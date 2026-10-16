@@ -64,8 +64,15 @@ func init() {
 		professions: [2]proto.Profession{proto.Profession_Engineering, proto.Profession_Blacksmithing},
 		withSpec: func(player *proto.Player) {
 			player.Class = proto.Class_ClassPaladin
+			// The Level 60 presets run Concentration Aura (its pushback protection against the raid
+			// hits; the raid already gives Retribution Aura). The level 20 and 30 builds solo and
+			// are hit, so Retribution Aura fires for them.
+			aura := proto.PaladinAura_RetributionAura
+			if player.Level >= 60 {
+				aura = proto.PaladinAura_ConcentrationAura
+			}
 			player.Spec = &proto.Player_RetributionPaladin{RetributionPaladin: &proto.RetributionPaladin{
-				Options: &proto.PaladinOptions{PrimarySeal: proto.PaladinSeal_Righteousness, Aura: proto.PaladinAura_RetributionAura},
+				Options: &proto.PaladinOptions{PrimarySeal: proto.PaladinSeal_Righteousness, Aura: aura},
 			}}
 		},
 	}

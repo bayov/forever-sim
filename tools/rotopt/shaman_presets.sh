@@ -14,11 +14,13 @@
 # The elemental rotations at the end are written the same way.
 set -e
 settings=$1
-# Client 1.60.1.70425 (2026-10-16): the Level 60 APLs in ui/*_shaman/apls carry hand edits on top
-# of what these templates write (Lightning Shield before the pull and its recast gates, the totem
-# recasts that stop 20 sec before the end, Searing Totem before the pull on Optimized), so they are
-# not regenerated from here. The templates pick each spell's top rank from the sim's tables, so the
-# new Lava Burst and Mana Tide Totem top ranks (1326047, 1325256) come out right.
+# Since the rotation auditor's pass 23 (2026-10-16) the Level 60 lines below write the same actions
+# as the shipped Level 60 APLs in ui/*_shaman/apls (Lightning Shield before the pull and its recast
+# gates, the totem recasts that stop 20 sec before the end, Searing or Magma Totem before the pull
+# after the shield: totemMinTime, shield, prepullShield=2, prepullFireLead, waterTotemMinTime,
+# shieldMinMana, shieldMinTime). Some shipped notes were shortened by hand and read differently. The
+# templates pick each spell's top rank from the sim's tables, so the client 70425 Lava Burst and Mana
+# Tide Totem top ranks (1326047, 1325256) come out right.
 # Standards 23 (user ruling 2026-10-15): there is no shaman totem duty. Every shaman drops its own
 # party's totems, like a warrior's Sunder: Strength of Earth, Windfury and Mana Spring for the melee
 # party, Mana Spring for the caster party.
@@ -62,11 +64,14 @@ gen() {
 # Fire Nova outside Clearcasting needs 12 mana a second left in the fight in place of the 20%
 # floor (fireNovaManaPerSec=12, the rotation auditor, 2026-10-15): +0.4 / +2.2 / +1.7 on Level 60
 # and +0.5 / +2.2 / +0.3 on Imp GW at 120 / 180 / 300 sec, paired at 20000 iterations.
-gen optimized "shock=4,airTotem=2,fireTotem=1,fireTotemMinTime=10,fireNova=2,fireNovaMana=20,waterTotem=1,flameShockFirst=1,fireNovaClearcast=2,prepullTotems=1,rageHoldForTrinket=1,fireNovaManaPerSec=12" -level 60
+gen optimized "shock=4,airTotem=2,fireTotem=1,fireTotemMinTime=10,fireNova=2,fireNovaMana=20,waterTotem=1,flameShockFirst=1,fireNovaClearcast=2,prepullTotems=1,rageHoldForTrinket=1,fireNovaManaPerSec=12,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1.5" -level 60
 # The Water Shield and Mana Tide talent builds have no Improved Fire Nova, so Magma Totem
 # beats Searing Totem there (899.7 against 879.5 at 180 sec on the Water Shield build). A
 # new Magma Totem goes down with as little as 10 sec left.
-gen magma "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=10,fireNova=1,fireNovaMana=20,waterTotem=1,earthShockFlameShockLeft=1,shield=2,shieldMana=50,prepullShield=1,prepullTotems=1,rageHoldForTrinket=1" -level 60
+# Since the rotation auditor's pass 23 (2026-10-16) a new Magma Totem goes down with as little as 2 sec
+# left (fireTotemMinTime=2): +1.17 / +0.88 / +0.55 at 120 / 180 / 300 sec on Water Shield and +0.63
+# at 180 on Mana Tide, paired at 20000 iterations on two seed sets.
+gen magma "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,fireNova=1,fireNovaMana=20,waterTotem=1,earthShockFlameShockLeft=1,prepullTotems=1,rageHoldForTrinket=1,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1" -level 60
 # On 2026-10-12, on the searched Water Shield build (050031-053030031005112151-052030001), Fire
 # Nova ahead of the shocks is +2.7 here too, and holding Earth Shock while Flame Shock has 1 sec
 # or less left (so the shock cooldown is back when the DoT runs out) +1.0: 762.3 as the mean of
@@ -83,7 +88,7 @@ gen magma "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=10,fireNova=1,fireNov
 # Magma Totem with Mana Tide Totem at 20% mana, for the Mana Tide talent build. Fire Nova
 # goes ahead of the shocks here (fireNova=1): +4.4 at 180 sec and +1.7 at 300 on 2026-10-08.
 # On the Water Shield build that was +1.7 at 180 sec and even at 300, so magma keeps it after.
-gen mana_tide "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=10,fireNova=1,fireNovaMana=20,waterTotem=1,manaTideMana=20,earthShockFlameShockLeft=1,shield=2,shieldMana=50,prepullShield=1,prepullTotems=1,rageHoldForTrinket=1" -level 60
+gen mana_tide "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,fireNova=1,fireNovaMana=20,waterTotem=1,manaTideMana=20,earthShockFlameShockLeft=1,prepullTotems=1,rageHoldForTrinket=1,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1" -level 60
 # Level 30 with 5 extra talent points (26 in all), tuned for the 120 sec Level 30
 # encounter. Flame Shock when its DoT is down and Earth Shock otherwise (shock=4), because
 # Earth Shock spends the Stormstrike mark (+20%). Windfury Weapon from level 30 and Mana Spring Totem from 26, and shocks only
@@ -117,5 +122,12 @@ gen_ele() {
 	mv "ui/elemental_shaman/apls/${name}_300s.apl.json" "ui/elemental_shaman/apls/$name.apl.json"
 	echo "wrote ui/elemental_shaman/apls/$name.apl.json ($knobs)"
 }
-gen_ele level60 "chainLightning=0,lightningBoltDownrank=2,lavaBurstFlameShockLeft=2,prepullBolt=1,earthShockFinish=1"
-gen_ele level60_mana_tide "chainLightning=0,lightningBoltDownrank=2,lavaBurstFlameShockLeft=2,prepullBolt=1,manaTideMana=20,earthShockFinish=1"
+# Lightning Shield at -5.4 sec and again in the fight with half the mana and a minute left
+# (shield=1, shieldMinMana=50, shieldMinTime=60, prepullShield=1), and Mana Spring not recast in the
+# last 20 sec (waterTotemMinTime=20). Since the rotation auditor's pass 23 (2026-10-16) no new Flame
+# Shock with less than 9 sec left (flameShockMinTime=9), and Mana Tide Totem at 10% mana: +2.43 /
+# +1.06 / +0.30 at 120 / 180 / 300 sec on Mana Tide, and the Flame Shock gate +2.50 / +0.70 / +0.71
+# on Level 60, paired at 20000 iterations on two seed sets.
+ele60="chainLightning=0,lightningBoltDownrank=2,lavaBurstFlameShockLeft=2,prepullBolt=1,earthShockFinish=1,waterTotemMinTime=20,shield=1,shieldMinMana=50,shieldMinTime=60,prepullShield=1,flameShockMinTime=9"
+gen_ele level60 "$ele60"
+gen_ele level60_mana_tide "$ele60,manaTideMana=10"

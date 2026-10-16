@@ -61,7 +61,10 @@ func (shamanEnh) Knobs() []Knob {
 		// its globes for mana, which is wasted while the pool is full.
 		{Name: "shieldMana", Default: 0, Min: 0, Max: 80, Step: 10},
 		// 1 puts the shield up before the pull too.
-		{Name: "prepullShield", Default: 0, Min: 0, Max: 1, Step: 1},
+		// 1 puts the shield up 1.5 sec before the first prepull totem. 2 puts it between the
+		// earth, air and water totems and the fire totem: the totems one totem GCD apart, the
+		// shield, then the fire totem 1.5 sec later at prepullFireLead sec before the pull.
+		{Name: "prepullShield", Default: 0, Min: 0, Max: 2, Step: 1},
 		// 0 none, 1 Earth Shock, 2 Flame Shock, 3 Frost Shock, 4 Flame Shock when its DoT
 		// is down and Earth Shock otherwise, 5 Earth Shock while the Stormstrike debuff (20%
 		// Nature damage) is on the target and Frost Shock otherwise, 6 Flame Shock when its
@@ -109,6 +112,11 @@ func (shamanEnh) Knobs() []Knob {
 		// 1 puts the totems down in the prepull actions, one totem GCD apart, 0 leaves them out
 		// and the rotation puts them down after the pull.
 		{Name: "prepullTotems", Default: 1, Min: 0, Max: 1, Step: 1},
+		// With prepullShield 2, the fire totem goes down this many seconds before the pull.
+		{Name: "prepullFireLead", Default: 1, Min: 1, Max: 1.5, Step: 0.5},
+		// The earth, air and water totems are only recast with this many seconds left in the fight
+		// (0 always). The prepull totems run out a few seconds before a 5 min fight ends.
+		{Name: "totemMinTime", Default: 0, Min: 0, Max: 30, Step: 10},
 	}
 }
 
@@ -139,7 +147,11 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 	var totems []*proto.ActionID
 	totem := func(id *proto.ActionID, aura *proto.ActionID, notes string) {
 		totems = append(totems, id)
-		items = append(items, cast(id, not(auraIsActive(aura)), notes))
+		when := not(auraIsActive(aura))
+		if t := k["totemMinTime"]; t > 0 {
+			when = andAlso(when, ge(remainingTime(), seconds(t)))
+		}
+		items = append(items, cast(id, when, notes))
 	}
 	if k["strengthOfEarth"] == 1 {
 		totem(strengthOfEarth, strengthOfEarth, "Strength of Earth Totem whenever it is down.")
@@ -158,13 +170,18 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 		if k["manaTideMana"] > 0 {
 			// Mana Spring would knock the tide down at once, so it waits for it to end.
 			totems = append(totems, manaSpringTotem)
-			items = append(items, cast(manaSpringTotem, and(not(auraIsActive(manaSpringTotem)), not(auraIsActive(manaTideTotem))),
-				"Mana Spring Totem whenever it is down and Mana Tide Totem is not up."))
+			when := and(not(auraIsActive(manaSpringTotem)), not(auraIsActive(manaTideTotem)))
+			if t := k["totemMinTime"]; t > 0 {
+				when = andAlso(when, ge(remainingTime(), seconds(t)))
+			}
+			items = append(items, cast(manaSpringTotem, when, "Mana Spring Totem whenever it is down and Mana Tide Totem is not up."))
 		} else {
 			totem(manaSpringTotem, manaSpringTotem, "Mana Spring Totem whenever it is down.")
 		}
 	}
+	var fireTotemID *proto.ActionID
 	fireTotem := func(id *proto.ActionID, notes string) {
+		fireTotemID = id
 		totems = append(totems, id)
 		items = append(items, cast(id, and(
 			not(dotIsActive(id)),
@@ -335,6 +352,25 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 	if k["prepullTotems"] == 0 {
 		totems = nil
 	}
+	if shieldID != nil && k["prepullShield"] == 2 {
+		// Earth, air and water a totem GCD (1 sec) apart, the shield (a 1.5 sec GCD), then the
+		// fire totem at prepullFireLead sec before the pull.
+		var others []*proto.ActionID
+		for _, id := range totems {
+			if id != fireTotemID {
+				others = append(others, id)
+			}
+		}
+		lead := k["prepullFireLead"]
+		for i, id := range others {
+			rot.PrepullActions = append(rot.PrepullActions, prepull(id, lead+1.5+float64(len(others)-i)))
+		}
+		rot.PrepullActions = append(rot.PrepullActions, prepull(shieldID, lead+1.5))
+		if fireTotemID != nil && len(others) < len(totems) {
+			rot.PrepullActions = append(rot.PrepullActions, prepull(fireTotemID, lead))
+		}
+		return rot
+	}
 	for i, id := range totems {
 		rot.PrepullActions = append(rot.PrepullActions, prepull(id, float64(len(totems)-i)))
 	}
@@ -343,6 +379,17 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 		rot.PrepullActions = append([]*proto.APLPrepullAction{prepull(shieldID, float64(len(totems))+1.5)}, rot.PrepullActions...)
 	}
 	return rot
+}
+
+// andAlso adds conditions to when, into the same and when it already is one, so the rotation
+// reads "a and b and c" rather than "(a and b) and c".
+func andAlso(when value, more ...value) value {
+	if when != nil {
+		if a, ok := when.Value.(*proto.APLValue_And); ok {
+			return and(append(append([]value{}, a.And.Vals...), more...)...)
+		}
+	}
+	return and(append([]value{when}, more...)...)
 }
 
 // shieldWhen recasts the shield when it is down, and with a mana gate (pct above 0) only below

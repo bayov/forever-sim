@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "optimized",
   "published": {
-    "dps": 825.3,
-    "source": "Shaman PR (client 1.60.1.70425: new talent tree with Elemental Mastery, Fire Nova cut, Lava Burst and Mana Tide ranks, searched talents, 2026-10-16)"
+    "dps": 848.1,
+    "source": "Shaman PR (rotation audit pass 23: Flame Shock 9 s end gate, Mana Tide at 10%, Magma Totem to 2 s; requests rebuilt with the prepull totems, 2026-10-16)"
   },
   "verify": {
-    "dps": 825.3,
+    "dps": 848.11,
     "stderr": 0.37,
     "iters": 20000,
     "ok": true,
@@ -37,7 +37,7 @@
     "Thundering Strikes"
   ],
   "rotation": [
-    "Pre-pull: Lightning Shield at -3s, Searing Totem at -1.5s; starting totems Strength of Earth IV, Windfury Totem and Mana Spring at -4 / -3 / -2s (they run out a few seconds before a 300s fight ends), no mana cost",
+    "Pre-pull: Strength of Earth IV at -6s, Windfury Totem at -5s, Mana Spring at -4s, Lightning Shield at -3s, Searing Totem at -1.5s (the totems last the whole fight but run out a few seconds before a 300s one ends)",
     "Recast Strength of Earth, Windfury Totem and Mana Spring when down, with at least 20s left",
     "Searing Totem when it is down and at least 10s remain (after the pre-pull one)",
     "Rage of the Farseer on cooldown, waiting for the on-use trinket; Blood Fury lined up with it",

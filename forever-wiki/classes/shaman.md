@@ -38,6 +38,8 @@ Elemental gains from Elemental Mastery (+22 as the mean of the three lengths), E
 
 Races at 180 sec on the new builds: Elemental Windshaper Skyborne 724.9, Orc 721.4, Dwarf 719.3, Tauren 719.1, Troll 710.1 (Mana Tide 714.6 / 711.2 / 708.7 / 708.6 / 700.1); Enhancement Level 60 Orc 825.3, Windshaper Skyborne 822.6, Tauren 817.1, Dwarf 816.9, Troll 813.7 (the other Enhancement builds rank the same). Best overall and best Horde: Windshaper Skyborne for Elemental, Orc for Enhancement. Best Alliance: Dwarf (the only Alliance shaman).
 
+Rotation audit pass 23 (2026-10-16): no new Flame Shock with less than 9 sec left on both Elemental builds, Mana Tide Totem at 10% mana on Elemental Mana Tide, and a new Magma Totem with as little as 2 sec left on Water Shield and Enhancement Mana Tide: +0.7 / +1.1 / +0.8 / +0.6 at 180 sec, no loss at any length (paired, 20000 iterations, two seed sets). The rotopt templates and `tools/rotopt/shaman_presets.sh` now write the shipped Level 60 APLs' actions. The report requests were rebuilt with mksettings: since the starting totems were dropped (97b76aa9) they carry the rotations' prepull totems, which moves Enhancement +3 to +13 against the requests on master before.
+
 ## Client 1.60.1.70338 and the 7 October deep dive
 
 From wago.tools (build 1.60.1.70338, 2026-10-10, the newest so far), foreverchanges.pro's 70338 talent calculator and the [Mage and Shaman class deep dive](https://worldofwarcraft.blizzard.com/en-us/news/24302097) of 7 October. The Elemental tree matches the sim rank for rank (shaman_audit.md 8.8 to 8.16).

@@ -170,7 +170,7 @@
                         },
                         "rhs": {
                           "const": {
-                            "val": "0.2"
+                            "val": "0.1"
                           }
                         }
                       }
@@ -287,6 +287,19 @@
                                 }
                               }
                             }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "9s"
+                                }
+                              }
+                            }
                           }
                         ]
                       }
@@ -343,7 +356,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "cmp": {
