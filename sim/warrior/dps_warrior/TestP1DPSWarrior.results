@@ -274,15 +274,15 @@ dps_results: {
 dps_results: {
  key: "TestP1DPSWarrior-Phase1-Settings-Gnome-phase_1-DPS-dps_no_reck-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 232.62317
-  tps: 349.85991
+  dps: 233.62367
+  tps: 350.86049
  }
 }
 dps_results: {
  key: "TestP1DPSWarrior-Phase1-Settings-Gnome-phase_1-DPS-dps_no_reck-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 83.437
-  tps: 79.69655
+  dps: 83.638
+  tps: 79.89754
  }
 }
 dps_results: {
@@ -295,15 +295,15 @@ dps_results: {
 dps_results: {
  key: "TestP1DPSWarrior-Phase1-Settings-Gnome-phase_1-DPS-dps_no_reck-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 80.56667
-  tps: 210.06484
+  dps: 80.97317
+  tps: 210.47103
  }
 }
 dps_results: {
  key: "TestP1DPSWarrior-Phase1-Settings-Gnome-phase_1-DPS-dps_no_reck-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 32.9615
-  tps: 43.13173
+  dps: 33.10467
+  tps: 43.27472
  }
 }
 dps_results: {
@@ -316,15 +316,15 @@ dps_results: {
 dps_results: {
  key: "TestP1DPSWarrior-Phase1-Settings-Gnome-phase_1-DPS-dps_reck-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 232.78067
-  tps: 350.01191
+  dps: 233.78117
+  tps: 351.01249
  }
 }
 dps_results: {
  key: "TestP1DPSWarrior-Phase1-Settings-Gnome-phase_1-DPS-dps_reck-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 83.437
-  tps: 79.69655
+  dps: 83.638
+  tps: 79.89754
  }
 }
 dps_results: {
@@ -337,15 +337,15 @@ dps_results: {
 dps_results: {
  key: "TestP1DPSWarrior-Phase1-Settings-Gnome-phase_1-DPS-dps_reck-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 81.3905
-  tps: 210.87737
+  dps: 81.797
+  tps: 211.28356
  }
 }
 dps_results: {
  key: "TestP1DPSWarrior-Phase1-Settings-Gnome-phase_1-DPS-dps_reck-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 33.39
-  tps: 43.53914
+  dps: 33.53317
+  tps: 43.68213
  }
 }
 dps_results: {
@@ -946,22 +946,22 @@ dps_results: {
 dps_results: {
  key: "TestP1DPSWarrior-Phase1-Settings-Undead-phase_1-DPS-dps_no_reck-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 218.78133
-  tps: 334.83729
+  dps: 217.56183
+  tps: 333.86168
  }
 }
 dps_results: {
  key: "TestP1DPSWarrior-Phase1-Settings-Undead-phase_1-DPS-dps_no_reck-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 79.973
-  tps: 76.5312
+  dps: 79.439
+  tps: 76.10437
  }
 }
 dps_results: {
  key: "TestP1DPSWarrior-Phase1-Settings-Undead-phase_1-DPS-dps_no_reck-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 153.1225
-  tps: 146.34597
+  dps: 152.04167
+  tps: 145.48215
  }
 }
 dps_results: {
@@ -988,22 +988,22 @@ dps_results: {
 dps_results: {
  key: "TestP1DPSWarrior-Phase1-Settings-Undead-phase_1-DPS-dps_reck-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 218.93817
-  tps: 334.98929
+  dps: 217.71867
+  tps: 334.01368
  }
 }
 dps_results: {
  key: "TestP1DPSWarrior-Phase1-Settings-Undead-phase_1-DPS-dps_reck-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 80.28067
-  tps: 76.8302
+  dps: 79.74667
+  tps: 76.40337
  }
 }
 dps_results: {
  key: "TestP1DPSWarrior-Phase1-Settings-Undead-phase_1-DPS-dps_reck-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 159.85167
-  tps: 152.66963
+  dps: 158.77083
+  tps: 151.80581
  }
 }
 dps_results: {

@@ -267,22 +267,22 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Phase5-Settings-Undead-blank-P5 Seal of Righteousness Ret-basic_ret-FullBuffs-P5-Consumes-LongMultiTarget"
  value: {
-  dps: 60.93933
-  tps: 127.40255
+  dps: 60.43633
+  tps: 126.90003
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-Settings-Undead-blank-P5 Seal of Righteousness Ret-basic_ret-FullBuffs-P5-Consumes-LongSingleTarget"
  value: {
-  dps: 42.52367
-  tps: 45.84034
+  dps: 42.02083
+  tps: 45.33782
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-Settings-Undead-blank-P5 Seal of Righteousness Ret-basic_ret-FullBuffs-P5-Consumes-ShortSingleTarget"
  value: {
-  dps: 68
-  tps: 74.38457
+  dps: 67.2225
+  tps: 73.60794
  }
 }
 dps_results: {
