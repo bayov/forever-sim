@@ -4,7 +4,7 @@
   "spec": "Demonology",
   "build": "Demonology",
   "isDefault": true,
-  "pr": 2,
+  "pr": 59,
   "race": "Gnome",
   "talents": "011-0305003131221001351-0550005003",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_demonology",
   "published": {
     "dps": 1099.2,
-    "source": "PR (client 70425 port)"
+    "source": "PR #59"
   },
   "verify": {
     "dps": 1099.24,

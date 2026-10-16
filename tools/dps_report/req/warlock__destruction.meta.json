@@ -4,7 +4,7 @@
   "spec": "Destruction",
   "build": "Destruction",
   "isDefault": false,
-  "pr": 2,
+  "pr": 59,
   "race": "Human",
   "talents": "255000000351--055030500310035",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_destruction",
   "published": {
     "dps": 980.7,
-    "source": "PR (client 70425 port)"
+    "source": "PR #59"
   },
   "verify": {
     "dps": 980.67,

@@ -4,7 +4,7 @@
   "spec": "Destruction",
   "build": "Destruction Fire (Curse duty)",
   "isDefault": false,
-  "pr": 30,
+  "pr": 59,
   "race": "Gnome",
   "talents": "25201020032-0002-0050355003101351",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_destruction_fire_duty_curse",
   "published": {
     "dps": 942.8,
-    "source": "PR (client 70425 port)"
+    "source": "PR #59"
   },
   "verify": {
     "dps": 942.78,

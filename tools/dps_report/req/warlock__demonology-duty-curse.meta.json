@@ -4,7 +4,7 @@
   "spec": "Demonology",
   "build": "Demonology (Curse duty)",
   "isDefault": false,
-  "pr": 30,
+  "pr": 59,
   "race": "Gnome",
   "talents": "011-0305003131221001351-0550005003",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_demonology_duty_curse",
   "published": {
     "dps": 1086.6,
-    "source": "PR (client 70425 port)"
+    "source": "PR #59"
   },
   "verify": {
     "dps": 1086.61,

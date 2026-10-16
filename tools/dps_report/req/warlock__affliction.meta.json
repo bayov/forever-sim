@@ -4,7 +4,7 @@
   "spec": "Affliction",
   "build": "Affliction",
   "isDefault": false,
-  "pr": 2,
+  "pr": 59,
   "race": "Human",
   "talents": "2550102003520005--0550305003",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_affliction",
   "published": {
     "dps": 998.0,
-    "source": "PR (client 70425 port)"
+    "source": "PR #59"
   },
   "verify": {
     "dps": 998.04,
