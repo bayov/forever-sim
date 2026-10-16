@@ -497,6 +497,14 @@
 			font-size: 1rem;
 			font-weight: 600;
 		}
+
+		// Its fields go on more lines when they don't fit in the column. Rest (Leveling) has four
+		// of them (Eat, Drink, until Health and until Mana), and on one line they ran into the
+		// condition.
+		&:not(:has(.apl-actionid-item-icon)) > .apl-picker-builder-root {
+			flex-wrap: wrap;
+			row-gap: 0.25rem;
+		}
 	}
 
 	.apl-list-item-picker-root > .apl-action-picker-root > .apl-action-condition,
