@@ -1041,6 +1041,13 @@ message Encounter {
 	// Leveling mode (docs/leveling_sim.md): a grinding session instead of one fight. When set,
 	// the targets above are ignored and the session pulls normal mobs from the mob table.
 	LevelingOptions leveling = 10;
+
+	// Raid damage on the players the boss isn't tanking: direct hits a minute, on average, at
+	// random times, and the damage of each before the player's damage taken modifiers. Each is
+	// a spell hit from the boss, so it does what any hit taken does (a shield's charge, Rage,
+	// spell pushback). See sim/core/raid_hits.go.
+	double raid_damage_hits_per_minute = 11;
+	double raid_damage_per_hit = 12;
 }
 
 // A grinding session (docs/leveling_sim.md). A field left at 0 takes its default.

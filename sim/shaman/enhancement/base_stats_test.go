@@ -17,6 +17,10 @@ import (
 // Orc shift (1 less Stamina, 2 more Intellect, 3 less Spirit, seen on a level 1 Orc shaman
 // and warlock on 2026-10-10) until we can check them on release.
 //
+// The crit readings come from client 70338, when the Orc's crit racial needed an axe. Client
+// 70425's Savage gives 1% more melee and spell crit with any weapon, so the sim's crit is 1%
+// above them (savageCrit).
+//
 // The beta's level 1 dodge reads 4.3% because the new character has 1 of 5 defense, and
 // each missing point takes 0.04% off. The sim doesn't model defense skill, so we pin the
 // 4.5% a trained character has.
@@ -63,11 +67,15 @@ func TestOrcShamanBaseStats(t *testing.T) {
 		check("mana", got[stats.Mana], want.mana, 0)
 		check("attack power", got[stats.AttackPower], want.ap, 0)
 		check("armor", got[stats.Armor], want.armor, 0)
-		check("melee crit", got[stats.MeleeCrit]/core.CritRatingPerCritChance, want.meleeCrit, 0.005)
-		check("spell crit", got[stats.SpellCrit]/core.CritRatingPerCritChance, want.spellCrit, 0.005)
+		check("melee crit", got[stats.MeleeCrit]/core.CritRatingPerCritChance, want.meleeCrit+savageCrit, 0.005)
+		check("spell crit", got[stats.SpellCrit]/core.CritRatingPerCritChance, want.spellCrit+savageCrit, 0.005)
 		check("dodge", got[stats.Dodge]/core.DodgeRatingPerDodgeChance, want.dodge, 0.005)
 	}
 }
+
+// savageCrit is the Orc's Savage (client 70425): 1% melee and spell crit with any weapon. The beta
+// readings below were taken on client 70338, when it needed an axe and our characters had none.
+const savageCrit = 1.0
 
 // TestOrcShamanAttributeRates checks what each attribute gives well above the naked values,
 // against a geared level 30 Orc shaman on the Forever beta (2026-10-08). We give a naked
@@ -120,9 +128,9 @@ func TestOrcShamanAttributeRates(t *testing.T) {
 	check("armor", got[stats.Armor], 86, 0)
 	check("health", got[stats.Health], 335+880, 0)
 	check("mana", got[stats.Mana], 665+1775, 0)
-	check("melee crit", got[stats.MeleeCrit]/core.CritRatingPerCritChance, 5.43, 0.005)
+	check("melee crit", got[stats.MeleeCrit]/core.CritRatingPerCritChance, 5.43+savageCrit, 0.005)
 	check("dodge", got[stats.Dodge]/core.DodgeRatingPerDodgeChance, 5.43, 0.005)
-	check("spell crit", got[stats.SpellCrit]/core.CritRatingPerCritChance, 7.16, 0.01)
+	check("spell crit", got[stats.SpellCrit]/core.CritRatingPerCritChance, 7.16+savageCrit, 0.01)
 	// 83 per 5 sec on the beta's tooltip, 12.5 + 33 / 8 = 16.625 a second.
 	check("mana regen", character.ManaRegenPerSecondWhileNotCasting(), 16.625, 1e-9)
 }

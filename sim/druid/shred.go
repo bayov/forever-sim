@@ -9,10 +9,11 @@ import (
 // Shred under Forever (1.60.1.70338, wago.tools): 155% weapon damage (1.12 has 225%), on
 // the weapon damage plus the rank's flat bonus, which the percent scales too. The tooltip
 // still says "plus 180" at rank 5, 1.12's 80 times 2.25, but the client's effects are 80
-// and 155%, so the bonus comes to 124.
+// and 155%, so the bonus comes to 124. Client 1.60.1.70425 moved rank 1 to level 20 with a
+// flat 22 (24 at level 22 in 70338).
 var ShredSpellId = []int32{0, 5221, 6800, 8992, 9829, 9830}
-var ShredFlatDamage = []float64{0, 24, 32, 44, 64, 80}
-var ShredLevel = []int32{0, 22, 30, 38, 46, 54}
+var ShredFlatDamage = []float64{0, 22, 32, 44, 64, 80}
+var ShredLevel = []int32{0, 20, 30, 38, 46, 54}
 
 const ShredWeaponMultiplier = 1.55
 
