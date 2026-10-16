@@ -737,3 +737,124 @@
 	box-shadow: 0 0 6px rgba(200, 162, 74, 0.8);
 	pointer-events: none;
 }
+
+// A leveling session's states behind the rows (Timeline.drawSession). The time out of a fight is
+// hatched in the state's color, like the prepull, and a fight is left plain. The name sits at the
+// top left of a band when it's wide enough.
+.rotation-session-bands {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+}
+
+.rotation-session-band {
+	position: absolute;
+	bottom: 0;
+	overflow: hidden;
+	background: repeating-linear-gradient(
+		135deg,
+		color-mix(in srgb, var(--band-color) 14%, transparent) 0 6px,
+		color-mix(in srgb, var(--band-color) 5%, transparent) 6px 12px
+	);
+	border-left: 1px solid color-mix(in srgb, var(--band-color) 35%, transparent);
+
+	// A found mob waits for its pull, which is nearly fighting, so it gets a plain tint.
+	&.state-pulling {
+		background: color-mix(in srgb, var(--band-color) 7%, transparent);
+	}
+
+	.rotation-session-band-label {
+		position: absolute;
+		top: 3px;
+		left: 6px;
+		font-size: 0.625rem;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		text-transform: uppercase;
+		white-space: nowrap;
+		color: color-mix(in srgb, var(--band-color) 75%, var(--text-muted-color));
+	}
+}
+
+// The kills and deaths under the ruler.
+.rotation-session-markers {
+	position: absolute;
+	left: 0;
+	z-index: 3;
+	pointer-events: none;
+
+	> * {
+		pointer-events: auto;
+	}
+}
+
+.rotation-kill-tick {
+	position: absolute;
+	bottom: 0;
+	width: 9px;
+	height: 9px;
+	margin-left: -4.5px;
+	cursor: default;
+
+	&::before {
+		content: '';
+		position: absolute;
+		left: 4px;
+		bottom: 0;
+		width: 2px;
+		height: 9px;
+		border-radius: 1px;
+		background: var(--gold);
+	}
+}
+
+.rotation-death-marker {
+	position: absolute;
+	bottom: -2px;
+	transform: translateX(-50%);
+	font-size: 0.75rem;
+	line-height: 1;
+	color: #ef7a7a;
+	cursor: default;
+}
+
+.rotation-death-line {
+	position: absolute;
+	bottom: 0;
+	z-index: 2;
+	width: 2px;
+	margin-left: -1px;
+	background: #ef7a7a;
+	opacity: 0.7;
+	pointer-events: none;
+}
+
+// The selection of a session: a veil over the rest, and a gold line at each end.
+.rotation-selection {
+	position: absolute;
+	inset: 0;
+	z-index: 2;
+	pointer-events: none;
+
+	.rotation-selection-veil {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		background: rgba(0, 0, 0, 0.38);
+	}
+
+	.rotation-selection-edge {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		width: 2px;
+		margin-left: -1px;
+		background: var(--gold);
+		opacity: 0.6;
+	}
+}
+
+// The health and mana chart under a session's kills chart.
+.leveling-vitals {
+	margin-top: var(--spacer-2);
+}
