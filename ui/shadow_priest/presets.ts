@@ -457,7 +457,8 @@ export const EncounterLevel60Holy = PresetUtils.makePresetEncounter('Level 60 + 
 
 export const PresetBuildLevel60Holy = PresetUtils.makePresetBuild('Level 60 + Holy', {
 	group: 'Level 60',
-	tooltip: 'Level 60 with the Holy sub tree talents and Greater Mageblood, 42 DPS behind Level 60.',
+	tooltip:
+		'Level 60 with the Holy sub tree talents and Greater Mageblood, 42 DPS behind Level 60. As a Human it runs out of mana by 300 sec (802.9; an Undead holds 865.1 with Dark Sacrifice).',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60Holy,
 	rotation: APLLevel60,
