@@ -118,17 +118,36 @@
               ],
               "priorityList": [
                 {
-                  "notes": "Strength of Earth Totem whenever it is down.",
+                  "notes": "Strength of Earth Totem whenever it is down, with 20 sec or more of the fight left.",
                   "action": {
                     "condition": {
-                      "not": {
-                        "val": {
-                          "auraIsActive": {
-                            "auraId": {
-                              "spellId": 10442
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 10442
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "20s"
+                                }
+                              }
                             }
                           }
-                        }
+                        ]
                       }
                     },
                     "castSpell": {
@@ -139,17 +158,36 @@
                   }
                 },
                 {
-                  "notes": "Windfury Totem whenever it is down. Windfury Weapon turns its buff off for the shaman.",
+                  "notes": "Windfury Totem whenever it is down, with 20 sec or more of the fight left. Windfury Weapon turns its buff off for the shaman.",
                   "action": {
                     "condition": {
-                      "not": {
-                        "val": {
-                          "auraIsActive": {
-                            "auraId": {
-                              "spellId": 10612
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 10612
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "20s"
+                                }
+                              }
                             }
                           }
-                        }
+                        ]
                       }
                     },
                     "castSpell": {
@@ -183,7 +221,7 @@
                   }
                 },
                 {
-                  "notes": "Mana Spring Totem whenever it is down and Mana Tide Totem is not up.",
+                  "notes": "Mana Spring Totem whenever it is down and Mana Tide Totem is not up, with 20 sec or more of the fight left.",
                   "action": {
                     "condition": {
                       "and": {
@@ -206,6 +244,19 @@
                                   "auraId": {
                                     "spellId": 17359
                                   }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "20s"
                                 }
                               }
                             }

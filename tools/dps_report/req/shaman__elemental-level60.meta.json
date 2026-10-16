@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 694.0,
-    "source": "Shaman PR (Lightning Shield on raid damage hits: 2 a minute melee, 1 ranged, 2026-10-15)"
+    "dps": 695.3,
+    "source": "Shaman PR (rotation audit pass 21: Searing Totem before the pull, gated Lightning Shield recast, no totem recasts in the last 20 s, 2026-10-16)"
   },
   "verify": {
-    "dps": 693.99,
+    "dps": 695.27,
     "stderr": 0.19,
     "iters": 20000,
     "ok": true,
@@ -39,12 +39,12 @@
   "rotation": [
     "Pre-pull: Lightning Shield at -5.4 s, Mana Spring Totem at -3.9 s, Lightning Bolt at -2.9 s (lands 0.1 s after the pull), Searing Totem at -0.9 s",
     "Cooldowns (Blood Fury, Sapper, Demonic Rune, Major Mana Potion, Land Mine) as they come up",
-    "Mana Spring Totem when it is down",
+    "Mana Spring Totem when it is down and at least 20 s remain",
     "Searing Totem when it is down and at least 20 s remain",
     "Flame Shock whenever its DoT is down",
     "Lava Burst on cooldown, unless Flame Shock would run out before the cast ends",
     "Earth Shock once a Lightning Bolt would no longer land before the fight ends",
-    "Lightning Shield when it is down (orbs fire at the target on raid damage hits, 1 a minute)",
+    "Lightning Shield when it is down, above 50% mana with at least 60 s left (orbs fire at the target on raid damage hits, 1 a minute)",
     "Lightning Bolt rank 8 below 20% mana",
     "Lightning Bolt rank 10 as filler (no Chain Lightning on one target)"
   ],
