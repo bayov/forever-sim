@@ -15,12 +15,12 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_fury_2h",
   "published": {
-    "dps": 942.0,
-    "source": "Raid damage hits on warriors (2 a minute, 1500 damage each), 2026-10-15"
+    "dps": 944.5,
+    "source": "Fury 2H Bloodrage under 20 and Heroic Strike from 85 Rage (rotation audit pass 21), 2026-10-16"
   },
   "verify": {
-    "dps": 942.01,
-    "stderr": 0.42,
+    "dps": 944.47,
+    "stderr": 0.43,
     "iters": 20000,
     "ok": true,
     "note": "verify.py, 180 s, seed 1"
@@ -40,10 +40,10 @@
     "Sunder Armor as the first GCD after the pull (every warrior; the tanks keep it up after)",
     "Death Wish held for the last 36 sec, Recklessness for the last 30 sec",
     "Blood Fury and Berserking held for the last 30 sec, Elune's Light with Death Wish; Mighty Rage Potion at the pull, second held for the last 20 sec",
-    "Bloodrage under 70 Rage",
+    "Bloodrage under 20 Rage",
     "Execute first in the execute phase",
     "Bloodthirst, then Slam from 30 Rage right after a main hand swing, then Whirlwind at 25+ Rage",
-    "Heroic Strike queued from 90 Rage (outside execute)",
+    "Heroic Strike queued from 85 Rage (outside execute)",
     "Hamstring filler from 20 Rage"
   ],
   "consumes": [

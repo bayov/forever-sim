@@ -136,13 +136,15 @@ export const APLNoReck = PresetUtils.makePresetAPLRotation('DPS (No Reck)', APLN
 // cooldown and holding the fillers for Bloodthirst and Whirlwind both lose.
 export const APLLevel60Fury = PresetUtils.makePresetAPLRotation('Level 60 Fury', Level60FuryAPLJSON, { group: 'Level 60' });
 // The same template on the two-hand Fury talents and the two-hand set: the Fury rotation with
-// Heroic Strike from 90 Rage instead of 40, Hamstring from 20, Bloodrage under 70, Slam from 30 Rage
+// Heroic Strike from 85 Rage instead of 40, Hamstring from 20, Bloodrage under 20, Slam from 30 Rage
 // right after a main hand swing, ahead of Whirlwind (+8.4 at 180 sec; Slam at any time loses), and
 // Death Wish held for the last 36 sec with Recklessness for the last 30. The second potion and the
 // trinket's last use are held for the last 20 and 34 sec, and Blood Fury and Berserking for the last
 // 30 (Elune's Light keeps waiting for Death Wish, held it lost 7). The 34 and 30 sec holds, from 25,
 // are +4.4 / +2.1 / +1.2 on the Orc at 120 / 180 / 300 sec (trinket +1.1 and Blood Fury +0.5 of it
-// at 180 sec), Troll +0.9 and Undead +1.3 at 180 sec.
+// at 180 sec), Troll +0.9 and Undead +1.3 at 180 sec. With the raid damage hits' Rage (the
+// rotation auditor's pass 21, 2026-10-16), Bloodrage moved from under 70 Rage to under 20 and
+// Heroic Strike from 90 to 85: +0.7 / +2.5 / +1.9 at 120 / 180 / 300 sec (944.5 at 180).
 export const APLLevel60Fury2H = PresetUtils.makePresetAPLRotation('Level 60 Fury (Two-Hand)', Level60Fury2HAPLJSON, { group: 'Level 60' });
 // The tools/rotopt search (template warrior_arms) on the Level 60 Arms talents and the two-hand
 // set, Human, 180 sec: Battle Stance, Mortal Strike, Slam above 20 Rage (15 sec cooldown with
