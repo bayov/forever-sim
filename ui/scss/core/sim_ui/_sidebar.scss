@@ -110,6 +110,17 @@
 			gap: var(--block-spacer) var(--spacer-2);
 			margin-bottom: 0;
 
+			// DPS, PvP or Leveling, over the whole row. The three choices share its width.
+			.sim-mode-picker {
+				display: flex;
+				flex: 1 0 100%;
+
+				.segmented-option {
+					flex: 1;
+					justify-content: center;
+				}
+			}
+
 			.iterations-picker {
 				flex: 1;
 				min-width: 0;

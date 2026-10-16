@@ -51,6 +51,14 @@ export async function saveLastSimRun(key: string, run: SimRun): Promise<void> {
 	}
 }
 
+export async function deleteLastSimRun(key: string): Promise<void> {
+	try {
+		await withStore('readwrite', store => store.delete(key));
+	} catch (e) {
+		console.warn('Failed to delete the last sim run: ' + e);
+	}
+}
+
 // Returns null when there's no saved run, or when we can't read it. A run saved by an older
 // version of the sim still reads, because protobuf skips the fields it doesn't know.
 export async function loadLastSimRun(key: string): Promise<SimRun | null> {

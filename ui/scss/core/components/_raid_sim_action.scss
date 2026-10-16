@@ -103,6 +103,13 @@
 	column-gap: 0;
 }
 
+// In place of the latest run's results, in a mode we haven't run yet.
+.sim-history-empty {
+	margin: 0;
+	font-size: 0.8125rem;
+	color: var(--text-muted-color);
+}
+
 .sim-history {
 	row-gap: var(--spacer-3);
 	margin-top: var(--spacer-3);

@@ -24,12 +24,13 @@ import * as InputHelpers from './components/input_helpers';
 import { addRaidSimAction, RaidSimResultsManager } from './components/raid_sim_action';
 import { SavedDataConfig } from './components/saved_data_manager';
 import { SimHistory } from './components/sim_history';
+import { SimModePicker } from './components/sim_mode_picker';
 import { addStatWeightsSection } from './components/stat_weights_action';
 import { GLOBAL_DISPLAY_PSEUDO_STATS, GLOBAL_DISPLAY_STATS, GLOBAL_EP_STATS } from './constants/other';
 import { SimSettingCategories } from './constants/sim_settings';
 import * as Tooltips from './constants/tooltips';
 import { installItemTooltipFallback } from './item_tooltip_fallback';
-import { loadLastSimRun, saveLastSimRun } from './last_sim_run';
+import { deleteLastSimRun, loadLastSimRun, saveLastSimRun } from './last_sim_run';
 import { simLaunchStatuses } from './launched_sims';
 import { DEFAULT_REACTION_TIME_MS, Player, PlayerConfig, registerSpecConfig as registerPlayerConfig } from './player';
 import { PresetBuild, PresetEpWeights, PresetGear, PresetRotation } from './preset_utils';
@@ -56,6 +57,7 @@ import { professionNames } from './proto_utils/names';
 import { SimResult } from './proto_utils/sim_result';
 import { Stats, UnitStat } from './proto_utils/stats';
 import { getTalentPoints, isHealingSpec, isTankSpec, SpecOptions, SpecRotation, specToEligibleRaces, specToLocalStorageKey } from './proto_utils/utils';
+import { encounterMode, encounterProtoMode, SimMode } from './sim_mode';
 import { SimUI, SimWarning } from './sim_ui';
 import { EventID, TypedEvent } from './typed_event';
 
@@ -351,23 +353,62 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 	// Shows the last run's results again after a page refresh, and saves each new run for the
 	// next one. See last_sim_run.ts.
+	//
+	// Each mode has its own last run (see sim_mode.ts). When we go to another mode, the Results
+	// tab shows that mode's last run, or no results when we have none.
 	private async restoreLastSimRun() {
-		const key = this.getStorageKey('__lastSimRun__');
-		// A run that finishes while we read the saved one is newer, so we don't show the saved
-		// one over it.
-		let hasNewRun = false;
-		const saved = await loadLastSimRun(key);
+		// A run that finishes while we read a saved one is newer, so we don't show the saved one
+		// over it. Each read counts up, so only the latest one shows when we switch modes fast.
+		let shown = 0;
 		this.sim.simResultEmitter.on((_, simResult) => {
-			hasNewRun = true;
-			saveLastSimRun(key, simResult.toProto());
+			shown++;
+			if (simResult === this.restoredRun) return;
+			saveLastSimRun(this.getLastSimRunKey(encounterProtoMode(simResult.request.encounter)), simResult.toProto());
 		});
-		if (!saved?.request || !saved.result || hasNewRun) return;
-		try {
-			const simResult = await SimResult.fromProto(saved);
-			if (!hasNewRun) this.sim.simResultEmitter.emit(TypedEvent.nextEventID(), simResult);
-		} catch (e) {
-			console.warn('Failed to show the last sim run: ' + e);
+
+		// Before each mode had its own last run, there was one for all of them.
+		const oldKey = this.getStorageKey('__lastSimRun__');
+		const old = await loadLastSimRun(oldKey);
+		if (old) {
+			await saveLastSimRun(this.getLastSimRunKey(encounterProtoMode(old.request?.encounter)), old);
+			await deleteLastSimRun(oldKey);
 		}
+
+		const show = async (mode: SimMode) => {
+			const read = ++shown;
+			const saved = await loadLastSimRun(this.getLastSimRunKey(mode));
+			if (read !== shown) return;
+			if (!saved?.request || !saved.result) {
+				this.raidSimResultsManager?.clearSimResult(TypedEvent.nextEventID());
+				return;
+			}
+			try {
+				const simResult = await SimResult.fromProto(saved);
+				// The run that goes takes the results we show when it's done, and it would take
+				// these ones in place of its own, see SimHistory.showRun.
+				if (read !== shown || this.raidSimResultsManager?.simHistory?.isRunning()) return;
+				this.restoredRun = simResult;
+				this.sim.simResultEmitter.emit(TypedEvent.nextEventID(), simResult);
+			} catch (e) {
+				console.warn('Failed to show the last sim run: ' + e);
+			}
+		};
+
+		let mode = encounterMode(this.sim.encounter);
+		await show(mode);
+		this.sim.encounter.changeEmitter.on(() => {
+			const newMode = encounterMode(this.sim.encounter);
+			if (newMode === mode) return;
+			mode = newMode;
+			show(mode);
+		});
+	}
+
+	// The saved run we show again, which we don't save again.
+	private restoredRun: SimResult | null = null;
+
+	getLastSimRunKey(mode: SimMode): string {
+		return this.getStorageKey(`__lastSimRun__${mode}`);
 	}
 
 	private addSidebarComponents() {
@@ -383,6 +424,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.changeEmitter.on(() => dirtySettings.schedule());
 		}
 
+		if (!this.isWithinRaidSim) new SimModePicker(this.simActionsContainer, this);
 		this.raidSimResultsManager = addRaidSimAction(this);
 		if (!this.isWithinRaidSim) new SimHistory(this, this.raidSimResultsManager);
 
