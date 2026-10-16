@@ -22,14 +22,16 @@ type TooltipHandler = (dataPointIndex: number) => Element;
 
 const dpsColor = '#ed5653';
 const manaColor = '#2E93fA';
-// The resource the chart draws beside the DPS, the first of these the unit has. Rage is red in
-// the game, but a red line would read as the DPS line, so it's violet here.
+// The resource the chart draws beside the DPS, the first of these the unit has, in the game's
+// colors.
 const chartResources = [ResourceType.ResourceTypeMana, ResourceType.ResourceTypeRage, ResourceType.ResourceTypeEnergy];
 const resourceChartColors: Partial<Record<ResourceType, string>> = {
 	[ResourceType.ResourceTypeMana]: manaColor,
-	[ResourceType.ResourceTypeRage]: '#b37bff',
+	[ResourceType.ResourceTypeRage]: '#ff0000',
 	[ResourceType.ResourceTypeEnergy]: '#ffd700',
 };
+// Rage is red like the DPS line, so next to rage the DPS line takes the warrior's class color.
+const rageDpsColor = '#c79c6e';
 const threatColor = '#b56d07';
 // The leveling chart's colors. Health and mana share the lower chart, and the pair passes the
 // dataviz palette checks on the dark card. Mobs killed is the only solid line of the upper chart,
@@ -782,11 +784,13 @@ export class Timeline extends ResultComponent {
 
 		if (players.length == 1) {
 			const player = players[0];
-			const dpsData = this.addDpsSeries(player, options, '', duration);
-			this.addDpsYAxis(dpsData.maxDps, options);
+			const resourceType = chartResources.find(type => player.groupedResourceLogs[type]?.some(log => log.timestamp >= 0));
+			const color = resourceType == ResourceType.ResourceTypeRage ? rageDpsColor : dpsColor;
+			const dpsData = this.addDpsSeries(player, options, '', duration, color);
+			this.addDpsYAxis(dpsData.maxDps, options, color);
 			tooltipHandlers.push(dpsData.tooltipHandler);
 			const continuousRegen = this.resultData!.result.request.simOptions?.ruleset != Ruleset.RulesetClassic;
-			tooltipHandlers.push(this.addResourceSeries(player, options, continuousRegen));
+			if (resourceType !== undefined) tooltipHandlers.push(this.addResourceSeries(player, resourceType, options, continuousRegen));
 			tooltipHandlers.push(this.addThreatSeries(player, options, ''));
 			tooltipHandlers = tooltipHandlers.filter(handler => handler != null);
 
@@ -1056,10 +1060,10 @@ export class Timeline extends ResultComponent {
 		);
 	}
 
-	private addDpsYAxis(maxDps: number, options: any) {
+	private addDpsYAxis(maxDps: number, options: any, color = dpsColor) {
 		const dpsAxisMax = Math.ceil(maxDps / 100) * 100;
 		options.yaxis.push({
-			color: dpsColor,
+			color,
 			seriesName: 'DPS',
 			min: 0,
 			max: dpsAxisMax,
@@ -1068,20 +1072,20 @@ export class Timeline extends ResultComponent {
 			title: {
 				text: 'DPS',
 				style: {
-					color: dpsColor,
+					color,
 				},
 			},
 			axisBorder: {
 				show: true,
-				color: dpsColor,
+				color,
 			},
 			axisTicks: {
-				color: dpsColor,
+				color,
 			},
 			labels: {
 				minWidth: 30,
 				style: {
-					colors: [dpsColor],
+					colors: [color],
 				},
 			},
 		});
@@ -1097,7 +1101,9 @@ export class Timeline extends ResultComponent {
 	//
 	// Between 5 and 15 sec into the fight we divide by the time so far (see DpsLog.windowAt), so
 	// the value also falls slowly between changes. We add a point every half second there.
-	private addDpsSeries(unit: UnitMetrics, options: any, colorOverride: string, duration: number): { maxDps: number; tooltipHandler: TooltipHandler } {
+	//
+	// lineColor replaces the usual red, like next to rage (see rageDpsColor).
+	private addDpsSeries(unit: UnitMetrics, options: any, colorOverride: string, duration: number, lineColor = ''): { maxDps: number; tooltipHandler: TooltipHandler } {
 		const dpsLogs = unit.dpsLogs;
 		const changes = new Map<number, number>();
 		const addChange = (timestamp: number, amount: number) => changes.set(timestamp, (changes.get(timestamp) ?? 0) + amount);
@@ -1134,7 +1140,7 @@ export class Timeline extends ResultComponent {
 				points.push({ timestamp, dps: after, log, aurasLog: lastLog });
 			});
 
-		options.colors.push(colorOverride || dpsColor);
+		options.colors.push(lineColor || colorOverride || dpsColor);
 		options.series.push({
 			name: 'DPS',
 			type: 'line',
@@ -1150,8 +1156,8 @@ export class Timeline extends ResultComponent {
 		};
 	}
 
-	// Returns a function for drawing the tooltip, or null if no series was added. The resource is
-	// the unit's main one: mana, or rage or energy for a class without mana.
+	// Returns a function for drawing the tooltip. The resource is the unit's main one: mana, or
+	// rage or energy for a class without mana.
 	//
 	// A spend is a jump, so we draw a point after each change at a moment, like the regen up to
 	// it and then the cost of a cast. Under Forever, mana and energy regenerate all the time and
@@ -1159,11 +1165,7 @@ export class Timeline extends ResultComponent {
 	// moments is right. Under Classic, mana only changes at the 2 sec ticks and the casts, and
 	// rage only changes when we hit, get hit or spend it. Then we also draw the value before the
 	// moment, and the line stays flat until it.
-	private addResourceSeries(unit: UnitMetrics, options: any, continuousRegen: boolean): TooltipHandler | null {
-		const resourceType = chartResources.find(type => unit.groupedResourceLogs[type]?.some(log => log.timestamp >= 0));
-		if (resourceType === undefined) {
-			return null;
-		}
+	private addResourceSeries(unit: UnitMetrics, resourceType: ResourceType, options: any, continuousRegen: boolean): TooltipHandler {
 		const allLogs = unit.groupedResourceLogs[resourceType];
 		const logs = allLogs.filter(log => log.timestamp >= 0);
 		const name = resourceNames.get(resourceType)!;
