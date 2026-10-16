@@ -707,6 +707,8 @@ export function startReport(dash, events) {
     }
     host.dataset.icons = m ? '1' : '0';
     host.classList.add('fv-icon-picker');
+    // A spec selector at the end of the row (the Races filters) stays there.
+    const spec = host.querySelector('.fv-scope-spec');
     host.replaceChildren(el('span', { class: 'fv-label fv-rowlabel', text: 'Class' }),
       el('div', { class: 'fv-pick-options' }, ...CLASSES.map((c) => {
         const u = m && m.get('classicon_' + c.toLowerCase());
@@ -714,7 +716,7 @@ export function startReport(dash, events) {
         b.addEventListener('click', () => { st[key] = st[key] === c ? 'All' : c; persist(); render(); });
         b.hidden = !!avail && !avail.has(c);
         return b;
-      })), el('span', { class: 'fv-pick-value', text: name }));
+      })), el('span', { class: 'fv-pick-value', text: name }), ...(spec ? [spec] : []));
   };
   const fail = (host) => { host.replaceChildren(el('div', { class: 'fv-fail', text: 'Failed to load' })); };
   const waitOr = (host, ids) => {
@@ -1320,12 +1322,12 @@ export function startReport(dash, events) {
     seg($(`#${p}-fac`), p + 'Fac', [['All', 'Both factions'], ['Horde', 'Horde', fi('ui_hordeicon')], ['Alliance', 'Alliance', fi('ui_allianceicon')]]);
     seg($(`#${p}-role`), p + 'Role', ROLES);
     classChips($(`#${p}-cls`), p + 'Cls', new Set(sc.classes));
-    const all = `All ${sc.cls} specs`;
+    const all = 'All specs';
     const items = [{ value: 'All', text: `${all} (${sc.inCls.length})` }];
     for (const b of sc.inCls) items.push({ value: b.id, text: b.build, icon: () => specIco(b, '') });
-    // The spec selector shows only once a class is picked, with that class's specs.
+    // The spec selector, at the end of the class row, shows only once a class is picked, with that class's specs.
     const host = $(`#${p}-spec`);
-    host.parentElement.hidden = sc.cls === 'All';
+    host.hidden = sc.cls === 'All';
     host.dataset.label = 'Spec';
     iconSelect(host, items, sc.spec, (v) => { st[p + 'Spec'] = v; persist(); hideTip(); render(); }, (it) => (it.value === 'All' ? all : it.text));
   };
