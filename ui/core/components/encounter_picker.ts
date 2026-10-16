@@ -955,7 +955,7 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 		set: (opts, value) => (opts.maxPackSize = unlessDefault(value, 5)),
 	});
 	const chainSearchTooltip =
-		'The time it takes to find a mob to chain pull while in combat, in seconds, at random between Chain Search Min and Chain Search Max.';
+		'The time it takes to find a mob to chain pull while in combat, running around with the mobs on us following, in seconds, at random between Chain Search Min and Chain Search Max.';
 	addLevelingNumberPicker(advancedGroup, encounter, {
 		id: 'encounter-leveling-chain-search-min',
 		label: 'Chain Search Min (sec)',
@@ -972,12 +972,23 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 		get: opts => orDefault(opts.chainSearchMax, 8),
 		set: (opts, value) => (opts.chainSearchMax = unlessDefault(value, 8)),
 	});
+	const standingSearchTooltip =
+		"The time it takes to find a mob to chain pull while in combat when the rotation stands and keeps fighting (Look For Mob's Stand), in seconds, at random between these. It's longer than running around, because we only see the mobs around us.";
 	addLevelingNumberPicker(advancedGroup, encounter, {
-		id: 'encounter-leveling-chain-search-moving',
-		label: 'Chain Search Running (%)',
-		labelTooltip: "The share of a search in combat we spend running, with the mobs on us following. We can't hard cast while we run.",
-		get: opts => toPercent(Math.min(Math.max(opts.chainSearchMoving ?? 0.75, 0), 1)),
-		set: (opts, value) => (opts.chainSearchMoving = value / 100 == 0.75 ? undefined : Math.min(Math.max(value / 100, 0), 1)),
+		id: 'encounter-leveling-chain-search-standing-min',
+		label: 'Chain Search Standing Min (sec)',
+		labelTooltip: standingSearchTooltip,
+		float: true,
+		get: opts => orDefault(opts.chainSearchStandingMin, 4),
+		set: (opts, value) => (opts.chainSearchStandingMin = unlessDefault(value, 4)),
+	});
+	addLevelingNumberPicker(advancedGroup, encounter, {
+		id: 'encounter-leveling-chain-search-standing-max',
+		label: 'Chain Search Standing Max (sec)',
+		labelTooltip: standingSearchTooltip,
+		float: true,
+		get: opts => orDefault(opts.chainSearchStandingMax, 16),
+		set: (opts, value) => (opts.chainSearchStandingMax = unlessDefault(value, 16)),
 	});
 	addLevelingNumberPicker(advancedGroup, encounter, {
 		id: 'encounter-leveling-death-penalty',

@@ -58,9 +58,12 @@ pull, so a 3-minute cooldown is ready for some pulls and not others, as in real 
    second, we walk up to it anyway. An instant can still pull it on the way.
 3. **Chain pull.** While fighting, the APL decides whether to look for another mob, from our
    health, mana, cooldowns, mobs on us and mobs still running in, so a pull can take one mob,
-   two, three or more. Most of the time we run around to find it with the mobs on us
-   following, so again only instants and melee. The APL pulls it from where it stands, walks up
-   to it with the mobs in tow, or leaves it as the next pull. Pushback makes a cast pull worse
+   two, three or more. The APL also decides how we look. We can run around to find it with
+   the mobs on us following, so again only instants and melee, and away from our totems. Or we
+   can stand and keep fighting while we look, which takes longer, because we only see the mobs
+   around us. The APL pulls what we find from where it stands, walks up to it with the mobs in
+   tow (it knows how far it is), or leaves it as the next pull. It can also walk back to a
+   totem we ran away from. Pushback makes a cast pull worse
    once a mob is hitting us, so the APL may chain-pull with an instant instead.
 4. **Fight.** Every mob has its own HP and dies on its own when its HP runs out, and then it
    stops attacking. We're out of combat only once all of them are dead.
@@ -162,7 +165,8 @@ with them still load, and those values are ignored.
 | Setting | Default |
 |---|---|
 | Finding the next mob, out of combat | Random 2–10 s (6 s on average), running. From the logs (below), 5–11 s until 2026-10-16. |
-| Finding a mob to chain-pull, in combat | Random 2–8 s (5 s on average), running 3 times in 4. 2–4 s until 2026-10-16. |
+| Finding a mob to chain-pull, in combat, running | Random 2–8 s (5 s on average). 2–4 s until 2026-10-16. |
+| Finding a mob to chain-pull, in combat, standing | Random 4–16 s (10 s on average), a guess: twice the running time, because we only see the mobs around us. Until 2026-10-16 the sim rolled whether we run (3 times in 4), and now the rotation picks (Look For Mob's Stand). |
 | Where the mob we find stands | Random 10–40 yd in whole yards, in a random direction |
 | Searching | Running in a random direction at our run speed |
 | Our run speed | 7 yd/s |
@@ -506,6 +510,8 @@ After the groundwork:
      | + the 2 to 7 s search from the logs | 72.4 | 0.22 | 41,900 | 63 s | 386 s | 714 s | 2.37 |
      | Optimizer pass 5: look ahead above 60% health, rest health to full | 73.8 | 0.00 | 42,700 | 97 s | 390 s | 712 s | 2.33 |
      | The user's 2 to 10 s search and 2 to 8 s chain search (pass 6 kept every knob) | 70.0 | 0.00 | 40,500 | 130 s | 365 s | 705 s | 2.08 |
+     | The rotation picks running or standing (always running here), food and water as spells | 70.4 | 0.00 | - | 130 s | 323 s | 747 s | 2.11 |
+     | Optimizer pass 7: no Mana Spring, a heal below 40% between pulls, shocks above 60% mana | 73.7 | 0.01 | 42,600 | 121 s | 282 s | 795 s | 2.03 |
 
      The rows down to pass 3 ran with Rockbiter Weapon and Windfury Weapon both on the main
      hand: the settings had Rockbiter in the consumes and Windfury in the class options, and
@@ -525,6 +531,18 @@ After the groundwork:
      almost all from the look ahead. Then the user set the search to 2 to 10 s and the chain
      search to 2 to 8 s. The slower chain search costs 3.8 mobs (73.8 to 70.0 on both seeds),
      mostly because a pull takes fewer mobs (2.08 instead of 2.33). Pass 6 found no better knobs.
+
+     Then whether a chain search runs became the rotation's choice (Look For Mob's Stand), with
+     a 4 to 16 s standing search, and the template got three knobs for it: stand or run (or
+     stand only while a totem of ours is down), walk back to Mana Spring Totem instead of
+     dropping a new one, and walk up to a mob found in combat only within some yards. None of
+     them helped. Standing every time gives 66.0 mobs and standing while a totem is down 66.6,
+     because a standing search often isn't done before the fight is (1.34 mobs a pull). Walking
+     back to the totem changes nothing, and leaving far mobs for later gives 69.3. Food, water
+     and bandages became spells in the same build (a change in the session's rest), which with
+     always running moved the start to 70.4. Pass 7 then dropped Mana Spring Totem, added a
+     heal below 40% health between pulls, shocked only above 60% mana and looked ahead above
+     50% health: 73.7 on seed 1 and 73.7 on seed 1000001, from 70.4.
 
      Pass 1: sit down below 80% health and stand at 90% instead of 50% and 100%, no Flame
      Shock DoT in the fight, Lesser Healing Wave below 30% in combat, no buff totems (their

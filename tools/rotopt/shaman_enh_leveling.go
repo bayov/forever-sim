@@ -21,8 +21,9 @@ import (
 //     Nothing pulls the mob we found while we need a rest.
 //   - Totems only once a mob is pulled, dropped again when out of reach. Rests wait on mana
 //     more than health at level 30 (eating heals 4% a second, drinking 1.8%), so a cheap
-//     Mana Spring Totem pays, and so does the cheapest Searing Totem with two mobs pulled
-//     (audit round 2).
+//     Mana Spring Totem paid in audit round 2, and so does the cheapest Searing Totem with
+//     two mobs pulled. Since pass 7 (Forever's mob health, the user's search times) Mana
+//     Spring is off, and a heal below 40% between pulls does part of the resting.
 //   - The fight: Stormstrike, the shocks above a mana floor, Fire Nova on packs, Lightning
 //     Shield, a heal below a threshold, and the cooldowns.
 type shamanEnhLeveling struct{}
@@ -33,11 +34,11 @@ func (shamanEnhLeveling) Knobs() []Knob {
 		// Totemic Recall's global cooldown before each search costs more than a quarter of
 		// the totems' mana gives back (audit round 2).
 		{Name: "recall", Default: 0, Min: 0, Max: 1, Step: 1},
-		{Name: "oocHealBelow", Default: 0, Min: 0, Max: 60, Step: 20},
+		{Name: "oocHealBelow", Default: 40, Min: 0, Max: 60, Step: 20},
 		{Name: "bandageBelow", Default: 0, Min: 0, Max: 80, Step: 20},
 		{Name: "restHealth", Default: 90, Min: 20, Max: 90, Step: 10},
 		{Name: "restMana", Default: 50, Min: 10, Max: 70, Step: 10},
-		{Name: "restUntil", Default: 100, Min: 60, Max: 100, Step: 10},
+		{Name: "restUntil", Default: 90, Min: 60, Max: 100, Step: 10},
 		{Name: "restUntilMana", Default: 80, Min: 60, Max: 100, Step: 10},
 		// Pulling: 0 none (walk up), 1 Earth Shock rank 1, 2 Earth Shock, 3 Flame Shock.
 		{Name: "pullSpell", Default: 1, Min: 0, Max: 3, Step: 1},
@@ -49,22 +50,32 @@ func (shamanEnhLeveling) Knobs() []Knob {
 		{Name: "chainMana", Default: 50, Min: 0, Max: 80, Step: 10},
 		// Look for the next mob above this health even when we won't pull it yet; 0 looks
 		// only when we'd pull it (chainHealth and chainMana).
-		{Name: "lookAheadHealth", Default: 60, Min: 0, Max: 70, Step: 10},
+		{Name: "lookAheadHealth", Default: 50, Min: 0, Max: 70, Step: 10},
 		// With one mob pulled and our target below this share of its health, pull the next
 		// one as it dies, above chainDyingHealth and chainDyingMana; 0 off.
 		{Name: "chainDyingBelow", Default: 20, Min: 0, Max: 40, Step: 10},
 		{Name: "chainDyingHealth", Default: 70, Min: 50, Max: 90, Step: 10},
 		{Name: "chainDyingMana", Default: 40, Min: 0, Max: 80, Step: 20},
+		// How we look for the next mob while fighting: 0 run around for it, 1 stand and keep
+		// fighting (a longer search), 2 stand while a totem of ours is down and in reach, so
+		// we keep its buff, and run otherwise.
+		{Name: "chainStand", Default: 0, Min: 0, Max: 2, Step: 1},
+		// In combat, walk up to the mob we found only when it's within this many yards, and
+		// otherwise leave it for after the fight; 0 always walks up. Out of combat we always do.
+		{Name: "chainWalkMax", Default: 0, Min: 0, Max: 40, Step: 10},
 		// Totems, once a mob is pulled. Fire: 0 none, 1 Flametongue, 2 Searing, 3 Magma
 		// with 2 mobs on us.
 		{Name: "strengthOfEarth", Default: 0, Min: 0, Max: 1, Step: 1},
-		{Name: "manaSpring", Default: 1, Min: 0, Max: 1, Step: 1},
+		{Name: "manaSpring", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "fireTotem", Default: 2, Min: 0, Max: 3, Step: 1},
 		// Searing Totem: rank 1 (25 mana) or the top rank, and from how many mobs pulled.
 		{Name: "searingRank1", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "searingMinPulled", Default: 2, Min: 1, Max: 2, Step: 1},
+		// When we've moved out of Mana Spring Totem's reach in a fight and it's still up, walk
+		// back to it (1) instead of dropping a new one (0).
+		{Name: "totemWalkBack", Default: 0, Min: 0, Max: 1, Step: 1},
 		// The fight.
-		{Name: "shockMana", Default: 10, Min: 0, Max: 60, Step: 10},
+		{Name: "shockMana", Default: 60, Min: 0, Max: 60, Step: 10},
 		{Name: "flameShock", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "fireNova", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "lightningShield", Default: 1, Min: 0, Max: 1, Step: 1},
@@ -151,7 +162,11 @@ func (shamanEnhLeveling) Build(k Knobs) *proto.APLRotation {
 	if pullShock != nil {
 		shockRange = 20
 	}
-	items = append(items, walkToPullTarget(shockRange, pullFit, "Walk up to the mob we found, into shock range or until it notices us."))
+	walkFit := pullFit
+	if k["chainWalkMax"] > 0 {
+		walkFit = and(pullFit, or(noMobs, le(pullTargetDistance(), num(k["chainWalkMax"]))))
+	}
+	items = append(items, walkToPullTarget(shockRange, walkFit, "Walk up to the mob we found, into shock range or until it notices us."))
 
 	// Chain pulls.
 	if k["chainMax"] > 0 {
@@ -159,8 +174,27 @@ func (shamanEnhLeveling) Build(k Knobs) *proto.APLRotation {
 		if k["lookAheadHealth"] > 0 {
 			look = gt(currentHealthPercent(), pct(k["lookAheadHealth"]))
 		}
-		items = append(items, lookForMob(and(lt(mobsPulled(), num(k["chainMax"])), look),
-			"Look for another mob while fighting: the next pull, now or after a rest."))
+		look = and(lt(mobsPulled(), num(k["chainMax"])), look)
+		notes := "Look for another mob while fighting: the next pull, now or after a rest."
+		switch k["chainStand"] {
+		case 0:
+			items = append(items, lookForMob(false, look, notes+" We run around for it."))
+		case 1:
+			items = append(items, lookForMob(true, look, notes+" We stand and keep fighting while we look."))
+		case 2:
+			// The totems we'd run out of reach of.
+			var up []value
+			if k["manaSpring"] == 1 && manaSpringTotem.GetSpellId() != 0 {
+				up = append(up, and(gt(totemRemainingTime(proto.ShamanTotems_Water), num(0)), le(totemDistance(proto.ShamanTotems_Water), num(30))))
+			}
+			if k["fireTotem"] > 0 {
+				up = append(up, gt(totemRemainingTime(proto.ShamanTotems_Fire), num(0)))
+			}
+			if len(up) > 0 {
+				items = append(items, lookForMob(true, and(look, or(up...)), notes+" We stand while a totem of ours is down, to keep its buff."))
+			}
+			items = append(items, lookForMob(false, look, notes+" We run around for it otherwise."))
+		}
 	}
 
 	// Totems once a mob is pulled, again when we've moved out of their reach.
@@ -171,6 +205,11 @@ func (shamanEnhLeveling) Build(k Knobs) *proto.APLRotation {
 		dropTotem(strengthOfEarth, proto.ShamanTotems_Earth, 30, nil, "Strength of Earth Totem in combat.")
 	}
 	if k["manaSpring"] == 1 && manaSpringTotem.GetSpellId() != 0 {
+		if k["totemWalkBack"] == 1 {
+			water := proto.ShamanTotems_Water
+			items = append(items, walkToTotem(water, 20, and(inCombat, gt(totemRemainingTime(water), num(0)), gt(totemDistance(water), num(30))),
+				"Walk back into Mana Spring Totem's reach, with the mobs following, instead of dropping a new one."))
+		}
 		dropTotem(manaSpringTotem, proto.ShamanTotems_Water, 30, nil, "Mana Spring Totem in combat.")
 	}
 	switch k["fireTotem"] {

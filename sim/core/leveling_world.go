@@ -427,17 +427,20 @@ func (s *levelingSession) aggro(sim *Simulation, mob *Unit) {
 	}
 }
 
-// chainSearch: while fighting, the rotation looks for another mob (LevelingLookForMob), and
-// we run around with the mobs on us following most of the time.
-func (s *levelingSession) chainSearch(sim *Simulation) {
-	moving := sim.RandomFloat("Leveling Chain Search Moving") < s.opts.chainSearchMoving
-	if moving {
+// chainSearch: while fighting, the rotation looks for another mob (LevelingLookForMob). It
+// runs around for it with the mobs on us following, or stands and keeps fighting while it
+// looks, which takes longer.
+func (s *levelingSession) chainSearch(sim *Simulation, stand bool) {
+	lo, hi := s.opts.chainSearchMin, s.opts.chainSearchMax
+	if stand {
+		lo, hi = s.opts.standingSearchMin, s.opts.standingSearchMax
+	} else {
 		s.move(sim, goalSearch, Vec2{}, 0, nil)
 	}
 	if sim.Log != nil {
-		s.player.Log(sim, "Leveling: looking for another mob, running: %v", moving)
+		s.player.Log(sim, "Leveling: looking for another mob, running: %v", !stand)
 	}
-	s.after(sim, &s.chainNext, randomDuration(sim, "Leveling Chain Search", s.opts.chainSearchMin, s.opts.chainSearchMax), func(sim *Simulation) {
+	s.after(sim, &s.chainNext, randomDuration(sim, "Leveling Chain Search", lo, hi), func(sim *Simulation) {
 		if s.goal == goalSearch {
 			s.move(sim, goalNone, Vec2{}, 0, nil)
 		}
@@ -545,10 +548,11 @@ func (encounter *Encounter) LevelingCanLookForMob() bool {
 		len(encounter.ActiveTargetUnits) < s.opts.maxPack
 }
 
-// LevelingLookForMob starts the rotation's search for another mob while fighting.
-func (encounter *Encounter) LevelingLookForMob(sim *Simulation) {
+// LevelingLookForMob starts the rotation's search for another mob while fighting, running
+// around for it, or standing and fighting while we look.
+func (encounter *Encounter) LevelingLookForMob(sim *Simulation, stand bool) {
 	if encounter.LevelingCanLookForMob() {
-		encounter.leveling.chainSearch(sim)
+		encounter.leveling.chainSearch(sim, stand)
 	}
 }
 

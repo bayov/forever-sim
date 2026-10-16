@@ -82,19 +82,23 @@ func (value *APLValueLevelingMobsOnUs) String() string {
 
 type APLActionLevelingLookForMob struct {
 	defaultAPLActionImpl
-	unit *Unit
+	unit  *Unit
+	stand bool
 }
 
-func (rot *APLRotation) newActionLevelingLookForMob(_ *proto.APLActionLevelingLookForMob) APLActionImpl {
-	return &APLActionLevelingLookForMob{unit: rot.unit}
+func (rot *APLRotation) newActionLevelingLookForMob(config *proto.APLActionLevelingLookForMob) APLActionImpl {
+	return &APLActionLevelingLookForMob{unit: rot.unit, stand: config.Stand}
 }
 func (action *APLActionLevelingLookForMob) IsReady(sim *Simulation) bool {
 	return sim.Encounter.LevelingCanLookForMob()
 }
 func (action *APLActionLevelingLookForMob) Execute(sim *Simulation) {
-	sim.Encounter.LevelingLookForMob(sim)
+	sim.Encounter.LevelingLookForMob(sim, action.stand)
 }
 func (action *APLActionLevelingLookForMob) String() string {
+	if action.stand {
+		return "Look For Mob (Leveling, standing)"
+	}
 	return "Look For Mob (Leveling)"
 }
 

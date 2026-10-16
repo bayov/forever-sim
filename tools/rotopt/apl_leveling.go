@@ -66,8 +66,10 @@ func action(condition value, notes string, a *proto.APLAction) *proto.APLListIte
 	return &proto.APLListItem{Notes: notes, Action: a}
 }
 
-func lookForMob(condition value, notes string) *proto.APLListItem {
-	return action(condition, notes, &proto.APLAction{Action: &proto.APLAction_LevelingLookForMob{LevelingLookForMob: &proto.APLActionLevelingLookForMob{}}})
+// lookForMob looks for another mob while fighting, running around for it, or standing and
+// fighting while we look.
+func lookForMob(stand bool, condition value, notes string) *proto.APLListItem {
+	return action(condition, notes, &proto.APLAction{Action: &proto.APLAction_LevelingLookForMob{LevelingLookForMob: &proto.APLActionLevelingLookForMob{Stand: stand}}})
 }
 
 func walkToPullTarget(within float64, condition value, notes string) *proto.APLListItem {

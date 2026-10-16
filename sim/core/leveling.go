@@ -34,9 +34,10 @@ import (
 //   - Combat: a pulled mob runs at us at its level's speed, following us if we move. We can
 //     cast at it on the way, but it can't hit us and we can't reach it in melee until it's
 //     here. Its first swing comes at a random point of its swing timer. The rotation decides
-//     whether to look for another mob (Look For Mob: 2 to 8 sec, running with the mobs on us
-//     following three times out of four, when only instants and melee go out), and pulls it
-//     the same ways, or leaves it for our next pull.
+//     whether to look for another mob (Look For Mob), and whether to run around for it with
+//     the mobs on us following, when only instants and melee go out (2 to 8 sec), or stand
+//     and keep fighting while we look (4 to 16 sec). It pulls what we find the same ways, or
+//     leaves it for our next pull.
 //   - When the last one dies, we're out of combat and ready (leveling_rest.go): the rotation
 //     can bandage, sit to eat and drink, heal or buff. Once it has nothing to do, the mob we
 //     found while fighting if there is one, or a new search.
@@ -137,10 +138,11 @@ type levelingOptions struct {
 	maxPack                        int
 	searchMin, searchMax           time.Duration
 	chainSearchMin, chainSearchMax time.Duration
-	chainSearchMoving              float64
-	foundMin, foundMax             float64
-	deathPenalty                   time.Duration
-	reviveFraction                 float64
+	// A chain search where we stand and keep fighting (Look For Mob's stand).
+	standingSearchMin, standingSearchMax time.Duration
+	foundMin, foundMax                   float64
+	deathPenalty                         time.Duration
+	reviveFraction                       float64
 }
 
 func resolveLevelingOptions(o *proto.LevelingOptions) levelingOptions {
@@ -162,7 +164,8 @@ func resolveLevelingOptions(o *proto.LevelingOptions) levelingOptions {
 		searchMax:         seconds(o.SearchMax, 10),
 		chainSearchMin:    seconds(o.ChainSearchMin, 2),
 		chainSearchMax:    seconds(o.ChainSearchMax, 8),
-		chainSearchMoving: 0.75,
+		standingSearchMin: seconds(o.ChainSearchStandingMin, 4),
+		standingSearchMax: seconds(o.ChainSearchStandingMax, 16),
 		foundMin:          math.Round(or(o.FoundMin, 10)),
 		foundMax:          math.Round(or(o.FoundMax, 40)),
 		deathPenalty:      seconds(o.DeathPenalty, 180),
@@ -170,9 +173,6 @@ func resolveLevelingOptions(o *proto.LevelingOptions) levelingOptions {
 	}
 	if o.MobLevelSpread != nil {
 		opts.mobSpread = max(*o.MobLevelSpread, 0)
-	}
-	if o.ChainSearchMoving != nil {
-		opts.chainSearchMoving = min(max(*o.ChainSearchMoving, 0), 1)
 	}
 	if opts.mobType == proto.MobType_MobTypeUnknown {
 		opts.mobType = proto.MobType_MobTypeBeast

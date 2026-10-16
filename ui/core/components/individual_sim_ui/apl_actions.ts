@@ -685,9 +685,13 @@ const actionKindFactories: { [f in NonNullable<APLActionKind>]: ActionKindConfig
 		label: 'Look For Mob (Leveling)',
 		submenu: ['Leveling'],
 		shortDescription:
-			'In a leveling session, while fighting: looks for another mob to pull, usually running around with the mobs on you following. The mob found is the Pull Target.',
+			'In a leveling session, while fighting: looks for another mob to pull. You run around for it with the mobs on you following, so only instants and melee go out, or with Stand you keep fighting while you look, which takes longer (the Chain Search settings). The mob found is the Pull Target.',
 		newValue: () => APLActionLevelingLookForMob.create({}),
-		fields: [],
+		fields: [
+			AplHelpers.booleanFieldConfig('stand', 'Stand', {
+				labelTooltip: 'Stand and keep fighting while you look, instead of running around. It takes the Chain Search Standing time.',
+			}),
+		],
 	}),
 	['levelingRest']: inputBuilder({
 		label: 'Rest (Leveling)',
