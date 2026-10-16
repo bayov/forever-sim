@@ -477,7 +477,8 @@
       "fireResistanceAura": true,
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
-      "retributionAura": "TristateEffectImproved"
+      "retributionAura": "TristateEffectImproved",
+      "salvation": true
     },
     "debuffs": {
       "judgementOfWisdom": true,
