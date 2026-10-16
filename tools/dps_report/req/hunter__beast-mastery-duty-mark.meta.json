@@ -5,7 +5,7 @@
   "build": "Beast Mastery (Hunter's Mark duty)",
   "isDefault": false,
   "pr": 5,
-  "race": "NightElf",
+  "race": "SkyborneWindshaper",
   "talents": "5020121505021241-00520503014",
   "treeNames": [
     "Beast Mastery",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_ranged",
   "apl": "bm_mark",
   "published": {
-    "dps": 952.1,
-    "source": "Hunter's Mark duty preset (standards 23), rotation audit pass 20 (2026-10-15): 180 s, 20000 iterations, seed 1"
+    "dps": 954.9,
+    "source": "client 1.60.1.70425 (Sniper Shot in Efficiency and Mortal Shots, the raid's Trueshot Aura, hunter_trap_ap), 2026-10-16: 180 s, 20000 iterations, seed 1"
   },
   "verify": {
-    "dps": 952.14,
+    "dps": 954.9,
     "stderr": 0.2,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, same sim as the published number"
+    "note": "same sim as verify.py and the published number"
   },
   "summary": "Beast Mastery 31/20 with a 1.0 sec cat: Bestial Wrath, Frenzy, Ferocity and Unleashed Fury, plus Careful Aim and Mortal Shots in Marksmanship. The pet deals about 21% of its damage; it is the pet-focused build, 68 DPS behind Marksmanship at 180 s.",
   "keyTalents": [
@@ -74,7 +74,8 @@
     "22% more crit per Agility than Classic (assumption hunter_crit_per_agi, user ruling 2026-10-15: the beta's level 1 ratio carried to 60)",
     "A pet's hit scales with its attack speed as in Classic (assumption hunter_pet_speed, user ruling 2026-10-15; on the beta every pet hits like a 2.0 sec pet); the cat is still the best pet and every cat speed sims within 1 DPS",
     "The ranged weapon is a 2.5 sec bow at Rhok'delar's 44.0 DPS (Striker's Mark's speed and spread, standards 22 Ranged). A 2.6 sec gun sims 0.3 to 1.0 higher with a 15% ammo pouch, but 3.4 to 5.2 lower with Era Phase 1's sure 14% pouch (Ribbly's Bandolier), and the 15% quiver only takes arrows",
-    "Hunter's Mark duty (standards 23): the request switches the raid's Hunter's Mark off and the hunter keeps its own up, the first cast 1.5 s before the pull, then one GCD and 60 mana every 2 min; it costs 0.0 / 0.0 / 0.3 DPS at 120 / 180 / 300 s against hunter__beast-mastery"
+    "Hunter's Mark duty (standards 23): the request switches the raid's Hunter's Mark off and the hunter keeps its own up, the first cast 1.5 s before the pull, then one GCD and 60 mana every 2 min; it costs 0.1 / 0.2 / 0.5 DPS at 120 / 180 / 300 s against hunter__beast-mastery",
+    "Windshaper is best (Wind Blessed, 3% haste since client 70425), at every fight length on two seed sets: 1.2 to 1.6 ahead of the High Order and 5 to 8 ahead of the Night Elf on Lone Wolf and Marksmanship, 0.3 to 0.9 ahead of the Human on Beast Mastery"
   ],
   "notes": "Request is hunter__beast-mastery's with the rotation swapped for ui/hunter/apls/bm_mark.apl.json (the base APL plus the mark line, tools/rotopt/hunter_presets.sh) and debuffs.huntersMark removed; mksettings writes the same raid as spec hunter_bm_mark. Request written by mksettings (spec hunter_bm) unchanged; it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions.",
   "duty": "Hunter's Mark",

@@ -49,12 +49,12 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
 
 #### Row 1 (0 points)
 
-- **Power in Light** (5 ranks, column 1) [NEW] [ranks settled by client trait curves]
-  - Rank 1: Your Smite and Penance spells deal 2% increased damage to targets afflicted with your Holy Fire.
-  - Rank 2: Your Smite and Penance spells deal 4% increased damage to targets afflicted with your Holy Fire.
-  - Rank 3: Your Smite and Penance spells deal 6% increased damage to targets afflicted with your Holy Fire.
-  - Rank 4: Your Smite and Penance spells deal 8% increased damage to targets afflicted with your Holy Fire.
-  - Rank 5: Your Smite and Penance spells deal 10% increased damage to targets afflicted with your Holy Fire.
+- **Power in Light** (5 ranks, column 1) [NEW] [ranks settled by client trait curves] [70425: Holy Fire or Shadow Word: Pain, per the 15 October notes]
+  - Rank 1: Your Smite and Penance spells deal 2% increased damage to targets afflicted with your Holy Fire or Shadow Word: Pain.
+  - Rank 2: Your Smite and Penance spells deal 4% increased damage to targets afflicted with your Holy Fire or Shadow Word: Pain.
+  - Rank 3: Your Smite and Penance spells deal 6% increased damage to targets afflicted with your Holy Fire or Shadow Word: Pain.
+  - Rank 4: Your Smite and Penance spells deal 8% increased damage to targets afflicted with your Holy Fire or Shadow Word: Pain.
+  - Rank 5: Your Smite and Penance spells deal 10% increased damage to targets afflicted with your Holy Fire or Shadow Word: Pain.
 - **Wand Specialization** (2 ranks, column 2) [CHANGED] [ranks settled by client trait curves]
   - Rank 1: Increases your damage with Wands by 13%.
   - Rank 2: Increases your damage with Wands by 26%.

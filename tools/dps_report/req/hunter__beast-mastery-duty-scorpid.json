@@ -4,7 +4,7 @@
       {
         "players": [
           {
-            "race": "RaceNightElf",
+            "race": "RaceSkyborneWindshaper",
             "class": "ClassHunter",
             "equipment": {
               "items": [
@@ -422,6 +422,7 @@
       "arcaneBrilliance": true,
       "divineSpirit": true,
       "battleShout": "TristateEffectImproved",
+      "trueshotAura": true,
       "leaderOfThePack": true,
       "moonkinAura": true,
       "manaSpringTotem": "TristateEffectRegular",

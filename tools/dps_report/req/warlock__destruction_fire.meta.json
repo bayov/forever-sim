@@ -4,9 +4,9 @@
   "spec": "Destruction",
   "build": "Destruction Fire",
   "isDefault": false,
-  "pr": 2,
-  "race": "Undead",
-  "talents": "2525000003-0002-0050355003101351",
+  "pr": 59,
+  "race": "Gnome",
+  "talents": "25201020032-0002-0050355003101351",
   "treeNames": [
     "Affliction",
     "Demonology",
@@ -15,26 +15,26 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_destruction_fire",
   "published": {
-    "dps": 973.6,
-    "source": "PR #25"
+    "dps": 953.3,
+    "source": "PR #59"
   },
   "verify": {
-    "dps": 973.6,
-    "stderr": 0.26,
+    "dps": 953.27,
+    "stderr": 0.27,
     "iters": 20000,
     "ok": true,
-    "note": "+0.00 vs published"
+    "note": "-0.03 vs published"
   },
-  "summary": "Fire Destruction with Incinerate as the filler, Conflagrate, Fire and Brimstone, Shadow and Flame and Aftermath, plus Malediction and Pandemic, Succubus out and Firestone. Shipped as its own playstyle on Undead, 1.7% behind Shadow Bolt Destruction.",
+  "summary": "Fire Destruction with Incinerate as the filler, Conflagrate, Fire and Brimstone, Shadow and Flame and Aftermath, plus Pandemic and Malevolence, Succubus out and Firestone. Shipped as its own playstyle on Undead, 1.7% behind Shadow Bolt Destruction.",
   "keyTalents": [
     "Incinerate",
     "Conflagrate",
     "Fire and Brimstone",
     "Shadow and Flame",
     "Aftermath",
-    "Malediction",
     "Pandemic",
-    "Ruin"
+    "Ruin",
+    "Malevolence"
   ],
   "rotation": [
     "Pre-pull: Immolate at -1.5 s",
@@ -78,5 +78,5 @@
     "Only the Demonheart Raiment 2-piece is live (the 5-piece added about +8 to +13 on the first set)",
     "Soul shards and Life Tap health cost are not tracked"
   ],
-  "notes": "Request straight from mksettings -spec destruction_fire -gear level60_phase1_synthetic -apl level60_destruction_fire -race Undead -duration 180, no edits. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Firestone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly."
+  "notes": "Request straight from mksettings -spec destruction_fire -gear level60_phase1_synthetic -apl level60_destruction_fire -race Gnome -duration 180, no edits. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Firestone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly."
 }

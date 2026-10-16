@@ -5,7 +5,7 @@
   "build": "Lone Wolf",
   "isDefault": true,
   "pr": 5,
-  "race": "NightElf",
+  "race": "SkyborneWindshaper",
   "talents": "5-0053552511503051-5",
   "treeNames": [
     "Beast Mastery",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_ranged",
   "apl": "lw",
   "published": {
-    "dps": 1064.0,
-    "source": "warrior and hunter assumption defaults and the ranged weapon pass, 2026-10-15 (standards 22, Ranged)"
+    "dps": 1075.7,
+    "source": "client 1.60.1.70425 (Sniper Shot in Efficiency and Mortal Shots, the raid's Trueshot Aura, hunter_trap_ap), 2026-10-16: 180 s, 20000 iterations, seed 1"
   },
   "verify": {
-    "dps": 1064.0,
+    "dps": 1075.66,
     "stderr": 0.28,
     "iters": 20000,
     "ok": true,
-    "note": "same sim as the published number"
+    "note": "same sim as verify.py and the published number"
   },
   "summary": "Marksmanship 5/41/5 with Lone Wolf (+20% damage with no pet out), played with the pet dismissed. It is the hunter's default and best Level 60 build, 44 DPS ahead of Marksmanship with a cat because a Forever pet takes no player buffs.",
   "keyTalents": [
@@ -68,7 +68,8 @@
     "Wildstalker Armor 4P/5P not in the preset (2P only); with them this build would gain +17 (measured on the 2026-10-12 gear)",
     "Rapid Killing's +20% after a kill is never exercised on a single boss",
     "22% more crit per Agility than Classic (assumption hunter_crit_per_agi, user ruling 2026-10-15: the beta's level 1 ratio carried to 60)",
-    "The ranged weapon is a 2.5 sec bow at Rhok'delar's 44.0 DPS (Striker's Mark's speed and spread, standards 22 Ranged). A 2.6 sec gun sims 0.3 to 1.0 higher with a 15% ammo pouch, but 3.4 to 5.2 lower with Era Phase 1's sure 14% pouch (Ribbly's Bandolier), and the 15% quiver only takes arrows"
+    "The ranged weapon is a 2.5 sec bow at Rhok'delar's 44.0 DPS (Striker's Mark's speed and spread, standards 22 Ranged). A 2.6 sec gun sims 0.3 to 1.0 higher with a 15% ammo pouch, but 3.4 to 5.2 lower with Era Phase 1's sure 14% pouch (Ribbly's Bandolier), and the 15% quiver only takes arrows",
+    "Windshaper is best (Wind Blessed, 3% haste since client 70425), at every fight length on two seed sets: 1.2 to 1.6 ahead of the High Order and 5 to 8 ahead of the Night Elf on Lone Wolf and Marksmanship, 0.3 to 0.9 ahead of the Human on Beast Mastery"
   ],
   "notes": "Request written by mksettings (spec hunter_lw) unchanged; it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Pet set to none (petType omitted = PetNone)."
 }

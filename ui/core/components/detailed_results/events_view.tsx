@@ -16,7 +16,7 @@ import { Timeline, zoomPresets, ZoomSpan } from './timeline.js';
 
 type EventsFormat = 'timeline' | 'chart' | 'log' | 'replay';
 // 'new' is the iteration we ran with Sim 1 iteration, after the run.
-type IterationKind = 'typical' | 'lucky' | 'unlucky' | 'new';
+export type IterationKind = 'typical' | 'lucky' | 'unlucky' | 'new';
 
 const formats: Array<{ format: EventsFormat; label: string; icon: string }> = [
 	{ format: 'timeline', label: 'Timeline', icon: 'fa-bars-staggered' },
@@ -44,6 +44,11 @@ const FORMAT_STORAGE_KEY = '__detailed_results_events_format__';
 
 export interface EventsViewConfig extends ResultComponentConfig {
 	simUI: SimUI | null;
+	// What the iteration buttons say on hover, when the results picked their iterations some
+	// other way. The DPS Report shows the fights at the 10th, 50th and 90th percentile.
+	iterationTooltips?: Partial<Record<IterationKind, string>>;
+	// Called when we pick another iteration, like the DPS Report's aura bars that follow it.
+	onIterationChange?: (kind: IterationKind) => void;
 }
 
 // One iteration of the run, event by event. We can look at it as a timeline, a chart or a log,
@@ -66,6 +71,7 @@ export class EventsView extends ResultComponent {
 	private selectToken = 0;
 	private simulatingNew = false;
 	private readonly simUI: SimUI | null;
+	private readonly onIterationChange?: (kind: IterationKind) => void;
 
 	private readonly ui: {
 		formatButtons: Map<EventsFormat, HTMLButtonElement>;
@@ -146,7 +152,8 @@ export class EventsView extends ResultComponent {
 						<div ref={refs.iterationGroup} className="events-iteration-group">
 							<span className="events-control-label">Iteration</span>
 							<div className="segmented events-iteration" attributes={{ role: 'group', 'aria-label': 'Iteration' }}>
-								{iterationKinds.map(({ kind, label, tooltip }) => {
+								{iterationKinds.map(({ kind, label, tooltip: defaultTooltip }) => {
+									const tooltip = config.iterationTooltips?.[kind] ?? defaultTooltip;
 									const button = (
 										<button className={`segmented-option iteration-${kind}`} type="button">
 											{kind == 'new' && <i className="fas fa-dice iteration-new-icon" />}
@@ -294,6 +301,7 @@ export class EventsView extends ResultComponent {
 		this.timeline.zoomEmitter.on(() => this.updateZoomButtons());
 
 		this.simUI = config.simUI;
+		this.onIterationChange = config.onIterationChange;
 		this.ui.rerollButton.addEventListener('click', () => this.simNewIteration());
 		tippy(this.ui.rerollButton, { content: 'Sim another new iteration, with a fresh seed and the current settings.' });
 
@@ -380,11 +388,12 @@ export class EventsView extends ResultComponent {
 		this.selectIteration();
 	}
 
-	private setIteration(kind: IterationKind) {
+	setIteration(kind: IterationKind) {
 		if (this.iteration == kind) return;
 		this.iteration = kind;
 		this.updateIterationButtons();
 		this.selectIteration();
+		this.onIterationChange?.(kind);
 	}
 
 	// Sends the chosen iteration to the views. We parse the lucky and unlucky logs the first time

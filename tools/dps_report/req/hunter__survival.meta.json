@@ -5,7 +5,7 @@
   "build": "Survival (melee)",
   "isDefault": false,
   "pr": 5,
-  "race": "Orc",
+  "race": "Human",
   "talents": "502-005005-500230230250122151",
   "treeNames": [
     "Beast Mastery",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_survival",
   "apl": "sv",
   "published": {
-    "dps": 892.4,
-    "source": "warrior and hunter assumption defaults and the ranged weapon pass, 2026-10-15 (standards 22, Ranged)"
+    "dps": 904.6,
+    "source": "client 1.60.1.70425 (Sniper Shot in Efficiency and Mortal Shots, the raid's Trueshot Aura, hunter_trap_ap), 2026-10-16: 180 s, 20000 iterations, seed 1"
   },
   "verify": {
-    "dps": 892.41,
-    "stderr": 0.27,
+    "dps": 904.58,
+    "stderr": 0.26,
     "iters": 20000,
     "ok": true,
-    "note": "same sim as the published number"
+    "note": "same sim as verify.py and the published number"
   },
   "summary": "Melee Survival 7/10/34 on a one-hand axe and a dagger with a cat: Predator's Edge, Expose Prey into Mongoose Bite, Strider Kick and Lacerating Strikes. It ships as Forever's melee hunter build; a ranged Survival build plays like Marksmanship and is only documented.",
   "keyTalents": [
@@ -64,11 +64,13 @@
     "Pet scaling: 10% of RAP plus hunter hit (SoD placeholder for hit); on SoD's full 22% pet scaling this build would gain +18 (2026-10-12 gear)",
     "Wildstalker Armor 4P/5P not in the preset (2P only); with them this build would gain 0 (measured on the 2026-10-12 gear)",
     "Raptor Strike rank 8 adds 96, halfway from the client's 70 to Era's 0.88 (assumption hunter_raptor_31plus, user ruling 2026-10-15); the ranks below keep the client's values",
-    "Orc is best through Axe Specialization on its main hand axe, 11 ahead of the Night Elf",
     "Fire-toasted Bun (+9) left out as a seasonal item; Elemental Sharpening Stone left out (MC-only plans)",
     "22% more crit per Agility than Classic (assumption hunter_crit_per_agi, user ruling 2026-10-15: the beta's level 1 ratio carried to 60)",
     "A pet's hit scales with its attack speed as in Classic (assumption hunter_pet_speed, user ruling 2026-10-15; on the beta every pet hits like a 2.0 sec pet); the cat is still the best pet and every cat speed sims within 1 DPS",
-    "Keeps Rhok'delar's 2.9 sec bow: Survival never shoots, so every ranged candidate of standards 22 sims the same"
+    "Keeps Rhok'delar's 2.9 sec bow: Survival never shoots, so every ranged candidate of standards 22 sims the same",
+    "Human is best (Ruthless, 2% crit with any weapon since client 70425), 0.8 ahead of the Orc at 180 s and 2.0 at 300 s; the Orc leads by 1.6 at 120 s (two seed sets, with the trap scaling)",
+    "Immolation Trap adds 2% of ranged attack power a tick (report assumption hunter_trap_ap: the 15 October dev notes say fire traps now scale with attack power, the client gives no coefficient; Expected is Wrath's 2% a tick, Low none, High 4%): +15.5 DPS at 180 s",
+    "The raid's Trueshot Aura (a raid aura since client 70425, from the raid's Marksmanship hunter): +1.0 at 180 s, through the pet's 10% of ranged attack power since Survival never shoots"
   ],
   "notes": "Request written by mksettings (spec hunter_sv) unchanged; it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Distance is 5 yd as in the mksettings raid the number was measured in (the UI preset starts at 25 yd; the APL walks in 6 s before the pull, which the preset says costs nothing). Survival keeps a 1.0 sec cat out (DefaultOptions)."
 }

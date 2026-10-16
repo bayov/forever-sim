@@ -5,7 +5,7 @@
   "build": "Feral cat (Faerie Fire duty)",
   "isDefault": false,
   "pr": 31,
-  "race": "NightElf",
+  "race": "Tauren",
   "talents": "05002-05200332021031212051-05501",
   "treeNames": [
     "Balance",
@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_ff",
   "published": {
-    "dps": 704.6,
-    "source": "Howling Idol at 0.5 sec (client 1.60.1.70425)"
+    "dps": 710.5,
+    "source": "Tauren, Nature's Focus pushback and the client 70425 racials (2026-10-16)"
   },
   "verify": {
-    "dps": 704.6,
+    "dps": 710.54,
     "stderr": 0.16,
     "iters": 20000,
     "ok": true,
@@ -38,7 +38,7 @@
   ],
   "rotation": [
     "Opener: plain Cat Form (no Stealth/Prowl or Ravage)",
-    "Racials, trinkets and potions on cooldown; Berserk with the on-use trinket; Elune's Light outside Berserk",
+    "Racials, trinkets and potions on cooldown; Berserk with the on-use trinket",
     "Faerie Fire (Feral) from Cat Form first after the cooldowns, again once it has under 7 s left, so a miss gets a retry (free, 1 s GCD, 6 s cooldown)",
     "Shifting Power at 50 Energy or less, unless a Ferocious Bite is due (5 CP and Rip has 6 s or more)",
     "Ferocious Bite at any combo points in the last 2 s",
@@ -59,7 +59,7 @@
     "Thistle Tea"
   ],
   "caveats": [
-    "Costs 6.2 / 5.0 / 4.3 DPS against the base build at 120 / 180 / 300 s",
+    "Costs 4.2 / 3.1 / 2.2 DPS against the base build at 120 / 180 / 300 s",
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 29 Agility and 17 Strength, and 165 Strength for 20 s every 2 min, used in the opening seconds and again on cooldown",
     "Rip's level 31+ client ranks are 6-9% below Era: Era values would give +1.6%",
     "Howling Idol (0.5 s off Shifting Power since client 1.60.1.70425) is worth 4.8 at 180 s; 5-piece Grovekeeper Ferocity would add 5.9 (measured before the 5a and 1b rounds)",

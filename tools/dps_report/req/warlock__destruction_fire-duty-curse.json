@@ -4,7 +4,7 @@
       {
         "players": [
           {
-            "race": "RaceUndead",
+            "race": "RaceGnome",
             "class": "ClassWarlock",
             "equipment": {
               "items": [
@@ -86,7 +86,7 @@
               "blessingOfKings": true,
               "blessingOfWisdom": "TristateEffectImproved"
             },
-            "talentsString": "2525000003-0002-0050355003101351",
+            "talentsString": "25201020032-0002-0050355003101351",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Tailoring",

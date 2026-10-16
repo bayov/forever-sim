@@ -4,7 +4,7 @@
       {
         "players": [
           {
-            "race": "RaceUndead",
+            "race": "RaceHuman",
             "class": "ClassPaladin",
             "equipment": {
               "items": [
@@ -511,7 +511,7 @@
             "retributionPaladin": {
               "options": {
                 "primarySeal": "Righteousness",
-                "aura": "RetributionAura"
+                "aura": "ConcentrationAura"
               }
             }
           }

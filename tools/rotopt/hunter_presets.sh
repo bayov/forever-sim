@@ -7,7 +7,7 @@
 # sanity sim does.
 #
 #   go run --tags=with_db ./tools/rotopt/mksettings -spec hunter_bm -gear level60_phase1_synthetic_ranged \
-#       -apl bm -talents 5020121505021241-00520503014 -race NightElf -duration 180 -out bm.json
+#       -apl bm -talents 5020121505021241-00520503014 -race SkyborneWindshaper -duration 180 -out bm.json
 #   tools/rotopt/hunter_presets.sh bm.json
 set -e
 settings=$1

@@ -5,7 +5,7 @@
   "build": "Balance Wrath",
   "isDefault": false,
   "pr": 8,
-  "race": "NightElf",
+  "race": "Tauren",
   "talents": "5502220115501351-03-505",
   "treeNames": [
     "Balance",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_wrath",
   "apl": "level60_wrath",
   "published": {
-    "dps": 786.5,
-    "source": "end-of-fight Moonfire (rotation audit pass 19, 2026-10-15)"
+    "dps": 784.4,
+    "source": "Tauren, Nature's Focus pushback and the client 70425 racials (2026-10-16)"
   },
   "verify": {
-    "dps": 786.49,
-    "stderr": 0.19,
+    "dps": 784.4,
+    "stderr": 0.2,
     "iters": 20000,
     "ok": true,
-    "note": "180 s, seed 1, after the end-of-fight Moonfire line"
+    "note": "180 s, seed 1"
   },
   "summary": "A second Balance playstyle with Wrath as the only filler, for a moonkin that would rather not weave; it trades Moonglow for Heart of the Wild and uses Natural Power gloves. It is 5.5% behind the default Balance build.",
   "keyTalents": [

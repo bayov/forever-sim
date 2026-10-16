@@ -137,10 +137,14 @@ export interface SctEvent {
 	searchText: string;
 	// A CSS color, like the color of the spell school.
 	color: string;
-	// Lines that come close together start a bit apart, so they don't overlap.
+	// Lines that come close together start a bit apart, so they don't overlap. A crit's lane is
+	// its spot in the middle of the area.
 	lane: number;
 	// Crits pop up in the middle of the area and stay put, like MSBT's sticky crits.
 	sticky: boolean;
+	// How long after its time the line starts to fade, and when it's gone, in seconds.
+	fadeAt: number;
+	end: number;
 }
 
 export interface ReplayCast {
@@ -262,10 +266,15 @@ const resourceLabels: Partial<Record<ResourceType, string>> = {
 const regenActions = [OtherAction.OtherActionManaRegen, OtherAction.OtherActionEnergyRegen, OtherAction.OtherActionFocusRegen];
 const autoAttacks = [OtherAction.OtherActionAttack, OtherAction.OtherActionShoot];
 
+// How long a line of the combat text stays up, in seconds of the iteration. At 2x it scrolls
+// by twice as fast, like everything else. A line fades out over the last part of its life.
+export const SCROLL_LIFE = 2.2;
+export const STICKY_LIFE = 1.6;
+const FADE_SHARE = 0.3;
 // Lines this close together on one side start apart from each other.
 const LANE_WINDOW = 0.45;
-const LANES = 6;
-const STICKY_WINDOW = 0.7;
+export const LANES = 6;
+// The spots for crits on each side.
 const STICKY_LANES = 3;
 const EPSILON = 1e-6;
 // The smallest mana gain the combat text shows, as a share of the mana bar.
@@ -374,8 +383,7 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 		cooldown.castTimes = castLogs.filter(log => log.actionId!.toStringIgnoringTag() == cooldown.key).map(log => log.timestamp);
 		cooldown.aura = playerAuras.find(track => track.actionId.equalsIgnoringTag(cooldown.actionId)) ?? null;
 	});
-	// The short rotation cooldowns first, then the long ones, each in the order we first used them.
-	cooldowns.sort((a, b) => Number(a.longest > 30) - Number(b.longest > 30) || a.firstUse - b.firstUse);
+	cooldowns.sort((a, b) => a.firstUse - b.firstUse);
 
 	const { mainBar, utilityBar } = isShaman ? shamanBars(cooldowns) : splitBars(cooldowns);
 	const shaman: ShamanPack | null = isShaman
@@ -517,12 +525,76 @@ const shamanBars = (cooldowns: Array<TrackedCooldown>) => {
 	return { mainBar, utilityBar };
 };
 
-// The other classes have no pack of the user's to follow. The short rotation cooldowns go on
-// the main bar and the long ones on the row under it.
-const splitBars = (cooldowns: Array<TrackedCooldown>) => ({
-	mainBar: cooldowns.filter(cooldown => cooldown.longest <= 30),
-	utilityBar: cooldowns.filter(cooldown => cooldown.longest > 30),
-});
+// The other classes have no pack of the user's to follow, so we do what the shaman pack does.
+// The main bar holds what we press for damage: the rotation, the big cooldowns, the racial and
+// the items we use (trinkets, explosives, potions, runes). The row under it holds the situational
+// cooldowns, like defensives, crowd control and movement.
+//
+// A row wraps after 9 icons. The main bar has our spells first, then the items, each in the
+// order we first used them.
+const OTHER_UTILITY = [
+	'Shield Wall',
+	'Last Stand',
+	'Shield Block',
+	'Berserker Rage',
+	'Intimidating Shout',
+	'Pummel',
+	'Shield Bash',
+	'Charge',
+	'Intercept',
+	'Intervene',
+	'Evasion',
+	'Sprint',
+	'Kick',
+	'Gouge',
+	'Blind',
+	'Kidney Shot',
+	'Distract',
+	'Divine Shield',
+	'Divine Protection',
+	'Blessing of Protection',
+	'Blessing of Freedom',
+	'Lay on Hands',
+	'Hammer of Justice',
+	'Ice Block',
+	'Blink',
+	'Counterspell',
+	'Frost Nova',
+	'Psychic Scream',
+	'Fade',
+	'Power Word: Shield',
+	'Silence',
+	'Feign Death',
+	'Freezing Trap',
+	'Frost Trap',
+	'Scatter Shot',
+	'Disengage',
+	'Wing Clip',
+	'Intimidation',
+	'Barkskin',
+	'Dash',
+	'Bash',
+	"Nature's Grasp",
+	'Frenzied Regeneration',
+	'Howl of Terror',
+	'Spell Lock',
+	'Shadow Ward',
+	'War Stomp',
+	'Will of the Forsaken',
+	'Stoneform',
+	'Escape Artist',
+	'Perception',
+];
+
+const splitBars = (cooldowns: Array<TrackedCooldown>) => {
+	const isUtility = (cooldown: TrackedCooldown) =>
+		OTHER_UTILITY.some(name => named(cooldown.actionId, name)) || SHAMAN_UTILITY_ITEMS.some(name => cooldown.actionId.name.includes(name));
+	const main = cooldowns.filter(cooldown => !isUtility(cooldown));
+	return {
+		mainBar: [...main.filter(cooldown => !cooldown.actionId.itemId), ...main.filter(cooldown => cooldown.actionId.itemId)],
+		utilityBar: cooldowns.filter(isUtility),
+	};
+};
 
 const buildTotemSlots = (logs: Array<SimLog>): Array<TotemSlot> => {
 	const slots = new Map<string, Array<TotemDrop>>();
@@ -660,7 +732,7 @@ const buildSct = (
 	resourceLogs: Array<ResourceChangedLog>,
 	bars: Array<ReplayBar>,
 ): Array<SctEvent> => {
-	const events: Array<Omit<SctEvent, 'lane' | 'searchText'>> = [];
+	const events: Array<Omit<SctEvent, 'lane' | 'searchText' | 'fadeAt' | 'end'>> = [];
 	const isPlayer = (entity: Entity | null) => !!entity && entity.isPlayer && entity.index == player.index;
 
 	// What we did to the enemies. Hits of one ability at the same moment, like Fire Nova on three
@@ -795,13 +867,35 @@ const buildSct = (
 	events.sort((a, b) => a.time - b.time);
 
 	// Lines close together start apart, so a burst of hits doesn't print on top of itself.
-	const recent: Record<string, Array<number>> = {};
+	const recent: Record<SctSide, Array<number>> = { in: [], out: [] };
+	// A crit takes a spot that no other crit is on, also one that is still fading. When every
+	// spot is taken, it covers the oldest crit, and that one starts to fade right away.
+	const spots: Record<SctSide, Array<SctEvent | null>> = {
+		in: new Array(STICKY_LANES).fill(null),
+		out: new Array(STICKY_LANES).fill(null),
+	};
 	return events.map(event => {
-		const group = `${event.side} ${event.sticky}`;
-		const window = event.sticky ? STICKY_WINDOW : LANE_WINDOW;
-		const times = (recent[group] = (recent[group] ?? []).filter(time => event.time - time < window));
-		const lane = times.length % (event.sticky ? STICKY_LANES : LANES);
-		times.push(event.time);
-		return { ...event, lane, searchText: `${searchText(event.logs)} ${event.actionId.name} ${event.text} ${event.note}`.toLowerCase() };
+		const search = `${searchText(event.logs)} ${event.actionId.name} ${event.text} ${event.note}`.toLowerCase();
+		if (!event.sticky) {
+			const times = (recent[event.side] = recent[event.side].filter(time => event.time - time < LANE_WINDOW));
+			const lane = times.length % LANES;
+			times.push(event.time);
+			const fadeAt = SCROLL_LIFE * (1 - FADE_SHARE);
+			return { ...event, lane, fadeAt, end: SCROLL_LIFE, searchText: search };
+		}
+		const side = spots[event.side];
+		let lane = side.findIndex(other => !other || other.time + other.end <= event.time);
+		if (lane < 0) {
+			lane = side.reduce((oldest, other, i) => (other!.time < side[oldest]!.time ? i : oldest), 0);
+			const covered = side[lane]!;
+			const age = event.time - covered.time;
+			if (age < covered.fadeAt) {
+				covered.fadeAt = age;
+				covered.end = age + STICKY_LIFE * FADE_SHARE;
+			}
+		}
+		const sct: SctEvent = { ...event, lane, fadeAt: STICKY_LIFE * (1 - FADE_SHARE), end: STICKY_LIFE, searchText: search };
+		side[lane] = sct;
+		return sct;
 	});
 };

@@ -30,12 +30,20 @@ export class ActionId {
 
 	readonly baseName: string; // The name without any tag additions.
 	readonly name: string;
-	readonly iconUrl: string;
+	private readonly wowheadIconUrl: string;
 	readonly spellIdTooltipOverride: number | null;
 
 	// The icons of the weapons each player had in the run we show, by raid index. Melee shows
 	// the player's own weapon instead of a generic sword. See setWeaponIcons.
 	private static weaponIcons = new Map<number, WeaponIcons>();
+
+	// Turns each icon's wowhead URL into the one we show. The DPS Report's single file can't load
+	// images from other sites, so it shows the icons it carries itself. See setIconUrlMapper.
+	private static iconUrlMapper: ((url: string) => string) | null = null;
+
+	static setIconUrlMapper(mapper: ((url: string) => string) | null) {
+		ActionId.iconUrlMapper = mapper;
+	}
 
 	private constructor(
 		itemId: number,
@@ -146,9 +154,13 @@ export class ActionId {
 		}
 		this.baseName = baseName;
 		this.name = name || baseName;
-		this.iconUrl = iconUrl;
+		this.wowheadIconUrl = iconUrl;
 		this.spellIdTooltipOverride = this.spellTooltipOverride?.spellId || null;
 		if (this.name) this.name += rank ? ` (Rank ${rank})` : '';
+	}
+
+	get iconUrl(): string {
+		return this.wowheadIconUrl && ActionId.iconUrlMapper ? ActionId.iconUrlMapper(this.wowheadIconUrl) : this.wowheadIconUrl;
 	}
 
 	anyId(): number {

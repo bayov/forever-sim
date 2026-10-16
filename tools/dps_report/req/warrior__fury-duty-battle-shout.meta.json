@@ -5,7 +5,7 @@
   "build": "Fury Dual Wield (Battle Shout duty)",
   "isDefault": false,
   "pr": 4,
-  "race": "Undead",
+  "race": "Orc",
   "talents": "30305013002-25053005112110501-2",
   "treeNames": [
     "Arms",
@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic_fury",
   "apl": "level60_fury_battle_shout",
   "published": {
-    "dps": 1063.5,
-    "source": "Raid damage hits on warriors (2 a minute, 1500 damage each), 2026-10-15"
+    "dps": 1053.2,
+    "source": "Orc for dual wield Fury after client 70425's racials (Savage crits with any weapon), 2026-10-16"
   },
   "verify": {
-    "dps": 1063.49,
-    "stderr": 0.34,
+    "dps": 1053.2,
+    "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 180 s, seed 1"
+    "note": "same sim as the published number"
   },
-  "summary": "Fury Dual Wield keeping Battle Shout up for its party, with the raid's Battle Shout off: 1.6 DPS behind the base build at 180 s.",
+  "summary": "Fury Dual Wield keeping Battle Shout up for its party, with the raid's Battle Shout off: 1.9 DPS behind the base build at 180 s.",
   "keyTalents": [
     "Bloodthirst",
     "Flurry",
@@ -69,12 +69,12 @@
     "Deep Wounds ticks can't crit (client attribute); Deep Wounds tick timer restarting on each crit is a modelling choice",
     "Crit Rage bonus assumed white hits only; Heroic Strike swings count for Unbridled Wrath (open assumptions)",
     "One +2% crit elixir a character: whether Ferocity stacks with Mongoose in game is open; a second crit elixir (Grizzly) would add 15.1",
-    "Battlegear of Glory 4-piece (+36 AP vs Humanoids) not counted (would add 10.8 at Undead 180 s)",
+    "Battlegear of Glory 4-piece (+36 AP vs Humanoids) not counted (would add 10.8 at 180 s)",
     "Second Mighty Rage Potion held for the last 20 sec: +6.4 at 180 sec, -3.0 at 120 sec (the preset targets 180 sec)",
     "Bloodthirst sometimes slips a GCD for lack of Rage; holding fillers for it loses",
     "Raid damage hits on the warrior (2 a minute at 1500 damage, about 15 Rage each) are an estimate from boss timers, not measured in logs; the assumptions panel runs 0 and 10 a minute"
   ],
-  "notes": "Request from mksettings -spec fury -gear level60_phase1_synthetic_fury -apl level60_fury_battle_shout -talents 30305013002-25053005112110501-2 -race Undead -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts.",
+  "notes": "Request from mksettings -spec fury -gear level60_phase1_synthetic_fury -apl level60_fury_battle_shout -talents 30305013002-25053005112110501-2 -race Orc -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts.",
   "duty": "Battle Shout",
   "baseBuild": "warrior__fury"
 }

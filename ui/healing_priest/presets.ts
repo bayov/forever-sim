@@ -31,13 +31,13 @@ export const ROTATION_PRESET_HOLY = PresetUtils.makePresetAPLRotation('Holy', Ho
 export const DiscTalents = {
 	name: 'Disc',
 	data: SavedTalents.create({
-		talentsString: '005003231305101531-2310510303',
+		talentsString: '005005231330011531-2310510303',
 	}),
 };
 export const HolyTalents = {
 	name: 'Holy',
 	data: SavedTalents.create({
-		talentsString: '005003231302-03405103030121531',
+		talentsString: '00510223123-03405103030121531',
 	}),
 };
 

@@ -242,6 +242,9 @@ func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
 			stats.AttackPower: 0.1 * ownerStats[stats.RangedAttackPower],
 			stats.MeleeCrit:   ownerStats[stats.MeleeCrit],
 			stats.MeleeHit:    ownerStats[stats.MeleeHit],
+			// The 15 October dev notes: "Pets now correctly benefit from Expertise." No hunter gear
+			// or talent gives any, so this is worth nothing today.
+			stats.Expertise: ownerStats[stats.Expertise],
 		}
 	}
 }

@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_mutilate",
   "apl": "level60_mutilate",
   "published": {
-    "dps": 681.2,
-    "source": "Phase 1 BiS weapon speed pass, 2026-10-15 (standards 22)"
+    "dps": 669.9,
+    "source": "Race pass on the client 70425 racials (raid hits, Savage, Ruthless, Earth Fury, Wind Blessed), master d511c09, 2026-10-16"
   },
   "verify": {
-    "dps": 681.2,
-    "stderr": null,
+    "dps": 669.9,
+    "stderr": 0.19,
     "iters": 20000,
     "ok": true,
-    "note": "same sim as the published number"
+    "note": "same sim as the published number (seed 1)"
   },
   "summary": "Assassination Mutilate with Seal Fate, Cold Blood and Vile Poisons, plus Precision and Puncturing Wounds in Combat, on a synthetic dagger with a fast sword in the off hand. It is the Assassination preset; Mutilate is pinned as the builder.",
   "keyTalents": [
@@ -64,7 +64,8 @@
     "Murder is damage only (+4% vs Humanoids and Giants) and does nothing on the generic boss, so its 2 points go to Lethality (Vile Poisons for Seal Fate Daggers); the vs Humanoid build keeps Murder 2/2",
     "Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV) left out under Forever; would add +13 to +18",
     "Grimstitch 4/5-piece bonuses not live on the synthetic gear (about +8 / +6 for Combat Daggers)",
-    "Flask of Supreme Power and Greater Arcane Elixir omitted for consistency (+8 via Dragonbreath Chili)"
+    "Flask of Supreme Power and Greater Arcane Elixir omitted for consistency (+8 via Dragonbreath Chili)",
+    "Best Alliance race is High Order; since client 70425 the races are within about 3 DPS of each other"
   ],
   "notes": "Default for the Assassination raid-sim preset."
 }

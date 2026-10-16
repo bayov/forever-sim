@@ -19,6 +19,13 @@ func (druid *Druid) registerShiftingPowerSpell() {
 	actionID := core.ActionID{SpellID: 1322605}
 	energyMetrics := druid.NewEnergyMetrics(actionID)
 
+	// Wolfshead Helm (17768) adds 5 Energy to Shifting Power, through spell 1310990 (20 in
+	// 1.60.1.70170, 5 since 70291, development notes 2026-10-08).
+	energy := 40.0
+	if druid.hasWolfsheadHelm() {
+		energy += 5
+	}
+
 	druid.ShiftingPower = druid.RegisterSpell(Cat, core.SpellConfig{
 		SpellCode: SpellCode_DruidShiftingPower,
 		ActionID:  actionID,
@@ -38,11 +45,21 @@ func (druid *Druid) registerShiftingPowerSpell() {
 				Duration: time.Second*16 - time.Second*4*time.Duration(druid.Talents.ImprovedShiftingPower),
 			},
 		},
+		// "Shifting Power can no longer be used while already at Full Energy" (development
+		// notes, 2026-10-08, build 1.60.1.70291).
+		ExtraCastCondition: func(_ *core.Simulation, _ *core.Unit) bool {
+			return druid.CurrentEnergy() < druid.MaxEnergy()
+		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			druid.AddEnergy(sim, 40, energyMetrics)
+			druid.AddEnergy(sim, energy, energyMetrics)
 		},
 	})
+}
+
+func (druid *Druid) hasWolfsheadHelm() bool {
+	head := druid.Equipment.Head()
+	return head != nil && head.ID == WolfsheadHelm
 }
 
 // Natural Shapeshifter takes 10% a point off the cost of shapeshifting and Shifting Power.

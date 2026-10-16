@@ -51,7 +51,7 @@ stat_weights_results: {
  key: "TestSurvival-Phase1-StatWeights-Default"
  value: {
   weights: 0
-  weights: 0.58244
+  weights: 0.61091
   weights: 0
   weights: 0
   weights: 0
@@ -68,8 +68,8 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0.26786
-  weights: 14.93452
-  weights: 4.98092
+  weights: 14.8823
+  weights: 5.09508
   weights: 0
   weights: 0
   weights: 0
@@ -77,7 +77,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.01327
+  weights: 0.02275
   weights: 0
   weights: 0
   weights: 0
@@ -99,304 +99,304 @@ stat_weights_results: {
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-BeastmasterArmor"
  value: {
-  dps: 1143.82167
-  tps: 1019.65865
+  dps: 1170.1865
+  tps: 1044.65563
   dtps: 1.68283
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-BloodGuard'sChainGauntlets-16530"
  value: {
-  dps: 1225.8835
-  tps: 1093.75996
+  dps: 1252.6385
+  tps: 1119.20867
   dtps: 1.73083
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-BloodGuard'sChainVices-22862"
  value: {
-  dps: 1229.23983
-  tps: 1096.64489
+  dps: 1256.18383
+  tps: 1122.28428
   dtps: 1.73083
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-Champion'sPursuance"
  value: {
-  dps: 1162.71967
-  tps: 1031.19171
+  dps: 1189.07533
+  tps: 1056.24025
   dtps: 1.77833
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-Champion'sPursuit"
  value: {
-  dps: 1126.8785
-  tps: 1001.52574
+  dps: 1151.91483
+  tps: 1025.26033
   dtps: 1.73083
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-CryptstalkerArmor"
  value: {
-  dps: 1263.875
-  tps: 1124.7382
+  dps: 1294.09467
+  tps: 1153.77623
   dtps: 1.77833
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-DevilsaurEye-19991"
  value: {
-  dps: 1240.49033
-  tps: 1105.97074
+  dps: 1267.63667
+  tps: 1131.81463
   dtps: 1.73083
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-DevilsaurTooth-19992"
  value: {
-  dps: 1226.93833
-  tps: 1092.79831
+  dps: 1253.80867
+  tps: 1118.36581
   dtps: 1.73083
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-DragonstalkerArmor"
  value: {
-  dps: 1205.58433
-  tps: 1071.25262
+  dps: 1233.86117
+  tps: 1098.19728
   dtps: 1.49717
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-FieldMarshal'sPursuit"
  value: {
-  dps: 1238.522
-  tps: 1100.95154
+  dps: 1267.12867
+  tps: 1128.21965
   dtps: 1.73083
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-General'sChainGloves-16571"
  value: {
-  dps: 1237.57617
-  tps: 1103.77747
+  dps: 1264.771
+  tps: 1129.66883
   dtps: 1.73083
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-GiantstalkerArmor"
  value: {
-  dps: 1196.93767
-  tps: 1064.70453
+  dps: 1223.893
+  tps: 1090.31207
   dtps: 1.58667
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-HunterSyntheticRanged(Phase1)"
  value: {
-  dps: 1239.00683
-  tps: 1103.04812
+  dps: 1266.53183
+  tps: 1129.26434
   dtps: 1.73083
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-HunterSyntheticSurvival(Phase1)"
  value: {
-  dps: 1236.83417
-  tps: 1102.89773
+  dps: 1263.98217
+  tps: 1128.74084
   dtps: 1.73083
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-Knight-Lieutenant'sChainGauntlets-16403"
  value: {
-  dps: 1225.8835
-  tps: 1093.75996
+  dps: 1252.6385
+  tps: 1119.20867
   dtps: 1.73083
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-Knight-Lieutenant'sChainVices-23279"
  value: {
-  dps: 1229.23983
-  tps: 1096.64489
+  dps: 1256.18383
+  tps: 1122.28428
   dtps: 1.73083
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-LieutenantCommander'sPursuance"
  value: {
-  dps: 1162.71967
-  tps: 1031.19171
+  dps: 1189.07533
+  tps: 1056.24025
   dtps: 1.77833
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-LieutenantCommander'sPursuit"
  value: {
-  dps: 1126.8785
-  tps: 1001.52574
+  dps: 1151.91483
+  tps: 1025.26033
   dtps: 1.73083
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-Marshal'sChainGrips-16463"
  value: {
-  dps: 1237.57617
-  tps: 1103.77747
+  dps: 1264.771
+  tps: 1129.66883
   dtps: 1.73083
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-Predator'sArmor"
  value: {
-  dps: 1187.8525
-  tps: 1059.35518
+  dps: 1214.66317
+  tps: 1084.88856
   dtps: 1.73083
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-RangedHunterSyntheticOn-UseTrinket(Phase1)-993016"
  value: {
-  dps: 1228.032
-  tps: 1092.79831
+  dps: 1255.68417
+  tps: 1119.14754
   dtps: 1.73083
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-Renataki'sCharmofBeasts-19953"
  value: {
-  dps: 1226.93833
-  tps: 1092.79831
+  dps: 1253.80867
+  tps: 1118.36581
   dtps: 1.73083
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-Striker'sGarb"
  value: {
-  dps: 1233.40033
-  tps: 1098.77694
+  dps: 1262.23817
+  tps: 1126.28856
   dtps: 1.77833
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-Warlord'sPursuit"
  value: {
-  dps: 1238.522
-  tps: 1100.95154
+  dps: 1267.12867
+  tps: 1128.21965
   dtps: 1.73083
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-Average-Default"
  value: {
-  dps: 1237.70289
-  tps: 1103.20953
+  dps: 1265.01465
+  tps: 1129.20965
   dtps: 1.95442
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-Settings-NightElf-level60_phase1_synthetic_survival-Options-sv-FullBuffs-Survival-LongMultiTarget"
  value: {
-  dps: 1421.8525
-  tps: 1732.46387
+  dps: 1449.54783
+  tps: 1733.4282
   dtps: 1.83817
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-Settings-NightElf-level60_phase1_synthetic_survival-Options-sv-FullBuffs-Survival-LongSingleTarget"
  value: {
-  dps: 1238.8875
-  tps: 1104.49492
+  dps: 1266.21883
+  tps: 1130.52101
   dtps: 1.77833
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-Settings-NightElf-level60_phase1_synthetic_survival-Options-sv-FullBuffs-Survival-ShortSingleTarget"
  value: {
-  dps: 1342.15833
-  tps: 1201.53706
+  dps: 1369.7375
+  tps: 1227.74092
   dtps: 8.89167
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-Settings-NightElf-level60_phase1_synthetic_survival-Options-sv-NoBuffs-Survival-LongMultiTarget"
  value: {
-  dps: 611.55433
-  tps: 510.68583
+  dps: 610.17833
+  tps: 509.9949
   dtps: 1.77667
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-Settings-NightElf-level60_phase1_synthetic_survival-Options-sv-NoBuffs-Survival-LongSingleTarget"
  value: {
-  dps: 484.70567
-  tps: 383.99179
+  dps: 484.03033
+  tps: 383.91253
   dtps: 1.7605
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-Settings-NightElf-level60_phase1_synthetic_survival-Options-sv-NoBuffs-Survival-ShortSingleTarget"
  value: {
-  dps: 596.4725
-  tps: 489.87195
+  dps: 625.3025
+  tps: 520.76182
   dtps: 8.8025
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-Settings-Orc-level60_phase1_synthetic_survival-Options-sv-FullBuffs-Survival-LongMultiTarget"
  value: {
-  dps: 1428.5785
-  tps: 1738.55164
+  dps: 1456.41117
+  tps: 1739.65323
   dtps: 1.69867
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-Settings-Orc-level60_phase1_synthetic_survival-Options-sv-FullBuffs-Survival-LongSingleTarget"
  value: {
-  dps: 1246.91183
-  tps: 1111.8854
+  dps: 1274.41317
+  tps: 1138.08394
   dtps: 1.73083
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-Settings-Orc-level60_phase1_synthetic_survival-Options-sv-FullBuffs-Survival-ShortSingleTarget"
  value: {
-  dps: 1364.84417
-  tps: 1223.85157
+  dps: 1393.30417
+  tps: 1250.93941
   dtps: 8.65417
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-Settings-Orc-level60_phase1_synthetic_survival-Options-sv-NoBuffs-Survival-LongMultiTarget"
  value: {
-  dps: 608.66933
-  tps: 507.34712
+  dps: 608.454
+  tps: 507.73129
   dtps: 1.74117
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-Settings-Orc-level60_phase1_synthetic_survival-Options-sv-NoBuffs-Survival-LongSingleTarget"
  value: {
-  dps: 482.9135
-  tps: 381.74802
+  dps: 483.02417
+  tps: 382.35985
   dtps: 1.7285
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-Settings-Orc-level60_phase1_synthetic_survival-Options-sv-NoBuffs-Survival-ShortSingleTarget"
  value: {
-  dps: 595.49
-  tps: 490.83484
+  dps: 623.26583
+  tps: 519.70586
   dtps: 8.6425
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 971.42067
-  tps: 835.5575
+  dps: 998.9135
+  tps: 861.75312
   dtps: 1.73083
  }
 }
