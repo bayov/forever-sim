@@ -254,11 +254,14 @@ func (rogue *Rogue) makeDeadlyPoison() *core.Spell {
 		Flags:    core.SpellFlagPoison | core.SpellFlagPassiveSpell | SpellFlagRoguePoison,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
-
+			// Landing the poison only applies it, like in game, so we log no hit for 0 damage.
+			// A resist is still logged.
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if !result.Landed() {
+				spell.DealOutcome(sim, result)
 				return
 			}
+			spell.DisposeResult(result)
 
 			dot := rogue.deadlyPoisonTick.Dot(target)
 
@@ -284,11 +287,14 @@ func (rogue *Rogue) makeWoundPoison() *core.Spell {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			result := spell.CalcAndDealOutcome(sim, target, spell.OutcomeMagicHit)
-
+			// Landing the poison only applies it, like in game, so we log no hit for 0 damage.
+			// A resist is still logged.
+			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 			if !result.Landed() {
+				spell.DealOutcome(sim, result)
 				return
 			}
+			spell.DisposeResult(result)
 
 			aura := rogue.woundPoisonDebuffAuras.Get(target)
 			if !aura.IsActive() {
