@@ -98,10 +98,11 @@ type RowPlace = 'pinned' | 'recent' | 'dialog';
 // into any order.
 //
 // Hovering a run lists the settings that changed since it, like the tooltip of a modified
-// preset. Ctrl+click on a run loads the settings it ran with. The history stays in the
-// browser's storage, so it's still there when we come back.
+// preset. Ctrl+click on a run loads the settings it ran with and shows its results. The
+// history stays in the browser's storage, so it's still there when we come back.
 export class SimHistory {
 	private readonly simUI: IndividualSimUI<any>;
+	private readonly resultsManager: RaidSimResultsManager;
 	private readonly runs: Record<SimMode, ModeRuns>;
 	// The mode of the encounter, whose runs we show.
 	private mode: SimMode;
@@ -121,12 +122,15 @@ export class SimHistory {
 	private dialog: SimHistoryModal | null = null;
 	// The runs whose full results we kept. Runs from before we kept them have none.
 	private readonly resultIds = new Set<string>();
+	// Counts the result loads of showResults.
+	private resultsLoad = 0;
 
 	// Fires when a run comes, goes, gets its results saved, or gets a new name or pin.
 	readonly changeEmitter = new TypedEvent<void>('SimHistoryChange');
 
 	constructor(simUI: IndividualSimUI<any>, resultsManager: RaidSimResultsManager) {
 		this.simUI = simUI;
+		this.resultsManager = resultsManager;
 		resultsManager.simHistory = this;
 		this.runs = this.loadRuns();
 		this.mode = encounterMode(simUI.sim.encounter);
@@ -210,9 +214,11 @@ export class SimHistory {
 		return this.resultIds.has(run.id);
 	}
 
-	async loadResults(run: SimRun): Promise<SimResult | null> {
+	// The run's results, and with withLogs the events of its typical, lucky and unlucky
+	// iterations too.
+	async loadResults(run: SimRun, withLogs = false): Promise<SimResult | null> {
 		if (!this.resultIds.has(run.id)) return null;
-		const saved = await loadHistoryRun(this.resultsKey(run.id));
+		const saved = await loadHistoryRun(this.resultsKey(run.id), withLogs);
 		if (!saved?.request || !saved.result) return null;
 		try {
 			return await SimResult.fromProto(saved);
@@ -453,7 +459,7 @@ export class SimHistory {
 	}
 
 	// Loads the settings the run ran with, all of them: gear, talents, rotation, buffs and the
-	// encounter.
+	// encounter. The Results tab then shows the run's own results, so they match the settings.
 	private applySettings(run: SimRun) {
 		try {
 			const settings = IndividualSimSettings.fromJson(run.settings as any, { ignoreUnknownFields: true });
@@ -461,7 +467,24 @@ export class SimHistory {
 			this.simUI.fromProto(TypedEvent.nextEventID(), settings);
 		} catch (e) {
 			console.warn('Failed to load the settings of a saved run: ' + e);
+			return;
 		}
+		this.showResults(run);
+	}
+
+	// Shows a run's results in the Results tab, with its events when we kept them. A run we
+	// have no results for (from before we kept them) shows none, because the ones there
+	// belong to another run.
+	//
+	// A run that goes shows its own results when it's done, so we leave it be. Each load counts
+	// up, so only the last run we picked shows when we pick a few fast.
+	private async showResults(run: SimRun) {
+		if (this.running) return;
+		const load = ++this.resultsLoad;
+		const result = await this.loadResults(run, true);
+		if (load !== this.resultsLoad || this.running) return;
+		if (result) this.simUI.sim.simResultEmitter.emit(TypedEvent.nextEventID(), result);
+		else this.resultsManager.clearSimResult(TypedEvent.nextEventID());
 	}
 
 	// Puts a text field in place of the name. Enter or a click elsewhere keeps the new name,
@@ -582,8 +605,9 @@ export class SimHistory {
 			else if (comparison === 'lower') verdict = `The latest run did ${amount} worse.`;
 			else verdict = `The latest run is within the noise of this one (${signed(diff, 2)} ${score.unit}).`;
 		}
-		// When it ran with the current settings, there's nothing to load.
+		// When it ran with the current settings, there are only its results to show, if we kept them.
 		const categories = this.changesSince(run);
+		const sameSettings = categories?.length === 0;
 		return (
 			<>
 				{run.name ? <p className="mb-0 fw-bold">{run.name}</p> : undefined}
@@ -595,7 +619,7 @@ export class SimHistory {
 				)}
 				{verdict ? <p className={`mb-0 sim-run-verdict sim-run-${this.compare(run)}`}>{verdict}</p> : undefined}
 				{this.changesNote(categories)}
-				{categories?.length === 0 ? undefined : keyClickHint('ctrl', 'load its settings')}
+				{sameSettings && !this.hasResults(run) ? undefined : keyClickHint('ctrl', sameSettings ? 'show its results' : 'load its settings and results')}
 			</>
 		) as Element;
 	}
@@ -707,7 +731,7 @@ class SimHistoryModal extends BaseModal {
 		const rows = this.history.dialogRows(this.tooltips);
 		this.body.replaceChildren(
 			<p className="sim-history-modal-intro">
-				{`The last ${MAX_HISTORY} ${simModeNames[this.history.getMode()]} runs. Pin a run to keep it as a reference. Hover a run to see what changed since, and Ctrl+click it to load its settings.`}
+				{`The last ${MAX_HISTORY} ${simModeNames[this.history.getMode()]} runs. Pin a run to keep it as a reference. Hover a run to see what changed since, and Ctrl+click it to load its settings and results.`}
 			</p>,
 			rows.length ? <div className="sim-history-list">{rows}</div> : <p className="mb-0">No runs yet.</p>,
 		);
