@@ -244,6 +244,12 @@ The user believes "some kind of partial resists exists, lowering damage of spell
   - The deep dives turned resist-chance talents into hit talents (Elemental Precision, Shadow Focus).
   - forever-bugs has no relevant issue.
 - **Client data:** no binary or no-partial attribute differs from Era (wago SpellMisc 70425 against 1.15.9 70003).
+- **Forever's own resistance formula (found 2026-10-16).** Forever's character sheet gives each resistance a percentage, from a helper no other Blizzard client has (Gethe/wow-ui-source, branch `forever`, `Interface/AddOns/Blizzard_UIPanels_Game/Camelot/PaperDollFrameStats.lua:234`, present since the first mirrored beta build 69876 and unchanged through 70425):
+  `ExpectedSpellResistance(casterLevel, resistance) = 0.75 * resistance / (casterLevel * 5)`, shown as "average resist against a caster of the unit's level".
+  - It is Classic's average from school resistance alone. It has no term for the attacker being higher level, and Classic's level-20 floor is gone. Classic Era's sheet (`Vanilla/PaperDollFrameStats.lua`) shows only Poor / Fair / Good.
+  - It fits both beta findings: partials only where the target has school resistance (the serpents), and none from level (0 in about 520 hits at +3 to +5).
+  - Blizzard hasn't said why. The likely reading is a deliberate simplification in line with the deep dives, which turned resist-chance talents into hit talents. The level gap now costs spell hit (misses), and only real resistance causes partial resists. The 10% steps match Blizzard's later resist table rather than Classic's 0/25/50/75.
+  - For a level 63 boss with no school resistance this predicts no partial resists, which is the `level_partial_resist` Expected setting. It's a UI helper, not server code, so a boss log still settles it.
 - **Report row:** `level_partial_resist` stays pending. Low is relabelled "bosses keep it (6% at +3)", Expected is none, and the default stays Classic. No 10%-step setting: the steps change variance, not mean DPS.
 - **Settling tests:** in notes.md (All classes / Shaman "Beta: partial resists").
   - Vishas and Thalnos in SM Graveyard: 50 or more landed hits each.

@@ -265,7 +265,7 @@ A = [
  dict(key='level_partial_resist', cls='All', label='Do bosses partly resist spells by level?',
       short='Classic bosses resisted about 6% of spell damage. Beta mobs above us resisted none.',
       desc='Classic bosses partly resisted about 6% of spell damage. About 520 beta hits on mobs 3 to 5 levels up showed none, and no boss is tested yet.',
-      src="Beta logs (0 partials in about 520 hits at +3 to +5). Classic's level rule (royalgiraffe's resist guide).",
+      src="Beta logs (0 partials in about 520 hits at +3 to +5). Forever's character sheet formula, 0.75 × resistance / (5 × caster level), with no level term (client UI, Camelot/PaperDollFrameStats.lua). Classic's level rule (royalgiraffe's resist guide).",
       builds=[b for b in ALL_BASE if not b.startswith(('rogue__', 'warrior__', 'hunter__'))],
       settings=[S('low', 'Bosses keep it (6% at +3)', "Classic's 2% average partial resist per level above you, on bosses only", "The only way to fit the beta's 0 in 520.", {'level_partial_resist': 0.02}),
                 S('expected', 'None (beta)', 'no level-based partial resist', 'What beta mobs showed.', {'level_partial_resist': 0})],
