@@ -232,15 +232,17 @@ func (shaman *Shaman) newMagmaTotemSpellConfig(rank int) core.SpellConfig {
 // The damage comes from SoD's Fire Nova damage spells (408423 to 408428), not the old
 // totem's (8349, 8502, 8503, 11306 and 11307). The client's tooltip still reads the old
 // totem's numbers, but the beta's combat log names 408424 on every rank 2 hit (2026-10-10).
-// Every rank has a 21.4% coefficient, where the old totem had 10% and 14.3%, and a few
-// points less base damage. A rank grows for five levels after it's learned, and the ranges
-// below are at that fifth level (client 70338).
+// Since client 1.60.1.70425 every rank has a 14.3% coefficient (21.4% before, the old totem
+// had 10% and 14.3%), and less base damage and growth: 33 / 55 / 130 / 179 / 239 at the learn
+// level, plus 0.4 / 0.6 / 0.9 / 1.1 / 1.3 a level (50 / 102 / 183 / 284 / 403 plus 1.1 / 1.6 /
+// 2.2 / 2.8 / 3.4 before). A rank grows for five levels after it's learned, and the ranges
+// below are at that fifth level, with each rank's spread as before.
 const FireNovaRanks = 5
 
 var FireNovaSpellId = [FireNovaRanks + 1]int32{0, 408341, 408342, 408343, 408344, 408345}
-var FireNovaBaseDamage = [FireNovaRanks + 1][]float64{{0, 0}, {51.23, 59.77}, {102.94, 117.06}, {182.12, 205.88}, {280.06, 315.94}, {396.95, 443.05}}
-var FireNovaScaling = [FireNovaRanks + 1]core.RankScaling{{}, {17, 1.1}, {27, 1.6}, {37, 2.2}, {47, 2.8}, {57, 3.4}}
-var FireNovaSpellCoeff = [FireNovaRanks + 1]float64{0, .214, .214, .214, .214, .214}
+var FireNovaBaseDamage = [FireNovaRanks + 1][]float64{{0, 0}, {32.31, 37.69}, {54.28, 61.72}, {126.26, 142.74}, {173.39, 195.61}, {232.03, 258.97}}
+var FireNovaScaling = [FireNovaRanks + 1]core.RankScaling{{}, {17, 0.4}, {27, 0.6}, {37, 0.9}, {47, 1.1}, {57, 1.3}}
+var FireNovaSpellCoeff = [FireNovaRanks + 1]float64{0, .143, .143, .143, .143, .143}
 
 // Client 1.60.1.70425 cut the costs by 25 to 32% (95 / 170 / 280 / 395 / 520 before).
 var FireNovaManaCost = [FireNovaRanks + 1]float64{0, 65, 120, 210, 290, 375}
