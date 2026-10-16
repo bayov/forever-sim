@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_ranged",
   "apl": "bm_scorpid",
   "published": {
-    "dps": 872.9,
-    "source": "client 1.60.1.70425 (Sniper Shot in Efficiency and Mortal Shots, the raid's Trueshot Aura, hunter_trap_ap), 2026-10-16: 180s, 20000 iterations, seed 1"
+    "dps": 881.8,
+    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 872.9)"
   },
   "verify": {
-    "dps": 872.93,
+    "dps": 881.85,
     "stderr": 0.2,
     "iters": 20000,
     "ok": true,
-    "note": "same sim as verify.py and the published number"
+    "note": "run_build.py main run, 180s, seed 1"
   },
   "summary": "Beast Mastery with a cat: Bestial Wrath, Frenzy and Unleashed Fury. The pet deals about 21% of the damage.",
   "keyTalents": [

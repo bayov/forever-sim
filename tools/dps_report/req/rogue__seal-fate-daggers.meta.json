@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_daggers",
   "apl": "level60_combat_daggers",
   "published": {
-    "dps": 683.0,
-    "source": "Re-check after Windfury Totem main hand only (#86) and Grace of Air (#88): weapons, talents, races (standards 16), master e83b6a0, 2026-10-16"
+    "dps": 687.1,
+    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 683.0)"
   },
   "verify": {
-    "dps": 683.0,
+    "dps": 687.07,
     "stderr": 0.21,
     "iters": 20000,
     "ok": true,
-    "note": "same sim as the published number (seed 1)"
+    "note": "run_build.py main run, 180s, seed 1"
   },
   "summary": "Backstab on daggers with Seal Fate from Assassination.",
   "keyTalents": [

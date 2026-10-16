@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_frostfire",
   "published": {
-    "dps": 1018.1,
-    "source": "PR #98 (rotation auditor pass 23, 2026-10-16)"
+    "dps": 1082.5,
+    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 1018.1)"
   },
   "verify": {
-    "dps": 1018.1,
-    "stderr": 0.5,
+    "dps": 1082.52,
+    "stderr": 0.51,
     "iters": 20000,
     "ok": true,
-    "note": "180 s, 20000 iterations, seed 1, on the pass 23 rotation (seed 100001 within 0.5)"
+    "note": "run_build.py main run, 180s, seed 1"
   },
   "summary": "Fire and Frost hybrid built on Frostfire Bolt, which gets both trees' talents.",
   "keyTalents": [

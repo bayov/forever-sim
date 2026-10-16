@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_wrath",
   "apl": "level60_wrath_ff",
   "published": {
-    "dps": 755.8,
-    "source": "Tauren, Nature's Focus pushback and the client 70425 racials (2026-10-16)"
+    "dps": 795.5,
+    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 755.8)"
   },
   "verify": {
-    "dps": 755.84,
+    "dps": 795.54,
     "stderr": 0.19,
     "iters": 20000,
     "ok": true,
-    "note": "180s, seed 1"
+    "note": "run_build.py main run, 180s, seed 1"
   },
   "summary": "The Wrath-only build keeping Faerie Fire on the boss for the raid. Moonkin gains nothing from the armor, so it only costs GCDs.",
   "keyTalents": [
