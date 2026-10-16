@@ -747,6 +747,11 @@
 	pointer-events: none;
 }
 
+// The lane above health that holds the state bands' names.
+.rotation-session-lane {
+	height: 16px;
+}
+
 .rotation-session-band {
 	position: absolute;
 	bottom: 0;

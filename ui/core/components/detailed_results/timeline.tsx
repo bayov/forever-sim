@@ -1345,6 +1345,7 @@ export class Timeline extends ResultComponent {
 		this.dpsResourcesPlotElem.classList.add('hide');
 		this.rotationPlotElem.classList.remove('hide');
 
+		if (this.session) this.addSessionLane();
 		orderedResourceTypes.forEach(resourceType => this.addResourceRow(resourceType, player.groupedResourceLogs[resourceType], duration));
 		this.addGcdRow(player, duration);
 
@@ -1650,6 +1651,13 @@ export class Timeline extends ResultComponent {
 			);
 			filledActionId.setBackgroundAndHref(labelIcon.value!);
 		});
+	}
+
+	// An empty lane at the top of a session, where the state bands put their names (Searching,
+	// Resting). Without it the names sit on the health line.
+	private addSessionLane() {
+		this.rotationLabels.appendChild(<div className="rotation-session-lane" />);
+		this.rotationTimeline.appendChild(<div className="rotation-session-lane" style={{ width: this.viewWidthPx() }} />);
 	}
 
 	private addSeparatorRow() {
