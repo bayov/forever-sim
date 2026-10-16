@@ -50,13 +50,14 @@
 
     <div class="content-block fv-card" id="rank-card">
       <div class="content-block-header"><h6 class="content-block-title">DPS by preset</h6></div>
-      <div class="fv-toolbar">
-      <div class="fv-lenbar" id="rank-lenbar"><span class="fv-label">Fight length</span><div class="fv-seg" id="rank-len" role="group" aria-label="Fight length"></div></div>
-      <div class="fv-controls" id="rank-classes" role="group" aria-label="Class filter"></div>
-      <div class="fv-controls fv-ctl-row">
-        <div class="fv-ctl"><span class="fv-label">Sort</span><div class="fv-seg" id="rank-sort" role="group" aria-label="Sort by"></div></div>
+      <div class="fv-toolbar fv-rank-tb">
+        <div class="fv-controls fv-ctl-row">
+          <div class="fv-ctl fv-lenbar" id="rank-lenbar"><span class="fv-label fv-rowlabel">Fight length</span><div class="fv-seg" id="rank-len" role="group" aria-label="Fight length"></div></div>
+          <div class="fv-ctl"><span class="fv-label">Sort</span><div class="fv-seg" id="rank-sort" role="group" aria-label="Sort by"></div></div>
+        </div>
+        <div class="fv-controls" id="rank-classes" role="group" aria-label="Class filter"></div>
         <div class="fv-ctl">
-          <span class="fv-label">Filter</span>
+          <span class="fv-label fv-rowlabel">Filter</span>
           <div class="fv-seg" id="rank-role" role="group" aria-label="Role"></div>
           <div class="fv-seg" id="rank-fac" role="group" aria-label="Faction of the preset race"></div>
           <button class="fv-chip" id="rank-best" aria-pressed="false">Best per class</button>
@@ -64,7 +65,6 @@
           <button class="fv-chip" id="rank-duty" aria-pressed="true" title="Presets that keep a raid buff or debuff up themselves">Duty</button>
           <button class="btn btn-link fv-reset" type="button" id="rank-reset" hidden>Clear filters</button>
         </div>
-      </div>
       </div>
       <div class="fv-rank" id="rank-chart" data-source="builds lengths"></div>
     </div>
@@ -93,9 +93,9 @@
       <div class="content-block-header"><h6 class="content-block-title">Best races</h6></div>
       <p class="fv-note">Gray is the race without racials. Colors are what each racial adds.</p>
       <div class="fv-toolbar">
-        <div class="fv-controls"><div class="fv-seg" id="rs-fac" role="group" aria-label="Faction"></div><div class="fv-seg" id="rs-role" role="group" aria-label="Role"></div></div>
+        <div class="fv-controls"><span class="fv-label fv-rowlabel">Filter</span><div class="fv-seg" id="rs-fac" role="group" aria-label="Faction"></div><div class="fv-seg" id="rs-role" role="group" aria-label="Role"></div></div>
         <div class="fv-controls" id="rs-cls" role="group" aria-label="Class filter"></div>
-        <div class="fv-controls"><span class="fv-label">Spec</span><div class="fv-scope-spec" id="rs-spec"></div><div class="fv-rs-opts" id="rs-opts"></div></div>
+        <div class="fv-controls"><span class="fv-label fv-rowlabel">Spec</span><div class="fv-scope-spec" id="rs-spec"></div><div class="fv-rs-opts" id="rs-opts"></div></div>
       </div>
       <p class="fv-ro-take" id="rs-take"></p>
       <div class="fv-legend" id="rs-legend"></div>
@@ -107,9 +107,9 @@
       <div class="content-block-header"><h6 class="content-block-title">Strongest racials</h6></div>
       <p class="fv-note">Averaged over the presets the race can play. No effect counts as zero.</p>
       <div class="fv-toolbar">
-        <div class="fv-controls"><div class="fv-seg" id="rl-fac" role="group" aria-label="Faction"></div><div class="fv-seg" id="rl-role" role="group" aria-label="Role"></div></div>
+        <div class="fv-controls"><span class="fv-label fv-rowlabel">Filter</span><div class="fv-seg" id="rl-fac" role="group" aria-label="Faction"></div><div class="fv-seg" id="rl-role" role="group" aria-label="Role"></div></div>
         <div class="fv-controls" id="rl-cls" role="group" aria-label="Class filter"></div>
-        <div class="fv-controls"><span class="fv-label">Spec</span><div class="fv-scope-spec" id="rl-spec"></div><div class="fv-rs-opts" id="rl-opts"></div></div>
+        <div class="fv-controls"><span class="fv-label fv-rowlabel">Spec</span><div class="fv-scope-spec" id="rl-spec"></div><div class="fv-rs-opts" id="rl-opts"></div></div>
       </div>
       <div class="fv-legend" id="rl-legend"></div>
       <div id="racial-rank" data-source="race_variants race_breakdown race_notes"></div>
@@ -121,7 +121,7 @@
       <p class="fv-note">Percent behind the best race (★). Hatched: race can't be that class.</p>
       <div class="fv-toolbar">
         <div class="fv-controls" id="heat-classes" role="group" aria-label="Class filter"></div>
-        <div class="fv-controls"><span class="fv-label">Races</span><div class="fv-seg" id="heat-fac" role="group" aria-label="Faction"></div><div class="fv-rs-opts" id="heat-opts"></div></div>
+        <div class="fv-controls"><span class="fv-label fv-rowlabel">Races</span><div class="fv-seg" id="heat-fac" role="group" aria-label="Faction"></div><div class="fv-rs-opts" id="heat-opts"></div></div>
       </div>
       <div class="fv-scroll" id="heat" data-source="race_variants builds"></div>
     </div>

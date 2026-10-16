@@ -693,14 +693,14 @@ export function startReport(dash, events) {
     }
     host.dataset.icons = m ? '1' : '0';
     host.classList.add('fv-icon-picker');
-    host.replaceChildren(el('span', { class: 'fv-label', text: 'Class' }), el('span', { class: 'fv-pick-value', text: name }),
+    host.replaceChildren(el('span', { class: 'fv-label fv-rowlabel', text: 'Class' }),
       el('div', { class: 'fv-pick-options' }, ...CLASSES.map((c) => {
         const u = m && m.get('classicon_' + c.toLowerCase());
         const b = el('button', { type: 'button', class: 'fv-pick-option' + (c === st[key] ? ' active' : ''), 'data-c': c, 'aria-label': c, 'aria-pressed': String(c === st[key]), 'data-tt': 'c:' + c, style: u ? `background-image:url("${u}")` : `background:${ccol(c)}` });
         b.addEventListener('click', () => { st[key] = st[key] === c ? 'All' : c; persist(); render(); });
         b.hidden = !!avail && !avail.has(c);
         return b;
-      })));
+      })), el('span', { class: 'fv-pick-value', text: name }));
   };
   const fail = (host) => { host.replaceChildren(el('div', { class: 'fv-fail', text: 'Failed to load' })); };
   const waitOr = (host, ids) => {

@@ -216,7 +216,18 @@
 	padding: var(--spacer-2) var(--spacer-3);
 	border: 1px solid var(--color-border-line);
 	border-radius: var(--fv-r-sm);
-	background: var(--fv-stone-chip);
+	background: var(--color-bg);
+}
+
+// The labels that start a toolbar's rows line up, so the controls after them start at one edge.
+.fv-toolbar .fv-rowlabel {
+	min-width: 5.75rem;
+	flex: none;
+	white-space: nowrap;
+
+	@include media-breakpoint-down(sm) {
+		min-width: 0;
+	}
 }
 
 .fv-controls {
@@ -272,16 +283,8 @@
 	align-items: center;
 }
 
-// The fight length applies to the whole ranking, so it sits in a row of its own above the other filters. When we
-// show another length than the default 180 s, the label turns gold like the Events tab's "New" iteration.
-.fv-lenbar {
-	display: flex;
-	align-items: center;
-	gap: var(--spacer-2) var(--spacer-3);
-	padding-bottom: var(--spacer-2);
-	border-bottom: 1px solid var(--line-color);
-}
-
+// When we show another fight length than the default 180s, its label turns gold like the Events tab's "New"
+// iteration.
 .fv-lenbar.off .fv-label {
 	color: var(--gold-soft);
 }
@@ -2915,10 +2918,11 @@ ol.fv-list li::marker {
 }
 
 // The class filter, drawn like the sim UI's race picker (see RacePicker).
+// The label, the class icons, and the picked class's name after them.
 .fv-icon-picker {
 	display: flex;
 	flex-wrap: wrap;
-	align-items: baseline;
+	align-items: center;
 	column-gap: var(--spacer-2);
 
 	.fv-pick-value {
@@ -2927,17 +2931,27 @@ ol.fv-list li::marker {
 	}
 
 	.fv-pick-options {
-		flex-basis: 100%;
 		display: flex;
 		flex-wrap: wrap;
 		gap: 0.4rem;
-		margin-top: 0.3rem;
 	}
 
 	.fv-pick-option {
 		@include icon-picker-option;
 		width: 2.5rem;
 		height: 2.5rem;
+	}
+
+	// All 9 classes fit one row on a phone.
+	@include media-breakpoint-down(sm) {
+		.fv-pick-options {
+			gap: 0.3rem;
+		}
+
+		.fv-pick-option {
+			width: 2rem;
+			height: 2rem;
+		}
 	}
 }
 
