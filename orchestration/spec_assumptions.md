@@ -31,7 +31,7 @@ Sources, all read-only:
 | All classes | 2 | `flat_bonus_inside_pct`, `wf_totem_offhand` |
 | Priest | 2 | `priest_sf_tick_crit`, `priest_smite8_tuning` |
 | Warlock | 4 | `lock_pet_scaling`, `lock_demon_melee`, `lock_bod_coef`, `lock_incinerate_bonus` (one value, kept for reference) |
-| Paladin | 3 (+1 shared) | `pal_2h_spec_holy`, `pal_31plus_ranks`, `pal_soc_wf` (+ `flat_bonus_inside_pct`) |
+| Paladin | 4 (+1 shared) | `pal_2h_spec_holy`, `pal_31plus_ranks`, `pal_soc_wf`, `pal_soc_ppm` (pending) (+ `flat_bonus_inside_pct`) |
 | Warrior | 4 (+1 shared) | `warr_rage_k`, `warr_rage_oh`, `warr_crit_rage`, `warr_rend_ap` (+ `wf_totem_offhand`) |
 | Hunter | 5 (+1 shared) | `hunter_pet_scaling`, `hunter_pet_speed`, `hunter_tsa_hm_rank`, `hunter_crit_per_agi`, `hunter_raptor_31plus` (+ `wf_totem_offhand` for Survival) |
 | Mage | 3 | `mage_ice_lance_coef`, `mage_frostbolt10`, `mage_imbue_scrolls` |
@@ -39,7 +39,7 @@ Sources, all read-only:
 | Druid | 4 | `druid_ooc_rate` (one value, kept for reference), `druid_shred_flat`, `druid_rip_31plus`, `druid_wrath8_tuning` |
 | Rogue | 0 (+2 shared) | `flat_bonus_inside_pct` (Backstab, Mutilate), `wf_totem_offhand` |
 
-That makes 33 assumptions in `assumptions_def.py` (PR #54 removed `pal_sor_sp_double`, `pal_sor_sp_speed` and `pal_consecration_coef`, settled 2026-10-16). The 2026-10-15 review removed `mage_ab_on_missiles`, `lock_decimation`, `oil_proc_damage` and `hunter_shot_ap_shares`, and added `pal_sor_sp_speed` (user rulings 2026-10-15). An assumption left with one value stays in the report as a reference row (user ruling 2026-10-15). The rogue has no material assumption of its own: the rank tuning audit found its spells Era-identical or client-tuned, and its open items are under 0.5% or client-sourced (see "Considered and left out"). Its two scenarios are the shared ones.
+That makes 35 assumptions in `assumptions_def.py`, counting the pending ones (PR #54 removed `pal_sor_sp_double`, `pal_sor_sp_speed` and `pal_consecration_coef`, settled 2026-10-16). The 2026-10-15 review removed `mage_ab_on_missiles`, `lock_decimation`, `oil_proc_damage` and `hunter_shot_ap_shares`, and added `pal_sor_sp_speed` (user rulings 2026-10-15). An assumption left with one value stays in the report as a reference row (user ruling 2026-10-15). The rogue has no material assumption of its own: the rank tuning audit found its spells Era-identical or client-tuned, and its open items are under 0.5% or client-sourced (see "Considered and left out"). Its two scenarios are the shared ones.
 
 ### The ones that matter most
 
@@ -593,6 +593,15 @@ No assumptions of its own. The rogue's scenarios are the shared ones:
 - **Settings:** Low (the sim now) is Classic's 6% at +3; Expected is none (the beta). The default stays on the sim's value until the user rules (orchestration/assumptions_audit.md, Q1).
 - **Sensitivity (10k iterations, seed 1, 180 s, None against 6%):** Fire +7.1%, Arcane +6.3%, Elemental +6.4%, Balance +5.4%, Destruction +5.2%, Affliction +5.3%, Ret +4.2%, Shadow +3.8%, Enhancement +3.0%, Frost 0 (Frostbolt is binary).
 - **Knob (to add):** `core.Assume("level_partial_resist", AverageMagicPartialResistPerLevelMultiplier)` at both uses.
+
+### `pal_soc_ppm` (pending, added 2026-10-16 by the assumptions audit)
+
+- **Builds:** the twisting presets (Level 60, sub Holy, their Crusader duty copies, vs Undead and sub Holy vs Undead). The Shock builds never use Seal of Command.
+- **Sim now:** 7 procs a minute with a 1 sec cooldown (`SealOfCommandPPM`, `sim/paladin/soc.go`).
+- **Source:** the client (1.60.1.70425, the aura options of 20375 and 20915 to 20920) gives the aura a 100% chance on melee hits, a 1 sec recovery and no procs-per-minute entry, so the server's script sets the rate, as in Classic. Classic and Season of Discovery use 7 a minute. No Forever beta log has counted the procs.
+- **Settings:** Low 5 a minute, Expected 7 (Classic), High 9. Low and High are a symmetric bracket two procs either side, not measurements.
+- **Sensitivity (paired 20k, 180 s, seeds 1 and 1000003):** Low −36 (−3.9 to −4.4%), High +35 (+3.8 to +4.3%) on every twist build. Shock 0. At Low, Shock's lead over twist at 180 s grows from 2.9% to 7.6%; at High twist is 1.2% ahead.
+- **Knob (to add):** `ppmm := paladin.AutoAttacks.NewPPMManager(core.Assume("pal_soc_ppm", SealOfCommandPPM), core.ProcMaskMelee)` in `registerSealOfCommand`.
 
 ## Settled, not a scenario
 
