@@ -124,7 +124,7 @@ export const DefaultGear = GearLevel60Ranged;
 // Improved Arcane Shot 5), and both cast Serpent Sting after Aimed Shot (+1.7 and +2.1). Beast Mastery
 // keeps Aimed Shot first and its floors.
 export const APLBeastMastery = PresetUtils.makePresetAPLRotation('Beast Mastery', BeastMasteryAPL, {
-	tooltip: 'Serpent Sting when down, Aimed Shot, Sniper Shot and Arcane Shot on cooldown, Bestial Wrath and Rapid Fire on cooldown.',
+	tooltip: 'Aimed Shot, Sniper Shot and Arcane Shot on cooldown, then Serpent Sting when down, Bestial Wrath and Rapid Fire on cooldown.',
 	group: 'Level 60',
 });
 export const APLMarksmanship = PresetUtils.makePresetAPLRotation('Marksmanship', MarksmanshipAPL, {
@@ -470,7 +470,8 @@ export const EncounterLevel60ScorpidDuty = PresetUtils.makePresetEncounter('Leve
 // standards 1b and its trinkets).
 const professions: [Profession, Profession] = [OtherDefaults.profession1, OtherDefaults.profession2];
 
-// 959.5 / 955.1 / 946.5 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16). The pet deals 21% of
+// 976.4 / 970.7 / 962.1 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16, Serpent Sting last since rotation
+// audit pass 24: +2.8 / +1.5 / +1.2). The pet deals 21% of
 // it.
 export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Beast Mastery', {
 	group: 'Level 60',
@@ -483,7 +484,7 @@ export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Bea
 	professions,
 	options: DefaultOptions,
 });
-// 959.4 / 954.9 / 946.1 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 0.1 / 0.2 / 0.5 behind the
+// 973.6 / 969.1 / 960.2 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 2.8 / 1.6 / 1.9 behind the
 // base preset: the raid's Hunter's Mark is off and the hunter casts its own 1.5 sec before the
 // pull and before it drops (standards 23).
 export const PresetBuildBeastMasteryMark = PresetUtils.makePresetBuild("Level 60 Beast Mastery (Hunter's Mark duty)", {
@@ -498,7 +499,7 @@ export const PresetBuildBeastMasteryMark = PresetUtils.makePresetBuild("Level 60
 	professions,
 	options: DefaultOptions,
 });
-// 878.1 / 872.9 / 864.2 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 81.4 / 82.2 / 82.3 behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in place of Serpent Sting, refreshed 4 sec before it drops (standards 23).
+// 887.0 / 881.8 / 873.1 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 89.4 / 88.8 / 89.0 behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in place of Serpent Sting, refreshed 4 sec before it drops (standards 23).
 export const PresetBuildBeastMasteryScorpid = PresetUtils.makePresetBuild('Level 60 Beast Mastery (Scorpid Sting duty)', {
 	group: 'Level 60',
 	tooltip:

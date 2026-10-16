@@ -141,7 +141,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "not": {
@@ -162,7 +161,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "or": {
@@ -239,45 +237,6 @@
                   "notes": "Rapid Fire, Bestial Wrath, racials, trinkets and potions.",
                   "action": {
                     "autocastOtherCooldowns": {}
-                  }
-                },
-                {
-                  "action": {
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "not": {
-                              "val": {
-                                "dotIsActive": {
-                                  "spellId": {
-                                    "spellId": 13555
-                                  }
-                                }
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "op": "OpGe",
-                              "lhs": {
-                                "currentManaPercent": {}
-                              },
-                              "rhs": {
-                                "const": {
-                                  "val": "0.3"
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 13555
-                      }
-                    }
                   }
                 },
                 {
@@ -383,6 +342,45 @@
                     "castSpell": {
                       "spellId": {
                         "spellId": 14287
+                      }
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "dotIsActive": {
+                                  "spellId": {
+                                    "spellId": 13555
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "currentManaPercent": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0.3"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 13555
                       }
                     }
                   }

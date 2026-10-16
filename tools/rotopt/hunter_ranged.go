@@ -59,8 +59,8 @@ func (hunterRanged) Knobs() []Knob {
 		// Rapid Fire 0.1 sec before the pull, so the second Auto Shot is already hasted.
 		{Name: "rapidPrepull", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Serpent Sting below Aimed Shot, so a refresh never delays Aimed Shot's cooldown, which starts
-		// when the cast ends.
-		{Name: "serpentLate", Default: 0, Min: 0, Max: 1, Step: 1},
+		// when the cast ends (1), or last, below the Arcane Shot cooldown too (2).
+		{Name: "serpentLate", Default: 0, Min: 0, Max: 2, Step: 1},
 		{Name: "intimidation", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Mana floors, in percent: Serpent Sting and the Arcane Shot cooldown only above them.
 		{Name: "serpentMana", Default: 30, Min: 0, Max: 60, Step: 10},
@@ -160,6 +160,9 @@ func (hunterRanged) Build(k Knobs) *proto.APLRotation {
 	}
 	if k["arcaneFirst"] == 0 {
 		items = append(items, arcane...)
+	}
+	if serpentOn && k["serpentLate"] == 2 {
+		items = append(items, serpent)
 	}
 
 	rot := rotation(items...)
