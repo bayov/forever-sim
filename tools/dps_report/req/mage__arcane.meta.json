@@ -4,7 +4,7 @@
   "spec": "Arcane",
   "build": "Arcane",
   "isDefault": false,
-  "pr": 89,
+  "pr": 98,
   "race": "Human",
   "talents": "0522005003100301531-02-05550003",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_arcane",
   "published": {
     "dps": 922.9,
-    "source": "PR (rotation auditor pass 23, 2026-10-16)"
+    "source": "PR #98 (rotation auditor pass 23, 2026-10-16)"
   },
   "verify": {
     "dps": 922.9,

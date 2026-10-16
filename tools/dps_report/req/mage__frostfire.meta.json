@@ -4,7 +4,7 @@
   "spec": "Frostfire",
   "build": "Frostfire",
   "isDefault": true,
-  "pr": 89,
+  "pr": 98,
   "race": "Human",
   "talents": "-0155003013012503-00550003310003002",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_frostfire",
   "published": {
     "dps": 1018.1,
-    "source": "PR (rotation auditor pass 23, 2026-10-16)"
+    "source": "PR #98 (rotation auditor pass 23, 2026-10-16)"
   },
   "verify": {
     "dps": 1018.1,
