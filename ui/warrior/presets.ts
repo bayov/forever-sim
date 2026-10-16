@@ -203,7 +203,7 @@ export const DefaultAPLs = [APLLevel60Fury];
 // is worth nothing in a raid (the boss does not hit the warrior), so it keeps one point. Weaponmaster
 // hybrids (25 Arms for the swords' extra attacks, no Bloodthirst) were 823.5 on the earlier gear,
 // 17% behind.
-export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Level 60 Fury', SavedTalents.create({ talentsString: '30305013002-25053005112110501-2' }), {
+export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Level 60 Fury', SavedTalents.create({ talentsString: '30305013002-25053005122010501-2' }), {
 	tooltip: 'Level 60 dual wield Fury talents from the talent search.',
 	group: 'Level 60',
 });
