@@ -227,7 +227,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "and": {
@@ -369,7 +368,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "and": {
@@ -438,7 +436,7 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 10333
+                        "spellId": 24239
                       }
                     }
                   }
@@ -447,7 +445,7 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 24239
+                        "spellId": 10333
                       }
                     }
                   }
@@ -486,7 +484,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "cmp": {

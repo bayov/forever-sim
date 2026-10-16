@@ -546,11 +546,24 @@ const RAID_BUFFS_TOOLTIP =
 // Shows a section dimmed under a note that says why it's off, and makes its pickers ignore
 // clicks. The code that reads the settings turns the section's settings off too, see
 // Player.setBuffs and Raid.setDebuffs.
+//
+// We still let the mouse hover the icons, so their tooltips say what each one is. That's why
+// we stop the clicks and keys here instead of making the section inert.
 function turnSectionOff(contentBlock: ContentBlock, note: string) {
 	contentBlock.rootElem.classList.add('settings-section-off');
 	const noteElem = document.createElement('p');
 	noteElem.classList.add('settings-section-off-note');
 	noteElem.textContent = note;
 	contentBlock.rootElem.insertBefore(noteElem, contentBlock.bodyElement);
-	contentBlock.bodyElement.inert = true;
+
+	const body = contentBlock.bodyElement;
+	const stop = (event: Event) => {
+		event.preventDefault();
+		event.stopPropagation();
+	};
+	['click', 'dblclick', 'mousedown', 'pointerdown', 'contextmenu', 'keydown'].forEach(type => body.addEventListener(type, stop, true));
+	// Nothing in it takes the keyboard focus either, so Tab skips the section.
+	const skipFocus = () => body.querySelectorAll<HTMLElement>('a, button, input, select, textarea, [tabindex]').forEach(elem => (elem.tabIndex = -1));
+	skipFocus();
+	new MutationObserver(skipFocus).observe(body, { childList: true, subtree: true });
 }

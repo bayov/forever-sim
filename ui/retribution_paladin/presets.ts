@@ -140,7 +140,9 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // in the Shock duty list), so in the execute phase it isn't held behind a Consecration that ticks
 // for less. Paired over two seed sets at 20000 iterations, 120 / 180 / 300 sec: twist +2.1 /
 // +2.2 / +2.2, sub Holy +2.0 / +2.5 / +1.6, their duty +2.2 to 2.7 / +2.4 to 2.5 / +1.7 to 2.2,
-// Shock +0.8 / +1.4 / +0.5, Shock duty +1.9 / +1.1 / +0.8. The vs Undead rotations keep their order.
+// Shock +0.8 / +1.4 / +0.5, Shock duty +1.9 / +1.1 / +0.8. Shock vs Undead keeps its order;
+// pass 24 put Hammer of Wrath above Holy Strike in the vs Undead twist rotation, where Consecration
+// is already last (see APLLevel60Undead).
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
 	tooltip: 'Level 60 rotation: Consecration, Seal of Command twisted with Seal of Righteousness before every swing, Judgement and Holy Strike on cooldown.',
 	group: 'Level 60',
@@ -160,6 +162,8 @@ export const APLLevel60Shock = PresetUtils.makePresetAPLRotation('Level 60 Shock
 // sub Holy builds. Seal of Righteousness stays up and Twist of Light twists to Seal of Command
 // before each swing at any mana, Judgement on whichever seal is up, Holy Strike, Hammer of Wrath
 // and Exorcism on cooldown, Holy Wrath above 80% mana (2.4 DPS), Consecration last above 20%.
+// Rotation audit pass 24 (2026-10-16): Hammer of Wrath above Holy Strike, paired over two seed sets
+// at 20000 iterations: +2.0 / +2.4 / +1.4 at 120 / 180 / 300 sec, sub Holy vs Undead +1.4 / +2.2 / +1.9.
 export const APLLevel60Undead = PresetUtils.makePresetAPLRotation('Level 60 (vs Undead)', Level60UndeadAPLJSON, {
 	tooltip: 'Level 60 rotation against an Undead or Demon boss: the twist rotation with Exorcism and Holy Wrath.',
 	group: 'Level 60',

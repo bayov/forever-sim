@@ -29,7 +29,10 @@ gen() {
 ranged="aimed=1,aimedMana=0,hawk=2,intimidation=0,serpent=1,sniper=1,sniperFirst=0,rapidPrepull=1"
 bm="$ranged,arcaneFirst=0,arcaneMana=20,serpentLate=0,serpentMana=30,holdElune=1"
 mm="$ranged,arcaneFirst=1,arcaneMana=0,serpentLate=1,serpentMana=0,sniperManaPerSec=25,holdRapid=1,holdElune=1"
-gen hunter_ranged bm "$bm"
+# Beast Mastery casts Serpent Sting last, after the Arcane Shot cooldown (rotation audit pass 24,
+# 2026-10-16: +2.8 / +1.5 / +1.2 at 120 / 180 / 300 sec). Its Hunter's Mark duty keeps it first (the
+# move costs 0.1 to 0.4 there), and the Scorpid Sting duty has no Serpent Sting.
+gen hunter_ranged bm "$bm,serpentLate=2"
 gen hunter_ranged mm "$mm"
 gen hunter_ranged lw "$mm"
 # Marksmanship and Lone Wolf hold Rapid Fire and Elune's Light for the on-use trinket when the wait
