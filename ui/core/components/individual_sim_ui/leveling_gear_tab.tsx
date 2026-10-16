@@ -256,20 +256,43 @@ export class LevelingGearTab extends SimTab {
 
 	protected buildTabContent() {}
 
-	// The stat weights the plan judges items by at a level: the spec's leveling stat weights
-	// preset closest to that level, or the Current EP when the spec has none.
-	private weightsAt(level: number): { weights: Stats; name: string } {
-		const presets = (this.simUI.individualConfig.presets.epWeights ?? []).filter(preset => preset.group == 'Leveling');
-		let best: { weights: Stats; name: string } | undefined;
-		let bestGap = Infinity;
-		for (const preset of presets) {
-			const presetLevel = Number(/Level (\d+)/.exec(preset.name)?.[1] ?? 60);
-			if (Math.abs(presetLevel - level) < bestGap) {
-				bestGap = Math.abs(presetLevel - level);
-				best = { weights: preset.epWeights, name: preset.name };
-			}
-		}
-		return best ?? { weights: this.player.getEpWeights(), name: 'the Current EP' };
+	// The spec's stat weights presets for the plan by their level, lowest first.
+	//
+	// They're the "Leveling Gear Plan" presets, measured on the plan's own gear. A spec without
+	// them falls back to its "Leveling" presets.
+	private levelingWeights(): Array<{ level: number; weights: Stats }> {
+		const presets = this.simUI.individualConfig.presets.epWeights ?? [];
+		const planPresets = presets.filter(preset => preset.group == 'Leveling Gear Plan');
+		return (planPresets.length ? planPresets : presets.filter(preset => preset.group == 'Leveling'))
+			.map(preset => ({ level: Number(/Level (\d+)/.exec(preset.name)?.[1] ?? 60), weights: preset.epWeights }))
+			.sort((a, b) => a.level - b.level);
+	}
+
+	// The stat weights the plan judges items by at a level.
+	//
+	// They come from the leveling sim, which measures them at a few levels. Between two of those levels we blend them by how close we are to
+	// each, so a level 22 judges items mostly by the level 20 weights and a bit by the level 25
+	// ones. Below the lowest and above the highest we take that one. A spec without leveling
+	// presets uses the Current EP.
+	private weightsAt(level: number): Stats {
+		const presets = this.levelingWeights();
+		if (!presets.length) return this.player.getEpWeights();
+		const above = presets.findIndex(preset => preset.level >= level);
+		if (above == -1) return presets[presets.length - 1].weights;
+		if (above == 0 || presets[above].level == level) return presets[above].weights;
+		const lo = presets[above - 1];
+		const hi = presets[above];
+		const t = (level - lo.level) / (hi.level - lo.level);
+		return lo.weights.scale(1 - t).add(hi.weights.scale(t));
+	}
+
+	private weightsNote(): string {
+		const levels = this.levelingWeights().map(preset => preset.level);
+		if (!levels.length) return 'We judge items by the Current EP.';
+		if (levels.length == 1) return `We judge items by the Level ${levels[0]} Leveling stat weights.`;
+		return `We judge items by the leveling sim's stat weights at levels ${levels.slice(0, -1).join(', ')} and ${
+			levels[levels.length - 1]
+		}, blended between them by level.`;
 	}
 
 	private rebuild() {
@@ -304,11 +327,10 @@ export class LevelingGearTab extends SimTab {
 			faction: raceToFaction[this.player.getRace()],
 			seed: this.player.getLevelingGearPlan().seed,
 			pins,
-			weightsAt: level => this.weightsAt(level).weights,
+			weightsAt: level => this.weightsAt(level),
 			zoneName: zoneId => db.getZone(zoneId)?.name,
 		});
-		const names = [...new Set(Array.from({ length: LEVELING_GEAR_MAX_LEVEL }, (_, i) => this.weightsAt(i + 1).name))];
-		this.weightsElem.textContent = `We judge items by the ${names.join(', ')} stat weights.`;
+		this.weightsElem.textContent = this.weightsNote();
 		this.buildGrid();
 		this.buildLevel();
 		this.buildPins();

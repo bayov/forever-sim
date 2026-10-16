@@ -43,7 +43,7 @@ func main() {
 	level := flag.Int("level", 0, "override the player's level, e.g. 20")
 	targets := flag.Int("targets", 0, "override the number of enemies, copies of the encounter's first target, for AoE rotations")
 	bonusTalents := flag.Int("bonus-talents", -1, "override the player's extra talent points beyond what the level grants, e.g. 5 for the Forever beta's 16 points at level 20")
-	bonus := flag.String("bonus", "", "extra stats on top of the gear, to see how the answers move with better itemization, e.g. AttackPower=400,Stamina=100")
+	bonus := flag.String("bonus", "", "extra stats on top of the gear, to see how the answers move with better itemization, e.g. AttackPower=400,Stamina=100 (weapon DPS too, like MainHandDps=2)")
 	printStats := flag.Bool("print-stats", false, "print the player's final stats and exit")
 	weights := flag.Bool("weights", false, "print stat weights for the starting knobs at the first fight length and exit")
 	talents := flag.String("talents", "", "override the player's talent string")
@@ -153,6 +153,15 @@ func main() {
 		}
 		for _, kv := range strings.Split(*bonus, ",") {
 			name, val, _ := strings.Cut(kv, "=")
+			v, _ := strconv.ParseFloat(val, 64)
+			// Weapon DPS is a pseudo stat, like MainHandDps.
+			if pseudo, ok := proto.PseudoStat_value["PseudoStat"+name]; ok {
+				for len(p.BonusStats.PseudoStats) < len(proto.PseudoStat_name) {
+					p.BonusStats.PseudoStats = append(p.BonusStats.PseudoStats, 0)
+				}
+				p.BonusStats.PseudoStats[pseudo] += v
+				continue
+			}
 			stat, ok := proto.Stat_value["Stat"+name]
 			if !ok {
 				fmt.Fprintf(os.Stderr, "unknown stat %q\n", name)
@@ -161,7 +170,6 @@ func main() {
 			for len(p.BonusStats.Stats) <= int(stat) {
 				p.BonusStats.Stats = append(p.BonusStats.Stats, 0)
 			}
-			v, _ := strconv.ParseFloat(val, 64)
 			p.BonusStats.Stats[stat] += v
 		}
 	}

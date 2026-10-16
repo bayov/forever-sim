@@ -38,9 +38,21 @@ We don't take the best item for each level. While leveling we gear up as we go:
   off hand.
 - **Start.** Level 1 starts in a white chest, legs and boots, with a white weapon.
 
-The stat weights are the spec's leveling stat weights preset closest to the level (the
-enhancement shaman has Level 30 Leveling only, so far), or the Current EP for a spec without
-one.
+The stat weights come from the leveling sim, by mobs killed in a session. The enhancement shaman
+has them at levels 10, 15, 20, 25 and 30 (the "Leveling Gear Plan" presets), measured on the
+plan's own gear at that level with that level's best rotation. Between two of those levels we
+blend them by level, and above 30 we keep the level 30 ones. A spec without them takes its
+"Leveling" presets, or the Current EP.
+
+Stamina, Intellect and MP5 move with the gear, because they decide how often we die. At level
+20, +10 Stamina was worth 2.29 a point on gear with little Intellect (0.19 deaths a session)
+and nothing on the gear those weights picked (more Intellect, 0.08 deaths). So each level's
+weights are the mean of three rounds of plan gear and probes. The final plan's gear kills as
+many mobs as the best round's or more at 15 to 30 (62.7 against 59.7 at 25), and 0.3 fewer at 10.
+
+The weights rate Intellect near Strength from level 15 (2.83 against 2 at 20), so the plan
+often wears cloth caster pieces like Robe of Evocation and Darkweave Breeches. Intellect
+shortens our rests and keeps us alive through the heals we cast.
 
 A plan is one random history from its seed, and Reroll plays out another. Each level and kind
 of slot rolls its own random numbers, so the same seed gives the same plan, and an item we add
@@ -64,7 +76,6 @@ leveling sim runs on it. The seed and our items are saved with the gear settings
   of Thanes is for is a guess too.
 - The dungeons' quest rewards aren't in: the item database doesn't say which quest belongs to
   which dungeon.
-- Leveling stat weights at more levels, so the plan judges low level items by their own
-  weights.
+- Leveling stat weights above level 30, once the beta goes past it.
 - The leveling sim can take the plan's gear at its own level directly, and average over many
   seeds, for the talent route.

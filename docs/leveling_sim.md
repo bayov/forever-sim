@@ -625,6 +625,9 @@ After the groundwork:
    - The BayovCore export (it was Pawn EP) writes the Current EP for BayovCore's Upgrades
      with its stat names, our level and talent tree, and Survival=own when the weights price
      Stamina or Armor, so Upgrades keeps them instead of its survival slider.
+   - The leveling gear plan's weights at levels 10 to 30 (the "Leveling Gear Plan" presets) are
+     probes of the plan's gear at each level, with each level's own rotation search. The
+     preset's comment says how they were measured.
 8. **Gear from 1 to 60** and the talent route search. The leveling gear plan
    (docs/leveling_gear.md, 2026-10-16) plays out how we gear up while leveling: random finds of
    about our level, mostly white and then green with a few blues, worn only when they beat
