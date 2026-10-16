@@ -152,7 +152,8 @@ func (shaman *Shaman) registerTotemicRecallSpell() {
 	})
 }
 
-// Totemic Projection (437009, level 22) moves every totem we have down to where we stand.
+// Totemic Projection (437009, level 22) moves every totem we have down to where we stand, each
+// as far from us and in the same direction as when we dropped it.
 // 25% of base mana, 1 min cooldown, 1.5 sec global cooldown. Totemic Focus discounts it (its
 // mask covers it, shaman_audit.md 8.36). The totems keep their time left.
 func (shaman *Shaman) registerTotemicProjectionSpell() {
@@ -183,10 +184,11 @@ func (shaman *Shaman) registerTotemicProjectionSpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+			// The totems keep their places around us.
 			here := sim.Encounter.LevelingPosition(sim)
 			for slot := range shaman.ActiveTotems {
 				if shaman.totemIsDown(sim, slot) {
-					shaman.totemPositions[slot] = here
+					shaman.setTotemPosition(sim, slot, shaman.ActiveTotems[slot], here.Add(shaman.totemOffsets[slot]))
 				}
 			}
 			shaman.checkTotemReach(sim)

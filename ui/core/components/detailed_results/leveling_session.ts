@@ -124,6 +124,13 @@ export interface ResourceSample {
 	value: number;
 }
 
+export interface TotemSpot {
+	t: number;
+	spellId: number;
+	x: number;
+	y: number;
+}
+
 export interface LevelingSession {
 	// Seconds, the session's length.
 	length: number;
@@ -135,6 +142,9 @@ export interface LevelingSession {
 	deaths: Array<{ t: number; backAt: number; pull: Pull | null }>;
 	// Our position. Empty for results simmed before the position lines.
 	player: Array<Motion>;
+	// Where each totem landed, a few yards from us, or moved to with Totemic Projection. Empty
+	// for results simmed before the totem position lines.
+	totemSpots: Array<TotemSpot>;
 	health: Array<ResourceSample>;
 	mana: Array<ResourceSample>;
 	stateAt(t: number): SessionState;
@@ -159,6 +169,7 @@ export function getLevelingSession(result: SimResult | null | undefined): Leveli
 }
 
 const reNow = /Leveling: now (\w+)/;
+const reTotemAt = /Leveling: \{SpellID: (\d+)[^}]*\} at \((-?[\d.]+), (-?[\d.]+)\)/;
 const reWe = /Leveling: we're at \((-?[\d.]+), (-?[\d.]+)\), moving \((-?[\d.]+), (-?[\d.]+)\)/;
 const reMobAt = /Leveling: (Target (\d+)) at \((-?[\d.]+), (-?[\d.]+)\), moving \((-?[\d.]+), (-?[\d.]+)\)/;
 const reFound = /Leveling: found (Target (\d+)) \(level (\d+)\) (\d+) yards away/;
@@ -180,6 +191,7 @@ function buildSession(result: SimResult): LevelingSession {
 	const alive = new Map<string, MobLife>();
 	const kills: Array<{ t: number; mob: MobLife }> = [];
 	const player: Array<Motion> = [];
+	const totemSpots: Array<TotemSpot> = [];
 	const health: Array<ResourceSample> = [];
 	const mana: Array<ResourceSample> = [];
 	const deathTimes: Array<number> = [];
@@ -247,6 +259,8 @@ function buildSession(result: SimResult): LevelingSession {
 			spans.push({ state: next, start: t, end: length });
 		} else if ((m = raw.match(reWe))) {
 			player.push({ t, x: +m[1], y: +m[2], vx: +m[3], vy: +m[4] });
+		} else if ((m = raw.match(reTotemAt))) {
+			totemSpots.push({ t, spellId: parseInt(m[1]), x: +m[2], y: +m[3] });
 		} else if ((m = raw.match(reMobAt))) {
 			const motion = { t, x: +m[3], y: +m[4], vx: +m[5], vy: +m[6] };
 			const mob = alive.get(m[1]);
@@ -399,6 +413,7 @@ function buildSession(result: SimResult): LevelingSession {
 		kills,
 		deaths,
 		player,
+		totemSpots,
 		health,
 		mana,
 		stateAt(t: number) {

@@ -486,6 +486,23 @@ func (encounter *Encounter) LevelingPosition(sim *Simulation) Vec2 {
 	return encounter.leveling.playerPosition(sim)
 }
 
+// A totem doesn't drop on our feet but somewhere around us, this many yards away.
+const (
+	levelingTotemDropMin = 1.5
+	levelingTotemDropMax = 3.5
+)
+
+// LevelingTotemOffset is where a totem we drop now lands, from where we stand: a few yards
+// away in a random direction. Outside a session totems stand on us, so it's zero.
+func (encounter *Encounter) LevelingTotemOffset(sim *Simulation) Vec2 {
+	if encounter.leveling == nil {
+		return Vec2{}
+	}
+	angle := 2 * math.Pi * sim.RandomFloat("Leveling Totem Drop Angle")
+	yards := levelingTotemDropMin + (levelingTotemDropMax-levelingTotemDropMin)*sim.RandomFloat("Leveling Totem Drop Distance")
+	return Vec2{yards * math.Cos(angle), yards * math.Sin(angle)}
+}
+
 // LevelingDistanceFrom is how far the mob is from a point (a totem), 0 outside a session.
 // A mob on us is where we are.
 func (encounter *Encounter) LevelingDistanceFrom(sim *Simulation, point Vec2, mob *Unit) float64 {
@@ -545,7 +562,7 @@ func (encounter *Encounter) LevelingMobsThisPull() int {
 func (encounter *Encounter) LevelingCanLookForMob() bool {
 	s := encounter.leveling
 	return s != nil && s.state == levelingCombat && s.found == nil && s.chainNext == nil && s.goal == goalNone &&
-		len(encounter.ActiveTargetUnits) < s.opts.maxPack
+		len(encounter.ActiveTargetUnits) > 0 && len(encounter.ActiveTargetUnits) < s.opts.maxPack
 }
 
 // LevelingLookForMob starts the rotation's search for another mob while fighting, running

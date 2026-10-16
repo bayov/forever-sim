@@ -250,6 +250,7 @@ type Shaman struct {
 	totemEnds        [4]func(sim *core.Simulation) // How to end each slot's totem when the next one comes down.
 	TotemExpirations [4]time.Duration              // The expiration time of each totem (earth, air, fire, water).
 	totemPositions   [4]core.Vec2                  // Where each totem stands in a leveling session (core.Encounter.LevelingPosition).
+	totemOffsets     [4]core.Vec2                  // Where each totem stands from where we dropped it (core.Encounter.LevelingTotemOffset).
 	totemReaches     [4]*totemReach                // How each totem's buff comes and goes with our distance (totem_reach.go).
 	totemCosts       [4]float64                    // The mana each totem cost, for Totemic Recall.
 
@@ -344,6 +345,7 @@ func (shaman *Shaman) Reset(_ *core.Simulation) {
 		shaman.TotemExpirations[i] = 0
 		shaman.totemEnds[i] = nil
 		shaman.totemPositions[i] = core.Vec2{}
+		shaman.totemOffsets[i] = core.Vec2{}
 		shaman.totemReaches[i] = nil
 		shaman.totemCosts[i] = 0
 	}

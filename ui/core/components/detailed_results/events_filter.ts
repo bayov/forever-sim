@@ -23,7 +23,7 @@ const defaultCategories: Array<EventCategory> = ['casts', 'damage', 'auras', 're
 
 // The leveling session's lines that only say where we are, how we move and which state we're
 // in. The replay's map and the session strip read them, but in the log they are noise.
-const levelingDebugLine = /Leveling: (we're at \(|now \w+$|Target \d+ at \()/;
+const levelingDebugLine = /Leveling: (we're at \(|now \w+$|Target \d+ at \(|\{[^}]*\} at \()/;
 
 // What the Events tab shows of an iteration. The timeline, the chart and the log all read the
 // same filter, so switching between them keeps what we narrowed down.

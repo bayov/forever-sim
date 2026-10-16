@@ -102,7 +102,7 @@ type levelingSession struct {
 	healthMetrics, reviveHealthMetrics *ResourceMetrics
 	drinkMetrics, reviveManaMetrics    *ResourceMetrics
 	// The food, water and bandage as spells of ours, with their auras (registerRestSpells).
-	foodSpell, drinkSpell, bandageSpell                     *Spell
+	foodSpell, drinkSpell, bandageSpell                    *Spell
 	foodAura, drinkAura, bandageAura, recentlyBandagedAura *Aura
 
 	// Sums over iterations, for LevelingMetrics.
@@ -287,7 +287,7 @@ func newLevelingSession(env *Environment, encounterProto *proto.Encounter) *leve
 
 	c := session.character
 	session.healthMetrics = c.NewHealthMetrics(ActionID{SpellID: 20577, Tag: 1}) // Health regen out of combat.
-	session.reviveHealthMetrics = c.NewHealthMetrics(ActionID{SpellID: 8326}) // Ghost
+	session.reviveHealthMetrics = c.NewHealthMetrics(ActionID{SpellID: 8326})    // Ghost
 	if c.HasManaBar() {
 		session.drinkMetrics = c.NewManaMetrics(ActionID{ItemID: session.drink.itemID})
 		session.reviveManaMetrics = c.NewManaMetrics(ActionID{SpellID: 8326})
@@ -430,9 +430,6 @@ func (s *levelingSession) onMobDeath(sim *Simulation, mob *Unit) {
 	if len(active) == 0 {
 		cancel(sim, &s.chainNext)
 		s.move(sim, goalNone, Vec2{}, 0, nil)
-		if sim.Log != nil {
-			s.player.Log(sim, "Leveling: out of combat")
-		}
 		// killTarget moved our target to the next living mob: the one we found, if there
 		// is one, still where it stands, out of reach of a swing.
 		if s.found != nil {
@@ -440,7 +437,10 @@ func (s *levelingSession) onMobDeath(sim *Simulation, mob *Unit) {
 		} else {
 			s.setPlayerDistance(sim, s.opts.foundMax)
 		}
-		s.outOfCombat(sim)
+		// Like in the game, we leave combat a second or two after the last mob dies. Until
+		// then we can't eat, drink or bandage, and get no out of combat regen.
+		delay := leaveCombatMin + DurationFromSeconds((leaveCombatMax-leaveCombatMin).Seconds()*sim.RandomFloat("Leveling Leave Combat"))
+		s.after(sim, &s.next, delay, s.leaveCombat)
 		return
 	}
 	// killTarget moved our target to the next living mob, which may be one we haven't
@@ -472,6 +472,24 @@ func (s *levelingSession) toPool(sim *Simulation, mob *Unit) {
 	if s.found == mob {
 		s.found = nil
 	}
+}
+
+// How long after the last mob dies we leave combat.
+const (
+	leaveCombatMin = time.Second
+	leaveCombatMax = 2 * time.Second
+)
+
+// leaveCombat: the last mob died a moment ago. When we pulled another one since, we're still
+// fighting it.
+func (s *levelingSession) leaveCombat(sim *Simulation) {
+	if s.state != levelingCombat || len(s.env.Encounter.ActiveTargetUnits) > 0 {
+		return
+	}
+	if sim.Log != nil {
+		s.player.Log(sim, "Leveling: out of combat")
+	}
+	s.outOfCombat(sim)
 }
 
 // outOfCombat: the pull is over, and the rotation decides what's next (ready).

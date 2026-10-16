@@ -46,11 +46,21 @@ func (shaman *Shaman) placeTotem(sim *core.Simulation, slot int, spell *core.Spe
 	shaman.TotemExpirations[slot] = sim.CurrentTime + duration
 	shaman.ActiveTotems[slot] = spell
 	shaman.totemEnds[slot] = end
-	shaman.totemPositions[slot] = sim.Encounter.LevelingPosition(sim)
+	shaman.totemOffsets[slot] = sim.Encounter.LevelingTotemOffset(sim)
+	shaman.setTotemPosition(sim, slot, spell, sim.Encounter.LevelingPosition(sim).Add(shaman.totemOffsets[slot]))
 	shaman.totemReaches[slot] = nil
 	shaman.totemCosts[slot] = spell.CurCast.Cost
 	if sim.Log != nil {
 		shaman.Log(sim, "%s down in the %s slot until %0.3f", spell.ActionID, totemSlotNames[slot], shaman.TotemExpirations[slot].Seconds())
+	}
+}
+
+// setTotemPosition puts the totem in the slot at a point, and logs it in a leveling session for
+// the replay's map.
+func (shaman *Shaman) setTotemPosition(sim *core.Simulation, slot int, spell *core.Spell, at core.Vec2) {
+	shaman.totemPositions[slot] = at
+	if sim.Log != nil && sim.Encounter.IsLeveling() {
+		shaman.Log(sim, "Leveling: %s at (%.2f, %.2f)", spell.ActionID, at.X, at.Y)
 	}
 }
 

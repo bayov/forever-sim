@@ -36,7 +36,7 @@ func logLines(t *testing.T, logs string, each func(at float64, line string)) {
 }
 
 // TestLevelingTotemReach: Strength of Earth Totem dropped as we start a search reaches us
-// for its 30 yards, so we lose its buff 30 / 7 sec into the run. Walking back to it with a
+// for its 30 yards, so we lose its buff about 30 / 7 sec into the run. Walking back to it with a
 // mob on us brings the buff back.
 func TestLevelingTotemReach(t *testing.T) {
 	rotation := rotationOf(healLine,
@@ -62,10 +62,11 @@ func TestLevelingTotemReach(t *testing.T) {
 		case soeFadedLine.MatchString(line) && inReach:
 			fades++
 			inReach = false
-			// Dropped as a search started, it's out of reach 30 yards into the run.
+			// Dropped as a search started, it's out of reach 30 yards from the totem, which lands
+			// 1.5 to 3.5 yards from us in any direction.
 			if castAt >= 0 && castAt >= searchAt && castAt-searchAt < 0.1 {
-				if d := at - castAt; d < 30.0/7-0.1 || d > 30.0/7+1.1 {
-					t.Errorf("at %.2f the buff faded %.2f sec after we dropped the totem and ran on, want %.2f to %.2f", at, d, 30.0/7, 30.0/7+1)
+				if d := at - castAt; d < 26.5/7-0.1 || d > 33.5/7+1.1 {
+					t.Errorf("at %.2f the buff faded %.2f sec after we dropped the totem and ran on, want %.2f to %.2f", at, d, 26.5/7, 33.5/7+1)
 				}
 			}
 			castAt = -1

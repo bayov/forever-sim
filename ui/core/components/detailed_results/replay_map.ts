@@ -78,7 +78,10 @@ interface PlacedTotem {
 	actionId: ActionId;
 	element: string;
 	start: number;
+	// When it stops standing here: it runs out or moves.
 	until: number;
+	// When it runs out, for its timer.
+	expires: number;
 	x: number;
 	y: number;
 }
@@ -212,20 +215,26 @@ export class ReplayMap {
 		this.focus = null;
 		if (!data) return;
 
-		// A totem stands where we were when we put it down, until it runs out or the next totem of
-		// its element takes its place.
+		// A totem stands where it landed, a few yards from us, until it runs out or the next totem
+		// of its element takes its place. Totemic Projection moves it, so it can have more spots.
+		// A result simmed before the sim logged the spots has the totem where we stood.
+		const spots = data.session.totemSpots;
 		this.totems = data.totems.flatMap(slot =>
-			slot.drops.map((drop, i) => {
+			slot.drops.flatMap((drop, i) => {
 				const next = slot.drops[i + 1];
+				const until = Math.min(drop.until, next ? next.start : Infinity);
+				const own = spots.filter(spot => spot.spellId == drop.actionId.spellId && spot.t >= drop.start - 0.005 && spot.t < until);
 				const at = positionAt(data.session.player, drop.start) ?? { x: 0, y: 0 };
-				return {
+				const places = own.length ? own : [{ t: drop.start, x: at.x, y: at.y }];
+				return places.map((place, j) => ({
 					actionId: drop.actionId,
 					element: slot.element,
-					start: drop.start,
-					until: Math.min(drop.until, next ? next.start : Infinity),
-					x: at.x,
-					y: at.y,
-				};
+					start: j == 0 ? drop.start : place.t,
+					until: j + 1 < places.length ? places[j + 1].t : until,
+					expires: until,
+					x: place.x,
+					y: place.y,
+				}));
 			}),
 		);
 
@@ -378,7 +387,7 @@ export class ReplayMap {
 			elem.classList.remove('hide');
 			const screen = toScreen(totem.x, totem.y);
 			place(elem, screen.x, screen.y);
-			const left = totem.until - time;
+			const left = totem.expires - time;
 			const text = elem.querySelector('.replay-map-totem-time')!;
 			const shown = Number.isFinite(left) && left < 600 ? (left < 10 ? left.toFixed(0) : formatClock(left)) : '';
 			if (text.textContent != shown) text.textContent = shown;
