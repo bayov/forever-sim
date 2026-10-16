@@ -4,15 +4,16 @@ Dashboard-only knobs read by run_assumptions.py: DASH_ASSUME="key=value,..." ove
 assumption scenarios vary (sim/core/assumptions.go). With the variable unset the sim is bit-identical.
 Each knob on a constant master sets (the rank scales, Ice Lance's coefficient, Rend's attack power share,
 the hunter's crit per Agility, Raptor Strike rank 8, the pet hit rule, the top Trueshot Aura and Hunter's
-Mark ranks) defaults to that constant, so a run with no knob reproduces master. Made against master
-67c157d2b with patches 0001 to 0003 applied.
+Mark ranks, the level partial resist, the damage taken Rage, Seal of Command's rate, the bleed tick crit, the Fire trap's attack power)
+defaults to that constant, so a run with no knob reproduces master. Made against master
+d9b3049aa with patches 0001 to 0003 applied.
 
 diff --git a/sim/core/assumptions.go b/sim/core/assumptions.go
 new file mode 100644
-index 000000000..2640dec7e
+index 000000000..8edf2869b
 --- /dev/null
 +++ b/sim/core/assumptions.go
-@@ -0,0 +1,52 @@
+@@ -0,0 +1,64 @@
 +package core
 +
 +import (
@@ -20,6 +21,8 @@ index 000000000..2640dec7e
 +	"strconv"
 +	"strings"
 +	"sync"
++
++	"github.com/wowsims/classic/sim/core/stats"
 +)
 +
 +// Dashboard-only assumption knobs (local dashdata tree, never pushed).
@@ -65,44 +68,32 @@ index 000000000..2640dec7e
 +// AssumeNoWindfury maps spell IDs to the knob that, when set to 0, keeps them from procing
 +// Windfury Totem. Classes fill it from package init only, so it is never written during a sim.
 +var AssumeNoWindfury = map[int32]string{}
++
++// tickCritMultiplier is a periodic tick's crit multiplier. DASH_ASSUME bleed_tick_crit scales a
++// physical tick crit's bonus: 0.5 makes a 200% bleed crit deal 150%.
++func (dot *Dot) tickCritMultiplier(attackTable *AttackTable) float64 {
++	critMultiplier := dot.Spell.CritMultiplier(attackTable)
++	if v, ok := AssumeOk("bleed_tick_crit"); ok && dot.Spell.SchoolIndex == stats.SchoolIndexPhysical {
++		critMultiplier = 1 + (critMultiplier-1)*v
++	}
++	return critMultiplier
++}
 diff --git a/sim/core/buffs.go b/sim/core/buffs.go
-index a554e3c72..87f9fd73b 100644
+index c45bcd8c7..218488495 100644
 --- a/sim/core/buffs.go
 +++ b/sim/core/buffs.go
-@@ -1673,6 +1673,9 @@ func TrueshotAura(unit *Unit) *Aura {
- 	meleeAP := 100.0
+@@ -1703,6 +1703,9 @@ func TrueshotAura(unit *Unit) *Aura {
  	if unit.Env.IsForever() {
  		rangedAP = bestLearnedRank(unit.Level, foreverTrueshotAuraLevel[:], foreverTrueshotAuraRAP[:])
-+		if unit.Level >= 60 {
-+			rangedAP = Assume("hunter_tsa60", rangedAP)
-+		}
  		meleeAP = 0
++		if unit.Level >= 60 {
++			rangedAP = Assume("hunter_tsa60", rangedAP) // dashboard assumption
++		}
  	}
  
-@@ -1924,6 +1927,11 @@ func CreateExtraAttackAuraCommon(character *Character, buffActionID ActionID, au
- 			if !result.Landed() || !spell.ProcMask.Matches(procMask) || spell.Flags.Matches(SpellFlagSuppressEquipProcs) {
- 				return
- 			}
-+			if key, ok := AssumeNoWindfury[spell.ActionID.SpellID]; ok {
-+				if v, set := AssumeOk(key); set && v == 0 {
-+					return
-+				}
-+			}
- 			if blocked != nil && blocked() {
- 				return
- 			}
-@@ -1974,6 +1982,9 @@ func WindfuryTotemBuffAura(character *Character, rank int32, label string) *Aura
- 	procMask := ProcMaskMeleeMH
- 	if character.Env.IsForever() {
- 		procMask = ProcMaskMelee
-+		if v, ok := AssumeOk("wf_totem_offhand"); ok && v == 0 {
-+			procMask = ProcMaskMeleeMH
-+		}
- 	}
- 	aura := CreateExtraAttackAuraCommon(character, buffActionID, label, rank, GetWindfuryAP, blocked, procMask)
- 	if character.Env.IsForever() {
+ 	aura := MakePermanent(unit.RegisterAura(Aura{
 diff --git a/sim/core/debuffs.go b/sim/core/debuffs.go
-index 2c48089de..88d6d2ec0 100644
+index 83f346dbf..1be52fe51 100644
 --- a/sim/core/debuffs.go
 +++ b/sim/core/debuffs.go
 @@ -215,6 +215,9 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
@@ -116,10 +107,10 @@ index 2c48089de..88d6d2ec0 100644
  		}
  	}
 diff --git a/sim/core/rage.go b/sim/core/rage.go
-index 3fa60ffec..1ce3cece3 100644
+index dd71a61ae..d3fff2dce 100644
 --- a/sim/core/rage.go
 +++ b/sim/core/rage.go
-@@ -65,7 +65,7 @@ func ForeverNormalizedRageLevelFactor(level int32) float64 {
+@@ -67,7 +67,7 @@ func ForeverNormalizedRageLevelFactor(level int32) float64 {
  	if level <= 30 {
  		return 1
  	}
@@ -128,15 +119,97 @@ index 3fa60ffec..1ce3cece3 100644
  }
  
  // ForeverNormalizedRage is the Rage a landed white hit with this weapon gives a character of this
-@@ -137,7 +137,7 @@ func (unit *Unit) EnableRageBar(options RageBarOptions) {
- 			if unit.rageBar.normalizedDealt {
- 				// Dodges and parries give the same Rage as a hit, as Classic's do.
- 				if spell.ProcMask == ProcMaskMeleeOHAuto {
--					generatedRage = ForeverNormalizedRage(unit.AutoAttacks.OH(), unit.Level) * ForeverNormalizedRageOffHand
-+					generatedRage = ForeverNormalizedRage(unit.AutoAttacks.OH(), unit.Level) * Assume("warr_rage_oh", ForeverNormalizedRageOffHand) // dashboard assumption
- 				} else {
- 					generatedRage = ForeverNormalizedRage(unit.AutoAttacks.MH(), unit.Level)
- 				}
+@@ -106,7 +106,8 @@ func ForeverDamageTakenRage(spell *Spell, result *SpellResult, level int32) floa
+ 	}
+ 	level = max(1, min(level, 60))
+ 	assumedArmor := 0.2 + 0.2*float64(level-1)/59
+-	return ForeverDamageTakenRageK * (1 - assumedArmor) * damage / NormalMobStatsAt(level).Health
++	// dashboard assumption warr_dt_rage_k
++	return Assume("warr_dt_rage_k", ForeverDamageTakenRageK) * (1 - assumedArmor) * damage / NormalMobStatsAt(level).Health
+ }
+ 
+ // foreverRageDamage is the damage ForeverDamageTakenRage counts for a hit.
+@@ -126,7 +127,7 @@ func foreverRageDamage(spell *Spell, result *SpellResult) float64 {
+ 	} else if result.DidCrush() {
+ 		damage *= 1.5
+ 	}
+-	switch ForeverDamageTakenRageMods {
++	switch int(Assume("warr_dt_rage_mods", float64(ForeverDamageTakenRageMods))) { // dashboard assumption
+ 	case ForeverDamageTakenRageModsAll:
+ 		damage *= spell.TargetDamageMultiplier(attackTable, false)
+ 	case ForeverDamageTakenRageModsIncreases:
+diff --git a/sim/core/spell_outcome.go b/sim/core/spell_outcome.go
+index 5acde3344..41b3f17fc 100644
+--- a/sim/core/spell_outcome.go
++++ b/sim/core/spell_outcome.go
+@@ -33,7 +33,7 @@ func (dot *Dot) OutcomeTick(sim *Simulation, result *SpellResult, attackTable *A
+ 
+ 	if dot.canCrit(sim) && dot.critCheck(sim, result.Target, attackTable) {
+ 		result.Outcome = OutcomeCrit
+-		result.Damage *= dot.Spell.CritMultiplier(attackTable)
++		result.Damage *= dot.tickCritMultiplier(attackTable)
+ 		dot.Spell.SpellMetrics[result.Target.UnitIndex].CritTicks++
+ 		if isPartialResist {
+ 			dot.Spell.SpellMetrics[result.Target.UnitIndex].ResistedCritTicks++
+@@ -66,7 +66,7 @@ func (dot *Dot) OutcomeTickPhysicalCrit(sim *Simulation, result *SpellResult, at
+ 
+ 	if dot.Spell.PhysicalCritCheck(sim, attackTable) {
+ 		result.Outcome = OutcomeCrit
+-		result.Damage *= dot.Spell.CritMultiplier(attackTable)
++		result.Damage *= dot.tickCritMultiplier(attackTable)
+ 		dot.Spell.SpellMetrics[result.Target.UnitIndex].CritTicks++
+ 		if isPartialResist {
+ 			dot.Spell.SpellMetrics[result.Target.UnitIndex].ResistedCritTicks++
+@@ -85,7 +85,7 @@ func (dot *Dot) OutcomeSnapshotCrit(sim *Simulation, result *SpellResult, attack
+ 
+ 	if sim.RandomFloat("Snapshot Crit Roll") < dot.SnapshotCritChance {
+ 		result.Outcome = OutcomeCrit
+-		result.Damage *= dot.Spell.CritMultiplier(attackTable)
++		result.Damage *= dot.tickCritMultiplier(attackTable)
+ 		dot.Spell.SpellMetrics[result.Target.UnitIndex].CritTicks++
+ 		if isPartialResist {
+ 			dot.Spell.SpellMetrics[result.Target.UnitIndex].ResistedCritTicks++
+@@ -105,7 +105,7 @@ func (dot *Dot) OutcomeMagicHitAndSnapshotCrit(sim *Simulation, result *SpellRes
+ 
+ 		if sim.RandomFloat("Snapshot Crit Roll") < dot.SnapshotCritChance {
+ 			result.Outcome = OutcomeCrit
+-			result.Damage *= dot.Spell.CritMultiplier(attackTable)
++			result.Damage *= dot.tickCritMultiplier(attackTable)
+ 			dot.Spell.SpellMetrics[result.Target.UnitIndex].CritTicks++
+ 			if isPartialResist {
+ 				dot.Spell.SpellMetrics[result.Target.UnitIndex].ResistedCritTicks++
+@@ -817,7 +817,7 @@ func (result *SpellResult) applyAttackTableCritSeparateRollSnapshot(sim *Simulat
+ 	if sim.RandomFloat("Physical Crit Roll") < dot.SnapshotCritChance {
+ 		isPartialResist := result.DidResist()
+ 		result.Outcome = OutcomeCrit
+-		result.Damage *= dot.Spell.CritMultiplier(attackTable)
++		result.Damage *= dot.tickCritMultiplier(attackTable)
+ 		if countHits {
+ 			dot.Spell.SpellMetrics[result.Target.UnitIndex].CritTicks++
+ 			if isPartialResist {
+@@ -993,7 +993,7 @@ func (spell *Spell) OutcomeExpectedMagicHitAndCrit(_ *Simulation, result *SpellR
+ 
+ func (dot *Dot) OutcomeExpectedMagicSnapshotCrit(_ *Simulation, result *SpellResult, attackTable *AttackTable) {
+ 	averageMultiplier := 1.0
+-	averageMultiplier += dot.SnapshotCritChance * (dot.Spell.CritMultiplier(attackTable) - 1)
++	averageMultiplier += dot.SnapshotCritChance * (dot.tickCritMultiplier(attackTable) - 1)
+ 
+ 	result.Damage *= averageMultiplier
+ }
+diff --git a/sim/core/spell_resistances.go b/sim/core/spell_resistances.go
+index 5e1b39f62..47b04a0ba 100644
+--- a/sim/core/spell_resistances.go
++++ b/sim/core/spell_resistances.go
+@@ -164,7 +164,8 @@ func (unit *Unit) resistCoeff(spell *Spell, attacker *Unit, binary bool, pureDot
+ 	}
+ 
+ 	if !binary && unit.Type == EnemyUnit && unit.Level > attacker.Level {
+-		avgMitigationAdded := AverageMagicPartialResistPerLevelMultiplier * float64(unit.Level-attacker.Level)
++		// dashboard assumption level_partial_resist
++		avgMitigationAdded := Assume("level_partial_resist", AverageMagicPartialResistPerLevelMultiplier) * float64(unit.Level-attacker.Level)
+ 		// coef is scaled 0 to 1, not 0 to 0.75
+ 		resistanceCoef += avgMitigationAdded * 1 / 0.75
+ 	}
 diff --git a/sim/druid/rip.go b/sim/druid/rip.go
 index 4d285552c..0abb1d23f 100644
 --- a/sim/druid/rip.go
@@ -154,22 +227,8 @@ index 4d285552c..0abb1d23f 100644
  				// AP scaling is 6% per combo point from 1 to 4, and 24% again for 5
  				tickDamage := baseDamage + 0.01*cpScaling*dot.Spell.MeleeAttackPower(target)
  				dot.Snapshot(target, tickDamage, isRollover)
-diff --git a/sim/druid/shred.go b/sim/druid/shred.go
-index d66d72a76..007e47547 100644
---- a/sim/druid/shred.go
-+++ b/sim/druid/shred.go
-@@ -22,6 +22,9 @@ func (druid *Druid) registerShredSpell() {
- 		return
- 	}
- 	flatDamageBonus := ShredFlatDamage[rank]
-+	if v, ok := core.AssumeOk("druid_shred_extra"); ok {
-+		flatDamageBonus = v / ShredWeaponMultiplier // dashboard assumption: the extra damage a Shred adds after the 155%
-+	}
- 
- 	druid.Shred = druid.RegisterSpell(Cat, core.SpellConfig{
- 		SpellCode:   SpellCode_DruidShred,
 diff --git a/sim/druid/talents.go b/sim/druid/talents.go
-index c11180e8b..3ac8fd190 100644
+index aca7cb621..188044b1c 100644
 --- a/sim/druid/talents.go
 +++ b/sim/druid/talents.go
 @@ -421,7 +421,13 @@ func (druid *Druid) applyOmenOfClarity() {
@@ -201,7 +260,7 @@ index c11180e8b..3ac8fd190 100644
  					chance *= 2
  				}
 diff --git a/sim/druid/wrath.go b/sim/druid/wrath.go
-index 869edc63c..1bd3e9b14 100644
+index a1dfe7401..3fac37812 100644
 --- a/sim/druid/wrath.go
 +++ b/sim/druid/wrath.go
 @@ -43,8 +43,9 @@ func WrathBaseDamageAt(rank int, level int32) (float64, float64) {
@@ -217,10 +276,10 @@ index 869edc63c..1bd3e9b14 100644
  	return low, high
  }
 diff --git a/sim/hunter/hunter.go b/sim/hunter/hunter.go
-index 6ad0e3529..bf8229c81 100644
+index 29147977f..5af6bf371 100644
 --- a/sim/hunter/hunter.go
 +++ b/sim/hunter/hunter.go
-@@ -157,7 +157,7 @@ func (hunter *Hunter) Initialize() {
+@@ -162,7 +162,7 @@ func (hunter *Hunter) Initialize() {
  	if hunter.Env.IsForever() {
  		// The stat dependencies add up, so this tops Classic's crit per Agility (NewHunter) up to
  		// Forever's.
@@ -229,8 +288,21 @@ index 6ad0e3529..bf8229c81 100644
  		// Forever's Auto Shot keeps firing while the hunter casts Aimed Shot, Multi-Shot or Sniper Shot
  		// (the forever-hunter wiki's beta testing, "Auto Shot can fire while the Hunter is casting
  		// another spell with a cast time"). So it takes no aiming time of its own that a cast could
+diff --git a/sim/hunter/immolation_trap.go b/sim/hunter/immolation_trap.go
+index df2572b8c..c569a9628 100644
+--- a/sim/hunter/immolation_trap.go
++++ b/sim/hunter/immolation_trap.go
+@@ -66,7 +66,7 @@ func (hunter *Hunter) getImmolationTrapConfig(rank int, timer *core.Timer) core.
+ 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+ 				tickDamage := dotDamage / float64(dot.NumberOfTicks)
+ 				if sim.IsForever() {
+-					tickDamage += ImmolationTrapRAPPerTick * dot.Spell.RangedAttackPower(target, false)
++					tickDamage += core.Assume("hunter_trap_ap", ImmolationTrapRAPPerTick) * dot.Spell.RangedAttackPower(target, false) // dashboard assumption
+ 				}
+ 				dot.Snapshot(target, tickDamage, isRollover)
+ 			},
 diff --git a/sim/hunter/pet.go b/sim/hunter/pet.go
-index 3293767c1..f6f1101c7 100644
+index 1863f08f6..22f5fd40f 100644
 --- a/sim/hunter/pet.go
 +++ b/sim/hunter/pet.go
 @@ -152,7 +152,11 @@ func (hp *HunterPet) applyForeverRules() {
@@ -292,7 +364,7 @@ index 695855682..f68f3da3a 100644
  	return low, high
  }
 diff --git a/sim/mage/ice_lance.go b/sim/mage/ice_lance.go
-index b8995228c..1d8321ac7 100644
+index a111a9c02..d232576db 100644
 --- a/sim/mage/ice_lance.go
 +++ b/sim/mage/ice_lance.go
 @@ -68,7 +68,7 @@ func (mage *Mage) newIceLanceSpellConfig(rank int) core.SpellConfig {
@@ -322,66 +394,48 @@ index 000000000..2088f47dc
 +	}
 +}
 diff --git a/sim/paladin/consecration.go b/sim/paladin/consecration.go
-index 2efef73a3..1ba9d7c54 100644
+index e68aed5d4..f00e3712f 100644
 --- a/sim/paladin/consecration.go
 +++ b/sim/paladin/consecration.go
-@@ -45,6 +45,10 @@ func (paladin *Paladin) registerConsecration() {
+@@ -46,6 +46,9 @@ func (paladin *Paladin) registerConsecration() {
  		if paladin.Env.IsForever() {
  			tickDamage = (rank.foreverAll + rank.foreverExtra) / 8
- 			tickCoefficient = 0.095
+ 			tickCoefficient = 0.042 // client 70425 (spells 1280345-1280353; 0.095 in 70338)
 +			if v, ok := core.AssumeOk("pal_cons31"); ok && rank.level >= 40 {
 +				tickDamage *= v // dashboard assumption: the 31+ ranks held to the level 30 trend
 +			}
-+			tickCoefficient = core.Assume("pal_consecration_coef", tickCoefficient)
  		}
  
  		paladin.RegisterSpell(core.SpellConfig{
 diff --git a/sim/paladin/holy_strike.go b/sim/paladin/holy_strike.go
-index 351c3edc7..bcd9491ea 100644
+index 351c3edc7..ffbaf90a4 100644
 --- a/sim/paladin/holy_strike.go
 +++ b/sim/paladin/holy_strike.go
-@@ -67,6 +67,18 @@ func (paladin *Paladin) registerHolyStrike() {
+@@ -67,6 +67,9 @@ func (paladin *Paladin) registerHolyStrike() {
  			break
  		}
  		holy := rank.holy + rank.scale*float64(min(paladin.Level, rank.scaleLevel)-rank.level)
 +		if v, ok := core.AssumeOk("pal_hs_flat31"); ok && rank.level >= 36 {
 +			holy *= v // dashboard assumption: the 31+ ranks' flat part held to the level 30 trend
 +		}
-+		// dashboard assumption: the flat part (and its spell power) after the weapon percent
-+		flatAfter := false
-+		if v, ok := core.AssumeOk("flat_bonus_inside_pct"); ok && v == 0 {
-+			flatAfter = true
-+		}
-+		bonusCoef := 0.429 * rank.weaponPercent
-+		if flatAfter {
-+			bonusCoef = 0.429
-+		}
  
  		paladin.RegisterSpell(core.SpellConfig{
  			ActionID:    core.ActionID{SpellID: rank.spellID},
-@@ -96,11 +108,15 @@ func (paladin *Paladin) registerHolyStrike() {
- 			ThreatMultiplier: threatMultiplier,
- 			// The flat part's 42.9% goes through the weapon percent too.
- 			BonusHitRating:   paladin.divinePrecisionHitRating(core.MeleeHitRatingPerHitChance),
--			BonusCoefficient: 0.429 * rank.weaponPercent,
-+			BonusCoefficient: bonusCoef,
- 
- 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
- 				flat := holy * (0.875 + 0.25*sim.RandomFloat("Holy Strike"))
--				baseDamage := rank.weaponPercent * (paladin.holyStrikeWeaponDamage(sim, spell.MeleeAttackPower(target)) + flat)
-+				weapon := paladin.holyStrikeWeaponDamage(sim, spell.MeleeAttackPower(target))
-+				baseDamage := rank.weaponPercent * (weapon + flat)
-+				if flatAfter {
-+					baseDamage = rank.weaponPercent*weapon + flat
-+				}
- 				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
- 			},
- 		})
 diff --git a/sim/paladin/soc.go b/sim/paladin/soc.go
-index 3cae7d4c2..232b951ec 100644
+index b1c7f5727..37ebf78ac 100644
 --- a/sim/paladin/soc.go
 +++ b/sim/paladin/soc.go
-@@ -79,7 +79,7 @@ func (paladin *Paladin) registerSealOfCommand() {
+@@ -59,7 +59,8 @@ func (paladin *Paladin) registerSealOfCommand() {
+ 		{level: 60, spellID: 20920, manaCost: 210, scaleLevel: 60, proc: proc{spellID: 20947}, judge: judge{spellID: 20966, minDamage: 339, maxDamage: 373, scale: 6.1}},
+ 	}
+ 
+-	ppmm := paladin.AutoAttacks.NewPPMManager(SealOfCommandPPM, core.ProcMaskMelee)
++	// dashboard assumption pal_soc_ppm
++	ppmm := paladin.AutoAttacks.NewPPMManager(core.Assume("pal_soc_ppm", SealOfCommandPPM), core.ProcMaskMelee)
+ 	improvedSeals := paladin.improvedSeals()
+ 
+ 	icd := core.Cooldown{
+@@ -85,7 +86,7 @@ func (paladin *Paladin) registerSealOfCommand() {
  			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
  
  			BonusCritRating:  paladin.holyPowerCrit(),
@@ -390,7 +444,7 @@ index 3cae7d4c2..232b951ec 100644
  			ThreatMultiplier: 1,
  			BonusCoefficient: 0.429,
  
-@@ -106,7 +106,7 @@ func (paladin *Paladin) registerSealOfCommand() {
+@@ -112,7 +113,7 @@ func (paladin *Paladin) registerSealOfCommand() {
  			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNotAProc,
  
  			BonusCritRating:  paladin.holyPowerCrit(),
@@ -399,62 +453,11 @@ index 3cae7d4c2..232b951ec 100644
  			ThreatMultiplier: 1,
  
  			BonusCoefficient: 0.29,
-diff --git a/sim/paladin/sor.go b/sim/paladin/sor.go
-index fe71ec365..bcbc16540 100644
---- a/sim/paladin/sor.go
-+++ b/sim/paladin/sor.go
-@@ -107,10 +107,26 @@ func (paladin *Paladin) registerSealOfRighteousness() {
- 			coeff = 0.1
- 		}
- 		damage := value * 0.85 * paladin.MainHand().SwingSpeed
-+		// dashboard assumption: the proc's spell power counted once, with no two-hander factor
-+		sorOnce := false
-+		if v, ok := core.AssumeOk("pal_sor_sp_double"); ok && v == 0 {
-+			sorOnce = true
-+		}
- 		if paladin.has2hEquipped() {
--			coeff *= 1.1 // from testing in SoD
-+			if !sorOnce {
-+				coeff *= 1.1 // from testing in SoD
-+			}
- 			damage = value * 1.2 * paladin.MainHand().SwingSpeed
- 		}
-+		if v, ok := core.AssumeOk("pal_sor_sp_speed"); ok && v != 0 {
-+			// dashboard assumption: the proc's spell power grows with weapon speed (TBC-like), the flat
-+			// value at a 3.6 sec two-hander or a 2.4 sec one-hander
-+			norm := 2.4
-+			if paladin.has2hEquipped() {
-+				norm = 3.6
-+			}
-+			coeff *= paladin.MainHand().SwingSpeed / norm
-+		}
- 
- 		procSpell := paladin.RegisterSpell(core.SpellConfig{
- 			ActionID:    core.ActionID{SpellID: rank.proc.spellID},
-@@ -121,7 +137,7 @@ func (paladin *Paladin) registerSealOfRighteousness() {
- 
- 			BonusCritRating: paladin.holyPowerCrit(),
- 
--			DamageMultiplier: paladin.getWeaponSpecializationModifier() * improvedSoR,
-+			DamageMultiplier: paladin.holySealWeaponSpec() * improvedSoR,
- 			ThreatMultiplier: 1,
- 
- 			BonusCoefficient: coeff,
-@@ -129,6 +145,9 @@ func (paladin *Paladin) registerSealOfRighteousness() {
- 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
- 				// effectively scales with coeff x 2, and damage dealt multipliers affect half the damage taken bonus
- 				baseDamage := damage + spell.BonusCoefficient*(spell.GetBonusDamage(target)+target.GetSchoolBonusDamageTaken(spell))
-+				if sorOnce {
-+					baseDamage = damage
-+				}
- 				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialCritOnly)
- 			},
- 		})
 diff --git a/sim/paladin/talents.go b/sim/paladin/talents.go
-index 79f54eda9..363f1d9dd 100644
+index 5df47aee8..d10d70042 100644
 --- a/sim/paladin/talents.go
 +++ b/sim/paladin/talents.go
-@@ -225,6 +225,15 @@ func (paladin *Paladin) applyShieldSpecializationMana() {
+@@ -238,6 +238,15 @@ func (paladin *Paladin) applyShieldSpecializationMana() {
  // and 2/4/6% for two handers (3/6/9% before the 2026-09-24 beta build), and they scale
  // everything physical the weapon deals,
  // plus the seal procs and judgements that roll as melee.
@@ -471,7 +474,7 @@ index 79f54eda9..363f1d9dd 100644
  	handType := paladin.MainHand().HandType
  	if handType == proto.HandType_HandTypeMainHand || handType == proto.HandType_HandTypeOneHand {
 diff --git a/sim/priest/smite.go b/sim/priest/smite.go
-index 1c93f8af3..3ae86462a 100644
+index 3634ec634..92951180c 100644
 --- a/sim/priest/smite.go
 +++ b/sim/priest/smite.go
 @@ -41,8 +41,9 @@ func SmiteBaseDamageAt(rank int, level int32) (float64, float64) {
@@ -487,10 +490,10 @@ index 1c93f8af3..3ae86462a 100644
  	return low, high
  }
 diff --git a/sim/priest/talents.go b/sim/priest/talents.go
-index c014141e3..b7728561c 100644
+index d2724da27..0bcd523d0 100644
 --- a/sim/priest/talents.go
 +++ b/sim/priest/talents.go
-@@ -349,6 +349,13 @@ func (priest *Priest) registerShadowform() {
+@@ -381,6 +381,13 @@ func (priest *Priest) registerShadowform() {
  	costSpell := func(spell *core.Spell) bool {
  		return spell.Cost != nil && spell.Flags.Matches(SpellFlagPriest) && spell.SpellSchool.Matches(core.SpellSchoolShadow)
  	}
@@ -504,7 +507,7 @@ index c014141e3..b7728561c 100644
  
  	priest.ShadowformAura = priest.RegisterAura(core.Aura{
  		Label:    "Shadowform",
-@@ -359,7 +366,7 @@ func (priest *Priest) registerShadowform() {
+@@ -391,7 +398,7 @@ func (priest *Priest) registerShadowform() {
  			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexPhysical] *= 0.85
  			for _, spell := range priest.Spellbook {
  				if critSpell(spell) {
@@ -513,7 +516,7 @@ index c014141e3..b7728561c 100644
  				}
  				if costSpell(spell) {
  					spell.Cost.Factor *= 0.5
-@@ -371,7 +378,7 @@ func (priest *Priest) registerShadowform() {
+@@ -403,7 +410,7 @@ func (priest *Priest) registerShadowform() {
  			aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[stats.SchoolIndexPhysical] /= 0.85
  			for _, spell := range priest.Spellbook {
  				if critSpell(spell) {
@@ -522,50 +525,8 @@ index c014141e3..b7728561c 100644
  				}
  				if costSpell(spell) {
  					spell.Cost.Factor /= 0.5
-diff --git a/sim/rogue/ambush.go b/sim/rogue/ambush.go
-index b84373a56..e5aa65f5a 100644
---- a/sim/rogue/ambush.go
-+++ b/sim/rogue/ambush.go
-@@ -18,6 +18,9 @@ func (rogue *Rogue) registerAmbushSpell() {
- 		18: 8676, 26: 8724, 34: 8725, 42: 11267, 50: 11268, 58: 11269,
- 	})
- 
-+	if v, ok := core.AssumeOk("flat_bonus_inside_pct"); ok && v == 0 {
-+		flatDamageBonus /= 2.5 // dashboard assumption: the tooltip's flat part after the 250%
-+	}
- 	damageMultiplier := 2.5 * []float64{1, 1.05, 1.1}[rogue.Talents.Opportunity]
- 
- 	rogue.Ambush = rogue.RegisterSpell(core.SpellConfig{
-diff --git a/sim/rogue/backstab.go b/sim/rogue/backstab.go
-index ea7911938..c5fa8d0ee 100644
---- a/sim/rogue/backstab.go
-+++ b/sim/rogue/backstab.go
-@@ -21,6 +21,9 @@ func (rogue *Rogue) registerBackstabSpell() {
- 	})
- 	core.RegisterSpellRanks(11281, 25300)
- 
-+	if v, ok := core.AssumeOk("flat_bonus_inside_pct"); ok && v == 0 {
-+		flatDamageBonus /= 1.5 // dashboard assumption: the tooltip's flat part after the 150%
-+	}
- 	damageMultiplier := 1.5 *
- 		[]float64{1, 1.05, 1.1}[rogue.Talents.Opportunity] *
- 		[]float64{1, 1.02, 1.04, 1.06}[rogue.Talents.Aggression]
-diff --git a/sim/rogue/mutilate.go b/sim/rogue/mutilate.go
-index 44ddbfd57..931346af4 100644
---- a/sim/rogue/mutilate.go
-+++ b/sim/rogue/mutilate.go
-@@ -13,6 +13,9 @@ func (rogue *Rogue) registerMutilateSpell() {
- 		return
- 	}
- 	flatDamage := rankAt(rogue.Level, map[int32]float64{1: 17.25, 40: 24.75, 50: 36, 60: 50.25})
-+	if v, ok := core.AssumeOk("flat_bonus_inside_pct"); ok && v == 0 {
-+		flatDamage /= 0.75 // dashboard assumption: the client's flat part added after the 75%
-+	}
- 
- 	rogue.mutilateOH = rogue.RegisterSpell(core.SpellConfig{
- 		ActionID:    MutilateActionID.WithTag(2),
 diff --git a/sim/shaman/earth_shock.go b/sim/shaman/earth_shock.go
-index 51c77d679..c05d5e91d 100644
+index ae2cf63fa..ba6ba6adf 100644
 --- a/sim/shaman/earth_shock.go
 +++ b/sim/shaman/earth_shock.go
 @@ -42,8 +42,9 @@ func EarthShockBaseDamageAt(rank int, level int32) (float64, float64) {
@@ -581,7 +542,7 @@ index 51c77d679..c05d5e91d 100644
  	return low, high
  }
 diff --git a/sim/shaman/lightning_bolt.go b/sim/shaman/lightning_bolt.go
-index 58d686957..4e5805b35 100644
+index 86ba71779..ff2f1caaf 100644
 --- a/sim/shaman/lightning_bolt.go
 +++ b/sim/shaman/lightning_bolt.go
 @@ -56,8 +56,9 @@ func LightningBoltBaseDamageAt(rank int, level int32) (float64, float64) {
@@ -597,10 +558,10 @@ index 58d686957..4e5805b35 100644
  	return low, high
  }
 diff --git a/sim/shaman/talents.go b/sim/shaman/talents.go
-index 8c2612ba8..b7c3953ca 100644
+index 7fb7b5cf2..f3bcb4c04 100644
 --- a/sim/shaman/talents.go
 +++ b/sim/shaman/talents.go
-@@ -530,7 +530,11 @@ func (shaman *Shaman) applyMaelstromWeapon() {
+@@ -536,7 +536,11 @@ func (shaman *Shaman) applyMaelstromWeapon() {
  
  	// TODO: The tooltip has no proc rate, beta testing will have to measure it.
  	// 2 PPM per point puts 5/5 at a full stack roughly every 30 sec.
@@ -646,11 +607,11 @@ index 87211cd1c..1c25959e2 100644
  			result := spell.CalcDamage(sim, target, sim.Roll(damageLow, damageHigh), spell.OutcomeMagicHitAndCrit)
  			spell.DamageMultiplier /= multiplier
 diff --git a/sim/warlock/pet.go b/sim/warlock/pet.go
-index acae7765e..3cfe37f32 100644
+index 76c4bbef8..c32e5342c 100644
 --- a/sim/warlock/pet.go
 +++ b/sim/warlock/pet.go
-@@ -218,6 +218,20 @@ func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {
- 		ownerHitChance := ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance
+@@ -221,6 +221,20 @@ func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {
+ 		ownerCritChance := ownerStats[stats.SpellCrit] / core.SpellCritRatingPerCritChance
  		highestSchoolPower := ownerStats[stats.SpellPower] + ownerStats[stats.SpellDamage] + max(ownerStats[stats.FirePower], ownerStats[stats.ShadowPower])
  
 +		if v, ok := core.AssumeOk("lock_pet_scaling"); ok {
@@ -698,16 +659,3 @@ index 1352185d2..68c2b4645 100644
  					return
  				}
  				dot.Snapshot(target, baseDamage, isRollover)
-diff --git a/sim/warrior/warrior.go b/sim/warrior/warrior.go
-index 53a2e89e8..70b0dcb85 100644
---- a/sim/warrior/warrior.go
-+++ b/sim/warrior/warrior.go
-@@ -176,7 +176,7 @@ func (warrior *Warrior) Initialize() {
- 	// Rage from white hits is normalized to the weapon's speed (standards 21, see
- 	// core.ForeverNormalizedRage).
- 	if warrior.Env.IsForever() {
--		warrior.AddCritDealtRageMultiplier(2)
-+		warrior.AddCritDealtRageMultiplier(core.Assume("warr_crit_rage", 2)) // dashboard assumption
- 		warrior.EnableForeverNormalizedRage()
- 	}
- 
