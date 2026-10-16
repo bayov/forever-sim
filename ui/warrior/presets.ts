@@ -123,8 +123,8 @@ export const APLNoReck = PresetUtils.makePresetAPLRotation('DPS (No Reck)', APLN
 // The tools/rotopt search (template warrior_fury, see warrior_presets.sh) on the Level 60 Fury
 // talents and set, 180 sec, with Forever's normalized Rage (standards 21: a white hit gives 3.46 Rage
 // a second of weapon speed at level 30, ×1.5 at 60 with s = 0.5): Whirlwind with 25 Rage, then
-// Bloodthirst, Execute after them in the execute phase, Heroic Strike queued from 50 Rage (40 before
-// the off hand's Rage was halved, 2026-10-16), and Hamstring as a filler from 10 Rage (its hits proc
+// Bloodthirst, Execute after them in the execute phase, Heroic Strike queued from 55 Rage (40 before
+// the off hand's Rage was halved, 50 before pass 23, 2026-10-16), and Hamstring as a filler from 10 Rage (its hits proc
 // Windfury Totem's extra attacks and Flurry).
 // Death Wish goes on cooldown and Recklessness at the pull with the other cooldowns: holding them
 // for the execute phase, where Execute spends all the Rage, lost 14 at 180 sec with flat Rage. Bloodrage under 40
@@ -496,6 +496,12 @@ export const EncounterLevel60Dragonkin = PresetUtils.makePresetEncounter(
 // Shout duty 998.2 / 968.1 / 951.4 to 1016.2 / 984.0 / 965.6. Two-hand Fury, unchanged at 1007.8 /
 // 969.6 / 944.9, stays behind. Orc is still the best race (5.7 ahead of High Order Skyborne, the
 // best Alliance race now, at 180 sec on two seed sets).
+// The rotation auditor's pass 23 (2026-10-16): Recklessness gets its own line while Death Wish is
+// up, just ahead of the other cooldowns line, so the trinket goes one GCD after it instead of in the
+// same pass (+1.2 / +1.0 / +0.6 on Fury, +1.1 / +1.0 / +0.7 on the Battle Shout duty at 120 / 180 /
+// 300 sec, on two seed sets). With it, Heroic Strike from 55 Rage beats 50 on both seed sets at
+// every length (+1.4 to +2.1 on Fury; the duty +0.7 / +1.1 at 180 sec). Fury 1018.1 / 986.5 /
+// 967.4 to 1020.8 / 989.0 / 970.0, the duty 1015.5 / 983.5 / 964.6 to 1018.1 / 985.2 / 967.3.
 export const PresetBuildLevel60Fury = PresetUtils.makePresetBuild('Level 60 Fury', {
 	group: 'Level 60',
 	tooltip: 'Level 60 dual wield Fury on the synthetic Phase 1 gear, in a 3 minute raid fight.',

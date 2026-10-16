@@ -52,7 +52,7 @@ func (warriorFury) Build(k Knobs) *proto.APLRotation {
 		)
 	}
 
-	executeLine := cast(execute, nil, "Execute in the execute phase.")
+	executeLine := cast(execute, nil, "")
 	if k["executeFirst"] == 1 {
 		items = append(items, executeLine)
 	}
@@ -60,15 +60,15 @@ func (warriorFury) Build(k Knobs) *proto.APLRotation {
 	if k["wwBtGap"] > 0 {
 		wwWhen = and(wwWhen, ge(spellTimeToReady(bloodthirst), seconds(k["wwBtGap"])))
 	}
-	bt := cast(bloodthirst, nil, "Bloodthirst on cooldown.")
-	ww := cast(whirlwind, wwWhen, "Whirlwind on cooldown with the Rage for it.")
+	bt := cast(bloodthirst, nil, "")
+	ww := cast(whirlwind, wwWhen, "")
 	afterSwing := k["slamRage"] > 0 && k["slamAfterSwing"] == 1
 	if afterSwing {
 		slamNow := cast(slam, and(
 			ge(currentRage(), num(k["slamRage"])),
 			not(executePhase()),
 			ge(mainHandTimeToNext(), sub(mainHandSwingTime(), seconds(0.5))),
-		), "Slam right after a main hand swing, so its cast costs little swing time.")
+		), "Its cast then costs little swing time.")
 		if k["wwFirst"] == 1 {
 			items = append(items, slamNow, ww, bt)
 		} else {
@@ -83,7 +83,7 @@ func (warriorFury) Build(k Knobs) *proto.APLRotation {
 		items = append(items, executeLine)
 	}
 	if k["slamRage"] > 0 && !afterSwing {
-		items = append(items, cast(slam, and(ge(currentRage(), num(k["slamRage"])), not(executePhase())), "Slam on cooldown with Rage to spare."))
+		items = append(items, cast(slam, and(ge(currentRage(), num(k["slamRage"])), not(executePhase())), ""))
 	}
 	var gap value
 	if k["fillerGap"] > 0 {
@@ -95,9 +95,9 @@ func (warriorFury) Build(k Knobs) *proto.APLRotation {
 	}
 	items = append(items, hs)
 	if k["hamstringRage"] > 0 {
-		items = append(items, cast(hamstring, and(ge(currentRage(), num(k["hamstringRage"])), not(executePhase()), gap), "Hamstring with Rage to spare, for the procs."))
+		items = append(items, cast(hamstring, and(ge(currentRage(), num(k["hamstringRage"])), not(executePhase()), gap), "For the procs."))
 	}
-	items = append(items, cast(berserkerStance, not(auraIsActive(berserkerStance)), "Back to Berserker Stance."))
+	items = append(items, cast(berserkerStance, not(auraIsActive(berserkerStance)), ""))
 	rot := warriorOpener(rotation(items...))
 	rot.PrepullActions = append(rot.PrepullActions, warriorShoutPrepull(k)...)
 	return rot

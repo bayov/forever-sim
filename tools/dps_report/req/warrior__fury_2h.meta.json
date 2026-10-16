@@ -41,8 +41,8 @@
     "Death Wish held for the last 36s, Recklessness for the last 30s",
     "Blood Fury and Berserking held for the last 30s, Elune's Light with Death Wish; Mighty Rage Potion at the pull, second held for the last 20s",
     "Bloodrage under 20 Rage",
-    "Execute first in the execute phase",
     "Bloodthirst, then Slam from 30 Rage right after a main hand swing, then Whirlwind at 25+ Rage",
+    "Execute in the execute phase, after Bloodthirst and Whirlwind (Execute first loses 4.7 on Fury and 22.7 on two-hand Fury)",
     "Heroic Strike queued from 85 Rage (outside execute)",
     "Hamstring filler from 20 Rage"
   ],

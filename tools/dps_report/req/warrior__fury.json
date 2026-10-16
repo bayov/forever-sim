@@ -359,7 +359,6 @@
                   }
                 },
                 {
-                  
                   "action":  {
                     "condition":  {
                       "or":  {
@@ -442,7 +441,6 @@
                   }
                 },
                 {
-                  
                   "action":  {
                     "condition":  {
                       "cmp":  {
@@ -515,6 +513,33 @@
                     "castSpell":  {
                       "spellId":  {
                         "itemId":  4395
+                      }
+                    }
+                  }
+                },
+                {
+                  "action":  {
+                    "condition":  {
+                      "and":  {
+                        "vals":  [
+                          {
+                            "auraIsActive":  {
+                              "auraId":  {
+                                "spellId":  12328
+                              }
+                            }
+                          },
+                          {
+                            "sequenceIsComplete":  {
+                              "sequenceName":  "sunder"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  1719
                       }
                     }
                   }
@@ -601,7 +626,6 @@
                   }
                 },
                 {
-                  
                   "action":  {
                     "condition":  {
                       "and":  {
@@ -614,7 +638,7 @@
                               },
                               "rhs":  {
                                 "const":  {
-                                  "val":  "50"
+                                  "val":  "55"
                                 }
                               }
                             }
@@ -691,7 +715,6 @@
                   }
                 },
                 {
-                  
                   "action":  {
                     "condition":  {
                       "not":  {
