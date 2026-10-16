@@ -465,7 +465,7 @@ export const EncounterLevel60ScorpidDuty = PresetUtils.makePresetEncounter('Leve
 // standards 1b and its trinkets).
 const professions: [Profession, Profession] = [OtherDefaults.profession1, OtherDefaults.profession2];
 
-// 959.2 / 952.2 / 942.9 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15). The pet deals 21% of
+// 959.5 / 955.1 / 946.5 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16). The pet deals 21% of
 // it.
 export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Beast Mastery', {
 	group: 'Level 60',
@@ -478,7 +478,7 @@ export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Bea
 	professions,
 	options: DefaultOptions,
 });
-// 959.3 / 952.1 / 942.6 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15), 0.0 / 0.0 / 0.3 behind the
+// 959.4 / 954.9 / 946.1 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 0.1 / 0.2 / 0.5 behind the
 // base preset: the raid's Hunter's Mark is off and the hunter casts its own 1.5 sec before the
 // pull and before it drops (standards 23).
 export const PresetBuildBeastMasteryMark = PresetUtils.makePresetBuild("Level 60 Beast Mastery (Hunter's Mark duty)", {
@@ -493,7 +493,7 @@ export const PresetBuildBeastMasteryMark = PresetUtils.makePresetBuild("Level 60
 	professions,
 	options: DefaultOptions,
 });
-// 876.7 / 869.2 / 859.3 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15), 82.5 / 83.0 / 83.5 behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in place of Serpent Sting, refreshed 4 sec before it drops (standards 23).
+// 878.1 / 872.9 / 864.2 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 81.4 / 82.2 / 82.3 behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in place of Serpent Sting, refreshed 4 sec before it drops (standards 23).
 export const PresetBuildBeastMasteryScorpid = PresetUtils.makePresetBuild('Level 60 Beast Mastery (Scorpid Sting duty)', {
 	group: 'Level 60',
 	tooltip:
@@ -506,7 +506,7 @@ export const PresetBuildBeastMasteryScorpid = PresetUtils.makePresetBuild('Level
 	professions,
 	options: DefaultOptions,
 });
-// 1027.9 / 1020.3 / 998.5 at 120 / 180 / 300 sec, 68 ahead of Beast Mastery at 180. The pet deals
+// 1029.6 / 1024.9 / 1003.0 at 120 / 180 / 300 sec, 70 ahead of Beast Mastery at 180. The pet deals
 // 11% of it. It runs short of mana in a 5 minute fight.
 export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Marksmanship', {
 	group: 'Level 60',
@@ -519,7 +519,7 @@ export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Mar
 	professions,
 	options: DefaultOptions,
 });
-// 1026.6 / 1018.9 / 996.5 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15), 1.3 / 1.3 / 2.0 behind the
+// 1028.1 / 1023.1 / 1001.5 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 1.4 / 1.8 / 1.5 behind the
 // base preset: the raid's Hunter's Mark is off and the hunter casts its own 1.5 sec before the
 // pull and before it drops (standards 23).
 export const PresetBuildMarksmanshipMark = PresetUtils.makePresetBuild("Level 60 Marksmanship (Hunter's Mark duty)", {
@@ -534,7 +534,7 @@ export const PresetBuildMarksmanshipMark = PresetUtils.makePresetBuild("Level 60
 	professions,
 	options: DefaultOptions,
 });
-// 945.1 / 939.2 / 935.4 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15), 82.8 / 81.1 / 63.1 behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in place of Serpent Sting (standards 23).
+// 947.7 / 944.3 / 941.2 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 81.9 / 80.6 / 61.8 behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in place of Serpent Sting (standards 23).
 export const PresetBuildMarksmanshipScorpid = PresetUtils.makePresetBuild('Level 60 Marksmanship (Scorpid Sting duty)', {
 	group: 'Level 60',
 	tooltip:
@@ -547,8 +547,8 @@ export const PresetBuildMarksmanshipScorpid = PresetUtils.makePresetBuild('Level
 	professions,
 	options: DefaultOptions,
 });
-// 1071.5 / 1064.0 / 1043.4 at 120 / 180 / 300 sec, the best of the four: Lone Wolf's 20% is worth more
-// than a pet that takes no player buffs (44 ahead of Marksmanship at 180). Holds up in a 5 minute fight with Sniper Shot held back for mana.
+// 1074.2 / 1069.5 / 1050.1 at 120 / 180 / 300 sec, the best of the four: Lone Wolf's 20% is worth more
+// than a pet that takes no player buffs (45 ahead of Marksmanship at 180). Holds up in a 5 minute fight with Sniper Shot held back for mana.
 export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wolf', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Marksmanship with Lone Wolf and no pet, on the synthetic Phase 1 ranged gear, in a 3 minute raid fight.',
@@ -560,7 +560,7 @@ export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wo
 	professions,
 	options: LoneWolfOptions,
 });
-// 1069.7 / 1061.7 / 1041.6 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15), 1.8 / 2.3 / 1.7 behind the
+// 1072.8 / 1068.1 / 1047.9 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 1.4 / 1.4 / 2.1 behind the
 // base preset: the raid's Hunter's Mark is off and the hunter casts its own 1.5 sec before the
 // pull and before it drops (standards 23).
 export const PresetBuildLoneWolfMark = PresetUtils.makePresetBuild("Level 60 Lone Wolf (Hunter's Mark duty)", {
@@ -575,7 +575,7 @@ export const PresetBuildLoneWolfMark = PresetUtils.makePresetBuild("Level 60 Lon
 	professions,
 	options: LoneWolfOptions,
 });
-// 973.5 / 967.7 / 965.0 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15), 98.0 / 96.3 / 78.4 behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in place of Serpent Sting (standards 23).
+// 977.5 / 974.3 / 972.3 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 96.7 / 95.2 / 77.8 behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in place of Serpent Sting (standards 23).
 export const PresetBuildLoneWolfScorpid = PresetUtils.makePresetBuild('Level 60 Lone Wolf (Scorpid Sting duty)', {
 	group: 'Level 60',
 	tooltip:
@@ -588,8 +588,7 @@ export const PresetBuildLoneWolfScorpid = PresetUtils.makePresetBuild('Level 60 
 	professions,
 	options: LoneWolfOptions,
 });
-// 899.6 / 892.4 / 883.7 at 120 / 180 / 300 sec in the mksettings raid (Orc, 2026-10-15). On a pair
-// of Brutality Blade swords the Human did 858.6 at 180 sec. The rotation walks in
+// 895.2 / 888.2 / 881.4 at 120 / 180 / 300 sec in the mksettings raid (Human, 2026-10-16). The rotation walks in
 // before the pull, so starting at 25 yards in the UI costs nothing.
 export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Survival', {
 	group: 'Level 60',
@@ -602,7 +601,7 @@ export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Surviva
 	professions,
 	options: DefaultOptions,
 });
-// 898.5 / 891.3 / 882.4 at 120 / 180 / 300 sec (20000 iterations, 2026-10-15), 1.1 / 1.1 / 1.3 behind the
+// 894.4 / 887.0 / 879.8 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 0.8 / 1.2 / 1.5 behind the
 // base preset: the raid's Hunter's Mark is off and the hunter casts its own 1.5 sec before the
 // pull and before it drops (standards 23).
 export const PresetBuildSurvivalMark = PresetUtils.makePresetBuild("Level 60 Survival (Hunter's Mark duty)", {
