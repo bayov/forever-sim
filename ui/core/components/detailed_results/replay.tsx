@@ -45,9 +45,9 @@ const SPEED_STORAGE_KEY = '__detailed_results_replay_speed__';
 // the cast history, and pushes the lines too close ahead of it further along, like MSBT.
 const LANE_PX = 28;
 // The crits on each side take spots between the cast history and the procs over the class pack,
-// as many as fit at this spacing. The first crit takes the middle spot.
+// as many as fit at this spacing, up to 4. The first crit takes a middle spot.
 const CRIT_SPOT_PX = 42;
-const MAX_CRIT_SPOTS = 5;
+const MAX_CRIT_SPOTS = 4;
 // What we do to the enemies lines up on the left edge of the target's frame, so the icons
 // form a column over it. What happens to us lines up on the right edge of our frame, with the
 // icon after the text. Crits stay put in their own column, this many pixels toward the middle
