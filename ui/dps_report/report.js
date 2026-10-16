@@ -866,10 +866,14 @@ export function startReport(dash, events) {
     seg($('#rank-role'), 'role', [['All', 'All roles'], ['Melee', 'Melee'], ['Ranged', 'Ranged'], ['Caster', 'Caster']]);
     const fi = (n) => (iconMap() ? iconImg(n, 'fv-ico') : null);
     seg($('#rank-fac'), 'fac', [['All', 'Both factions'], ['Horde', 'Horde', fi('ui_hordeicon')], ['Alliance', 'Alliance', fi('ui_allianceicon')]]);
-    $('#rank-best').setAttribute('aria-pressed', String(st.best));
+    // With one class picked there's nothing to pick the best of, so the chip is off until the class filter is cleared.
+    const oneCls = st.cls !== 'All', best = st.best && !oneCls;
+    $('#rank-best').disabled = oneCls;
+    $('#rank-best').title = oneCls ? 'Only one class is shown' : '';
+    $('#rank-best').setAttribute('aria-pressed', String(best));
     $('#rank-enc').setAttribute('aria-pressed', String(!!st.enc));
     $('#rank-duty').setAttribute('aria-pressed', String(!!st.duty));
-    const filtered = st.cls !== 'All' || st.role !== 'All' || st.fac !== 'All' || st.best;
+    const filtered = st.cls !== 'All' || st.role !== 'All' || st.fac !== 'All' || best;
     $('#rank-reset').hidden = !filtered;
     if (!waitOr(host, ['builds', 'lengths'])) return;
     const builds = rankB(), lengths = rowsOf('lengths'), roles = roleOf();
@@ -881,7 +885,7 @@ export function startReport(dash, events) {
     const sortKey = L === 180 ? st.sort : 'dps';
     const key = { dps: val, p10: (b) => b.p10, p90: (b) => b.p90, cv: (b) => -b.cv }[sortKey] || val;
     rows = rows.sort((a, b) => key(b) - key(a));
-    if (st.best) { const seen = new Set(); rows = rows.filter((b) => !seen.has(b.class) && seen.add(b.class)); }
+    if (best) { const seen = new Set(); rows = rows.filter((b) => !seen.has(b.class) && seen.add(b.class)); }
     const max = d3.max(builds, (b) => Math.max(L === 180 ? b.p90 : 0, val(b))) * 1.02;
     const x = (v) => (100 * v / max) + '%';
     const top = d3.max(builds, val);
