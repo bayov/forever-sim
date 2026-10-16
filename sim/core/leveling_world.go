@@ -11,8 +11,9 @@ import (
 //   - Each search we run off in a random direction, and we walk to a mob or to a point (a
 //     totem) when the session or the rotation says so. While we move no hard cast goes out
 //     (Moving), but we keep swinging at a mob on us.
-//   - The mob we find stands in a random direction from us, 10 to 40 yards away (found_min /
-//     found_max).
+//   - The mob we find stands in a random direction from us, 10 to 25 yards away after a
+//     search we run for (found_min / found_max) and 10 to 40 after one we stand for
+//     (found_standing_min / found_standing_max).
 //   - A pulled mob runs at us at its level's speed and reaches us 5 yards away (melee range).
 //     While we move it keeps turning toward where we are, every 0.1 sec. Once it has reached
 //     us it stays on us wherever we go.
@@ -295,7 +296,7 @@ func (s *levelingSession) search(sim *Simulation) {
 	}
 	s.after(sim, &s.next, randomDuration(sim, "Leveling Search", s.opts.searchMin, s.opts.searchMax), func(sim *Simulation) {
 		s.move(sim, goalNone, Vec2{}, 0, nil)
-		if s.find(sim) != nil {
+		if s.find(sim, false) != nil {
 			s.startPull(sim)
 		} else {
 			s.search(sim)
@@ -304,14 +305,18 @@ func (s *levelingSession) search(sim *Simulation) {
 }
 
 // find picks a mob from the pool to stand in a random direction from us, waiting to be
-// pulled.
-func (s *levelingSession) find(sim *Simulation) *Unit {
+// pulled. A mob we find while standing tends to be further away.
+func (s *levelingSession) find(sim *Simulation, stood bool) *Unit {
 	level := s.levels[int(sim.RandomFloat("Leveling Mob Level")*float64(len(s.levels)))%len(s.levels)]
 	mob := s.idleMob(level)
 	if mob == nil {
 		return nil
 	}
-	distance := math.Round(s.opts.foundMin + sim.RandomFloat("Leveling Mob Distance")*(s.opts.foundMax-s.opts.foundMin))
+	lo, hi := s.opts.foundMin, s.opts.foundMax
+	if stood {
+		lo, hi = s.opts.standingFoundMin, s.opts.standingFoundMax
+	}
+	distance := math.Round(lo + sim.RandomFloat("Leveling Mob Distance")*(hi-lo))
 	direction := vec2FromAngle(2 * math.Pi * sim.RandomFloat("Leveling Mob Direction"))
 	mob.dead = false
 	mob.enabled = true
@@ -445,7 +450,7 @@ func (s *levelingSession) chainSearch(sim *Simulation, stand bool) {
 			s.move(sim, goalNone, Vec2{}, 0, nil)
 		}
 		if s.state == levelingCombat {
-			s.find(sim)
+			s.find(sim, stand)
 		}
 	})
 }

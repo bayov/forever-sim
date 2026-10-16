@@ -44,8 +44,9 @@ pull, so a 3-minute cooldown is ready for some pulls and not others, as in real 
 1. **Search.** It takes a random time to find the next mob. We run around while we search, so
    only instants go out (totems, shields, buffs), no hard casts. Out-of-combat regen (Spirit,
    mana regen outside the five-second rule) ticks during it. Positions are on a flat 2D plane:
-   each search we run off in a random direction, and the mob we find stands a random 10 to 40
-   yards away in a random direction from us.
+   each search we run off in a random direction, and the mob we find stands a random 10 to 25
+   yards away in a random direction from us. A chain search we stand for finds its mob 10 to
+   40 yards away, because we didn't run toward it.
 2. **Pull.** The APL picks how to pull it: any harmful spell at any rank that reaches it
    (Earth Shock within 20 yards, Lightning Bolt rank 1 within 30 to save mana, …) or a face
    pull. A mob notices us when the pull spell lands, so a bolt's flight counts, and then runs to
@@ -167,7 +168,7 @@ with them still load, and those values are ignored.
 | Finding the next mob, out of combat | Random 2–10 s (6 s on average), running. From the logs (below), 5–11 s until 2026-10-16. |
 | Finding a mob to chain-pull, in combat, running | Random 2–8 s (5 s on average). 2–4 s until 2026-10-16. |
 | Finding a mob to chain-pull, in combat, standing | Random 4–16 s (10 s on average), a guess: twice the running time, because we only see the mobs around us. Until 2026-10-16 the sim rolled whether we run (3 times in 4), and now the rotation picks (Look For Mob's Stand). |
-| Where the mob we find stands | Random 10–40 yd in whole yards, in a random direction |
+| Where the mob we find stands | Random 10–25 yd in whole yards after a search we run for, 10–40 yd after a chain search we stand for (a guess: we ran toward the first, the second is what we see around us), in a random direction |
 | Searching | Running in a random direction at our run speed |
 | Our run speed | 7 yd/s |
 | Mob run speed | The level's average from the mob table: 6 yd/s at levels 1–2, about 8 yd/s from level 11 |

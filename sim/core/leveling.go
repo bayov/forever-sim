@@ -24,7 +24,7 @@ import (
 //
 // One loop runs the session:
 //   - Searching: we run around for a random 0 to 10 sec (search_min / search_max), so we
-//     can't hard cast, and find a mob standing 10 to 40 yards away (found_min / found_max).
+//     can't hard cast, and find a mob standing 10 to 25 yards away (found_min / found_max).
 //     One that close to its aggro radius notices us at once.
 //   - Pulling: the mob waits there, as our target and the rotation's Pull Target. A spell
 //     that attacks it pulls it when it lands, and spells only reach it within their range
@@ -141,6 +141,7 @@ type levelingOptions struct {
 	// A chain search where we stand and keep fighting (Look For Mob's stand).
 	standingSearchMin, standingSearchMax time.Duration
 	foundMin, foundMax                   float64
+	standingFoundMin, standingFoundMax   float64
 	deathPenalty                         time.Duration
 	reviveFraction                       float64
 }
@@ -167,7 +168,9 @@ func resolveLevelingOptions(o *proto.LevelingOptions) levelingOptions {
 		standingSearchMin: seconds(o.ChainSearchStandingMin, 0),
 		standingSearchMax: seconds(o.ChainSearchStandingMax, 5),
 		foundMin:          math.Round(or(o.FoundMin, 10)),
-		foundMax:          math.Round(or(o.FoundMax, 40)),
+		foundMax:          math.Round(or(o.FoundMax, 25)),
+		standingFoundMin:  math.Round(or(o.FoundStandingMin, 10)),
+		standingFoundMax:  math.Round(or(o.FoundStandingMax, 40)),
 		deathPenalty:      seconds(o.DeathPenalty, 180),
 		reviveFraction:    or(o.ReviveFraction, 0.5),
 	}
@@ -181,7 +184,14 @@ func resolveLevelingOptions(o *proto.LevelingOptions) levelingOptions {
 		opts.maxPack = 5
 	}
 	opts.foundMax = max(opts.foundMax, opts.foundMin)
+	opts.standingFoundMax = max(opts.standingFoundMax, opts.standingFoundMin)
 	return opts
+}
+
+// farthestFound is the furthest any search finds a mob. We stand that far from our target
+// while we have none.
+func (opts *levelingOptions) farthestFound() float64 {
+	return max(opts.foundMax, opts.standingFoundMax)
 }
 
 // levelingPlayerLevel is the level of the raid's first player, the one who grinds.
@@ -310,7 +320,7 @@ func (s *levelingSession) reset(sim *Simulation) {
 	s.pos, s.vel, s.posAt, s.stoppedAt = Vec2{}, Vec2{}, 0, 0
 	s.goal, s.goalMob, s.goalReached, s.proximity, s.chaseTurn = goalNone, nil, nil, nil, nil
 	s.player.MovementHandler.Moving = false
-	s.player.DistanceFromTarget = s.opts.foundMax
+	s.player.DistanceFromTarget = s.opts.farthestFound()
 
 	s.state, s.stateSince = levelingSearching, 0
 	s.seconds = [levelingStateCount]time.Duration{}
@@ -410,7 +420,7 @@ func (s *levelingSession) retarget(sim *Simulation, mob *Unit) {
 
 func (s *levelingSession) setPlayerDistance(sim *Simulation, distance float64) {
 	if math.IsInf(distance, 1) {
-		distance = s.opts.foundMax
+		distance = s.opts.farthestFound()
 	}
 	if s.player.DistanceFromTarget == distance {
 		return
@@ -435,7 +445,7 @@ func (s *levelingSession) onMobDeath(sim *Simulation, mob *Unit) {
 		if s.found != nil {
 			s.retarget(sim, s.found)
 		} else {
-			s.setPlayerDistance(sim, s.opts.foundMax)
+			s.setPlayerDistance(sim, s.opts.farthestFound())
 		}
 		// Like in the game, we leave combat a second or two after the last mob dies. Until
 		// then we can't eat, drink or bandage, and get no out of combat regen.
@@ -582,7 +592,7 @@ func (s *levelingSession) onPlayerDeath(sim *Simulation) {
 	if s.found != nil {
 		s.despawn(sim, s.found)
 	}
-	s.setPlayerDistance(sim, s.opts.foundMax)
+	s.setPlayerDistance(sim, s.opts.farthestFound())
 	s.busy(sim, s.opts.deathPenalty)
 	s.after(sim, &s.next, s.opts.deathPenalty, s.revive)
 }

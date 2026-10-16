@@ -906,7 +906,7 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 		set: (opts, value) => (opts.searchMax = unlessDefault(value, 10)),
 	});
 	const foundTooltip =
-		'How far away the mob we find stands, in whole yards, at random between Mob Distance Min and Mob Distance Max. It waits there until a harmful spell lands on it or we walk into melee range of it, then runs to us.';
+		"How far away the mob we find on a search we run for stands, in whole yards, at random between Mob Distance Min and Mob Distance Max. That's every search out of combat, and a chain search we run for. It waits there until a harmful spell lands on it or we walk into melee range of it, then runs to us.";
 	addLevelingNumberPicker(searchGroup, encounter, {
 		id: 'encounter-leveling-found-min',
 		label: 'Mob Distance Min (yd)',
@@ -918,8 +918,8 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 		id: 'encounter-leveling-found-max',
 		label: 'Mob Distance Max (yd)',
 		labelTooltip: foundTooltip,
-		get: opts => Math.round(orDefault(opts.foundMax, 40)),
-		set: (opts, value) => (opts.foundMax = unlessDefault(value, 40)),
+		get: opts => Math.round(orDefault(opts.foundMax, 25)),
+		set: (opts, value) => (opts.foundMax = unlessDefault(value, 25)),
 	});
 
 	// The options we rarely change, folded away.
@@ -989,6 +989,22 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 		float: true,
 		get: opts => orDefault(opts.chainSearchStandingMax, 5),
 		set: (opts, value) => (opts.chainSearchStandingMax = unlessDefault(value, 5)),
+	});
+	const standingFoundTooltip =
+		"How far away the mob we find on a chain search we stand for stands, in whole yards, at random between these. Standing still we only spot the mobs around us, so it's further than one we ran toward.";
+	addLevelingNumberPicker(advancedGroup, encounter, {
+		id: 'encounter-leveling-found-standing-min',
+		label: 'Standing Mob Distance Min (yd)',
+		labelTooltip: standingFoundTooltip,
+		get: opts => Math.round(orDefault(opts.foundStandingMin, 10)),
+		set: (opts, value) => (opts.foundStandingMin = unlessDefault(value, 10)),
+	});
+	addLevelingNumberPicker(advancedGroup, encounter, {
+		id: 'encounter-leveling-found-standing-max',
+		label: 'Standing Mob Distance Max (yd)',
+		labelTooltip: standingFoundTooltip,
+		get: opts => Math.round(orDefault(opts.foundStandingMax, 40)),
+		set: (opts, value) => (opts.foundStandingMax = unlessDefault(value, 40)),
 	});
 	addLevelingNumberPicker(advancedGroup, encounter, {
 		id: 'encounter-leveling-death-penalty',

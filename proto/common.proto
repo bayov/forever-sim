@@ -1080,11 +1080,17 @@ message LevelingOptions {
 	double chain_search_max = 11;
 	double chain_search_standing_min = 20;
 	double chain_search_standing_max = 21;
-	// How far the mob we find stands, in whole yards between these (default 10 to 40). It
-	// waits there until we pull it: a harmful spell that lands on it, or walking into melee
-	// range of it (a face pull). Then it runs to us at its level's speed.
+	// How far the mob a running search finds stands, in whole yards between these (default
+	// 10 to 25). That's every search out of combat, and a chain search that runs. It waits
+	// there until we pull it: a harmful spell that lands on it, or walking into melee range of
+	// it (a face pull). Then it runs to us at its level's speed.
 	double found_min = 12;
 	double found_max = 18;
+	// How far the mob a standing chain search finds stands (default 10 to 40). We ran toward
+	// the mob a running search finds, but standing still we only spot what's around us, so it
+	// tends to be further away.
+	double found_standing_min = 22;
+	double found_standing_max = 23;
 
 	// When to eat, drink and bandage is the rotation's (Rest and Bandage), and so is how many
 	// mobs a pull takes (Look For Mob). These were options once.
