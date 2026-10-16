@@ -842,9 +842,7 @@
               "options": {
                 "queueDelay": 250,
                 "shout": "WarriorShoutBattle",
-                "stance": "WarriorStanceBattle",
-                "raidDamageHitsPerMinute": 2,
-                "raidDamagePerHit": 1500
+                "stance": "WarriorStanceBattle"
               }
             }
           }
@@ -950,7 +948,9 @@
         "parryHaste": true,
         "mobType": "MobTypeDragonkin"
       }
-    ]
+    ],
+    "raidDamageHitsPerMinute": 2,
+    "raidDamagePerHit": 1500
   },
   "simOptions": {
     "iterations": 1000,

@@ -78,6 +78,30 @@ func ForeverNormalizedRage(weapon *Weapon, level int32) float64 {
 	return k * ForeverNormalizedRageK * ForeverNormalizedRageLevelFactor(level) * weapon.SwingSpeed
 }
 
+// ForeverDamageTakenRage is the Rage a hit taken gives under Forever. Forever scales it by the
+// health a normal mob of our level has rather than by the attacker's level: 20 Rage for a mob's
+// worth of health, counted as if armor took off a share that grows from 20% at level 1 to 40% at
+// 60. Damage counts before our armor and partial resists, crits included; absorbed damage gives
+// none. Blizzard's notes give the shape ("expected creature's health", crits count, 20-40% armor
+// by level); the constant comes from a fit of logged hits taken. At 60 a 1500 hit gives 4.5 Rage,
+// where Classic's rule gives 15.4.
+func ForeverDamageTakenRage(result *SpellResult, level int32) float64 {
+	if result.Damage <= 0 {
+		return 0
+	}
+	preMitigation := result.Damage
+	if result.ResistanceMultiplier > 0 {
+		preMitigation /= result.ResistanceMultiplier
+	}
+	level = max(1, min(level, 60))
+	assumedArmor := 0.2 + 0.2*float64(level-1)/59
+	return ForeverDamageTakenRageK * (1 - assumedArmor) * preMitigation / NormalMobStatsAt(level).Health
+}
+
+// ForeverDamageTakenRageK is the Rage a full normal mob's health of damage taken gives, before the
+// assumed armor.
+const ForeverDamageTakenRageK = 20.0
+
 func GetRageConversion(attacker_level int32) float64 {
 	if attacker_level == 25 {
 		return 82.25 // Tested
@@ -167,8 +191,12 @@ func (unit *Unit) EnableRageBar(options RageBarOptions) {
 			if unit.GetCurrentPowerBar() != RageBar {
 				return
 			}
-			rageConversionDamageTaken := GetRageConversion(spell.Unit.Level)
-			generatedRage := result.Damage * 2.5 / rageConversionDamageTaken
+			var generatedRage float64
+			if sim.IsForever() {
+				generatedRage = ForeverDamageTakenRage(result, unit.Level)
+			} else {
+				generatedRage = result.Damage * 2.5 / GetRageConversion(spell.Unit.Level)
+			}
 			generatedRage *= unit.rageBar.damageTakenMultiplier
 			generatedRage += unit.rageBar.flatDamageTakenBonusRage
 			unit.AddRage(sim, generatedRage, rageFromDamageTakenMetrics)

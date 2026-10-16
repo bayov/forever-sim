@@ -37,9 +37,7 @@ func init() {
 			// A caster stands at range, so it never swings.
 			player.DistanceFromTarget = 20
 			player.Spec = &proto.Player_ElementalShaman{ElementalShaman: &proto.ElementalShaman{
-				// The raid damage that hits a ranged shaman in a level 60 raid fight and fires its
-				// Lightning Shield (ui/elemental_shaman/presets.ts RaidDamageHitsLevel60).
-				Options: &proto.ElementalShaman_Options{RaidDamageHitsPerMinute: 1},
+				Options: &proto.ElementalShaman_Options{},
 			}}
 		},
 	}

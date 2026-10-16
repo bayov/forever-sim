@@ -15,12 +15,12 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_ff",
   "published": {
-    "dps": 712.4,
-    "source": "Faerie Fire (Feral) refreshed at 7 s (rotation audit pass 20)"
+    "dps": 704.6,
+    "source": "Howling Idol at 0.5 sec (client 1.60.1.70425)"
   },
   "verify": {
-    "dps": 712.35,
-    "stderr": 0.15,
+    "dps": 704.6,
+    "stderr": 0.16,
     "iters": 20000,
     "ok": true,
     "note": "180 s, seed 1"
@@ -59,10 +59,10 @@
     "Thistle Tea"
   ],
   "caveats": [
-    "Costs 6.3 / 5.2 / 4.2 DPS against the base build at 120 / 180 / 300 s",
+    "Costs 6.2 / 5.0 / 4.3 DPS against the base build at 120 / 180 / 300 s",
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 29 Agility and 17 Strength, and 165 Strength for 20 s every 2 min, used in the opening seconds and again on cooldown",
     "Rip's level 31+ client ranks are 6-9% below Era: Era values would give +1.6%",
-    "Howling Idol is worth 12.5 and 5-piece Grovekeeper Ferocity would add 5.9 (measured before the 5a and 1b rounds)",
+    "Howling Idol (0.5 s off Shifting Power since client 1.60.1.70425) is worth 4.8 at 180 s; 5-piece Grovekeeper Ferocity would add 5.9 (measured before the 5a and 1b rounds)",
     "Unverified: Shred's flat bonus, AP on Rip and Ferocious Bite, Rend and Tear's scope",
     "Keeping Rake up costs 33; Rip at 5 CP ties",
     "Only one +2% crit elixir by standard; Grizzly in place of Ferocity would add 4.9",

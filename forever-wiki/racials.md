@@ -78,7 +78,7 @@ Classes: Hunter, Mage (new), Rogue, Shaman, Warlock, Warrior.
 
 - Blood Fury (active) CHANGED: [Instant; 2 min cooldown] Increases Attack Power and Spell Power by 10% for 15 sec.
 - Shatter Curse (active) NEW: [Instant; 3 min cooldown] Instantly removes and grants immunity to all Curses and Banes, and reduces all Magical damage taken by 15% for 8 sec.
-- Axe Specialization (passive) CHANGED: Increases your critical strike chance with all spells and abilities by 1% while you have an axe or a two-handed axe equipped.
+- Savage (passive) CHANGED: Increases your critical strike chance with all spells and abilities by 1%. Client 70425 renamed it from Axe Specialization and dropped the axe requirement (70338: "while you have an axe or a two-handed axe equipped").
 - Hardiness (passive) CHANGED: Duration of Stun effects on you reduced by 20%.
 - Command REMOVED (was: Hunter and Warlock pet damage +5%).
 
@@ -128,7 +128,7 @@ Classes: Druid, Hunter, Rogue, Shaman, Warrior.
 
 For a melee DPS sim comparing races within a faction:
 
-- Horde: Orc gives 1% crit with axes plus a 10% AP/SP burst every 2 min. Troll gives a 10% haste burst every 3 min and 5% vs Beasts. Tauren gives a flat 1% hit. Undead gives a 5% proc life drain (10% for casters, the drain amount under the 5% health cap is unknown). Windshaper Skyborne gives a flat 1% haste and 5% vs Elementals.
+- Horde: Orc gives 1% crit with any weapon plus a 10% AP/SP burst every 2 min. Troll gives a 10% haste burst every 3 min and 5% vs Beasts. Tauren gives a flat 1% hit. Undead gives a 5% proc life drain (10% for casters, the drain amount under the 5% health cap is unknown). Windshaper Skyborne gives a flat 1% haste and 5% vs Elementals.
 - Alliance: Human gives 2% crit with swords. Dwarf gives 1% crit with maces and 5% vs Beasts. Night Elf gives a 10% crit burst for 15 sec every 3 min. Gnome gives 3 abilities at 20% less Energy (40% Rage, 50% Mana, 15% for Priests) and 10% more damage every 2 min, and 5% more Energy, Rage or Mana pool. High Order Skyborne gives 1% haste and 5% vs Elementals.
 
 The weapon-type crit racials apply to spells too. Nothing here depends on weapon skill any more, so the old Classic reason to pick Orc or Human for weapon skill is gone. How much that matters depends on how much weapon skill Forever puts on gear. The sim's numbers per race are in [sim-status.md](sim-status.md).

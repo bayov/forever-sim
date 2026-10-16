@@ -52,15 +52,10 @@ func init() {
 				Air: proto.AirTotem_WindfuryTotem, AirSecondsBeforePull: 3,
 				Water: proto.WaterTotem_ManaSpringTotem, WaterSecondsBeforePull: 2,
 			}
-			// The raid damage that hits a melee shaman in a level 60 raid fight and fires its
-			// Lightning Shield (ui/enhancement_shaman/presets.ts RaidDamageHitsLevel60). The level
-			// 30 builds' enemy hits the shaman itself.
-			raidHits := 2.0
 			if flag.Lookup("level").Value.String() != "60" {
 				// The level 30 builds keep the old seconds. At level 60 they go down just before
 				// the pull, so a 5 min totem lasts a 300 sec fight.
 				startingTotems.EarthSecondsBeforePull, startingTotems.AirSecondsBeforePull, startingTotems.WaterSecondsBeforePull = 28, 27, 30
-				raidHits = 0
 			}
 			player.Spec = &proto.Player_EnhancementShaman{EnhancementShaman: &proto.EnhancementShaman{
 				Options: &proto.EnhancementShaman_Options{
@@ -68,8 +63,7 @@ func init() {
 					ShamanImbue: proto.WeaponImbue_WindfuryWeapon,
 					// The Level 60 preset's starting totems. The level 30 rotations put theirs down
 					// in the prepull actions, which take the place of these.
-					StartingTotems:          startingTotems,
-					RaidDamageHitsPerMinute: raidHits,
+					StartingTotems: startingTotems,
 				},
 			}}
 		},

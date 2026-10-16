@@ -1515,7 +1515,9 @@
         "parryHaste": true,
         "mobType": "MobTypeHumanoid"
       }
-    ]
+    ],
+    "raidDamageHitsPerMinute": 2,
+    "raidDamagePerHit": 1500
   },
   "simOptions": {
     "iterations": 1000,

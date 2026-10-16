@@ -118,9 +118,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 	otherInputs: {
 		inputs: [ShamanInputs.ShamanImbueInput, OtherInputs.TankAssignment, OtherInputs.InFrontOfTarget],
 	},
-	encounterInputs: {
-		inputs: [ShamanInputs.RaidDamageHitsInput, ShamanInputs.RaidDamageHitsVariationInput],
-	},
 	itemSwapConfig: {
 		itemSlots: [ItemSlot.ItemSlotMainHand, ItemSlot.ItemSlotOffHand],
 	},

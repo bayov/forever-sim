@@ -23,6 +23,9 @@ export class Encounter {
 	private useHealth = false;
 	private pvp = false;
 	private pvpMeleeDowntime = DEFAULT_PVP_MELEE_DOWNTIME;
+	// Raid damage on the players the boss isn't tanking (sim/core/raid_hits.go).
+	private raidDamageHitsPerMinute = 0;
+	private raidDamagePerHit = 0;
 	// Set in Leveling mode, a grinding session in place of one fight (docs/leveling_sim.md).
 	private leveling: LevelingOptions | undefined = undefined;
 
@@ -136,6 +139,26 @@ export class Encounter {
 		this.durationChangeEmitter.emit(eventID);
 	}
 
+	getRaidDamageHitsPerMinute(): number {
+		return this.raidDamageHitsPerMinute;
+	}
+	setRaidDamageHitsPerMinute(eventID: EventID, newHits: number) {
+		if (newHits == this.raidDamageHitsPerMinute) return;
+
+		this.raidDamageHitsPerMinute = newHits;
+		this.durationChangeEmitter.emit(eventID);
+	}
+
+	getRaidDamagePerHit(): number {
+		return this.raidDamagePerHit;
+	}
+	setRaidDamagePerHit(eventID: EventID, newDamage: number) {
+		if (newDamage == this.raidDamagePerHit) return;
+
+		this.raidDamagePerHit = newDamage;
+		this.durationChangeEmitter.emit(eventID);
+	}
+
 	// The leveling session's options, or undefined when we sim one fight. An empty
 	// LevelingOptions is a session with every option at its default. We return a copy.
 	getLeveling(): LevelingOptions | undefined {
@@ -177,6 +200,8 @@ export class Encounter {
 			useHealth: this.useHealth,
 			pvp: this.pvp,
 			pvpMeleeDowntime: this.pvpMeleeDowntime,
+			raidDamageHitsPerMinute: this.raidDamageHitsPerMinute,
+			raidDamagePerHit: this.raidDamagePerHit,
 			targets: this.targets,
 			leveling: this.getLeveling(),
 		});
@@ -192,6 +217,8 @@ export class Encounter {
 			this.setUseHealth(eventID, proto.useHealth);
 			this.setPvp(eventID, proto.pvp);
 			this.setPvpMeleeDowntime(eventID, proto.pvpMeleeDowntime);
+			this.setRaidDamageHitsPerMinute(eventID, proto.raidDamageHitsPerMinute);
+			this.setRaidDamagePerHit(eventID, proto.raidDamagePerHit);
 			this.setLeveling(eventID, proto.leveling);
 			// We copy the targets, so editing one later doesn't change the preset or the saved
 			// settings they came from.
