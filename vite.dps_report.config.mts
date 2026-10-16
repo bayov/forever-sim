@@ -18,6 +18,11 @@ import zlib from 'zlib';
 //     fight that's half the lines.
 //   - The [DEBUG] lines with the damage formula of each hit. The log hides them unless we turn on Debug.
 const LOG_ONLY = /^\[[-\d.]+\] \[[^\]]*\] (No available actions!$|Pausing GCD for \S+ due to rotation \/ CDs\.$|.*\[DEBUG\])/;
+
+// We also leave out the hit for 0 damage and 0 threat when a DoT or debuff goes on (Rupture, Deep Wounds, Mind Flay).
+// The sim no longer logs it (see dealDamageInternal in sim/core/spell_result.go), but most fights we carry are older
+// than that.
+const AURA_ONLY_HIT = /\} Hit for 0\.000 damage \(SpellSchool: \d+\)\. \(Threat: 0\.000\)$/;
 const ITERATIONS = ['typicalIteration', 'unluckyIteration', 'luckyIteration'];
 
 function gzipAsBase64(): PluginOption {
@@ -33,7 +38,7 @@ function gzipAsBase64(): PluginOption {
 				if (iteration?.logs) {
 					iteration.logs = iteration.logs
 						.split('\n')
-						.filter((line: string) => !LOG_ONLY.test(line))
+						.filter((line: string) => !LOG_ONLY.test(line) && !AURA_ONLY_HIT.test(line))
 						.join('\n');
 				}
 			}

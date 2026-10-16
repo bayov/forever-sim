@@ -478,7 +478,13 @@ func (spell *Spell) dealDamageInternal(sim *Simulation, isPeriodic bool, result 
 		}
 	}
 
-	if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {
+	// A landed hit with no damage and no threat is a DoT or debuff going on (Rupture, Corruption,
+	// Deep Wounds, Mind Flay). The game logs only the aura for it, so we don't log a hit for 0.
+	//
+	// We keep the line when it has threat (Sunder Armor, Bane of Doom), because the events view
+	// reads threat from the log.
+	auraOnly := !isPeriodic && result.Landed() && result.Damage == 0 && result.Threat == 0
+	if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) && !auraOnly {
 		if isPeriodic {
 			spell.Unit.Log(sim, "%s %s tick %s (SpellSchool: %d). (Threat: %0.3f)", result.Target.LogLabel(), spell.ActionID, result.DamageString(), spell.SpellSchool, result.Threat)
 		} else {
