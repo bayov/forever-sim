@@ -37,7 +37,10 @@ gen hunter_ranged lw "$mm"
 # at 300 sec, nothing at 120 and 180).
 # Survival: Wing Clip in every free global cooldown (+31 at 180 sec), held when Mongoose Bite or
 # Strider Kick is about ready (+0.4).
-sv="lacerate=1,lacerateMana=20,strikerMana=0,trap=1,trapMana=30,wingClip=1,wingClipMana=50,wingClipHold=1"
+# Since the trap scales with ranged attack power (hunter_trap_ap) it goes right after Strider Kick,
+# and Wing Clip holds only for an opened Mongoose Bite, not for Strider Kick (rotation audit pass 23,
+# 2026-10-16: +2.8 / +3.0 / +3.1 at 120 / 180 / 300 sec; dropping the Mongoose Bite hold too loses 0.55).
+sv="lacerate=1,lacerateMana=20,strikerMana=0,trap=1,trapMana=30,wingClip=1,wingClipMana=50,wingClipHold=2,trapFirst=1"
 gen hunter_sv sv "$sv"
 # Hunter's Mark duty (standards 23): the base rotation plus the mark before the pull and before it drops,
 # for the presets with the raid's mark off (mksettings specs hunter_*_mark).

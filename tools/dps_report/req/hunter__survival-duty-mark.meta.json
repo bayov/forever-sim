@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_survival",
   "apl": "sv_mark",
   "published": {
-    "dps": 925.0,
-    "source": "Report re-sim on master 5bbcb0d, 2026-10-16: Grace of Air with Windfury in the melee raid, Windfury Totem main hand only, off-hand Rage 0.5 and channel pushback on hits taken (was 903.2)"
+    "dps": 928.4,
+    "source": "Rotation audit pass 23 on master 42ff910, 2026-10-16: Immolation Trap right after Strider Kick and no Strider Kick hold on Wing Clip (was 925.0)"
   },
   "verify": {
-    "dps": 925.01,
+    "dps": 928.45,
     "stderr": 0.27,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "same sim as verify.py and the published number"
   },
   "summary": "Forever's melee hunter: Survival with a cat, built on Expose Prey into Mongoose Bite.",
   "keyTalents": [
@@ -42,10 +42,10 @@
     "Hunter's Mark (rank 4, +140 ranged attack power) 1.5s before the pull and again in its last 3s; the raid's mark is off",
     "Mongoose Bite whenever Expose Prey (or a dodge) opens it",
     "Strider Kick on cooldown",
+    "Immolation Trap on cooldown (mana >= 30%)",
     "Raptor Strike queued on the next swing when ready",
     "Lacerate when it is down (mana >= 20%)",
-    "Immolation Trap on cooldown (mana >= 30%)",
-    "Wing Clip in free GCDs (mana >= 50%), held when Mongoose Bite or Strider Kick is about ready"
+    "Wing Clip in free GCDs (mana >= 50%), held when an opened Mongoose Bite is about ready"
   ],
   "consumes": [
     "Elixir of the Mongoose",
