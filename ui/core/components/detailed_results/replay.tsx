@@ -354,7 +354,7 @@ export class Replay extends ResultComponent {
 	private playerFrame: UnitFrameRefs | null = null;
 	private resourceRefs: {
 		powers: Array<{ bar: ReplayBar; fill: HTMLElement; text: HTMLElement }>;
-		swingFill: HTMLElement;
+		swings: Array<{ fill: HTMLElement; times: Array<number>; mainHand: boolean }>;
 		pips: Array<HTMLElement>;
 	} | null = null;
 	private playerCastBar = makeCastBar('player');
@@ -1273,11 +1273,20 @@ export class Replay extends ResultComponent {
 			) as HTMLElement;
 			return { bar, elem, fill: elem.querySelector<HTMLElement>('.replay-bar-fill')!, text: elem.querySelector<HTMLElement>('.replay-bar-center')! };
 		});
-		const swing = (
-			<div className="replay-swing">
-				<div className="replay-swing-fill" />
-			</div>
-		) as HTMLElement;
+		// A swing timer for each hand we swing with, the main hand above the off hand.
+		const swings = [
+			{ times: model.mainHandSwings, mainHand: true },
+			{ times: model.offHandSwings, mainHand: false },
+		]
+			.filter(({ times }) => times.length > 1)
+			.map(({ times, mainHand }) => {
+				const elem = (
+					<div className="replay-swing">
+						<div className="replay-swing-fill" />
+					</div>
+				) as HTMLElement;
+				return { elem, fill: elem.firstElementChild as HTMLElement, times, mainHand };
+			});
 		const pips: Array<HTMLElement> = [];
 		const pipKind = model.comboPoints ? 'combo' : model.maelstrom ? 'maelstrom' : '';
 		const pipRow = (<div className={`replay-pips ${pipKind}`} />) as HTMLElement;
@@ -1288,12 +1297,8 @@ export class Replay extends ResultComponent {
 				pips.push(pip);
 			}
 		}
-		// From the bottom, like the user's Bayov resource bars: power, the swing, then the pips.
-		this.ui.resources.replaceChildren(
-			...(pipKind ? [pipRow] : []),
-			...(model.mainHandSwings.length > 1 ? [swing] : []),
-			...powers.map(power => power.elem),
-		);
+		// From the bottom, like the user's Bayov resource bars: power, the swings, then the pips.
+		this.ui.resources.replaceChildren(...(pipKind ? [pipRow] : []), ...swings.map(swing => swing.elem), ...powers.map(power => power.elem));
 		// Each bar has its own tooltip, so we see the one resource under the mouse.
 		const rowsTip = (rows: () => Array<Element | null>) => () =>
 			(
@@ -1309,12 +1314,18 @@ export class Replay extends ResultComponent {
 				]),
 			),
 		);
-		this.tip(
-			swing,
-			rowsTip(() => {
-				const next = this.swingAt(model, this.time);
-				return [tooltipRow('Next main hand swing', next ? formatSeconds(next.next - this.time) : 'None')];
-			}),
+		swings.forEach(({ elem, times, mainHand }) =>
+			this.tip(
+				elem,
+				rowsTip(() => {
+					const next = this.swingAt(times, this.time);
+					const queued = mainHand ? this.swingQueuedAt(model, this.time) : null;
+					return [
+						tooltipRow(`Next ${mainHand ? 'main' : 'off'} hand swing`, next ? formatSeconds(next.next - this.time) : 'None'),
+						queued && tooltipRow('Queued', queued.name.replace(/ \(Queue\)/, '')),
+					];
+				}),
+			),
 		);
 		if (model.maelstrom) {
 			this.tip(pipRow, this.auraTip(model.maelstrom, 'us'));
@@ -1336,7 +1347,7 @@ export class Replay extends ResultComponent {
 				rowsTip(() => [tooltipRow('Combo points', String(model.comboPoints!.at(this.time)))]),
 			);
 		}
-		this.resourceRefs = { powers, swingFill: swing.firstElementChild as HTMLElement, pips };
+		this.resourceRefs = { powers, swings, pips };
 	}
 
 	private pipsAt(model: ReplayModel, time: number): number {
@@ -1346,10 +1357,14 @@ export class Replay extends ResultComponent {
 		return aura ? Math.max(1, aura.stacks) : 0;
 	}
 
-	// The last and the next main hand swing around this time. A long gap, like while we were out
+	// The Heroic Strike (or Cleave, Maul, Raptor Strike) waiting for the next main hand swing.
+	private swingQueuedAt(model: ReplayModel, time: number): ActionId | null {
+		return model.swingQueue.find(track => activeAuraAt(track, time, model.end))?.actionId ?? null;
+	}
+
+	// The last and the next swing of a hand around this time. A long gap, like while we were out
 	// of range, has no swing timer.
-	private swingAt(model: ReplayModel, time: number): { last: number; next: number } | null {
-		const swings = model.mainHandSwings;
+	private swingAt(swings: Array<number>, time: number): { last: number; next: number } | null {
 		const i = lastIndexAtOrBefore(swings, time);
 		if (i < 0 || i + 1 >= swings.length || swings[i + 1] - swings[i] > 5) return null;
 		return { last: swings[i], next: swings[i + 1] };
@@ -1488,8 +1503,12 @@ export class Replay extends ResultComponent {
 			if (bar.type == ResourceType.ResourceTypeMana) fill.style.background = manaColor(fraction);
 			setText(text, String(Math.floor(value)));
 		});
-		const swing = this.swingAt(model, time);
-		setWidth(resources.swingFill, swing ? (time - swing.last) / (swing.next - swing.last) : 0);
+		resources.swings.forEach(({ fill, times, mainHand }) => {
+			const swing = this.swingAt(times, time);
+			setWidth(fill, swing ? (time - swing.last) / (swing.next - swing.last) : 0);
+			// The main hand's timer turns yellow while a Heroic Strike waits for its swing.
+			if (mainHand) fill.classList.toggle('queued', !!this.swingQueuedAt(model, time));
+		});
 		const pips = this.pipsAt(model, time);
 		resources.pips.forEach((pip, i) => pip.classList.toggle('on', i < pips));
 		// At five Maelstrom Weapon stacks arcs light up on both sides of the pack, like the
