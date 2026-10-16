@@ -42,10 +42,10 @@ Diffed against 70338 for every paladin spell and trait curve (wago.tools SpellEf
 
 - Judgement of Righteousness is 42.9% of spell power on every rank (was 50%), and Judgement of Fury 42.9% (was 45%).
 - Champion of the Light is 10 / 20 / 30% of Intellect as spell damage (trait curve 110350, was 20 / 40 / 60%).
-- Consecration's Forever ranks (1280345 to 1280353) are 4.2% of spell power a tick (was 9.5%), Era's value.
+- Consecration's Forever ranks (1280345 to 1280353) are 4.2% of spell power a tick (was 9.5%), Era's value. The 15 October beta notes give 0.042 too, and say Judgement of Righteousness and Judgement of Fury now have "correct spell power coefficients for instant cast spells".
 - Righteous Fury is 90% Holy threat again (60% in 70338).
 - Seal of Fury rank 1 (20163) is learned at level 26 (was 25). Seal of Fury is not in the sim.
-- The Seal of Righteousness proc spells (25713 and the lower ranks) lost their 10% spell power coefficient (0 in 70425). The seal's tooltip (auras 20154, 20287 to 20293, 21084) still adds `$1h` = 7.65% and `$2h` = 12% of spell power (description variables 1023) to each hit's s3/87 to s3/25, so the bonus reads as moved server side. Following the tooltip (the orchestrator's ruling 2026-10-16), the sim adds it once: 12% with a two-hander, flat per swing. It used to count 2 x 11%, the Season of Discovery tests; that would be 50 DPS more on twist at 180 sec, and the proc's 0 would be 57 less.
+- The Seal of Righteousness proc spells (25713 and the lower ranks) lost their 10% spell power coefficient (0 in 70425). The seal's tooltip (auras 20154, 20287 to 20293, 21084) still adds `$1h` = 7.65% and `$2h` = 12% of spell power (description variables 1023) to each hit's s3/87 to s3/25, so the bonus reads as moved server side. Blizzard's 15 October beta notes confirm it: "Fixed an issue causing Seal of Righteousness to gain almost twice as much benefit from Spell Damage than intended." The sim adds it once: 12% with a two-hander, flat per swing. It used to count 2 x 11%, the Season of Discovery tests; that would be 50 DPS more on twist at 180 sec, and the proc's 0 would be 57 less.
 - Improved Seals stores 0 on its spell (was 3); its trait curve is still 5 / 10 / 15%.
 - Blessing of Salvation is now Salvation (1038), a threat buff outside the blessing slot, and Greater Blessing of Salvation is Mass Salvation (25895). No DPS change.
 

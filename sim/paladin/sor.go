@@ -116,7 +116,9 @@ func (paladin *Paladin) registerSealOfRighteousness() {
 			// Forever's seal tooltip (client 1.60.1.70425, description variables 1023) adds
 			// 7.65% of spell power a hit with a one-hander and 12% with a two-hander, flat per
 			// swing, while the proc spells' own coefficient is 0 since 70425 (0.1 before). So the
-			// bonus is added once, server side, as the tooltip says.
+			// bonus is added once, as the tooltip says. Blizzard's 15 October beta notes: "Fixed an
+			// issue causing Seal of Righteousness to gain almost twice as much benefit from Spell
+			// Damage than intended."
 			coeff = core.TernaryFloat64(paladin.has2hEquipped(), 0.12, 0.0765)
 			countTwice = false
 		}
