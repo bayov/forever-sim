@@ -334,6 +334,11 @@ export const APLOptimized = PresetUtils.makePresetAPLRotation('Optimized', Optim
 //
 // Since 2026-10-15 it keeps Lightning Shield up in place of Water Shield, like Optimized (see the
 // raid damage note under Options).
+//
+// Since the rotation auditor's pass 23 (2026-10-16) a new Magma Totem goes down with as little as
+// 2 sec left (it was 10): on the Water Shield build 828.9 / 819.3 / 815.7 at 120 / 180 / 300 sec
+// (+1.2 / +0.8 / +0.5), on Mana Tide 790.6 / 781.7 / 777.1 (+1.0 / +0.6 / +0.4), paired at 20000
+// iterations on two seed sets.
 export const APLMagma = PresetUtils.makePresetAPLRotation('Magma Totem', MagmaAPLJSON, {
 	tooltip: 'Optimized with Magma Totem in place of Searing Totem, for the Water Shield talents.',
 	group: 'Level 60',

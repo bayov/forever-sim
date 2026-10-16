@@ -253,6 +253,19 @@
                                 }
                               }
                             }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "9s"
+                                }
+                              }
+                            }
                           }
                         ]
                       }
@@ -309,7 +322,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "cmp": {

@@ -105,13 +105,69 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
+                        "spellId": 10442
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-5.5s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10614
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-4.5s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10497
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-3.5s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
                         "spellId": 10432
                       }
                     }
                   },
                   "doAtValue": {
                     "const": {
-                      "val": "-1.5s"
+                      "val": "-2.5s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10587
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-1s"
                     }
                   }
                 }
@@ -293,7 +349,7 @@
                               },
                               "rhs": {
                                 "const": {
-                                  "val": "10s"
+                                  "val": "2s"
                                 }
                               }
                             }
@@ -625,7 +681,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "and": {
@@ -686,17 +741,7 @@
             "enhancementShaman": {
               "options": {
                 "syncType": "Auto",
-                "shamanImbue": "WindfuryWeapon",
-                "startingTotems": {
-                  "earth": "StrengthOfEarthTotem",
-                  "air": "WindfuryTotem",
-                  "water": "ManaSpringTotem",
-                  "earthSecondsBeforePull": 4,
-                  "airSecondsBeforePull": 3,
-                  "waterSecondsBeforePull": 2,
-                  "fire": "MagmaTotem",
-                  "fireSecondsBeforePull": 1
-                }
+                "shamanImbue": "WindfuryWeapon"
               }
             }
           }
