@@ -1270,8 +1270,9 @@ export function startReport(dash, events) {
     if (st.tab !== 'races') showTab('races'); else render();
     requestAnimationFrame(() => $('#race-rank-card').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }));
   };
-  // Pointing at a row shows its tooltip, and on a phone (no pointer) a tap does.
-  const hoverTip = (row, tip) => {
+  // Pointing at a row shows its tooltip, and on a phone (no pointer) a tap does. Without tap, a tap only does what the
+  // row does (like a button that picks a setting), and the tooltip is for the mouse only.
+  const hoverTip = (row, tip, { tap = true } = {}) => {
     row.addEventListener('pointerenter', (e) => {
       if (e.pointerType !== 'mouse' || tipPinned) return;
       if (tipHl.includes(row)) { clearTimeout(tipWait); return; }
@@ -1279,7 +1280,7 @@ export function startReport(dash, events) {
     });
     row.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse' && !tipPinned && tipHl.includes(row)) tipHover(hideTip); });
     row.addEventListener('pointerup', (e) => {
-      if (e.pointerType === 'mouse' || e.target.closest('[data-tt]')) return;
+      if (!tap || e.pointerType === 'mouse' || e.target.closest('[data-tt]')) return;
       if (row.classList.contains('is-hl') && tipPinned) { hideTip(); return; }
       tip(true);
     });
@@ -2508,8 +2509,12 @@ export function startReport(dash, events) {
   // A reference row: the only value considered, which the presets use, so there is nothing to compare or pick.
   const asmRef = (a) => arr(a.settings).length === 1;
   const REF_CAP = 'Reference value.';
-  const asmRefLine = (a) => arr(a.settings).map((x) => el('p', { class: 'fv-asm-ref' }, el('b', { text: x.label }), ...asmMarks(a, x),
-    x.value && x.value !== x.label ? el('span', { text: ` · ${x.value}` }) : null));
+  const asmRefLine = (a) => arr(a.settings).map((x) => {
+    const p = el('p', { class: 'fv-asm-ref' }, el('b', { text: x.label }), ...asmMarks(a, x),
+      x.value && x.value !== x.label ? el('span', { text: ` · ${x.value}` }) : null);
+    if (x.rationale) asmHover(p, x.label, () => asmSetTip(a, x));
+    return p;
+  });
   // The presets' setting is the default: what the ranking uses, and the expected value since the 2026-10-15 rulings.
   const asmMarks = (a, x) => [x.id === a.defaultSetting ? el('span', { class: 'def', text: ' · default' }) : null];
   // One table per assumption. Each cell answers "if the truth is this column, this row's spec changes by this much at
@@ -2533,6 +2538,8 @@ export function startReport(dash, events) {
         'aria-label': `${x.label} (${SEG_NAME[x.id] || x.id})${x.id === a.defaultSetting ? ', default' : ''}` }, ...asmHead(a, x, cur));
       if (!live) bt.disabled = true;
       bt.addEventListener('click', (e) => { e.stopPropagation(); onPick(x.id); });
+      // A tap on the head picks the setting, so its tooltip is for the mouse only.
+      if (x.rationale) asmHover(bt, x.label, () => asmSetTip(a, x), { tap: false });
       return el('th', { scope: 'col', class: col(x) }, bt);
     }));
     const body = live ? el('tbody', {}, ...asmSpecs(a).map((g) => el('tr', {},
@@ -2541,21 +2548,32 @@ export function startReport(dash, events) {
         : el('td', { class: col(x) }, asmRange(asmPcts(a, x.id, g.ids)) || zero(), el('small', {}, asmRange(dpsOf(x.id, g.ids), f0, ' DPS', 0.5)))))))) : null;
     return el('div', { class: 'fv-asm-mx' }, el('table', { class: 'fv-asm-tbl' + (onPick ? '' : ' ro') }, el('thead', {}, head), body));
   };
-  // The ⓘ tooltip: what each setting means and why it's a candidate, and the source. The panel's table has the
-  // numbers; Method has the full description.
+  // Pointing at an assumption shows where it comes from, and its full description when the panel shows a short one.
+  // Each setting explains itself on its column head (or its line in a reference row), see asmSetTip.
   const asmTip = (a) => [
-    el('div', { class: 'fv-asm-tsets' }, ...arr(a.settings).map((x) => el('div', { class: 'fv-tip-set' },
-      el('b', { text: x.label }), el('span', { class: 'fv-tip-m', text: ` ${SEG_NAME[x.id] || ''}` }), ...asmMarks(a, x),
-      el('small', { text: `${x.value && x.value !== x.label ? x.value + '. ' : ''}${x.rationale}` })))),
+    a.short && a.description && a.description !== a.short ? tipText(a.description) : null,
     a.source ? tipNote(`Source: ${a.source}`) : null,
     a.status === 'pending' ? tipNote('Not simulated yet') : a.status === 'inert' ? tipNote('No longer applies') : null,
   ];
+  // What a setting means, and why it's a candidate.
+  const asmSetTip = (a, x) => [
+    el('div', { class: 'fv-tip-set' }, el('span', { class: 'fv-tip-m', text: SEG_NAME[x.id] || '' }), ...asmMarks(a, x),
+      el('small', { text: `${x.value && x.value !== x.label ? x.value + '. ' : ''}${x.rationale}` })),
+  ];
+  // Shows the tooltip under node, from node's left edge.
+  const asmHover = (node, head, lines, opts = {}) => {
+    node.setAttribute('data-tip', '1');
+    hoverTip(node, (pinned) => {
+      const card = $('#asm-card'), cr = card.getBoundingClientRect(), nr = node.getBoundingClientRect();
+      showTip(card, nr.left - cr.left, nr.bottom - cr.top + 4, head, lines(), { hl: node, below: true, pinned, act: opts.act });
+    }, { tap: opts.tap !== false });
+  };
   const openMethodAsm = () => { showTab('method'); requestAnimationFrame(() => $('#method-asm-card')?.scrollIntoView({ block: 'start' })); };
   const drawAsm = () => {
     const host = $('#asm-list'), custom = asmSel().length > 0;
     $('#asm-badge').hidden = !custom; $('#asm-reset').hidden = !custom;
     if (!waitOr(host, ['assumptions', 'assumption_dps', 'builds'])) return;
-    const As = rowsOf('assumptions'), open = new Set(arr(st.asmOpen)), card = $('#asm-card');
+    const As = rowsOf('assumptions'), open = new Set(arr(st.asmOpen));
     host.replaceChildren(...d3.groups(As, (a) => a.class).map(([cls, as]) => {
       const changed = as.filter((a) => st.asm?.[a.key]).length, top = d3.max(as, asmImpact);
       const d = el('details', { class: 'fv-asm-cls', 'data-cls': cls });
@@ -2566,13 +2584,13 @@ export function startReport(dash, events) {
       for (const a of asmSort(as)) {
         const cur = st.asm?.[a.key] || a.defaultSetting, ref = asmRef(a), live = a.status === 'live' && !ref, imp = asmImpact(a);
         const [sz, szText] = ref ? ['ref', 'Reference'] : asmSize(imp);
-        const info = el('button', { class: 'fv-asm-i', 'aria-label': `Details: ${a.label}`, 'data-tip': '1', text: 'ⓘ' });
-        info.addEventListener('click', (e) => { e.stopPropagation(); const cr = card.getBoundingClientRect(), ir = info.getBoundingClientRect(); showTip(card, 16, ir.bottom - cr.top + 4, a.label, asmTip(a), { hl: info, below: true, act: ['More in Method ›', openMethodAsm] }); });
         const picked = cur !== a.defaultSetting;
+        const txt = el('div', { class: 'fv-asm-txt' },
+          el('div', { class: 'fv-asm-lbl' }, el('b', { text: a.label }), live || ref ? el('span', { class: `fv-asm-size ${sz}`, title: ref ? 'One value only, kept for reference' : `Up to ${f1(imp)}% on a preset at 180s`, text: szText }) : null),
+          el('p', { class: 'fv-asm-short', text: a.short || a.description }));
+        asmHover(txt, a.label, () => asmTip(a), { act: ['More in Method ›', openMethodAsm] });
         d.append(el('div', { class: 'fv-asm-row', 'data-key': a.key, 'data-size': sz },
-          el('div', { class: 'fv-asm-txt' },
-            el('div', { class: 'fv-asm-lbl' }, el('b', { text: a.label }), live || ref ? el('span', { class: `fv-asm-size ${sz}`, title: ref ? 'One value only, kept for reference' : `Up to ${f1(imp)}% on a preset at 180s`, text: szText }) : null, info),
-            el('p', { class: 'fv-asm-short', text: a.short || a.description })),
+          txt,
           el('div', { class: 'fv-asm-body' }, ...(ref ? [...asmRefLine(a), el('p', { class: 'fv-asm-cap', text: REF_CAP })] : [
             live ? el('p', { class: 'fv-asm-cap', text: picked ? 'DPS change at 180s, vs the ranking without your pick' : ASM_CAP }) : null,
             asmMatrix(a, cur, (id) => asmPick(a, id)),

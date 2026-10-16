@@ -3248,10 +3248,6 @@ ol.fv-list li::marker {
 		color: var(--color-fg);
 		min-width: 0;
 	}
-
-	.fv-asm-i {
-		margin-left: auto;
-	}
 }
 
 // How far it can move a preset: big (4% or more), medium (1.5% or more) or small.
@@ -3296,16 +3292,6 @@ ol.fv-list li::marker {
 	font-size: var(--cds-font-size-caption);
 	line-height: 1.4;
 	color: var(--color-fg-muted);
-}
-
-.fv-asm-i {
-	border: 0;
-	background: none;
-	color: var(--color-fg-muted);
-	cursor: pointer;
-	padding: 0 0.2rem;
-	font: inherit;
-	line-height: 1;
 }
 
 // A signed change in the ok and bad colours, and a range of them.
@@ -3526,12 +3512,6 @@ ol.fv-list li::marker {
 		min-width: 0;
 		overflow-wrap: break-word;
 	}
-}
-
-.fv-asm-tsets {
-	display: grid;
-	gap: 0.25rem;
-	margin-top: 0.15rem;
 }
 
 #method-asm h3 {
