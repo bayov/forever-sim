@@ -624,7 +624,7 @@ func (spell *Spell) ApplyAOEThreat(threatAmount float64) {
 func (spell *Spell) finalizeExpectedDamage(result *SpellResult) {
 	if !spell.SpellSchool.Matches(SpellSchoolPhysical) {
 		result.Damage /= result.ResistanceMultiplier
-		averagePartialResistMultiplier := 1.0 - AverageMagicPartialResistPerLevelMultiplier*float64(result.Target.Level-spell.Unit.Level)
+		averagePartialResistMultiplier := 1.0 - spell.Unit.partialResistPerLevel()*float64(result.Target.Level-spell.Unit.Level)
 		result.Damage *= averagePartialResistMultiplier
 		result.ResistanceMultiplier = averagePartialResistMultiplier
 	}
