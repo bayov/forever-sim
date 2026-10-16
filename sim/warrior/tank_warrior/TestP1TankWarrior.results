@@ -190,85 +190,85 @@ dps_results: {
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Human-p0.bis-Protection-dps_no_reck-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 38.164
-  tps: 153.56076
+  dps: 38.74333
+  tps: 154.12191
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Human-p0.bis-Protection-dps_no_reck-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 20.00533
-  tps: 26.82055
+  dps: 20.24467
+  tps: 27.05849
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Human-p0.bis-Protection-dps_no_reck-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 50.15917
-  tps: 63.17875
+  dps: 50.19333
+  tps: 63.20653
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Human-p0.bis-Protection-dps_no_reck-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 16.53017
-  tps: 138.48311
+  dps: 16.65633
+  tps: 138.60327
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Human-p0.bis-Protection-dps_no_reck-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 9.10233
-  tps: 22.07968
+  dps: 9.3245
+  tps: 22.3019
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Human-p0.bis-Protection-dps_no_reck-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 19.92917
-  tps: 42.14789
+  dps: 20.465
+  tps: 42.68344
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Human-p0.bis-Protection-dps_reck-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 38.164
-  tps: 153.56076
+  dps: 38.74333
+  tps: 154.12191
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Human-p0.bis-Protection-dps_reck-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 20.00533
-  tps: 26.82055
+  dps: 20.24467
+  tps: 27.05849
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Human-p0.bis-Protection-dps_reck-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 65.38833
-  tps: 78.4074
+  dps: 65.4225
+  tps: 78.43518
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Human-p0.bis-Protection-dps_reck-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 16.9145
-  tps: 138.86741
+  dps: 17.04067
+  tps: 138.98758
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Human-p0.bis-Protection-dps_reck-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 9.2945
-  tps: 22.27183
+  dps: 9.51667
+  tps: 22.49405
  }
 }
 dps_results: {
  key: "TestP1TankWarrior-Phase1-Settings-Human-p0.bis-Protection-dps_reck-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 34.29917
-  tps: 56.51936
+  dps: 34.835
+  tps: 57.0549
  }
 }
 dps_results: {

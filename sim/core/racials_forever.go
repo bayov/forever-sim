@@ -8,8 +8,10 @@ import (
 )
 
 // Forever racials, as read from the beta client tooltips (build 1.60.1.69876, see
-// forever-wiki/racials.md). Every race has two actives and two passives, the resistance
-// racials are gone and the weapon skill racials pay crit instead.
+// forever-wiki/racials.md) and checked against client 1.60.1.70425. Every race has two actives
+// and two passives, and the resistance racials are gone. The weapon skill racials paid crit with
+// their weapon type until 70425, which dropped every weapon requirement: Human Ruthless and Orc
+// Savage give crit with any weapon, and Dwarf Earth Fury gives crit damage instead.
 //
 // Cooldowns per the client: Eureka! and the Undead and Gnome utilities 2 min, Blood Fury
 // (since client 70425), Berserking, Elune's Light and the Human, Dwarf and Orc utilities 3 min.
@@ -19,15 +21,19 @@ func applyForeverRaceEffects(agent Agent) {
 
 	switch character.Race {
 	case proto.Race_RaceHuman:
-		// The Human Spirit. Sword Specialization is crit now, and Mace Specialization
-		// moved to the Dwarves.
+		// The Human Spirit, and Ruthless (20597): 2% crit with all spells and attacks. Client 70338
+		// called it Sword Specialization and gave the 2% only with a sword or two-handed sword
+		// (SpellEquippedItems subclass mask 384); 70425 renamed it and dropped the weapon rule.
 		character.MultiplyStat(stats.Spirit, 1.05)
-		character.AddWeaponSpecializationCrit(2, proto.WeaponType_WeaponTypeSword)
+		character.AddStat(stats.MeleeCrit, 2*CritRatingPerCritChance)
+		character.AddStat(stats.SpellCrit, 2*SpellCritRatingPerCritChance)
 
 	case proto.Race_RaceDwarf:
-		// Mace Specialization and Big Game Hunter. Stoneform is a defensive cooldown the
-		// sim does not measure.
-		character.AddWeaponSpecializationCrit(1, proto.WeaponType_WeaponTypeMace)
+		// Earth Fury (1259719): "Increases your critical strike bonus to damage and healing by
+		// 2%" (auras 163 and 50, 2 each). Client 70338 called it Mace Specialization, 1% crit with
+		// all spells and attacks with a mace or two-handed mace; 70425 replaced it. And Big Game
+		// Hunter. Stoneform is a defensive cooldown the sim does not measure.
+		character.critDamageBonus(1.02)
 		character.mobTypeDamageAura(proto.MobType_MobTypeBeast, 1.05)
 
 	case proto.Race_RaceNightElf:
@@ -61,10 +67,10 @@ func applyForeverRaceEffects(agent Agent) {
 		character.registerTouchOfTheGrave()
 
 	case proto.Race_RaceTauren:
-		// Endurance carries a point of hit alongside the health.
+		// Endurance (20550): 5% health and, since client 70425, "critical strike bonus to damage
+		// and healing increased by 2%" (auras 163 and 50) in place of 70338's 1% hit.
 		character.MultiplyStat(stats.Health, 1.05)
-		character.AddStat(stats.MeleeHit, 1*MeleeHitRatingPerHitChance)
-		character.AddStat(stats.SpellHit, 1*SpellHitRatingPerHitChance)
+		character.critDamageBonus(1.02)
 
 	case proto.Race_RaceTroll:
 		// Beast Slaying stays. Bow and Throwing Specialization are gone, and Berserking
@@ -73,13 +79,28 @@ func applyForeverRaceEffects(agent Agent) {
 		makeBerserkingCooldown(character, .1, character.NewTimer())
 
 	case proto.Race_RaceSkyborneHighOrder, proto.Race_RaceSkyborneWindshaper:
-		// Wind Blessed and Elemental Insight. The actives (Walk on Air, Read Ley Line,
-		// Skysight) are movement and regeneration, so the two halves sim the same.
-		character.PseudoStats.MeleeSpeedMultiplier *= 1.01
-		character.PseudoStats.RangedSpeedMultiplier *= 1.01
-		character.PseudoStats.CastSpeedMultiplier *= 1.01
+		// Wind Blessed (1259710: 3% spellcasting, melee and ranged haste since client 70425, 1% in
+		// 70338) and Elemental Insight. The actives (Walk on Air, Read Leyline, Skysight) are
+		// movement and regeneration, so the two halves sim the same.
+		character.PseudoStats.MeleeSpeedMultiplier *= 1.03
+		character.PseudoStats.RangedSpeedMultiplier *= 1.03
+		character.PseudoStats.CastSpeedMultiplier *= 1.03
 		character.mobTypeDamageAura(proto.MobType_MobTypeElemental, 1.05)
 	}
+}
+
+// critDamageBonus multiplies the damage of every critical strike, melee, ranged and spell, like
+// the 2% of Dwarf Earth Fury and Tauren Endurance (aura 163, "critical strike bonus to damage"):
+// a 200% melee crit does 204% and a 150% spell crit 153%. Applied to the attack tables after
+// finalize because the targets are not known before then.
+func (character *Character) critDamageBonus(multiplier float64) {
+	character.Env.RegisterPostFinalizeEffect(func() {
+		for _, t := range character.Env.Encounter.Targets {
+			for _, at := range character.AttackTables[t.UnitIndex] {
+				at.CritMultiplier *= multiplier
+			}
+		}
+	})
 }
 
 // Damage against one creature type, like Troll Beast Slaying. Applied to the attack
