@@ -227,3 +227,22 @@ func TestDarkInspiration(t *testing.T) {
 		t.Errorf("Dark Inspiration lasts %s, want 10s", got)
 	}
 }
+
+// TestTwilightFocus checks the pushback protection: 70% at 3/3 on the cast and channelled
+// spells in Twilight Focus's mask, none on the instants.
+func TestTwilightFocus(t *testing.T) {
+	_, sp := newShadowPriestSim(t, "-3025011323-50052101231302051")
+	for _, c := range []struct {
+		name  string
+		spell *core.Spell
+		want  float64
+	}{
+		{"Mind Blast", topRank(t, "Mind Blast", sp.MindBlast), 0.70},
+		{"Mind Flay", topRank(t, "Mind Flay", sp.MindFlay), 0.70},
+		{"Shadow Word: Pain", topRank(t, "Shadow Word: Pain", sp.ShadowWordPain), 0},
+	} {
+		if got := c.spell.PushbackReduction; math.Abs(got-c.want) > 1e-9 {
+			t.Errorf("%s ignores pushback %.2f of the time, want %.2f", c.name, got, c.want)
+		}
+	}
+}

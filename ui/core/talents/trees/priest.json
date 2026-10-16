@@ -558,8 +558,7 @@
             70
           ]
         ],
-        "icon": "spell_holy_healingfocus",
-        "notSimulated": true
+        "icon": "spell_holy_healingfocus"
       },
       {
         "fieldName": "improvedRenew",

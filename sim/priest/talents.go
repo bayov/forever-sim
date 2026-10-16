@@ -38,6 +38,7 @@ func (priest *Priest) ApplyTalents() {
 	}
 
 	// Holy
+	priest.applyTwilightFocus()
 	priest.applyHolySpecialization()
 	priest.applySearingLight()
 
@@ -113,6 +114,23 @@ func (priest *Priest) applyHolyPrecision() {
 	priest.OnSpellRegistered(func(spell *core.Spell) {
 		if spellIn(spell, SpellCode_PriestSmite, SpellCode_PriestHolyFire, SpellCode_PriestPenance) {
 			spell.BonusHitRating += bonusHit
+		}
+	})
+}
+
+// Twilight Focus: 23, 47 and 70% chance not to lose casting time to damage taken (client
+// 14913, spell modifier 9) on the spells in its class mask: Smite, Holy Fire, Mind Blast,
+// Mind Flay, Penance, Starshards and the heals. The instants have no cast to push back.
+func (priest *Priest) applyTwilightFocus() {
+	if priest.Talents.TwilightFocus == 0 {
+		return
+	}
+
+	chance := []float64{0, 0.23, 0.47, 0.70}[priest.Talents.TwilightFocus]
+	priest.OnSpellRegistered(func(spell *core.Spell) {
+		if spellIn(spell, SpellCode_PriestSmite, SpellCode_PriestHolyFire, SpellCode_PriestMindBlast, SpellCode_PriestMindFlay,
+			SpellCode_PriestPenance, SpellCode_PriestStarshards, SpellCode_PriestFlashHeal, SpellCode_PriestGreaterHeal, SpellCode_PriestHeal) {
+			spell.PushbackReduction = chance
 		}
 	})
 }
