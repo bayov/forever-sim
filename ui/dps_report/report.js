@@ -1294,17 +1294,20 @@ export function startReport(dash, events) {
     });
   };
 
-  // A row whose parts each have their own tooltip. A part is any element with data-zone, and the rest of the row
-  // is one more part (zone ''). With a mouse we show the tooltip of the part under the pointer, and switch it as
-  // the pointer moves to another part. A tap shows and pins the tooltip of the part it lands on, and a second tap
-  // on the same part closes it. tip(zone, node, pinned) gets the part's element, or the row.
+  // A row whose parts each have their own tooltip. A part is any element with data-zone, and the parts marked
+  // data-zone="" all show the row's own tooltip (zone ''). The rest of the row shows none. With a mouse we show the
+  // tooltip of the part under the pointer, and switch it as the pointer moves to another part. A tap shows and pins
+  // the tooltip of the part it lands on, and a second tap on the same part closes it. tip(zone, node, pinned) gets
+  // the part's element.
   const hoverZones = (row, tip) => {
     let cur = null;
-    const at = (e) => e.target.closest('[data-zone]') || row;
-    const zone = (n) => (n === row ? '' : n.dataset.zone);
+    const at = (e) => e.target.closest('[data-zone]');
+    const zone = (n) => (n && row.contains(n) ? n.dataset.zone : null);
+    const off = () => { cur = null; if (tipHl.includes(row)) hideTip(); };
     row.addEventListener('pointerover', (e) => {
       if (e.pointerType !== 'mouse' || tipPinned) return;
       const n = at(e), z = zone(n);
+      if (z == null) return off();
       if (z === cur && tipHl.includes(row)) return;
       cur = z;
       tip(z, n, false);
@@ -1313,7 +1316,7 @@ export function startReport(dash, events) {
     row.addEventListener('pointerup', (e) => {
       if (e.pointerType === 'mouse' || e.target.closest('[data-tt]')) return;
       const n = at(e), z = zone(n);
-      if (tipPinned && tipHl.includes(row) && z === cur) { hideTip(); cur = null; return; }
+      if (z == null || (tipPinned && tipHl.includes(row) && z === cur)) return off();
       cur = z;
       tip(z, n, true);
     });
@@ -1513,6 +1516,8 @@ export function startReport(dash, events) {
         ...gaps.map(([k, d]) => [k, sgn(d, f0), ...(w ? [w.has(k) && w.get(k) ? tipDelta(worth(k, d), f1, '') : '0'] : [])]),
         w ? ['Sum', '', tipDelta(sum, f1, '')] : null])];
     };
+    // The race's icon, name and numbers show the row's own tooltip.
+    const head = (n) => { n.dataset.zone = ''; return n; };
     host.replaceChildren(...rows.map((r, i) => {
       const track = el('div', { class: 'fv-rtrack' });
       r.segs.forEach((sg, k) => {
@@ -1529,9 +1534,9 @@ export function startReport(dash, events) {
       // A racial with no effect here gets its reason after the race name, so it costs no extra line.
       const idle = one ? r.idle.slice(0, 3).map((q) => el('small', { 'data-zone': 'idle:' + q.part, text: `${shortLabel(q.label)}: ${q.note}` })) : [];
       const row = el('div', { class: 'fv-rrow' + (i === 0 ? ' top' : ''), 'data-tip': '1' },
-        raceIco(r.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(r.race)}` }),
-        el('span', { class: 'nm' }, raceName(r), one && r.isPreset ? el('i', { text: 'preset race' }) : null, ...idle),
-        el('span', { class: 'end' }, el('small', { text: one ? (i === 0 ? '★ best' : `−${f2(100 * (1 - r.dps / rows[0].dps))}%`) : r.timesBest ? `best on ${r.timesBest} of ${r.n}` : 'never best' }),
+        head(raceIco(r.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(r.race)}` })),
+        el('span', { class: 'nm' }, head(raceName(r)), one && r.isPreset ? head(el('i', { text: 'preset race' })) : null, ...idle),
+        el('span', { class: 'end', 'data-zone': '' }, el('small', { text: one ? (i === 0 ? '★ best' : `−${f2(100 * (1 - r.dps / rows[0].dps))}%`) : r.timesBest ? `best on ${r.timesBest} of ${r.n}` : 'never best' }),
           el('b', { text: one ? f1(r.dps) : pct(r.avg) })),
         track, cap);
       // Each part of the entry has its own tooltip. A piece of the bar, or its caption under the bar, says what
