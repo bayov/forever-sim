@@ -25,7 +25,7 @@
     "ok": true,
     "note": "180 s, seed 1"
   },
-  "summary": "A second Balance playstyle with Wrath as the only filler, for a moonkin that would rather not weave; it trades Moonglow for Heart of the Wild and uses Natural Power gloves. It is 5.5% behind the default Balance build.",
+  "summary": "Balance with Wrath as the only filler, for a moonkin that would rather not weave. Takes Heart of the Wild instead of Moonglow, with Natural Power gloves. 5.5% behind the default Balance build.",
   "keyTalents": [
     "Improved Wrath",
     "Moonkin Form",
@@ -59,11 +59,11 @@
     "Cerebral Cortex Compound"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 36 spell power and 15 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Two synthetic item level 71 trinkets: 36 spell power and 15 crit rating, and an on-use 140 spell power for 20 s every 2 min (at the pull, then on cooldown).",
     "5.5% behind the weaving Balance build (782.7 vs 828.5 at 180 s)",
-    "Wrath VIII's base damage ×1.085, halfway to the level 30 rank's 0.42 of Era (only ranks 1 to 5 were retuned); the client has ×1.00",
+    "Wrath VIII's base damage is ×1.085, halfway to the level 30 rank's 0.42 of Era (only ranks 1 to 5 were retuned). The client has ×1.00.",
     "Natural Power gloves are +8.1 over Arcane Power for this build",
-    "Heart of the Wild 3 over Moonglow 3 is +2.6 in its own search"
+    "Heart of the Wild 3 over Moonglow 3 is +2.6."
   ],
   "notes": "Request from mksettings -spec balance with the Wrath gear variant, apl and talents; same consumes, buffs and encounter as the Balance build (shared EncounterLevel60). Duration 180 s, durationVariation 20. No edits needed."
 }

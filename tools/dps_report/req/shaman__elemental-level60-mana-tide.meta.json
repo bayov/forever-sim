@@ -25,7 +25,7 @@
     "ok": true,
     "note": "verify.py, 180 s, seed 1"
   },
-  "summary": "The Elemental Level 60 build with 16 Restoration points for Mana Tide Totem, cast at 20% mana for the group's mana. It is 1.4% behind Level 60 at 180 s.",
+  "summary": "The default Elemental build with 16 Restoration points for Mana Tide Totem, cast at 20% mana for the group. 1.4% behind at 180 s.",
   "keyTalents": [
     "Elemental Mastery",
     "Lava Burst",
@@ -68,14 +68,14 @@
     "Goblin Land Mine"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 37 spell power and 14 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Mana Tide Totem is A/B -1.4 for the shaman itself: a 3 min fight with a potion and rune doesn't need the mana",
-    "Water Shield point is inert (the rotation keeps Lightning Shield up)",
-    "Lightning Bolt X's base damage ×1.12, the raise a beta build gave the top playable rank; the client's 31+ ranks look untuned (rank 10 ~201 base at 0.714 coefficient)",
-    "Only the Tier 1 2-piece is live by the standard; the 5-piece (Lava Burst -1 s cooldown) would add more",
-    "One 2% crit elixir by the standard; Owl stacked on Sages would be about +10 if Forever allows stacking",
-    "Raid damage hits on the shaman (1 a minute, which fires Lightning Shield) are an estimate from boss timers, not measured in logs; the assumptions panel runs 0 and 10",
-    "Call of Thunder is gone from the 70425 tree; Elemental Mastery took its point, and Eye of the Storm 3 keeps 70% of the casts from being pushed back by the 2 raid hits a minute"
+    "Two synthetic item level 71 trinkets: 37 spell power and 14 crit rating, and an on-use 140 spell power for 20 s every 2 min (at the pull, then on cooldown).",
+    "Mana Tide Totem costs the shaman 1.4 DPS: a 3 min fight with a potion and rune doesn't need the mana.",
+    "The Water Shield point does nothing (the rotation keeps Lightning Shield up).",
+    "Lightning Bolt X's base damage is ×1.12, the raise a beta build gave the top playable rank. The client's 31+ ranks look untuned (rank 10 has about 201 base at a 0.714 coefficient).",
+    "Only the Tier 1 2-piece is active. The 5-piece (Lava Burst -1 s cooldown) would add more.",
+    "One 2% crit elixir per character. Owl on top of Sages would add about 10 if Forever allows it.",
+    "Raid damage hits on the shaman (1 a minute, each fires Lightning Shield) are estimated from boss timers. The assumptions panel also runs 0 and 10.",
+    "Call of Thunder is gone from the 70425 tree, so Elemental Mastery took its point. Eye of the Storm 3 keeps 70% of casts from being pushed back by the 2 raid hits a minute."
   ],
   "notes": "mksettings -spec ele -apl level60_mana_tide (standards 23: every shaman drops its own party totems; the raid has none, the shaman drops Mana Spring Totem itself); race SkyborneWindshaper (the best race since client 70425's Wind Blessed 3% haste)."
 }

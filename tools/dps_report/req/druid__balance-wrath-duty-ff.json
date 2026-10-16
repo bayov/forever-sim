@@ -230,7 +230,7 @@
                       }
                     }
                   },
-                  "notes": "Insect Swarm whenever it is down. Without the talent ignore the warning on this line."
+                  "notes": "Without the talent ignore the warning on this line."
                 },
                 {
                   "action": {
@@ -269,8 +269,7 @@
                         ]
                       }
                     }
-                  },
-                  "notes": "Moonfire whenever its dot is down."
+                  }
                 },
                 {
                   "action": {
@@ -287,7 +286,7 @@
                       }
                     }
                   },
-                  "notes": "A free Starfire on Clearcasting, which Wrath does not use up."
+                  "notes": "Free Starfire on Clearcasting. Wrath doesn't use it up."
                 },
                 {
                   "action": {
@@ -322,7 +321,7 @@
                       }
                     }
                   },
-                  "notes": "Moonfire when a Wrath would not land before the end."
+                  "notes": "When a Wrath would not land before the end."
                 },
                 {
                   "action": {
@@ -331,8 +330,7 @@
                         "spellId": 9912
                       }
                     }
-                  },
-                  "notes": "Wrath."
+                  }
                 }
               ]
             },

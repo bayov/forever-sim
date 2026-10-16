@@ -25,7 +25,7 @@
     "ok": true,
     "note": "180 s, seed 1"
   },
-  "summary": "41/0/10 moonkin that keeps Insect Swarm and Moonfire up and weaves Wrath and Starfire to spend every Eclipse charge. It is the talent search's best on the synthetic Phase 1 gear and the default Balance Level 60 preset.",
+  "summary": "41/0/10 moonkin. It keeps Insect Swarm and Moonfire up and weaves Wrath and Starfire to spend every Eclipse charge. The default Balance build.",
   "keyTalents": [
     "Moonkin Form",
     "Eclipse",
@@ -61,13 +61,13 @@
     "Cerebral Cortex Compound"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 36 spell power and 15 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "No Ahn'Qiraj ranks: Starfire rank 6 costs 13.3 DPS (820.4 -> 807.1 at 180 s, first gear)",
+    "Two synthetic item level 71 trinkets: 36 spell power and 15 crit rating, and an on-use 140 spell power for 20 s every 2 min (at the pull, then on cooldown).",
+    "No Ahn'Qiraj ranks: Starfire rank 6 costs 13.3 DPS at 180 s.",
     "5-piece Grovekeeper Eclipse instead of 2-piece would add 12.6 and Swarming Idol is worth 3.3 (measured before the 5a and 1b rounds)",
-    "At 300 s mana runs out and the plain weave without the Clearcasting Starfire is 2 ahead",
-    "Wrath VIII's base damage ×1.085, halfway to the level 30 rank's 0.42 of Era (only ranks 1 to 5 were retuned); the client has ×1.00",
-    "Omen of Clarity's proc chance on spells and Eclipse charges on Wrath landing are unverified",
-    "Only one +2% crit elixir by standard; a second (Owl) would add 15.1"
+    "At 300 s mana runs out, and the plain weave without the Clearcasting Starfire is 2 ahead.",
+    "Wrath VIII's base damage is ×1.085, halfway to the level 30 rank's 0.42 of Era (only ranks 1 to 5 were retuned). The client has ×1.00.",
+    "Unverified: Omen of Clarity's proc chance on spells, and Eclipse charges on Wrath landing.",
+    "One +2% crit elixir per character. A second one (Owl) would add 15.1."
   ],
   "notes": "Request from mksettings -spec balance (caster group: Mana Spring, Kings + Wisdom, no Might, own Moonkin Form crit; 30 yd range; Innervate on self). Duration set to 180 s, durationVariation 20 as in EncounterLevel60. No edits needed."
 }

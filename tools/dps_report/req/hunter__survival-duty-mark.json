@@ -161,7 +161,7 @@
                       }
                     }
                   },
-                  "notes": "Walk into melee range when the fight starts at range."
+                  "notes": "When the fight starts at range."
                 },
                 {
                   "action": {
@@ -182,7 +182,7 @@
                       }
                     }
                   },
-                  "notes": "Aspect of the Beast if it ever drops."
+                  "notes": "If it ever drops."
                 },
                 {
                   "action": {
@@ -228,7 +228,7 @@
                       }
                     }
                   },
-                  "notes": "Mongoose Bite whenever Expose Prey or a dodge opens it."
+                  "notes": "When Expose Prey or a dodge opens it."
                 },
                 {
                   "action": {
@@ -238,7 +238,7 @@
                       }
                     }
                   },
-                  "notes": "Strider Kick on cooldown, with the talent."
+                  "notes": "With the talent."
                 },
                 {
                   "action": {
@@ -249,7 +249,7 @@
                       }
                     }
                   },
-                  "notes": "Queue Raptor Strike on the next swing when it is ready."
+                  "notes": "Queued on the next swing."
                 },
                 {
                   "action": {
@@ -288,8 +288,7 @@
                         ]
                       }
                     }
-                  },
-                  "notes": "Lacerate when it is down."
+                  }
                 },
                 {
                   "action": {
@@ -312,7 +311,7 @@
                       }
                     }
                   },
-                  "notes": "Immolation Trap at the hunter's feet on cooldown."
+                  "notes": "At the hunter's feet."
                 },
                 {
                   "action": {
@@ -398,7 +397,7 @@
                       }
                     }
                   },
-                  "notes": "Wing Clip as a filler with the mana to spare, held when Mongoose Bite or Strider Kick is about ready."
+                  "notes": "Filler with mana to spare. Held when Mongoose Bite or Strider Kick is almost ready."
                 }
               ]
             },

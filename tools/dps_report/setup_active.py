@@ -46,31 +46,31 @@ CONSUME_GIVES = {
 SCHOOL_NONE = {'Frost spell damage': 'Frost', 'Fire spell damage': 'Fire', 'Shadow spell damage': 'Shadow', 'Nature spell damage': 'Nature'}
 
 # raid buffs a class puts up itself in the sim (each class's AddRaidBuffs)
-OWN = {('Mage', 'arcaneBrilliance'): "the sim adds the mage's own Arcane Brilliance",
-       ('Priest', 'divineSpirit'): "the sim adds the priest's own Divine Spirit",
-       ('Priest', 'shadowProtection'): "the sim adds the priest's own Shadow Protection",
-       ('Priest', 'powerWordFortitude'): "the sim adds the priest's own Power Word: Fortitude",
-       ('Warlock', 'bloodPact'): "the sim adds the warlock's own Imp's Blood Pact",
-       ('Druid', 'moonkinAura'): "the sim adds the druid's own Moonkin Aura",
-       ('Druid', 'leaderOfThePack'): "the sim adds the druid's own Leader of the Pack",
-       ('Hunter', 'trueshotAura'): "the sim adds the hunter's own Trueshot Aura"}
+OWN = {('Mage', 'arcaneBrilliance'): "The mage already brings its own Arcane Brilliance",
+       ('Priest', 'divineSpirit'): "The priest already brings its own Divine Spirit",
+       ('Priest', 'shadowProtection'): "The priest already brings its own Shadow Protection",
+       ('Priest', 'powerWordFortitude'): "The priest already brings its own Power Word: Fortitude",
+       ('Warlock', 'bloodPact'): "The warlock's Imp already brings Blood Pact",
+       ('Druid', 'moonkinAura'): "The druid already brings its own Moonkin Aura",
+       ('Druid', 'leaderOfThePack'): "The druid already brings its own Leader of the Pack",
+       ('Hunter', 'trueshotAura'): "The hunter already brings its own Trueshot Aura"}
 
 DEFENSIVE = {
-    'thorns': "It only hurts what attacks you, and in this sim the boss attacks the tank, not you.",
-    'retributionAura': "It only hurts what attacks you, and in this sim the boss attacks the tank, not you.",
-    'devotionAura': "Armor only. The boss attacks the tank, not you, so it doesn't change your damage.",
+    'thorns': "It only hurts attackers, and the boss attacks the tank, not you.",
+    'retributionAura': "It only hurts attackers, and the boss attacks the tank, not you.",
+    'devotionAura': "Armor only, and the boss attacks the tank, not you.",
     'shadowProtection': "Shadow resistance only. Nothing in this fight deals Shadow damage to you.",
     'fireResistanceAura': "Fire resistance only. Nothing in this fight deals Fire damage to you.",
     'frostResistanceAura': "Frost resistance only. Nothing in this fight deals Frost damage to you.",
-    'powerWordFortitude': "Stamina only, and health doesn't change this build's damage.",
-    'bloodPact': "Stamina only, and health doesn't change this build's damage.",
-    'curseOfWeakness': "Defensive: it weakens the boss's attacks, and the boss attacks the tank, not you.",
-    'demoralizingShout': "Defensive: it lowers the boss's attack power, and the boss attacks the tank, not you.",
-    'demoralizingRoar': "Defensive: it lowers the boss's attack power, and the boss attacks the tank, not you.",
-    'thunderClap': "Defensive: it slows the boss's attacks, and the boss attacks the tank, not you.",
-    'insectSwarm': "Defensive: it makes the boss miss more, and the boss attacks the tank, not you.",
-    'scorpidSting': "Defensive, and the sim gives it no effect.",
-    'judgementOfLight': "It heals whoever hits the boss, and healing doesn't change damage.",
+    'powerWordFortitude': "Stamina only. Health doesn't change damage.",
+    'bloodPact': "Stamina only. Health doesn't change damage.",
+    'curseOfWeakness': "It weakens the boss's attacks, and the boss attacks the tank, not you.",
+    'demoralizingShout': "It lowers the boss's attack power, and the boss attacks the tank, not you.",
+    'demoralizingRoar': "It lowers the boss's attack power, and the boss attacks the tank, not you.",
+    'thunderClap': "It slows the boss's attacks, and the boss attacks the tank, not you.",
+    'insectSwarm': "It makes the boss miss more, and the boss attacks the tank, not you.",
+    'scorpidSting': "Defensive only. The sim gives it no effect.",
+    'judgementOfLight': "It heals whoever hits the boss. Healing doesn't add damage.",
 }
 GONE = {
     'curseOfShadow': "Not in WoW Forever: its Curse of the Elements already covers Shadow and Arcane.",
@@ -93,8 +93,8 @@ ARMOR = {'sunderArmor', 'exposeArmor', 'faerieFire', 'curseOfRecklessness'}
 
 def mana_reason(g, cls):
     if cls in NO_MANA:
-        return f"It gives {g}, and {cls}s have no mana." if 'mana' in g else f"It gives {g}, which only matters for mana, and {cls}s have no mana."
-    return f"It gives {g}, and this build never runs short of mana." if 'mana' in g else f"It gives {g}, which only helps mana here, and this build never runs short of mana."
+        return f"It gives {g}, and {cls}s have no mana."
+    return f"It gives {g}, and this build never runs short of mana."
 
 
 def reason(k, row, cls, role, abl_same, pair_same):
@@ -103,15 +103,15 @@ def reason(k, row, cls, role, abl_same, pair_same):
     if k in GONE:
         return GONE[k]
     if (cls, k) in OWN:
-        return 'Already there: ' + OWN[(cls, k)] + '.'
+        return OWN[(cls, k)] + '.'
     if k in ARMOR and pair_same:
-        return "It lowers armor, and this build's damage is all spells, which armor doesn't reduce."
+        return "It lowers armor, and armor doesn't reduce this build's spell damage."
     if k in DEFENSIVE:
         return DEFENSIVE[k]
     if k == 'trueshotAura':
-        return "WoW Forever's Trueshot Aura gives ranged attack power only, and this build doesn't attack at range."
+        return "In WoW Forever it gives only ranged attack power, and this build doesn't attack at range."
     if row['category'] == 'Professions':
-        return "This profession changes nothing in the sim for this build."
+        return "No effect on this build's damage."
     if row['category'] == 'Consumes':
         name = item.split(': ', 1)[1]
         g = CONSUME_GIVES.get(name)
@@ -124,10 +124,10 @@ def reason(k, row, cls, role, abl_same, pair_same):
         if g and ('mana' in g or g in ('Intellect', 'Spirit')):
             return mana_reason(g, cls)
         if g == 'health':
-            return "Health only, and health doesn't change this build's damage."
+            return "Health only. Health doesn't change damage."
         if g:
             return f"It gives {g}, which this build doesn't use."
-        return "Leaving it out doesn't change this build's damage in the sim."
+        return "No effect on this build's damage."
     g = GIVES.get(k)
     if g and ('mana' in g or g in ('Intellect', 'Spirit')):
         return mana_reason(g, cls)
@@ -136,10 +136,10 @@ def reason(k, row, cls, role, abl_same, pair_same):
     if k in ('battleShout', 'blessingOfMight') and role == 'Caster':
         return "It gives attack power, which this build's spells don't use."
     if k == 'judgementOfTheCrusader':
-        return "It adds Holy damage taken by the boss, and this build deals no Holy damage."
+        return "It raises Holy damage taken, but this build deals no Holy damage."
     if g:
         return f"It gives {g}, which this build doesn't use."
-    return "Leaving it out doesn't change this build's damage in the sim."
+    return "No effect on this build's damage."
 
 
 def roles(stat_rows):
@@ -192,7 +192,7 @@ def annotate(setup, builds, stat_rows, path=os.path.join(D, 'abl', 'ablate.json'
                 what = pair[1][0]
                 tail = " In WoW Forever the two share one slot." if k in ('faerieFire', 'curseOfRecklessness', 'leaderOfThePack', 'moonkinAura') else " The two don't stack."
                 if k == 'exposeArmor':  # the sim's aura log shows Expose Armor up from 3 s, as it takes the slot over
-                    tail += " The sim swaps Expose Armor in after 3 s, which is why its uptime shows, but without it Sunder Armor holds the same armor."
+                    tail += " Its uptime still shows because the sim swaps it in after 3 s."
                 r['active'], r['why'] = False, f"{NAME[other]} already gives {what}.{tail}"
         elif same:
             r['active'], r['why'] = False, reason(k, r, cls, role, same, pair_same)

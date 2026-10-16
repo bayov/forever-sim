@@ -110,13 +110,13 @@
               ],
               "priorityList": [
                 {
-                  "notes": "Arcane Power, Presence of Mind, Combustion, trinkets, racials and the mana gems on a free GCD.",
+                  "notes": "Arcane Power, Presence of Mind, Combustion, trinkets, racials and mana gems on a free GCD.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }
                 },
                 {
-                  "notes": "Evocation once the mana runs low, with enough of the fight left to spend it.",
+                  "notes": "Once mana runs low, with enough fight left to spend it.",
                   "action": {
                     "condition": {
                       "and": {
@@ -188,7 +188,7 @@
                   }
                 },
                 {
-                  "notes": "Arcane Blast up to the stack target: each stack is 15% of Intellect as spell damage for 15 sec from the first.",
+                  "notes": "Up to the stack target.",
                   "action": {
                     "condition": {
                       "and": {
@@ -275,7 +275,7 @@
                   }
                 },
                 {
-                  "notes": "Arcane Missiles on a Missile Barrage proc, free and twice as fast.",
+                  "notes": "On a Missile Barrage proc: free and twice as fast.",
                   "action": {
                     "condition": {
                       "and": {
@@ -305,7 +305,7 @@
                   }
                 },
                 {
-                  "notes": "An instant when the filler would not land before the end of the fight.",
+                  "notes": "Instant cast when the filler would not land before the fight ends.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -340,7 +340,6 @@
                   }
                 },
                 {
-                  "notes": "Frostbolt.",
                   "action": {
                     "castSpell": {
                       "spellId": {

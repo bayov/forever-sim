@@ -110,7 +110,7 @@
               ],
               "priorityList": [
                 {
-                  "notes": "The on-use trinket once Fire Vulnerability has 5 stacks (or on cooldown without Improved Scorch). Without the trinket ignore the warning on this line.",
+                  "notes": "Once Fire Vulnerability has 5 stacks, or on cooldown without Improved Scorch. Without the trinket ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -176,13 +176,13 @@
                   }
                 },
                 {
-                  "notes": "Arcane Power, Presence of Mind, Combustion, trinkets, racials and the mana gems on a free GCD.",
+                  "notes": "Arcane Power, Presence of Mind, Combustion, trinkets, racials and mana gems on a free GCD.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }
                 },
                 {
-                  "notes": "Evocation once the mana runs low, with enough of the fight left to spend it.",
+                  "notes": "Once mana runs low, with enough fight left to spend it.",
                   "action": {
                     "condition": {
                       "and": {
@@ -224,7 +224,7 @@
                   }
                 },
                 {
-                  "notes": "Never: the mana gems share the Demonic Rune's cooldown, and the rune gives more.",
+                  "notes": "Never: mana gems share the Demonic Rune's cooldown, and the rune gives more.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -249,7 +249,7 @@
                   }
                 },
                 {
-                  "notes": "Never: the mana gems share the Demonic Rune's cooldown, and the rune gives more.",
+                  "notes": "Never: mana gems share the Demonic Rune's cooldown, and the rune gives more.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -274,7 +274,7 @@
                   }
                 },
                 {
-                  "notes": "Never: the mana gems share the Demonic Rune's cooldown, and the rune gives more.",
+                  "notes": "Never: mana gems share the Demonic Rune's cooldown, and the rune gives more.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -299,7 +299,7 @@
                   }
                 },
                 {
-                  "notes": "Never: the mana gems share the Demonic Rune's cooldown, and the rune gives more.",
+                  "notes": "Never: mana gems share the Demonic Rune's cooldown, and the rune gives more.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -324,7 +324,6 @@
                   }
                 },
                 {
-                  "notes": "Ice Lance while Fingers of Frost is up.",
                   "action": {
                     "condition": {
                       "and": {
@@ -354,7 +353,7 @@
                   }
                 },
                 {
-                  "notes": "Scorch up to 5 stacks of Fire Vulnerability, and before it runs out.",
+                  "notes": "Builds 5 Fire Vulnerability stacks and refreshes them.",
                   "action": {
                     "condition": {
                       "and": {
@@ -426,7 +425,7 @@
                   }
                 },
                 {
-                  "notes": "Pyroblast once Heating Up has cut its cast enough.",
+                  "notes": "Once Heating Up has cut its cast enough.",
                   "action": {
                     "condition": {
                       "and": {
@@ -472,7 +471,7 @@
                   }
                 },
                 {
-                  "notes": "Arcane Missiles on a Missile Barrage proc, free and twice as fast.",
+                  "notes": "On a Missile Barrage proc: free and twice as fast.",
                   "action": {
                     "condition": {
                       "and": {
@@ -502,7 +501,7 @@
                   }
                 },
                 {
-                  "notes": "Fire Blast on cooldown with the mana to spare.",
+                  "notes": "With mana to spare.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -525,7 +524,7 @@
                   }
                 },
                 {
-                  "notes": "Fire Blast with the mana the fight can't use.",
+                  "notes": "With mana the fight can't use.",
                   "action": {
                     "condition": {
                       "and": {
@@ -575,7 +574,7 @@
                   }
                 },
                 {
-                  "notes": "Rank 2 Frostfire Bolt when the mana will not last the fight.",
+                  "notes": "Rank 2 when mana won't last the fight.",
                   "action": {
                     "condition": {
                       "and": {
@@ -655,7 +654,7 @@
                   }
                 },
                 {
-                  "notes": "An instant when the filler would not land before the end of the fight.",
+                  "notes": "Instant cast when the filler would not land before the fight ends.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -690,7 +689,6 @@
                   }
                 },
                 {
-                  "notes": "Frostfire Bolt.",
                   "action": {
                     "castSpell": {
                       "spellId": {

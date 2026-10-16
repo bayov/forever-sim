@@ -25,12 +25,12 @@
     "ok": true,
     "note": "same sim as the published number (seed 1)"
   },
-  "summary": "Mutilate against a Humanoid or Giant boss, with Murder 2/2 (+4% damage to Humanoids and Giants) taking the points the generic-boss build spends elsewhere.",
-  "advantage": "Murder 2/2 makes every attack do 4% more damage to Humanoids and Giants. Against other bosses it does nothing, so the normal build spends those points elsewhere.",
+  "summary": "Mutilate for a Humanoid or Giant boss, with Murder 2/2 (+4% damage to Humanoids and Giants) in place of the points the normal build spends elsewhere.",
+  "advantage": "Murder 2/2 adds 4% damage against Humanoids and Giants. It does nothing against other bosses, so the normal build spends those points elsewhere.",
   "advantageRefs": [
     "tal:Rogue:0:4"
   ],
-  "advantageShort": "Murder 2/2: +4% damage to Humanoids and Giants. It does nothing elsewhere, so the normal build skips it.",
+  "advantageShort": "Murder 2/2 adds 4% damage against Humanoids and Giants. The normal build skips it.",
   "keyTalents": [
     "Murder 2/2",
     "Mutilate",
@@ -64,14 +64,14 @@
   ],
   "caveats": [
     "Murder is damage only (+4%) and only against Humanoids and Giants",
-    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 31 Agility and 15 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Backstab with the same talents is about 20 DPS ahead; Mutilate is pinned to define the spec",
-    "Venom (25 Energy) loses DPS at every combo point count, so no Venom preset",
-    "Mutilate needing only a main-hand dagger is open for beta testing",
-    "Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV) left out under Forever; would add +13 to +18",
-    "Grimstitch 4/5-piece bonuses not live on the synthetic gear (about +8 / +6 for Combat Daggers)",
-    "Flask of Supreme Power and Greater Arcane Elixir omitted for consistency (+8 via Dragonbreath Chili)",
-    "Best Alliance race is High Order; since client 70425 the races are within about 3 DPS of each other"
+    "Two synthetic item level 71 trinkets: 31 Agility and 15 crit rating, and an on-use 335 attack power for 20 s every 2 min (at the pull, then on cooldown).",
+    "Backstab with the same talents is about 20 DPS ahead. Mutilate is kept because it defines the spec.",
+    "Venom (25 Energy) loses DPS at every combo point count, so there's no Venom preset.",
+    "Open for beta testing: does Mutilate need only a main-hand dagger?",
+    "No Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV). They would add 13 to 18.",
+    "Grimstitch 4-piece and 5-piece bonuses aren't active on the synthetic gear (about +8 and +6 for Combat Daggers).",
+    "Flask of Supreme Power and Greater Arcane Elixir left out for consistency (+8 through Dragonbreath Chili).",
+    "Best Alliance race is High Order. Since client 70425 the races are within about 3 DPS of each other."
   ],
   "notes": "Request from mksettings with the same arguments as rogue__mutilate except talents, then the target's mobType set to MobTypeHumanoid, as the class preset's encounter does.",
   "encounter": "Humanoid",

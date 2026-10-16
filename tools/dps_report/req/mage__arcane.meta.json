@@ -25,7 +25,7 @@
     "ok": true,
     "note": "180 s, 20000 iterations, seed 1, on the 70425 rotation (seed 100001 within 0.6)"
   },
-  "summary": "Arcane to Arcane Power, rebuilt for client 70425: four Arcane Blast stacks every 15 s for 60% of Intellect as spell damage, Missile Barrage 2 and a Frostbolt filler, on the Arcane gear variant (Gloves - Arcane Power). 12% behind Frostfire.",
+  "summary": "Arcane to Arcane Power, rebuilt for client 70425: four Arcane Blast stacks every 15 s for 60% of Intellect as spell damage, Missile Barrage 2 and a Frostbolt filler. Arcane gear (Gloves - Arcane Power). 12% behind Frostfire.",
   "keyTalents": [
     "Arcane Blast",
     "Missile Barrage",
@@ -63,12 +63,12 @@
     "Goblin Sapper"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 41 spell power and 11 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Arcane Blast stacks (70425): the stack lands after the cast's own hit and more stacks don't refresh the 15 s; both open",
-    "Arcane Wrath (new in 70425) lost its point to Missile Barrage 2",
-    "Arcane Concentration on missile ticks with a 1 s internal cooldown (assumed)",
-    "Arcane Mind crit semantics assumed",
-    "No Ahn'Qiraj book ranks (Fireball XI, Frostbolt X, Arcane Missiles VII); with the books Frost +50, Arcane +30, Fire +17, Frostfire 0"
+    "Two synthetic item level 71 trinkets: 41 spell power and 11 crit rating, and an on-use 140 spell power for 20 s every 2 min (at the pull, then on cooldown).",
+    "Arcane Blast stacks (70425): each stack lands after the cast's own hit, and more stacks don't refresh the 15 s. Both are open.",
+    "Arcane Wrath (new in 70425) lost its point to Missile Barrage 2.",
+    "Assumed: Arcane Concentration on missile ticks, with a 1 s internal cooldown.",
+    "Arcane Mind's crit behavior is assumed.",
+    "No Ahn'Qiraj book ranks (Fireball XI, Frostbolt X, Arcane Missiles VII). With the books: Frost +50, Arcane +30, Fire +17, Frostfire 0."
   ],
   "notes": "Request written by mksettings -spec mage_arcane unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). It carries the spec's staff imbue scroll (Scroll of Imbue Precision) as a mage option, as the preset does."
 }

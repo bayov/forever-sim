@@ -229,7 +229,7 @@
                       }
                     }
                   },
-                  "notes": "The spell power on-use trinket at the pull, then held for the execute phase when that loses no use."
+                  "notes": "At the pull, then held for the execute phase when that loses no use."
                 },
                 {
                   "action": {
@@ -238,8 +238,7 @@
                         "itemId": 10646
                       }
                     }
-                  },
-                  "notes": "Goblin Sapper Charge on cooldown."
+                  }
                 },
                 {
                   "action": {
@@ -320,7 +319,7 @@
                       }
                     }
                   },
-                  "notes": "Consecration with the mana to spare."
+                  "notes": "With mana to spare."
                 },
                 {
                   "action": {
@@ -366,7 +365,7 @@
                       }
                     }
                   },
-                  "notes": "Judgement on cooldown, on whichever damage seal is up."
+                  "notes": "On whichever damage seal is up."
                 },
                 {
                   "action": {
@@ -416,7 +415,7 @@
                       }
                     }
                   },
-                  "notes": "Seal of Command whenever it is down. Judgement does not consume it under Forever. Without the talent ignore the warning on this line."
+                  "notes": "Judgement doesn't use it up in Forever. Without the talent ignore the warning on this line."
                 },
                 {
                   "action": {
@@ -495,7 +494,7 @@
                       }
                     }
                   },
-                  "notes": "Twist of Light: swap to the other damage seal just before the swing, which then gets the Echo of the old one too."
+                  "notes": "Twist of Light: swap seals just before the swing, so the swing also gets the old seal's Echo."
                 },
                 {
                   "action": {
@@ -574,7 +573,7 @@
                       }
                     }
                   },
-                  "notes": "And back again before the next swing."
+                  "notes": "Back again before the next swing."
                 },
                 {
                   "action": {
@@ -583,8 +582,7 @@
                         "spellId": 10333
                       }
                     }
-                  },
-                  "notes": "Holy Strike on cooldown."
+                  }
                 },
                 {
                   "action": {
@@ -593,8 +591,7 @@
                         "spellId": 24239
                       }
                     }
-                  },
-                  "notes": "Hammer of Wrath below 20% health."
+                  }
                 },
                 {
                   "action": {
@@ -604,7 +601,7 @@
                       }
                     }
                   },
-                  "notes": "Exorcism on cooldown, only against Undead and Demons."
+                  "notes": "Only against Undead and Demons."
                 },
                 {
                   "action": {

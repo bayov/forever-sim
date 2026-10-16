@@ -25,7 +25,7 @@
     "ok": true,
     "note": "180 s, 20000 iterations, seed 1 (seed 1000001: 724.9)"
   },
-  "summary": "A Holy damage priest: 31 Discipline (Power in Light, Twin Disciplines, Holy Precision, Power Infusion) and 17 Holy (Divine Fury, Searing Light, Twilight Focus) casting Smite with Shadow Word: Pain up for Power in Light. Shipped as its own spec on its own hit-free gear, 22% behind Shadow at 180 s because Smite is a mana-hungry filler.",
+  "summary": "Holy damage priest casting Smite, with Shadow Word: Pain up for Power in Light: 31 Discipline (Power in Light, Twin Disciplines, Holy Precision, Power Infusion) and 17 Holy (Divine Fury, Searing Light, Twilight Focus). Its own hit-free gear. 22% behind Shadow at 180 s, because Smite costs a lot of mana.",
   "keyTalents": [
     "Power in Light",
     "Divine Fury",
@@ -62,17 +62,17 @@
     "Demonic Rune"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 36 spell power and 15 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Mana-bound: 744.0 / 724.6 / 639.7 at 120 / 180 / 300 s (Undead); Devouring Plague's 24 s cooldown (client 70425) only pays above 80% mana",
-    "Smite VIII's base damage ×1.09, halfway to rank 4's ratio to Era (the 31+ ranks look partly un-retuned); the client has ×1.00",
-    "Forever's downrank penalty modeled (5% of the coefficient per level past 17 below the caster), so the fallback Smite is rank 7, which keeps its full coefficient",
-    "Penance and Mind Blast dropped by the search (Penance: 385 mana for three 92-damage bolts); Shadow Word: Death only at the end of the fight",
-    "Synthetic gear, Vestments of Conviction 2-piece only (4/5-piece +4.7)",
-    "Kreeg's Stout Beatdown left out as a Dire Maul item; Elixir of Sages left out by the one-crit-elixir ruling (+6.4)",
-    "Dark Sacrifice gives 1600 + Spirit mana (tooltip adds Spirit; client data says 1600)",
-    "Twilight Focus 3/3 (70% chance to ignore pushback from the raid hits) in place of Inspiration",
-    "Gnome is the best Alliance race (706.8 at 180 s)",
-    "No Holy Fire: since 70425 Power in Light also counts Shadow Word: Pain, so Holy Fire's mana goes to Smite (+14.7 / +7.8 at 120 / 180 s, -6.9 at 300 s against keeping it up)"
+    "Two synthetic item level 71 trinkets: 36 spell power and 15 crit rating, and an on-use 140 spell power for 20 s every 2 min (at the pull, then on cooldown).",
+    "Mana-bound: 744.0 / 724.6 / 639.7 at 120 / 180 / 300 s (Undead). Devouring Plague's 24 s cooldown (client 70425) only pays above 80% mana.",
+    "Smite VIII's base damage is ×1.09, halfway to rank 4's ratio to Era (the 31+ ranks look partly untuned). The client has ×1.00.",
+    "Forever's downrank penalty is modeled (5% of the coefficient per level past 17 below the caster). So the fallback Smite is rank 7, which keeps its full coefficient.",
+    "The search dropped Penance and Mind Blast (Penance costs 385 mana for three 92-damage bolts). Shadow Word: Death is only cast at the end of the fight.",
+    "Synthetic gear with only the Vestments of Conviction 2-piece. The 4-piece and 5-piece would add 4.7.",
+    "Left out: Kreeg's Stout Beatdown (Dire Maul item) and Elixir of Sages (one crit elixir rule, +6.4).",
+    "Dark Sacrifice gives 1600 + Spirit mana (the tooltip adds Spirit, client data says 1600).",
+    "Twilight Focus 3/3 (70% chance to ignore pushback from raid hits) in place of Inspiration.",
+    "Gnome is the best Alliance race (706.8 at 180 s).",
+    "No Holy Fire: since 70425 Power in Light also counts Shadow Word: Pain, so Holy Fire's mana goes to Smite. Against keeping it up: +14.7 / +7.8 at 120 / 180 s, -6.9 at 300 s."
   ],
   "notes": "mksettings request plus ConsumesSmite from presets.ts: defaultPotion MajorManaPotion, firePowerBuff ElixirOfGreaterFirepower, manaRegenElixir GreaterMagebloodElixir, spiritElixir ElixirOfGreaterSpirit. Gear level60_phase1_smite, apl level60_smite."
 }

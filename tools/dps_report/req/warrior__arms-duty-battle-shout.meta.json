@@ -25,7 +25,7 @@
     "ok": true,
     "note": "same sim as the published number"
   },
-  "summary": "Arms keeping Battle Shout up for its party, with the raid's Battle Shout off: 1.7 DPS behind the base build at 180 s.",
+  "summary": "Arms keeping Battle Shout up for its party, with the raid's Battle Shout off. 1.7 DPS behind the base build at 180 s.",
   "keyTalents": [
     "Mortal Strike",
     "Bloodthrill",
@@ -64,17 +64,17 @@
     "Dense Sharpening Stone (main hand)"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 30 Strength and 16 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Rage from white hits is normalised to the weapon: k × swing speed (k 3.46 one-hand, 4.5 two-hand, measured at level 30), growing with level to ×1.5 at 60 (s = 0.5), the off hand the same. An assumption until measured at 60",
+    "Two synthetic item level 71 trinkets: 30 Strength and 16 crit rating, and an on-use 335 attack power for 20 s every 2 min (at the pull, then on cooldown).",
+    "White hit Rage is normalized to the weapon: k × swing speed (k is 3.46 one-hand and 4.5 two-hand, measured at level 30). It grows with level to ×1.5 at 60, the same for the off hand. Not yet measured at 60.",
     "Synthetic Phase 1 gear on Forever's physical budget (ids 991001-991018)",
     "No Ahn'Qiraj book ranks (Heroic Strike VIII, raid Battle Shout VI, Strength of Earth, Grace of Air)",
-    "Deep Wounds ticks can't crit (client attribute); Deep Wounds tick timer restarting on each crit is a modelling choice",
-    "Crit Rage bonus assumed white hits only; Heroic Strike swings count for Unbridled Wrath (open assumptions)",
-    "One +2% crit elixir a character: whether Ferocity stacks with Mongoose in game is open; a second crit elixir (Grizzly) would add 10.9",
-    "Battlegear of Glory 4-piece (+36 AP vs Humanoids) not counted (would add 8.4 at Undead 180 s)",
+    "Deep Wounds ticks can't crit (client data). Each crit restarting the Deep Wounds tick timer is our modeling choice.",
+    "Assumed: the crit Rage bonus is white hits only, and Heroic Strike swings count for Unbridled Wrath.",
+    "One +2% crit elixir per character, since it's unknown if Ferocity stacks with Mongoose. A second one (Grizzly) would add 10.9.",
+    "Battlegear of Glory 4-piece (+36 AP vs Humanoids) not counted. It would add 8.4 (Undead, 180 s).",
     "Booming Voice (5/5) does nothing because the raid has Battle Shout",
     "Arms in Berserker Stance with Whirlwind all fight was 10% behind",
-    "Raid damage hits on the warrior (2 a minute at 1500 damage, about 15 Rage each) are an estimate from boss timers, not measured in logs; the assumptions panel runs 0 and 10 a minute"
+    "Raid damage hits on the warrior (2 a minute at 1500 damage, about 15 Rage each) are estimated from boss timers. The assumptions panel also runs 0 and 10 a minute."
   ],
   "notes": "Request from mksettings -spec arms -gear level60_phase1_synthetic_arms -apl level60_arms_battle_shout -talents 20305213032515201-55050000001 -race Orc -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Not the class default: the warrior UI has one spec page and its default Level 60 build is Fury Dual Wield; this is the only Arms preset. Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts.",
   "duty": "Battle Shout",

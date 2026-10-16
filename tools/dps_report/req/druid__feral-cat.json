@@ -173,7 +173,7 @@
                       }
                     }
                   },
-                  "notes": "Berserk with the trinket, unless waiting for it would lose a use. Without the talent ignore the warning on this line."
+                  "notes": "With the trinket, unless waiting would lose a use. Without the talent ignore the warning on this line."
                 },
                 {
                   "action": {
@@ -242,7 +242,7 @@
                       }
                     }
                   },
-                  "notes": "Shifting Power once the Energy is low, but not while a Ferocious Bite is due (its Energy goes into Shreds). Without the talent ignore the warning on this line."
+                  "notes": "When Energy is low, but not while a Ferocious Bite is due. Its Energy goes into Shreds. Without the talent ignore the warning on this line."
                 },
                 {
                   "action": {
@@ -283,8 +283,7 @@
                         ]
                       }
                     }
-                  },
-                  "notes": "Ferocious Bite at any combo points in the last seconds of the fight."
+                  }
                 },
                 {
                   "action": {
@@ -336,8 +335,7 @@
                         ]
                       }
                     }
-                  },
-                  "notes": "Rip whenever it is down."
+                  }
                 },
                 {
                   "action": {
@@ -420,8 +418,7 @@
                         ]
                       }
                     }
-                  },
-                  "notes": "Ferocious Bite at 5 combo points while Rip has time left."
+                  }
                 },
                 {
                   "action": {

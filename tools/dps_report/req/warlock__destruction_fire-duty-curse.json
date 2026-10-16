@@ -130,7 +130,7 @@
                   }
                 },
                 {
-                  "notes": "Life Tap when the mana runs low or the filler costs more than is left.",
+                  "notes": "When mana runs low or the filler costs more than is left.",
                   "action": {
                     "condition": {
                       "or": {
@@ -219,7 +219,7 @@
                   }
                 },
                 {
-                  "notes": "Bane of Doom when it lands before the fight ends.",
+                  "notes": "When it lands before the fight ends.",
                   "action": {
                     "condition": {
                       "and": {
@@ -259,7 +259,7 @@
                   }
                 },
                 {
-                  "notes": "Bane of Agony while Bane of Doom is on cooldown or would not land.",
+                  "notes": "While Bane of Doom is on cooldown or would not land.",
                   "action": {
                     "condition": {
                       "and": {
@@ -346,7 +346,6 @@
                   }
                 },
                 {
-                  "notes": "Corruption when it is down.",
                   "action": {
                     "condition": {
                       "and": {
@@ -409,7 +408,6 @@
                   }
                 },
                 {
-                  "notes": "Immolate when it is down.",
                   "action": {
                     "condition": {
                       "and": {
@@ -472,7 +470,6 @@
                   }
                 },
                 {
-                  "notes": "Conflagrate on cooldown.",
                   "action": {
                     "condition": {
                       "dotIsActive": {
@@ -489,7 +486,7 @@
                   }
                 },
                 {
-                  "notes": "Death Coil when the filler would not land before the end.",
+                  "notes": "When the filler would not land before the end.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -524,7 +521,7 @@
                   }
                 },
                 {
-                  "notes": "Searing Pain when the filler would not land before the end.",
+                  "notes": "When the filler would not land before the end.",
                   "action": {
                     "condition": {
                       "and": {
@@ -580,7 +577,6 @@
                   }
                 },
                 {
-                  "notes": "Incinerate while Immolate is up.",
                   "action": {
                     "condition": {
                       "dotIsActive": {
@@ -597,7 +593,6 @@
                   }
                 },
                 {
-                  "notes": "Shadow Bolt otherwise.",
                   "action": {
                     "castSpell": {
                       "spellId": {

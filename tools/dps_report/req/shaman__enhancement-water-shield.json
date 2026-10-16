@@ -118,7 +118,6 @@
               ],
               "priorityList": [
                 {
-                  "notes": "Strength of Earth Totem whenever it is down, with 20 sec or more of the fight left.",
                   "action": {
                     "condition": {
                       "and": {
@@ -158,7 +157,7 @@
                   }
                 },
                 {
-                  "notes": "Windfury Totem whenever it is down, with 20 sec or more of the fight left. Windfury Weapon turns its buff off for the shaman.",
+                  "notes": "Windfury Weapon turns its buff off for the shaman.",
                   "action": {
                     "condition": {
                       "and": {
@@ -198,7 +197,6 @@
                   }
                 },
                 {
-                  "notes": "Mana Spring Totem whenever it is down, with 20 sec or more of the fight left.",
                   "action": {
                     "condition": {
                       "and": {
@@ -238,7 +236,6 @@
                   }
                 },
                 {
-                  "notes": "Magma Totem whenever it is down, unless the fight is about to end.",
                   "action": {
                     "condition": {
                       "and": {
@@ -278,7 +275,7 @@
                   }
                 },
                 {
-                  "notes": "Rage of the Farseer anchors the burst window. Without the talent ignore the warning on this line.",
+                  "notes": "Starts the burst window. Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -352,7 +349,7 @@
                   }
                 },
                 {
-                  "notes": "Orc. Blood Fury waits for Rage of the Farseer when the wait costs no use. Other races can ignore the warning on this line.",
+                  "notes": "Orc. Waits for Rage of the Farseer when that loses no use. Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -426,7 +423,7 @@
                   }
                 },
                 {
-                  "notes": "Troll. Berserking waits for Rage of the Farseer when the wait costs no use. Other races can ignore the warning on this line.",
+                  "notes": "Troll. Waits for Rage of the Farseer when that loses no use. Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -502,13 +499,13 @@
                   }
                 },
                 {
-                  "notes": "Anything not listed above (Sapper, trinkets, potions).",
+                  "notes": "Sapper, trinkets and potions.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }
                 },
                 {
-                  "notes": "Stormstrike on cooldown. Without the talent ignore the warning on this line.",
+                  "notes": "Without the talent ignore the warning on this line.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -518,7 +515,7 @@
                   }
                 },
                 {
-                  "notes": "Lightning Bolt once Maelstrom Weapon has stacked enough to make it quick. Without the talent ignore the warning on this line.",
+                  "notes": "Once Maelstrom Weapon makes it quick. Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -545,7 +542,7 @@
                   }
                 },
                 {
-                  "notes": "Fire Nova on cooldown. It goes off around the fire totem, so it needs one in place.",
+                  "notes": "Goes off around the fire totem, so it needs one down.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -568,7 +565,6 @@
                   }
                 },
                 {
-                  "notes": "Flame Shock when its DoT is down.",
                   "action": {
                     "condition": {
                       "and": {
@@ -595,7 +591,7 @@
                   }
                 },
                 {
-                  "notes": "Earth Shock otherwise, unless Flame Shock is about to run out.",
+                  "notes": "Unless Flame Shock is about to run out.",
                   "action": {
                     "condition": {
                       "and": {
@@ -628,7 +624,7 @@
                   }
                 },
                 {
-                  "notes": "Lightning Shield when it is down and nothing above is ready. Raid damage that hits the shaman fires its orbs at the target, three to a cast, at most one every 3.5 sec.",
+                  "notes": "When nothing above is ready. Raid damage on the shaman fires its orbs at the boss: three per cast, at most one every 3.5 sec.",
                   "action": {
                     "condition": {
                       "not": {

@@ -25,7 +25,7 @@
     "ok": true,
     "note": "-0.01 vs published"
   },
-  "summary": "Shadow Bolt Destruction: Conflagrate with Shadow and Flame 5/5 (Immolate is kept) and Fire and Brimstone, plus Pandemic and Malevolence from Affliction, with the Succubus out. The best 30-point Destruction build.",
+  "summary": "Shadow Bolt Destruction with Conflagrate (Immolate kept), Shadow and Flame 5/5 and Fire and Brimstone, plus Pandemic and Malevolence from Affliction. Succubus out. The best 30-point Destruction build.",
   "keyTalents": [
     "Conflagrate",
     "Shadow and Flame",
@@ -65,16 +65,16 @@
     "Major Spellstone (weapon imbue)"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 38 spell power and 13 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
+    "Two synthetic item level 71 trinkets: 38 spell power and 13 crit rating, and an on-use 140 spell power for 20 s every 2 min (at the pull, then on cooldown).",
     "Demon sensitivity: no owner scaling 946.1, Succubus melee halved 947.4, both 922.9 (first set)",
     "Succubus 984.9 vs Felhunter 960.1, Imp 950.7, no demon 895.4; Spellstone and Firestone within 0.1 (first set)",
-    "Demon scaling uses Season of Discovery placeholder coefficients (Forever's are server-side): worth +49 on Demonology, +39 on the other builds",
-    "Succubus base melee is unverified: halved melee would cost Demonology 43, the other builds 38 to 39",
-    "Bane of Doom coefficient 4.0 (Era 1.0) is about 12% of Shadow Bolt builds' damage; at 2.0 they lose about 4%, at 1.0 about 6%",
-    "No Ahn'Qiraj book ranks (Shadow Bolt IX, Immolate VII, Corruption VI): 7 to 13 DPS below rank X/VIII/VII",
+    "Demon scaling uses Season of Discovery placeholder coefficients (Forever's are server side). Worth 49 on Demonology and 39 on the other builds.",
+    "Succubus base melee is unverified. Halving it would cost Demonology 43 and the other builds 38 to 39.",
+    "Bane of Doom's coefficient is 4.0 (Era 1.0), about 12% of Shadow Bolt builds' damage. At 2.0 they lose about 4%, at 1.0 about 6%.",
+    "No Ahn'Qiraj book ranks (Shadow Bolt IX, Immolate VII, Corruption VI). These are 7 to 13 DPS below ranks X, VIII and VII.",
     "Only the Demonheart Raiment 2-piece is live (the 5-piece added about +8 to +13 on the first set)",
-    "Soul shards and Life Tap health cost are not tracked",
-    "Demons take the warlock's spell crit as their own melee and spell crit, with no crit of their own (Blizzard's intent, forever-bugs #331; user ruling 2026-10-16); worth 15 to 17 DPS"
+    "Soul shards and Life Tap's health cost aren't tracked.",
+    "Demons use the warlock's spell crit as their own melee and spell crit, with no crit of their own (Blizzard's intent, forever-bugs #331). Worth 15 to 17 DPS."
   ],
   "notes": "Request straight from mksettings -spec destruction -gear level60_phase1_synthetic -apl level60_destruction -race Human -duration 180, no edits. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Spellstone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly."
 }

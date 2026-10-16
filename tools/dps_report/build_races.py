@@ -24,14 +24,14 @@ RACE_ORDER = ['Human', 'Dwarf', 'Night Elf', 'Gnome', 'High Order', 'Orc', 'Unde
 PART_INFO = {
     'spirit': ('The Human Spirit', 'Spirit increased by 5%.'),
     'ruthless': ('Ruthless', '+2% critical strike chance with all spells and attacks, with any weapon (swords only before client 70425).'),
-    'earthfury': ('Earth Fury', 'Critical strike bonus to damage and healing increased by 2% (client 70425; it was +1% crit with a mace).'),
+    'earthfury': ('Earth Fury', 'Critical strike bonus to damage and healing increased by 2% (+1% crit with a mace before client 70425).'),
     'savage': ('Savage', '+1% critical strike chance with all spells and abilities, with any weapon (axes only before client 70425).'),
     'elune': ("Elune's Light", '+10% critical strike chance for 15 sec, 3 min cooldown.'),
     'mind': ('Expansive Mind', 'Maximum Mana, Rage or Energy increased by 5%.'),
-    'eureka': ('Eureka!', 'For 8 sec, non-periodic damaging abilities cost 10% less and deal 10% more damage (every damaging ability for Warlocks, heals too for Priests), 2 min cooldown.'),
+    'eureka': ('Eureka!', 'For 8 sec, direct damage abilities cost 10% less and deal 10% more damage (DoTs too for Warlocks, heals too for Priests), 2 min cooldown.'),
     'bloodfury': ('Blood Fury', 'Attack power and spell power increased by 10% for 15 sec, 3 min cooldown.'),
-    'touch': ('Touch of the Grave', 'Spells and attacks have a 20% chance (30% for Mages, Priests and Warlocks) to deal Shadow damage equal to 5% of your maximum health and heal you for it, at most once every 25 sec. It cannot crit.'),
-    'endurance': ('Endurance', 'Health increased by 5% and critical strike bonus to damage and healing increased by 2% (client 70425; it was +1% hit).'),
+    'touch': ('Touch of the Grave', 'Spells and attacks have a 20% chance (30% for Mages, Priests and Warlocks) to deal Shadow damage equal to 5% of your maximum health and heal you for it. At most once every 25 sec, and it cannot crit.'),
+    'endurance': ('Endurance', 'Health increased by 5% and critical strike bonus to damage and healing increased by 2% (+1% hit before client 70425).'),
     'berserking': ('Berserking', 'Attack and casting speed increased by 10% for 10 sec, 3 min cooldown.'),
     'windblessed': ('Wind Blessed', 'Spellcasting, melee and ranged haste increased by 3% (1% before client 70425).'),
     'beast_dwarf': ('Big Game Hunter', 'Damage dealt versus Beasts increased by 5%.'),
@@ -40,13 +40,13 @@ PART_INFO = {
     'chastise': ('Chastise', 'Dwarf Priests: an instant Holy hit on a Humanoid, 2 min cooldown.'),
     'starshards': ('Starshards', 'Night Elf Priests: Arcane damage over 6 sec, 30 sec cooldown.'),
     'darksacrifice': ('Dark Sacrifice', 'Undead Priests: trade health for mana over 15 sec, 10 min cooldown.'),
-    'base': ('Base stats', "The race's own Strength, Agility, Stamina, Intellect and Spirit, with every racial left out."),
-    'target': ('Target type', 'What changes against this creature type: conditional racials, plus talents and spells that only work on some types.'),
+    'base': ('Base stats', "The race's own Strength, Agility, Stamina, Intellect and Spirit, with no racials."),
+    'target': ('Target type', 'What this creature type changes: racials, talents and spells that work only on some types.'),
 }
 
 # The tooltip's one line for the parts whose text above runs long; the others show their text as it is.
 PART_SHORT = {
-    'touch': '20% chance a hit (30% for Mages, Priests and Warlocks): Shadow damage of 5% of max health, at most once every 25 sec.',
+    'touch': '20% chance a hit (30% for Mages, Priests and Warlocks) to deal Shadow damage equal to 5% of max health. At most once every 25 sec.',
 }
 
 # Each racial's game icon, from ui/core/forever/racials.json. The priest racials are from wowhead, and Dark Sacrifice
@@ -63,11 +63,11 @@ RACE_PARTS = {'Human': ['spirit', 'ruthless'], 'Dwarf': ['earthfury', 'beast_dwa
               'Gnome': ['mind', 'eureka'], 'Orc': ['savage', 'bloodfury'], 'Undead': ['touch', 'darksacrifice'], 'Tauren': ['endurance'],
               'Troll': ['berserking', 'beast_troll'], 'High Order': ['windblessed', 'insight'], 'Windshaper': ['windblessed', 'insight']}
 SCENARIOS = [
-    ('baseline', 'Generic boss', 'Each preset against the generic level 63 boss (no creature type). Since client 70425 no racial depends on the weapon held.'),
-    ('beast', 'Beast target', 'A Beast boss switches on Troll Beast Slaying and Dwarf Big Game Hunter: 5% more damage.'),
-    ('elemental', 'Elemental target', 'An Elemental boss switches on High Order and Windshaper Elemental Insight: 5% more damage.'),
-    ('humanoid', 'Humanoid target', 'Priests only: Dwarf Priests cast Chastise, which works on Humanoids only. No other racial cares about Humanoids, so the other presets have no Humanoid numbers here.'),
-    ('off', 'Racials off', 'Every race on its base stats alone, with all racial passives and abilities left out: what the races differ by before racials.'),
+    ('baseline', 'Generic boss', 'Each preset against a level 63 boss with no creature type. Since client 70425, no racial depends on the weapon.'),
+    ('beast', 'Beast target', 'A Beast boss turns on Troll Beast Slaying and Dwarf Big Game Hunter (5% more damage).'),
+    ('elemental', 'Elemental target', 'An Elemental boss turns on High Order and Windshaper Elemental Insight (5% more damage).'),
+    ('humanoid', 'Humanoid target', 'Priests only. Dwarf Priests cast Chastise, which works only on Humanoids. No other racial cares about Humanoids.'),
+    ('off', 'Racials off', 'Every race on its base stats, with all racials left out.'),
 ]
 
 
@@ -229,34 +229,33 @@ def finding(cls, bmap, variants, breakdown):
         race = names.pop()
         gaps = [rs[1]['vsBest'] for _, rs in bests if len(rs) > 1]
         second = bests[0][1][1] if len(bests[0][1]) > 1 else None
-        s = f"{race} is the best race on {'every' if len(bs) > 1 else 'the'} {cls} preset"
+        out.append(f"{race} is best on {'every' if len(bs) > 1 else 'the'} {cls} preset.")
         if second:
-            s += f"; {second['race']} is next, {pct(second['vsBest'])} behind on {bests[0][0]['build']}"
-        out.append(s + '.')
+            out.append(f"{second['race']} is next, {pct(second['vsBest'])} behind on {bests[0][0]['build']}.")
     else:
         by = {}
         for b, rs in bests:
             by.setdefault(rs[0]['race'], []).append(b['build'])
         def andjoin(xs):
             return xs[0] if len(xs) == 1 else ', '.join(xs[:-1]) + ' and ' + xs[-1]
-        out.append('Best race: ' + '; '.join(f"{r} on {andjoin(bl)}" for r, bl in by.items()) + '.')
+        out.extend(f"{r} is best on {andjoin(bl)}." for r, bl in by.items())
     # closest other-faction pick on the top preset
     top = bests[0][1]
     fac0 = top[0]['faction']
     other = next((r for r in top if r['faction'] != fac0), None)
     if other and not (len(top) > 1 and top[1] is other):
-        out.append(f"Best {other['faction']} pick on {bests[0][0]['build']}: {other['race']}, {pct(other['vsBest'])} behind.")
+        out.append(f"The best {other['faction']} race on {bests[0][0]['build']} is {other['race']}, {pct(other['vsBest'])} behind.")
     # the racial worth most on the top preset, and any racial that costs DPS
     b0 = bests[0][0]
     mine = [x for x in breakdown if x['scenario'] == 'all' and x['part'] != 'base' and x['active'] and bmap.get(x['build'], {}).get('class') == cls]
     top_part = max((x for x in mine if x['build'] == b0['id']), key=lambda x: x['dps'], default=None)
     if top_part and top_part['dps'] > 2 * top_part['se']:
         dps = next(r['dps'] for r in bests[0][1] if r['race'] == top_part['race'])
-        out.append(f"The biggest racial on {b0['build']} is {top_part['race']} {top_part['label']}, +{top_part['dps']:.1f} DPS ({100 * top_part['dps'] / dps:.1f}%).")
+        out.append(f"{top_part['race']} {top_part['label']} is the biggest racial on {b0['build']}, +{top_part['dps']:.1f} DPS ({100 * top_part['dps'] / dps:.1f}%).")
     worst = min(mine, key=lambda x: x['dps'] / max(x['se'], 0.01), default=None)
     if worst and worst['dps'] < -2 * worst['se'] and worst['dps'] < -1:
-        why = ', the time spent casting it' if worst['part'] in ('chastise', 'starshards', 'darksacrifice', 'eureka', 'elune', 'bloodfury', 'berserking') else ''
-        out.append(f"{worst['race']} {worst['label']} costs {abs(worst['dps']):.1f} DPS on {bmap[worst['build']]['build']} in the sim{why}.")
+        why = ', for the time spent casting it' if worst['part'] in ('chastise', 'starshards', 'darksacrifice', 'eureka', 'elune', 'bloodfury', 'berserking') else ''
+        out.append(f"{worst['race']} {worst['label']} costs {abs(worst['dps']):.1f} DPS on {bmap[worst['build']]['build']}{why}.")
     # target types that change the leader
     for t, word in (('beast', 'Beasts'), ('elemental', 'Elementals')):
         b0, rs0 = bests[0]
@@ -270,7 +269,7 @@ def finding(cls, bmap, variants, breakdown):
             else:
                 lead += ' leads'
             base = next(r for r in rs0 if r['race'] == tr[0]['race'])
-            s = f"Against {word} {lead} {b0['build']} ({'+' if tr[0]['dps'] >= base['dps'] else '-'}{pct(100 * (tr[0]['dps'] / base['dps'] - 1))} over its generic-boss DPS)"
+            s = f"Against {word}, {lead} {b0['build']} ({'+' if tr[0]['dps'] >= base['dps'] else '-'}{pct(100 * (tr[0]['dps'] / base['dps'] - 1))} vs the generic boss)"
             if nxt and abs(nxt['vsBest']) < 0.05:
                 s += f", level with {nxt['race']}"
             elif nxt:

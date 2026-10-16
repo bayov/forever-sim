@@ -307,13 +307,13 @@ for _p in glob.glob(os.path.join(D, 'out_pre1b', '*.json')):
         pass
 # The gear rules of the bundled gear round (orchestration/standards.md 1b, 5a, 8a), shown on the Method tab.
 GEAR_RULES = [
-    "Every synthetic piece is priced at Forever's own budget for its archetype (standards 1b): its weighted linear stat total is the slot modifier x (1.125 x item level + 2.0) x the archetype's factor, within 1%, and its shape (a 1.7-norm) is within 6% of the standard.",
-    "Weights: spell power 0.86, attack power 0.5 (a hunter's ranged attack power 0.4), every other stat (Strength, Agility, Stamina, Intellect, Spirit, hit and crit rating) 1. Caster weapons use Forever's caster weapon rate.",
-    "Item levels follow the shared table: 66 for head, shoulders, chest, hands, legs and feet; 71 for neck, back, wrist, waist, rings, one-handers and ranged; 76 for two-handers.",
-    "Stamina is each spec's own share in its Season of Discovery level 60 best-in-slot sets. Hit sits at the cap, and the other stats keep the spec's target proportions in the room left (standards 5a).",
-    "Every spec wears two synthetic item level 71 trinkets: a stat trinket (about 46 weighted points) and an on-use trinket, 140 spell power, 335 attack power, 415 ranged attack power or 165 Strength for 20 s every 2 min, used in the opening seconds and again on cooldown. Forever's launch trinkets aren't simulated.",
-    "Hybrids keep hybrid stats: Retribution and Enhancement carry spell power and Intellect alongside their melee stats, at the hybrid budget factor.",
-    "Only the tier set's 2-piece bonus is live, and enchants are the best Phase 1 ones from outside the raids. Talents, rotations and races did not change in this round, apart from a few small rotation retunes and Destruction Fire's race (now Undead), noted on each preset.",
+    "Each synthetic piece is priced at Forever's stat budget for its archetype, within 1%. The budget is the slot modifier x (1.125 x item level + 2.0) x the archetype's factor. Its stat shape (a 1.7-norm) is within 6% of the standard.",
+    "Stat weights for the budget: spell power 0.86, attack power 0.5, a hunter's ranged attack power 0.4, and every other stat 1. Caster weapons use Forever's caster weapon rate.",
+    "Item levels: 66 for head, shoulders, chest, hands, legs and feet. 71 for neck, back, wrist, waist, rings, one-handers and ranged. 76 for two-handers.",
+    "Stamina matches each spec's share in its Season of Discovery level 60 best-in-slot sets. Hit is at the cap. The other stats keep the spec's target proportions.",
+    "Every spec wears two synthetic item level 71 trinkets: a stat trinket (about 46 weighted points) and an on-use trinket. The on-use one gives 140 spell power, 335 attack power, 415 ranged attack power or 165 Strength for 20 s every 2 min, at the pull and then on cooldown. Forever's launch trinkets aren't simulated.",
+    "Retribution and Enhancement keep spell power and Intellect next to their melee stats, at the hybrid budget factor.",
+    "Only the tier set's 2-piece bonus is active. Enchants are the best Phase 1 ones from outside raids.",
 ]
 for _i, _t in enumerate(GEAR_RULES):
     notes.append({'build': '_round', 'kind': 'gear', 'order': _i, 'text': _t})
