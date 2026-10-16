@@ -214,6 +214,8 @@ func prepareLevelingEncounter(raidProto *proto.Raid, encounterProto *proto.Encou
 	prepared.ExecuteProportion_35 = 0
 	prepared.Pvp = false
 	prepared.PvpMeleeDowntime = 0
+	// The mobs we fight hit us themselves; there is no raid.
+	prepared.RaidDamageHitsPerMinute = 0
 	prepared.Targets = nil
 	for _, mobLevel := range levelingMobLevels(level, opts) {
 		for range opts.maxPack {

@@ -139,9 +139,10 @@ func TestForeverWarriorNormalizedRageLevels(t *testing.T) {
 	}
 }
 
-// TestForeverWarriorDamageTakenRage checks that Rage from taking damage stays Classic's (standards
-// 21 only changes Rage from dealing damage): damage × 2.5 / the conversion at the attacker's
-// level. The damage comes from a level 60 special attack, which gives no Rage for dealing it.
+// TestForeverWarriorDamageTakenRage checks Forever's Rage from taking damage (standards 21):
+// 20 × (1 − 0.4) × damage / a level 60 normal mob's health (3993) at level 60, so 3.0 Rage for
+// 1000 damage, where Classic's damage × 2.5 / the conversion at the attacker's level gives 10.8.
+// The damage comes from a level 60 special attack, which gives no Rage for dealing it.
 func TestForeverWarriorDamageTakenRage(t *testing.T) {
 	sim, war := newForeverWarriorArmed(t, "", 991014, 991015)
 	war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
@@ -150,7 +151,7 @@ func TestForeverWarriorDamageTakenRage(t *testing.T) {
 	result.Outcome = core.OutcomeHit
 	result.Damage = 1000
 	attack.DealDamage(sim, result)
-	if got, want := war.CurrentRage(), 1000*2.5/core.GetRageConversion(60); math.Abs(got-want) > 1e-6 {
+	if got, want := war.CurrentRage(), 20*0.6*1000/core.NormalMobStatsAt(60).Health; math.Abs(got-want) > 1e-6 {
 		t.Errorf("taking 1000 damage gave %.3f Rage, want %.3f", got, want)
 	}
 }

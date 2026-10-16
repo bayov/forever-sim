@@ -174,9 +174,6 @@ func replay(player *proto.Player, p *plan, iterations int) (*tallies, *replaySta
 
 func replayOnce(base *proto.Player, p *plan, seed int64) (*tallies, *replayStats) {
 	player := googleproto.Clone(base).(*proto.Player)
-	if enh := player.GetEnhancementShaman(); enh != nil {
-		enh.Options.RaidDamageHitsPerMinute = p.hitsPerMinute
-	}
 	target := &proto.Target{
 		Level:     int32(p.level),
 		MobType:   proto.MobType_MobTypeUnknown,
@@ -184,8 +181,11 @@ func replayOnce(base *proto.Player, p *plan, seed int64) (*tallies, *replayStats
 		TankIndex: -1,
 	}
 	sim := core.NewSim(&proto.RaidSimRequest{
-		Raid:      core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
-		Encounter: &proto.Encounter{Duration: p.duration.Seconds(), Targets: []*proto.Target{target}},
+		Raid: core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+		// The mobs' hits on us, at the logged rate, for the shield's procs. Their damage is a token
+		// one: we only replay what we deal.
+		Encounter: &proto.Encounter{Duration: p.duration.Seconds(), Targets: []*proto.Target{target},
+			RaidDamageHitsPerMinute: p.hitsPerMinute, RaidDamagePerHit: 1},
 		// The amount check needs each hit's unrounded damage.
 		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: seed, Iterations: 1, ExactDamage: true},
 	}, simsignals.CreateSignals())

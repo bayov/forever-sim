@@ -340,8 +340,8 @@ export const APLOptimized = PresetUtils.makePresetAPLRotation('Optimized', Optim
 // Searing Totem is 888.8 / 879.5 / 877.0. On the Level 60 build Searing Totem is still
 // ahead (938.4 against 927.1 at 180 sec).
 //
-// Since 2026-10-15 it keeps Lightning Shield up in place of Water Shield, like Optimized (see
-// RaidDamageHitsLevel60).
+// Since 2026-10-15 it keeps Lightning Shield up in place of Water Shield, like Optimized (see the
+// raid damage note under Options).
 export const APLMagma = PresetUtils.makePresetAPLRotation('Magma Totem', MagmaAPLJSON, {
 	tooltip: 'Optimized with Magma Totem in place of Searing Totem, for the Water Shield talents.',
 	group: 'Level 60',
@@ -584,13 +584,13 @@ export const DefaultTalents = TalentPresets[Phase.Phase1][0];
 //                                 Options
 ///////////////////////////////////////////////////////////////////////////
 
-// The raid damage that hits the shaman in a level 60 raid fight: 2 direct hits a minute, at
-// random times. Nothing we can read measures it (Warcraft Logs was out of reach, 2026-10-15), so
-// it comes from Season of Discovery boss timers in the Deadly Boss Mods source. Most bosses
-// land one or two hits on the melee every 20 to 40 sec (Ragnaros's Wrath every 26 sec,
-// Broodlord's Blast Wave, Kel'Thuzad's Frostbolt Volley, Chromaggus's breaths), Patchwerk and
-// Loatheb none, and Firemaw, Vaelastrasz and Huhuran's last 30% about 10. A ranged shaman takes
-// about half as many (Elemental uses 1). The DPS report's assumptions run 0 and 10 too.
+// The raid damage in the Level 60 encounter (PresetUtils.LEVEL_60_RAID_DAMAGE, the same for every
+// spec since 2026-10-16): 2 direct hits a minute, at random times. Nothing we can read measures
+// it (Warcraft Logs was out of reach, 2026-10-15), so it comes from Season of Discovery boss
+// timers in the Deadly Boss Mods source. Most bosses land one or two hits on the raid every 20 to
+// 40 sec (Ragnaros's Wrath every 26 sec, Broodlord's Blast Wave, Kel'Thuzad's Frostbolt Volley,
+// Chromaggus's breaths), Patchwerk and Loatheb none, and Firemaw, Vaelastrasz and Huhuran's last
+// 30% about 10. The DPS report's assumptions run 0 and 10 too.
 //
 // Each hit fires a Lightning Shield orb, so every Level 60 rotation keeps the shield up: before
 // the pull, and in the fight when nothing else is ready (+2.8 at 6 a minute over putting it
@@ -607,21 +607,17 @@ export const DefaultTalents = TalentPresets[Phase.Phase1][0];
 // left (the starting totems run out a few seconds before a 5 min fight ends). Level 60 is 845.7 /
 // 834.6 / 815.5 at 120 / 180 / 300 sec (+1.2 / +0.8 / +1.9), Imp GW 842.1 / 830.3 / 811.0, Water
 // Shield 792.6 / 785.4 / 772.5 and Mana Tide 770.0 / 763.3 / 758.0 (the last two only gain at 300).
-export const RaidDamageHitsLevel60 = 2;
-
 export const DefaultOptions = EnhancementShamanOptions.create({
 	shamanImbue: WeaponImbue.WindfuryWeapon,
 	syncType: ShamanSyncType.Auto,
-	raidDamageHitsPerMinute: RaidDamageHitsLevel60,
 });
 
 // The class options every preset build sets. They always set the starting totems, so loading a
-// build puts its own in place and changing them marks the build as modified. The same goes for
-// the raid hits: the Level 30 builds take none, because their enemy hits the shaman itself.
+// build puts its own in place and changing them marks the build as modified.
 //
 // The Level 30 PvP builds start the fight with no totems and put them down in the rotation's
 // prepull actions.
-const PresetBuildOptions = { shamanImbue: WeaponImbue.WindfuryWeapon, startingTotems: StartingTotems.create(), raidDamageHitsPerMinute: 0 };
+const PresetBuildOptions = { shamanImbue: WeaponImbue.WindfuryWeapon, startingTotems: StartingTotems.create() };
 
 // The raid and dungeon builds start the fight with their totems already down, each at the
 // default seconds before the pull, one totem GCD apart (see starting_totems.tsx). They cost no
@@ -647,7 +643,7 @@ const startingTotemsLevel60 = StartingTotems.create({
 	water: WaterTotem.ManaSpringTotem,
 	waterSecondsBeforePull: 2,
 });
-const PresetBuildOptionsLevel60 = { ...PresetBuildOptions, startingTotems: startingTotemsLevel60, raidDamageHitsPerMinute: RaidDamageHitsLevel60 };
+const PresetBuildOptionsLevel60 = { ...PresetBuildOptions, startingTotems: startingTotemsLevel60 };
 // Magma Totem lasts only 20 sec, so it goes down 1 sec before the pull.
 const PresetBuildOptionsLevel60Magma = {
 	...PresetBuildOptionsLevel60,
@@ -785,6 +781,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		executeProportion20: 0.2,
 		executeProportion25: 0.25,
 		executeProportion35: 0.35,
+		...PresetUtils.LEVEL_60_RAID_DAMAGE,
 		targets: [
 			{
 				id: 213336,
