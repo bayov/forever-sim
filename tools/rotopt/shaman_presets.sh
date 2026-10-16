@@ -69,7 +69,7 @@ gen() {
 # 120 / 180 / 300 sec; Trial by Fire's 20 sec on Magma Totem since client 70425 helps), and Earth Shock
 # waits for the Stormstrike mark (earthShockHold=1, +0.3 to +1.5 more), paired at 20000 iterations on two
 # seed sets. A knob search that could drop Windfury Totem dropped it; the builds keep it for the party.
-gen optimized "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,earthShockHold=1,fireNova=2,fireNovaMana=20,waterTotem=1,flameShockFirst=1,fireNovaClearcast=2,prepullTotems=1,rageHoldForTrinket=1,fireNovaManaPerSec=12,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1.5" -level 60
+gen optimized "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,earthShockHold=1,fireNova=2,fireNovaMana=20,waterTotem=1,flameShockFirst=1,fireNovaClearcast=2,prepullTotems=1,rageHoldForTrinket=1,fireNovaManaPerSec=12,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1.5,earthShockBeforeBolt=1" -level 60
 # The Water Shield and Mana Tide talent builds have no Improved Fire Nova, so Magma Totem
 # beats Searing Totem there (899.7 against 879.5 at 180 sec on the Water Shield build). A
 # new Magma Totem goes down with as little as 10 sec left.
@@ -78,7 +78,7 @@ gen optimized "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,earthShockHold=
 # at 180 on Mana Tide, paired at 20000 iterations on two seed sets.
 # Flame Shock ahead of the bolt (flameShockFirst=1) on the Water Shield build since the raid's
 # Flametongue Totem: +3.0 to +3.5 / +2.3 to +2.9 / +1.6 to +2.3 on two seed sets.
-gen magma "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,fireNova=1,fireNovaMana=20,waterTotem=1,earthShockFlameShockLeft=1,flameShockFirst=1,prepullTotems=1,rageHoldForTrinket=1,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1" -level 60
+gen magma "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,fireNova=1,fireNovaMana=20,waterTotem=1,earthShockFlameShockLeft=1,flameShockFirst=2,earthShockBeforeBolt=1,prepullTotems=1,rageHoldForTrinket=1,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1" -level 60
 # On 2026-10-12, on the searched Water Shield build (050031-053030031005112151-052030001), Fire
 # Nova ahead of the shocks is +2.7 here too, and holding Earth Shock while Flame Shock has 1 sec
 # or less left (so the shock cooldown is back when the DoT runs out) +1.0: 762.3 as the mean of
