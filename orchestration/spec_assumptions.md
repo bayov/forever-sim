@@ -32,14 +32,14 @@ Sources, all read-only:
 | Priest | 2 | `priest_sf_tick_crit`, `priest_smite8_tuning` |
 | Warlock | 4 | `lock_pet_scaling`, `lock_demon_melee`, `lock_bod_coef`, `lock_incinerate_bonus` (one value, kept for reference) |
 | Paladin | 6 (+1 shared) | `pal_sor_sp_double`, `pal_sor_sp_speed`, `pal_consecration_coef`, `pal_2h_spec_holy`, `pal_31plus_ranks`, `pal_soc_wf` (+ `flat_bonus_inside_pct`) |
-| Warrior | 4 (+1 shared) | `warr_rage_k`, `warr_rage_oh`, `warr_crit_rage`, `warr_rend_ap` (+ `wf_totem_offhand`) |
+| Warrior | 3 (+1 shared) | `warr_rage_k`, `warr_rage_oh`, `warr_rend_ap` (+ `wf_totem_offhand`); `warr_crit_rage` settled 2026-10-16 |
 | Hunter | 5 (+1 shared) | `hunter_pet_scaling`, `hunter_pet_speed`, `hunter_tsa_hm_rank`, `hunter_crit_per_agi`, `hunter_raptor_31plus` (+ `wf_totem_offhand` for Survival) |
 | Mage | 3 | `mage_ice_lance_coef`, `mage_frostbolt10`, `mage_imbue_scrolls` |
 | Shaman | 3 | `sham_mw_ppm`, `sham_lb_31plus`, `sham_es7_tuning` |
 | Druid | 4 | `druid_ooc_rate` (one value, kept for reference), `druid_shred_flat`, `druid_rip_31plus`, `druid_wrath8_tuning` |
 | Rogue | 0 (+2 shared) | `flat_bonus_inside_pct` (Backstab, Mutilate), `wf_totem_offhand` |
 
-That makes 33 assumptions in `assumptions_def.py`. The 2026-10-15 review removed `mage_ab_on_missiles`, `lock_decimation`, `oil_proc_damage` and `hunter_shot_ap_shares`, and added `pal_sor_sp_speed` (user rulings 2026-10-15). An assumption left with one value stays in the report as a reference row (user ruling 2026-10-15). The rogue has no material assumption of its own: the rank tuning audit found its spells Era-identical or client-tuned, and its open items are under 0.5% or client-sourced (see "Considered and left out"). Its two scenarios are the shared ones.
+That makes 33 assumptions in `assumptions_def.py` (fewer since the 2026-10-16 assumptions audit, orchestration/assumptions_audit.md, which settled `warr_crit_rage`). The 2026-10-15 review removed `mage_ab_on_missiles`, `lock_decimation`, `oil_proc_damage` and `hunter_shot_ap_shares`, and added `pal_sor_sp_speed` (user rulings 2026-10-15). An assumption left with one value stays in the report as a reference row (user ruling 2026-10-15). The rogue has no material assumption of its own: the rank tuning audit found its spells Era-identical or client-tuned, and its open items are under 0.5% or client-sourced (see "Considered and left out"). Its two scenarios are the shared ones.
 
 ### The ones that matter most
 
@@ -309,7 +309,6 @@ Retribution is also affected by `flat_bonus_inside_pct` (Holy Strike; +3.6 to +4
 |---|---|---|---|---|---|---|---|
 | `warr_rage_k` | How normalised Rage grows with level | Fury, Fury two-hand, Arms | midpoint, k ×1.5 at 60 (standards 21) | flat k (×1) | midpoint (×1.5 at 60) | Classic-like (×2 at 60) | flat: Fury 950.6 at 180 s; others to measure |
 | `warr_rage_oh` | Off-hand factor of normalised Rage | Fury | ×1.0 | ×0.5 | ×1.0 | = Expected | Low −9.4% Fury (measured with flat k) |
-| `warr_crit_rage` | Extra Rage from critical white hits | Fury, Fury two-hand, Arms | +100% | +75% | +100% | = Expected | est. Low −2 to −3% Fury, about −1.5% Arms |
 | `warr_rend_ap` | Rend's attack power share | Arms, Arms vs Dragonkin | 2% of attack power a tick | none (client) | 2% a tick | 5% a tick | Low −2.0%, High +3.0% (assumption sims, 180 s) |
 
 Dual-wield Fury is also affected by `wf_totem_offhand` (est. −2 to −3% at its Low).
@@ -317,7 +316,7 @@ Dual-wield Fury is also affected by `wf_totem_offhand` (est. −2 to −3% at it
 ### `warr_rage_k`: how normalised Rage grows with level
 
 - **Builds:** Fury, Fury two-hand, Arms.
-- **Sim now (standards 21):** a landed, dodged or parried white hit gives k(L) × weapon swing speed in Rage. k30 is 3.46 for a one-hander and 4.5 for a two-hander, and k(L) = k30 × (1 + s × (L − 30) / 30) above level 30, with s = 0.5 (Expected). Dual Wield Specialization and the `warr_crit_rage` crit bonus multiply on top. The code is `sim/core/rage.go`, behind `Env.IsForever()`; only the warrior enables it.
+- **Sim now (standards 21):** a landed, dodged or parried white hit gives k(L) × weapon swing speed in Rage. k30 is 3.46 for a one-hander and 4.5 for a two-hander, and k(L) = k30 × (1 + s × (L − 30) / 30) above level 30, with s = 0.5 (Expected). Dual Wield Specialization and the crit bonus (+100%, settled) multiply on top. The code is `sim/core/rage.go`, behind `Env.IsForever()`; only the warrior enables it.
 - **Source:** Blizzard's Priest & Warrior deep dive ("fully-normalized ... based on the speed of the weapon that dealt the damage"), tier 3. The constants are beta testers' measurements at level 30 or below (forum thread 2355684; Icy Veins and wowforeverbuilds repeat them), tier 5.
 - **Why uncertain:** the beta stopped at level 30, and Blizzard gives no formula. At 30 the measured k gives about Classic's Rage per swing; flat at 60 it gives about half (a 2.6 s main hand: 9.0 against Classic's 18.6 for an average swing). Nobody knows whether Blizzard scales it with level. The full test plan is under "Rage needs a beta test" in orchestration/followups.md.
 - **Settings (user ruling 2026-10-13):**
@@ -338,21 +337,6 @@ Dual-wield Fury is also affected by `wf_totem_offhand` (est. −2 to −3% at it
   - **High:** = Expected.
 - **Sensitivity:** Low is −9.4% on Fury (861.7 against 950.6 at 180 s, measured with flat k).
 - **Knob:** `core.ForeverNormalizedRageOffHand`.
-
-### `warr_crit_rage`: extra Rage from critical white hits
-
-- **Builds:** Fury, Fury two-hand, Arms.
-- **Sim now:** a critical white hit (main or off hand) gives twice its normal Rage, on top of the doubled damage, so 4× a normal hit's Rage where Classic gives 2×. Abilities get nothing extra. `sim/warrior/warrior.go:171-175` (`AddCritDealtRageMultiplier(2)`), hook `sim/core/rage.go:160`.
-- **Source:** Blizzard's 1 October warrior notes: "75% increased Rage when landing a critical strike with a basic attack", then 100% in the second warrior pass the same day.
-- **Why uncertain:** no beta combat log has checked it. A few dozen white swings at level 30 would show it (notes.md, Warrior).
-- **Settings:**
-  - **Low, +75%.** The first 1 October number.
-  - **Expected, +100% (Sim now).** The later pass of the same day.
-  - **High:** = Expected. Heroic Strike and Cleave replace the swing and make no Rage, so a wider scope adds nothing.
-- **Sensitivity (est.):**
-  - At Low, white-hit Rage drops about 8% (crits at about 25% of landed swings, glancing 40%), about 6% of all Rage.
-  - Fury is Rage-starved (Bloodthirst slips GCDs), so −2 to −3% on Fury and two-hand Fury. Arms has more non-white Rage (Bloodthrill, Overpower), so about −1.5%.
-- **Knob:** `sim/warrior/warrior.go:174`, `AddCritDealtRageMultiplier(core.Assume("warr_crit_rage", 2))` (1.75 for Low).
 
 ### `warr_rend_ap`: Rend's attack power share
 
@@ -635,6 +619,10 @@ No assumptions of its own. The rogue's scenarios are the shared ones:
 
 ## Settled, not a scenario
 
+- **Extra Rage from critical white hits: +100%** (was `warr_crit_rage`, removed 2026-10-16 by the assumptions audit, orchestration/assumptions_audit.md).
+  - Blizzard's 1 October beta development notes (us.forums.blizzard.com/en/wow/t/2360696, post 4, Warrior): "Players now generate 75% increased Rage when landing a critical strike with a basic attack", then in the same post "Additional Rage generated from landing Critical Strikes increased to 100% increased Rage (was 75%)". Kaivax's 2 October post (t/2369360) says the same.
+  - The 8 October notes (post 5, Druid) raised Bear Form's crit Rage to the same 100% ("Was 75%").
+  - The 75% Low was Blizzard's own superseded first number, so nothing is left to support it. The sim already gives +100% (`sim/warrior/warrior.go`, `AddCritDealtRageMultiplier(2)`), so no DPS moves.
 - **Windfury Totem's internal cooldown: 1.5 sec.**
   - User ruling 2026-10-13, standards 17; the sim already uses it (`sim/core/buffs.go:1827`).
   - The Forever client's 100 ms and Era's no cooldown are closed.
@@ -676,7 +664,7 @@ These are below the 0.5% threshold, client-sourced, or have no sensible range.
 ## Where no sensible range was found
 
 These entries have only two sensible settings (High = Expected): either the evidence gives two readings and nothing beyond them, or the higher value is the sim's own.
-- `flat_bonus_inside_pct`, `wf_totem_offhand`, `priest_sf_tick_crit`, `pal_sor_sp_double`, `pal_sor_sp_speed`, `pal_consecration_coef`, `pal_2h_spec_holy`, `pal_31plus_ranks`, `pal_soc_wf`, `warr_crit_rage`, `hunter_pet_speed` (no Low: Classic is Expected), `hunter_crit_per_agi`, `lock_pet_scaling`, `lock_demon_melee`, `lock_bod_coef`, `mage_imbue_scrolls` and `druid_rip_31plus` (no Low: the client is Expected). `hunter_tsa_hm_rank` and `mage_ice_lance_coef` have two settings below Expected and none above. `lock_incinerate_bonus` and `druid_ooc_rate` have one value.
+- `flat_bonus_inside_pct`, `wf_totem_offhand`, `priest_sf_tick_crit`, `pal_sor_sp_double`, `pal_sor_sp_speed`, `pal_consecration_coef`, `pal_2h_spec_holy`, `pal_31plus_ranks`, `pal_soc_wf`, `hunter_pet_speed` (no Low: Classic is Expected), `hunter_crit_per_agi`, `lock_pet_scaling`, `lock_demon_melee`, `lock_bod_coef`, `mage_imbue_scrolls` and `druid_rip_31plus` (no Low: the client is Expected). `hunter_tsa_hm_rank` and `mage_ice_lance_coef` have two settings below Expected and none above. `lock_incinerate_bonus` and `druid_ooc_rate` have one value.
 
 Weakly grounded values:
 - `sham_mw_ppm` Low (5 PPM): no analogue below 10.
