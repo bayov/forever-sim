@@ -58,9 +58,8 @@ Options:
 - `-redo` runs every window again with the sim as it is now. Use it after a sim or logcheck
   fix, to see which flags the fix cleared. The digest counts the newest run of each window.
 - `-log <path>` audits one log.
-- `-flavor <folder>` picks the game folder. The default is `_classic_beta_`. At release, add
-  the live game's folder to `FLAVORS` in `tools/combat_log/archive.sh` and audit it with
-  `-flavor`.
+- `-flavor <folder>` audits only one game folder of the archive, like `_classic_beta_`. By
+  default the audit takes every folder in `~/forever-logs/`.
 - `-iters` is the number of sim replays per mob level (default 200).
 
 ## 2. Go through the findings and the new flags
@@ -218,14 +217,34 @@ Once a log hasn't changed for a day and no window of it waits, the audit compres
 `WoWCombatLog-*.txt.gz` (about a tenth of the size). logcheck reads those the same way, the
 ledger keeps the plain name, and `archive.sh` stops copying the game's plain copy.
 
+## Characters and game folders
+
+The user plays more than one character and will keep making new ones, so nothing here may
+assume a character's name or realm. The tools know each character by its GUID
+(`Player-4620-01872808`). The digest and reports print `Name-Realm (GUID)`, but the name is
+only for reading. The game changes how the log writes names (`Bayov-ClassicBetaPvE2-` became
+`Bayov-Oom-ClassicBetaPvE2-` for the same character on 2026-10-16), and two characters can
+share a name. A log says which character was ours by the "mine" unit flags, and BayovCore
+writes the GUID into each history record since 2026-10-16. `tools/logcheck/README.md`
+("The character") has the details. When a window or a script can't find us, look at the
+flags and GUIDs in the log, not at the names.
+
+The game folder will change too. The beta's logs and history are in `_classic_beta_`. The
+release client gets a folder of its own, and we don't know its name yet (`_forever_` is our
+guess). `tools/combat_log/archive.sh` lists the folders it copies in `FLAVORS`, and
+`history.py` takes the same list. When the release is out, or when the audit has no new
+windows while the user says they played, check the folders in the WoW folder
+(`/mnt/d/Gaming/World of Warcraft`) and put the real one in `FLAVORS`. logcheck reads every
+folder in the archive, so it needs no change.
+
 ## Known limits
 
 - The logs from 2026-10-10 to 10-12 came before the history. Their windows use the pasted
   exports, and most of them have `change` flags. They're in the ledger as a baseline.
-- The history hasn't been seen in a real game session yet (as of 2026-10-14). On the first
-  audit with real history, check that its records look right: a login record at each login,
-  change records for a weapon swap and skill ups, a logout record at each `/reload`. Then
-  check that the audit cut the windows at those times.
+- The first real sessions with history (2026-10-15 and 10-16) cut the windows where they
+  should: at each level up, each gear pickup and each logout or `/reload`. A new character
+  changes gear every few minutes while leveling, so its first windows are mostly too small
+  to run.
 - The sim plays the window with no buffs, no consumes and full mana. Rows that depend on
   those (like a Strength buff from another player) can flag. The report lists other players'
   buffs.

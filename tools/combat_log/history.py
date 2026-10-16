@@ -9,13 +9,16 @@ string. Sheets and talent lists are stored once and records point at them by id.
 The addon keeps only the last 7 days, and WoW writes the file only on /reload, logout or exit.
 So archive.sh runs this every 5 minutes, and we keep every record we've ever seen:
 
-    ~/forever-logs/history/<Name>-<Realm>.jsonl        one record per line, in time order
-    ~/forever-logs/history/<Name>-<Realm>.blobs.json   the sheets and talent lists, by id
+    ~/forever-logs/history/<key>.jsonl        one record per line, in time order
+    ~/forever-logs/history/<key>.blobs.json   the sheets and talent lists, by id
+
+The key is the addon's: the character's GUID since 2026-10-16, and Name-Realm before. logcheck
+knows each character by its GUID, and places the older records by the logs (characters.go).
 
 A record we already have is skipped, so running this again changes nothing. logcheck reads these
 files and rebuilds an export for each moment a record describes.
 
-    python3 tools/combat_log/history.py [--game DIR] [--archive DIR] [--flavors "_classic_beta_"]
+    python3 tools/combat_log/history.py [--game DIR] [--archive DIR] [--flavors "_classic_beta_ _forever_"]
 """
 import argparse
 import glob
@@ -200,7 +203,8 @@ def main():
     p = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     p.add_argument('--game', default=os.environ.get('WOW_DIR', '/mnt/d/Gaming/World of Warcraft'))
     p.add_argument('--archive', default=os.path.join(os.environ.get('FOREVER_LOGS', os.path.expanduser('~/forever-logs')), 'history'))
-    p.add_argument('--flavors', default=os.environ.get('FLAVORS', '_classic_beta_'))
+    # The same game folders as archive.sh, which says why _forever_ is a guess.
+    p.add_argument('--flavors', default=os.environ.get('FLAVORS', '_classic_beta_ _forever_'))
     args = p.parse_args()
 
     for flavor in args.flavors.split():
