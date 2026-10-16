@@ -852,29 +852,51 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter) {
 }
 
 // The leveling session's options (LevelingOptions in proto/common.proto), shown in Leveling
-// mode. The ones we change most come first. The rest are under Advanced.
+// mode, in categories under a header each.
 function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 	const section = document.createElement('div');
 	section.classList.add('encounter-leveling');
 	rootElem.appendChild(section);
 
-	const mainGroup = Input.newGroupContainer();
-	section.appendChild(mainGroup);
-	addLevelingNumberPicker(mainGroup, encounter, {
+	const sessionGroup = addLevelingCategory(section, 'Session');
+	addLevelingNumberPicker(sessionGroup, encounter, {
 		id: 'encounter-leveling-session-length',
 		label: 'Session (min)',
 		labelTooltip: 'How long the grinding session lasts, in minutes.',
 		get: opts => Math.round((orDefault(opts.sessionLength, 1200) / 60) * 100) / 100,
 		set: (opts, value) => (opts.sessionLength = unlessDefault(value * 60, 1200)),
 	});
-	addLevelingNumberPicker(mainGroup, encounter, {
+	addLevelingNumberPicker(sessionGroup, encounter, {
+		id: 'encounter-leveling-death-penalty',
+		label: 'Death Penalty (sec)',
+		labelTooltip: 'The corpse run after a death, in seconds. The mobs on us leave, and our cooldowns keep ticking.',
+		get: opts => orDefault(opts.deathPenalty, 180),
+		set: (opts, value) => (opts.deathPenalty = unlessDefault(value, 180)),
+	});
+	addLevelingNumberPicker(sessionGroup, encounter, {
+		id: 'encounter-leveling-revive-fraction',
+		label: 'Revive At (%)',
+		labelTooltip: 'The share of health and mana we come back with after a death.',
+		get: opts => toPercent(orDefault(opts.reviveFraction, 0.5)),
+		set: (opts, value) => (opts.reviveFraction = unlessDefault(value / 100, 0.5)),
+	});
+
+	const mobsGroup = addLevelingCategory(section, 'Mobs');
+	addLevelingNumberPicker(mobsGroup, encounter, {
 		id: 'encounter-leveling-mob-level-offset',
 		label: 'Mob Level +/-',
 		labelTooltip: 'The level of the mobs we grind, less ours. 0 grinds mobs of our level, and -2 mobs two levels under us.',
 		get: opts => opts.mobLevelOffset,
 		set: (opts, value) => (opts.mobLevelOffset = value),
 	});
-	new EnumPicker<Encounter>(mainGroup, encounter, {
+	addLevelingNumberPicker(mobsGroup, encounter, {
+		id: 'encounter-leveling-mob-level-spread',
+		label: 'Mob Level Spread',
+		labelTooltip: 'How many levels either side of the mob level the mobs spread. At level 20, a spread of 1 grinds level 19 to 21 mobs.',
+		get: opts => Math.max(opts.mobLevelSpread ?? 1, 0),
+		set: (opts, value) => (opts.mobLevelSpread = value == 1 ? undefined : Math.max(value, 0)),
+	});
+	new EnumPicker<Encounter>(mobsGroup, encounter, {
 		id: 'encounter-leveling-mob-type',
 		label: 'Mob Type',
 		labelTooltip:
@@ -885,8 +907,23 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 		setValue: (eventID: EventID, encounter: Encounter, newValue: number) =>
 			updateLeveling(eventID, encounter, opts => (opts.mobType = newValue == DEFAULT_LEVELING_MOB_TYPE ? MobType.MobTypeUnknown : newValue)),
 	});
-	const searchGroup = Input.newGroupContainer();
-	section.appendChild(searchGroup);
+	addLevelingNumberPicker(mobsGroup, encounter, {
+		id: 'encounter-leveling-armor-multiplier',
+		label: 'Armor Multiplier',
+		labelTooltip: "Scales the mobs' armor, which is the average for their level.",
+		float: true,
+		get: opts => orDefault(opts.armorMultiplier, 1),
+		set: (opts, value) => (opts.armorMultiplier = unlessDefault(value, 1)),
+	});
+	addLevelingNumberPicker(mobsGroup, encounter, {
+		id: 'encounter-leveling-max-pack-size',
+		label: 'Max Pack Size',
+		labelTooltip: 'The most mobs we can ever have on us at once. How many we pull is up to the rotation (Look For Mob).',
+		get: opts => orDefault(opts.maxPackSize, 5),
+		set: (opts, value) => (opts.maxPackSize = unlessDefault(value, 5)),
+	});
+
+	const searchGroup = addLevelingCategory(section, 'Search');
 	const searchTooltip =
 		'The time it takes to find the next mob out of combat, in seconds, at random between Search Min and Search Max. We run around while we search, so we can only cast instants.';
 	addLevelingNumberPicker(searchGroup, encounter, {
@@ -922,41 +959,10 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 		set: (opts, value) => (opts.foundMax = unlessDefault(value, 40)),
 	});
 
-	// The options we rarely change, folded away.
-	const advanced = document.createElement('details');
-	advanced.classList.add('encounter-leveling-advanced');
-	advanced.innerHTML = `
-		<summary class="form-label"><i class="fas fa-chevron-right encounter-leveling-chevron"></i>Advanced</summary>
-	`;
-	section.appendChild(advanced);
-	const advancedGroup = Input.newGroupContainer();
-	advanced.appendChild(advancedGroup);
-
-	addLevelingNumberPicker(advancedGroup, encounter, {
-		id: 'encounter-leveling-mob-level-spread',
-		label: 'Mob Level Spread',
-		labelTooltip: 'How many levels either side of the mob level the mobs spread. At level 20, a spread of 1 grinds level 19 to 21 mobs.',
-		get: opts => Math.max(opts.mobLevelSpread ?? 1, 0),
-		set: (opts, value) => (opts.mobLevelSpread = value == 1 ? undefined : Math.max(value, 0)),
-	});
-	addLevelingNumberPicker(advancedGroup, encounter, {
-		id: 'encounter-leveling-armor-multiplier',
-		label: 'Armor Multiplier',
-		labelTooltip: "Scales the mobs' armor, which is the average for their level.",
-		float: true,
-		get: opts => orDefault(opts.armorMultiplier, 1),
-		set: (opts, value) => (opts.armorMultiplier = unlessDefault(value, 1)),
-	});
-	addLevelingNumberPicker(advancedGroup, encounter, {
-		id: 'encounter-leveling-max-pack-size',
-		label: 'Max Pack Size',
-		labelTooltip: 'The most mobs we can ever have on us at once. How many we pull is up to the rotation (Look For Mob).',
-		get: opts => orDefault(opts.maxPackSize, 5),
-		set: (opts, value) => (opts.maxPackSize = unlessDefault(value, 5)),
-	});
+	const chainGroup = addLevelingCategory(section, 'Chain Search Running');
 	const chainSearchTooltip =
-		'The time it takes to find a mob to chain pull while in combat, running around with the mobs on us following, in seconds, at random between Chain Search Min and Chain Search Max.';
-	addLevelingNumberPicker(advancedGroup, encounter, {
+		'The time it takes to find a mob to chain pull while in combat, running around with the mobs on us following, in seconds, at random between Chain Search Min and Chain Search Max. The mob we find stands at the Mob Distance under Search.';
+	addLevelingNumberPicker(chainGroup, encounter, {
 		id: 'encounter-leveling-chain-search-min',
 		label: 'Chain Search Min (sec)',
 		labelTooltip: chainSearchTooltip,
@@ -964,7 +970,7 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 		get: opts => orDefault(opts.chainSearchMin, 0),
 		set: (opts, value) => (opts.chainSearchMin = unlessDefault(value, 0)),
 	});
-	addLevelingNumberPicker(advancedGroup, encounter, {
+	addLevelingNumberPicker(chainGroup, encounter, {
 		id: 'encounter-leveling-chain-search-max',
 		label: 'Chain Search Max (sec)',
 		labelTooltip: chainSearchTooltip,
@@ -972,9 +978,11 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 		get: opts => orDefault(opts.chainSearchMax, 3),
 		set: (opts, value) => (opts.chainSearchMax = unlessDefault(value, 3)),
 	});
+
+	const standingGroup = addLevelingCategory(section, 'Chain Search Standing');
 	const standingSearchTooltip =
 		"The time it takes to find a mob to chain pull while in combat when the rotation stands and keeps fighting (Look For Mob's Stand), in seconds, at random between these. It's longer than running around, because we only see the mobs around us.";
-	addLevelingNumberPicker(advancedGroup, encounter, {
+	addLevelingNumberPicker(standingGroup, encounter, {
 		id: 'encounter-leveling-chain-search-standing-min',
 		label: 'Chain Search Standing Min (sec)',
 		labelTooltip: standingSearchTooltip,
@@ -982,7 +990,7 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 		get: opts => orDefault(opts.chainSearchStandingMin, 0),
 		set: (opts, value) => (opts.chainSearchStandingMin = unlessDefault(value, 0)),
 	});
-	addLevelingNumberPicker(advancedGroup, encounter, {
+	addLevelingNumberPicker(standingGroup, encounter, {
 		id: 'encounter-leveling-chain-search-standing-max',
 		label: 'Chain Search Standing Max (sec)',
 		labelTooltip: standingSearchTooltip,
@@ -992,34 +1000,31 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 	});
 	const standingFoundTooltip =
 		'How far away the mob we find on a chain search we stand for stands, in whole yards, at random between these. Standing still we look out over the area, so we spot mobs further off than while running around.';
-	addLevelingNumberPicker(advancedGroup, encounter, {
+	addLevelingNumberPicker(standingGroup, encounter, {
 		id: 'encounter-leveling-found-standing-min',
 		label: 'Standing Mob Distance Min (yd)',
 		labelTooltip: standingFoundTooltip,
 		get: opts => Math.round(orDefault(opts.foundStandingMin, 20)),
 		set: (opts, value) => (opts.foundStandingMin = unlessDefault(value, 20)),
 	});
-	addLevelingNumberPicker(advancedGroup, encounter, {
+	addLevelingNumberPicker(standingGroup, encounter, {
 		id: 'encounter-leveling-found-standing-max',
 		label: 'Standing Mob Distance Max (yd)',
 		labelTooltip: standingFoundTooltip,
 		get: opts => Math.round(orDefault(opts.foundStandingMax, 60)),
 		set: (opts, value) => (opts.foundStandingMax = unlessDefault(value, 60)),
 	});
-	addLevelingNumberPicker(advancedGroup, encounter, {
-		id: 'encounter-leveling-death-penalty',
-		label: 'Death Penalty (sec)',
-		labelTooltip: 'The corpse run after a death, in seconds. The mobs on us leave, and our cooldowns keep ticking.',
-		get: opts => orDefault(opts.deathPenalty, 180),
-		set: (opts, value) => (opts.deathPenalty = unlessDefault(value, 180)),
-	});
-	addLevelingNumberPicker(advancedGroup, encounter, {
-		id: 'encounter-leveling-revive-fraction',
-		label: 'Revive At (%)',
-		labelTooltip: 'The share of health and mana we come back with after a death.',
-		get: opts => toPercent(orDefault(opts.reviveFraction, 0.5)),
-		set: (opts, value) => (opts.reviveFraction = unlessDefault(value / 100, 0.5)),
-	});
+}
+
+// Adds a header for a category of leveling options, and returns the group its pickers go in.
+function addLevelingCategory(section: HTMLElement, title: string): HTMLElement {
+	const header = document.createElement('div');
+	header.classList.add('encounter-leveling-header');
+	header.textContent = title;
+	section.appendChild(header);
+	const group = Input.newGroupContainer();
+	section.appendChild(group);
+	return group;
 }
 
 // The session fights Beasts when the mob type is left unset.
