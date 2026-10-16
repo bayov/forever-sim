@@ -133,7 +133,7 @@ Weapon types and speeds (2026-10-15, orchestration/standards.md 22). Each physic
 
 | Preset | Weapons now | Race | DPS (on the Era BiS weapons) |
 |---|---|---|---|
-| Fury | 2.8 sec sword, 1.7 sec axe | Undead | 1061.4 (1038.1) |
+| Fury | 2.8 sec sword, 1.7 sec axe | Undead (Orc since client 70425) | 1061.4 (1038.1) |
 | Fury (Two-Hand) | 3.7 sec axe | Orc (was Undead) | 927.5 (901.6) |
 | Arms | 3.7 sec axe | Orc (was Undead) | 933.1 (915.1) |
 | Arms (vs Dragonkin) | 3.7 sec axe | Orc (was Undead) | 971.5 (947.9) |
@@ -174,22 +174,22 @@ Three builds, each its own spec: dual wield Fury (Bloodthirst), two-hand Fury (B
 - Against Giants and Dragonkin (Onyxia), Spearing Strike does 120% of normalized weapon damage instead of 40%. A fourth, non-default build, Level 60 Arms (vs Dragonkin), takes it and Improved Bloodrage for two points of Booming Voice and one of Improved Execute (`20305213132515201-3505-2`) and casts it on cooldown from 15 Rage: 967.1 / 947.9 / 922.7 (Undead) against the Arms build's 935.0 / 915.1 / 890.3 on the same boss (+3.6% at 180 sec). Fury needs Battle Stance for it: a stance dance (Battle Stance with at most 25 or 40 Rage when Spearing Strike is ready) with the talent searches is +0.5% on dual wield Fury (1042.2) and +0.8% on two-hand Fury (898.1), so Fury has no such build.
 - Consumes: Elixir of the Mongoose and Forever's Elixir of Ferocity (18 Strength, 18 Agility). A character takes one of the five +2% crit elixirs, and Ferocity beat Juju Power, Elixir of Giants and Grizzly with Greater Agility as the other elixir. Grizzly on top would add 15.1 on Fury, 12.0 on two-hand Fury and 10.9 on Arms, and both crit elixirs together were +73. Then Juju Might, Smoked Desert Dumplings (a stand-in for Forever's +20 Strength foods), R.O.I.D.S., Dense Sharpening Stones (Elemental's plans drop only in Molten Core), Mighty Rage Potion, Dragonbreath Chili, the Goblin Sapper, Goblin Land Mines between Sappers (+1 to +3) and Flask of the Titans (no DPS). Each won its slot in a sweep over every consumable the sim applies.
 
-Races, 20,000 iterations, the final builds, 120 / 180 / 300 sec. The weapons are swords like the Era Phase 1 ones, so Human gets its 2% crit and Orc and Dwarf get nothing from their axe and mace racials. Touch of the Grave rolls on every ability press, with the client's 1 sec internal cooldown (the shared branch's fix cost Undead 0.3 to 1.6 at 180 sec, and the order did not change), and all three rotations press Hamstring as a filler.
+Races (2026-10-16, client 70425's racials, the raid damage hits; 20,000 iterations, the final builds, 120 / 180 / 300 sec). No racial depends on the weapon any more: Orc Savage and Human Ruthless are 1% and 2% crit with any weapon, Dwarf Earth Fury and Tauren crits do 2% more damage, Skyborne has 3% haste. Orc is best overall and best Horde for all four builds, Human best Alliance. Dual wield Fury moves from Undead to Orc (+11.3 at 180 sec, now that Savage crits with its sword). Blood Fury waiting for Death Wish (racialHoldForDw 1) stays the best racial timing on the Orc: holding it for the last 20 to 35 sec instead is 8.1 lower at 180 sec. The weapons were picked on a race with no weapon racial (standards 22), so they stand.
 
-| Race | Fury | Fury (Two-Hand) | Arms |
-|---|---|---|---|
-| Undead (H) | **1074.3 / 1038.1 / 1013.7** | **937.1 / 901.6 / 874.9** | **935.0 / 915.1 / 890.3** |
-| Human (A) | 1065.0 / 1031.1 / 1008.3 | 933.0 / 899.4 / 874.0 | 929.6 / 912.5 / 888.2 |
-| Night Elf (A) | 1046.8 / 1013.9 / 992.8 | 922.0 / 888.5 / 865.3 | 928.2 / 907.0 / 881.6 |
-| Orc (H) | 1067.0 / 1028.8 / 999.8 | 931.2 / 897.5 / 868.9 | 927.5 / 909.4 / 882.1 |
-| Troll (H) | 1057.3 / 1019.8 / 994.0 | 928.5 / 890.4 / 862.5 | 918.3 / 900.1 / 874.0 |
-| Tauren (H) | 1050.7 / 1014.7 / 990.0 | 916.9 / 881.6 / 855.1 | 914.9 / 896.1 / 870.7 |
-| High Order Skyborne (A) | 1051.6 / 1016.1 / 991.8 | 921.2 / 885.4 / 859.1 | 919.1 / 900.3 / 875.5 |
-| Windshaper Skyborne (H) | 1051.5 / 1016.0 / 991.7 | 921.0 / 885.3 / 859.0 | 919.0 / 900.3 / 875.5 |
-| Gnome (A) | 1050.0 / 1013.0 / 988.5 | 922.6 / 884.7 / 858.6 | 920.3 / 899.6 / 874.4 |
-| Dwarf (A) | 1043.6 / 1007.9 / 983.3 | 916.2 / 880.7 / 854.1 | 914.2 / 895.3 / 869.9 |
+| Race | Fury | Fury (Two-Hand) | Arms | Arms (vs Dragonkin) |
+|---|---|---|---|---|
+| Orc (H) | **1093.5 / 1055.1 / 1031.4** | **973.5 / 932.3 / 903.6** | **959.1 / 944.2 / 920.4** | **1000.0 / 982.4 / 958.3** |
+| Human (A) | 1083.1 / 1051.0 / 1031.0 | 966.2 / 931.2 / 903.3 | 955.6 / 943.5 / 920.5 | 995.7 / 981.2 / 958.6 |
+| High Order Skyborne (A) | 1084.3 / 1049.8 / 1027.8 | 959.8 / 923.2 / 893.4 | 950.9 / 936.8 / 913.4 | 988.6 / 973.2 / 950.0 |
+| Windshaper Skyborne (H) | 1084.3 / 1049.7 / 1027.9 | 959.7 / 923.1 / 893.5 | 950.8 / 936.8 / 913.5 | 988.6 / 973.1 / 950.0 |
+| Undead (H) | 1078.0 / 1043.8 / 1021.5 | 963.9 / 926.6 / 897.2 | 955.2 / 941.5 / 917.4 | 994.2 / 977.9 / 954.1 |
+| Tauren (H) | 1076.7 / 1042.0 / 1018.5 | 960.5 / 923.9 / 892.4 | 953.8 / 939.2 / 915.0 | 993.4 / 977.1 / 952.6 |
+| Dwarf (A) | 1075.6 / 1040.8 / 1017.4 | 959.6 / 922.8 / 891.6 | 953.0 / 938.4 / 914.2 | 992.6 / 976.1 / 951.7 |
+| Troll (H) | 1074.1 / 1038.6 / 1015.0 | 956.3 / 920.5 / 889.8 | 943.5 / 931.2 / 907.0 | 983.5 / 968.3 / 943.4 |
+| Night Elf (A) | 1065.5 / 1034.2 / 1015.4 | 954.6 / 920.1 / 894.0 | 954.1 / 937.5 / 914.0 | 994.1 / 975.2 / 951.4 |
+| Gnome (A) | 1069.0 / 1033.7 / 1012.0 | 955.8 / 918.5 / 889.6 | 949.1 / 933.5 / 909.2 | 988.6 / 971.0 / 946.8 |
 
-The Ahn'Qiraj book ranks being out (Heroic Strike VIII; the raid's Battle Shout VI, Strength of Earth and Grace of Air) cost Undead 22.6 / 14.8 / 14.2 at 180 sec, and Deep Wounds' ticks not critting 1.6 / 6.7 / 7.2 (client 70338). Best overall and best Horde is Undead for all three builds, best Alliance is Human for all three. Deep Wounds without attack power but rolling (13 October) added about 29 DPS to every build and left the order as it was. The builds use Undead. Undead has no weapon racial, so with weapon-type racials off the spec ranking is the same: Fury 1020.3, Arms 890.4, Fury (Two-Hand) 887.4 at 180 sec (two-hand Fury is ahead of Arms at 120 sec). The standard error is 0.3 to 0.6.
+The Ahn'Qiraj book ranks being out (Heroic Strike VIII; the raid's Battle Shout VI, Strength of Earth and Grace of Air) cost Undead 22.6 / 14.8 / 14.2 at 180 sec, and Deep Wounds' ticks not critting 1.6 / 6.7 / 7.2 (client 70338). Deep Wounds without attack power but rolling (13 October) added about 29 DPS to every build and left the race order as it was. The standard error is 0.3 to 0.5.
 
 Rotation audit (one iteration's timeline, the breakdown and the uptimes of each final build, and the rotation auditor's pass): Bloodthirst goes on cooldown unless Rage is short, which the search prefers over holding the fillers. Whirlwind is cast about 12 times in 180 sec of 18 possible for the same reason. For Fury, Execute replaces everything in the last 36 sec (Arms keeps Mortal Strike ahead of it), and Death Wish and Recklessness land there. Flurry is up 94 to 96% for Fury. The audit found Arms never cast Recklessness (it needs Berserker Stance) and capped on Rage with idle GCDs. The Arms template got the stance swap and the Hamstring filler, and Arms went from 811.9 to 868.7 on the auditor's settings. The auditor's second pass, on the final gear, found Heroic Strike at 20 Rage starving Fury's Bloodthirst and Whirlwind, Fury two-hand drinking one potion a fight, and Arms' second potion missing Recklessness. Heroic Strike now waits for 40, the second potion is held for the end of the fight, and Arms' Slam and Hamstring wait for 20 (+9.8 / +7.2 / +6.9 at 180 sec). Overpower comes off dodges and Bloodthrill, and Rend is up for Bloodthrill. The racial and Death Wish lines only warn when a race or build lacks them.
 

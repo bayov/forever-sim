@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_arms_dragonkin",
   "published": {
-    "dps": 992.2,
-    "source": "Raid damage hits on warriors (2 a minute, 1500 damage each), 2026-10-15"
+    "dps": 982.4,
+    "source": "Client 70425 racials and the raid damage hits, re-measured on master 4f5c608, 2026-10-16"
   },
   "verify": {
-    "dps": 992.16,
-    "stderr": 0.35,
+    "dps": 982.4,
+    "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 180 s, seed 1"
+    "note": "same sim as the published number"
   },
   "summary": "Arms with Spearing Strike and Improved Bloodrage against a Giant or Dragonkin boss such as Onyxia; 4.0% ahead of the generic Arms build on its own boss at 180 s.",
   "advantage": "Spearing Strike does 80% more damage to Giants and Dragonkin. Against such a boss the talent is worth taking, so this build puts it in the rotation. The normal Arms build spends those points elsewhere.",
