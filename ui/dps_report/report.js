@@ -1309,7 +1309,8 @@ export function startReport(dash, events) {
     if (!classes.includes(st[p + 'Cls'])) st[p + 'Cls'] = 'All';
     const cls = st[p + 'Cls'];
     const inCls = inRole.filter((b) => cls === 'All' || b.class === cls);
-    if (!inCls.some((b) => b.id === st[p + 'Spec'])) st[p + 'Spec'] = 'All';
+    // We pick a spec only within a class, so with all classes the spec goes back to all of them.
+    if (cls === 'All' || !inCls.some((b) => b.id === st[p + 'Spec'])) st[p + 'Spec'] = 'All';
     const spec = st[p + 'Spec'];
     const builds = spec === 'All' ? inCls : inCls.filter((b) => b.id === spec);
     return { fac: st[p + 'Fac'] || 'All', role, cls, spec, classes, inCls, builds, ids: new Set(builds.map((b) => b.id)), single: builds.length === 1 ? builds[0] : null };
@@ -1319,17 +1320,14 @@ export function startReport(dash, events) {
     seg($(`#${p}-fac`), p + 'Fac', [['All', 'Both factions'], ['Horde', 'Horde', fi('ui_hordeicon')], ['Alliance', 'Alliance', fi('ui_allianceicon')]]);
     seg($(`#${p}-role`), p + 'Role', ROLES);
     classChips($(`#${p}-cls`), p + 'Cls', new Set(sc.classes));
-    const all = sc.cls !== 'All' ? `All ${sc.cls} specs` : sc.role !== 'All' ? `All ${sc.role.toLowerCase()} specs` : 'All specs';
+    const all = `All ${sc.cls} specs`;
     const items = [{ value: 'All', text: `${all} (${sc.inCls.length})` }];
-    for (const c of CLASSES) {
-      const bs = sc.inCls.filter((b) => b.class === c);
-      if (!bs.length) continue;
-      if (sc.cls === 'All') items.push({ header: c, color: ccol(c) });
-      for (const b of bs) items.push({ value: b.id, text: b.build, icon: () => specIco(b, '') });
-    }
+    for (const b of sc.inCls) items.push({ value: b.id, text: b.build, icon: () => specIco(b, '') });
+    // The spec selector shows only once a class is picked, with that class's specs.
     const host = $(`#${p}-spec`);
+    host.parentElement.hidden = sc.cls === 'All';
     host.dataset.label = 'Spec';
-    iconSelect(host, items, sc.spec, (v) => { st[p + 'Spec'] = v; persist(); hideTip(); render(); }, (it) => (it.value === 'All' ? all : `${sc.cls === 'All' ? (sc.builds[0]?.class || '') + ' · ' : ''}${it.text}`));
+    iconSelect(host, items, sc.spec, (v) => { st[p + 'Spec'] = v; persist(); hideTip(); render(); }, (it) => (it.value === 'All' ? all : it.text));
   };
 
   // The Specs page's race cards show one preset, so their filter is only the faction.
