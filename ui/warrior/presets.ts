@@ -315,8 +315,7 @@ export const DefaultConsumes = Consumes.create({
 
 // The raid the level 60 numbers were measured under (tools/rotopt/mksettings, spec fury and arms):
 // the shared level 60 raid, Battle Shout from another warrior, and a shaman in the warrior's group
-// with Strength of Earth and Windfury Totem. Forever's air totems no longer stack in a party, so the
-// shaman picks Windfury over Grace of Air for a warrior.
+// with Strength of Earth and Windfury Totem, and Grace of Air from a second shaman in the raid as well (the user's ruling 2026-10-16, "both totems": client 1.60.1.70425 lets Grace of Air stack with Windfury Totem and makes both raid-wide).
 export const DefaultRaidBuffs = RaidBuffs.create({
 	arcaneBrilliance: true,
 	battleShout: TristateEffect.TristateEffectImproved,
@@ -326,6 +325,7 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	fireResistanceAura: true,
 	frostResistanceAura: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
+	graceOfAirTotem: TristateEffect.TristateEffectRegular,
 	leaderOfThePack: true,
 	moonkinAura: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,

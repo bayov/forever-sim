@@ -1,7 +1,6 @@
 import { Player } from '../../player';
 import { Ruleset } from '../../proto/api';
 import { Class, Debuffs, Faction, IndividualBuffs, RaidBuffs, SaygesFortune, Spec, Stat, TotemWeaponBuff, TristateEffect } from '../../proto/common';
-import { AirTotem, EnhancementShaman_Options } from '../../proto/shaman';
 import { ActionId } from '../../proto_utils/action_id';
 import { EventID, TypedEvent } from '../../typed_event';
 import {
@@ -1013,22 +1012,9 @@ export interface IconSubsection {
 	items: Array<IconSubsectionItem>;
 }
 
-// Another shaman's Windfury Totem in the party buffs, under Forever.
-export function otherShamanWindfuryTotem(player: Player<any>): boolean {
-	return isForever(player) && player.getRaid()!.getBuffs().totemWeaponBuff === TotemWeaponBuff.TotemWeaponBuffWindfury;
-}
-
-// Under Forever, Grace of Air doesn't stack with Windfury Totem for now (the user, 2026-10-08).
-// The sim turns Grace of Air off while a Windfury Totem buff is up. We name the Windfury Totem
-// that's on: another shaman's, or the one an Enhancement shaman starts the fight with.
-function graceOfAirUnstackedNote(player: Player<any>): string | undefined {
-	if (player.getRaid()!.getBuffs().graceOfAirTotem === TristateEffect.TristateEffectMissing) return undefined;
-	const startingAir = player.spec === Spec.SpecEnhancementShaman ? (player.getSpecOptions() as EnhancementShaman_Options).startingTotems?.air : undefined;
-	if (otherShamanWindfuryTotem(player)) return "Gives no Agility while another shaman's Windfury Totem is up. Under Forever they don't stack for now.";
-	if (isForever(player) && startingAir === AirTotem.WindfuryTotem)
-		return "Gives no Agility while our starting Windfury Totem stands. Under Forever they don't stack for now.";
-	return undefined;
-}
+// Grace of Air and Windfury Totem stack under Forever since client 1.60.1.70425 (development
+// notes, 2026-10-15: "Grace of Air Totem is no longer exclusive with Windfury Totem and
+// Flametongue Totem"), so Grace of Air carries no unstacked note.
 
 // A buff from RAID_BUFFS_CONFIG or MISC_BUFFS_CONFIG, with the stats it has there.
 function buffItem(config: unknown): IconSubsectionItem {
@@ -1059,7 +1045,7 @@ export const PARTY_BUFF_SUBSECTIONS: Array<IconSubsection> = [
 		label: player => (player.getClass() === Class.ClassShaman ? 'Other Shaman Totems' : 'Totems'),
 		items: [
 			...[StrengthBuffHorde, StrengthBuffHordeForever].map(buffItem),
-			...[GraceOfAir, GraceOfAirForever].map(config => ({ ...buffItem(config), unstackedNote: graceOfAirUnstackedNote })),
+			...[GraceOfAir, GraceOfAirForever].map(config => buffItem(config)),
 			...[ManaSpringTotem, PhysDamReductionBuff].map(buffItem),
 			{ config: TotemWeaponBuffs, stats: [Stat.StatAttackPower] },
 		],

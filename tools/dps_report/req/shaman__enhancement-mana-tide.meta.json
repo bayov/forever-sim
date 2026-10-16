@@ -79,5 +79,5 @@
     "Elemental Focus trigger set: if Stormstrike can trigger it, Enhancement gets too few Clearcasting procs",
     "Raid damage hits on the shaman (2 a minute, which fires Lightning Shield) are an estimate from boss timers, not measured in logs; the assumptions panel runs 0 and 10"
   ],
-  "notes": "mksettings -spec enh -apl mana_tide (standards 23: every shaman drops its own party totems; the raid has none, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself) ; edited startingTotems.fire to MagmaTotem with fireSecondsBeforePull 1, as the preset ships."
+  "notes": "mksettings -spec enh -apl mana_tide (standards 23: every shaman drops its own party totems; the raid's only totem is a second shaman's Grace of Air, standards 25, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself) ; edited startingTotems.fire to MagmaTotem with fireSecondsBeforePull 1, as the preset ships."
 }

@@ -395,8 +395,7 @@ export const DefaultConsumes = Consumes.create({
 // The level 60 raid (tools/rotopt/mksettings): both paladin blessings, Kings, Judgement of the
 // Crusader and of Wisdom from another paladin, every debuff, Curse of the Elements (10% Holy
 // damage under Forever, worth 62 here). The paladin is in a melee group with a shaman, who puts
-// down Strength of Earth, Windfury Totem (one air totem per party since the 2026-09-24 build) and
-// Mana Spring.
+// down Strength of Earth, Windfury Totem and Mana Spring, and Grace of Air from a second shaman in the raid as well (the user's ruling 2026-10-16, "both totems": client 1.60.1.70425 lets Grace of Air stack with Windfury Totem and makes both raid-wide).
 export const DefaultRaidBuffs = RaidBuffs.create({
 	arcaneBrilliance: true,
 	battleShout: TristateEffect.TristateEffectImproved,
@@ -406,6 +405,7 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	fireResistanceAura: true,
 	frostResistanceAura: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
+	graceOfAirTotem: TristateEffect.TristateEffectRegular,
 	leaderOfThePack: true,
 	manaSpringTotem: TristateEffect.TristateEffectRegular,
 	moonkinAura: true,

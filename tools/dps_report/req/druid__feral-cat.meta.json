@@ -66,7 +66,7 @@
     "Only one +2% crit elixir by standard; Grizzly in place of Ferocity would add 4.9",
     "Tiger's Fury is removed in Forever (replaced by Shifting Power); it was worth 24.9 at 180 s",
     "The cat's swing spreads 20% either side of the weapon's DPS (the server's range isn't visible)",
-    "Windfury Totem in the melee group is +13.3 over Grace of Air; Dense Weightstone on the mace is +4.9 (Elemental Sharpening Stone left out: its plans only drop in Molten Core)"
+    "Windfury Totem and a second shaman's Grace of Air in the melee group (standards 25: they stack since client 70425); Dense Weightstone on the mace is +4.9 (Elemental Sharpening Stone left out: its plans only drop in Molten Core)"
   ],
   "notes": "Request from mksettings -spec feral (melee group: Strength of Earth and Windfury Totem, all blessings, own Leader of the Pack; latency 100 ms). Duration 180 s, durationVariation 20. Forever lets the cat drink in form, so Mighty Rage Potion and Thistle Tea are used. No edits needed."
 }

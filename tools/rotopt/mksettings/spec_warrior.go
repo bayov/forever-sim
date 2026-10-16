@@ -2,14 +2,14 @@ package main
 
 import "github.com/wowsims/classic/sim/core/proto"
 
-// The DPS warrior is in a melee group with a shaman, who drops Strength of Earth and Windfury Totem
-// (Forever's air totems no longer stack in a party, so it is Windfury or Grace of Air, and Windfury is
-// worth more to a warrior). The paladins bless it with Kings and Might. The shared raid already has Battle Shout from another warrior, Sunder Armor,
+// The DPS warrior is in a melee group with a shaman, who drops Strength of Earth and Windfury Totem,
+// and the raid's second shaman adds Grace of Air (the user's ruling 2026-10-16, "both totems": client 1.60.1.70425 lets Grace of Air stack with Windfury Totem and makes both raid-wide). The paladins bless it with Kings and Might. The shared raid already has Battle Shout from another warrior, Sunder Armor,
 // Faerie Fire, Curse of Recklessness and Expose Armor.
 func init() {
 	warriorRaid := func(raidBuffs *proto.RaidBuffs, buffs *proto.IndividualBuffs, _ *proto.Debuffs) {
 		raidBuffs.StrengthOfEarthTotem = proto.TristateEffect_TristateEffectRegular
 		raidBuffs.TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffWindfury
+		raidBuffs.GraceOfAirTotem = proto.TristateEffect_TristateEffectRegular
 		// Kings and Might, no Wisdom for a Rage user.
 		buffs.BlessingOfWisdom = proto.TristateEffect_TristateEffectMissing
 	}

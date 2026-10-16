@@ -6,12 +6,13 @@ func init() {
 	specs["rogue"] = &specSetup{
 		uiDir: "ui/rogue",
 		// The rogue is in a melee group with a shaman: Strength of Earth and Windfury Totem, the
-		// same party as the UI presets (Forever lets one air totem work in a party, and Windfury
-		// is ahead of Grace of Air). Enhancing Totems is not in Forever's tree, so the totems are
-		// the regular ones.
+		// same party as the UI presets, and Grace of Air from the raid's second shaman
+		// (the user's ruling 2026-10-16, "both totems": client 1.60.1.70425 lets Grace of Air stack with Windfury Totem and makes both raid-wide). Enhancing Totems is not in Forever's tree, so the totems are the
+		// regular ones.
 		raid: func(raidBuffs *proto.RaidBuffs, _ *proto.IndividualBuffs, _ *proto.Debuffs) {
 			raidBuffs.StrengthOfEarthTotem = proto.TristateEffect_TristateEffectRegular
 			raidBuffs.TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffWindfury
+			raidBuffs.GraceOfAirTotem = proto.TristateEffect_TristateEffectRegular
 		},
 		consumes: func() *proto.Consumes {
 			return &proto.Consumes{

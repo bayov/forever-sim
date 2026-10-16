@@ -10,13 +10,13 @@ func init() {
 	specs["ret"] = &specSetup{
 		uiDir: "ui/retribution_paladin",
 		// The paladin is in a melee group with a shaman. Enhancing Totems is not in Forever's tree,
-		// so the totems are the regular ones. A shaman puts down one air totem for the party
-		// since the 2026-09-24 beta build, and for a melee group that is Windfury Totem, and
-		// Mana Spring Totem is its water totem.
+		// so the totems are the regular ones: Windfury Totem, Mana Spring Totem, and Grace of Air
+		// from the raid's second shaman (the user's ruling 2026-10-16, "both totems": client 1.60.1.70425 lets Grace of Air stack with Windfury Totem and makes both raid-wide).
 		raid: func(raidBuffs *proto.RaidBuffs, _ *proto.IndividualBuffs, _ *proto.Debuffs) {
 			raidBuffs.StrengthOfEarthTotem = proto.TristateEffect_TristateEffectRegular
 			raidBuffs.TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffWindfury
 			raidBuffs.ManaSpringTotem = proto.TristateEffect_TristateEffectRegular
+			raidBuffs.GraceOfAirTotem = proto.TristateEffect_TristateEffectRegular
 		},
 		// The consumes the level 60 search kept, each tried slot by slot on the synthetic Phase 1
 		// set at 180 and 300 sec (see the Level 60 consumes in ui/retribution_paladin/presets.ts).
