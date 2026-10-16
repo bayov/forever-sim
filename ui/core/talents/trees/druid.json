@@ -1100,8 +1100,7 @@
             70
           ]
         ],
-        "icon": "spell_nature_healingwavegreater",
-        "notSimulated": true
+        "icon": "spell_nature_healingwavegreater"
       },
       {
         "fieldName": "furor",
