@@ -5,7 +5,7 @@
   "build": "Destruction",
   "isDefault": false,
   "pr": 2,
-  "race": "Gnome",
+  "race": "Human",
   "talents": "255000000351--055030500310035",
   "treeNames": [
     "Affliction",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_destruction",
   "published": {
-    "dps": 990.0,
-    "source": "PR #25"
+    "dps": 980.7,
+    "source": "PR (client 70425 port)"
   },
   "verify": {
-    "dps": 990.03,
-    "stderr": 0.37,
+    "dps": 980.67,
+    "stderr": 0.36,
     "iters": 20000,
     "ok": true,
-    "note": "+0.03 vs published"
+    "note": "-0.03 vs published"
   },
   "summary": "Shadow Bolt Destruction: Conflagrate with Shadow and Flame 5/5 (Immolate is kept) and Fire and Brimstone, plus Pandemic and Malevolence from Affliction, with the Succubus out. The best 30-point Destruction build.",
   "keyTalents": [
@@ -75,5 +75,5 @@
     "Only the Demonheart Raiment 2-piece is live (the 5-piece added about +8 to +13 on the first set)",
     "Soul shards and Life Tap health cost are not tracked"
   ],
-  "notes": "Request straight from mksettings -spec destruction -gear level60_phase1_synthetic -apl level60_destruction -race Gnome -duration 180, no edits. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Spellstone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly."
+  "notes": "Request straight from mksettings -spec destruction -gear level60_phase1_synthetic -apl level60_destruction -race Human -duration 180, no edits. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Spellstone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly."
 }

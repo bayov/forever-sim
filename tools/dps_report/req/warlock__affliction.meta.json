@@ -5,7 +5,7 @@
   "build": "Affliction",
   "isDefault": false,
   "pr": 2,
-  "race": "Gnome",
+  "race": "Human",
   "talents": "2550102003520005--0550305003",
   "treeNames": [
     "Affliction",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_affliction",
   "published": {
-    "dps": 982.3,
-    "source": "PR #25"
+    "dps": 998.0,
+    "source": "PR (client 70425 port)"
   },
   "verify": {
-    "dps": 982.32,
+    "dps": 998.04,
     "stderr": 0.38,
     "iters": 20000,
     "ok": true,
-    "note": "+0.02 vs published"
+    "note": "+0.04 vs published"
   },
   "summary": "Shadow Bolt Affliction: Shadow Mastery, Pandemic, Malevolence and Nightfall with Improved Shadow Bolt, Ruin and Agonizing Flames, Succubus out. The best 30-point Affliction build; a Wrack/drain DoT spec was dropped as 55+ DPS behind with the same playstyle.",
   "keyTalents": [
@@ -73,5 +73,5 @@
     "Only the Demonheart Raiment 2-piece is live (the 5-piece added about +8 to +13 on the first set)",
     "Soul shards and Life Tap health cost are not tracked"
   ],
-  "notes": "Request straight from mksettings -spec affliction -gear level60_phase1_synthetic -apl level60_affliction -race Gnome -duration 180, no edits. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Spellstone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly."
+  "notes": "Request straight from mksettings -spec affliction -gear level60_phase1_synthetic -apl level60_affliction -race Human -duration 180, no edits. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Spellstone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly."
 }

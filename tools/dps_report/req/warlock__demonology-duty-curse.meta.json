@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic_demonology",
   "apl": "level60_demonology_duty_curse",
   "published": {
-    "dps": 1103.2,
-    "source": "PR #30"
+    "dps": 1086.6,
+    "source": "PR (client 70425 port)"
   },
   "verify": {
-    "dps": 1103.19,
-    "stderr": 0.38,
+    "dps": 1086.61,
+    "stderr": 0.39,
     "iters": 20000,
     "ok": true,
-    "note": "-0.01 vs published"
+    "note": "+0.01 vs published"
   },
-  "summary": "Demonology on curse duty for the raid, casting Curse of the Elements (one curse duty per warlock; other warlocks cover the other curses): the warlock keeps its own Curse of the Elements (rank 4, 10% magic damage taken) up all fight, cast right after the opener and recast before it drops, and the raid's is off. Under Forever the curse has its own slot, so the bane stays. Costs 12.3 DPS at 180 s against the base build.",
+  "summary": "Demonology on curse duty for the raid, casting Curse of the Elements (one curse duty per warlock; other warlocks cover the other curses): the warlock keeps its own Curse of the Elements (rank 4, 10% magic damage taken) up all fight, cast right after the opener and recast before it drops, and the raid's is off. Under Forever the curse has its own slot, so the bane stays. Costs 12.6 DPS at 180 s against the base build.",
   "keyTalents": [
     "Demonic Pact",
     "Demonic Sacrifice",
