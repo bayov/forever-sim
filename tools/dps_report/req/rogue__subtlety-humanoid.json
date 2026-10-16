@@ -1509,7 +1509,8 @@
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
-      "totemWeaponBuff": "TotemWeaponBuffWindfury"
+      "totemWeaponBuff": "TotemWeaponBuffWindfury",
+      "salvation": true
     },
     "debuffs": {
       "judgementOfWisdom": true,
