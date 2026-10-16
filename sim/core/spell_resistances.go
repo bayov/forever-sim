@@ -132,6 +132,21 @@ func (unit *Unit) GetResistanceForSchool(schoolIndex stats.SchoolIndex) float64 
 // All of the following calculations are based on this guide:
 // https://royalgiraffe.github.io/resist-guide
 
+// partialResistPerLevel is the average partial resist a non-binary spell meets for each level its
+// target is above the caster: Classic's 2%, 6% against a level 63 boss. Forever has none. Its
+// character sheet gives the average resist as 0.75 x resistance / (5 x caster level), school
+// resistance only, with no level term (client UI Camelot/PaperDollFrameStats.lua, every beta build
+// since 69876), and about 520 beta hits on normal mobs 3 to 5 levels up were never partly resisted
+// while mobs with school resistance were, in 10% steps. A boss log would confirm it for bosses
+// (user ruling 2026-10-16: no level partial resist, the one value of report assumption
+// level_partial_resist).
+func (unit *Unit) partialResistPerLevel() float64 {
+	if unit.Env != nil && unit.Env.IsForever() {
+		return 0
+	}
+	return AverageMagicPartialResistPerLevelMultiplier
+}
+
 func (unit *Unit) resistCoeff(spell *Spell, attacker *Unit, binary bool, pureDot bool) float64 {
 	if spell.SchoolIndex <= stats.SchoolIndexPhysical {
 		return 0
@@ -163,8 +178,8 @@ func (unit *Unit) resistCoeff(spell *Spell, attacker *Unit, binary bool, pureDot
 		resistanceCoef /= 10
 	}
 
-	if !binary && unit.Type == EnemyUnit && unit.Level > attacker.Level {
-		avgMitigationAdded := AverageMagicPartialResistPerLevelMultiplier * float64(unit.Level-attacker.Level)
+	if perLevel := attacker.partialResistPerLevel(); perLevel > 0 && !binary && unit.Type == EnemyUnit && unit.Level > attacker.Level {
+		avgMitigationAdded := perLevel * float64(unit.Level-attacker.Level)
 		// coef is scaled 0 to 1, not 0 to 0.75
 		resistanceCoef += avgMitigationAdded * 1 / 0.75
 	}
