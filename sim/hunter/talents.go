@@ -358,9 +358,10 @@ func (hunter *Hunter) applyRapidRecuperation() {
 }
 
 // Resourcefulness takes 30% a rank off the traps and the melee abilities in its mask (Raptor
-// Strike, Mongoose Bite, Wing Clip and the parry strike; not Strider Kick or Lacerate), and a crit has a
-// 50% chance a rank to give 50% of mana regen while casting for 30 sec (1242688). The tooltip
-// leaves the chance as "?%", the 50 a rank is the client's rank curve.
+// Strike, Mongoose Bite, Wing Clip, the parry strike and, since client 1.60.1.70425, Strider Kick;
+// not Lacerate), and a crit has a 50% chance a rank to give 50% of mana regen while casting for
+// 30 sec (1242688). The tooltip leaves the chance as "?%", the 50 a rank is the client's rank curve
+// (in 70338 that effect's trait curve read -20 / -40, which 70425 fixed to 50 / 100).
 func (hunter *Hunter) applyResourcefulness() {
 	if hunter.Talents.Resourcefulness == 0 {
 		return
@@ -368,7 +369,7 @@ func (hunter *Hunter) applyResourcefulness() {
 
 	hunter.OnSpellRegistered(func(spell *core.Spell) {
 		switch spell.SpellCode {
-		case SpellCode_HunterRaptorStrike, SpellCode_HunterMongooseBite, SpellCode_HunterWingClip:
+		case SpellCode_HunterRaptorStrike, SpellCode_HunterMongooseBite, SpellCode_HunterWingClip, SpellCode_HunterStriderKick:
 		default:
 			if !spell.Flags.Matches(SpellFlagTrap) {
 				return
