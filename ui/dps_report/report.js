@@ -1500,8 +1500,12 @@ export function startReport(dash, events) {
         ...gaps.map(([k, d]) => [k, sgn(d, f0), ...(w ? [w.has(k) && w.get(k) ? tipDelta(worth(k, d), f1, '') : '0'] : [])]),
         w ? ['Sum', '', tipDelta(sum, f1, '')] : null])];
     };
-    // The race's icon, name and numbers show the row's own tooltip.
+    // The race's numbers show the row's own tooltip.
     const head = (n) => { n.dataset.zone = ''; return n; };
+    // The race's icon and name show the race's game tooltip instead, with every racial it has, also the ones that
+    // add no DPS here. On one preset it also gives that preset's DPS for the race.
+    const cls1 = new Set(sc.builds.map((b) => b.class)).size === 1 ? sc.builds[0].class : null;
+    const raceTT = (r, n) => tt(n, `r:${r.race}${cls1 ? ':' + cls1 : ''}`, true, one ? one.id : null);
     // An entry's "vs Elemental" tag shows the tooltip of the racial that works on that boss type.
     const tagZone = (r, name) => {
       const tag = name.querySelector('.fv-rtag');
@@ -1509,6 +1513,7 @@ export function startReport(dash, events) {
       if (tag && part) tag.dataset.zone = part;
       return name;
     };
+    const raceNameTT = (r) => { const n = raceName(r); raceTT(r, n.querySelector('b')); return n; };
     host.replaceChildren(...rows.map((r, i) => {
       const track = el('div', { class: 'fv-rtrack' });
       r.segs.forEach((sg, k) => {
@@ -1525,8 +1530,8 @@ export function startReport(dash, events) {
       // A racial with no effect here gets its reason after the race name, so it costs no extra line.
       const idle = one ? r.idle.slice(0, 3).map((q) => el('small', { 'data-zone': 'idle:' + q.part, text: `${shortLabel(q.label)}: ${q.note}` })) : [];
       const row = el('div', { class: 'fv-rrow' + (i === 0 ? ' top' : ''), 'data-tip': '1' },
-        head(raceIco(r.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(r.race)}` })),
-        el('span', { class: 'nm' }, tagZone(r, head(raceName(r))), one && r.isPreset ? head(el('i', { text: 'preset race' })) : null, ...idle),
+        raceTT(r, raceIco(r.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(r.race)}` })),
+        el('span', { class: 'nm' }, tagZone(r, raceNameTT(r)), one && r.isPreset ? head(el('i', { text: 'preset race' })) : null, ...idle),
         el('span', { class: 'end', 'data-zone': '' }, el('small', { text: one ? (i === 0 ? '★ best' : `−${f2(100 * (1 - r.dps / rows[0].dps))}%`) : r.timesBest ? `best on ${r.timesBest} of ${r.n}` : 'never best' }),
           el('b', { text: one ? f1(r.dps) : pct(r.avg) })),
         track, cap);
