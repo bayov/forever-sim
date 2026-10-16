@@ -1,6 +1,8 @@
 package mage
 
 import (
+	"time"
+
 	"github.com/wowsims/classic/sim/common/guardians"
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
@@ -91,12 +93,16 @@ type Mage struct {
 	ImprovedScorchAuras core.AuraArray
 	MageArmorAura       *core.Aura
 	MissileBarrageAura  *core.Aura
+	PresenceOfMindAura  *core.Aura
 
 	// Chances added up by the talents and the Manaflare set, read when the proc rolls.
 	fingersOfFrostChance         float64
 	frostfireMissileBarrageBonus float64
 	frostfireFingersOfFrostBonus float64
 	frostfireCombustionCrit      float64
+
+	// When Presence of Mind was last used up, so Heating Up can tell it made that Pyroblast instant.
+	presenceOfMindSpentAt time.Duration
 }
 
 // Agent is a generic way to access underlying mage on any of the agents.
@@ -141,6 +147,7 @@ func (mage *Mage) Initialize() {
 }
 
 func (mage *Mage) Reset(sim *core.Simulation) {
+	mage.presenceOfMindSpentAt = -1
 }
 
 func NewMage(character *core.Character, options *proto.Player) *Mage {

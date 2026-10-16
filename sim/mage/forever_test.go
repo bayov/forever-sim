@@ -72,6 +72,50 @@ func TestMageHeatingUp(t *testing.T) {
 	}
 }
 
+// Since 1.60.1.70425 every Fire Blast that deals damage adds a Heating Up stack, and a crit adds
+// a second. A Pyroblast made instant by Presence of Mind leaves the stacks alone.
+func TestMageHeatingUpFireBlastAndPresenceOfMind(t *testing.T) {
+	// Arcane to Presence of Mind, Fire to Heating Up.
+	sim, mage := newMageSim(t, "0502225003100001-235500001301")
+	fireBlast := topRank(t, "Fire Blast", mage.FireBlast)
+	for i := 0; i < 8; i++ {
+		mage.HeatingUpAura.Deactivate(sim)
+		fireBlast.CD.Reset()
+		mage.SetGCDTimer(sim, sim.CurrentTime)
+		crits := fireBlast.SpellMetrics[mage.CurrentTarget.UnitIndex].Crits
+		hits := fireBlast.SpellMetrics[mage.CurrentTarget.UnitIndex].Hits
+		if !fireBlast.Cast(sim, mage.CurrentTarget) {
+			t.Fatalf("Fire Blast %d didn't cast (mana %.0f)", i, mage.CurrentMana())
+		}
+		crit := fireBlast.SpellMetrics[mage.CurrentTarget.UnitIndex].Crits > crits
+		hit := fireBlast.SpellMetrics[mage.CurrentTarget.UnitIndex].Hits > hits
+		want := int32(0)
+		if crit {
+			want = 2
+		} else if hit {
+			want = 1
+		}
+		if got := mage.HeatingUpAura.GetStacks(); got != want {
+			t.Errorf("Fire Blast (crit %v, hit %v) left %d Heating Up stacks, want %d", crit, hit, got, want)
+		}
+	}
+
+	pyroblast := topRank(t, "Pyroblast", mage.Pyroblast)
+	mage.HeatingUpAura.Activate(sim)
+	mage.HeatingUpAura.SetStacks(sim, 2)
+	mage.PresenceOfMindAura.Activate(sim)
+	mage.SetGCDTimer(sim, sim.CurrentTime)
+	if !pyroblast.Cast(sim, mage.CurrentTarget) {
+		t.Fatalf("Pyroblast didn't cast")
+	}
+	if mage.PresenceOfMindAura.IsActive() {
+		t.Errorf("Presence of Mind is still up after the Pyroblast")
+	}
+	if got := mage.HeatingUpAura.GetStacks(); got != 2 {
+		t.Errorf("an instant Pyroblast with Presence of Mind left %d Heating Up stacks, want 2", got)
+	}
+}
+
 // Since 1.60.1.70425 each Arcane Blast stack is 15% of Intellect as spell damage and 175% more
 // mana on Arcane Blast. The buff lasts 15 sec from the first stack, and other spells don't end it.
 func TestMageArcaneBlastStacks(t *testing.T) {

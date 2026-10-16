@@ -370,9 +370,12 @@ func (mage *Mage) registerPresenceOfMindCD() {
 				return
 			}
 
+			mage.presenceOfMindSpentAt = sim.CurrentTime
 			aura.Deactivate(sim)
 		},
 	})
+
+	mage.PresenceOfMindAura = pomAura
 
 	mage.PresenceOfMind = mage.RegisterSpell(core.SpellConfig{
 		ActionID: actionID,
@@ -577,8 +580,11 @@ func (mage *Mage) applyMasterOfElements() {
 
 // Heating Up (Hot Streak until the 2026-10-08 build): non-periodic crits with Fireball,
 // Frostfire Bolt, Fire Blast and Scorch take 25% off the next Pyroblast's cast time, stacking to
-// 3 (75%), for 20 sec. The next Pyroblast uses up every stack (the client buff 400625 has one
-// charge and a -25% cast time modifier per stack).
+// 3 (75%), for 20 sec. Since 1.60.1.70425 every Fire Blast that deals damage adds a stack too,
+// so a Fire Blast crit adds two (the 400624 tooltip: "Fire Blast grants an additional stack
+// every time it deals damage"). The next Pyroblast uses up every stack (the client buff 400625
+// has a -25% cast time modifier per stack), unless Presence of Mind made it instant (70425 notes:
+// Heating Up is no longer consumed if Presence of Mind was active).
 func (mage *Mage) applyHeatingUp() {
 	if !mage.Talents.HeatingUp {
 		return
@@ -599,15 +605,24 @@ func (mage *Mage) applyHeatingUp() {
 			}
 		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if spell.SpellCode == SpellCode_MagePyroblast {
-				aura.Deactivate(sim)
+			if spell.SpellCode != SpellCode_MagePyroblast {
+				return
 			}
+			// Presence of Mind may have ended just before this, on the same cast.
+			if mage.PresenceOfMindAura != nil && (mage.PresenceOfMindAura.IsActive() || mage.presenceOfMindSpentAt == sim.CurrentTime) {
+				return
+			}
+			aura.Deactivate(sim)
 		},
 	})
 
 	core.MakePermanent(mage.RegisterAura(core.Aura{
 		Label: "Heating Up Talent",
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if spell.SpellCode == SpellCode_MageFireBlast && result.Landed() {
+				mage.HeatingUpAura.Activate(sim)
+				mage.HeatingUpAura.AddStack(sim)
+			}
 			if !result.DidCrit() {
 				return
 			}
