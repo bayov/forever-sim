@@ -613,7 +613,7 @@ export function startReport(dash, events) {
   }
 
   // ---------- tabs ----------
-  const pages = ['ranking', 'races', 'spec', 'compare', 'method'];
+  const pages = ['ranking', 'spec', 'races', 'compare', 'method'];
   const showTab = (tab, link = true) => {
     const changed = st.tab !== tab;
     st.tab = tab; persist();
