@@ -156,19 +156,29 @@ export const DefaultAPL = APLLevel60;
 // Strikes 5 and Tidal Focus 5 (5% hit, Forever took Nature's Guidance away) are the big ones. On
 // the earlier gear the next best build moved 4 points into Ancestral Knowledge and Shamanistic
 // Focus out of Mindfulness and Tidal Focus and was 15 behind.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '550433100000135-052-05305' }), {
-	tooltip: 'Level 60 talents from the talent search: Lava Burst, Thundering Strikes, Mindfulness and Tidal Focus.',
+//
+// Client 1.60.1.70425 removed Call of Thunder, moved Lava Burst to the 20-point row and made
+// Elemental Mastery the 30-point talent. The talent search (from the old build without Call of
+// Thunder, on the 2 raid hits a minute that now push casts back) took Elemental Mastery first
+// (+22 as the mean of 120, 180 and 300 sec), moved 3 Reverberation points into Eye of the Storm
+// (+8: it keeps 70% of the casts from being pushed back), and the Restoration points into
+// Ancestral Knowledge, Shamanistic Focus and one Improved Lightning Shield. 731.3 / 721.4 /
+// 712.6 at 120 / 180 / 300 sec.
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '5501331003001351-055000101-053' }), {
+	tooltip: 'Level 60 talents from the talent search: Elemental Mastery, Lava Burst, Eye of the Storm, Thundering Strikes and Tidal Focus.',
 	group: 'Level 60',
 });
 // Mana Tide Totem for the group's mana: Totemic Focus 5, Mindfulness 3, Tidal Focus 5 and the
 // Mana Tide row, with one point less in Thundering Strikes and none in Ancestral Knowledge. The
 // talent search with Mana Tide Totem pinned found it, and found it again on the standard gear.
 // Its Water Shield point does nothing in the sim: the rotation keeps Lightning Shield up instead
-// (see the Options note below). It is 667.7 / 666.9 / 656.7 at 120 / 180 / 300 sec
-// on the 1b set, 1.0% behind Level 60 at 180.
+// (see the Options note below). Under client 1.60.1.70425 it takes Elemental Mastery for Call of
+// Thunder and Eye of the Storm for 3 Reverberation points, as Level 60 does (the talent search
+// with Mana Tide Totem pinned). 721.3 / 711.2 / 697.4 at 120 / 180 / 300 sec, 1.4% behind
+// Level 60 at 180.
 export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
 	'Level 60 + Mana Tide',
-	SavedTalents.create({ talentsString: '550433100000135-04-053150001001' }),
+	SavedTalents.create({ talentsString: '5501331003001351-04-053150001001' }),
 	{ tooltip: 'Level 60 talents with 16 Restoration points for Mana Tide Totem.', group: 'Level 60' },
 );
 
@@ -202,6 +212,12 @@ export const DefaultTalents = TalentsLevel60;
 // Dropping the recast was a little ahead at 1 a minute but 5.6 behind at 10. Mana Spring is not
 // recast with less than 20 sec left either. Level 60 is 699.0 / 695.3 / 679.7 at 120 / 180 / 300
 // sec (+1.4 / +1.3 / +3.0) and Mana Tide 692.3 / 688.1 / 673.7 (+1.4 / +1.7 / +1.7).
+//
+// Measured again at 2 hits a minute with pushback, on the client 70425 builds (20000 iterations,
+// 120 / 180 / 300 sec), the gate still wins or ties: Level 60 731.3 / 721.4 / 712.6 with it,
+// 729.0 / 719.6 / 711.5 recasting whenever the shield is down, 729.0 / 719.7 / 712.3 with only the
+// mana half, 731.4 / 720.7 / 711.1 with no recast in the fight. Mana Tide 721.3 / 711.2 / 697.4,
+// 718.8 / 709.4 / 695.6, 719.0 / 710.0 / 697.3 and 721.5 / 710.9 / 697.0.
 export const DefaultOptions = ElementalShamanOptions.create({});
 
 // The level 60 consumables, Forever's Phase 1 ones (the shared consumables branch). On 2026-10-12

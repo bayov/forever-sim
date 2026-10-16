@@ -455,7 +455,7 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 // gear round's set the search again only made mana tie-breaks inside the noise (792.0 against
 // 792.6), so the build stays: 813.5 / 801.8 / 781.6, and 813.8 / 801.6 / 782.3 once Rage of the Farseer
 // waits for the on-use trinket, and 824.5 / 813.9 / 794.0 with Elixir of Cunning and Ferocity and Forever's oil and chili damage.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '053503102-053030031005112251' }), {
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '053503002-055030011005112151-02' }), {
 	tooltip: 'Level 60 talents from the talent search, with Spirit Weapons and Concussion.',
 	group: 'Level 60',
 });
@@ -503,7 +503,7 @@ export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Level 60 + Imp
 // of Cunning and Ferocity), 5.9% behind Level 60 at 180.
 export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
 	'Level 60 + Water Shield',
-	SavedTalents.create({ talentsString: '051003-053030031005112151-032050001' }),
+	SavedTalents.create({ talentsString: '051003-054030021005112151-053020001' }),
 	{ tooltip: 'Level 60 talents with 10 Restoration points for Water Shield.', group: 'Level 60' },
 );
 // The best build that takes Water Shield and Mana Tide Totem (-require
@@ -525,7 +525,7 @@ export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
 // 8.7% behind Level 60 at 180.
 export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
 	'Level 60 + Mana Tide',
-	SavedTalents.create({ talentsString: '02-055030031005112151-053051001001' }),
+	SavedTalents.create({ talentsString: '03-055030031005112051-053051001001' }),
 	{ tooltip: 'Level 60 talents with Water Shield and Mana Tide Totem.', group: 'Level 60' },
 );
 // Level 30 with 5 extra talent points (26 in all), with Stormstrike, Spirit Weapons and
