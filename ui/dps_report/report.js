@@ -184,13 +184,24 @@ export function startReport(dash, events) {
 
   // ---------- tooltip ----------
   // Chart tooltips: tap (or hover with a mouse) a mark for its exact values; the mark is highlighted; tap elsewhere to close.
-  let tipEl = null, tipTippy = null, tipHl = [], tipPinned = false, tipCleanup = null;
+  let tipEl = null, tipTippy = null, tipHl = [], tipPinned = false, tipCleanup = null, tipWait = null;
   const hideTip = () => {
+    clearTimeout(tipWait);
     if (tipTippy) { tipTippy.destroy(); tipTippy = null; }
     tipEl = null;
     for (const n of tipHl) n.classList.remove('is-hl');
     if (tipCleanup) { tipCleanup(); tipCleanup = null; }
     tipHl = []; tipPinned = false;
+  };
+  // A tooltip with buttons (like "Open in Specs ›") stays up while the mouse is on it.
+  //
+  // When the mouse leaves its mark, or moves on to another mark, the hover handlers call tipHover with what to do
+  // next (hide the tooltip, or show the other mark's). With buttons in the tooltip we wait a moment first, so the mouse
+  // can cross over to the tooltip, and reaching the tooltip cancels it. Any other tooltip changes right away.
+  const tipHover = (fn) => {
+    clearTimeout(tipWait);
+    if (tipEl && tipEl.classList.contains('act') && !tipPinned) tipWait = setTimeout(fn, 300);
+    else fn();
   };
   // x and y are where the mark is in host, which the tooltip points at. head is a title (text, or tipTitle(...)), and
   // lines are the tooltip pieces above (plain text lines still work).
@@ -217,6 +228,12 @@ export function startReport(dash, events) {
       placement: opts.below ? 'bottom-start' : 'top-start', offset: [10, 8], getReferenceClientRect: at, duration: [120, 0],
     });
     tipTippy.show();
+    if (acts.length) {
+      tipTippy.popper.addEventListener('pointerenter', () => clearTimeout(tipWait));
+      tipTippy.popper.addEventListener('pointerleave', (e) => {
+        if (e.pointerType === 'mouse' && !tipPinned && !tipHl.some((n) => n.contains(e.relatedTarget))) tipHover(opts.onLeave || hideTip);
+      });
+    }
     tipHl = (Array.isArray(opts.hl) ? opts.hl : opts.hl ? [opts.hl] : []).filter(Boolean);
     for (const n of tipHl) n.classList.add('is-hl');
     tipCleanup = opts.onHide || null;
@@ -225,8 +242,12 @@ export function startReport(dash, events) {
   // bind a tooltip to d3 marks: fn(event, datum, node) shows it
   const tipOn = (sel, fn) => sel.attr('data-tip', '1').style('cursor', 'pointer')
     .on('click', function (e, d) { e.stopPropagation(); if (tipHl.includes(this) && tipPinned) { hideTip(); return; } fn(e, d, this); tipPinned = true; })
-    .on('pointerenter', function (e, d) { if (e.pointerType === 'mouse' && !tipPinned) { fn(e, d, this); tipPinned = false; } })
-    .on('pointerleave', function (e) { if (e.pointerType === 'mouse' && !tipPinned && tipHl.includes(this)) hideTip(); });
+    .on('pointerenter', function (e, d) {
+      if (e.pointerType !== 'mouse' || tipPinned) return;
+      if (tipHl.includes(this)) { clearTimeout(tipWait); return; }
+      tipHover(() => { fn(e, d, this); tipPinned = false; });
+    })
+    .on('pointerleave', function (e) { if (e.pointerType === 'mouse' && !tipPinned && tipHl.includes(this)) tipHover(hideTip); });
   document.addEventListener('click', (e) => { if (!e.target.closest('[data-tip]') && !e.target.closest('.fv-tip')) hideTip(); });
 
   // An advantaged preset's "vs Undead" badge says on hover how much it gains over its normal build, and why.
@@ -917,13 +938,21 @@ export function startReport(dash, events) {
     const focusOn = (s) => { for (const [ss, pa] of paths) pa.attr('opacity', !s ? ss.op ?? 1 : ss === s ? 1 : Math.min(ss.op ?? 1, 0.12)).attr('stroke-width', ss === s ? 3 : ss.w || 2); };
     // With no line asked for, the picked one (opts.hlId) stays lit, or none.
     const highlight = (id) => { const want = id || opts.hlId; focusOn(want ? series.find((q) => q.id === want) || null : null); };
-    const pick = (e, pinned) => {
+    // The tooltip shows where the pointer is. While the mouse stays on the same line and length, we leave the tooltip
+    // where it is, so the mouse can reach its button.
+    let shown = null;
+    const leave = () => { hideTip(); rule.attr('opacity', 0); dot.attr('opacity', 0); highlight(null); if (opts.onHover) opts.onHover(null); };
+    const pick = (e, pinned, now) => {
       const [px, py] = d3.pointer(e, svg.node());
       const sx = xs.reduce((a, b) => (Math.abs(x(b) - px) < Math.abs(x(a) - px) ? b : a));
       let best = null, bd = Infinity;
       for (const s of pickable) { const p = s.pts.find((q) => q.s === sx); if (p && Math.abs(y(p.v) - py) < bd) { bd = Math.abs(y(p.v) - py); best = [s, p]; } }
       if (!best) return;
       const [s, p] = best;
+      const key = s.id + '|' + sx;
+      if (!pinned && tipEl && shown === key) { clearTimeout(tipWait); return; }
+      if (!pinned && !now && tipEl) { tipHover(() => pick(e, false, true)); return; }
+      shown = key;
       rule.attr('x1', x(sx)).attr('x2', x(sx)).attr('opacity', 0.5);
       dot.attr('cx', x(sx)).attr('cy', y(p.v)).style('stroke', s.color).attr('opacity', 1);
       if (opts.focus) focusOn(s);
@@ -939,14 +968,14 @@ export function startReport(dash, events) {
       // tipMain gives the key figure and what it compares to; tipRows any further [label, value] rows
       const main = opts.tipMain ? opts.tipMain(p) : [`${f1(p.v)} DPS`];
       showTip(host, hx, hy, tipTitle(s.name, opts.tipSub ? opts.tipSub(sx) : `${sx} s`, tipSw(s.color)), [tipKey(main[0], null, main[1]), opts.tipRows ? tipGrid(opts.tipRows(p)) : null, others, strip],
-        { open: s.id && opts.open ? s.id : null, pinned, onHide: () => { rule.attr('opacity', 0); dot.attr('opacity', 0); } });
+        { open: s.id && opts.open ? s.id : null, pinned, onLeave: leave, onHide: () => { shown = null; rule.attr('opacity', 0); dot.attr('opacity', 0); } });
       if (pinned && opts.onPick) opts.onPick(s.id);
     };
     if (opts.refLabel && opts.ref != null) svg.append('text').attr('x', W - m.r).attr('y', y(opts.ref) - 4).attr('text-anchor', 'end').style('fill', 'var(--color-fg-muted)').text(opts.refLabel);
     svg.append('rect').attr('x', m.l).attr('y', 0).attr('width', Math.max(0, W - m.l - m.r + 8)).attr('height', H - m.b).style('fill', 'transparent').attr('data-tip', '1').style('cursor', 'crosshair')
       .on('click', (e) => { e.stopPropagation(); pick(e, true); })
       .on('pointermove', (e) => { if (e.pointerType === 'mouse' && !tipPinned) pick(e, false); })
-      .on('pointerleave', (e) => { if (e.pointerType === 'mouse' && !tipPinned) { hideTip(); rule.attr('opacity', 0); dot.attr('opacity', 0); highlight(null); if (opts.onHover) opts.onHover(null); } });
+      .on('pointerleave', (e) => { if (e.pointerType === 'mouse' && !tipPinned) tipHover(leave); });
     host.replaceChildren(svg.node());
     highlight(null);
     // Something outside the chart, like a list of the same presets, can light up one line.
@@ -1020,8 +1049,13 @@ export function startReport(dash, events) {
             ['Fights running low', share >= 99.5 ? 'all' : `${d3.format('.0f')(share)}%`], ['Mana pool', d3.format(',')(m.maxMana)], ['Net drain', `${f1(m.spentPerSec - m.gainedPerSec)}/s`]]),
         ], { hl: row, open: b.id, below: true, pinned });
       };
-      row.addEventListener('pointerenter', (e) => { chart.highlight(b.id); row.classList.add('is-hover'); if (e.pointerType === 'mouse' && !tipPinned) tip(false); });
-      row.addEventListener('pointerleave', (e) => { chart.highlight(null); row.classList.remove('is-hover'); if (e.pointerType === 'mouse' && !tipPinned) hideTip(); });
+      row.addEventListener('pointerenter', (e) => {
+        chart.highlight(b.id); row.classList.add('is-hover');
+        if (e.pointerType !== 'mouse' || tipPinned) return;
+        if (tipHl.includes(row)) { clearTimeout(tipWait); return; }
+        tipHover(() => tip(false));
+      });
+      row.addEventListener('pointerleave', (e) => { chart.highlight(null); row.classList.remove('is-hover'); if (e.pointerType === 'mouse' && !tipPinned && tipHl.includes(row)) tipHover(hideTip); });
       row.addEventListener('click', (e) => {
         e.stopPropagation();
         if (row.classList.contains('is-hl') && tipPinned) { openSpec(b.id); return; }
@@ -1236,8 +1270,12 @@ export function startReport(dash, events) {
   };
   // Pointing at a row shows its tooltip, and on a phone (no pointer) a tap does.
   const hoverTip = (row, tip) => {
-    row.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse' && !tipPinned) tip(false); });
-    row.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse' && !tipPinned && tipHl.includes(row)) hideTip(); });
+    row.addEventListener('pointerenter', (e) => {
+      if (e.pointerType !== 'mouse' || tipPinned) return;
+      if (tipHl.includes(row)) { clearTimeout(tipWait); return; }
+      tipHover(() => tip(false));
+    });
+    row.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse' && !tipPinned && tipHl.includes(row)) tipHover(hideTip); });
     row.addEventListener('pointerup', (e) => {
       if (e.pointerType === 'mouse' || e.target.closest('[data-tt]')) return;
       if (row.classList.contains('is-hl') && tipPinned) { hideTip(); return; }

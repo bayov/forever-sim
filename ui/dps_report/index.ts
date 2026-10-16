@@ -4,13 +4,14 @@
 import tippy from 'tippy.js';
 
 import { installStickyTooltips } from '../core/components/sticky_tooltips';
+import { interactiveWhenClickable } from '../core/interactive_tooltips';
 import { createDash } from './data';
 import { loadDataset, manifest, standalone } from './data_source';
 import { ReportEvents } from './events';
 import layout from './layout.html?raw';
 import { startReport } from './report.js';
 
-tippy.setDefaultProps({ arrow: false, allowHTML: true });
+tippy.setDefaultProps({ arrow: false, allowHTML: true, plugins: [interactiveWhenClickable] });
 
 const root = document.getElementById('dps-report')!;
 root.innerHTML = layout;
