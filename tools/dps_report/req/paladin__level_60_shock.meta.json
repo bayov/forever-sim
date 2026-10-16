@@ -4,7 +4,7 @@
   "spec": "Retribution",
   "build": "Level 60 Shock",
   "isDefault": false,
-  "pr": 3,
+  "pr": 54,
   "race": "Undead",
   "talents": "55003003201121251--05225230001",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_shock",
   "published": {
     "dps": 899.8,
-    "source": "Paladin PR (client 70425: Judgement of Righteousness 42.9%, Champion of the Light 10 / 20 / 30%, Consecration 4.2% a tick, 2026-10-16)"
+    "source": "PR #54 (client 70425: Judgement of Righteousness 42.9%, Champion of the Light 10 / 20 / 30%, Consecration 4.2% a tick, 2026-10-16)"
   },
   "verify": {
     "dps": 899.8,
