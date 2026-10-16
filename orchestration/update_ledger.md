@@ -106,6 +106,29 @@ The counts are as audited, before this audit's own PRs. A row that touches two s
 3. **Paladin Seal of Righteousness.** PR #54 keeps the double spell power behind a `pal_sor_sp_double` assumption, but the 70425 notes and client say it's fixed. Make "Once" the expected setting?
 4. **Warlock races.** After #69, Gnome may no longer be the best warlock race. Rerun the race tables.
 
+### Report assumptions and Need to Verify items this ledger settles
+
+For the assumptions audit (orchestration/assumptions_audit.md). Keys are from tools/dps_report/assumptions_def.py.
+
+**Settled:**
+- `warr_crit_rage`: settled at the expected setting, +100%. The client's hidden "Rule of Rage (DND)" (1322574) went from 10 to 100 base points in 70291. That matches the second 10-01 warrior pass, and the 10-08 notes give bears the same 100%. Rows WAR-70170-02 and WAR-U-05; the sim has it (`warrior.go:179`).
+- `pal_sor_sp_double` (PR #54's branch, not on master): the client and the 10-15 notes point to "Once". Seal of Righteousness's proc spells 25713 and 25735-25742 have coefficient 0.1 → 0 in 70425, and the notes say it "gained almost twice as much benefit from Spell Damage than intended" and that this is fixed. Row PAL-70425-01; a ruling is still needed, so it's in the rulings list above.
+- Consecration's spell power coefficient is 0.042 a tick (70425 client and notes; PR #54). Row PAL-70425-03.
+
+**Not settled by any build from 69893 to 70425** (no client value change, or server side):
+- Ice Lance's coefficient: 70425 only changed the frozen bonus, 300 → 200.
+- Bane of Doom's coefficient.
+- The top ranks of Smite, Frostbolt, Lightning Bolt, Wrath, Rip and Raptor Strike: only ranks 1-5 were retuned, in 70009 and 70291.
+- Earth Shock rank 7: 70425 added a combat-text attribute only.
+- Holy Strike's flat bonus.
+- Trueshot Aura rank 5 and Hunter's Mark rank 4.
+- Shred's flat bonus: only rank 1 changed, 24 → 22.
+- Warlock pet scaling and demon melee: Warlock Pet Scaling 416189 changed only its health (70291) and armor (70425) effects.
+- Hunter pet attack power and hit: Hunter Pet Scaling 415429 changed only its health and armor effects, and every value is 0 in the client. 70425's pet lines are covered by HUN-70425-03 and HUN-70425-06.
+- The Maelstrom Weapon and Omen of Clarity rates.
+- Rend's attack power: 11574 has no coefficient in any build.
+- `wf_totem_offhand` and the Windfury Totem ICD: 70425 only made the totem raid-wide and players-only.
+
 ## Per-class ledgers
 
 Each section below has five parts:
