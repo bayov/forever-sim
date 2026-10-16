@@ -194,6 +194,11 @@
 		.content-block-body {
 			opacity: 0.4;
 			filter: grayscale(1);
+
+			// The icons still show their tooltips on hover, but clicks do nothing.
+			* {
+				cursor: default !important;
+			}
 		}
 	}
 }
