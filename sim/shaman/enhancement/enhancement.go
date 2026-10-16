@@ -42,7 +42,6 @@ func NewEnhancementShaman(character *core.Character, options *proto.Player) *Enh
 
 	enh.ApplySyncType(enhOptions.Options.SyncType)
 	enh.ShamanImbue = enhOptions.Options.ShamanImbue
-	enh.StartingTotems = enhOptions.Options.StartingTotems
 	enh.ApplyShamanImbue()
 
 	return enh

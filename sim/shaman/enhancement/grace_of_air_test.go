@@ -37,7 +37,7 @@ func newGraceOfAirSim(totemWeaponBuff proto.TotemWeaponBuff, options *proto.Enha
 // The 2026-10-15 development notes undo it: "Grace of Air Totem is no longer exclusive with
 // Windfury Totem and Flametongue Totem", and Grace of Air's SpellMisc Attributes_11 lost its
 // 1024 flag. The Grace of Air here is another shaman's, and so is the Windfury Totem, or it's
-// our own starting totem.
+// our own.
 func TestOrcShamanGraceOfAirWithWindfury(t *testing.T) {
 	_, alone := newGraceOfAirSim(proto.TotemWeaponBuff_TotemWeaponBuffNone, &proto.EnhancementShaman_Options{})
 	agility := alone.GetStat(stats.Agility)
@@ -47,10 +47,10 @@ func TestOrcShamanGraceOfAirWithWindfury(t *testing.T) {
 		t.Errorf("with another shaman's Windfury Totem: %.0f Agility, want %.0f", got, agility)
 	}
 
-	sim, enh := newGraceOfAirSim(proto.TotemWeaponBuff_TotemWeaponBuffNone, &proto.EnhancementShaman_Options{StartingTotems: &proto.StartingTotems{
-		Air:                  proto.AirTotem_WindfuryTotem,
-		AirSecondsBeforePull: 290,
-	}})
+	sim, enh := newGraceOfAirSim(proto.TotemWeaponBuff_TotemWeaponBuffNone, &proto.EnhancementShaman_Options{})
+	at(sim, 1, func(sim *core.Simulation) {
+		castNow(t, sim, enh, topRank(t, "Windfury Totem", enh.WindfuryTotem))
+	})
 	at(sim, 5, func(sim *core.Simulation) {
 		if got := enh.GetStat(stats.Agility); got != agility {
 			t.Errorf("at 5 sec with our Windfury Totem: %.0f Agility, want %.0f", got, agility)

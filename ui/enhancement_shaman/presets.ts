@@ -35,15 +35,7 @@ import {
 	WeaponImbue,
 	ZanzaBuff,
 } from '../core/proto/common.js';
-import {
-	AirTotem,
-	EarthTotem,
-	EnhancementShaman_Options as EnhancementShamanOptions,
-	FireTotem,
-	ShamanSyncType,
-	StartingTotems,
-	WaterTotem,
-} from '../core/proto/shaman.js';
+import { EnhancementShaman_Options as EnhancementShamanOptions, ShamanSyncType } from '../core/proto/shaman.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import GraceOfAirAPLJSON from './apls/grace_of_air.apl.json';
@@ -640,56 +632,12 @@ export const DefaultOptions = EnhancementShamanOptions.create({
 	syncType: ShamanSyncType.Auto,
 });
 
-// The class options every preset build sets. They always set the starting totems, so loading a
-// build puts its own in place and changing them marks the build as modified.
+// The class options every preset build sets.
 //
-// The Level 30 PvP builds start the fight with no totems and put them down in the rotation's
-// prepull actions.
-const PresetBuildOptions = { shamanImbue: WeaponImbue.WindfuryWeapon, startingTotems: StartingTotems.create() };
-
-// The raid and dungeon builds start the fight with their totems already down, each at the
-// default seconds before the pull, one totem GCD apart (see starting_totems.tsx). They cost no
-// mana, so the rotations leave them out of the prepull actions. Totems last 5 min under
-// Forever, so a 3 min fight never puts them down again.
-//
-// On 2026-10-08 that was +0.3 at 180 sec on Level 60 over the old prepull totems, and +0.7
-// at 120 sec on Level 30 + 5. At 300 sec it can be 1 to 2 behind, because the totems run out
-// 30 sec sooner and the rotation puts them down again.
-//
-// Since 2026-10-15 (the rotation auditor's pass 20) the Level 60 builds put them down 4, 3
-// and 2 sec before the pull, one totem GCD apart and after the 1 sec Magma Totem's slot, so a 5 min
-// totem lasts the whole 300 sec fight: +2.4 at 300 sec on Level 60, +2.1 on Imp GW, +1.2 on Water
-// Shield and +0.7 on Mana Tide, with 120 and 180 sec unchanged. Level 30 keeps its 28 / 30 sec.
-const startingTotemsLevel60 = StartingTotems.create({
-	earth: EarthTotem.StrengthOfEarthTotem,
-	earthSecondsBeforePull: 4,
-	air: AirTotem.WindfuryTotem,
-	airSecondsBeforePull: 3,
-	// No fire totem before the pull: since the 2026-10-13 gear round the Optimized rotation puts
-	// Searing Totem down at the pull (+5.9 at 180 sec over Flametongue Totem, which shares the
-	// weapon buff slot with Windfury Totem).
-	water: WaterTotem.ManaSpringTotem,
-	waterSecondsBeforePull: 2,
-});
-const PresetBuildOptionsLevel60 = { ...PresetBuildOptions, startingTotems: startingTotemsLevel60 };
-// Magma Totem lasts only 20 sec, so it goes down 1 sec before the pull.
-const PresetBuildOptionsLevel60Magma = {
-	...PresetBuildOptionsLevel60,
-	startingTotems: StartingTotems.create({ ...startingTotemsLevel60, fire: FireTotem.MagmaTotem, fireSecondsBeforePull: 1 }),
-};
-// Windfury Totem comes at level 32.
-const PresetBuildOptionsLevel30 = {
-	...PresetBuildOptions,
-	startingTotems: StartingTotems.create({
-		...startingTotemsLevel60,
-		earthSecondsBeforePull: 28,
-		air: AirTotem.NoAirTotem,
-		airSecondsBeforePull: 0,
-		waterSecondsBeforePull: 30,
-		fire: FireTotem.FlametongueTotem,
-		fireSecondsBeforePull: 29,
-	}),
-};
+// Since 2026-10-16 the totems go down in each rotation's prepull actions, one global cooldown
+// apart, with their mana. Before that the builds started the fight with them already down for
+// free (the old StartingTotems option), which the game doesn't allow.
+const PresetBuildOptions = { shamanImbue: WeaponImbue.WindfuryWeapon };
 
 // The level 60 consumables. On 2026-10-08 we tried every consumable the sim applies in each
 // slot on the Level 60 build at 180 sec. Under Forever the shaman imbue stacks with an oil or a
@@ -902,7 +850,7 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: PresetBuildOptionsLevel60,
+	options: PresetBuildOptions,
 });
 export const PresetBuildLevel60WaterShield = PresetUtils.makePresetBuild('Level 60 + Water Shield', {
 	group: 'Level 60',
@@ -915,7 +863,7 @@ export const PresetBuildLevel60WaterShield = PresetUtils.makePresetBuild('Level 
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: PresetBuildOptionsLevel60Magma,
+	options: PresetBuildOptions,
 });
 export const PresetBuildLevel60ManaTide = PresetUtils.makePresetBuild('Level 60 + Mana Tide', {
 	group: 'Level 60',
@@ -928,7 +876,7 @@ export const PresetBuildLevel60ManaTide = PresetUtils.makePresetBuild('Level 60 
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: PresetBuildOptionsLevel60Magma,
+	options: PresetBuildOptions,
 });
 
 // A level 30 shaman soloing Interrogator Vishas (Scarlet Monastery Graveyard, level 32)
@@ -1270,7 +1218,7 @@ export const PresetBuildLevel30p5 = PresetUtils.makePresetBuild('Level 30 + 5', 
 	level: 30,
 	bonusTalentPoints: 5,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: PresetBuildOptionsLevel30,
+	options: PresetBuildOptions,
 });
 
 // Level 30 PvP is a 60 sec fight against a level 30 player in PvP mode. The enemy keeps us

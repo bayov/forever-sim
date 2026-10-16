@@ -106,9 +106,8 @@ func (shamanEnh) Knobs() []Knob {
 		// Rage of the Farseer waits for the synthetic attack power on-use trinket (20 sec every 2
 		// min) when the wait costs it no use, the way Blood Fury waits for Rage.
 		{Name: "rageHoldForTrinket", Default: 0, Min: 0, Max: 1, Step: 1},
-		// 1 puts the totems down in the prepull actions, 0 leaves them out, for settings that
-		// start the fight with them already down (the Enhancement option StartingTotems). A
-		// starting totem would replace the prepull one anyway.
+		// 1 puts the totems down in the prepull actions, one totem GCD apart, 0 leaves them out
+		// and the rotation puts them down after the pull.
 		{Name: "prepullTotems", Default: 1, Min: 0, Max: 1, Step: 1},
 	}
 }
