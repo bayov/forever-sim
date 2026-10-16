@@ -44,11 +44,11 @@ so a script that checks the mark at the damage line calls those hits unmarked.
 
 `archive.sh` copies every `WoWCombatLog-*.txt` into `~/forever-logs/<flavor>/`, so the logs
 outlive the beta install. The client never deletes its combat logs, but uninstalling the beta
-takes the whole `Logs` folder with it. A systemd user timer runs it every 5 minutes (the units
-are in `systemd/`, installed into `~/.config/systemd/user/` and enabled), and
-`tools/logcheck` runs it before it reads a log. Nothing is compressed. When the archive gets too
-big we delete old logs by hand. `FLAVORS` in the script lists the game folders it copies, so
-add the live Forever folder there when it exists.
+takes the whole `Logs` folder with it. Nothing runs it on a schedule. `tools/logcheck` runs it
+before it reads a log, so each `/log-audit` run (by hand or hourly) brings the archive up to
+date. `logcheck -audit` compresses a log once it's a day old and fully audited. `FLAVORS` in
+the script lists the game folders it copies, so add the live Forever folder there when it
+exists.
 
 The `/bayov export` JSONs go in `~/forever-logs/exports/` as `export-<date>_<time>.json`,
 named after their `when.date`. `tools/logcheck` pairs each log window with the export taken
@@ -57,7 +57,8 @@ closest before it.
 `archive.sh` also runs `history.py`, which copies BayovCore's character history out of the
 game's `SavedVariables/BayovCore.lua` into `~/forever-logs/history/`. The addon records each
 gear swap, talent change, level up and skill up as it happens, and keeps the last 7 days. We
-keep every record, so the archive is the only full copy. `tools/logcheck` rebuilds an export
+keep every record, so the archive is the only full copy. That's why an audit has to run at
+least once a week, or the oldest records are gone before we copy them. `tools/logcheck` rebuilds an export
 for each record (its README has the details).
 
 Some scripts hold numbers from one character and one day, like the weapon models in

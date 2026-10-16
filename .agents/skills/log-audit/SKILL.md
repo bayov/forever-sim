@@ -35,7 +35,8 @@ go run --tags=with_db ./tools/logcheck -audit
 ```
 
 It takes a few seconds. It copies the game's logs and history into `~/forever-logs` first
-(`tools/combat_log/archive.sh`). Then it splits every log into windows where the character holds
+(`tools/combat_log/archive.sh`). Nothing else runs the archive, so these audit runs are what
+keep `~/forever-logs` up to date. Then it splits every log into windows where the character holds
 still, runs logcheck on each window it hasn't run before, and prints a digest:
 
 - **Each new window**: the log, the character, the times, why the window ends, the export the
@@ -148,6 +149,12 @@ Call CronList. When no job has the prompt `/log-audit hourly`, create one with C
 recurring, prompt `/log-audit hourly`, at a minute that isn't 0 or 30 (like `17 * * * *`).
 Tell the user when the next run is (the time CronCreate gives back), that the runs stop when
 they close this session, and that a recurring job expires after 7 days.
+
+An audit has to run at least once a week. BayovCore keeps only the last 7 days of character
+history in game, and the archive (`history.py`) is the only full copy. When the hourly job
+expires or the session closes, records older than a week are lost unless someone runs
+`/log-audit` again. So when we start the hourly runs, tell the user to start `/log-audit` again
+within the week.
 
 ## 6. An hourly run
 
