@@ -4,7 +4,7 @@
   "spec": "Affliction",
   "build": "Affliction",
   "isDefault": false,
-  "pr": 85,
+  "pr": 103,
   "race": "Human",
   "talents": "2550102003520005--0550305003",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_affliction",
   "published": {
     "dps": 1066.0,
-    "source": "PR (Demonology DoT end gates)"
+    "source": "PR #103"
   },
   "verify": {
     "dps": 1066.05,

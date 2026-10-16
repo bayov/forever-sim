@@ -4,7 +4,7 @@
   "spec": "Demonology",
   "build": "Demonology",
   "isDefault": true,
-  "pr": 85,
+  "pr": 103,
   "race": "Human",
   "talents": "011-0305003131221001351-0550005003",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_demonology",
   "published": {
     "dps": 1177.7,
-    "source": "PR (Demonology DoT end gates)"
+    "source": "PR #103"
   },
   "verify": {
     "dps": 1177.74,

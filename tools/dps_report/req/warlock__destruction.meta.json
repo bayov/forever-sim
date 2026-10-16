@@ -4,7 +4,7 @@
   "spec": "Destruction",
   "build": "Destruction",
   "isDefault": false,
-  "pr": 85,
+  "pr": 103,
   "race": "Human",
   "talents": "255000000351--055030500310035",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_destruction",
   "published": {
     "dps": 1047.4,
-    "source": "PR (Demonology DoT end gates)"
+    "source": "PR #103"
   },
   "verify": {
     "dps": 1047.35,

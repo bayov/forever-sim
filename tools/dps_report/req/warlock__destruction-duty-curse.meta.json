@@ -4,7 +4,7 @@
   "spec": "Destruction",
   "build": "Destruction (Curse duty)",
   "isDefault": false,
-  "pr": 85,
+  "pr": 103,
   "race": "Human",
   "talents": "255000000351--055030500310035",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_destruction_duty_curse",
   "published": {
     "dps": 1034.8,
-    "source": "PR (Demonology DoT end gates)"
+    "source": "PR #103"
   },
   "verify": {
     "dps": 1034.79,
