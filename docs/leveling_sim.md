@@ -293,8 +293,11 @@ anything leveling-specific exists.
        more health than the table had, which the table now uses (Mobs above). Armor and swing
        time match. Mobs also crit us far less than Classic's 5%: 4 crits in about 2,200
        swings at us from mobs 6 levels under us to 5 over, where crushing blows came as
-       expected (13% at 3 levels over, 26% at 4). The sim still gives mobs Classic's crit
-       (notes.md, Need to Verify).
+       expected (13% at 3 levels over, 26% at 4). Split by level, about 2,900 swings from
+       mobs at or under our level never crit, and mobs 1 to 5 levels over crit 4 times in
+       745 swings. So the sim now gives Forever's mobs no 5% base crit, only the 0.2% a
+       level over us (4.6 crits expected there). Bosses and elites aren't checked (notes.md,
+       Need to Verify).
      - Check the player's defenses at low level (dodge per Agility for every class, block,
        armor) against the beta's character sheet. notes.md has dodge per Agility checked at
        level 1 for some classes only.

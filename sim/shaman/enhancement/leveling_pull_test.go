@@ -279,27 +279,34 @@ func TestLevelingLookForMob(t *testing.T) {
 	req.SimOptions.Debug = true
 	result := runLeveling(t, req)
 
+	// A fight can take more than 3 mobs in all, when we chain pull again after a kill. So
+	// we count the mobs on us at the same time, which is what the rotation's 3 is about.
 	pullSizes := map[int]int{}
 	inPull := 0
+	inCombat := map[string]bool{}
+	mostAtOnce := 0
 	logLines(t, result.Logs, func(at float64, line string) {
 		switch {
 		case pulledLine.MatchString(line):
 			inPull++
+			inCombat[pulledLine.FindStringSubmatch(line)[1]] = true
+			mostAtOnce = max(mostAtOnce, len(inCombat))
+		case diedLine.MatchString(line):
+			delete(inCombat, diedLine.FindStringSubmatch(line)[1])
 		case searchingLine.MatchString(line), strings.Contains(line, "Leveling: died"):
 			if inPull > 0 {
 				pullSizes[inPull]++
 			}
 			inPull = 0
+			inCombat = map[string]bool{}
 		}
 	})
-	t.Logf("pulls by mobs taken: %v, %.2f mobs a pull", pullSizes, result.EncounterMetrics.Leveling.MobsPerPull)
-	if pullSizes[1] == 0 || pullSizes[2]+pullSizes[3] == 0 {
+	t.Logf("pulls by mobs taken: %v, %.2f mobs a pull, at most %d mobs at once", pullSizes, result.EncounterMetrics.Leveling.MobsPerPull, mostAtOnce)
+	if pullSizes[1] == 0 || pullSizes[2]+pullSizes[3]+pullSizes[4] == 0 {
 		t.Errorf("pulls by mobs taken %v, want some single and some chain pulls", pullSizes)
 	}
-	for size := range pullSizes {
-		if size > 3 {
-			t.Errorf("a pull took %d mobs, but the rotation looks only while fewer than 3 are pulled", size)
-		}
+	if mostAtOnce > 3 {
+		t.Errorf("we had %d mobs on us at once, but the rotation looks only while fewer than 3 are pulled", mostAtOnce)
 	}
 }
 

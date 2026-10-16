@@ -429,6 +429,16 @@ func newWeaponAttackTable(attacker *Unit, defender *Unit, weapon *Item, skillGap
 		table.BaseMissChance = 0.05 + levelDelta
 		table.BaseDodgeChance = levelDelta // base dodge applied with class base stats
 		table.BaseCritChance = 0.05 - levelDelta
+		// Forever's mobs have no 5% base crit against us. They only crit by the level gap,
+		// 0.2% for each level they're above us.
+		//
+		// In the beta logs the level 30 shaman took about 2,900 swings from mobs at or under
+		// its level and none of them crit. Classic rules would have given about 85 crits.
+		// Mobs 1 to 5 levels above crit 4 times in 745 swings, where this rule expects 4.6.
+		// The crit roll takes no less than 0, so mobs under our level never crit.
+		if attacker.Env != nil && attacker.Env.IsForever() {
+			table.BaseCritChance = -levelDelta
+		}
 	}
 
 	return table

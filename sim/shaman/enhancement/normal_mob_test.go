@@ -72,10 +72,13 @@ func TestNormalMobStats(t *testing.T) {
 }
 
 // TestNormalMobSwingOutcomes rolls a normal mob's white swing against us many times. The
-// table is Classic's: 5% miss and 5% crit at our level, 0.2% each a level of difference
-// (0.04% for each point of our defense over its weapon skill, both being 5 a level), and our
-// dodge from the character sheet, 0.2% less a level up. We have no shield and no Spirit
-// Weapons, so no block or parry. Crushing blows take a mob 3 levels above us.
+// table is Classic's: 5% miss at our level, 0.2% each a level of difference (0.04% for each
+// point of our defense over its weapon skill, both being 5 a level), and our dodge from the
+// character sheet, 0.2% less a level up. We have no shield and no Spirit Weapons, so no block
+// or parry. Crushing blows take a mob 3 levels above us.
+//
+// Crits are Forever's. A mob at or under our level never crits us, and one above us crits
+// 0.2% a level.
 //
 // While we cast we can't dodge, parry or block, so a hit lands more often.
 func TestNormalMobSwingOutcomes(t *testing.T) {
@@ -105,7 +108,7 @@ func TestNormalMobSwingOutcomes(t *testing.T) {
 			if c.casting {
 				dodge = 0
 			}
-			want := map[string]float64{"miss": 0.05 + delta, "dodge": dodge, "parry": 0, "block": 0, "crit": 0.05 - delta, "crush": c.crush}
+			want := map[string]float64{"miss": 0.05 + delta, "dodge": dodge, "parry": 0, "block": 0, "crit": max(-delta, 0), "crush": c.crush}
 
 			const rolls = 200000
 			swing := mob.AutoAttacks.MHAuto()
