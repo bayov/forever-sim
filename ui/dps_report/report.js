@@ -2165,11 +2165,14 @@ export function startReport(dash, events) {
   // ---------- consumes and buffs (as the sim UI's icon pickers) ----------
   // Sections and subsections follow the sim UI: the Consumables picker's rows, the Raid and Party
   // Buffs subsections and the Offensive and Defensive Debuffs subsections (ui/core/components).
+  // The report is Forever's, so it groups the buffs as the sim UI does under Forever: Battle
+  // Shout, Trueshot Aura, the totems but Mana Spring and Stoneskin, the crit auras and the
+  // resistances reach the whole raid (client 1.60.1.70425; see RAID_BUFF_SUBSECTIONS).
   const SETUP_SECTIONS = ['Consumables', 'Raid Buffs', 'Party Buffs', 'Offensive Debuffs', 'Defensive Debuffs', 'Professions'];
   const SETUP_SUBS = {
     'Consumables': ['Potion', 'Special', 'Flask', 'Weapon', 'Food', 'Attributes', 'Physical', 'Defensive', 'Spell', 'Misc', 'Engineering', 'Pet'],
-    'Raid Buffs': ['Stats', 'Blessings', 'Mana', 'Other'],
-    'Party Buffs': ['Attack Power', 'Totems', 'Crit', 'Defense', 'Resistances', 'Other'],
+    'Raid Buffs': ['Stats', 'Blessings', 'Attack Power', 'Totems', 'Crit', 'Resistances', 'Mana', 'Other'],
+    'Party Buffs': ['Totems', 'Defense', 'Other'],
     'Offensive Debuffs': ['Sunder / Expose', 'CoR / FF', 'CoE', 'Other'],
     'Defensive Debuffs': ['Attack Power', 'Attack Speed', 'Chance to Hit', 'Other'],
     'Professions': [''],
@@ -2184,9 +2187,9 @@ export function startReport(dash, events) {
   const BUFF_SUB = [
     [/^(Gift Of The Wild|Mark Of The Wild|Power Word Fortitude|Prayer Of Fortitude|Arcane Brilliance|Arcane Intellect|Divine Spirit|Prayer Of Spirit)/, 'Raid Buffs', 'Stats'],
     [/^Blessing Of/, 'Raid Buffs', 'Blessings'], [/^Innervate/, 'Raid Buffs', 'Mana'], [/^(Power Infusion|Thorns)/, 'Raid Buffs', 'Other'],
-    [/^(Battle Shout|Trueshot Aura)/, 'Party Buffs', 'Attack Power'], [/Totem/, 'Party Buffs', 'Totems'],
-    [/^(Leader Of The Pack|Moonkin Aura)/, 'Party Buffs', 'Crit'], [/^(Devotion Aura|Retribution Aura)/, 'Party Buffs', 'Defense'],
-    [/Protection|Resistance/, 'Party Buffs', 'Resistances'],
+    [/^(Battle Shout|Trueshot Aura)/, 'Raid Buffs', 'Attack Power'], [/^(Mana Spring Totem|Stoneskin Totem)/, 'Party Buffs', 'Totems'],
+    [/Protection|Resistance/, 'Raid Buffs', 'Resistances'], [/Totem/, 'Raid Buffs', 'Totems'],
+    [/^(Leader Of The Pack|Moonkin Aura)/, 'Raid Buffs', 'Crit'], [/^(Devotion Aura|Retribution Aura)/, 'Party Buffs', 'Defense'],
   ];
   const DEBUFF_SUB = [
     [/^(Sunder Armor|Expose Armor)/, 'Offensive Debuffs', 'Sunder / Expose'], [/^(Curse Of Recklessness|Faerie Fire)/, 'Offensive Debuffs', 'CoR / FF'],

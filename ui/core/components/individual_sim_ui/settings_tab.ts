@@ -44,7 +44,8 @@ export class SettingsTab extends SimTab {
 
 	// The individual sim has three lanes. The left one is about us: the saved settings, the
 	// Player, the Class Settings and the consumables. The middle one is about the target: the
-	// Encounter and the debuffs. The right one has the buffs the party and the raid give us.
+	// Encounter and the debuffs. The right one has the buffs the party and the raid give us (which
+	// ones are which depends on the ruleset, see PARTY_BUFF_SUBSECTIONS).
 	readonly column1: HTMLElement = this.buildColumn(1, 'settings-left-col');
 	readonly column2: HTMLElement = this.buildColumn(2, 'settings-left-col');
 	readonly column3: HTMLElement = this.buildColumn(3, 'settings-left-col');
@@ -274,7 +275,8 @@ export class SettingsTab extends SimTab {
 	}
 
 	// One of the two buff sections, with the buffs that the party or the raid gives us, in
-	// subsections like the debuffs.
+	// subsections like the debuffs. Which buffs are party buffs depends on the ruleset, see
+	// PARTY_BUFF_SUBSECTIONS.
 	private buildBuffsSection(column: HTMLElement, cssClass: string, title: string, tooltip: string, subsections: Array<BuffDebuffInputs.IconSubsection>) {
 		const relevant = this.relevantSubsections(subsections);
 		if (!relevant.length) return;
@@ -364,6 +366,11 @@ export class SettingsTab extends SimTab {
 			slots.classList.add('icon-subsection-slots');
 			group.append(label, slots);
 			parent.appendChild(group);
+			// A subsection whose buffs all belong to the other section under this ruleset (see
+			// RAID_BUFF_SUBSECTIONS) hides, label and all.
+			const updateShown = () => group.classList.toggle('hide', !subsection.items.some(item => BuffDebuffInputs.iconSubsectionItemShows(item, player)));
+			TypedEvent.onAny([this.simUI.changeEmitter, player.sim.rulesetChangeEmitter]).on(updateShown);
+			updateShown();
 
 			let toggles: HTMLElement | null = null;
 			subsection.items.forEach(item => {
@@ -527,8 +534,14 @@ export class SettingsTab extends SimTab {
 	}
 }
 
-const PARTY_BUFFS_TOOLTIP = 'Buffs the members of our party give us, like totems, auras and Battle Shout.';
-const RAID_BUFFS_TOOLTIP = 'Buffs anyone in the raid can give us, like Mark of the Wild, Fortitude, a Blessing or Innervate.';
+// Under Forever, Battle Shout, Trueshot Aura, Strength of Earth, Grace of Air, Windfury and
+// Flametongue Totem, Leader of the Pack and Moonkin Aura reach the whole raid (client
+// 1.60.1.70425), and the resistances already did, so they're in Raid Buffs there. In Classic
+// they're party buffs. See RAID_BUFF_SUBSECTIONS.
+const PARTY_BUFFS_TOOLTIP =
+	'Buffs only the members of our party give us, like Mana Spring, Devotion Aura or Blood Pact. In Classic also the other totems, Battle Shout, Trueshot Aura and the crit auras.';
+const RAID_BUFFS_TOOLTIP =
+	'Buffs anyone in the raid can give us, like Mark of the Wild, Fortitude, a Blessing or Innervate. Under Forever also Battle Shout, Trueshot Aura, Strength of Earth, Grace of Air, Windfury Totem and the crit auras, which reach the whole raid since client 70425.';
 
 // Shows a section dimmed under a note that says why it's off, and makes its pickers ignore
 // clicks. The code that reads the settings turns the section's settings off too, see
