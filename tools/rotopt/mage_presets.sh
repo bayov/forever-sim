@@ -24,7 +24,7 @@ gen() {
 # Rune takes their cooldown). An Arcane Blast precast lands at the pull. Arcane Power and Presence
 # of Mind wait for the on-use trinket unless it won't be back in time. When a Frostbolt would not
 # land before the end (its cast plus 0.75 sec), Fire Blast and Arcane Explosion instead.
-gen mage_arcane level60_arcane "blastBuff=4,blastRefresh=9,arcaneWrath=0,conserveMana=20,filler=2,missileBarrage=1,barrageFirst=0,evocationMana=0,gems=0,prepull=1,powerWithTrinket=1,pomWrath=0,finisher=1,finishPad=0.75"
+gen mage_arcane level60_arcane "blastBuff=4,blastRefresh=0,barrageBeforeBlast=1,arcaneWrath=0,conserveMana=20,filler=2,missileBarrage=1,barrageFirst=0,evocationMana=0,gems=0,prepull=1,powerWithTrinket=1,pomWrath=0,finisher=1,finishPad=0.75"
 # Scorch to 5 Fire Vulnerability stacks and before they run out (5 sec), Pyroblast at 3 Heating
 # Up stacks (a 1.5 sec cast), Arcane Missiles on Missile Barrage, Fire Blast above 20% mana (since
 # 70425 every Fire Blast adds a Heating Up stack, two on a crit), Fireball. Evocation below 20%
@@ -32,7 +32,7 @@ gen mage_arcane level60_arcane "blastBuff=4,blastRefresh=9,arcaneWrath=0,conserv
 # its crits go on spells that take all 15%. No mana gems: they share the Demonic Rune's 2 min
 # cooldown, and the rune gives more. When a Fireball would not land before the end (its cast plus
 # 1.04 sec), Fire Blast and Scorch instead.
-gen mage_fire level60_fire "scorchRefresh=5,pyroStacks=3,fireBlastMana=20,fireBlastHeating=0,missileBarrage=1,filler=1,evocationMana=20,evocationMinTime=90,cooldownsAfterScorch=1,trinketAfterScorch=1,gems=0,blastBuff=0,arcaneWrath=0,finisher=1,finishPad=1.04"
+gen mage_fire level60_fire "scorchRefresh=5,pyroStacks=3,fireBlastMana=10,fireBlastHeating=0,missileBarrage=1,filler=1,evocationMana=20,evocationMinTime=90,cooldownsAfterScorch=1,trinketAfterScorch=1,gems=0,blastBuff=0,arcaneWrath=0,finisher=1,finishPad=1.04"
 # Frostbolt, with Ice Lance on every Fingers of Frost charge (3 times the damage on a Frozen
 # target since 70425, with SoD's 42.9% spell power coefficient), and one Arcane Blast every 15 sec
 # for 15% of Intellect as spell damage. Frost rarely runs low on mana, so Evocation (below 20%
@@ -48,4 +48,4 @@ gen mage_frost level60_frost "iceLance=1,missileBarrage=1,fireBlastMana=0,evocat
 # Bolt (285 mana for 9% less damage). No mana gems, for the Demonic Rune. The on-use trinket waits
 # for the 5th Fire Vulnerability stack. When a Frostfire Bolt would not land before the end (its
 # cast plus 1.5 sec), Ice Lance instead.
-gen mage_frostfire level60_frostfire "scorchRefresh=9,pyroStacks=3,pyroMana=0,iceLance=1,missileBarrage=1,fireBlastMana=80,evocationMana=20,evocationMinTime=60,gems=0,lowManaRank=60,fireBlastSurplus=100,trinketAfterScorch=1,iceLanceFirst=1,blastBuff=0,arcaneWrath=0,finisher=1,finishPad=1.5"
+gen mage_frostfire level60_frostfire "scorchRefresh=7,pyroStacks=3,pyroMana=0,iceLance=1,missileBarrage=1,fireBlastMana=80,evocationMana=20,evocationMinTime=45,gems=0,lowManaRank=60,fireBlastSurplus=70,trinketAfterScorch=1,iceLanceFirst=1,blastBuff=0,arcaneWrath=0,finisher=1,finishPad=1.5"

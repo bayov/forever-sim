@@ -312,7 +312,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "cmp": {
@@ -347,7 +346,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "cmp": {
@@ -382,7 +380,36 @@
                   }
                 },
                 {
-                  
+                  "notes": "Free and twice as fast.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "auraIsKnown": {
+                              "auraId": {
+                                "spellId": 400589
+                              }
+                            }
+                          },
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "spellId": 400589
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10212
+                      }
+                    }
+                  }
+                },
+                {
                   "action": {
                     "condition": {
                       "and": {
@@ -442,7 +469,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "and": {
@@ -469,40 +495,6 @@
                                   "val": "4"
                                 }
                               }
-                            }
-                          },
-                          {
-                            "or": {
-                              "vals": [
-                                {
-                                  "not": {
-                                    "val": {
-                                      "auraIsActive": {
-                                        "auraId": {
-                                          "spellId": 400573
-                                        }
-                                      }
-                                    }
-                                  }
-                                },
-                                {
-                                  "cmp": {
-                                    "op": "OpGt",
-                                    "lhs": {
-                                      "auraRemainingTime": {
-                                        "auraId": {
-                                          "spellId": 400573
-                                        }
-                                      }
-                                    },
-                                    "rhs": {
-                                      "const": {
-                                        "val": "9s"
-                                      }
-                                    }
-                                  }
-                                }
-                              ]
                             }
                           },
                           {
@@ -546,37 +538,6 @@
                   }
                 },
                 {
-                  "notes": "Free and twice as fast.",
-                  "action": {
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "auraIsKnown": {
-                              "auraId": {
-                                "spellId": 400589
-                              }
-                            }
-                          },
-                          {
-                            "auraIsActive": {
-                              "auraId": {
-                                "spellId": 400589
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 10212
-                      }
-                    }
-                  }
-                },
-                {
-                  
                   "action": {
                     "castSpell": {
                       "spellId": {

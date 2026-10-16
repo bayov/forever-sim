@@ -27,6 +27,9 @@ func (mageArcane) Knobs() []Knob {
 		Knob{Name: "missileBarrage", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Missile Barrage missiles ahead of Arcane Wrath.
 		Knob{Name: "barrageFirst", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Missile Barrage missiles ahead of the Arcane Blasts, so a proc during the stacks is used
+		// before the next Arcane Blast can roll another over it.
+		Knob{Name: "barrageBeforeBlast", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Precast an Arcane Blast (1.5 sec cast) so it lands at the pull.
 		Knob{Name: "prepull", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Hold Arcane Power and Presence of Mind for the synthetic on-use trinket.
@@ -55,6 +58,14 @@ func (mageArcane) Build(k Knobs) *proto.APLRotation {
 	}
 	arcaneExplosion := rankID(mage.ArcaneExplosionLevel[:], mage.ArcaneExplosionSpellId[:])
 	items = append(items, finisherLines(k, filler, s.fireBlast, arcaneExplosion)...)
+	barrage := []*proto.APLListItem{}
+	if k["missileBarrage"] == 1 {
+		barrage = append(barrage, cast(s.arcaneMissiles, known(missileBarrage, auraIsActive(missileBarrage)), "Arcane Missiles on a Missile Barrage proc, free and twice as fast."))
+	}
+	if k["barrageBeforeBlast"] == 1 {
+		items = append(items, barrage...)
+		barrage = nil
+	}
 	var enoughMana value
 	if k["conserveMana"] > 0 && k["blastBuff"] > 1 {
 		// Below the floor the stack target is 1.
@@ -63,10 +74,6 @@ func (mageArcane) Build(k Knobs) *proto.APLRotation {
 		enoughMana = not(lowMana)
 	}
 	items = append(items, arcaneBlastBuffLines(k, s, enoughMana)...)
-	barrage := []*proto.APLListItem{}
-	if k["missileBarrage"] == 1 {
-		barrage = append(barrage, cast(s.arcaneMissiles, known(missileBarrage, auraIsActive(missileBarrage)), "Arcane Missiles on a Missile Barrage proc, free and twice as fast."))
-	}
 	if k["barrageFirst"] == 1 {
 		items = append(items, barrage...)
 		items = append(items, arcaneWrathLines(k, s)...)
