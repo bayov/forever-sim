@@ -111,6 +111,20 @@
                   },
                   "doAtValue": {
                     "const": {
+                      "val": "-3s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10438
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
                       "val": "-1.5s"
                     }
                   }
@@ -118,17 +132,36 @@
               ],
               "priorityList": [
                 {
-                  "notes": "Strength of Earth Totem whenever it is down.",
+                  "notes": "Strength of Earth Totem whenever it is down, with 20 sec or more of the fight left.",
                   "action": {
                     "condition": {
-                      "not": {
-                        "val": {
-                          "auraIsActive": {
-                            "auraId": {
-                              "spellId": 10442
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 10442
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "20s"
+                                }
+                              }
                             }
                           }
-                        }
+                        ]
                       }
                     },
                     "castSpell": {
@@ -139,17 +172,36 @@
                   }
                 },
                 {
-                  "notes": "Windfury Totem whenever it is down. Windfury Weapon turns its buff off for the shaman.",
+                  "notes": "Windfury Totem whenever it is down, with 20 sec or more of the fight left. Windfury Weapon turns its buff off for the shaman.",
                   "action": {
                     "condition": {
-                      "not": {
-                        "val": {
-                          "auraIsActive": {
-                            "auraId": {
-                              "spellId": 10612
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 10612
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "20s"
+                                }
+                              }
                             }
                           }
-                        }
+                        ]
                       }
                     },
                     "castSpell": {
@@ -160,17 +212,36 @@
                   }
                 },
                 {
-                  "notes": "Mana Spring Totem whenever it is down.",
+                  "notes": "Mana Spring Totem whenever it is down, with 20 sec or more of the fight left.",
                   "action": {
                     "condition": {
-                      "not": {
-                        "val": {
-                          "auraIsActive": {
-                            "auraId": {
-                              "spellId": 10497
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 10497
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "20s"
+                                }
+                              }
                             }
                           }
-                        }
+                        ]
                       }
                     },
                     "castSpell": {

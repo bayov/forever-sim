@@ -192,10 +192,16 @@ export const DefaultTalents = TalentsLevel60;
 // caster at range is out of the cleaves and Blast Waves that reach the melee. Each hit fires a
 // Lightning Shield orb, so both Level 60 rotations keep the shield up. It goes before the pull at
 // -5.4 sec (casting it in the fight instead lost 6), and in the fight just ahead of the low rank
-// Lightning Bolt. At 180 sec Level 60 goes from 690.6 to 694.0 and Mana Tide from 683.3 to 686.5
+// Lightning Bolt. At 180 sec Level 60 went from 690.6 to 694.0 and Mana Tide from 683.3 to 686.5
 // (about +13 at 10 a minute), and it costs 0.4 with no hits at all, for the mana. Water Shield's
 // 2% mana a globe was 20 behind at 6 a minute on Mana Tide: the GCDs cost more than the mana is
 // worth.
+//
+// Since the rotation auditor's pass 21 (2026-10-16) the fight recast waits for half the mana and a
+// minute of the fight left: at 1 hit a minute 3 orbs don't repay the GCD and the mana otherwise.
+// Dropping the recast was a little ahead at 1 a minute but 5.6 behind at 10. Mana Spring is not
+// recast with less than 20 sec left either. Level 60 is 699.0 / 695.3 / 679.7 at 120 / 180 / 300
+// sec (+1.4 / +1.3 / +3.0) and Mana Tide 692.3 / 688.1 / 673.7 (+1.4 / +1.7 / +1.7).
 export const RaidDamageHitsLevel60 = 1;
 
 export const DefaultOptions = ElementalShamanOptions.create({ raidDamageHitsPerMinute: RaidDamageHitsLevel60 });

@@ -160,17 +160,36 @@
                   }
                 },
                 {
-                  "notes": "Mana Spring Totem whenever it is down.",
+                  "notes": "Mana Spring Totem whenever it is down, with 20 sec or more of the fight left.",
                   "action": {
                     "condition": {
-                      "not": {
-                        "val": {
-                          "auraIsActive": {
-                            "auraId": {
-                              "spellId": 10497
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 10497
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "20s"
+                                }
+                              }
                             }
                           }
-                        }
+                        ]
                       }
                     },
                     "castSpell": {
@@ -327,17 +346,49 @@
                   }
                 },
                 {
-                  "notes": "Lightning Shield when it is down. Raid damage that hits the shaman fires its orbs at the target, three to a cast, at most one every 3.5 sec.",
+                  "notes": "Lightning Shield again with half the mana left and a minute of the fight to go. Raid damage that hits the shaman fires its orbs at the target, three to a cast, at most one every 3.5 sec.",
                   "action": {
                     "condition": {
-                      "not": {
-                        "val": {
-                          "auraIsActive": {
-                            "auraId": {
-                              "spellId": 10432
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 10432
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "currentManaPercent": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0.5"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "60s"
+                                }
+                              }
                             }
                           }
-                        }
+                        ]
                       }
                     },
                     "castSpell": {

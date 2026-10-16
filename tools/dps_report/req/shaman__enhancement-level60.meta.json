@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "optimized",
   "published": {
-    "dps": 833.8,
-    "source": "Shaman PR (Lightning Shield on raid damage hits: 2 a minute melee, 1 ranged, 2026-10-15)"
+    "dps": 834.6,
+    "source": "Shaman PR (rotation audit pass 21: Searing Totem before the pull, gated Lightning Shield recast, no totem recasts in the last 20 s, 2026-10-16)"
   },
   "verify": {
-    "dps": 833.83,
+    "dps": 834.64,
     "stderr": 0.37,
     "iters": 20000,
     "ok": true,
@@ -37,9 +37,9 @@
     "Thundering Strikes"
   ],
   "rotation": [
-    "Pre-pull: Lightning Shield at -1.5 s; starting totems Strength of Earth IV, Windfury Totem and Mana Spring at -4 / -3 / -2 s (they last the whole 300 s fight), no mana cost",
-    "Recast Strength of Earth, Windfury Totem and Mana Spring when down",
-    "Searing Totem when it is down and at least 10 s remain",
+    "Pre-pull: Lightning Shield at -3 s, Searing Totem at -1.5 s; starting totems Strength of Earth IV, Windfury Totem and Mana Spring at -4 / -3 / -2 s (they run out a few seconds before a 300 s fight ends), no mana cost",
+    "Recast Strength of Earth, Windfury Totem and Mana Spring when down, with at least 20 s left",
+    "Searing Totem when it is down and at least 10 s remain (after the pre-pull one)",
     "Rage of the Farseer on cooldown, waiting for the on-use trinket; Blood Fury lined up with it",
     "Other cooldowns (Sapper, Demonic Rune, Major Mana Potion, Land Mine)",
     "Stormstrike on cooldown",

@@ -593,13 +593,20 @@ export const DefaultTalents = TalentPresets[Phase.Phase1][0];
 // about half as many (Elemental uses 1). The DPS report's assumptions run 0 and 10 too.
 //
 // Each hit fires a Lightning Shield orb, so every Level 60 rotation keeps the shield up: before
-// the pull at -1.5 sec, and in the fight when nothing else is ready (+2.8 at 6 a minute over
-// putting it first). At 180 sec Level 60 goes from 826.0 to 833.8, Imp GW from 822.0 to 829.5
-// (about +26 at 10 a minute), and with no hits it costs nothing measurable. The Water Shield and
-// Mana Tide builds cast Lightning Shield too: Water Shield's 2% mana a globe was worth less than
-// Lightning Shield's orbs at every rate we tried (0, 2, 6 and 10 a minute), whether we kept Water
-// Shield for low mana or not. Water Shield goes from 776.1 to 785.3, Mana Tide from 753.4 to
-// 763.3 (+32 and +34 at 10 a minute).
+// the pull, and in the fight when nothing else is ready (+2.8 at 6 a minute over putting it
+// first). At 180 sec Level 60 went from 826.0 to 833.8, Imp GW from 822.0 to 829.5 (about +26 at
+// 10 a minute), and with no hits it costs nothing measurable. The Water Shield and Mana Tide builds
+// cast Lightning Shield too: Water Shield's 2% mana a globe was worth less than Lightning Shield's
+// orbs at every rate we tried (0, 2, 6 and 10 a minute), whether we kept Water Shield for low mana
+// or not. Water Shield went from 776.1 to 785.3, Mana Tide from 753.4 to 763.3 (+32 and +34 at 10
+// a minute).
+//
+// Since the rotation auditor's pass 21 (2026-10-16) Optimized puts Lightning Shield up at -3 sec
+// and Searing Totem at -1.5 sec, so the totem no longer takes the first GCD of the fight, and
+// none of the rotations recasts Strength of Earth, Windfury or Mana Spring with less than 20 sec
+// left (the starting totems run out a few seconds before a 5 min fight ends). Level 60 is 845.7 /
+// 834.6 / 815.5 at 120 / 180 / 300 sec (+1.2 / +0.8 / +1.9), Imp GW 842.1 / 830.3 / 811.0, Water
+// Shield 792.6 / 785.4 / 772.5 and Mana Tide 770.0 / 763.3 / 758.0 (the last two only gain at 300).
 export const RaidDamageHitsLevel60 = 2;
 
 export const DefaultOptions = EnhancementShamanOptions.create({
