@@ -227,6 +227,15 @@ function makePresetRotationHelper(name: string, rotation: SavedRotation, options
 	};
 }
 
+// The raid damage on a DPS player in every level 60 preset's encounter (standards 24): 2 direct
+// hits a minute at random times, 1500 damage each. The boss is on the tank, and these stand in
+// for the raid-wide spells, cleaves and volleys that still reach the raid. The rate and the
+// damage are estimates from Season of Discovery boss timers (Ragnaros's Wrath every 26 sec,
+// Broodlord's Blast Wave, Kel'Thuzad's Frostbolt Volley, Chromaggus's breaths; none on Patchwerk,
+// Loatheb and Sapphiron; about 10 a minute on Firemaw, Vaelastrasz and Huhuran below 30%), which
+// hit for about 1000 to 2500 in Classic.
+export const LEVEL_60_RAID_DAMAGE = { raidDamageHitsPerMinute: 2, raidDamagePerHit: 1500 };
+
 export const makePresetEncounter = (name: string, encounter?: PresetEncounter['encounter'] | string, options?: PresetEncounterOptions): PresetEncounter => {
 	let healingModel: PresetEncounter['healingModel'] = undefined;
 	let tanks: PresetEncounter['tanks'] = undefined;

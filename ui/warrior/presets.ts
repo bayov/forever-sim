@@ -250,27 +250,20 @@ export const DefaultTalents = TalentsLevel60Fury;
 //                                 Options Presets
 ///////////////////////////////////////////////////////////////////////////
 
-// The raid damage that hits a melee DPS in a level 60 raid fight: 2 direct hits a minute at random
-// times, the same as the Enhancement shaman's (enhancement_shaman/presets.ts RaidDamageHitsLevel60
-// has where the rate comes from), each 1500 damage. The damage is an estimate too, from the same
-// boss timers: Ragnaros's Wrath, Broodlord's Blast Wave, Kel'Thuzad's Frostbolt Volley and
-// Huhuran's Poison Bolt Volley hit for about 1000 to 2500 in Classic. Each hit gives 15.4 Rage
-// from the level 63 boss (19.2 under Recklessness), and has Enrage's 30% chance, because Forever's
-// Enrage fires on any damage taken (Enrage's uptime goes from 3.5 to 23 sec a fight on the Fury
-// builds; on two-hand Fury it is about 10 of the 15.5 below). At 180 sec that is +6.9 on Fury (1057.9 to
-// 1064.9), +15.5 on Fury two-hand (925.7 to 941.2), +2.1 on Arms (951.0 to 953.2) and +2.9 on Arms
-// vs Dragonkin; at 10 hits a minute +29, +65, +10 and +9. Arms already caps its Rage with no
-// hits, so it wastes much of what the hits give.
-export const RaidDamageHitsLevel60 = 2;
-export const RaidDamagePerHitLevel60 = 1500;
+// The raid damage in the Level 60 encounters (PresetUtils.LEVEL_60_RAID_DAMAGE, the same for every
+// spec): 2 direct hits a minute at random times, 1500 damage each. Under Forever each gives 4.5
+// Rage (core.ForeverDamageTakenRage: 20 Rage for a level 60 mob's 3993 health, as if 40% armor took
+// its share), and has Enrage's 30% chance, because Forever's Enrage fires on any damage taken.
+// At 180 sec (10,000 iterations, the report requests) that is +3.4 on Fury (1040.4 to 1043.8),
+// +11.0 on Fury two-hand (921.0 to 932.0), -1.1 on Arms (945.6 to 944.5: Slam's cast is pushed
+// back) and -0.1 on Arms vs Dragonkin; at 10 hits a minute +16.0, +47.5, -4.1 and -3.3. With
+// Classic's damage-taken Rage (15.4 a hit) each build was 4 to 5 higher at 2 a minute.
 
 export const DefaultOptions = WarriorOptions.create({
 	queueDelay: 250,
 	startingRage: 0,
 	shout: WarriorShout.WarriorShoutBattle,
 	stance: WarriorStance.WarriorStanceBerserker,
-	raidDamageHitsPerMinute: RaidDamageHitsLevel60,
-	raidDamagePerHit: RaidDamagePerHitLevel60,
 });
 
 // The class options the preset builds set. Fury starts in Berserker Stance, Arms in Battle Stance
@@ -280,8 +273,6 @@ const PresetBuildOptionsFury = {
 	startingRage: 0,
 	shout: WarriorShout.WarriorShoutBattle,
 	stance: WarriorStance.WarriorStanceBerserker,
-	raidDamageHitsPerMinute: RaidDamageHitsLevel60,
-	raidDamagePerHit: RaidDamagePerHitLevel60,
 };
 const PresetBuildOptionsArms = { ...PresetBuildOptionsFury, stance: WarriorStance.WarriorStanceBattle };
 
@@ -397,6 +388,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		executeProportion20: 0.2,
 		executeProportion25: 0.25,
 		executeProportion35: 0.35,
+		...PresetUtils.LEVEL_60_RAID_DAMAGE,
 		targets: [
 			{
 				id: 213336,
@@ -439,6 +431,7 @@ export const EncounterLevel60Dragonkin = PresetUtils.makePresetEncounter(
 		executeProportion20: 0.2,
 		executeProportion25: 0.25,
 		executeProportion35: 0.35,
+		...PresetUtils.LEVEL_60_RAID_DAMAGE,
 		targets: [
 			{
 				id: 213336,

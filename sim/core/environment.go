@@ -159,6 +159,8 @@ func (env *Environment) initialize(raidProto *proto.Raid, encounterProto *proto.
 		}
 	}
 
+	env.registerRaidDamageHits()
+
 	env.State = Initialized
 	return raidStats
 }
