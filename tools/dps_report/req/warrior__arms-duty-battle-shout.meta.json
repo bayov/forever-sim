@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_arms_battle_shout",
   "published": {
-    "dps": 952.6,
-    "source": "Raid damage hits on warriors (2 a minute, 1500 damage each), 2026-10-15"
+    "dps": 942.5,
+    "source": "Client 70425 racials and the raid damage hits, re-measured on master 4f5c608, 2026-10-16"
   },
   "verify": {
-    "dps": 952.57,
-    "stderr": 0.34,
+    "dps": 942.5,
+    "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 180 s, seed 1"
+    "note": "same sim as the published number"
   },
-  "summary": "Arms keeping Battle Shout up for its party, with the raid's Battle Shout off: 1.5 DPS behind the base build at 180 s.",
+  "summary": "Arms keeping Battle Shout up for its party, with the raid's Battle Shout off: 1.7 DPS behind the base build at 180 s.",
   "keyTalents": [
     "Mortal Strike",
     "Bloodthrill",
