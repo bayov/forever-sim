@@ -538,9 +538,10 @@ func GetAllRotationSpellIds() map[string][]int32 {
 			Equipment: &proto.EquipmentSpec{},
 		}, &proto.Player_Hunter{Hunter: &proto.Hunter{Options: &proto.Hunter_Options{}}}), nil, nil, nil)},
 		{Name: "mage", Raid: core.SinglePlayerRaidProto(core.WithSpec(&proto.Player{
-			Class:         proto.Class_ClassMage,
-			Equipment:     &proto.EquipmentSpec{},
-			TalentsString: "2352342212231531-5532323123233121-25221213122351351",
+			Class:     proto.Class_ClassMage,
+			Equipment: &proto.EquipmentSpec{},
+			// Every talent at its top rank in the 1.60.1.70425 tree (ui/core/talents/trees/mage.json).
+			TalentsString: "2552225223122311531-23552333132135131-2555323331321331251",
 		}, &proto.Player_Mage{Mage: &proto.Mage{Options: &proto.Mage_Options{}}}), nil, nil, nil)},
 		{Name: "shadow", Raid: core.SinglePlayerRaidProto(core.WithSpec(&proto.Player{
 			Class:     proto.Class_ClassPriest,
