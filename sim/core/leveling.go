@@ -98,8 +98,11 @@ type levelingSession struct {
 	// we took, for the iteration picks (lastIteration).
 	lastKills float64
 
-	healthMetrics, foodMetrics, bandageMetrics, reviveHealthMetrics *ResourceMetrics
-	drinkMetrics, reviveManaMetrics                                 *ResourceMetrics
+	healthMetrics, reviveHealthMetrics *ResourceMetrics
+	drinkMetrics, reviveManaMetrics    *ResourceMetrics
+	// The food, water and bandage as spells of ours, with their auras (registerRestSpells).
+	foodSpell, drinkSpell, bandageSpell                     *Spell
+	foodAura, drinkAura, bandageAura, recentlyBandagedAura *Aura
 
 	// Sums over iterations, for LevelingMetrics.
 	agg struct {
@@ -284,13 +287,12 @@ func newLevelingSession(env *Environment, encounterProto *proto.Encounter) *leve
 
 	c := session.character
 	session.healthMetrics = c.NewHealthMetrics(ActionID{SpellID: 20577, Tag: 1}) // Health regen out of combat.
-	session.foodMetrics = c.NewHealthMetrics(ActionID{ItemID: session.food.itemID})
-	session.bandageMetrics = c.NewHealthMetrics(ActionID{ItemID: session.bandage.itemID})
 	session.reviveHealthMetrics = c.NewHealthMetrics(ActionID{SpellID: 8326}) // Ghost
 	if c.HasManaBar() {
 		session.drinkMetrics = c.NewManaMetrics(ActionID{ItemID: session.drink.itemID})
 		session.reviveManaMetrics = c.NewManaMetrics(ActionID{SpellID: 8326})
 	}
+	session.registerRestSpells()
 	return session
 }
 
@@ -346,6 +348,14 @@ func (s *levelingSession) setState(sim *Simulation, state levelingState) {
 	}
 	s.state, s.stateSince = state, sim.CurrentTime
 	cancel(sim, &s.next)
+	// Standing up, or a mob on us, ends the food, water and bandage.
+	if state != levelingResting {
+		s.foodAura.Deactivate(sim)
+		s.drinkAura.Deactivate(sim)
+	}
+	if state != levelingBandaging {
+		s.bandageAura.Deactivate(sim)
+	}
 }
 
 func cancel(sim *Simulation, pa **PendingAction) {
@@ -517,7 +527,7 @@ func (s *levelingSession) tick(sim *Simulation, dt time.Duration) {
 	switch s.state {
 	case levelingBandaging:
 		if s.bandageLeft > 0 {
-			s.heal(sim, s.bandage.amount*seconds/s.bandage.duration.Seconds(), s.bandageMetrics)
+			s.healTick(sim, s.bandageSpell, s.bandage.amount*seconds/s.bandage.duration.Seconds())
 			s.bandageLeft -= dt
 		}
 	case levelingResting:
