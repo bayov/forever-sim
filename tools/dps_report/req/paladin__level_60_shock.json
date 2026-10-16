@@ -227,6 +227,15 @@
                   }
                 },
                 {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 24239
+                      }
+                    }
+                  }
+                },
+                {
                   "notes": "Until mana runs out.",
                   "action": {
                     "castSpell": {
@@ -290,15 +299,6 @@
                     "castSpell": {
                       "spellId": {
                         "spellId": 10333
-                      }
-                    }
-                  }
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 24239
                       }
                     }
                   }
