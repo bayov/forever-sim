@@ -65,7 +65,6 @@ func (shaman *Shaman) registerWaterShieldSpell() {
 			}
 		},
 	})
-	shaman.shieldHitTaken[shaman.WaterShieldAura] = consumeGlobe
 
 	shaman.WaterShield = shaman.RegisterSpell(core.SpellConfig{
 		SpellCode: SpellCode_ShamanWaterShield,

@@ -269,14 +269,6 @@ type Shaman struct {
 	// Shield
 	ActiveShield     *core.Spell // Tracks the Shaman's active shield spell
 	ActiveShieldAura *core.Aura
-	// What each shield's aura does when an enemy lands a direct hit on us.
-	shieldHitTaken map[*core.Aura]func(sim *core.Simulation, attacker *core.Unit)
-	// Direct hits taken from raid damage per minute, each one reaching our shield. Set from
-	// the enhancement options before Initialize.
-	RaidDamageHitsPerMinute float64
-	// Each iteration's rate is up to this many hits per minute above or below
-	// RaidDamageHitsPerMinute, like Duration +/- for the fight length.
-	RaidDamageHitsPerMinuteVariation float64
 	// The shaman's own main hand imbue in Forever, beside the oil or stone in the
 	// consumes. Set from the enhancement options before Initialize.
 	ShamanImbue proto.WeaponImbue
@@ -308,12 +300,10 @@ func (shaman *Shaman) Initialize() {
 	shaman.registerChainLightningSpell()
 	shaman.registerLavaBurstSpell()
 	shaman.registerLightningBoltSpell()
-	shaman.shieldHitTaken = map[*core.Aura]func(*core.Simulation, *core.Unit){}
 	shaman.registerLightningShieldSpell()
 	shaman.registerShocks()
 	shaman.registerStormstrikeSpell()
 	shaman.registerWaterShieldSpell()
-	shaman.registerRaidDamageHits()
 	shaman.registerHealingSpells()
 
 	// Imbues

@@ -5,7 +5,7 @@ Blizzard called this "a deliberate un-solving of the Classic gear meta". These a
 ## Combat stat changes (from the Deep Dive panel)
 
 - Hit chance is one stat across melee, ranged and spell.
-- Critical strike chance is one stat across melee, ranged and spell. Racial weapon specializations follow this: Orc Axe Specialization is "Axes increase spell and ability critical strike chance by 1%", and it applies to spells as well as attacks.
+- Critical strike chance is one stat across melee, ranged and spell. Racial weapon specializations follow this: they apply to spells as well as attacks. The Orc's was "Axes increase spell and ability critical strike chance by 1%" until client 70425 made it Savage, the same 1% with any weapon.
 - Weapon skill survives but is spread more thinly across items and "is no longer overwhelming". Weapon skill racials are gone, replaced by crit (see [racials.md](racials.md)).
 - A new stat reduces the chance your attacks get dodged or parried (an expertise-like stat). Mostly aimed at tanks.
 - Bonus healing on gear now also includes one third as much bonus damage. Healers can quest in one set.
@@ -34,7 +34,7 @@ Pulled together here because they are what a sim would model. Full list in [raci
 | Night Elf | Elune's Light: +10% crit for 15 sec (active). +1% dodge, +2% run speed |
 | Gnome | Eureka!: next 3 spells or abilities cost less and deal 10% more damage or healing (active). +5% max Mana, Rage or Energy |
 | High Order Skyborne | +1% melee, ranged and spell haste. +5% damage to Elementals |
-| Orc | Blood Fury: +10% Attack Power and Spell Power for 15 sec (active). Axes: +1% spell and ability crit. Stun duration -20% |
+| Orc | Blood Fury: +10% Attack Power and Spell Power for 15 sec (active). Savage: +1% spell and ability crit with any weapon (axes only before client 70425). Stun duration -20% |
 | Undead | Touch of the Grave: 5% chance on spells and attacks to drain health, up to 5% of max health |
 | Tauren | +5% health, +1% hit chance. War Stomp |
 | Troll | Berserking: +10% attack and casting speed for 10 sec (active, flat, no longer scales with missing health). +5% damage to Beasts. Regeneration |

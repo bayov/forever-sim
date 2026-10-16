@@ -700,8 +700,7 @@
                   "waterSecondsBeforePull": 2,
                   "fire": "MagmaTotem",
                   "fireSecondsBeforePull": 1
-                },
-                "raidDamageHitsPerMinute": 2
+                }
               }
             }
           }
@@ -804,7 +803,9 @@
         "swingSpeed": 2,
         "parryHaste": true
       }
-    ]
+    ],
+    "raidDamageHitsPerMinute": 2,
+    "raidDamagePerHit": 1500
   },
   "simOptions": {
     "iterations": 1000,
