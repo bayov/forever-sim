@@ -4,9 +4,9 @@
   "spec": "Fire",
   "build": "Fire",
   "isDefault": false,
-  "pr": 6,
-  "race": "Undead",
-  "talents": "05020500300001-23550000130123051-004",
+  "pr": 89,
+  "race": "Human",
+  "talents": "0402005-23550030130135031-005",
   "treeNames": [
     "Arcane",
     "Fire",
@@ -15,36 +15,38 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_fire",
   "published": {
-    "dps": 889.1,
-    "source": "PR (rotation auditor pass 19: end-of-fight instants, 2026-10-15)"
+    "dps": 993.2,
+    "source": "PR #89 (client 1.60.1.70425 port, 2026-10-16)"
   },
   "verify": {
-    "dps": 889.1,
+    "dps": 993.2,
     "stderr": 0.4,
     "iters": 20000,
     "ok": true,
-    "note": "180 s, 20000 iterations, on the pass 19 rotation"
+    "note": "180 s, 20000 iterations, seed 1, on the 70425 rotation (seed 100001 within 0.6)"
   },
-  "summary": "Deep Fire to Combustion with Arcane Concentration and Missile Barrage from Arcane. 11% behind Frostfire.",
+  "summary": "Deep Fire to Combustion with Critical Mass 5, Burning Soul and Master of Elements, plus Arcane Concentration and Missile Barrage 2 from Arcane. 2% behind Frostfire at 180 s and ahead at 300 s.",
   "keyTalents": [
     "Missile Barrage",
-    "Wake of Fire",
+    "Improved Fire Blast",
     "Improved Fireball",
     "Ignite",
+    "Burning Soul",
     "Improved Scorch",
     "Heating Up",
+    "Critical Mass",
     "Fire Power",
     "Combustion"
   ],
   "rotation": [
     "Pre-pull: Fireball at -3 s",
-    "Combustion once Fire Vulnerability has 5 stacks",
+    "Combustion and the on-use trinket once Fire Vulnerability has 5 stacks",
     "Cooldowns (Demonic Rune, racial) on a free GCD; mana gems never",
     "Evocation below 20% mana with more than 90 s left",
     "Scorch to 5 Fire Vulnerability stacks and before they run out",
     "Pyroblast at 3 Heating Up stacks (1.5 s cast)",
     "Arcane Missiles on a Missile Barrage proc",
-    "Fire Blast on cooldown at 20% mana or more",
+    "Fire Blast on cooldown at 20% mana or more (every Fire Blast adds a Heating Up stack)",
     "Fire Blast, then Scorch, when a Fireball would not land before the end (its cast plus 1.04 s)",
     "Filler: Fireball"
   ],
@@ -66,8 +68,9 @@
   ],
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 41 spell power and 11 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Ignite: SoD-style rolling with no cap vs Era's 5-crit cap (open); ticks never crit (-16)",
-    "Heating Up assumed consumed by one Pyroblast",
+    "Ignite: SoD-style rolling with no cap vs Era's 5-crit cap (open); ticks never crit",
+    "Heating Up: every Fire Blast adds a stack (two on a crit), from the 70425 tooltip; one Pyroblast uses them all",
+    "Fire Power (70425): counts Fire Vulnerability and the Fireball, Pyroblast, Flamestrike and Ignite DoTs (at most 4), multiplied with Fire Vulnerability; whether it adds or multiplies is open",
     "Pyroblast DoT coefficient taken per tick",
     "Missile Barrage roll timing and cost interaction with Arcane Power open",
     "No Ahn'Qiraj book ranks (Fireball XI, Frostbolt X, Arcane Missiles VII); with the books Frost +50, Arcane +30, Fire +17, Frostfire 0"

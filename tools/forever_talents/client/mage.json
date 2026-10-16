@@ -1,5 +1,5 @@
 {
- "source": "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17, with the talents the 2026-10-01 and 2026-10-08 development notes changed (Wake of Fire, Hot Streak renamed Heating Up, Combustion) updated to build 1.60.1.70338 from foreverchanges.pro",
+ "source": "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17, with the talents the 2026-10-01 and 2026-10-08 development notes changed (Wake of Fire, Hot Streak renamed Heating Up, Combustion) updated to build 1.60.1.70338 from foreverchanges.pro, and the 2026-10-15 tree rework (Arcane Blast, Arcane Wrath, Missile Barrage, Improved Fire Blast, Critical Mass, Fire Power, Winter's Chill, Ice Lance, Frost Channeling, Frostbite) updated to build 1.60.1.70425 from the client tables and Wowhead's Forever tooltips",
  "class": "mage",
  "trees": [
   {
@@ -196,14 +196,36 @@
      "passive": false,
      "icon": "spell_arcane_blast",
      "desc": {
-      "1": "Blasts the target with energy, dealing 57 to 65 Arcane damage. Each time you cast Arcane Blast, the damage of all your other spells is increased by 10% and the mana cost of Arcane Blast is increased by 175%. Effect stacks up to 4 times and lasts 8 sec or until any other damage spell is cast."
+      "1": "Blasts the target with energy, dealing 34 to 38 Arcane damage. Each time you cast Arcane Blast, you gain 15% of your Intellect as Spell Damage and the mana cost of Arcane Blast is increased by 175%. Effect stacks up to 4 times and lasts 15 sec from time of initial application."
      },
-     "cost": "15% base Mana; 30 yd range; 2.5 sec cast",
+     "cost": "15% base Mana; 30 yd range; 1.5 sec cast",
      "id": 105806,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70425",
       "spellId": 400574,
+      "notes": [
+       "Values shown at level 60.",
+       "Excludes spell power, attack power and other bonuses."
+      ]
+     }
+    },
+    {
+     "name": "Arcane Wrath",
+     "max": 1,
+     "row": 4,
+     "col": 4,
+     "passive": false,
+     "icon": "ability_mage_netherwindpresence",
+     "desc": {
+      "1": "Launches a projectile of pure Arcane energy at the enemy target, causing 122 to 146 Arcane damage. This spell gains additional Spell Damage equal to 5% of your maximum Mana."
+     },
+     "req": "Arcane Blast",
+     "cost": "140 Mana; 30 yd range; 3.5 sec cast; 6 sec cooldown",
+     "tooltip": {
+      "source": "client",
+      "build": "1.60.1.70425",
+      "spellId": 1326079,
       "notes": [
        "Values shown at level 60.",
        "Excludes spell power, attack power and other bonuses."
@@ -271,18 +293,19 @@
     },
     {
      "name": "Missile Barrage",
-     "max": 1,
-     "row": 4,
+     "max": 2,
+     "row": 1,
      "col": 4,
      "passive": true,
      "icon": "ability_mage_missilebarrage",
      "desc": {
-      "1": "Gives your Arcane Blast spell a 40% chance, and your Fireball, Frostbolt, and Frostfire Bolt spells a 20% chance to reduce the channeled duration of your next Arcane Missiles spell by 50%, reduce the Mana cost by 100%, and missiles fire every 0.5 sec."
+      "1": "Gives your Arcane Blast spell a 20% chance, your Arcane Missile hits a 5% chance, and your Arcane Wrath, Fireball, Frostbolt, and Frostfire Bolt spells a 10% chance to reduce the channeled duration of your next Arcane Missiles spell by 50%, reduce the Mana cost by 100%, and missiles fire every 0.5 sec.",
+      "2": "Gives your Arcane Blast spell a 40% chance, your Arcane Missile hits a 10% chance, and your Arcane Wrath, Fireball, Frostbolt, and Frostfire Bolt spells a 20% chance to reduce the channeled duration of your next Arcane Missiles spell by 50%, reduce the Mana cost by 100%, and missiles fire every 0.5 sec."
      },
      "id": 105802,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70425",
       "spellId": 400588,
       "notes": []
      }
@@ -384,20 +407,20 @@
    "icon": "spell_fire_firebolt02",
    "talents": [
     {
-     "name": "Wake of Fire",
+     "name": "Improved Fire Blast",
      "max": 2,
      "row": 1,
      "col": 1,
      "passive": true,
      "icon": "spell_fire_lavaspawn",
      "desc": {
-      "1": "Reduces the cooldown of your Fire Blast spell by 1 sec. Killing a non-trivial target increases the critical strike chance of your next Fire Blast cast within 30 sec by 25%.",
-      "2": "Reduces the cooldown of your Fire Blast spell by 2 sec. Killing a non-trivial target increases the critical strike chance of your next Fire Blast cast within 30 sec by 50%."
+      "1": "Reduces the cooldown of your Fire Blast spell by 1 sec and increases its range by 8 yards.",
+      "2": "Reduces the cooldown of your Fire Blast spell by 2 sec and increases its range by 15 yards."
      },
      "id": 105797,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.70338",
+      "build": "1.60.1.70425",
       "spellId": 11078,
       "notes": []
      }
@@ -647,7 +670,7 @@
     },
     {
      "name": "Critical Mass",
-     "max": 3,
+     "max": 5,
      "row": 5,
      "col": 2,
      "passive": true,
@@ -655,12 +678,14 @@
      "desc": {
       "1": "Increases the critical strike chance of your Fire spells by 2%.",
       "2": "Increases the critical strike chance of your Fire spells by 4%.",
-      "3": "Increases the critical strike chance of your Fire spells by 6%."
+      "3": "Increases the critical strike chance of your Fire spells by 6%.",
+      "4": "Increases the critical strike chance of your Fire spells by 8%.",
+      "5": "Increases the critical strike chance of your Fire spells by 10%."
      },
      "id": 105784,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70425",
       "spellId": 11115,
       "notes": []
      }
@@ -689,22 +714,20 @@
     },
     {
      "name": "Fire Power",
-     "max": 5,
+     "max": 3,
      "row": 6,
      "col": 3,
      "passive": true,
      "icon": "spell_fire_immolation",
      "desc": {
-      "1": "Increases the damage done by your Fire spells by 2%.",
-      "2": "Increases the damage done by your Fire spells by 4%.",
-      "3": "Increases the damage done by your Fire spells by 6%.",
-      "4": "Increases the damage done by your Fire spells by 8%.",
-      "5": "Increases the damage done by your Fire spells by 10%."
+      "1": "Increases the damage done by your Fire spells by 1% per your Fire effects on the target, up to a maximum increase of 4%. Effects which mix multiple schools of magic do not qualify.",
+      "2": "Increases the damage done by your Fire spells by 2% per your Fire effects on the target, up to a maximum increase of 8%. Effects which mix multiple schools of magic do not qualify.",
+      "3": "Increases the damage done by your Fire spells by 3% per your Fire effects on the target, up to a maximum increase of 12%. Effects which mix multiple schools of magic do not qualify."
      },
      "id": 105782,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70425",
       "spellId": 11124,
       "notes": []
      }
@@ -876,7 +899,7 @@
      "id": 105774,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70425",
       "spellId": 11071,
       "notes": []
      }
@@ -916,7 +939,7 @@
      "id": 105772,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70425",
       "spellId": 11160,
       "notes": []
      }
@@ -929,13 +952,13 @@
      "passive": false,
      "icon": "spell_frost_frostblast",
      "desc": {
-      "1": "Deals 28 to 32 Frost damage to an enemy target. Deals 300% increased damage to Frozen targets."
+      "1": "Deals 28 to 32 Frost damage to an enemy target. Deals 200% increased damage to Frozen targets."
      },
      "cost": "45 Mana; 30 yd range; Instant",
      "id": 105767,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70425",
       "spellId": 1312002,
       "notes": [
        "Values shown at level 60.",
@@ -1088,16 +1111,16 @@
      "passive": true,
      "icon": "spell_frost_chillingblast",
      "desc": {
-      "1": "Gives your Frost damage spells a 20% chance to apply the Winter's Chill effect, which increases the chance your Ice Lance and Frostbolt spells will critically hit the target by 2% for 15 sec. Stacks up to 1 times.",
-      "2": "Gives your Frost damage spells a 40% chance to apply the Winter's Chill effect, which increases the chance your Ice Lance and Frostbolt spells will critically hit the target by 2% for 15 sec. Stacks up to 2 times.",
-      "3": "Gives your Frost damage spells a 60% chance to apply the Winter's Chill effect, which increases the chance your Ice Lance and Frostbolt spells will critically hit the target by 2% for 15 sec. Stacks up to 3 times.",
-      "4": "Gives your Frost damage spells a 80% chance to apply the Winter's Chill effect, which increases the chance your Ice Lance and Frostbolt spells will critically hit the target by 2% for 15 sec. Stacks up to 4 times.",
-      "5": "Gives your Frost damage spells a 100% chance to apply the Winter's Chill effect, which increases the chance your Ice Lance and Frostbolt spells will critically hit the target by 2% for 15 sec. Stacks up to 5 times."
+      "1": "Gives your Frost damage spells a 20% chance to apply the Winter's Chill effect, which increases the damage done by your Cone of Cold spell to the target by 40%, stacking up to 5 times.",
+      "2": "Gives your Frost damage spells a 40% chance to apply the Winter's Chill effect, which increases the damage done by your Cone of Cold spell to the target by 40%, stacking up to 5 times.",
+      "3": "Gives your Frost damage spells a 60% chance to apply the Winter's Chill effect, which increases the damage done by your Cone of Cold spell to the target by 40%, stacking up to 5 times.",
+      "4": "Gives your Frost damage spells a 80% chance to apply the Winter's Chill effect, which increases the damage done by your Cone of Cold spell to the target by 40%, stacking up to 5 times.",
+      "5": "Gives your Frost damage spells a 100% chance to apply the Winter's Chill effect, which increases the damage done by your Cone of Cold spell to the target by 40%, stacking up to 5 times."
      },
      "id": 105763,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70425",
       "spellId": 11180,
       "notes": []
      }

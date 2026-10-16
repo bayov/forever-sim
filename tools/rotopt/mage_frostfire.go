@@ -16,7 +16,7 @@ func init() {
 }
 
 func (mageFrostfire) Knobs() []Knob {
-	return append(append(mageCommonKnobs(), finisherKnobs(1.5)...),
+	return append(append(append(mageCommonKnobs(), arcaneKnobs(0, 0)...), finisherKnobs(1.5)...),
 		// Scorch up to 5 stacks of Fire Vulnerability and again with less than this many seconds
 		// left, 0 never.
 		Knob{Name: "scorchRefresh", Default: 5, Min: 0, Max: 9, Step: 3},
@@ -72,6 +72,8 @@ func (mageFrostfire) Build(k Knobs) *proto.APLRotation {
 	if k["iceLanceFirst"] != 1 {
 		iceLance()
 	}
+	items = append(items, arcaneBlastBuffLines(k, s, nil)...)
+	items = append(items, arcaneWrathLines(k, s)...)
 	if k["missileBarrage"] == 1 {
 		items = append(items, cast(s.arcaneMissiles, known(missileBarrage, auraIsActive(missileBarrage)), "Arcane Missiles on a Missile Barrage proc, free and twice as fast."))
 	}

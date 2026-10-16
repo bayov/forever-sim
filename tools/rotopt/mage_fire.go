@@ -6,7 +6,7 @@ import "github.com/wowsims/classic/sim/core/proto"
 // per stack, from that mage only), so the fire mage keeps 5 stacks up with its own Scorches.
 // Heating Up takes 25% off the next Pyroblast's cast per Fireball, Fire Blast or Scorch crit,
 // to 75% at 3 stacks, so the question is how many stacks a Pyroblast waits for. Fire Blast is
-// instant, and with Wake of Fire it is up every 6 sec.
+// instant, and with Improved Fire Blast it is up every 6 sec.
 type mageFire struct{}
 
 func init() {
@@ -14,7 +14,7 @@ func init() {
 }
 
 func (mageFire) Knobs() []Knob {
-	return append(append(mageCommonKnobs(), finisherKnobs(1.04)...),
+	return append(append(append(mageCommonKnobs(), arcaneKnobs(0, 0)...), finisherKnobs(1.04)...),
 		// Scorch until Fire Vulnerability has 5 stacks, and again once it has less than this
 		// many seconds left. 0 never Scorches.
 		Knob{Name: "scorchRefresh", Default: 5, Min: 0, Max: 9, Step: 3},
@@ -52,6 +52,8 @@ func (mageFire) Build(k Knobs) *proto.APLRotation {
 	case p >= 1 && p <= 3:
 		items = append(items, cast(s.pyroblast, and(known(heatingUp, ge(auraNumStacks(heatingUp), num(p))), manaAbove(k["pyroMana"])), "Pyroblast once Heating Up has cut its cast enough."))
 	}
+	items = append(items, arcaneBlastBuffLines(k, s, nil)...)
+	items = append(items, arcaneWrathLines(k, s)...)
 	if k["missileBarrage"] == 1 {
 		items = append(items, cast(s.arcaneMissiles, known(missileBarrage, auraIsActive(missileBarrage)), "Arcane Missiles on a Missile Barrage proc, free and twice as fast."))
 	}
