@@ -7,13 +7,13 @@
         {"action":{"castSpell":{"spellId":{"itemId":250937}}},"doAtValue":{"const":{"val":"-0.1s"}}}
     ],
     "priorityList": [
-        {"action":{"castSpell":{"spellId":{"spellId":1277328}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpLt","rhs":{"const":{"val":"0.1"}}}}},"notes":"Undead. When mana runs low. Other races can ignore the warning on this line."},
-        {"action":{"autocastOtherCooldowns":{}},"notes":"Racials and trinkets on cooldown."},
+        {"action":{"castSpell":{"spellId":{"spellId":1277328}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpLt","rhs":{"const":{"val":"0.1"}}}}},"notes":"Undead. Trades health for mana. Other races can ignore the warning on this line."},
+        {"action":{"autocastOtherCooldowns":{}},"notes":"Racials and trinkets."},
         {"action":{"castSpell":{"spellId":{"spellId":10894}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":10894}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGe","rhs":{"const":{"val":"9s"}}}}]}}}},
         {"action":{"castSpell":{"spellId":{"spellId":19280}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":19280}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGe","rhs":{"const":{"val":"12s"}}}}]}}}},
         {"action":{"castSpell":{"spellId":{"spellId":1309636}}}},
         {"action":{"castSpell":{"spellId":{"spellId":14751}},"condition":{"and":{"vals":[{"spellIsReady":{"spellId":{"spellId":10947}}},{"dotIsActive":{"spellId":{"spellId":10894}}},{"or":{"vals":[{"dotIsActive":{"spellId":{"spellId":19280}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":19280}}}}}]}}]}}},"notes":"Right before Mind Blast. Without the talent ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":10947}}}},
-        {"action":{"channelSpell":{"interruptIf":{"or":{"vals":[{"and":{"vals":[{"or":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":10894}}}}},{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":19280}}}}},{"spellIsReady":{"spellId":{"spellId":19280}}}]}}]}},{"cmp":{"lhs":{"spellChanneledTicks":{"spellId":{"spellId":18807}}},"op":"OpGe","rhs":{"const":{"val":"2"}}}}]}}]}},"spellId":{"spellId":18807}}},"notes":"The filler, and when a DoT falls off."}
+        {"action":{"channelSpell":{"interruptIf":{"or":{"vals":[{"and":{"vals":[{"or":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":10894}}}}},{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":19280}}}}},{"spellIsReady":{"spellId":{"spellId":19280}}}]}}]}},{"cmp":{"lhs":{"spellChanneledTicks":{"spellId":{"spellId":18807}}},"op":"OpGe","rhs":{"const":{"val":"2"}}}}]}}]}},"spellId":{"spellId":18807}}}}
     ]
 }

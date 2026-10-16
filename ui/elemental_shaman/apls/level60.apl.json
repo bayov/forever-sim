@@ -7,14 +7,14 @@
         {"action":{"castSpell":{"spellId":{"spellId":10438}}},"doAtValue":{"const":{"val":"-0.9s"}}}
     ],
     "priorityList": [
-        {"action":{"autocastOtherCooldowns":{}},"notes":"Racials, trinkets, potions, Demonic Rune and Nature's Swiftness on cooldown."},
+        {"action":{"autocastOtherCooldowns":{}},"notes":"Racials, trinkets, potions, Demonic Rune and Nature's Swiftness."},
         {"action":{"castSpell":{"spellId":{"spellId":10497}},"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":10497}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGe","rhs":{"const":{"val":"20s"}}}}]}}}},
         {"action":{"castSpell":{"spellId":{"spellId":10438}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":10438}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGe","rhs":{"const":{"val":"20s"}}}}]}}},"notes":"It reaches 20 yards."},
         {"action":{"castSpell":{"spellId":{"spellId":29228}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":29228}}}}}]}}}},
         {"action":{"castSpell":{"spellId":{"spellId":1326047}},"condition":{"or":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":29228}}}}},{"cmp":{"lhs":{"dotRemainingTime":{"spellId":{"spellId":29228}}},"op":"OpGt","rhs":{"const":{"val":"2s"}}}}]}}},"notes":"Unless Flame Shock runs out before the cast ends. Without the talent ignore the warning on this line."},
-        {"action":{"castSpell":{"spellId":{"spellId":10414}},"condition":{"cmp":{"lhs":{"remainingTime":{}},"op":"OpLt","rhs":{"math":{"lhs":{"spellCastTime":{"spellId":{"spellId":15208}}},"op":"OpAdd","rhs":{"const":{"val":"1s"}}}}}}},"notes":"When a Lightning Bolt would not land before the end."},
-        {"action":{"castSpell":{"spellId":{"spellId":10432}},"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":10432}}}}},{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.5"}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGe","rhs":{"const":{"val":"60s"}}}}]}}},"notes":"Recast with half mana and a minute left. Raid damage on the shaman fires its orbs at the boss: three per cast, at most one every 3.5s."},
-        {"action":{"castSpell":{"spellId":{"spellId":10392}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpLt","rhs":{"const":{"val":"0.2"}}}}},"notes":"Lower rank once mana runs low."},
+        {"action":{"castSpell":{"spellId":{"spellId":10414}},"condition":{"cmp":{"lhs":{"remainingTime":{}},"op":"OpLt","rhs":{"math":{"lhs":{"spellCastTime":{"spellId":{"spellId":15208}}},"op":"OpAdd","rhs":{"const":{"val":"1s"}}}}}}}},
+        {"action":{"castSpell":{"spellId":{"spellId":10432}},"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":10432}}}}},{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.5"}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGe","rhs":{"const":{"val":"60s"}}}}]}}},"notes":"Raid damage on the shaman fires its orbs at the boss (3 per cast, at most one per 3.5s)."},
+        {"action":{"castSpell":{"spellId":{"spellId":10392}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpLt","rhs":{"const":{"val":"0.2"}}}}},"notes":"Lower rank."},
         {"action":{"castSpell":{"spellId":{"spellId":15208}}}}
     ]
 }
