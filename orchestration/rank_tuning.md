@@ -372,6 +372,14 @@ This section replaces the ranking effects in the 11:00 and 15:15 sections. Since
 - Smite's +2.7% passes Elemental and Mana Tide Enhancement.
 - Balance (+0.4%), Frost and Enhancement move within noise.
 
+## Check 2026-10-16 21:20 UTC: master 7f9bbc2
+
+No client build is newer than 70425. Since ddb095a, master has merged #103–#108 and the 2026-10-15/16 Forever updates. None of them touches a spell in the sensitivity set (curses.go, Smite, Rip, Wrath, Frostbolt, Holy Strike, Consecration, Lightning Bolt, Lava Burst, Earth Shock).
+
+I re-ran all 66 bases and every sensitivity anyway, since #108 (Salvation) and the warlock, shaman and paladin presets touched 58 request files. Every sensitivity percentage is the same as at 15:30 to 0.1%.
+
+The only bases that moved more than 0.4% are the four Enhancement presets, up 0.8–1.2% from the totem change in water_totems.go: Enhancement 848.1, Imp GW 841.6, Water Shield 819.3, Mana Tide 781.7. As a result, Elemental's largest case (836.6) now ends just below Imp GW Enhancement instead of passing it, at place 46 rather than 45. Everything else in the 15:30 table stands, including Demonology at 1177.7 (coefficient 2.0: 1130.7) ahead of Lone Wolf at 1094.1.
+
 ## Cross-class summary
 
 **Specs whose standing rests on likely-stale or untested 31+ data:**
