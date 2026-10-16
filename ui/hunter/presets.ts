@@ -459,7 +459,8 @@ export const EncounterLevel60ScorpidDuty = PresetUtils.makePresetEncounter('Leve
 // Windshaper is best for the three ranged specs (Wind Blessed's 3% haste), 1.2 to 1.6 ahead of the
 // High Order and 5 to 8 ahead of the Night Elf on Lone Wolf and Marksmanship (0.3 to 0.9 ahead of the
 // Human on Beast Mastery). For Survival the Human is best at 180 and 300 sec (Ruthless's 2% crit),
-// 1.1 and 2.4 ahead of the Orc, which leads by 1.0 at 120 sec. With the Wildstalker Armor 4
+// 0.8 and 2.0 ahead of the Orc, which leads by 1.6 at 120 sec (with the trap scaling, Blood Fury's
+// attack power reaches the trap too). With the Wildstalker Armor 4
 // and 5 piece bonuses on top of the 2 piece (the presets carry the 2 piece only, as every class
 // does), Lone Wolf would gain 17, Marksmanship 13, Beast Mastery 1 and Survival nothing, with the
 // rotations re-tuned for the shorter Aimed Shot cooldown (measured on the 2026-10-12 gear, before
@@ -507,7 +508,7 @@ export const PresetBuildBeastMasteryScorpid = PresetUtils.makePresetBuild('Level
 	professions,
 	options: DefaultOptions,
 });
-// 1029.6 / 1024.9 / 1003.0 at 120 / 180 / 300 sec, 70 ahead of Beast Mastery at 180. The pet deals
+// 1034.4 / 1029.6 / 1007.9 at 120 / 180 / 300 sec, 75 ahead of Beast Mastery at 180. The pet deals
 // 11% of it. It runs short of mana in a 5 minute fight.
 export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Marksmanship', {
 	group: 'Level 60',
@@ -520,7 +521,7 @@ export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Mar
 	professions,
 	options: DefaultOptions,
 });
-// 1028.1 / 1023.1 / 1001.5 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 1.4 / 1.8 / 1.5 behind the
+// 1033.0 / 1028.2 / 1006.3 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 1.4 / 1.4 / 1.5 behind the
 // base preset: the raid's Hunter's Mark is off and the hunter casts its own 1.5 sec before the
 // pull and before it drops (standards 23).
 export const PresetBuildMarksmanshipMark = PresetUtils.makePresetBuild("Level 60 Marksmanship (Hunter's Mark duty)", {
@@ -535,7 +536,7 @@ export const PresetBuildMarksmanshipMark = PresetUtils.makePresetBuild("Level 60
 	professions,
 	options: DefaultOptions,
 });
-// 947.7 / 944.3 / 941.2 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 81.9 / 80.6 / 61.8 behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in place of Serpent Sting (standards 23).
+// 952.5 / 949.2 / 946.6 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 81.9 / 80.4 / 61.3 behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in place of Serpent Sting (standards 23).
 export const PresetBuildMarksmanshipScorpid = PresetUtils.makePresetBuild('Level 60 Marksmanship (Scorpid Sting duty)', {
 	group: 'Level 60',
 	tooltip:
@@ -548,8 +549,8 @@ export const PresetBuildMarksmanshipScorpid = PresetUtils.makePresetBuild('Level
 	professions,
 	options: DefaultOptions,
 });
-// 1074.2 / 1069.5 / 1050.1 at 120 / 180 / 300 sec, the best of the four: Lone Wolf's 20% is worth more
-// than a pet that takes no player buffs (45 ahead of Marksmanship at 180). Holds up in a 5 minute fight with Sniper Shot held back for mana.
+// 1080.2 / 1075.7 / 1055.3 at 120 / 180 / 300 sec, the best of the four: Lone Wolf's 20% is worth more
+// than a pet that takes no player buffs (46 ahead of Marksmanship at 180). Holds up in a 5 minute fight with Sniper Shot held back for mana.
 export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wolf', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Marksmanship with Lone Wolf and no pet, on the synthetic Phase 1 ranged gear, in a 3 minute raid fight.',
@@ -561,7 +562,7 @@ export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wo
 	professions,
 	options: LoneWolfOptions,
 });
-// 1072.8 / 1068.1 / 1047.9 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 1.4 / 1.4 / 2.1 behind the
+// 1078.4 / 1073.7 / 1053.2 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 1.8 / 2.0 / 2.1 behind the
 // base preset: the raid's Hunter's Mark is off and the hunter casts its own 1.5 sec before the
 // pull and before it drops (standards 23).
 export const PresetBuildLoneWolfMark = PresetUtils.makePresetBuild("Level 60 Lone Wolf (Hunter's Mark duty)", {
@@ -576,7 +577,7 @@ export const PresetBuildLoneWolfMark = PresetUtils.makePresetBuild("Level 60 Lon
 	professions,
 	options: LoneWolfOptions,
 });
-// 977.5 / 974.3 / 972.3 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 96.7 / 95.2 / 77.8 behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in place of Serpent Sting (standards 23).
+// 983.3 / 980.2 / 978.2 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 96.9 / 95.5 / 77.1 behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in place of Serpent Sting (standards 23).
 export const PresetBuildLoneWolfScorpid = PresetUtils.makePresetBuild('Level 60 Lone Wolf (Scorpid Sting duty)', {
 	group: 'Level 60',
 	tooltip:
@@ -589,7 +590,7 @@ export const PresetBuildLoneWolfScorpid = PresetUtils.makePresetBuild('Level 60 
 	professions,
 	options: LoneWolfOptions,
 });
-// 895.2 / 888.2 / 881.4 at 120 / 180 / 300 sec in the mksettings raid (Human, 2026-10-16). The rotation walks in
+// 911.5 / 904.6 / 897.6 at 120 / 180 / 300 sec in the mksettings raid (Human, 2026-10-16). The rotation walks in
 // before the pull, so starting at 25 yards in the UI costs nothing.
 export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Survival', {
 	group: 'Level 60',
@@ -602,7 +603,7 @@ export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Surviva
 	professions,
 	options: DefaultOptions,
 });
-// 894.4 / 887.0 / 879.8 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 0.8 / 1.2 / 1.5 behind the
+// 910.4 / 903.2 / 896.5 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 1.1 / 1.3 / 1.1 behind the
 // base preset: the raid's Hunter's Mark is off and the hunter casts its own 1.5 sec before the
 // pull and before it drops (standards 23).
 export const PresetBuildSurvivalMark = PresetUtils.makePresetBuild("Level 60 Survival (Hunter's Mark duty)", {
