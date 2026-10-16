@@ -960,11 +960,14 @@ export const EncounterLevel30 = PresetUtils.makePresetEncounter(
 // on its own set and encounter: rotopt -weights at 100k iterations, then direct probes
 // for the rest.
 //
-// Hit and crit come from probes because under Forever an item's hit or crit counts for
-// melee and spells both. The weights run moves the melee and the spell stat one at a time,
-// so it reads about half. The sets also have no hit, and the weights run can't probe below
-// zero. The hit value is for the first 2%. Each point above that is worth less, because
-// the spell hit cap comes first.
+// Hit and crit come from probes, because the sets have no hit and the weights run reads it
+// low there. The hit value is the average of the first 4%. Each point above that is worth
+// less, because the spell hit cap comes first.
+//
+// Until 2026-10-16 hit and crit here and in the PvP weights below were twice what they
+// are. Under Forever a bonus to melee hit or crit also moves the spell one
+// (unifyEquipHitAndCrit), so the probes' +2% melee and +2% spell was +4%, and we divided by
+// 2. We halved them.
 export const EPLevel30 = PresetUtils.makePresetEpWeights(
 	'Level 30',
 	Stats.fromMap(
@@ -974,10 +977,10 @@ export const EPLevel30 = PresetUtils.makePresetEpWeights(
 			[Stat.StatIntellect]: 2.93,
 			[Stat.StatSpirit]: 0.4,
 			[Stat.StatAttackPower]: 1,
-			[Stat.StatMeleeHit]: 48.3,
-			[Stat.StatSpellHit]: 48.3,
-			[Stat.StatMeleeCrit]: 37,
-			[Stat.StatSpellCrit]: 37,
+			[Stat.StatMeleeHit]: 24.15,
+			[Stat.StatSpellHit]: 24.15,
+			[Stat.StatMeleeCrit]: 18.5,
+			[Stat.StatSpellCrit]: 18.5,
 			[Stat.StatSpellPower]: 2.09,
 			[Stat.StatSpellDamage]: 2.09,
 			[Stat.StatFirePower]: 1.07,
@@ -1067,8 +1070,8 @@ export const EPLevel30PvPVsCloth = makeLevel30PvPEP('PvP vs Cloth', 'Level 30 Pv
 	int: 1.96,
 	spi: 0,
 	mp5: 0,
-	hit: 38.5,
-	crit: 23.5,
+	hit: 19.25,
+	crit: 11.75,
 	sp: 2.09,
 	fire: 1.3,
 	nature: 0.48,
@@ -1080,8 +1083,8 @@ export const EPLevel30PvPVsHunter = makeLevel30PvPEP('PvP vs Hunter', 'Level 30 
 	int: 2.49,
 	spi: 0.2,
 	mp5: 0.44,
-	hit: 41.7,
-	crit: 24.9,
+	hit: 20.85,
+	crit: 12.45,
 	sp: 3.12,
 	fire: 1.46,
 	nature: 1.32,
@@ -1093,8 +1096,8 @@ export const EPLevel30PvPVsRogue = makeLevel30PvPEP('PvP vs Rogue', 'Level 30 Pv
 	int: 4.54,
 	spi: 0.82,
 	mp5: 2.68,
-	hit: 40.7,
-	crit: 23.6,
+	hit: 20.35,
+	crit: 11.8,
 	sp: 2.36,
 	fire: 1.18,
 	nature: 0.93,
@@ -1106,8 +1109,8 @@ export const EPLevel30PvPVsShaman = makeLevel30PvPEP('PvP vs Shaman', 'Level 30 
 	int: 2.92,
 	spi: 0.62,
 	mp5: 1.62,
-	hit: 36.7,
-	crit: 22.4,
+	hit: 18.35,
+	crit: 11.2,
 	sp: 2.25,
 	fire: 1.14,
 	nature: 0.83,
@@ -1122,8 +1125,8 @@ export const EPLevel30PvPVsWarrior = makeLevel30PvPEP(
 		int: 2.69,
 		spi: 0.47,
 		mp5: 1.15,
-		hit: 41,
-		crit: 23.7,
+		hit: 20.5,
+		crit: 11.85,
 		sp: 2.46,
 		fire: 1.39,
 		nature: 0.77,
@@ -1139,8 +1142,8 @@ export const EPLevel30PvPVsProt = makeLevel30PvPEP(
 		int: 3.59,
 		spi: 0.77,
 		mp5: 1.91,
-		hit: 42.3,
-		crit: 23.9,
+		hit: 21.15,
+		crit: 11.95,
 		sp: 3,
 		fire: 1.59,
 		nature: 1,
@@ -1168,8 +1171,8 @@ export const EPLevel30PvP = makeLevel30PvPEP('Level 30 PvP', 'The mean of the si
 	int: 2.3,
 	spi: 0.14,
 	mp5: 0.37,
-	hit: 42.6,
-	crit: 24.9,
+	hit: 21.3,
+	crit: 12.45,
 	sp: 2.59,
 	fire: 1.37,
 	nature: 0.91,
@@ -1184,8 +1187,8 @@ export const EPLevel30PvPHighHP = makeLevel30PvPEP(
 		int: 3.03,
 		spi: 0.48,
 		mp5: 1.3,
-		hit: 40.1,
-		crit: 23.6,
+		hit: 20.05,
+		crit: 11.8,
 		sp: 2.55,
 		fire: 1.34,
 		nature: 0.89,
