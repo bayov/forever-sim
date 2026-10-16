@@ -103,9 +103,10 @@ export const APLSimpleVael = PresetUtils.makePresetAPLRotation('Simple Vaelastra
 // bleed up on its own (keeping Rake up costs 33 at every length). Rip at 5 combo
 // points is 1 to 2 behind. The search on the 1b gear kept every knob at 120 and 180 sec (at 300
 // sec Shifting Power at 40 Energy is 0.3 ahead). Berserk's later uses wait for the Strength
-// trinket when waiting loses no use, and Elune's Light (the Night Elf's 10% crit) stays out of
+// trinket when waiting loses no use, and Elune's Light (the Night Elf's 10% crit) stayed out of
 // Berserk, where every builder crits anyway: 2.5 / 0.9 / 2.7 ahead at 120 / 180 / 300 sec
-// (rotation auditor's cooldown pass).
+// (rotation auditor's cooldown pass). The presets are Tauren since client 1.60.1.70425's racials, so
+// the Elune's Light line is out; a Night Elf still uses it on cooldown through the autocast line.
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
 	tooltip: "The optimizer's best level 60 rotation: Rip at 4 combo points, Shred, Shifting Power and Berserk on cooldown.",
 	group: 'Level 60',
@@ -117,8 +118,8 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // and again once it has under 7 sec left, so a miss gets a second try before it drops (99.7% uptime,
 // rotation auditor). Forever's Faerie Fire and Curse of Recklessness share the
 // minor armor slot (standards 20), so the line waits while the raid's Faerie Fire or a curse holds
-// it, and the duty's cost shows with both off: 6.2 / 5.0 / 4.3 DPS at 120 / 180 / 300 sec (715.9 /
-// 704.6 / 696.8, 20,000 iterations), the GCDs and the moment before it lands, since the cat's own
+// it, and the duty's cost shows with both off: 6.0 / 5.1 / 4.4 DPS at 120 / 180 / 300 sec (718.2 /
+// 708.5 / 699.9, Tauren, 20,000 iterations), the GCDs and the moment before it lands, since the cat's own
 // hits get the armor. The knob search kept the rest of the rotation at 120, 180 and 300 sec.
 export const APLLevel60FaerieFire = PresetUtils.makePresetAPLRotation('Level 60 (Faerie Fire duty)', Level60FaerieFireAPLJSON, {
 	tooltip:
@@ -265,7 +266,7 @@ export const DefaultDebuffs = Debuffs.create({
 export const OtherDefaults = {
 	profession1: Profession.Engineering,
 	profession2: Profession.Alchemy,
-	race: Race.RaceNightElf,
+	race: Race.RaceTauren,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -315,26 +316,26 @@ export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('L
 	buffs: DefaultIndividualBuffs,
 	consumes: DefaultConsumes,
 });
-// The Level 60 build, 722.0 / 709.7 / 701.2 at 120 / 180 / 300 sec (client 1.60.1.70425, where
-// Howling Idol takes 0.5 sec off Shifting Power instead of 1). Every race a druid can be under
-// Forever on it with the same seed, 40,000 iterations (standard error 0.1):
+// The Level 60 build, Tauren: 724.1 / 713.7 / 704.3 at 120 / 180 / 300 sec (client 1.60.1.70425,
+// where Howling Idol takes 0.5 sec off Shifting Power and Tauren crits do 2% more). Every race a
+// druid can be under Forever on it with the same seed, 40,000 iterations (standard error 0.1):
 //
 //	                     120 sec  180 sec  300 sec
-//	Night Elf             722.0    709.7    701.2   best overall and Alliance
-//	Windshaper Skyborne   716.8    706.3    697.2   best Horde
-//	High Order Skyborne   716.7    706.2    697.1
-//	Tauren                714.4    704.1    694.9
+//	Tauren                724.2    713.7    704.3   best overall and Horde
+//	High Order Skyborne   721.5    711.2    702.0   best Alliance
+//	Windshaper Skyborne   721.6    711.2    702.1
+//	Night Elf             722.0    709.7    701.3
 //
-// Night Elf's lead is its Agility. No racial goes by weapon type, so the weapon changes
-// nothing, and the ranking with weapon type racials off is the same.
+// The Skyborne's 3% haste and the Tauren's crit damage now beat the Night Elf's Agility. No racial
+// goes by weapon type.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Night Elf on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Tauren on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60,
 	encounter: EncounterLevel60,
-	race: Race.RaceNightElf,
+	race: Race.RaceTauren,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -347,7 +348,7 @@ export const PresetBuildLevel60FaerieFire = PresetUtils.makePresetBuild('Level 6
 	talents: TalentsLevel60,
 	rotation: APLLevel60FaerieFire,
 	encounter: EncounterLevel60FaerieFireDuty,
-	race: Race.RaceNightElf,
+	race: Race.RaceTauren,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],

@@ -65,6 +65,8 @@ func (druid *Druid) newWrathSpellConfig(rank int) core.SpellConfig {
 		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       SpellFlagOmen | core.SpellFlagAPL | core.SpellFlagResetAttackSwing,
 
+		PushbackReduction: druid.naturesFocusChance(),
+
 		RequiredLevel: level,
 		Rank:          rank,
 		MissileSpeed:  20,

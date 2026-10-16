@@ -5,7 +5,7 @@
   "build": "Feral cat",
   "isDefault": true,
   "pr": 8,
-  "race": "NightElf",
+  "race": "Tauren",
   "talents": "05002-05200332021031212051-05501",
   "treeNames": [
     "Balance",
@@ -15,12 +15,12 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 709.6,
-    "source": "Howling Idol at 0.5 sec (client 1.60.1.70425)"
+    "dps": 713.7,
+    "source": "Tauren, Nature's Focus pushback and the client 70425 racials (2026-10-16)"
   },
   "verify": {
-    "dps": 709.64,
-    "stderr": 0.15,
+    "dps": 713.67,
+    "stderr": 0.16,
     "iters": 20000,
     "ok": true,
     "note": "180 s, seed 1"
@@ -38,7 +38,7 @@
   ],
   "rotation": [
     "Opener: plain Cat Form (no Stealth/Prowl or Ravage)",
-    "Racials, trinkets and potions on cooldown; Berserk with the on-use trinket; Elune's Light outside Berserk",
+    "Racials, trinkets and potions on cooldown; Berserk with the on-use trinket",
     "Shifting Power at 50 Energy or less, unless a Ferocious Bite is due (5 CP and Rip has 6 s or more)",
     "Ferocious Bite at any combo points in the last 2 s",
     "Rip at 4+ combo points when it is down (not in the last 8 s)",
