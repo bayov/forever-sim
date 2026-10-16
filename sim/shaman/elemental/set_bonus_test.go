@@ -19,7 +19,7 @@ func newSyntheticSetSim(items []*proto.ItemSpec) *ElementalShaman {
 		Class:         proto.Class_ClassShaman,
 		Level:         60,
 		Equipment:     &proto.EquipmentSpec{Items: items},
-		TalentsString: "5505301300103051",
+		TalentsString: "550533100000135",
 		Rotation:      &proto.APLRotation{},
 		Spec: &proto.Player_ElementalShaman{ElementalShaman: &proto.ElementalShaman{
 			Options: &proto.ElementalShaman_Options{},

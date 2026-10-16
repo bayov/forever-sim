@@ -6,7 +6,7 @@
   "isDefault": true,
   "pr": 7,
   "race": "Orc",
-  "talents": "050533102-053030031005112251",
+  "talents": "053503002-055030011005112151-02",
   "treeNames": [
     "Elemental",
     "Enhancement",
@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "optimized",
   "published": {
-    "dps": 834.6,
-    "source": "Shaman PR (rotation audit pass 21: Searing Totem before the pull, gated Lightning Shield recast, no totem recasts in the last 20 s, 2026-10-16)"
+    "dps": 825.3,
+    "source": "Shaman PR (client 1.60.1.70425: new talent tree with Elemental Mastery, Fire Nova cut, Lava Burst and Mana Tide ranks, searched talents, 2026-10-16)"
   },
   "verify": {
-    "dps": 834.64,
+    "dps": 825.3,
     "stderr": 0.37,
     "iters": 20000,
     "ok": true,
@@ -43,7 +43,6 @@
     "Rage of the Farseer on cooldown, waiting for the on-use trinket; Blood Fury lined up with it",
     "Other cooldowns (Sapper, Demonic Rune, Major Mana Potion, Land Mine)",
     "Stormstrike on cooldown",
-    "Fire Nova while Clearcasting is up",
     "Flame Shock when its DoT is down",
     "Lightning Bolt at 5 Maelstrom Weapon stacks",
     "Earth Shock",
@@ -73,14 +72,14 @@
   ],
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 Strength and 14 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Orc lead is mostly Axe Specialization from the synthetic axe; with weapon racials off Windshaper Skyborne leads",
+    "Orc leads on Savage (1% crit with any weapon since client 70425); Windshaper Skyborne is 2.7 behind at 180 s",
     "Maelstrom Weapon proc rate (2 PPM per point) is an assumption until beta reaches level 34",
-    "Elemental Focus trigger set: if Stormstrike can trigger it, Enhancement gets too few Clearcasting procs",
     "Without Ahn'Qiraj book ranks (Strength of Earth IV, Battle Shout VI) every build lost about 7.7 DPS",
     "One 2% crit elixir by the standard; Mongoose, Grizzly and Owl stacked would be about +36 if Forever allows it",
     "Earth Shock VII's base damage ×1.08, halfway to the level 24 rank's 0.66 of Era; the client has ×1.00",
     "Tier 1 4/5-piece bonuses not live",
-    "Raid damage hits on the shaman (2 a minute, which fires Lightning Shield) are an estimate from boss timers, not measured in logs; the assumptions panel runs 0 and 10"
+    "Raid damage hits on the shaman (2 a minute, which fires Lightning Shield) are an estimate from boss timers, not measured in logs; the assumptions panel runs 0 and 10",
+    "Fire Nova cut in client 70425 (coefficient 0.143 from 0.214, rank 5 232 to 259 base from 397 to 443)"
   ],
   "notes": "mksettings -spec enh -apl optimized (standards 23: every shaman drops its own party totems; the raid's only totem is a second shaman's Grace of Air, standards 25, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself)."
 }

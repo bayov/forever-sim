@@ -156,7 +156,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecElementalShaman, {
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
 				[Faction.Alliance]: Race.RaceDwarf,
-				[Faction.Horde]: Race.RaceOrc,
+				[Faction.Horde]: Race.RaceSkyborneWindshaper,
 			},
 			defaultGear: {
 				[Faction.Unknown]: {},

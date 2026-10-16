@@ -41,7 +41,7 @@ var PlayerOptionsBasic = &proto.Player_WardenShaman{
 	},
 }
 
-var DefaultTalents = "3535001-0502303313551102"
+var DefaultTalents = "35050013-0502303313551102"
 
 var Phase1Consumes = core.ConsumesCombo{
 	Label: "P1-Consumes",

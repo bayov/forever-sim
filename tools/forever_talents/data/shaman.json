@@ -4,7 +4,7 @@
   "className": "Shaman",
   "dataVersion": 2,
   "dataSource": "client",
-  "generatedAt": "2026-09-25T05:41:14Z",
+  "generatedAt": "2026-10-16T06:59:12Z",
   "rules": {
     "pointsPerRow": 5,
     "maxPoints": 51,
@@ -103,8 +103,8 @@
         {
           "id": "elemental-warding",
           "name": "Elemental Warding",
-          "row": 1,
-          "col": 0,
+          "row": 2,
+          "col": 1,
           "maxRank": 3,
           "icon": "spell_nature_spiritarmor",
           "iconSource": "client",
@@ -168,20 +168,23 @@
           "id": "call-of-flame",
           "name": "Call of Flame",
           "row": 1,
-          "col": 2,
+          "col": 3,
           "maxRank": 3,
           "icon": "spell_fire_immolation",
           "iconSource": "client",
-          "description": "Increases the damage done by your Fire Totems and by your Flame Shock, Fire Nova, and Lava Burst spells by {0}%.",
+          "description": "Increases the damage done by your Fire Totems and by your Flame Shock, Fire Nova, and Lava Burst spells by {0}%, as well as increases the duration of your Flame Shock spell by {1} sec.",
           "ranks": [
             [
-              5
+              5,
+              3
             ],
             [
-              10
+              10,
+              6
             ],
             [
-              15
+              15,
+              9
             ]
           ],
           "ranksObserved": [
@@ -196,7 +199,7 @@
           "id": "elemental-devastation",
           "name": "Elemental Devastation",
           "row": 1,
-          "col": 3,
+          "col": 0,
           "maxRank": 3,
           "icon": "spell_fire_elementaldevastation",
           "iconSource": "client",
@@ -227,7 +230,7 @@
           "id": "elemental-focus",
           "name": "Elemental Focus",
           "row": 2,
-          "col": 1,
+          "col": 0,
           "maxRank": 1,
           "icon": "spell_shadow_manaburn",
           "iconSource": "client",
@@ -280,8 +283,8 @@
           "ranksSource": "client",
           "requires": [
             {
-              "talent": "call-of-thunder",
-              "rank": 1
+              "talent": "lightning-overload",
+              "rank": 3
             }
           ],
           "spellId": 16089
@@ -294,15 +297,17 @@
           "maxRank": 2,
           "icon": "spell_fire_sealoffire",
           "iconSource": "client",
-          "description": "Increases the damage done by your Fire Nova spell by {0}% and reduces its cooldown by {1} sec.",
+          "description": "Increases the damage done by your Fire Nova spell by {0}% and reduces its cooldown by {1} sec, and increases the duration of your Magma Totem by {2} sec.",
           "ranks": [
             [
               10,
-              2
+              2,
+              10
             ],
             [
               20,
-              4
+              4,
+              20
             ]
           ],
           "ranksObserved": [
@@ -341,32 +346,6 @@
           "spellId": 29062
         },
         {
-          "id": "call-of-thunder",
-          "name": "Call of Thunder",
-          "row": 3,
-          "col": 2,
-          "maxRank": 1,
-          "icon": "spell_nature_callstorm",
-          "iconSource": "client",
-          "description": "Increases the critical strike chance of your Lightning Bolt and Chain Lightning spells by {0}%.",
-          "ranks": [
-            [
-              3
-            ]
-          ],
-          "ranksObserved": [
-            1
-          ],
-          "ranksSource": "client",
-          "requires": [
-            {
-              "talent": "elemental-alacrity",
-              "rank": 3
-            }
-          ],
-          "spellId": 16120
-        },
-        {
           "id": "elemental-reach",
           "name": "Elemental Reach",
           "row": 4,
@@ -374,15 +353,15 @@
           "maxRank": 2,
           "icon": "spell_nature_stormreach",
           "iconSource": "client",
-          "description": "Increases the range of your Lightning Bolt, Chain Lightning, Fire Nova, and Lava Burst spells by {0} yards, and increases the range of your Flame Shock spell by {1} yards.",
+          "description": "Increases the range of your Lightning Bolt, Chain Lightning, Fire Nova, and Lava Burst spells by {0} yards and reduces the cooldown of Totemic Projection by {1} sec.",
           "ranks": [
             [
               3,
-              8
+              10
             ],
             [
               6,
-              15
+              20
             ]
           ],
           "ranksObserved": [
@@ -396,7 +375,7 @@
           "id": "lightning-overload",
           "name": "Lightning Overload",
           "row": 4,
-          "col": 1,
+          "col": 2,
           "maxRank": 3,
           "icon": "spell_nature_lightningoverload",
           "iconSource": "client",
@@ -418,12 +397,18 @@
             3
           ],
           "ranksSource": "client",
+          "requires": [
+            {
+              "talent": "elemental-alacrity",
+              "rank": 3
+            }
+          ],
           "spellId": 408438
         },
         {
           "id": "earthbound",
           "name": "Earthbound",
-          "row": 4,
+          "row": 3,
           "col": 3,
           "maxRank": 1,
           "icon": "spell_nature_stranglevines",
@@ -443,7 +428,7 @@
         {
           "id": "elemental-alacrity",
           "name": "Elemental Alacrity",
-          "row": 2,
+          "row": 1,
           "col": 2,
           "maxRank": 3,
           "icon": "spell_lightning_lightningbolt01",
@@ -471,7 +456,7 @@
         {
           "id": "lava-burst",
           "name": "Lava Burst",
-          "row": 6,
+          "row": 4,
           "col": 1,
           "maxRank": 1,
           "icon": "spell_shaman_lavaburst",
@@ -479,8 +464,8 @@
           "description": "You hurl molten lava at the target, dealing {0} to {1} Fire damage. If your Flame Shock is on the target, Lava Burst deals {2}% increased damage.",
           "ranks": [
             [
-              143,
-              185,
+              113,
+              146,
               20
             ]
           ],
@@ -488,14 +473,36 @@
             1
           ],
           "ranksSource": "client",
-          "cost": "165 Mana; 30 yd range; 2.5 sec cast; 10 sec cooldown",
+          "cost": "135 Mana; 30 yd range; 2.5 sec cast; 10 sec cooldown",
+          "spellId": 408490
+        },
+        {
+          "id": "elemental-mastery",
+          "name": "Elemental Mastery",
+          "row": 6,
+          "col": 1,
+          "maxRank": 1,
+          "icon": "spell_nature_wispheal",
+          "iconSource": "client",
+          "description": "Gain mastery over Fire and Lightning, reducing the cast time of Lightning Bolt and Lava Burst by {0} sec, and removing the cooldown from Chain Lightning. Lasts {1} sec.",
+          "ranks": [
+            [
+              0.5,
+              15
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "Instant; 3 min cooldown",
           "requires": [
             {
-              "talent": "lightning-overload",
-              "rank": 3
+              "talent": "lava-burst",
+              "rank": 1
             }
           ],
-          "spellId": 408490
+          "spellId": 16166
         }
       ]
     },
@@ -1196,7 +1203,7 @@
         {
           "id": "tidal-focus",
           "name": "Tidal Focus",
-          "row": 1,
+          "row": 0,
           "col": 2,
           "maxRank": 5,
           "icon": "spell_frost_manarecharge",
@@ -1347,7 +1354,7 @@
         {
           "id": "totemic-focus",
           "name": "Totemic Focus",
-          "row": 0,
+          "row": 1,
           "col": 2,
           "maxRank": 5,
           "icon": "spell_nature_moonglow",
@@ -1566,6 +1573,6 @@
     }
   ],
   "notes": [
-    "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17, with the talents the 2026-09-24 development notes changed updated to build 1.60.1.70009 from foreverchanges.pro"
+    "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17, with the talents the 2026-09-24 development notes changed updated to build 1.60.1.70009 from foreverchanges.pro; tree moves, Elemental Mastery, Call of Thunder removed and the Call of Flame, Improved Fire Nova (Trial by Fire) and Elemental Reach effects from build 1.60.1.70425 (wago.tools)"
   ]
 }

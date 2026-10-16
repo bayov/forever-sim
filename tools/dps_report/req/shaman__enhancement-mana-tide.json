@@ -94,7 +94,7 @@
               "blessingOfWisdom": "TristateEffectImproved",
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "02-055030031005112151-053051001001",
+            "talentsString": "03-055030031005112051-053051001001",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Leatherworking",
@@ -215,7 +215,7 @@
                     },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 17359
+                        "spellId": 1325256
                       }
                     }
                   }
@@ -242,7 +242,7 @@
                               "val": {
                                 "auraIsActive": {
                                   "auraId": {
-                                    "spellId": 17359
+                                    "spellId": 1325256
                                   }
                                 }
                               }

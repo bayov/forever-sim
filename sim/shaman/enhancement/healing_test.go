@@ -18,7 +18,7 @@ import (
 // Nature's Swiftness, Purification, Riptide).
 const (
 	restoImprovedHealingWave = "--5"
-	restoTidalFocus          = "--00005"
+	restoTidalFocus          = "--05"
 	restoAncestralHealing    = "--0000003"
 	restoHealingFocus        = "--00000003"
 	restoTidalMastery        = "--0000000005"

@@ -19,7 +19,7 @@ func TestOrcShamanElementalAlacrity(t *testing.T) {
 	for points, cut := range []time.Duration{0, 170, 330, 500} {
 		cut *= time.Millisecond
 		// Elemental Alacrity points and Lava Burst.
-		sim, enh := newShamanSim(newOrcShaman(60, fmt.Sprintf("0000000%d00000001", points), &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 10)
+		sim, enh := newShamanSim(newOrcShaman(60, fmt.Sprintf("0000%d00000001", points), &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 10)
 		if enh.Talents.ElementalAlacrity != int32(points) {
 			t.Fatalf("got Elemental Alacrity %d, want %d", enh.Talents.ElementalAlacrity, points)
 		}

@@ -6,7 +6,7 @@ import (
 	"github.com/wowsims/classic/sim/core"
 )
 
-// Stormstrike under Forever (beta client): 125 Mana, 8 sec cooldown, and the strike marks the
+// Stormstrike under Forever (beta client): 8% of base mana (125 Mana before client 1.60.1.70425), 8 sec cooldown, and the strike marks the
 // target so the shaman's next Lightning Bolt, Chain Lightning or Earth Shock on it deals 20%
 // more. The mark lasts 12 sec and is the shaman's own, so another shaman's Stormstrike gives
 // nothing (the external debuff is skipped under Forever in core/debuffs.go).
@@ -59,7 +59,8 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 	manaCost := core.ManaCostOptions{BaseCost: .21}
 	cooldown := time.Second * 20
 	if forever {
-		manaCost = core.ManaCostOptions{FlatCost: 125}
+		// 8% of base mana since client 1.60.1.70425 (125 before).
+		manaCost = core.ManaCostOptions{BaseCost: .08}
 		cooldown = time.Second * 8
 	}
 
@@ -114,18 +115,22 @@ func (shaman *Shaman) stormstrikeWeaponDamage(sim *core.Simulation, attackPower 
 	return weapon.BaseDamage(sim) + StormstrikeSpeed(weapon)*attackPower/weapon.AttackPowerPerDPS
 }
 
-// spendStormstrike returns the damage multiplier the shaman's Lightning Bolt, Chain
-// Lightning or Earth Shock gets on this target, and uses the mark up. Under Classic the
-// debuff on the target already raises the Nature damage it takes, so this is 1.
-func (shaman *Shaman) spendStormstrike(sim *core.Simulation, target *core.Unit) float64 {
-	if shaman.stormstrikeMarks == nil {
+// stormstrikeBonus returns the damage multiplier the shaman's Lightning Bolt, Chain Lightning
+// or Earth Shock gets on this target from our Stormstrike mark. Under Classic the debuff on the
+// target already raises the Nature damage it takes, so this is 1.
+func (shaman *Shaman) stormstrikeBonus(target *core.Unit) float64 {
+	if shaman.stormstrikeMarks == nil || !shaman.stormstrikeMarks.Get(target).IsActive() {
 		return 1
 	}
-
-	aura := shaman.stormstrikeMarks.Get(target)
-	if !aura.IsActive() {
-		return 1
-	}
-	aura.Deactivate(sim)
 	return StormstrikeForeverBonus
+}
+
+// spendStormstrike uses the mark on the target up once the spell's result is in. Since client
+// 1.60.1.70425 a spell that misses leaves it (the 15 October development notes: "Stormstrike's
+// debuff is no longer consumed if the spell does not land").
+func (shaman *Shaman) spendStormstrike(sim *core.Simulation, target *core.Unit, result *core.SpellResult) {
+	if shaman.stormstrikeMarks == nil || !result.Landed() {
+		return
+	}
+	shaman.stormstrikeMarks.Get(target).Deactivate(sim)
 }

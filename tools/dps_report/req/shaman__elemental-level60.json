@@ -4,7 +4,7 @@
       {
         "players": [
           {
-            "race": "RaceOrc",
+            "race": "RaceSkyborneWindshaper",
             "class": "ClassShaman",
             "equipment": {
               "items": [
@@ -88,7 +88,7 @@
               "blessingOfKings": true,
               "blessingOfWisdom": "TristateEffectImproved"
             },
-            "talentsString": "5504301300103051-052-05305",
+            "talentsString": "5501331003001351-055000101-053",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Alchemy",
@@ -305,7 +305,7 @@
                     },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 1238300
+                        "spellId": 1326047
                       }
                     }
                   }

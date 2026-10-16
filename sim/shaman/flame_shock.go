@@ -33,12 +33,14 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 }
 
 func (shaman *Shaman) newFlameShockSpell(rank int, shockTimer *core.Timer) core.SpellConfig {
-	numTicks := 4
+	// Call of Flame lengthens the DoT by 3 sec, one tick, a point since client 1.60.1.70425.
+	// The base tick keeps its damage, so the extra ticks add to the total.
+	numTicks := 4 + int(shaman.Talents.CallOfFlame)
 	tickDuration := time.Second * 3
 
 	spellId := FlameShockSpellId[rank]
 	baseDamage := FlameShockScaling[rank].At(FlameShockBaseDamage[rank], shaman.Level)
-	baseDotDamage := FlameShockBaseDotDamage[rank] / float64(numTicks)
+	baseDotDamage := FlameShockBaseDotDamage[rank] / 4
 	baseSpellCoeff := FlameShockBaseSpellCoef[rank]
 	dotSpellCoeff := FlameShockDotSpellCoef[rank]
 	manaCost := FlameShockManaCost[rank]
