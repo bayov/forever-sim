@@ -1,0 +1,180 @@
+{
+  "name": "Level 30",
+  "spec": "ele",
+  "class": "SHAMAN",
+  "race": "Orc",
+  "faction": "Horde",
+  "level": 30,
+  "talents": "550430130010301",
+  "durations": [120],
+  "dps": 89.12,
+  "made": "2026-10-16",
+  "sim": "abd7cd344ed1+",
+  "slots": {
+    "head": [
+      {"id":10502,"name":"Spellpower Goggles Xtreme","dps":89.12,"loss":0,"bis":true},
+      {"id":15339,"suffix":2002,"name":"Pathfinder Hat of Nature's Wrath","dps":87.97,"loss":1.15},
+      {"id":7413,"suffix":2001,"name":"Infiltrator Cap of Nature's Wrath","dps":87.7,"loss":1.42},
+      {"id":15129,"suffix":2001,"name":"Robust Helm of Nature's Wrath","dps":87.7,"loss":1.42},
+      {"id":10406,"suffix":2001,"name":"Scaled Leather Headband of Nature's Wrath","dps":87.7,"loss":1.42},
+      {"id":14200,"suffix":990225,"name":"Thistlefur Cap of Magic","dps":87.57,"loss":1.55},
+      {"id":4322,"name":"Enchanter's Cowl","dps":87.41,"loss":1.7},
+      {"id":7357,"suffix":990235,"name":"Elder's Hat of Magic","dps":87.26,"loss":1.86},
+      {"id":7413,"suffix":990235,"name":"Infiltrator Cap of Magic","dps":87.26,"loss":1.86},
+      {"id":15339,"suffix":990235,"name":"Pathfinder Hat of Magic","dps":87.26,"loss":1.86}
+    ],
+    "neck": [
+      {"id":23169,"name":"Scorn's Icy Choker","dps":89.12,"loss":0,"bis":true},
+      {"id":12029,"suffix":990194,"name":"Greenstone Talisman of the Elder","dps":87.95,"loss":1.17},
+      {"id":12029,"suffix":990149,"name":"Greenstone Talisman of the Sorcerer","dps":87.88,"loss":1.24},
+      {"id":12028,"suffix":990186,"name":"Basalt Necklace of the Elder","dps":87.74,"loss":1.38},
+      {"id":12019,"suffix":990186,"name":"Cerulean Talisman of the Elder","dps":87.74,"loss":1.38},
+      {"id":12039,"suffix":990186,"name":"Tundra Necklace of the Elder","dps":87.74,"loss":1.38},
+      {"id":12029,"suffix":174,"name":"Greenstone Talisman of Intellect","dps":87.67,"loss":1.45},
+      {"id":12029,"suffix":990164,"name":"Greenstone Talisman of the Physician","dps":87.63,"loss":1.49},
+      {"id":12028,"suffix":990191,"name":"Basalt Necklace of the Sorcerer","dps":87.62,"loss":1.5},
+      {"id":12019,"suffix":990191,"name":"Cerulean Talisman of the Sorcerer","dps":87.62,"loss":1.5}
+    ],
+    "shoulder": [
+      {"id":7684,"name":"Bloodmage Mantle","dps":89.12,"loss":0,"bis":true},
+      {"id":6697,"name":"Batwing Mantle","dps":88.92,"loss":0.2},
+      {"id":6685,"name":"Death Speaker Mantle","dps":88.92,"loss":0.2},
+      {"id":4197,"name":"Berylline Pads","dps":88.87,"loss":0.25},
+      {"id":12998,"name":"Magician's Mantle","dps":87.88,"loss":1.24},
+      {"id":15140,"suffix":1999,"name":"Cutthroat's Mantle of Nature's Wrath","dps":87.83,"loss":1.29},
+      {"id":15357,"suffix":1999,"name":"Headhunter's Spaulders of Nature's Wrath","dps":87.83,"loss":1.29},
+      {"id":3748,"name":"Feline Mantle","dps":87.31,"loss":1.81},
+      {"id":15140,"suffix":990179,"name":"Cutthroat's Mantle of Magic","dps":87.27,"loss":1.85},
+      {"id":15357,"suffix":990179,"name":"Headhunter's Spaulders of Magic","dps":87.27,"loss":1.85}
+    ],
+    "back": [
+      {"id":277206,"name":"Brilliant Cloak","dps":89.12,"loss":0,"bis":true},
+      {"id":15579,"suffix":990194,"name":"Sparkleshell Cloak of the Elder","dps":88.58,"loss":0.53},
+      {"id":7436,"suffix":990194,"name":"Twilight Cape of the Elder","dps":88.58,"loss":0.53},
+      {"id":15579,"suffix":990149,"name":"Sparkleshell Cloak of the Sorcerer","dps":88.56,"loss":0.56},
+      {"id":7436,"suffix":990149,"name":"Twilight Cape of the Sorcerer","dps":88.56,"loss":0.56},
+      {"id":9860,"suffix":1996,"name":"Archer's Cloak of Nature's Wrath","dps":88.53,"loss":0.59},
+      {"id":15579,"suffix":1996,"name":"Sparkleshell Cloak of Nature's Wrath","dps":88.53,"loss":0.59},
+      {"id":7436,"suffix":1996,"name":"Twilight Cape of Nature's Wrath","dps":88.53,"loss":0.59},
+      {"id":15579,"suffix":990148,"name":"Sparkleshell Cloak of Magic","dps":88.37,"loss":0.75},
+      {"id":7436,"suffix":990148,"name":"Twilight Cape of Magic","dps":88.37,"loss":0.75}
+    ],
+    "chest": [
+      {"id":273044,"name":"Arcanowisp Robes","dps":89.12,"loss":0,"unsourced":true,"bis":true},
+      {"id":7065,"name":"Green Silk Armor","dps":88.65,"loss":0.47},
+      {"id":7728,"name":"Beguiler Robes","dps":88.5,"loss":0.62},
+      {"id":9508,"name":"Mechbuilder's Overalls","dps":88.18,"loss":0.94},
+      {"id":277213,"name":"Dro'zem's Tunic","dps":87.86,"loss":1.26},
+      {"id":4256,"name":"Guardian Armor","dps":87.46,"loss":1.66},
+      {"id":17043,"name":"Zealot's Robe","dps":87.25,"loss":1.87},
+      {"id":6682,"name":"Death Speaker Robes","dps":87.22,"loss":1.9},
+      {"id":270079,"name":"Witchdoctor's Dress","dps":87.05,"loss":2.07},
+      {"id":15130,"suffix":2002,"name":"Cutthroat's Vest of Nature's Wrath","dps":86.64,"loss":2.48}
+    ],
+    "wrist": [
+      {"id":9448,"name":"Spidertank Oilrag","dps":89.12,"loss":0,"bis":true},
+      {"id":9428,"suffix":1998,"name":"Unearthed Bands of Nature's Wrath","dps":88.83,"loss":0.29},
+      {"id":9455,"suffix":990144,"name":"Emissary Cuffs of Magic","dps":88.49,"loss":0.63},
+      {"id":9428,"suffix":990144,"name":"Unearthed Bands of Magic","dps":88.49,"loss":0.63},
+      {"id":9857,"suffix":1996,"name":"Archer's Bracers of Nature's Wrath","dps":88.04,"loss":1.08},
+      {"id":9455,"suffix":1996,"name":"Emissary Cuffs of Nature's Wrath","dps":88.04,"loss":1.08},
+      {"id":9846,"suffix":990148,"name":"Conjurer's Bracers of Magic","dps":87.88,"loss":1.24},
+      {"id":14221,"suffix":990148,"name":"Geomancer's Bracers of Magic","dps":87.88,"loss":1.24},
+      {"id":9428,"suffix":176,"name":"Unearthed Bands of Intellect","dps":87.8,"loss":1.32},
+      {"id":15143,"suffix":1995,"name":"Ghostwalker Bindings of Nature's Wrath","dps":87.77,"loss":1.35}
+    ],
+    "hands": [
+      {"id":15355,"suffix":1998,"name":"Headhunter's Mitts of Nature's Wrath","dps":89.12,"loss":0,"bis":true},
+      {"id":9861,"suffix":1998,"name":"Archer's Gloves of Nature's Wrath","dps":89.12,"loss":0},
+      {"id":9861,"suffix":990179,"name":"Archer's Gloves of Magic","dps":89.09,"loss":0.03},
+      {"id":15355,"suffix":990179,"name":"Headhunter's Mitts of Magic","dps":89.09,"loss":0.03},
+      {"id":14211,"suffix":990179,"name":"Vital Handwraps of Magic","dps":89.09,"loss":0.03},
+      {"id":16741,"name":"Oilrag Handwraps","dps":88.89,"loss":0.23},
+      {"id":15137,"suffix":990150,"name":"Cutthroat's Mitts of Nature's Wrath","dps":88.85,"loss":0.27},
+      {"id":7412,"suffix":990150,"name":"Infiltrator Gloves of Nature's Wrath","dps":88.85,"loss":0.27},
+      {"id":9832,"suffix":990150,"name":"Scaled Leather Gloves of Nature's Wrath","dps":88.85,"loss":0.27},
+      {"id":286989,"name":"Violet Sorcerer's Wraps","dps":88.82,"loss":0.3,"unsourced":true}
+    ],
+    "waist": [
+      {"id":273039,"name":"Blightleaf Rope","dps":89.12,"loss":0,"unsourced":true,"bis":true},
+      {"id":20164,"name":"Defiler's Cloth Girdle","dps":88.3,"loss":0.82},
+      {"id":7055,"name":"Crimson Silk Belt","dps":88.18,"loss":0.94},
+      {"id":4258,"name":"Guardian Belt","dps":88.18,"loss":0.94},
+      {"id":20172,"name":"Defiler's Lizardhide Girdle","dps":87.67,"loss":1.45},
+      {"id":20197,"name":"Defiler's Mail Girdle","dps":87.67,"loss":1.45},
+      {"id":6726,"name":"Razzeric's Customized Seatbelt","dps":87.67,"loss":1.45},
+      {"id":9855,"suffix":990250,"name":"Archer's Belt of the Elder","dps":87.59,"loss":1.53},
+      {"id":9853,"suffix":990250,"name":"Conjurer's Cinch of the Elder","dps":87.59,"loss":1.53},
+      {"id":15148,"suffix":990250,"name":"Ghostwalker Belt of the Elder","dps":87.59,"loss":1.53}
+    ],
+    "legs": [
+      {"id":286988,"name":"Violet Sorcerer's Leggings","dps":89.12,"loss":0,"unsourced":true,"bis":true},
+      {"id":285338,"name":"Kodohide Legguards","dps":87.87,"loss":1.25},
+      {"id":15358,"suffix":2002,"name":"Headhunter's Woolies of Nature's Wrath","dps":86.44,"loss":2.68},
+      {"id":23173,"name":"Abomination Skin Leggings","dps":86.39,"loss":2.73},
+      {"id":15358,"suffix":990222,"name":"Headhunter's Woolies of the Elder","dps":86.37,"loss":2.75},
+      {"id":14203,"suffix":990222,"name":"Thistlefur Pants of the Elder","dps":86.37,"loss":2.75},
+      {"id":15139,"suffix":2001,"name":"Cutthroat's Pants of Nature's Wrath","dps":86.18,"loss":2.94},
+      {"id":7414,"suffix":2001,"name":"Infiltrator Pants of Nature's Wrath","dps":86.18,"loss":2.94},
+      {"id":9833,"suffix":2001,"name":"Scaled Leather Leggings of Nature's Wrath","dps":86.18,"loss":2.94},
+      {"id":15358,"suffix":990227,"name":"Headhunter's Woolies of the Sorcerer","dps":86.16,"loss":2.96}
+    ],
+    "feet": [
+      {"id":9454,"name":"Acidic Walkers","dps":89.12,"loss":0,"bis":true},
+      {"id":15142,"suffix":1999,"name":"Ghostwalker Boots of Nature's Wrath","dps":89.19,"loss":-0.07},
+      {"id":15350,"suffix":1999,"name":"Headhunter's Slippers of Nature's Wrath","dps":89.19,"loss":-0.07},
+      {"id":9845,"suffix":990179,"name":"Conjurer's Shoes of Magic","dps":88.64,"loss":0.48},
+      {"id":15142,"suffix":990179,"name":"Ghostwalker Boots of Magic","dps":88.64,"loss":0.48},
+      {"id":15350,"suffix":990179,"name":"Headhunter's Slippers of Magic","dps":88.64,"loss":0.48},
+      {"id":14214,"suffix":990179,"name":"Vital Boots of Magic","dps":88.64,"loss":0.48},
+      {"id":9845,"suffix":990250,"name":"Conjurer's Shoes of the Elder","dps":88.55,"loss":0.57},
+      {"id":15142,"suffix":990250,"name":"Ghostwalker Boots of the Elder","dps":88.55,"loss":0.57},
+      {"id":15350,"suffix":990250,"name":"Headhunter's Slippers of the Elder","dps":88.55,"loss":0.57}
+    ],
+    "finger": [
+      {"id":281635,"name":"Philanthropist's Ring","dps":89.12,"loss":0,"bis":true},
+      {"id":273030,"name":"Ring of Power Regulation","dps":89.12,"loss":0,"bis":true},
+      {"id":6750,"name":"Snake Hoop","dps":89.25,"loss":-0.13},
+      {"id":19521,"name":"Advisor's Ring","dps":89.1,"loss":0.02},
+      {"id":11985,"suffix":990194,"name":"Cerulean Ring of the Elder","dps":88.53,"loss":0.59},
+      {"id":20426,"name":"Advisor's Ring","dps":88.48,"loss":0.64},
+      {"id":11996,"suffix":990186,"name":"Basalt Ring of the Elder","dps":88.42,"loss":0.7},
+      {"id":11970,"suffix":990186,"name":"Spinel Ring of the Elder","dps":88.42,"loss":0.7},
+      {"id":12009,"suffix":990186,"name":"Tundra Ring of the Elder","dps":88.42,"loss":0.7},
+      {"id":11985,"suffix":990149,"name":"Cerulean Ring of the Sorcerer","dps":88.41,"loss":0.71}
+    ],
+    "trinket": [
+      {"id":273643,"name":"Worgenbane Talisman","dps":89.12,"loss":0,"bis":true},
+      {"id":274152,"name":"Roogug's Severed Head","dps":89.12,"loss":0,"bis":true},
+      {"id":273298,"name":"Lookie's Spyglass","dps":88.98,"loss":0.14}
+    ],
+    "mainhand": [
+      {"id":271804,"name":"Soulsplatter Mace","dps":89.12,"loss":0,"with":7749,"bis":true},
+      {"id":280607,"name":"Lightning's Grasp","dps":88.87,"loss":0.25,"with":7749},
+      {"id":271803,"name":"Greatstaff of the Necrokhans","dps":86.71,"loss":2.41},
+      {"id":271931,"name":"Clever Expeditionary's Spellblade","dps":85.47,"loss":3.65,"unsourced":true,"with":7749},
+      {"id":272086,"name":"Darkspear Insurgent's Spellblade","dps":85.47,"loss":3.65,"with":7749},
+      {"id":271799,"name":"Desert Crawler's Claw","dps":85.39,"loss":3.73,"with":7749},
+      {"id":270069,"name":"Mindslicer","dps":85.09,"loss":4.03,"with":7749},
+      {"id":6691,"name":"Swinetusk Shank","dps":84.89,"loss":4.23,"with":7749},
+      {"id":273053,"name":"Tendonscraper Dagger","dps":83.54,"loss":5.58,"unsourced":true,"with":7749},
+      {"id":17039,"name":"Skullbreaker","dps":83.26,"loss":5.86,"with":7749}
+    ],
+    "offhand": [
+      {"id":7749,"name":"Omega Orb","dps":89.12,"loss":0,"with":271804,"bis":true},
+      {"id":274043,"name":"Irradiated Shield","dps":89.15,"loss":-0.03,"with":271804},
+      {"id":273027,"name":"Raptor's Gaze","dps":88.56,"loss":0.56,"with":271804},
+      {"id":7609,"suffix":1996,"name":"Elder's Amber Stave of Nature's Wrath","dps":88.04,"loss":1.08,"with":271804},
+      {"id":6630,"name":"Seedcloud Buckler","dps":88.01,"loss":1.11,"with":271804},
+      {"id":7609,"suffix":990148,"name":"Elder's Amber Stave of Magic","dps":87.88,"loss":1.24,"with":271804},
+      {"id":9843,"suffix":1995,"name":"Banded Shield of Nature's Wrath","dps":87.77,"loss":1.35,"with":271804},
+      {"id":15133,"suffix":1995,"name":"Cutthroat's Buckler of Nature's Wrath","dps":87.77,"loss":1.35,"with":271804},
+      {"id":15935,"suffix":1995,"name":"Durable Rod of Nature's Wrath","dps":87.77,"loss":1.35,"with":271804},
+      {"id":15352,"suffix":1995,"name":"Headhunter's Buckler of Nature's Wrath","dps":87.77,"loss":1.35,"with":271804}
+    ],
+    "ranged": [
+      {"id":263412,"name":"Totem of Charged Flames","dps":89.12,"loss":0,"bis":true},
+      {"id":263436,"name":"Firestorm Totem","dps":85.45,"loss":3.67,"unsourced":true}
+    ]
+  }
+}

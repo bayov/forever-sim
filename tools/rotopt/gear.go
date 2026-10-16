@@ -595,6 +595,13 @@ func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSp
 			fmt.Println()
 		}
 	}
+	// With -gear-rank-out we also rank what else each slot could hold (bis.go).
+	if *gearRankOut != "" {
+		if err := s.rankBis(*gearRankOut, pool, best, names, unsourced, knobs); err != nil {
+			fmt.Fprintf(os.Stderr, "writing %s: %v\n", *gearRankOut, err)
+			os.Exit(1)
+		}
+	}
 	return best, bestScore
 }
 

@@ -1,0 +1,179 @@
+{
+  "name": "Level 30",
+  "spec": "enh",
+  "class": "SHAMAN",
+  "race": "Orc",
+  "faction": "Horde",
+  "level": 30,
+  "talents": "-0540320010051122",
+  "durations": [120],
+  "dps": 166.58,
+  "made": "2026-10-16",
+  "sim": "abd7cd344ed1+",
+  "slots": {
+    "head": [
+      {"id":15339,"suffix":693,"name":"Pathfinder Hat of the Tiger","dps":166.58,"loss":0,"bis":true},
+      {"id":7413,"suffix":948,"name":"Infiltrator Cap of the Gorilla","dps":166.36,"loss":0.21},
+      {"id":15339,"suffix":948,"name":"Pathfinder Hat of the Gorilla","dps":166.36,"loss":0.21},
+      {"id":7413,"suffix":690,"name":"Infiltrator Cap of the Tiger","dps":166,"loss":0.57},
+      {"id":15129,"suffix":690,"name":"Robust Helm of the Tiger","dps":166,"loss":0.57},
+      {"id":10406,"suffix":690,"name":"Scaled Leather Headband of the Tiger","dps":166,"loss":0.57},
+      {"id":15339,"suffix":440,"name":"Pathfinder Hat of the Falcon","dps":166,"loss":0.58},
+      {"id":15129,"suffix":945,"name":"Robust Helm of the Gorilla","dps":165.96,"loss":0.62},
+      {"id":10406,"suffix":945,"name":"Scaled Leather Headband of the Gorilla","dps":165.96,"loss":0.62},
+      {"id":3020,"name":"Enduring Cap","dps":165.51,"loss":1.06}
+    ],
+    "neck": [
+      {"id":13084,"name":"Kaleidoscope Chain","dps":166.58,"loss":0,"bis":true},
+      {"id":273049,"name":"Archmagister's Faceted Pendant","dps":166.21,"loss":0.36,"unsourced":true},
+      {"id":12019,"suffix":936,"name":"Cerulean Talisman of the Gorilla","dps":166.02,"loss":0.56},
+      {"id":12029,"suffix":936,"name":"Greenstone Talisman of the Gorilla","dps":166.02,"loss":0.56},
+      {"id":285331,"name":"Mark of the Pack Leader","dps":166.02,"loss":0.56},
+      {"id":12039,"suffix":936,"name":"Tundra Necklace of the Gorilla","dps":166.02,"loss":0.56},
+      {"id":23169,"name":"Scorn's Icy Choker","dps":165.79,"loss":0.79},
+      {"id":12028,"suffix":934,"name":"Basalt Necklace of the Gorilla","dps":165.78,"loss":0.8},
+      {"id":10299,"suffix":934,"name":"Gnomeregan Amulet of the Gorilla","dps":165.78,"loss":0.8},
+      {"id":10299,"suffix":680,"name":"Gnomeregan Amulet of the Tiger","dps":165.6,"loss":0.97}
+    ],
+    "shoulder": [
+      {"id":6697,"name":"Batwing Mantle","dps":166.58,"loss":0,"bis":true},
+      {"id":6685,"name":"Death Speaker Mantle","dps":165.8,"loss":0.78},
+      {"id":7684,"name":"Bloodmage Mantle","dps":165.64,"loss":0.93},
+      {"id":4197,"name":"Berylline Pads","dps":165.59,"loss":0.99},
+      {"id":15140,"suffix":942,"name":"Cutthroat's Mantle of the Gorilla","dps":165.56,"loss":1.01},
+      {"id":15357,"suffix":942,"name":"Headhunter's Spaulders of the Gorilla","dps":165.56,"loss":1.01},
+      {"id":2278,"name":"Forest Tracker Epaulets","dps":165.43,"loss":1.15},
+      {"id":15140,"suffix":254,"name":"Cutthroat's Mantle of the Falcon","dps":165.23,"loss":1.34},
+      {"id":15357,"suffix":254,"name":"Headhunter's Spaulders of the Falcon","dps":165.23,"loss":1.34},
+      {"id":3748,"name":"Feline Mantle","dps":165.21,"loss":1.37}
+    ],
+    "back": [
+      {"id":7460,"suffix":936,"name":"Knight's Cloak of the Gorilla","dps":166.58,"loss":0,"bis":true},
+      {"id":9860,"suffix":936,"name":"Archer's Cloak of the Gorilla","dps":166.58,"loss":0},
+      {"id":9847,"suffix":936,"name":"Conjurer's Cloak of the Gorilla","dps":166.58,"loss":0},
+      {"id":14219,"suffix":936,"name":"Geomancer's Cloak of the Gorilla","dps":166.58,"loss":0},
+      {"id":15147,"suffix":936,"name":"Ghostwalker Cloak of the Gorilla","dps":166.58,"loss":0},
+      {"id":15354,"suffix":936,"name":"Headhunter's Cloak of the Gorilla","dps":166.58,"loss":0},
+      {"id":15579,"suffix":936,"name":"Sparkleshell Cloak of the Gorilla","dps":166.58,"loss":0},
+      {"id":7436,"suffix":936,"name":"Twilight Cape of the Gorilla","dps":166.58,"loss":0},
+      {"id":14210,"suffix":936,"name":"Vital Cape of the Gorilla","dps":166.58,"loss":0},
+      {"id":271719,"name":"Furs of the Earthen Ring","dps":166.5,"loss":0.08}
+    ],
+    "chest": [
+      {"id":273026,"name":"Garb of Florid Feathers","dps":166.58,"loss":0,"bis":true},
+      {"id":273038,"name":"Garb of Fallen Felbark","dps":165.98,"loss":0.6,"unsourced":true},
+      {"id":273044,"name":"Arcanowisp Robes","dps":165.36,"loss":1.21,"unsourced":true},
+      {"id":9406,"name":"Spirewind Fetter","dps":164.92,"loss":1.66},
+      {"id":15130,"suffix":440,"name":"Cutthroat's Vest of the Falcon","dps":164.81,"loss":1.76},
+      {"id":7407,"suffix":440,"name":"Infiltrator Armor of the Falcon","dps":164.81,"loss":1.76},
+      {"id":7065,"name":"Green Silk Armor","dps":164.79,"loss":1.79},
+      {"id":7728,"name":"Beguiler Robes","dps":164.74,"loss":1.84},
+      {"id":270079,"name":"Witchdoctor's Dress","dps":164.73,"loss":1.85},
+      {"id":15130,"suffix":948,"name":"Cutthroat's Vest of the Gorilla","dps":164.67,"loss":1.91}
+    ],
+    "wrist": [
+      {"id":9428,"suffix":684,"name":"Unearthed Bands of the Tiger","dps":166.58,"loss":0,"bis":true},
+      {"id":9428,"suffix":939,"name":"Unearthed Bands of the Gorilla","dps":166.44,"loss":0.13},
+      {"id":9428,"suffix":251,"name":"Unearthed Bands of the Falcon","dps":166.16,"loss":0.41},
+      {"id":9428,"suffix":990247,"name":"Unearthed Bands of the Bandit","dps":165.92,"loss":0.66},
+      {"id":9428,"suffix":176,"name":"Unearthed Bands of Intellect","dps":165.7,"loss":0.88},
+      {"id":9428,"suffix":1556,"name":"Unearthed Bands of Power","dps":165.68,"loss":0.9},
+      {"id":9428,"suffix":190,"name":"Unearthed Bands of Strength","dps":165.68,"loss":0.9},
+      {"id":9455,"suffix":684,"name":"Emissary Cuffs of the Tiger","dps":165.62,"loss":0.95},
+      {"id":9455,"suffix":939,"name":"Emissary Cuffs of the Gorilla","dps":165.5,"loss":1.07},
+      {"id":9428,"suffix":171,"name":"Unearthed Bands of Agility","dps":165.45,"loss":1.13}
+    ],
+    "hands": [
+      {"id":277223,"name":"Traveled Gloves","dps":166.58,"loss":0,"bis":true},
+      {"id":286989,"name":"Violet Sorcerer's Wraps","dps":166.71,"loss":-0.13,"unsourced":true},
+      {"id":6732,"name":"Gnomish Mechanic's Gloves","dps":166.2,"loss":0.38},
+      {"id":9861,"suffix":254,"name":"Archer's Gloves of the Falcon","dps":165.88,"loss":0.7},
+      {"id":15355,"suffix":254,"name":"Headhunter's Mitts of the Falcon","dps":165.88,"loss":0.7},
+      {"id":14211,"suffix":254,"name":"Vital Handwraps of the Falcon","dps":165.88,"loss":0.7},
+      {"id":9861,"suffix":942,"name":"Archer's Gloves of the Gorilla","dps":165.72,"loss":0.85},
+      {"id":15355,"suffix":942,"name":"Headhunter's Mitts of the Gorilla","dps":165.72,"loss":0.85},
+      {"id":15137,"suffix":251,"name":"Cutthroat's Mitts of the Falcon","dps":165.09,"loss":1.49},
+      {"id":9823,"suffix":251,"name":"Durable Gloves of the Falcon","dps":165.09,"loss":1.49}
+    ],
+    "waist": [
+      {"id":252461,"name":"Skirmisher's Leather Belt","dps":166.58,"loss":0,"bis":true},
+      {"id":252459,"name":"Prowler's Leather Belt","dps":166.55,"loss":0.03},
+      {"id":252521,"name":"Stalker's Leather Belt","dps":165.67,"loss":0.9},
+      {"id":273807,"name":"Demolition Girdle","dps":165.59,"loss":0.99},
+      {"id":252520,"name":"Skulker's Leather Belt","dps":165.46,"loss":1.11},
+      {"id":273039,"name":"Blightleaf Rope","dps":165.45,"loss":1.13,"unsourced":true},
+      {"id":9855,"suffix":254,"name":"Archer's Belt of the Falcon","dps":165.4,"loss":1.17},
+      {"id":15148,"suffix":254,"name":"Ghostwalker Belt of the Falcon","dps":165.4,"loss":1.17},
+      {"id":15136,"suffix":251,"name":"Cutthroat's Belt of the Falcon","dps":164.63,"loss":1.95},
+      {"id":4257,"name":"Green Leather Belt","dps":164.63,"loss":1.95}
+    ],
+    "legs": [
+      {"id":6690,"name":"Ferine Leggings","dps":166.58,"loss":0,"bis":true},
+      {"id":270074,"name":"Doomcaller's Pants","dps":165.98,"loss":0.6},
+      {"id":285338,"name":"Kodohide Legguards","dps":165.51,"loss":1.07},
+      {"id":286988,"name":"Violet Sorcerer's Leggings","dps":165.35,"loss":1.22,"unsourced":true},
+      {"id":252458,"name":"Totemic Leather Leggings","dps":165.23,"loss":1.35},
+      {"id":15358,"suffix":948,"name":"Headhunter's Woolies of the Gorilla","dps":165.03,"loss":1.55},
+      {"id":7414,"suffix":948,"name":"Infiltrator Pants of the Gorilla","dps":165.03,"loss":1.55},
+      {"id":252501,"name":"Trapper's Leather Pants","dps":164.63,"loss":1.95},
+      {"id":252446,"name":"Totemic Leather Pants","dps":164.55,"loss":2.03},
+      {"id":7368,"suffix":440,"name":"Elder's Pants of the Falcon","dps":164.37,"loss":2.21}
+    ],
+    "feet": [
+      {"id":15142,"suffix":942,"name":"Ghostwalker Boots of the Gorilla","dps":166.58,"loss":0,"bis":true},
+      {"id":15350,"suffix":942,"name":"Headhunter's Slippers of the Gorilla","dps":166.58,"loss":0},
+      {"id":9845,"suffix":254,"name":"Conjurer's Shoes of the Falcon","dps":166.12,"loss":0.46},
+      {"id":15142,"suffix":254,"name":"Ghostwalker Boots of the Falcon","dps":166.12,"loss":0.46},
+      {"id":15350,"suffix":254,"name":"Headhunter's Slippers of the Falcon","dps":166.12,"loss":0.46},
+      {"id":14214,"suffix":254,"name":"Vital Boots of the Falcon","dps":166.12,"loss":0.46},
+      {"id":284403,"name":"Shapeshifting Sentinel's Strides","dps":166.1,"loss":0.47},
+      {"id":15142,"suffix":687,"name":"Ghostwalker Boots of the Tiger","dps":166.03,"loss":0.54},
+      {"id":15350,"suffix":687,"name":"Headhunter's Slippers of the Tiger","dps":166.03,"loss":0.54},
+      {"id":15131,"suffix":939,"name":"Cutthroat's Boots of the Gorilla","dps":165.99,"loss":0.59}
+    ],
+    "finger": [
+      {"id":281635,"name":"Philanthropist's Ring","dps":166.58,"loss":0,"bis":true},
+      {"id":13097,"name":"Thunderbrow Ring","dps":166.58,"loss":0,"bis":true},
+      {"id":7686,"name":"Ironspine's Eye","dps":166.64,"loss":-0.06},
+      {"id":285190,"name":"Wyvern Heart Band","dps":166.46,"loss":0.12},
+      {"id":11996,"suffix":936,"name":"Basalt Ring of the Gorilla","dps":166.34,"loss":0.24},
+      {"id":11985,"suffix":936,"name":"Cerulean Ring of the Gorilla","dps":166.34,"loss":0.24},
+      {"id":11970,"suffix":936,"name":"Spinel Ring of the Gorilla","dps":166.34,"loss":0.24},
+      {"id":12009,"suffix":936,"name":"Tundra Ring of the Gorilla","dps":166.34,"loss":0.24},
+      {"id":19513,"name":"Legionnaire's Band","dps":166.3,"loss":0.27},
+      {"id":18585,"name":"Band of Allegiance","dps":166.28,"loss":0.29}
+    ],
+    "trinket": [
+      {"id":273298,"name":"Lookie's Spyglass","dps":166.83,"loss":-0.25}
+    ],
+    "mainhand": [
+      {"id":280604,"name":"Rage of the Storm","dps":166.58,"loss":0,"bis":true},
+      {"id":271801,"name":"Abandoned Ferocity","dps":165.03,"loss":1.54},
+      {"id":279844,"name":"Striking Staff","dps":157.96,"loss":8.62},
+      {"id":6687,"name":"Corpsemaker","dps":156.48,"loss":10.09},
+      {"id":271803,"name":"Greatstaff of the Necrokhans","dps":155.96,"loss":10.62},
+      {"id":4128,"name":"Silver Spade","dps":154.93,"loss":11.64},
+      {"id":13045,"name":"Viscous Hammer","dps":153.52,"loss":13.05},
+      {"id":9521,"name":"Skullsplitter","dps":152.6,"loss":13.97},
+      {"id":271766,"name":"Heavehammer","dps":151.26,"loss":15.32},
+      {"id":272082,"name":"Darkspear Raider's Reaper","dps":150.21,"loss":16.37}
+    ],
+    "offhand": [
+      {"id":15133,"suffix":936,"name":"Cutthroat's Buckler of the Gorilla","dps":142.05,"loss":24.52,"with":271802},
+      {"id":15935,"suffix":936,"name":"Durable Rod of the Gorilla","dps":142.05,"loss":24.52,"with":271802},
+      {"id":7609,"suffix":936,"name":"Elder's Amber Stave of the Gorilla","dps":142.05,"loss":24.52,"with":271802},
+      {"id":15352,"suffix":936,"name":"Headhunter's Buckler of the Gorilla","dps":142.05,"loss":24.52,"with":271802},
+      {"id":7331,"suffix":936,"name":"Phalanx Shield of the Gorilla","dps":142.05,"loss":24.52,"with":271802},
+      {"id":15934,"suffix":936,"name":"Sage's Stave of the Gorilla","dps":142.05,"loss":24.52,"with":271802},
+      {"id":9830,"suffix":936,"name":"Scaled Shield of the Gorilla","dps":142.05,"loss":24.52,"with":271802},
+      {"id":15543,"suffix":936,"name":"Wicked Chain Shield of the Gorilla","dps":142.05,"loss":24.52,"with":271802},
+      {"id":273027,"name":"Raptor's Gaze","dps":141.91,"loss":24.67,"with":271802},
+      {"id":6746,"name":"Basalt Buckler","dps":141.88,"loss":24.69,"with":271802}
+    ],
+    "ranged": [
+      {"id":249398,"name":"Polished Driftwood Icon","dps":166.58,"loss":0,"bis":true},
+      {"id":263412,"name":"Totem of Charged Flames","dps":166.15,"loss":0.43},
+      {"id":263436,"name":"Firestorm Totem","dps":166.09,"loss":0.49,"unsourced":true}
+    ]
+  }
+}
