@@ -182,6 +182,14 @@ export function startReport(dash, events) {
   const tipSw = (color) => el('i', { class: 'sw', style: `background:${color}` });
   const tipChips = (items, more) => el('div', { class: 'fv-tip-chips' }, ...items.map((t) => el('span', { text: t })), more ? el('em', { text: more }) : null);
 
+  // A chart whose bars start well above 0 makes small gaps look big, so we say so plainly above it. start is where the
+  // bars start (null hides the warning), and what is what the gaps are between.
+  const axisWarn = (node, start, what) => {
+    node.hidden = !start;
+    if (start) node.replaceChildren(el('i', { class: 'fas fa-triangle-exclamation', 'aria-hidden': 'true' }),
+      el('span', {}, 'Bars start at ', el('b', { text: start }), `, not at 0, so the gaps between ${what} look much bigger than they are.`));
+  };
+
   // ---------- tooltip ----------
   // Chart tooltips: tap (or hover with a mouse) a mark for its exact values; the mark is highlighted; tap elsewhere to close.
   let tipEl = null, tipTippy = null, tipHl = [], tipPinned = false, tipCleanup = null, tipWait = null;
@@ -1569,7 +1577,7 @@ export function startReport(dash, events) {
       take.replaceChildren(el('b', { text: one.label }), ': ', el('b', { text: who(lead) }), ` leads with ${f1(lead.dps)} DPS`,
         ...(rows.length > 1 ? ['. ', who(rows[1]), ` is ${f2(100 * (1 - rows[1].dps / lead.dps))}% behind, and `, who(last), ` is last at −${f2(100 * (1 - last.dps / lead.dps))}%.`] : ['.']));
     } else take.replaceChildren();
-    axis.textContent = one ? `Bars start at ${f0(lo)} DPS.` : `Bars start at ${f1(lo)}%.`;
+    axisWarn(axis, lo > 0 ? (one ? `${f0(lo)} DPS` : `${f1(lo)}%`) : null, 'races');
     legend($('#rs-legend'), kinds, true);
     layoutCaps(host);
     if (!host.dataset.capWatch) {
@@ -2014,8 +2022,9 @@ export function startReport(dash, events) {
       rg.append('rect').attr('x', m.l).attr('y', yy + 6).attr('height', rowH - 12).attr('width', Math.max(2, x(r.dps) - m.l)).attr('rx', 4).style('fill', fcol(r.race)).attr('opacity', r.adv ? 0.45 : 0.8);
       svg.append('text').attr('x', x(r.dps) + 6).attr('y', yy + rowH / 2 + 4).text(f1(r.dps) + (i === 0 ? ' ★' : ''));
     });
-    svg.append('text').attr('x', m.l).attr('y', H).attr('font-size', 9).text(`axis starts at ${f0(lo)}`);
-    host.replaceChildren(svg.node());
+    const warn = el('p', { class: 'fv-axiswarn' });
+    axisWarn(warn, `${f0(lo)} DPS`, 'races');
+    host.replaceChildren(warn, svg.node());
     $('#sp-races-link').onclick = (e) => { e.stopPropagation(); pickRaceSpec(b.id); };
   };
 
@@ -2441,21 +2450,26 @@ export function startReport(dash, events) {
     const builds = new Map(visB().map((b) => [b.id, b]));
     const cav = rowsOf('notes').filter((n) => n.kind === 'caveats' && builds.has(n.build));
     const byClass = d3.groups(cav, (n) => builds.get(n.build).class).sort((a, b) => CLASSES.indexOf(a[0]) - CLASSES.indexOf(b[0]));
-    // A caveat that starts with "Assumed:", "Open:", "Left out:" or "Unverified:" shows that word as a tag. The presets
-    // it applies to go in a column of their own, or "All presets" when it's every preset of the class.
+    // A caveat that starts with "Assumed:", "Open:", "Left out:" or "Unverified:" shows that word as a tag.
     const TAG = /^(Assumed|Open|Left out|Unverified):\s*/;
-    const cavItem = (t, bs, all) => {
+    const cavItem = (t) => {
       const m = t.match(TAG), rest = m ? t.slice(m[0].length) : t, txt = rest.charAt(0).toUpperCase() + rest.slice(1);
-      return el('li', { class: 'fv-cav' },
-        el('span', { class: 'fv-cav-t' }, m ? el('span', { class: 'fv-cav-tag', text: m[1] }) : null, /[.!?)]$/.test(txt) ? txt : txt + '.'),
-        el('span', { class: 'fv-cav-on', text: bs.length === all ? 'All presets' : bs.join(', ') }));
+      return el('li', { class: 'fv-cav' }, m ? el('span', { class: 'fv-cav-tag', text: m[1] }) : null, /[.!?)]$/.test(txt) ? txt : txt + '.');
     };
+    // Within a class, the caveats go under the presets they apply to. The ones every preset of the class shares come
+    // first, then each preset's own, in the ranking's order. A caveat a few presets share goes under all their names.
+    const order = new Map([...builds.keys()].map((id, k) => [id, k]));
     host.replaceChildren(...byClass.map(([cls, ns]) => {
       const seen = new Map();
-      for (const n of ns) { if (!seen.has(n.text)) seen.set(n.text, []); seen.get(n.text).push(builds.get(n.build).build); }
+      for (const n of ns) { if (!seen.has(n.text)) seen.set(n.text, []); seen.get(n.text).push(n.build); }
       const all = [...builds.values()].filter((b) => b.class === cls).length;
+      const groups = d3.groups([...seen], ([, ids]) => ids.join('|'))
+        .map(([, items]) => ({ ids: items[0][1], texts: items.map(([t]) => t) }))
+        .sort((p, q) => (q.ids.length === all) - (p.ids.length === all) || order.get(p.ids[0]) - order.get(q.ids[0]));
+      const head = (ids) => el('h4', { class: 'fv-cav-preset' }, ...(ids.length === all && all > 1 ? [`All ${cls} presets`]
+        : ids.flatMap((id, k) => [k ? ', ' : null, specIco(builds.get(id), ''), ' ', builds.get(id).build])));
       return el('details', { class: 'fv-cav-cls' }, el('summary', {}, el('span', { class: 'fv-cav-cls-name' }, el('span', { class: 'fv-dot', style: `background:${ccol(cls)}` }), `${cls} (${seen.size})`)),
-        el('ul', { class: 'fv-cav-list' }, ...[...seen].map(([t, bs]) => cavItem(t, bs, all))));
+        ...groups.map((g) => el('section', { class: 'fv-cav-group' }, head(g.ids), el('ul', { class: 'fv-cav-list' }, ...g.texts.map(cavItem)))));
     }));
   };
 
