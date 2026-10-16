@@ -229,14 +229,15 @@ export const DefaultAPL = APLPresets[Phase.Phase4][0];
 // build that leaves Twist of Light out (30 Holy, 21 Retribution).
 //
 // Client 1.60.1.70425 (2026-10-16) cut Judgement of Righteousness to 42.9% of spell power,
-// Champion of the Light to 10 / 20 / 30% and Consecration to 4.2% a tick; the numbers in the
-// comments below are from before it. On the 70425 tree (raid hits, Concentration Aura, Human),
-// at 120 / 180 / 300 sec with 20000 iterations:
-// - Level 60: 880.8 / 876.6 / 868.3.
-// - Level 60 (sub Holy): 878.2 / 872.8 / 862.7.
-// - Level 60 Shock: 912.6 / 896.9 / 858.2, ahead of the twist builds up to 180 sec.
-// - Against an Undead boss: vs Undead 974.3 / 969.5 / 952.0, sub Holy vs Undead
-//   977.1 / 973.3 / 964.4, Shock vs Undead 998.2 / 970.3 / 927.6.
+// Champion of the Light to 10 / 20 / 30% and Consecration to 4.2% a tick, and Blizzard's 15
+// October beta notes halved Seal of Righteousness's spell power (12% a hit with a two-hander,
+// once). The numbers in the comments below are from before. On the 70425 tree (raid hits,
+// Concentration Aura, Human), at 120 / 180 / 300 sec with 20000 iterations:
+// - Level 60: 831.2 / 826.9 / 819.2.
+// - Level 60 (sub Holy): 828.2 / 822.9 / 813.6.
+// - Level 60 Shock: 867.1 / 851.0 / 812.3, ahead of the twist builds up to 180 sec.
+// - Against an Undead boss: vs Undead 923.1 / 918.2 / 901.1, sub Holy vs Undead
+//   925.9 / 922.0 / 913.4, Shock vs Undead 952.3 / 924.1 / 880.9.
 // The talent searches (180 sec, Undead, before the raid hits) kept every build but two. Both
 // moves trade one fight length against another, so the presets stay:
 // - vs Undead: three Divine Intellect points into Divine Strength and Reverence into Precision 3
@@ -492,16 +493,16 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 );
 // Level 60: the Human on the synthetic set with the Level 60 talents and rotation. Client 70425
 // made every racial weapon-free, and Human's Ruthless (2% crit) now beats Undead's Touch of the
-// Grave on every Level 60 build at every length. Seed 1, 20000 iterations, 120 / 180 / 300 sec,
-// client 70425, Concentration Aura:
-// - Level 60: Human 880.8 / 876.6 / 868.3, Undead 878.2 / 873.5 / 864.9, Dwarf 871.9 / 867.8 /
-//   859.7.
-// - sub Holy: Human 878.2 / 872.8 / 862.7, Undead 874.8 / 869.5 / 858.7, Dwarf 869.5 / 864.2 /
-//   853.7.
-// - Shock: Human 912.6 / 896.9 / 858.2, Undead 911.2 / 894.5 / 855.6, Dwarf 907.2 / 890.9 / 852.3.
-// Human is the best race and the best Alliance one. Undead is the best (and only) Horde
-// paladin. The earlier Undead pick (986.6 / 981.9 / 972.7 against Human's 971.0 / 966.4 / 957.6)
-// was before client 70425, when Human's crit only counted with a sword.
+// Grave on every Level 60 build at every length (+0.7 to +4.0 on two seed sets). Seed 1, 20000
+// iterations, 120 / 180 / 300 sec, client 70425, Seal of Righteousness's spell power once,
+// Concentration Aura:
+// - Level 60: Human 831.2 / 826.9 / 819.2, Undead 829.5 / 824.8 / 816.6.
+// - sub Holy: Human 828.2 / 822.9 / 813.6, Undead 825.6 / 820.4 / 810.6.
+// - Shock: Human 867.1 / 851.0 / 812.3, Undead 866.4 / 849.4 / 810.4.
+// Dwarf was about 5 behind Undead (with the double count). Human is the best race and the best
+// Alliance one. Undead is the best (and only) Horde paladin. The earlier Undead pick (986.6 /
+// 981.9 / 972.7 against Human's 971.0 / 966.4 / 957.6) was before client 70425, when Human's
+// crit only counted with a sword.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Human on the synthetic Phase 1 gear with the Level 60 talents and rotation, in a 3 minute raid fight.',
@@ -632,9 +633,9 @@ const OptionsRighteousness = RetributionPaladinOptions.create({
 });
 // The vs Undead builds, on an Undead boss (50000 iterations, 120 / 180 / 300 sec). Undead was
 // the best race on each before client 70425. Now Human is (seed 1, 20000 iterations): vs Undead
-// Human 974.3 / 969.5 / 952.0 against Undead 970.3 / 965.5 / 947.6, sub Holy vs Undead
-// 977.1 / 973.3 / 964.4 against 973.7 / 969.3 / 960.1, Shock vs Undead 998.2 / 970.3 / 927.6
-// against 996.0 / 966.9 / 924.8. Dwarf is about 5 behind Undead. The older numbers:
+// Human 923.1 / 918.2 / 901.1 against Undead 920.0 / 915.2 / 897.6, sub Holy vs Undead
+// 925.9 / 922.0 / 913.4 against 923.5 / 919.0 / 910.0, Shock vs Undead 952.3 / 924.1 / 880.9
+// against 950.7 / 921.5 / 878.8. The older numbers:
 // Level 60 (vs Undead): Undead 1074.2 / 1069.7 / 1045.9, Human 1057.9 / 1053.9 / 1030.9, Dwarf
 // 1057.2 / 1053.2 / 1029.7.
 export const PresetBuildLevel60Undead = PresetUtils.makePresetBuild('Level 60 (vs Undead)', {
