@@ -923,7 +923,7 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 		set: (opts, value) => (opts.maxPackSize = unlessDefault(value, 5)),
 	});
 
-	const searchGroup = addLevelingCategory(section, 'Search');
+	const searchGroup = addLevelingCategory(section, 'Search', true);
 	const searchTooltip =
 		'The time it takes to find the next mob out of combat, in seconds, at random between Search Min and Search Max. We run around while we search, so we can only cast instants.';
 	addLevelingNumberPicker(searchGroup, encounter, {
@@ -959,7 +959,7 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 		set: (opts, value) => (opts.foundMax = unlessDefault(value, 40)),
 	});
 
-	const chainGroup = addLevelingCategory(section, 'Chain Search Running');
+	const chainGroup = addLevelingCategory(section, 'Chain Search Running', true);
 	const chainSearchTooltip =
 		'The time it takes to find a mob to chain pull while in combat, running around with the mobs on us following, in seconds, at random between Chain Search Min and Chain Search Max. The mob we find stands at the Mob Distance under Search.';
 	addLevelingNumberPicker(chainGroup, encounter, {
@@ -979,7 +979,7 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 		set: (opts, value) => (opts.chainSearchMax = unlessDefault(value, 3)),
 	});
 
-	const standingGroup = addLevelingCategory(section, 'Chain Search Standing');
+	const standingGroup = addLevelingCategory(section, 'Chain Search Standing', true);
 	const standingSearchTooltip =
 		"The time it takes to find a mob to chain pull while in combat when the rotation stands and keeps fighting (Look For Mob's Stand), in seconds, at random between these. It's longer than running around, because we only see the mobs around us.";
 	addLevelingNumberPicker(standingGroup, encounter, {
@@ -1017,12 +1017,16 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 }
 
 // Adds a header for a category of leveling options, and returns the group its pickers go in.
-function addLevelingCategory(section: HTMLElement, title: string): HTMLElement {
+//
+// The search categories lay their pickers out in pairs, the time on one row and the distance
+// on the next, because their labels are long and get cut off three to a row.
+function addLevelingCategory(section: HTMLElement, title: string, pairs = false): HTMLElement {
 	const header = document.createElement('div');
 	header.classList.add('encounter-leveling-header');
 	header.textContent = title;
 	section.appendChild(header);
 	const group = Input.newGroupContainer();
+	group.classList.toggle('encounter-leveling-pairs', pairs);
 	section.appendChild(group);
 	return group;
 }
