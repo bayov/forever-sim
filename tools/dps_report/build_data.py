@@ -228,7 +228,7 @@ CONSUME_ICON = {'scroll of imbue greater flame': 'inv_10_inscription2_repcontrac
                 'elixir of the owl': 'inv_potion_10', 'elixir of greater intellect': 'inv_potion_10', 'elixir of sages': 'inv_potion_29',
                 'elixir of greater spirit': 'inv_potion_09', 'major mana potion': 'inv_potion_76', 'major frenzy potion': 'inv_potion_41',
                 'mighty rage potion': 'inv_potion_41', 'major spellblasting potion': 'inv_potion_25', 'conjured demonic rune': 'inv_misc_rune_04',
-                'conjured rogue thistle tea': 'inv_drink_milk_05', 'goblin sapper': 'spell_fire_selfdestruct', 'explosive goblin land mine': 'inv_misc_bomb_05',
+                'conjured rogue thistle tea': 'inv_drink_milk_05', 'goblin sapper': 'spell_fire_selfdestruct', 'explosive goblin land mine': 'inv_shield_08',
                 'lobster stew': 'inv_misc_food_86', 'grilled squid': 'inv_misc_fish_13', 'smoked desert dumpling': 'inv_misc_food_64',
                 'flank au poivre': 'inv_misc_food_65', 'wizard oil': 'inv_potion_105', 'shadow oil': 'inv_potion_23',
                 'dense sharpening stone': 'inv_stone_sharpeningstone_05', 'instant poison': 'ability_poisons', 'deadly poison': 'ability_rogue_dualweild',
