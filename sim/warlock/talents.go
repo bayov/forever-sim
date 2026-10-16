@@ -31,6 +31,14 @@ var (
 		SpellCode_WarlockSearingPain, SpellCode_WarlockShadowBolt, SpellCode_WarlockShadowburn, SpellCode_WarlockSoulFire}
 	// Improved Drains and Soul Siphon.
 	drainSpells = []int32{SpellCode_WarlockDrainLife, SpellCode_WarlockDrainSoul, SpellCode_WarlockWrack}
+	// Fel Concentration's pushback protection: the drains and Wrack by the client's mask.
+	felConcentrationSpells = drainSpells
+	// Intensity's pushback protection by the client's mask (0x3E5): Shadow Bolt, Immolate, Searing
+	// Pain, Soul Fire, Shadowburn, Conflagrate, Hellfire and Rain of Fire, not Incinerate.
+	intensitySpells = []int32{SpellCode_WarlockShadowBolt, SpellCode_WarlockImmolate, SpellCode_WarlockSearingPain,
+		SpellCode_WarlockSoulFire, SpellCode_WarlockShadowburn, SpellCode_WarlockConflagrate}
+	// Fel Concentration and Intensity: 23 / 47 / 70% to ignore a hit's pushback (client curves).
+	pushbackProtection = []float64{0, 0.23, 0.47, 0.70}
 )
 
 func (warlock *Warlock) onSpellCodes(codes []int32, apply func(spell *core.Spell)) {
@@ -49,6 +57,7 @@ func (warlock *Warlock) ApplyTalents() {
 	warlock.applyImprovedCorruption()
 	warlock.applyImprovedDrains()
 	warlock.applyImprovedBaneOfAgony()
+	warlock.applyFelConcentration()
 	warlock.applyPandemic()
 	warlock.applyMalevolence()
 	warlock.applyNightfall()
@@ -74,6 +83,7 @@ func (warlock *Warlock) ApplyTalents() {
 	warlock.applyCataclysm()
 	warlock.applyAftermath()
 	warlock.applyRuin()
+	warlock.applyIntensity()
 	warlock.applyAgonizingFlames()
 	warlock.applyFireAndBrimstone()
 	warlock.applyShadowAndFlame()
@@ -968,4 +978,30 @@ func (warlock *Warlock) applyTargetDamageModifiers() {
 			}
 		}
 	}
+}
+
+// Fel Concentration: a 23 / 47 / 70% chance that a hit taken doesn't push back Drain Life, Drain
+// Soul or Wrack (SPELLMOD_NOT_LOSE_CASTING_TIME, client 1.60.1.70425).
+func (warlock *Warlock) applyFelConcentration() {
+	if warlock.Talents.FelConcentration == 0 {
+		return
+	}
+
+	chance := pushbackProtection[warlock.Talents.FelConcentration]
+	warlock.onSpellCodes(felConcentrationSpells, func(spell *core.Spell) {
+		spell.PushbackReduction += chance
+	})
+}
+
+// Intensity: a 23 / 47 / 70% chance that a hit taken doesn't push back the Destruction spells in
+// its mask. Incinerate is outside it (client 1.60.1.70425).
+func (warlock *Warlock) applyIntensity() {
+	if warlock.Talents.Intensity == 0 {
+		return
+	}
+
+	chance := pushbackProtection[warlock.Talents.Intensity]
+	warlock.onSpellCodes(intensitySpells, func(spell *core.Spell) {
+		spell.PushbackReduction += chance
+	})
 }

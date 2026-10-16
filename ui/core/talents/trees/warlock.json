@@ -235,8 +235,7 @@
             70
           ]
         ],
-        "icon": "spell_shadow_fingerofdeath",
-        "notSimulated": true
+        "icon": "spell_shadow_fingerofdeath"
       },
       {
         "fieldName": "amplifyCurse",
@@ -1352,8 +1351,7 @@
             70
           ]
         ],
-        "icon": "spell_fire_lavaspawn",
-        "notSimulated": true
+        "icon": "spell_fire_lavaspawn"
       },
       {
         "fieldName": "agonizingFlames",
