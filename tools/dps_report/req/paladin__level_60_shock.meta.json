@@ -4,7 +4,7 @@
   "spec": "Retribution",
   "build": "Level 60 Shock",
   "isDefault": false,
-  "pr": 54,
+  "pr": 100,
   "race": "Human",
   "talents": "55003003201121251--05225230001",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_shock",
   "published": {
     "dps": 866.8,
-    "source": "Paladin PR (rotation audit pass 23: Hammer of Wrath above Consecration, 2026-10-16)"
+    "source": "PR #100 (rotation audit pass 23: Hammer of Wrath above Consecration, 2026-10-16)"
   },
   "verify": {
     "dps": 866.78,

@@ -4,7 +4,7 @@
   "spec": "Retribution",
   "build": "Level 60 (sub Holy, Crusader duty)",
   "isDefault": false,
-  "pr": 54,
+  "pr": 100,
   "race": "Human",
   "talents": "550030032--05215331001330321",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_crusader_duty",
   "published": {
     "dps": 841.3,
-    "source": "Paladin PR (rotation audit pass 23: Hammer of Wrath above Consecration, 2026-10-16)"
+    "source": "PR #100 (rotation audit pass 23: Hammer of Wrath above Consecration, 2026-10-16)"
   },
   "verify": {
     "dps": 841.3,
