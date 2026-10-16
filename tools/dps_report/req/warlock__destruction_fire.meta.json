@@ -5,7 +5,7 @@
   "build": "Destruction Fire",
   "isDefault": false,
   "pr": 59,
-  "race": "Gnome",
+  "race": "Human",
   "talents": "25201020032-0002-0050355003101351",
   "treeNames": [
     "Affliction",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_destruction_fire",
   "published": {
-    "dps": 953.3,
-    "source": "PR #59"
+    "dps": 970.2,
+    "source": "PR (demon crit, races)"
   },
   "verify": {
-    "dps": 953.27,
+    "dps": 970.23,
     "stderr": 0.27,
     "iters": 20000,
     "ok": true,
-    "note": "-0.03 vs published"
+    "note": "+0.03 vs published"
   },
   "summary": "Fire Destruction with Incinerate as the filler, Conflagrate, Fire and Brimstone, Shadow and Flame and Aftermath, plus Pandemic and Malevolence, Succubus out and Firestone. Shipped as its own playstyle on Undead, 1.7% behind Shadow Bolt Destruction.",
   "keyTalents": [
@@ -76,7 +76,8 @@
     "Bane of Doom coefficient 4.0 (Era 1.0) is about 12% of Shadow Bolt builds' damage; at 2.0 they lose about 4%, at 1.0 about 6%",
     "No Ahn'Qiraj book ranks (Shadow Bolt IX, Immolate VII, Corruption VI): 7 to 13 DPS below rank X/VIII/VII",
     "Only the Demonheart Raiment 2-piece is live (the 5-piece added about +8 to +13 on the first set)",
-    "Soul shards and Life Tap health cost are not tracked"
+    "Soul shards and Life Tap health cost are not tracked",
+    "Demons take the warlock's spell crit as their own melee and spell crit, with no crit of their own (Blizzard's intent, forever-bugs #331; user ruling 2026-10-16); worth 15 to 17 DPS"
   ],
-  "notes": "Request straight from mksettings -spec destruction_fire -gear level60_phase1_synthetic -apl level60_destruction_fire -race Gnome -duration 180, no edits. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Firestone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly."
+  "notes": "Request straight from mksettings -spec destruction_fire -gear level60_phase1_synthetic -apl level60_destruction_fire -race Human -duration 180, no edits. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Firestone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly."
 }

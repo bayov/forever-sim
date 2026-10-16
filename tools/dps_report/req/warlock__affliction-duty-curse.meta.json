@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_affliction_duty_curse",
   "published": {
-    "dps": 987.0,
-    "source": "PR #59"
+    "dps": 1002.2,
+    "source": "PR (demon crit, races)"
   },
   "verify": {
-    "dps": 986.95,
+    "dps": 1002.17,
     "stderr": 0.38,
     "iters": 20000,
     "ok": true,
-    "note": "-0.05 vs published"
+    "note": "-0.03 vs published"
   },
-  "summary": "Affliction on curse duty for the raid, casting Curse of the Elements (one curse duty per warlock; other warlocks cover the other curses): the warlock keeps its own Curse of the Elements (rank 4, 10% magic damage taken) up all fight, cast right after the opener and recast before it drops, and the raid's is off. Under Forever the curse has its own slot, so the bane stays. Costs 11.0 DPS at 180 s against the base build.",
+  "summary": "Affliction on curse duty for the raid, casting Curse of the Elements (one curse duty per warlock; other warlocks cover the other curses): the warlock keeps its own Curse of the Elements (rank 4, 10% magic damage taken) up all fight, cast right after the opener and recast before it drops, and the raid's is off. Under Forever the curse has its own slot, so the bane stays. Costs 11.1 DPS at 180 s against the base build.",
   "keyTalents": [
     "Shadow Mastery",
     "Pandemic",
@@ -73,7 +73,8 @@
     "Bane of Doom coefficient 4.0 (Era 1.0) is about 12% of Shadow Bolt builds' damage; at 2.0 they lose about 4%, at 1.0 about 6%",
     "No Ahn'Qiraj book ranks (Shadow Bolt IX, Immolate VII, Corruption VI): 7 to 13 DPS below rank X/VIII/VII",
     "Only the Demonheart Raiment 2-piece is live (the 5-piece added about +8 to +13 on the first set)",
-    "Soul shards and Life Tap health cost are not tracked"
+    "Soul shards and Life Tap health cost are not tracked",
+    "Demons take the warlock's spell crit as their own melee and spell crit, with no crit of their own (Blizzard's intent, forever-bugs #331; user ruling 2026-10-16); worth 15 to 17 DPS"
   ],
   "notes": "Request from mksettings with the same arguments as warlock__affliction except -apl level60_affliction_duty_curse, then raid.debuffs.curseOfElements set to false. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Spellstone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly.",
   "duty": "Curse of the Elements",
