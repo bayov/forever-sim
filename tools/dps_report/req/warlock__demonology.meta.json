@@ -4,8 +4,8 @@
   "spec": "Demonology",
   "build": "Demonology",
   "isDefault": true,
-  "pr": 59,
-  "race": "Gnome",
+  "pr": 85,
+  "race": "Human",
   "talents": "011-0305003131221001351-0550005003",
   "treeNames": [
     "Affliction",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_demonology",
   "apl": "level60_demonology",
   "published": {
-    "dps": 1099.2,
-    "source": "PR #59"
+    "dps": 1118.3,
+    "source": "PR #85"
   },
   "verify": {
-    "dps": 1099.24,
+    "dps": 1118.3,
     "stderr": 0.39,
     "iters": 20000,
     "ok": true,
-    "note": "+0.04 vs published"
+    "note": "+0.00 vs published"
   },
   "summary": "Demonic Pact build: the Imp is sacrificed before the pull for 15% Shadow damage and the Succubus stays out for Master Demonologist, Soul Link and Demonic Knowledge. The highest-DPS warlock build and the class default.",
   "keyTalents": [
@@ -73,7 +73,8 @@
     "Bane of Doom coefficient 4.0 (Era 1.0) is about 12% of Shadow Bolt builds' damage; at 2.0 they lose about 4%, at 1.0 about 6%",
     "No Ahn'Qiraj book ranks (Shadow Bolt IX, Immolate VII, Corruption VI): 7 to 13 DPS below rank X/VIII/VII",
     "Only the Demonheart Raiment 2-piece is live (the 5-piece added about +8 to +13 on the first set)",
-    "Soul shards and Life Tap health cost are not tracked"
+    "Soul shards and Life Tap health cost are not tracked",
+    "Demons take the warlock's spell crit as their own melee and spell crit, with no crit of their own (Blizzard's intent, forever-bugs #331; user ruling 2026-10-16); worth 15 to 17 DPS"
   ],
-  "notes": "Request straight from mksettings -spec demonology -gear level60_phase1_synthetic_demonology -apl level60_demonology -race Gnome -duration 180, no edits. Demon Armor; Summon Succubus, sacrificed Imp, imbue Spellstone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly."
+  "notes": "Request straight from mksettings -spec demonology -gear level60_phase1_synthetic_demonology -apl level60_demonology -race Human -duration 180, no edits. Demon Armor; Summon Succubus, sacrificed Imp, imbue Spellstone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly."
 }

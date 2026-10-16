@@ -360,7 +360,7 @@ export const OtherDefaults = {
 	profession1: Profession.Engineering,
 	profession2: Profession.Tailoring,
 	channelClipDelay: 150,
-	race: Race.RaceGnome,
+	race: Race.RaceHuman,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -407,29 +407,28 @@ export const EncounterLevel60 = level60Encounter('Level 60', DefaultDebuffs);
 export const EncounterLevel60CurseDuty = level60Encounter('Level 60 (Curse duty)', Debuffs.create({ ...DefaultDebuffs, curseOfElements: false }));
 
 // The Level 60 builds at 120 / 180 / 300 sec (20000 iterations, 2026-10-16, client 1.60.1.70425 with
-// the raid's 2 hits a minute): Demonology (Gnome) 1114.8 / 1099.2 / 1068.0, Destruction (Human) 987.3
-// / 980.7 / 963.0, Affliction (Human) 1006.5 / 998.0 / 977.6, Destruction fire (Gnome) 960.2 / 953.3
-// / 935.3. Forever teaches no Ahn'Qiraj book ranks, so Shadow Bolt is rank IX, Immolate VII and
-// Corruption VI. The demons take no player buffs and scale from the warlock's stats with Season of
-// Discovery's numbers as a placeholder (notes.md). The demon is the least sourced input: on the first
-// set at 180 sec, without the owner scaling Demonology was 1037.8 and the other builds 937 to 946, with
-// the Succubus's melee halved 1044.5 and 937 to 947.
+// the raid's 2 hits a minute, demons taking the warlock's spell crit): Demonology 1131.8 / 1118.3 / 1090.0,
+// Destruction 1002.5 / 995.9 / 978.2, Affliction 1021.8 / 1013.3 / 992.8, Destruction fire
+// 976.3 / 970.2 / 953.7, all Human. Forever teaches no Ahn'Qiraj book ranks, so Shadow Bolt is rank IX,
+// Immolate VII and Corruption VI. The demons take no player buffs and scale from the warlock's stats with
+// Season of Discovery's numbers as a placeholder (notes.md), and their melee and spell crit are the
+// warlock's spell crit with none of their own (Blizzard's intent, forever-bugs #331). The demon is the
+// least sourced input: on the first set at 180 sec, without the owner scaling Demonology was 1037.8 and
+// the other builds 937 to 946, with the Succubus's melee halved 1044.5 and 937 to 947.
 //
-// Races at 180 sec, client 70425 (Human Ruthless is 2% crit with every spell, Orc Savage 1%, both
-// seeds): the Human is first on Destruction (1.2 / 2.5 ahead of the Gnome) and Affliction (1.0 / 2.4,
-// and 3.6 at 300 sec). Demonology is level between the Gnome and the Human (1099.2 / 1099.7 against
-// 1099.1 / 1100.0; the Gnome 2.2 ahead at 120 sec, the Human 2.9 at 300) and stays Gnome. On
-// Destruction fire the Gnome, the Human and the Orc are within 0.9 and the Gnome is first at 180 sec;
-// the Undead, its race before Touch of the Grave's 70425 lockout, is 5.1 behind. The best Horde race is
+// Races at 180 sec, both seed sets (standards 16: a switch needs a lead over 0.5 on both): the Human is
+// first on every build. Human Ruthless is 2% crit with every spell, and the demons now take it from the
+// warlock. Demonology 15.7 / 15.1 ahead of the Gnome and 3.9 / 3.5 of the Orc, Destruction 3.2 / 3.0 of
+// the Orc, Affliction 3.0 / 2.8 of the Orc, Destruction fire 1.0 / 1.3 of the Orc. The best Horde race is
 // the Orc on every build. The full table is in forever-wiki/sim-status.md.
 export const PresetBuildLevel60Demonology = PresetUtils.makePresetBuild('Level 60 Demonology', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Gnome Demonology warlock on the synthetic Phase 1 gear, the Imp sacrificed and the Succubus out, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Human Demonology warlock on the synthetic Phase 1 gear, the Imp sacrificed and the Succubus out, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1SyntheticDemonology,
 	talents: TalentsLevel60Demonology,
 	rotation: RotationLevel60Demonology,
 	encounter: EncounterLevel60,
-	race: Race.RaceGnome,
+	race: Race.RaceHuman,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -464,12 +463,12 @@ export const PresetBuildLevel60Affliction = PresetUtils.makePresetBuild('Level 6
 
 export const PresetBuildLevel60DestructionFire = PresetUtils.makePresetBuild('Level 60 Destruction Fire', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Gnome Destruction fire warlock on the synthetic Phase 1 gear with the Succubus out, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Human Destruction fire warlock on the synthetic Phase 1 gear with the Succubus out, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60DestructionFire,
 	rotation: RotationLevel60DestructionFire,
 	encounter: EncounterLevel60,
-	race: Race.RaceGnome,
+	race: Race.RaceHuman,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
