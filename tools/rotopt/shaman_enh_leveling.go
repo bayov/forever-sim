@@ -37,7 +37,7 @@ func (shamanEnhLeveling) Knobs() []Knob {
 		{Name: "bandageBelow", Default: 0, Min: 0, Max: 80, Step: 20},
 		{Name: "restHealth", Default: 90, Min: 20, Max: 90, Step: 10},
 		{Name: "restMana", Default: 50, Min: 10, Max: 70, Step: 10},
-		{Name: "restUntil", Default: 90, Min: 60, Max: 100, Step: 10},
+		{Name: "restUntil", Default: 100, Min: 60, Max: 100, Step: 10},
 		{Name: "restUntilMana", Default: 80, Min: 60, Max: 100, Step: 10},
 		// Pulling: 0 none (walk up), 1 Earth Shock rank 1, 2 Earth Shock, 3 Flame Shock.
 		{Name: "pullSpell", Default: 1, Min: 0, Max: 3, Step: 1},
@@ -49,7 +49,7 @@ func (shamanEnhLeveling) Knobs() []Knob {
 		{Name: "chainMana", Default: 50, Min: 0, Max: 80, Step: 10},
 		// Look for the next mob above this health even when we won't pull it yet; 0 looks
 		// only when we'd pull it (chainHealth and chainMana).
-		{Name: "lookAheadHealth", Default: 40, Min: 0, Max: 70, Step: 10},
+		{Name: "lookAheadHealth", Default: 60, Min: 0, Max: 70, Step: 10},
 		// With one mob pulled and our target below this share of its health, pull the next
 		// one as it dies, above chainDyingHealth and chainDyingMana; 0 off.
 		{Name: "chainDyingBelow", Default: 20, Min: 0, Max: 40, Step: 10},

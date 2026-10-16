@@ -83,6 +83,34 @@ The log doesn't say which mobs are elites, rares or bosses, so a level's average
 of them, and the medians are the safer numbers. Parry haste and stuns shorten or lengthen
 the gaps between swings, which is why the swing time is a median too.
 
+## The pacing
+
+```sh
+go run --tags=with_db ./tools/logcheck -pacing -from "2026-10-10 18:00:00" -to "2026-10-10 20:00:00"
+```
+
+This measures how we paced our grinding, in every archived log (or just `-log`), for the
+leveling sim's session defaults (`docs/leveling_sim.md`, From the logs). It looks at the mobs
+within 3 levels of ours that we fought and killed, with our level from the exports and
+BayovCore's history.
+
+- **By hour:** our kills, the median fight and our damage a second. A beta test stretch (white
+  swings only, say) shows as low damage a second, so we can pick the stretch of normal play with
+  `-from` and `-to`.
+- **Kill to next pull:** the time from a kill to the next fight's first attack, less the time
+  we spent eating, drinking, bandaging or casting a heal. Gaps over 60 s (AFK) and gaps with a
+  death of ours are left out. It also gives our travel in the gap, from the positions in the
+  log, and how many gaps had a Ghost Wolf cast.
+- **Pulls:** how the first mob of each fight was pulled (a spell, our white swing, or the mob
+  attacking first), and for a spell pull, how far we stood from the mob when it landed and how
+  long the mob took to swing at us.
+- **Fights:** the mobs a fight took, the most on us at once, and how long after the mob before
+  each later one joined, split by whether we pulled it or it came to us.
+
+A fight is the mobs we fought one after another while some were still alive. A mob we leave
+alone for 15 s is out of it. Each sample prints its count, fast quartile, median, mean and
+slow quartile.
+
 ## Inputs
 
 - **The log.** With no `-log`, it runs `tools/combat_log/archive.sh` first and reads the newest

@@ -23,7 +23,7 @@ import (
 // (leveling_world.go).
 //
 // One loop runs the session:
-//   - Searching: we run around for a random 5 to 11 sec (search_min / search_max), so we
+//   - Searching: we run around for a random 2 to 7 sec (search_min / search_max), so we
 //     can't hard cast, and find a mob standing 10 to 40 yards away (found_min / found_max).
 //     One that close to its aggro radius notices us at once.
 //   - Pulling: the mob waits there, as our target and the rotation's Pull Target. A spell
@@ -155,8 +155,8 @@ func resolveLevelingOptions(o *proto.LevelingOptions) levelingOptions {
 		mobType:           o.MobType,
 		armorMultiplier:   or(o.ArmorMultiplier, 1),
 		maxPack:           int(max(o.MaxPackSize, 0)),
-		searchMin:         seconds(o.SearchMin, 5),
-		searchMax:         seconds(o.SearchMax, 11),
+		searchMin:         seconds(o.SearchMin, 2),
+		searchMax:         seconds(o.SearchMax, 7),
 		chainSearchMin:    seconds(o.ChainSearchMin, 2),
 		chainSearchMax:    seconds(o.ChainSearchMax, 4),
 		chainSearchMoving: 0.75,

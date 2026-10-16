@@ -23,8 +23,11 @@ func atoi(s string) int {
 
 // TestLevelingRotationRests: the rotation sits down to eat and drink below 60% health or 40%
 // mana and stands up at 90% of both, and the default rest lines stay out of it.
+//
+// The mobs are 3 levels under ours, because Forever's mobs at our level have 30% more health
+// than 1.12's, and the naked test character dies to them too often to rest much.
 func TestLevelingRotationRests(t *testing.T) {
-	req := withRotation(t, levelingRequest(t, &proto.LevelingOptions{}, 1), rotationOf(healLine,
+	req := withRotation(t, levelingRequest(t, &proto.LevelingOptions{MobLevelOffset: -3}, 1), rotationOf(healLine,
 		`{"action":{"condition":{"or":{"vals":[{"cmp":{"op":"OpLt","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"60%"}}}},{"cmp":{"op":"OpLt","lhs":{"currentManaPercent":{}},"rhs":{"const":{"val":"40%"}}}}]}},"levelingRest":{"eat":true,"drink":true,"healthUntil":{"const":{"val":"90%"}},"manaUntil":{"const":{"val":"90%"}}}}}`))
 	req.SimOptions.Debug = true
 	result := runLeveling(t, req)
@@ -54,8 +57,11 @@ func TestLevelingRotationRests(t *testing.T) {
 
 // TestLevelingSitting: sitting without food or water to rest to full health regens a third
 // more a second from Spirit than standing (as we do while we search).
+//
+// This rotation has no heal, so the naked test character dies to every mob near our level
+// before it can sit down. Mobs 8 levels under ours leave it alive below 50% health.
 func TestLevelingSitting(t *testing.T) {
-	req := withRotation(t, levelingRequest(t, &proto.LevelingOptions{}, 1), rotationOf(
+	req := withRotation(t, levelingRequest(t, &proto.LevelingOptions{MobLevelOffset: -8}, 1), rotationOf(
 		`{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"50%"}}}},"levelingRest":{}}}`))
 	req.SimOptions.Debug = true
 	result := runLeveling(t, req)

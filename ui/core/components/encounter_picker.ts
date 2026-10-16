@@ -903,16 +903,16 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 		label: 'Search Min (sec)',
 		labelTooltip: searchTooltip,
 		float: true,
-		get: opts => orDefault(opts.searchMin, 5),
-		set: (opts, value) => (opts.searchMin = unlessDefault(value, 5)),
+		get: opts => orDefault(opts.searchMin, 2),
+		set: (opts, value) => (opts.searchMin = unlessDefault(value, 2)),
 	});
 	addLevelingNumberPicker(searchGroup, encounter, {
 		id: 'encounter-leveling-search-max',
 		label: 'Search Max (sec)',
 		labelTooltip: searchTooltip,
 		float: true,
-		get: opts => orDefault(opts.searchMax, 11),
-		set: (opts, value) => (opts.searchMax = unlessDefault(value, 11)),
+		get: opts => orDefault(opts.searchMax, 7),
+		set: (opts, value) => (opts.searchMax = unlessDefault(value, 7)),
 	});
 	const foundTooltip =
 		'How far away the mob we find stands, in whole yards, at random between Mob Distance Min and Mob Distance Max. It waits there until a harmful spell lands on it or we walk into melee range of it, then runs to us.';
