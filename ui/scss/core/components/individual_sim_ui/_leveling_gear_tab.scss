@@ -1,6 +1,5 @@
-// The Gear part of the Leveling Plan tab (leveling_plan_gear.tsx), laid out like the Gear tab:
-// the plan's panels on the left, the selected level's gear pane on the right, and the grid of
-// every level under both.
+// The Gear part of the Leveling Plan tab (leveling_plan_gear.tsx): the plan's panels on the
+// left, the grid of every level on the right, and the selected level's gear pane under both.
 .leveling-plan-gear {
 	.leveling-gear {
 		width: 100%;
@@ -31,7 +30,8 @@
 		}
 	}
 
-	.leveling-gear-pane-col {
+	.leveling-gear-pane-col,
+	.leveling-gear-grid-col {
 		flex: 1;
 		min-width: 0;
 		width: 100%;

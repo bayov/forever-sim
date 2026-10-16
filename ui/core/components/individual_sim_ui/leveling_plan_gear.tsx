@@ -38,11 +38,10 @@ import { NumberPicker } from '../number_picker';
 // The Gear part of the Leveling Plan tab shows the leveling gear plan (leveling_gear.ts): what
 // we wear at each level from 1 to 60 when we gear up as we go.
 //
-// It's laid out like the Gear tab. On the left are the plan's settings and the items we put in
-// by hand. On the right the selected level's gear is in the same gear pane, and under both the
-// grid has a row per slot and a column per level, in the color of the item we wear then. A
-// click on a column picks that level, and Grind takes that level of the plan to the Grinding
-// mode.
+// On the left are the plan's settings and the items we put in by hand. On the right the grid
+// has a row per slot and a column per level, in the color of the item we wear then. Under both,
+// the selected level's gear is in the Gear tab's gear pane. A click on a column picks that
+// level, and Grind takes that level of the plan to the Grinding mode.
 export class LevelingGearSection {
 	readonly rootElem: HTMLElement;
 	private readonly simUI: IndividualSimUI<Spec>;
@@ -74,9 +73,9 @@ export class LevelingGearSection {
 			<div className="leveling-gear">
 				<div className="leveling-gear-top">
 					{side}
-					{paneCol}
+					{gridCol}
 				</div>
-				{gridCol}
+				{paneCol}
 			</div>,
 		);
 
