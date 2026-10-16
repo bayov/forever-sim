@@ -110,6 +110,10 @@ func main() {
 		ExecuteProportion_20: 0.2,
 		ExecuteProportion_25: 0.25,
 		ExecuteProportion_35: 0.35,
+		// The raid damage on a DPS player in a level 60 raid fight
+		// (ui/core/preset_utils.tsx LEVEL_60_RAID_DAMAGE). A low level encounter has none.
+		RaidDamageHitsPerMinute: 2,
+		RaidDamagePerHit:        1500,
 		Targets: []*proto.Target{{
 			Id:      213336,
 			Name:    "Level 60",

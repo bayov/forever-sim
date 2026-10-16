@@ -76,8 +76,9 @@ func TestOrcShamanStatMultipliers(t *testing.T) {
 	check("attack power with Kings", character.GetStat(stats.AttackPower), 272)
 	check("health with Kings", character.MaxHealth(), 1315)
 	check("mana regen with Kings", character.ManaRegenPerSecondWhileNotCasting(), 17.625)
-	if crit := character.GetStat(stats.MeleeCrit) / core.CritRatingPerCritChance; math.Abs(crit-(1.7+47*0.0868)) > 0.005 {
-		t.Errorf("melee crit with Kings: got %.4f, want %.4f", crit, 1.7+47*0.0868)
+	// The beta reading is from client 70338; 70425's Savage adds 1% with any weapon (savageCrit).
+	if crit := character.GetStat(stats.MeleeCrit) / core.CritRatingPerCritChance; math.Abs(crit-(1.7+47*0.0868+savageCrit)) > 0.005 {
+		t.Errorf("melee crit with Kings: got %.4f, want %.4f", crit, 1.7+47*0.0868+savageCrit)
 	}
 
 	character.AddStatDynamic(sim, stats.Intellect, 7)

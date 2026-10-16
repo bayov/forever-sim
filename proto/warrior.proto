@@ -92,11 +92,9 @@ message Warrior {
 		WarriorShout shout = 3;
 		WarriorStance stance = 7;
 
-		// Direct hits the warrior takes from raid damage per minute, on average, at random times.
-		// The boss is on the tank, so these are the only hits a DPS warrior takes. Each one is a
-		// spell hit from the boss for raid_damage_per_hit, which gives Rage like any damage taken.
-		double raid_damage_hits_per_minute = 9;
-		double raid_damage_per_hit = 10;
+		// Moved to Encounter.raid_damage_hits_per_minute and raid_damage_per_hit, for every class.
+		double raid_damage_hits_per_minute = 9 [deprecated = true];
+		double raid_damage_per_hit = 10 [deprecated = true];
 	}
 	Options options = 3;
 }

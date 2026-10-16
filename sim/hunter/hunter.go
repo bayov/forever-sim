@@ -348,10 +348,14 @@ func NewHunter(character *core.Character, options *proto.Player) *Hunter {
 func (hunter *Hunter) OnGCDReady(_ *core.Simulation) {
 }
 
-// Forever's weapon specialization racials give melee and spell crit with a sword (Human, 2%), mace
-// (Dwarf, 1%) or axe (Orc, 1%), sim/core/racials_forever.go. The sim keeps one crit stat for melee
-// and ranged attacks, but the forever-hunter wiki's beta testing finds the racial gives no ranged
-// crit, so the ranged attacks take it back off. The pet inherits it, as the wiki also finds.
+// Forever's weapon specialization racials give melee and spell crit with a sword (Human, 2%) or mace
+// (Dwarf, 1%), sim/core/racials_forever.go. The sim keeps one crit stat for melee and ranged
+// attacks, but the forever-hunter wiki's beta testing finds the racial gives no ranged crit, so
+// the ranged attacks take it back off. The pet inherits it, as the wiki also finds.
+//
+// The Orc's Savage (client 70425) needs no weapon, and its "all spells and abilities" crit has no
+// equipped item rule to keep it off the bow, so it stays on the ranged attacks (notes.md, Need to
+// Verify). The wiki's test was of 70338's axe-only version.
 func (hunter *Hunter) removeRacialRangedCrit() {
 	weaponCrit := map[proto.Race]struct {
 		weaponType proto.WeaponType
@@ -359,7 +363,6 @@ func (hunter *Hunter) removeRacialRangedCrit() {
 	}{
 		proto.Race_RaceHuman: {proto.WeaponType_WeaponTypeSword, 2},
 		proto.Race_RaceDwarf: {proto.WeaponType_WeaponTypeMace, 1},
-		proto.Race_RaceOrc:   {proto.WeaponType_WeaponTypeAxe, 1},
 	}
 	racial, ok := weaponCrit[hunter.Race]
 	if !ok {
