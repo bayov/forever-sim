@@ -166,8 +166,10 @@ export class SavedDataManager<ModObject, T> extends Component {
 				tooltip.destroy();
 
 				const idx = this.userData.findIndex(data => data.name == config.name);
-				this.presetTree.untrack(this.userData[idx].elem);
+				// We remove the preset before the tree refreshes, so the Saved folder hides when
+				// this was its last one.
 				this.userData[idx].elem.remove();
+				this.presetTree.untrack(this.userData[idx].elem);
 				this.userData.splice(idx, 1);
 				this.saveUserData();
 			});
