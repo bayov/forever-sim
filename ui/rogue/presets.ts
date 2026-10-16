@@ -403,12 +403,12 @@ export const TalentsLevel60CombatSwords = PresetUtils.makePresetTalents(
 );
 export const TalentsLevel60SealFateSwords = PresetUtils.makePresetTalents(
 	'Level 60 Seal Fate Swords',
-	SavedTalents.create({ talentsString: '0053031045130005-3220132020141' }),
+	SavedTalents.create({ talentsString: '0053031035140005-3220132020141' }),
 	{ tooltip: 'Seal Fate and Cold Blood in Assassination with Blade Flurry and Hack and Slash, for Sinister Strike.', group: 'Level 60' },
 );
 export const TalentsLevel60CombatDaggers = PresetUtils.makePresetTalents(
 	'Level 60 Combat Daggers',
-	SavedTalents.create({ talentsString: '00530310501-30230320201513231-002' }),
+	SavedTalents.create({ talentsString: '005303104-30230320201515231-002' }),
 	{ tooltip: 'Deep Combat for Backstab: Adrenaline Rush, Blade Flurry, Puncturing Wounds, Hack and Slash, Opportunity.', group: 'Level 60' },
 );
 export const TalentsLevel60SealFateDaggers = PresetUtils.makePresetTalents(
@@ -444,10 +444,10 @@ export const TalentsLevel60CombatSwordsHumanoid = humanoidTalents(
 );
 export const TalentsLevel60SealFateSwordsHumanoid = humanoidTalents(
 	'Level 60 Seal Fate Swords',
-	'0053231025130005-3220132020141',
+	'0053231015140005-3220132020141',
 	'Seal Fate with Blade Flurry for Sinister Strike.',
 );
-export const TalentsLevel60CombatDaggersHumanoid = humanoidTalents('Level 60 Combat Daggers', '00532310301-30230320201513231-002', 'Deep Combat for Backstab.');
+export const TalentsLevel60CombatDaggersHumanoid = humanoidTalents('Level 60 Combat Daggers', '005323102-30230320201515231-002', 'Deep Combat for Backstab.');
 export const TalentsLevel60SealFateDaggersHumanoid = humanoidTalents(
 	'Level 60 Seal Fate Daggers',
 	'0053231053120005-322303200013-002',
