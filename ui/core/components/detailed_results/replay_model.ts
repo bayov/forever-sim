@@ -213,8 +213,13 @@ export interface ReplayModel {
 	enemies: Array<ReplayEnemy>;
 	// The enemy the player hit last with a single target ability, by time.
 	focus: Steps;
-	// When the main hand swung, for the swing timer.
+	// When each hand swung, for the swing timers. A Heroic Strike, Cleave or Maul takes the main
+	// hand's swing, so it counts as one.
 	mainHandSwings: Array<number>;
+	offHandSwings: Array<number>;
+	// The auras of a queued Heroic Strike, Cleave, Maul or Raptor Strike, while it waits for the
+	// next main hand swing.
+	swingQueue: Array<AuraTrack>;
 	// The Maelstrom Weapon buff, which the shaman pack shows as five pips like combo points.
 	maelstrom: AuraTrack | null;
 	damageDone: Steps;
@@ -322,7 +327,14 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 		comboLogs.forEach(log => comboPoints!.push(log.timestamp, log.valueAfter));
 	}
 
-	const playerAuras = buildAuraTracks(player.auraUptimeLogs, start, end);
+	// The sim keeps an aura on us while a totem of ours is down, like Searing Totem. In game it's
+	// only a totem, so we show it in its totem cell and not as a buff too.
+	const totemSlots = buildTotemSlots(player.logs);
+	const totemIds = new Set(totemSlots.flatMap(slot => slot.drops.map(drop => drop.actionId.toString())));
+	const totemNames = new Set(totemSlots.flatMap(slot => slot.drops.map(drop => baseName(drop.actionId)).filter(Boolean)));
+	const playerAuras = buildAuraTracks(player.auraUptimeLogs, start, end).filter(
+		track => !totemNames.has(baseName(track.actionId)) && !totemIds.has(track.actionId.toString()),
+	);
 
 	// The cooldowns, from the lines the sim writes when an ability goes on cooldown.
 	const timerUseLists = new Map<string, Array<TimerUse>>();
@@ -352,9 +364,6 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 	const castLogs = player.castLogs.slice().sort((a, b) => a.timestamp - b.timestamp);
 	const casts = castLogs.map(toReplayCast);
 	const majorCooldownIds = player.majorCooldownLogs.map(log => log.actionId!);
-
-	const totemSlots = buildTotemSlots(player.logs);
-	const totemIds = new Set(totemSlots.flatMap(slot => slot.drops.map(drop => drop.actionId.toString())));
 
 	// Abilities with a cooldown shorter than the GCD, like an auto attack, aren't worth tracking.
 	const cooldowns = Array.from(cooldownsByKey.values()).filter(cooldown => cooldown.longest >= 1.5);
@@ -481,7 +490,9 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 		actionStarts: actions.map(cast => cast.log.timestamp),
 		enemies,
 		focus,
-		mainHandSwings: castLogs.filter(log => log.actionId!.otherId == OtherAction.OtherActionAttack && log.actionId!.tag == 1).map(log => log.timestamp),
+		mainHandSwings: castLogs.filter(log => isAutoAttack(log.actionId!, 1) || isNextSwingHit(log.actionId!)).map(log => log.timestamp),
+		offHandSwings: castLogs.filter(log => isAutoAttack(log.actionId!, 2)).map(log => log.timestamp),
+		swingQueue: playerAuras.filter(track => isSwingQueue(track.actionId)),
 		maelstrom: playerAuras.find(track => track.actionId.name.startsWith('Maelstrom Weapon')) ?? null,
 		damageDone,
 		sct,
@@ -508,6 +519,17 @@ const TOTEM_ELEMENTS = ['Air', 'Earth', 'Fire', 'Water'];
 
 // The ability's name without its rank, like "Earth Shock" for "Earth Shock (Rank 7)".
 const named = (actionId: ActionId, name: string) => actionId.name == name || actionId.name.startsWith(`${name} (`);
+// The name without its rank or tag, like "Searing Totem" for "Searing Totem (Rank 5)".
+const baseName = (actionId: ActionId) => actionId.name.replace(/ \(.*$/, '');
+
+const isAutoAttack = (actionId: ActionId, tag: number) => actionId.otherId == OtherAction.OtherActionAttack && actionId.tag == tag;
+// The abilities that take the next main hand swing. The sim tags the queue spell and its aura
+// 1, and the hit 0. Raptor Strike's hit is tagged 1 and its queue 3.
+const NEXT_SWING = ['Heroic Strike', 'Cleave', 'Maul'];
+const isNextSwingHit = (actionId: ActionId) =>
+	(actionId.tag == 0 && NEXT_SWING.some(name => named(actionId, name))) || (actionId.tag == 1 && named(actionId, 'Raptor Strike'));
+const isSwingQueue = (actionId: ActionId) =>
+	(actionId.tag == 1 && NEXT_SWING.some(name => named(actionId, name))) || (actionId.tag == 3 && named(actionId, 'Raptor Strike'));
 
 const shamanBars = (cooldowns: Array<TrackedCooldown>) => {
 	const indexIn = (list: Array<string>, cooldown: TrackedCooldown) => list.findIndex(name => named(cooldown.actionId, name));
