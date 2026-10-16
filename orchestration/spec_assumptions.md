@@ -633,6 +633,15 @@ No assumptions of its own. The rogue's scenarios are the shared ones:
 
 ---
 
+### `level_partial_resist` (pending, added 2026-10-16 by the assumptions audit)
+
+- **Builds:** every caster and hybrid (mage, warlock, priest, Elemental, Enhancement, Balance, Retribution); not the rogues, warriors or hunters.
+- **Sim now:** Classic's 2% average partial resist per level above the caster on every non-binary spell, 6% against the level 63 boss (`AverageMagicPartialResistPerLevelMultiplier`, `sim/core/spell_resistances.go`, `spell.go`). notes.md said the sim drops it under Forever, but the code keeps it.
+- **Evidence:** 0 partial resists in 313 landed non-binary hits on normal beta mobs 3 to 5 levels up (shaman_audit.md 5.2). No boss or elite data.
+- **Settings:** Low (the sim now) is Classic's 6% at +3; Expected is none (the beta). The default stays on the sim's value until the user rules (orchestration/assumptions_audit.md, Q1).
+- **Sensitivity (10k iterations, seed 1, 180 s, None against 6%):** Fire +7.1%, Arcane +6.3%, Elemental +6.4%, Balance +5.4%, Destruction +5.2%, Affliction +5.3%, Ret +4.2%, Shadow +3.8%, Enhancement +3.0%, Frost 0 (Frostbolt is binary).
+- **Knob (to add):** `core.Assume("level_partial_resist", AverageMagicPartialResistPerLevelMultiplier)` at both uses.
+
 ## Settled, not a scenario
 
 - **Windfury Totem's internal cooldown: 1.5 sec.**
