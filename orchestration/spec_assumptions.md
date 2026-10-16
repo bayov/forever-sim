@@ -61,9 +61,11 @@ Close behind: `sham_lb_31plus` (−1.9% / +4.1% Elemental around the presets' ×
 
 | Key | Label | Builds | Sim now | Low | Expected | High | Sensitivity |
 |---|---|---|---|---|---|---|---|
-| `wf_totem_offhand` | Windfury Totem procs from off-hand hits | Fury (dual wield), all six rogue builds, Survival | yes | main hand only | yes | = Expected | est. −2 to −3% DW Fury and rogues, about −1.5% Survival (at Low) |
+| `wf_totem_offhand` | Windfury Totem procs from off-hand hits | Fury (dual wield), all six rogue builds, Survival | no, main hand only (one value, user ruling 2026-10-16) | = Expected | main hand only | = Expected | none left (one value) |
 
 ### `wf_totem_offhand`: Windfury Totem procs from off-hand hits
+
+- **Ruling (2026-10-16):** main hand only, kept as a one-value row. Client 70425 edited the totem's description to "Each main hand hit has a 20% chance", and the user ruled: "Main hand only, and keep as assumption with only 1 value". `sim/core/buffs.go` (`WindfuryTotemBuffAura`) now uses `ProcMaskMeleeMH` under Forever too. The history below is kept for reference.
 
 - **Builds:** Fury (dual wield), all six rogue builds, Survival. These are the dual wielders in a Windfury Totem group (`tools/rotopt/mksettings/spec_warrior.go:12`, `spec_rogue60.go:16`, `spec_hunter.go:38`). Two-hand Fury, Arms and Retribution have no off hand.
 - **Sim now:** yes. Under Forever the totem's proc mask is `ProcMaskMelee`. `sim/core/buffs.go:1893-1896` (`WindfuryTotemBuffAura`).

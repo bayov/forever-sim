@@ -35,12 +35,11 @@ def S(id_, label, value, why, env=None, edit=None):
 
 A = [
  dict(key='wf_totem_offhand', cls='All', label='Can off-hand hits proc Windfury Totem?',
-      short="Forever's totem is a party aura with no weapon rule. In Era, only main-hand hits could proc it.",
-      desc="Whether off-hand hits can proc Windfury Totem. In Era the totem put an enchant on the main hand, so only main-hand hits procced it. Forever's totem is a party aura with nothing tying it to a weapon. The totem needs level 32, beyond the beta, so nobody has checked.",
-      src="Forever client builds 70291 and 70338 (party aura, no weapon condition).",
+      short="Only main-hand hits proc Windfury Totem: client 70425's description says so, and the user ruled for it.",
+      desc="Whether off-hand hits can proc Windfury Totem. In Era the totem put an enchant on the main hand, so only main-hand hits procced it. Forever's totem is a raid aura with no weapon rule in its proc data, but client 70425 edited its description to \"Each main hand hit has a 20% chance\". The user ruled to keep this one value.",
+      src="Forever client 1.60.1.70425 (Windfury Totem description); user ruling 2026-10-16.",
       builds=['warrior__fury'] + R(ROGUE) + ['hunter__survival'],
-      settings=[S('low', 'Main hand only (Era)', 'only main-hand hits can proc it', "How Era worked: the totem enchanted the main hand.", {'wf_totem_offhand': 0}),
-                S('expected', 'Any melee hit', 'main-hand and off-hand hits can proc it', "Forever's party aura names no weapon.")],
+      settings=[S('expected', 'Main hand only', 'only main-hand hits can proc it', "Client 70425's description; the user ruled for it.")],
       default='expected', expected='expected'),
  dict(key='priest_sf_tick_crit', cls='Priest', label="Do DoT ticks get Shadowform's 200% crits?",
       short="Shadowform makes Shadow crits deal 200%. Do Shadow Word: Pain, Mind Flay and Devouring Plague ticks get it too?",
