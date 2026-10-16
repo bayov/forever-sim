@@ -124,16 +124,16 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 		// Preset gear configurations that the user can quickly select.
 		gear: [...Presets.GearPresets[Phase.Phase2]],
 		builds: [
-			Presets.PresetBuildLevel60CombatDaggers,
-			Presets.PresetBuildLevel60SealFateDaggers,
 			Presets.PresetBuildLevel60CombatSwords,
 			Presets.PresetBuildLevel60SealFateSwords,
+			Presets.PresetBuildLevel60CombatDaggers,
+			Presets.PresetBuildLevel60SealFateDaggers,
 			Presets.PresetBuildLevel60Mutilate,
 			Presets.PresetBuildLevel60Subtlety,
-			Presets.PresetBuildLevel60CombatDaggersHumanoid,
-			Presets.PresetBuildLevel60SealFateDaggersHumanoid,
 			Presets.PresetBuildLevel60CombatSwordsHumanoid,
 			Presets.PresetBuildLevel60SealFateSwordsHumanoid,
+			Presets.PresetBuildLevel60CombatDaggersHumanoid,
+			Presets.PresetBuildLevel60SealFateDaggersHumanoid,
 			Presets.PresetBuildLevel60MutilateHumanoid,
 			Presets.PresetBuildLevel60SubtletyHumanoid,
 			Presets.PresetBuildBackstab,
@@ -165,16 +165,16 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 			consumes: Presets.DefaultConsumes[Phase.Phase1],
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
-				[Faction.Alliance]: Race.RaceHuman,
+				[Faction.Alliance]: Race.RaceSkyborneHighOrder,
 				[Faction.Horde]: Race.RaceUndead,
 			},
 			defaultGear: {
 				[Faction.Unknown]: {},
 				[Faction.Alliance]: {
-					1: Presets.DefaultGear.gear,
+					1: Presets.GearLevel60SyntheticMutilate.gear,
 				},
 				[Faction.Horde]: {
-					1: Presets.DefaultGear.gear,
+					1: Presets.GearLevel60SyntheticMutilate.gear,
 				},
 			},
 		},
@@ -189,8 +189,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 			consumes: Presets.DefaultConsumes[Phase.Phase1],
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
-				[Faction.Alliance]: Race.RaceGnome,
-				[Faction.Horde]: Race.RaceUndead,
+				[Faction.Alliance]: Race.RaceHuman,
+				[Faction.Horde]: Race.RaceOrc,
 			},
 			defaultGear: {
 				[Faction.Unknown]: {},

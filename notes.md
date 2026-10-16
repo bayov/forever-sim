@@ -55,7 +55,7 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 * Beta: Mutilate with an off hand that is not a dagger. The client asks for a dagger on the cast and the main hand strike only (SpellEquippedItems, 1.60.1.70338), so the sim lets any off hand weapon strike. Mutilate is a 20 point talent, so a level 30 rogue can try it with a sword in the off hand.
 * Beta: Preparation resets every other rogue cooldown in the sim (Adrenaline Rush, Blade Flurry, Cold Blood, Premeditation, Ghostly Strike, Vanish, Evasion), as the tooltip says and Classic did. The client spell is a dummy effect, so the list is the server's. Preparation is a 20 point Subtlety talent: a level 30 rogue can use Evasion, Sprint, Ghostly Strike and Premeditation and press it.
 * Beta: Premeditation out of Stealth. The client spell no longer has the stealth only attribute, and foreverchanges reads the tooltip the same way, so the sim lets it go out in combat. A 15 point Subtlety talent, so a level 30 rogue can try it.
-* Beta: Backstab's flat bonus. Forever's tooltip says "150% weapon damage plus 150" at rank 9, Era's "plus 225", but the client effect data is the same as Era's (150 added to the weapon damage before the 150%). The sim keeps 225. At level 28 the tooltip shows "plus 46" (Era 69): a few Backstabs with a known dagger and attack power settle it.
+* Settled 2026-10-16 (assumptions audit): Backstab's flat bonus goes inside the 150% (rank 9: 1.5 × (weapon + 150) = +225, Era's number), as for Ambush and Mutilate. Shred, on the same weapon damage + weapon percent effects, was measured that way (forever-bugs #208: a level 22 Shred hit 56 to 65 beside 19 to 24 white hits, which only the flat-inside reading reaches; AidanZMoon: "it's a tooltip bug for the flat damage"), and Forever's Mutilate tooltip itself multiplies the flat part by the 75% (`${$1310706m1*$1310706m2/100}`). Forever's "plus 150" prints the flat part before the percent. No longer a report assumption (`flat_bonus_inside_pct` removed).
 * Deadly Poison takes a new snapshot of the whole stack on every application (since 2026-10-12), so Venom or Blood Fury coming up later reaches a poison already at 5 stacks. Before, only the first stack took one. The modern client recomputes an aura's amount when it is applied again, but the server could keep the old one.
 * The Ahn'Qiraj book ranks (Backstab and Eviscerate rank 9, Deadly Poison V) are out under Forever (`env.IncludeAQRanks()`): client 70338 has the books with no source and no trainer. If Forever adds them at launch, Backstab, Eviscerate and Deadly Poison gain about 2 to 3% DPS (Combat Daggers 18, Combat Swords 14, Subtlety 13, Mutilate 15 at 180 sec).
 * Grimstitch Armor's bonuses (1% hit, 36 attack power against Humanoids, Eviscerate 5 Energy cheaper) sit on the synthetic Phase 1 sets, the client pieces have no stats yet.
@@ -110,7 +110,7 @@ Mechanics the sim assumes but no source has settled yet. "Beta" marks the ones w
 * Devilsaur Tooth makes the next Revive Pet free under Forever (the forever-hunter wiki), so the sim gives it nothing in a fight.
 * Wildstalker Armor's 5 piece bonus (spell 1301252) is named "Aimed and Multi-Shot", but its cooldown effect's class mask (131072) matches only Aimed Shot (Multi-Shot is 4096, client 1.60.1.70338). The sim cuts only Aimed Shot's cooldown, to 5 sec; Multi-Shot shares it. Its 2 piece 1% attack speed is taken as melee and ranged attack speed and cast speed (auras 342 and 65). Beta: the cooldown after a Multi-Shot with 5 pieces on. The presets carry the 2 piece only (cross-class standard).
 * Level 31+ ranks (the rank tuning auditor, orchestration/rank_tuning.md): Raptor Strike's flat bonus is tuned to 0.88 of Era at level 24 but the client's 32 to 56 ranks (35 / 40 / 55 / 70) sit at 0.50 to 0.70 of Era, so they may still be untuned. The sim raises rank 8 halfway, to 96 (report assumption hunter_raptor_31plus, user ruling 2026-10-15); holding it at 0.88 (123) would give Survival about +1.2% on the earlier numbers. Arcane Shot, Aimed Shot, Serpent Sting and Mongoose Bite are tuned at every rank; Sniper Shot's 160 / 225 / 295 has never changed in a beta build. The sim takes the client's numbers for the other ranks. Beta: a Raptor Strike at 32+ with the weapon damage known.
-* Trueshot Aura is a party aura under Forever; the sim only has a raid wide switch, so the hunter's own talent turns it on for the raid.
+* Trueshot Aura is a raid aura under Forever since client 70425 (a party aura before); a Marksmanship hunter's talent turns it on for the raid, and the shared raid (mksettings) assumes one is present for every class, hunters included since 70425.
 * Trueshot Aura rank 5 and Hunter's Mark rank 4 (sim: 100 and 140 ranged attack power, report assumption hunter_tsa_hm_rank, user ruling 2026-10-15). The client gives them 50 and 71, below the ranks before them (75 and 98); the ruling takes Blizzard fixing them onto the curve, so the top ranks are cast. Beta at 60: the two top ranks' tooltips.
 * Does a hunter pet's Furious Howl stack with Battle Shout (the user, 2026-10-16)? In client 70425 Furious Howl (24604, 24605, 24603, 24597: 5 / 34 / 60 / 82 melee attack power for 15 sec) is a raid area aura (target 56) on the same aura type as Battle Shout (99, melee attack power), so on paper both count, as in Classic, unless the server puts them in one group like Forever's other raid-wide shouts and totems. The sim has no Furious Howl at all (the pet ability is commented out in `sim/hunter/pet_abilities.go`, and there is no raid buff for it). If both count, a raid with a Furious Howl wolf gives every melee about 82 attack power for a share of the fight on top of Battle Shout's 139. Beta: a warrior with Battle Shout up next to a wolf that howls, checking the sheet's attack power (UnitAttackPower) before and during the howl. Furious Howl rank 1 comes at pet level 10.
 * Do the crit racials give ranged crit (the user noticed the Orc's no longer needs an axe, 2026-10-16)? Client 70425 renamed Human Sword Specialization (20597) to Ruthless, 2% crit "with all spells and attacks", and Orc Axe Specialization (20574) to Savage, 1% crit "with all spells and abilities", and dropped both equipped item rules (70338 had swords and axes only). The sim gives every Human 2% and every Orc 1% melee and spell crit now, and leaves it on a hunter's ranged attacks: the forever-hunter wiki found the old weapon racials gave no ranged crit, but that was 70338's versions, tied to a melee weapon. Beta: an Orc or Human hunter's ranged crit on the sheet (GetRangedCritChance) against a Troll's with the same Agility.
@@ -202,6 +202,154 @@ The warlock runs the Forever client tree and spell ranks since 2026-10-12. What 
 * Rip's level 31+ ranks (rank tuning audit, orchestration/rank_tuning.md). Per combo point, Forever's ranks up to level 30 sit above Era (4.4 / 7.2 against 4 / 7), but its 31+ ranks sit below (8.5 / 12.7 / 18.2 / 25.5 against 9 / 14 / 20 / 28). The sim uses the client's values. If the 31+ ranks are off, Era values would be worth +1.6% to Feral and the 30-and-below trend +2.1% (648 to 662 at 180 sec). Rip ticks at 60 on the beta, once it opens, settle it.
 * Wrath rank 8 (rank tuning audit). Build 70009 multiplied every Wrath rank by 1.5, and 70291 retuned only ranks 1 to 5, so the level 31+ ranks may keep the old shape: Forever over Era is 0.42 at level 30, then 0.36 / 0.34 / 0.36. Holding rank 8 at 0.42 (x1.17) would be worth +1.6% to the Wrath build (760 to 772 at 180 sec) and +0.4% to Balance. The sim uses half of that, x1.085, since 2026-10-15 (the user's ruling on the report assumptions, `WrathRank8DamageScale`); still open. Starfire, Moonfire and Insect Swarm look tuned.
 * Starfire rank 7 and Ferocious Bite rank 5 come from Ahn'Qiraj books. The Forever client (70338) has the books with no source and no trainer, and Forever is set before Molten Core, so Forever sims leave them out (Environment.IncludeAQRanks, orchestrator ruling 8a): Starfire rank 6 and Ferocious Bite rank 4. That costs Balance 13 DPS at 180 sec and Feral 2. If Forever puts the books in Phase 1, the ranks come back.
+
+## Game-update audit (2026-10-16)
+
+Open questions from the game-update audit (orchestration/update_ledger.md, section 4 of each class): the client and the notes disagree, or the server decides. Each class's items are its own section 4, copied here.
+
+### Warrior
+
+* **NtV-1 Dual Wield Specialization's off-hand Rage.** (Settled by PR #75, if merged: Arlewow's combat log on magey/forever-warrior #3 measures half Rage, 0.5, from a 1.6 sec off hand.) The 1 October notes say DWS "no longer provides a 20/40/60/80/100% increase to your Off-Hand weapon's Rage generation". The 70170 client did drop the effect, but 70291 put it back as a server-side dummy (23584 eff 1, Aura 4, bp 5) on the same trait curve (111755) it used when it gave 20-100%. Aidan Moon (X) and ForeverChanges say 10-50%, and the sim gives 10% a point (x1.5 at 5/5, talents.go:211). The curve values are not in our download, so the client cannot settle 50% vs 100%. Beta: off-hand white swings' Rage with 0 and 5 points of DWS, same weapon, Battle Stance, no other Rage talents.
+* **NtV-2 Improved Slam's cooldown at one point.** 70009 gave the -3 s effect a rank curve (1.5/3 s, as the notes say); 70291 removed that curve row, so the client now takes 3 s off at either rank, and ForeverChanges reads "3 sec per rank" (6 s at 2/2). The sim uses 3 s at 1 or 2 points (slam.go:26). Every preset takes 2/2, so only a 6 s reading would change DPS (a 12 s Slam). Beta: Slam's cooldown on the action bar with Improved Slam 1/2 and 2/2.
+* **NtV-3 Deep Wounds and caster damage modifiers.** Forever's Deep Wound damage spell (412613) carries SPELL_ATTR6 bit 29 (ignore caster damage modifiers) since the beta opened. The sim follows Classic's double dip: the weapon damage behind the DoT is taken with the attacker multipliers (deep_wounds.go:85/:89) and every tick applies `AttackerDamageMultiplier` again (:44), so Death Wish (+20%), Enrage (+2-10%) and the like count twice. If the server honours the attribute, the ticks should take no caster modifiers (one dip, or none if the weapon average is also raw). Beta: Deep Wounds tick sizes from the same crit with and without Death Wish up.
+* **NtV-4 Berserker Rage's bonus Rage under Forever.** The tooltip still says "generating extra rage when taking damage" and the amount is server side. Since the 8 October build Forever's damage-taken Rage is about a third of Classic's at 60, but the sim's Berserker Rage bonus still uses Classic's conversion (15.4 for a 1500 hit). Beta: Rage from the same mob hit with and without Berserker Rage up.
+* **NtV-5 Sunder Armor's new aura type (674).** 70291 moved every player Sunder rank's armor effect from aura 22 (mod resistance) to a new aura type 674, and 70425 did the same to NPC Sunders; values are unchanged. It probably implements "usable even if the target has a more powerful Expose Armor" (deep dive), which would let Sunder and Improved Expose Armor coexist or not. Beta: target armor with 5 Sunders and a 5-point Expose Armor applied in both orders.
+
+### Paladin
+
+* **NtV-1, Seal of Righteousness after the 70425 fix (beta).** (PR #54 owns the fix; the ruling is listed in orchestration/update_ledger.md.) DN6 says SoR "gained almost twice as much benefit from Spell Damage than intended" and is fixed. Client 70425 zeroes the proc spells' 10% coefficient (25713 and lower ranks), while Judgement of Righteousness still carries the seal's 1786 / 47 dummy at 20%. The sim should count SP once. Still open: whether the surviving share is 10% flat, 11% on a two-hander (the Season of Discovery ×1.1), or tied to weapon speed. 70425's tooltip now has separate `$<1h>` and `$<2h>` terms plus a `$<mult>` (SpellDescriptionVariables, not downloaded), which hints at a hand-dependent SP term. To settle it, compare SoR proc hits at level 60 with a 2H and a 1H, with and without about 100 spell power (one Brilliant Wizard Oil swap). Knobs: `pal_sor_sp_double`, `pal_sor_sp_speed`, `sor.go:111`.
+* **NtV-2, Improved Seals' stored value (client).** Client 70425 changed Improved Seals (20224) base points from 3 to 0 without a note. The talent's ranks come from a trait curve, which overrides the spell, as Champion of the Light shows (spell holds 100, ranks are 10/20/30). The TraitDefinitionEffectPoints row did not change. Read the 70425 curve for 20224's trait (wago Curve / CurvePoint), or check that a 3/3 paladin's SoR and JoR still hit 15% harder than 0/3. Sim keeps 5/10/15% (`talents.go:62`). If it were really 0, every preset loses about 10-13%.
+* **NtV-3, Champion of the Light 10/20/30 (client curve).** PR #54 takes 10/20/30% from trait curve 110350. The local download has no Curve table to confirm it, but DN6 and the DD ("up to 30%") agree, so this is low risk. Recheck the character sheet's spell damage with 3/3.
+
+### Hunter
+
+* **Fire traps' attack power share (server side).** Blizzard's 10-15 notes say "The Hunter's Fire traps now correctly scale with Attack Power", but client 1.60.1.70425 gives Immolation Trap's tick (14301, 138 a tick x 5 at rank 5) and Explosive Trap's hit and dot (14315: 229 ± 24%, 33 a tick) no attack power coefficient (BonusCoefficientFromAP 0) and no spell power coefficient, so the server adds it and the share is unknown, as is whether it reads melee or ranged attack power. The sim deals the flat client numbers. Survival casts Immolation Trap on its 18 sec cooldown, about 5% of its damage. Beta: an Immolation Trap's ticks at level 60 (or any level) with and without Aspect of the Beast / Aspect of the Hawk, attack power known from the sheet.
+* **Savage Strikes: crit or damage?** Blizzard's hunter deep dive (2026-09-30) says Savage Strikes "now increases all melee damage by 2/4%", but the client (19159, still at 1.60.1.70425) says "Increases the critical strike chance of all your melee abilities by $s1%", and the sim follows the client (2% crit a rank on Raptor Strike, Mongoose Bite, Wing Clip, Strider Kick, Lacerate and Lacerating Strikes). For Survival's 2 ranks the two readings differ by roughly 1% DPS (4% melee damage incl. white swings vs 4% crit on abilities). Beta: the talent's tooltip in game and a Raptor Strike crit rate with 0 and 2 ranks.
+* **Furious Howl (refines notes.md:114, the stacking question is not re-raised).** The client gives Furious Howl a 60 sec duration (DurationIndex 3) and a 30 sec cooldown, so a wolf keeps it up the whole fight, not "a share of the fight"; the 15 is its radius in yards. Rank 4 (24597) is 82 plus 0.4 a level from 56, 83.6 at 60 if the growth runs to level 60. The 40% cut announced for 70009 only reached the client in 70170. Beta: the buff's duration and value on a level 60 wolf's party member.
+* **Pet Expertise coefficient.** "Pets now correctly benefit from Expertise" has no client data (Hunter Pet Scaling 415429 has no expertise effect), so whether it is the hunter's Expertise 1:1, and whether any hunter source of Expertise exists at 60, is open. No sim effect today.
+
+### Rogue
+
+**NTV-1. Death Mark (new rogue finisher in client 70425).**
+- Client 70425 adds Death Mark in four ranks (1316709 at 40, 1325756 at 48, 1325757 at 56, 1325758 at 60). It is a 25 Energy finisher with a 10 sec cooldown that marks the target for 6 sec, stores a share of the rogue's damage per combo point, and then deals it, capped at (rank 4) 156 + 245 per point plus an AP and crit term.
+- Relentless Strikes and Eureka! were extended to cover it in the same build.
+- No trainer (SkillLineAbility), talent or item teaches it yet, and Blizzard's notes, the deep dive and foreverchanges don't mention it.
+- Settles it: the trainer list or spellbook of a rogue of level 40 or more on the next build, or the next patch notes. If it ships, it is a new finisher that every rogue rotation must weigh against Eviscerate and Rupture. The store ratio and the AP term are in the tooltip variables ($<ratio>, $<maxAP>, $<attackP>), which need the SpellVariable table we didn't download.
+
+**NTV-2. Seal Fate on Mutilate: one roll, or one per hand?**
+- The deep dive says Mutilate "will trigger [Seal Fate] exactly once if either or both hands generates a critical strike". The client gives Seal Fate a 500 ms ProcCategoryRecovery, which only says it can't fire twice.
+- The sim rolled on each half until one succeeded (1-(1-p)² with both hands critting); since PR #73 it rolls once per Mutilate, as the deep dive says.
+- Settles it: on the beta, with Seal Fate 1/5 (20%) and Cold Blood (+100% crit on both halves, if NTV-3 holds), count Seal Fate combo points over about 50 Cold Blooded Mutilates. About 20% means one roll and about 36% means one per hand. Mutilate is a 21-point talent, so this needs a level 40 or higher rogue.
+
+**NTV-3. Cold Blood and Mutilate's two halves.**
+- Cold Blood's client mask (14177, SpellClassMask_1 = 6) covers both Mutilate halves (1310705 and 1310706, mask_1 = 2), so both should get +100% crit. Notes 70425 says it is "consumed when Mutilate lands a critical strike".
+- Since PR #73 the sim gives the bonus to both halves and spends it once (it was the main hand half only).
+- Open: (1) do both halves crit under Cold Blood? (2) Is Cold Blood kept if Mutilate is dodged or misses?
+- Settles it: Cold Blood → Mutilate on a training dummy. Two crits in the log means both halves count. Then repeat against a mob that dodges, and check whether the buff stays.
+
+**NTV-4. The Attributes_6 bit 21 added to Rupture and Garrote in 70425.**
+- Client 70425 sets SpellMisc Attributes_6 bit 21 (2097152) on every rank of Rupture and Garrote, alongside the rogue's interrupts and crowd control (Kick, Gouge, Kidney Shot, Cheap Shot, Blind), Riposte, Crippling Poison, Paladin Rebuke and the racials War Stomp, Stoneform and Will to Survive.
+- The set looks like a PvP or diminishing returns grouping, and no patch note names it.
+- If it changes how the bleeds roll or scale, Rupture would be off for the Subtlety and Seal Fate presets.
+- Settles it: Rupture's 5-point ticks at 60 on the next build compared with the same character's ticks before 70425. Also look for a new PvP note about rogue stuns and bleeds.
+
+**NTV-5. Talent rank values that come only from curves (Dual Wield Specialization, Lethality).**
+- The base spells still hold Classic numbers: Dual Wield Specialization 13715 bp 50 (aura 122) and Lethality 14128 bp 6.
+- The ranks come from TraitDefinitionEffectPoints curves (not downloaded). The Forever tooltips (hyjal 69876, forever-wiki) read 5% per rank for Dual Wield Specialization (25% at 5/5) and 4% per rank for Lethality, and the sim uses those. The deep dive agrees on direction for both ("increase to off-hand damage reduced", "bonus to critical damage also lowered some").
+- Not moved by any build since 69893. Dual Wield Specialization is worth about 3% to the Combat and Seal Fate Swords presets if the tooltip were wrong.
+- Settles it: the rogue's off-hand white hit range on the character sheet (or log) at Dual Wield Specialization 0 and 5. ×1.25 means the tooltip is right; ×1.5 means it is Classic's.
+
+### Priest
+
+* **NtV-1 Shadow Word: Death's old cooldown.** The 15 October notes say "increased to 18 seconds (was
+  12 seconds)", but client 70374 had 15000 ms (SpellCooldowns 1309595/633/635/636) and the deep dive
+  said 15 s. The new 18 s agrees everywhere, so the sim's 18 s (PB) stands; only the "was" differs.
+  Nothing to test unless a later build lands on 12 or 15; check the in-game tooltip at 32+.
+* **NtV-2 Improved Mind Flay stacking.** "Each instance of damage of Mind Flay deals 10/20% more damage
+  than its previous instance" (70425). The client turned the talent into a dummy (1225139 aura 4, bp
+  20), so the server decides. PB reads it as compounding (ticks x1, x1.2, x1.44 at 2/2); additive
+  (x1, x1.2, x1.4) is the other reading, ~1.5% less Mind Flay damage, maybe -0.5% shadow DPS. A 2/2
+  priest's three Mind Flay ticks on a training dummy (no crits, same spell power) settle it: third
+  tick / first tick = 1.44 or 1.40.
+* **NtV-3 Inner Focus and channels.** 70170's note: Inner Focus "no longer applies its Critical Strike
+  increase to Periodic Effects", and the tooltip now says "non-periodic spell", but the same build
+  added Mind Flay and Starshards to Inner Focus's crit mask (14751 eff1) and took SW:P and DP out.
+  The 70291 Eureka note says "Channeled spells do not count as periodics", which suggests Inner Focus
+  then crits every Mind Flay tick. The sim keeps channels out (talents.go:277-280). No preset spends
+  Inner Focus on Mind Flay, so the DPS effect is nil today; it decides whether "Inner Focus -> Mind
+  Flay" is a valid rotation. Beta: Inner Focus then a full Mind Flay, count tick crits over many casts.
+* **NtV-4 Power in Light's size.** The talent spell holds bp 15 (1309969, dummy) while the tooltip
+  read gives 2/4/6/8/10% (curve 109048 not downloaded). The sim uses 2% a rank. A 5/5 Smite with and
+  without Holy Fire (or now SW:P) on the target settles 10% vs 15%: smite preset +1.5% if 15%.
+* **NtV-5 Touch of the Grave and Shadow modifiers** (shared): the note says it no longer scales with
+  Shadow increases; the sim scales it today (fix 3). Beta: an Undead Shadowform priest's drains equal
+  5% of max health with and without Shadowform.
+
+### Shaman
+
+* **NTV-1. Elemental Mastery's charges (client 70425, 16166).** The notes and the tooltip say Lightning Bolt and Lava Burst cast 0.5 sec faster and Chain Lightning has no cooldown "for 15 seconds", 3 min cooldown. The client aura has a 15 sec duration but also ProcCharges 1 with proc flags 0x15550 (spell casts), Era's "next spell" setup, so it may be spent by the first Lightning Bolt or Lava Burst, which would make it worth one 0.5 sec cut instead of about five. The worker models 15 sec with no charges. A beta test: press it and cast two Lightning Bolts, and watch whether the buff stays and the second cast is 0.5 sec shorter.
+
+* **NTV-2. Grace of Air with Windfury Totem from two shamans (client 70425).** Grace of Air lost its exclusivity bit (Attributes_11 1024 -> 0 on 8836 / 10626 / 25360) and all four buff totems became raid area auras, while Windfury and Flametongue Totems keep the bit. So a raid with two shamans gives the melee both GoA's 77 Agility and Windfury Totem. The sim still blocks GoA under any Windfury Totem buff (buffs.go:2009). Once fixed, should the melee presets (rogue, warrior, Ret, Feral, Survival) carry both, as the raid has several shamans on both factions? A user ruling, roughly +2 to +5% for those presets. Also open: does a second shaman's copy of the same totem (two SoE) do anything (notes.md:17).
+
+* **NTV-3. Lava Burst's Flame Shock bonus by level (client 70425).** The bonus is a dummy effect, bp 20, and ranks 3 (1238300) and 4 (1326047) carry RealPointsPerLevel 4.2 on it. If the server scales it, rank 3 (learned at 50, capped at 58) gives 53.6% at 58 and rank 4 stays 20% at 60. Level 60 is unaffected; leveling between 50 and 59 would be. A Lava Burst with and without Flame Shock at level 51 to 58 settles it.
+
+* **NTV-4. Stormstrike and Lightning Overload (70425 notes).** The mark is no longer spent by a spell that does not land. Does an Overload copy spend it, or get the 20%? The sim's overload runs the bolt's own effects; today the main bolt always spends the mark first, but after F3 a missed bolt would leave it for its overload. Also: does a partially resisted spell count as landed (the sim says yes).
+
+* **NTV-5. Water Shield's new trigger (70425).** The proc flags gained 0x10000 (harmful magic spells), so any damage spell crit should spend a globe. Do Flametongue Weapon and Flametongue Totem procs and Lightning Overload copies count, and does the 3.5 sec globe cooldown still hold? Ten minutes of Enhancement play with Water Shield up, counting globes against spell crits, settles it.
+
+* **NTV-6. Flametongue Totem on a cat (70291 notes).** The notes say it uses a shapeshifted target's attack speed; the sim uses the equipped weapon's. Only matters if a Feral preset ever takes Flametongue Totem.
+
+### Mage
+
+1. **Winter's Chill per-stack value (sim: not modelled, Cone of Cold isn't simulated).** The 70425 notes say two things: "Cone of Cold deals 40% increased damage per stack" and "increasing the target's damage taken from your next Cone of Cold by 5% and it gains an additional 7% of your spell damage, stacking up to 5 times"; foreverchanges follows the second. Client 12579 is aura 271 (damage taken from the caster) at 40 with the Cone of Cold mask and 5 stacks, which supports the first. Only matters for AoE/Cone of Cold builds. Beta (needs 25+ Frost points): Cone of Cold on a dummy with 0 and 5 stacks.
+
+2. **Missile Barrage per-rank split (sim on B: per point AB 20%, each landed missile 5%, Arcane Wrath/Fireball/Frostbolt/Frostfire Bolt 10%).** The 70425 client gives 400588 base 40 with a 2-rank trait curve (126757, not downloaded) and ProcChance 100 (was 50, which settles the old notes.md item). The tooltip formulas are m1, m1/4, m1/2. Whether rank 1 is half of rank 2, and whether the missile roll is per hit or per channel, are server side. A log of 100 Arcane Missiles channels at 1/2 and 2/2 settles it.
+
+3. **Fire Power's effect list and stacking (sim on B: Fire Vulnerability counts once regardless of stacks, plus the mage's active Fireball, Pyroblast, Flamestrike and Ignite DoTs, cap 4; multiplied with Fire Vulnerability on the attack table).** Blizzard lists Ignite, Improved Scorch, Fireball, Pyroblast and Impact, not Flamestrike; the client turned the talent into a dummy (aura 4), so the server counts. Whether several Fireball DoTs from different ranks count separately, whether Fire Vulnerability counts per stack, and whether the bonus adds to or multiplies the other % modifiers are open. Beta: Scorch damage with 0/1/2/3 Fire effects up.
+
+4. **Arcane Wrath's coefficient and its mana bonus (sim on B: 100% of spell power, and 5% of max mana added as spell damage through the same 100%).** The client effect carries EffectBonusCoefficient 1, the value earlier builds zeroed on several non-damage spells as a placeholder (Chaos Fire, Frosty Zap, Improved Counterspell in 70009), though 1.0 is also the classic 3.5 s cast value. Two Arcane Wrath hits at different spell power (and at different max mana, e.g. with and without Arcane Intellect) settle both. It decides Arcane Wrath's place in the Arcane rotation.
+
+5. **Arcane Blast stack timing (sim on B: the stack lands after the hit, so a cast doesn't use its own new 15% of Intellect; the buff keeps the first application's 15 s and later casts don't refresh it).** Server side. A 5-cast AB chain timed past 15 s, with the spell damage readout, settles both; Heating Up's Fire Blast stack (fix A) similarly: does a missed Fire Blast give it ("every time it deals damage")?
+
+### Warlock
+
+* Shadow Mastery's 70425 value. The 2% a point rests on the dev notes and the CurvePoint rows the warlock worker read; the talent's own SpellEffect points (2 on both effects) never changed between 69893 and 70425, and the deep dive of 2026-10-07 said its "damage bonus reduced". The sim (on the worker branch) takes 2 / 4 / 6 / 8 / 10%. Worth 3% on Affliction. A 70425 client tooltip at 5/5, or Shadow Bolt damage with and without the talent at a known spell power, settles it.
+* Eureka! for warlocks. Client 70425 limits Eureka's cost and damage to the direct spells plus the drains' and Wrack's ticks; Corruption, the banes, Siphon Life and Incinerate are outside its mask, and Immolate gets it on its hit only. The sim gives every damaging warlock spell both halves. The masks could be stale if the server applies its own list. A Gnome warlock's Corruption tick and Incinerate inside and outside the 8 sec window (combat log) settle it; worth up to about 0.8% on the Gnome builds.
+* Revelation for warlocks. Since 70170 the client has a warlock-only Revelation aura (1323392) whose mask includes Drain Life, Drain Soul and Wrack, while the sim's generic Revelation leaves channels out because their ticks roll crit. Only matters if a warlock preset takes the Revelation weapon enchant (none does today). A warlock with the enchant channelling Drain Life after a proc settles whether a channel uses it.
+* Malediction versus Grim Reach. The deep dive (2026-10-07) lists Malediction as a new talent and Grim Reach as removed; the 70425 notes and client reverse both. The sim follows 70425 (branch). Nothing to test unless Blizzard flips it back; flag for the next build diff.
+
+### Druid
+
+* N1 Rake's attack power (Forever). Blizzard's class deep dive says "Rake: Now gains increased damage from Attack Power", but client 70425 gives Rake 9904 no attack power coefficient (61 initial, 34 a tick over 9 sec, as in 70338), so the server adds it and the sim has none (sim/druid/rake.go). No preset uses Rake today; with the scaling it could join the feral rotation as a second builder or a Rend and Tear enabler. A Rake hit and its ticks at two known attack power values on the beta settle it.
+* N2 Grovekeeper Ferocity 5 piece's spell. The sim takes 1 sec off Shifting Power, which is the "1.60.0 - Item - Tier 1 - Druid - Feral 5P Bonus - Shifting Power" spell 1301247 (-1000 ms since 70170, unchanged in 70425). Howling Idol's 1291059 dropped to -500 ms in 70425; if the set links to 1291059 instead, the 5 piece is now worth half (about 4 DPS on both feral presets). The client's ItemSetSpell row for set 2115 (not in our download) or the set's in-game tooltip settles it.
+* N3 Omen of Clarity from a caster Faerie Fire. Build 70425 says Faerie Fire can't trigger Omen of Clarity in Cat or Bear Form because it costs nothing there, which implies the 115 mana caster Faerie Fire (and in Moonkin Form) still can. The sim never lets Faerie Fire proc it (faerie_fire.go has no SpellFlagOmen). Worth well under 1 DPS to the balance duty presets; a few dozen caster Faerie Fires watched for Clearcasting settle it.
+
+### Races, shared mechanics and items
+
+* **Does Dwarf Earth Fury still need a mace?** Client 70425 replaced Mace Specialization (1259719) with Earth Fury,
+  "Increases your critical strike bonus to damage and healing by 2%", with no word on weapons, and removed the
+  equipped-item rows of Human Ruthless (255480) and Orc Savage (255488). But Earth Fury's own row, SpellEquippedItems
+  255482 (weapon class, subclass mask 48: one- and two-handed maces), is still there, so the server may only apply it
+  with a mace equipped. The sim gives it to every Dwarf whatever the weapon (racials_forever.go:36). Beta: a level 30
+  Dwarf with a non-mace weapon lands crits on a training dummy, then again with a mace; if the crit sizes only move
+  with the mace, the sim needs the old `hasWeaponOfType(Mace)` gate back (and the race table its weapon variant).
+* **Grace of Air with Windfury Totem (2026-10-15 notes vs the sim).** Blizzard's notes and the client (Grace of Air
+  25360 drops Attributes_11 0x400) say the two stack now; PR #77 lets them stack in the sim (it turned Grace of Air off while Windfury was up). Beta: two shamans, one Grace of Air and one Windfury Totem, a melee in range; the character sheet's
+  Agility (UnitStat) should keep the 77 while the Windfury buff is up.
+* **Eureka! on damage over time and channels.** The 2026-10-01 notes say periodic effects get nothing and channels
+  are not periodic. The 70425 masks agree (DoTs out of the cost and damage masks, a periodic-damage mod only for
+  Drain Life, Drain Soul and Mind Flay); PR #69 makes the sim follow the masks (it gave every DoT cast inside the
+  window both the 10% discount and 10% on all its ticks). Beta: a Gnome warlock casts Corruption with and without Eureka! up (mana cost and tick size),
+  then Drain Life (ticks should be 10% bigger).
+* **Trueshot Aura in the level 60 raid.** Client 70425 makes it a raid area aura (effect 65, "party or raid
+  members"); notes.md:112 still treats it as party-wide, and only the Marksmanship presets have it. Not a beta test but
+  a composition ruling: does the reference raid carry a Marksmanship hunter, so every hunter preset gets 100 ranged
+  attack power?
+* **The 70009 EffectBonusCoefficient wipe.** 1,029 of the 1,043 zeroed rows are effects where the coefficient has no
+  meaning (stat auras, triggers, dummies, item creation), so it reads as a client data cleanup. If the server reads the
+  client value for procs, about 24 damaging item procs (Shadowstrike's Drain Life 21170, which PR #77 follows, Masterwork Stormhammer's
+  Chain Lightning 463946, the Shock 2606-2610 procs…) no longer scale with spell power; none is in a preset. A beta log
+  of one such proc at two spell power values would settle it; low priority.
 
 ## At 60
 

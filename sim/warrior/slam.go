@@ -54,6 +54,10 @@ func (warrior *Warrior) registerSlamSpell() {
 			},
 		},
 
+		// "Slam is no longer subject to spell pushback" (development notes, 2026-10-15, build
+		// 1.60.1.70425). The raid hits (sim/core/encounters) would otherwise push it back.
+		PushbackReduction: core.TernaryFloat64(warrior.Env.IsForever(), 1, 0),
+
 		CritDamageBonus: warrior.impale(),
 
 		DamageMultiplier: 1,

@@ -103,6 +103,15 @@ func (warrior *Warrior) applyWeaponmaster() {
 	}
 }
 
+// Shield Bash ranks 1 to 3.
+func isShieldBash(spellID int32) bool {
+	switch spellID {
+	case 72, 1671, 1672:
+		return true
+	}
+	return false
+}
+
 func (warrior *Warrior) registerWeaponmasterExtraAttack(procMask core.ProcMask, procChance float64) {
 	icd := core.Cooldown{
 		Timer:    warrior.NewTimer(),
@@ -120,6 +129,11 @@ func (warrior *Warrior) registerWeaponmasterExtraAttack(procMask core.ProcMask, 
 				return
 			}
 			if !spell.ProcMask.Matches(procMask) {
+				return
+			}
+			// "Fixed an issue where Weaponmaster's Sword Specialization could be activated by
+			// Shield Bash and Shield Slam" (development notes, 2026-10-15, build 1.60.1.70425).
+			if spell.SpellCode == SpellCode_WarriorShieldSlam || isShieldBash(spell.SpellID) {
 				return
 			}
 			if !icd.IsReady(sim) {
@@ -143,10 +157,12 @@ func (warrior *Warrior) applyBloodthrill() {
 
 	procChance := 0.04 * float64(warrior.Talents.Bloodthrill)
 
+	// The Overpower window it opens is spell 1282733, 5 sec (duration index 0 of client
+	// 70009 to 70425; until 69893 the talent pointed at 1289681, 6 sec).
 	warrior.BloodthrillAura = warrior.RegisterAura(core.Aura{
 		Label:    "Bloodthrill",
 		ActionID: core.ActionID{SpellID: 56638},
-		Duration: time.Second * 6,
+		Duration: time.Second * 5,
 	})
 
 	core.MakePermanent(warrior.RegisterAura(core.Aura{
