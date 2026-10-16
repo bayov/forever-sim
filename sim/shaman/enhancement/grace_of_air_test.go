@@ -30,20 +30,21 @@ func newGraceOfAirSim(totemWeaponBuff proto.TotemWeaponBuff, options *proto.Enha
 	return sim, sim.Raid.Parties[0].Players[0].(*EnhancementShaman)
 }
 
-// TestOrcShamanGraceOfAirWithWindfury checks that Grace of Air gives no Agility while a
+// TestOrcShamanGraceOfAirWithWindfury checks that Grace of Air keeps its Agility while a
 // Windfury Totem buff is up.
 //
-// Forever doesn't stack the two for now (the user, 2026-10-08). The Grace of Air here is
-// another shaman's. When the Windfury Totem is another shaman's too, Grace of Air stays off
-// the whole fight. When it's our own starting totem, put down 290 sec before the pull, it runs
-// out at 10 sec and Grace of Air's 77 Agility (rank 2; rank 3 is an Ahn'Qiraj tablet) comes back.
+// Forever didn't stack the two until client 1.60.1.70425 (the user, 2026-10-08: "for now").
+// The 2026-10-15 development notes undo it: "Grace of Air Totem is no longer exclusive with
+// Windfury Totem and Flametongue Totem", and Grace of Air's SpellMisc Attributes_11 lost its
+// 1024 flag. The Grace of Air here is another shaman's, and so is the Windfury Totem, or it's
+// our own starting totem.
 func TestOrcShamanGraceOfAirWithWindfury(t *testing.T) {
 	_, alone := newGraceOfAirSim(proto.TotemWeaponBuff_TotemWeaponBuffNone, &proto.EnhancementShaman_Options{})
 	agility := alone.GetStat(stats.Agility)
 
 	_, raidWindfury := newGraceOfAirSim(proto.TotemWeaponBuff_TotemWeaponBuffWindfury, &proto.EnhancementShaman_Options{})
-	if got, want := raidWindfury.GetStat(stats.Agility), agility-77; got != want {
-		t.Errorf("with another shaman's Windfury Totem: %.0f Agility, want %.0f", got, want)
+	if got := raidWindfury.GetStat(stats.Agility); got != agility {
+		t.Errorf("with another shaman's Windfury Totem: %.0f Agility, want %.0f", got, agility)
 	}
 
 	sim, enh := newGraceOfAirSim(proto.TotemWeaponBuff_TotemWeaponBuffNone, &proto.EnhancementShaman_Options{StartingTotems: &proto.StartingTotems{
@@ -51,13 +52,8 @@ func TestOrcShamanGraceOfAirWithWindfury(t *testing.T) {
 		AirSecondsBeforePull: 290,
 	}})
 	at(sim, 5, func(sim *core.Simulation) {
-		if got, want := enh.GetStat(stats.Agility), agility-77; got != want {
-			t.Errorf("at 5 sec with our Windfury Totem: %.0f Agility, want %.0f", got, want)
-		}
-	})
-	at(sim, 10.001, func(sim *core.Simulation) {
 		if got := enh.GetStat(stats.Agility); got != agility {
-			t.Errorf("after our Windfury Totem ran out: %.0f Agility, want %.0f", got, agility)
+			t.Errorf("at 5 sec with our Windfury Totem: %.0f Agility, want %.0f", got, agility)
 		}
 	})
 	runSim(sim)
