@@ -258,3 +258,15 @@ func TestScorpidStingDuty(t *testing.T) {
 		}
 	}
 }
+
+// TestPushbackFlags checks the client's interrupt flags (1.60.1.70425): Multi-Shot's lack the
+// pushback bit, Aimed Shot's carry it.
+func TestPushbackFlags(t *testing.T) {
+	_, hunter := newHunterSim(t, "", &proto.Debuffs{})
+	if got := hunter.MultiShot.PushbackReduction; got != 1 {
+		t.Errorf("Multi-Shot pushback reduction %v, want 1", got)
+	}
+	if got := hunter.AimedShot.PushbackReduction; got != 0 {
+		t.Errorf("Aimed Shot pushback reduction %v, want 0", got)
+	}
+}
