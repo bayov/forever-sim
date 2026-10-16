@@ -62,7 +62,7 @@ gen level60_shock "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecration
 # seal is up, Holy Strike, Hammer of Wrath and Exorcism on cooldown, Holy Wrath above 80% mana,
 # Consecration last above 20%. The searches on the twist and sub Holy talents ended within 2 DPS
 # of each other summed over both builds, and this one keeps more mana at 300 sec.
-gen level60_undead "seal=1,jotc=0,consecration=1,consecrationFirst=0,consecrationMana=20,twist=1,twistMana=0,twistWindow=15,hammerOfWrathMana=0,prepullTwo=1,judgeRighteousnessWindow=0,cooldownsFirst=1,holyWrathMana=80,trinketExecute=1" -level 60
+gen level60_undead "seal=1,jotc=0,consecration=1,consecrationFirst=0,consecrationMana=20,twist=1,twistMana=0,twistWindow=15,hammerOfWrathMana=0,prepullTwo=1,judgeRighteousnessWindow=0,cooldownsFirst=1,holyWrathMana=80,trinketExecute=1,hammerOfWrathFirst=3" -level 60
 # Level 60 Shock (vs Undead): the Shock rotation, with Light's Vigil above 30% mana in fights up
 # to 240 sec and above 60% in longer ones, to leave mana for Exorcism (rotation audit pass 13: a
 # flat 60% left 1300 to 1700 mana unspent at 120 and 180 sec; +9.7 / +10.5 / 0 at 120 / 180 /
@@ -88,6 +88,9 @@ gen level60_shock_crusader_duty "seal=1,jotc=1,sealFirst=1,consecration=1,consec
 # 180 / 300 sec: twist +2.1 / +2.2 / +2.2, sub Holy +2.0 / +2.5 / +1.6, their duty +2.2 to 2.7 /
 # +2.4 to 2.5 / +1.7 to 2.2, Shock +0.8 / +1.4 / +0.5, Shock duty +1.9 / +1.1 / +0.8. vs Undead
 # already has Consecration last, and Shock vs Undead gains under 1.1, so both keep their order.
+# Rotation audit pass 24 (2026-10-16, after the partial resists went): vs Undead puts Hammer of
+# Wrath above Holy Strike instead (hammerOfWrathFirst=3): +2.0 / +2.4 / +1.4 at 120 / 180 / 300 sec
+# paired over two seed sets, sub Holy vs Undead +1.4 / +2.2 / +1.9.
 # Level 30 with 5 extra talent points (26 in all). The old level 20 rotation still wins,
 # and Seal of Command stays ahead of Seal of Righteousness on Corpsemaker.
 gen level30p5 "seal=2,consecration=1,consecrationFirst=1,consecrationMana=0" -level 30 -bonus-talents 5 -talents --502240312013201

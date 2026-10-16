@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_undead",
   "published": {
-    "dps": 974.1,
-    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 941.2)"
+    "dps": 976.3,
+    "source": "Paladin PR (rotation audit pass 24: Hammer of Wrath above Holy Strike vs Undead, 2026-10-16)"
   },
   "verify": {
-    "dps": 974.12,
+    "dps": 976.34,
     "stderr": 0.32,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "verify.py, 180 s, seed 1"
   },
   "summary": "The twist build with Purifying Power 2, adding Exorcism and Holy Wrath for an Undead or Demon boss.",
   "advantage": "Exorcism and Holy Wrath only work on Undead and Demons. Purifying Power 2 makes both cooldowns a third shorter.",
@@ -43,13 +43,15 @@
     "Holy Conduit"
   ],
   "rotation": [
-    "Pre-pull: Seal of Righteousness at -3s, Seal of Command at -1.5s so the first swing gets the Echo",
-    "Consecration on cooldown while mana is at or above 20%",
+    "Pre-pull: Seal of Command at -3s, Seal of Righteousness at -1.5s so the first swing gets the Echo",
     "Judgement on cooldown on whichever damage seal is up",
-    "Seal of Command whenever no damage seal is up",
-    "Twist: with Seal of Command up, swap to Seal of Righteousness in the last 1.5s before a swing, and back to Command before the next swing (one swap per swing, down to 20% mana); Twist of Light's Echo applies the old seal on the next swing",
+    "Seal of Righteousness whenever no damage seal is up",
+    "Twist: with Seal of Righteousness up, swap to Seal of Command in the last 1.5s before a swing at any mana, and back before the next swing (one swap per swing); Twist of Light's Echo applies the old seal on the next swing",
+    "Hammer of Wrath below 20% health, ahead of Holy Strike",
     "Holy Strike on cooldown",
-    "Hammer of Wrath below 20% health",
+    "Exorcism on cooldown (Undead and Demons)",
+    "Holy Wrath on cooldown at or above 80% mana (Undead and Demons)",
+    "Consecration last, while mana is at or above 20%",
     "Racials, Goblin Sapper, Major Mana Potion and Demonic Rune on free GCDs"
   ],
   "consumes": [

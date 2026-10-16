@@ -56,8 +56,9 @@ func (paladinRet) Knobs() []Knob {
 		// Hammer of Wrath (from level 44) below 20% health, above this much mana. 100 never.
 		{Name: "hammerOfWrathMana", Default: 100, Min: 0, Max: 100, Step: 20},
 		// Where Hammer of Wrath goes: 0 after Holy Strike, 1 just above Consecration, 2 at the
-		// top of the list. In the execute phase it beats the Consecration tick it delays.
-		{Name: "hammerOfWrathFirst", Default: 0, Min: 0, Max: 2, Step: 1},
+		// top of the list, 3 just above Holy Strike. In the execute phase it beats the
+		// Consecration tick or the Holy Strike it delays.
+		{Name: "hammerOfWrathFirst", Default: 0, Min: 0, Max: 3, Step: 1},
 		// Twist the seals for Twist of Light's Echo: 0 never, 1 swap Seal of Command and Seal
 		// of Righteousness within twistWindow tenths of a second of the next swing, above
 		// twistMana percent of mana.
@@ -272,6 +273,9 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 	}
 	if k["exorcismFirst"] == 1 {
 		exorcismLine()
+	}
+	if hammerOfWrathLine != nil && k["hammerOfWrathFirst"] == 3 {
+		items = append(items, hammerOfWrathLine)
 	}
 	if k["holyStrikeFirst"] == 0 {
 		holyStrikeLine()
