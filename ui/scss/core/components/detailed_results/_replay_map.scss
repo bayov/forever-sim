@@ -543,8 +543,9 @@
 	}
 }
 
-// The progress bar of a session shows what we did along it: the states as colors, a tick for
-// each kill and a skull for each death.
+// The progress bar of a session shows what we did along it: the states as muted colors, a dot
+// for each kill and a red dot for each death. They stay inside the bar and stay quiet, so what
+// we played and the playhead stand out while the replay runs.
 .replay-progress-states {
 	position: absolute;
 	inset: 0;
@@ -564,21 +565,20 @@
 .replay-progress-kill,
 .replay-progress-death {
 	position: absolute;
-	top: -3px;
-	bottom: -3px;
-	width: 2px;
-	margin-left: -1px;
-	background: rgba(255, 255, 255, 0.75);
+	top: 50%;
+	width: 4px;
+	height: 4px;
+	margin: -2px 0 0 -2px;
+	border-radius: 50%;
+	background: rgba(255, 255, 255, 0.7);
 	pointer-events: none;
 }
 
 .replay-progress-death {
-	width: 4px;
-	margin-left: -2px;
-	top: -6px;
-	bottom: -6px;
+	width: 6px;
+	height: 6px;
+	margin: -3px 0 0 -3px;
 	background: #ef4a4a;
-	box-shadow: 0 0 4px #000;
 }
 
 // A session's progress bar is taller, so its colors show, and what we played only tints them.
@@ -593,12 +593,25 @@
 	}
 
 	.replay-progress-states {
-		opacity: 0.9;
+		opacity: 0.5;
+		filter: saturate(0.4);
 	}
 
 	.replay-progress-played {
-		background: rgba(255, 215, 94, 0.45);
+		background: rgba(255, 215, 94, 0.35);
 		box-shadow: inset -2px 0 0 var(--gold);
+	}
+
+	// A small playhead stays up while the session plays, since its bar is long and busy.
+	.replay-progress-thumb {
+		transform: scale(0.75);
+		box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6);
+	}
+
+	.replay-progress:hover .replay-progress-thumb,
+	.replay-progress.scrubbing .replay-progress-thumb,
+	&.paused .replay-progress-thumb {
+		transform: scale(1);
 	}
 }
 
