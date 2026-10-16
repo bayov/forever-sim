@@ -781,6 +781,91 @@ var ForeverItems = []*proto.UIItem{
 		Stats: stats.Stats{stats.Armor: 61, stats.Stamina: 17, stats.ShadowPower: 24}.ToFloatArray(),
 		Ilvl:  58, RequiredLevel: 53, Quality: proto.ItemQuality_ItemQualityUncommon, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
 	},
+	// Revealed October 15 to 16, a batch of bind on equip rares for levels 26 to 40 (Kirin Tor
+	// and city guard names, so probably a new Forever dungeon, but no source is known yet).
+	// Stats from the ForeverChanges item pages; the wowhead Forever tooltips agree where they
+	// exist (none yet for Ancient Cleaver and Arcane Remnant Leggings). The thrown weapons'
+	// damage is from wowhead, ForeverChanges shows it as "set by hand". Hit and crit are
+	// typed as rating (0.5% = 5 hit or 7 crit rating, as wowhead prints them).
+	{
+		Id: 286983, Name: "Ancient Cleaver", Icon: "inv_weapon_halbard_01",
+		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeAxe, HandType: proto.HandType_HandTypeTwoHand,
+		Stats:           stats.Stats{stats.Strength: 12, stats.SpellPower: 14}.ToFloatArray(),
+		WeaponDamageMin: 80, WeaponDamageMax: 120, WeaponSpeed: 3.60,
+		Ilvl: 33, RequiredLevel: 28, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286996, Name: "City Guard's Tarnished Blade", Icon: "inv_sword_23",
+		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeOneHand,
+		Stats:           stats.Stats{stats.Stamina: 6, stats.SpellPower: 5}.ToFloatArray(),
+		WeaponDamageMin: 39, WeaponDamageMax: 73, WeaponSpeed: 2.50,
+		Ilvl: 34, RequiredLevel: 29, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 287068, Name: "Excavated Dagger", Icon: "inv_weapon_shortblade_19",
+		Type: proto.ItemType_ItemTypeRanged, RangedWeaponType: proto.RangedWeaponType_RangedWeaponTypeThrown,
+		Stats:           stats.Stats{stats.Strength: 4, stats.Agility: 4}.ToFloatArray(),
+		WeaponDamageMin: 34, WeaponDamageMax: 35, WeaponSpeed: 1.80,
+		Ilvl: 33, RequiredLevel: 28, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 287070, Name: "Skypierce Javelin", Icon: "inv_spear_05",
+		Type: proto.ItemType_ItemTypeRanged, RangedWeaponType: proto.RangedWeaponType_RangedWeaponTypeThrown,
+		Stats:           stats.Stats{stats.Strength: 3}.ToFloatArray(),
+		CritRating:      7,
+		WeaponDamageMin: 79, WeaponDamageMax: 80, WeaponSpeed: 2.90,
+		Ilvl: 45, RequiredLevel: 40, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286984, Name: "Mark of the Marsh", Icon: "inv_jewelry_necklace_09",
+		Type:  proto.ItemType_ItemTypeNeck,
+		Stats: stats.Stats{stats.Strength: 5, stats.Agility: 8}.ToFloatArray(),
+		Ilvl:  33, RequiredLevel: 28, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286995, Name: "Guardian's Emblem", Icon: "spell_arcane_arcaneresilience",
+		Type:  proto.ItemType_ItemTypeNeck,
+		Stats: stats.Stats{stats.Stamina: 8, stats.SpellPower: 6}.ToFloatArray(),
+		Ilvl:  33, RequiredLevel: 28, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286994, Name: "Tattered Kirin Tor Cloak", Icon: "inv_misc_cape_05",
+		Type:      proto.ItemType_ItemTypeBack,
+		Stats:     stats.Stats{stats.Armor: 25, stats.Intellect: 8}.ToFloatArray(),
+		HitRating: 5,
+		Ilvl:      33, RequiredLevel: 28, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286992, Name: "Construct's Grips", Icon: "inv_gauntlets_04",
+		Type: proto.ItemType_ItemTypeHands, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats: stats.Stats{stats.Armor: 142, stats.Strength: 12, stats.Stamina: 4}.ToFloatArray(),
+		Ilvl:  33, RequiredLevel: 28, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286990, Name: "Arcane Remnant Leggings", Icon: "inv_pants_leather_05",
+		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats: stats.Stats{stats.Armor: 95, stats.Intellect: 12, stats.ArcanePower: 17}.ToFloatArray(),
+		Ilvl:  33, RequiredLevel: 28, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286993, Name: "Suffused Bindings", Icon: "inv_belt_15",
+		Type: proto.ItemType_ItemTypeWaist, ArmorType: proto.ArmorType_ArmorTypeMail,
+		Stats: stats.Stats{stats.Armor: 126, stats.Stamina: 9, stats.Intellect: 4, stats.SpellPower: 6}.ToFloatArray(),
+		Ilvl:  32, RequiredLevel: 27, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286985, Name: "Thicket Bindings", Icon: "inv_bracer_12",
+		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats:     stats.Stats{stats.Armor: 46, stats.Stamina: 8}.ToFloatArray(),
+		HitRating: 5,
+		Ilvl:      31, RequiredLevel: 26, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
+	{
+		Id: 286986, Name: "Abandoned Leggings", Icon: "inv_pants_09",
+		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeCloth,
+		Stats: stats.Stats{stats.Armor: 42, stats.Stamina: 8, stats.Spirit: 6, stats.SpellPenetration: 4}.ToFloatArray(),
+		Ilvl:  31, RequiredLevel: 26, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
 }
 
 // ForeverSeenInGame are items whose stats differ from wowhead's Forever listing. They are
