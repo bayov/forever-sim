@@ -39,6 +39,7 @@ Item format:
   - Check the player's defenses at low level (dodge per Agility for every class, block, armor), spell pushback (`sim/core/cast.go`) and parry and block from in front.
   - Calibrate against the user's logs: damage taken per mob and the mob's miss, dodge and crit rates. A "solo mob" DPS encounter that reports HP lost per kill and deaths.
   - 2026-10-15: the sim side is done (mob table from the 1.12 world database, death without a healing model, health fight length, pushback cap, tests). Still open: the low-level defense checks; the UI preset. `docs/leveling_sim.md`, Groundwork 1.
+  - 2026-10-16: spell pushback checked in the logs (casts match the sim's rule, `tools/combat_log/pushback.py`), and channels now take pushback too.
   - 2026-10-16: `logcheck -mobs` on the user's logs. Forever's mobs have up to 30% more health than 1.12's (the table uses it now), and they crit us far less than Classic's 5% (Need to Verify). `logcheck -pacing` measured the session pacing, and the search default is now 2 to 7 s (`docs/leveling_sim.md`, From the logs).
 - [ ] 2026-10-15 — Leveling groundwork 2: separate mob death (`docs/leveling_sim.md`, Groundwork)
   - Each mob has its own HP, dies when it runs out and stops attacking. The fight ends when all are dead. Today `use_health` only ends the fight on the targets' combined HP.
@@ -76,4 +77,4 @@ Item format:
 - [ ] 2026-10-15 — On the next beta build, check these tracker fixes against the sim (forever-bugs, tracker only)
   - #331: hunter pets use the hunter's **ranged** crit "starting Thursday" (Oct 15). `sim/hunter/pet.go:243` inherits `MeleeCrit`. https://github.com/ClassicWoWCommunity/forever-bugs/issues/331
   - #20: the Bear Form armor multiplier will no longer apply to temporary armor buffs ("fixed in the next build"). Examples: Elixir of Minor Defense gives 140 armor in Bear Form vs 50; Mark of the Wild rank 1 gives 95 vs 34. Check whether the feral tank sim multiplies buff armor. https://github.com/ClassicWoWCommunity/forever-bugs/issues/20
-  - #344 (Shaman, Oct 14): Eye of the Storm's pushback text is now Vanilla-style. It's a wording fix only; check that the sim's pushback model matches.
+  - #344 (Shaman, Oct 14): Eye of the Storm's pushback text is now Vanilla-style. It's a wording fix only; check that the sim's pushback model matches. 2026-10-16: it does. The sim's pushback rule (1 sec, then 0.8 and so on) fits the beta logs (`tools/combat_log/pushback.py`), and Eye of the Storm's chance applies per hit.

@@ -243,9 +243,13 @@ the 60 s Recently Bandaged debuff are modelled.
   (`sim/core/health.go`). Every iteration starts at full health. Death is recorded whenever a
   mob is on us, with or without a healing model (since groundwork 1).
 - **Spell pushback**, including talents that reduce it (`sim/core/cast.go`): 1.0 s for the
-  first hit, then 0.8, 0.6, 0.4 and 0.2 s, as on the cmangos Classic server. Since groundwork 1
-  it can't take the cast bar back past its start, as there. Forever may differ, which logs of
-  casts under mob hits would show.
+  first hit, then 0.8, 0.6, 0.4 and 0.2 s, as on the cmangos Classic server. A cast can't go
+  back past its start (since groundwork 1). Forever does the same: it fits 243 of 285 casts
+  that took hits in the user's logs within 0.1 s (`tools/combat_log/pushback.py`,
+  2026-10-16), the user's own Lesser Healing Waves among them. Only direct hits push back, not
+  DoT ticks. Since 2026-10-16 a hit also ends a channel sooner by the same amounts, and the
+  ticks past the new end are lost (before that channels took no pushback). Too few channels
+  took hits in the logs to check that (notes.md, Need to Verify).
 - **No dodge, parry or block while casting**, as on the cmangos Classic server.
 - **"In front of target"** as a player option (`proto/api.proto`, `in_front_of_target`).
 - **A chosen spell rank** in action IDs. The Elemental rotation already casts Lightning Bolt
@@ -282,6 +286,9 @@ anything leveling-specific exists.
        and pushback (`pushback_test.go`).
      - `logcheck -mobs`, to measure the same things from the logs.
    - Open:
+     - Done (2026-10-16): the pushback rule in Forever's logs. Casts match the sim (Engine
+       today above), and a mob's swings push back Lesser Healing Wave in a leveling session
+       (`TestLevelingHealPushback`). Channels had no pushback at all until then.
      - Done (2026-10-16): `logcheck -mobs` on the user's logs. Forever's mobs have up to 30%
        more health than the table had, which the table now uses (Mobs above). Armor and swing
        time match. Mobs also crit us far less than Classic's 5%: 4 crits in about 2,200
@@ -291,7 +298,6 @@ anything leveling-specific exists.
      - Check the player's defenses at low level (dodge per Agility for every class, block,
        armor) against the beta's character sheet. notes.md has dodge per Agility checked at
        level 1 for some classes only.
-     - Check the pushback rule in Forever's logs (casts under mob hits).
      - A "solo mob" encounter preset in the UI. Until the leveling mode has its own UI, a
        target from the table with "use health" on does it by hand, and the results show
        damage taken per second and the chance of death.

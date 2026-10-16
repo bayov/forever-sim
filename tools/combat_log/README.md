@@ -82,6 +82,10 @@ Some scripts hold numbers from one character and one day, like the weapon models
 - `fistglance.py` splits white swings by weapon (a raw under 150 is the fist) and mob level,
   with glances, crits and miss types.
 - `parry.py` checks the mob's next swing after each parry against Classic's parry haste rule.
+- `pushback.py` times every player's casts and channels that took hits, in any number of logs
+  (plain or .gz), against a few pushback rules. The sim's rule (1 sec, then 0.8, 0.6 and so on,
+  never back past the cast's start) fits 243 of 285 casts within 0.1 sec on the 10-10 to 10-16
+  logs. Too few channels took hits to check them.
 - `respec.py` reports the Elemental respec run (item 12): each fire and shock spell's hits,
   crits and raw, the auras on us, and the auras that came with each of our spell crits.
 - `devastation.py` checks which of our crits give Elemental Devastation (aura 30165): for
