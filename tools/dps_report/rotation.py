@@ -123,7 +123,7 @@ class Humaniser:
             # wrap a part whose text joins the other way (by node type, since names like Slice and Dice hold "and")
             parts = [f'({self.pred(x)})' if self.joiner(x, False) not in (None, how) else self.pred(x) for x in vals]
             out = f' {how} '.join(parts)
-            m = re.search(r'in the last (\S+ \S+) of the fight', out)
+            m = re.search(r'in the last (\S+(?: \S+)?) of the fight', out)
             if m:  # "in the last 33s ... or waiting until the last 33s ..." -> "waiting"
                 out = out.replace(f' until the last {m.group(1)} of the fight', '')
             return out
@@ -163,7 +163,13 @@ class Humaniser:
         (t, a), = v.items()
         if t == 'const':
             return str(a.get('val')).lower() in ('true', '1')
+        # "The Sunder opener is done" on every line after the opener says nothing new, because the opener comes
+        # first in the list. So we count it as true and leave it out. "Not done" still shows.
+        if t == 'sequenceIsComplete':
+            return True
         if t == 'not':
+            if 'sequenceIsComplete' in a.get('val', {}):
+                return None
             c = self.const_of(a.get('val'))
             return None if c is None else not c
         if t == 'cmp':
@@ -362,7 +368,9 @@ def build(req_dir, outs, nm, names, abilities, racial_race):
                 extra = 'Into melee range' if str(r) in ('0', '0s') else f'To {r} yd from the boss'
             key = key_of(ref) if ref else None
             name = nm(key) if key else {'move': 'Move', 'autocastOtherCooldowns': 'Other cooldowns', 'wait': 'Wait'}.get(kind, kind)
-            when = H.pred(cond, top=True) if cond else ('' if section == 'prepull' else 'when ready' if kind in ('castSpell', 'channelSpell') else '')
+            when = H.pred(cond, top=True) if cond else ''
+            if not cond or when == 'always':  # no condition, or only one we leave out (see Humaniser.const_of)
+                when = '' if section == 'prepull' else 'when ready' if kind in ('castSpell', 'channelSpell') else ''
             if kind == 'autocastOtherCooldowns':
                 when = 'trinkets, racials and potions not listed here, as soon as they are ready'
             rr = (racial_race.get(int(ref['spellId'])) if ref and ref.get('spellId') else None) or (racial_race.get(name) if key else None)
