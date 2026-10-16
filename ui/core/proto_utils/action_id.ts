@@ -346,6 +346,10 @@ export class ActionId {
 					name = `${name} (Off-Hand)`;
 				}
 				break;
+			// Whirlwind hits with both weapons. The off-hand hit is its own spell, with tag 2.
+			case 'Whirlwind':
+				if (this.tag === 2) name = `${name} (Off-Hand)`;
+				break;
 			case 'Holy Shield':
 				if (this.tag === 1) {
 					name += ' (Proc)';
