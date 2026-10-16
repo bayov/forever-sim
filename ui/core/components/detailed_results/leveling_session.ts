@@ -16,10 +16,10 @@ export type SessionState = 'searching' | 'pulling' | 'fighting' | 'resting' | 'b
 export const SESSION_STATES: Record<SessionState, { label: string; color: string; tooltip: string }> = {
 	searching: { label: 'Searching', color: '#7fb3f0', tooltip: 'Running around looking for a mob.' },
 	pulling: { label: 'Pulling', color: '#a9cbf5', tooltip: 'A mob found, waiting for us to pull it.' },
-	fighting: { label: 'Fighting', color: '#c8a24a', tooltip: 'Mobs on us or running at us.' },
+	fighting: { label: 'Fighting', color: '#e0584a', tooltip: 'Mobs on us or running at us.' },
 	resting: { label: 'Resting', color: '#8fd18f', tooltip: 'Sitting to eat and drink.' },
 	bandaging: { label: 'Bandaging', color: '#6fbf9a', tooltip: 'Bandaging.' },
-	dead: { label: 'Dead', color: '#ef7a7a', tooltip: 'Running back to the corpse.' },
+	dead: { label: 'Dead', color: '#8a8fb8', tooltip: 'Running back to the corpse.' },
 	ready: { label: 'Ready', color: '#9aa0a6', tooltip: 'Out of combat, deciding what to do next (buffs, heals).' },
 };
 

@@ -593,8 +593,8 @@
 	}
 
 	.replay-progress-states {
-		opacity: 0.5;
-		filter: saturate(0.4);
+		opacity: 0.65;
+		filter: saturate(0.6);
 	}
 
 	.replay-progress-played {
@@ -605,6 +605,7 @@
 	// A small playhead stays up while the session plays, since its bar is long and busy.
 	.replay-progress-thumb {
 		transform: scale(0.75);
+		background: #fff;
 		box-shadow: 0 0 0 2px rgba(0, 0, 0, 0.6);
 	}
 
