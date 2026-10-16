@@ -1685,6 +1685,8 @@ export function startReport(dash, events) {
   const keyIcon = (key) => { const n = rowsOf('names'); if (!n) return null; const r = n.find((x) => x.key === key); return r?.icon ? iconImg(r.icon) : null; };
 
   // ---------- talents ----------
+  // The preset the talents show, for redrawing them when the card's width changes.
+  let talB = null;
   const drawTalents = (b) => {
     const host = $('#sp-tal');
     host.setAttribute('data-source', 'talenttrees builds icons treeart');
@@ -1694,15 +1696,23 @@ export function startReport(dash, events) {
     const parts = String(b.talents).split('-');
     const pts = (t) => +((parts[t.tree] || '')[t.idx] || 0);
     const trees = d3.groups(all, (t) => t.tree).sort((x, y) => x[0] - y[0]).map(([ti, ts]) => ({ ti, name: ts[0].treeName, ts, spent: d3.sum(ts, pts) }));
-    const wide = $('#sp-tal-card').clientWidth > 700;
-    if (st.talBuild !== b.id || st.talTree == null) { st.talTree = wide ? 'all' : String(trees.reduce((x, y) => (y.spent > x.spent ? y : x)).ti); st.talBuild = b.id; }
+    // On a narrow screen the trees don't fit side by side, and the tree picker shows one at a time, the one with the
+    // most points first. When all three fit, they all show and the picker hides.
+    if (st.talBuild !== b.id || st.talTree == null) { st.talTree = String(trees.reduce((x, y) => (y.spent > x.spent ? y : x)).ti); st.talBuild = b.id; }
     $('#sp-tal-seg').replaceChildren(...[...trees.map((t) => [String(t.ti), `${t.name} ${t.spent}`]), ['all', 'All three']].map(([v, lbl]) => {
       const bt = el('button', { 'aria-pressed': String(st.talTree === v), text: lbl });
       bt.addEventListener('click', () => { st.talTree = v; drawTalents(b); });
       return bt;
     }));
-    // The trees use the sim UI's talent picker markup and styles (talents_picker.tsx), read only.
-    const shown = st.talTree === 'all' ? trees : trees.filter((t) => String(t.ti) === st.talTree);
+    // We redraw when the card's width changes, in case the trees fit now or no longer do. The Specs tab is hidden
+    // until we open it, and then its width changes from 0 too.
+    talB = b;
+    const card = $('#sp-tal-card');
+    if (!card.dataset.fitWatch) {
+      card.dataset.fitWatch = '1';
+      let w = card.clientWidth;
+      new ResizeObserver(() => { if (card.clientWidth !== w) { w = card.clientWidth; if (talB && st.tab === 'spec') { try { drawTalents(talB); } catch (e) { console.error(e); } } } }).observe(card);
+    }
     const arrow = (pr, pc, r, c, active) => {
       // Placed like TalentReqArrow in the sim UI: it starts on the parent's cell and its length is in cells.
       const a = el('div', { class: 'talent-picker-req-arrow' });
@@ -1729,7 +1739,8 @@ export function startReport(dash, events) {
       return a;
     };
     const icons = iconMap();
-    host.replaceChildren(el('div', { class: 'talents-picker-root' }, el('div', { class: 'talents-picker-inner' }, el('div', { id: 'talents-carousel', class: 'carousel' },
+    // The trees use the sim UI's talent picker markup and styles (talents_picker.tsx), read only.
+    const paint = (shown) => host.replaceChildren(el('div', { class: 'talents-picker-root' }, el('div', { class: 'talents-picker-inner' }, el('div', { id: 'talents-carousel', class: 'carousel' },
       el('div', { class: 'carousel-inner' }, ...shown.map((tr) => {
         const rows = d3.max(tr.ts, (t) => t.row) + 1;
         const cell = 'calc(var(--talent-icon-size) * 1.4)';
@@ -1751,6 +1762,11 @@ export function startReport(dash, events) {
           el('div', { class: 'talent-tree-background', style: art && art.bg ? `background-image:url("${art.bg}")` : '' }),
           main));
       }))))));
+    paint(trees);
+    const car = host.querySelector('#talents-carousel');
+    const fits = !car.clientWidth || car.scrollWidth <= car.clientWidth + 1;
+    $('#sp-tal-seg').closest('.fv-toolbar').hidden = fits;
+    if (!fits && st.talTree !== 'all') paint(trees.filter((t) => String(t.ti) === st.talTree));
   };
 
   // ---------- stat weights ----------
