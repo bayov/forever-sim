@@ -1022,45 +1022,85 @@ function buffItem(config: unknown): IconSubsectionItem {
 	return { config: option.config as IconPickerConfig<Player<any>, any>, stats: option.stats };
 }
 
+// Shows a buff or a row of buffs only under one ruleset, on top of its own showWhen. A
+// subsection whose items are all hidden hides its label too (see the settings tab).
+function onlyWhen(item: IconSubsectionItem, when: (player: Player<any>) => boolean): IconSubsectionItem {
+	const gate = <C extends { showWhen?: (player: Player<any>) => boolean }>(config: C): C => ({
+		...config,
+		showWhen: (player: Player<any>) => when(player) && (config.showWhen?.(player) ?? true),
+	});
+	const config = 'options' in item.config ? { options: item.config.options.map(gate) } : gate(item.config);
+	return { ...item, config };
+}
+
+// Whether a subsection item shows for this player: its own showWhen, or for a row, any of its
+// icons'.
+export function iconSubsectionItemShows(item: IconSubsectionItem, player: Player<any>): boolean {
+	const shows = (config: { showWhen?: (player: Player<any>) => boolean }) => config.showWhen?.(player) ?? true;
+	return 'options' in item.config ? item.config.options.some(shows) : shows(item.config);
+}
+
+const totemsLabel = (player: Player<any>) => (player.getClass() === Class.ClassShaman ? 'Other Shaman Totems' : 'Totems');
+
+// The buffs that reach the whole raid under Forever but only the caster's party in Classic.
+// Client 1.60.1.70425 turned them from party auras into raid auras (wago.tools SpellEffect,
+// 70374 to 70425): Battle Shout's ImplicitTarget 20 (party) to 56 (raid) on every rank; Effect
+// 35 (party area aura) to 65 (raid area aura) on Trueshot Aura, the Strength of Earth, Grace of
+// Air, Windfury and Flametongue Totem auras, Leader of the Pack and Moonkin Aura. The
+// resistance totems and auras and Aspect of the Wild were raid area auras before it.
+const attackPowerItems = [BattleShoutBuff, BattleShoutBuffForever, TrueshotAuraBuff].map(buffItem);
+const totemWeaponItem: IconSubsectionItem = { config: TotemWeaponBuffs, stats: [Stat.StatAttackPower] };
+const critAuraItem: IconSubsectionItem = { config: CritAuraBuffs, stats: [Stat.StatMeleeCrit, Stat.StatSpellCrit] };
+const resistanceItems: Array<IconSubsectionItem> = [
+	{ config: ShadowResistanceBuffs, stats: [Stat.StatShadowResistance] },
+	{ config: NatureResistanceBuffs, stats: [Stat.StatNatureResistance] },
+	{ config: FireResistanceBuffs, stats: [Stat.StatFireResistance] },
+	{ config: FrostResistanceBuffs, stats: [Stat.StatFrostResistance] },
+];
+
 // The buffs anyone in the raid can give us, like Mark of the Wild or Fortitude. It's about who
 // casts it, not who it reaches, so Innervate is a raid buff even though it lands on us alone.
 // The Blessings go here too, even for a paladin, because another paladin in the raid gives
-// them.
+// them. Under Forever the raid-wide auras, shouts and totems above join them.
+//
+// Salvation isn't offered. Client 70425 made it a raid buff that no longer takes a Blessing
+// slot (spells 1038 and 25895), but it only lowers threat, which the sim doesn't model, and the
+// raid buffs have no field for it, so a toggle would do nothing.
 export const RAID_BUFF_SUBSECTIONS: Array<IconSubsection> = [
 	{ label: 'Stats', items: [AllStatsBuff, AllStatsBuffForever, StaminaBuff, StaminaBuffForever, IntellectBuff, SpiritBuff].map(buffItem) },
 	{ label: 'Blessings', items: [BlessingOfKings, BlessingOfMight, BlessingOfMightForever, BlessingOfWisdom, BlessingOfWisdomForever].map(buffItem) },
+	{ label: 'Attack Power', items: attackPowerItems.map(item => onlyWhen(item, isForever)) },
+	{
+		label: totemsLabel,
+		items: [...[StrengthBuffHordeForever, GraceOfAirForever].map(buffItem), totemWeaponItem].map(item => onlyWhen(item, isForever)),
+	},
+	{ label: 'Crit', items: [onlyWhen(critAuraItem, isForever)] },
+	{ label: 'Resistances', items: resistanceItems.map(item => onlyWhen(item, isForever)) },
 	{ label: 'Mana', items: [Innervate].map(buffItem) },
 	{ label: 'Other', items: [PowerInfusion, Thorns].map(buffItem) },
 ];
 
-// The buffs the members of our party give us: the totems, the auras, Battle Shout and Blood
-// Pact. The protos keep them with the raid buffs, but only our party's shaman or paladin gives
-// them to us. We leave out Atiesh's Power of the Guardian.
+// The buffs only the members of our party give us. The protos keep them with the raid buffs,
+// but only our party's shaman, paladin or warlock gives them to us: Mana Spring and Stoneskin
+// Totem, Devotion, Retribution and Sanctity Aura, Blood Pact. In Classic Battle Shout, Trueshot
+// Aura, the other totems, the crit auras and the resistances are party buffs too; under Forever
+// they're raid buffs (see above). We leave out Atiesh's Power of the Guardian.
 //
 // A shaman puts down its own totems (see the starting totems in its Class Settings and the
 // rotation), so for a shaman the totems here are the ones the other shamans in the party give.
 export const PARTY_BUFF_SUBSECTIONS: Array<IconSubsection> = [
-	{ label: 'Attack Power', items: [BattleShoutBuff, BattleShoutBuffForever, TrueshotAuraBuff].map(buffItem) },
+	{ label: 'Attack Power', items: attackPowerItems.map(item => onlyWhen(item, notForever)) },
 	{
-		label: player => (player.getClass() === Class.ClassShaman ? 'Other Shaman Totems' : 'Totems'),
+		label: totemsLabel,
 		items: [
-			...[StrengthBuffHorde, StrengthBuffHordeForever].map(buffItem),
-			...[GraceOfAir, GraceOfAirForever].map(config => buffItem(config)),
+			...[StrengthBuffHorde, GraceOfAir].map(buffItem),
 			...[ManaSpringTotem, PhysDamReductionBuff].map(buffItem),
-			{ config: TotemWeaponBuffs, stats: [Stat.StatAttackPower] },
+			onlyWhen(totemWeaponItem, notForever),
 		],
 	},
-	{ label: 'Crit', items: [{ config: CritAuraBuffs, stats: [Stat.StatMeleeCrit, Stat.StatSpellCrit] }] },
+	{ label: 'Crit', items: [onlyWhen(critAuraItem, notForever)] },
 	{ label: 'Defense', items: [ArmorBuff, RetributionAura].map(buffItem) },
-	{
-		label: 'Resistances',
-		items: [
-			{ config: ShadowResistanceBuffs, stats: [Stat.StatShadowResistance] },
-			{ config: NatureResistanceBuffs, stats: [Stat.StatNatureResistance] },
-			{ config: FireResistanceBuffs, stats: [Stat.StatFireResistance] },
-			{ config: FrostResistanceBuffs, stats: [Stat.StatFrostResistance] },
-		],
-	},
+	{ label: 'Resistances', items: resistanceItems.map(item => onlyWhen(item, notForever)) },
 	{
 		label: 'Other',
 		items: [BloodPactBuff, BloodPactBuffForever, SanctityAura, BattleSquawkBuff].map(buffItem),
