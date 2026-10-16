@@ -92,7 +92,10 @@ func (shamanEnh) Knobs() []Knob {
 		// Hold Earth Shock for the Stormstrike mark the same way, 0 never.
 		{Name: "earthShockHold", Default: 0, Min: 0, Max: 4, Step: 1},
 		// With shock 4, Flame Shock goes ahead of the Maelstrom Weapon Lightning Bolt.
-		{Name: "flameShockFirst", Default: 0, Min: 0, Max: 1, Step: 1},
+		{Name: "flameShockFirst", Default: 0, Min: 0, Max: 2, Step: 1},
+		// With shock 4, 1 puts Flame Shock and Earth Shock ahead of the Maelstrom Weapon Lightning
+		// Bolt (and the Fire Nova that goes ahead of the shocks after it).
+		{Name: "earthShockBeforeBolt", Default: 0, Min: 0, Max: 1, Step: 1},
 		// With shock 4, Earth Shock only goes while Flame Shock's DoT has more than this many
 		// seconds left, so the shared shock cooldown is back when the DoT runs out. 0 never
 		// holds.
@@ -231,6 +234,16 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 			autocastOtherCooldowns(nil, "Anything not listed above (Sapper, trinkets, potions)."),
 		)
 	}
+	shockManaFloor := func(pct float64) value {
+		if pct == 0 {
+			return nil
+		}
+		return ge(currentManaPercent(), num(pct/100))
+	}
+	// flameShockFirst 2 puts Flame Shock above Stormstrike, 1 right below it.
+	if k["shock"] == 4 && k["flameShockFirst"] == 2 {
+		items = append(items, cast(flameShock, and(not(dotIsActive(flameShock)), shockManaFloor(k["shockMana"])), "Flame Shock when its DoT is down."))
+	}
 	if maxTalentPoints >= 16 {
 		items = append(items, cast(stormstrike, nil, "Stormstrike on cooldown. Without the talent ignore the warning on this line."))
 	}
@@ -267,9 +280,25 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 	flameShockLine := func() *proto.APLListItem {
 		return cast(flameShock, and(not(dotIsActive(flameShock)), manaFloor(k["shockMana"])), "Flame Shock when its DoT is down.")
 	}
-	flameShockFirst := k["shock"] == 4 && k["flameShockFirst"] == 1
-	if flameShockFirst {
+	flameShockFirst := k["shock"] == 4 && k["flameShockFirst"] > 0
+	if k["shock"] == 4 && k["flameShockFirst"] == 1 {
 		items = append(items, flameShockLine())
+	}
+	// The Flame Shock / Earth Shock pair of shock 4.
+	shock4 := func() {
+		if !flameShockFirst {
+			items = append(items, flameShockLine())
+		}
+		when, notes := earthShockWhen(), "Earth Shock otherwise."
+		if left := k["earthShockFlameShockLeft"]; left > 0 {
+			when = and(when, gt(dotRemainingTime(flameShock), seconds(left)))
+			notes = "Earth Shock otherwise, unless Flame Shock is about to run out."
+		}
+		items = append(items, cast(earthShock, when, notes))
+	}
+	shocksBeforeBolt := k["shock"] == 4 && k["earthShockBeforeBolt"] == 1
+	if shocksBeforeBolt {
+		shock4()
 	}
 	if k["maelstromStacks"] > 0 {
 		when := ge(auraNumStacks(maelstromWeapon), num(k["maelstromStacks"]))
@@ -302,15 +331,9 @@ func (shamanEnh) Build(k Knobs) *proto.APLRotation {
 	case 3:
 		items = append(items, cast(frostShock, manaFloor(k["shockMana"]), "Frost Shock on cooldown."))
 	case 4:
-		if !flameShockFirst {
-			items = append(items, flameShockLine())
+		if !shocksBeforeBolt {
+			shock4()
 		}
-		when, notes := earthShockWhen(), "Earth Shock otherwise."
-		if left := k["earthShockFlameShockLeft"]; left > 0 {
-			when = and(when, gt(dotRemainingTime(flameShock), seconds(left)))
-			notes = "Earth Shock otherwise, unless Flame Shock is about to run out."
-		}
-		items = append(items, cast(earthShock, when, notes))
 	case 5:
 		items = append(items,
 			cast(earthShock, and(targetAuraIsActive(stormstrike), manaFloor(k["shockMana"])), "Earth Shock while the Stormstrike debuff is up (20% Nature damage)."),

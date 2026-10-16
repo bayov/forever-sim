@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "optimized",
   "published": {
-    "dps": 886.9,
-    "source": "Shaman PR (the raid's Flametongue Totem on the Enhancement weapon, user ruling 2026-10-16; Magma Totem on Level 60 and the rotation re-check, 2026-10-16)"
+    "dps": 887.8,
+    "source": "Shaman PR (the raid's Flametongue Totem on the Enhancement weapon, user ruling 2026-10-16; rotation pass 24, Lightning Bolt after the shocks, 2026-10-16)"
   },
   "verify": {
-    "dps": 886.92,
+    "dps": 887.76,
     "stderr": 0.38,
     "iters": 20000,
     "ok": true,
@@ -44,8 +44,8 @@
     "Stormstrike on cooldown",
     "Fire Nova while Clearcasting is up",
     "Flame Shock when its DoT is down",
-    "Lightning Bolt at 5 Maelstrom Weapon stacks",
     "Earth Shock while the Stormstrike mark is up, or with Stormstrike more than 1s from ready",
+    "Lightning Bolt at 5 Maelstrom Weapon stacks",
     "Fire Nova while the mana covers 12 a second for the rest of the fight",
     "Lightning Shield when it is down and nothing else is ready (orbs fire at the target on raid damage hits, 2 a minute)"
   ],

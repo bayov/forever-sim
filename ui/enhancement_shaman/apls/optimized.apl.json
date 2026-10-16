@@ -19,8 +19,8 @@
         {"action":{"castSpell":{"spellId":{"spellId":17364}}},"notes":"Without the talent ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":408345}},"condition":{"or":{"vals":[{"auraIsActive":{"auraId":{"spellId":16246}}},{"const":{"val":"false"}}]}}},"notes":"It costs the most, so it takes the free cast."},
         {"action":{"castSpell":{"spellId":{"spellId":29228}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":29228}}}}}]}}}},
-        {"action":{"castSpell":{"spellId":{"spellId":15208}},"condition":{"cmp":{"lhs":{"auraNumStacks":{"auraId":{"spellId":408505}}},"op":"OpGe","rhs":{"const":{"val":"5"}}}}},"notes":"Without the talent ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":10414}},"condition":{"and":{"vals":[{"or":{"vals":[{"auraIsActive":{"auraId":{"spellId":17364},"sourceUnit":{"type":"CurrentTarget"}}},{"cmp":{"lhs":{"spellTimeToReady":{"spellId":{"spellId":17364}}},"op":"OpGt","rhs":{"const":{"val":"1s"}}}}]}}]}}},"notes":"Earth Shock otherwise."},
+        {"action":{"castSpell":{"spellId":{"spellId":15208}},"condition":{"cmp":{"lhs":{"auraNumStacks":{"auraId":{"spellId":408505}}},"op":"OpGe","rhs":{"const":{"val":"5"}}}}},"notes":"Without the talent ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":408345}},"condition":{"or":{"vals":[{"cmp":{"lhs":{"currentMana":{}},"op":"OpGe","rhs":{"math":{"lhs":{"remainingTime":{}},"op":"OpMul","rhs":{"const":{"val":"12"}}}}}},{"auraIsActive":{"auraId":{"spellId":16246}}}]}}},"notes":"Goes off around the fire totem, so it needs one down."},
         {"action":{"castSpell":{"spellId":{"spellId":10432}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":10432}}}}}},"notes":"Raid damage on the shaman fires its orbs at the boss (3 per cast, at most one per 3.5s)."}
     ]

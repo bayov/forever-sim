@@ -561,16 +561,6 @@
                   }
                 },
                 {
-                  "notes": "Without the talent ignore the warning on this line.",
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 17364
-                      }
-                    }
-                  }
-                },
-                {
                   "action": {
                     "condition": {
                       "and": {
@@ -592,6 +582,48 @@
                     "castSpell": {
                       "spellId": {
                         "spellId": 29228
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Without the talent ignore the warning on this line.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 17364
+                      }
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "dotRemainingTime": {
+                                  "spellId": {
+                                    "spellId": 29228
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "1s"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10414
                       }
                     }
                   }
@@ -642,38 +674,6 @@
                     "castSpell": {
                       "spellId": {
                         "spellId": 408345
-                      }
-                    }
-                  }
-                },
-                {
-                  "action": {
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "cmp": {
-                              "op": "OpGt",
-                              "lhs": {
-                                "dotRemainingTime": {
-                                  "spellId": {
-                                    "spellId": 29228
-                                  }
-                                }
-                              },
-                              "rhs": {
-                                "const": {
-                                  "val": "1s"
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 10414
                       }
                     }
                   }
