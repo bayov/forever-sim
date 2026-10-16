@@ -4,7 +4,7 @@
       {
         "players": [
           {
-            "race": "RaceOrc",
+            "race": "RaceHuman",
             "class": "ClassHunter",
             "equipment": {
               "items": [
