@@ -85,6 +85,20 @@ func (s *setup) session(rot *proto.APLRotation, seed int64) string {
 	return b.String()
 }
 
+// sessionLog is one session's whole log, the way the UI gets it (debug lines too).
+func (s *setup) sessionLog(rot *proto.APLRotation, seed int64) string {
+	request := s.clone()
+	request.Raid.Parties[0].Players[0].Rotation = rot
+	request.SimOptions.Iterations = 1
+	request.SimOptions.RandomSeed = seed
+	request.SimOptions.Debug = true
+	res := core.RunRaidSim(request)
+	if res.Error != nil {
+		return "sim failed: " + res.Error.Message
+	}
+	return res.Logs
+}
+
 var (
 	sessionTime     = regexp.MustCompile(`^\s*\[(-?[0-9.]+)\] `)
 	sessionPlayer   = regexp.MustCompile(`^\s*\[[0-9.]+\] \[ \(#1\)\] `)

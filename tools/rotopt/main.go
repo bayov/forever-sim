@@ -84,6 +84,7 @@ func main() {
 	objective := flag.String("objective", "mobs", "leveling settings: what to maximize, mobs (killed in a session) or xp (an hour, for comparing mob levels)")
 	mobOffset := flag.Int("mob-offset", 0, "leveling settings: the mobs' level less ours (the session's mob_level_offset)")
 	session := flag.Bool("session", false, "leveling settings: print one session's pulls, rests and searches for the starting knobs, no search")
+	sessionRaw := flag.Bool("session-raw", false, "leveling settings: with -session, print the session's whole log as the UI gets it instead of the summary")
 	sessionSeed := flag.Int64("session-seed", 1, "leveling settings: the random seed of the -session, for another sample session")
 	seed := flag.Int64("seed", 1, "random seed of the scoring runs, to check a gain holds on other fights or sessions")
 	flag.Parse()
@@ -189,7 +190,11 @@ func main() {
 			leveling.MobLevelOffset = int32(*mobOffset)
 		}
 		if *session {
-			fmt.Print(setup.session(template.Build(start), *sessionSeed))
+			if *sessionRaw {
+				fmt.Print(setup.sessionLog(template.Build(start), *sessionSeed))
+			} else {
+				fmt.Print(setup.session(template.Build(start), *sessionSeed))
+			}
 			return
 		}
 	} else if *session || *mobOffset != 0 {

@@ -459,6 +459,11 @@ message RaidSimResult {
 	IterationLog typical_iteration = 8;
 	IterationLog lucky_iteration = 9;
 	IterationLog unlucky_iteration = 10;
+
+	// In a leveling run the picks above go by mobs killed instead of raid DPS, and this one
+	// is the session with the most deaths (of those, the one closest to the average kills).
+	// It's unset when no session had a death.
+	IterationLog died_iteration = 11;
 }
 
 // One iteration of a run.
@@ -470,6 +475,10 @@ message IterationLog {
 	// In seconds.
 	double duration = 3;
 	string logs = 4;
+	// A leveling session's mobs killed (the ones on us at the end by the share of their
+	// health we took) and deaths. Zero outside the leveling mode.
+	double kills = 5;
+	int32 deaths = 6;
 }
 
 message RaidSimRequestSplitRequest {
