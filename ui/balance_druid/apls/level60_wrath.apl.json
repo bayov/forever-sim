@@ -7,10 +7,10 @@
     ],
     "priorityList": [
         {"action":{"autocastOtherCooldowns":{}},"notes":"Racials, trinkets, potions and runes."},
-        {"action":{"castSpell":{"spellId":{"spellId":24977}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":24977}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"const":{"val":"8s"}}}}]}}},"notes":"Insect Swarm whenever it is down. Without the talent ignore the warning on this line."},
-        {"action":{"castSpell":{"spellId":{"spellId":9835}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":9835}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"const":{"val":"8s"}}}}]}}},"notes":"Moonfire whenever its dot is down."},
-        {"action":{"castSpell":{"spellId":{"spellId":9876}},"condition":{"auraIsActive":{"auraId":{"spellId":16870}}}},"notes":"A free Starfire on Clearcasting, which Wrath does not use up."},
-        {"action":{"castSpell":{"spellId":{"spellId":9835}},"condition":{"cmp":{"lhs":{"remainingTime":{}},"op":"OpLt","rhs":{"math":{"lhs":{"spellCastTime":{"spellId":{"spellId":9912}}},"op":"OpAdd","rhs":{"const":{"val":"1.5s"}}}}}}},"notes":"Moonfire when a Wrath would not land before the end."},
-        {"action":{"castSpell":{"spellId":{"spellId":9912}}},"notes":"Wrath."}
+        {"action":{"castSpell":{"spellId":{"spellId":24977}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":24977}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"const":{"val":"8s"}}}}]}}},"notes":"Without the talent ignore the warning on this line."},
+        {"action":{"castSpell":{"spellId":{"spellId":9835}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":9835}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"const":{"val":"8s"}}}}]}}}},
+        {"action":{"castSpell":{"spellId":{"spellId":9876}},"condition":{"auraIsActive":{"auraId":{"spellId":16870}}}},"notes":"Free Starfire on Clearcasting. Wrath doesn't use it up."},
+        {"action":{"castSpell":{"spellId":{"spellId":9835}},"condition":{"cmp":{"lhs":{"remainingTime":{}},"op":"OpLt","rhs":{"math":{"lhs":{"spellCastTime":{"spellId":{"spellId":9912}}},"op":"OpAdd","rhs":{"const":{"val":"1.5s"}}}}}}},"notes":"When a Wrath would not land before the end."},
+        {"action":{"castSpell":{"spellId":{"spellId":9912}}}}
     ]
 }
