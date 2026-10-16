@@ -5,7 +5,7 @@
   "build": "Combat Swords (vs Humanoid)",
   "isDefault": false,
   "pr": 9,
-  "race": "Orc",
+  "race": "SkyborneWindshaper",
   "talents": "00532310301-32003311201515231",
   "treeNames": [
     "Assassination",
@@ -15,12 +15,12 @@
   "gearSet": "level60_phase1_synthetic_swords",
   "apl": "level60_combat_swords",
   "published": {
-    "dps": 729.2,
-    "source": "Race pass on the client 70425 racials (raid hits, Savage, Ruthless, Earth Fury, Wind Blessed), master d511c09, 2026-10-16"
+    "dps": 748.2,
+    "source": "Re-check after Windfury Totem main hand only (#86) and Grace of Air (#88): weapons, talents, races (standards 16), master e83b6a0, 2026-10-16"
   },
   "verify": {
-    "dps": 729.2,
-    "stderr": 0.24,
+    "dps": 748.2,
+    "stderr": 0.26,
     "iters": 20000,
     "ok": true,
     "note": "same sim as the published number (seed 1)"
@@ -35,7 +35,7 @@
     "Murder 2/2",
     "Adrenaline Rush",
     "Blade Flurry",
-    "Hack and Slash 5/5 (axe and sword extra attacks)",
+    "Hack and Slash 5/5 (axe extra attacks, mace off hand armor ignored)",
     "Improved Sinister Strike",
     "Aggression",
     "Weapon Expertise",
@@ -71,7 +71,7 @@
     "Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV) left out under Forever; would add +13 to +18",
     "Grimstitch 4/5-piece bonuses not live on the synthetic gear (about +8 / +6 for Combat Daggers)",
     "Flask of Supreme Power and Greater Arcane Elixir omitted for consistency (+8 via Dragonbreath Chili)",
-    "Best Alliance race is Human; since client 70425 the races are within about 3 DPS of each other"
+    "Best Alliance race is High Order; since client 70425 the races are within about 3 DPS of each other"
   ],
   "notes": "Request from mksettings with the same arguments as rogue__combat-swords except talents, then the target's mobType set to MobTypeHumanoid, as the class preset's encounter does.",
   "encounter": "Humanoid",

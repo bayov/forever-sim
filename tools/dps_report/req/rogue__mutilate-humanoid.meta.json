@@ -5,7 +5,7 @@
   "build": "Mutilate (vs Humanoid)",
   "isDefault": false,
   "pr": 9,
-  "race": "Undead",
+  "race": "SkyborneWindshaper",
   "talents": "0053231013150103-302303202015-002",
   "treeNames": [
     "Assassination",
@@ -15,12 +15,12 @@
   "gearSet": "level60_phase1_synthetic_mutilate",
   "apl": "level60_mutilate",
   "published": {
-    "dps": 692.8,
-    "source": "Race pass on the client 70425 racials (raid hits, Savage, Ruthless, Earth Fury, Wind Blessed), master d511c09, 2026-10-16"
+    "dps": 702.6,
+    "source": "Re-check after Windfury Totem main hand only (#86) and Grace of Air (#88): weapons, talents, races (standards 16), master e83b6a0, 2026-10-16"
   },
   "verify": {
-    "dps": 692.8,
-    "stderr": 0.19,
+    "dps": 702.6,
+    "stderr": 0.2,
     "iters": 20000,
     "ok": true,
     "note": "same sim as the published number (seed 1)"

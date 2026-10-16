@@ -5,7 +5,7 @@
   "build": "Seal Fate Daggers",
   "isDefault": false,
   "pr": 9,
-  "race": "Undead",
+  "race": "SkyborneWindshaper",
   "talents": "0053031055120005-322303200013-002",
   "treeNames": [
     "Assassination",
@@ -15,12 +15,12 @@
   "gearSet": "level60_phase1_synthetic_daggers",
   "apl": "level60_combat_daggers",
   "published": {
-    "dps": 665.5,
-    "source": "Race pass on the client 70425 racials (raid hits, Savage, Ruthless, Earth Fury, Wind Blessed), master d511c09, 2026-10-16"
+    "dps": 683.0,
+    "source": "Re-check after Windfury Totem main hand only (#86) and Grace of Air (#88): weapons, talents, races (standards 16), master e83b6a0, 2026-10-16"
   },
   "verify": {
-    "dps": 665.5,
-    "stderr": 0.2,
+    "dps": 683.0,
+    "stderr": 0.21,
     "iters": 20000,
     "ok": true,
     "note": "same sim as the published number (seed 1)"
