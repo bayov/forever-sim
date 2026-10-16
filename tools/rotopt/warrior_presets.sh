@@ -23,10 +23,10 @@ gen() {
 	echo "wrote ui/warrior/apls/$name.apl.json ($knobs)"
 }
 gen warrior_fury level60_fury 30305013002-25053005122010501-2 \
-	battleShout=0,berserkerRageRage=0,bloodrageRage=40,deathWish=1,dwEnd=33,executeFirst=0,fillerGap=0,hamstringRage=10,hsExecute=0,hsRage=50,mineSync=1,potionAt=20,potionHoldForDw=2,potionPull=1,racialAt=25,racialHoldForDw=1,recklessAt=25,recklessness=0,slamAfterSwing=0,slamRage=0,spearDance=0,trinketAt=0,wwBtGap=0,wwFirst=1,wwRage=25
+	battleShout=0,berserkerRageRage=0,bloodrageRage=40,deathWish=1,dwEnd=33,executeFirst=0,fillerGap=0,hamstringRage=10,hsExecute=0,hsRage=55,mineSync=1,potionAt=20,potionHoldForDw=2,potionPull=1,racialAt=25,racialHoldForDw=1,recklessAt=25,recklessness=3,slamAfterSwing=0,slamRage=0,spearDance=0,trinketAt=0,wwBtGap=0,wwFirst=1,wwRage=25
 # level60_fury on Battle Shout duty (standards 23): shouts before the pull and refreshes it.
 gen warrior_fury level60_fury_battle_shout 30305013002-25053005122010501-2 \
-	battleShout=1,berserkerRageRage=0,bloodrageRage=40,deathWish=1,dwEnd=33,executeFirst=0,fillerGap=0,hamstringRage=10,hsExecute=0,hsRage=50,mineSync=1,potionAt=20,potionHoldForDw=2,potionPull=1,racialAt=25,racialHoldForDw=1,recklessAt=25,recklessness=0,slamAfterSwing=0,slamRage=0,spearDance=0,trinketAt=0,wwBtGap=0,wwFirst=1,wwRage=25
+	battleShout=1,berserkerRageRage=0,bloodrageRage=40,deathWish=1,dwEnd=33,executeFirst=0,fillerGap=0,hamstringRage=10,hsExecute=0,hsRage=55,mineSync=1,potionAt=20,potionHoldForDw=2,potionPull=1,racialAt=25,racialHoldForDw=1,recklessAt=25,recklessness=3,slamAfterSwing=0,slamRage=0,spearDance=0,trinketAt=0,wwBtGap=0,wwFirst=1,wwRage=25
 gen warrior_fury level60_fury_2h 30305013032-25053000152110501 \
 	battleShout=0,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,fillerGap=0,hamstringRage=20,hsExecute=0,hsRage=85,mineSync=1,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=30,racialHoldForDw=2,recklessAt=30,recklessness=2,slamAfterSwing=1,slamRage=30,spearDance=0,trinketAt=34,wwBtGap=0,wwFirst=0,wwRage=25
 # level60_fury_2h on Battle Shout duty (standards 23): shouts before the pull and refreshes it. The duty

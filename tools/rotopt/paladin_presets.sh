@@ -41,7 +41,7 @@ gen() {
 # From the rotation audit (2026-10-13): the spell power on-use trinket and the Goblin Sapper
 # Charge at the top of the list instead of on the autocast line, which a GCD line above it
 # nearly always beat, so they went out 3 to 4.5 sec late and drifted from there.
-gen level60 "seal=2,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistMana=20,twistWindow=15,hammerOfWrathMana=0,prepullTwo=1,judgeRighteousnessWindow=0,cooldownsFirst=1,trinketExecute=1" -level 60
+gen level60 "seal=2,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistMana=20,twistWindow=15,hammerOfWrathMana=0,prepullTwo=1,judgeRighteousnessWindow=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1" -level 60
 # Level 60 Shock, for the Holy Shock talents (no Twist of Light, so no twisting): Consecration
 # first down to the last point of mana (2 ahead of a 20% floor), Judgement on cooldown on Seal of
 # Righteousness, Holy Strike on cooldown (90), Light's Vigil above 40% mana just before Holy
@@ -54,7 +54,7 @@ gen level60 "seal=2,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=2
 # From the rotation audit (2026-10-13): the spell power on-use trinket and the Goblin Sapper
 # Charge at the top of the list instead of on the autocast line, which a GCD line above it
 # nearly always beat, so they went out 3 to 4.5 sec late and drifted from there.
-gen level60_shock "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,lightsVigilMana=30,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1" -level 60
+gen level60_shock "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,lightsVigilMana=30,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1" -level 60
 # Level 60 (vs Undead), for an Undead or Demon boss (standards 19, 2026-10-13): Exorcism and Holy
 # Wrath now land. Searched on an Undead boss over 120, 180 and 300 sec together from each twist
 # build, with a talent search in between, until neither moved. Seal of Righteousness stays up and
@@ -80,8 +80,14 @@ gen level60_shock_undead "seal=1,jotc=0,consecration=1,consecrationFirst=1,conse
 # Rotation audit pass 20: the Shock duty puts Seal of Righteousness back up ahead of Consecration
 # (sealFirst), since the opener's Judgement of the Crusader leaves it down: +6.0 / +3.0 / +0.5 at 120
 # / 180 / 300 sec (base Shock, which never loses its seal early, is 1.6 behind with it at 180 sec).
-gen level60_crusader_duty "seal=2,jotc=1,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistMana=20,twistWindow=15,hammerOfWrathMana=0,prepullTwo=1,judgeRighteousnessWindow=0,cooldownsFirst=1,trinketExecute=1" -level 60
-gen level60_shock_crusader_duty "seal=1,jotc=1,sealFirst=1,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,holyStrikeFirst=1,lightsVigilMana=30,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1" -level 60
+gen level60_crusader_duty "seal=2,jotc=1,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistMana=20,twistWindow=15,hammerOfWrathMana=0,prepullTwo=1,judgeRighteousnessWindow=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1" -level 60
+gen level60_shock_crusader_duty "seal=1,jotc=1,sealFirst=1,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,holyStrikeFirst=1,lightsVigilMana=30,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=2" -level 60
+# Rotation audit pass 23 (2026-10-16): Hammer of Wrath above Consecration, so in the execute phase
+# it isn't held behind a Consecration that ticks for less (hammerOfWrathFirst=1; 2 puts it at the
+# very top, which is where the Shock duty list gains most). Paired over two seed sets at 20k, 120 /
+# 180 / 300 sec: twist +2.1 / +2.2 / +2.2, sub Holy +2.0 / +2.5 / +1.6, their duty +2.2 to 2.7 /
+# +2.4 to 2.5 / +1.7 to 2.2, Shock +0.8 / +1.4 / +0.5, Shock duty +1.9 / +1.1 / +0.8. vs Undead
+# already has Consecration last, and Shock vs Undead gains under 1.1, so both keep their order.
 # Level 30 with 5 extra talent points (26 in all). The old level 20 rotation still wins,
 # and Seal of Command stays ahead of Seal of Righteousness on Corpsemaker.
 gen level30p5 "seal=2,consecration=1,consecrationFirst=1,consecrationMana=0" -level 30 -bonus-talents 5 -talents --502240312013201

@@ -4,7 +4,7 @@
   "spec": "Retribution",
   "build": "Level 60 Shock",
   "isDefault": false,
-  "pr": 54,
+  "pr": 100,
   "race": "Human",
   "talents": "55003003201121251--05225230001",
   "treeNames": [
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_shock",
   "published": {
-    "dps": 865.2,
-    "source": "Report re-sim on master 5bbcb0d, 2026-10-16: Grace of Air with Windfury in the melee raid, Windfury Totem main hand only, off-hand Rage 0.5 and channel pushback on hits taken (was 851.0)"
+    "dps": 866.8,
+    "source": "PR #100 (rotation audit pass 23: Hammer of Wrath above Consecration, 2026-10-16)"
   },
   "verify": {
-    "dps": 865.23,
+    "dps": 866.78,
     "stderr": 0.24,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "verify.py, 180 s, seed 1"
   },
   "summary": "Deep Holy to Light's Vigil with Holy Shock and Seal of Righteousness, no twisting.",
   "keyTalents": [
@@ -38,10 +38,10 @@
   ],
   "rotation": [
     "Pre-pull: Seal of Righteousness at -3s, Light's Vigil at -1.5s",
+    "Hammer of Wrath below 20% health, ahead of Consecration",
     "Consecration on cooldown, down to the last point of mana",
     "Judgement on cooldown on Seal of Righteousness; re-seal Righteousness whenever it is down (no twisting)",
     "Holy Strike on cooldown",
-    "Hammer of Wrath below 20% health",
     "Light's Vigil whenever it is not on the target and mana is at or above 30%",
     "Holy Shock on a Vigil-marked target (detonates it, refunds 75% of its mana, starts no cooldown), or on cooldown below 30% mana; Divine Favor goes on a Holy Shock",
     "Racials, Goblin Sapper, Major Mana Potion and Demonic Rune on free GCDs"

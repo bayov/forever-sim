@@ -148,18 +148,23 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "itemId": 992015
+                        "spellId": 24239
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "At the pull, then saved for the execute phase.",
+                  "action": {
                     "condition": {
                       "or": {
                         "vals": [
                           {
                             "cmp": {
+                              "op": "OpLt",
                               "lhs": {
                                 "currentTime": {}
                               },
-                              "op": "OpLt",
                               "rhs": {
                                 "const": {
                                   "val": "1s"
@@ -174,18 +179,24 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "spellUsesLostByDelay": {
+                                  "spellId": {
+                                    "itemId": 992015
+                                  },
                                   "delay": {
                                     "math": {
+                                      "op": "OpDiv",
                                       "lhs": {
                                         "math": {
+                                          "op": "OpSub",
                                           "lhs": {
                                             "math": {
+                                              "op": "OpMul",
                                               "lhs": {
                                                 "remainingTime": {}
                                               },
-                                              "op": "OpMul",
                                               "rhs": {
                                                 "const": {
                                                   "val": "4"
@@ -193,13 +204,11 @@
                                               }
                                             }
                                           },
-                                          "op": "OpSub",
                                           "rhs": {
                                             "currentTime": {}
                                           }
                                         }
                                       },
-                                      "op": "OpDiv",
                                       "rhs": {
                                         "const": {
                                           "val": "5"
@@ -211,13 +220,9 @@
                                     "const": {
                                       "val": "20s"
                                     }
-                                  },
-                                  "spellId": {
-                                    "itemId": 992015
                                   }
                                 }
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "0"
@@ -227,9 +232,13 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 992015
+                      }
                     }
-                  },
-                  "notes": "At the pull, then saved for the execute phase."
+                  }
                 },
                 {
                   "action": {
@@ -241,29 +250,25 @@
                   }
                 },
                 {
+                  "notes": "Judge Seal of the Crusader first, the judgement lasts 40s and every melee hit refreshes it.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 20271
-                      }
-                    },
                     "condition": {
                       "auraIsActive": {
                         "auraId": {
                           "spellId": 20308
                         }
                       }
-                    }
-                  },
-                  "notes": "Judge Seal of the Crusader first, the judgement lasts 40s and every melee hit refreshes it."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 20308
+                        "spellId": 20271
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Seal of the Crusader when its judgement is not on the target.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
@@ -271,11 +276,11 @@
                             "not": {
                               "val": {
                                 "auraIsActive": {
-                                  "auraId": {
-                                    "spellId": 20303
-                                  },
                                   "sourceUnit": {
                                     "type": "CurrentTarget"
+                                  },
+                                  "auraId": {
+                                    "spellId": 20303
                                   }
                                 }
                               }
@@ -294,17 +299,17 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Seal of the Crusader when its judgement is not on the target."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 20293
+                        "spellId": 20308
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Judgement doesn't use it up in Forever.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
@@ -321,29 +326,33 @@
                           },
                           {
                             "auraIsActive": {
-                              "auraId": {
-                                "spellId": 20303
-                              },
                               "sourceUnit": {
                                 "type": "CurrentTarget"
+                              },
+                              "auraId": {
+                                "spellId": 20303
                               }
                             }
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20293
+                      }
                     }
-                  },
-                  "notes": "Judgement doesn't use it up in Forever."
+                  }
                 },
                 {
+                  "notes": "Until mana runs out.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "spellId": 20924
                       }
                     }
-                  },
-                  "notes": "Until mana runs out."
+                  }
                 },
                 {
                   "action": {
@@ -356,11 +365,6 @@
                 },
                 {
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 20271
-                      }
-                    },
                     "condition": {
                       "and": {
                         "vals": [
@@ -373,54 +377,46 @@
                           },
                           {
                             "auraIsActive": {
-                              "auraId": {
-                                "spellId": 20303
-                              },
                               "sourceUnit": {
                                 "type": "CurrentTarget"
+                              },
+                              "auraId": {
+                                "spellId": 20303
                               }
                             }
                           }
                         ]
                       }
-                    }
-                  }
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 24239
+                        "spellId": 20271
                       }
                     }
                   }
                 },
                 {
+                  "notes": "Only against Undead and Demons.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "spellId": 10314
                       }
                     }
-                  },
-                  "notes": "Only against Undead and Demons."
+                  }
                 },
                 {
+                  "notes": "Without the talent ignore the warning on this line.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 1311595
-                      }
-                    },
                     "condition": {
                       "and": {
                         "vals": [
                           {
                             "cmp": {
+                              "op": "OpGe",
                               "lhs": {
                                 "currentManaPercent": {}
                               },
-                              "op": "OpGe",
                               "rhs": {
                                 "const": {
                                   "val": "0.3"
@@ -432,11 +428,11 @@
                             "not": {
                               "val": {
                                 "auraIsActive": {
-                                  "auraId": {
-                                    "spellId": 1311597
-                                  },
                                   "sourceUnit": {
                                     "type": "CurrentTarget"
+                                  },
+                                  "auraId": {
+                                    "spellId": 1311597
                                   }
                                 }
                               }
@@ -444,17 +440,17 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Without the talent ignore the warning on this line."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 20930
+                        "spellId": 1311595
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Detonates the Vigil with no cooldown.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
@@ -463,20 +459,20 @@
                               "vals": [
                                 {
                                   "auraIsActive": {
-                                    "auraId": {
-                                      "spellId": 1311597
-                                    },
                                     "sourceUnit": {
                                       "type": "CurrentTarget"
+                                    },
+                                    "auraId": {
+                                      "spellId": 1311597
                                     }
                                   }
                                 },
                                 {
                                   "cmp": {
+                                    "op": "OpLt",
                                     "lhs": {
                                       "currentManaPercent": {}
                                     },
-                                    "op": "OpLt",
                                     "rhs": {
                                       "const": {
                                         "val": "0.3"
@@ -489,15 +485,19 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20930
+                      }
                     }
-                  },
-                  "notes": "Detonates the Vigil with no cooldown."
+                  }
                 },
                 {
+                  "notes": "Racials and trinkets.",
                   "action": {
                     "autocastOtherCooldowns": {}
-                  },
-                  "notes": "Racials and trinkets."
+                  }
                 }
               ]
             },

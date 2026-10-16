@@ -50,21 +50,21 @@ func (warriorArms) Build(k Knobs) *proto.APLRotation {
 			not(auraIsActive(berserkerStance)),
 			spellIsReady(recklessness),
 			le(currentRage(), num(25)),
-		), "Berserker Stance for Recklessness at the end of the fight, with no more Rage than Tactical Mastery keeps."))
+		), "For Recklessness. Tactical Mastery keeps the Rage."))
 	}
 	items = append(items, warriorCooldowns(k)...)
 
 	if k["executeFirst"] == 1 {
-		items = append(items, cast(execute, nil, "Execute in the execute phase."))
+		items = append(items, cast(execute, nil, ""))
 	}
-	ms := cast(mortalStrike, nil, "Mortal Strike on cooldown.")
+	ms := cast(mortalStrike, nil, "")
 	var slamLine *proto.APLListItem
 	if k["slamRage"] > 0 {
 		when := and(ge(currentRage(), num(k["slamRage"])), not(executePhase()))
 		if k["slamAfterSwing"] == 1 {
 			when = and(when, ge(mainHandTimeToNext(), seconds(1.5)))
 		}
-		slamLine = cast(slam, when, "Slam on cooldown with Rage to spare.")
+		slamLine = cast(slam, when, "")
 	}
 	if k["msFirst"] == 1 || slamLine == nil {
 		items = append(items, ms)
@@ -76,23 +76,23 @@ func (warriorArms) Build(k Knobs) *proto.APLRotation {
 	}
 	if battle {
 		if k["overpowerRage"] > 0 {
-			items = append(items, cast(overpower, ge(currentRage(), num(k["overpowerRage"])), "Overpower after a dodge or a Bloodthrill proc."))
+			items = append(items, cast(overpower, ge(currentRage(), num(k["overpowerRage"])), "After a dodge or a Bloodthrill proc."))
 		}
 		if k["rend"] == 1 {
-			items = append(items, cast(rend, and(not(dotIsActive(rend)), not(executePhase())), "Rend whenever it is down, for Bloodthrill."))
+			items = append(items, cast(rend, and(not(dotIsActive(rend)), not(executePhase())), "Kept up for Bloodthrill."))
 		}
 		if k["spearingRage"] > 0 {
-			items = append(items, cast(spearingStrike, ge(currentRage(), num(k["spearingRage"])), "Spearing Strike on cooldown. Without the talent ignore the warning on this line."))
+			items = append(items, cast(spearingStrike, ge(currentRage(), num(k["spearingRage"])), "Spearing Strike. Without the talent ignore the warning on this line."))
 		}
 	} else if k["wwRage"] > 0 {
-		items = append(items, cast(whirlwind, ge(currentRage(), num(k["wwRage"])), "Whirlwind on cooldown with the Rage for it."))
+		items = append(items, cast(whirlwind, ge(currentRage(), num(k["wwRage"])), ""))
 	}
 	if k["executeFirst"] == 0 {
-		items = append(items, cast(execute, nil, "Execute in the execute phase."))
+		items = append(items, cast(execute, nil, ""))
 	}
 	items = append(items, heroicStrikeLine(k))
 	if k["hamstringRage"] > 0 {
-		items = append(items, cast(hamstring, and(ge(currentRage(), num(k["hamstringRage"])), not(executePhase())), "Hamstring with Rage to spare, for the procs."))
+		items = append(items, cast(hamstring, and(ge(currentRage(), num(k["hamstringRage"])), not(executePhase())), "For the procs."))
 	}
 	stance := battleStance
 	if !battle {
@@ -104,7 +104,7 @@ func (warriorArms) Build(k Knobs) *proto.APLRotation {
 	} else if reckSwap {
 		back = and(back, gt(remainingTime(), seconds(k["recklessAt"])))
 	}
-	items = append(items, cast(stance, back, "Back to the rotation's stance."))
+	items = append(items, cast(stance, back, ""))
 	rot := warriorOpener(rotation(items...))
 	rot.PrepullActions = append(rot.PrepullActions, warriorShoutPrepull(k)...)
 	rot.PrepullActions = append(rot.PrepullActions, prepull(stance, 1))

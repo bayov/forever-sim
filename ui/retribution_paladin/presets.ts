@@ -136,6 +136,11 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // out 3 to 4.5 sec late (+6.1 / +3.3 / +2.1 at 120 / 180 / 300 sec, Shock +4.7 / +1.6 / +1.7).
 // The trinket goes at the pull and is then held for the 20% execute phase whenever that loses no
 // use of it (+1.3 at 180 sec, Shock +1.1, nothing at 120 sec). All four Level 60 rotations do this.
+// Rotation audit pass 23 (2026-10-16): Hammer of Wrath goes above Consecration (at the very top
+// in the Shock duty list), so in the execute phase it isn't held behind a Consecration that ticks
+// for less. Paired over two seed sets at 20000 iterations, 120 / 180 / 300 sec: twist +2.1 /
+// +2.2 / +2.2, sub Holy +2.0 / +2.5 / +1.6, their duty +2.2 to 2.7 / +2.4 to 2.5 / +1.7 to 2.2,
+// Shock +0.8 / +1.4 / +0.5, Shock duty +1.9 / +1.1 / +0.8. The vs Undead rotations keep their order.
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
 	tooltip: 'Level 60 rotation: Consecration, Seal of Command twisted with Seal of Righteousness before every swing, Judgement and Holy Strike on cooldown.',
 	group: 'Level 60',

@@ -55,6 +55,9 @@ func (paladinRet) Knobs() []Knob {
 		{Name: "lightsVigilMana", Default: 100, Min: 0, Max: 100, Step: 10},
 		// Hammer of Wrath (from level 44) below 20% health, above this much mana. 100 never.
 		{Name: "hammerOfWrathMana", Default: 100, Min: 0, Max: 100, Step: 20},
+		// Where Hammer of Wrath goes: 0 after Holy Strike, 1 just above Consecration, 2 at the
+		// top of the list. In the execute phase it beats the Consecration tick it delays.
+		{Name: "hammerOfWrathFirst", Default: 0, Min: 0, Max: 2, Step: 1},
 		// Twist the seals for Twist of Light's Echo: 0 never, 1 swap Seal of Command and Seal
 		// of Righteousness within twistWindow tenths of a second of the next swing, above
 		// twistMana percent of mana.
@@ -122,7 +125,19 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 		sealNotes = "Seal of Command whenever it is down. Judgement does not consume it under Forever. Without the talent ignore the warning on this line."
 	}
 
+	var hammerOfWrathLine *proto.APLListItem
+	if k["hammerOfWrathMana"] < 100 {
+		var floor value
+		if k["hammerOfWrathMana"] > 0 {
+			floor = ge(currentManaPercent(), num(k["hammerOfWrathMana"]/100))
+		}
+		hammerOfWrathLine = cast(hammerOfWrath, floor, "Hammer of Wrath below 20% health.")
+	}
+
 	var items []*proto.APLListItem
+	if hammerOfWrathLine != nil && k["hammerOfWrathFirst"] == 2 {
+		items = append(items, hammerOfWrathLine)
+	}
 	if k["cooldownsFirst"] == 1 {
 		items = append(items,
 			trinketLine(k["trinketExecute"] == 1),
@@ -151,6 +166,9 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 	sealLine := cast(seal, and(not(auraIsActive(seal)), jotcUp), sealNotes)
 	if !twist && k["sealFirst"] == 1 {
 		items = append(items, sealLine)
+	}
+	if hammerOfWrathLine != nil && k["hammerOfWrathFirst"] == 1 && consecrationLine != nil && k["consecrationFirst"] == 1 {
+		items = append(items, hammerOfWrathLine)
 	}
 	if consecrationLine != nil && k["consecrationFirst"] == 1 {
 		items = append(items, consecrationLine)
@@ -258,12 +276,8 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 	if k["holyStrikeFirst"] == 0 {
 		holyStrikeLine()
 	}
-	if k["hammerOfWrathMana"] < 100 {
-		var floor value
-		if k["hammerOfWrathMana"] > 0 {
-			floor = ge(currentManaPercent(), num(k["hammerOfWrathMana"]/100))
-		}
-		items = append(items, cast(hammerOfWrath, floor, "Hammer of Wrath below 20% health."))
+	if hammerOfWrathLine != nil && (k["hammerOfWrathFirst"] == 0 || k["hammerOfWrathFirst"] == 1 && (consecrationLine == nil || k["consecrationFirst"] == 0)) {
+		items = append(items, hammerOfWrathLine)
 	}
 	if k["exorcismFirst"] == 0 {
 		exorcismLine()
