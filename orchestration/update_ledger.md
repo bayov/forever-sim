@@ -134,6 +134,10 @@ For the assumptions audit (orchestration/assumptions_audit.md). Keys are from to
 - Rend's attack power: 11574 has no coefficient in any build.
 - `wf_totem_offhand` and the Windfury Totem ICD: 70425 only made the totem raid-wide and players-only.
 
+## Build 1.60.1.70450 (2026-10-16)
+
+70450: cosmetic only. Diffed against 70425 on the same tables. 22 spells changed: pets, mounts, two appearance ensembles and the Adventurer's Tent. 23 cosmetic items were added. No class, racial, talent, enchant or existing-item change. Dev notes post /6 got a wording-only edit. No rows added.
+
 ## Per-class ledgers
 
 Each section below has five parts:

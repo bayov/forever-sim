@@ -1,7 +1,7 @@
 {
   "updated": "2026-10-16",
   "note": "Every class PR through #97 is merged into master. The report data in ui/dps_report was re-simmed in full on 2026-10-16 (provenance recorded at 5bbcb0d for all 66 builds) after the 70425 class ports and racials, Grace of Air with Windfury, main-hand Windfury Totem, off-hand Rage 0.5 and the Fury and rogue re-searches. Use `node tools/dps_report/stale.mjs` to see what's stale.",
-  "foreverClientBuild": "1.60.1.70425",
+  "foreverClientBuild": "1.60.1.70450 (spells, talents, racials and enchants identical to 70425)",
   "coordinationBranch": {
     "name": "claude/wow-forever-dps-presets-m9u15h",
     "head": "b23485514"
