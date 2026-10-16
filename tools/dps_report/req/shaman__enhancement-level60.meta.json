@@ -6,7 +6,7 @@
   "isDefault": true,
   "pr": 7,
   "race": "Orc",
-  "talents": "053503002-055030011005112151-02",
+  "talents": "053503102-055030011005112151-01",
   "treeNames": [
     "Elemental",
     "Enhancement",
@@ -15,12 +15,12 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "optimized",
   "published": {
-    "dps": 886.4,
-    "source": "Shaman PR (the raid's Flametongue Totem on the Enhancement weapon, user ruling 2026-10-16; Magma Totem on Level 60 and the rotation re-check, 2026-10-16)"
+    "dps": 892.2,
+    "source": "Shaman PR (Elemental Focus for Tidal Focus on Level 60, the orchestrator's call 2026-10-16, tuned at 180 s)"
   },
   "verify": {
-    "dps": 886.4,
-    "stderr": 0.39,
+    "dps": 892.22,
+    "stderr": 0.38,
     "iters": 20000,
     "ok": true,
     "note": "verify.py, 180s, seed 1"
@@ -33,6 +33,7 @@
     "Flurry",
     "Mental Dexterity",
     "Improved Fire Nova",
+    "Elemental Focus",
     "Shamanistic Focus",
     "Thundering Strikes"
   ],
@@ -43,9 +44,10 @@
     "Rage of the Farseer on cooldown, waiting for the on-use trinket; Blood Fury lined up with it",
     "Other cooldowns (Sapper, Demonic Rune, Major Mana Potion, Land Mine)",
     "Stormstrike on cooldown",
+    "Fire Nova while Clearcasting is up",
     "Flame Shock when its DoT is down",
-    "Lightning Bolt at 5 Maelstrom Weapon stacks",
     "Earth Shock while the Stormstrike mark is up, or with Stormstrike more than 1s from ready",
+    "Lightning Bolt at 5 Maelstrom Weapon stacks",
     "Fire Nova while the mana covers 12 a second for the rest of the fight",
     "Lightning Shield when it is down and nothing else is ready (orbs fire at the target on raid damage hits, 2 a minute)"
   ],
@@ -77,7 +79,8 @@
     "Earth Shock VII's base damage is ×1.08 (client ×1.00).",
     "Raid damage hits (2 a minute, each fires Lightning Shield) are an estimate.",
     "Fire Nova uses the 70425 values: coefficient 0.143, rank 5 base 232 to 259.",
-    "The raid's second shaman's Flametongue Totem holds the weapon's totem slot next to our Windfury Weapon (user ruling 2026-10-16, assumed; to verify in game): +18 to +19 at 180 s"
+    "The raid's second shaman's Flametongue Totem holds the weapon's totem slot next to our Windfury Weapon (user ruling 2026-10-16, assumed; to verify in game): +18 to +19 at 180 s",
+    "Elemental Focus in place of a Tidal Focus point is tuned at 180 s: about -3 at 120 s for +5 at 180 s and +8 at 300 s, paired at 20000 iterations on two seed sets"
   ],
   "notes": "mksettings -spec enh -apl optimized (standards 23: every shaman drops its own party totems; the raid's only totem is a second shaman's Grace of Air, standards 25, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself)."
 }

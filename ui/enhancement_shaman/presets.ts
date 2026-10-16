@@ -333,6 +333,12 @@ export const APLWindfury = PresetUtils.makePresetAPLRotation('Windfury Totem', W
 // client 70425 helps), and Earth Shock waits for the Stormstrike mark (+0.3 to +1.5 more), paired at
 // 20000 iterations on two seed sets. Level 60 is 906.6 / 886.4 / 863.0 and Imp GW 900.3 / 886.9 /
 // 866.9. Windfury Weapon is still the imbue: Rockbiter 28 and Frostbrand 45 behind at 180 sec.
+//
+// Since the rotation pass of 2026-10-16 Lightning Bolt at 5 Maelstrom Weapon stacks waits for the
+// shocks: Level 60 907.2 / 887.0 / 863.2 at 120 / 180 / 300 sec (+0.6 / +0.6 / +0.2, and +1.2 / +0.7
+// / +1.1 on the second seed set), Imp GW 901.3 / 887.8 / 867.9 (+1.0 / +0.9 / +1.0, and +0.1 / +0.3
+// / +0.6), paired at 20000 iterations. A talent search on it found no build ahead at every length:
+// Elemental Focus for Tidal Focus is +4.5 to +8.6 at 180 and 300 sec but 2.2 to 3.4 behind at 120.
 export const APLOptimized = PresetUtils.makePresetAPLRotation('Optimized', OptimizedAPLJSON, {
 	tooltip: "The optimizer's best level 60 rotation, with Windfury Totem for the group, Magma Totem and Fire Nova.",
 	group: 'Level 60',
@@ -340,7 +346,7 @@ export const APLOptimized = PresetUtils.makePresetAPLRotation('Optimized', Optim
 // The rotation for the Level 60 + Water Shield and Level 60 + Mana Tide talents. It is
 // Optimized with Magma Totem in place of Searing Totem, and a new Magma Totem goes down
 // with as little as 10 sec left in the fight. Those builds have no Elemental Focus, so
-// there is no Clearcasting line, and Flame Shock goes after the bolt (within noise there).
+// there is no Clearcasting line, and Flame Shock now goes first (see below).
 //
 // Those builds have no points for Improved Fire Nova, and Magma Totem makes up for some of
 // it. On the Water Shield build it is 912.0 / 899.7 / 883.4 at 120 / 180 / 300 sec, where
@@ -354,6 +360,11 @@ export const APLOptimized = PresetUtils.makePresetAPLRotation('Optimized', Optim
 // 2 sec left (it was 10): on the Water Shield build 828.9 / 819.3 / 815.7 at 120 / 180 / 300 sec
 // (+1.2 / +0.8 / +0.5), on Mana Tide 790.6 / 781.7 / 777.1 (+1.0 / +0.6 / +0.4), paired at 20000
 // iterations on two seed sets.
+//
+// Since the rotation pass of 2026-10-16 the Water Shield build puts Flame Shock up first, then
+// Stormstrike, Earth Shock and the bolt, with Fire Nova last: 851.9 / 842.2 / 838.5 at 120 / 180 / 300
+// sec (+1.4 / +1.8 / +1.7, and +1.3 / +1.9 / +1.8 on the second seed set). It was within noise on Mana
+// Tide, which keeps its own order.
 export const APLMagma = PresetUtils.makePresetAPLRotation('Magma Totem', MagmaAPLJSON, {
 	tooltip: 'Optimized with Magma Totem in place of Searing Totem, for the Water Shield talents.',
 	group: 'Level 60',
@@ -497,7 +508,14 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 // Elemental Weapons' points to Ancestral Knowledge: +7.9 / +6.3 / -7.2 at 120 / 180 / 300 sec
 // paired against the old build (it runs lower on mana in long fights). With the raid's second
 // shaman's Grace of Air (standards 25) it is 835.5 / 825.3 / 809.1, from 865.7 / 852.9 / 834.8.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '053503002-055030011005112151-02' }), {
+//
+// With the raid's Flametongue Totem and Lightning Bolt after the shocks (2026-10-16) the talent search
+// on two seed sets put Elemental Focus back in place of a Tidal Focus point. Presets are tuned at 180
+// sec, so it ships though it costs a little at 120: 905.0 / 892.2 / 871.8 at 120 / 180 / 300 sec
+// (-2.2 / +5.2 / +8.6, and -3.4 / +4.5 / +7.9 on the second seed set), paired at 20000 iterations.
+// Improved Stormstrike 2 as well was further ahead at 300 sec but behind at 180. The knob search on
+// the new talents kept the Optimized rotation.
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '053503102-055030011005112151-01' }), {
 	tooltip: 'Level 60 talents from the talent search, with Spirit Weapons and Concussion.',
 	group: 'Level 60',
 });
