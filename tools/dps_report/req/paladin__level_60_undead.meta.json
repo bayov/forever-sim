@@ -4,7 +4,7 @@
   "spec": "Retribution",
   "build": "Level 60 (vs Undead)",
   "isDefault": false,
-  "pr": 54,
+  "pr": 111,
   "race": "Human",
   "talents": "250030012-502-05225231001330301",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_undead",
   "published": {
     "dps": 976.3,
-    "source": "Paladin PR (rotation audit pass 24: Hammer of Wrath above Holy Strike vs Undead, 2026-10-16)"
+    "source": "PR #111 (rotation audit pass 24: Hammer of Wrath above Holy Strike vs Undead, 2026-10-16)"
   },
   "verify": {
     "dps": 976.34,
