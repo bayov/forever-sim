@@ -6,7 +6,7 @@ import { dirtySettings } from './components/dirty_settings';
 import { EncounterPickerConfig } from './components/encounter_picker';
 import * as IconInputs from './components/icon_inputs';
 import { BulkTab } from './components/individual_sim_ui/bulk_tab';
-import { Individual60UEPExporter, IndividualJsonExporter, IndividualLinkExporter, IndividualPawnEPExporter } from './components/individual_sim_ui/exporters';
+import { Individual60UEPExporter, IndividualJsonExporter, IndividualLinkExporter, IndividualBayovCoreExporter } from './components/individual_sim_ui/exporters';
 import { GearTab } from './components/individual_sim_ui/gear_tab';
 import {
 	Individual60UImporter,
@@ -510,7 +510,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		this.simHeader.addExportLink('JSON', new IndividualJsonExporter(this.rootElem, this), true);
 		//this.simHeader.addExportLink('WoWHead', new IndividualWowheadGearPlannerExporter(this.rootElem, this), false);
 		this.simHeader.addExportLink('60U SoD EP', new Individual60UEPExporter(this.rootElem, this), false);
-		this.simHeader.addExportLink('Pawn EP', new IndividualPawnEPExporter(this.rootElem, this), false);
+		this.simHeader.addExportLink('BayovCore', new IndividualBayovCoreExporter(this.rootElem, this), false);
 		//this.simHeader.addExportLink("CLI", new IndividualCLIExporter(this.rootElem, this), true);
 	}
 
