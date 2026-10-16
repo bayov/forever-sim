@@ -1206,8 +1206,9 @@ export const EPLevel30PvPHighHP = makeLevel30PvPEP(
 //
 // Next to Level 30, Spirit is worth more than four times as much and MP5 three times, while
 // Intellect is worth less. Over a session the rests matter as much as the fight, and Spirit
-// and MP5 shorten them. Hit is for the first 2% (20.9 and then 22.1). The set has none, so the
-// stat weights run can't step it down and reads it low (13.3). Armor is worth little, since
+// and MP5 shorten them. Hit is for the first 2% (20.9 and then 22.1). The set has none, and 1% below
+// none costs only a quarter of what the first 1% adds, so the stat weights run, which
+// averages the step down and the step up, reads it low (13.3). Armor is worth little, since
 // mobs at our level barely hurt us between rests.
 export const EPLevel30Leveling = PresetUtils.makePresetEpWeights(
 	'Level 30 Leveling',
