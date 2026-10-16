@@ -459,8 +459,11 @@ func (druid *Druid) applyOmenOfClarity() {
 	})
 }
 
-// Nature's Focus (client 1.60.1.70338, spell 17063): a 14% chance a point to avoid the pushback
-// a hit taken does to an Arcane or Nature cast, 70% at 5 points. Wrath and Starfire take it.
+// Nature's Focus (client 1.60.1.70425, spell 17063): aura 108 (a percent spell modifier) with misc
+// value 9 (no lost casting time), 14% a point, so a 70% chance at 5 points to avoid the pushback a
+// hit taken does. Its class mask (set 7) covers Wrath, Starfire, Hurricane, Entangling Roots,
+// Healing Touch, Regrowth, Tranquility and Hibernate; the sim casts Wrath, Starfire and Hurricane.
+// The sim only pushes back hardcasts, so Hurricane's channel takes it for completeness.
 func (druid *Druid) naturesFocusChance() float64 {
 	return 0.14 * float64(druid.Talents.NaturesFocus)
 }
