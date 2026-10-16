@@ -56,13 +56,15 @@ func (hunter *Hunter) applyMarksmanshipTalents() {
 	}
 
 	// Efficiency: 3% off a rank (Classic 2%) on the shots, stings and melee abilities in its
-	// class mask (19416). Sniper Shot, Strider Kick and Lacerate are not in it.
+	// class mask (19416). Strider Kick and Lacerate are not in it; Sniper Shot is since client
+	// 1.60.1.70425 (mask word 3 bit 0x800000).
 	if hunter.Talents.Efficiency > 0 {
 		hunter.OnSpellRegistered(func(spell *core.Spell) {
 			switch spell.SpellCode {
 			case SpellCode_HunterAimedShot, SpellCode_HunterArcaneShot, SpellCode_HunterMultiShot,
 				SpellCode_HunterSerpentSting, SpellCode_HunterScorpidSting, SpellCode_HunterVolley, SpellCode_HunterSummonHawk,
-				SpellCode_HunterRaptorStrike, SpellCode_HunterMongooseBite, SpellCode_HunterWingClip:
+				SpellCode_HunterRaptorStrike, SpellCode_HunterMongooseBite, SpellCode_HunterWingClip,
+				SpellCode_HunterSniperShot:
 				if spell.Cost != nil {
 					spell.Cost.Multiplier -= 3 * hunter.Talents.Efficiency
 				}
@@ -317,7 +319,8 @@ func (hunter *Hunter) registerBestialWrathCD() {
 }
 
 // Mortal Shots: 6% crit damage a rank (Classic also 6%) on Auto Shot, Aimed, Arcane and Multi-Shot,
-// Serpent Sting and Volley. Not Sniper Shot or the hawks.
+// Serpent Sting, Volley and, since client 1.60.1.70425 (mask word 3 bit 0x800000), Sniper Shot. Not
+// the hawks.
 func (hunter *Hunter) mortalShots() float64 {
 	return 0.06 * float64(hunter.Talents.MortalShots)
 }
@@ -361,7 +364,8 @@ func (hunter *Hunter) applyRapidRecuperation() {
 // Strike, Mongoose Bite, Wing Clip, the parry strike and, since client 1.60.1.70425, Strider Kick;
 // not Lacerate), and a crit has a 50% chance a rank to give 50% of mana regen while casting for
 // 30 sec (1242688). The tooltip leaves the chance as "?%", the 50 a rank is the client's rank curve
-// (in 70338 that effect's trait curve read -20 / -40, which 70425 fixed to 50 / 100).
+// (in 70338 that effect's trait curve read -20 / -40, which 70425 fixed to 50 / 100). Since 70425
+// only melee and ranged ability crits proc it (proc flags 272, was 328020 with the autos and traps).
 func (hunter *Hunter) applyResourcefulness() {
 	if hunter.Talents.Resourcefulness == 0 {
 		return
@@ -395,7 +399,7 @@ func (hunter *Hunter) applyResourcefulness() {
 	core.MakeProcTriggerAura(&hunter.Unit, core.ProcTrigger{
 		Name:       "Resourcefulness Trigger",
 		Callback:   core.CallbackOnSpellHitDealt,
-		ProcMask:   core.ProcMaskMeleeOrRanged,
+		ProcMask:   core.ProcMaskMeleeOrRangedSpecial,
 		Outcome:    core.OutcomeCrit,
 		ProcChance: 0.5 * float64(hunter.Talents.Resourcefulness),
 		Handler: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {

@@ -11,6 +11,16 @@ import (
 // Forever's traps can be set in combat and have a 30 sec cooldown (Classic 15), Fire traps sharing one
 // and Frost traps another. The trap itself is Classic's: 690 over 15 sec at rank 5, a tick every 3 sec
 // (client 14301, build 1.60.1.70338).
+//
+// Report assumption hunter_trap_ap: the 15 October dev notes say "The Hunter's Fire traps now
+// correctly scale with Attack Power", but the client gives the trap's damage spell no attack power
+// coefficient (14301, builds 70338 and 70425; the scaling is the server's) and Blizzard published no
+// number. Low 0 (no scaling, the client's data); Expected Wrath's Immolation Trap, 2% of ranged
+// attack power a tick, 10% over the five ticks (rank 8, 49056: "[(Ranged Attack Power * (2 / 100) +
+// 377) * 5] Fire damage", the 10% Burning Crusade's patch 2.3.0 added); High twice that. The sim
+// takes Expected, read when the trap goes off. Under Forever only.
+const ImmolationTrapRAPPerTick = 0.02
+
 func (hunter *Hunter) getImmolationTrapConfig(rank int, timer *core.Timer) core.SpellConfig {
 	spellId := [6]int32{0, 13795, 14302, 14303, 14304, 14305}[rank]
 	dotDamage := [6]float64{0, 105, 215, 340, 510, 690}[rank]
@@ -55,6 +65,9 @@ func (hunter *Hunter) getImmolationTrapConfig(rank int, timer *core.Timer) core.
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
 				tickDamage := dotDamage / float64(dot.NumberOfTicks)
+				if sim.IsForever() {
+					tickDamage += ImmolationTrapRAPPerTick * dot.Spell.RangedAttackPower(target, false)
+				}
 				dot.Snapshot(target, tickDamage, isRollover)
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
