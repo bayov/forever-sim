@@ -115,6 +115,11 @@ For the assumptions audit (orchestration/assumptions_audit.md). Keys are from to
 - `pal_sor_sp_double` (PR #54's branch, not on master): the client and the 10-15 notes point to "Once". Seal of Righteousness's proc spells 25713 and 25735-25742 have coefficient 0.1 → 0 in 70425, and the notes say it "gained almost twice as much benefit from Spell Damage than intended" and that this is fixed. Row PAL-70425-01; a ruling is still needed, so it's in the rulings list above.
 - Consecration's spell power coefficient is 0.042 a tick (70425 client and notes; PR #54). Row PAL-70425-03.
 
+**Settled elsewhere, by evidence other than the client** (the assumptions audit's PRs):
+- #67: `warr_crit_rage`, docs and report row.
+- #72: `flat_bonus_inside_pct` and `druid_shred_flat`, from forever-bugs #208's measured Shred and Mutilate's tooltip formula.
+- #75 (held for the user): the off-hand Rage share, 0.5 (warrior NtV-1 in notes.md), from a combat log.
+
 **Not settled by any build from 69893 to 70425** (no client value change, or server side):
 - Ice Lance's coefficient: 70425 only changed the frozen bonus, 300 → 200.
 - Bane of Doom's coefficient.
