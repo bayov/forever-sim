@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 717.2,
-    "source": "PR #8"
+    "dps": 709.6,
+    "source": "Howling Idol at 0.5 sec (client 1.60.1.70425)"
   },
   "verify": {
-    "dps": 717.41,
+    "dps": 709.64,
     "stderr": 0.15,
     "iters": 20000,
     "ok": true,
-    "note": "+0.21 vs PR #8"
+    "note": "180 s, seed 1"
   },
   "summary": "Shred and Rip cat with Shifting Power for Energy and Berserk on cooldown, no Rake. Forever's form rules apply: the cat swings its weapon's DPS at 1.0 s, and stones, potions, Thistle Tea and Windfury Totem all work in Cat Form. It is the talent search's best on the synthetic Phase 1 gear and the default Feral Level 60 preset.",
   "keyTalents": [
@@ -60,7 +60,7 @@
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 29 Agility and 17 Strength, and 165 Strength for 20 s every 2 min, used in the opening seconds and again on cooldown",
     "Rip's level 31+ client ranks are 6-9% below Era: Era values would give +1.6%",
-    "Howling Idol is worth 12.5 and 5-piece Grovekeeper Ferocity would add 5.9 (measured before the 5a and 1b rounds)",
+    "Howling Idol (0.5 s off Shifting Power since client 1.60.1.70425) is worth 4.8 at 180 s; 5-piece Grovekeeper Ferocity would add 5.9 (measured before the 5a and 1b rounds)",
     "Unverified: Shred's flat bonus, AP on Rip and Ferocious Bite, Rend and Tear's scope",
     "Keeping Rake up costs 33; Rip at 5 CP ties",
     "Only one +2% crit elixir by standard; Grizzly in place of Ferocity would add 4.9",

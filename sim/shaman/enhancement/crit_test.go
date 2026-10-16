@@ -134,27 +134,35 @@ func TestOrcShamanSpellCrit(t *testing.T) {
 	}
 }
 
-// TestOrcShamanAxeSpecialization checks Forever's Orc Axe Specialization (shaman_audit.md 9.1).
+// TestOrcShamanSavage checks Forever's Orc Savage (shaman_audit.md 9.1).
 //
-// With an axe in hand we get 1% more crit on every melee attack and spell, as the client's
-// spell says (20574). We compare a two-handed axe with a two-handed mace, and neither has any
-// stats, so the 1% is the whole difference.
-func TestOrcShamanAxeSpecialization(t *testing.T) {
-	const (
-		barbarianWarAxe = 3201
-		batteringHammer = 3198
-	)
-	crit := func(weapon int32) (melee, spell float64) {
-		_, enh := weaponSim{level: 30, weapon: &proto.ItemSpec{Id: weapon}, seconds: 1}.start()
-		return enh.GetStat(stats.MeleeCrit) / core.CritRatingPerCritChance, enh.GetStat(stats.SpellCrit) / core.SpellCritRatingPerCritChance
+// Client 70425 renamed the Orc's Axe Specialization (20574) to Savage and dropped its axe
+// requirement: 1% more crit on every melee attack and spell with any weapon. We compare an Orc
+// and a Tauren holding a two-handed mace that has no stats. The races' base Agility and Intellect
+// differ, so we take those out and the 1% is what is left.
+func TestOrcShamanSavage(t *testing.T) {
+	const batteringHammer = 3198
+	crit := func(race proto.Race) (melee, spell float64) {
+		player := newOrcShaman(30, "", &proto.EnhancementShaman_Options{})
+		player.Race = race
+		items := make([]*proto.ItemSpec, proto.ItemSlot_ItemSlotMainHand+1)
+		for i := range items {
+			items[i] = &proto.ItemSpec{}
+		}
+		items[proto.ItemSlot_ItemSlotMainHand].Id = batteringHammer
+		player.Equipment = &proto.EquipmentSpec{Items: items}
+		_, enh := newShamanSim(player, &proto.Debuffs{}, 1)
+		melee = enh.GetStat(stats.MeleeCrit)/core.CritRatingPerCritChance - enh.GetStat(stats.Agility)*core.CritPerAgi(enh.Class, enh.Level)
+		spell = enh.GetStat(stats.SpellCrit)/core.SpellCritRatingPerCritChance - enh.GetStat(stats.Intellect)*core.CritPerInt(enh.Class, enh.Level)
+		return melee, spell
 	}
-	axeMelee, axeSpell := crit(barbarianWarAxe)
-	maceMelee, maceSpell := crit(batteringHammer)
-	if got := axeMelee - maceMelee; math.Abs(got-1) > 1e-9 {
-		t.Errorf("the axe gives %.4f%% more melee crit than the mace, want 1%%", got)
+	orcMelee, orcSpell := crit(proto.Race_RaceOrc)
+	taurenMelee, taurenSpell := crit(proto.Race_RaceTauren)
+	if got := orcMelee - taurenMelee; math.Abs(got-1) > 1e-6 {
+		t.Errorf("the Orc has %.4f%% more melee crit than the Tauren with a mace, want 1%%", got)
 	}
-	if got := axeSpell - maceSpell; math.Abs(got-1) > 1e-9 {
-		t.Errorf("the axe gives %.4f%% more spell crit than the mace, want 1%%", got)
+	if got := orcSpell - taurenSpell; math.Abs(got-1) > 1e-6 {
+		t.Errorf("the Orc has %.4f%% more spell crit than the Tauren with a mace, want 1%%", got)
 	}
 }
 

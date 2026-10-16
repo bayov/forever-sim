@@ -393,6 +393,7 @@ const level60Boss = Encounter.create({
 	executeProportion20: 0.2,
 	executeProportion25: 0.25,
 	executeProportion35: 0.35,
+	...PresetUtils.LEVEL_60_RAID_DAMAGE,
 	targets: [
 		{
 			id: 213336,

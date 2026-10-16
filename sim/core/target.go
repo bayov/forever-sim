@@ -35,6 +35,10 @@ type Encounter struct {
 	// PvP mode, and the share of the fight out of melee range (in PvP or not), see pvp.go.
 	PvP              bool
 	PvPMeleeDowntime float64
+
+	// The raid damage on the players the boss isn't tanking, see raid_hits.go.
+	RaidDamageHitsPerMinute float64
+	RaidDamagePerHit        float64
 }
 
 func NewEncounter(options *proto.Encounter) Encounter {
@@ -50,6 +54,9 @@ func NewEncounter(options *proto.Encounter) Encounter {
 		PvP:                  options.Pvp,
 		PvPMeleeDowntime:     min(max(options.PvpMeleeDowntime, 0), 1),
 		Targets:              []*Target{},
+
+		RaidDamageHitsPerMinute: max(options.RaidDamageHitsPerMinute, 0),
+		RaidDamagePerHit:        max(options.RaidDamagePerHit, 0),
 	}
 	// If UseHealth is set, we use the sum of targets health.
 	if options.UseHealth {

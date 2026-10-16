@@ -155,9 +155,9 @@ message ElementalShaman {
 	message Options {
 		// The shaman's own weapon imbue on the main hand, like EnhancementShaman's.
 		WeaponImbue shaman_imbue = 6;
-		// Direct hits the shaman takes from raid damage per minute, like EnhancementShaman's.
-		double raid_damage_hits_per_minute = 7;
-		double raid_damage_hits_per_minute_variation = 8;
+		// Moved to Encounter.raid_damage_hits_per_minute, for every class.
+		double raid_damage_hits_per_minute = 7 [deprecated = true];
+		double raid_damage_hits_per_minute_variation = 8 [deprecated = true];
 	}
 	Options options = 3;
 }
@@ -169,14 +169,9 @@ message EnhancementShaman {
 	// NextIndex: 11
 	message Options {
 		ShamanSyncType sync_type = 3;
-		// Direct hits the shaman takes from raid damage per minute. Each one fires a
-		// Lightning Shield orb at the target or spends a Water Shield globe, like any hit an
-		// enemy lands on us. The boss is on the tank, so this is the only thing that sets off
-		// our shield.
-		double raid_damage_hits_per_minute = 7;
-		// Each sim iteration takes a random rate up to this many hits per minute above or
-		// below raid_damage_hits_per_minute, like Duration +/- does for the fight length.
-		double raid_damage_hits_per_minute_variation = 9;
+		// Moved to Encounter.raid_damage_hits_per_minute, for every class.
+		double raid_damage_hits_per_minute = 7 [deprecated = true];
+		double raid_damage_hits_per_minute_variation = 9 [deprecated = true];
 		// The shaman's own weapon imbue (Windfury, Rockbiter, Flametongue or Frostbrand
 		// Weapon) on the main hand. In Forever it acts as a buff on the character and no longer
 		// takes the weapon's temporary enchant, so the main hand imbue in the consumes holds an

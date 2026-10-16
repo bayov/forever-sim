@@ -37,10 +37,6 @@ type WarriorInputs struct {
 	QueueDelay     int32
 	StanceSnapshot bool
 	Stance         proto.WarriorStance
-
-	// The raid damage that hits us (raid_hits.go).
-	RaidDamageHitsPerMinute float64
-	RaidDamagePerHit        float64
 }
 
 const (
@@ -198,7 +194,6 @@ func (warrior *Warrior) Initialize() {
 	warrior.registerSunderArmorSpell()
 	warrior.registerThunderClapSpell()
 	warrior.registerWhirlwindSpell()
-	warrior.registerRaidDamageHits()
 	warrior.registerRendSpell()
 	warrior.registerHamstringSpell()
 	warrior.registerPummelSpell()

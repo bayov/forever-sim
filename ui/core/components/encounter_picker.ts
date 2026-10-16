@@ -769,6 +769,36 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter) {
 		showWhen: (encounter: Encounter) => !encounter.isLeveling(),
 	});
 
+	new NumberPicker(typeGroup, encounter, {
+		id: 'encounter-raid-damage-hits',
+		label: 'Raid hits per minute',
+		labelTooltip:
+			'Hits a player the boss is not attacking takes from raid damage per minute, on average, at random times: raid-wide spells, cleaves and the like, which the sim does not otherwise model. ' +
+			'Each is a spell hit from the boss, so it does what any hit taken does: it fires a Lightning Shield orb or spends a Water Shield globe, gives Rage (and Enrage) to a warrior, and pushes back a cast. ' +
+			"It takes no health. The boss's tank takes the boss's attacks instead.",
+		float: true,
+		positive: true,
+		changedEvent: (encounter: Encounter) => encounter.changeEmitter,
+		getValue: (encounter: Encounter) => encounter.getRaidDamageHitsPerMinute(),
+		setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
+			encounter.setRaidDamageHitsPerMinute(eventID, newValue);
+		},
+		showWhen: (encounter: Encounter) => !encounter.isLeveling(),
+	});
+
+	new NumberPicker(typeGroup, encounter, {
+		id: 'encounter-raid-damage-per-hit',
+		label: 'Raid hit damage',
+		labelTooltip: 'The damage of each raid hit, before your damage taken modifiers. It sets the Rage a warrior gets from each.',
+		positive: true,
+		changedEvent: (encounter: Encounter) => encounter.changeEmitter,
+		getValue: (encounter: Encounter) => encounter.getRaidDamagePerHit(),
+		setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
+			encounter.setRaidDamagePerHit(eventID, newValue);
+		},
+		showWhen: (encounter: Encounter) => !encounter.isLeveling(),
+	});
+
 	// The three execute phases share one label. Each field's own label is the health its phase
 	// starts at, and its value is the share of the fight in that phase.
 	const executeSection = document.createElement('div');
