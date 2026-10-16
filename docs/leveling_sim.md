@@ -518,6 +518,7 @@ After the groundwork:
      | The user's 2 to 10 s search and 2 to 8 s chain search (pass 6 kept every knob) | 70.0 | 0.00 | 40,500 | 130 s | 365 s | 705 s | 2.08 |
      | The rotation picks running or standing (always running here), food and water as spells | 70.4 | 0.00 | - | 130 s | 323 s | 747 s | 2.11 |
      | Optimizer pass 7: no Mana Spring, a heal below 40% between pulls, shocks above 60% mana | 73.7 | 0.01 | 42,600 | 121 s | 282 s | 795 s | 2.03 |
+     | We leave combat 1 to 2 s after the last kill, totems land 1.5 to 3.5 yd from us | 72.1 | 0.00 | 41,300 | 109 s | 273 s | 819 s | - |
 
      The rows down to pass 3 ran with Rockbiter Weapon and Windfury Weapon both on the main
      hand: the settings had Rockbiter in the consumes and Windfury in the class options, and
@@ -549,6 +550,11 @@ After the groundwork:
      always running moved the start to 70.4. Pass 7 then dropped Mana Spring Totem, added a
      heal below 40% health between pulls, shocked only above 60% mana and looked ahead above
      50% health: 73.7 on seed 1 and 73.7 on seed 1000001, from 70.4.
+
+     Then the sim started leaving combat 1 to 2 s after the last mob dies, as the game does,
+     with no chain search in that wait. Totems also land a few yards from us at a random
+     angle now. Pass 7's rotation gives 71.1 mobs on seed 1 and 73.1 on seed 1000001. The
+     wait after each kill adds up to about 50 s of the session, which is most of the loss.
 
      Pass 1: sit down below 80% health and stand at 90% instead of 50% and 100%, no Flame
      Shock DoT in the fight, Lesser Healing Wave below 30% in combat, no buff totems (their
