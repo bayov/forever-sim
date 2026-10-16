@@ -308,6 +308,21 @@ message IndividualSimSettings {
 	Stat dps_ref_stat = 12;
 	Stat heal_ref_stat = 13;
 	Stat tank_ref_stat = 14;
+	LevelingGearPlanSettings leveling_gear_plan = 15;
+}
+
+// The leveling gear plan's own choices (ui/core/leveling_gear.ts): the seed of its random
+// finds, and the items we put in by hand.
+message LevelingGearPlanSettings {
+	int32 seed = 1;
+	repeated LevelingGearPin pins = 2;
+}
+
+// An item we have from this level on, if it beats what the plan has in that slot.
+message LevelingGearPin {
+	int32 level = 1;
+	ItemSlot slot = 2;
+	ItemSpec item = 3;
 }
 
 // Local storage data for gear settings.

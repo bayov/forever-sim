@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_ff",
   "published": {
-    "dps": 797.5,
-    "source": "Tauren, Nature's Focus pushback and the client 70425 racials (2026-10-16)"
+    "dps": 840.3,
+    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 797.5)"
   },
   "verify": {
-    "dps": 797.52,
+    "dps": 840.29,
     "stderr": 0.24,
     "iters": 20000,
     "ok": true,
-    "note": "180s, seed 1"
+    "note": "run_build.py main run, 180s, seed 1"
   },
   "summary": "The Balance build keeping Faerie Fire on the boss for the raid. Moonkin gains nothing from the armor, so it only costs GCDs.",
   "keyTalents": [

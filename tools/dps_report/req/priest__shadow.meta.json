@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 926.0,
-    "source": "Report re-sim on master 5bbcb0d, 2026-10-16: Grace of Air with Windfury in the melee raid, Windfury Totem main hand only, off-hand Rage 0.5 and channel pushback on hits taken (was 928.6)"
+    "dps": 960.7,
+    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 926.0)"
   },
   "verify": {
-    "dps": 925.97,
+    "dps": 960.72,
     "stderr": 0.18,
     "iters": 20000,
     "ok": true,

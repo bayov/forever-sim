@@ -53,7 +53,7 @@ def long_fight(req):
 
 def fight(req, seed):
     """One logged fight: the player's mana after each change, plus the mana it started with."""
-    r = run(req, 1, seed, debug=True)
+    r = run(req, 1, seed, log_all=True)  # the same fight as debug=True gives, without its 3 logged replays
     pts, start, spent, gained = [], None, 0.0, 0.0
     for line in r['logs'].split('\n'):
         if ' mana from ' not in line:

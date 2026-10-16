@@ -8,6 +8,7 @@ import * as IconInputs from './components/icon_inputs';
 import { BulkTab } from './components/individual_sim_ui/bulk_tab';
 import { Individual60UEPExporter, IndividualJsonExporter, IndividualLinkExporter, IndividualBayovCoreExporter } from './components/individual_sim_ui/exporters';
 import { GearTab } from './components/individual_sim_ui/gear_tab';
+import { LevelingGearTab } from './components/individual_sim_ui/leveling_gear_tab';
 import {
 	Individual60UImporter,
 	IndividualAddonImporter,
@@ -300,6 +301,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 		this.addSidebarComponents();
 		this.addGearTab();
+		new LevelingGearTab(this.simTabContentsContainer, this);
 		this.addTalentsTab();
 		this.bt = this.addBulkTab();
 		this.addSettingsTab();
@@ -602,6 +604,11 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				tanks: this.sim.raid.getTanks(),
 			});
 		}
+		if (exportCategory(SimSettingCategories.Gear)) {
+			IndividualSimSettings.mergePartial(proto, {
+				levelingGearPlan: this.player.getLevelingGearPlan(),
+			});
+		}
 		if (exportCategory(SimSettingCategories.Encounter)) {
 			IndividualSimSettings.mergePartial(proto, {
 				encounter: this.sim.encounter.toProto(),
@@ -649,6 +656,10 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 			if (loadCategory(SimSettingCategories.Miscellaneous)) {
 				this.sim.raid.setTanks(eventID, settings.tanks || []);
+			}
+			// Settings without a plan, like an imported gear set, keep the one we have.
+			if (loadCategory(SimSettingCategories.Gear) && settings.levelingGearPlan) {
+				this.player.setLevelingGearPlan(eventID, settings.levelingGearPlan);
 			}
 			if (loadCategory(SimSettingCategories.External)) {
 				this.sim.raid.setBuffs(eventID, settings.raidBuffs || RaidBuffs.create());

@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_shock",
   "published": {
-    "dps": 866.8,
-    "source": "PR #100 (rotation audit pass 23: Hammer of Wrath above Consecration, 2026-10-16)"
+    "dps": 901.7,
+    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 866.8)"
   },
   "verify": {
-    "dps": 866.78,
-    "stderr": 0.24,
+    "dps": 901.7,
+    "stderr": 0.25,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 180 s, seed 1"
+    "note": "run_build.py main run, 180s, seed 1"
   },
   "summary": "Deep Holy to Light's Vigil with Holy Shock and Seal of Righteousness, no twisting.",
   "keyTalents": [

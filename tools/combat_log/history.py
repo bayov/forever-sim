@@ -7,7 +7,8 @@ talent change, level up and skill up, and the sheet after a change. Each record 
 string. Sheets and talent lists are stored once and records point at them by id.
 
 The addon keeps only the last 7 days, and WoW writes the file only on /reload, logout or exit.
-So archive.sh runs this every 5 minutes, and we keep every record we've ever seen:
+So archive.sh runs this on each logcheck run, and we keep every record we've ever seen. An
+audit has to run at least once a week, or the addon drops records we never copied:
 
     ~/forever-logs/history/<key>.jsonl        one record per line, in time order
     ~/forever-logs/history/<key>.blobs.json   the sheets and talent lists, by id

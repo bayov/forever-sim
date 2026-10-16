@@ -1247,9 +1247,68 @@ export const EPLevel30Leveling = PresetUtils.makePresetEpWeights(
 	{ tooltip: 'Stat weights for a solo level 30 grinding mobs of its level, by mobs killed in a session.', group: 'Leveling' },
 );
 
+// Stat weights for the leveling gear plan (2026-10-16), by mobs killed in a 20 min session, in
+// attack power, at levels 10 to 30. The Leveling Gear tab judges the items it finds by them, and
+// blends two of them for the levels in between.
+//
+// Each level is simmed on the plan's own gear at that level (seed 1, no enchants), with the
+// leveling optimizer's best rotation for that level and gear. The talents follow the Level 30
+// Leveling build in the order we'd take them: Thundering Strikes, Mental Dexterity, Improved
+// Ghost Wolf, Shamanistic Focus, Ancestral Knowledge, then Flurry and Stormstrike at 25, where
+// the 5 extra points start. Below 30 we use Rockbiter, which beats Flametongue there.
+//
+// Each stat is a direct probe at 20,000 sessions (+10 of it, +20 attack power or spell power,
+// +5 MP5, +200 armor, +1% hit or crit, +2 weapon DPS). Strength is always 2, because it only
+// gives us attack power. The weights move with the gear, because Stamina, Intellect and MP5
+// decide how often we die (0.05 to 0.25 deaths a session). The gear the plan picks by one set
+// of weights changes the next. So each level is the mean of three rounds: the plan's gear by the
+// Level 30 Leveling weights, then by those weights, then by the mean of the first two. Stamina at
+// level 20, for example, came out at 2.29, -0.04 and 2.33.
+//
+// [level, [Str, Agi, Sta, Int, Spi, hit, crit, SP, Fire, Nature, MP5, Armor, MH DPS]]
+const levelingGearPlanWeights: Array<[number, number[]]> = [
+	[10, [2.0, 0.74, 2.6, 0.94, 1.67, 7.07, 3.29, 2.75, 0.34, 2.33, 4.12, 0.09, 13.34]],
+	[15, [2.0, 0.8, 1.42, 1.59, 1.01, 8.13, 5.11, 2.95, 0.6, 2.26, 2.69, 0.08, 14.05]],
+	[20, [2.0, 1.24, 1.53, 2.83, 0.68, 13.28, 8.03, 3.48, 0.66, 2.54, 3.15, 0.13, 13.56]],
+	[25, [2.0, 1.11, 1.77, 2.22, 0.51, 13.91, 10.0, 2.08, 0.37, 1.6, 3.36, 0.07, 13.14]],
+	[30, [2.0, 1.29, 0.56, 2.0, 0.95, 14.19, 9.73, 1.63, 0.28, 1.27, 1.82, 0.08, 13.56]],
+];
+export const EPLevelingGearPlan = levelingGearPlanWeights.map(([level, [str, agi, sta, int, spi, hit, crit, sp, fire, nature, mp5, armor, mhDps]]) =>
+	PresetUtils.makePresetEpWeights(
+		`Level ${level} Leveling Gear`,
+		Stats.fromMap(
+			{
+				[Stat.StatStrength]: str,
+				[Stat.StatAgility]: agi,
+				[Stat.StatStamina]: sta,
+				[Stat.StatIntellect]: int,
+				[Stat.StatSpirit]: spi,
+				[Stat.StatAttackPower]: 1,
+				[Stat.StatMeleeHit]: hit,
+				[Stat.StatSpellHit]: hit,
+				[Stat.StatMeleeCrit]: crit,
+				[Stat.StatSpellCrit]: crit,
+				[Stat.StatSpellPower]: sp,
+				[Stat.StatSpellDamage]: sp,
+				[Stat.StatFirePower]: fire,
+				[Stat.StatNaturePower]: nature,
+				[Stat.StatMP5]: mp5,
+				[Stat.StatArmor]: armor,
+				[Stat.StatBonusArmor]: armor,
+			},
+			{ [PseudoStat.PseudoStatMainHandDps]: mhDps },
+		),
+		{
+			tooltip: `Stat weights for a solo level ${level} on the leveling gear plan's gear, by mobs killed in a session. The Leveling Gear tab judges items by them.`,
+			group: 'Leveling Gear Plan',
+		},
+	),
+);
+
 export const EPPresets = [
 	EPLevel30,
 	EPLevel30Leveling,
+	...EPLevelingGearPlan,
 	EPLevel30PvP,
 	EPLevel30PvPHighHP,
 	EPLevel30PvPVsCloth,

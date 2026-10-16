@@ -1,0 +1,261 @@
+// The Leveling Gear tab (leveling_gear_tab.tsx), laid out like the Gear tab: the plan's panels
+// on the left, the selected level's gear pane on the right, and the grid of every level under
+// both.
+#leveling-gear-tab {
+	.leveling-gear {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		gap: var(--section-spacer);
+	}
+
+	.leveling-gear-top {
+		display: flex;
+		gap: var(--section-spacer);
+		align-items: flex-start;
+
+		@include media-breakpoint-down(xl) {
+			flex-direction: column;
+		}
+	}
+
+	.leveling-gear-side {
+		flex: 0 0 22rem;
+		display: flex;
+		flex-direction: column;
+		gap: var(--block-spacer);
+
+		@include media-breakpoint-down(xl) {
+			flex-basis: auto;
+			width: 100%;
+		}
+	}
+
+	.leveling-gear-pane-col {
+		flex: 1;
+		min-width: 0;
+		width: 100%;
+	}
+
+	.leveling-gear-pane-title {
+		font-family: var(--heading-font-family);
+		font-variant: small-caps;
+		font-size: var(--h5-font-size);
+		color: var(--gold);
+		margin-bottom: var(--spacer-2);
+	}
+
+	.leveling-gear-weights {
+		color: var(--bs-gray-500);
+		margin-bottom: var(--block-spacer);
+	}
+
+	// A number field with its button beside it, both on the field's line.
+	.leveling-gear-row {
+		display: flex;
+		align-items: flex-end;
+		gap: var(--spacer-2);
+		margin-bottom: var(--block-spacer);
+
+		.input-root {
+			flex: 1;
+			margin-bottom: 0;
+		}
+
+		.btn {
+			flex: 0 0 7rem;
+		}
+	}
+
+	// Under an item in the pane: since when we wear it and where it came from, in gray, or
+	// green when we put it on at this level.
+	.item-picker-root .item-picker-enchant.leveling-gear-since {
+		color: var(--bs-gray-500);
+		pointer-events: none;
+
+		&.leveling-gear-since-new {
+			color: var(--bs-uncommon);
+		}
+	}
+
+	.leveling-gear-pins {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacer-2);
+		margin-bottom: var(--block-spacer);
+	}
+
+	.leveling-gear-pin {
+		display: flex;
+		align-items: center;
+		gap: var(--spacer-2);
+	}
+
+	.leveling-gear-pin-icon {
+		@include wowhead-background-icon;
+		flex: 0 0 2.25rem;
+		height: 2.25rem;
+		border: var(--border-default);
+	}
+
+	.leveling-gear-pin-labels {
+		flex: 1;
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.leveling-gear-pin-where {
+		color: var(--bs-gray-500);
+		font-size: var(--content-font-size);
+	}
+
+	.leveling-gear-pin-remove {
+		padding: 0;
+	}
+
+	.leveling-gear-none {
+		color: var(--bs-gray-500);
+		margin-bottom: var(--block-spacer);
+	}
+
+	.leveling-gear-legend {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--spacer-2) var(--spacer-4);
+		margin-bottom: var(--block-spacer);
+		color: var(--bs-gray-400);
+
+		span {
+			display: inline-flex;
+			align-items: center;
+			gap: var(--spacer-1);
+		}
+	}
+
+	.leveling-gear-legend-note {
+		color: var(--bs-gray-500);
+	}
+
+	.leveling-gear-swatch {
+		display: inline-block;
+		width: 0.9rem;
+		height: 0.9rem;
+		border-radius: 2px;
+	}
+
+	.leveling-gear-grid {
+		overflow-x: auto;
+	}
+
+	.leveling-gear-table {
+		border-collapse: separate;
+		border-spacing: 2px;
+
+		th {
+			font-weight: normal;
+			cursor: pointer;
+		}
+	}
+
+	.leveling-gear-slot-head {
+		color: var(--bs-gray-400);
+		font-size: var(--content-font-size);
+		white-space: nowrap;
+		padding-right: var(--spacer-3);
+		text-align: right;
+	}
+
+	.leveling-gear-level-head {
+		color: var(--bs-gray-500);
+		font-size: 0.7rem;
+		text-align: left;
+		min-width: 1rem;
+		padding: 0;
+
+		&.leveling-gear-col-selected {
+			color: var(--gold);
+		}
+	}
+
+	.leveling-gear-cell {
+		width: 1rem;
+		height: 1.2rem;
+		border-radius: 2px;
+		cursor: pointer;
+		opacity: 0.4;
+		transition: opacity 0.1s;
+
+		// A new item at this level: full color.
+		&.leveling-gear-changed {
+			opacity: 1;
+		}
+
+		&:hover {
+			opacity: 1;
+			filter: brightness(1.2);
+		}
+
+		&.leveling-gear-col-selected {
+			opacity: 1;
+			box-shadow: 0 0 0 1px var(--gold);
+		}
+	}
+
+	// Our own items have a gold edge.
+	.leveling-gear-pinned {
+		box-shadow: inset 0 0 0 2px $item-quality-artifact;
+	}
+
+	.leveling-gear-q0 {
+		background: rgba(255, 255, 255, 0.04);
+		opacity: 1;
+	}
+	.leveling-gear-q1 {
+		background: $item-quality-common;
+	}
+	.leveling-gear-q2 {
+		background: $item-quality-uncommon;
+	}
+	.leveling-gear-q3 {
+		background: $item-quality-rare;
+	}
+	.leveling-gear-q4 {
+		background: $item-quality-epic;
+	}
+}
+
+.leveling-gear-add-modal {
+	.leveling-gear-add {
+		display: flex;
+		flex-direction: column;
+		gap: var(--block-spacer);
+	}
+
+	.leveling-gear-add-row {
+		display: flex;
+		align-items: center;
+		gap: var(--spacer-2);
+
+		.form-label {
+			margin-bottom: 0;
+		}
+
+		input {
+			width: 6rem;
+		}
+	}
+
+	.leveling-gear-add-results {
+		display: flex;
+		flex-direction: column;
+		max-height: 50vh;
+		overflow-y: auto;
+	}
+
+	.leveling-gear-add-item {
+		padding: var(--spacer-1) 0;
+		text-decoration: none;
+	}
+}

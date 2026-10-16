@@ -1065,4 +1065,22 @@ var ForeverSeenInGame = []*proto.UIItem{
 		Stats: stats.Stats{stats.Stamina: 7, stats.Spirit: 7, stats.SpellPower: 8}.ToFloatArray(),
 		Ilvl:  44, RequiredLevel: 39, Quality: proto.ItemQuality_ItemQualityRare,
 	},
+	// Revealed October 14 to 15, both Galgann Firehammer drops in Uldaman. Galgann's Firehammer
+	// became a rare main hand caster mace (Classic: uncommon one-hand, 42 - 79, no stats, a
+	// 80 to 112 Fire chance on hit) with 54 spell power and a chance on harmful spell cast to
+	// blast the target for 64 to 90 Fire, which is not implemented in the sim. The wowhead
+	// Forever tooltip agrees. Emberscale Cape went rare and traded its 3 Spirit for 4 Fire
+	// Resistance (Classic 30 Armor, 10 Sta, ilvl 46, req 41).
+	{
+		Id: 9419, Name: "Galgann's Firehammer",
+		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeMace, HandType: proto.HandType_HandTypeMainHand,
+		Stats:           stats.Stats{stats.SpellPower: 54}.ToFloatArray(),
+		WeaponDamageMin: 32, WeaponDamageMax: 60, WeaponSpeed: 2.20,
+		Ilvl: 47, RequiredLevel: 42, Quality: proto.ItemQuality_ItemQualityRare,
+	},
+	{
+		Id: 11311, Name: "Emberscale Cape",
+		Stats: stats.Stats{stats.Armor: 34, stats.Stamina: 14, stats.FireResistance: 4}.ToFloatArray(),
+		Ilvl:  47, RequiredLevel: 42, Quality: proto.ItemQuality_ItemQualityRare,
+	},
 }

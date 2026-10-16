@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_fire",
   "published": {
-    "dps": 995.5,
-    "source": "PR #98 (rotation auditor pass 23, 2026-10-16)"
+    "dps": 1067.0,
+    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 995.5)"
   },
   "verify": {
-    "dps": 995.5,
-    "stderr": 0.4,
+    "dps": 1067.02,
+    "stderr": 0.38,
     "iters": 20000,
     "ok": true,
-    "note": "180 s, 20000 iterations, seed 1, on the pass 23 rotation (seed 100001 within 0.5)"
+    "note": "run_build.py main run, 180s, seed 1"
   },
   "summary": "Deep Fire to Combustion, plus Arcane Concentration and Missile Barrage from Arcane.",
   "keyTalents": [
