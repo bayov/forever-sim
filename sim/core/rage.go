@@ -42,21 +42,19 @@ type RageBarOptions struct {
 // weapon that dealt the damage" (Blizzard's Priest & Warrior deep dive). Blizzard gives no
 // formula. A landed white hit gives k × the weapon's swing speed, with k measured by beta testers
 // at level 30 (forum thread 2355684): about 3.46 a second for a one-hander and 4.5 for a
-// two-hander. The off hand gets half: a beta log with advanced logging (Arlewow's
-// gist a622100ad149f4fc31ddf95f9b3aab2c, linked from magey/forever-warrior issue 3, 20 September)
-// shows a 1.8 sec main hand dagger giving 6.2 to 6.3 Rage a swing (3.46 × 1.8) and a 1.6 sec off
-// hand dagger 2.7 to 2.8 (3.46 × 1.6 × 0.5), glancing blows included, on about 50 and 60 clean
-// swings (assumptions audit, 2026-10-16). Talent multipliers (Dual Wield Specialization's 10% off
-// hand Rage a point, client 1.60.1.70425 curve 111755) and the crit bonus stay on top. The rest is
-// an assumption until the beta test in orchestration/followups.md ("Rage needs a beta test"). k is a level 30 number, and flat at 60 it gives about half of Classic's Rage a swing, so
+// two-hander. Nobody has measured the off hand, so it gets the same (standards 21). Talent
+// multipliers (Dual Wield Specialization's off hand Rage) and the crit bonus stay on top. All of
+// it is an assumption until the beta test in orchestration/followups.md ("Rage needs a beta
+// test"). k is a level 30 number, and flat at 60 it gives about half of Classic's Rage a swing, so
 // how it grows past 30 is an assumption too (standards 21): k(L) = k30 × (1 + s × (L − 30) / 30),
 // with s = 0 flat, 0.5 the midpoint (×1.5 at 60, the default) and 1 Classic-like (×2 at 60). The
-// variables are for the dashboard's assumption runs (spec_assumptions.md, warr_rage_k).
+// variables are for the dashboard's assumption runs (spec_assumptions.md, warr_rage_k and
+// warr_rage_oh).
 var (
 	ForeverNormalizedRageOneHand  = 3.46
 	ForeverNormalizedRageTwoHand  = 4.5
 	ForeverNormalizedRageK        = 1.0 // Multiplies both constants
-	ForeverNormalizedRageOffHand  = 0.5 // Off hand factor (measured)
+	ForeverNormalizedRageOffHand  = 1.0 // Off hand factor
 	ForeverNormalizedRageScaling  = 0.5 // s, how k grows from level 30 to 60
 	foreverTwoHandNormalizedSpeed = 3.3
 )

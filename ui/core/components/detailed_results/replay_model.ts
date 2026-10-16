@@ -1,6 +1,6 @@
 import { ResourceType } from '../../proto/api.js';
 import { OtherAction, Stat } from '../../proto/common.js';
-import { ActionId } from '../../proto_utils/action_id.js';
+import { ActionId, resourceTypeToIcon } from '../../proto_utils/action_id.js';
 import { AuraUptimeLog, CastLog, DamageDealtLog, Entity, ResourceChangedLog, SimLog } from '../../proto_utils/logs_parser.js';
 import { SimResult, SimResultFilter, UnitMetrics } from '../../proto_utils/sim_result.js';
 import { formatToNumber } from '../../utils.js';
@@ -137,8 +137,7 @@ export interface SctEvent {
 	searchText: string;
 	// A CSS color, like the color of the spell school.
 	color: string;
-	// Lines that come close together start a bit apart, so they don't overlap. A crit's lane is
-	// its spot in the middle of the area.
+	// A crit's spot in the middle of the area. The scrolling lines don't use it.
 	lane: number;
 	// Crits pop up in the middle of the area and stay put, like MSBT's sticky crits.
 	sticky: boolean;
@@ -271,14 +270,15 @@ const autoAttacks = [OtherAction.OtherActionAttack, OtherAction.OtherActionShoot
 export const SCROLL_LIFE = 2.2;
 export const STICKY_LIFE = 1.6;
 const FADE_SHARE = 0.3;
-// Lines this close together on one side start apart from each other.
-const LANE_WINDOW = 0.45;
-export const LANES = 6;
-// The spots for crits on each side.
-const STICKY_LANES = 3;
 const EPSILON = 1e-6;
 // The smallest mana gain the combat text shows, as a share of the mana bar.
 const MIN_MANA_GAIN = 0.01;
+// Small gains of rage or energy, like the +1 Rage of each Unbridled Wrath proc, come many times a
+// second. Gains under this share of the bar that come within the window of the first one go on
+// one line, like MSBT's merged lines. The line shows at the last gain, so it never tells of a
+// gain before it happens.
+const SMALL_GAIN = 0.05;
+const MERGE_WINDOW = 2;
 
 const formatAmount = (amount: number) => formatToNumber(Math.round(amount), { maximumFractionDigits: 0 });
 
@@ -842,47 +842,74 @@ const buildSct = (
 				});
 		});
 
-	resourceLogs.forEach(log => {
-		if (log.isSpend || log.timestamp < 0) return;
-		const label = resourceLabels[log.resourceType];
-		const amount = log.valueAfter - log.valueBefore;
-		if (!label || amount < 1 || regenActions.includes(log.actionId!.otherId)) return;
-		// Small mana gains that come all the time, like Blessing of Wisdom, would bury the rest.
-		const max = bars.find(bar => bar.type == log.resourceType)?.max ?? 0;
-		if (log.resourceType == ResourceType.ResourceTypeMana && amount < max * MIN_MANA_GAIN) return;
+	const gained = (log: ResourceChangedLog) => log.valueAfter - log.valueBefore;
+	const resourceLine = (logs: Array<ResourceChangedLog>) => {
+		const sources = new Set(logs.map(log => log.actionId!.toStringIgnoringTag()));
+		const type = logs[0].resourceType;
 		events.push({
-			time: log.timestamp,
+			time: logs[logs.length - 1].timestamp,
 			side: 'in',
 			kind: 'resource',
-			text: `+${formatAmount(amount)} ${label}`,
-			note: '',
-			actionId: log.actionId!,
-			iconUrl: log.actionId!.iconUrl,
-			logs: [log],
-			color: resourceColors[log.resourceType]!,
+			text: `+${formatAmount(logs.reduce((sum, log) => sum + gained(log), 0))} ${resourceLabels[type]}`,
+			note: logs.length > 1 ? `×${logs.length}` : '',
+			actionId: logs[0].actionId!,
+			// Gains from several sources show the resource's icon.
+			iconUrl: sources.size > 1 ? resourceTypeToIcon[type] : logs[0].actionId!.iconUrl,
+			logs,
+			color: resourceColors[type]!,
 			sticky: false,
 		});
+	};
+	const merging = new Map<ResourceType, Array<ResourceChangedLog>>();
+	resourceLogs.forEach(log => {
+		if (log.isSpend || log.timestamp < 0) return;
+		const amount = gained(log);
+		if (!resourceLabels[log.resourceType] || amount < 1 || regenActions.includes(log.actionId!.otherId)) return;
+		const max = bars.find(bar => bar.type == log.resourceType)?.max ?? 0;
+		// Small mana gains that come all the time, like Blessing of Wisdom, would bury the rest.
+		if (log.resourceType == ResourceType.ResourceTypeMana) {
+			if (amount >= max * MIN_MANA_GAIN) resourceLine([log]);
+			return;
+		}
+		if (amount >= max * SMALL_GAIN) {
+			resourceLine([log]);
+			return;
+		}
+		const batch = merging.get(log.resourceType);
+		if (batch && log.timestamp - batch[0].timestamp <= MERGE_WINDOW) {
+			batch.push(log);
+		} else {
+			if (batch) resourceLine(batch);
+			merging.set(log.resourceType, [log]);
+		}
 	});
+	merging.forEach(resourceLine);
 
 	events.sort((a, b) => a.time - b.time);
 
-	// Lines close together start apart, so a burst of hits doesn't print on top of itself.
-	const recent: Record<SctSide, Array<number>> = { in: [], out: [] };
-	// A crit takes a spot that no other crit is on, also one that is still fading. When every
-	// spot is taken, it covers the oldest crit, and that one starts to fade right away.
-	const spots: Record<SctSide, Array<SctEvent | null>> = {
-		in: new Array(STICKY_LANES).fill(null),
-		out: new Array(STICKY_LANES).fill(null),
-	};
-	return events.map(event => {
+	const sct = events.map(event => {
+		const life = event.sticky ? STICKY_LIFE : SCROLL_LIFE;
 		const search = `${searchText(event.logs)} ${event.actionId.name} ${event.text} ${event.note}`.toLowerCase();
-		if (!event.sticky) {
-			const times = (recent[event.side] = recent[event.side].filter(time => event.time - time < LANE_WINDOW));
-			const lane = times.length % LANES;
-			times.push(event.time);
-			const fadeAt = SCROLL_LIFE * (1 - FADE_SHARE);
-			return { ...event, lane, fadeAt, end: SCROLL_LIFE, searchText: search };
-		}
+		return { ...event, lane: 0, fadeAt: life * (1 - FADE_SHARE), end: life, searchText: search };
+	});
+	placeCrits(sct, 3);
+	return sct;
+};
+
+// Gives each crit one of the spots on its side. The replay calls this again when its height fits
+// a different number of spots.
+//
+// A crit takes a spot that no other crit is on, also one that is still fading. When every spot
+// is taken, it covers the oldest crit, and that one starts to fade right away.
+export const placeCrits = (sct: Array<SctEvent>, spotCount: number) => {
+	const spots: Record<SctSide, Array<SctEvent | null>> = {
+		in: new Array(spotCount).fill(null),
+		out: new Array(spotCount).fill(null),
+	};
+	sct.forEach(event => {
+		if (!event.sticky) return;
+		event.fadeAt = STICKY_LIFE * (1 - FADE_SHARE);
+		event.end = STICKY_LIFE;
 		const side = spots[event.side];
 		let lane = side.findIndex(other => !other || other.time + other.end <= event.time);
 		if (lane < 0) {
@@ -894,8 +921,7 @@ const buildSct = (
 				covered.end = age + STICKY_LIFE * FADE_SHARE;
 			}
 		}
-		const sct: SctEvent = { ...event, lane, fadeAt: STICKY_LIFE * (1 - FADE_SHARE), end: STICKY_LIFE, searchText: search };
-		side[lane] = sct;
-		return sct;
+		event.lane = lane;
+		side[lane] = event;
 	});
 };

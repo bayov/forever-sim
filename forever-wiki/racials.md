@@ -54,6 +54,7 @@ Classes: Mage, Priest (new), Rogue, Warlock, Warrior.
   - Warlock: Your damaging abilities have their Mana cost reduced by 10% and deal 10% more damage.
   - Mage: Your non-periodic damaging abilities have their Mana cost reduced by 10% and deal 10% more damage.
   - Priest: Your non-periodic damaging or healing abilities have their Mana cost reduced by 10% and deal 10% more damage or healing.
+  - Which spells count is set by each class's own Eureka! spell (Rogue 1259812, Warrior 1259813, Mage 1259817, Warlock 1259821, Priest 1259823): a class mask for the cost, one for direct damage and one for periodic damage. Only the Warlock's Drain Life, Drain Soul and Wrack and the Priest's Mind Flay, Penance and Starshards get it on their ticks ("channeled spells do not count as periodics", development notes 2026-10-01). Corruption, the banes, Siphon Life, Incinerate, Shadow Word: Pain, Devouring Plague, Rupture, Garrote and Rend get nothing; Immolate and Holy Fire get it on the hit only. The sim follows the masks (sim/core/racials_forever_eureka.go).
 - Expansive Mind (passive) CHANGED:
   - Mage, Priest, Warlock: Maximum Mana increased by 5%.
   - Rogue: Maximum Energy increased by 5%.
@@ -89,7 +90,7 @@ Classes: Mage, Paladin (new), Priest, Rogue, Warlock, Warrior.
 - Will of the Forsaken (active) CHANGED: [Instant; 2 min cooldown] Instantly removes all Charm, Fear and Sleep effects.
 - Cannibalize (active) CHANGED: [5 yd range; Instant; 2 min cooldown] When activated, regenerates 7% of total Health and 7% of total Mana every 2 sec for 10 sec. Only works on Humanoid or Undead corpses within 5 yds. Any movement, action, or damage taken while Cannibalizing will cancel the effect.
 - Underwater Breathing (passive) same: Underwater breath lasts 300% longer than normal.
-- Touch of the Grave (passive) NEW: Your spells and attacks have a chance to drain Health from the target, up to 5% of your maximum Health. Client 70425: 20% (Warrior, Rogue, Paladin, spell 1260189) or 30% (Mage, Priest, Warlock, 1260201) a hit, at most once every 25 sec (SpellAuraOptions). It was 5% and 10% with no lockout before.
+- Touch of the Grave (passive) NEW: Your spells and attacks have a chance to drain Health from the target, up to 5% of your maximum Health. Client 70425: 20% (Warrior, Rogue, Paladin, spell 1260189) or 30% (Mage, Priest, Warlock, 1260201) a hit, at most once every 25 sec (SpellAuraOptions). It was 5% and 10% with no lockout before. Since client 70425 the drain no longer scales with Shadow damage bonuses on the target or the caster (development notes 2026-10-15: "Touch of the Dead no longer scales with Shadow increases on the target or the caster"); the sim gives it no damage modifiers at all.
   - Since the 2026-09-24 build it does not break crowd control, and abilities with no damage component (Distract, Pick Pocket, Polymorph, Expose Armor) no longer activate it. A damage over time spell activates it on the cast, not on its ticks.
 - Shadow Resistance REMOVED.
 

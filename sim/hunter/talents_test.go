@@ -287,3 +287,12 @@ func TestSniperShotMarksmanshipTalents(t *testing.T) {
 		t.Errorf("Sniper Shot crit damage %v, Aimed Shot %v, want both 1.30", got, want)
 	}
 }
+
+// TestMultiShotInstant checks that Multi-Shot has no cast since client 1.60.1.70425 (SpellMisc
+// casting time index 3, 500 ms, became 1, none).
+func TestMultiShotInstant(t *testing.T) {
+	_, hunter := newHunterSim(t, "", &proto.Debuffs{})
+	if got := hunter.MultiShot.DefaultCast.CastTime; got != 0 {
+		t.Errorf("Multi-Shot cast time %v, want 0", got)
+	}
+}
