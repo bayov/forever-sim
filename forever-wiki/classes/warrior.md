@@ -22,7 +22,7 @@ Ranks the BlizzCon data guessed wrong:
 
 - Enrage is a flat 30% chance for 2 / 4 / 6 / 8 / 10% Physical damage (the guess was 30% a point for a flat 2%).
 - Unbridled Wrath is 12% a point, 1 Rage whatever the weapon (two-handers no longer get 2).
-- Dual Wield Specialization is 5% off hand damage and 10% off hand Rage a point, no hit. The off hand's own white-hit Rage is half the main hand's for the same speed (a beta combat log with advanced logging (Arlewow's gist https://gist.github.com/Arlewow/a622100ad149f4fc31ddf95f9b3aab2c, linked from magey/forever-warrior issue 3, 20 September, level 13 warrior with a 1.8 sec main hand and 1.6 sec off hand dagger) shows 6.2 to 6.3 Rage a main hand swing (3.46 × 1.8) and 2.7 to 2.8 an off hand swing (3.46 × 1.6 × 0.5), glancing blows included, on about 50 and 60 clean swings (assumptions audit, 2026-10-16)).
+- Dual Wield Specialization is 5% off hand damage and 10% off hand Rage a point, no hit.
 - Bloodthrill is 4% a point (2% before 24 September), from main hand attacks only.
 - Improved Rend is 12 / 23 / 35%, Improved Execute 3 / 5 Rage.
 - Booming Voice widens every shout by 10% a point and takes 5% a point off their Rage cost.
