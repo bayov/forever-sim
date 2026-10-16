@@ -80,7 +80,7 @@ Level 60, 300 sec, the shipped builds and the `mksettings` raid (2026-09-17, bet
 - Enhancement: see the table below, on the synthetic Phase 1 set and the 2026-10-12 build. The 2026-09-17 numbers were Dwarf 967 (Mace Specialization on Sulfuras), Skyborne 963, Troll 962, Tauren 962, Orc 960 (no axe, 926 with Spinal Reaper).
 - Retribution (2026-10-12, the Level 60 build on the final synthetic set, 180 sec): Undead 981.9, Human 966.4, Dwarf 965.7 (the same with weapon racials off, the axe has none). See Level 60 presets below for the 120 and 300 sec columns and the weapon type.
 
-- Hunter (2026-10-13, standards 1b gear and synthetic trinkets, 180 sec, 20000 iterations, the four Level 60 builds): Night Elf is best for Lone Wolf, Marksmanship and Beast Mastery (1029.8 / 1019.8 / 980.4), Orc the best Horde race (5 behind). Survival: Human 858.6 (swords), Orc 853.1, Night Elf 852.4. The full table is under [Level 60 presets](#hunter).
+- Hunter (2026-10-16, client 1.60.1.70425 racials with the raid hits, 180 sec, 20000 iterations, the four Level 60 builds): Skyborne (Windshaper) is best for Lone Wolf, Marksmanship and Beast Mastery (1069.5 / 1024.9 / 955.1; Wind Blessed's 3% haste), the High Order 1.0 to 1.3 behind. Survival: Human 888.2 (Ruthless), Orc 887.0, Windshaper 885.8. The full table is under [Level 60 presets](#hunter).
 - Warlock (Level 60 presets, 180 sec, 2026-10-16, client 1.60.1.70425 with the raid's 2 hits a minute): Gnome 1099.2, Human 1099.1, Orc 1096.3, Undead 1089.9, Troll 1082.6 on Demonology. Human Ruthless (2% crit with every spell) puts the Human first on Destruction and Affliction; Demonology is level between the Gnome and the Human and stays Gnome, and Destruction fire goes to the Gnome (the Undead 5.1 behind). See Level 60 presets.
 
 Orc with an axe. Rogues can wear axes under Forever, so an Orc row without one hides Axe Specialization (1% crit). The sets above carry swords, daggers and Sulfuras, and a same tier axe changes the picture only for Sinister Strike (5 min, 4000 iterations, Night Elf as the control for the weapon swap alone):
@@ -148,7 +148,7 @@ Weapon types and speeds (2026-10-15, orchestration/standards.md 22). Each physic
 
 Ret ties on every 3.4 sec two-hander (under 1 DPS) and keeps its axe. Seal of Righteousness giving 10% of spell power on every swing would make Shock about 50 DPS higher on a 2.1 sec two-hander, but no Phase 1 BiS two-hander is that fast (notes.md, Need to Verify). Casters and ranged hunters don't swing their weapon. The race and section tables below were made on the old weapons. Arms, Arms (vs Dragonkin) and Survival moved again with the warrior and hunter assumption defaults of 2026-10-15 (952.6, 991.0 and 892.4, see above).
 
-Ranged weapons (2026-10-15, standards 22, Ranged): the hunters' ranged weapon keeps Rhok'delar's 44.0 damage per second and took each Era Phase 1 BiS ranged speed in turn (bows 2.9 and 2.5, guns 2.6 and 2.5, crossbows 3.3 and 3.2). The faster ones win by a few DPS, through Deadly Aspects' per-shot Quick Shots (the shots themselves are normalised). The ranged set holds Striker's Mark's 2.5 sec bow: Lone Wolf 1064.0, Marksmanship 1020.3, Beast Mastery 952.2 at 180 sec (+3.3 / +2.7 / +3.5 over the 2.9 sec bow). Blastershot Launcher's 2.6 sec gun is up to 1.0 higher only with a 15% ammo pouch, which Phase 1 may not have (Ribbly's Bandolier is 14%). Survival never shoots and keeps the 2.9 sec bow. Forever has no ranged weapon racials, so the races don't move: Night Elf for the ranged specs (Orc the best Horde race, 3.5 to 5.1 behind), Orc for Survival (Night Elf the best Alliance race, 11.0 behind).
+Ranged weapons (2026-10-15, standards 22, Ranged): the hunters' ranged weapon keeps Rhok'delar's 44.0 damage per second and took each Era Phase 1 BiS ranged speed in turn (bows 2.9 and 2.5, guns 2.6 and 2.5, crossbows 3.3 and 3.2). The faster ones win by a few DPS, through Deadly Aspects' per-shot Quick Shots (the shots themselves are normalised). The ranged set holds Striker's Mark's 2.5 sec bow: Lone Wolf 1064.0, Marksmanship 1020.3, Beast Mastery 952.2 at 180 sec (+3.3 / +2.7 / +3.5 over the 2.9 sec bow). Blastershot Launcher's 2.6 sec gun is up to 1.0 higher only with a 15% ammo pouch, which Phase 1 may not have (Ribbly's Bandolier is 14%). Survival never shoots and keeps the 2.9 sec bow. Forever has no ranged weapon racials, so the races didn't move then (Night Elf for the ranged specs, Orc for Survival); client 70425's racials have since moved them to the Windshaper and the Human (the race table below).
 
 ### Warrior
 
@@ -233,53 +233,51 @@ Four specs, each with its own talents, rotation and preset build in `ui/hunter/p
 - The 4 and 5 piece bonuses (36 attack power against Beasts, Aimed Shot's cooldown 1 sec shorter; the effect's class mask is Aimed Shot's alone, though the name says Multi-Shot too) would add 17 for Lone Wolf, 13 for Marksmanship, 1 for Beast Mastery and nothing for Survival, with the rotations re-tuned for them (measured on the 2026-10-12 gear, before standards 1b and its trinkets).
 - Pets take the hunter's melee hit 1:1 (Season of Discovery's Hunter Pet Scaling as a placeholder: Blizzard's 09-17 known issues say pet hit takes the master's coefficient but not which; +17 Beast Mastery, +10 Marksmanship and Survival). On SoD's full scaling (22% of ranged attack power plus hit) Beast Mastery, Marksmanship and Survival would gain 41, 23 and 18 more.
 - Pets take no player buffs under Forever, and no pet consumables (Juju and the pet scrolls are player-cast buffs; they would add 17 to Beast Mastery if Forever allows them). Until 2026-10-12 the flag was set after the buffs went on, so the pet kept them all (880 attack power instead of 540) and Beast Mastery read 55 too high. Everything here is after the fix.
-- Lone Wolf, Marksmanship 5/41/5 with no pet (`5-0053552511503051-5`), 1064.0 on a Night Elf (1029.8 before the 2026-10-15 defaults and ranged pass), the best of the four. Lone Wolf's 20% damage is worth more than a pet that takes no player buffs.
-- Marksmanship 7/39/5 with a cat (`502-0053452501503051-5`), 1020.3 (1019.8 before). The pet deals 11% of the damage (14% before the pet's hit scaled with its speed). Both Marksmanship builds take Improved Arcane Shot 5 and Sniper Shot, put Arcane Shot above Aimed Shot and spend mana with no floors and cast Serpent Sting after Aimed Shot. At 300 sec they hold up (1005 and 992), holding Rapid Fire and Elune's Light for the on-use trinket (+2.3 and +1.7; Beast Mastery holds Elune's Light, +0.5) with Sniper Shot held back when the mana would not last the fight.
-- Beast Mastery 31/20 (`5020121505021241-00520503014`), 952.2 (980.4 before). A 1.0 sec cat. Since 2026-10-15 the pet's hit scales with its speed as in Classic (report assumption hunter_pet_speed), so every speed deals the same white damage a second: every family at 1.0, 1.2, 1.5 and 2.0 sec on Beast Mastery, Marksmanship and Survival left the cat best (the raptor ties it), 5 to 9 ahead of the owl and the bat, with every cat speed within 1 DPS, and the presets keep the 1.0 sec cat. The pet deals 21% of the damage (26% before). The searches drop Summon Hawk: on the cooldown it shares with Arcane Shot the hawk deals less than the shot.
-- Survival 7/10/34, the melee spec (`502-005005-500230230250122151`), 892.4 on an Orc since the weapon pass and the 2026-10-15 defaults (858.6 on a Human on the Era swords), with a Dense Sharpening Stone on each sword (+9): Mongoose Bite whenever Expose Prey opens it (for 10 sec), Strider Kick and Raptor Strike on cooldown, Lacerate kept up, Immolation Trap on cooldown, Wing Clip in every free global cooldown (+31), held when Mongoose Bite or Strider Kick is about ready. It walks in 6 sec before the pull. Survival runs out of global cooldowns, not mana, so Efficiency and the cost half of Resourcefulness are worth nothing. A ranged Survival build with Lightning Reflexes kept plays like Marksmanship and its free search ends on the Marksmanship build, so it is not a spec of its own. Fire-toasted Bun (+9) is left out: Forever's is a seasonal item.
+- Lone Wolf, Marksmanship 5/41/5 with no pet (`5-0053552511503051-5`), 1069.5 on a Windshaper since client 70425's racials and the raid hits (1064.0 on a Night Elf before, 1029.8 before the 2026-10-15 defaults and ranged pass), the best of the four. Lone Wolf's 20% damage is worth more than a pet that takes no player buffs.
+- Marksmanship 7/39/5 with a cat (`502-0053452501503051-5`), 1024.9 on a Windshaper (1020.3 on a Night Elf before). The pet deals 11% of the damage (14% before the pet's hit scaled with its speed). Both Marksmanship builds take Improved Arcane Shot 5 and Sniper Shot, put Arcane Shot above Aimed Shot and spend mana with no floors and cast Serpent Sting after Aimed Shot. At 300 sec they hold up (1005 and 992), holding Rapid Fire and Elune's Light for the on-use trinket (+2.3 and +1.7; Beast Mastery holds Elune's Light, +0.5) with Sniper Shot held back when the mana would not last the fight.
+- Beast Mastery 31/20 (`5020121505021241-00520503014`), 955.1 on a Windshaper (952.2 on a Night Elf before, 980.4 before that). A 1.0 sec cat. Since 2026-10-15 the pet's hit scales with its speed as in Classic (report assumption hunter_pet_speed), so every speed deals the same white damage a second: every family at 1.0, 1.2, 1.5 and 2.0 sec on Beast Mastery, Marksmanship and Survival left the cat best (the raptor ties it), 5 to 9 ahead of the owl and the bat, with every cat speed within 1 DPS, and the presets keep the 1.0 sec cat. The pet deals 21% of the damage (26% before). The searches drop Summon Hawk: on the cooldown it shares with Arcane Shot the hawk deals less than the shot.
+- Survival 7/10/34, the melee spec (`502-005005-500230230250122151`), 888.2 on a Human since client 70425's racials and the raid hits (892.4 on an Orc before; Strider Kick is 30% cheaper under 70425's Resourcefulness, which changes no decision since Survival never runs short of mana), with a Dense Sharpening Stone on each sword (+9): Mongoose Bite whenever Expose Prey opens it (for 10 sec), Strider Kick and Raptor Strike on cooldown, Lacerate kept up, Immolation Trap on cooldown, Wing Clip in every free global cooldown (+31), held when Mongoose Bite or Strider Kick is about ready. It walks in 6 sec before the pull. Survival runs out of global cooldowns, not mana, so Efficiency and the cost half of Resourcefulness are worth nothing. A ranged Survival build with Lightning Reflexes kept plays like Marksmanship and its free search ends on the Marksmanship build, so it is not a spec of its own. Fire-toasted Bun (+9) is left out: Forever's is a seasonal item.
 - The rotations (`tools/rotopt/hunter_presets.sh`): Serpent Sting when it is down, Aimed Shot on the cooldown it shares with Multi-Shot, Arcane Shot on its own, Sniper Shot, Rapid Fire 0.1 sec before the pull, Bestial Wrath and the racials at the pull and on cooldown. The hand audits found every shot and cooldown on time; the ranged specs have idle global cooldowns only when every shot is on cooldown (Volley would hold Auto Shot for 6 sec).
 - Raid duties (standards 23, 2026-10-15). The base presets cast neither Hunter's Mark nor Scorpid Sting: both come from the raid's debuffs, as if another hunter kept them up. Each Level 60 preset has a Hunter's Mark duty preset next to it, and the ranged ones (Lone Wolf, Marksmanship, Beast Mastery) a Scorpid Sting duty preset too, each keeping its debuff up itself with that raid debuff off in its request (`tools/dps_report/req/<base>-duty-mark` and `-duty-scorpid`, mksettings specs `hunter_*_mark` and `hunter_{bm,mm,lw}_scorpid`). Survival has no Scorpid Sting duty (user ruling, 2026-10-15): a melee hunter would have to leave melee for the sting's minimum range. Hunter's Mark duty: rank 4 (60 mana, the raid debuff's 140) 1.5 sec before the pull, after the pre-pull Aspect's global cooldown (the mark doesn't pull, so it may go up before it, and it is never held back for the hunter's own damage: user rulings 2026-10-15), and again in its last 3 sec. Scorpid Sting duty: Forever's one rank (2% off the boss's hit, 9% of base mana) at the pull and in its last 2 sec (Beast Mastery 4 sec: its busier global cooldowns let a 2 sec refresh lapse, +2.6 / +2.7 / +3.0; at 4 sec Marksmanship and Lone Wolf lose up to 1.4, so they keep 2), in place of Serpent Sting since a hunter has one sting on a target. Without Serpent Sting Marksmanship and Lone Wolf have the mana for Sniper Shot at 15 a second of the fight left instead of 25. Scorpid Sting only lowers the boss's hit, so its cost buys the raid no damage. At 120 / 180 / 300 sec (20000 iterations, seed 1):
 
   | Preset | Base | Hunter's Mark duty | Cost | Scorpid Sting duty | Cost |
   |---|---|---|---|---|---|
-  | Lone Wolf | 1071.5 / 1064.0 / 1043.4 | 1069.7 / 1061.7 / 1041.6 | 1.8 / 2.3 / 1.7 | 973.5 / 967.7 / 965.0 | 98.0 / 96.3 / 78.4 |
-  | Marksmanship | 1027.9 / 1020.3 / 998.5 | 1026.6 / 1018.9 / 996.5 | 1.3 / 1.3 / 2.0 | 945.1 / 939.2 / 935.4 | 82.8 / 81.1 / 63.1 |
-  | Beast Mastery | 959.2 / 952.2 / 942.9 | 959.3 / 952.1 / 942.6 | 0.0 / 0.0 / 0.3 | 876.7 / 869.2 / 859.3 | 82.5 / 83.0 / 83.5 |
-  | Survival | 899.6 / 892.4 / 883.7 | 898.5 / 891.3 / 882.4 | 1.1 / 1.1 / 1.3 | none (ruling) | |
+  | Lone Wolf | 1074.2 / 1069.5 / 1050.1 | 1072.8 / 1068.1 / 1047.9 | 1.4 / 1.4 / 2.1 | 977.5 / 974.3 / 972.3 | 96.7 / 95.2 / 77.8 |
+  | Marksmanship | 1029.6 / 1024.9 / 1003.0 | 1028.1 / 1023.1 / 1001.5 | 1.4 / 1.8 / 1.5 | 947.7 / 944.3 / 941.2 | 81.9 / 80.6 / 61.8 |
+  | Beast Mastery | 959.5 / 955.1 / 946.5 | 959.4 / 954.9 / 946.1 | 0.1 / 0.2 / 0.5 | 878.1 / 872.9 / 864.2 | 81.4 / 82.2 / 82.3 |
+  | Survival | 895.2 / 888.2 / 881.4 | 894.4 / 887.0 / 879.8 | 0.8 / 1.2 / 1.5 | none (ruling) |  |
 
-  Rotation audit pass 20 (2026-10-15) moved the mark before the pull (+5.7 / +4.7 / +2.3 Beast Mastery, +4.6 / +3.3 / +2.0 Marksmanship, +5.2 / +3.4 / +2.4 Lone Wolf, +2.0 / +1.4 / +0.8 Survival) and Beast Mastery's sting refresh to 4 sec. Beast Mastery's mark now costs nothing: its first global cooldown before the pull was idle. Survival still walks into melee before the pull and its swings start at the pull.
+  The table is on client 70425's racials (Windshaper for the ranged presets, Human for Survival) with the raid hits (2026-10-16). Rotation audit pass 20 (2026-10-15) moved the mark before the pull (+5.7 / +4.7 / +2.3 Beast Mastery, +4.6 / +3.3 / +2.0 Marksmanship, +5.2 / +3.4 / +2.4 Lone Wolf, +2.0 / +1.4 / +0.8 Survival) and Beast Mastery's sting refresh to 4 sec. Beast Mastery's mark now costs nothing: its first global cooldown before the pull was idle. Survival still walks into melee before the pull and its swings start at the pull.
 
   The Scorpid Sting cost is Serpent Sting's damage (83 a second on Beast Mastery, 98 on Lone Wolf at 180 sec).
 
-Races, 20000 iterations (standard error about 0.2), at 120 / 180 / 300 sec. Measured without the Ahn'Qiraj book ranks (Aspect of the Hawk 5, Serpent Sting 8; Multi-Shot has one rank), with the strongest learned rank where Forever's top rank is weaker (Aspect of the Hawk V's 90, Trueshot Aura IV's 75, Hunter's Mark III's 98; standards 8a; since 2026-10-15 the top ranks give 100 and 140 and are cast) and with the shared raid buff caps (Grace of Air 77, Strength of Earth 42, Battle Shout 115), on the standards 1b gear with its two synthetic trinkets, and with Forever's consumables (Elixir of Ferocity, Flank au Poivre, Elixir of Greater Intellect, Greater Mageblood Elixir, Major Frenzy Potion for Survival) and Enchant Cloak - Agility. The two Skyborne halves differ only in noise. The synthetic weapons are swords (Barbarous Blade, Brutality Blade) and a bow, as in Era's Phase 1 BiS. The table predates the weapon passes and the 2026-10-15 defaults; the races at 180 sec on the current presets (20000 iterations) are Lone Wolf / Marksmanship / Beast Mastery / Survival: Night Elf 1064.0 / 1020.3 / 952.2 / 881.4, Orc 1059.3 / 1015.2 / 948.7 / 892.4, Windshaper 1055.8 / 1012.2 / 944.9 / 877.1, High Order 1054.5 / 1011.0 / 943.9 / 876.7, Troll 1054.5 / 1011.5 / 944.4 / 876.2, Human 1047.8 / 1007.1 / 942.7 / 872.1, Tauren 1045.6 / 1003.3 / 938.0 / 875.3, Dwarf 1043.6 / 1001.5 / 936.5 / 870.3. Forever's weapon racials give no ranged crit, so for the ranged specs a sword stat stick only helps the Human's pet; an axe would give the Orc pet 1% crit, a mace the Dwarf's.
+Races, 20000 iterations (standard error about 0.2), at 120 / 180 / 300 sec (the table below is on client 70425's racials with the raid hits, 2026-10-16). Measured without the Ahn'Qiraj book ranks (Aspect of the Hawk 5, Serpent Sting 8; Multi-Shot has one rank), with the strongest learned rank where Forever's top rank is weaker (Aspect of the Hawk V's 90, Trueshot Aura IV's 75, Hunter's Mark III's 98; standards 8a; since 2026-10-15 the top ranks give 100 and 140 and are cast) and with the shared raid buff caps (Grace of Air 77, Strength of Earth 42, Battle Shout 115), on the standards 1b gear with its two synthetic trinkets, and with Forever's consumables (Elixir of Ferocity, Flank au Poivre, Elixir of Greater Intellect, Greater Mageblood Elixir, Major Frenzy Potion for Survival) and Enchant Cloak - Agility. The two Skyborne halves differ only in noise. The synthetic weapons are swords (Barbarous Blade, Brutality Blade) and a bow, as in Era's Phase 1 BiS. Before client 70425 (2026-10-15 defaults and the weapon passes, no raid hits) the races at 180 sec were Lone Wolf / Marksmanship / Beast Mastery / Survival: Night Elf 1064.0 / 1020.3 / 952.2 / 881.4, Orc 1059.3 / 1015.2 / 948.7 / 892.4, Windshaper 1055.8 / 1012.2 / 944.9 / 877.1, Human 1047.8 / 1007.1 / 942.7 / 872.1.
 
 | Race | Lone Wolf | Marksmanship | Beast Mastery | Survival |
 |---|---|---|---|---|
-| Night Elf | 1038.0 / 1029.8 / 1005.1 | 1028.2 / 1019.8 / 992.0 | 987.1 / 980.4 / 970.3 | 860.8 / 852.4 / 845.2 |
-| Orc | 1030.5 / 1025.3 / 1000.0 | 1020.3 / 1014.7 / 986.3 | 979.4 / 975.7 / 965.3 | 859.8 / 853.1 / 845.2 |
-| Skyborne (Windshaper) | 1026.6 / 1021.4 / 997.4 | 1016.6 / 1011.4 / 984.3 | 976.0 / 971.5 / 962.5 | 853.4 / 846.9 / 840.8 |
-| Skyborne (High Order) | 1025.3 / 1020.1 / 995.9 | 1015.5 / 1010.2 / 983.1 | 975.0 / 970.5 / 961.5 | 853.0 / 846.5 / 840.4 |
-| Troll | 1025.4 / 1019.0 / 994.4 | 1015.8 / 1009.9 / 982.2 | 975.8 / 970.8 / 961.3 | 853.9 / 846.5 / 839.3 |
-| Human | 1019.1 / 1013.9 / 990.1 | 1012.8 / 1007.2 / 980.5 | 974.9 / 971.0 / 961.9 | 865.0 / 858.6 / 852.2 |
-| Tauren | 1017.0 / 1011.8 / 987.6 | 1008.5 / 1002.9 / 975.7 | 969.2 / 965.3 / 956.3 | 851.6 / 845.0 / 838.8 |
-| Dwarf | 1015.1 / 1009.9 / 985.9 | 1006.8 / 1001.2 / 974.1 | 967.7 / 963.7 / 954.8 | 847.0 / 840.5 / 834.2 |
+| Skyborne (Windshaper) | 1074.2 / 1069.5 / 1050.1 | 1029.6 / 1024.9 / 1003.0 | 959.5 / 955.1 / 946.5 | 892.9 / 885.8 / 879.1 |
+| Skyborne (High Order) | 1072.8 / 1068.2 / 1048.5 | 1028.4 / 1023.7 / 1001.8 | 958.4 / 954.1 / 945.5 | 892.5 / 885.3 / 878.7 |
+| Human | 1068.7 / 1063.3 / 1045.0 | 1026.1 / 1020.9 / 1000.9 | 959.2 / 954.3 / 945.9 | 895.2 / 888.2 / 881.4 |
+| Night Elf | 1069.3 / 1061.1 / 1042.3 | 1026.2 / 1018.4 / 997.8 | 958.2 / 951.2 / 942.0 | 889.7 / 880.8 / 873.0 |
+| Orc | 1068.8 / 1061.0 / 1040.7 | 1025.3 / 1018.1 / 996.3 | 957.9 / 951.3 / 941.9 | 896.2 / 887.0 / 878.7 |
+| Tauren | 1060.6 / 1055.4 / 1036.9 | 1017.2 / 1012.1 / 992.0 | 950.4 / 945.9 / 937.3 | 887.2 / 879.9 / 872.9 |
+| Dwarf | 1058.6 / 1053.4 / 1035.1 | 1015.3 / 1010.2 / 990.3 | 948.7 / 944.2 / 935.7 | 886.6 / 879.4 / 872.4 |
+| Troll | 1058.1 / 1051.9 / 1032.3 | 1015.3 / 1009.6 / 987.9 | 949.2 / 943.2 / 934.3 | 883.8 / 875.9 / 868.3 |
 
-Night Elf is the best race for the three ranged specs (Elune's Light's 10% crit, which the pet inherits too), Orc the best Horde race (Blood Fury). For Survival the Human is best (2% crit with its swords), the Orc the best Horde race, the Night Elf the next Alliance race (0.2 behind the Orc, within the noise). Tauren's 1% hit is wasted at the hit cap the sets carry. The presets use Night Elf for the ranged builds and, since the weapon pass gave Survival a main hand axe, Orc for Survival.
-
-With weapon racials off (fairness rule 16): the only weapon racial the hunter's weapons meet is the Human's swords, so the best race without one is the Night Elf for the ranged specs (Lone Wolf 1029.8, Marksmanship 1019.8, Beast Mastery 980.4) and the Orc and Night Elf, tied within the noise, for Survival (853.1 and 852.4) at 180 sec. The spec order is the same either way.
+Client 70425's racials (2026-10-16, with the raid hits; seed 1, and the top races confirmed on a second independent seed set at every length): no racial depends on the weapon any more. Skyborne (Windshaper) is best for the three ranged specs (Wind Blessed, 3% haste), the High Order (Alliance) 1.0 to 1.6 behind, the Human next, the Night Elf 5 to 8 behind on Lone Wolf and Marksmanship (Elune's Light is weaker than steady haste and crit). For Survival the Human is best at 180 and 300 sec (Ruthless, 2% crit), 1.1 and 2.4 ahead of the Orc (Savage, 1% crit, and Blood Fury), which leads by 1.0 at 120 sec. The presets use the Windshaper for the ranged specs and the Human for Survival. The standards 16 weapon column is gone, since no racial needs a weapon type.
 
 ### Rogue
 
-Six builds, all on Undead (Touch of the Grave), in the shared level 60 raid with the rogue in a melee group (Battle Shout, Strength of Earth and Windfury Totem, which is 24 ahead of Grace of Air), against the generic Level 60 boss (no creature type, standards 19), 20000 iterations, standard error 0.1 to 0.3. Combat Daggers is the default build.
+Six builds, all on Undead, in the shared level 60 raid with the rogue in a melee group (Battle Shout, Strength of Earth and Windfury Totem, which is 24 ahead of Grace of Air), against the generic Level 60 boss (no creature type, standards 19), 20000 iterations, seed 1, standard error 0.1 to 0.3, measured on master aaa643f (2026-10-16: the client 70425 racials, raid hits of 1500 twice a minute, and the Phase 1 BiS weapon speeds of standards 22). Combat Daggers is the default build. Combat Swords now edges it at 180 sec (701.3 against 698.7) since its axes sim best.
 
 | Build | Talents | 120 / 180 / 300 sec |
 | --- | --- | --- |
-| Combat Daggers (Backstab) | `00530310501-30230320201513231-002` | 730.3 / 708.1 / 689.7 |
-| Seal Fate Daggers (Backstab) | `0053031055120005-322303200013-002` | 685.6 / 674.4 / 666.0 |
-| Mutilate | `0053031033150103-302303202015-002` | 680.4 / 669.8 / 662.1 |
-| Combat Swords (Sinister Strike) | `00530310501-32003311201515231` | 702.0 / 679.1 / 660.9 |
-| Subtlety (Hemorrhage) | `0053031035140004--3021203310113011` | 657.0 / 643.6 / 634.0 |
-| Seal Fate Swords (Sinister Strike) | `0053031045130005-3220132020141` | 655.0 / 644.7 / 635.6 |
+| Combat Daggers (Backstab) | `00530310501-30230320201513231-002` | 720.8 / 698.7 / 680.2 |
+| Seal Fate Daggers (Backstab) | `0053031055120005-322303200013-002` | 676.8 / 665.5 / 657.0 |
+| Mutilate | `0053031033150103-302303202015-002` | 680.6 / 669.9 / 661.7 |
+| Combat Swords (Sinister Strike) | `00530310501-32003311201515231` | 724.3 / 701.3 / 683.0 |
+| Subtlety (Hemorrhage) | `0053031035140004--3021203310113011` | 648.1 / 634.3 / 624.5 |
+| Seal Fate Swords (Sinister Strike) | `0053031045130005-3220132020141` | 675.6 / 665.4 / 656.0 |
 
 Combat Swords, Combat Daggers, Mutilate and Subtlety play differently and each has its own preset. Seal Fate Daggers (4.8% behind Combat Daggers) and Seal Fate Swords (5.1% behind Combat Swords) are the other builds within 10% of their spec, with the same rotations as their spec.
 
@@ -287,12 +285,12 @@ Murder (2/2, +4% against Humanoids and Giants) does nothing against the generic 
 
 | Build (vs Humanoid) | Talents | 120 / 180 / 300 sec |
 | --- | --- | --- |
-| Combat Daggers | `00532310301-30230320201513231-002` | 752.8 / 730.1 / 711.3 |
-| Seal Fate Daggers | `0053231053120005-322303200013-002` | 709.6 / 697.8 / 689.0 |
-| Mutilate | `0053231013150103-302303202015-002` | 703.9 / 693.0 / 685.1 |
-| Combat Swords | `00532310301-32003311201515231` | 726.3 / 702.8 / 684.0 |
-| Subtlety | `0053231015140004--3021203310113011` | 680.5 / 666.6 / 656.6 |
-| Seal Fate Swords | `0053231025130005-3220132020141` | 678.1 / 667.4 / 658.1 |
+| Combat Daggers | `00532310301-30230320201513231-002` | 743.0 / 720.4 / 701.3 |
+| Seal Fate Daggers | `0053231053120005-322303200013-002` | 700.3 / 688.6 / 679.7 |
+| Mutilate | `0053231013150103-302303202015-002` | 703.8 / 692.8 / 684.4 |
+| Combat Swords | `00532310301-32003311201515231` | 749.4 / 725.8 / 706.9 |
+| Subtlety | `0053231015140004--3021203310113011` | 671.3 / 656.9 / 646.8 |
+| Seal Fate Swords | `0053231025130005-3220132020141` | 699.4 / 688.9 / 679.2 |
 
 Expose Armor is out of every build and rotation (standards 18). It never added anything, since it does not stack with the raid's Sunder Armor.
 
@@ -301,12 +299,12 @@ No build uses Venom. As modelled (25 Energy, the cost still marked TODO in `veno
 Forever's rogue changes beyond the talent tree, and what each one is worth (2026-10-13, Combat Swords Undead at 180 sec unless said otherwise):
 - Poisons are class imbues. Forever's poisons (Deadly Poison 11356 and 25351, Instant Poison 11340, Wound Poison 13227) apply through SpellEffect 360, where Era used 54, the same weapon enchant effect as the sharpening stones and oils (Dense Sharpening Stone 16138, Elemental Sharpening Stone 25122). A poison and a stone sit on the same weapon (client 1.60.1.70338, wago.tools SpellEffect; found by the class changes auditor). The rogue takes its poisons from its own options now (a poison picker on each hand, the main hand Deadly Poison and the off hand Instant Poison), and the consumes put a Dense Sharpening Stone (+8 damage) on both blades: +9.5 for Combat Swords, +13.0 for Combat Daggers.
 - Windfury Totem with a main hand poison: the sim already let Windfury Totem proc next to a rogue poison (only a shaman's own Windfury Weapon blocks it), so nothing moved.
-- Axes: Forever's rogues can wield axes (Hack and Slash reads "Axe/Sword", and the rogue gear pool has had axes since 2026-09-23), and the Orc's Axe Specialization is 1% crit (Forever's racials, beta client). The same synthetic swords as axes (before the Chili fix) are worth +6.2 to the Orc on Combat Swords (680.3 against 674.1 at 180 sec), which puts an Orc with axes 1.5 ahead of the Undead (678.8, the same with either weapon) and 5.4 ahead of the Human with swords (674.9; the Human loses its sword racial with axes, 663.0). On Seal Fate Swords axes are +3.6 for the Orc (643.1), still 1.5 behind the Undead (644.6). No other race gains. Maces lose (674.7 for the Undead, and 663.2 for the Dwarf with its mace racial against 661.7 with swords). The presets stay on swords, the Era Phase 1 BiS type (standards 16), and on the Undead. An Orc playing Combat Swords should take axes.
+- Axes: Forever's rogues can wield axes (Hack and Slash reads "Axe/Sword"). Since client 70425 no racial depends on the weapon (the Orc's Savage and the Human's Ruthless work with any weapon, the Dwarf's Earth Fury replaced the mace crit), so a weapon type is chosen on its own merits: Combat Swords carries a 2.9 and a 1.7 sec axe because those Phase 1 BiS speeds sim best (standards 22).
 - Eureka! (the Gnome's 10% off for every class) was already in.
 - The Land Mine goes out after a main hand swing under Slice and Dice (+0.6 to +1.5 over throwing it at once), and the synthetic on-use trinket is its own line next to Earthstrike's.
 - Dragonbreath Chili's Forever damage, 61 to 69 a proc (client 70338, the shared consumes fix), adds 0.3.
 
-Gear: two synthetic Phase 1 sets (`tools/database/forever_synthetic_items_rogue.go`) on the shared item level table, swords for Sinister Strike (Vis'kag the Bloodletter and Brutality Blade's damage) and daggers for the rest (Perdition's Blade and Core Hound Tooth's), built to the cross-class Forever budget (standards 1b, 2026-10-13: physical melee, each armor piece's weighted linear total slot mod x (1.125 x ilvl + 2) x f within 1% and three stat lines so its 1.7-norm stays within 6% of the shape line; armor 650.5, two one-handers 31.9 each and a bow 19.5, 734.0 a set) in the fair stat mix of Season of Discovery rogue BiS (standards 5a, hit held at the cap and the rest in the table's proportions; linear shares Stamina / Strength / Agility / attack power / hit / crit: swords 20.6 / 17.8 / 37.2 / 5.6 / 6.8 / 12.0, daggers 20.7 / 18.0 / 34.1 / 7.5 / 6.8 / 12.9, every stat within 1 point of the hit-adjusted target). Both sets wear two synthetic ilvl 71 trinkets (31 Agility and 15 crit rating, and +335 attack power for 20 sec every 2 min, `sim/rogue/forever_synthetic_trinkets.go`), since Forever's real Phase 1 trinkets are removed or not simulated. Against the earlier 1a sets (793.5 linear points and no trinkets) every build gained 10 to 16 at 180 sec, and no talent, rotation or race changed. Both sets carry 5% hit, the 9% cap with Precision 3/3 and the 2 piece bonus of Grimstitch Armor (Forever's crafted rogue set, 1% hit). Its 4 piece (+36 attack power against Humanoids) would add about 8 DPS and the 5 piece (Eviscerate 5 Energy cheaper) about 6 more, for Combat Daggers and Combat Swords alike. The Ahn'Qiraj book ranks are out (Backstab, Eviscerate and Deadly Poison take ranks 8, 8 and 4). Consumes: Elixir of the Mongoose and Elixir of Ferocity, Juju Might, Ground Scorpok Assay, Flank au Poivre, Dragonbreath Chili, Major Frenzy Potion, Thistle Tea, Goblin Sapper and Land Mine, a Dense Sharpening Stone on each blade, with Deadly Poison on the main hand and Instant Poison on the off hand in the rogue's options (the best pair for every spec).
+Gear: four synthetic Phase 1 sets (`tools/database/forever_synthetic_items_rogue.go`: Combat Swords, Seal Fate Swords, Mutilate and the daggers shared by the other builds) on the shared item level table, the Sinister Strike weapons at Vis'kag the Bloodletter's and Brutality Blade's damage per second and the dagger weapons at Perdition's Blade's and Core Hound Tooth's, each at the Phase 1 BiS speed and type that sims best (standards 22: Combat Swords a 2.9 sec axe and a 1.7 sec axe, Seal Fate Swords the same main hand and a 1.6 sec dagger, Mutilate a 1.7 sec dagger and a 1.8 sec sword, the other dagger builds 1.8 and 1.6 sec daggers), built to the cross-class Forever budget (standards 1b, 2026-10-13: physical melee, each armor piece's weighted linear total slot mod x (1.125 x ilvl + 2) x f within 1% and three stat lines so its 1.7-norm stays within 6% of the shape line; armor 650.5, two one-handers 31.9 each and a bow 19.5, 734.0 a set) in the fair stat mix of Season of Discovery rogue BiS (standards 5a, hit held at the cap and the rest in the table's proportions; linear shares Stamina / Strength / Agility / attack power / hit / crit: swords 20.6 / 17.8 / 37.2 / 5.6 / 6.8 / 12.0, daggers 20.7 / 18.0 / 34.1 / 7.5 / 6.8 / 12.9, every stat within 1 point of the hit-adjusted target). Both sets wear two synthetic ilvl 71 trinkets (31 Agility and 15 crit rating, and +335 attack power for 20 sec every 2 min, `sim/rogue/forever_synthetic_trinkets.go`), since Forever's real Phase 1 trinkets are removed or not simulated. Against the earlier 1a sets (793.5 linear points and no trinkets) every build gained 10 to 16 at 180 sec, and no talent, rotation or race changed. Both sets carry 5% hit, the 9% cap with Precision 3/3 and the 2 piece bonus of Grimstitch Armor (Forever's crafted rogue set, 1% hit). Its 4 piece (+36 attack power against Humanoids) would add about 8 DPS and the 5 piece (Eviscerate 5 Energy cheaper) about 6 more, for Combat Daggers and Combat Swords alike. The Ahn'Qiraj book ranks are out (Backstab, Eviscerate and Deadly Poison take ranks 8, 8 and 4). Consumes: Elixir of the Mongoose and Elixir of Ferocity, Juju Might, Ground Scorpok Assay, Flank au Poivre, Dragonbreath Chili, Major Frenzy Potion, Thistle Tea, Goblin Sapper and Land Mine, a Dense Sharpening Stone on each blade, with Deadly Poison on the main hand and Instant Poison on the off hand in the rogue's options (the best pair for every spec).
 
 Talents and rotations come from `tools/rotopt` at 180 sec: a knob search, a talent search seeded from every archetype (deep Combat, Seal Fate with Combat, Mutilate, deep Subtlety, Subtlety with Seal Fate), and the knob search again until neither moved, with Mutilate, Seal Fate and Hemorrhage, Ghostly Strike and Premeditation pinned (`-require`) for their builds. The talent searches were run again after the Ahn'Qiraj ranks went out, after the Murder fix and after each gear rebudget, and kept every build. The rotations (`rogue_ss`, `rogue_bs`, `rogue_mut`, `rogue_sub`, regenerated by `rogue_presets.sh`):
 
@@ -317,31 +315,34 @@ Talents and rotations come from `tools/rotopt` at 180 sec: a knob search, a tale
 
 Rotation audit (the rotations auditor and our own timelines and breakdowns): Slice and Dice is up 96 to 97% of the fight, the cooldowns line up with Adrenaline Rush, the potion, Sapper, the on-use trinket and Land Mine go in the opening window (the Land Mine after a main hand swing), energy sits under the builder's cost 77 to 96% of the time and caps only in the opener (2 to 5 energy a fight lost to Thistle Tea). Refreshing Slice and Dice early, waiting for more points on a fresh one, Rupture at 4 or 5 points, Expose Armor and Ghostly Strike on the Combat builds all lose.
 
-Races against the generic boss (180 sec, 120 / 300 sec in the same order):
+Races against the generic boss (master aaa643f, 180 sec, 20000 iterations, seed 1, standard error 0.2; the same seed for every race, so the gaps are tighter than the error suggests):
 
 | Race | Combat Daggers | Seal Fate Daggers | Combat Swords | Seal Fate Swords | Mutilate | Subtlety |
 | --- | --- | --- | --- | --- | --- | --- |
-| Undead | 708.1 | 674.4 | 679.1 | 644.7 | 669.8 | 643.6 |
-| Orc | 699.2 | 664.4 | 674.6 | 639.4 | 657.3 | 634.8 |
-| Gnome | 693.3 | 662.4 | 669.0 | 636.1 | 655.7 | 629.7 |
-| Night Elf | 692.5 | 661.4 | 669.3 | 635.0 | 653.9 | 629.3 |
-| Troll | 692.0 | 659.1 | 667.6 | 633.4 | 652.5 | 626.5 |
-| Skyborne (Windshaper) | 691.7 | 658.9 | 667.3 | 633.2 | 652.4 | 627.0 |
-| Skyborne (High Order) | 691.6 | 658.7 | 667.1 | 633.0 | 652.2 | 626.9 |
-| Human | 688.2 | 655.6 | 675.4 | 634.9 | 648.7 | 624.3 |
-| Dwarf | 687.3 | 654.0 | 662.2 | 627.9 | 647.2 | 623.3 |
+| Undead | 698.7 | 665.5 | 701.3 | 665.4 | 669.9 | 634.3 |
+| Orc | 696.5 | 665.7 | 704.7 | 665.6 | 669.4 | 633.5 |
+| Skyborne (Windshaper) | 698.8 | 665.8 | 703.4 | 666.5 | 669.5 | 633.3 |
+| Skyborne (High Order) | 698.8 | 665.6 | 703.2 | 666.2 | 669.3 | 633.2 |
+| Dwarf | 696.7 | 662.6 | 699.1 | 662.0 | 665.8 | 630.5 |
+| Human | 691.7 | 662.2 | 704.1 | 661.2 | 665.5 | 629.2 |
+| Gnome | 692.6 | 661.7 | 698.1 | 663.1 | 666.3 | 631.2 |
+| Night Elf | 692.0 | 661.3 | 697.7 | 661.2 | 664.4 | 629.0 |
+| Troll | 691.7 | 658.8 | 696.1 | 659.7 | 662.8 | 626.7 |
 
-Best overall and best Horde is Undead for every build (Touch of the Grave): 3.7 to 4.0 ahead of the Human on Combat Swords, 5 to 7 ahead of the Orc on Seal Fate Swords, 8 to 14 ahead of the Orc on the dagger builds. Best Alliance:
-- Combat Daggers: Gnome (Eureka!), 0.7 to 0.8 ahead of the Night Elf at every length.
-- Seal Fate Daggers: Gnome, by 0.5 to 1.0.
-- Mutilate: Gnome, by 1.5 to 1.8.
-- Subtlety: Gnome, by 0.1 to 0.4.
-- Combat Swords: Human (+2% crit with swords), by 4.9 to 6.4.
-- Seal Fate Swords: Gnome, 1.1 ahead of the Night Elf at 180 sec, 0.1 to 0.2 at 120 and 300.
+Since client 70425 the races sit close together (Touch of the Grave once every 25 sec, Savage and Ruthless with any weapon, Earth Fury, Wind Blessed at 3% haste). The presets stay Undead:
+- Combat Swords: the Orc is best overall and best Horde (704.7, 3.4 over the Undead), the Human best Alliance (704.1, Ruthless).
+- Combat Daggers, Seal Fate Daggers and Seal Fate Swords: the Windshaper, High Order and Undead are within 1.1 of each other, and so is the Orc except on Combat Daggers (2.3 behind). Best Alliance is the High Order, 2.1 to 3.1 ahead of the next (Dwarf or Gnome).
+- Mutilate and Subtlety: the Undead is still best overall and best Horde, by 0.4 over the Windshaper and 0.7 over the Orc. Best Alliance is the High Order, 0.6 and 1.1 behind.
 
-Against a Humanoid (the "(vs Humanoid)" presets, Murder 2/2) the order is the same and the gaps 0.2 to 0.6 wider. Undead at 180 sec: Combat Daggers 730.1, Seal Fate Daggers 697.8, Combat Swords 702.8, Seal Fate Swords 667.4, Mutilate 693.0, Subtlety 666.6. Next: Orc 720.9 / 687.4 / Human 698.7 / Orc 661.9 / 679.9 / 657.4. Best Alliance: Gnome 714.6 / 685.3 / Human 698.7 / Gnome 658.4 / 678.3 / 652.0.
+Against a Humanoid (the "(vs Humanoid)" presets, Murder 2/2) the order is the same within 0.3. At 180 sec, Undead / best:
+- Combat Daggers 720.4 / Windshaper 720.5.
+- Seal Fate Daggers 688.6 / Orc 688.8.
+- Combat Swords 725.8 / Orc 729.2 (Human 728.4).
+- Seal Fate Swords 688.9 / Windshaper 690.0.
+- Mutilate 692.8 (best).
+- Subtlety 656.9 (best).
 
-The weapons are the Era Phase 1 BiS types (swords and daggers), so the only weapon racial in play is the Human's swords (and the Orc's axes, above, for a player who swaps). Undead has none, so with the weapon racials off the order of the specs is the same. The 120 and 300 sec columns keep the order but for near ties (within 0.7).
+No racial depends on the weapon any more, so there is no weapon-racial column.
 
 Talent verification (2026-10-12): every talent with points in the six builds was checked from runs rather than the code:
 - Debug logs: the attacker modifier and crit multiplier on each hit, the energy costs, the aura times.
@@ -553,14 +554,16 @@ Under Forever the cat swings its equipped weapon (its DPS at a 1.0 sec swing), u
 
 | Race | 120 sec | 180 sec | 300 sec | |
 |---|---|---|---|---|
-| Night Elf | 722.0 | 709.7 | 701.2 | best overall and Alliance |
-| Windshaper Skyborne | 716.8 | 706.3 | 697.2 | best Horde |
-| High Order Skyborne | 716.7 | 706.2 | 697.1 | |
-| Tauren | 714.4 | 704.1 | 694.9 | |
+| Tauren | 724.2 | 713.7 | 704.3 | best overall and Horde |
+| High Order Skyborne | 721.5 | 711.2 | 702.0 | best Alliance |
+| Windshaper Skyborne | 721.6 | 711.2 | 702.1 | |
+| Night Elf | 722.0 | 709.7 | 701.3 | |
 
 No druid race has a weapon type racial, so the ranking with weapon type racials off is the same.
 
 **Client 1.60.1.70425** (2026-10-16). Howling Idol takes 0.5 sec off Shifting Power, not 1 (spell 1291059, -500 ms): Feral 717.4 -> 709.6 at 180 sec (729.6 -> 722.1 and 708.3 -> 701.1 at 120 / 300 sec), the Faerie Fire duty 712.3 -> 704.6, about 7.5 at every length on two seed sets; the idol is now worth 4.8, and the knob search keeps the rotation. Moonkin Aura and Leader of the Pack split into 3% spell crit and 3% physical crit raid auras with the shared 70425 port (PR #50); each druid build brings its own, so neither moves. Shred rank 1 is level 20 with 22 (was 22 with 24). Faerie Fire's added effect is threat, and Bear and Dire Bear Form's stops Energy regeneration in those forms; neither is simulated. Balance doesn't move.
+
+**Racials and raid hits** (2026-10-16). Client 70425's racials (Tauren crits do 2% more and the 1% hit is gone, Skyborne have 3% haste) put Tauren first for all three builds at 180 sec, so the presets and report requests are Tauren now: Balance 828.4 (Night Elf 827.3, best Alliance; Night Elf leads at 120 sec), the Wrath build 784.5 (Night Elf 782.9), Feral 713.7 (High Order Skyborne 711.2 best Alliance, Night Elf 709.7), 40,000 iterations. The rotations leave Elune's Light out (`elune=0`); a Night Elf still uses it through the autocast line. The raid's damage hits (2 a minute, PR #55) push back Wrath and Starfire, which cost Balance 13.5 at 180 sec: Nature's Focus (14% a point, spell 17063) now gives Wrath and Starfire its chance to avoid pushback, 70% at 5 points, worth about 9 (Balance 817.9 -> 827.2 on Night Elf, the Wrath build 774.5 -> 782.9). The knob searches on Tauren keep every rotation. Published at 180 sec (20,000, seed 1): Balance 828.2, Wrath 784.4, Feral 713.7; Faerie Fire duties 797.5 / 755.8 / 708.5 (costs 30.7 / 28.6 / 5.1).
 
 ## Low levels
 

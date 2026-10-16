@@ -458,3 +458,9 @@ func (druid *Druid) applyOmenOfClarity() {
 		},
 	})
 }
+
+// Nature's Focus (client 1.60.1.70338, spell 17063): a 14% chance a point to avoid the pushback
+// a hit taken does to an Arcane or Nature cast, 70% at 5 points. Wrath and Starfire take it.
+func (druid *Druid) naturesFocusChance() float64 {
+	return 0.14 * float64(druid.Talents.NaturesFocus)
+}

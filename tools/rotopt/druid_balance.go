@@ -61,6 +61,9 @@ func (druidBalance) Knobs() []Knob {
 		// Elune's Light 0.1 sec before the pull as well, so the pre-pull cast lands inside them, and
 		// Elune's later uses held for the synthetic trinket when holding loses no use.
 		{Name: "cdStack", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Elune's Light (the Night Elf's racial) in the cdStack lines, 0/1. Other races leave it
+		// out; a Night Elf without the lines still uses it through the autocast line.
+		{Name: "elune", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Moonfire at the end of the fight once the filler would not land before it ends (rotation
 		// auditor): 0 never, 1 when a Starfire would not, 2 when a Wrath would not. endMoonfireSlack
 		// adds seconds to that cast time.
@@ -92,7 +95,7 @@ func (druidBalance) Build(k Knobs) *proto.APLRotation {
 			"Innervate on ourself once the mana runs low."))
 	}
 	items = append(items, autocastOtherCooldowns(nil, "Racials, trinkets, potions and runes."))
-	if k["cdStack"] == 1 {
+	if k["cdStack"] == 1 && k["elune"] == 1 {
 		items = append(items, cast(elunesLight, holdFor(elunesLight, itemID(druid.BalanceSyntheticSpellPowerTrinket)),
 			"Elune's Light with the trinket, unless waiting for it would lose a use."))
 	}
@@ -165,9 +168,10 @@ func (druidBalance) Build(k Knobs) *proto.APLRotation {
 		rot.PrepullActions = append(rot.PrepullActions, prepull(itemID(druid.BalanceSyntheticSpellPowerTrinket), 0.1))
 	}
 	if k["cdStack"] == 1 {
-		rot.PrepullActions = append(rot.PrepullActions,
-			prepull(itemID(majorSpellblastingPotion), 0.1),
-			prepull(elunesLight, 0.1))
+		rot.PrepullActions = append(rot.PrepullActions, prepull(itemID(majorSpellblastingPotion), 0.1))
+		if k["elune"] == 1 {
+			rot.PrepullActions = append(rot.PrepullActions, prepull(elunesLight, 0.1))
+		}
 	}
 	return rot
 }

@@ -5,7 +5,7 @@
   "build": "Balance (Faerie Fire duty)",
   "isDefault": false,
   "pr": 31,
-  "race": "NightElf",
+  "race": "Tauren",
   "talents": "5532220115501351--505",
   "treeNames": [
     "Balance",
@@ -15,12 +15,12 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_ff",
   "published": {
-    "dps": 799.9,
-    "source": "PR #31 (Faerie Fire duty, standards 23)"
+    "dps": 797.5,
+    "source": "Tauren, Nature's Focus pushback and the client 70425 racials (2026-10-16)"
   },
   "verify": {
-    "dps": 799.85,
-    "stderr": 0.23,
+    "dps": 797.52,
+    "stderr": 0.24,
     "iters": 20000,
     "ok": true,
     "note": "180 s, seed 1"
@@ -62,7 +62,7 @@
     "Cerebral Cortex Compound"
   ],
   "caveats": [
-    "Costs 33.7 / 31.5 / 29.1 DPS against the base build at 120 / 180 / 300 s",
+    "Costs 32.4 / 30.7 / 28.7 DPS against the base build at 120 / 180 / 300 s",
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 36 spell power and 15 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
     "No Ahn'Qiraj ranks: Starfire rank 6 costs 13.3 DPS (820.4 -> 807.1 at 180 s, first gear)",
     "5-piece Grovekeeper Eclipse instead of 2-piece would add 12.6 and Swarming Idol is worth 3.3 (measured before the 5a and 1b rounds)",

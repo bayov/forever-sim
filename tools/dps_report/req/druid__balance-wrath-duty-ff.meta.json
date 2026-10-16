@@ -5,7 +5,7 @@
   "build": "Balance Wrath (Faerie Fire duty)",
   "isDefault": false,
   "pr": 31,
-  "race": "NightElf",
+  "race": "Tauren",
   "talents": "5502220115501351-03-505",
   "treeNames": [
     "Balance",
@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic_wrath",
   "apl": "level60_wrath_ff",
   "published": {
-    "dps": 757.1,
-    "source": "PR #31 (Faerie Fire duty, standards 23)"
+    "dps": 755.8,
+    "source": "Tauren, Nature's Focus pushback and the client 70425 racials (2026-10-16)"
   },
   "verify": {
-    "dps": 757.09,
+    "dps": 755.84,
     "stderr": 0.19,
     "iters": 20000,
     "ok": true,
@@ -60,7 +60,7 @@
     "Cerebral Cortex Compound"
   ],
   "caveats": [
-    "Costs 32.0 / 29.4 / 27.6 DPS against the base build at 120 / 180 / 300 s",
+    "Costs 30.5 / 28.6 / 27.1 DPS against the base build at 120 / 180 / 300 s",
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 36 spell power and 15 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
     "5.5% behind the weaving Balance build (782.7 vs 828.5 at 180 s)",
     "Wrath VIII's base damage ×1.085, halfway to the level 30 rank's 0.42 of Era (only ranks 1 to 5 were retuned); the client has ×1.00",
