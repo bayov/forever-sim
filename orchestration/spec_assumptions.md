@@ -552,6 +552,26 @@ No assumptions of its own. The rogue's scenarios are the shared ones:
 - **Sensitivity (10k iterations, seed 1, 180 s, None against 6%):** Fire +7.1%, Arcane +6.3%, Elemental +6.4%, Balance +5.4%, Destruction +5.2%, Affliction +5.3%, Ret +4.2%, Shadow +3.8%, Enhancement +3.0%, Frost 0 (Frostbolt is binary).
 - **Knob (to add):** `core.Assume("level_partial_resist", AverageMagicPartialResistPerLevelMultiplier)` at both uses.
 
+### Pending rows added 2026-10-16 (assumptions audit, orchestrator's request)
+
+None of these has a knob yet. The report-tree rebuild adds them; the defaults keep the sim's current behaviour.
+
+- **`lock_pet_crit`: do demons inherit the warlock's spell crit?** (all four warlocks)
+  - Source: AidanZMoon on forever-bugs #331 (13 to 14 October). Demons "should be getting their master's spell crit as their own melee AND spell crit chance", and the scaling stays off until the demons' wrong base crit is removed.
+  - The sim gives the demon no crit from the warlock. Low (default): no crit, the beta today. Expected: the warlock's spell crit, Blizzard's intent.
+  - Swing: +2.1 to +2.4% at 180 s ("SoD plus crit", the last assumption sims before the 2026-10-15 review dropped that setting).
+  - Knob: `sim/warlock/pet.go`, `makeStatInheritance`. When `core.AssumeOk("lock_pet_crit")`, add the owner's SpellCrit to the demon's MeleeCrit and SpellCrit.
+- **`lock_stone_with_oil`: do Firestone or Spellstone and Wizard Oil stack?** (all four warlocks)
+  - The sim stacks them (`sim/warlock/talents.go`: the stones use the shaman imbue and rogue poison enchant effect in client 70338). No beta test.
+  - Low: one or the other. Expected (default): both. Swing: about −16 DPS a build (−1.5%) at Low (sim-status.md).
+  - Knob: a request edit `no_weapon_oil` in `run_assumptions.py` that takes the Wizard Oil off the main hand consume.
+- **`bleed_tick_crit`: how hard bleed ticks crit** (Feral, Arms, Arms vs Dragonkin, Subtlety and Subtlety vs Humanoid)
+  - Client 70425 gives Rip, Rake, Rend, Rupture and Garrote the periodic-crit attribute (SpellMisc Attributes_8 0x200). The sim crits them as melee, at 200%.
+  - The only tick crits measured are spell ticks, at 1.5x (the shaman's Flame Shock).
+  - Low: 150%. Expected (default): 200%.
+  - Measured at Low (10k iterations, seed 1, 180 s): Feral 713.8 → 690.9 (−3.2%), Subtlety 634.6 → 624.9 (−1.5%), Arms 944.4 → 940.7 (−0.4%), Arms vs Dragonkin 982.4 → 978.7 (−0.4%).
+  - Knob: `sim/core/spell_outcome.go`, `Dot.OutcomeTick`. For a Physical dot, multiply by `1 + (CritMultiplier − 1) × core.Assume("bleed_tick_crit", 1)` (0.5 for Low).
+
 ## Settled, not a scenario
 
 - **Flat strike bonuses go inside the weapon percent** (was `flat_bonus_inside_pct` and `druid_shred_flat`, removed 2026-10-16 by the assumptions audit). Backstab, Ambush, Mutilate and Holy Strike carry their flat part on a normalized weapon damage effect (121), Shred and Claw on a weapon damage effect (58), each followed by a weapon percent effect (31); the server sums the flat part into the weapon damage and then takes the percent, which is what the sim does.
