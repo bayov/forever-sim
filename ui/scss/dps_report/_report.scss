@@ -1432,8 +1432,8 @@ ol.fv-list li::marker {
 	z-index: 1;
 }
 
-// A class icon in the class picker keeps its own look while its tooltip is open.
-.fv [data-tt].tt-on:not(rect):not(g):not(path):not(.fv-pick-option) {
+// A class icon in the class picker, and a consumable or buff, keep their own look while their tooltip is open.
+.fv [data-tt].tt-on:not(rect):not(g):not(path):not(.fv-pick-option):not(.fv-pick) {
 	background-color: color-mix(in srgb, var(--fv-gold) 14%, transparent);
 	border-radius: 6px;
 }
@@ -2690,8 +2690,8 @@ ol.fv-list li::marker {
 
 .fv-pick {
 	position: relative;
-	width: var(--icon-size-md);
-	height: var(--icon-size-md);
+	width: 2.2rem; // the sim's pick size (35px)
+	height: 2.2rem;
 	padding: 0;
 	cursor: pointer;
 	overflow: hidden;
@@ -2720,8 +2720,8 @@ ol.fv-list li::marker {
 	}
 }
 
-// Consumables are bag slots: a black border and a thin light edge.
-.fv-sgrp.slots .fv-pick {
+// Every icon is a bag slot, like the sim's picks: a black border and a thin light edge.
+.fv-sgrp .fv-pick {
 	border: 1px solid #000;
 	border-radius: 3px;
 	outline: 1px solid #3c3a35;
@@ -2732,16 +2732,8 @@ ol.fv-list li::marker {
 	}
 }
 
-// Buffs, debuffs and professions have the sim's icon picker look, with its green border when active.
-.fv-sgrp.buffs .fv-pick {
-	border: 1px solid $success;
-	border-radius: 0;
-}
-
 // On but no effect: gray, like a pick the sim's settings page doesn't have.
 .fv-sgrp .fv-pick.off {
-	border-color: var(--bs-border-color);
-	outline-color: #3c3a35;
 	filter: grayscale(1) brightness(0.55);
 
 	&:hover {

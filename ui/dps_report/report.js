@@ -2259,13 +2259,13 @@ export function startReport(dash, events) {
         label ? el('span', { class: 'lb', text: label }) : null), 'su:' + s.item);
     };
     // Each section looks like its card on the sim's settings page: a gold small caps title, then its groups side by
-    // side, each with a muted label over its icons. Consumables are bag slots, and the buffs, debuffs and professions
-    // have the sim's green ring when they're active. One that's on but does nothing is gray, like an unpicked one.
+    // side, each with a muted label over its icons. Every icon is a bag slot like the sim's picks. One that's on but
+    // does nothing is gray, like an unpicked one.
     host.replaceChildren(...sections.map(([sec, xs]) => {
       const order = SETUP_SUBS[sec] || [];
       const subs = d3.groups(xs, (x) => x.p[1]).sort((p, q) => order.indexOf(p[0]) - order.indexOf(q[0]));
       const on = xs.filter((x) => x.s.active !== false).length;
-      return el('section', { class: 'content-block fv-sgrp ' + (sec === 'Consumables' ? 'wide slots' : 'buffs') },
+      return el('section', { class: 'content-block fv-sgrp' + (sec === 'Consumables' ? ' wide' : '') },
         el('div', { class: 'content-block-header' }, el('h6', { class: 'content-block-title', text: sec }),
           on < xs.length ? el('small', { class: 'fv-sgrp-n', text: `${on} of ${xs.length} active` }) : null),
         el('div', { class: 'fv-ssubs' }, ...subs.map(([sub, ys]) => el('div', { class: 'fv-ssub' },
