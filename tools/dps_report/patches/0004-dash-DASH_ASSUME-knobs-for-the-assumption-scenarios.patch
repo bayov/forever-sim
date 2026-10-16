@@ -400,25 +400,25 @@ index 3cae7d4c2..232b951ec 100644
  
  			BonusCoefficient: 0.29,
 diff --git a/sim/paladin/sor.go b/sim/paladin/sor.go
-index fe71ec365..bcbc16540 100644
+index b876f8db9..4507e3b12 100644
 --- a/sim/paladin/sor.go
 +++ b/sim/paladin/sor.go
-@@ -107,10 +107,26 @@ func (paladin *Paladin) registerSealOfRighteousness() {
- 			coeff = 0.1
- 		}
- 		damage := value * 0.85 * paladin.MainHand().SwingSpeed
-+		// dashboard assumption: the proc's spell power counted once, with no two-hander factor
-+		sorOnce := false
-+		if v, ok := core.AssumeOk("pal_sor_sp_double"); ok && v == 0 {
-+			sorOnce = true
-+		}
- 		if paladin.has2hEquipped() {
--			coeff *= 1.1 // from testing in SoD
-+			if !sorOnce {
-+				coeff *= 1.1 // from testing in SoD
+@@ -119,6 +119,26 @@
+ 			// bonus is added once, server side, as the tooltip says.
+ 			coeff = core.TernaryFloat64(paladin.has2hEquipped(), 0.12, 0.0765)
+ 			countTwice = false
++			// dashboard assumption: 0 is the proc spells' own client coefficient (none), 2 the Season
++			// of Discovery double count (10%, x1.1 with a two-hander, counted twice)
++			if v, ok := core.AssumeOk("pal_sor_sp_double"); ok {
++				switch v {
++				case 0:
++					coeff = 0
++				case 2:
++					coeff = core.TernaryFloat64(paladin.has2hEquipped(), 0.11, 0.1)
++					countTwice = true
++				}
 +			}
- 			damage = value * 1.2 * paladin.MainHand().SwingSpeed
- 		}
++		}
 +		if v, ok := core.AssumeOk("pal_sor_sp_speed"); ok && v != 0 {
 +			// dashboard assumption: the proc's spell power grows with weapon speed (TBC-like), the flat
 +			// value at a 3.6 sec two-hander or a 2.4 sec one-hander
@@ -427,11 +427,10 @@ index fe71ec365..bcbc16540 100644
 +				norm = 3.6
 +			}
 +			coeff *= paladin.MainHand().SwingSpeed / norm
-+		}
+ 		}
  
  		procSpell := paladin.RegisterSpell(core.SpellConfig{
- 			ActionID:    core.ActionID{SpellID: rank.proc.spellID},
-@@ -121,7 +137,7 @@ func (paladin *Paladin) registerSealOfRighteousness() {
+@@ -130,7 +150,7 @@
  
  			BonusCritRating: paladin.holyPowerCrit(),
  
@@ -440,16 +439,6 @@ index fe71ec365..bcbc16540 100644
  			ThreatMultiplier: 1,
  
  			BonusCoefficient: coeff,
-@@ -129,6 +145,9 @@ func (paladin *Paladin) registerSealOfRighteousness() {
- 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
- 				// effectively scales with coeff x 2, and damage dealt multipliers affect half the damage taken bonus
- 				baseDamage := damage + spell.BonusCoefficient*(spell.GetBonusDamage(target)+target.GetSchoolBonusDamageTaken(spell))
-+				if sorOnce {
-+					baseDamage = damage
-+				}
- 				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialCritOnly)
- 			},
- 		})
 diff --git a/sim/paladin/talents.go b/sim/paladin/talents.go
 index 79f54eda9..363f1d9dd 100644
 --- a/sim/paladin/talents.go
