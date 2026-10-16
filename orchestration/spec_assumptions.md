@@ -310,6 +310,7 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 - **Sim now:** Classic's rule: a pet's hit scales with its attack speed, so every pet has the same white damage a second (`ForeverPetHitScalesWithSpeed`, `sim/hunter/pet.go`; user ruling 2026-10-15, PR #22). On the beta every pet's auto attack hits the size of a 2.0 sec pet's (18.17 to 27.66 × 2) at any attack speed, so the fastest pet deals the most.
 - **Source:** beta players, gathered on ForeverChanges' hunter pets page and the forever-hunter wiki. The code comment says "nobody knows yet whether that is intended".
 - **Why uncertain:** it could be a beta bug that Blizzard fixes, which would bring back Classic's hit size scaling with the swing.
+- **Reconfirmed 2026-10-16:** the assumptions audit found the beta behaviour still standing: EU forum thread 632244 (level 16 Tallstriders, a 1.3 sec pet hitting 27 to 38 against 31 to 42 for a 2.0 sec pet), forever-bugs #31 still open, and no fix in any note through 15 October. Asked again, the user ruled "Keep treating it as a bug", so Classic's speed scaling stays the default.
 - **Settings:**
   - **Expected, Classic (Sim now).** The hit scales with attack speed, treating the beta's behaviour as a bug (user ruling 2026-10-15).
   - **High, as on the beta.** The only observed behaviour: every pet hits like a 2.0 sec pet.

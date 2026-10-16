@@ -218,3 +218,11 @@ Items not listed are still open with no new evidence. Verdict, then the evidence
 - **Q4. Demon crit.** Blizzard says demons will inherit the warlock's spell crit once a baseline bug is fixed. Bring back "SoD + spell crit" as a setting (about +2.1 to +2.4%), or as the default?
 - **Q5. Grace of Air with Windfury Totem.** These now stack, and both are raid-wide. Should melee raids assume both totems (two shamans), or keep one Air totem?
 - **Q6. Off-hand Rage at 0.5 (PR #67).** Standards 21 called for this switch once a test showed it, and the test exists (an advanced combat log, about 60 off-hand swings, level 13). It drops dual-wield Fury about 9%. Merge as is, or wait for a level 30+ log?
+
+## 6. User rulings (2026-10-16, relayed by the orchestrator)
+- **Q1, level partial resist:** "Can you research more into this? I believe some kind of partial resists exists, lowering damage of spells. This is something we need To Verify." The sim keeps Classic's 6% default. `level_partial_resist` stays pending; see section 7 for the research.
+- **Q2, Windfury Totem off hand:** "Main hand only, and keep as assumption with only 1 value." The sim change is pending. This session's permission check blocked the edit because the ruling arrived relayed, so the orchestrator is routing it.
+- **Q3, hunter pet hit size:** "Keep treating it as a bug." `hunter_pet_speed` is unchanged: Classic's attack-speed scaling stays the default, and the beta's same-size hit stays the High setting.
+- **Q4, demon crit:** "Yes, as Blizzard intends", locked to one value. The warlock worker implements it and makes `lock_pet_crit` a single setting. Settled by ruling once that lands.
+- **Q5, Grace of Air with Windfury Totem:** "both totems". The update auditor has it.
+- **Q6, off-hand Rage:** "Use 0.5, and remove other assumption values (keep assumption but locked to one value, 0.5)". PR #75.
