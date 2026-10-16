@@ -76,6 +76,11 @@
 					overflow-x: hidden;
 					margin-right: calc(-1 * var(--sidebar-padding-x));
 					padding-right: var(--sidebar-padding-x);
+
+					// Folded stats take only their title's height.
+					&:has(.character-stats-root.collapsed) {
+						min-height: 0;
+					}
 				}
 			}
 		}

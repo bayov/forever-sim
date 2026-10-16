@@ -13,6 +13,9 @@ import { NumberPicker } from './number_picker';
 
 export type StatMods = { talents?: Stats; buffs?: Stats };
 
+// Whether the stats are folded away, the same for every class's sim in this browser.
+const COLLAPSED_STORAGE_KEY = '__character_stats_collapsed__';
+
 const statGroups = new Map<string, Array<UnitStat>>([
 	['Primary', [UnitStat.fromStat(Stat.StatHealth), UnitStat.fromStat(Stat.StatMana)]],
 	[
@@ -95,6 +98,33 @@ export class CharacterStats extends Component {
 		this.stats = [];
 		this.player = player;
 		this.modifyDisplayStats = modifyDisplayStats;
+
+		// The title folds the stats away, like a folder of the presets above.
+		const toggle = (
+			<button type="button" className="character-stats-toggle">
+				<i className="fas fa-chevron-right character-stats-chevron" />
+				<span>Character Stats</span>
+			</button>
+		) as HTMLButtonElement;
+		const setCollapsed = (collapsed: boolean) => {
+			this.rootElem.classList.toggle('collapsed', collapsed);
+			toggle.setAttribute('aria-expanded', String(!collapsed));
+		};
+		try {
+			setCollapsed(localStorage.getItem(COLLAPSED_STORAGE_KEY) == 'true');
+		} catch {
+			setCollapsed(false);
+		}
+		toggle.addEventListener('click', () => {
+			const collapsed = !this.rootElem.classList.contains('collapsed');
+			setCollapsed(collapsed);
+			try {
+				localStorage.setItem(COLLAPSED_STORAGE_KEY, String(collapsed));
+			} catch {
+				// Without storage the stats still fold, only not across page loads.
+			}
+		});
+		this.rootElem.appendChild(toggle);
 
 		const table = <table className="character-stats-table"></table>;
 		this.rootElem.appendChild(table);
