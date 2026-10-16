@@ -578,40 +578,54 @@
 }
 
 // At five Maelstrom Weapon stacks, cyan arcs light up on both sides of the pack, like the
-// PowerAuras textures of the WeakAura.
-.replay-center::before,
-.replay-center::after {
-	content: '';
+// PowerAuras textures of the WeakAura. Each arc fits in the 36px gap between the pack and a unit
+// frame, from the maintain row down to the cooldowns, so it covers neither.
+.replay-alert {
 	position: absolute;
-	top: 30px;
-	width: 46px;
-	height: 120px;
-	border: 5px solid #00b8de;
-	border-radius: 50%;
+	top: 26px;
+	left: -30px;
+	right: -30px;
+	height: 152px;
 	opacity: 0;
-	filter: drop-shadow(0 0 6px #00b8de);
 	transition: opacity 0.12s;
+
+	&.on {
+		opacity: 1;
+		animation: replay-pulse 0.8s ease-in-out infinite alternate;
+	}
+}
+
+// The box spans the pack, so only the arcs take the hover, and only while they show.
+.replay-alert.replay-tip {
 	pointer-events: none;
 }
 
-.replay-center::before {
-	left: -64px;
-	border-right-color: transparent;
-	border-top-color: transparent;
-	border-bottom-color: transparent;
+.replay-alert.on .replay-alert-arc {
+	pointer-events: auto;
 }
 
-.replay-center::after {
-	right: -64px;
-	border-left-color: transparent;
-	border-top-color: transparent;
-	border-bottom-color: transparent;
-}
+.replay-alert-arc {
+	position: absolute;
+	top: 0;
+	width: 24px;
+	height: 100%;
+	border: 4px solid #00b8de;
+	border-radius: 50%;
+	filter: drop-shadow(0 0 4px #00b8de);
 
-.replay-center.maelstrom-full::before,
-.replay-center.maelstrom-full::after {
-	opacity: 1;
-	animation: replay-pulse 0.8s ease-in-out infinite alternate;
+	&.left {
+		left: 0;
+		border-right-color: transparent;
+		border-top-color: transparent;
+		border-bottom-color: transparent;
+	}
+
+	&.right {
+		right: 0;
+		border-left-color: transparent;
+		border-top-color: transparent;
+		border-bottom-color: transparent;
+	}
 }
 
 @keyframes replay-pulse {

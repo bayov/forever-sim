@@ -137,8 +137,7 @@ export interface SctEvent {
 	searchText: string;
 	// A CSS color, like the color of the spell school.
 	color: string;
-	// Lines that come close together start a bit apart, so they don't overlap. A crit's lane is
-	// its spot in the middle of the area.
+	// A crit's spot in the middle of the area. The scrolling lines don't use it.
 	lane: number;
 	// Crits pop up in the middle of the area and stay put, like MSBT's sticky crits.
 	sticky: boolean;
@@ -271,11 +270,6 @@ const autoAttacks = [OtherAction.OtherActionAttack, OtherAction.OtherActionShoot
 export const SCROLL_LIFE = 2.2;
 export const STICKY_LIFE = 1.6;
 const FADE_SHARE = 0.3;
-// Lines this close together on one side start apart from each other.
-const LANE_WINDOW = 0.45;
-export const LANES = 6;
-// The spots for crits on each side.
-const STICKY_LANES = 3;
 const EPSILON = 1e-6;
 // The smallest mana gain the combat text shows, as a share of the mana bar.
 const MIN_MANA_GAIN = 0.01;
@@ -893,23 +887,29 @@ const buildSct = (
 
 	events.sort((a, b) => a.time - b.time);
 
-	// Lines close together start apart, so a burst of hits doesn't print on top of itself.
-	const recent: Record<SctSide, Array<number>> = { in: [], out: [] };
-	// A crit takes a spot that no other crit is on, also one that is still fading. When every
-	// spot is taken, it covers the oldest crit, and that one starts to fade right away.
-	const spots: Record<SctSide, Array<SctEvent | null>> = {
-		in: new Array(STICKY_LANES).fill(null),
-		out: new Array(STICKY_LANES).fill(null),
-	};
-	return events.map(event => {
+	const sct = events.map(event => {
+		const life = event.sticky ? STICKY_LIFE : SCROLL_LIFE;
 		const search = `${searchText(event.logs)} ${event.actionId.name} ${event.text} ${event.note}`.toLowerCase();
-		if (!event.sticky) {
-			const times = (recent[event.side] = recent[event.side].filter(time => event.time - time < LANE_WINDOW));
-			const lane = times.length % LANES;
-			times.push(event.time);
-			const fadeAt = SCROLL_LIFE * (1 - FADE_SHARE);
-			return { ...event, lane, fadeAt, end: SCROLL_LIFE, searchText: search };
-		}
+		return { ...event, lane: 0, fadeAt: life * (1 - FADE_SHARE), end: life, searchText: search };
+	});
+	placeCrits(sct, 3);
+	return sct;
+};
+
+// Gives each crit one of the spots on its side. The replay calls this again when its height fits
+// a different number of spots.
+//
+// A crit takes a spot that no other crit is on, also one that is still fading. When every spot
+// is taken, it covers the oldest crit, and that one starts to fade right away.
+export const placeCrits = (sct: Array<SctEvent>, spotCount: number) => {
+	const spots: Record<SctSide, Array<SctEvent | null>> = {
+		in: new Array(spotCount).fill(null),
+		out: new Array(spotCount).fill(null),
+	};
+	sct.forEach(event => {
+		if (!event.sticky) return;
+		event.fadeAt = STICKY_LIFE * (1 - FADE_SHARE);
+		event.end = STICKY_LIFE;
 		const side = spots[event.side];
 		let lane = side.findIndex(other => !other || other.time + other.end <= event.time);
 		if (lane < 0) {
@@ -921,8 +921,7 @@ const buildSct = (
 				covered.end = age + STICKY_LIFE * FADE_SHARE;
 			}
 		}
-		const sct: SctEvent = { ...event, lane, fadeAt: STICKY_LIFE * (1 - FADE_SHARE), end: STICKY_LIFE, searchText: search };
-		side[lane] = sct;
-		return sct;
+		event.lane = lane;
+		side[lane] = event;
 	});
 };

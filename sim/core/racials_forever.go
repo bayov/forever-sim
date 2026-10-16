@@ -235,46 +235,64 @@ func (character *Character) registerElunesLight() {
 // SpellAuraOptions row, so the 3-charge limit is gone: every ability in the 8 sec gets it.
 // Under 70338 it was the next 3 damaging abilities within 15 sec.
 //
-// A damaging ability is one the rotation can cast, that has a cost and that is set up to
-// deal damage. Slice and Dice, Expose Armor or a shout have no damage multiplier and are
-// left alone. Auto attacks are not abilities.
+// Which spells it covers comes from the client: each class's Eureka! names its spells with a
+// class mask, one for the cost, one for direct damage and one for periodic damage
+// (racials_forever_eureka.go). Only Drain Life, Drain Soul and Wrack (Warlock) and Mind
+// Flay, Penance and Starshards (Priest) get it on their ticks, as the 2026-10-01 development
+// notes say ("no longer benefits periodic effects at all. Channeled spells do not count as
+// periodics"). So a Corruption, a curse, Siphon Life, Incinerate, Shadow Word: Pain,
+// Rupture, Garrote or Rend gets nothing, and Immolate and Holy Fire get it on the hit only.
+//
+// A class without its own Eureka! keeps the general rule: a spell the rotation can cast,
+// that has a cost and that is set up to deal damage (or heal, for a Priest).
 func (character *Character) registerEureka() {
 	actionID := ActionID{SpellID: 1259812}
-	costReduction := int32(10)
 	healingCounts := character.Class == proto.Class_ClassPriest
+	scopes := eurekaScopes[character.Class]
 
-	affects := func(spell *Spell) bool {
+	scopeOf := func(spell *Spell) uint8 {
+		if scopes != nil {
+			return scopes[spell.SpellID]
+		}
 		if !spell.Flags.Matches(SpellFlagAPL) || spell.Cost == nil {
-			return false
+			return 0
 		}
 		if spell.Flags.Matches(SpellFlagHelpful) {
-			return healingCounts
+			if healingCounts {
+				return eurekaCost | eurekaDirect | eurekaPeriodic
+			}
+			return 0
 		}
-		return spell.DamageMultiplier != 0
+		if spell.DamageMultiplier == 0 {
+			return 0
+		}
+		return eurekaCost | eurekaDirect | eurekaPeriodic
 	}
 
-	var affected []*Spell
+	type affectedSpell struct {
+		spell *Spell
+		scope uint8
+	}
+	var affected []affectedSpell
 	aura := character.RegisterAura(Aura{
 		Label:    "Eureka!",
 		ActionID: actionID,
 		Duration: time.Second * 8, // duration index 31 in client 70425 (15 sec in 70338)
 		OnInit: func(aura *Aura, sim *Simulation) {
 			for _, spell := range character.Spellbook {
-				if affects(spell) {
-					affected = append(affected, spell)
+				if scope := scopeOf(spell); scope != 0 {
+					affected = append(affected, affectedSpell{spell, scope})
 				}
 			}
 		},
 		OnGain: func(aura *Aura, sim *Simulation) {
-			for _, spell := range affected {
-				spell.DamageMultiplier *= 1.1
-				spell.Cost.Multiplier -= costReduction
+			for _, a := range affected {
+				applyEureka(a.spell, a.scope, 1)
 			}
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			for _, spell := range affected {
-				spell.DamageMultiplier /= 1.1
-				spell.Cost.Multiplier += costReduction
+			for _, a := range affected {
+				applyEureka(a.spell, a.scope, -1)
 			}
 		},
 	})
@@ -303,6 +321,29 @@ func (character *Character) registerEureka() {
 			return character.NextAbilityBuffCondition(sim, character)
 		},
 	})
+}
+
+// applyEureka adds (sign 1) or takes back (sign -1) Eureka!'s 10% on one spell. A spell whose
+// damage all counts (direct damage with no ticks, a channel, a spell covered both ways) gets
+// a 10% multiplier; Immolate or Holy Fire, covered on the hit only, get 10% on the hit only.
+func applyEureka(spell *Spell, scope uint8, sign float64) {
+	if scope&eurekaCost != 0 && spell.Cost != nil {
+		spell.Cost.Multiplier -= int32(sign) * 10
+	}
+	direct, periodic := scope&eurekaDirect != 0, scope&eurekaPeriodic != 0
+	if !direct && !periodic {
+		return
+	}
+	hasTicks := len(spell.Dots()) > 0 || spell.AOEDot() != nil
+	if direct && hasTicks && !periodic {
+		spell.ImpactDamageMultiplierAdditive += 0.1 * sign
+		return
+	}
+	if sign > 0 {
+		spell.DamageMultiplier *= 1.1
+	} else {
+		spell.DamageMultiplier /= 1.1
+	}
 }
 
 // Touch of the Grave: spells and attacks have a 20% chance (30% for Mages, Priests and
@@ -352,7 +393,10 @@ func (character *Character) registerTouchOfTheGrave() {
 		SpellSchool: SpellSchoolShadow,
 		DefenseType: DefenseTypeMagic,
 		ProcMask:    ProcMaskEmpty,
-		Flags:       SpellFlagPassiveSpell | SpellFlagNoOnCastComplete | SpellFlagBinary,
+		// "Touch of the Dead no longer scales with Shadow increases on the target or the
+		// caster" (development notes, 2026-10-15, build 1.60.1.70425): no Shadowform, Shadow
+		// Weaving, Curse of Shadow or Shadow Mastery on the drain.
+		Flags: SpellFlagPassiveSpell | SpellFlagNoOnCastComplete | SpellFlagBinary | SpellFlagIgnoreModifiers,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,

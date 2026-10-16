@@ -163,33 +163,6 @@
                   }
                 },
                 {
-                  "notes": "Holy Fire whenever its damage over time is down, for Power in Light.",
-                  "action": {
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "not": {
-                              "val": {
-                                "dotIsActive": {
-                                  "spellId": {
-                                    "spellId": 15261
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 15261
-                      }
-                    }
-                  }
-                },
-                {
                   "notes": "Shadow Word: Pain whenever it is down.",
                   "action": {
                     "condition": {
@@ -267,7 +240,7 @@
                               },
                               "rhs": {
                                 "const": {
-                                  "val": "0.6"
+                                  "val": "0.8"
                                 }
                               }
                             }
