@@ -7,10 +7,10 @@ race_breakdown  build × race × part: base stats, each racial, and the target c
 race_summary    scenario × scope × role × race: how often a race is best and how far behind it is
 race_notes      what each scenario switches on, what each racial part is, a finding per class
 """
-import json, math, os, statistics
+import json, math, os, re, statistics
 from collections import defaultdict
 
-from dashpaths import D
+from dashpaths import D, TREE
 RACE_NAMES = {'NightElf': 'Night Elf', 'SkyborneHighOrder': 'High Order', 'SkyborneWindshaper': 'Windshaper'}
 HORDE = {'Orc', 'Undead', 'Tauren', 'Troll', 'Windshaper'}
 RACE_ICON = {'Human': 'race_human_male', 'Dwarf': 'race_dwarf_male', 'Night Elf': 'race_nightelf_male', 'Gnome': 'race_gnome_male',
@@ -197,6 +197,8 @@ def build(builds, races_rows, stats_rows, dump):
         notes.append({'kind': 'scenario', 'key': key, 'title': title, 'text': text})
     for p, (title, text) in PART_INFO.items():
         notes.append({'kind': 'part', 'key': p, 'title': title, 'text': text, 'short': PART_SHORT.get(p, text), 'icon': PART_ICON.get(p)})
+    for race, offs in race_offsets().items():
+        notes.append({'kind': 'stats', 'key': race, 'stats': offs})
     for cls in ['Warrior', 'Rogue', 'Hunter', 'Paladin', 'Shaman', 'Druid', 'Mage', 'Warlock', 'Priest']:
         notes.append({'kind': 'class', 'key': cls, 'title': cls, 'text': finding(cls, bmap, variants, breakdown)})
     dump('race_variants', variants)
@@ -204,6 +206,24 @@ def build(builds, races_rows, stats_rows, dump):
     dump('race_summary', summary)
     dump('race_notes', notes)
     return variants, breakdown, summary, notes
+
+
+# Each race's level 60 attribute offsets from the sim (RaceOffsets in sim/core/base_stats.go). Every race of a class
+# starts from the same class row, so these are the whole stat gap between two races before racials.
+STAT_ORDER = ['Strength', 'Agility', 'Stamina', 'Intellect', 'Spirit']
+
+
+def race_offsets():
+    src = open(os.path.join(TREE, 'sim/core/base_stats.go')).read()
+    body = src[src.index('var RaceOffsets'):]
+    body = body[:body.index('\n}\n')]
+    out = {}
+    for m in re.finditer(r'proto\.Race_Race(\w+):\s*\{([^}]*)\}', body):
+        if m.group(1) == 'Unknown':
+            continue
+        vals = dict((k, float(v)) for k, v in re.findall(r'stats\.(\w+):\s*(-?[\d.]+)', m.group(2)))
+        out[RACE_NAMES.get(m.group(1), m.group(1))] = {k: vals.get(k, 0) for k in STAT_ORDER}
+    return out
 
 
 def pct(x):

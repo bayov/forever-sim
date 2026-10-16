@@ -1497,6 +1497,22 @@ export function startReport(dash, events) {
         ...[...talents.values()].map((t) => talent(t, [t[0], t[4]])),
       ] };
     };
+    // Every race of a class starts from the same class stats plus its own small stat offsets, so the offsets are the
+    // whole base stats gap between two races. For one preset we also price each stat with that preset's stat weights,
+    // so the sum is close to the simmed gap.
+    const wOne = one ? new Map((rowsOf('weights') || []).filter((w) => w.build === one.id).map((w) => [w.stat, +w.dpsPer])) : null;
+    const statGap = (race, ref) => {
+      const a = noteRow('stats', race)?.stats, b = noteRow('stats', ref)?.stats;
+      if (!a || !b) return [];
+      const gaps = Object.keys(a).map((k) => [k, a[k] - b[k]]).filter(([, d]) => d);
+      if (!gaps.length) return [el('span', { class: 'fv-tip-m', text: `Same stats as ${ref}.` })];
+      const w = wOne?.size ? wOne : null;
+      const worth = (k, d) => (w.has(k) ? d * w.get(k) : 0);
+      const sum = w ? d3.sum(gaps, ([k, d]) => worth(k, d)) : 0;
+      return [tipTable([`Stats vs ${ref}`, '', ...(w ? ['DPS'] : [])], [
+        ...gaps.map(([k, d]) => [k, sgn(d, f0), ...(w ? [w.has(k) && w.get(k) ? tipDelta(worth(k, d), f1, '') : '0'] : [])]),
+        w ? ['Sum', '', tipDelta(sum, f1, '')] : null])];
+    };
     host.replaceChildren(...rows.map((r, i) => {
       const track = el('div', { class: 'fv-rtrack' });
       r.segs.forEach((sg, k) => {
@@ -1541,6 +1557,8 @@ export function startReport(dash, events) {
               sub.push(el('span', { class: 'fv-tip-m', text: low.race === r.race ? 'Weakest base stats here.'
                 : gap < 0.005 ? `Same as ${low.race} (weakest base here).`
                 : `${f2(gap)}%${one ? ` (${f1(base - baseOf(low))} DPS)` : ''} above ${low.race} (weakest base here).` }));
+              const ref = low.race === r.race ? d3.greatest(rows.filter((q) => baseOf(q) != null), baseOf) : low;
+              if (ref.race !== r.race) sub.push(...statGap(r.race, ref.race));
             }
           } else if (sg) name = `${sg.label} ${fd(sg.v)}`;
           if (!name) return;
