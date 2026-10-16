@@ -318,6 +318,22 @@ export class Sim {
 		}
 	}
 
+	// Runs a request the caller made, like one level of the leveling plan (leveling_plan.ts).
+	// The result only goes to the caller. Stop aborts it like a raid sim.
+	async runRaidSimRequest(request: RaidSimRequest, onProgress: (_?: any) => void): Promise<RaidSimResult> {
+		await this.waitForInit();
+		const signals = this.signalManager.registerRunning(RequestTypes.RaidSim);
+		try {
+			const result = (await this.shouldUseWasmConcurrency())
+				? await runConcurrentSim(request, this.workerPool, onProgress, signals)
+				: await this.workerPool.raidSimAsync(request, onProgress, signals);
+			if (result.error?.type == ErrorOutcomeType.ErrorOutcomeError) throw new SimError(result.error.message);
+			return result;
+		} finally {
+			this.signalManager.unregisterRunning(signals);
+		}
+	}
+
 	// Runs one iteration with its logs. With emit false, the result only goes to the caller and
 	// doesn't take the place of the current results.
 	async runRaidSimWithLogs(eventID: EventID, emit = true): Promise<SimResult | null> {

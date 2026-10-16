@@ -317,6 +317,11 @@ export class SimHistory {
 		if (this.running) return;
 		this.latestTooltip?.destroy();
 		this.latestTooltip = null;
+		// The Leveling mode's runs are the leveling plan's, which its tab keeps.
+		if (this.mode === 'levelingPlan' && this.simUI.levelingPlanSummary) {
+			this.simUI.resultsViewer.setContent(this.simUI.levelingPlanSummary());
+			return;
+		}
 		const latest = this.latest;
 		if (!latest) {
 			this.simUI.resultsViewer.setContent(<p className="sim-history-empty">{`No ${simModeNames[this.mode]} runs yet.`}</p>);

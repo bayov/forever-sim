@@ -1,8 +1,8 @@
 # Leveling gear plan
 
 What a character wears at each level from 1 to 60 while speed leveling, for the leveling sim
-and the talent route. The Leveling Gear tab shows it (Leveling mode only). The plan is
-`ui/core/leveling_gear.ts`.
+and the talent route. The Gear part of the Leveling Plan tab shows it (Leveling mode only, see
+docs/leveling_plan.md). The plan is `ui/core/leveling_gear.ts`.
 
 ## The model
 

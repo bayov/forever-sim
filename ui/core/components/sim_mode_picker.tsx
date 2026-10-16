@@ -10,15 +10,17 @@ const modeTooltips: Record<SimMode, string> = {
 	pvp: 'A fight against an enemy player, scored by DPS. White hits never glance, and Out of Melee (%) in the Encounter settings is the share of the fight we spend out of melee range.',
 	leveling:
 		'A grinding session against normal mobs around our level, scored by the mobs we kill. The Encounter settings have the options of the session.',
+	levelingPlan:
+		'The leveling plan, simmed level by level with a grinding session at each, scored by the hours it takes. The Leveling Plan tab has its gear, talents and rotations.',
 };
 
 // The encounter of each mode, as we last left it.
 const MODE_ENCOUNTERS_KEY = '__modeEncounters__';
 
-// DPS, PvP or Leveling, in the sidebar above the iterations. See sim_mode.ts.
+// DPS, PvP, Grinding or Leveling, in the sidebar above the iterations. See sim_mode.ts.
 //
-// Each mode keeps its own encounter. When we go from Leveling to DPS and back, the session's
-// options are the ones we had, and the DPS fight is the one we had before we went to Leveling.
+// Each mode keeps its own encounter. When we go from Grinding to DPS and back, the session's
+// options are the ones we had, and the DPS fight is the one we had before we went to Grinding.
 // A mode we never used starts from the encounter we have, with the mode turned on.
 export class SimModePicker {
 	readonly rootElem: HTMLElement;
@@ -79,10 +81,15 @@ export class SimModePicker {
 			}
 			encounter.setPvp(eventID, mode === 'pvp');
 			// A new session starts with every option at its default. The Out of Melee field is
-			// hidden in Leveling mode, where the session moves us itself, so we clear it rather
+			// hidden in Grinding and Leveling modes, where the session moves us itself, so we clear it rather
 			// than keep a downtime nobody sees.
-			if (mode === 'leveling') {
-				encounter.setLeveling(eventID, LevelingOptions.create());
+			//
+			// Grinding and Leveling share the world we grind in, so going from one to the other
+			// keeps those options.
+			if (mode === 'leveling' || mode === 'levelingPlan') {
+				const leveling = encounter.getLeveling() ?? LevelingOptions.create();
+				leveling.plan = mode === 'levelingPlan';
+				encounter.setLeveling(eventID, leveling);
 				encounter.setPvpMeleeDowntime(eventID, 0);
 			} else {
 				encounter.setLeveling(eventID, undefined);

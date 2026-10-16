@@ -7,6 +7,7 @@ import { Encounter as EncounterProto } from '../proto/common';
 import { SimRunData } from '../proto/ui';
 import { ActionMetrics, SimResult, SimResultFilter } from '../proto_utils/sim_result';
 import { RequestTypes } from '../sim_signal_manager';
+import { encounterMode } from '../sim_mode';
 import { SimUI } from '../sim_ui';
 import { EventID, TypedEvent } from '../typed_event';
 import { formatDeltaTextElem, formatToNumber, formatToPercent, sum } from '../utils';
@@ -45,12 +46,17 @@ export function addRaidSimAction(simUI: SimUI): RaidSimResultsManager {
 		button.style.minWidth = `${button.getBoundingClientRect().width}px`;
 		button.replaceChildren(<i className="fas fa-stop me-1" />, 'Stop');
 
-		resultsManager.simHistory?.startRun();
-		await simUI.runSim((progress: ProgressMetrics) => {
-			progressBar.update(progress);
-			resultsManager.setSimProgress(progress);
-		});
-		resultsManager.simHistory?.finishRun();
+		// The Leveling mode sims the leveling plan level by level, and its tab shows the results.
+		if (encounterMode(simUI.sim.encounter) === 'levelingPlan' && simUI.levelingPlanRun) {
+			await simUI.levelingPlanRun((progress: ProgressMetrics) => progressBar.update(progress));
+		} else {
+			resultsManager.simHistory?.startRun();
+			await simUI.runSim((progress: ProgressMetrics) => {
+				progressBar.update(progress);
+				resultsManager.setSimProgress(progress);
+			});
+			resultsManager.simHistory?.finishRun();
+		}
 
 		progressBar.rootElem.remove();
 		simUI.simActionsContainer.classList.remove('running');

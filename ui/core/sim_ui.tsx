@@ -49,6 +49,10 @@ export abstract class SimUI extends Component {
 	readonly changeEmitter;
 
 	readonly resultsViewer: ResultsViewer;
+	// The Leveling mode's run of the leveling plan and its results in the sidebar, set by the
+	// Leveling Plan tab (leveling_plan_tab.tsx).
+	levelingPlanRun?: (onProgress: WorkerProgressCallback) => Promise<void>;
+	levelingPlanSummary?: () => HTMLElement;
 	readonly simHeader: SimHeader;
 
 	readonly simContentContainer: HTMLElement;

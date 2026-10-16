@@ -36,12 +36,19 @@ import {
 	ZanzaBuff,
 } from '../core/proto/common.js';
 import { EnhancementShaman_Options as EnhancementShamanOptions, ShamanSyncType } from '../core/proto/shaman.js';
-import { SavedTalents } from '../core/proto/ui.js';
+import { LevelingPlanSettings, LevelingRotation, SavedTalents } from '../core/proto/ui.js';
+import { buildFromMilestones, talentShape } from '../core/leveling_plan.js';
+import { shamanTalentsConfig } from '../core/talents/shaman.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import GraceOfAirAPLJSON from './apls/grace_of_air.apl.json';
 import Level30LevelingAPLJSON from './apls/level30_leveling.apl.json';
 import Level30p5APLJSON from './apls/level30p5.apl.json';
 import Level30PvPAPLJSON from './apls/level30_pvp.apl.json';
+import LevelingPlan10APLJSON from './apls/leveling_plan_10.apl.json';
+import LevelingPlan15APLJSON from './apls/leveling_plan_15.apl.json';
+import LevelingPlan20APLJSON from './apls/leveling_plan_20.apl.json';
+import LevelingPlan25APLJSON from './apls/leveling_plan_25.apl.json';
+import LevelingPlan30APLJSON from './apls/leveling_plan_30.apl.json';
 import MagmaAPLJSON from './apls/magma.apl.json';
 import ManaTideAPLJSON from './apls/mana_tide.apl.json';
 import OptimizedAPLJSON from './apls/optimized.apl.json';
@@ -397,8 +404,29 @@ export const APLLevel30Leveling = PresetUtils.makePresetAPLRotation('Level 30 Le
 	group: 'Leveling',
 });
 
+// The Leveling Plan rotations are the leveling optimizer's best rotations at levels 10, 15, 20,
+// 25 and 30, each searched on the leveling gear plan's gear at that level with the plan's
+// talents there (the stat weights work of 2026-10-16, see EPLevelingGearPlan). Below 30 they
+// use Rockbiter Weapon. They are all the same rotation, with Flame Shock pulls, Searing Totem
+// from two mobs and Fire Nova, but they rest, heal and chain pull at other health and mana.
+// The level 10 one pulls with the rank of Healing Wave a level 10 has.
+export const APLLevelingPlan = (
+	[
+		[10, LevelingPlan10APLJSON],
+		[15, LevelingPlan15APLJSON],
+		[20, LevelingPlan20APLJSON],
+		[25, LevelingPlan25APLJSON],
+		[30, LevelingPlan30APLJSON],
+	] as Array<[number, any]>
+).map(([level, json]) =>
+	PresetUtils.makePresetAPLRotation(`Level ${level} Leveling Plan`, json, {
+		tooltip: `The leveling optimizer's best rotation for a level ${level} in the leveling plan's gear and talents.`,
+		group: 'Leveling Plan',
+	}),
+);
+
 export const APLPresets = {
-	[Phase.Phase1]: [APLOptimized, APLMagma, APLManaTide, APLGraceOfAir, APLWindfury, APLLevel30p5, APLLevel30PvP, APLLevel30Leveling],
+	[Phase.Phase1]: [APLOptimized, APLMagma, APLManaTide, APLGraceOfAir, APLWindfury, APLLevel30p5, APLLevel30PvP, APLLevel30Leveling, ...APLLevelingPlan],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
 	[Phase.Phase4]: [],
@@ -1599,4 +1627,30 @@ export const PresetBuildLevel30Leveling = PresetUtils.makePresetBuild('Level 30 
 	bonusTalentPoints: 5,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: PresetBuildOptions,
+});
+
+///////////////////////////////////////////////////////////////////////////
+//                                 Leveling Plan
+///////////////////////////////////////////////////////////////////////////
+
+// The leveling plan of the Leveling mode (ui/core/leveling_plan.ts), from level 10 to 30.
+//
+// The talents go to the Level 30 Leveling build in the order the leveling stat weights were
+// measured with: Thundering Strikes first, then Mental Dexterity, Improved Ghost Wolf,
+// Shamanistic Focus and Ancestral Knowledge, and Flurry and Stormstrike once the extra points
+// come at 25. These are the builds we had at 10, 15, 20, 25 and 30. The rotations are the
+// Leveling Plan ones, with Rockbiter Weapon until Windfury Weapon at 30.
+export const DefaultLevelingPlan = LevelingPlanSettings.create({
+	fromLevel: 10,
+	toLevel: 30,
+	bonusTalentPoints: 5,
+	builds: [buildFromMilestones(10, ['-01', '-05001', '-050032001', '-0540320010051', '-0540320010051122'], talentShape(shamanTalentsConfig))],
+	rotations: APLLevelingPlan.map((preset, i) =>
+		LevelingRotation.create({
+			level: [10, 15, 20, 25, 30][i],
+			name: preset.name,
+			rotation: preset.rotation.rotation,
+			imbue: i < 4 ? WeaponImbue.RockbiterWeapon : WeaponImbue.WindfuryWeapon,
+		}),
+	),
 });

@@ -106,6 +106,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 		partyBuffs: PartyBuffs.create({}),
 		individualBuffs: Presets.DefaultIndividualBuffs,
 		debuffs: Presets.DefaultDebuffs,
+		levelingPlan: Presets.DefaultLevelingPlan,
 	},
 
 	// IconInputs to include in the 'Player' section on the settings tab.

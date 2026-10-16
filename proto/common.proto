@@ -1108,6 +1108,10 @@ message LevelingOptions {
 	// we come back with (default 0.5).
 	double death_penalty = 16;
 	double revive_fraction = 17;
+
+	// The UI's Leveling mode, which sims a leveling plan level by level (ui/core/leveling_plan.ts),
+	// in place of the Grinding mode's one session. The sim itself never reads it.
+	bool plan = 24;
 }
 
 message PresetTarget {

@@ -40,6 +40,7 @@ import {
 	DungeonFilterOption,
 	ExcludedZones,
 	LevelingGearPlanSettings,
+	LevelingPlanSettings,
 	RaidFilterOption,
 	SourceFilterOption,
 	UIEnchant as Enchant,
@@ -304,6 +305,7 @@ export class Player<SpecType extends Spec> {
 	private epRatios: Array<number> = new Array<number>(Player.numEpRatios).fill(0);
 	private epWeights: Stats = new Stats();
 	private levelingGearPlan: LevelingGearPlanSettings = LevelingGearPlanSettings.create({ seed: 1 });
+	private levelingPlan: LevelingPlanSettings = LevelingPlanSettings.create({ fromLevel: 10, toLevel: 30, bonusTalentPoints: 5 });
 	private currentStats: PlayerStats = PlayerStats.create();
 	private metadata: UnitMetadata = new UnitMetadata();
 	private petMetadatas: UnitMetadataList = new UnitMetadataList();
@@ -325,6 +327,7 @@ export class Player<SpecType extends Spec> {
 	readonly epWeightsChangeEmitter = new TypedEvent<void>('PlayerEpWeights');
 	readonly miscOptionsChangeEmitter = new TypedEvent<void>('PlayerMiscOptions');
 	readonly levelingGearPlanChangeEmitter = new TypedEvent<void>('PlayerLevelingGearPlan');
+	readonly levelingPlanChangeEmitter = new TypedEvent<void>('PlayerLevelingPlan');
 
 	readonly currentStatsEmitter = new TypedEvent<void>('PlayerCurrentStats');
 	readonly epRatiosChangeEmitter = new TypedEvent<void>('PlayerEpRatios');
@@ -378,6 +381,7 @@ export class Player<SpecType extends Spec> {
 				this.healingModelChangeEmitter,
 				this.epWeightsChangeEmitter,
 				this.levelingGearPlanChangeEmitter,
+				this.levelingPlanChangeEmitter,
 				this.epRatiosChangeEmitter,
 				this.epRefStatChangeEmitter,
 			],
@@ -491,6 +495,17 @@ export class Player<SpecType extends Spec> {
 		if (LevelingGearPlanSettings.equals(this.levelingGearPlan, plan)) return;
 		this.levelingGearPlan = LevelingGearPlanSettings.clone(plan);
 		this.levelingGearPlanChangeEmitter.emit(eventID);
+	}
+
+	// The leveling plan's levels, talent builds and rotations (leveling_plan.ts).
+	getLevelingPlan(): LevelingPlanSettings {
+		return LevelingPlanSettings.clone(this.levelingPlan);
+	}
+
+	setLevelingPlan(eventID: EventID, plan: LevelingPlanSettings) {
+		if (LevelingPlanSettings.equals(this.levelingPlan, plan)) return;
+		this.levelingPlan = LevelingPlanSettings.clone(plan);
+		this.levelingPlanChangeEmitter.emit(eventID);
 	}
 
 	getDefaultEpRatios(isTankSpec: boolean, isHealingSpec: boolean): Array<number> {

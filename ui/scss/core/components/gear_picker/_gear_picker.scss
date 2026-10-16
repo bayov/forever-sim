@@ -204,9 +204,9 @@ $gear-fog: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' wid
 	align-self: flex-start;
 }
 
-// The Leveling Gear tab shows a level's gear in the same pane.
+// The Leveling Plan tab shows a level's gear in the same pane.
 #gear-tab .gear-picker-root,
-#leveling-gear-tab .gear-picker-root {
+.leveling-plan-gear .gear-picker-root {
 	// The screenshot was taken with the game's UI at about 150%, and the slots here are a bit
 	// smaller than the game's at 100%.
 	--gear-slot-size: 3rem;

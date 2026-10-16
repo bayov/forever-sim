@@ -8,7 +8,7 @@ import * as IconInputs from './components/icon_inputs';
 import { BulkTab } from './components/individual_sim_ui/bulk_tab';
 import { Individual60UEPExporter, IndividualJsonExporter, IndividualLinkExporter, IndividualBayovCoreExporter } from './components/individual_sim_ui/exporters';
 import { GearTab } from './components/individual_sim_ui/gear_tab';
-import { LevelingGearTab } from './components/individual_sim_ui/leveling_gear_tab';
+import { LevelingPlanTab } from './components/individual_sim_ui/leveling_plan_tab';
 import {
 	Individual60UImporter,
 	IndividualAddonImporter,
@@ -52,7 +52,7 @@ import {
 	Spec,
 	Stat,
 } from './proto/common';
-import { IndividualSimSettings, SavedTalents } from './proto/ui';
+import { IndividualSimSettings, LevelingPlanSettings, SavedTalents } from './proto/ui';
 import { ItemSwapGear } from './proto_utils/gear';
 import { professionNames } from './proto_utils/names';
 import { SimResult } from './proto_utils/sim_result';
@@ -134,6 +134,9 @@ export interface IndividualSimUIConfig<SpecType extends Spec> extends PlayerConf
 		debuffs: Debuffs;
 
 		other?: OtherDefaults;
+
+		// The spec's leveling plan, for the Leveling mode (leveling_plan.ts).
+		levelingPlan?: LevelingPlanSettings;
 	};
 
 	playerInputs?: InputSection;
@@ -301,7 +304,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 		this.addSidebarComponents();
 		this.addGearTab();
-		new LevelingGearTab(this.simTabContentsContainer, this);
+		if (!this.isWithinRaidSim) new LevelingPlanTab(this.simTabContentsContainer, this);
 		this.addTalentsTab();
 		this.bt = this.addBulkTab();
 		this.addSettingsTab();
@@ -310,6 +313,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		if (!this.isWithinRaidSim) {
 			this.addDetailedResultsTab();
 			this.addCompareTab();
+			this.syncTabsWithMode();
 		}
 
 		this.addTopbarComponents();
@@ -446,6 +450,24 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		);
 	}
 
+	// The Leveling Plan tab is only there in the Leveling mode. There it takes the place of the
+	// tabs that edit one character at one level, and of the results of one run, because the plan
+	// has a character and a run for each level.
+	private syncTabsWithMode() {
+		const planTabs = ['leveling-plan-tab'];
+		const characterTabs = ['gear-tab', 'talents-tab', 'rotation-tab', 'bulk-tab', 'detailed-results-tab-tab', 'compare-results-tab-tab'];
+		const navItem = (id: string) => this.simHeader.rootElem.querySelector<HTMLElement>(`.nav-item.${id}`);
+		const update = () => {
+			const plan = encounterMode(this.sim.encounter) === 'levelingPlan';
+			planTabs.forEach(id => navItem(id)?.classList.toggle('d-none', !plan));
+			characterTabs.forEach(id => navItem(id)?.classList.toggle('d-none', plan));
+			const active = this.simHeader.rootElem.querySelector<HTMLElement>('.nav-item .nav-link.active')?.closest<HTMLElement>('.nav-item');
+			if (active?.classList.contains('d-none')) this.simHeader.activateTab(plan ? 'leveling-plan-tab' : 'gear-tab');
+		};
+		update();
+		this.sim.encounter.changeEmitter.on(update);
+	}
+
 	private addGearTab() {
 		const gearTab = new GearTab(this.simTabContentsContainer, this);
 		gearTab.rootElem.classList.add('active', 'show');
@@ -551,6 +573,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.player.setDistanceFromTarget(eventID, this.individualConfig.defaults.other?.distanceFromTarget || 0);
 			this.player.setChannelClipDelay(eventID, this.individualConfig.defaults.other?.channelClipDelay || 0);
 			this.player.setReactionTime(eventID, DEFAULT_REACTION_TIME_MS);
+			if (this.individualConfig.defaults.levelingPlan) this.player.setLevelingPlan(eventID, this.individualConfig.defaults.levelingPlan);
 
 			if (this.isWithinRaidSim) {
 				this.sim.raid.setTargetDummies(eventID, 0);
@@ -607,6 +630,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		if (exportCategory(SimSettingCategories.Gear)) {
 			IndividualSimSettings.mergePartial(proto, {
 				levelingGearPlan: this.player.getLevelingGearPlan(),
+				levelingPlan: this.player.getLevelingPlan(),
 			});
 		}
 		if (exportCategory(SimSettingCategories.Encounter)) {
@@ -660,6 +684,9 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			// Settings without a plan, like an imported gear set, keep the one we have.
 			if (loadCategory(SimSettingCategories.Gear) && settings.levelingGearPlan) {
 				this.player.setLevelingGearPlan(eventID, settings.levelingGearPlan);
+			}
+			if (loadCategory(SimSettingCategories.Gear) && settings.levelingPlan) {
+				this.player.setLevelingPlan(eventID, settings.levelingPlan);
 			}
 			if (loadCategory(SimSettingCategories.External)) {
 				this.sim.raid.setBuffs(eventID, settings.raidBuffs || RaidBuffs.create());

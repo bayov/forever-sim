@@ -309,6 +309,48 @@ message IndividualSimSettings {
 	Stat heal_ref_stat = 13;
 	Stat tank_ref_stat = 14;
 	LevelingGearPlanSettings leveling_gear_plan = 15;
+	LevelingPlanSettings leveling_plan = 16;
+}
+
+// The leveling plan's talents and rotations (ui/core/leveling_plan.ts). Its gear is the
+// LevelingGearPlanSettings.
+message LevelingPlanSettings {
+	// We sim each level from from_level up to, but not including, to_level.
+	int32 from_level = 1;
+	int32 to_level = 2;
+	// The extra talent points Forever gives from level 25.
+	int32 bonus_talent_points = 3;
+	// The first build starts at from_level. Each later one is a respec at its level.
+	repeated LevelingTalentBuild builds = 4;
+	// Each rotation is used from its level until the next one's.
+	repeated LevelingRotation rotations = 5;
+	// Whether we level with the Settings tab's buffs, debuffs and consumables. Without it we
+	// level solo, because the Settings tab usually has a raid's, like Goblin Sapper Charges
+	// that hurt a level 10 more than the mobs do.
+	bool use_settings_buffs = 6;
+}
+
+// A talent build and the order we put its points in. At each level we have the first picks,
+// as many as the level gives points.
+message LevelingTalentBuild {
+	int32 level = 1;
+	repeated LevelingTalentPick picks = 2;
+}
+
+// One talent point: the tree (0 to 2) and the talent's place in that tree's talent string.
+message LevelingTalentPick {
+	int32 tree = 1;
+	int32 talent = 2;
+}
+
+message LevelingRotation {
+	int32 level = 1;
+	// The preset it came from, or empty for one we copied from the Rotation tab.
+	string name = 2;
+	APLRotation rotation = 3;
+	// The class's own weapon imbue for these levels, like Rockbiter before Windfury Weapon.
+	// Unknown keeps the one in the class options.
+	WeaponImbue imbue = 4;
 }
 
 // The leveling gear plan's own choices (ui/core/leveling_gear.ts): the seed of its random

@@ -34,21 +34,25 @@ import { ContentBlock } from '../content_block';
 import { ItemRenderer } from '../gear_picker/gear_picker';
 import { getEmptySlotIconUrl } from '../gear_picker/utils';
 import { NumberPicker } from '../number_picker';
-import { SimTab } from '../sim_tab';
 
-// The Leveling Gear tab shows the leveling gear plan (leveling_gear.ts): what we wear at each
-// level from 1 to 60 when we gear up as we go. It's only there in Leveling mode.
+// The Gear part of the Leveling Plan tab shows the leveling gear plan (leveling_gear.ts): what
+// we wear at each level from 1 to 60 when we gear up as we go.
 //
 // It's laid out like the Gear tab. On the left are the plan's settings and the items we put in
 // by hand. On the right the selected level's gear is in the same gear pane, and under both the
 // grid has a row per slot and a column per level, in the color of the item we wear then. A
-// click on a column picks that level, and Equip puts its gear on in the Gear tab.
-export class LevelingGearTab extends SimTab {
-	protected simUI: IndividualSimUI<Spec>;
+// click on a column picks that level, and Grind takes that level of the plan to the Grinding
+// mode.
+export class LevelingGearSection {
+	readonly rootElem: HTMLElement;
+	private readonly simUI: IndividualSimUI<Spec>;
 	private readonly player: Player<Spec>;
-	private selectedLevel = 30;
+	private selectedLevel = 20;
 	private plan: LevelingGearPlan | null = null;
 	private readonly selectedLevelEmitter = new TypedEvent<void>('LevelingGearSelectedLevel');
+	// Fires when the plan's gear changes.
+	readonly planChangeEmitter = new TypedEvent<void>('LevelingGearPlanned');
+	private readonly onGrind: (level: number) => void;
 
 	private readonly gridElem: HTMLElement;
 	private readonly paneTitleElem: HTMLElement;
@@ -56,15 +60,17 @@ export class LevelingGearTab extends SimTab {
 	private readonly weightsElem: HTMLElement;
 	private readonly slotRenderers = new Map<ItemSlot, ItemRenderer>();
 
-	constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
-		super(parentElem, simUI, { identifier: 'leveling-gear-tab', title: 'Leveling Gear' });
+	constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>, onGrind: (level: number) => void) {
 		this.simUI = simUI;
 		this.player = simUI.player;
+		this.onGrind = onGrind;
+		this.rootElem = (<div className="leveling-plan-gear" />) as HTMLElement;
+		parentElem.appendChild(this.rootElem);
 
 		const side = (<div className="leveling-gear-side tab-panel-col" />) as HTMLElement;
 		const paneCol = (<div className="leveling-gear-pane-col" />) as HTMLElement;
 		const gridCol = (<div className="leveling-gear-grid-col" />) as HTMLElement;
-		this.contentContainer.appendChild(
+		this.rootElem.appendChild(
 			<div className="leveling-gear">
 				<div className="leveling-gear-top">
 					{side}
@@ -83,7 +89,7 @@ export class LevelingGearTab extends SimTab {
 			},
 		});
 		const reroll = ref<HTMLButtonElement>();
-		const equip = ref<HTMLButtonElement>();
+		const grind = ref<HTMLButtonElement>();
 		const seedRow = ref<HTMLDivElement>();
 		const levelRow = ref<HTMLDivElement>();
 		const weights = ref<HTMLParagraphElement>();
@@ -97,9 +103,9 @@ export class LevelingGearTab extends SimTab {
 					</button>
 				</div>
 				<div className="leveling-gear-row" ref={levelRow}>
-					<button className="btn btn-primary" ref={equip}>
-						<i className="fas fa-shirt me-1" />
-						Equip
+					<button className="btn btn-primary" ref={grind}>
+						<i className="fas fa-person-running me-1" />
+						Grind
 					</button>
 				</div>
 			</>,
@@ -117,25 +123,27 @@ export class LevelingGearTab extends SimTab {
 				player.setLevelingGearPlan(eventID, plan);
 			},
 		});
-		new NumberPicker<LevelingGearTab>(levelRow.value!, this, {
+		new NumberPicker<LevelingGearSection>(levelRow.value!, this, {
 			id: 'leveling-gear-level',
 			label: 'Level',
-			labelTooltip: 'The level whose gear the pane shows, and that Equip puts on. A click on the grid picks one too.',
+			labelTooltip: 'The level whose gear the pane shows, and that Grind takes to the Grinding mode. A click on the grid picks one too.',
 			positive: true,
 			changedEvent: tab => tab.selectedLevelEmitter,
 			getValue: tab => tab.selectedLevel,
 			setValue: (eventID, tab, newValue) => tab.selectLevel(newValue),
 		});
 		seedRow.value!.append(reroll.value!);
-		levelRow.value!.append(equip.value!);
+		levelRow.value!.append(grind.value!);
 		tippy(reroll.value!, { content: 'Play out another leveling journey, with a new seed.' });
-		tippy(equip.value!, { content: () => `Put on the plan's level ${this.selectedLevel} gear in the Gear tab, and make us level ${this.selectedLevel}.` });
+		tippy(grind.value!, {
+			content: () => `Go to the Grinding mode as the plan's level ${this.selectedLevel}, with its gear, talents and rotation.`,
+		});
 		reroll.value!.addEventListener('click', () => {
 			const plan = this.player.getLevelingGearPlan();
 			plan.seed = Math.floor(Math.random() * 1_000_000) + 1;
 			this.player.setLevelingGearPlan(TypedEvent.nextEventID(), plan);
 		});
-		equip.value!.addEventListener('click', () => this.equipSelectedLevel());
+		grind.value!.addEventListener('click', () => this.onGrind(this.selectedLevel));
 
 		// Our own items, with Add Item under them like Save Preset under a preset list.
 		const pinsBlock = new ContentBlock(side, 'leveling-gear-pins-block', {
@@ -239,13 +247,6 @@ export class LevelingGearTab extends SimTab {
 		);
 		this.gridElem = grid.value!;
 
-		// The tab is only there in Leveling mode.
-		const updateMode = () => {
-			this.navLink.hidden = !simUI.sim.encounter.isLeveling();
-		};
-		simUI.sim.encounter.changeEmitter.on(updateMode);
-		updateMode();
-
 		simUI.sim.waitForInit().then(() => {
 			this.rebuild();
 			TypedEvent.onAny([this.player.levelingGearPlanChangeEmitter, this.player.raceChangeEmitter, this.player.epWeightsChangeEmitter]).on(() =>
@@ -254,7 +255,23 @@ export class LevelingGearTab extends SimTab {
 		});
 	}
 
-	protected buildTabContent() {}
+	// The plan we show, or null before the database has loaded.
+	getPlan(): LevelingGearPlan | null {
+		return this.plan;
+	}
+
+	// The plan's gear at a level, as the Gear tab would have it.
+	gearAt(level: number): Gear | null {
+		const levelPlan = this.levelPlan(level);
+		if (!levelPlan) return null;
+		const db = this.simUI.sim.db;
+		const gear: Partial<Record<ItemSlot, EquippedItem | null>> = {};
+		for (const slot of LEVELING_GEAR_SLOTS) {
+			const piece = levelPlan.gear[slot];
+			gear[slot] = piece ? db.lookupItemSpec(ItemSpec.create({ id: piece.item.id, randomSuffix: piece.randomSuffix?.id ?? 0 })) : null;
+		}
+		return new Gear(gear);
+	}
 
 	// The spec's stat weights presets for the plan by their level, lowest first.
 	//
@@ -334,6 +351,7 @@ export class LevelingGearTab extends SimTab {
 		this.buildGrid();
 		this.buildLevel();
 		this.buildPins();
+		this.planChangeEmitter.emit(TypedEvent.nextEventID());
 	}
 
 	selectLevel(level: number) {
@@ -463,22 +481,6 @@ export class LevelingGearTab extends SimTab {
 		this.player.setLevelingGearPlan(TypedEvent.nextEventID(), plan);
 	}
 
-	private equipSelectedLevel() {
-		const level = this.levelPlan(this.selectedLevel);
-		if (!level) return;
-		const db = this.simUI.sim.db;
-		const gear: Partial<Record<ItemSlot, EquippedItem | null>> = {};
-		for (const slot of LEVELING_GEAR_SLOTS) {
-			const piece = level.gear[slot];
-			gear[slot] = piece ? db.lookupItemSpec(ItemSpec.create({ id: piece.item.id, randomSuffix: piece.randomSuffix?.id ?? 0 })) : null;
-		}
-		const eventID = TypedEvent.nextEventID();
-		TypedEvent.freezeAllAndDo(() => {
-			this.player.setLevel(eventID, this.selectedLevel);
-			this.player.setGear(eventID, new Gear(gear));
-		});
-	}
-
 	get db() {
 		return this.simUI.sim.db;
 	}
@@ -511,7 +513,7 @@ function suffixStats(stats: Array<number>): string {
 
 // The Add Item window: a level, a slot and an item of ours for the plan.
 class AddPinModal extends BaseModal {
-	constructor(parent: HTMLElement, tab: LevelingGearTab, startLevel: number) {
+	constructor(parent: HTMLElement, tab: LevelingGearSection, startLevel: number) {
 		super(parent, 'leveling-gear-add-modal', { title: 'Add Item', disposeOnClose: true });
 		const level = ref<HTMLInputElement>();
 		const slot = ref<HTMLSelectElement>();

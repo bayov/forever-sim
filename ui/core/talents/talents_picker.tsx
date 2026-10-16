@@ -22,6 +22,12 @@ export interface TalentsPickerConfig<TalentsProto> extends InputConfig<Player<Sp
 	klass: Class;
 	trees: TalentsConfig<TalentsProto>;
 	pointsPerRow: number;
+	// The points we may spend, the player's by default. The leveling plan's picker has those of
+	// the plan's last level.
+	getMaxPoints?: () => number;
+	// Whether the talents get the marks of a changed preset, which compare the player's talents.
+	// The leveling plan's picker edits other talents, so it has none.
+	tracksPresets?: boolean;
 }
 
 export class TalentsPicker<TalentsProto> extends Input<Player<Spec>, string> {
@@ -30,6 +36,7 @@ export class TalentsPicker<TalentsProto> extends Input<Player<Spec>, string> {
 	readonly numRows: number;
 	readonly numCols: number;
 	readonly pointsPerRow: number;
+	readonly tracksPresets: boolean;
 	maxPoints: number;
 
 	readonly trees: Array<TalentTreePicker<TalentsProto>>;
@@ -38,13 +45,14 @@ export class TalentsPicker<TalentsProto> extends Input<Player<Spec>, string> {
 		super(parent, 'talents-picker-root', player, config);
 		this.config = config;
 		this.pointsPerRow = config.pointsPerRow;
+		this.tracksPresets = config.tracksPresets ?? true;
 		this.numRows = Math.max(...config.trees.map(treeConfig => treeConfig.talents.map(talentConfig => talentConfig.location.rowIdx).flat()).flat()) + 1;
 		this.numCols = Math.max(...config.trees.map(treeConfig => treeConfig.talents.map(talentConfig => talentConfig.location.colIdx).flat()).flat()) + 1;
 
-		const getMaxPoints = () => player.getMaxTalentPoints();
+		const getMaxPoints = config.getMaxPoints ?? (() => player.getMaxTalentPoints());
 		this.maxPoints = getMaxPoints();
 
-		const getPointsRemaining = (): number => this.maxPoints - player.getTalentTreePoints().reduce((sum, points) => sum + points, 0);
+		const getPointsRemaining = (): number => this.maxPoints - sum([...config.getValue(player)].map(c => (c >= '0' && c <= '9' ? Number(c) : 0)));
 
 		const pointsRemainingElemRef = ref<HTMLSpanElement>();
 		const actionsContainerRef = ref<HTMLDivElement>();
@@ -84,15 +92,16 @@ export class TalentsPicker<TalentsProto> extends Input<Player<Spec>, string> {
 		const carouselPrevBtn = carouselPrevBtnRef.value!;
 		const carouselNextBtn = carouselNextBtnRef.value!;
 
-		TypedEvent.onAny([player.talentsChangeEmitter, player.miscOptionsChangeEmitter]).on(() => {
+		const updatePointsRemaining = () => {
 			this.setMaxPoints(getMaxPoints());
 			pointsRemainingElemRef.value!.textContent = `${getPointsRemaining()}`;
 			pointsRemainingElemRef.value!.classList.toggle('talents-points-negative', getPointsRemaining() < 0);
-		});
+		};
+		TypedEvent.onAny([config.changedEvent(player), player.talentsChangeEmitter, player.miscOptionsChangeEmitter]).on(updatePointsRemaining);
 
 		new CopyButton(actionsContainerRef.value!, {
 			extraCssClasses: ['btn-sm', 'btn-outline-primary', 'copy-talents'],
-			getContent: () => player.getTalentsString(),
+			getContent: () => this.getInputValue(),
 			text: 'Copy',
 			tooltip: 'Copy talent string',
 		});
@@ -129,6 +138,7 @@ export class TalentsPicker<TalentsProto> extends Input<Player<Spec>, string> {
 		carouselNextBtn.addEventListener('click', slideNext);
 
 		this.init();
+		updatePointsRemaining();
 	}
 
 	getInputElem(): HTMLElement {
@@ -384,16 +394,17 @@ class TalentPicker<TalentsProto> extends Component {
 
 		// The talents string has a digit per talent, in the order of the tree's talents, and
 		// the trees are separated by dashes.
-		dirtySettings.track({
-			elem: this.rootElem,
-			read: () => {
-				const treeIdx = this.tree.picker.trees.indexOf(this.tree);
-				const talentIdx = this.tree.talents.indexOf(this);
-				return this.tree.picker.modObject.getTalentsString().split('-')[treeIdx]?.charAt(talentIdx) || '0';
-			},
-			name: () => this.config.name ?? String(this.config.fieldName ?? 'Talent'),
-			format: points => `${points}/${this.config.maxPoints}`,
-		});
+		if (tree.picker.tracksPresets)
+			dirtySettings.track({
+				elem: this.rootElem,
+				read: () => {
+					const treeIdx = this.tree.picker.trees.indexOf(this.tree);
+					const talentIdx = this.tree.talents.indexOf(this);
+					return this.tree.picker.modObject.getTalentsString().split('-')[treeIdx]?.charAt(talentIdx) || '0';
+				},
+				name: () => this.config.name ?? String(this.config.fieldName ?? 'Talent'),
+				format: points => `${points}/${this.config.maxPoints}`,
+			});
 
 		this.rootElem.addEventListener('click', event => {
 			event.preventDefault();
