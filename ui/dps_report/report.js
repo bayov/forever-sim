@@ -152,7 +152,7 @@ export function startReport(dash, events) {
   // ---------- state ----------
   const store = (() => { try { return window.localStorage; } catch { return null; } })();
   const saved = (() => { try { return JSON.parse(store?.getItem('fv-state') || '{}'); } catch { return {}; } })();
-  const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', rsOpt: {}, rsFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', rlFac: 'All', rlRole: 'All', rlCls: 'All', rlSpec: 'All', setupHide: false, enc: false, duty: true, asm: {}, asmOpen: [] }, saved);
+  const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', rsOpt: {}, rsFac: 'All', srFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', rlFac: 'All', rlRole: 'All', rlCls: 'All', rlSpec: 'All', setupHide: false, enc: false, duty: true, asm: {}, asmOpen: [] }, saved);
   st.len = '180'; // a fight length other than 180s is never restored: the page always opens on the main numbers
   const persist = () => { try { store?.setItem('fv-state', JSON.stringify(st)); } catch {} };
 
@@ -1294,17 +1294,20 @@ export function startReport(dash, events) {
     });
   };
 
-  // A row whose parts each have their own tooltip. A part is any element with data-zone, and the rest of the row
-  // is one more part (zone ''). With a mouse we show the tooltip of the part under the pointer, and switch it as
-  // the pointer moves to another part. A tap shows and pins the tooltip of the part it lands on, and a second tap
-  // on the same part closes it. tip(zone, node, pinned) gets the part's element, or the row.
+  // A row whose parts each have their own tooltip. A part is any element with data-zone, and the parts marked
+  // data-zone="" all show the row's own tooltip (zone ''). The rest of the row shows none. With a mouse we show the
+  // tooltip of the part under the pointer, and switch it as the pointer moves to another part. A tap shows and pins
+  // the tooltip of the part it lands on, and a second tap on the same part closes it. tip(zone, node, pinned) gets
+  // the part's element.
   const hoverZones = (row, tip) => {
     let cur = null;
-    const at = (e) => e.target.closest('[data-zone]') || row;
-    const zone = (n) => (n === row ? '' : n.dataset.zone);
+    const at = (e) => e.target.closest('[data-zone]');
+    const zone = (n) => (n && row.contains(n) ? n.dataset.zone : null);
+    const off = () => { cur = null; if (tipHl.includes(row)) hideTip(); };
     row.addEventListener('pointerover', (e) => {
       if (e.pointerType !== 'mouse' || tipPinned) return;
       const n = at(e), z = zone(n);
+      if (z == null) return off();
       if (z === cur && tipHl.includes(row)) return;
       cur = z;
       tip(z, n, false);
@@ -1313,7 +1316,7 @@ export function startReport(dash, events) {
     row.addEventListener('pointerup', (e) => {
       if (e.pointerType === 'mouse' || e.target.closest('[data-tt]')) return;
       const n = at(e), z = zone(n);
-      if (tipPinned && tipHl.includes(row) && z === cur) { hideTip(); cur = null; return; }
+      if (z == null || (tipPinned && tipHl.includes(row) && z === cur)) return off();
       cur = z;
       tip(z, n, true);
     });
@@ -1398,16 +1401,26 @@ export function startReport(dash, events) {
   // the entry's DPS. Over several presets it's the entry's DPS as a share of the best entry's on the same preset,
   // averaged, so a full bar is the best race on every preset. Either way the bar is split into the race's base
   // stats (the gray body) and what each of its racials adds, which shows how strong each racial is.
-  const drawRaceRank = () => {
-    const host = $('#race-rank'), axis = $('#rs-axis');
-    if (!waitOr(host, ['race_variants', 'race_breakdown', 'builds', 'stats'])) return;
-    const sc = scopeOf('rs');
-    drawScope('rs', sc);
-    const V = rsVar('rs'), one = sc.single;
+  //
+  // The Specs page shows the same card for its preset (fixed), with only the faction and the enemy types switch.
+  const drawRaceRank = (fixed) => {
+    const p = fixed ? 'sr' : 'rs';
+    const host = fixed ? $('#sp-races') : $('#race-rank'), axis = $(`#${p}-axis`), card = host.closest('.fv-card');
+    const ids = ['race_variants', 'race_breakdown', 'builds', 'stats'];
+    if (!(fixed ? specWait(host, ids, fixed) : waitOr(host, ids))) return;
+    let sc;
+    if (fixed) {
+      sc = { fac: st.srFac || 'All', builds: [fixed], ids: new Set([fixed.id]), single: fixed };
+      seg($('#sr-fac'), 'srFac', [['All', 'Both factions'], ['Horde', 'Horde', iconMap() ? iconImg('ui_hordeicon', 'fv-ico') : null], ['Alliance', 'Alliance', iconMap() ? iconImg('ui_allianceicon', 'fv-ico') : null]]);
+    } else {
+      sc = scopeOf('rs');
+      drawScope('rs', sc);
+    }
+    const V = rsVar(p), one = sc.single;
     const rr = raceRows(V).filter((r) => sc.ids.has(r.build) && (sc.fac === 'All' || r.faction === sc.fac));
     if (!rr.length) {
-      host.replaceChildren(el('p', { class: 'fv-note', text: 'No race of this faction plays these presets.' }));
-      axis.textContent = ''; $('#rs-legend').replaceChildren();
+      host.replaceChildren(el('p', { class: 'fv-note', text: fixed ? 'No race numbers.' : 'No race of this faction plays these presets.' }));
+      axis.textContent = ''; $(`#${p}-legend`).replaceChildren();
       return;
     }
     const bd = d3.group(rowsOf('race_breakdown').filter((q) => sc.ids.has(q.build)), (q) => q.build + '|' + q.race);
@@ -1443,7 +1456,6 @@ export function startReport(dash, events) {
     const fv = (v) => (one ? f1(v) : `${f2(v)}%`), fd = (v) => (one ? sgn(v, f1) : `${sgn(v, f2)}%`);
     const who = (r) => (r.tag ? `${r.race} ${r.tag}` : r.race);
     const kinds = new Set();
-    const card = $('#race-rank-card');
     // The weakest base stats in view, which the tooltip measures each race's base stats against.
     const baseOf = (r) => r.segs.find((sg) => sg.part === 'base')?.v;
     const low = d3.least(rows.filter((r) => baseOf(r) != null), baseOf);
@@ -1497,6 +1509,24 @@ export function startReport(dash, events) {
         ...[...talents.values()].map((t) => talent(t, [t[0], t[4]])),
       ] };
     };
+    // Every race of a class starts from the same class stats plus its own small stat offsets, so the offsets are the
+    // whole base stats gap between two races. For one preset we also price each stat with that preset's stat weights,
+    // so the sum is close to the simmed gap.
+    const wOne = one ? new Map((rowsOf('weights') || []).filter((w) => w.build === one.id).map((w) => [w.stat, +w.dpsPer])) : null;
+    const statGap = (race, ref) => {
+      const a = noteRow('stats', race)?.stats, b = noteRow('stats', ref)?.stats;
+      if (!a || !b) return [];
+      const gaps = Object.keys(a).map((k) => [k, a[k] - b[k]]).filter(([, d]) => d);
+      if (!gaps.length) return [el('span', { class: 'fv-tip-m', text: `Same stats as ${ref}.` })];
+      const w = wOne?.size ? wOne : null;
+      const worth = (k, d) => (w.has(k) ? d * w.get(k) : 0);
+      const sum = w ? d3.sum(gaps, ([k, d]) => worth(k, d)) : 0;
+      return [tipTable([`Stats vs ${ref}`, '', ...(w ? ['DPS'] : [])], [
+        ...gaps.map(([k, d]) => [k, sgn(d, f0), ...(w ? [w.has(k) && w.get(k) ? tipDelta(worth(k, d), f1, '') : '0'] : [])]),
+        w ? ['Sum', '', tipDelta(sum, f1, '')] : null])];
+    };
+    // The race's icon, name and numbers show the row's own tooltip.
+    const head = (n) => { n.dataset.zone = ''; return n; };
     host.replaceChildren(...rows.map((r, i) => {
       const track = el('div', { class: 'fv-rtrack' });
       r.segs.forEach((sg, k) => {
@@ -1513,9 +1543,9 @@ export function startReport(dash, events) {
       // A racial with no effect here gets its reason after the race name, so it costs no extra line.
       const idle = one ? r.idle.slice(0, 3).map((q) => el('small', { 'data-zone': 'idle:' + q.part, text: `${shortLabel(q.label)}: ${q.note}` })) : [];
       const row = el('div', { class: 'fv-rrow' + (i === 0 ? ' top' : ''), 'data-tip': '1' },
-        raceIco(r.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(r.race)}` }),
-        el('span', { class: 'nm' }, raceName(r), one && r.isPreset ? el('i', { text: 'preset race' }) : null, ...idle),
-        el('span', { class: 'end' }, el('small', { text: one ? (i === 0 ? '★ best' : `−${f2(100 * (1 - r.dps / rows[0].dps))}%`) : r.timesBest ? `best on ${r.timesBest} of ${r.n}` : 'never best' }),
+        head(raceIco(r.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(r.race)}` })),
+        el('span', { class: 'nm' }, head(raceName(r)), one && r.isPreset ? head(el('i', { text: 'preset race' })) : null, ...idle),
+        el('span', { class: 'end', 'data-zone': '' }, el('small', { text: one ? (i === 0 ? '★ best' : `−${f2(100 * (1 - r.dps / rows[0].dps))}%`) : r.timesBest ? `best on ${r.timesBest} of ${r.n}` : 'never best' }),
           el('b', { text: one ? f1(r.dps) : pct(r.avg) })),
         track, cap);
       // Each part of the entry has its own tooltip. A piece of the bar, or its caption under the bar, says what
@@ -1541,6 +1571,8 @@ export function startReport(dash, events) {
               sub.push(el('span', { class: 'fv-tip-m', text: low.race === r.race ? 'Weakest base stats here.'
                 : gap < 0.005 ? `Same as ${low.race} (weakest base here).`
                 : `${f2(gap)}%${one ? ` (${f1(base - baseOf(low))} DPS)` : ''} above ${low.race} (weakest base here).` }));
+              const ref = low.race === r.race ? d3.greatest(rows.filter((q) => baseOf(q) != null), baseOf) : low;
+              if (ref.race !== r.race) sub.push(...statGap(r.race, ref.race));
             }
           } else if (sg) name = `${sg.label} ${fd(sg.v)}`;
           if (!name) return;
@@ -1573,7 +1605,7 @@ export function startReport(dash, events) {
       return row;
     }));
     axisWarn(axis, lo > 0 ? (one ? `${f0(lo)} DPS` : `${f1(lo)}%`) : null, 'races');
-    legend($('#rs-legend'), kinds, true);
+    legend($(`#${p}-legend`), kinds, true);
     layoutCaps(host);
     if (!host.dataset.capWatch) {
       host.dataset.capWatch = '1';
@@ -1860,7 +1892,8 @@ export function startReport(dash, events) {
     safe(() => drawAbilities(b, abil, colors), $('#sp-abil'));
     safe(() => drawEvents(b), $('#sp-events'));
     safe(() => drawAuras(b), $('#sp-auras'));
-    safe(() => drawSpecRaces(b), $('#sp-races'));
+    safe(() => drawRaceRank(b), $('#sp-races'));
+    $('#sp-races-link').onclick = (e) => { e.stopPropagation(); pickRaceSpec(b.id); };
     safe(() => drawSpecLen(b), $('#sp-len'));
     safe(() => drawTables(b));
   };
@@ -2008,36 +2041,6 @@ export function startReport(dash, events) {
   };
   $('#sp-alwayson').addEventListener('click', (e) => { e.stopPropagation(); st.alwaysOn = !st.alwaysOn; persist(); render(); });
   $('#sp-setup-hide').addEventListener('click', (e) => { e.stopPropagation(); st.setupHide = !st.setupHide; persist(); $('#sp-setup').classList.toggle('hide-off', st.setupHide); e.currentTarget.setAttribute('aria-pressed', String(st.setupHide)); });
-
-  const drawSpecRaces = (b) => {
-    const host = $('#sp-races');
-    host.setAttribute('data-source', 'race_variants race_breakdown');
-    if (!specWait(host, ['race_variants', 'race_breakdown'], b)) return;
-    // Every race, and each advantage a race has as its own row (see raceRows), best first.
-    const rows = raceRows('wt').filter((r) => r.build === b.id);
-    if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No race numbers.' })); return; }
-    const W = host.clientWidth, rowH = 26, m = { l: rows.some((r) => r.tag) ? Math.min(225, W * 0.45) : 100, r: 64, t: 4, b: 4 };
-    const H = m.t + m.b + rows.length * rowH;
-    const lo = d3.min(rows, (r) => r.dps) * 0.985, hi = d3.max(rows, (r) => r.dps);
-    const x = d3.scaleLinear([lo, hi], [m.l, W - m.r]);
-    const svg = d3.create('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('height', H);
-    rows.forEach((r, i) => {
-      const yy = m.t + i * rowH;
-      const rg = svg.append('g').attr('data-tt', `r:${r.race}:${b.class}`).attr('data-tt-tap', '').attr('data-tt-b', b.id);
-      rg.append('rect').attr('x', 0).attr('y', yy).attr('width', W).attr('height', rowH).style('fill', 'transparent');
-      const label = rg.append('text').attr('x', m.l - 26).attr('y', yy + rowH / 2 + 4).attr('text-anchor', 'end');
-      label.append('tspan').text(r.race).style('fill', fcol(r.race));
-      if (r.tag) label.append('tspan').text(' ' + r.tag).style('fill', `var(--fv-adv-${tagKind(r.variant)}, var(--color-fg-muted))`).attr('font-size', '0.85em').attr('font-weight', 600);
-      if (r.raceIcon) svgIcon(rg, r.raceIcon, m.l - 22, yy + 4, rowH - 8);
-      // An advantage's bar is lighter than its race's own.
-      rg.append('rect').attr('x', m.l).attr('y', yy + 6).attr('height', rowH - 12).attr('width', Math.max(2, x(r.dps) - m.l)).attr('rx', 4).style('fill', fcol(r.race)).attr('opacity', r.adv ? 0.45 : 0.8);
-      svg.append('text').attr('x', x(r.dps) + 6).attr('y', yy + rowH / 2 + 4).text(f1(r.dps) + (i === 0 ? ' ★' : ''));
-    });
-    const warn = el('p', { class: 'fv-axiswarn' });
-    axisWarn(warn, `${f0(lo)} DPS`, 'races');
-    host.replaceChildren(warn, svg.node());
-    $('#sp-races-link').onclick = (e) => { e.stopPropagation(); pickRaceSpec(b.id); };
-  };
 
   const drawSpecLen = (b) => {
     const host = $('#sp-len');
