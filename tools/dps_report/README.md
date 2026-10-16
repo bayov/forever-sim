@@ -102,12 +102,12 @@ dashboard-only and never go to a class branch.
 |---|---|---|
 | `0001` DASH_NAMES dump, dashstats, manaAbove dedupe | In `sim/core/environment.go` (finalize): when `DASH_NAMES=<file>` is set, appends every unit's aura `spellId itemId otherId tag label` to that file. Also adds `tools/dashstats/main.go`, and drops the duplicate `manaAbove` from `tools/rotopt/priest_shadow.go`. | `run_build.py` (`names/<id>.tsv`, used for aura and proc labels in `names`, `abilities`, `auras` and `timeline_*`). `stats` needs dashstats. rotopt needs the dedupe to build. |
 | `0002` DASH_RACIALS_OFF | In `sim/core/racials_forever.go`, `sim/hunter/hunter.go` and the priest racials (Chastise, Dark Sacrifice, Starshards): `DASH_RACIALS_OFF=all` or `=<part>[,<part>]` leaves those racial parts out. Parts: spirit, sword, mace, axe, beast, dodge, elune, mind, eureka, bloodfury, touch, endurance, berserking, windblessed, insight, chastise, starshards, darksacrifice. | `run_races.py` (`off`, `off:<part>` and `weaponNoRacial` variants) |
-| `0003` target racials damage only | Beast Slaying, Big Game Hunter and Elemental Insight no longer also raise CritMultiplier. Client 70338 gives them aura 168 at 5%. | the `beast` and `elemental` race variants. The real fix in shared `sim/core` is a follow-up. |
+| `0003` target racials damage only | Beast Slaying, Big Game Hunter and Elemental Insight no longer also raise CritMultiplier. Client 70338 gives them aura 168 at 5%. | nothing in the report: master has the Forever half since PR #94, and the patch keeps only the Classic `racials.go` line. |
 | `0004` DASH_ASSUME knobs | `sim/core/assumptions.go`: `DASH_ASSUME="key=value,..."` overrides the constants the assumption scenarios vary (`assumptions_def.py` lists the keys). A plain diff against master with 0001 to 0003 applied; apply with `git apply`. A knob on a constant master already sets (the caster rank scales, Ice Lance's coefficient, Rend's attack power share, the hunter's crit per Agility, Raptor Strike rank 8, the pet hit rule, the top Trueshot Aura and Hunter's Mark ranks) defaults to that constant, so a run with no knob reproduces master. Build it as `$DASH_BIN/wowsimcli_assume`. | `run_assumptions.py` |
 
 The db regeneration commit isn't exported because it's binary; rerun gen_db instead. Merge commits aren't exported either:
-their conflict resolutions follow the rules above. With no env var set, all three patches leave the sim's behaviour unchanged,
-except the 0003 crit fix against Beast or Elemental targets. No preset fights those targets. `run_assumptions.py --identical`
+their conflict resolutions follow the rules above. With no env var set, the patches leave the Forever sim's behaviour
+unchanged. `run_assumptions.py --identical`
 checks that a 0004 build is bit-identical to the plain one with `DASH_ASSUME` unset.
 
 ## Requests

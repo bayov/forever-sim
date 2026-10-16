@@ -105,7 +105,7 @@ def rots(combo):
 
 
 def tasks(bid):
-    ks = keys_for(bid)
+    ks = [k for k in keys_for(bid) if nondefault(k)]  # one-value assumptions have nothing to vary
     if not ks:
         return
     yield (bid, (), 'base')
