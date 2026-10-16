@@ -380,7 +380,7 @@ export const OtherDefaults = {
 	distanceFromTarget: 25,
 	profession1: Profession.Engineering,
 	profession2: Profession.Alchemy,
-	race: Race.RaceNightElf,
+	race: Race.RaceSkyborneWindshaper,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -453,11 +453,12 @@ export const EncounterLevel60ScorpidDuty = PresetUtils.makePresetEncounter('Leve
 
 // The numbers are without the Ahn'Qiraj book ranks (Aspect of the Hawk 5, Serpent Sting 8) and
 // with the shared raid buff caps (Grace of Air 77, Strength of Earth 42, Battle Shout 115).
-// Races, 20000 iterations at 180 sec (forever-wiki/sim-status.md has 120 and 300 too): the Night
-// Elf is best for the three ranged specs (Elune's Light, which the pet's crit follows), 4 to 5 ahead
-// of the Orc, the best Horde race (3.5 on Beast Mastery). For Survival the Orc is best (Axe Specialization with its main
-// hand axe), 11 ahead of the Night Elf, the best Alliance race. Forever has no ranged weapon
-// racials (Dwarf Gun and Troll Bow Specialization are gone), so the ranged type favours no race. With the Wildstalker Armor 4
+// Races (client 1.60.1.70425 racials, with the raid hits, 20000 iterations at 120 / 180 / 300 sec,
+// forever-wiki/sim-status.md has the table): no racial depends on the weapon any more. The
+// Windshaper is best for the three ranged specs (Wind Blessed's 3% haste), 1.2 to 1.6 ahead of the
+// High Order and 5 to 8 ahead of the Night Elf on Lone Wolf and Marksmanship (0.3 to 0.9 ahead of the
+// Human on Beast Mastery). For Survival the Human is best at 180 and 300 sec (Ruthless's 2% crit),
+// 1.1 and 2.4 ahead of the Orc, which leads by 1.0 at 120 sec. With the Wildstalker Armor 4
 // and 5 piece bonuses on top of the 2 piece (the presets carry the 2 piece only, as every class
 // does), Lone Wolf would gain 17, Marksmanship 13, Beast Mastery 1 and Survival nothing, with the
 // rotations re-tuned for the shorter Aimed Shot cooldown (measured on the 2026-10-12 gear, before
@@ -473,7 +474,7 @@ export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Bea
 	talents: TalentsBeastMastery,
 	rotation: APLBeastMastery,
 	encounter: EncounterLevel60,
-	race: Race.RaceNightElf,
+	race: Race.RaceSkyborneWindshaper,
 	professions,
 	options: DefaultOptions,
 });
@@ -488,7 +489,7 @@ export const PresetBuildBeastMasteryMark = PresetUtils.makePresetBuild("Level 60
 	talents: TalentsBeastMastery,
 	rotation: APLBeastMasteryMark,
 	encounter: EncounterLevel60MarkDuty,
-	race: Race.RaceNightElf,
+	race: Race.RaceSkyborneWindshaper,
 	professions,
 	options: DefaultOptions,
 });
@@ -501,7 +502,7 @@ export const PresetBuildBeastMasteryScorpid = PresetUtils.makePresetBuild('Level
 	talents: TalentsBeastMastery,
 	rotation: APLBeastMasteryScorpid,
 	encounter: EncounterLevel60ScorpidDuty,
-	race: Race.RaceNightElf,
+	race: Race.RaceSkyborneWindshaper,
 	professions,
 	options: DefaultOptions,
 });
@@ -514,7 +515,7 @@ export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Mar
 	talents: TalentsMarksmanship,
 	rotation: APLMarksmanship,
 	encounter: EncounterLevel60,
-	race: Race.RaceNightElf,
+	race: Race.RaceSkyborneWindshaper,
 	professions,
 	options: DefaultOptions,
 });
@@ -529,7 +530,7 @@ export const PresetBuildMarksmanshipMark = PresetUtils.makePresetBuild("Level 60
 	talents: TalentsMarksmanship,
 	rotation: APLMarksmanshipMark,
 	encounter: EncounterLevel60MarkDuty,
-	race: Race.RaceNightElf,
+	race: Race.RaceSkyborneWindshaper,
 	professions,
 	options: DefaultOptions,
 });
@@ -542,7 +543,7 @@ export const PresetBuildMarksmanshipScorpid = PresetUtils.makePresetBuild('Level
 	talents: TalentsMarksmanship,
 	rotation: APLMarksmanshipScorpid,
 	encounter: EncounterLevel60ScorpidDuty,
-	race: Race.RaceNightElf,
+	race: Race.RaceSkyborneWindshaper,
 	professions,
 	options: DefaultOptions,
 });
@@ -555,7 +556,7 @@ export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wo
 	talents: TalentsLoneWolf,
 	rotation: APLLoneWolf,
 	encounter: EncounterLevel60,
-	race: Race.RaceNightElf,
+	race: Race.RaceSkyborneWindshaper,
 	professions,
 	options: LoneWolfOptions,
 });
@@ -570,7 +571,7 @@ export const PresetBuildLoneWolfMark = PresetUtils.makePresetBuild("Level 60 Lon
 	talents: TalentsLoneWolf,
 	rotation: APLLoneWolfMark,
 	encounter: EncounterLevel60MarkDuty,
-	race: Race.RaceNightElf,
+	race: Race.RaceSkyborneWindshaper,
 	professions,
 	options: LoneWolfOptions,
 });
@@ -583,7 +584,7 @@ export const PresetBuildLoneWolfScorpid = PresetUtils.makePresetBuild('Level 60 
 	talents: TalentsLoneWolf,
 	rotation: APLLoneWolfScorpid,
 	encounter: EncounterLevel60ScorpidDuty,
-	race: Race.RaceNightElf,
+	race: Race.RaceSkyborneWindshaper,
 	professions,
 	options: LoneWolfOptions,
 });
@@ -597,7 +598,7 @@ export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Surviva
 	talents: TalentsSurvival,
 	rotation: APLSurvival,
 	encounter: EncounterLevel60Melee,
-	race: Race.RaceOrc,
+	race: Race.RaceHuman,
 	professions,
 	options: DefaultOptions,
 });
@@ -612,7 +613,7 @@ export const PresetBuildSurvivalMark = PresetUtils.makePresetBuild("Level 60 Sur
 	talents: TalentsSurvival,
 	rotation: APLSurvivalMark,
 	encounter: EncounterLevel60MeleeMarkDuty,
-	race: Race.RaceOrc,
+	race: Race.RaceHuman,
 	professions,
 	options: DefaultOptions,
 });
