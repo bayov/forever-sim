@@ -15,12 +15,12 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_crusader_duty",
   "published": {
-    "dps": 865.0,
-    "source": "PR #54 (client 70425: Judgement of Righteousness 42.9%, Champion of the Light 10 / 20 / 30%, Consecration 4.2% a tick; Concentration Aura; Human, 2026-10-16)"
+    "dps": 815.5,
+    "source": "PR #54 (client 70425: Judgement of Righteousness 42.9%, Champion of the Light 10 / 20 / 30%, Consecration 4.2% a tick; Seal of Righteousness spell power once per the tooltip; Concentration Aura; Human, 2026-10-16)"
   },
   "verify": {
-    "dps": 864.98,
-    "stderr": 0.31,
+    "dps": 815.48,
+    "stderr": 0.3,
     "iters": 20000,
     "ok": true,
     "note": "verify.py, 180 s, seed 1"
@@ -69,12 +69,12 @@
   ],
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 spell power and 18 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "0.3% behind the default at 120 s and 0.6% at 300 s because it has no Precision",
+    "0.4% behind the default at 120 s and 0.7% at 300 s because it has no Precision",
     "Purifying Power does nothing on the generic boss (Exorcism and Holy Wrath are not cast); the vs Undead builds use it",
     "Would gain 1.4 DPS twisting down to 0% mana, but shares the twist rotation's 20% floor",
     "Holy Strike's flat part inside the 50% weapon percent comes from client data, not yet confirmed on the beta",
     "High Holy Strike and Consecration ranks may be stale: holding them to their level 30 trend would cost about 1.2%",
-    "Seal of Righteousness spell power counted twice on a two-hander (SoD-style 2 x 11%); one coefficient would be about 50-54 DPS lower, and client 70425's 0 on the proc spells about 98-105 lower",
+    "Seal of Righteousness adds 12% of spell power a hit with a two-hander, once, per the 70425 tooltip (the proc spell itself carries 0): the SoD-style double count (2 x 11%) would be about 46-51 DPS higher, the proc spell's 0 about 53-59 lower",
     "Two-Handed Weapon Specialization applied to Holy seal damage (Era sim choice vs client Physical mask): about -11 if removed",
     "Synthetic gear on the hybrid budget (only the Justice Battlegear 2-piece live)",
     "The request has the raid's Judgement of the Crusader off, so the debuff comes only from this paladin (standards 23)."

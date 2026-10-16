@@ -15,12 +15,12 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_shock_undead",
   "published": {
-    "dps": 970.3,
-    "source": "PR #54 (client 70425: Judgement of Righteousness 42.9%, Champion of the Light 10 / 20 / 30%, Consecration 4.2% a tick; Concentration Aura; Human, 2026-10-16)"
+    "dps": 924.1,
+    "source": "PR #54 (client 70425: Judgement of Righteousness 42.9%, Champion of the Light 10 / 20 / 30%, Consecration 4.2% a tick; Seal of Righteousness spell power once per the tooltip; Concentration Aura; Human, 2026-10-16)"
   },
   "verify": {
-    "dps": 970.3,
-    "stderr": 0.26,
+    "dps": 924.14,
+    "stderr": 0.25,
     "iters": 20000,
     "ok": true,
     "note": "verify.py, 180 s, seed 1"
@@ -80,7 +80,7 @@
     "Human is best since client 70425 (Ruthless, 2% crit with any weapon): about 3 ahead of Undead (Touch of the Grave) at 180 s",
     "Holy Strike's flat part inside the 50% weapon percent comes from client data, not yet confirmed on the beta",
     "High Holy Strike and Consecration ranks may be stale: holding them to their level 30 trend would cost about 1.2%",
-    "Seal of Righteousness spell power counted twice on a two-hander (SoD-style 2 x 11%); one coefficient would be about 50-54 DPS lower, and client 70425's 0 on the proc spells about 98-105 lower"
+    "Seal of Righteousness adds 12% of spell power a hit with a two-hander, once, per the 70425 tooltip (the proc spell itself carries 0): the SoD-style double count (2 x 11%) would be about 46-51 DPS higher, the proc spell's 0 about 53-59 lower"
   ],
   "notes": "Request from mksettings with the same arguments as paladin__level_60_shock except talents and APL, then the target's mobType set to MobTypeUndead, as the class preset's encounter does.",
   "encounter": "Undead",

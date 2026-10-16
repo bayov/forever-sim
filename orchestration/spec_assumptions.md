@@ -48,7 +48,7 @@ That makes 33 assumptions in `assumptions_def.py`. The 2026-10-15 review removed
    - Without owner scaling, every warlock build loses about 4%; with the Succubus melee halved, another 4%; with both, 7% (PR).
    - Demonology leads the ranking (1109.8), and the other three builds sit just above Retribution (969 to 985 against 960 to 967). These decide that order.
 3. **`lock_bod_coef`.** Bane of Doom's 4.0 coefficient is about 12% of every Shadow Bolt build's damage. At 2.0, every Shadow Bolt warlock loses 4.1% (PR), and Destruction and Affliction drop below the Retribution builds. I still expect 4.0 (it is the duration/15 rule), but it is untested in any beta build.
-4. **`pal_consecration_coef` and `pal_sor_sp_double`.** Consecration's 9.5% a tick comes from an old tooltip, against Era's 4.2% (est. −4% at Era's value). Seal of Righteousness counting spell power twice comes from Season of Discovery tests (−5.3 to −6.6% if counted once, assumption sims). Together with Consecration at Era's 4.2% (−4.5 to −6.3%) these could move every Retribution build about 11%.
+4. **`pal_consecration_coef` and `pal_sor_sp_double`.** Consecration's 9.5% a tick comes from an old tooltip, against Era's 4.2% (est. −4% at Era's value). Seal of Righteousness counted spell power twice from Season of Discovery tests; since PR #54 (2026-10-16) it counts it once per the 70425 tooltip (−5 to −6% against the double count), and Consecration is at client 70425's 4.2%. Together with Consecration at Era's 4.2% (−4.5 to −6.3%) these could move every Retribution build about 11%.
 5. **`hunter_pet_speed` and `hunter_pet_scaling`.**
    - Pet speed: the beta's fast pets hit as hard as a 2.0 sec pet. The presets treat that as a bug and use Classic's speed-scaled hit (user ruling 2026-10-15, PR #22); the beta's rule would add 6.1% to Beast Mastery and 3.2% to Marksmanship (assumption sims, 180 s).
    - Pet scaling: Season of Discovery's 22% scaling instead of the measured 10% would add 41 / 23 / 18 to Beast Mastery / Marksmanship / Survival (PR).
@@ -219,7 +219,7 @@ Close behind: `flat_bonus_inside_pct` (est. −3.7% dagger rogues and +3% Retrib
 
 | Key | Label | Builds | Sim now | Low | Expected | High | Sensitivity |
 |---|---|---|---|---|---|---|---|
-| `pal_sor_sp_double` | Seal of Righteousness takes spell power twice | twist, sub Holy, Shock | twice (2 × 11% on a two-hander) | once (10%) | twice | = Expected | Low −5.3 to −6.6% (assumption sims, 180 s) |
+| `pal_sor_sp_double` | Seal of Righteousness's spell power | twist, sub Holy, Shock | once (tooltip: 12% on a two-hander) | none (the proc spell's 0) | once | twice (2 × 11%, SoD) | Low −5.8 to −7.0%, High +5.0 to +6.1% (paired 20k, 180 s) |
 | `pal_sor_sp_speed` | Seal of Righteousness's spell power and weapon speed | twist, sub Holy, Shock | flat per swing | scales with weapon speed (TBC-like) | flat per swing | = Expected | Low −0.5 to −0.7% (assumption sims, 180 s) |
 | `pal_consecration_coef` | Consecration's coefficient a tick | twist, sub Holy, Shock | 4.2% (client 70425) | = Expected | 4.2% | 9.5% (client 70338) | settled by client 70425 (was Low −4.5 to −6.3%, assumption sims, 180 s) |
 | `pal_2h_spec_holy` | Two-Handed Weapon Spec on Holy seal damage | twist, sub Holy, Shock | yes | Physical only | yes | = Expected | Low −1.1% twist (PR) |
@@ -227,22 +227,18 @@ Close behind: `flat_bonus_inside_pct` (est. −3.7% dagger rogues and +3% Retrib
 
 Retribution is also affected by `flat_bonus_inside_pct` (Holy Strike; +3.6 to +4.2% at its Low, assumption sims).
 
-### `pal_sor_sp_double`: Seal of Righteousness counts spell power twice
+### `pal_sor_sp_double`: how much spell power Seal of Righteousness adds
 
 - **Builds:** Level 60 twist, sub Holy (both twist Seal of Righteousness in on every swing) and Shock (Seal of Righteousness stays up).
-- **Sim now:**
-  - The proc's coefficient is 10% under Forever, ×1.1 on a two-hander (`sim/paladin/sor.go:105-112`).
-  - It is added once into `baseDamage` (`:131`) and once more through `BonusCoefficient` (`:127`), so the effective coefficient is 2 × 11%.
-  - Judgement of Righteousness is 42.9% (`:94`, client 70425; 50% before).
-- **Source:** Season of Discovery sim tests ("from testing in SoD", `:111`). The Forever client has the same data as Season of Discovery's: Judgement of Righteousness (20286) carries the seal's 1786 / 47 at a 20% coefficient, twice the proc spell's 10%.
-- **Why uncertain:** the double count is a Season of Discovery server behaviour inferred from data, not a Forever measurement. A level 30 paladin with and without spell power would settle it.
+- **Sim now (the orchestrator's ruling 2026-10-16, PR #54):** under Forever the proc adds 12% of spell power a hit with a two-hander and 7.65% with a one-hander, once and flat per swing (`sim/paladin/sor.go`, `coeff` and `countTwice`). The target's damage taken bonus goes through the same coefficient once. Era and SoD keep the tested double count (10%, ×1.1 on a two-hander, twice). Judgement of Righteousness is 42.9% (client 70425; 50% before).
+- **Source:** Forever client 1.60.1.70425. The seal auras (20154, 20287-20293, 21084) give each hit `($s3/87 + $1h)*$mult` to `($s3/25 + $2h)*$mult`, and description variables 1023 set `$1h = 0.0765*$SPH` and `$2h = 0.12*$SPH`. 70425 zeroed the proc spells' own coefficient (25713-25742: 0, 0.1 in 70338), read as the bonus moving server side.
+- **Why uncertain:** the tooltip formula is the client's; no Forever log yet shows the hits. A beta log of Seal of Righteousness hits at two spell power levels would settle it (notes.md).
 - **Settings:**
-  - **Low, once (10%, no two-hander factor).** The proc spell's own coefficient, read plainly.
-  - **Expected, twice (Sim now).** Forever's client matches Season of Discovery's data, where the double count was measured.
-  - **High:** = Expected.
-- **Sensitivity (PR, results audit before the fairness round):** Low gives twist −49 (−5.1%) and Shock −42 (−4.4%); sub Holy is like twist. The build order doesn't change.
-- **Client 70425 (2026-10-16):** the proc spells (25713 and lower) now carry a 0 coefficient; Judgement of Righteousness's dummy effect still has 1786 / 47 at 20%. On the 70425 sim, once is −54 on twist and −50 on Shock at 180 s, and 0 is −105 and −99.
-- **Knob:** `sim/paladin/sor.go:131`. When the key is 1, drop the explicit `spell.BonusCoefficient*(...)` term; `:111` drops the ×1.1.
+  - **Low, none.** The proc spell's 70425 coefficient (0) read plainly.
+  - **Expected, once (Sim now).** The tooltip's 12% (two-hander) / 7.65% (one-hander).
+  - **High, twice.** The Season of Discovery double count, 2 × 11% on a two-hander.
+- **Sensitivity (paired 20k, 180 s, seeds 1 and 1000003):** High is +49 to +51 on twist and sub Holy, +46 on Shock; Low is −57 to −59 on twist and sub Holy, −53 on Shock. The build order at 180 s doesn't change.
+- **Knob:** `sim/paladin/sor.go` (patch 0004): key 0 sets the coefficient to 0, key 2 restores the SoD double count.
 
 ### `pal_sor_sp_speed`: does Seal of Righteousness's spell power grow with weapon speed?
 
