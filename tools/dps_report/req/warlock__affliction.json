@@ -531,7 +531,8 @@
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
-      "sanctityAura": false
+      "sanctityAura": false,
+      "salvation": true
     },
     "debuffs": {
       "judgementOfWisdom": true,

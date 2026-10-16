@@ -4,7 +4,11 @@
 Main run: 180 s, 20k iterations, seed 1, all values saved (distribution), first iteration logged.
 Race sweep: every race the class can be, 10k iterations, seed 1.
 Fight lengths: 60/120/180/300/480 s, 5k iterations, preset race.
-Sample fights: seeds 1..3, one iteration each, logged and parsed into a compact timeline.
+Sample fights: of seeds 1..30, the ones nearest the 10th, 50th and 90th percentile, logged and parsed into a compact timeline.
+
+Iteration i of a run with seed 1 is the fight a one-iteration run with seed 1+i would sim (the sim reseeds every
+iteration), so the main run's saved values already hold the 30 seeds' DPS and the preset race's 10k sweep run
+(its first 10,000 values). Neither is simmed again.
 """
 import json, os, re, subprocess, sys, tempfile, copy, math
 
@@ -27,7 +31,7 @@ HORDE = {'Orc', 'Undead', 'Tauren', 'Troll', 'SkyborneWindshaper'}
 LENGTHS = [60, 120, 180, 300, 480]
 
 
-def run(req, iters, seed, debug=False, save_all=False, race=None, duration=None, names=None):
+def run(req, iters, seed, debug=False, save_all=False, race=None, duration=None, names=None, log_all=False, replay=None):
     req = copy.deepcopy(req)
     if race:
         req['raid']['parties'][0]['players'][0]['race'] = 'Race' + race
@@ -38,6 +42,10 @@ def run(req, iters, seed, debug=False, save_all=False, race=None, duration=None,
         req['simOptions']['debugFirstIteration'] = True
     if save_all:
         req['simOptions']['saveAllValues'] = True
+    if log_all:  # log every iteration as it runs: no replay, one copy of the log (debug replays each picked fight)
+        req['simOptions']['debug'] = True
+    if replay:  # run only these seeds, logged: typical, lucky and unlucky in the result, in that order
+        req['simOptions']['replaySeeds'] = [str(s) for s in replay]
     with tempfile.TemporaryDirectory() as d:
         i, o = os.path.join(d, 'i.json'), os.path.join(d, 'o.json')
         json.dump(req, open(i, 'w'))
@@ -220,7 +228,8 @@ def main(bid):
 
     r = run(req, 20000, 1, save_all=True, names=names)
     p = r['raidMetrics']['parties'][0]['players'][0]
-    vals = sorted(p['dps'].get('allValues', []))
+    allv = p['dps'].get('allValues', [])  # fight i is seed 1+i
+    vals = sorted(allv)
     n = len(vals)
     pct = {str(q): vals[min(n - 1, int(q / 100 * n))] for q in (1, 5, 10, 25, 50, 75, 90, 95, 99)}
     lo, hi = math.floor(vals[0] / 5) * 5, math.ceil(vals[-1] / 5) * 5
@@ -245,24 +254,29 @@ def main(bid):
         'tps': p['threat']['avg'], 'petDps': sum(x['dps'] for x in pets), 'pets': pets,
         'actions': actions, 'auras': auras, 'resources': resources,
     }
-    # Sample fights: one-iteration runs; pick the seeds nearest the 10th, 50th and 90th percentile.
-    rolls = []
-    for seed in range(1, 31):
-        rs = run(req, 1, seed)
-        rolls.append((rs['raidMetrics']['parties'][0]['players'][0]['dps']['avg'], seed))
-    samples, used = [], set()
+    # Sample fights: of seeds 1..30 (the main run's first 30 fights), the ones nearest the 10th, 50th and 90th
+    # percentile, replayed with logs in one run.
+    rolls = [(allv[seed - 1], seed) for seed in range(1, 31)]
+    picked, used = [], set()
     for label, q in (('Typical fight', '50'), ('Unlucky fight', '10'), ('Lucky fight', '90')):
         dps_s, seed = min((x for x in rolls if x[1] not in used), key=lambda x: abs(x[0] - pct[q]))
         used.add(seed)
-        rs = run(req, 1, seed, debug=True)
-        samples.append(parse_log(rs['logs'], rs['firstIterationDuration']) | {'seed': seed, 'dps': dps_s, 'label': label, 'pct': int(q)})
-    out['samples'] = samples
+        picked.append((label, q, dps_s, seed))
+    rs = run(req, 1, 1, replay=[x[3] for x in picked])
+    logs = [(rs['logs'], rs['firstIterationDuration'])] + [(rs[k]['logs'], rs[k]['duration']) for k in ('luckyIteration', 'unluckyIteration')]
+    out['samples'] = [parse_log(text, dur) | {'seed': seed, 'dps': dps_s, 'label': label, 'pct': int(q)}
+                      for (label, q, dps_s, seed), (text, dur) in zip(picked, logs)]
 
     races = []
     for rc in CLASS_RACES[meta['class']]:
-        rr = run(req, 10000, 1, race=rc)
-        pp = rr['raidMetrics']['parties'][0]['players'][0]
-        races.append({'race': rc, 'faction': 'Horde' if rc in HORDE else 'Alliance', 'dps': pp['dps']['avg'], 'se': pp['dps']['stdev'] / 100})
+        if req['raid']['parties'][0]['players'][0]['race'] == 'Race' + rc and len(allv) >= 10000:
+            v = allv[:10000]  # the same 10k fights a seed 1 run of the preset race sims
+            m = sum(v) / len(v)
+            dps_r, sd = m, math.sqrt(max(0.0, sum(x * x for x in v) / len(v) - m * m))
+        else:
+            pp = run(req, 10000, 1, race=rc)['raidMetrics']['parties'][0]['players'][0]
+            dps_r, sd = pp['dps']['avg'], pp['dps']['stdev']
+        races.append({'race': rc, 'faction': 'Horde' if rc in HORDE else 'Alliance', 'dps': dps_r, 'se': sd / 100})
     out['races'] = races
 
     lengths = []

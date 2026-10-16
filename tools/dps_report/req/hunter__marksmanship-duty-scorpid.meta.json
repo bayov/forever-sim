@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_ranged",
   "apl": "mm_scorpid",
   "published": {
-    "dps": 949.2,
-    "source": "client 1.60.1.70425 (Sniper Shot in Efficiency and Mortal Shots, the raid's Trueshot Aura, hunter_trap_ap), 2026-10-16: 180s, 20000 iterations, seed 1"
+    "dps": 959.6,
+    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 949.2)"
   },
   "verify": {
-    "dps": 949.21,
-    "stderr": 0.24,
+    "dps": 959.64,
+    "stderr": 0.23,
     "iters": 20000,
     "ok": true,
-    "note": "same sim as verify.py and the published number"
+    "note": "run_build.py main run, 180s, seed 1"
   },
   "summary": "Marksmanship with a cat instead of Lone Wolf. The pet deals about 11% of the damage.",
   "keyTalents": [

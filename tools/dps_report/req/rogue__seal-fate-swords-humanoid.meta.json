@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_seal_fate_swords",
   "apl": "level60_combat_swords",
   "published": {
-    "dps": 697.3,
-    "source": "Re-check after Windfury Totem main hand only (#86) and Grace of Air (#88): weapons, talents, races (standards 16), master e83b6a0, 2026-10-16"
+    "dps": 701.7,
+    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 697.3)"
   },
   "verify": {
-    "dps": 697.3,
+    "dps": 701.75,
     "stderr": 0.24,
     "iters": 20000,
     "ok": true,
-    "note": "same sim as the published number (seed 1)"
+    "note": "run_build.py main run, 180s, seed 1"
   },
   "summary": "Seal Fate Swords with Murder 2/2, for a Humanoid or Giant boss.",
   "advantage": "Murder 2/2 adds 4% damage against Humanoids and Giants. It does nothing against other bosses.",

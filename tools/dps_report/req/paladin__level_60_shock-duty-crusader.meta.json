@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_shock_crusader_duty",
   "published": {
-    "dps": 858.3,
-    "source": "PR #100 (rotation audit pass 23: Hammer of Wrath above Consecration, 2026-10-16)"
+    "dps": 893.0,
+    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 858.3)"
   },
   "verify": {
-    "dps": 858.32,
+    "dps": 893.01,
     "stderr": 0.24,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 180 s, seed 1"
+    "note": "run_build.py main run, 180s, seed 1"
   },
   "summary": "The Holy Shock build, keeping Judgement of the Crusader on the boss for the raid.",
   "keyTalents": [
