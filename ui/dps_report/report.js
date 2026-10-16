@@ -1399,7 +1399,7 @@ export function startReport(dash, events) {
   // averaged, so a full bar is the best race on every preset. Either way the bar is split into the race's base
   // stats (the gray body) and what each of its racials adds, which shows how strong each racial is.
   const drawRaceRank = () => {
-    const host = $('#race-rank'), take = $('#rs-take'), axis = $('#rs-axis');
+    const host = $('#race-rank'), axis = $('#rs-axis');
     if (!waitOr(host, ['race_variants', 'race_breakdown', 'builds', 'stats'])) return;
     const sc = scopeOf('rs');
     drawScope('rs', sc);
@@ -1407,7 +1407,7 @@ export function startReport(dash, events) {
     const rr = raceRows(V).filter((r) => sc.ids.has(r.build) && (sc.fac === 'All' || r.faction === sc.fac));
     if (!rr.length) {
       host.replaceChildren(el('p', { class: 'fv-note', text: 'No race of this faction plays these presets.' }));
-      take.replaceChildren(); axis.textContent = ''; $('#rs-legend').replaceChildren();
+      axis.textContent = ''; $('#rs-legend').replaceChildren();
       return;
     }
     const bd = d3.group(rowsOf('race_breakdown').filter((q) => sc.ids.has(q.build)), (q) => q.build + '|' + q.race);
@@ -1510,13 +1510,14 @@ export function startReport(dash, events) {
       const cap = el('div', { class: 'fv-rsub fv-rcap' }, ...r.segs.map((sg, k) => ({ sg, at: k === 0 ? 0 : x(Math.min(sg.from, sg.to)) }))
         .filter(({ sg }) => sg.part !== 'base' && Math.abs(sg.v) >= (one ? 0.05 : 0.005))
         .map(({ sg, at }) => el('span', { 'data-zone': sg.part, 'data-at': at, style: `left:${at}%` }, partIco(sg.part), `${shortLabel(sg.label)} ${fd(sg.v)}`)));
-      const idle = one && r.idle.length ? el('div', { class: 'fv-rsub' }, ...r.idle.slice(0, 3).map((q) => el('span', { 'data-zone': 'idle:' + q.part }, el('em', { text: `${shortLabel(q.label)}: ${q.note}` })))) : null;
+      // A racial with no effect here gets its reason after the race name, so it costs no extra line.
+      const idle = one ? r.idle.slice(0, 3).map((q) => el('small', { 'data-zone': 'idle:' + q.part, text: `${shortLabel(q.label)}: ${q.note}` })) : [];
       const row = el('div', { class: 'fv-rrow' + (i === 0 ? ' top' : ''), 'data-tip': '1' },
         raceIco(r.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(r.race)}` }),
-        el('span', { class: 'nm' }, raceName(r), one && r.isPreset ? el('i', { text: 'preset race' }) : null),
+        el('span', { class: 'nm' }, raceName(r), one && r.isPreset ? el('i', { text: 'preset race' }) : null, ...idle),
         el('span', { class: 'end' }, el('small', { text: one ? (i === 0 ? '★ best' : `−${f2(100 * (1 - r.dps / rows[0].dps))}%`) : r.timesBest ? `best on ${r.timesBest} of ${r.n}` : 'never best' }),
           el('b', { text: one ? f1(r.dps) : pct(r.avg) })),
-        track, cap, idle);
+        track, cap);
       // Each part of the entry has its own tooltip. A piece of the bar, or its caption under the bar, says what
       // that part is worth and what the racial does. The rest of the row gives the entry's DPS, and over several
       // presets the specs it's the best race for, one line per class, or the three where it comes closest.
@@ -1571,12 +1572,6 @@ export function startReport(dash, events) {
       });
       return row;
     }));
-    const lead = rows[0];
-    if (one) {
-      const last = rows[rows.length - 1];
-      take.replaceChildren(el('b', { text: one.label }), ': ', el('b', { text: who(lead) }), ` leads with ${f1(lead.dps)} DPS`,
-        ...(rows.length > 1 ? ['. ', who(rows[1]), ` is ${f2(100 * (1 - rows[1].dps / lead.dps))}% behind, and `, who(last), ` is last at −${f2(100 * (1 - last.dps / lead.dps))}%.`] : ['.']));
-    } else take.replaceChildren();
     axisWarn(axis, lo > 0 ? (one ? `${f0(lo)} DPS` : `${f1(lo)}%`) : null, 'races');
     legend($('#rs-legend'), kinds, true);
     layoutCaps(host);

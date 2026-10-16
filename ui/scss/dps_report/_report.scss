@@ -3721,13 +3721,7 @@ ol.fv-list li::marker {
 	color: var(--fv-adv-tgt);
 }
 
-// The overview's takeaway line, and its rows: the share of the best race's DPS needs a wider end column.
-.fv-ro-take {
-	margin: 0;
-	font-size: var(--cds-font-size-caption);
-	line-height: 1.5;
-}
-
+// The share of the best race's DPS needs a wider end column.
 @media (min-width: 46rem) {
 	#racial-rank .fv-orow {
 		grid-template-columns: 1.6rem minmax(9rem, 16rem) minmax(0, 1fr) 6.5rem;
