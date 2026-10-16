@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_affliction",
   "published": {
-    "dps": 1013.3,
-    "source": "PR #85"
+    "dps": 1066.0,
+    "source": "PR (Demonology DoT end gates)"
   },
   "verify": {
-    "dps": 1013.29,
-    "stderr": 0.38,
+    "dps": 1066.05,
+    "stderr": 0.39,
     "iters": 20000,
     "ok": true,
-    "note": "-0.01 vs published"
+    "note": "+0.05 vs published"
   },
   "summary": "Shadow Bolt Affliction with Nightfall, plus Improved Shadow Bolt and Ruin from Destruction.",
   "keyTalents": [

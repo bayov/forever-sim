@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_affliction_duty_curse",
   "published": {
-    "dps": 1002.2,
-    "source": "PR #85"
+    "dps": 1054.2,
+    "source": "PR (Demonology DoT end gates)"
   },
   "verify": {
-    "dps": 1002.17,
+    "dps": 1054.22,
     "stderr": 0.38,
     "iters": 20000,
     "ok": true,
-    "note": "-0.03 vs published"
+    "note": "+0.02 vs published"
   },
   "summary": "Keeps its own Curse of the Elements up for the raid, with the raid's copy off. Under Forever the curse has its own slot, so the bane stays.",
   "keyTalents": [

@@ -15,12 +15,12 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_destruction_fire_duty_curse",
   "published": {
-    "dps": 960.7,
-    "source": "PR #85"
+    "dps": 1008.4,
+    "source": "PR (Demonology DoT end gates)"
   },
   "verify": {
-    "dps": 960.67,
-    "stderr": 0.27,
+    "dps": 1008.37,
+    "stderr": 0.26,
     "iters": 20000,
     "ok": true,
     "note": "-0.03 vs published"

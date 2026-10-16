@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_demonology",
   "apl": "level60_demonology",
   "published": {
-    "dps": 1118.3,
-    "source": "PR #85"
+    "dps": 1177.7,
+    "source": "PR (Demonology DoT end gates)"
   },
   "verify": {
-    "dps": 1118.3,
+    "dps": 1177.74,
     "stderr": 0.39,
     "iters": 20000,
     "ok": true,
-    "note": "+0.00 vs published"
+    "note": "+0.04 vs published"
   },
   "summary": "Demonic Pact build. The Imp is sacrificed before the pull for 15% Shadow damage, and the Succubus stays out.",
   "keyTalents": [

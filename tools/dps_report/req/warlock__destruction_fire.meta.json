@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_destruction_fire",
   "published": {
-    "dps": 970.2,
-    "source": "PR #85"
+    "dps": 1018.5,
+    "source": "PR (Demonology DoT end gates)"
   },
   "verify": {
-    "dps": 970.23,
+    "dps": 1018.49,
     "stderr": 0.27,
     "iters": 20000,
     "ok": true,
-    "note": "+0.03 vs published"
+    "note": "-0.01 vs published"
   },
   "summary": "Fire Destruction with Incinerate as the filler and a Firestone.",
   "keyTalents": [
