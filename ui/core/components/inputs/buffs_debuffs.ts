@@ -393,13 +393,13 @@ export const MeleeCritBuff = withLabel(
 
 export const SpellCritBuff = withLabel(makeBooleanRaidBuffInput({ actionId: () => ActionId.fromSpellId(24907), fieldName: 'moonkinAura' }), 'Moonkin Aura');
 
-// Under Forever, Leader of the Pack and Moonkin Aura both give 3% crit to spells and attacks,
-// and they don't stack (see sim/core/buffs.go). In Classic each gives its own kind of crit, so
-// both can be on.
+// Leader of the Pack gives physical crit and Moonkin Aura spell crit, so both can be on. Forever
+// client 1.60.1.70425 split them that way too (sim/core/buffs.go); in 70338 both gave 3% crit to
+// everything and only one counted.
 export const CritAuraBuffs: ExclusiveIconRowConfig = {
 	options: [
-		makeExclusiveBuff(24932, 'leaderOfThePack', 'moonkinAura', undefined, player => isForever(player)),
-		makeExclusiveBuff(24907, 'moonkinAura', 'leaderOfThePack', undefined, player => isForever(player)),
+		makeExclusiveBuff(24932, 'leaderOfThePack', 'moonkinAura', undefined, () => false),
+		makeExclusiveBuff(24907, 'moonkinAura', 'leaderOfThePack', undefined, () => false),
 	],
 };
 

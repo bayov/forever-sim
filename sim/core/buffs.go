@@ -289,13 +289,15 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 	}
 
 	if character.Env.IsForever() {
-		// Forever's Moonkin Form and Leader of the Pack both give 3% crit to spells and
-		// attacks, and the two do not stack.
-		if raidBuffs.MoonkinAura || raidBuffs.LeaderOfThePack {
-			character.AddStats(stats.Stats{
-				stats.MeleeCrit: 3 * CritRatingPerCritChance,
-				stats.SpellCrit: 3 * SpellCritRatingPerCritChance,
-			})
+		// Forever client 1.60.1.70425: Moonkin Aura (24907) is a raid aura of 3% spell crit
+		// (aura 57) and Leader of the Pack (24932) a raid aura of 3% physical crit (aura 52).
+		// In 70338 both were the same party aura of 3% crit to everything (aura 290), so either
+		// gave both and they did not stack.
+		if raidBuffs.MoonkinAura {
+			character.AddStat(stats.SpellCrit, 3*SpellCritRatingPerCritChance)
+		}
+		if raidBuffs.LeaderOfThePack {
+			character.AddStat(stats.MeleeCrit, 3*CritRatingPerCritChance)
 		}
 	} else {
 		if raidBuffs.MoonkinAura {

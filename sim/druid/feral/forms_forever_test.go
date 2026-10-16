@@ -202,3 +202,23 @@ func TestForeverCatFaerieFireFeral(t *testing.T) {
 		t.Errorf("Faerie Fire (Feral) global cooldown %.1f sec, want 1", got)
 	}
 }
+
+// Client 1.60.1.70425: Moonkin Aura is 3% spell crit and Leader of the Pack 3% physical crit,
+// each its own raid aura, so the cat gets melee crit only from Leader of the Pack.
+func TestForeverCritAuras(t *testing.T) {
+	_, none := newFormSimBuffs(t, proto.Ruleset_RulesetForever, &proto.Consumes{}, &proto.RaidBuffs{})
+	_, moonkin := newFormSimBuffs(t, proto.Ruleset_RulesetForever, &proto.Consumes{}, &proto.RaidBuffs{MoonkinAura: true})
+	_, lotp := newFormSimBuffs(t, proto.Ruleset_RulesetForever, &proto.Consumes{}, &proto.RaidBuffs{LeaderOfThePack: true})
+	_, both := newFormSimBuffs(t, proto.Ruleset_RulesetForever, &proto.Consumes{}, &proto.RaidBuffs{MoonkinAura: true, LeaderOfThePack: true})
+	melee := func(c *FeralDruid) float64 { return c.GetStat(stats.MeleeCrit) - none.GetStat(stats.MeleeCrit) }
+	spell := func(c *FeralDruid) float64 { return c.GetStat(stats.SpellCrit) - none.GetStat(stats.SpellCrit) }
+	if !near(melee(moonkin), 0) || !near(spell(moonkin), 3*core.SpellCritRatingPerCritChance) {
+		t.Errorf("Moonkin Aura gave %.2f melee and %.2f spell crit rating, want 0 and 3%%", melee(moonkin), spell(moonkin))
+	}
+	if !near(melee(lotp), 3*core.CritRatingPerCritChance) || !near(spell(lotp), 0) {
+		t.Errorf("Leader of the Pack gave %.2f melee and %.2f spell crit rating, want 3%% and 0", melee(lotp), spell(lotp))
+	}
+	if !near(melee(both), 3*core.CritRatingPerCritChance) || !near(spell(both), 3*core.SpellCritRatingPerCritChance) {
+		t.Errorf("both auras gave %.2f melee and %.2f spell crit rating, want 3%% each", melee(both), spell(both))
+	}
+}
