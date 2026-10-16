@@ -23,7 +23,8 @@ part has the session's options). The mode comes from the encounter like the othe
   by default, the beta's cap).
 - **Gear.** The leveling gear plan (docs/leveling_gear.md), as before.
 - **Talents.** A build is the order we put its points in, and at each level we have as many of
-  them as the level gives (one a level from 10, plus the extra points Forever gives from 25).
+  them as the level gives (one a level from 10, plus any extra points from 25, none by
+  default).
   The talent trees edit the order: a click puts the next point in a talent, a right click
   takes its last point out, and the Order list moves a point earlier or later. A point the
   tree doesn't allow yet (its row isn't open, or the talent it needs isn't full) shows red.
@@ -31,9 +32,13 @@ part has the session's options). The mode comes from the encounter like the othe
   back by its own order. A run also sims the respec's levels with the build we had, on the
   same sessions, and says how many hours the respec saves. We weigh that against the price
   of the respec ourselves.
-- **Rotations.** Each rotation is played from its level until the next one's. It's a preset or
-  a copy of the Rotation tab's. A shaman's also picks the weapon imbue, because Windfury
-  Weapon only comes at 30.
+- **Rotations.** Each rotation is played from its level until the next one's. It starts as a
+  preset or a copy of the Rotation tab's, and the rotation editor under the list changes the
+  selected one ("changed" marks one that no longer matches its preset). A shaman's also picks
+  the weapon imbue, because Windfury Weapon only comes at 30. The editor is the Rotation tab's,
+  and its spell lists come from the character's level and talents. So while the Rotations
+  part is open, the character is the plan's at the selected rotation's first level, and we put
+  the character back when we leave the part or the mode.
 - **Solo.** We level without the Settings tab's buffs, debuffs and consumables, unless
   "Settings tab's buffs" is on. The Settings tab usually has a raid's, and Goblin Sapper
   Charges hurt a level 10 more than the mobs do.
@@ -56,8 +61,8 @@ The last run stays in the browser's storage. The Leveling mode has no sim histor
 
 `DefaultLevelingPlan` in `ui/enhancement_shaman/presets.ts`: the Level 30 Leveling build in
 the order the leveling stat weights were measured with (Thundering Strikes, Mental Dexterity,
-Improved Ghost Wolf, Shamanistic Focus, Ancestral Knowledge, then Flurry and Stormstrike from
-25), and the "Level N Leveling Plan" rotations, the leveling optimizer's best at levels 10,
+Improved Ghost Wolf, Shamanistic Focus, Ancestral Knowledge, then Stormstrike at 25 and
+Flurry), and the "Level N Leveling Plan" rotations, the leveling optimizer's best at levels 10,
 15, 20, 25 and 30 on the plan's gear, with Rockbiter Weapon until 30.
 
 A first run (2026-10-16, 300 sessions a level) takes about 19 hours from 10 to 30. XP an

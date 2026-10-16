@@ -22,17 +22,22 @@ export class APLRotationPicker extends Component {
 		simUI: SimUI,
 		modPlayer: Player<any>,
 		prepullActionNote?: (player: Player<any>, action: APLPrepullAction) => string | undefined,
+		// The Leveling Plan tab's editor edits a rotation of the plan, not one of a preset, so
+		// it leaves the marks of a changed preset to the Rotation tab.
+		tracksPresets = true,
 	) {
 		super(parent, 'apl-rotation-picker-root');
 
 		// We don't mark the editor's rows, see Input.tracksPresetChanges(), so the editor as a
 		// whole tells the Rotation tab and the presets' tooltips that the rotation changed.
-		dirtySettings.track({
-			elem: this.rootElem,
-			read: () => ({ prepull: modPlayer.aplRotation.prepullActions, priority: modPlayer.aplRotation.priorityList }),
-			name: () => 'Rotation',
-			format: () => '',
-		});
+		if (tracksPresets) {
+			dirtySettings.track({
+				elem: this.rootElem,
+				read: () => ({ prepull: modPlayer.aplRotation.prepullActions, priority: modPlayer.aplRotation.priorityList }),
+				name: () => 'Rotation',
+				format: () => '',
+			});
+		}
 
 		new ListPicker<Player<any>, APLPrepullAction>(this.rootElem, modPlayer, {
 			extraCssClasses: ['apl-prepull-action-picker'],

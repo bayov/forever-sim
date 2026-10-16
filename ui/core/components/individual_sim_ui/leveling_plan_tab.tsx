@@ -19,10 +19,12 @@ import {
 } from '../../leveling_plan';
 import { Player } from '../../player';
 import { ErrorOutcomeType, ProgressMetrics, RaidSimRequest } from '../../proto/api';
+import { APLRotation } from '../../proto/apl';
 import { Consumes, Debuffs, IndividualBuffs, PartyBuffs, RaidBuffs, Spec } from '../../proto/common';
 import { LevelingPlanSettings } from '../../proto/ui';
 import { slotNames } from '../../proto_utils/names';
 import { Database } from '../../proto_utils/database';
+import { Gear } from '../../proto_utils/gear';
 import { encounterMode } from '../../sim_mode';
 import { TypedEvent } from '../../typed_event';
 import { ContentBlock } from '../content_block';
@@ -32,6 +34,15 @@ import { SimTab } from '../sim_tab';
 import { LevelingGearSection } from './leveling_plan_gear';
 import { LevelingRotationsSection } from './leveling_plan_rotations';
 import { LevelingTalentsSection } from './leveling_plan_talents';
+
+interface SavedCharacter {
+	level: number;
+	bonusTalentPoints: number;
+	talents: string;
+	gear: Gear;
+	rotation: APLRotation;
+	specOptions: ReturnType<Player<Spec>['getSpecOptions']>;
+}
 
 // What one level of a plan run came to.
 interface LevelResult {
@@ -79,6 +90,11 @@ export class LevelingPlanTab extends SimTab {
 	private readonly player: Player<Spec>;
 	private readonly gear: LevelingGearSection;
 	private readonly talents: LevelingTalentsSection;
+	private readonly rotations: LevelingRotationsSection;
+	private section: Section = 'overview';
+	// The character as it was before the Rotations part made it the plan's at a level, so we
+	// can put it back when we leave that part.
+	private savedCharacter: SavedCharacter | null = null;
 	private lastRun: PlanRun | null = null;
 	private running: PlanRun | null = null;
 	private progress: ProgressMetrics | null = null;
@@ -226,8 +242,14 @@ export class LevelingPlanTab extends SimTab {
 
 		this.gear = new LevelingGearSection(this.sections.get('gear')!, simUI, level => this.grind(level));
 		this.talents = new LevelingTalentsSection(this.sections.get('talents')!, simUI);
-		new LevelingRotationsSection(this.sections.get('rotations')!, simUI);
+		this.rotations = new LevelingRotationsSection(
+			this.sections.get('rotations')!,
+			simUI,
+			level => this.applyLevel(level),
+			() => this.savedCharacter?.rotation ?? this.player.aplRotation,
+		);
 		this.showSection('overview');
+		simUI.sim.encounter.changeEmitter.on(() => this.syncRotationsEditing());
 
 		this.lastRun = this.loadRun();
 		simUI.levelingPlanRun = onProgress => this.run(onProgress);
@@ -246,6 +268,8 @@ export class LevelingPlanTab extends SimTab {
 	protected buildTabContent() {}
 
 	private showSection(section: Section) {
+		this.section = section;
+		this.syncRotationsEditing();
 		this.sections.forEach((elem, id) => elem.classList.toggle('hide', id != section));
 		this.navButtons.forEach((button, id) => {
 			button.classList.toggle('active', id == section);
@@ -357,8 +381,46 @@ export class LevelingPlanTab extends SimTab {
 		return this.running ?? this.lastRun;
 	}
 
+	// The Rotations part edits the character's own rotation, so while it's open in the Leveling
+	// mode the character is the plan's at a level. Before that we keep the character as it was,
+	// and we put it back when we leave the part or the mode.
+	private syncRotationsEditing() {
+		const editing = this.section == 'rotations' && encounterMode(this.simUI.sim.encounter) == 'levelingPlan';
+		if (editing && !this.savedCharacter) {
+			this.savedCharacter = {
+				level: this.player.getLevel(),
+				bonusTalentPoints: this.player.getBonusTalentPoints(),
+				talents: this.player.getTalentsString(),
+				gear: this.player.getGear(),
+				rotation: APLRotation.clone(this.player.aplRotation),
+				specOptions: this.player.getSpecOptions(),
+			};
+			this.rotations.setActive(true);
+		} else if (!editing && this.savedCharacter) {
+			this.rotations.setActive(false);
+			const saved = this.savedCharacter;
+			this.savedCharacter = null;
+			const eventID = TypedEvent.nextEventID();
+			TypedEvent.freezeAllAndDo(() => {
+				this.player.setLevel(eventID, saved.level);
+				this.player.setBonusTalentPoints(eventID, saved.bonusTalentPoints);
+				this.player.setTalentsString(eventID, saved.talents);
+				this.player.setGear(eventID, saved.gear);
+				this.player.setAplRotation(eventID, saved.rotation);
+				this.player.setSpecOptions(eventID, saved.specOptions);
+			});
+		}
+	}
+
 	// Takes a level of the plan to the Grinding mode: its level, gear, talents and rotation.
 	grind(level: number) {
+		this.applyLevel(level);
+		this.simUI.rootElem.querySelector<HTMLButtonElement>('.sim-mode-picker [data-mode="leveling"]')?.click();
+		this.simUI.simHeader.activateTab('gear-tab');
+	}
+
+	// Makes the character the plan's at a level: its level, gear, talents, rotation and imbue.
+	private applyLevel(level: number) {
 		const plan = this.player.getLevelingPlan();
 		const gear = this.gear.gearAt(level);
 		const rotation = rotationAt(plan, level);
@@ -374,8 +436,6 @@ export class LevelingPlanTab extends SimTab {
 				if ('shamanImbue' in options) this.player.setSpecOptions(eventID, { ...options, shamanImbue: rotation.imbue });
 			}
 		});
-		this.simUI.rootElem.querySelector<HTMLButtonElement>('.sim-mode-picker [data-mode="leveling"]')?.click();
-		this.simUI.simHeader.activateTab('gear-tab');
 	}
 
 	private render() {
