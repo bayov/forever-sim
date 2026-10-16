@@ -47,6 +47,9 @@ export interface MobLife {
 	targetIndex: number;
 	level: number;
 	foundAt: number;
+	// When the search that found it started. The mob stood there all along, so the replay's map
+	// shows it from then, before we spot it.
+	searchedFrom: number;
 	foundDistance: number;
 	// When it was found while we were fighting another (a chain pull).
 	foundInCombat: boolean;
@@ -172,6 +175,7 @@ const reNow = /Leveling: now (\w+)/;
 const reTotemAt = /Leveling: \{SpellID: (\d+)[^}]*\} at \((-?[\d.]+), (-?[\d.]+)\)/;
 const reWe = /Leveling: we're at \((-?[\d.]+), (-?[\d.]+)\), moving \((-?[\d.]+), (-?[\d.]+)\)/;
 const reMobAt = /Leveling: (Target (\d+)) at \((-?[\d.]+), (-?[\d.]+)\), moving \((-?[\d.]+), (-?[\d.]+)\)/;
+const reSearch = /Leveling: (searching for a mob|looking for another mob)/;
 const reFound = /Leveling: found (Target (\d+)) \(level (\d+)\) (\d+) yards away/;
 const reNoticed = /Leveling: (Target \d+) noticed us/;
 const rePulled = /Leveling: pulled (Target \d+) \(level \d+\) from (\d+) yards/;
@@ -203,6 +207,9 @@ function buildSession(result: SimResult): LevelingSession {
 	let maxHealth = 0;
 	let maxMana = 0;
 	let state: SessionState | null = null;
+	// When the search we're in started. A search that finds nothing searches again, and that
+	// is still the same search.
+	let searchStart: number | null = null;
 
 	const endLife = (mob: MobLife, t: number) => {
 		mob.end = t;
@@ -252,6 +259,8 @@ function buildSession(result: SimResult): LevelingSession {
 				}
 			}
 			state = next;
+			// A chain search ends with the fight, and we only search again once we're out.
+			if (next != 'searching' && next != 'pulling' && next != 'fighting') searchStart = null;
 			if (last && last.state == next) {
 				last.end = length;
 				continue;
@@ -266,12 +275,15 @@ function buildSession(result: SimResult): LevelingSession {
 			const mob = alive.get(m[1]);
 			if (mob) mob.track.push(motion);
 			else pendingAt.set(m[1], motion);
+		} else if ((m = raw.match(reSearch))) {
+			if (searchStart == null || m[1] == 'looking for another mob') searchStart = t;
 		} else if ((m = raw.match(reFound))) {
 			const mob: MobLife = {
 				label: m[1],
 				targetIndex: parseInt(m[2]) - 1,
 				level: parseInt(m[3]),
 				foundAt: t,
+				searchedFrom: searchStart ?? t,
 				foundDistance: parseInt(m[4]),
 				foundInCombat: state == 'fighting',
 				pulledAt: null,
@@ -289,6 +301,7 @@ function buildSession(result: SimResult): LevelingSession {
 			pendingAt.delete(m[1]);
 			alive.set(mob.label, mob);
 			mobs.push(mob);
+			searchStart = null;
 		} else if ((m = raw.match(reNoticed))) {
 			noticed.add(m[1]);
 		} else if ((m = raw.match(rePulled))) {
@@ -530,7 +543,9 @@ export function positionAt(track: Array<Motion>, t: number): { x: number; y: num
 // Where a mob is at t: on its track while it stands or runs, and where we are once it reached
 // us. Null when it isn't out of the pool at t.
 export function mobPositionAt(session: LevelingSession, mob: MobLife, t: number): { x: number; y: number; moving: boolean } | null {
-	if (t < mob.foundAt || t > mob.end) return null;
+	if (t < mob.searchedFrom || t > mob.end) return null;
+	// Before we found it, it stood where we found it.
+	if (t < mob.foundAt) return mob.track[0] ? { x: mob.track[0].x, y: mob.track[0].y, moving: false } : null;
 	if (mob.reachedAt != null && t >= mob.reachedAt) {
 		return positionAt(session.player, t);
 	}

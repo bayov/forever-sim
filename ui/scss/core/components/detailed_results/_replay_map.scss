@@ -171,6 +171,12 @@
 			--ring: #ff5a46;
 		}
 
+		// The mob our search is about to find, where it stands before we spot it.
+		&.unseen {
+			--ring: #9a9a9a;
+			opacity: 0.55;
+		}
+
 		&.running:not(.focus) .replay-map-mob-icon {
 			animation: replay-map-pulse 0.6s ease-in-out infinite alternate;
 		}
@@ -471,14 +477,51 @@
 	}
 }
 
+.replay-section-kind-wrap {
+	position: relative;
+}
+
 .replay-section-kind {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 6px;
+	width: 84px;
 	height: 28px;
-	padding: 0 6px;
+	padding: 0 10px;
 	border: 0;
-	border-radius: 4px;
+	border-radius: 999px;
 	background: rgba(255, 255, 255, 0.08);
 	color: #fff;
 	font-size: 12px;
+
+	&:hover {
+		background: rgba(255, 255, 255, 0.16);
+	}
+
+	i {
+		font-size: 10px;
+		opacity: 0.7;
+	}
+}
+
+// The menu opens up from the button, like the speed's.
+.replay-speed-menu.replay-section-kind-menu {
+	right: auto;
+	left: 0;
+	bottom: 36px;
+	min-width: 150px;
+
+	.replay-speed-option {
+		display: flex;
+		justify-content: space-between;
+		gap: 16px;
+	}
+}
+
+.replay-section-kind-count {
+	color: rgba(255, 255, 255, 0.5);
+	font-variant-numeric: tabular-nums;
 }
 
 .replay-skip-rest {

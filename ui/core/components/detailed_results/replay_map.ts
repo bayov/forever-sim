@@ -350,6 +350,7 @@ export class ReplayMap {
 			place(view.root, meScreen.x + offset.x, meScreen.y + offset.y);
 			const pulled = mob.pulledAt != null && time >= mob.pulledAt;
 			view.root.classList.toggle('found', !pulled);
+			view.root.classList.toggle('unseen', time < mob.foundAt);
 			view.root.classList.toggle('running', pulled && (mob.reachedAt == null || time < mob.reachedAt));
 			view.root.classList.toggle('on-us', ringIndex >= 0);
 			view.root.classList.toggle('focus', pulled && mob.targetIndex == focus);
@@ -466,11 +467,12 @@ export class ReplayMap {
 		return { x: (minX + maxX) / 2, y: (minY + maxY) / 2, span, key };
 	}
 
-	// The mob lives out of the pool at this time: found and waiting, running at us or on us.
+	// The mob lives out of the pool at this time: the one our search is about to find, found and
+	// waiting, running at us or on us.
 	private activeMobs(session: LevelingSession, time: number): Array<MobLife> {
 		const mobs: Array<MobLife> = [];
 		for (const mob of session.mobs) {
-			if (mob.foundAt > time) break;
+			if (mob.searchedFrom > time) continue;
 			if (time <= mob.end && mob.diedAt !== time && mob.leftAt !== time) mobs.push(mob);
 		}
 		return mobs;
@@ -484,7 +486,7 @@ export class ReplayMap {
 		if (motion && (motion.vx != 0 || motion.vy != 0)) return Math.atan2(motion.vy, motion.vx);
 		const me = positionAt(session.player, time);
 		if (!me) return null;
-		const mobs = this.activeMobs(session, time).filter(mob => mob.reachedAt == null || time < mob.reachedAt);
+		const mobs = this.activeMobs(session, time).filter(mob => time >= mob.foundAt && (mob.reachedAt == null || time < mob.reachedAt));
 		const mob = mobs[0];
 		const at = mob && mobPositionAt(session, mob, time);
 		if (at && (at.x != me.x || at.y != me.y)) return Math.atan2(at.y - me.y, at.x - me.x);
@@ -531,7 +533,7 @@ export class ReplayMap {
 		const me = positionAt(session.player, time) ?? { x: 0, y: 0, moving: false };
 		const meScreen = toScreen(me.x, me.y);
 
-		// The aggro radius of the mob we found, and a dashed line to it.
+		// The aggro radius of the mob we found, and a dashed line to it once we know it's there.
 		for (const mob of this.activeMobs(session, time)) {
 			const pulled = mob.pulledAt != null && time >= mob.pulledAt;
 			const at = mobPositionAt(session, mob, time);
@@ -546,6 +548,8 @@ export class ReplayMap {
 				ctx.arc(screen.x, screen.y, radius, 0, 2 * Math.PI);
 				ctx.fill();
 				ctx.stroke();
+				ctx.setLineDash([]);
+				if (time < mob.foundAt) continue;
 				ctx.strokeStyle = 'rgba(255, 220, 120, 0.45)';
 				ctx.setLineDash([4, 5]);
 				ctx.beginPath();
@@ -847,7 +851,8 @@ const NAV_KINDS: Array<SectionKind> = ['pull', 'rest', 'search', 'death'];
 // the strip, so the other views follow. Without one they only move the replay.
 export class LevelingTransport {
 	readonly root: HTMLElement;
-	private readonly kindSelect: HTMLSelectElement;
+	private readonly kindButton: HTMLButtonElement;
+	private readonly kindMenu: HTMLElement;
 	private readonly prevButton: HTMLButtonElement;
 	private readonly nextButton: HTMLButtonElement;
 	private readonly skipButton: HTMLButtonElement;
@@ -861,20 +866,40 @@ export class LevelingTransport {
 		this.root = div('replay-section-buttons hide');
 		this.prevButton = button('replay-button small', 'fa-backward-step');
 		this.nextButton = button('replay-button small', 'fa-forward-step');
-		this.kindSelect = document.createElement('select');
-		this.kindSelect.className = 'replay-section-kind';
+		// Which kind of section the buttons go through: a button with a menu like the speed's. A
+		// native select would close as soon as it opens, because the replay takes the focus back
+		// on each click so its keys keep working.
+		const kindWrap = div('replay-section-kind-wrap');
+		this.kindButton = document.createElement('button');
+		this.kindButton.type = 'button';
+		this.kindButton.className = 'replay-section-kind';
+		this.kindButton.setAttribute('aria-haspopup', 'menu');
+		this.kindMenu = div('replay-speed-menu replay-section-kind-menu hide');
+		const title = div('replay-speed-title');
+		title.textContent = 'Go through';
+		this.kindMenu.appendChild(title);
 		NAV_KINDS.forEach(kind => {
-			const option = document.createElement('option');
-			option.value = kind;
-			option.textContent = SECTION_LABELS[kind].many;
-			this.kindSelect.appendChild(option);
+			const option = document.createElement('button');
+			option.type = 'button';
+			option.className = 'replay-speed-option';
+			option.dataset.kind = kind;
+			option.addEventListener('click', () => {
+				this.setKind(kind);
+				this.kindMenu.classList.add('hide');
+			});
+			this.kindMenu.appendChild(option);
 		});
-		this.kindSelect.addEventListener('change', () => (this.kind = this.kindSelect.value as SectionKind));
+		kindWrap.append(this.kindButton, this.kindMenu);
+		this.kindButton.addEventListener('click', () => this.kindMenu.classList.toggle('hide'));
+		document.addEventListener('pointerdown', event => {
+			if (!kindWrap.contains(event.target as Node)) this.kindMenu.classList.add('hide');
+		});
+		this.updateKind();
 		this.skipButton = document.createElement('button');
 		this.skipButton.type = 'button';
 		this.skipButton.className = 'replay-skip-rest';
 		this.skipButton.textContent = 'Skip to pull';
-		this.root.append(this.prevButton, this.kindSelect, this.nextButton, this.skipButton);
+		this.root.append(this.prevButton, kindWrap, this.nextButton, this.skipButton);
 
 		// The controls sit on the stage's controls, and a click there would play or pause.
 		this.root.addEventListener('click', event => event.stopPropagation());
@@ -891,6 +916,29 @@ export class LevelingTransport {
 	setSession(session: LevelingSession | null) {
 		this.session = session;
 		this.root.classList.toggle('hide', !session);
+		this.updateKind();
+	}
+
+	private setKind(kind: SectionKind) {
+		this.kind = kind;
+		this.updateKind();
+	}
+
+	// The button shows the kind we go through, and the menu has each kind with its count.
+	private updateKind() {
+		this.kindButton.replaceChildren(
+			Object.assign(document.createElement('span'), { textContent: SECTION_LABELS[this.kind].many }),
+			icon('fa-caret-up'),
+		);
+		this.kindMenu.querySelectorAll<HTMLElement>('.replay-speed-option').forEach(option => {
+			const kind = option.dataset.kind as SectionKind;
+			const count = this.session?.sections.filter(section => section.kind == kind).length ?? 0;
+			option.classList.toggle('active', kind == this.kind);
+			option.replaceChildren(
+				Object.assign(document.createElement('span'), { textContent: SECTION_LABELS[kind].many }),
+				Object.assign(document.createElement('span'), { className: 'replay-section-kind-count', textContent: String(count) }),
+			);
+		});
 	}
 
 	// Moves to the section before or after the one we're in, of the kind we picked.
