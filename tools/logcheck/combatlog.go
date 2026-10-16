@@ -276,8 +276,20 @@ func archivedLogs(dir string) []string {
 
 // isChar says whether a name in the log is the character Name-Realm. The log adds a dash
 // and a region after the realm, which is empty on the beta ("Bayov-ClassicBetaPvP-").
+//
+// Since the 2026-10-16 logs, the beta can also put an extra part between the name and the
+// realm ("Bayov-Oom-ClassicBetaPvE2-"), and a log can have both forms. So we match the name
+// and the realm, and skip what's between them.
 func isChar(name, char string) bool {
-	return name == char || strings.HasPrefix(name, char+"-")
+	if name == char || strings.HasPrefix(name, char+"-") {
+		return true
+	}
+	charName, realm, ok := strings.Cut(char, "-")
+	if !ok {
+		return false
+	}
+	parts := strings.Split(name, "-")
+	return len(parts) > 2 && parts[0] == charName && slices.Contains(parts[2:], realm)
 }
 
 // logChars is which of the characters we have exports of played between from and to.

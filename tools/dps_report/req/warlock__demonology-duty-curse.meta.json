@@ -4,7 +4,7 @@
   "spec": "Demonology",
   "build": "Demonology (Curse duty)",
   "isDefault": false,
-  "pr": 85,
+  "pr": 103,
   "race": "Human",
   "talents": "011-0305003131221001351-0550005003",
   "treeNames": [
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_demonology",
   "apl": "level60_demonology_duty_curse",
   "published": {
-    "dps": 1107.2,
-    "source": "PR #85"
+    "dps": 1166.1,
+    "source": "PR #103"
   },
   "verify": {
-    "dps": 1107.17,
+    "dps": 1166.1,
     "stderr": 0.39,
     "iters": 20000,
     "ok": true,
-    "note": "-0.03 vs published"
+    "note": "+0.00 vs published"
   },
   "summary": "Keeps its own Curse of the Elements up for the raid, with the raid's copy off. Under Forever the curse has its own slot, so the bane stays.",
   "keyTalents": [

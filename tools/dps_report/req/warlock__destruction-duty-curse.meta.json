@@ -4,7 +4,7 @@
   "spec": "Destruction",
   "build": "Destruction (Curse duty)",
   "isDefault": false,
-  "pr": 85,
+  "pr": 103,
   "race": "Human",
   "talents": "255000000351--055030500310035",
   "treeNames": [
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_destruction_duty_curse",
   "published": {
-    "dps": 983.7,
-    "source": "PR #85"
+    "dps": 1034.8,
+    "source": "PR #103"
   },
   "verify": {
-    "dps": 983.75,
+    "dps": 1034.79,
     "stderr": 0.36,
     "iters": 20000,
     "ok": true,
-    "note": "+0.05 vs published"
+    "note": "-0.01 vs published"
   },
   "summary": "Keeps its own Curse of the Elements up for the raid, with the raid's copy off. Under Forever the curse has its own slot, so the bane stays.",
   "keyTalents": [

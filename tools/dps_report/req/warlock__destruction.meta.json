@@ -4,7 +4,7 @@
   "spec": "Destruction",
   "build": "Destruction",
   "isDefault": false,
-  "pr": 85,
+  "pr": 103,
   "race": "Human",
   "talents": "255000000351--055030500310035",
   "treeNames": [
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_destruction",
   "published": {
-    "dps": 995.9,
-    "source": "PR #85"
+    "dps": 1047.4,
+    "source": "PR #103"
   },
   "verify": {
-    "dps": 995.89,
-    "stderr": 0.36,
+    "dps": 1047.35,
+    "stderr": 0.37,
     "iters": 20000,
     "ok": true,
-    "note": "-0.01 vs published"
+    "note": "-0.05 vs published"
   },
   "summary": "Shadow Bolt Destruction with Conflagrate, plus Pandemic and Malevolence from Affliction.",
   "keyTalents": [
