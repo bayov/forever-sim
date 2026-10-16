@@ -6,7 +6,7 @@ import { ref } from 'tsx-vanilla';
 import { WOWHEAD_DOMAIN, WOWHEAD_EXPANSION_ENV } from '../../constants/wowhead.js';
 import { ResourceType } from '../../proto/api.js';
 import { ActionId } from '../../proto_utils/action_id.js';
-import { CastLog, DamageDealtLog } from '../../proto_utils/logs_parser.js';
+import { CastLog, DamageDealtLog, ResourceChangedLog } from '../../proto_utils/logs_parser.js';
 import { resourceNames } from '../../proto_utils/names.js';
 import { formatToCompactNumber, formatToNumber } from '../../utils.js';
 import { EventFilter } from './events_filter.js';
@@ -325,6 +325,7 @@ export class Replay extends ResultComponent {
 		coreCooldowns: HTMLElement;
 		majorCooldowns: HTMLElement;
 		center: HTMLElement;
+		alert: HTMLElement;
 		resources: HTMLElement;
 		maintain: HTMLElement;
 		sctZone: HTMLElement;
@@ -419,6 +420,7 @@ export class Replay extends ResultComponent {
 			coreCooldowns: ref<HTMLDivElement>(),
 			majorCooldowns: ref<HTMLDivElement>(),
 			center: ref<HTMLDivElement>(),
+			alert: ref<HTMLDivElement>(),
 			resources: ref<HTMLDivElement>(),
 			maintain: ref<HTMLDivElement>(),
 			sctZone: ref<HTMLDivElement>(),
@@ -466,6 +468,10 @@ export class Replay extends ResultComponent {
 					<div className="replay-frames">
 						<div ref={refs.playerCol} className="replay-col replay-col-player" />
 						<div ref={refs.center} className="replay-center">
+							<div ref={refs.alert} className="replay-alert">
+								<div className="replay-alert-arc left" />
+								<div className="replay-alert-arc right" />
+							</div>
 							<div ref={refs.procs} className="replay-procs" />
 							<div ref={refs.maintain} className="replay-maintain" />
 							<div ref={refs.resources} className="replay-resources" />
@@ -536,6 +542,7 @@ export class Replay extends ResultComponent {
 			coreCooldowns: refs.coreCooldowns.value!,
 			majorCooldowns: refs.majorCooldowns.value!,
 			center: refs.center.value!,
+			alert: refs.alert.value!,
 			resources: refs.resources.value!,
 			maintain: refs.maintain.value!,
 			sctZone: refs.sctZone.value!,
@@ -1106,6 +1113,31 @@ export class Replay extends ResultComponent {
 
 	// A line of the combat text: the hits behind it, or the buff or resource we gained.
 	private sctTip(event: SctEvent): Element {
+		// A line of merged resource gains lists each gain.
+		const gains = event.logs.filter((log): log is ResourceChangedLog => log.isResourceChanged());
+		if (gains.length > 1) {
+			const sources = new Set(gains.map(log => log.actionId!.name));
+			return (
+				<div className="timeline-tooltip">
+					<div className="timeline-tooltip-title">
+						<img className="timeline-tooltip-icon" src={event.iconUrl} />
+						<span className="timeline-tooltip-name">{event.text}</span>
+					</div>
+					<div className="timeline-tooltip-meta">
+						{`${gains.length} small gains from ${formatSeconds(gains[0].timestamp)} to ${formatSeconds(event.time)}`}
+					</div>
+					<div className="timeline-tooltip-rows">
+						{gains.map(log =>
+							tooltipRow(
+								`${formatSeconds(log.timestamp)}${sources.size > 1 ? ` ${log.actionId!.name}` : ''}`,
+								`+${formatToNumber(log.valueAfter - log.valueBefore, { maximumFractionDigits: 1 })}`,
+							),
+						)}
+					</div>
+					{sources.size == 1 && this.ingameTooltip(event.actionId)}
+				</div>
+			) as Element;
+		}
 		const hits = event.logs.filter((log): log is DamageDealtLog => log.isDamageDealt());
 		const targets = Array.from(new Set(hits.map(hit => hit.target?.name).filter(Boolean)));
 		const what = event.kind == 'aura' ? 'Gained' : event.kind == 'resource' ? event.text : '';
@@ -1277,6 +1309,18 @@ export class Replay extends ResultComponent {
 		);
 		if (model.maelstrom) {
 			this.tip(pipRow, this.auraTip(model.maelstrom, 'us'));
+			const maelstromTip = this.auraTip(model.maelstrom, 'us');
+			this.tip(this.ui.alert, () => {
+				const tip = maelstromTip();
+				tip.insertBefore(
+					<div className="timeline-tooltip-meta">
+						These arcs light up at 5 stacks of Maelstrom Weapon, like a WeakAura spell alert. Each stack makes the next Lightning Bolt 4% faster and
+						cheaper for each talent point, so with 5 points it's instant and free.
+					</div>,
+					tip.children[1],
+				);
+				return tip;
+			});
 		} else if (model.comboPoints) {
 			this.tip(
 				pipRow,
@@ -1439,9 +1483,9 @@ export class Replay extends ResultComponent {
 		setWidth(resources.swingFill, swing ? (time - swing.last) / (swing.next - swing.last) : 0);
 		const pips = this.pipsAt(model, time);
 		resources.pips.forEach((pip, i) => pip.classList.toggle('on', i < pips));
-		// At five Maelstrom Weapon stacks the pack lights up around the middle, like the
+		// At five Maelstrom Weapon stacks arcs light up where our character would stand, like the
 		// PowerAuras textures of the user's WeakAura.
-		this.ui.center.classList.toggle('maelstrom-full', !!model.maelstrom && pips >= 5);
+		this.ui.alert.classList.toggle('on', !!model.maelstrom && pips >= 5);
 
 		// The procs and other buffs that come and go, in the middle above the cooldowns.
 		syncAuras(this.ui.procs, this.procElems, activeAuras(this.procTracks, time, model.end), 'proc', (elem, track) => {
