@@ -49,9 +49,11 @@ import (
 // (Vis'kag the Bloodletter and Brutality Blade) and daggers for the rest (Perdition's Blade and Core Hound
 // Tooth), with the slot's budget in stats on top and no proc. Their type and speed are the ones each
 // build sims best with among the speeds of Era Phase 1 BiS weapons (standards 22). Combat Swords holds
-// Deathbringer's 2.9 sec axe (Forever lets rogues use axes) and Bone Slicing Hatchet's 1.7 sec axe.
-// Seal Fate Swords holds the same main hand and Core Hound Tooth's 1.6 sec dagger. The dagger builds
-// keep Perdition's Blade and Core Hound Tooth. Mutilate holds Felstriker's 1.7 sec dagger and Dal'Rend's
+// Deathbringer's 2.9 sec axe (Forever lets rogues use axes) and Ebon Hand's 2.5 sec mace, and Combat
+// Daggers Perdition's Blade and Ebon Hand: since Windfury Totem procs from the main hand only, a slow
+// off hand wins for the Combat builds, and a mace takes Hack and Slash's armor ignore.
+// Seal Fate Swords holds the same main hand and Core Hound Tooth's 1.6 sec dagger. Seal Fate Daggers
+// and Subtlety keep Perdition's Blade and Core Hound Tooth. Mutilate holds Felstriker's 1.7 sec dagger and Dal'Rend's
 // Tribal Guardian's 1.8 sec sword, because its off hand strike is normalised to 2.4 sec for any weapon
 // but a dagger. A fast off hand applies more poison. The ranged slot is a bow with Striker's Mark's
 // damage.
@@ -185,13 +187,14 @@ var rogueSyntheticItems = []*proto.UIItem{
 	},
 	// Off Hand, item level 71, in place of Brutality Blade (70, 18832). Linear 32.0 of 31.9.
 	{
-		Id: 994014, Name: "Combat Swords Synthetic Off Hand (Phase 1)", Icon: "inv_axe_11",
-		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeAxe, HandType: proto.HandType_HandTypeOneHand,
+		Id: 994014, Name: "Combat Swords Synthetic Off Hand (Phase 1)", Icon: "inv_hammer_19",
+		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeMace, HandType: proto.HandType_HandTypeOneHand,
 		Stats:      stats.Stats{stats.Agility: 10, stats.Stamina: 8, stats.AttackPower: 10, stats.RangedAttackPower: 10}.ToFloatArray(),
 		CritRating: 9,
-		// Bone Slicing Hatchet's speed and damage spread at Brutality Blade's 51.6 DPS (standards 22:
-		// a Phase 1 BiS speed, the one that sims best).
-		WeaponDamageMin: 61, WeaponDamageMax: 114.4, WeaponSpeed: 1.7,
+		// Ebon Hand's speed and damage spread at Brutality Blade's 51.6 DPS (standards 22: a Phase 1 BiS
+		// speed, the one that sims best). With Windfury Totem procs from the main hand only (2026-10-16)
+		// a slow off hand wins, and a mace takes Hack and Slash's armor ignore.
+		WeaponDamageMin: 90, WeaponDamageMax: 168, WeaponSpeed: 2.5,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
 	},
@@ -378,6 +381,21 @@ var rogueSyntheticItems = []*proto.UIItem{
 		// Felstriker's speed and damage spread at Perdition's Blade's 58.3 DPS (standards 22:
 		// a Phase 1 BiS speed, the one that sims best).
 		WeaponDamageMin: 69.1, WeaponDamageMax: 129.2, WeaponSpeed: 1.7,
+		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+
+	// Combat Daggers off hand: the dagger off hand's stats as a mace, at the speed Combat Daggers sims best
+	// with since Windfury Totem procs from the main hand only. Seal Fate Daggers and Subtlety lose 6 to 7
+	// with it, so they keep the dagger.
+	{
+		Id: 994118, Name: "Combat Daggers Synthetic Off Hand (Phase 1)", Icon: "inv_hammer_19",
+		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeMace, HandType: proto.HandType_HandTypeOneHand,
+		Stats:      stats.Stats{stats.Agility: 9, stats.Stamina: 8, stats.AttackPower: 12, stats.RangedAttackPower: 12}.ToFloatArray(),
+		CritRating: 9,
+		// Ebon Hand's speed and damage spread at Core Hound Tooth's 51.3 DPS (standards 22: a Phase 1 BiS
+		// speed, the one that sims best).
+		WeaponDamageMin: 89.4, WeaponDamageMax: 166.9, WeaponSpeed: 2.5,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
 	},

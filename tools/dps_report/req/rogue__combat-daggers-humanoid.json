@@ -4,7 +4,7 @@
       {
         "players": [
           {
-            "race": "RaceUndead",
+            "race": "RaceSkyborneWindshaper",
             "class": "ClassRogue",
             "equipment": {
               "items": [
@@ -63,7 +63,7 @@
                   "enchant": 1900
                 },
                 {
-                  "id": 994114,
+                  "id": 994118,
                   "enchant": 1900
                 },
                 {
@@ -90,7 +90,7 @@
               "blessingOfWisdom": "TristateEffectImproved",
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "00532310301-30230320201513231-002",
+            "talentsString": "005323102-30230320201515231-002",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Leatherworking",

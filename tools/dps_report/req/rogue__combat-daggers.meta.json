@@ -5,35 +5,34 @@
   "build": "Combat Daggers",
   "isDefault": false,
   "pr": 9,
-  "race": "Undead",
-  "talents": "00530310501-30230320201513231-002",
+  "race": "SkyborneWindshaper",
+  "talents": "005303104-30230320201515231-002",
   "treeNames": [
     "Assassination",
     "Combat",
     "Subtlety"
   ],
-  "gearSet": "level60_phase1_synthetic_daggers",
+  "gearSet": "level60_phase1_synthetic_combat_daggers",
   "apl": "level60_combat_daggers",
   "published": {
-    "dps": 698.7,
-    "source": "Race pass on the client 70425 racials (raid hits, Savage, Ruthless, Earth Fury, Wind Blessed), master d511c09, 2026-10-16"
+    "dps": 722.8,
+    "source": "Re-check after Windfury Totem main hand only (#86) and Grace of Air (#88): weapons, talents, races (standards 16), master e83b6a0, 2026-10-16"
   },
   "verify": {
-    "dps": 698.7,
-    "stderr": 0.2,
+    "dps": 722.8,
+    "stderr": 0.21,
     "iters": 20000,
     "ok": true,
     "note": "same sim as the published number (seed 1)"
   },
-  "summary": "Combat Backstab on daggers.",
+  "summary": "Combat Backstab on a dagger, with a slow off hand mace for Hack and Slash.",
   "keyTalents": [
     "Adrenaline Rush",
     "Blade Flurry",
     "Puncturing Wounds",
-    "Hack and Slash (daggers crit)",
+    "Hack and Slash 5/5 (mace off hand: armor ignored)",
     "Opportunity",
     "Aggression",
-    "Cold Blood",
     "Relentless Strikes"
   ],
   "rotation": [
@@ -41,7 +40,6 @@
     "Slice and Dice at 1+ combo points when down; refresh at 5 when about to drop",
     "Adrenaline Rush under 39 energy while Slice and Dice is up",
     "Blade Flurry on cooldown",
-    "Cold Blood right before a 5-point Eviscerate",
     "Thistle Tea at 10 energy or less; Sapper, Land Mine and potion while Slice and Dice is up",
     "Eviscerate at 4+ combo points (with Slice and Dice up, 79+ energy, or under 6s left); spend leftover points in the last 3s",
     "Backstab right after a main-hand swing (0.25s), or at 100 energy"

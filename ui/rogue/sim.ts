@@ -166,7 +166,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
 				[Faction.Alliance]: Race.RaceSkyborneHighOrder,
-				[Faction.Horde]: Race.RaceUndead,
+				[Faction.Horde]: Race.RaceSkyborneWindshaper,
 			},
 			defaultGear: {
 				[Faction.Unknown]: {},
@@ -189,8 +189,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 			consumes: Presets.DefaultConsumes[Phase.Phase1],
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
-				[Faction.Alliance]: Race.RaceHuman,
-				[Faction.Horde]: Race.RaceOrc,
+				[Faction.Alliance]: Race.RaceSkyborneHighOrder,
+				[Faction.Horde]: Race.RaceSkyborneWindshaper,
 			},
 			defaultGear: {
 				[Faction.Unknown]: {},

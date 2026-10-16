@@ -54,6 +54,7 @@ import SinisterStrikeGearPreBiS from './gear_sets/combat_sinister_strike_prebis.
 import Level30p5BackstabGear from './gear_sets/level30p5_backstab.gear.json';
 import Level30p5SinisterStrikeGear from './gear_sets/level30p5_sinister_strike.gear.json';
 import Level60SyntheticDaggersGear from './gear_sets/level60_phase1_synthetic_daggers.gear.json';
+import Level60SyntheticCombatDaggersGear from './gear_sets/level60_phase1_synthetic_combat_daggers.gear.json';
 import Level60SyntheticMutilateGear from './gear_sets/level60_phase1_synthetic_mutilate.gear.json';
 import Level60SyntheticSealFateSwordsGear from './gear_sets/level60_phase1_synthetic_seal_fate_swords.gear.json';
 import Level60SyntheticSwordsGear from './gear_sets/level60_phase1_synthetic_swords.gear.json';
@@ -142,12 +143,18 @@ export const GearLevel60SyntheticSwords = PresetUtils.makePresetGear('Level 60 S
 	group: 'Level 60',
 });
 export const GearLevel60SyntheticDaggers = PresetUtils.makePresetGear('Level 60 Synthetic Daggers', Level60SyntheticDaggersGear, {
-	tooltip: 'A guess at Phase 1 BiS under Forever for Backstab and Subtlety, made of synthetic items that are not in the game.',
+	tooltip: 'A guess at Phase 1 BiS under Forever for Seal Fate Backstab and Subtlety, made of synthetic items that are not in the game.',
 	group: 'Level 60',
 });
 // The swords set with a 1.6 sec dagger off hand, which Seal Fate sims best with.
 export const GearLevel60SyntheticSealFateSwords = PresetUtils.makePresetGear('Level 60 Synthetic Seal Fate Swords', Level60SyntheticSealFateSwordsGear, {
 	tooltip: 'A guess at Phase 1 BiS under Forever for Seal Fate Sinister Strike, made of synthetic items that are not in the game.',
+	group: 'Level 60',
+});
+// The daggers set with a 2.5 sec mace off hand, which Combat Daggers sims best with since Windfury Totem
+// procs from the main hand only (a mace takes Hack and Slash's armor ignore).
+export const GearLevel60SyntheticCombatDaggers = PresetUtils.makePresetGear('Level 60 Synthetic Combat Daggers', Level60SyntheticCombatDaggersGear, {
+	tooltip: 'A guess at Phase 1 BiS under Forever for Combat Backstab, made of synthetic items that are not in the game.',
 	group: 'Level 60',
 });
 // The daggers set with a 1.7 sec dagger main hand and a 1.8 sec sword off hand, which Mutilate sims best
@@ -162,6 +169,7 @@ export const GearPresets = {
 		GearLevel60SyntheticSwords,
 		GearLevel60SyntheticDaggers,
 		GearLevel60SyntheticSealFateSwords,
+		GearLevel60SyntheticCombatDaggers,
 		GearLevel60SyntheticMutilate,
 		GearBackstabPreBiS,
 		GearSinisterStrikePreBiS,
@@ -174,6 +182,7 @@ export const GearPresets = {
 		GearLevel60SyntheticSwords,
 		GearLevel60SyntheticDaggers,
 		GearLevel60SyntheticSealFateSwords,
+		GearLevel60SyntheticCombatDaggers,
 		GearLevel60SyntheticMutilate,
 		GearBackstabPreBiS,
 		GearSinisterStrikePreBiS,
@@ -394,12 +403,12 @@ export const TalentsLevel60CombatSwords = PresetUtils.makePresetTalents(
 );
 export const TalentsLevel60SealFateSwords = PresetUtils.makePresetTalents(
 	'Level 60 Seal Fate Swords',
-	SavedTalents.create({ talentsString: '0053031045130005-3220132020141' }),
+	SavedTalents.create({ talentsString: '0053031035140005-3220132020141' }),
 	{ tooltip: 'Seal Fate and Cold Blood in Assassination with Blade Flurry and Hack and Slash, for Sinister Strike.', group: 'Level 60' },
 );
 export const TalentsLevel60CombatDaggers = PresetUtils.makePresetTalents(
 	'Level 60 Combat Daggers',
-	SavedTalents.create({ talentsString: '00530310501-30230320201513231-002' }),
+	SavedTalents.create({ talentsString: '005303104-30230320201515231-002' }),
 	{ tooltip: 'Deep Combat for Backstab: Adrenaline Rush, Blade Flurry, Puncturing Wounds, Hack and Slash, Opportunity.', group: 'Level 60' },
 );
 export const TalentsLevel60SealFateDaggers = PresetUtils.makePresetTalents(
@@ -435,10 +444,10 @@ export const TalentsLevel60CombatSwordsHumanoid = humanoidTalents(
 );
 export const TalentsLevel60SealFateSwordsHumanoid = humanoidTalents(
 	'Level 60 Seal Fate Swords',
-	'0053231025130005-3220132020141',
+	'0053231015140005-3220132020141',
 	'Seal Fate with Blade Flurry for Sinister Strike.',
 );
-export const TalentsLevel60CombatDaggersHumanoid = humanoidTalents('Level 60 Combat Daggers', '00532310301-30230320201513231-002', 'Deep Combat for Backstab.');
+export const TalentsLevel60CombatDaggersHumanoid = humanoidTalents('Level 60 Combat Daggers', '005323102-30230320201515231-002', 'Deep Combat for Backstab.');
 export const TalentsLevel60SealFateDaggersHumanoid = humanoidTalents(
 	'Level 60 Seal Fate Daggers',
 	'0053231053120005-322303200013-002',
@@ -696,7 +705,7 @@ export const DefaultDebuffs = {
 export const P1OtherDefaults = {
 	profession1: Profession.Engineering,
 	profession2: Profession.Leatherworking,
-	race: Race.RaceOrc,
+	race: Race.RaceSkyborneWindshaper,
 };
 
 export const OtherDefaults = {
@@ -747,30 +756,31 @@ export const EncounterLevel60Humanoid = level60Encounter('Level 60 (vs Humanoid)
 
 // The Level 60 builds: the synthetic Phase 1 gear, the searched talents and rotation, the Level 60
 // encounter and the best race at 180 sec. A build changes race only when the new one leads by more
-// than 0.5 DPS on two seed sets (standards 16). On 2026-10-16 (client 70425 racials, raid hits),
-// 20000 iterations, seed 1, at 120 / 180 / 300 sec, against the generic boss (no creature type), on
-// the synthetic sets built to the Forever budget (standards 1b: armor 650.5, weapons 63.9, bow 19.5
-// weighted linear points a set, plus two synthetic ilvl 71 trinkets, 31 Agility and 15 crit rating,
-// and +335 attack power for 20 sec every 2 min), with a Dense Sharpening Stone beside the poison on
-// each blade:
-//   Combat Swords       730.3 / 704.7 / 685.5 Orc (the default)
-//   Combat Daggers      720.8 / 698.7 / 680.2 Undead
-//   Seal Fate Daggers   676.8 / 665.5 / 657.0 Undead, 4.8% behind Combat Daggers
-//   Mutilate            680.6 / 669.9 / 661.7 Undead
-//   Subtlety            648.1 / 634.3 / 624.5 Undead
-//   Seal Fate Swords    676.6 / 666.5 / 657.0 Skyborne (Windshaper), 5.4% behind Combat Swords
-// The Orc leads the Undead by 3.0 to 3.4 on Combat Swords (Savage), the Windshaper by 1.0 to 1.4 on
-// Seal Fate Swords (Wind Blessed). On the dagger builds the Windshaper, High Order, Undead and Orc are
-// within 0.7 and the Undead stays. The best Alliance race is the Human on Combat Swords and the High
-// Order everywhere else. No racial depends on the weapon since client 70425.
+// than 0.5 DPS on two seed sets (standards 16). On 2026-10-16 (client 70425 racials, raid hits,
+// Windfury Totem from main hand hits only, Grace of Air beside it), 20000 iterations, seed 1, at
+// 120 / 180 / 300 sec, against the generic boss (no creature type), on the synthetic sets built to the
+// Forever budget (standards 1b: armor 650.5, weapons 63.9, bow 19.5 weighted linear points a set, plus
+// two synthetic ilvl 71 trinkets, 31 Agility and 15 crit rating, and +335 attack power for 20 sec every
+// 2 min), with a Dense Sharpening Stone beside the poison on each blade:
+//   Combat Swords       747.8 / 723.4 / 703.3 Skyborne (Windshaper) (the default)
+//   Combat Daggers      745.4 / 722.8 / 703.4 Skyborne (Windshaper)
+//   Seal Fate Daggers   694.7 / 683.0 / 674.4 Skyborne (Windshaper), 5.5% behind Combat Daggers
+//   Mutilate            690.4 / 679.7 / 671.6 Skyborne (Windshaper)
+//   Seal Fate Swords    684.2 / 673.8 / 664.2 Skyborne (Windshaper), 6.9% behind Combat Swords
+//   Subtlety            668.5 / 652.0 / 641.1 Orc
+// Wind Blessed's 3% haste leads the Undead by 0.7 to 2.8 and the Orc by 1.2 to 3.3 on five builds;
+// on Subtlety the Orc's Savage leads the Undead by 0.8 to 1.0. The best Alliance race is the High
+// Order, 0.1 to 0.4 behind the Windshaper. No racial depends on the weapon since client 70425.
 // The weapons have the type and speed each build sims best with among Era Phase 1 BiS speeds
 // (standards 22), at the Era BiS weapons' damage per second. A slow main hand and a fast off hand win:
-// Combat Swords holds a 2.9 sec axe and a 1.7 sec axe, Seal Fate Swords the 2.9 sec axe and a 1.6 sec
-// dagger, and Mutilate a 1.7 sec dagger and a 1.8 sec sword. The other dagger builds keep Perdition's
-// Blade and Core Hound Tooth.
+// Combat Swords holds a 2.9 sec axe and a 2.5 sec mace, Combat Daggers a 1.8 sec dagger and the same
+// mace (since Windfury Totem procs from the main hand only, a slow off hand wins for the Combat builds,
+// and a mace takes Hack and Slash's armor ignore), Seal Fate Swords the 2.9 sec axe and a 1.6 sec
+// dagger, and Mutilate a 1.7 sec dagger and a 1.8 sec sword. Seal Fate Daggers and Subtlety keep
+// Perdition's Blade and Core Hound Tooth.
 // The "(vs Humanoid)" builds (Murder 2/2, Humanoid boss, the same race as their build) at 180 sec:
-// Combat Swords 729.2, Combat Daggers 720.4, Seal Fate Daggers 688.6, Mutilate 692.8, Subtlety 656.9,
-// Seal Fate Swords 690.0.
+// Combat Swords 748.2, Combat Daggers 744.6, Seal Fate Daggers 706.7, Mutilate 702.6, Seal Fate Swords
+// 697.3, Subtlety 674.9.
 // Venom (25 Energy) loses DPS at every point count as modelled, about 30 at every length, so there is
 // no Venom build. Grimstitch Armor's 4 and 5 piece bonuses would add about 8 and 6 to Combat Daggers.
 // The trinkets are synthetic (Forever's real Phase 1 trinkets are removed or not simulated), and the
@@ -784,7 +794,7 @@ const level60Build = (
 	talents: PresetUtils.PresetTalents,
 	rotation: PresetUtils.PresetRotation,
 	encounter = EncounterLevel60,
-	race = Race.RaceUndead,
+	race = Race.RaceSkyborneWindshaper,
 ) =>
 	PresetUtils.makePresetBuild(name, {
 		group: 'Level 60',
@@ -800,26 +810,26 @@ const level60Build = (
 	});
 export const PresetBuildLevel60CombatDaggers = level60Build(
 	'Level 60 Combat Daggers',
-	'Level 60 Undead Combat Backstab on the synthetic Phase 1 daggers.',
-	GearLevel60SyntheticDaggers,
+	'Level 60 Windshaper Combat Backstab on the synthetic Phase 1 dagger and a slow mace off hand.',
+	GearLevel60SyntheticCombatDaggers,
 	TalentsLevel60CombatDaggers,
 	ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
 );
 export const PresetBuildLevel60SealFateDaggers = level60Build(
 	'Level 60 Seal Fate Daggers',
-	'Level 60 Undead Seal Fate Backstab on the synthetic Phase 1 daggers.',
+	'Level 60 Windshaper Seal Fate Backstab on the synthetic Phase 1 daggers.',
 	GearLevel60SyntheticDaggers,
 	TalentsLevel60SealFateDaggers,
 	ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
 );
 export const PresetBuildLevel60CombatSwords = level60Build(
 	'Level 60 Combat Swords',
-	'Level 60 Orc Combat Sinister Strike on a slow and a fast synthetic Phase 1 axe, in a 3 minute raid fight.',
+	'Level 60 Windshaper Combat Sinister Strike on a slow synthetic Phase 1 axe and a mace off hand, in a 3 minute raid fight.',
 	GearLevel60SyntheticSwords,
 	TalentsLevel60CombatSwords,
 	ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
 	EncounterLevel60,
-	Race.RaceOrc,
+	Race.RaceSkyborneWindshaper,
 );
 export const PresetBuildLevel60SealFateSwords = level60Build(
 	'Level 60 Seal Fate Swords',
@@ -832,17 +842,19 @@ export const PresetBuildLevel60SealFateSwords = level60Build(
 );
 export const PresetBuildLevel60Mutilate = level60Build(
 	'Level 60 Mutilate',
-	'Level 60 Undead Assassination Mutilate on the synthetic Phase 1 dagger and a fast sword off hand.',
+	'Level 60 Windshaper Assassination Mutilate on the synthetic Phase 1 dagger and a fast sword off hand.',
 	GearLevel60SyntheticMutilate,
 	TalentsLevel60Mutilate,
 	ROTATION_PRESET_LEVEL60_MUTILATE,
 );
 export const PresetBuildLevel60Subtlety = level60Build(
 	'Level 60 Subtlety',
-	'Level 60 Undead Subtlety (Hemorrhage, Ghostly Strike, Premeditation) on the synthetic Phase 1 daggers.',
+	'Level 60 Orc Subtlety (Hemorrhage, Ghostly Strike, Premeditation) on the synthetic Phase 1 daggers.',
 	GearLevel60SyntheticDaggers,
 	TalentsLevel60Subtlety,
 	ROTATION_PRESET_LEVEL60_SUBTLETY,
+	EncounterLevel60,
+	Race.RaceOrc,
 );
 
 // The vs Humanoid builds: the same specs against a Humanoid boss (Giants too), with Murder 2/2.
@@ -852,7 +864,7 @@ const humanoidBuild = (
 	gear: PresetUtils.PresetGear,
 	talents: PresetUtils.PresetTalents,
 	rotation: PresetUtils.PresetRotation,
-	race = Race.RaceUndead,
+	race = Race.RaceSkyborneWindshaper,
 ) =>
 	level60Build(
 		`${name} (vs Humanoid)`,
@@ -865,7 +877,7 @@ const humanoidBuild = (
 	);
 export const PresetBuildLevel60CombatDaggersHumanoid = humanoidBuild(
 	'Level 60 Combat Daggers',
-	GearLevel60SyntheticDaggers,
+	GearLevel60SyntheticCombatDaggers,
 	TalentsLevel60CombatDaggersHumanoid,
 	ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
 );
@@ -880,7 +892,7 @@ export const PresetBuildLevel60CombatSwordsHumanoid = humanoidBuild(
 	GearLevel60SyntheticSwords,
 	TalentsLevel60CombatSwordsHumanoid,
 	ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
-	Race.RaceOrc,
+	Race.RaceSkyborneWindshaper,
 );
 export const PresetBuildLevel60SealFateSwordsHumanoid = humanoidBuild(
 	'Level 60 Seal Fate Swords',
@@ -900,4 +912,5 @@ export const PresetBuildLevel60SubtletyHumanoid = humanoidBuild(
 	GearLevel60SyntheticDaggers,
 	TalentsLevel60SubtletyHumanoid,
 	ROTATION_PRESET_LEVEL60_SUBTLETY,
+	Race.RaceOrc,
 );

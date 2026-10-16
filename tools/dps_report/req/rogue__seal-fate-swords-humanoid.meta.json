@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 9,
   "race": "SkyborneWindshaper",
-  "talents": "0053231025130005-3220132020141",
+  "talents": "0053231015140005-3220132020141",
   "treeNames": [
     "Assassination",
     "Combat",
@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic_seal_fate_swords",
   "apl": "level60_combat_swords",
   "published": {
-    "dps": 690.0,
-    "source": "Race pass on the client 70425 racials (raid hits, Savage, Ruthless, Earth Fury, Wind Blessed), master d511c09, 2026-10-16"
+    "dps": 697.3,
+    "source": "Re-check after Windfury Totem main hand only (#86) and Grace of Air (#88): weapons, talents, races (standards 16), master e83b6a0, 2026-10-16"
   },
   "verify": {
-    "dps": 690.0,
+    "dps": 697.3,
     "stderr": 0.24,
     "iters": 20000,
     "ok": true,
