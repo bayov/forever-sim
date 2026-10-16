@@ -299,6 +299,7 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 - **Sim now:** Classic's rule: a pet's hit scales with its attack speed, so every pet has the same white damage a second (`ForeverPetHitScalesWithSpeed`, `sim/hunter/pet.go`; user ruling 2026-10-15, PR #22). On the beta every pet's auto attack hits the size of a 2.0 sec pet's (18.17 to 27.66 × 2) at any attack speed, so the fastest pet deals the most.
 - **Source:** beta players, gathered on ForeverChanges' hunter pets page and the forever-hunter wiki. The code comment says "nobody knows yet whether that is intended".
 - **Why uncertain:** it could be a beta bug that Blizzard fixes, which would bring back Classic's hit size scaling with the swing.
+- **Reconfirmed 2026-10-16:** the assumptions audit found the beta behaviour still standing: EU forum thread 632244 (level 16 Tallstriders, a 1.3 sec pet hitting 27 to 38 against 31 to 42 for a 2.0 sec pet), forever-bugs #31 still open, and no fix in any note through 15 October. Asked again, the user ruled "Keep treating it as a bug", so Classic's speed scaling stays the default.
 - **Settings:**
   - **Expected, Classic (Sim now).** The hit scales with attack speed, treating the beta's behaviour as a bug (user ruling 2026-10-15).
   - **High, as on the beta.** The only observed behaviour: every pet hits like a 2.0 sec pet.
@@ -520,8 +521,8 @@ No assumptions of its own. The rogue's scenarios are the shared ones:
 
 - **Builds:** every caster and hybrid (mage, warlock, priest, Elemental, Enhancement, Balance, Retribution); not the rogues, warriors or hunters.
 - **Sim now:** Classic's 2% average partial resist per level above the caster on every non-binary spell, 6% against the level 63 boss (`AverageMagicPartialResistPerLevelMultiplier`, `sim/core/spell_resistances.go`, `spell.go`). notes.md said the sim drops it under Forever, but the code keeps it.
-- **Evidence:** 0 partial resists in 313 landed non-binary hits on normal beta mobs 3 to 5 levels up (shaman_audit.md 5.2). No boss or elite data.
-- **Settings:** Low (the sim now) is Classic's 6% at +3; Expected is none (the beta). The default stays on the sim's value until the user rules (orchestration/assumptions_audit.md, Q1).
+- **Evidence:** 0 partial resists in about 520 landed non-binary hits on normal beta mobs 3 to 5 levels up (shaman_audit.md 5.2 and beta_results.txt; the earlier "313" counted only part of the log). Classic predicts 18 to 30% of such hits partly resisted, WotLK's model about 75%. Mobs with a school resistance do partly resist, in 10% steps: Elder Cloud Serpents (Nature 58) took 20% or 30% off all 15 Nature hits. No boss or elite data, and no Blizzard note or bug report on level resists (research 2026-10-16, orchestration/assumptions_audit.md section 7).
+- **Settings:** Low (the sim now) is Classic's 6% at +3, relabelled "bosses keep it", the only reading the beta leaves room for. Expected is none (the beta). A 10%-step setting isn't needed: step size changes the variance, not the mean, and WotLK's 5 resistance a level would give 4.5% at +3, close to Low. The default stays on the sim's value: the user asked for more verification (Q1, 2026-10-16), with the settling test in notes.md.
 - **Sensitivity (10k iterations, seed 1, 180 s, None against 6%):** Fire +7.1%, Arcane +6.3%, Elemental +6.4%, Balance +5.4%, Destruction +5.2%, Affliction +5.3%, Ret +4.2%, Shadow +3.8%, Enhancement +3.0%, Frost 0 (Frostbolt is binary).
 - **Knob (to add):** `core.Assume("level_partial_resist", AverageMagicPartialResistPerLevelMultiplier)` at both uses.
 
