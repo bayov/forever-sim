@@ -152,7 +152,7 @@ export function startReport(dash, events) {
   // ---------- state ----------
   const store = (() => { try { return window.localStorage; } catch { return null; } })();
   const saved = (() => { try { return JSON.parse(store?.getItem('fv-state') || '{}'); } catch { return {}; } })();
-  const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', rsOpt: {}, rsFac: 'All', srFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', rlFac: 'All', rlRole: 'All', rlCls: 'All', rlSpec: 'All', setupHide: false, enc: false, duty: true, asm: {}, asmOpen: [] }, saved);
+  const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', rsOpt: {}, rsFac: 'All', srFac: 'All', slFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', rlFac: 'All', rlRole: 'All', rlCls: 'All', rlSpec: 'All', setupHide: false, enc: false, duty: true, asm: {}, asmOpen: [] }, saved);
   st.len = '180'; // a fight length other than 180s is never restored: the page always opens on the main numbers
   const persist = () => { try { store?.setItem('fv-state', JSON.stringify(st)); } catch {} };
 
@@ -1359,6 +1359,13 @@ export function startReport(dash, events) {
     iconSelect(host, items, sc.spec, (v) => { st[p + 'Spec'] = v; persist(); hideTip(); render(); }, (it) => (it.value === 'All' ? all : `${sc.cls === 'All' ? (sc.builds[0]?.class || '') + ' · ' : ''}${it.text}`));
   };
 
+  // The Specs page's race cards show one preset, so their filter is only the faction.
+  const fixedScope = (p, b) => {
+    const fi = (n) => (iconMap() ? iconImg(n, 'fv-ico') : null);
+    seg($(`#${p}-fac`), p + 'Fac', [['All', 'Both factions'], ['Horde', 'Horde', fi('ui_hordeicon')], ['Alliance', 'Alliance', fi('ui_allianceicon')]]);
+    return { fac: st[p + 'Fac'] || 'All', builds: [b], ids: new Set([b.id]), single: b };
+  };
+
   // An entry's bar on one preset: base stats, then each racial that works in its scenario (its variant). The entry
   // without its weapon racial leaves that racial out. A boss type's part is named after the racial it switches on.
   const segsOf = (row, mine) => {
@@ -1408,14 +1415,8 @@ export function startReport(dash, events) {
     const host = fixed ? $('#sp-races') : $('#race-rank'), axis = $(`#${p}-axis`), card = host.closest('.fv-card');
     const ids = ['race_variants', 'race_breakdown', 'builds', 'stats'];
     if (!(fixed ? specWait(host, ids, fixed) : waitOr(host, ids))) return;
-    let sc;
-    if (fixed) {
-      sc = { fac: st.srFac || 'All', builds: [fixed], ids: new Set([fixed.id]), single: fixed };
-      seg($('#sr-fac'), 'srFac', [['All', 'Both factions'], ['Horde', 'Horde', iconMap() ? iconImg('ui_hordeicon', 'fv-ico') : null], ['Alliance', 'Alliance', iconMap() ? iconImg('ui_allianceicon', 'fv-ico') : null]]);
-    } else {
-      sc = scopeOf('rs');
-      drawScope('rs', sc);
-    }
+    const sc = fixed ? fixedScope(p, fixed) : scopeOf(p);
+    if (!fixed) drawScope(p, sc);
     const V = rsVar(p), one = sc.single;
     const rr = raceRows(V).filter((r) => sc.ids.has(r.build) && (sc.fac === 'All' || r.faction === sc.fac));
     if (!rr.length) {
@@ -1622,12 +1623,16 @@ export function startReport(dash, events) {
   // counts as nothing. The switches decide whether a weapon racial counts with its weapon swapped in, and a boss
   // type racial against its boss type. On one preset the numbers are DPS.
   const TARGET_PART = { 'Troll|beast': 'beast_troll', 'Dwarf|beast': 'beast_dwarf', 'High Order|elemental': 'insight', 'Windshaper|elemental': 'insight', 'Dwarf|humanoid': 'chastise' };
-  const drawRacialRank = () => {
-    const host = $('#racial-rank'), dead = $('#rl-dead');
-    if (!waitOr(host, ['race_variants', 'race_breakdown', 'builds', 'stats'])) return;
-    const sc = scopeOf('rl');
-    drawScope('rl', sc);
-    const V = rsVar('rl'), one = sc.single, tgt = V.includes('t');
+  //
+  // The Specs page shows the same card for its preset (fixed), with only the faction and the enemy types switch.
+  const drawRacialRank = (fixed) => {
+    const p = fixed ? 'sl' : 'rl';
+    const host = fixed ? $('#sp-racials') : $('#racial-rank'), dead = $(`#${p}-dead`), card = host.closest('.fv-card');
+    const ids = ['race_variants', 'race_breakdown', 'builds', 'stats'];
+    if (!(fixed ? specWait(host, ids, fixed) : waitOr(host, ids))) return;
+    const sc = fixed ? fixedScope(p, fixed) : scopeOf(p);
+    if (!fixed) drawScope(p, sc);
+    const V = rsVar(p), one = sc.single, tgt = V.includes('t');
     const base = rowsOf('race_variants').filter((r) => r.variant === 'baseline' && sc.ids.has(r.build) && (sc.fac === 'All' || r.faction === sc.fac));
     const bd = d3.group(rowsOf('race_breakdown').filter((q) => sc.ids.has(q.build)), (q) => q.build + '|' + q.race);
     const bmap = new Map(sc.builds.map((b) => [b.id, b]));
@@ -1652,13 +1657,12 @@ export function startReport(dash, events) {
     const rows = all.filter((a) => a.works), idle = all.filter((a) => !a.works);
     if (!rows.length) {
       host.replaceChildren(el('p', { class: 'fv-note', text: 'No racial helps these presets.' }));
-      dead.replaceChildren(); $('#rl-legend').replaceChildren();
+      dead.replaceChildren(); $(`#${p}-legend`).replaceChildren();
       return;
     }
     const max = Math.max(d3.max(rows, (a) => a.value), one ? 1 : 0.1);
     const fd = (v) => (one ? sgn(v, f1) : `${sgn(v, f2)}%`);
     const kinds = new Set();
-    const card = $('#racial-rank-card');
     host.replaceChildren(...rows.map((a, i) => {
       kinds.add(PART_KIND[a.part] ?? 0);
       const row = el('div', { class: 'fv-orow' + (i === 0 ? ' top' : ''), 'data-tip': '1' },
@@ -1684,7 +1688,7 @@ export function startReport(dash, events) {
       return row;
     }));
     dead.textContent = idle.length ? `No effect on ${one ? 'this preset' : 'these presets'}: ${idle.map((a) => `${a.label} (${a.race})`).join(', ')}.` : '';
-    legend($('#rl-legend'), kinds);
+    legend($(`#${p}-legend`), kinds);
   };
 
   // ---------- icons ----------
@@ -1893,6 +1897,7 @@ export function startReport(dash, events) {
     safe(() => drawEvents(b), $('#sp-events'));
     safe(() => drawAuras(b), $('#sp-auras'));
     safe(() => drawRaceRank(b), $('#sp-races'));
+    safe(() => drawRacialRank(b), $('#sp-racials'));
     $('#sp-races-link').onclick = (e) => { e.stopPropagation(); pickRaceSpec(b.id); };
     safe(() => drawSpecLen(b), $('#sp-len'));
     safe(() => drawTables(b));

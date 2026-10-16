@@ -70,13 +70,13 @@
     </div>
 
     <div class="content-block fv-card" id="len-card">
-      <div class="content-block-header"><h6 class="content-block-title">Short and long fights</h6></div>
+      <div class="content-block-header"><h6 class="content-block-title">DPS by fight length</h6></div>
       <p class="fv-note">As a share of 180s DPS.</p>
       <div class="fv-chart" id="lenchart" data-source="lengths builds"></div>
     </div>
 
     <div class="content-block fv-card" id="mana-card">
-      <div class="content-block-header"><h6 class="content-block-title">Mana over a long fight</h6></div>
+      <div class="content-block-header"><h6 class="content-block-title">Mana over time</h6></div>
       <p class="fv-note">Time to 10% mana, in 8 minute fights.</p>
       <p class="fv-note" id="mana-sum"></p>
       <div class="fv-mana">
@@ -115,7 +115,7 @@
     </div>
 
     <div class="content-block fv-card" id="heat-card">
-      <div class="content-block-header fv-hrow"><h6 class="content-block-title">Every race on every preset</h6></div>
+      <div class="content-block-header fv-hrow"><h6 class="content-block-title">Races by preset</h6></div>
       <p class="fv-note">Percent behind the best race (★). Hatched: race can't be that class.</p>
       <div class="fv-toolbar">
         <div class="fv-controls" id="heat-classes" role="group" aria-label="Class filter"></div>
@@ -125,7 +125,7 @@
     </div>
 
     <div class="content-block fv-card" id="racespread-card">
-      <div class="content-block-header fv-hrow"><h6 class="content-block-title">How much race matters</h6></div>
+      <div class="content-block-header fv-hrow"><h6 class="content-block-title">Race DPS spread</h6></div>
       <p class="fv-note">Best to worst race, in %.</p>
       <div class="fv-toolbar"><div class="fv-controls"><span class="fv-label">Sort</span><div class="fv-seg" id="spread-sort" role="group" aria-label="Sort"></div><div class="fv-rs-opts" id="spread-opts"></div></div></div>
       <div class="fv-chart" id="racespread" data-source="racespread builds race_variants"></div>
@@ -160,9 +160,30 @@
       <div class="fv-trees" id="sp-tal"></div>
     </div>
 
+    <div class="content-block fv-card" id="sp-races-card" data-jump="Races">
+      <div class="content-block-header"><h6 class="content-block-title">Best races</h6></div>
+      <div class="fv-toolbar">
+        <div class="fv-controls"><div class="fv-seg" id="sr-fac" role="group" aria-label="Faction"></div><div class="fv-rs-opts" id="sr-opts"></div></div>
+      </div>
+      <div class="fv-legend" id="sr-legend"></div>
+      <p class="fv-axiswarn" id="sr-axis" hidden></p>
+      <div id="sp-races" data-source="race_variants race_breakdown race_notes"></div>
+      <button class="btn btn-link fv-linkbtn" type="button" id="sp-races-link">Racials, weapons and target types ›</button>
+    </div>
+
+    <div class="content-block fv-card" id="sp-racials-card" data-jump="Racials">
+      <div class="content-block-header"><h6 class="content-block-title">Strongest racials</h6></div>
+      <div class="fv-toolbar">
+        <div class="fv-controls"><div class="fv-seg" id="sl-fac" role="group" aria-label="Faction"></div><div class="fv-rs-opts" id="sl-opts"></div></div>
+      </div>
+      <div class="fv-legend" id="sl-legend"></div>
+      <div id="sp-racials" data-source="race_variants race_breakdown race_notes"></div>
+      <p class="fv-note" id="sl-dead"></p>
+    </div>
+
     <div class="fv-grid">
-      <div class="content-block fv-card" id="sp-dist-card" data-jump="Spread">
-        <div class="content-block-header"><h6 class="content-block-title">How fights vary</h6></div>
+      <div class="content-block fv-card" id="sp-dist-card" data-jump="Distribution">
+        <div class="content-block-header"><h6 class="content-block-title">DPS distribution</h6></div>
         <p class="fv-note" id="sp-dist-note">DPS of every simulated fight, in 5 DPS bins.</p>
         <div class="fv-toolbar"><div class="fv-controls"><div class="fv-seg" id="sp-dist-mode" role="group" aria-label="Show"></div></div></div>
         <div class="fv-chart" id="sp-dist"></div>
@@ -176,7 +197,7 @@
       </div>
     </div>
 
-    <div class="content-block fv-card" id="sp-time-card" data-jump="Timeline">
+    <div class="content-block fv-card" id="sp-time-card" data-jump="Events">
       <div class="content-block-header"><h6 class="content-block-title">Events</h6></div>
       <p class="fv-note" id="sp-time-note"></p>
       <div class="fv-events" id="sp-events"></div>
@@ -184,24 +205,11 @@
 
     <div class="fv-grid">
       <div class="content-block fv-card" id="sp-auras-card" data-jump="Auras">
-        <div class="content-block-header"><h6 class="content-block-title">Buff and debuff uptime</h6></div>
+        <div class="content-block-header"><h6 class="content-block-title">Aura uptime</h6></div>
         <p class="fv-note" id="sp-auras-note">Number: average uptime. Bar: the fight picked above.</p>
         <div class="fv-toolbar"><div class="fv-controls"><div class="fv-seg" id="sp-aura-owner" role="group" aria-label="Whose auras"></div><button class="fv-chip" id="sp-alwayson" aria-pressed="true">Hide always-on</button></div></div>
         <div class="fv-sbar" id="sp-auras"></div>
       </div>
-      <div class="content-block fv-card" id="sp-races-card" data-jump="Races">
-        <div class="content-block-header"><h6 class="content-block-title">Races for this preset</h6></div>
-        <div class="fv-toolbar">
-          <div class="fv-controls"><div class="fv-seg" id="sr-fac" role="group" aria-label="Faction"></div><div class="fv-rs-opts" id="sr-opts"></div></div>
-        </div>
-        <div class="fv-legend" id="sr-legend"></div>
-        <p class="fv-axiswarn" id="sr-axis" hidden></p>
-        <div id="sp-races" data-source="race_variants race_breakdown race_notes"></div>
-        <button class="btn btn-link fv-linkbtn" type="button" id="sp-races-link">Racials, weapons and target types ›</button>
-      </div>
-    </div>
-
-    <div class="fv-grid">
       <div class="content-block fv-card" id="sp-len-card">
         <div class="content-block-header"><h6 class="content-block-title">DPS by fight length</h6></div>
         <div class="fv-chart" id="sp-len"></div>
@@ -217,7 +225,7 @@
 
     <div class="content-block fv-card" id="sp-abiltab-card" data-jump="Ability table">
       <details>
-        <summary>Per-ability numbers</summary>
+        <summary>Ability table</summary>
         <p class="fv-note">Per fight. Crit % is of landed hits.</p>
         <div class="fv-scroll tall">
           <table id="sp-abiltab" data-source="abilities" data-row-key="build,key">
@@ -299,7 +307,7 @@
     </div>
     <div class="fv-grid">
       <div class="content-block fv-card" id="cmp-dist-card">
-        <div class="content-block-header"><h6 class="content-block-title">Fight-to-fight spread</h6></div>
+        <div class="content-block-header"><h6 class="content-block-title">DPS distribution</h6></div>
         <div class="fv-chart" id="cmp-dist" data-source="hist"></div>
       </div>
       <div class="content-block fv-card" id="cmp-len-card">
@@ -308,12 +316,12 @@
       </div>
     </div>
     <div class="content-block fv-card" id="cmp-w-card">
-      <div class="content-block-header"><h6 class="content-block-title">Stat weights side by side</h6></div>
+      <div class="content-block-header"><h6 class="content-block-title">Stat weights</h6></div>
       <p class="fv-note">In each preset's main stat. Hit and crit per rating point.</p>
       <div class="fv-grid" id="cmp-w" data-source="weights"></div>
     </div>
     <div class="content-block fv-card" id="cmp-abil-card">
-      <div class="content-block-header"><h6 class="content-block-title">Damage sources side by side</h6></div>
+      <div class="content-block-header"><h6 class="content-block-title">Damage breakdown</h6></div>
       <div class="fv-grid" id="cmp-abil" data-source="abilities"></div>
     </div>
   </section>
@@ -321,7 +329,7 @@
   <!-- METHOD -->
   <section class="tab-pane fv-page" id="method" data-page="method" hidden>
     <div class="content-block fv-card" id="method-card">
-      <div class="content-block-header"><h6 class="content-block-title">How these numbers were made</h6></div>
+      <div class="content-block-header"><h6 class="content-block-title">Sim setup</h6></div>
       <div class="fv-prose" id="method-prose">
         <p>Every preset uses its own talents, rotation, race, consumes and synthetic Phase 1 gear, plus shared raid buffs.</p>
         <ul class="fv-list">
