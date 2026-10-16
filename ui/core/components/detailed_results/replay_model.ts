@@ -374,8 +374,7 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 		cooldown.castTimes = castLogs.filter(log => log.actionId!.toStringIgnoringTag() == cooldown.key).map(log => log.timestamp);
 		cooldown.aura = playerAuras.find(track => track.actionId.equalsIgnoringTag(cooldown.actionId)) ?? null;
 	});
-	// The short rotation cooldowns first, then the long ones, each in the order we first used them.
-	cooldowns.sort((a, b) => Number(a.longest > 30) - Number(b.longest > 30) || a.firstUse - b.firstUse);
+	cooldowns.sort((a, b) => a.firstUse - b.firstUse);
 
 	const { mainBar, utilityBar } = isShaman ? shamanBars(cooldowns) : splitBars(cooldowns);
 	const shaman: ShamanPack | null = isShaman
@@ -517,12 +516,76 @@ const shamanBars = (cooldowns: Array<TrackedCooldown>) => {
 	return { mainBar, utilityBar };
 };
 
-// The other classes have no pack of the user's to follow. The short rotation cooldowns go on
-// the main bar and the long ones on the row under it.
-const splitBars = (cooldowns: Array<TrackedCooldown>) => ({
-	mainBar: cooldowns.filter(cooldown => cooldown.longest <= 30),
-	utilityBar: cooldowns.filter(cooldown => cooldown.longest > 30),
-});
+// The other classes have no pack of the user's to follow, so we do what the shaman pack does.
+// The main bar holds what we press for damage: the rotation, the big cooldowns, the racial and
+// the items we use (trinkets, explosives, potions, runes). The row under it holds the situational
+// cooldowns, like defensives, crowd control and movement.
+//
+// A row wraps after 9 icons. The main bar has our spells first, then the items, each in the
+// order we first used them.
+const OTHER_UTILITY = [
+	'Shield Wall',
+	'Last Stand',
+	'Shield Block',
+	'Berserker Rage',
+	'Intimidating Shout',
+	'Pummel',
+	'Shield Bash',
+	'Charge',
+	'Intercept',
+	'Intervene',
+	'Evasion',
+	'Sprint',
+	'Kick',
+	'Gouge',
+	'Blind',
+	'Kidney Shot',
+	'Distract',
+	'Divine Shield',
+	'Divine Protection',
+	'Blessing of Protection',
+	'Blessing of Freedom',
+	'Lay on Hands',
+	'Hammer of Justice',
+	'Ice Block',
+	'Blink',
+	'Counterspell',
+	'Frost Nova',
+	'Psychic Scream',
+	'Fade',
+	'Power Word: Shield',
+	'Silence',
+	'Feign Death',
+	'Freezing Trap',
+	'Frost Trap',
+	'Scatter Shot',
+	'Disengage',
+	'Wing Clip',
+	'Intimidation',
+	'Barkskin',
+	'Dash',
+	'Bash',
+	"Nature's Grasp",
+	'Frenzied Regeneration',
+	'Howl of Terror',
+	'Spell Lock',
+	'Shadow Ward',
+	'War Stomp',
+	'Will of the Forsaken',
+	'Stoneform',
+	'Escape Artist',
+	'Perception',
+];
+
+const splitBars = (cooldowns: Array<TrackedCooldown>) => {
+	const isUtility = (cooldown: TrackedCooldown) =>
+		OTHER_UTILITY.some(name => named(cooldown.actionId, name)) || SHAMAN_UTILITY_ITEMS.some(name => cooldown.actionId.name.includes(name));
+	const main = cooldowns.filter(cooldown => !isUtility(cooldown));
+	return {
+		mainBar: [...main.filter(cooldown => !cooldown.actionId.itemId), ...main.filter(cooldown => cooldown.actionId.itemId)],
+		utilityBar: cooldowns.filter(isUtility),
+	};
+};
 
 const buildTotemSlots = (logs: Array<SimLog>): Array<TotemSlot> => {
 	const slots = new Map<string, Array<TotemDrop>>();

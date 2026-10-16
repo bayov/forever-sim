@@ -65,7 +65,7 @@ enum Blessings {
 	BlessingUnknown = 0;
 	BlessingOfKings = 1;
 	BlessingOfMight = 2;
-	BlessingOfSalvation = 3;
+	BlessingOfSalvation = 3; // Forever (client 70425): "Salvation", no longer a blessing; offered in no picker
 	BlessingOfWisdom = 4;
 	BlessingOfSanctuary = 5;
 	BlessingOfLight = 6;

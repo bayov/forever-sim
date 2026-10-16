@@ -6,6 +6,7 @@ import tippy from 'tippy.js';
 import { installStickyTooltips } from '../core/components/sticky_tooltips';
 import { createDash } from './data';
 import { loadDataset, manifest, standalone } from './data_source';
+import { ReportEvents } from './events';
 import layout from './layout.html?raw';
 import { startReport } from './report.js';
 
@@ -21,7 +22,7 @@ if (standalone) {
 	root.querySelector('#home-back')!.remove();
 }
 const dash = createDash(manifest, loadDataset, document.getElementById('fv')!);
-startReport(dash);
+startReport(dash, new ReportEvents(document.getElementById('sp-events')!, dash));
 installStickyTooltips();
 
 // Like the sim UI's header, the tabs float over the page once it scrolls. The page scrolls in .sim-ui.
