@@ -26,6 +26,7 @@ type export struct {
 		Version string `json:"version"`
 	} `json:"when"`
 	Who struct {
+		GUID      string `json:"guid"`
 		Name      string `json:"name"`
 		Realm     string `json:"realm"`
 		ClassFile string `json:"classFile"`
@@ -60,6 +61,11 @@ type export struct {
 	// change or logout.
 	history bool
 	kind    string
+	// session is the history file and the login a history record belongs to.
+	session string
+	// guid is the character's GUID: the export's own when it has one, or else the one the logs
+	// place it on (placeExports).
+	guid string
 }
 
 type exportItem struct {
@@ -106,7 +112,7 @@ func parseExport(data []byte, path string) (*export, error) {
 }
 
 // loadExports reads every export we have: the pasted ones in <archive>/exports, and one for each
-// record of BayovCore's history in <archive>/history.
+// record of BayovCore's history in <archive>/history. Each one knows its character's GUID.
 func loadExports(archive string) ([]*export, error) {
 	paths, _ := filepath.Glob(filepath.Join(archive, "exports", "export-*.json"))
 	var all []*export
@@ -121,20 +127,25 @@ func loadExports(archive string) ([]*export, error) {
 	if err != nil {
 		return nil, err
 	}
-	return append(all, history...), nil
+	all = append(all, history...)
+	if slices.ContainsFunc(all, func(ex *export) bool { return ex.Who.GUID == "" }) {
+		spans, err := archivedMeSpans(archive)
+		if err != nil {
+			return nil, err
+		}
+		placeExports(all, spans)
+	} else {
+		placeExports(all, nil)
+	}
+	return all, nil
 }
 
-// charKey is how the export and the combat log name a character: Name-Realm.
-func charKey(ex *export) string {
-	return ex.Who.Name + "-" + ex.Who.Realm
-}
-
-// pickExport is the newest export of one of chars taken before the window ends, or else the
-// first one after it.
+// pickExport is the newest export of one of the characters (by GUID) taken before the window
+// ends, or else the first one after it.
 func pickExport(all []*export, end time.Time, chars map[string]bool) (*export, error) {
 	var before, after *export
 	for _, ex := range all {
-		if !chars[charKey(ex)] {
+		if ex.guid == "" || !chars[ex.guid] {
 			continue
 		}
 		if !ex.time.After(end) {
@@ -155,12 +166,11 @@ func pickExport(all []*export, end time.Time, chars map[string]bool) (*export, e
 }
 
 // exportsAround returns the character's exports from the last one taken at or before the
-// window starts to the first one taken at or after it ends, in time order. Another character
-// with the same name (a deleted and remade one) has another class or race, and is left out.
+// window starts to the first one taken at or after it ends, in time order.
 func exportsAround(all []*export, ex *export, from, to time.Time) []*export {
 	var mine []*export
 	for _, other := range all {
-		if other.Who.Name == ex.Who.Name && other.Who.Realm == ex.Who.Realm && other.Who.ClassFile == ex.Who.ClassFile && other.Who.RaceFile == ex.Who.RaceFile {
+		if other.guid != "" && other.guid == ex.guid {
 			mine = append(mine, other)
 		}
 	}

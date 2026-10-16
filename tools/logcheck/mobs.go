@@ -4,11 +4,9 @@ import (
 	"fmt"
 	"maps"
 	"math"
-	"path/filepath"
 	"slices"
 	"sort"
 	"strconv"
-	"strings"
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
@@ -32,10 +30,10 @@ const (
 func runMobs(archive, flavor, logPath string) error {
 	logs := []string{logPath}
 	if logPath == "" {
-		logs = archivedLogs(filepath.Join(archive, flavor))
+		logs = flavorLogs(archive, flavor)
 	}
 	if len(logs) == 0 {
-		return fmt.Errorf("no combat logs in %s", filepath.Join(archive, flavor))
+		return fmt.Errorf("no combat logs in %s", archive)
 	}
 	exports, err := loadExports(archive)
 	if err != nil {
@@ -43,7 +41,9 @@ func runMobs(archive, flavor, logPath string) error {
 	}
 	byChar := map[string][]*export{}
 	for _, ex := range exports {
-		byChar[charKey(ex)] = append(byChar[charKey(ex)], ex)
+		if ex.guid != "" {
+			byChar[ex.guid] = append(byChar[ex.guid], ex)
+		}
 	}
 	for _, list := range byChar {
 		slices.SortFunc(list, func(a, b *export) int { return a.time.Compare(b.time) })
@@ -113,28 +113,15 @@ func (m *mobTally) read(events []*event, byChar map[string][]*export) {
 			}
 		}
 	}
-	// Our characters' GUIDs, from the names of the ones we have exports of.
-	chars := map[string]string{}
-	for _, e := range events {
-		for _, unit := range [][2]string{{e.srcGUID, e.src}, {e.dstGUID, e.dst}} {
-			if !strings.HasPrefix(unit[0], "Player-") || chars[unit[0]] != "" {
-				continue
-			}
-			for char := range byChar {
-				if isChar(unit[1], char) {
-					chars[unit[0]] = char
-				}
-			}
-		}
-	}
 
 	lastSwing := map[string]time.Time{}
 	for _, e := range events {
 		if (e.kind != "SWING_DAMAGE" && e.kind != "SWING_MISSED") || !isCreature(e.srcGUID) {
 			continue
 		}
-		char := chars[e.dstGUID]
-		if char == "" {
+		// Our characters are the ones we have exports of.
+		char := e.dstGUID
+		if byChar[char] == nil {
 			continue
 		}
 		m.ours++

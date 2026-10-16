@@ -14,7 +14,7 @@ swings = collections.defaultdict(list)
 parried = collections.defaultdict(list)  # the unit that parried gets the haste
 names = {}
 for e in evs:
-    if e.src.startswith(cl.ME): ME = e.srcGUID
+    if e.me_src: ME = e.srcGUID
 # File order breaks ties: a swing logged after the parry in the same ms came after it.
 for i, e in enumerate(evs):
     e.f.append(i)

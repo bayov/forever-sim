@@ -67,7 +67,9 @@ Some scripts hold numbers from one character and one day, like the weapon models
 
 - `cl.py` parses the log into events. `cl.dmg(e)` reads a damage line's tail (amount, raw,
   overkill, school, resisted, blocked, absorbed, crit, glancing, crushing), and `cl.miss(e)`
-  reads a miss type. `cl.ME` is our character's name prefix ("Bayov-").
+  reads a miss type. `e.me_src` and `e.me_dst` say a line's source or target is our own
+  character. They come from the unit flags the client writes ("mine" is 0x511), never from the
+  name, because the game changes how it writes names and we play more than one character.
 - `recheck.py` runs most of the recheck list over a window: white and Stormstrike raw against
   the weapon models, Lightning Shield orbs, Flametongue procs per trigger, Searing bolts,
   glancing and partial resists by mob level, resist steps per mob and school, Fire Nova's

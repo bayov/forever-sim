@@ -37,7 +37,7 @@ func parseLines(text string) ([]*event, error) {
 func TestMobTally(t *testing.T) {
 	ex := &export{time: time.Date(2026, 10, 10, 14, 0, 0, 0, time.UTC)}
 	ex.Who.Name, ex.Who.Realm, ex.Who.Level = "Bayov", "Beta", 29
-	byChar := map[string][]*export{"Bayov-Beta": {ex}}
+	byChar := map[string][]*export{"Player-1-0001": {ex}}
 
 	// amount, raw, overkill, school, resisted, blocked, absorbed, crit, glance, crush
 	events := []*event{

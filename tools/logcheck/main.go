@@ -42,7 +42,7 @@ var repoRoot = "."
 func main() {
 	home, _ := os.UserHomeDir()
 	archive := flag.String("archive", filepath.Join(home, "forever-logs"), "the log archive: logs under <flavor>/, exports under exports/, client tables under wago/")
-	flavor := flag.String("flavor", "_classic_beta_", "the game folder whose newest log we read when -log is empty")
+	flavor := flag.String("flavor", "", "the game folder in the archive to read, like _classic_beta_ (default: every one)")
 	logPath := flag.String("log", "", "the combat log to read (default: the newest one in the archive)")
 	exportPath := flag.String("export", "", "the /bayov export JSON of the character (default: the newest one before the window ends)")
 	fromFlag := flag.String("from", "", "start of the window, HH:MM:SS on the log's first day (a time before the log starts is taken as the next day), or YYYY-MM-DD HH:MM:SS")
@@ -52,7 +52,7 @@ func main() {
 	rounding := flag.String("rounding", "floor", "how the server turns damage into whole points, floor or round")
 	fullSkill := flag.Bool("full-skill", false, "sim full weapon skill instead of the export's")
 	behind := flag.Bool("behind", false, "sim us behind the mob, where it can't parry or block (by default we're in front, as when questing)")
-	charFlag := flag.String("char", "", "the character who played the window, as Name-Realm (default: the one of ours with lines in the window)")
+	charFlag := flag.String("char", "", "the character who played the window, as its GUID, or a Name or Name-Realm (default: the one of ours with lines in the window)")
 	flagsOut := flag.String("flags-out", "", "also write the flagged list to this file as JSON")
 	audit := flag.Bool("audit", false, "check every stretch of the archived logs we haven't checked yet (audit.go), instead of one window")
 	redo := flag.Bool("redo", false, "with -audit, check again the windows the ledger already has, with the sim as it is now")
@@ -101,9 +101,9 @@ func main() {
 		if err := exec.Command(filepath.Join(repoRoot, "tools/combat_log/archive.sh")).Run(); err != nil {
 			fmt.Fprintln(os.Stderr, "archive.sh:", err)
 		}
-		*logPath = newestLog(filepath.Join(*archive, *flavor))
+		*logPath = newestLog(flavorLogs(*archive, *flavor))
 		if *logPath == "" {
-			log.Fatalf("no combat logs in %s", filepath.Join(*archive, *flavor))
+			log.Fatalf("no combat logs in %s", *archive)
 		}
 	}
 	all, err := loadLog(*logPath)
@@ -131,11 +131,14 @@ func main() {
 	case *exportPath != "":
 		ex, err = loadExport(*exportPath)
 	case *charFlag != "":
-		ex, err = pickExport(exports, to, map[string]bool{*charFlag: true})
+		var guid string
+		if guid, err = findChar(exports, *charFlag); err == nil {
+			ex, err = pickExport(exports, to, map[string]bool{guid: true})
+		}
 	default:
-		// The log has every player near us, and we may have played more than one of our
-		// characters in it, so we take an export of one that played in the window.
-		chars := logChars(all, exports, from, to)
+		// We may have played more than one of our characters in the log, so we take an export
+		// of the one that played in the window.
+		chars := ourChars(all, exports, from, to)
 		if len(chars) == 0 {
 			log.Fatal("none of the characters we have exports of played in the window")
 		}
@@ -149,7 +152,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	cl, err := newCombatLog(all, charKey(ex), from, to)
+	cl, err := newCombatLog(all, ex.guid, from, to)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -200,8 +203,7 @@ type runResult struct {
 	Findings []finding `json:"findings"`
 }
 
-func newestLog(dir string) string {
-	paths := archivedLogs(dir)
+func newestLog(paths []string) string {
 	newest := ""
 	var newestTime time.Time
 	for _, path := range paths {

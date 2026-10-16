@@ -40,7 +40,7 @@ def moved(guid, t1, t2):
         return float('nan')
     return max([0.0] + [math.hypot(x - p0[1], y - p0[2]) for (t, x, y) in track.get(guid, []) if t1 < t <= t2])
 
-summons = [e for e in evs if e.ev == 'SPELL_SUMMON' and e.src.startswith(cl.ME) and 'Searing' in e.dst and e.ts >= since]
+summons = [e for e in evs if e.ev == 'SPELL_SUMMON' and e.me_src and 'Searing' in e.dst and e.ts >= since]
 rows = []
 for sm in summons:
     g = sm.dstGUID

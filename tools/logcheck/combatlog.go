@@ -189,13 +189,12 @@ type combatLog struct {
 	to     time.Time
 }
 
-// newCombatLog takes the lines from `from` to `to`, and finds us by the character's
-// Name-Realm.
-func newCombatLog(all []*event, char string, from, to time.Time) (*combatLog, error) {
+// newCombatLog takes the lines from `from` to `to`, seen from our character with that GUID.
+func newCombatLog(all []*event, guid string, from, to time.Time) (*combatLog, error) {
 	cl := &combatLog{ours: map[string]bool{}, levels: map[string]int{}, from: from, to: to}
 	for _, e := range all {
-		if cl.me == "" && isChar(e.src, char) && strings.HasPrefix(e.srcGUID, "Player-") {
-			cl.me = e.srcGUID
+		if cl.me == "" && e.meGUID() == guid {
+			cl.me = guid
 		}
 		// Mob levels come from every line where the mob is the info unit, even outside the
 		// window, because a mob we only hit with white swings never is.
@@ -206,7 +205,7 @@ func newCombatLog(all []*event, char string, from, to time.Time) (*combatLog, er
 		}
 	}
 	if cl.me == "" {
-		return nil, fmt.Errorf("no lines from %s in the log", char)
+		return nil, fmt.Errorf("no lines from %s in the log", guid)
 	}
 	cl.ours[cl.me] = true
 	for _, e := range all {
@@ -272,47 +271,6 @@ func archivedLogs(dir string) []string {
 	logs := append(plain, compressed...)
 	slices.SortFunc(logs, func(a, b string) int { return strings.Compare(logName(a), logName(b)) })
 	return logs
-}
-
-// isChar says whether a name in the log is the character Name-Realm. The log adds a dash
-// and a region after the realm, which is empty on the beta ("Bayov-ClassicBetaPvP-").
-//
-// Since the 2026-10-16 logs, the beta can also put an extra part between the name and the
-// realm ("Bayov-Oom-ClassicBetaPvE2-"), and a log can have both forms. So we match the name
-// and the realm, and skip what's between them.
-func isChar(name, char string) bool {
-	if name == char || strings.HasPrefix(name, char+"-") {
-		return true
-	}
-	charName, realm, ok := strings.Cut(char, "-")
-	if !ok {
-		return false
-	}
-	parts := strings.Split(name, "-")
-	return len(parts) > 2 && parts[0] == charName && slices.Contains(parts[2:], realm)
-}
-
-// logChars is which of the characters we have exports of played between from and to.
-func logChars(all []*event, exports []*export, from, to time.Time) map[string]bool {
-	known := map[string]bool{}
-	for _, ex := range exports {
-		known[charKey(ex)] = true
-	}
-	names := map[string]bool{}
-	for _, e := range all {
-		if !e.t.Before(from) && !e.t.After(to) && strings.HasPrefix(e.srcGUID, "Player-") {
-			names[e.src] = true
-		}
-	}
-	found := map[string]bool{}
-	for char := range known {
-		for name := range names {
-			if isChar(name, char) {
-				found[char] = true
-			}
-		}
-	}
-	return found
 }
 
 func isAttack(kind string) bool {

@@ -1,10 +1,24 @@
 """Parse a WoW Forever beta combat log into events. Usage: import cl; cl.load(path)."""
 import csv, datetime
 
-ME = 'Bayov-'
+
+def is_me(guid, flags):
+    """Whether a unit is our own character, from the flags the client writes with it.
+
+    Only our character has a player's flags with the "mine" affiliation (0x511). A party member
+    is 0x512 and everyone else 0x518. We never go by the name, because the game changes how it
+    writes names ("Bayov-ClassicBetaPvE2-" became "Bayov-Oom-ClassicBetaPvE2-" for the same
+    character) and we play more than one character.
+    """
+    try:
+        n = int(flags, 16)
+    except ValueError:
+        return False
+    return guid.startswith('Player-') and n & 0xF == 0x1 and n & 0xFC00 == 0x400
+
 
 class Ev:
-    __slots__ = ('t', 'ts', 'ev', 'src', 'dst', 'srcGUID', 'dstGUID', 'spellId', 'spell', 'f')
+    __slots__ = ('t', 'ts', 'ev', 'src', 'dst', 'srcGUID', 'dstGUID', 'me_src', 'me_dst', 'spellId', 'spell', 'f')
     def __repr__(self):
         return f"{self.ts} {self.ev} {self.src}>{self.dst} {self.spell or ''}"
 
@@ -26,6 +40,8 @@ def load(path):
         e.dst = f[6] if len(f) > 6 else ''
         e.srcGUID = f[1] if len(f) > 1 else ''
         e.dstGUID = f[5] if len(f) > 5 else ''
+        e.me_src = len(f) > 3 and is_me(e.srcGUID, f[3])
+        e.me_dst = len(f) > 7 and is_me(e.dstGUID, f[7])
         e.spellId = None
         e.spell = None
         if e.ev.startswith(('SPELL_', 'RANGE_')) and len(f) > 10:
@@ -52,7 +68,7 @@ def miss(e):
     return e.f[12]
 
 def mine(evs):
-    return [e for e in evs if e.src.startswith(ME)]
+    return [e for e in evs if e.me_src]
 
 def level_of(e):
     """Advanced field 'level' of the info unit, the last field before the damage suffix."""

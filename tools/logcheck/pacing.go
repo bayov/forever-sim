@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"maps"
 	"math"
-	"path/filepath"
 	"slices"
 	"sort"
 	"strings"
@@ -43,10 +42,10 @@ var restAuras = map[string]bool{"Food": true, "Drink": true, "Refreshment": true
 func runPacing(archive, flavor, logPath, fromFlag, toFlag string) error {
 	logs := []string{logPath}
 	if logPath == "" {
-		logs = archivedLogs(filepath.Join(archive, flavor))
+		logs = flavorLogs(archive, flavor)
 	}
 	if len(logs) == 0 {
-		return fmt.Errorf("no combat logs in %s", filepath.Join(archive, flavor))
+		return fmt.Errorf("no combat logs in %s", archive)
 	}
 	exports, err := loadExports(archive)
 	if err != nil {
@@ -54,7 +53,9 @@ func runPacing(archive, flavor, logPath, fromFlag, toFlag string) error {
 	}
 	byChar := map[string][]*export{}
 	for _, ex := range exports {
-		byChar[charKey(ex)] = append(byChar[charKey(ex)], ex)
+		if ex.guid != "" {
+			byChar[ex.guid] = append(byChar[ex.guid], ex)
+		}
 	}
 	for _, list := range byChar {
 		slices.SortFunc(list, func(a, b *export) int { return a.time.Compare(b.time) })
@@ -197,21 +198,17 @@ func (p *pacing) read(events []*event, byChar map[string][]*export, from, to tim
 			}
 		}
 	}
-	// Our characters by GUID, from the names of the ones we have exports of, and their totems.
+	// Our characters by GUID, the ones we have exports of, and their totems.
 	chars := map[string]*pacingChar{}
 	owner := map[string]*pacingChar{}
 	for _, e := range events {
-		for _, unit := range [][2]string{{e.srcGUID, e.src}, {e.dstGUID, e.dst}} {
-			if !strings.HasPrefix(unit[0], "Player-") || chars[unit[0]] != nil {
+		for _, guid := range []string{e.srcGUID, e.dstGUID} {
+			if byChar[guid] == nil || chars[guid] != nil {
 				continue
 			}
-			for char := range byChar {
-				if isChar(unit[1], char) {
-					c := &pacingChar{char: char, open: map[string]*engagement{}, casting: map[string]time.Time{}, ourUnits: map[string]bool{unit[0]: true}}
-					chars[unit[0]] = c
-					owner[unit[0]] = c
-				}
-			}
+			c := &pacingChar{char: guid, open: map[string]*engagement{}, casting: map[string]time.Time{}, ourUnits: map[string]bool{guid: true}}
+			chars[guid] = c
+			owner[guid] = c
 		}
 	}
 	if len(chars) == 0 {

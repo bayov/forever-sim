@@ -57,9 +57,14 @@ const (
 )
 
 // auditWindow is one stretch of one log where the sim's character holds still.
+//
+// Char is the character's GUID. Name is only for us to read, because the game can change it
+// (characters.go). The ledger's windows from before 2026-10-16 had Name-Realm in Char, and
+// fixLedgerChars moves those to the GUID.
 type auditWindow struct {
 	Log  string `json:"log"`
 	Char string `json:"char"`
+	Name string `json:"name,omitempty"`
 	From string `json:"from"`
 	To   string `json:"to"`
 	// Ends says why the window ends: what changed, a break, a logout, or the end of the log.
@@ -68,6 +73,14 @@ type auditWindow struct {
 }
 
 func (w auditWindow) key() string { return w.Log + " " + w.Char + " " + w.From }
+
+// who is the window's character for the digest: its name and GUID.
+func (w auditWindow) who() string {
+	if w.Name == "" {
+		return w.Char
+	}
+	return w.Name + " (" + w.Char + ")"
+}
 
 // ledgerEntry is one line of the ledger: a window and what checking it found.
 type ledgerEntry struct {
@@ -111,6 +124,9 @@ func runAudit(archive, flavor, onlyLog string, iterations int, redo bool) error 
 	if err != nil {
 		return err
 	}
+	if ledger, err = fixLedgerChars(archive, ledgerPath, ledger); err != nil {
+		return err
+	}
 	done := map[string]bool{}
 	for _, entry := range ledger {
 		done[entry.key()] = true
@@ -122,7 +138,7 @@ func runAudit(archive, flavor, onlyLog string, iterations int, redo bool) error 
 	}
 	logs := []string{onlyLog}
 	if onlyLog == "" {
-		logs = archivedLogs(filepath.Join(archive, flavor))
+		logs = flavorLogs(archive, flavor)
 	}
 
 	var todo []auditWindow
@@ -241,6 +257,45 @@ func compressLog(path string, info os.FileInfo) error {
 	return os.Remove(path)
 }
 
+// fixLedgerChars moves the ledger's windows from before 2026-10-16, whose Char is a Name-Realm,
+// to the GUID that the log had as ours when the window starts. It rewrites the ledger when it
+// moved any.
+func fixLedgerChars(archive, path string, ledger []ledgerEntry) ([]ledgerEntry, error) {
+	if !slices.ContainsFunc(ledger, func(e ledgerEntry) bool { return !strings.HasPrefix(e.Char, "Player-") }) {
+		return ledger, nil
+	}
+	spans, err := archivedMeSpans(archive)
+	if err != nil {
+		return nil, err
+	}
+	var lines []byte
+	for i, entry := range ledger {
+		if !strings.HasPrefix(entry.Char, "Player-") {
+			from, err := time.Parse(stampFormat, entry.From)
+			if err != nil {
+				return nil, err
+			}
+			ex := &export{time: from}
+			placeExports([]*export{ex}, spans)
+			if ex.guid == "" {
+				return nil, fmt.Errorf("%s: no character of ours in the logs at %s", path, entry.From)
+			}
+			entry.Name, entry.Char = entry.Char, ex.guid
+			ledger[i] = entry
+		}
+		line, err := json.Marshal(entry)
+		if err != nil {
+			return nil, err
+		}
+		lines = append(append(lines, line...), '\n')
+	}
+	tmp := path + ".tmp"
+	if err := os.WriteFile(tmp, lines, 0o644); err != nil {
+		return nil, err
+	}
+	return ledger, os.Rename(tmp, path)
+}
+
 func readLedger(path string) ([]ledgerEntry, error) {
 	f, err := os.Open(path)
 	if os.IsNotExist(err) {
@@ -279,17 +334,22 @@ func planLog(path string, exports []*export) ([]auditWindow, []string, error) {
 
 	var windows []auditWindow
 	var waiting []string
-	chars := logChars(all, exports, logStart, logEnd)
+	chars := ourChars(all, exports, logStart, logEnd)
 	for _, char := range slices.Sorted(maps.Keys(chars)) {
 		cl, err := newCombatLog(all, char, logStart, logEnd)
 		if err != nil {
 			return nil, nil, err
 		}
 		var history []*export
+		name := ""
 		for _, ex := range exports {
-			if ex.history && charKey(ex) == char {
+			if ex.guid != char {
+				continue
+			}
+			if ex.history {
 				history = append(history, ex)
 			}
+			name = ex.Who.Name + "-" + ex.Who.Realm
 		}
 		slices.SortStableFunc(history, func(a, b *export) int { return a.time.Compare(b.time) })
 		cuts := append(historyCuts(history), itemLevelCuts(cl, history)...)
@@ -316,14 +376,14 @@ func planLog(path string, exports []*export) ([]auditWindow, []string, error) {
 				continue
 			}
 			// The window's times are whole seconds, so the end goes up to the next one.
-			w := auditWindow{Log: logName(path), Char: char, From: from.Format(stampFormat), To: to.Add(time.Second - 1).Format(stampFormat), Ends: ends, Attacks: attacks}
+			w := auditWindow{Log: logName(path), Char: char, Name: name, From: from.Format(stampFormat), To: to.Add(time.Second - 1).Format(stampFormat), Ends: ends, Attacks: attacks}
 			switch {
 			case len(history) > 0 && history[len(history)-1].time.Before(to):
 				waiting = append(waiting, fmt.Sprintf("%s %s %s to %s: its history ends at %s, /reload in game to save it",
-					w.Log, char, w.From, w.To, history[len(history)-1].time.Format(stampFormat)))
+					w.Log, w.who(), w.From, w.To, history[len(history)-1].time.Format(stampFormat)))
 				continue
 			case len(history) == 0 && !idle:
-				waiting = append(waiting, fmt.Sprintf("%s %s %s to %s: the log is still growing", w.Log, char, w.From, w.To))
+				waiting = append(waiting, fmt.Sprintf("%s %s %s to %s: the log is still growing", w.Log, w.who(), w.From, w.To))
 				continue
 			}
 			windows = append(windows, w)
@@ -552,7 +612,7 @@ func printDigest(w io.Writer, earlier, now []ledgerEntry, waiting []string) erro
 		fmt.Fprintln(w, "No new windows to check.")
 	}
 	for _, entry := range now {
-		fmt.Fprintf(w, "\n%s  %s  %s to %s  (%d attacks, ends at %s)\n", entry.Log, entry.Char, entry.From, entry.To[11:], entry.Attacks, entry.Ends)
+		fmt.Fprintf(w, "\n%s  %s  %s to %s  (%d attacks, ends at %s)\n", entry.Log, entry.who(), entry.From, entry.To[11:], entry.Attacks, entry.Ends)
 		switch {
 		case entry.Skipped != "":
 			fmt.Fprintf(w, "  skipped: %s\n", entry.Skipped)

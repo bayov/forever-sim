@@ -13,7 +13,7 @@ def xy(e):
 died = collections.defaultdict(list)
 for e in evs:
     if e.ev in ('UNIT_DIED', 'PARTY_KILL'): died[e.dstGUID].append(e.t)
-ft = [e for e in evs if e.src.startswith(cl.ME) and e.spellId == 16368]
+ft = [e for e in evs if e.me_src and e.spellId == 16368]
 fire = None  # (name, xy, summon time)
 # The totem lasts 5 minutes and logs no death when it runs out (seen 2026-10-10 22:26:28).
 FT_DURATION = 300
@@ -21,13 +21,13 @@ totem_guid = {}
 res = collections.Counter()
 for e in evs:
     if not (lo <= e.ts < hi): continue
-    if e.src.startswith(cl.ME) and e.ev == 'SPELL_CAST_SUCCESS':
+    if e.me_src and e.ev == 'SPELL_CAST_SUCCESS':
         if e.spell == 'Flametongue Totem': fire = ('FT', xy(e), e.t)
         elif e.spell and e.spell.startswith('Searing Totem'): fire = ('Searing', None)
         elif e.spell == 'Totemic Recall': fire = None
-    if e.ev == 'SPELL_SUMMON' and e.src.startswith(cl.ME) and 'Flametongue' in e.dst: totem_guid[e.dstGUID] = 1
+    if e.ev == 'SPELL_SUMMON' and e.me_src and 'Flametongue' in e.dst: totem_guid[e.dstGUID] = 1
     if e.ev in ('UNIT_DIED', 'UNIT_DESTROYED') and e.dstGUID in totem_guid and fire and fire[0] == 'FT': fire = None
-    if e.src.startswith(cl.ME) and e.ev == 'SWING_DAMAGE':
+    if e.me_src and e.ev == 'SWING_DAMAGE':
         d = cl.dmg(e)
         got = any(0 <= p.t - e.t <= 0.2 and pos[id(p)] > pos[id(e)] for p in ft)
         if d['overkill'] >= 0: why = 'kill'

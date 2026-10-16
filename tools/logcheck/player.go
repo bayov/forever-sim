@@ -19,7 +19,10 @@ import (
 // buffs, consumes, rotation or imbue. The JSON is
 //
 //	{ "player": <proto.Player>, "notes": [what we had to leave out], "export": <where it came from>,
-//	  "date": <when it was taken>, "char": "Name-Realm", "class": "SHAMAN", "level": 30 }
+//	  "date": <when it was taken>, "char": "Name-Realm", "guid": "Player-...", "class": "SHAMAN", "level": 30 }
+//
+// char names the character for bayovui, which matches it against the logged in one. The guid is
+// what knows it for sure.
 func writePlayer(archive, exportPath, char string, fullSkill bool, out string) error {
 	var ex *export
 	var err error
@@ -28,14 +31,18 @@ func writePlayer(archive, exportPath, char string, fullSkill bool, out string) e
 		ex, err = loadExport(exportPath)
 	case char != "":
 		var all []*export
+		var guid string
 		all, err = loadExports(archive)
+		if err == nil {
+			guid, err = findChar(all, char)
+		}
 		if err == nil {
 			// The newest of all. Export times are the game's local time, read as UTC, so
 			// time.Now() would leave out the last few hours.
-			ex, err = pickExport(all, time.Date(9999, 1, 1, 0, 0, 0, 0, time.UTC), map[string]bool{char: true})
+			ex, err = pickExport(all, time.Date(9999, 1, 1, 0, 0, 0, 0, time.UTC), map[string]bool{guid: true})
 		}
 	default:
-		return fmt.Errorf("-player-out needs -char Name-Realm or -export")
+		return fmt.Errorf("-player-out needs -char (a GUID or a name) or -export")
 	}
 	if err != nil {
 		return err
@@ -65,7 +72,8 @@ func writePlayer(archive, exportPath, char string, fullSkill bool, out string) e
 		"notes":  notes,
 		"export": ex.path,
 		"date":   ex.When.Date,
-		"char":   charKey(ex),
+		"char":   ex.Who.Name + "-" + ex.Who.Realm,
+		"guid":   ex.guid,
 		"class":  ex.Who.ClassFile,
 		"level":  ex.Who.Level,
 	}, "", "  ")

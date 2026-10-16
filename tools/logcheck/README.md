@@ -114,11 +114,22 @@ slow quartile.
 ## Inputs
 
 - **The log.** With no `-log`, it runs `tools/combat_log/archive.sh` first and reads the newest
-  log in `~/forever-logs/_classic_beta_/`. `-from` and `-to` take `HH:MM:SS` on the log's first
-  day (a time before the log starts is the next day) or `YYYY-MM-DD HH:MM:SS`.
+  log of every game folder in `~/forever-logs/` (`_classic_beta_/` now, and the release
+  client's folder once `archive.sh` lists it), or of `-flavor`. `-from` and `-to` take
+  `HH:MM:SS` on the log's first day (a time before the log starts is the next day) or
+  `YYYY-MM-DD HH:MM:SS`.
+- **The character.** We know each character by its GUID (`Player-4620-01872808`), never by
+  its name. The game changes how the log writes names (`Bayov-ClassicBetaPvE2-` became
+  `Bayov-Oom-ClassicBetaPvE2-` for the same character on 2026-10-16), and two characters can
+  share one. The log flags its own player as "mine" (0x511), so its lines say which GUID was us
+  at each moment. Exports and history records since 2026-10-16 carry the GUID in `who.guid`.
+  An older one takes the GUID that the logs had as ours at its time, and a history session
+  takes the one most of its records got (`characters.go`). `~/forever-logs/audit/me.json` keeps
+  which GUID wrote each log, so we read each log once for that.
 - **The export.** With no `-export`, it takes the newest export taken before the window ends,
   of the one character of ours (one we have exports of) that has lines in the window. When we
-  played two of them in the window, `-char Name-Realm` picks one.
+  played two of them in the window, `-char` picks one, by GUID or by name. A name that more
+  than one character had picks the one with the newest export.
   It looks at the pasted ones in `~/forever-logs/exports/` and at BayovCore's history in
   `~/forever-logs/history/` (below). When the user pastes an export, save it in `exports/` as
   `export-<date>_<time>.json` with the date and time from its `when.date`. The header prints which
@@ -130,8 +141,9 @@ slow quartile.
   WoW writes it to disk on `/reload` or logout, and the addon adds a logout record just before,
   which says the history is complete up to then. `archive.sh` runs
   `tools/combat_log/history.py`, which adds the new records to
-  `~/forever-logs/history/<Name>-<Realm>.jsonl` (the sheets and talent lists are in the
-  `.blobs.json` next to it). logcheck rebuilds a whole export for each record, so the header
+  `~/forever-logs/history/<key>.jsonl` (the sheets and talent lists are in the `.blobs.json`
+  next to it). The key is the GUID, or Name-Realm in the histories from before 2026-10-16.
+  logcheck rebuilds a whole export for each record, so the header
   names a history line like `Bayov-ClassicBetaPvP.jsonl:5 (history, change)`.
 - **Client tables.** It downloads SpellName and SpellEffect for the export's client build from
   wago.tools into `~/forever-logs/wago/<build>/`, or uses the newest build there when wago.tools

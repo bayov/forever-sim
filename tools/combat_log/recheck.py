@@ -8,7 +8,7 @@ evs = cl.load(sys.argv[1]); evs.sort(key=lambda e: e.t)
 pos = {id(e): i for i, e in enumerate(evs)}
 lo = sys.argv[2] if len(sys.argv) > 2 else '00'; hi = sys.argv[3] if len(sys.argv) > 3 else '99'
 win = [e for e in evs if lo <= e.ts < hi]
-me = [e for e in win if e.src.startswith(cl.ME)]
+me = [e for e in win if e.me_src]
 print(f'window {lo} to {win[-1].ts if win else "-"}, {len(win)} lines')
 
 # Mob levels from the mob's own swings (info unit = source, level at row[-11]).
@@ -57,7 +57,7 @@ for name, sid, trig in (('Flametongue Weapon', 10444, swings + ss), ('Flametongu
     print(f'{name}: {len(ps)} procs', dict(sorted(kinds.items())))
 
 # Searing Totem bolts: damage, crit, miss.
-tot = {e.dstGUID for e in win if e.ev == 'SPELL_SUMMON' and e.src.startswith(cl.ME) and 'Searing' in e.dst}
+tot = {e.dstGUID for e in win if e.ev == 'SPELL_SUMMON' and e.me_src and 'Searing' in e.dst}
 bolts = [e for e in win if e.srcGUID in tot and e.ev in ('SPELL_DAMAGE', 'SPELL_MISSED')]
 br = [cl.dmg(e) for e in bolts if e.ev == 'SPELL_DAMAGE']
 print(f'Searing bolts {len(bolts)}: hits {len(br)}, misses {len(bolts)-len(br)}, crits {sum(d["crit"] for d in br)}, '
@@ -73,7 +73,7 @@ print('glancing by level', dict(gl))
 
 # Partial resists on our spells that can partially resist, by mob level.
 pr = collections.defaultdict(lambda: [0, 0])
-for e in [x for x in win if (x.src.startswith(cl.ME) or x.srcGUID in tot) and x.ev in ('SPELL_DAMAGE', 'SPELL_PERIODIC_DAMAGE')]:
+for e in [x for x in win if (x.me_src or x.srcGUID in tot) and x.ev in ('SPELL_DAMAGE', 'SPELL_PERIODIC_DAMAGE')]:
     if e.spell in ('Stormstrike',): continue
     d = cl.dmg(e)
     if d['school'] == 1: continue
@@ -90,7 +90,7 @@ print('partial resists (resisted, hits) by spell and level', dict(pr))
 # times raw, and its key says crit.
 SCHOOL = {2: 'Holy', 4: 'Fire', 8: 'Nature', 16: 'Frost', 32: 'Shadow', 64: 'Arcane'}
 rs = collections.defaultdict(collections.Counter)
-for e in [x for x in win if (x.src.startswith(cl.ME) or x.srcGUID in tot) and x.ev.startswith('SPELL_') and ('DAMAGE' in x.ev or 'MISSED' in x.ev)]:
+for e in [x for x in win if (x.me_src or x.srcGUID in tot) and x.ev.startswith('SPELL_') and ('DAMAGE' in x.ev or 'MISSED' in x.ev)]:
     school = SCHOOL.get(int(e.f[11], 16))
     if school is None: continue
     if 'MISSED' in e.ev:
@@ -122,6 +122,6 @@ for s in ss:
 print('Stormstrike buff and mark:', dict(res))
 
 # Healing Stream: crits of our own totems' heals (the suffix ends amount, raw, overheal, absorbed, crit).
-hst = {e.dstGUID for e in evs if e.ev == 'SPELL_SUMMON' and e.src.startswith(cl.ME) and 'Healing Stream' in e.dst}
+hst = {e.dstGUID for e in evs if e.ev == 'SPELL_SUMMON' and e.me_src and 'Healing Stream' in e.dst}
 hs = [e for e in win if e.srcGUID in hst and e.ev == 'SPELL_PERIODIC_HEAL']
 if hs: print(f'Healing Stream heals {len(hs)}: crits {sum(e.f[-1] == "1" for e in hs)}')

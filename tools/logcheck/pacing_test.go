@@ -68,7 +68,7 @@ func TestPacing(t *testing.T) {
 	ex := &export{time: time.Date(2026, 10, 10, 17, 0, 0, 0, time.UTC)}
 	ex.Who.Name, ex.Who.Realm, ex.Who.Level = "Bayov", "Beta", 30
 	p := &pacing{hours: map[string]*pacingHour{}}
-	p.read(events, map[string][]*export{"Bayov-Beta": {ex}}, events[0].t, events[len(events)-1].t)
+	p.read(events, map[string][]*export{pacingMe: {ex}}, events[0].t, events[len(events)-1].t)
 
 	if p.fights != 2 || p.pulls["Flame Shock"] != 1 || p.pulls["our white swing"] != 1 {
 		t.Errorf("%d fights, pulls %v, want 2 fights, one Flame Shock pull and one white swing", p.fights, p.pulls)
