@@ -3,7 +3,7 @@
 /* global d3 */
 import tippy from 'tippy.js';
 
-export function startReport(dash) {
+export function startReport(dash, events) {
   const CLASSES = ['Warrior', 'Rogue', 'Hunter', 'Paladin', 'Shaman', 'Druid', 'Mage', 'Warlock', 'Priest'];
   const RACES_ALL = ['Human', 'Dwarf', 'Night Elf', 'Gnome', 'High Order', 'Orc', 'Undead', 'Tauren', 'Troll', 'Windshaper'];
   const HORDE = new Set(['Orc', 'Undead', 'Tauren', 'Troll', 'Windshaper']);
@@ -152,9 +152,8 @@ export function startReport(dash) {
   // ---------- state ----------
   const store = (() => { try { return window.localStorage; } catch { return null; } })();
   const saved = (() => { try { return JSON.parse(store?.getItem('fv-state') || '{}'); } catch { return {}; } })();
-  const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, zoom: 'fit', A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, filter: 'all', hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', lanes: 'all', focus: '', rsOpt: {}, rsFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', rlFac: 'All', rlRole: 'All', rlCls: 'All', rlSpec: 'All', setupHide: false, enc: false, duty: true, asm: {}, asmOpen: [] }, saved);
+  const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', rsOpt: {}, rsFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', rlFac: 'All', rlRole: 'All', rlCls: 'All', rlSpec: 'All', setupHide: false, enc: false, duty: true, asm: {}, asmOpen: [] }, saved);
   st.len = '180'; // a fight length other than 180 s is never restored: the page always opens on the main numbers
-  if (typeof st.focus !== 'string') st.focus = '';
   const persist = () => { try { store?.setItem('fv-state', JSON.stringify(st)); } catch {} };
 
   // ---------- tooltip pieces ----------
@@ -598,7 +597,7 @@ export function startReport(dash) {
   const openSpec = (id) => {
     id = dutyBase(id);
     const swap = st.tab === 'spec' && st.build !== id;
-    st.build = id; st.sample = 0; st.focus = ''; persist(); showTab('spec'); $('.sim-ui').scrollTo({ top: 0 });
+    st.build = id; st.sample = 0; persist(); showTab('spec'); $('.sim-ui').scrollTo({ top: 0 });
     if (swap) for (const n of [$('#sp-head'), $('#sp-tiles')]) { n.classList.remove('fv-swap'); void n.offsetWidth; n.classList.add('fv-swap'); }
   };
   // swipe the spec banner for the next or previous preset
@@ -1798,7 +1797,7 @@ export function startReport(dash) {
     const abil = (rowsOf('abilities') || []).filter((a) => a.build === b.id);
     const colors = ABILITY_COLORS(abil);
     safe(() => drawAbilities(b, abil, colors), $('#sp-abil'));
-    safe(() => drawTimeline(b, colors), $('#tl-scroll'));
+    safe(() => drawEvents(b), $('#sp-events'));
     safe(() => drawAuras(b), $('#sp-auras'));
     safe(() => drawSpecRaces(b), $('#sp-races'));
     safe(() => drawSpecLen(b), $('#sp-len'));
@@ -1890,7 +1889,7 @@ export function startReport(dash) {
     $('#sp-abiltab').dataset.build = b.id;
   };
 
-  // each aura's average uptime (every fight), and a mini timeline of the sample fight picked on the timeline
+  // each aura's average uptime (every fight), and a mini timeline of the sample fight picked in the events view
   const drawAuras = (b) => {
     const host = $('#sp-auras');
     const src = 'timeline_' + b.class.toLowerCase();
@@ -1936,7 +1935,7 @@ export function startReport(dash) {
       out.push(bar);
     }
     host.replaceChildren(...(out.length ? out : [el('span', { class: 'fv-note', text: 'Every aura is up the whole fight.' })]));
-    $('#sp-auras-note').textContent = s ? `The number is the average uptime over every simulated fight. Each bar is the ${s.label.toLowerCase()} picked on the timeline, filled only while the aura was up${t0 < -0.55 ? ', with the pre-pull seconds shaded' : ''}. Tap a name for its tooltip, a bar for its times.` : 'Average uptime over every simulated fight. Tap a name for its tooltip.';
+    $('#sp-auras-note').textContent = s ? `The number is the average uptime over every simulated fight. Each bar is the ${s.label.toLowerCase()} picked above, filled only while the aura was up${t0 < -0.55 ? ', with the pre-pull seconds shaded' : ''}. Tap a name for its tooltip, a bar for its times.` : 'Average uptime over every simulated fight. Tap a name for its tooltip.';
   };
   $('#sp-alwayson').addEventListener('click', (e) => { e.stopPropagation(); st.alwaysOn = !st.alwaysOn; persist(); render(); });
   $('#sp-setup-hide').addEventListener('click', (e) => { e.stopPropagation(); st.setupHide = !st.setupHide; persist(); $('#sp-setup').classList.toggle('hide-off', st.setupHide); e.currentTarget.setAttribute('aria-pressed', String(st.setupHide)); });
@@ -2199,9 +2198,9 @@ export function startReport(dash) {
     }
   };
 
-  // ---------- timeline ----------
-  // Resources take the game's colours; spells and items take a colour from their icon (names.color).
-  const RES_COL = { mana: '#3f7fe0', rage: '#d2413a', energy: '#a8bd2a', focus: '#e0832c', 'combo points': '#d9a62c', health: '#3faa4f' };
+  // ---------- sample fights ----------
+  // The fight itself shows in the sim UI's events view (events.ts). These read the compact timeline datasets, which
+  // the aura bars and the rotation table still use.
   const tlParse = (v, dflt) => { if (typeof v !== 'string') return v ?? dflt; try { return JSON.parse(v); } catch { return dflt; } };
   const tlCache = { rows: null, id: null, list: null };
   // the sample fights of one preset (typical, unlucky, lucky), parsed once per dataset load
@@ -2212,7 +2211,7 @@ export function startReport(dash) {
     if (tlCache.rows !== rows || tlCache.id !== b.id) {
       const samples = rows.filter((s) => s.build === b.id).map((s) => ({
         ...s, pct: +s.pct, seed: +s.seed, dps: +s.dps, dur: +s.dur,
-        casts: tlParse(s.casts, []), dmg: tlParse(s.dmg, []), auras: tlParse(s.auras, []), cds: tlParse(s.cds, []), res: tlParse(s.res, {}), units: tlParse(s.units, {}),
+        casts: tlParse(s.casts, []), auras: tlParse(s.auras, []),
       }));
       const ord = [samples.find((s) => s.pct === 50), samples.find((s) => s.pct === 10), samples.find((s) => s.pct === 90)].filter(Boolean);
       for (const s of ord) s.t0 = Math.min(0, d3.min(s.casts, (c) => c[0]) ?? 0, d3.min(s.auras, (a) => a[2]) ?? 0) - (d3.min(s.casts, (c) => c[0]) < 0 ? 0.6 : 0.5);
@@ -2222,387 +2221,23 @@ export function startReport(dash) {
   };
   const nameColor = (k) => { const n = byKey('names')?.get(k); return n && n.color ? n.color : null; };
   const fmtT = (t) => `${t < 0 ? '−' : ''}${Math.abs(t).toFixed(1)} s`;
-  const kfmt = (v) => (v >= 10000 ? d3.format('.1f')(v / 1000) + 'k' : d3.format(',')(Math.round(v)));
-  const OUTC = { H: 'hit', C: 'crit', G: 'glance', M: 'miss', D: 'dodge', P: 'parry', B: 'block', R: 'resist' };
 
-  let tl = null; // current timeline context
-  const tlReset = () => { $('#tl-readout').replaceChildren(el('span', { class: 'fv-note', text: 'Tap the timeline to see the casts, hits and buffs at that moment.' })); };
-  const drawTimeline = (b, colors) => {
-    const card = $('#sp-time-card');
-    const sc = $('#tl-scroll');
-    const src = 'timeline_' + b.class.toLowerCase();
-    sc.setAttribute('data-source', src + ' names icons tooltips');
-    iconMap();
-    if (!['lanes', 'single'].includes(st.tlMode)) st.tlMode = 'lanes';
-    seg($('#tl-mode'), 'tlMode', [['lanes', 'Lanes'], ['single', 'Single lane']], (v) => { if (v === 'single' && (st.zoom === 'fit' || st.zoom === '60')) st.zoom = 'auto'; persist(); drawSpec(); });
-    const single = st.tlMode === 'single';
-    card.querySelector('.fv-lanes').hidden = single;
-    // while this preset's fights load, show nothing of the previous preset's
-    if (!specWait(sc, [src, 'names'], b, [$('#tl-samples'), $('#tl-labels'), $('#tl-lanes'), $('#tl-log'), $('#tl-legend')])) {
-      if (sc.dataset.build !== b.id) { tlReset(); tl = null; sc.style.minHeight = '16rem'; $('#tl-readout').dataset.build = ''; }
-      return;
-    }
-    const names = byKey('names');
-    const T = tlSamples(b);
-    const ord = T ? T.list : [];
-    if (!ord.length) { sc.replaceChildren(el('div', { class: 'fv-fail', text: 'No sample fight' })); return; }
-    if (st.sample >= ord.length) st.sample = 0;
-    const segS = $('#tl-samples');
-    segS.replaceChildren(...ord.map((s, i) => {
-      const bt = el('button', { 'aria-pressed': String(i === st.sample) }, `${s.label.replace(' fight', '')} `, mark(el('span', { text: f0(s.dps) }), src, 'dps', `build=${enc(b.id)}&seed=${s.seed}`));
-      bt.addEventListener('click', () => { st.sample = i; persist(); drawSpec(); });
-      return bt;
-    }));
-    segS.dataset.build = b.id;
-    const s = ord[st.sample];
-    // single lane opens zoomed in far enough to tell casts apart: 5 s windows for busy melee, 15 s otherwise
-    const isAuto = (k) => /^oOtherAction(Attack|Shoot)/.test(k);
-    if (st.zoom === 'auto') { st.zoom = s.casts.some((c) => /^oOtherActionAttack/.test(c[1])) && s.casts.filter((c) => c[4] === 'p' && !isAuto(c[1])).length / s.dur > 0.55 ? '5' : '15'; persist(); }
-    if (!['fit', '60', '30', '15', '5'].includes(st.zoom)) st.zoom = 'fit';
-    document.querySelectorAll('#tl-zoom button').forEach((bt) => bt.setAttribute('aria-pressed', String(bt.dataset.z === st.zoom)));
-    const key = b.id + '|' + st.sample;
-    if (sc.dataset.tlKey !== key) { tlReset(); sc.dataset.tlKey = key; }
-    // which names have several ranks in this sample
-    const nameOf = (k) => names.get(k)?.name || k;
-    const rankCount = d3.rollup(new Set([...s.casts.map((c) => c[1]), ...s.dmg.map((d) => d[1])]), (v) => v.length, (k) => nameOf(k));
-    const label = (k) => { const n = names.get(k); const nm = nameOf(k); return n?.rank && rankCount.get(nm) > 1 ? `${nm} r${n.rank}` : nm; };
-    const unitName = (u) => (u === 'p' ? 'Player' : u === 't' ? 'Boss' : s.units?.[u] || 'Pet');
-    const colorOf = (k) => nameColor(k) || colors.get(k) || 'var(--cds-chart-muted)';
-    const t0 = s.t0, t1 = s.dur;
-    const viewW = Math.max(200, sc.clientWidth);
-    const pps = st.zoom === 'fit' ? viewW / (t1 - t0) : viewW / +st.zoom;
-    const Wd = Math.max(viewW, (t1 - t0) * pps);
-    const x = d3.scaleLinear([t0, t1], [0, Wd]);
-    const permanent = (a) => a[2] <= 0.05 && a[3] >= s.dur - 0.05;
-    const auraGroups = (who) => {
-      const g = d3.groups(s.auras.filter((a) => (who === 't' ? a[1] === 't' : a[1] !== 't') && !permanent(a) && a[3] > a[2] && (who !== 't' || s.auras.some((q) => q[0] === a[0] && q[2] > 0.05))), (a) => a[0] + '|' + a[1]);
-      return g.map(([k, iv]) => ({ key: iv[0][0], unit: iv[0][1], iv, up: d3.sum(iv, (a) => a[3] - a[2]) })).sort((p, q) => q.up - p.up).slice(0, who === 't' ? 7 : 9);
-    };
-    const buffs = auraGroups('p'), debuffs = auraGroups('t');
-    const resKey = ['p:rage', 'p:energy', 'p:focus', 'p:mana'].find((k) => s.res[k]?.length > 2);
-    const resName = resKey ? resKey.slice(2) : null;
-    const resCol = resName ? RES_COL[resName] : null;
-    const cpKey = s.res['p:combo points'] ? 'p:combo points' : null;
-    const petCasts = s.casts.filter((c) => c[4] !== 'p' && c[4] !== 't');
-    const resAt = (k, t) => { const pts = s.res[k]; if (!pts) return null; let v = null; for (const p of pts) { if (p[0] > t) break; v = p[1]; } return v; };
-    const resMax = resKey ? d3.max(s.res[resKey], (p) => p[1]) || 1 : 1;
-    const aurasAt = (t, who) => s.auras.filter((a) => (who === 't' ? a[1] === 't' : a[1] !== 't') && a[2] <= t && a[3] > t && !permanent(a))
-      .map((a) => label(a[0]) + (a[4] > 1 ? ` ×${a[4]}` : '') + (a[1] !== 'p' && a[1] !== 't' ? ` (${unitName(a[1])})` : ''));
-    const hid = new Set(String(st.lanes || '').split(',').filter(Boolean));
-    // highlight one ability: everything else fades
-    const fsel = $('#tl-focus');
-    const keys = [...new Set(s.casts.map((c) => c[1]).concat(s.dmg.map((d) => d[1])))].filter((k) => names.has(k)).sort((p, q) => String(label(p)).localeCompare(String(label(q))));
-    fsel.replaceChildren(el('option', { value: '', text: 'Everything' }), ...keys.map((k) => el('option', { value: k, text: label(k) })));
-    if (!keys.includes(st.focus)) st.focus = '';
-    fsel.value = st.focus;
-    const fo = (k, on) => (!st.focus || k === st.focus ? on : 0.1);
-    // lanes
-    const lanes = [];
-    let yy = 22;
-    const lane = (id, lbl, h, k) => { const l = { id, lbl, y: yy, h, key: k }; lanes.push(l); yy += h + 4; return l; };
-    let Ld = null, Lc = null, Lr = null, Lx = null;
-    if (!single) {
-      Lc = lane('casts', 'Casts', 24);
-      const groups = [['pet', 'Pet casts', petCasts.length > 0], ['cds', 'Cooldowns', s.cds.length > 0], ['b', 'Buffs', buffs.length > 0], ['t', 'Debuffs', debuffs.length > 0], ['res', resName ? resName[0].toUpperCase() + resName.slice(1) : '', !!resKey], ['dps', 'Running DPS', true]].filter((g) => g[2]);
-      $('#tl-lanes').replaceChildren(...groups.map(([k, lbl]) => {
-        const bt = el('button', { class: 'fv-chip', 'aria-pressed': String(!hid.has(k)), text: lbl });
-        bt.addEventListener('click', (e) => { e.stopPropagation(); if (hid.has(k)) hid.delete(k); else hid.add(k); st.lanes = [...hid].join(','); persist(); drawTimeline(b, colors); });
-        return bt;
-      }));
-    }
-    const Lp = !single && petCasts.length && !hid.has('pet') ? lane('pet', 'Pet casts', 16) : null;
-    if (!single) Ld = lane('dmg', 'Damage', 44);
-    const Lcd = !single && s.cds.length && !hid.has('cds') ? lane('cds', 'Cooldowns', 16) : null;
-    const Lb = single || hid.has('b') ? [] : buffs.map((a) => lane('b', label(a.key) + (a.unit !== 'p' ? ` (${unitName(a.unit)})` : ''), 10, a.key));
-    if (!single && debuffs.length && !hid.has('t')) yy += 4;
-    const Lt = single || hid.has('t') ? [] : debuffs.map((a) => lane('t', '◆ ' + label(a.key), 10, a.key));
-    if (!single) {
-      Lr = resKey && !hid.has('res') ? lane('res', resName[0].toUpperCase() + resName.slice(1), 40) : null;
-      Lx = hid.has('dps') ? null : lane('dps', 'Running DPS', 40);
-    }
-    // single lane: damage numbers above, cast icons on the track, resource changes below
-    let Sd = null, Si = null, Sr = null;
-    if (single) {
-      Sd = lane('sd', 'Damage', 30);
-      Si = lane('si', 'Casts', 30);
-      Sr = resKey ? lane('sr', resName[0].toUpperCase() + resName.slice(1), 14) : null;
-    }
-    const H = yy + 4;
-    const svg = d3.create('svg').attr('width', Wd).attr('height', H).attr('viewBox', `0 0 ${Wd} ${H}`);
-    // pre-pull shading, grid, axis and the pull marker
-    if (t0 < -0.55) {
-      svg.append('rect').attr('x', 0).attr('y', 14).attr('width', Math.max(0, x(0))).attr('height', H - 14).style('fill', 'var(--fv-prepull)');
-      if (x(0) > 44) svg.append('text').attr('x', x(0) - 4).attr('y', H - 4).attr('text-anchor', 'end').text('pre-pull').style('font-size', '9px').style('fill', 'var(--color-fg-muted)');
-    }
-    const step = pps > 30 ? 1 : pps > 10 ? 5 : pps > 3 ? 10 : 30;
-    const ticks = d3.range(Math.ceil(t0 / step) * step, t1 + 0.01, step).filter((d) => d !== 0);
-    svg.append('g').selectAll('line').data(ticks).join('line').attr('x1', x).attr('x2', x).attr('y1', 16).attr('y2', H).style('stroke', 'var(--cds-chart-grid)').attr('stroke-width', 1);
-    svg.append('g').selectAll('text').data(ticks.filter((d, i) => step >= 5 || Math.round(d) % 5 === 0)).join('text').attr('x', x)
-      .attr('y', 11).attr('text-anchor', (d) => (x(d) < 14 ? 'start' : x(d) > Wd - 14 ? 'end' : 'middle')).text((d) => (d < 0 ? '−' : '') + Math.abs(d) + 's')
-      .attr('opacity', (d) => (x(d) - x(0) < 58 && x(d) - x(0) > -22 ? 0 : 1));
-    svg.append('line').attr('x1', x(0)).attr('x2', x(0)).attr('y1', 13).attr('y2', H).style('stroke', 'var(--fv-gold)').attr('stroke-width', 1.5).attr('stroke-dasharray', '3 2');
-    svg.append('text').attr('x', x(0) + 3).attr('y', 11).text('Pull 0 s').style('fill', 'var(--fv-gold)').style('font-weight', '600').style('font-size', '9.5px');
-    for (const l of lanes) if (l.id === 'b' || l.id === 't') svg.append('rect').attr('x', 0).attr('width', Wd).attr('y', l.y).attr('height', l.h).style('fill', 'var(--color-panel)').attr('opacity', 0.6);
-    const icoOf = (k) => names.get(k)?.icon;
-    if (!single) {
-      // casts
-      const castRect = (g, list, L) => {
-        g.selectAll('rect').data(list).join('rect').attr('x', (c) => x(c[0])).attr('y', L.y).attr('height', L.h)
-          .attr('width', (c) => Math.max(2, x(c[0] + Math.max(c[2], c[3], 0.15)) - x(c[0]) - 1)).attr('rx', 2)
-          .style('fill', (c) => colorOf(c[1])).attr('opacity', (c) => fo(c[1], 0.92)).attr('data-tt', (c) => 'k:' + c[1]).attr('data-tt-tap', '');
-        if (pps > 8) for (const c of list) { const w = Math.max(c[2], c[3], 0.15) * pps; const ic = icoOf(c[1]); if (ic && w >= L.h) svgIcon(g, ic, x(c[0]) + 1, L.y + 1, L.h - 2); }
-        if (pps > 14) g.selectAll('text').data(list.filter((c) => (Math.max(c[2], c[3], 0.15)) * pps > 34 + L.h)).join('text')
-          .attr('x', (c) => x(c[0]) + 3 + (icoOf(c[1]) ? L.h : 0)).attr('y', L.y + L.h / 2 + 3.5).text((c) => { const n = label(c[1]); const w = Math.max(c[2], c[3]) * pps; return n.length * 5.5 > w - 6 ? n.slice(0, Math.max(2, Math.floor((w - 6) / 5.5))) : n; })
-          .style('fill', '#fff').style('font-size', '9.5px').style('paint-order', 'stroke').style('stroke', 'rgba(0,0,0,0.35)').style('stroke-width', '2px');
-      };
-      castRect(svg.append('g'), s.casts.filter((c) => c[4] === 'p'), Lc);
-      if (Lp) castRect(svg.append('g'), petCasts, Lp);
-      // damage
-      const maxD = d3.max(s.dmg, (d) => d[2]) || 1;
-      const hs = d3.scaleSqrt([0, maxD], [0, Ld.h - 2]);
-      const dg = svg.append('g');
-      dg.selectAll('rect').data(s.dmg.filter((d) => d[2] > 0)).join('rect').attr('x', (d) => x(d[0]) - 0.75).attr('width', pps > 20 ? 2.5 : 1.5)
-        .attr('y', (d) => Ld.y + Ld.h - hs(d[2])).attr('height', (d) => Math.max(1, hs(d[2]))).style('fill', (d) => colorOf(d[1]))
-        .attr('opacity', (d) => fo(d[1], d[3] === 'C' ? 1 : d[3] === 'G' ? 0.35 : 0.6)).attr('data-tt', (d) => 'k:' + d[1]).attr('data-tt-tap', '');
-      dg.selectAll('text').data(s.dmg.filter((d) => d[2] === 0 && ['M', 'D', 'P'].includes(d[3]))).join('text').attr('x', (d) => x(d[0])).attr('y', Ld.y + Ld.h).attr('text-anchor', 'middle').text('×').style('font-size', '9px');
-      // cooldowns
-      if (Lcd) {
-        const cg = svg.append('g');
-        cg.selectAll('path').data(s.cds).join('path').attr('d', (c) => `M${x(c[0])},${Lcd.y} l5,${Lcd.h / 2} l-5,${Lcd.h / 2} l-5,-${Lcd.h / 2}z`).style('fill', (c) => colorOf(c[1])).style('stroke', 'var(--color-fg)').attr('stroke-width', 0.75).attr('data-tt', (c) => 'k:' + c[1]).attr('data-tt-tap', '');
-        if (pps > 6) cg.selectAll('text').data(s.cds).join('text').attr('x', (c) => x(c[0]) + 7 + Lcd.h).attr('y', Lcd.y + Lcd.h - 3).text((c) => label(c[1])).style('font-size', '9px');
-        if (pps > 6) for (const c of s.cds) { const ic = icoOf(c[1]); if (ic) svgIcon(cg, ic, x(c[0]) + 6, Lcd.y, Lcd.h); }
-      }
-      // auras
-      const auraLane = (a, L, col) => {
-        const g = svg.append('g');
-        g.attr('data-tt', 'a:' + a.key).attr('data-tt-tap', '');
-        g.selectAll('rect').data(a.iv).join('rect').attr('x', (v) => x(Math.max(t0, v[2]))).attr('width', (v) => Math.max(1.5, x(v[3]) - x(Math.max(t0, v[2])))).attr('y', L.y + 1).attr('height', L.h - 2).attr('rx', 2).style('fill', col).attr('opacity', 0.85);
-        if (pps > 14) g.selectAll('text').data(a.iv.filter((v) => v[4] > 1 && (v[3] - v[2]) * pps > 14)).join('text').attr('x', (v) => x(v[2]) + 2).attr('y', L.y + L.h - 2).text((v) => '×' + v[4]).style('font-size', '8px').style('fill', '#fff');
-      };
-      buffs.forEach((a, i) => { if (Lb[i]) auraLane(a, Lb[i], nameColor(a.key) || colors.get(a.key) || dash.colors[i % 8]); });
-      debuffs.forEach((a, i) => { if (Lt[i]) auraLane(a, Lt[i], nameColor(a.key) || colors.get(a.key) || 'var(--cds-chart-muted)'); });
-      // resource, in the game's colour
-      if (Lr) {
-        const pts = s.res[resKey];
-        const ry = d3.scaleLinear([0, resMax], [Lr.y + Lr.h, Lr.y]);
-        const area = d3.area().curve(d3.curveStepAfter).x((p) => x(p[0])).y0(Lr.y + Lr.h).y1((p) => ry(p[1]));
-        svg.append('path').attr('d', area([...pts, [t1, pts[pts.length - 1][1]]])).style('fill', resCol).attr('opacity', 0.28);
-        svg.append('path').attr('d', d3.line().curve(d3.curveStepAfter).x((p) => x(p[0])).y((p) => ry(p[1]))([...pts, [t1, pts[pts.length - 1][1]]])).style('fill', 'none').style('stroke', resCol).attr('stroke-width', 1.5);
-        svg.append('text').attr('x', Math.max(3, x(0) + 3)).attr('y', Lr.y + 9).text(f0(resMax)).style('font-size', '9px');
-        if (cpKey) {
-          const cp = s.res[cpKey];
-          svg.append('path').attr('d', d3.line().curve(d3.curveStepAfter).x((p) => x(p[0])).y((p) => Lr.y + Lr.h - (p[1] / 5) * Lr.h)([...cp, [t1, cp[cp.length - 1][1]]])).style('fill', 'none').style('stroke', RES_COL['combo points']).attr('stroke-width', 1.2).attr('stroke-dasharray', '2 2');
-        }
-      }
-    }
-    // running dps
-    const cum = [];
-    let tot = 0;
-    for (const d of [...s.dmg].sort((p, q) => p[0] - q[0])) { tot += d[2]; if (d[0] > 2) cum.push([d[0], tot / d[0]]); }
-    const dy = Lx ? d3.scaleLinear([0, (d3.max(cum, (p) => p[1]) || 1) * 1.05], [Lx.y + Lx.h, Lx.y]) : null;
-    if (Lx) svg.append('path').attr('d', d3.line().x((p) => x(p[0])).y((p) => dy(p[1]))(cum)).style('fill', 'none').style('stroke', ccol(b.class)).attr('stroke-width', 1.8).attr('stroke-linejoin', 'round');
-    if (Lx && cum.length) svg.append('text').attr('x', Wd - 3).attr('y', dy(cum[cum.length - 1][1]) - 4).attr('text-anchor', 'end').text(f0(cum[cum.length - 1][1]) + ' DPS').style('font-size', '9.5px');
-
-    // ---- single lane ----
-    // one moment's state, for the tooltip: resource left, buffs and debuffs up, recent cooldowns
-    const stateGrid = (t) => {
-      const rv = resKey ? resAt(resKey, t + 0.001) : null;
-      const cp = cpKey ? resAt(cpKey, t + 0.001) : null;
-      const bu = aurasAt(t, 'p'), de = aurasAt(t, 't');
-      const cdr = s.cds.filter((c) => c[0] <= t + 0.01 && c[0] >= t - 30);
-      const list = (xs, n) => `${xs.slice(0, n).join(', ')}${xs.length > n ? ` +${xs.length - n}` : ''}`;
-      return tipGrid([rv != null ? [el('span', {}, tipSw(resCol), resName[0].toUpperCase() + resName.slice(1)), `${f0(rv)} / ${f0(resMax)}`] : null,
-        cp != null ? ['Combo points', f0(cp)] : null, bu.length ? ['Buffs', list(bu, 5), 'txt'] : null, de.length ? ['Debuffs', list(de, 4), 'txt'] : null,
-        cdr.length ? ['Last 30 s', cdr.map((c) => `${label(c[1])} ${fmtT(c[0])}`).join(', '), 'txt'] : null]);
-    };
-    if (single) {
-      const evC = s.casts.map((c) => ({ t: c[0], k: c[1], u: c[4], cast: c[2], cost: c[5], kind: 'c' }));
-      const evD = s.dmg.map((d) => ({ t: d[0], k: d[1], amt: d[2], o: d[3], tick: d[5], u: d[4], kind: 'd' }));
-      const evR = [];
-      if (resKey) {
-        const pts = s.res[resKey];
-        for (let i = 1; i < pts.length; i++) { const dv = pts[i][1] - pts[i - 1][1]; if (Math.abs(dv) >= 0.5) evR.push({ t: pts[i][0], dv }); }
-      }
-      // greedy clusters: neighbours closer than `gap` pixels share one mark
-      const cluster = (list, gapOf) => {
-        const out = [];
-        for (const e of [...list].sort((p, q) => p.t - q.t)) {
-          const last = out[out.length - 1];
-          if (last && x(e.t) - x(last.t0) < gapOf(last)) { last.ev.push(e); last.t1 = e.t; } else out.push({ t0: e.t, t1: e.t, ev: [e] });
-        }
-        return out;
-      };
-      const ic = Si.h - 7;
-      // a cast's damage and what it cost, for its tooltip
-      const tipFor = (g, what) => (e, d, node) => {
-        const r = card.getBoundingClientRect(), nb = node.getBoundingClientRect();
-        const evs = what === 'c' ? d.ev : what === 'd' ? d.ev : d.ev;
-        const head = evs.length === 1 && what !== 'r' ? tipTitle(label(evs[0].k), fmtT(evs[0].t), icoOf(evs[0].k) ? iconImg(icoOf(evs[0].k)) : null)
-          : tipTitle(`${evs.length} ${what === 'c' ? 'casts' : what === 'd' ? 'hits' : 'changes'}`, `${fmtT(d.t0)}${d.t1 > d.t0 ? `–${fmtT(d.t1)}` : ''}`);
-        const lines = [];
-        // a cast's cost and the damage it did, in a few words
-        const castOf = (c) => {
-          const hits = s.dmg.filter((q) => q[1] === c.k && q[0] >= c.t - 0.01 && q[0] <= c.t + Math.max(c.cast, 0) + 1.2 && (q[2] > 0 || q[3] !== 'H'));
-          return [c.cost ? `−${f0(c.cost)}${resName ? ' ' + resName : ''}` : null, hits.length ? hits.slice(0, 3).map((q) => (q[2] ? `${kfmt(q[2])}${q[3] === 'C' ? ' crit' : ''}` : OUTC[q[3]] || q[3])).join(', ') : null, c.u !== 'p' ? unitName(c.u) : null];
-        };
-        const more = (n, max) => (n > max ? tipNote(`and ${n - max} more`) : null);
-        if (what === 'c') {
-          if (evs.length === 1) {
-            const c = evs[0], [cost, dmg, who] = castOf(c);
-            lines.push(tipGrid([['Cast', c.cast > 0 ? `${f1(c.cast)} s` : 'instant'], cost ? ['Cost', cost] : null, dmg ? ['Damage', dmg] : null, who ? ['By', who, 'txt'] : null]));
-          } else {
-            lines.push(tipGrid(evs.slice(0, 6).map((c) => [`${fmtT(c.t)} ${label(c.k)}`, castOf(c).filter(Boolean).join(' · ') || (c.cast > 0 ? `${f1(c.cast)} s` : 'instant')])), more(evs.length, 6));
-          }
-        } else if (what === 'd') {
-          const sum = d3.sum(evs, (q) => q.amt), cr = evs.filter((q) => q.o === 'C').length;
-          const one = (q) => `${q.amt ? kfmt(q.amt) : ''} ${q.tick ? 'tick' : ''} ${q.o === 'H' && q.amt ? '' : OUTC[q.o] || q.o}`.replace(/\s+/g, ' ').trim();
-          if (evs.length === 1) lines.push(tipKey(one(evs[0]), null, null));
-          else lines.push(tipKey(kfmt(sum), 'damage', cr ? `${cr} crit${cr > 1 ? 's' : ''}` : null), tipGrid(evs.slice(0, 6).map((q) => [`${fmtT(q.t)} ${label(q.k)}`, one(q)])), more(evs.length, 6));
-        } else {
-          const net = d3.sum(evs, (q) => q.dv);
-          lines.push(tipKey(sgn(net, f0), resName), tipGrid(evs.slice(0, 6).map((q) => [fmtT(q.t), sgn(q.dv, f0)])), more(evs.length, 6));
-        }
-        lines.push(el('span', { class: 'fv-tip-sep' }), stateGrid(d.t1));
-        showTip(card, nb.left - r.left + nb.width / 2 - 10, nb.bottom - r.top, head, lines, { hl: node, below: true });
-      };
-      // casts: icons framed in their colour; pets smaller, on the lower half
-      const cg = svg.append('g');
-      const CW = ic + 4;
-      // auto attacks: small ticks under the track, so the spells stand out
-      const ag = cg.append('g');
-      for (const g of cluster(evC.filter((q) => q.u === 'p' && isAuto(q.k)), () => 6)) {
-        const gg = ag.append('g').datum(g);
-        gg.append('rect').attr('x', x(g.t0) - 2).attr('y', Si.y + Si.h - 3).attr('width', Math.max(4, x(g.t1) - x(g.t0) + 4)).attr('height', 5).attr('rx', 2.5).style('fill', 'var(--cds-chart-muted)').attr('class', 'sl-cast');
-        tipOn(gg, tipFor(g, 'c'));
-      }
-      for (const g of cluster(evC.filter((q) => q.u === 'p' && !isAuto(q.k)), () => CW)) {
-        const e0 = g.ev[0], cx = x(g.t0);
-        const gg = cg.append('g').datum(g).attr('opacity', g.ev.some((q) => !st.focus || q.k === st.focus) ? 1 : 0.15);
-        gg.append('rect').attr('x', cx - 1).attr('y', Si.y).attr('width', ic + 2).attr('height', ic + 2).attr('rx', 3).style('fill', colorOf(e0.k)).attr('class', 'sl-cast');
-        const ico = icoOf(e0.k);
-        if (ico) svgIcon(gg, ico, cx + 1, Si.y + 2, ic - 2);
-        else gg.append('text').attr('x', cx + ic / 2).attr('y', Si.y + ic / 2 + 4).attr('text-anchor', 'middle').text(label(e0.k).slice(0, 2)).style('fill', '#fff').style('font-size', '9px').style('font-weight', '600');
-        if (g.ev.length > 1) {
-          gg.append('rect').attr('x', cx + ic - 8).attr('y', Si.y - 4).attr('width', 13).attr('height', 10).attr('rx', 5).style('fill', 'var(--color-fg)');
-          gg.append('text').attr('x', cx + ic - 1.5).attr('y', Si.y + 3.5).attr('text-anchor', 'middle').text('+' + (g.ev.length - 1)).style('fill', 'var(--color-bg)').style('font-size', '7.5px').style('font-weight', '700');
-        }
-        tipOn(gg, tipFor(g, 'c'));
-      }
-      for (const g of cluster(evC.filter((q) => q.u !== 'p' && q.u !== 't'), () => 14)) {
-        const e0 = g.ev[0], cx = x(g.t0);
-        const gg = cg.append('g').datum(g);
-        gg.append('circle').attr('cx', cx + 6).attr('cy', Si.y + Si.h - 5).attr('r', 6).style('fill', colorOf(e0.k)).style('stroke', 'var(--color-bg)').attr('stroke-width', 1.5);
-        const ico = icoOf(e0.k);
-        if (ico && pps > 20) svgIcon(gg, ico, cx + 2, Si.y + Si.h - 9, 8);
-        tipOn(gg, tipFor(g, 'c'));
-      }
-      // damage numbers: crits bold with a star, misses in words
-      const dgp = svg.append('g');
-      const wOf = (g) => 8 + 5.6 * (g.ev.length > 1 ? kfmt(d3.sum(g.ev, (q) => q.amt)).length + 3 : (g.ev[0].amt ? kfmt(g.ev[0].amt).length : 5));
-      const dcl = cluster(evD.filter((q) => q.u !== 't'), wOf);
-      dcl.forEach((g, i) => {
-        const sum = d3.sum(g.ev, (q) => q.amt), crit = g.ev.some((q) => q.o === 'C'), miss = g.ev.length === 1 && !g.ev[0].amt;
-        const big = g.ev.reduce((p, q) => (q.amt > p.amt ? q : p));
-        const gg = dgp.append('g').datum(g).attr('opacity', g.ev.some((q) => !st.focus || q.k === st.focus) ? 1 : 0.15);
-        const txt = miss ? (OUTC[g.ev[0].o] || g.ev[0].o) : `${kfmt(sum)}${g.ev.length > 1 ? ` ×${g.ev.length}` : ''}`;
-        const yb = Sd.y + (i % 2 ? 26 : 13);
-        gg.append('rect').attr('x', x(g.t0) - 2).attr('y', yb - 10).attr('width', wOf(g)).attr('height', 13).style('fill', 'transparent');
-        gg.append('text').attr('x', x(g.t0)).attr('y', yb).text(txt).style('fill', miss ? 'var(--color-fg-muted)' : colorOf(big.k))
-          .style('font-weight', crit ? '700' : '500').style('font-style', miss ? 'italic' : 'normal').style('font-size', crit ? '10.5px' : '9.5px');
-        if (crit) gg.append('text').attr('x', x(g.t0) + wOf(g) - 7).attr('y', yb - 4).text('✦').style('fill', 'var(--fv-gold)').style('font-size', '8px');
-        tipOn(gg, tipFor(g, 'd'));
-      });
-      // resource changes
-      if (Sr) {
-        const rg = svg.append('g');
-        for (const g of cluster(evR, () => 26)) {
-          const net = d3.sum(g.ev, (q) => q.dv);
-          if (Math.abs(net) < 0.5) continue;
-          const gg = rg.append('g').datum(g);
-          gg.append('rect').attr('x', x(g.t0) - 2).attr('y', Sr.y).attr('width', 26).attr('height', Sr.h).style('fill', 'transparent');
-          gg.append('text').attr('x', x(g.t0)).attr('y', Sr.y + 10).text(sgn(net, f0)).style('fill', resCol).style('font-weight', net < 0 ? '600' : '500').style('font-size', '9px');
-          tipOn(gg, tipFor(g, 'r'));
-        }
-      }
-    }
-    // cursor
-    const cursor = svg.append('line').attr('y1', 16).attr('y2', H).style('stroke', 'var(--color-fg)').attr('stroke-width', 1).attr('opacity', 0);
-    svg.on('click', (e) => {
-      const [px] = d3.pointer(e);
-      const t = x.invert(px);
-      cursor.attr('x1', px).attr('x2', px).attr('opacity', 0.8);
-      readout(t);
-    });
-    // double-tap (or double-click) zooms in one step around that moment
-    svg.on('dblclick', (e) => {
-      e.preventDefault();
-      const t = x.invert(d3.pointer(e)[0]);
-      const steps = ['fit', '60', '30', '15', '5'];
-      const nx = steps[Math.min(steps.length - 1, steps.indexOf(st.zoom) + 1)];
-      if (nx === st.zoom) return;
-      st.zoom = nx; persist(); drawSpec();
-      const sc2 = $('#tl-scroll');
-      if (tl) sc2.scrollLeft = Math.max(0, tl.x(t) - sc2.clientWidth / 2);
-    });
-    sc.replaceChildren(svg.node());
-    sc.style.minHeight = '';
-    $('#tl-labels').style.height = H + 'px';
-    $('#tl-labels').replaceChildren(...lanes.map((l) => tt(el('div', { style: `top:${l.y + l.h / 2 - 5}px;font-size:${l.h < 14 ? '0.62rem' : '0.68rem'}${l.id === 'sr' || l.id === 'res' ? `;color:${resCol}` : ''}`, title: l.key ? null : l.lbl, text: l.lbl }), l.key ? 'a:' + l.key : null)));
-    // legend: the resource colour, the crit star and the pull marker
-    $('#tl-legend').replaceChildren(...[
-      resKey ? el('span', {}, el('i', { class: 'sw', style: `background:${resCol}` }), resName[0].toUpperCase() + resName.slice(1)) : null,
-      cpKey ? el('span', {}, el('i', { class: 'sw', style: `background:${RES_COL['combo points']}` }), 'Combo points') : null,
-      single ? el('span', {}, el('b', { text: '✦', style: 'color:var(--fv-gold)' }), ' Crit') : null,
-      el('span', {}, el('i', { class: 'sw pull' }), 'Pull at 0 s', t0 < -0.55 ? ', shaded before it' : ''),
-      el('span', { class: 'fv-note', text: single ? 'Tap a mark for its numbers and the buffs up at that moment.' : 'Bars take their icon’s colour.' }),
-    ].filter(Boolean));
-    const readout = (t) => {
-      const near = (tt2) => Math.abs(tt2 - t) <= (pps > 20 ? 0.6 : 1.5);
-      const evs = [];
-      for (const c of s.casts) if (near(c[0])) evs.push([c[0], `${unitName(c[4])} casts ${label(c[1])}`, c[5] ? `${f0(c[5])} cost` : '', 'k:' + c[1]]);
-      for (const d of s.dmg) if (near(d[0])) evs.push([d[0], `${label(d[1])}${d[5] ? ' tick' : ''} ${OUTC[d[3]] || d[3]}`, d[2] ? f0(d[2]) : '', 'k:' + d[1]]);
-      for (const a of s.auras) { if (near(a[2]) && a[2] > t0 + 0.6) evs.push([a[2], `${label(a[0])} on ${unitName(a[1]).toLowerCase()}`, 'gained', 'a:' + a[0]]); if (near(a[3]) && a[3] < s.dur - 0.05) evs.push([a[3], `${label(a[0])} on ${unitName(a[1]).toLowerCase()}`, 'faded', 'a:' + a[0]]); }
-      evs.sort((p, q) => p[0] - q[0]);
-      const up = buffs.filter((a) => a.iv.some((v) => v[2] <= t && v[3] >= t)).map((a) => label(a.key));
-      const rv = resKey ? resAt(resKey, t) : null;
-      const cd = cum.filter((p) => p[0] <= t).pop();
-      const head = el('div', { class: 'ev' }, el('b', { text: fmtT(t) + (t < 0 ? ' (before the pull)' : '') }),
-        el('span', { class: 'fv-note', text: [rv != null ? `${resName} ${f0(rv)}` : null, cd ? `running ${f0(cd[1])} DPS` : null].filter(Boolean).join(' · ') }));
-      const list = evs.slice(0, 14).map((e2) => tt(el('div', { class: 'ev' }, el('span', { class: 't', text: e2[0].toFixed(2) }), el('span', { style: 'flex:1', text: e2[1] }), el('span', { text: e2[2] })), e2[3]));
-      $('#tl-readout').replaceChildren(head, ...list, ...(up.length ? [el('div', { class: 'fv-note', text: 'Active: ' + up.join(', ') })] : []));
-    };
-    // log
-    tl = { s, x, label, unitName, t0, t1, b: b.id };
-    $('#tl-filter').value = st.filter;
-    updateLog();
-    for (const n of [$('#tl-labels'), $('#tl-log'), $('#tl-legend'), $('#tl-lanes'), $('#tl-readout')]) n.dataset.build = b.id;
-    $('#sp-time-note').textContent = `${s.label}: ${f1(s.dps)} DPS over ${f1(s.dur)} s${t0 < -0.55 ? `, from ${fmtT(t0 + 0.6).replace('−', '')} before the pull` : ''}. ${single ? 'Every cast, hit and resource change on one track. Zoom in to pull clusters apart.' : 'Zoom in, scroll sideways, and tap anywhere to see what happened at that moment.'}`;
+  // The events view of the preset's sample fights. Its Typical, Unlucky and Lucky iterations are st.sample 0, 1 and
+  // 2, and the aura bars follow the one picked there.
+  const drawEvents = (b) => {
+    const T = statusOf('timeline_' + b.class.toLowerCase()) === 'ok' ? tlSamples(b) : null;
+    const s = T && T.list.length ? T.list[Math.min(st.sample || 0, T.list.length - 1)] : null;
+    $('#sp-time-note').textContent = s
+      ? `${s.label}: ${f1(s.dps)} DPS over ${f1(s.dur)} s. Pick the typical, unlucky or lucky fight, and see it as a timeline, a chart, the combat log or a replay.`
+      : 'One simulated fight. Pick the typical, unlucky or lucky fight, and see it as a timeline, a chart, the combat log or a replay.';
+    events.show(b.id, st.sample || 0);
   };
-  const updateLog = () => {
-    if (!tl) return;
-    const sc = $('#tl-scroll');
-    const a = tl.x.invert(sc.scrollLeft), z = tl.x.invert(sc.scrollLeft + sc.clientWidth);
-    const s = tl.s, f = st.filter, evs = [];
-    if (f === 'all' || f === 'cast') for (const c of s.casts) if (c[0] >= a && c[0] <= z) evs.push([c[0], `${tl.unitName(c[4])}: ${tl.label(c[1])}`, c[2] ? `${c[2].toFixed(2)} s cast` : 'instant', 'k:' + c[1]]);
-    if (f === 'all' || f === 'dmg') for (const d of s.dmg) if (d[0] >= a && d[0] <= z) evs.push([d[0], `${tl.label(d[1])}${d[5] ? ' (tick)' : ''}`, d[2] ? `${f0(d[2])}${d[3] === 'C' ? ' crit' : d[3] === 'G' ? ' glance' : ''}` : ({ M: 'miss', D: 'dodge', P: 'parry' })[d[3]] || d[3], 'k:' + d[1]]);
-    if (f === 'all' || f === 'aura') for (const au of s.auras) { if (au[2] >= a && au[2] <= z && au[2] > tl.t0 + 0.6) evs.push([au[2], `${tl.label(au[0])} on ${tl.unitName(au[1]).toLowerCase()}`, '+', 'a:' + au[0]]); if (au[3] >= a && au[3] <= z && au[3] < s.dur - 0.05) evs.push([au[3], `${tl.label(au[0])} on ${tl.unitName(au[1]).toLowerCase()}`, '−', 'a:' + au[0]]); }
-    evs.sort((p, q) => p[0] - q[0]);
-    $('#tl-log').replaceChildren(...evs.slice(0, 400).map((e) => tt(el('div', {}, el('span', { class: 't', text: e[0].toFixed(2) }), el('span', { text: e[1] }), el('span', { class: 'x', text: e[2] })), e[3])),
-      ...(evs.length > 400 ? [el('span', { class: 'fv-note', text: `First 400 of ${evs.length} events. Zoom in to see the rest.` })] : evs.length ? [] : [el('span', { class: 'fv-note', text: 'No events on screen. Scroll the timeline or pick another filter.' })]));
-  };
-  let logTimer = null;
-  $('#tl-scroll').addEventListener('scroll', () => { clearTimeout(logTimer); logTimer = setTimeout(updateLog, 150); }, { passive: true });
-  document.addEventListener('toggle', (e) => { if (e.target && e.target.id === 'tl-logbox') updateLog(); }, true);
-  $('#tl-logbox summary').addEventListener('click', () => setTimeout(updateLog, 50));
-  $('#tl-focus').addEventListener('change', (e) => { st.focus = e.target.value; persist(); drawSpec(); });
-  $('#tl-filter').addEventListener('change', (e) => { st.filter = e.target.value; persist(); updateLog(); });
-  document.querySelectorAll('#tl-zoom button').forEach((bt) => bt.addEventListener('click', () => {
-    const sc = $('#tl-scroll');
-    const mid = tl ? tl.x.invert(sc.scrollLeft + sc.clientWidth / 2) : 0;
-    st.zoom = bt.dataset.z; persist();
-    drawSpec();
-    if (tl) sc.scrollLeft = Math.max(0, tl.x(mid) - sc.clientWidth / 2);
-  }));
+  events.onSampleChange((sample) => {
+    if (st.sample === sample) return;
+    st.sample = sample; persist();
+    const b = visB().find((x) => x.id === st.build);
+    if (b) { drawEvents(b); drawAuras(b); }
+  });
 
   // ---------- compare ----------
   // A side is a preset, or one of its race and setup variants from the Races tab. A variant only has its

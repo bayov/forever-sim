@@ -793,5 +793,11 @@ with ThreadPoolExecutor(9) as ex:
     got_bg = list(ex.map(fetch_bg, art))
 dump('treeart', [{'class': a['class'], 'tree': a['tree'], 'treeName': a['treeName'], 'icon': a['icon'], 'bg': ('data:image/jpeg;base64,' + b) if b else None} for a, b in got_bg])
 print('missing icons:', [ic for ic, b in got if not b])
+# The Specs page shows the whole sample fights in the sim UI's events view (events.py writes them). The page still
+# draws each aura's bar from these rows, so they keep the auras and the pre-pull casts that tell when the bars start.
+def slim_timeline(r):
+    return {k: v for k, v in r.items() if k not in ('dmg', 'res', 'cds')} | {'casts': [c for c in r['casts'] if c[0] < 0]}
+
+
 for c, rows in timelines.items():
-    dump('timeline_' + c, rows)
+    dump('timeline_' + c, [slim_timeline(r) for r in rows])
