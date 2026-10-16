@@ -26,7 +26,7 @@ from run_build import run, D, LINE
 
 DUR = 480
 STEP = 5
-LOW = 15  # "runs low" means mana below this % of max. Most rotations start holding spells around 15 to 20%.
+LOW = 10  # "runs low" means mana below this % of max.
 FIGHTS = int(os.environ.get('FIGHTS', 100))
 AGG_ITERS = 5000
 PAR = int(os.environ.get('PAR', 8))

@@ -1013,7 +1013,7 @@ export function startReport(dash, events) {
     $('#mana-sum').textContent = st.cls === 'Warrior' || st.cls === 'Rogue' ? `${st.cls}s don't use mana.`
       : missing.length ? `No mana data for ${[...new Set(missing.map((b) => b.class))].join(', ').replace(/, ([^,]*)$/, ' and $1')} (${missing.length} preset${missing.length > 1 ? 's' : ''}).` : '';
     if (!shown.length) { host.replaceChildren(); list.replaceChildren(); return; }
-    const lowPct = rowsOf('mana_summary')[0]?.lowPct ?? 15;
+    const lowPct = rowsOf('mana_summary')[0]?.lowPct ?? 10;
     const series = manaBuilds.filter((b) => sum.has(b.id)).map((b) => {
       const on = shown.includes(b);
       const pts = (curves.get(b.id) || []).map((r) => ({ s: r.t, v: r.pct, p25: r.p25, p75: r.p75 }));
