@@ -620,7 +620,7 @@
             "retributionPaladin": {
               "options": {
                 "primarySeal": "Command",
-                "aura": "RetributionAura"
+                "aura": "ConcentrationAura"
               }
             }
           }

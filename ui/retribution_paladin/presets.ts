@@ -325,8 +325,12 @@ export const DefaultTalents = TalentPresets[Phase.Phase4][0];
 //                                 Options
 ///////////////////////////////////////////////////////////////////////////
 
+// The Level 60 builds run Concentration Aura: the raid's paladins already give Retribution
+// Aura, which only fires when something hits the paladin in melee, while Concentration Aura's 35%
+// chance to ignore pushback from the raid hits is +0.3 on twist, +2.7 on Shock, +2.5 on Shock vs
+// Undead and +1.0 on sub Holy vs Undead at 180 sec (20000 iterations, two seed sets).
 export const DefaultOptions = RetributionPaladinOptions.create({
-	aura: PaladinAura.RetributionAura,
+	aura: PaladinAura.ConcentrationAura,
 	primarySeal: PaladinSeal.Command,
 });
 
@@ -534,7 +538,7 @@ export const PresetBuildLevel60Shock = PresetUtils.makePresetBuild('Level 60 Sho
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: RetributionPaladinOptions.create({
-		aura: PaladinAura.RetributionAura,
+		aura: PaladinAura.ConcentrationAura,
 		primarySeal: PaladinSeal.Righteousness,
 	}),
 });
@@ -593,7 +597,7 @@ export const PresetBuildLevel60ShockCrusaderDuty = PresetUtils.makePresetBuild('
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: RetributionPaladinOptions.create({
-		aura: PaladinAura.RetributionAura,
+		aura: PaladinAura.ConcentrationAura,
 		primarySeal: PaladinSeal.Righteousness,
 	}),
 });
@@ -615,7 +619,7 @@ export const EncounterLevel60Undead = PresetUtils.makePresetEncounter(
 	},
 );
 const OptionsRighteousness = RetributionPaladinOptions.create({
-	aura: PaladinAura.RetributionAura,
+	aura: PaladinAura.ConcentrationAura,
 	primarySeal: PaladinSeal.Righteousness,
 });
 // The vs Undead builds, on an Undead boss (50000 iterations, 120 / 180 / 300 sec). Undead stays

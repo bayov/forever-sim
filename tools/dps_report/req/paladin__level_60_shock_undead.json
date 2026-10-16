@@ -515,7 +515,7 @@
             "retributionPaladin": {
               "options": {
                 "primarySeal": "Righteousness",
-                "aura": "RetributionAura"
+                "aura": "ConcentrationAura"
               }
             }
           }
