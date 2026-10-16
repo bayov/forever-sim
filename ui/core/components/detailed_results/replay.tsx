@@ -17,11 +17,13 @@ import {
 	AuraTrack,
 	buildReplayModel,
 	cooldownAt,
+	LANES,
 	lastIndexAtOrBefore,
 	ReplayBar,
 	ReplayCast,
 	ReplayEnemy,
 	ReplayModel,
+	SCROLL_LIFE,
 	SctEvent,
 	totemAt,
 	TotemSlot,
@@ -33,18 +35,20 @@ import { tooltipHit, tooltipRow, tooltipTitle } from './timeline.js';
 const SPEEDS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 3, 4];
 const SPEED_STORAGE_KEY = '__detailed_results_replay_speed__';
 
-// How long a line of the combat text stays up, in seconds of the iteration. At 2x it scrolls
-// by twice as fast, like everything else.
-const SCROLL_LIFE = 2.2;
-const STICKY_LIFE = 1.6;
-// How far apart lines that start close together are, in pixels.
+// How far apart lines that start close together are, in pixels. When the area is short, the
+// lanes get closer, so they take at most this share of it.
 const LANE_PX = 28;
+const LANES_SHARE = 0.4;
 const STICKY_LANE_PX = 42;
 // What we do to the enemies lines up on the left edge of the target's frame, so the icons
 // form a column over it. What happens to us lines up on the right edge of our frame, with the
 // icon after the text. Crits stay put in their own column, this many pixels toward the middle
 // of the screen, so the lines that scroll by don't run over them.
 const STICKY_GAP_PX = 32;
+// What happens to us scrolls down from under the cast history to just above our frame. What we
+// do scrolls up from just above the target's frame to under our buffs at the top right. This is
+// the room we keep from each of them, about half the height of a crit.
+const SCT_MARGIN_PX = 20;
 
 // The cast history is a timeline at the top left that ends at the current time, right under the
 // clock. Each cast sits at the moment we made it and slides left as time goes on. Casts too
@@ -1705,14 +1709,28 @@ export class Replay extends ResultComponent {
 		const ourRight = zone.right - playerFrame.right;
 		const targetLeft = targetFrame ? targetFrame.left - zone.left : zone.width * 0.7;
 
+		// Where each side's lines start and end, in pixels from the top of the area.
+		const history = this.ui.history.parentElement!.getBoundingClientRect();
+		const inTop = history.bottom - zone.top + SCT_MARGIN_PX;
+		const inBottom = playerFrame.top - zone.top - SCT_MARGIN_PX;
+		const outTop = this.buffsElem.getBoundingClientRect().bottom - zone.top + SCT_MARGIN_PX;
+		const outBottom = (targetFrame ? targetFrame.top - zone.top : zone.height) - SCT_MARGIN_PX;
+		// A line that starts close after another starts a few lanes behind it. We keep the room for
+		// the lanes inside the area, so the last lane still starts clear of the frame or the history.
+		const lanes = (span: number) => {
+			const lanePx = Math.min(LANE_PX, (span * LANES_SHARE) / (LANES - 1));
+			return { lanePx, room: lanePx * (LANES - 1) };
+		};
+		const inLanes = lanes(inBottom - inTop);
+		const outLanes = lanes(outBottom - outTop);
+
 		const first = lastIndexAtOrBefore(model.sctTimes, time - SCROLL_LIFE) + 1;
 		const last = lastIndexAtOrBefore(model.sctTimes, time);
 		const shown = new Set<number>();
 		for (let i = first; i <= last; i++) {
 			const event = model.sct[i];
 			const age = time - event.time;
-			const life = event.sticky ? STICKY_LIFE : SCROLL_LIFE;
-			if (age > life) continue;
+			if (age > event.end) continue;
 			shown.add(i);
 			let elem = this.sctElems.get(i);
 			if (!elem) {
@@ -1720,25 +1738,22 @@ export class Replay extends ResultComponent {
 				this.sctElems.set(i, elem);
 				(event.side == 'in' ? this.ui.sctIn : this.ui.sctOut).appendChild(elem);
 			}
-			const progress = age / life;
-			// Where the line is, as a share of the area's height and a number of pixels from there.
-			// A line that starts close after another starts a few lanes behind it.
+			const progress = age / event.end;
 			let y: number;
-			let offset: number;
 			let scale = 1;
 			if (event.sticky) {
-				y = 0.45;
-				offset = (event.side == 'in' ? 1 : -1) * event.lane * STICKY_LANE_PX;
+				// The crits' spots go from the middle of the side's area toward its end.
+				y = event.side == 'in' ? (inTop + inBottom) / 2 + event.lane * STICKY_LANE_PX : (outTop + outBottom) / 2 - event.lane * STICKY_LANE_PX;
 				scale = 1 + 0.55 * Math.max(0, 1 - age / 0.12);
 			} else if (event.side == 'out') {
-				y = 1 - progress;
-				offset = event.lane * LANE_PX;
+				const { lanePx, room } = outLanes;
+				y = outBottom - room - progress * (outBottom - outTop - room) + event.lane * lanePx;
 			} else {
-				y = progress;
-				offset = -event.lane * LANE_PX;
+				const { lanePx, room } = inLanes;
+				y = inTop + room + progress * (inBottom - inTop - room) - event.lane * lanePx;
 			}
-			const opacity = Math.min(1, age / 0.06) * Math.min(1, (1 - progress) / 0.3);
-			elem.style.top = `calc(${(y * 100).toFixed(2)}% + ${offset}px)`;
+			const opacity = Math.min(1, age / 0.06) * Math.min(1, (event.end - age) / (event.end - event.fadeAt));
+			elem.style.top = `${y.toFixed(1)}px`;
 			if (event.side == 'out' && !event.sticky) {
 				elem.style.left = `${targetLeft}px`;
 			} else if (event.side == 'out') {

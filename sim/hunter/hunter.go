@@ -141,8 +141,8 @@ func (hunter *Hunter) GetHunter() *Hunter {
 	return hunter
 }
 
-// Forever's Trueshot Aura is a party aura the talent teaches, ranged attack power only. The sim only
-// has a raid wide switch for it.
+// Forever's Trueshot Aura is a raid aura the talent teaches (a party aura before client
+// 1.60.1.70425), ranged attack power only.
 func (hunter *Hunter) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	if hunter.Talents.TrueshotAura {
 		raidBuffs.TrueshotAura = true

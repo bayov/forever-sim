@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_daggers",
   "apl": "level60_combat_daggers",
   "published": {
-    "dps": 698.3,
-    "source": "Phase 1 BiS weapon speed pass, 2026-10-15 (standards 22)"
+    "dps": 688.6,
+    "source": "Race pass on the client 70425 racials (raid hits, Savage, Ruthless, Earth Fury, Wind Blessed), master d511c09, 2026-10-16"
   },
   "verify": {
-    "dps": 698.3,
-    "stderr": null,
+    "dps": 688.6,
+    "stderr": 0.21,
     "iters": 20000,
     "ok": true,
-    "note": "same sim as the published number"
+    "note": "same sim as the published number (seed 1)"
   },
   "summary": "Seal Fate Daggers against a Humanoid or Giant boss, with Murder 2/2 (+4% damage to Humanoids and Giants) taking the points the generic-boss build spends elsewhere.",
   "advantage": "Murder 2/2 makes every attack do 4% more damage to Humanoids and Giants. Against other bosses it does nothing, so the normal build spends those points elsewhere.",
@@ -68,7 +68,8 @@
     "Improved Sinister Strike 2 is a row-filler with no DPS effect",
     "Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV) left out under Forever; would add +13 to +18",
     "Grimstitch 4/5-piece bonuses not live on the synthetic gear (about +8 / +6 for Combat Daggers)",
-    "Flask of Supreme Power and Greater Arcane Elixir omitted for consistency (+8 via Dragonbreath Chili)"
+    "Flask of Supreme Power and Greater Arcane Elixir omitted for consistency (+8 via Dragonbreath Chili)",
+    "Best Alliance race is High Order; since client 70425 the races are within about 3 DPS of each other"
   ],
   "notes": "Request from mksettings with the same arguments as rogue__seal-fate-daggers except talents, then the target's mobType set to MobTypeHumanoid, as the class preset's encounter does.",
   "encounter": "Humanoid",
