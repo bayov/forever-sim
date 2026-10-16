@@ -4,7 +4,7 @@
   "spec": "Destruction",
   "build": "Destruction Fire (Curse duty)",
   "isDefault": false,
-  "pr": 59,
+  "pr": 85,
   "race": "Human",
   "talents": "25201020032-0002-0050355003101351",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_destruction_fire_duty_curse",
   "published": {
     "dps": 960.7,
-    "source": "PR (demon crit, races)"
+    "source": "PR #85"
   },
   "verify": {
     "dps": 960.67,
