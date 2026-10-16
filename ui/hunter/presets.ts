@@ -135,13 +135,15 @@ export const APLLoneWolf = PresetUtils.makePresetAPLRotation('Lone Wolf', LoneWo
 	tooltip: 'The Marksmanship rotation, for no pet.',
 	group: 'Level 60',
 });
-// Melee: Mongoose Bite whenever Expose Prey opens it, Strider Kick and Raptor Strike on
-// cooldown, Lacerate kept up, Immolation Trap on cooldown and Wing Clip in every free global
-// cooldown. The Wing Clip filler was the knob search's one change (+31 at 180 sec): Survival
-// runs out of global cooldowns long before it runs out of mana. It walks in 6 sec before the
+// Melee: Mongoose Bite whenever Expose Prey opens it, Strider Kick and Immolation Trap on
+// cooldown (the trap ahead of Raptor Strike since it scales with ranged attack power,
+// hunter_trap_ap), Raptor Strike, Lacerate kept up and Wing Clip in every free global cooldown,
+// held only for an opened Mongoose Bite (rotation audit pass 23: +3.5 to +3.8 over the old order
+// with a Strider Kick hold too). The Wing Clip filler was the knob search's one change (+31 at 180
+// sec): Survival runs out of global cooldowns long before it runs out of mana. It walks in 6 sec before the
 // pull, since the fight starts at 25 yards.
 export const APLSurvival = PresetUtils.makePresetAPLRotation('Survival', SurvivalAPL, {
-	tooltip: 'Melee: Mongoose Bite, Strider Kick, Raptor Strike, Lacerate, Immolation Trap, Wing Clip filler.',
+	tooltip: 'Melee: Mongoose Bite, Strider Kick, Immolation Trap, Raptor Strike, Lacerate, Wing Clip filler.',
 	group: 'Level 60',
 });
 
@@ -591,7 +593,7 @@ export const PresetBuildLoneWolfScorpid = PresetUtils.makePresetBuild('Level 60 
 	professions,
 	options: LoneWolfOptions,
 });
-// 911.5 / 904.6 / 897.6 at 120 / 180 / 300 sec in the mksettings raid (Human, 2026-10-16). The rotation walks in
+// 936.7 / 929.7 / 923.1 at 120 / 180 / 300 sec in the mksettings raid (Human, 2026-10-16, rotation audit pass 23). The rotation walks in
 // before the pull, so starting at 25 yards in the UI costs nothing.
 export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Survival', {
 	group: 'Level 60',
@@ -604,7 +606,7 @@ export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Surviva
 	professions,
 	options: DefaultOptions,
 });
-// 910.4 / 903.2 / 896.5 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 1.1 / 1.3 / 1.1 behind the
+// 935.8 / 928.4 / 921.5 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 0.9 / 1.3 / 1.6 behind the
 // base preset: the raid's Hunter's Mark is off and the hunter casts its own 1.5 sec before the
 // pull and before it drops (standards 23).
 export const PresetBuildSurvivalMark = PresetUtils.makePresetBuild("Level 60 Survival (Hunter's Mark duty)", {
