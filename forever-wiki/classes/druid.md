@@ -402,6 +402,7 @@ Leap behind an enemy, Dazing them for 3 sec.
     - Rank 4: Gives you a 56% chance to avoid interruption caused by damage while casting the Healing Touch, Regrowth and Tranquility spells.
     - Rank 5: Gives you a 70% chance to avoid interruption caused by damage while casting the Healing Touch, Regrowth and Tranquility spells.
   - Note: Now protects all Arcane and Nature spells instead of Healing Touch, Regrowth and Tranquility. Only rank 1 seen.
+  - Sim: Wrath and Starfire take its chance to avoid pushback from a hit taken (sim/druid/talents.go naturesFocusChance), which matters since every Level 60 preset takes the raid's damage hits.
 - **Furor** (5 ranks, column 3) [unchanged]
   - Rank 1: Gives you a 20% chance to gain 10 Rage when you shapeshift into Bear Form or Dire Bear Form. When you shift into Cat Form, you will regain 20% of the Energy you had when you were last in Cat Form, plus 2 Energy for each second you spent not in Bear Form, Cat Form, or Dire Bear Form, up to a maximum of 20 Energy.
   - Rank 2: Rank 2 values not yet captured from footage.

@@ -3,12 +3,10 @@
     "prepullActions": [
         {"action":{"castSpell":{"spellId":{"spellId":9912}}},"doAtValue":{"const":{"val":"-1.5s"}}},
         {"action":{"castSpell":{"spellId":{"itemId":998015}}},"doAtValue":{"const":{"val":"-0.1s"}}},
-        {"action":{"castSpell":{"spellId":{"itemId":250937}}},"doAtValue":{"const":{"val":"-0.1s"}}},
-        {"action":{"castSpell":{"spellId":{"spellId":1259799}}},"doAtValue":{"const":{"val":"-0.1s"}}}
+        {"action":{"castSpell":{"spellId":{"itemId":250937}}},"doAtValue":{"const":{"val":"-0.1s"}}}
     ],
     "priorityList": [
         {"action":{"autocastOtherCooldowns":{}},"notes":"Racials, trinkets, potions and runes."},
-        {"action":{"castSpell":{"spellId":{"spellId":1259799}},"condition":{"or":{"vals":[{"auraIsActive":{"auraId":{"itemId":998015}}},{"cmp":{"lhs":{"spellTimeToReady":{"spellId":{"itemId":998015}}},"op":"OpGt","rhs":{"math":{"lhs":{"remainingTime":{}},"op":"OpSub","rhs":{"const":{"val":"10s"}}}}}},{"cmp":{"lhs":{"spellUsesLostByDelay":{"delay":{"spellTimeToReady":{"spellId":{"itemId":998015}}},"minTimeLeft":{"const":{"val":"15s"}},"spellId":{"spellId":1259799}}},"op":"OpGt","rhs":{"const":{"val":"0"}}}}]}}},"notes":"Elune's Light with the trinket, unless waiting for it would lose a use."},
         {"action":{"castSpell":{"spellId":{"spellId":9907}},"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":11717},"sourceUnit":{"type":"CurrentTarget"}}}}},{"cmp":{"lhs":{"auraRemainingTime":{"auraId":{"spellId":9907},"sourceUnit":{"type":"CurrentTarget"}}},"op":"OpLt","rhs":{"const":{"val":"1.5s"}}}}]}}},"notes":"Faerie Fire on the target, refreshed before it drops, unless a Curse of Recklessness holds the slot (Faerie Fire duty)."},
         {"action":{"castSpell":{"spellId":{"spellId":24977}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":24977}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"const":{"val":"8s"}}}}]}}},"notes":"Insect Swarm whenever it is down. Without the talent ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":9835}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":9835}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"const":{"val":"8s"}}}}]}}},"notes":"Moonfire whenever its dot is down."},
