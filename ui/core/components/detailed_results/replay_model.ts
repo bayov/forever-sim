@@ -137,8 +137,7 @@ export interface SctEvent {
 	searchText: string;
 	// A CSS color, like the color of the spell school.
 	color: string;
-	// Lines that come close together start a bit apart, so they don't overlap. A crit's lane is
-	// its spot in the middle of the area.
+	// A crit's spot in the middle of the area. The scrolling lines don't use it.
 	lane: number;
 	// Crits pop up in the middle of the area and stay put, like MSBT's sticky crits.
 	sticky: boolean;
@@ -214,8 +213,13 @@ export interface ReplayModel {
 	enemies: Array<ReplayEnemy>;
 	// The enemy the player hit last with a single target ability, by time.
 	focus: Steps;
-	// When the main hand swung, for the swing timer.
+	// When each hand swung, for the swing timers. A Heroic Strike, Cleave or Maul takes the main
+	// hand's swing, so it counts as one.
 	mainHandSwings: Array<number>;
+	offHandSwings: Array<number>;
+	// The auras of a queued Heroic Strike, Cleave, Maul or Raptor Strike, while it waits for the
+	// next main hand swing.
+	swingQueue: Array<AuraTrack>;
 	// The Maelstrom Weapon buff, which the shaman pack shows as five pips like combo points.
 	maelstrom: AuraTrack | null;
 	damageDone: Steps;
@@ -271,11 +275,6 @@ const autoAttacks = [OtherAction.OtherActionAttack, OtherAction.OtherActionShoot
 export const SCROLL_LIFE = 2.2;
 export const STICKY_LIFE = 1.6;
 const FADE_SHARE = 0.3;
-// Lines this close together on one side start apart from each other.
-const LANE_WINDOW = 0.45;
-export const LANES = 6;
-// The spots for crits on each side.
-const STICKY_LANES = 3;
 const EPSILON = 1e-6;
 // The smallest mana gain the combat text shows, as a share of the mana bar.
 const MIN_MANA_GAIN = 0.01;
@@ -328,7 +327,14 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 		comboLogs.forEach(log => comboPoints!.push(log.timestamp, log.valueAfter));
 	}
 
-	const playerAuras = buildAuraTracks(player.auraUptimeLogs, start, end);
+	// The sim keeps an aura on us while a totem of ours is down, like Searing Totem. In game it's
+	// only a totem, so we show it in its totem cell and not as a buff too.
+	const totemSlots = buildTotemSlots(player.logs);
+	const totemIds = new Set(totemSlots.flatMap(slot => slot.drops.map(drop => drop.actionId.toString())));
+	const totemNames = new Set(totemSlots.flatMap(slot => slot.drops.map(drop => baseName(drop.actionId)).filter(Boolean)));
+	const playerAuras = buildAuraTracks(player.auraUptimeLogs, start, end).filter(
+		track => !totemNames.has(baseName(track.actionId)) && !totemIds.has(track.actionId.toString()),
+	);
 
 	// The cooldowns, from the lines the sim writes when an ability goes on cooldown.
 	const timerUseLists = new Map<string, Array<TimerUse>>();
@@ -358,9 +364,6 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 	const castLogs = player.castLogs.slice().sort((a, b) => a.timestamp - b.timestamp);
 	const casts = castLogs.map(toReplayCast);
 	const majorCooldownIds = player.majorCooldownLogs.map(log => log.actionId!);
-
-	const totemSlots = buildTotemSlots(player.logs);
-	const totemIds = new Set(totemSlots.flatMap(slot => slot.drops.map(drop => drop.actionId.toString())));
 
 	// Abilities with a cooldown shorter than the GCD, like an auto attack, aren't worth tracking.
 	const cooldowns = Array.from(cooldownsByKey.values()).filter(cooldown => cooldown.longest >= 1.5);
@@ -487,7 +490,9 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 		actionStarts: actions.map(cast => cast.log.timestamp),
 		enemies,
 		focus,
-		mainHandSwings: castLogs.filter(log => log.actionId!.otherId == OtherAction.OtherActionAttack && log.actionId!.tag == 1).map(log => log.timestamp),
+		mainHandSwings: castLogs.filter(log => isAutoAttack(log.actionId!, 1) || isNextSwingHit(log.actionId!)).map(log => log.timestamp),
+		offHandSwings: castLogs.filter(log => isAutoAttack(log.actionId!, 2)).map(log => log.timestamp),
+		swingQueue: playerAuras.filter(track => isSwingQueue(track.actionId)),
 		maelstrom: playerAuras.find(track => track.actionId.name.startsWith('Maelstrom Weapon')) ?? null,
 		damageDone,
 		sct,
@@ -514,6 +519,17 @@ const TOTEM_ELEMENTS = ['Air', 'Earth', 'Fire', 'Water'];
 
 // The ability's name without its rank, like "Earth Shock" for "Earth Shock (Rank 7)".
 const named = (actionId: ActionId, name: string) => actionId.name == name || actionId.name.startsWith(`${name} (`);
+// The name without its rank or tag, like "Searing Totem" for "Searing Totem (Rank 5)".
+const baseName = (actionId: ActionId) => actionId.name.replace(/ \(.*$/, '');
+
+const isAutoAttack = (actionId: ActionId, tag: number) => actionId.otherId == OtherAction.OtherActionAttack && actionId.tag == tag;
+// The abilities that take the next main hand swing. The sim tags the queue spell and its aura
+// 1, and the hit 0. Raptor Strike's hit is tagged 1 and its queue 3.
+const NEXT_SWING = ['Heroic Strike', 'Cleave', 'Maul'];
+const isNextSwingHit = (actionId: ActionId) =>
+	(actionId.tag == 0 && NEXT_SWING.some(name => named(actionId, name))) || (actionId.tag == 1 && named(actionId, 'Raptor Strike'));
+const isSwingQueue = (actionId: ActionId) =>
+	(actionId.tag == 1 && NEXT_SWING.some(name => named(actionId, name))) || (actionId.tag == 3 && named(actionId, 'Raptor Strike'));
 
 const shamanBars = (cooldowns: Array<TrackedCooldown>) => {
 	const indexIn = (list: Array<string>, cooldown: TrackedCooldown) => list.findIndex(name => named(cooldown.actionId, name));
@@ -893,23 +909,29 @@ const buildSct = (
 
 	events.sort((a, b) => a.time - b.time);
 
-	// Lines close together start apart, so a burst of hits doesn't print on top of itself.
-	const recent: Record<SctSide, Array<number>> = { in: [], out: [] };
-	// A crit takes a spot that no other crit is on, also one that is still fading. When every
-	// spot is taken, it covers the oldest crit, and that one starts to fade right away.
-	const spots: Record<SctSide, Array<SctEvent | null>> = {
-		in: new Array(STICKY_LANES).fill(null),
-		out: new Array(STICKY_LANES).fill(null),
-	};
-	return events.map(event => {
+	const sct = events.map(event => {
+		const life = event.sticky ? STICKY_LIFE : SCROLL_LIFE;
 		const search = `${searchText(event.logs)} ${event.actionId.name} ${event.text} ${event.note}`.toLowerCase();
-		if (!event.sticky) {
-			const times = (recent[event.side] = recent[event.side].filter(time => event.time - time < LANE_WINDOW));
-			const lane = times.length % LANES;
-			times.push(event.time);
-			const fadeAt = SCROLL_LIFE * (1 - FADE_SHARE);
-			return { ...event, lane, fadeAt, end: SCROLL_LIFE, searchText: search };
-		}
+		return { ...event, lane: 0, fadeAt: life * (1 - FADE_SHARE), end: life, searchText: search };
+	});
+	placeCrits(sct, 3);
+	return sct;
+};
+
+// Gives each crit one of the spots on its side. The replay calls this again when its height fits
+// a different number of spots.
+//
+// A crit takes a spot that no other crit is on, also one that is still fading. When every spot
+// is taken, it covers the oldest crit, and that one starts to fade right away.
+export const placeCrits = (sct: Array<SctEvent>, spotCount: number) => {
+	const spots: Record<SctSide, Array<SctEvent | null>> = {
+		in: new Array(spotCount).fill(null),
+		out: new Array(spotCount).fill(null),
+	};
+	sct.forEach(event => {
+		if (!event.sticky) return;
+		event.fadeAt = STICKY_LIFE * (1 - FADE_SHARE);
+		event.end = STICKY_LIFE;
 		const side = spots[event.side];
 		let lane = side.findIndex(other => !other || other.time + other.end <= event.time);
 		if (lane < 0) {
@@ -921,8 +943,7 @@ const buildSct = (
 				covered.end = age + STICKY_LIFE * FADE_SHARE;
 			}
 		}
-		const sct: SctEvent = { ...event, lane, fadeAt: STICKY_LIFE * (1 - FADE_SHARE), end: STICKY_LIFE, searchText: search };
-		side[lane] = sct;
-		return sct;
+		event.lane = lane;
+		side[lane] = event;
 	});
 };

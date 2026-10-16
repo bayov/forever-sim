@@ -60,7 +60,13 @@ func (priest *Priest) registerVampiricEmbraceSpell() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			// Forever 70425 made it unresistable (SpellMisc Attributes_3 +0x40000, the bit Shadow
+			// Weaving got in 70170).
+			outcome := spell.OutcomeMagicHit
+			if priest.Env.IsForever() {
+				outcome = spell.OutcomeAlwaysHit
+			}
+			result := spell.CalcOutcome(sim, target, outcome)
 			if result.Landed() {
 				priest.VampiricEmbraceAuras.Get(target).Activate(sim)
 			}

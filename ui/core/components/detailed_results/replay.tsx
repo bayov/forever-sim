@@ -17,8 +17,8 @@ import {
 	AuraTrack,
 	buildReplayModel,
 	cooldownAt,
-	LANES,
 	lastIndexAtOrBefore,
+	placeCrits,
 	ReplayBar,
 	ReplayCast,
 	ReplayEnemy,
@@ -35,11 +35,13 @@ import { tooltipHit, tooltipRow, tooltipTitle } from './timeline.js';
 const SPEEDS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 3, 4];
 const SPEED_STORAGE_KEY = '__detailed_results_replay_speed__';
 
-// How far apart lines that start close together are, in pixels. When the area is short, the
-// lanes get closer, so they take at most this share of it.
+// How far apart the scrolling lines stay, in pixels. A new line starts at the frame or under
+// the cast history, and pushes the lines too close ahead of it further along, like MSBT.
 const LANE_PX = 28;
-const LANES_SHARE = 0.4;
-const STICKY_LANE_PX = 42;
+// The crits on each side take spots between the cast history and the procs over the class pack,
+// as many as fit at this spacing. The first crit takes the middle spot.
+const CRIT_SPOT_PX = 42;
+const MAX_CRIT_SPOTS = 5;
 // What we do to the enemies lines up on the left edge of the target's frame, so the icons
 // form a column over it. What happens to us lines up on the right edge of our frame, with the
 // icon after the text. Crits stay put in their own column, this many pixels toward the middle
@@ -49,6 +51,10 @@ const STICKY_GAP_PX = 32;
 // do scrolls up from just above the target's frame to under our buffs at the top right. This is
 // the room we keep from each of them, about half the height of a crit.
 const SCT_MARGIN_PX = 20;
+// The longest way a line scrolls, in pixels. In full screen the area is much taller, and the lines
+// would scroll too far and too fast. Outgoing lines still start at the target's frame and incoming
+// lines still end at our frame.
+const MAX_SCROLL_PX = 360;
 
 // The cast history is a timeline at the top left that ends at the current time, right under the
 // clock. Each cast sits at the moment we made it and slides left as time goes on. Casts too
@@ -348,7 +354,7 @@ export class Replay extends ResultComponent {
 	private playerFrame: UnitFrameRefs | null = null;
 	private resourceRefs: {
 		powers: Array<{ bar: ReplayBar; fill: HTMLElement; text: HTMLElement }>;
-		swingFill: HTMLElement;
+		swings: Array<{ fill: HTMLElement; times: Array<number>; mainHand: boolean }>;
 		pips: Array<HTMLElement>;
 	} | null = null;
 	private playerCastBar = makeCastBar('player');
@@ -374,6 +380,8 @@ export class Replay extends ResultComponent {
 	// Where each cast goes on the history timeline, by its index in the model's actions.
 	private historyLayout: Array<{ row: number; shift: number }> = [];
 	private sctElems = new Map<number, HTMLElement>();
+	// How many crit spots the model's crits are placed on.
+	private critSpots = 0;
 
 	// The hover tooltip. The parts of the screen move, come and go many times a second, so one
 	// tooltip serves all of them. It follows the part under the mouse and shows its state at the
@@ -1175,6 +1183,7 @@ export class Replay extends ResultComponent {
 
 	// Builds the frames, the cooldown tracker and the progress bar markers for a new iteration.
 	private build(model: ReplayModel) {
+		this.critSpots = 0;
 		this.sctElems.forEach(elem => elem.remove());
 		this.sctElems.clear();
 		this.historyElems.forEach(elem => elem.remove());
@@ -1264,11 +1273,20 @@ export class Replay extends ResultComponent {
 			) as HTMLElement;
 			return { bar, elem, fill: elem.querySelector<HTMLElement>('.replay-bar-fill')!, text: elem.querySelector<HTMLElement>('.replay-bar-center')! };
 		});
-		const swing = (
-			<div className="replay-swing">
-				<div className="replay-swing-fill" />
-			</div>
-		) as HTMLElement;
+		// A swing timer for each hand we swing with, the main hand above the off hand.
+		const swings = [
+			{ times: model.mainHandSwings, mainHand: true },
+			{ times: model.offHandSwings, mainHand: false },
+		]
+			.filter(({ times }) => times.length > 1)
+			.map(({ times, mainHand }) => {
+				const elem = (
+					<div className="replay-swing">
+						<div className="replay-swing-fill" />
+					</div>
+				) as HTMLElement;
+				return { elem, fill: elem.firstElementChild as HTMLElement, times, mainHand };
+			});
 		const pips: Array<HTMLElement> = [];
 		const pipKind = model.comboPoints ? 'combo' : model.maelstrom ? 'maelstrom' : '';
 		const pipRow = (<div className={`replay-pips ${pipKind}`} />) as HTMLElement;
@@ -1279,12 +1297,8 @@ export class Replay extends ResultComponent {
 				pips.push(pip);
 			}
 		}
-		// From the bottom, like the user's Bayov resource bars: power, the swing, then the pips.
-		this.ui.resources.replaceChildren(
-			...(pipKind ? [pipRow] : []),
-			...(model.mainHandSwings.length > 1 ? [swing] : []),
-			...powers.map(power => power.elem),
-		);
+		// From the bottom, like the user's Bayov resource bars: power, the swings, then the pips.
+		this.ui.resources.replaceChildren(...(pipKind ? [pipRow] : []), ...swings.map(swing => swing.elem), ...powers.map(power => power.elem));
 		// Each bar has its own tooltip, so we see the one resource under the mouse.
 		const rowsTip = (rows: () => Array<Element | null>) => () =>
 			(
@@ -1300,12 +1314,18 @@ export class Replay extends ResultComponent {
 				]),
 			),
 		);
-		this.tip(
-			swing,
-			rowsTip(() => {
-				const next = this.swingAt(model, this.time);
-				return [tooltipRow('Next main hand swing', next ? formatSeconds(next.next - this.time) : 'None')];
-			}),
+		swings.forEach(({ elem, times, mainHand }) =>
+			this.tip(
+				elem,
+				rowsTip(() => {
+					const next = this.swingAt(times, this.time);
+					const queued = mainHand ? this.swingQueuedAt(model, this.time) : null;
+					return [
+						tooltipRow(`Next ${mainHand ? 'main' : 'off'} hand swing`, next ? formatSeconds(next.next - this.time) : 'None'),
+						queued && tooltipRow('Queued', queued.name.replace(/ \(Queue\)/, '')),
+					];
+				}),
+			),
 		);
 		if (model.maelstrom) {
 			this.tip(pipRow, this.auraTip(model.maelstrom, 'us'));
@@ -1327,7 +1347,7 @@ export class Replay extends ResultComponent {
 				rowsTip(() => [tooltipRow('Combo points', String(model.comboPoints!.at(this.time)))]),
 			);
 		}
-		this.resourceRefs = { powers, swingFill: swing.firstElementChild as HTMLElement, pips };
+		this.resourceRefs = { powers, swings, pips };
 	}
 
 	private pipsAt(model: ReplayModel, time: number): number {
@@ -1337,10 +1357,14 @@ export class Replay extends ResultComponent {
 		return aura ? Math.max(1, aura.stacks) : 0;
 	}
 
-	// The last and the next main hand swing around this time. A long gap, like while we were out
+	// The Heroic Strike (or Cleave, Maul, Raptor Strike) waiting for the next main hand swing.
+	private swingQueuedAt(model: ReplayModel, time: number): ActionId | null {
+		return model.swingQueue.find(track => activeAuraAt(track, time, model.end))?.actionId ?? null;
+	}
+
+	// The last and the next swing of a hand around this time. A long gap, like while we were out
 	// of range, has no swing timer.
-	private swingAt(model: ReplayModel, time: number): { last: number; next: number } | null {
-		const swings = model.mainHandSwings;
+	private swingAt(swings: Array<number>, time: number): { last: number; next: number } | null {
 		const i = lastIndexAtOrBefore(swings, time);
 		if (i < 0 || i + 1 >= swings.length || swings[i + 1] - swings[i] > 5) return null;
 		return { last: swings[i], next: swings[i + 1] };
@@ -1479,11 +1503,15 @@ export class Replay extends ResultComponent {
 			if (bar.type == ResourceType.ResourceTypeMana) fill.style.background = manaColor(fraction);
 			setText(text, String(Math.floor(value)));
 		});
-		const swing = this.swingAt(model, time);
-		setWidth(resources.swingFill, swing ? (time - swing.last) / (swing.next - swing.last) : 0);
+		resources.swings.forEach(({ fill, times, mainHand }) => {
+			const swing = this.swingAt(times, time);
+			setWidth(fill, swing ? (time - swing.last) / (swing.next - swing.last) : 0);
+			// The main hand's timer turns yellow while a Heroic Strike waits for its swing.
+			if (mainHand) fill.classList.toggle('queued', !!this.swingQueuedAt(model, time));
+		});
 		const pips = this.pipsAt(model, time);
 		resources.pips.forEach((pip, i) => pip.classList.toggle('on', i < pips));
-		// At five Maelstrom Weapon stacks arcs light up where our character would stand, like the
+		// At five Maelstrom Weapon stacks arcs light up on both sides of the pack, like the
 		// PowerAuras textures of the user's WeakAura.
 		this.ui.alert.classList.toggle('on', !!model.maelstrom && pips >= 5);
 
@@ -1755,23 +1783,31 @@ export class Replay extends ResultComponent {
 
 		// Where each side's lines start and end, in pixels from the top of the area.
 		const history = this.ui.history.parentElement!.getBoundingClientRect();
-		const inTop = history.bottom - zone.top + SCT_MARGIN_PX;
 		const inBottom = playerFrame.top - zone.top - SCT_MARGIN_PX;
-		const outTop = this.buffsElem.getBoundingClientRect().bottom - zone.top + SCT_MARGIN_PX;
+		const inTop = Math.max(history.bottom - zone.top + SCT_MARGIN_PX, inBottom - MAX_SCROLL_PX);
 		const outBottom = (targetFrame ? targetFrame.top - zone.top : zone.height) - SCT_MARGIN_PX;
-		// A line that starts close after another starts a few lanes behind it. We keep the room for
-		// the lanes inside the area, so the last lane still starts clear of the frame or the history.
-		const lanes = (span: number) => {
-			const lanePx = Math.min(LANE_PX, (span * LANES_SHARE) / (LANES - 1));
-			return { lanePx, room: lanePx * (LANES - 1) };
-		};
-		const inLanes = lanes(inBottom - inTop);
-		const outLanes = lanes(outBottom - outTop);
+		const outTop = Math.max(this.buffsElem.getBoundingClientRect().bottom - zone.top + SCT_MARGIN_PX, outBottom - MAX_SCROLL_PX);
+		// Where the newer line on each side is. We place the lines from the newest back, so an older
+		// line too close to a newer one gets pushed ahead of it.
+		let newerIn = -Infinity;
+		let newerOut = Infinity;
+
+		// The crits' area has the same cap, so in full screen they stay near the scrolling lines.
+		const critBottom = this.ui.procs.getBoundingClientRect().top - zone.top;
+		const critTop = Math.max(history.bottom - zone.top, critBottom - MAX_SCROLL_PX);
+		const critSpan = critBottom - critTop;
+		const spots = Math.max(1, Math.min(MAX_CRIT_SPOTS, Math.floor(critSpan / CRIT_SPOT_PX)));
+		if (spots != this.critSpots) {
+			placeCrits(model.sct, spots);
+			this.critSpots = spots;
+		}
+		// The rows of the spots in the order the crits take them, from the middle out.
+		const critRows = Array.from({ length: spots }, (_, row) => row).sort((a, b) => Math.abs(a - (spots - 1) / 2) - Math.abs(b - (spots - 1) / 2) || a - b);
 
 		const first = lastIndexAtOrBefore(model.sctTimes, time - SCROLL_LIFE) + 1;
 		const last = lastIndexAtOrBefore(model.sctTimes, time);
 		const shown = new Set<number>();
-		for (let i = first; i <= last; i++) {
+		for (let i = last; i >= first; i--) {
 			const event = model.sct[i];
 			const age = time - event.time;
 			if (age > event.end) continue;
@@ -1785,18 +1821,19 @@ export class Replay extends ResultComponent {
 			const progress = age / event.end;
 			let y: number;
 			let scale = 1;
+			// A line pushed past the end of its area is gone.
+			let pushedOut = false;
 			if (event.sticky) {
-				// The crits' spots go from the middle of the side's area toward its end.
-				y = event.side == 'in' ? (inTop + inBottom) / 2 + event.lane * STICKY_LANE_PX : (outTop + outBottom) / 2 - event.lane * STICKY_LANE_PX;
+				y = critTop + ((critRows[event.lane] ?? 0) + 0.5) * (critSpan / spots);
 				scale = 1 + 0.55 * Math.max(0, 1 - age / 0.12);
 			} else if (event.side == 'out') {
-				const { lanePx, room } = outLanes;
-				y = outBottom - room - progress * (outBottom - outTop - room) + event.lane * lanePx;
+				y = newerOut = Math.min(outBottom - progress * (outBottom - outTop), newerOut - LANE_PX);
+				pushedOut = y < outTop;
 			} else {
-				const { lanePx, room } = inLanes;
-				y = inTop + room + progress * (inBottom - inTop - room) - event.lane * lanePx;
+				y = newerIn = Math.max(inTop + progress * (inBottom - inTop), newerIn + LANE_PX);
+				pushedOut = y > inBottom;
 			}
-			const opacity = Math.min(1, age / 0.06) * Math.min(1, (event.end - age) / (event.end - event.fadeAt));
+			const opacity = pushedOut ? 0 : Math.min(1, age / 0.06) * Math.min(1, (event.end - age) / (event.end - event.fadeAt));
 			elem.style.top = `${y.toFixed(1)}px`;
 			if (event.side == 'out' && !event.sticky) {
 				elem.style.left = `${targetLeft}px`;

@@ -233,7 +233,7 @@ export const DefaultAPL = APLPresets[Phase.Phase4][0];
 // October beta notes halved Seal of Righteousness's spell power (12% a hit with a two-hander,
 // once). The numbers in the comments below are from before. On the 70425 tree (raid hits,
 // Concentration Aura, Human), at 120 / 180 / 300 sec with 20000 iterations:
-// - Level 60: 831.2 / 826.9 / 819.2.
+// - Level 60: 831.2 / 826.9 / 819.2 (833.4 / 828.9 / 820.6 on the re-searched talents below).
 // - Level 60 (sub Holy): 828.2 / 822.9 / 813.6.
 // - Level 60 Shock: 867.1 / 851.0 / 812.3, ahead of the twist builds up to 180 sec.
 // - Against an Undead boss: vs Undead 923.1 / 918.2 / 901.1, sub Holy vs Undead
@@ -252,7 +252,11 @@ export const DefaultAPL = APLPresets[Phase.Phase4][0];
 // 3 in Holy. 986.6 / 981.9 / 972.7 at 120 / 180 / 300 sec on the final set. The search's last move (a Vindication
 // point into Divine Intellect for mana) was a tie. Twist of Light is the build: without it the
 // seals cannot be twisted, and the Holy Power build was 24% behind before any search.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '52003-503-05225331001330311' }), {
+// The re-search on the 70425 tree with Seal of Righteousness's spell power counted once
+// (2026-10-16, Human) moved a Divine Intellect point into Instrument of Law 2
+// (`51003-503-05225331001330321`): +2.2 / +2.0 / +1.4 at 120 / 180 / 300 sec (paired 20000
+// iterations, two seed sets), and the same on the Crusader duty copy.
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '51003-503-05225331001330321' }), {
 	tooltip: 'Level 60 talents from the talent search: Retribution to Twist of Light, Precision, Divine Strength and Improved Seals.',
 	group: 'Level 60',
 });

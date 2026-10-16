@@ -1992,18 +1992,15 @@ func GetWindfuryAP(aura *Aura, rank int32) float64 {
 // WindfuryTotemBuffAura is the Windfury Totem buff at the given rank. It is not active on
 // its own, and Windfury Weapon on the main hand turns it off, see totem_weapon_buffs.go.
 //
-// In Era the totem put an enchant on the main hand, so only main hand hits procced it. Under
-// Forever it's a party aura that procs on our melee swings and abilities (ProcTypeMask 0x14
-// in the Forever client 70291 and 70338), with nothing that ties it to a weapon. So we let
-// off-hand hits proc it too, as the user expects (2026-10-10). The extra swing is always a
+// Only main hand hits proc it, in Era and under Forever. Forever's totem is a raid aura with
+// nothing in its proc data that ties it to a weapon (ProcTypeMask 0x14), but client 70425
+// edited its description to "Each main hand hit has a 20% chance", and the user ruled for main
+// hand only (2026-10-16; report assumption wf_totem_offhand, one value). The extra swing is a
 // main hand one.
 func WindfuryTotemBuffAura(character *Character, rank int32, label string) *Aura {
 	buffActionID := ActionID{SpellID: WindfuryBuffSpellId[rank]}
 	blocked := func() bool { return mainHandHasImbue(character, windfuryWeaponEnchantIds) }
 	procMask := ProcMaskMeleeMH
-	if character.Env.IsForever() {
-		procMask = ProcMaskMelee
-	}
 	aura := CreateExtraAttackAuraCommon(character, buffActionID, label, rank, GetWindfuryAP, blocked, procMask)
 	if character.Env.IsForever() {
 		// The attack power lasts 1 sec under Forever.

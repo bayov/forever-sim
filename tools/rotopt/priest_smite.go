@@ -21,18 +21,21 @@ func init() {
 
 func (priestSmite) Knobs() []Knob {
 	return []Knob{
-		// Holy Fire whenever its damage over time is down (Power in Light needs it), above a
-		// mana floor in percent. 2 casts it on cooldown like a nuke.
-		{Name: "holyFire", Default: 1, Min: 0, Max: 1, Step: 1},
+		// Holy Fire whenever its damage over time is down, above a mana floor in percent. 2
+		// casts it on cooldown like a nuke. Off since Power in Light also counts Shadow Word:
+		// Pain (70425): its mana goes to Smite, 744.0 / 724.6 / 639.7 at 120 / 180 / 300 sec
+		// against 729.3 / 716.8 / 646.6 with it (2026-10-16).
+		{Name: "holyFire", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "holyFireMana", Default: 0, Min: 0, Max: 60, Step: 10},
 		{Name: "penance", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "swp", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "swpMana", Default: 0, Min: 0, Max: 60, Step: 10},
 		{Name: "dp", Default: 1, Min: 0, Max: 1, Step: 1},
-		// Devouring Plague above 60% mana. Its 24 sec cooldown (client 70425, was 1 min) would
+		// Devouring Plague above 80% mana. Its 24 sec cooldown (client 70425, was 1 min) would
 		// spend Smite's mana: above 40% it is 733.2 / 709.5 / 617.9 at 120 / 180 / 300 sec,
-		// above 60% with Inner Focus on cooldown 727.8 / 714.6 / 642.2 (2026-10-16).
-		{Name: "dpMana", Default: 60, Min: 0, Max: 80, Step: 10},
+		// above 60% with Inner Focus on cooldown 727.8 / 714.6 / 642.2 (2026-10-16). Without
+		// Holy Fire (below) 80% is best at 180 sec.
+		{Name: "dpMana", Default: 80, Min: 0, Max: 80, Step: 10},
 		{Name: "mb", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "mbMana", Default: 20, Min: 0, Max: 60, Step: 10},
 		{Name: "swd", Default: 0, Min: 0, Max: 1, Step: 1},

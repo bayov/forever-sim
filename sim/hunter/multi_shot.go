@@ -7,11 +7,11 @@ import (
 	"github.com/wowsims/classic/sim/core/proto"
 )
 
-// Forever's Multi-Shot (beta client, build 1.60.1.70338) has one rank, no flat bonus, a 0.5 sec
-// cast and 13.9% of base mana, and a 6 sec cooldown shared with Aimed Shot (Classic 10 sec alone,
-// up to +150 at rank 5). Its interrupt flags (SpellInterrupts, client 1.60.1.70425) are 9, without
-// the pushback bit (0x2) that Aimed Shot's and Sniper Shot's 7 carry, so a hit taken never pushes
-// its cast back.
+// Forever's Multi-Shot (beta client, build 1.60.1.70338) has one rank, no flat bonus, 13.9% of base
+// mana and a 6 sec cooldown shared with Aimed Shot (Classic 10 sec alone, up to +150 at rank 5). It
+// is instant since client 1.60.1.70425 (SpellMisc casting time index 3, 500 ms, became 1, none;
+// not in the patch notes). Its interrupt flags (SpellInterrupts, 70425) are 9, without the pushback
+// bit (0x2) that Aimed Shot's and Sniper Shot's 7 carry, which no longer matters with no cast.
 func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 	if hunter.Level < 18 {
 		return
@@ -37,19 +37,12 @@ func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:      core.GCDDefault,
-				CastTime: time.Millisecond * 500,
-			},
-			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				cast.CastTime = spell.CastTime()
+				GCD: core.GCDDefault,
 			},
 			IgnoreHaste: true, // Hunter GCD is locked at 1.5s
 			CD: core.Cooldown{
 				Timer:    timer,
 				Duration: time.Second * 6,
-			},
-			CastTime: func(spell *core.Spell) time.Duration {
-				return time.Duration(float64(spell.DefaultCast.CastTime) / hunter.RangedSwingSpeed())
 			},
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {

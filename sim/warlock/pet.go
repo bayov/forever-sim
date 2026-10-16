@@ -80,6 +80,10 @@ func (warlock *Warlock) registerPets() {
 }
 
 func (warlock *Warlock) makePet(cfg PetConfig, enabledOnStart bool) *WarlockPet {
+	// No crit of the demon's own: its crit is its master's spell crit (makeStatInheritance).
+	cfg.Stats[stats.MeleeCrit] = 0
+	cfg.Stats[stats.SpellCrit] = 0
+
 	wp := &WarlockPet{
 		Pet:          core.NewPet(cfg.Name, &warlock.Character, cfg.Stats, warlock.makeStatInheritance(), enabledOnStart, false),
 		owner:        warlock,
@@ -104,16 +108,10 @@ func (warlock *Warlock) makePet(cfg PetConfig, enabledOnStart bool) *WarlockPet 
 			return wp.GetStat(stats.Spirit) / 5
 		}
 
-		// Mage spell crit scaling for imp
-		wp.AddStatDependency(stats.Intellect, stats.SpellCrit, core.CritPerIntAtLevel[proto.Class_ClassMage]*core.SpellCritRatingPerCritChance)
 	} else {
 		// Warrior scaling for all other pets
 		wp.AddStat(stats.AttackPower, -20)
 		wp.AddStatDependency(stats.Strength, stats.AttackPower, 2)
-
-		// Warrior crit scaling
-		wp.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritPerAgiAtLevel[proto.Class_ClassWarrior]*core.CritRatingPerCritChance)
-		wp.AddStatDependency(stats.Intellect, stats.SpellCrit, core.CritPerIntAtLevel[proto.Class_ClassWarrior]*core.SpellCritRatingPerCritChance)
 
 		// Imps generally don't melee
 		wp.EnableAutoAttacks(wp, cfg.AutoAttacks)
@@ -210,12 +208,17 @@ func (wp *WarlockPet) ExecuteCustomRotation(sim *core.Simulation) {
 //     player test, 2024-01-06).
 //   - Spell damage: about 25% of that spell power (the same test; the tester was unsure of it).
 //   - Stamina, Intellect and armor: the test says they are inherited but gives no shares, so none here.
-//   - Crit: no source in either, so none.
+//   - Crit: the warlock's spell crit, as the demon's melee and its spell crit, and no crit of the demon's
+//     own (no base crit, none from its Agility or Intellect). Blizzard's intent: AidanZMoon on forever-bugs
+//     #331 (13 to 14 October), demons "should be getting their master's spell crit as their own melee AND
+//     spell crit chance", the scaling held back on the beta "until the baseline critical strike chance is
+//     removed" (user ruling 2026-10-16: model Blizzard's intent, one value).
 //
 // notes.md lists it under Need to Verify.
 func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {
 	return func(ownerStats stats.Stats) stats.Stats {
 		ownerHitChance := ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance
+		ownerCritChance := ownerStats[stats.SpellCrit] / core.SpellCritRatingPerCritChance
 		highestSchoolPower := ownerStats[stats.SpellPower] + ownerStats[stats.SpellDamage] + max(ownerStats[stats.FirePower], ownerStats[stats.ShadowPower])
 
 		return stats.Stats{
@@ -223,6 +226,8 @@ func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {
 			stats.SpellDamage: highestSchoolPower * 0.25,
 			stats.SpellHit:    ownerHitChance * core.SpellHitRatingPerHitChance,
 			stats.MeleeHit:    ownerHitChance * 0.8 * core.MeleeHitRatingPerHitChance,
+			stats.SpellCrit:   ownerCritChance * core.SpellCritRatingPerCritChance,
+			stats.MeleeCrit:   ownerCritChance * core.CritRatingPerCritChance,
 		}
 	}
 }

@@ -48,7 +48,7 @@ Survival:
 Spellbook at level 60:
 
 - Aimed Shot is trained from level 20. Rank 6: +166 (Classic 600), 2 sec cast (Classic 3), 310 mana, 6 sec cooldown shared with Multi-Shot. The ranks below: 20 / 34 / 55 / 89 / 125.
-- Multi-Shot has one rank: no flat bonus, 0.5 sec cast, 6 sec cooldown shared with Aimed Shot, 13.9% of base mana.
+- Multi-Shot has one rank: no flat bonus, 6 sec cooldown shared with Aimed Shot, 13.9% of base mana. It had a 0.5 sec cast until client 1.60.1.70425 made it instant (SpellMisc casting time 500 ms to none; not in the patch notes).
 - Arcane Shot rank 8: 217 Arcane (Classic 183), no spell power coefficient (Classic 42.9%). Ranks 20 / 26 / 39 / 65 / 94 / 134 / 170 / 217.
 - Serpent Sting rank 9: 555 over 15 sec, no spell power coefficient. The ranks below are lower than Classic's: 10 / 30 / 60 / 110 / 170 / 240 / 320 / 415.
 - Aspect of the Hawk rank 7: 120 ranged attack power (rank 6 reads 55, below rank 5's 90, likely a client error). Aspect of the Beast has 4 ranks of 50 / 70 / 90 / 110 melee attack power. Hunter's Mark rank 4: 71 (rank 3 98).
