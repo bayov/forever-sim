@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arcane",
   "apl": "level60_arcane",
   "published": {
-    "dps": 882.4,
-    "source": "Report re-sim on master 5bbcb0d, 2026-10-16: Grace of Air with Windfury in the melee raid, Windfury Totem main hand only, off-hand Rage 0.5 and channel pushback on hits taken (was 884.9)"
+    "dps": 922.9,
+    "source": "PR (rotation auditor pass 23, 2026-10-16)"
   },
   "verify": {
-    "dps": 882.38,
+    "dps": 922.9,
     "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "180 s, 20000 iterations, seed 1, on the pass 23 rotation (seed 100001 within 0.5)"
   },
   "summary": "Arcane Power with four Arcane Blast stacks every 15s (60% of Intellect as spell damage) and a Frostbolt filler, on the Arcane gear (Gloves - Arcane Power).",
   "keyTalents": [
@@ -40,9 +40,9 @@
     "Pre-pull: Arcane Blast at -1.5s so it lands at the pull",
     "Arcane Power and Presence of Mind with the on-use trinket (unless it won't be back in time); other cooldowns on a free GCD; mana gems never",
     "Fire Blast, then Arcane Explosion, when a Frostbolt would not land before the end (its cast plus 0.75s)",
+    "Arcane Missiles on a Missile Barrage proc, ahead of the Arcane Blasts",
     "Below 20% mana: one Arcane Blast per 15s buff",
-    "Arcane Blast to 4 stacks at the start of each 15s buff (each stack 15% of Intellect as spell damage)",
-    "Arcane Missiles on a Missile Barrage proc",
+    "Arcane Blast to 4 stacks (each 15% of Intellect as spell damage for 15s from the first)",
     "Filler: Frostbolt",
     "No Evocation"
   ],
