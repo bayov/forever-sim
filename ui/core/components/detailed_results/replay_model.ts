@@ -332,12 +332,13 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 	}
 
 	// The sim keeps an aura on us while a totem of ours is down, like Searing Totem. In game it's
-	// only a totem, so we show it in its totem cell and not as a buff too.
+	// only a totem, so we show it in its totem cell and not as a buff too. That goes for the auras
+	// named after it too, like Windfury Totem Passive.
 	const totemSlots = buildTotemSlots(player.logs);
 	const totemIds = new Set(totemSlots.flatMap(slot => slot.drops.map(drop => drop.actionId.toString())));
-	const totemNames = new Set(totemSlots.flatMap(slot => slot.drops.map(drop => baseName(drop.actionId)).filter(Boolean)));
+	const totemNames = Array.from(new Set(totemSlots.flatMap(slot => slot.drops.map(drop => baseName(drop.actionId)).filter(Boolean))));
 	const playerAuras = buildAuraTracks(player.auraUptimeLogs, start, end).filter(
-		track => !totemNames.has(baseName(track.actionId)) && !totemIds.has(track.actionId.toString()),
+		track => !totemIds.has(track.actionId.toString()) && !totemNames.some(name => baseName(track.actionId).startsWith(name)),
 	);
 
 	// The cooldowns, from the lines the sim writes when an ability goes on cooldown.
@@ -437,8 +438,8 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 		const healthFraction = leveling
 			? levelingMobHealth(leveling, target)
 			: timeBasedHealth
-				? (time: number) => clamp01((end - Math.max(0, time)) / end)
-				: (time: number) => (maxHealth > 0 ? clamp01(1 - damageTaken.at(time) / maxHealth) : 1);
+			? (time: number) => clamp01((end - Math.max(0, time)) / end)
+			: (time: number) => (maxHealth > 0 ? clamp01(1 - damageTaken.at(time) / maxHealth) : 1);
 		// A leveling session's targets are its pool of mobs, each of one level.
 		const life = leveling?.mobs.find(mob => mob.targetIndex == target.index);
 		return {
