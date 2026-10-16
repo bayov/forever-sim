@@ -267,18 +267,18 @@ Client 70425's racials (2026-10-16, with the raid hits; seed 1, and the top race
 
 ### Rogue
 
-Six builds, all on Undead, in the shared level 60 raid with the rogue in a melee group (Battle Shout, Strength of Earth and Windfury Totem, which is 24 ahead of Grace of Air), against the generic Level 60 boss (no creature type, standards 19), 20000 iterations, seed 1, standard error 0.1 to 0.3, measured on master aaa643f (2026-10-16: the client 70425 racials, raid hits of 1500 twice a minute, and the Phase 1 BiS weapon speeds of standards 22). Combat Daggers is the default build. Combat Swords now edges it at 180 sec (701.3 against 698.7) since its axes sim best.
+Six builds, each on its best race (Combat Swords on the Orc, Seal Fate Swords on the Windshaper, the rest on the Undead), in the shared level 60 raid with the rogue in a melee group (Battle Shout, Strength of Earth and Windfury Totem, which is 24 ahead of Grace of Air), against the generic Level 60 boss (no creature type, standards 19), 20000 iterations, seed 1, standard error 0.1 to 0.3, measured on master d511c09 (2026-10-16: the client 70425 racials, raid hits of 1500 twice a minute, and the Phase 1 BiS weapon speeds of standards 22). Combat Swords is the default build since 2026-10-16: on the Orc it leads Combat Daggers at every length.
 
 | Build | Talents | 120 / 180 / 300 sec |
 | --- | --- | --- |
 | Combat Daggers (Backstab) | `00530310501-30230320201513231-002` | 720.8 / 698.7 / 680.2 |
 | Seal Fate Daggers (Backstab) | `0053031055120005-322303200013-002` | 676.8 / 665.5 / 657.0 |
 | Mutilate | `0053031033150103-302303202015-002` | 680.6 / 669.9 / 661.7 |
-| Combat Swords (Sinister Strike) | `00530310501-32003311201515231` | 724.3 / 701.3 / 683.0 |
+| Combat Swords (Sinister Strike), Orc | `00530310501-32003311201515231` | 730.3 / 704.7 / 685.5 |
 | Subtlety (Hemorrhage) | `0053031035140004--3021203310113011` | 648.1 / 634.3 / 624.5 |
-| Seal Fate Swords (Sinister Strike) | `0053031045130005-3220132020141` | 675.6 / 665.4 / 656.0 |
+| Seal Fate Swords (Sinister Strike), Windshaper | `0053031045130005-3220132020141` | 676.6 / 666.5 / 657.0 |
 
-Combat Swords, Combat Daggers, Mutilate and Subtlety play differently and each has its own preset. Seal Fate Daggers (4.8% behind Combat Daggers) and Seal Fate Swords (5.1% behind Combat Swords) are the other builds within 10% of their spec, with the same rotations as their spec.
+Combat Swords, Combat Daggers, Mutilate and Subtlety play differently and each has its own preset. Seal Fate Daggers (4.8% behind Combat Daggers) and Seal Fate Swords (5.4% behind Combat Swords) are the other builds within 10% of their spec, with the same rotations as their spec.
 
 Murder (2/2, +4% against Humanoids and Giants) does nothing against the generic boss, so its two points go to Lethality (Vile Poisons for Seal Fate Daggers, whose Lethality is full). Each build also ships a "(vs Humanoid)" preset with Murder 2/2 and a Humanoid boss, for Humanoid and Giant fights:
 
@@ -287,9 +287,9 @@ Murder (2/2, +4% against Humanoids and Giants) does nothing against the generic 
 | Combat Daggers | `00532310301-30230320201513231-002` | 743.0 / 720.4 / 701.3 |
 | Seal Fate Daggers | `0053231053120005-322303200013-002` | 700.3 / 688.6 / 679.7 |
 | Mutilate | `0053231013150103-302303202015-002` | 703.8 / 692.8 / 684.4 |
-| Combat Swords | `00532310301-32003311201515231` | 749.4 / 725.8 / 706.9 |
+| Combat Swords, Orc | `00532310301-32003311201515231` | 755.5 / 729.2 / 709.4 |
 | Subtlety | `0053231015140004--3021203310113011` | 671.3 / 656.9 / 646.8 |
-| Seal Fate Swords | `0053231025130005-3220132020141` | 699.4 / 688.9 / 679.2 |
+| Seal Fate Swords, Windshaper | `0053231025130005-3220132020141` | 700.4 / 690.0 / 680.2 |
 
 Expose Armor is out of every build and rotation (standards 18). It never added anything, since it does not stack with the raid's Sunder Armor.
 
@@ -328,10 +328,11 @@ Races against the generic boss (master aaa643f, 180 sec, 20000 iterations, seed 
 | Night Elf | 692.0 | 661.3 | 697.7 | 661.2 | 664.4 | 629.0 |
 | Troll | 691.7 | 658.8 | 696.1 | 659.7 | 662.8 | 626.7 |
 
-Since client 70425 the races sit close together (Touch of the Grave once every 25 sec, Savage and Ruthless with any weapon, Earth Fury, Wind Blessed at 3% haste). The presets stay Undead:
-- Combat Swords: the Orc is best overall and best Horde (704.7, 3.4 over the Undead), the Human best Alliance (704.1, Ruthless).
-- Combat Daggers, Seal Fate Daggers and Seal Fate Swords: the Windshaper, High Order and Undead are within 1.1 of each other, and so is the Orc except on Combat Daggers (2.3 behind). Best Alliance is the High Order, 2.1 to 3.1 ahead of the next (Dwarf or Gnome).
-- Mutilate and Subtlety: the Undead is still best overall and best Horde, by 0.4 over the Windshaper and 0.7 over the Orc. Best Alliance is the High Order, 0.6 and 1.1 behind.
+Since client 70425 the races sit close together (Touch of the Grave once every 25 sec, Savage and Ruthless with any weapon, Earth Fury, Wind Blessed at 3% haste). Each preset takes the race that is best at 180 sec, switching only when the lead is over 0.5 on two seed sets (1 and 1000003, standards 16):
+- Combat Swords: Orc (Savage), 3.4 and 3.0 ahead of the Undead on the two seeds. Best Alliance is the Human (704.1, Ruthless).
+- Seal Fate Swords: Skyborne (Windshaper) (Wind Blessed), 1.0 and 1.3 ahead of the Undead. Best Alliance is the High Order.
+- Combat Daggers and Seal Fate Daggers: Undead. The Windshaper, High Order and Orc lead it by 0.1 to 0.7 depending on the seed, never by more than 0.5 on both, so the preset stays. Best Alliance is the High Order.
+- Mutilate and Subtlety: Undead is best on both seeds, by 0.4 over the Windshaper and 0.6 to 0.7 over the Orc. Best Alliance is the High Order.
 
 Against a Humanoid (the "(vs Humanoid)" presets, Murder 2/2) the order is the same within 0.3. At 180 sec, Undead / best:
 - Combat Daggers 720.4 / Windshaper 720.5.
