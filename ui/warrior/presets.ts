@@ -123,8 +123,9 @@ export const APLNoReck = PresetUtils.makePresetAPLRotation('DPS (No Reck)', APLN
 // The tools/rotopt search (template warrior_fury, see warrior_presets.sh) on the Level 60 Fury
 // talents and set, 180 sec, with Forever's normalized Rage (standards 21: a white hit gives 3.46 Rage
 // a second of weapon speed at level 30, ×1.5 at 60 with s = 0.5): Whirlwind with 25 Rage, then
-// Bloodthirst, Execute after them in the execute phase, Heroic Strike queued from 40 Rage, and
-// Hamstring as a filler from 10 Rage (its hits proc Windfury Totem's extra attacks and Flurry).
+// Bloodthirst, Execute after them in the execute phase, Heroic Strike queued from 50 Rage (40 before
+// the off hand's Rage was halved, 2026-10-16), and Hamstring as a filler from 10 Rage (its hits proc
+// Windfury Totem's extra attacks and Flurry).
 // Death Wish goes on cooldown and Recklessness at the pull with the other cooldowns: holding them
 // for the execute phase, where Execute spends all the Rage, lost 14 at 180 sec with flat Rage. Bloodrage under 40
 // Rage, no Berserker Rage. The Mighty Rage Potion goes at the pull and the second is held for the
@@ -200,7 +201,8 @@ export const DefaultAPLs = [APLLevel60Fury];
 // Dual wield Fury, from the tools/rotopt talent search (alternated with the rotation search until
 // neither moved) on the synthetic Fury set, Human, 180 sec: 32 Fury to Bloodthirst with Furious
 // Precision, Dual Wield Specialization and Flurry, 17 Arms to Impale, and Improved Bloodrage. Enrage
-// is worth nothing in a raid (the boss does not hit the warrior), so it keeps one point. Weaponmaster
+// took a second point from Improved Berserker Rage in the 2026-10-16 search (+2.8 at 180 sec), now
+// that the raid damage hits trigger it. Weaponmaster
 // hybrids (25 Arms for the swords' extra attacks, no Bloodthirst) were 823.5 on the earlier gear,
 // 17% behind.
 export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Level 60 Fury', SavedTalents.create({ talentsString: '30305013002-25053005122010501-2' }), {
@@ -464,7 +466,7 @@ export const EncounterLevel60Dragonkin = PresetUtils.makePresetEncounter(
 // adds 2% of attack power a tick under Forever (report assumption warr_rend_ap, user ruling
 // 2026-10-15): +19.5 at 180 sec over Rend with no attack power (933.1); the Fury builds don't cast it. The weapons have the type
 // and speed each build sims best with among Era Phase 1 BiS speeds (standards 22): a 2.8 sec sword
-// and a 1.7 sec axe for Fury, a 3.7 sec axe for the two-hand builds. On the Era BiS swords the
+// and a 1.7 sec axe for Fury (a 2.9 sec axe since 2026-10-16, below), a 3.7 sec axe for the two-hand builds. On the Era BiS swords the
 // builds did 1038.1, 901.6 and 915.1 at 180 sec (Undead). The numbers below were measured on those swords. How k grows
 // from level 30 to 60 is an assumption: flat (s = 0) is 950.6 / 835.0 / 861.4 at 180 sec, Classic-like (s = 1)
 // 1076.1 / 924.2 / 935.0, and the off hand at half Rage (s = 0.5) 945.1 on Fury (-8.9%; the
@@ -485,6 +487,15 @@ export const EncounterLevel60Dragonkin = PresetUtils.makePresetEncounter(
 // (Orc) 1000.0 / 982.4 / 958.3. On Battle Shout duty: Fury 1092.6 / 1053.2 / 1029.8, two-hand Fury
 // 972.2 / 929.4 / 901.9 and Arms 959.4 / 942.5 / 918.2, so the duty costs 0.9 / 1.9 / 1.6,
 // 1.3 / 2.9 / 1.7 and -0.3 / 1.7 / 2.2. The numbers above this paragraph are from before.
+// On 2026-10-16, after the user's rulings that the off hand makes half the Rage (#75) and that
+// Windfury Totem procs only from the main hand (#86), with Grace of Air in the melee raid (#88),
+// Fury was re-searched (Orc, 20,000 iterations, 120 / 180 / 300 sec). The off hand became a 2.9
+// sec axe (Deathbringer's speed; slow off hands from 2.4 to 2.9 sec were 5 to 7 ahead of the 1.7
+// sec axe, the 2.8 sec main hand stayed best), Enrage took a point from Improved Berserker Rage,
+// and Heroic Strike moved to 50 Rage: 1002.3 / 972.0 / 953.8 to 1019.9 / 987.9 / 968.7, the Battle
+// Shout duty 998.2 / 968.1 / 951.4 to 1016.2 / 984.0 / 965.6. Two-hand Fury, unchanged at 1007.8 /
+// 969.6 / 944.9, stays behind. Orc is still the best race (5.7 ahead of High Order Skyborne, the
+// best Alliance race now, at 180 sec on two seed sets).
 export const PresetBuildLevel60Fury = PresetUtils.makePresetBuild('Level 60 Fury', {
 	group: 'Level 60',
 	tooltip: 'Level 60 dual wield Fury on the synthetic Phase 1 gear, in a 3 minute raid fight.',
