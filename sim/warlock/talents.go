@@ -10,14 +10,15 @@ import (
 )
 
 // The Forever warlock talents, from the beta client tree (tools/forever_talents/client,
-// build 1.60.1.69876, checked against 1.60.1.70338). Per rank values are the client tooltips.
+// build 1.60.1.69876, checked against 1.60.1.70338 and brought up to 1.60.1.70425: Grim Reach
+// in Malediction's place, Shadow Mastery 2% a point). Per rank values are the client tooltips.
 // Which spells a talent touches is the client's class mask on the talent's effect
 // (wago.tools SpellEffect, 70338), and a percent on a spell's damage is a direct damage
 // modifier (impact) or a periodic one depending on the effect, which add up with each other
 // like 1.12's spell modifiers.
 
 var (
-	// Malediction, Pandemic and the periodic half of Shadow Mastery.
+	// Pandemic and the periodic half of Shadow Mastery.
 	afflictionPeriodicSpells = []int32{SpellCode_WarlockBaneOfAgony, SpellCode_WarlockBaneOfDoom, SpellCode_WarlockCorruption,
 		SpellCode_WarlockDrainLife, SpellCode_WarlockDrainSoul, SpellCode_WarlockSiphonLife, SpellCode_WarlockWrack}
 	// Malevolence.
@@ -46,7 +47,6 @@ func (warlock *Warlock) ApplyTalents() {
 	// Affliction
 	warlock.applySuppression()
 	warlock.applyImprovedCorruption()
-	warlock.applyMalediction()
 	warlock.applyImprovedDrains()
 	warlock.applyImprovedBaneOfAgony()
 	warlock.applyPandemic()
@@ -144,18 +144,6 @@ func (warlock *Warlock) applyImprovedCorruption() {
 	})
 }
 
-// Malediction: 1% periodic damage a point on every warlock damage over time spell.
-func (warlock *Warlock) applyMalediction() {
-	if warlock.Talents.Malediction == 0 {
-		return
-	}
-
-	bonus := 0.01 * float64(warlock.Talents.Malediction)
-	warlock.onSpellCodes(append(slices.Clone(afflictionPeriodicSpells), SpellCode_WarlockImmolate), func(spell *core.Spell) {
-		spell.PeriodicDamageMultiplierAdditive += bonus
-	})
-}
-
 // Improved Drains: 7 / 13 / 20% on Drain Life, Drain Soul and Wrack.
 func (warlock *Warlock) applyImprovedDrains() {
 	if warlock.Talents.ImprovedDrains == 0 {
@@ -248,14 +236,14 @@ func (warlock *Warlock) applyNightfall() {
 	}))
 }
 
-// Shadow Mastery: 1% a point, as a direct damage modifier on Shadow Bolt, Shadowburn and
+// Shadow Mastery: 2% a point (1% before client 1.60.1.70425), as a direct damage modifier on Shadow Bolt, Shadowburn and
 // Death Coil and a periodic one on the Affliction damage over time spells.
 func (warlock *Warlock) applyShadowMastery() {
 	if warlock.Talents.ShadowMastery == 0 {
 		return
 	}
 
-	bonus := 0.01 * float64(warlock.Talents.ShadowMastery)
+	bonus := 0.02 * float64(warlock.Talents.ShadowMastery)
 	warlock.onSpellCodes(shadowMasteryDirectSpells, func(spell *core.Spell) {
 		spell.ImpactDamageMultiplierAdditive += bonus
 	})

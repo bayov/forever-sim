@@ -143,3 +143,18 @@ func TestWarlockCurseOfRecklessnessLands(t *testing.T) {
 	})
 	runSim(sim)
 }
+
+// TestWarlockShadowMastery checks Shadow Mastery at 5/5: 10% on Shadow Bolt's damage and on
+// Corruption's ticks (2% a point since client 1.60.1.70425, 1% before).
+func TestWarlockShadowMastery(t *testing.T) {
+	_, without := newWarlockSim(t, "", &proto.WarlockOptions{})
+	_, with := newWarlockSim(t, "0000000000000005", &proto.WarlockOptions{})
+	last := func(spells []*core.Spell) *core.Spell { return spells[len(spells)-1] }
+
+	if got := last(with.ShadowBolt).ImpactDamageMultiplierAdditive - last(without.ShadowBolt).ImpactDamageMultiplierAdditive; got < 0.0999 || got > 0.1001 {
+		t.Errorf("Shadow Mastery 5/5 adds %.3f to Shadow Bolt, want 0.10", got)
+	}
+	if got := last(with.Corruption).PeriodicDamageMultiplierAdditive - last(without.Corruption).PeriodicDamageMultiplierAdditive; got < 0.0999 || got > 0.1001 {
+		t.Errorf("Shadow Mastery 5/5 adds %.3f to Corruption's ticks, want 0.10", got)
+	}
+}
