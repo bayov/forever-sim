@@ -15,7 +15,7 @@ import { dirtySettings } from '../dirty_settings';
 import { itemLink, enchantLink } from './item_links';
 import { hideTooltipIconsWhileHovered } from './item_comparison';
 import { GearData } from './item_list';
-import SelectorModal, { SelectorModalTabs } from './selector_modal';
+import SelectorModal, { SelectorModalOptions, SelectorModalTabs } from './selector_modal';
 import { getEmptySlotIconUrl } from './utils';
 
 export default class GearPicker extends Component {
@@ -23,7 +23,8 @@ export default class GearPicker extends Component {
 	readonly itemPickers: Array<ItemPicker>;
 	readonly selectorModal: SelectorModal;
 
-	constructor(parent: HTMLElement, simUI: SimUI, player: Player<any>) {
+	// modalOptions go to the item selector, like the tabs it leaves out.
+	constructor(parent: HTMLElement, simUI: SimUI, player: Player<any>, modalOptions?: Partial<SelectorModalOptions>) {
 		super(parent, 'gear-picker-root');
 
 		const leftSide = document.createElement('div');
@@ -59,7 +60,7 @@ export default class GearPicker extends Component {
 
 		this.itemPickers = leftItemPickers.concat(rightItemPickers).sort((a, b) => a.slot - b.slot);
 
-		this.selectorModal = new SelectorModal(simUI.rootElem, simUI, player, this);
+		this.selectorModal = new SelectorModal(simUI.rootElem, simUI, player, this, modalOptions);
 	}
 }
 
@@ -270,6 +271,7 @@ export class ItemPicker extends Component {
 	}
 
 	openSelectorModal(selectedTab: SelectorModalTabs) {
+		if (!this.gearPicker.selectorModal.hasTab(selectedTab)) selectedTab = SelectorModalTabs.Items;
 		this.gearPicker.selectorModal.openTab(this.slot, selectedTab, this.createGearData());
 	}
 }

@@ -37,7 +37,7 @@ import {
 	ZanzaBuff,
 } from '../core/proto/common.js';
 import { EnhancementShaman_Options as EnhancementShamanOptions, ShamanSyncType } from '../core/proto/shaman.js';
-import { LevelingPlanSettings, LevelingRotation, SavedTalents } from '../core/proto/ui.js';
+import { LevelingPlanSettings, LevelingRotation, LevelingRotationPreset, SavedTalents } from '../core/proto/ui.js';
 import { buildFromMilestones, talentShape } from '../core/leveling_plan.js';
 import { shamanTalentsConfig } from '../core/talents/shaman.js';
 import { Stats } from '../core/proto_utils/stats.js';
@@ -1680,11 +1680,11 @@ export const DefaultLevelingPlan = LevelingPlanSettings.create({
 	builds: [
 		buildFromMilestones(10, ['-01', '-05001', '-050032001', '-0540320010001', '-0540320010051', '-0540320010051122'], talentShape(shamanTalentsConfig)),
 	],
+	rotationLibrary: APLLevelingPlan.map(preset => LevelingRotationPreset.create({ name: preset.name, rotation: preset.rotation.rotation })),
 	rotations: APLLevelingPlan.map((preset, i) =>
 		LevelingRotation.create({
 			level: [10, 15, 20, 25, 30][i],
 			name: preset.name,
-			rotation: preset.rotation.rotation,
 			imbue: i < 4 ? WeaponImbue.RockbiterWeapon : WeaponImbue.WindfuryWeapon,
 		}),
 	),

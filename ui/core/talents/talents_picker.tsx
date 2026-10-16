@@ -16,7 +16,7 @@ import { isRightClick, sum } from '../utils.js';
 // resolved through Wowhead. Some are not datamined yet and fall back to the client's own
 // placeholder rather than drawing nothing.
 const UNKNOWN_TALENT_ICON = 'inv_misc_questionmark';
-const talentIconUrl = (icon: string) => `https://wow.zamimg.com/images/wow/icons/large/${icon}.jpg`;
+export const talentIconUrl = (icon: string) => `https://wow.zamimg.com/images/wow/icons/large/${icon}.jpg`;
 
 export interface TalentsPickerConfig<TalentsProto> extends InputConfig<Player<Spec>, string> {
 	klass: Class;

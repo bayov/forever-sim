@@ -12,8 +12,7 @@
 		align-self: flex-start;
 	}
 
-	.leveling-plan-note,
-	.leveling-plan-summary {
+	.leveling-plan-note {
 		color: var(--bs-gray-500);
 		margin-bottom: var(--block-spacer);
 	}
@@ -26,8 +25,9 @@
 
 	.leveling-plan-level-input {
 		display: inline-block;
-		width: 4.5rem;
-		padding: 0 var(--spacer-1);
+		width: 4rem;
+		height: 1.9rem;
+		padding: 0 var(--spacer-2);
 	}
 
 	.leveling-plan-remove,
@@ -36,28 +36,194 @@
 		padding: 0 var(--spacer-1);
 	}
 
-	// The overview: the levels on the left, the table by level on the right.
-	.leveling-plan-section-overview {
-		display: flex;
-		gap: var(--section-spacer);
-		align-items: flex-start;
+	.leveling-plan-badge {
+		display: inline-block;
+		margin-left: var(--spacer-2);
+		padding: 0 0.4rem;
+		border: 1px solid var(--gold);
+		border-radius: 0.6rem;
+		color: var(--gold);
+		font-size: 0.7rem;
+		line-height: 1.1rem;
+		vertical-align: middle;
+		text-transform: lowercase;
+	}
 
-		@include media-breakpoint-down(xl) {
-			flex-direction: column;
+	.leveling-plan-swatch {
+		flex: 0 0 auto;
+		display: inline-block;
+		width: 0.75rem;
+		height: 0.75rem;
+		border-radius: 3px;
+	}
+
+	.leveling-plan-tooltip-wrap {
+		display: inline-flex;
+	}
+
+	// A talent or spell icon, like the ones in the talent trees but small.
+	.leveling-plan-talent-icon,
+	.leveling-plan-spell,
+	.leveling-plan-item-icon {
+		@include wowhead-background-icon;
+		flex: 0 0 auto;
+		display: inline-block;
+		width: 1.75rem;
+		height: 1.75rem;
+		border: 1px solid #000;
+		border-radius: 3px;
+		outline: 1px solid var(--line-color-strong);
+		background-size: 115%;
+		background-position: center;
+
+		&.small {
+			width: 1.25rem;
+			height: 1.25rem;
 		}
 	}
 
-	.leveling-plan-side {
-		flex: 0 0 20rem;
+	// A row of the plan's levels in segments, like the level ranges of the rotations or the
+	// talent builds. Each segment is as wide as its levels.
+	.leveling-plan-timeline {
+		display: flex;
+		gap: 3px;
+		margin-bottom: var(--block-spacer);
+	}
 
-		@include media-breakpoint-down(xl) {
-			flex-basis: auto;
-			width: 100%;
+	.leveling-plan-segment {
+		--segment-color: var(--bs-gray-600);
+		flex: 1 1 0;
+		min-width: 4.5rem;
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 0.1rem;
+		padding: 0.4rem 0.6rem;
+		border: 0;
+		border-top: 3px solid var(--segment-color);
+		border-radius: 3px;
+		background: color-mix(in srgb, var(--segment-color) 14%, transparent);
+		color: var(--bs-gray-300);
+		text-align: left;
+		overflow: hidden;
+		cursor: pointer;
+		transition: background 0.1s;
+
+		&:hover {
+			background: color-mix(in srgb, var(--segment-color) 24%, transparent);
 		}
+
+		&.active {
+			background: color-mix(in srgb, var(--segment-color) 32%, transparent);
+			box-shadow: inset 0 0 0 1px var(--segment-color);
+			color: var(--bs-white);
+		}
+
+		> span {
+			max-width: 100%;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+		}
+	}
+
+	.leveling-plan-segment-levels {
+		color: var(--segment-color);
+		font-size: 0.75rem;
+		font-weight: 600;
+	}
+
+	.leveling-plan-segment-name {
+		font-size: 0.875rem;
+	}
+
+	.leveling-plan-segment-imbue {
+		color: var(--bs-gray-500);
+		font-size: 0.75rem;
+	}
+
+	// The overview: the totals on top, then the levels on the left and the table by level on
+	// the right.
+	.leveling-plan-section-overview {
+		display: flex;
+		flex-direction: column;
+		gap: var(--section-spacer);
+	}
+
+	.leveling-plan-tiles {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--spacer-3);
+	}
+
+	.leveling-plan-tile {
+		flex: 0 0 auto;
+		min-width: 9rem;
+		display: flex;
+		flex-direction: column;
+		padding: var(--spacer-2) var(--spacer-3);
+		border: 1px solid var(--line-color);
+		border-radius: var(--bs-border-radius);
+		background: rgba(0, 0, 0, 0.25);
+
+		&.leveling-plan-tile-main {
+			border-color: var(--gold);
+
+			.leveling-plan-tile-value {
+				color: var(--gold);
+			}
+		}
+	}
+
+	.leveling-plan-tile-value {
+		font-size: 1.5rem;
+		font-weight: 600;
+		line-height: 1.2;
+		color: var(--bs-white);
+	}
+
+	.leveling-plan-tile-label {
+		color: var(--bs-gray-500);
+		font-size: 0.8125rem;
+	}
+
+	.leveling-plan-overview-top {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--section-spacer);
+		align-items: stretch;
+	}
+
+	// The plan's levels, with their fields side by side.
+	.leveling-plan-side {
+		flex: 1 1 40rem;
+		max-width: 56rem;
+
+		.content-block-body {
+			display: flex;
+			flex-direction: row;
+			flex-wrap: wrap;
+			align-items: flex-end;
+			gap: var(--spacer-2) var(--spacer-3);
+
+			> .input-root {
+				flex: 1 1 8rem;
+				margin-bottom: 0;
+			}
+
+			> .boolean-picker-root,
+			> .input-root.input-inline {
+				flex: 0 0 auto;
+				margin-bottom: 0.4rem;
+			}
+		}
+	}
+
+	.leveling-plan-tiles {
+		flex: 1 1 100%;
 	}
 
 	.leveling-plan-main {
-		flex: 1;
 		min-width: 0;
 		width: 100%;
 	}
@@ -72,23 +238,25 @@
 
 		th,
 		td {
-			padding: 0.2rem 0.6rem;
+			padding: 0.2rem 0.5rem;
 			background: transparent;
+			border-color: var(--line-color);
 		}
 
 		th {
 			color: var(--gold);
+			font-weight: 600;
 			white-space: nowrap;
 		}
 
 		td {
+			height: 2.1rem;
 			vertical-align: middle;
 			white-space: nowrap;
 		}
 
-		.leveling-plan-cell-text {
-			white-space: normal;
-			max-width: 18rem;
+		tbody tr:hover td {
+			background: rgba(255, 255, 255, 0.03);
 		}
 
 		.leveling-plan-respec-row td {
@@ -96,20 +264,133 @@
 		}
 	}
 
+	.leveling-plan-level-cell {
+		color: var(--gold);
+		font-weight: 600;
+		text-align: right;
+	}
+
+	.leveling-plan-talents-cell {
+		.leveling-plan-badge {
+			margin: 0 var(--spacer-2) 0 0;
+		}
+	}
+
+	.leveling-plan-talent-gain {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--spacer-2);
+		margin-right: var(--spacer-1);
+	}
+
+	.leveling-plan-gear-cell {
+		.leveling-plan-item-icon {
+			width: 1.4rem;
+			height: 1.4rem;
+			margin-right: 3px;
+			outline-width: 2px;
+
+			&.item-quality-common {
+				outline-color: $item-quality-common;
+			}
+			&.item-quality-uncommon {
+				outline-color: $item-quality-uncommon;
+			}
+			&.item-quality-rare {
+				outline-color: $item-quality-rare;
+			}
+			&.item-quality-epic {
+				outline-color: $item-quality-epic;
+			}
+		}
+	}
+
+	// The rotation of a level range: its name on its first level, and its color on the levels
+	// after it.
+	.leveling-plan-rotation-chip {
+		--segment-color: var(--bs-gray-600);
+		display: inline-flex;
+		align-items: center;
+		padding: 0 0.5rem;
+		border-left: 3px solid var(--segment-color);
+		background: color-mix(in srgb, var(--segment-color) 18%, transparent);
+		border-radius: 2px;
+		line-height: 1.4rem;
+
+		&.continued {
+			height: 2.1rem;
+			margin: -0.2rem 0;
+			padding: 0;
+			background: none;
+		}
+	}
+
+	// A value with a bar behind it of its share of the column's largest one.
+	.leveling-plan-bar-col {
+		min-width: 7.5rem;
+	}
+
+	.leveling-plan-bar {
+		position: relative;
+		height: 1.3rem;
+		border-radius: 2px;
+		background: rgba(255, 255, 255, 0.04);
+	}
+
+	.leveling-plan-bar-fill {
+		position: absolute;
+		inset: 0 auto 0 0;
+		border-radius: 2px;
+	}
+
+	.leveling-plan-bar-xp .leveling-plan-bar-fill {
+		background: rgba(78, 155, 255, 0.35);
+	}
+
+	.leveling-plan-bar-hours .leveling-plan-bar-fill {
+		background: rgba(240, 160, 48, 0.35);
+	}
+
+	.leveling-plan-bar-text {
+		position: relative;
+		display: block;
+		padding: 0 0.4rem;
+		line-height: 1.3rem;
+		text-align: right;
+	}
+
+	.leveling-plan-deaths-high {
+		color: var(--bs-danger);
+	}
+
+	.leveling-plan-total-cell {
+		color: var(--bs-gray-400);
+	}
+
 	.leveling-plan-respec {
 		margin-bottom: var(--spacer-2);
+		padding: var(--spacer-1) var(--spacer-2);
+		border-left: 3px solid var(--line-color-strong);
 	}
 
 	.leveling-plan-better {
 		color: var(--bs-success);
+		border-left-color: var(--bs-success);
 	}
 
 	.leveling-plan-worse {
 		color: var(--bs-danger);
+		border-left-color: var(--bs-danger);
 	}
 
-	// Talents: the builds, the trees and the order, side by side.
+	// Talents: the builds on top, then the trees and the order side by side.
 	.leveling-plan-talents {
+		display: flex;
+		flex-direction: column;
+		gap: var(--section-spacer);
+	}
+
+	.leveling-plan-talents-main {
 		display: flex;
 		gap: var(--section-spacer);
 		align-items: flex-start;
@@ -119,43 +400,73 @@
 		}
 	}
 
-	.leveling-plan-talents-side {
-		flex: 0 0 18rem;
-	}
-
 	.leveling-plan-talents-trees {
-		flex: 1;
+		flex: 0 1 auto;
 		min-width: 0;
 	}
 
+	.leveling-plan-trees-note {
+		max-width: 40rem;
+	}
+
 	.leveling-plan-talents-order-col {
-		flex: 0 0 18rem;
+		flex: 1 1 22rem;
+		max-width: 30rem;
 	}
 
 	.leveling-plan-builds {
 		display: flex;
+		flex-wrap: wrap;
+		align-items: stretch;
+		gap: var(--spacer-3);
+	}
+
+	.leveling-plan-build-cards {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--spacer-3);
+	}
+
+	.leveling-plan-build-actions {
+		display: flex;
 		flex-direction: column;
-		gap: var(--spacer-1);
-		margin-bottom: var(--block-spacer);
+		justify-content: center;
+		gap: var(--spacer-2);
 	}
 
 	.leveling-plan-build {
+		--segment-color: var(--bs-gray-600);
+		width: 15rem;
 		display: flex;
-		align-items: center;
-		padding: var(--spacer-1) var(--spacer-2);
+		flex-direction: column;
+		gap: var(--spacer-2);
+		padding: var(--spacer-2) var(--spacer-3);
 		border: 1px solid var(--line-color-strong);
+		border-top: 3px solid var(--segment-color);
 		border-radius: var(--bs-border-radius);
+		background: rgba(0, 0, 0, 0.2);
 		cursor: pointer;
+
+		&:hover {
+			background: rgba(255, 255, 255, 0.03);
+		}
 
 		&.active {
 			border-color: var(--gold);
+			border-top-color: var(--segment-color);
+			background: color-mix(in srgb, var(--segment-color) 10%, transparent);
 		}
 	}
 
-	.leveling-plan-build-labels {
-		flex: 1;
+	.leveling-plan-build-head {
 		display: flex;
-		flex-direction: column;
+		align-items: center;
+		justify-content: space-between;
+	}
+
+	.leveling-plan-build-name {
+		color: var(--bs-white);
+		font-weight: 600;
 	}
 
 	.leveling-plan-build-where {
@@ -163,80 +474,365 @@
 		font-size: 0.8125rem;
 	}
 
-	.leveling-plan-order {
-		max-height: 40rem;
-		overflow-y: auto;
+	.leveling-plan-build-trees {
+		display: flex;
+		gap: var(--spacer-3);
 	}
 
-	.leveling-plan-pick {
-		display: flex;
+	.leveling-plan-build-tree {
+		display: inline-flex;
 		align-items: center;
-		gap: var(--spacer-2);
-		font-size: 0.8125rem;
+		gap: var(--spacer-1);
+		font-weight: 600;
 
-		&.leveling-plan-pick-problem {
-			color: var(--bs-danger);
+		img {
+			width: 1.4rem;
+			height: 1.4rem;
+			border-radius: 50%;
+		}
+
+		&.empty {
+			opacity: 0.35;
 		}
 	}
 
-	.leveling-plan-pick-level {
-		flex: 0 0 1.5rem;
+	.leveling-plan-build-keys {
+		display: flex;
+		gap: var(--spacer-1);
+		min-height: 1.75rem;
+	}
+
+	// The level of a talent's first point, on its icon in the trees.
+	.talent-picker-root .leveling-plan-talent-level {
+		position: absolute;
+		top: -0.35rem;
+		left: -0.35rem;
+		z-index: 2;
+		min-width: 1.15rem;
+		padding: 0 0.2rem;
+		border: 1px solid var(--gold);
+		border-radius: 0.6rem;
+		background: #111;
 		color: var(--gold);
+		font-size: 0.65rem;
+		font-weight: 600;
+		line-height: 1rem;
+		text-align: center;
+		pointer-events: none;
+
+		&.past {
+			border-color: var(--bs-gray-600);
+			color: var(--bs-gray-500);
+		}
+	}
+
+	.leveling-plan-order {
+		display: flex;
+		flex-direction: column;
+		gap: 3px;
+		max-height: 44rem;
+		overflow-y: auto;
+	}
+
+	// A row of the order: the talent we put points in one after the other, with a pip for each
+	// of its ranks.
+	.leveling-plan-run {
+		--tree-color: var(--bs-gray-600);
+		display: flex;
+		align-items: center;
+		gap: var(--spacer-2);
+		padding: 0.3rem var(--spacer-2);
+		border-left: 3px solid var(--tree-color);
+		border-radius: 2px;
+		background: rgba(0, 0, 0, 0.25);
+
+		&:hover {
+			background: rgba(255, 255, 255, 0.04);
+
+			.leveling-plan-run-moves {
+				opacity: 1;
+			}
+		}
+
+		&.leveling-plan-run-problem {
+			border-left-color: var(--bs-danger);
+
+			.leveling-plan-run-name {
+				color: var(--bs-danger);
+			}
+		}
+
+		&.leveling-plan-run-past {
+			opacity: 0.45;
+		}
+	}
+
+	.leveling-plan-run-levels {
+		flex: 0 0 2.75rem;
+		color: var(--gold);
+		font-size: 0.8125rem;
+		font-weight: 600;
 		text-align: right;
 	}
 
-	.leveling-plan-pick-name {
+	.leveling-plan-run-labels {
 		flex: 1;
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.15rem;
 	}
 
-	// Rotations: a row per rotation, and the selected one in the editor under them.
+	.leveling-plan-run-name {
+		color: var(--bs-gray-200);
+		font-size: 0.875rem;
+		line-height: 1.1;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.leveling-plan-pips {
+		display: flex;
+		gap: 3px;
+	}
+
+	.leveling-plan-pip {
+		width: 0.6rem;
+		height: 0.6rem;
+		border: 1px solid var(--bs-gray-600);
+		border-radius: 50%;
+
+		&.had {
+			background: var(--bs-gray-600);
+		}
+
+		&.on {
+			border-color: var(--tree-color);
+			background: var(--tree-color);
+		}
+
+		&.past {
+			background: transparent;
+			border-style: dashed;
+		}
+	}
+
+	.leveling-plan-run-moves {
+		display: flex;
+		opacity: 0.35;
+		transition: opacity 0.1s;
+	}
+
+	.leveling-plan-order-end {
+		margin: var(--spacer-2) 0 var(--spacer-1);
+		padding-top: var(--spacer-1);
+		border-top: 1px dashed var(--line-color-strong);
+		color: var(--bs-gray-500);
+		font-size: 0.75rem;
+	}
+
+	.leveling-plan-order-extra {
+		display: flex;
+		align-items: center;
+		gap: var(--spacer-2);
+		margin-top: var(--block-spacer);
+		color: var(--bs-gray-400);
+		font-size: 0.8125rem;
+	}
+
+	// Rotations: the level ranges on top, then the plan's rotations on the left and the
+	// selected one in the editor on the right.
 	.leveling-plan-rotations {
 		display: flex;
 		flex-direction: column;
 		gap: var(--section-spacer);
 	}
 
-	.leveling-plan-rotations-block {
-		max-width: 60rem;
-	}
-
-	.leveling-plan-rotation-list {
+	.leveling-plan-ranges {
 		display: flex;
 		flex-direction: column;
 		gap: var(--spacer-2);
 		margin-bottom: var(--block-spacer);
 	}
 
-	.leveling-plan-rotation {
+	.leveling-plan-range {
 		display: flex;
 		align-items: center;
 		gap: var(--spacer-2);
-		padding: var(--spacer-1) var(--spacer-2);
-		border: 1px solid transparent;
-		border-radius: var(--bs-border-radius);
-		cursor: pointer;
-
-		&.active {
-			border-color: var(--gold);
-		}
+		max-width: 52rem;
 	}
 
-	.leveling-plan-rotation-changed {
-		color: var(--gold);
-		font-size: 0.8125rem;
-	}
-
-	.leveling-plan-rotation-levels {
-		flex: 0 0 11rem;
+	.leveling-plan-range-levels {
+		flex: 0 0 9.5rem;
+		display: flex;
+		align-items: center;
+		gap: var(--spacer-2);
 		white-space: nowrap;
+	}
+
+	.leveling-plan-range-from {
+		width: 4rem;
+		padding: 0 var(--spacer-2);
+	}
+
+	.leveling-plan-range-to {
+		color: var(--bs-gray-400);
 	}
 
 	.leveling-plan-rotation-select {
 		flex: 1;
+		min-width: 0;
 	}
 
 	.leveling-plan-imbue-select {
 		flex: 0 0 12rem;
+	}
+
+	.leveling-plan-remove-space {
+		flex: 0 0 1.6rem;
+	}
+
+	.leveling-plan-rotations-main {
+		display: flex;
+		gap: var(--section-spacer);
+		align-items: flex-start;
+
+		@include media-breakpoint-down(xl) {
+			flex-direction: column;
+		}
+	}
+
+	.leveling-plan-library-col {
+		flex: 0 0 20rem;
+		position: sticky;
+		top: var(--spacer-3);
+
+		@include media-breakpoint-down(xl) {
+			position: static;
+			flex-basis: auto;
+			width: 100%;
+		}
+	}
+
+	.leveling-plan-editor-col {
+		flex: 1;
+		min-width: 0;
+		width: 100%;
+	}
+
+	.leveling-plan-library {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacer-2);
+		margin-bottom: var(--block-spacer);
+	}
+
+	.leveling-plan-library-item {
+		display: flex;
+		align-items: flex-start;
+		gap: var(--spacer-2);
+		padding: var(--spacer-2);
+		border: 1px solid var(--line-color);
+		border-radius: var(--bs-border-radius);
+		background: rgba(0, 0, 0, 0.2);
+		color: inherit;
+		text-align: left;
+		cursor: pointer;
+
+		.leveling-plan-swatch {
+			margin-top: 0.3rem;
+		}
+
+		&:hover {
+			background: rgba(255, 255, 255, 0.03);
+		}
+
+		&.active {
+			border-color: var(--gold);
+			background: rgba(255, 255, 255, 0.05);
+		}
+	}
+
+	.leveling-plan-library-labels {
+		flex: 1;
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+		gap: 0.2rem;
+	}
+
+	.leveling-plan-library-name {
+		color: var(--bs-white);
+	}
+
+	.leveling-plan-library-where {
+		color: var(--bs-gray-500);
+		font-size: 0.8125rem;
+	}
+
+	.leveling-plan-spells {
+		display: flex;
+		align-items: center;
+		gap: 3px;
+		margin-top: 0.15rem;
+
+		.leveling-plan-spell {
+			width: 1.4rem;
+			height: 1.4rem;
+		}
+	}
+
+	.leveling-plan-spells-more {
+		color: var(--bs-gray-500);
+		font-size: 0.75rem;
+		margin-left: 0.2rem;
+	}
+
+	.leveling-plan-new-rotation .dropdown-menu {
+		max-height: 60vh;
+		overflow-y: auto;
+	}
+
+	.leveling-plan-editor-head {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacer-2);
+		margin-bottom: var(--block-spacer);
+	}
+
+	.leveling-plan-editor-title {
+		display: flex;
+		align-items: center;
+		gap: var(--spacer-2);
+
+		.leveling-plan-swatch {
+			width: 1rem;
+			height: 1rem;
+		}
+	}
+
+	.leveling-plan-name-input {
+		flex: 1;
+		max-width: 26rem;
+		font-size: 1rem;
+		font-weight: 600;
+	}
+
+	.leveling-plan-editor-level {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--spacer-2);
+		color: var(--bs-gray-400);
+
+		.leveling-plan-note {
+			margin: 0;
+		}
+	}
+
+	.leveling-plan-level-select {
+		width: 5rem;
 	}
 }
 

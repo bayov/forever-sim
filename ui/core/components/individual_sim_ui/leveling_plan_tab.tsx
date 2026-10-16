@@ -1,6 +1,7 @@
 import tippy from 'tippy.js';
 import { ref } from 'tsx-vanilla';
 
+import { setItemQualityCssClass } from '../../css_utils';
 import { IndividualSimUI } from '../../individual_sim_ui';
 import { LEVELING_GEAR_SLOTS } from '../../leveling_gear';
 import {
@@ -10,6 +11,7 @@ import {
 	hoursAtLevel,
 	LEVELING_PLAN_MAX_LEVEL,
 	planLevels,
+	rangeAt,
 	rotationAt,
 	sortedBuilds,
 	talentsAt,
@@ -19,30 +21,20 @@ import {
 } from '../../leveling_plan';
 import { Player } from '../../player';
 import { ErrorOutcomeType, ProgressMetrics, RaidSimRequest } from '../../proto/api';
-import { APLRotation } from '../../proto/apl';
 import { Consumes, Debuffs, IndividualBuffs, PartyBuffs, RaidBuffs, Spec } from '../../proto/common';
 import { LevelingPlanSettings } from '../../proto/ui';
-import { slotNames } from '../../proto_utils/names';
+import { ActionId } from '../../proto_utils/action_id';
 import { Database } from '../../proto_utils/database';
-import { Gear } from '../../proto_utils/gear';
 import { encounterMode } from '../../sim_mode';
 import { TypedEvent } from '../../typed_event';
-import { ContentBlock } from '../content_block';
 import { BooleanPicker } from '../boolean_picker';
+import { ContentBlock } from '../content_block';
 import { NumberPicker } from '../number_picker';
 import { SimTab } from '../sim_tab';
+import { LevelingPlanCharacter } from './leveling_plan_character';
 import { LevelingGearSection } from './leveling_plan_gear';
 import { LevelingRotationsSection } from './leveling_plan_rotations';
 import { LevelingTalentsSection } from './leveling_plan_talents';
-
-interface SavedCharacter {
-	level: number;
-	bonusTalentPoints: number;
-	talents: string;
-	gear: Gear;
-	rotation: APLRotation;
-	specOptions: ReturnType<Player<Spec>['getSpecOptions']>;
-}
 
 // What one level of a plan run came to.
 interface LevelResult {
@@ -92,9 +84,6 @@ export class LevelingPlanTab extends SimTab {
 	private readonly talents: LevelingTalentsSection;
 	private readonly rotations: LevelingRotationsSection;
 	private section: Section = 'overview';
-	// The character as it was before the Rotations part made it the plan's at a level, so we
-	// can put it back when we leave that part.
-	private savedCharacter: SavedCharacter | null = null;
 	private lastRun: PlanRun | null = null;
 	private running: PlanRun | null = null;
 	private progress: ProgressMetrics | null = null;
@@ -102,7 +91,7 @@ export class LevelingPlanTab extends SimTab {
 	private readonly navButtons = new Map<Section, HTMLButtonElement>();
 	private readonly tableElem: HTMLElement;
 	private readonly respecsElem: HTMLElement;
-	private readonly summaryElem: HTMLElement;
+	private readonly tilesElem: HTMLElement;
 	// Fires when the run's results change, so the sidebar shows them.
 	readonly runChangeEmitter = new TypedEvent<void>('LevelingPlanRun');
 
@@ -133,11 +122,19 @@ export class LevelingPlanTab extends SimTab {
 			this.sections.set(id, section);
 		}
 
-		// The overview: the plan's levels on the left, the results by level on the right.
+		// The overview: the totals of the last run and the plan's levels on top, then the
+		// results by level.
 		const overview = this.sections.get('overview')!;
 		const side = (<div className="leveling-plan-side" />) as HTMLElement;
 		const main = (<div className="leveling-plan-main" />) as HTMLElement;
-		overview.append(side, main);
+		this.tilesElem = (<div className="leveling-plan-tiles" />) as HTMLElement;
+		overview.append(
+			<div className="leveling-plan-overview-top">
+				{this.tilesElem}
+				{side}
+			</div>,
+			main,
+		);
 		const levelsBlock = new ContentBlock(side, 'leveling-plan-levels-block', {
 			header: {
 				title: 'Levels',
@@ -146,13 +143,6 @@ export class LevelingPlanTab extends SimTab {
 			},
 		});
 		const reset = ref<HTMLButtonElement>();
-		const summary = ref<HTMLParagraphElement>();
-		levelsBlock.bodyElement.appendChild(
-			<>
-				<p className="leveling-plan-summary" ref={summary} />
-			</>,
-		);
-		this.summaryElem = summary.value!;
 		const levelInput = (
 			id: string,
 			label: string,
@@ -240,16 +230,26 @@ export class LevelingPlanTab extends SimTab {
 		this.tableElem = table.value!;
 		this.respecsElem = respecs.value!;
 
-		this.gear = new LevelingGearSection(this.sections.get('gear')!, simUI, level => this.grind(level));
+		// The Gear and Rotations parts each show the plan's character at a level of their own.
+		const makeRequest = (level: number) => this.makeRequest(level);
+		const characterKey = (level: number) => this.characterKey(level);
+		this.gear = new LevelingGearSection(
+			this.sections.get('gear')!,
+			simUI,
+			new LevelingPlanCharacter(simUI.sim, this.player.spec, makeRequest),
+			characterKey,
+			level => this.grind(level),
+		);
 		this.talents = new LevelingTalentsSection(this.sections.get('talents')!, simUI);
 		this.rotations = new LevelingRotationsSection(
 			this.sections.get('rotations')!,
 			simUI,
-			level => this.applyLevel(level),
-			() => this.savedCharacter?.rotation ?? this.player.aplRotation,
+			new LevelingPlanCharacter(simUI.sim, this.player.spec, makeRequest),
+			characterKey,
 		);
+		this.gear.planChangeEmitter.on(() => this.rotations.refresh());
 		this.showSection('overview');
-		simUI.sim.encounter.changeEmitter.on(() => this.syncRotationsEditing());
+		simUI.sim.encounter.changeEmitter.on(() => this.syncActiveSections());
 
 		this.lastRun = this.loadRun();
 		simUI.levelingPlanRun = onProgress => this.run(onProgress);
@@ -265,11 +265,13 @@ export class LevelingPlanTab extends SimTab {
 		});
 	}
 
-	protected buildTabContent() {}
+	protected buildTabContent() {
+		// The constructor builds it, because the parts need the tab's fields.
+	}
 
 	private showSection(section: Section) {
 		this.section = section;
-		this.syncRotationsEditing();
+		this.syncActiveSections();
 		this.sections.forEach((elem, id) => elem.classList.toggle('hide', id != section));
 		this.navButtons.forEach((button, id) => {
 			button.classList.toggle('active', id == section);
@@ -302,11 +304,12 @@ export class LevelingPlanTab extends SimTab {
 			request.raid!.parties.forEach(party => (party.buffs = PartyBuffs.create()));
 		}
 		const rotation = rotationAt(plan, level);
-		if (rotation?.rotation) player.rotation = rotation.rotation;
-		if (rotation?.imbue) {
+		if (rotation) player.rotation = rotation;
+		const imbue = rangeAt(plan, level)?.imbue;
+		if (imbue) {
 			const spec = player.spec as any;
 			const options = spec?.[spec.oneofKind]?.options;
-			if (options && 'shamanImbue' in options) options.shamanImbue = rotation.imbue;
+			if (options && 'shamanImbue' in options) options.shamanImbue = imbue;
 		}
 		if (request.encounter?.leveling) request.encounter.leveling.plan = false;
 		return request;
@@ -381,35 +384,26 @@ export class LevelingPlanTab extends SimTab {
 		return this.running ?? this.lastRun;
 	}
 
-	// The Rotations part edits the character's own rotation, so while it's open in the Leveling
-	// mode the character is the plan's at a level. Before that we keep the character as it was,
-	// and we put it back when we leave the part or the mode.
-	private syncRotationsEditing() {
-		const editing = this.section == 'rotations' && encounterMode(this.simUI.sim.encounter) == 'levelingPlan';
-		if (editing && !this.savedCharacter) {
-			this.savedCharacter = {
-				level: this.player.getLevel(),
-				bonusTalentPoints: this.player.getBonusTalentPoints(),
-				talents: this.player.getTalentsString(),
-				gear: this.player.getGear(),
-				rotation: APLRotation.clone(this.player.aplRotation),
-				specOptions: this.player.getSpecOptions(),
-			};
-			this.rotations.setActive(true);
-		} else if (!editing && this.savedCharacter) {
-			this.rotations.setActive(false);
-			const saved = this.savedCharacter;
-			this.savedCharacter = null;
-			const eventID = TypedEvent.nextEventID();
-			TypedEvent.freezeAllAndDo(() => {
-				this.player.setLevel(eventID, saved.level);
-				this.player.setBonusTalentPoints(eventID, saved.bonusTalentPoints);
-				this.player.setTalentsString(eventID, saved.talents);
-				this.player.setGear(eventID, saved.gear);
-				this.player.setAplRotation(eventID, saved.rotation);
-				this.player.setSpecOptions(eventID, saved.specOptions);
-			});
-		}
+	// The Gear and Rotations parts load the plan's character only while we see them, so the
+	// other modes compute no stats for it.
+	private syncActiveSections() {
+		const shown = encounterMode(this.simUI.sim.encounter) == 'levelingPlan';
+		this.gear.setActive(shown && this.section == 'gear');
+		this.rotations.setActive(shown && this.section == 'rotations');
+	}
+
+	// What the plan's character at a level is made of, besides its rotation. When it's the same
+	// as when we loaded the character, the character is still right.
+	private characterKey(level: number): string {
+		const plan = this.player.getLevelingPlan();
+		return JSON.stringify([
+			level,
+			talentsAt(plan, level, this.talents.shape),
+			plan.bonusTalentPoints,
+			plan.useSettingsBuffs,
+			rangeAt(plan, level)?.imbue ?? 0,
+			this.gear.gearAt(level)?.asSpec() ?? null,
+		]);
 	}
 
 	// Takes a level of the plan to the Grinding mode: its level, gear, talents and rotation.
@@ -424,22 +418,23 @@ export class LevelingPlanTab extends SimTab {
 		const plan = this.player.getLevelingPlan();
 		const gear = this.gear.gearAt(level);
 		const rotation = rotationAt(plan, level);
+		const imbue = rangeAt(plan, level)?.imbue;
 		const eventID = TypedEvent.nextEventID();
 		TypedEvent.freezeAllAndDo(() => {
 			this.player.setLevel(eventID, level);
 			this.player.setBonusTalentPoints(eventID, level >= BONUS_TALENT_POINTS_LEVEL ? plan.bonusTalentPoints : 0);
 			this.player.setTalentsString(eventID, talentsAt(plan, level, this.talents.shape));
 			if (gear) this.player.setGear(eventID, gear);
-			if (rotation?.rotation) this.player.setAplRotation(eventID, rotation.rotation);
-			if (rotation?.imbue) {
+			if (rotation) this.player.setAplRotation(eventID, rotation);
+			if (imbue) {
 				const options = this.player.getSpecOptions() as any;
-				if ('shamanImbue' in options) this.player.setSpecOptions(eventID, { ...options, shamanImbue: rotation.imbue });
+				if ('shamanImbue' in options) this.player.setSpecOptions(eventID, { ...options, shamanImbue: imbue });
 			}
 		});
 	}
 
 	private render() {
-		this.renderSummary();
+		this.renderTiles();
 		this.renderRespecs();
 		this.renderTable();
 	}
@@ -448,17 +443,39 @@ export class LevelingPlanTab extends SimTab {
 		return levels.reduce((sum, level) => sum + level.hours, 0);
 	}
 
-	private renderSummary() {
+	// The totals of the run we show, a tile each.
+	private renderTiles() {
 		const plan = this.player.getLevelingPlan();
 		const run = this.shownRun();
-		const levels = planLevels(plan).length;
-		let text = `${levels} levels, ${plan.fromLevel} to ${plan.toLevel}.`;
-		if (run?.levels.length) {
-			text += ` The ${this.running ? 'run going now' : 'last run'} has ${run.levels.length} of them at ${run.iterations} sessions each, ${formatHours(
-				this.totalHours(run.levels),
-			)} of grinding.`;
-		}
-		this.summaryElem.textContent = text;
+		const levels = run?.levels ?? [];
+		const hours = this.totalHours(levels);
+		const deaths = levels.reduce((sum, level) => sum + level.deathsPerHour * level.hours, 0);
+		const respecs = sortedBuilds(plan).length - 1;
+		const tile = (value: string, label: string, tooltip: string, className = '') => {
+			const elem = (
+				<div className={`leveling-plan-tile ${className}`}>
+					<span className="leveling-plan-tile-value">{value}</span>
+					<span className="leveling-plan-tile-label">{label}</span>
+				</div>
+			) as HTMLElement;
+			tippy(elem, { content: tooltip });
+			return elem;
+		};
+		const done = levels.length ? levels[levels.length - 1].level + 1 : plan.fromLevel;
+		this.tilesElem.replaceChildren(
+			tile(
+				levels.length ? formatHours(hours) : '-',
+				this.running ? 'So far' : 'Grinding time',
+				levels.length
+					? `The hours of grinding from level ${plan.fromLevel} to ${done}, by the ${this.running ? 'run going now' : 'last run'}.`
+					: 'Simulate to see how long the plan takes.',
+				'leveling-plan-tile-main',
+			),
+			tile(`${plan.fromLevel} to ${plan.toLevel}`, 'Levels', `${planLevels(plan).length} levels, a session sim each.`),
+			tile(levels.length ? String(Math.round(deaths)) : '-', 'Deaths', 'Deaths over all the levels, from the deaths an hour at each one.'),
+			tile(String(respecs), respecs == 1 ? 'Respec' : 'Respecs', 'Talent builds after the first one, see the Talents part.'),
+			tile(run ? String(run.iterations) : '-', 'Sessions a level', 'The iterations of the run, one grinding session each.'),
+		);
 	}
 
 	private renderRespecs() {
@@ -493,18 +510,21 @@ export class LevelingPlanTab extends SimTab {
 		const gearPlan = this.gear.getPlan();
 		const builds = sortedBuilds(plan);
 		const shape = this.talents.shape;
+		const results = planLevels(plan).map(level => run?.levels.find(l => l.level == level));
+		const maxXp = Math.max(1, ...results.map(result => result?.xpPerHour ?? 0));
+		const maxHours = Math.max(0.01, ...results.map(result => (result && isFinite(result.hours) ? result.hours : 0)));
 		const table = (<table className="leveling-plan-table table table-sm" />) as HTMLTableElement;
 		table.appendChild(
 			<thead>
 				<tr>
 					<th>Level</th>
 					<th>Talents</th>
-					<th>Gear</th>
+					<th>New gear</th>
 					<th>Rotation</th>
-					<th className="text-end">XP / h</th>
+					<th className="leveling-plan-bar-col">XP / h</th>
 					<th className="text-end">Mobs / h</th>
 					<th className="text-end">Deaths / h</th>
-					<th className="text-end">Hours</th>
+					<th className="leveling-plan-bar-col">Hours</th>
 					<th className="text-end">Total</th>
 					<th />
 				</tr>
@@ -512,37 +532,41 @@ export class LevelingPlanTab extends SimTab {
 		);
 		const tbody = document.createElement('tbody');
 		let total = 0;
-		let lastRotation = '';
-		for (const level of planLevels(plan)) {
+		let lastRange = '';
+		planLevels(plan).forEach((level, index) => {
 			const buildIndex = buildIndexAt(plan, level);
 			const respec = buildIndex > 0 && builds[buildIndex].level == level;
 			const before = level > plan.fromLevel && !respec ? talentsAt(plan, level - 1, shape) : '';
-			const now = talentsAt(plan, level, shape);
-			const talentsText = respec ? `Respec: ${now || 'none'}` : newTalents(before, now, shape);
-			const levelGear = gearPlan?.levels[level - 1];
-			const gearText =
-				levelGear?.changed
-					.filter(slot => LEVELING_GEAR_SLOTS.includes(slot))
-					.map(slot => levelGear.gear[slot]?.item.name ?? slotNames.get(slot) ?? '')
-					.join(', ') ?? '';
-			const rotation = rotationAt(plan, level);
-			const rotationName = rotation ? rotation.name || 'Rotation tab copy' : 'Rotation tab';
-			const rotationText = rotationName != lastRotation ? rotationName : '';
-			lastRotation = rotationName;
-			const result = run?.levels.find(l => l.level == level);
+			const gained = newTalents(before, talentsAt(plan, level, shape), shape);
+			const range = rangeAt(plan, level);
+			const rangeName = range?.name || "Rotation tab's";
+			const rangeStart = rangeName != lastRange;
+			lastRange = rangeName;
+			const result = results[index];
 			if (result) total += result.hours;
+
+			const talentsCell = ref<HTMLTableCellElement>();
+			const gearCell = ref<HTMLTableCellElement>();
+			const rotationCell = ref<HTMLTableCellElement>();
+			const hoursCell = ref<HTMLTableCellElement>();
 			const grind = ref<HTMLButtonElement>();
 			const row = (
 				<tr className={respec ? 'leveling-plan-respec-row' : ''}>
-					<td>{String(level)}</td>
-					<td className="leveling-plan-cell-text">{talentsText}</td>
-					<td className="leveling-plan-cell-text">{gearText}</td>
-					<td className="leveling-plan-cell-text">{rotationText}</td>
-					<td className="text-end">{result ? Math.round(result.xpPerHour).toLocaleString() : ''}</td>
+					<td className="leveling-plan-level-cell">{String(level)}</td>
+					<td className="leveling-plan-talents-cell" ref={talentsCell} />
+					<td className="leveling-plan-gear-cell" ref={gearCell} />
+					<td className="leveling-plan-rotation-cell" ref={rotationCell} />
+					<td className="leveling-plan-bar-col">
+						{result ? bar(result.xpPerHour / maxXp, Math.round(result.xpPerHour).toLocaleString(), 'xp') : null}
+					</td>
 					<td className="text-end">{result ? result.mobsPerHour.toFixed(1) : ''}</td>
-					<td className="text-end">{result ? result.deathsPerHour.toFixed(2) : ''}</td>
-					<td className="text-end">{result ? result.hours.toFixed(2) : ''}</td>
-					<td className="text-end">{result ? total.toFixed(1) : ''}</td>
+					<td className={`text-end ${result && result.deathsPerHour >= 1 ? 'leveling-plan-deaths-high' : ''}`}>
+						{result ? result.deathsPerHour.toFixed(2) : ''}
+					</td>
+					<td className="leveling-plan-bar-col" ref={hoursCell}>
+						{result ? bar(isFinite(result.hours) ? result.hours / maxHours : 1, result.hours.toFixed(2), 'hours') : null}
+					</td>
+					<td className="text-end leveling-plan-total-cell">{result ? total.toFixed(1) : ''}</td>
 					<td>
 						<button className="btn btn-link leveling-plan-grind" ref={grind}>
 							<i className="fas fa-person-running" />
@@ -550,8 +574,43 @@ export class LevelingPlanTab extends SimTab {
 					</td>
 				</tr>
 			) as HTMLElement;
+
+			if (respec) talentsCell.value!.appendChild(<span className="leveling-plan-badge">Respec</span>);
+			gained.forEach(({ tree, talent, rank, maxPoints, name }) => {
+				const icon = (<span className="leveling-plan-talent-icon small" />) as HTMLElement;
+				this.talents.talentIcon(tree, talent, url => (icon.style.backgroundImage = `url('${url}')`));
+				talentsCell.value!.appendChild(
+					<span className="leveling-plan-talent-gain">
+						{icon}
+						{!respec || gained.length == 1 ? <span>{`${name} ${rank}/${maxPoints}`}</span> : null}
+					</span>,
+				);
+				if (respec && gained.length > 1) tippy(icon, { content: `${name} ${rank}/${maxPoints}` });
+			});
+
+			const levelGear = gearPlan?.levels[level - 1];
+			levelGear?.changed
+				.filter(slot => LEVELING_GEAR_SLOTS.includes(slot))
+				.forEach(slot => {
+					const piece = levelGear.gear[slot];
+					if (!piece) return;
+					const icon = (<a className="leveling-plan-item-icon" href="javascript:void(0)" dataset={{ whtticon: 'false' }} />) as HTMLAnchorElement;
+					setItemQualityCssClass(icon, piece.item.quality);
+					ActionId.fromItemId(piece.item.id, undefined, piece.randomSuffix?.id).fillAndSet(icon, true, true);
+					gearCell.value!.appendChild(icon);
+				});
+
+			const chip = (
+				<span
+					className={`leveling-plan-rotation-chip ${rangeStart ? '' : 'continued'}`}
+					style={{ '--segment-color': this.rotations.colorOf(plan, range?.name ?? '') } as any}>
+					{rangeStart ? <span>{rangeName}</span> : null}
+				</span>
+			) as HTMLElement;
+			rotationCell.value!.appendChild(chip);
+
 			if (result) {
-				tippy(row.children[7] as HTMLElement, {
+				tippy(hoursCell.value!, {
 					content: `${xpToNextLevel(level).toLocaleString()} XP to level ${level + 1}, ±${(result.hours * result.relativeError * 1.96).toFixed(
 						2,
 					)} hours`,
@@ -560,7 +619,7 @@ export class LevelingPlanTab extends SimTab {
 			tippy(grind.value!, { content: `Go to the Grinding mode as the plan's level ${level}` });
 			grind.value!.addEventListener('click', () => this.grind(level));
 			tbody.appendChild(row);
-		}
+		});
 		table.appendChild(tbody);
 		this.tableElem.replaceChildren(table);
 	}
@@ -610,17 +669,27 @@ export class LevelingPlanTab extends SimTab {
 	}
 }
 
-// The talents we got from one talents string to the next, like "Flurry 2/5".
-function newTalents(before: string, now: string, shape: TalentShape): string {
+// The talent ranks we got from one talents string to the next.
+function newTalents(before: string, now: string, shape: TalentShape) {
 	const a = talentsStringToCounts(before, shape);
 	const b = talentsStringToCounts(now, shape);
-	const names: string[] = [];
+	const gained: Array<{ tree: number; talent: number; rank: number; maxPoints: number; name: string }> = [];
 	shape.trees.forEach((tree, t) =>
 		tree.talents.forEach((talent, i) => {
-			if (b[t][i] > a[t][i]) names.push(`${talent.name} ${b[t][i]}/${talent.maxPoints}`);
+			if (b[t][i] > a[t][i]) gained.push({ tree: t, talent: i, rank: b[t][i], maxPoints: talent.maxPoints, name: talent.name });
 		}),
 	);
-	return names.join(', ');
+	return gained;
+}
+
+// A bar of the share of the column's largest value, with the value on it.
+function bar(share: number, text: string, kind: string): HTMLElement {
+	return (
+		<div className={`leveling-plan-bar leveling-plan-bar-${kind}`}>
+			<span className="leveling-plan-bar-fill" style={{ width: `${Math.round(Math.min(Math.max(share, 0), 1) * 100)}%` }} />
+			<span className="leveling-plan-bar-text">{text}</span>
+		</div>
+	) as HTMLElement;
 }
 
 function formatHours(hours: number): string {

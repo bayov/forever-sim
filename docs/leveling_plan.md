@@ -21,24 +21,35 @@ part has the session's options). The mode comes from the encounter like the othe
 
 - **Levels.** We sim each level from From level up to, but not including, To level (10 to 30
   by default, the beta's cap).
-- **Gear.** The leveling gear plan (docs/leveling_gear.md), as before.
+- **Gear.** The leveling gear plan (docs/leveling_gear.md), as before. The Gear part shows the selected level's gear in the Gear tab's gear pane. A click
+  on a slot opens the Gear tab's item list with the items that level can wear, sorted by the
+  stat weights of that level, and the item we pick becomes one of ours from that level on.
 - **Talents.** A build is the order we put its points in, and at each level we have as many of
   them as the level gives (one a level from 10, plus any extra points from 25, none by
   default).
-  The talent trees edit the order: a click puts the next point in a talent, a right click
-  takes its last point out, and the Order list moves a point earlier or later. A point the
-  tree doesn't allow yet (its row isn't open, or the talent it needs isn't full) shows red.
+  The talent trees edit the order: a click puts the next point in a talent, and a right click
+  takes its last point out. Each talent in the trees shows the level of its first point. The
+  Order list has a row for each talent we put points in one after the other, with a pip for
+  each rank, and the arrows move the row earlier or later. A point the tree doesn't allow yet
+  (its row isn't open, or the talent it needs isn't full) shows red. Points after the plan's
+  last level are dimmed, because we don't sim them.
 - **Respecs.** A build after the first is a respec at its level. There we put all the points
   back by its own order. A run also sims the respec's levels with the build we had, on the
   same sessions, and says how many hours the respec saves. We weigh that against the price
   of the respec ourselves.
-- **Rotations.** Each rotation is played from its level until the next one's. It starts as a
-  preset or a copy of the Rotation tab's, and the rotation editor under the list changes the
-  selected one ("changed" marks one that no longer matches its preset). A shaman's also picks
-  the weapon imbue, because Windfury Weapon only comes at 30. The editor is the Rotation tab's,
-  and its spell lists come from the character's level and talents. So while the Rotations
-  part is open, the character is the plan's at the selected rotation's first level, and we put
-  the character back when we leave the part or the mode.
+- **Rotations.** The plan has its own rotations (`LevelingPlanSettings.rotation_library`). They
+  start as copies of the spec's presets, and we add more from the spec's presets or the
+  Rotation tab, rename them and change them in the editor. A rotation with the name of a
+  spec's preset that we changed is marked "edited", and "Spec's version" undoes our changes.
+  The level ranges on top pick one of them for each range of levels, from the range's level
+  until the next range's. A shaman's range also picks the weapon imbue, because Windfury
+  Weapon only comes at 30. Plans saved before the library held each range's rotation in the
+  range, and we move those into the library when we load them.
+- **The plan's character.** The rotation editor's spell lists come from the character's level
+  and talents, and the gear pane's item list from its level and stat weights. So the Gear and
+  Rotations parts each have a character of their own (`LevelingPlanCharacter`), made from the
+  request of a level as the run sims it. The character of the settings never changes, so a
+  reload or another mode always finds it as it was.
 - **Solo.** We level without the Settings tab's buffs, debuffs and consumables, unless
   "Settings tab's buffs" is on. The Settings tab usually has a raid's, and Goblin Sapper
   Charges hurt a level 10 more than the mobs do.
@@ -51,7 +62,9 @@ session, with Classic 1.12's XP table (notes.md, Need to Verify). Quests, dungeo
 are left out, so the total is the time of a plan that only grinds. It's a fair way to compare
 plans, not a forecast of a real leveling time.
 
-The grind button on a row (and Grind in the Gear part) takes that level of the plan to the
+The Overview has the run's totals and a row per level, with the talents and the items we get
+there, the rotation we play, and bars for the XP an hour and the hours. The grind button on a
+row (and Grind in the Gear part) takes that level of the plan to the
 Grinding mode, with its level, gear, talents, rotation and imbue, so we can look at its
 session in the Results tab.
 

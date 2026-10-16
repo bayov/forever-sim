@@ -1,4 +1,5 @@
-import { LevelingPlanSettings, LevelingRotation, LevelingTalentBuild, LevelingTalentPick } from './proto/ui';
+import { APLRotation } from './proto/apl';
+import { LevelingPlanSettings, LevelingRotation, LevelingRotationPreset, LevelingTalentBuild, LevelingTalentPick } from './proto/ui';
 import type { TalentsConfig } from './talents/talents_picker';
 
 // The leveling plan: what we wear, which talents we have and which rotation we play at each
@@ -131,13 +132,73 @@ export function buildLevels(plan: LevelingPlanSettings, index: number): number[]
 	return planLevels(plan).filter(level => level >= from && level < to);
 }
 
-export function rotationAt(plan: LevelingPlanSettings, level: number): LevelingRotation | undefined {
-	const rotations = [...plan.rotations].sort((a, b) => a.level - b.level);
-	let found = rotations[0];
-	rotations.forEach(rotation => {
-		if (rotation.level <= level) found = rotation;
+// The level ranges by level, lowest first. The first one starts at the plan's first level
+// whatever its own level says.
+export function sortedRanges(plan: LevelingPlanSettings): LevelingRotation[] {
+	return [...plan.rotations].sort((a, b) => a.level - b.level);
+}
+
+// The level range we play at a level.
+export function rangeAt(plan: LevelingPlanSettings, level: number): LevelingRotation | undefined {
+	const ranges = sortedRanges(plan);
+	let found = ranges[0];
+	ranges.forEach(range => {
+		if (range.level <= level) found = range;
 	});
 	return found;
+}
+
+// The first and last level of a range of the plan. The last one is below the first when the
+// range starts at or past the plan's last level.
+export function rangeLevels(plan: LevelingPlanSettings, index: number): { from: number; to: number } {
+	const ranges = sortedRanges(plan);
+	const from = index == 0 ? plan.fromLevel : ranges[index].level;
+	const to = index + 1 < ranges.length ? ranges[index + 1].level - 1 : plan.toLevel - 1;
+	return { from, to };
+}
+
+export function libraryRotation(plan: LevelingPlanSettings, name: string): LevelingRotationPreset | undefined {
+	return plan.rotationLibrary.find(preset => preset.name == name);
+}
+
+// The rotation we play at a level.
+export function rotationAt(plan: LevelingPlanSettings, level: number): APLRotation | undefined {
+	const range = rangeAt(plan, level);
+	return range ? libraryRotation(plan, range.name)?.rotation : undefined;
+}
+
+// A name for a new rotation of the library, the name itself when it's free, or else with a
+// number after it, like "Level 20 Leveling Plan 2".
+export function freeRotationName(plan: LevelingPlanSettings, name: string): string {
+	const base = name.trim() || 'Rotation';
+	if (!libraryRotation(plan, base)) return base;
+	for (let n = 2; ; n++) {
+		if (!libraryRotation(plan, `${base} ${n}`)) return `${base} ${n}`;
+	}
+}
+
+// Moves the rotations of a plan saved before the library into it.
+//
+// Such a plan held each level range's rotation in the range itself, named after the preset it
+// came from, or with no name for a copy of the Rotation tab. Each one goes into the library
+// under that name, and two ranges with the same rotation share it.
+export function withRotationLibrary(plan: LevelingPlanSettings): LevelingPlanSettings {
+	if (!plan.rotations.some(range => range.rotation)) return plan;
+	const result = LevelingPlanSettings.clone(plan);
+	for (const range of result.rotations) {
+		const rotation = range.rotation;
+		range.rotation = undefined;
+		if (!rotation) continue;
+		const same = result.rotationLibrary.find(preset => preset.rotation && APLRotation.equals(preset.rotation, rotation));
+		if (same) {
+			range.name = same.name;
+			continue;
+		}
+		const name = freeRotationName(result, range.name || 'Rotation tab copy');
+		result.rotationLibrary.push(LevelingRotationPreset.create({ name, rotation }));
+		range.name = name;
+	}
+	return result;
 }
 
 // The shape of a class's talent trees, as the leveling plan needs it: each talent's row and

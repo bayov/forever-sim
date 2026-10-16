@@ -3,6 +3,7 @@ import { getLanguageCode } from './constants/lang.js';
 import * as Mechanics from './constants/mechanics.js';
 import { SimSettingCategories } from './constants/sim_settings';
 import { WOWHEAD_DOMAIN, WOWHEAD_EXPANSION_ENV } from './constants/wowhead.js';
+import { withRotationLibrary } from './leveling_plan';
 import { MAX_PARTY_SIZE, Party } from './party.js';
 import {
 	AuraStats as AuraStatsProto,
@@ -502,7 +503,10 @@ export class Player<SpecType extends Spec> {
 		return LevelingPlanSettings.clone(this.levelingPlan);
 	}
 
+	// A plan saved before the plan had its own rotations gets them here, see
+	// withRotationLibrary.
 	setLevelingPlan(eventID: EventID, plan: LevelingPlanSettings) {
+		plan = withRotationLibrary(plan);
 		if (LevelingPlanSettings.equals(this.levelingPlan, plan)) return;
 		this.levelingPlan = LevelingPlanSettings.clone(plan);
 		this.levelingPlanChangeEmitter.emit(eventID);

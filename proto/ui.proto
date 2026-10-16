@@ -322,12 +322,15 @@ message LevelingPlanSettings {
 	int32 bonus_talent_points = 3;
 	// The first build starts at from_level. Each later one is a respec at its level.
 	repeated LevelingTalentBuild builds = 4;
-	// Each rotation is used from its level until the next one's.
+	// Each level range plays a rotation of rotation_library from its level until the next
+	// range's.
 	repeated LevelingRotation rotations = 5;
 	// Whether we level with the Settings tab's buffs, debuffs and consumables. Without it we
 	// level solo, because the Settings tab usually has a raid's, like Goblin Sapper Charges
 	// that hurt a level 10 more than the mobs do.
 	bool use_settings_buffs = 6;
+	// The plan's own rotations, by name. The level ranges in rotations pick from them.
+	repeated LevelingRotationPreset rotation_library = 7;
 }
 
 // A talent build and the order we put its points in. At each level we have the first picks,
@@ -343,14 +346,24 @@ message LevelingTalentPick {
 	int32 talent = 2;
 }
 
+// A level range of the plan: from its level until the next range's, we play the rotation of
+// rotation_library with its name.
 message LevelingRotation {
 	int32 level = 1;
-	// The preset it came from, or empty for one we copied from the Rotation tab.
 	string name = 2;
+	// Only in plans saved before rotation_library, which held each range's rotation here. We
+	// move it into the library when we load such a plan.
 	APLRotation rotation = 3;
 	// The class's own weapon imbue for these levels, like Rockbiter before Windfury Weapon.
 	// Unknown keeps the one in the class options.
 	WeaponImbue imbue = 4;
+}
+
+// One of the leveling plan's own rotations. A name the spec's rotation presets also have means
+// it started as a copy of that preset.
+message LevelingRotationPreset {
+	string name = 1;
+	APLRotation rotation = 2;
 }
 
 // The leveling gear plan's own choices (ui/core/leveling_gear.ts): the seed of its random

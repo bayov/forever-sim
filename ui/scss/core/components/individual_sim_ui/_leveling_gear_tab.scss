@@ -37,12 +37,49 @@
 		width: 100%;
 	}
 
+	// Over the pane: the level, with arrows to the level before and after, the Level field and
+	// Grind.
+	.leveling-gear-pane-head {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--spacer-2);
+		margin-bottom: var(--spacer-2);
+
+		.input-root {
+			margin-bottom: 0;
+			flex-direction: row;
+			align-items: center;
+			gap: var(--spacer-2);
+
+			.form-label {
+				margin-bottom: 0;
+			}
+
+			input {
+				width: 4.5rem;
+			}
+		}
+	}
+
 	.leveling-gear-pane-title {
+		min-width: 5.5rem;
 		font-family: var(--heading-font-family);
 		font-variant: small-caps;
-		font-size: var(--h5-font-size);
+		font-size: var(--h4-font-size);
 		color: var(--gold);
-		margin-bottom: var(--spacer-2);
+		text-align: center;
+	}
+
+	.leveling-gear-step {
+		padding: 0 var(--spacer-1);
+		font-size: 1.1rem;
+	}
+
+	.leveling-gear-pane-note {
+		flex: 1;
+		color: var(--bs-gray-500);
+		font-size: 0.8125rem;
 	}
 
 	.leveling-gear-weights {
@@ -67,14 +104,19 @@
 		}
 	}
 
-	// Under an item in the pane: since when we wear it and where it came from, in gray, or
-	// green when we put it on at this level.
-	.item-picker-root .item-picker-enchant.leveling-gear-since {
+	// Under an item in the pane: since when we wear it and where it came from, in gray, green
+	// when we put it on at this level, or gold when it's one of ours.
+	.item-picker-root .leveling-gear-since {
 		color: var(--bs-gray-500);
+		font-size: 0.8125rem;
 		pointer-events: none;
 
 		&.leveling-gear-since-new {
 			color: var(--bs-uncommon);
+		}
+
+		&.leveling-gear-since-ours {
+			color: $item-quality-artifact;
 		}
 	}
 
@@ -223,39 +265,5 @@
 	}
 	.leveling-gear-q4 {
 		background: $item-quality-epic;
-	}
-}
-
-.leveling-gear-add-modal {
-	.leveling-gear-add {
-		display: flex;
-		flex-direction: column;
-		gap: var(--block-spacer);
-	}
-
-	.leveling-gear-add-row {
-		display: flex;
-		align-items: center;
-		gap: var(--spacer-2);
-
-		.form-label {
-			margin-bottom: 0;
-		}
-
-		input {
-			width: 6rem;
-		}
-	}
-
-	.leveling-gear-add-results {
-		display: flex;
-		flex-direction: column;
-		max-height: 50vh;
-		overflow-y: auto;
-	}
-
-	.leveling-gear-add-item {
-		padding: var(--spacer-1) 0;
-		text-decoration: none;
 	}
 }

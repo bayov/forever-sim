@@ -318,6 +318,13 @@ export class Sim {
 		}
 	}
 
+	// The stats of the raid of a request the caller made, like the leveling plan's character at
+	// one level. Nothing else on the page changes.
+	async computeStatsOfRequest(request: RaidSimRequest) {
+		await this.waitForInit();
+		return this.workerPool.computeStats(ComputeStatsRequest.create({ raid: request.raid, encounter: request.encounter, ruleset: this.getRuleset() }));
+	}
+
 	// Runs a request the caller made, like one level of the leveling plan (leveling_plan.ts).
 	// The result only goes to the caller. Stop aborts it like a raid sim.
 	async runRaidSimRequest(request: RaidSimRequest, onProgress: (_?: any) => void): Promise<RaidSimResult> {

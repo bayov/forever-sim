@@ -32,11 +32,16 @@ export interface SelectorModalConfig {
 	gearData: GearData;
 }
 
-type SelectorModalOptions = {
+export type SelectorModalOptions = {
 	// This will add a unique ID to the modal, allowing multiple of the same modals to exist
 	id: string;
 	// Prevents rendering of certail tabs
 	disabledTabs?: SelectorModalTabs[];
+	// False keeps the Gear tab's Stat Weights section out of the modal, for a player whose
+	// weights aren't the ones it shows, like the leveling plan's character.
+	statWeights?: boolean;
+	// Leaves items out of the item list, on top of the player's filters.
+	itemFilter?: (item: UIItem) => boolean;
 };
 
 export default class SelectorModal extends BaseModal {
@@ -110,6 +115,10 @@ export default class SelectorModal extends BaseModal {
 		);
 	}
 
+	hasTab(tab: SelectorModalTabs): boolean {
+		return !this.disabledTabs.includes(tab);
+	}
+
 	openTab(selectedSlot: ItemSlot, selectedTab: SelectorModalTabs, gearData: GearData) {
 		this.titleElem.textContent = slotNames.get(selectedSlot) ?? '';
 		this.setData(selectedSlot, selectedTab, gearData);
@@ -123,7 +132,7 @@ export default class SelectorModal extends BaseModal {
 	// calculation all carry on. The raid sim has no such section, and then the modal keeps
 	// its usual width.
 	private showStatWeights() {
-		if (!this.weightsHome) {
+		if (!this.weightsHome && this.options.statWeights !== false) {
 			const weights = this.simUI.rootElem.querySelector<HTMLElement>('.ep-weights-menu');
 			if (weights?.parentElement) {
 				this.weightsHome = { parent: weights.parentElement, next: weights.nextSibling };
@@ -179,7 +188,8 @@ export default class SelectorModal extends BaseModal {
 
 		const equippedItem = gearData.getEquippedItem();
 
-		const eligibleItems = this.player.getItems(selectedSlot);
+		const itemFilter = this.options.itemFilter;
+		const eligibleItems = itemFilter ? this.player.getItems(selectedSlot).filter(itemFilter) : this.player.getItems(selectedSlot);
 		const eligibleEnchants = this.player.getEnchants(selectedSlot);
 		// If the enchant tab is selected but the item has no eligible enchants, default to items
 		if (selectedTab === SelectorModalTabs.Enchants && !eligibleEnchants.length) {

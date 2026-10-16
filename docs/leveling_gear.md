@@ -60,14 +60,16 @@ doesn't change any other find.
 
 ## Our items
 
-Add Item puts an item we have into the plan from a level on: a level, a slot and the item (a
-random suffix item is one entry per suffix). The plan offers it at that level like a find, and
-wears it until something better comes along. The grid gives our items a gold edge.
+A click on a slot of the selected level's gear pane opens the Gear tab's item list, with the
+items that level can wear sorted by the stat weights of that level. The item we pick there
+(with its random suffix) goes into the plan as ours from that level on. The plan offers it at
+that level like a find, and wears it until something better comes along. The grid gives our
+items a gold edge, and the pane says "ours" under them.
 
 ## Using it
 
-Equip puts the selected level's plan gear on in the Gear tab and makes us that level, so the
-leveling sim runs on it. The seed and our items are saved with the gear settings.
+Grind takes the selected level of the plan to the Grinding mode, with its gear, talents and
+rotation. The seed and our items are saved with the gear settings.
 
 ## Open
 
