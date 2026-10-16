@@ -114,8 +114,9 @@ MANUAL = {'i10646': 'Goblin Sapper Charge', 'i12662': 'Demonic Rune', 'i13444': 
           's1311598': "Light's Vigil", 's1329': 'Mutilate', 's1329t1': 'Mutilate (main hand)', 's1329t2': 'Mutilate (off hand)', 's1382': 'Shadow Oil',
           's17261': 'Bite', 's20947': 'Seal of Command', 's20966': 'Judgement of Command', 's3009': 'Claw', 'i4395': 'Goblin Land Mine', 'i7676': 'Thistle Tea',
           **{f's11300t{i}': f'Eviscerate ({i} CP)' for i in range(1, 6)}, 's11300': 'Eviscerate',
-          's1293527': 'Summon Hawk', 's1293527t1': 'Hawk 1', 's1293527t2': 'Hawk 2', 's460534': 'Cutthroat'}
-MANUAL_ICON = {'s1293527': 'ability_hunter_pet_owl', 's460534': 'ability_rogue_ambush'}
+          's1293527': 'Summon Hawk', 's1293527t1': 'Hawk 1', 's1293527t2': 'Hawk 2', 's460534': 'Cutthroat',
+          's1310222': 'Spearing Strike'}
+MANUAL_ICON = {'s1293527': 'ability_hunter_pet_owl', 's460534': 'ability_rogue_ambush', 's1310222': 'inv_spear_01'}
 for race, lst in json.load(open(os.path.join(TREE, 'ui/core/forever/racials.json'))).items():
     for r in lst:
         for v in r.get('variants', []):
