@@ -21,7 +21,7 @@ const [, , hp = 'h', mode = 'plain'] = process.argv;
       find: ${C('#race-find > div')}, faction: ${C('#faction-table tbody tr')}, spread: ${C('#racespread .tr')}, fails: ${C('#races .fv-fail')}})`);
   };
   await snap('baseline');
-  for (const [k, v] of [['rs-target', 'beast'], ['rs-target', 'elemental'], ['rs-target', 'undead'], ['rs-weapon', 'weapon'], ['rs-weapon', 'off']]) {
+  for (const [k, v] of [['rs-target', 'beast'], ['rs-target', 'elemental'], ['rs-target', 'undead'], ['rs-weapon', 'off']]) {
     await q(`document.querySelector('#${k} [data-v="${v}"]').click()`); await page.waitForTimeout(200);
     await snap(v);
   }
