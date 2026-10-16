@@ -253,8 +253,8 @@ export const DefaultTalents = TalentsLevel60Fury;
 ///////////////////////////////////////////////////////////////////////////
 
 // The raid damage in the Level 60 encounters (PresetUtils.LEVEL_60_RAID_DAMAGE, the same for every
-// spec): 2 direct hits a minute at random times, 1500 damage each. Under Forever each gives 4.5
-// Rage in any stance (core.ForeverDamageTakenRage: 20 Rage for a level 60 mob's 3993 health, as if
+// spec): 2 direct hits a minute at random times, 1500 damage each. Under Forever each gives 3.4
+// Rage in any stance (core.ForeverDamageTakenRage: 20 Rage for a level 60 mob's 5356 health, as if
 // 40% armor took its share, before any of our own damage taken modifiers), and has Enrage's 30%
 // chance, because Forever's Enrage fires on any damage taken. Since our stance and Recklessness no
 // longer change it (2026-10-16), Fury moved by -0.2 to -0.6.
