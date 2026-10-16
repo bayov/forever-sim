@@ -204,43 +204,43 @@ dps_results: {
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-Settings-Dwarf-combat_sinister_strike_prebis-No Poisons-combat_sinister_strike-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 294.32183
-  tps: 208.97157
+  dps: 297.91533
+  tps: 211.52091
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-Settings-Dwarf-combat_sinister_strike_prebis-No Poisons-combat_sinister_strike-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 254.96117
-  tps: 181.0237
+  dps: 258.07133
+  tps: 183.23063
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-Settings-Dwarf-combat_sinister_strike_prebis-No Poisons-combat_sinister_strike-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 329.36417
-  tps: 233.8436
+  dps: 333.55667
+  tps: 236.8189
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-Settings-Dwarf-combat_sinister_strike_prebis-No Poisons-combat_sinister_strike-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 145.257
-  tps: 103.13192
+  dps: 146.51967
+  tps: 104.0286
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-Settings-Dwarf-combat_sinister_strike_prebis-No Poisons-combat_sinister_strike-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 125.76483
-  tps: 89.29521
+  dps: 126.848
+  tps: 90.06373
  }
 }
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-Settings-Dwarf-combat_sinister_strike_prebis-No Poisons-combat_sinister_strike-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 167.32333
-  tps: 118.79786
+  dps: 169.0125
+  tps: 119.999
  }
 }
 dps_results: {
