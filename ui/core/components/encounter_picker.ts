@@ -894,8 +894,8 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 		label: 'Search Min (sec)',
 		labelTooltip: searchTooltip,
 		float: true,
-		get: opts => orDefault(opts.searchMin, 2),
-		set: (opts, value) => (opts.searchMin = unlessDefault(value, 2)),
+		get: opts => orDefault(opts.searchMin, 0),
+		set: (opts, value) => (opts.searchMin = unlessDefault(value, 0)),
 	});
 	addLevelingNumberPicker(searchGroup, encounter, {
 		id: 'encounter-leveling-search-max',
@@ -961,16 +961,16 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 		label: 'Chain Search Min (sec)',
 		labelTooltip: chainSearchTooltip,
 		float: true,
-		get: opts => orDefault(opts.chainSearchMin, 2),
-		set: (opts, value) => (opts.chainSearchMin = unlessDefault(value, 2)),
+		get: opts => orDefault(opts.chainSearchMin, 0),
+		set: (opts, value) => (opts.chainSearchMin = unlessDefault(value, 0)),
 	});
 	addLevelingNumberPicker(advancedGroup, encounter, {
 		id: 'encounter-leveling-chain-search-max',
 		label: 'Chain Search Max (sec)',
 		labelTooltip: chainSearchTooltip,
 		float: true,
-		get: opts => orDefault(opts.chainSearchMax, 8),
-		set: (opts, value) => (opts.chainSearchMax = unlessDefault(value, 8)),
+		get: opts => orDefault(opts.chainSearchMax, 3),
+		set: (opts, value) => (opts.chainSearchMax = unlessDefault(value, 3)),
 	});
 	const standingSearchTooltip =
 		"The time it takes to find a mob to chain pull while in combat when the rotation stands and keeps fighting (Look For Mob's Stand), in seconds, at random between these. It's longer than running around, because we only see the mobs around us.";

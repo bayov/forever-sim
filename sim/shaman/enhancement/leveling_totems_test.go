@@ -122,11 +122,14 @@ func TestTotemicRecall(t *testing.T) {
 // TestTotemicProjection: a Magma Totem dropped while we search is left behind (a mob that
 // runs past it on its way to us may take a pulse), but projecting it to us once a mob is on
 // us brings its pulses back.
+//
+// We search for 2 to 10 sec, so we walk well away from where we dropped it.
 func TestTotemicProjection(t *testing.T) {
+	opts := &proto.LevelingOptions{SearchMin: 2, SearchMax: 10}
 	magma := `{"action":{"condition":{"and":{"vals":[` + searchingOnly + `,{"not":{"val":{"totemRemainingTime":{"totemType":"Fire"}}}}]}},"castSpell":{"spellId":{"spellId":8190}}}}`
 	project := `{"action":{"condition":{"and":{"vals":[{"cmp":{"op":"OpGe","lhs":{"levelingMobsOnUs":{}},"rhs":{"const":{"val":"1"}}}},{"cmp":{"op":"OpGt","lhs":{"totemDistance":{"totemType":"Fire"}},"rhs":{"const":{"val":"8"}}}}]}},"castSpell":{"spellId":{"spellId":437009}}}}`
-	left, _ := spellDamage(totemSession(t, &proto.LevelingOptions{}, healLine, magma), 8187)
-	player := totemSession(t, &proto.LevelingOptions{}, healLine, magma, project)
+	left, _ := spellDamage(totemSession(t, opts, healLine, magma), 8187)
+	player := totemSession(t, opts, healLine, magma, project)
 	projected, _ := spellDamage(player, 8187)
 	_, projections := spellDamage(player, 437009)
 	t.Logf("Magma Totem damage: %.0f left behind, %.0f projected with %d projections", left, projected, projections)

@@ -212,13 +212,13 @@ func TestLevelingChainPulls(t *testing.T) {
 }
 
 // TestLevelingChainSearchStanding: Look For Mob with Stand never runs, and its searches take
-// the standing time (4 to 16 sec by default) where running ones take 2 to 8.
+// the standing time (4 to 16 sec by default) where running ones take 0 to 3.
 func TestLevelingChainSearchStanding(t *testing.T) {
 	for _, c := range []struct {
 		stand   bool
 		lo, hi  float64
 		running string
-	}{{false, 2, 8, "true"}, {true, 4, 16, "false"}} {
+	}{{false, 0, 3, "true"}, {true, 4, 16, "false"}} {
 		lines := packLines(2)
 		if c.stand {
 			for i := range lines {

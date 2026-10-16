@@ -23,7 +23,7 @@ import (
 // (leveling_world.go).
 //
 // One loop runs the session:
-//   - Searching: we run around for a random 2 to 10 sec (search_min / search_max), so we
+//   - Searching: we run around for a random 0 to 10 sec (search_min / search_max), so we
 //     can't hard cast, and find a mob standing 10 to 40 yards away (found_min / found_max).
 //     One that close to its aggro radius notices us at once.
 //   - Pulling: the mob waits there, as our target and the rotation's Pull Target. A spell
@@ -35,7 +35,7 @@ import (
 //     cast at it on the way, but it can't hit us and we can't reach it in melee until it's
 //     here. Its first swing comes at a random point of its swing timer. The rotation decides
 //     whether to look for another mob (Look For Mob), and whether to run around for it with
-//     the mobs on us following, when only instants and melee go out (2 to 8 sec), or stand
+//     the mobs on us following, when only instants and melee go out (0 to 3 sec), or stand
 //     and keep fighting while we look (4 to 16 sec). It pulls what we find the same ways, or
 //     leaves it for our next pull.
 //   - When the last one dies, we're out of combat and ready (leveling_rest.go): the rotation
@@ -160,10 +160,10 @@ func resolveLevelingOptions(o *proto.LevelingOptions) levelingOptions {
 		mobType:           o.MobType,
 		armorMultiplier:   or(o.ArmorMultiplier, 1),
 		maxPack:           int(max(o.MaxPackSize, 0)),
-		searchMin:         seconds(o.SearchMin, 2),
+		searchMin:         seconds(o.SearchMin, 0),
 		searchMax:         seconds(o.SearchMax, 10),
-		chainSearchMin:    seconds(o.ChainSearchMin, 2),
-		chainSearchMax:    seconds(o.ChainSearchMax, 8),
+		chainSearchMin:    seconds(o.ChainSearchMin, 0),
+		chainSearchMax:    seconds(o.ChainSearchMax, 3),
 		standingSearchMin: seconds(o.ChainSearchStandingMin, 4),
 		standingSearchMax: seconds(o.ChainSearchStandingMax, 16),
 		foundMin:          math.Round(or(o.FoundMin, 10)),
