@@ -232,7 +232,7 @@ export function startReport(dash, events) {
     const at = () => { const r = host.getBoundingClientRect(); const px = r.left + x, py = r.top + y; return { width: 0, height: 0, x: px, y: py, left: px, right: px, top: py, bottom: py }; };
     tipTippy = tippy(host, {
       content: tipEl, trigger: 'manual', interactive: acts.length > 0, appendTo: document.body, hideOnClick: false,
-      placement: opts.below ? 'bottom-start' : 'top-start', offset: [10, 8], getReferenceClientRect: at, duration: [120, 0],
+      placement: opts.below ? 'bottom-start' : 'top-start', offset: [10, 8], getReferenceClientRect: at, duration: 0,
     });
     tipTippy.show();
     if (acts.length) {
@@ -300,7 +300,7 @@ export function startReport(dash, events) {
   const DUTY_SHORT = { 'Battle Shout': 'Shout', 'Curse of the Elements': 'Curse', 'Faerie Fire': 'FF', "Hunter's Mark": 'Mark', 'Judgement of the Crusader': 'Crusader', 'Scorpid Sting': 'Scorpid' };
   const dutyBadge = (b, list) => {
     const badge = el('span', { class: 'fv-duty' + (b.dutyDefensive === true ? ' def' : ''), text: `${DUTY_SHORT[b.duty] || b.duty} duty` });
-    tippy(badge, { content: dutyTip(b, list), onShow: (t) => t.setContent(dutyTip(b, list)) });
+    tippy(badge, { content: dutyTip(b, list), duration: 0, onShow: (t) => t.setContent(dutyTip(b, list)) });
     badge.addEventListener('click', (e) => { e.stopPropagation(); hideTip(); setTimeout(() => badge._tippy?.show()); });
     return badge;
   };
@@ -308,7 +308,7 @@ export function startReport(dash, events) {
     const badge = el('span', { class: 'fv-enc', text: 'vs ' + b.encounter });
     if (b.advantage || b.advantageShort) {
       // We build the tooltip each time it shows, because the spell and talent tooltips load after the page.
-      tippy(badge, { content: advTip(b), onShow: (t) => t.setContent(advTip(b)) });
+      tippy(badge, { content: advTip(b), duration: 0, onShow: (t) => t.setContent(advTip(b)) });
       // a tap on the badge shows why, not the ranking row's own tooltip
       badge.addEventListener('click', (e) => { e.stopPropagation(); hideTip(); setTimeout(() => badge._tippy?.show()); });
     }
@@ -322,7 +322,7 @@ export function startReport(dash, events) {
     if (!t) return;
     const content = el('div', { class: 'fv-tip fv-tip-text', text: t });
     if (n._tippy) n._tippy.setContent(content);
-    else tippy(n, { content });
+    else tippy(n, { content, duration: 0 });
   };
   {
     const root = $('#fv');
@@ -551,7 +551,7 @@ export function startReport(dash, events) {
     const wide = pt && (r.width > 160 || node instanceof SVGElement);
     const dx = wide ? pt.x - 12 - r.left : 0;
     ttTippy = tippy(node, {
-      content, trigger: 'manual', interactive: true, appendTo: document.body, hideOnClick: false, placement: 'bottom-start', offset: [0, 6], duration: [120, 0],
+      content, trigger: 'manual', interactive: true, appendTo: document.body, hideOnClick: false, placement: 'bottom-start', offset: [0, 6], duration: 0,
       getReferenceClientRect: wide ? () => { const q = node.getBoundingClientRect(); return { width: 0, height: q.height, x: q.left + dx, y: q.top, left: q.left + dx, right: q.left + dx, top: q.top, bottom: q.bottom }; } : null,
     });
     ttTippy.show();
@@ -564,17 +564,16 @@ export function startReport(dash, events) {
 
   {
     const root = $('#fv');
-    let hoverTimer = null, lpTimer = null, lpFired = false, lpStart = null;
+    let lpTimer = null, lpFired = false, lpStart = null;
     // The tooltip is in body, outside the report, so we watch the whole page. That way moving onto the tooltip
     // keeps it up.
     document.addEventListener('pointerover', (e) => {
       if (e.pointerType !== 'mouse') return;
       if (ttEl && ttEl.contains(e.target)) { clearTimeout(ttHideTimer); return; }
       const n = e.target.closest('[data-tt]');
-      clearTimeout(hoverTimer);
       if (n && n === ttNode) clearTimeout(ttHideTimer);
       if (!n || n === ttNode) return;
-      hoverTimer = setTimeout(() => { if (!ttPinned) showTT(n, { x: e.clientX, y: e.clientY }); }, 120);
+      if (!ttPinned) showTT(n, { x: e.clientX, y: e.clientY });
     });
     document.addEventListener('pointerout', (e) => {
       if (e.pointerType !== 'mouse') return;
@@ -583,7 +582,6 @@ export function startReport(dash, events) {
       if (ttEl && ttEl.contains(e.target)) { if (!ttPinned && !into(ttEl) && !into(ttNode)) { clearTimeout(ttHideTimer); ttHideTimer = setTimeout(hideTT, 250); } return; }
       const n = e.target.closest('[data-tt]');
       if (!n || into(n)) return;
-      clearTimeout(hoverTimer);
       if (n === ttNode && !ttPinned && !into(ttEl)) { clearTimeout(ttHideTimer); ttHideTimer = setTimeout(hideTT, 250); }
     });
     root.addEventListener('pointerdown', (e) => {
@@ -848,7 +846,7 @@ export function startReport(dash, events) {
           : v >= b.p10 && v <= b.p90 ? ['10th–90th percentile', `${f1(b.p10)}–${f1(b.p90)}`]
             : v <= b.dps ? ['Mean', f1(b.dps)] : null;
       if (!part) { hide(); return; }
-      if (!partTippy) partTippy = tippy(el('span'), { trigger: 'manual', appendTo: document.body, placement: 'top', offset: [0, 12], duration: [80, 0], content: '' });
+      if (!partTippy) partTippy = tippy(el('span'), { trigger: 'manual', appendTo: document.body, placement: 'top', offset: [0, 12], duration: 0, content: '' });
       if (last !== part[0]) { partTippy.setContent(el('span', { class: 'fv-parttip' }, el('span', { class: 't', text: part[0] }), el('br'), el('b', { text: part[1] }), ' DPS')); last = part[0]; }
       const px = e.clientX, py = r.top + r.height / 2;
       partTippy.setProps({ getReferenceClientRect: () => ({ width: 0, height: 0, x: px, y: py, left: px, right: px, top: py, bottom: py }) });
