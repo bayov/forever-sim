@@ -4,6 +4,7 @@ import { WOWHEAD_DOMAIN, WOWHEAD_EXPANSION_ENV } from './constants/wowhead';
 import { CRIT_RATING_PER_PERCENT, HIT_RATING_PER_PERCENT } from './player';
 import { EnchantType, ItemQuality, ItemSlot, ItemType, Stat } from './proto/common';
 import { UIEnchant, UIItem } from './proto/ui';
+import { isPlainItemId } from './leveling_gear';
 import { Database } from './proto_utils/database';
 import { armorTypeNames, classNames, itemTypeNames, rangedWeaponTypeNames, statNames, weaponTypeNames } from './proto_utils/names';
 
@@ -11,7 +12,8 @@ import { armorTypeNames, classNames, itemTypeNames, rangedWeaponTypeNames, statN
 //
 // The tooltips everywhere else come from wowhead's script, which reads the item id off the link.
 // For an id Forever's wowhead database does not carry (the made up "Enhancement Synthetic" items
-// from 990001 up, or a client item wowhead has not picked up yet) it shows an error and no stats.
+// from 990001 up, the leveling gear plan's plain white items, or a client item wowhead has not
+// picked up yet) it shows an error and no stats.
 // So on the first hover over such a link we ask wowhead's tooltip endpoint about the id. When it
 // answers with an error, we take wowhead's tooltip off the link and show ours, with a warning on
 // top that wowhead does not know the item.
@@ -107,7 +109,10 @@ function line(text: string, cssClass = ''): string {
 }
 
 export function tooltipContent(itemId: number, item: UIItem | undefined): string {
-	const lines = [line('Not found on wowhead. Stats from the sim’s item database.', 'text-warning small mb-1')];
+	const note = isPlainItemId(itemId)
+		? 'A plain white item the leveling gear plan made up, with the armor or damage of its item level.'
+		: 'Not found on wowhead. Stats from the sim’s item database.';
+	const lines = [line(note, 'text-warning small mb-1')];
 	if (!item) {
 		lines.push(line(`Item ${itemId}`));
 		return lines.join('');
@@ -188,7 +193,8 @@ async function fallbackContent(target: LinkedId): Promise<string | null> {
 	const db = await Database.get();
 	const kit = findKit(db, target);
 	if (kit) return (await isKitBrokenOnWowhead(kit.spellId)) ? kitTooltipContent(kit) : null;
-	if (target.kind !== 'item' || (await isOnWowhead(target.id))) return null;
+	// The leveling gear plan's plain items are ours, so we don't ask wowhead about them.
+	if (target.kind !== 'item' || (!isPlainItemId(target.id) && (await isOnWowhead(target.id)))) return null;
 	return tooltipContent(target.id, db.getItemById(target.id));
 }
 

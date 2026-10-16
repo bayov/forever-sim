@@ -427,21 +427,28 @@ const PLAIN_MAX_ILVL = 65;
 
 // PlainItems are the white items the plan makes up, since the item database has none: armor
 // with no stats, and weapons. Their armor and weapon DPS go with item level, at 90% of a green
-// piece's armor and 85% of a green weapon's DPS. The green lines are fit to the database.
+// piece's armor and 85% of a green weapon's DPS. The green lines are fit to the database. Each
+// one wears the icon of the lowest level green of its kind, like a leather vest's or a
+// two-handed mace's.
 //
 // They only depend on the database, so the database makes the same ones at startup
 // (Database.getItemById), and gear with them in it still loads after a reload.
 export class PlainItems {
 	private readonly armorFit = new Map<string, [number, number]>();
 	private readonly weaponFit = new Map<string, [number, number]>();
+	private readonly icons = new Map<string, Item>();
 
 	constructor(items: Array<Item>) {
 		const weaponSamples = new Map<string, Array<[number, number]>>();
 		const armorSamples = new Map<string, Array<[number, number]>>();
 		for (const item of items) {
 			if (item.quality != ItemQuality.ItemQualityUncommon) continue;
-			if (item.weaponSpeed > 0) push(weaponSamples, String(item.handType == HandType.HandTypeTwoHand), [item.ilvl, getWeaponDPS(item)]);
+			const twoHand = item.handType == HandType.HandTypeTwoHand;
+			if (item.weaponSpeed > 0) push(weaponSamples, String(twoHand), [item.ilvl, getWeaponDPS(item)]);
 			else if (item.stats[Stat.StatArmor] > 0) push(armorSamples, `${item.type}/${item.armorType}`, [item.ilvl, item.stats[Stat.StatArmor]]);
+			const iconKey = item.type == ItemType.ItemTypeWeapon ? `w/${item.weaponType}/${twoHand}` : `a/${item.type}/${item.armorType}`;
+			const best = this.icons.get(iconKey);
+			if (item.icon && (!best || item.ilvl < best.ilvl || (item.ilvl == best.ilvl && item.id < best.id))) this.icons.set(iconKey, item);
 		}
 		armorSamples.forEach((samples, key) => this.armorFit.set(key, lineFit(samples)));
 		weaponSamples.forEach((samples, key) => this.weaponFit.set(key, lineFit(samples)));
@@ -454,6 +461,7 @@ export class PlainItems {
 		const item = madeUpItem(plainId(type, armorType, ilvl), name, type, ilvl);
 		item.armorType = armorType;
 		item.stats[Stat.StatArmor] = Math.max(1, Math.round(0.9 * (a + b * ilvl)));
+		item.icon = this.icons.get(`a/${type}/${armorType}`)?.icon ?? this.icons.get(`a/${type}/${ArmorType.ArmorTypeCloth}`)?.icon ?? item.icon;
 		return item;
 	}
 
@@ -472,6 +480,7 @@ export class PlainItems {
 		item.weaponSpeed = speed;
 		item.weaponDamageMin = Math.round(dps * speed * 0.8);
 		item.weaponDamageMax = Math.round(dps * speed * 1.2);
+		item.icon = this.icons.get(`w/${weaponType}/${twoHand}`)?.icon ?? item.icon;
 		return item;
 	}
 

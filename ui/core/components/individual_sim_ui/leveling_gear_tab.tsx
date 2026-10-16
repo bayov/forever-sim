@@ -30,16 +30,19 @@ import {
 } from '../../proto_utils/utils';
 import { TypedEvent } from '../../typed_event';
 import { BaseModal } from '../base_modal';
+import { ContentBlock } from '../content_block';
+import { ItemRenderer } from '../gear_picker/gear_picker';
+import { getEmptySlotIconUrl } from '../gear_picker/utils';
 import { NumberPicker } from '../number_picker';
 import { SimTab } from '../sim_tab';
 
 // The Leveling Gear tab shows the leveling gear plan (leveling_gear.ts): what we wear at each
 // level from 1 to 60 when we gear up as we go. It's only there in Leveling mode.
 //
-// The grid has a row per slot and a column per level, in the color of the item we wear then,
-// with a mark where it changed. A click on a column shows that level's gear below it, and
-// Equip puts it on in the Gear tab, at that level. Add Item puts an item of our own into the
-// plan from a level on, and the plan wears it until it finds a better one.
+// It's laid out like the Gear tab. On the left are the plan's settings and the items we put in
+// by hand. On the right the selected level's gear is in the same gear pane, and under both the
+// grid has a row per slot and a column per level, in the color of the item we wear then. A
+// click on a column picks that level, and Equip puts its gear on in the Gear tab.
 export class LevelingGearTab extends SimTab {
 	protected simUI: IndividualSimUI<Spec>;
 	private readonly player: Player<Spec>;
@@ -48,57 +51,64 @@ export class LevelingGearTab extends SimTab {
 	private readonly selectedLevelEmitter = new TypedEvent<void>('LevelingGearSelectedLevel');
 
 	private readonly gridElem: HTMLElement;
-	private readonly levelElem: HTMLElement;
+	private readonly paneTitleElem: HTMLElement;
 	private readonly pinsElem: HTMLElement;
 	private readonly weightsElem: HTMLElement;
+	private readonly slotRenderers = new Map<ItemSlot, ItemRenderer>();
 
 	constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
 		super(parentElem, simUI, { identifier: 'leveling-gear-tab', title: 'Leveling Gear' });
 		this.simUI = simUI;
 		this.player = simUI.player;
 
-		const controls = ref<HTMLDivElement>();
-		const grid = ref<HTMLDivElement>();
-		const level = ref<HTMLDivElement>();
-		const pins = ref<HTMLDivElement>();
-		const weights = ref<HTMLDivElement>();
-		const reroll = ref<HTMLButtonElement>();
-		const equip = ref<HTMLButtonElement>();
-		const addPin = ref<HTMLButtonElement>();
+		const side = (<div className="leveling-gear-side tab-panel-col" />) as HTMLElement;
+		const paneCol = (<div className="leveling-gear-pane-col" />) as HTMLElement;
+		const gridCol = (<div className="leveling-gear-grid-col" />) as HTMLElement;
 		this.contentContainer.appendChild(
 			<div className="leveling-gear">
-				<div className="leveling-gear-controls" ref={controls}>
+				<div className="leveling-gear-top">
+					{side}
+					{paneCol}
+				</div>
+				{gridCol}
+			</div>,
+		);
+
+		// The plan's settings: the seed, the level we look at and Equip.
+		const planBlock = new ContentBlock(side, 'leveling-gear-plan-block', {
+			header: {
+				title: 'Leveling Gear Plan',
+				tooltip:
+					'One random leveling journey. Each level, each slot comes across an item now and then, mostly white early and green later with a few blues, and we wear it only when it beats what we have.',
+			},
+		});
+		const reroll = ref<HTMLButtonElement>();
+		const equip = ref<HTMLButtonElement>();
+		const seedRow = ref<HTMLDivElement>();
+		const levelRow = ref<HTMLDivElement>();
+		const weights = ref<HTMLParagraphElement>();
+		planBlock.bodyElement.appendChild(
+			<>
+				<p className="leveling-gear-weights" ref={weights} />
+				<div className="leveling-gear-row" ref={seedRow}>
 					<button className="btn btn-outline-primary" ref={reroll}>
 						<i className="fas fa-dice me-1" />
 						Reroll
 					</button>
-					<button className="btn btn-outline-primary" ref={equip}>
+				</div>
+				<div className="leveling-gear-row" ref={levelRow}>
+					<button className="btn btn-primary" ref={equip}>
 						<i className="fas fa-shirt me-1" />
 						Equip
 					</button>
-					<button className="btn btn-outline-primary" ref={addPin}>
-						<i className="fas fa-plus me-1" />
-						Add Item
-					</button>
-					<span className="leveling-gear-weights" ref={weights} />
 				</div>
-				<div className="leveling-gear-grid" ref={grid} />
-				<div className="leveling-gear-bottom">
-					<div className="leveling-gear-level" ref={level} />
-					<div className="leveling-gear-pins" ref={pins} />
-				</div>
-			</div>,
+			</>,
 		);
-		this.gridElem = grid.value!;
-		this.levelElem = level.value!;
-		this.pinsElem = pins.value!;
 		this.weightsElem = weights.value!;
-
-		new NumberPicker<Player<Spec>>(controls.value!, this.player, {
+		new NumberPicker<Player<Spec>>(seedRow.value!, this.player, {
 			id: 'leveling-gear-seed',
 			label: 'Seed',
 			labelTooltip: 'The plan is one random leveling journey. Another seed, or Reroll, plays out another one.',
-			inline: true,
 			changedEvent: player => player.levelingGearPlanChangeEmitter,
 			getValue: player => player.getLevelingGearPlan().seed,
 			setValue: (eventID, player, newValue) => {
@@ -107,29 +117,127 @@ export class LevelingGearTab extends SimTab {
 				player.setLevelingGearPlan(eventID, plan);
 			},
 		});
-		new NumberPicker<LevelingGearTab>(controls.value!, this, {
+		new NumberPicker<LevelingGearTab>(levelRow.value!, this, {
 			id: 'leveling-gear-level',
 			label: 'Level',
-			labelTooltip: 'The level whose gear shows below the grid, and that Equip puts on.',
-			inline: true,
+			labelTooltip: 'The level whose gear the pane shows, and that Equip puts on. A click on the grid picks one too.',
 			positive: true,
 			changedEvent: tab => tab.selectedLevelEmitter,
 			getValue: tab => tab.selectedLevel,
 			setValue: (eventID, tab, newValue) => tab.selectLevel(newValue),
 		});
-		controls.value!.prepend(reroll.value!, equip.value!, addPin.value!);
-		controls.value!.append(this.weightsElem);
-
+		seedRow.value!.append(reroll.value!);
+		levelRow.value!.append(equip.value!);
 		tippy(reroll.value!, { content: 'Play out another leveling journey, with a new seed.' });
 		tippy(equip.value!, { content: () => `Put on the plan's level ${this.selectedLevel} gear in the Gear tab, and make us level ${this.selectedLevel}.` });
-		tippy(addPin.value!, { content: 'Put an item of our own into the plan, from a level on. The plan wears it until it finds a better one.' });
 		reroll.value!.addEventListener('click', () => {
 			const plan = this.player.getLevelingGearPlan();
 			plan.seed = Math.floor(Math.random() * 1_000_000) + 1;
 			this.player.setLevelingGearPlan(TypedEvent.nextEventID(), plan);
 		});
 		equip.value!.addEventListener('click', () => this.equipSelectedLevel());
+
+		// Our own items, with Add Item under them like Save Preset under a preset list.
+		const pinsBlock = new ContentBlock(side, 'leveling-gear-pins-block', {
+			header: {
+				title: 'Our Items',
+				tooltip: 'Items we have, from a level on. The plan wears each one at its level if it beats what it has, until it finds a better one.',
+			},
+		});
+		const addPin = ref<HTMLButtonElement>();
+		const pins = ref<HTMLDivElement>();
+		pinsBlock.bodyElement.appendChild(
+			<>
+				<div className="leveling-gear-pins" ref={pins} />
+				<button className="btn btn-outline-primary leveling-gear-add-button" ref={addPin}>
+					<i className="fas fa-plus me-1" />
+					Add item
+				</button>
+			</>,
+		);
+		this.pinsElem = pins.value!;
 		addPin.value!.addEventListener('click', () => new AddPinModal(this.simUI.rootElem, this, this.selectedLevel));
+
+		// The selected level's gear, in the Gear tab's pane.
+		const paneTitle = ref<HTMLDivElement>();
+		const left = ref<HTMLDivElement>();
+		const right = ref<HTMLDivElement>();
+		paneCol.appendChild(
+			<>
+				<div className="leveling-gear-pane-title" ref={paneTitle} />
+				<div className="gear-picker-root leveling-gear-pane">
+					<div className="gear-picker-left tab-panel-col" ref={left} />
+					<div className="gear-picker-right tab-panel-col" ref={right} />
+				</div>
+			</>,
+		);
+		this.paneTitleElem = paneTitle.value!;
+		const leftSlots = [
+			ItemSlot.ItemSlotHead,
+			ItemSlot.ItemSlotNeck,
+			ItemSlot.ItemSlotShoulder,
+			ItemSlot.ItemSlotBack,
+			ItemSlot.ItemSlotChest,
+			ItemSlot.ItemSlotWrist,
+			ItemSlot.ItemSlotMainHand,
+			ItemSlot.ItemSlotOffHand,
+			ItemSlot.ItemSlotRanged,
+		];
+		const rightSlots = [
+			ItemSlot.ItemSlotHands,
+			ItemSlot.ItemSlotWaist,
+			ItemSlot.ItemSlotLegs,
+			ItemSlot.ItemSlotFeet,
+			ItemSlot.ItemSlotFinger1,
+			ItemSlot.ItemSlotFinger2,
+			ItemSlot.ItemSlotTrinket1,
+			ItemSlot.ItemSlotTrinket2,
+		];
+		for (const [column, slots] of [
+			[left.value!, leftSlots],
+			[right.value!, rightSlots],
+		] as Array<[HTMLElement, Array<ItemSlot>]>) {
+			for (const slot of slots) {
+				const root = (<div className="item-picker-root" />) as HTMLElement;
+				column.appendChild(root);
+				this.slotRenderers.set(slot, new ItemRenderer(null as unknown as HTMLElement, root, this.player));
+			}
+		}
+
+		// Every level's gear, a column each.
+		const gridBlock = new ContentBlock(gridCol, 'leveling-gear-grid-block', {
+			header: {
+				title: 'Gear by Level',
+				tooltip:
+					'A row per slot and a column per level, in the color of what we wear then. A bright cell is a new item at that level, and a gold edge is one of ours.',
+			},
+		});
+		const grid = ref<HTMLDivElement>();
+		gridBlock.bodyElement.appendChild(
+			<>
+				<div className="leveling-gear-legend">
+					<span>
+						<i className="leveling-gear-swatch leveling-gear-q1" />
+						White
+					</span>
+					<span>
+						<i className="leveling-gear-swatch leveling-gear-q2" />
+						Green
+					</span>
+					<span>
+						<i className="leveling-gear-swatch leveling-gear-q3" />
+						Blue
+					</span>
+					<span>
+						<i className="leveling-gear-swatch leveling-gear-q2 leveling-gear-pinned" />
+						Ours
+					</span>
+					<span className="leveling-gear-legend-note">Bright: a new item that level</span>
+				</div>
+				<div className="leveling-gear-grid" ref={grid} />
+			</>,
+		);
+		this.gridElem = grid.value!;
 
 		// The tab is only there in Leveling mode.
 		const updateMode = () => {
@@ -199,7 +307,7 @@ export class LevelingGearTab extends SimTab {
 			weightsAt: level => this.weightsAt(level).weights,
 		});
 		const names = [...new Set(Array.from({ length: LEVELING_GEAR_MAX_LEVEL }, (_, i) => this.weightsAt(i + 1).name))];
-		this.weightsElem.textContent = `Items are judged by ${names.join(', ')}.`;
+		this.weightsElem.textContent = `We judge items by the ${names.join(', ')} stat weights.`;
 		this.buildGrid();
 		this.buildLevel();
 		this.buildPins();
@@ -226,6 +334,7 @@ export class LevelingGearTab extends SimTab {
 		for (const level of plan.levels) {
 			const th = document.createElement('th');
 			th.dataset.level = String(level.level);
+			th.classList.add('leveling-gear-level-head');
 			th.textContent = level.level % 5 == 0 || level.level == 1 ? String(level.level) : '';
 			th.addEventListener('click', () => this.selectLevel(level.level));
 			header.appendChild(th);
@@ -234,6 +343,7 @@ export class LevelingGearTab extends SimTab {
 		for (const slot of LEVELING_GEAR_SLOTS) {
 			const row = document.createElement('tr');
 			const label = document.createElement('th');
+			label.classList.add('leveling-gear-slot-head');
 			label.textContent = slotNames.get(slot) ?? '';
 			row.appendChild(label);
 			for (const level of plan.levels) {
@@ -244,8 +354,12 @@ export class LevelingGearTab extends SimTab {
 				if (level.changed.includes(slot)) cell.classList.add('leveling-gear-changed');
 				if (piece?.source == 'pinned') cell.classList.add('leveling-gear-pinned');
 				cell.addEventListener('click', () => this.selectLevel(level.level));
-				if (piece && level.changed.includes(slot)) {
-					tippy(cell, { content: `Level ${level.level}: ${pieceName(piece)}${piece.source == 'pinned' ? ' (ours)' : ''}` });
+				if (piece) {
+					tippy(cell, {
+						content: `${slotNames.get(slot)} at level ${level.level}: ${pieceName(piece)}, since ${piece.since}${
+							piece.source == 'pinned' ? ' (ours)' : ''
+						}`,
+					});
 				}
 				row.appendChild(cell);
 			}
@@ -258,42 +372,23 @@ export class LevelingGearTab extends SimTab {
 	private buildLevel() {
 		const level = this.levelPlan(this.selectedLevel);
 		if (!level) return;
-		const rows = LEVELING_GEAR_SLOTS.map(slot => {
+		this.paneTitleElem.textContent = `Level ${this.selectedLevel}`;
+		for (const [slot, renderer] of this.slotRenderers) {
 			const piece = level.gear[slot];
-			const icon = ref<HTMLAnchorElement>();
-			const name = ref<HTMLAnchorElement>();
-			const row = (
-				<tr>
-					<td className="leveling-gear-slot">{slotNames.get(slot) ?? ''}</td>
-					<td>
-						<a className="leveling-gear-icon" ref={icon} />
-						<a className="leveling-gear-name" ref={name}>
-							{piece ? pieceName(piece) : '-'}
-						</a>
-					</td>
-					<td className="leveling-gear-since">{piece ? `since ${piece.since}` : ''}</td>
-					<td className="leveling-gear-source">{piece ? sourceText(piece) : ''}</td>
-				</tr>
-			) as HTMLElement;
-			if (piece) {
-				setItemQualityCssClass(name.value!, piece.item.quality);
-				if (!isPlainItemId(piece.item.id)) {
-					const id = ActionId.fromItemId(piece.item.id, undefined, piece.randomSuffix?.id);
-					id.fillAndSet(icon.value!, true, true);
-					id.fillAndSet(name.value!, true, false);
-				} else {
-					icon.value!.style.backgroundImage = `url('https://wow.zamimg.com/images/wow/icons/large/inv_misc_questionmark.jpg')`;
-					tippy(name.value!, { content: `A plain white item we made up: ${plainStats(piece.item)}.` });
-				}
+			renderer.clear();
+			renderer.nameElem.textContent = slotNames.get(slot) ?? '';
+			setItemQualityCssClass(renderer.nameElem, null);
+			if (!piece) {
+				renderer.iconElem.style.backgroundImage = `url('${getEmptySlotIconUrl(slot)}')`;
+				continue;
 			}
-			return row;
-		});
-		this.levelElem.replaceChildren(
-			<div className="leveling-gear-level-title">
-				Level {String(this.selectedLevel)}, {String(level.finds)} {level.finds == 1 ? 'find' : 'finds'} this level
-			</div>,
-			<table className="leveling-gear-level-table">{rows}</table>,
-		);
+			renderer.update(new EquippedItem({ item: piece.item, randomSuffix: piece.randomSuffix ?? null }));
+			// The line under the name says since when we wear it and where it came from.
+			renderer.enchantElem.textContent = `since ${piece.since}, ${sourceText(piece)}`;
+			renderer.enchantElem.classList.remove('hide');
+			renderer.enchantElem.classList.add('leveling-gear-since');
+			renderer.enchantElem.classList.toggle('leveling-gear-since-new', piece.since == this.selectedLevel);
+		}
 	}
 
 	private buildPins() {
@@ -302,19 +397,32 @@ export class LevelingGearTab extends SimTab {
 		const rows = pins.map((pin, i) => {
 			const item = pin.item ? db.getItemById(pin.item.id) : undefined;
 			const suffix = pin.item?.randomSuffix ? db.getRandomSuffixById(pin.item.randomSuffix) : undefined;
+			const icon = ref<HTMLAnchorElement>();
+			const name = ref<HTMLAnchorElement>();
 			const remove = ref<HTMLButtonElement>();
 			const row = (
-				<tr>
-					<td>Level {String(pin.level)}</td>
-					<td>{slotNames.get(pin.slot) ?? ''}</td>
-					<td>{item ? `${item.name}${suffix ? ` ${suffix.name}` : ''}` : `item ${pin.item?.id ?? '?'}`}</td>
-					<td>
-						<button className="btn btn-link link-danger p-0" ref={remove}>
-							<i className="fas fa-times" />
-						</button>
-					</td>
-				</tr>
+				<div className="leveling-gear-pin">
+					<a className="leveling-gear-pin-icon" ref={icon} />
+					<div className="leveling-gear-pin-labels">
+						<a className="leveling-gear-pin-name" ref={name}>
+							{item ? `${item.name}${suffix ? ` ${suffix.name}` : ''}` : `Item ${pin.item?.id ?? '?'}`}
+						</a>
+						<span className="leveling-gear-pin-where">
+							{slotNames.get(pin.slot) ?? ''}, from level {String(pin.level)}
+						</span>
+					</div>
+					<button className="btn btn-link link-danger leveling-gear-pin-remove" ref={remove}>
+						<i className="fas fa-times" />
+					</button>
+				</div>
 			) as HTMLElement;
+			if (item) {
+				setItemQualityCssClass(name.value!, item.quality);
+				const id = ActionId.fromItemId(item.id, undefined, suffix?.id);
+				id.fillAndSet(icon.value!, true, true);
+				id.fillAndSet(name.value!, true, false);
+			}
+			tippy(remove.value!, { content: 'Take it out of the plan' });
 			remove.value!.addEventListener('click', () => {
 				const plan = this.player.getLevelingGearPlan();
 				plan.pins.splice(i, 1);
@@ -322,14 +430,7 @@ export class LevelingGearTab extends SimTab {
 			});
 			return row;
 		});
-		this.pinsElem.replaceChildren(
-			<div className="leveling-gear-level-title">Our items</div>,
-			pins.length > 0 ? (
-				<table className="leveling-gear-pins-table">{rows}</table>
-			) : (
-				<div className="leveling-gear-none">None yet. Add Item puts one in.</div>
-			),
-		);
+		this.pinsElem.replaceChildren(...(rows.length > 0 ? rows : [<p className="leveling-gear-none">None yet.</p>]));
 	}
 
 	addPin(pin: LevelingGearPin) {
@@ -379,13 +480,6 @@ function sourceText(piece: LevelingGearPiece): string {
 // apart.
 function suffixStats(stats: Array<number>): string {
 	return stats.flatMap((value, stat) => (value ? [`+${value} ${statNames.get(stat) ?? ''}`] : [])).join(', ');
-}
-
-function plainStats(item: Item): string {
-	if (item.weaponSpeed > 0) {
-		return `${item.weaponDamageMin} - ${item.weaponDamageMax} damage, ${item.weaponSpeed.toFixed(2)} speed`;
-	}
-	return `${item.stats[26]} armor`;
 }
 
 // The Add Item window: a level, a slot and an item of ours for the plan.

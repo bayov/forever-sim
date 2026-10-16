@@ -1,39 +1,148 @@
-// The Leveling Gear tab (leveling_gear_tab.tsx): the controls, the grid of levels by slots,
-// and under it the selected level's gear and our own items.
+// The Leveling Gear tab (leveling_gear_tab.tsx), laid out like the Gear tab: the plan's panels
+// on the left, the selected level's gear pane on the right, and the grid of every level under
+// both.
 #leveling-gear-tab {
 	.leveling-gear {
 		width: 100%;
 		display: flex;
 		flex-direction: column;
-		gap: var(--block-spacer);
+		gap: var(--section-spacer);
 	}
 
-	.leveling-gear-controls {
+	.leveling-gear-top {
 		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.5rem 1rem;
+		gap: var(--section-spacer);
+		align-items: flex-start;
 
-		// The seed and the level sit in the row with their labels to the left.
-		.input-root {
-			display: flex;
-			align-items: center;
-			gap: 0.5rem;
-			width: auto;
-			margin-bottom: 0;
-
-			.form-label {
-				margin-bottom: 0;
-			}
+		@include media-breakpoint-down(xl) {
+			flex-direction: column;
 		}
+	}
 
-		input {
-			width: 6rem;
+	.leveling-gear-side {
+		flex: 0 0 22rem;
+		display: flex;
+		flex-direction: column;
+		gap: var(--block-spacer);
+
+		@include media-breakpoint-down(xl) {
+			flex-basis: auto;
+			width: 100%;
 		}
+	}
+
+	.leveling-gear-pane-col {
+		flex: 1;
+		min-width: 0;
+		width: 100%;
+	}
+
+	.leveling-gear-pane-title {
+		font-family: var(--heading-font-family);
+		font-variant: small-caps;
+		font-size: var(--h5-font-size);
+		color: var(--gold);
+		margin-bottom: var(--spacer-2);
 	}
 
 	.leveling-gear-weights {
 		color: var(--bs-gray-500);
+		margin-bottom: var(--block-spacer);
+	}
+
+	// A number field with its button beside it, both on the field's line.
+	.leveling-gear-row {
+		display: flex;
+		align-items: flex-end;
+		gap: var(--spacer-2);
+		margin-bottom: var(--block-spacer);
+
+		.input-root {
+			flex: 1;
+			margin-bottom: 0;
+		}
+
+		.btn {
+			flex: 0 0 7rem;
+		}
+	}
+
+	// Under an item in the pane: since when we wear it and where it came from, in gray, or
+	// green when we put it on at this level.
+	.item-picker-root .item-picker-enchant.leveling-gear-since {
+		color: var(--bs-gray-500);
+		pointer-events: none;
+
+		&.leveling-gear-since-new {
+			color: var(--bs-uncommon);
+		}
+	}
+
+	.leveling-gear-pins {
+		display: flex;
+		flex-direction: column;
+		gap: var(--spacer-2);
+		margin-bottom: var(--block-spacer);
+	}
+
+	.leveling-gear-pin {
+		display: flex;
+		align-items: center;
+		gap: var(--spacer-2);
+	}
+
+	.leveling-gear-pin-icon {
+		@include wowhead-background-icon;
+		flex: 0 0 2.25rem;
+		height: 2.25rem;
+		border: var(--border-default);
+	}
+
+	.leveling-gear-pin-labels {
+		flex: 1;
+		min-width: 0;
+		display: flex;
+		flex-direction: column;
+	}
+
+	.leveling-gear-pin-where {
+		color: var(--bs-gray-500);
+		font-size: var(--content-font-size);
+	}
+
+	.leveling-gear-pin-remove {
+		padding: 0;
+	}
+
+	.leveling-gear-none {
+		color: var(--bs-gray-500);
+		margin-bottom: var(--block-spacer);
+	}
+
+	.leveling-gear-legend {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--spacer-2) var(--spacer-4);
+		margin-bottom: var(--block-spacer);
+		color: var(--bs-gray-400);
+
+		span {
+			display: inline-flex;
+			align-items: center;
+			gap: var(--spacer-1);
+		}
+	}
+
+	.leveling-gear-legend-note {
+		color: var(--bs-gray-500);
+	}
+
+	.leveling-gear-swatch {
+		display: inline-block;
+		width: 0.9rem;
+		height: 0.9rem;
+		border-radius: 2px;
 	}
 
 	.leveling-gear-grid {
@@ -42,43 +151,65 @@
 
 	.leveling-gear-table {
 		border-collapse: separate;
-		border-spacing: 1px;
+		border-spacing: 2px;
 
 		th {
 			font-weight: normal;
-			font-size: 0.75rem;
-			color: var(--bs-gray-500);
-			white-space: nowrap;
-			padding-right: 0.5rem;
 			cursor: pointer;
 		}
+	}
 
-		tr:first-child th {
-			text-align: left;
-			min-width: 0.9rem;
-			padding: 0;
+	.leveling-gear-slot-head {
+		color: var(--bs-gray-400);
+		font-size: var(--content-font-size);
+		white-space: nowrap;
+		padding-right: var(--spacer-3);
+		text-align: right;
+	}
+
+	.leveling-gear-level-head {
+		color: var(--bs-gray-500);
+		font-size: 0.7rem;
+		text-align: left;
+		min-width: 1rem;
+		padding: 0;
+
+		&.leveling-gear-col-selected {
+			color: var(--gold);
 		}
 	}
 
 	.leveling-gear-cell {
-		width: 0.9rem;
-		height: 1.1rem;
+		width: 1rem;
+		height: 1.2rem;
+		border-radius: 2px;
 		cursor: pointer;
-		opacity: 0.55;
+		opacity: 0.4;
+		transition: opacity 0.1s;
 
-		// A new item at this level: a full color block.
+		// A new item at this level: full color.
 		&.leveling-gear-changed {
 			opacity: 1;
 		}
 
-		// Our own item, with a gold edge.
-		&.leveling-gear-pinned {
-			box-shadow: inset 0 0 0 2px $item-quality-artifact;
+		&:hover {
+			opacity: 1;
+			filter: brightness(1.2);
+		}
+
+		&.leveling-gear-col-selected {
+			opacity: 1;
+			box-shadow: 0 0 0 1px var(--gold);
 		}
 	}
 
+	// Our own items have a gold edge.
+	.leveling-gear-pinned {
+		box-shadow: inset 0 0 0 2px $item-quality-artifact;
+	}
+
 	.leveling-gear-q0 {
-		background: transparent;
+		background: rgba(255, 255, 255, 0.04);
 		opacity: 1;
 	}
 	.leveling-gear-q1 {
@@ -93,65 +224,19 @@
 	.leveling-gear-q4 {
 		background: $item-quality-epic;
 	}
-
-	.leveling-gear-col-selected {
-		outline: 1px solid var(--bs-white);
-	}
-
-	.leveling-gear-bottom {
-		display: flex;
-		flex-wrap: wrap;
-		gap: 2rem;
-		align-items: flex-start;
-	}
-
-	.leveling-gear-level-title {
-		font-family: var(--heading-font-family);
-		color: var(--gold);
-		margin-bottom: 0.5rem;
-	}
-
-	.leveling-gear-level-table,
-	.leveling-gear-pins-table {
-		td {
-			padding: 0.1rem 0.75rem 0.1rem 0;
-			vertical-align: middle;
-		}
-	}
-
-	.leveling-gear-slot,
-	.leveling-gear-since,
-	.leveling-gear-source {
-		color: var(--bs-gray-500);
-		white-space: nowrap;
-	}
-
-	.leveling-gear-icon {
-		display: inline-block;
-		width: 1.5rem;
-		height: 1.5rem;
-		margin-right: 0.5rem;
-		vertical-align: middle;
-		background-size: cover;
-		border-radius: 3px;
-	}
-
-	.leveling-gear-none {
-		color: var(--bs-gray-500);
-	}
 }
 
 .leveling-gear-add-modal {
 	.leveling-gear-add {
 		display: flex;
 		flex-direction: column;
-		gap: 0.75rem;
+		gap: var(--block-spacer);
 	}
 
 	.leveling-gear-add-row {
 		display: flex;
 		align-items: center;
-		gap: 0.5rem;
+		gap: var(--spacer-2);
 
 		.form-label {
 			margin-bottom: 0;
@@ -170,7 +255,7 @@
 	}
 
 	.leveling-gear-add-item {
-		padding: 0.15rem 0;
+		padding: var(--spacer-1) 0;
 		text-decoration: none;
 	}
 }
