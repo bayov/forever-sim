@@ -864,6 +864,16 @@ export function startReport(dash, events) {
     $('#rank-lenbar').classList.toggle('off', st.len !== '180');
     seg($('#rank-sort'), 'sort', SORTS);
     seg($('#rank-role'), 'role', [['All', 'All roles'], ['Melee', 'Melee'], ['Ranged', 'Ranged'], ['Caster', 'Caster']]);
+    // With a class picked, the roles it has no preset for are off. A class with one role shows that role, with the
+    // whole role filter off. The picked role comes back when the class filter is cleared.
+    const roleMap = roleOf();
+    const clsRoles = st.cls !== 'All' ? new Set((rankB() || []).filter((b) => b.class === st.cls).map((b) => roleMap.get(b.id)).filter(Boolean)) : null;
+    const role = !clsRoles?.size ? st.role : clsRoles.size === 1 ? [...clsRoles][0] : clsRoles.has(st.role) ? st.role : 'All';
+    $('#rank-role').querySelectorAll('button').forEach((bt) => {
+      const v = bt.dataset.v;
+      bt.setAttribute('aria-pressed', String(v === role));
+      bt.disabled = !!clsRoles?.size && (clsRoles.size === 1 || (v !== 'All' && !clsRoles.has(v)));
+    });
     const fi = (n) => (iconMap() ? iconImg(n, 'fv-ico') : null);
     seg($('#rank-fac'), 'fac', [['All', 'Both factions'], ['Horde', 'Horde', fi('ui_hordeicon')], ['Alliance', 'Alliance', fi('ui_allianceicon')]]);
     // With one class picked there's nothing to pick the best of, so the chip is off until the class filter is cleared.
@@ -873,14 +883,14 @@ export function startReport(dash, events) {
     $('#rank-best').setAttribute('aria-pressed', String(best));
     $('#rank-enc').setAttribute('aria-pressed', String(!!st.enc));
     $('#rank-duty').setAttribute('aria-pressed', String(!!st.duty));
-    const filtered = st.cls !== 'All' || st.role !== 'All' || st.fac !== 'All' || best;
+    const filtered = st.cls !== 'All' || (role !== 'All' && !(clsRoles?.size === 1)) || st.fac !== 'All' || best;
     $('#rank-reset').hidden = !filtered;
     if (!waitOr(host, ['builds', 'lengths'])) return;
     const builds = rankB(), lengths = rowsOf('lengths'), roles = roleOf();
     const L = +st.len;
     $('#rank-sort').parentElement.hidden = L !== 180;
     const lenMap = new Map(lengths.filter((r) => r.secs === L).map((r) => [r.build, r]));
-    let rows = builds.filter((b) => (st.cls === 'All' || b.class === st.cls) && (st.fac === 'All' || b.faction === st.fac) && (st.role === 'All' || roles.get(b.id) === st.role));
+    let rows = builds.filter((b) => (st.cls === 'All' || b.class === st.cls) && (st.fac === 'All' || b.faction === st.fac) && (role === 'All' || roles.get(b.id) === role));
     const val = (b) => (L === 180 ? b.dps : (lenMap.get(b.id)?.dps ?? 0) * asmFactor(b.id, L));
     const sortKey = L === 180 ? st.sort : 'dps';
     const key = { dps: val, p10: (b) => b.p10, p90: (b) => b.p90, cv: (b) => -b.cv }[sortKey] || val;
