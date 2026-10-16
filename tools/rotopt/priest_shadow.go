@@ -44,8 +44,9 @@ func (priestShadow) Knobs() []Knob {
 		// Shadow Word: Death on cooldown (18 sec), 2 for only in the execute phase.
 		{Name: "swd", Default: 1, Min: 0, Max: 2, Step: 1},
 		{Name: "swdMana", Default: 0, Min: 0, Max: 60, Step: 10},
-		// Shadow Word: Death above Mind Blast in the priority.
-		{Name: "swdFirst", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Shadow Word: Death above Mind Blast in the priority. On since 70425 (18 sec cooldown,
+		// 200% crits in Shadowform): +1.5 / +1.8 / +1.7 at 120 / 180 / 300 sec (2026-10-16).
+		{Name: "swdFirst", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Mind Blast above a mana floor.
 		{Name: "mbMana", Default: 0, Min: 0, Max: 40, Step: 10},
 		// Inner Focus: 0 never, 1 on Mind Blast, 2 on cooldown with whatever comes next, 3 on

@@ -5,7 +5,7 @@
   "build": "Level 60 + Holy",
   "isDefault": false,
   "pr": 1,
-  "race": "Undead",
+  "race": "Human",
   "talents": "-3025011303-50052101231302251",
   "treeNames": [
     "Discipline",
@@ -15,32 +15,32 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 833.1,
-    "source": "master after raid buffs took Forever's ranks (shaman audit 10.2), 2026-10-15"
+    "dps": 886.4,
+    "source": "priest client 70425 port (DP 24 s, talents and knobs re-searched with raid hits), 2026-10-16"
   },
   "verify": {
-    "dps": 833.1,
+    "dps": 886.4,
     "stderr": 0.16,
     "iters": 20000,
     "ok": true,
-    "note": "+0.40 vs PR #1 (raid buff ranks)"
+    "note": "180 s, 20000 iterations, seed 1 (seed 1000001: 886.4)"
   },
-  "summary": "The same Shadow points with 20 Holy points of healing utility instead of Discipline, giving up Twin Disciplines and Mental Strength. Shipped as a second Shadow preset for raids that want the Holy utility, 2.5% behind Level 60 at 180 s.",
+  "summary": "The Shadow points with 18 Holy points of healing utility (Twilight Focus, Spell Warding, Inspiration, Improved Healing) instead of Discipline, giving up Twin Disciplines and Mental Strength. Shipped as a second Shadow preset for raids that want the Holy utility, 4.5% behind Level 60 at 180 s.",
   "keyTalents": [
     "Shadowform",
     "Shadow Weaving",
     "Darkness",
     "Improved Mind Flay",
     "Shadow Focus",
-    "Improved Mind Blast"
+    "Improved Mind Blast",
+    "Twilight Focus"
   ],
   "rotation": [
-    "Pre-pull: Shadowform at -3 s, Mind Blast at -1.5 s that lands at the pull",
-    "Dark Sacrifice (Undead) below 40% mana; racials on cooldown",
+    "Pre-pull: Shadowform at -3 s, Mind Blast at -1.5 s that lands at the pull; the on-use trinket and Major Spellblasting Potion at -0.1 s",
+    "Dark Sacrifice (Undead) below 10% mana; racials and trinkets on cooldown",
     "Shadow Word: Pain whenever it is down (9+ s left in the fight)",
-    "Devouring Plague whenever it is down and off its 1 min cooldown (12+ s left)",
-    "Inner Focus right before Mind Blast",
-    "Mind Blast on cooldown, then Shadow Word: Death on cooldown",
+    "Devouring Plague whenever it is down and off its 24 s cooldown (12+ s left)",
+    "Shadow Word: Death on cooldown, then Inner Focus right before Mind Blast and Mind Blast on cooldown",
     "Mind Flay to fill; clipped after the second tick if SW:P or Devouring Plague fell off, never clipped for Mind Blast"
   ],
   "consumes": [
@@ -58,9 +58,9 @@
   ],
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 36 spell power and 15 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "The 20 Holy points add no DPS (healing utility only)",
-    "Runs low on mana on long fights; Greater Mageblood Elixir keeps it (without it 300 s fell to 821 on the earlier gear); Gnome is 0.3 behind Undead at 180 s but 21.8 at 300 s",
-    "Synthetic Phase 1 gear (not in the game), only the 2-piece set bonus is live; Raiments 4/5-piece would add +40.2 DPS (+4.7%, Devouring Plague without a cooldown)",
+    "The Holy points add no DPS except Twilight Focus (pushback protection); an unconstrained talent search drops Holy for the Level 60 build",
+    "Runs out of mana on long fights now that Devouring Plague is every 24 s: Human leads at 180 s (886.4), but Undead's Dark Sacrifice wins at 300 s (865.1 against 802.9); Undead is the best Horde race, 3.5 behind at 180 s",
+    "Synthetic Phase 1 gear (not in the game), only the 2-piece set bonus is live; Raiments 4/5-piece (Devouring Plague without a cooldown) not re-measured since its cooldown dropped to 24 s",
     "Periodic spells roll crit per tick (global Forever rule); Shadow Weaving assumed to apply to the priest's own Shadow damage on every target",
     "Mind Flay rolls hit once and its channel is not hasted; SW:Death backlash ignored and SW:Death numbers are untested in beta",
     "Brilliant Wizard Oil left out as a Zul'Gurub recipe (+12.5); Elixir of Sages left out by the one-crit-elixir ruling (+13.9)"

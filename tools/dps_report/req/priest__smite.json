@@ -163,33 +163,6 @@
                   }
                 },
                 {
-                  "notes": "Inner Focus right before Holy Fire. Without the talent ignore the warning on this line.",
-                  "action": {
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "not": {
-                              "val": {
-                                "dotIsActive": {
-                                  "spellId": {
-                                    "spellId": 15261
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 14751
-                      }
-                    }
-                  }
-                },
-                {
                   "notes": "Holy Fire whenever its damage over time is down, for Power in Light.",
                   "action": {
                     "condition": {
@@ -294,7 +267,7 @@
                               },
                               "rhs": {
                                 "const": {
-                                  "val": "0.4"
+                                  "val": "0.6"
                                 }
                               }
                             }
@@ -340,6 +313,16 @@
                     "castSpell": {
                       "spellId": {
                         "spellId": 1309636
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Inner Focus on cooldown, for the next Smite. Without the talent ignore the warning on this line.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 14751
                       }
                     }
                   }

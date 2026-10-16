@@ -5,7 +5,7 @@
   "build": "Level 60",
   "isDefault": true,
   "pr": 1,
-  "race": "Undead",
+  "race": "Human",
   "talents": "00500501103-3-50052101231302251",
   "treeNames": [
     "Discipline",
@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 854.8,
-    "source": "master after raid buffs took Forever's ranks (shaman audit 10.2), 2026-10-15"
+    "dps": 928.6,
+    "source": "priest client 70425 port (DP 24 s, talents and knobs re-searched with raid hits), 2026-10-16"
   },
   "verify": {
-    "dps": 854.78,
+    "dps": 928.6,
     "stderr": 0.16,
     "iters": 20000,
     "ok": true,
-    "note": "+0.38 vs PR #1 (raid buff ranks)"
+    "note": "180 s, 20000 iterations, seed 1 (seed 1000001: 928.5)"
   },
-  "summary": "Deep Shadow (Shadowform, Shadow Weaving, Darkness, Improved Mind Flay) with 20 Discipline points for Twin Disciplines, Mental Strength and Inner Focus. The talent search's best priest build and the spec's default Level 60 preset.",
+  "summary": "Deep Shadow (Shadowform, Shadow Weaving, Darkness, Improved Mind Flay, Early Demise) with 15 Discipline points for Twin Disciplines, Mental Strength and Inner Focus and 3 Holy points for Twilight Focus's pushback protection. The talent search's best priest build and the spec's default Level 60 preset.",
   "keyTalents": [
     "Shadowform",
     "Shadow Weaving",
@@ -34,15 +34,14 @@
     "Shadow Focus",
     "Improved Mind Blast",
     "Twin Disciplines",
-    "Mental Strength"
+    "Twilight Focus"
   ],
   "rotation": [
-    "Pre-pull: Shadowform at -3 s, Mind Blast at -1.5 s that lands at the pull",
-    "Dark Sacrifice (Undead) below 40% mana; racials on cooldown",
+    "Pre-pull: Shadowform at -3 s, Mind Blast at -1.5 s that lands at the pull; the on-use trinket and Major Spellblasting Potion at -0.1 s",
+    "Dark Sacrifice (Undead) below 10% mana; racials and trinkets on cooldown",
     "Shadow Word: Pain whenever it is down (9+ s left in the fight)",
-    "Devouring Plague whenever it is down and off its 1 min cooldown (12+ s left)",
-    "Inner Focus right before Mind Blast",
-    "Mind Blast on cooldown, then Shadow Word: Death on cooldown",
+    "Devouring Plague whenever it is down and off its 24 s cooldown (12+ s left)",
+    "Shadow Word: Death on cooldown, then Inner Focus right before Mind Blast and Mind Blast on cooldown",
     "Mind Flay to fill; clipped after the second tick if SW:P or Devouring Plague fell off, never clipped for Mind Blast"
   ],
   "consumes": [
@@ -59,11 +58,13 @@
   ],
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 36 spell power and 15 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Synthetic Phase 1 gear (not in the game), only the 2-piece set bonus is live; Raiments 4/5-piece would add +40.2 DPS (+4.7%, Devouring Plague without a cooldown)",
+    "Synthetic Phase 1 gear (not in the game), only the 2-piece set bonus is live; Raiments 4/5-piece (Devouring Plague without a cooldown) not re-measured since its cooldown dropped to 24 s",
     "Periodic spells roll crit per tick (global Forever rule); Shadow Weaving assumed to apply to the priest's own Shadow damage on every target",
     "Mind Flay rolls hit once and its channel is not hasted; SW:Death backlash ignored and SW:Death numbers are untested in beta",
     "Brilliant Wizard Oil left out as a Zul'Gurub recipe (+12.5); Elixir of Sages left out by the one-crit-elixir ruling (+13.9)",
-    "Mana never binds (about 12-25 min to empty), so mana talents and Spirit add nothing"
+    "Human since client 70425's Ruthless (2% crit with any weapon): Undead is the best Horde race, 3.7 behind at 180 s",
+    "Improved Mind Flay (70425) read as compounding, each tick 20% more than the one before (1, 1.2, 1.44); Dark Inspiration's party Spirit is applied to the priest only",
+    "Mana barely binds (about 13 min to empty)"
   ],
   "notes": "Request from mksettings unchanged (spec shadow, 180 s, durationVariation 20); it matches the shipped encounter and DefaultConsumes."
 }
