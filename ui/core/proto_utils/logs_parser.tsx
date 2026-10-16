@@ -323,10 +323,13 @@ export class SimLog {
 		return grouped;
 	}
 
+	// We cache each line's markup and hand out a copy. The markup is often a fragment, and a
+	// fragment empties when it goes into the page, so handing out the cached one again (when the
+	// Log view draws a run a second time) would show an empty line.
 	cacheOutput(cacheKey: string | number | boolean, fn: () => Element) {
-		if (this.cachedHTML[String(cacheKey)]) return this.cachedHTML[String(cacheKey)] as Element;
-		this.cachedHTML[String(cacheKey)] = fn();
-		return this.cachedHTML[String(cacheKey)]! as Element;
+		const key = String(cacheKey);
+		if (!this.cachedHTML[key]) this.cachedHTML[key] = fn();
+		return (this.cachedHTML[key] as Element).cloneNode(true) as Element;
 	}
 }
 
