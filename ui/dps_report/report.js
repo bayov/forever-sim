@@ -5,7 +5,6 @@ import tippy from 'tippy.js';
 
 export function startReport(dash, events) {
   const CLASSES = ['Warrior', 'Rogue', 'Hunter', 'Paladin', 'Shaman', 'Druid', 'Mage', 'Warlock', 'Priest'];
-  const RACES_ALL = ['Human', 'Dwarf', 'Night Elf', 'Gnome', 'High Order', 'Orc', 'Undead', 'Tauren', 'Troll', 'Windshaper'];
   const HORDE = new Set(['Orc', 'Undead', 'Tauren', 'Troll', 'Windshaper']);
   const ccol = (c) => `var(--fv-${String(c).toLowerCase()})`;
   const fcol = (r) => (HORDE.has(r) ? 'var(--fv-horde)' : 'var(--fv-alliance)');
@@ -152,7 +151,7 @@ export function startReport(dash, events) {
   // ---------- state ----------
   const store = (() => { try { return window.localStorage; } catch { return null; } })();
   const saved = (() => { try { return JSON.parse(store?.getItem('fv-state') || '{}'); } catch { return {}; } })();
-  const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', rsOpt: {}, rsFac: 'All', srFac: 'All', slFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', rlFac: 'All', rlRole: 'All', rlCls: 'All', rlSpec: 'All', setupHide: false, enc: false, duty: true, asm: {}, asmOpen: [] }, saved);
+  const st = Object.assign({ tab: 'ranking', cls: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', rsOpt: {}, rsFac: 'All', srFac: 'All', slFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', rlFac: 'All', rlRole: 'All', rlCls: 'All', rlSpec: 'All', setupHide: false, enc: false, duty: true, asm: {}, asmOpen: [] }, saved);
   st.len = '180'; // a fight length other than 180s is never restored: the page always opens on the main numbers
   const persist = () => { try { store?.setItem('fv-state', JSON.stringify(st)); } catch {} };
 
@@ -505,6 +504,22 @@ export function startReport(dash, events) {
     return el('div', { class: 'c-' + (['t', 'm', 'y', 'g'].includes(k) ? k : 't'), text: String(a ?? '') });
   };
 
+  // A head row with an icon (a racial in a race's tooltip) starts an embedded card: a box with the icon, the head row
+  // and the lines under it, up to the next head row or spacer.
+  const ttLines = (lines) => {
+    const out = [];
+    let body = null;
+    for (const l of arr(lines)) {
+      const k = Array.isArray(l) ? l[0] : null;
+      if (k === 'h' && l[3]) {
+        body = el('div', { class: 'tt-body' }, ttLine(l));
+        out.push(el('div', { class: 'tt-embed' }, iconImg(l[3], 'tt-ico'), body));
+      } else if (body && k !== 'h' && k !== 's') body.append(ttLine(l));
+      else { body = null; out.push(ttLine(l)); }
+    }
+    return out;
+  };
+
   let ttEl = null, ttTippy = null, ttNode = null, ttPinned = false, ttAt = null;
   let ttHl = [], ttHideTimer = null;
   const hideTT = () => {
@@ -520,10 +535,10 @@ export function startReport(dash, events) {
     const off = /^No effect: /.test(spec.why || '');
     const body = el('div', { class: 'tt-body' }, spec.why ? el('div', { class: 'tt-why' }, off ? el('b', { text: 'No effect' }) : null, off ? ' ' + spec.why.replace(/^No effect: /, '') : spec.why) : null,
       el('div', { class: 'tt-head' }, el('span', { class: 'tt-title', style: `color:${spec.color || GOLD}`, text: spec.title }), spec.sub ? el('span', { class: 'tt-sub', text: spec.sub }) : null),
-      ...arr(spec.lines).map(ttLine),
+      ...ttLines(spec.lines),
       ...(spec.nums && spec.nums.length ? [el('div', { class: 'tt-nums' }, spec.numsHead ? el('div', { class: 'c-m', text: spec.numsHead }) : null, ...spec.nums.map(ttLine))] : []),
       spec.link ? el('div', { class: 'tt-link' }, el('a', { href: spec.link.href, target: '_blank', rel: 'noopener noreferrer', text: spec.link.label + ' ↗' }), spec.link.note ? el('span', { text: spec.link.note }) : null) : null);
-    return el('div', { class: 'fv-tt', role: 'tooltip' }, spec.icon ? iconImg(spec.icon, 'tt-ico') : null, body);
+    return el('div', { class: 'fv-tt' + (compact ? ' tt-embed' : ''), role: 'tooltip' }, spec.icon ? iconImg(spec.icon, 'tt-ico') : null, body);
   };
   const showTT = (node, pt) => {
     let spec = null;
@@ -1076,61 +1091,6 @@ export function startReport(dash, events) {
   };
 
   // ---------- races ----------
-  const drawHeat = () => {
-    const host = $('#heat');
-    host.setAttribute('data-source', 'race_variants builds tooltips');
-    classChips($('#heat-classes'), 'heatCls');
-    const fi = (n) => (iconMap() ? iconImg(n, 'fv-ico') : null);
-    seg($('#heat-fac'), 'heatFac', [['All', 'All'], ['Horde', 'Horde', fi('ui_hordeicon')], ['Alliance', 'Alliance', fi('ui_allianceicon')]]);
-    if (!waitOr(host, ['race_variants', 'race_breakdown', 'builds'])) return;
-    const V = rsVar('heat');
-    const RACES = RACES_ALL.filter((r) => st.heatFac === 'All' || (st.heatFac === 'Horde') === HORDE.has(r));
-    const races = raceRows(V);
-    const has = new Set(races.map((r) => r.build));
-    const builds = buildOrder(genB()).filter((b) => (st.heatCls === 'All' || b.class === st.heatCls) && has.has(b.id));
-    const shown = new Set(builds.map((b) => b.id));
-    const idx = new Map(races.map((r) => [r.build + '|' + r.key, r]));
-    // Each race's column, then a column for each of its advantages that any preset shown has.
-    const cols = RACES.flatMap((rc) => [{ key: rc, race: rc, tag: null }, ...ADV.map((v) => races.filter((r) => r.race === rc && r.variant === v && shown.has(r.build))).filter((rs) => rs.length)
-      .map((rs) => ({ key: rs[0].key, race: rc, tag: groupTag(rs), variant: rs[0].variant }))]);
-    const grid = el('div', { class: 'fv-heat', style: `grid-template-columns: max-content repeat(${cols.length}, minmax(2.9rem, 1fr))` });
-    grid.append(el('div', { class: 'hh' }));
-    const RI = new Map(races.map((r) => [r.race, r.raceIcon]));
-    for (const c of cols) {
-      grid.append(tt(el('div', { class: 'hh' + (c.tag ? ' var' : ''), style: `color:${fcol(c.race)}` }, RI.get(c.race) ? iconImg(RI.get(c.race), '') : null, c.race.replace('High Order', 'High Ord.').replace('Windshaper', 'Windshp.'),
-        c.tag ? el('small', { class: tagKind(c.variant), text: c.tag.replace(/^with (an? )?/, '').replace(/ or (an? )?/, ' or ') }) : null), 'r:' + c.race));
-    }
-    const maxGap = d3.max(races, (r) => -r.vsBest) || 1;
-    for (const b of builds) {
-      const hl = el('div', { class: 'hl', title: b.label, role: 'button', tabindex: '0', style: 'cursor:pointer' }, specIco(b, '') || el('span', { class: 'fv-dot', style: `background:${ccol(b.class)}` }), b.build);
-      hl.addEventListener('click', (e) => { e.stopPropagation(); pickRaceSpec(b.id); });
-      grid.append(hl);
-      for (const col of cols) {
-        const r = idx.get(b.id + '|' + col.key);
-        if (!r) { grid.append(el('div', { class: 'hc na', text: '' })); continue; }
-        const best = r.vsBest >= -0.005;
-        const t = Math.min(1, -r.vsBest / Math.min(maxGap, 4));
-        const c = el('button', {
-          class: 'hc', 'data-tip': '1',
-          style: `background:color-mix(in srgb, ${best ? 'var(--color-ok)' : 'var(--cds-chart-muted)'} ${best ? 35 : Math.round(8 + 50 * t)}%, transparent);`,
-          text: best ? '★' : '−' + f1(-r.vsBest),
-        });
-        c.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const card = $('#heat-card'), cr = card.getBoundingClientRect(), cb = c.getBoundingClientRect();
-          if (c.classList.contains('is-hl')) { hideTip(); return; }
-          const sib = races.filter((q) => q.build === b.id).sort((p, q) => q.dps - p.dps);
-          showTip(card, cb.left - cr.left, cb.top - cr.top, tipTitle(r.name, b.label, raceIco(r.raceIcon)), [
-            tipKey(best ? '★ Best race' : tipDelta(r.vsBest, f2), null, best ? null : `vs ${sib[0].name}`),
-            tipGrid([['DPS', `${f1(r.dps)} ± ${f2(r.se)}`], ['Race rank', `${r.rank} of ${r.of}`], r.isPreset ? ['Preset race', '✓'] : null]),
-            r.note && r.variant === 'weapon' ? tipNote(r.note) : null], { hl: c, open: b.id, act: ['Compare races ›', () => pickRaceSpec(b.id)] });
-        });
-        grid.append(c);
-      }
-    }
-    host.replaceChildren(grid);
-  };
-
   const drawRaceSpread = () => {
     const host = $('#racespread');
     if (!waitOr(host, ['builds', 'race_variants', 'race_breakdown'])) return;
@@ -2706,7 +2666,7 @@ export function startReport(dash, events) {
     if (ttNode && !ttNode.isConnected) hideTT();
     try {
       if (st.tab === 'ranking') { safeTop(drawAsm, $('#asm-list')); drawRanking(); drawLenAll(); drawMana(); }
-      else if (st.tab === 'races') { for (const [fn, h] of [[drawRaceRank, '#race-rank'], [drawRacialRank, '#racial-rank'], [drawHeat, '#heat'], [drawRaceSpread, '#racespread']]) safeTop(fn, h && $(h)); }
+      else if (st.tab === 'races') { for (const [fn, h] of [[drawRaceRank, '#race-rank'], [drawRacialRank, '#racial-rank'], [drawRaceSpread, '#racespread']]) safeTop(fn, h && $(h)); }
       else if (st.tab === 'spec') drawSpec();
       else if (st.tab === 'compare') drawCompare();
       else if (st.tab === 'method') { drawMethod(); }

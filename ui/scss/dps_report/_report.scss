@@ -238,8 +238,7 @@
 }
 
 // The class pickers wrap on a phone. The padding leaves room for the gold ring of the picked class.
-#rank-classes,
-#heat-classes {
+#rank-classes {
 	padding-block: 2px;
 	margin-inline: -2px;
 	padding-inline: 2px;
@@ -817,80 +816,6 @@ ol.fv-list li::marker {
 	z-index: 3;
 }
 
-/* ---------- heat grid ---------- */
-.fv-heat {
-	display: grid;
-	gap: 2px;
-	min-width: max-content;
-	font-size: var(--cds-font-size-caption);
-}
-
-.fv-heat .hc {
-	padding: 0.36rem 0.2rem;
-	text-align: center;
-	border-radius: 5px;
-	min-width: 2.9rem;
-	cursor: pointer;
-	border: 0;
-	font: inherit;
-	font-size: var(--cds-font-size-caption);
-	color: var(--color-fg);
-	transition: transform 0.1s;
-}
-
-.fv-heat .hc:hover {
-	transform: scale(1.06);
-}
-
-.fv-heat .hh {
-	color: var(--color-fg-muted);
-	text-align: center;
-	padding: 0.3rem 0.2rem;
-	white-space: nowrap;
-	font-size: 0.68rem;
-}
-
-// The row's preset name. The left padding leaves room for the colored ring around its icon, which the overflow
-// would cut off otherwise.
-.fv-heat .hl {
-	position: sticky;
-	left: 0;
-	background: var(--color-panel);
-	padding: 0.3rem 0.4rem 0.3rem 3px;
-	white-space: nowrap;
-	display: flex;
-	gap: 0.35rem;
-	align-items: center;
-	z-index: 1;
-	overflow: hidden;
-	text-overflow: ellipsis;
-}
-
-// On a phone the sticky name column would take too much of the screen, so a long name is cut short there.
-@media (max-width: 46rem) {
-	.fv-heat .hl {
-		max-width: 11rem;
-	}
-}
-
-.fv-heat .hl > .fv-ico {
-	flex-shrink: 0;
-}
-
-.fv-heat .na {
-	background: repeating-linear-gradient(135deg, transparent 0 4px, color-mix(in srgb, var(--color-fg) 6%, transparent) 4px 5px);
-	color: var(--color-fg-muted);
-	cursor: default;
-}
-
-.fv-heat .hh img {
-	display: block;
-	margin: 0 auto 0.15rem;
-	width: 1.4rem;
-	height: 1.4rem;
-	border-radius: 50%;
-}
-
 /* ---------- spec ---------- */
 .fv-picker {
 	display: grid;
@@ -1425,13 +1350,6 @@ ol.fv-list li::marker {
 	opacity: 1 !important;
 }
 
-.fv-heat .hc.is-hl {
-	outline: 2px solid var(--fv-gold);
-	outline-offset: 1px;
-	position: relative;
-	z-index: 1;
-}
-
 // A class icon in the class picker, and a consumable or buff, keep their own look while their tooltip is open.
 .fv [data-tt].tt-on:not(rect):not(g):not(path):not(.fv-pick-option):not(.fv-pick) {
 	background-color: color-mix(in srgb, var(--fv-gold) 14%, transparent);
@@ -1603,13 +1521,6 @@ ol.fv-list li::marker {
 	color: #ff8f2a;
 }
 
-.fv-heat .hh img {
-	display: block;
-	margin: 0 auto 0.15rem;
-	width: 1.4rem;
-	height: 1.4rem;
-	border-radius: 50%;
-}
 
 [data-dash-source-state='refreshing'] {
 	opacity: 0.5;
@@ -1721,6 +1632,37 @@ ol.fv-list li::marker {
 
 .fv-tt .tt-sp {
 	height: 0.3rem;
+}
+
+// A game tooltip inside another tooltip (a racial in a race's tooltip, a talent in an advantaged preset's) sits in
+// its own box with its icon, so it's clear where each one starts and ends. The tooltips are dark in both themes.
+.tt-embed,
+.fv-tip-racial {
+	padding: 0.35rem 0.45rem;
+	border: 1px solid rgba(255, 255, 255, 0.16);
+	border-radius: 4px;
+	background: rgba(255, 255, 255, 0.04);
+}
+
+// with cards inside, a tooltip is a little wider, so each card's text wraps less
+.tippy-box:has(> .tippy-content > .fv-tt div.tt-embed) {
+	max-width: min(24rem, calc(100vw - 8px)) !important;
+}
+
+div.tt-embed:not(.fv-tt) {
+	display: flex;
+	gap: 0.45rem;
+	align-items: flex-start;
+	margin-top: 0.3rem;
+
+	.tt-ico {
+		width: 1.6rem;
+		height: 1.6rem;
+	}
+
+	.tt-h {
+		margin-top: 0;
+	}
 }
 
 .fv-tt .tt-nums {
@@ -3723,30 +3665,6 @@ ol.fv-list li::marker {
 	border-style: dashed;
 	background: none;
 	font-weight: 500;
-}
-
-// An advantage's column in the race heatmap: its race's icon and name, and the advantage under them. A faint
-// line on its left ties it to its race's column.
-.fv-heat .hh small {
-	display: block;
-	color: var(--color-fg-muted);
-	font-size: 0.6rem;
-}
-
-.fv-heat .hh.var {
-	box-shadow: inset 1px 0 0 var(--line-color);
-	white-space: normal;
-	line-height: 1.15;
-}
-
-.fv-heat .hh small.wpn,
-.fv-heat .hh small.tgt {
-	font-weight: 600;
-	color: var(--fv-adv-wpn);
-}
-
-.fv-heat .hh small.tgt {
-	color: var(--fv-adv-tgt);
 }
 
 // The share of the best race's DPS needs a wider end column.
