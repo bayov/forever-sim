@@ -254,7 +254,10 @@ export const DefaultTalents = TalentsLevel60Fury;
 // spec): 2 direct hits a minute at random times, 1500 damage each. Under Forever each gives 4.5
 // Rage (core.ForeverDamageTakenRage: 20 Rage for a level 60 mob's 3993 health, as if 40% armor took
 // its share), and has Enrage's 30% chance, because Forever's Enrage fires on any damage taken.
-// RAID_HITS_NUMBERS
+// At 180 sec (10,000 iterations, the report requests) that is +3.4 on Fury (1040.4 to 1043.8),
+// +11.0 on Fury two-hand (921.0 to 932.0), -1.1 on Arms (945.6 to 944.5: Slam's cast is pushed
+// back) and -0.1 on Arms vs Dragonkin; at 10 hits a minute +16.0, +47.5, -4.1 and -3.3. With
+// Classic's damage-taken Rage (15.4 a hit) each build was 4 to 5 higher at 2 a minute.
 
 export const DefaultOptions = WarriorOptions.create({
 	queueDelay: 250,
