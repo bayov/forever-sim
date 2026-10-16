@@ -88,7 +88,7 @@
               "blessingOfKings": true,
               "blessingOfWisdom": "TristateEffectImproved"
             },
-            "talentsString": "5504301300103051-04-053150001001",
+            "talentsString": "550433100000135-04-053150001001",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Alchemy",
@@ -177,7 +177,7 @@
                     },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 17359
+                        "spellId": 1325256
                       }
                     }
                   }
@@ -204,7 +204,7 @@
                               "val": {
                                 "auraIsActive": {
                                   "auraId": {
-                                    "spellId": 17359
+                                    "spellId": 1325256
                                   }
                                 }
                               }
@@ -339,7 +339,7 @@
                     },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 1238300
+                        "spellId": 1326047
                       }
                     }
                   }

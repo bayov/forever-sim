@@ -455,7 +455,7 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 // gear round's set the search again only made mana tie-breaks inside the noise (792.0 against
 // 792.6), so the build stays: 813.5 / 801.8 / 781.6, and 813.8 / 801.6 / 782.3 once Rage of the Farseer
 // waits for the on-use trinket, and 824.5 / 813.9 / 794.0 with Elixir of Cunning and Ferocity and Forever's oil and chili damage.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '050533102-053030031005112251' }), {
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '053503102-053030031005112251' }), {
 	tooltip: 'Level 60 talents from the talent search, with Spirit Weapons and Concussion.',
 	group: 'Level 60',
 });
@@ -472,7 +472,7 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // 810.4 / 797.7 / 778.7 at 120 / 180 / 300 sec on the 2026-10-13 gear round's set with Rage of the
 // Farseer waiting for the on-use trinket (820.9 / 809.4 / 790.0 with Elixir of Cunning and Ferocity and Forever's oil and chili damage),
 // 4.1 behind Level 60 at 180 (800.0 / 788.3 / 767.3 before).
-export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Level 60 + Imp GW', SavedTalents.create({ talentsString: '050533102-051032031005112251' }), {
+export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Level 60 + Imp GW', SavedTalents.create({ talentsString: '053503102-051032031005112251' }), {
 	tooltip: 'The Level 60 talents with Improved Ghost Wolf 2, taken out of Ancestral Knowledge.',
 	group: 'Level 60',
 });
@@ -503,7 +503,7 @@ export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Level 60 + Imp
 // of Cunning and Ferocity), 5.9% behind Level 60 at 180.
 export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
 	'Level 60 + Water Shield',
-	SavedTalents.create({ talentsString: '050031-053030031005112151-052030001' }),
+	SavedTalents.create({ talentsString: '051003-053030031005112151-032050001' }),
 	{ tooltip: 'Level 60 talents with 10 Restoration points for Water Shield.', group: 'Level 60' },
 );
 // The best build that takes Water Shield and Mana Tide Totem (-require

@@ -52,7 +52,6 @@ func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost fl
 			ModifyCast: shaman.stopMeleeForCast,
 		},
 
-		BonusCritRating:   core.TernaryFloat64(shaman.Talents.CallOfThunder, 3, 0) * core.SpellCritRatingPerCritChance,
 		PushbackReduction: shaman.eyeOfTheStormChance(),
 
 		DamageMultiplier: 1,

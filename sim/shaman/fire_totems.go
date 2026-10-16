@@ -157,7 +157,9 @@ func (shaman *Shaman) newMagmaTotemSpellConfig(rank int) core.SpellConfig {
 	manaCost := MagmaTotemManaCost[rank]
 	level := MagmaTotemLevel[rank]
 
-	duration := time.Second * 20
+	// Improved Fire Nova (the client's Trial by Fire) adds 10 sec a point since client
+	// 1.60.1.70425.
+	duration := time.Second*20 + shaman.improvedFireNovaMagmaDuration()
 	attackInterval := time.Second * 2
 
 	aoeSpell := shaman.RegisterSpell(core.SpellConfig{
@@ -239,7 +241,9 @@ var FireNovaSpellId = [FireNovaRanks + 1]int32{0, 408341, 408342, 408343, 408344
 var FireNovaBaseDamage = [FireNovaRanks + 1][]float64{{0, 0}, {51.23, 59.77}, {102.94, 117.06}, {182.12, 205.88}, {280.06, 315.94}, {396.95, 443.05}}
 var FireNovaScaling = [FireNovaRanks + 1]core.RankScaling{{}, {17, 1.1}, {27, 1.6}, {37, 2.2}, {47, 2.8}, {57, 3.4}}
 var FireNovaSpellCoeff = [FireNovaRanks + 1]float64{0, .214, .214, .214, .214, .214}
-var FireNovaManaCost = [FireNovaRanks + 1]float64{0, 95, 170, 280, 395, 520}
+
+// Client 1.60.1.70425 cut the costs by 25 to 32% (95 / 170 / 280 / 395 / 520 before).
+var FireNovaManaCost = [FireNovaRanks + 1]float64{0, 65, 120, 210, 290, 375}
 var FireNovaLevel = [FireNovaRanks + 1]int{0, 12, 22, 32, 42, 52}
 
 func (shaman *Shaman) registerFireNovaSpell() {

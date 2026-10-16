@@ -157,11 +157,11 @@ func TestElementalLevel60(t *testing.T) {
 	}))
 }
 
-var DefaultTalents = "5505301300103051--503352001"
+var DefaultTalents = "550533100000135--553302001"
 
 // The Level 60 preset's talents, rotation and consumes (ui/elemental_shaman/presets.ts) on the
 // synthetic Phase 1 set.
-var Level60Talents = "5504301300103051-052-05305"
+var Level60Talents = "550433100000135-052-05305"
 
 var Level60Consumes = core.ConsumesCombo{
 	Label: "Level60-Consumes",

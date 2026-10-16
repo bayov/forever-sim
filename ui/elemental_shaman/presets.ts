@@ -156,7 +156,7 @@ export const DefaultAPL = APLLevel60;
 // Strikes 5 and Tidal Focus 5 (5% hit, Forever took Nature's Guidance away) are the big ones. On
 // the earlier gear the next best build moved 4 points into Ancestral Knowledge and Shamanistic
 // Focus out of Mindfulness and Tidal Focus and was 15 behind.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '5504301300103051-052-05305' }), {
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '550433100000135-052-05305' }), {
 	tooltip: 'Level 60 talents from the talent search: Lava Burst, Thundering Strikes, Mindfulness and Tidal Focus.',
 	group: 'Level 60',
 });
@@ -168,7 +168,7 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // on the 1b set, 1.0% behind Level 60 at 180.
 export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
 	'Level 60 + Mana Tide',
-	SavedTalents.create({ talentsString: '5504301300103051-04-053150001001' }),
+	SavedTalents.create({ talentsString: '550433100000135-04-053150001001' }),
 	{ tooltip: 'Level 60 talents with 16 Restoration points for Mana Tide Totem.', group: 'Level 60' },
 );
 

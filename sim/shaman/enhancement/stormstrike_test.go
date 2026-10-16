@@ -13,7 +13,8 @@ import (
 // TestOrcShamanStormstrikeOutcomes checks what a Stormstrike costs and leaves behind on each
 // outcome.
 //
-// It always costs 125 mana and starts its 8 sec cooldown, and only a Stormstrike that lands
+// It always costs 8% of base mana (121.6 at level 60 since client 1.60.1.70425, 125 before) and
+// starts its 8 sec cooldown, and only a Stormstrike that lands
 // puts the mark up. A blocked one lands. The beta log showed all of it (shaman_audit.md 5.8): a
 // parried Stormstrike took 125 mana, and the 8 misses, 3 dodges and 19 parries put no mark up
 // where the one block did. We cast 400 from in front of a level 63 boss, so every outcome
@@ -60,8 +61,8 @@ func TestOrcShamanStormstrikeOutcomes(t *testing.T) {
 			o := outcome(before)
 			seen[o]++
 
-			if spent := mana - enh.CurrentMana(); spent != 125 {
-				t.Fatalf("a %s cost %.1f mana, want 125", o, spent)
+			if spent, want := mana-enh.CurrentMana(), .08*enh.BaseMana; math.Abs(spent-want) > 1e-9 {
+				t.Fatalf("a %s cost %.1f mana, want %.1f", o, spent, want)
 			}
 			if readyAt := enh.Stormstrike.CD.ReadyAt(); readyAt != sim.CurrentTime+8*time.Second {
 				t.Fatalf("after a %s the cooldown ends at %s, want %s", o, readyAt, sim.CurrentTime+8*time.Second)

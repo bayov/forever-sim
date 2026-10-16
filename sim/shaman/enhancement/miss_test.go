@@ -38,7 +38,7 @@ func TestOrcShamanMissChance(t *testing.T) {
 		{"5% hit against the boss", 60, 63, darkEdge, 0, stormstrike, 5, 0.04},
 		{"the 9% hit cap", 60, 63, darkEdge, 0, stormstrike, 9, 0},
 		{"hit over the cap", 60, 63, darkEdge, 0, stormstrike, 12, 0},
-		{"Tidal Focus 5/5 against the boss", 60, 63, darkEdge, 0, stormstrike + "-00005", 0, 0.04},
+		{"Tidal Focus 5/5 against the boss", 60, 63, darkEdge, 0, stormstrike + "-05", 0, 0.04},
 		{"level 30 against Vishas (level 32)", 30, 32, whirlwind, 0, stormstrike, 0, 0.06},
 		{"1% hit against Vishas", 30, 32, whirlwind, 0, stormstrike, 1, 0.05},
 		{"level 30 against a level 33", 30, 33, whirlwind, 0, stormstrike, 0, 0.08},
@@ -118,7 +118,7 @@ func newTargetLevelSim(level, targetLevel, weapon int32, skill float64, talents 
 // gives 1% spell hit a point.
 func TestOrcShamanSpellMissChance(t *testing.T) {
 	const tarnishedElvenRing = 18500
-	const tidalFocus = "--00005"
+	const tidalFocus = "--05"
 	cases := []struct {
 		name               string
 		level, targetLevel int32

@@ -6,7 +6,7 @@ import (
 	"github.com/wowsims/classic/sim/core"
 )
 
-// Stormstrike under Forever (beta client): 125 Mana, 8 sec cooldown, and the strike marks the
+// Stormstrike under Forever (beta client): 8% of base mana (125 Mana before client 1.60.1.70425), 8 sec cooldown, and the strike marks the
 // target so the shaman's next Lightning Bolt, Chain Lightning or Earth Shock on it deals 20%
 // more. The mark lasts 12 sec and is the shaman's own, so another shaman's Stormstrike gives
 // nothing (the external debuff is skipped under Forever in core/debuffs.go).
@@ -59,7 +59,8 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 	manaCost := core.ManaCostOptions{BaseCost: .21}
 	cooldown := time.Second * 20
 	if forever {
-		manaCost = core.ManaCostOptions{FlatCost: 125}
+		// 8% of base mana since client 1.60.1.70425 (125 before).
+		manaCost = core.ManaCostOptions{BaseCost: .08}
 		cooldown = time.Second * 8
 	}
 

@@ -21,7 +21,7 @@ func TestOrcShamanElementalFury(t *testing.T) {
 	for _, points := range []int{0, 5} {
 		spellCrit := 1.5 + .1*float64(points)
 		// Elemental Fury points, Lava Burst and Stormstrike.
-		talents := fmt.Sprintf("00000000000000%d1-0000000000001", points)
+		talents := fmt.Sprintf("00000000000010%d-0000000000001", points)
 		check := func(enh *EnhancementShaman, name string, spell *core.Spell, want float64) {
 			if spell == nil {
 				t.Fatalf("Elemental Fury %d: no %s", points, name)

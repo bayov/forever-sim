@@ -215,7 +215,7 @@
                     },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 17359
+                        "spellId": 1325256
                       }
                     }
                   }
@@ -242,7 +242,7 @@
                               "val": {
                                 "auraIsActive": {
                                   "auraId": {
-                                    "spellId": 17359
+                                    "spellId": 1325256
                                   }
                                 }
                               }

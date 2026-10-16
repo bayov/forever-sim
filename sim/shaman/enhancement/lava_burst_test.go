@@ -11,22 +11,22 @@ import (
 	"github.com/wowsims/classic/sim/shaman"
 )
 
-// TestOrcShamanLavaBurstRanks checks that a rotation naming Lava Burst rank 3 casts the rank
+// TestOrcShamanLavaBurstRanks checks that a rotation naming Lava Burst rank 4 casts the rank
 // the level knows.
 //
-// The talent teaches rank 1 at 40, and the trainer has rank 2 at 50 and rank 3 at 60. Each
-// rank has its own Forever spell ID.
+// Since client 1.60.1.70425 the talent teaches rank 1 at 30, and the trainer has rank 2 at 40,
+// rank 3 at 50 and rank 4 at 60. Each rank has its own Forever spell ID.
 func TestOrcShamanLavaBurstRanks(t *testing.T) {
 	cases := []struct {
 		level int32
 		rank  int
-	}{{45, 1}, {55, 2}, {60, 3}}
+	}{{35, 1}, {45, 2}, {55, 3}, {60, 4}}
 	for _, c := range cases {
 		// Lava Burst.
-		player := newOrcShaman(c.level, "0000000000000001", &proto.EnhancementShaman_Options{})
+		player := newOrcShaman(c.level, "0000000000001", &proto.EnhancementShaman_Options{})
 		player.Rotation = &proto.APLRotation{PriorityList: []*proto.APLListItem{{Action: &proto.APLAction{
 			Action: &proto.APLAction_CastSpell{CastSpell: &proto.APLActionCastSpell{
-				SpellId: &proto.ActionID{RawId: &proto.ActionID_SpellId{SpellId: shaman.LavaBurstSpellId[3]}},
+				SpellId: &proto.ActionID{RawId: &proto.ActionID_SpellId{SpellId: shaman.LavaBurstSpellId[4]}},
 			}},
 		}}}}
 		sim, enh := newShamanSim(player, &proto.Debuffs{}, 15)
@@ -45,7 +45,8 @@ func TestOrcShamanLavaBurstRanks(t *testing.T) {
 // TestOrcShamanLavaBurstDamage checks Lava Burst's damage, its bonus with Flame Shock up, its
 // cast, travel time and cooldown (shaman_audit.md 7.14).
 //
-// Rank 3 deals 192.14 to 247.86 at level 60 with no spell power, and 20% more with our Flame
+// Rank 4 (rank 3 before client 1.60.1.70425, the same values) deals 192.14 to 247.86 at level
+// 60 with no spell power, and 20% more with our Flame
 // Shock on the target. We take all our spell crit away, and the target is at our level. Half
 // of 1000 hits have Flame Shock up, so the two averages should come out near 220 and 264.
 //
@@ -53,11 +54,11 @@ func TestOrcShamanLavaBurstRanks(t *testing.T) {
 // sec after the cast ends. The 10 sec cooldown counts from the end of the cast.
 func TestOrcShamanLavaBurstDamage(t *testing.T) {
 	// Lava Burst.
-	sim, enh := newTargetLevelSim(60, 60, 0, 0, "0000000000000001")
+	sim, enh := newTargetLevelSim(60, 60, 0, 0, "0000000000001")
 	sim.PrePull()
 	lavaBurst := enh.LavaBurst
-	if lavaBurst == nil || lavaBurst.Rank != 3 {
-		t.Fatalf("level 60 has no Lava Burst rank 3")
+	if lavaBurst == nil || lavaBurst.Rank != 4 {
+		t.Fatalf("level 60 has no Lava Burst rank 4")
 	}
 	target := enh.CurrentTarget
 	flameShock := topRank(t, "Flame Shock", enh.FlameShock).Dot(target)

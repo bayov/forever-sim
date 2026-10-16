@@ -21,7 +21,8 @@ var ChainLightningScaling = [ChainLightningRanks + 1]core.RankScaling{{}, {37, 0
 var ChainLightningSpellCoef = [ChainLightningRanks + 1]float64{0, 0.571, 0.571, 0.517, 0.571}
 
 // Forever's costs, about 20% under Classic. The cast is 2 sec, down from 2.5.
-var ChainLightningManaCost = [ChainLightningRanks + 1]float64{0, 225, 305, 390, 485}
+// Client 1.60.1.70425 cut every rank by about 35% (225 / 305 / 390 / 485 before).
+var ChainLightningManaCost = [ChainLightningRanks + 1]float64{0, 145, 200, 250, 315}
 var ChainLightningLevel = [ChainLightningRanks + 1]int{0, 32, 40, 48, 56}
 
 func (shaman *Shaman) registerChainLightningSpell() {
