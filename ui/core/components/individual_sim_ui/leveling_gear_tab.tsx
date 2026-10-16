@@ -305,6 +305,7 @@ export class LevelingGearTab extends SimTab {
 			seed: this.player.getLevelingGearPlan().seed,
 			pins,
 			weightsAt: level => this.weightsAt(level).weights,
+			zoneName: zoneId => db.getZone(zoneId)?.name,
 		});
 		const names = [...new Set(Array.from({ length: LEVELING_GEAR_MAX_LEVEL }, (_, i) => this.weightsAt(i + 1).name))];
 		this.weightsElem.textContent = `We judge items by the ${names.join(', ')} stat weights.`;
@@ -471,8 +472,12 @@ function sourceText(piece: LevelingGearPiece): string {
 			return 'starting gear';
 		case 'pinned':
 			return 'ours';
+		case 'quest':
+			return 'quest reward';
+		case 'dungeon':
+			return piece.dungeon ?? 'dungeon';
 		default:
-			return isPlainItemId(piece.item.id) ? 'found, plain' : 'found';
+			return isPlainItemId(piece.item.id) ? 'plain drop' : 'drop';
 	}
 }
 

@@ -24,6 +24,14 @@ We don't take the best item for each level. While leveling we gear up as we go:
   at 90% of a green piece's of that item level, or a weapon at 85% of a green weapon's DPS
   (the green lines are fit to the database). The database makes the same ones at startup, so
   gear with them in it still loads.
+- **Quest rewards and drops.** 60% of finds are quest rewards (`QUEST_SHARE`), and there we
+  take the best of 3 for us (`QUEST_CHOICES`). That's where the plan picks what our spec wants.
+  The rest are drops, with whatever stats they have.
+- **Dungeons.** We run the dungeons of our faction (`LEVELING_DUNGEONS`) with an 80% chance
+  each, twice: 1 and 3 levels after the lowest level their loot needs. Each boss drops one
+  item from its own loot, or two half the time, and we win an item we'd wear half the time,
+  since the group rolls on it too. So Ragefire Chasm's blues come at 14 and 16, and Ruins of
+  Lordaeron's (a Forever dungeon) at 16 and 18. Boss loot isn't a find out in the world.
 - **Wearing it.** We put a find on only when it beats what we wear in that slot, by the stat
   weights at that level. Most finds don't, so a slot can keep a lucky blue for ten or twenty
   levels. A ring or a trinket replaces the weaker of the two, and a two-hander also takes the
@@ -51,8 +59,11 @@ leveling sim runs on it. The seed and our items are saved with the gear settings
 
 ## Open
 
-- The finds and the quality mix are guesses (notes.md, Need to Verify). Bayov-Oom's BayovCore
-  history as it levels will show the real pace.
+- The finds, the quality mix and the dungeon runs are guesses (notes.md, Need to Verify).
+  Bayov-Oom's BayovCore history as it levels will show the real pace. Which faction The Hall
+  of Thanes is for is a guess too.
+- The dungeons' quest rewards aren't in: the item database doesn't say which quest belongs to
+  which dungeon.
 - Leveling stat weights at more levels, so the plan judges low level items by their own
   weights.
 - The leveling sim can take the plan's gear at its own level directly, and average over many

@@ -19,11 +19,16 @@ import { Stats } from './proto_utils/stats.js';
 // up the way we do while speed leveling (docs/leveling_gear.md).
 //
 // We don't look for the best item at each level. We level up and now and then come across
-// an item for a slot, from a quest reward or a drop. It's of about our level, and its
-// quality is mostly white early on, then mostly green, with a few blues that grow more
-// common with level. It has whatever stats it has, often ones we don't want. We wear it only
-// when it beats what we have in that slot by our stat weights at that level. So most finds
-// go unused, and a slot can keep a lucky blue for ten levels.
+// an item for a slot. It's of about our level, and its quality is mostly white early on, then
+// mostly green, with a few blues that grow more common with level. We wear it only when it
+// beats what we have in that slot by our stat weights at that level. So most finds go unused,
+// and a slot can keep a lucky blue for ten levels.
+//
+// Most finds are quest rewards, and there we pick the best of a few for our spec, the way an
+// enhancement shaman takes the mail with Strength over the cloth with Intellect. The rest are
+// drops, which have whatever stats they have. On top of those we run the dungeons of our
+// faction once or twice in their level range, and their bosses drop the blues that make a
+// big step, like Ragefire Chasm's at 13 or the axe from Ruins of Lordaeron.
 //
 // The items are real ones from the item database: one we could find at that level, of that
 // quality and for that slot, picked at random. A random suffix item rolls one of its
@@ -69,6 +74,45 @@ export const QUALITY_MIX: Array<{ level: number; white: number; green: number; b
 	{ level: 45, white: 0.04, green: 0.78, blue: 0.18 },
 	{ level: 60, white: 0.03, green: 0.72, blue: 0.25 },
 ];
+
+// Of the finds, this share are quest rewards, where we take the best of QUEST_CHOICES for us.
+// The rest are drops.
+export const QUEST_SHARE = 0.6;
+export const QUEST_CHOICES = 3;
+
+// The dungeons we run while leveling, if our faction goes there. Each one we run with this
+// chance, twice: 1 and 3 levels after the lowest level its loot needs. Each boss drops one item
+// from its own loot, or two half the time, and we win an item we'd wear with WIN_CHANCE, since
+// others in the group roll on it too. Raids and battlegrounds aren't here.
+export const DUNGEON_RUN_CHANCE = 0.8;
+export const DUNGEON_RUN_LEVELS = [1, 3];
+export const DUNGEON_WIN_CHANCE = 0.5;
+export const LEVELING_DUNGEONS: Array<{ zoneId: number; faction?: Faction }> = [
+	{ zoneId: 2437, faction: Faction.Horde }, // Ragefire Chasm, in Orgrimmar
+	{ zoneId: 16611, faction: Faction.Horde }, // Ruins of Lordaeron, Forever's, under Undercity
+	{ zoneId: 16919, faction: Faction.Alliance }, // The Hall of Thanes, Forever's, a guess that it's the dwarves'
+	{ zoneId: 1581, faction: Faction.Alliance }, // The Deadmines
+	{ zoneId: 718 }, // Wailing Caverns
+	{ zoneId: 209 }, // Shadowfang Keep
+	{ zoneId: 717, faction: Faction.Alliance }, // The Stockade
+	{ zoneId: 719 }, // Blackfathom Deeps
+	{ zoneId: 721 }, // Gnomeregan
+	{ zoneId: 491 }, // Razorfen Kraul
+	{ zoneId: 796 }, // Scarlet Monastery
+	{ zoneId: 722 }, // Razorfen Downs
+	{ zoneId: 1337 }, // Uldaman
+	{ zoneId: 1176 }, // Zul'Farrak
+	{ zoneId: 2100 }, // Maraudon
+	{ zoneId: 1477 }, // The Temple of Atal'Hakkar
+	{ zoneId: 1584 }, // Blackrock Depths
+	{ zoneId: 1583 }, // Blackrock Spire
+	{ zoneId: 2557 }, // Dire Maul
+	{ zoneId: 2017 }, // Stratholme
+	{ zoneId: 2057 }, // Scholomance
+];
+
+// The dungeons above and the raids and battlegrounds, whose loot drops only there.
+const INSTANCE_ZONES = new Set([...LEVELING_DUNGEONS.map(d => d.zoneId), 15475, 1977, 2159, 2677, 2717, 2597, 3277, 3358]);
 
 // A find is of about our level: its item level is from 3 under ours to 5 over, and we must be
 // able to wear it already.
@@ -118,13 +162,16 @@ const SLOT_TYPE: Record<number, ItemType> = {
 	[ItemSlot.ItemSlotRanged]: ItemType.ItemTypeRanged,
 };
 
-// Where an item came from in the plan: the white starting gear, a find, or a pin.
-export type LevelingGearSource = 'start' | 'found' | 'pinned';
+// Where an item came from in the plan: the white starting gear, a quest reward, a drop, a
+// dungeon boss, or a pin.
+export type LevelingGearSource = 'start' | 'quest' | 'drop' | 'dungeon' | 'pinned';
 
 export interface LevelingGearPiece {
 	item: Item;
 	randomSuffix?: ItemRandomSuffix;
 	source: LevelingGearSource;
+	// The dungeon it dropped in.
+	dungeon?: string;
 	// The level we put it on at.
 	since: number;
 }
@@ -167,6 +214,8 @@ export interface LevelingGearInputs {
 	pins: Array<LevelingGearPinInput>;
 	// The stat weights we judge items by at a level.
 	weightsAt: (level: number) => Stats;
+	// A zone's name, for the dungeons.
+	zoneName?: (zoneId: number) => string | undefined;
 	maxLevel?: number;
 }
 
@@ -182,6 +231,7 @@ export function planLevelingGear(inputs: LevelingGearInputs): LevelingGearPlan {
 	const pool = new ItemPool(inputs);
 	const gear: Partial<Record<ItemSlot, LevelingGearPiece>> = {};
 	const levels: Array<LevelingGearLevel> = [];
+	const dungeonRuns = planDungeonRuns(inputs, pool);
 
 	// We start in white chest, legs and boots, with a white weapon.
 	for (const slot of [ItemSlot.ItemSlotChest, ItemSlot.ItemSlotLegs, ItemSlot.ItemSlotFeet, ItemSlot.ItemSlotMainHand]) {
@@ -192,8 +242,9 @@ export function planLevelingGear(inputs: LevelingGearInputs): LevelingGearPlan {
 	for (let level = 1; level <= maxLevel; level++) {
 		const weights = inputs.weightsAt(level);
 		const changed: Array<ItemSlot> = [];
+		const gainOf = (piece: LevelingGearPiece) => bestSlotFor(piece, gear, weights, inputs.classRules);
 		const offer = (piece: LevelingGearPiece) => {
-			const slot = bestSlotFor(piece, gear, weights, inputs.classRules);
+			const slot = gainOf(piece).slot;
 			if (slot === undefined) return;
 			gear[slot] = piece;
 			if (slot == ItemSlot.ItemSlotMainHand && piece.item.handType == HandType.HandTypeTwoHand) delete gear[ItemSlot.ItemSlotOffHand];
@@ -206,10 +257,32 @@ export function planLevelingGear(inputs: LevelingGearInputs): LevelingGearPlan {
 			const rand = mulberry32(hash(inputs.seed, level, type));
 			const count = poisson(rate!, rand);
 			for (let i = 0; i < count; i++) {
-				const piece = pool.find(type, level, rand);
-				if (!piece) continue;
+				const quest = rand() < QUEST_SHARE;
+				const choices: Array<LevelingGearPiece> = [];
+				for (let c = 0; c < (quest ? QUEST_CHOICES : 1); c++) {
+					const piece = pool.find(type, level, rand);
+					if (piece) choices.push(piece);
+				}
+				if (choices.length == 0) continue;
 				finds++;
-				offer(piece);
+				// A quest lets us choose, so we take the reward that helps us most.
+				const best = choices.reduce((a, b) => (gainOf(b).gain > gainOf(a).gain ? b : a));
+				offer({ ...best, source: quest ? 'quest' : 'drop' });
+			}
+		}
+		for (const run of dungeonRuns.filter(run => run.level == level)) {
+			const rand = mulberry32(hash(inputs.seed, level, 1000 + run.zoneId));
+			for (const loot of run.bosses) {
+				const drops = 1 + (rand() < 0.5 ? 1 : 0);
+				for (let i = 0; i < drops; i++) {
+					const usable = loot.filter(item => pool.canWearAt(item, level));
+					if (usable.length == 0) continue;
+					const piece = pool.withSuffix(usable[Math.floor(rand() * usable.length)], rand, 'dungeon', level);
+					piece.dungeon = run.name;
+					if (gainOf(piece).slot === undefined || rand() >= DUNGEON_WIN_CHANCE) continue;
+					finds++;
+					offer(piece);
+				}
 			}
 		}
 		for (const pin of inputs.pins) {
@@ -221,14 +294,45 @@ export function planLevelingGear(inputs: LevelingGearInputs): LevelingGearPlan {
 	return { levels, madeUpItems: pool.madeUpItems() };
 }
 
-// The slot a new piece goes in, or undefined when it beats nothing we wear. A ring or a
-// trinket replaces the weaker of the two, and we don't wear two of a unique item.
+interface DungeonRun {
+	level: number;
+	zoneId: number;
+	name: string;
+	// Each boss's loot that we could use.
+	bosses: Array<Array<Item>>;
+}
+
+// The dungeon runs of this journey: which dungeons of our faction we run, and at what levels.
+function planDungeonRuns(inputs: LevelingGearInputs, pool: ItemPool): Array<DungeonRun> {
+	const runs: Array<DungeonRun> = [];
+	for (const dungeon of LEVELING_DUNGEONS) {
+		if (dungeon.faction !== undefined && dungeon.faction != inputs.faction) continue;
+		const bosses = pool.bossLoot(dungeon.zoneId);
+		const levels = bosses
+			.flat()
+			.map(item => item.requiredLevel)
+			.filter(level => level > 0);
+		if (levels.length == 0) continue;
+		const rand = mulberry32(hash(inputs.seed, 0, 1000 + dungeon.zoneId));
+		if (rand() >= DUNGEON_RUN_CHANCE) continue;
+		const start = Math.min(...levels);
+		const name = inputs.zoneName?.(dungeon.zoneId) ?? `zone ${dungeon.zoneId}`;
+		for (const offset of DUNGEON_RUN_LEVELS) {
+			runs.push({ level: Math.min(start + offset, LEVELING_GEAR_MAX_LEVEL), zoneId: dungeon.zoneId, name, bosses });
+		}
+	}
+	return runs;
+}
+
+// The slot a new piece goes in and what it gains us there, or no slot when it beats nothing we
+// wear. A ring or a trinket replaces the weaker of the two, and we don't wear two of a unique
+// item.
 function bestSlotFor(
 	piece: LevelingGearPiece,
 	gear: Partial<Record<ItemSlot, LevelingGearPiece>>,
 	weights: Stats,
 	rules: LevelingGearClassRules,
-): ItemSlot | undefined {
+): { slot: ItemSlot | undefined; gain: number } {
 	const item = piece.item;
 	const slots = slotsFor(item, rules);
 	let best: ItemSlot | undefined;
@@ -251,7 +355,7 @@ function bestSlotFor(
 			bestGain = gain;
 		}
 	}
-	return best;
+	return { slot: best, gain: bestGain };
 }
 
 // What we give up in a slot to wear the piece there. A two-hander also takes the off hand,
@@ -321,6 +425,8 @@ export function scorePiece(piece: LevelingGearPiece, slot: ItemSlot, weights: St
 class ItemPool {
 	private readonly inputs: LevelingGearInputs;
 	private readonly byTypeQuality = new Map<string, Array<Item>>();
+	// Each dungeon's boss loot we could use, by zone and boss.
+	private readonly bosses = new Map<number, Map<number, Array<Item>>>();
 	private readonly plain: PlainItems;
 	private readonly usedPlain = new Map<number, Item>();
 
@@ -328,7 +434,18 @@ class ItemPool {
 		this.inputs = inputs;
 		this.plain = new PlainItems(inputs.items);
 		for (const item of inputs.items) {
-			if (this.canFind(item)) push(this.byTypeQuality, `${item.type}/${item.quality}`, item);
+			if (!this.canFind(item)) continue;
+			// A dungeon boss's or a raid's loot only drops there, so it's not a find out in the
+			// world.
+			const instanceOnly = item.sources.length > 0 && item.sources.every(s => s.source.oneofKind == 'drop' && INSTANCE_ZONES.has(s.source.drop.zoneId));
+			if (!instanceOnly) push(this.byTypeQuality, `${item.type}/${item.quality}`, item);
+			for (const source of item.sources) {
+				if (source.source.oneofKind != 'drop' || !source.source.drop.npcId) continue;
+				const { zoneId, npcId } = source.source.drop;
+				if (!this.bosses.has(zoneId)) this.bosses.set(zoneId, new Map());
+				const loot = this.bosses.get(zoneId)!;
+				if (!loot.get(npcId)?.includes(item)) push(loot, npcId, item);
+			}
 		}
 	}
 
@@ -351,13 +468,31 @@ class ItemPool {
 		return this.inputs.classRules.weaponTypes.some(wt => wt.weaponType == weaponType && (!twoHand || wt.canUseTwoHand));
 	}
 
+	bossLoot(zoneId: number): Array<Array<Item>> {
+		return [...(this.bosses.get(zoneId)?.values() ?? [])];
+	}
+
+	// Whether we can wear the item at this level: its required level and our armor type then.
+	canWearAt(item: Item, level: number): boolean {
+		return item.requiredLevel <= level && (item.armorType == ArmorType.ArmorTypeUnknown || item.armorType <= this.inputs.classRules.maxArmorTypeAt(level));
+	}
+
+	// The item as a piece we have, with one of its random suffixes rolled.
+	withSuffix(item: Item, rand: () => number, source: LevelingGearSource, level: number): LevelingGearPiece {
+		let randomSuffix: ItemRandomSuffix | undefined;
+		if (item.randomSuffixOptions.length > 0) {
+			randomSuffix = this.inputs.randomSuffix(item.randomSuffixOptions[Math.floor(rand() * item.randomSuffixOptions.length)]);
+		}
+		return { item, randomSuffix, source, since: level };
+	}
+
 	// An item we come across at this level, or undefined when there's none of the rolled kind.
 	find(type: ItemType, level: number, rand: () => number): LevelingGearPiece | undefined {
 		const quality = rollQuality(level, rand());
 		if (quality == ItemQuality.ItemQualityCommon) {
 			const ilvl = Math.max(1, level + Math.floor(rand() * (ILVL_ABOVE + 1)));
 			const item = this.plainItem(type, ilvl, level, rand);
-			return item && { item, source: 'found', since: level };
+			return item && { item, source: 'drop', since: level };
 		}
 		const maxArmor = this.inputs.classRules.maxArmorTypeAt(level);
 		const candidates = (this.byTypeQuality.get(`${type}/${quality}`) ?? []).filter(
@@ -368,12 +503,7 @@ class ItemPool {
 				(item.armorType == ArmorType.ArmorTypeUnknown || item.armorType <= maxArmor),
 		);
 		if (candidates.length == 0) return undefined;
-		const item = candidates[Math.floor(rand() * candidates.length)];
-		let randomSuffix: ItemRandomSuffix | undefined;
-		if (item.randomSuffixOptions.length > 0) {
-			randomSuffix = this.inputs.randomSuffix(item.randomSuffixOptions[Math.floor(rand() * item.randomSuffixOptions.length)]);
-		}
-		return { item, randomSuffix, source: 'found', since: level };
+		return this.withSuffix(candidates[Math.floor(rand() * candidates.length)], rand, 'drop', level);
 	}
 
 	// A plain white item of this kind and item level: armor of the best type we can wear at this
