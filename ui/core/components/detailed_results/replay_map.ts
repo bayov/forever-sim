@@ -1,4 +1,5 @@
 import { ResourceType } from '../../proto/api.js';
+import { MobType } from '../../proto/common.js';
 import { ActionId } from '../../proto_utils/action_id.js';
 import { UnitMetrics } from '../../proto_utils/sim_result.js';
 import { EventFilter } from './events_filter.js';
@@ -21,9 +22,11 @@ import { TotemSlot } from './replay_model.js';
 // The map of a leveling session in the middle of the replay: the plane the sim moves us and the
 // mobs on (sim/core/leveling_world.go), seen from above, with north up.
 //
-// Like the rest of the replay, what it shows comes from the time alone, so a seek draws the same
-// frame as playing up to it. That holds for the camera too: it follows the average of where it
-// would look over a couple of seconds around now, not where it looked on the frame before.
+// Like the rest of the replay, where things stand comes from the time alone, so a seek draws the
+// same frame as playing up to it. The camera and the mobs on the ring around us are the exception
+// while we play. When what the camera looks at changes all at once (we find a mob, a mob reaches
+// us or dies), the camera eases over to its new view, and so does a mob taking its spot on the
+// ring. A seek puts them where they belong right away.
 
 // How long the trails behind us and the running mobs are, in seconds.
 const TRAIL_SECONDS = 6;
@@ -35,13 +38,21 @@ const MARK_SECONDS = 8;
 const MIN_SPAN_YARDS = 36;
 const MAX_SPAN_YARDS = 160;
 const PAD_YARDS = 7;
-// The camera looks at what matters over this window of the session, so it eases in and out. It
-// looks a little ahead too, so a mob we find doesn't show up at the edge.
-const CAMERA_WINDOW = 2;
+// The camera looks a little ahead, so it starts to ease out before a mob we find shows up at the
+// edge.
 const CAMERA_AHEAD = 0.6;
-const CAMERA_SAMPLES = 9;
+// How fast the camera eases to a new view, and a mob to its spot on the ring. They move like a
+// critically damped spring of this frequency (in 1/s): they start slowly, speed up and slow down
+// as they get there, in about 4 / frequency seconds. Faster replays ease faster, so the camera
+// keeps up with a session that moves faster, but by the square root, so it still eases at 32x.
+const EASE_FREQUENCY = 6;
+const RING_EASE_FREQUENCY = 9;
+// Nothing on the map moves faster than this, in yards a second. When what the camera looks at
+// moves further in one frame, it jumped (like when we come back from the dead), and the camera
+// eases over.
+const MAX_FOCUS_SPEED = 25;
 // Mobs on us stand around us on a ring this many pixels out, so each one shows.
-const RING_PX = 30;
+const RING_PX = 40;
 // Totems further than this from us don't pull the camera out.
 const TOTEM_FOCUS_YARDS = 40;
 
@@ -58,6 +69,9 @@ export interface ReplayMapData {
 	totems: Array<TotemSlot>;
 	// A mob's share of health left, by its target index.
 	mobHealth: (targetIndex: number, time: number) => number;
+	mobIcon: string;
+	// The target index of the enemy the replay shows as our target, by time.
+	focusAt: (time: number) => number;
 }
 
 interface PlacedTotem {
@@ -76,11 +90,37 @@ interface Camera {
 	scale: number;
 }
 
+// The box the camera wants to show. The key lists what's in it, so we know when that changed.
+interface FocusBox {
+	x: number;
+	y: number;
+	span: number;
+	key: string;
+}
+
+// How far something still has to go to where it belongs, and how fast it goes there, see
+// springStep.
+interface Spring {
+	offset: number;
+	velocity: number;
+}
+
+// Where a mob on us shows, around us on the ring: its spot (an angle), and how far it still is
+// from it, in radians and in screen pixels.
+interface RingSpot {
+	slot: number;
+	angle: Spring;
+	radius: Spring;
+}
+
 interface MobView {
 	root: HTMLElement;
 	health: HTMLElement;
-	label: HTMLElement;
+	percent: HTMLElement;
 	shown: boolean;
+	// Where it showed on the frame before, in screen pixels from our spot.
+	offset: { x: number; y: number } | null;
+	ring: RingSpot | null;
 }
 
 const STATE_ICONS: Partial<Record<SessionState, string>> = {
@@ -118,6 +158,14 @@ export class ReplayMap {
 	private width = 0;
 	private height = 0;
 	private time = 0;
+	// The camera is the box it wants to show plus what's left of its easing from the view before,
+	// in yards and in log(span). See cameraFor.
+	private focus: FocusBox | null = null;
+	private ease = { x: spring(), y: spring(), logSpan: spring() };
+	private focusTime = 0;
+	private focusSize = 0;
+	private lastFrameAt = 0;
+	private lastPlayedAt = -Infinity;
 
 	constructor(config: ReplayMapConfig) {
 		this.tip = config.tip;
@@ -161,6 +209,7 @@ export class ReplayMap {
 		this.totemViews.clear();
 		this.markViews.forEach(elem => elem.remove());
 		this.markViews.clear();
+		this.focus = null;
 		if (!data) return;
 
 		// A totem stands where we were when we put it down, until it runs out or the next totem of
@@ -200,12 +249,26 @@ export class ReplayMap {
 		if (this.data) this.draw(this.time);
 	}
 
-	draw(time: number) {
+	// Draws the map at a time. While we play, the replay gives its speed, and the camera and the ring
+	// ease from the frame before. Without it, they snap to where they belong, unless the time is
+	// the same as before (like when the map changed size).
+	draw(time: number, playSpeed: number | null = null) {
+		const sameTime = time == this.time;
 		this.time = time;
 		const data = this.data;
 		if (!data || this.width == 0) return;
 		const session = data.session;
-		const camera = this.cameraAt(time);
+		const now = performance.now();
+		const wallDt = Math.min(0.1, Math.max(0, (now - this.lastFrameAt) / 1000));
+		this.lastFrameAt = now;
+		if (playSpeed != null) this.lastPlayedAt = now;
+		// The map changed size while we play, like when the window did. It eases to the new size's
+		// zoom too.
+		const resizedWhilePlaying = sameTime && now - this.lastPlayedAt < 250;
+		// While we play, things ease over this frame's time. On a seek they snap (null). When the
+		// time is the same, like when the map changed size, they stay where they are (0).
+		const easeDt = playSpeed != null ? wallDt * Math.sqrt(Math.max(playSpeed, 1)) : sameTime ? 0 : null;
+		const camera = this.cameraFor(time, easeDt, resizedWhilePlaying);
 		const toScreen = (x: number, y: number) => ({
 			x: this.width / 2 + (x - camera.x) * camera.scale,
 			y: this.height / 2 - (y - camera.y) * camera.scale,
@@ -232,30 +295,60 @@ export class ReplayMap {
 		if (heading != null) this.playerArrow.style.transform = `rotate(${(-heading * 180) / Math.PI}deg)`;
 		this.playerArrow.classList.toggle('hide', heading == null);
 
-		// The mobs out of the pool. The ones on us stand on a ring around us, in the order they came.
+		// The mobs out of the pool. The ones on us stand on a ring around us, in the order they came,
+		// from the top round to the right. A mob that just reached us, or one whose spot moved because
+		// another came or died, moves over to its spot along the ring. A mob under us has its
+		// nameplate under it, so the plate doesn't cover us.
 		const shownMobs = new Set<MobLife>();
-		const onUs = this.mobsOnUs(session, time);
-		for (const mob of this.activeMobs(session, time)) {
+		const active = this.activeMobs(session, time);
+		const focus = data.focusAt(time);
+		const onUs = active.filter(mob => mob.reachedAt != null && time >= mob.reachedAt).sort((a, b) => a.reachedAt! - b.reachedAt!);
+		for (const mob of active) {
 			const view = this.mobView(mob);
-			shownMobs.add(mob);
 			const ringIndex = onUs.indexOf(mob);
-			let screen: { x: number; y: number };
+			let offset: { x: number; y: number };
 			if (ringIndex >= 0) {
-				const angle = -Math.PI / 2 + (ringIndex * 2 * Math.PI) / Math.max(onUs.length, 1) + Math.PI / Math.max(onUs.length, 1);
-				screen = { x: meScreen.x + Math.cos(angle) * RING_PX, y: meScreen.y + Math.sin(angle) * RING_PX };
+				const slot = -Math.PI / 2 + (ringIndex * 2 * Math.PI) / onUs.length;
+				if (!view.ring) {
+					// It eases in from where it showed on the frame before, while we play.
+					const from = view.shown && view.offset && easeDt != null ? view.offset : null;
+					view.ring = { slot, angle: spring(), radius: spring() };
+					if (from) {
+						view.ring.angle.offset = angleBetween(slot, Math.atan2(from.y, from.x));
+						view.ring.radius.offset = Math.hypot(from.x, from.y) - RING_PX;
+					}
+				}
+				const ring = view.ring;
+				// Another mob came or died, so its spot moved. It goes there from where it shows now.
+				if (ring.slot != slot) {
+					ring.angle.offset = angleBetween(slot, ring.slot + ring.angle.offset);
+					ring.slot = slot;
+				}
+				[ring.angle, ring.radius].forEach(s => springStep(s, RING_EASE_FREQUENCY, easeDt));
+				const angle = slot + ring.angle.offset;
+				const radius = RING_PX + ring.radius.offset;
+				offset = { x: Math.cos(angle) * radius, y: Math.sin(angle) * radius };
 			} else {
+				view.ring = null;
 				const at = mobPositionAt(session, mob, time);
 				if (!at) continue;
-				screen = toScreen(at.x, at.y);
+				const screen = toScreen(at.x, at.y);
+				offset = { x: screen.x - meScreen.x, y: screen.y - meScreen.y };
 			}
-			place(view.root, screen.x, screen.y);
+			shownMobs.add(mob);
+			view.offset = offset;
+			view.root.classList.toggle('plate-below', ringIndex >= 0 && offset.y > 1);
+			place(view.root, meScreen.x + offset.x, meScreen.y + offset.y);
 			const pulled = mob.pulledAt != null && time >= mob.pulledAt;
 			view.root.classList.toggle('found', !pulled);
 			view.root.classList.toggle('running', pulled && (mob.reachedAt == null || time < mob.reachedAt));
 			view.root.classList.toggle('on-us', ringIndex >= 0);
+			view.root.classList.toggle('focus', pulled && mob.targetIndex == focus);
 			const health = pulled ? data.mobHealth(mob.targetIndex, time) : 1;
 			view.health.style.width = `${(health * 100).toFixed(1)}%`;
 			view.root.classList.toggle('damaged', health < 1);
+			const percent = pulled ? `${Math.round(health * 100)}%` : '';
+			if (view.percent.textContent != percent) view.percent.textContent = percent;
 			if (!view.shown) {
 				view.root.classList.remove('hide');
 				view.shown = true;
@@ -265,6 +358,8 @@ export class ReplayMap {
 			if (!shownMobs.has(mob) && view.shown) {
 				view.root.classList.add('hide');
 				view.shown = false;
+				view.offset = null;
+				view.ring = null;
 			}
 		});
 
@@ -293,36 +388,48 @@ export class ReplayMap {
 		this.drawScale(camera);
 	}
 
-	// The camera at this time: the middle and the size of the box around what matters, averaged
-	// over CAMERA_WINDOW seconds that end CAMERA_AHEAD seconds from now.
-	private cameraAt(time: number): Camera {
-		let x = 0;
-		let y = 0;
-		let span = 0;
-		let weights = 0;
-		for (let i = 0; i < CAMERA_SAMPLES; i++) {
-			const t = time + CAMERA_AHEAD - (CAMERA_WINDOW * i) / (CAMERA_SAMPLES - 1);
-			const box = this.focusBox(Math.max(0, t));
-			// The recent samples count more, so the camera keeps up with us.
-			const weight = CAMERA_SAMPLES - i;
-			x += box.x * weight;
-			y += box.y * weight;
-			span += box.span * weight;
-			weights += weight;
-		}
-		span /= weights;
+	// The camera at this time: the box around what matters, a little ahead of now.
+	//
+	// While the box moves smoothly (we walk, a mob runs at us), the camera follows it exactly. When
+	// it jumps (a mob we found comes into it, or one leaves it), the camera keeps showing what it
+	// showed and eases over to the new box. We keep how far it still has to go and shrink that
+	// every frame. Without easing (a seek), the camera goes straight to the box.
+	private cameraFor(time: number, easeDt: number | null, keepScale: boolean): Camera {
+		const before = this.focus;
+		const box = this.focusBox(time + CAMERA_AHEAD);
+		const ease = this.ease;
+		const springs = [ease.x, ease.y, ease.logSpan];
 		const size = Math.max(1, Math.min(this.width, this.height));
-		return { x: x / weights, y: y / weights, scale: size / span };
+		// The yards a pixel stays the same over a change of size, and the spring takes it from there.
+		if (keepScale && before && this.focusSize > 0 && size != this.focusSize) ease.logSpan.offset += Math.log(size / this.focusSize);
+		this.focusSize = size;
+		if (!before || easeDt == null) {
+			springs.forEach(s => springStep(s, EASE_FREQUENCY, null));
+		} else if (easeDt > 0) {
+			const dt = Math.abs(time - this.focusTime);
+			const jumped = box.key != before.key || Math.hypot(box.x - before.x, box.y - before.y) > MAX_FOCUS_SPEED * dt + 1;
+			if (jumped) {
+				ease.x.offset += before.x - box.x;
+				ease.y.offset += before.y - box.y;
+				ease.logSpan.offset += Math.log(before.span) - Math.log(box.span);
+			}
+			springs.forEach(s => springStep(s, EASE_FREQUENCY, easeDt));
+		}
+		this.focus = box;
+		this.focusTime = time;
+		const span = Math.exp(Math.log(box.span) + ease.logSpan.offset);
+		return { x: box.x + ease.x.offset, y: box.y + ease.y.offset, scale: size / span };
 	}
 
 	// The box around us, the mob we found, the mobs running at us and our totems close by.
-	private focusBox(time: number): { x: number; y: number; span: number } {
+	private focusBox(time: number): FocusBox {
 		const session = this.data!.session;
 		const me = positionAt(session.player, time) ?? { x: 0, y: 0 };
 		let minX = me.x;
 		let maxX = me.x;
 		let minY = me.y;
 		let maxY = me.y;
+		let key = '';
 		const add = (x: number, y: number) => {
 			minX = Math.min(minX, x);
 			maxX = Math.max(maxX, x);
@@ -332,17 +439,22 @@ export class ReplayMap {
 		for (const mob of this.activeMobs(session, time)) {
 			if (mob.reachedAt != null && time >= mob.reachedAt) continue;
 			const at = mobPositionAt(session, mob, time);
-			if (at) add(at.x, at.y);
+			if (!at) continue;
+			add(at.x, at.y);
+			key += `${mob.label}@${mob.foundAt} `;
 		}
-		for (const totem of this.totems) {
-			if (time >= totem.start && time < totem.until && Math.hypot(totem.x - me.x, totem.y - me.y) < TOTEM_FOCUS_YARDS) add(totem.x, totem.y);
-		}
+		this.totems.forEach((totem, i) => {
+			if (time >= totem.start && time < totem.until && Math.hypot(totem.x - me.x, totem.y - me.y) < TOTEM_FOCUS_YARDS) {
+				add(totem.x, totem.y);
+				key += `t${i} `;
+			}
+		});
 		// The map is wider than it's tall, so the box keeps the map's shape.
 		const aspect = this.height > 0 ? this.width / this.height : 1;
 		const spanX = (maxX - minX + 2 * PAD_YARDS) / Math.max(aspect, 1);
 		const spanY = (maxY - minY + 2 * PAD_YARDS) * Math.min(aspect, 1);
 		const span = Math.min(MAX_SPAN_YARDS, Math.max(MIN_SPAN_YARDS, spanX, spanY));
-		return { x: (minX + maxX) / 2, y: (minY + maxY) / 2, span };
+		return { x: (minX + maxX) / 2, y: (minY + maxY) / 2, span, key };
 	}
 
 	// The mob lives out of the pool at this time: found and waiting, running at us or on us.
@@ -353,12 +465,6 @@ export class ReplayMap {
 			if (time <= mob.end && mob.diedAt !== time && mob.leftAt !== time) mobs.push(mob);
 		}
 		return mobs;
-	}
-
-	private mobsOnUs(session: LevelingSession, time: number): Array<MobLife> {
-		return this.activeMobs(session, time)
-			.filter(mob => mob.reachedAt != null && time >= mob.reachedAt)
-			.sort((a, b) => a.reachedAt! - b.reachedAt!);
 	}
 
 	// Which way we face: the way we move, or toward the mob we fight or found.
@@ -599,16 +705,27 @@ export class ReplayMap {
 	private mobView(mob: MobLife): MobView {
 		const existing = this.mobViews.get(mob);
 		if (existing) return existing;
+		// The mob's icon in a ring, under a nameplate like the user's EllesmereUI ones in the game: its
+		// level over a thin health bar, and its health in percent once we pulled it. The level has the
+		// game's colors for how hard the mob is for us.
 		const root = div('replay-map-unit mob hide');
-		const health = div('replay-map-health-fill');
+		const iconElem = div('replay-map-mob-icon');
+		iconElem.style.backgroundImage = `url('${this.data!.mobIcon}')`;
+		const plate = div('replay-map-plate');
+		const level = div('replay-map-plate-level');
+		level.textContent = String(mob.level);
+		level.style.color = levelColor(this.data!.playerLevel, mob.level);
+		const percent = div('replay-map-plate-percent');
 		const bar = div('replay-map-health');
+		const health = div('replay-map-health-fill');
 		bar.appendChild(health);
-		const label = div('replay-map-label');
-		label.textContent = `${mobName(mob)} · ${mob.level}`;
-		root.append(div('replay-map-dot'), bar, label);
+		const title = div('replay-map-plate-title');
+		title.append(level, percent);
+		plate.append(title, bar);
+		root.append(iconElem, plate);
 		this.layer.appendChild(root);
 		this.tip(root, () => this.mobTip(mob));
-		const view = { root, health, label, shown: false };
+		const view: MobView = { root, health, percent, shown: false, offset: null, ring: null };
 		this.mobViews.set(mob, view);
 		return view;
 	}
@@ -652,6 +769,34 @@ export class ReplayMap {
 		return tipBox(data.playerName, [SESSION_STATES[state].label, at ? `At (${at.x.toFixed(0)}, ${at.y.toFixed(0)}) yd` : '']);
 	}
 }
+
+// The icons of the mob types, the hunter's tracking spells (like the Encounter settings show them).
+// A session without a mob type has beasts, like the sim.
+const MOB_TYPE_ICONS: Partial<Record<MobType, string>> = {
+	[MobType.MobTypeBeast]: 'ability_tracking',
+	[MobType.MobTypeDemon]: 'spell_shadow_summonfelhunter',
+	[MobType.MobTypeDragonkin]: 'inv_misc_head_dragon_01',
+	[MobType.MobTypeElemental]: 'spell_frost_summonwaterelemental',
+	[MobType.MobTypeGiant]: 'ability_racial_avatar',
+	[MobType.MobTypeHumanoid]: 'spell_holy_prayerofhealing',
+	[MobType.MobTypeMechanical]: 'inv_gizmo_02',
+	[MobType.MobTypeUndead]: 'spell_shadow_darksummoning',
+};
+
+export const levelingMobIcon = (mobType: MobType | undefined): string =>
+	`https://wow.zamimg.com/images/wow/icons/large/${MOB_TYPE_ICONS[mobType || MobType.MobTypeBeast] ?? MOB_TYPE_ICONS[MobType.MobTypeBeast]}.jpg`;
+
+// The game's color for a mob's level next to ours: red 5 or more above, orange 3 or 4 above,
+// yellow close to ours, green below, and gray when it's too low to give us experience.
+const levelColor = (playerLevel: number, mobLevel: number): string => {
+	const diff = mobLevel - playerLevel;
+	if (diff >= 5) return '#ff3b30';
+	if (diff >= 3) return '#ff8c1a';
+	if (diff >= -2) return '#ffd21a';
+	// The gray level is about level / 10 + 5 below ours at these levels.
+	if (-diff < Math.floor(playerLevel / 10) + 5) return '#40d040';
+	return '#a0a0a0';
+};
 
 // A pool mob's share of health left over the session. It comes back at full health each time we
 // find it again, and the log has no line for that, so we start each of its lives at full.
@@ -886,6 +1031,29 @@ const lastIndexBy = <T>(items: Array<T>, t: number, key: (item: T) => number): n
 		}
 	}
 	return found;
+};
+
+const spring = (): Spring => ({ offset: 0, velocity: 0 });
+
+// Moves a spring dt seconds on toward 0, critically damped, so it never overshoots. It's the exact
+// solution, so it moves the same however long the frames are. A null dt puts it there.
+const springStep = (s: Spring, frequency: number, dt: number | null) => {
+	if (dt == null) {
+		s.offset = 0;
+		s.velocity = 0;
+		return;
+	}
+	if (dt <= 0) return;
+	const decay = Math.exp(-frequency * dt);
+	const drift = (s.velocity + frequency * s.offset) * dt;
+	s.velocity = (s.velocity - frequency * drift) * decay;
+	s.offset = (s.offset + drift) * decay;
+};
+
+// The turn from one angle to another the short way round, in radians.
+const angleBetween = (from: number, to: number): number => {
+	const turn = (to - from) % (2 * Math.PI);
+	return turn > Math.PI ? turn - 2 * Math.PI : turn < -Math.PI ? turn + 2 * Math.PI : turn;
 };
 
 const lastIndex = (track: Array<{ t: number }>, t: number): number => lastIndexBy(track, t, m => m.t);

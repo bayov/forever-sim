@@ -5,7 +5,7 @@ import { AuraUptimeLog, CastLog, DamageDealtLog, Entity, ResourceChangedLog, Sim
 import { SimResult, SimResultFilter, UnitMetrics } from '../../proto_utils/sim_result.js';
 import { formatToNumber } from '../../utils.js';
 import { getLevelingSession, LevelingSession, mobName } from './leveling_session.js';
-import { levelingMobHealth } from './replay_map.js';
+import { levelingMobHealth, levelingMobIcon } from './replay_map.js';
 import { searchText } from './timeline.js';
 
 // Everything the Replay view draws, worked out once per iteration. The view then asks for the
@@ -234,6 +234,8 @@ export interface ReplayModel {
 	timeBasedHealth: boolean;
 	// The leveling session the iteration was, or null for a fight.
 	leveling: LevelingSession | null;
+	// The icon of the session's mobs on the map: their mob type's.
+	levelingMobIcon: string;
 }
 
 // The colors of the spell schools, by the school's bit in the sim's logs.
@@ -413,8 +415,14 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 		const actionId = cast.log.actionId!;
 		if (autoAttacks.includes(actionId.otherId)) return false;
 		// Procs, like a Windfury attack, are casts too. Only what we pressed takes the GCD or has
-		// a cooldown of its own.
-		return cast.log.effectiveTime > 0 || trackedKeys.has(actionId.toStringIgnoringTag()) || majorCooldownIds.some(id => id.equalsIgnoringTag(actionId));
+		// a cooldown of its own. An item we use is pressed too, like the food, drink and bandages of
+		// a leveling session, which take no GCD.
+		return (
+			cast.log.effectiveTime > 0 ||
+			actionId.itemId > 0 ||
+			trackedKeys.has(actionId.toStringIgnoringTag()) ||
+			majorCooldownIds.some(id => id.equalsIgnoringTag(actionId))
+		);
 	});
 
 	// The enemies. The sim ends the fight at a set time unless the encounter uses health, and
@@ -512,6 +520,7 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 		hasCooldownData: player.logs.some(log => log.isCooldown() || log.isMaxResources()),
 		timeBasedHealth,
 		leveling,
+		levelingMobIcon: levelingMobIcon(encounter?.leveling?.mobType),
 	};
 };
 

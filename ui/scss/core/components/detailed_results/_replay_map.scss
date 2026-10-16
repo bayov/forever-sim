@@ -1,6 +1,11 @@
 // The map of a leveling session in the middle of the replay (replay_map.ts). It sits between the
-// cast history and the class pack, and the combat text scrolls over its sides, like MSBT over
-// the game world.
+// cast history and the class pack.
+//
+// On a wide stage (map-wide, see Replay.updateMapWide), our frame goes to the left edge of the
+// stage and the target's frame to the right edge. The combat text lines up with the frames
+// (Replay.drawSct), so it scrolls beside the map and not over it, and the map takes the room
+// between them. On a narrower stage the frames stay by the class pack, and the text runs over the
+// sides of the map.
 
 // A leveling session needs room for the map, so the stage is taller, nearly the window's height.
 .replay-player.leveling .replay-stage {
@@ -9,8 +14,43 @@
 	max-height: none;
 }
 
-.replay-player.leveling .replay-sct-zone {
-	margin-bottom: 8px;
+.replay-player.leveling {
+	.replay-sct-zone {
+		margin-bottom: 8px;
+	}
+
+	// More pulled mobs means more frames, and they hang down from the top of the row, so the row
+	// (and the map over it) keeps its height.
+	.replay-col-enemies {
+		height: 0;
+		overflow: visible;
+	}
+}
+
+.replay-player.leveling.map-wide {
+	.replay-map {
+		// The frames are 300px wide and 3% in from the edges, and we leave a gap past each.
+		width: clamp(420px, calc(100% - 2 * (3% + 300px + 36px)), 1200px);
+		min-width: 0;
+	}
+
+	.replay-col-player {
+		align-items: flex-start;
+	}
+
+	.replay-col-enemies {
+		align-items: flex-end;
+	}
+
+	// The crits stay over the frames too, so they grow away from the edge like the lines that
+	// scroll.
+	.replay-sct-out .replay-sct-text.sticky {
+		transform-origin: left center;
+	}
+
+	.replay-sct-in .replay-sct-text.sticky {
+		transform-origin: right center;
+	}
 }
 
 .replay-map {
@@ -120,36 +160,98 @@
 		}
 	}
 
+	// A mob is its mob type's icon in a ring: gold while it waits for us, red once it's pulled.
 	&.mob {
+		--icon: 34px;
+		--ring: #e8c25a;
 		z-index: 2;
 
-		&.found {
-			--unit-color: #e8c25a;
+		&.running,
+		&.on-us {
+			--ring: #ff5a46;
 		}
 
-		&.running .replay-map-dot {
+		&.running:not(.focus) .replay-map-mob-icon {
 			animation: replay-map-pulse 0.6s ease-in-out infinite alternate;
 		}
 
 		&.on-us {
-			--dot: 12px;
-
-			.replay-map-label {
-				display: none;
-			}
-
-			// The frames on the right show the health of the mobs on us, so the bars here are small.
-			.replay-map-health {
-				left: -10px;
-				width: 20px;
-				height: 4px;
-			}
+			--icon: 28px;
 		}
 
-		&.on-us:hover .replay-map-label {
-			display: block;
+		// The other pulled mobs' plates are a little dimmed, so our target's stands out.
+		&.running:not(.focus) .replay-map-plate,
+		&.on-us:not(.focus) .replay-map-plate {
+			opacity: 0.7;
+		}
+
+		// The enemy the replay shows as our target: a lighter border and a soft glow on its bar.
+		&.focus {
+			z-index: 3;
+
+			.replay-map-health {
+				border-color: rgba(255, 230, 170, 0.85);
+				box-shadow: 0 0 6px rgba(255, 230, 170, 0.55);
+			}
 		}
 	}
+}
+
+.replay-map-mob-icon {
+	position: absolute;
+	width: var(--icon);
+	height: var(--icon);
+	margin: calc(var(--icon) / -2) 0 0 calc(var(--icon) / -2);
+	border-radius: 50%;
+	background-size: 115%;
+	background-position: center;
+	box-shadow:
+		0 0 0 2px var(--ring),
+		0 0 0 3px rgba(0, 0, 0, 0.85),
+		0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+// The nameplate over a mob, like the user's EllesmereUI nameplates: its level and health in small
+// text with a shadow, over a thin flat health bar, with nothing behind them. Mobs on us stand close
+// together on the ring around us, so theirs are narrower.
+.replay-map-plate {
+	--plate-width: 78px;
+	position: absolute;
+	bottom: calc(var(--icon) / 2 + 4px);
+	left: calc(var(--plate-width) / -2);
+	display: flex;
+	flex-direction: column;
+	gap: 1px;
+	width: var(--plate-width);
+	white-space: nowrap;
+	pointer-events: none;
+
+	.plate-below & {
+		bottom: auto;
+		top: calc(var(--icon) / 2 + 4px);
+	}
+
+	.on-us & {
+		--plate-width: 64px;
+	}
+}
+
+.replay-map-plate-title {
+	display: flex;
+	align-items: baseline;
+	justify-content: space-between;
+	padding: 0 1px;
+	font-size: 12px;
+	font-weight: 700;
+	line-height: 1;
+	font-variant-numeric: tabular-nums;
+	color: #fff;
+	text-shadow: 1px 1px 0 #000;
+}
+
+.replay-map-plate-percent {
+	font-weight: 400;
+	font-size: 11px;
 }
 
 // What we're doing, over our head.
@@ -186,31 +288,21 @@
 	}
 }
 
-// A mob's health bar, over its head once we pulled it.
+// A mob's health bar on its nameplate, flat with a black border like the unit frames.
 .replay-map-health {
-	position: absolute;
-	top: calc(var(--dot) / -2 - 9px);
-	left: -17px;
-	width: 34px;
-	height: 5px;
-	background: rgba(0, 0, 0, 0.75);
-	border: 1px solid rgba(0, 0, 0, 0.9);
-	display: none;
+	height: 9px;
+	overflow: hidden;
+	border: 1px solid #000;
+	background: #111;
 
-	.found & {
-		display: none;
-	}
-
-	.running &,
-	.on-us &,
-	.damaged & {
-		display: block;
+	.on-us & {
+		height: 8px;
 	}
 }
 
 .replay-map-health-fill {
 	height: 100%;
-	background: #c8312b;
+	background: #c41f1f;
 }
 
 .replay-map-totem {
@@ -222,11 +314,13 @@
 		width: var(--size);
 		height: var(--size);
 		margin: calc(var(--size) / -2) 0 0 calc(var(--size) / -2);
-		background-size: cover;
-		border-radius: 4px;
+		background-size: 115%;
+		background-position: center;
+		border-radius: 50%;
 		box-shadow:
-			0 0 0 2px var(--totem-color, #888),
-			0 0 0 3px rgba(0, 0, 0, 0.8);
+			0 0 0 1.5px var(--totem-color, #888),
+			0 0 0 2.5px rgba(0, 0, 0, 0.8),
+			0 1px 4px rgba(0, 0, 0, 0.5);
 	}
 
 	&.fire {
@@ -349,12 +443,20 @@
 	}
 }
 
+// A mob running at us glows in and out. It's the glow that changes and not the size, so the icon
+// doesn't wobble.
 @keyframes replay-map-pulse {
 	from {
-		transform: scale(1);
+		box-shadow:
+			0 0 0 2px var(--ring),
+			0 0 0 3px rgba(0, 0, 0, 0.85),
+			0 0 0 0 rgba(255, 90, 70, 0);
 	}
 	to {
-		transform: scale(1.25);
+		box-shadow:
+			0 0 0 2px var(--ring),
+			0 0 0 3px rgba(0, 0, 0, 0.85),
+			0 0 12px 4px rgba(255, 90, 70, 0.7);
 	}
 }
 

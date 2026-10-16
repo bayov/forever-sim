@@ -61,6 +61,9 @@ const SCT_MARGIN_PX = 20;
 // would scroll too far and too fast. Outgoing lines still start at the target's frame and incoming
 // lines still end at our frame.
 const MAX_SCROLL_PX = 360;
+// The narrowest stage that has the frames at its edges and the leveling map between them, in
+// pixels. Narrower, the frames stay by the class pack and the combat text runs over the map.
+const MAP_WIDE_PX = 1150;
 
 // The cast history is a timeline at the top left that ends at the current time, right under the
 // clock. Each cast sits at the moment we made it and slides left as time goes on. Casts too
@@ -396,6 +399,7 @@ export class Replay extends ResultComponent {
 	private procTracks: Array<AuraTrack> = [];
 	// The iteration the frames were last lined up with the resource bar for.
 	private alignedFor: ReplayModel | null = null;
+	private mapWide = false;
 	private historyElems = new Map<number, HTMLElement>();
 	private historyLabels = new Map<number, HTMLElement>();
 	// Where each cast goes on the history timeline, by its index in the model's actions.
@@ -623,6 +627,9 @@ export class Replay extends ResultComponent {
 			event.stopPropagation();
 			this.ui.speedMenu.classList.toggle('hide');
 		});
+		// A leveling session on a wide enough stage has its frames at the edges, with the map
+		// between them (_replay_map.scss). The combat text follows the frames.
+		new ResizeObserver(() => this.updateMapWide()).observe(this.ui.player);
 		this.ui.fullscreenButton.addEventListener('click', () => this.toggleFullscreen());
 		document.addEventListener('fullscreenchange', () => {
 			const full = document.fullscreenElement == this.ui.player;
@@ -685,6 +692,7 @@ export class Replay extends ResultComponent {
 		this.ui.player.classList.remove('empty');
 		this.model = model;
 		this.setLeveling(model);
+		this.updateMapWide();
 		this.playRange = this.rangeFor(model);
 		this.time = this.playRange.start;
 		this.build(model);
@@ -719,6 +727,15 @@ export class Replay extends ResultComponent {
 
 	// Sets the replay up for a leveling session, or back for a fight: the map, the session's
 	// controls and its faster speeds.
+	private updateMapWide() {
+		const wide = !!this.model?.leveling && this.ui.player.clientWidth >= MAP_WIDE_PX;
+		if (wide == this.mapWide) return;
+		this.mapWide = wide;
+		this.ui.player.classList.toggle('map-wide', wide);
+		// The frames moved, so they line up with the resource bar again.
+		this.alignedFor = null;
+	}
+
 	private setLeveling(model: ReplayModel) {
 		const leveling = model.leveling;
 		this.ui.player.classList.toggle('leveling', !!leveling);
@@ -731,6 +748,8 @@ export class Replay extends ResultComponent {
 						classColor: `var(--bs-${model.player.classColor})`,
 						totems: model.shaman?.totems ?? [],
 						mobHealth: (targetIndex, time) => model.enemies.find(enemy => enemy.unit.index == targetIndex)?.healthFraction(time) ?? 1,
+						mobIcon: model.levelingMobIcon,
+						focusAt: time => model.focus.at(time),
 					}
 				: null,
 		);
@@ -799,7 +818,7 @@ export class Replay extends ResultComponent {
 		const elapsed = Math.min(0.25, (now - this.lastFrameAt) / 1000);
 		this.lastFrameAt = now;
 		this.time = Math.min(this.playRange.end, this.time + elapsed * this.speed);
-		this.draw();
+		this.draw(true);
 		if (this.time >= this.playRange.end) {
 			this.pause();
 			return;
@@ -1562,8 +1581,9 @@ export class Replay extends ResultComponent {
 		this.ui.enemyCol.classList.toggle('many', this.enemyFrames.length > 2);
 	}
 
-	// Draws the screen at the current time.
-	private draw() {
+	// Draws the screen at the current time. A frame of play lets the map ease from the frame before,
+	// see ReplayMap.draw.
+	private draw(playing = false) {
 		const model = this.model;
 		if (!model || !this.isVisible()) return;
 		const time = this.time;
@@ -1578,7 +1598,7 @@ export class Replay extends ResultComponent {
 		this.drawSct(model, time);
 		this.drawControls(model, time);
 		if (model.leveling) {
-			this.map.draw(time);
+			this.map.draw(time, playing ? this.speed : null);
 			this.transport.update(time);
 		}
 		this.updateHover();
@@ -1926,7 +1946,10 @@ export class Replay extends ResultComponent {
 			.querySelector('.replay-unit-main')!
 			.getBoundingClientRect();
 		const ourRight = zone.right - playerFrame.right;
-		const targetLeft = targetFrame ? targetFrame.left - zone.left : zone.width * 0.7;
+		// With the leveling map on a wide stage, the frames sit at its edges (_replay_map.scss). Without
+		// a target, the target's frame would be where ours is, from the other side.
+		const withMap = this.mapWide;
+		const targetLeft = targetFrame ? targetFrame.left - zone.left : withMap ? zone.width - (playerFrame.right - zone.left) : zone.width * 0.7;
 
 		// Where each side's lines start and end, in pixels from the top of the area.
 		const history = this.ui.history.parentElement!.getBoundingClientRect();
@@ -1940,8 +1963,15 @@ export class Replay extends ResultComponent {
 		let newerOut = Infinity;
 
 		// The crits' area has the same cap, so in full screen they stay near the scrolling lines.
-		const critBottom = this.ui.procs.getBoundingClientRect().top - zone.top;
-		const critTop = Math.max(history.bottom - zone.top, critBottom - MAX_SCROLL_PX);
+		let critBottom = this.ui.procs.getBoundingClientRect().top - zone.top;
+		let critTop = Math.max(history.bottom - zone.top, critBottom - MAX_SCROLL_PX);
+		// The map takes the middle, so there the crits stay over the frames like the lines that
+		// scroll, above where those scroll. When that room is too small, they share the lines' room.
+		const mapCritBottom = Math.min(inTop, outTop) - SCT_MARGIN_PX;
+		if (withMap && mapCritBottom - (history.bottom - zone.top) >= CRIT_SPOT_PX) {
+			critTop = history.bottom - zone.top;
+			critBottom = mapCritBottom;
+		}
 		const critSpan = critBottom - critTop;
 		const spots = Math.max(1, Math.min(MAX_CRIT_SPOTS, Math.floor(critSpan / CRIT_SPOT_PX)));
 		if (spots != this.critSpots) {
@@ -1982,11 +2012,11 @@ export class Replay extends ResultComponent {
 			}
 			const opacity = pushedOut ? 0 : Math.min(1, age / 0.06) * Math.min(1, (event.end - age) / (event.end - event.fadeAt));
 			elem.style.top = `${y.toFixed(1)}px`;
-			if (event.side == 'out' && !event.sticky) {
+			if (event.side == 'out' && (!event.sticky || withMap)) {
 				elem.style.left = `${targetLeft}px`;
 			} else if (event.side == 'out') {
 				elem.style.right = `${zone.width - targetLeft + STICKY_GAP_PX}px`;
-			} else if (!event.sticky) {
+			} else if (!event.sticky || withMap) {
 				elem.style.right = `${ourRight}px`;
 			} else {
 				elem.style.left = `${zone.width - ourRight + STICKY_GAP_PX}px`;
