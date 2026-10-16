@@ -61,7 +61,18 @@ func (shaman *Shaman) newHealingStreamTotemSpellConfig(rank int) core.SpellConfi
 	// Purification's tooltip says "your healing spells", but in the Forever client (70291) and
 	// the Classic Era client (1.15.9) it only lists Healing Wave, Lesser Healing Wave and Chain
 	// Heal, and we have none of those. Healing Stream's heal isn't on the list in either client.
-	baseHealing := HealingStreamTotemBaseHealing[rank] * (1 + shaman.restorativeTotemsModifier())
+	//
+	// In Classic Restorative Totems raises only the base heal. Since the October 15 development
+	// notes (client 1.60.1.70425) it raises all of the heal under Forever, the part from healing
+	// power too (forever-bugs #291).
+	restorativeTotems := 1 + shaman.restorativeTotemsModifier()
+	baseHealing := HealingStreamTotemBaseHealing[rank]
+	healingMultiplier := 1.0
+	if shaman.Env.IsForever() {
+		healingMultiplier = restorativeTotems
+	} else {
+		baseHealing *= restorativeTotems
+	}
 	spellCoeff := HealingStreamTotemSpellCoeff[rank]
 	manaCost := HealingStreamTotemManaCost[rank]
 	level := HealingStreamTotemLevel[rank]
@@ -80,7 +91,7 @@ func (shaman *Shaman) newHealingStreamTotemSpellConfig(rank int) core.SpellConfi
 		ProcMask:    core.ProcMaskSpellHealing,
 		Flags:       core.SpellFlagHelpful | core.SpellFlagNoOnCastComplete | core.SpellFlagNoLogs | core.SpellFlagNoMetrics,
 
-		DamageMultiplier: 1,
+		DamageMultiplier: healingMultiplier,
 		ThreatMultiplier: 1,
 		BonusCoefficient: spellCoeff,
 
