@@ -312,7 +312,9 @@ Consecration's share went up with 70425's 0.042 tick coefficient on master, so i
 - **Feral:** at 765.7 it passes Balance Wrath duty-FF (755.8), and stays below Balance Wrath (784.4).
 - **Ret:** −1.3% doesn't change the order: Ret twist at 841.2 is still above Balance (828.2), and Enhancement (852.9) was already above it.
 
-Still to re-run once the shaman port merges: Elemental, which is currently last at 684.9 (Lightning Bolt ×1.12 / ×1.38, Lava Burst), and Balance Wrath ×1.17.
+Balance (druid ports #61 and #64 are already on master), with Wrath 31+ ×1.17: Balance Wrath goes 784.4 → 798.1 (+1.7%), still below Enhancement + Water Shield (804.2). Balance goes 828.2 → 831.8 (+0.4%). Neither changes the order.
+
+Still to re-run once the shaman port merges: Elemental, which is currently last at 684.9 (Lightning Bolt ×1.12 / ×1.38, Lava Burst).
 
 ## Cross-class summary
 
