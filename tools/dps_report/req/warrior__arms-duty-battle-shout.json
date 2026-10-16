@@ -513,7 +513,7 @@
                   }
                 },
                 {
-                  "notes": "Right after a main hand swing, so its 1 sec cast loses no swing time.",
+                  "notes": "Right after a main hand swing, so its 1s cast loses no swing time.",
                   "action": {
                     "condition": {
                       "and": {

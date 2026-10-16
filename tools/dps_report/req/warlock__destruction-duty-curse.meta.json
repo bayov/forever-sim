@@ -25,7 +25,7 @@
     "ok": true,
     "note": "+0.05 vs published"
   },
-  "summary": "Destruction keeping its own Curse of the Elements (rank 4, 10% magic damage taken) up for the raid, with the raid's copy off. Under Forever the curse has its own slot, so the bane stays. Costs 12.2 DPS at 180 s.",
+  "summary": "Destruction keeping its own Curse of the Elements (rank 4, 10% magic damage taken) up for the raid, with the raid's copy off. Under Forever the curse has its own slot, so the bane stays. Costs 12.2 DPS at 180s.",
   "keyTalents": [
     "Conflagrate",
     "Shadow and Flame",
@@ -37,13 +37,13 @@
     "Agonizing Flames"
   ],
   "rotation": [
-    "Pre-pull: Shadow Bolt at -2.5 s (lands just after the pull)",
+    "Pre-pull: Shadow Bolt at -2.5s (lands just after the pull)",
     "Racials on cooldown",
     "Life Tap below 5% mana or when the filler costs more than the mana left",
     "Curse of the Elements on duty for the raid, right after the opener and recast before it drops",
-    "Bane of Doom when it lands before the fight ends (more than 60 s left)",
+    "Bane of Doom when it lands before the fight ends (more than 60s left)",
     "Bane of Agony while Bane of Doom is on cooldown or would not land",
-    "Corruption when it is down (more than 9 s left)",
+    "Corruption when it is down (more than 9s left)",
     "Immolate when down or when less than its cast time remains",
     "Conflagrate on cooldown while Immolate is up",
     "Death Coil, then Searing Pain, when the filler would not land before the fight ends",
@@ -67,7 +67,7 @@
   ],
   "caveats": [
     "Under Forever a bane and a curse use separate slots, so the duty curse costs only its GCDs and mana, not the bane.",
-    "Two synthetic item level 71 trinkets: 38 spell power and 13 crit rating, and an on-use 140 spell power for 20 s every 2 min (at the pull, then on cooldown).",
+    "Two synthetic item level 71 trinkets: 38 spell power and 13 crit rating, and an on-use 140 spell power for 20s every 2 min (at the pull, then on cooldown).",
     "Demon sensitivity: no owner scaling 946.1, Succubus melee halved 947.4, both 922.9 (first set)",
     "Succubus 984.9 vs Felhunter 960.1, Imp 950.7, no demon 895.4; Spellstone and Firestone within 0.1 (first set)",
     "Demon scaling uses Season of Discovery placeholder coefficients (Forever's are server side). Worth 49 on Demonology and 39 on the other builds.",

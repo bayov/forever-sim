@@ -18,6 +18,6 @@
         {"action":{"castSpell":{"spellId":{"spellId":408345}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.2"}}}}},"notes":"Goes off around the fire totem, so it needs one down."},
         {"action":{"castSpell":{"spellId":{"spellId":29228}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":29228}}}}}]}}}},
         {"action":{"castSpell":{"spellId":{"spellId":10414}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"dotRemainingTime":{"spellId":{"spellId":29228}}},"op":"OpGt","rhs":{"const":{"val":"1s"}}}}]}}},"notes":"Unless Flame Shock is about to run out."},
-        {"action":{"castSpell":{"spellId":{"spellId":10432}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":10432}}}}}},"notes":"When nothing above is ready. Raid damage on the shaman fires its orbs at the boss: three per cast, at most one every 3.5 sec."}
+        {"action":{"castSpell":{"spellId":{"spellId":10432}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":10432}}}}}},"notes":"When nothing above is ready. Raid damage on the shaman fires its orbs at the boss: three per cast, at most one every 3.5s."}
     ]
 }

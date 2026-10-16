@@ -40,8 +40,8 @@
     "Slice and Dice at 1+ combo points when down; refresh at 5 when about to drop",
     "Cold Blood right before a 5-point Eviscerate",
     "Thistle Tea at 10 energy or less; Sapper, Land Mine and potion while Slice and Dice is up",
-    "Eviscerate at 4+ combo points (with Slice and Dice up, 79+ energy, or under 6 s left); spend leftover points in the last 3 s",
-    "Backstab right after a main-hand swing (0.25 s), or at 100 energy"
+    "Eviscerate at 4+ combo points (with Slice and Dice up, 79+ energy, or under 6s left); spend leftover points in the last 3s",
+    "Backstab right after a main-hand swing (0.25s), or at 100 energy"
   ],
   "consumes": [
     "Elixir of the Mongoose",
@@ -57,8 +57,8 @@
     "Deadly Poison (main hand) and Instant Poison (off hand), each beside a Dense Sharpening Stone"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 31 Agility and 15 crit rating, and an on-use 335 attack power for 20 s every 2 min (at the pull, then on cooldown).",
-    "4.8% behind Combat Daggers at 180 s",
+    "Two synthetic item level 71 trinkets: 31 Agility and 15 crit rating, and an on-use 335 attack power for 20s every 2 min (at the pull, then on cooldown).",
+    "4.8% behind Combat Daggers at 180s",
     "Improved Sinister Strike 2 only fills a row and adds no DPS.",
     "Murder (+4% damage vs Humanoids and Giants) does nothing on the generic boss. Its 2 points go to Lethality (Vile Poisons for Seal Fate Daggers). The vs Humanoid build keeps Murder 2/2.",
     "No Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV). They would add 13 to 18.",

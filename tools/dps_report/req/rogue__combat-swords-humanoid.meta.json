@@ -42,14 +42,14 @@
     "Cold Blood"
   ],
   "rotation": [
-    "Pre-pull: Blade Flurry at -1 s",
+    "Pre-pull: Blade Flurry at -1s",
     "Slice and Dice at 1+ combo points when down; refresh at 5 when about to drop",
     "Adrenaline Rush under 39 energy while Slice and Dice is up",
     "Blade Flurry on cooldown while Slice and Dice is up",
     "Cold Blood right before a 5-point Eviscerate",
     "Thistle Tea at 10 energy or less; Sapper, Land Mine and potion while Slice and Dice is up",
-    "Eviscerate at 5 combo points (with Slice and Dice up, 79+ energy, or under 6 s left); spend leftover points in the last 3 s",
-    "Sinister Strike right after a main-hand swing (0.5 s), or at 79+ energy"
+    "Eviscerate at 5 combo points (with Slice and Dice up, 79+ energy, or under 6s left); spend leftover points in the last 3s",
+    "Sinister Strike right after a main-hand swing (0.5s), or at 79+ energy"
   ],
   "consumes": [
     "Elixir of the Mongoose",
@@ -66,7 +66,7 @@
   ],
   "caveats": [
     "Murder is damage only (+4%) and only against Humanoids and Giants",
-    "Two synthetic item level 71 trinkets: 31 Agility and 15 crit rating, and an on-use 335 attack power for 20 s every 2 min (at the pull, then on cooldown).",
+    "Two synthetic item level 71 trinkets: 31 Agility and 15 crit rating, and an on-use 335 attack power for 20s every 2 min (at the pull, then on cooldown).",
     "Swords keep 5-point Eviscerates. 4 points lose 6 to 8 DPS.",
     "No Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV). They would add 13 to 18.",
     "Grimstitch 4-piece and 5-piece bonuses aren't active on the synthetic gear (about +8 and +6 for Combat Daggers).",

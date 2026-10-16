@@ -48,7 +48,7 @@ def build(dump, builds=None):
              'dps180': by_secs.get(180, (None,))[0], 'se180': by_secs.get(180, (None, None))[1],
              'dps120': by_secs.get(120, (None,))[0], 'dps300': by_secs.get(300, (None,))[0]}
         rows.append(r)
-    # sensitivities: each single setting against the build's base, at 180 s
+    # sensitivities: each single setting against the build's base, at 180s
     sens = defaultdict(list)
     for (bid, combo), (by_secs, rot) in res.items():
         if combo and '|' not in combo and 180 in by_secs:

@@ -658,7 +658,7 @@
                   }
                 },
                 {
-                  "notes": "When nothing above is ready. Raid damage on the shaman fires its orbs at the boss: three per cast, at most one every 3.5 sec.",
+                  "notes": "When nothing above is ready. Raid damage on the shaman fires its orbs at the boss: three per cast, at most one every 3.5s.",
                   "action": {
                     "condition": {
                       "not": {

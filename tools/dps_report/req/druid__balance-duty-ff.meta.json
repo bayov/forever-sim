@@ -23,7 +23,7 @@
     "stderr": 0.24,
     "iters": 20000,
     "ok": true,
-    "note": "180 s, seed 1"
+    "note": "180s, seed 1"
   },
   "summary": "The Balance build keeping Faerie Fire on the boss for the raid. Moonkin gets nothing from the armor, so the duty costs the GCDs spent on it.",
   "keyTalents": [
@@ -37,11 +37,11 @@
     "Naturalist"
   ],
   "rotation": [
-    "Pre-pull: Starfire (rank 6) cast 3 s before the pull so it lands at 0",
+    "Pre-pull: Starfire (rank 6) cast 3s before the pull so it lands at 0",
     "Racials, potions and runes on cooldown (Innervate on its own trigger)",
-    "Faerie Fire on the target first after the pull, again once it has under 1.5 s left",
-    "Insect Swarm whenever it is down (more than 8 s of fight left)",
-    "Moonfire whenever its dot is down (more than 8 s of fight left)",
+    "Faerie Fire on the target first after the pull, again once it has under 1.5s left",
+    "Insect Swarm whenever it is down (more than 8s of fight left)",
+    "Moonfire whenever its dot is down (more than 8s of fight left)",
     "Starfire when Clearcasting is up (Wrath does not use it up)",
     "Moonfire when a Starfire would not land before the end",
     "Wrath when Eclipse is at 2 charges or fewer and no Wrath is in flight",
@@ -62,11 +62,11 @@
     "Cerebral Cortex Compound"
   ],
   "caveats": [
-    "Costs 32.4 / 30.7 / 28.7 DPS against the base build at 120 / 180 / 300 s.",
-    "Two synthetic item level 71 trinkets: 36 spell power and 15 crit rating, and an on-use 140 spell power for 20 s every 2 min (at the pull, then on cooldown).",
-    "No Ahn'Qiraj ranks: Starfire rank 6 costs 13.3 DPS at 180 s.",
+    "Costs 32.4 / 30.7 / 28.7 DPS against the base build at 120s / 180s / 300s.",
+    "Two synthetic item level 71 trinkets: 36 spell power and 15 crit rating, and an on-use 140 spell power for 20s every 2 min (at the pull, then on cooldown).",
+    "No Ahn'Qiraj ranks: Starfire rank 6 costs 13.3 DPS at 180s.",
     "5-piece Grovekeeper Eclipse instead of 2-piece would add 12.6 and Swarming Idol is worth 3.3 (measured before the 5a and 1b rounds)",
-    "At 300 s mana runs out, and the plain weave without the Clearcasting Starfire is 2 ahead.",
+    "At 300s mana runs out, and the plain weave without the Clearcasting Starfire is 2 ahead.",
     "Wrath VIII's base damage is ×1.085, halfway to the level 30 rank's 0.42 of Era (only ranks 1 to 5 were retuned). The client has ×1.00.",
     "Unverified: Omen of Clarity's proc chance on spells, and Eclipse charges on Wrath landing.",
     "One +2% crit elixir per character. A second one (Owl) would add 15.1."

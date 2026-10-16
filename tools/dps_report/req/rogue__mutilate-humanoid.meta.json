@@ -45,8 +45,8 @@
     "Slice and Dice at 1+ combo points when down; refresh when about to drop",
     "Cold Blood right before a 5-point Eviscerate",
     "Thistle Tea at 10 energy or less; Sapper, Land Mine and potion while Slice and Dice is up",
-    "Eviscerate at 4+ combo points (with Slice and Dice up, 79+ energy, or under 6 s left); spend leftover points in the last 3 s",
-    "Mutilate right after a main-hand swing (0.75 s)",
+    "Eviscerate at 4+ combo points (with Slice and Dice up, 79+ energy, or under 6s left); spend leftover points in the last 3s",
+    "Mutilate right after a main-hand swing (0.75s)",
     "Backstab as fallback builder"
   ],
   "consumes": [
@@ -64,7 +64,7 @@
   ],
   "caveats": [
     "Murder is damage only (+4%) and only against Humanoids and Giants",
-    "Two synthetic item level 71 trinkets: 31 Agility and 15 crit rating, and an on-use 335 attack power for 20 s every 2 min (at the pull, then on cooldown).",
+    "Two synthetic item level 71 trinkets: 31 Agility and 15 crit rating, and an on-use 335 attack power for 20s every 2 min (at the pull, then on cooldown).",
     "Backstab with the same talents is about 20 DPS ahead. Mutilate is kept because it defines the spec.",
     "Venom (25 Energy) loses DPS at every combo point count, so there's no Venom preset.",
     "Open for beta testing: does Mutilate need only a main-hand dagger?",

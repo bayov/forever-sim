@@ -23,9 +23,9 @@
     "stderr": 0.36,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 180 s, seed 1"
+    "note": "verify.py, 180s, seed 1"
   },
-  "summary": "Enhancement with Restoration points for Water Shield and Mana Tide Totem, cast at 20% mana for the group. Magma Totem rotation, and Lightning Shield kept up, which beat Water Shield at every raid hit rate tried. 7.9% behind the default at 180 s.",
+  "summary": "Enhancement with Restoration points for Water Shield and Mana Tide Totem, cast at 20% mana for the group. Magma Totem rotation, and Lightning Shield kept up, which beat Water Shield at every raid hit rate tried. 7.9% behind the default at 180s.",
   "keyTalents": [
     "Stormstrike",
     "Maelstrom Weapon",
@@ -37,16 +37,16 @@
     "Mental Dexterity"
   ],
   "rotation": [
-    "Pre-pull: Lightning Shield at -1.5 s; starting totems Strength of Earth IV, Windfury Totem and Mana Spring at -4 / -3 / -2 s, and Magma Totem 1 s before the pull",
-    "Recast Strength of Earth, Windfury Totem and Mana Spring when down, with at least 20 s left",
+    "Pre-pull: Lightning Shield at -1.5s; starting totems Strength of Earth IV, Windfury Totem and Mana Spring at -4 / -3 / -2s, and Magma Totem 1s before the pull",
+    "Recast Strength of Earth, Windfury Totem and Mana Spring when down, with at least 20s left",
     "Mana Tide Totem at 20% mana or less; Mana Spring waits until the tide ends",
-    "Magma Totem when it is down and at least 10 s remain",
+    "Magma Totem when it is down and at least 10s remain",
     "Rage of the Farseer on cooldown, waiting for the on-use trinket; Blood Fury lined up with it; other cooldowns",
     "Stormstrike on cooldown",
     "Lightning Bolt at 5 Maelstrom Weapon stacks",
     "Fire Nova above 20% mana (ahead of the shocks)",
     "Flame Shock when its DoT is down",
-    "Earth Shock while Flame Shock has more than 1 s left",
+    "Earth Shock while Flame Shock has more than 1s left",
     "Lightning Shield when it is down and nothing else is ready (orbs fire at the target on raid damage hits, 2 a minute)"
   ],
   "consumes": [
@@ -71,10 +71,10 @@
     "Goblin Land Mine"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 32 Strength and 14 crit rating, and an on-use 335 attack power for 20 s every 2 min (at the pull, then on cooldown).",
+    "Two synthetic item level 71 trinkets: 32 Strength and 14 crit rating, and an on-use 335 attack power for 20s every 2 min (at the pull, then on cooldown).",
     "Mana Tide Totem is worth about 0.1 for the shaman itself in a 3 min fight.",
     "Water Shield does nothing: the rotation keeps Lightning Shield up, which stays ahead even with 70425's spell-crit globes.",
-    "Orc leads on Savage (1% crit with any weapon since client 70425). Windshaper Skyborne is 2.8 behind at 180 s.",
+    "Orc leads on Savage (1% crit with any weapon since client 70425). Windshaper Skyborne is 2.8 behind at 180s.",
     "Assumed: Maelstrom Weapon procs at 2 PPM per point, until the beta reaches level 34.",
     "Elemental Focus triggers: if Stormstrike can trigger it, Enhancement gets too few Clearcasting procs.",
     "Raid damage hits on the shaman (2 a minute, each fires Lightning Shield) are estimated from boss timers. The assumptions panel also runs 0 and 10.",

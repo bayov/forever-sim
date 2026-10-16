@@ -23,9 +23,9 @@
     "stderr": 0.36,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 180 s, seed 1"
+    "note": "verify.py, 180s, seed 1"
   },
-  "summary": "The default Enhancement build with Improved Ghost Wolf 2 for utility, from the talent search with it pinned. 6.9 DPS behind at 180 s.",
+  "summary": "The default Enhancement build with Improved Ghost Wolf 2 for utility, from the talent search with it pinned. 6.9 DPS behind at 180s.",
   "keyTalents": [
     "Stormstrike",
     "Maelstrom Weapon",
@@ -36,9 +36,9 @@
     "Improved Ghost Wolf"
   ],
   "rotation": [
-    "Pre-pull: Lightning Shield at -3 s, Searing Totem at -1.5 s; starting totems Strength of Earth IV, Windfury Totem and Mana Spring at -4 / -3 / -2 s (they run out a few seconds before a 300 s fight ends), no mana cost",
-    "Recast Strength of Earth, Windfury Totem and Mana Spring when down, with at least 20 s left",
-    "Searing Totem when it is down and at least 10 s remain (after the pre-pull one)",
+    "Pre-pull: Lightning Shield at -3s, Searing Totem at -1.5s; starting totems Strength of Earth IV, Windfury Totem and Mana Spring at -4 / -3 / -2s (they run out a few seconds before a 300s fight ends), no mana cost",
+    "Recast Strength of Earth, Windfury Totem and Mana Spring when down, with at least 20s left",
+    "Searing Totem when it is down and at least 10s remain (after the pre-pull one)",
     "Rage of the Farseer on cooldown, waiting for the on-use trinket; Blood Fury lined up with it",
     "Other cooldowns (Sapper, Demonic Rune, Major Mana Potion, Land Mine)",
     "Stormstrike on cooldown",
@@ -71,9 +71,9 @@
     "Goblin Land Mine"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 32 Strength and 14 crit rating, and an on-use 335 attack power for 20 s every 2 min (at the pull, then on cooldown).",
+    "Two synthetic item level 71 trinkets: 32 Strength and 14 crit rating, and an on-use 335 attack power for 20s every 2 min (at the pull, then on cooldown).",
     "Improved Ghost Wolf is utility only (no DPS change).",
-    "Orc leads on Savage (1% crit with any weapon since client 70425). Windshaper Skyborne is 3.0 behind at 180 s.",
+    "Orc leads on Savage (1% crit with any weapon since client 70425). Windshaper Skyborne is 3.0 behind at 180s.",
     "Assumed: Maelstrom Weapon procs at 2 PPM per point, until the beta reaches level 34.",
     "Elemental Focus triggers: if Stormstrike can trigger it, Enhancement gets too few Clearcasting procs.",
     "Raid damage hits on the shaman (2 a minute, each fires Lightning Shield) are estimated from boss timers. The assumptions panel also runs 0 and 10.",

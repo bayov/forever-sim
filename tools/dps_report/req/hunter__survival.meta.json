@@ -16,7 +16,7 @@
   "apl": "sv",
   "published": {
     "dps": 904.6,
-    "source": "client 1.60.1.70425 (Sniper Shot in Efficiency and Mortal Shots, the raid's Trueshot Aura, hunter_trap_ap), 2026-10-16: 180 s, 20000 iterations, seed 1"
+    "source": "client 1.60.1.70425 (Sniper Shot in Efficiency and Mortal Shots, the raid's Trueshot Aura, hunter_trap_ap), 2026-10-16: 180s, 20000 iterations, seed 1"
   },
   "verify": {
     "dps": 904.58,
@@ -37,7 +37,7 @@
     "Clever Traps"
   ],
   "rotation": [
-    "Pre-pull: walk into melee at -6 s, Aspect of the Beast at -3 s",
+    "Pre-pull: walk into melee at -6s, Aspect of the Beast at -3s",
     "Racials, potions and other cooldowns on cooldown",
     "Mongoose Bite whenever Expose Prey (or a dodge) opens it",
     "Strider Kick on cooldown",
@@ -60,17 +60,17 @@
     "Goblin Land Mine"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 32 Agility and 14 crit rating, and an on-use 335 attack power for 20 s every 2 min (at the pull, then on cooldown).",
+    "Two synthetic item level 71 trinkets: 32 Agility and 14 crit rating, and an on-use 335 attack power for 20s every 2 min (at the pull, then on cooldown).",
     "Pet scaling: 10% of RAP plus the hunter's hit (SoD placeholder for hit). With SoD's full 22% pet scaling this build would gain 18.",
     "Wildstalker Armor 4-piece and 5-piece aren't in the preset (2-piece only). They would add nothing.",
     "Assumed: Raptor Strike rank 8 adds 96, halfway between the client's 70 and Era's 0.88. Lower ranks keep the client's values.",
     "Left out: Fire-toasted Bun (+9, seasonal) and Elemental Sharpening Stone (plans only from Molten Core).",
     "Assumed: 22% more crit per Agility than Classic, the beta's level 1 ratio carried to 60.",
-    "Assumed: a pet's hit scales with its attack speed as in Classic. On the beta every pet hits like a 2.0 s pet. The cat is still the best pet, and every cat speed sims within 1 DPS.",
-    "Keeps Rhok'delar's 2.9 s bow. Survival never shoots, so every ranged weapon sims the same.",
-    "Human is best (Ruthless, 2% crit with any weapon since client 70425): 0.8 ahead of Orc at 180 s and 2.0 at 300 s. Orc leads by 1.6 at 120 s.",
-    "Immolation Trap adds 2% of ranged attack power a tick (+15.5 DPS at 180 s). The 15 October dev notes say fire traps now scale with attack power, but the client has no coefficient. The assumption runs none, 2% (Wrath's value) and 4%.",
-    "The raid's Trueshot Aura (a raid aura since client 70425, from the raid's Marksmanship hunter) adds 1.0 at 180 s. It works through the pet's 10% of ranged attack power, since Survival never shoots."
+    "Assumed: a pet's hit scales with its attack speed as in Classic. On the beta every pet hits like a 2.0s pet. The cat is still the best pet, and every cat speed sims within 1 DPS.",
+    "Keeps Rhok'delar's 2.9s bow. Survival never shoots, so every ranged weapon sims the same.",
+    "Human is best (Ruthless, 2% crit with any weapon since client 70425): 0.8 ahead of Orc at 180s and 2.0 at 300s. Orc leads by 1.6 at 120s.",
+    "Immolation Trap adds 2% of ranged attack power a tick (+15.5 DPS at 180s). The 15 October dev notes say fire traps now scale with attack power, but the client has no coefficient. The assumption runs none, 2% (Wrath's value) and 4%.",
+    "The raid's Trueshot Aura (a raid aura since client 70425, from the raid's Marksmanship hunter) adds 1.0 at 180s. It works through the pet's 10% of ranged attack power, since Survival never shoots."
   ],
-  "notes": "Request written by mksettings (spec hunter_sv) unchanged; it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Distance is 5 yd as in the mksettings raid the number was measured in (the UI preset starts at 25 yd; the APL walks in 6 s before the pull, which the preset says costs nothing). Survival keeps a 1.0 sec cat out (DefaultOptions)."
+  "notes": "Request written by mksettings (spec hunter_sv) unchanged; it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Distance is 5 yd as in the mksettings raid the number was measured in (the UI preset starts at 25 yd; the APL walks in 6s before the pull, which the preset says costs nothing). Survival keeps a 1.0s cat out (DefaultOptions)."
 }

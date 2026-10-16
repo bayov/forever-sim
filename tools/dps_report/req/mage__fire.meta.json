@@ -23,9 +23,9 @@
     "stderr": 0.4,
     "iters": 20000,
     "ok": true,
-    "note": "180 s, 20000 iterations, seed 1, on the 70425 rotation (seed 100001 within 0.6)"
+    "note": "180s, 20000 iterations, seed 1, on the 70425 rotation (seed 100001 within 0.6)"
   },
-  "summary": "Deep Fire to Combustion with Critical Mass 5, Burning Soul and Master of Elements, plus Arcane Concentration and Missile Barrage 2 from Arcane. 2% behind Frostfire at 180 s, ahead at 300 s.",
+  "summary": "Deep Fire to Combustion with Critical Mass 5, Burning Soul and Master of Elements, plus Arcane Concentration and Missile Barrage 2 from Arcane. 2% behind Frostfire at 180s, ahead at 300s.",
   "keyTalents": [
     "Missile Barrage",
     "Improved Fire Blast",
@@ -39,15 +39,15 @@
     "Combustion"
   ],
   "rotation": [
-    "Pre-pull: Fireball at -3 s",
+    "Pre-pull: Fireball at -3s",
     "Combustion and the on-use trinket once Fire Vulnerability has 5 stacks",
     "Cooldowns (Demonic Rune, racial) on a free GCD; mana gems never",
-    "Evocation below 20% mana with more than 90 s left",
+    "Evocation below 20% mana with more than 90s left",
     "Scorch to 5 Fire Vulnerability stacks and before they run out",
-    "Pyroblast at 3 Heating Up stacks (1.5 s cast)",
+    "Pyroblast at 3 Heating Up stacks (1.5s cast)",
     "Arcane Missiles on a Missile Barrage proc",
     "Fire Blast on cooldown at 20% mana or more (every Fire Blast adds a Heating Up stack)",
-    "Fire Blast, then Scorch, when a Fireball would not land before the end (its cast plus 1.04 s)",
+    "Fire Blast, then Scorch, when a Fireball would not land before the end (its cast plus 1.04s)",
     "Filler: Fireball"
   ],
   "consumes": [
@@ -67,7 +67,7 @@
     "Goblin Sapper"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 41 spell power and 11 crit rating, and an on-use 140 spell power for 20 s every 2 min (at the pull, then on cooldown).",
+    "Two synthetic item level 71 trinkets: 41 spell power and 11 crit rating, and an on-use 140 spell power for 20s every 2 min (at the pull, then on cooldown).",
     "Ignite rolls with no cap as in SoD (Era caps at 5 crits, open). Its ticks never crit.",
     "Heating Up: every Fire Blast adds a stack (two on a crit), from the 70425 tooltip. One Pyroblast uses them all.",
     "Fire Power (70425) counts Fire Vulnerability and the Fireball, Pyroblast, Flamestrike and Ignite DoTs (at most 4), multiplied with Fire Vulnerability. Whether it adds or multiplies is open.",

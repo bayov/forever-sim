@@ -23,9 +23,9 @@
     "stderr": 0.16,
     "iters": 20000,
     "ok": true,
-    "note": "180 s, seed 1"
+    "note": "180s, seed 1"
   },
-  "summary": "The cat keeping Faerie Fire (Feral) on the boss for the raid. Its own attacks gain from the armor too, so the duty costs only its 1 s GCDs and the first second before it lands.",
+  "summary": "The cat keeping Faerie Fire (Feral) on the boss for the raid. Its own attacks gain from the armor too, so the duty costs only its 1s GCDs and the first second before it lands.",
   "keyTalents": [
     "Shredding Attacks",
     "Shifting Power",
@@ -39,11 +39,11 @@
   "rotation": [
     "Opener: plain Cat Form (no Stealth/Prowl or Ravage)",
     "Racials, trinkets and potions on cooldown; Berserk with the on-use trinket",
-    "Faerie Fire (Feral) from Cat Form first after the cooldowns, again once it has under 7 s left, so a miss gets a retry (free, 1 s GCD, 6 s cooldown)",
-    "Shifting Power at 50 Energy or less, unless a Ferocious Bite is due (5 CP and Rip has 6 s or more)",
-    "Ferocious Bite at any combo points in the last 2 s",
-    "Rip at 4+ combo points when it is down (not in the last 8 s)",
-    "Ferocious Bite at 5 combo points and 35 Energy while Rip has 6 s or more left (or in the last 8 s)",
+    "Faerie Fire (Feral) from Cat Form first after the cooldowns, again once it has under 7s left, so a miss gets a retry (free, 1s GCD, 6s cooldown)",
+    "Shifting Power at 50 Energy or less, unless a Ferocious Bite is due (5 CP and Rip has 6s or more)",
+    "Ferocious Bite at any combo points in the last 2s",
+    "Rip at 4+ combo points when it is down (not in the last 8s)",
+    "Ferocious Bite at 5 combo points and 35 Energy while Rip has 6s or more left (or in the last 8s)",
     "Shred below 5 combo points"
   ],
   "consumes": [
@@ -59,14 +59,14 @@
     "Thistle Tea"
   ],
   "caveats": [
-    "Costs 4.2 / 3.1 / 2.2 DPS against the base build at 120 / 180 / 300 s.",
-    "Two synthetic item level 71 trinkets: 29 Agility and 17 Strength, and an on-use 165 Strength for 20 s every 2 min (at the pull, then on cooldown).",
+    "Costs 4.2 / 3.1 / 2.2 DPS against the base build at 120s / 180s / 300s.",
+    "Two synthetic item level 71 trinkets: 29 Agility and 17 Strength, and an on-use 165 Strength for 20s every 2 min (at the pull, then on cooldown).",
     "Rip's level 31+ client ranks are 6-9% below Era. Era values would give +1.6%.",
-    "Howling Idol (0.5 s off Shifting Power since client 1.60.1.70425) is worth 4.8 at 180 s; 5-piece Grovekeeper Ferocity would add 5.9 (measured before the 5a and 1b rounds)",
+    "Howling Idol (0.5s off Shifting Power since client 1.60.1.70425) is worth 4.8 at 180s; 5-piece Grovekeeper Ferocity would add 5.9 (measured before the 5a and 1b rounds)",
     "Unverified: Shred's flat bonus, AP on Rip and Ferocious Bite, Rend and Tear's scope",
     "Keeping Rake up costs 33 DPS. Rip at 5 CP ties.",
     "One +2% crit elixir per character. Grizzly in place of Ferocity would add 4.9.",
-    "Tiger's Fury is gone in Forever (replaced by Shifting Power). It was worth 24.9 at 180 s.",
+    "Tiger's Fury is gone in Forever (replaced by Shifting Power). It was worth 24.9 at 180s.",
     "The cat's swing damage spreads 20% either side of the weapon's DPS (the server's range isn't known).",
     "Windfury Totem and a second shaman's Grace of Air in the melee group (they stack since client 70425). Dense Weightstone on the mace adds 4.9. Elemental Sharpening Stone is left out (plans only from Molten Core)."
   ],

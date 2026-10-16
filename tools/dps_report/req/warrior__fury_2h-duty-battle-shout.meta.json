@@ -25,7 +25,7 @@
     "ok": true,
     "note": "same sim as the published number"
   },
-  "summary": "Fury Two-Hand keeping Battle Shout up for its party, with the raid's Battle Shout off. 2.9 DPS behind the base build at 180 s.",
+  "summary": "Fury Two-Hand keeping Battle Shout up for its party, with the raid's Battle Shout off. 2.9 DPS behind the base build at 180s.",
   "keyTalents": [
     "Bloodthirst",
     "Flurry",
@@ -36,11 +36,11 @@
     "Enrage"
   ],
   "rotation": [
-    "Start in Berserker Stance with no Rage; Bloodrage and Battle Shout 3 sec before the pull",
+    "Start in Berserker Stance with no Rage; Bloodrage and Battle Shout 3s before the pull",
     "Sunder Armor as the first GCD after the pull (every warrior; the tanks keep it up after)",
-    "Battle Shout again with 35 sec of it left (about 142 sec in, before the execute phase), unless it lasts the fight (Forever's lasts 3 min)",
-    "Death Wish held for the last 36 sec, Recklessness for the last 30 sec",
-    "Blood Fury and Berserking held for the last 30 sec, Elune's Light with Death Wish; Mighty Rage Potion at the pull, second held for the last 20 sec",
+    "Battle Shout again with 35s of it left (about 142s in, before the execute phase), unless it lasts the fight (Forever's lasts 3 min)",
+    "Death Wish held for the last 36s, Recklessness for the last 30s",
+    "Blood Fury and Berserking held for the last 30s, Elune's Light with Death Wish; Mighty Rage Potion at the pull, second held for the last 20s",
     "Bloodrage under 20 Rage",
     "Execute first in the execute phase",
     "Bloodthirst, then Slam from 30 Rage right after a main hand swing, then Whirlwind at 25+ Rage",
@@ -61,15 +61,15 @@
     "Dense Sharpening Stone (main hand)"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 30 Strength and 16 crit rating, and an on-use 335 attack power for 20 s every 2 min (at the pull, with the last use held for the final 34 s).",
+    "Two synthetic item level 71 trinkets: 30 Strength and 16 crit rating, and an on-use 335 attack power for 20s every 2 min (at the pull, with the last use held for the final 34s).",
     "White hit Rage is normalized to the weapon: k × swing speed (k is 3.46 one-hand and 4.5 two-hand, measured at level 30). It grows with level to ×1.5 at 60, the same for the off hand. Not yet measured at 60.",
     "Synthetic Phase 1 gear on Forever's physical budget (ids 991001-991018)",
     "No Ahn'Qiraj book ranks (Heroic Strike VIII, raid Battle Shout VI, Strength of Earth, Grace of Air)",
     "Deep Wounds ticks can't crit (client data). Each crit restarting the Deep Wounds tick timer is our modeling choice.",
     "Assumed: the crit Rage bonus is white hits only, and Heroic Strike swings count for Unbridled Wrath.",
     "One +2% crit elixir per character, since it's unknown if Ferocity stacks with Mongoose. A second one (Grizzly) would add 12.0.",
-    "Battlegear of Glory 4-piece (+36 AP vs Humanoids) not counted. It would add 8.8 (Undead, 180 s).",
-    "Holding Death Wish for 36 s is +3.5 at 180 s but -4 at 120 s.",
+    "Battlegear of Glory 4-piece (+36 AP vs Humanoids) not counted. It would add 8.8 (Undead, 180s).",
+    "Holding Death Wish for 36s is +3.5 at 180s but -4 at 120s.",
     "Raid damage hits on the warrior (2 a minute at 1500 damage, about 15 Rage each) are estimated from boss timers. The assumptions panel also runs 0 and 10 a minute."
   ],
   "notes": "Request from mksettings -spec fury -gear level60_phase1_synthetic_arms -apl level60_fury_2h_battle_shout -talents 30305013032-25053000152110501 -race Orc -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts. Uses the Fury class options (Berserker Stance) as the preset build does; the preset's DefaultConsumes keep an off-hand stone, which has no effect without an off hand.",

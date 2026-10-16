@@ -23,7 +23,7 @@
     "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 180 s, seed 1"
+    "note": "verify.py, 180s, seed 1"
   },
   "summary": "The twist build with its side points in Holy (Divine Intellect 5, Reverence, Purifying Power) instead of Precision. This copy keeps Judgement of the Crusader on the boss for the raid, instead of getting it from another paladin.",
   "keyTalents": [
@@ -37,12 +37,12 @@
     "Champion of the Light"
   ],
   "rotation": [
-    "Pre-pull: Seal of Righteousness at -4.5 s, Seal of Command at -3 s, Seal of the Crusader at -1.5 s (replacing Command leaves its Echo for the first swing)",
-    "Judgement of the Crusader at the pull (the duty): 161 Holy damage taken for 40 s, refreshed by the paladin's own melee hits, so one cast lasts the fight; judged again only if it drops",
+    "Pre-pull: Seal of Righteousness at -4.5s, Seal of Command at -3s, Seal of the Crusader at -1.5s (replacing Command leaves its Echo for the first swing)",
+    "Judgement of the Crusader at the pull (the duty): 161 Holy damage taken for 40s, refreshed by the paladin's own melee hits, so one cast lasts the fight; judged again only if it drops",
     "Consecration on cooldown while mana is at or above 20%",
     "Judgement on cooldown on whichever damage seal is up",
     "Seal of Command whenever no damage seal is up",
-    "Twist: with Seal of Command up, swap to Seal of Righteousness in the last 1.5 s before a swing, and back to Command before the next swing (one swap per swing, down to 20% mana); Twist of Light's Echo applies the old seal on the next swing",
+    "Twist: with Seal of Command up, swap to Seal of Righteousness in the last 1.5s before a swing, and back to Command before the next swing (one swap per swing, down to 20% mana); Twist of Light's Echo applies the old seal on the next swing",
     "Holy Strike on cooldown",
     "Hammer of Wrath below 20% health",
     "Racials, Goblin Sapper, Major Mana Potion and Demonic Rune on free GCDs"
@@ -68,8 +68,8 @@
     "Demonic Rune"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 32 spell power and 18 crit rating, and an on-use 140 spell power for 20 s every 2 min (at the pull, then on cooldown).",
-    "0.6% behind the default at 120 s and 0.9% at 300 s, because it has no Precision.",
+    "Two synthetic item level 71 trinkets: 32 spell power and 18 crit rating, and an on-use 140 spell power for 20s every 2 min (at the pull, then on cooldown).",
+    "0.6% behind the default at 120s and 0.9% at 300s, because it has no Precision.",
     "Purifying Power does nothing on the generic boss because Exorcism and Holy Wrath aren't cast. The vs Undead builds use it.",
     "Twisting down to 0% mana would gain 1.4 DPS, but it shares the twist rotation's 20% floor.",
     "Holy Strike's flat bonus is inside the 50% weapon percent per client data. Not yet confirmed on the beta.",

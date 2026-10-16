@@ -19,6 +19,6 @@
         {"action":{"castSpell":{"spellId":{"spellId":15208}},"condition":{"cmp":{"lhs":{"auraNumStacks":{"auraId":{"spellId":408505}}},"op":"OpGe","rhs":{"const":{"val":"5"}}}}},"notes":"Once Maelstrom Weapon makes it quick. Without the talent ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":10414}}}},
         {"action":{"castSpell":{"spellId":{"spellId":408345}},"condition":{"or":{"vals":[{"cmp":{"lhs":{"currentMana":{}},"op":"OpGe","rhs":{"math":{"lhs":{"remainingTime":{}},"op":"OpMul","rhs":{"const":{"val":"12"}}}}}},{"auraIsActive":{"auraId":{"spellId":16246}}}]}}},"notes":"Goes off around the fire totem, so it needs one down."},
-        {"action":{"castSpell":{"spellId":{"spellId":10432}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":10432}}}}}},"notes":"When nothing above is ready. Raid damage on the shaman fires its orbs at the boss: three per cast, at most one every 3.5 sec."}
+        {"action":{"castSpell":{"spellId":{"spellId":10432}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":10432}}}}}},"notes":"When nothing above is ready. Raid damage on the shaman fires its orbs at the boss: three per cast, at most one every 3.5s."}
     ]
 }

@@ -23,7 +23,7 @@
     "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "180 s, 20000 iterations, seed 1, on the 70425 rotation (seed 100001 within 0.6)"
+    "note": "180s, 20000 iterations, seed 1, on the 70425 rotation (seed 100001 within 0.6)"
   },
   "summary": "Deep Frost Frostbolt with Fingers of Frost and Shatter, plus Arcane Concentration, Missile Barrage and Arcane Blast for spell damage. Client 70425 took Winter's Chill's crit and Ice Lance's fourth times, so it is 18% behind Frostfire, last of the four. High Order with a Major Spellblasting Potion.",
   "keyTalents": [
@@ -37,14 +37,14 @@
     "Fingers of Frost"
   ],
   "rotation": [
-    "Pre-pull: Frostbolt at -2.5 s",
+    "Pre-pull: Frostbolt at -2.5s",
     "Cooldowns (Demonic Rune, racial) on a free GCD",
-    "Evocation below 20% mana with more than 90 s left (almost never fires)",
+    "Evocation below 20% mana with more than 90s left (almost never fires)",
     "Ice Lance on every Fingers of Frost charge: the boss counts as Frozen, so 3 times the damage and Shatter crit",
-    "Arcane Blast once every 15 s for 15% of Intellect as spell damage",
+    "Arcane Blast once every 15s for 15% of Intellect as spell damage",
     "Arcane Missiles on a Missile Barrage proc",
-    "Ice Lance instead when a Frostbolt would not land before the end (its cast plus 1 s)",
-    "Filler: Frostbolt (2.5 s)"
+    "Ice Lance instead when a Frostbolt would not land before the end (its cast plus 1s)",
+    "Filler: Frostbolt (2.5s)"
   ],
   "consumes": [
     "Flask of Supreme Power",
@@ -63,7 +63,7 @@
     "Goblin Sapper"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 41 spell power and 11 crit rating, and an on-use 140 spell power for 20 s every 2 min (at the pull, then on cooldown).",
+    "Two synthetic item level 71 trinkets: 41 spell power and 11 crit rating, and an on-use 140 spell power for 20s every 2 min (at the pull, then on cooldown).",
     "Ice Lance's spell power coefficient is 0.429, Season of Discovery's server value. Forever's client has 0, as SoD's did.",
     "Frostbolt X's base damage is ×1.04, half of beta 70291's +8% raise of the low ranks. The client has ×1.00.",
     "Winter's Chill is a Cone of Cold debuff since 70425, so the build takes none.",

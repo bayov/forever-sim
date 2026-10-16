@@ -23,7 +23,7 @@
     "stderr": 0.37,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 180 s, seed 1"
+    "note": "verify.py, 180s, seed 1"
   },
   "summary": "Stormstrike and Maelstrom Weapon Enhancement with a two-hand axe, Windfury Weapon and Windfury Totem for the group. Concussion 5 instead of Convection 5. The default Enhancement build.",
   "keyTalents": [
@@ -37,9 +37,9 @@
     "Thundering Strikes"
   ],
   "rotation": [
-    "Pre-pull: Lightning Shield at -3 s, Searing Totem at -1.5 s; starting totems Strength of Earth IV, Windfury Totem and Mana Spring at -4 / -3 / -2 s (they run out a few seconds before a 300 s fight ends), no mana cost",
-    "Recast Strength of Earth, Windfury Totem and Mana Spring when down, with at least 20 s left",
-    "Searing Totem when it is down and at least 10 s remain (after the pre-pull one)",
+    "Pre-pull: Lightning Shield at -3s, Searing Totem at -1.5s; starting totems Strength of Earth IV, Windfury Totem and Mana Spring at -4 / -3 / -2s (they run out a few seconds before a 300s fight ends), no mana cost",
+    "Recast Strength of Earth, Windfury Totem and Mana Spring when down, with at least 20s left",
+    "Searing Totem when it is down and at least 10s remain (after the pre-pull one)",
     "Rage of the Farseer on cooldown, waiting for the on-use trinket; Blood Fury lined up with it",
     "Other cooldowns (Sapper, Demonic Rune, Major Mana Potion, Land Mine)",
     "Stormstrike on cooldown",
@@ -71,8 +71,8 @@
     "Goblin Land Mine"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 32 Strength and 14 crit rating, and an on-use 335 attack power for 20 s every 2 min (at the pull, then on cooldown).",
-    "Orc leads on Savage (1% crit with any weapon since client 70425). Windshaper Skyborne is 2.7 behind at 180 s.",
+    "Two synthetic item level 71 trinkets: 32 Strength and 14 crit rating, and an on-use 335 attack power for 20s every 2 min (at the pull, then on cooldown).",
+    "Orc leads on Savage (1% crit with any weapon since client 70425). Windshaper Skyborne is 2.7 behind at 180s.",
     "Assumed: Maelstrom Weapon procs at 2 PPM per point, until the beta reaches level 34.",
     "No Ahn'Qiraj book ranks (Strength of Earth IV, Battle Shout VI). Every build loses about 7.7 DPS.",
     "One 2% crit elixir per character. Mongoose, Grizzly and Owl stacked would add about 36 if Forever allows it.",

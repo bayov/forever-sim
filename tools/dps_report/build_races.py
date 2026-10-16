@@ -26,27 +26,27 @@ PART_INFO = {
     'ruthless': ('Ruthless', '+2% critical strike chance with all spells and attacks, with any weapon (swords only before client 70425).'),
     'earthfury': ('Earth Fury', 'Critical strike bonus to damage and healing increased by 2% (+1% crit with a mace before client 70425).'),
     'savage': ('Savage', '+1% critical strike chance with all spells and abilities, with any weapon (axes only before client 70425).'),
-    'elune': ("Elune's Light", '+10% critical strike chance for 15 sec, 3 min cooldown.'),
+    'elune': ("Elune's Light", '+10% critical strike chance for 15s, 3 min cooldown.'),
     'mind': ('Expansive Mind', 'Maximum Mana, Rage or Energy increased by 5%.'),
-    'eureka': ('Eureka!', 'For 8 sec, direct damage abilities cost 10% less and deal 10% more damage (DoTs too for Warlocks, heals too for Priests), 2 min cooldown.'),
-    'bloodfury': ('Blood Fury', 'Attack power and spell power increased by 10% for 15 sec, 3 min cooldown.'),
-    'touch': ('Touch of the Grave', 'Spells and attacks have a 20% chance (30% for Mages, Priests and Warlocks) to deal Shadow damage equal to 5% of your maximum health and heal you for it. At most once every 25 sec, and it cannot crit.'),
+    'eureka': ('Eureka!', 'For 8s, direct damage abilities cost 10% less and deal 10% more damage (DoTs too for Warlocks, heals too for Priests), 2 min cooldown.'),
+    'bloodfury': ('Blood Fury', 'Attack power and spell power increased by 10% for 15s, 3 min cooldown.'),
+    'touch': ('Touch of the Grave', 'Spells and attacks have a 20% chance (30% for Mages, Priests and Warlocks) to deal Shadow damage equal to 5% of your maximum health and heal you for it. At most once every 25s, and it cannot crit.'),
     'endurance': ('Endurance', 'Health increased by 5% and critical strike bonus to damage and healing increased by 2% (+1% hit before client 70425).'),
-    'berserking': ('Berserking', 'Attack and casting speed increased by 10% for 10 sec, 3 min cooldown.'),
+    'berserking': ('Berserking', 'Attack and casting speed increased by 10% for 10s, 3 min cooldown.'),
     'windblessed': ('Wind Blessed', 'Spellcasting, melee and ranged haste increased by 3% (1% before client 70425).'),
     'beast_dwarf': ('Big Game Hunter', 'Damage dealt versus Beasts increased by 5%.'),
     'beast_troll': ('Beast Slaying', 'Damage dealt versus Beasts increased by 5%.'),
     'insight': ('Elemental Insight', 'Damage dealt versus Elementals increased by 5%.'),
     'chastise': ('Chastise', 'Dwarf Priests: an instant Holy hit on a Humanoid, 2 min cooldown.'),
-    'starshards': ('Starshards', 'Night Elf Priests: Arcane damage over 6 sec, 30 sec cooldown.'),
-    'darksacrifice': ('Dark Sacrifice', 'Undead Priests: trade health for mana over 15 sec, 10 min cooldown.'),
+    'starshards': ('Starshards', 'Night Elf Priests: Arcane damage over 6s, 30s cooldown.'),
+    'darksacrifice': ('Dark Sacrifice', 'Undead Priests: trade health for mana over 15s, 10 min cooldown.'),
     'base': ('Base stats', "The race's own Strength, Agility, Stamina, Intellect and Spirit, with no racials."),
     'target': ('Target type', 'What this creature type changes: racials, talents and spells that work only on some types.'),
 }
 
 # The tooltip's one line for the parts whose text above runs long; the others show their text as it is.
 PART_SHORT = {
-    'touch': '20% chance a hit (30% for Mages, Priests and Warlocks) to deal Shadow damage equal to 5% of max health. At most once every 25 sec.',
+    'touch': '20% chance a hit (30% for Mages, Priests and Warlocks) to deal Shadow damage equal to 5% of max health. At most once every 25s.',
 }
 
 # Each racial's game icon, from ui/core/forever/racials.json. The priest racials are from wowhead, and Dark Sacrifice

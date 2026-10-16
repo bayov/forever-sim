@@ -16,7 +16,7 @@
   "apl": "bm_scorpid",
   "published": {
     "dps": 872.9,
-    "source": "client 1.60.1.70425 (Sniper Shot in Efficiency and Mortal Shots, the raid's Trueshot Aura, hunter_trap_ap), 2026-10-16: 180 s, 20000 iterations, seed 1"
+    "source": "client 1.60.1.70425 (Sniper Shot in Efficiency and Mortal Shots, the raid's Trueshot Aura, hunter_trap_ap), 2026-10-16: 180s, 20000 iterations, seed 1"
   },
   "verify": {
     "dps": 872.93,
@@ -25,7 +25,7 @@
     "ok": true,
     "note": "same sim as verify.py and the published number"
   },
-  "summary": "Beast Mastery 31/20 with a 1.0 sec cat: Bestial Wrath, Frenzy, Ferocity and Unleashed Fury, plus Careful Aim and Mortal Shots. The pet deals about 21% of the damage. 68 DPS behind Marksmanship at 180 s.",
+  "summary": "Beast Mastery 31/20 with a 1.0s cat: Bestial Wrath, Frenzy, Ferocity and Unleashed Fury, plus Careful Aim and Mortal Shots. The pet deals about 21% of the damage. 68 DPS behind Marksmanship at 180s.",
   "keyTalents": [
     "Bestial Wrath",
     "Frenzy",
@@ -37,13 +37,13 @@
     "Mortal Shots"
   ],
   "rotation": [
-    "Pre-pull: Aspect of the Hawk at -3 s, Rapid Fire at -0.1 s",
-    "Bestial Wrath (0 and 120 s), Rapid Fire, racials, Sapper and potions on cooldown",
-    "Scorpid Sting (2% off the boss's hit, 9% of base mana) at the pull and again in its last 4 s, in place of Serpent Sting; the raid's Scorpid Sting is off",
+    "Pre-pull: Aspect of the Hawk at -3s, Rapid Fire at -0.1s",
+    "Bestial Wrath (0s and 120s), Rapid Fire, racials, Sapper and potions on cooldown",
+    "Scorpid Sting (2% off the boss's hit, 9% of base mana) at the pull and again in its last 4s, in place of Serpent Sting; the raid's Scorpid Sting is off",
     "Aimed Shot on the cooldown it shares with Multi-Shot",
     "Sniper Shot on cooldown",
     "Arcane Shot on cooldown (mana >= 20%)",
-    "Cat (1.0 sec) bites and claws on cooldown, Frenzy up about 178 of 180 s; Auto Shot throughout"
+    "Cat (1.0s) bites and claws on cooldown, Frenzy up about 178 of 180s; Auto Shot throughout"
   ],
   "consumes": [
     "Flask of Distilled Wisdom",
@@ -60,20 +60,20 @@
     "Goblin Land Mine"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 32 Agility and 14 crit rating, and an on-use 415 ranged attack power for 20 s every 2 min (at the pull, then on cooldown).",
+    "Two synthetic item level 71 trinkets: 32 Agility and 14 crit rating, and an on-use 415 ranged attack power for 20s every 2 min (at the pull, then on cooldown).",
     "Assumed fixed onto the rank curve: Trueshot Aura's top rank gives 100 ranged attack power and Hunter's Mark's 140. The client has 50 and 71, below the older ranks' 75 and 98.",
     "Aspect of the Hawk stays at rank 5 (90 RAP) because Forever's rank 6 gives only 55.",
     "Pet scaling: 10% of RAP plus the hunter's hit (SoD placeholder for hit). With SoD's full 22% pet scaling this build would gain 41.",
     "Arcane Shot takes 10% of ranged attack power and Serpent Sting 3% a tick (Forever hunter wiki). The beta log fit was 11% and 3.5%.",
-    "Assumed: Auto Shot fires through casts with no 0.5 s aim.",
+    "Assumed: Auto Shot fires through casts with no 0.5s aim.",
     "Wildstalker Armor 4-piece and 5-piece aren't in the preset (2-piece only). They would add 1.",
     "Pet consumables are off because Forever pets take no player buffs. They would add 17.",
     "Intimidation is talented but not cast by the rotation",
-    "Major Frenzy Potion is +5 at 120 and 180 s but 19 behind at 300 s, so the preset uses Major Mana Potion.",
+    "Major Frenzy Potion is +5 at 120s and 180s but 19 behind at 300s, so the preset uses Major Mana Potion.",
     "Assumed: 22% more crit per Agility than Classic, the beta's level 1 ratio carried to 60.",
-    "Assumed: a pet's hit scales with its attack speed as in Classic. On the beta every pet hits like a 2.0 s pet. The cat is still the best pet, and every cat speed sims within 1 DPS.",
-    "The ranged weapon is a 2.5 s bow at Rhok'delar's 44.0 DPS. A 2.6 s gun sims 0.3 to 1.0 higher with a 15% ammo pouch, but 3.4 to 5.2 lower with Era Phase 1's 14% pouch (Ribbly's Bandolier). The 15% quiver takes only arrows.",
-    "Scorpid Sting duty: the raid's Scorpid Sting is off and the hunter keeps its own up in place of Serpent Sting. Costs 81.4 / 82.2 / 82.3 DPS at 120 / 180 / 300 s against Beast Mastery, mostly Serpent Sting's damage.",
+    "Assumed: a pet's hit scales with its attack speed as in Classic. On the beta every pet hits like a 2.0s pet. The cat is still the best pet, and every cat speed sims within 1 DPS.",
+    "The ranged weapon is a 2.5s bow at Rhok'delar's 44.0 DPS. A 2.6s gun sims 0.3 to 1.0 higher with a 15% ammo pouch, but 3.4 to 5.2 lower with Era Phase 1's 14% pouch (Ribbly's Bandolier). The 15% quiver takes only arrows.",
+    "Scorpid Sting duty: the raid's Scorpid Sting is off and the hunter keeps its own up in place of Serpent Sting. Costs 81.4 / 82.2 / 82.3 DPS at 120s / 180s / 300s against Beast Mastery, mostly Serpent Sting's damage.",
     "The sting only lowers the boss's hit (2%, in the slot it shares with Insect Swarm, whose raid debuff stays on). It adds nothing to the raid's damage.",
     "Windshaper is best (Wind Blessed, 3% haste since client 70425) at every fight length. On Lone Wolf and Marksmanship it is 1.2 to 1.6 ahead of High Order and 5 to 8 ahead of Night Elf. On Beast Mastery it is 0.3 to 0.9 ahead of Human."
   ],

@@ -23,9 +23,9 @@
     "stderr": 0.17,
     "iters": 20000,
     "ok": true,
-    "note": "180 s, 20000 iterations, seed 1 (seed 1000001: 724.9)"
+    "note": "180s, 20000 iterations, seed 1 (seed 1000001: 724.9)"
   },
-  "summary": "Holy damage priest casting Smite, with Shadow Word: Pain up for Power in Light: 31 Discipline (Power in Light, Twin Disciplines, Holy Precision, Power Infusion) and 17 Holy (Divine Fury, Searing Light, Twilight Focus). Its own hit-free gear. 22% behind Shadow at 180 s, because Smite costs a lot of mana.",
+  "summary": "Holy damage priest casting Smite, with Shadow Word: Pain up for Power in Light: 31 Discipline (Power in Light, Twin Disciplines, Holy Precision, Power Infusion) and 17 Holy (Divine Fury, Searing Light, Twilight Focus). Its own hit-free gear. 22% behind Shadow at 180s, because Smite costs a lot of mana.",
   "keyTalents": [
     "Power in Light",
     "Divine Fury",
@@ -37,7 +37,7 @@
     "Twilight Focus"
   ],
   "rotation": [
-    "Pre-pull: Smite at -2 s that lands at the pull, the on-use trinket at -0.1 s",
+    "Pre-pull: Smite at -2s that lands at the pull, the on-use trinket at -0.1s",
     "Dark Sacrifice (Undead) below 40% mana; Power Infusion on cooldown; racials and trinkets on cooldown",
     "Shadow Word: Pain whenever it is down (9+ s left; keeps Power in Light up)",
     "Devouring Plague whenever it is down (12+ s left) and mana is at least 80%",
@@ -62,8 +62,8 @@
     "Demonic Rune"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 36 spell power and 15 crit rating, and an on-use 140 spell power for 20 s every 2 min (at the pull, then on cooldown).",
-    "Mana-bound: 744.0 / 724.6 / 639.7 at 120 / 180 / 300 s (Undead). Devouring Plague's 24 s cooldown (client 70425) only pays above 80% mana.",
+    "Two synthetic item level 71 trinkets: 36 spell power and 15 crit rating, and an on-use 140 spell power for 20s every 2 min (at the pull, then on cooldown).",
+    "Mana-bound: 744.0 / 724.6 / 639.7 at 120s / 180s / 300s (Undead). Devouring Plague's 24s cooldown (client 70425) only pays above 80% mana.",
     "Smite VIII's base damage is ×1.09, halfway to rank 4's ratio to Era (the 31+ ranks look partly untuned). The client has ×1.00.",
     "Forever's downrank penalty is modeled (5% of the coefficient per level past 17 below the caster). So the fallback Smite is rank 7, which keeps its full coefficient.",
     "The search dropped Penance and Mind Blast (Penance costs 385 mana for three 92-damage bolts). Shadow Word: Death is only cast at the end of the fight.",
@@ -71,8 +71,8 @@
     "Left out: Kreeg's Stout Beatdown (Dire Maul item) and Elixir of Sages (one crit elixir rule, +6.4).",
     "Dark Sacrifice gives 1600 + Spirit mana (the tooltip adds Spirit, client data says 1600).",
     "Twilight Focus 3/3 (70% chance to ignore pushback from raid hits) in place of Inspiration.",
-    "Gnome is the best Alliance race (706.8 at 180 s).",
-    "No Holy Fire: since 70425 Power in Light also counts Shadow Word: Pain, so Holy Fire's mana goes to Smite. Against keeping it up: +14.7 / +7.8 at 120 / 180 s, -6.9 at 300 s."
+    "Gnome is the best Alliance race (706.8 at 180s).",
+    "No Holy Fire: since 70425 Power in Light also counts Shadow Word: Pain, so Holy Fire's mana goes to Smite. Against keeping it up: +14.7 / +7.8 at 120s / 180s, -6.9 at 300s."
   ],
   "notes": "mksettings request plus ConsumesSmite from presets.ts: defaultPotion MajorManaPotion, firePowerBuff ElixirOfGreaterFirepower, manaRegenElixir GreaterMagebloodElixir, spiritElixir ElixirOfGreaterSpirit. Gear level60_phase1_smite, apl level60_smite."
 }

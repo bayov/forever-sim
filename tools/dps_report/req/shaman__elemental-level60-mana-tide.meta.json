@@ -23,9 +23,9 @@
     "stderr": 0.19,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 180 s, seed 1"
+    "note": "verify.py, 180s, seed 1"
   },
-  "summary": "The default Elemental build with 16 Restoration points for Mana Tide Totem, cast at 20% mana for the group. 1.4% behind at 180 s.",
+  "summary": "The default Elemental build with 16 Restoration points for Mana Tide Totem, cast at 20% mana for the group. 1.4% behind at 180s.",
   "keyTalents": [
     "Elemental Mastery",
     "Lava Burst",
@@ -39,15 +39,15 @@
     "Totemic Focus"
   ],
   "rotation": [
-    "Pre-pull: Lightning Shield at -5.4 s, Mana Spring Totem at -3.9 s, Lightning Bolt at -2.9 s (lands 0.1 s after the pull), Searing Totem at -0.9 s",
+    "Pre-pull: Lightning Shield at -5.4s, Mana Spring Totem at -3.9s, Lightning Bolt at -2.9s (lands 0.1s after the pull), Searing Totem at -0.9s",
     "Elemental Mastery and the other cooldowns (Sapper, Demonic Rune, Major Mana Potion, Land Mine) as they come up",
     "Mana Tide Totem at 20% mana or less",
-    "Mana Spring Totem when it is down, Mana Tide is not up and at least 20 s remain",
-    "Searing Totem when it is down and at least 20 s remain",
+    "Mana Spring Totem when it is down, Mana Tide is not up and at least 20s remain",
+    "Searing Totem when it is down and at least 20s remain",
     "Flame Shock whenever its DoT is down",
     "Lava Burst on cooldown, unless Flame Shock would run out before the cast ends",
     "Earth Shock once a Lightning Bolt would no longer land before the fight ends",
-    "Lightning Shield when it is down, above 50% mana with at least 60 s left (orbs fire at the target on raid damage hits, 1 a minute)",
+    "Lightning Shield when it is down, above 50% mana with at least 60s left (orbs fire at the target on raid damage hits, 1 a minute)",
     "Lightning Bolt rank 8 below 20% mana",
     "Lightning Bolt rank 10 as filler (no Chain Lightning on one target)"
   ],
@@ -68,11 +68,11 @@
     "Goblin Land Mine"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 37 spell power and 14 crit rating, and an on-use 140 spell power for 20 s every 2 min (at the pull, then on cooldown).",
+    "Two synthetic item level 71 trinkets: 37 spell power and 14 crit rating, and an on-use 140 spell power for 20s every 2 min (at the pull, then on cooldown).",
     "Mana Tide Totem costs the shaman 1.4 DPS: a 3 min fight with a potion and rune doesn't need the mana.",
     "The Water Shield point does nothing (the rotation keeps Lightning Shield up).",
     "Lightning Bolt X's base damage is ×1.12, the raise a beta build gave the top playable rank. The client's 31+ ranks look untuned (rank 10 has about 201 base at a 0.714 coefficient).",
-    "Only the Tier 1 2-piece is active. The 5-piece (Lava Burst -1 s cooldown) would add more.",
+    "Only the Tier 1 2-piece is active. The 5-piece (Lava Burst -1s cooldown) would add more.",
     "One 2% crit elixir per character. Owl on top of Sages would add about 10 if Forever allows it.",
     "Raid damage hits on the shaman (1 a minute, each fires Lightning Shield) are estimated from boss timers. The assumptions panel also runs 0 and 10.",
     "Call of Thunder is gone from the 70425 tree, so Elemental Mastery took its point. Eye of the Storm 3 keeps 70% of casts from being pushed back by the 2 raid hits a minute."

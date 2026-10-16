@@ -25,7 +25,7 @@
     "ok": true,
     "note": "same sim as the published number"
   },
-  "summary": "Dual wield Fury with a 2.8 s sword and a 2.9 s axe: Bloodthirst, Whirlwind and Flurry, with Death Wish and Recklessness at the pull. The warrior's default and best build.",
+  "summary": "Dual wield Fury with a 2.8s sword and a 2.9s axe: Bloodthirst, Whirlwind and Flurry, with Death Wish and Recklessness at the pull. The warrior's default and best build.",
   "keyTalents": [
     "Bloodthirst",
     "Flurry",
@@ -41,7 +41,7 @@
     "Start in Berserker Stance with no Rage; Battle Shout from the raid",
     "Sunder Armor as the first GCD after the pull (every warrior; the tanks keep it up after)",
     "Death Wish right after the Sunder, Recklessness one GCD later",
-    "Racial cooldowns with Death Wish (Blood Fury and Berserking also at the end of the fight); trinket on cooldown; Mighty Rage Potion at the pull, second held for the last 20 sec",
+    "Racial cooldowns with Death Wish (Blood Fury and Berserking also at the end of the fight); trinket on cooldown; Mighty Rage Potion at the pull, second held for the last 20s",
     "Bloodrage under 40 Rage",
     "Execute first in the execute phase",
     "Whirlwind at 25+ Rage, then Bloodthirst",
@@ -62,15 +62,15 @@
     "Dense Sharpening Stone"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 30 Strength and 16 crit rating, and an on-use 335 attack power for 20 s every 2 min (at the pull, then on cooldown).",
+    "Two synthetic item level 71 trinkets: 30 Strength and 16 crit rating, and an on-use 335 attack power for 20s every 2 min (at the pull, then on cooldown).",
     "White hit Rage is normalized to the weapon: k × swing speed (k is 3.46 one-hand and 4.5 two-hand, measured at level 30). It grows with level to ×1.5 at 60, the same for the off hand. Not yet measured at 60.",
     "Synthetic Phase 1 gear on Forever's physical budget (ids 991001-991018)",
     "No Ahn'Qiraj book ranks (Heroic Strike VIII, raid Battle Shout VI, Strength of Earth, Grace of Air)",
     "Deep Wounds ticks can't crit (client data). Each crit restarting the Deep Wounds tick timer is our modeling choice.",
     "Assumed: the crit Rage bonus is white hits only, and Heroic Strike swings count for Unbridled Wrath.",
     "One +2% crit elixir per character, since it's unknown if Ferocity stacks with Mongoose. A second one (Grizzly) would add 15.1.",
-    "Battlegear of Glory 4-piece (+36 AP vs Humanoids) not counted. It would add 10.8 at 180 s.",
-    "Second Mighty Rage Potion held for the last 20 s: +6.4 at 180 s, -3.0 at 120 s.",
+    "Battlegear of Glory 4-piece (+36 AP vs Humanoids) not counted. It would add 10.8 at 180s.",
+    "Second Mighty Rage Potion held for the last 20s: +6.4 at 180s, -3.0 at 120s.",
     "Bloodthirst sometimes slips a GCD for lack of Rage. Holding fillers for it loses DPS.",
     "Raid damage hits on the warrior (2 a minute at 1500 damage, about 15 Rage each) are estimated from boss timers. The assumptions panel also runs 0 and 10 a minute."
   ],

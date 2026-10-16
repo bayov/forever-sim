@@ -4,7 +4,7 @@
         {"action":{"castSpell":{"spellId":{"spellId":20305}}},"doAtValue":{"const":{"val":"-1.5s"}}}
     ],
     "priorityList": [
-        {"action":{"castSpell":{"spellId":{"spellId":20271}},"condition":{"auraIsActive":{"auraId":{"spellId":20305}}}},"notes":"Judge Seal of the Crusader first, the judgement lasts 40 sec and every melee hit refreshes it."},
+        {"action":{"castSpell":{"spellId":{"spellId":20271}},"condition":{"auraIsActive":{"auraId":{"spellId":20305}}}},"notes":"Judge Seal of the Crusader first, the judgement lasts 40s and every melee hit refreshes it."},
         {"action":{"castSpell":{"spellId":{"spellId":20305}},"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":20303},"sourceUnit":{"type":"CurrentTarget"}}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":20305}}}}}]}}},"notes":"Seal of the Crusader when its judgement is not on the target."},
         {"action":{"castSpell":{"spellId":{"spellId":20116}}},"notes":"Down to the last point of mana."},
         {"action":{"castSpell":{"spellId":{"spellId":20271}},"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":20915}}},{"auraIsActive":{"auraId":{"spellId":20303},"sourceUnit":{"type":"CurrentTarget"}}}]}}}},

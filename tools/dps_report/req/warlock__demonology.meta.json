@@ -37,13 +37,13 @@
     "Agonizing Flames"
   ],
   "rotation": [
-    "Pre-pull: Soul Link at -6 s, Life Tap at -4.5 s, Shadow Bolt at -2.5 s (lands just after the pull)",
+    "Pre-pull: Soul Link at -6s, Life Tap at -4.5s, Shadow Bolt at -2.5s (lands just after the pull)",
     "Racials on cooldown",
     "Life Tap below 5% mana or when the filler costs more than the mana left",
-    "Bane of Doom when it lands before the fight ends (more than 60 s left)",
+    "Bane of Doom when it lands before the fight ends (more than 60s left)",
     "Bane of Agony while Bane of Doom is on cooldown or would not land",
-    "Corruption when down or under 1.5 s left (more than 9 s of fight left)",
-    "Immolate when down or under 1.5 s left (more than 6 s of fight left)",
+    "Corruption when down or under 1.5s left (more than 9s of fight left)",
+    "Immolate when down or under 1.5s left (more than 6s of fight left)",
     "Death Coil, then Searing Pain, when the filler would not land before the fight ends",
     "Shadow Bolt as the filler"
   ],
@@ -64,7 +64,7 @@
     "Major Spellstone (weapon imbue)"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 38 spell power and 13 crit rating, and an on-use 140 spell power for 20 s every 2 min (at the pull, then on cooldown).",
+    "Two synthetic item level 71 trinkets: 38 spell power and 13 crit rating, and an on-use 140 spell power for 20s every 2 min (at the pull, then on cooldown).",
     "Demon model is most sensitive here: no owner scaling 1037.8, Succubus melee halved 1044.5, both 1011.5 (first set)",
     "Wears the Demonology hit gear (14% hit from gear, 1 point of Suppression). Suppression 5/5 is 72 behind (1038.0 vs 1110.1).",
     "Decimation's 3% comes from the tooltip only (the real value is server side).",

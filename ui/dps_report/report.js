@@ -128,7 +128,7 @@ export function startReport(dash, events) {
   });
   dash.calc('pairs', {
     inputs: ['builds'], title: 'Preset against preset',
-    description: 'For every pair of presets, the second’s mean, 10th, 50th and 90th percentile, standard deviation and 120 s / 300 s DPS relative to the first, in percent.',
+    description: 'For every pair of presets, the second’s mean, 10th, 50th and 90th percentile, standard deviation and 120s / 300s DPS relative to the first, in percent.',
     fn: (builds) => {
       const out = [];
       for (const a of builds) for (const b of builds) {
@@ -153,7 +153,7 @@ export function startReport(dash, events) {
   const store = (() => { try { return window.localStorage; } catch { return null; } })();
   const saved = (() => { try { return JSON.parse(store?.getItem('fv-state') || '{}'); } catch { return {}; } })();
   const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', rsOpt: {}, rsFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', rlFac: 'All', rlRole: 'All', rlCls: 'All', rlSpec: 'All', setupHide: false, enc: false, duty: true, asm: {}, asmOpen: [] }, saved);
-  st.len = '180'; // a fight length other than 180 s is never restored: the page always opens on the main numbers
+  st.len = '180'; // a fight length other than 180s is never restored: the page always opens on the main numbers
   const persist = () => { try { store?.setItem('fv-state', JSON.stringify(st)); } catch {} };
 
   // ---------- tooltip pieces ----------
@@ -837,7 +837,7 @@ export function startReport(dash, events) {
     const host = $('#rank-chart');
     classChips($('#rank-classes'), 'cls');
     const lens = statusOf('lengths') === 'ok' ? [...new Set([180, ...rowsOf('lengths').map((r) => +r.secs)])].sort((a, b) => a - b).map(String) : ['180'];
-    seg($('#rank-len'), 'len', lens.map((v) => [v, v + ' s']));
+    seg($('#rank-len'), 'len', lens.map((v) => [v, v + 's']));
     $('#rank-lenbar').classList.toggle('off', st.len !== '180');
     seg($('#rank-sort'), 'sort', SORTS);
     seg($('#rank-role'), 'role', [['All', 'All roles'], ['Melee', 'Melee'], ['Ranged', 'Ranged'], ['Caster', 'Caster']]);
@@ -897,7 +897,7 @@ export function startReport(dash, events) {
         const lines = L === 180
           ? [tipKey(f1(b.dps), 'DPS', `± ${f2(b.se)}`), tipGrid([['Rank', el('span', {}, `${rankOf(b, builds)} of ${builds.length} · `, behind)], ['10th–90th', `${f1(b.p10)}–${f1(b.p90)}`],
             ['Middle half', `${f1(b.p25)}–${f1(b.p75)}`], ['Spread', `${f2(b.cv)}%`], ['Race', race], isEnc(b) ? ['Boss', `${b.encounter} · advantaged`] : null, isDuty(b) ? ['Duty', dutyCostEl(b, builds)] : null])]
-          : [tipKey(f1(v), 'DPS', se != null ? `± ${f2(se)} at ${L} s` : `at ${L} s`), tipGrid([['vs 180 s', el('span', {}, `${f1(b.dps)} · `, tipDelta(100 * (v / b.dps - 1)))], ['vs the top', behind], ['Race', race]])];
+          : [tipKey(f1(v), 'DPS', se != null ? `± ${f2(se)} at ${L}s` : `at ${L}s`), tipGrid([['vs 180s', el('span', {}, `${f1(b.dps)} · `, tipDelta(100 * (v / b.dps - 1)))], ['vs the top', behind], ['Race', race]])];
         showTip(card, rr.left - cr.left + 30, rr.bottom - cr.top + 6, tipTitle(b.label, null, specIco(b, '')), lines, { hl: row, open: b.id, below: true });
       });
       return row;
@@ -916,7 +916,7 @@ export function startReport(dash, events) {
     const x = d3.scaleLinear(d3.extent(xs), [m.l + 8, W - m.r]);
     const all = series.flatMap((s) => s.pts.map((p) => p.v)).concat(opts.ref != null ? [opts.ref] : []);
     const y = d3.scaleLinear(opts.yDomain || d3.extent(all), [H - m.b, m.t]).nice();
-    const xTicks = opts.xTicks || xs, xFmt = opts.xFmt || ((d) => d + ' s');
+    const xTicks = opts.xTicks || xs, xFmt = opts.xFmt || ((d) => d + 's');
     const svg = d3.create('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('height', H);
     svg.append('g').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues(xTicks).tickFormat((d, i) => (W >= 480 || i === xTicks.length - 1 ? xFmt(d) : String(d))).tickSizeOuter(0)).attr('font-size', null).attr('font-family', null)
       .call((g) => g.selectAll('line,path').style('stroke', 'var(--cds-chart-axis)'));
@@ -964,12 +964,12 @@ export function startReport(dash, events) {
       const others = series.length <= 3 ? tipGrid(series.filter((q) => q !== s).map((q) => { const pp = q.pts.find((r) => r.s === sx); return pp ? [el('span', {}, tipSw(q.color), q.short || q.name), opts.tipMain ? opts.tipMain(pp)[0] : `${f1(pp.v)} DPS`] : null; })) : null;
       const [hx, hy] = d3.pointer(e, host);
       const strip = series.length > 3 && opts.strip !== false ? el('div', { class: 'fv-tip-strip' }, ...s.pts.flatMap((q) => [
-        el('span', { class: 'k' + (q.s === sx ? ' on' : ''), text: `${q.s} s` }),
+        el('span', { class: 'k' + (q.s === sx ? ' on' : ''), text: `${q.s}s` }),
         el('span', { class: 'v' + (q.s === sx ? ' on' : ''), text: opts.fmt ? opts.fmt(q.v) : f0(q.v) }),
       ])) : null;
       // tipMain gives the key figure and what it compares to; tipRows any further [label, value] rows
       const main = opts.tipMain ? opts.tipMain(p) : [`${f1(p.v)} DPS`];
-      showTip(host, hx, hy, tipTitle(s.name, opts.tipSub ? opts.tipSub(sx) : `${sx} s`, tipSw(s.color)), [tipKey(main[0], null, main[1]), opts.tipRows ? tipGrid(opts.tipRows(p)) : null, others, strip],
+      showTip(host, hx, hy, tipTitle(s.name, opts.tipSub ? opts.tipSub(sx) : `${sx}s`, tipSw(s.color)), [tipKey(main[0], null, main[1]), opts.tipRows ? tipGrid(opts.tipRows(p)) : null, others, strip],
         { open: s.id && opts.open ? s.id : null, pinned, onLeave: leave, onHide: () => { shown = null; rule.attr('opacity', 0); dot.attr('opacity', 0); } });
       if (pinned && opts.onPick) opts.onPick(s.id);
     };
@@ -995,11 +995,11 @@ export function startReport(dash, events) {
       const on = st.cls === 'All' || b.class === st.cls;
       return { id: b.id, name: b.label, color: ccol(b.class), op: on ? 0.9 : 0.08, pick: on, w: on && st.cls !== 'All' ? 2 : 1.5, dots: on && st.cls !== 'All', pts: pts.map((p) => ({ s: p.secs, v: (100 * p.dps * asmFactor(b.id, p.secs)) / (base * asmFactor(b.id, 180)), dps: p.dps * asmFactor(b.id, p.secs) })) };
     }).sort((a, b) => a.op - b.op);
-    drawLenChart(host, series, { fmt: (v) => d3.format('.0f')(v) + '%', ref: 100, focus: true, open: true, hlId: st.hlLen, onPick: (id) => { st.hlLen = id; persist(); }, tipMain: (p) => [`${f1(p.dps)} DPS`, p.s === 180 ? null : el('span', {}, tipDelta(p.v - 100), ' vs 180 s')] });
+    drawLenChart(host, series, { fmt: (v) => d3.format('.0f')(v) + '%', ref: 100, focus: true, open: true, hlId: st.hlLen, onPick: (id) => { st.hlLen = id; persist(); }, tipMain: (p) => [`${f1(p.dps)} DPS`, p.s === 180 ? null : el('span', {}, tipDelta(p.v - 100), ' vs 180s')] });
   };
 
   // ---------- mana ----------
-  // How a preset's mana runs down over a long fight, from 100 logged 480 s fights each. The chart is the average mana
+  // How a preset's mana runs down over a long fight, from 100 logged 480s fights each. The chart is the average mana
   // and the list says when a typical fight first drops below 10%. Warriors and rogues don't use mana.
   const mmss = (v) => `${Math.floor(v / 60)}:${String(Math.round(v % 60)).padStart(2, '0')}`;
   const drawMana = () => {
@@ -1464,7 +1464,7 @@ export function startReport(dash, events) {
         else {
           for (const t of arr(q.talents)) nodes.push(talent(t, [`${t[0]} ${t[2]}/${t[3]}`, t[4], bonus(t[5], t[6]), bonus(t[7], t[8])]));
           if (moved.length) {
-            nodes.push(el('span', {}, el('b', { text: 'Speed: ' }), moved.map(([hand, , , s0, s1]) => `${hand} ${f2(s0)} sec to ${f2(s1)} sec`).join(', ') + '. ',
+            nodes.push(el('span', {}, el('b', { text: 'Speed: ' }), moved.map(([hand, , , s0, s1]) => `${hand} ${f2(s0)}s to ${f2(s1)}s`).join(', ') + '. ',
               Math.abs(q.dps) < 0.05 ? "Not a melee preset. No change." : 'Same weapon DPS, but a slower weapon hits harder and less often.'));
           }
           if (!arr(q.talents).length && !moved.length) nodes.push(el('span', { class: 'fv-tip-m', text: 'No talent uses the weapon type and the speed is the same. No change.' }));
@@ -1752,7 +1752,7 @@ export function startReport(dash, events) {
     const rows = rowsOf('weights').filter((w) => w.build === b.id);
     if (!rows.length) { host.replaceChildren(el('span', { class: 'fv-note', text: 'No stat weights for this preset.' })); $('#sp-wtab tbody').replaceChildren(); $('#sp-wtab').dataset.build = b.id; return; }
     const ab = rows[0].primaryAbbr;
-    $('#sp-weights-note').textContent = `Each stat's worth in points of ${ab} (${rows[0].primary.toLowerCase()}). Hit and crit are per rating point (10 hit or 14 crit rating = 1%). ${f0(rows[0].iters)} fights per stat at 180 s.`;
+    $('#sp-weights-note').textContent = `Each stat's worth in points of ${ab} (${rows[0].primary.toLowerCase()}). Hit and crit are per rating point (10 hit or 14 crit rating = 1%). ${f0(rows[0].iters)} fights per stat at 180s.`;
     const val = (w) => (w.unit === '1%' ? w.ratingWorth : w.worth);
     const shown = rows.filter((w) => w.stat !== 'MeleeHitDown').sort((x, y) => val(y) - val(x));
     const down = rows.find((w) => w.stat === 'MeleeHitDown');
@@ -1808,7 +1808,7 @@ export function startReport(dash, events) {
       isEnc(b) ? mark(encBadge(b), 'builds', 'encounter', W) : null].filter(Boolean));
     mark($('#sp-summary'), 'builds', 'summary', W).textContent = b.summary;
     const extra = b.petDps > 0 ? tile('Pet damage', f1(b.petShare), `${f1(b.petDps)} DPS from pets`, 'builds', 'petShare', W, '%')
-      : b.oomSecs > 0 ? tile('Time out of mana', f1(b.oomSecs), 'per fight', 'builds', 'oomSecs', W, ' s')
+      : b.oomSecs > 0 ? tile('Time out of mana', f1(b.oomSecs), 'per fight', 'builds', 'oomSecs', W, 's')
         : tile('Threat per second', f0(b.tps), 'for tank aggro', 'builds', 'tps', W);
     $('#sp-tiles').replaceChildren(
       tile('Mean DPS', f1(b.dps), `± ${f2(b.se)} (1 s.e.)`, 'builds', 'dps', W),
@@ -1975,7 +1975,7 @@ export function startReport(dash, events) {
           const tm = (t) => `${Math.max(0, t).toFixed(0)}`;
           const lines = [tipKey(`${f1(a.uptime)}%`, 'uptime', 'every fight'), tipGrid([[`This ${s.label.toLowerCase().replace(' fight', '')} fight`, `${f1(upHere)}% · ${iv.length}×`],
             d3.max(iv, (q) => q[4]) > 1 ? ['Most stacks', String(d3.max(iv, (q) => q[4]))] : null]),
-            iv.length ? tipChips(iv.slice(0, 8).map((q) => `${tm(q[2])}–${q[3] >= s.dur - 0.05 ? 'end' : tm(q[3])} s`), iv.length > 8 ? `+${iv.length - 8} more` : null) : null];
+            iv.length ? tipChips(iv.slice(0, 8).map((q) => `${tm(q[2])}–${q[3] >= s.dur - 0.05 ? 'end' : tm(q[3])}s`), iv.length > 8 ? `+${iv.length - 8} more` : null) : null];
           showTip(card, e.clientX - r.left - 20, nb.bottom - r.top, tipTitle(a.aura, null, a.icon ? iconImg(a.icon) : null), lines, { hl: bar, below: true });
         });
       } else {
@@ -2023,7 +2023,7 @@ export function startReport(dash, events) {
     host.setAttribute('data-source', 'lengths');
     if (!specWait(host, ['lengths'], b)) return;
     const pts = rowsOf('lengths').filter((r) => r.build === b.id).sort((p, q) => p.secs - q.secs).map((p) => ({ s: p.secs, v: p.dps, oom: p.oomSecs }));
-    drawLenChart(host, [{ name: b.build, color: ccol(b.class), dots: true, pts }], { h: 200, tipMain: (p) => [`${f1(p.v)} DPS`, p.s === 180 ? null : el('span', {}, tipDelta(100 * (p.v / b.dps - 1)), ' vs 180 s')], tipRows: (p) => [p.oom > 0 ? ['Out of mana', `${f1(p.oom)} s`] : null] });
+    drawLenChart(host, [{ name: b.build, color: ccol(b.class), dots: true, pts }], { h: 200, tipMain: (p) => [`${f1(p.v)} DPS`, p.s === 180 ? null : el('span', {}, tipDelta(100 * (p.v / b.dps - 1)), ' vs 180s')], tipRows: (p) => [p.oom > 0 ? ['Out of mana', `${f1(p.oom)}s`] : null] });
   };
 
   // ---------- rotation ----------
@@ -2069,7 +2069,7 @@ export function startReport(dash, events) {
     const pp = rows.filter((r) => r.section === 'prepull').sort((p, q) => p.at - q.at);
     pre.replaceChildren(...(pp.length ? [el('span', { class: 'fv-label', text: 'Before the pull' }),
       el('div', { class: 'fv-pp' }, ...pp.map((r) => tt(el('button', { class: 'fv-ppi' }, ico(r, 'fv-ico'), el('span', {}, mark(el('b', { text: r.name }), 'rotation', 'name', W(r)), mark(el('em', { text: fmtT(+r.at) }), 'rotation', 'at', W(r)))), `rot:prepull:${r.order}`, true, b.id)),
-        el('span', { class: 'fv-ppi pull' }, el('b', { text: 'Pull' }), el('em', { text: '0 s' })))] : []));
+        el('span', { class: 'fv-ppi pull' }, el('b', { text: 'Pull' }), el('em', { text: '0s' })))] : []));
     pre.dataset.build = b.id;
     const pl = rows.filter((r) => r.section === 'priority').sort((p, q) => p.order - q.order);
     const items = [];
@@ -2269,7 +2269,7 @@ export function startReport(dash, events) {
     return { src, list: tlCache.list };
   };
   const nameColor = (k) => { const n = byKey('names')?.get(k); return n && n.color ? n.color : null; };
-  const fmtT = (t) => `${t < 0 ? '−' : ''}${Math.abs(t).toFixed(1)} s`;
+  const fmtT = (t) => `${t < 0 ? '−' : ''}${Math.abs(t).toFixed(1)}s`;
 
   // The events view of the preset's sample fights. Its Typical, Unlucky and Lucky iterations are st.sample 0, 1 and
   // 2, and the aura bars follow the one picked there.
@@ -2277,7 +2277,7 @@ export function startReport(dash, events) {
     const T = statusOf('timeline_' + b.class.toLowerCase()) === 'ok' ? tlSamples(b) : null;
     const s = T && T.list.length ? T.list[Math.min(st.sample || 0, T.list.length - 1)] : null;
     $('#sp-time-note').textContent = s
-      ? `${s.label}: ${f1(s.dps)} DPS over ${f1(s.dur)} s.`
+      ? `${s.label}: ${f1(s.dps)} DPS over ${f1(s.dur)}s.`
       : 'One simulated fight: typical, unlucky or lucky.';
     events.show(b.id, st.sample || 0);
   };
@@ -2383,7 +2383,7 @@ export function startReport(dash, events) {
       if (k === 'stdev') td.className = 'n';
       return td;
     };
-    const rows = [['Mean DPS', 'dps', f1], ['Error of the mean', 'se', f2], ['Median', 'p50', f1], ['Unlucky (10th)', 'p10', f1], ['Lucky (90th)', 'p90', f1], ['Std dev', 'stdev', f1], ['120 s fight', 'dps120', f1], ['300 s fight', 'dps300', f1], ['Race', 'race', String],
+    const rows = [['Mean DPS', 'dps', f1], ['Error of the mean', 'se', f2], ['Median', 'p50', f1], ['Unlucky (10th)', 'p10', f1], ['Lucky (90th)', 'p90', f1], ['Std dev', 'stdev', f1], ['120s fight', 'dps120', f1], ['300s fight', 'dps300', f1], ['Race', 'race', String],
       ...(anyVar ? [['Setup', 'setup', String]] : []), ...(rv ? [['Race rank', 'raceRank', String]] : []), ['Best race', 'bestRace', String], ['Boss', 'bossType', String], ['Rank', 'rank', String]];
     $('#cmp-table tbody').replaceChildren(...rows.map(([lbl, k, f]) => el('tr', {}, el('td', { text: lbl }), valTd(sA, k, f), valTd(sB, k, f), diffOf(k))));
 
@@ -2471,7 +2471,7 @@ export function startReport(dash, events) {
   };
   $('#asm-reset').addEventListener('click', (e) => { e.stopPropagation(); st.asm = {}; persist(); hideTip(); render(); });
   const bName = (id) => (rowsOf('builds') || []).find((b) => b.id === id)?.build || id;
-  // Effects are each setting's change against the presets' own setting at 180 s, from `sens`. A signed number takes
+  // Effects are each setting's change against the presets' own setting at 180s, from `sens`. A signed number takes
   // the ok or bad colour; a range over several presets runs from the smaller change to the larger.
   const SPEC_SHORT = { Retribution: 'Ret', Enhancement: 'Enh', Elemental: 'Ele', 'Beast Mastery': 'BM', Marksmanship: 'MM', Assassination: 'Assassin', Destruction: 'Destro', Demonology: 'Demo' };
   const asmSigned = (v, f, unit, eps) => el('span', { class: 'fv-asm-d' + (Math.abs(v) < eps ? '' : v > 0 ? ' pos' : ' neg'), text: (Math.abs(v) < eps ? '' : v > 0 ? '+' : '−') + f(Math.abs(v)) + unit });
@@ -2483,7 +2483,7 @@ export function startReport(dash, events) {
     return el('span', { class: 'fv-asm-eff' }, asmSigned(p, f, '', eps), el('span', { class: 'fv-asm-to', text: ' to ' }), asmSigned(q, f, unit, eps));
   };
   const asmPcts = (a, sid, ids) => arr(a.sens).filter((x) => x.setting === sid && (!ids || ids.includes(x.build))).map((x) => +x.pct);
-  // how much an assumption can move a preset at 180 s, for the order within a class and the size badge
+  // how much an assumption can move a preset at 180s, for the order within a class and the size badge
   const asmImpact = (a) => (a.status === 'live' ? d3.max(arr(a.sens), (x) => Math.abs(+x.pct)) || 0 : -1);
   const asmSize = (v) => (v >= 4 ? ['big', 'Big'] : v >= 1.5 ? ['med', 'Medium'] : v >= 0.05 ? ['small', 'Small'] : ['none', 'No effect']);
   const asmSort = (as) => [...as].sort((p, q) => asmImpact(q) - asmImpact(p) || p.order - q.order);
@@ -2510,10 +2510,10 @@ export function startReport(dash, events) {
   // The presets' setting is the default: what the ranking uses, and the expected value since the 2026-10-15 rulings.
   const asmMarks = (a, x) => [x.id === a.defaultSetting ? el('span', { class: 'def', text: ' · default' }) : null];
   // One table per assumption. Each cell answers "if the truth is this column, this row's spec changes by this much at
-  // 180 s, against what the ranking shows now": a column per setting, a row per spec, the % in the ok or bad colour
+  // 180s, against what the ranking shows now": a column per setting, a row per spec, the % in the ok or bad colour
   // and the DPS under it. The presets' column is the zero point ("–") whichever column is picked, so the numbers never
   // shift. With onPick the column heads are the buttons that apply a setting; without (Method) they are plain heads.
-  const ASM_CAP = 'DPS change at 180 s if true, vs the current ranking';
+  const ASM_CAP = 'DPS change at 180s if true, vs the current ranking';
   const asmHead = (a, x, cur) => [
     el('b', { text: x.label }),
     x.id === a.defaultSetting ? el('small', { class: 'fv-asm-tag def', text: 'Default' }) : el('small', { class: 'fv-asm-tag', text: SEG_NAME[x.id] || x.id }),
@@ -2568,10 +2568,10 @@ export function startReport(dash, events) {
         const picked = cur !== a.defaultSetting;
         d.append(el('div', { class: 'fv-asm-row', 'data-key': a.key, 'data-size': sz },
           el('div', { class: 'fv-asm-txt' },
-            el('div', { class: 'fv-asm-lbl' }, el('b', { text: a.label }), live || ref ? el('span', { class: `fv-asm-size ${sz}`, title: ref ? 'One value only, kept for reference' : `Up to ${f1(imp)}% on a preset at 180 s`, text: szText }) : null, info),
+            el('div', { class: 'fv-asm-lbl' }, el('b', { text: a.label }), live || ref ? el('span', { class: `fv-asm-size ${sz}`, title: ref ? 'One value only, kept for reference' : `Up to ${f1(imp)}% on a preset at 180s`, text: szText }) : null, info),
             el('p', { class: 'fv-asm-short', text: a.short || a.description })),
           el('div', { class: 'fv-asm-body' }, ...(ref ? [...asmRefLine(a), el('p', { class: 'fv-asm-cap', text: REF_CAP })] : [
-            live ? el('p', { class: 'fv-asm-cap', text: picked ? 'DPS change at 180 s if true, vs the ranking without your pick' : ASM_CAP }) : null,
+            live ? el('p', { class: 'fv-asm-cap', text: picked ? 'DPS change at 180s if true, vs the ranking without your pick' : ASM_CAP }) : null,
             asmMatrix(a, cur, (id) => asmPick(a, id)),
             !live ? el('p', { class: 'fv-asm-cap', text: a.status === 'pending' ? 'Not simulated yet.' : 'No longer applies.' }) : null]))));
       }

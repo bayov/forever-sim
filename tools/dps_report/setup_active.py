@@ -29,7 +29,7 @@ def key_of(row):
 # what an entry gives, for the "this build doesn't use it" sentence
 GIVES = {
     'arcaneBrilliance': 'Intellect', 'divineSpirit': 'Spirit', 'battleShout': 'attack power', 'blessingOfMight': 'attack power',
-    'blessingOfKings': '10% to every attribute', 'blessingOfWisdom': 'mana per 5 sec', 'manaSpringTotem': 'mana per 5 sec',
+    'blessingOfKings': '10% to every attribute', 'blessingOfWisdom': 'mana per 5s', 'manaSpringTotem': 'mana per 5s',
     'giftOfTheWild': 'armor, attributes and resistances', 'strengthOfEarthTotem': 'Strength', 'graceOfAirTotem': 'Agility',
     'powerWordFortitude': 'Stamina', 'bloodPact': 'Stamina', 'judgementOfWisdom': 'mana when you hit the boss',
     'judgementOfTheCrusader': 'Holy damage taken by the boss', 'curseOfElements': 'spell damage taken by the boss',
@@ -38,7 +38,7 @@ GIVES = {
 CONSUME_GIVES = {
     'Elixir Of Frost Power': 'Frost spell damage', 'Elixir Of Firepower': 'Fire spell damage', 'Elixir Of Shadow Power': 'Shadow spell damage',
     'Elixir Of Nature Power': 'Nature spell damage', 'Elixir Of Greater Firepower': 'Holy spell damage (WoW Forever made it the Elixir of Holy Power)',
-    'Greater Arcane Elixir': 'spell damage', 'Greater Mageblood Elixir': 'mana per 5 sec', 'Flask Of Distilled Wisdom': 'mana',
+    'Greater Arcane Elixir': 'spell damage', 'Greater Mageblood Elixir': 'mana per 5s', 'Flask Of Distilled Wisdom': 'mana',
     'Flask Of Supreme Power': 'spell damage', 'Flask Of The Titans': 'health', 'Juju Might': 'attack power',
     'Elixir Of Greater Intellect': 'Intellect', 'Cerebral Cortex Compound': 'Intellect', 'Elixir Of Sages': 'Spirit and 2% crit',
     'Elixir Of Greater Spirit': 'Spirit', 'Elixir Of The Owl': 'Intellect and 2% crit',
@@ -191,8 +191,8 @@ def annotate(setup, builds, stat_rows, path=os.path.join(D, 'abl', 'ablate.json'
             if redundant:
                 what = pair[1][0]
                 tail = " In WoW Forever the two share one slot." if k in ('faerieFire', 'curseOfRecklessness', 'leaderOfThePack', 'moonkinAura') else " The two don't stack."
-                if k == 'exposeArmor':  # the sim's aura log shows Expose Armor up from 3 s, as it takes the slot over
-                    tail += " Its uptime still shows because the sim swaps it in after 3 s."
+                if k == 'exposeArmor':  # the sim's aura log shows Expose Armor up from 3s, as it takes the slot over
+                    tail += " Its uptime still shows because the sim swaps it in after 3s."
                 r['active'], r['why'] = False, f"{NAME[other]} already gives {what}.{tail}"
         elif same:
             r['active'], r['why'] = False, reason(k, r, cls, role, same, pair_same)

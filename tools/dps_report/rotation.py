@@ -24,10 +24,10 @@ def fmt_const(s):
     s = str(s).strip()
     m = re.fullmatch(r'(-?\d+(?:\.\d+)?)ms', s)
     if m:
-        return f'{float(m.group(1)) / 1000:g} s'
+        return f'{float(m.group(1)) / 1000:g}s'
     m = re.fullmatch(r'(-?\d+(?:\.\d+)?)s', s)
     if m:
-        return f'{float(m.group(1)):g} s'
+        return f'{float(m.group(1)):g}s'
     m = re.fullmatch(r'(-?\d+(?:\.\d+)?)m', s)
     if m:
         return f'{float(m.group(1)):g} min'
@@ -86,7 +86,7 @@ class Humaniser:
         if t == 'autoSwingTime':
             return f"{AUTO.get(a.get('autoType'), '')} swing time".strip()
         if t == 'math':
-            if a.get('op') in ('OpAdd', 'OpSub') and secs((a.get('rhs') or {}).get('const', {}).get('val')) == 0:  # "+ 0 s" adds nothing
+            if a.get('op') in ('OpAdd', 'OpSub') and secs((a.get('rhs') or {}).get('const', {}).get('val')) == 0:  # "+ 0s" adds nothing
                 return self.noun(a['lhs'])
             return f"{self.noun(a['lhs'])} {MATH.get(a.get('op'), '?')} {self.noun(a['rhs'])}"
         if t == 'spellChanneledTicks':
@@ -124,7 +124,7 @@ class Humaniser:
             parts = [f'({self.pred(x)})' if self.joiner(x, False) not in (None, how) else self.pred(x) for x in vals]
             out = f' {how} '.join(parts)
             m = re.search(r'in the last (\S+ \S+) of the fight', out)
-            if m:  # "in the last 33 s ... or waiting until the last 33 s ..." -> "waiting"
+            if m:  # "in the last 33s ... or waiting until the last 33s ..." -> "waiting"
                 out = out.replace(f' until the last {m.group(1)} of the fight', '')
             return out
         if t == 'not':

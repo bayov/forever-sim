@@ -23,9 +23,9 @@
     "stderr": 0.5,
     "iters": 20000,
     "ok": true,
-    "note": "180 s, 20000 iterations, seed 1, on the 70425 rotation (seed 100001 within 0.6)"
+    "note": "180s, 20000 iterations, seed 1, on the 70425 rotation (seed 100001 within 0.6)"
   },
-  "summary": "Fire 29 / Frost 22 built around Frostfire Bolt, which gets both trees' talents and feeds Heating Up and Fingers of Frost at once. The mage's default and best build at 180 s.",
+  "summary": "Fire 29 / Frost 22 built around Frostfire Bolt, which gets both trees' talents and feeds Heating Up and Fingers of Frost at once. The mage's default and best build at 180s.",
   "keyTalents": [
     "Improved Fireball",
     "Ignite",
@@ -39,16 +39,16 @@
     "Fingers of Frost"
   ],
   "rotation": [
-    "Pre-pull: Frostfire Bolt at -3 s",
+    "Pre-pull: Frostfire Bolt at -3s",
     "The on-use trinket once Fire Vulnerability has 5 stacks; other cooldowns on a free GCD; mana gems never (they share the rune's cooldown)",
-    "Evocation below 20% mana with more than 60 s left",
+    "Evocation below 20% mana with more than 60s left",
     "Ice Lance on every Fingers of Frost charge, ahead of Scorch and Pyroblast (3 times the damage, Shatter crit)",
-    "Scorch to 5 Fire Vulnerability stacks and again with under 9 s left",
-    "Pyroblast at 3 Heating Up stacks (1.5 s cast)",
+    "Scorch to 5 Fire Vulnerability stacks and again with under 9s left",
+    "Pyroblast at 3 Heating Up stacks (1.5s cast)",
     "Arcane Missiles on a Missile Barrage proc",
     "Fire Blast on cooldown above 80% mana, and with mana the fight can't use (above 100 per second of fight left); every Fire Blast adds a Heating Up stack",
-    "Rank 2 Frostfire Bolt once Evocation is spent or under 60 s left, while mana is under 60 per second of fight left",
-    "Ice Lance instead when a Frostfire Bolt would not land before the end (its cast plus 1.5 s)",
+    "Rank 2 Frostfire Bolt once Evocation is spent or under 60s left, while mana is under 60 per second of fight left",
+    "Ice Lance instead when a Frostfire Bolt would not land before the end (its cast plus 1.5s)",
     "Filler: Frostfire Bolt"
   ],
   "consumes": [
@@ -68,7 +68,7 @@
     "Goblin Sapper"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 41 spell power and 11 crit rating, and an on-use 140 spell power for 20 s every 2 min (at the pull, then on cooldown).",
+    "Two synthetic item level 71 trinkets: 41 spell power and 11 crit rating, and an on-use 140 spell power for 20s every 2 min (at the pull, then on cooldown).",
     "Ice Lance's spell power coefficient is 0.429, Season of Discovery's server value. Forever's client has 0, as SoD's did.",
     "Heating Up: every Fire Blast adds a stack (two on a crit), from the 70425 tooltip. One Pyroblast uses them all.",
     "Fire Power (70425) counts Fire Vulnerability and the Fireball, Pyroblast, Flamestrike and Ignite DoTs (at most 4), multiplied with Fire Vulnerability. Whether it adds or multiplies is open. Frostfire Bolt gets it, but its DoT doesn't count.",
@@ -77,5 +77,5 @@
     "Frostfire Bolt's DoT has no client coefficient. It takes both schools' talents.",
     "No Ahn'Qiraj book ranks (Fireball XI, Frostbolt X, Arcane Missiles VII). With the books: Frost +50, Arcane +30, Fire +17, Frostfire 0."
   ],
-  "notes": "Request written by mksettings -spec mage_frostfire unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). It carries the spec's staff imbue scroll (Scroll of Imbue Greater Flame) as a mage option, as the preset does. Its rotation casts Ice Lance on every Fingers of Frost charge and Evocation below 30% mana with more than 60 s left."
+  "notes": "Request written by mksettings -spec mage_frostfire unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). It carries the spec's staff imbue scroll (Scroll of Imbue Greater Flame) as a mage option, as the preset does. Its rotation casts Ice Lance on every Fingers of Frost charge and Evocation below 30% mana with more than 60s left."
 }
