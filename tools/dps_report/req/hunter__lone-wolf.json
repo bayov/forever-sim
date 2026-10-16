@@ -470,6 +470,7 @@
       "arcaneBrilliance": true,
       "divineSpirit": true,
       "battleShout": "TristateEffectImproved",
+      "trueshotAura": true,
       "leaderOfThePack": true,
       "moonkinAura": true,
       "manaSpringTotem": "TristateEffectRegular",

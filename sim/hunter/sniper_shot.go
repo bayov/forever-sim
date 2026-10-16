@@ -10,7 +10,8 @@ import (
 // Sniper Shot, the 31 point Marksmanship talent (beta client 1310687, 1310785 and 1310786, build
 // 1.60.1.70338): normalized ranged weapon damage plus 160/225/295 by rank, a 4 sec cast, a 15 sec
 // cooldown of its own and 365 mana at every rank. Its range bonus to the next 3 shots does nothing
-// here. Mortal Shots, Barrage and Efficiency leave it out of their class masks.
+// here. Barrage leaves it out of its class mask; Mortal Shots and Efficiency take it in since
+// client 1.60.1.70425 (their masks gained its bit, word 3 0x800000).
 func (hunter *Hunter) registerSniperShotSpell() {
 	if !hunter.Talents.SniperShot {
 		return
@@ -61,6 +62,7 @@ func (hunter *Hunter) registerSniperShotSpell() {
 			return hunter.inRangedRange()
 		},
 
+		CritDamageBonus:  hunter.mortalShots(),
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
 		BonusCoefficient: 1,

@@ -1613,13 +1613,13 @@ func GraceOfAirTotemAura(unit *Unit, multiplier float64) *Aura {
 	return aura
 }
 
-// graceOfAirWindfuryCategory holds Grace of Air's Agility.
+// graceOfAirWindfuryCategory holds Grace of Air's Agility, so two Grace of Air totems don't
+// stack.
 //
-// Until client 1.60.1.70425 Forever didn't let Grace of Air stack with a Windfury Totem buff, and
-// the Windfury Totem buff sat above it in this category. The 15 October development notes say
-// Grace of Air Totem is no longer exclusive with Windfury Totem, and in client 70425 the Grace of
-// Air auras (8836, 10626, 25360) lost the Attributes_11 0x400 flag they shared with the Windfury
-// Totem auras (8515, 10609, 10612), which keep it. So the two stack now, under Forever too.
+// Forever made Grace of Air and Windfury Totem exclusive, then undid it in client 1.60.1.70425
+// ("Grace of Air Totem is no longer exclusive with Windfury Totem and Flametongue Totem",
+// development notes 2026-10-15; Grace of Air's SpellMisc Attributes_11 lost 1024 on 10626 and
+// 25360). Windfury Totem and Flametongue Totem stay exclusive (totem_weapon_buffs.go).
 const graceOfAirWindfuryCategory = "GraceOfAirWindfury"
 
 const BattleShoutRanks = 7

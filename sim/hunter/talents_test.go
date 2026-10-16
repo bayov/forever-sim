@@ -270,3 +270,20 @@ func TestPushbackFlags(t *testing.T) {
 		t.Errorf("Aimed Shot pushback reduction %v, want 0", got)
 	}
 }
+
+// TestSniperShotMarksmanshipTalents checks that Efficiency and Mortal Shots cover Sniper Shot since
+// client 1.60.1.70425 (both masks gained its bit, word 3 0x800000), on the Lone Wolf build's
+// Efficiency 5 and Mortal Shots 5.
+func TestSniperShotMarksmanshipTalents(t *testing.T) {
+	_, hunter := newHunterSim(t, "5-0053552511503051-5", &proto.Debuffs{})
+	if hunter.SniperShot == nil || hunter.Talents.Efficiency != 5 || hunter.Talents.MortalShots != 5 {
+		t.Fatalf("Sniper Shot %v, Efficiency %d, Mortal Shots %d, want a spell, 5 and 5", hunter.SniperShot != nil, hunter.Talents.Efficiency, hunter.Talents.MortalShots)
+	}
+	if got := costMultiplier(t, hunter, SpellCode_HunterSniperShot); got != 85 {
+		t.Errorf("Sniper Shot cost multiplier %d, want 85", got)
+	}
+	// The same crit damage as Aimed Shot, which Mortal Shots has always covered (1.30 with rank 5).
+	if got, want := hunter.SniperShot.CritDamageBonus, hunter.AimedShot.CritDamageBonus; math.Abs(got-want) > 1e-9 || math.Abs(want-1.30) > 1e-9 {
+		t.Errorf("Sniper Shot crit damage %v, Aimed Shot %v, want both 1.30", got, want)
+	}
+}

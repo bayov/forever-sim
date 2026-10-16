@@ -47,20 +47,18 @@ func init() {
 // A ranged hunter's raid: Hunter's Mark from the raid (another hunter keeps it up, standards 23; the
 // _mark specs switch it off for the hunter on duty), Blessing of Wisdom next to Might (a mana user),
 // and a shaman in its group for Grace of Air (Agility is two ranged attack power and crit) and
-// Mana Spring. Trueshot Aura only from a Marksmanship hunter's own talent (Forever makes it a party
-// aura of ranged attack power), not from the raid. The melee debuffs and Faerie Fire stay, the
-// physical shots go through armor.
+// Mana Spring. Trueshot Aura from the raid's Marksmanship hunter, as for every other class: client
+// 1.60.1.70425 made it a raid aura (it was a party aura, so hunters went without it). The melee
+// debuffs and Faerie Fire stay, the physical shots go through armor.
 func hunterRangedRaid(raidBuffs *proto.RaidBuffs, buffs *proto.IndividualBuffs, debuffs *proto.Debuffs) {
-	raidBuffs.TrueshotAura = false
 	raidBuffs.GraceOfAirTotem = proto.TristateEffect_TristateEffectRegular
 	raidBuffs.ManaSpringTotem = proto.TristateEffect_TristateEffectRegular
 	debuffs.HuntersMark = proto.TristateEffect_TristateEffectImproved
 }
 
 // Survival melees, so it joins a melee group: Windfury Totem (its own one air totem, Forever stops
-// two from stacking) and Strength of Earth, plus Mana Spring.
+// two from stacking) and Strength of Earth, plus Mana Spring, and the raid's Trueshot Aura.
 func hunterMeleeRaid(raidBuffs *proto.RaidBuffs, buffs *proto.IndividualBuffs, debuffs *proto.Debuffs) {
-	raidBuffs.TrueshotAura = false
 	raidBuffs.TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffWindfury
 	raidBuffs.StrengthOfEarthTotem = proto.TristateEffect_TristateEffectRegular
 	raidBuffs.ManaSpringTotem = proto.TristateEffect_TristateEffectRegular

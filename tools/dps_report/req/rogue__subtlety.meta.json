@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_daggers",
   "apl": "level60_subtlety",
   "published": {
-    "dps": 644.1,
-    "source": "Phase 1 BiS weapon speed pass, 2026-10-15 (standards 22)"
+    "dps": 634.3,
+    "source": "Race pass on the client 70425 racials (raid hits, Savage, Ruthless, Earth Fury, Wind Blessed), master d511c09, 2026-10-16"
   },
   "verify": {
-    "dps": 644.1,
-    "stderr": null,
+    "dps": 634.3,
+    "stderr": 0.18,
     "iters": 20000,
     "ok": true,
-    "note": "same sim as the published number"
+    "note": "same sim as the published number (seed 1)"
   },
   "summary": "Subtlety with Hemorrhage, Ghostly Strike, Premeditation and Preparation, plus Seal Fate in Assassination, on the synthetic daggers. It is the Subtlety preset; the defining talents are pinned.",
   "keyTalents": [
@@ -69,7 +69,8 @@
     "Murder is damage only (+4% vs Humanoids and Giants) and does nothing on the generic boss, so its 2 points go to Lethality (Vile Poisons for Seal Fate Daggers); the vs Humanoid build keeps Murder 2/2",
     "Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV) left out under Forever; would add +13 to +18",
     "Grimstitch 4/5-piece bonuses not live on the synthetic gear (about +8 / +6 for Combat Daggers)",
-    "Flask of Supreme Power and Greater Arcane Elixir omitted for consistency (+8 via Dragonbreath Chili)"
+    "Flask of Supreme Power and Greater Arcane Elixir omitted for consistency (+8 via Dragonbreath Chili)",
+    "Best Alliance race is High Order; since client 70425 the races are within about 3 DPS of each other"
   ],
   "notes": "Only Subtlety build, so treated as the Subtlety default."
 }
