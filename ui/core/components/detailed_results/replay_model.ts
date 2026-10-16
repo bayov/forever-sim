@@ -4,6 +4,8 @@ import { ActionId, resourceTypeToIcon } from '../../proto_utils/action_id.js';
 import { AuraUptimeLog, CastLog, DamageDealtLog, Entity, ResourceChangedLog, SimLog } from '../../proto_utils/logs_parser.js';
 import { SimResult, SimResultFilter, UnitMetrics } from '../../proto_utils/sim_result.js';
 import { formatToNumber } from '../../utils.js';
+import { getLevelingSession, LevelingSession, mobName } from './leveling_session.js';
+import { levelingMobHealth, levelingMobIcon } from './replay_map.js';
 import { searchText } from './timeline.js';
 
 // Everything the Replay view draws, worked out once per iteration. The view then asks for the
@@ -230,6 +232,10 @@ export interface ReplayModel {
 	hasCooldownData: boolean;
 	// The fight ends at a set time, so the enemy's health follows the time left.
 	timeBasedHealth: boolean;
+	// The leveling session the iteration was, or null for a fight.
+	leveling: LevelingSession | null;
+	// The icon of the session's mobs on the map: their mob type's.
+	levelingMobIcon: string;
 }
 
 // The colors of the spell schools, by the school's bit in the sim's logs.
@@ -328,12 +334,13 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 	}
 
 	// The sim keeps an aura on us while a totem of ours is down, like Searing Totem. In game it's
-	// only a totem, so we show it in its totem cell and not as a buff too.
+	// only a totem, so we show it in its totem cell and not as a buff too. That goes for the auras
+	// named after it too, like Windfury Totem Passive.
 	const totemSlots = buildTotemSlots(player.logs);
 	const totemIds = new Set(totemSlots.flatMap(slot => slot.drops.map(drop => drop.actionId.toString())));
-	const totemNames = new Set(totemSlots.flatMap(slot => slot.drops.map(drop => baseName(drop.actionId)).filter(Boolean)));
+	const totemNames = Array.from(new Set(totemSlots.flatMap(slot => slot.drops.map(drop => baseName(drop.actionId)).filter(Boolean))));
 	const playerAuras = buildAuraTracks(player.auraUptimeLogs, start, end).filter(
-		track => !totemNames.has(baseName(track.actionId)) && !totemIds.has(track.actionId.toString()),
+		track => !totemIds.has(track.actionId.toString()) && !totemNames.some(name => baseName(track.actionId).startsWith(name)),
 	);
 
 	// The cooldowns, from the lines the sim writes when an ability goes on cooldown.
@@ -408,13 +415,21 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 		const actionId = cast.log.actionId!;
 		if (autoAttacks.includes(actionId.otherId)) return false;
 		// Procs, like a Windfury attack, are casts too. Only what we pressed takes the GCD or has
-		// a cooldown of its own.
-		return cast.log.effectiveTime > 0 || trackedKeys.has(actionId.toStringIgnoringTag()) || majorCooldownIds.some(id => id.equalsIgnoringTag(actionId));
+		// a cooldown of its own. An item we use is pressed too, like the food, drink and bandages of
+		// a leveling session, which take no GCD.
+		return (
+			cast.log.effectiveTime > 0 ||
+			actionId.itemId > 0 ||
+			trackedKeys.has(actionId.toStringIgnoringTag()) ||
+			majorCooldownIds.some(id => id.equalsIgnoringTag(actionId))
+		);
 	});
 
 	// The enemies. The sim ends the fight at a set time unless the encounter uses health, and
 	// then the execute phases follow the time left. So the health bars follow it too.
-	const timeBasedHealth = !encounter?.useHealth;
+	// A leveling session is a timed fight too, but its mobs have health of their own.
+	const leveling = getLevelingSession(result);
+	const timeBasedHealth = !encounter?.useHealth && !leveling;
 	const playerDamage = (log: DamageDealtLog) => log.isDamage() && !!log.target?.isTarget;
 	const allDamage = result.logs.filter((log): log is DamageDealtLog => log.isDamageDealt() && playerDamage(log));
 
@@ -428,13 +443,17 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 				damageTaken.push(log.timestamp, total);
 			});
 		const maxHealth = encounter?.targets[i]?.stats[Stat.StatHealth] || 0;
-		const healthFraction = timeBasedHealth
+		const healthFraction = leveling
+			? levelingMobHealth(leveling, target)
+			: timeBasedHealth
 			? (time: number) => clamp01((end - Math.max(0, time)) / end)
 			: (time: number) => (maxHealth > 0 ? clamp01(1 - damageTaken.at(time) / maxHealth) : 1);
+		// A leveling session's targets are its pool of mobs, each of one level.
+		const life = leveling?.mobs.find(mob => mob.targetIndex == target.index);
 		return {
 			unit: target,
-			name: target.name || `Target ${i + 1}`,
-			level: encounter?.targets[i]?.level || 63,
+			name: life ? mobName(life) : target.name || `Target ${i + 1}`,
+			level: life?.level || encounter?.targets[i]?.level || 63,
 			healthFraction,
 			damageTaken,
 			// The sim keeps Searing Totem and Magma Totem going as a dot on the first enemy, but in game
@@ -500,6 +519,8 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 		markers,
 		hasCooldownData: player.logs.some(log => log.isCooldown() || log.isMaxResources()),
 		timeBasedHealth,
+		leveling,
+		levelingMobIcon: levelingMobIcon(encounter?.leveling?.mobType),
 	};
 };
 

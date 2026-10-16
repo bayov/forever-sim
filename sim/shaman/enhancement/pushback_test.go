@@ -1,6 +1,8 @@
 package enhancement
 
 import (
+	"regexp"
+	"strings"
 	"testing"
 	"time"
 
@@ -52,4 +54,41 @@ func TestOrcShamanCastPushback(t *testing.T) {
 	at(sim, 2.6, hit)
 	check(2.6, 4.5)
 	runSim(sim)
+}
+
+// TestLevelingHealPushback grinds a session where we cast Lesser Healing Wave below 40%
+// health. Every mob hit that lands while we cast pushes the heal back, and a whole session
+// has plenty of them.
+func TestLevelingHealPushback(t *testing.T) {
+	req := levelingRequest(t, &proto.LevelingOptions{MaxPackSize: 3}, 1)
+	req.SimOptions.Debug = true
+	result := runLeveling(t, req)
+
+	mobHit := regexp.MustCompile(`^\[Target \d+\] \[ \(#1\)\] \{OtherID: 7, Tag: 1\} (Hit|Crit|Crush|Block) `)
+	casting := false
+	hits, pushbacks, casts := 0, 0, 0
+	for _, line := range strings.Split(result.Logs, "\n") {
+		m := logTime.FindStringSubmatch(line)
+		if m == nil {
+			continue
+		}
+		event := line[len(m[0]):]
+		switch {
+		case strings.HasPrefix(event, "[ (#1)] Casting {SpellID: 8008}"):
+			casting = true
+			casts++
+		case strings.HasPrefix(event, "[ (#1)] Completed cast {SpellID: 8008}"):
+			casting = false
+		case casting && mobHit.MatchString(event):
+			hits++
+		case casting && strings.HasPrefix(event, "[ (#1)] Unit Hardcast extended"):
+			pushbacks++
+		}
+	}
+	if hits < 10 {
+		t.Fatalf("%d mob hits landed in %d heals, want more to check pushback", hits, casts)
+	}
+	if pushbacks != hits {
+		t.Errorf("%d mob hits landed while we cast Lesser Healing Wave, but %d pushed it back", hits, pushbacks)
+	}
 }

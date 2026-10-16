@@ -5,7 +5,7 @@ Classic:  https://nether.wowhead.com/classic/tooltip/<item|spell>/<id>?dataEnv=4
 The /forever/ path picks Forever's database whatever dataEnv says (16, 17 or none answer the same). Without the path, dataEnv 16 is
 Forever and dataEnv 17 is retail's squished data (Earthstrike item level 13, Forever-only ids not found).
 Every answer (an error too) is kept under forever_tt_cache/<domain>/<kind>/<id>.json, so a rebuild reads the
-disk and never the network. `python3 whcache.py ids.json` fetches what is missing (ids.json: [[kind, id], ...]).
+disk and never the network. `python3 whcache.py [--retry] ids.json` fetches what is missing (ids.json: [[kind, id], ...]).
 """
 import json, os, ssl, sys, time, urllib.error, urllib.request
 
@@ -95,9 +95,14 @@ def lookup(kind, i):
 
 
 if __name__ == '__main__':
-    ids = json.load(open(sys.argv[1]))
+    # --retry asks Forever's wowhead again for what it didn't know when we cached its answer. It adds spells and
+    # items over time, like the talents' rank 1 spells.
+    retry = '--retry' in sys.argv
+    ids = json.load(open([a for a in sys.argv[1:] if a != '--retry'][0]))
     n = 0
     for kind, i in ids:
+        if retry and cached('forever', kind, i) is not None and not ok(cached('forever', kind, i)):
+            os.remove(path('forever', kind, i))
         had = cached('forever', kind, i) is not None
         j = fetch('forever', kind, i)
         if not ok(j):

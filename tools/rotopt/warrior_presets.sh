@@ -6,7 +6,7 @@
 # them, only the one sanity sim does.
 #
 #   go run --tags=with_db ./tools/rotopt/mksettings -spec fury -gear level60_phase1_synthetic_fury \
-#       -apl level60_fury -talents 30305013002-25053005112110501-2 -race Human -duration 180 -out fury.json
+#       -apl level60_fury -talents 30305013002-25053005122010501-2 -race Human -duration 180 -out fury.json
 #   tools/rotopt/warrior_presets.sh fury.json
 #
 # The searches: tools/rotopt -talent-search and the knob search, one after the other until
@@ -22,13 +22,13 @@ gen() {
 		-eval -confirm-iters 100 -out ui/warrior/apls -name "$name" -talents "$talents" -knobs "$knobs" >/dev/null
 	echo "wrote ui/warrior/apls/$name.apl.json ($knobs)"
 }
-gen warrior_fury level60_fury 30305013002-25053005112110501-2 \
-	battleShout=0,berserkerRageRage=0,bloodrageRage=40,deathWish=1,dwEnd=33,executeFirst=0,fillerGap=0,hamstringRage=10,hsExecute=0,hsRage=40,mineSync=1,potionAt=20,potionHoldForDw=2,potionPull=1,racialAt=25,racialHoldForDw=1,recklessAt=25,recklessness=0,slamAfterSwing=0,slamRage=0,spearDance=0,trinketAt=0,wwBtGap=0,wwFirst=1,wwRage=25
+gen warrior_fury level60_fury 30305013002-25053005122010501-2 \
+	battleShout=0,berserkerRageRage=0,bloodrageRage=40,deathWish=1,dwEnd=33,executeFirst=0,fillerGap=0,hamstringRage=10,hsExecute=0,hsRage=50,mineSync=1,potionAt=20,potionHoldForDw=2,potionPull=1,racialAt=25,racialHoldForDw=1,recklessAt=25,recklessness=0,slamAfterSwing=0,slamRage=0,spearDance=0,trinketAt=0,wwBtGap=0,wwFirst=1,wwRage=25
 # level60_fury on Battle Shout duty (standards 23): shouts before the pull and refreshes it.
-gen warrior_fury level60_fury_battle_shout 30305013002-25053005112110501-2 \
-	battleShout=1,berserkerRageRage=0,bloodrageRage=40,deathWish=1,dwEnd=33,executeFirst=0,fillerGap=0,hamstringRage=10,hsExecute=0,hsRage=40,mineSync=1,potionAt=20,potionHoldForDw=2,potionPull=1,racialAt=25,racialHoldForDw=1,recklessAt=25,recklessness=0,slamAfterSwing=0,slamRage=0,spearDance=0,trinketAt=0,wwBtGap=0,wwFirst=1,wwRage=25
+gen warrior_fury level60_fury_battle_shout 30305013002-25053005122010501-2 \
+	battleShout=1,berserkerRageRage=0,bloodrageRage=40,deathWish=1,dwEnd=33,executeFirst=0,fillerGap=0,hamstringRage=10,hsExecute=0,hsRage=50,mineSync=1,potionAt=20,potionHoldForDw=2,potionPull=1,racialAt=25,racialHoldForDw=1,recklessAt=25,recklessness=0,slamAfterSwing=0,slamRage=0,spearDance=0,trinketAt=0,wwBtGap=0,wwFirst=1,wwRage=25
 gen warrior_fury level60_fury_2h 30305013032-25053000152110501 \
-	battleShout=0,berserkerRageRage=0,bloodrageRage=70,deathWish=2,dwEnd=36,executeFirst=0,fillerGap=0,hamstringRage=20,hsExecute=0,hsRage=90,mineSync=1,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=30,racialHoldForDw=2,recklessAt=30,recklessness=2,slamAfterSwing=1,slamRage=30,spearDance=0,trinketAt=34,wwBtGap=0,wwFirst=0,wwRage=25
+	battleShout=0,berserkerRageRage=0,bloodrageRage=20,deathWish=2,dwEnd=36,executeFirst=0,fillerGap=0,hamstringRage=20,hsExecute=0,hsRage=85,mineSync=1,potionAt=20,potionHoldForDw=2,potionPull=0,racialAt=30,racialHoldForDw=2,recklessAt=30,recklessness=2,slamAfterSwing=1,slamRage=30,spearDance=0,trinketAt=34,wwBtGap=0,wwFirst=0,wwRage=25
 # level60_fury_2h on Battle Shout duty (standards 23): shouts before the pull and refreshes it. The duty
 # search takes Bloodrage below 20 Rage (+1.6 at 180 sec), since the pull's Bloodrage goes before the shout.
 gen warrior_fury level60_fury_2h_battle_shout 30305013032-25053000152110501 \

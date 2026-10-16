@@ -25,7 +25,7 @@
     "ok": true,
     "note": "same sim as the published number (seed 1)"
   },
-  "summary": "Subtlety with Hemorrhage, Ghostly Strike, Premeditation and Preparation, plus Seal Fate in Assassination, on the synthetic daggers. It is the Subtlety preset; the defining talents are pinned.",
+  "summary": "Subtlety with Hemorrhage, Ghostly Strike and Preparation, on daggers.",
   "keyTalents": [
     "Hemorrhage",
     "Ghostly Strike",
@@ -61,16 +61,14 @@
     "Deadly Poison (main hand) and Instant Poison (off hand), each beside a Dense Sharpening Stone"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 31 Agility and 15 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Fight never opens from Stealth; Stealth only comes from Vanish",
-    "Ghostly Strike is worth nothing over Hemorrhage (+0.5 removed) but is pinned by the build",
-    "Premeditation out of Stealth and Preparation's reset list are open for beta testing",
-    "Elusiveness is worth 0 at 180 s, -2.9 at 300 s",
-    "Murder is damage only (+4% vs Humanoids and Giants) and does nothing on the generic boss, so its 2 points go to Lethality (Vile Poisons for Seal Fate Daggers); the vs Humanoid build keeps Murder 2/2",
-    "Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV) left out under Forever; would add +13 to +18",
-    "Grimstitch 4/5-piece bonuses not live on the synthetic gear (about +8 / +6 for Combat Daggers)",
-    "Flask of Supreme Power and Greater Arcane Elixir omitted for consistency (+8 via Dragonbreath Chili)",
-    "Best Alliance race is High Order; since client 70425 the races are within about 3 DPS of each other"
+    "The fight doesn't open from Stealth. Only Vanish gives Stealth.",
+    "Ghostly Strike adds nothing over Hemorrhage (0.5), but the build requires it.",
+    "Open: Premeditation out of Stealth and Preparation's reset list.",
+    "Elusiveness: 0 at 180s, -2.9 at 300s.",
+    "Murder does nothing on the generic boss, so its points go to Lethality (Vile Poisons for Seal Fate Daggers).",
+    "No Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV). They would add 13 to 18.",
+    "Grimstitch 4-piece and 5-piece aren't active (about +8 and +6).",
+    "Flask of Supreme Power and Greater Arcane Elixir left out (+8 through Dragonbreath Chili)."
   ],
   "notes": "Only Subtlety build, so treated as the Subtlety default."
 }

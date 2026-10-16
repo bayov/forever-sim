@@ -221,9 +221,11 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 		Id: 991015, Name: "Fury Synthetic Off Hand (Phase 1)", Icon: "inv_axe_11",
 		Type:       proto.ItemType_ItemTypeWeapon,
 		WeaponType: proto.WeaponType_WeaponTypeAxe, HandType: proto.HandType_HandTypeOneHand,
-		// Bone Slicing Hatchet's speed and damage spread at Brutality Blade's 51.6 DPS (standards 22:
-		// a Phase 1 BiS speed, the one that sims best).
-		WeaponDamageMin: 61, WeaponDamageMax: 114.4, WeaponSpeed: 1.7,
+		// Deathbringer's speed and damage spread at Brutality Blade's 51.6 DPS (standards 22: a Phase 1
+		// BiS speed, the one that sims best). It was Bone Slicing Hatchet's 1.7 sec until the off hand's
+		// Rage was halved and Windfury Totem stopped proccing from it (2026-10-16): a slow off hand is
+		// now 9 ahead at 180 sec.
+		WeaponDamageMin: 104.3, WeaponDamageMax: 194.9, WeaponSpeed: 2.9,
 		Stats:      stats.Stats{stats.Strength: 10, stats.Agility: 4, stats.Stamina: 3}.ToFloatArray(),
 		CritRating: 15,
 		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,

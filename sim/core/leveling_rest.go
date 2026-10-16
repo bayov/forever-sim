@@ -17,6 +17,11 @@ import (
 // Sitting adds a third to Spirit's health regen (sittingHealthRegenMultiplier). Food and water
 // come on top of Spirit's regen, health and mana alike. While we sit or bandage the rotation
 // does nothing: anything else would stand us up.
+//
+// The food, water and bandage are spells of ours, like in the game's combat log. Each food or
+// drink we start and each bandage is a cast, with an aura while it lasts (Food, Drink and First
+// Aid, then Recently Bandaged), and the food and bandage heal in ticks. So they show in the
+// log, the healing metrics and the replay's action history like any other spell.
 
 // levelingRest is what we sit down for: eating, drinking, or just sitting, until health and
 // mana are at these shares of max, with another food or drink when one runs out short.
@@ -90,10 +95,12 @@ func (s *levelingSession) refill(sim *Simulation) {
 	if r.eat && s.foodLeft <= 0 && s.player.CurrentHealthPercent() < r.healthUntil {
 		s.foodLeft = s.food.duration
 		s.foods++
+		s.foodSpell.Cast(sim, s.player)
 	}
 	if r.drink && s.drinkLeft <= 0 && s.player.HasManaBar() && s.manaPercent() < r.manaUntil {
 		s.drinkLeft = s.drink.duration
 		s.drinks++
+		s.drinkSpell.Cast(sim, s.player)
 	}
 }
 
@@ -102,7 +109,7 @@ func (s *levelingSession) restTick(sim *Simulation, dt time.Duration) {
 	p := s.player
 	seconds := dt.Seconds()
 	if s.foodLeft > 0 {
-		s.heal(sim, s.food.amount*seconds/s.food.duration.Seconds(), s.foodMetrics)
+		s.healTick(sim, s.foodSpell, s.food.amount*seconds/s.food.duration.Seconds())
 		s.foodLeft -= dt
 	}
 	if s.drinkLeft > 0 && p.HasManaBar() {
@@ -137,11 +144,52 @@ func (s *levelingSession) startBandage(sim *Simulation) {
 	s.bandageLeft = s.bandage.duration
 	s.bandageReadyAt = sim.CurrentTime + recentlyBandagedDuration
 	s.bandages++
+	s.bandageSpell.Cast(sim, s.player)
+	s.recentlyBandagedAura.Activate(sim)
 	s.busy(sim, s.bandage.duration)
 	if sim.Log != nil {
 		s.player.Log(sim, "Leveling: bandaging")
 	}
 	s.after(sim, &s.next, s.bandage.duration, s.outOfCombatDone)
+}
+
+// registerRestSpells makes the food, water and bandage spells of ours, each with its aura.
+// They go off the rotation's global cooldown and don't proc anything: we're sitting.
+func (s *levelingSession) registerRestSpells() {
+	c := s.character
+	restSpell := func(r restorer, label string) (*Spell, *Aura) {
+		actionID := ActionID{ItemID: r.itemID}
+		aura := c.RegisterAura(Aura{Label: label, ActionID: actionID, Duration: r.duration})
+		spell := c.RegisterSpell(SpellConfig{
+			ActionID:    actionID,
+			SpellSchool: SpellSchoolPhysical,
+			ProcMask:    ProcMaskEmpty,
+			// Food and bandages heal what they say, whatever our healing modifiers.
+			Flags:            SpellFlagHelpful | SpellFlagIgnoreModifiers | SpellFlagNoOnCastComplete,
+			DamageMultiplier: 1,
+			ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
+				aura.Activate(sim)
+			},
+		})
+		return spell, aura
+	}
+	s.foodSpell, s.foodAura = restSpell(s.food, "Food")
+	s.drinkSpell, s.drinkAura = restSpell(s.drink, "Drink")
+	s.bandageSpell, s.bandageAura = restSpell(s.bandage, "First Aid")
+	s.recentlyBandagedAura = c.RegisterAura(Aura{
+		Label:    "Recently Bandaged",
+		ActionID: ActionID{SpellID: 11196},
+		Duration: recentlyBandagedDuration,
+	})
+}
+
+// healTick heals us by a tick of food or a bandage, up to our max health.
+func (s *levelingSession) healTick(sim *Simulation, spell *Spell, amount float64) {
+	amount = min(amount, s.player.MaxHealth()-s.player.CurrentHealth())
+	if amount <= 0 {
+		return
+	}
+	spell.DealPeriodicHealing(sim, spell.CalcHealing(sim, s.player, amount, spell.OutcomeHealing))
 }
 
 // outOfCombatDone: a rest or bandage is over, and the rotation decides what's next.

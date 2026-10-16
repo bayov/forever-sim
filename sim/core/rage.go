@@ -95,7 +95,8 @@ func ForeverNormalizedRage(weapon *Weapon, level int32) float64 {
 // (2026-10-16: being more defensive doesn't penalize Rage) those don't count either (report
 // assumption warr_dt_rage_mods). K = 20 comes from pre-fix beta logs (magey/forever-warrior
 // issue 3: 10 Rage a max health of damage with the 50% armor assumption, at levels 8 to 9). At
-// 60 a 1500 hit gives 4.5 Rage; Classic gave 15.4 from a level 63 attacker.
+// 60 a 1500 hit gives 3.4 Rage (a level 60 normal mob has 5356 health in Forever's creature table);
+// Classic gave 15.4 from a level 63 attacker.
 func ForeverDamageTakenRage(spell *Spell, result *SpellResult, level int32) float64 {
 	if !result.Landed() {
 		return 0

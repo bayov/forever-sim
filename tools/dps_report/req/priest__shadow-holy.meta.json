@@ -16,16 +16,16 @@
   "apl": "level60",
   "published": {
     "dps": 886.4,
-    "source": "priest client 70425 port (DP 24 s, talents and knobs re-searched with raid hits), 2026-10-16"
+    "source": "priest client 70425 port (DP 24s, talents and knobs re-searched with raid hits), 2026-10-16"
   },
   "verify": {
     "dps": 886.4,
     "stderr": 0.16,
     "iters": 20000,
     "ok": true,
-    "note": "180 s, 20000 iterations, seed 1 (seed 1000001: 886.4)"
+    "note": "180s, 20000 iterations, seed 1 (seed 1000001: 886.4)"
   },
-  "summary": "The Shadow points with 18 Holy points of healing utility (Twilight Focus, Spell Warding, Inspiration, Improved Healing) instead of Discipline, giving up Twin Disciplines and Mental Strength. Shipped as a second Shadow preset for raids that want the Holy utility, 4.5% behind Level 60 at 180 s.",
+  "summary": "Shadow with Holy points of healing utility instead of Discipline.",
   "keyTalents": [
     "Shadowform",
     "Shadow Weaving",
@@ -36,10 +36,10 @@
     "Twilight Focus"
   ],
   "rotation": [
-    "Pre-pull: Shadowform at -3 s, Mind Blast at -1.5 s that lands at the pull; the on-use trinket and Major Spellblasting Potion at -0.1 s",
+    "Pre-pull: Shadowform at -3s, Mind Blast at -1.5s that lands at the pull; the on-use trinket and Major Spellblasting Potion at -0.1s",
     "Dark Sacrifice (Undead) below 10% mana; racials and trinkets on cooldown",
     "Shadow Word: Pain whenever it is down (9+ s left in the fight)",
-    "Devouring Plague whenever it is down and off its 24 s cooldown (12+ s left)",
+    "Devouring Plague whenever it is down and off its 24s cooldown (12+ s left)",
     "Shadow Word: Death on cooldown, then Inner Focus right before Mind Blast and Mind Blast on cooldown",
     "Mind Flay to fill; clipped after the second tick if SW:P or Devouring Plague fell off, never clipped for Mind Blast"
   ],
@@ -57,13 +57,12 @@
     "Demonic Rune"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 36 spell power and 15 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "The Holy points add no DPS except Twilight Focus (pushback protection); an unconstrained talent search drops Holy for the Level 60 build",
-    "Runs out of mana on long fights now that Devouring Plague is every 24 s: Human leads at 180 s (886.4), but Undead's Dark Sacrifice wins at 300 s (865.1 against 802.9); Undead is the best Horde race, 3.5 behind at 180 s",
-    "Synthetic Phase 1 gear (not in the game), only the 2-piece set bonus is live; Raiments 4/5-piece (Devouring Plague without a cooldown) not re-measured since its cooldown dropped to 24 s",
-    "Periodic spells roll crit per tick (global Forever rule); Shadow Weaving assumed to apply to the priest's own Shadow damage on every target",
-    "Mind Flay rolls hit once and its channel is not hasted; SW:Death backlash ignored and SW:Death numbers are untested in beta",
-    "Brilliant Wizard Oil left out as a Zul'Gurub recipe (+12.5); Elixir of Sages left out by the one-crit-elixir ruling (+13.9)"
+    "The Holy points add no DPS except Twilight Focus (pushback protection).",
+    "Runs out of mana on long fights. Undead's Dark Sacrifice wins at 300s (865.1 vs 802.9).",
+    "Only the 2-piece set bonus is active. Raiments 4-piece and 5-piece not measured since Devouring Plague's 24s cooldown.",
+    "Periodic spells crit per tick (Forever rule). Assumed: Shadow Weaving applies to the priest's own Shadow damage.",
+    "Mind Flay rolls hit once and isn't hasted. SW:Death backlash is ignored.",
+    "Left out: Brilliant Wizard Oil (+12.5) and Elixir of Sages (+13.9)."
   ],
   "notes": "mksettings request plus manaRegenElixir GreaterMagebloodElixir (ConsumesHoly in presets.ts). Only the Undead number is published for this build; no per-faction race table."
 }

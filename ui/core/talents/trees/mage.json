@@ -69,11 +69,11 @@
           "colIdx": 2
         },
         "spellIds": [
-          0,
-          0,
-          0,
-          0,
-          0
+          11237,
+          11237,
+          11237,
+          11237,
+          11237
         ],
         "maxPoints": 5,
         "name": "Improved Channeling",
@@ -100,8 +100,40 @@
             70
           ]
         ],
-        "icon": "spell_nature_starfall",
-        "notSimulated": true
+        "icon": "spell_nature_starfall"
+      },
+      {
+        "fieldName": "missileBarrage",
+        "location": {
+          "rowIdx": 0,
+          "colIdx": 3
+        },
+        "spellIds": [
+          400588,
+          400588
+        ],
+        "maxPoints": 2,
+        "name": "Missile Barrage",
+        "description": "Gives your Arcane Blast spell a {0}% chance, your Arcane Missile hits a {1}% chance, and your Arcane Wrath, Fireball, Frostbolt, and Frostfire Bolt spells a {2}% chance to reduce the channeled duration of your next Arcane Missiles spell by {3}%, reduce the Mana cost by {4}%, and missiles fire every {5} sec.",
+        "ranks": [
+          [
+            20,
+            5,
+            10,
+            50,
+            100,
+            0.5
+          ],
+          [
+            40,
+            10,
+            20,
+            50,
+            100,
+            0.5
+          ]
+        ],
+        "icon": "ability_mage_missilebarrage"
       },
       {
         "fieldName": "arcaneSubtlety",
@@ -227,8 +259,8 @@
           "colIdx": 0
         },
         "spellIds": [
-          0,
-          0
+          11247,
+          11247
         ],
         "maxPoints": 2,
         "name": "Arcane Geometry",
@@ -251,9 +283,9 @@
           "colIdx": 1
         },
         "spellIds": [
-          0,
-          0,
-          0
+          11242,
+          11242,
+          11242
         ],
         "maxPoints": 3,
         "name": "Arcane Impact",
@@ -278,19 +310,19 @@
           "colIdx": 3
         },
         "spellIds": [
-          0
+          400574
         ],
         "maxPoints": 1,
         "name": "Arcane Blast",
-        "description": "Blasts the target with energy, dealing {0} to {1} Arcane damage. Each time you cast Arcane Blast, the damage of all your other spells is increased by {2}% and the mana cost of Arcane Blast is increased by {3}%. Effect stacks up to {4} times and lasts {5} sec or until any other damage spell is cast.",
+        "description": "Blasts the target with energy, dealing {0} to {1} Arcane damage. Each time you cast Arcane Blast, you gain {2}% of your Intellect as Spell Damage and the mana cost of Arcane Blast is increased by {3}%. Effect stacks up to {4} times and lasts {5} sec from time of initial application.",
         "ranks": [
           [
-            57,
-            65,
-            10,
+            34,
+            38,
+            15,
             175,
             4,
-            8
+            15
           ]
         ],
         "icon": "spell_arcane_blast"
@@ -302,8 +334,8 @@
           "colIdx": 0
         },
         "spellIds": [
-          0,
-          0
+          11252,
+          11252
         ],
         "maxPoints": 2,
         "name": "Arcane Shielding",
@@ -377,27 +409,29 @@
         "icon": "spell_shadow_siphonmana"
       },
       {
-        "fieldName": "missileBarrage",
+        "fieldName": "arcaneWrath",
         "location": {
           "rowIdx": 3,
           "colIdx": 3
         },
+        "prereqLocation": {
+          "rowIdx": 2,
+          "colIdx": 3
+        },
         "spellIds": [
-          0
+          1326079
         ],
         "maxPoints": 1,
-        "name": "Missile Barrage",
-        "description": "Gives your Arcane Blast spell a {0}% chance, and your Fireball, Frostbolt, and Frostfire Bolt spells a {1}% chance to reduce the channeled duration of your next Arcane Missiles spell by {2}%, reduce the Mana cost by {3}%, and missiles fire every {4} sec.",
+        "name": "Arcane Wrath",
+        "description": "Launches a projectile of pure Arcane energy at the enemy target, causing {0} to {1} Arcane damage. This spell gains additional Spell Damage equal to {2}% of your maximum Mana.",
         "ranks": [
           [
-            40,
-            20,
-            50,
-            100,
-            0.5
+            122,
+            146,
+            5
           ]
         ],
-        "icon": "ability_mage_missilebarrage"
+        "icon": "ability_mage_netherwindpresence"
       },
       {
         "fieldName": "presenceOfMind",
@@ -520,28 +554,26 @@
     "backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/classic/41.jpg",
     "talents": [
       {
-        "fieldName": "wakeOfFire",
+        "fieldName": "improvedFireBlast",
         "location": {
           "rowIdx": 0,
           "colIdx": 0
         },
         "spellIds": [
-          0,
-          0
+          11078,
+          11078
         ],
         "maxPoints": 2,
-        "name": "Wake of Fire",
-        "description": "Reduces the cooldown of your Fire Blast spell by {0} sec. Killing a non-trivial target increases the critical strike chance of your next Fire Blast cast within {1} sec by {2}%.",
+        "name": "Improved Fire Blast",
+        "description": "Reduces the cooldown of your Fire Blast spell by {0} sec and increases its range by {1} yards.",
         "ranks": [
           [
             1,
-            30,
-            25
+            8
           ],
           [
             2,
-            30,
-            50
+            15
           ]
         ],
         "icon": "spell_fire_lavaspawn"
@@ -553,9 +585,9 @@
           "colIdx": 1
         },
         "spellIds": [
-          0,
-          0,
-          0
+          18459,
+          18459,
+          18459
         ],
         "maxPoints": 3,
         "name": "Incineration",
@@ -854,7 +886,7 @@
           "colIdx": 2
         },
         "spellIds": [
-          0
+          400624
         ],
         "maxPoints": 1,
         "name": "Heating Up",
@@ -906,7 +938,7 @@
           11367,
           11368
         ],
-        "maxPoints": 3,
+        "maxPoints": 5,
         "name": "Critical Mass",
         "description": "Increases the critical strike chance of your Fire spells by {0}%.",
         "ranks": [
@@ -918,6 +950,12 @@
           ],
           [
             6
+          ],
+          [
+            8
+          ],
+          [
+            10
           ]
         ],
         "icon": "spell_nature_wispheal"
@@ -957,24 +995,21 @@
           12399,
           12400
         ],
-        "maxPoints": 5,
+        "maxPoints": 3,
         "name": "Fire Power",
-        "description": "Increases the damage done by your Fire spells by {0}%.",
+        "description": "Increases the damage done by your Fire spells by {0}% per your Fire effects on the target, up to a maximum increase of {1}%. Effects which mix multiple schools of magic do not qualify.",
         "ranks": [
           [
-            2
-          ],
-          [
+            1,
             4
           ],
           [
-            6
-          ],
-          [
+            2,
             8
           ],
           [
-            10
+            3,
+            12
           ]
         ],
         "icon": "spell_fire_immolation"
@@ -1288,7 +1323,7 @@
           "colIdx": 2
         },
         "spellIds": [
-          0
+          1312002
         ],
         "maxPoints": 1,
         "name": "Ice Lance",
@@ -1297,7 +1332,7 @@
           [
             28,
             32,
-            300
+            200
           ]
         ],
         "icon": "spell_frost_frostblast"
@@ -1461,8 +1496,8 @@
           "colIdx": 2
         },
         "spellIds": [
-          0,
-          0
+          400647,
+          400647
         ],
         "maxPoints": 2,
         "name": "Fingers of Frost",
@@ -1492,40 +1527,36 @@
         ],
         "maxPoints": 5,
         "name": "Winter's Chill",
-        "description": "Gives your Frost damage spells a {0}% chance to apply the Winter's Chill effect, which increases the chance your Ice Lance and Frostbolt spells will critically hit the target by {1}% for {2} sec. Stacks up to {3} times.",
+        "description": "Gives your Frost damage spells a {0}% chance to apply the Winter's Chill effect, which increases the damage done by your Cone of Cold spell to the target by {1}%, stacking up to {2} times.",
         "ranks": [
           [
             20,
-            2,
-            15,
-            1
+            40,
+            5
           ],
           [
             40,
-            2,
-            15,
-            2
+            40,
+            5
           ],
           [
             60,
-            2,
-            15,
-            3
+            40,
+            5
           ],
           [
             80,
-            2,
-            15,
-            4
+            40,
+            5
           ],
           [
             100,
-            2,
-            15,
+            40,
             5
           ]
         ],
-        "icon": "spell_frost_chillingblast"
+        "icon": "spell_frost_chillingblast",
+        "notSimulated": true
       },
       {
         "fieldName": "iceBarrier",

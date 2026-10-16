@@ -3,10 +3,10 @@
 
 Every build whose class uses mana (all but warriors and rogues. Feral cat counts because it powershifts
 with mana) is simmed with its own request ($DASH_DIR/req/<id>.json: consumes, mana potions, buffs and
-rotation as run_build.py runs them), but with a fixed 480 s fight and no duration variation.
+rotation as run_build.py runs them), but with a fixed 480s fight and no duration variation.
 
   - FIGHTS (default 100) one-fight runs with seeds 1001.., each with a debug log. We read the player's
-    mana from the log's "Spent / Gained N mana (old --> new)" lines and sample it every 5 s.
+    mana from the log's "Spent / Gained N mana (old --> new)" lines and sample it every 5s.
   - One 5,000-fight run for the sim's own mana metrics: time spent out of mana (secondsOomAvg), time to
     OOM (Tto, the first cast that failed for mana, extrapolated from the spend rate when none failed)
     and mana left at the end.
@@ -26,7 +26,7 @@ from run_build import run, D, LINE
 
 DUR = 480
 STEP = 5
-LOW = 15  # "runs low" means mana below this % of max. Most rotations start holding spells around 15 to 20%.
+LOW = 10  # "runs low" means mana below this % of max.
 FIGHTS = int(os.environ.get('FIGHTS', 100))
 AGG_ITERS = 5000
 PAR = int(os.environ.get('PAR', 8))

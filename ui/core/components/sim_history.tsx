@@ -5,6 +5,7 @@ import { deleteHistoryRun, historyRunKeys, loadHistoryRun, loadLastSimRun, saveH
 import { LevelingMetrics } from '../proto/api';
 import { IndividualSimSettings } from '../proto/ui';
 import { SimResult } from '../proto_utils/sim_result';
+import { encounterMode, SIM_MODES, SimMode, simModeNames } from '../sim_mode';
 import { TypedEvent } from '../typed_event';
 import { formatToNumber } from '../utils';
 import { BaseModal } from './base_modal';
@@ -46,28 +47,46 @@ function runScore(run: SimRun): RunScore {
 	return { value: run.dps, stdev: run.stdev, unit: 'DPS' };
 }
 
-// A leveling run and a DPS run score different things, so they don't compare.
-function sameKind(a: SimRun, b: SimRun): boolean {
-	return !!a.leveling === !!b.leveling;
+// The mode a run ran in, by its settings. See sim_mode.ts.
+function runMode(run: SimRun): SimMode {
+	if (run.leveling) return 'leveling';
+	const encounter = (run.settings as any)?.encounter;
+	if (encounter?.leveling) return 'leveling';
+	if (encounter?.pvp) return 'pvp';
+	return 'dps';
 }
 
 // How a run's DPS compares with the latest run. The difference only counts when it's bigger
 // than the noise of the two runs (a Z test at 95%), otherwise it's 'same'.
 type Comparison = 'higher' | 'lower' | 'same';
 
-// The runs we keep. A run in the settings is about 3 KB, so 100 runs fit the browser's
-// storage easily.
+// The runs we keep of each mode, besides the pinned ones. A run in the settings is about 3 KB,
+// so 100 runs of each mode fit the browser's storage easily.
 const MAX_HISTORY = 100;
 // The recent runs in the sidebar. The rest are in the history dialog.
 const SIDEBAR_RUNS = 5;
 
+// Each mode keeps its runs under these keys with the mode after them, like
+// '__simHistory__leveling'. The keys without a mode hold the runs of every mode from before we
+// split them, see loadRuns.
 const HISTORY_KEY = '__simHistory__';
 const PINNED_KEY = '__pinnedSims__';
+
+interface ModeRuns {
+	// Newest first.
+	history: SimRun[];
+	// In the order we put them.
+	pinned: SimRun[];
+}
 
 // Where a run's row shows. Each place offers different actions on it.
 type RowPlace = 'pinned' | 'recent' | 'dialog';
 
 // The results in the sidebar of an individual sim, with the runs before them.
+//
+// DPS, PvP and Leveling runs score different things, so each mode has a history of its own,
+// and the sidebar shows the one of the mode we're in (see SimModePicker). A run goes in the
+// history of the mode it ran in.
 //
 // Every run we start with Simulate goes in the history, which keeps the last 100. The sidebar
 // shows the latest run's results, and the last few runs under them. The history dialog shows
@@ -79,14 +98,16 @@ type RowPlace = 'pinned' | 'recent' | 'dialog';
 // into any order.
 //
 // Hovering a run lists the settings that changed since it, like the tooltip of a modified
-// preset. Ctrl+click on a run loads the settings it ran with. The history stays in the
-// browser's storage, so it's still there when we come back.
+// preset. Ctrl+click on a run loads the settings it ran with and shows its results. The
+// history stays in the browser's storage, so it's still there when we come back.
 export class SimHistory {
 	private readonly simUI: IndividualSimUI<any>;
-	// Newest first.
-	private history: SimRun[];
-	// In the order we put them.
-	private pinned: SimRun[];
+	private readonly resultsManager: RaidSimResultsManager;
+	private readonly runs: Record<SimMode, ModeRuns>;
+	// The mode of the encounter, whose runs we show.
+	private mode: SimMode;
+	// The mode of the run that goes.
+	private runningMode: SimMode = 'dps';
 	// The settings when we pressed Simulate. We keep them for the run, because the settings
 	// may change while it runs. Runs without them (the one-iteration runs for the timeline)
 	// don't go in the history.
@@ -101,20 +122,53 @@ export class SimHistory {
 	private dialog: SimHistoryModal | null = null;
 	// The runs whose full results we kept. Runs from before we kept them have none.
 	private readonly resultIds = new Set<string>();
+	// Counts the result loads of showResults.
+	private resultsLoad = 0;
 
 	// Fires when a run comes, goes, gets its results saved, or gets a new name or pin.
 	readonly changeEmitter = new TypedEvent<void>('SimHistoryChange');
 
 	constructor(simUI: IndividualSimUI<any>, resultsManager: RaidSimResultsManager) {
 		this.simUI = simUI;
+		this.resultsManager = resultsManager;
 		resultsManager.simHistory = this;
-		this.history = this.load(HISTORY_KEY);
-		this.pinned = this.load(PINNED_KEY);
+		this.runs = this.loadRuns();
+		this.mode = encounterMode(simUI.sim.encounter);
 		this.listElem = (<div className="sim-history" />) as HTMLElement;
 		// The warnings go under the runs.
 		simUI.resultsViewer.rootElem.insertBefore(this.listElem, simUI.resultsViewer.warningElem);
 		this.render();
 		this.loadResultIds();
+
+		simUI.sim.waitForInit().then(() => {
+			const updateMode = () => {
+				const mode = encounterMode(simUI.sim.encounter);
+				if (mode === this.mode) return;
+				this.mode = mode;
+				this.render();
+			};
+			updateMode();
+			simUI.sim.encounter.changeEmitter.on(updateMode);
+		});
+	}
+
+	// The runs of the mode we're in.
+	private get history(): SimRun[] {
+		return this.runs[this.mode].history;
+	}
+	private get pinned(): SimRun[] {
+		return this.runs[this.mode].pinned;
+	}
+	private set pinned(runs: SimRun[]) {
+		this.runs[this.mode].pinned = runs;
+	}
+
+	getMode(): SimMode {
+		return this.mode;
+	}
+
+	private allRuns(): SimRun[] {
+		return SIM_MODES.flatMap(mode => [...this.runs[mode].history, ...this.runs[mode].pinned]);
 	}
 
 	// Finds the runs we kept results for. We also drop the results of runs that are gone from
@@ -126,16 +180,17 @@ export class SimHistory {
 	private async loadResultIds() {
 		const prefix = this.resultsKey('');
 		const keys = (await historyRunKeys()).filter(key => key.startsWith(prefix));
-		const known = new Set([...this.history, ...this.pinned].map(run => run.id));
+		const known = new Set(this.allRuns().map(run => run.id));
 		keys.forEach(key => {
 			const id = key.slice(prefix.length);
 			if (known.has(id)) this.resultIds.add(id);
 			else deleteHistoryRun(key);
 		});
 
-		const latest = this.latest;
-		if (latest && !this.resultIds.has(latest.id)) {
-			const saved = await loadLastSimRun(this.simUI.getStorageKey('__lastSimRun__'));
+		for (const mode of SIM_MODES) {
+			const latest = this.runs[mode].history[0];
+			if (!latest || this.resultIds.has(latest.id)) continue;
+			const saved = await loadLastSimRun(this.simUI.getLastSimRunKey(mode));
 			const dps = saved?.result?.raidMetrics?.dps?.avg;
 			if (saved && dps !== undefined && Math.abs(dps - latest.dps) < 1e-6) {
 				await saveHistoryRun(this.resultsKey(latest.id), saved);
@@ -149,8 +204,8 @@ export class SimHistory {
 		return this.simUI.getStorageKey(`__simRun__${id}`);
 	}
 
-	// The pinned runs in the order we put them, and the recent runs newest first. A pinned run
-	// can be in both.
+	// The pinned runs in the order we put them, and the recent runs newest first, of the mode
+	// we're in. A pinned run can be in both.
 	getRuns(): { pinned: SimRun[]; recent: SimRun[] } {
 		return { pinned: [...this.pinned], recent: [...this.history] };
 	}
@@ -159,9 +214,11 @@ export class SimHistory {
 		return this.resultIds.has(run.id);
 	}
 
-	async loadResults(run: SimRun): Promise<SimResult | null> {
+	// The run's results, and with withLogs the events of its typical, lucky and unlucky
+	// iterations too.
+	async loadResults(run: SimRun, withLogs = false): Promise<SimResult | null> {
 		if (!this.resultIds.has(run.id)) return null;
-		const saved = await loadHistoryRun(this.resultsKey(run.id));
+		const saved = await loadHistoryRun(this.resultsKey(run.id), withLogs);
 		if (!saved?.request || !saved.result) return null;
 		try {
 			return await SimResult.fromProto(saved);
@@ -192,7 +249,12 @@ export class SimHistory {
 
 	startRun() {
 		this.runSettings = IndividualSimSettings.toJson(this.simUI.toProto());
+		this.runningMode = encounterMode(this.simUI.sim.encounter);
 		this.running = true;
+	}
+
+	isRunning(): boolean {
+		return this.running;
 	}
 
 	// A run that we stopped, or that failed, leaves its progress in place of the results, so
@@ -208,7 +270,9 @@ export class SimHistory {
 			const dps = simResult.raidMetrics.dps;
 			const leveling = getLevelingMetrics(simResult);
 			const id = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
-			this.history.unshift({
+			// We may have gone to another mode while it ran.
+			const history = this.runs[this.runningMode].history;
+			history.unshift({
 				id,
 				time: Date.now(),
 				dps: dps.avg,
@@ -218,7 +282,7 @@ export class SimHistory {
 				...(leveling ? { leveling: LevelingMetrics.clone(leveling) } : {}),
 				settings: this.runSettings,
 			});
-			this.history.splice(MAX_HISTORY).forEach(run => this.dropResults(run));
+			history.splice(MAX_HISTORY).forEach(run => this.dropResults(run));
 			this.runSettings = null;
 			this.store();
 			saveHistoryRun(this.resultsKey(id), simResult.toProto()).then(() => {
@@ -247,12 +311,17 @@ export class SimHistory {
 		this.changeEmitter.emit(TypedEvent.nextEventID());
 	}
 
-	// The latest run's results, with the same tooltips as after a run.
+	// The latest run's results, with the same tooltips as after a run. A mode we have no runs in
+	// shows none.
 	private renderLatest() {
-		const latest = this.latest;
-		if (this.running || !latest) return;
+		if (this.running) return;
 		this.latestTooltip?.destroy();
 		this.latestTooltip = null;
+		const latest = this.latest;
+		if (!latest) {
+			this.simUI.resultsViewer.setContent(<p className="sim-history-empty">{`No ${simModeNames[this.mode]} runs yet.`}</p>);
+			return;
+		}
 		// A leveling run shows its mobs killed and the rest of the session in place of the DPS,
 		// and the run's tooltip goes on the mobs killed.
 		if (latest.leveling) {
@@ -320,7 +389,7 @@ export class SimHistory {
 		const isPinned = this.isPinned(run);
 		const comparison = this.compare(run);
 		const score = runScore(run);
-		const diff = latest && !isLatest && sameKind(latest, run) ? runScore(latest).value - score.value : null;
+		const diff = latest && !isLatest ? runScore(latest).value - score.value : null;
 
 		const pinButton = (
 			<button className={`sim-run-pin ${isPinned ? 'active' : ''}`} attributes={{ 'aria-label': isPinned ? 'Unpin' : 'Pin' }}>
@@ -382,15 +451,15 @@ export class SimHistory {
 		this.render();
 	}
 
-	// Deletes the results of a run that's neither in the history nor pinned anymore.
+	// Deletes the results of a run that's neither in a history nor pinned anymore.
 	private dropResults(run: SimRun) {
-		if (this.isPinned(run) || this.history.some(other => other.id === run.id)) return;
+		if (this.allRuns().some(other => other.id === run.id)) return;
 		this.resultIds.delete(run.id);
 		deleteHistoryRun(this.resultsKey(run.id));
 	}
 
 	// Loads the settings the run ran with, all of them: gear, talents, rotation, buffs and the
-	// encounter.
+	// encounter. The Results tab then shows the run's own results, so they match the settings.
 	private applySettings(run: SimRun) {
 		try {
 			const settings = IndividualSimSettings.fromJson(run.settings as any, { ignoreUnknownFields: true });
@@ -398,7 +467,24 @@ export class SimHistory {
 			this.simUI.fromProto(TypedEvent.nextEventID(), settings);
 		} catch (e) {
 			console.warn('Failed to load the settings of a saved run: ' + e);
+			return;
 		}
+		this.showResults(run);
+	}
+
+	// Shows a run's results in the Results tab, with its events when we kept them. A run we
+	// have no results for (from before we kept them) shows none, because the ones there
+	// belong to another run.
+	//
+	// A run that goes shows its own results when it's done, so we leave it be. Each load counts
+	// up, so only the last run we picked shows when we pick a few fast.
+	private async showResults(run: SimRun) {
+		if (this.running) return;
+		const load = ++this.resultsLoad;
+		const result = await this.loadResults(run, true);
+		if (load !== this.resultsLoad || this.running) return;
+		if (result) this.simUI.sim.simResultEmitter.emit(TypedEvent.nextEventID(), result);
+		else this.resultsManager.clearSimResult(TypedEvent.nextEventID());
 	}
 
 	// Puts a text field in place of the name. Enter or a click elsewhere keeps the new name,
@@ -422,7 +508,7 @@ export class SimHistory {
 			if (keep) {
 				const name = input.value.trim() || undefined;
 				// A pinned run is a copy of the one in the history, so we rename both.
-				[...this.history, ...this.pinned].filter(other => other.id === run.id).forEach(other => (other.name = name));
+				this.allRuns().filter(other => other.id === run.id).forEach(other => (other.name = name));
 				this.store();
 			}
 			this.render();
@@ -510,11 +596,7 @@ export class SimHistory {
 		const isLatest = latest?.id === run.id;
 		const score = runScore(run);
 		let verdict = '';
-		if (latest && !isLatest && !sameKind(latest, run)) {
-			verdict = latest.leveling
-				? "The latest run is a leveling run, so it doesn't compare with this one."
-				: "This is a leveling run, so it doesn't compare with the latest one.";
-		} else if (latest && !isLatest) {
+		if (latest && !isLatest) {
 			const diff = runScore(latest).value - score.value;
 			const percent = (Math.abs(diff) / (score.value || 1)) * 100;
 			const amount = `${Math.abs(diff).toFixed(2)} ${score.unit} (${percent.toFixed(2)}%)`;
@@ -523,8 +605,9 @@ export class SimHistory {
 			else if (comparison === 'lower') verdict = `The latest run did ${amount} worse.`;
 			else verdict = `The latest run is within the noise of this one (${signed(diff, 2)} ${score.unit}).`;
 		}
-		// When it ran with the current settings, there's nothing to load.
+		// When it ran with the current settings, there are only its results to show, if we kept them.
 		const categories = this.changesSince(run);
+		const sameSettings = categories?.length === 0;
 		return (
 			<>
 				{run.name ? <p className="mb-0 fw-bold">{run.name}</p> : undefined}
@@ -536,7 +619,7 @@ export class SimHistory {
 				)}
 				{verdict ? <p className={`mb-0 sim-run-verdict sim-run-${this.compare(run)}`}>{verdict}</p> : undefined}
 				{this.changesNote(categories)}
-				{categories?.length === 0 ? undefined : keyClickHint('ctrl', 'load its settings')}
+				{sameSettings && !this.hasResults(run) ? undefined : keyClickHint('ctrl', sameSettings ? 'show its results' : 'load its settings and results')}
 			</>
 		) as Element;
 	}
@@ -568,12 +651,35 @@ export class SimHistory {
 
 	private compare(run: SimRun): Comparison {
 		const latest = this.latest;
-		if (!latest || latest.id === run.id || !sameKind(latest, run)) return 'same';
+		if (!latest || latest.id === run.id) return 'same';
 		const error = (run: SimRun) => runScore(run).stdev / Math.sqrt(Math.max(run.iterations, 1));
 		const diff = runScore(latest).value - runScore(run).value;
 		const noise = Math.sqrt(error(latest) ** 2 + error(run) ** 2);
 		if (diff === 0 || (noise > 0 && Math.abs(diff) / noise <= 1.96)) return 'same';
 		return diff > 0 ? 'higher' : 'lower';
+	}
+
+	// The runs of each mode. The first time, we split the runs from before each mode had its own
+	// history by the mode they ran in, and drop the old keys.
+	private loadRuns(): Record<SimMode, ModeRuns> {
+		const runs = Object.fromEntries(
+			SIM_MODES.map(mode => [mode, { history: this.load(HISTORY_KEY + mode), pinned: this.load(PINNED_KEY + mode) }]),
+		) as Record<SimMode, ModeRuns>;
+		const oldHistory = this.load(HISTORY_KEY);
+		const oldPinned = this.load(PINNED_KEY);
+		if (!oldHistory.length && !oldPinned.length) return runs;
+		SIM_MODES.forEach(mode => {
+			runs[mode].history = [...runs[mode].history, ...oldHistory.filter(run => runMode(run) === mode)].slice(0, MAX_HISTORY);
+			runs[mode].pinned = [...runs[mode].pinned, ...oldPinned.filter(run => runMode(run) === mode)];
+		});
+		this.storeRuns(runs);
+		try {
+			window.localStorage.removeItem(this.simUI.getStorageKey(HISTORY_KEY));
+			window.localStorage.removeItem(this.simUI.getStorageKey(PINNED_KEY));
+		} catch (e) {
+			console.warn('Failed to drop the old sim history: ' + e);
+		}
+		return runs;
 	}
 
 	private load(key: string): SimRun[] {
@@ -588,9 +694,15 @@ export class SimHistory {
 	}
 
 	private store() {
+		this.storeRuns(this.runs);
+	}
+
+	private storeRuns(runs: Record<SimMode, ModeRuns>) {
 		try {
-			window.localStorage.setItem(this.simUI.getStorageKey(HISTORY_KEY), JSON.stringify(this.history));
-			window.localStorage.setItem(this.simUI.getStorageKey(PINNED_KEY), JSON.stringify(this.pinned));
+			SIM_MODES.forEach(mode => {
+				window.localStorage.setItem(this.simUI.getStorageKey(HISTORY_KEY + mode), JSON.stringify(runs[mode].history));
+				window.localStorage.setItem(this.simUI.getStorageKey(PINNED_KEY + mode), JSON.stringify(runs[mode].pinned));
+			});
 		} catch (e) {
 			console.warn('Failed to save the sim history: ' + e);
 		}
@@ -603,7 +715,12 @@ class SimHistoryModal extends BaseModal {
 	private tooltips: TippyInstance[] = [];
 
 	constructor(parent: HTMLElement, history: SimHistory) {
-		super(parent, 'sim-history-modal', { title: 'Sim History', size: 'lg', scrollContents: true, disposeOnClose: true });
+		super(parent, 'sim-history-modal', {
+			title: `${simModeNames[history.getMode()]} Sim History`,
+			size: 'lg',
+			scrollContents: true,
+			disposeOnClose: true,
+		});
 		this.history = history;
 		this.addOnHideCallback(() => this.tooltips.forEach(tooltip => tooltip.destroy()));
 	}
@@ -614,7 +731,7 @@ class SimHistoryModal extends BaseModal {
 		const rows = this.history.dialogRows(this.tooltips);
 		this.body.replaceChildren(
 			<p className="sim-history-modal-intro">
-				{`The last ${MAX_HISTORY} runs. Pin a run to keep it as a reference. Hover a run to see what changed since, and Ctrl+click it to load its settings.`}
+				{`The last ${MAX_HISTORY} ${simModeNames[this.history.getMode()]} runs. Pin a run to keep it as a reference. Hover a run to see what changed since, and Ctrl+click it to load its settings and results.`}
 			</p>,
 			rows.length ? <div className="sim-history-list">{rows}</div> : <p className="mb-0">No runs yet.</p>,
 		);

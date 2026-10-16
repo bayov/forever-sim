@@ -152,7 +152,7 @@
                       }
                     }
                   },
-                  "notes": "Step back to 25 yards when the fight starts in melee range, inside the 8 yard minimum."
+                  "notes": "Steps out past the 8 yard minimum."
                 },
                 {
                   "action": {
@@ -172,8 +172,7 @@
                         }
                       }
                     }
-                  },
-                  "notes": "Aspect of the Hawk if it ever drops."
+                  }
                 },
                 {
                   "action": {
@@ -246,8 +245,7 @@
                         ]
                       }
                     }
-                  },
-                  "notes": "Rapid Fire with the on-use trinket, unless waiting would cost a use."
+                  }
                 },
                 {
                   "action": {
@@ -320,14 +318,13 @@
                         ]
                       }
                     }
-                  },
-                  "notes": "Elune's Light with the on-use trinket, unless waiting would cost a use."
+                  }
                 },
                 {
                   "action": {
                     "autocastOtherCooldowns": {}
                   },
-                  "notes": "Rapid Fire, Bestial Wrath, racials, trinkets and potions on cooldown."
+                  "notes": "Rapid Fire, Bestial Wrath, racials, trinkets and potions."
                 },
                 {
                   "action": {
@@ -399,7 +396,7 @@
                       }
                     }
                   },
-                  "notes": "Summon Hawk while fewer than 2 hawks are out, with the talent."
+                  "notes": "With the talent."
                 },
                 {
                   "action": {
@@ -408,8 +405,7 @@
                         "spellId": 14287
                       }
                     }
-                  },
-                  "notes": "Arcane Shot on its cooldown."
+                  }
                 },
                 {
                   "action": {
@@ -419,7 +415,7 @@
                       }
                     }
                   },
-                  "notes": "Aimed Shot on the cooldown it shares with Multi-Shot."
+                  "notes": "Shares its cooldown with Multi-Shot."
                 },
                 {
                   "action": {
@@ -429,7 +425,7 @@
                       }
                     }
                   },
-                  "notes": "Multi-Shot when Aimed Shot is not taken."
+                  "notes": "When Aimed Shot is not talented."
                 },
                 {
                   "action": {
@@ -455,8 +451,7 @@
                         ]
                       }
                     }
-                  },
-                  "notes": "Serpent Sting when it is down."
+                  }
                 },
                 {
                   "action": {
@@ -487,7 +482,7 @@
                       }
                     }
                   },
-                  "notes": "Sniper Shot on cooldown, with the talent, while the mana lasts the fight."
+                  "notes": "With the talent."
                 }
               ]
             },

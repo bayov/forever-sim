@@ -2,19 +2,28 @@ import { ActionId } from '../../proto_utils/action_id.js';
 import { SimLog } from '../../proto_utils/logs_parser.js';
 import { TypedEvent } from '../../typed_event.js';
 
-export type EventCategory = 'casts' | 'damage' | 'auras' | 'resources' | 'other' | 'debug';
+export type EventCategory = 'casts' | 'damage' | 'auras' | 'resources' | 'session' | 'other' | 'debug';
 
 export const eventCategories: Array<{ category: EventCategory; label: string }> = [
 	{ category: 'casts', label: 'Casts' },
 	{ category: 'damage', label: 'Damage' },
 	{ category: 'auras', label: 'Auras' },
 	{ category: 'resources', label: 'Resources' },
+	{ category: 'session', label: 'Session' },
 	{ category: 'other', label: 'Other' },
 	{ category: 'debug', label: 'Debug' },
 ];
 
+// The categories that only have events in a leveling session. Outside one their chip has
+// nothing to show, so the Events view hides it.
+export const levelingOnlyCategories: Array<EventCategory> = ['session'];
+
 // The sim's own debug lines (the ones with [DEBUG]) are noise most of the time, so they start off.
-const defaultCategories: Array<EventCategory> = ['casts', 'damage', 'auras', 'resources', 'other'];
+const defaultCategories: Array<EventCategory> = ['casts', 'damage', 'auras', 'resources', 'session', 'other'];
+
+// The leveling session's lines that only say where we are, how we move and which state we're
+// in. The replay's map and the session strip read them, but in the log they are noise.
+const levelingDebugLine = /Leveling: (we're at \(|now \w+$|Target \d+ at \(|\{[^}]*\} at \()/;
 
 // What the Events tab shows of an iteration. The timeline, the chart and the log all read the
 // same filter, so switching between them keeps what we narrowed down.
@@ -108,22 +117,29 @@ export class EventFilter {
 		return (this.from == null || time >= this.from) && (this.to == null || time <= this.to);
 	}
 
+	// Whether there is anything to search for. Without it every text matches, and the log can
+	// skip making the rows it doesn't show.
+	hasSearch(): boolean {
+		return this.keywords.length > 0;
+	}
+
 	// Whether the text has every word of the search. Quoted phrases have to match whole.
 	matchesText(lowerCaseText: string): boolean {
 		return this.keywords.every(keyword => lowerCaseText.includes(keyword));
 	}
 
 	matchesLog(log: SimLog, lowerCaseText: string): boolean {
-		return (
-			this.categories.has(EventFilter.categoryOf(log)) &&
-			this.inRange(log.timestamp) &&
-			!(log.actionId && this.isHidden(log.actionId)) &&
-			this.matchesText(lowerCaseText)
-		);
+		return this.matchesLogExceptText(log, EventFilter.categoryOf(log)) && this.matchesText(lowerCaseText);
+	}
+
+	// Everything matchesLog asks but the search, for a log that already knows its category.
+	matchesLogExceptText(log: SimLog, category: EventCategory): boolean {
+		return this.categories.has(category) && this.inRange(log.timestamp) && !(log.actionId && this.isHidden(log.actionId));
 	}
 
 	static categoryOf(log: SimLog): EventCategory {
 		if (log.raw.includes('[DEBUG]')) return 'debug';
+		if (log.raw.includes('] Leveling: ')) return levelingDebugLine.test(log.raw) ? 'debug' : 'session';
 		// We ask every question before the first if. The log types look alike to TypeScript, so a
 		// false answer would otherwise narrow log down to nothing for the next question.
 		const isDamage = log.isDamageDealt();

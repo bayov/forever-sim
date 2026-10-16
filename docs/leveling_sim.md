@@ -58,9 +58,12 @@ pull, so a 3-minute cooldown is ready for some pulls and not others, as in real 
    second, we walk up to it anyway. An instant can still pull it on the way.
 3. **Chain pull.** While fighting, the APL decides whether to look for another mob, from our
    health, mana, cooldowns, mobs on us and mobs still running in, so a pull can take one mob,
-   two, three or more. Most of the time we run around to find it with the mobs on us
-   following, so again only instants and melee. The APL pulls it from where it stands, walks up
-   to it with the mobs in tow, or leaves it as the next pull. Pushback makes a cast pull worse
+   two, three or more. The APL also decides how we look. We can run around to find it with
+   the mobs on us following, so again only instants and melee, and away from our totems. Or we
+   can stand and keep fighting while we look, which takes longer, because we only see the mobs
+   around us. The APL pulls what we find from where it stands, walks up to it with the mobs in
+   tow (it knows how far it is), or leaves it as the next pull. It can also walk back to a
+   totem we ran away from. Pushback makes a cast pull worse
    once a mob is hitting us, so the APL may chain-pull with an instant instead.
 4. **Fight.** Every mob has its own HP and dies on its own when its HP runs out, and then it
    stops attacking. We're out of combat only once all of them are dead.
@@ -86,20 +89,33 @@ the 1.12 world database (cmangos classic-db), weighted by how many of each mob a
 open world. It covers hostile and neutral mobs we can attack, rank 0 only, and leaves out casters
 (mage class mobs, 3% of spawns). `tools/export_normal_mobs.py` exports the mobs from the dump to
 `assets/db_inputs/mobs/normal_mobs.csv`, and `tools/gen_mob_stats.py` averages them into the
-table. A few rows:
+table.
+
+Health is Forever's, not 1.12's. Our beta logs (`logcheck -mobs`, 2026-10-16) show that Forever
+gives every normal melee mob of a level the same health. It's the 1.12 warrior class mob's
+health at that level, 2.5% more a level from level 9, and 30% more from level 20 on. Needles
+Cougar has 896 health at level 28 in 1.12 and 1164 in Forever, and so does every other level 28
+mob we fought, the paladin class ones too. The rule fits all 40 creatures we saw from level 2
+to 35 to within a point, except at level 35: the table has 1824 there, and the one mob we saw
+had 1745. Above 35 it's the same rule, not yet checked. At level 30 a mob has 1365 health where
+the 1.12 average was 1019, so every kill takes about a third longer.
+
+A few rows:
 
 | Level | Health | Armor | Damage | Swing | Run speed |
 |---|---|---|---|---|---|
-| 10 | 202 | 531 | 14.1–18.4 | 1.90 s | 7.5 yd/s |
-| 20 | 486 | 924 | 32.0–39.2 | 1.99 s | 8.1 yd/s |
-| 30 | 1019 | 1288 | 45.8–55.2 | 1.94 s | 8.1 yd/s |
-| 40 | 1792 | 2189 | 66.7–82.0 | 1.96 s | 8.3 yd/s |
-| 50 | 2772 | 3123 | 89.9–110.3 | 1.93 s | 8.2 yd/s |
-| 60 | 3993 | 3728 | 120.2–148.6 | 1.92 s | 8.0 yd/s |
+| 10 | 208 | 531 | 14.1–18.4 | 1.90 s | 7.5 yd/s |
+| 20 | 642 | 924 | 32.0–39.2 | 1.99 s | 8.1 yd/s |
+| 30 | 1365 | 1288 | 45.8–55.2 | 1.94 s | 8.1 yd/s |
+| 40 | 2378 | 2189 | 66.7–82.0 | 1.96 s | 8.3 yd/s |
+| 50 | 3600 | 3123 | 89.9–110.3 | 1.93 s | 8.2 yd/s |
+| 60 | 5356 | 3728 | 120.2–148.6 | 1.92 s | 8.0 yd/s |
 
 Damage is a white swing before our armor, with the mob's attack power in it (AP / 14 per second
 of swing). `go run --tags=with_db ./tools/logcheck -mobs` measures the same things from our
-logs, so we can see where Forever's mobs differ.
+logs, so we can see where Forever's mobs differ. Besides health, the logs agree with the table on
+armor and on the 2 s swing. The damage of a landed swing is within the table's range at most
+levels, and under it at 27 and 28 (the Thousand Needles mobs hit softer).
 
 We fight from in front, so mobs can parry and block our swings, and we can parry, dodge and block
 theirs (the existing "in front of target" option).
@@ -148,8 +164,9 @@ with them still load, and those values are ignored.
 
 | Setting | Default |
 |---|---|
-| Finding the next mob, out of combat | Random 5–11 s (8 s on average), running |
-| Finding a mob to chain-pull, in combat | Random 2–4 s (3 s on average), running 3 times in 4 |
+| Finding the next mob, out of combat | Random 2–10 s (6 s on average), running. From the logs (below), 5–11 s until 2026-10-16. |
+| Finding a mob to chain-pull, in combat, running | Random 2–8 s (5 s on average). 2–4 s until 2026-10-16. |
+| Finding a mob to chain-pull, in combat, standing | Random 4–16 s (10 s on average), a guess: twice the running time, because we only see the mobs around us. Until 2026-10-16 the sim rolled whether we run (3 times in 4), and now the rotation picks (Look For Mob's Stand). |
 | Where the mob we find stands | Random 10–40 yd in whole yards, in a random direction |
 | Searching | Running in a random direction at our run speed |
 | Our run speed | 7 yd/s |
@@ -169,7 +186,7 @@ with them still load, and those values are ignored.
 | Spread | Uniform ±1 around the target level (target 20 gives mobs of level 19 to 21) |
 | Armor | The level's average (an armor multiplier, 1 by default). Within a level armor barely varies: it goes by the mob's class, and the melee mobs (warrior class, 85% of spawns) all have about the same. |
 | Creature type | The level's mix from the mob table, e.g. at 30: 56% beast, 34% humanoid, 7% demon, 3% undead |
-| HP, armor, damage, swing and run speed by level | The mob table (below), until the logs check it |
+| HP, armor, damage, swing and run speed by level | The mob table (above): health from the logs, the rest from 1.12 |
 | XP per kill | Classic's formula, until we see whether Forever changed it |
 
 ### Recovery
@@ -226,9 +243,13 @@ the 60 s Recently Bandaged debuff are modelled.
   (`sim/core/health.go`). Every iteration starts at full health. Death is recorded whenever a
   mob is on us, with or without a healing model (since groundwork 1).
 - **Spell pushback**, including talents that reduce it (`sim/core/cast.go`): 1.0 s for the
-  first hit, then 0.8, 0.6, 0.4 and 0.2 s, as on the cmangos Classic server. Since groundwork 1
-  it can't take the cast bar back past its start, as there. Forever may differ, which logs of
-  casts under mob hits would show.
+  first hit, then 0.8, 0.6, 0.4 and 0.2 s, as on the cmangos Classic server. A cast can't go
+  back past its start (since groundwork 1). Forever does the same: it fits 243 of 285 casts
+  that took hits in the user's logs within 0.1 s (`tools/combat_log/pushback.py`,
+  2026-10-16), the user's own Lesser Healing Waves among them. Only direct hits push back, not
+  DoT ticks. Since 2026-10-16 a hit also ends a channel sooner by the same amounts, and the
+  ticks past the new end are lost (before that channels took no pushback). Too few channels
+  took hits in the logs to check that (notes.md, Need to Verify).
 - **No dodge, parry or block while casting**, as on the cmangos Classic server.
 - **"In front of target"** as a player option (`proto/api.proto`, `in_front_of_target`).
 - **A chosen spell rank** in action IDs. The Elemental rotation already casts Lightning Bolt
@@ -265,11 +286,18 @@ anything leveling-specific exists.
        and pushback (`pushback_test.go`).
      - `logcheck -mobs`, to measure the same things from the logs.
    - Open:
-     - Run `logcheck -mobs` on the user's machine, and compare Forever's mobs with the table.
+     - Done (2026-10-16): the pushback rule in Forever's logs. Casts match the sim (Engine
+       today above), and a mob's swings push back Lesser Healing Wave in a leveling session
+       (`TestLevelingHealPushback`). Channels had no pushback at all until then.
+     - Done (2026-10-16): `logcheck -mobs` on the user's logs. Forever's mobs have up to 30%
+       more health than the table had, which the table now uses (Mobs above). Armor and swing
+       time match. Mobs also crit us far less than Classic's 5%: 4 crits in about 2,200
+       swings at us from mobs 6 levels under us to 5 over, where crushing blows came as
+       expected (13% at 3 levels over, 26% at 4). The sim still gives mobs Classic's crit
+       (notes.md, Need to Verify).
      - Check the player's defenses at low level (dodge per Agility for every class, block,
        armor) against the beta's character sheet. notes.md has dodge per Agility checked at
        level 1 for some classes only.
-     - Check the pushback rule in Forever's logs (casts under mob hits).
      - A "solo mob" encounter preset in the UI. Until the leveling mode has its own UI, a
        target from the table with "use health" on does it by hand, and the results show
        damage taken per second and the chance of death.
@@ -484,6 +512,13 @@ After the groundwork:
      | Optimizer pass 3: pull with rank 1 Earth Shock | 100.0 | 0.01 | 57,900 | 140 s | 327 s | 732 s | 2.13 |
      | Pass 3's rotation with one imbue (Windfury Weapon) | 91.9 | 0.02 | - | 106 s | 340 s | 750 s | 2.21 |
      | Optimizer pass 4: Fire Nova with two mobs on us | 93.0 | 0.03 | 53,800 | 110 s | 378 s | 707 s | 2.30 |
+     | Pass 4's rotation with Forever's mob health (2026-10-16) | 71.8 | 0.22 | - | 72 s | 381 s | 709 s | 2.37 |
+     | + the 2 to 7 s search from the logs | 72.4 | 0.22 | 41,900 | 63 s | 386 s | 714 s | 2.37 |
+     | Optimizer pass 5: look ahead above 60% health, rest health to full | 73.8 | 0.00 | 42,700 | 97 s | 390 s | 712 s | 2.33 |
+     | The user's 2 to 10 s search and 2 to 8 s chain search (pass 6 kept every knob) | 70.0 | 0.00 | 40,500 | 130 s | 365 s | 705 s | 2.08 |
+     | The rotation picks running or standing (always running here), food and water as spells | 70.4 | 0.00 | - | 130 s | 323 s | 747 s | 2.11 |
+     | Optimizer pass 7: no Mana Spring, a heal below 40% between pulls, shocks above 60% mana | 73.7 | 0.01 | 42,600 | 121 s | 282 s | 795 s | 2.03 |
+     | We leave combat 1 to 2 s after the last kill, totems land 1.5 to 3.5 yd from us | 72.1 | 0.00 | 41,300 | 109 s | 273 s | 819 s | - |
 
      The rows down to pass 3 ran with Rockbiter Weapon and Windfury Weapon both on the main
      hand: the settings had Rockbiter in the consumes and Windfury in the class options, and
@@ -492,6 +527,34 @@ After the groundwork:
      86.3 mobs with the round 2 rotation). The rules the earlier rows found still stand; pass 4
      re-tuned the knobs with one imbue and added Fire Nova with two mobs on us (+1.1 mobs on
      both seeds), which the weaker melee now makes worth its mana.
+
+     The last three rows have Forever's mob health and search time (From the logs, below).
+     The health costs 21 mobs a session (93.0 to 71.8), since each kill takes a third longer.
+     The shorter search gives back only 0.5, because the rotation mostly finds its next mob
+     while still fighting. Pass 5 kept every rule and moved two knobs: look for the next mob
+     above 60% health instead of 40%, and rest health to full instead of 90%. With mobs that
+     take longer to kill, looking ahead at 40% to 60% health led into pulls that killed us
+     (0.22 deaths a session). It's +1.3 mobs on seed 1 and on seed 1000001 (72.55 to 73.84),
+     almost all from the look ahead. Then the user set the search to 2 to 10 s and the chain
+     search to 2 to 8 s. The slower chain search costs 3.8 mobs (73.8 to 70.0 on both seeds),
+     mostly because a pull takes fewer mobs (2.08 instead of 2.33). Pass 6 found no better knobs.
+
+     Then whether a chain search runs became the rotation's choice (Look For Mob's Stand), with
+     a 4 to 16 s standing search, and the template got three knobs for it: stand or run (or
+     stand only while a totem of ours is down), walk back to Mana Spring Totem instead of
+     dropping a new one, and walk up to a mob found in combat only within some yards. None of
+     them helped. Standing every time gives 66.0 mobs and standing while a totem is down 66.6,
+     because a standing search often isn't done before the fight is (1.34 mobs a pull). Walking
+     back to the totem changes nothing, and leaving far mobs for later gives 69.3. Food, water
+     and bandages became spells in the same build (a change in the session's rest), which with
+     always running moved the start to 70.4. Pass 7 then dropped Mana Spring Totem, added a
+     heal below 40% health between pulls, shocked only above 60% mana and looked ahead above
+     50% health: 73.7 on seed 1 and 73.7 on seed 1000001, from 70.4.
+
+     Then the sim started leaving combat 1 to 2 s after the last mob dies, as the game does,
+     with no chain search in that wait. Totems also land a few yards from us at a random
+     angle now. Pass 7's rotation gives 71.1 mobs on seed 1 and 73.1 on seed 1000001. The
+     wait after each kill adds up to about 50 s of the session, which is most of the loss.
 
      Pass 1: sit down below 80% health and stand at 90% instead of 50% and 100%, no Flame
      Shock DoT in the fight, Lesser Healing Wave below 30% in combat, no buff totems (their
@@ -514,6 +577,12 @@ After the groundwork:
      levels under us, 52,800 at 2 under, 54,300 at 1 under, 53,700 at our level, 51,300 at 1
      over, 41,900 at 2 over (deaths climb to 0.7 a session). Mobs one level under us are best by
      about 1%, with mobs of our level next; the knobs were tuned at our level.
+   - Again with Forever's mob health and the pass 5 rotation (2000 sessions, 2026-10-16):
+     43,200 at 3 levels under us, 44,200 at 2 under, 43,900 at 1 under, 42,700 at our level and
+     40,500 at 1 over. Mobs two levels under us are now best, by 3% over our own level. That's
+     also what the user fought in the 2026-10-10 log (level 27 to 29 at 30). Tuning the knobs
+     at 2 under only adds half a mob (90.5 to 91.0: rest mana to 60% instead of 80%), so the
+     preset keeps the knobs tuned at our level, and the default mob level stays ours.
 6. **Enhancement shaman end to end at level 30**, checked against the user's beta logs.
 7. **More optimizing:** leveling stat weights with a Pawn export, the talent route, other
    classes' templates.
@@ -546,15 +615,64 @@ After the groundwork:
       chain pulled through the rotation, so their score is unchanged: 92.98 mobs (4000
       sessions) before and after.
 
-## From the logs, later
+## From the logs
 
-A small tool run on the user's machine against `~/forever-logs` measures, for each kill:
+`go run --tags=with_db ./tools/logcheck -pacing` (2026-10-16) reads `~/forever-logs` and
+measures our grinding, for mobs within 3 levels of ours that we killed:
 
-- the time from a kill to the next pull, minus time spent eating or drinking
-- the run-in time, from the pull to the mob's first swing
-- the gap between chain-pulled mobs
-- the pack sizes actually taken
+- the time from a kill to the next pull, less the time spent eating, drinking, bandaging or
+  casting a heal
+- how we pulled, from how far, and how long the mob took to reach us
+- how many mobs a fight took, and how the later ones joined
+- how far we traveled between fights, and whether we cast Ghost Wolf on the way
 
-The logs have AFK and unfocused stretches, so it drops gaps over about 60 s and reports the
-median and the fast quartile. The fast quartile becomes the default, since we're simulating
-focused play. Those numbers replace the search and run-in defaults above.
+It drops gaps over 60 s (AFK) and gaps with a death in them. `-from` and `-to` pick a stretch.
+
+Most of what the archive holds isn't plain grinding. The level 30 shaman's log of 2026-10-10
+has about 200 kills of level 27 to 31 mobs, but from 20:00 on it's beta tests (white swings
+and Flametongue Totem, about 55 damage a second). From 18:00 to 20:00 is normal play (110 to
+125 damage a second, Stormstrike and shocks). The 2026-10-11 log is that shaman killing mobs 12
+or more levels under it, and the PvE2 logs from 2026-10-14 have few lines of ours (BayovCore's
+history has that character at level 1). So the
+numbers come from one stretch of 52 fights, with the whole archive next to them:
+
+| | 18:00 to 20:00 | All of the archive |
+|---|---|---|
+| Fights | 52 | 202 |
+| Kill to next pull, fast quartile | 5.7 s | 6.5 s |
+| Kill to next pull, median | 7.7 s | 10.5 s |
+| Gaps with a rest | 6 of 40 (a heal of about 2 s, never food or water) | 29 of 140 |
+| Travel in the gap, median | 39 yd | 49 yd |
+| Pulled with Flame Shock | 46% | 31% |
+| Walked up and swung first | 37% | 38% |
+| The mob attacked first | 10% | 24% |
+| Flame Shock pull distance, median | 18 yd | 19 yd |
+| Run-in after a Flame Shock pull, median | 1.2 s | 1.6 s |
+| Fights with one mob | 47 of 52 | 189 of 202 |
+
+What it changed:
+
+- **Search.** The sim's gap after a kill, when it had to search, was 8.5 s at the fast
+  quartile and 9.6 s at the median with the 5 to 11 s search. The user picked 2 to 10 s as the
+  new default, which gives 5.3 s and 7.0 s, close to the 5.7 s and 7.7 s of focused play. The
+  gap in the log has looting in it, which the sim doesn't model, so the search time stands
+  for both.
+- **Chain search.** The user picked 2 to 8 s, from 2 to 4 s. The logs have too few chain pulls
+  to measure it (below), and the 4 we have joined 5 to 11 s after the mob before.
+
+What it didn't settle:
+
+- **Run-in.** A Flame Shock pull from 18 yd reaches us in 1.2 s in the log. The sim gives 1.6 s
+  at 8.1 yd/s, but we stand still in the sim while in the game we walk toward the mob. That fits
+  the sim's mob speed, so it stays.
+- **Chain search and pack sizes.** We took one mob a fight almost every time, and only 4 times
+  in the normal stretch pulled a second mob while fighting (5 to 11 s after the one before).
+  That's too few to measure the chain search. The sim's best rotation takes 2.3 mobs a
+  pull, so how fast we find a mob while fighting matters a lot, and it's still a guess.
+- **Found distance.** The log shows where we pulled from, not where we first saw the mob.
+- **Rests.** We never ate or drank, and healed with Healing Wave instead. The sim's rotation
+  rests about 390 s a session (eating and drinking). A grinding log with the sim's kind of
+  pulls would show whether that holds.
+
+A longer stretch of focused grinding, ideally with some chain pulls, would settle the chain
+search and the rests.

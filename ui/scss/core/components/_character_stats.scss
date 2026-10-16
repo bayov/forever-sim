@@ -3,6 +3,46 @@
 .character-stats-root {
 	width: 100%;
 
+	// The title, in the sidebar's gold small capitals. It folds the stats away.
+	.character-stats-toggle {
+		display: flex;
+		align-items: center;
+		gap: var(--spacer-2);
+		width: 100%;
+		margin-bottom: var(--spacer-2);
+		padding: 0;
+		border: 0;
+		background: none;
+		font-family: var(--heading-font-family);
+		font-variant: small-caps;
+		font-weight: 700;
+		font-size: 1.15rem;
+		letter-spacing: 0.04em;
+		color: var(--gold-soft);
+		text-align: left;
+	}
+
+	.character-stats-chevron {
+		width: 0.75rem;
+		font-size: 0.7rem;
+		transform: rotate(90deg);
+		transition: transform 0.1s;
+	}
+
+	&.collapsed {
+		.character-stats-toggle {
+			margin-bottom: 0;
+		}
+
+		.character-stats-chevron {
+			transform: none;
+		}
+
+		.character-stats-table {
+			display: none;
+		}
+	}
+
 	.character-stats-label {
 		margin-bottom: var(--spacer-2);
 		display: flex;

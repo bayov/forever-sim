@@ -23,7 +23,7 @@ import (
 // (leveling_world.go).
 //
 // One loop runs the session:
-//   - Searching: we run around for a random 5 to 11 sec (search_min / search_max), so we
+//   - Searching: we run around for a random 2 to 10 sec (search_min / search_max), so we
 //     can't hard cast, and find a mob standing 10 to 40 yards away (found_min / found_max).
 //     One that close to its aggro radius notices us at once.
 //   - Pulling: the mob waits there, as our target and the rotation's Pull Target. A spell
@@ -34,9 +34,10 @@ import (
 //   - Combat: a pulled mob runs at us at its level's speed, following us if we move. We can
 //     cast at it on the way, but it can't hit us and we can't reach it in melee until it's
 //     here. Its first swing comes at a random point of its swing timer. The rotation decides
-//     whether to look for another mob (Look For Mob: 2 to 4 sec, running with the mobs on us
-//     following three times out of four, when only instants and melee go out), and pulls it
-//     the same ways, or leaves it for our next pull.
+//     whether to look for another mob (Look For Mob), and whether to run around for it with
+//     the mobs on us following, when only instants and melee go out (2 to 8 sec), or stand
+//     and keep fighting while we look (4 to 16 sec). It pulls what we find the same ways, or
+//     leaves it for our next pull.
 //   - When the last one dies, we're out of combat and ready (leveling_rest.go): the rotation
 //     can bandage, sit to eat and drink, heal or buff. Once it has nothing to do, the mob we
 //     found while fighting if there is one, or a new search.
@@ -94,9 +95,15 @@ type levelingSession struct {
 
 	kills, xp float64
 	deaths    int
+	// The last session's score, mobs on us at the end counted by the share of their health
+	// we took, for the iteration picks (lastIteration).
+	lastKills float64
 
-	healthMetrics, foodMetrics, bandageMetrics, reviveHealthMetrics *ResourceMetrics
-	drinkMetrics, reviveManaMetrics                                 *ResourceMetrics
+	healthMetrics, reviveHealthMetrics *ResourceMetrics
+	drinkMetrics, reviveManaMetrics    *ResourceMetrics
+	// The food, water and bandage as spells of ours, with their auras (registerRestSpells).
+	foodSpell, drinkSpell, bandageSpell                    *Spell
+	foodAura, drinkAura, bandageAura, recentlyBandagedAura *Aura
 
 	// Sums over iterations, for LevelingMetrics.
 	agg struct {
@@ -131,10 +138,11 @@ type levelingOptions struct {
 	maxPack                        int
 	searchMin, searchMax           time.Duration
 	chainSearchMin, chainSearchMax time.Duration
-	chainSearchMoving              float64
-	foundMin, foundMax             float64
-	deathPenalty                   time.Duration
-	reviveFraction                 float64
+	// A chain search where we stand and keep fighting (Look For Mob's stand).
+	standingSearchMin, standingSearchMax time.Duration
+	foundMin, foundMax                   float64
+	deathPenalty                         time.Duration
+	reviveFraction                       float64
 }
 
 func resolveLevelingOptions(o *proto.LevelingOptions) levelingOptions {
@@ -152,11 +160,12 @@ func resolveLevelingOptions(o *proto.LevelingOptions) levelingOptions {
 		mobType:           o.MobType,
 		armorMultiplier:   or(o.ArmorMultiplier, 1),
 		maxPack:           int(max(o.MaxPackSize, 0)),
-		searchMin:         seconds(o.SearchMin, 5),
-		searchMax:         seconds(o.SearchMax, 11),
+		searchMin:         seconds(o.SearchMin, 2),
+		searchMax:         seconds(o.SearchMax, 10),
 		chainSearchMin:    seconds(o.ChainSearchMin, 2),
-		chainSearchMax:    seconds(o.ChainSearchMax, 4),
-		chainSearchMoving: 0.75,
+		chainSearchMax:    seconds(o.ChainSearchMax, 8),
+		standingSearchMin: seconds(o.ChainSearchStandingMin, 4),
+		standingSearchMax: seconds(o.ChainSearchStandingMax, 16),
 		foundMin:          math.Round(or(o.FoundMin, 10)),
 		foundMax:          math.Round(or(o.FoundMax, 40)),
 		deathPenalty:      seconds(o.DeathPenalty, 180),
@@ -164,9 +173,6 @@ func resolveLevelingOptions(o *proto.LevelingOptions) levelingOptions {
 	}
 	if o.MobLevelSpread != nil {
 		opts.mobSpread = max(*o.MobLevelSpread, 0)
-	}
-	if o.ChainSearchMoving != nil {
-		opts.chainSearchMoving = min(max(*o.ChainSearchMoving, 0), 1)
 	}
 	if opts.mobType == proto.MobType_MobTypeUnknown {
 		opts.mobType = proto.MobType_MobTypeBeast
@@ -257,6 +263,16 @@ func newLevelingSession(env *Environment, encounterProto *proto.Encounter) *leve
 			break
 		}
 	}
+	// Every mob is in front of us, and we're in front of every mob, whatever the 2D positions
+	// in leveling_world.go say. A player turns and steps a little so all the mobs on them are in
+	// front, and we don't sim those small moves. So our attacks can be parried and blocked, and
+	// Backstab can't go, even when the In Front of Target setting is off.
+	//
+	// The mobs' attacks on us don't look at facing (outcomeEnemyMeleeWhite), so we can always
+	// dodge, parry and block them. Our pets stay behind, see NewPet.
+	for _, unit := range env.Raid.AllPlayerUnits {
+		unit.PseudoStats.InFrontOfTarget = true
+	}
 	session.level = session.player.Level
 	session.levels = levelingMobLevels(session.level, session.opts)
 	session.mobs = make([]levelingMob, len(env.Encounter.Targets))
@@ -271,13 +287,12 @@ func newLevelingSession(env *Environment, encounterProto *proto.Encounter) *leve
 
 	c := session.character
 	session.healthMetrics = c.NewHealthMetrics(ActionID{SpellID: 20577, Tag: 1}) // Health regen out of combat.
-	session.foodMetrics = c.NewHealthMetrics(ActionID{ItemID: session.food.itemID})
-	session.bandageMetrics = c.NewHealthMetrics(ActionID{ItemID: session.bandage.itemID})
-	session.reviveHealthMetrics = c.NewHealthMetrics(ActionID{SpellID: 8326}) // Ghost
+	session.reviveHealthMetrics = c.NewHealthMetrics(ActionID{SpellID: 8326})    // Ghost
 	if c.HasManaBar() {
 		session.drinkMetrics = c.NewManaMetrics(ActionID{ItemID: session.drink.itemID})
 		session.reviveManaMetrics = c.NewManaMetrics(ActionID{SpellID: 8326})
 	}
+	session.registerRestSpells()
 	return session
 }
 
@@ -314,10 +329,33 @@ func (s *levelingSession) reset(sim *Simulation) {
 	s.startTicks(sim)
 }
 
+// levelingStateNames are the states as the "Leveling: now ..." log lines say them, for the
+// results' session strip.
+var levelingStateNames = [levelingStateCount]string{
+	levelingSearching: "searching",
+	levelingPulling:   "pulling",
+	levelingCombat:    "fighting",
+	levelingResting:   "resting",
+	levelingBandaging: "bandaging",
+	levelingDead:      "dead",
+	levelingReady:     "ready",
+}
+
 func (s *levelingSession) setState(sim *Simulation, state levelingState) {
 	s.seconds[s.state] += sim.CurrentTime - s.stateSince
+	if sim.Log != nil && (state != s.state || sim.CurrentTime == 0) {
+		s.player.Log(sim, "Leveling: now %s", levelingStateNames[state])
+	}
 	s.state, s.stateSince = state, sim.CurrentTime
 	cancel(sim, &s.next)
+	// Standing up, or a mob on us, ends the food, water and bandage.
+	if state != levelingResting {
+		s.foodAura.Deactivate(sim)
+		s.drinkAura.Deactivate(sim)
+	}
+	if state != levelingBandaging {
+		s.bandageAura.Deactivate(sim)
+	}
 }
 
 func cancel(sim *Simulation, pa **PendingAction) {
@@ -392,9 +430,6 @@ func (s *levelingSession) onMobDeath(sim *Simulation, mob *Unit) {
 	if len(active) == 0 {
 		cancel(sim, &s.chainNext)
 		s.move(sim, goalNone, Vec2{}, 0, nil)
-		if sim.Log != nil {
-			s.player.Log(sim, "Leveling: out of combat")
-		}
 		// killTarget moved our target to the next living mob: the one we found, if there
 		// is one, still where it stands, out of reach of a swing.
 		if s.found != nil {
@@ -402,7 +437,10 @@ func (s *levelingSession) onMobDeath(sim *Simulation, mob *Unit) {
 		} else {
 			s.setPlayerDistance(sim, s.opts.foundMax)
 		}
-		s.outOfCombat(sim)
+		// Like in the game, we leave combat a second or two after the last mob dies. Until
+		// then we can't eat, drink or bandage, and get no out of combat regen.
+		delay := leaveCombatMin + DurationFromSeconds((leaveCombatMax-leaveCombatMin).Seconds()*sim.RandomFloat("Leveling Leave Combat"))
+		s.after(sim, &s.next, delay, s.leaveCombat)
 		return
 	}
 	// killTarget moved our target to the next living mob, which may be one we haven't
@@ -434,6 +472,24 @@ func (s *levelingSession) toPool(sim *Simulation, mob *Unit) {
 	if s.found == mob {
 		s.found = nil
 	}
+}
+
+// How long after the last mob dies we leave combat.
+const (
+	leaveCombatMin = time.Second
+	leaveCombatMax = 2 * time.Second
+)
+
+// leaveCombat: the last mob died a moment ago. When we pulled another one since, we're still
+// fighting it.
+func (s *levelingSession) leaveCombat(sim *Simulation) {
+	if s.state != levelingCombat || len(s.env.Encounter.ActiveTargetUnits) > 0 {
+		return
+	}
+	if sim.Log != nil {
+		s.player.Log(sim, "Leveling: out of combat")
+	}
+	s.outOfCombat(sim)
 }
 
 // outOfCombat: the pull is over, and the rotation decides what's next (ready).
@@ -489,7 +545,7 @@ func (s *levelingSession) tick(sim *Simulation, dt time.Duration) {
 	switch s.state {
 	case levelingBandaging:
 		if s.bandageLeft > 0 {
-			s.heal(sim, s.bandage.amount*seconds/s.bandage.duration.Seconds(), s.bandageMetrics)
+			s.healTick(sim, s.bandageSpell, s.bandage.amount*seconds/s.bandage.duration.Seconds())
 			s.bandageLeft -= dt
 		}
 	case levelingResting:
@@ -533,6 +589,9 @@ func (s *levelingSession) onPlayerDeath(sim *Simulation) {
 
 // despawn sends a mob back to the pool without a kill.
 func (s *levelingSession) despawn(sim *Simulation, mob *Unit) {
+	if sim.Log != nil {
+		s.player.Log(sim, "Leveling: %s left", mob.Label)
+	}
 	mob.dead = true
 	mob.AutoAttacks.CancelAutoSwing(sim)
 	mob.auraTracker.expireAll(sim)
@@ -564,6 +623,7 @@ func (s *levelingSession) doneIteration(sim *Simulation) {
 		kills += share
 		xp += share * mobKillXP(s.level, mob.Level)
 	}
+	s.lastKills = kills
 
 	a := &s.agg
 	a.n++

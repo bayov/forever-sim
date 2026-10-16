@@ -22,7 +22,7 @@ func TestOrcShamanEyeOfTheStorm(t *testing.T) {
 	const casts = 2000
 	for points, chance := range []float64{0, .23, .47, .70} {
 		// Eye of the Storm points and Lava Burst.
-		sim, enh := newShamanSim(newOrcShaman(60, fmt.Sprintf("000000000%d000001", points), &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, casts*4+10)
+		sim, enh := newShamanSim(newOrcShaman(60, fmt.Sprintf("000000000%d001", points), &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, casts*4+10)
 		if enh.Talents.EyeOfTheStorm != int32(points) {
 			t.Fatalf("got Eye of the Storm %d, want %d", enh.Talents.EyeOfTheStorm, points)
 		}

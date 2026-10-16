@@ -25,12 +25,12 @@
     "ok": true,
     "note": "same sim as the published number (seed 1)"
   },
-  "summary": "Combat Swords against a Humanoid or Giant boss, with Murder 2/2 (+4% damage to Humanoids and Giants) taking the points the generic-boss build spends elsewhere.",
-  "advantage": "Murder 2/2 makes every attack do 4% more damage to Humanoids and Giants. Against other bosses it does nothing, so the normal build spends those points elsewhere.",
+  "summary": "Combat Swords with Murder 2/2, for a Humanoid or Giant boss.",
+  "advantage": "Murder 2/2 adds 4% damage against Humanoids and Giants. It does nothing against other bosses.",
   "advantageRefs": [
     "tal:Rogue:0:4"
   ],
-  "advantageShort": "Murder 2/2: +4% damage to Humanoids and Giants. It does nothing elsewhere, so the normal build skips it.",
+  "advantageShort": "Murder 2/2 adds 4% damage against Humanoids and Giants.",
   "keyTalents": [
     "Murder 2/2",
     "Adrenaline Rush",
@@ -42,14 +42,14 @@
     "Cold Blood"
   ],
   "rotation": [
-    "Pre-pull: Blade Flurry at -1 s",
+    "Pre-pull: Blade Flurry at -1s",
     "Slice and Dice at 1+ combo points when down; refresh at 5 when about to drop",
     "Adrenaline Rush under 39 energy while Slice and Dice is up",
     "Blade Flurry on cooldown while Slice and Dice is up",
     "Cold Blood right before a 5-point Eviscerate",
     "Thistle Tea at 10 energy or less; Sapper, Land Mine and potion while Slice and Dice is up",
-    "Eviscerate at 5 combo points (with Slice and Dice up, 79+ energy, or under 6 s left); spend leftover points in the last 3 s",
-    "Sinister Strike right after a main-hand swing (0.5 s), or at 79+ energy"
+    "Eviscerate at 5 combo points (with Slice and Dice up, 79+ energy, or under 6s left); spend leftover points in the last 3s",
+    "Sinister Strike right after a main-hand swing (0.5s), or at 79+ energy"
   ],
   "consumes": [
     "Elixir of the Mongoose",
@@ -65,13 +65,11 @@
     "Deadly Poison (main hand) and Instant Poison (off hand), each beside a Dense Sharpening Stone"
   ],
   "caveats": [
-    "Murder is damage only (+4%) and only against Humanoids and Giants",
-    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 31 Agility and 15 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Swords keep 5-point Eviscerates; 4 points lose 6 to 8",
-    "Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV) left out under Forever; would add +13 to +18",
-    "Grimstitch 4/5-piece bonuses not live on the synthetic gear (about +8 / +6 for Combat Daggers)",
-    "Flask of Supreme Power and Greater Arcane Elixir omitted for consistency (+8 via Dragonbreath Chili)",
-    "Best Alliance race is High Order; since client 70425 the races are within about 3 DPS of each other"
+    "Murder (+4% damage) only works against Humanoids and Giants.",
+    "Eviscerate at 4 points loses 6 to 8 DPS.",
+    "No Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV). They would add 13 to 18.",
+    "Grimstitch 4-piece and 5-piece aren't active (about +8 and +6).",
+    "Flask of Supreme Power and Greater Arcane Elixir left out (+8 through Dragonbreath Chili)."
   ],
   "notes": "Request from mksettings with the same arguments as rogue__combat-swords except talents, then the target's mobType set to MobTypeHumanoid, as the class preset's encounter does.",
   "encounter": "Humanoid",

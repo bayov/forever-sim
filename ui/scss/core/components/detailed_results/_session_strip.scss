@@ -1,0 +1,395 @@
+// The leveling session in one bar, above every view of the Events tab (session_strip.tsx).
+
+.events-strip-row:empty,
+.events-strip-row:has(> .session-strip.hide) {
+	display: none;
+}
+
+.events-strip-row {
+	padding-top: var(--spacer-3);
+	border-top: 1px solid var(--line-color);
+}
+
+.session-strip {
+	--strip-states-height: 14px;
+	--strip-chart-height: 34px;
+	display: flex;
+	flex-direction: column;
+	gap: var(--spacer-2);
+}
+
+.session-strip-nav {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--spacer-2) var(--spacer-3);
+
+	.segmented-option {
+		gap: 0.4rem;
+	}
+}
+
+.session-strip-swatch {
+	display: inline-block;
+	width: 0.6rem;
+	height: 0.6rem;
+	border-radius: 2px;
+
+	&.kind-pull {
+		background: #c8a24a;
+	}
+
+	&.kind-rest {
+		background: #8fd18f;
+	}
+
+	&.kind-search {
+		background: #7fb3f0;
+	}
+
+	&.kind-death {
+		background: #ef7a7a;
+	}
+}
+
+.session-strip-kind-count {
+	font-weight: normal;
+	font-variant-numeric: tabular-nums;
+	font-size: 0.75rem;
+	opacity: 0.7;
+}
+
+// The arrows and the part we picked, as tall as the kind buttons beside them. The middle has a
+// fixed width, so the arrows stay put while we step through the parts.
+.session-strip-step {
+	position: relative;
+	display: flex;
+}
+
+.session-strip-picker {
+	.segmented-option {
+		justify-content: center;
+	}
+}
+
+.session-strip-arrow {
+	padding-left: 0.55rem;
+	padding-right: 0.55rem;
+	font-size: 0.7rem;
+}
+
+.session-strip-current {
+	width: 9.5rem;
+	color: var(--gold-soft);
+	background: $panel-bg-2;
+	box-shadow: inset 0 0 0 1px var(--line-color-strong);
+	font-variant-numeric: tabular-nums;
+
+	&:hover:not(:disabled) {
+		color: var(--gold-soft);
+	}
+}
+
+.session-strip-title {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.session-strip-caret {
+	font-size: 0.7rem;
+	opacity: 0.7;
+}
+
+// Every part of the kind, under the picker.
+.session-strip-menu {
+	position: absolute;
+	top: calc(100% + 4px);
+	left: 0;
+	z-index: 20;
+	display: flex;
+	flex-direction: column;
+	min-width: 100%;
+	width: max-content;
+	max-width: 28rem;
+	max-height: 22rem;
+	overflow-y: auto;
+	padding: 3px;
+	border-radius: var(--bs-border-radius);
+	background: rgba(12, 14, 20, 0.98);
+	box-shadow:
+		0 0 0 1px var(--line-color-strong),
+		0 6px 16px rgba(0, 0, 0, 0.55);
+}
+
+.session-strip-menu-item {
+	display: grid;
+	grid-template-columns: 6.5rem 3.2rem minmax(0, 1fr);
+	gap: var(--spacer-2);
+	align-items: baseline;
+	padding: 0.3rem 0.6rem;
+	border: 0;
+	border-radius: calc(var(--bs-border-radius) - 1px);
+	background: transparent;
+	color: var(--bs-body-color);
+	font-size: 0.8125rem;
+	text-align: left;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+
+	&:hover,
+	&:focus-visible {
+		outline: none;
+		background: rgba(255, 255, 255, 0.06);
+	}
+
+	&.active {
+		background: $panel-bg-2;
+		box-shadow: inset 0 0 0 1px var(--gold-soft);
+	}
+}
+
+.session-strip-menu-name {
+	font-weight: 600;
+	color: var(--gold-soft);
+}
+
+.session-strip-menu-time,
+.session-strip-menu-summary {
+	font-size: 0.75rem;
+	color: var(--text-muted-color);
+}
+
+.session-strip-menu-summary {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+// What the part was, next to the picker while there's room. The picker's tooltip has it all.
+.session-strip-detail {
+	flex: 1 1 0;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: 0.75rem;
+	color: var(--text-muted-color);
+	font-variant-numeric: tabular-nums;
+}
+
+.session-strip-all {
+	padding: 0;
+	font-size: 0.8125rem;
+}
+
+.session-strip-stats {
+	margin-left: auto;
+	font-size: 0.75rem;
+	color: var(--text-muted-color);
+	font-variant-numeric: tabular-nums;
+}
+
+.session-strip-bar {
+	position: relative;
+	height: calc(var(--strip-states-height) + var(--strip-chart-height));
+	border-radius: 4px;
+	background: rgba(255, 255, 255, 0.03);
+	box-shadow: inset 0 0 0 1px var(--line-color);
+	cursor: pointer;
+	user-select: none;
+	touch-action: none;
+
+	&:focus-visible {
+		outline: 1px solid var(--gold-soft);
+		outline-offset: 2px;
+	}
+}
+
+.session-strip-spans {
+	position: absolute;
+	inset: 0 0 auto 0;
+	height: var(--strip-states-height);
+	overflow: hidden;
+	border-radius: 4px 4px 0 0;
+}
+
+.session-strip-span {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	opacity: 0.85;
+
+	// Fighting is what we came for, so it's the full color. The downtime is a step back.
+	&.state-searching,
+	&.state-pulling,
+	&.state-ready {
+		opacity: 0.55;
+	}
+}
+
+// What a picked part leaves out is dimmed, so the part stands out.
+.session-strip-bar.has-selection .session-strip-spans,
+.session-strip-bar.has-selection .session-strip-chart {
+	opacity: 0.45;
+}
+
+.session-strip-chart {
+	position: absolute;
+	left: 0;
+	right: 0;
+	top: var(--strip-states-height);
+	height: var(--strip-chart-height);
+	width: 100%;
+	overflow: visible;
+
+	polyline {
+		fill: none;
+		stroke-width: 1.25px;
+		stroke-linejoin: round;
+	}
+
+	.session-strip-health {
+		stroke: #6fcf6f;
+	}
+
+	.session-strip-mana {
+		stroke: #5aa0f0;
+		opacity: 0.8;
+	}
+}
+
+.session-strip-marks {
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+}
+
+.session-strip-kill {
+	position: absolute;
+	top: 0;
+	width: 1px;
+	height: var(--strip-states-height);
+	background: rgba(0, 0, 0, 0.55);
+}
+
+.session-strip-death {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	width: 2px;
+	margin-left: -1px;
+	background: #ef7a7a;
+
+	i {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		padding: 2px;
+		border-radius: 50%;
+		font-size: 0.6rem;
+		color: #fff;
+		background: #b33a3a;
+	}
+}
+
+.session-strip-selection,
+.session-strip-hover,
+.session-strip-view {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	pointer-events: none;
+}
+
+.session-strip-selection {
+	min-width: 2px;
+	background: rgba(255, 255, 255, 0.12);
+	box-shadow:
+		inset 0 0 0 1px var(--gold-soft),
+		0 0 0 1px rgba(0, 0, 0, 0.4);
+	border-radius: 2px;
+}
+
+.session-strip-hover {
+	min-width: 1px;
+	background: rgba(255, 255, 255, 0.1);
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+// The part of the session the timeline shows.
+.session-strip-view {
+	top: auto;
+	bottom: -5px;
+	height: 3px;
+	min-width: 2px;
+	border-radius: 2px;
+	background: var(--text-muted-color);
+}
+
+// Where the replay is.
+.session-strip-cursor {
+	position: absolute;
+	top: -3px;
+	bottom: -3px;
+	width: 2px;
+	margin-left: -1px;
+	background: #fff;
+	box-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+	pointer-events: none;
+}
+
+.session-strip-tooltip {
+	position: absolute;
+	bottom: calc(100% + 6px);
+	z-index: 5;
+	max-width: 26rem;
+	padding: 0.4rem 0.6rem;
+	border-radius: 4px;
+	font-size: 0.75rem;
+	line-height: 1.35;
+	color: var(--bs-body-color);
+	background: rgba(12, 14, 20, 0.96);
+	box-shadow:
+		0 0 0 1px var(--line-color-strong),
+		0 4px 12px rgba(0, 0, 0, 0.5);
+	pointer-events: none;
+	white-space: normal;
+}
+
+.session-strip-tooltip-time {
+	font-variant-numeric: tabular-nums;
+	color: var(--text-muted-color);
+}
+
+.session-strip-tooltip-title {
+	margin-top: 0.15rem;
+	font-weight: 600;
+	color: var(--gold-soft);
+}
+
+.session-strip-ruler {
+	position: relative;
+	height: 0.9rem;
+	margin-top: -0.25rem;
+	font-size: 0.65rem;
+	color: var(--text-muted-color);
+	font-variant-numeric: tabular-nums;
+}
+
+.session-strip-tick {
+	position: absolute;
+	transform: translateX(-50%);
+
+	&:first-child {
+		transform: none;
+	}
+
+	&:last-child {
+		transform: translateX(-100%);
+	}
+}
+
+.events-iteration-group .iteration-died-icon {
+	font-size: 0.7rem;
+	color: #ef7a7a;
+}

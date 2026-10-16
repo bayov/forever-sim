@@ -23,9 +23,9 @@
     "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 180 s, seed 1"
+    "note": "verify.py, 180s, seed 1"
   },
-  "summary": "The twist build with its side points in Holy (Divine Intellect 5, Reverence, Purifying Power) instead of Protection's Precision. This copy is on Judgement of the Crusader duty: it keeps the debuff on the boss for the raid instead of getting it from another paladin.",
+  "summary": "The Holy side points twist build, keeping Judgement of the Crusader on the boss for the raid.",
   "keyTalents": [
     "Twist of Light",
     "Seal of Command",
@@ -37,12 +37,12 @@
     "Champion of the Light"
   ],
   "rotation": [
-    "Pre-pull: Seal of Righteousness at -4.5 s, Seal of Command at -3 s, Seal of the Crusader at -1.5 s (replacing Command leaves its Echo for the first swing)",
-    "Judgement of the Crusader at the pull (the duty): 161 Holy damage taken for 40 s, refreshed by the paladin's own melee hits, so one cast lasts the fight; judged again only if it drops",
+    "Pre-pull: Seal of Righteousness at -4.5s, Seal of Command at -3s, Seal of the Crusader at -1.5s (replacing Command leaves its Echo for the first swing)",
+    "Judgement of the Crusader at the pull (the duty): 161 Holy damage taken for 40s, refreshed by the paladin's own melee hits, so one cast lasts the fight; judged again only if it drops",
     "Consecration on cooldown while mana is at or above 20%",
     "Judgement on cooldown on whichever damage seal is up",
     "Seal of Command whenever no damage seal is up",
-    "Twist: with Seal of Command up, swap to Seal of Righteousness in the last 1.5 s before a swing, and back to Command before the next swing (one swap per swing, down to 20% mana); Twist of Light's Echo applies the old seal on the next swing",
+    "Twist: with Seal of Command up, swap to Seal of Righteousness in the last 1.5s before a swing, and back to Command before the next swing (one swap per swing, down to 20% mana); Twist of Light's Echo applies the old seal on the next swing",
     "Holy Strike on cooldown",
     "Hammer of Wrath below 20% health",
     "Racials, Goblin Sapper, Major Mana Potion and Demonic Rune on free GCDs"
@@ -68,16 +68,12 @@
     "Demonic Rune"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 spell power and 18 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "0.6% behind the default at 120 s and 0.9% at 300 s because it has no Precision",
-    "Purifying Power does nothing on the generic boss (Exorcism and Holy Wrath are not cast); the vs Undead builds use it",
-    "Would gain 1.4 DPS twisting down to 0% mana, but shares the twist rotation's 20% floor",
-    "Holy Strike's flat part inside the 50% weapon percent comes from client data, not yet confirmed on the beta",
-    "High Holy Strike and Consecration ranks may be stale: holding them to their level 30 trend would cost about 1.2%",
-    "Seal of Righteousness adds 12% of spell power a hit with a two-hander, once, per the 70425 tooltip (the proc spell itself carries 0): the SoD-style double count (2 x 11%) would be about 46-51 DPS higher, the proc spell's 0 about 53-59 lower",
-    "Two-Handed Weapon Specialization applied to Holy seal damage (Era sim choice vs client Physical mask): about -11 if removed",
-    "Synthetic gear on the hybrid budget (only the Justice Battlegear 2-piece live)",
-    "The request has the raid's Judgement of the Crusader off, so the debuff comes only from this paladin (standards 23)."
+    "0.6% behind the default at 120s and 0.9% at 300s (no Precision).",
+    "Purifying Power does nothing on the generic boss.",
+    "Holy Strike's flat bonus is inside the weapon percent (client data). Unconfirmed on the beta.",
+    "High Holy Strike and Consecration ranks may be out of date (about 1.2% at stake).",
+    "Seal of Righteousness adds 12% of spell power a hit with a two-hander, once (70425 tooltip). Counted twice it would be 46-51 DPS higher. At the proc spell's 0 it would be 53-59 lower.",
+    "Two-Handed Weapon Specialization boosts Holy seal damage (Era sim choice, the client says Physical only). Without it: -11."
   ],
   "notes": "Request: paladin__level_60_sub_holy with raid debuff judgementOfTheCrusader removed and the level60_crusader_duty rotation.",
   "duty": "Judgement of the Crusader",

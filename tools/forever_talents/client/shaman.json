@@ -1,5 +1,5 @@
 {
- "source": "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17, with the talents the 2026-09-24 development notes changed updated to build 1.60.1.70009 from foreverchanges.pro",
+ "source": "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17, with the talents the 2026-09-24 development notes changed updated to build 1.60.1.70009 from foreverchanges.pro; tree moves, Elemental Mastery, Call of Thunder removed and the Call of Flame, Improved Fire Nova (Trial by Fire) and Elemental Reach effects from build 1.60.1.70425 (wago.tools)",
  "class": "shaman",
  "trees": [
   {
@@ -54,8 +54,8 @@
     {
      "name": "Elemental Warding",
      "max": 3,
-     "row": 2,
-     "col": 1,
+     "row": 3,
+     "col": 2,
      "passive": true,
      "icon": "spell_nature_spiritarmor",
      "desc": {
@@ -66,7 +66,7 @@
      "id": 104771,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70425",
       "spellId": 28996,
       "notes": []
      }
@@ -97,18 +97,18 @@
      "name": "Call of Flame",
      "max": 3,
      "row": 2,
-     "col": 3,
+     "col": 4,
      "passive": true,
      "icon": "spell_fire_immolation",
      "desc": {
-      "1": "Increases the damage done by your Fire Totems and by your Flame Shock, Fire Nova, and Lava Burst spells by 5%.",
-      "2": "Increases the damage done by your Fire Totems and by your Flame Shock, Fire Nova, and Lava Burst spells by 10%.",
-      "3": "Increases the damage done by your Fire Totems and by your Flame Shock, Fire Nova, and Lava Burst spells by 15%."
+      "1": "Increases the damage done by your Fire Totems and by your Flame Shock, Fire Nova, and Lava Burst spells by 5%, as well as increases the duration of your Flame Shock spell by 3 sec.",
+      "2": "Increases the damage done by your Fire Totems and by your Flame Shock, Fire Nova, and Lava Burst spells by 10%, as well as increases the duration of your Flame Shock spell by 6 sec.",
+      "3": "Increases the damage done by your Fire Totems and by your Flame Shock, Fire Nova, and Lava Burst spells by 15%, as well as increases the duration of your Flame Shock spell by 9 sec."
      },
      "id": 104770,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70425",
       "spellId": 16038,
       "notes": []
      }
@@ -117,7 +117,7 @@
      "name": "Elemental Devastation",
      "max": 3,
      "row": 2,
-     "col": 4,
+     "col": 1,
      "passive": true,
      "icon": "spell_fire_elementaldevastation",
      "desc": {
@@ -128,7 +128,7 @@
      "id": 104769,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70425",
       "spellId": 30160,
       "notes": []
      }
@@ -137,7 +137,7 @@
      "name": "Elemental Focus",
      "max": 1,
      "row": 3,
-     "col": 2,
+     "col": 1,
      "passive": true,
      "icon": "spell_shadow_manaburn",
      "desc": {
@@ -146,7 +146,7 @@
      "id": 104768,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70425",
       "spellId": 16164,
       "notes": []
      }
@@ -168,11 +168,11 @@
      "id": 104766,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.70009",
+      "build": "1.60.1.70425",
       "spellId": 16089,
       "notes": []
      },
-     "req": "Call of Thunder"
+     "req": "Lightning Overload"
     },
     {
      "name": "Improved Fire Nova",
@@ -182,13 +182,13 @@
      "passive": true,
      "icon": "spell_fire_sealoffire",
      "desc": {
-      "1": "Increases the damage done by your Fire Nova spell by 10% and reduces its cooldown by 2 sec.",
-      "2": "Increases the damage done by your Fire Nova spell by 20% and reduces its cooldown by 4 sec."
+      "1": "Increases the damage done by your Fire Nova spell by 10% and reduces its cooldown by 2 sec, and increases the duration of your Magma Totem by 10 sec.",
+      "2": "Increases the damage done by your Fire Nova spell by 20% and reduces its cooldown by 4 sec, and increases the duration of your Magma Totem by 20 sec."
      },
      "id": 104764,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70425",
       "spellId": 16086,
       "notes": []
      }
@@ -214,25 +214,6 @@
      }
     },
     {
-     "name": "Call of Thunder",
-     "max": 1,
-     "row": 4,
-     "col": 3,
-     "passive": true,
-     "icon": "spell_nature_callstorm",
-     "desc": {
-      "1": "Increases the critical strike chance of your Lightning Bolt and Chain Lightning spells by 3%."
-     },
-     "req": "Elemental Alacrity",
-     "id": 104762,
-     "tooltip": {
-      "source": "client",
-      "build": "1.60.1.69876",
-      "spellId": 16120,
-      "notes": []
-     }
-    },
-    {
      "name": "Elemental Reach",
      "max": 2,
      "row": 5,
@@ -240,13 +221,13 @@
      "passive": true,
      "icon": "spell_nature_stormreach",
      "desc": {
-      "1": "Increases the range of your Lightning Bolt, Chain Lightning, Fire Nova, and Lava Burst spells by 3 yards, and increases the range of your Flame Shock spell by 8 yards.",
-      "2": "Increases the range of your Lightning Bolt, Chain Lightning, Fire Nova, and Lava Burst spells by 6 yards, and increases the range of your Flame Shock spell by 15 yards."
+      "1": "Increases the range of your Lightning Bolt, Chain Lightning, Fire Nova, and Lava Burst spells by 3 yards and reduces the cooldown of Totemic Projection by 10 sec.",
+      "2": "Increases the range of your Lightning Bolt, Chain Lightning, Fire Nova, and Lava Burst spells by 6 yards and reduces the cooldown of Totemic Projection by 20 sec."
      },
      "id": 104761,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70425",
       "spellId": 28999,
       "notes": []
      }
@@ -255,7 +236,7 @@
      "name": "Lightning Overload",
      "max": 3,
      "row": 5,
-     "col": 2,
+     "col": 3,
      "passive": true,
      "icon": "spell_nature_lightningoverload",
      "desc": {
@@ -266,25 +247,26 @@
      "id": 104759,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70425",
       "spellId": 408438,
       "notes": []
-     }
+     },
+     "req": "Elemental Alacrity"
     },
     {
      "name": "Earthbound",
      "max": 1,
-     "row": 5,
+     "row": 4,
      "col": 4,
      "passive": true,
      "icon": "spell_nature_stranglevines",
      "desc": {
       "1": "Your Earthbind Totem Immobilizes nearby targets for 5 sec when cast."
      },
-     "id": 104760,
+     "id": 104762,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70425",
       "spellId": 1222988,
       "notes": []
      }
@@ -292,7 +274,7 @@
     {
      "name": "Elemental Alacrity",
      "max": 3,
-     "row": 3,
+     "row": 2,
      "col": 3,
      "passive": true,
      "icon": "spell_lightning_lightningbolt01",
@@ -304,7 +286,7 @@
      "id": 104765,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.70009",
+      "build": "1.60.1.70425",
       "spellId": 16578,
       "notes": []
      }
@@ -312,33 +294,53 @@
     {
      "name": "Lava Burst",
      "max": 1,
-     "row": 7,
+     "row": 5,
      "col": 2,
      "passive": false,
      "icon": "spell_shaman_lavaburst",
      "desc": {
-      "1": "You hurl molten lava at the target, dealing 143 to 185 Fire damage. If your Flame Shock is on the target, Lava Burst deals 20% increased damage."
+      "1": "You hurl molten lava at the target, dealing 113 to 146 Fire damage. If your Flame Shock is on the target, Lava Burst deals 20% increased damage."
      },
-     "req": "Lightning Overload",
-     "cost": "165 Mana; 30 yd range; 2.5 sec cast; 10 sec cooldown",
-     "id": 104758,
+     "cost": "135 Mana; 30 yd range; 2.5 sec cast; 10 sec cooldown",
+     "id": 104760,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.70009",
+      "build": "1.60.1.70425",
       "spellId": 408490,
       "notes": [
-       "Values shown at level 60.",
+       "Rank 1 (level 30) at its level 38 cap; the trainer teaches ranks 2 to 4 at 40, 50 and 60.",
        "Excludes spell power, attack power and other bonuses."
       ]
+     }
+    },
+    {
+     "name": "Elemental Mastery",
+     "max": 1,
+     "row": 7,
+     "col": 2,
+     "passive": false,
+     "icon": "spell_nature_wispheal",
+     "req": "Lava Burst",
+     "cost": "Instant; 3 min cooldown",
+     "id": 104758,
+     "desc": {
+      "1": "Gain mastery over Fire and Lightning, reducing the cast time of Lightning Bolt and Lava Burst by 0.5 sec, and removing the cooldown from Chain Lightning. Lasts 15 sec."
+     },
+     "tooltip": {
+      "source": "client",
+      "build": "1.60.1.70425",
+      "spellId": 16166,
+      "notes": []
      }
     }
    ],
    "removed": [
     {
-     "name": "Elemental Mastery",
+     "name": "Call of Thunder",
      "max": 1,
-     "text": "When activated, this spell gives your next Fire, Frost, or Nature damage spell a 100% critical strike chance and reduces the mana cost by 100%.",
-     "row": 7
+     "text": "Increases the critical strike chance of your Lightning Bolt and Chain Lightning spells by 3%.",
+     "row": 4,
+     "build": "1.60.1.70425"
     }
    ]
   },
@@ -835,7 +837,7 @@
     {
      "name": "Tidal Focus",
      "max": 5,
-     "row": 2,
+     "row": 1,
      "col": 3,
      "passive": true,
      "icon": "spell_frost_manarecharge",
@@ -849,7 +851,7 @@
      "id": 104735,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70425",
       "spellId": 16179,
       "notes": []
      }
@@ -935,7 +937,7 @@
     {
      "name": "Totemic Focus",
      "max": 5,
-     "row": 1,
+     "row": 2,
      "col": 3,
      "passive": true,
      "icon": "spell_nature_moonglow",
@@ -949,7 +951,7 @@
      "id": 104729,
      "tooltip": {
       "source": "client",
-      "build": "1.60.1.69876",
+      "build": "1.60.1.70425",
       "spellId": 16173,
       "notes": []
      }

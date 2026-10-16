@@ -1,6 +1,8 @@
 package mage
 
 import (
+	"time"
+
 	"github.com/wowsims/classic/sim/common/guardians"
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
@@ -28,9 +30,10 @@ const (
 	SpellCode_MageIceLance
 	SpellCode_MageFrostfireBolt
 	SpellCode_MagePyroblast
+	SpellCode_MageArcaneWrath
 )
 
-var TalentTreeSizes = [3]int{18, 17, 19}
+var TalentTreeSizes = [3]int{19, 17, 19}
 
 func RegisterMage() {
 	core.RegisterAgentFactory(
@@ -61,6 +64,7 @@ type Mage struct {
 	ArcaneExplosion         []*core.Spell
 	ArcaneMissiles          []*core.Spell
 	ArcaneMissilesTickSpell []*core.Spell
+	ArcaneWrath             []*core.Spell
 	BlastWave               []*core.Spell
 	Blizzard                []*core.Spell
 	Counterspell            *core.Spell
@@ -89,7 +93,7 @@ type Mage struct {
 	ImprovedScorchAuras core.AuraArray
 	MageArmorAura       *core.Aura
 	MissileBarrageAura  *core.Aura
-	WintersChillAuras   core.AuraArray
+	PresenceOfMindAura  *core.Aura
 
 	// Chances added up by the talents and the Manaflare set, read when the proc rolls.
 	fingersOfFrostChance         float64
@@ -97,8 +101,8 @@ type Mage struct {
 	frostfireFingersOfFrostBonus float64
 	frostfireCombustionCrit      float64
 
-	// The Arcane Blast bonus the running Arcane Missiles channel took at its start.
-	arcaneMissilesBlastBonus float64
+	// When Presence of Mind was last used up, so Heating Up can tell it made that Pyroblast instant.
+	presenceOfMindSpentAt time.Duration
 }
 
 // Agent is a generic way to access underlying mage on any of the agents.
@@ -128,6 +132,7 @@ func (mage *Mage) Initialize() {
 	mage.registerPyroblastSpell()
 	mage.registerScorchSpell()
 	mage.registerArcaneBlastSpell()
+	mage.registerArcaneWrathSpell()
 	mage.registerIceLanceSpell()
 	mage.registerFrostfireBoltSpell()
 
@@ -142,6 +147,7 @@ func (mage *Mage) Initialize() {
 }
 
 func (mage *Mage) Reset(sim *core.Simulation) {
+	mage.presenceOfMindSpentAt = -1
 }
 
 func NewMage(character *core.Character, options *proto.Player) *Mage {

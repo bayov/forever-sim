@@ -25,7 +25,7 @@
     "ok": true,
     "note": "same sim as the published number (seed 1)"
   },
-  "summary": "Deep Combat Sinister Strike on a slow synthetic Phase 1 axe in the main hand and a slow mace in the off hand with Adrenaline Rush, Blade Flurry, Hack and Slash and Cold Blood. It is the highest-DPS rogue build and the class default.",
+  "summary": "Combat Sinister Strike with a slow main hand axe and a slow off hand mace.",
   "keyTalents": [
     "Adrenaline Rush",
     "Blade Flurry",
@@ -36,14 +36,14 @@
     "Cold Blood"
   ],
   "rotation": [
-    "Pre-pull: Blade Flurry at -1 s",
+    "Pre-pull: Blade Flurry at -1s",
     "Slice and Dice at 1+ combo points when down; refresh at 5 when about to drop",
     "Adrenaline Rush under 39 energy while Slice and Dice is up",
     "Blade Flurry on cooldown while Slice and Dice is up",
     "Cold Blood right before a 5-point Eviscerate",
     "Thistle Tea at 10 energy or less; Sapper, Land Mine and potion while Slice and Dice is up",
-    "Eviscerate at 5 combo points (with Slice and Dice up, 79+ energy, or under 6 s left); spend leftover points in the last 3 s",
-    "Sinister Strike right after a main-hand swing (0.5 s), or at 79+ energy"
+    "Eviscerate at 5 combo points (with Slice and Dice up, 79+ energy, or under 6s left); spend leftover points in the last 3s",
+    "Sinister Strike right after a main-hand swing (0.5s), or at 79+ energy"
   ],
   "consumes": [
     "Elixir of the Mongoose",
@@ -59,13 +59,11 @@
     "Deadly Poison (main hand) and Instant Poison (off hand), each beside a Dense Sharpening Stone"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 31 Agility and 15 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Swords keep 5-point Eviscerates; 4 points lose 6 to 8",
-    "Murder is damage only (+4% vs Humanoids and Giants) and does nothing on the generic boss, so its 2 points go to Lethality (Vile Poisons for Seal Fate Daggers); the vs Humanoid build keeps Murder 2/2",
-    "Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV) left out under Forever; would add +13 to +18",
-    "Grimstitch 4/5-piece bonuses not live on the synthetic gear (about +8 / +6 for Combat Daggers)",
-    "Flask of Supreme Power and Greater Arcane Elixir omitted for consistency (+8 via Dragonbreath Chili)",
-    "Best Alliance race is High Order; since client 70425 the races are within about 3 DPS of each other"
+    "Eviscerate at 4 points loses 6 to 8 DPS.",
+    "Murder does nothing on the generic boss, so its points go to Lethality (Vile Poisons for Seal Fate Daggers).",
+    "No Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV). They would add 13 to 18.",
+    "Grimstitch 4-piece and 5-piece aren't active (about +8 and +6).",
+    "Flask of Supreme Power and Greater Arcane Elixir left out (+8 through Dragonbreath Chili)."
   ],
   "notes": "Class default preset (default gear, talents, rotation, race and consumes); default for the Combat raid-sim preset."
 }

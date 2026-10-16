@@ -201,3 +201,31 @@ func TestLevelingRests(t *testing.T) {
 		t.Errorf("never resting died %.2f times, always resting %.2f", never.Deaths, always.Deaths)
 	}
 }
+
+// TestLevelingAlwaysInFront: in a leveling session every mob is in front of us, whatever the
+// In Front of Target setting says, and with two mobs on us at once, which stand around us in a
+// ring. So the mobs parry our swings, and a session with the setting off plays out just like
+// one with it on.
+func TestLevelingAlwaysInFront(t *testing.T) {
+	rotation := strings.TrimSuffix(chainRotation, "\n]}") + ",\n" + strings.Join(packLines(2), ",\n") + "\n]}"
+	parries := map[bool]int32{}
+	for _, inFront := range []bool{false, true} {
+		req := withRotation(t, levelingRequest(t, &proto.LevelingOptions{}, 20), rotation)
+		req.Raid.Parties[0].Players[0].InFrontOfTarget = inFront
+		result := runLeveling(t, req)
+		for _, action := range result.RaidMetrics.Parties[0].Players[0].Actions {
+			if action.Id.GetOtherId() == proto.OtherAction_OtherActionAttack {
+				for _, target := range action.Targets {
+					parries[inFront] += target.Parries
+				}
+			}
+		}
+		if mpp := result.EncounterMetrics.Leveling.MobsPerPull; mpp < 1.5 {
+			t.Errorf("%.2f mobs a pull pulling two at a time, want two on us most pulls", mpp)
+		}
+	}
+	t.Logf("%d of our swings parried with In Front of Target off, %d with it on", parries[false], parries[true])
+	if parries[false] == 0 || parries[false] != parries[true] {
+		t.Errorf("%d of our swings parried with In Front of Target off and %d with it on, want the same and some: every mob is in front of us", parries[false], parries[true])
+	}
+}

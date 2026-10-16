@@ -1,16 +1,15 @@
-From 3da143320d0b5019e93dac8bc24e5b4d2be58770 Mon Sep 17 00:00:00 2001
+From 3baadba2da2acf87608992de13560c885b371681 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Tue, 13 Oct 2026 13:12:13 +0000
-Subject: [PATCH] dash: Beast Slaying, Big Game Hunter and Elemental Insight
- raise damage only, not crit damage
+Subject: [PATCH 3/3] dash: Beast Slaying, Big Game Hunter and Elemental
+ Insight raise damage only, not crit damage
 
 Client 70338 gives them aura 168 at 5% (damage done vs the creature type), so the
-CritMultiplier line goes. Dashboard-only local patch; the shared fix is a followup.
-
+CritMultiplier line goes. Master has the Forever half since PR #94; this keeps only the Classic
+racials.go line, which the Forever report never runs.
 ---
- sim/core/racials.go         | 1 -
- sim/core/racials_forever.go | 2 +-
- 2 files changed, 1 insertion(+), 2 deletions(-)
+ sim/core/racials.go | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/sim/core/racials.go b/sim/core/racials.go
 index 16c04b65d..f309474ec 100644
@@ -24,25 +23,6 @@ index 16c04b65d..f309474ec 100644
  					}
  				}
  			}
-diff --git a/sim/core/racials_forever.go b/sim/core/racials_forever.go
-index c6b1ca30c..bf9ba5e48 100644
---- a/sim/core/racials_forever.go
-+++ b/sim/core/racials_forever.go
-@@ -134,13 +134,13 @@ func applyForeverRaceEffects(agent Agent) {
- 
- // Damage against one creature type, like Troll Beast Slaying. Applied to the attack
- // tables after finalize because the targets are not known before then.
-+// It is a plain damage aura (aura 168, 5%), so it leaves crit damage alone.
- func (character *Character) mobTypeDamageAura(mobType proto.MobType, multiplier float64) {
- 	character.Env.RegisterPostFinalizeEffect(func() {
- 		for _, t := range character.Env.Encounter.Targets {
- 			if t.MobType == mobType {
- 				for _, at := range character.AttackTables[t.UnitIndex] {
- 					at.DamageDealtMultiplier *= multiplier
--					at.CritMultiplier *= multiplier
- 				}
- 			}
- 		}
 -- 
 2.43.0
 

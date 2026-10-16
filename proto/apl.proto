@@ -313,10 +313,14 @@ message APLActionMove {
     APLValue range_from_target = 1;
 }
 
-// In a leveling session, while fighting: look for another mob to pull. Most of the time we
-// run around to find it with the mobs on us following (LevelingOptions.chain_search_moving).
-// The mob we find is the Pull Target (UnitReference.PullTarget) until we pull it.
+// In a leveling session, while fighting: look for another mob to pull. We run around to find
+// it with the mobs on us following, so only instants and melee go out, or we stand and keep
+// fighting while we look, which takes longer (LevelingOptions.chain_search_min and max, and
+// chain_search_standing_min and max). The mob we find is the Pull Target
+// (UnitReference.PullTarget) until we pull it.
 message APLActionLevelingLookForMob {
+    // Stand and keep fighting while we look, instead of running around.
+    bool stand = 1;
 }
 
 // In a leveling session: walk toward the Pull Target until we're within this many yards of

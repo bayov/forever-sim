@@ -4,7 +4,7 @@
       {
         "players": [
           {
-            "race": "RaceUndead",
+            "race": "RaceHuman",
             "class": "ClassMage",
             "equipment": {
               "items": [
@@ -86,7 +86,7 @@
               "blessingOfKings": true,
               "blessingOfWisdom": "TristateEffectImproved"
             },
-            "talentsString": "051225003100311531-03-02550003",
+            "talentsString": "0522005003100301531-02-05550003",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Tailoring",
@@ -103,19 +103,63 @@
                   },
                   "doAtValue": {
                     "const": {
-                      "val": "-2.5s"
+                      "val": "-1.5s"
                     }
                   }
                 }
               ],
               "priorityList": [
                 {
+                  "notes": "Without the talent ignore the warning on this line.",
                   "action": {
+                    "condition": {
+                      "or": {
+                        "vals": [
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "itemId": 996032
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "spellTimeToReady": {
+                                  "spellId": {
+                                    "itemId": 996032
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "math": {
+                                  "op": "OpSub",
+                                  "lhs": {
+                                    "remainingTime": {}
+                                  },
+                                  "rhs": {
+                                    "const": {
+                                      "val": "15s"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
                     "castSpell": {
                       "spellId": {
                         "spellId": 12042
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "With Arcane Power. Without the talent ignore the warning on this line.",
+                  "action": {
                     "condition": {
                       "or": {
                         "vals": [
@@ -128,6 +172,7 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "spellTimeToReady": {
                                   "spellId": {
@@ -135,13 +180,12 @@
                                   }
                                 }
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "math": {
+                                  "op": "OpSub",
                                   "lhs": {
                                     "remainingTime": {}
                                   },
-                                  "op": "OpSub",
                                   "rhs": {
                                     "const": {
                                       "val": "15s"
@@ -153,241 +197,193 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Arcane Power with the on-use trinket, unless the trinket won't be back in time. Without the talent ignore the warning on this line."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
                         "spellId": 12043
                       }
-                    },
-                    "condition": {
-                      "or": {
-                        "vals": [
-                          {
-                            "auraIsActive": {
-                              "auraId": {
-                                "itemId": 996032
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "lhs": {
-                                "spellTimeToReady": {
-                                  "spellId": {
-                                    "itemId": 996032
-                                  }
-                                }
-                              },
-                              "op": "OpGt",
-                              "rhs": {
-                                "math": {
-                                  "lhs": {
-                                    "remainingTime": {}
-                                  },
-                                  "op": "OpSub",
-                                  "rhs": {
-                                    "const": {
-                                      "val": "15s"
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
                     }
-                  },
-                  "notes": "Presence of Mind with Arcane Power and the trinket. Without the talent ignore the warning on this line."
+                  }
                 },
                 {
+                  "notes": "Arcane Power, Presence of Mind, Combustion, trinkets, racials and mana gems.",
                   "action": {
                     "autocastOtherCooldowns": {}
-                  },
-                  "notes": "Arcane Power, Presence of Mind, Combustion, trinkets, racials and the mana gems on a free GCD."
+                  }
                 },
                 {
+                  "notes": "Never: mana gems share the Demonic Rune's cooldown, and the rune gives more.",
                   "action": {
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGt",
+                        "lhs": {
+                          "const": {
+                            "val": "0"
+                          }
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "1"
+                          }
+                        }
+                      }
+                    },
                     "castSpell": {
                       "spellId": {
                         "itemId": 5514
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Never: mana gems share the Demonic Rune's cooldown, and the rune gives more.",
+                  "action": {
                     "condition": {
                       "cmp": {
+                        "op": "OpGt",
                         "lhs": {
                           "const": {
                             "val": "0"
                           }
                         },
-                        "op": "OpGt",
                         "rhs": {
                           "const": {
                             "val": "1"
                           }
                         }
                       }
-                    }
-                  },
-                  "notes": "Never: the mana gems share the Demonic Rune's cooldown, and the rune gives more."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
                         "itemId": 5513
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Never: mana gems share the Demonic Rune's cooldown, and the rune gives more.",
+                  "action": {
                     "condition": {
                       "cmp": {
+                        "op": "OpGt",
                         "lhs": {
                           "const": {
                             "val": "0"
                           }
                         },
-                        "op": "OpGt",
                         "rhs": {
                           "const": {
                             "val": "1"
                           }
                         }
                       }
-                    }
-                  },
-                  "notes": "Never: the mana gems share the Demonic Rune's cooldown, and the rune gives more."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
                         "itemId": 8007
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Never: mana gems share the Demonic Rune's cooldown, and the rune gives more.",
+                  "action": {
                     "condition": {
                       "cmp": {
+                        "op": "OpGt",
                         "lhs": {
                           "const": {
                             "val": "0"
                           }
                         },
-                        "op": "OpGt",
                         "rhs": {
                           "const": {
                             "val": "1"
                           }
                         }
                       }
-                    }
-                  },
-                  "notes": "Never: the mana gems share the Demonic Rune's cooldown, and the rune gives more."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
                         "itemId": 8008
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  
+                  "action": {
                     "condition": {
                       "cmp": {
+                        "op": "OpLt",
                         "lhs": {
-                          "const": {
-                            "val": "0"
-                          }
+                          "remainingTime": {}
                         },
-                        "op": "OpGt",
                         "rhs": {
-                          "const": {
-                            "val": "1"
+                          "math": {
+                            "op": "OpAdd",
+                            "lhs": {
+                              "spellCastTime": {
+                                "spellId": {
+                                  "spellId": 10181
+                                }
+                              }
+                            },
+                            "rhs": {
+                              "const": {
+                                "val": "0.75s"
+                              }
+                            }
                           }
                         }
                       }
-                    }
-                  },
-                  "notes": "Never: the mana gems share the Demonic Rune's cooldown, and the rune gives more."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
                         "spellId": 10199
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  
+                  "action": {
                     "condition": {
                       "cmp": {
+                        "op": "OpLt",
                         "lhs": {
                           "remainingTime": {}
                         },
-                        "op": "OpLt",
                         "rhs": {
                           "math": {
+                            "op": "OpAdd",
                             "lhs": {
                               "spellCastTime": {
                                 "spellId": {
-                                  "spellId": 1239700
+                                  "spellId": 10181
                                 }
                               }
                             },
-                            "op": "OpAdd",
                             "rhs": {
                               "const": {
-                                "val": "0s"
+                                "val": "0.75s"
                               }
                             }
                           }
                         }
                       }
-                    }
-                  },
-                  "notes": "An instant when the filler would not land before the end of the fight."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
                         "spellId": 10202
                       }
-                    },
-                    "condition": {
-                      "cmp": {
-                        "lhs": {
-                          "remainingTime": {}
-                        },
-                        "op": "OpLt",
-                        "rhs": {
-                          "math": {
-                            "lhs": {
-                              "spellCastTime": {
-                                "spellId": {
-                                  "spellId": 1239700
-                                }
-                              }
-                            },
-                            "op": "OpAdd",
-                            "rhs": {
-                              "const": {
-                                "val": "0s"
-                              }
-                            }
-                          }
-                        }
-                      }
                     }
-                  },
-                  "notes": "An instant when the filler would not land before the end of the fight."
+                  }
                 },
                 {
+                  
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 10212
-                      }
-                    },
                     "condition": {
                       "and": {
                         "vals": [
@@ -400,10 +396,10 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpLt",
                               "lhs": {
                                 "currentManaPercent": {}
                               },
-                              "op": "OpLt",
                               "rhs": {
                                 "const": {
                                   "val": "0.2"
@@ -412,142 +408,42 @@
                             }
                           },
                           {
-                            "cmp": {
-                              "lhs": {
-                                "auraNumStacks": {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
                                   "auraId": {
                                     "spellId": 400573
                                   }
                                 }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "remainingTime": {}
                               },
-                              "op": "OpGe",
                               "rhs": {
                                 "const": {
-                                  "val": "1"
+                                  "val": "4s"
                                 }
                               }
                             }
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Low on mana: Arcane Missiles after a single Arcane Blast."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
                         "spellId": 1239700
                       }
-                    },
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "auraIsKnown": {
-                              "auraId": {
-                                "spellId": 400573
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "lhs": {
-                                "currentManaPercent": {}
-                              },
-                              "op": "OpLt",
-                              "rhs": {
-                                "const": {
-                                  "val": "0.2"
-                                }
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "lhs": {
-                                "auraNumStacks": {
-                                  "auraId": {
-                                    "spellId": 400573
-                                  }
-                                }
-                              },
-                              "op": "OpLt",
-                              "rhs": {
-                                "const": {
-                                  "val": "1"
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
                     }
-                  },
-                  "notes": "Low on mana: one Arcane Blast."
+                  }
                 },
                 {
+                  
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 10212
-                      }
-                    },
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "auraIsKnown": {
-                              "auraId": {
-                                "spellId": 400573
-                              }
-                            }
-                          },
-                          {
-                            "auraIsKnown": {
-                              "auraId": {
-                                "spellId": 400589
-                              }
-                            }
-                          },
-                          {
-                            "auraIsActive": {
-                              "auraId": {
-                                "spellId": 400589
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "lhs": {
-                                "auraNumStacks": {
-                                  "auraId": {
-                                    "spellId": 400573
-                                  }
-                                }
-                              },
-                              "op": "OpGe",
-                              "rhs": {
-                                "const": {
-                                  "val": "2"
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  },
-                  "notes": "Arcane Missiles on Missile Barrage once the stacks are up."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 1239700
-                      }
-                    },
                     "condition": {
                       "and": {
                         "vals": [
@@ -560,36 +456,134 @@
                           },
                           {
                             "cmp": {
-                              "lhs": {
-                                "auraNumStacks": {
-                                  "auraId": {
-                                    "spellId": 400573
-                                  }
-                                }
-                              },
                               "op": "OpLt",
+                              "lhs": {
+                                "auraNumStacks": {
+                                  "auraId": {
+                                    "spellId": 400573
+                                  }
+                                }
+                              },
                               "rhs": {
                                 "const": {
                                   "val": "4"
                                 }
                               }
                             }
+                          },
+                          {
+                            "or": {
+                              "vals": [
+                                {
+                                  "not": {
+                                    "val": {
+                                      "auraIsActive": {
+                                        "auraId": {
+                                          "spellId": 400573
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "cmp": {
+                                    "op": "OpGt",
+                                    "lhs": {
+                                      "auraRemainingTime": {
+                                        "auraId": {
+                                          "spellId": 400573
+                                        }
+                                      }
+                                    },
+                                    "rhs": {
+                                      "const": {
+                                        "val": "9s"
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "4s"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "not": {
+                              "val": {
+                                "cmp": {
+                                  "op": "OpLt",
+                                  "lhs": {
+                                    "currentManaPercent": {}
+                                  },
+                                  "rhs": {
+                                    "const": {
+                                      "val": "0.2"
+                                    }
+                                  }
+                                }
+                              }
+                            }
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1239700
+                      }
                     }
-                  },
-                  "notes": "Arcane Blast up to the stack target."
+                  }
                 },
                 {
+                  "notes": "Free and twice as fast.",
                   "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "auraIsKnown": {
+                              "auraId": {
+                                "spellId": 400589
+                              }
+                            }
+                          },
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "spellId": 400589
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
                     "castSpell": {
                       "spellId": {
                         "spellId": 10212
                       }
                     }
-                  },
-                  "notes": "The filler."
+                  }
+                },
+                {
+                  
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10181
+                      }
+                    }
+                  }
                 }
               ]
             },

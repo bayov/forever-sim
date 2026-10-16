@@ -128,7 +128,7 @@ export function startReport(dash, events) {
   });
   dash.calc('pairs', {
     inputs: ['builds'], title: 'Preset against preset',
-    description: 'For every pair of presets, the second’s mean, 10th, 50th and 90th percentile, standard deviation and 120 s / 300 s DPS relative to the first, in percent.',
+    description: 'For every pair of presets, the second’s mean, 10th, 50th and 90th percentile, standard deviation and 120s / 300s DPS relative to the first, in percent.',
     fn: (builds) => {
       const out = [];
       for (const a of builds) for (const b of builds) {
@@ -153,7 +153,7 @@ export function startReport(dash, events) {
   const store = (() => { try { return window.localStorage; } catch { return null; } })();
   const saved = (() => { try { return JSON.parse(store?.getItem('fv-state') || '{}'); } catch { return {}; } })();
   const st = Object.assign({ tab: 'ranking', cls: 'All', heatCls: 'All', heatFac: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', rsOpt: {}, rsFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', rlFac: 'All', rlRole: 'All', rlCls: 'All', rlSpec: 'All', setupHide: false, enc: false, duty: true, asm: {}, asmOpen: [] }, saved);
-  st.len = '180'; // a fight length other than 180 s is never restored: the page always opens on the main numbers
+  st.len = '180'; // a fight length other than 180s is never restored: the page always opens on the main numbers
   const persist = () => { try { store?.setItem('fv-state', JSON.stringify(st)); } catch {} };
 
   // ---------- tooltip pieces ----------
@@ -182,15 +182,34 @@ export function startReport(dash, events) {
   const tipSw = (color) => el('i', { class: 'sw', style: `background:${color}` });
   const tipChips = (items, more) => el('div', { class: 'fv-tip-chips' }, ...items.map((t) => el('span', { text: t })), more ? el('em', { text: more }) : null);
 
+  // A chart whose bars start well above 0 makes small gaps look big, so we say so plainly above it. start is where the
+  // bars start (null hides the warning), and what is what the gaps are between.
+  const axisWarn = (node, start, what) => {
+    node.hidden = !start;
+    if (start) node.replaceChildren(el('i', { class: 'fas fa-triangle-exclamation', 'aria-hidden': 'true' }),
+      el('span', {}, 'Bars start at ', el('b', { text: start }), `, not at 0, so the gaps between ${what} look much bigger than they are.`));
+  };
+
   // ---------- tooltip ----------
   // Chart tooltips: tap (or hover with a mouse) a mark for its exact values; the mark is highlighted; tap elsewhere to close.
-  let tipEl = null, tipTippy = null, tipHl = [], tipPinned = false, tipCleanup = null;
+  let tipEl = null, tipTippy = null, tipHl = [], tipPinned = false, tipCleanup = null, tipWait = null;
   const hideTip = () => {
+    clearTimeout(tipWait);
     if (tipTippy) { tipTippy.destroy(); tipTippy = null; }
     tipEl = null;
     for (const n of tipHl) n.classList.remove('is-hl');
     if (tipCleanup) { tipCleanup(); tipCleanup = null; }
     tipHl = []; tipPinned = false;
+  };
+  // A tooltip with buttons (like "Open in Specs ›") stays up while the mouse is on it.
+  //
+  // When the mouse leaves its mark, or moves on to another mark, the hover handlers call tipHover with what to do
+  // next (hide the tooltip, or show the other mark's). With buttons in the tooltip we wait a moment first, so the mouse
+  // can cross over to the tooltip, and reaching the tooltip cancels it. Any other tooltip changes right away.
+  const tipHover = (fn) => {
+    clearTimeout(tipWait);
+    if (tipEl && tipEl.classList.contains('act') && !tipPinned) tipWait = setTimeout(fn, 300);
+    else fn();
   };
   // x and y are where the mark is in host, which the tooltip points at. head is a title (text, or tipTitle(...)), and
   // lines are the tooltip pieces above (plain text lines still work).
@@ -217,6 +236,12 @@ export function startReport(dash, events) {
       placement: opts.below ? 'bottom-start' : 'top-start', offset: [10, 8], getReferenceClientRect: at, duration: [120, 0],
     });
     tipTippy.show();
+    if (acts.length) {
+      tipTippy.popper.addEventListener('pointerenter', () => clearTimeout(tipWait));
+      tipTippy.popper.addEventListener('pointerleave', (e) => {
+        if (e.pointerType === 'mouse' && !tipPinned && !tipHl.some((n) => n.contains(e.relatedTarget))) tipHover(opts.onLeave || hideTip);
+      });
+    }
     tipHl = (Array.isArray(opts.hl) ? opts.hl : opts.hl ? [opts.hl] : []).filter(Boolean);
     for (const n of tipHl) n.classList.add('is-hl');
     tipCleanup = opts.onHide || null;
@@ -225,8 +250,12 @@ export function startReport(dash, events) {
   // bind a tooltip to d3 marks: fn(event, datum, node) shows it
   const tipOn = (sel, fn) => sel.attr('data-tip', '1').style('cursor', 'pointer')
     .on('click', function (e, d) { e.stopPropagation(); if (tipHl.includes(this) && tipPinned) { hideTip(); return; } fn(e, d, this); tipPinned = true; })
-    .on('pointerenter', function (e, d) { if (e.pointerType === 'mouse' && !tipPinned) { fn(e, d, this); tipPinned = false; } })
-    .on('pointerleave', function (e) { if (e.pointerType === 'mouse' && !tipPinned && tipHl.includes(this)) hideTip(); });
+    .on('pointerenter', function (e, d) {
+      if (e.pointerType !== 'mouse' || tipPinned) return;
+      if (tipHl.includes(this)) { clearTimeout(tipWait); return; }
+      tipHover(() => { fn(e, d, this); tipPinned = false; });
+    })
+    .on('pointerleave', function (e) { if (e.pointerType === 'mouse' && !tipPinned && tipHl.includes(this)) tipHover(hideTip); });
   document.addEventListener('click', (e) => { if (!e.target.closest('[data-tip]') && !e.target.closest('.fv-tip')) hideTip(); });
 
   // An advantaged preset's "vs Undead" badge says on hover how much it gains over its normal build, and why.
@@ -264,8 +293,8 @@ export function startReport(dash, events) {
   const dutyTip = (b, list) => {
     const base = list.find((x) => x.id === b.baseBuild) || adjB((rowsOf('builds') || []).find((x) => x.id === b.baseBuild) || {});
     return el('div', { class: 'fv-tip fv-advtip' }, tipTitle(`On ${b.duty} duty`),
-      +base.dps ? tipKey(dutyCostText(b, base), 'DPS', el('span', { class: 'fv-tip-m' }, tipDelta(100 * (b.dps / base.dps - 1)), ` vs ${base.build}, where the raid covers it`)) : null,
-      b.dutyDefensive === true ? tipText('Defensive: it makes the raid safer, not stronger, so no one else gains DPS from it.') : null,
+      +base.dps ? tipKey(dutyCostText(b, base), 'DPS', el('span', { class: 'fv-tip-m' }, tipDelta(100 * (b.dps / base.dps - 1)), ` vs ${base.build}`)) : null,
+      b.dutyDefensive === true ? tipText('Defensive: no DPS gain for the raid.') : null,
       tipText(b.summary));
   };
   // The badge's short name for each duty; its tooltip gives the full name, and says when the duty is defensive.
@@ -371,7 +400,7 @@ export function startReport(dash, events) {
       spec.nums.push(...nums([[a.owner === 'Self' ? 'Uptime' : 'Uptime on the boss', `${f1(a.uptime)}%`], a.procs > 0 ? ['Applied per fight', f1(a.procs)] : null]));
     }
     if (spec.nums.length && bl) spec.numsHead = bl.label;
-    if (!spec.lines.length && !spec.nums.length && aura) spec.lines = [['m', 'No tooltip text for this effect.']];
+    if (!spec.lines.length && !spec.nums.length && aura) spec.lines = [['m', 'No tooltip text.']];
     return spec;
   };
 
@@ -521,7 +550,9 @@ export function startReport(dash, events) {
   {
     const root = $('#fv');
     let hoverTimer = null, lpTimer = null, lpFired = false, lpStart = null;
-    root.addEventListener('pointerover', (e) => {
+    // The tooltip is in body, outside the report, so we watch the whole page. That way moving onto the tooltip
+    // keeps it up.
+    document.addEventListener('pointerover', (e) => {
       if (e.pointerType !== 'mouse') return;
       if (ttEl && ttEl.contains(e.target)) { clearTimeout(ttHideTimer); return; }
       const n = e.target.closest('[data-tt]');
@@ -530,7 +561,7 @@ export function startReport(dash, events) {
       if (!n || n === ttNode) return;
       hoverTimer = setTimeout(() => { if (!ttPinned) showTT(n, { x: e.clientX, y: e.clientY }); }, 120);
     });
-    root.addEventListener('pointerout', (e) => {
+    document.addEventListener('pointerout', (e) => {
       if (e.pointerType !== 'mouse') return;
       const into = (x) => x && e.relatedTarget && x.contains(e.relatedTarget);
       // a short grace period lets the mouse cross over to the tooltip and its wowhead link
@@ -582,7 +613,7 @@ export function startReport(dash, events) {
   }
 
   // ---------- tabs ----------
-  const pages = ['ranking', 'races', 'spec', 'compare', 'method'];
+  const pages = ['ranking', 'spec', 'races', 'compare', 'method'];
   const showTab = (tab, link = true) => {
     const changed = st.tab !== tab;
     st.tab = tab; persist();
@@ -662,14 +693,14 @@ export function startReport(dash, events) {
     }
     host.dataset.icons = m ? '1' : '0';
     host.classList.add('fv-icon-picker');
-    host.replaceChildren(el('span', { class: 'fv-label', text: 'Class' }), el('span', { class: 'fv-pick-value', text: name }),
+    host.replaceChildren(el('span', { class: 'fv-label fv-rowlabel', text: 'Class' }),
       el('div', { class: 'fv-pick-options' }, ...CLASSES.map((c) => {
         const u = m && m.get('classicon_' + c.toLowerCase());
         const b = el('button', { type: 'button', class: 'fv-pick-option' + (c === st[key] ? ' active' : ''), 'data-c': c, 'aria-label': c, 'aria-pressed': String(c === st[key]), 'data-tt': 'c:' + c, style: u ? `background-image:url("${u}")` : `background:${ccol(c)}` });
         b.addEventListener('click', () => { st[key] = st[key] === c ? 'All' : c; persist(); render(); });
         b.hidden = !!avail && !avail.has(c);
         return b;
-      })));
+      })), el('span', { class: 'fv-pick-value', text: name }));
   };
   const fail = (host) => { host.replaceChildren(el('div', { class: 'fv-fail', text: 'Failed to load' })); };
   const waitOr = (host, ids) => {
@@ -814,7 +845,7 @@ export function startReport(dash, events) {
     const host = $('#rank-chart');
     classChips($('#rank-classes'), 'cls');
     const lens = statusOf('lengths') === 'ok' ? [...new Set([180, ...rowsOf('lengths').map((r) => +r.secs)])].sort((a, b) => a - b).map(String) : ['180'];
-    seg($('#rank-len'), 'len', lens.map((v) => [v, v + ' s']));
+    seg($('#rank-len'), 'len', lens.map((v) => [v, v + 's']));
     $('#rank-lenbar').classList.toggle('off', st.len !== '180');
     seg($('#rank-sort'), 'sort', SORTS);
     seg($('#rank-role'), 'role', [['All', 'All roles'], ['Melee', 'Melee'], ['Ranged', 'Ranged'], ['Caster', 'Caster']]);
@@ -839,7 +870,7 @@ export function startReport(dash, events) {
     const max = d3.max(builds, (b) => Math.max(L === 180 ? b.p90 : 0, val(b))) * 1.02;
     const x = (v) => (100 * v / max) + '%';
     const top = d3.max(builds, val);
-    if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No preset matches these filters.' })); return; }
+    if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No preset matches.' })); return; }
     host.replaceChildren(...rows.map((b, i) => {
       const v = val(b);
       const valEl = el('span', { class: 'fv-row-val', text: f1(v) });
@@ -874,7 +905,7 @@ export function startReport(dash, events) {
         const lines = L === 180
           ? [tipKey(f1(b.dps), 'DPS', `± ${f2(b.se)}`), tipGrid([['Rank', el('span', {}, `${rankOf(b, builds)} of ${builds.length} · `, behind)], ['10th–90th', `${f1(b.p10)}–${f1(b.p90)}`],
             ['Middle half', `${f1(b.p25)}–${f1(b.p75)}`], ['Spread', `${f2(b.cv)}%`], ['Race', race], isEnc(b) ? ['Boss', `${b.encounter} · advantaged`] : null, isDuty(b) ? ['Duty', dutyCostEl(b, builds)] : null])]
-          : [tipKey(f1(v), 'DPS', se != null ? `± ${f2(se)} at ${L} s` : `at ${L} s`), tipGrid([['vs 180 s', el('span', {}, `${f1(b.dps)} · `, tipDelta(100 * (v / b.dps - 1)))], ['vs the top', behind], ['Race', race]])];
+          : [tipKey(f1(v), 'DPS', se != null ? `± ${f2(se)} at ${L}s` : `at ${L}s`), tipGrid([['vs 180s', el('span', {}, `${f1(b.dps)} · `, tipDelta(100 * (v / b.dps - 1)))], ['vs the top', behind], ['Race', race]])];
         showTip(card, rr.left - cr.left + 30, rr.bottom - cr.top + 6, tipTitle(b.label, null, specIco(b, '')), lines, { hl: row, open: b.id, below: true });
       });
       return row;
@@ -893,7 +924,7 @@ export function startReport(dash, events) {
     const x = d3.scaleLinear(d3.extent(xs), [m.l + 8, W - m.r]);
     const all = series.flatMap((s) => s.pts.map((p) => p.v)).concat(opts.ref != null ? [opts.ref] : []);
     const y = d3.scaleLinear(opts.yDomain || d3.extent(all), [H - m.b, m.t]).nice();
-    const xTicks = opts.xTicks || xs, xFmt = opts.xFmt || ((d) => d + ' s');
+    const xTicks = opts.xTicks || xs, xFmt = opts.xFmt || ((d) => d + 's');
     const svg = d3.create('svg').attr('width', '100%').attr('viewBox', `0 0 ${W} ${H}`).attr('height', H);
     svg.append('g').attr('transform', `translate(0,${H - m.b})`).call(d3.axisBottom(x).tickValues(xTicks).tickFormat((d, i) => (W >= 480 || i === xTicks.length - 1 ? xFmt(d) : String(d))).tickSizeOuter(0)).attr('font-size', null).attr('font-family', null)
       .call((g) => g.selectAll('line,path').style('stroke', 'var(--cds-chart-axis)'));
@@ -917,13 +948,21 @@ export function startReport(dash, events) {
     const focusOn = (s) => { for (const [ss, pa] of paths) pa.attr('opacity', !s ? ss.op ?? 1 : ss === s ? 1 : Math.min(ss.op ?? 1, 0.12)).attr('stroke-width', ss === s ? 3 : ss.w || 2); };
     // With no line asked for, the picked one (opts.hlId) stays lit, or none.
     const highlight = (id) => { const want = id || opts.hlId; focusOn(want ? series.find((q) => q.id === want) || null : null); };
-    const pick = (e, pinned) => {
+    // The tooltip shows where the pointer is. While the mouse stays on the same line and length, we leave the tooltip
+    // where it is, so the mouse can reach its button.
+    let shown = null;
+    const leave = () => { hideTip(); rule.attr('opacity', 0); dot.attr('opacity', 0); highlight(null); if (opts.onHover) opts.onHover(null); };
+    const pick = (e, pinned, now) => {
       const [px, py] = d3.pointer(e, svg.node());
       const sx = xs.reduce((a, b) => (Math.abs(x(b) - px) < Math.abs(x(a) - px) ? b : a));
       let best = null, bd = Infinity;
       for (const s of pickable) { const p = s.pts.find((q) => q.s === sx); if (p && Math.abs(y(p.v) - py) < bd) { bd = Math.abs(y(p.v) - py); best = [s, p]; } }
       if (!best) return;
       const [s, p] = best;
+      const key = s.id + '|' + sx;
+      if (!pinned && tipEl && shown === key) { clearTimeout(tipWait); return; }
+      if (!pinned && !now && tipEl) { tipHover(() => pick(e, false, true)); return; }
+      shown = key;
       rule.attr('x1', x(sx)).attr('x2', x(sx)).attr('opacity', 0.5);
       dot.attr('cx', x(sx)).attr('cy', y(p.v)).style('stroke', s.color).attr('opacity', 1);
       if (opts.focus) focusOn(s);
@@ -933,20 +972,20 @@ export function startReport(dash, events) {
       const others = series.length <= 3 ? tipGrid(series.filter((q) => q !== s).map((q) => { const pp = q.pts.find((r) => r.s === sx); return pp ? [el('span', {}, tipSw(q.color), q.short || q.name), opts.tipMain ? opts.tipMain(pp)[0] : `${f1(pp.v)} DPS`] : null; })) : null;
       const [hx, hy] = d3.pointer(e, host);
       const strip = series.length > 3 && opts.strip !== false ? el('div', { class: 'fv-tip-strip' }, ...s.pts.flatMap((q) => [
-        el('span', { class: 'k' + (q.s === sx ? ' on' : ''), text: `${q.s} s` }),
+        el('span', { class: 'k' + (q.s === sx ? ' on' : ''), text: `${q.s}s` }),
         el('span', { class: 'v' + (q.s === sx ? ' on' : ''), text: opts.fmt ? opts.fmt(q.v) : f0(q.v) }),
       ])) : null;
       // tipMain gives the key figure and what it compares to; tipRows any further [label, value] rows
       const main = opts.tipMain ? opts.tipMain(p) : [`${f1(p.v)} DPS`];
-      showTip(host, hx, hy, tipTitle(s.name, opts.tipSub ? opts.tipSub(sx) : `${sx} s`, tipSw(s.color)), [tipKey(main[0], null, main[1]), opts.tipRows ? tipGrid(opts.tipRows(p)) : null, others, strip],
-        { open: s.id && opts.open ? s.id : null, pinned, onHide: () => { rule.attr('opacity', 0); dot.attr('opacity', 0); } });
+      showTip(host, hx, hy, tipTitle(s.name, opts.tipSub ? opts.tipSub(sx) : `${sx}s`, tipSw(s.color)), [tipKey(main[0], null, main[1]), opts.tipRows ? tipGrid(opts.tipRows(p)) : null, others, strip],
+        { open: s.id && opts.open ? s.id : null, pinned, onLeave: leave, onHide: () => { shown = null; rule.attr('opacity', 0); dot.attr('opacity', 0); } });
       if (pinned && opts.onPick) opts.onPick(s.id);
     };
     if (opts.refLabel && opts.ref != null) svg.append('text').attr('x', W - m.r).attr('y', y(opts.ref) - 4).attr('text-anchor', 'end').style('fill', 'var(--color-fg-muted)').text(opts.refLabel);
     svg.append('rect').attr('x', m.l).attr('y', 0).attr('width', Math.max(0, W - m.l - m.r + 8)).attr('height', H - m.b).style('fill', 'transparent').attr('data-tip', '1').style('cursor', 'crosshair')
       .on('click', (e) => { e.stopPropagation(); pick(e, true); })
       .on('pointermove', (e) => { if (e.pointerType === 'mouse' && !tipPinned) pick(e, false); })
-      .on('pointerleave', (e) => { if (e.pointerType === 'mouse' && !tipPinned) { hideTip(); rule.attr('opacity', 0); dot.attr('opacity', 0); highlight(null); if (opts.onHover) opts.onHover(null); } });
+      .on('pointerleave', (e) => { if (e.pointerType === 'mouse' && !tipPinned) tipHover(leave); });
     host.replaceChildren(svg.node());
     highlight(null);
     // Something outside the chart, like a list of the same presets, can light up one line.
@@ -964,11 +1003,11 @@ export function startReport(dash, events) {
       const on = st.cls === 'All' || b.class === st.cls;
       return { id: b.id, name: b.label, color: ccol(b.class), op: on ? 0.9 : 0.08, pick: on, w: on && st.cls !== 'All' ? 2 : 1.5, dots: on && st.cls !== 'All', pts: pts.map((p) => ({ s: p.secs, v: (100 * p.dps * asmFactor(b.id, p.secs)) / (base * asmFactor(b.id, 180)), dps: p.dps * asmFactor(b.id, p.secs) })) };
     }).sort((a, b) => a.op - b.op);
-    drawLenChart(host, series, { fmt: (v) => d3.format('.0f')(v) + '%', ref: 100, focus: true, open: true, hlId: st.hlLen, onPick: (id) => { st.hlLen = id; persist(); }, tipMain: (p) => [`${f1(p.dps)} DPS`, p.s === 180 ? null : el('span', {}, tipDelta(p.v - 100), ' vs 180 s')] });
+    drawLenChart(host, series, { fmt: (v) => d3.format('.0f')(v) + '%', ref: 100, focus: true, open: true, hlId: st.hlLen, onPick: (id) => { st.hlLen = id; persist(); }, tipMain: (p) => [`${f1(p.dps)} DPS`, p.s === 180 ? null : el('span', {}, tipDelta(p.v - 100), ' vs 180s')] });
   };
 
   // ---------- mana ----------
-  // How a preset's mana runs down over a long fight, from 100 logged 480 s fights each. The chart is the average mana
+  // How a preset's mana runs down over a long fight, from 100 logged 480s fights each. The chart is the average mana
   // and the list says when a typical fight first drops below 10%. Warriors and rogues don't use mana.
   const mmss = (v) => `${Math.floor(v / 60)}:${String(Math.round(v % 60)).padStart(2, '0')}`;
   const drawMana = () => {
@@ -980,9 +1019,9 @@ export function startReport(dash, events) {
     const shown = manaBuilds.filter((b) => sum.has(b.id) && (st.cls === 'All' || b.class === st.cls));
     const missing = manaBuilds.filter((b) => !sum.has(b.id) && (st.cls === 'All' || b.class === st.cls));
     $('#mana-sum').textContent = st.cls === 'Warrior' || st.cls === 'Rogue' ? `${st.cls}s don't use mana.`
-      : missing.length ? `No mana data yet for ${[...new Set(missing.map((b) => b.class))].join(', ').replace(/, ([^,]*)$/, ' and $1')} (${missing.length} preset${missing.length > 1 ? 's' : ''}).` : '';
+      : missing.length ? `No mana data for ${[...new Set(missing.map((b) => b.class))].join(', ').replace(/, ([^,]*)$/, ' and $1')} (${missing.length} preset${missing.length > 1 ? 's' : ''}).` : '';
     if (!shown.length) { host.replaceChildren(); list.replaceChildren(); return; }
-    const lowPct = rowsOf('mana_summary')[0]?.lowPct ?? 15;
+    const lowPct = rowsOf('mana_summary')[0]?.lowPct ?? 10;
     const series = manaBuilds.filter((b) => sum.has(b.id)).map((b) => {
       const on = shown.includes(b);
       const pts = (curves.get(b.id) || []).map((r) => ({ s: r.t, v: r.pct, p25: r.p25, p75: r.p75 }));
@@ -1020,8 +1059,13 @@ export function startReport(dash, events) {
             ['Fights running low', share >= 99.5 ? 'all' : `${d3.format('.0f')(share)}%`], ['Mana pool', d3.format(',')(m.maxMana)], ['Net drain', `${f1(m.spentPerSec - m.gainedPerSec)}/s`]]),
         ], { hl: row, open: b.id, below: true, pinned });
       };
-      row.addEventListener('pointerenter', (e) => { chart.highlight(b.id); row.classList.add('is-hover'); if (e.pointerType === 'mouse' && !tipPinned) tip(false); });
-      row.addEventListener('pointerleave', (e) => { chart.highlight(null); row.classList.remove('is-hover'); if (e.pointerType === 'mouse' && !tipPinned) hideTip(); });
+      row.addEventListener('pointerenter', (e) => {
+        chart.highlight(b.id); row.classList.add('is-hover');
+        if (e.pointerType !== 'mouse' || tipPinned) return;
+        if (tipHl.includes(row)) { clearTimeout(tipWait); return; }
+        tipHover(() => tip(false));
+      });
+      row.addEventListener('pointerleave', (e) => { chart.highlight(null); row.classList.remove('is-hover'); if (e.pointerType === 'mouse' && !tipPinned && tipHl.includes(row)) tipHover(hideTip); });
       row.addEventListener('click', (e) => {
         e.stopPropagation();
         if (row.classList.contains('is-hl') && tipPinned) { openSpec(b.id); return; }
@@ -1111,7 +1155,7 @@ export function startReport(dash, events) {
       const tip = (pinned) => {
         const sib = races.filter((q) => q.build === b.id).sort((p, q) => q.dps - p.dps);
         const card = $('#racespread-card'), cr = card.getBoundingClientRect(), nr = tr.getBoundingClientRect();
-        showTip(card, 20, nr.bottom - cr.top + 4, tipTitle(b.label, null, specIco(b, '')), [tipKey(`${f2(r.spreadPct)}%`, null, `best to worst of ${sib.length} entries`),
+        showTip(card, 20, nr.bottom - cr.top + 4, tipTitle(b.label, null, specIco(b, '')), [tipKey(`${f2(r.spreadPct)}%`, null, `best to worst, ${sib.length} entries`),
           tipGrid(sib.map((q, k) => [q.name + (q.isPreset ? ' (preset race)' : ''), k === 0 ? `${f1(q.dps)} DPS` : `−${f2(100 * (1 - q.dps / sib[0].dps))}%`]))],
           { hl: row, open: b.id, below: true, pinned, act: ['Compare races ›', () => pickRaceSpec(b.id)] });
       };
@@ -1132,7 +1176,7 @@ export function startReport(dash, events) {
   // Each Races card shows every race as the preset plays it, on the generic boss. A switch on each card adds the
   // boss types a racial works on as entries of their own (t, off by default). Since client 70425 no racial depends
   // on the weapon, so there are no racial weapon entries any more.
-  const RS_OPTS = [['t', 'Racial enemy types', 'Races with a racial against one boss type, again against that type: Troll and Dwarf vs Beast, Windshaper and High Order vs Elemental, Dwarf vs Humanoid for Priests']];
+  const RS_OPTS = [['t', 'Racial enemy types', 'Troll and Dwarf vs Beast, Windshaper and High Order vs Elemental, Dwarf vs Humanoid (Priests)']];
   const rsVar = (card) => {
     const m = (st.rsOpt?.[card] ?? '').replace('w', '');
     const host = $(`#${card}-opts`);
@@ -1234,12 +1278,17 @@ export function startReport(dash, events) {
     if (st.tab !== 'races') showTab('races'); else render();
     requestAnimationFrame(() => $('#race-rank-card').scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' }));
   };
-  // Pointing at a row shows its tooltip, and on a phone (no pointer) a tap does.
-  const hoverTip = (row, tip) => {
-    row.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse' && !tipPinned) tip(false); });
-    row.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse' && !tipPinned && tipHl.includes(row)) hideTip(); });
+  // Pointing at a row shows its tooltip, and on a phone (no pointer) a tap does. Without tap, a tap only does what the
+  // row does (like a button that picks a setting), and the tooltip is for the mouse only.
+  const hoverTip = (row, tip, { tap = true } = {}) => {
+    row.addEventListener('pointerenter', (e) => {
+      if (e.pointerType !== 'mouse' || tipPinned) return;
+      if (tipHl.includes(row)) { clearTimeout(tipWait); return; }
+      tipHover(() => tip(false));
+    });
+    row.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse' && !tipPinned && tipHl.includes(row)) tipHover(hideTip); });
     row.addEventListener('pointerup', (e) => {
-      if (e.pointerType === 'mouse' || e.target.closest('[data-tt]')) return;
+      if (!tap || e.pointerType === 'mouse' || e.target.closest('[data-tt]')) return;
       if (row.classList.contains('is-hl') && tipPinned) { hideTip(); return; }
       tip(true);
     });
@@ -1319,7 +1368,7 @@ export function startReport(dash, events) {
       && !(V === 'weapon' && mine.some((w) => w.scenario === 'weapon' && w.part === q.part))));
     return { segs: out.filter((sg) => sg.r), idle };
   };
-  const legend = (host, kinds, base) => host.replaceChildren(base ? el('span', {}, el('i', { class: 'sw2', style: 'background:var(--cds-chart-muted)' }), 'The race without its racials') : '', ...[0, 1, 2, 'swap'].filter((k) => kinds.has(k)).map((k) => el('span', {}, el('i', { class: 'sw2', style: `background:${k === 'swap' ? 'var(--color-fg-muted)' : dash.colors[k]}` }), k === 'swap' ? 'Weapon swap' : KIND_NAME[k])));
+  const legend = (host, kinds, base) => host.replaceChildren(base ? el('span', {}, el('i', { class: 'sw2', style: 'background:var(--cds-chart-muted)' }), 'No racials') : '', ...[0, 1, 2, 'swap'].filter((k) => kinds.has(k)).map((k) => el('span', {}, el('i', { class: 'sw2', style: `background:${k === 'swap' ? 'var(--color-fg-muted)' : dash.colors[k]}` }), k === 'swap' ? 'Weapon swap' : KIND_NAME[k])));
 
   // Each racial's caption sits under its piece of the bar, starting where the piece starts. When a caption would run
   // into the one before it, we move it down to the first line where it fits, so short pieces side by side still get
@@ -1416,23 +1465,23 @@ export function startReport(dash, events) {
         const holds = ws.length === 2 ? (ws[0][1] === ws[1][1] ? `${art(ws[0][1])} in each hand` : `${art(ws[0][1])} and ${art(ws[1][1])}`)
           : ws[0][0] === 'off hand' ? `${art(ws[0][1])} in the off hand` : ws[0][0] === 'two-hand' ? `a two-hand ${ws[0][1]}` : art(ws[0][1]);
         const gets = ws.length === 2 ? `${art(W)} in each hand` : ws[0][0] === 'off hand' ? `${art(W)} in the off hand` : q.caster ? `a one-hand ${W}` : art(W);
-        const text = `${spec} holds ${holds}. ${racial} only works with ${art(W)}, so this entry gets ${gets} with the same stats and damage. `
-          + `This piece is what that change does by itself, before ${racial} adds its bonus.`;
+        const text = `${spec} holds ${holds}. ${racial} needs ${art(W)}, so this entry gets ${gets} with the same stats. `
+          + `This piece is the swap alone, before the racial bonus.`;
         const moved = ws.filter((w) => w[3] !== w[4]);
         const nodes = [];
-        if (q.caster) nodes.push(el('span', { class: 'fv-tip-m', text: "Casters don't attack with their weapon, so this changes nothing." }));
+        if (q.caster) nodes.push(el('span', { class: 'fv-tip-m', text: "Casters don't attack with their weapon. No change." }));
         else {
           for (const t of arr(q.talents)) nodes.push(talent(t, [`${t[0]} ${t[2]}/${t[3]}`, t[4], bonus(t[5], t[6]), bonus(t[7], t[8])]));
           if (moved.length) {
-            nodes.push(el('span', {}, el('b', { text: 'Speed: ' }), moved.map(([hand, , , s0, s1]) => `${hand} ${f2(s0)} sec to ${f2(s1)} sec`).join(', ') + '. ',
-              Math.abs(q.dps) < 0.05 ? "This preset doesn't fight in melee, so the speed changes nothing." : 'The damage per second stays the same, but a slower weapon hits harder and less often.'));
+            nodes.push(el('span', {}, el('b', { text: 'Speed: ' }), moved.map(([hand, , , s0, s1]) => `${hand} ${f2(s0)}s to ${f2(s1)}s`).join(', ') + '. ',
+              Math.abs(q.dps) < 0.05 ? "Not a melee preset. No change." : 'Same weapon DPS, but a slower weapon hits harder and less often.'));
           }
-          if (!arr(q.talents).length && !moved.length) nodes.push(el('span', { class: 'fv-tip-m', text: 'No talent in this preset cares about the weapon type, and the speed stays the same, so nothing changes.' }));
+          if (!arr(q.talents).length && !moved.length) nodes.push(el('span', { class: 'fv-tip-m', text: 'No talent uses the weapon type and the speed is the same. No change.' }));
         }
         return { text, nodes };
       }
-      const text = `${racial} only works with ${art(W)}. So on each preset that holds another weapon, this entry gets ${art(W)} with the same stats and damage. `
-        + `This piece is what that change does by itself, before ${racial} adds its bonus.`;
+      const text = `${racial} needs ${art(W)}. Presets with another weapon get ${art(W)} with the same stats. `
+        + `This piece is the swap alone, before the racial bonus.`;
       const why = (q) => (arr(q.talents).length ? arr(q.talents).map((t) => t[0]).join(' and ') + ' bonus changes' : 'the weapon speed changes');
       const from = (q) => { const t = [...new Set(arr(q.weapons).map((w) => w[1]))].join(' and '); return t[0].toUpperCase() + t.slice(1); };
       const live = sw.filter((q) => Math.abs(+q.dps) >= 0.05), idle = sw.filter((q) => Math.abs(+q.dps) < 0.05);
@@ -1444,7 +1493,7 @@ export function startReport(dash, events) {
           return el('span', {}, b ? specIco(b, '') : el('i'), el('span', {}, el('b', { text: `${b?.label || q.build}: ${sgn(+q.dps, f1)} DPS. ` }), `${from(q)} to ${W}, ${why(q)}.`));
         })),
         idle.length ? el('span', { class: 'fv-tip-m', text: `No effect on ${idle.map((q) => bmap.get(q.build)?.label || q.build).join(', ')}. `
-          + 'Casters and ranged Hunters don\'t attack with this weapon, and the others keep the same speed and talent bonus.' }) : null,
+          + 'Casters and ranged Hunters don\'t attack with it. The others keep the same speed and talent bonus.' }) : null,
         ...[...talents.values()].map((t) => talent(t, [t[0], t[4]])),
       ] };
     };
@@ -1488,15 +1537,15 @@ export function startReport(dash, events) {
             name = `Base stats ${fv(base)}${one ? ' DPS' : ''}`;
             if (low && rows.length > 1) {
               const gap = one ? (100 * (base - baseOf(low))) / baseOf(low) : base - baseOf(low);
-              sub.push(el('span', { class: 'fv-tip-m', text: low.race === r.race ? 'The weakest base stats of these races.'
-                : gap < 0.005 ? `About the same as ${low.race}, the weakest base here.`
-                : `${f2(gap)}%${one ? ` (${f1(base - baseOf(low))} DPS)` : ''} above ${low.race}, the weakest base here.` }));
+              sub.push(el('span', { class: 'fv-tip-m', text: low.race === r.race ? 'Weakest base stats here.'
+                : gap < 0.005 ? `Same as ${low.race} (weakest base here).`
+                : `${f2(gap)}%${one ? ` (${f1(base - baseOf(low))} DPS)` : ''} above ${low.race} (weakest base here).` }));
             }
           } else if (sg) name = `${sg.label} ${fd(sg.v)}`;
           if (!name) return;
           let text = info?.text;
           if (part === 'swap') { const t = swapTip(r); text = t.text || text; sub.push(...t.nodes); }
-          if (!one && what === 'seg') sub.push(el('span', { class: 'fv-tip-m', text: `Averaged over ${r.n} presets, as a share of the best race's DPS on each.` }));
+          if (!one && what === 'seg') sub.push(el('span', { class: 'fv-tip-m', text: `Share of the best race's DPS, averaged over ${r.n} presets.` }));
           const segEl = what === 'seg' ? row.querySelector(`.sg[data-zone="${part}"]`) : null;
           const capEl = row.querySelector(`.fv-rsub [data-zone="${zone}"]`);
           // We point the tooltip at the caption when the pointer is on it, else at the piece of the bar.
@@ -1516,9 +1565,9 @@ export function startReport(dash, events) {
             ringed('classicon_' + cls.toLowerCase(), 'fv-ico ring', ccol(cls)), el('span', {}, el('b', { text: `${cls}: `, style: `color:${ccol(cls)}` }),
               os.map((o) => o.b.build + (best.length ? '' : ` (${pct(o.g.share)})`)).join(', '))));
           head = [tipKey(best.length ? `Best race on ${best.length}` : 'Never the best race', `of ${r.n} presets`),
-            best.length ? null : el('span', { class: 'fv-tip-m', text: 'It comes closest on:' }), el('div', { class: 'fv-tip-specs' }, ...list)];
+            best.length ? null : el('span', { class: 'fv-tip-m', text: 'Closest on:' }), el('div', { class: 'fv-tip-specs' }, ...list)];
         }
-        showTip(card, 24, rw.bottom - cr.top + 4, title, [...head, el('span', { class: 'fv-tip-m', text: 'Point at a piece of the bar to see what it adds.' })], { ...opts, hl: row });
+        showTip(card, 24, rw.bottom - cr.top + 4, title, [...head, null], { ...opts, hl: row });
       });
       return row;
     }));
@@ -1528,7 +1577,7 @@ export function startReport(dash, events) {
       take.replaceChildren(el('b', { text: one.label }), ': ', el('b', { text: who(lead) }), ` leads with ${f1(lead.dps)} DPS`,
         ...(rows.length > 1 ? ['. ', who(rows[1]), ` is ${f2(100 * (1 - rows[1].dps / lead.dps))}% behind, and `, who(last), ` is last at −${f2(100 * (1 - last.dps / lead.dps))}%.`] : ['.']));
     } else take.replaceChildren();
-    axis.textContent = one ? `Bars start at ${f0(lo)} DPS, not at zero.` : `A full bar is 100%: the best race on every preset. Bars start at ${f1(lo)}%, not at zero.`;
+    axisWarn(axis, lo > 0 ? (one ? `${f0(lo)} DPS` : `${f1(lo)}%`) : null, 'races');
     legend($('#rs-legend'), kinds, true);
     layoutCaps(host);
     if (!host.dataset.capWatch) {
@@ -1575,7 +1624,7 @@ export function startReport(dash, events) {
     const all = [...acc.values()].map((a) => ({ ...a, value: one ? a.dps : a.share / a.n })).sort((p, q) => q.value - p.value);
     const rows = all.filter((a) => a.works), idle = all.filter((a) => !a.works);
     if (!rows.length) {
-      host.replaceChildren(el('p', { class: 'fv-note', text: 'No racial does anything on these presets.' }));
+      host.replaceChildren(el('p', { class: 'fv-note', text: 'No racial helps these presets.' }));
       dead.replaceChildren(); $('#rl-legend').replaceChildren();
       return;
     }
@@ -1602,7 +1651,7 @@ export function startReport(dash, events) {
             const b = bmap.get(g.build);
             return [b ? el('span', { class: 'fv-tip-spec' }, specIco(b, ''), b.label) : g.build, `${sgn(g.share, f2)}%`];
           })) : null,
-          a.works < a.n && a.notes.length ? tipNote(`Does nothing on ${a.n - a.works} of ${a.n}: ${a.notes.slice(0, 2).join('; ')}`) : null,
+          a.works < a.n && a.notes.length ? tipNote(`Does nothing on ${a.n - a.works} of ${a.n}: ${a.notes.slice(0, 2).join(' · ')}`) : null,
         ], { hl: row, below: true, pinned });
       });
       return row;
@@ -1636,6 +1685,8 @@ export function startReport(dash, events) {
   const keyIcon = (key) => { const n = rowsOf('names'); if (!n) return null; const r = n.find((x) => x.key === key); return r?.icon ? iconImg(r.icon) : null; };
 
   // ---------- talents ----------
+  // The preset the talents show, for redrawing them when the card's width changes.
+  let talB = null;
   const drawTalents = (b) => {
     const host = $('#sp-tal');
     host.setAttribute('data-source', 'talenttrees builds icons treeart');
@@ -1645,15 +1696,23 @@ export function startReport(dash, events) {
     const parts = String(b.talents).split('-');
     const pts = (t) => +((parts[t.tree] || '')[t.idx] || 0);
     const trees = d3.groups(all, (t) => t.tree).sort((x, y) => x[0] - y[0]).map(([ti, ts]) => ({ ti, name: ts[0].treeName, ts, spent: d3.sum(ts, pts) }));
-    const wide = $('#sp-tal-card').clientWidth > 700;
-    if (st.talBuild !== b.id || st.talTree == null) { st.talTree = wide ? 'all' : String(trees.reduce((x, y) => (y.spent > x.spent ? y : x)).ti); st.talBuild = b.id; }
+    // On a narrow screen the trees don't fit side by side, and the tree picker shows one at a time, the one with the
+    // most points first. When all three fit, they all show and the picker hides.
+    if (st.talBuild !== b.id || st.talTree == null) { st.talTree = String(trees.reduce((x, y) => (y.spent > x.spent ? y : x)).ti); st.talBuild = b.id; }
     $('#sp-tal-seg').replaceChildren(...[...trees.map((t) => [String(t.ti), `${t.name} ${t.spent}`]), ['all', 'All three']].map(([v, lbl]) => {
       const bt = el('button', { 'aria-pressed': String(st.talTree === v), text: lbl });
       bt.addEventListener('click', () => { st.talTree = v; drawTalents(b); });
       return bt;
     }));
-    // The trees use the sim UI's talent picker markup and styles (talents_picker.tsx), read only.
-    const shown = st.talTree === 'all' ? trees : trees.filter((t) => String(t.ti) === st.talTree);
+    // We redraw when the card's width changes, in case the trees fit now or no longer do. The Specs tab is hidden
+    // until we open it, and then its width changes from 0 too.
+    talB = b;
+    const card = $('#sp-tal-card');
+    if (!card.dataset.fitWatch) {
+      card.dataset.fitWatch = '1';
+      let w = card.clientWidth;
+      new ResizeObserver(() => { if (card.clientWidth !== w) { w = card.clientWidth; if (talB && st.tab === 'spec') { try { drawTalents(talB); } catch (e) { console.error(e); } } } }).observe(card);
+    }
     const arrow = (pr, pc, r, c, active) => {
       // Placed like TalentReqArrow in the sim UI: it starts on the parent's cell and its length is in cells.
       const a = el('div', { class: 'talent-picker-req-arrow' });
@@ -1680,7 +1739,8 @@ export function startReport(dash, events) {
       return a;
     };
     const icons = iconMap();
-    host.replaceChildren(el('div', { class: 'talents-picker-root' }, el('div', { class: 'talents-picker-inner' }, el('div', { id: 'talents-carousel', class: 'carousel' },
+    // The trees use the sim UI's talent picker markup and styles (talents_picker.tsx), read only.
+    const paint = (shown) => host.replaceChildren(el('div', { class: 'talents-picker-root' }, el('div', { class: 'talents-picker-inner' }, el('div', { id: 'talents-carousel', class: 'carousel' },
       el('div', { class: 'carousel-inner' }, ...shown.map((tr) => {
         const rows = d3.max(tr.ts, (t) => t.row) + 1;
         const cell = 'calc(var(--talent-icon-size) * 1.4)';
@@ -1702,6 +1762,11 @@ export function startReport(dash, events) {
           el('div', { class: 'talent-tree-background', style: art && art.bg ? `background-image:url("${art.bg}")` : '' }),
           main));
       }))))));
+    paint(trees);
+    const car = host.querySelector('#talents-carousel');
+    const fits = !car.clientWidth || car.scrollWidth <= car.clientWidth + 1;
+    $('#sp-tal-seg').closest('.fv-toolbar').hidden = fits;
+    if (!fits && st.talTree !== 'all') paint(trees.filter((t) => String(t.ti) === st.talTree));
   };
 
   // ---------- stat weights ----------
@@ -1712,7 +1777,7 @@ export function startReport(dash, events) {
     const rows = rowsOf('weights').filter((w) => w.build === b.id);
     if (!rows.length) { host.replaceChildren(el('span', { class: 'fv-note', text: 'No stat weights for this preset.' })); $('#sp-wtab tbody').replaceChildren(); $('#sp-wtab').dataset.build = b.id; return; }
     const ab = rows[0].primaryAbbr;
-    $('#sp-weights-note').textContent = `What one more point of each stat is worth, in ${rows[0].primary.toLowerCase()} (${ab}): how many points of ${ab} give the same DPS. Hit and crit are per rating point (10 hit rating or 14 crit rating make 1%). From ${f0(rows[0].iters)} fights per stat at 180 s.`;
+    $('#sp-weights-note').textContent = `In points of ${ab}. Hit and crit per rating point (10 hit or 14 crit rating = 1%).`;
     const val = (w) => (w.unit === '1%' ? w.ratingWorth : w.worth);
     const shown = rows.filter((w) => w.stat !== 'MeleeHitDown').sort((x, y) => val(y) - val(x));
     const down = rows.find((w) => w.stat === 'MeleeHitDown');
@@ -1725,7 +1790,7 @@ export function startReport(dash, events) {
         tt(el('span', { class: 'vl' }, mark(el('span', { text: f2(val(w)) }), 'weights', w.unit === '1%' ? 'ratingWorth' : 'worth', where), ` ${ab}`), 'w:' + w.stat),
         tt(el('span', { class: 'tr' }, el('span', { style: `width:${Math.max(0, 100 * val(w) / max)}%;background:${ccol(b.class)}` })), 'w:' + w.stat),
       ];
-    }), ...(down ? [el('span', { class: 'fv-note', style: 'grid-column:1/-1', text: `Losing 1% hit would cost ${f1(down.dpsPer)} DPS, worth ${f2(down.ratingWorth)} ${ab} per rating point${shown.find((w) => w.stat === 'MeleeHit')?.dpsPer < 0.5 ? ': this preset sits at the hit cap, so more hit adds nothing.' : '.'}` })] : []));
+    }), ...(down ? [el('span', { class: 'fv-note', style: 'grid-column:1/-1', text: `Losing 1% hit costs ${f1(down.dpsPer)} DPS (${f2(down.ratingWorth)} ${ab} per rating point)${shown.find((w) => w.stat === 'MeleeHit')?.dpsPer < 0.5 ? '. At the hit cap, so more hit adds nothing.' : '.'}` })] : []));
     $('#sp-wtab tbody').replaceChildren(...rows.map((w) => el('tr', { 'data-key': `${enc(b.id)},${enc(w.stat)}` },
       el('td', { text: w.label }), el('td', { class: 'n', text: fmt('.3f')(w.dpsPer) }), el('td', { class: 'n', text: fmt('.3f')(w.sePer) }),
       el('td', { class: 'n', text: w.worth == null ? '' : f2(w.worth) }), el('td', { class: 'n', text: w.ratingWorth == null ? '' : f2(w.ratingWorth) }))));
@@ -1760,15 +1825,16 @@ export function startReport(dash, events) {
       $('#sp-art').style.backgroundImage = art && art.bg ? `url("${art.bg}")` : '';
     }
     mark($('#sp-title'), 'builds', 'label', W).textContent = b.label;
-    $('#sp-meta').replaceChildren(
+    // replaceChildren writes a null as the text "null", so we leave out the encounter badge when there's none.
+    $('#sp-meta').replaceChildren(...[
       tt(el('span', {}, ringed('classicon_' + b.class.toLowerCase(), 'fv-ico ring', ccol(b.class)), ` ${b.spec}`), 'c:' + b.class),
       tt(el('span', {}, raceIco(b.raceIcon), ' ', mark(el('span', { text: b.race }), 'builds', 'race', W), ' ', iconImg(b.faction === 'Horde' ? 'ui_hordeicon' : 'ui_allianceicon')), `r:${b.race}:${b.class}`, true, b.id),
       mark(el('span', { text: b.treePoints }), 'builds', 'treePoints', W),
-      isEnc(b) ? mark(encBadge(b), 'builds', 'encounter', W) : null);
+      isEnc(b) ? mark(encBadge(b), 'builds', 'encounter', W) : null].filter(Boolean));
     mark($('#sp-summary'), 'builds', 'summary', W).textContent = b.summary;
     const extra = b.petDps > 0 ? tile('Pet damage', f1(b.petShare), `${f1(b.petDps)} DPS from pets`, 'builds', 'petShare', W, '%')
-      : b.oomSecs > 0 ? tile('Time out of mana', f1(b.oomSecs), 'per fight on average', 'builds', 'oomSecs', W, ' s')
-        : tile('Threat per second', f0(b.tps), 'for tanks keeping aggro', 'builds', 'tps', W);
+      : b.oomSecs > 0 ? tile('Time out of mana', f1(b.oomSecs), 'per fight', 'builds', 'oomSecs', W, 's')
+        : tile('Threat per second', f0(b.tps), 'for tank aggro', 'builds', 'tps', W);
     $('#sp-tiles').replaceChildren(
       tile('Mean DPS', f1(b.dps), `± ${f2(b.se)} (1 s.e.)`, 'builds', 'dps', W),
       tile('Rank', String(rankOf(b, builds)), `of ${builds.length} presets`, 'builds', st.enc ? 'rankAll' : 'rank', W),
@@ -1861,7 +1927,7 @@ export function startReport(dash, events) {
     t.querySelector('thead tr').replaceChildren(...cols.map(([h]) => el('th', { class: 'n', text: h })));
     t.querySelector('tbody tr').replaceChildren(...cols.map(([, k]) => mark(el('td', { class: 'n', text: f1(b[k]) }), 'builds', k, W)));
     t.dataset.build = b.id;
-    $('#sp-dist-note').textContent = `DPS of each of the ${f0(b.iters)} simulated fights, in 5 DPS bins.`;
+    $('#sp-dist-note').textContent = `${f0(b.iters)} fights.`;
   };
 
   const drawAbilities = (b, abil, colors) => {
@@ -1923,7 +1989,7 @@ export function startReport(dash, events) {
         tt(el('span', { class: 'vl' }, mark(el('span', { text: f1(a.uptime) }), 'auras', 'uptime', where), '% avg'), 'a:' + a.key));
       let bar;
       if (s) {
-        bar = el('span', { class: 'tr fv-mini', 'data-tip': '1', role: 'button', 'aria-label': `${a.aura}: when it was up in the sample fight` },
+        bar = el('span', { class: 'tr fv-mini', 'data-tip': '1', role: 'button', 'aria-label': `${a.aura}: uptime in the sample fight` },
           t0 < -0.55 ? el('i', { class: 'pre', style: `width:${pos(0)}%` }) : null,
           ...iv.map((q) => el('span', { style: `left:${pos(q[2])}%;width:${Math.max(0.4, pos(q[3]) - pos(q[2]))}%;background:${col}` }, q[4] > 1 && pos(q[3]) - pos(q[2]) > 6 ? el('b', { text: '×' + q[4] }) : null)),
           el('i', { class: 'pull', style: `left:${pos(0)}%` }));
@@ -1934,7 +2000,7 @@ export function startReport(dash, events) {
           const tm = (t) => `${Math.max(0, t).toFixed(0)}`;
           const lines = [tipKey(`${f1(a.uptime)}%`, 'uptime', 'every fight'), tipGrid([[`This ${s.label.toLowerCase().replace(' fight', '')} fight`, `${f1(upHere)}% · ${iv.length}×`],
             d3.max(iv, (q) => q[4]) > 1 ? ['Most stacks', String(d3.max(iv, (q) => q[4]))] : null]),
-            iv.length ? tipChips(iv.slice(0, 8).map((q) => `${tm(q[2])}–${q[3] >= s.dur - 0.05 ? 'end' : tm(q[3])} s`), iv.length > 8 ? `+${iv.length - 8} more` : null) : null];
+            iv.length ? tipChips(iv.slice(0, 8).map((q) => `${tm(q[2])}–${q[3] >= s.dur - 0.05 ? 'end' : tm(q[3])}s`), iv.length > 8 ? `+${iv.length - 8} more` : null) : null];
           showTip(card, e.clientX - r.left - 20, nb.bottom - r.top, tipTitle(a.aura, null, a.icon ? iconImg(a.icon) : null), lines, { hl: bar, below: true });
         });
       } else {
@@ -1942,8 +2008,8 @@ export function startReport(dash, events) {
       }
       out.push(bar);
     }
-    host.replaceChildren(...(out.length ? out : [el('span', { class: 'fv-note', text: 'Every aura is up the whole fight.' })]));
-    $('#sp-auras-note').textContent = s ? `The number is the average uptime over every simulated fight. Each bar is the ${s.label.toLowerCase()} picked above, filled only while the aura was up${t0 < -0.55 ? ', with the pre-pull seconds shaded' : ''}. Tap a name for its tooltip, a bar for its times.` : 'Average uptime over every simulated fight. Tap a name for its tooltip.';
+    host.replaceChildren(...(out.length ? out : [el('span', { class: 'fv-note', text: 'Every aura is always up.' })]));
+    $('#sp-auras-note').textContent = s ? `Number: average uptime. Bar: the ${s.label.toLowerCase()}${t0 < -0.55 ? ' (pre-pull shaded)' : ''}.` : 'Average uptime.';
   };
   $('#sp-alwayson').addEventListener('click', (e) => { e.stopPropagation(); st.alwaysOn = !st.alwaysOn; persist(); render(); });
   $('#sp-setup-hide').addEventListener('click', (e) => { e.stopPropagation(); st.setupHide = !st.setupHide; persist(); $('#sp-setup').classList.toggle('hide-off', st.setupHide); e.currentTarget.setAttribute('aria-pressed', String(st.setupHide)); });
@@ -1954,7 +2020,7 @@ export function startReport(dash, events) {
     if (!specWait(host, ['race_variants', 'race_breakdown'], b)) return;
     // Every race, and each advantage a race has as its own row (see raceRows), best first.
     const rows = raceRows('wt').filter((r) => r.build === b.id);
-    if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No race numbers for this preset.' })); return; }
+    if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No race numbers.' })); return; }
     const W = host.clientWidth, rowH = 26, m = { l: rows.some((r) => r.tag) ? Math.min(225, W * 0.45) : 100, r: 64, t: 4, b: 4 };
     const H = m.t + m.b + rows.length * rowH;
     const lo = d3.min(rows, (r) => r.dps) * 0.985, hi = d3.max(rows, (r) => r.dps);
@@ -1972,8 +2038,9 @@ export function startReport(dash, events) {
       rg.append('rect').attr('x', m.l).attr('y', yy + 6).attr('height', rowH - 12).attr('width', Math.max(2, x(r.dps) - m.l)).attr('rx', 4).style('fill', fcol(r.race)).attr('opacity', r.adv ? 0.45 : 0.8);
       svg.append('text').attr('x', x(r.dps) + 6).attr('y', yy + rowH / 2 + 4).text(f1(r.dps) + (i === 0 ? ' ★' : ''));
     });
-    svg.append('text').attr('x', m.l).attr('y', H).attr('font-size', 9).text(`axis starts at ${f0(lo)}`);
-    host.replaceChildren(svg.node());
+    const warn = el('p', { class: 'fv-axiswarn' });
+    axisWarn(warn, `${f0(lo)} DPS`, 'races');
+    host.replaceChildren(warn, svg.node());
     $('#sp-races-link').onclick = (e) => { e.stopPropagation(); pickRaceSpec(b.id); };
   };
 
@@ -1982,7 +2049,7 @@ export function startReport(dash, events) {
     host.setAttribute('data-source', 'lengths');
     if (!specWait(host, ['lengths'], b)) return;
     const pts = rowsOf('lengths').filter((r) => r.build === b.id).sort((p, q) => p.secs - q.secs).map((p) => ({ s: p.secs, v: p.dps, oom: p.oomSecs }));
-    drawLenChart(host, [{ name: b.build, color: ccol(b.class), dots: true, pts }], { h: 200, tipMain: (p) => [`${f1(p.v)} DPS`, p.s === 180 ? null : el('span', {}, tipDelta(100 * (p.v / b.dps - 1)), ' vs 180 s')], tipRows: (p) => [p.oom > 0 ? ['Out of mana', `${f1(p.oom)} s`] : null] });
+    drawLenChart(host, [{ name: b.build, color: ccol(b.class), dots: true, pts }], { h: 200, tipMain: (p) => [`${f1(p.v)} DPS`, p.s === 180 ? null : el('span', {}, tipDelta(100 * (p.v / b.dps - 1)), ' vs 180s')], tipRows: (p) => [p.oom > 0 ? ['Out of mana', `${f1(p.oom)}s`] : null] });
   };
 
   // ---------- rotation ----------
@@ -2028,7 +2095,7 @@ export function startReport(dash, events) {
     const pp = rows.filter((r) => r.section === 'prepull').sort((p, q) => p.at - q.at);
     pre.replaceChildren(...(pp.length ? [el('span', { class: 'fv-label', text: 'Before the pull' }),
       el('div', { class: 'fv-pp' }, ...pp.map((r) => tt(el('button', { class: 'fv-ppi' }, ico(r, 'fv-ico'), el('span', {}, mark(el('b', { text: r.name }), 'rotation', 'name', W(r)), mark(el('em', { text: fmtT(+r.at) }), 'rotation', 'at', W(r)))), `rot:prepull:${r.order}`, true, b.id)),
-        el('span', { class: 'fv-ppi pull' }, el('b', { text: 'Pull' }), el('em', { text: '0 s' })))] : []));
+        el('span', { class: 'fv-ppi pull' }, el('b', { text: 'Pull' }), el('em', { text: '0s' })))] : []));
     pre.dataset.build = b.id;
     const pl = rows.filter((r) => r.section === 'priority').sort((p, q) => p.order - q.order);
     const items = [];
@@ -2040,7 +2107,7 @@ export function startReport(dash, events) {
         while (pl[i + 1] && fold(pl[i + 1]) === why) run.push(pl[++i]);
         items.push(el('li', { class: 'fv-pr other', value: String(run[0].order) },
           el('span', { class: 'no', text: run.length > 1 ? `${run[0].order}–${run[run.length - 1].order}` : String(run[0].order) }),
-          el('div', { class: 'tx' }, el('div', { class: 'ics' }, ...run.map((q) => tt(ico(q, 'fv-ico'), `rot:priority:${q.order}`, true, b.id)), el('b', { text: run.map((q) => q.name).join(', ') })), el('span', { class: 'wh', text: why === 'race' ? `Racials for ${[...new Set(run.map((q) => q.race))].join(', ')}: skipped on ${b.race}.` : `Switched off in this preset${run[0].notes ? ': ' + run[0].notes.replace(/^Never:\s*/i, '') : '.'}` }))));
+          el('div', { class: 'tx' }, el('div', { class: 'ics' }, ...run.map((q) => tt(ico(q, 'fv-ico'), `rot:priority:${q.order}`, true, b.id)), el('b', { text: run.map((q) => q.name).join(', ') })), el('span', { class: 'wh', text: why === 'race' ? `${[...new Set(run.map((q) => q.race))].join(', ')} racials: skipped on ${b.race}.` : `Off in this preset${run[0].notes ? ': ' + run[0].notes.replace(/^Never:\s*/i, '') : '.'}` }))));
         continue;
       }
       items.push(tt(el('li', { class: 'fv-pr', value: String(r.order) },
@@ -2054,7 +2121,7 @@ export function startReport(dash, events) {
         r.casts > 0 ? el('span', { class: 'ct' }, mark(el('b', { text: f1(r.casts) }), 'rotation', 'casts', W(r)), el('small', { text: 'casts' })) : null), `rot:priority:${r.order}`, true, b.id));
     }
     host.replaceChildren(...(items.length ? items : [el('li', { class: 'fv-note', text: 'No rotation recorded.' })]));
-    $('#sp-rot-note').textContent = `${b.label}'s own priority list, as the sim runs it: whenever it can act, it takes the first line whose condition holds.${pp.length ? ' Pre-pull casts go out before the boss is pulled.' : ''} Casts are per fight on average, for the spell as a whole. Tap a line for the spell and its exact condition.`;
+    $('#sp-rot-note').textContent = 'The sim casts the first line whose condition holds.';
   };
 
   // ---------- gear (paper doll, as the sim UI's gear picker) ----------
@@ -2124,11 +2191,14 @@ export function startReport(dash, events) {
   // ---------- consumes and buffs (as the sim UI's icon pickers) ----------
   // Sections and subsections follow the sim UI: the Consumables picker's rows, the Raid and Party
   // Buffs subsections and the Offensive and Defensive Debuffs subsections (ui/core/components).
+  // The report is Forever's, so it groups the buffs as the sim UI does under Forever: Battle
+  // Shout, Trueshot Aura, the totems but Mana Spring and Stoneskin, the crit auras and the
+  // resistances reach the whole raid (client 1.60.1.70425; see RAID_BUFF_SUBSECTIONS).
   const SETUP_SECTIONS = ['Consumables', 'Raid Buffs', 'Party Buffs', 'Offensive Debuffs', 'Defensive Debuffs', 'Professions'];
   const SETUP_SUBS = {
     'Consumables': ['Potion', 'Special', 'Flask', 'Weapon', 'Food', 'Attributes', 'Physical', 'Defensive', 'Spell', 'Misc', 'Engineering', 'Pet'],
-    'Raid Buffs': ['Stats', 'Blessings', 'Mana', 'Other'],
-    'Party Buffs': ['Attack Power', 'Totems', 'Crit', 'Defense', 'Resistances', 'Other'],
+    'Raid Buffs': ['Stats', 'Blessings', 'Attack Power', 'Totems', 'Crit', 'Resistances', 'Mana', 'Other'],
+    'Party Buffs': ['Totems', 'Defense', 'Other'],
     'Offensive Debuffs': ['Sunder / Expose', 'CoR / FF', 'CoE', 'Other'],
     'Defensive Debuffs': ['Attack Power', 'Attack Speed', 'Chance to Hit', 'Other'],
     'Professions': [''],
@@ -2143,9 +2213,9 @@ export function startReport(dash, events) {
   const BUFF_SUB = [
     [/^(Gift Of The Wild|Mark Of The Wild|Power Word Fortitude|Prayer Of Fortitude|Arcane Brilliance|Arcane Intellect|Divine Spirit|Prayer Of Spirit)/, 'Raid Buffs', 'Stats'],
     [/^Blessing Of/, 'Raid Buffs', 'Blessings'], [/^Innervate/, 'Raid Buffs', 'Mana'], [/^(Power Infusion|Thorns)/, 'Raid Buffs', 'Other'],
-    [/^(Battle Shout|Trueshot Aura)/, 'Party Buffs', 'Attack Power'], [/Totem/, 'Party Buffs', 'Totems'],
-    [/^(Leader Of The Pack|Moonkin Aura)/, 'Party Buffs', 'Crit'], [/^(Devotion Aura|Retribution Aura)/, 'Party Buffs', 'Defense'],
-    [/Protection|Resistance/, 'Party Buffs', 'Resistances'],
+    [/^(Battle Shout|Trueshot Aura)/, 'Raid Buffs', 'Attack Power'], [/^(Mana Spring Totem|Stoneskin Totem)/, 'Party Buffs', 'Totems'],
+    [/Protection|Resistance/, 'Raid Buffs', 'Resistances'], [/Totem/, 'Raid Buffs', 'Totems'],
+    [/^(Leader Of The Pack|Moonkin Aura)/, 'Raid Buffs', 'Crit'], [/^(Devotion Aura|Retribution Aura)/, 'Party Buffs', 'Defense'],
   ];
   const DEBUFF_SUB = [
     [/^(Sunder Armor|Expose Armor)/, 'Offensive Debuffs', 'Sunder / Expose'], [/^(Curse Of Recklessness|Faerie Fire)/, 'Offensive Debuffs', 'CoR / FF'],
@@ -2228,7 +2298,7 @@ export function startReport(dash, events) {
     return { src, list: tlCache.list };
   };
   const nameColor = (k) => { const n = byKey('names')?.get(k); return n && n.color ? n.color : null; };
-  const fmtT = (t) => `${t < 0 ? '−' : ''}${Math.abs(t).toFixed(1)} s`;
+  const fmtT = (t) => `${t < 0 ? '−' : ''}${Math.abs(t).toFixed(1)}s`;
 
   // The events view of the preset's sample fights. Its Typical, Unlucky and Lucky iterations are st.sample 0, 1 and
   // 2, and the aura bars follow the one picked there.
@@ -2236,8 +2306,8 @@ export function startReport(dash, events) {
     const T = statusOf('timeline_' + b.class.toLowerCase()) === 'ok' ? tlSamples(b) : null;
     const s = T && T.list.length ? T.list[Math.min(st.sample || 0, T.list.length - 1)] : null;
     $('#sp-time-note').textContent = s
-      ? `${s.label}: ${f1(s.dps)} DPS over ${f1(s.dur)} s. Pick the typical, unlucky or lucky fight, and see it as a timeline, a chart, the combat log or a replay.`
-      : 'One simulated fight. Pick the typical, unlucky or lucky fight, and see it as a timeline, a chart, the combat log or a replay.';
+      ? `${s.label}: ${f1(s.dps)} DPS over ${f1(s.dur)}s.`
+      : '';
     events.show(b.id, st.sample || 0);
   };
   events.onSampleChange((sample) => {
@@ -2342,14 +2412,14 @@ export function startReport(dash, events) {
       if (k === 'stdev') td.className = 'n';
       return td;
     };
-    const rows = [['Mean DPS', 'dps', f1], ['Error of the mean', 'se', f2], ['Median', 'p50', f1], ['Unlucky (10th)', 'p10', f1], ['Lucky (90th)', 'p90', f1], ['Std dev', 'stdev', f1], ['120 s fight', 'dps120', f1], ['300 s fight', 'dps300', f1], ['Race', 'race', String],
+    const rows = [['Mean DPS', 'dps', f1], ['Error of the mean', 'se', f2], ['Median', 'p50', f1], ['Unlucky (10th)', 'p10', f1], ['Lucky (90th)', 'p90', f1], ['Std dev', 'stdev', f1], ['120s fight', 'dps120', f1], ['300s fight', 'dps300', f1], ['Race', 'race', String],
       ...(anyVar ? [['Setup', 'setup', String]] : []), ...(rv ? [['Race rank', 'raceRank', String]] : []), ['Best race', 'bestRace', String], ['Boss', 'bossType', String], ['Rank', 'rank', String]];
     $('#cmp-table tbody').replaceChildren(...rows.map(([lbl, k, f]) => el('tr', {}, el('td', { text: lbl }), valTd(sA, k, f), valTd(sB, k, f), diffOf(k))));
 
     // The charts and the side by side cards show the sides that were simmed in full.
     const full = [sA, sB].filter((s) => s.full), part = [sA, sB].filter((s) => !s.full);
     const gap = $('#cmp-gap');
-    gap.replaceChildren(...(part.length ? [part.map((s) => `${s.k} (${s.name})`).join(' and '), ` only ${part.length > 1 ? 'have their' : 'has its'} mean DPS. ${full.length ? `The cards below show ${full[0].k} only` : 'The spread, fight length, stat weights and damage sources show up when a side is a preset on its own race and setup'}, because we sim them for each preset's own race only.`] : []));
+    gap.replaceChildren(...(part.length ? [part.map((s) => `${s.k} (${s.name})`).join(' and '), `: mean DPS only. ${full.length ? `The cards below show ${full[0].k} only.` : 'The charts below need a preset on its own race and setup.'}`] : []));
     for (const id of ['#cmp-dist-card', '#cmp-len-card', '#cmp-w-card', '#cmp-abil-card']) $(id).hidden = !full.length;
     const hd = $('#cmp-dist');
     if (full.length && waitOr(hd, ['hist'])) {
@@ -2396,11 +2466,26 @@ export function startReport(dash, events) {
     const builds = new Map(visB().map((b) => [b.id, b]));
     const cav = rowsOf('notes').filter((n) => n.kind === 'caveats' && builds.has(n.build));
     const byClass = d3.groups(cav, (n) => builds.get(n.build).class).sort((a, b) => CLASSES.indexOf(a[0]) - CLASSES.indexOf(b[0]));
+    // A caveat that starts with "Assumed:", "Open:", "Left out:" or "Unverified:" shows that word as a tag.
+    const TAG = /^(Assumed|Open|Left out|Unverified):\s*/;
+    const cavItem = (t) => {
+      const m = t.match(TAG), rest = m ? t.slice(m[0].length) : t, txt = rest.charAt(0).toUpperCase() + rest.slice(1);
+      return el('li', { class: 'fv-cav' }, m ? el('span', { class: 'fv-cav-tag', text: m[1] }) : null, /[.!?)]$/.test(txt) ? txt : txt + '.');
+    };
+    // Within a class, the caveats go under the presets they apply to. The ones every preset of the class shares come
+    // first, then each preset's own, in the ranking's order. A caveat a few presets share goes under all their names.
+    const order = new Map([...builds.keys()].map((id, k) => [id, k]));
     host.replaceChildren(...byClass.map(([cls, ns]) => {
       const seen = new Map();
-      for (const n of ns) { if (!seen.has(n.text)) seen.set(n.text, []); seen.get(n.text).push(builds.get(n.build).build); }
-      return el('details', { style: 'border-top:1px solid var(--color-border-line);padding-block:0.5rem' }, el('summary', {}, el('span', { style: 'display:flex;gap:0.4rem;align-items:center;font-size:var(--cds-font-size-body)' }, el('span', { class: 'fv-dot', style: `background:${ccol(cls)}` }), `${cls} (${seen.size})`)),
-        el('ul', { class: 'fv-list' }, ...[...seen].map(([t, bs]) => el('li', {}, t, el('span', { class: 'fv-note', text: ` · ${bs.join(', ')}` })))));
+      for (const n of ns) { if (!seen.has(n.text)) seen.set(n.text, []); seen.get(n.text).push(n.build); }
+      const all = [...builds.values()].filter((b) => b.class === cls).length;
+      const groups = d3.groups([...seen], ([, ids]) => ids.join('|'))
+        .map(([, items]) => ({ ids: items[0][1], texts: items.map(([t]) => t) }))
+        .sort((p, q) => (q.ids.length === all) - (p.ids.length === all) || order.get(p.ids[0]) - order.get(q.ids[0]));
+      const head = (ids) => el('h4', { class: 'fv-cav-preset' }, ...(ids.length === all && all > 1 ? [`All ${cls} presets`]
+        : ids.flatMap((id, k) => [k ? ', ' : null, specIco(builds.get(id), ''), ' ', builds.get(id).build])));
+      return el('details', { class: 'fv-cav-cls' }, el('summary', {}, el('span', { class: 'fv-cav-cls-name' }, el('span', { class: 'fv-dot', style: `background:${ccol(cls)}` }), `${cls} (${seen.size})`)),
+        ...groups.map((g) => el('section', { class: 'fv-cav-group' }, head(g.ids), el('ul', { class: 'fv-cav-list' }, ...g.texts.map(cavItem)))));
     }));
   };
 
@@ -2420,28 +2505,6 @@ export function startReport(dash, events) {
     });
   };
 
-  // ---------- hero ----------
-  const drawHero = () => {
-    const host = $('#hero');
-    const builds = genB(), m = iconMap();
-    if (!builds || !m) return;
-    const arts = later ? rowsOf('treeart') : null;
-    if (arts && !$('#top').dataset.art) {
-      const top = builds.reduce((p, q) => (+q.dps > +p.dps ? q : p));
-      const parts = String(top.talents).split('-').map((t) => [...t].reduce((x, c) => x + (+c || 0), 0));
-      const art = arts.find((a) => a.class === top.class && +a.tree === parts.indexOf(Math.max(...parts)));
-      if (art && art.bg) { $('#top').style.setProperty('--fv-hero-art', `url("${art.bg}")`); $('#top').dataset.art = '1'; }
-    }
-    host.replaceChildren(...CLASSES.map((c) => {
-      const b = builds.find((x) => x.class === c);
-      const img = iconImg((b && b.classIcon) || 'classicon_' + c.toLowerCase() + ':l', '');
-      if (img) { img.src = m.get('classicon_' + c.toLowerCase() + ':l') || img.src; img.style.setProperty('--ring', ccol(c)); img.alt = c; }
-      const bt = el('button', { 'aria-pressed': String(st.cls === c), 'aria-label': `Show ${c}`, 'data-tt': 'c:' + c }, img);
-      bt.addEventListener('click', () => { st.cls = st.cls === c ? 'All' : c; st.heatCls = st.cls; persist(); if (st.tab !== 'ranking' && st.tab !== 'races') showTab('ranking'); else render(); });
-      return bt;
-    }));
-  };
-
   // ---------- assumptions panel ----------
   // the picks live in st, this browser's saved view
   const SEG_NAME = { low: 'Low', mid: 'Mid', expected: 'Expected', high: 'High', higher: 'Higher' };
@@ -2452,7 +2515,7 @@ export function startReport(dash, events) {
   };
   $('#asm-reset').addEventListener('click', (e) => { e.stopPropagation(); st.asm = {}; persist(); hideTip(); render(); });
   const bName = (id) => (rowsOf('builds') || []).find((b) => b.id === id)?.build || id;
-  // Effects are each setting's change against the presets' own setting at 180 s, from `sens`. A signed number takes
+  // Effects are each setting's change against the presets' own setting at 180s, from `sens`. A signed number takes
   // the ok or bad colour; a range over several presets runs from the smaller change to the larger.
   const SPEC_SHORT = { Retribution: 'Ret', Enhancement: 'Enh', Elemental: 'Ele', 'Beast Mastery': 'BM', Marksmanship: 'MM', Assassination: 'Assassin', Destruction: 'Destro', Demonology: 'Demo' };
   const asmSigned = (v, f, unit, eps) => el('span', { class: 'fv-asm-d' + (Math.abs(v) < eps ? '' : v > 0 ? ' pos' : ' neg'), text: (Math.abs(v) < eps ? '' : v > 0 ? '+' : '−') + f(Math.abs(v)) + unit });
@@ -2464,7 +2527,7 @@ export function startReport(dash, events) {
     return el('span', { class: 'fv-asm-eff' }, asmSigned(p, f, '', eps), el('span', { class: 'fv-asm-to', text: ' to ' }), asmSigned(q, f, unit, eps));
   };
   const asmPcts = (a, sid, ids) => arr(a.sens).filter((x) => x.setting === sid && (!ids || ids.includes(x.build))).map((x) => +x.pct);
-  // how much an assumption can move a preset at 180 s, for the order within a class and the size badge
+  // how much an assumption can move a preset at 180s, for the order within a class and the size badge
   const asmImpact = (a) => (a.status === 'live' ? d3.max(arr(a.sens), (x) => Math.abs(+x.pct)) || 0 : -1);
   const asmSize = (v) => (v >= 4 ? ['big', 'Big'] : v >= 1.5 ? ['med', 'Medium'] : v >= 0.05 ? ['small', 'Small'] : ['none', 'No effect']);
   const asmSort = (as) => [...as].sort((p, q) => asmImpact(q) - asmImpact(p) || p.order - q.order);
@@ -2485,16 +2548,20 @@ export function startReport(dash, events) {
   };
   // A reference row: the only value considered, which the presets use, so there is nothing to compare or pick.
   const asmRef = (a) => arr(a.settings).length === 1;
-  const REF_CAP = 'Reference: the only value considered, so it is the default and there is nothing to compare.';
-  const asmRefLine = (a) => arr(a.settings).map((x) => el('p', { class: 'fv-asm-ref' }, el('b', { text: x.label }), ...asmMarks(a, x),
-    x.value && x.value !== x.label ? el('span', { text: ` · ${x.value}` }) : null));
+  const REF_CAP = 'Reference value.';
+  const asmRefLine = (a) => arr(a.settings).map((x) => {
+    const p = el('p', { class: 'fv-asm-ref' }, el('b', { text: x.label }), ...asmMarks(a, x),
+      x.value && x.value !== x.label ? el('span', { text: ` · ${x.value}` }) : null);
+    if (x.rationale) asmHover(p, x.label, () => asmSetTip(a, x));
+    return p;
+  });
   // The presets' setting is the default: what the ranking uses, and the expected value since the 2026-10-15 rulings.
   const asmMarks = (a, x) => [x.id === a.defaultSetting ? el('span', { class: 'def', text: ' · default' }) : null];
   // One table per assumption. Each cell answers "if the truth is this column, this row's spec changes by this much at
-  // 180 s, against what the ranking shows now": a column per setting, a row per spec, the % in the ok or bad colour
+  // 180s, against what the ranking shows now": a column per setting, a row per spec, the % in the ok or bad colour
   // and the DPS under it. The presets' column is the zero point ("–") whichever column is picked, so the numbers never
-  // shift. With onPick the column heads are the buttons that apply a setting; without (Method) they are plain heads.
-  const ASM_CAP = 'DPS change at 180 s if this turns out to be true, vs the current ranking';
+  // shift. The column heads are the buttons that apply a setting.
+  const ASM_CAP = 'DPS change at 180s';
   const asmHead = (a, x, cur) => [
     el('b', { text: x.label }),
     x.id === a.defaultSetting ? el('small', { class: 'fv-asm-tag def', text: 'Default' }) : el('small', { class: 'fv-asm-tag', text: SEG_NAME[x.id] || x.id }),
@@ -2503,37 +2570,55 @@ export function startReport(dash, events) {
   const asmMatrix = (a, cur, onPick) => {
     const live = a.status === 'live' && arr(a.sens).length > 0, sets = arr(a.settings);
     const dpsOf = (sid, ids) => arr(a.sens).filter((x) => x.setting === sid && ids.includes(x.build)).map((x) => +x.dps);
-    const zero = () => el('span', { class: 'fv-asm-zero', title: 'No change: this is the default', text: '–' });
-    const col = (x) => [x.id === a.defaultSetting ? 'is-def' : '', onPick && x.id === cur ? 'is-cur' : ''].filter(Boolean).join(' ') || null;
+    const zero = () => el('span', { class: 'fv-asm-zero', title: 'Default: no change', text: '–' });
+    const col = (x) => [x.id === a.defaultSetting ? 'is-def' : '', x.id === cur ? 'is-cur' : ''].filter(Boolean).join(' ') || null;
     const head = el('tr', {}, el('th', { class: 'fv-asm-corner', scope: 'col' }, live ? 'Spec' : ''), ...sets.map((x) => {
-      if (!onPick) return el('th', { scope: 'col', class: col(x) }, el('div', { class: 'fv-asm-col' }, ...asmHead(a, x)));
       const bt = el('button', { class: 'fv-asm-col', 'data-setting': x.id, 'aria-pressed': String(x.id === cur),
         'aria-label': `${x.label} (${SEG_NAME[x.id] || x.id})${x.id === a.defaultSetting ? ', default' : ''}` }, ...asmHead(a, x, cur));
       if (!live) bt.disabled = true;
       bt.addEventListener('click', (e) => { e.stopPropagation(); onPick(x.id); });
+      // A tap on the head picks the setting, so its tooltip is for the mouse only.
+      if (x.rationale) asmHover(bt, x.label, () => asmSetTip(a, x), { tap: false });
       return el('th', { scope: 'col', class: col(x) }, bt);
     }));
     const body = live ? el('tbody', {}, ...asmSpecs(a).map((g) => el('tr', {},
       el('th', { scope: 'row', title: `${g.cls} · ${g.spec}` }, el('span', { class: 'fv-asm-tspec' }, ringed(g.icon, 'fv-ico ring', ccol(g.cls)), el('span', { text: g.short }))),
       ...sets.map((x) => (x.id === a.defaultSetting ? el('td', { class: col(x) }, zero())
         : el('td', { class: col(x) }, asmRange(asmPcts(a, x.id, g.ids)) || zero(), el('small', {}, asmRange(dpsOf(x.id, g.ids), f0, ' DPS', 0.5)))))))) : null;
-    return el('div', { class: 'fv-asm-mx' }, el('table', { class: 'fv-asm-tbl' + (onPick ? '' : ' ro') }, el('thead', {}, head), body));
+    return el('div', { class: 'fv-asm-mx' }, el('table', { class: 'fv-asm-tbl' }, el('thead', {}, head), body));
   };
-  // The ⓘ tooltip: what each setting means and why it's a candidate, and the source. The panel's table has the
-  // numbers; Method has the full description.
+  // Pointing at an assumption shows where it comes from, and its full description when the panel shows a short one.
+  // Each setting explains itself on its column head (or its line in a reference row), see asmSetTip.
   const asmTip = (a) => [
-    el('div', { class: 'fv-asm-tsets' }, ...arr(a.settings).map((x) => el('div', { class: 'fv-tip-set' },
-      el('b', { text: x.label }), el('span', { class: 'fv-tip-m', text: ` ${SEG_NAME[x.id] || ''}` }), ...asmMarks(a, x),
-      el('small', { text: `${x.value && x.value !== x.label ? x.value + '. ' : ''}${x.rationale}` })))),
+    a.short && a.description && a.description !== a.short ? tipText(a.description) : null,
     a.source ? tipNote(`Source: ${a.source}`) : null,
     a.status === 'pending' ? tipNote('Not simulated yet') : a.status === 'inert' ? tipNote('No longer applies') : null,
   ];
-  const openMethodAsm = () => { showTab('method'); requestAnimationFrame(() => $('#method-asm-card')?.scrollIntoView({ block: 'start' })); };
+  // What a setting means, and why it's a candidate.
+  const asmSetTip = (a, x) => [
+    el('div', { class: 'fv-tip-set' }, el('span', { class: 'fv-tip-m', text: SEG_NAME[x.id] || '' }), ...asmMarks(a, x),
+      el('small', { text: `${x.value && x.value !== x.label ? x.value + '. ' : ''}${x.rationale}` })),
+  ];
+  // Shows the tooltip under node, from node's left edge.
+  const asmHover = (node, head, lines, opts = {}) => {
+    node.setAttribute('data-tip', '1');
+    hoverTip(node, (pinned) => {
+      const card = $('#asm-card'), cr = card.getBoundingClientRect(), nr = node.getBoundingClientRect();
+      showTip(card, nr.left - cr.left, nr.bottom - cr.top + 4, head, lines(), { hl: node, below: true, pinned, act: opts.act });
+    }, { tap: opts.tap !== false });
+  };
+  // Everything about an assumption the row leaves out, behind "More details": the full description, each setting's
+  // value and reason, and the source.
+  const asmMore = (a) => el('details', { class: 'fv-asm-more' }, el('summary', { text: 'More details' }),
+    a.description && a.description !== (a.short || a.description) ? el('p', { text: a.description }) : null,
+    el('div', { class: 'fv-asm-msets' }, ...arr(a.settings).map((x) => el('small', {}, el('b', { text: x.label }),
+      ` (${x.id === a.defaultSetting ? 'default' : SEG_NAME[x.id] || x.id}): ${x.value && x.value !== x.label ? x.value + '. ' : ''}${x.rationale || ''}`))),
+    a.source ? el('small', { class: 'fv-asm-src', text: `Source: ${a.source}` }) : null);
   const drawAsm = () => {
     const host = $('#asm-list'), custom = asmSel().length > 0;
     $('#asm-badge').hidden = !custom; $('#asm-reset').hidden = !custom;
     if (!waitOr(host, ['assumptions', 'assumption_dps', 'builds'])) return;
-    const As = rowsOf('assumptions'), open = new Set(arr(st.asmOpen)), card = $('#asm-card');
+    const As = rowsOf('assumptions'), open = new Set(arr(st.asmOpen));
     host.replaceChildren(...d3.groups(As, (a) => a.class).map(([cls, as]) => {
       const changed = as.filter((a) => st.asm?.[a.key]).length, top = d3.max(as, asmImpact);
       const d = el('details', { class: 'fv-asm-cls', 'data-cls': cls });
@@ -2544,15 +2629,15 @@ export function startReport(dash, events) {
       for (const a of asmSort(as)) {
         const cur = st.asm?.[a.key] || a.defaultSetting, ref = asmRef(a), live = a.status === 'live' && !ref, imp = asmImpact(a);
         const [sz, szText] = ref ? ['ref', 'Reference'] : asmSize(imp);
-        const info = el('button', { class: 'fv-asm-i', 'aria-label': `Details: ${a.label}`, 'data-tip': '1', text: 'ⓘ' });
-        info.addEventListener('click', (e) => { e.stopPropagation(); const cr = card.getBoundingClientRect(), ir = info.getBoundingClientRect(); showTip(card, 16, ir.bottom - cr.top + 4, a.label, asmTip(a), { hl: info, below: true, act: ['More in Method ›', openMethodAsm] }); });
         const picked = cur !== a.defaultSetting;
+        const hd = el('div', { class: 'fv-asm-hd' },
+          el('div', { class: 'fv-asm-lbl' }, el('b', { text: a.label }), live || ref ? el('span', { class: `fv-asm-size ${sz}`, title: ref ? 'One value only, kept for reference' : `Up to ${f1(imp)}% on a preset at 180s`, text: szText }) : null),
+          el('p', { class: 'fv-asm-short', text: a.short || a.description }));
+        asmHover(hd, a.label, () => asmTip(a));
         d.append(el('div', { class: 'fv-asm-row', 'data-key': a.key, 'data-size': sz },
-          el('div', { class: 'fv-asm-txt' },
-            el('div', { class: 'fv-asm-lbl' }, el('b', { text: a.label }), live || ref ? el('span', { class: `fv-asm-size ${sz}`, title: ref ? 'One value only, kept for reference' : `Moves a preset by up to ${f1(imp)}% at 180 s`, text: szText }) : null, info),
-            el('p', { class: 'fv-asm-short', text: a.short || a.description })),
+          el('div', { class: 'fv-asm-txt' }, hd, asmMore(a)),
           el('div', { class: 'fv-asm-body' }, ...(ref ? [...asmRefLine(a), el('p', { class: 'fv-asm-cap', text: REF_CAP })] : [
-            live ? el('p', { class: 'fv-asm-cap', text: picked ? 'DPS change at 180 s if this turns out to be true, vs the ranking without your pick' : ASM_CAP }) : null,
+            live ? el('p', { class: 'fv-asm-cap', text: picked ? 'DPS change at 180s, vs the ranking without your pick' : ASM_CAP }) : null,
             asmMatrix(a, cur, (id) => asmPick(a, id)),
             !live ? el('p', { class: 'fv-asm-cap', text: a.status === 'pending' ? 'Not simulated yet.' : 'No longer applies.' }) : null]))));
       }
@@ -2571,23 +2656,6 @@ export function startReport(dash, events) {
     const v = { topLabel: top.label, topDps: f1(top.dps), bottomLabel: bot.label, bottomDps: f1(bot.dps), median: f1(d3.median(s, (b) => b.dps)), count: String(s.length),
       classes: String(new Set(s.map((b) => b.class)).size), spreadPct: f1((top.dps / bot.dps - 1) * 100) };
     all.forEach((n) => { for (const a of ['data-source', 'data-field', 'data-row']) n.removeAttribute(a); n.textContent = v[n.dataset.asmF] ?? '—'; n.classList.remove('dash-skeleton'); });
-  };
-  const drawMethodAsm = () => {
-    const host = $('#method-asm');
-    if (!waitOr(host, ['assumptions', 'builds'])) return;
-    host.replaceChildren(...d3.groups(rowsOf('assumptions'), (a) => a.class).flatMap(([cls, as]) => [el('h3', { text: cls === 'All' ? 'All classes' : cls }),
-      el('ul', { class: 'fv-list' }, ...asmSort(as).map((a) => {
-        // The full text the panel leaves out: the description, the panel's table without its buttons, each setting's
-        // numbers and reason, and the source.
-        const live = a.status === 'live' && arr(a.sens).length > 0, ref = asmRef(a);
-        return el('li', {}, el('b', { text: a.label }),
-          el('div', { class: 'fv-asm-mdesc', text: `${a.description}${a.status === 'pending' ? ' Not simulated yet.' : a.status === 'inert' ? ' No longer applies.' : ''}` }),
-          live ? el('p', { class: 'fv-asm-cap', text: ASM_CAP }) : ref ? el('p', { class: 'fv-asm-cap', text: REF_CAP }) : null,
-          live ? asmMatrix(a, a.defaultSetting, null) : null,
-          el('div', { class: 'fv-asm-msets' }, ...arr(a.settings).map((x) => el('small', {}, el('b', { text: x.label }),
-            ` (${x.id === a.defaultSetting ? 'default' : SEG_NAME[x.id] || x.id}): ${x.value ? x.value + '. ' : ''}${x.rationale}`))),
-          a.source ? el('small', { class: 'fv-asm-src', text: `Source: ${a.source}` }) : null);
-      }))]));
   };
 
   // ---------- render ----------
@@ -2608,13 +2676,12 @@ export function startReport(dash, events) {
       else (window.requestIdleCallback || setTimeout)(loadLater);
     }
     if (ttNode && !ttNode.isConnected) hideTT();
-    try { drawHero(); } catch (e) { console.error(e); }
     try {
       if (st.tab === 'ranking') { safeTop(drawAsm, $('#asm-list')); drawRanking(); drawLenAll(); drawMana(); }
       else if (st.tab === 'races') { for (const [fn, h] of [[drawRaceRank, '#race-rank'], [drawRacialRank, '#racial-rank'], [drawHeat, '#heat'], [drawRaceSpread, '#racespread']]) safeTop(fn, h && $(h)); }
       else if (st.tab === 'spec') drawSpec();
       else if (st.tab === 'compare') drawCompare();
-      else if (st.tab === 'method') { drawMethod(); safeTop(drawMethodAsm, $('#method-asm')); }
+      else if (st.tab === 'method') { drawMethod(); }
     } catch (err) { console.error(err); throw err; }
   }
 

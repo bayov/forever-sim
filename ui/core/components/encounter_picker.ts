@@ -66,48 +66,40 @@ export class EncounterPicker extends Component {
 
 		// Need to wait so that the encounter and target presets will be loaded.
 		modEncounter.sim.waitForInit().then(() => {
-			// The Encounter Type comes first. PvP and Leveling are among its choices, beside the
-			// preset encounters, and picking anything else turns them off. Leveling is for one
-			// player, so the raid sim doesn't offer it.
+			// The Encounter Type comes first. In the individual sim it's the preset fight, and the
+			// mode in the sidebar picks DPS, PvP or Leveling (see SimModePicker). A leveling session
+			// has no targets to pick, so it hides the Encounter Type.
+			//
+			// The raid sim has no mode picker and no Leveling, so its PvP is one of the choices,
+			// beside the preset encounters, and picking anything else turns it off.
 			const presetEncounters = modEncounter.sim.db.getAllPresetEncounters();
 			const typeGroup = this.rootElem.querySelector(':scope > .encounter-type-group') as HTMLElement;
+			const individual = simUI.isIndividualSim();
 			const typePicker = new EnumPicker<Encounter>(typeGroup, modEncounter, {
 				id: 'encounter-type',
 				label: 'Encounter Type',
-				labelTooltip: simUI.isIndividualSim()
-					? 'A preset fight, PvP or Leveling. In PvP the target is an enemy player, and white hits never glance. How long we spend out of melee range is Out of Melee (%), in PvP or not. Leveling is a grinding session against normal mobs around our level, scored by the mobs we kill, with its own settings below.'
+				labelTooltip: individual
+					? 'A preset fight, or Custom for targets of our own. The mode in the sidebar picks DPS, PvP or Leveling. How long we spend out of melee range is Out of Melee (%), in PvP or not.'
 					: 'A preset fight, or PvP. In PvP the target is an enemy player, and white hits never glance. How long we spend out of melee range is Out of Melee (%), in PvP or not.',
 				values: [
 					{ name: 'Custom', value: ENCOUNTER_TYPE_CUSTOM },
-					{ name: 'PvP', value: ENCOUNTER_TYPE_PVP },
-					...(simUI.isIndividualSim() ? [{ name: 'Leveling', value: ENCOUNTER_TYPE_LEVELING }] : []),
+					...(individual ? [] : [{ name: 'PvP', value: ENCOUNTER_TYPE_PVP }]),
 					...presetEncounters.map((pe, i) => ({ name: pe.path, value: i })),
 				],
 				changedEvent: (encounter: Encounter) => encounter.changeEmitter,
 				getValue: (encounter: Encounter) => {
-					if (encounter.isLeveling()) return ENCOUNTER_TYPE_LEVELING;
-					if (encounter.getPvp()) return ENCOUNTER_TYPE_PVP;
+					if (!individual && encounter.getPvp()) return ENCOUNTER_TYPE_PVP;
 					return presetEncounters.findIndex(pe => encounter.matchesPreset(pe));
 				},
 				setValue: (eventID: EventID, encounter: Encounter, newValue: number) => {
 					TypedEvent.freezeAllAndDo(() => {
-						encounter.setPvp(eventID, newValue == ENCOUNTER_TYPE_PVP);
-						// A new session starts with every option at its default. The Out of Melee
-						// field is hidden in Leveling mode, where the session moves us itself, so we
-						// clear it rather than keep a downtime nobody sees.
-						if (newValue == ENCOUNTER_TYPE_LEVELING) {
-							if (!encounter.isLeveling()) {
-								encounter.setLeveling(eventID, LevelingOptions.create());
-								encounter.setPvpMeleeDowntime(eventID, 0);
-							}
-						} else {
-							encounter.setLeveling(eventID, undefined);
-						}
+						if (!individual) encounter.setPvp(eventID, newValue == ENCOUNTER_TYPE_PVP);
 						if (newValue >= 0) {
 							encounter.applyPreset(eventID, presetEncounters[newValue]);
 						}
 					});
 				},
+				showWhen: (encounter: Encounter) => !encounter.isLeveling(),
 			});
 			typeGroup.prepend(typePicker.rootElem);
 
@@ -710,7 +702,6 @@ class TargetInputPicker extends Input<Encounter, TargetInput> {
 // The Encounter Type picker's choices besides the preset encounters, which use their index.
 const ENCOUNTER_TYPE_CUSTOM = -1;
 const ENCOUNTER_TYPE_PVP = -2;
-const ENCOUNTER_TYPE_LEVELING = -3;
 
 // The class of the fields Leveling mode hides, see EncounterPicker.
 const FIGHT_ONLY_CLASS = 'encounter-fight-only';
@@ -903,16 +894,16 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 		label: 'Search Min (sec)',
 		labelTooltip: searchTooltip,
 		float: true,
-		get: opts => orDefault(opts.searchMin, 5),
-		set: (opts, value) => (opts.searchMin = unlessDefault(value, 5)),
+		get: opts => orDefault(opts.searchMin, 2),
+		set: (opts, value) => (opts.searchMin = unlessDefault(value, 2)),
 	});
 	addLevelingNumberPicker(searchGroup, encounter, {
 		id: 'encounter-leveling-search-max',
 		label: 'Search Max (sec)',
 		labelTooltip: searchTooltip,
 		float: true,
-		get: opts => orDefault(opts.searchMax, 11),
-		set: (opts, value) => (opts.searchMax = unlessDefault(value, 11)),
+		get: opts => orDefault(opts.searchMax, 10),
+		set: (opts, value) => (opts.searchMax = unlessDefault(value, 10)),
 	});
 	const foundTooltip =
 		'How far away the mob we find stands, in whole yards, at random between Mob Distance Min and Mob Distance Max. It waits there until a harmful spell lands on it or we walk into melee range of it, then runs to us.';
@@ -964,7 +955,7 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 		set: (opts, value) => (opts.maxPackSize = unlessDefault(value, 5)),
 	});
 	const chainSearchTooltip =
-		'The time it takes to find a mob to chain pull while in combat, in seconds, at random between Chain Search Min and Chain Search Max.';
+		'The time it takes to find a mob to chain pull while in combat, running around with the mobs on us following, in seconds, at random between Chain Search Min and Chain Search Max.';
 	addLevelingNumberPicker(advancedGroup, encounter, {
 		id: 'encounter-leveling-chain-search-min',
 		label: 'Chain Search Min (sec)',
@@ -978,15 +969,26 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 		label: 'Chain Search Max (sec)',
 		labelTooltip: chainSearchTooltip,
 		float: true,
-		get: opts => orDefault(opts.chainSearchMax, 4),
-		set: (opts, value) => (opts.chainSearchMax = unlessDefault(value, 4)),
+		get: opts => orDefault(opts.chainSearchMax, 8),
+		set: (opts, value) => (opts.chainSearchMax = unlessDefault(value, 8)),
+	});
+	const standingSearchTooltip =
+		"The time it takes to find a mob to chain pull while in combat when the rotation stands and keeps fighting (Look For Mob's Stand), in seconds, at random between these. It's longer than running around, because we only see the mobs around us.";
+	addLevelingNumberPicker(advancedGroup, encounter, {
+		id: 'encounter-leveling-chain-search-standing-min',
+		label: 'Chain Search Standing Min (sec)',
+		labelTooltip: standingSearchTooltip,
+		float: true,
+		get: opts => orDefault(opts.chainSearchStandingMin, 4),
+		set: (opts, value) => (opts.chainSearchStandingMin = unlessDefault(value, 4)),
 	});
 	addLevelingNumberPicker(advancedGroup, encounter, {
-		id: 'encounter-leveling-chain-search-moving',
-		label: 'Chain Search Running (%)',
-		labelTooltip: "The share of a search in combat we spend running, with the mobs on us following. We can't hard cast while we run.",
-		get: opts => toPercent(Math.min(Math.max(opts.chainSearchMoving ?? 0.75, 0), 1)),
-		set: (opts, value) => (opts.chainSearchMoving = value / 100 == 0.75 ? undefined : Math.min(Math.max(value / 100, 0), 1)),
+		id: 'encounter-leveling-chain-search-standing-max',
+		label: 'Chain Search Standing Max (sec)',
+		labelTooltip: standingSearchTooltip,
+		float: true,
+		get: opts => orDefault(opts.chainSearchStandingMax, 16),
+		set: (opts, value) => (opts.chainSearchStandingMax = unlessDefault(value, 16)),
 	});
 	addLevelingNumberPicker(advancedGroup, encounter, {
 		id: 'encounter-leveling-death-penalty',

@@ -229,7 +229,7 @@
                       }
                     }
                   },
-                  "notes": "The spell power on-use trinket at the pull, then held for the execute phase when that loses no use."
+                  "notes": "At the pull, then saved for the execute phase."
                 },
                 {
                   "action": {
@@ -238,8 +238,7 @@
                         "itemId": 10646
                       }
                     }
-                  },
-                  "notes": "Goblin Sapper Charge on cooldown."
+                  }
                 },
                 {
                   "action": {
@@ -256,7 +255,7 @@
                       }
                     }
                   },
-                  "notes": "Judge Seal of the Crusader first, the judgement lasts 40 sec and every melee hit refreshes it."
+                  "notes": "Judge Seal of the Crusader first, the judgement lasts 40s and every melee hit refreshes it."
                 },
                 {
                   "action": {
@@ -334,7 +333,7 @@
                       }
                     }
                   },
-                  "notes": "Seal of Righteousness whenever it is down. Judgement does not consume it under Forever."
+                  "notes": "Judgement doesn't use it up in Forever."
                 },
                 {
                   "action": {
@@ -344,7 +343,7 @@
                       }
                     }
                   },
-                  "notes": "Consecration on cooldown, down to the last point of mana."
+                  "notes": "Until mana runs out."
                 },
                 {
                   "action": {
@@ -353,8 +352,7 @@
                         "spellId": 10333
                       }
                     }
-                  },
-                  "notes": "Holy Strike on cooldown."
+                  }
                 },
                 {
                   "action": {
@@ -386,8 +384,7 @@
                         ]
                       }
                     }
-                  },
-                  "notes": "Judgement on cooldown."
+                  }
                 },
                 {
                   "action": {
@@ -396,8 +393,7 @@
                         "spellId": 24239
                       }
                     }
-                  },
-                  "notes": "Hammer of Wrath below 20% health."
+                  }
                 },
                 {
                   "action": {
@@ -407,7 +403,7 @@
                       }
                     }
                   },
-                  "notes": "Exorcism on cooldown, only against Undead and Demons."
+                  "notes": "Only against Undead and Demons."
                 },
                 {
                   "action": {
@@ -450,7 +446,7 @@
                       }
                     }
                   },
-                  "notes": "Light's Vigil whenever it is not on the target, with the mana to spare. Without the talent ignore the warning on this line."
+                  "notes": "Without the talent ignore the warning on this line."
                 },
                 {
                   "action": {
@@ -495,13 +491,13 @@
                       }
                     }
                   },
-                  "notes": "Holy Shock on the Vigil, so it detonates it and starts no cooldown, or on cooldown once the mana is too low for the Vigil."
+                  "notes": "Detonates the Vigil with no cooldown."
                 },
                 {
                   "action": {
                     "autocastOtherCooldowns": {}
                   },
-                  "notes": "Racials and trinkets on a free GCD."
+                  "notes": "Racials and trinkets."
                 }
               ]
             },

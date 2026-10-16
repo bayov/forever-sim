@@ -149,7 +149,7 @@
               ],
               "priorityList": [
                 {
-                  "notes": "Undead. Dark Sacrifice when mana runs low. Other races can ignore the warning on this line.",
+                  "notes": "Undead. Trades health for mana. Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -172,13 +172,12 @@
                   }
                 },
                 {
-                  "notes": "Racials and trinkets on cooldown.",
+                  "notes": "Racials and trinkets.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }
                 },
                 {
-                  "notes": "Shadow Word: Pain whenever it is down.",
                   "action": {
                     "condition": {
                       "and": {
@@ -218,7 +217,6 @@
                   }
                 },
                 {
-                  "notes": "Devouring Plague whenever it is down and off cooldown.",
                   "action": {
                     "condition": {
                       "and": {
@@ -258,7 +256,6 @@
                   }
                 },
                 {
-                  "notes": "Shadow Word: Death on cooldown.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -268,7 +265,7 @@
                   }
                 },
                 {
-                  "notes": "Inner Focus right before Mind Blast. Without the talent ignore the warning on this line.",
+                  "notes": "Right before Mind Blast. Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "and": {
@@ -322,7 +319,6 @@
                   }
                 },
                 {
-                  "notes": "Mind Blast on cooldown.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -332,7 +328,6 @@
                   }
                 },
                 {
-                  "notes": "Mind Flay fills, and when a damage over time spell fell off.",
                   "action": {
                     "channelSpell": {
                       "spellId": {

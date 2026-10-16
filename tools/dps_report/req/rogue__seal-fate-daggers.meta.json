@@ -25,7 +25,7 @@
     "ok": true,
     "note": "same sim as the published number (seed 1)"
   },
-  "summary": "Seal Fate and Cold Blood in Assassination with Puncturing Wounds in Combat, for Backstab on daggers. Shipped as a variant 4.8% behind Combat Daggers.",
+  "summary": "Backstab on daggers with Seal Fate from Assassination.",
   "keyTalents": [
     "Seal Fate 5/5",
     "Lethality 5/5",
@@ -40,8 +40,8 @@
     "Slice and Dice at 1+ combo points when down; refresh at 5 when about to drop",
     "Cold Blood right before a 5-point Eviscerate",
     "Thistle Tea at 10 energy or less; Sapper, Land Mine and potion while Slice and Dice is up",
-    "Eviscerate at 4+ combo points (with Slice and Dice up, 79+ energy, or under 6 s left); spend leftover points in the last 3 s",
-    "Backstab right after a main-hand swing (0.25 s), or at 100 energy"
+    "Eviscerate at 4+ combo points (with Slice and Dice up, 79+ energy, or under 6s left); spend leftover points in the last 3s",
+    "Backstab right after a main-hand swing (0.25s), or at 100 energy"
   ],
   "consumes": [
     "Elixir of the Mongoose",
@@ -57,14 +57,11 @@
     "Deadly Poison (main hand) and Instant Poison (off hand), each beside a Dense Sharpening Stone"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 31 Agility and 15 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "4.8% behind Combat Daggers at 180 s",
-    "Improved Sinister Strike 2 is a row-filler with no DPS effect",
-    "Murder is damage only (+4% vs Humanoids and Giants) and does nothing on the generic boss, so its 2 points go to Lethality (Vile Poisons for Seal Fate Daggers); the vs Humanoid build keeps Murder 2/2",
-    "Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV) left out under Forever; would add +13 to +18",
-    "Grimstitch 4/5-piece bonuses not live on the synthetic gear (about +8 / +6 for Combat Daggers)",
-    "Flask of Supreme Power and Greater Arcane Elixir omitted for consistency (+8 via Dragonbreath Chili)",
-    "Best Alliance race is High Order; since client 70425 the races are within about 3 DPS of each other"
+    "Improved Sinister Strike 2 adds no DPS.",
+    "Murder does nothing on the generic boss, so its points go to Lethality (Vile Poisons for Seal Fate Daggers).",
+    "No Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV). They would add 13 to 18.",
+    "Grimstitch 4-piece and 5-piece aren't active (about +8 and +6).",
+    "Flask of Supreme Power and Greater Arcane Elixir left out (+8 through Dragonbreath Chili)."
   ],
   "notes": "Spec family set to Assassination (30 Assassination points); the PR frames it as a variant of Combat Daggers and it uses the rogue_combat mksettings setup and the Combat Daggers APL. The talent preset tooltip mentions Blade Flurry, but the talent string has no Blade Flurry point."
 }

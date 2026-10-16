@@ -23,9 +23,9 @@
     "stderr": 0.2,
     "iters": 20000,
     "ok": true,
-    "note": "180 s, seed 1"
+    "note": "180s, seed 1"
   },
-  "summary": "A second Balance playstyle with Wrath as the only filler, for a moonkin that would rather not weave; it trades Moonglow for Heart of the Wild and uses Natural Power gloves. It is 5.5% behind the default Balance build.",
+  "summary": "Balance with Wrath as the only filler, for a moonkin that would rather not weave.",
   "keyTalents": [
     "Improved Wrath",
     "Moonkin Form",
@@ -36,12 +36,12 @@
     "Naturalist"
   ],
   "rotation": [
-    "Pre-pull: Wrath cast 1.5 s before the pull",
+    "Pre-pull: Wrath cast 1.5s before the pull",
     "Racials, potions and runes on cooldown (Innervate on its own trigger)",
-    "Insect Swarm whenever it is down (more than 8 s of fight left)",
-    "Moonfire whenever its dot is down (more than 8 s of fight left)",
+    "Insect Swarm whenever it is down (more than 8s of fight left)",
+    "Moonfire whenever its dot is down (more than 8s of fight left)",
     "Starfire when Clearcasting is up",
-    "Moonfire when a Wrath plus 1.5 s would not land before the end",
+    "Moonfire when a Wrath plus 1.5s would not land before the end",
     "Otherwise Wrath"
   ],
   "consumes": [
@@ -59,11 +59,9 @@
     "Cerebral Cortex Compound"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 36 spell power and 15 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "5.5% behind the weaving Balance build (782.7 vs 828.5 at 180 s)",
-    "Wrath VIII's base damage ×1.085, halfway to the level 30 rank's 0.42 of Era (only ranks 1 to 5 were retuned); the client has ×1.00",
-    "Natural Power gloves are +8.1 over Arcane Power for this build",
-    "Heart of the Wild 3 over Moonglow 3 is +2.6 in its own search"
+    "Wrath VIII's base damage is ×1.085 (client ×1.00).",
+    "Natural Power gloves are +8.1 over Arcane Power.",
+    "Heart of the Wild 3 over Moonglow 3 is +2.6."
   ],
-  "notes": "Request from mksettings -spec balance with the Wrath gear variant, apl and talents; same consumes, buffs and encounter as the Balance build (shared EncounterLevel60). Duration 180 s, durationVariation 20. No edits needed."
+  "notes": "Request from mksettings -spec balance with the Wrath gear variant, apl and talents; same consumes, buffs and encounter as the Balance build (shared EncounterLevel60). Duration 180s, durationVariation 20. No edits needed."
 }

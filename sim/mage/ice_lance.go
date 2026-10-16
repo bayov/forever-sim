@@ -9,7 +9,7 @@ const IceLanceRanks = 6
 var IceLanceSpellId = [IceLanceRanks + 1]int32{0, 1312002, 400640, 1240044, 1240045, 1240046, 1240047}
 
 // Ice Lance is a talent under Forever (Frost, row 3), with trainer ranks behind it. Damage at each
-// rank's cap (or at 60), its growth per level and the mana are the Forever client's (1.60.1.70338).
+// rank's cap (or at 60), its growth per level and the mana are the Forever client's (1.60.1.70338, unchanged in 70425).
 // Rank 6 is 136 to 161 for 160 mana, instant.
 var IceLanceBaseDamage = [IceLanceRanks + 1][]float64{{0}, {27.59, 32.61}, {34.47, 40.73}, {44, 52}, {76.27, 90.13}, {94.97, 112.23}, {136.22, 160.98}}
 var IceLanceScaling = [IceLanceRanks + 1]core.RankScaling{{}, {26, 0.35}, {32, 0.4}, {40, 0.5}, {48, 0.7}, {56, 0.7}, {60, 0.9}}
@@ -19,14 +19,14 @@ var IceLanceLevel = [IceLanceRanks + 1]int{0, 20, 28, 34, 42, 48, 56}
 // The client has no spell power coefficient on Ice Lance, on any of the six ranks, where every
 // other new Forever damage spell carries its own (Frostfire Bolt 0.814, Arcane Blast 0.714).
 // SoD's client had 0 too (1.15.9 spell 400640 on wago.tools), and SoD's server gave it 42.9%.
-// Frozen targets take 300% more (the client's dummy effect of 300 and the tooltip), so 4 times
-// the damage. The other two dummies (20 and 5) look like SoD's Glaciate (20% a stack, 5 stacks),
+// Frozen targets take 200% more (the client's dummy effect and the tooltip, 300% before
+// 1.60.1.70425), so 3 times the damage. The other two dummies (20 and 5) look like SoD's Glaciate (20% a stack, 5 stacks),
 // which no Forever tooltip mentions, so they are left out.
 //
 // Report assumption mage_ice_lance_coef, user ruling 2026-10-15: 0.429, SoD's server value,
 // since SoD's client showed the same 0 and the server added the coefficient.
 const IceLanceSpellCoeff = 0.429
-const IceLanceFrozenMultiplier = 4
+const IceLanceFrozenMultiplier = 3
 
 func (mage *Mage) registerIceLanceSpell() {
 	if !mage.Talents.IceLance {

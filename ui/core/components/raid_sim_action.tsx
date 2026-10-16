@@ -431,6 +431,13 @@ export class RaidSimResultsManager {
 		return isDiff;
 	}
 
+	// No results, like in a mode we haven't run yet. See SimHistory and restoreLastSimRun.
+	clearSimResult(eventID: EventID) {
+		if (!this.currentData) return;
+		this.currentData = null;
+		this.currentChangeEmitter.emit(eventID);
+	}
+
 	getRunData(): SimRunData | null {
 		if (this.currentData == null) {
 			return null;

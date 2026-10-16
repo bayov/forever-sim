@@ -12,6 +12,14 @@
 # its health goes linearly from its lowest level to its highest. Its melee damage takes its
 # attack power the way the 1.12 servers did: AP / 14 per second of swing time.
 #
+# Health is Forever's, not the 1.12 mob's own. Forever gives every normal melee mob of a level
+# the same health: the 1.12 warrior class health at that level (the spawn weighted median, so
+# a few odd mobs don't move it), 2.5% more a level from level 9, up to 30% more from level 20
+# on. That fits all 40 creatures in our level 2 to 35 logs to within 1 point, paladin class
+# mobs too (Needles Cougar 896 in 1.12 and 1164 in Forever at level 28). Level 35 is the
+# exception: the median gives 1824 and the one mob we saw there had 1745. `logcheck -mobs`
+# checks it again.
+#
 #   python3 tools/gen_mob_stats.py
 
 import csv
@@ -39,6 +47,7 @@ with open(IN) as f:
         speed = float(r["melee_base_attack_time"]) / 1000
         ap_damage = float(r["melee_attack_power"]) / 14 * speed
         mob = {
+            "warrior": r["unit_class"] == "1",
             "armor": float(r["armor"]),
             "min_dps": (float(r["min_melee_dmg"]) + ap_damage) / speed,
             "max_dps": (float(r["max_melee_dmg"]) + ap_damage) / speed,
@@ -50,6 +59,19 @@ with open(IN) as f:
             t = 0 if hi == lo else (level - lo) / (hi - lo)
             health = float(r["min_level_health"]) + (float(r["max_level_health"]) - float(r["min_level_health"])) * t
             levels[level].append((int(r["spawns"]) / (hi - lo + 1), dict(mob, health=health)))
+
+
+def forever_health_multiplier(level):
+    return 1 + 0.025 * min(max(level - 8, 0), 12)
+
+
+def weighted_median(mobs, key):
+    ordered = sorted(mobs, key=lambda wm: wm[1][key])
+    half, total = sum(w for w, _ in ordered) / 2, 0
+    for w, m in ordered:
+        total += w
+        if total >= half:
+            return m[key]
 
 
 def mean(mobs, key):
@@ -68,9 +90,10 @@ for level in range(1, 61):
     types = {t: 0.0 for t in TYPE_ORDER}
     for w, m in mobs:
         types[m["type"]] += w / total
+    health = weighted_median([wm for wm in mobs if wm[1]["warrior"]], "health") * forever_health_multiplier(level)
     mix = ", ".join(f"proto.MobType_{t}: {share:.3f}" for t, share in types.items() if share >= 0.0005)
     lines.append(
-        f"\t{{Level: {level}, Health: {mean(mobs, 'health'):.0f}, Armor: {mean(mobs, 'armor'):.0f}, "
+        f"\t{{Level: {level}, Health: {health:.0f}, Armor: {mean(mobs, 'armor'):.0f}, "
         f"MinDamage: {min_damage:.1f}, MaxDamage: {max_damage:.1f}, SwingSpeed: {speed:.2f}, "
         f"RunSpeed: {mean(mobs, 'run'):.2f}, Spawns: {total:.0f},\n\t\tMobTypes: map[proto.MobType]float64{{{mix}}}}},")
 
@@ -84,7 +107,7 @@ with open(OUT, "w") as f:
 import "github.com/wowsims/classic/sim/core/proto"
 
 // The average normal melee mob at each level, index 0 is level 1, from the 1.12 world
-// database weighted by spawns (tools/gen_mob_stats.py).
+// database weighted by spawns, with Forever's health (tools/gen_mob_stats.py).
 var normalMobStatsByLevel = [60]NormalMobStats{
 """)
     f.write("\n".join(lines))

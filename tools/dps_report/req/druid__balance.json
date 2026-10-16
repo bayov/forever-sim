@@ -180,7 +180,7 @@
                       }
                     }
                   },
-                  "notes": "Insect Swarm whenever it is down. Without the talent ignore the warning on this line."
+                  "notes": "Without the talent ignore the warning on this line."
                 },
                 {
                   "action": {
@@ -219,8 +219,7 @@
                         ]
                       }
                     }
-                  },
-                  "notes": "Moonfire whenever its dot is down."
+                  }
                 },
                 {
                   "action": {
@@ -237,7 +236,7 @@
                       }
                     }
                   },
-                  "notes": "A free Starfire on Clearcasting, which Wrath does not use up."
+                  "notes": "Wrath doesn't use Clearcasting up."
                 },
                 {
                   "action": {
@@ -261,8 +260,7 @@
                         }
                       }
                     }
-                  },
-                  "notes": "Moonfire when a Starfire would not land before the end."
+                  }
                 },
                 {
                   "action": {
@@ -305,8 +303,7 @@
                         ]
                       }
                     }
-                  },
-                  "notes": "Wrath once Eclipse is down to its last charge and no Wrath is on its way."
+                  }
                 },
                 {
                   "action": {
@@ -315,8 +312,7 @@
                         "spellId": 9876
                       }
                     }
-                  },
-                  "notes": "Starfire."
+                  }
                 }
               ]
             },

@@ -89,7 +89,7 @@
               "blessingOfKings": true,
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "30305013002-25053005112110501-2",
+            "talentsString": "30305013002-25053005122010501-2",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Alchemy",
@@ -128,7 +128,7 @@
               ],
               "priorityList": [
                 {
-                  "notes": "Sunder Armor as the first GCD after the pull, as every warrior does; the raid's tanks keep it up after.",
+                  "notes": "Sunder Armor once at the pull. The tanks keep it up after.",
                   "action": {
                     "sequence": {
                       "name": "sunder",
@@ -207,7 +207,7 @@
                   }
                 },
                 {
-                  "notes": "Death Wish on cooldown. Without the talent ignore the warning on this line.",
+                  "notes": "Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "and": {
@@ -228,7 +228,7 @@
                   }
                 },
                 {
-                  "notes": "Orc. Blood Fury waits for Death Wish (or the end of the fight) when the wait costs no use. Other races can ignore the warning on this line.",
+                  "notes": "Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -302,7 +302,7 @@
                   }
                 },
                 {
-                  "notes": "Troll. Berserking waits for Death Wish (or the end of the fight) when the wait costs no use. Other races can ignore the warning on this line.",
+                  "notes": "Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -378,7 +378,7 @@
                   }
                 },
                 {
-                  "notes": "Night Elf. Elune's Light waits for Death Wish when the wait costs no use. Other races can ignore the warning on this line.",
+                  "notes": "Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -452,7 +452,7 @@
                   }
                 },
                 {
-                  "notes": "Mighty Rage Potion at the pull, the last one held for the end of the fight when the wait costs no use.",
+                  
                   "action": {
                     "condition": {
                       "or": {
@@ -535,7 +535,7 @@
                   }
                 },
                 {
-                  "notes": "Bloodrage when there is room for the Rage.",
+                  
                   "action": {
                     "condition": {
                       "cmp": {
@@ -558,7 +558,6 @@
                   }
                 },
                 {
-                  "notes": "Goblin Sapper Charge on cooldown.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -568,7 +567,7 @@
                   }
                 },
                 {
-                  "notes": "Goblin Land Mine right after a main hand swing, so its 1 sec cast loses no swing time.",
+                  "notes": "Its 1s cast then loses no swing time.",
                   "action": {
                     "condition": {
                       "and": {
@@ -614,13 +613,12 @@
                   }
                 },
                 {
-                  "notes": "Anything not listed above (Sapper, trinkets).",
+                  "notes": "Sapper and trinkets.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }
                 },
                 {
-                  "notes": "Whirlwind on cooldown with the Rage for it.",
                   "action": {
                     "condition": {
                       "and": {
@@ -654,7 +652,6 @@
                   }
                 },
                 {
-                  "notes": "Bloodthirst on cooldown.",
                   "action": {
                     "condition": {
                       "and": {
@@ -676,7 +673,6 @@
                   }
                 },
                 {
-                  "notes": "Execute in the execute phase.",
                   "action": {
                     "condition": {
                       "and": {
@@ -698,7 +694,7 @@
                   }
                 },
                 {
-                  "notes": "Heroic Strike on the next swing with Rage to spare.",
+                  
                   "action": {
                     "condition": {
                       "and": {
@@ -711,7 +707,7 @@
                               },
                               "rhs": {
                                 "const": {
-                                  "val": "40"
+                                  "val": "50"
                                 }
                               }
                             }
@@ -738,7 +734,7 @@
                   }
                 },
                 {
-                  "notes": "Hamstring with Rage to spare, for the procs.",
+                  "notes": "For the procs.",
                   "action": {
                     "condition": {
                       "and": {
@@ -788,7 +784,7 @@
                   }
                 },
                 {
-                  "notes": "Back to Berserker Stance.",
+                  
                   "action": {
                     "condition": {
                       "not": {

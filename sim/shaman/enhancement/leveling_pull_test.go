@@ -157,8 +157,8 @@ const chainRotation = `{"type":"TypeAPL","priorityList":[
 var lookingLine = regexp.MustCompile(`Leveling: looking for another mob, running: (true|false)`)
 
 // TestLevelingChainPulls: pulling two at a time (mobs a few levels below us, so the naked
-// shaman lives through them), we look for a second mob while fighting the first, mostly
-// running with it following us, when no hard cast starts. The rotation bolts the second mob
+// shaman lives through them), we look for a second mob while fighting the first, running
+// with it following us, when no hard cast starts. The rotation bolts the second mob
 // from where it stands, mobs on us or not, and pulls stay two mobs.
 func TestLevelingChainPulls(t *testing.T) {
 	rotation := strings.TrimSuffix(chainRotation, "\n]}") + ",\n" + strings.Join(packLines(2), ",\n") + "\n]}"
@@ -200,14 +200,68 @@ func TestLevelingChainPulls(t *testing.T) {
 		}
 	}
 	t.Logf("%d looks for another mob, %d running; %d chain pulls by bolt; %.2f mobs a pull", looks, runs, chainBolts, result.EncounterMetrics.Leveling.MobsPerPull)
-	if looks < 5 || runs < looks/2 || runs == looks {
-		t.Errorf("%d looks for another mob, %d of them running, want most but not all", looks, runs)
+	if looks < 5 || runs != looks {
+		t.Errorf("%d looks for another mob, %d of them running, want all", looks, runs)
 	}
 	if chainBolts < 2 {
 		t.Errorf("%d chain pulls by bolt from beyond shock range", chainBolts)
 	}
 	if mpp := result.EncounterMetrics.Leveling.MobsPerPull; mpp < 1.7 || mpp > 2 {
 		t.Errorf("%.2f mobs a pull pulling two at a time", mpp)
+	}
+}
+
+// TestLevelingChainSearchStanding: Look For Mob with Stand never runs, and its searches take
+// the standing time (4 to 16 sec by default) where running ones take 2 to 8.
+func TestLevelingChainSearchStanding(t *testing.T) {
+	for _, c := range []struct {
+		stand   bool
+		lo, hi  float64
+		running string
+	}{{false, 2, 8, "true"}, {true, 4, 16, "false"}} {
+		lines := packLines(2)
+		if c.stand {
+			for i := range lines {
+				lines[i] = strings.ReplaceAll(lines[i], `"levelingLookForMob":{}`, `"levelingLookForMob":{"stand":true}`)
+			}
+		}
+		rotation := strings.TrimSuffix(chainRotation, "\n]}") + ",\n" + strings.Join(lines, ",\n") + "\n]}"
+		req := withRotation(t, levelingRequest(t, &proto.LevelingOptions{MobLevelOffset: -4}, 1), rotation)
+		req.SimOptions.Debug = true
+		result := runLeveling(t, req)
+
+		lookedAt := -1.0
+		var searches []float64
+		for _, line := range strings.Split(result.Logs, "\n") {
+			m := logTime.FindStringSubmatch(line)
+			if m == nil {
+				continue
+			}
+			at, _ := strconv.ParseFloat(m[1], 64)
+			switch {
+			case lookingLine.MatchString(line):
+				if got := lookingLine.FindStringSubmatch(line)[1]; got != c.running {
+					t.Errorf("stand %v: at %.2f looking for another mob with running: %s", c.stand, at, got)
+				}
+				lookedAt = at
+			case searchingLine.MatchString(line), strings.Contains(line, "Leveling: died"):
+				lookedAt = -1
+			case foundLine.MatchString(line) && lookedAt >= 0:
+				searches = append(searches, at-lookedAt)
+				lookedAt = -1
+			}
+		}
+		if len(searches) < 5 {
+			t.Fatalf("stand %v: %d chain searches found a mob", c.stand, len(searches))
+		}
+		sum := 0.0
+		for _, d := range searches {
+			sum += d
+			if d < c.lo-0.01 || d > c.hi+0.01 {
+				t.Errorf("stand %v: a chain search took %.2f sec, want %.0f to %.0f", c.stand, d, c.lo, c.hi)
+			}
+		}
+		t.Logf("stand %v: %d chain searches, %.1f sec on average", c.stand, len(searches), sum/float64(len(searches)))
 	}
 }
 

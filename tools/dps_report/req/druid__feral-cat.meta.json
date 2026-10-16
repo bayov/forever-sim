@@ -23,9 +23,9 @@
     "stderr": 0.16,
     "iters": 20000,
     "ok": true,
-    "note": "180 s, seed 1"
+    "note": "180s, seed 1"
   },
-  "summary": "Shred and Rip cat with Shifting Power for Energy and Berserk on cooldown, no Rake. Forever's form rules apply: the cat swings its weapon's DPS at 1.0 s, and stones, potions, Thistle Tea and Windfury Totem all work in Cat Form. It is the talent search's best on the synthetic Phase 1 gear and the default Feral Level 60 preset.",
+  "summary": "Shred and Rip cat with Berserk on cooldown and no Rake. Under Forever the cat swings at 1.0s with its weapon's DPS, and stones, potions, Thistle Tea and Windfury Totem work in Cat Form.",
   "keyTalents": [
     "Shredding Attacks",
     "Shifting Power",
@@ -39,10 +39,10 @@
   "rotation": [
     "Opener: plain Cat Form (no Stealth/Prowl or Ravage)",
     "Racials, trinkets and potions on cooldown; Berserk with the on-use trinket",
-    "Shifting Power at 50 Energy or less, unless a Ferocious Bite is due (5 CP and Rip has 6 s or more)",
-    "Ferocious Bite at any combo points in the last 2 s",
-    "Rip at 4+ combo points when it is down (not in the last 8 s)",
-    "Ferocious Bite at 5 combo points and 35 Energy while Rip has 6 s or more left (or in the last 8 s)",
+    "Shifting Power at 50 Energy or less, unless a Ferocious Bite is due (5 CP and Rip has 6s or more)",
+    "Ferocious Bite at any combo points in the last 2s",
+    "Rip at 4+ combo points when it is down (not in the last 8s)",
+    "Ferocious Bite at 5 combo points and 35 Energy while Rip has 6s or more left (or in the last 8s)",
     "Shred below 5 combo points"
   ],
   "consumes": [
@@ -58,15 +58,14 @@
     "Thistle Tea"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 29 Agility and 17 Strength, and 165 Strength for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Rip's level 31+ client ranks are 6-9% below Era: Era values would give +1.6%",
-    "Howling Idol (0.5 s off Shifting Power since client 1.60.1.70425) is worth 4.8 at 180 s; 5-piece Grovekeeper Ferocity would add 5.9 (measured before the 5a and 1b rounds)",
+    "Rip's level 31+ client ranks are 6-9% below Era. Era values would add 1.6%.",
+    "Howling Idol (0.5s off Shifting Power since client 1.60.1.70425) is worth 4.8 at 180s; 5-piece Grovekeeper Ferocity would add 5.9 (measured before the 5a and 1b rounds)",
     "Unverified: Shred's flat bonus, AP on Rip and Ferocious Bite, Rend and Tear's scope",
-    "Keeping Rake up costs 33; Rip at 5 CP ties",
-    "Only one +2% crit elixir by standard; Grizzly in place of Ferocity would add 4.9",
-    "Tiger's Fury is removed in Forever (replaced by Shifting Power); it was worth 24.9 at 180 s",
-    "The cat's swing spreads 20% either side of the weapon's DPS (the server's range isn't visible)",
-    "Windfury Totem and a second shaman's Grace of Air in the melee group (standards 25: they stack since client 70425); Dense Weightstone on the mace is +4.9 (Elemental Sharpening Stone left out: its plans only drop in Molten Core)"
+    "Keeping Rake up costs 33 DPS. Rip at 5 CP ties.",
+    "One +2% crit elixir. Grizzly instead of Ferocity would add 4.9.",
+    "Tiger's Fury is gone in Forever. It was worth 24.9.",
+    "Cat swing damage spreads 20% either side (the server's range is unknown).",
+    "Windfury Totem and a second shaman's Grace of Air in the melee group. Dense Weightstone adds 4.9. Elemental Sharpening Stone is left out (Molten Core plans)."
   ],
-  "notes": "Request from mksettings -spec feral (melee group: Strength of Earth and Windfury Totem, all blessings, own Leader of the Pack; latency 100 ms). Duration 180 s, durationVariation 20. Forever lets the cat drink in form, so Mighty Rage Potion and Thistle Tea are used. No edits needed."
+  "notes": "Request from mksettings -spec feral (melee group: Strength of Earth and Windfury Totem, all blessings, own Leader of the Pack; latency 100 ms). Duration 180s, durationVariation 20. Forever lets the cat drink in form, so Mighty Rage Potion and Thistle Tea are used. No edits needed."
 }

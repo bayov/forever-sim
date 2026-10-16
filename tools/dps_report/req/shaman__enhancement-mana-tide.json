@@ -94,7 +94,7 @@
               "blessingOfWisdom": "TristateEffectImproved",
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "02-055030031005112151-053051001001",
+            "talentsString": "03-055030031005112051-053051001001",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Leatherworking",
@@ -118,7 +118,6 @@
               ],
               "priorityList": [
                 {
-                  "notes": "Strength of Earth Totem whenever it is down, with 20 sec or more of the fight left.",
                   "action": {
                     "condition": {
                       "and": {
@@ -158,7 +157,7 @@
                   }
                 },
                 {
-                  "notes": "Windfury Totem whenever it is down, with 20 sec or more of the fight left. Windfury Weapon turns its buff off for the shaman.",
+                  "notes": "Windfury Weapon turns its buff off for the shaman.",
                   "action": {
                     "condition": {
                       "and": {
@@ -198,7 +197,7 @@
                   }
                 },
                 {
-                  "notes": "Mana Tide Totem once the mana runs low. Without the talent ignore the warning on this line.",
+                  "notes": "Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -215,13 +214,12 @@
                     },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 17359
+                        "spellId": 1325256
                       }
                     }
                   }
                 },
                 {
-                  "notes": "Mana Spring Totem whenever it is down and Mana Tide Totem is not up, with 20 sec or more of the fight left.",
                   "action": {
                     "condition": {
                       "and": {
@@ -242,7 +240,7 @@
                               "val": {
                                 "auraIsActive": {
                                   "auraId": {
-                                    "spellId": 17359
+                                    "spellId": 1325256
                                   }
                                 }
                               }
@@ -272,7 +270,6 @@
                   }
                 },
                 {
-                  "notes": "Magma Totem whenever it is down, unless the fight is about to end.",
                   "action": {
                     "condition": {
                       "and": {
@@ -312,7 +309,7 @@
                   }
                 },
                 {
-                  "notes": "Rage of the Farseer anchors the burst window. Without the talent ignore the warning on this line.",
+                  "notes": "Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -386,7 +383,7 @@
                   }
                 },
                 {
-                  "notes": "Orc. Blood Fury waits for Rage of the Farseer when the wait costs no use. Other races can ignore the warning on this line.",
+                  "notes": "Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -460,7 +457,7 @@
                   }
                 },
                 {
-                  "notes": "Troll. Berserking waits for Rage of the Farseer when the wait costs no use. Other races can ignore the warning on this line.",
+                  "notes": "Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -536,13 +533,13 @@
                   }
                 },
                 {
-                  "notes": "Anything not listed above (Sapper, trinkets, potions).",
+                  "notes": "Sapper, trinkets and potions.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }
                 },
                 {
-                  "notes": "Stormstrike on cooldown. Without the talent ignore the warning on this line.",
+                  "notes": "Without the talent ignore the warning on this line.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -552,7 +549,7 @@
                   }
                 },
                 {
-                  "notes": "Lightning Bolt once Maelstrom Weapon has stacked enough to make it quick. Without the talent ignore the warning on this line.",
+                  "notes": "Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -579,7 +576,7 @@
                   }
                 },
                 {
-                  "notes": "Fire Nova on cooldown. It goes off around the fire totem, so it needs one in place.",
+                  "notes": "Goes off around the fire totem, so it needs one down.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -602,7 +599,6 @@
                   }
                 },
                 {
-                  "notes": "Flame Shock when its DoT is down.",
                   "action": {
                     "condition": {
                       "and": {
@@ -629,7 +625,7 @@
                   }
                 },
                 {
-                  "notes": "Earth Shock otherwise, unless Flame Shock is about to run out.",
+                  
                   "action": {
                     "condition": {
                       "and": {
@@ -662,7 +658,7 @@
                   }
                 },
                 {
-                  "notes": "Lightning Shield when it is down and nothing above is ready. Raid damage that hits the shaman fires its orbs at the target, three to a cast, at most one every 3.5 sec.",
+                  "notes": "Raid damage on the shaman fires its orbs at the boss (3 per cast, at most one per 3.5s).",
                   "action": {
                     "condition": {
                       "not": {

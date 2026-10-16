@@ -23,9 +23,9 @@
     "stderr": 0.24,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 180 s, seed 1"
+    "note": "verify.py, 180s, seed 1"
   },
-  "summary": "A deep Holy build to Light's Vigil (Holy Shock, Holy Power 5, Consecrated Ground, Divine Precision) with Retribution to Sacred Arbiter, on Seal of Righteousness with no twisting. It is the Holy Shock playstyle, 2.7% ahead of twist at 180 s and 4.0% at 120 s, 1.0% behind at 300 s (client 70425).",
+  "summary": "Deep Holy to Light's Vigil with Holy Shock and Seal of Righteousness, no twisting.",
   "keyTalents": [
     "Holy Shock",
     "Light's Vigil",
@@ -37,7 +37,7 @@
     "Sacred Arbiter"
   ],
   "rotation": [
-    "Pre-pull: Seal of Righteousness at -3 s, Light's Vigil at -1.5 s",
+    "Pre-pull: Seal of Righteousness at -3s, Light's Vigil at -1.5s",
     "Consecration on cooldown, down to the last point of mana",
     "Judgement on cooldown on Seal of Righteousness; re-seal Righteousness whenever it is down (no twisting)",
     "Holy Strike on cooldown",
@@ -67,15 +67,13 @@
     "Demonic Rune"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 spell power and 18 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Runs short of mana: 4.0% ahead of twist at 120 s (867.1 / 833.4), 2.7% at 180 s, 1.0% behind at 300 s",
-    "Divine Precision's hit does not cover Judgement of Righteousness",
-    "Holy Shock is worth 148 DPS and Light's Vigil about 91 (measured before client 70425)",
-    "A missed Holy Shock consumes the Vigil with no detonation or refund (small at about 1% Holy miss)",
-    "Human is best since client 70425 (Ruthless, 2% crit with any weapon): about 2 to 3 ahead of Undead (Touch of the Grave) at 180 s",
-    "Holy Strike's flat part inside the 50% weapon percent comes from client data, not yet confirmed on the beta",
-    "High Holy Strike and Consecration ranks may be stale: holding them to their level 30 trend would cost about 1.2%",
-    "Seal of Righteousness adds 12% of spell power a hit with a two-hander, once, per the 70425 tooltip (the proc spell itself carries 0): the SoD-style double count (2 x 11%) would be about 46-51 DPS higher, the proc spell's 0 about 53-59 lower"
+    "Runs short of mana: 4.0% ahead of twist at 120s, 2.7% at 180s, 1.0% behind at 300s.",
+    "Divine Precision's hit doesn't cover Judgement of Righteousness.",
+    "Holy Shock is worth 148 DPS and Light's Vigil about 91 (before client 70425).",
+    "A missed Holy Shock wastes the Vigil (about 1% Holy miss).",
+    "Holy Strike's flat bonus is inside the weapon percent (client data). Unconfirmed on the beta.",
+    "High Holy Strike and Consecration ranks may be out of date (about 1.2% at stake).",
+    "Seal of Righteousness adds 12% of spell power a hit with a two-hander, once (70425 tooltip). Counted twice it would be 46-51 DPS higher. At the proc spell's 0 it would be 53-59 lower."
   ],
   "notes": "Preset options are primarySeal Righteousness, as mksettings writes."
 }

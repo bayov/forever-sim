@@ -400,6 +400,11 @@ const ACTION_KIND_ICONS: Record<string, string> = {
 	catOptimalRotationAction: 'fa-gears',
 	customRotation: 'fa-gears',
 	castPaladinPrimarySeal: 'fa-certificate',
+	levelingLookForMob: 'fa-binoculars',
+	levelingWalkToPullTarget: 'fa-person-walking',
+	levelingRest: 'fa-utensils',
+	levelingBandage: 'fa-bandage',
+	shamanWalkToTotem: 'fa-monument',
 };
 
 class HidePicker extends Input<Player<any>, boolean> {

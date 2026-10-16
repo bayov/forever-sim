@@ -1069,15 +1069,17 @@ message LevelingOptions {
 	// another mob while fighting (Look For Mob), and how to pull it.
 	int32 max_pack_size = 7;
 
-	// Seconds to find the next mob out of combat (default 5 to 11), and to find one to
-	// chain pull while in combat (default 2 to 4). Searching out of combat we run around,
-	// so we can't hard cast. Searching in combat we run with the mobs on us following, the
-	// share of the time chain_search_moving says (default 0.75).
+	// Seconds to find the next mob out of combat (default 2 to 10), and to find one to
+	// chain pull while in combat. Searching out of combat we run around, so we can't hard
+	// cast. In combat the rotation picks (Look For Mob): run around with the mobs on us
+	// following (default 2 to 8), or stand and keep fighting while we look, which takes
+	// longer because we only see the mobs around us (default 4 to 16).
 	double search_min = 8;
 	double search_max = 9;
 	double chain_search_min = 10;
 	double chain_search_max = 11;
-	optional double chain_search_moving = 19;
+	double chain_search_standing_min = 20;
+	double chain_search_standing_max = 21;
 	// How far the mob we find stands, in whole yards between these (default 10 to 40). It
 	// waits there until we pull it: a harmful spell that lands on it, or walking into melee
 	// range of it (a face pull). Then it runs to us at its level's speed.
@@ -1088,6 +1090,9 @@ message LevelingOptions {
 	// mobs a pull takes (Look For Mob). These were options once.
 	reserved 6, 13, 14, 15;
 	reserved "pack_size", "eat_below", "drink_below", "no_bandages";
+	// Whether a chain search runs is the rotation's (Look For Mob's stand) since 2026-10-16.
+	reserved 19;
+	reserved "chain_search_moving";
 
 	// Seconds of corpse run after a death (default 180), and the share of health and mana
 	// we come back with (default 0.5).

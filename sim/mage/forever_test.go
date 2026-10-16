@@ -72,42 +72,183 @@ func TestMageHeatingUp(t *testing.T) {
 	}
 }
 
-// Each Arcane Blast stack is 10% more damage on the other spells and 175% more mana on Arcane
-// Blast. Any other damage spell ends them.
+// Since 1.60.1.70425 every Fire Blast that deals damage adds a Heating Up stack, and a crit adds
+// a second. A Pyroblast made instant by Presence of Mind leaves the stacks alone.
+func TestMageHeatingUpFireBlastAndPresenceOfMind(t *testing.T) {
+	// Arcane to Presence of Mind, Fire to Heating Up.
+	sim, mage := newMageSim(t, "0502225003100001-235500001301")
+	fireBlast := topRank(t, "Fire Blast", mage.FireBlast)
+	for i := 0; i < 8; i++ {
+		mage.HeatingUpAura.Deactivate(sim)
+		fireBlast.CD.Reset()
+		mage.SetGCDTimer(sim, sim.CurrentTime)
+		crits := fireBlast.SpellMetrics[mage.CurrentTarget.UnitIndex].Crits
+		hits := fireBlast.SpellMetrics[mage.CurrentTarget.UnitIndex].Hits
+		if !fireBlast.Cast(sim, mage.CurrentTarget) {
+			t.Fatalf("Fire Blast %d didn't cast (mana %.0f)", i, mage.CurrentMana())
+		}
+		crit := fireBlast.SpellMetrics[mage.CurrentTarget.UnitIndex].Crits > crits
+		hit := fireBlast.SpellMetrics[mage.CurrentTarget.UnitIndex].Hits > hits
+		want := int32(0)
+		if crit {
+			want = 2
+		} else if hit {
+			want = 1
+		}
+		if got := mage.HeatingUpAura.GetStacks(); got != want {
+			t.Errorf("Fire Blast (crit %v, hit %v) left %d Heating Up stacks, want %d", crit, hit, got, want)
+		}
+	}
+
+	pyroblast := topRank(t, "Pyroblast", mage.Pyroblast)
+	mage.HeatingUpAura.Activate(sim)
+	mage.HeatingUpAura.SetStacks(sim, 2)
+	mage.PresenceOfMindAura.Activate(sim)
+	mage.SetGCDTimer(sim, sim.CurrentTime)
+	if !pyroblast.Cast(sim, mage.CurrentTarget) {
+		t.Fatalf("Pyroblast didn't cast")
+	}
+	if mage.PresenceOfMindAura.IsActive() {
+		t.Errorf("Presence of Mind is still up after the Pyroblast")
+	}
+	if got := mage.HeatingUpAura.GetStacks(); got != 2 {
+		t.Errorf("an instant Pyroblast with Presence of Mind left %d Heating Up stacks, want 2", got)
+	}
+}
+
+// Since 1.60.1.70425 each Arcane Blast stack is 15% of Intellect as spell damage and 175% more
+// mana on Arcane Blast. The buff lasts 15 sec from the first stack, and other spells don't end it.
 func TestMageArcaneBlastStacks(t *testing.T) {
-	// Arcane to Arcane Blast and Missile Barrage.
-	sim, mage := newMageSim(t, "05022500110001")
+	// Arcane to Arcane Wrath, with Missile Barrage 2.
+	sim, mage := newMageSim(t, "050200500310001")
 	arcaneBlast := topRank(t, "Arcane Blast", mage.ArcaneBlast)
 	fireball := topRank(t, "Fireball", mage.Fireball)
+	if got := arcaneBlast.CastTime(); got != 1500*time.Millisecond {
+		t.Errorf("Arcane Blast casts in %s, want 1.5s", got)
+	}
 	baseCost := arcaneBlast.Cost.GetCurrentCost()
 	if want := 0.15 * mage.BaseMana; math.Abs(baseCost-want) > 1e-6 {
 		t.Fatalf("Arcane Blast costs %.1f, want %.1f (15%% of base mana)", baseCost, want)
 	}
+	baseSpellPower := mage.GetStat(stats.SpellPower)
 	baseMultiplier := fireball.DamageMultiplierAdditive
-	mage.ArcaneBlastAura.Activate(sim)
-	mage.ArcaneBlastAura.SetStacks(sim, 3)
+
+	cast := func(spell *core.Spell) {
+		mage.SetGCDTimer(sim, sim.CurrentTime)
+		if !spell.Cast(sim, mage.CurrentTarget) {
+			t.Fatalf("%s didn't cast", spell.ActionID)
+		}
+		for !sim.Step() && mage.Hardcast.Expires > sim.CurrentTime {
+		}
+	}
+	for i := 0; i < 3; i++ {
+		cast(arcaneBlast)
+	}
+	if got := mage.ArcaneBlastAura.GetStacks(); got != 3 {
+		t.Fatalf("%d Arcane Blast stacks after 3 casts, want 3", got)
+	}
 	if got, want := arcaneBlast.Cost.GetCurrentCost(), baseCost*(1+3*1.75); math.Abs(got-want) > 1e-6 {
 		t.Errorf("Arcane Blast costs %.1f at 3 stacks, want %.1f", got, want)
 	}
-	if got := fireball.DamageMultiplierAdditive - baseMultiplier; math.Abs(got-0.3) > 1e-9 {
-		t.Errorf("Fireball gets %.2f more damage at 3 stacks, want 0.30", got)
-	}
-	if got := arcaneBlast.DamageMultiplierAdditive; got != 1 {
-		t.Errorf("Arcane Blast's own multiplier is %.2f, want 1", got)
-	}
-
-	mage.SetGCDTimer(sim, sim.CurrentTime)
-	if !fireball.Cast(sim, mage.CurrentTarget) {
-		t.Fatalf("Fireball didn't cast")
-	}
-	for !sim.Step() && mage.Hardcast.Expires > sim.CurrentTime {
-	}
-	if mage.ArcaneBlastAura.IsActive() {
-		t.Errorf("the Arcane Blast stacks are still up after a Fireball")
+	if got, want := mage.GetStat(stats.SpellPower)-baseSpellPower, 0.45*mage.GetStat(stats.Intellect); math.Abs(got-want) > 1e-6 {
+		t.Errorf("3 stacks give %.2f spell damage, want %.2f (45%% of Intellect)", got, want)
 	}
 	if got := fireball.DamageMultiplierAdditive; math.Abs(got-baseMultiplier) > 1e-9 {
-		t.Errorf("Fireball's multiplier is %.2f after the stacks ended, want %.2f", got, baseMultiplier)
+		t.Errorf("Fireball's multiplier is %.2f at 3 stacks, want %.2f", got, baseMultiplier)
 	}
+	// The first stack came 1.5 sec into the first cast, and later stacks don't refresh it.
+	if got, want := mage.ArcaneBlastAura.RemainingDuration(sim), 15*time.Second-3*time.Second; got != want {
+		t.Errorf("the stacks have %s left, want %s", got, want)
+	}
+
+	cast(fireball)
+	if got := mage.ArcaneBlastAura.GetStacks(); got != 3 {
+		t.Errorf("%d Arcane Blast stacks after a Fireball, want 3", got)
+	}
+	// 15 sec after the first stack, which came at 1.5 sec.
+	sim.AddPendingAction(&core.PendingAction{NextActionAt: 16500 * time.Millisecond, OnAction: func(*core.Simulation) {}})
+	for sim.CurrentTime < 16500*time.Millisecond && !sim.Step() {
+	}
+	if mage.ArcaneBlastAura.IsActive() {
+		t.Errorf("the Arcane Blast stacks are still up %s in", sim.CurrentTime)
+	}
+	if got := mage.GetStat(stats.SpellPower); math.Abs(got-baseSpellPower) > 1e-6 {
+		t.Errorf("spell damage is %.2f after the stacks ended, want %.2f", got, baseSpellPower)
+	}
+}
+
+// Arcane Wrath casts in 3.5 sec, has a 6 sec cooldown and gets 5% of maximum mana as spell damage
+// at a full coefficient.
+func TestMageArcaneWrath(t *testing.T) {
+	sim, mage := newMageSim(t, "050200500310001")
+	arcaneWrath := topRank(t, "Arcane Wrath", mage.ArcaneWrath)
+	if got := arcaneWrath.CastTime(); got != 3500*time.Millisecond {
+		t.Errorf("Arcane Wrath casts in %s, want 3.5s", got)
+	}
+	if got := arcaneWrath.CD.Duration; got != 6*time.Second {
+		t.Errorf("Arcane Wrath cooldown %s, want 6s", got)
+	}
+	if got := arcaneWrath.Cost.GetCurrentCost(); got != 395 {
+		t.Errorf("Arcane Wrath costs %.0f, want 395", got)
+	}
+	mage.SetGCDTimer(sim, sim.CurrentTime)
+	if !arcaneWrath.Cast(sim, mage.CurrentTarget) {
+		t.Fatalf("Arcane Wrath didn't cast")
+	}
+	for !sim.Step() && sim.CurrentTime < 5*time.Second {
+	}
+	metrics := arcaneWrath.SpellMetrics[mage.CurrentTarget.UnitIndex]
+	if metrics.Casts != 1 {
+		t.Fatalf("%d Arcane Wrath casts, want 1", metrics.Casts)
+	}
+	// No gear: the spell damage is all from the mana, and there are no damage modifiers.
+	low := 405.67 + 0.05*mage.MaxMana()
+	high := 496.33 + 0.05*mage.MaxMana()
+	damage := metrics.TotalDamage
+	if metrics.Crits > 0 {
+		damage /= 1.5 + arcaneWrath.CritDamageBonus
+	}
+	if metrics.Hits+metrics.Crits == 1 && (damage < low-1e-6 || damage > high+1e-6) {
+		t.Errorf("Arcane Wrath hit for %.1f, want %.1f to %.1f", damage, low, high)
+	}
+}
+
+// Fire Power: 1% more Fire damage per point for each of the mage's own Fire effects on the
+// target, at most 4. Frostfire Bolt's DoT is two schools and doesn't count.
+func TestMageFirePower(t *testing.T) {
+	// Fire to Fire Power 3, with Improved Scorch 3.
+	sim, mage := newMageSim(t, "-2355000013010003")
+	target := mage.CurrentTarget
+	at := mage.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand]
+	fireball := topRank(t, "Fireball", mage.Fireball)
+	frostbolt := topRank(t, "Frostbolt", mage.Frostbolt)
+	pyroblast := topRank(t, "Pyroblast", mage.Pyroblast)
+	frostfireBolt := topRank(t, "Frostfire Bolt", mage.FrostfireBolt)
+
+	check := func(what string, spell *core.Spell, want float64) {
+		t.Helper()
+		if got := spell.TargetDamageMultiplier(at, false); math.Abs(got-want) > 1e-9 {
+			t.Errorf("%s: %s takes %.4f, want %.4f", what, spell.ActionID, got, want)
+		}
+	}
+	check("no effects", fireball, 1)
+	frostfireBolt.Dot(target).Activate(sim)
+	check("Frostfire Bolt DoT", fireball, 1)
+	mage.Ignite.Dot(target).Activate(sim)
+	check("Ignite", fireball, 1.03)
+	fireball.Dot(target).Activate(sim)
+	check("Ignite and Fireball", fireball, 1.06)
+	check("Ignite and Fireball", frostbolt, 1)
+	check("Ignite and Fireball", mage.Ignite, 1)
+	aura := mage.ImprovedScorchAuras.Get(target)
+	aura.Activate(sim)
+	aura.SetStacks(sim, 5)
+	check("three effects", fireball, 1.15*1.09)
+	pyroblast.Dot(target).Activate(sim)
+	topRank(t, "Flamestrike", mage.Flamestrike).AOEDot().Activate(sim)
+	check("five effects", fireball, 1.15*1.12)
+	check("five effects", frostfireBolt, 1.15*1.12)
+	check("five effects", mage.Ignite, 1)
 }
 
 // Fire Vulnerability counts only for the mage's own Fire damage, 3% a stack.
@@ -132,34 +273,24 @@ func TestMageFireVulnerability(t *testing.T) {
 	}
 }
 
-// Winter's Chill stacks up to its rank, and gives only Frostbolt and Ice Lance its crit.
-// Shatter's crit comes with Fingers of Frost.
-func TestMageWintersChillAndShatter(t *testing.T) {
+// Shatter's crit comes with Fingers of Frost, on every spell. Winter's Chill gives no crit since
+// 1.60.1.70425.
+func TestMageShatter(t *testing.T) {
 	// Frost to Winter's Chill 2, with Shatter 3 and Fingers of Frost 2.
 	sim, mage := newMageSim(t, "--055500033100130122")
 	target := mage.CurrentTarget
-	aura := mage.WintersChillAuras.Get(target)
-	if aura.MaxStacks != 2 {
-		t.Fatalf("Winter's Chill stacks to %d at rank 2, want 2", aura.MaxStacks)
-	}
-	aura.Activate(sim)
-	aura.SetStacks(sim, 2)
-
 	frostbolt := topRank(t, "Frostbolt", mage.Frostbolt)
 	iceLance := topRank(t, "Ice Lance", mage.IceLance)
 	blizzard := topRank(t, "Blizzard", mage.Blizzard)
 	rating := float64(core.SpellCritRatingPerCritChance)
-	if got := mage.personalCritRating(frostbolt, target); got != 4*rating {
-		t.Errorf("Frostbolt gets %.1f crit rating from Winter's Chill, want %.1f", got, 4*rating)
-	}
-	if got := mage.personalCritRating(blizzard, target); got != 0 {
-		t.Errorf("Blizzard gets %.1f crit rating from Winter's Chill, want 0", got)
+	if got := mage.personalCritRating(frostbolt, target); got != 0 {
+		t.Errorf("Frostbolt gets %.1f crit rating without Fingers of Frost, want 0", got)
 	}
 
 	mage.FingersOfFrostAura.Activate(sim)
 	mage.FingersOfFrostAura.SetStacks(sim, 2)
-	if got := mage.personalCritRating(iceLance, target); got != 54*rating {
-		t.Errorf("Ice Lance gets %.1f crit rating with Fingers of Frost, want %.1f", got, 54*rating)
+	if got := mage.personalCritRating(iceLance, target); got != 50*rating {
+		t.Errorf("Ice Lance gets %.1f crit rating with Fingers of Frost, want %.1f", got, 50*rating)
 	}
 	if got := mage.personalCritRating(blizzard, target); got != 50*rating {
 		t.Errorf("Blizzard gets %.1f crit rating with Fingers of Frost, want %.1f", got, 50*rating)
@@ -264,4 +395,28 @@ func mageStat(player *proto.Player, stat stats.Stat) float64 {
 	}, simsignals.CreateSignals())
 	sim.Reset()
 	return sim.Raid.Parties[0].Players[0].GetCharacter().GetStat(stat)
+}
+
+// Pushback protection from the client masks: Burning Soul on Fireball, Scorch, Pyroblast,
+// Flamestrike and Frostfire Bolt, Improved Channeling on Arcane Missiles, Arcane Blast and
+// Arcane Wrath.
+func TestMagePushbackProtection(t *testing.T) {
+	// Improved Channeling 5 with Arcane Wrath, and Burning Soul 3.
+	_, mage := newMageSim(t, "055200500310001-00000030")
+	for _, c := range []struct {
+		name  string
+		spell *core.Spell
+		want  float64
+	}{
+		{"Arcane Missiles", topRank(t, "Arcane Missiles", mage.ArcaneMissiles), 1.0},
+		{"Arcane Blast", topRank(t, "Arcane Blast", mage.ArcaneBlast), 0.70},
+		{"Arcane Wrath", topRank(t, "Arcane Wrath", mage.ArcaneWrath), 0.70},
+		{"Fireball", topRank(t, "Fireball", mage.Fireball), 0.70},
+		{"Frostfire Bolt", topRank(t, "Frostfire Bolt", mage.FrostfireBolt), 0.70},
+		{"Frostbolt", topRank(t, "Frostbolt", mage.Frostbolt), 0},
+	} {
+		if math.Abs(c.spell.PushbackReduction-c.want) > 1e-9 {
+			t.Errorf("%s ignores pushback %.2f of the time, want %.2f", c.name, c.spell.PushbackReduction, c.want)
+		}
+	}
 }

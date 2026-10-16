@@ -14,6 +14,7 @@ the better (no setting uses it now: the Frost and Frostfire presets cast Ice Lan
 no_ice_lance edit (Ice Lance at the client's coefficient, 0) runs the preset rotation and the build's rotation that never
 casts Ice Lance (asm_apls/<id>.no_ice_lance.apl.json, the Level 60 APL before the presets took Ice Lance up), and keeps
 the better. A setting with the raid_hits=N edit sets the encounter's raid damage hits a minute (raidDamageHitsPerMinute) to N.
+A setting with the no_weapon_oil edit takes the Wizard Oil off the warlock's weapon (the stone stays).
 Results append to asm/results.jsonl keyed (build, combo, secs, rot), so a rerun only does what is missing.
 """
 import copy, itertools, json, math, os, random, subprocess, sys, tempfile, threading
@@ -55,6 +56,8 @@ def request(bid, combo, rot):
             pl.setdefault('mage', {}).setdefault('options', {})['staffImbue'] = STAFF_IMBUE[bid]
         if st['edit'] == 'no_staff_imbue':  # the presets carry the scroll; this setting takes it off
             pl.get('mage', {}).get('options', {}).pop('staffImbue', None)
+        if st['edit'] == 'no_weapon_oil':  # the stone alone: no oil on the warlock's weapon
+            pl.get('consumes', {}).pop('mainHandImbue', None)
         if (st['edit'] or '').startswith('raid_hits='):  # the encounter's raid damage hits a minute
             req['encounter']['raidDamageHitsPerMinute'] = float(st['edit'].split('=')[1])
         if st['edit'] == 'no_ice_lance' and rot == 'noil':
@@ -102,7 +105,7 @@ def rots(combo):
 
 
 def tasks(bid):
-    ks = keys_for(bid)
+    ks = [k for k in keys_for(bid) if nondefault(k)]  # one-value assumptions have nothing to vary
     if not ks:
         return
     yield (bid, (), 'base')

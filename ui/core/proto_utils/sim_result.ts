@@ -590,9 +590,13 @@ export class EncounterMetrics {
 	}
 
 	static async makeNew(resultData: SimResultData, encounter: EncounterProto, metrics: EncounterMetricsProto, logs: Array<SimLog>): Promise<EncounterMetrics> {
-		const numTargets = Math.min(encounter.targets.length, metrics.targets.length);
+		// A leveling session's targets are its pool of mobs, which the sim makes from the session's
+		// options, so the request has none of them. Each one gets the metrics anyway.
+		const numTargets = encounter.leveling ? metrics.targets.length : Math.min(encounter.targets.length, metrics.targets.length);
 		const targets = await Promise.all(
-			[...new Array(numTargets).keys()].map(i => UnitMetrics.makeNewTarget(resultData, encounter.targets[i], metrics.targets[i], i, logs)),
+			[...new Array(numTargets).keys()].map(i =>
+				UnitMetrics.makeNewTarget(resultData, encounter.targets[i] ?? TargetProto.create(), metrics.targets[i], i, logs),
+			),
 		);
 
 		return new EncounterMetrics(encounter, metrics, targets);

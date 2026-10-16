@@ -18,6 +18,7 @@ func (shaman *Shaman) ApplyTalents() {
 	shaman.applyElementalDevastation()
 	shaman.applyElementalFocus()
 	shaman.applyElementalFury()
+	shaman.registerElementalMasteryCD()
 
 	// Enhancement Talents
 	shaman.applyFlurry()
@@ -200,6 +201,10 @@ func (shaman *Shaman) improvedFireNovaBonus() float64 {
 
 func (shaman *Shaman) improvedFireNovaCooldownReduction() time.Duration {
 	return time.Second * 2 * time.Duration(shaman.Talents.ImprovedFireNova)
+}
+
+func (shaman *Shaman) improvedFireNovaMagmaDuration() time.Duration {
+	return time.Second * 10 * time.Duration(shaman.Talents.ImprovedFireNova)
 }
 
 func (shaman *Shaman) applyElementalFocus() {
@@ -618,6 +623,75 @@ func (shaman *Shaman) registerRageOfTheFarseerCD() {
 
 	shaman.AddMajorCooldown(core.MajorCooldown{
 		Spell: rageSpell,
+		Type:  core.CooldownTypeDPS,
+	})
+}
+
+// Elemental Mastery (16166) is the Elemental tree's 30-point talent since client 1.60.1.70425
+// (it needs Lava Burst): for 15 sec Lightning Bolt and Lava Burst cast 0.5 sec faster and Chain
+// Lightning has no cooldown. 3 min cooldown, off the global cooldown. The cast time comes off
+// before haste, like the client's flat cast time modifier.
+func (shaman *Shaman) registerElementalMasteryCD() {
+	if !shaman.Talents.ElementalMastery {
+		return
+	}
+
+	actionID := core.ActionID{SpellID: 16166}
+	reduction := time.Millisecond * 500
+
+	var fasterSpells, chainLightnings []*core.Spell
+	shaman.OnSpellRegistered(func(spell *core.Spell) {
+		if !spell.Flags.Matches(core.SpellFlagAPL) {
+			return
+		}
+		switch spell.SpellCode {
+		case SpellCode_ShamanLightningBolt, SpellCode_ShamanLavaBurst:
+			fasterSpells = append(fasterSpells, spell)
+		case SpellCode_ShamanChainLightning:
+			chainLightnings = append(chainLightnings, spell)
+		}
+	})
+
+	var chainLightningCooldown time.Duration
+	buffAura := shaman.RegisterAura(core.Aura{
+		Label:    "Elemental Mastery",
+		ActionID: actionID,
+		Duration: time.Second * 15,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			for _, spell := range fasterSpells {
+				spell.DefaultCast.CastTime -= reduction
+			}
+			for _, spell := range chainLightnings {
+				chainLightningCooldown = spell.CD.Duration
+				spell.CD.Duration = 0
+			}
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			for _, spell := range fasterSpells {
+				spell.DefaultCast.CastTime += reduction
+			}
+			for _, spell := range chainLightnings {
+				spell.CD.Duration = chainLightningCooldown
+			}
+		},
+	})
+
+	masterySpell := shaman.RegisterSpell(core.SpellConfig{
+		ActionID: actionID,
+		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagAPL,
+		Cast: core.CastConfig{
+			CD: core.Cooldown{
+				Timer:    shaman.NewTimer(),
+				Duration: time.Minute * 3,
+			},
+		},
+		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+			buffAura.Activate(sim)
+		},
+	})
+
+	shaman.AddMajorCooldown(core.MajorCooldown{
+		Spell: masterySpell,
 		Type:  core.CooldownTypeDPS,
 	})
 }
