@@ -36,6 +36,11 @@ PARTS = {
 PRIEST_ONLY = {'chastise', 'starshards', 'darksacrifice'}
 TARGETS = {'beast': 'MobTypeBeast', 'elemental': 'MobTypeElemental'}
 CLASS_TARGETS = {'Priest': {'humanoid': 'MobTypeHumanoid'}}  # a racial that cares about Humanoids (Chastise)
+# The races with a racial that depends on the target's creature type. Every other race fights a beast, elemental or
+# humanoid boss exactly as it fights the generic one (the last full run: 378 of 476 target sims bit-identical to the
+# race sweep), so those rows copy the sweep's result instead of simming. RACES_ALL_TARGETS=1 sims them all again.
+TARGET_RACES = {'beast': {'Dwarf', 'Troll'}, 'elemental': {'SkyborneHighOrder', 'SkyborneWindshaper'}, 'humanoid': {'Dwarf'}}
+ALL_TARGETS = os.environ.get('RACES_ALL_TARGETS') == '1'
 
 
 def player(req):
@@ -68,6 +73,18 @@ def sim(req, race, off=None, mob=None):
     return round(p['avg'], 3), round(p['stdev'] / math.sqrt(ITERS), 3)
 
 
+def sweep_result(bid, race):
+    """The race sweep's (dps, se) for this race from out/<bid>.json (run_build.py), or None."""
+    try:
+        o = json.load(open(os.path.join(D, 'out', bid + '.json')))
+    except (OSError, ValueError):
+        return None
+    if os.path.getmtime(os.path.join(D, 'out', bid + '.json')) < os.path.getmtime(os.path.join(D, 'req', bid + '.json')):
+        return None  # simmed before the request last changed
+    r = next((r for r in o.get('races', []) if r['race'] == race), None)
+    return (round(r['dps'], 3), round(r['se'], 3)) if r else None
+
+
 def tasks(bid):
     req = json.load(open(os.path.join(D, 'req', bid + '.json')))
     meta = json.load(open(os.path.join(D, 'req', bid + '.meta.json')))
@@ -79,7 +96,11 @@ def tasks(bid):
             for p in ps:
                 yield (bid, race, 'off:' + p), lambda race=race, p=p: sim(req, race, off=p)
         for t, mob in {**TARGETS, **CLASS_TARGETS.get(cls, {})}.items():
-            yield (bid, race, t), lambda race=race, mob=mob: sim(req, race, mob=mob)
+            same = None if ALL_TARGETS or race in TARGET_RACES[t] else sweep_result(bid, race)
+            if same:
+                yield (bid, race, t), lambda same=same: same
+            else:
+                yield (bid, race, t), lambda race=race, mob=mob: sim(req, race, mob=mob)
 
 
 def main(ids):

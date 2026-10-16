@@ -16,6 +16,9 @@ casts Ice Lance (asm_apls/<id>.no_ice_lance.apl.json, the Level 60 APL before th
 the better. A setting with the raid_hits=N edit sets the encounter's raid damage hits a minute (raidDamageHitsPerMinute) to N.
 A setting with the no_weapon_oil edit takes the Wizard Oil off the warlock's weapon (the stone stays).
 Results append to asm/results.jsonl keyed (build, combo, secs, rot), so a rerun only does what is missing.
+The base rows are the same sims run_build.py ran (seed 1: the main 180 s run at 20k, the 120 and 300 s lengths at 5k,
+and with no DASH_ASSUME this binary is bit-identical to the plain one), so they are copied from out/<id>.json when it
+is newer than the request. ASM_REUSE_OUT=0 sims them again.
 """
 import copy, itertools, json, math, os, random, subprocess, sys, tempfile, threading
 from concurrent.futures import ThreadPoolExecutor
@@ -129,6 +132,19 @@ def tasks(bid):
             yield (bid, c, 'check')
 
 
+def base_from_out(bid):
+    """The base rows from run_build.py's out/<bid>.json, as {secs: (iters, dps, se)}, or {} when it is missing or older."""
+    path, req = os.path.join(D, 'out', bid + '.json'), os.path.join(D, 'req', bid + '.json')
+    if os.environ.get('ASM_REUSE_OUT') == '0' or not os.path.exists(path) or os.path.getmtime(path) < os.path.getmtime(req):
+        return {}
+    o = json.load(open(path))
+    rows = {180: (o['main']['iters'], o['main']['dps'], o['main']['se'])}
+    for x in o.get('lengths', []):
+        if x['secs'] in (120, 300):
+            rows[x['secs']] = (5000, x['dps'], x['se'])
+    return rows
+
+
 def main(ids):
     os.makedirs(OUT, exist_ok=True)
     done = set()
@@ -138,6 +154,13 @@ def main(ids):
             done.add((x['build'], x['combo'], x['secs'], x['rot']))
     jobs = []
     for bid in ids:
+        if keys_for(bid) and (bid, '', 180, 'preset') not in done:
+            copied = base_from_out(bid)
+            with open(RES, 'a') as fh:
+                for secs, (iters, d, se) in sorted(copied.items()):
+                    if (bid, '', secs, 'preset') not in done and iters == (20000 if secs == 180 else 5000):
+                        fh.write(json.dumps({'build': bid, 'combo': '', 'kind': 'base', 'secs': secs, 'iters': iters, 'rot': 'preset', 'dps': round(d, 3), 'se': round(se, 3)}) + '\n')
+                        done.add((bid, '', secs, 'preset'))
         for b, combo, kind in tasks(bid):
             lens = [(180, 20000)] + ([(120, 5000), (300, 5000)] if kind in ('base', 'single') else [])
             for secs, iters in lens:
