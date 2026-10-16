@@ -175,6 +175,40 @@ func TestOrcShamanWaterShieldRecast(t *testing.T) {
 	runSim(sim)
 }
 
+// TestOrcShamanWaterShieldSpellCrit checks that our damage spells' crits spend a Water Shield
+// globe since client 1.60.1.70425 ("triggers from any of the Shaman's critical spells", the 15
+// October notes; ProcTypeMask 0x262a8 -> 0x362a8 adds harmful spells). A spell that hits without
+// a crit leaves the globes alone.
+func TestOrcShamanWaterShieldSpellCrit(t *testing.T) {
+	// Water Shield.
+	sim, enh := newShamanSim(newOrcShaman(60, "--000000001", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 10)
+	aura := enh.WaterShieldAura
+	bolt := enh.RegisterSpell(core.SpellConfig{
+		ActionID:         core.ActionID{SpellID: 1},
+		SpellSchool:      core.SpellSchoolNature,
+		DefenseType:      core.DefenseTypeMagic,
+		ProcMask:         core.ProcMaskSpellDamage,
+		DamageMultiplier: 1,
+	})
+	at(sim, 1, func(sim *core.Simulation) {
+		castNow(t, sim, enh, enh.WaterShield)
+		enh.SpendMana(sim, enh.MaxMana()/2, enh.GetManaNotCastingMetrics())
+		bolt.CalcAndDealDamage(sim, enh.CurrentTarget, 10, forcedOutcome(core.OutcomeHit))
+		if got := aura.GetStacks(); got != 3 {
+			t.Errorf("after a spell hit: %d globes, want 3", got)
+		}
+		mana := enh.CurrentMana()
+		bolt.CalcAndDealDamage(sim, enh.CurrentTarget, 10, forcedOutcome(core.OutcomeCrit))
+		if got := aura.GetStacks(); got != 2 {
+			t.Errorf("after a spell crit: %d globes, want 2", got)
+		}
+		if got, want := enh.CurrentMana()-mana, 0.02*enh.MaxMana(); math.Abs(got-want) > 1e-6 {
+			t.Errorf("the spell crit's globe gave %.3f mana, want %.3f", got, want)
+		}
+	})
+	runSim(sim)
+}
+
 // TestOrcShamanManaSpring checks the mana our own Mana Spring Totem gives at level 30
 // (shaman_audit.md 7.26).
 //

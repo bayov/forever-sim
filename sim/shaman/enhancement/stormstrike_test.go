@@ -152,22 +152,28 @@ func TestOrcShamanStormstrikeMark(t *testing.T) {
 				names[earthShock] = "Earth Shock on the mark"
 				before := earthShock.SpellMetrics[enh.CurrentTarget.UnitIndex].Misses
 				earthShock.ApplyEffects(sim, enh.CurrentTarget, earthShock)
-				if earthShock.SpellMetrics[enh.CurrentTarget.UnitIndex].Misses > before {
+				missed := earthShock.SpellMetrics[enh.CurrentTarget.UnitIndex].Misses > before
+				if missed {
 					misses++
 				}
-				if mark.IsActive() {
-					t.Fatalf("Earth Shock left the mark up")
+				// Since client 1.60.1.70425 a spell that misses leaves the mark.
+				if mark.IsActive() != (marked && missed) {
+					t.Fatalf("Earth Shock (missed %v) left the mark up %v", missed, mark.IsActive())
 				}
+				mark.Deactivate(sim)
 				names[earthShock] = "Earth Shock after it"
 				earthShock.ApplyEffects(sim, enh.CurrentTarget, earthShock)
 
 				if marked {
 					mark.Activate(sim)
 				}
+				boltMisses := lightningBolt.SpellMetrics[enh.CurrentTarget.UnitIndex].Misses
 				lightningBolt.ApplyEffects(sim, enh.CurrentTarget, lightningBolt)
-				if mark.IsActive() {
-					t.Fatalf("Lightning Bolt left the mark up")
+				boltMissed := lightningBolt.SpellMetrics[enh.CurrentTarget.UnitIndex].Misses > boltMisses
+				if mark.IsActive() != (marked && boltMissed) {
+					t.Fatalf("Lightning Bolt (missed %v) left the mark up %v", boltMissed, mark.IsActive())
 				}
+				mark.Deactivate(sim)
 			}
 		})
 		if marked {
