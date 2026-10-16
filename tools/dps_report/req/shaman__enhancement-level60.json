@@ -626,33 +626,6 @@
                   }
                 },
                 {
-                  "notes": "Without the talent ignore the warning on this line.",
-                  "action": {
-                    "condition": {
-                      "cmp": {
-                        "op": "OpGe",
-                        "lhs": {
-                          "auraNumStacks": {
-                            "auraId": {
-                              "spellId": 408505
-                            }
-                          }
-                        },
-                        "rhs": {
-                          "const": {
-                            "val": "5"
-                          }
-                        }
-                      }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 15208
-                      }
-                    }
-                  }
-                },
-                {
                   "notes": "Earth Shock otherwise.",
                   "action": {
                     "condition": {
@@ -697,6 +670,33 @@
                     "castSpell": {
                       "spellId": {
                         "spellId": 10414
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Without the talent ignore the warning on this line.",
+                  "action": {
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "auraNumStacks": {
+                            "auraId": {
+                              "spellId": 408505
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "5"
+                          }
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 15208
                       }
                     }
                   }
