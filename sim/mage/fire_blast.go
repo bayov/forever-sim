@@ -64,8 +64,8 @@ func (mage *Mage) newFireBlastSpellConfig(rank int, cdTimer *core.Timer) core.Sp
 			},
 			CD: core.Cooldown{
 				Timer: cdTimer,
-				// Wake of Fire takes 1 sec off per point. Its bonus after a kill needs a target that dies.
-				Duration: cooldown - time.Second*time.Duration(mage.Talents.WakeOfFire),
+				// Improved Fire Blast takes 1 sec off per point (its range doesn't matter here).
+				Duration: cooldown - time.Second*time.Duration(mage.Talents.ImprovedFireBlast),
 			},
 		},
 

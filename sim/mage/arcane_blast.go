@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/stats"
 )
 
 const ArcaneBlastRanks = 5
@@ -11,19 +12,19 @@ const ArcaneBlastRanks = 5
 var ArcaneBlastSpellId = [ArcaneBlastRanks + 1]int32{0, 400574, 1239696, 1239697, 1239699, 1239700}
 
 // Arcane Blast is a talent under Forever (Arcane, row 3), with trainer ranks behind it. Damage at
-// each rank's cap (or at 60), its growth per level up to there and the 71.4% coefficient are the
-// Forever client's (1.60.1.70338). Every rank costs 15% of base mana and casts in 2.5 sec.
-var ArcaneBlastBaseDamage = [ArcaneBlastRanks + 1][]float64{{0}, {56.58, 65.82}, {130.54, 151.86}, {168.07, 195.53}, {268.84, 312.76}, {364.25, 423.75}}
-var ArcaneBlastScaling = [ArcaneBlastRanks + 1]core.RankScaling{{}, {28, 0.9}, {38, 1.4}, {48, 1.6}, {58, 2.1}, {}}
+// each rank's cap (or at 60), its growth per level up to there and the 42.9% coefficient are the
+// Forever client's (1.60.1.70425): base points plus 15.1% variance, so rank 5 is 218 to 254 at
+// 60. Every rank costs 15% of base mana and casts in 1.5 sec (2.5 sec and 71.4% before 70425).
+var ArcaneBlastBaseDamage = [ArcaneBlastRanks + 1][]float64{{0}, {33.28, 38.72}, {78.03, 90.77}, {100.77, 117.23}, {164.93, 191.87}, {218.18, 253.82}}
+var ArcaneBlastScaling = [ArcaneBlastRanks + 1]core.RankScaling{{}, {28, 0.5}, {38, 0.8}, {48, 1.0}, {58, 1.3}, {}}
 var ArcaneBlastLevel = [ArcaneBlastRanks + 1]int{0, 20, 30, 40, 50, 60}
 
-// Each Arcane Blast puts a stack of 400573 on the mage, up to 4, for 8 sec: 10% more damage on
-// the mage's other spells and 175% more mana on Arcane Blast per stack. Any other damage spell
-// ends it. The tooltip says "all your other spells", and so does the sim, Arcane Missiles too.
-// The client's 400573 leaves Arcane Missiles out of the damage part, and a second buff, 400586
-// (15% a stack on Arcane Missiles, from SoD), is still in the client. Which of the two Forever
-// gives Arcane Missiles is open (notes.md).
-const ArcaneBlastStackBonus = 0.10
+// Each Arcane Blast puts a stack of 400573 on the mage, up to 4: 15% of Intellect as spell
+// damage (all schools) and 175% more mana on Arcane Blast per stack. Since 70425 the buff lasts
+// 15 sec from its first stack, more stacks don't refresh it, and other spells no longer end it
+// (the client gives it no charges and no proc flags). The 10% damage bonus on other spells is gone.
+const ArcaneBlastIntellectPerStack = 0.15
+const ArcaneBlastMaxStacks = 4
 
 func (mage *Mage) registerArcaneBlastSpell() {
 	if !mage.Talents.ArcaneBlast {
@@ -32,38 +33,30 @@ func (mage *Mage) registerArcaneBlastSpell() {
 
 	mage.ArcaneBlast = make([]*core.Spell, ArcaneBlastRanks+1)
 
-	// The stack bonus goes on every other mage damage spell. Arcane Missiles takes it at the
-	// start of the channel (see arcane_missiles.go), so its missiles are left out here.
-	var boostedSpells []*core.Spell
-	mage.OnSpellRegistered(func(spell *core.Spell) {
-		if spell.Flags.Matches(SpellFlagMage) && spell.ProcMask.Matches(core.ProcMaskSpellDamage) &&
-			spell.SpellCode != SpellCode_MageArcaneBlast && spell.SpellCode != SpellCode_MageArcaneMissilesTick {
-			boostedSpells = append(boostedSpells, spell)
-		}
-	})
+	spellPowerDeps := make([]*stats.StatDependency, ArcaneBlastMaxStacks+1)
+	for stacks := 1; stacks <= ArcaneBlastMaxStacks; stacks++ {
+		spellPowerDeps[stacks] = mage.NewDynamicStatDependency(stats.Intellect, stats.SpellPower, ArcaneBlastIntellectPerStack*float64(stacks))
+	}
 
 	mage.ArcaneBlastAura = mage.RegisterAura(core.Aura{
 		Label:     "Arcane Blast",
 		ActionID:  core.ActionID{SpellID: 400573},
-		Duration:  time.Second * 8,
-		MaxStacks: 4,
+		Duration:  time.Second * 15,
+		MaxStacks: ArcaneBlastMaxStacks,
 		// The mage's own casts give the stacks, so the rotation knows them at once.
 		NoReaction: true,
 		OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-			for _, spell := range boostedSpells {
-				spell.DamageMultiplierAdditive += ArcaneBlastStackBonus * float64(newStacks-oldStacks)
+			if oldStacks > 0 {
+				mage.DisableDynamicStatDep(sim, spellPowerDeps[oldStacks])
+			}
+			if newStacks > 0 {
+				mage.EnableDynamicStatDep(sim, spellPowerDeps[newStacks])
 			}
 			for _, spell := range mage.ArcaneBlast {
 				if spell != nil {
 					spell.Cost.Multiplier += 175 * (newStacks - oldStacks)
 				}
 			}
-		},
-		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if spell.SpellCode == SpellCode_MageArcaneBlast || !spell.Flags.Matches(SpellFlagMage) || !spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
-				return
-			}
-			aura.Deactivate(sim)
 		},
 	})
 
@@ -95,27 +88,23 @@ func (mage *Mage) newArcaneBlastSpellConfig(rank int) core.SpellConfig {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD:      core.GCDDefault,
-				CastTime: time.Millisecond * 2500,
+				CastTime: time.Millisecond * 1500,
 			},
 		},
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
-		BonusCoefficient: 0.714,
+		BonusCoefficient: 0.429,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(baseDamageLow, baseDamageHigh)
 			spell.DealDamage(sim, mage.calcMageDamage(sim, target, baseDamage, spell))
-			mage.ArcaneBlastAura.Activate(sim)
+			// The stack comes after the hit, so this cast doesn't use its own spell damage.
+			// More stacks don't move the 15 sec on from the first one.
+			if !mage.ArcaneBlastAura.IsActive() {
+				mage.ArcaneBlastAura.Activate(sim)
+			}
 			mage.ArcaneBlastAura.AddStack(sim)
 		},
 	}
-}
-
-// arcaneBlastBonus is the damage bonus the Arcane Blast stacks give the mage's other spells now.
-func (mage *Mage) arcaneBlastBonus() float64 {
-	if mage.ArcaneBlastAura == nil || !mage.ArcaneBlastAura.IsActive() {
-		return 0
-	}
-	return ArcaneBlastStackBonus * float64(mage.ArcaneBlastAura.GetStacks())
 }

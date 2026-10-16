@@ -5,12 +5,12 @@ import (
 	"github.com/wowsims/classic/sim/mage"
 )
 
-// Arcane under Forever rules. Arcane Blast stacks to 4 for 10% more damage on the mage's other
-// spells per stack, but each stack makes the next Arcane Blast cost 175% more. Arcane Missiles
-// ends the stacks and takes their bonus, and Missile Barrage (40% per Arcane Blast) makes it
-// free and twice as fast. So the rotation builds stacks, then spends them on Arcane Missiles,
-// and the knobs are how many stacks, whether the missiles wait for Missile Barrage, and when
-// the mana says to stop stacking.
+// Arcane under Forever rules (client 1.60.1.70425). Arcane Blast's stacks are spell damage now:
+// 15% of Intellect each, up to 4, for 15 sec from the first stack, and each stack makes the next
+// Arcane Blast cost 175% more. Nothing ends them early. So the rotation buys a few stacks at the
+// start of each 15 sec, then casts Arcane Wrath on cooldown (3.5 sec, 6 sec cooldown, 5% of
+// maximum mana as extra spell damage), Arcane Missiles on Missile Barrage, and the filler. The
+// knobs are how many stacks, the filler and when the mana says to stop stacking.
 type mageArcane struct{}
 
 func init() {
@@ -18,59 +18,34 @@ func init() {
 }
 
 func (mageArcane) Knobs() []Knob {
-	return append(append(mageCommonKnobs(), finisherKnobs(0)...),
-		// Arcane Blast up to this many stacks before Arcane Missiles.
-		Knob{Name: "blastStacks", Default: 3, Min: 1, Max: 4, Step: 1},
-		// Arcane Missiles only with Missile Barrage up (1), or at the stack count whatever
-		// (0). With 1 and no proc, Arcane Blast goes on to 4 stacks and then waits on the filler.
-		Knob{Name: "missilesNeedBarrage", Default: 0, Min: 0, Max: 1, Step: 1},
+	return append(append(append(mageCommonKnobs(), finisherKnobs(0)...), arcaneKnobs(2, 1)...),
 		// Below this much mana Arcane Blast only goes to one stack, 0 never.
 		Knob{Name: "conserveMana", Default: 30, Min: 0, Max: 60, Step: 10},
-		// The filler once Arcane Blast is done: 1 Arcane Missiles, 2 Frostbolt, 3 Fireball.
+		// The filler: 1 Arcane Missiles, 2 Frostbolt, 3 Fireball.
 		Knob{Name: "filler", Default: 1, Min: 1, Max: 3, Step: 1},
-		// Missile Barrage procs are used right away, before more Arcane Blasts.
-		Knob{Name: "barrageFirst", Default: 1, Min: 0, Max: 1, Step: 1},
-		// With barrageFirst, the Missile Barrage missiles wait for this many stacks, 0 the stack
-		// target.
-		Knob{Name: "barrageStacks", Default: 0, Min: 0, Max: 4, Step: 1},
-		// Precast an Arcane Blast (2.5 sec cast) so it lands at the pull.
+		// Arcane Missiles on a Missile Barrage proc.
+		Knob{Name: "missileBarrage", Default: 1, Min: 0, Max: 1, Step: 1},
+		// Missile Barrage missiles ahead of Arcane Wrath.
+		Knob{Name: "barrageFirst", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Precast an Arcane Blast (1.5 sec cast) so it lands at the pull.
 		Knob{Name: "prepull", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Hold Arcane Power and Presence of Mind for the synthetic on-use trinket.
 		Knob{Name: "powerWithTrinket", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Presence of Mind on Arcane Wrath, the longest cast.
+		Knob{Name: "pomWrath", Default: 0, Min: 0, Max: 1, Step: 1},
 	)
 }
 
 func (mageArcane) Build(k Knobs) *proto.APLRotation {
 	s := mageRanks()
-	items := mageCooldowns(k, s)
-	arcaneExplosion := rankID(mage.ArcaneExplosionLevel[:], mage.ArcaneExplosionSpellId[:])
-	items = append(items, finisherLines(k, s.arcaneBlast, s.fireBlast, arcaneExplosion)...)
-	stacks := auraNumStacks(arcaneBlastAura)
-	abKnown := auraIsKnown(arcaneBlastAura)
-	maxStacks := num(k["blastStacks"])
-	if k["conserveMana"] > 0 {
-		// Below the floor the stack target is 1.
-		lowMana := lt(currentManaPercent(), num(k["conserveMana"]/100))
+	var items []*proto.APLListItem
+	if k["pomWrath"] == 1 {
 		items = append(items,
-			cast(s.arcaneMissiles, and(abKnown, lowMana, ge(stacks, num(1))), "Low on mana: Arcane Missiles after a single Arcane Blast."),
-			cast(s.arcaneBlast, and(abKnown, lowMana, lt(stacks, num(1))), "Low on mana: one Arcane Blast."),
+			cast(s.arcaneWrath, known(presenceOfMind, auraIsActive(presenceOfMind)), "Arcane Wrath while Presence of Mind is up. Without the talents ignore the warning on this line."),
+			cast(presenceOfMind, spellIsReady(s.arcaneWrath), "Presence of Mind for an instant Arcane Wrath. Without the talents ignore the warning on this line."),
 		)
 	}
-	if k["barrageFirst"] == 1 {
-		barrageStacks := maxStacks
-		if k["barrageStacks"] > 0 {
-			barrageStacks = num(k["barrageStacks"])
-		}
-		items = append(items, cast(s.arcaneMissiles, and(abKnown, auraIsKnown(missileBarrage), auraIsActive(missileBarrage), ge(stacks, barrageStacks)), "Arcane Missiles on Missile Barrage once the stacks are up."))
-	}
-	if k["missilesNeedBarrage"] == 0 {
-		items = append(items, cast(s.arcaneMissiles, and(abKnown, ge(stacks, maxStacks)), "Arcane Missiles at the stack target, it ends the stacks and takes their bonus."))
-	}
-	stackCap := maxStacks
-	if k["missilesNeedBarrage"] == 1 {
-		stackCap = num(4)
-	}
-	items = append(items, cast(s.arcaneBlast, and(abKnown, lt(stacks, stackCap)), "Arcane Blast up to the stack target."))
+	items = append(items, mageCooldowns(k, s)...)
 	filler := s.arcaneMissiles
 	switch k["filler"] {
 	case 2:
@@ -78,10 +53,31 @@ func (mageArcane) Build(k Knobs) *proto.APLRotation {
 	case 3:
 		filler = s.fireball
 	}
+	arcaneExplosion := rankID(mage.ArcaneExplosionLevel[:], mage.ArcaneExplosionSpellId[:])
+	items = append(items, finisherLines(k, filler, s.fireBlast, arcaneExplosion)...)
+	var enoughMana value
+	if k["conserveMana"] > 0 && k["blastBuff"] > 1 {
+		// Below the floor the stack target is 1.
+		lowMana := lt(currentManaPercent(), num(k["conserveMana"]/100))
+		items = append(items, cast(s.arcaneBlast, and(auraIsKnown(arcaneBlastAura), lowMana, not(auraIsActive(arcaneBlastAura)), gt(remainingTime(), seconds(4))), "Low on mana: one Arcane Blast for the spell damage."))
+		enoughMana = not(lowMana)
+	}
+	items = append(items, arcaneBlastBuffLines(k, s, enoughMana)...)
+	barrage := []*proto.APLListItem{}
+	if k["missileBarrage"] == 1 {
+		barrage = append(barrage, cast(s.arcaneMissiles, known(missileBarrage, auraIsActive(missileBarrage)), "Arcane Missiles on a Missile Barrage proc, free and twice as fast."))
+	}
+	if k["barrageFirst"] == 1 {
+		items = append(items, barrage...)
+		items = append(items, arcaneWrathLines(k, s)...)
+	} else {
+		items = append(items, arcaneWrathLines(k, s)...)
+		items = append(items, barrage...)
+	}
 	items = append(items, cast(filler, nil, "The filler."))
 	rot := rotation(items...)
 	if k["prepull"] == 1 {
-		rot.PrepullActions = append(rot.PrepullActions, prepull(s.arcaneBlast, 2.5))
+		rot.PrepullActions = append(rot.PrepullActions, prepull(s.arcaneBlast, 1.5))
 	}
 	return rot
 }
