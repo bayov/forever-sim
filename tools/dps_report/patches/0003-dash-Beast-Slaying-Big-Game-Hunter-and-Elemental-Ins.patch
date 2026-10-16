@@ -1,12 +1,11 @@
-From 3da143320d0b5019e93dac8bc24e5b4d2be58770 Mon Sep 17 00:00:00 2001
+From 3baadba2da2acf87608992de13560c885b371681 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Tue, 13 Oct 2026 13:12:13 +0000
-Subject: [PATCH] dash: Beast Slaying, Big Game Hunter and Elemental Insight
- raise damage only, not crit damage
+Subject: [PATCH 3/3] dash: Beast Slaying, Big Game Hunter and Elemental
+ Insight raise damage only, not crit damage
 
 Client 70338 gives them aura 168 at 5% (damage done vs the creature type), so the
 CritMultiplier line goes. Dashboard-only local patch; the shared fix is a followup.
-
 ---
  sim/core/racials.go         | 1 -
  sim/core/racials_forever.go | 2 +-
@@ -25,10 +24,10 @@ index 16c04b65d..f309474ec 100644
  				}
  			}
 diff --git a/sim/core/racials_forever.go b/sim/core/racials_forever.go
-index c6b1ca30c..bf9ba5e48 100644
+index 53fb7a109..62392ddd2 100644
 --- a/sim/core/racials_forever.go
 +++ b/sim/core/racials_forever.go
-@@ -134,13 +134,13 @@ func applyForeverRaceEffects(agent Agent) {
+@@ -159,13 +159,13 @@ func (character *Character) critDamageBonus(multiplier float64) {
  
  // Damage against one creature type, like Troll Beast Slaying. Applied to the attack
  // tables after finalize because the targets are not known before then.

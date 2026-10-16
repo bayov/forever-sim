@@ -1,19 +1,18 @@
-From 346dd46e45e3bc91ce7981948a12adaa11d71467 Mon Sep 17 00:00:00 2001
+From 426badadb967c0c5324e8bb4f95db039a1b511f1 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
 Date: Tue, 13 Oct 2026 11:46:32 +0000
-Subject: [PATCH] dash: DASH_RACIALS_OFF switch to leave racial parts out
+Subject: [PATCH 2/3] dash: DASH_RACIALS_OFF switch to leave racial parts out
  (dashboard race breakdown only)
 
 ---
- sim/core/racials_forever.go  | 106 ++++++++++++++++++++++++++---------
- sim/hunter/hunter.go         |   3 +
+ sim/core/racials_forever.go  | 108 ++++++++++++++++++++++++++---------
  sim/priest/chastise.go       |   2 +-
  sim/priest/dark_sacrifice.go |   2 +-
  sim/priest/starshards.go     |   2 +-
- 5 files changed, 86 insertions(+), 29 deletions(-)
+ 4 files changed, 84 insertions(+), 30 deletions(-)
 
 diff --git a/sim/core/racials_forever.go b/sim/core/racials_forever.go
-index 8b3ef245f..c6b1ca30c 100644
+index f05bbd0f9..53fb7a109 100644
 --- a/sim/core/racials_forever.go
 +++ b/sim/core/racials_forever.go
 @@ -1,6 +1,8 @@
@@ -25,13 +24,13 @@ index 8b3ef245f..c6b1ca30c 100644
  	"time"
  
  	"github.com/wowsims/classic/sim/core/proto"
-@@ -14,67 +16,119 @@ import (
- // Cooldowns per the client: Blood Fury, Eureka! and the Undead and Gnome utilities 2 min,
- // Berserking, Elune's Light and the Human, Dwarf and Orc utilities 3 min.
+@@ -16,76 +18,128 @@ import (
+ // Cooldowns per the client: Eureka! and the Undead and Gnome utilities 2 min, Blood Fury
+ // (since client 70425), Berserking, Elune's Light and the Human, Dwarf and Orc utilities 3 min.
  
 +// DASH_RACIALS_OFF (dashboard builds only) lists racial parts to leave out, comma separated,
-+// or "all": spirit, sword, mace, beast, dodge, elune, mind, eureka, axe, bloodfury, touch,
-+// endurance, berserking, windblessed, insight, and the priest racial spells darksacrifice,
++// or "all": spirit, ruthless, earthfury, beast, dodge, elune, mind, eureka, savage, bloodfury,
++// touch, endurance, berserking, windblessed, insight, and the priest racial spells darksacrifice,
 +// starshards and chastise. It splits a race's edge into its base stats and each racial.
 +var dashRacialsOff = func() map[string]bool {
 +	off := map[string]bool{}
@@ -54,24 +53,29 @@ index 8b3ef245f..c6b1ca30c 100644
  
  	switch character.Race {
  	case proto.Race_RaceHuman:
- 		// The Human Spirit. Sword Specialization is crit now, and Mace Specialization
- 		// moved to the Dwarves.
+ 		// The Human Spirit, and Ruthless (20597): 2% crit with all spells and attacks. Client 70338
+ 		// called it Sword Specialization and gave the 2% only with a sword or two-handed sword
+ 		// (SpellEquippedItems subclass mask 384); 70425 renamed it and dropped the weapon rule.
 -		character.MultiplyStat(stats.Spirit, 1.05)
--		character.AddWeaponSpecializationCrit(2, proto.WeaponType_WeaponTypeSword)
+-		character.AddStat(stats.MeleeCrit, 2*CritRatingPerCritChance)
+-		character.AddStat(stats.SpellCrit, 2*SpellCritRatingPerCritChance)
 +		if on("spirit") {
 +			character.MultiplyStat(stats.Spirit, 1.05)
 +		}
-+		if on("sword") {
-+			character.AddWeaponSpecializationCrit(2, proto.WeaponType_WeaponTypeSword)
++		if on("ruthless") {
++			character.AddStat(stats.MeleeCrit, 2*CritRatingPerCritChance)
++			character.AddStat(stats.SpellCrit, 2*SpellCritRatingPerCritChance)
 +		}
  
  	case proto.Race_RaceDwarf:
- 		// Mace Specialization and Big Game Hunter. Stoneform is a defensive cooldown the
- 		// sim does not measure.
--		character.AddWeaponSpecializationCrit(1, proto.WeaponType_WeaponTypeMace)
+ 		// Earth Fury (1259719): "Increases your critical strike bonus to damage and healing by
+ 		// 2%" (auras 163 and 50, 2 each). Client 70338 called it Mace Specialization, 1% crit with
+ 		// all spells and attacks with a mace or two-handed mace; 70425 replaced it. And Big Game
+ 		// Hunter. Stoneform is a defensive cooldown the sim does not measure.
+-		character.critDamageBonus(1.02)
 -		character.mobTypeDamageAura(proto.MobType_MobTypeBeast, 1.05)
-+		if on("mace") {
-+			character.AddWeaponSpecializationCrit(1, proto.WeaponType_WeaponTypeMace)
++		if on("earthfury") {
++			character.critDamageBonus(1.02)
 +		}
 +		if on("beast") {
 +			character.mobTypeDamageAura(proto.MobType_MobTypeBeast, 1.05)
@@ -114,11 +118,16 @@ index 8b3ef245f..c6b1ca30c 100644
 -		character.registerEureka()
  
  	case proto.Race_RaceOrc:
- 		// Axe Specialization is crit now. Command (pet damage) is gone.
--		character.AddWeaponSpecializationCrit(1, proto.WeaponType_WeaponTypeAxe)
+ 		// Savage: 1% crit with all spells and abilities, whatever the weapon. In client 70338 it was
+ 		// Axe Specialization, the same 1% only with an axe or a two-handed axe equipped
+ 		// (SpellEquippedItems 255488, axes only); client 70425 renamed spell 20574 and dropped
+ 		// the weapon requirement. Command (pet damage) is gone.
+-		character.AddStat(stats.MeleeCrit, 1*CritRatingPerCritChance)
+-		character.AddStat(stats.SpellCrit, 1*SpellCritRatingPerCritChance)
 -		character.registerForeverBloodFury()
-+		if on("axe") {
-+			character.AddWeaponSpecializationCrit(1, proto.WeaponType_WeaponTypeAxe)
++		if on("savage") {
++			character.AddStat(stats.MeleeCrit, 1*CritRatingPerCritChance)
++			character.AddStat(stats.SpellCrit, 1*SpellCritRatingPerCritChance)
 +		}
 +		if on("bloodfury") {
 +			character.registerForeverBloodFury()
@@ -131,14 +140,13 @@ index 8b3ef245f..c6b1ca30c 100644
 +		}
  
  	case proto.Race_RaceTauren:
- 		// Endurance carries a point of hit alongside the health.
+ 		// Endurance (20550): 5% health and, since client 70425, "critical strike bonus to damage
+ 		// and healing increased by 2%" (auras 163 and 50) in place of 70338's 1% hit.
 -		character.MultiplyStat(stats.Health, 1.05)
--		character.AddStat(stats.MeleeHit, 1*MeleeHitRatingPerHitChance)
--		character.AddStat(stats.SpellHit, 1*SpellHitRatingPerHitChance)
+-		character.critDamageBonus(1.02)
 +		if on("endurance") {
 +			character.MultiplyStat(stats.Health, 1.05)
-+			character.AddStat(stats.MeleeHit, 1*MeleeHitRatingPerHitChance)
-+			character.AddStat(stats.SpellHit, 1*SpellHitRatingPerHitChance)
++			character.critDamageBonus(1.02)
 +		}
  
  	case proto.Race_RaceTroll:
@@ -154,16 +162,17 @@ index 8b3ef245f..c6b1ca30c 100644
 +		}
  
  	case proto.Race_RaceSkyborneHighOrder, proto.Race_RaceSkyborneWindshaper:
- 		// Wind Blessed and Elemental Insight. The actives (Walk on Air, Read Ley Line,
- 		// Skysight) are movement and regeneration, so the two halves sim the same.
--		character.PseudoStats.MeleeSpeedMultiplier *= 1.01
--		character.PseudoStats.RangedSpeedMultiplier *= 1.01
--		character.PseudoStats.CastSpeedMultiplier *= 1.01
+ 		// Wind Blessed (1259710: 3% spellcasting, melee and ranged haste since client 70425, 1% in
+ 		// 70338) and Elemental Insight. The actives (Walk on Air, Read Leyline, Skysight) are
+ 		// movement and regeneration, so the two halves sim the same.
+-		character.PseudoStats.MeleeSpeedMultiplier *= 1.03
+-		character.PseudoStats.RangedSpeedMultiplier *= 1.03
+-		character.PseudoStats.CastSpeedMultiplier *= 1.03
 -		character.mobTypeDamageAura(proto.MobType_MobTypeElemental, 1.05)
 +		if on("windblessed") {
-+			character.PseudoStats.MeleeSpeedMultiplier *= 1.01
-+			character.PseudoStats.RangedSpeedMultiplier *= 1.01
-+			character.PseudoStats.CastSpeedMultiplier *= 1.01
++			character.PseudoStats.MeleeSpeedMultiplier *= 1.03
++			character.PseudoStats.RangedSpeedMultiplier *= 1.03
++			character.PseudoStats.CastSpeedMultiplier *= 1.03
 +		}
 +		if on("insight") {
 +			character.mobTypeDamageAura(proto.MobType_MobTypeElemental, 1.05)
@@ -171,20 +180,6 @@ index 8b3ef245f..c6b1ca30c 100644
  	}
  }
  
-diff --git a/sim/hunter/hunter.go b/sim/hunter/hunter.go
-index 212a8375a..1c48a4681 100644
---- a/sim/hunter/hunter.go
-+++ b/sim/hunter/hunter.go
-@@ -349,6 +349,9 @@ func (hunter *Hunter) removeRacialRangedCrit() {
- 	if !ok {
- 		return
- 	}
-+	if core.DashRacialOff(map[proto.WeaponType]string{proto.WeaponType_WeaponTypeSword: "sword", proto.WeaponType_WeaponTypeMace: "mace", proto.WeaponType_WeaponTypeAxe: "axe"}[racial.weaponType]) {
-+		return
-+	}
- 	for _, weapon := range []*core.Item{hunter.MainHand(), hunter.OffHand()} {
- 		if weapon.WeaponType == racial.weaponType {
- 			bonus := racial.crit * core.CritRatingPerCritChance
 diff --git a/sim/priest/chastise.go b/sim/priest/chastise.go
 index 631b7bda0..656c06e34 100644
 --- a/sim/priest/chastise.go
