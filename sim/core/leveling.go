@@ -260,6 +260,16 @@ func newLevelingSession(env *Environment, encounterProto *proto.Encounter) *leve
 			break
 		}
 	}
+	// Every mob is in front of us, and we're in front of every mob, whatever the 2D positions
+	// in leveling_world.go say. A player turns and steps a little so all the mobs on them are in
+	// front, and we don't sim those small moves. So our attacks can be parried and blocked, and
+	// Backstab can't go, even when the In Front of Target setting is off.
+	//
+	// The mobs' attacks on us don't look at facing (outcomeEnemyMeleeWhite), so we can always
+	// dodge, parry and block them. Our pets stay behind, see NewPet.
+	for _, unit := range env.Raid.AllPlayerUnits {
+		unit.PseudoStats.InFrontOfTarget = true
+	}
 	session.level = session.player.Level
 	session.levels = levelingMobLevels(session.level, session.opts)
 	session.mobs = make([]levelingMob, len(env.Encounter.Targets))

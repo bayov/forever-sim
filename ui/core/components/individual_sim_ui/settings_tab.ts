@@ -131,7 +131,13 @@ export class SettingsTab extends SimTab {
 
 		if (this.simUI.individualConfig.otherInputs.inputs.includes(OtherInputs.InFrontOfTarget)) {
 			const group = Input.newGroupContainer();
-			new BooleanPicker(group, this.simUI.player, { ...OtherInputs.InFrontOfTarget, inline: true });
+			// A leveling session always has us in front of every mob, so the field is hidden there.
+			new BooleanPicker(group, this.simUI.player, {
+				...OtherInputs.InFrontOfTarget,
+				inline: true,
+				changedEvent: player => TypedEvent.onAny([player.inFrontOfTargetChangeEmitter, this.simUI.sim.encounter.changeEmitter]),
+				showWhen: () => !this.simUI.sim.encounter.isLeveling(),
+			});
 			this.encounterPicker.rootElem.insertBefore(group, targets ?? null);
 		}
 
