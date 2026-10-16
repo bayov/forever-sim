@@ -2251,20 +2251,26 @@ export function startReport(dash, events) {
       // Forever took out every talent that improved a raid buff or debuff (Improved Blessing of Might,
       // Improved Mark of the Wild, ...), and the sim treats an improved one as regular, so no 'Imp' tag.
       const name = String(r?.title || s.item.split(': ').pop()).replace(/ \(improved\)/i, '').replace(/ (Of|The) /g, (m) => m.toLowerCase());
-      const q = r?.kind === 'item' ? r.quality : null;
-      return tt(el('button', { class: 'fv-pick' + (q ? ' q-' + q : '') + (off ? ' off' : ''), 'aria-label': off ? name + ' (no effect)' : null },
-        el('span', { class: 'ib' }, s.icon ? iconImg(s.icon, 'fv-ico') : el('span', { class: 'fv-ico fv-noico', text: name.slice(0, 2) }),
-          s.level && s.level !== 'Improved' ? el('span', { class: 'lv', text: s.level }) : null, s.hand ? el('span', { class: 'hd', text: s.hand }) : null, off ? el('span', { class: 'x', text: '×', 'aria-hidden': 'true' }) : null),
-        mark(el('span', { class: 'nmx', text: name }), 'setup', 'item', `build=${enc(b.id)}&item=${enc(s.item)}`)), 'su:' + s.item);
+      // The icon only, like the sim's settings page. The name is in its tooltip. A hand (MH or OH) or a level goes in a
+      // label at its bottom, like the stat labels of the sim's elixirs.
+      const label = s.hand || (s.level && s.level !== 'Improved' ? s.level : null);
+      return tt(el('button', { class: 'fv-pick' + (off ? ' off' : ''), 'aria-label': off ? name + ' (no effect)' : name },
+        s.icon ? iconImg(s.icon, 'fv-ico') : el('span', { class: 'fv-ico fv-noico', text: name.slice(0, 2) }),
+        label ? el('span', { class: 'lb', text: label }) : null), 'su:' + s.item);
     };
+    // Each section looks like its card on the sim's settings page: a gold small caps title, then its groups side by
+    // side, each with a muted label over its icons. Consumables are bag slots, and the buffs, debuffs and professions
+    // have the sim's green ring when they're active. One that's on but does nothing is gray, like an unpicked one.
     host.replaceChildren(...sections.map(([sec, xs]) => {
       const order = SETUP_SUBS[sec] || [];
       const subs = d3.groups(xs, (x) => x.p[1]).sort((p, q) => order.indexOf(p[0]) - order.indexOf(q[0]));
-      return el('section', { class: 'fv-sgrp' + (sec === 'Consumables' ? ' wide' : '') },
-        el('div', { class: 'gh' }, el('span', { text: sec }), el('small', { text: (() => { const on = xs.filter((x) => x.s.active !== false).length; return on === xs.length ? String(on) : `${on} of ${xs.length} active`; })() })),
-        ...subs.map(([sub, ys]) => el('div', { class: 'fv-ssub' },
+      const on = xs.filter((x) => x.s.active !== false).length;
+      return el('section', { class: 'content-block fv-sgrp ' + (sec === 'Consumables' ? 'wide slots' : 'buffs') },
+        el('div', { class: 'content-block-header' }, el('h6', { class: 'content-block-title', text: sec }),
+          on < xs.length ? el('small', { class: 'fv-sgrp-n', text: `${on} of ${xs.length} active` }) : null),
+        el('div', { class: 'fv-ssubs' }, ...subs.map(([sub, ys]) => el('div', { class: 'fv-ssub' },
           sub ? el('div', { class: 'sh', text: sub }) : null,
-          el('div', { class: 'fv-picks' }, ...ys.sort((p, q) => (p.s.active === false) - (q.s.active === false) || (p.s.slotOrder || 0) - (q.s.slotOrder || 0)).map((y) => pick(y.s))))));
+          el('div', { class: 'fv-picks' }, ...ys.sort((p, q) => (p.s.active === false) - (q.s.active === false) || (p.s.slotOrder || 0) - (q.s.slotOrder || 0)).map((y) => pick(y.s)))))));
     }));
     host.classList.toggle('hide-off', !!st.setupHide);
     $('#sp-setup-hide').setAttribute('aria-pressed', String(!!st.setupHide));
