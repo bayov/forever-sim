@@ -11,6 +11,13 @@
 		white-space: nowrap;
 	}
 
+	// The other results tables stick their header under the page's toolbar. This table sits in
+	// boxes that hide their overflow (the events panel and its own scroll box), so that offset
+	// would push the header down over the first rows. It stays at the table's top instead.
+	.metrics-table-header-cell {
+		top: 0;
+	}
+
 	.metrics-table-header-cell.unsortable {
 		cursor: default;
 	}
