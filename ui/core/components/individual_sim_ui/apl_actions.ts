@@ -15,19 +15,24 @@ import {
 	APLActionCustomRotation,
 	APLActionItemSwap,
 	APLActionItemSwap_SwapSet as ItemSwapSet,
+	APLActionLevelingBandage,
+	APLActionLevelingLookForMob,
+	APLActionLevelingRest,
+	APLActionLevelingWalkToPullTarget,
 	APLActionMove,
 	APLActionMultidot,
 	APLActionMultishield,
 	APLActionResetSequence,
 	APLActionSchedule,
 	APLActionSequence,
+	APLActionShamanWalkToTotem,
 	APLActionStrictSequence,
 	APLActionTriggerICD,
 	APLActionWait,
 	APLActionWaitUntil,
 	APLValue,
 } from '../../proto/apl';
-import { Spec } from '../../proto/common';
+import { Class, Spec } from '../../proto/common';
 import { isHealingSpec } from '../../proto_utils/utils';
 import { EventID } from '../../typed_event';
 import { randomUUID } from '../../utils';
@@ -660,5 +665,72 @@ const actionKindFactories: { [f in NonNullable<APLActionKind>]: ActionKindConfig
 		includeIf: (player: Player<any>, _isPrepull: boolean) => player.spec == Spec.SpecRetributionPaladin || player.spec == Spec.SpecProtectionPaladin,
 		newValue: () => APLActionCastPaladinPrimarySeal.create({}),
 		fields: [],
+	}),
+	['shamanWalkToTotem']: inputBuilder({
+		label: 'Walk To Totem (Leveling)',
+		submenu: ['Shaman'],
+		shortDescription:
+			'In a leveling session, walks back toward your totem of this element until you are within the given yards of it. The mobs on you follow.',
+		includeIf: (player: Player<any>, _isPrepull: boolean) => player.getClass() === Class.ClassShaman,
+		newValue: () => APLActionShamanWalkToTotem.create({}),
+		fields: [
+			AplValues.totemTypeFieldConfig('totemType'),
+			AplValues.valueFieldConfig('within', {
+				label: 'within',
+				labelTooltip: 'Yards from the totem to stop at.',
+			}),
+		],
+	}),
+	['levelingLookForMob']: inputBuilder({
+		label: 'Look For Mob (Leveling)',
+		submenu: ['Leveling'],
+		shortDescription:
+			'In a leveling session, while fighting: looks for another mob to pull. You run around for it with the mobs on you following, so only instants and melee go out, or with Stand you keep fighting while you look, which takes longer (the Chain Search settings). The mob found is the Pull Target.',
+		newValue: () => APLActionLevelingLookForMob.create({}),
+		fields: [
+			AplHelpers.booleanFieldConfig('stand', 'Stand', {
+				labelTooltip: 'Stand and keep fighting while you look, instead of running around. It takes the Chain Search Standing time.',
+			}),
+		],
+	}),
+	['levelingRest']: inputBuilder({
+		label: 'Rest (Leveling)',
+		submenu: ['Leveling'],
+		shortDescription:
+			'In a leveling session, out of combat: sits down to eat, drink, both or neither until health and mana reach the given shares of max (100% when empty), with another food or drink when one runs out short. Sitting adds a third to Spirit health regen. Only the rotation rests: a rotation with no Rest or Bandage line gets default ones in front of its own (bandage below 50% health, eat and drink to full below 50% health or 40% mana). Add a disabled Rest line to never rest.',
+		newValue: () => APLActionLevelingRest.create({}),
+		fields: [
+			AplHelpers.booleanFieldConfig('eat', 'Eat', { labelTooltip: 'Eat the best vendor food for your level, for health.' }),
+			AplHelpers.booleanFieldConfig('drink', 'Drink', { labelTooltip: 'Drink the best vendor water for your level, for mana.' }),
+			AplValues.valueFieldConfig('healthUntil', {
+				label: 'until Health',
+				labelTooltip: 'Share of max health to rest to, e.g. 90%.',
+			}),
+			AplValues.valueFieldConfig('manaUntil', {
+				label: 'until Mana',
+				labelTooltip: 'Share of max mana to rest to, e.g. 90%.',
+			}),
+		],
+	}),
+	['levelingBandage']: inputBuilder({
+		label: 'Bandage (Leveling)',
+		submenu: ['Leveling'],
+		shortDescription:
+			'In a leveling session, out of combat: puts on the best bandage First Aid allows at your level, an 8 sec channel, unless Recently Bandaged (1 min). Use Bandage Ready to check.',
+		newValue: () => APLActionLevelingBandage.create({}),
+		fields: [],
+	}),
+	['levelingWalkToPullTarget']: inputBuilder({
+		label: 'Walk To Pull Target (Leveling)',
+		submenu: ['Leveling'],
+		shortDescription:
+			'In a leveling session: walks toward the Pull Target until you are within the given yards of it (melee range for 0), or it notices you first.',
+		newValue: () => APLActionLevelingWalkToPullTarget.create({}),
+		fields: [
+			AplValues.valueFieldConfig('within', {
+				label: 'within',
+				labelTooltip: 'Yards from the mob to stop at.',
+			}),
+		],
 	}),
 };

@@ -67,10 +67,14 @@ func TestOrcShamanChainLightningJumps(t *testing.T) {
 			if marked {
 				mark.Activate(sim)
 			}
+			jumpMisses := cl.SpellMetrics[targets[1].UnitIndex].Misses
 			cl.ApplyEffects(sim, targets[0], cl)
-			if mark.IsActive() {
-				t.Fatalf("the jump to the marked target left the mark up")
+			// Since client 1.60.1.70425 a jump that misses leaves the mark.
+			jumpMissed := cl.SpellMetrics[targets[1].UnitIndex].Misses > jumpMisses
+			if mark.IsActive() != (marked && jumpMissed) {
+				t.Fatalf("the jump to the marked target (missed %v) left the mark up %v", jumpMissed, mark.IsActive())
 			}
+			mark.Deactivate(sim)
 			jump := 0.7
 			if marked {
 				jump = 0.84

@@ -53,9 +53,9 @@ func TestWarlockDestructionFire(t *testing.T) {
 
 // Forever tree (tools/forever_talents/client/warlock.json).
 var TalentsDemonology = "011-0305003131221001351-0550005003"
-var TalentsDestruction = "25510000035--055030500310035"
-var TalentsAffliction = "2553000003520005--0550305003"
-var TalentsDestructionFire = "2525000003-0002-0050355003101351"
+var TalentsDestruction = "255000000351--055030500310035"
+var TalentsAffliction = "2550102003520005--0550305003"
+var TalentsDestructionFire = "25201020032-0002-0050355003101351"
 
 // Keeps the Succubus out with Firestone.
 var FireWarlock = &proto.Player_Warlock{

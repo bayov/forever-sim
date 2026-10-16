@@ -13,6 +13,10 @@ type Encounter struct {
 	DurationVariation time.Duration
 	Targets           []*Target
 	TargetUnits       []*Unit
+	// The targets still alive, in TargetUnits' order. In a health fight a target dies when
+	// its health runs out (target_death.go). In a timed fight none do, and this is always
+	// TargetUnits.
+	ActiveTargetUnits []*Unit
 
 	ExecuteProportion_20 float64
 	ExecuteProportion_25 float64
@@ -25,12 +29,16 @@ type Encounter struct {
 	// In health fight: set to true until we get something to base on
 	DurationIsEstimate bool
 
-	// Value to multiply by, for damage spells which are subject to the aoe cap.
-	aoeCapMultiplier float64
+	// The grinding session in leveling mode (leveling.go), nil otherwise.
+	leveling *levelingSession
 
 	// PvP mode, and the share of the fight out of melee range (in PvP or not), see pvp.go.
 	PvP              bool
 	PvPMeleeDowntime float64
+
+	// The raid damage on the players the boss isn't tanking, see raid_hits.go.
+	RaidDamageHitsPerMinute float64
+	RaidDamagePerHit        float64
 }
 
 func NewEncounter(options *proto.Encounter) Encounter {
@@ -46,6 +54,9 @@ func NewEncounter(options *proto.Encounter) Encounter {
 		PvP:                  options.Pvp,
 		PvPMeleeDowntime:     min(max(options.PvpMeleeDowntime, 0), 1),
 		Targets:              []*Target{},
+
+		RaidDamageHitsPerMinute: max(options.RaidDamageHitsPerMinute, 0),
+		RaidDamagePerHit:        max(options.RaidDamagePerHit, 0),
 	}
 	// If UseHealth is set, we use the sum of targets health.
 	if options.UseHealth {
@@ -70,25 +81,28 @@ func NewEncounter(options *proto.Encounter) Encounter {
 		encounter.TargetUnits = append(encounter.TargetUnits, &target.Unit)
 	}
 
+	encounter.ActiveTargetUnits = make([]*Unit, 0, len(encounter.TargetUnits))
+	encounter.ActiveTargetUnits = append(encounter.ActiveTargetUnits, encounter.TargetUnits...)
+
 	if encounter.EndFightAtHealth > 0 {
 		// Until we pre-sim set duration to 10m
 		encounter.Duration = time.Minute * 10
 		encounter.DurationIsEstimate = true
 	}
 
-	encounter.updateAOECapMultiplier()
-
 	return encounter
 }
 
+// AOECapMultiplier is the damage multiplier of an ability that splits its damage past 10
+// targets (aoe.go), for the targets alive now.
 func (encounter *Encounter) AOECapMultiplier() float64 {
-	return encounter.aoeCapMultiplier
-}
-func (encounter *Encounter) updateAOECapMultiplier() {
-	encounter.aoeCapMultiplier = min(10/float64(len(encounter.Targets)), 1)
+	return AoESoftCapMultiplier(int32(len(encounter.ActiveTargetUnits)), 10, AoESoftCapSplit)
 }
 
 func (encounter *Encounter) doneIteration(sim *Simulation) {
+	if encounter.leveling != nil {
+		encounter.leveling.doneIteration(sim)
+	}
 	for i := range encounter.Targets {
 		target := encounter.Targets[i]
 		target.doneIteration(sim)
@@ -104,6 +118,9 @@ func (encounter *Encounter) GetMetricsProto() *proto.EncounterMetrics {
 	for _, target := range encounter.Targets {
 		metrics.Targets[i] = target.GetMetricsProto()
 		i++
+	}
+	if encounter.leveling != nil {
+		metrics.Leveling = encounter.leveling.metrics()
 	}
 
 	return metrics
@@ -412,6 +429,16 @@ func newWeaponAttackTable(attacker *Unit, defender *Unit, weapon *Item, skillGap
 		table.BaseMissChance = 0.05 + levelDelta
 		table.BaseDodgeChance = levelDelta // base dodge applied with class base stats
 		table.BaseCritChance = 0.05 - levelDelta
+		// Forever's mobs have no 5% base crit against us. They only crit by the level gap,
+		// 0.2% for each level they're above us.
+		//
+		// In the beta logs the level 30 shaman took about 2,900 swings from mobs at or under
+		// its level and none of them crit. Classic rules would have given about 85 crits.
+		// Mobs 1 to 5 levels above crit 4 times in 745 swings, where this rule expects 4.6.
+		// The crit roll takes no less than 0, so mobs under our level never crit.
+		if attacker.Env != nil && attacker.Env.IsForever() {
+			table.BaseCritChance = -levelDelta
+		}
 	}
 
 	return table

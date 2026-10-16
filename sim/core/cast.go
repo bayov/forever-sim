@@ -18,6 +18,10 @@ type Hardcast struct {
 	OnComplete func(*Simulation, *Unit)
 	Target     *Unit
 	Pushback   float64
+	// The cast's full time. Pushback can't take the cast bar back past its start.
+	CastTime time.Duration
+	// When the cast started.
+	Start time.Duration
 }
 
 // Input for constructing the CastSpell function for a spell.
@@ -73,12 +77,32 @@ func (spell *Spell) castFailureHelper(sim *Simulation, message string, vals ...a
 	return false
 }
 
+// applySpellPushback: a hit that lands and does damage pushes back the cast or channel we're
+// in, as on the cmangos Classic server (Unit::InterruptOrDelaySpell).
+//
+// Only direct hits do it: melee swings, ranged attacks and spell hits. Ticks of a DoT don't,
+// and neither does a hit that does no damage (a miss, a dodge or a full absorb).
+//
+// The first hit takes 1 sec, then 0.8, 0.6, 0.4 and 0.2 sec for every hit after that
+// (Spell::GetNextDelayAtDamageMsTime). Each cast or channel starts over at 1 sec. A cast's bar
+// goes back, so it lands later (Spell::Delayed). A channel ends sooner, and its ticks past the
+// new end are lost (Spell::DelayedChannel). Talents like Eye of the Storm, Healing Focus and Fel
+// Concentration give the spell we're casting a chance to ignore each hit.
 func (unit *Unit) applySpellPushback() {
+	// The channel we've pushed back, by its dot and start, how much its next pushback takes,
+	// and the action that ends it early.
+	var channel *Dot
+	var channelStart time.Duration
+	var channelPushback float64
+	var channelEnd *PendingAction
+
 	unit.RegisterAura(Aura{
 		Label:    "Spell Pushback",
 		Duration: NeverExpires,
 		OnReset: func(aura *Aura, sim *Simulation) {
 			aura.Activate(sim)
+			channel = nil
+			channelEnd = nil
 		},
 		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
 			//No pushback for bosses/NPCs
@@ -98,42 +122,32 @@ func (unit *Unit) applySpellPushback() {
 				return
 			}
 
-			if !aura.Unit.IsCasting(sim) {
-				return
-			}
-
-			// We take the chance to ignore pushback from the spell we're casting.
-			//
-			// Talents like Eye of the Storm let our Lightning Bolt shrug off a hit. The spell that
-			// hits us has nothing to do with it.
-			hc := aura.Unit.Hardcast
-			hcSpell := aura.Unit.GetSpell(hc.ActionID)
-			if sim.Roll(0, 1.0) > hcSpell.PushbackReduction {
-				// Do spell pushback
+			if aura.Unit.IsCasting(sim) {
+				// We take the chance to ignore pushback from the spell we're casting.
+				//
+				// Talents like Eye of the Storm let our Lightning Bolt shrug off a hit. The spell
+				// that hits us has nothing to do with it.
+				hc := aura.Unit.Hardcast
+				hcSpell := aura.Unit.GetSpell(hc.ActionID)
+				if sim.Roll(0, 1.0) <= hcSpell.PushbackReduction {
+					return
+				}
 				pushback := DurationFromSeconds(max(0.2, hc.Pushback))
 				aura.Unit.Hardcast.Pushback -= 0.2
 
-				if hcSpell.Flags.Matches(SpellFlagChanneled) {
-					newExpires := max(sim.CurrentTime, hc.Expires-pushback)
-					if sim.Log != nil {
-						aura.Unit.Log(sim, "Unit Hardcast shortened by %s due to spell hit taken, will now occur at %s", pushback, newExpires)
-					}
+				// The cast bar goes back by the pushback, but not past its start, as on the
+				// cmangos Classic server (Spell::Delayed). A hit half a second into a 3 sec
+				// cast takes it back half a second, not the full 1 sec.
+				if hc.CastTime > 0 {
+					pushback = min(pushback, max(0, sim.CurrentTime+hc.CastTime-hc.Expires))
+				}
+				if sim.Log != nil {
+					aura.Unit.Log(sim, "Unit Hardcast extended by %s due to spell hit taken, will now occur at %s", pushback, hc.Expires+pushback)
+				}
 
-					// Update Dot if present
-					if hcDot := hcSpell.CurDot(); hcDot != nil {
-						hcDot.UpdateExpires(sim, newExpires)
-					}
-
-					aura.Unit.Hardcast.Expires = newExpires
-					hcSpell.SpellMetrics[aura.Unit.CurrentTarget.UnitIndex].TotalCastTime -= pushback
-
-				} else {
-					if sim.Log != nil {
-						aura.Unit.Log(sim, "Unit Hardcast extended by %s due to spell hit taken, will now occur at %s", pushback, hc.Expires+pushback)
-					}
-
-					aura.Unit.Hardcast.Expires += pushback
-					hcSpell.SpellMetrics[aura.Unit.CurrentTarget.UnitIndex].TotalCastTime += pushback
+				aura.Unit.Hardcast.Expires += pushback
+				if metricsTarget := aura.Unit.CurrentTarget; metricsTarget != nil {
+					hcSpell.SpellMetrics[metricsTarget.UnitIndex].TotalCastTime += pushback
 				}
 
 				// Update GCDTimer
@@ -141,7 +155,54 @@ func (unit *Unit) applySpellPushback() {
 
 				// Update Swing timer
 				aura.Unit.AutoAttacks.StopMeleeUntil(sim, aura.Unit.Hardcast.Expires, false)
+				return
 			}
+
+			// Our own damage doesn't shorten our channel (Hellfire burns us while we channel it).
+			dot := aura.Unit.ChanneledDot
+			if dot == nil || !dot.IsActive() || spell.Unit == aura.Unit {
+				return
+			}
+			if sim.Roll(0, 1.0) <= dot.Spell.PushbackReduction {
+				return
+			}
+			if dot != channel || dot.StartedAt() != channelStart {
+				channel, channelStart, channelPushback = dot, dot.StartedAt(), 1.0
+			}
+			pushback := DurationFromSeconds(max(0.2, channelPushback))
+			channelPushback -= 0.2
+
+			newExpires := max(sim.CurrentTime, dot.ExpiresAt()-pushback)
+			if sim.Log != nil {
+				aura.Unit.Log(sim, "Unit channel shortened by %s due to spell hit taken, will now end at %s", dot.ExpiresAt()-newExpires, newExpires)
+			}
+			dot.UpdateExpires(sim, newExpires)
+
+			// The channel ends at its new end, with the tick due then if one is, and the
+			// rotation goes on from there, as it does after a channel's last tick (Dot.TickOnce).
+			if channelEnd != nil {
+				channelEnd.Cancel(sim)
+			}
+			channelEnd = &PendingAction{
+				NextActionAt: newExpires,
+				OnAction: func(sim *Simulation) {
+					channelEnd = nil
+					// Nothing to do when the rotation stopped the channel before this, or
+					// started it again.
+					if dot.StartedAt() != channelStart {
+						return
+					}
+					if dot.IsActive() {
+						dot.Cancel(sim)
+					} else if dot.fadeTime != sim.CurrentTime {
+						return
+					}
+					if !aura.Unit.IsCasting(sim) && aura.Unit.GCD.IsReady(sim) {
+						aura.Unit.WaitUntil(sim, sim.CurrentTime+aura.Unit.ChannelClipDelay)
+					}
+				},
+			}
+			sim.AddPendingAction(channelEnd)
 		},
 	})
 }
@@ -185,6 +246,7 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 			}
 
 			spell.CD.Set(sim.CurrentTime + spell.CurCast.CastTime + spell.CD.Duration)
+			spell.logCooldown(sim, spell.CD.Timer)
 		}
 
 		if config.SharedCD.Timer != nil {
@@ -194,6 +256,7 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 			}
 
 			spell.SharedCD.Set(sim.CurrentTime + spell.CurCast.CastTime + spell.SharedCD.Duration)
+			spell.logCooldown(sim, spell.SharedCD.Timer)
 		}
 
 		// By panicking if spell is on CD, we force each sim to properly check for their own CDs.
@@ -242,6 +305,8 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 				Expires:  sim.CurrentTime + spell.CurCast.CastTime,
 				ActionID: spell.ActionID,
 				Pushback: 1.0,
+				CastTime: spell.CurCast.CastTime,
+				Start:    sim.CurrentTime,
 				OnComplete: func(sim *Simulation, target *Unit) {
 					spell.LastCastAt = sim.CurrentTime
 
@@ -314,6 +379,7 @@ func (spell *Spell) makeCastFuncSimple() CastSuccessFunc {
 			}
 
 			spell.CD.Set(sim.CurrentTime + spell.CD.Duration)
+			spell.logCooldown(sim, spell.CD.Timer)
 		}
 
 		if spell.SharedCD.Timer != nil {
@@ -323,6 +389,7 @@ func (spell *Spell) makeCastFuncSimple() CastSuccessFunc {
 			}
 
 			spell.SharedCD.Set(sim.CurrentTime + spell.SharedCD.Duration)
+			spell.logCooldown(sim, spell.SharedCD.Timer)
 		}
 
 		if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {
@@ -357,4 +424,24 @@ func (spell *Spell) makeCastFuncAutosOrProcs() CastSuccessFunc {
 
 		return true
 	}
+}
+
+// logCooldown writes when the spell is off cooldown again, like
+// `{SpellID: 17364} on cooldown until 12.500 (timer 4)`, for the Replay view of the Events tab.
+//
+// The timer number is the timer's place among the unit's timers. Spells that share a timer
+// (like Earth Shock and Flame Shock) log the same number, so the replay puts all of them on
+// cooldown when we cast one.
+func (spell *Spell) logCooldown(sim *Simulation, timer *Timer) {
+	if sim.Log == nil || spell.Flags.Matches(SpellFlagNoLogs) || timer.ReadyAt() <= sim.CurrentTime {
+		return
+	}
+	timerIndex := -1
+	for i, unitTimer := range spell.Unit.cdTimers {
+		if unitTimer == timer {
+			timerIndex = i
+			break
+		}
+	}
+	spell.Unit.Log(sim, "%s on cooldown until %0.3f (timer %d)", spell.ActionID, timer.ReadyAt().Seconds(), timerIndex)
 }

@@ -118,7 +118,8 @@ func (ws weaponSim) start() (*core.Simulation, *EnhancementShaman) {
 // each other. Forever's Curse of the Elements adds 10% to every magic school at level 60.
 //
 // Call of Flame 3 is 15% on Flame Shock (the hit and the ticks), Searing and Magma Totem, Fire
-// Nova and Lava Burst (shaman_audit.md 8.5). Lava Burst's own 20% with Flame Shock on the target
+// Nova and Lava Burst (shaman_audit.md 8.5). Since client 1.60.1.70425 it also makes Flame Shock
+// last 3 sec (one tick) longer a point, so the bonus sim's last Flame Shock ticks 3 more times. Lava Burst's own 20% with Flame Shock on the target
 // is in both sims, and Call of Flame multiplies with it.
 //
 // Concussion is 1% a point on Lightning Bolt, Chain Lightning and Earth Shock only, as the client
@@ -132,8 +133,8 @@ func TestOrcShamanSpellDamageModifiers(t *testing.T) {
 	// Lava Burst and Stormstrike in both sims. The bonus sim adds Concussion 5, Call of Flame 3,
 	// Improved Fire Nova 2 and Improved Lightning Shield 3.
 	const (
-		plainTalents = "0000000000000001-0000000000001"
-		bonusTalents = "0500300020000001-0000003000001"
+		plainTalents = "0000000000001-0000000000001"
+		bonusTalents = "0500030020001-0000003000001"
 	)
 	newSim := func(talents string, debuffs *proto.Debuffs) (*core.Simulation, *EnhancementShaman) {
 		target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)
@@ -186,7 +187,7 @@ func TestOrcShamanSpellDamageModifiers(t *testing.T) {
 				t.Errorf("Chain Lightning didn't take the Stormstrike mark")
 			}
 		})
-		// The last Flame Shock ticks over the next 12 sec.
+		// The last Flame Shock ticks over the next 12 sec, 21 with Call of Flame 3.
 		runSim(sim)
 		metrics := map[string]core.SpellMetrics{}
 		for _, s := range spells {
@@ -218,16 +219,17 @@ func TestOrcShamanSpellDamageModifiers(t *testing.T) {
 		if a.Hits != b.Hits || a.Crits != b.Crits || a.Hits < 400 {
 			t.Fatalf("%s: the sims rolled apart (%d hits and %d crits, %d and %d)", c.name, a.Hits, a.Crits, b.Hits, b.Crits)
 		}
-		if got := b.TotalDamage / a.TotalDamage; math.Abs(got-c.want) > 1e-9 {
+		if got := (b.TotalDamage - b.TotalTickDamage) / (a.TotalDamage - a.TotalTickDamage); math.Abs(got-c.want) > 1e-9 {
 			t.Errorf("%s dealt %.4f times as much, want %.4f", c.name, got, c.want)
 		}
 		if c.tick == 0 {
 			continue
 		}
-		if a.Ticks == 0 || a.Ticks != b.Ticks {
-			t.Fatalf("%s ticked %d and %d times", c.name, a.Ticks, b.Ticks)
+		if a.Ticks == 0 || b.Ticks != a.Ticks+3 {
+			t.Fatalf("%s ticked %d and %d times, want 3 more with Call of Flame 3", c.name, a.Ticks, b.Ticks)
 		}
-		if got := b.TotalTickDamage / a.TotalTickDamage; math.Abs(got-c.tick) > 1e-9 {
+		perTick := func(m core.SpellMetrics) float64 { return m.TotalTickDamage / float64(m.Ticks) }
+		if got := perTick(b) / perTick(a); math.Abs(got-c.tick) > 1e-9 {
 			t.Errorf("%s ticked for %.4f times as much, want %.4f", c.name, got, c.tick)
 		}
 	}
@@ -252,7 +254,7 @@ func TestOrcShamanCallOfFlameLeavesFlametongue(t *testing.T) {
 		}
 		return out
 	}
-	plain, withCallOfFlame := hits(stormstrike), hits("00003"+stormstrike)
+	plain, withCallOfFlame := hits(stormstrike), hits("000003"+stormstrike)
 	if len(plain) < 5 {
 		t.Fatalf("found only %d Flametongue procs: %v", len(plain), plain)
 	}

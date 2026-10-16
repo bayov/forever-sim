@@ -13,7 +13,8 @@ import (
 // TestOrcShamanStormstrikeOutcomes checks what a Stormstrike costs and leaves behind on each
 // outcome.
 //
-// It always costs 125 mana and starts its 8 sec cooldown, and only a Stormstrike that lands
+// It always costs 8% of base mana (121.6 at level 60 since client 1.60.1.70425, 125 before) and
+// starts its 8 sec cooldown, and only a Stormstrike that lands
 // puts the mark up. A blocked one lands. The beta log showed all of it (shaman_audit.md 5.8): a
 // parried Stormstrike took 125 mana, and the 8 misses, 3 dodges and 19 parries put no mark up
 // where the one block did. We cast 400 from in front of a level 63 boss, so every outcome
@@ -60,8 +61,8 @@ func TestOrcShamanStormstrikeOutcomes(t *testing.T) {
 			o := outcome(before)
 			seen[o]++
 
-			if spent := mana - enh.CurrentMana(); spent != 125 {
-				t.Fatalf("a %s cost %.1f mana, want 125", o, spent)
+			if spent, want := mana-enh.CurrentMana(), .08*enh.BaseMana; math.Abs(spent-want) > 1e-9 {
+				t.Fatalf("a %s cost %.1f mana, want %.1f", o, spent, want)
 			}
 			if readyAt := enh.Stormstrike.CD.ReadyAt(); readyAt != sim.CurrentTime+8*time.Second {
 				t.Fatalf("after a %s the cooldown ends at %s, want %s", o, readyAt, sim.CurrentTime+8*time.Second)
@@ -151,22 +152,28 @@ func TestOrcShamanStormstrikeMark(t *testing.T) {
 				names[earthShock] = "Earth Shock on the mark"
 				before := earthShock.SpellMetrics[enh.CurrentTarget.UnitIndex].Misses
 				earthShock.ApplyEffects(sim, enh.CurrentTarget, earthShock)
-				if earthShock.SpellMetrics[enh.CurrentTarget.UnitIndex].Misses > before {
+				missed := earthShock.SpellMetrics[enh.CurrentTarget.UnitIndex].Misses > before
+				if missed {
 					misses++
 				}
-				if mark.IsActive() {
-					t.Fatalf("Earth Shock left the mark up")
+				// Since client 1.60.1.70425 a spell that misses leaves the mark.
+				if mark.IsActive() != (marked && missed) {
+					t.Fatalf("Earth Shock (missed %v) left the mark up %v", missed, mark.IsActive())
 				}
+				mark.Deactivate(sim)
 				names[earthShock] = "Earth Shock after it"
 				earthShock.ApplyEffects(sim, enh.CurrentTarget, earthShock)
 
 				if marked {
 					mark.Activate(sim)
 				}
+				boltMisses := lightningBolt.SpellMetrics[enh.CurrentTarget.UnitIndex].Misses
 				lightningBolt.ApplyEffects(sim, enh.CurrentTarget, lightningBolt)
-				if mark.IsActive() {
-					t.Fatalf("Lightning Bolt left the mark up")
+				boltMissed := lightningBolt.SpellMetrics[enh.CurrentTarget.UnitIndex].Misses > boltMisses
+				if mark.IsActive() != (marked && boltMissed) {
+					t.Fatalf("Lightning Bolt (missed %v) left the mark up %v", boltMissed, mark.IsActive())
 				}
+				mark.Deactivate(sim)
 			}
 		})
 		if marked {

@@ -37,6 +37,7 @@ func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost fl
 		ProcMask:     core.ProcMaskSpellDamage,
 		Flags:        SpellFlagShaman | SpellFlagLightning | core.SpellFlagAPL,
 		MetricSplits: 6,
+		MaxRange:     30,
 
 		ManaCost: core.ManaCostOptions{
 			FlatCost: baseCost,
@@ -51,7 +52,6 @@ func (shaman *Shaman) newElectricSpellConfig(actionID core.ActionID, baseCost fl
 			ModifyCast: shaman.stopMeleeForCast,
 		},
 
-		BonusCritRating:   core.TernaryFloat64(shaman.Talents.CallOfThunder, 3, 0) * core.SpellCritRatingPerCritChance,
 		PushbackReduction: shaman.eyeOfTheStormChance(),
 
 		DamageMultiplier: 1,

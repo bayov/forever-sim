@@ -189,6 +189,14 @@ func (rot *APLRotation) newAPLActionImpl(config *proto.APLAction) APLActionImpl 
 		return rot.newActionCustomRotation(config.GetCustomRotation())
 	case *proto.APLAction_AddComboPoints:
 		return rot.newActionAddComboPoints(config.GetAddComboPoints())
+	case *proto.APLAction_LevelingLookForMob:
+		return rot.newActionLevelingLookForMob(config.GetLevelingLookForMob())
+	case *proto.APLAction_LevelingWalkToPullTarget:
+		return rot.newActionLevelingWalkToPullTarget(config.GetLevelingWalkToPullTarget())
+	case *proto.APLAction_LevelingRest:
+		return rot.newActionLevelingRest(config.GetLevelingRest())
+	case *proto.APLAction_LevelingBandage:
+		return rot.newActionLevelingBandage(config.GetLevelingBandage())
 	default:
 		return nil
 	}

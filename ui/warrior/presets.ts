@@ -123,8 +123,9 @@ export const APLNoReck = PresetUtils.makePresetAPLRotation('DPS (No Reck)', APLN
 // The tools/rotopt search (template warrior_fury, see warrior_presets.sh) on the Level 60 Fury
 // talents and set, 180 sec, with Forever's normalized Rage (standards 21: a white hit gives 3.46 Rage
 // a second of weapon speed at level 30, ×1.5 at 60 with s = 0.5): Whirlwind with 25 Rage, then
-// Bloodthirst, Execute after them in the execute phase, Heroic Strike queued from 40 Rage, and
-// Hamstring as a filler from 10 Rage (its hits proc Windfury Totem's extra attacks and Flurry).
+// Bloodthirst, Execute after them in the execute phase, Heroic Strike queued from 55 Rage (40 before
+// the off hand's Rage was halved, 50 before pass 23, 2026-10-16), and Hamstring as a filler from 10 Rage (its hits proc
+// Windfury Totem's extra attacks and Flurry).
 // Death Wish goes on cooldown and Recklessness at the pull with the other cooldowns: holding them
 // for the execute phase, where Execute spends all the Rage, lost 14 at 180 sec with flat Rage. Bloodrage under 40
 // Rage, no Berserker Rage. The Mighty Rage Potion goes at the pull and the second is held for the
@@ -136,13 +137,15 @@ export const APLNoReck = PresetUtils.makePresetAPLRotation('DPS (No Reck)', APLN
 // cooldown and holding the fillers for Bloodthirst and Whirlwind both lose.
 export const APLLevel60Fury = PresetUtils.makePresetAPLRotation('Level 60 Fury', Level60FuryAPLJSON, { group: 'Level 60' });
 // The same template on the two-hand Fury talents and the two-hand set: the Fury rotation with
-// Heroic Strike from 90 Rage instead of 40, Hamstring from 20, Bloodrage under 70, Slam from 30 Rage
+// Heroic Strike from 85 Rage instead of 40, Hamstring from 20, Bloodrage under 20, Slam from 30 Rage
 // right after a main hand swing, ahead of Whirlwind (+8.4 at 180 sec; Slam at any time loses), and
 // Death Wish held for the last 36 sec with Recklessness for the last 30. The second potion and the
 // trinket's last use are held for the last 20 and 34 sec, and Blood Fury and Berserking for the last
 // 30 (Elune's Light keeps waiting for Death Wish, held it lost 7). The 34 and 30 sec holds, from 25,
 // are +4.4 / +2.1 / +1.2 on the Orc at 120 / 180 / 300 sec (trinket +1.1 and Blood Fury +0.5 of it
-// at 180 sec), Troll +0.9 and Undead +1.3 at 180 sec.
+// at 180 sec), Troll +0.9 and Undead +1.3 at 180 sec. With the raid damage hits' Rage (the
+// rotation auditor's pass 21, 2026-10-16), Bloodrage moved from under 70 Rage to under 20 and
+// Heroic Strike from 90 to 85: +0.7 / +2.5 / +1.9 at 120 / 180 / 300 sec (944.5 at 180).
 export const APLLevel60Fury2H = PresetUtils.makePresetAPLRotation('Level 60 Fury (Two-Hand)', Level60Fury2HAPLJSON, { group: 'Level 60' });
 // The tools/rotopt search (template warrior_arms) on the Level 60 Arms talents and the two-hand
 // set, Human, 180 sec: Battle Stance, Mortal Strike, Slam above 20 Rage (15 sec cooldown with
@@ -166,8 +169,9 @@ export const APLLevel60ArmsDragonkin = PresetUtils.makePresetAPLRotation('Level 
 });
 
 // The Battle Shout duty (standards 23): the base rotation, plus Battle Shout before the pull (with a
-// Bloodrage for its Rage, 3 sec before the pull so its GCD is over by then) and again when 3 sec of it
-// are left, unless it lasts the fight. Forever's Battle Shout lasts 3 min.
+// Bloodrage for its Rage, 3 sec before the pull so its GCD is over by then) and again when 35 sec of it
+// are left, unless it lasts the fight. Forever's Battle Shout lasts 3 min, so only a fight over about
+// 177 sec refreshes it, at about 142 sec, before the execute phase.
 export const APLLevel60FuryShout = PresetUtils.makePresetAPLRotation('Level 60 Fury (Battle Shout duty)', Level60FuryShoutAPLJSON, { group: 'Level 60' });
 export const APLLevel60Fury2HShout = PresetUtils.makePresetAPLRotation('Level 60 Fury (Two-Hand) (Battle Shout duty)', Level60Fury2HShoutAPLJSON, {
 	group: 'Level 60',
@@ -197,10 +201,11 @@ export const DefaultAPLs = [APLLevel60Fury];
 // Dual wield Fury, from the tools/rotopt talent search (alternated with the rotation search until
 // neither moved) on the synthetic Fury set, Human, 180 sec: 32 Fury to Bloodthirst with Furious
 // Precision, Dual Wield Specialization and Flurry, 17 Arms to Impale, and Improved Bloodrage. Enrage
-// is worth nothing in a raid (the boss does not hit the warrior), so it keeps one point. Weaponmaster
+// took a second point from Improved Berserker Rage in the 2026-10-16 search (+2.8 at 180 sec), now
+// that the raid damage hits trigger it. Weaponmaster
 // hybrids (25 Arms for the swords' extra attacks, no Bloodthirst) were 823.5 on the earlier gear,
 // 17% behind.
-export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Level 60 Fury', SavedTalents.create({ talentsString: '30305013002-25053005112110501-2' }), {
+export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Level 60 Fury', SavedTalents.create({ talentsString: '30305013002-25053005122010501-2' }), {
 	tooltip: 'Level 60 dual wield Fury talents from the talent search.',
 	group: 'Level 60',
 });
@@ -247,6 +252,17 @@ export const DefaultTalents = TalentsLevel60Fury;
 //                                 Options Presets
 ///////////////////////////////////////////////////////////////////////////
 
+// The raid damage in the Level 60 encounters (PresetUtils.LEVEL_60_RAID_DAMAGE, the same for every
+// spec): 2 direct hits a minute at random times, 1500 damage each. Under Forever each gives 3.4
+// Rage in any stance (core.ForeverDamageTakenRage: 20 Rage for a level 60 mob's 5356 health, as if
+// 40% armor took its share, before any of our own damage taken modifiers), and has Enrage's 30%
+// chance, because Forever's Enrage fires on any damage taken. Since our stance and Recklessness no
+// longer change it (2026-10-16), Fury moved by -0.2 to -0.6.
+// At 180 sec (10,000 iterations, the report requests) that is +3.4 on Fury (1040.4 to 1043.8),
+// +11.0 on Fury two-hand (921.0 to 932.0), -1.1 on Arms (945.6 to 944.5: Slam's cast is pushed
+// back) and -0.1 on Arms vs Dragonkin; at 10 hits a minute +16.0, +47.5, -4.1 and -3.3. With
+// Classic's damage-taken Rage (15.4 a hit) each build was 4 to 5 higher at 2 a minute.
+
 export const DefaultOptions = WarriorOptions.create({
 	queueDelay: 250,
 	startingRage: 0,
@@ -256,7 +272,12 @@ export const DefaultOptions = WarriorOptions.create({
 
 // The class options the preset builds set. Fury starts in Berserker Stance, Arms in Battle Stance
 // (Overpower, Rend and Bloodthrill need it).
-const PresetBuildOptionsFury = { queueDelay: 250, startingRage: 0, shout: WarriorShout.WarriorShoutBattle, stance: WarriorStance.WarriorStanceBerserker };
+const PresetBuildOptionsFury = {
+	queueDelay: 250,
+	startingRage: 0,
+	shout: WarriorShout.WarriorShoutBattle,
+	stance: WarriorStance.WarriorStanceBerserker,
+};
 const PresetBuildOptionsArms = { ...PresetBuildOptionsFury, stance: WarriorStance.WarriorStanceBattle };
 
 // The level 60 consumables. On 2026-10-12 we tried every consumable the sim applies in each slot on
@@ -296,8 +317,7 @@ export const DefaultConsumes = Consumes.create({
 
 // The raid the level 60 numbers were measured under (tools/rotopt/mksettings, spec fury and arms):
 // the shared level 60 raid, Battle Shout from another warrior, and a shaman in the warrior's group
-// with Strength of Earth and Windfury Totem. Forever's air totems no longer stack in a party, so the
-// shaman picks Windfury over Grace of Air for a warrior.
+// with Strength of Earth and Windfury Totem, and Grace of Air from a second shaman in the raid as well (the user's ruling 2026-10-16, "both totems": client 1.60.1.70425 lets Grace of Air stack with Windfury Totem and makes both raid-wide).
 export const DefaultRaidBuffs = RaidBuffs.create({
 	arcaneBrilliance: true,
 	battleShout: TristateEffect.TristateEffectImproved,
@@ -307,6 +327,7 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	fireResistanceAura: true,
 	frostResistanceAura: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
+	graceOfAirTotem: TristateEffect.TristateEffectRegular,
 	leaderOfThePack: true,
 	moonkinAura: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
@@ -316,6 +337,7 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	thorns: TristateEffect.TristateEffectImproved,
 	totemWeaponBuff: TotemWeaponBuff.TotemWeaponBuffWindfury,
 	trueshotAura: true,
+	salvation: true,
 });
 
 // Kings and Might. A Rage user has no use for Wisdom.
@@ -347,13 +369,14 @@ export const DefaultDebuffs = Debuffs.create({
 	thunderClap: TristateEffect.TristateEffectImproved,
 });
 
-// Undead is the best race for dual wield Fury (Touch of the Grave rolls on every ability press,
-// Hamstring included), Orc for Arms and two-hand Fury, whose two-handers are axes (Axe Specialization),
-// with Undead next. See sim-status.md for the race table. Engineering is for the Goblin Sapper Charge.
+// Orc is the best race for every warrior build since client 70425, whose Savage gives 1% crit with
+// any weapon (it was Axe Specialization), and Human, whose Ruthless gives 2% crit with any weapon,
+// is the best Alliance race. No racial depends on the weapon any more. See sim-status.md for the
+// race table. Engineering is for the Goblin Sapper Charge.
 export const OtherDefaults = {
 	profession1: Profession.Engineering,
 	profession2: Profession.Alchemy,
-	race: Race.RaceUndead,
+	race: Race.RaceOrc,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -371,6 +394,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		executeProportion20: 0.2,
 		executeProportion25: 0.25,
 		executeProportion35: 0.35,
+		...PresetUtils.LEVEL_60_RAID_DAMAGE,
 		targets: [
 			{
 				id: 213336,
@@ -413,6 +437,7 @@ export const EncounterLevel60Dragonkin = PresetUtils.makePresetEncounter(
 		executeProportion20: 0.2,
 		executeProportion25: 0.25,
 		executeProportion35: 0.35,
+		...PresetUtils.LEVEL_60_RAID_DAMAGE,
 		targets: [
 			{
 				id: 213336,
@@ -442,7 +467,7 @@ export const EncounterLevel60Dragonkin = PresetUtils.makePresetEncounter(
 // adds 2% of attack power a tick under Forever (report assumption warr_rend_ap, user ruling
 // 2026-10-15): +19.5 at 180 sec over Rend with no attack power (933.1); the Fury builds don't cast it. The weapons have the type
 // and speed each build sims best with among Era Phase 1 BiS speeds (standards 22): a 2.8 sec sword
-// and a 1.7 sec axe for Fury, a 3.7 sec axe for the two-hand builds. On the Era BiS swords the
+// and a 1.7 sec axe for Fury (a 2.9 sec axe since 2026-10-16, below), a 3.7 sec axe for the two-hand builds. On the Era BiS swords the
 // builds did 1038.1, 901.6 and 915.1 at 180 sec (Undead). The numbers below were measured on those swords. How k grows
 // from level 30 to 60 is an assumption: flat (s = 0) is 950.6 / 835.0 / 861.4 at 180 sec, Classic-like (s = 1)
 // 1076.1 / 924.2 / 935.0, and the off hand at half Rage (s = 0.5) 945.1 on Fury (-8.9%; the
@@ -455,8 +480,29 @@ export const EncounterLevel60Dragonkin = PresetUtils.makePresetEncounter(
 // two-hand Fury and 5.4 / 1.6 / 1.6 on Arms; the numbers above include it.
 //
 // The Battle Shout duty builds (standards 23) shout for the party themselves, on the raid without
-// its Battle Shout: Fury 1090.6 / 1054.2 / 1034.6, two-hand Fury 961.9 / 923.7 / 894.5 and Arms
-// 962.4 / 948.0 / 923.3, so the duty costs 1.3 / 3.7 / 1.3, 0.6 / 2.0 / 0.9 and 1.1 / 3.0 / 2.1.
+// its Battle Shout.
+//
+// On 2026-10-16 (client 70425's racials, the raid damage hits; 20,000 iterations, 120 / 180 / 300
+// sec): Fury (Orc) 1093.5 / 1055.1 / 1031.4 (Undead, its race before, 1078.0 / 1043.8 / 1021.5),
+// two-hand Fury (Orc) 973.5 / 932.3 / 903.6, Arms (Orc) 959.1 / 944.2 / 920.4 and Arms vs Dragonkin
+// (Orc) 1000.0 / 982.4 / 958.3. On Battle Shout duty: Fury 1092.6 / 1053.2 / 1029.8, two-hand Fury
+// 972.2 / 929.4 / 901.9 and Arms 959.4 / 942.5 / 918.2, so the duty costs 0.9 / 1.9 / 1.6,
+// 1.3 / 2.9 / 1.7 and -0.3 / 1.7 / 2.2. The numbers above this paragraph are from before.
+// On 2026-10-16, after the user's rulings that the off hand makes half the Rage (#75) and that
+// Windfury Totem procs only from the main hand (#86), with Grace of Air in the melee raid (#88),
+// Fury was re-searched (Orc, 20,000 iterations, 120 / 180 / 300 sec). The off hand became a 2.9
+// sec axe (Deathbringer's speed; slow off hands from 2.4 to 2.9 sec were 5 to 7 ahead of the 1.7
+// sec axe, the 2.8 sec main hand stayed best), Enrage took a point from Improved Berserker Rage,
+// and Heroic Strike moved to 50 Rage: 1002.3 / 972.0 / 953.8 to 1019.9 / 987.9 / 968.7, the Battle
+// Shout duty 998.2 / 968.1 / 951.4 to 1016.2 / 984.0 / 965.6. Two-hand Fury, unchanged at 1007.8 /
+// 969.6 / 944.9, stays behind. Orc is still the best race (5.7 ahead of High Order Skyborne, the
+// best Alliance race now, at 180 sec on two seed sets).
+// The rotation auditor's pass 23 (2026-10-16): Recklessness gets its own line while Death Wish is
+// up, just ahead of the other cooldowns line, so the trinket goes one GCD after it instead of in the
+// same pass (+1.2 / +1.0 / +0.6 on Fury, +1.1 / +1.0 / +0.7 on the Battle Shout duty at 120 / 180 /
+// 300 sec, on two seed sets). With it, Heroic Strike from 55 Rage beats 50 on both seed sets at
+// every length (+1.4 to +2.1 on Fury; the duty +0.7 / +1.1 at 180 sec). Fury 1018.1 / 986.5 /
+// 967.4 to 1020.8 / 989.0 / 970.0, the duty 1015.5 / 983.5 / 964.6 to 1018.1 / 985.2 / 967.3.
 export const PresetBuildLevel60Fury = PresetUtils.makePresetBuild('Level 60 Fury', {
 	group: 'Level 60',
 	tooltip: 'Level 60 dual wield Fury on the synthetic Phase 1 gear, in a 3 minute raid fight.',
@@ -464,7 +510,7 @@ export const PresetBuildLevel60Fury = PresetUtils.makePresetBuild('Level 60 Fury
 	talents: TalentsLevel60Fury,
 	rotation: APLLevel60Fury,
 	encounter: EncounterLevel60,
-	race: Race.RaceUndead,
+	race: Race.RaceOrc,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -477,7 +523,7 @@ export const PresetBuildLevel60FuryShout = PresetUtils.makePresetBuild('Level 60
 	talents: TalentsLevel60Fury,
 	rotation: APLLevel60FuryShout,
 	encounter: EncounterLevel60BattleShoutDuty,
-	race: Race.RaceUndead,
+	race: Race.RaceOrc,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],

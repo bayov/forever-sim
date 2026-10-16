@@ -32,8 +32,6 @@ import { Stats } from '../core/proto_utils/stats.js';
 import DefaultAPLJson from './apls/default.apl.json';
 import Level60APLJson from './apls/level60.apl.json';
 import Level60ManaTideAPLJson from './apls/level60_mana_tide.apl.json';
-import Level60ManaTideTotemDutyAPLJson from './apls/level60_mana_tide_totem_duty.apl.json';
-import Level60TotemDutyAPLJson from './apls/level60_totem_duty.apl.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
 import Phase1GearJSON from './gear_sets/phase_1.gear.json';
 import Phase2GearJSON from './gear_sets/phase_2.gear.json';
@@ -126,17 +124,8 @@ export const APLDefault = PresetUtils.makePresetAPLRotation('Default', DefaultAP
 // once a Lightning Bolt would no longer land in time, is +5.8 / +3.4 / +1.7 (the rotation auditor,
 // 2026-10-15; +5.7 / +3.4 / +1.8 on Mana Tide). A caster stands at range, so the rotation has no
 // Magma Totem or Fire Nova. tools/rotopt/shaman_presets.sh writes it.
-//
-// Since standards 23 (raid duties, 2026-10-15) the base rotations put down no Mana Spring Totem:
-// another shaman's comes from the raid buffs. Searing Totem is for the shaman's own damage and
-// stays. The "Totems duty" rotations put Mana Spring down themselves (before the pull, again
-// when it runs out), with the raid's off (rotopt knob waterTotem).
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJson, {
-	tooltip: "The tools/rotopt search result for the Level 60 talents. The party's Mana Spring Totem comes from the raid.",
-	group: 'Level 60',
-});
-export const APLLevel60TotemDuty = PresetUtils.makePresetAPLRotation('Level 60 (Totems duty)', Level60TotemDutyAPLJson, {
-	tooltip: "The Level 60 rotation, also keeping up the caster party's Mana Spring Totem.",
+	tooltip: 'The tools/rotopt search result for the Level 60 talents.',
 	group: 'Level 60',
 });
 // The same with Mana Tide Totem at 20% mana. At 40, 60 and 80% it was 1.1, 2.7 and 5.7 behind.
@@ -144,13 +133,9 @@ export const APLLevel60ManaTide = PresetUtils.makePresetAPLRotation('Level 60 + 
 	tooltip: 'The Level 60 rotation with Mana Tide Totem, for the Level 60 + Mana Tide talents.',
 	group: 'Level 60',
 });
-export const APLLevel60ManaTideTotemDuty = PresetUtils.makePresetAPLRotation('Level 60 + Mana Tide (Totems duty)', Level60ManaTideTotemDutyAPLJson, {
-	tooltip: "The Level 60 + Mana Tide rotation, also keeping up the caster party's Mana Spring Totem.",
-	group: 'Level 60',
-});
 
 export const APLPresets = {
-	[Phase.Phase1]: [APLLevel60, APLLevel60TotemDuty, APLLevel60ManaTide, APLLevel60ManaTideTotemDuty, APLDefault],
+	[Phase.Phase1]: [APLLevel60, APLLevel60ManaTide, APLDefault],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
 	[Phase.Phase4]: [],
@@ -171,19 +156,29 @@ export const DefaultAPL = APLLevel60;
 // Strikes 5 and Tidal Focus 5 (5% hit, Forever took Nature's Guidance away) are the big ones. On
 // the earlier gear the next best build moved 4 points into Ancestral Knowledge and Shamanistic
 // Focus out of Mindfulness and Tidal Focus and was 15 behind.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '5504301300103051-052-05305' }), {
-	tooltip: 'Level 60 talents from the talent search: Lava Burst, Thundering Strikes, Mindfulness and Tidal Focus.',
+//
+// Client 1.60.1.70425 removed Call of Thunder, moved Lava Burst to the 20-point row and made
+// Elemental Mastery the 30-point talent. The talent search (from the old build without Call of
+// Thunder, on the 2 raid hits a minute that now push casts back) took Elemental Mastery first
+// (+22 as the mean of 120, 180 and 300 sec), moved 3 Reverberation points into Eye of the Storm
+// (+8: it keeps 70% of the casts from being pushed back), and the Restoration points into
+// Ancestral Knowledge, Shamanistic Focus and one Improved Lightning Shield. 731.3 / 721.4 /
+// 712.6 at 120 / 180 / 300 sec.
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '5501331003001351-055000101-053' }), {
+	tooltip: 'Level 60 talents from the talent search: Elemental Mastery, Lava Burst, Eye of the Storm, Thundering Strikes and Tidal Focus.',
 	group: 'Level 60',
 });
 // Mana Tide Totem for the group's mana: Totemic Focus 5, Mindfulness 3, Tidal Focus 5 and the
 // Mana Tide row, with one point less in Thundering Strikes and none in Ancestral Knowledge. The
 // talent search with Mana Tide Totem pinned found it, and found it again on the standard gear.
-// Its Water Shield point does nothing in the sim: the elemental options have no raid damage
-// hits, and the boss never hits a caster. It is 667.7 / 666.9 / 656.7 at 120 / 180 / 300 sec
-// on the 1b set, 1.0% behind Level 60 at 180.
+// Its Water Shield point does nothing in the sim: the rotation keeps Lightning Shield up instead
+// (see the Options note below). Under client 1.60.1.70425 it takes Elemental Mastery for Call of
+// Thunder and Eye of the Storm for 3 Reverberation points, as Level 60 does (the talent search
+// with Mana Tide Totem pinned). 721.3 / 711.2 / 697.4 at 120 / 180 / 300 sec, 1.4% behind
+// Level 60 at 180.
 export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
 	'Level 60 + Mana Tide',
-	SavedTalents.create({ talentsString: '5504301300103051-04-053150001001' }),
+	SavedTalents.create({ talentsString: '5501331003001351-04-053150001001' }),
 	{ tooltip: 'Level 60 talents with 16 Restoration points for Mana Tide Totem.', group: 'Level 60' },
 );
 
@@ -202,6 +197,33 @@ export const DefaultTalents = TalentsLevel60;
 //                                 Options
 ///////////////////////////////////////////////////////////////////////////
 
+// Lightning Shield and the raid damage in the Level 60 encounter (PresetUtils.LEVEL_60_RAID_DAMAGE,
+// 2 direct hits a minute since 2026-10-16, when the raid hits moved to the encounter for every
+// spec; the numbers below were taken at Elemental's own rate of 1 a minute). Each hit fires a
+// Lightning Shield orb, so both Level 60 rotations keep the shield up. It goes before the pull at
+// -5.4 sec (casting it in the fight instead lost 6), and in the fight just ahead of the low rank
+// Lightning Bolt. At 180 sec Level 60 went from 690.6 to 694.0 and Mana Tide from 683.3 to 686.5
+// (about +13 at 10 a minute), and it costs 0.4 with no hits at all, for the mana. Water Shield's
+// 2% mana a globe was 20 behind at 6 a minute on Mana Tide: the GCDs cost more than the mana is
+// worth.
+//
+// Since the rotation auditor's pass 21 (2026-10-16) the fight recast waits for half the mana and a
+// minute of the fight left: at 1 hit a minute 3 orbs don't repay the GCD and the mana otherwise.
+// Dropping the recast was a little ahead at 1 a minute but 5.6 behind at 10. Mana Spring is not
+// recast with less than 20 sec left either. Level 60 is 699.0 / 695.3 / 679.7 at 120 / 180 / 300
+// sec (+1.4 / +1.3 / +3.0) and Mana Tide 692.3 / 688.1 / 673.7 (+1.4 / +1.7 / +1.7).
+//
+// Measured again at 2 hits a minute with pushback, on the client 70425 builds (20000 iterations,
+// 120 / 180 / 300 sec), the gate still wins or ties: Level 60 731.3 / 721.4 / 712.6 with it,
+// 729.0 / 719.6 / 711.5 recasting whenever the shield is down, 729.0 / 719.7 / 712.3 with only the
+// mana half, 731.4 / 720.7 / 711.1 with no recast in the fight. Mana Tide 721.3 / 711.2 / 697.4,
+// 718.8 / 709.4 / 695.6, 719.0 / 710.0 / 697.3 and 721.5 / 710.9 / 697.0.
+//
+// The rotation auditor's pass 23 (2026-10-16): no new Flame Shock with less than 9 sec left (a DoT
+// put up at the very end ticks too few times for its mana and GCD), and on Mana Tide the totem at
+// 10% mana instead of 20%. Paired at 20000 iterations on two seed sets: Level 60 781.6 / 771.8 /
+// 761.7 at 120 / 180 / 300 sec (+2.7 / +0.7 / +0.8), Mana Tide 770.8 / 761.4 / 744.3 (+2.6 / +1.1
+// / +0.3). 3, 4.5, 6 and 12 sec gates were +0.1 to +0.6 on Level 60.
 export const DefaultOptions = ElementalShamanOptions.create({});
 
 // The level 60 consumables, Forever's Phase 1 ones (the shared consumables branch). On 2026-10-12
@@ -234,8 +256,9 @@ export const DefaultConsumes = Consumes.create({
 // The level 60 raid (tools/rotopt/mksettings -spec ele): the shared level 60 raid buffs, Kings
 // and Wisdom from the paladins, Judgement of Wisdom, and Curse of the Elements as the one debuff
 // on the shaman's schools. Under Forever Improved Scorch and Winter's Chill only help the mage's
-// own spells, and Curse of Shadow is gone. A caster party's only DPS totem is Mana Spring (see
-// PartyTotemsRaidBuffs).
+// own spells, and Curse of Shadow is gone. The shaman is the only one in its group, so its
+// totems are the ones the rotation puts down (standards 23: every shaman drops its own totems; a
+// caster party's only DPS totem is Mana Spring).
 export const DefaultRaidBuffs = RaidBuffs.create({
 	arcaneBrilliance: true,
 	battleShout: TristateEffect.TristateEffectImproved,
@@ -249,17 +272,10 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	moonkinAura: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
 	retributionAura: TristateEffect.TristateEffectImproved,
-	sanctityAura: true,
 	shadowProtection: true,
 	thorns: TristateEffect.TristateEffectImproved,
 	trueshotAura: true,
-});
-
-// Standards 23: the base Level 60 builds get the caster party's Mana Spring Totem from the raid, as if
-// another shaman in the party put it down. It isn't improved: the builds have no Restorative Totems.
-export const PartyTotemsRaidBuffs = RaidBuffs.create({
-	...DefaultRaidBuffs,
-	manaSpringTotem: TristateEffect.TristateEffectRegular,
+	salvation: true,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
@@ -291,13 +307,14 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 // The shaman is an engineer for the Goblin Sapper Charge and Goblin Land Mine (4.3 and 1.2)
-// and an alchemist. The race is Orc, the best race (673.9 at 180 sec, Windshaper Skyborne 1.6
-// behind), see the races under the builds.
+// and an alchemist. The race is Windshaper Skyborne, the best race since client 1.60.1.70425
+// gave Wind Blessed 3% haste (721.4 for the Orc at 180 sec before), see the races under the
+// builds.
 export const OtherDefaults = {
 	distanceFromTarget: 20,
 	profession1: Profession.Engineering,
 	profession2: Profession.Alchemy,
-	race: Race.RaceOrc,
+	race: Race.RaceSkyborneWindshaper,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -315,6 +332,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		executeProportion20: 0.2,
 		executeProportion25: 0.25,
 		executeProportion35: 0.35,
+		...PresetUtils.LEVEL_60_RAID_DAMAGE,
 		targets: [
 			{
 				id: 213336,
@@ -331,21 +349,12 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 	}),
 	{
 		tanks: [],
-		raidBuffs: PartyTotemsRaidBuffs,
+		raidBuffs: DefaultRaidBuffs,
 		debuffs: DefaultDebuffs,
 		buffs: DefaultIndividualBuffs,
 		consumes: DefaultConsumes,
 	},
 );
-// The Level 60 encounter for the totem duty builds: the same raid without the party's Mana Spring
-// Totem, which the shaman puts down itself.
-export const EncounterLevel60TotemDuty = PresetUtils.makePresetEncounter('Level 60 (Totems duty)', EncounterLevel60.encounter!, {
-	tanks: [],
-	raidBuffs: DefaultRaidBuffs,
-	debuffs: DefaultDebuffs,
-	buffs: DefaultIndividualBuffs,
-	consumes: DefaultConsumes,
-});
 
 // On 2026-10-13, on the gear round's set (standards 1b, with the two synthetic trinkets) and the
 // standard consumes (20000 iterations), Level 60 is 674.3 / 673.9 / 663.3 at 120 / 180 / 300 sec and
@@ -358,27 +367,20 @@ export const EncounterLevel60TotemDuty = PresetUtils.makePresetEncounter('Level 
 // Best Alliance: Dwarf (the only Alliance shaman). On Mana Tide: Orc 666.9, Windshaper Skyborne 665.2,
 // Troll 662.0, Dwarf 659.8, Tauren 659.8 at 180 sec. The staff is the Era Phase 1 weapon type and no
 // race has a staff racial; Tauren's 1% hit is wasted at the hit cap.
+//
+// Client 1.60.1.70425 (2026-10-16, the 70425 talents, 2 raid hits a minute, 20000 iterations, 180
+// sec): Windshaper Skyborne 724.9 (Wind Blessed is 3% haste now), Orc 721.4 (Savage's 1% crit
+// counts with the staff now), Dwarf 719.3 and Tauren 719.1 (2% crit damage each), Troll 710.1.
+// Best overall and best Horde: Windshaper Skyborne. Best Alliance: Dwarf. On Mana Tide:
+// Windshaper Skyborne 714.6, Orc 711.2, Dwarf 708.7, Tauren 708.6, Troll 700.1.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Orc on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Windshaper Skyborne on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60,
 	encounter: EncounterLevel60,
-	race: Race.RaceOrc,
-	level: 60,
-	bonusTalentPoints: 0,
-	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-});
-// Level 60 on totem duty: it puts down the caster party's Mana Spring Totem itself, with the raid's off.
-export const PresetBuildLevel60TotemDuty = PresetUtils.makePresetBuild('Level 60 (Totems duty)', {
-	group: 'Level 60',
-	tooltip: "Level 60, also keeping up the caster party's Mana Spring Totem (the raid has no other shaman).",
-	gear: GearLevel60Phase1Synthetic,
-	talents: TalentsLevel60,
-	rotation: APLLevel60TotemDuty,
-	encounter: EncounterLevel60TotemDuty,
-	race: Race.RaceOrc,
+	race: Race.RaceSkyborneWindshaper,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -390,20 +392,7 @@ export const PresetBuildLevel60ManaTide = PresetUtils.makePresetBuild('Level 60 
 	talents: TalentsLevel60ManaTide,
 	rotation: APLLevel60ManaTide,
 	encounter: EncounterLevel60,
-	race: Race.RaceOrc,
-	level: 60,
-	bonusTalentPoints: 0,
-	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-});
-// Level 60 + Mana Tide on totem duty: it puts down the caster party's Mana Spring Totem itself, with the raid's off.
-export const PresetBuildLevel60ManaTideTotemDuty = PresetUtils.makePresetBuild('Level 60 + Mana Tide (Totems duty)', {
-	group: 'Level 60',
-	tooltip: "Level 60 + Mana Tide, also keeping up the caster party's Mana Spring Totem (the raid has no other shaman).",
-	gear: GearLevel60Phase1Synthetic,
-	talents: TalentsLevel60ManaTide,
-	rotation: APLLevel60ManaTideTotemDuty,
-	encounter: EncounterLevel60TotemDuty,
-	race: Race.RaceOrc,
+	race: Race.RaceSkyborneWindshaper,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],

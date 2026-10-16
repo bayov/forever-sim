@@ -8,6 +8,38 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks settled by the 70338 trait curves] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Client 1.60.1.70425 (2026-10-16)
+
+From wago.tools, diffing every shaman spell-class spell, the talent tree (TraitNode, TraitNodeEntry, TraitDefinition, TraitCond, TraitEdge) and the trait curves between builds 70338 and 70425, with the 15 October development notes. The talent sections below are the BlizzCon transcription and predate this; `tools/forever_talents/client/shaman.json` and `ui/core/talents/trees/shaman.json` have the 70425 tree.
+
+- Elemental tree: Lava Burst moved from row 7 to row 5 (the 20-point gate) and Elemental Mastery (16166) is the new row 7 talent, needing Lava Burst. Call of Thunder is gone from the tree (its spell has no level row, so it is not baseline either). Elemental Alacrity moved to row 2, Elemental Warding to row 3, Earthbound to row 4, and the columns were rearranged. Lightning Overload now needs Elemental Alacrity and Elemental Fury needs Lightning Overload. Restoration: Tidal Focus and Totemic Focus swapped rows (Tidal Focus is row 1 now). Every talent string with Elemental or Restoration points changes; the old Enhancement Water Shield build is no longer legal.
+- Elemental Mastery: 15 sec, 3 min cooldown, off the global cooldown. Lightning Bolt and Lava Burst cast 0.5 sec faster and Chain Lightning has no cooldown.
+- Call of Flame also lengthens Flame Shock by 3 / 6 / 9 sec (one tick a point). Trial by Fire (the sim's Improved Fire Nova) adds 10 / 20 sec to Magma Totem. Elemental Reach lost Flame Shock's extra range and cuts Totemic Projection's cooldown by 10 / 20 sec.
+- Lava Burst: the three ranks moved ten levels down (30 / 40 / 50: 123 + 0.8, 164 + 0.9, 196 + 1.1 a level, 135 / 165 / 230 mana), and a new rank 4 (1326047) at 60 has what was rank 3 (220 + 1.3 a level, 265 mana). At 60 Lava Burst is unchanged under a new spell ID.
+- Mana Tide Totem: ranks at 1 / 38 / 48 / 58 (88 / 133 / 197 / 290 mana a tick, 10 / 20 / 30 / 60 cost), the new rank 4 (1325256) at 58 being the old rank 3. Unchanged at 60 under a new spell ID.
+- Fire Nova: coefficient 0.143 (was 0.214), base 33 / 55 / 130 / 179 / 239 plus 0.4 / 0.6 / 0.9 / 1.1 / 1.3 a level (was 50 / 102 / 183 / 284 / 403 plus 1.1 / 1.6 / 2.2 / 2.8 / 3.4), and cheaper (65 / 120 / 210 / 290 / 375 mana). Rank 5 hits 232 to 259 at 57 where it was 397 to 443.
+- Chain Lightning costs 35% less (145 / 200 / 250 / 315). Stormstrike costs 8% of base mana (121.6 at 60, was 125).
+- Stormstrike's mark is no longer used up by a spell that misses (development notes). Water Shield's globes also come from our damage spells' crits (ProcTypeMask 0x262a8 to 0x362a8).
+- Strength of Earth, Grace of Air, Windfury Totem and Flametongue Totem became raid auras (effect 35 to 65), and Grace of Air lost the exclusivity flag it shared with Windfury Totem, so the two stack (master #77, standards 25).
+- Unchanged and cosmetic: Eye of the Storm (23 / 47 / 70% not to lose cast time), Elemental Alacrity's and Elemental Warding's curves (the client swapped which definition holds them), Elemental Devastation (direct harmful spells), the shocks' new Attributes_6 bit 21 (mechanic shown as combat text), Restorative Totems' modifier (healing only).
+
+The presets after the port, with the searched talents (as the mean of 120, 180 and 300 sec, 2 raid hits a minute), 20000 iterations, master before the port to after, 120 / 180 / 300 sec:
+
+| Preset | Talents | 120 s | 180 s | 300 s |
+|---|---|---|---|---|
+| Elemental Level 60 (Windshaper Skyborne, was Orc) | `5501331003001351-055000101-053` | 691.6 → 732.3 | 684.9 → 724.9 | 671.5 → 715.3 |
+| Elemental Level 60 + Mana Tide (Windshaper Skyborne, was Orc) | `5501331003001351-04-053150001001` | 685.0 → 722.1 | 678.0 → 714.6 | 665.2 → 699.4 |
+| Enhancement Level 60 | `053503002-055030011005112151-02` | 865.7 → 835.5 | 852.9 → 825.3 | 834.8 → 809.1 |
+| Enhancement Level 60 + Imp GW | `053503102-054032001005112151-01` | 862.0 → 827.4 | 848.7 → 818.4 | 830.7 → 811.5 |
+| Enhancement Level 60 + Water Shield | `051003-054030021005112151-053020001` | 813.8 → 803.7 | 804.2 → 795.3 | 792.4 → 793.3 |
+| Enhancement Level 60 + Mana Tide | `03-055030031005112051-053051001001` | 790.3 → 769.0 | 782.1 → 760.5 | 778.0 → 756.7 |
+
+Elemental gains from Elemental Mastery (+22 as the mean of the three lengths), Eye of the Storm 3 in place of 3 Reverberation points (+8, now that raid hits push casts back) and Call of Flame's longer Flame Shock, against Call of Thunder's 3% crit. Enhancement loses mostly to the Fire Nova cut. Chain Lightning, even at the new cost and with no cooldown under Elemental Mastery, loses 15 to 55 on one target, so the Elemental rotations still leave it out.
+
+Races at 180 sec on the new builds: Elemental Windshaper Skyborne 724.9, Orc 721.4, Dwarf 719.3, Tauren 719.1, Troll 710.1 (Mana Tide 714.6 / 711.2 / 708.7 / 708.6 / 700.1); Enhancement Level 60 Orc 825.3, Windshaper Skyborne 822.6, Tauren 817.1, Dwarf 816.9, Troll 813.7 (the other Enhancement builds rank the same). Best overall and best Horde: Windshaper Skyborne for Elemental, Orc for Enhancement. Best Alliance: Dwarf (the only Alliance shaman).
+
+Rotation audit pass 23 (2026-10-16): no new Flame Shock with less than 9 sec left on both Elemental builds, Mana Tide Totem at 10% mana on Elemental Mana Tide, and a new Magma Totem with as little as 2 sec left on Water Shield and Enhancement Mana Tide: +0.7 / +1.1 / +0.8 / +0.6 at 180 sec, no loss at any length (paired, 20000 iterations, two seed sets). The rotopt templates and `tools/rotopt/shaman_presets.sh` now write the shipped Level 60 APLs' actions. The report requests were rebuilt with mksettings: since the starting totems were dropped (97b76aa9) they carry the rotations' prepull totems, which moves Enhancement +3 to +13 against the requests on master before.
+
 ## Client 1.60.1.70338 and the 7 October deep dive
 
 From wago.tools (build 1.60.1.70338, 2026-10-10, the newest so far), foreverchanges.pro's 70338 talent calculator and the [Mage and Shaman class deep dive](https://worldofwarcraft.blizzard.com/en-us/news/24302097) of 7 October. The Elemental tree matches the sim rank for rank (shaman_audit.md 8.8 to 8.16).
@@ -25,11 +57,10 @@ From wago.tools (build 1.60.1.70338, 2026-10-10, the newest so far), foreverchan
 - Downranking: under Forever a rank keeps 1 - 5% for each level past its learn level + 17 of its spell power coefficient (Blizzard's 2026-10-01 development notes, the formula from foreverchanges.pro/downranking). Lightning Bolt and Chain Lightning take it (`downrank_test.go`), so the elemental low-mana fallback is rank 8 (learned at 44) now, not rank 7 (75% at 60).
 - Talent verification (every preset talent, from sim runs on the Level 60 and Level 30 builds): 108 entries over 32 talents, 92 verified, 4 Maelstrom Weapon entries partly (the proc rate), 12 utility or inert, no bugs. Not verifiable in the sim: Maelstrom Weapon's proc rate, Elemental Focus's trigger set, Water Shield and Improved Stormstrike's dodge and parry reset (inert at 0 hits), two dummy effects.
 
-## Totem duty presets (standards 23, 2026-10-15)
+## Totems in the presets (standards 23, user ruling 2026-10-15)
 
-- Each Level 60 preset has a base build and a "(Totems duty)" build. The base build gets its party's totems from the raid's buffs, as if another shaman in the party dropped them, and keeps only the totems it drops for its own damage (Searing or Magma Totem) and Mana Tide Totem. The duty build drops the party's totems itself, with the raid's off.
-- Melee party (Enhancement): Strength of Earth, Windfury Totem and Mana Spring. Windfury Totem and Grace of Air can't both stand under Forever, and our own Windfury Weapon turns Windfury Totem's buff off for us, so it is the party's. Caster party (Elemental): Mana Spring, its only DPS totem.
-- Under Forever the totems last 5 min and a starting totem costs no mana, so the duty costs 0.0 to 0.5 DPS at 3 min and 1.1 to 4.6 at 5 min, when the totems have to go down again (sim-status.md has the numbers).
+- There is no shaman totem duty: every shaman drops its own party's totems, like a warrior's Sunder, and the raid has none of its own. Enhancement puts down the melee party's Strength of Earth, Windfury Totem and Mana Spring (both are air totems, so one shaman puts down one of them; our own Windfury Weapon turns Windfury Totem's buff off for us, so it is the party's); Elemental puts down the caster party's Mana Spring, its only DPS totem. Searing or Magma Totem and Mana Tide Totem are the shaman's own as before.
+- Under Forever the totems last 5 min and a starting totem costs no mana. The Enhancement builds put theirs down 4, 3 and 2 sec before the pull so they last a 300 sec fight. Against the raid's totems the cost is 0.0 to 0.7 DPS at 3 min and 0.9 to 2.4 at 5 min (sim-status.md has the numbers).
 
 ## Beta build 1.60.1.70009 (2026-09-24)
 
@@ -39,7 +70,7 @@ The [development notes of 24 September](https://www.wowhead.com/blue-tracker/top
 - Lava Burst rank 1 is 164 average at level 40 (was 113) and rank 2 is 196 at level 50 (was 179), about 10% above the Lightning Bolt rank of the same level.
 - Elemental Fury (now row 6, after Call of Thunder) and Elemental Alacrity (now row 3, no prerequisite) swapped places. Call of Thunder now needs Elemental Alacrity. An enhancement build can no longer reach Elemental Fury.
 - Rage of the Farseer is attack speed only (it was attack and cast speed).
-- Windfury, Grace of Air and Tranquil Air Totem no longer stack in a party, even from different shamans, so twisting Windfury with Grace of Air is gone.
+- Windfury, Grace of Air and Tranquil Air Totem no longer stacked in a party, even from different shamans (development notes, 24 September). Client 70425 undid it for Grace of Air: "Grace of Air Totem is no longer exclusive with Windfury Totem and Flametongue Totem" (development notes, 15 October; Grace of Air's Attributes_11 lost 1024). Windfury and Flametongue Totem stay exclusive. One shaman still has one air totem, so Windfury Totem with Grace of Air takes two shamans, and both totems are raid-wide since 70425.
 - Flametongue Totem has no duration, does not stack with itself, with Flametongue Weapon or with Windfury Totem. The sim models it since 2026-10-01: a fire totem from level 28 (90 Mana, 5 min) that gives every main hand hit 548 / 25 Fire damage per 4 sec of weapon speed (21.9 on a 4.0 speed weapon, rank 1 does not grow with level), at 10% of spell power. Under Forever a weapon has three slots that all work together: a totem buff (Windfury or Flametongue Totem, one at a time), the shaman's own imbue (Windfury, Rockbiter, Flametongue or Frostbrand Weapon) and an oil or stone. The sim models this since 2026-10-03, for the shaman's own totems and for another shaman's (the raid buffs' Totem Weapon Buff). When both totems stand, the buff of the one placed last holds the slot.
 
 ## Trait curves, client 1.60.1.70338 (2026-10-12)

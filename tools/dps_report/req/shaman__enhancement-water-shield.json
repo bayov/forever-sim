@@ -94,7 +94,7 @@
               "blessingOfWisdom": "TristateEffectImproved",
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "050031-053030031005112151-052030001",
+            "talentsString": "051003-054030021005112151-053020001",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Leatherworking",
@@ -105,20 +105,193 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 408510
+                        "spellId": 10442
                       }
                     }
                   },
                   "doAtValue": {
                     "const": {
-                      "val": "-1.5s"
+                      "val": "-5.5s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10614
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-4.5s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10497
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-3.5s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10432
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-2.5s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10587
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-1s"
                     }
                   }
                 }
               ],
               "priorityList": [
                 {
-                  "notes": "Magma Totem whenever it is down, unless the fight is about to end.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 10442
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "20s"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10442
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Windfury Weapon turns its buff off for the shaman.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 10612
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "20s"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10614
+                      }
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 10497
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "20s"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10497
+                      }
+                    }
+                  }
+                },
+                {
                   "action": {
                     "condition": {
                       "and": {
@@ -142,7 +315,7 @@
                               },
                               "rhs": {
                                 "const": {
-                                  "val": "10s"
+                                  "val": "2s"
                                 }
                               }
                             }
@@ -158,7 +331,7 @@
                   }
                 },
                 {
-                  "notes": "Rage of the Farseer anchors the burst window. Without the talent ignore the warning on this line.",
+                  "notes": "Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -232,7 +405,7 @@
                   }
                 },
                 {
-                  "notes": "Orc. Blood Fury waits for Rage of the Farseer when the wait costs no use. Other races can ignore the warning on this line.",
+                  "notes": "Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -306,7 +479,7 @@
                   }
                 },
                 {
-                  "notes": "Troll. Berserking waits for Rage of the Farseer when the wait costs no use. Other races can ignore the warning on this line.",
+                  "notes": "Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -382,13 +555,13 @@
                   }
                 },
                 {
-                  "notes": "Anything not listed above (Sapper, trinkets, potions).",
+                  "notes": "Sapper, trinkets and potions.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }
                 },
                 {
-                  "notes": "Stormstrike on cooldown. Without the talent ignore the warning on this line.",
+                  "notes": "Without the talent ignore the warning on this line.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -398,7 +571,7 @@
                   }
                 },
                 {
-                  "notes": "Lightning Bolt once Maelstrom Weapon has stacked enough to make it quick. Without the talent ignore the warning on this line.",
+                  "notes": "Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -425,7 +598,7 @@
                   }
                 },
                 {
-                  "notes": "Fire Nova on cooldown. It goes off around the fire totem, so it needs one in place.",
+                  "notes": "Goes off around the fire totem, so it needs one down.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -448,7 +621,6 @@
                   }
                 },
                 {
-                  "notes": "Flame Shock when its DoT is down.",
                   "action": {
                     "condition": {
                       "and": {
@@ -475,7 +647,6 @@
                   }
                 },
                 {
-                  "notes": "Earth Shock otherwise, unless Flame Shock is about to run out.",
                   "action": {
                     "condition": {
                       "and": {
@@ -508,41 +679,22 @@
                   }
                 },
                 {
-                  "notes": "Water Shield whenever it is down. Its three globes are 2% mana each when something hits the shaman. Without the talent ignore the warning on this line.",
+                  "notes": "Raid damage on the shaman fires its orbs at the boss (3 per cast, at most one per 3.5s).",
                   "action": {
                     "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "not": {
-                              "val": {
-                                "auraIsActive": {
-                                  "auraId": {
-                                    "spellId": 408510
-                                  }
-                                }
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "op": "OpLt",
-                              "lhs": {
-                                "currentManaPercent": {}
-                              },
-                              "rhs": {
-                                "const": {
-                                  "val": "0.5"
-                                }
-                              }
+                      "not": {
+                        "val": {
+                          "auraIsActive": {
+                            "auraId": {
+                              "spellId": 10432
                             }
                           }
-                        ]
+                        }
                       }
                     },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 408510
+                        "spellId": 10432
                       }
                     }
                   }
@@ -555,11 +707,7 @@
             "enhancementShaman": {
               "options": {
                 "syncType": "Auto",
-                "shamanImbue": "WindfuryWeapon",
-                "startingTotems": {
-                  "fire": "MagmaTotem",
-                  "fireSecondsBeforePull": 1
-                }
+                "shamanImbue": "WindfuryWeapon"
               }
             }
           }
@@ -571,21 +719,20 @@
       "giftOfTheWild": "TristateEffectImproved",
       "powerWordFortitude": "TristateEffectImproved",
       "bloodPact": "TristateEffectImproved",
-      "strengthOfEarthTotem": "TristateEffectRegular",
+      "graceOfAirTotem": "TristateEffectRegular",
       "arcaneBrilliance": true,
       "divineSpirit": true,
       "battleShout": "TristateEffectImproved",
       "trueshotAura": true,
       "leaderOfThePack": true,
       "moonkinAura": true,
-      "manaSpringTotem": "TristateEffectRegular",
       "shadowProtection": true,
       "frostResistanceAura": true,
       "fireResistanceAura": true,
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
-      "totemWeaponBuff": "TotemWeaponBuffWindfury"
+      "salvation": true
     },
     "debuffs": {
       "judgementOfWisdom": true,
@@ -665,7 +812,9 @@
         "swingSpeed": 2,
         "parryHaste": true
       }
-    ]
+    ],
+    "raidDamageHitsPerMinute": 2,
+    "raidDamagePerHit": 1500
   },
   "simOptions": {
     "iterations": 1000,

@@ -3,9 +3,9 @@ package main
 import "github.com/wowsims/classic/sim/core/proto"
 
 // Frost under Forever rules. Frostbolt is the filler. Fingers of Frost (15% on a chill) makes
-// the next spells treat the boss as Frozen, which turns on Shatter and Ice Lance's 4 times damage,
-// so the main decision is what to spend the charges on. Winter's Chill only helps Frostbolt and
-// Ice Lance now, and only the mage's own.
+// the next spells treat the boss as Frozen, which turns on Shatter and Ice Lance's 3 times damage,
+// so the main decision is what to spend the charges on. Winter's Chill is a Cone of Cold debuff
+// since the client 1.60.1.70425.
 type mageFrost struct{}
 
 func init() {
@@ -13,7 +13,7 @@ func init() {
 }
 
 func (mageFrost) Knobs() []Knob {
-	return append(append(mageCommonKnobs(), finisherKnobs(1)...),
+	return append(append(append(mageCommonKnobs(), arcaneKnobs(0, 0)...), finisherKnobs(1)...),
 		// Ice Lance while Fingers of Frost is up: 0 never, 1 every charge, 2 only the last
 		// charge (the first goes on a Frostbolt).
 		Knob{Name: "iceLance", Default: 1, Min: 0, Max: 2, Step: 1},
@@ -32,10 +32,12 @@ func (mageFrost) Build(k Knobs) *proto.APLRotation {
 	items := mageCooldowns(k, s)
 	switch k["iceLance"] {
 	case 1:
-		items = append(items, cast(s.iceLance, known(fingersOfFrost, auraIsActive(fingersOfFrost)), "Ice Lance while Fingers of Frost makes the boss count as Frozen (4 times the damage, Shatter's crit)."))
+		items = append(items, cast(s.iceLance, known(fingersOfFrost, auraIsActive(fingersOfFrost)), "Ice Lance while Fingers of Frost makes the boss count as Frozen (3 times the damage, Shatter's crit)."))
 	case 2:
 		items = append(items, cast(s.iceLance, known(fingersOfFrost, eq(auraNumStacks(fingersOfFrost), num(1))), "Ice Lance on the last Fingers of Frost charge, the first goes on a Frostbolt."))
 	}
+	items = append(items, arcaneBlastBuffLines(k, s, nil)...)
+	items = append(items, arcaneWrathLines(k, s)...)
 	if k["missileBarrage"] == 1 {
 		items = append(items, cast(s.arcaneMissiles, known(missileBarrage, auraIsActive(missileBarrage)), "Arcane Missiles on a Missile Barrage proc, free and twice as fast."))
 	}

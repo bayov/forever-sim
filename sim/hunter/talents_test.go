@@ -69,6 +69,32 @@ func TestEfficiencyClassMask(t *testing.T) {
 	}
 }
 
+// TestResourcefulnessClassMask checks that Resourcefulness 1 (440529) takes 30% off the costs its
+// mask names, Strider Kick included since client 1.60.1.70425 (mask word 2 bit 0x200000), and not
+// Lacerate's (word 1 bit 4096).
+func TestResourcefulnessClassMask(t *testing.T) {
+	// The Survival preset's 34 points, with Resourcefulness 1 and Strider Kick.
+	_, hunter := newHunterSim(t, "--500230230250122151", &proto.Debuffs{})
+	if hunter.Talents.Resourcefulness != 1 || !hunter.Talents.StriderKick {
+		t.Fatalf("Resourcefulness %d, Strider Kick %v, want 1 and true", hunter.Talents.Resourcefulness, hunter.Talents.StriderKick)
+	}
+	for _, c := range []struct {
+		name string
+		code int32
+		want int32
+	}{
+		{"Raptor Strike", SpellCode_HunterRaptorStrike, 70},
+		{"Mongoose Bite", SpellCode_HunterMongooseBite, 70},
+		{"Wing Clip", SpellCode_HunterWingClip, 70},
+		{"Strider Kick", SpellCode_HunterStriderKick, 70},
+		{"Lacerate", SpellCode_HunterLacerate, 100},
+	} {
+		if got := costMultiplier(t, hunter, c.code); got != c.want {
+			t.Errorf("%s cost multiplier %d, want %d", c.name, got, c.want)
+		}
+	}
+}
+
 // TestExposePreyWindow checks that Expose Prey (5% a rank) opens Mongoose Bite for 10 sec, as
 // it has since build 70291, and only on a target with Hunter's Mark.
 func TestExposePreyWindow(t *testing.T) {
@@ -230,5 +256,43 @@ func TestScorpidStingDuty(t *testing.T) {
 		if hunter.SerpentSting.Dot(target).IsActive() {
 			t.Error("Serpent Sting still up after Scorpid Sting")
 		}
+	}
+}
+
+// TestPushbackFlags checks the client's interrupt flags (1.60.1.70425): Multi-Shot's lack the
+// pushback bit, Aimed Shot's carry it.
+func TestPushbackFlags(t *testing.T) {
+	_, hunter := newHunterSim(t, "", &proto.Debuffs{})
+	if got := hunter.MultiShot.PushbackReduction; got != 1 {
+		t.Errorf("Multi-Shot pushback reduction %v, want 1", got)
+	}
+	if got := hunter.AimedShot.PushbackReduction; got != 0 {
+		t.Errorf("Aimed Shot pushback reduction %v, want 0", got)
+	}
+}
+
+// TestSniperShotMarksmanshipTalents checks that Efficiency and Mortal Shots cover Sniper Shot since
+// client 1.60.1.70425 (both masks gained its bit, word 3 0x800000), on the Lone Wolf build's
+// Efficiency 5 and Mortal Shots 5.
+func TestSniperShotMarksmanshipTalents(t *testing.T) {
+	_, hunter := newHunterSim(t, "5-0053552511503051-5", &proto.Debuffs{})
+	if hunter.SniperShot == nil || hunter.Talents.Efficiency != 5 || hunter.Talents.MortalShots != 5 {
+		t.Fatalf("Sniper Shot %v, Efficiency %d, Mortal Shots %d, want a spell, 5 and 5", hunter.SniperShot != nil, hunter.Talents.Efficiency, hunter.Talents.MortalShots)
+	}
+	if got := costMultiplier(t, hunter, SpellCode_HunterSniperShot); got != 85 {
+		t.Errorf("Sniper Shot cost multiplier %d, want 85", got)
+	}
+	// The same crit damage as Aimed Shot, which Mortal Shots has always covered (1.30 with rank 5).
+	if got, want := hunter.SniperShot.CritDamageBonus, hunter.AimedShot.CritDamageBonus; math.Abs(got-want) > 1e-9 || math.Abs(want-1.30) > 1e-9 {
+		t.Errorf("Sniper Shot crit damage %v, Aimed Shot %v, want both 1.30", got, want)
+	}
+}
+
+// TestMultiShotInstant checks that Multi-Shot has no cast since client 1.60.1.70425 (SpellMisc
+// casting time index 3, 500 ms, became 1, none).
+func TestMultiShotInstant(t *testing.T) {
+	_, hunter := newHunterSim(t, "", &proto.Debuffs{})
+	if got := hunter.MultiShot.DefaultCast.CastTime; got != 0 {
+		t.Errorf("Multi-Shot cast time %v, want 0", got)
 	}
 }

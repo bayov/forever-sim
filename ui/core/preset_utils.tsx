@@ -11,6 +11,7 @@ import {
 	Faction,
 	HealingModel,
 	IndividualBuffs,
+	PartyBuffs,
 	Profession,
 	Race,
 	RaidBuffs,
@@ -77,6 +78,9 @@ export interface PresetEncounter extends PresetBase {
 	healingModel?: HealingModel;
 	tanks?: UnitReference[];
 	raidBuffs?: RaidBuffs;
+	// The buffs of our party, like another shaman's Mana Tide Totem. Left out means the
+	// encounter does not touch them.
+	partyBuffs?: PartyBuffs;
 	debuffs?: Debuffs;
 	buffs?: IndividualBuffs;
 	consumes?: Consumes;
@@ -87,7 +91,7 @@ export interface PresetEncounter extends PresetBase {
 // The buffs and consumes can be given directly instead of through an exported link.
 export interface PresetEncounterOptions
 	extends PresetOptionsBase,
-		Pick<PresetEncounter, 'healingModel' | 'tanks' | 'raidBuffs' | 'debuffs' | 'buffs' | 'consumes' | 'inFrontOfTarget'> {}
+		Pick<PresetEncounter, 'healingModel' | 'tanks' | 'raidBuffs' | 'partyBuffs' | 'debuffs' | 'buffs' | 'consumes' | 'inFrontOfTarget'> {}
 
 export interface PresetBuild {
 	name: string;
@@ -222,6 +226,15 @@ function makePresetRotationHelper(name: string, rotation: SavedRotation, options
 		onLoad: options?.onLoad,
 	};
 }
+
+// The raid damage on a DPS player in every level 60 preset's encounter (standards 24): 2 direct
+// hits a minute at random times, 1500 damage each. The boss is on the tank, and these stand in
+// for the raid-wide spells, cleaves and volleys that still reach the raid. The rate and the
+// damage are estimates from Season of Discovery boss timers (Ragnaros's Wrath every 26 sec,
+// Broodlord's Blast Wave, Kel'Thuzad's Frostbolt Volley, Chromaggus's breaths; none on Patchwerk,
+// Loatheb and Sapphiron; about 10 a minute on Firemaw, Vaelastrasz and Huhuran below 30%), which
+// hit for about 1000 to 2500 in Classic.
+export const LEVEL_60_RAID_DAMAGE = { raidDamageHitsPerMinute: 2, raidDamagePerHit: 1500 };
 
 export const makePresetEncounter = (name: string, encounter?: PresetEncounter['encounter'] | string, options?: PresetEncounterOptions): PresetEncounter => {
 	let healingModel: PresetEncounter['healingModel'] = undefined;

@@ -130,6 +130,10 @@ func (unit *Unit) newAPLRotation(config *proto.APLRotation) *APLRotation {
 			action.Finalize(rotation)
 		})
 	}
+	// After the warnings, which go by the user's lines.
+	if defaults := rotation.levelingDefaultRests(config); len(defaults) > 0 {
+		rotation.priorityList = append(defaults, rotation.priorityList...)
+	}
 
 	// Remove MCDs that are referenced by APL actions, so that the Autocast Other Cooldowns
 	// action does not include them.
@@ -206,6 +210,9 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 
 	if sim.Log != nil && i == 0 {
 		apl.unit.Log(sim, "No available actions!")
+	}
+	if i == 0 && sim.Encounter.leveling != nil {
+		sim.Encounter.leveling.onRotationIdle(sim, apl.unit)
 	}
 
 	gcdReady := apl.unit.GCD.IsReady(sim)

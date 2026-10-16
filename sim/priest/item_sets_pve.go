@@ -183,7 +183,7 @@ var raimentsOfConvictionBonuses = map[int32]core.ApplyEffect{
 		}))
 	},
 	// Reduces the cooldown of your Devouring Plague spell by 60 sec, which is all of its
-	// 1 min cooldown under Forever.
+	// 24 sec cooldown under Forever (client 70425; 1 min before).
 	5: func(agent core.Agent) {
 		priest := agent.(PriestAgent).GetPriest()
 		priest.OnSpellRegistered(func(spell *core.Spell) {

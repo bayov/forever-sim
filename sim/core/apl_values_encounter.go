@@ -86,7 +86,7 @@ func (value *APLValueNumberTargets) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeInt
 }
 func (value *APLValueNumberTargets) GetInt(sim *Simulation) int32 {
-	return sim.GetNumTargets()
+	return int32(len(sim.Encounter.ActiveTargetUnits))
 }
 func (value *APLValueNumberTargets) String() string {
 	return "Num Targets"

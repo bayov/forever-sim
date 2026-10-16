@@ -813,6 +813,10 @@ message RaidBuffs {
 
 	// Windfury or Flametongue Totem from another shaman, on the main hand.
 	TotemWeaponBuff totem_weapon_buff = 40;
+
+	// Forever's Salvation (spell 1038, client 1.60.1.70425): 30% less threat for the raid. It's no
+	// longer a Blessing, so it doesn't take a Blessing slot.
+	bool salvation = 41;
 }
 
 // Buffs that affect a single party.
@@ -1037,6 +1041,73 @@ message Encounter {
 	// spend random stretches of 1 to 10 sec out of melee range, where they have no white
 	// hits and cannot use melee abilities.
 	double pvp_melee_downtime = 9;
+
+	// Leveling mode (docs/leveling_sim.md): a grinding session instead of one fight. When set,
+	// the targets above are ignored and the session pulls normal mobs from the mob table.
+	LevelingOptions leveling = 10;
+
+	// Raid damage on the players the boss isn't tanking: direct hits a minute, on average, at
+	// random times, and the damage of each before the player's damage taken modifiers. Each is
+	// a spell hit from the boss, so it does what any hit taken does (a shield's charge, Rage,
+	// spell pushback). See sim/core/raid_hits.go.
+	double raid_damage_hits_per_minute = 11;
+	double raid_damage_per_hit = 12;
+}
+
+// A grinding session (docs/leveling_sim.md). A field left at 0 takes its default.
+message LevelingOptions {
+	// Seconds. Default 1200 (20 min).
+	double session_length = 1;
+
+	// The mobs we grind: their level less ours (default 0), and how far either side of that
+	// they spread (default 1, so level 19 to 21 mobs for a level 20 at offset 0).
+	int32 mob_level_offset = 2;
+	optional int32 mob_level_spread = 3;
+	// Default Beast. One type for the session, because a mob's type is fixed when the sim is
+	// built (Slaying talents and items read it then).
+	MobType mob_type = 4;
+	// Scales the level's average armor. Default 1.
+	double armor_multiplier = 5;
+
+	// The most mobs we can ever have on us (default 5). The rotation decides when to look for
+	// another mob while fighting (Look For Mob), and how to pull it.
+	int32 max_pack_size = 7;
+
+	// Seconds to find the next mob out of combat (default 0 to 10), and to find one to
+	// chain pull while in combat. Searching out of combat we run around, so we can't hard
+	// cast. In combat the rotation picks (Look For Mob): run around with the mobs on us
+	// following (default 0 to 3), or stand and keep fighting while we look, which takes
+	// longer because we only see the mobs around us (default 0 to 5).
+	double search_min = 8;
+	double search_max = 9;
+	double chain_search_min = 10;
+	double chain_search_max = 11;
+	double chain_search_standing_min = 20;
+	double chain_search_standing_max = 21;
+	// How far the mob a running search finds stands, in whole yards between these (default
+	// 10 to 40). That's every search out of combat, and a chain search that runs. It waits
+	// there until we pull it: a harmful spell that lands on it, or walking into melee range of
+	// it (a face pull). Then it runs to us at its level's speed.
+	double found_min = 12;
+	double found_max = 18;
+	// How far the mob a standing chain search finds stands (default 20 to 60). Running around
+	// we come across mobs, but standing still we look out over the area and spot them further
+	// off.
+	double found_standing_min = 22;
+	double found_standing_max = 23;
+
+	// When to eat, drink and bandage is the rotation's (Rest and Bandage), and so is how many
+	// mobs a pull takes (Look For Mob). These were options once.
+	reserved 6, 13, 14, 15;
+	reserved "pack_size", "eat_below", "drink_below", "no_bandages";
+	// Whether a chain search runs is the rotation's (Look For Mob's stand) since 2026-10-16.
+	reserved 19;
+	reserved "chain_search_moving";
+
+	// Seconds of corpse run after a death (default 180), and the share of health and mana
+	// we come back with (default 0.5).
+	double death_penalty = 16;
+	double revive_fraction = 17;
 }
 
 message PresetTarget {
@@ -1126,6 +1197,9 @@ message UnitReference {
 		CurrentTarget = 5;
 		AllPlayers = 6;
 		AllTargets = 7;
+		// In a leveling session (Encounter.leveling): the mob we found and haven't pulled
+		// yet, out of combat or while fighting others. None when there isn't one.
+		PullTarget = 8;
 	}
 
 	// The type of unit being referenced.

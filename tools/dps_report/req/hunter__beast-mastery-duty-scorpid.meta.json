@@ -5,7 +5,7 @@
   "build": "Beast Mastery (Scorpid Sting duty)",
   "isDefault": false,
   "pr": 5,
-  "race": "NightElf",
+  "race": "SkyborneWindshaper",
   "talents": "5020121505021241-00520503014",
   "treeNames": [
     "Beast Mastery",
@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic_ranged",
   "apl": "bm_scorpid",
   "published": {
-    "dps": 866.4,
-    "source": "Scorpid Sting duty preset (standards 23), 2026-10-15: 180 s, 20000 iterations, seed 1"
+    "dps": 881.8,
+    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 872.9)"
   },
   "verify": {
-    "dps": 866.41,
-    "stderr": 0.19,
+    "dps": 881.85,
+    "stderr": 0.2,
     "iters": 20000,
     "ok": true,
-    "note": "same sim as the published number"
+    "note": "run_build.py main run, 180s, seed 1"
   },
-  "summary": "Beast Mastery 31/20 with a 1.0 sec cat: Bestial Wrath, Frenzy, Ferocity and Unleashed Fury, plus Careful Aim and Mortal Shots in Marksmanship. The pet deals about 21% of its damage; it is the pet-focused build, 68 DPS behind Marksmanship at 180 s.",
+  "summary": "Beast Mastery with a cat: Bestial Wrath, Frenzy and Unleashed Fury. The pet deals about 21% of the damage.",
   "keyTalents": [
     "Bestial Wrath",
     "Frenzy",
@@ -37,13 +37,13 @@
     "Mortal Shots"
   ],
   "rotation": [
-    "Pre-pull: Aspect of the Hawk at -3 s, Rapid Fire at -0.1 s",
-    "Bestial Wrath (0 and 120 s), Rapid Fire, racials, Sapper and potions on cooldown",
-    "Scorpid Sting (2% off the boss's hit, 9% of base mana) at the pull and again in its last 2 s, in place of Serpent Sting; the raid's Scorpid Sting is off",
+    "Pre-pull: Aspect of the Hawk at -3s, Rapid Fire at -0.1s",
+    "Bestial Wrath (0s and 120s), Rapid Fire, racials, Sapper and potions on cooldown",
+    "Scorpid Sting (2% off the boss's hit, 9% of base mana) at the pull and again in its last 4s, in place of Serpent Sting; the raid's Scorpid Sting is off",
     "Aimed Shot on the cooldown it shares with Multi-Shot",
     "Sniper Shot on cooldown",
     "Arcane Shot on cooldown (mana >= 20%)",
-    "Cat (1.0 sec) bites and claws on cooldown, Frenzy up about 178 of 180 s; Auto Shot throughout"
+    "Cat (1.0s) bites and claws on cooldown, Frenzy up about 178 of 180s; Auto Shot throughout"
   ],
   "consumes": [
     "Flask of Distilled Wisdom",
@@ -60,21 +60,19 @@
     "Goblin Land Mine"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 Agility and 14 crit rating, and 415 ranged attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Trueshot Aura's top rank gives 100 ranged attack power and Hunter's Mark's 140 (assumption hunter_tsa_hm_rank, user ruling 2026-10-15: Blizzard fixes both onto the curve; the client has 50 and 71, below the older ranks' 75 and 98)",
-    "Aspect of the Hawk held at rank 5 (90 RAP) since Forever's rank 6 gives only 55",
-    "Pet scaling: 10% of RAP plus hunter hit (SoD placeholder for hit); on SoD's full 22% pet scaling this build would gain +41 (2026-10-12 gear)",
-    "Arcane Shot takes 10% of ranged attack power and Serpent Sting 3% a tick (the forever-hunter wiki; the beta log fit was 11% / 3.5%)",
-    "Auto Shot fires through casts with no 0.5 sec aim (open assumption)",
-    "Wildstalker Armor 4P/5P not in the preset (2P only); with them this build would gain +1 (measured on the 2026-10-12 gear)",
-    "Pet consumables are off (Forever pets take no player buffs); they would add 17 if allowed",
-    "Intimidation is talented but not cast by the rotation",
-    "Major Frenzy Potion is +5 at 120/180 s but 19 behind at 300 s, so Major Mana Potion ships",
-    "22% more crit per Agility than Classic (assumption hunter_crit_per_agi, user ruling 2026-10-15: the beta's level 1 ratio carried to 60)",
-    "A pet's hit scales with its attack speed as in Classic (assumption hunter_pet_speed, user ruling 2026-10-15; on the beta every pet hits like a 2.0 sec pet); the cat is still the best pet and every cat speed sims within 1 DPS",
-    "The ranged weapon is a 2.5 sec bow at Rhok'delar's 44.0 DPS (Striker's Mark's speed and spread, standards 22 Ranged). A 2.6 sec gun sims 0.3 to 1.0 higher with a 15% ammo pouch, but 3.4 to 5.2 lower with Era Phase 1's sure 14% pouch (Ribbly's Bandolier), and the 15% quiver only takes arrows",
-    "Scorpid Sting duty (standards 23): the request switches the raid's Scorpid Sting off and the hunter keeps its own up in place of Serpent Sting; it costs 85.1 / 85.7 / 86.5 DPS at 120 / 180 / 300 s against hunter__beast-mastery, most of it Serpent Sting's damage",
-    "The sting only lowers the boss's hit (2%, the slot it shares with Insect Swarm, whose raid debuff stays on), so it adds nothing to the raid's damage"
+    "Assumed: Trueshot Aura's top rank gives 100 ranged attack power and Hunter's Mark's 140 (the client has 50 and 71).",
+    "Aspect of the Hawk stays at rank 5 (90 RAP). Forever's rank 6 gives only 55.",
+    "Pet scaling uses 10% of RAP (SoD placeholder). SoD's 22% would add 41.",
+    "Arcane Shot takes 10% of ranged attack power and Serpent Sting 3% a tick (beta log fit: 11% and 3.5%).",
+    "Assumed: Auto Shot fires through casts with no 0.5s aim.",
+    "Pet consumables are off (Forever pets take no player buffs). They would add 17.",
+    "Intimidation is talented but not cast.",
+    "Major Frenzy Potion: +5 at 120s and 180s, -19 at 300s, so the preset uses Major Mana Potion.",
+    "Assumed: 22% more crit per Agility than Classic.",
+    "Assumed: pet hits scale with attack speed as in Classic. Every cat speed sims within 1 DPS.",
+    "A 2.5s bow at Rhok'delar's 44.0 DPS. A 2.6s gun sims 0.3 to 1.0 higher with a 15% ammo pouch, 3.4 to 5.2 lower with Era's 14% pouch.",
+    "Costs 81.4 / 82.2 / 82.3 DPS vs Beast Mastery at 120s / 180s / 300s, mostly Serpent Sting's damage.",
+    "The sting only lowers the boss's hit by 2%. It adds no raid damage."
   ],
   "notes": "Request is hunter__beast-mastery's with the rotation swapped for ui/hunter/apls/bm_scorpid.apl.json (tools/rotopt/hunter_presets.sh) and debuffs.scorpidSting removed; mksettings writes the same raid as spec hunter_bm_scorpid. Request written by mksettings (spec hunter_bm) unchanged; it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions.",
   "duty": "Scorpid Sting",

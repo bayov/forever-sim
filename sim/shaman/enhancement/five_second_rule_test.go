@@ -198,7 +198,7 @@ func TestOrcShamanFiveSecondRule(t *testing.T) {
 // so we regen the same as when not casting.
 func TestOrcShamanCastingRegenCap(t *testing.T) {
 	// Stormstrike, Improved Stormstrike 2/2 and Mindfulness 3/3.
-	sim, enh := newFiveSecondRuleSim(60, "-000000000000100200-003")
+	sim, enh := newFiveSecondRuleSim(60, "-0000000000001002-003")
 	full := enh.ManaRegenPerSecondWhileNotCasting()
 	casting := 0.58 * full
 	if got := enh.ManaRegenPerSecondWhileCasting(); math.Abs(got-casting) > 1e-9 {

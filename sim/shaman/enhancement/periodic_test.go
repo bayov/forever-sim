@@ -260,12 +260,13 @@ func TestOrcShamanSearingTotemBolts(t *testing.T) {
 	}
 	bolt := enh.GetSpell(core.ActionID{SpellID: shaman.SearingTotemAttackSpellId[3]})
 	var bolts []time.Duration
-	dot := searing.Dot(enh.CurrentTarget)
+	// The totem runs as a dot on the shaman and shoots our target.
+	dot := searing.AOEDot()
 	onTick := dot.OnTick
 	dot.OnTick = func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-		casts := bolt.SpellMetrics[target.UnitIndex].Casts
+		casts := bolt.SpellMetrics[enh.CurrentTarget.UnitIndex].Casts
 		onTick(sim, target, dot)
-		if bolt.SpellMetrics[target.UnitIndex].Casts == casts+1 {
+		if bolt.SpellMetrics[enh.CurrentTarget.UnitIndex].Casts == casts+1 {
 			bolts = append(bolts, sim.CurrentTime)
 		}
 	}
@@ -308,7 +309,7 @@ func TestOrcShamanMagmaTotemPulses(t *testing.T) {
 	targets := sim.Encounter.TargetUnits
 
 	var pulses []time.Duration
-	dot := magma.Dot(enh.CurrentTarget)
+	dot := magma.AOEDot()
 	onTick := dot.OnTick
 	dot.OnTick = func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 		var before []core.SpellMetrics
@@ -348,17 +349,19 @@ func TestOrcShamanMagmaTotemPulses(t *testing.T) {
 // It goes off around our fire totem, so it can't be cast without one. With a Magma Totem down
 // it hits all 3 targets and waits 10 sec, or 8 and 6 sec with Improved Fire Nova 1 and 2. On
 // the beta the shortest gaps between casts were 9.99 sec and, with the talent at 2/2, 5.92
-// sec (shaman_audit.md 8.9). Once the Magma Totem's 20 sec are up, it can't be cast again.
+// sec (shaman_audit.md 8.9). Once the Magma Totem is gone, it can't be cast again: after 20 sec,
+// and 30 or 40 with Improved Fire Nova (the client's Trial by Fire) 1 or 2 since client 1.60.1.70425.
 func TestOrcShamanFireNova(t *testing.T) {
 	for _, c := range []struct {
 		talents  string
 		cooldown time.Duration
-	}{{"", 10 * time.Second}, {"000000001", 8 * time.Second}, {"000000002", 6 * time.Second}} {
+		magma    float64
+	}{{"", 10 * time.Second, 20}, {"000000001", 8 * time.Second, 30}, {"000000002", 6 * time.Second, 40}} {
 		target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)
 		target.Level = 60
 		sim := core.NewSim(&proto.RaidSimRequest{
 			Raid:       core.SinglePlayerRaidProto(newOrcShaman(60, c.talents, &proto.EnhancementShaman_Options{}), &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
-			Encounter:  &proto.Encounter{Duration: 30, Targets: []*proto.Target{target, target, target}},
+			Encounter:  &proto.Encounter{Duration: 50, Targets: []*proto.Target{target, target, target}},
 			SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1, ExactDamage: true},
 		}, simsignals.CreateSignals())
 		sim.Reset()
@@ -384,13 +387,13 @@ func TestOrcShamanFireNova(t *testing.T) {
 			}
 		})
 		// The Magma Totem went down at 1 sec.
-		at(sim, 20.9, func(sim *core.Simulation) {
+		at(sim, c.magma+0.9, func(sim *core.Simulation) {
 			enh.SetGCDTimer(sim, sim.CurrentTime)
 			if !fireNova.CanCast(sim, enh.CurrentTarget) {
 				t.Errorf("talents %q: Fire Nova can't be cast with the Magma Totem still down", c.talents)
 			}
 		})
-		at(sim, 21.1, func(sim *core.Simulation) {
+		at(sim, c.magma+1.1, func(sim *core.Simulation) {
 			enh.SetGCDTimer(sim, sim.CurrentTime)
 			if fireNova.CanCast(sim, enh.CurrentTarget) {
 				t.Errorf("talents %q: Fire Nova can be cast after the Magma Totem ran out", c.talents)

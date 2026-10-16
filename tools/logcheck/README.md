@@ -62,14 +62,74 @@ the second one wait for the first.
 The skill runs the audit every hour while its session is open, and collects what it finds in
 `findings.md` (next to this README) for us to go through.
 
+## The mobs
+
+```sh
+go run --tags=with_db ./tools/logcheck -mobs
+```
+
+This measures the mobs that swung at our characters, in every archived log (or just `-log`),
+for the leveling sim's normal mob table (`sim/core/mob_stats_auto_gen.go`,
+`docs/leveling_sim.md`). Our level at each swing comes from the exports and BayovCore's
+history.
+
+- **By mob level:** the mobs' max health and armor (from the log's advanced fields), the time
+  between a mob's swings at us, and the raw damage of their landed swings, before our armor
+  and the crit. Each comes as a median and a mean, next to the table's value for that level.
+- **By the mob's level less ours:** how their white swings landed on us (miss, dodge, parry,
+  block, crit and crush), with 95% intervals.
+
+The log doesn't say which mobs are elites, rares or bosses, so a level's averages carry some
+of them, and the medians are the safer numbers. Parry haste and stuns shorten or lengthen
+the gaps between swings, which is why the swing time is a median too.
+
+## The pacing
+
+```sh
+go run --tags=with_db ./tools/logcheck -pacing -from "2026-10-10 18:00:00" -to "2026-10-10 20:00:00"
+```
+
+This measures how we paced our grinding, in every archived log (or just `-log`), for the
+leveling sim's session defaults (`docs/leveling_sim.md`, From the logs). It looks at the mobs
+within 3 levels of ours that we fought and killed, with our level from the exports and
+BayovCore's history.
+
+- **By hour:** our kills, the median fight and our damage a second. A beta test stretch (white
+  swings only, say) shows as low damage a second, so we can pick the stretch of normal play with
+  `-from` and `-to`.
+- **Kill to next pull:** the time from a kill to the next fight's first attack, less the time
+  we spent eating, drinking, bandaging or casting a heal. Gaps over 60 s (AFK) and gaps with a
+  death of ours are left out. It also gives our travel in the gap, from the positions in the
+  log, and how many gaps had a Ghost Wolf cast.
+- **Pulls:** how the first mob of each fight was pulled (a spell, our white swing, or the mob
+  attacking first), and for a spell pull, how far we stood from the mob when it landed and how
+  long the mob took to swing at us.
+- **Fights:** the mobs a fight took, the most on us at once, and how long after the mob before
+  each later one joined, split by whether we pulled it or it came to us.
+
+A fight is the mobs we fought one after another while some were still alive. A mob we leave
+alone for 15 s is out of it. Each sample prints its count, fast quartile, median, mean and
+slow quartile.
+
 ## Inputs
 
 - **The log.** With no `-log`, it runs `tools/combat_log/archive.sh` first and reads the newest
-  log in `~/forever-logs/_classic_beta_/`. `-from` and `-to` take `HH:MM:SS` on the log's first
-  day (a time before the log starts is the next day) or `YYYY-MM-DD HH:MM:SS`.
+  log of every game folder in `~/forever-logs/` (`_classic_beta_/` now, and the release
+  client's folder once `archive.sh` lists it), or of `-flavor`. `-from` and `-to` take
+  `HH:MM:SS` on the log's first day (a time before the log starts is the next day) or
+  `YYYY-MM-DD HH:MM:SS`.
+- **The character.** We know each character by its GUID (`Player-4620-01872808`), never by
+  its name. The game changes how the log writes names (`Bayov-ClassicBetaPvE2-` became
+  `Bayov-Oom-ClassicBetaPvE2-` for the same character on 2026-10-16), and two characters can
+  share one. The log flags its own player as "mine" (0x511), so its lines say which GUID was us
+  at each moment. Exports and history records since 2026-10-16 carry the GUID in `who.guid`.
+  An older one takes the GUID that the logs had as ours at its time, and a history session
+  takes the one most of its records got (`characters.go`). `~/forever-logs/audit/me.json` keeps
+  which GUID wrote each log, so we read each log once for that.
 - **The export.** With no `-export`, it takes the newest export taken before the window ends,
   of the one character of ours (one we have exports of) that has lines in the window. When we
-  played two of them in the window, `-char Name-Realm` picks one.
+  played two of them in the window, `-char` picks one, by GUID or by name. A name that more
+  than one character had picks the one with the newest export.
   It looks at the pasted ones in `~/forever-logs/exports/` and at BayovCore's history in
   `~/forever-logs/history/` (below). When the user pastes an export, save it in `exports/` as
   `export-<date>_<time>.json` with the date and time from its `when.date`. The header prints which
@@ -81,8 +141,9 @@ The skill runs the audit every hour while its session is open, and collects what
   WoW writes it to disk on `/reload` or logout, and the addon adds a logout record just before,
   which says the history is complete up to then. `archive.sh` runs
   `tools/combat_log/history.py`, which adds the new records to
-  `~/forever-logs/history/<Name>-<Realm>.jsonl` (the sheets and talent lists are in the
-  `.blobs.json` next to it). logcheck rebuilds a whole export for each record, so the header
+  `~/forever-logs/history/<key>.jsonl` (the sheets and talent lists are in the `.blobs.json`
+  next to it). The key is the GUID, or Name-Realm in the histories from before 2026-10-16.
+  logcheck rebuilds a whole export for each record, so the header
   names a history line like `Bayov-ClassicBetaPvP.jsonl:5 (history, change)`.
 - **Client tables.** It downloads SpellName and SpellEffect for the export's client build from
   wago.tools into `~/forever-logs/wago/<build>/`, or uses the newest build there when wago.tools

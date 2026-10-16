@@ -37,6 +37,8 @@ func (druid *Druid) registerHurricaneSpell() {
 			ProcMask:    core.ProcMaskSpellDamage,
 			Flags:       SpellFlagOmen | core.SpellFlagChanneled | core.SpellFlagBinary | core.SpellFlagAPL,
 
+			PushbackReduction: druid.naturesFocusChance(),
+
 			RequiredLevel: int(rank.level),
 			Rank:          i + 1,
 
@@ -66,7 +68,7 @@ func (druid *Druid) registerHurricaneSpell() {
 					dot.Snapshot(target, damage, isRollover)
 				},
 				OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-					for _, aoeTarget := range sim.Encounter.TargetUnits {
+					for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
 						dot.CalcAndDealPeriodicSnapshotDamage(sim, aoeTarget, dot.OutcomeTick)
 					}
 				},

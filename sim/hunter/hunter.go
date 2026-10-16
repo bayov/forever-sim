@@ -141,8 +141,8 @@ func (hunter *Hunter) GetHunter() *Hunter {
 	return hunter
 }
 
-// Forever's Trueshot Aura is a party aura the talent teaches, ranged attack power only. The sim only
-// has a raid wide switch for it.
+// Forever's Trueshot Aura is a raid aura the talent teaches (a party aura before client
+// 1.60.1.70425), ranged attack power only.
 func (hunter *Hunter) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 	if hunter.Talents.TrueshotAura {
 		raidBuffs.TrueshotAura = true
@@ -172,8 +172,6 @@ func (hunter *Hunter) Initialize() {
 		ranged.Flags |= core.SpellFlagCastWhileCasting
 		ranged.Cast = core.CastConfig{}
 		ranged.ExtraCastCondition = nil
-
-		hunter.removeRacialRangedCrit()
 	}
 
 	hunter.OnSpellRegistered(func(spell *core.Spell) {
@@ -346,36 +344,6 @@ func NewHunter(character *core.Character, options *proto.Player) *Hunter {
 }
 
 func (hunter *Hunter) OnGCDReady(_ *core.Simulation) {
-}
-
-// Forever's weapon specialization racials give melee and spell crit with a sword (Human, 2%), mace
-// (Dwarf, 1%) or axe (Orc, 1%), sim/core/racials_forever.go. The sim keeps one crit stat for melee
-// and ranged attacks, but the forever-hunter wiki's beta testing finds the racial gives no ranged
-// crit, so the ranged attacks take it back off. The pet inherits it, as the wiki also finds.
-func (hunter *Hunter) removeRacialRangedCrit() {
-	weaponCrit := map[proto.Race]struct {
-		weaponType proto.WeaponType
-		crit       float64
-	}{
-		proto.Race_RaceHuman: {proto.WeaponType_WeaponTypeSword, 2},
-		proto.Race_RaceDwarf: {proto.WeaponType_WeaponTypeMace, 1},
-		proto.Race_RaceOrc:   {proto.WeaponType_WeaponTypeAxe, 1},
-	}
-	racial, ok := weaponCrit[hunter.Race]
-	if !ok {
-		return
-	}
-	for _, weapon := range []*core.Item{hunter.MainHand(), hunter.OffHand()} {
-		if weapon.WeaponType == racial.weaponType {
-			bonus := racial.crit * core.CritRatingPerCritChance
-			hunter.OnSpellRegistered(func(spell *core.Spell) {
-				if spell.ProcMask.Matches(core.ProcMaskRanged) {
-					spell.BonusCritRating -= bonus
-				}
-			})
-			return
-		}
-	}
 }
 
 // The hunter's ranged spells need the target out of melee range, its melee spells need it in.

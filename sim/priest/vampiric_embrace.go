@@ -13,8 +13,9 @@ func (priest *Priest) registerVampiricEmbraceSpell() {
 
 	actionID := core.ActionID{SpellID: 15286}
 	manaCost := 40.0
-	// Forever: 30 sec (Classic 1 min) on a 1 min cooldown, and Improved Vampiric Embrace is
-	// gone, so it heals the party for 20% of the Shadow damage (client 1.60.1.70338).
+	// Forever: 30 sec (Classic 1 min) on a 30 sec cooldown (client 1.60.1.70425; 1 min in
+	// 70338), and Improved Vampiric Embrace is gone, so it heals the party for 20% of the
+	// Shadow damage.
 	duration := time.Second * 30
 
 	partyPlayers := priest.Env.Raid.GetPlayerParty(&priest.Unit).Players
@@ -54,12 +55,18 @@ func (priest *Priest) registerVampiricEmbraceSpell() {
 			},
 			CD: core.Cooldown{
 				Timer:    priest.NewTimer(),
-				Duration: time.Minute,
+				Duration: time.Second * 30,
 			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			result := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
+			// Forever 70425 made it unresistable (SpellMisc Attributes_3 +0x40000, the bit Shadow
+			// Weaving got in 70170).
+			outcome := spell.OutcomeMagicHit
+			if priest.Env.IsForever() {
+				outcome = spell.OutcomeAlwaysHit
+			}
+			result := spell.CalcOutcome(sim, target, outcome)
 			if result.Landed() {
 				priest.VampiricEmbraceAuras.Get(target).Activate(sim)
 			}

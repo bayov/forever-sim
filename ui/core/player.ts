@@ -39,6 +39,7 @@ import {
 import {
 	DungeonFilterOption,
 	ExcludedZones,
+	LevelingGearPlanSettings,
 	RaidFilterOption,
 	SourceFilterOption,
 	UIEnchant as Enchant,
@@ -302,6 +303,7 @@ export class Player<SpecType extends Spec> {
 	private static readonly numEpRatios = 6;
 	private epRatios: Array<number> = new Array<number>(Player.numEpRatios).fill(0);
 	private epWeights: Stats = new Stats();
+	private levelingGearPlan: LevelingGearPlanSettings = LevelingGearPlanSettings.create({ seed: 1 });
 	private currentStats: PlayerStats = PlayerStats.create();
 	private metadata: UnitMetadata = new UnitMetadata();
 	private petMetadatas: UnitMetadataList = new UnitMetadataList();
@@ -322,6 +324,7 @@ export class Player<SpecType extends Spec> {
 	readonly healingModelChangeEmitter = new TypedEvent<void>('PlayerHealingModel');
 	readonly epWeightsChangeEmitter = new TypedEvent<void>('PlayerEpWeights');
 	readonly miscOptionsChangeEmitter = new TypedEvent<void>('PlayerMiscOptions');
+	readonly levelingGearPlanChangeEmitter = new TypedEvent<void>('PlayerLevelingGearPlan');
 
 	readonly currentStatsEmitter = new TypedEvent<void>('PlayerCurrentStats');
 	readonly epRatiosChangeEmitter = new TypedEvent<void>('PlayerEpRatios');
@@ -374,6 +377,7 @@ export class Player<SpecType extends Spec> {
 				this.distanceFromTargetChangeEmitter,
 				this.healingModelChangeEmitter,
 				this.epWeightsChangeEmitter,
+				this.levelingGearPlanChangeEmitter,
 				this.epRatiosChangeEmitter,
 				this.epRefStatChangeEmitter,
 			],
@@ -476,6 +480,17 @@ export class Player<SpecType extends Spec> {
 			this.itemEPCache[i] = new Map();
 		}
 		this.epWeightsChangeEmitter.emit(eventID);
+	}
+
+	// The leveling gear plan's seed and the items we put in it by hand (leveling_gear.ts).
+	getLevelingGearPlan(): LevelingGearPlanSettings {
+		return LevelingGearPlanSettings.clone(this.levelingGearPlan);
+	}
+
+	setLevelingGearPlan(eventID: EventID, plan: LevelingGearPlanSettings) {
+		if (LevelingGearPlanSettings.equals(this.levelingGearPlan, plan)) return;
+		this.levelingGearPlan = LevelingGearPlanSettings.clone(plan);
+		this.levelingGearPlanChangeEmitter.emit(eventID);
 	}
 
 	getDefaultEpRatios(isTankSpec: boolean, isHealingSpec: boolean): Array<number> {
@@ -751,7 +766,11 @@ export class Player<SpecType extends Spec> {
 
 	getMeleeCritCapInfo(weapon: WeaponType, useDWPenalty?: boolean): MeleeCritCapInfo {
 		let targetLevel = 63; // Initializes at level 63 until UI is loaded
-		if (this.sim.encounter.targets) {
+		const leveling = this.sim.encounter.getLeveling();
+		if (leveling) {
+			// A leveling session grinds mobs around our level plus its offset, not the targets.
+			targetLevel = Math.max(this.getEffectiveLevel() + leveling.mobLevelOffset, 1);
+		} else if (this.sim.encounter.targets) {
 			targetLevel = this.sim.encounter?.primaryTarget.level;
 		}
 

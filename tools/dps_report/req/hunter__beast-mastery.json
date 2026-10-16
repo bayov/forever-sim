@@ -4,7 +4,7 @@
       {
         "players": [
           {
-            "race": "RaceNightElf",
+            "race": "RaceSkyborneWindshaper",
             "class": "ClassHunter",
             "equipment": {
               "items": [
@@ -126,7 +126,7 @@
               ],
               "priorityList": [
                 {
-                  "notes": "Step back to 25 yards when the fight starts in melee range, inside the 8 yard minimum.",
+                  "notes": "Steps out past the 8 yard minimum.",
                   "action": {
                     "condition": {
                       "inMeleeRange": {}
@@ -141,7 +141,7 @@
                   }
                 },
                 {
-                  "notes": "Aspect of the Hawk if it ever drops.",
+                  
                   "action": {
                     "condition": {
                       "not": {
@@ -162,7 +162,7 @@
                   }
                 },
                 {
-                  "notes": "Elune's Light with the on-use trinket, unless waiting would cost a use.",
+                  
                   "action": {
                     "condition": {
                       "or": {
@@ -236,13 +236,12 @@
                   }
                 },
                 {
-                  "notes": "Rapid Fire, Bestial Wrath, racials, trinkets and potions on cooldown.",
+                  "notes": "Rapid Fire, Bestial Wrath, racials, trinkets and potions.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }
                 },
                 {
-                  "notes": "Serpent Sting when it is down.",
                   "action": {
                     "condition": {
                       "and": {
@@ -282,7 +281,7 @@
                   }
                 },
                 {
-                  "notes": "Aimed Shot on the cooldown it shares with Multi-Shot.",
+                  "notes": "Shares its cooldown with Multi-Shot.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -292,7 +291,7 @@
                   }
                 },
                 {
-                  "notes": "Multi-Shot when Aimed Shot is not taken.",
+                  "notes": "When Aimed Shot is not talented.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -302,7 +301,7 @@
                   }
                 },
                 {
-                  "notes": "Sniper Shot on cooldown, with the talent, while the mana lasts the fight.",
+                  "notes": "With the talent.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -312,7 +311,7 @@
                   }
                 },
                 {
-                  "notes": "Summon Hawk while fewer than 2 hawks are out, with the talent.",
+                  "notes": "With the talent.",
                   "action": {
                     "condition": {
                       "and": {
@@ -367,7 +366,6 @@
                   }
                 },
                 {
-                  "notes": "Arcane Shot on its cooldown.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -415,6 +413,7 @@
       "arcaneBrilliance": true,
       "divineSpirit": true,
       "battleShout": "TristateEffectImproved",
+      "trueshotAura": true,
       "leaderOfThePack": true,
       "moonkinAura": true,
       "manaSpringTotem": "TristateEffectRegular",
@@ -423,7 +422,8 @@
       "fireResistanceAura": true,
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
-      "retributionAura": "TristateEffectImproved"
+      "retributionAura": "TristateEffectImproved",
+      "salvation": true
     },
     "debuffs": {
       "judgementOfWisdom": true,
@@ -504,7 +504,9 @@
         "swingSpeed": 2,
         "parryHaste": true
       }
-    ]
+    ],
+    "raidDamageHitsPerMinute": 2,
+    "raidDamagePerHit": 1500
   },
   "simOptions": {
     "iterations": 1000,

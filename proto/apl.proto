@@ -73,9 +73,16 @@ message APLAction {
         APLActionMove move = 18;
         APLActionAddComboPoints add_combo_points = 23;
 
+        // Leveling session actions (Encounter.leveling)
+        APLActionLevelingLookForMob leveling_look_for_mob = 24;
+        APLActionLevelingWalkToPullTarget leveling_walk_to_pull_target = 25;
+        APLActionLevelingRest leveling_rest = 27;
+        APLActionLevelingBandage leveling_bandage = 28;
+
         // Class or Spec-specific actions
         APLActionCatOptimalRotationAction cat_optimal_rotation_action = 19;
         APLActionCastPaladinPrimarySeal cast_paladin_primary_seal = 21;
+        APLActionShamanWalkToTotem shaman_walk_to_totem = 26;
 
         // Internal use only, not exposed in UI.
         APLActionCustomRotation custom_rotation = 20;
@@ -168,10 +175,19 @@ message APLValue {
         APLValueChannelClipDelay channel_clip_delay = 58;
         APLValueFrontOfTarget front_of_target = 63;
         APLValueInMeleeRange in_melee_range = 80;
+        APLValueIsMoving is_moving = 84;
+
+        // Leveling session values (Encounter.leveling)
+        APLValueLevelingDistance leveling_distance = 81;
+        APLValueLevelingMobsRunningIn leveling_mobs_running_in = 82;
+        APLValueLevelingMobsOnUs leveling_mobs_on_us = 83;
+        APLValueLevelingBandageReady leveling_bandage_ready = 86;
+        APLValueLevelingMobsThisPull leveling_mobs_this_pull = 87;
 
         // Class or Spec-specific values
         // Shaman
         APLValueTotemRemainingTime totem_remaining_time = 49;
+        APLValueTotemDistance totem_distance = 85;
         // Druid
         APLValueCatExcessEnergy cat_excess_energy = 52;
         // Warlock
@@ -295,6 +311,46 @@ message APLActionCastPaladinPrimarySeal {
 
 message APLActionMove {
     APLValue range_from_target = 1;
+}
+
+// In a leveling session, while fighting: look for another mob to pull. We run around to find
+// it with the mobs on us following, so only instants and melee go out, or we stand and keep
+// fighting while we look, which takes longer (LevelingOptions.chain_search_min and max, and
+// chain_search_standing_min and max). The mob we find is the Pull Target
+// (UnitReference.PullTarget) until we pull it.
+message APLActionLevelingLookForMob {
+    // Stand and keep fighting while we look, instead of running around.
+    bool stand = 1;
+}
+
+// In a leveling session: walk toward the Pull Target until we're within this many yards of
+// it (melee range when 0), or it notices us first (its aggro radius). The mobs on us follow.
+message APLActionLevelingWalkToPullTarget {
+    APLValue within = 1;
+}
+
+// In a leveling session, out of combat: sit down to eat, drink, both, or neither (just
+// resting), until health and mana are at these shares of max (default 100%). Another food or
+// drink starts when one runs out short of that. Sitting adds a third to Spirit's health regen.
+// Only the rotation rests: one with no Rest or Bandage gets default lines in front (bandage
+// below 50% health, eat and drink to full below 50% health or 40% mana).
+message APLActionLevelingRest {
+    bool eat = 1;
+    bool drink = 2;
+    APLValue health_until = 3;
+    APLValue mana_until = 4;
+}
+
+// In a leveling session, out of combat: put on the level's best bandage (First Aid kept up),
+// unless Recently Bandaged.
+message APLActionLevelingBandage {
+}
+
+// In a leveling session: walk back toward one of our totems until we're within this many
+// yards of it. The mobs on us follow, and the ones running at us change course.
+message APLActionShamanWalkToTotem {
+    ShamanTotems.TotemType totem_type = 1;
+    APLValue within = 2;
 }
 
 message APLActionCustomRotation {
@@ -452,6 +508,34 @@ message APLValueFrontOfTarget {
 message APLValueInMeleeRange {
 }
 
+// True while we run: searching for a mob, or walking up to one. Only instants go out then.
+message APLValueIsMoving {
+}
+
+// Yards to the unit in a leveling session (default the current target): where a mob we
+// found stands, how far a pulled one still has to run, or melee range for one on us. 0
+// outside a session or for no unit (a PullTarget when there isn't one).
+message APLValueLevelingDistance {
+    UnitReference target_unit = 1;
+}
+
+// Mobs we pulled that are still running to us, in a leveling session.
+message APLValueLevelingMobsRunningIn {
+}
+
+// Mobs we pulled that have reached us, in a leveling session.
+message APLValueLevelingMobsOnUs {
+}
+
+// True out of combat in a leveling session while we're not Recently Bandaged.
+message APLValueLevelingBandageReady {
+}
+
+// The mobs the current pull has taken in a leveling session, the dead ones too; 0 out of
+// combat. A rotation that looks for another mob while this is under N pulls N at a time.
+message APLValueLevelingMobsThisPull {
+}
+
 message APLValueSpellTravelTime {
     ActionID spell_id = 1;
 }
@@ -536,6 +620,12 @@ message APLValueSequenceIsReady {
 }
 message APLValueSequenceTimeToReady {
     string sequence_name = 1;
+}
+
+// Yards from us to our totem of this element in a leveling session, 0 outside one or
+// without that totem.
+message APLValueTotemDistance {
+    ShamanTotems.TotemType totem_type = 1;
 }
 
 message APLValueTotemRemainingTime {

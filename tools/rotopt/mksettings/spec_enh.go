@@ -1,25 +1,18 @@
 package main
 
 import (
-	"flag"
 
 	"github.com/wowsims/classic/sim/core/proto"
 )
 
-// shamanTotems says who puts down the shaman's party totems at level 60 (standards 23). "raid"
-// (the base presets): the raid's totem buffs give them, as if another shaman in the party
-// dropped them, and the shaman casts only the totems it puts down for its own damage. "self"
-// (the totem duty presets): the shaman drops them itself, and the raid has none of them.
-var shamanTotems = flag.String("totems", "raid", "who puts down a level 60 shaman's party totems: raid (base preset) or self (totem duty preset)")
-
-// shamanTotemsFromRaid is true at level 60 when the raid gives the party totems.
-func shamanTotemsFromRaid() bool {
-	return *shamanTotems != "self" && flag.Lookup("level").Value.String() == "60"
-}
-
 func init() {
 	specs["enh"] = &specSetup{
 		uiDir: "ui/enhancement_shaman",
+		// The shaman drops its own party's totems (withSpec), and the raid's second shaman, the one
+		// whose Grace of Air every melee group gets, gives it Grace of Air too (the user's ruling 2026-10-16, "both totems": client 1.60.1.70425 lets Grace of Air stack with Windfury Totem and makes both raid-wide).
+		raid: func(raidBuffs *proto.RaidBuffs, _ *proto.IndividualBuffs, _ *proto.Debuffs) {
+			raidBuffs.GraceOfAirTotem = proto.TristateEffect_TristateEffectRegular
+		},
 		consumes: func() *proto.Consumes {
 			// The Level 60 preset's consumes (ui/enhancement_shaman/presets.ts). Under Forever the
 			// shaman imbue is a class option, so the main hand holds Shadow Oil beside it.
@@ -45,17 +38,6 @@ func init() {
 				ZanzaBuff:         proto.ZanzaBuff_ROIDS,
 			}
 		},
-		// A melee party gets Strength of Earth, Windfury Totem (which can't stand with Grace of Air)
-		// and Mana Spring. Our own Windfury Weapon turns Windfury Totem's buff off for us, so it
-		// is the party's. None of these is improved: Forever took Enhancing Totems out, and the
-		// builds have no Restorative Totems.
-		raid: func(raidBuffs *proto.RaidBuffs, buffs *proto.IndividualBuffs, debuffs *proto.Debuffs) {
-			if shamanTotemsFromRaid() {
-				raidBuffs.StrengthOfEarthTotem = proto.TristateEffect_TristateEffectRegular
-				raidBuffs.TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffWindfury
-				raidBuffs.ManaSpringTotem = proto.TristateEffect_TristateEffectRegular
-			}
-		},
 		// The Level 60 preset's professions.
 		professions: [2]proto.Profession{proto.Profession_Engineering, proto.Profession_Leatherworking},
 		lowLevel: func(string) (lowLevelSetup, error) {
@@ -66,22 +48,14 @@ func init() {
 		},
 		withSpec: func(player *proto.Player) {
 			player.Class = proto.Class_ClassShaman
-			startingTotems := &proto.StartingTotems{
-				Earth: proto.EarthTotem_StrengthOfEarthTotem, EarthSecondsBeforePull: 28,
-				Air: proto.AirTotem_WindfuryTotem, AirSecondsBeforePull: 27,
-				Water: proto.WaterTotem_ManaSpringTotem, WaterSecondsBeforePull: 30,
-			}
-			if shamanTotemsFromRaid() {
-				// The raid's totems take their place.
-				startingTotems = &proto.StartingTotems{}
-			}
+			// The shaman drops its melee party's totems itself (standards 23: no totem duty, every
+			// shaman puts its own down, like a warrior's Sunder): Strength of Earth, Windfury Totem
+			// and Mana Spring, in the rotation's prepull actions. Its own Windfury Weapon turns
+			// Windfury Totem's buff off for itself. The totem is for the party.
 			player.Spec = &proto.Player_EnhancementShaman{EnhancementShaman: &proto.EnhancementShaman{
 				Options: &proto.EnhancementShaman_Options{
 					SyncType:    proto.ShamanSyncType_Auto,
 					ShamanImbue: proto.WeaponImbue_WindfuryWeapon,
-					// The Level 60 preset's starting totems. The level 30 rotations put theirs down
-					// in the prepull actions, which take the place of these.
-					StartingTotems: startingTotems,
 				},
 			}}
 		},

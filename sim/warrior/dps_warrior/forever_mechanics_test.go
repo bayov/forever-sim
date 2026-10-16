@@ -79,8 +79,9 @@ func whiteRage(sim *core.Simulation, war *warrior.Warrior, auto *core.Spell, out
 // TestForeverWarriorNormalizedRage checks standards 21: under Forever a landed white hit gives
 // k × the weapon's swing speed in Rage, whatever its damage (Blizzard's Priest & Warrior deep dive:
 // "Rage gained is now based on the speed of the weapon that dealt the damage"), with k = 3.46 for
-// a one-hander and 4.5 for a two-hander, the off hand at the same rate, 100% more on a crit (the
-// 2 October post, https://us.forums.blizzard.com/en/wow/t/2369360) and dodges and parries giving
+// a one-hander and 4.5 for a two-hander, the off hand at half the rate (measured, see
+// core.ForeverNormalizedRageOffHand), 100% more on a crit (the 2 October post,
+// https://us.forums.blizzard.com/en/wow/t/2369360) and dodges and parries giving
 // the same as a hit. Abilities and Deep Wounds give no Rage for their damage.
 func TestForeverWarriorNormalizedRage(t *testing.T) {
 	near := func(name string, got, want float64) {
@@ -101,11 +102,11 @@ func TestForeverWarriorNormalizedRage(t *testing.T) {
 	near("a parried main hand swing", whiteRage(sim, war, mh, core.OutcomeParry, 0), l60*3.46*2.8)
 	near("a glancing main hand swing", whiteRage(sim, war, mh, core.OutcomeGlance, 200), l60*3.46*2.8)
 	near("a missed main hand swing", whiteRage(sim, war, mh, core.OutcomeMiss, 0), 0)
-	near("an off hand hit", whiteRage(sim, war, oh, core.OutcomeHit, 150), l60*3.46*1.7)
+	near("an off hand hit", whiteRage(sim, war, oh, core.OutcomeHit, 150), 0.5*l60*3.46*2.9)
 
 	// Dual Wield Specialization's off hand Rage (10% a point) stays on top.
 	sim, war = newForeverWarriorArmed(t, "-00000005", 991014, 991015)
-	near("an off hand hit with Dual Wield Specialization 5/5", whiteRage(sim, war, war.AutoAttacks.OHAuto(), core.OutcomeHit, 150), 1.5*l60*3.46*1.7)
+	near("an off hand hit with Dual Wield Specialization 5/5", whiteRage(sim, war, war.AutoAttacks.OHAuto(), core.OutcomeHit, 150), 1.5*0.5*l60*3.46*2.9)
 
 	sim, war = newForeverWarriorArmed(t, "", 991016, 0)
 	near("a two-hander hit", whiteRage(sim, war, war.AutoAttacks.MHAuto(), core.OutcomeHit, 500), l60*4.5*3.7)
@@ -139,19 +140,43 @@ func TestForeverWarriorNormalizedRageLevels(t *testing.T) {
 	}
 }
 
-// TestForeverWarriorDamageTakenRage checks that Rage from taking damage stays Classic's (standards
-// 21 only changes Rage from dealing damage): damage × 2.5 / the conversion at the attacker's
-// level. The damage comes from a level 60 special attack, which gives no Rage for dealing it.
+// TestForeverWarriorDamageTakenRage checks Forever's Rage from taking damage (standards 21):
+// 20 × (1 − 0.4) × damage / a level 60 normal mob's health (5356) at level 60, so 2.2 Rage for
+// 1000 damage, where Classic's damage × 2.5 / the conversion at the attacker's level gives 10.8.
+// The damage is the attacker's, before anything of ours: our damage taken modifiers (Defensive
+// Stance, Shield Wall), a block and an absorb take no Rage away (report assumption
+// warr_dt_rage_mods, None). A crushing blow counts at 1.5. The damage comes from a level 60
+// special attack, which gives no Rage for dealing it.
 func TestForeverWarriorDamageTakenRage(t *testing.T) {
-	sim, war := newForeverWarriorArmed(t, "", 991014, 991015)
-	war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
-	attack := war.Hamstring.Spell
-	result := attack.NewResult(&war.Unit)
-	result.Outcome = core.OutcomeHit
-	result.Damage = 1000
-	attack.DealDamage(sim, result)
-	if got, want := war.CurrentRage(), 1000*2.5/core.GetRageConversion(60); math.Abs(got-want) > 1e-6 {
-		t.Errorf("taking 1000 damage gave %.3f Rage, want %.3f", got, want)
+	perPoint := 20 * 0.6 / core.NormalMobStatsAt(60).Health
+	cases := []struct {
+		name       string
+		outcome    core.HitOutcome
+		taken      float64 // the damage after all of our mitigation
+		takenMulti float64 // our damage taken multiplier while the hit lands
+		want       float64 // Rage, for 1000 attacker damage
+	}{
+		{"a hit", core.OutcomeHit, 1000, 1, 1000 * perPoint},
+		{"a hit in Defensive Stance", core.OutcomeHit, 900, 0.9, 1000 * perPoint},
+		{"a hit under Shield Wall", core.OutcomeHit, 250, 0.25, 1000 * perPoint},
+		{"a hit fully absorbed", core.OutcomeHit, 0, 1, 1000 * perPoint},
+		{"a blocked hit", core.OutcomeBlock, 700, 1, 1000 * perPoint},
+		{"a crushing blow", core.OutcomeCrush, 1500, 1, 1500 * perPoint},
+		{"a dodge", core.OutcomeDodge, 0, 1, 0},
+	}
+	for _, c := range cases {
+		sim, war := newForeverWarriorArmed(t, "", 991014, 991015)
+		war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
+		war.PseudoStats.DamageTakenMultiplier *= c.takenMulti
+		attack := war.Hamstring.Spell
+		result := attack.NewResult(&war.Unit)
+		result.Outcome = c.outcome
+		result.AttackerDamage = 1000
+		result.Damage = c.taken
+		attack.DealDamage(sim, result)
+		if got := war.CurrentRage(); math.Abs(got-c.want) > 1e-6 {
+			t.Errorf("%s gave %.3f Rage, want %.3f", c.name, got, c.want)
+		}
 	}
 }
 

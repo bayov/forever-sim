@@ -18,6 +18,7 @@ func (shaman *Shaman) ApplyTalents() {
 	shaman.applyElementalDevastation()
 	shaman.applyElementalFocus()
 	shaman.applyElementalFury()
+	shaman.registerElementalMasteryCD()
 
 	// Enhancement Talents
 	shaman.applyFlurry()
@@ -59,9 +60,10 @@ func (shaman *Shaman) ApplyTalents() {
 	}
 
 	// Restoration Talents
-	// TODO: Healing Way
-	// TODO: Ancestral Healing
+	// Improved Healing Wave, Healing Way, Healing Focus and Purification are in the heals
+	// themselves (healing.go).
 	shaman.registerNaturesSwiftnessCD()
+	shaman.applyAncestralHealing()
 
 	shaman.PseudoStats.SpiritRegenRateCasting += []float64{0, .17, .33, .50}[shaman.Talents.Mindfulness]
 
@@ -199,6 +201,10 @@ func (shaman *Shaman) improvedFireNovaBonus() float64 {
 
 func (shaman *Shaman) improvedFireNovaCooldownReduction() time.Duration {
 	return time.Second * 2 * time.Duration(shaman.Talents.ImprovedFireNova)
+}
+
+func (shaman *Shaman) improvedFireNovaMagmaDuration() time.Duration {
+	return time.Second * 10 * time.Duration(shaman.Talents.ImprovedFireNova)
 }
 
 func (shaman *Shaman) applyElementalFocus() {
@@ -621,6 +627,75 @@ func (shaman *Shaman) registerRageOfTheFarseerCD() {
 	})
 }
 
+// Elemental Mastery (16166) is the Elemental tree's 30-point talent since client 1.60.1.70425
+// (it needs Lava Burst): for 15 sec Lightning Bolt and Lava Burst cast 0.5 sec faster and Chain
+// Lightning has no cooldown. 3 min cooldown, off the global cooldown. The cast time comes off
+// before haste, like the client's flat cast time modifier.
+func (shaman *Shaman) registerElementalMasteryCD() {
+	if !shaman.Talents.ElementalMastery {
+		return
+	}
+
+	actionID := core.ActionID{SpellID: 16166}
+	reduction := time.Millisecond * 500
+
+	var fasterSpells, chainLightnings []*core.Spell
+	shaman.OnSpellRegistered(func(spell *core.Spell) {
+		if !spell.Flags.Matches(core.SpellFlagAPL) {
+			return
+		}
+		switch spell.SpellCode {
+		case SpellCode_ShamanLightningBolt, SpellCode_ShamanLavaBurst:
+			fasterSpells = append(fasterSpells, spell)
+		case SpellCode_ShamanChainLightning:
+			chainLightnings = append(chainLightnings, spell)
+		}
+	})
+
+	var chainLightningCooldown time.Duration
+	buffAura := shaman.RegisterAura(core.Aura{
+		Label:    "Elemental Mastery",
+		ActionID: actionID,
+		Duration: time.Second * 15,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			for _, spell := range fasterSpells {
+				spell.DefaultCast.CastTime -= reduction
+			}
+			for _, spell := range chainLightnings {
+				chainLightningCooldown = spell.CD.Duration
+				spell.CD.Duration = 0
+			}
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			for _, spell := range fasterSpells {
+				spell.DefaultCast.CastTime += reduction
+			}
+			for _, spell := range chainLightnings {
+				spell.CD.Duration = chainLightningCooldown
+			}
+		},
+	})
+
+	masterySpell := shaman.RegisterSpell(core.SpellConfig{
+		ActionID: actionID,
+		Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagAPL,
+		Cast: core.CastConfig{
+			CD: core.Cooldown{
+				Timer:    shaman.NewTimer(),
+				Duration: time.Minute * 3,
+			},
+		},
+		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
+			buffAura.Activate(sim)
+		},
+	})
+
+	shaman.AddMajorCooldown(core.MajorCooldown{
+		Spell: masterySpell,
+		Type:  core.CooldownTypeDPS,
+	})
+}
+
 func (shaman *Shaman) totemicFocusFactor() float64 {
 	return 1 - .05*float64(shaman.Talents.TotemicFocus)
 }
@@ -632,4 +707,60 @@ func (shaman *Shaman) totemicFocusFactor() float64 {
 // "Improved" stands for that shaman's 5/5, and our own points don't touch it.
 func (shaman *Shaman) restorativeTotemsModifier() float64 {
 	return .1 * float64(shaman.Talents.RestorativeTotems)
+}
+
+// improvedHealingWaveReduction is Improved Healing Wave's 0.1 sec off Healing Wave's cast a
+// point (unchanged in Forever, 16182).
+func (shaman *Shaman) improvedHealingWaveReduction() time.Duration {
+	return time.Duration(shaman.Talents.ImprovedHealingWave) * 100 * time.Millisecond
+}
+
+// healingWayMultiplier is Forever's Healing Way: Healing Wave heals 8, 17 or 25% more, always
+// (the 70338 talent curve for 29206). Classic's stacking buff on the target is gone.
+func (shaman *Shaman) healingWayMultiplier() float64 {
+	return 1 + []float64{0, .08, .17, .25}[shaman.Talents.HealingWay]
+}
+
+// purificationMultiplier is Purification's 2% more healing a point on every heal (16178). It
+// multiplies with Healing Way, as the sim does with the shaman's other percent bonuses of
+// the same kind (shaman_audit.md 5.6).
+func (shaman *Shaman) purificationMultiplier() float64 {
+	return 1 + .02*float64(shaman.Talents.Purification)
+}
+
+// healingFocusChance is Healing Focus's chance for a hit not to push back a heal: 23, 47 and
+// 70% for 1 to 3 points in Forever (70338 curve for 16181; Classic had 5 points of 14%).
+func (shaman *Shaman) healingFocusChance() float64 {
+	return []float64{0, .23, .47, .70}[shaman.Talents.HealingFocus]
+}
+
+// applyAncestralHealing: after a crit from one of our heals, its target (us) has 8, 17 or 25%
+// more armor for 15 sec (70338 curve for 16176).
+func (shaman *Shaman) applyAncestralHealing() {
+	if shaman.Talents.AncestralHealing == 0 {
+		return
+	}
+	armorMultiplier := 1 + []float64{0, .08, .17, .25}[shaman.Talents.AncestralHealing]
+
+	buff := shaman.RegisterAura(core.Aura{
+		Label: "Ancestral Fortitude",
+		// One buff spell for every rank in Forever (16177, 8% that the talent's curve scales).
+		ActionID: core.ActionID{SpellID: 16177},
+		Duration: time.Second * 15,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.ArmorMultiplier *= armorMultiplier
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.PseudoStats.ArmorMultiplier /= armorMultiplier
+		},
+	})
+
+	core.MakePermanent(shaman.RegisterAura(core.Aura{
+		Label: "Ancestral Healing",
+		OnHealDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			if result.DidCrit() && spell.ProcMask.Matches(core.ProcMaskSpellHealing) && result.Target == &shaman.Unit {
+				buff.Activate(sim)
+			}
+		},
+	}))
 }

@@ -22,7 +22,7 @@ gl = collections.defaultdict(lambda: [0, 0])
 names = collections.defaultdict(set)
 FIST_FROM, skipped = '21:31:52', 0
 for e in evs:
-    if not (lo <= e.ts < hi and e.src.startswith(cl.ME) and e.ev in ('SWING_DAMAGE', 'SWING_MISSED')):
+    if not (lo <= e.ts < hi and e.me_src and e.ev in ('SWING_DAMAGE', 'SWING_MISSED')):
         continue
     # From 21:31:52 the user swings a fist weapon on a low Unarmed skill, which glances far more.
     if e.ts >= FIST_FROM:

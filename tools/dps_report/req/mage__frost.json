@@ -86,7 +86,7 @@
               "blessingOfKings": true,
               "blessingOfWisdom": "TristateEffectImproved"
             },
-            "talentsString": "050005-03-0555300331001301251",
+            "talentsString": "05020050031001-03-0555100331001301201",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Tailoring",
@@ -110,27 +110,23 @@
               ],
               "priorityList": [
                 {
+                  "notes": "Arcane Power, Presence of Mind, Combustion, trinkets, racials and mana gems.",
                   "action": {
                     "autocastOtherCooldowns": {}
-                  },
-                  "notes": "Arcane Power, Presence of Mind, Combustion, trinkets, racials and the mana gems on a free GCD."
+                  }
                 },
                 {
+                  
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 12051
-                      }
-                    },
                     "condition": {
                       "and": {
                         "vals": [
                           {
                             "cmp": {
+                              "op": "OpLt",
                               "lhs": {
                                 "currentManaPercent": {}
                               },
-                              "op": "OpLt",
                               "rhs": {
                                 "const": {
                                   "val": "0.2"
@@ -140,10 +136,10 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "remainingTime": {}
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "90s"
@@ -153,17 +149,17 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Evocation once the mana runs low, with enough of the fight left to spend it."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 1240047
+                        "spellId": 12051
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Ice Lance while Fingers of Frost makes the boss count as Frozen (3 times the damage, Shatter's crit).",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
@@ -183,55 +179,143 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1240047
+                      }
                     }
-                  },
-                  "notes": "Ice Lance while Fingers of Frost makes the boss count as Frozen (4 times the damage, Shatter's crit)."
+                  }
                 },
                 {
+                  
                   "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "auraIsKnown": {
+                              "auraId": {
+                                "spellId": 400573
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpLt",
+                              "lhs": {
+                                "auraNumStacks": {
+                                  "auraId": {
+                                    "spellId": 400573
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "1"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "or": {
+                              "vals": [
+                                {
+                                  "not": {
+                                    "val": {
+                                      "auraIsActive": {
+                                        "auraId": {
+                                          "spellId": 400573
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "cmp": {
+                                    "op": "OpGt",
+                                    "lhs": {
+                                      "auraRemainingTime": {
+                                        "auraId": {
+                                          "spellId": 400573
+                                        }
+                                      }
+                                    },
+                                    "rhs": {
+                                      "const": {
+                                        "val": "9s"
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "4s"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1239700
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Free and twice as fast.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "auraIsKnown": {
+                              "auraId": {
+                                "spellId": 400589
+                              }
+                            }
+                          },
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "spellId": 400589
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
                     "castSpell": {
                       "spellId": {
                         "spellId": 10212
                       }
-                    },
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "auraIsKnown": {
-                              "auraId": {
-                                "spellId": 400589
-                              }
-                            }
-                          },
-                          {
-                            "auraIsActive": {
-                              "auraId": {
-                                "spellId": 400589
-                              }
-                            }
-                          }
-                        ]
-                      }
                     }
-                  },
-                  "notes": "Arcane Missiles on a Missile Barrage proc, free and twice as fast."
+                  }
                 },
                 {
+                  
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 1240047
-                      }
-                    },
                     "condition": {
                       "cmp": {
+                        "op": "OpLt",
                         "lhs": {
                           "remainingTime": {}
                         },
-                        "op": "OpLt",
                         "rhs": {
                           "math": {
+                            "op": "OpAdd",
                             "lhs": {
                               "spellCastTime": {
                                 "spellId": {
@@ -239,7 +323,6 @@
                                 }
                               }
                             },
-                            "op": "OpAdd",
                             "rhs": {
                               "const": {
                                 "val": "1s"
@@ -248,9 +331,13 @@
                           }
                         }
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1240047
+                      }
                     }
-                  },
-                  "notes": "An instant when the filler would not land before the end of the fight."
+                  }
                 },
                 {
                   "action": {
@@ -259,8 +346,7 @@
                         "spellId": 10181
                       }
                     }
-                  },
-                  "notes": "Frostbolt."
+                  }
                 }
               ]
             },
@@ -294,7 +380,8 @@
       "fireResistanceAura": true,
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
-      "retributionAura": "TristateEffectImproved"
+      "retributionAura": "TristateEffectImproved",
+      "salvation": true
     },
     "debuffs": {
       "judgementOfWisdom": true,
@@ -374,7 +461,9 @@
         "swingSpeed": 2,
         "parryHaste": true
       }
-    ]
+    ],
+    "raidDamageHitsPerMinute": 2,
+    "raidDamagePerHit": 1500
   },
   "simOptions": {
     "iterations": 1000,

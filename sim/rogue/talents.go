@@ -120,6 +120,11 @@ func (rogue *Rogue) registerColdBloodCD() {
 			}
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+			// Cold Blood covers both halves of a Mutilate (class deep dive: "Now also applies to
+			// Mutilate"; the client masks both). The off hand half lands last and spends it.
+			if spell == rogue.Mutilate {
+				return
+			}
 			if spell.Flags.Matches(SpellFlagColdBlooded) {
 				aura.Deactivate(sim)
 			}
@@ -177,11 +182,17 @@ func (rogue *Rogue) applySealFate() {
 		Duration: 500 * time.Millisecond,
 	}
 
+	// "Mutilate will trigger this exactly once if either or both hands generates a critical
+	// strike" (World of Warcraft: Forever class deep dive, Rogue). Both halves land at the same
+	// moment, so the first crit of a Mutilate rolls and the other half's is ignored.
+	lastMutilateRoll := time.Duration(-1)
+
 	rogue.RegisterAura(core.Aura{
 		Label:    "Seal Fate",
 		Duration: core.NeverExpires,
 		OnReset: func(aura *core.Aura, sim *core.Simulation) {
 			aura.Activate(sim)
+			lastMutilateRoll = -1
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if !spell.Flags.Matches(SpellFlagBuilder) {
@@ -190,6 +201,13 @@ func (rogue *Rogue) applySealFate() {
 
 			if !result.Outcome.Matches(core.OutcomeCrit) {
 				return
+			}
+
+			if spell == rogue.Mutilate || spell == rogue.mutilateOH {
+				if lastMutilateRoll == sim.CurrentTime {
+					return
+				}
+				lastMutilateRoll = sim.CurrentTime
 			}
 
 			if icd.IsReady(sim) && sim.Proc(procChance, "Seal Fate") {
@@ -374,7 +392,7 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 			rogue.MultiplyMeleeSpeed(sim, 1/1.2)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if sim.GetNumTargets() < 2 {
+			if sim.Encounter.AoETargetCount(0) < 2 {
 				return
 			}
 

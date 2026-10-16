@@ -31,7 +31,7 @@ func TestOrcShamanElementalWarding(t *testing.T) {
 	}
 	for points, taken := range []float64{1, .97, .93, .90} {
 		// Convection 0, Concussion 0, Elemental Warding points.
-		sim, enh := newShamanSim(newOrcShaman(30, fmt.Sprintf("00%d", points), &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 10)
+		sim, enh := newShamanSim(newOrcShaman(30, fmt.Sprintf("0000000%d", points), &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 10)
 		if enh.Talents.ElementalWarding != int32(points) {
 			t.Fatalf("got Elemental Warding %d, want %d", enh.Talents.ElementalWarding, points)
 		}

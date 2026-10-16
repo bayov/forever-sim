@@ -24,7 +24,7 @@ EARTH = ('Stoneskin Totem', 'Tremor Totem', 'Strength of Earth Totem', 'Earthbin
 earth = []
 gone = {}
 for e in evs:
-    if e.ev == 'SPELL_SUMMON' and e.src.startswith(cl.ME) and e.spell and e.spell.startswith(EARTH):
+    if e.ev == 'SPELL_SUMMON' and e.me_src and e.spell and e.spell.startswith(EARTH):
         earth.append([e.t, e.spell, e.dstGUID, e.t + 300])
     if e.ev in ('UNIT_DIED', 'UNIT_DESTROYED') and e.dstGUID:
         gone.setdefault(e.dstGUID, e.t)
@@ -41,7 +41,7 @@ def stoneskin(t):
 
 hits = []
 for e in evs:
-    if e.ev != 'SWING_DAMAGE' or not e.dst.startswith(cl.ME) or not e.srcGUID.startswith('Creature') or not lo <= e.ts < hi:
+    if e.ev != 'SWING_DAMAGE' or not e.me_dst or not e.srcGUID.startswith('Creature') or not lo <= e.ts < hi:
         continue
     d = cl.dmg(e)
     if d['crit'] or d['crushing'] or d['blocked'] or d['absorbed'] or d['glancing']:

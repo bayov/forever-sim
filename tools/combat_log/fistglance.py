@@ -10,7 +10,7 @@ for e in evs:
         try: lvl[e.srcGUID] = int(e.f[-11] if e.ev == 'SWING_DAMAGE' else e.f[-12])
         except ValueError: pass
 # Weapon by time: the first fist swing (raw under 150) marks the switch.
-me = [e for e in evs if e.src.startswith(cl.ME) and lo <= e.ts < hi and e.ev in ('SWING_DAMAGE', 'SWING_MISSED')]
+me = [e for e in evs if e.me_src and lo <= e.ts < hi and e.ev in ('SWING_DAMAGE', 'SWING_MISSED')]
 first = next((e.t for e in me if e.ev == 'SWING_DAMAGE' and cl.dmg(e)['raw'] < 150), None)
 c = collections.defaultdict(collections.Counter)
 for e in me:

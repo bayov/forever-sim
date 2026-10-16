@@ -15,15 +15,17 @@ import (
 // seconds of quiet (SETTLE in BayovCore's Modules/Export.lua), and we leave a few more for a slow frame.
 const historySettle = 5 * time.Second
 
-// historyRecord is one line of ~/forever-logs/history/<Name>-<Realm>.jsonl, which
-// tools/combat_log/history.py copies out of BayovCore's export module.
+// historyRecord is one line of ~/forever-logs/history/<key>.jsonl, which
+// tools/combat_log/history.py copies out of BayovCore's export module. The key is the
+// character's GUID, or Name-Realm in the histories from before 2026-10-16 (characters.go says
+// how we place those).
 //
 // A "login" or "mark" record holds the whole character, like an export. A "change" record
 // holds only what changed: the gear slots (false for one that was emptied), the talents, the
 // level, or the skills that went up. A "logout" record holds nothing. The addon writes one at
 // logout and /reload, just before WoW saves the history, so its time says the history is
 // complete up to then. We still rebuild an export for it, the same as the one before. The sheet ("stats") and the full talent list ("ref") are
-// ids into <Name>-<Realm>.blobs.json, because the addon stores each distinct one once.
+// ids into <key>.blobs.json, because the addon stores each distinct one once.
 type historyRecord struct {
 	Kind    string                     `json:"kind"`
 	Date    string                     `json:"date"`
@@ -69,6 +71,7 @@ func replayHistory(path string) ([]*export, error) {
 	var state map[string]any
 	gear := map[int]json.RawMessage{}
 	var exports []*export
+	logins := 0
 	scanner := bufio.NewScanner(f)
 	scanner.Buffer(make([]byte, 1<<20), 1<<24)
 	for line := 1; scanner.Scan(); line++ {
@@ -79,6 +82,9 @@ func replayHistory(path string) ([]*export, error) {
 		whole := rec.Kind == "login" || rec.Kind == "mark"
 		if !whole && state == nil {
 			continue
+		}
+		if rec.Kind == "login" {
+			logins++
 		}
 		if whole {
 			state = map[string]any{"when": rec.When, "who": rec.Who, "imbues": rec.Imbues, "skills": rec.Skills}
@@ -147,6 +153,7 @@ func replayHistory(path string) ([]*export, error) {
 		}
 		ex.history = true
 		ex.kind = rec.Kind
+		ex.session = fmt.Sprintf("%s#%d", path, logins)
 		exports = append(exports, ex)
 	}
 	return exports, scanner.Err()

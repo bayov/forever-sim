@@ -89,7 +89,11 @@ func (shaman *Shaman) newSearingTotemSpellConfig(rank int) core.SpellConfig {
 			IgnoreHaste: true,
 		},
 
+		// The totem runs as a dot on the shaman, so it keeps going when its target dies. It
+		// shoots our current target, which moves on to the next mob when one dies, as long as
+		// it's in range (searingTotemTarget).
 		Dot: core.DotConfig{
+			IsAOE: true,
 			Aura: core.Aura{
 				Label: fmt.Sprintf("Searing Totem (Rank %d)", rank),
 			},
@@ -100,15 +104,17 @@ func (shaman *Shaman) newSearingTotemSpellConfig(rank int) core.SpellConfig {
 			// totem fired 16 bolts, which 2.5 sec ticks give too.
 			NumberOfTicks: int32(duration / attackInterval),
 			TickLength:    attackInterval,
-			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				attackSpell.Cast(sim, target)
+			OnTick: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot) {
+				if target := shaman.searingTotemTarget(sim); target != nil {
+					attackSpell.Cast(sim, target)
+				}
 			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
 			// +1 needed because of rounding issues with totem tick time.
 			shaman.placeTotem(sim, FireTotem, spell, duration+1, shaman.endFireTotem(spell))
-			spell.Dot(sim.GetTargetUnit(0)).Apply(sim)
+			spell.AOEDot().Apply(sim)
 		},
 	}
 
@@ -151,7 +157,9 @@ func (shaman *Shaman) newMagmaTotemSpellConfig(rank int) core.SpellConfig {
 	manaCost := MagmaTotemManaCost[rank]
 	level := MagmaTotemLevel[rank]
 
-	duration := time.Second * 20
+	// Improved Fire Nova (the client's Trial by Fire) adds 10 sec a point since client
+	// 1.60.1.70425.
+	duration := time.Second*20 + shaman.improvedFireNovaMagmaDuration()
 	attackInterval := time.Second * 2
 
 	aoeSpell := shaman.RegisterSpell(core.SpellConfig{
@@ -165,7 +173,7 @@ func (shaman *Shaman) newMagmaTotemSpellConfig(rank int) core.SpellConfig {
 		BonusCoefficient: spellCoeff,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			for _, aoeTarget := range sim.Encounter.TargetUnits {
+			for _, aoeTarget := range shaman.fireTotemMobs(sim, magmaTotemRadius) {
 				spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeMagicHitAndCrit)
 			}
 		},
@@ -195,21 +203,22 @@ func (shaman *Shaman) newMagmaTotemSpellConfig(rank int) core.SpellConfig {
 		},
 
 		Dot: core.DotConfig{
+			IsAOE: true,
 			Aura: core.Aura{
 				Label: fmt.Sprintf("Magma Totem (Rank %d)", rank),
 			},
 			NumberOfTicks: int32(duration / attackInterval),
 			TickLength:    attackInterval,
 
-			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-				aoeSpell.Cast(sim, target)
+			OnTick: func(sim *core.Simulation, _ *core.Unit, dot *core.Dot) {
+				aoeSpell.Cast(sim, shaman.CurrentTarget)
 			},
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			// +1 needed because of rounding issues with totem tick time.
 			shaman.placeTotem(sim, FireTotem, spell, duration+1, shaman.endFireTotem(spell))
-			spell.Dot(sim.GetTargetUnit(0)).Apply(sim)
+			spell.AOEDot().Apply(sim)
 		},
 	}
 
@@ -223,16 +232,20 @@ func (shaman *Shaman) newMagmaTotemSpellConfig(rank int) core.SpellConfig {
 // The damage comes from SoD's Fire Nova damage spells (408423 to 408428), not the old
 // totem's (8349, 8502, 8503, 11306 and 11307). The client's tooltip still reads the old
 // totem's numbers, but the beta's combat log names 408424 on every rank 2 hit (2026-10-10).
-// Every rank has a 21.4% coefficient, where the old totem had 10% and 14.3%, and a few
-// points less base damage. A rank grows for five levels after it's learned, and the ranges
-// below are at that fifth level (client 70338).
+// Since client 1.60.1.70425 every rank has a 14.3% coefficient (21.4% before, the old totem
+// had 10% and 14.3%), and less base damage and growth: 33 / 55 / 130 / 179 / 239 at the learn
+// level, plus 0.4 / 0.6 / 0.9 / 1.1 / 1.3 a level (50 / 102 / 183 / 284 / 403 plus 1.1 / 1.6 /
+// 2.2 / 2.8 / 3.4 before). A rank grows for five levels after it's learned, and the ranges
+// below are at that fifth level, with each rank's spread as before.
 const FireNovaRanks = 5
 
 var FireNovaSpellId = [FireNovaRanks + 1]int32{0, 408341, 408342, 408343, 408344, 408345}
-var FireNovaBaseDamage = [FireNovaRanks + 1][]float64{{0, 0}, {51.23, 59.77}, {102.94, 117.06}, {182.12, 205.88}, {280.06, 315.94}, {396.95, 443.05}}
-var FireNovaScaling = [FireNovaRanks + 1]core.RankScaling{{}, {17, 1.1}, {27, 1.6}, {37, 2.2}, {47, 2.8}, {57, 3.4}}
-var FireNovaSpellCoeff = [FireNovaRanks + 1]float64{0, .214, .214, .214, .214, .214}
-var FireNovaManaCost = [FireNovaRanks + 1]float64{0, 95, 170, 280, 395, 520}
+var FireNovaBaseDamage = [FireNovaRanks + 1][]float64{{0, 0}, {32.31, 37.69}, {54.28, 61.72}, {126.26, 142.74}, {173.39, 195.61}, {232.03, 258.97}}
+var FireNovaScaling = [FireNovaRanks + 1]core.RankScaling{{}, {17, 0.4}, {27, 0.6}, {37, 0.9}, {47, 1.1}, {57, 1.3}}
+var FireNovaSpellCoeff = [FireNovaRanks + 1]float64{0, .143, .143, .143, .143, .143}
+
+// Client 1.60.1.70425 cut the costs by 25 to 32% (95 / 170 / 280 / 395 / 520 before).
+var FireNovaManaCost = [FireNovaRanks + 1]float64{0, 65, 120, 210, 290, 375}
 var FireNovaLevel = [FireNovaRanks + 1]int{0, 12, 22, 32, 42, 52}
 
 func (shaman *Shaman) registerFireNovaSpell() {
@@ -273,7 +286,8 @@ func (shaman *Shaman) newFireNovaSpellConfig(rank int) core.SpellConfig {
 			},
 		},
 		ExtraCastCondition: func(sim *core.Simulation, _ *core.Unit) bool {
-			return shaman.ActiveTotems[FireTotem] != nil && shaman.TotemExpirations[FireTotem] > sim.CurrentTime
+			return shaman.ActiveTotems[FireTotem] != nil && shaman.TotemExpirations[FireTotem] > sim.CurrentTime &&
+				sim.Encounter.LevelingPosition(sim).Dist(shaman.totemPositions[FireTotem]) <= fireNovaCastRange
 		},
 
 		// Call of Flame and Improved Fire Nova multiply each other under Forever.
@@ -287,7 +301,7 @@ func (shaman *Shaman) newFireNovaSpellConfig(rank int) core.SpellConfig {
 		BonusCoefficient: FireNovaSpellCoeff[rank],
 
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-			for _, aoeTarget := range sim.Encounter.TargetUnits {
+			for _, aoeTarget := range shaman.fireTotemMobs(sim, fireNovaRadius) {
 				spell.CalcAndDealDamage(sim, aoeTarget, sim.Roll(baseDamageLow, baseDamageHigh), spell.OutcomeMagicHitAndCrit)
 			}
 		},
@@ -334,6 +348,7 @@ func (shaman *Shaman) newFlametongueTotemSpellConfig(rank int) core.SpellConfig 
 	// The totem is a one tick dot like the other fire totems, so that placing another fire
 	// totem takes this one down the same way.
 	spell.Dot = core.DotConfig{
+		IsAOE: true,
 		Aura: core.Aura{
 			Label: fmt.Sprintf("Flametongue Totem (Rank %d) Totem", rank),
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
@@ -349,14 +364,21 @@ func (shaman *Shaman) newFlametongueTotemSpellConfig(rank int) core.SpellConfig 
 	}
 	spell.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
 		shaman.placeTotem(sim, FireTotem, spell, duration, shaman.endFireTotem(spell))
-		spell.Dot(sim.GetTargetUnit(0)).Apply(sim)
+		spell.AOEDot().Apply(sim)
+		shaman.setTotemReach(FireTotem,
+			func(sim *core.Simulation) {
+				shaman.setTotemWeaponBuff(sim, buffAura, proto.WeaponImbue_FlametongueWeapon)
+			},
+			func(sim *core.Simulation) {
+				shaman.clearTotemWeaponBuff(sim, buffAura)
+			})
 	}
 	return spell
 }
 
-// endFireTotem ends a fire totem, which the sim runs as a dot on the first target.
+// endFireTotem ends a fire totem, which the sim runs as a dot on the shaman.
 func (shaman *Shaman) endFireTotem(spell *core.Spell) func(sim *core.Simulation) {
 	return func(sim *core.Simulation) {
-		spell.Dot(sim.GetTargetUnit(0)).Cancel(sim)
+		spell.AOEDot().Cancel(sim)
 	}
 }

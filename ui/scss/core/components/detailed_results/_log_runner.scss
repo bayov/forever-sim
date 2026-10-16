@@ -123,3 +123,90 @@
 		}
 	}
 }
+
+// A leveling session's log. Each section starts with a header row in the color of its state,
+// and the regen of a rest or a search folds into one row.
+.log-runner-root.leveling {
+	.log-runner-logs tr.log-section-row td {
+		padding: 0 var(--spacer-2);
+		background: linear-gradient(var(--section-color), var(--section-color)) center / 100% 1px no-repeat;
+	}
+
+	.log-section-button {
+		display: inline-flex;
+		align-items: baseline;
+		gap: 0.6rem;
+		max-width: 100%;
+		margin-left: 1.5rem;
+		padding: 0.1rem 0.6rem;
+		border: 1px solid transparent;
+		border-radius: 999px;
+		background: $panel-bg;
+		font-size: 0.75rem;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		color: var(--text-muted-color);
+
+		&:hover {
+			border-color: var(--section-color);
+		}
+	}
+
+	tr.log-section-row.selected .log-section-button {
+		border-color: var(--section-color);
+		box-shadow: 0 0 0 1px var(--section-color);
+	}
+
+	.log-section-title {
+		font-size: 0.6875rem;
+		font-weight: 700;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--section-color);
+	}
+
+	.log-section-time {
+		font-variant-numeric: tabular-nums;
+		color: $ivory;
+	}
+
+	tr.log-section-pull .log-section-summary {
+		color: $ivory;
+	}
+
+	.log-fold-button {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.4rem;
+		padding: 0;
+		border: 0;
+		background: none;
+		font-size: 0.75rem;
+		font-style: italic;
+		color: var(--text-muted-color);
+
+		&:hover {
+			color: var(--bs-link-color);
+		}
+	}
+
+	.log-fold-caret {
+		width: 0.6rem;
+		transition: transform 0.12s ease-in-out;
+	}
+
+	tr.log-fold-row.open .log-fold-caret {
+		transform: rotate(90deg);
+	}
+
+	tr.log-session-line .log-event-text {
+		color: $ivory;
+	}
+
+	.log-session-icon {
+		margin-right: 0.4rem;
+		font-size: 0.75rem;
+		color: var(--gold-soft);
+	}
+}

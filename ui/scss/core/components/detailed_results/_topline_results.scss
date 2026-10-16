@@ -10,6 +10,10 @@
 		gap: var(--block-spacer);
 	}
 
+	.results-cards:has(> .results-sim-mobs) > .results-sim-dps {
+		border-left: 1px solid var(--line-color);
+	}
+
 	.results-card {
 		@include panel-card;
 		display: flex;
@@ -45,8 +49,10 @@
 			font-variant-numeric: tabular-nums;
 		}
 
-		// The DPS card leads, so it has a gold edge.
-		&.results-sim-dps {
+		// The DPS card leads, so it has a gold edge. In a leveling run the mobs killed lead
+		// instead.
+		&.results-sim-dps,
+		&.results-sim-mobs {
 			border-left: 2px solid var(--gold);
 		}
 

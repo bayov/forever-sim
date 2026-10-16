@@ -32,10 +32,16 @@ func (unit *Unit) IsInMeleeRange() bool {
 }
 
 // Whether the melee downtime keeps this spell from being cast right now: a melee ability,
-// or a spell that goes off from a totem, while the player is out of melee range.
+// or a spell that goes off from a totem, while the player is out of melee range. In a
+// leveling session (leveling.go) a melee ability waits while our target hasn't reached us;
+// totems there have their own ranges.
 func (spell *Spell) outOfPvPRange() bool {
-	if spell.Unit.Env.Encounter.PvPMeleeDowntime <= 0 || spell.Unit.IsInMeleeRange() {
+	enc := &spell.Unit.Env.Encounter
+	if (enc.PvPMeleeDowntime <= 0 && enc.leveling == nil) || spell.Unit.IsInMeleeRange() {
 		return false
+	}
+	if enc.leveling != nil {
+		return spell.ProcMask.Matches(ProcMaskMelee)
 	}
 	return spell.ProcMask.Matches(ProcMaskMelee) || spell.Flags.Matches(SpellFlagCastFromTotem)
 }

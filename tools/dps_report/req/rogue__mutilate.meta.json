@@ -5,7 +5,7 @@
   "build": "Mutilate",
   "isDefault": true,
   "pr": 9,
-  "race": "Undead",
+  "race": "SkyborneWindshaper",
   "talents": "0053031033150103-302303202015-002",
   "treeNames": [
     "Assassination",
@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic_mutilate",
   "apl": "level60_mutilate",
   "published": {
-    "dps": 681.2,
-    "source": "Phase 1 BiS weapon speed pass, 2026-10-15 (standards 22)"
+    "dps": 684.2,
+    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 679.7)"
   },
   "verify": {
-    "dps": 681.2,
-    "stderr": null,
+    "dps": 684.17,
+    "stderr": 0.19,
     "iters": 20000,
     "ok": true,
-    "note": "same sim as the published number"
+    "note": "run_build.py main run, 180s, seed 1"
   },
-  "summary": "Assassination Mutilate with Seal Fate, Cold Blood and Vile Poisons, plus Precision and Puncturing Wounds in Combat, on a synthetic dagger with a fast sword in the off hand. It is the Assassination preset; Mutilate is pinned as the builder.",
+  "summary": "Mutilate with Seal Fate and Cold Blood, plus Puncturing Wounds from Combat.",
   "keyTalents": [
     "Mutilate",
     "Seal Fate 3/5",
@@ -39,8 +39,8 @@
     "Slice and Dice at 1+ combo points when down; refresh when about to drop",
     "Cold Blood right before a 5-point Eviscerate",
     "Thistle Tea at 10 energy or less; Sapper, Land Mine and potion while Slice and Dice is up",
-    "Eviscerate at 4+ combo points (with Slice and Dice up, 79+ energy, or under 6 s left); spend leftover points in the last 3 s",
-    "Mutilate right after a main-hand swing (0.75 s)",
+    "Eviscerate at 4+ combo points (with Slice and Dice up, 79+ energy, or under 6s left); spend leftover points in the last 3s",
+    "Mutilate right after a main-hand swing (0.75s)",
     "Backstab as fallback builder"
   ],
   "consumes": [
@@ -57,14 +57,13 @@
     "Deadly Poison (main hand) and Instant Poison (off hand), each beside a Dense Sharpening Stone"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 31 Agility and 15 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Backstab with the same talents is about 20 DPS ahead; Mutilate is pinned to define the spec",
-    "Venom (25 Energy) loses DPS at every combo point count, so no Venom preset",
-    "Mutilate needing only a main-hand dagger is open for beta testing",
-    "Murder is damage only (+4% vs Humanoids and Giants) and does nothing on the generic boss, so its 2 points go to Lethality (Vile Poisons for Seal Fate Daggers); the vs Humanoid build keeps Murder 2/2",
-    "Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV) left out under Forever; would add +13 to +18",
-    "Grimstitch 4/5-piece bonuses not live on the synthetic gear (about +8 / +6 for Combat Daggers)",
-    "Flask of Supreme Power and Greater Arcane Elixir omitted for consistency (+8 via Dragonbreath Chili)"
+    "Backstab with the same talents is about 20 DPS ahead.",
+    "Venom (25 Energy) always loses DPS.",
+    "Open: does Mutilate need only a main-hand dagger?",
+    "Murder does nothing on the generic boss, so its points go to Lethality (Vile Poisons for Seal Fate Daggers).",
+    "No Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV). They would add 13 to 18.",
+    "Grimstitch 4-piece and 5-piece aren't active (about +8 and +6).",
+    "Flask of Supreme Power and Greater Arcane Elixir left out (+8 through Dragonbreath Chili)."
   ],
   "notes": "Default for the Assassination raid-sim preset."
 }

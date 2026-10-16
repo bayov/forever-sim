@@ -195,7 +195,20 @@ func (aura *Aura) Refresh(sim *Simulation) {
 	}
 
 	if sim.Log != nil && aura.IsActive() && !aura.ActionID.IsEmptyAction() {
-		aura.Unit.Log(sim, "Aura refreshed: %s", aura.ActionID)
+		aura.logEvent(sim, "refreshed")
+	}
+}
+
+// Logs that the aura was gained or refreshed, with when it expires.
+//
+// The replay of the Events tab counts down an aura's time left from that. Without it, an aura
+// we refresh before it ever runs out (like Improved Stormstrike on every Stormstrike) never
+// shows how long it lasts.
+func (aura *Aura) logEvent(sim *Simulation, event string) {
+	if aura.expires == NeverExpires {
+		aura.Unit.Log(sim, "Aura %s: %s", event, aura.ActionID)
+	} else {
+		aura.Unit.Log(sim, "Aura %s: %s (expires at %0.3f)", event, aura.ActionID, aura.expires.Seconds())
 	}
 }
 
@@ -254,6 +267,9 @@ func (aura *Aura) UpdateExpires(sim *Simulation, newExpires time.Duration) {
 	if aura.expires < aura.Unit.minExpires {
 		aura.Unit.minExpires = aura.expires
 		sim.rescheduleTracker(aura.expires)
+	}
+	if sim.Log != nil && aura.IsActive() && !aura.ActionID.IsEmptyAction() {
+		aura.logEvent(sim, "refreshed")
 	}
 }
 
@@ -587,6 +603,16 @@ restart:
 	return at.minExpires
 }
 
+// respawn brings back a respawned mob's permanent auras (the leveling session's mob pool),
+// which its death expired: each inactive aura's reset effect runs again.
+func (at *auraTracker) respawn(sim *Simulation) {
+	for _, aura := range at.auras {
+		if !aura.IsActive() && aura.OnReset != nil {
+			aura.OnReset(aura, sim)
+		}
+	}
+}
+
 func (at *auraTracker) expireAll(sim *Simulation) {
 restart:
 	for _, aura := range at.activeAuras {
@@ -706,7 +732,7 @@ func (aura *Aura) Activate(sim *Simulation) {
 	}
 
 	if sim.Log != nil && !aura.ActionID.IsEmptyAction() {
-		aura.Unit.Log(sim, "Aura gained: %s", aura.ActionID)
+		aura.logEvent(sim, "gained")
 	}
 
 	// don't invoke possible callbacks until the internal state is consistent

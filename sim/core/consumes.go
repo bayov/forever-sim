@@ -564,7 +564,7 @@ func DragonBreathChiliAura(character *Character) *Aura {
 		BonusCoefficient: 1,
 
 		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
-			for _, aoeTarget := range sim.Environment.Encounter.TargetUnits {
+			for _, aoeTarget := range sim.Environment.Encounter.ActiveTargetUnits {
 				spell.CalcAndDealDamage(sim, aoeTarget, dragonbreathChiliDamage(sim), spell.OutcomeMagicHitAndCrit)
 			}
 		},
@@ -1157,7 +1157,7 @@ func (character *Character) newBasicExplosiveSpellConfig(sharedTimer *Timer, act
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
-			for _, aoeTarget := range sim.Encounter.TargetUnits {
+			for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
 				baseDamage := sim.Roll(minDamage, maxDamage) * sim.Encounter.AOECapMultiplier()
 				spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeMagicHitAndCrit)
 			}

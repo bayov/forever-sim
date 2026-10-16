@@ -15,6 +15,7 @@ merged tree ──► requests ──► sims ──► datasets ──► artif
    its class, spec, build name, preset race, talents, gear set, APL, published and verified DPS, summary, key talents, rotation,
    consumes and caveats.
 3. **Sims.** `run_build.py`, `weights.py`, `run_races.py`, `ablate.py` and `mana_curves.py` run the binaries on the requests.
+   After `build_data.py`, `events.py` sims the sample fights once more with their debug logs (see the datasets table).
 4. **Datasets.** `build_data.py` (with `build_races.py`, `setup_active.py`, `rotation.py` and `tooltips.py`) writes `data/*.json`.
 5. **Artifact.** Each changed data file is uploaded as an asset, and its `datasets/<id>` doc is repointed at it.
 
@@ -26,6 +27,7 @@ merged tree ──► requests ──► sims ──► datasets ──► artif
 | `req/` | The 36 requests and their meta files (largest is 64 KB) | yes |
 | `forever_tt_cache/` | Wowhead tooltip JSON cache, `forever/` and `classic/`, `item/` and `spell/` (2,126 files, 8.4 MB) | yes |
 | `fortt_ids.json` | Every spell and item id the dashboard shows a tooltip for. Written by `whids.py`, read by `whcache.py`. | yes |
+| `talent_ids.json` | Every spell a talent rank may link to (the Forever client's rank 1 spells and the trees' per rank spells). Written by `talent_links.py ids`, read by `whcache.py`. | yes |
 | `patches/` | Local-only sim patches for the merged tree (see below) | yes |
 | `dashstats/main.go` | The `dashstats` helper. Copy it to `tools/dashstats/` in the merged tree, or let patch 0001 add it. | yes |
 | `rd/` | Headless check harness (Playwright) | scripts only |
@@ -100,12 +102,12 @@ dashboard-only and never go to a class branch.
 |---|---|---|
 | `0001` DASH_NAMES dump, dashstats, manaAbove dedupe | In `sim/core/environment.go` (finalize): when `DASH_NAMES=<file>` is set, appends every unit's aura `spellId itemId otherId tag label` to that file. Also adds `tools/dashstats/main.go`, and drops the duplicate `manaAbove` from `tools/rotopt/priest_shadow.go`. | `run_build.py` (`names/<id>.tsv`, used for aura and proc labels in `names`, `abilities`, `auras` and `timeline_*`). `stats` needs dashstats. rotopt needs the dedupe to build. |
 | `0002` DASH_RACIALS_OFF | In `sim/core/racials_forever.go`, `sim/hunter/hunter.go` and the priest racials (Chastise, Dark Sacrifice, Starshards): `DASH_RACIALS_OFF=all` or `=<part>[,<part>]` leaves those racial parts out. Parts: spirit, sword, mace, axe, beast, dodge, elune, mind, eureka, bloodfury, touch, endurance, berserking, windblessed, insight, chastise, starshards, darksacrifice. | `run_races.py` (`off`, `off:<part>` and `weaponNoRacial` variants) |
-| `0003` target racials damage only | Beast Slaying, Big Game Hunter and Elemental Insight no longer also raise CritMultiplier. Client 70338 gives them aura 168 at 5%. | the `beast` and `elemental` race variants. The real fix in shared `sim/core` is a follow-up. |
+| `0003` target racials damage only | Beast Slaying, Big Game Hunter and Elemental Insight no longer also raise CritMultiplier. Client 70338 gives them aura 168 at 5%. | nothing in the report: master has the Forever half since PR #94, and the patch keeps only the Classic `racials.go` line. |
 | `0004` DASH_ASSUME knobs | `sim/core/assumptions.go`: `DASH_ASSUME="key=value,..."` overrides the constants the assumption scenarios vary (`assumptions_def.py` lists the keys). A plain diff against master with 0001 to 0003 applied; apply with `git apply`. A knob on a constant master already sets (the caster rank scales, Ice Lance's coefficient, Rend's attack power share, the hunter's crit per Agility, Raptor Strike rank 8, the pet hit rule, the top Trueshot Aura and Hunter's Mark ranks) defaults to that constant, so a run with no knob reproduces master. Build it as `$DASH_BIN/wowsimcli_assume`. | `run_assumptions.py` |
 
 The db regeneration commit isn't exported because it's binary; rerun gen_db instead. Merge commits aren't exported either:
-their conflict resolutions follow the rules above. With no env var set, all three patches leave the sim's behaviour unchanged,
-except the 0003 crit fix against Beast or Elemental targets. No preset fights those targets. `run_assumptions.py --identical`
+their conflict resolutions follow the rules above. With no env var set, the patches leave the Forever sim's behaviour
+unchanged. `run_assumptions.py --identical`
 checks that a 0004 build is bit-identical to the plain one with `DASH_ASSUME` unset.
 
 ## Requests
@@ -130,6 +132,10 @@ Murder's 4% against Humanoids and Giants, and an `advantageShort` of 25 words at
 the preset's "vs Humanoid" badge (the long line stays in the data). Its `advantageRefs` list the abilities and talents
 `advantageShort` names, as game tooltip refs: `k:s10314` for a spell key, `tal:Rogue:0:4` for a talent by class, tree and
 index in `talenttrees.json`. The badge's tooltip puts each one's icon in front of its name and its own tooltip below.
+A duty preset (one with `duty` and `baseBuild`, standards 23) keeps a raid buff or debuff up itself, with the raid's copy
+off. It gets `run_build.py` only (main, race sweep, lengths, samples): the page lists it in the Ranking while "Duty" is on,
+with what it costs against its base, and `build_data.py` keeps it out of every per-preset detail dataset so the page stays
+small. Its assumption factor is its base's.
 Each assumption in `assumptions_def.py` is written for a player who hasn't read our notes: a question-style `label`
 (8 words at most), a `short` line (20 words at most) the Ranking panel shows under it, setting labels that say what each
 choice means with a `rationale` of 15 words at most, and a `desc` of 2 to 4 sentences plus its `src` (written to the
@@ -166,7 +172,9 @@ All are written by `build_data.py`. "out" means `out/<id>.json` from `run_build.
 | hist | build_data.py | out main run: all 20k fight DPS values, 5-DPS bins | run_build |
 | abilities | build_data.py | out main run per-action metrics, names | run_build |
 | auras | build_data.py | out main run aura uptimes and procs (player and target), names | run_build |
-| timeline_\<class\> (×9) | build_data.py | out sample fights: 3 logged one-iteration fights per build, picked from 30 seeds | run_build |
+| timeline_\<class\> (×9) | build_data.py | out sample fights: 3 logged one-iteration fights per build, picked from 30 seeds. Only their auras and pre-pull casts, for the aura bars. | run_build |
+| events/\<build\>.json.gz | events.py | the timeline datasets' seeds: each sample fight simmed again with its whole debug log, as a gzipped RaidSimRequest and RaidSimResult for the sim UI's events view | events.py (seconds) |
+| event_names, event_icons | events.py | every spell and item id in the fights, their metrics and weapons, named from `db.json` and then the wowhead cache, and the icons that icons/icons_more lack | events.py |
 | stats | build_data.py | out `stats`: dashstats `ComputeStats` final sheet | run_build |
 | gear | build_data.py | the request's equipment, item names, icons and ilvl from `db.json` and wowhead item csv | none (no sims) |
 | setup | build_data.py + setup_active.py | the request's consumes, buffs, debuffs and professions; `abl/ablate.json` for `active` / `why` | ablate.py |
@@ -200,6 +208,7 @@ under 8 MB; the largest are icons and treeart at about 1 MB.
   rerun everything.
 - **Request text only** (meta summary, caveats, rotation bullets): just rerun `build_data.py`. It reads the meta files fresh.
 - **New ids to show** (new items, spells or talents): `whids.py`, then `whcache.py fortt_ids.json`, then `build_data.py`.
+- **Talent links**: each rank links to the Forever client's rank 1 spell on Forever's wowhead, because Forever keeps only that one (`talent_links.py`). Forever's wowhead adds spells over time, so `python3 talent_links.py ids`, then `python3 whcache.py --retry talent_ids.json` asks it again for what it didn't know. `python3 talent_links.py refresh` then rewrites the links in the shipped `talenttrees.json` without a full `build_data.py` run.
 - **Racial or target changes:** rerun only `run_races.py` for the affected variants (delete those lines), then `build_data.py`.
 - **`build_data.py` always rebuilds every dataset.** It takes seconds. Compare `data/*.json` with the published copies
   (`md5sum`) and upload only the files that changed.

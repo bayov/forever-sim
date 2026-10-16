@@ -8,19 +8,24 @@
 #
 # logcheck -audit compresses a log once it's a day old and fully audited. The game still has the plain one, so we skip a log we hold as .gz.
 #
-# A systemd user timer runs this every 5 minutes (systemd/ has the units), and logcheck runs it
-# before it reads a log, so the newest lines are always in the archive.
+# Only logcheck runs this, before it reads a log, so the newest lines are in the archive when
+# we look at them. The log-audit skill's runs (by hand and hourly) are what keep the archive up
+# to date.
 #
 # It also copies BayovCore's character history out of the SavedVariables (history.py), which
 # logcheck uses to know the gear, talents and skills at each moment of a log.
 #
-# FLAVORS lists the game folders we archive. Add the live Forever folder when it exists.
+# FLAVORS lists the game folders we archive, and we skip one that doesn't exist. The beta is
+# _classic_beta_. The release client will get a folder of its own, and we don't know its name
+# yet. _forever_ is our guess. When the release is out, check the folders in the WoW folder and
+# put the real one here (history.py takes the same list). logcheck reads every folder in the
+# archive, so it needs no change.
 
 set -eu
 
 GAME="${WOW_DIR:-/mnt/d/Gaming/World of Warcraft}"
 ARCHIVE="${FOREVER_LOGS:-$HOME/forever-logs}"
-FLAVORS="${FLAVORS:-_classic_beta_}"
+FLAVORS="${FLAVORS:-_classic_beta_ _forever_}"
 
 for flavor in $FLAVORS; do
     src="$GAME/$flavor/Logs"

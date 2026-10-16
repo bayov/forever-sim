@@ -4,7 +4,7 @@
       {
         "players": [
           {
-            "race": "RaceUndead",
+            "race": "RaceHuman",
             "class": "ClassPaladin",
             "equipment": {
               "items": [
@@ -145,21 +145,17 @@
               ],
               "priorityList": [
                 {
+                  "notes": "At the pull, then saved for the execute phase.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "itemId": 992015
-                      }
-                    },
                     "condition": {
                       "or": {
                         "vals": [
                           {
                             "cmp": {
+                              "op": "OpLt",
                               "lhs": {
                                 "currentTime": {}
                               },
-                              "op": "OpLt",
                               "rhs": {
                                 "const": {
                                   "val": "1s"
@@ -174,18 +170,24 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "spellUsesLostByDelay": {
+                                  "spellId": {
+                                    "itemId": 992015
+                                  },
                                   "delay": {
                                     "math": {
+                                      "op": "OpDiv",
                                       "lhs": {
                                         "math": {
+                                          "op": "OpSub",
                                           "lhs": {
                                             "math": {
+                                              "op": "OpMul",
                                               "lhs": {
                                                 "remainingTime": {}
                                               },
-                                              "op": "OpMul",
                                               "rhs": {
                                                 "const": {
                                                   "val": "4"
@@ -193,13 +195,11 @@
                                               }
                                             }
                                           },
-                                          "op": "OpSub",
                                           "rhs": {
                                             "currentTime": {}
                                           }
                                         }
                                       },
-                                      "op": "OpDiv",
                                       "rhs": {
                                         "const": {
                                           "val": "5"
@@ -211,13 +211,9 @@
                                     "const": {
                                       "val": "20s"
                                     }
-                                  },
-                                  "spellId": {
-                                    "itemId": 992015
                                   }
                                 }
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "0"
@@ -227,9 +223,13 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 992015
+                      }
                     }
-                  },
-                  "notes": "The spell power on-use trinket at the pull, then held for the execute phase when that loses no use."
+                  }
                 },
                 {
                   "action": {
@@ -238,33 +238,28 @@
                         "itemId": 10646
                       }
                     }
-                  },
-                  "notes": "Goblin Sapper Charge on cooldown."
+                  }
                 },
                 {
+                  "notes": "Judge Seal of the Crusader first, the judgement lasts 40s and every melee hit refreshes it.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 20271
-                      }
-                    },
                     "condition": {
                       "auraIsActive": {
                         "auraId": {
                           "spellId": 20308
                         }
                       }
-                    }
-                  },
-                  "notes": "Judge Seal of the Crusader first, the judgement lasts 40 sec and every melee hit refreshes it."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 20308
+                        "spellId": 20271
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Seal of the Crusader when its judgement is not on the target.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
@@ -272,11 +267,11 @@
                             "not": {
                               "val": {
                                 "auraIsActive": {
-                                  "auraId": {
-                                    "spellId": 20303
-                                  },
                                   "sourceUnit": {
                                     "type": "CurrentTarget"
+                                  },
+                                  "auraId": {
+                                    "spellId": 20303
                                   }
                                 }
                               }
@@ -295,40 +290,47 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20308
+                      }
                     }
-                  },
-                  "notes": "Seal of the Crusader when its judgement is not on the target."
+                  }
                 },
                 {
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 20924
+                        "spellId": 24239
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "action": {
                     "condition": {
                       "cmp": {
+                        "op": "OpGe",
                         "lhs": {
                           "currentManaPercent": {}
                         },
-                        "op": "OpGe",
                         "rhs": {
                           "const": {
                             "val": "0.2"
                           }
                         }
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20924
+                      }
                     }
-                  },
-                  "notes": "Consecration with the mana to spare."
+                  }
                 },
                 {
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 20271
-                      }
-                    },
                     "condition": {
                       "and": {
                         "vals": [
@@ -354,27 +356,27 @@
                           },
                           {
                             "auraIsActive": {
-                              "auraId": {
-                                "spellId": 20303
-                              },
                               "sourceUnit": {
                                 "type": "CurrentTarget"
+                              },
+                              "auraId": {
+                                "spellId": 20303
                               }
                             }
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Judgement on cooldown, on whichever damage seal is up."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 20920
+                        "spellId": 20271
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Judgement doesn't use it up in Forever. Without the talent ignore the warning on this line.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
@@ -404,27 +406,27 @@
                           },
                           {
                             "auraIsActive": {
-                              "auraId": {
-                                "spellId": 20303
-                              },
                               "sourceUnit": {
                                 "type": "CurrentTarget"
+                              },
+                              "auraId": {
+                                "spellId": 20303
                               }
                             }
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Seal of Command whenever it is down. Judgement does not consume it under Forever. Without the talent ignore the warning on this line."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 20293
+                        "spellId": 20920
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Twist of Light: the swing also gets the old seal's Echo.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
@@ -440,12 +442,12 @@
                               "vals": [
                                 {
                                   "cmp": {
+                                    "op": "OpLt",
                                     "lhs": {
                                       "autoTimeToNext": {
                                         "autoType": "MainHand"
                                       }
                                     },
-                                    "op": "OpLt",
                                     "rhs": {
                                       "const": {
                                         "val": "1.5s"
@@ -480,10 +482,10 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGe",
                               "lhs": {
                                 "currentManaPercent": {}
                               },
-                              "op": "OpGe",
                               "rhs": {
                                 "const": {
                                   "val": "0.2"
@@ -493,17 +495,16 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20293
+                      }
                     }
-                  },
-                  "notes": "Twist of Light: swap to the other damage seal just before the swing, which then gets the Echo of the old one too."
+                  }
                 },
                 {
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 20920
-                      }
-                    },
                     "condition": {
                       "and": {
                         "vals": [
@@ -519,12 +520,12 @@
                               "vals": [
                                 {
                                   "cmp": {
+                                    "op": "OpLt",
                                     "lhs": {
                                       "autoTimeToNext": {
                                         "autoType": "MainHand"
                                       }
                                     },
-                                    "op": "OpLt",
                                     "rhs": {
                                       "const": {
                                         "val": "1.5s"
@@ -559,10 +560,10 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGe",
                               "lhs": {
                                 "currentManaPercent": {}
                               },
-                              "op": "OpGe",
                               "rhs": {
                                 "const": {
                                   "val": "0.2"
@@ -572,9 +573,13 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20920
+                      }
                     }
-                  },
-                  "notes": "And back again before the next swing."
+                  }
                 },
                 {
                   "action": {
@@ -583,34 +588,23 @@
                         "spellId": 10333
                       }
                     }
-                  },
-                  "notes": "Holy Strike on cooldown."
+                  }
                 },
                 {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 24239
-                      }
-                    }
-                  },
-                  "notes": "Hammer of Wrath below 20% health."
-                },
-                {
+                  "notes": "Only against Undead and Demons.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "spellId": 10314
                       }
                     }
-                  },
-                  "notes": "Exorcism on cooldown, only against Undead and Demons."
+                  }
                 },
                 {
+                  "notes": "Racials and trinkets.",
                   "action": {
                     "autocastOtherCooldowns": {}
-                  },
-                  "notes": "Racials and trinkets on a free GCD."
+                  }
                 }
               ]
             },
@@ -620,7 +614,7 @@
             "retributionPaladin": {
               "options": {
                 "primarySeal": "Command",
-                "aura": "RetributionAura"
+                "aura": "ConcentrationAura"
               }
             }
           }
@@ -633,6 +627,7 @@
       "powerWordFortitude": "TristateEffectImproved",
       "bloodPact": "TristateEffectImproved",
       "strengthOfEarthTotem": "TristateEffectRegular",
+      "graceOfAirTotem": "TristateEffectRegular",
       "arcaneBrilliance": true,
       "divineSpirit": true,
       "battleShout": "TristateEffectImproved",
@@ -646,7 +641,8 @@
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
-      "totemWeaponBuff": "TotemWeaponBuffWindfury"
+      "totemWeaponBuff": "TotemWeaponBuffWindfury",
+      "salvation": true
     },
     "debuffs": {
       "judgementOfWisdom": true,
@@ -725,7 +721,9 @@
         "swingSpeed": 2,
         "parryHaste": true
       }
-    ]
+    ],
+    "raidDamageHitsPerMinute": 2,
+    "raidDamagePerHit": 1500
   },
   "simOptions": {
     "iterations": 1000,

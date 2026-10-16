@@ -67,6 +67,9 @@ func main() {
 		ShadowProtection: true,
 		Thorns:           improved,
 		TrueshotAura:     true,
+		// Salvation is a raid buff under Forever (client 70425), on in every level 60 DPS preset.
+		// It lowers threat by 30% and changes no damage.
+		Salvation: true,
 	}
 	individualBuffs := &proto.IndividualBuffs{
 		BlessingOfKings:  true,
@@ -110,6 +113,10 @@ func main() {
 		ExecuteProportion_20: 0.2,
 		ExecuteProportion_25: 0.25,
 		ExecuteProportion_35: 0.35,
+		// The raid damage on a DPS player in a level 60 raid fight
+		// (ui/core/preset_utils.tsx LEVEL_60_RAID_DAMAGE). A low level encounter has none.
+		RaidDamageHitsPerMinute: 2,
+		RaidDamagePerHit:        1500,
 		Targets: []*proto.Target{{
 			Id:      213336,
 			Name:    "Level 60",

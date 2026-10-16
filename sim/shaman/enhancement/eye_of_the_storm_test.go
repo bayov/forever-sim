@@ -15,13 +15,14 @@ import (
 //
 // The client gives a 23, 47 and 70% chance for 1, 2 and 3 points to ignore the pushback on
 // Lightning Bolt, Chain Lightning and Lava Burst. Without the talent the first hit in a cast adds
-// 1 sec and the second 0.8 sec. We cast a top rank Lightning Bolt (2.5 sec) and an enemy spell
-// hits us 0.5 sec into it, 2000 times for each rank, and count the casts that still end on time.
+// 1 sec and the second 0.8 sec, but never past the cast bar's start (pushback_test.go). We cast a
+// top rank Lightning Bolt (2.5 sec) and an enemy spell hits us 1 sec into it, where the full 1 sec
+// fits, 2000 times for each rank, and count the casts that still end on time.
 func TestOrcShamanEyeOfTheStorm(t *testing.T) {
 	const casts = 2000
 	for points, chance := range []float64{0, .23, .47, .70} {
 		// Eye of the Storm points and Lava Burst.
-		sim, enh := newShamanSim(newOrcShaman(60, fmt.Sprintf("000000000%d000001", points), &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, casts*4+10)
+		sim, enh := newShamanSim(newOrcShaman(60, fmt.Sprintf("000000000%d001", points), &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, casts*4+10)
 		if enh.Talents.EyeOfTheStorm != int32(points) {
 			t.Fatalf("got Eye of the Storm %d, want %d", enh.Talents.EyeOfTheStorm, points)
 		}
@@ -58,7 +59,7 @@ func TestOrcShamanEyeOfTheStorm(t *testing.T) {
 				enh.AddMana(sim, enh.MaxMana(), enh.GetManaNotCastingMetrics())
 				castNow(t, sim, enh, lb)
 			})
-			at(sim, start+1.5, func(sim *core.Simulation) {
+			at(sim, start+2, func(sim *core.Simulation) {
 				hitUs(sim)
 				switch enh.Hardcast.Expires {
 				case core.DurationFromSeconds(start + 3.5):
@@ -87,8 +88,11 @@ func TestOrcShamanEyeOfTheStorm(t *testing.T) {
 	at(sim, 1, func(sim *core.Simulation) {
 		castNow(t, sim, enh, topRank(t, "Lightning Bolt", enh.LightningBolt))
 	})
-	at(sim, 1.5, func(sim *core.Simulation) {
+	// 1 sec into the cast, 1.5 sec left plus 1 sec. Then 1.5 sec left again, plus 0.8.
+	at(sim, 2, func(sim *core.Simulation) {
 		hit.CalcAndDealDamage(sim, &enh.Unit, 1, forcedOutcome(core.OutcomeHit))
+	})
+	at(sim, 3, func(sim *core.Simulation) {
 		hit.CalcAndDealDamage(sim, &enh.Unit, 1, forcedOutcome(core.OutcomeHit))
 		if want := 5300 * time.Millisecond; enh.Hardcast.Expires != want {
 			t.Errorf("two hits push the cast to end at %s, want %s", enh.Hardcast.Expires, want)

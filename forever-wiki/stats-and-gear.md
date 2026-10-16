@@ -5,7 +5,7 @@ Blizzard called this "a deliberate un-solving of the Classic gear meta". These a
 ## Combat stat changes (from the Deep Dive panel)
 
 - Hit chance is one stat across melee, ranged and spell.
-- Critical strike chance is one stat across melee, ranged and spell. Racial weapon specializations follow this: Orc Axe Specialization is "Axes increase spell and ability critical strike chance by 1%", and it applies to spells as well as attacks.
+- Critical strike chance is one stat across melee, ranged and spell. The crit racials follow this: they apply to spells as well as attacks. Until client 70425 they needed a weapon type (Human swords 2%, Dwarf maces 1%, Orc axes 1%). 70425 made Human Ruthless and Orc Savage work with any weapon and replaced the Dwarf's with Earth Fury, 2% more crit damage.
 - Weapon skill survives but is spread more thinly across items and "is no longer overwhelming". Weapon skill racials are gone, replaced by crit (see [racials.md](racials.md)).
 - A new stat reduces the chance your attacks get dodged or parried (an expertise-like stat). Mostly aimed at tanks.
 - Bonus healing on gear now also includes one third as much bonus damage. Healers can quest in one set.
@@ -29,16 +29,16 @@ Pulled together here because they are what a sim would model. Full list in [raci
 
 | Race | Effect |
 |---|---|
-| Human | Swords: +2% spell and ability crit. +5% Spirit |
-| Dwarf | Maces: +1% spell and ability crit. +5% damage to Beasts. Stoneform reduces physical damage taken |
+| Human | Ruthless: +2% spell and ability crit with any weapon (swords only before client 70425). +5% Spirit |
+| Dwarf | Earth Fury: +2% crit damage and healing (client 70425; it was +1% crit with maces). +5% damage to Beasts. Stoneform reduces physical damage taken |
 | Night Elf | Elune's Light: +10% crit for 15 sec (active). +1% dodge, +2% run speed |
 | Gnome | Eureka!: next 3 spells or abilities cost less and deal 10% more damage or healing (active). +5% max Mana, Rage or Energy |
-| High Order Skyborne | +1% melee, ranged and spell haste. +5% damage to Elementals |
-| Orc | Blood Fury: +10% Attack Power and Spell Power for 15 sec (active). Axes: +1% spell and ability crit. Stun duration -20% |
+| High Order Skyborne | +3% melee, ranged and spell haste (1% before client 70425). +5% damage to Elementals |
+| Orc | Blood Fury: +10% Attack Power and Spell Power for 15 sec (active). Savage: +1% spell and ability crit with any weapon (axes only before client 70425). Stun duration -20% |
 | Undead | Touch of the Grave: 5% chance on spells and attacks to drain health, up to 5% of max health |
-| Tauren | +5% health, +1% hit chance. War Stomp |
+| Tauren | +5% health, +2% crit damage and healing (client 70425; it was +1% hit). War Stomp |
 | Troll | Berserking: +10% attack and casting speed for 10 sec (active, flat, no longer scales with missing health). +5% damage to Beasts. Regeneration |
-| Windshaper Skyborne | +1% melee, ranged and spell haste. +5% damage to Elementals |
+| Windshaper Skyborne | +3% melee, ranged and spell haste (1% before client 70425). +5% damage to Elementals |
 
 Cooldowns on the actives were not shown in the footage.
 

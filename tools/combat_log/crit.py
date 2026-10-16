@@ -15,11 +15,11 @@ for e in evs:
             if 1 <= v <= 63: lvl[e.srcGUID] = v
         except ValueError: pass
 
-totems = {e.dstGUID: e.dst for e in evs if e.ev == 'SPELL_SUMMON' and e.src.startswith(cl.ME)}
+totems = {e.dstGUID: e.dst for e in evs if e.ev == 'SPELL_SUMMON' and e.me_src}
 cnt = collections.defaultdict(lambda: [0, 0])
 for e in evs:
     if not (lo <= e.ts < hi) or e.ev != 'SPELL_DAMAGE': continue
-    if not (e.src.startswith(cl.ME) or e.srcGUID in totems): continue
+    if not (e.me_src or e.srcGUID in totems): continue
     d = cl.dmg(e)
     if d['school'] == 1: continue  # Windfury Weapon attacks, Stormstrike
     if e.spellId == 10444: g = 'FT Weapon'

@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 7,
   "race": "Orc",
-  "talents": "02-055030031005112151-053051001001",
+  "talents": "03-055030031005112051-053051001001",
   "treeNames": [
     "Elemental",
     "Enhancement",
@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "mana_tide",
   "published": {
-    "dps": 753.4,
-    "source": "Shaman PR (standards 23 totem duty presets, 2026-10-15)"
+    "dps": 781.7,
+    "source": "Shaman PR (rotation audit pass 23: Flame Shock 9 s end gate, Mana Tide at 10%, Magma Totem to 2 s; requests rebuilt with the prepull totems, 2026-10-16)"
   },
   "verify": {
-    "dps": 753.41,
-    "stderr": 0.35,
+    "dps": 781.74,
+    "stderr": 0.36,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 180 s, seed 1"
+    "note": "verify.py, 180s, seed 1"
   },
-  "summary": "Sub-Restoration Enhancement with Water Shield and Mana Tide Totem for the group's mana, on the Magma Totem rotation with Mana Tide at 20% mana. It is 8.5% behind Level 60 at 180 s.",
+  "summary": "Enhancement with Mana Tide Totem for the group, cast at 20% mana. Magma Totem rotation, with Lightning Shield kept up.",
   "keyTalents": [
     "Stormstrike",
     "Maelstrom Weapon",
@@ -37,16 +37,17 @@
     "Mental Dexterity"
   ],
   "rotation": [
-    "Pre-pull: Water Shield at -1.5 s; Magma Totem 1 s before the pull. Party totems from the raid (Strength of Earth, Windfury Totem, Mana Spring)",
-    "Mana Tide Totem at 20% mana or less",
-    "Magma Totem when it is down and at least 10 s remain",
+    "Pre-pull: Strength of Earth IV at -5.5s, Windfury Totem at -4.5s, Mana Spring at -3.5s, Lightning Shield at -2.5s, Magma Totem at -1s",
+    "Recast Strength of Earth, Windfury Totem and Mana Spring when down, with at least 20s left",
+    "Mana Tide Totem at 20% mana or less; Mana Spring waits until the tide ends",
+    "Magma Totem when it is down and at least 2s remain",
     "Rage of the Farseer on cooldown, waiting for the on-use trinket; Blood Fury lined up with it; other cooldowns",
     "Stormstrike on cooldown",
     "Lightning Bolt at 5 Maelstrom Weapon stacks",
     "Fire Nova above 20% mana (ahead of the shocks)",
     "Flame Shock when its DoT is down",
-    "Earth Shock while Flame Shock has more than 1 s left",
-    "Water Shield when it is down and mana is below 50%"
+    "Earth Shock while Flame Shock has more than 1s left",
+    "Lightning Shield when it is down and nothing else is ready (orbs fire at the target on raid damage hits, 2 a minute)"
   ],
   "consumes": [
     "Windfury Weapon (shaman imbue) + Shadow Oil (main hand)",
@@ -70,12 +71,12 @@
     "Goblin Land Mine"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 Strength and 14 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Mana Tide Totem is worth about +0.1 for the shaman itself in a 3 min fight",
-    "Water Shield is inert at the preset's 0 raid hits; worth up to +4.1 at 6 hits a minute",
-    "Orc lead is mostly Axe Specialization from the synthetic axe; with weapon racials off Windshaper Skyborne leads",
-    "Maelstrom Weapon proc rate (2 PPM per point) is an assumption until beta reaches level 34",
-    "Elemental Focus trigger set: if Stormstrike can trigger it, Enhancement gets too few Clearcasting procs"
+    "Mana Tide Totem is worth about 0.1 for the shaman itself.",
+    "Water Shield does nothing: Lightning Shield stays ahead.",
+    "Assumed: Maelstrom Weapon procs at 2 PPM per point, until the beta reaches level 34.",
+    "Elemental Focus triggers: if Stormstrike can trigger it, Enhancement gets too few Clearcasting procs.",
+    "Raid damage hits (2 a minute, each fires Lightning Shield) are an estimate.",
+    "Fire Nova uses the 70425 values: coefficient 0.143, rank 5 base 232 to 259."
   ],
-  "notes": "mksettings -spec enh -apl mana_tide (default -totems raid: the raid gives the party's Strength of Earth, Windfury Totem and Mana Spring Totem, standards 23) ; edited startingTotems.fire to MagmaTotem with fireSecondsBeforePull 1, as the preset ships."
+  "notes": "mksettings -spec enh -apl mana_tide (standards 23: every shaman drops its own party totems; the raid's only totem is a second shaman's Grace of Air, standards 25, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself) ; edited startingTotems.fire to MagmaTotem with fireSecondsBeforePull 1, as the preset ships."
 }

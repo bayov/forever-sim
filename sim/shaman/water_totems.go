@@ -110,7 +110,9 @@ func (shaman *Shaman) newHealingStreamTotemSpellConfig(rank int) core.SpellConfi
 		NumberOfTicks: int32(duration / healInterval),
 		TickLength:    healInterval,
 		OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-			healSpell.Cast(sim, target)
+			if shaman.inTotemReach(sim, WaterTotem) {
+				healSpell.Cast(sim, target)
+			}
 		},
 	}
 
@@ -192,19 +194,21 @@ func (shaman *Shaman) newManaSpringTotemSpellConfig(rank int) core.SpellConfig {
 		// The ticks start over from the drop.
 		shaman.placeTotem(sim, WaterTotem, spell, aura.Duration, endTotemBuff(aura))
 		aura.Activate(sim)
+		shaman.setTotemAuraReach(WaterTotem, aura)
 	}
 	return spell
 }
 
-const ManaTideTotemRanks = 3
+const ManaTideTotemRanks = 4
 
-// Forever's ranks (ForeverChanges spellbook, build 70009). Rank 1 comes at level 25 and gives
-// 88 mana a tick where Classic's gives 170, rank 2 gives 197 where Classic's gives 230, and
-// rank 3 is Classic's 290.
-var ManaTideTotemSpellId = [ManaTideTotemRanks + 1]int32{0, 16190, 17354, 17359}
-var ManaTideTotemManaRestore = [ManaTideTotemRanks + 1]float64{0, 88, 197, 290}
-var ManaTideTotemManaCost = [ManaTideTotemRanks + 1]float64{0, 10, 30, 60}
-var ManaTideTotemLevel = [ManaTideTotemRanks + 1]int{0, 25, 48, 58}
+// Forever's ranks (client 1.60.1.70425, wago.tools). The talent teaches rank 1 (88 mana a tick,
+// Classic's gives 170) and the trainer the rest at 38, 48 and 58. 70425 added rank 4 (1325256)
+// with what was rank 3's 290 mana and 60 cost, and moved ranks 2 and 3 ten levels down with
+// lower values (they were 197 and 290 at 48 and 58).
+var ManaTideTotemSpellId = [ManaTideTotemRanks + 1]int32{0, 16190, 17354, 17359, 1325256}
+var ManaTideTotemManaRestore = [ManaTideTotemRanks + 1]float64{0, 88, 133, 197, 290}
+var ManaTideTotemManaCost = [ManaTideTotemRanks + 1]float64{0, 10, 20, 30, 60}
+var ManaTideTotemLevel = [ManaTideTotemRanks + 1]int{0, 1, 38, 48, 58}
 
 // Mana Tide Totem is a water totem that stands for 13 sec and gives the group its mana every
 // 3 sec, 4 times. It takes the water slot, so Mana Spring Totem goes away and has to be put
@@ -257,6 +261,9 @@ func (shaman *Shaman) newManaTideTotemSpellConfig(rank int, cooldown *core.Timer
 				Period:   core.ManaTideTotemTickPeriod,
 				NumTicks: 4,
 				OnAction: func(sim *core.Simulation) {
+					if !shaman.inTotemReach(sim, WaterTotem) {
+						return
+					}
 					for i, char := range players {
 						char.AddMana(sim, manaRestore, metrics[i])
 					}

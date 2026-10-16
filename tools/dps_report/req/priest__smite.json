@@ -86,7 +86,7 @@
               "blessingOfKings": true,
               "blessingOfWisdom": "TristateEffectImproved"
             },
-            "talentsString": "525030231305001001-00505113002-3",
+            "talentsString": "525035231030001001-30505110002-3",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Tailoring",
@@ -124,7 +124,7 @@
               ],
               "priorityList": [
                 {
-                  "notes": "Undead. Dark Sacrifice when mana runs low. Other races can ignore the warning on this line.",
+                  "notes": "Undead. Trades health for mana. Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -147,7 +147,7 @@
                   }
                 },
                 {
-                  "notes": "Power Infusion on cooldown. Without the talent ignore the warning on this line.",
+                  "notes": "Without the talent ignore the warning on this line.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -157,67 +157,12 @@
                   }
                 },
                 {
-                  "notes": "Racials and trinkets on cooldown.",
+                  "notes": "Racials and trinkets.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }
                 },
                 {
-                  "notes": "Inner Focus right before Holy Fire. Without the talent ignore the warning on this line.",
-                  "action": {
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "not": {
-                              "val": {
-                                "dotIsActive": {
-                                  "spellId": {
-                                    "spellId": 15261
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 14751
-                      }
-                    }
-                  }
-                },
-                {
-                  "notes": "Holy Fire whenever its damage over time is down, for Power in Light.",
-                  "action": {
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "not": {
-                              "val": {
-                                "dotIsActive": {
-                                  "spellId": {
-                                    "spellId": 15261
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 15261
-                      }
-                    }
-                  }
-                },
-                {
-                  "notes": "Shadow Word: Pain whenever it is down.",
                   "action": {
                     "condition": {
                       "and": {
@@ -257,7 +202,6 @@
                   }
                 },
                 {
-                  "notes": "Devouring Plague whenever it is down and off cooldown.",
                   "action": {
                     "condition": {
                       "and": {
@@ -294,7 +238,7 @@
                               },
                               "rhs": {
                                 "const": {
-                                  "val": "0.4"
+                                  "val": "0.8"
                                 }
                               }
                             }
@@ -310,7 +254,7 @@
                   }
                 },
                 {
-                  "notes": "Dwarf. Chastise on cooldown against a Humanoid. Other races can ignore the warning on this line.",
+                  "notes": "Dwarf. Only against Humanoids. Other races can ignore the warning on this line.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -320,7 +264,7 @@
                   }
                 },
                 {
-                  "notes": "Shadow Word: Death when Smite would not land before the fight ends.",
+                  
                   "action": {
                     "condition": {
                       "cmp": {
@@ -345,7 +289,17 @@
                   }
                 },
                 {
-                  "notes": "Smite while the mana lasts the fight at 35 mana a second.",
+                  "notes": "Inner Focus on cooldown, for the next Smite. Without the talent ignore the warning on this line.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 14751
+                      }
+                    }
+                  }
+                },
+                {
+                  
                   "action": {
                     "condition": {
                       "cmp": {
@@ -376,7 +330,7 @@
                   }
                 },
                 {
-                  "notes": "Rank 7 Smite once it would not: most of the damage for far less mana.",
+                  "notes": "Rank 7: most of the damage for far less mana.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -416,7 +370,8 @@
       "fireResistanceAura": true,
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
-      "retributionAura": "TristateEffectImproved"
+      "retributionAura": "TristateEffectImproved",
+      "salvation": true
     },
     "debuffs": {
       "judgementOfWisdom": true,
@@ -496,7 +451,9 @@
         "swingSpeed": 2,
         "parryHaste": true
       }
-    ]
+    ],
+    "raidDamageHitsPerMinute": 2,
+    "raidDamagePerHit": 1500
   },
   "simOptions": {
     "iterations": 1000,

@@ -8,6 +8,7 @@ import (
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/stats"
+	googleProto "google.golang.org/protobuf/proto"
 )
 
 var TalentTreeSizes = [3]int{16, 18, 16}
@@ -122,6 +123,25 @@ func (shaman *Shaman) clearTotemWeaponBuff(sim *core.Simulation, aura *core.Aura
 	}
 }
 
+// OneMainHandImbue keeps one shaman imbue on the main hand, as the game does. When the spec's
+// options pick one (ShamanImbue) and the consumes carry a different shaman imbue, the options
+// win, the way the UI moves a shaman imbue out of the consumes. Call it before NewShaman,
+// which puts the consumes' imbue on.
+func OneMainHandImbue(character *core.Character, imbue proto.WeaponImbue) {
+	if imbue == proto.WeaponImbue_WeaponImbueUnknown || character.Consumes == nil {
+		return
+	}
+	switch character.Consumes.MainHandImbue {
+	case imbue:
+		return
+	case proto.WeaponImbue_RockbiterWeapon, proto.WeaponImbue_FlametongueWeapon, proto.WeaponImbue_FrostbrandWeapon, proto.WeaponImbue_WindfuryWeapon:
+		// A copy, so the request's consumes stay as they came.
+		consumes := googleProto.Clone(character.Consumes).(*proto.Consumes)
+		consumes.MainHandImbue = proto.WeaponImbue_WeaponImbueUnknown
+		character.Consumes = consumes
+	}
+}
+
 // ApplyShamanImbue puts ShamanImbue on the main hand, the way NewShaman does for a
 // shaman imbue in the consumes. It runs after the spec has set ShamanImbue.
 //
@@ -169,6 +189,7 @@ const (
 	SpellCode_ShamanSearingTotem
 	SpellCode_ShamanStormstrike
 	SpellCode_ShamanWaterShield
+	SpellCode_ShamanRiptide
 )
 
 // Shaman represents a shaman character.
@@ -184,6 +205,8 @@ type Shaman struct {
 	EarthShield            *core.Spell
 	EarthShock             []*core.Spell
 	FireNova               []*core.Spell
+	TotemicRecall          *core.Spell
+	TotemicProjection      *core.Spell
 	FlametongueTotem       []*core.Spell
 	FlameShock             []*core.Spell
 	FrostShock             []*core.Spell
@@ -197,6 +220,7 @@ type Shaman struct {
 	LightningShield        []*core.Spell
 	LightningShieldProcs   []*core.Spell // The damage component of lightning shield is a separate spell
 	MagmaTotem             []*core.Spell
+	Riptide                *core.Spell
 	ManaSpringTotem        []*core.Spell
 	ManaTideTotem          []*core.Spell
 	SearingTotem           []*core.Spell
@@ -225,6 +249,10 @@ type Shaman struct {
 	ActiveTotems     [4]*core.Spell
 	totemEnds        [4]func(sim *core.Simulation) // How to end each slot's totem when the next one comes down.
 	TotemExpirations [4]time.Duration              // The expiration time of each totem (earth, air, fire, water).
+	totemPositions   [4]core.Vec2                  // Where each totem stands in a leveling session (core.Encounter.LevelingPosition).
+	totemOffsets     [4]core.Vec2                  // Where each totem stands from where we dropped it (core.Encounter.LevelingTotemOffset).
+	totemReaches     [4]*totemReach                // How each totem's buff comes and goes with our distance (totem_reach.go).
+	totemCosts       [4]float64                    // The mana each totem cost, for Totemic Recall.
 
 	EarthTotems []*core.Spell
 	FireTotems  []*core.Spell
@@ -242,20 +270,9 @@ type Shaman struct {
 	// Shield
 	ActiveShield     *core.Spell // Tracks the Shaman's active shield spell
 	ActiveShieldAura *core.Aura
-	// What each shield's aura does when an enemy lands a direct hit on us.
-	shieldHitTaken map[*core.Aura]func(sim *core.Simulation, attacker *core.Unit)
-	// Direct hits taken from raid damage per minute, each one reaching our shield. Set from
-	// the enhancement options before Initialize.
-	RaidDamageHitsPerMinute float64
-	// Each iteration's rate is up to this many hits per minute above or below
-	// RaidDamageHitsPerMinute, like Duration +/- for the fight length.
-	RaidDamageHitsPerMinuteVariation float64
 	// The shaman's own main hand imbue in Forever, beside the oil or stone in the
 	// consumes. Set from the enhancement options before Initialize.
 	ShamanImbue proto.WeaponImbue
-	// The totems we have standing when the fight starts. Set from the enhancement options
-	// before Initialize.
-	StartingTotems *proto.StartingTotems
 
 	ChainLightningBounceCoefficient float64
 }
@@ -281,12 +298,11 @@ func (shaman *Shaman) Initialize() {
 	shaman.registerChainLightningSpell()
 	shaman.registerLavaBurstSpell()
 	shaman.registerLightningBoltSpell()
-	shaman.shieldHitTaken = map[*core.Aura]func(*core.Simulation, *core.Unit){}
 	shaman.registerLightningShieldSpell()
 	shaman.registerShocks()
 	shaman.registerStormstrikeSpell()
 	shaman.registerWaterShieldSpell()
-	shaman.registerRaidDamageHits()
+	shaman.registerHealingSpells()
 
 	// Imbues
 	// In the Initialize due to frost brand adding the aura to the enemy
@@ -309,7 +325,9 @@ func (shaman *Shaman) Initialize() {
 	shaman.registerWindfuryTotemSpell()
 	shaman.registerGraceOfAirTotemSpell()
 	shaman.registerWindwallTotemSpell()
-	shaman.registerStartingTotems()
+	shaman.registerTotemicRecallSpell()
+	shaman.registerTotemicProjectionSpell()
+	shaman.registerTotemReach()
 }
 
 func (shaman *Shaman) Reset(_ *core.Simulation) {
@@ -322,5 +340,9 @@ func (shaman *Shaman) Reset(_ *core.Simulation) {
 		shaman.ActiveTotems[i] = nil
 		shaman.TotemExpirations[i] = 0
 		shaman.totemEnds[i] = nil
+		shaman.totemPositions[i] = core.Vec2{}
+		shaman.totemOffsets[i] = core.Vec2{}
+		shaman.totemReaches[i] = nil
+		shaman.totemCosts[i] = 0
 	}
 }

@@ -109,11 +109,15 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // left to its own trigger (at 500 mana), 2 ahead of casting it at 40% mana. The synthetic spell
 // power trinket goes 0.1 sec before the pull, so it is up when the Starfire lands: 1.8 / 1.1 /
 // 0.7 ahead of using it at 0 (rotation auditor). Major Spellblasting Potion and Elune's Light
-// (the Night Elf's racial) go at the same moment, and Elune's later uses wait for the trinket
+// (the Night Elf's racial) went at the same moment, and Elune's later uses waited for the trinket
 // when waiting loses no use: 2.2 / 1.5 / 1.6 ahead at 120 / 180 / 300 sec (rotation auditor's
 // cooldown pass; the Wrath build gains 1.2 / 0.8 / 1.0 from the same lines). In the last seconds,
 // once a Starfire would no longer land before the end, it casts Moonfire instead: 4.4 / 2.9 / 1.4
-// ahead (rotation auditor), 835.9 / 831.6 / 820.7 with Wrath rank 8 at x1.085.
+// ahead (rotation auditor), 835.9 / 831.6 / 820.7 with Wrath rank 8 at x1.085 (Night Elf, before
+// the raid's damage hits and Nature's Focus).
+// The presets are Tauren since client 1.60.1.70425's racials, so the Elune's Light lines are out (a
+// Night Elf still uses it on cooldown through the autocast line); the potion still goes before
+// the pull.
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
 	tooltip: "The optimizer's best level 60 rotation: both dots up, then Wrath and Starfire in turn for Eclipse.",
 	group: 'Level 60',
@@ -135,9 +139,9 @@ export const APLLevel60Wrath = PresetUtils.makePresetAPLRotation('Level 60 Wrath
 // again once it has under 1.5 sec left. Forever's Faerie Fire and Curse of Recklessness share the
 // minor armor slot (standards 20), so the line waits while a curse holds it, and the duty's cost
 // shows with the raid's Faerie Fire and Curse of Recklessness both off. The moonkin gets nothing
-// from the armor itself, so the duty costs its GCDs: 33.7 / 31.5 / 29.1 DPS at 120 / 180 / 300
-// sec for Level 60 (802.0 / 799.9 / 791.4), 32.0 / 29.4 / 27.6 for Level 60 Wrath (755.0 /
-// 757.1 / 754.8), 20,000 iterations. The knob search kept the rest of both rotations.
+// from the armor itself, so the duty costs its GCDs: 32.4 / 30.7 / 28.7 DPS at 120 / 180 / 300
+// sec for Level 60 (797.6 / 797.5 / 789.9), 30.5 / 28.6 / 27.1 for Level 60 Wrath (752.1 /
+// 755.8 / 753.4), Tauren, 20,000 iterations. The knob search kept the rest of both rotations.
 export const APLLevel60FaerieFire = PresetUtils.makePresetAPLRotation('Level 60 (Faerie Fire duty)', Level60FaerieFireAPLJSON, {
 	tooltip:
 		"The Level 60 rotation, keeping Faerie Fire on the target for the raid. Pick the duty build to switch off the raid's Faerie Fire and Curse of Recklessness.",
@@ -233,10 +237,10 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	manaSpringTotem: TristateEffect.TristateEffectRegular,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
 	retributionAura: TristateEffect.TristateEffectImproved,
-	sanctityAura: true,
 	shadowProtection: true,
 	thorns: TristateEffect.TristateEffectImproved,
 	trueshotAura: true,
+	salvation: true,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
@@ -273,7 +277,7 @@ export const OtherDefaults = {
 	distanceFromTarget: 30,
 	profession1: Profession.Engineering,
 	profession2: Profession.Alchemy,
-	race: Race.RaceNightElf,
+	race: Race.RaceTauren,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -290,6 +294,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		executeProportion20: 0.2,
 		executeProportion25: 0.25,
 		executeProportion35: 0.35,
+		...PresetUtils.LEVEL_60_RAID_DAMAGE,
 		targets: [
 			{
 				id: 213336,
@@ -322,25 +327,28 @@ export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('L
 	buffs: DefaultIndividualBuffs,
 	consumes: DefaultConsumes,
 });
-// The Level 60 build, 829.8 / 827.0 / 817.7 at 120 / 180 / 300 sec. Every race a druid can be
-// under Forever on it with the same seed, 40,000 iterations (standard error 0.1 to 0.2):
+// The Level 60 build, Tauren: 830.0 / 828.2 / 818.6 at 120 / 180 / 300 sec. Every race a druid
+// can be under Forever on it with the same seed, 40,000 iterations (standard error 0.1 to 0.2),
+// on client 1.60.1.70425's racials (Tauren crits do 2% more, Skyborne have 3% haste) and the
+// raid's damage hits, whose pushback Nature's Focus 5 avoids 70% of the time:
 //
 //	                     120 sec  180 sec  300 sec
-//	Night Elf             829.8    827.0    817.7   best overall and Alliance
-//	Tauren                818.2    817.8    809.0   best Horde (its 1% hit is past the cap)
-//	Windshaper Skyborne   806.9    811.9    806.8
-//	High Order Skyborne   806.8    811.7    806.6
+//	Tauren                830.2    828.4    818.7   best overall and Horde
+//	Night Elf             831.6    827.3    817.1   best Alliance (ahead at 120 sec)
+//	Windshaper Skyborne   818.1    820.9    813.2
+//	High Order Skyborne   818.0    820.7    812.9
 //
-// No racial goes by weapon type, so the staff changes nothing here, and the ranking with
-// weapon type racials off is the same.
+// The Wrath build: Tauren 782.7 / 784.5 / 780.6 (best overall and Horde), Night Elf 783.4 /
+// 782.9 / 778.6 (best Alliance), Windshaper Skyborne 777.6 / 779.3 / 775.3, High Order Skyborne
+// 777.5 / 779.1 / 775.2. No racial goes by weapon type.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Night Elf on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Tauren on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60,
 	encounter: EncounterLevel60,
-	race: Race.RaceNightElf,
+	race: Race.RaceTauren,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -353,7 +361,7 @@ export const PresetBuildLevel60FaerieFire = PresetUtils.makePresetBuild('Level 6
 	talents: TalentsLevel60,
 	rotation: APLLevel60FaerieFire,
 	encounter: EncounterLevel60FaerieFireDuty,
-	race: Race.RaceNightElf,
+	race: Race.RaceTauren,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -365,7 +373,7 @@ export const PresetBuildLevel60Wrath = PresetUtils.makePresetBuild('Level 60 Wra
 	talents: TalentsLevel60Wrath,
 	rotation: APLLevel60Wrath,
 	encounter: EncounterLevel60,
-	race: Race.RaceNightElf,
+	race: Race.RaceTauren,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -378,7 +386,7 @@ export const PresetBuildLevel60WrathFaerieFire = PresetUtils.makePresetBuild('Le
 	talents: TalentsLevel60Wrath,
 	rotation: APLLevel60WrathFaerieFire,
 	encounter: EncounterLevel60FaerieFireDuty,
-	race: Race.RaceNightElf,
+	race: Race.RaceTauren,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],

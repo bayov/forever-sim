@@ -1,0 +1,107 @@
+// See ui/core/components/detailed_results/pulls_table.tsx.
+//
+// The leveling session's pulls, in the look of the other results tables. A row is a button to
+// show only that pull, the pull we look at has a gold edge, and the pulls we died in are red.
+.pulls-table-root {
+	.pulls-table-scroll {
+		overflow-x: auto;
+	}
+
+	.pulls-table {
+		white-space: nowrap;
+	}
+
+	// The other results tables stick their header under the page's toolbar. This table sits in
+	// boxes that hide their overflow (the events panel and its own scroll box), so that offset
+	// would push the header down over the first rows. It stays at the table's top instead.
+	.metrics-table-header-cell {
+		top: 0;
+	}
+
+	.metrics-table-header-cell.unsortable {
+		cursor: default;
+	}
+
+	.pulls-table-row {
+		cursor: pointer;
+
+		&.selected {
+			background: rgba($accent, 0.12);
+			box-shadow: inset 3px 0 0 var(--gold);
+		}
+
+		&.died td {
+			color: #ef7a7a;
+		}
+	}
+
+	.metrics-table-footer td {
+		color: var(--text-muted-color);
+		font-size: 0.75rem;
+	}
+
+	.pulls-table-number {
+		color: var(--gold-soft);
+		font-weight: 600;
+	}
+
+	.pulls-table-mobs {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.pulls-table-mob-count {
+		min-width: 1.25rem;
+		font-weight: 600;
+		color: $ivory;
+	}
+
+	.pulls-table-levels {
+		font-size: 0.75rem;
+		color: var(--text-muted-color);
+	}
+
+	.pulls-table-chain {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.2rem;
+		font-size: 0.75rem;
+		color: #7fb3f0;
+	}
+
+	.pulls-table-pulled-by {
+		font-size: 0.75rem;
+		color: var(--gold-soft);
+	}
+
+	.pulls-table-from-to {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.3rem;
+
+		.fa-arrow-right {
+			font-size: 0.6rem;
+			color: var(--text-muted-color);
+		}
+	}
+
+	.pulls-table-rest {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.35rem;
+
+		i {
+			font-size: 0.75rem;
+			color: #8fd18f;
+		}
+	}
+
+	.pulls-table-muted {
+		color: var(--text-muted-color);
+	}
+
+	.pulls-table-skull {
+		color: #ef7a7a;
+	}
+}

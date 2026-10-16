@@ -964,7 +964,7 @@ def build(tree, names, gear, setup, outs, abilities, auras, timelines, builds, i
             for v in vs:
                 cls = [c.replace('Class', '') for c in v.get('classes', [])]
                 right = 'Passive' if v.get('passive') else (v.get('cost') or '').replace('; ', ', ')
-                generic.append(['h', r['name'], right])
+                generic.append(['h', r['name'], right, v.get('icon')])
                 if len(descs) > 1:
                     generic.append(['m', ', '.join(cls)])
                 generic.append(['y', v['description']])
@@ -980,7 +980,7 @@ def build(tree, names, gear, setup, outs, abilities, auras, timelines, builds, i
                 if not v:
                     continue
                 right = 'Passive' if v.get('passive') else (v.get('cost') or '').replace('; ', ', ')
-                ls += [['h', r['name'], right], ['y', v['description']]]
+                ls += [['h', r['name'], right, v.get('icon')], ['y', v['description']]]
             rows.append({'key': f'race:{race}:{cls}', 'kind': 'race', 'title': race, 'sub': f'{fac} {cls}', 'icon': None, 'lines': ls})
 
     # ---- stat weights ----

@@ -2,6 +2,7 @@ package core
 
 import (
 	"math"
+	"slices"
 	"time"
 
 	"github.com/wowsims/classic/sim/core/proto"
@@ -150,9 +151,18 @@ func buildStatWeightRequests(swr *proto.StatWeightsRequest) *proto.StatWeightReq
 	statModsLow := make([]float64, stats.UnitStatsLen)
 	statModsHigh := make([]float64, stats.UnitStatsLen)
 
+	flatStatScale := 1.0
+	if swr.Encounter.GetLeveling() != nil {
+		flatStatScale = levelingStatModScale
+	}
+
 	// Make sure reference stat is included.
-	statModsLow[swr.EpReferenceStat] = -defaultStatMod
-	statModsHigh[swr.EpReferenceStat] = defaultStatMod
+	refMod := defaultStatMod
+	if !isPercentStat(swr.EpReferenceStat) {
+		refMod *= flatStatScale
+	}
+	statModsLow[swr.EpReferenceStat] = -refMod
+	statModsHigh[swr.EpReferenceStat] = refMod
 
 	statsToWeigh := stats.ProtoArrayToStatsList(swr.StatsToWeigh)
 	for _, s := range statsToWeigh {
@@ -160,6 +170,9 @@ func buildStatWeightRequests(swr *proto.StatWeightsRequest) *proto.StatWeightReq
 		statMod := defaultStatMod
 		if stat.EqualsStat(stats.Armor) || stat.EqualsStat(stats.BonusArmor) || stat.EqualsStat(stats.Mana) {
 			statMod = defaultStatMod * 20
+		}
+		if !isPercentStat(proto.Stat(s)) {
+			statMod *= flatStatScale
 		}
 		statModsHigh[stat] = statMod
 		statModsLow[stat] = -statMod
@@ -197,6 +210,26 @@ func buildStatWeightRequests(swr *proto.StatWeightsRequest) *proto.StatWeightReq
 	return swBaseResponse
 }
 
+// levelingStatModScale is how much bigger the stat steps are in a leveling run.
+//
+// +1 attack power adds about 0.04 mobs to a 20 minute session at level 30. That's so little
+// that the sessions with and without it drift apart on their own (a pull a little sooner
+// rolls different crits from then on), and the weights came out mostly noise. +10 gets the
+// noise down to a few percent. We don't go much bigger, because Stamina and Spirit work through
+// rests, which aren't linear. -40 Stamina starts deaths, and Stamina then comes out twice what
+// it is at -10.
+const levelingStatModScale = 10.0
+
+// isPercentStat is a stat counted in percent, like crit, which a point of already moves a lot.
+func isPercentStat(s proto.Stat) bool {
+	switch s {
+	case proto.Stat_StatMeleeHit, proto.Stat_StatMeleeCrit, proto.Stat_StatMeleeHaste, proto.Stat_StatSpellHit, proto.Stat_StatSpellCrit,
+		proto.Stat_StatSpellHaste, proto.Stat_StatExpertise, proto.Stat_StatDodge, proto.Stat_StatParry, proto.Stat_StatBlock:
+		return true
+	}
+	return false
+}
+
 func computeStatWeights(swcr *proto.StatWeightsCalcRequest) *proto.StatWeightsResult {
 	haveRefStat := false
 	for _, statResult := range swcr.StatSimResults {
@@ -217,20 +250,26 @@ func computeStatWeights(swcr *proto.StatWeightsCalcRequest) *proto.StatWeightsRe
 		modPlayerLow := statResult.ResultLow.RaidMetrics.Parties[0].Players[0]
 		modPlayerHigh := statResult.ResultHigh.RaidMetrics.Parties[0].Players[0]
 
+		baseKills := swcr.BaseResult.EncounterMetrics.GetLeveling().GetAllKills()
+		lowKills := statResult.ResultLow.EncounterMetrics.GetLeveling().GetAllKills()
+		highKills := statResult.ResultHigh.EncounterMetrics.GetLeveling().GetAllKills()
+		leveling := len(baseKills) > 0
+
 		// Check for hard caps. Hard caps will have results identical to the baseline because RNG is fixed.
 		// When we find a hard-capped stat, just skip it (will return 0).
-		if modPlayerHigh.Dps.Avg == baselinePlayer.Dps.Avg && modPlayerHigh.Hps.Avg == baselinePlayer.Hps.Avg && modPlayerHigh.Tmi.Avg == baselinePlayer.Tmi.Avg {
+		if modPlayerHigh.Dps.Avg == baselinePlayer.Dps.Avg && modPlayerHigh.Hps.Avg == baselinePlayer.Hps.Avg && modPlayerHigh.Tmi.Avg == baselinePlayer.Tmi.Avg &&
+			(!leveling || slices.Equal(highKills, baseKills)) {
 			continue
 		}
 
-		calcWeightResults := func(baselineMetrics *proto.DistributionMetrics, modLowMetrics *proto.DistributionMetrics, modHighMetrics *proto.DistributionMetrics, weightResults *StatWeightValues) {
+		calcWeights := func(baseline, modLow, modHigh []float64, weightResults *StatWeightValues) {
 			var lo, hi aggregator
-			for i := 0; i < len(baselineMetrics.AllValues); i++ {
-				lo.add(modLowMetrics.AllValues[i] - baselineMetrics.AllValues[i])
+			for i := 0; i < len(baseline); i++ {
+				lo.add(modLow[i] - baseline[i])
 			}
 			lo.scale(1 / statResult.StatData.ModLow)
-			for i := 0; i < len(baselineMetrics.AllValues); i++ {
-				hi.add(modHighMetrics.AllValues[i] - baselineMetrics.AllValues[i])
+			for i := 0; i < len(baseline); i++ {
+				hi.add(modHigh[i] - baseline[i])
 			}
 			hi.scale(1 / statResult.StatData.ModHigh)
 
@@ -238,8 +277,18 @@ func computeStatWeights(swcr *proto.StatWeightsCalcRequest) *proto.StatWeightsRe
 			weightResults.Weights.AddStat(stat, mean)
 			weightResults.WeightsStdev.AddStat(stat, stdev)
 		}
+		calcWeightResults := func(baselineMetrics *proto.DistributionMetrics, modLowMetrics *proto.DistributionMetrics, modHighMetrics *proto.DistributionMetrics, weightResults *StatWeightValues) {
+			calcWeights(baselineMetrics.AllValues, modLowMetrics.AllValues, modHighMetrics.AllValues, weightResults)
+		}
 
-		calcWeightResults(baselinePlayer.Dps, modPlayerLow.Dps, modPlayerHigh.Dps, &result.Dps)
+		// A leveling session scores mobs killed, not DPS. So there the DPS weights are the mobs
+		// killed in the session that a point of each stat adds. They take in everything the
+		// stat does for the session, like Stamina's shorter rests, which DPS alone misses.
+		if leveling {
+			calcWeights(baseKills, lowKills, highKills, &result.Dps)
+		} else {
+			calcWeightResults(baselinePlayer.Dps, modPlayerLow.Dps, modPlayerHigh.Dps, &result.Dps)
+		}
 		calcWeightResults(baselinePlayer.Hps, modPlayerLow.Hps, modPlayerHigh.Hps, &result.Hps)
 		calcWeightResults(baselinePlayer.Threat, modPlayerLow.Threat, modPlayerHigh.Threat, &result.Tps)
 		calcWeightResults(baselinePlayer.Dtps, modPlayerLow.Dtps, modPlayerHigh.Dtps, &result.Dtps)

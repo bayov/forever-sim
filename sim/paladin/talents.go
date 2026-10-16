@@ -43,9 +43,10 @@ func (paladin *Paladin) ApplyTalents() {
 
 	// Champion of the Light turns Intellect into spell damage and healing.
 	//
-	// The 2026-10-01 development notes cut it to 20 / 40 / 60% (it was 33 / 66 / 100%).
+	// The 2026-10-01 development notes cut it to 20 / 40 / 60% (it was 33 / 66 / 100%), and
+	// client 1.60.1.70425 to 10 / 20 / 30% (trait curve 110350).
 	if paladin.Talents.ChampionOfTheLight > 0 {
-		paladin.AddStatDependency(stats.Intellect, stats.SpellPower, []float64{0, .2, .4, .6}[paladin.Talents.ChampionOfTheLight])
+		paladin.AddStatDependency(stats.Intellect, stats.SpellPower, []float64{0, .1, .2, .3}[paladin.Talents.ChampionOfTheLight])
 	}
 
 	paladin.applyWeaponSpecialization()
@@ -156,9 +157,12 @@ func (paladin *Paladin) applyRedoubt() {
 	})
 }
 
-// Reckoning gives an extra attack on 20% per point of the crits taken, and on 8% per
-// point of the blocks, at most once every 1.5 sec (the 2026-09-12 beta notes, and the
-// client's proc cooldown on spell 20177).
+// Reckoning gives a charge on 20% per point of the crits taken, and on 8% per point of the
+// blocks, at most once every 1.5 sec (the 2026-09-12 beta notes, and the client's proc cooldown
+// on spell 20177). Since client 1.60.1.70425 the charges stack up to 4 (spell 1326084:
+// CumulativeAura 4, one charge, on a done melee auto attack) and the paladin's next auto attack
+// spends them all as extra attacks: the core's stored extra attacks, which hold up to 4 and fire
+// on the next main-hand swing. 70338 gave the extra attack at once (trigger 20178).
 func (paladin *Paladin) applyReckoning() {
 	if paladin.Talents.Reckoning == 0 {
 		return
@@ -171,6 +175,14 @@ func (paladin *Paladin) applyReckoning() {
 		Timer:    paladin.NewTimer(),
 		Duration: time.Millisecond * 1500,
 	}
+
+	// The stored extra attacks, registered up front: StoreExtraMHAttack would add the aura mid-fight.
+	core.MakePermanent(paladin.GetOrRegisterAura(core.Aura{
+		Label:     "Extra Attacks  (Main Hand)", // the same aura as Windfury Totem's, see core/buffs.go
+		ActionID:  core.ActionID{SpellID: 21919},
+		Duration:  core.NeverExpires,
+		MaxStacks: 4,
+	}))
 
 	paladin.RegisterAura(core.Aura{
 		Label:    "Reckoning Trigger",
@@ -185,14 +197,15 @@ func (paladin *Paladin) applyReckoning() {
 			if result.DidCrit() && sim.Proc(critChance, "Reckoning") ||
 				result.DidBlock() && sim.Proc(blockChance, "Reckoning") {
 				icd.Use(sim)
-				paladin.AutoAttacks.ExtraMHAttack(sim, 1, procID, spell.ActionID)
+				paladin.AutoAttacks.StoreExtraMHAttack(sim, 1, procID, spell.ActionID)
 			}
 		},
 	})
 }
 
 // Shield Specialization's second half: a block has a 33% chance per point to restore
-// 6% of the paladin's maximum mana, once every 3 sec.
+// 4% of the paladin's maximum mana (client 1.60.1.70425, spell 1310925; 6% in 70338), once
+// every 3 sec.
 func (paladin *Paladin) applyShieldSpecializationMana() {
 	if paladin.Talents.ShieldSpecialization == 0 {
 		return
@@ -215,7 +228,7 @@ func (paladin *Paladin) applyShieldSpecializationMana() {
 		OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 			if result.DidBlock() && icd.IsReady(sim) && sim.Proc(procChance, "Shield Specialization") {
 				icd.Use(sim)
-				paladin.AddMana(sim, 0.06*paladin.MaxMana(), manaMetrics)
+				paladin.AddMana(sim, 0.04*paladin.MaxMana(), manaMetrics)
 			}
 		},
 	})

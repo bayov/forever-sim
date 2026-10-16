@@ -18,7 +18,7 @@ hi = sys.argv[3] if len(sys.argv) > 3 else '99'
 win = [e for e in evs if lo <= e.ts < hi]
 print(f'window {lo} to {win[-1].ts if win else "-"}')
 
-totems = {e.dstGUID: e.dst for e in evs if e.ev == 'SPELL_SUMMON' and e.src.startswith(cl.ME)}
+totems = {e.dstGUID: e.dst for e in evs if e.ev == 'SPELL_SUMMON' and e.me_src}
 
 def kind(e):
     if e.ev.startswith('SWING_DAMAGE'):
@@ -33,11 +33,11 @@ def kind(e):
         return e.spell + ' tick'
     return e.spell + (' (physical)' if cl.dmg(e)['school'] == 1 else '')
 
-crits = [e for e in win if (e.src.startswith(cl.ME) or e.srcGUID in totems)
+crits = [e for e in win if (e.me_src or e.srcGUID in totems)
          and e.ev in ('SWING_DAMAGE', 'SPELL_DAMAGE', 'SPELL_PERIODIC_DAMAGE') and cl.dmg(e)['crit']]
-hits = collections.Counter(kind(e) for e in win if (e.src.startswith(cl.ME) or e.srcGUID in totems)
+hits = collections.Counter(kind(e) for e in win if (e.me_src or e.srcGUID in totems)
                            and e.ev in ('SWING_DAMAGE', 'SPELL_DAMAGE', 'SPELL_PERIODIC_DAMAGE'))
-buffs = [e for e in win if e.dst.startswith(cl.ME) and e.spellId == ED
+buffs = [e for e in win if e.me_dst and e.spellId == ED
          and e.ev in ('SPELL_AURA_APPLIED', 'SPELL_AURA_REFRESH')]
 
 rows = collections.defaultdict(lambda: collections.Counter())

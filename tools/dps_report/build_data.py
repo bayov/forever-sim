@@ -16,7 +16,9 @@ SLOTS = ['Head', 'Neck', 'Shoulders', 'Back', 'Chest', 'Wrist', 'Hands', 'Waist'
 OTHER = {'oOtherActionAttack': 'Melee', 'oOtherActionAttackt1': 'Melee (main hand)', 'oOtherActionAttackt2': 'Melee (off hand)',
          'oOtherActionShoot': 'Auto Shot', 'oOtherActionManaRegen': 'Mana regen', 'oOtherActionEnergyRegen': 'Energy regen',
          'oOtherActionFocusRegen': 'Focus regen', 'oOtherActionRefund': 'Refund', 'oOtherActionPotion': 'Potion', 'oOtherActionMove': 'Movement',
-         'oOtherActionComboPoints': 'Combo points', 'oOtherActionManaGain': 'Mana gain', 'oOtherActionRageGain': 'Rage gain', 'oOtherActionDamageTaken': 'Damage taken', 'oOtherActionExplosives': 'Explosives', 'oOtherActionWait': 'Wait'}
+         'oOtherActionComboPoints': 'Combo points', 'oOtherActionManaGain': 'Mana gain', 'oOtherActionRageGain': 'Rage gain', 'oOtherActionDamageTaken': 'Damage taken', 'oOtherActionExplosives': 'Explosives', 'oOtherActionWait': 'Wait',
+         # The logs name OtherIDs run_build.py doesn't map by number: 11 is the raid damage hit the boss lands on a warrior
+         'o11': 'Raid damage hit'}
 # metrics keys use the enum's text; normalize to the log's keys
 def norm_key(k):
     return k
@@ -32,7 +34,7 @@ DISPLAY = {'paladin__level_60': 'Ret twist', 'paladin__level_60_sub_holy': 'Ret 
 
 STAT_LABEL = {'AttackPower': 'Attack power', 'RangedAttackPower': 'Ranged attack power', 'MeleeHit': 'Melee hit %', 'MeleeCrit': 'Melee crit %',
               'MeleeHaste': 'Melee haste %', 'SpellPower': 'Spell power', 'SpellDamage': 'Spell damage', 'SpellHit': 'Spell hit %', 'SpellCrit': 'Spell crit %',
-              'SpellHaste': 'Spell haste %', 'MP5': 'Mana per 5 s', 'FirePower': 'Fire power', 'FrostPower': 'Frost power', 'ShadowPower': 'Shadow power',
+              'SpellHaste': 'Spell haste %', 'MP5': 'Mana per 5s', 'FirePower': 'Fire power', 'FrostPower': 'Frost power', 'ShadowPower': 'Shadow power',
               'ArcanePower': 'Arcane power', 'NaturePower': 'Nature power', 'HolyPower': 'Holy power', 'ArmorPenetration': 'Armor penetration'}
 
 
@@ -112,8 +114,9 @@ MANUAL = {'i10646': 'Goblin Sapper Charge', 'i12662': 'Demonic Rune', 'i13444': 
           's1311598': "Light's Vigil", 's1329': 'Mutilate', 's1329t1': 'Mutilate (main hand)', 's1329t2': 'Mutilate (off hand)', 's1382': 'Shadow Oil',
           's17261': 'Bite', 's20947': 'Seal of Command', 's20966': 'Judgement of Command', 's3009': 'Claw', 'i4395': 'Goblin Land Mine', 'i7676': 'Thistle Tea',
           **{f's11300t{i}': f'Eviscerate ({i} CP)' for i in range(1, 6)}, 's11300': 'Eviscerate',
-          's1293527': 'Summon Hawk', 's1293527t1': 'Hawk 1', 's1293527t2': 'Hawk 2', 's460534': 'Cutthroat'}
-MANUAL_ICON = {'s1293527': 'ability_hunter_pet_owl', 's460534': 'ability_rogue_ambush'}
+          's1293527': 'Summon Hawk', 's1293527t1': 'Hawk 1', 's1293527t2': 'Hawk 2', 's460534': 'Cutthroat',
+          's1310222': 'Spearing Strike'}
+MANUAL_ICON = {'s1293527': 'ability_hunter_pet_owl', 's460534': 'ability_rogue_ambush', 's1310222': 'inv_spear_01'}
 for race, lst in json.load(open(os.path.join(TREE, 'ui/core/forever/racials.json'))).items():
     for r in lst:
         for v in r.get('variants', []):
@@ -226,7 +229,7 @@ CONSUME_ICON = {'scroll of imbue greater flame': 'inv_10_inscription2_repcontrac
                 'elixir of the owl': 'inv_potion_10', 'elixir of greater intellect': 'inv_potion_10', 'elixir of sages': 'inv_potion_29',
                 'elixir of greater spirit': 'inv_potion_09', 'major mana potion': 'inv_potion_76', 'major frenzy potion': 'inv_potion_41',
                 'mighty rage potion': 'inv_potion_41', 'major spellblasting potion': 'inv_potion_25', 'conjured demonic rune': 'inv_misc_rune_04',
-                'conjured rogue thistle tea': 'inv_drink_milk_05', 'goblin sapper': 'spell_fire_selfdestruct', 'explosive goblin land mine': 'inv_misc_bomb_05',
+                'conjured rogue thistle tea': 'inv_drink_milk_05', 'goblin sapper': 'spell_fire_selfdestruct', 'explosive goblin land mine': 'inv_shield_08',
                 'lobster stew': 'inv_misc_food_86', 'grilled squid': 'inv_misc_fish_13', 'smoked desert dumpling': 'inv_misc_food_64',
                 'flank au poivre': 'inv_misc_food_65', 'wizard oil': 'inv_potion_105', 'shadow oil': 'inv_potion_23',
                 'dense sharpening stone': 'inv_stone_sharpeningstone_05', 'instant poison': 'ability_poisons', 'deadly poison': 'ability_rogue_dualweild',
@@ -277,6 +280,11 @@ CONSUME_SLOT = {'flask': ('Flask', 1), 'agilityElixir': ('Elixir', 2), 'strength
                 'defaultConjured': ('Rune', 7)}
 
 
+# Raid duties (standards 23) that make the raid safer rather than stronger: Scorpid Sting only lowers the boss's
+# chance to hit.
+DEFENSIVE_DUTIES = {'Scorpid Sting'}
+
+
 def tree_points(talents):
     parts = talents.split('-')
     return '/'.join(str(sum(int(c) for c in p)) for p in parts) if talents else ''
@@ -300,13 +308,13 @@ for _p in glob.glob(os.path.join(D, 'out_pre1b', '*.json')):
         pass
 # The gear rules of the bundled gear round (orchestration/standards.md 1b, 5a, 8a), shown on the Method tab.
 GEAR_RULES = [
-    "Every synthetic piece is priced at Forever's own budget for its archetype (standards 1b): its weighted linear stat total is the slot modifier x (1.125 x item level + 2.0) x the archetype's factor, within 1%, and its shape (a 1.7-norm) is within 6% of the standard.",
-    "Weights: spell power 0.86, attack power 0.5 (a hunter's ranged attack power 0.4), every other stat (Strength, Agility, Stamina, Intellect, Spirit, hit and crit rating) 1. Caster weapons use Forever's caster weapon rate.",
-    "Item levels follow the shared table: 66 for head, shoulders, chest, hands, legs and feet; 71 for neck, back, wrist, waist, rings, one-handers and ranged; 76 for two-handers.",
-    "Stamina is each spec's own share in its Season of Discovery level 60 best-in-slot sets. Hit sits at the cap, and the other stats keep the spec's target proportions in the room left (standards 5a).",
-    "Every spec wears two synthetic item level 71 trinkets: a stat trinket (about 46 weighted points) and an on-use trinket, 140 spell power, 335 attack power, 415 ranged attack power or 165 Strength for 20 s every 2 min, used in the opening seconds and again on cooldown. Forever's launch trinkets aren't simulated.",
-    "Hybrids keep hybrid stats: Retribution and Enhancement carry spell power and Intellect alongside their melee stats, at the hybrid budget factor.",
-    "Only the tier set's 2-piece bonus is live, and enchants are the best Phase 1 ones from outside the raids. Talents, rotations and races did not change in this round, apart from a few small rotation retunes and Destruction Fire's race (now Undead), noted on each preset.",
+    "Each piece matches Forever's stat budget for its slot, item level and archetype, within 1%.",
+    "Budget weights: spell power 0.86, attack power 0.5, ranged attack power 0.4, every other stat 1.",
+    "Item levels: 66 for head, shoulders, chest, hands, legs and feet. 71 for neck, back, wrist, waist, rings, one-handers and ranged. 76 for two-handers.",
+    "Stamina follows each spec's share in its Season of Discovery level 60 best-in-slot sets. Hit is at the cap.",
+    "Two synthetic item level 71 trinkets: a stat trinket and an on-use one (140 spell power, 335 attack power, 415 ranged attack power or 165 Strength for 20s every 2 min). Forever's launch trinkets aren't simulated.",
+    "Retribution and Enhancement also carry spell power and Intellect.",
+    "Only the tier set's 2-piece bonus is active. Enchants are the best Phase 1 ones from outside raids.",
 ]
 for _i, _t in enumerate(GEAR_RULES):
     notes.append({'build': '_round', 'kind': 'gear', 'order': _i, 'text': _t})
@@ -355,11 +363,15 @@ for o in outs:
     _prev = PREV.get(bid)
     encn = m.get('encounter')  # an encounter preset: the same boss as a creature type (shown only with "Special encounters" on)
     base_id = m.get('baseBuild')
-    dname = DISPLAY.get(bid, m['build']) if not encn else f"{DISPLAY.get(base_id, json.load(open(os.path.join(D, 'req', base_id + '.meta.json')))['build'])} · vs {encn}"
+    duty = m.get('duty')  # a duty preset (standards 23): it keeps this raid buff or debuff up itself (shown only with "Duty" on)
+    base_name = DISPLAY.get(base_id, json.load(open(os.path.join(D, 'req', base_id + '.meta.json')))['build']) if base_id else None
+    dname = f"{base_name} · vs {encn}" if encn else f"{base_name} · {duty} duty" if duty else DISPLAY.get(bid, m['build'])
     builds.append({
         'id': bid, 'class': m['class'], 'presetName': m['build'], 'spec': 'Seal Fate' if bid.startswith('rogue__seal-fate') else m['spec'], 'build': dname, 'isDefault': bool(m.get('isDefault')),
         'label': f"{m['class']} · {dname}", 'race': race_name(m['race']),
-        'encounter': encn or None, 'baseBuild': base_id or None,
+        'encounter': encn or None, 'baseBuild': base_id or None, 'duty': duty or None,
+        # a duty that protects the raid instead of raising its damage, so its cost buys no DPS anywhere
+        'dutyDefensive': duty in DEFENSIVE_DUTIES if duty else None,
         'bossType': encn or 'Generic boss', 'bossText': f"Level 63 {encn} boss" if encn else 'Level 63 boss with no creature type (generic)',
         'dps': round(mn['dps'], 1), 'se': round(mn['se'], 2), 'stdev': round(mn['stdev'], 1),
         'p1': round(mn['pct']['1'], 1), 'p10': round(mn['pct']['10'], 1), 'p25': round(mn['pct']['25'], 1), 'p50': round(mn['pct']['50'], 1),
@@ -389,12 +401,15 @@ for o in outs:
         'specIcon': spec_icon(m['class'], m.get('talents', '')),
         'faction': 'Horde' if m['race'] in ('Orc', 'Undead', 'Tauren', 'Troll', 'SkyborneWindshaper') else 'Alliance',
     })
+    for x in o['lengths']:
+        lengths.append({'build': bid, 'secs': x['secs'], 'dps': round(x['dps'], 1), 'se': round(x['se'], 2), 'oomSecs': round(x['oomSecs'], 1)})
+    if duty:
+        # The page shows a duty preset in the Ranking only, so it keeps its numbers and leaves the detail to its base.
+        continue
     for r in o['races']:
         races.append({'build': bid, 'class': m['class'], 'race': race_name(r['race']), 'faction': r['faction'],
                       'dps': round(r['dps'], 1), 'se': round(r['se'], 2), 'vsBest': round(100 * (r['dps'] / best['dps'] - 1), 2),
                       'isPreset': r['race'] == m['race'], 'raceIcon': RACE_ICON.get(race_name(r['race']))})
-    for x in o['lengths']:
-        lengths.append({'build': bid, 'secs': x['secs'], 'dps': round(x['dps'], 1), 'se': round(x['se'], 2), 'oomSecs': round(x['oomSecs'], 1)})
     total = sum(a['dps'] for a in mn['actions'])
     seen = defaultdict(int)
     for a in mn['actions']:
@@ -507,8 +522,16 @@ def unship(t):
 for b in builds:
     b['summary'] = unship(b['summary'])
 
-# rank among the default presets (an encounter preset gets the place it would take among them), and among all
-_defaults = [b for b in builds if not b['encounter']]
+# What each duty costs: its base's DPS minus its own, at 180s.
+_by_id = {b['id']: b for b in builds}
+for b in builds:
+    if b['duty']:
+        _base = _by_id[b['baseBuild']]
+        b['dutyCost'] = round(_base['dps'] - b['dps'], 1)
+        b['dutyCostPct'] = round(100 * (1 - b['dps'] / _base['dps']), 2)
+
+# rank among the default presets (an encounter or duty preset gets the place it would take among them), and among all
+_defaults = [b for b in builds if not b['encounter'] and not b['duty']]
 for b in builds:
     b['rank'] = 1 + sum(1 for x in _defaults if x['dps'] > b['dps'] and x is not b)
     b['rankAll'] = 1 + sum(1 for x in builds if x['dps'] > b['dps'])
@@ -572,7 +595,7 @@ for w in sorted(glob.glob(os.path.join(D, 'weights', '*.json'))):
 if wrows:
     dump('weights', wrows)
 
-# mana over a 480 s fight (mana_curves.py)
+# mana over a 480s fight (mana_curves.py)
 import mana_curves
 mana_rows, mana_summary = mana_curves.datasets()
 if mana_summary:
@@ -594,7 +617,7 @@ for _race, _lst in json.load(open(os.path.join(TREE, 'ui/core/forever/racials.js
         RACIAL_RACE.setdefault(_r['name'], race_name(_race.replace('Race', '')))
 for _k, _v in list(RACIAL_RACE.items()):
     RACIAL_RACE[_k] = {'SkyborneHighOrder': 'High Order', 'SkyborneWindshaper': 'Windshaper'}.get(_v, _v)
-_outs_r = [dict(o, meta=dict(o['meta'], race=race_name(o['meta']['race']))) for o in outs]
+_outs_r = [dict(o, meta=dict(o['meta'], race=race_name(o['meta']['race']))) for o in outs if not o['meta'].get('duty')]
 rot_rows, rot_fallback = rotation.build(os.path.join(D, 'req'), _outs_r, nm, names, abilities, RACIAL_RACE)
 for r in rot_rows:
     if r['key'] and not r['icon']:
@@ -617,12 +640,13 @@ print('rotation conditions shown in compact form:', rot_fallback)
 sys.path.insert(0, D)
 import tooltips
 import whcache
-tt_rows, tt_missing, tt_report = tooltips.build(TREE, names, gear, setup, outs, abilities, auras, timelines, builds, item_names,
+tt_rows, tt_missing, tt_report = tooltips.build(TREE, names, gear, setup, [o for o in outs if not o['meta'].get('duty')], abilities, auras, timelines, builds, item_names,
                                                 {e['effectId']: e for e in db['enchants']}, TREE_JSON, os.path.join(TREE, 'ui/core/forever/racials.json'), SLOTS)
 dump('tooltips', tt_rows)
 print('tooltips without text:', tt_missing)
 
 # talent trees, laid out as the sim UI draws them
+import talent_links
 trees = []
 for cls in CLASS_ORDER:
     t = json.load(open(os.path.join(TREE, f'ui/core/talents/trees/{cls.lower()}.json')))
@@ -633,9 +657,8 @@ for cls in CLASS_ORDER:
                           'col': tal['location']['colIdx'], 'maxPoints': tal['maxPoints'], 'preRow': pre['rowIdx'] if pre else None,
                           'preCol': pre['colIdx'] if pre else None, 'icon': tal.get('icon') or 'inv_misc_questionmark',
                           'description': tal.get('description', ''), 'ranks': tal.get('ranks') or [],
-                          # wowhead link per rank: "<domain>:<spell id>", Forever's where its database knows the id, else Classic's, else ""
-                          'wh': [next((f'{dm}:{sid}' for dm in ('forever', 'classic') if whcache.ok(whcache.cached(dm, 'spell', sid))), '')
-                                 for sid in tal.get('spellIds') or []]})
+                          # wowhead link per rank: "<domain>:<spell id>", see talent_links.py
+                          'wh': talent_links.links(cls, ti, tal)})
 dump('talenttrees', trees)
 
 # wowhead coverage of the tooltips: which source each one's text came from, and the ids behind them
@@ -673,6 +696,8 @@ from concurrent.futures import ThreadPoolExecutor
 os.makedirs(os.path.join(D, 'icons'), exist_ok=True)
 extra = set(RACE_ICON.values()) | set(FACTION_ICON.values()) | {'classicon_' + c.lower() for c in CLASS_ORDER} | {a['icon'] for a in art}
 extra |= set(build_races.PART_ICON.values())
+# every racial's icon, for its card in the race tooltips
+extra |= {v['icon'] for lst in json.load(open(os.path.join(TREE, 'ui/core/forever/racials.json'))).values() for r in lst for v in r.get('variants', []) if v.get('icon')}
 extra |= {g['icon'] for g in gear if g.get('icon')} | {x['icon'] for x in setup if x.get('icon')} | {x['icon'] for x in auras if x.get('icon')} | {b['specIcon'] for b in builds}
 want = sorted({t['icon'] for t in trees} | {n['icon'] for n in names.values() if n.get('icon')} | {'inv_misc_questionmark'} | extra)
 def fetch(ic):
@@ -771,5 +796,11 @@ with ThreadPoolExecutor(9) as ex:
     got_bg = list(ex.map(fetch_bg, art))
 dump('treeart', [{'class': a['class'], 'tree': a['tree'], 'treeName': a['treeName'], 'icon': a['icon'], 'bg': ('data:image/jpeg;base64,' + b) if b else None} for a, b in got_bg])
 print('missing icons:', [ic for ic, b in got if not b])
+# The Specs page shows the whole sample fights in the sim UI's events view (events.py writes them). The page still
+# draws each aura's bar from these rows, so they keep the auras and the pre-pull casts that tell when the bars start.
+def slim_timeline(r):
+    return {k: v for k, v in r.items() if k not in ('dmg', 'res', 'cds')} | {'casts': [c for c in r['casts'] if c[0] < 0]}
+
+
 for c, rows in timelines.items():
-    dump('timeline_' + c, rows)
+    dump('timeline_' + c, [slim_timeline(r) for r in rows])

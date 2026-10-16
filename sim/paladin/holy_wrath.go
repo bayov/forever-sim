@@ -68,7 +68,7 @@ func (paladin *Paladin) registerHolyWrath() {
 
 			ApplyEffects: func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
 				results = results[:0]
-				for _, target := range paladin.Env.Encounter.TargetUnits {
+				for _, target := range sim.Encounter.ActiveTargetUnits {
 					if target.MobType == proto.MobType_MobTypeDemon || target.MobType == proto.MobType_MobTypeUndead {
 						damage := sim.Roll(minDamage, maxDamage)
 						result := spell.CalcDamage(sim, target, damage, spell.OutcomeMagicHitAndCrit)

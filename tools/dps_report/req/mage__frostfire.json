@@ -4,7 +4,7 @@
       {
         "players": [
           {
-            "race": "RaceUndead",
+            "race": "RaceHuman",
             "class": "ClassMage",
             "equipment": {
               "items": [
@@ -86,7 +86,7 @@
               "blessingOfKings": true,
               "blessingOfWisdom": "TristateEffectImproved"
             },
-            "talentsString": "-1355000013013304-00550003310003002",
+            "talentsString": "-0155003013012503-00550003310003002",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Tailoring",
@@ -110,12 +110,8 @@
               ],
               "priorityList": [
                 {
+                  "notes": "Without the trinket ignore the warning on this line.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "itemId": 996032
-                      }
-                    },
                     "condition": {
                       "or": {
                         "vals": [
@@ -124,27 +120,27 @@
                               "vals": [
                                 {
                                   "auraIsKnown": {
-                                    "auraId": {
-                                      "spellId": 22959
-                                    },
                                     "sourceUnit": {
                                       "type": "CurrentTarget"
+                                    },
+                                    "auraId": {
+                                      "spellId": 22959
                                     }
                                   }
                                 },
                                 {
                                   "cmp": {
+                                    "op": "OpGe",
                                     "lhs": {
                                       "auraNumStacks": {
-                                        "auraId": {
-                                          "spellId": 22959
-                                        },
                                         "sourceUnit": {
                                           "type": "CurrentTarget"
+                                        },
+                                        "auraId": {
+                                          "spellId": 22959
                                         }
                                       }
                                     },
-                                    "op": "OpGe",
                                     "rhs": {
                                       "const": {
                                         "val": "5"
@@ -159,11 +155,11 @@
                             "not": {
                               "val": {
                                 "auraIsKnown": {
-                                  "auraId": {
-                                    "spellId": 22959
-                                  },
                                   "sourceUnit": {
                                     "type": "CurrentTarget"
+                                  },
+                                  "auraId": {
+                                    "spellId": 22959
                                   }
                                 }
                               }
@@ -171,165 +167,163 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "The on-use trinket once Fire Vulnerability has 5 stacks (or on cooldown without Improved Scorch). Without the trinket ignore the warning on this line."
-                },
-                {
-                  "action": {
-                    "autocastOtherCooldowns": {}
-                  },
-                  "notes": "Arcane Power, Presence of Mind, Combustion, trinkets, racials and the mana gems on a free GCD."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 12051
+                        "itemId": 996032
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Arcane Power, Presence of Mind, Combustion, trinkets, racials and mana gems.",
+                  "action": {
+                    "autocastOtherCooldowns": {}
+                  }
+                },
+                {
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
                           {
                             "cmp": {
+                              "op": "OpLt",
                               "lhs": {
                                 "currentManaPercent": {}
                               },
-                              "op": "OpLt",
                               "rhs": {
                                 "const": {
-                                  "val": "0.3"
+                                  "val": "0.2"
                                 }
                               }
                             }
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "remainingTime": {}
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "const": {
-                                  "val": "60s"
+                                  "val": "45s"
                                 }
                               }
                             }
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 12051
+                      }
                     }
-                  },
-                  "notes": "Evocation once the mana runs low, with enough of the fight left to spend it."
+                  }
                 },
                 {
+                  "notes": "Never: mana gems share the Demonic Rune's cooldown, and the rune gives more.",
                   "action": {
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGt",
+                        "lhs": {
+                          "const": {
+                            "val": "0"
+                          }
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "1"
+                          }
+                        }
+                      }
+                    },
                     "castSpell": {
                       "spellId": {
                         "itemId": 5514
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Never: mana gems share the Demonic Rune's cooldown, and the rune gives more.",
+                  "action": {
                     "condition": {
                       "cmp": {
+                        "op": "OpGt",
                         "lhs": {
                           "const": {
                             "val": "0"
                           }
                         },
-                        "op": "OpGt",
                         "rhs": {
                           "const": {
                             "val": "1"
                           }
                         }
                       }
-                    }
-                  },
-                  "notes": "Never: the mana gems share the Demonic Rune's cooldown, and the rune gives more."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
                         "itemId": 5513
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Never: mana gems share the Demonic Rune's cooldown, and the rune gives more.",
+                  "action": {
                     "condition": {
                       "cmp": {
+                        "op": "OpGt",
                         "lhs": {
                           "const": {
                             "val": "0"
                           }
                         },
-                        "op": "OpGt",
                         "rhs": {
                           "const": {
                             "val": "1"
                           }
                         }
                       }
-                    }
-                  },
-                  "notes": "Never: the mana gems share the Demonic Rune's cooldown, and the rune gives more."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
                         "itemId": 8007
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Never: mana gems share the Demonic Rune's cooldown, and the rune gives more.",
+                  "action": {
                     "condition": {
                       "cmp": {
+                        "op": "OpGt",
                         "lhs": {
                           "const": {
                             "val": "0"
                           }
                         },
-                        "op": "OpGt",
                         "rhs": {
                           "const": {
                             "val": "1"
                           }
                         }
                       }
-                    }
-                  },
-                  "notes": "Never: the mana gems share the Demonic Rune's cooldown, and the rune gives more."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
                         "itemId": 8008
                       }
-                    },
-                    "condition": {
-                      "cmp": {
-                        "lhs": {
-                          "const": {
-                            "val": "0"
-                          }
-                        },
-                        "op": "OpGt",
-                        "rhs": {
-                          "const": {
-                            "val": "1"
-                          }
-                        }
-                      }
                     }
-                  },
-                  "notes": "Never: the mana gems share the Demonic Rune's cooldown, and the rune gives more."
+                  }
                 },
                 {
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 1240047
-                      }
-                    },
                     "condition": {
                       "and": {
                         "vals": [
@@ -349,27 +343,26 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1240047
+                      }
                     }
-                  },
-                  "notes": "Ice Lance while Fingers of Frost is up."
+                  }
                 },
                 {
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 10207
-                      }
-                    },
                     "condition": {
                       "and": {
                         "vals": [
                           {
                             "auraIsKnown": {
-                              "auraId": {
-                                "spellId": 22959
-                              },
                               "sourceUnit": {
                                 "type": "CurrentTarget"
+                              },
+                              "auraId": {
+                                "spellId": 22959
                               }
                             }
                           },
@@ -378,17 +371,17 @@
                               "vals": [
                                 {
                                   "cmp": {
+                                    "op": "OpLt",
                                     "lhs": {
                                       "auraNumStacks": {
-                                        "auraId": {
-                                          "spellId": 22959
-                                        },
                                         "sourceUnit": {
                                           "type": "CurrentTarget"
+                                        },
+                                        "auraId": {
+                                          "spellId": 22959
                                         }
                                       }
                                     },
-                                    "op": "OpLt",
                                     "rhs": {
                                       "const": {
                                         "val": "5"
@@ -398,20 +391,20 @@
                                 },
                                 {
                                   "cmp": {
+                                    "op": "OpLt",
                                     "lhs": {
                                       "auraRemainingTime": {
-                                        "auraId": {
-                                          "spellId": 22959
-                                        },
                                         "sourceUnit": {
                                           "type": "CurrentTarget"
+                                        },
+                                        "auraId": {
+                                          "spellId": 22959
                                         }
                                       }
                                     },
-                                    "op": "OpLt",
                                     "rhs": {
                                       "const": {
-                                        "val": "5s"
+                                        "val": "7s"
                                       }
                                     }
                                   }
@@ -421,17 +414,17 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Scorch up to 5 stacks of Fire Vulnerability, and before it runs out."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 18809
+                        "spellId": 10207
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Once Heating Up has cut its cast enough.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
@@ -447,6 +440,7 @@
                                 },
                                 {
                                   "cmp": {
+                                    "op": "OpGe",
                                     "lhs": {
                                       "auraNumStacks": {
                                         "auraId": {
@@ -454,7 +448,6 @@
                                         }
                                       }
                                     },
-                                    "op": "OpGe",
                                     "rhs": {
                                       "const": {
                                         "val": "3"
@@ -467,17 +460,17 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Pyroblast once Heating Up has cut its cast enough."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 10212
+                        "spellId": 18809
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Free and twice as fast.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
@@ -497,35 +490,57 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10212
+                      }
                     }
-                  },
-                  "notes": "Arcane Missiles on a Missile Barrage proc, free and twice as fast."
+                  }
                 },
                 {
                   "action": {
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "currentManaPercent": {}
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "0.8"
+                          }
+                        }
+                      }
+                    },
                     "castSpell": {
                       "spellId": {
                         "spellId": 10199
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "With mana the fight can't use.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "currentMana": {}
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "math": {
+                                  "op": "OpMul",
                                   "lhs": {
                                     "remainingTime": {}
                                   },
-                                  "op": "OpMul",
                                   "rhs": {
                                     "const": {
-                                      "val": "150"
+                                      "val": "70"
                                     }
                                   }
                                 }
@@ -534,10 +549,10 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "remainingTime": {}
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "1s"
@@ -547,17 +562,17 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Fire Blast with the mana the fight can't use."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 1237312
+                        "spellId": 10199
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Rank 2.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
@@ -577,10 +592,10 @@
                                 },
                                 {
                                   "cmp": {
+                                    "op": "OpLt",
                                     "lhs": {
                                       "remainingTime": {}
                                     },
-                                    "op": "OpLt",
                                     "rhs": {
                                       "const": {
                                         "val": "60s"
@@ -593,16 +608,16 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpLt",
                               "lhs": {
                                 "currentMana": {}
                               },
-                              "op": "OpLt",
                               "rhs": {
                                 "math": {
+                                  "op": "OpMul",
                                   "lhs": {
                                     "remainingTime": {}
                                   },
-                                  "op": "OpMul",
                                   "rhs": {
                                     "const": {
                                       "val": "60"
@@ -614,10 +629,10 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "remainingTime": {}
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "10s"
@@ -627,25 +642,25 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1237312
+                      }
                     }
-                  },
-                  "notes": "Rank 2 Frostfire Bolt when the mana will not last the fight."
+                  }
                 },
                 {
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 1240047
-                      }
-                    },
                     "condition": {
                       "cmp": {
+                        "op": "OpLt",
                         "lhs": {
                           "remainingTime": {}
                         },
-                        "op": "OpLt",
                         "rhs": {
                           "math": {
+                            "op": "OpAdd",
                             "lhs": {
                               "spellCastTime": {
                                 "spellId": {
@@ -653,7 +668,6 @@
                                 }
                               }
                             },
-                            "op": "OpAdd",
                             "rhs": {
                               "const": {
                                 "val": "1.5s"
@@ -662,9 +676,13 @@
                           }
                         }
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1240047
+                      }
                     }
-                  },
-                  "notes": "An instant when the filler would not land before the end of the fight."
+                  }
                 },
                 {
                   "action": {
@@ -673,8 +691,7 @@
                         "spellId": 1237313
                       }
                     }
-                  },
-                  "notes": "Frostfire Bolt."
+                  }
                 }
               ]
             },
@@ -708,7 +725,8 @@
       "fireResistanceAura": true,
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
-      "retributionAura": "TristateEffectImproved"
+      "retributionAura": "TristateEffectImproved",
+      "salvation": true
     },
     "debuffs": {
       "judgementOfWisdom": true,
@@ -788,7 +806,9 @@
         "swingSpeed": 2,
         "parryHaste": true
       }
-    ]
+    ],
+    "raidDamageHitsPerMinute": 2,
+    "raidDamagePerHit": 1500
   },
   "simOptions": {
     "iterations": 1000,

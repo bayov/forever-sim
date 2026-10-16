@@ -45,14 +45,31 @@ The pipeline is `tools/dps_report/README.md` and its Python scripts (on
 `claude/wow-forever-dps-presets-m9u15h` until that branch is merged). Follow it: build the
 merged tree, refresh the scoped builds' requests, rerun the sim steps for those builds only
 (its "Rerunning only the stale parts" section says which outputs to delete), then
-`python3 build_data.py`, which writes every dataset to `$DASH_DIR/data/`. Split the builds
-across subagents by class; each one runs its own class's sims.
+`python3 build_data.py`, which writes every dataset to `$DASH_DIR/data/`.
+
+Run the sim steps with `tools/dps_report/pipeline.sh run <ids>` (it starts with `plan`, which
+counts every step's sims, catches a script that can't enumerate its work, and prints an
+estimate: about 95 min for all 66 builds on 4 cores, 15 to 25 for one class). For more than
+one class, fan out instead of running it here: start one remote session per shard
+(`pipeline.sh shard <k> <n> <ids>` balances them by cost), each on the same master commit
+with `patches/` applied and the binaries built, running `pipeline.sh run` then
+`pipeline.sh pack shard<k>.tgz <its ids>` and pushing the pack to `dash-raw/<run>/<k>`.
+Fetch the packs, `pipeline.sh unpack` each into `$DASH_DIR`, then run `build_data.py`. The
+sims seed every iteration, so a shard's numbers don't depend on its machine.
 
 The sim steps include `mana_curves.py`, which sims every mana-using build (all but warrior
 and rogue) through 100 fixed 480 s fights and reads its mana from the debug logs. It writes
 `mana/<id>.json`, and `build_data.py` turns those into the `mana` (mana % every 5 s) and
 `mana_summary` (when mana runs low) datasets. It takes seconds per build. Rerun it with
 `--force <ids>` for every re-simmed build that uses mana.
+
+After `build_data.py`, run `python3 events.py --data "$DASH_DIR/data" <ids>` for the
+re-simmed builds. The Specs page shows each preset's typical, unlucky and lucky fight in the
+sim UI's events view (timeline, chart, log, replay), which needs the whole debug log of each
+fight. `events.py` sims those fights again from the seeds in the `timeline_<class>` datasets
+and writes `events/<id>.json.gz`, plus the `event_names` and `event_icons` lookups. It says
+so when a fight's DPS differs from the dataset's (then the binary isn't the one the numbers
+came from). It takes seconds.
 
 Skip the README's "Publishing" section and its `rd/` harness: they are for the old
 Dashboard-type artifact. Steps 3 to 5 here replace them.

@@ -92,7 +92,7 @@ func TestOrcShamanShieldTriggers(t *testing.T) {
 	runSim(sim)
 }
 
-// TestOrcShamanRaidDamageHits checks that the raid damage we take fires Lightning Shield's
+// TestOrcShamanRaidDamageHits checks that the encounter's raid hits fire Lightning Shield's
 // orbs at our target, and that the hits land at random times.
 //
 // We take 15 hits a minute. A hit every 4 sec would fire an orb each time, 15 orbs a minute.
@@ -101,8 +101,15 @@ func TestOrcShamanShieldTriggers(t *testing.T) {
 // orbs a minute. We keep the shield at 3 orbs and count them over 9 min (the shield lasts 10).
 func TestOrcShamanRaidDamageHits(t *testing.T) {
 	const minutes, hitsPerMinute = 9, 15
-	player := newOrcShaman(60, "", &proto.EnhancementShaman_Options{RaidDamageHitsPerMinute: hitsPerMinute})
-	sim, enh := newShamanSim(player, &proto.Debuffs{}, minutes*60)
+	sim := core.NewSim(&proto.RaidSimRequest{
+		Raid: core.SinglePlayerRaidProto(newOrcShaman(60, "", &proto.EnhancementShaman_Options{}), &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+		Encounter: &proto.Encounter{Duration: minutes * 60, Targets: []*proto.Target{core.NewDefaultTarget()},
+			RaidDamageHitsPerMinute: hitsPerMinute, RaidDamagePerHit: 1500},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1, ExactDamage: true},
+	}, simsignals.CreateSignals())
+	sim.Reset()
+	sim.PrePull()
+	enh := sim.Raid.Parties[0].Players[0].(*EnhancementShaman)
 	shield := topRank(t, "Lightning Shield", enh.LightningShield)
 	orb := topRank(t, "Lightning Shield", enh.LightningShieldProcs)
 	at(sim, 0.5, func(sim *core.Simulation) {

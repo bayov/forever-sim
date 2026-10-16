@@ -72,13 +72,16 @@ func (druidFeral) Knobs() []Knob {
 		// Strength trinket when holding loses no use, and the Night Elf's Elune's Light (10% crit)
 		// kept out of Berserk, where every builder crits anyway.
 		{Name: "cdStack", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Elune's Light (the Night Elf's racial) in the cdStack line, 0/1. Other races leave it out;
+		// a Night Elf without the line still uses it through the autocast line.
+		{Name: "elune", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Tiger's Fury before the pull, so it is ready again sooner, 0/1.
 		{Name: "prepullTigersFury", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Faerie Fire duty (standards 23), 0/1: keep Faerie Fire (Feral) on the target, cast again
 		// once it has less than ffRefresh seconds left. ffPos 0 puts it ahead of everything but the
 		// cooldowns, 1 after Rip.
 		{Name: "faerieFire", Default: 0, Min: 0, Max: 1, Step: 1},
-		{Name: "ffRefresh", Default: 1, Min: 0, Max: 4, Step: 1},
+		{Name: "ffRefresh", Default: 1, Min: 0, Max: 8, Step: 1},
 		{Name: "ffPos", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
@@ -112,7 +115,7 @@ func (druidFeral) Build(k Knobs) *proto.APLRotation {
 	case k["berserk"] == 2:
 		items = append(items, cast(druidBerserk, auraIsActive(druidTigersFury), "Berserk with Tiger's Fury."))
 	}
-	if k["cdStack"] == 1 {
+	if k["cdStack"] == 1 && k["elune"] == 1 {
 		items = append(items, cast(elunesLight, or(
 			and(not(auraIsActive(druidBerserk)), not(spellIsReady(druidBerserk))),
 			gt(spellUsesLostByDelay(elunesLight, auraRemainingTime(druidBerserk), seconds(0)), num(0))),

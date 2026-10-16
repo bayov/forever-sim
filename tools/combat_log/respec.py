@@ -6,7 +6,7 @@ import cl
 evs = cl.load(sys.argv[1]); evs.sort(key=lambda e: e.t)
 lo = sys.argv[2] if len(sys.argv) > 2 else '00'; hi = sys.argv[3] if len(sys.argv) > 3 else '99'
 win = [e for e in evs if lo <= e.ts < hi]
-me = [e for e in win if e.src.startswith(cl.ME)]
+me = [e for e in win if e.me_src]
 lvl = {}
 for e in evs:
     if not e.srcGUID.startswith('Creature'): continue
@@ -32,14 +32,14 @@ show('Flame Shock ticks', [e for e in me if e.spell == 'Flame Shock' and e.ev in
 for sp in ('Earth Shock', 'Frost Shock', 'Lightning Bolt', 'Lightning Shield', 'Flametongue Weapon'):
     x = [e for e in me if e.spell == sp and ('DAMAGE' in e.ev or 'MISSED' in e.ev)]
     if x: show(sp, x)
-tot = {e.dstGUID for e in evs if e.ev == 'SPELL_SUMMON' and e.src.startswith(cl.ME) and 'Searing' in e.dst}
+tot = {e.dstGUID for e in evs if e.ev == 'SPELL_SUMMON' and e.me_src and 'Searing' in e.dst}
 x = [e for e in win if e.srcGUID in tot and ('DAMAGE' in e.ev or 'MISSED' in e.ev)]
 if x: show('Searing Totem', x)
 
 # Auras on us, and what came with each of our spell crits.
-aur = collections.Counter((e.ev, e.spellId, e.spell) for e in win if e.dst.startswith(cl.ME) and e.ev.startswith('SPELL_AURA') and e.spell not in ('Thrill of Adventure',))
+aur = collections.Counter((e.ev, e.spellId, e.spell) for e in win if e.me_dst and e.ev.startswith('SPELL_AURA') and e.spell not in ('Thrill of Adventure',))
 print('auras on us', dict(aur))
 for e in me:
     if e.ev in ('SPELL_DAMAGE', 'SPELL_PERIODIC_DAMAGE') and cl.dmg(e)['crit'] and cl.dmg(e)['school'] != 1:
-        near = [f'{a.ev} {a.spell}' for a in win if a.dst.startswith(cl.ME) and a.ev.startswith('SPELL_AURA') and -0.05 <= a.t - e.t <= 0.3 and a.spell not in ('Thrill of Adventure',)]
+        near = [f'{a.ev} {a.spell}' for a in win if a.me_dst and a.ev.startswith('SPELL_AURA') and -0.05 <= a.t - e.t <= 0.3 and a.spell not in ('Thrill of Adventure',)]
         print('  crit', e.ts, e.spell, e.ev, near)

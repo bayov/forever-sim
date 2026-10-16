@@ -4,7 +4,7 @@
       {
         "players": [
           {
-            "race": "RaceGnome",
+            "race": "RaceHuman",
             "class": "ClassWarlock",
             "equipment": {
               "items": [
@@ -86,7 +86,7 @@
               "blessingOfKings": true,
               "blessingOfWisdom": "TristateEffectImproved"
             },
-            "talentsString": "2553000003520005--0550305003",
+            "talentsString": "2550102003520005--0550305003",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Tailoring",
@@ -124,13 +124,13 @@
               ],
               "priorityList": [
                 {
-                  "notes": "Racials and trinkets on cooldown.",
+                  "notes": "Racials and trinkets.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }
                 },
                 {
-                  "notes": "Life Tap when the mana runs low or the filler costs more than is left.",
+                  
                   "action": {
                     "condition": {
                       "or": {
@@ -219,7 +219,7 @@
                   }
                 },
                 {
-                  "notes": "Bane of Doom when it lands before the fight ends.",
+                  
                   "action": {
                     "condition": {
                       "and": {
@@ -259,7 +259,7 @@
                   }
                 },
                 {
-                  "notes": "Bane of Agony while Bane of Doom is on cooldown or would not land.",
+                  
                   "action": {
                     "condition": {
                       "and": {
@@ -346,7 +346,6 @@
                   }
                 },
                 {
-                  "notes": "Corruption when it is down.",
                   "action": {
                     "condition": {
                       "and": {
@@ -386,7 +385,6 @@
                   }
                 },
                 {
-                  "notes": "Immolate when it is down.",
                   "action": {
                     "condition": {
                       "and": {
@@ -435,7 +433,7 @@
                               },
                               "rhs": {
                                 "const": {
-                                  "val": "6s"
+                                  "val": "9s"
                                 }
                               }
                             }
@@ -451,7 +449,7 @@
                   }
                 },
                 {
-                  "notes": "Death Coil when the filler would not land before the end.",
+                  
                   "action": {
                     "condition": {
                       "cmp": {
@@ -486,7 +484,7 @@
                   }
                 },
                 {
-                  "notes": "Searing Pain when the filler would not land before the end.",
+                  
                   "action": {
                     "condition": {
                       "and": {
@@ -542,7 +540,7 @@
                   }
                 },
                 {
-                  "notes": "Shadow Bolt as the filler.",
+                  
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -582,7 +580,8 @@
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
-      "sanctityAura": true
+      "sanctityAura": false,
+      "salvation": true
     },
     "debuffs": {
       "judgementOfWisdom": true,
@@ -590,7 +589,7 @@
       "judgementOfTheCrusader": "TristateEffectImproved",
       "faerieFire": true,
       "curseOfElements": false,
-      "curseOfShadow": true,
+      "curseOfShadow": false,
       "sunderArmor": true,
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,
@@ -663,7 +662,9 @@
         "swingSpeed": 2,
         "parryHaste": true
       }
-    ]
+    ],
+    "raidDamageHitsPerMinute": 2,
+    "raidDamagePerHit": 1500
   },
   "simOptions": {
     "iterations": 1000,

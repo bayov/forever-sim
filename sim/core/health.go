@@ -100,11 +100,16 @@ func (character *Character) trackChanceOfDeath(healingModel *proto.HealingModel)
 		return
 	}
 
-	if healingModel == nil {
+	// Without a healing model, a fight that ends when the mobs die (a health fight) still
+	// takes our health and can kill us, as when we solo mobs while leveling. A timed fight
+	// without one keeps us at full health, as the DPS presets that let a boss hit us (for
+	// Lightning Shield, rage and the like) have always had it.
+	if healingModel == nil && character.Env.Encounter.EndFightAtHealth == 0 && character.Env.Encounter.leveling == nil {
 		return
 	}
-
-	character.Unit.Metrics.tmiBin = healingModel.BurstWindow
+	if healingModel != nil {
+		character.Unit.Metrics.tmiBin = healingModel.BurstWindow
+	}
 
 	character.RegisterAura(Aura{
 		Label:    ChanceOfDeathAuraLabel,
@@ -116,11 +121,8 @@ func (character *Character) trackChanceOfDeath(healingModel *proto.HealingModel)
 			if result.Damage > 0 {
 				aura.Unit.RemoveHealth(sim, result.Damage)
 
-				if aura.Unit.CurrentHealth() <= 0 && !aura.Unit.Metrics.Died {
-					aura.Unit.Metrics.Died = true
-					if sim.Log != nil {
-						character.Log(sim, "Dead")
-					}
+				if aura.Unit.CurrentHealth() <= 0 {
+					character.died(sim)
 				}
 			}
 		},
@@ -128,18 +130,35 @@ func (character *Character) trackChanceOfDeath(healingModel *proto.HealingModel)
 			if result.Damage > 0 {
 				aura.Unit.RemoveHealth(sim, result.Damage)
 
-				if aura.Unit.CurrentHealth() <= 0 && !aura.Unit.Metrics.Died {
-					aura.Unit.Metrics.Died = true
-					if sim.Log != nil {
-						character.Log(sim, "Dead")
-					}
+				if aura.Unit.CurrentHealth() <= 0 {
+					character.died(sim)
 				}
 			}
 		},
 	})
 
-	if healingModel.Hps != 0 {
+	if healingModel != nil && healingModel.Hps != 0 {
 		character.applyHealingModel(healingModel)
+	}
+}
+
+// RegisterLevelingDeathEffect runs effect when we die in a leveling session (leveling.go),
+// as a shaman's totems vanish. Only a session goes on after a death.
+func (character *Character) RegisterLevelingDeathEffect(effect func(sim *Simulation)) {
+	character.levelingDeathEffects = append(character.levelingDeathEffects, effect)
+}
+
+// died is our health running out: recorded for the chance of death, and in a leveling
+// session the corpse run (leveling.go), which can happen again later in the session.
+func (character *Character) died(sim *Simulation) {
+	if !character.Metrics.Died {
+		character.Metrics.Died = true
+		if sim.Log != nil {
+			character.Log(sim, "Dead")
+		}
+	}
+	if session := character.Env.Encounter.leveling; session != nil {
+		session.onPlayerDeath(sim)
 	}
 }
 

@@ -145,6 +145,7 @@ func (paladin *Paladin) Initialize() {
 	paladin.registerLayOnHands()
 	paladin.registerHolyStrike()
 	paladin.registerRetributionAura()
+	paladin.registerConcentrationAura()
 
 	paladin.registerStopAttackMacros()
 

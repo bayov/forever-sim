@@ -44,11 +44,11 @@ so a script that checks the mark at the damage line calls those hits unmarked.
 
 `archive.sh` copies every `WoWCombatLog-*.txt` into `~/forever-logs/<flavor>/`, so the logs
 outlive the beta install. The client never deletes its combat logs, but uninstalling the beta
-takes the whole `Logs` folder with it. A systemd user timer runs it every 5 minutes (the units
-are in `systemd/`, installed into `~/.config/systemd/user/` and enabled), and
-`tools/logcheck` runs it before it reads a log. Nothing is compressed. When the archive gets too
-big we delete old logs by hand. `FLAVORS` in the script lists the game folders it copies, so
-add the live Forever folder there when it exists.
+takes the whole `Logs` folder with it. Nothing runs it on a schedule. `tools/logcheck` runs it
+before it reads a log, so each `/log-audit` run (by hand or hourly) brings the archive up to
+date. `logcheck -audit` compresses a log once it's a day old and fully audited. `FLAVORS` in
+the script lists the game folders it copies, so add the live Forever folder there when it
+exists.
 
 The `/bayov export` JSONs go in `~/forever-logs/exports/` as `export-<date>_<time>.json`,
 named after their `when.date`. `tools/logcheck` pairs each log window with the export taken
@@ -57,7 +57,8 @@ closest before it.
 `archive.sh` also runs `history.py`, which copies BayovCore's character history out of the
 game's `SavedVariables/BayovCore.lua` into `~/forever-logs/history/`. The addon records each
 gear swap, talent change, level up and skill up as it happens, and keeps the last 7 days. We
-keep every record, so the archive is the only full copy. `tools/logcheck` rebuilds an export
+keep every record, so the archive is the only full copy. That's why an audit has to run at
+least once a week, or the oldest records are gone before we copy them. `tools/logcheck` rebuilds an export
 for each record (its README has the details).
 
 Some scripts hold numbers from one character and one day, like the weapon models in
@@ -67,7 +68,9 @@ Some scripts hold numbers from one character and one day, like the weapon models
 
 - `cl.py` parses the log into events. `cl.dmg(e)` reads a damage line's tail (amount, raw,
   overkill, school, resisted, blocked, absorbed, crit, glancing, crushing), and `cl.miss(e)`
-  reads a miss type. `cl.ME` is our character's name prefix ("Bayov-").
+  reads a miss type. `e.me_src` and `e.me_dst` say a line's source or target is our own
+  character. They come from the unit flags the client writes ("mine" is 0x511), never from the
+  name, because the game changes how it writes names and we play more than one character.
 - `recheck.py` runs most of the recheck list over a window: white and Stormstrike raw against
   the weapon models, Lightning Shield orbs, Flametongue procs per trigger, Searing bolts,
   glancing and partial resists by mob level, resist steps per mob and school, Fire Nova's
@@ -82,6 +85,10 @@ Some scripts hold numbers from one character and one day, like the weapon models
 - `fistglance.py` splits white swings by weapon (a raw under 150 is the fist) and mob level,
   with glances, crits and miss types.
 - `parry.py` checks the mob's next swing after each parry against Classic's parry haste rule.
+- `pushback.py` times every player's casts and channels that took hits, in any number of logs
+  (plain or .gz), against a few pushback rules. The sim's rule (1 sec, then 0.8, 0.6 and so on,
+  never back past the cast's start) fits 243 of 285 casts within 0.1 sec on the 10-10 to 10-16
+  logs. Too few channels took hits to check them.
 - `respec.py` reports the Elemental respec run (item 12): each fire and shock spell's hits,
   crits and raw, the auras on us, and the auras that came with each of our spell crits.
 - `devastation.py` checks which of our crits give Elemental Devastation (aura 30165): for

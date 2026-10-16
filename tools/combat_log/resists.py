@@ -5,7 +5,7 @@ import cl
 evs = cl.load(sys.argv[1]); name = sys.argv[2]
 c = collections.defaultdict(lambda: [0, 0, 0, []])
 for e in evs:
-    if not e.src.startswith(cl.ME) or e.dst != name: continue
+    if not e.me_src or e.dst != name: continue
     if e.ev in ('SPELL_DAMAGE', 'SPELL_PERIODIC_DAMAGE', 'SPELL_MISSED', 'SWING_DAMAGE', 'SWING_MISSED'):
         k = (e.ev.split('_')[0], e.f[10] if e.ev.startswith('SPELL') else 'melee')
         if e.ev.endswith('MISSED'):

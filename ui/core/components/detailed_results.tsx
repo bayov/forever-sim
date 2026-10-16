@@ -353,7 +353,7 @@ export abstract class DetailedResults extends Component {
 		switch (data.data.oneofKind) {
 			case 'runData':
 				const runData = data.data.runData;
-				this.currentSimResult = await SimResult.fromProto(runData.run || SimRun.create());
+				this.currentSimResult = runData.run ? await SimResult.fromProto(runData.run) : null;
 				this.updateResults();
 				break;
 			case 'settings':
@@ -390,11 +390,10 @@ export class EmbeddedDetailedResults extends DetailedResults {
 		}
 
 		simResultsManager.currentChangeEmitter.on(async () => {
-			const runData = simResultsManager.getRunData();
-			if (runData) {
-				await this.updateSettings();
-				await this.setSimRunData(runData);
-			}
+			// Without a run, the tab shows no results.
+			const runData = simResultsManager.getRunData() ?? SimRunData.create();
+			await this.updateSettings();
+			await this.setSimRunData(runData);
 		});
 	}
 

@@ -437,35 +437,65 @@ func (sim *Simulation) lastIteration() *proto.IterationLog {
 	if sim.Encounter.EndFightAtHealth != 0 {
 		duration = sim.CurrentTime
 	}
-	return &proto.IterationLog{
+	it := &proto.IterationLog{
 		Seed:     sim.rand.GetSeed(),
 		Dps:      sim.Raid.dpsMetrics.Total / sim.Duration.Seconds(),
 		Duration: duration.Seconds(),
 	}
+	if s := sim.Encounter.leveling; s != nil {
+		it.Kills = s.lastKills
+		it.Deaths = int32(s.deaths)
+	}
+	return it
 }
 
-// pickIterations sets the typical (raid DPS closest to the average), lucky (highest raid
-// DPS) and unlucky (lowest raid DPS) iterations of the result, without their logs.
+// iterationScore is what the iteration picks go by: mobs killed in a leveling session, and
+// raid DPS otherwise.
+func iterationScore(it *proto.IterationLog, leveling bool) float64 {
+	if leveling {
+		return it.Kills
+	}
+	return it.Dps
+}
+
+// pickDied keeps the session with the most deaths, and of those the one with kills closest
+// to the mean. Sessions without a death never count.
+func pickDied(picked, it *proto.IterationLog, mean float64) *proto.IterationLog {
+	if it == nil || it.Deaths == 0 {
+		return picked
+	}
+	if picked == nil || it.Deaths > picked.Deaths ||
+		it.Deaths == picked.Deaths && math.Abs(it.Kills-mean) < math.Abs(picked.Kills-mean) {
+		return it
+	}
+	return picked
+}
+
+// pickIterations sets the typical (closest to the average), lucky (highest) and unlucky
+// (lowest) iterations of the result, without their logs. They go by raid DPS, or by mobs
+// killed in a leveling run, which also picks the session with the most deaths.
 func pickIterations(result *proto.RaidSimResult, iterations []*proto.IterationLog) {
 	if len(iterations) == 0 {
 		return
 	}
+	leveling := result.EncounterMetrics.GetLeveling() != nil
+	score := func(it *proto.IterationLog) float64 { return iterationScore(it, leveling) }
 
 	mean := 0.0
 	for _, it := range iterations {
-		mean += it.Dps
+		mean += score(it)
 	}
 	mean /= float64(len(iterations))
 
 	typical, lucky, unlucky := iterations[0], iterations[0], iterations[0]
 	for _, it := range iterations[1:] {
-		if math.Abs(it.Dps-mean) < math.Abs(typical.Dps-mean) {
+		if math.Abs(score(it)-mean) < math.Abs(score(typical)-mean) {
 			typical = it
 		}
-		if it.Dps > lucky.Dps {
+		if score(it) > score(lucky) {
 			lucky = it
 		}
-		if it.Dps < unlucky.Dps {
+		if score(it) < score(unlucky) {
 			unlucky = it
 		}
 	}
@@ -473,25 +503,34 @@ func pickIterations(result *proto.RaidSimResult, iterations []*proto.IterationLo
 	result.TypicalIteration = typical
 	result.LuckyIteration = lucky
 	result.UnluckyIteration = unlucky
+	if leveling {
+		var died *proto.IterationLog
+		for _, it := range iterations {
+			died = pickDied(died, it, mean)
+		}
+		result.DiedIteration = died
+	}
 }
 
 // replayPicked runs the typical, lucky and unlucky iterations of the result again with
 // logs on, and puts their logs in the result.
 func (sim *Simulation) replayPicked(result *proto.RaidSimResult) {
-	picked := []*proto.IterationLog{result.TypicalIteration, result.LuckyIteration, result.UnluckyIteration}
-	replays := make([]*proto.IterationLog, len(picked))
-	for i, it := range picked {
-		replays[i] = sim.replayIteration(it.Seed)
-		if replays[i].Dps != it.Dps && !sim.isTest {
-			log.Printf("Replaying the iteration with seed %d gave %.3f DPS, but it ran at %.3f DPS the first time", it.Seed, replays[i].Dps, it.Dps)
+	for _, picked := range []**proto.IterationLog{&result.TypicalIteration, &result.LuckyIteration, &result.UnluckyIteration, &result.DiedIteration} {
+		it := *picked
+		if it == nil {
+			continue
 		}
+		replay := sim.replayIteration(it.Seed)
+		if replay.Dps != it.Dps && !sim.isTest {
+			log.Printf("Replaying the iteration with seed %d gave %.3f DPS, but it ran at %.3f DPS the first time", it.Seed, replay.Dps, it.Dps)
+		}
+		*picked = replay
 	}
-	result.TypicalIteration, result.LuckyIteration, result.UnluckyIteration = replays[0], replays[1], replays[2]
 	setTypicalLogs(result)
 }
 
-// runReplays runs only the iterations with these seeds (typical, lucky, unlucky), with
-// logs on. See SimOptions.replay_seeds.
+// runReplays runs only the iterations with these seeds (typical, lucky, unlucky and, in a
+// leveling run with a death, died), with logs on. See SimOptions.replay_seeds.
 func (sim *Simulation) runReplays(seeds []int64) *proto.RaidSimResult {
 	result := &proto.RaidSimResult{IterationsDone: int32(len(seeds))}
 	replays := make([]*proto.IterationLog, len(seeds))
@@ -506,6 +545,9 @@ func (sim *Simulation) runReplays(seeds []int64) *proto.RaidSimResult {
 	}
 	if len(replays) > 2 {
 		result.UnluckyIteration = replays[2]
+	}
+	if len(replays) > 3 {
+		result.DiedIteration = replays[3]
 	}
 	setTypicalLogs(result)
 
@@ -645,7 +687,15 @@ func (sim *Simulation) Cleanup() {
 	// quite at the Duration. Explicitly set this so that accesses to CurrentTime
 	// during the doneIteration phase will return the Duration value, which is
 	// intuitive.
-	sim.CurrentTime = sim.Duration
+	//
+	// A health fight ends when the targets die, not at a set time, so its duration is the
+	// time it took. Before, it took the 10 minute placeholder and every DPS and DTPS came out
+	// over 600 sec.
+	if sim.Encounter.EndFightAtHealth > 0 {
+		sim.Duration = sim.CurrentTime
+	} else {
+		sim.CurrentTime = sim.Duration
+	}
 
 	for _, pa := range sim.pendingActions {
 		if pa.CleanUp != nil {

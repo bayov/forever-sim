@@ -32,7 +32,7 @@ func newTotemSlotSim(t *testing.T, seconds float64) (*core.Simulation, *Enhancem
 		return a.IsActive
 	}
 	dot := func(spell *core.Spell) func() bool {
-		return func() bool { return spell.Dot(enh.CurrentTarget).IsActive() }
+		return func() bool { return spell.DotOrAOEDot(enh.CurrentTarget).IsActive() }
 	}
 	healingStream := topRank(t, "Healing Stream Totem", enh.HealingStreamTotem)
 	searing := topRank(t, "Searing Totem", enh.SearingTotem)
@@ -48,7 +48,7 @@ func newTotemSlotSim(t *testing.T, seconds float64) (*core.Simulation, *Enhancem
 		"water": {
 			{"Healing Stream Totem", healingStream, func() bool { return healingStream.Hot(&enh.Unit).IsActive() }, 5 * time.Minute},
 			{"Mana Spring Totem", topRank(t, "Mana Spring Totem", enh.ManaSpringTotem), aura("Mana Spring Totem (Rank 4)"), 5 * time.Minute},
-			{"Mana Tide Totem", topRank(t, "Mana Tide Totem", enh.ManaTideTotem), aura("Mana Tide Totem (Rank 3)"), 13 * time.Second},
+			{"Mana Tide Totem", topRank(t, "Mana Tide Totem", enh.ManaTideTotem), aura("Mana Tide Totem (Rank 4)"), 13 * time.Second},
 		},
 		"fire": {
 			{"Searing Totem", searing, dot(searing), 55 * time.Second},

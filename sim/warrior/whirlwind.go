@@ -46,7 +46,10 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			mhTarget := target
-			for idx := range results {
+			// Only living targets, each one once.
+			hits := results[:sim.Encounter.AoETargetCount(int32(len(results)))]
+			ohHits := ohResults[:len(hits)]
+			for idx := range hits {
 				baseDamage := spell.Unit.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower(target))
 				results[idx] = spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 				target = sim.Environment.NextTargetUnit(target)
@@ -54,19 +57,19 @@ func (warrior *Warrior) registerWhirlwindSpell() {
 
 			if whirlwindOh != nil {
 				target = mhTarget
-				for idx := range ohResults {
+				for idx := range ohHits {
 					baseDamage := whirlwindOh.Unit.OHNormalizedWeaponDamage(sim, whirlwindOh.MeleeAttackPower(target))
 					ohResults[idx] = whirlwindOh.CalcDamage(sim, target, baseDamage, whirlwindOh.OutcomeMeleeWeaponSpecialHitAndCrit)
 					target = sim.Environment.NextTargetUnit(target)
 				}
 			}
 
-			for _, result := range results {
+			for _, result := range hits {
 				spell.DealDamage(sim, result)
 			}
 
 			if whirlwindOh != nil {
-				for _, result := range ohResults {
+				for _, result := range ohHits {
 					whirlwindOh.DealDamage(sim, result)
 				}
 			}

@@ -9,6 +9,8 @@ import (
 type UnitReference struct {
 	fixedUnit       *Unit
 	curTargetSource *Unit
+	// The leveling session's Pull Target, which comes and goes.
+	pullTargetOf *Encounter
 }
 
 func (ur UnitReference) Get() *Unit {
@@ -16,13 +18,24 @@ func (ur UnitReference) Get() *Unit {
 		return ur.fixedUnit
 	} else if ur.curTargetSource != nil {
 		return ur.curTargetSource.CurrentTarget
+	} else if ur.pullTargetOf != nil {
+		return ur.pullTargetOf.LevelingPullTarget()
 	} else {
 		return nil
 	}
 }
 
+// IsDynamic is whether the reference can be empty for a while, so an action on it waits
+// rather than being dropped from the rotation.
+func (ur UnitReference) IsDynamic() bool {
+	return ur.pullTargetOf != nil
+}
+
 func (ur *UnitReference) String() string {
-	return ur.Get().Label
+	if unit := ur.Get(); unit != nil {
+		return unit.Label
+	}
+	return "none"
 }
 
 func NewUnitReference(ref *proto.UnitReference, contextUnit *Unit) UnitReference {
@@ -31,6 +44,10 @@ func NewUnitReference(ref *proto.UnitReference, contextUnit *Unit) UnitReference
 	} else if ref.Type == proto.UnitReference_CurrentTarget {
 		return UnitReference{
 			curTargetSource: contextUnit,
+		}
+	} else if ref.Type == proto.UnitReference_PullTarget {
+		return UnitReference{
+			pullTargetOf: &contextUnit.Env.Encounter,
 		}
 	} else {
 		return UnitReference{
@@ -44,7 +61,7 @@ func (rot *APLRotation) getUnit(ref *proto.UnitReference, defaultRef *proto.Unit
 		return NewUnitReference(defaultRef, rot.unit)
 	} else {
 		unitRef := NewUnitReference(ref, rot.unit)
-		if unitRef.Get() == nil {
+		if unitRef.Get() == nil && !unitRef.IsDynamic() {
 			rot.ValidationWarning("No unit found matching reference: %s", ref)
 		}
 		return unitRef

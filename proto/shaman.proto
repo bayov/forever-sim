@@ -9,20 +9,20 @@ message ShamanTalents {
 	// Elemental Combat
 	int32 convection = 1;
 	int32 concussion = 2;
-	int32 elemental_warding = 3;
+	int32 elemental_devastation = 3;
 	int32 reverberation = 4;
-	int32 call_of_flame = 5;
-	int32 elemental_devastation = 6;
+	int32 elemental_alacrity = 5;
+	int32 call_of_flame = 6;
 	bool elemental_focus = 7;
-	int32 elemental_alacrity = 8;
+	int32 elemental_warding = 8;
 	int32 improved_fire_nova = 9;
 	int32 eye_of_the_storm = 10;
-	bool call_of_thunder = 11;
+	bool earthbound = 11;
 	int32 elemental_reach = 12;
-	int32 lightning_overload = 13;
-	bool earthbound = 14;
+	bool lava_burst = 13;
+	int32 lightning_overload = 14;
 	int32 elemental_fury = 15;
-	bool lava_burst = 16;
+	bool elemental_mastery = 16;
 
 	// Enhancement
 	int32 earths_grasp = 17;
@@ -46,10 +46,10 @@ message ShamanTalents {
 
 	// Restoration
 	int32 improved_healing_wave = 35;
-	int32 totemic_focus = 36;
+	int32 tidal_focus = 36;
 	int32 mindfulness = 37;
 	int32 natural_grace = 38;
-	int32 tidal_focus = 39;
+	int32 totemic_focus = 39;
 	int32 improved_reincarnation = 40;
 	int32 ancestral_healing = 41;
 	int32 healing_focus = 42;
@@ -61,6 +61,7 @@ message ShamanTalents {
 	bool natures_swiftness = 48;
 	int32 purification = 49;
 	bool riptide = 50;
+
 }
 
 enum EarthTotem {
@@ -123,22 +124,6 @@ message ShamanTotems {
 	bool enh_tier_ten_bonus = 11;
 }
 
-// The totems we have standing when the fight starts, one per element, and how long before the
-// pull we put each down. We take them as put down before the sim starts, so they cost no mana
-// and no global cooldown.
-message StartingTotems {
-	EarthTotem earth = 1;
-	AirTotem air = 2;
-	FireTotem fire = 3;
-	WaterTotem water = 4;
-	// The seconds before the pull we put each totem down. 0 means at the pull, so it has its
-	// full duration.
-	double earth_seconds_before_pull = 5;
-	double air_seconds_before_pull = 6;
-	double fire_seconds_before_pull = 7;
-	double water_seconds_before_pull = 8;
-}
-
 enum ShamanSyncType {
   NoSync = 0;
   SyncMainhandOffhandSwings = 1;
@@ -150,10 +135,13 @@ message ElementalShaman {
 	message Rotation {
 	}
 
-	// NextIndex: 7
+	// NextIndex: 9
 	message Options {
 		// The shaman's own weapon imbue on the main hand, like EnhancementShaman's.
 		WeaponImbue shaman_imbue = 6;
+		// Moved to Encounter.raid_damage_hits_per_minute, for every class.
+		double raid_damage_hits_per_minute = 7 [deprecated = true];
+		double raid_damage_hits_per_minute_variation = 8 [deprecated = true];
 	}
 	Options options = 3;
 }
@@ -165,20 +153,18 @@ message EnhancementShaman {
 	// NextIndex: 11
 	message Options {
 		ShamanSyncType sync_type = 3;
-		// Direct hits the shaman takes from raid damage per minute. Each one fires a
-		// Lightning Shield orb at the target or spends a Water Shield globe, like any hit an
-		// enemy lands on us. The boss is on the tank, so this is the only thing that sets off
-		// our shield.
-		double raid_damage_hits_per_minute = 7;
-		// Each sim iteration takes a random rate up to this many hits per minute above or
-		// below raid_damage_hits_per_minute, like Duration +/- does for the fight length.
-		double raid_damage_hits_per_minute_variation = 9;
+		// Moved to Encounter.raid_damage_hits_per_minute, for every class.
+		double raid_damage_hits_per_minute = 7 [deprecated = true];
+		double raid_damage_hits_per_minute_variation = 9 [deprecated = true];
 		// The shaman's own weapon imbue (Windfury, Rockbiter, Flametongue or Frostbrand
 		// Weapon) on the main hand. In Forever it acts as a buff on the character and no longer
 		// takes the weapon's temporary enchant, so the main hand imbue in the consumes holds an
 		// oil or a stone beside it.
 		WeaponImbue shaman_imbue = 8;
-		StartingTotems starting_totems = 10;
+		// The totems we had standing at the pull for free. Since 2026-10-16 the rotation puts
+		// them down in its prepull actions, with their mana and global cooldown.
+		reserved 10;
+		reserved "starting_totems";
 	}
 	Options options = 3;
 }

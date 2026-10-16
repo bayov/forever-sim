@@ -8,18 +8,19 @@ import (
 
 const LavaBurstFlameShockBonus = .2
 
-// Lava Burst ranks from the Forever client data that https://foreverchanges.pro reads
-// (downrank calculator): damage at each rank's cap, its growth per level up to there, and
-// mana. The talent teaches rank 1 and the trainer the other two at 50 and 60. The
-// 2026-09-24 beta build raised ranks 1 and 2 (113 and 179 at the learn level before, 164
-// and 196 now) to about 10% above the Lightning Bolt learned around the same level.
-var LavaBurstBaseDamage = [][]float64{{0}, {149.52, 192.88}, {178.86, 230.74}, {192.14, 247.86}}
-var LavaBurstScaling = []core.RankScaling{{}, {48, 0.9}, {58, 1.1}, {60, 1.3}}
+// Lava Burst ranks from the Forever client (1.60.1.70425, wago.tools): damage at each rank's
+// cap, its growth per level up to there, and mana. The talent (at the 20-point gate since
+// 70425) teaches rank 1 at 30 and the trainer the others at 40, 50 and 60. 70425 moved the
+// three old ranks ten levels down (rank 1 now 123 + 0.8 a level, rank 2 164 + 0.9, rank 3
+// 196 + 1.1, each cheaper) and added rank 4 (1326047) with what was rank 3: 220 + 1.3 a level,
+// 265 mana. At 60 the shaman casts rank 4, the same spell as before under a new ID.
+var LavaBurstBaseDamage = [][]float64{{0}, {113.01, 145.79}, {149.52, 192.88}, {178.86, 230.74}, {192.14, 247.86}}
+var LavaBurstScaling = []core.RankScaling{{}, {38, 0.8}, {48, 0.9}, {58, 1.1}, {60, 1.3}}
 
-// The spell IDs are Forever's (wowhead Forever), and the talent teaches rank 1.
-var LavaBurstSpellId = []int32{0, 408490, 1238299, 1238300}
-var LavaBurstManaCost = []float64{0, 165, 230, 265}
-var LavaBurstLevel = []int32{0, 40, 50, 60}
+// The spell IDs are Forever's, and the talent teaches rank 1.
+var LavaBurstSpellId = []int32{0, 408490, 1238299, 1238300, 1326047}
+var LavaBurstManaCost = []float64{0, 135, 165, 230, 265}
+var LavaBurstLevel = []int32{0, 30, 40, 50, 60}
 
 func (shaman *Shaman) registerLavaBurstSpell() {
 	if !shaman.Talents.LavaBurst {
@@ -42,6 +43,7 @@ func (shaman *Shaman) registerLavaBurstSpell() {
 		Rank:        rank,
 
 		MissileSpeed: 20,
+		MaxRange:     30,
 
 		ManaCost: core.ManaCostOptions{
 			FlatCost: LavaBurstManaCost[rank],

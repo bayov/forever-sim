@@ -15,7 +15,7 @@ import (
 
 // Elemental Devastation 3/3, Elemental Focus and Lava Burst, then Flurry 5/5, Stormstrike
 // and Maelstrom Weapon 5/5.
-const talentProcTalents = "0000031000000001-00000000000510005"
+const talentProcTalents = "0030001000001-00000000000510005"
 
 const (
 	flurry               = "Flurry"
@@ -235,7 +235,7 @@ func forcedOutcome(outcome core.HitOutcome) core.OutcomeApplier {
 func TestOrcShamanElementalDevastationBuff(t *testing.T) {
 	for _, points := range []int{1, 3} {
 		// Elemental Devastation.
-		sim, enh := newShamanSim(newOrcShaman(60, fmt.Sprintf("00000%d", points), &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 15)
+		sim, enh := newShamanSim(newOrcShaman(60, fmt.Sprintf("00%d", points), &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 15)
 		buff := enh.GetAura("Elemental Devastation Proc")
 		if buff == nil {
 			t.Fatalf("%d points: no Elemental Devastation Proc", points)

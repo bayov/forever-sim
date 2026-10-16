@@ -175,6 +175,40 @@ func TestOrcShamanWaterShieldRecast(t *testing.T) {
 	runSim(sim)
 }
 
+// TestOrcShamanWaterShieldSpellCrit checks that our damage spells' crits spend a Water Shield
+// globe since client 1.60.1.70425 ("triggers from any of the Shaman's critical spells", the 15
+// October notes; ProcTypeMask 0x262a8 -> 0x362a8 adds harmful spells). A spell that hits without
+// a crit leaves the globes alone.
+func TestOrcShamanWaterShieldSpellCrit(t *testing.T) {
+	// Water Shield.
+	sim, enh := newShamanSim(newOrcShaman(60, "--000000001", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 10)
+	aura := enh.WaterShieldAura
+	bolt := enh.RegisterSpell(core.SpellConfig{
+		ActionID:         core.ActionID{SpellID: 1},
+		SpellSchool:      core.SpellSchoolNature,
+		DefenseType:      core.DefenseTypeMagic,
+		ProcMask:         core.ProcMaskSpellDamage,
+		DamageMultiplier: 1,
+	})
+	at(sim, 1, func(sim *core.Simulation) {
+		castNow(t, sim, enh, enh.WaterShield)
+		enh.SpendMana(sim, enh.MaxMana()/2, enh.GetManaNotCastingMetrics())
+		bolt.CalcAndDealDamage(sim, enh.CurrentTarget, 10, forcedOutcome(core.OutcomeHit))
+		if got := aura.GetStacks(); got != 3 {
+			t.Errorf("after a spell hit: %d globes, want 3", got)
+		}
+		mana := enh.CurrentMana()
+		bolt.CalcAndDealDamage(sim, enh.CurrentTarget, 10, forcedOutcome(core.OutcomeCrit))
+		if got := aura.GetStacks(); got != 2 {
+			t.Errorf("after a spell crit: %d globes, want 2", got)
+		}
+		if got, want := enh.CurrentMana()-mana, 0.02*enh.MaxMana(); math.Abs(got-want) > 1e-6 {
+			t.Errorf("the spell crit's globe gave %.3f mana, want %.3f", got, want)
+		}
+	})
+	runSim(sim)
+}
+
 // TestOrcShamanManaSpring checks the mana our own Mana Spring Totem gives at level 30
 // (shaman_audit.md 7.26).
 //
@@ -220,8 +254,8 @@ func TestOrcShamanManaSpring(t *testing.T) {
 // TestOrcShamanManaTideRanks checks the mana of Mana Tide Totem's first tick by rank and its
 // cooldown (shaman_audit.md 7.27).
 //
-// Ranks 1 to 3 come at levels 25, 48 and 58 and give 88, 197 and 290 mana a tick, the first 3
-// sec after the drop, as the Forever client's party auras do. The totem is ready again 5 min
+// Since client 1.60.1.70425 ranks 1 to 4 come at levels 1, 38, 48 and 58 (the talent teaches
+// rank 1) and give 88, 133, 197 and 290 mana a tick, the first 3 sec after the drop, as the Forever client's party auras do. The totem is ready again 5 min
 // after the cast. We look at the mana a moment before and after the tick, so the regen in
 // between is under 0.1 mana.
 func TestOrcShamanManaTideRanks(t *testing.T) {
@@ -229,7 +263,7 @@ func TestOrcShamanManaTideRanks(t *testing.T) {
 		level int32
 		rank  int
 		tick  float64
-	}{{25, 1, 88}, {48, 2, 197}, {58, 3, 290}} {
+	}{{25, 1, 88}, {38, 2, 133}, {48, 3, 197}, {58, 4, 290}} {
 		// Mana Tide Totem.
 		sim, enh := newShamanSim(newOrcShaman(c.level, "--000000000001", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 10)
 		manaTide := topRank(t, "Mana Tide Totem", enh.ManaTideTotem)
@@ -265,8 +299,8 @@ func TestOrcShamanManaTide(t *testing.T) {
 	full := enh.ManaRegenPerSecondWhileNotCasting()
 	manaSpring := enh.ManaSpringTotem[4]
 	manaSpringAura := enh.GetAura("Mana Spring Totem (Rank 4)")
-	manaTide := enh.ManaTideTotem[3]
-	manaTideAura := enh.GetAura("Mana Tide Totem (Rank 3)")
+	manaTide := enh.ManaTideTotem[4]
+	manaTideAura := enh.GetAura("Mana Tide Totem (Rank 4)")
 
 	checkMana := func(sim *core.Simulation, want float64) {
 		if have := enh.CurrentMana(); math.Abs(have-want) > 1e-6 {

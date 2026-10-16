@@ -6,8 +6,9 @@ import { dirtySettings } from './components/dirty_settings';
 import { EncounterPickerConfig } from './components/encounter_picker';
 import * as IconInputs from './components/icon_inputs';
 import { BulkTab } from './components/individual_sim_ui/bulk_tab';
-import { Individual60UEPExporter, IndividualJsonExporter, IndividualLinkExporter, IndividualPawnEPExporter } from './components/individual_sim_ui/exporters';
+import { Individual60UEPExporter, IndividualJsonExporter, IndividualLinkExporter, IndividualBayovCoreExporter } from './components/individual_sim_ui/exporters';
 import { GearTab } from './components/individual_sim_ui/gear_tab';
+import { LevelingGearTab } from './components/individual_sim_ui/leveling_gear_tab';
 import {
 	Individual60UImporter,
 	IndividualAddonImporter,
@@ -24,12 +25,13 @@ import * as InputHelpers from './components/input_helpers';
 import { addRaidSimAction, RaidSimResultsManager } from './components/raid_sim_action';
 import { SavedDataConfig } from './components/saved_data_manager';
 import { SimHistory } from './components/sim_history';
+import { SimModePicker } from './components/sim_mode_picker';
 import { addStatWeightsSection } from './components/stat_weights_action';
 import { GLOBAL_DISPLAY_PSEUDO_STATS, GLOBAL_DISPLAY_STATS, GLOBAL_EP_STATS } from './constants/other';
 import { SimSettingCategories } from './constants/sim_settings';
 import * as Tooltips from './constants/tooltips';
 import { installItemTooltipFallback } from './item_tooltip_fallback';
-import { loadLastSimRun, saveLastSimRun } from './last_sim_run';
+import { deleteLastSimRun, loadLastSimRun, saveLastSimRun } from './last_sim_run';
 import { simLaunchStatuses } from './launched_sims';
 import { DEFAULT_REACTION_TIME_MS, Player, PlayerConfig, registerSpecConfig as registerPlayerConfig } from './player';
 import { PresetBuild, PresetEpWeights, PresetGear, PresetRotation } from './preset_utils';
@@ -56,6 +58,7 @@ import { professionNames } from './proto_utils/names';
 import { SimResult } from './proto_utils/sim_result';
 import { Stats, UnitStat } from './proto_utils/stats';
 import { getTalentPoints, isHealingSpec, isTankSpec, SpecOptions, SpecRotation, specToEligibleRaces, specToLocalStorageKey } from './proto_utils/utils';
+import { encounterMode, encounterProtoMode, SimMode } from './sim_mode';
 import { SimUI, SimWarning } from './sim_ui';
 import { EventID, TypedEvent } from './typed_event';
 
@@ -298,6 +301,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 		this.addSidebarComponents();
 		this.addGearTab();
+		new LevelingGearTab(this.simTabContentsContainer, this);
 		this.addTalentsTab();
 		this.bt = this.addBulkTab();
 		this.addSettingsTab();
@@ -319,7 +323,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			const savedSettings = window.localStorage.getItem(this.getSettingsStorageKey());
 			if (savedSettings != null) {
 				try {
-					const settings = IndividualSimSettings.fromJsonString(savedSettings);
+					const settings = IndividualSimSettings.fromJsonString(savedSettings, { ignoreUnknownFields: true });
 					this.fromProto(initEventID, settings);
 				} catch (e) {
 					console.warn('Failed to parse saved settings: ' + e);
@@ -351,23 +355,62 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 	// Shows the last run's results again after a page refresh, and saves each new run for the
 	// next one. See last_sim_run.ts.
+	//
+	// Each mode has its own last run (see sim_mode.ts). When we go to another mode, the Results
+	// tab shows that mode's last run, or no results when we have none.
 	private async restoreLastSimRun() {
-		const key = this.getStorageKey('__lastSimRun__');
-		// A run that finishes while we read the saved one is newer, so we don't show the saved
-		// one over it.
-		let hasNewRun = false;
-		const saved = await loadLastSimRun(key);
+		// A run that finishes while we read a saved one is newer, so we don't show the saved one
+		// over it. Each read counts up, so only the latest one shows when we switch modes fast.
+		let shown = 0;
 		this.sim.simResultEmitter.on((_, simResult) => {
-			hasNewRun = true;
-			saveLastSimRun(key, simResult.toProto());
+			shown++;
+			if (simResult === this.restoredRun) return;
+			saveLastSimRun(this.getLastSimRunKey(encounterProtoMode(simResult.request.encounter)), simResult.toProto());
 		});
-		if (!saved?.request || !saved.result || hasNewRun) return;
-		try {
-			const simResult = await SimResult.fromProto(saved);
-			if (!hasNewRun) this.sim.simResultEmitter.emit(TypedEvent.nextEventID(), simResult);
-		} catch (e) {
-			console.warn('Failed to show the last sim run: ' + e);
+
+		// Before each mode had its own last run, there was one for all of them.
+		const oldKey = this.getStorageKey('__lastSimRun__');
+		const old = await loadLastSimRun(oldKey);
+		if (old) {
+			await saveLastSimRun(this.getLastSimRunKey(encounterProtoMode(old.request?.encounter)), old);
+			await deleteLastSimRun(oldKey);
 		}
+
+		const show = async (mode: SimMode) => {
+			const read = ++shown;
+			const saved = await loadLastSimRun(this.getLastSimRunKey(mode));
+			if (read !== shown) return;
+			if (!saved?.request || !saved.result) {
+				this.raidSimResultsManager?.clearSimResult(TypedEvent.nextEventID());
+				return;
+			}
+			try {
+				const simResult = await SimResult.fromProto(saved);
+				// The run that goes takes the results we show when it's done, and it would take
+				// these ones in place of its own, see SimHistory.showRun.
+				if (read !== shown || this.raidSimResultsManager?.simHistory?.isRunning()) return;
+				this.restoredRun = simResult;
+				this.sim.simResultEmitter.emit(TypedEvent.nextEventID(), simResult);
+			} catch (e) {
+				console.warn('Failed to show the last sim run: ' + e);
+			}
+		};
+
+		let mode = encounterMode(this.sim.encounter);
+		await show(mode);
+		this.sim.encounter.changeEmitter.on(() => {
+			const newMode = encounterMode(this.sim.encounter);
+			if (newMode === mode) return;
+			mode = newMode;
+			show(mode);
+		});
+	}
+
+	// The saved run we show again, which we don't save again.
+	private restoredRun: SimResult | null = null;
+
+	getLastSimRunKey(mode: SimMode): string {
+		return this.getStorageKey(`__lastSimRun__${mode}`);
 	}
 
 	private addSidebarComponents() {
@@ -383,6 +426,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			this.changeEmitter.on(() => dirtySettings.schedule());
 		}
 
+		if (!this.isWithinRaidSim) new SimModePicker(this.simActionsContainer, this);
 		this.raidSimResultsManager = addRaidSimAction(this);
 		if (!this.isWithinRaidSim) new SimHistory(this, this.raidSimResultsManager);
 
@@ -468,7 +512,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		this.simHeader.addExportLink('JSON', new IndividualJsonExporter(this.rootElem, this), true);
 		//this.simHeader.addExportLink('WoWHead', new IndividualWowheadGearPlannerExporter(this.rootElem, this), false);
 		this.simHeader.addExportLink('60U SoD EP', new Individual60UEPExporter(this.rootElem, this), false);
-		this.simHeader.addExportLink('Pawn EP', new IndividualPawnEPExporter(this.rootElem, this), false);
+		this.simHeader.addExportLink('BayovCore', new IndividualBayovCoreExporter(this.rootElem, this), false);
 		//this.simHeader.addExportLink("CLI", new IndividualCLIExporter(this.rootElem, this), true);
 	}
 
@@ -560,6 +604,11 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 				tanks: this.sim.raid.getTanks(),
 			});
 		}
+		if (exportCategory(SimSettingCategories.Gear)) {
+			IndividualSimSettings.mergePartial(proto, {
+				levelingGearPlan: this.player.getLevelingGearPlan(),
+			});
+		}
 		if (exportCategory(SimSettingCategories.Encounter)) {
 			IndividualSimSettings.mergePartial(proto, {
 				encounter: this.sim.encounter.toProto(),
@@ -607,6 +656,10 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 			if (loadCategory(SimSettingCategories.Miscellaneous)) {
 				this.sim.raid.setTanks(eventID, settings.tanks || []);
+			}
+			// Settings without a plan, like an imported gear set, keep the one we have.
+			if (loadCategory(SimSettingCategories.Gear) && settings.levelingGearPlan) {
+				this.player.setLevelingGearPlan(eventID, settings.levelingGearPlan);
 			}
 			if (loadCategory(SimSettingCategories.External)) {
 				this.sim.raid.setBuffs(eventID, settings.raidBuffs || RaidBuffs.create());

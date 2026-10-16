@@ -35,6 +35,12 @@ import {
 	APLValueEnergyThreshold,
 	APLValueFrontOfTarget,
 	APLValueInMeleeRange,
+	APLValueIsMoving,
+	APLValueLevelingBandageReady,
+	APLValueLevelingDistance,
+	APLValueLevelingMobsOnUs,
+	APLValueLevelingMobsRunningIn,
+	APLValueLevelingMobsThisPull,
 	APLValueGCDIsReady,
 	APLValueGCDTimeToReady,
 	APLValueIsExecutePhase,
@@ -67,6 +73,7 @@ import {
 	APLValueSpellTimeToReady,
 	APLValueSpellTravelTime,
 	APLValueTimeToEnergyTick,
+	APLValueTotemDistance,
 	APLValueTotemRemainingTime,
 	APLValueWarlockCurrentPetMana,
 	APLValueWarlockCurrentPetManaPercent,
@@ -396,7 +403,7 @@ function executePhaseThresholdFieldConfig(field: string): AplHelpers.APLPickerBu
 	};
 }
 
-function totemTypeFieldConfig(field: string): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
+export function totemTypeFieldConfig(field: string): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
 	return {
 		field: field,
 		newValue: () => TotemType.Water,
@@ -606,6 +613,50 @@ const valueKindFactories: { [f in NonNullable<APLValueKind>]: ValueKindConfig<AP
 		submenu: ['Encounter'],
 		shortDescription: '<b>True</b> while you can reach the target in melee. Only PvP mode takes you out of range.',
 		newValue: APLValueInMeleeRange.create,
+		fields: [],
+	}),
+	isMoving: inputBuilder({
+		label: 'Is Moving',
+		submenu: ['Encounter'],
+		shortDescription: '<b>True</b> while you run: searching for a mob or walking up to one in a leveling session. Only instants go out then.',
+		newValue: APLValueIsMoving.create,
+		fields: [],
+	}),
+	levelingDistance: inputBuilder({
+		label: 'Distance (Leveling)',
+		submenu: ['Leveling'],
+		shortDescription:
+			'Yards to the unit in a leveling session: where a mob you found stands, how far a pulled one still has to run, or melee range for one on you. 0 outside a session.',
+		newValue: APLValueLevelingDistance.create,
+		fields: [AplHelpers.unitFieldConfig('targetUnit', 'targets')],
+	}),
+	levelingMobsRunningIn: inputBuilder({
+		label: 'Mobs Running In',
+		submenu: ['Leveling'],
+		shortDescription: 'Mobs you pulled that are still running to you, in a leveling session.',
+		newValue: APLValueLevelingMobsRunningIn.create,
+		fields: [],
+	}),
+	levelingBandageReady: inputBuilder({
+		label: 'Bandage Ready',
+		submenu: ['Leveling'],
+		shortDescription: '<b>True</b> out of combat in a leveling session while you are not Recently Bandaged, so Bandage (Leveling) can go.',
+		newValue: APLValueLevelingBandageReady.create,
+		fields: [],
+	}),
+	levelingMobsOnUs: inputBuilder({
+		label: 'Mobs On You',
+		submenu: ['Leveling'],
+		shortDescription: 'Mobs you pulled that have reached you, in a leveling session.',
+		newValue: APLValueLevelingMobsOnUs.create,
+		fields: [],
+	}),
+	levelingMobsThisPull: inputBuilder({
+		label: 'Mobs This Pull',
+		submenu: ['Leveling'],
+		shortDescription:
+			'Mobs the current pull has taken in a leveling session, the dead ones too. 0 out of combat. Look For Mob while this is under 3 pulls three at a time.',
+		newValue: APLValueLevelingMobsThisPull.create,
 		fields: [],
 	}),
 
@@ -1030,6 +1081,14 @@ const valueKindFactories: { [f in NonNullable<APLValueKind>]: ValueKindConfig<AP
 		submenu: ['Shaman'],
 		shortDescription: 'Returns the amount of time remaining until the totem will expire.',
 		newValue: APLValueTotemRemainingTime.create,
+		includeIf: (player: Player<any>, _isPrepull: boolean) => player.getClass() === Class.ClassShaman,
+		fields: [totemTypeFieldConfig('totemType')],
+	}),
+	totemDistance: inputBuilder({
+		label: 'Totem Distance (Leveling)',
+		submenu: ['Shaman'],
+		shortDescription: 'Yards from you to your totem of this element in a leveling session. 0 outside one or without that totem.',
+		newValue: APLValueTotemDistance.create,
 		includeIf: (player: Player<any>, _isPrepull: boolean) => player.getClass() === Class.ClassShaman,
 		fields: [totemTypeFieldConfig('totemType')],
 	}),

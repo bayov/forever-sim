@@ -194,6 +194,12 @@ export class SimLog {
 
 	static async parseAll(result: RaidSimResult): Promise<SimLog[]> {
 		const lines = result.logs.split('\n');
+		const logs = await SimLog.parseLines(lines);
+		CastBeganLog.findCostResources(logs);
+		return logs;
+	}
+
+	private static parseLines(lines: string[]): Promise<SimLog[]> {
 		return Promise.all(
 			lines.map((line, lineIndex) => {
 				const params: SimLogParams = {
@@ -233,8 +239,12 @@ export class SimLog {
 					MajorCooldownUsedLog.parse(params) ||
 					CastBeganLog.parse(params) ||
 					CastCompletedLog.parse(params) ||
+					CastInterruptedLog.parse(params) ||
 					StatChangeLog.parse(params) ||
 					ExtraAttackLog.parse(params) ||
+					CooldownLog.parse(params) ||
+					MaxResourcesLog.parse(params) ||
+					TotemLog.parse(params) ||
 					Promise.resolve(new SimLog(params))
 				);
 			}),
@@ -269,12 +279,28 @@ export class SimLog {
 		return this instanceof CastCompletedLog;
 	}
 
+	isCastInterrupted(): this is CastInterruptedLog {
+		return this instanceof CastInterruptedLog;
+	}
+
 	isStatChange(): this is StatChangeLog {
 		return this instanceof StatChangeLog;
 	}
 
 	isExtraAttack(): this is ExtraAttackLog {
 		return this instanceof ExtraAttackLog;
+	}
+
+	isCooldown(): this is CooldownLog {
+		return this instanceof CooldownLog;
+	}
+
+	isMaxResources(): this is MaxResourcesLog {
+		return this instanceof MaxResourcesLog;
+	}
+
+	isTotem(): this is TotemLog {
+		return this instanceof TotemLog;
 	}
 
 	// Group events that happen at the same time.
@@ -297,10 +323,13 @@ export class SimLog {
 		return grouped;
 	}
 
+	// We cache each line's markup and hand out a copy. The markup is often a fragment, and a
+	// fragment empties when it goes into the page, so handing out the cached one again (when the
+	// Log view draws a run a second time) would show an empty line.
 	cacheOutput(cacheKey: string | number | boolean, fn: () => Element) {
-		if (this.cachedHTML[String(cacheKey)]) return this.cachedHTML[String(cacheKey)] as Element;
-		this.cachedHTML[String(cacheKey)] = fn();
-		return this.cachedHTML[String(cacheKey)]! as Element;
+		const key = String(cacheKey);
+		if (!this.cachedHTML[key]) this.cachedHTML[key] = fn();
+		return (this.cachedHTML[key] as Element).cloneNode(true) as Element;
 	}
 }
 
@@ -479,6 +508,18 @@ export class DpsLog extends SimLog {
 	}
 
 	static DPS_WINDOW = 15; // Window over which to calculate DPS.
+	static DPS_MIN_WINDOW = 5;
+
+	// The seconds we divide the window's damage by at a time in the fight.
+	//
+	// Before 15 sec into the fight, the window holds only the damage since the pull. Dividing by
+	// the full 15 sec would draw the opening as a slow climb from 0, so we divide by the time so
+	// far instead. We never divide by less than 5 sec, because the first hit or two would
+	// otherwise read as thousands of DPS.
+	static windowAt(timestamp: number): number {
+		return Math.min(DpsLog.DPS_WINDOW, Math.max(DpsLog.DPS_MIN_WINDOW, timestamp));
+	}
+
 	static fromLogs(damageDealtLogs: Array<DamageDealtLog>): Array<DpsLog> {
 		const groupedDamageLogs = SimLog.groupDuplicateTimestamps(damageDealtLogs);
 
@@ -504,7 +545,7 @@ export class DpsLog extends SimLog {
 				curDamageLogs = curDamageLogs.slice(newStartIdx);
 			}
 
-			const dps = curDamageTotal / DpsLog.DPS_WINDOW;
+			const dps = curDamageTotal / DpsLog.windowAt(ddLogGroup[0].timestamp);
 			if (isNaN(dps)) {
 				console.warn('NaN dps!');
 			}
@@ -568,12 +609,16 @@ export class AuraEventLog extends SimLog {
 	readonly isGained: boolean;
 	readonly isFaded: boolean;
 	readonly isRefreshed: boolean;
+	// When a gained or refreshed aura runs out, if it does. Results simmed before the sim
+	// wrote it don't have it.
+	readonly expiresAt: number | null;
 
-	constructor(params: SimLogParams, isGained: boolean, isFaded: boolean, isRefreshed: boolean) {
+	constructor(params: SimLogParams, isGained: boolean, isFaded: boolean, isRefreshed: boolean, expiresAt: number | null = null) {
 		super(params);
 		this.isGained = isGained;
 		this.isFaded = isFaded;
 		this.isRefreshed = isRefreshed;
+		this.expiresAt = expiresAt;
 	}
 
 	toHTML(includeTimestamp = true) {
@@ -594,7 +639,8 @@ export class AuraEventLog extends SimLog {
 				.then(aura => {
 					params.actionId = aura;
 					const event = match[1];
-					return new AuraEventLog(params, event == 'gained', event == 'faded', event == 'refreshed');
+					const expires = match[5].match(/\(expires at (-?\d+\.?\d*)\)/);
+					return new AuraEventLog(params, event == 'gained', event == 'faded', event == 'refreshed', expires ? parseFloat(expires[1]) : null);
 				});
 		} else {
 			return null;
@@ -639,12 +685,15 @@ export class AuraUptimeLog extends SimLog {
 	readonly gainedAt: number;
 	readonly fadedAt: number;
 	readonly stacksChange: Array<AuraStacksChangeLog>;
+	// When the aura was set to run out as it was gained or refreshed, if the log says.
+	readonly expiresAt: number | null;
 
-	constructor(params: SimLogParams, fadedAt: number, stacksChange: Array<AuraStacksChangeLog>) {
+	constructor(params: SimLogParams, fadedAt: number, stacksChange: Array<AuraStacksChangeLog>, expiresAt: number | null = null) {
 		super(params);
 		this.gainedAt = params.timestamp;
 		this.fadedAt = fadedAt;
 		this.stacksChange = stacksChange;
+		this.expiresAt = expiresAt;
 	}
 
 	static fromLogs(logs: Array<SimLog>, entity: Entity, encounterDuration: number): Array<AuraUptimeLog> {
@@ -695,6 +744,7 @@ export class AuraUptimeLog extends SimLog {
 					},
 					log.timestamp,
 					stacksChangeLogs,
+					gainedLog.expiresAt,
 				),
 			);
 
@@ -719,6 +769,7 @@ export class AuraUptimeLog extends SimLog {
 					},
 					encounterDuration,
 					stacksChangeLogs,
+					gainedLog.expiresAt,
 				),
 			);
 		});
@@ -902,6 +953,9 @@ export class CastBeganLog extends SimLog {
 	readonly manaCost: number;
 	readonly castTime: number;
 	readonly effectiveTime: number;
+	// What the cost is paid in, from the cast's spend line, see findCostResources. Null when the
+	// cast spent nothing.
+	costResource: ResourceType | null = null;
 
 	constructor(params: SimLogParams, manaCost: number, castTime: number, effectiveTime: number) {
 		super(params);
@@ -913,10 +967,43 @@ export class CastBeganLog extends SimLog {
 	toHTML(includeTimestamp = true) {
 		return this.cacheOutput(includeTimestamp, () => (
 			<>
-				{this.toPrefix(includeTimestamp)} Casting {this.newActionIdLink(this.actionId!)} (Cast time: {this.castTime.toFixed(2)}s, Cost:{' '}
-				{this.manaCost.toFixed(1)} Mana).
+				{this.toPrefix(includeTimestamp)} Casting {this.newActionIdLink(this.actionId!)} (Cast time: {this.castTime.toFixed(2)}s, {this.costText()}).
 			</>
 		));
+	}
+
+	private costText(): string {
+		if (!this.manaCost) return 'no cost';
+		const resource = this.costResource === null ? '' : ` ${resourceNames.get(this.costResource)}`;
+		return `Cost: ${this.manaCost.toFixed(1)}${resource}`;
+	}
+
+	// The sim's cast line has the cost but not what it's paid in, so a warrior's Whirlwind would
+	// read "22.0 Mana". The spend comes in its own line ("Spent 22.0 rage from Whirlwind"), so we
+	// take the resource from there. An instant spends at the same moment, next to the cast line.
+	// A cast with a cast time spends when it finishes. A finisher also spends its combo points,
+	// and the cost is the energy.
+	static findCostResources(logs: SimLog[]) {
+		logs.forEach((log, i) => {
+			if (!log.isCastBegan() || !log.manaCost) return;
+			// The log rounds times to 0.01s.
+			const end = log.timestamp + Math.max(log.castTime, log.effectiveTime) + 0.011;
+			for (let j = Math.max(0, i - 8); j < logs.length && (j <= i || logs[j].timestamp <= end); j++) {
+				const other = logs[j];
+				if (
+					other.isResourceChanged() &&
+					other.isSpend &&
+					other.timestamp >= log.timestamp &&
+					other.resourceType != ResourceType.ResourceTypeComboPoints &&
+					!!log.source &&
+					!!other.source?.equals(log.source) &&
+					other.actionId?.equalsIgnoringTag(log.actionId!)
+				) {
+					log.costResource = other.resourceType;
+					return;
+				}
+			}
+		});
 	}
 
 	static parse(params: SimLogParams): Promise<CastBeganLog> | null {
@@ -970,6 +1057,33 @@ export class CastCompletedLog extends SimLog {
 	}
 }
 
+// A hard cast cut off before it finished, like "Cast of {SpellID: 8008} interrupted" when we
+// start moving or die.
+export class CastInterruptedLog extends SimLog {
+	constructor(params: SimLogParams) {
+		super(params);
+	}
+
+	toHTML(includeTimestamp = true) {
+		return this.cacheOutput(includeTimestamp, () => (
+			<>
+				{this.toPrefix(includeTimestamp)} Cast of {this.newActionIdLink(this.actionId!)} interrupted.
+			</>
+		));
+	}
+
+	static parse(params: SimLogParams): Promise<CastInterruptedLog> | null {
+		const match = params.raw.match(/Cast of ({.*?}) interrupted/);
+		if (!match) return null;
+		return ActionId.fromLogString(match[1])
+			.fill(params.source?.index, params.source?.isPlayer)
+			.then(castId => {
+				params.actionId = castId;
+				return new CastInterruptedLog(params);
+			});
+	}
+}
+
 export class CastLog extends SimLog {
 	readonly castTime: number;
 	readonly effectiveTime: number;
@@ -977,11 +1091,18 @@ export class CastLog extends SimLog {
 
 	readonly castBeganLog: CastBeganLog;
 	readonly castCompletedLog: CastCompletedLog | null;
+	// Set when the cast was cut off before it finished, like by moving or dying.
+	readonly castInterruptedLog: CastInterruptedLog | null;
 
 	// All instances of damage dealt from the completion of this cast until the completion of the next cast.
 	readonly damageDealtLogs: Array<DamageDealtLog>;
 
-	constructor(castBeganLog: CastBeganLog, castCompletedLog: CastCompletedLog | null, damageDealtLogs: Array<DamageDealtLog>) {
+	constructor(
+		castBeganLog: CastBeganLog,
+		castCompletedLog: CastCompletedLog | null,
+		damageDealtLogs: Array<DamageDealtLog>,
+		castInterruptedLog: CastInterruptedLog | null = null,
+	) {
 		super({
 			raw: castBeganLog.raw,
 			logIndex: castBeganLog.logIndex,
@@ -995,10 +1116,13 @@ export class CastLog extends SimLog {
 		this.effectiveTime = castBeganLog.effectiveTime;
 		this.castBeganLog = castBeganLog;
 		this.castCompletedLog = castCompletedLog;
+		this.castInterruptedLog = castInterruptedLog;
 		this.damageDealtLogs = damageDealtLogs;
 
 		if (this.castCompletedLog && this.castBeganLog) {
 			this.castTime = this.castCompletedLog.timestamp - this.castBeganLog.timestamp;
+		} else if (this.castInterruptedLog) {
+			this.castTime = this.castInterruptedLog.timestamp - this.castBeganLog.timestamp;
 		}
 		if (
 			this.castCompletedLog &&
@@ -1027,6 +1151,7 @@ export class CastLog extends SimLog {
 	static fromLogs(logs: Array<SimLog>): Array<CastLog> {
 		const castBeganLogs = logs.filter((log): log is CastBeganLog => log.isCastBegan());
 		const castCompletedLogs = logs.filter((log): log is CastCompletedLog => log.isCastCompleted());
+		const castInterruptedLogs = logs.filter((log): log is CastInterruptedLog => log.isCastInterrupted());
 		const damageDealtLogs = logs.filter((log): log is DamageDealtLog => log.isDamageDealt());
 
 		const toBucketKey = (actionId: ActionId) => {
@@ -1040,6 +1165,7 @@ export class CastLog extends SimLog {
 		};
 		const castBeganLogsByAbility = bucket(castBeganLogs, log => toBucketKey(log.actionId!));
 		const castCompletedLogsByAbility = bucket(castCompletedLogs, log => toBucketKey(log.actionId!));
+		const castInterruptedLogsByAbility = bucket(castInterruptedLogs, log => toBucketKey(log.actionId!));
 		const damageDealtLogsByAbility = bucket(damageDealtLogs, log => toBucketKey(log.actionId!));
 
 		const castLogs: Array<CastLog> = [];
@@ -1048,20 +1174,56 @@ export class CastLog extends SimLog {
 			const abilityCastsCompleted = castCompletedLogsByAbility[bucketKey];
 			const abilityDamageDealt = damageDealtLogsByAbility[bucketKey];
 
+			// A cast that was interrupted, like a Lesser Healing Wave cut off when we died, never
+			// completes. It ends at its "Cast of ... interrupted" line, which belongs to the last cast
+			// of the ability that began before it. Without this, each later cast took the completion
+			// of the one after it, and the interrupted cast lasted until the next one completed.
+			//
+			// Once in a while a cast also ends with neither line, and the next cast of the ability
+			// begins later on (we've seen it with Lesser Healing Wave in a leveling session). It gets
+			// no completion either, so it shows for its cast time.
+			const endedEarly = new Map<CastBeganLog, CastInterruptedLog | null>();
+			(castInterruptedLogsByAbility[bucketKey] ?? []).forEach(interruptedLog => {
+				let began: CastBeganLog | undefined;
+				for (const log of abilityCastsBegan) {
+					if (log.logIndex > interruptedLog.logIndex) break;
+					began = log;
+				}
+				if (began && !endedEarly.has(began)) endedEarly.set(began, interruptedLog);
+			});
+			const completedIndexes = (abilityCastsCompleted ?? []).map(log => log.logIndex);
+			let nextCompleted = 0;
+			abilityCastsBegan.forEach((log, i) => {
+				while (nextCompleted < completedIndexes.length && completedIndexes[nextCompleted] < log.logIndex) nextCompleted++;
+				const next = abilityCastsBegan[i + 1];
+				// Two casts that begin at the same moment, like a double extra attack, may log both
+				// begins before the completions, so those keep pairing in order.
+				if (!next || endedEarly.has(log) || next.timestamp <= log.timestamp) return;
+				const completesBeforeNext = nextCompleted < completedIndexes.length && completedIndexes[nextCompleted] < next.logIndex;
+				if (!completesBeforeNext) endedEarly.set(log, null);
+			});
+
 			let ddIdx = 0;
+			// The other casts pair with the completed logs in order.
+			let completedIdx = 0;
 			for (let cbIdx = 0; cbIdx < abilityCastsBegan.length; cbIdx++) {
 				const cbLog = abilityCastsBegan[cbIdx];
+				if (endedEarly.has(cbLog)) {
+					castLogs.push(new CastLog(cbLog, null, [], endedEarly.get(cbLog)));
+					continue;
+				}
 
 				// Assume cast completed log is the same index because they always come in pairs.
 				// Only exception is final pair, where there might be a cast began without a cast completed.
 				let ccLog: CastCompletedLog | null = null;
 				let nextCcLog: CastCompletedLog | null = null;
-				if (abilityCastsCompleted && cbIdx < abilityCastsCompleted.length) {
-					ccLog = abilityCastsCompleted[cbIdx];
-					if (cbIdx + 1 < abilityCastsCompleted.length) {
-						nextCcLog = abilityCastsCompleted[cbIdx + 1];
+				if (abilityCastsCompleted && completedIdx < abilityCastsCompleted.length) {
+					ccLog = abilityCastsCompleted[completedIdx];
+					if (completedIdx + 1 < abilityCastsCompleted.length) {
+						nextCcLog = abilityCastsCompleted[completedIdx + 1];
 					}
 				}
+				completedIdx++;
 
 				// Find all damage dealt logs between the cur and next cast completed logs.
 				const ddLogs = [];
@@ -1163,5 +1325,109 @@ export class ExtraAttackLog extends SimLog {
 		} else {
 			return null;
 		}
+	}
+}
+
+// A spell or item went on cooldown, like "{SpellID: 17364} on cooldown until 12.500 (timer 4)".
+//
+// Spells that share a cooldown log the same timer number. One cast can log more than one timer,
+// like a trinket with its own cooldown and the cooldown it shares with the other trinkets.
+export class CooldownLog extends SimLog {
+	readonly readyAt: number;
+	readonly timer: number;
+
+	constructor(params: SimLogParams, readyAt: number, timer: number) {
+		super(params);
+		this.readyAt = readyAt;
+		this.timer = timer;
+	}
+
+	toHTML(includeTimestamp = true) {
+		return this.cacheOutput(includeTimestamp, () => (
+			<>
+				{this.toPrefix(includeTimestamp)} {this.newActionIdLink(this.actionId!)} on cooldown until {this.readyAt.toFixed(2)}s.
+			</>
+		));
+	}
+
+	static parse(params: SimLogParams): Promise<CooldownLog> | null {
+		const match = params.raw.match(/] ({.*?}) on cooldown until (-?\d+\.?\d*) \(timer (-?\d+)\)/);
+		if (!match) return null;
+		return ActionId.fromLogString(match[1])
+			.fill(params.source?.index, params.source?.isPlayer)
+			.then(actionId => {
+				params.actionId = actionId;
+				return new CooldownLog(params, parseFloat(match[2]), parseInt(match[3]));
+			});
+	}
+}
+
+// The size of each of a unit's bars at the pull, like `Max resources: {"Health": 4210.000}`.
+export class MaxResourcesLog extends SimLog {
+	readonly maxValues: Partial<Record<ResourceType, number>>;
+
+	constructor(params: SimLogParams, maxValues: Partial<Record<ResourceType, number>>) {
+		super(params);
+		this.maxValues = maxValues;
+	}
+
+	toHTML(includeTimestamp = true) {
+		return this.cacheOutput(includeTimestamp, () => (
+			<>
+				{this.toPrefix(includeTimestamp)} Max{' '}
+				{Object.entries(this.maxValues)
+					.map(([type, value]) => `${resourceNames.get(Number(type) as ResourceType)?.toLowerCase()} ${value!.toFixed(0)}`)
+					.join(', ')}
+				.
+			</>
+		));
+	}
+
+	static parse(params: SimLogParams): Promise<MaxResourcesLog> | null {
+		const match = params.raw.match(/Max resources: ({.*})/);
+		if (!match) return null;
+		const maxValues: Partial<Record<ResourceType, number>> = {};
+		try {
+			Object.entries(JSON.parse(match[1]) as Record<string, number>).forEach(([name, value]) => {
+				const type = stringToResourceType(name);
+				if (type != ResourceType.ResourceTypeNone) maxValues[type] = value;
+			});
+		} catch {
+			return null;
+		}
+		return Promise.resolve(new MaxResourcesLog(params, maxValues));
+	}
+}
+
+// A shaman's totem went down in its element's slot, like
+// "{SpellID: 10438} down in the Fire slot until 55.000". A new totem in the slot takes the old
+// one's place.
+export class TotemLog extends SimLog {
+	readonly element: string;
+	readonly until: number;
+
+	constructor(params: SimLogParams, element: string, until: number) {
+		super(params);
+		this.element = element;
+		this.until = until;
+	}
+
+	toHTML(includeTimestamp = true) {
+		return this.cacheOutput(includeTimestamp, () => (
+			<>
+				{this.toPrefix(includeTimestamp)} {this.newActionIdLink(this.actionId!)} down in the {this.element} slot until {this.until.toFixed(2)}s.
+			</>
+		));
+	}
+
+	static parse(params: SimLogParams): Promise<TotemLog> | null {
+		const match = params.raw.match(/] ({.*?}) down in the (\w+) slot until (-?\d+\.?\d*)/);
+		if (!match) return null;
+		return ActionId.fromLogString(match[1])
+			.fill(params.source?.index, params.source?.isPlayer)
+			.then(actionId => {
+				params.actionId = actionId;
+				return new TotemLog(params, match[2], parseFloat(match[3]));
+			});
 	}
 }

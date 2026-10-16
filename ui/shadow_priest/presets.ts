@@ -129,15 +129,23 @@ export const APLP1Shadow = PresetUtils.makePresetAPLRotation('Shadow', P1APL);
 //   it a 3 sec channel left either one down for up to 3 sec.
 // - Vampiric Embrace is left out. It heals the party and deals no damage, and keeping it up costs
 //   17.6 DPS at 180 sec in GCDs. A raid that wants its healing can turn the knob on.
-// - Mind Blast above Shadow Word: Death, 2.3 ahead, so Inner Focus lands on Mind Blast.
+// - Shadow Word: Death above Mind Blast since client 70425 (18 sec cooldown, 200% crits in
+//   Shadowform): +1.5 / +1.8 / +1.7 at 120 / 180 / 300 sec. Inner Focus still waits for Mind
+//   Blast.
 // - Starshards (Night Elf) and Chastise (Dwarf) are left out. In Shadowform a Starshards tick
 //   hits no harder than a Mind Flay tick and the 6 sec channel holds up Mind Blast, 30 DPS
 //   lost at any length. Chastise loses 4.7 to the Mind Flay GCD it takes.
-// - Dark Sacrifice (Undead) under 40% mana. Mana never gets that low in a raid fight on this
-//   set (about 25 min to empty), so it is there for longer fights.
+// - Dark Sacrifice (Undead) under 10% mana. Level 60 never gets that low (about 13 min to
+//   empty); Shadow + Holy does since 70425, and casts it only when it must (+2.9 / +5.8 / +2.1
+//   against 40%).
 // - The on-use trinket and the Major Spellblasting Potion go at -0.1 sec so the pre-cast Mind
 //   Blast landing at 0 gets them (rotation auditor, 2026-10-13): +1.0 / +0.7 / +0.4 at 120 / 180
 //   / 300 sec, the same for Shadow + Holy.
+//
+// Client 70425 (2026-10-16): Devouring Plague's cooldown is 24 sec, as long as its damage over
+// time, so it stays up all fight. The knob search on the new talents, with the raid hits,
+// keeps the rest of the rotation: 921.4 / 924.9 / 921.9 at 120 / 180 / 300 sec as an Undead.
+// Inner Focus right before Devouring Plague (now free under it) is no better.
 //
 // A hand audit of the timeline on the final build (2026-10-12): Shadowform holds all fight,
 // Shadow Weaving reaches 5 stacks 6 sec in and stays there, Inner Focus goes on the first Mind
@@ -153,9 +161,8 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // Infusion on cooldown after a Smite 2 sec before the pull that lands at 0 (+6.0; the on-use
 // trinket at -0.1 sec so it lands with the trinket up, +1.0 / +0.7 / +0.4), Holy Fire
 // whenever its damage over time is down (Power in Light gives
-// Smite 10% while it is up), Shadow Word: Pain, Devouring Plague above 40% mana, Chastise for a
-// Dwarf, Inner Focus on Holy Fire (0.2 ahead of Smite at 180 sec, 0.6 at 300; Devouring Plague
-// is not in its free-cast mask), then rank 8 Smite while the mana lasts the fight
+// Smite 10% while it is up), Shadow Word: Pain, Devouring Plague above 60% mana, Chastise for a
+// Dwarf, Inner Focus on cooldown for the next Smite, then rank 8 Smite while the mana lasts the fight
 // at 35 mana a second and rank 7 Smite after. Forever's downranking penalty (Blizzard's
 // development notes, 2026-10-01; foreverchanges.pro/downranking's measured size, see notes.md)
 // leaves rank 7 (level 46) its full coefficient at 60 and the earlier rank 4 fallback none: the
@@ -165,9 +172,19 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // back once, when a Smite would no longer land before the fight ends: 725.5 / 716.5 / 645.7
 // against 719.7 / 713.5 / 644.5 at 120 / 180 / 300 sec (rotation audit 19b, 2026-10-15). A timeline shows Smite
 // every 2 sec (Divine Fury) and Holy Fire back up within a cast of falling off.
+//
+// Client 70425 (2026-10-16) cut Devouring Plague's cooldown to 24 sec, which would spend
+// Smite's mana: the 40% floor fell to 733.2 / 709.5 / 617.9 at 120 / 180 / 300 sec. Above 60%
+// with Inner Focus on cooldown it is 727.8 / 714.6 / 642.2 on the old talents; at 300 sec
+// leaving it out is better still (+16), at 120 sec the 40% floor (+5). Devouring Plague is
+// free under Inner Focus (its fourth class mask word), but Inner Focus on it is behind.
+//
+// Power in Light also counts Shadow Word: Pain since 70425 (update ledger PRI-70425-03), so
+// Holy Fire's damage over time is no longer needed for it, and its mana goes to Smite:
+// 744.0 / 724.6 / 639.7 at 120 / 180 / 300 sec against 729.3 / 716.8 / 646.6 with it, with
+// Devouring Plague now above 80% mana (2026-10-16). The notes above are from before.
 export const APLLevel60Smite = PresetUtils.makePresetAPLRotation('Level 60 Smite', Level60SmiteAPL, {
-	tooltip:
-		"The optimizer's best rotation for the Smite talents: Holy Fire up for Power in Light, Shadow Word: Pain, Smite to fill, a lower rank once mana runs short.",
+	tooltip: "The optimizer's best rotation for the Smite talents: Shadow Word: Pain up for Power in Light, Smite to fill, a lower rank once mana runs short.",
 	group: 'Level 60',
 });
 
@@ -186,6 +203,15 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 // from deep Shadow with Discipline, deep Shadow with Holy, and 31 Discipline (Power Infusion)
 // with 20 Shadow. On 2026-10-13 (the bundled gear round, searches rerun) the build is 853.5 / 854.4 / 851.7 at
 // 120 / 180 / 300 sec as an Undead.
+//
+// Client 70425 (2026-10-16) removed Shadow Affinity, added Dark Inspiration, moved Mental
+// Strength up and cut it to 2% a rank, made Improved Mind Flay grow tick by tick, widened Twin
+// Disciplines to Mind Flay and Shadow Word: Death, and the raid hits made pushback count. The
+// search from the carried over build (Shadow Affinity's points in Dark Inspiration) trades
+// Holy Precision (hit for Holy spells only) and Martyrdom for Twilight Focus 3 (70% chance to
+// ignore pushback on Mind Blast and Mind Flay) and Early Demise 2: 914.1 / 917.5 / 914.6 to
+// 919.9 / 923.1 / 920.2 as an Undead, 924.6 / 928.6 / 926.0 as a Human. The notes below are
+// from before 70425.
 // - Shadow 31: Shadow Focus 5, Improved Shadow Word: Pain, Improved Mind Blast 5, Mind Flay
 //   and Improved Mind Flay 2, Shadow Weaving 3, Devouring Contagion 2, Darkness 5, Shadowform.
 //   Shadow Affinity and a point of Shadow Reach only fill the rows (threat and range).
@@ -195,11 +221,16 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 //   Mental Agility, Meditation and the row 2 points fill the rows: mana never runs out.
 // - Early Demise 2 in place of 2 Mental Strength is 0.7 behind.
 // - The Power Infusion build loses Shadowform and is out of mana 107 sec in: 601 at 180 sec.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '005030211305--500321501201302051' }), {
-	tooltip: 'Level 60 talents from the talent search: deep Shadow with Twin Disciplines, Mental Strength and Inner Focus.',
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '00500501103-3-50052101231302251' }), {
+	tooltip: 'Level 60 talents from the talent search: deep Shadow with Twin Disciplines, Mental Strength, Inner Focus and Twilight Focus.',
 	group: 'Level 60',
 });
 
+// Client 70425 (2026-10-16): the Shadow points follow Level 60's (Early Demise 2 from Holy Reach,
+// which only adds range), so it keeps 18 Holy points: 874.8 / 878.7 / 863.5 to 878.1 / 881.7 /
+// 866.5 as an Undead, 882.0 / 886.4 / 802.9 as a Human, 4.5% behind Level 60 at 180 sec. An
+// unconstrained search leaves Holy for the Level 60 build (923.4). The notes below are from
+// before 70425.
 // The same Shadow points with 20 in Holy instead of Discipline (Twilight Focus, Spell Warding,
 // Inspiration, Improved Healing and the rest of the healing utility a raid may ask for). None of
 // the Holy talents adds Shadow damage, so it gives up Twin Disciplines and Mental Strength:
@@ -207,8 +238,8 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // 2.5% behind at 180 sec. A talent search from it trades Holy points for Twin Disciplines and
 // Shadow (+9.8 with 13 Holy), which defeats the build's purpose, so it keeps its 20 Holy. With
 // Dark Sacrifice left out of the rotation it would gain 5.1 (837.1).
-export const TalentsLevel60Holy = PresetUtils.makePresetTalents('Level 60 + Holy', SavedTalents.create({ talentsString: '-3025011323-500321501201302051' }), {
-	tooltip: 'The Level 60 Shadow points with 20 Holy points for healing utility, about 22 DPS behind.',
+export const TalentsLevel60Holy = PresetUtils.makePresetTalents('Level 60 + Holy', SavedTalents.create({ talentsString: '-3025011303-50052101231302251' }), {
+	tooltip: 'The Level 60 Shadow points with 18 Holy points for healing utility, about 42 DPS behind.',
 	group: 'Level 60',
 });
 
@@ -222,15 +253,18 @@ export const TalentsLevel60Holy = PresetUtils.makePresetTalents('Level 60 + Holy
 // Shadow Word: Pain's hit. The deep Holy start ends at 608.9.
 //
 // On its own set with its own consumes (see the build) it is 712.4 / 706.5 / 643.8 at 120 / 180
-// / 300 sec as an Undead, whose Dark Sacrifice comes when the mana runs low. That is 17% behind
+// / 300 sec as an Undead, whose Dark Sacrifice comes when the mana runs low. Client 70425 (2026-10-16,
+// with the raid hits): Twilight Focus 3 in place of Inspiration (70% chance to ignore pushback
+// on Smite and Holy Fire), 712.7 / 700.9 / 637.2 to 723.2 / 710.6 / 641.0, 23% behind Shadow
+// at 180 sec. That is 17% behind
 // Shadow at 180 sec and 24% at 300: Smite is a mana hungry filler and nothing in the tree halves its cost the way
 // Shadowform does for Shadow spells.
-export const TalentsLevel60Smite = PresetUtils.makePresetTalents('Level 60 Smite', SavedTalents.create({ talentsString: '525030231305001001-00505113002-3' }), {
-	tooltip: 'Holy damage talents: 31 Discipline (Power in Light, Penance, Power Infusion) and 17 Holy (Divine Fury, Searing Light).',
+export const TalentsLevel60Smite = PresetUtils.makePresetTalents('Level 60 Smite', SavedTalents.create({ talentsString: '525035231030001001-30505110002-3' }), {
+	tooltip: 'Holy damage talents: 31 Discipline (Power in Light, Penance, Power Infusion) and 17 Holy (Divine Fury, Searing Light, Twilight Focus).',
 	group: 'Level 60',
 });
 
-export const TalentsP1Shadow = PresetUtils.makePresetTalents('Shadow', SavedTalents.create({ talentsString: '005030231301--500321501201302251' }));
+export const TalentsP1Shadow = PresetUtils.makePresetTalents('Shadow', SavedTalents.create({ talentsString: '00503123103--50052101231302251' }));
 
 export const TalentPresets = {
 	[Phase.Phase1]: [TalentsLevel60, TalentsLevel60Holy, TalentsLevel60Smite, TalentsP1Shadow],
@@ -293,10 +327,10 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	moonkinAura: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
 	retributionAura: TristateEffect.TristateEffectImproved,
-	sanctityAura: true,
 	shadowProtection: true,
 	thorns: TristateEffect.TristateEffectImproved,
 	trueshotAura: true,
+	salvation: true,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
@@ -351,6 +385,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		executeProportion20: 0.2,
 		executeProportion25: 0.25,
 		executeProportion35: 0.35,
+		...PresetUtils.LEVEL_60_RAID_DAMAGE,
 		targets: [
 			{
 				id: 213336,
@@ -375,28 +410,26 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 );
 
 // Every race a priest can be under Forever, on the Level 60 build with the same seed (20000
-// iterations, standard error 0.2 or less), at 120 / 180 / 300 sec (2026-10-13, bundled gear
-// round):
-//   Undead    853.5 / 854.4 / 851.7  (best overall and Horde)
-//   Gnome     847.5 / 849.6 / 846.2  (best Alliance)
-//   Night Elf 846.5 / 846.1 / 843.4
-//   Human     838.8 / 839.6 / 837.1
-//   Dwarf     838.6 / 839.5 / 836.9
-//   Troll     838.4 / 839.2 / 836.6
-// Over a Human, Undead's Touch of the Grave is 14.8, Gnome's Eureka! 10.0, Night Elf's Elune's
-// Light 6.5. With the
-// staff no priest race has a weapon type racial, so the table is the same with them off (with
-// the earlier sword a Human's 2% crit tied it with an Undead). Troll's Berserking only speeds up
-// Mind Blast's cast, channels and the GCD do not speed up, so it is worth nothing. Starshards and
-// Chastise lose DPS (see the rotation).
+// iterations, standard error 0.2 or less), at 120 / 180 / 300 sec (2026-10-16, client 70425,
+// with the raid hits):
+//   Human     924.6 / 928.6 / 926.0  (best overall and Alliance)
+//   Gnome     921.1 / 927.2 / 923.5
+//   Undead    921.4 / 924.9 / 921.9  (best Horde)
+//   Dwarf     919.6 / 923.5 / 920.8
+//   Night Elf 918.3 / 920.8 / 917.8
+//   Troll     909.5 / 913.4 / 910.7
+// Client 70425 made Human's Ruthless 2% crit with any weapon (and spell), which puts Human ahead
+// of Undead's Touch of the Grave. Troll's Berserking only speeds up Mind Blast's cast, channels
+// and the GCD do not speed up, so it is worth nothing. Starshards and Chastise lose DPS (see the
+// rotation).
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Undead on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Human on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60,
 	encounter: EncounterLevel60,
-	race: Race.RaceUndead,
+	race: Race.RaceHuman,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -404,14 +437,16 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 // Without Twin Disciplines and Mental Strength the Holy build runs low on a long fight, so it
 // adds the Greater Mageblood Elixir. With it the Major Spellblasting Potion beat the Major Mana
 // Potion at every length on the earlier gear (rotation audit, 2026-10-12). Every race on it
-// (2026-10-13, bundled gear round, 120 / 180 / 300 sec):
-//   Undead    834.8 / 832.7 / 830.9  (best overall and Horde)
-//   Gnome     829.8 / 832.3 / 809.1  (best Alliance)
-//   Night Elf 829.1 / 829.2 / 785.7
-//   Human     821.4 / 822.7 / 779.5
-//   Dwarf     821.3 / 822.6 / 778.7
-//   Troll     821.1 / 822.4 / 777.5
-// Undead's Dark Sacrifice keeps it in mana on a long fight; the others run dry before 300 sec.
+// (2026-10-16, client 70425, with the raid hits, 120 / 180 / 300 sec):
+//   Human     882.0 / 886.4 / 802.9  (best at 180 sec, and best Alliance)
+//   Gnome     878.6 / 884.9 / 822.2
+//   Undead    879.3 / 882.9 / 865.1  (best Horde, and best at 300 sec)
+//   Dwarf     876.7 / 881.0 / 797.4
+//   Night Elf 875.8 / 878.9 / 796.3
+//   Troll     867.5 / 871.8 / 788.1
+// Devouring Plague every 24 sec (client 70425) empties the mana before 300 sec. Undead's Dark
+// Sacrifice keeps it going (865.1 at 300 sec); every other race runs dry. The preset follows
+// the 180 sec fight like the others and takes the Human.
 export const ConsumesHoly = Consumes.create({
 	...DefaultConsumes,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
@@ -427,12 +462,13 @@ export const EncounterLevel60Holy = PresetUtils.makePresetEncounter('Level 60 + 
 
 export const PresetBuildLevel60Holy = PresetUtils.makePresetBuild('Level 60 + Holy', {
 	group: 'Level 60',
-	tooltip: 'Level 60 with the Holy sub tree talents and Greater Mageblood, 22 DPS behind Level 60.',
+	tooltip:
+		'Level 60 with the Holy sub tree talents and Greater Mageblood, 42 DPS behind Level 60. As a Human it runs out of mana by 300 sec (802.9; an Undead holds 865.1 with Dark Sacrifice).',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60Holy,
 	rotation: APLLevel60,
 	encounter: EncounterLevel60Holy,
-	race: Race.RaceUndead,
+	race: Race.RaceHuman,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -463,19 +499,18 @@ export const EncounterLevel60Smite = PresetUtils.makePresetEncounter('Level 60 S
 });
 
 // Smite as every race on its set and consumes (20000 iterations, 120 / 180 / 300 sec,
-// 2026-10-13, bundled gear round):
-//   Undead    712.4 / 706.5 / 643.8  (best overall and Horde)
-//   Gnome     716.0 / 699.1 / 618.8  (best Alliance)
-//   Night Elf 711.5 / 689.0 / 606.7
-//   Human     707.9 / 688.1 / 607.5
-//   Troll     709.7 / 686.6 / 603.2
-//   Dwarf     707.0 / 685.0 / 602.7  (the generic boss is no Humanoid, so no Chastise; it cost
-//             the Dwarf 8 DPS against a Humanoid)
+// 2026-10-16, client 70425, with the raid hits, without Holy Fire):
+//   Undead    744.0 / 724.6 / 639.7  (best overall and Horde)
+//   Gnome     742.0 / 706.8 / 609.8  (best Alliance)
+//   Human     732.9 / 697.1 / 602.5
+//   Dwarf     728.9 / 691.2 / 595.6  (the generic boss is no Humanoid, so no Chastise)
+//   Night Elf 728.7 / 690.2 / 595.2
+//   Troll     728.5 / 689.4 / 593.5
 // Undead's Dark Sacrifice and Gnome's larger mana pool and cheaper Eureka! casts are worth the
 // most once the mana runs out.
 export const PresetBuildLevel60Smite = PresetUtils.makePresetBuild('Level 60 Smite', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Undead Holy damage priest (Smite, Holy Fire, Power Infusion) on the synthetic Phase 1 gear, 17% behind Shadow.',
+	tooltip: 'Level 60 Undead Holy damage priest (Smite, Power Infusion) on the synthetic Phase 1 gear, 22% behind Shadow.',
 	gear: GearLevel60Phase1Smite,
 	talents: TalentsLevel60Smite,
 	rotation: APLLevel60Smite,

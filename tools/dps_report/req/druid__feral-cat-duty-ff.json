@@ -4,7 +4,7 @@
       {
         "players": [
           {
-            "race": "RaceNightElf",
+            "race": "RaceTauren",
             "class": "ClassDruid",
             "equipment": {
               "items": [
@@ -173,80 +173,7 @@
                       }
                     }
                   },
-                  "notes": "Berserk with the trinket, unless waiting for it would lose a use. Without the talent ignore the warning on this line."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 1259799
-                      }
-                    },
-                    "condition": {
-                      "or": {
-                        "vals": [
-                          {
-                            "and": {
-                              "vals": [
-                                {
-                                  "not": {
-                                    "val": {
-                                      "auraIsActive": {
-                                        "auraId": {
-                                          "spellId": 417141
-                                        }
-                                      }
-                                    }
-                                  }
-                                },
-                                {
-                                  "not": {
-                                    "val": {
-                                      "spellIsReady": {
-                                        "spellId": {
-                                          "spellId": 417141
-                                        }
-                                      }
-                                    }
-                                  }
-                                }
-                              ]
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "lhs": {
-                                "spellUsesLostByDelay": {
-                                  "delay": {
-                                    "auraRemainingTime": {
-                                      "auraId": {
-                                        "spellId": 417141
-                                      }
-                                    }
-                                  },
-                                  "minTimeLeft": {
-                                    "const": {
-                                      "val": "0s"
-                                    }
-                                  },
-                                  "spellId": {
-                                    "spellId": 1259799
-                                  }
-                                }
-                              },
-                              "op": "OpGt",
-                              "rhs": {
-                                "const": {
-                                  "val": "0"
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  },
-                  "notes": "Elune's Light outside Berserk, unless waiting would lose a use."
+                  "notes": "Without the talent ignore the warning on this line."
                 },
                 {
                   "action": {
@@ -301,7 +228,7 @@
                               "op": "OpLt",
                               "rhs": {
                                 "const": {
-                                  "val": "1s"
+                                  "val": "7s"
                                 }
                               }
                             }
@@ -379,7 +306,7 @@
                       }
                     }
                   },
-                  "notes": "Shifting Power once the Energy is low, but not while a Ferocious Bite is due (its Energy goes into Shreds). Without the talent ignore the warning on this line."
+                  "notes": "Its Energy goes into Shreds. Without the talent ignore the warning on this line."
                 },
                 {
                   "action": {
@@ -420,8 +347,7 @@
                         ]
                       }
                     }
-                  },
-                  "notes": "Ferocious Bite at any combo points in the last seconds of the fight."
+                  }
                 },
                 {
                   "action": {
@@ -473,8 +399,7 @@
                         ]
                       }
                     }
-                  },
-                  "notes": "Rip whenever it is down."
+                  }
                 },
                 {
                   "action": {
@@ -557,8 +482,7 @@
                         ]
                       }
                     }
-                  },
-                  "notes": "Ferocious Bite at 5 combo points while Rip has time left."
+                  }
                 },
                 {
                   "action": {
@@ -580,8 +504,7 @@
                         }
                       }
                     }
-                  },
-                  "notes": "The builder."
+                  }
                 }
               ]
             },
@@ -604,6 +527,7 @@
       "powerWordFortitude": "TristateEffectImproved",
       "bloodPact": "TristateEffectImproved",
       "strengthOfEarthTotem": "TristateEffectRegular",
+      "graceOfAirTotem": "TristateEffectRegular",
       "arcaneBrilliance": true,
       "divineSpirit": true,
       "battleShout": "TristateEffectImproved",
@@ -614,7 +538,8 @@
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
-      "totemWeaponBuff": "TotemWeaponBuffWindfury"
+      "totemWeaponBuff": "TotemWeaponBuffWindfury",
+      "salvation": true
     },
     "debuffs": {
       "judgementOfWisdom": true,
@@ -694,7 +619,9 @@
         "swingSpeed": 2,
         "parryHaste": true
       }
-    ]
+    ],
+    "raidDamageHitsPerMinute": 2,
+    "raidDamagePerHit": 1500
   },
   "simOptions": {
     "iterations": 1000,

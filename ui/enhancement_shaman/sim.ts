@@ -11,7 +11,6 @@ import { Stats } from '../core/proto_utils/stats.js';
 import { getSpecIcon, specNames } from '../core/proto_utils/utils.js';
 import * as ShamanInputs from './inputs.js';
 import * as Presets from './presets.js';
-import { buildStartingTotemsSettings, buildStartingTotemsSummary, startingTotemPrepullNote } from './starting_totems';
 
 const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 	cssClass: 'enhancement-shaman-sim-ui',
@@ -103,7 +102,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 		specOptions: Presets.DefaultOptions,
 		other: Presets.OtherDefaults,
 		// Default raid/party buffs settings.
-		raidBuffs: Presets.PartyTotemsRaidBuffs,
+		raidBuffs: Presets.DefaultRaidBuffs,
 		partyBuffs: PartyBuffs.create({}),
 		individualBuffs: Presets.DefaultIndividualBuffs,
 		debuffs: Presets.DefaultDebuffs,
@@ -118,17 +117,11 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 	otherInputs: {
 		inputs: [ShamanInputs.ShamanImbueInput, OtherInputs.TankAssignment, OtherInputs.InFrontOfTarget],
 	},
-	encounterInputs: {
-		inputs: [ShamanInputs.RaidDamageHitsInput, ShamanInputs.RaidDamageHitsVariationInput],
-	},
 	itemSwapConfig: {
 		itemSlots: [ItemSlot.ItemSlotMainHand, ItemSlot.ItemSlotOffHand],
 	},
 	customSections: [],
-	classSettings: buildStartingTotemsSettings,
 	migrateSettings: migrateShamanImbue,
-	rotationTabHeader: buildStartingTotemsSummary,
-	prepullActionNote: startingTotemPrepullNote,
 	encounterPicker: {
 		// Whether to include 'Execute Duration (%)' in the 'Encounter' section of the settings tab.
 		showExecuteProportion: false,
@@ -137,11 +130,8 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 	presets: {
 		builds: [
 			Presets.PresetBuildLevel60,
-			Presets.PresetBuildLevel60TotemDuty,
 			Presets.PresetBuildLevel60WaterShield,
-			Presets.PresetBuildLevel60WaterShieldTotemDuty,
 			Presets.PresetBuildLevel60ManaTide,
-			Presets.PresetBuildLevel60ManaTideTotemDuty,
 			Presets.PresetBuildLevel30p5,
 			Presets.PresetBuildLevel30PvP,
 			Presets.PresetBuildLevel30PvPVsCloth,
@@ -150,6 +140,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 			Presets.PresetBuildLevel30PvPVsShaman,
 			Presets.PresetBuildLevel30PvPVsWarrior,
 			Presets.PresetBuildLevel30PvPVsProt,
+			Presets.PresetBuildLevel30Leveling,
 		],
 		epWeights: Presets.EPPresets,
 		talents: [

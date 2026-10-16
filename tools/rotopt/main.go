@@ -43,7 +43,7 @@ func main() {
 	level := flag.Int("level", 0, "override the player's level, e.g. 20")
 	targets := flag.Int("targets", 0, "override the number of enemies, copies of the encounter's first target, for AoE rotations")
 	bonusTalents := flag.Int("bonus-talents", -1, "override the player's extra talent points beyond what the level grants, e.g. 5 for the Forever beta's 16 points at level 20")
-	bonus := flag.String("bonus", "", "extra stats on top of the gear, to see how the answers move with better itemization, e.g. AttackPower=400,Stamina=100")
+	bonus := flag.String("bonus", "", "extra stats on top of the gear, to see how the answers move with better itemization, e.g. AttackPower=400,Stamina=100 (weapon DPS too, like MainHandDps=2)")
 	printStats := flag.Bool("print-stats", false, "print the player's final stats and exit")
 	weights := flag.Bool("weights", false, "print stat weights for the starting knobs at the first fight length and exit")
 	talents := flag.String("talents", "", "override the player's talent string")
@@ -81,7 +81,15 @@ func main() {
 	outName := flag.String("name", "", "file name base for -out, defaults to the template name")
 	breakdown := flag.Bool("breakdown", false, "print the damage of every spell and attack for the starting knobs at the first fight length, no search")
 	timeline := flag.Bool("timeline", false, "print one iteration's cooldown and finisher casts for the starting knobs at the first fight length, no search")
+	objective := flag.String("objective", "mobs", "leveling settings: what to maximize, mobs (killed in a session) or xp (an hour, for comparing mob levels)")
+	mobOffset := flag.Int("mob-offset", 0, "leveling settings: the mobs' level less ours (the session's mob_level_offset)")
+	session := flag.Bool("session", false, "leveling settings: print one session's pulls, rests and searches for the starting knobs, no search")
+	sessionRaw := flag.Bool("session-raw", false, "leveling settings: with -session, print the session's whole log as the UI gets it instead of the summary")
+	sessionSeed := flag.Int64("session-seed", 1, "leveling settings: the random seed of the -session, for another sample session")
+	seed := flag.Int64("seed", 1, "random seed of the scoring runs, to check a gain holds on other fights or sessions")
 	flag.Parse()
+	simSeed = *seed
+	levelingObjective = *objective
 
 	log.SetOutput(io.Discard)
 	sim.RegisterAll()
@@ -145,6 +153,15 @@ func main() {
 		}
 		for _, kv := range strings.Split(*bonus, ",") {
 			name, val, _ := strings.Cut(kv, "=")
+			v, _ := strconv.ParseFloat(val, 64)
+			// Weapon DPS is a pseudo stat, like MainHandDps.
+			if pseudo, ok := proto.PseudoStat_value["PseudoStat"+name]; ok {
+				for len(p.BonusStats.PseudoStats) < len(proto.PseudoStat_name) {
+					p.BonusStats.PseudoStats = append(p.BonusStats.PseudoStats, 0)
+				}
+				p.BonusStats.PseudoStats[pseudo] += v
+				continue
+			}
 			stat, ok := proto.Stat_value["Stat"+name]
 			if !ok {
 				fmt.Fprintf(os.Stderr, "unknown stat %q\n", name)
@@ -153,7 +170,6 @@ func main() {
 			for len(p.BonusStats.Stats) <= int(stat) {
 				p.BonusStats.Stats = append(p.BonusStats.Stats, 0)
 			}
-			v, _ := strconv.ParseFloat(val, 64)
 			p.BonusStats.Stats[stat] += v
 		}
 	}
@@ -174,6 +190,24 @@ func main() {
 	for _, d := range strings.Split(*durs, ",") {
 		v, _ := strconv.ParseFloat(d, 64)
 		durations = append(durations, v)
+	}
+	if leveling := setup.request.Encounter.GetLeveling(); leveling != nil {
+		// A session has its own length: one run per candidate.
+		durations = durations[:1]
+		if *mobOffset != 0 {
+			leveling.MobLevelOffset = int32(*mobOffset)
+		}
+		if *session {
+			if *sessionRaw {
+				fmt.Print(setup.sessionLog(template.Build(start), *sessionSeed))
+			} else {
+				fmt.Print(setup.session(template.Build(start), *sessionSeed))
+			}
+			return
+		}
+	} else if *session || *mobOffset != 0 {
+		fmt.Fprintln(os.Stderr, "-session and -mob-offset need leveling settings (an encounter with leveling options)")
+		os.Exit(2)
 	}
 
 	if *printStats {
@@ -358,7 +392,7 @@ func main() {
 		suffix    string
 	}
 	var jobs []job
-	if *combined {
+	if *combined || setup.request.Encounter.GetLeveling() != nil {
 		jobs = []job{{durations, ""}}
 	} else {
 		for _, d := range durations {
@@ -380,7 +414,11 @@ func main() {
 			setup: setup, template: template, durations: j.durations,
 			iterations: int32(*confirmIterations), cache: map[string]result{}, survival: *survival,
 		}
-		fmt.Printf("%gs: %s\n", j.durations, confirm.score(best))
+		label := fmt.Sprintf("%gs", j.durations)
+		if setup.request.Encounter.GetLeveling() != nil {
+			label = "session"
+		}
+		fmt.Printf("%s: %s\n", label, confirm.score(best))
 		fmt.Printf("  start %s\n  best  %s\n  sim runs %d\n", confirm.score(start), best, s.evals)
 
 		if *outDir != "" {

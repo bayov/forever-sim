@@ -5,7 +5,7 @@
   "build": "Survival (melee) (Hunter's Mark duty)",
   "isDefault": false,
   "pr": 5,
-  "race": "Orc",
+  "race": "Human",
   "talents": "502-005005-500230230250122151",
   "treeNames": [
     "Beast Mastery",
@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic_survival",
   "apl": "sv_mark",
   "published": {
-    "dps": 889.9,
-    "source": "Hunter's Mark duty preset (standards 23), 2026-10-15: 180 s, 20000 iterations, seed 1"
+    "dps": 934.1,
+    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 928.4)"
   },
   "verify": {
-    "dps": 889.94,
+    "dps": 934.07,
     "stderr": 0.27,
     "iters": 20000,
     "ok": true,
-    "note": "same sim as the published number"
+    "note": "run_build.py main run, 180s, seed 1"
   },
-  "summary": "Melee Survival 7/10/34 on a one-hand axe and a dagger with a cat: Predator's Edge, Expose Prey into Mongoose Bite, Strider Kick and Lacerating Strikes. It ships as Forever's melee hunter build; a ranged Survival build plays like Marksmanship and is only documented.",
+  "summary": "Forever's melee hunter: Survival with a cat, built on Expose Prey into Mongoose Bite.",
   "keyTalents": [
     "Predator's Edge",
     "Expose Prey",
@@ -37,15 +37,15 @@
     "Clever Traps"
   ],
   "rotation": [
-    "Pre-pull: walk into melee at -6 s, Aspect of the Beast at -3 s",
+    "Pre-pull: walk into melee at -6s, Aspect of the Beast at -3s",
     "Racials, potions and other cooldowns on cooldown",
-    "Hunter's Mark (rank 4, +140 ranged attack power) at the pull and again in its last 3 s; the raid's mark is off",
+    "Hunter's Mark (rank 4, +140 ranged attack power) 1.5s before the pull and again in its last 3s; the raid's mark is off",
     "Mongoose Bite whenever Expose Prey (or a dodge) opens it",
     "Strider Kick on cooldown",
+    "Immolation Trap on cooldown (mana >= 30%)",
     "Raptor Strike queued on the next swing when ready",
     "Lacerate when it is down (mana >= 20%)",
-    "Immolation Trap on cooldown (mana >= 30%)",
-    "Wing Clip in free GCDs (mana >= 50%), held when Mongoose Bite or Strider Kick is about ready"
+    "Wing Clip in free GCDs (mana >= 50%), held when an opened Mongoose Bite is about ready"
   ],
   "consumes": [
     "Elixir of the Mongoose",
@@ -61,18 +61,17 @@
     "Goblin Land Mine"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 Agility and 14 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Pet scaling: 10% of RAP plus hunter hit (SoD placeholder for hit); on SoD's full 22% pet scaling this build would gain +18 (2026-10-12 gear)",
-    "Wildstalker Armor 4P/5P not in the preset (2P only); with them this build would gain 0 (measured on the 2026-10-12 gear)",
-    "Raptor Strike rank 8 adds 96, halfway from the client's 70 to Era's 0.88 (assumption hunter_raptor_31plus, user ruling 2026-10-15); the ranks below keep the client's values",
-    "Orc is best through Axe Specialization on its main hand axe, 11 ahead of the Night Elf",
-    "Fire-toasted Bun (+9) left out as a seasonal item; Elemental Sharpening Stone left out (MC-only plans)",
-    "22% more crit per Agility than Classic (assumption hunter_crit_per_agi, user ruling 2026-10-15: the beta's level 1 ratio carried to 60)",
-    "A pet's hit scales with its attack speed as in Classic (assumption hunter_pet_speed, user ruling 2026-10-15; on the beta every pet hits like a 2.0 sec pet); the cat is still the best pet and every cat speed sims within 1 DPS",
-    "Keeps Rhok'delar's 2.9 sec bow: Survival never shoots, so every ranged candidate of standards 22 sims the same",
-    "Hunter's Mark duty (standards 23): the request switches the raid's Hunter's Mark off and the hunter keeps its own up, one GCD and 60 mana every 2 min; it costs 3.1 / 2.5 / 2.1 DPS at 120 / 180 / 300 s against hunter__survival"
+    "Pet scaling uses 10% of RAP (SoD placeholder). SoD's 22% would add 18.",
+    "Assumed: Raptor Strike rank 8 adds 96, halfway between the client and Era.",
+    "Left out: Fire-toasted Bun (+9, seasonal) and Elemental Sharpening Stone (Molten Core plans).",
+    "Assumed: 22% more crit per Agility than Classic.",
+    "Assumed: pet hits scale with attack speed as in Classic. Every cat speed sims within 1 DPS.",
+    "Survival never shoots, so the ranged weapon doesn't matter.",
+    "Costs 1.1 / 1.3 / 1.1 DPS vs Survival at 120s / 180s / 300s.",
+    "Assumed: Immolation Trap adds 2% of ranged attack power a tick (+15.5 DPS). The client has no coefficient yet.",
+    "The raid's Trueshot Aura adds 1.0 through the pet."
   ],
-  "notes": "Request is hunter__survival's with the rotation swapped for ui/hunter/apls/sv_mark.apl.json (the base APL plus the mark line, tools/rotopt/hunter_presets.sh) and debuffs.huntersMark removed; mksettings writes the same raid as spec hunter_sv_mark. Request written by mksettings (spec hunter_sv) unchanged; it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Distance is 5 yd as in the mksettings raid the number was measured in (the UI preset starts at 25 yd; the APL walks in 6 s before the pull, which the preset says costs nothing). Survival keeps a 1.0 sec cat out (DefaultOptions).",
+  "notes": "Request is hunter__survival's with the rotation swapped for ui/hunter/apls/sv_mark.apl.json (the base APL plus the mark line, tools/rotopt/hunter_presets.sh) and debuffs.huntersMark removed; mksettings writes the same raid as spec hunter_sv_mark. Request written by mksettings (spec hunter_sv) unchanged; it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Distance is 5 yd as in the mksettings raid the number was measured in (the UI preset starts at 25 yd; the APL walks in 6s before the pull, which the preset says costs nothing). Survival keeps a 1.0s cat out (DefaultOptions).",
   "duty": "Hunter's Mark",
   "baseBuild": "hunter__survival"
 }

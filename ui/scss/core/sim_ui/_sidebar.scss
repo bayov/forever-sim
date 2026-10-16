@@ -76,6 +76,11 @@
 					overflow-x: hidden;
 					margin-right: calc(-1 * var(--sidebar-padding-x));
 					padding-right: var(--sidebar-padding-x);
+
+					// Folded stats take only their title's height.
+					&:has(.character-stats-root.collapsed) {
+						min-height: 0;
+					}
 				}
 			}
 		}
@@ -109,6 +114,17 @@
 			align-items: flex-end;
 			gap: var(--block-spacer) var(--spacer-2);
 			margin-bottom: 0;
+
+			// DPS, PvP or Leveling, over the whole row. The three choices share its width.
+			.sim-mode-picker {
+				display: flex;
+				flex: 1 0 100%;
+
+				.segmented-option {
+					flex: 1;
+					justify-content: center;
+				}
+			}
 
 			.iterations-picker {
 				flex: 1;
@@ -191,16 +207,15 @@
 			}
 		}
 
-		// A line between each part: the presets, the sim's actions and results, and the stats.
-		// The raid sim has no presets, and its player editor shows only the stats, so they need
-		// no line.
+		// A line between the presets and the sim's actions and results. The raid sim has no
+		// presets, so it needs no line. The stats have their own title, so they need no line
+		// above them.
 		.sim-sidebar-presets:not(:empty) {
 			border-bottom: 1px solid var(--line-color);
 			padding-bottom: var(--spacer-4);
 		}
 
 		.sim-sidebar-stats:not(.within-raid-sim *) {
-			border-top: 1px solid var(--line-color);
 			padding-top: var(--spacer-4);
 		}
 

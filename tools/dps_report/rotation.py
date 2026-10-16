@@ -24,10 +24,10 @@ def fmt_const(s):
     s = str(s).strip()
     m = re.fullmatch(r'(-?\d+(?:\.\d+)?)ms', s)
     if m:
-        return f'{float(m.group(1)) / 1000:g} s'
+        return f'{float(m.group(1)) / 1000:g}s'
     m = re.fullmatch(r'(-?\d+(?:\.\d+)?)s', s)
     if m:
-        return f'{float(m.group(1)):g} s'
+        return f'{float(m.group(1)):g}s'
     m = re.fullmatch(r'(-?\d+(?:\.\d+)?)m', s)
     if m:
         return f'{float(m.group(1)):g} min'
@@ -66,26 +66,28 @@ class Humaniser:
         if t == 'currentHealthPercent':
             return 'health'
         if t in ('currentMana', 'currentRage', 'currentEnergy', 'currentFocus', 'currentComboPoints'):
-            return {'currentMana': 'mana', 'currentRage': 'rage', 'currentEnergy': 'energy', 'currentFocus': 'focus', 'currentComboPoints': 'combo points'}[t]
+            return {'currentMana': 'mana', 'currentRage': 'Rage', 'currentEnergy': 'Energy', 'currentFocus': 'Focus', 'currentComboPoints': 'combo points'}[t]
         if t == 'spellTimeToReady':
             return f"{self.sp(a.get('spellId'))} cooldown left"
         if t == 'auraRemainingTime':
             return f"{self.sp(a.get('auraId'))} time left"
         if t == 'dotRemainingTime':
-            return f"{self.sp(a.get('spellId'))} time left on the target"
+            return f"{self.sp(a.get('spellId'))} time left"
         if t == 'auraNumStacks':
             return f"{self.sp(a.get('auraId'))} stacks"
         if t == 'spellUsesRemaining':
-            return f"{self.sp(a.get('spellId'))} uses left in the fight"
+            return f"{self.sp(a.get('spellId'))} uses left"
         if t == 'spellCurrentCost':
             return f"{self.sp(a.get('spellId'))} cost"
         if t == 'spellCastTime':
             return f"{self.sp(a.get('spellId'))} cast time"
         if t == 'autoTimeToNext':
-            return f"time to the {AUTO.get(a.get('autoType'), 'next')} swing"
+            return f"time to the next {AUTO.get(a.get('autoType'), '')} swing".replace('  ', ' ')
         if t == 'autoSwingTime':
             return f"{AUTO.get(a.get('autoType'), '')} swing time".strip()
         if t == 'math':
+            if a.get('op') in ('OpAdd', 'OpSub') and secs((a.get('rhs') or {}).get('const', {}).get('val')) == 0:  # "+ 0s" adds nothing
+                return self.noun(a['lhs'])
             return f"{self.noun(a['lhs'])} {MATH.get(a.get('op'), '?')} {self.noun(a['rhs'])}"
         if t == 'spellChanneledTicks':
             return 'ticks channeled'
@@ -102,6 +104,9 @@ class Humaniser:
             return f"for {self.sp(a.get('spellId'))}"
         if t == 'math' and a.get('op') == 'OpSub' and 'remainingTime' in a.get('lhs', {}) and 'const' in a.get('rhs', {}):
             return f"until the last {fmt_const(a['rhs']['const']['val'])} of the fight"
+        if t == 'max' and len(a.get('vals', [])) > 1:
+            parts = [re.sub(r'^(for|until) ', '', self.delay(x)) for x in a['vals']]
+            return f"for both {' and '.join(parts)}"
         if t == 'const':
             return fmt_const(a.get('val'))
         return self.noun(d)
@@ -110,16 +115,17 @@ class Humaniser:
         """a value used as a condition, as a clause"""
         (t, a), = v.items()
         if t in ('and', 'or'):
-            vals = a.get('vals', [])
+            how, vals = self.parts(t, a.get('vals', []), False)
+            if not vals:
+                return 'always' if (vals is None) == (how == 'or') else 'never (this line is switched off)'
             if len(vals) == 1:
                 return self.pred(vals[0])
-            other = 'or' if t == 'and' else 'and'
-            # wrap a child that joins the other way (by its node type, since names like Slice and Dice hold "and")
-            parts = [f'({self.pred(x)})' if self.joins(x, other) else self.pred(x) for x in vals]
-            out = f' {t} '.join(parts)
-            m = re.search(r'in the last (\S+ \S+) of the fight', out)
-            if m:  # "in the last 33 s ... or when waiting until the last 33 s ..." -> "until then"
-                out = out.replace(f'until the last {m.group(1)} of the fight', 'until then')
+            # wrap a part whose text joins the other way (by node type, since names like Slice and Dice hold "and")
+            parts = [f'({self.pred(x)})' if self.joiner(x, False) not in (None, how) else self.pred(x) for x in vals]
+            out = f' {how} '.join(parts)
+            m = re.search(r'in the last (\S+(?: \S+)?) of the fight', out)
+            if m:  # "in the last 33s ... or waiting until the last 33s ..." -> "waiting"
+                out = out.replace(f' until the last {m.group(1)} of the fight', '')
             return out
         if t == 'not':
             return self.neg(a.get('val'))
@@ -129,11 +135,11 @@ class Humaniser:
             return 'always' if str(a.get('val')).lower() in ('true', '1') else 'never'
         if t == 'auraIsActive':
             on = (a.get('sourceUnit') or {}).get('type') == 'CurrentTarget'
-            return f"{self.sp(a.get('auraId'))} is {'on the target' if on else 'up'}"
+            return f"{self.sp(a.get('auraId'))} {'on the boss' if on else 'is up'}"
         if t == 'auraIsKnown':
             return f"{self.sp(a.get('auraId'))} is talented"
         if t == 'dotIsActive':
-            return f"{self.sp(a.get('spellId'))} is ticking on the target"
+            return f"{self.sp(a.get('spellId'))} on the boss"
         if t == 'spellIsReady':
             return f"{self.sp(a.get('spellId'))} is ready"
         if t == 'spellCanCast':
@@ -142,32 +148,79 @@ class Humaniser:
             return f"{self.sp(a.get('spellId'))} is in flight"
         if t == 'isExecutePhase':
             th = re.sub(r'\D', '', str(a.get('threshold', '20'))) or '20'
-            return f"the target is below {th}% health"
+            return f"boss under {th}% health"
         if t == 'inMeleeRange':
             return 'in melee range'
         if t == 'spellIsChanneling':
             return f"channeling {self.sp(a.get('spellId'))}"
+        if t == 'sequenceIsComplete':
+            return f"the {str(a.get('sequenceName') or '').title()} opener is done".replace('the  opener', 'the opener')
         self.fallbacks.append(t)
         return self.noun(v)
 
-    def joins(self, v, how):
+    def const_of(self, v):
+        """True or False when a condition part has a fixed value, else None"""
         (t, a), = v.items()
-        if t == how and len(a.get('vals', [])) > 1:
+        if t == 'const':
+            return str(a.get('val')).lower() in ('true', '1')
+        # "The Sunder opener is done" on every line after the opener says nothing new, because the opener comes
+        # first in the list. So we count it as true and leave it out. "Not done" still shows.
+        if t == 'sequenceIsComplete':
             return True
         if t == 'not':
-            (t2, a2), = a.get('val', {}).items()
-            return t2 in ('and', 'or') and t2 != how and len(a2.get('vals', [])) > 1  # De Morgan flips it
-        return False
+            if 'sequenceIsComplete' in a.get('val', {}):
+                return None
+            c = self.const_of(a.get('val'))
+            return None if c is None else not c
+        if t == 'cmp':
+            L, R = a.get('lhs', {}), a.get('rhs', {})
+            if 'const' in L and 'const' in R:
+                x, y = secs(L['const'].get('val')), secs(R['const'].get('val'))
+                if x is not None and y is not None:
+                    return {'OpLt': x < y, 'OpLe': x <= y, 'OpGt': x > y, 'OpGe': x >= y, 'OpEq': x == y, 'OpNe': x != y}.get(a.get('op'))
+            if 'auraRemainingTime' in L and secs(R.get('const', {}).get('val')) == 0 and a.get('op') == 'OpGe':
+                return True  # time left is never negative
+        return None
+
+    def parts(self, t, vals, neg):
+        """The connective an and/or node's text uses (flipped when negated) and the parts it joins.
+
+        A part with a fixed value that changes nothing (true in an and, false in an or) is left out.
+        The parts come back as None when one fixes the whole node (false in an and, true in an or).
+        """
+        how = t if not neg else ('or' if t == 'and' else 'and')
+        out = []
+        for x in vals:
+            c = self.const_of(x)
+            if c is not None and neg:
+                c = not c
+            if c is (how == 'or'):
+                return how, None
+            if c is not (how == 'and'):
+                out.append(x)
+        return how, out
+
+    def joiner(self, v, neg):
+        """the connective at the top of a condition part's text, or None"""
+        (t, a), = v.items()
+        if t in ('and', 'or'):
+            how, vals = self.parts(t, a.get('vals', []), neg)
+            if not vals:
+                return None
+            return self.joiner(vals[0], neg) if len(vals) == 1 else how
+        if t == 'not':
+            return self.joiner(a.get('val'), not neg)
+        return None
 
     def neg(self, v):
         (t, a), = v.items()
         if t == 'auraIsActive':
             on = (a.get('sourceUnit') or {}).get('type') == 'CurrentTarget'
-            return f"{self.sp(a.get('auraId'))} is not {'on the target' if on else 'up'}"
+            return f"{'no ' + self.sp(a.get('auraId')) + ' on the boss' if on else self.sp(a.get('auraId')) + ' is not up'}"
         if t == 'auraIsKnown':
             return f"{self.sp(a.get('auraId'))} is not talented"
         if t == 'dotIsActive':
-            return f"{self.sp(a.get('spellId'))} is not on the target"
+            return f"no {self.sp(a.get('spellId'))} on the boss"
         if t == 'spellIsReady':
             return f"{self.sp(a.get('spellId'))} is not ready"
         if t == 'spellCanCast':
@@ -176,15 +229,19 @@ class Humaniser:
             return f"{self.sp(a.get('spellId'))} is not in flight"
         if t == 'isExecutePhase':
             th = re.sub(r'\D', '', str(a.get('threshold', '20'))) or '20'
-            return f"the target is above {th}% health"
+            return f"boss over {th}% health"
         if t == 'inMeleeRange':
             return 'out of melee range'
         if t == 'cmp':  # not (a < b) is a >= b
             inv = {'OpLt': 'OpGe', 'OpLe': 'OpGt', 'OpGt': 'OpLe', 'OpGe': 'OpLt', 'OpEq': 'OpNe', 'OpNe': 'OpEq'}
             return self.cmp(dict(a, op=inv.get(a.get('op'), a.get('op'))))
         if t in ('and', 'or'):  # De Morgan keeps it readable: not (A and B) = A is not ... or B is not ...
-            how = 'or' if t == 'and' else 'and'
-            parts = [f'({self.neg(x)})' if self.joins(x, t) else self.neg(x) for x in a.get('vals', [])]
+            how, vals = self.parts(t, a.get('vals', []), True)
+            if not vals:
+                return 'always' if (vals is None) == (how == 'or') else 'never (this line is switched off)'
+            if len(vals) == 1:
+                return self.neg(vals[0])
+            parts = [f'({self.neg(x)})' if self.joiner(x, True) not in (None, how) else self.neg(x) for x in vals]
             return f' {how} '.join(parts)
         return f'not ({self.pred(v)})'
 
@@ -204,7 +261,7 @@ class Humaniser:
         cv = secs(R['const']['val']) if 'const' in R else None
         w = OPS.get(op, op)
         if lt == 'remainingTime' and c:
-            return f"in the last {c} of the fight" if op in ('OpLt', 'OpLe') else f"with more than {c} of the fight left"
+            return f"in the last {c} of the fight" if op in ('OpLt', 'OpLe') else f"over {c} of the fight left"
         if lt == 'currentTime' and c:
             return f"in the first {c} of the fight" if op in ('OpLt', 'OpLe') else f"after the first {c} of the fight"
         if lt == 'currentComboPoints' and c:
@@ -215,29 +272,36 @@ class Humaniser:
             d = self.delay(la.get('delay'))
             s = self.sp(la.get('spellId'))
             if op in ('OpGt', 'OpNe'):
-                return f"when waiting {d} would cost a use of {s}"
+                return f"waiting {d} would lose a use of {s}"
             if op in ('OpEq', 'OpLe'):
-                return f"when waiting {d} costs no use of {s}"
+                return f"waiting {d} loses no use of {s}"
         if lt == 'spellUsesRemaining' and c is not None and cv == 0:
             s = self.sp(la.get('spellId'))
             if op in ('OpEq', 'OpLe'):
-                return f"no {s} uses are left in the fight"
+                return f"no {s} uses left"
             if op in ('OpGt', 'OpNe'):
-                return f"{s} has uses left in the fight"
+                return f"{s} has uses left"
         if lt == 'spellTimeToReady' and c:
             s = self.sp(la.get('spellId'))
             if cv == 0 and op in ('OpEq', 'OpLe'):
                 return f"{s} is ready"
-            return f"{s} is ready within {c}" if op in ('OpLt', 'OpLe') else f"{s} has more than {c} of cooldown left"
+            return f"{s} is ready within {c}" if op in ('OpLt', 'OpLe') else f"{s} cooldown over {c}"
         if lt == 'spellChanneledTicks' and c:
             n = int(cv) if cv is not None else c
             return {'OpGe': f'at least {n} ticks channeled', 'OpGt': f'more than {n} ticks channeled', 'OpLt': f'fewer than {n} ticks channeled'}.get(op, f'ticks channeled {w} {n}')
         if lt == 'autoTimeToNext' and 'math' in R and R['math'].get('op') == 'OpSub' and 'autoSwingTime' in R['math'].get('lhs', {}) and 'const' in R['math'].get('rhs', {}) and op in ('OpGt', 'OpGe'):
             hand = AUTO.get(la.get('autoType'), 'next')
             return f"within {fmt_const(R['math']['rhs']['const']['val'])} after a {hand} swing"
+        if lt == 'autoTimeToNext' and c:
+            hand = AUTO.get(la.get('autoType'), 'next')
+            sw = 'next swing' if hand == 'next' else f'next {hand} swing'
+            return f"{sw} in under {c}" if op in ('OpLt', 'OpLe') else f"{sw} in over {c}"
+        if lt == 'spellTimeToReady' and 'math' in R and R['math'].get('op') == 'OpSub' and 'remainingTime' in R['math'].get('lhs', {}) and 'const' in R['math'].get('rhs', {}) and op in ('OpGt', 'OpGe'):
+            # its cooldown ends after fight time left - c: it won't come back before the last c of the fight
+            return f"{self.sp(la.get('spellId'))} won't be ready again before the last {fmt_const(R['math']['rhs']['const']['val'])} of the fight"
         if lt in ('currentMana',) and 'math' in R and R['math'].get('op') == 'OpMul' and 'remainingTime' in R['math'].get('lhs', {}) and 'const' in R['math'].get('rhs', {}):
             k = fmt_const(R['math']['rhs']['const']['val'])
-            return f"enough mana for {k} per second of the fight left" if op in ('OpGe', 'OpGt') else f"less mana than {k} per second of the fight left"
+            return f"mana at least {k} × seconds left" if op in ('OpGe', 'OpGt') else f"mana under {k} × seconds left"
         if lt == 'auraRemainingTime' and c and cv == 0 and op in ('OpGt', 'OpNe'):
             return f"{self.sp(la.get('auraId'))} is up"
         if lt == 'auraRemainingTime' and c:
@@ -245,10 +309,12 @@ class Humaniser:
             return f"{s} has under {c} left" if op in ('OpLt', 'OpLe') else f"{s} has over {c} left"
         if lt == 'dotRemainingTime' and c:
             s = self.sp(la.get('spellId'))
-            return f"{s} has under {c} left on the target" if op in ('OpLt', 'OpLe') else f"{s} has over {c} left on the target"
+            return f"{s} has under {c} left" if op in ('OpLt', 'OpLe') else f"{s} has over {c} left"
         if lt == 'auraNumStacks' and c:
             s = self.sp(la.get('auraId'))
             n = int(cv) if cv is not None else c
+            if n == 1 and op == 'OpLt':
+                return f'no {s} stacks'
             return {'OpGe': f'{s} at {n}+ stacks', 'OpGt': f'{s} above {n} stacks', 'OpEq': f'{s} at {n} stacks',
                     'OpLt': f'{s} under {n} stacks', 'OpLe': f'{s} at {n} stacks or fewer'}.get(op, f'{s} stacks {w} {n}')
         if lt in ('currentMana', 'currentRage', 'currentEnergy', 'currentFocus') and 'spellCurrentCost' in R:
@@ -296,15 +362,17 @@ def build(req_dir, outs, nm, names, abilities, racial_race):
             elif kind == 'channelSpell':
                 ref = body.get('spellId')
                 if body.get('interruptIf'):
-                    extra = 'Stops channeling when ' + H.pred(body['interruptIf'])
+                    extra = 'Stops the channel when ' + H.pred(body['interruptIf'])
             elif kind == 'move':
                 r = body.get('rangeFromTarget', {}).get('const', {}).get('val', '0')
-                extra = 'Into melee range' if str(r) in ('0', '0s') else f'To {r} yd from the target'
+                extra = 'Into melee range' if str(r) in ('0', '0s') else f'To {r} yd from the boss'
             key = key_of(ref) if ref else None
             name = nm(key) if key else {'move': 'Move', 'autocastOtherCooldowns': 'Other cooldowns', 'wait': 'Wait'}.get(kind, kind)
-            when = H.pred(cond, top=True) if cond else ('' if section == 'prepull' else 'whenever it is ready' if kind in ('castSpell', 'channelSpell') else '')
+            when = H.pred(cond, top=True) if cond else ''
+            if not cond or when == 'always':  # no condition, or only one we leave out (see Humaniser.const_of)
+                when = '' if section == 'prepull' else 'when ready' if kind in ('castSpell', 'channelSpell') else ''
             if kind == 'autocastOtherCooldowns':
-                when = 'any major cooldown not named in this list (trinkets, racials, potions) is used as soon as it is ready'
+                when = 'trinkets, racials and potions not listed here, as soon as they are ready'
             rr = (racial_race.get(int(ref['spellId'])) if ref and ref.get('spellId') else None) or (racial_race.get(name) if key else None)
             mr = re.match(r'^(Human|Dwarf|Night Elf|Gnome|High Order|Orc|Undead|Tauren|Troll|Windshaper)\. ', notes or '')
             if not rr and mr:  # a racial line the notes name ("Undead. Dark Sacrifice when ...")

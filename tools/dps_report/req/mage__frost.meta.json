@@ -4,9 +4,9 @@
   "spec": "Frost",
   "build": "Frost",
   "isDefault": false,
-  "pr": 6,
+  "pr": 89,
   "race": "SkyborneHighOrder",
-  "talents": "050005-03-0555300331001301251",
+  "talents": "05020050031001-03-0555100331001301201",
   "treeNames": [
     "Arcane",
     "Fire",
@@ -15,35 +15,36 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_frost",
   "published": {
-    "dps": 948.3,
-    "source": "PR (rotation auditor pass 19: end-of-fight instants, 2026-10-15)"
+    "dps": 843.3,
+    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 826.0)"
   },
   "verify": {
-    "dps": 948.3,
-    "stderr": 0.6,
+    "dps": 843.32,
+    "stderr": 0.34,
     "iters": 20000,
     "ok": true,
-    "note": "180 s, 20000 iterations, on the pass 19 rotation"
+    "note": "run_build.py main run, 180s, seed 1"
   },
-  "summary": "Deep Frost Frostbolt build with Fingers of Frost, Shatter and Winter's Chill, plus Arcane Concentration. Its own playstyle, 5% behind Frostfire. The preset is High Order with a Major Spellblasting Potion.",
+  "summary": "Deep Frost Frostbolt with Fingers of Frost and Shatter.",
   "keyTalents": [
     "Arcane Concentration",
+    "Missile Barrage",
+    "Arcane Blast",
     "Improved Frostbolt",
     "Ice Shards",
     "Piercing Ice",
-    "Frost Channeling",
     "Shatter",
-    "Fingers of Frost",
-    "Winter's Chill"
+    "Fingers of Frost"
   ],
   "rotation": [
-    "Pre-pull: Frostbolt at -2.5 s",
+    "Pre-pull: Frostbolt at -2.5s",
     "Cooldowns (Demonic Rune, racial) on a free GCD",
-    "Evocation below 20% mana with more than 90 s left (almost never fires)",
-    "Ice Lance on every Fingers of Frost charge: the boss counts as Frozen, so 4 times the damage and Shatter crit",
+    "Evocation below 20% mana with more than 90s left (almost never fires)",
+    "Ice Lance on every Fingers of Frost charge: the boss counts as Frozen, so 3 times the damage and Shatter crit",
+    "Arcane Blast once every 15s for 15% of Intellect as spell damage",
     "Arcane Missiles on a Missile Barrage proc",
-    "Ice Lance instead when a Frostbolt would not land before the end (its cast plus 1 s)",
-    "Filler: Frostbolt (2.5 s)"
+    "Ice Lance instead when a Frostbolt would not land before the end (its cast plus 1s)",
+    "Filler: Frostbolt (2.5s)"
   ],
   "consumes": [
     "Flask of Supreme Power",
@@ -62,13 +63,11 @@
     "Goblin Sapper"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 41 spell power and 11 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Ice Lance's spell power coefficient is Season of Discovery's server value, 0.429; Forever's client has 0, as SoD's did",
-    "Frostbolt X's base damage ×1.04, half of beta 70291's +8% raise of the low ranks; the client has ×1.00",
-    "Frostbolt XI (AQ book) left out: +50 with it",
-    "Arcane Focus 5 and Incineration 3 do nothing for this rotation",
-    "Raid bosses assumed not freezable; Fingers of Frost charge timing open",
-    "No Ahn'Qiraj book ranks (Fireball XI, Frostbolt X, Arcane Missiles VII); with the books Frost +50, Arcane +30, Fire +17, Frostfire 0"
+    "Ice Lance's spell power coefficient is 0.429 (SoD server value, the client has 0).",
+    "Frostbolt X's base damage is ×1.04 (client ×1.00).",
+    "Winter's Chill is a Cone of Cold debuff now, so the build takes none.",
+    "Assumed: raid bosses can't be frozen. Fingers of Frost charge timing is open.",
+    "No Ahn'Qiraj book ranks (Fireball XI, Frostbolt X, Arcane Missiles VII). With the books: Frost +50, Arcane +30, Fire +17, Frostfire 0."
   ],
   "notes": "Request written by mksettings -spec mage_frost unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). It carries the spec's staff imbue scroll (Scroll of Imbue Greater Frost) as a mage option, as the preset does. Its rotation casts Ice Lance on every Fingers of Frost charge."
 }

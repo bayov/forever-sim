@@ -50,12 +50,12 @@ func TestOrcShamanManaCostTalents(t *testing.T) {
 		shock, bolt, shield, totem float64
 	}{
 		// Every case has Lava Burst.
-		{"no cost talents", "0000000000000001", 1, 1, 1, 1},
-		{"Convection 2/5", "2000000000000001", .96, .96, 1, 1},
-		{"Convection 5/5", "5000000000000001", .9, .9, 1, 1},
-		{"Shamanistic Focus", "0000000000000001-000000001", .55, 1, .55, 1},
-		{"Totemic Focus 5/5", "0000000000000001--05", 1, 1, 1, .75},
-		{"all three", "5000000000000001-000000001-05", .9 * .55, .9, .55, .75},
+		{"no cost talents", "0000000000001", 1, 1, 1, 1},
+		{"Convection 2/5", "2000000000001", .96, .96, 1, 1},
+		{"Convection 5/5", "5000000000001", .9, .9, 1, 1},
+		{"Shamanistic Focus", "0000000000001-000000001", .55, 1, .55, 1},
+		{"Totemic Focus 5/5", "0000000000001--00005", 1, 1, 1, .75},
+		{"all three", "5000000000001-000000001-00005", .9 * .55, .9, .55, .75},
 	}
 	for _, c := range cases {
 		_, enh := newShamanSim(newOrcShaman(60, c.talents, &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 10)
@@ -89,7 +89,7 @@ func TestOrcShamanManaCostTalents(t *testing.T) {
 		totem   float64
 	}{
 		{"Mana Tide Totem", "--000000000001", 1},
-		{"Mana Tide Totem with Totemic Focus 5/5", "--050000000001", .75},
+		{"Mana Tide Totem with Totemic Focus 5/5", "--000050000001", .75},
 	} {
 		_, enh := newShamanSim(newOrcShaman(60, c.talents, &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 10)
 		checkManaCosts(t, c.name, []manaCostCheck{
@@ -226,7 +226,7 @@ func TestOrcShamanMaelstromWeaponCost(t *testing.T) {
 // give it or use it up either.
 func TestOrcShamanClearcasting(t *testing.T) {
 	// Elemental Focus and Lava Burst.
-	sim, enh := newShamanSim(newOrcShaman(60, "0000001000000001", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 3400)
+	sim, enh := newShamanSim(newOrcShaman(60, "0000001000001", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 3400)
 	cc := enh.ClearcastingAura
 	es := topRank(t, "Earth Shock", enh.EarthShock)
 	fireNova := topRank(t, "Fire Nova", enh.FireNova)

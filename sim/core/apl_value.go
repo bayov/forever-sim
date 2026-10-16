@@ -91,6 +91,18 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueRemainingTimePercent(config.GetRemainingTimePercent())
 	case *proto.APLValue_IsExecutePhase:
 		return rot.newValueIsExecutePhase(config.GetIsExecutePhase())
+	case *proto.APLValue_IsMoving:
+		return rot.newValueIsMoving(config.GetIsMoving())
+	case *proto.APLValue_LevelingDistance:
+		return rot.newValueLevelingDistance(config.GetLevelingDistance())
+	case *proto.APLValue_LevelingMobsRunningIn:
+		return rot.newValueLevelingMobsRunningIn(config.GetLevelingMobsRunningIn())
+	case *proto.APLValue_LevelingMobsOnUs:
+		return rot.newValueLevelingMobsOnUs(config.GetLevelingMobsOnUs())
+	case *proto.APLValue_LevelingMobsThisPull:
+		return rot.newValueLevelingMobsThisPull(config.GetLevelingMobsThisPull())
+	case *proto.APLValue_LevelingBandageReady:
+		return rot.newValueLevelingBandageReady(config.GetLevelingBandageReady())
 	case *proto.APLValue_NumberTargets:
 		return rot.newValueNumberTargets(config.GetNumberTargets())
 

@@ -13,9 +13,11 @@ import {
 	Food,
 	IndividualBuffs,
 	IntellectElixir,
+	LevelingOptions,
 	ManaRegenElixir,
 	MobType,
 	NaturePowerBuff,
+	PartyBuffs,
 	Potions,
 	Profession,
 	PseudoStat,
@@ -27,33 +29,22 @@ import {
 	SpiritElixir,
 	Stat,
 	StrengthBuff,
-	TotemWeaponBuff,
 	TristateEffect,
 	UnitReference,
 	UnitReference_Type,
 	WeaponImbue,
 	ZanzaBuff,
 } from '../core/proto/common.js';
-import {
-	AirTotem,
-	EarthTotem,
-	EnhancementShaman_Options as EnhancementShamanOptions,
-	FireTotem,
-	ShamanSyncType,
-	StartingTotems,
-	WaterTotem,
-} from '../core/proto/shaman.js';
+import { EnhancementShaman_Options as EnhancementShamanOptions, ShamanSyncType } from '../core/proto/shaman.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import GraceOfAirAPLJSON from './apls/grace_of_air.apl.json';
+import Level30LevelingAPLJSON from './apls/level30_leveling.apl.json';
 import Level30p5APLJSON from './apls/level30p5.apl.json';
 import Level30PvPAPLJSON from './apls/level30_pvp.apl.json';
 import MagmaAPLJSON from './apls/magma.apl.json';
-import MagmaTotemDutyAPLJSON from './apls/magma_totem_duty.apl.json';
 import ManaTideAPLJSON from './apls/mana_tide.apl.json';
-import ManaTideTotemDutyAPLJSON from './apls/mana_tide_totem_duty.apl.json';
 import OptimizedAPLJSON from './apls/optimized.apl.json';
-import OptimizedTotemDutyAPLJSON from './apls/optimized_totem_duty.apl.json';
 import WindfuryAPLJSON from './apls/windfury.apl.json';
 import Level30p5GearJSON from './gear_sets/level30p5.gear.json';
 import Level30PvPGearJSON from './gear_sets/level30_pvp.gear.json';
@@ -327,19 +318,8 @@ export const APLWindfury = PresetUtils.makePresetAPLRotation('Windfury Totem', W
 // Flametongue Totem was 828. All the numbers in this paragraph and the one above are from
 // before 2026-10-07, when Windfury Weapon still got the level 68 attack power, Windfury
 // Totem still stacked with it for the shaman, and Enhancing Totems was still in the sim.
-//
-// Since standards 23 (raid duties, 2026-10-15) the Level 60 rotations come in two kinds. The base
-// ones put down no party totems: another shaman's Strength of Earth, Windfury and Mana Spring Totem
-// come from the raid buffs, and the shaman only keeps up the fire totem it drops for its own damage.
-// The "Totems duty" ones drop the party's Strength of Earth, Windfury and Mana Spring Totem
-// themselves (as starting totems before the pull, again when they run out) with the raid's totems
-// off. The two are the same rotation otherwise (rotopt knobs strengthOfEarth, airTotem, waterTotem).
 export const APLOptimized = PresetUtils.makePresetAPLRotation('Optimized', OptimizedAPLJSON, {
-	tooltip: "The optimizer's best level 60 rotation, with Searing Totem and Fire Nova. The party's totems come from the raid.",
-	group: 'Level 60',
-});
-export const APLOptimizedTotemDuty = PresetUtils.makePresetAPLRotation('Optimized (Totems duty)', OptimizedTotemDutyAPLJSON, {
-	tooltip: "Optimized, also keeping up the party's Strength of Earth, Windfury and Mana Spring Totem.",
+	tooltip: "The optimizer's best level 60 rotation, with Windfury Totem for the group, Searing Totem and Fire Nova.",
 	group: 'Level 60',
 });
 // The rotation for the Level 60 + Water Shield and Level 60 + Mana Tide talents. It is
@@ -351,12 +331,16 @@ export const APLOptimizedTotemDuty = PresetUtils.makePresetAPLRotation('Optimize
 // it. On the Water Shield build it is 912.0 / 899.7 / 883.4 at 120 / 180 / 300 sec, where
 // Searing Totem is 888.8 / 879.5 / 877.0. On the Level 60 build Searing Totem is still
 // ahead (938.4 against 927.1 at 180 sec).
+//
+// Since 2026-10-15 it keeps Lightning Shield up in place of Water Shield, like Optimized (see the
+// raid damage note under Options).
+//
+// Since the rotation auditor's pass 23 (2026-10-16) a new Magma Totem goes down with as little as
+// 2 sec left (it was 10): on the Water Shield build 828.9 / 819.3 / 815.7 at 120 / 180 / 300 sec
+// (+1.2 / +0.8 / +0.5), on Mana Tide 790.6 / 781.7 / 777.1 (+1.0 / +0.6 / +0.4), paired at 20000
+// iterations on two seed sets.
 export const APLMagma = PresetUtils.makePresetAPLRotation('Magma Totem', MagmaAPLJSON, {
 	tooltip: 'Optimized with Magma Totem in place of Searing Totem, for the Water Shield talents.',
-	group: 'Level 60',
-});
-export const APLMagmaTotemDuty = PresetUtils.makePresetAPLRotation('Magma Totem (Totems duty)', MagmaTotemDutyAPLJSON, {
-	tooltip: "Magma Totem, also keeping up the party's Strength of Earth, Windfury and Mana Spring Totem.",
 	group: 'Level 60',
 });
 // Magma Totem with Mana Tide Totem once the shaman is down to 20% mana. Mana Spring Totem
@@ -366,10 +350,6 @@ export const APLMagmaTotemDuty = PresetUtils.makePresetAPLRotation('Magma Totem 
 // +2.5 at 300 sec and even at 120 and 180 sec.
 export const APLManaTide = PresetUtils.makePresetAPLRotation('Mana Tide', ManaTideAPLJSON, {
 	tooltip: 'The Magma Totem rotation that also drops Mana Tide Totem at 20% mana.',
-	group: 'Level 60',
-});
-export const APLManaTideTotemDuty = PresetUtils.makePresetAPLRotation('Mana Tide (Totems duty)', ManaTideTotemDutyAPLJSON, {
-	tooltip: "Mana Tide, also keeping up the party's Strength of Earth, Windfury and Mana Spring Totem.",
 	group: 'Level 60',
 });
 // Level 30 + 5 is Stormstrike on cooldown, Flame Shock when its DoT is down and Earth Shock
@@ -401,19 +381,24 @@ export const APLLevel30PvP = PresetUtils.makePresetAPLRotation('Level 30 PvP', L
 	group: 'Level 30 PvP',
 });
 
+// Level 30 Leveling is the leveling optimizer's best rotation for a solo level 30 grinding
+// mobs of its level (tools/rotopt, the shaman_enh_leveling template, see
+// docs/leveling_sim.md). It needs the Leveling mode: it rests, looks for the next mob and
+// pulls it with the leveling actions, which do nothing in a single fight. A better rotation
+// from a later optimizer run can replace apls/level30_leveling.apl.json under the same name.
+//
+// What it does is in docs/leveling_sim.md (step 5, pass 9): it rests to 90% health and 80%
+// mana and pulls with Flame Shock. While still fighting it stands and looks for the next mob,
+// from 70% health (50% when its target is nearly dead). It keeps Mana Spring and Strength of
+// Earth Totem down, and with two mobs puts down Searing Totem and casts Fire Nova. It heals
+// with Lesser Healing Wave below 30% health.
+export const APLLevel30Leveling = PresetUtils.makePresetAPLRotation('Level 30 Leveling', Level30LevelingAPLJSON, {
+	tooltip: "The leveling optimizer's best rotation for a solo level 30. It rests, finds the next mob and pulls it, for the Leveling mode.",
+	group: 'Leveling',
+});
+
 export const APLPresets = {
-	[Phase.Phase1]: [
-		APLOptimized,
-		APLOptimizedTotemDuty,
-		APLMagma,
-		APLMagmaTotemDuty,
-		APLManaTide,
-		APLManaTideTotemDuty,
-		APLGraceOfAir,
-		APLWindfury,
-		APLLevel30p5,
-		APLLevel30PvP,
-	],
+	[Phase.Phase1]: [APLOptimized, APLMagma, APLManaTide, APLGraceOfAir, APLWindfury, APLLevel30p5, APLLevel30PvP, APLLevel30Leveling],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
 	[Phase.Phase4]: [],
@@ -468,7 +453,15 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 // gear round's set the search again only made mana tie-breaks inside the noise (792.0 against
 // 792.6), so the build stays: 813.5 / 801.8 / 781.6, and 813.8 / 801.6 / 782.3 once Rage of the Farseer
 // waits for the on-use trinket, and 824.5 / 813.9 / 794.0 with Elixir of Cunning and Ferocity and Forever's oil and chili damage.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '050533102-053030031005112251' }), {
+//
+// Client 1.60.1.70425 (2026-10-16) cut Fire Nova (coefficient 0.143 from 0.214, rank 5 232 to 259
+// base from 397 to 443) and moved the Elemental tree around. The search (Spirit Weapons pinned, as
+// the mean of 120, 180 and 300 sec, 2 raid hits a minute) dropped Elemental Focus and a point of
+// Improved Stormstrike for Tidal Focus 2 (Clearcasting Fire Novas are worth little now), and moved
+// Elemental Weapons' points to Ancestral Knowledge: +7.9 / +6.3 / -7.2 at 120 / 180 / 300 sec
+// paired against the old build (it runs lower on mana in long fights). With the raid's second
+// shaman's Grace of Air (standards 25) it is 835.5 / 825.3 / 809.1, from 865.7 / 852.9 / 834.8.
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '053503002-055030011005112151-02' }), {
 	tooltip: 'Level 60 talents from the talent search, with Spirit Weapons and Concussion.',
 	group: 'Level 60',
 });
@@ -485,10 +478,18 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // 810.4 / 797.7 / 778.7 at 120 / 180 / 300 sec on the 2026-10-13 gear round's set with Rage of the
 // Farseer waiting for the on-use trinket (820.9 / 809.4 / 790.0 with Elixir of Cunning and Ferocity and Forever's oil and chili damage),
 // 4.1 behind Level 60 at 180 (800.0 / 788.3 / 767.3 before).
-export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Level 60 + Imp GW', SavedTalents.create({ talentsString: '050533102-051032031005112251' }), {
-	tooltip: 'The Level 60 talents with Improved Ghost Wolf 2, taken out of Ancestral Knowledge.',
-	group: 'Level 60',
-});
+//
+// Under client 1.60.1.70425 the search with Improved Ghost Wolf and Spirit Weapons pinned (from the
+// Level 60 changes above) kept Elemental Focus and Ancestral Knowledge 4: 827.4 / 818.4 / 811.5 at
+// 120 / 180 / 300 sec (862.0 / 848.7 / 830.7 before), 6.9 behind Level 60 at 180.
+export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents(
+	'Level 60 + Imp GW',
+	SavedTalents.create({ talentsString: '053503102-054032001005112151-01' }),
+	{
+		tooltip: 'The Level 60 talents with Improved Ghost Wolf 2, taken out of Ancestral Knowledge.',
+		group: 'Level 60',
+	},
+);
 // The best build that takes Water Shield (-require spiritWeapons,waterShield), with the
 // Magma Totem rotation. Water Shield needs 10 Restoration points above it, and those go
 // to Tidal Focus 5 (+5% hit) and Totemic Focus 5 (cheaper totems). That leaves 9 points
@@ -514,9 +515,17 @@ export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Level 60 + Imp
 // was 752.8 against 751.2, inside the noise, so it stays: 763.1 / 755.6 / 741.4, and 762.9 / 755.4 /
 // 742.3 with Rage of the Farseer waiting for the on-use trinket (772.0 / 765.5 / 753.2 with Elixir
 // of Cunning and Ferocity), 5.9% behind Level 60 at 180.
+//
+// Client 1.60.1.70425 moved Tidal Focus up to the first row and Totemic Focus down to the second,
+// so the old Restoration points (Tidal Focus 3, Mindfulness 2, Totemic Focus 5) no longer reach
+// Water Shield. The search (Water Shield and Spirit Weapons pinned) settled on Tidal Focus 5,
+// Mindfulness 3 and Totemic Focus 2, and one point from Elemental Weapons into Ancestral
+// Knowledge: 803.7 / 795.3 / 793.3 at 120 / 180 / 300 sec (813.8 / 804.2 / 792.4 before), 3.6%
+// behind Level 60 at 180. Casting Water Shield, whose globes now also come from our spell crits,
+// is still 3 to 11 behind Lightning Shield on this build and on Mana Tide.
 export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
 	'Level 60 + Water Shield',
-	SavedTalents.create({ talentsString: '050031-053030031005112151-052030001' }),
+	SavedTalents.create({ talentsString: '051003-054030021005112151-053020001' }),
 	{ tooltip: 'Level 60 talents with 10 Restoration points for Water Shield.', group: 'Level 60' },
 );
 // The best build that takes Water Shield and Mana Tide Totem (-require
@@ -536,9 +545,13 @@ export const TalentsLevel60WaterShield = PresetUtils.makePresetTalents(
 // the search found nothing better: 739.7 / 733.0 / 727.4, and 739.9 / 733.4 / 728.4 with Rage of the
 // Farseer waiting for the on-use trinket (749.3 / 742.7 / 737.9 with Elixir of Cunning and Ferocity and Forever's oil and chili damage),
 // 8.7% behind Level 60 at 180.
+//
+// Under client 1.60.1.70425 the search (Mana Tide Totem and Spirit Weapons pinned) moved a point
+// from Improved Stormstrike to Concussion: 769.0 / 760.5 / 756.7 at 120 / 180 / 300 sec (790.3 /
+// 782.1 / 778.0 before, mostly the Fire Nova cut), 7.9% behind Level 60 at 180.
 export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
 	'Level 60 + Mana Tide',
-	SavedTalents.create({ talentsString: '02-055030031005112151-053051001001' }),
+	SavedTalents.create({ talentsString: '03-055030031005112051-053051001001' }),
 	{ tooltip: 'Level 60 talents with Water Shield and Mana Tide Totem.', group: 'Level 60' },
 );
 // Level 30 with 5 extra talent points (26 in all), with Stormstrike, Spirit Weapons and
@@ -567,8 +580,23 @@ export const TalentsLevel30PvP = PresetUtils.makePresetTalents('Level 30 PvP', S
 	group: 'Level 30 PvP',
 });
 
+// The talents the leveling optimizer ran with. They are the Level 30 + 5 talents, kept as their
+// own preset so a leveling talent search can change them later without touching Level 30 + 5.
+export const TalentsLevel30Leveling = PresetUtils.makePresetTalents('Level 30 Leveling', SavedTalents.create({ talentsString: '-0540320010051122' }), {
+	tooltip: 'The Level 30 + 5 talents, which the leveling optimizer ran with.',
+	group: 'Leveling',
+});
+
 export const TalentPresets = {
-	[Phase.Phase1]: [TalentsLevel60, TalentsLevel60ImpGW, TalentsLevel60WaterShield, TalentsLevel60ManaTide, TalentsLevel30p5, TalentsLevel30PvP],
+	[Phase.Phase1]: [
+		TalentsLevel60,
+		TalentsLevel60ImpGW,
+		TalentsLevel60WaterShield,
+		TalentsLevel60ManaTide,
+		TalentsLevel30p5,
+		TalentsLevel30PvP,
+		TalentsLevel30Leveling,
+	],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
 	[Phase.Phase4]: [],
@@ -582,59 +610,40 @@ export const DefaultTalents = TalentPresets[Phase.Phase1][0];
 //                                 Options
 ///////////////////////////////////////////////////////////////////////////
 
+// The raid damage in the Level 60 encounter (PresetUtils.LEVEL_60_RAID_DAMAGE, the same for every
+// spec since 2026-10-16): 2 direct hits a minute, at random times. Nothing we can read measures
+// it (Warcraft Logs was out of reach, 2026-10-15), so it comes from Season of Discovery boss
+// timers in the Deadly Boss Mods source. Most bosses land one or two hits on the raid every 20 to
+// 40 sec (Ragnaros's Wrath every 26 sec, Broodlord's Blast Wave, Kel'Thuzad's Frostbolt Volley,
+// Chromaggus's breaths), Patchwerk and Loatheb none, and Firemaw, Vaelastrasz and Huhuran's last
+// 30% about 10. The DPS report's assumptions run 0 and 10 too.
+//
+// Each hit fires a Lightning Shield orb, so every Level 60 rotation keeps the shield up: before
+// the pull, and in the fight when nothing else is ready (+2.8 at 6 a minute over putting it
+// first). At 180 sec Level 60 went from 826.0 to 833.8, Imp GW from 822.0 to 829.5 (about +26 at
+// 10 a minute), and with no hits it costs nothing measurable. The Water Shield and Mana Tide builds
+// cast Lightning Shield too: Water Shield's 2% mana a globe was worth less than Lightning Shield's
+// orbs at every rate we tried (0, 2, 6 and 10 a minute), whether we kept Water Shield for low mana
+// or not. Water Shield went from 776.1 to 785.3, Mana Tide from 753.4 to 763.3 (+32 and +34 at 10
+// a minute).
+//
+// Since the rotation auditor's pass 21 (2026-10-16) Optimized puts Lightning Shield up at -3 sec
+// and Searing Totem at -1.5 sec, so the totem no longer takes the first GCD of the fight, and
+// none of the rotations recasts Strength of Earth, Windfury or Mana Spring with less than 20 sec
+// left (the starting totems run out a few seconds before a 5 min fight ends). Level 60 is 845.7 /
+// 834.6 / 815.5 at 120 / 180 / 300 sec (+1.2 / +0.8 / +1.9), Imp GW 842.1 / 830.3 / 811.0, Water
+// Shield 792.6 / 785.4 / 772.5 and Mana Tide 770.0 / 763.3 / 758.0 (the last two only gain at 300).
 export const DefaultOptions = EnhancementShamanOptions.create({
 	shamanImbue: WeaponImbue.WindfuryWeapon,
 	syncType: ShamanSyncType.Auto,
 });
 
-// The class options every preset build sets. They always set the starting totems, so loading a
-// build puts its own in place and changing them marks the build as modified.
+// The class options every preset build sets.
 //
-// The Level 30 PvP builds start the fight with no totems and put them down in the rotation's
-// prepull actions.
-const PresetBuildOptions = { shamanImbue: WeaponImbue.WindfuryWeapon, startingTotems: StartingTotems.create() };
-
-// The raid and dungeon builds start the fight with their totems already down, each at the
-// default seconds before the pull, one totem GCD apart (see starting_totems.tsx). They cost no
-// mana, so the rotations leave them out of the prepull actions. Totems last 5 min under
-// Forever, so a 3 min fight never puts them down again.
-//
-// On 2026-10-08 that was +0.3 at 180 sec on Level 60 over the old prepull totems, and +0.7
-// at 120 sec on Level 30 + 5. At 300 sec it can be 1 to 2 behind, because the totems run out
-// 30 sec sooner and the rotation puts them down again.
-const startingTotemsLevel60 = StartingTotems.create({
-	earth: EarthTotem.StrengthOfEarthTotem,
-	earthSecondsBeforePull: 28,
-	air: AirTotem.WindfuryTotem,
-	airSecondsBeforePull: 27,
-	// No fire totem before the pull: since the 2026-10-13 gear round the Optimized rotation puts
-	// Searing Totem down at the pull (+5.9 at 180 sec over Flametongue Totem, which shares the
-	// weapon buff slot with Windfury Totem).
-	water: WaterTotem.ManaSpringTotem,
-	waterSecondsBeforePull: 30,
-});
-// The base Level 60 builds get the party's totems from the raid (standards 23), so they start with
-// none of their own. The totem duty builds start with startingTotemsLevel60.
-const PresetBuildOptionsLevel60 = { ...PresetBuildOptions, startingTotems: StartingTotems.create() };
-const PresetBuildOptionsLevel60TotemDuty = { ...PresetBuildOptions, startingTotems: startingTotemsLevel60 };
-// Magma Totem lasts only 20 sec, so it goes down 1 sec before the pull.
-const magmaStartingTotem = { fire: FireTotem.MagmaTotem, fireSecondsBeforePull: 1 };
-const PresetBuildOptionsLevel60Magma = { ...PresetBuildOptions, startingTotems: StartingTotems.create(magmaStartingTotem) };
-const PresetBuildOptionsLevel60MagmaTotemDuty = {
-	...PresetBuildOptions,
-	startingTotems: StartingTotems.create({ ...startingTotemsLevel60, ...magmaStartingTotem }),
-};
-// Windfury Totem comes at level 32.
-const PresetBuildOptionsLevel30 = {
-	...PresetBuildOptions,
-	startingTotems: StartingTotems.create({
-		...startingTotemsLevel60,
-		air: AirTotem.NoAirTotem,
-		airSecondsBeforePull: 0,
-		fire: FireTotem.FlametongueTotem,
-		fireSecondsBeforePull: 29,
-	}),
-};
+// Since 2026-10-16 the totems go down in each rotation's prepull actions, one global cooldown
+// apart, with their mana. Before that the builds started the fight with them already down for
+// free (the old StartingTotems option), which the game doesn't allow.
+const PresetBuildOptions = { shamanImbue: WeaponImbue.WindfuryWeapon };
 
 // The level 60 consumables. On 2026-10-08 we tried every consumable the sim applies in each
 // slot on the Level 60 build at 180 sec. Under Forever the shaman imbue stacks with an oil or a
@@ -678,9 +687,11 @@ export const DefaultConsumes = Consumes.create({
 
 // The raid the level 60 numbers were measured under (the rogue search's export minus
 // the totems): both paladin blessings, Judgement of Wisdom and every debuff, but no
-// second shaman in the group, so the player's own Strength of Earth and Grace of Air
-// are what the rotation casts and there is no Mana Spring. Judgement of Wisdom alone is
-// 60 DPS here because without it the shaman is out of mana two minutes in.
+// second shaman in the group, so the player's own totems are what the rotation casts.
+// Judgement of Wisdom alone is 60 DPS here because without it the shaman is out of mana
+// two minutes in. Grace of Air comes from the raid's second shaman, the one whose Grace of
+// Air every melee group gets (the user's ruling 2026-10-16, "both totems": client
+// 1.60.1.70425 lets it stack with Windfury Totem and makes both raid-wide).
 export const DefaultRaidBuffs = RaidBuffs.create({
 	arcaneBrilliance: true,
 	battleShout: TristateEffect.TristateEffectImproved,
@@ -690,26 +701,15 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	fireResistanceAura: true,
 	frostResistanceAura: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
+	graceOfAirTotem: TristateEffect.TristateEffectRegular,
 	leaderOfThePack: true,
 	moonkinAura: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
 	retributionAura: TristateEffect.TristateEffectImproved,
-	sanctityAura: true,
 	shadowProtection: true,
 	thorns: TristateEffect.TristateEffectImproved,
 	trueshotAura: true,
-});
-
-// Standards 23: the base Level 60 builds get the party's totems from the raid, as if another shaman in
-// the melee party put them down. That party has Strength of Earth, Windfury Totem (which can't stand
-// with Grace of Air) and Mana Spring Totem. Our own Windfury Weapon turns Windfury Totem's buff off
-// for us, so it is there for the party. None is improved: Forever took out Enhancing Totems, and the
-// builds have no Restorative Totems.
-export const PartyTotemsRaidBuffs = RaidBuffs.create({
-	...DefaultRaidBuffs,
-	strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
-	totemWeaponBuff: TotemWeaponBuff.TotemWeaponBuffWindfury,
-	manaSpringTotem: TristateEffect.TristateEffectRegular,
+	salvation: true,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
@@ -728,7 +728,6 @@ export const DefaultIndividualBuffs = IndividualBuffs.create({
 export const DefaultDebuffs = Debuffs.create({
 	curseOfElements: true,
 	curseOfRecklessness: true,
-	curseOfShadow: true,
 	curseOfWeakness: TristateEffect.TristateEffectImproved,
 	demoralizingRoar: TristateEffect.TristateEffectImproved,
 	demoralizingShout: TristateEffect.TristateEffectImproved,
@@ -768,6 +767,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		executeProportion20: 0.2,
 		executeProportion25: 0.25,
 		executeProportion35: 0.35,
+		...PresetUtils.LEVEL_60_RAID_DAMAGE,
 		targets: [
 			{
 				id: 213336,
@@ -784,26 +784,19 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 	}),
 	{
 		tanks: [],
-		raidBuffs: PartyTotemsRaidBuffs,
+		raidBuffs: DefaultRaidBuffs,
 		debuffs: DefaultDebuffs,
 		buffs: DefaultIndividualBuffs,
 		consumes: DefaultConsumes,
 	},
 );
-// The Level 60 encounter for the totem duty builds: the same raid without its party totems, which
-// the shaman puts down itself.
-export const EncounterLevel60TotemDuty = PresetUtils.makePresetEncounter('Level 60 (Totems duty)', EncounterLevel60.encounter!, {
-	tanks: [],
-	raidBuffs: DefaultRaidBuffs,
-	debuffs: DefaultDebuffs,
-	buffs: DefaultIndividualBuffs,
-	consumes: DefaultConsumes,
-});
 // On 2026-10-08, with the starting totems and the new consumables, Level 60 is 826.5 / 819.6 /
 // 807.7 at 120 / 180 / 300 sec, Level 60 + Water Shield 776.6 / 767.0 / 751.2 and Level 60 +
 // Mana Tide 756.6 / 750.3 / 745.3. A knob search kept every rotation knob but the Mana Tide
 // build's Fire Nova order (see shaman_presets.sh). It wanted Grace of Air in place of Windfury
-// Totem (+23 at 180 sec), but the builds keep Windfury Totem for the group. The talents were
+// Totem (+23 at 180 sec), but the builds keep Windfury Totem for the group. Standards 23 (user ruling,
+// 2026-10-15): there is no totem duty for shamans, every shaman drops its own party's totems (Strength
+// of Earth, Windfury Totem and Mana Spring for this melee party), like a warrior's Sunder. The talents were
 // not searched again.
 //
 // On 2026-10-12, after the shaman audit fixes since 2026-10-08 (the sim had moved Level 60 to
@@ -864,22 +857,7 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: PresetBuildOptionsLevel60,
-});
-// Level 60 on totem duty: it drops the party's Strength of Earth, Windfury and Mana Spring Totem itself, with
-// the raid's totems off.
-export const PresetBuildLevel60TotemDuty = PresetUtils.makePresetBuild('Level 60 (Totems duty)', {
-	group: 'Level 60',
-	tooltip: "Level 60, also keeping up the party's Strength of Earth, Windfury and Mana Spring Totem (the raid has no other shaman).",
-	gear: GearLevel60Phase1Synthetic,
-	talents: TalentsLevel60,
-	rotation: APLOptimizedTotemDuty,
-	encounter: EncounterLevel60TotemDuty,
-	race: Race.RaceOrc,
-	level: 60,
-	bonusTalentPoints: 0,
-	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: PresetBuildOptionsLevel60TotemDuty,
+	options: PresetBuildOptions,
 });
 export const PresetBuildLevel60WaterShield = PresetUtils.makePresetBuild('Level 60 + Water Shield', {
 	group: 'Level 60',
@@ -892,22 +870,7 @@ export const PresetBuildLevel60WaterShield = PresetUtils.makePresetBuild('Level 
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: PresetBuildOptionsLevel60Magma,
-});
-// Level 60 + Water Shield on totem duty: it drops the party's Strength of Earth, Windfury and Mana Spring Totem itself, with
-// the raid's totems off.
-export const PresetBuildLevel60WaterShieldTotemDuty = PresetUtils.makePresetBuild('Level 60 + Water Shield (Totems duty)', {
-	group: 'Level 60',
-	tooltip: "Level 60 + Water Shield, also keeping up the party's Strength of Earth, Windfury and Mana Spring Totem (the raid has no other shaman).",
-	gear: GearLevel60Phase1Synthetic,
-	talents: TalentsLevel60WaterShield,
-	rotation: APLMagmaTotemDuty,
-	encounter: EncounterLevel60TotemDuty,
-	race: Race.RaceOrc,
-	level: 60,
-	bonusTalentPoints: 0,
-	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: PresetBuildOptionsLevel60MagmaTotemDuty,
+	options: PresetBuildOptions,
 });
 export const PresetBuildLevel60ManaTide = PresetUtils.makePresetBuild('Level 60 + Mana Tide', {
 	group: 'Level 60',
@@ -920,22 +883,7 @@ export const PresetBuildLevel60ManaTide = PresetUtils.makePresetBuild('Level 60 
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: PresetBuildOptionsLevel60Magma,
-});
-// Level 60 + Mana Tide on totem duty: it drops the party's Strength of Earth, Windfury and Mana Spring Totem itself, with
-// the raid's totems off.
-export const PresetBuildLevel60ManaTideTotemDuty = PresetUtils.makePresetBuild('Level 60 + Mana Tide (Totems duty)', {
-	group: 'Level 60',
-	tooltip: "Level 60 + Mana Tide, also keeping up the party's Strength of Earth, Windfury and Mana Spring Totem (the raid has no other shaman).",
-	gear: GearLevel60Phase1Synthetic,
-	talents: TalentsLevel60ManaTide,
-	rotation: APLManaTideTotemDuty,
-	encounter: EncounterLevel60TotemDuty,
-	race: Race.RaceOrc,
-	level: 60,
-	bonusTalentPoints: 0,
-	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: PresetBuildOptionsLevel60MagmaTotemDuty,
+	options: PresetBuildOptions,
 });
 
 // A level 30 shaman soloing Interrogator Vishas (Scarlet Monastery Graveyard, level 32)
@@ -1017,11 +965,14 @@ export const EncounterLevel30 = PresetUtils.makePresetEncounter(
 // on its own set and encounter: rotopt -weights at 100k iterations, then direct probes
 // for the rest.
 //
-// Hit and crit come from probes because under Forever an item's hit or crit counts for
-// melee and spells both. The weights run moves the melee and the spell stat one at a time,
-// so it reads about half. The sets also have no hit, and the weights run can't probe below
-// zero. The hit value is for the first 2%. Each point above that is worth less, because
-// the spell hit cap comes first.
+// Hit and crit come from probes, because the sets have no hit and the weights run reads it
+// low there. The hit value is the average of the first 4%. Each point above that is worth
+// less, because the spell hit cap comes first.
+//
+// Until 2026-10-16 hit and crit here and in the PvP weights below were twice what they
+// are. Under Forever a bonus to melee hit or crit also moves the spell one
+// (unifyEquipHitAndCrit), so the probes' +2% melee and +2% spell was +4%, and we divided by
+// 2. We halved them.
 export const EPLevel30 = PresetUtils.makePresetEpWeights(
 	'Level 30',
 	Stats.fromMap(
@@ -1031,10 +982,10 @@ export const EPLevel30 = PresetUtils.makePresetEpWeights(
 			[Stat.StatIntellect]: 2.93,
 			[Stat.StatSpirit]: 0.4,
 			[Stat.StatAttackPower]: 1,
-			[Stat.StatMeleeHit]: 48.3,
-			[Stat.StatSpellHit]: 48.3,
-			[Stat.StatMeleeCrit]: 37,
-			[Stat.StatSpellCrit]: 37,
+			[Stat.StatMeleeHit]: 24.15,
+			[Stat.StatSpellHit]: 24.15,
+			[Stat.StatMeleeCrit]: 18.5,
+			[Stat.StatSpellCrit]: 18.5,
 			[Stat.StatSpellPower]: 2.09,
 			[Stat.StatSpellDamage]: 2.09,
 			[Stat.StatFirePower]: 1.07,
@@ -1124,8 +1075,8 @@ export const EPLevel30PvPVsCloth = makeLevel30PvPEP('PvP vs Cloth', 'Level 30 Pv
 	int: 1.96,
 	spi: 0,
 	mp5: 0,
-	hit: 38.5,
-	crit: 23.5,
+	hit: 19.25,
+	crit: 11.75,
 	sp: 2.09,
 	fire: 1.3,
 	nature: 0.48,
@@ -1137,8 +1088,8 @@ export const EPLevel30PvPVsHunter = makeLevel30PvPEP('PvP vs Hunter', 'Level 30 
 	int: 2.49,
 	spi: 0.2,
 	mp5: 0.44,
-	hit: 41.7,
-	crit: 24.9,
+	hit: 20.85,
+	crit: 12.45,
 	sp: 3.12,
 	fire: 1.46,
 	nature: 1.32,
@@ -1150,8 +1101,8 @@ export const EPLevel30PvPVsRogue = makeLevel30PvPEP('PvP vs Rogue', 'Level 30 Pv
 	int: 4.54,
 	spi: 0.82,
 	mp5: 2.68,
-	hit: 40.7,
-	crit: 23.6,
+	hit: 20.35,
+	crit: 11.8,
 	sp: 2.36,
 	fire: 1.18,
 	nature: 0.93,
@@ -1163,8 +1114,8 @@ export const EPLevel30PvPVsShaman = makeLevel30PvPEP('PvP vs Shaman', 'Level 30 
 	int: 2.92,
 	spi: 0.62,
 	mp5: 1.62,
-	hit: 36.7,
-	crit: 22.4,
+	hit: 18.35,
+	crit: 11.2,
 	sp: 2.25,
 	fire: 1.14,
 	nature: 0.83,
@@ -1179,8 +1130,8 @@ export const EPLevel30PvPVsWarrior = makeLevel30PvPEP(
 		int: 2.69,
 		spi: 0.47,
 		mp5: 1.15,
-		hit: 41,
-		crit: 23.7,
+		hit: 20.5,
+		crit: 11.85,
 		sp: 2.46,
 		fire: 1.39,
 		nature: 0.77,
@@ -1196,8 +1147,8 @@ export const EPLevel30PvPVsProt = makeLevel30PvPEP(
 		int: 3.59,
 		spi: 0.77,
 		mp5: 1.91,
-		hit: 42.3,
-		crit: 23.9,
+		hit: 21.15,
+		crit: 11.95,
 		sp: 3,
 		fire: 1.59,
 		nature: 1,
@@ -1225,8 +1176,8 @@ export const EPLevel30PvP = makeLevel30PvPEP('Level 30 PvP', 'The mean of the si
 	int: 2.3,
 	spi: 0.14,
 	mp5: 0.37,
-	hit: 42.6,
-	crit: 24.9,
+	hit: 21.3,
+	crit: 12.45,
 	sp: 2.59,
 	fire: 1.37,
 	nature: 0.91,
@@ -1241,16 +1192,123 @@ export const EPLevel30PvPHighHP = makeLevel30PvPEP(
 		int: 3.03,
 		spi: 0.48,
 		mp5: 1.3,
-		hit: 40.1,
-		crit: 23.6,
+		hit: 20.05,
+		crit: 11.8,
 		sp: 2.55,
 		fire: 1.34,
 		nature: 0.89,
 		armor: 0.31,
 	},
 );
+// Stat weights for leveling (2026-10-16): what each stat adds to the mobs a solo level 30
+// kills in a 20 min session, in attack power, on the Level 30 Leveling (solo) build. One
+// attack power adds 0.042 mobs a session.
+//
+// Each stat is a direct probe at 20,000 sessions, +10 of it (+5 MP5, +20 spell power, +200
+// armor, +1% hit or crit) against none, with the same random rolls. Under Forever a bonus to
+// melee hit or crit moves the spell one too, so +1% is one bonus, not two. We take the step up,
+// because that's what an upgrade does. Most stats come out the same stepping down, but
+// Stamina doesn't. -10 Stamina costs 1.45 attack power a point and +10 adds 0.86, and +30 adds
+// no more than +20, because Stamina only shortens our rests and we rest to a fixed health.
+// The weapon DPS and the fire and nature split are from the stat weights run (±10).
+//
+// Next to Level 30, Spirit is worth more than four times as much and MP5 three times, while
+// Intellect is worth less. Over a session the rests matter as much as the fight, and Spirit
+// and MP5 shorten them. Hit is for the first 2% (20.9 and then 22.1). The set has none, and 1% below
+// none costs only a quarter of what the first 1% adds, so the stat weights run, which
+// averages the step down and the step up, reads it low (13.3). Armor is worth little, since
+// mobs at our level barely hurt us between rests.
+export const EPLevel30Leveling = PresetUtils.makePresetEpWeights(
+	'Level 30 Leveling',
+	Stats.fromMap(
+		{
+			[Stat.StatStrength]: 1.98,
+			[Stat.StatAgility]: 1.81,
+			[Stat.StatStamina]: 0.85,
+			[Stat.StatIntellect]: 1.79,
+			[Stat.StatSpirit]: 1.84,
+			[Stat.StatAttackPower]: 1,
+			[Stat.StatMeleeHit]: 21.5,
+			[Stat.StatSpellHit]: 21.5,
+			[Stat.StatMeleeCrit]: 14.1,
+			[Stat.StatSpellCrit]: 14.1,
+			[Stat.StatSpellPower]: 1.46,
+			[Stat.StatSpellDamage]: 1.46,
+			[Stat.StatFirePower]: 0.29,
+			[Stat.StatNaturePower]: 1.12,
+			[Stat.StatMP5]: 3.76,
+			[Stat.StatArmor]: 0.06,
+			[Stat.StatBonusArmor]: 0.06,
+		},
+		{
+			[PseudoStat.PseudoStatMainHandDps]: 13.62,
+		},
+	),
+	{ tooltip: 'Stat weights for a solo level 30 grinding mobs of its level, by mobs killed in a session.', group: 'Leveling' },
+);
+
+// Stat weights for the leveling gear plan (2026-10-16), by mobs killed in a 20 min session, in
+// attack power, at levels 10 to 30. The Leveling Gear tab judges the items it finds by them, and
+// blends two of them for the levels in between.
+//
+// Each level is simmed on the plan's own gear at that level (seed 1, no enchants), with the
+// leveling optimizer's best rotation for that level and gear. The talents follow the Level 30
+// Leveling build in the order we'd take them: Thundering Strikes, Mental Dexterity, Improved
+// Ghost Wolf, Shamanistic Focus, Ancestral Knowledge, then Flurry and Stormstrike at 25, where
+// the 5 extra points start. Below 30 we use Rockbiter, which beats Flametongue there.
+//
+// Each stat is a direct probe at 20,000 sessions (+10 of it, +20 attack power or spell power,
+// +5 MP5, +200 armor, +1% hit or crit, +2 weapon DPS). Strength is always 2, because it only
+// gives us attack power. The weights move with the gear, because Stamina, Intellect and MP5
+// decide how often we die (0.05 to 0.25 deaths a session). The gear the plan picks by one set
+// of weights changes the next. So each level is the mean of three rounds: the plan's gear by the
+// Level 30 Leveling weights, then by those weights, then by the mean of the first two. Stamina at
+// level 20, for example, came out at 2.29, -0.04 and 2.33.
+//
+// [level, [Str, Agi, Sta, Int, Spi, hit, crit, SP, Fire, Nature, MP5, Armor, MH DPS]]
+const levelingGearPlanWeights: Array<[number, number[]]> = [
+	[10, [2.0, 0.74, 2.6, 0.94, 1.67, 7.07, 3.29, 2.75, 0.34, 2.33, 4.12, 0.09, 13.34]],
+	[15, [2.0, 0.8, 1.42, 1.59, 1.01, 8.13, 5.11, 2.95, 0.6, 2.26, 2.69, 0.08, 14.05]],
+	[20, [2.0, 1.24, 1.53, 2.83, 0.68, 13.28, 8.03, 3.48, 0.66, 2.54, 3.15, 0.13, 13.56]],
+	[25, [2.0, 1.11, 1.77, 2.22, 0.51, 13.91, 10.0, 2.08, 0.37, 1.6, 3.36, 0.07, 13.14]],
+	[30, [2.0, 1.29, 0.56, 2.0, 0.95, 14.19, 9.73, 1.63, 0.28, 1.27, 1.82, 0.08, 13.56]],
+];
+export const EPLevelingGearPlan = levelingGearPlanWeights.map(([level, [str, agi, sta, int, spi, hit, crit, sp, fire, nature, mp5, armor, mhDps]]) =>
+	PresetUtils.makePresetEpWeights(
+		`Level ${level} Leveling Gear`,
+		Stats.fromMap(
+			{
+				[Stat.StatStrength]: str,
+				[Stat.StatAgility]: agi,
+				[Stat.StatStamina]: sta,
+				[Stat.StatIntellect]: int,
+				[Stat.StatSpirit]: spi,
+				[Stat.StatAttackPower]: 1,
+				[Stat.StatMeleeHit]: hit,
+				[Stat.StatSpellHit]: hit,
+				[Stat.StatMeleeCrit]: crit,
+				[Stat.StatSpellCrit]: crit,
+				[Stat.StatSpellPower]: sp,
+				[Stat.StatSpellDamage]: sp,
+				[Stat.StatFirePower]: fire,
+				[Stat.StatNaturePower]: nature,
+				[Stat.StatMP5]: mp5,
+				[Stat.StatArmor]: armor,
+				[Stat.StatBonusArmor]: armor,
+			},
+			{ [PseudoStat.PseudoStatMainHandDps]: mhDps },
+		),
+		{
+			tooltip: `Stat weights for a solo level ${level} on the leveling gear plan's gear, by mobs killed in a session. The Leveling Gear tab judges items by them.`,
+			group: 'Leveling Gear Plan',
+		},
+	),
+);
+
 export const EPPresets = [
 	EPLevel30,
+	EPLevel30Leveling,
+	...EPLevelingGearPlan,
 	EPLevel30PvP,
 	EPLevel30PvPHighHP,
 	EPLevel30PvPVsCloth,
@@ -1277,7 +1335,7 @@ export const PresetBuildLevel30p5 = PresetUtils.makePresetBuild('Level 30 + 5', 
 	level: 30,
 	bonusTalentPoints: 5,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: PresetBuildOptionsLevel30,
+	options: PresetBuildOptions,
 });
 
 // Level 30 PvP is a 60 sec fight against a level 30 player in PvP mode. The enemy keeps us
@@ -1498,3 +1556,47 @@ export const PresetBuildLevel30PvPVsProt = makeLevel30PvPBuild(
 	EncounterLevel30PvPVsProt,
 	EPLevel30PvPVsProt,
 );
+
+// Leveling is a grinding session in place of one fight (docs/leveling_sim.md): 20 min against
+// mobs of our level, give or take one, with every leveling option at its default. The sim makes
+// up the mobs and the session's length, so the duration and the target here only count when
+// the Leveling mode is off again. They are the Level 30 encounter's.
+//
+// We level alone: no raid or party buffs, no Blessing of Kings and no debuffs from others.
+export const EncounterLeveling = PresetUtils.makePresetEncounter(
+	'Leveling',
+	Encounter.create({
+		...EncounterLevel30.encounter,
+		leveling: LevelingOptions.create(),
+	}),
+	{
+		group: 'Leveling',
+		tanks: EncounterLevel30.tanks,
+		raidBuffs: RaidBuffs.create(),
+		partyBuffs: PartyBuffs.create(),
+		debuffs: Debuffs.create(),
+		buffs: IndividualBuffs.create(),
+		consumes: Consumes.create(),
+		inFrontOfTarget: true,
+	},
+);
+// The solo level 30 setup the leveling optimizer ran with (tools/rotopt/leveling/
+// level30_enh_solo.json): the Level 30 + 5 gear, talents and professions, an Orc with 5 extra
+// talent points, Windfury Weapon, and no starting totems, explosives or potions.
+//
+// The game takes one shaman imbue on the weapon. Windfury Weapon kills more mobs a session
+// than Rockbiter Weapon with this rotation (89.6 to 86.3 at 2000 sessions, 2026-10-15).
+export const PresetBuildLevel30Leveling = PresetUtils.makePresetBuild('Level 30 Leveling (solo)', {
+	group: 'Leveling',
+	tooltip: 'A level 30 Orc grinding mobs of its level alone for 20 min, with the Level 30 + 5 gear and talents and no buffs or consumes.',
+	gear: GearLevel30p5,
+	talents: TalentsLevel30Leveling,
+	rotation: APLLevel30Leveling,
+	epWeights: EPLevel30Leveling,
+	encounter: EncounterLeveling,
+	race: Race.RaceOrc,
+	level: 30,
+	bonusTalentPoints: 5,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: PresetBuildOptions,
+});

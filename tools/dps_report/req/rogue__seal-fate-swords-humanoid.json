@@ -4,7 +4,7 @@
       {
         "players": [
           {
-            "race": "RaceUndead",
+            "race": "RaceSkyborneWindshaper",
             "class": "ClassRogue",
             "equipment": {
               "items": [
@@ -90,7 +90,7 @@
               "blessingOfWisdom": "TristateEffectImproved",
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "0053231025130005-3220132020141",
+            "talentsString": "0053231015140005-3220132020141",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Leatherworking",
@@ -114,7 +114,7 @@
               ],
               "priorityList": [
                 {
-                  "notes": "Slice and Dice up at any combo points, refresh at 5 when it is about to drop or when Adrenaline Rush is waiting on a longer one.",
+                  "notes": "Up at any combo points. Refreshed at 5 when about to drop, or when Adrenaline Rush waits on a longer one.",
                   "action": {
                     "condition": {
                       "or": {
@@ -395,7 +395,7 @@
                   }
                 },
                 {
-                  "notes": "Adrenaline Rush anchors the big window. Cast it low on energy so none of the extra regen is wasted.",
+                  "notes": "Cast low on Energy so no extra regen is wasted.",
                   "action": {
                     "condition": {
                       "and": {
@@ -442,7 +442,7 @@
                   }
                 },
                 {
-                  "notes": "Blade Flurry is auto attack speed and does not feed the energy window, so it goes on cooldown.",
+                  "notes": "Doesn't help the Energy window, so on cooldown.",
                   "action": {
                     "condition": {
                       "and": {
@@ -476,7 +476,7 @@
                   }
                 },
                 {
-                  "notes": "Cold Blood is spent by the next hit, so only ever right before a 5 point Eviscerate.",
+                  "notes": "Right before a 5 point Eviscerate.",
                   "action": {
                     "condition": {
                       "and": {
@@ -718,7 +718,7 @@
                   }
                 },
                 {
-                  "notes": "Gnome. Eureka! buffs the next 3 abilities, so right before Eviscerate and the two builders after it. Other races can ignore the warning on this line.",
+                  "notes": "Gnome. Buffs Eviscerate and the next two builders. Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "and": {
@@ -960,7 +960,7 @@
                   }
                 },
                 {
-                  "notes": "Orc. Blood Fury waits for Adrenaline Rush when the wait costs no use. Other races can ignore the warning on this line.",
+                  "notes": "Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "and": {
@@ -1040,7 +1040,7 @@
                   }
                 },
                 {
-                  "notes": "Night Elf. Elune's Light waits for Adrenaline Rush when the wait costs no use. Other races can ignore the warning on this line.",
+                  "notes": "Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -1114,7 +1114,7 @@
                   }
                 },
                 {
-                  "notes": "Troll. Berserking is auto attack speed, so it goes on cooldown. Other races can ignore the warning on this line.",
+                  "notes": "Other races can ignore the warning on this line.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -1125,7 +1125,7 @@
                   }
                 },
                 {
-                  "notes": "Earthstrike on cooldown. Without the trinket ignore the warning on this line.",
+                  "notes": "Without the trinket ignore the warning on this line.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -1135,7 +1135,7 @@
                   }
                 },
                 {
-                  "notes": "The synthetic on-use trinket on cooldown. Without the trinket ignore the warning on this line.",
+                  "notes": "Without the trinket ignore the warning on this line.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -1145,7 +1145,7 @@
                   }
                 },
                 {
-                  "notes": "Thistle Tea when there is room for the 100 energy.",
+                  
                   "action": {
                     "condition": {
                       "cmp": {
@@ -1168,7 +1168,6 @@
                   }
                 },
                 {
-                  "notes": "Goblin Sapper Charge on cooldown once Slice and Dice is up.",
                   "action": {
                     "condition": {
                       "auraIsActive": {
@@ -1186,7 +1185,7 @@
                   }
                 },
                 {
-                  "notes": "Goblin Land Mine right after a main hand swing, so its 1 sec cast loses no swing time.",
+                  "notes": "Its 1s cast then loses no swing time.",
                   "action": {
                     "condition": {
                       "and": {
@@ -1235,7 +1234,7 @@
                   }
                 },
                 {
-                  "notes": "Anything not listed above (trinkets).",
+                  "notes": "Trinkets.",
                   "action": {
                     "condition": {
                       "auraIsActive": {
@@ -1355,7 +1354,7 @@
                   }
                 },
                 {
-                  "notes": "Sinister Strike right after a main hand swing so an extra attack proc restarts a swing that just happened, or when energy is about to cap.",
+                  "notes": "An extra attack proc then resets a swing that just happened.",
                   "action": {
                     "condition": {
                       "or": {
@@ -1443,6 +1442,7 @@
       "powerWordFortitude": "TristateEffectImproved",
       "bloodPact": "TristateEffectImproved",
       "strengthOfEarthTotem": "TristateEffectRegular",
+      "graceOfAirTotem": "TristateEffectRegular",
       "arcaneBrilliance": true,
       "divineSpirit": true,
       "battleShout": "TristateEffectImproved",
@@ -1455,7 +1455,8 @@
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
-      "totemWeaponBuff": "TotemWeaponBuffWindfury"
+      "totemWeaponBuff": "TotemWeaponBuffWindfury",
+      "salvation": true
     },
     "debuffs": {
       "judgementOfWisdom": true,
@@ -1536,7 +1537,9 @@
         "parryHaste": true,
         "mobType": "MobTypeHumanoid"
       }
-    ]
+    ],
+    "raidDamageHitsPerMinute": 2,
+    "raidDamagePerHit": 1500
   },
   "simOptions": {
     "iterations": 1000,

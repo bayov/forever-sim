@@ -16,7 +16,7 @@ Talents (the ranks the BlizzCon data guessed that were wrong):
 
 - Wand Specialization 13 / 25%. Improved Power Word: Shield 7 / 14 / 20%. Mental Agility 3 / 7 / 10%. Twilight Focus 23 / 47 / 70%. Blessed Recovery 8 / 17 / 25%. Inspiration 8 / 17 / 25%. Searing Light 2 / 5% Holy damage. Spiritual Guidance 1 / 3 / 5 / 6 / 8% of Spirit as spell damage (5% a rank as healing). Spiritual Healing 3 / 7 / 10%. Shadow Weaving 33 / 67 / 100%.
 - Penance (20 point Discipline talent) at 60: 3 bolts of 92 Holy damage at 19% each, 385 Mana, 12 sec cooldown. Power Infusion needs Penance. Inner Focus now says its crit is only for a non-periodic spell.
-- Spirit Tap also triggers when an enemy with the priest's Vampiric Embrace dies. Vampiric Embrace lasts 30 sec (1 min cooldown) and Improved Vampiric Embrace is gone, so it always heals for 20%.
+- Spirit Tap also triggers when an enemy with the priest's Vampiric Embrace dies. Vampiric Embrace lasts 30 sec (30 sec cooldown since client 70425, 1 min before) and can't be resisted (70425) and Improved Vampiric Embrace is gone, so it always heals for 20%.
 - Shadow Weaving puts a 2% stack (up to 5, 15 sec) on the target that only raises the Shadow damage of the priest who put it there (aura 270).
 - Shadowform: 10% more Shadow damage, 50% off the mana cost of Shadow spells (a school cost aura, so it multiplies with the talent cost cuts), +100% critical strike damage bonus for Shadow Word: Pain, Mind Blast, Mind Flay, Devouring Plague, Mana Burn and Shadowguard (crits deal 200%), 15% less Physical damage taken. It costs 40% of base mana and blocks healing spells only, so Smite and Holy Fire are castable in it.
 - Darkness and Searing Light are school damage auras (they cover every Shadow or Holy damage the priest deals and multiply with Shadowform). Twin Disciplines' class mask covers the periodic part of Shadow Word: Pain and Devouring Plague and the direct part of Chastise, Holy Nova, Shadowguard and Touch of Weakness, not Shadow Word: Death or Mind Blast. Mental Agility's covers Shadow Word: Pain, Devouring Plague, Vampiric Embrace, Shadowform, Power Infusion, Smite, Holy Fire and Chastise, not Mind Blast, Mind Flay or Shadow Word: Death. Inner Focus's crit leaves out Shadow Word: Death.
@@ -26,7 +26,7 @@ Spells at their top rank (level 60):
 - Shadow Word: Pain 127 every 3 sec for 18 sec (762, Classic 852) at 20% a tick, 120% over the 6 ticks (Classic 100%).
 - Mind Blast 477 to 503 (Classic 508 to 537), 42.9% for every rank.
 - Mind Flay 390 over 3 sec (Classic 426) at 16.7% a tick (Classic 15%).
-- Devouring Plague: every race learns it, 106 every 3 sec for 24 sec (848, Classic 904) at 10% a tick, 1 min cooldown (Classic 3 min).
+- Devouring Plague: every race learns it, 106 every 3 sec for 24 sec (848, Classic 904) at 10% a tick, 24 sec cooldown since client 70425 (1 min before, Classic 3 min).
 - Shadow Word: Death (new, trained from 32): 444 to 472 at 42.9%, 340 Mana, instant, 15 sec cooldown. If the target lives, the priest takes 10% of their maximum health.
 - Smite 167 to 186 (Classic 384 to 429; the sim deals 9% more with rank 8, 182 to 203, as if the retune of the low ranks reached it, by the user's ruling on the report assumptions, 2026-10-15) and Holy Fire 184 to 232 plus 75 over 10 sec (Classic 355 to 449 plus 145). Both are usable in Shadowform.
 - Racial priest spells. Night Elf: Starshards 1800 Arcane over 6 sec (Classic 936) at 16.7% a tick, now on a 30 sec cooldown. Dwarf: Chastise (new), 272 to 306 Holy at 14.3%, instant, 2 min cooldown, Humanoids only. Undead: Dark Sacrifice (new), gives up 1600 health over 15 sec for 1600 mana plus the priest's Spirit, 10 min cooldown. Troll: Shadowguard 96 a hit (Classic 116). Human: Feedback, Divine Grace. Gnome: Confounding Flash, Contingency Plan. Fear Ward and Desperate Prayer are no longer tied to one race.
@@ -49,12 +49,12 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
 
 #### Row 1 (0 points)
 
-- **Power in Light** (5 ranks, column 1) [NEW] [ranks settled by client trait curves]
-  - Rank 1: Your Smite and Penance spells deal 2% increased damage to targets afflicted with your Holy Fire.
-  - Rank 2: Your Smite and Penance spells deal 4% increased damage to targets afflicted with your Holy Fire.
-  - Rank 3: Your Smite and Penance spells deal 6% increased damage to targets afflicted with your Holy Fire.
-  - Rank 4: Your Smite and Penance spells deal 8% increased damage to targets afflicted with your Holy Fire.
-  - Rank 5: Your Smite and Penance spells deal 10% increased damage to targets afflicted with your Holy Fire.
+- **Power in Light** (5 ranks, column 1) [NEW] [ranks settled by client trait curves] [70425: Holy Fire or Shadow Word: Pain, per the 15 October notes]
+  - Rank 1: Your Smite and Penance spells deal 2% increased damage to targets afflicted with your Holy Fire or Shadow Word: Pain.
+  - Rank 2: Your Smite and Penance spells deal 4% increased damage to targets afflicted with your Holy Fire or Shadow Word: Pain.
+  - Rank 3: Your Smite and Penance spells deal 6% increased damage to targets afflicted with your Holy Fire or Shadow Word: Pain.
+  - Rank 4: Your Smite and Penance spells deal 8% increased damage to targets afflicted with your Holy Fire or Shadow Word: Pain.
+  - Rank 5: Your Smite and Penance spells deal 10% increased damage to targets afflicted with your Holy Fire or Shadow Word: Pain.
 - **Wand Specialization** (2 ranks, column 2) [CHANGED] [ranks settled by client trait curves]
   - Rank 1: Increases your damage with Wands by 13%.
   - Rank 2: Increases your damage with Wands by 26%.

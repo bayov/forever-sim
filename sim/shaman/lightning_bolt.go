@@ -83,10 +83,11 @@ func (shaman *Shaman) newLightningBoltSpellConfig(rank int) core.SpellConfig {
 
 	spell.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 		baseDamage := sim.Roll(baseDamageLow, baseDamageHigh)
-		stormstrike := shaman.spendStormstrike(sim, target)
+		stormstrike := shaman.stormstrikeBonus(target)
 		spell.DamageMultiplier *= stormstrike
 		result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		spell.DamageMultiplier /= stormstrike
+		shaman.spendStormstrike(sim, target, result)
 
 		spell.WaitTravelTime(sim, func(sim *core.Simulation) {
 			spell.DealDamage(sim, result)

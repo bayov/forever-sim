@@ -389,6 +389,35 @@ message RaidMetrics {
 
 message EncounterMetrics {
 	repeated UnitMetrics targets = 1;
+
+	// Set in leveling mode (Encounter.leveling): averages over the iterations.
+	LevelingMetrics leveling = 2;
+}
+
+// What a grinding session (docs/leveling_sim.md) came to, averaged over the iterations.
+message LevelingMetrics {
+	// The score: mobs killed in the session, the one we're fighting at the end counted by
+	// the share of its health we took.
+	double mobs_killed = 1;
+	double mobs_killed_stdev = 2;
+	// XP from those kills (Classic's formula by level difference), and per hour.
+	double xp = 3;
+	double xp_per_hour = 4;
+	double deaths = 5;
+	// Average seconds of the session in each state.
+	double seconds_in_combat = 6;
+	double seconds_resting = 7;
+	double seconds_searching = 8;
+	double seconds_dead = 9;
+	// Average number of mobs a pull came to, chain pulls included.
+	double mobs_per_pull = 10;
+	// Food, water and bandages used a session.
+	double food = 11;
+	double drinks = 12;
+	double bandages = 13;
+	// Each session's mobs killed, in iteration order, when SimOptions.save_all_values is on.
+	// Stat weights compare them session by session, the way they use the DPS's all_values.
+	repeated double all_kills = 14;
 }
 
 enum ErrorOutcomeType {
@@ -433,6 +462,11 @@ message RaidSimResult {
 	IterationLog typical_iteration = 8;
 	IterationLog lucky_iteration = 9;
 	IterationLog unlucky_iteration = 10;
+
+	// In a leveling run the picks above go by mobs killed instead of raid DPS, and this one
+	// is the session with the most deaths (of those, the one closest to the average kills).
+	// It's unset when no session had a death.
+	IterationLog died_iteration = 11;
 }
 
 // One iteration of a run.
@@ -444,6 +478,10 @@ message IterationLog {
 	// In seconds.
 	double duration = 3;
 	string logs = 4;
+	// A leveling session's mobs killed (the ones on us at the end by the share of their
+	// health we took) and deaths. Zero outside the leveling mode.
+	double kills = 5;
+	int32 deaths = 6;
 }
 
 message RaidSimRequestSplitRequest {

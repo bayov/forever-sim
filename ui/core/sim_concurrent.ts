@@ -204,9 +204,10 @@ export const runConcurrentSim = async (
 	return combiResult;
 };
 
-// The split sims run without logs. Each one picks its typical, lucky and unlucky
-// iterations, the combined result has the overall ones, and here we run those three again
-// on one worker with logs on, so the results can show them event by event.
+// The split sims run without logs. Each one picks its typical, lucky and unlucky iterations
+// (and in a leveling run the one with the most deaths), the combined result has the overall
+// ones, and here we run those again on one worker with logs on, so the results can show them
+// event by event.
 const replayPickedIterations = async (request: RaidSimRequest, result: RaidSimResult, workerPool: WorkerPool, signals: SimSignals) => {
 	const { typicalIteration, luckyIteration, unluckyIteration } = result;
 	if (!request.simOptions?.debugFirstIteration || request.simOptions.debug) return;
@@ -215,8 +216,10 @@ const replayPickedIterations = async (request: RaidSimRequest, result: RaidSimRe
 	const replayRequest = RaidSimRequest.clone(request);
 	replayRequest.simOptions!.iterations = 1;
 	replayRequest.simOptions!.replaySeeds = [typicalIteration.seed, luckyIteration.seed, unluckyIteration.seed];
+	// A leveling run also picks the session with the most deaths.
+	if (result.diedIteration) replayRequest.simOptions!.replaySeeds.push(result.diedIteration.seed);
 
-	// The replay is three iterations, so it has no progress worth showing.
+	// The replay is a few iterations, so it has no progress worth showing.
 	const replay = await workerPool.raidSimAsync(replayRequest, () => undefined, signals);
 	if (replay.error) {
 		console.error('Replaying the typical, lucky and unlucky iterations failed', replay.error);
@@ -228,6 +231,7 @@ const replayPickedIterations = async (request: RaidSimRequest, result: RaidSimRe
 	result.typicalIteration = replay.typicalIteration;
 	result.luckyIteration = replay.luckyIteration;
 	result.unluckyIteration = replay.unluckyIteration;
+	result.diedIteration = replay.diedIteration;
 };
 
 const makeAndSendWeightsError = (err: string | ErrorOutcome, onProgress: WorkerProgressCallback): StatWeightsResult => {

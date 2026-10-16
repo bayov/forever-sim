@@ -66,8 +66,9 @@ export const GearP6BIS = PresetUtils.makePresetGear('P6 BiS', P6BISGear);
 // of the same on-use as 165 Agility, 3.0 ahead of 335 attack power). Only the head and chest carry
 // Grovekeeper Ferocity, Forever's crafted Feral set, so only its 2 piece (1% attack speed) is
 // live, like every class's set; the 5 piece (1 sec off Shifting Power) would add 5.9 at 180 sec.
-// Howling Idol (1 sec off Shifting Power, a real Forever Phase 1 idol) is worth 12.5 (those two
-// and the enchant comparisons below measured on the set before the 5a rebudget). Enchants are the
+// Howling Idol (0.5 sec off Shifting Power since client 1.60.1.70425, 1 sec before; a real Forever
+// Phase 1 idol) is worth 4.8 at 180 sec (12.5 at 1 sec; the 5 piece and the enchant comparisons
+// below measured on the set before the 5a rebudget). Enchants are the
 // best Phase 1 ones a cat can get, nothing from a raid: Lesser Arcanum of Voracity (Agility) on
 // the head and legs, Forever's +5 Agility on the neck, Agility on the back, Greater Stats, +9
 // Strength on the wrist, Superior Strength on the gloves (3.2 ahead of Greater Agility), +7
@@ -102,9 +103,10 @@ export const APLSimpleVael = PresetUtils.makePresetAPLRotation('Simple Vaelastra
 // bleed up on its own (keeping Rake up costs 33 at every length). Rip at 5 combo
 // points is 1 to 2 behind. The search on the 1b gear kept every knob at 120 and 180 sec (at 300
 // sec Shifting Power at 40 Energy is 0.3 ahead). Berserk's later uses wait for the Strength
-// trinket when waiting loses no use, and Elune's Light (the Night Elf's 10% crit) stays out of
+// trinket when waiting loses no use, and Elune's Light (the Night Elf's 10% crit) stayed out of
 // Berserk, where every builder crits anyway: 2.5 / 0.9 / 2.7 ahead at 120 / 180 / 300 sec
-// (rotation auditor's cooldown pass).
+// (rotation auditor's cooldown pass). The presets are Tauren since client 1.60.1.70425's racials, so
+// the Elune's Light line is out; a Night Elf still uses it on cooldown through the autocast line.
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
 	tooltip: "The optimizer's best level 60 rotation: Rip at 4 combo points, Shred, Shifting Power and Berserk on cooldown.",
 	group: 'Level 60',
@@ -113,10 +115,11 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // Faerie Fire duty (standards 23): the cat that keeps Faerie Fire (Feral) on the boss for the
 // raid. The Level 60 rotation leaves it to the raid's debuff; this one casts it from Cat Form
 // (free, 1 sec GCD, 6 sec cooldown, a trainer spell at 25 under Forever) first after the cooldowns
-// and again once it has under 1 sec left. Forever's Faerie Fire and Curse of Recklessness share the
+// and again once it has under 7 sec left, so a miss gets a second try before it drops (99.7% uptime,
+// rotation auditor). Forever's Faerie Fire and Curse of Recklessness share the
 // minor armor slot (standards 20), so the line waits while the raid's Faerie Fire or a curse holds
-// it, and the duty's cost shows with both off: 6.3 / 5.2 / 4.2 DPS at 120 / 180 / 300 sec (723.3 /
-// 712.3 / 704.1, 20,000 iterations), the GCDs and the moment before it lands, since the cat's own
+// it, and the duty's cost shows with both off: 4.2 / 3.1 / 2.2 DPS at 120 / 180 / 300 sec (719.9 /
+// 710.5 / 702.0, Tauren, 20,000 iterations; Faerie Fire no longer resets the swing), the GCDs and the moment before it lands, since the cat's own
 // hits get the armor. The knob search kept the rest of the rotation at 120, 180 and 300 sec.
 export const APLLevel60FaerieFire = PresetUtils.makePresetAPLRotation('Level 60 (Faerie Fire duty)', Level60FaerieFireAPLJSON, {
 	tooltip:
@@ -209,8 +212,8 @@ export const DefaultConsumes = Consumes.create({
 
 // The raid the Level 60 numbers were measured under (tools/rotopt/mksettings -spec feral): the
 // shared level 60 raid with the cat in a melee group, so a shaman's Strength of Earth and
-// Windfury Totem, as the warrior and rogue presets have (Forever's air totems don't stack in a
-// party, so Windfury takes Grace of Air's place; it works on a cat under Forever), every
+// Windfury Totem, as the warrior and rogue presets have (it works on a cat under Forever), and
+// Grace of Air from a second shaman in the raid as well (the user's ruling 2026-10-16, "both totems": client 1.60.1.70425 lets Grace of Air stack with Windfury Totem and makes both raid-wide), every
 // blessing, and its own Leader of the Pack. Under Forever the totems and Battle Shout are capped
 // below their Ahn'Qiraj book ranks (Strength of Earth 42, Battle Shout 115).
 export const DefaultRaidBuffs = RaidBuffs.create({
@@ -222,14 +225,15 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	fireResistanceAura: true,
 	frostResistanceAura: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
+	graceOfAirTotem: TristateEffect.TristateEffectRegular,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
 	retributionAura: TristateEffect.TristateEffectImproved,
-	sanctityAura: true,
 	shadowProtection: true,
 	strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
 	thorns: TristateEffect.TristateEffectImproved,
 	totemWeaponBuff: TotemWeaponBuff.TotemWeaponBuffWindfury,
 	trueshotAura: true,
+	salvation: true,
 });
 
 export const DefaultIndividualBuffs = IndividualBuffs.create({
@@ -264,7 +268,7 @@ export const DefaultDebuffs = Debuffs.create({
 export const OtherDefaults = {
 	profession1: Profession.Engineering,
 	profession2: Profession.Alchemy,
-	race: Race.RaceNightElf,
+	race: Race.RaceTauren,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -281,6 +285,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		executeProportion20: 0.2,
 		executeProportion25: 0.25,
 		executeProportion35: 0.35,
+		...PresetUtils.LEVEL_60_RAID_DAMAGE,
 		targets: [
 			{
 				id: 213336,
@@ -313,25 +318,26 @@ export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('L
 	buffs: DefaultIndividualBuffs,
 	consumes: DefaultConsumes,
 });
-// The Level 60 build, 729.5 / 717.2 / 708.1 at 120 / 180 / 300 sec. Every race a druid can be
-// under Forever on it with the same seed, 40,000 iterations (standard error 0.1):
+// The Level 60 build, Tauren: 724.1 / 713.7 / 704.3 at 120 / 180 / 300 sec (client 1.60.1.70425,
+// where Howling Idol takes 0.5 sec off Shifting Power and Tauren crits do 2% more). Every race a
+// druid can be under Forever on it with the same seed, 40,000 iterations (standard error 0.1):
 //
 //	                     120 sec  180 sec  300 sec
-//	Night Elf             729.5    717.2    708.1   best overall and Alliance
-//	Windshaper Skyborne   723.9    713.7    704.0   best Horde
-//	High Order Skyborne   723.8    713.7    704.0
-//	Tauren                722.0    711.5    701.8
+//	Tauren                724.2    713.7    704.3   best overall and Horde
+//	High Order Skyborne   721.5    711.2    702.0   best Alliance
+//	Windshaper Skyborne   721.6    711.2    702.1
+//	Night Elf             722.0    709.7    701.3
 //
-// Night Elf's lead is its Agility. No racial goes by weapon type, so the weapon changes
-// nothing, and the ranking with weapon type racials off is the same.
+// The Skyborne's 3% haste and the Tauren's crit damage now beat the Night Elf's Agility. No racial
+// goes by weapon type.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Night Elf on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Tauren on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60,
 	encounter: EncounterLevel60,
-	race: Race.RaceNightElf,
+	race: Race.RaceTauren,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -344,7 +350,7 @@ export const PresetBuildLevel60FaerieFire = PresetUtils.makePresetBuild('Level 6
 	talents: TalentsLevel60,
 	rotation: APLLevel60FaerieFire,
 	encounter: EncounterLevel60FaerieFireDuty,
-	race: Race.RaceNightElf,
+	race: Race.RaceTauren,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],

@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_arms_battle_shout",
   "published": {
-    "dps": 948.0,
-    "source": "Battle Shout duty preset (standards 23), 2026-10-15"
+    "dps": 975.3,
+    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 974.6)"
   },
   "verify": {
-    "dps": 948.0,
-    "stderr": 0.3,
+    "dps": 975.34,
+    "stderr": 0.35,
     "iters": 20000,
     "ok": true,
-    "note": "same sim as the published number"
+    "note": "run_build.py main run, 180s, seed 1"
   },
-  "summary": "Arms keeping Battle Shout up for its party, with the raid's Battle Shout off: 3.0 DPS behind the base build at 180 s.",
+  "summary": "Keeps Battle Shout up for its party, with the raid's Battle Shout off.",
   "keyTalents": [
     "Mortal Strike",
     "Bloodthrill",
@@ -37,15 +37,15 @@
     "Cruelty"
   ],
   "rotation": [
-    "Pre-pull: Bloodrage and Battle Shout 3 sec before the pull",
+    "Pre-pull: Bloodrage and Battle Shout 3s before the pull",
     "Pre-pull: Battle Stance",
-    "Battle Shout again with 3 sec of it left, unless it lasts the fight (Forever's lasts 3 min)",
+    "Battle Shout again with 35s of it left (about 142s in, before the execute phase), unless it lasts the fight (Forever's lasts 3 min)",
     "Sunder Armor as the first GCD after the pull (every warrior; the tanks keep it up after)",
-    "With 25 sec left, Recklessness ready and under 25 Rage: swap to Berserker Stance, and back to Battle Stance once Recklessness is out",
-    "Death Wish held for the last 36 sec, Recklessness in the last 25 sec; racials with Death Wish (Blood Fury and Berserking also at the end of the fight)",
-    "Mighty Rage Potion at the pull, second held for the last 20 sec; Bloodrage under 10 Rage",
+    "With 25s left, Recklessness ready and under 25 Rage: swap to Berserker Stance, and back to Battle Stance once Recklessness is out",
+    "Death Wish held for the last 36s, Recklessness in the last 25s; racials with Death Wish (Blood Fury and Berserking also at the end of the fight)",
+    "Mighty Rage Potion at the pull, second held for the last 20s; Bloodrage under 10 Rage",
     "Mortal Strike on cooldown",
-    "Slam from 20 Rage (15 sec cooldown with Improved Slam), outside execute",
+    "Slam from 20 Rage (15s cooldown with Improved Slam), outside execute",
     "Overpower from 5 Rage (dodges and Bloodthrill)",
     "Rend kept up outside execute; then Execute",
     "Heroic Strike from 70 Rage, Hamstring filler from 20 Rage (outside execute)"
@@ -64,16 +64,15 @@
     "Dense Sharpening Stone (main hand)"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 30 Strength and 16 crit rating, and 335 attack power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Rage from white hits is normalised to the weapon: k × swing speed (k 3.46 one-hand, 4.5 two-hand, measured at level 30), growing with level to ×1.5 at 60 (s = 0.5), the off hand the same. An assumption until measured at 60",
-    "Synthetic Phase 1 gear on Forever's physical budget (ids 991001-991018)",
+    "White hit Rage scales with weapon speed (measured at level 30, assumed ×1.5 at 60).",
     "No Ahn'Qiraj book ranks (Heroic Strike VIII, raid Battle Shout VI, Strength of Earth, Grace of Air)",
-    "Deep Wounds ticks can't crit (client attribute); Deep Wounds tick timer restarting on each crit is a modelling choice",
-    "Crit Rage bonus assumed white hits only; Heroic Strike swings count for Unbridled Wrath (open assumptions)",
-    "One +2% crit elixir a character: whether Ferocity stacks with Mongoose in game is open; a second crit elixir (Grizzly) would add 10.9",
-    "Battlegear of Glory 4-piece (+36 AP vs Humanoids) not counted (would add 8.4 at Undead 180 s)",
+    "Deep Wounds ticks can't crit. Each crit restarts the tick timer (our choice).",
+    "Assumed: the crit Rage bonus is white hits only, and Heroic Strike counts for Unbridled Wrath.",
+    "One +2% crit elixir. A second (Grizzly) would add 10.9.",
+    "Battlegear of Glory 4-piece not counted. It would add 8.4 vs Humanoids.",
     "Booming Voice (5/5) does nothing because the raid has Battle Shout",
-    "Arms in Berserker Stance with Whirlwind all fight was 10% behind"
+    "Arms in Berserker Stance with Whirlwind is 10% behind.",
+    "Raid damage hits (2 a minute, about 15 Rage each) are an estimate."
   ],
   "notes": "Request from mksettings -spec arms -gear level60_phase1_synthetic_arms -apl level60_arms_battle_shout -talents 20305213032515201-55050000001 -race Orc -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Not the class default: the warrior UI has one spec page and its default Level 60 build is Fury Dual Wield; this is the only Arms preset. Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts.",
   "duty": "Battle Shout",

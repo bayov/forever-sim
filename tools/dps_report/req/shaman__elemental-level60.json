@@ -4,7 +4,7 @@
       {
         "players": [
           {
-            "race": "RaceOrc",
+            "race": "RaceSkyborneWindshaper",
             "class": "ClassShaman",
             "equipment": {
               "items": [
@@ -88,13 +88,41 @@
               "blessingOfKings": true,
               "blessingOfWisdom": "TristateEffectImproved"
             },
-            "talentsString": "5504301300103051-052-05305",
+            "talentsString": "5501331003001351-055000101-053",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Alchemy",
             "rotation": {
               "type": "TypeAPL",
               "prepullActions": [
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10432
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-5.4s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10497
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-3.9s"
+                    }
+                  }
+                },
                 {
                   "action": {
                     "castSpell": {
@@ -126,13 +154,52 @@
               ],
               "priorityList": [
                 {
-                  "notes": "Racials, trinkets, potions, Demonic Rune and Nature's Swiftness on cooldown.",
+                  "notes": "Racials, trinkets, potions, Demonic Rune and Nature's Swiftness.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }
                 },
                 {
-                  "notes": "Searing Totem whenever it is down, unless the fight is about to end. It reaches 20 yards.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 10497
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "20s"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10497
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "It reaches 20 yards.",
                   "action": {
                     "condition": {
                       "and": {
@@ -172,7 +239,6 @@
                   }
                 },
                 {
-                  "notes": "Flame Shock when its DoT is down.",
                   "action": {
                     "condition": {
                       "and": {
@@ -184,6 +250,19 @@
                                   "spellId": {
                                     "spellId": 29228
                                   }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "9s"
                                 }
                               }
                             }
@@ -199,7 +278,7 @@
                   }
                 },
                 {
-                  "notes": "Lava Burst on cooldown, unless Flame Shock runs out before the cast ends. Without the talent ignore the warning on this line.",
+                  "notes": "Unless Flame Shock runs out before the cast ends. Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -237,13 +316,12 @@
                     },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 1238300
+                        "spellId": 1326047
                       }
                     }
                   }
                 },
                 {
-                  "notes": "Earth Shock when a Lightning Bolt would not land before the end.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -278,7 +356,60 @@
                   }
                 },
                 {
-                  "notes": "A lower rank of Lightning Bolt once the mana runs low.",
+                  "notes": "Raid damage on the shaman fires its orbs at the boss (3 per cast, at most one per 3.5s).",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 10432
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "currentManaPercent": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0.5"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "60s"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10432
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Lower rank.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -301,7 +432,6 @@
                   }
                 },
                 {
-                  "notes": "Lightning Bolt.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -333,13 +463,13 @@
       "trueshotAura": true,
       "leaderOfThePack": true,
       "moonkinAura": true,
-      "manaSpringTotem": "TristateEffectRegular",
       "shadowProtection": true,
       "frostResistanceAura": true,
       "fireResistanceAura": true,
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
-      "retributionAura": "TristateEffectImproved"
+      "retributionAura": "TristateEffectImproved",
+      "salvation": true
     },
     "debuffs": {
       "judgementOfWisdom": true,
@@ -419,7 +549,9 @@
         "swingSpeed": 2,
         "parryHaste": true
       }
-    ]
+    ],
+    "raidDamageHitsPerMinute": 2,
+    "raidDamagePerHit": 1500
   },
   "simOptions": {
     "iterations": 1000,

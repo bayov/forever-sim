@@ -393,6 +393,7 @@ const unitSets: Record<
 			return [
 				undefined,
 				player.sim.encounter.targetsMetadata.asList().map((_targetMetadata, i) => UnitReference.create({ type: UnitType.Target, index: i })),
+				UnitReference.create({ type: UnitType.PullTarget }),
 			].flat();
 		},
 	},
@@ -442,6 +443,12 @@ export class APLUnitPicker extends UnitPicker<Player<any>> {
 				value: ref,
 				iconUrl: 'fa-bullseye',
 				text: 'Current Target',
+			};
+		} else if (ref.type == UnitType.PullTarget) {
+			return {
+				value: ref,
+				iconUrl: 'fa-bullseye',
+				text: 'Pull Target (Leveling)',
 			};
 		} else if (ref.type == UnitType.Player) {
 			const player = thisPlayer.sim.raid.getPlayer(ref.index);

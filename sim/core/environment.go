@@ -58,6 +58,7 @@ func NewEnvironment(raidProto *proto.Raid, encounterProto *proto.Encounter, rule
 		Ruleset: ruleset,
 	}
 
+	encounterProto = prepareLevelingEncounter(raidProto, encounterProto)
 	env.construct(raidProto, encounterProto)
 	raidStats := env.initialize(raidProto, encounterProto)
 	env.finalize(raidProto, encounterProto, raidStats, runFakePrepull)
@@ -93,6 +94,16 @@ func (env *Environment) construct(raidProto *proto.Raid, encounterProto *proto.E
 		unit.CurrentTarget = env.Encounter.TargetUnits[0]
 	}
 
+	// In a health fight or a leveling session each target with health dies on its own
+	// (target_death.go).
+	if env.Encounter.EndFightAtHealth > 0 || encounterProto.Leveling != nil {
+		for _, target := range env.Encounter.TargetUnits {
+			if target.stats[stats.Health] > 0 {
+				target.EnableHealthBar()
+			}
+		}
+	}
+
 	// Apply extra debuffs from raid.
 	if raidProto.Debuffs != nil && len(env.Encounter.TargetUnits) > 0 {
 		for targetIdx, targetUnit := range env.Encounter.TargetUnits {
@@ -114,6 +125,11 @@ func (env *Environment) construct(raidProto *proto.Raid, encounterProto *proto.E
 				}
 			}
 		}
+	}
+
+	// A leveling session: every mob in its pool goes for us (leveling.go).
+	if encounterProto.Leveling != nil {
+		env.Encounter.leveling = newLevelingSession(env, encounterProto)
 	}
 
 	env.State = Constructed
@@ -142,6 +158,8 @@ func (env *Environment) initialize(raidProto *proto.Raid, encounterProto *proto.
 			playerOrPet.Initialize()
 		}
 	}
+
+	env.registerRaidDamageHits()
 
 	env.State = Initialized
 	return raidStats
@@ -299,6 +317,7 @@ func (env *Environment) IsFinalized() bool {
 func (env *Environment) reset(sim *Simulation) {
 	// Reset primary targets damage taken for tracking health fights.
 	env.Encounter.DamageTaken = 0
+	env.Encounter.ActiveTargetUnits = append([]*Unit(nil), env.Encounter.TargetUnits...)
 
 	// Targets need to be reset before the raid, so that players can check for
 	// the presence of permanent target auras in their Reset handlers.
@@ -309,6 +328,10 @@ func (env *Environment) reset(sim *Simulation) {
 	env.Raid.reset(sim)
 
 	env.startPvPDowntime(sim)
+
+	if env.Encounter.leveling != nil {
+		env.Encounter.leveling.reset(sim)
+	}
 }
 
 // The maximum possible duration for any iteration.
@@ -326,8 +349,15 @@ func (env *Environment) GetTarget(index int32) *Target {
 func (env *Environment) GetTargetUnit(index int32) *Unit {
 	return &env.Encounter.Targets[index].Unit
 }
+
+// NextTarget is the next living target after target, wrapping around, or target itself when
+// no other one is alive.
 func (env *Environment) NextTarget(target *Unit) *Target {
-	return env.Encounter.Targets[target.Index].NextTarget()
+	next := env.Encounter.Targets[target.Index].NextTarget()
+	for next.dead && &next.Unit != target {
+		next = next.NextTarget()
+	}
+	return next
 }
 func (env *Environment) NextTargetUnit(target *Unit) *Unit {
 	return &env.NextTarget(target).Unit

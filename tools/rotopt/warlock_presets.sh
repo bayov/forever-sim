@@ -27,22 +27,22 @@ gen() {
 base="bane=2,corruption=1,immolate=1,lifeTapMana=5,shadowburn=0,soulFire=0,endInstants=1"
 # Demonology: Soul Link and a Life Tap before the pull, the damage over time spells recast 1.5 sec
 # early.
-gen level60_demonology "$base,filler=1,conflagrate=0,siphonLife=0,soulLink=1,prepullLifeTap=1,dotLead=1.5,prepullAt=2.5"
+gen level60_demonology "$base,filler=1,conflagrate=0,siphonLife=0,soulLink=1,prepullLifeTap=1,dotLead=1.5,prepullAt=2.5,corruptionMinTime=12,immolateMinTime=9"
 # Destruction (Shadow Bolt): Conflagrate on cooldown while Immolate is up.
 # Destruction and Affliction recast Immolate once it has less left than its cast time.
 gen level60_destruction "$base,filler=1,conflagrate=1,siphonLife=0,soulLink=0,dotLead=0,immolateLead=1,prepullAt=2.5"
-gen level60_affliction "$base,filler=1,conflagrate=0,siphonLife=0,soulLink=0,dotLead=0,immolateLead=1,prepullAt=2.5"
+gen level60_affliction "$base,filler=1,conflagrate=0,siphonLife=0,soulLink=0,dotLead=0,immolateLead=1,prepullAt=2.5,immolateMinTime=9"
 # Destruction fire: Incinerate while Immolate is up, Conflagrate on cooldown, Immolate recast 2
 # sec early.
-gen level60_destruction_fire "$base,filler=2,conflagrate=1,siphonLife=0,soulLink=0,dotLead=2,prepullAt=1.5"
+gen level60_destruction_fire "$base,filler=2,conflagrate=1,siphonLife=0,soulLink=0,dotLead=2,prepullAt=1.5,corruptionMinTime=12,immolateMinTime=4"
 
 # The raid curse duty presets (standards 23): the same rotations with the warlock keeping Curse of
 # the Elements (curse=1) up for the raid itself. A warlock holds one curse duty, so there is one
 # preset per build. Under Forever the curse has its own slot, so the bane stays.
-K_demonology="$base,filler=1,conflagrate=0,siphonLife=0,soulLink=1,prepullLifeTap=1,dotLead=1.5,prepullAt=2.5"
+K_demonology="$base,filler=1,conflagrate=0,siphonLife=0,soulLink=1,prepullLifeTap=1,dotLead=1.5,prepullAt=2.5,corruptionMinTime=12,immolateMinTime=9"
 K_destruction="$base,filler=1,conflagrate=1,siphonLife=0,soulLink=0,dotLead=0,immolateLead=1,prepullAt=2.5"
-K_affliction="$base,filler=1,conflagrate=0,siphonLife=0,soulLink=0,dotLead=0,immolateLead=1,prepullAt=2.5"
-K_destruction_fire="$base,filler=2,conflagrate=1,siphonLife=0,soulLink=0,dotLead=2,prepullAt=1.5"
+K_affliction="$base,filler=1,conflagrate=0,siphonLife=0,soulLink=0,dotLead=0,immolateLead=1,prepullAt=2.5,immolateMinTime=9"
+K_destruction_fire="$base,filler=2,conflagrate=1,siphonLife=0,soulLink=0,dotLead=2,prepullAt=1.5,corruptionMinTime=12,immolateMinTime=4"
 for spec in demonology destruction affliction destruction_fire; do
 	eval dutyKnobs=\$K_$spec
 	gen "level60_${spec}_duty_curse" "$dutyKnobs,curse=1"

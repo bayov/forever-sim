@@ -13,8 +13,12 @@ A setting with the ice_lance edit runs the preset rotation and one with Ice Lanc
 the better (no setting uses it now: the Frost and Frostfire presets cast Ice Lance themselves). A setting with the
 no_ice_lance edit (Ice Lance at the client's coefficient, 0) runs the preset rotation and the build's rotation that never
 casts Ice Lance (asm_apls/<id>.no_ice_lance.apl.json, the Level 60 APL before the presets took Ice Lance up), and keeps
-the better.
+the better. A setting with the raid_hits=N edit sets the encounter's raid damage hits a minute (raidDamageHitsPerMinute) to N.
+A setting with the no_weapon_oil edit takes the Wizard Oil off the warlock's weapon (the stone stays).
 Results append to asm/results.jsonl keyed (build, combo, secs, rot), so a rerun only does what is missing.
+The base rows are the same sims run_build.py ran (seed 1: the main 180 s run at 20k, the 120 and 300 s lengths at 5k,
+and with no DASH_ASSUME this binary is bit-identical to the plain one), so they are copied from out/<id>.json when it
+is newer than the request. ASM_REUSE_OUT=0 sims them again.
 """
 import copy, itertools, json, math, os, random, subprocess, sys, tempfile, threading
 from concurrent.futures import ThreadPoolExecutor
@@ -55,6 +59,10 @@ def request(bid, combo, rot):
             pl.setdefault('mage', {}).setdefault('options', {})['staffImbue'] = STAFF_IMBUE[bid]
         if st['edit'] == 'no_staff_imbue':  # the presets carry the scroll; this setting takes it off
             pl.get('mage', {}).get('options', {}).pop('staffImbue', None)
+        if st['edit'] == 'no_weapon_oil':  # the stone alone: no oil on the warlock's weapon
+            pl.get('consumes', {}).pop('mainHandImbue', None)
+        if (st['edit'] or '').startswith('raid_hits='):  # the encounter's raid damage hits a minute
+            req['encounter']['raidDamageHitsPerMinute'] = float(st['edit'].split('=')[1])
         if st['edit'] == 'no_ice_lance' and rot == 'noil':
             pl['rotation'] = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'asm_apls', bid + '.no_ice_lance.apl.json')))
         if st['edit'] == 'ice_lance' and rot == 'il':
@@ -100,7 +108,7 @@ def rots(combo):
 
 
 def tasks(bid):
-    ks = keys_for(bid)
+    ks = [k for k in keys_for(bid) if nondefault(k)]  # one-value assumptions have nothing to vary
     if not ks:
         return
     yield (bid, (), 'base')
@@ -124,6 +132,19 @@ def tasks(bid):
             yield (bid, c, 'check')
 
 
+def base_from_out(bid):
+    """The base rows from run_build.py's out/<bid>.json, as {secs: (iters, dps, se)}, or {} when it is missing or older."""
+    path, req = os.path.join(D, 'out', bid + '.json'), os.path.join(D, 'req', bid + '.json')
+    if os.environ.get('ASM_REUSE_OUT') == '0' or not os.path.exists(path) or os.path.getmtime(path) < os.path.getmtime(req):
+        return {}
+    o = json.load(open(path))
+    rows = {180: (o['main']['iters'], o['main']['dps'], o['main']['se'])}
+    for x in o.get('lengths', []):
+        if x['secs'] in (120, 300):
+            rows[x['secs']] = (5000, x['dps'], x['se'])
+    return rows
+
+
 def main(ids):
     os.makedirs(OUT, exist_ok=True)
     done = set()
@@ -133,6 +154,13 @@ def main(ids):
             done.add((x['build'], x['combo'], x['secs'], x['rot']))
     jobs = []
     for bid in ids:
+        if keys_for(bid) and (bid, '', 180, 'preset') not in done:
+            copied = base_from_out(bid)
+            with open(RES, 'a') as fh:
+                for secs, (iters, d, se) in sorted(copied.items()):
+                    if (bid, '', secs, 'preset') not in done and iters == (20000 if secs == 180 else 5000):
+                        fh.write(json.dumps({'build': bid, 'combo': '', 'kind': 'base', 'secs': secs, 'iters': iters, 'rot': 'preset', 'dps': round(d, 3), 'se': round(se, 3)}) + '\n')
+                        done.add((bid, '', secs, 'preset'))
         for b, combo, kind in tasks(bid):
             lens = [(180, 20000)] + ([(120, 5000), (300, 5000)] if kind in ('base', 'single') else [])
             for secs, iters in lens:

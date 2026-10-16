@@ -54,10 +54,12 @@ type Template interface {
 }
 
 var templates = map[string]Template{
-	"rogue_ss":    rogueSS{},
-	"rogue_bs":    rogueBS{},
-	"shaman_enh":  shamanEnh{},
-	"paladin_ret": paladinRet{},
+	"rogue_ss":   rogueSS{},
+	"rogue_bs":   rogueBS{},
+	"shaman_enh": shamanEnh{},
+	// Leveling sessions (settings with leveling options).
+	"shaman_enh_leveling": shamanEnhLeveling{},
+	"paladin_ret":         paladinRet{},
 }
 
 func defaultKnobs(t Template) Knobs {

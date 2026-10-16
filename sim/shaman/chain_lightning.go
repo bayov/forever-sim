@@ -21,7 +21,8 @@ var ChainLightningScaling = [ChainLightningRanks + 1]core.RankScaling{{}, {37, 0
 var ChainLightningSpellCoef = [ChainLightningRanks + 1]float64{0, 0.571, 0.571, 0.517, 0.571}
 
 // Forever's costs, about 20% under Classic. The cast is 2 sec, down from 2.5.
-var ChainLightningManaCost = [ChainLightningRanks + 1]float64{0, 225, 305, 390, 485}
+// Client 1.60.1.70425 cut every rank by about 35% (225 / 305 / 390 / 485 before).
+var ChainLightningManaCost = [ChainLightningRanks + 1]float64{0, 145, 200, 250, 315}
 var ChainLightningLevel = [ChainLightningRanks + 1]int{0, 32, 40, 48, 56}
 
 func (shaman *Shaman) registerChainLightningSpell() {
@@ -76,18 +77,21 @@ func (shaman *Shaman) newChainLightningSpellConfig(rank int, cdTimer *core.Timer
 	spell.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 		primaryTarget := target
 		origMult := spell.DamageMultiplier
-		for hitIndex := range results {
+		// It jumps only to living mobs, never back to one it already hit.
+		hits := results[:sim.Encounter.AoETargetCount(int32(len(results)))]
+		for hitIndex := range hits {
 			baseDamage := sim.Roll(baseDamageLow, baseDamageHigh)
 			// Each target carries its own Stormstrike mark, so a bounce can spend one too.
-			stormstrike := shaman.spendStormstrike(sim, target)
+			stormstrike := shaman.stormstrikeBonus(target)
 			spell.DamageMultiplier *= stormstrike
 			results[hitIndex] = spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			spell.DamageMultiplier /= stormstrike
+			shaman.spendStormstrike(sim, target, results[hitIndex])
 			target = sim.Environment.NextTargetUnit(target)
 			spell.DamageMultiplier *= shaman.ChainLightningBounceCoefficient
 		}
 
-		for _, result := range results {
+		for _, result := range hits {
 			spell.DealDamage(sim, result)
 		}
 

@@ -4,7 +4,7 @@
       {
         "players": [
           {
-            "race": "RaceUndead",
+            "race": "RaceHuman",
             "class": "ClassPaladin",
             "equipment": {
               "items": [
@@ -131,7 +131,7 @@
               ],
               "priorityList": [
                 {
-                  "notes": "The spell power on-use trinket at the pull, then held for the execute phase when that loses no use.",
+                  "notes": "At the pull, then saved for the execute phase.",
                   "action": {
                     "condition": {
                       "or": {
@@ -218,7 +218,6 @@
                   }
                 },
                 {
-                  "notes": "Goblin Sapper Charge on cooldown.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -228,7 +227,16 @@
                   }
                 },
                 {
-                  "notes": "Consecration on cooldown, down to the last point of mana.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 24239
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Until mana runs out.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -238,7 +246,6 @@
                   }
                 },
                 {
-                  "notes": "Judgement on cooldown.",
                   "action": {
                     "condition": {
                       "and": {
@@ -261,7 +268,7 @@
                   }
                 },
                 {
-                  "notes": "Seal of Righteousness whenever it is down. Judgement does not consume it under Forever.",
+                  "notes": "Judgement doesn't use it up in Forever.",
                   "action": {
                     "condition": {
                       "and": {
@@ -288,7 +295,6 @@
                   }
                 },
                 {
-                  "notes": "Holy Strike on cooldown.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -298,17 +304,7 @@
                   }
                 },
                 {
-                  "notes": "Hammer of Wrath below 20% health.",
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 24239
-                      }
-                    }
-                  }
-                },
-                {
-                  "notes": "Exorcism on cooldown, only against Undead and Demons.",
+                  "notes": "Only against Undead and Demons.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -318,7 +314,7 @@
                   }
                 },
                 {
-                  "notes": "Light's Vigil whenever it is not on the target, with the mana to spare. Without the talent ignore the warning on this line.",
+                  "notes": "Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "and": {
@@ -361,7 +357,7 @@
                   }
                 },
                 {
-                  "notes": "Holy Shock on the Vigil, so it detonates it and starts no cooldown, or on cooldown once the mana is too low for the Vigil.",
+                  "notes": "Detonates the Vigil with no cooldown.",
                   "action": {
                     "condition": {
                       "and": {
@@ -406,7 +402,7 @@
                   }
                 },
                 {
-                  "notes": "Racials and trinkets on a free GCD.",
+                  "notes": "Racials and trinkets.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }
@@ -419,7 +415,7 @@
             "retributionPaladin": {
               "options": {
                 "primarySeal": "Righteousness",
-                "aura": "RetributionAura"
+                "aura": "ConcentrationAura"
               }
             }
           }
@@ -432,6 +428,7 @@
       "powerWordFortitude": "TristateEffectImproved",
       "bloodPact": "TristateEffectImproved",
       "strengthOfEarthTotem": "TristateEffectRegular",
+      "graceOfAirTotem": "TristateEffectRegular",
       "arcaneBrilliance": true,
       "divineSpirit": true,
       "battleShout": "TristateEffectImproved",
@@ -445,7 +442,8 @@
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
-      "totemWeaponBuff": "TotemWeaponBuffWindfury"
+      "totemWeaponBuff": "TotemWeaponBuffWindfury",
+      "salvation": true
     },
     "debuffs": {
       "judgementOfWisdom": true,
@@ -525,7 +523,9 @@
         "swingSpeed": 2,
         "parryHaste": true
       }
-    ]
+    ],
+    "raidDamageHitsPerMinute": 2,
+    "raidDamagePerHit": 1500
   },
   "simOptions": {
     "iterations": 1000,

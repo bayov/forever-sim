@@ -17,7 +17,7 @@ lo = sys.argv[2] if len(sys.argv) > 2 else '00'
 hi = sys.argv[3] if len(sys.argv) > 3 else '99'
 last = None
 for e in evs:
-    if e.ev != 'SPELL_CAST_SUCCESS' or not e.src.startswith(cl.ME) or not lo <= e.ts < hi or len(e.f) < 31:
+    if e.ev != 'SPELL_CAST_SUCCESS' or not e.me_src or not lo <= e.ts < hi or len(e.f) < 31:
         continue
     f = e.f
     key = (f[15], f[16], f[17], f[18], f[24], f[30])

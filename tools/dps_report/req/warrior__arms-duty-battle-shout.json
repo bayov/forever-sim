@@ -138,7 +138,7 @@
               ],
               "priorityList": [
                 {
-                  "notes": "Berserker Stance for Recklessness at the end of the fight, with no more Rage than Tactical Mastery keeps.",
+                  "notes": "For Recklessness. Tactical Mastery keeps the Rage.",
                   "action": {
                     "condition": {
                       "and": {
@@ -198,7 +198,7 @@
                   }
                 },
                 {
-                  "notes": "Sunder Armor as the first GCD after the pull, as every warrior does; the raid's tanks keep it up after.",
+                  "notes": "Sunder Armor once at the pull. The tanks keep it up after.",
                   "action": {
                     "sequence": {
                       "name": "sunder",
@@ -236,7 +236,7 @@
                                     },
                                     "rhs": {
                                       "const": {
-                                        "val": "3s"
+                                        "val": "35s"
                                       }
                                     }
                                   }
@@ -277,7 +277,7 @@
                   }
                 },
                 {
-                  "notes": "Death Wish on cooldown, but held for the end of the fight when the wait costs no use. Without the talent ignore the warning on this line.",
+                  "notes": "Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "and": {
@@ -352,7 +352,7 @@
                   }
                 },
                 {
-                  "notes": "Recklessness for the last seconds of the fight, in the execute phase.",
+                  
                   "action": {
                     "condition": {
                       "and": {
@@ -386,7 +386,7 @@
                   }
                 },
                 {
-                  "notes": "Orc. Blood Fury waits for Death Wish (or the end of the fight) when the wait costs no use. Other races can ignore the warning on this line.",
+                  "notes": "Other races can ignore the warning on this line.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -396,7 +396,7 @@
                   }
                 },
                 {
-                  "notes": "Troll. Berserking waits for Death Wish (or the end of the fight) when the wait costs no use. Other races can ignore the warning on this line.",
+                  "notes": "Other races can ignore the warning on this line.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -407,7 +407,7 @@
                   }
                 },
                 {
-                  "notes": "Night Elf. Elune's Light waits for Death Wish when the wait costs no use. Other races can ignore the warning on this line.",
+                  "notes": "Other races can ignore the warning on this line.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -417,7 +417,7 @@
                   }
                 },
                 {
-                  "notes": "Mighty Rage Potion, the last one held for the end of the fight when the wait costs no use.",
+                  
                   "action": {
                     "condition": {
                       "or": {
@@ -481,7 +481,7 @@
                   }
                 },
                 {
-                  "notes": "Bloodrage when there is room for the Rage.",
+                  
                   "action": {
                     "condition": {
                       "cmp": {
@@ -504,7 +504,6 @@
                   }
                 },
                 {
-                  "notes": "Goblin Sapper Charge on cooldown.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -514,7 +513,7 @@
                   }
                 },
                 {
-                  "notes": "Goblin Land Mine right after a main hand swing, so its 1 sec cast loses no swing time.",
+                  "notes": "Its 1s cast then loses no swing time.",
                   "action": {
                     "condition": {
                       "and": {
@@ -560,13 +559,12 @@
                   }
                 },
                 {
-                  "notes": "Anything not listed above (Sapper, trinkets).",
+                  "notes": "Sapper and trinkets.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }
                 },
                 {
-                  "notes": "Mortal Strike on cooldown.",
                   "action": {
                     "condition": {
                       "and": {
@@ -588,7 +586,7 @@
                   }
                 },
                 {
-                  "notes": "Slam on cooldown with Rage to spare.",
+                  
                   "action": {
                     "condition": {
                       "and": {
@@ -638,7 +636,7 @@
                   }
                 },
                 {
-                  "notes": "Overpower after a dodge or a Bloodthrill proc.",
+                  "notes": "After a dodge or a Bloodthrill proc.",
                   "action": {
                     "condition": {
                       "and": {
@@ -673,7 +671,7 @@
                   }
                 },
                 {
-                  "notes": "Rend whenever it is down, for Bloodthrill.",
+                  "notes": "Kept up for Bloodthrill.",
                   "action": {
                     "condition": {
                       "and": {
@@ -722,7 +720,6 @@
                   }
                 },
                 {
-                  "notes": "Execute in the execute phase.",
                   "action": {
                     "condition": {
                       "and": {
@@ -744,7 +741,7 @@
                   }
                 },
                 {
-                  "notes": "Heroic Strike on the next swing with Rage to spare.",
+                  
                   "action": {
                     "condition": {
                       "and": {
@@ -784,7 +781,7 @@
                   }
                 },
                 {
-                  "notes": "Hamstring with Rage to spare, for the procs.",
+                  "notes": "For the procs.",
                   "action": {
                     "condition": {
                       "and": {
@@ -834,7 +831,7 @@
                   }
                 },
                 {
-                  "notes": "Back to the rotation's stance.",
+                  
                   "action": {
                     "condition": {
                       "and": {
@@ -912,6 +909,7 @@
       "powerWordFortitude": "TristateEffectImproved",
       "bloodPact": "TristateEffectImproved",
       "strengthOfEarthTotem": "TristateEffectRegular",
+      "graceOfAirTotem": "TristateEffectRegular",
       "arcaneBrilliance": true,
       "divineSpirit": true,
       "trueshotAura": true,
@@ -923,7 +921,8 @@
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
-      "totemWeaponBuff": "TotemWeaponBuffWindfury"
+      "totemWeaponBuff": "TotemWeaponBuffWindfury",
+      "salvation": true
     },
     "debuffs": {
       "judgementOfWisdom": true,
@@ -1003,7 +1002,9 @@
         "swingSpeed": 2,
         "parryHaste": true
       }
-    ]
+    ],
+    "raidDamageHitsPerMinute": 2,
+    "raidDamagePerHit": 1500
   },
   "simOptions": {
     "iterations": 1000,

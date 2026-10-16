@@ -764,7 +764,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 ### 6.5 Spell damage to us and the raid damage hits
 
 - Shown to the user (2026-10-10). No enemy casts at us, because no preset encounter has an AI (6.1). So Elemental Warding (3, 7 and 10% less Fire, Frost and Nature damage taken, as the Forever text says, `talents.go`) and our resistances never do anything in our sims.
-- Raid damage hits (`shields.go`, Enhancement options "Raid hits per minute" and its +/-): the user sets how many direct hits a minute the raid's enemies land on us. Each one fires our Lightning Shield orb at our target or spends a Water Shield globe, the same as a real hit. Both shields still wait 3.5 sec between procs (the client's 3500 ms proc cooldown, 7.15 and 7.16). Nothing else that reacts to a hit taken sees them. With a +/-, each iteration picks its own rate in that range. No preset sets it.
+- Raid damage hits (`shields.go`, Enhancement options "Raid hits per minute" and its +/-): the user sets how many direct hits a minute the raid's enemies land on us. Each one fires our Lightning Shield orb at our target or spends a Water Shield globe, the same as a real hit. Both shields still wait 3.5 sec between procs (the client's 3500 ms proc cooldown, 7.15 and 7.16). Nothing else that reacts to a hit taken sees them. With a +/-, each iteration picks its own rate in that range. Since 2026-10-15 every Level 60 preset sets it (below), and Elemental has it too.
 - Found: the hits come at an even pace (one every 60 / rate sec). Real raid damage comes at random times, and with the 3.5 sec wait an even pace gives more procs than random hits at the same rate:
 
   | Hits a minute | Procs a minute, even | Procs a minute, random |
@@ -782,6 +782,11 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Tests:
   - TestOrcShamanRaidDamageHits (replaces TestOrcShamanRaidDamageLightningShield) keeps Lightning Shield at 3 orbs for 9 min at 15 hits a minute. It wants about 72 orbs (8 a minute), within 15. It got 78. The old even pace gives 135 and fails it.
   - TestOrcShamanWaterShield now lands enemy melee hits at set times (every 5 sec, then every 3 sec) instead of using the option, so it still checks each globe and the 3.5 sec wait.
+
+- The user (2026-10-15): the presets cast neither shield, though most raid fights put some damage on a DPS. Add a raid hits assumption, 0 allowed, with rates from SoD logs.
+- Done (2026-10-15): Elemental's options take the raid hits too (`elemental.go`, the same two fields), and every Level 60 preset sets them: 2 a minute for Enhancement (melee) and 1 for Elemental (ranged), at random times (`RaidDamageHitsLevel60` in each spec's presets.ts, and mksettings). Every Level 60 rotation keeps Lightning Shield up, the Water Shield and Mana Tide builds too: Water Shield's 2% mana a globe was worth less than the orbs at 0, 2, 6 and 10 hits a minute, for Enhancement and Elemental alike. At 180 sec: Enhancement Level 60 826.0 to 833.8, Imp GW 822.0 to 829.5, Water Shield 776.1 to 785.3, Mana Tide 753.4 to 763.3; Elemental Level 60 690.6 to 694.0, Mana Tide 683.3 to 686.5.
+- The rates are estimates, not measurements: Warcraft Logs answered 403 from this environment and `tools/warcraftlogs` has no API client here. They come from SoD boss timers in the Deadly Boss Mods source: most bosses land one or two direct hits on the melee every 20 to 40 sec (Ragnaros's Wrath every 26 sec, Broodlord's Blast Wave, Kel'Thuzad's Frostbolt Volley, Chromaggus's breaths), Patchwerk, Loatheb and Sapphiron none (their raid damage ticks), Firemaw, Vaelastrasz and Huhuran below 30% about 10. The DPS report's assumption runs 0 and 10 a minute beside the presets' rate. To measure it: the damage taken by DPS shamans on SoD bosses, direct hits only, through `tools/warcraftlogs` with an API client.
+- `elemental/shields_test.go` TestOrcShamanRaidDamageHits checks that 15 hits a minute fire about 8 orbs a minute and 0 fire none. It fails when Elemental's options don't reach the shield.
 
 ### 6.6 Health
 
@@ -1372,6 +1377,7 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - Today only the Level 30 encounters hit us (Vishas tanks on us), the Level 30 presets are all Enhancement, and the Level 60 elemental preset doesn't take it. So no preset number moves.
 - Beta: no build had it, and we never cast a Lightning Bolt.
 - `eye_of_the_storm_test.go` TestOrcShamanEyeOfTheStorm: every rank of the three spells has the chance for 0 to 3 points. 2000 top rank Lightning Bolts with an enemy hit 0.5 sec in end on time 23, 47 and 70% of the time (within 5%), and 1 sec late otherwise. Without the talent, two hits push it 1.8 sec. Reading the chance from the hitting spell, or a 60% rank 3, fails it.
+- Changed (2026-10-15, leveling groundwork, `docs/leveling_sim.md`): pushback can't take the cast bar back past its start, as on the cmangos Classic server (`Spell::Delayed`), so a hit 0.5 sec into a 2.5 sec bolt adds 0.5 sec, not 1. The test's hits moved to 1 sec into the cast, where the full pushback fits, and `pushback_test.go` covers the cap. Forever's own rule is still to be seen in logs of casts under mob hits.
 
 ### 8.11 Call of Thunder
 
@@ -1867,6 +1873,22 @@ GetManaRegen on the level 30 Orc shaman, while not casting, in mana a second (th
 - The swing timer keeps running while we're out, so the held swing goes off when we're back (tested). From the code, a cast made while out of range still starts the swing timer over at its end and that carries over when we come back (`attack.go` EnableAutoSwing keeps the later swing time), and going out and back in during a cast doesn't undo the hold.
 - Simplified: we can hard cast while out of range, as if we stand and cast instead of chasing. The PvP rotation has no hard casts, so it doesn't matter for the preset. Nothing changes the share out of range, so Frost Shock's slow, Earthbind and Ghost Wolf (8.x) can't shorten the kiting. The enemy keeps swinging at us while we're out (set aside in 6.1). The 70% is the user's default, not a measured number.
 - No sim change, no new test, no Need to Verify item.
+
+### 11.5 Self-healing (leveling groundwork 3)
+
+- The user (2026-10-15): add the shaman's heals for the leveling sim (docs/leveling_sim.md), and make sure the healing talents work.
+- Heals (`healing.go`), every value from client 70338 (SpellEffect, SpellLevels, SpellMisc, SpellPower): Healing Wave ranks 1 to 10, Lesser Healing Wave 1 to 6, Chain Heal 1 to 3 and Riptide (the 31 point talent, 408521). A rank heals its base at its learn level plus its growth per level for 5 levels, spread evenly by its variance (Lightning Bolt's client rows read the same way give the sim's Lightning Bolt table to the point). Coefficients 0.429 / 0.571 / 0.714 / 0.857 by cast time, 0.429 for Lesser Healing Wave, 0.714 for Chain Heal, with Forever's downranking (`downrankCoefficient`). Riptide: 480 at 40 plus 3.7 a level to 48 (486 to 534, the tooltip), 0.214, then 89 + 10% of healing power every 3 sec for 15 sec, 245 Mana, 6 sec cooldown, and Chain Heal at a target with it heals 25% more.
+- Every heal lands on us, whatever target the rotation casts it at: we solo, and Chain Heal finds no one to jump to. A mob dying during the cast doesn't stop a heal (only harmful casts stop, `target_death.go`).
+- Talents, each one on the spells its client mask lists:
+  - Improved Healing Wave (16182): 0.1 sec off Healing Wave a point.
+  - Healing Way (29206): Healing Wave heals 8 / 17 / 25% more, always. Classic's stacking buff on the target is gone.
+  - Purification (16178): 2% a point on Healing Wave, Lesser Healing Wave, Chain Heal and Riptide (heal and ticks). Not Healing Stream, whose heal isn't on the list (`water_totems.go`). It multiplies with Healing Way, like the other percent bonuses of the same kind (5.6).
+  - Healing Focus (16181): a 23 / 47 / 70% chance for a hit not to push back Healing Wave, Lesser Healing Wave or Chain Heal.
+  - Ancestral Healing (16176, buff 16177): 8 / 17 / 25% more armor on us for 15 sec after a heal crit.
+  - Already in the sim and now reaching the heals: Tidal Focus (cost), Tidal Mastery (crit, heals only under Forever, Riptide too), Nature's Swiftness (its client mask has the three cast heals), Water Shield (a globe on a heal crit), Mental Quickness (Intellect to spell power, which heals count).
+- Tests (`sim/shaman/enhancement/healing_test.go`): the rank tables, each heal's amount with 200 healing power and no crits, with and without Healing Way and Purification, the downranked Healing Wave 1 at 60, cast times with Improved Healing Wave, costs with Tidal Focus, Tidal Mastery's 5% (and none on Lightning Bolt), Healing Focus's 70%, Nature's Swiftness, Ancestral Healing's armor, Riptide's heal and ticks and its Chain Heal bonus, a heal at a mob that dies mid-cast, and a naked level 30 against one level 30 mob: 46% deaths in 300 fights with white swings only, none with Lesser Healing Wave below 40% health.
+- No preset casts a heal, and every golden result stayed the same.
+- Open: the beta hasn't shown a heal's numbers next to the client's yet. A few Healing Waves and Lesser Healing Waves on ourselves at a known level and healing power would settle the variance reading.
 
 ### Pre-checks for sections 3 and 4 (not yet shown to the user)
 

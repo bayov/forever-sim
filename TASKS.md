@@ -33,6 +33,29 @@ Item format:
   - The score would be kill speed over a whole level range, not encounter DPS. It counts downtime: how long we sit between pulls to get HP and mana back. It also counts how many mobs we can pull at once and survive.
   - Talents are picked at each level, so the search finds the best order to spend points in, not just the final build.
   - It would let us compare paths, for example whether respeccing at some level beats keeping one build the whole way.
+  - Design and defaults settled 2026-10-15: `docs/leveling_sim.md` (score: mobs killed in a 20 min session; Enhancement shaman first). The groundwork items below come first.
+- [ ] 2026-10-15 — Leveling groundwork 1: damage taken from mobs (`docs/leveling_sim.md`, Groundwork)
+  - A table of normal mob HP, armor, damage and swing speed by level (Classic averages to start).
+  - Check the player's defenses at low level (dodge per Agility for every class, block, armor), spell pushback (`sim/core/cast.go`) and parry and block from in front.
+  - Calibrate against the user's logs: damage taken per mob and the mob's miss, dodge and crit rates. A "solo mob" DPS encounter that reports HP lost per kill and deaths.
+  - 2026-10-15: the sim side is done (mob table from the 1.12 world database, death without a healing model, health fight length, pushback cap, tests). Still open: the low-level defense checks; the UI preset. `docs/leveling_sim.md`, Groundwork 1.
+  - 2026-10-16: spell pushback checked in the logs (casts match the sim's rule, `tools/combat_log/pushback.py`), and channels now take pushback too.
+  - 2026-10-16: `logcheck -mobs` on the user's logs. Forever's mobs have up to 30% more health than 1.12's (the table uses it now), and they crit us far less than Classic's 5% (Need to Verify). `logcheck -pacing` measured the session pacing, and the search default is now 2 to 7 s (`docs/leveling_sim.md`, From the logs).
+- [ ] 2026-10-15 — Leveling groundwork 2: separate mob death (`docs/leveling_sim.md`, Groundwork)
+  - Each mob has its own HP, dies when it runs out and stops attacking. The fight ends when all are dead. Today `use_health` only ends the fight on the targets' combined HP.
+  - 2026-10-15: done (`sim/core/target_death.go`, `sim/core/aoe.go`), with AoE taking only living targets and helpers for hard and soft caps. Which kind each AoE is in Forever goes to the Forever mechanics auditor (orchestration/auditor_forever.md, AoE scaling). A cast at a mob that dies during it stops unpaid.
+- [ ] 2026-10-15 — Leveling groundwork 3: self-healing (`docs/leveling_sim.md`, Groundwork)
+  - Shaman first: Healing Wave and Lesser Healing Wave by rank and level. Then Priest (Lesser Heal, Heal, Flash Heal, Greater Heal, Renew; today commented out or missing), Paladin (Holy Light, Flash of Light) and Druid (Healing Touch, Rejuvenation, Regrowth).
+  - Absorbs in the core, for Power Word: Shield, Mana Shield and Sacrifice.
+  - 2026-10-15: shaman done (`sim/shaman/healing.go`, shaman_audit.md 11.5), with the healing talents. Still open: Priest, Paladin, Druid and absorbs.
+- [x] 2026-10-15 — Leveling mode step 4: move the rest decisions into the rotation (`docs/leveling_sim.md`, The leveling mode)
+  - Done (2026-10-15): Rest (Leveling) and Bandage (Leveling) actions, Bandage Ready, the ready state between pulls; health regen from Wrath's game tables, a third more sitting, Troll Regeneration.
+- [ ] 2026-10-15 — Leveling: open items after steps 1 to 4 (`docs/leveling_sim.md`)
+  - Measure a shaman's out of combat health ticks on the beta (notes.md, Need to Verify): two Spirit values under 50 and one over, at two levels, standing and sitting.
+  - A bolt's flight time to a chain pull target that isn't our current target uses our current target's distance.
+  - Stoneskin Totem's client data also has a 20 yard effect next to the 30 yard one; we use 30 for all of it.
+- [ ] 2026-10-15 — Leveling: measure search, run-in and chain-pull times and pack sizes from the user's logs (`docs/leveling_sim.md`, From the logs)
+  - Needs `~/forever-logs` on the user's machine. Drop gaps over about 60 s (AFK) and use the fast quartile as the default.
 - [ ] 2026-10-14 — Whole raid sim (user idea)
   - Sim every member of a raid together, so we can try out raid comps and see the total raid damage.
   - Then optimize the comp itself: which classes and specs, and how buffs, debuffs and totems are spread across groups.
@@ -40,9 +63,31 @@ Item format:
   - The spell tables are already byte-identical to 70338's (`orchestration/rank_tuning.md`, check 2026-10-14 00:30 UTC). Trackers say talents, spells and items are unchanged; wowclassicforever.info lists only ManifestInterfaceData and ManifestInterfaceItemIcon as changed tables.
   - Still to diff: https://wago.tools/db2/ItemSparse?build=1.60.1.70374 , https://wago.tools/db2/ItemEffect?build=1.60.1.70374 , https://wago.tools/db2/SpellItemEnchantment?build=1.60.1.70374 , https://wago.tools/db2/Talent?build=1.60.1.70374
   - The fix build expected Thursday Oct 15 (forever-bugs "fixed on Thursday" list) is the one to watch: re-run the full table diff then.
+  - 2026-10-15 17:10 UTC: no newer build yet. wago.tools lists 1.60.1.70374 (wow_cn_beta, Oct 13) as the newest, plus a new `wowf` product at 1.60.1.70245 (first seen Oct 13, probably the live client's product).
 - [x] 2026-10-14 — Decide whether Searing and Magma Totem crits should stop proccing Elemental Devastation (forever-bugs #334, Oct 13, NAB, tracker)
   - Settled, no change needed: Searing and Magma Totem's attack spells have `ProcMaskEmpty` in `sim/shaman/fire_totems.go`, so they never match the talent's `ProcMaskSpellDamage` check, and Fire Nova is excluded by spell code. No totem attack procs Elemental Devastation in the sim, as #334 says.
   - AidanZMoon: "None of your Totem or Totem originating attacks cause Elemental Devastation"; the tooltip is updated for Thursday's build. `applyElementalDevastation` in `sim/shaman/talents.go` excludes only Fire Nova (shaman_audit.md 4.13).
   - Check on the beta after Oct 15: does a Searing Totem crit give buff 30165? https://github.com/ClassicWoWCommunity/forever-bugs/issues/334
 - [ ] 2026-10-14 — Give Crown of Maldazzar 284065 and Triune Amulet 7722 attention once PR #20 merges (revealed Oct 12–14)
   - Crown of Maldazzar has no known source (BoE); add one when it's known. https://foreverchanges.pro/item/284065
+- [ ] 2026-10-15 — Model the item procs revealed on Oct 14–15 (client, foreverchanges.pro hidden items). The stats went in with PR #37.
+  - Galgann's Firehammer 9419 (main hand mace, +54 spell power, req 42): "Chance on harmful spell cast to blast a target for 64 to 90 Fire damage (100ms cooldown)". The proc rate is unknown. https://wago.tools/db2/ItemEffect?build=1.60.1.70374&filter[ParentItemID]=9419 , https://foreverchanges.pro/item/9419
+  - Galgann's Fireblaster 9412 (gun, 44–84 / 2.60, req 42): its ranged chance-on-hit Fire Blast went from 12–18 to 22–34. The sim doesn't model the proc. https://foreverchanges.pro/item/9412
+  - Suggestion: compare Firehammer with the Elemental level 60 synthetic staff (55 SP) plus an off-hand in the gear search.
+- [ ] 2026-10-15 — On the next beta build, check these tracker fixes against the sim (forever-bugs, tracker only)
+  - #331: hunter pets use the hunter's **ranged** crit "starting Thursday" (Oct 15). `sim/hunter/pet.go:243` inherits `MeleeCrit`. https://github.com/ClassicWoWCommunity/forever-bugs/issues/331
+  - #20: the Bear Form armor multiplier will no longer apply to temporary armor buffs ("fixed in the next build"). Examples: Elixir of Minor Defense gives 140 armor in Bear Form vs 50; Mark of the Wild rank 1 gives 95 vs 34. Check whether the feral tank sim multiplies buff armor. https://github.com/ClassicWoWCommunity/forever-bugs/issues/20
+  - #344 (Shaman, Oct 14): Eye of the Storm's pushback text is now Vanilla-style. It's a wording fix only; check that the sim's pushback model matches. 2026-10-16: it does. The sim's pushback rule (1 sec, then 0.8 and so on) fits the beta logs (`tools/combat_log/pushback.py`), and Eye of the Storm's chance applies per hit.
+- [ ] 2026-10-16 — Give the 12 rares revealed October 15 to 16 a source once one is known, so the gear search can use them (PR #107 adds them with no source)
+  - 286983 Ancient Cleaver, 286996 City Guard's Tarnished Blade, 287068 Excavated Dagger, 287070 Skypierce Javelin, 286984 Mark of the Marsh, 286995 Guardian's Emblem, 286994 Tattered Kirin Tor Cloak, 286992 Construct's Grips, 286990 Arcane Remnant Leggings, 286993 Suffused Bindings, 286985 Thicket Bindings, 286986 Abandoned Leggings
+  - All bind on equip, levels 26 to 40. The Kirin Tor and city guard names point to a new Forever dungeon (City of Dalaran?), unconfirmed.
+  - Then re-run the Level 30 gear searches: Ancient Cleaver (2H axe 80–120 / 3.60, +12 Str, +14 SP) for Enhancement and Ret, Mark of the Marsh and Thicket Bindings for Combat.
+- [ ] 2026-10-16 — Revealed items left out of PR #107 (foreverchanges.pro hidden items, October 15 to 16)
+  - Unearthed Barrier 286982 (shield, 699 armor, 15 block, +8 Sta, req 27): "Deals 6 to 38 Nature damage every time you block. Damage is doubled in swamps." (wowhead: 6 to 39). The block proc is not modelled. https://foreverchanges.pro/item/286982
+  - Roused Nature Footwraps 286991 (leather feet, 73 armor, +6 Sta, +9 Spi, +13 Healing, +4 Spell Damage, req 27): waits on the "+X healing and +Y spell damage" item above. https://foreverchanges.pro/item/286991
+  - Low level thrown knives with no damage on foreverchanges (wowhead may have it): 287059, 287060, 287061, 287062, 287063, 287064, 287066, 287067, 287069 Yeti Skinner (+7 AP), 287071 Goblin Switchblade (+3 Agi, +10 AP vs Beasts). https://foreverchanges.pro/item/287071
+- [ ] 2026-10-16 — shaman_audit.md: Restorative Totems now scales all of Healing Stream Totem's heal under Forever (official, Oct 15 development notes, client 70425; implemented in PR #107)
+  - Update the Healing Stream Totem note once #107 merges, then tick the 2026-10-13 Restorative Totems item above.
+- [ ] 2026-10-16 — Grounding Totem breaks on non-damaging spells in 70425; a beta hotfix is promised (forever-bugs #354, AidanZMoon "Will be hotfixed into beta", tracker)
+  - Not simulated (PvP and utility). Check after the hotfix whether anything in the sim or the docs assumes the old rule. https://github.com/ClassicWoWCommunity/forever-bugs/issues/354
+  - Also new on the tracker, no dev reply yet: #370 Elemental Reach lost its Flame Shock range (the 70425 tooltip agrees), #358 Ghost Wolf, Cure Poison and Cure Disease use up Water Shield charges.

@@ -64,9 +64,12 @@ func warriorKnobs() []Knob {
 		// execute phase) when the wait costs no use.
 		{Name: "deathWish", Default: 2, Min: 0, Max: 2, Step: 1},
 		{Name: "dwEnd", Default: 36, Min: 15, Max: 60, Step: 3},
-		// Recklessness (30 min cooldown, so once a fight): 0 never, 1 at the pull, 2 when this many
-		// seconds are left (recklessAt).
-		{Name: "recklessness", Default: 2, Min: 0, Max: 2, Step: 1},
+		// Recklessness (30 min cooldown, so once a fight): 0 no line of its own (the other cooldowns
+		// line casts it at the pull), 1 at the pull, 2 when this many seconds are left (recklessAt),
+		// 3 while Death Wish is up, just ahead of the other cooldowns line, so that line's trinket
+		// waits for the GCD after it instead of going out in the same pass (the rotation auditor's
+		// pass 23).
+		{Name: "recklessness", Default: 2, Min: 0, Max: 3, Step: 1},
 		{Name: "recklessAt", Default: 15, Min: 10, Max: 30, Step: 5},
 		// Bloodrage below this much Rage.
 		{Name: "bloodrageRage", Default: 70, Min: 0, Max: 100, Step: 10},
@@ -100,8 +103,10 @@ func warriorKnobs() []Knob {
 		// Rage, and again before it drops when the fight outlasts it. The base presets leave it to
 		// the raid (0), and the duty presets switch the raid's off.
 		{Name: "battleShout", Default: 0, Min: 0, Max: 1, Step: 1},
-		// Refresh Battle Shout when this many seconds of it are left.
-		{Name: "shoutRefresh", Default: 3, Min: 0, Max: 9, Step: 3},
+		// Refresh Battle Shout when this many seconds of it are left. 35 puts the refresh (only in
+		// fights longer than about 177 sec) at about 142 sec, ahead of the execute phase, rather than
+		// at about 174 sec inside it.
+		{Name: "shoutRefresh", Default: 35, Min: 0, Max: 60, Step: 5},
 	}
 }
 
@@ -117,18 +122,18 @@ func warriorCooldowns(k Knobs) []*proto.APLListItem {
 	}
 	switch k["deathWish"] {
 	case 1:
-		items = append(items, cast(deathWish, nil, "Death Wish on cooldown. Without the talent ignore the warning on this line."))
+		items = append(items, cast(deathWish, nil, "Without the talent ignore the warning on this line."))
 	case 2:
 		items = append(items, cast(deathWish, or(
 			le(remainingTime(), seconds(k["dwEnd"])),
 			gt(spellUsesLostByDelay(deathWish, sub(remainingTime(), seconds(k["dwEnd"])), deathWishDuration), num(0)),
-		), "Death Wish on cooldown, but held for the end of the fight when the wait costs no use. Without the talent ignore the warning on this line."))
+		), "Without the talent ignore the warning on this line."))
 	}
 	switch k["recklessness"] {
 	case 1:
 		items = append(items, cast(recklessness, nil, "Recklessness at the pull."))
 	case 2:
-		items = append(items, cast(recklessness, le(remainingTime(), seconds(k["recklessAt"])), "Recklessness for the last seconds of the fight, in the execute phase."))
+		items = append(items, cast(recklessness, le(remainingTime(), seconds(k["recklessAt"])), ""))
 	}
 	// The wait for Death Wish: until it is ready, and when it is held for the last dwEnd seconds,
 	// until then too.
@@ -157,21 +162,21 @@ func warriorCooldowns(k Knobs) []*proto.APLListItem {
 		return hold(spell, racial)
 	}
 	items = append(items,
-		cast(bloodFury, racialHold(bloodFury), "Orc. Blood Fury waits for Death Wish (or the end of the fight) when the wait costs no use. Other races can ignore the warning on this line."),
-		cast(berserking, racialHold(berserking), "Troll. Berserking waits for Death Wish (or the end of the fight) when the wait costs no use. Other races can ignore the warning on this line."),
+		cast(bloodFury, racialHold(bloodFury), "Other races can ignore the warning on this line."),
+		cast(berserking, racialHold(berserking), "Other races can ignore the warning on this line."),
 		// Elune's Light keeps waiting for Death Wish: held for the end it lost 7 at 180 sec on
 		// two-hand Fury, where Blood Fury and Berserking gained.
-		cast(elunesLight, hold(elunesLight, k["racialHoldForDw"] >= 1), "Night Elf. Elune's Light waits for Death Wish when the wait costs no use. Other races can ignore the warning on this line."),
+		cast(elunesLight, hold(elunesLight, k["racialHoldForDw"] >= 1), "Other races can ignore the warning on this line."),
 		potionLine(k, hold),
 	)
 	if k["trinketAt"] > 0 {
 		items = append(items, cast(battleTrinket, or(
 			le(remainingTime(), seconds(k["trinketAt"])),
 			gt(spellUsesLostByDelay(battleTrinket, sub(remainingTime(), seconds(k["trinketAt"])), seconds(15)), num(0)),
-		), "The on-use trinket, the last use held for the end of the fight when the wait costs no use."))
+		), ""))
 	}
 	items = append(items,
-		cast(bloodrage, lt(currentRage(), num(k["bloodrageRage"])), "Bloodrage when there is room for the Rage."),
+		cast(bloodrage, lt(currentRage(), num(k["bloodrageRage"])), ""),
 	)
 	if k["berserkerRageRage"] > 0 {
 		items = append(items, cast(berserkerRage, lt(currentRage(), num(k["berserkerRageRage"])),
@@ -179,12 +184,15 @@ func warriorCooldowns(k Knobs) []*proto.APLListItem {
 	}
 	if k["mineSync"] == 1 {
 		items = append(items,
-			cast(warriorSapper, nil, "Goblin Sapper Charge on cooldown."),
+			cast(warriorSapper, nil, ""),
 			cast(warriorLandMine, ge(mainHandTimeToNext(), sub(mainHandSwingTime(), seconds(0.4))),
-				"Goblin Land Mine right after a main hand swing, so its 1 sec cast loses no swing time."),
+				"Its 1s cast then loses no swing time."),
 		)
 	}
-	items = append(items, autocastOtherCooldowns(nil, "Anything not listed above (Sapper, trinkets)."))
+	if k["recklessness"] == 3 {
+		items = append(items, cast(recklessness, auraIsActive(deathWish), ""))
+	}
+	items = append(items, autocastOtherCooldowns(nil, "Sapper and trinkets."))
 	return items
 }
 
@@ -231,7 +239,7 @@ func warriorOpener(rot *proto.APLRotation) *proto.APLRotation {
 			Name:    sunderOpener,
 			Actions: []*proto.APLAction{{Action: &proto.APLAction_CastSpell{CastSpell: &proto.APLActionCastSpell{SpellId: sunderArmor}}}},
 		}}},
-		Notes: "Sunder Armor as the first GCD after the pull, as every warrior does; the raid's tanks keep it up after.",
+		Notes: "Sunder Armor once at the pull. The tanks keep it up after.",
 	}
 	rot.PriorityList = append(rot.PriorityList[:first], append([]*proto.APLListItem{sunder}, rot.PriorityList[first:]...)...)
 	return rot
@@ -257,11 +265,7 @@ func potionLine(k Knobs, hold func(*proto.ActionID, bool) value) *proto.APLListI
 		if k["potionPull"] == 1 {
 			when = or(le(warriorCurrentTime(), seconds(3)), when)
 		}
-		notes := "Mighty Rage Potion, the last one held for the end of the fight when the wait costs no use."
-		if k["potionPull"] == 1 {
-			notes = "Mighty Rage Potion at the pull, the last one held for the end of the fight when the wait costs no use."
-		}
-		return cast(potion, when, notes)
+		return cast(potion, when, "")
 	}
 	return cast(potion, hold(potion, k["potionHoldForDw"] == 1), "Mighty Rage Potion with Death Wish.")
 }
@@ -272,7 +276,7 @@ func heroicStrikeLine(k Knobs) *proto.APLListItem {
 	if k["hsExecute"] == 0 {
 		when = and(when, not(executePhase()))
 	}
-	return cast(heroicStrikeNext, when, "Heroic Strike on the next swing with Rage to spare.")
+	return cast(heroicStrikeNext, when, "")
 }
 
 func init() {

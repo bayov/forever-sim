@@ -4,7 +4,7 @@
       {
         "players": [
           {
-            "race": "RaceNightElf",
+            "race": "RaceTauren",
             "class": "ClassDruid",
             "equipment": {
               "items": [
@@ -133,20 +133,6 @@
                       "val": "-0.1s"
                     }
                   }
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 1259799
-                      }
-                    }
-                  },
-                  "doAtValue": {
-                    "const": {
-                      "val": "-0.1s"
-                    }
-                  }
                 }
               ],
               "priorityList": [
@@ -155,83 +141,6 @@
                     "autocastOtherCooldowns": {}
                   },
                   "notes": "Racials, trinkets, potions and runes."
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 1259799
-                      }
-                    },
-                    "condition": {
-                      "or": {
-                        "vals": [
-                          {
-                            "auraIsActive": {
-                              "auraId": {
-                                "itemId": 998015
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "lhs": {
-                                "spellTimeToReady": {
-                                  "spellId": {
-                                    "itemId": 998015
-                                  }
-                                }
-                              },
-                              "op": "OpGt",
-                              "rhs": {
-                                "math": {
-                                  "lhs": {
-                                    "remainingTime": {}
-                                  },
-                                  "op": "OpSub",
-                                  "rhs": {
-                                    "const": {
-                                      "val": "10s"
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "lhs": {
-                                "spellUsesLostByDelay": {
-                                  "delay": {
-                                    "spellTimeToReady": {
-                                      "spellId": {
-                                        "itemId": 998015
-                                      }
-                                    }
-                                  },
-                                  "minTimeLeft": {
-                                    "const": {
-                                      "val": "15s"
-                                    }
-                                  },
-                                  "spellId": {
-                                    "spellId": 1259799
-                                  }
-                                }
-                              },
-                              "op": "OpGt",
-                              "rhs": {
-                                "const": {
-                                  "val": "0"
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    }
-                  },
-                  "notes": "Elune's Light with the trinket, unless waiting for it would lose a use."
                 },
                 {
                   "action": {
@@ -321,7 +230,7 @@
                       }
                     }
                   },
-                  "notes": "Insect Swarm whenever it is down. Without the talent ignore the warning on this line."
+                  "notes": "Without the talent ignore the warning on this line."
                 },
                 {
                   "action": {
@@ -360,8 +269,7 @@
                         ]
                       }
                     }
-                  },
-                  "notes": "Moonfire whenever its dot is down."
+                  }
                 },
                 {
                   "action": {
@@ -378,7 +286,7 @@
                       }
                     }
                   },
-                  "notes": "A free Starfire on Clearcasting, which Wrath does not use up."
+                  "notes": "Wrath doesn't use Clearcasting up."
                 },
                 {
                   "action": {
@@ -402,8 +310,7 @@
                         }
                       }
                     }
-                  },
-                  "notes": "Moonfire when a Starfire would not land before the end."
+                  }
                 },
                 {
                   "action": {
@@ -446,8 +353,7 @@
                         ]
                       }
                     }
-                  },
-                  "notes": "Wrath once Eclipse is down to its last charge and no Wrath is on its way."
+                  }
                 },
                 {
                   "action": {
@@ -456,8 +362,7 @@
                         "spellId": 9876
                       }
                     }
-                  },
-                  "notes": "Starfire."
+                  }
                 }
               ]
             },
@@ -490,7 +395,8 @@
       "fireResistanceAura": true,
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
-      "retributionAura": "TristateEffectImproved"
+      "retributionAura": "TristateEffectImproved",
+      "salvation": true
     },
     "debuffs": {
       "judgementOfWisdom": true,
@@ -570,7 +476,9 @@
         "swingSpeed": 2,
         "parryHaste": true
       }
-    ]
+    ],
+    "raidDamageHitsPerMinute": 2,
+    "raidDamagePerHit": 1500
   },
   "simOptions": {
     "iterations": 1000,

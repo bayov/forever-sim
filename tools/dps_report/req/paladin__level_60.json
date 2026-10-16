@@ -4,7 +4,7 @@
       {
         "players": [
           {
-            "race": "RaceUndead",
+            "race": "RaceHuman",
             "class": "ClassPaladin",
             "equipment": {
               "items": [
@@ -93,7 +93,7 @@
               "blessingOfWisdom": "TristateEffectImproved",
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "52003-503-05225331001330311",
+            "talentsString": "51003-503-05225331001330321",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Blacksmithing",
@@ -131,7 +131,7 @@
               ],
               "priorityList": [
                 {
-                  "notes": "The spell power on-use trinket at the pull, then held for the execute phase when that loses no use.",
+                  "notes": "At the pull, then saved for the execute phase.",
                   "action": {
                     "condition": {
                       "or": {
@@ -218,7 +218,6 @@
                   }
                 },
                 {
-                  "notes": "Goblin Sapper Charge on cooldown.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -228,7 +227,15 @@
                   }
                 },
                 {
-                  "notes": "Consecration with the mana to spare.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 24239
+                      }
+                    }
+                  }
+                },
+                {
                   "action": {
                     "condition": {
                       "cmp": {
@@ -251,7 +258,6 @@
                   }
                 },
                 {
-                  "notes": "Judgement on cooldown, on whichever damage seal is up.",
                   "action": {
                     "condition": {
                       "and": {
@@ -287,7 +293,7 @@
                   }
                 },
                 {
-                  "notes": "Seal of Command whenever it is down. Judgement does not consume it under Forever. Without the talent ignore the warning on this line.",
+                  "notes": "Judgement doesn't use it up in Forever. Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "and": {
@@ -327,7 +333,7 @@
                   }
                 },
                 {
-                  "notes": "Twist of Light: swap to the other damage seal just before the swing, which then gets the Echo of the old one too.",
+                  "notes": "Twist of Light: the swing also gets the old seal's Echo.",
                   "action": {
                     "condition": {
                       "and": {
@@ -406,7 +412,6 @@
                   }
                 },
                 {
-                  "notes": "And back again before the next swing.",
                   "action": {
                     "condition": {
                       "and": {
@@ -485,7 +490,6 @@
                   }
                 },
                 {
-                  "notes": "Holy Strike on cooldown.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -495,17 +499,7 @@
                   }
                 },
                 {
-                  "notes": "Hammer of Wrath below 20% health.",
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 24239
-                      }
-                    }
-                  }
-                },
-                {
-                  "notes": "Exorcism on cooldown, only against Undead and Demons.",
+                  "notes": "Only against Undead and Demons.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -515,7 +509,7 @@
                   }
                 },
                 {
-                  "notes": "Racials and trinkets on a free GCD.",
+                  "notes": "Racials and trinkets.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }
@@ -528,7 +522,7 @@
             "retributionPaladin": {
               "options": {
                 "primarySeal": "Command",
-                "aura": "RetributionAura"
+                "aura": "ConcentrationAura"
               }
             }
           }
@@ -541,6 +535,7 @@
       "powerWordFortitude": "TristateEffectImproved",
       "bloodPact": "TristateEffectImproved",
       "strengthOfEarthTotem": "TristateEffectRegular",
+      "graceOfAirTotem": "TristateEffectRegular",
       "arcaneBrilliance": true,
       "divineSpirit": true,
       "battleShout": "TristateEffectImproved",
@@ -554,7 +549,8 @@
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
-      "totemWeaponBuff": "TotemWeaponBuffWindfury"
+      "totemWeaponBuff": "TotemWeaponBuffWindfury",
+      "salvation": true
     },
     "debuffs": {
       "judgementOfWisdom": true,
@@ -634,7 +630,9 @@
         "swingSpeed": 2,
         "parryHaste": true
       }
-    ]
+    ],
+    "raidDamageHitsPerMinute": 2,
+    "raidDamagePerHit": 1500
   },
   "simOptions": {
     "iterations": 1000,

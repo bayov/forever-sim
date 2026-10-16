@@ -27,7 +27,7 @@ var (
 
 type mageSpells struct {
 	fireball, frostbolt, frostfireBolt, scorch, fireBlast, pyroblast *proto.ActionID
-	arcaneMissiles, arcaneBlast, iceLance                            *proto.ActionID
+	arcaneMissiles, arcaneBlast, iceLance, arcaneWrath               *proto.ActionID
 }
 
 // mageRanks leaves out the ranks only the Ahn'Qiraj books teach (Fireball XII, Frostbolt XI,
@@ -44,7 +44,51 @@ func mageRanks() mageSpells {
 		arcaneMissiles: rankID(mage.ArcaneMissilesLevel[:mage.ArcaneMissilesRanks], mage.ArcaneMissilesSpellId[:]),
 		arcaneBlast:    rankID(mage.ArcaneBlastLevel[:], mage.ArcaneBlastSpellId[:]),
 		iceLance:       rankID(mage.IceLanceLevel[:], mage.IceLanceSpellId[:]),
+		arcaneWrath:    rankID(mage.ArcaneWrathLevel[:], mage.ArcaneWrathSpellId[:]),
 	}
+}
+
+// arcaneKnobs are the Arcane talents every mage template can use since the Forever client
+// 1.60.1.70425: Arcane Blast's stacks are 15% of Intellect as spell damage each for 15 sec from
+// the first (more stacks don't refresh it, other spells don't end it, each stack costs 175% more
+// on the next Arcane Blast), and Arcane Wrath is a 3.5 sec cast on a 6 sec cooldown with 5% of
+// maximum mana as extra spell damage.
+func arcaneKnobs(stacks float64, wrath float64) []Knob {
+	return []Knob{
+		// Arcane Blast up to this many stacks, 0 never.
+		{Name: "blastBuff", Default: stacks, Min: 0, Max: 4, Step: 1},
+		// More stacks only while the buff has more than this many seconds left, so the
+		// expensive ones aren't bought for a buff about to end. A new buff always starts. 0
+		// stacks whenever.
+		{Name: "blastRefresh", Default: 9, Min: 0, Max: 12, Step: 3},
+		// Arcane Wrath on cooldown (1), never (0).
+		{Name: "arcaneWrath", Default: wrath, Min: 0, Max: 1, Step: 1},
+	}
+}
+
+// arcaneBlastBuffLines keep the Arcane Blast stacks up, for builds with the talent. extra is an
+// added condition, nil for none.
+func arcaneBlastBuffLines(k Knobs, s mageSpells, extra value) []*proto.APLListItem {
+	if k["blastBuff"] == 0 {
+		return nil
+	}
+	stacks := auraNumStacks(arcaneBlastAura)
+	var window value
+	if k["blastRefresh"] > 0 {
+		window = or(not(auraIsActive(arcaneBlastAura)), gt(auraRemainingTime(arcaneBlastAura), seconds(k["blastRefresh"])))
+	}
+	cond := and(auraIsKnown(arcaneBlastAura), lt(stacks, num(k["blastBuff"])), window,
+		// Not in the last seconds, when the spell damage has nothing left to go on.
+		gt(remainingTime(), seconds(4)), extra)
+	return []*proto.APLListItem{cast(s.arcaneBlast, cond, "Arcane Blast up to the stack target: each stack is 15% of Intellect as spell damage for 15 sec from the first.")}
+}
+
+// arcaneWrathLines cast Arcane Wrath on cooldown, for builds with the talent.
+func arcaneWrathLines(k Knobs, s mageSpells) []*proto.APLListItem {
+	if k["arcaneWrath"] != 1 {
+		return nil
+	}
+	return []*proto.APLListItem{cast(s.arcaneWrath, gt(remainingTime(), add(spellCastTime(s.arcaneWrath), seconds(0.5))), "Arcane Wrath on cooldown. Without the talent ignore the warning on this line.")}
 }
 
 func targetAuraNumStacks(aura *proto.ActionID) value {

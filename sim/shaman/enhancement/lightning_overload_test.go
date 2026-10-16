@@ -18,7 +18,7 @@ import (
 func TestOrcShamanLightningOverload(t *testing.T) {
 	const casts = 2000
 	// Lightning Overload 3.
-	sim, enh := newShamanSim(newOrcShaman(60, "0000000000003", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 2*casts*3+10)
+	sim, enh := newShamanSim(newOrcShaman(60, "00000000000003", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 2*casts*3+10)
 	target := enh.CurrentTarget
 	lb := topRank(t, "Lightning Bolt", enh.LightningBolt)
 	overload := enh.LightningBoltOverload[lb.Rank]

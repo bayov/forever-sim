@@ -296,6 +296,9 @@ func (rsrc *raidSimResultCombiner) AddResult(result *proto.RaidSimResult, isLast
 	for i, tar := range result.EncounterMetrics.Targets {
 		rsrc.combineUnitMetrics(rsrc.Combined.EncounterMetrics.Targets[i], tar, isLast, weight)
 	}
+	if add := result.EncounterMetrics.Leveling; add != nil {
+		combineLevelingMetrics(rsrc.Combined.EncounterMetrics.Leveling, add, isLast, weight)
+	}
 
 	rsrc.Combined.AvgIterationDuration += result.AvgIterationDuration * weight
 	rsrc.Combined.IterationsDone += result.IterationsDone
@@ -328,6 +331,9 @@ func (rsrc *raidSimResultCombiner) SetBaseResult(baseRsr *proto.RaidSimResult) {
 
 	for i, tar := range baseRsr.EncounterMetrics.Targets {
 		newRsr.EncounterMetrics.Targets[i] = rsrc.newUnitMetrics(tar)
+	}
+	if baseRsr.EncounterMetrics.Leveling != nil {
+		newRsr.EncounterMetrics.Leveling = &proto.LevelingMetrics{}
 	}
 
 	rsrc.Combined = newRsr
@@ -362,29 +368,35 @@ func CombineConcurrentSimResults(results []*proto.RaidSimResult, isDebug bool) *
 }
 
 // combinePickedIterations picks the overall typical, lucky and unlucky iterations from the
-// ones each split sim picked.
+// ones each split sim picked, and in a leveling run the overall died one.
 //
 // Lucky and unlucky are the highest and lowest of the splits. The typical one is the
 // split's typical iteration closest to the combined average, which is close to the
 // iteration closest to that average over all iterations.
 func combinePickedIterations(combined *proto.RaidSimResult, results []*proto.RaidSimResult) {
+	leveling := combined.EncounterMetrics.GetLeveling() != nil
+	score := func(it *proto.IterationLog) float64 { return iterationScore(it, leveling) }
 	mean := combined.RaidMetrics.Dps.Avg
+	if leveling {
+		mean = combined.EncounterMetrics.Leveling.MobsKilled
+	}
 	for _, result := range results {
 		if it := result.TypicalIteration; it != nil {
-			if combined.TypicalIteration == nil || math.Abs(it.Dps-mean) < math.Abs(combined.TypicalIteration.Dps-mean) {
+			if combined.TypicalIteration == nil || math.Abs(score(it)-mean) < math.Abs(score(combined.TypicalIteration)-mean) {
 				combined.TypicalIteration = it
 			}
 		}
 		if it := result.LuckyIteration; it != nil {
-			if combined.LuckyIteration == nil || it.Dps > combined.LuckyIteration.Dps {
+			if combined.LuckyIteration == nil || score(it) > score(combined.LuckyIteration) {
 				combined.LuckyIteration = it
 			}
 		}
 		if it := result.UnluckyIteration; it != nil {
-			if combined.UnluckyIteration == nil || it.Dps < combined.UnluckyIteration.Dps {
+			if combined.UnluckyIteration == nil || score(it) < score(combined.UnluckyIteration) {
 				combined.UnluckyIteration = it
 			}
 		}
+		combined.DiedIteration = pickDied(combined.DiedIteration, result.DiedIteration, mean)
 	}
 }
 
@@ -398,6 +410,9 @@ func ReplayIterationsRequest(request *proto.RaidSimRequest, result *proto.RaidSi
 	replay := googleProto.Clone(request).(*proto.RaidSimRequest)
 	replay.SimOptions.Iterations = 1
 	replay.SimOptions.ReplaySeeds = []int64{result.TypicalIteration.Seed, result.LuckyIteration.Seed, result.UnluckyIteration.Seed}
+	if result.DiedIteration != nil {
+		replay.SimOptions.ReplaySeeds = append(replay.SimOptions.ReplaySeeds, result.DiedIteration.Seed)
+	}
 	return replay
 }
 
@@ -412,6 +427,7 @@ func ApplyIterationReplays(result *proto.RaidSimResult, replay *proto.RaidSimRes
 	result.TypicalIteration = replay.TypicalIteration
 	result.LuckyIteration = replay.LuckyIteration
 	result.UnluckyIteration = replay.UnluckyIteration
+	result.DiedIteration = replay.DiedIteration
 }
 
 type concurrentSimData struct {
@@ -600,4 +616,27 @@ func runSimConcurrent(request *proto.RaidSimRequest, progress chan *proto.Progre
 	}
 
 	return result
+}
+
+// combineLevelingMetrics adds one thread's leveling averages, weighted by its share of the
+// iterations. The spread of mobs killed adds up as mean squares (stdev^2 + mean^2) and comes
+// back to a standard deviation on the last one.
+func combineLevelingMetrics(base, add *proto.LevelingMetrics, isLast bool, weight float64) {
+	base.MobsKilled += add.MobsKilled * weight
+	base.MobsKilledStdev += (add.MobsKilledStdev*add.MobsKilledStdev + add.MobsKilled*add.MobsKilled) * weight
+	base.Xp += add.Xp * weight
+	base.XpPerHour += add.XpPerHour * weight
+	base.Deaths += add.Deaths * weight
+	base.SecondsInCombat += add.SecondsInCombat * weight
+	base.SecondsResting += add.SecondsResting * weight
+	base.SecondsSearching += add.SecondsSearching * weight
+	base.SecondsDead += add.SecondsDead * weight
+	base.MobsPerPull += add.MobsPerPull * weight
+	base.Food += add.Food * weight
+	base.Drinks += add.Drinks * weight
+	base.Bandages += add.Bandages * weight
+	base.AllKills = append(base.AllKills, add.AllKills...)
+	if isLast {
+		base.MobsKilledStdev = math.Sqrt(max(base.MobsKilledStdev-base.MobsKilled*base.MobsKilled, 0))
+	}
 }

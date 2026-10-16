@@ -50,6 +50,9 @@ type Character struct {
 	//Item Swap Handler
 	ItemSwap ItemSwap
 
+	// What happens when we die in a leveling session (RegisterLevelingDeathEffect).
+	levelingDeathEffects []func(sim *Simulation)
+
 	// Consumables this Character will be using.
 	Consumes *proto.Consumes
 

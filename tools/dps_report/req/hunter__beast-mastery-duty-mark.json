@@ -4,7 +4,7 @@
       {
         "players": [
           {
-            "race": "RaceNightElf",
+            "race": "RaceSkyborneWindshaper",
             "class": "ClassHunter",
             "equipment": {
               "items": [
@@ -113,6 +113,20 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
+                        "spellId": 14325
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-1.5s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
                         "spellId": 3045
                       }
                     }
@@ -138,7 +152,7 @@
                       }
                     }
                   },
-                  "notes": "Step back to 25 yards when the fight starts in melee range, inside the 8 yard minimum."
+                  "notes": "Steps out past the 8 yard minimum."
                 },
                 {
                   "action": {
@@ -158,8 +172,7 @@
                         }
                       }
                     }
-                  },
-                  "notes": "Aspect of the Hawk if it ever drops."
+                  }
                 },
                 {
                   "action": {
@@ -232,14 +245,13 @@
                         ]
                       }
                     }
-                  },
-                  "notes": "Elune's Light with the on-use trinket, unless waiting would cost a use."
+                  }
                 },
                 {
                   "action": {
                     "autocastOtherCooldowns": {}
                   },
-                  "notes": "Rapid Fire, Bestial Wrath, racials, trinkets and potions on cooldown."
+                  "notes": "Rapid Fire, Bestial Wrath, racials, trinkets and potions."
                 },
                 {
                   "action": {
@@ -308,8 +320,7 @@
                         ]
                       }
                     }
-                  },
-                  "notes": "Serpent Sting when it is down."
+                  }
                 },
                 {
                   "action": {
@@ -319,7 +330,7 @@
                       }
                     }
                   },
-                  "notes": "Aimed Shot on the cooldown it shares with Multi-Shot."
+                  "notes": "Shares its cooldown with Multi-Shot."
                 },
                 {
                   "action": {
@@ -329,7 +340,7 @@
                       }
                     }
                   },
-                  "notes": "Multi-Shot when Aimed Shot is not taken."
+                  "notes": "When Aimed Shot is not talented."
                 },
                 {
                   "action": {
@@ -339,7 +350,7 @@
                       }
                     }
                   },
-                  "notes": "Sniper Shot on cooldown, with the talent, while the mana lasts the fight."
+                  "notes": "With the talent."
                 },
                 {
                   "action": {
@@ -394,7 +405,7 @@
                       }
                     }
                   },
-                  "notes": "Summon Hawk while fewer than 2 hawks are out, with the talent."
+                  "notes": "With the talent."
                 },
                 {
                   "action": {
@@ -416,8 +427,7 @@
                         }
                       }
                     }
-                  },
-                  "notes": "Arcane Shot on its cooldown."
+                  }
                 }
               ]
             },
@@ -445,6 +455,7 @@
       "arcaneBrilliance": true,
       "divineSpirit": true,
       "battleShout": "TristateEffectImproved",
+      "trueshotAura": true,
       "leaderOfThePack": true,
       "moonkinAura": true,
       "manaSpringTotem": "TristateEffectRegular",
@@ -453,7 +464,8 @@
       "fireResistanceAura": true,
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
-      "retributionAura": "TristateEffectImproved"
+      "retributionAura": "TristateEffectImproved",
+      "salvation": true
     },
     "debuffs": {
       "judgementOfWisdom": true,
@@ -533,7 +545,9 @@
         "swingSpeed": 2,
         "parryHaste": true
       }
-    ]
+    ],
+    "raidDamageHitsPerMinute": 2,
+    "raidDamagePerHit": 1500
   },
   "simOptions": {
     "iterations": 1000,

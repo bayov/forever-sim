@@ -35,6 +35,32 @@
 	}
 }
 
+// The leveling session's options, in place of the fight's in Leveling mode, in categories under
+// a header each.
+.encounter-leveling {
+	width: 100%;
+	display: flex;
+	flex-direction: column;
+	gap: var(--block-spacer);
+
+	.encounter-leveling-header {
+		font-family: var(--heading-font-family);
+		font-size: 0.75rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+		color: var(--gold);
+		margin-bottom: calc(-0.5 * var(--block-spacer));
+
+		&:not(:first-child) {
+			margin-top: calc(0.5 * var(--block-spacer));
+		}
+	}
+
+	.encounter-leveling-pairs {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
 .encounter-targets {
 	width: 100%;
 	display: flex;

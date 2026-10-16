@@ -49,6 +49,9 @@ const roundEp = (value: number) => Math.round(value * 100) / 100;
 
 const DEFAULT_ITERATIONS = 3000;
 
+// The stats Calculate also weighs in a leveling session, where they shorten our rests.
+const LEVELING_EP_STATS = [Stat.StatStamina, Stat.StatArmor];
+
 class EpWeightsMenu extends Component {
 	private readonly simUI: IndividualSimUI<any>;
 	private readonly body: HTMLElement;
@@ -78,7 +81,10 @@ class EpWeightsMenu extends Component {
 		this.epReferenceStat = epReferenceStat;
 
 		const contentBlock = new ContentBlock(this.rootElem, 'ep-weights-block', {
-			header: { title: 'Stat Weights', tooltip: 'How much DPS each stat is worth, from sims that add a little of each stat.' },
+			header: {
+				title: 'Stat Weights',
+				tooltip: 'How much DPS each stat is worth (mobs killed in a leveling session), from sims that add a little of each stat.',
+			},
 		});
 		this.body = contentBlock.bodyElement;
 		this.body.innerHTML = `
@@ -289,7 +295,7 @@ class EpWeightsMenu extends Component {
 
 			const result = await this.simUI.player.computeStatWeights(
 				TypedEvent.nextEventID(),
-				this.epStats,
+				this.weighedStats(),
 				this.epPseudoStats,
 				this.epReferenceStat,
 				(progress: ProgressMetrics) => progressBar.update(progress),
@@ -339,16 +345,36 @@ class EpWeightsMenu extends Component {
 			},
 		});
 
-		tippy(calcButton, {
-			content: `
+		const calcTooltip = `
 				<p class="mb-1">We sim the character once as it is, and then once with each stat raised by 1 and once with it lowered by 1. All of them use the same random rolls, so the difference is the stat alone.</p>
 				<p class="mb-1">A stat's weight is the DPS it adds per point. Its EP is that weight divided by the weight of ${getNameFromStat(
 					this.getDpsEpRefStat(),
 				)}, so ${getNameFromStat(this.getDpsEpRefStat())} is always 1.</p>
 				<p class="mb-0">More iterations give steadier numbers, but take longer.</p>
-			`,
-			allowHTML: true,
-		});
+			`;
+		const levelingTooltip = `
+				<p class="mb-1">We sim the leveling session once as it is, and then once with each stat raised by 10 and once with it lowered by 10 (hit and crit by 1%). All of them use the same random rolls, so the difference is the stat alone.</p>
+				<p class="mb-1">A stat's weight is the mobs it adds to the session per point, so it counts what the stat does for our rests too, like Stamina and Spirit. Its EP is that weight divided by the weight of ${getNameFromStat(
+					this.getDpsEpRefStat(),
+				)}.</p>
+				<p class="mb-0">A stat we have none of, like hit on most low level gear, can't go lower and reads too low.</p>
+			`;
+		const calcButtonTooltip = tippy(calcButton, { content: calcTooltip, allowHTML: true });
+
+		// A leveling session weighs stats by mobs killed, and keeps its own last result, so
+		// switching the mode shows the weights for that mode.
+		let leveling = this.isLeveling();
+		const updateLeveling = () => {
+			calcButtonTooltip.setContent(this.isLeveling() ? levelingTooltip : calcTooltip);
+			if (this.isLeveling() == leveling) return;
+			leveling = this.isLeveling();
+			this.simUI.prevEpSimResult = null;
+			this.simUI.prevEpIterations = 0;
+			this.loadResult();
+			this.updateTable();
+		};
+		this.simUI.sim.encounter.changeEmitter.on(updateLeveling);
+		updateLeveling();
 
 		tippy(this.applyAllButton, { content: 'Copy every calculated EP into the Current EP.' });
 		this.applyAllButton.addEventListener('click', () => this.applyAll());
@@ -377,15 +403,38 @@ class EpWeightsMenu extends Component {
 		weightRatioCells.forEach(makeEpRatioCell);
 	}
 
+	// Whether the encounter is a leveling session (docs/leveling_sim.md).
+	private isLeveling(): boolean {
+		return this.simUI.sim.encounter.isLeveling();
+	}
+
+	// The stats Calculate weighs: the spec's, and in a leveling session Stamina and Armor too.
+	private weighedStats(): Array<Stat> {
+		if (!this.isLeveling()) return this.epStats;
+		return this.epStats.concat(LEVELING_EP_STATS.filter(stat => !this.epStats.includes(stat)));
+	}
+
 	// The tooltips on the column titles. They say what each column holds, which stat the EP is
 	// normalized by, and how the calculated values get into the Current EP.
 	private addHeaderTooltips() {
 		const getName = (stat: Stat) => getClassStatName(stat, this.simUI.player.getClass());
 		const copyNote =
 			'Green is above the Current EP and red is below it. The ± is the range we are 90% sure the value is in. The arrow on a row, or Apply All, copies it into the Current EP.';
-		const metrics: Array<[string, (() => Stat) | undefined]> = [
-			['How much DPS (damage per second) one point of each stat adds, from the last Calculate.', undefined],
-			['The EP (equivalency points) of each stat for DPS, from the last Calculate.', () => this.getDpsEpRefStat()],
+		const metrics: Array<[string | (() => string), (() => Stat) | undefined]> = [
+			[
+				() =>
+					this.isLeveling()
+						? 'How many more mobs one point of each stat kills in the leveling session, from the last Calculate.'
+						: 'How much DPS (damage per second) one point of each stat adds, from the last Calculate.',
+				undefined,
+			],
+			[
+				() =>
+					this.isLeveling()
+						? 'The EP (equivalency points) of each stat for mobs killed in the leveling session, from the last Calculate.'
+						: 'The EP (equivalency points) of each stat for DPS, from the last Calculate.',
+				() => this.getDpsEpRefStat(),
+			],
 			['How much HPS (healing per second) one point of each stat adds.', undefined],
 			['The EP of each stat for HPS (healing per second).', () => this.getHealEpRefStat()],
 			['How much TPS (threat per second) one point of each stat adds.', undefined],
@@ -399,7 +448,10 @@ class EpWeightsMenu extends Component {
 		];
 		this.rootElem.querySelectorAll<HTMLElement>('.metric-header > span').forEach((label, i) => {
 			const [text, refStat] = metrics[i];
-			tippy(label, { content: () => [text, refStat ? `It's normalized by ${getName(refStat())}.` : '', copyNote].filter(Boolean).join(' ') });
+			tippy(label, {
+				content: () =>
+					[typeof text == 'string' ? text : text(), refStat ? `It's normalized by ${getName(refStat())}.` : '', copyNote].filter(Boolean).join(' '),
+			});
 		});
 		tippy(this.rootElem.querySelector('.current-ep-header > span') as HTMLElement, {
 			content:
@@ -410,7 +462,7 @@ class EpWeightsMenu extends Component {
 	// Whether the last Calculate weighed the stat. The others have an empty Calculated EP and
 	// keep their Current EP.
 	private isCalculated(stat: UnitStat): boolean {
-		return stat.isStat() ? this.epStats.includes(stat.getStat()) : this.epPseudoStats.includes(stat.getPseudoStat());
+		return stat.isStat() ? this.weighedStats().includes(stat.getStat()) : this.epPseudoStats.includes(stat.getPseudoStat());
 	}
 
 	// The stat's value from the last Calculate, as the table shows it (EP or weight), or
@@ -438,10 +490,14 @@ class EpWeightsMenu extends Component {
 	}
 
 	// The last calculated weights are kept in local storage with their iterations, so they are
-	// still in the table after a reload.
+	// still in the table after a reload. A leveling session keeps its own.
+	private resultStorageKey(): string {
+		return this.simUI.getStorageKey(this.isLeveling() ? '__epResultLeveling__' : '__epResult__');
+	}
+
 	private loadResult() {
 		try {
-			const stored = window.localStorage.getItem(this.simUI.getStorageKey('__epResult__'));
+			const stored = window.localStorage.getItem(this.resultStorageKey());
 			if (!stored) return;
 			const { iterations, result } = JSON.parse(stored);
 			this.simUI.prevEpSimResult = StatWeightsResult.fromJson(result);
@@ -455,7 +511,7 @@ class EpWeightsMenu extends Component {
 		if (!this.simUI.prevEpSimResult) return;
 		try {
 			window.localStorage.setItem(
-				this.simUI.getStorageKey('__epResult__'),
+				this.resultStorageKey(),
 				JSON.stringify({ iterations: this.simUI.prevEpIterations, result: StatWeightsResult.toJson(this.simUI.prevEpSimResult) }),
 			);
 		} catch {
@@ -535,7 +591,7 @@ class EpWeightsMenu extends Component {
 			// A stat the spec doesn't weigh still shows when the Current EP prices it, as the
 			// PvP presets do with Stamina and Armor.
 			const hasCurrentEp = this.simUI.player.getEpWeights().getUnitStat(stat) != 0;
-			const isExtra = !hasCurrentEp && stat.isStat() && !this.epStats.includes(stat.getStat());
+			const isExtra = !hasCurrentEp && stat.isStat() && !this.weighedStats().includes(stat.getStat());
 			if ((!this.showAllStats && isExtra) || (stat.isPseudoStat() && !this.epPseudoStats.includes(stat.getPseudoStat()))) {
 				return;
 			}

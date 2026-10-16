@@ -11,8 +11,9 @@ import (
 // everyone in the area takes a quarter of Classic's damage over 8 sec, and the first four
 // enemies to enter take an extra amount on top. wowhead's Forever tooltips give both parts
 // for every rank, e.g. rank 1 does 16 plus 32 (Classic 64). The damage runs through a
-// server script, so no page shows its spell power coefficient. We keep the 9.5% per tick
-// an older Forever tooltip showed. Every sim target counts as one of the first four.
+// server script; its damage spells (1280345 to 1280353) carry 9.5% of spell power a tick in
+// client 1.60.1.70338 and 4.2% (Era's) in 1.60.1.70425, which the sim uses. Every sim target
+// counts as one of the first four.
 func (paladin *Paladin) registerConsecration() {
 	ranks := []struct {
 		level    int32
@@ -44,7 +45,7 @@ func (paladin *Paladin) registerConsecration() {
 		tickCoefficient := 0.042
 		if paladin.Env.IsForever() {
 			tickDamage = (rank.foreverAll + rank.foreverExtra) / 8
-			tickCoefficient = 0.095
+			tickCoefficient = 0.042 // client 70425 (spells 1280345-1280353; 0.095 in 70338)
 		}
 
 		paladin.RegisterSpell(core.SpellConfig{
@@ -88,7 +89,7 @@ func (paladin *Paladin) registerConsecration() {
 				OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 					// Consecration can miss, showing up as either a resist in logs or a
 					// silent failure (missing damage tick).
-					for _, aoeTarget := range sim.Encounter.TargetUnits {
+					for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
 						dot.CalcAndDealPeriodicSnapshotDamage(sim, aoeTarget, dot.OutcomeMagicHitAndTick)
 					}
 				},

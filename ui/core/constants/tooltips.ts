@@ -62,6 +62,11 @@ export const TOOLTIP_METRIC_LABELS = {
 	DUR: 'Encounter Duration',
 	OOM: 'Spent Out of Mana',
 	TTO: 'Time to Out of Mana in seconds',
+	// Leveling (docs/leveling_sim.md)
+	'Mobs Killed': 'Mobs killed in a grinding session, the last one counted by the share of its health we took. The score of leveling mode.',
+	'XP/Hour': "XP an hour of grinding, from the kills by mob level. Compares mob levels, which mobs killed alone can't.",
+	Deaths: 'Deaths in a grinding session',
+	'Mobs/Pull': 'Mobs a pull came to on average, chain pulls included',
 	// Aura metrcis
 	Procs: 'Procs',
 	PPM: 'Procs Per Minute',

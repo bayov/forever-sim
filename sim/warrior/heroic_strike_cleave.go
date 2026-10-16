@@ -77,13 +77,15 @@ func (warrior *Warrior) registerCleaveSpell(realismICD *core.Cooldown) {
 		BonusCoefficient: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			for idx := range results {
+			// Only living targets, each one once.
+			hits := results[:sim.Encounter.AoETargetCount(int32(len(results)))]
+			for idx := range hits {
 				baseDamage := flatDamageBonus + spell.Unit.MHWeaponDamage(sim, spell.MeleeAttackPower(target))
 				results[idx] = spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 				target = sim.Environment.NextTargetUnit(target)
 			}
 
-			for _, result := range results {
+			for _, result := range hits {
 				spell.DealDamage(sim, result)
 			}
 

@@ -8,8 +8,8 @@ import (
 
 // Strider Kick, the 21 point Survival talent (beta client 1317257, build 1.60.1.70338): 100%
 // normalized melee weapon damage, an 8 sec cooldown, 5.81% of base mana. Its 30% run speed for 3 sec
-// does nothing here. Savage Strikes and Predator's Edge cover it, Efficiency and Resourcefulness
-// don't.
+// does nothing here. Savage Strikes and Predator's Edge cover it, and since client 1.60.1.70425
+// Resourcefulness does too (its mask gained Strider Kick's bit); Efficiency doesn't.
 func (hunter *Hunter) registerStriderKickSpell() {
 	if !hunter.Talents.StriderKick {
 		return

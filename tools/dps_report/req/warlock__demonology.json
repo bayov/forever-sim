@@ -4,7 +4,7 @@
       {
         "players": [
           {
-            "race": "RaceGnome",
+            "race": "RaceHuman",
             "class": "ClassWarlock",
             "equipment": {
               "items": [
@@ -152,13 +152,13 @@
               ],
               "priorityList": [
                 {
-                  "notes": "Racials and trinkets on cooldown.",
+                  "notes": "Racials and trinkets.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }
                 },
                 {
-                  "notes": "Life Tap when the mana runs low or the filler costs more than is left.",
+                  
                   "action": {
                     "condition": {
                       "or": {
@@ -198,7 +198,7 @@
                   }
                 },
                 {
-                  "notes": "Bane of Doom when it lands before the fight ends.",
+                  
                   "action": {
                     "condition": {
                       "and": {
@@ -238,7 +238,7 @@
                   }
                 },
                 {
-                  "notes": "Bane of Agony while Bane of Doom is on cooldown or would not land.",
+                  
                   "action": {
                     "condition": {
                       "and": {
@@ -325,7 +325,6 @@
                   }
                 },
                 {
-                  "notes": "Corruption when it is down.",
                   "action": {
                     "condition": {
                       "and": {
@@ -351,6 +350,68 @@
                                       "dotRemainingTime": {
                                         "spellId": {
                                           "spellId": 11672
+                                        }
+                                      }
+                                    },
+                                    "rhs": {
+                                      "const": {
+                                        "val": "1.5s"
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "12s"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 11672
+                      }
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "or": {
+                              "vals": [
+                                {
+                                  "not": {
+                                    "val": {
+                                      "dotIsActive": {
+                                        "spellId": {
+                                          "spellId": 11668
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "cmp": {
+                                    "op": "OpLt",
+                                    "lhs": {
+                                      "dotRemainingTime": {
+                                        "spellId": {
+                                          "spellId": 11668
                                         }
                                       }
                                     },
@@ -382,76 +443,13 @@
                     },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 11672
-                      }
-                    }
-                  }
-                },
-                {
-                  "notes": "Immolate when it is down.",
-                  "action": {
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "or": {
-                              "vals": [
-                                {
-                                  "not": {
-                                    "val": {
-                                      "dotIsActive": {
-                                        "spellId": {
-                                          "spellId": 11668
-                                        }
-                                      }
-                                    }
-                                  }
-                                },
-                                {
-                                  "cmp": {
-                                    "op": "OpLt",
-                                    "lhs": {
-                                      "dotRemainingTime": {
-                                        "spellId": {
-                                          "spellId": 11668
-                                        }
-                                      }
-                                    },
-                                    "rhs": {
-                                      "const": {
-                                        "val": "1.5s"
-                                      }
-                                    }
-                                  }
-                                }
-                              ]
-                            }
-                          },
-                          {
-                            "cmp": {
-                              "op": "OpGt",
-                              "lhs": {
-                                "remainingTime": {}
-                              },
-                              "rhs": {
-                                "const": {
-                                  "val": "6s"
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    },
-                    "castSpell": {
-                      "spellId": {
                         "spellId": 11668
                       }
                     }
                   }
                 },
                 {
-                  "notes": "Death Coil when the filler would not land before the end.",
+                  
                   "action": {
                     "condition": {
                       "cmp": {
@@ -486,7 +484,7 @@
                   }
                 },
                 {
-                  "notes": "Searing Pain when the filler would not land before the end.",
+                  
                   "action": {
                     "condition": {
                       "and": {
@@ -542,7 +540,7 @@
                   }
                 },
                 {
-                  "notes": "Shadow Bolt as the filler.",
+                  
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -583,7 +581,8 @@
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
-      "sanctityAura": false
+      "sanctityAura": false,
+      "salvation": true
     },
     "debuffs": {
       "judgementOfWisdom": true,
@@ -664,7 +663,9 @@
         "swingSpeed": 2,
         "parryHaste": true
       }
-    ]
+    ],
+    "raidDamageHitsPerMinute": 2,
+    "raidDamagePerHit": 1500
   },
   "simOptions": {
     "iterations": 1000,

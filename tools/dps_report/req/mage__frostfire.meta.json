@@ -4,9 +4,9 @@
   "spec": "Frostfire",
   "build": "Frostfire",
   "isDefault": true,
-  "pr": 6,
-  "race": "Undead",
-  "talents": "-1355000013013304-00550003310003002",
+  "pr": 98,
+  "race": "Human",
+  "talents": "-0155003013012503-00550003310003002",
   "treeNames": [
     "Arcane",
     "Fire",
@@ -15,39 +15,41 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_frostfire",
   "published": {
-    "dps": 1011.5,
-    "source": "PR (rotation auditor pass 19: end-of-fight instants, Ice Lance ahead of Scorch, 2026-10-15)"
+    "dps": 1082.5,
+    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 1018.1)"
   },
   "verify": {
-    "dps": 1011.5,
-    "stderr": 0.6,
+    "dps": 1082.52,
+    "stderr": 0.51,
     "iters": 20000,
     "ok": true,
-    "note": "180 s, 20000 iterations, on the pass 19 rotation"
+    "note": "run_build.py main run, 180s, seed 1"
   },
-  "summary": "Fire 29 / Frost 22 built around Frostfire Bolt, which takes both trees' talents and feeds Heating Up and Fingers of Frost at once. The mage's default Level 60 preset and the top build, the same split as foreverchanges' popular Fire build.",
+  "summary": "Fire and Frost hybrid built on Frostfire Bolt, which gets both trees' talents.",
   "keyTalents": [
     "Improved Fireball",
     "Ignite",
+    "Burning Soul",
     "Improved Scorch",
     "Heating Up",
     "Critical Mass",
+    "Fire Power",
     "Ice Shards",
     "Shatter",
     "Fingers of Frost"
   ],
   "rotation": [
-    "Pre-pull: Frostfire Bolt at -3 s",
-    "Cooldowns (Demonic Rune, racial) on a free GCD; mana gems never (they share the rune's cooldown)",
-    "Evocation below 30% mana with more than 60 s left",
-    "Ice Lance on every Fingers of Frost charge, ahead of Scorch and Pyroblast",
-    "Scorch to 5 Fire Vulnerability stacks and before they run out (exactly 5 in the opener)",
-    "Pyroblast at 3 Heating Up stacks (1.5 s cast)",
+    "Pre-pull: Frostfire Bolt at -3s",
+    "The on-use trinket once Fire Vulnerability has 5 stacks; other cooldowns on a free GCD; mana gems never (they share the rune's cooldown)",
+    "Evocation below 20% mana with more than 45s left",
+    "Ice Lance on every Fingers of Frost charge, ahead of Scorch and Pyroblast (3 times the damage, Shatter crit)",
+    "Scorch to 5 Fire Vulnerability stacks and again with under 7s left",
+    "Pyroblast at 3 Heating Up stacks (1.5s cast)",
     "Arcane Missiles on a Missile Barrage proc",
-    "Fire Blast only with mana the fight can't use (above 150 per second of fight left)",
-    "Rank 2 Frostfire Bolt once Evocation is spent or under 60 s left, while mana is under 60 per second of fight left",
-    "Ice Lance instead when a Frostfire Bolt would not land before the end (its cast plus 1.5 s)",
-    "Filler: Frostfire Bolt (2.5 s), carrying Fingers of Frost Shatter crit"
+    "Fire Blast on cooldown above 80% mana, and with mana the fight can't use (above 70 per second of fight left); every Fire Blast adds a Heating Up stack",
+    "Rank 2 Frostfire Bolt once Evocation is spent or under 60s left, while mana is under 60 per second of fight left",
+    "Ice Lance instead when a Frostfire Bolt would not land before the end (its cast plus 1.5s)",
+    "Filler: Frostfire Bolt"
   ],
   "consumes": [
     "Flask of Supreme Power",
@@ -66,12 +68,13 @@
     "Goblin Sapper"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 41 spell power and 11 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Ice Lance's spell power coefficient is Season of Discovery's server value, 0.429; Forever's client has 0, as SoD's did",
-    "Manaflare 4/5-piece not modelled (only 2-piece live): would add +55.9 (6.2%)",
-    "Frost Channeling 3 does nothing (client leaves Frostfire Bolt out); it is filler for Fingers of Frost",
-    "Frostfire Bolt's DoT has no client coefficient; takes both schools' talents",
-    "No Ahn'Qiraj book ranks (Fireball XI, Frostbolt X, Arcane Missiles VII); with the books Frost +50, Arcane +30, Fire +17, Frostfire 0"
+    "Ice Lance's spell power coefficient is 0.429 (SoD server value, the client has 0).",
+    "Heating Up: every Fire Blast adds a stack (two on a crit). One Pyroblast uses them all.",
+    "Fire Power counts Fire Vulnerability and up to 4 Fire DoTs. Open: whether it adds or multiplies. Frostfire Bolt gets it, but its DoT doesn't count.",
+    "Manaflare 4-piece and 5-piece not modeled (2-piece only).",
+    "Frost Channeling 3 does nothing but leads to Fingers of Frost.",
+    "Frostfire Bolt's DoT has no client coefficient.",
+    "No Ahn'Qiraj book ranks (Fireball XI, Frostbolt X, Arcane Missiles VII). With the books: Frost +50, Arcane +30, Fire +17, Frostfire 0."
   ],
-  "notes": "Request written by mksettings -spec mage_frostfire unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). It carries the spec's staff imbue scroll (Scroll of Imbue Greater Flame) as a mage option, as the preset does. Its rotation casts Ice Lance on every Fingers of Frost charge and Evocation below 30% mana with more than 60 s left."
+  "notes": "Request written by mksettings -spec mage_frostfire unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). It carries the spec's staff imbue scroll (Scroll of Imbue Greater Flame) as a mage option, as the preset does. Its rotation casts Ice Lance on every Fingers of Frost charge and Evocation below 30% mana with more than 60s left."
 }

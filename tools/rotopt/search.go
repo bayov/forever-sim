@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"math"
 	"os"
+
+	"github.com/wowsims/classic/sim/core/proto"
 )
 
 // Coordinate descent over the knobs. Every knob in turn tries each of its values with the
@@ -60,6 +62,7 @@ type searcher struct {
 func (s *searcher) score(knobs Knobs) result {
 	rot := s.template.Build(knobs)
 	var sum, variance, mana, manaVariance, tto float64
+	var leveling *proto.LevelingMetrics
 	for _, d := range s.durations {
 		key := fmt.Sprintf("%s|%g|%s|%d", s.setup.talents, d, knobs, s.iterations)
 		r, ok := s.cache[key]
@@ -78,12 +81,16 @@ func (s *searcher) score(knobs Knobs) result {
 		mana += r.mana
 		manaVariance += r.manaStderr * r.manaStderr
 		tto += r.tto
+		leveling = r.leveling
 	}
 	n := float64(len(s.durations))
 	r := result{
 		dps: sum / n, stderr: math.Sqrt(variance) / n,
 		mana: mana / n, manaStderr: math.Sqrt(manaVariance) / n,
 		tto: tto / n,
+	}
+	if len(s.durations) == 1 {
+		r.leveling = leveling
 	}
 	if s.survival || s.minHealth > 0 || s.minArmor > 0 || s.healthWeight != 0 || s.armorWeight != 0 {
 		r.health, r.armor = s.setup.unbuffedStats()
