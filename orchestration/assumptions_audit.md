@@ -32,7 +32,7 @@ Verdicts:
 
 PRs:
 - **#67** (warrior): `warr_crit_rage` settled, no DPS change.
-- **#75**: `warr_rage_oh` settled at 0.5, so the sim changes: dual-wield Fury goes from 1055.0 to 961.1 at 180 s. Split from #67; held for Q6.
+- **#75**: `warr_rage_oh` settled at 0.5, so the sim changes: dual-wield Fury goes from 1055.0 to 961.1 at 180 s. Split from #67. The user ruled on Q6: "Use 0.5, and remove other assumption values (keep assumption but locked to one value, 0.5)".
 - **#70** (priest and warlock): Power in Light counts Shadow Word: Pain (Smite +6.2), plus four notes items.
 - **#72** (flat bonus): `flat_bonus_inside_pct` and `druid_shred_flat` settled, no DPS change.
 - **#54** (paladin worker): takes `pal_sor_sp_double`, `pal_sor_sp_speed` and `pal_consecration_coef`, routed 2026-10-16.
@@ -81,7 +81,7 @@ PRs:
 
 The DASH_ASSUME knobs that die (the orchestrator rebuilds patch 0004):
 - `warr_crit_rage`;
-- `warr_rage_oh` (or set its default to 0.5);
+- `warr_rage_oh`: its row stays with the one setting 0.5, so the knob's default must be 0.5 and no setting overrides it;
 - `flat_bonus_inside_pct`;
 - `druid_shred_extra`;
 - the paladin ones listed by #54: `pal_sor_sp_double`, `pal_sor_sp_speed`, `pal_consecration_coef`.
