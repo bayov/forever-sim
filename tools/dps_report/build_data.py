@@ -696,6 +696,8 @@ from concurrent.futures import ThreadPoolExecutor
 os.makedirs(os.path.join(D, 'icons'), exist_ok=True)
 extra = set(RACE_ICON.values()) | set(FACTION_ICON.values()) | {'classicon_' + c.lower() for c in CLASS_ORDER} | {a['icon'] for a in art}
 extra |= set(build_races.PART_ICON.values())
+# every racial's icon, for its card in the race tooltips
+extra |= {v['icon'] for lst in json.load(open(os.path.join(TREE, 'ui/core/forever/racials.json'))).values() for r in lst for v in r.get('variants', []) if v.get('icon')}
 extra |= {g['icon'] for g in gear if g.get('icon')} | {x['icon'] for x in setup if x.get('icon')} | {x['icon'] for x in auras if x.get('icon')} | {b['specIcon'] for b in builds}
 want = sorted({t['icon'] for t in trees} | {n['icon'] for n in names.values() if n.get('icon')} | {'inv_misc_questionmark'} | extra)
 def fetch(ic):
