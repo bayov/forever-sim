@@ -106,7 +106,7 @@ The rules every class follows so the specs' Level 60 numbers compare fairly. New
 
 ## Races
 
-16. Presets use the best race on the spec's weapons (22). Race tables give best overall, Horde and Alliance. The cross-spec ranking also gets a column with weapon-type racials off (fairness P6), so the weapon type doesn't decide the spec order.
+16. Presets use the best race (22 for the weapons). Race tables give best overall, Horde and Alliance. Since client 70425 no racial depends on the weapon (Human Ruthless and Orc Savage give crit with any weapon, the Dwarf's mace racial became Earth Fury, 2% crit damage), so the weapon-type racials column (fairness P6) and the Races tab's racial weapon entries are gone (user ruling 2026-10-16: "We need to remove the 'with weapon' variants of races as well now").
 
 ## Weapons
 
