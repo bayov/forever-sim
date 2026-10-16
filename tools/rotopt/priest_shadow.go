@@ -64,8 +64,10 @@ func (priestShadow) Knobs() []Knob {
 		// Dwarf: Chastise on cooldown against a Humanoid. A GCD of Mind Flay is worth more,
 		// 4.7 DPS at 180 sec.
 		{Name: "chastise", Default: 0, Min: 0, Max: 1, Step: 1},
-		// Undead: Dark Sacrifice under this much mana in percent (0 never).
-		{Name: "darkSacrifice", Default: 40, Min: 0, Max: 80, Step: 10},
+		// Undead: Dark Sacrifice under this much mana in percent (0 never). 10% since 70425:
+		// Shadow + Holy now runs short (Devouring Plague every 24 sec) and casts it only when
+		// it must, +2.9 / +5.8 / +2.1 at 120 / 180 / 300 sec against 40% (2026-10-16).
+		{Name: "darkSacrifice", Default: 10, Min: 0, Max: 80, Step: 10},
 		// Vampiric Embrace kept on the target. It heals the party for 20% of the priest's
 		// Shadow damage and deals none, so each cast is a GCD of damage given up.
 		{Name: "vampiricEmbrace", Default: 0, Min: 0, Max: 1, Step: 1},
