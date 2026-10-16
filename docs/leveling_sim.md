@@ -521,7 +521,8 @@ After the groundwork:
      | The user's 2 to 10 s search and 2 to 8 s chain search (pass 6 kept every knob) | 70.0 | 0.00 | 40,500 | 130 s | 365 s | 705 s | 2.08 |
      | The rotation picks running or standing (always running here), food and water as spells | 70.4 | 0.00 | - | 130 s | 323 s | 747 s | 2.11 |
      | Optimizer pass 7: no Mana Spring, a heal below 40% between pulls, shocks above 60% mana | 73.7 | 0.01 | 42,600 | 121 s | 282 s | 795 s | 2.03 |
-     | We leave combat 1 to 2 s after the last kill, totems land 1.5 to 3.5 yd from us | 72.1 | 0.00 | 41,300 | 109 s | 273 s | 819 s | - |
+     | Pass 7's rotation after we leave combat 1 to 2 s after a kill, mobs crit only above our level, searches 0 to 10 s and chain searches 0 to 3 s running and 0 to 5 s standing | 77.2 | 0.00 | - | 74 s | 298 s | 828 s | 2.31 |
+     | Optimizer pass 8: stand for chain searches, Mana Spring and Strength of Earth, full rank Searing, pull in melee | 82.1 | 0.00 | - | 88 s | 294 s | 818 s | 2.37 |
 
      The rows down to pass 3 ran with Rockbiter Weapon and Windfury Weapon both on the main
      hand: the settings had Rockbiter in the consumes and Windfury in the class options, and
@@ -554,10 +555,20 @@ After the groundwork:
      heal below 40% health between pulls, shocked only above 60% mana and looked ahead above
      50% health: 73.7 on seed 1 and 73.7 on seed 1000001, from 70.4.
 
-     Then the sim started leaving combat 1 to 2 s after the last mob dies, as the game does,
-     with no chain search in that wait. Totems also land a few yards from us at a random
-     angle now. Pass 7's rotation gives 71.1 mobs on seed 1 and 73.1 on seed 1000001. The
-     wait after each kill adds up to about 50 s of the session, which is most of the loss.
+     Then three changes came in together. We leave combat 1 to 2 s after the last mob dies,
+     as the game does, with no chain search in that wait, and totems land a few yards from
+     us at a random angle. Mobs no longer crit us unless they're above our level (From the
+     logs, below). And the user set the searches to 0 to 10 s, and the chain searches to 0 to
+     3 s running and 0 to 5 s standing. Pass 7's rotation gives 77.2 mobs with all of them.
+
+     Pass 8 then found 82.1 on seed 1 and 82.2 on seed 1000001. Each of its changes helps on
+     its own, by how much we lose when we turn it back:
+
+     - Stand for a chain search (+2.6). It's as quick as running now, and we keep hitting.
+     - Full rank Searing Totem instead of rank 1 (+1.4).
+     - Mana Spring Totem (+1.2) and Strength of Earth Totem (+0.7). With fewer crits on us,
+       fights are less about health and more about mana and damage.
+     - Walk up and pull in melee, with no shock (+0.2).
 
      Pass 1: sit down below 80% health and stand at 90% instead of 50% and 100%, no Flame
      Shock DoT in the fight, Lesser Healing Wave below 30% in combat, no buff totems (their

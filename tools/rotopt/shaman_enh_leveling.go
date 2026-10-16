@@ -41,7 +41,7 @@ func (shamanEnhLeveling) Knobs() []Knob {
 		{Name: "restUntil", Default: 90, Min: 60, Max: 100, Step: 10},
 		{Name: "restUntilMana", Default: 80, Min: 60, Max: 100, Step: 10},
 		// Pulling: 0 none (walk up), 1 Earth Shock rank 1, 2 Earth Shock, 3 Flame Shock.
-		{Name: "pullSpell", Default: 1, Min: 0, Max: 3, Step: 1},
+		{Name: "pullSpell", Default: 0, Min: 0, Max: 3, Step: 1},
 		{Name: "pullBolt", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Chain pulls: 0 off, else look while fewer than chainMax mobs are pulled, and pull
 		// what we find above chainHealth and chainMana.
@@ -59,17 +59,17 @@ func (shamanEnhLeveling) Knobs() []Knob {
 		// How we look for the next mob while fighting: 0 run around for it, 1 stand and keep
 		// fighting (a longer search), 2 stand while a totem of ours is down and in reach, so
 		// we keep its buff, and run otherwise.
-		{Name: "chainStand", Default: 0, Min: 0, Max: 2, Step: 1},
+		{Name: "chainStand", Default: 1, Min: 0, Max: 2, Step: 1},
 		// In combat, walk up to the mob we found only when it's within this many yards, and
 		// otherwise leave it for after the fight; 0 always walks up. Out of combat we always do.
 		{Name: "chainWalkMax", Default: 0, Min: 0, Max: 40, Step: 10},
 		// Totems, once a mob is pulled. Fire: 0 none, 1 Flametongue, 2 Searing, 3 Magma
 		// with 2 mobs on us.
-		{Name: "strengthOfEarth", Default: 0, Min: 0, Max: 1, Step: 1},
-		{Name: "manaSpring", Default: 0, Min: 0, Max: 1, Step: 1},
+		{Name: "strengthOfEarth", Default: 1, Min: 0, Max: 1, Step: 1},
+		{Name: "manaSpring", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "fireTotem", Default: 2, Min: 0, Max: 3, Step: 1},
 		// Searing Totem: rank 1 (25 mana) or the top rank, and from how many mobs pulled.
-		{Name: "searingRank1", Default: 1, Min: 0, Max: 1, Step: 1},
+		{Name: "searingRank1", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "searingMinPulled", Default: 2, Min: 1, Max: 2, Step: 1},
 		// When we've moved out of Mana Spring Totem's reach in a fight and it's still up, walk
 		// back to it (1) instead of dropping a new one (0).
