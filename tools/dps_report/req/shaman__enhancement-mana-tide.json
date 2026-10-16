@@ -632,29 +632,6 @@
                   }
                 },
                 {
-                  "notes": "Goes off around the fire totem, so it needs one down.",
-                  "action": {
-                    "condition": {
-                      "cmp": {
-                        "op": "OpGe",
-                        "lhs": {
-                          "currentManaPercent": {}
-                        },
-                        "rhs": {
-                          "const": {
-                            "val": "0.2"
-                          }
-                        }
-                      }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 408345
-                      }
-                    }
-                  }
-                },
-                {
                   "action": {
                     "condition": {
                       "and": {
@@ -708,6 +685,29 @@
                     "castSpell": {
                       "spellId": {
                         "spellId": 10414
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Goes off around the fire totem, so it needs one down.",
+                  "action": {
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "currentManaPercent": {}
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "0.2"
+                          }
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 408345
                       }
                     }
                   }

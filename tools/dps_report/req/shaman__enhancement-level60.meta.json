@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "optimized",
   "published": {
-    "dps": 848.1,
-    "source": "Shaman PR (rotation audit pass 23: Flame Shock 9 s end gate, Mana Tide at 10%, Magma Totem to 2 s; requests rebuilt with the prepull totems, 2026-10-16)"
+    "dps": 886.4,
+    "source": "Shaman PR (the raid's Flametongue Totem on the Enhancement weapon, user ruling 2026-10-16; Magma Totem on Level 60 and the rotation re-check, 2026-10-16)"
   },
   "verify": {
-    "dps": 848.11,
-    "stderr": 0.37,
+    "dps": 886.4,
+    "stderr": 0.39,
     "iters": 20000,
     "ok": true,
     "note": "verify.py, 180s, seed 1"
   },
-  "summary": "Stormstrike and Maelstrom Weapon with a two-hand axe, and Windfury Totem for the group.",
+  "summary": "Stormstrike and Maelstrom Weapon with a two-hand axe, and Windfury Totem for the group, with Magma Totem and the raid's Flametongue Totem on its weapon.",
   "keyTalents": [
     "Stormstrike",
     "Maelstrom Weapon",
@@ -37,15 +37,15 @@
     "Thundering Strikes"
   ],
   "rotation": [
-    "Pre-pull: Strength of Earth IV at -6s, Windfury Totem at -5s, Mana Spring at -4s, Lightning Shield at -3s, Searing Totem at -1.5s (the totems last the whole fight but run out a few seconds before a 300s one ends)",
+    "Pre-pull: Strength of Earth IV at -6s, Windfury Totem at -5s, Mana Spring at -4s, Lightning Shield at -3s, Magma Totem at -1.5s (the totems last the whole fight but run out a few seconds before a 300s one ends)",
     "Recast Strength of Earth, Windfury Totem and Mana Spring when down, with at least 20s left",
-    "Searing Totem when it is down and at least 10s remain (after the pre-pull one)",
+    "Magma Totem when it is down and at least 2s remain (after the pre-pull one)",
     "Rage of the Farseer on cooldown, waiting for the on-use trinket; Blood Fury lined up with it",
     "Other cooldowns (Sapper, Demonic Rune, Major Mana Potion, Land Mine)",
     "Stormstrike on cooldown",
     "Flame Shock when its DoT is down",
     "Lightning Bolt at 5 Maelstrom Weapon stacks",
-    "Earth Shock",
+    "Earth Shock while the Stormstrike mark is up, or with Stormstrike more than 1s from ready",
     "Fire Nova while the mana covers 12 a second for the rest of the fight",
     "Lightning Shield when it is down and nothing else is ready (orbs fire at the target on raid damage hits, 2 a minute)"
   ],
@@ -76,7 +76,8 @@
     "One 2% crit elixir. Mongoose, Grizzly and Owl stacked would add about 36.",
     "Earth Shock VII's base damage is ×1.08 (client ×1.00).",
     "Raid damage hits (2 a minute, each fires Lightning Shield) are an estimate.",
-    "Fire Nova uses the 70425 values: coefficient 0.143, rank 5 base 232 to 259."
+    "Fire Nova uses the 70425 values: coefficient 0.143, rank 5 base 232 to 259.",
+    "The raid's second shaman's Flametongue Totem holds the weapon's totem slot next to our Windfury Weapon (user ruling 2026-10-16, assumed; to verify in game): +18 to +19 at 180 s"
   ],
   "notes": "mksettings -spec enh -apl optimized (standards 23: every shaman drops its own party totems; the raid's only totem is a second shaman's Grace of Air, standards 25, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself)."
 }

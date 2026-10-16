@@ -326,8 +326,15 @@ export const APLWindfury = PresetUtils.makePresetAPLRotation('Windfury Totem', W
 // Flametongue Totem was 828. All the numbers in this paragraph and the one above are from
 // before 2026-10-07, when Windfury Weapon still got the level 68 attack power, Windfury
 // Totem still stacked with it for the shaman, and Enhancing Totems was still in the sim.
+//
+// With the raid's Flametongue Totem on our weapon (the user's ruling 2026-10-16, see the raid
+// buffs) Magma Totem beats Searing Totem on the Level 60 build, recast with as little as 2 sec
+// left: +28.5 / +19.0 / +12.7 at 120 / 180 / 300 sec (Trial by Fire's 20 sec on Magma Totem since
+// client 70425 helps), and Earth Shock waits for the Stormstrike mark (+0.3 to +1.5 more), paired at
+// 20000 iterations on two seed sets. Level 60 is 906.6 / 886.4 / 863.0 and Imp GW 900.3 / 886.9 /
+// 866.9. Windfury Weapon is still the imbue: Rockbiter 28 and Frostbrand 45 behind at 180 sec.
 export const APLOptimized = PresetUtils.makePresetAPLRotation('Optimized', OptimizedAPLJSON, {
-	tooltip: "The optimizer's best level 60 rotation, with Windfury Totem for the group, Searing Totem and Fire Nova.",
+	tooltip: "The optimizer's best level 60 rotation, with Windfury Totem for the group, Magma Totem and Fire Nova.",
 	group: 'Level 60',
 });
 // The rotation for the Level 60 + Water Shield and Level 60 + Mana Tide talents. It is
