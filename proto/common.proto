@@ -1073,7 +1073,7 @@ message LevelingOptions {
 	// chain pull while in combat. Searching out of combat we run around, so we can't hard
 	// cast. In combat the rotation picks (Look For Mob): run around with the mobs on us
 	// following (default 0 to 3), or stand and keep fighting while we look, which takes
-	// longer because we only see the mobs around us (default 4 to 16).
+	// longer because we only see the mobs around us (default 0 to 5).
 	double search_min = 8;
 	double search_max = 9;
 	double chain_search_min = 10;

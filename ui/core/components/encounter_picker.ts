@@ -979,16 +979,16 @@ function addLevelingPickers(rootElem: HTMLElement, encounter: Encounter) {
 		label: 'Chain Search Standing Min (sec)',
 		labelTooltip: standingSearchTooltip,
 		float: true,
-		get: opts => orDefault(opts.chainSearchStandingMin, 4),
-		set: (opts, value) => (opts.chainSearchStandingMin = unlessDefault(value, 4)),
+		get: opts => orDefault(opts.chainSearchStandingMin, 0),
+		set: (opts, value) => (opts.chainSearchStandingMin = unlessDefault(value, 0)),
 	});
 	addLevelingNumberPicker(advancedGroup, encounter, {
 		id: 'encounter-leveling-chain-search-standing-max',
 		label: 'Chain Search Standing Max (sec)',
 		labelTooltip: standingSearchTooltip,
 		float: true,
-		get: opts => orDefault(opts.chainSearchStandingMax, 16),
-		set: (opts, value) => (opts.chainSearchStandingMax = unlessDefault(value, 16)),
+		get: opts => orDefault(opts.chainSearchStandingMax, 5),
+		set: (opts, value) => (opts.chainSearchStandingMax = unlessDefault(value, 5)),
 	});
 	addLevelingNumberPicker(advancedGroup, encounter, {
 		id: 'encounter-leveling-death-penalty',

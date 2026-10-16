@@ -36,7 +36,7 @@ import (
 //     here. Its first swing comes at a random point of its swing timer. The rotation decides
 //     whether to look for another mob (Look For Mob), and whether to run around for it with
 //     the mobs on us following, when only instants and melee go out (0 to 3 sec), or stand
-//     and keep fighting while we look (4 to 16 sec). It pulls what we find the same ways, or
+//     and keep fighting while we look (0 to 5 sec). It pulls what we find the same ways, or
 //     leaves it for our next pull.
 //   - When the last one dies, we're out of combat and ready (leveling_rest.go): the rotation
 //     can bandage, sit to eat and drink, heal or buff. Once it has nothing to do, the mob we
@@ -164,8 +164,8 @@ func resolveLevelingOptions(o *proto.LevelingOptions) levelingOptions {
 		searchMax:         seconds(o.SearchMax, 10),
 		chainSearchMin:    seconds(o.ChainSearchMin, 0),
 		chainSearchMax:    seconds(o.ChainSearchMax, 3),
-		standingSearchMin: seconds(o.ChainSearchStandingMin, 4),
-		standingSearchMax: seconds(o.ChainSearchStandingMax, 16),
+		standingSearchMin: seconds(o.ChainSearchStandingMin, 0),
+		standingSearchMax: seconds(o.ChainSearchStandingMax, 5),
 		foundMin:          math.Round(or(o.FoundMin, 10)),
 		foundMax:          math.Round(or(o.FoundMax, 40)),
 		deathPenalty:      seconds(o.DeathPenalty, 180),
