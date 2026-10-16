@@ -282,6 +282,38 @@ Re-run on the master request files (tools/dps_report/req, 20k iterations, same l
 
 Still to re-run when their ports merge: Elemental (Lightning Bolt / Lava Burst on the new Lava Burst ranks), Retribution (Holy Strike / Consecration with Consecration's new 0.042 ticks), Balance Wrath.
 
+## Check 2026-10-16 11:00 UTC: paladin and mage ports on master
+
+Master 4477bcb now has the paladin (#54, #81) and mage (#89, #90) ports, the off-hand Rage ruling (#67, #75), demons inheriting spell crit (#85), Smite without Holy Fire (#83) and the hunter (#76, #82) and rogue (#73, #80) follow-ups. The shaman 70425 port hasn't merged yet. No client build is newer than 70425.
+
+Re-run on the master request files (20k iterations, same local patches; I re-simmed every preset's base for the ranking):
+
+| Preset | Base | 31+ rescale | Change |
+|---|---|---|---|
+| Demonology, Bane coefficient 2.0 | 1118.3 | 1074.1 | −4.0% |
+| Affliction, Bane coefficient 2.0 | 1013.3 | 971.6 | −4.1% |
+| Destruction, Bane coefficient 2.0 | 995.9 | 956.6 | −3.9% |
+| Destruction Fire, Bane coefficient 2.0 | 970.2 | 936.1 | −3.5% |
+| Ret twist (level_60), Holy Strike ×0.52 / Consecration ×0.82 / both | 852.7 | 849.1 / 844.8 / 841.2 | −0.4% / −0.9% / −1.3% |
+| Ret Shock, both | 865.2 | 852.9 | −1.4% |
+| Ret sub-Holy, both | 846.5 | 835.2 | −1.3% |
+| Frost, Frostbolt 31+ ×1.08 | 827.3 | 839.4 | +1.5% |
+| Frostfire, Frostbolt 31+ ×1.08 | 1010.8 | 1010.8 | 0 (casts no Frostbolt) |
+| Smite, 31+ Smite ×1.18 | 723.7 | 743.3 | +2.7% |
+| Feral, Rip 31+ ×1.13 | 752.7 | 765.7 | +1.7% |
+
+Consecration's share went up with 70425's 0.042 tick coefficient on master, so its ratio risk is now the larger half of Ret's (−0.9% of −1.3%). Frost's swing is smaller than on 70338 (+2.8%) because Frost now leans less on Frostbolt.
+
+**Ranking effects (master bases):**
+- **First place:** Demonology 1118.3, Lone Wolf hunter 1075.7. Fury dropped to 970.8 after the off-hand Rage ruling. At coefficient 2.0, Demonology (1074.1) lands 1.6 below Lone Wolf, so the Bane of Doom risk still decides first place, now against Lone Wolf instead of Fury.
+- **Affliction and Destruction:** at coefficient 2.0, Affliction (971.6) falls below Arms on dragonkin (1015.4), Frostfire (1010.8), Fire (993.2) and Arms (976.4). Destruction (956.6) also falls below Fury (970.8) and Fury 2H (969.3).
+- **Frost:** +1.5% lifts it from 827.3 to 839.4, past Balance (828.2). It stays below Ret twist (852.7).
+- **Smite:** at 743.3 it passes both Combat rogue presets on humanoids (740.5, 734.1), and stays below Feral (752.7).
+- **Feral:** at 765.7 it passes Balance Wrath duty-FF (755.8), and stays below Balance Wrath (784.4).
+- **Ret:** −1.3% doesn't change the order: Ret twist at 841.2 is still above Balance (828.2), and Enhancement (852.9) was already above it.
+
+Still to re-run once the shaman port merges: Elemental, which is currently last at 684.9 (Lightning Bolt ×1.12 / ×1.38, Lava Burst), and Balance Wrath ×1.17.
+
 ## Cross-class summary
 
 **Specs whose standing rests on likely-stale or untested 31+ data:**
