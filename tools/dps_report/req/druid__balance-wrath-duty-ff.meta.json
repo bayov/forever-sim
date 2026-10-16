@@ -25,7 +25,7 @@
     "ok": true,
     "note": "180s, seed 1"
   },
-  "summary": "The Wrath-only build keeping Faerie Fire on the boss for the raid. Moonkin gets nothing from the armor, so the duty costs the GCDs spent on it.",
+  "summary": "The Wrath-only build keeping Faerie Fire on the boss for the raid. Moonkin gains nothing from the armor, so it only costs GCDs.",
   "keyTalents": [
     "Improved Wrath",
     "Moonkin Form",
@@ -60,11 +60,9 @@
     "Cerebral Cortex Compound"
   ],
   "caveats": [
-    "Costs 30.5 / 28.6 / 27.1 DPS against the base build at 120s / 180s / 300s.",
-    "Two synthetic item level 71 trinkets: 36 spell power and 15 crit rating, and an on-use 140 spell power for 20s every 2 min (at the pull, then on cooldown).",
-    "5.5% behind the weaving Balance build (782.7 vs 828.5 at 180s)",
-    "Wrath VIII's base damage is ×1.085, halfway to the level 30 rank's 0.42 of Era (only ranks 1 to 5 were retuned). The client has ×1.00.",
-    "Natural Power gloves are +8.1 over Arcane Power for this build",
+    "Costs 30.5 / 28.6 / 27.1 DPS vs the base build at 120s / 180s / 300s.",
+    "Wrath VIII's base damage is ×1.085 (client ×1.00).",
+    "Natural Power gloves are +8.1 over Arcane Power.",
     "Heart of the Wild 3 over Moonglow 3 is +2.6."
   ],
   "notes": "druid__balance-wrath.json with the raid's Faerie Fire and Curse of Recklessness off (Forever's two share the minor armor slot, standards 20, so with the curse on the druid's own Faerie Fire adds nothing) and the level60_wrath_ff rotation. Everything else is the base request.",

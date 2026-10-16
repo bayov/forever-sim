@@ -25,7 +25,7 @@
     "ok": true,
     "note": "same sim as verify.py and the published number"
   },
-  "summary": "Marksmanship 7/39/5 with a 1.0s cat, taking Efficiency 4 and Focused Fire instead of Lone Wolf. The pet deals about 11% of the damage. 44 DPS behind Lone Wolf.",
+  "summary": "Marksmanship with a cat instead of Lone Wolf. The pet deals about 11% of the damage.",
   "keyTalents": [
     "Deadly Aspects",
     "Careful Aim",
@@ -61,19 +61,17 @@
     "Goblin Land Mine"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 32 Agility and 14 crit rating, and an on-use 415 ranged attack power for 20s every 2 min (at the pull, then on cooldown).",
-    "Assumed fixed onto the rank curve: Trueshot Aura's top rank gives 100 ranged attack power and Hunter's Mark's 140. The client has 50 and 71, below the older ranks' 75 and 98.",
-    "Aspect of the Hawk stays at rank 5 (90 RAP) because Forever's rank 6 gives only 55.",
-    "Pet scaling: 10% of RAP plus the hunter's hit (SoD placeholder for hit). With SoD's full 22% pet scaling this build would gain 23.",
-    "Arcane Shot takes 10% of ranged attack power and Serpent Sting 3% a tick (Forever hunter wiki). The beta log fit was 11% and 3.5%.",
+    "Assumed: Trueshot Aura's top rank gives 100 ranged attack power and Hunter's Mark's 140 (the client has 50 and 71).",
+    "Aspect of the Hawk stays at rank 5 (90 RAP). Forever's rank 6 gives only 55.",
+    "Pet scaling uses 10% of RAP (SoD placeholder). SoD's 22% would add 23.",
+    "Arcane Shot takes 10% of ranged attack power and Serpent Sting 3% a tick (beta log fit: 11% and 3.5%).",
     "Assumed: Auto Shot fires through casts with no 0.5s aim.",
-    "Wildstalker Armor 4-piece and 5-piece aren't in the preset (2-piece only). They would add 13.",
-    "Runs short of mana in a 5 minute fight (998.5 DPS at 300s).",
-    "Assumed: 22% more crit per Agility than Classic, the beta's level 1 ratio carried to 60.",
-    "Assumed: a pet's hit scales with its attack speed as in Classic. On the beta every pet hits like a 2.0s pet. The cat is still the best pet, and every cat speed sims within 1 DPS.",
-    "The ranged weapon is a 2.5s bow at Rhok'delar's 44.0 DPS. A 2.6s gun sims 0.3 to 1.0 higher with a 15% ammo pouch, but 3.4 to 5.2 lower with Era Phase 1's 14% pouch (Ribbly's Bandolier). The 15% quiver takes only arrows.",
-    "Hunter's Mark duty: the raid's Hunter's Mark is off and the hunter keeps its own up. The first cast is 1.5s before the pull, then one GCD and 60 mana every 2 min. Costs 1.4 / 1.4 / 1.5 DPS at 120s / 180s / 300s against Marksmanship.",
-    "Windshaper is best (Wind Blessed, 3% haste since client 70425) at every fight length. On Lone Wolf and Marksmanship it is 1.2 to 1.6 ahead of High Order and 5 to 8 ahead of Night Elf. On Beast Mastery it is 0.3 to 0.9 ahead of Human."
+    "Wildstalker Armor 4-piece and 5-piece aren't active. They would add 13.",
+    "Runs short of mana at 300s (998.5 DPS).",
+    "Assumed: 22% more crit per Agility than Classic.",
+    "Assumed: pet hits scale with attack speed as in Classic. Every cat speed sims within 1 DPS.",
+    "A 2.5s bow at Rhok'delar's 44.0 DPS. A 2.6s gun sims 0.3 to 1.0 higher with a 15% ammo pouch, 3.4 to 5.2 lower with Era's 14% pouch.",
+    "Costs 1.4 / 1.4 / 1.5 DPS vs Marksmanship at 120s / 180s / 300s."
   ],
   "notes": "Request is hunter__marksmanship's with the rotation swapped for ui/hunter/apls/mm_mark.apl.json (the base APL plus the mark line, tools/rotopt/hunter_presets.sh) and debuffs.huntersMark removed; mksettings writes the same raid as spec hunter_mm_mark. Request written by mksettings (spec hunter_mm) unchanged; it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions.",
   "duty": "Hunter's Mark",

@@ -110,13 +110,13 @@
               ],
               "priorityList": [
                 {
-                  "notes": "Arcane Power, Presence of Mind, Combustion, trinkets, racials and mana gems on a free GCD.",
+                  "notes": "Arcane Power, Presence of Mind, Combustion, trinkets, racials and mana gems.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }
                 },
                 {
-                  "notes": "Once mana runs low, with enough fight left to spend it.",
+                  
                   "action": {
                     "condition": {
                       "and": {
@@ -188,7 +188,7 @@
                   }
                 },
                 {
-                  "notes": "Up to the stack target.",
+                  
                   "action": {
                     "condition": {
                       "and": {
@@ -275,7 +275,7 @@
                   }
                 },
                 {
-                  "notes": "On a Missile Barrage proc: free and twice as fast.",
+                  "notes": "Free and twice as fast.",
                   "action": {
                     "condition": {
                       "and": {
@@ -305,7 +305,7 @@
                   }
                 },
                 {
-                  "notes": "Instant cast when the filler would not land before the fight ends.",
+                  
                   "action": {
                     "condition": {
                       "cmp": {

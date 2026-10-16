@@ -131,7 +131,7 @@
               ],
               "priorityList": [
                 {
-                  "notes": "At the pull, then held for the execute phase when that loses no use.",
+                  "notes": "At the pull, then saved for the execute phase.",
                   "action": {
                     "condition": {
                       "or": {
@@ -227,7 +227,7 @@
                   }
                 },
                 {
-                  "notes": "On whichever damage seal is up.",
+                  
                   "action": {
                     "condition": {
                       "and": {
@@ -303,7 +303,7 @@
                   }
                 },
                 {
-                  "notes": "Twist of Light: swap seals just before the swing, so the swing also gets the old seal's Echo.",
+                  "notes": "Twist of Light: the swing also gets the old seal's Echo.",
                   "action": {
                     "condition": {
                       "and": {
@@ -369,7 +369,7 @@
                   }
                 },
                 {
-                  "notes": "Back again before the next swing.",
+                  
                   "action": {
                     "condition": {
                       "and": {
@@ -486,7 +486,7 @@
                   }
                 },
                 {
-                  "notes": "With mana to spare.",
+                  
                   "action": {
                     "condition": {
                       "cmp": {
@@ -509,7 +509,7 @@
                   }
                 },
                 {
-                  "notes": "Racials and trinkets on a free GCD.",
+                  "notes": "Racials and trinkets.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }

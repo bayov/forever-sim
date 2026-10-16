@@ -138,7 +138,7 @@
                       }
                     }
                   },
-                  "notes": "When the fight starts in melee range, inside the 8 yard minimum."
+                  "notes": "Steps out past the 8 yard minimum."
                 },
                 {
                   "action": {
@@ -158,8 +158,7 @@
                         }
                       }
                     }
-                  },
-                  "notes": "If it ever drops."
+                  }
                 },
                 {
                   "action": {
@@ -232,14 +231,13 @@
                         ]
                       }
                     }
-                  },
-                  "notes": "With the on-use trinket, unless waiting would lose a use."
+                  }
                 },
                 {
                   "action": {
                     "autocastOtherCooldowns": {}
                   },
-                  "notes": "Rapid Fire, Bestial Wrath, racials, trinkets and potions on cooldown."
+                  "notes": "Rapid Fire, Bestial Wrath, racials, trinkets and potions."
                 },
                 {
                   "action": {
@@ -316,7 +314,7 @@
                       }
                     }
                   },
-                  "notes": "With the talent, while mana lasts the fight."
+                  "notes": "With the talent."
                 },
                 {
                   "action": {
@@ -371,7 +369,7 @@
                       }
                     }
                   },
-                  "notes": "With the talent, while fewer than 2 hawks are out."
+                  "notes": "With the talent."
                 },
                 {
                   "action": {

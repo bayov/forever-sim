@@ -25,7 +25,7 @@
     "ok": true,
     "note": "180s, 20000 iterations, seed 1, on the 70425 rotation (seed 100001 within 0.6)"
   },
-  "summary": "Deep Fire to Combustion with Critical Mass 5, Burning Soul and Master of Elements, plus Arcane Concentration and Missile Barrage 2 from Arcane. 2% behind Frostfire at 180s, ahead at 300s.",
+  "summary": "Deep Fire to Combustion, plus Arcane Concentration and Missile Barrage from Arcane.",
   "keyTalents": [
     "Missile Barrage",
     "Improved Fire Blast",
@@ -67,10 +67,9 @@
     "Goblin Sapper"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 41 spell power and 11 crit rating, and an on-use 140 spell power for 20s every 2 min (at the pull, then on cooldown).",
-    "Ignite rolls with no cap as in SoD (Era caps at 5 crits, open). Its ticks never crit.",
-    "Heating Up: every Fire Blast adds a stack (two on a crit), from the 70425 tooltip. One Pyroblast uses them all.",
-    "Fire Power (70425) counts Fire Vulnerability and the Fireball, Pyroblast, Flamestrike and Ignite DoTs (at most 4), multiplied with Fire Vulnerability. Whether it adds or multiplies is open.",
+    "Ignite rolls with no cap (SoD style, open). Its ticks never crit.",
+    "Heating Up: every Fire Blast adds a stack (two on a crit). One Pyroblast uses them all.",
+    "Fire Power counts Fire Vulnerability and up to 4 Fire DoTs. Open: whether it adds or multiplies.",
     "Pyroblast DoT coefficient taken per tick",
     "Open: Missile Barrage roll timing and its cost interaction with Arcane Power.",
     "No Ahn'Qiraj book ranks (Fireball XI, Frostbolt X, Arcane Missiles VII). With the books: Frost +50, Arcane +30, Fire +17, Frostfire 0."

@@ -131,7 +131,7 @@
               ],
               "priorityList": [
                 {
-                  "notes": "At the pull, then held for the execute phase when that loses no use.",
+                  "notes": "At the pull, then saved for the execute phase.",
                   "action": {
                     "condition": {
                       "or": {
@@ -227,7 +227,7 @@
                   }
                 },
                 {
-                  "notes": "Down to the last point of mana.",
+                  "notes": "Until mana runs out.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -357,7 +357,7 @@
                   }
                 },
                 {
-                  "notes": "On the Vigil, to detonate it with no cooldown. On cooldown once mana is too low for the Vigil.",
+                  "notes": "Detonates the Vigil with no cooldown.",
                   "action": {
                     "condition": {
                       "and": {
@@ -402,7 +402,7 @@
                   }
                 },
                 {
-                  "notes": "Racials and trinkets on a free GCD.",
+                  "notes": "Racials and trinkets.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }

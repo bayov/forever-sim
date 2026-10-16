@@ -25,12 +25,12 @@
     "ok": true,
     "note": "same sim as the published number"
   },
-  "summary": "Arms with Spearing Strike and Improved Bloodrage, for a Giant or Dragonkin boss such as Onyxia. 4.0% ahead of normal Arms on that boss at 180s.",
-  "advantage": "Spearing Strike does 80% more damage to Giants and Dragonkin. That makes it worth a place in the rotation. Normal Arms spends those points elsewhere.",
+  "summary": "Arms with Spearing Strike and Improved Bloodrage, for a Giant or Dragonkin boss such as Onyxia.",
+  "advantage": "Spearing Strike does 80% more damage to Giants and Dragonkin, so it earns a place in the rotation.",
   "advantageRefs": [
     "tal:Warrior:0:8"
   ],
-  "advantageShort": "Spearing Strike does 80% more damage to Giants and Dragonkin, so it joins the rotation.",
+  "advantageShort": "Spearing Strike does 80% more damage to Giants and Dragonkin.",
   "keyTalents": [
     "Spearing Strike",
     "Mortal Strike",
@@ -67,17 +67,15 @@
   ],
   "caveats": [
     "Spearing Strike only works against Giants and Dragonkin",
-    "White hit Rage is normalized to the weapon: k × swing speed (k is 3.46 one-hand and 4.5 two-hand, measured at level 30). It grows with level to ×1.5 at 60, the same for the off hand. Not yet measured at 60.",
-    "No Fury Dragonkin build: stance dancing for Spearing Strike adds only 0.4% (dual wield) and 0.8% (two-hand).",
-    "Two synthetic item level 71 trinkets: 30 Strength and 16 crit rating, and an on-use 335 attack power for 20s every 2 min (at the pull, then on cooldown).",
-    "Synthetic Phase 1 gear on Forever's physical budget (ids 991001-991018)",
+    "White hit Rage scales with weapon speed (measured at level 30, assumed ×1.5 at 60).",
+    "No Fury Dragonkin build: Spearing Strike adds only 0.4% (dual wield) and 0.8% (two-hand).",
     "No Ahn'Qiraj book ranks (Heroic Strike VIII, raid Battle Shout VI, Strength of Earth, Grace of Air)",
-    "Deep Wounds ticks can't crit (client data). Each crit restarting the Deep Wounds tick timer is our modeling choice.",
-    "Assumed: the crit Rage bonus is white hits only, and Heroic Strike swings count for Unbridled Wrath.",
-    "One +2% crit elixir per character, since it's unknown if Ferocity stacks with Mongoose. A second one (Grizzly) would add 10.9.",
-    "Battlegear of Glory 4-piece (+36 AP vs Humanoids) not counted. It would add 8.4 (Undead, 180s).",
+    "Deep Wounds ticks can't crit. Each crit restarts the tick timer (our choice).",
+    "Assumed: the crit Rage bonus is white hits only, and Heroic Strike counts for Unbridled Wrath.",
+    "One +2% crit elixir. A second (Grizzly) would add 10.9.",
+    "Battlegear of Glory 4-piece not counted. It would add 8.4 vs Humanoids.",
     "Booming Voice (5/5) does nothing because the raid has Battle Shout",
-    "Raid damage hits on the warrior (2 a minute at 1500 damage, about 15 Rage each) are estimated from boss timers. The assumptions panel also runs 0 and 10 a minute."
+    "Raid damage hits (2 a minute, about 15 Rage each) are an estimate."
   ],
   "notes": "Request from mksettings with the same arguments as warrior__arms except talents and APL, then the target's mobType set to MobTypeDragonkin, as the class preset's encounter does.",
   "encounter": "Dragonkin",

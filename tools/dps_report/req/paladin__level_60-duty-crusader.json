@@ -229,7 +229,7 @@
                       }
                     }
                   },
-                  "notes": "At the pull, then held for the execute phase when that loses no use."
+                  "notes": "At the pull, then saved for the execute phase."
                 },
                 {
                   "action": {
@@ -318,8 +318,7 @@
                         }
                       }
                     }
-                  },
-                  "notes": "With mana to spare."
+                  }
                 },
                 {
                   "action": {
@@ -364,8 +363,7 @@
                         ]
                       }
                     }
-                  },
-                  "notes": "On whichever damage seal is up."
+                  }
                 },
                 {
                   "action": {
@@ -494,7 +492,7 @@
                       }
                     }
                   },
-                  "notes": "Twist of Light: swap seals just before the swing, so the swing also gets the old seal's Echo."
+                  "notes": "Twist of Light: the swing also gets the old seal's Echo."
                 },
                 {
                   "action": {
@@ -572,8 +570,7 @@
                         ]
                       }
                     }
-                  },
-                  "notes": "Back again before the next swing."
+                  }
                 },
                 {
                   "action": {
@@ -607,7 +604,7 @@
                   "action": {
                     "autocastOtherCooldowns": {}
                   },
-                  "notes": "Racials and trinkets on a free GCD."
+                  "notes": "Racials and trinkets."
                 }
               ]
             },

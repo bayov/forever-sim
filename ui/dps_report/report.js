@@ -285,8 +285,8 @@ export function startReport(dash, events) {
   const dutyTip = (b, list) => {
     const base = list.find((x) => x.id === b.baseBuild) || adjB((rowsOf('builds') || []).find((x) => x.id === b.baseBuild) || {});
     return el('div', { class: 'fv-tip fv-advtip' }, tipTitle(`On ${b.duty} duty`),
-      +base.dps ? tipKey(dutyCostText(b, base), 'DPS', el('span', { class: 'fv-tip-m' }, tipDelta(100 * (b.dps / base.dps - 1)), ` vs ${base.build} (raid covers the duty)`)) : null,
-      b.dutyDefensive === true ? tipText('Defensive: it makes the raid safer, not stronger. No one gains DPS from it.') : null,
+      +base.dps ? tipKey(dutyCostText(b, base), 'DPS', el('span', { class: 'fv-tip-m' }, tipDelta(100 * (b.dps / base.dps - 1)), ` vs ${base.build}`)) : null,
+      b.dutyDefensive === true ? tipText('Defensive: no DPS gain for the raid.') : null,
       tipText(b.summary));
   };
   // The badge's short name for each duty; its tooltip gives the full name, and says when the duty is defensive.
@@ -1168,7 +1168,7 @@ export function startReport(dash, events) {
   // Each Races card shows every race as the preset plays it, on the generic boss. A switch on each card adds the
   // boss types a racial works on as entries of their own (t, off by default). Since client 70425 no racial depends
   // on the weapon, so there are no racial weapon entries any more.
-  const RS_OPTS = [['t', 'Racial enemy types', 'Adds races with a racial against one boss type, simmed against that type: Troll and Dwarf vs Beast, Windshaper and High Order vs Elemental, Dwarf vs Humanoid (Priests)']];
+  const RS_OPTS = [['t', 'Racial enemy types', 'Troll and Dwarf vs Beast, Windshaper and High Order vs Elemental, Dwarf vs Humanoid (Priests)']];
   const rsVar = (card) => {
     const m = (st.rsOpt?.[card] ?? '').replace('w', '');
     const host = $(`#${card}-opts`);
@@ -1359,7 +1359,7 @@ export function startReport(dash, events) {
       && !(V === 'weapon' && mine.some((w) => w.scenario === 'weapon' && w.part === q.part))));
     return { segs: out.filter((sg) => sg.r), idle };
   };
-  const legend = (host, kinds, base) => host.replaceChildren(base ? el('span', {}, el('i', { class: 'sw2', style: 'background:var(--cds-chart-muted)' }), 'The race without its racials') : '', ...[0, 1, 2, 'swap'].filter((k) => kinds.has(k)).map((k) => el('span', {}, el('i', { class: 'sw2', style: `background:${k === 'swap' ? 'var(--color-fg-muted)' : dash.colors[k]}` }), k === 'swap' ? 'Weapon swap' : KIND_NAME[k])));
+  const legend = (host, kinds, base) => host.replaceChildren(base ? el('span', {}, el('i', { class: 'sw2', style: 'background:var(--cds-chart-muted)' }), 'No racials') : '', ...[0, 1, 2, 'swap'].filter((k) => kinds.has(k)).map((k) => el('span', {}, el('i', { class: 'sw2', style: `background:${k === 'swap' ? 'var(--color-fg-muted)' : dash.colors[k]}` }), k === 'swap' ? 'Weapon swap' : KIND_NAME[k])));
 
   // Each racial's caption sits under its piece of the bar, starting where the piece starts. When a caption would run
   // into the one before it, we move it down to the first line where it fits, so short pieces side by side still get
@@ -1558,7 +1558,7 @@ export function startReport(dash, events) {
           head = [tipKey(best.length ? `Best race on ${best.length}` : 'Never the best race', `of ${r.n} presets`),
             best.length ? null : el('span', { class: 'fv-tip-m', text: 'Closest on:' }), el('div', { class: 'fv-tip-specs' }, ...list)];
         }
-        showTip(card, 24, rw.bottom - cr.top + 4, title, [...head, el('span', { class: 'fv-tip-m', text: 'Point at a bar piece for what it adds.' })], { ...opts, hl: row });
+        showTip(card, 24, rw.bottom - cr.top + 4, title, [...head, null], { ...opts, hl: row });
       });
       return row;
     }));
@@ -1568,7 +1568,7 @@ export function startReport(dash, events) {
       take.replaceChildren(el('b', { text: one.label }), ': ', el('b', { text: who(lead) }), ` leads with ${f1(lead.dps)} DPS`,
         ...(rows.length > 1 ? ['. ', who(rows[1]), ` is ${f2(100 * (1 - rows[1].dps / lead.dps))}% behind, and `, who(last), ` is last at −${f2(100 * (1 - last.dps / lead.dps))}%.`] : ['.']));
     } else take.replaceChildren();
-    axis.textContent = one ? `Bars start at ${f0(lo)} DPS.` : `100% is the best race on every preset. Bars start at ${f1(lo)}%.`;
+    axis.textContent = one ? `Bars start at ${f0(lo)} DPS.` : `Bars start at ${f1(lo)}%.`;
     legend($('#rs-legend'), kinds, true);
     layoutCaps(host);
     if (!host.dataset.capWatch) {
@@ -1752,7 +1752,7 @@ export function startReport(dash, events) {
     const rows = rowsOf('weights').filter((w) => w.build === b.id);
     if (!rows.length) { host.replaceChildren(el('span', { class: 'fv-note', text: 'No stat weights for this preset.' })); $('#sp-wtab tbody').replaceChildren(); $('#sp-wtab').dataset.build = b.id; return; }
     const ab = rows[0].primaryAbbr;
-    $('#sp-weights-note').textContent = `Each stat's worth in points of ${ab} (${rows[0].primary.toLowerCase()}). Hit and crit are per rating point (10 hit or 14 crit rating = 1%). ${f0(rows[0].iters)} fights per stat at 180s.`;
+    $('#sp-weights-note').textContent = `In points of ${ab}. Hit and crit per rating point (10 hit or 14 crit rating = 1%).`;
     const val = (w) => (w.unit === '1%' ? w.ratingWorth : w.worth);
     const shown = rows.filter((w) => w.stat !== 'MeleeHitDown').sort((x, y) => val(y) - val(x));
     const down = rows.find((w) => w.stat === 'MeleeHitDown');
@@ -1902,7 +1902,7 @@ export function startReport(dash, events) {
     t.querySelector('thead tr').replaceChildren(...cols.map(([h]) => el('th', { class: 'n', text: h })));
     t.querySelector('tbody tr').replaceChildren(...cols.map(([, k]) => mark(el('td', { class: 'n', text: f1(b[k]) }), 'builds', k, W)));
     t.dataset.build = b.id;
-    $('#sp-dist-note').textContent = `${f0(b.iters)} simulated fights, in 5 DPS bins.`;
+    $('#sp-dist-note').textContent = `${f0(b.iters)} fights.`;
   };
 
   const drawAbilities = (b, abil, colors) => {
@@ -1984,7 +1984,7 @@ export function startReport(dash, events) {
       out.push(bar);
     }
     host.replaceChildren(...(out.length ? out : [el('span', { class: 'fv-note', text: 'Every aura is always up.' })]));
-    $('#sp-auras-note').textContent = s ? `The number is average uptime over all fights. The bar shows the ${s.label.toLowerCase()} picked above${t0 < -0.55 ? ' (pre-pull shaded)' : ''}.` : 'Average uptime over all fights.';
+    $('#sp-auras-note').textContent = s ? `Number: average uptime. Bar: the ${s.label.toLowerCase()}${t0 < -0.55 ? ' (pre-pull shaded)' : ''}.` : 'Average uptime.';
   };
   $('#sp-alwayson').addEventListener('click', (e) => { e.stopPropagation(); st.alwaysOn = !st.alwaysOn; persist(); render(); });
   $('#sp-setup-hide').addEventListener('click', (e) => { e.stopPropagation(); st.setupHide = !st.setupHide; persist(); $('#sp-setup').classList.toggle('hide-off', st.setupHide); e.currentTarget.setAttribute('aria-pressed', String(st.setupHide)); });
@@ -2095,7 +2095,7 @@ export function startReport(dash, events) {
         r.casts > 0 ? el('span', { class: 'ct' }, mark(el('b', { text: f1(r.casts) }), 'rotation', 'casts', W(r)), el('small', { text: 'casts' })) : null), `rot:priority:${r.order}`, true, b.id));
     }
     host.replaceChildren(...(items.length ? items : [el('li', { class: 'fv-note', text: 'No rotation recorded.' })]));
-    $('#sp-rot-note').textContent = `Priority list: the sim casts the first line whose condition holds.${pp.length ? ' Pre-pull casts go out before the pull.' : ''} Casts are per fight, for the whole spell.`;
+    $('#sp-rot-note').textContent = 'The sim casts the first line whose condition holds.';
   };
 
   // ---------- gear (paper doll, as the sim UI's gear picker) ----------
@@ -2278,7 +2278,7 @@ export function startReport(dash, events) {
     const s = T && T.list.length ? T.list[Math.min(st.sample || 0, T.list.length - 1)] : null;
     $('#sp-time-note').textContent = s
       ? `${s.label}: ${f1(s.dps)} DPS over ${f1(s.dur)}s.`
-      : 'One simulated fight: typical, unlucky or lucky.';
+      : '';
     events.show(b.id, st.sample || 0);
   };
   events.onSampleChange((sample) => {
@@ -2390,7 +2390,7 @@ export function startReport(dash, events) {
     // The charts and the side by side cards show the sides that were simmed in full.
     const full = [sA, sB].filter((s) => s.full), part = [sA, sB].filter((s) => !s.full);
     const gap = $('#cmp-gap');
-    gap.replaceChildren(...(part.length ? [part.map((s) => `${s.k} (${s.name})`).join(' and '), `: mean DPS only. ${full.length ? `The cards below show ${full[0].k} only` : 'Charts below need a preset on its own race and setup'}, because we sim them on the preset race only.`] : []));
+    gap.replaceChildren(...(part.length ? [part.map((s) => `${s.k} (${s.name})`).join(' and '), `: mean DPS only. ${full.length ? `The cards below show ${full[0].k} only.` : 'The charts below need a preset on its own race and setup.'}`] : []));
     for (const id of ['#cmp-dist-card', '#cmp-len-card', '#cmp-w-card', '#cmp-abil-card']) $(id).hidden = !full.length;
     const hd = $('#cmp-dist');
     if (full.length && waitOr(hd, ['hist'])) {
@@ -2504,7 +2504,7 @@ export function startReport(dash, events) {
   };
   // A reference row: the only value considered, which the presets use, so there is nothing to compare or pick.
   const asmRef = (a) => arr(a.settings).length === 1;
-  const REF_CAP = 'Reference: the only value, nothing to compare.';
+  const REF_CAP = 'Reference value.';
   const asmRefLine = (a) => arr(a.settings).map((x) => el('p', { class: 'fv-asm-ref' }, el('b', { text: x.label }), ...asmMarks(a, x),
     x.value && x.value !== x.label ? el('span', { text: ` · ${x.value}` }) : null));
   // The presets' setting is the default: what the ranking uses, and the expected value since the 2026-10-15 rulings.
@@ -2513,7 +2513,7 @@ export function startReport(dash, events) {
   // 180s, against what the ranking shows now": a column per setting, a row per spec, the % in the ok or bad colour
   // and the DPS under it. The presets' column is the zero point ("–") whichever column is picked, so the numbers never
   // shift. With onPick the column heads are the buttons that apply a setting; without (Method) they are plain heads.
-  const ASM_CAP = 'DPS change at 180s if true, vs the current ranking';
+  const ASM_CAP = 'DPS change at 180s';
   const asmHead = (a, x, cur) => [
     el('b', { text: x.label }),
     x.id === a.defaultSetting ? el('small', { class: 'fv-asm-tag def', text: 'Default' }) : el('small', { class: 'fv-asm-tag', text: SEG_NAME[x.id] || x.id }),
@@ -2571,7 +2571,7 @@ export function startReport(dash, events) {
             el('div', { class: 'fv-asm-lbl' }, el('b', { text: a.label }), live || ref ? el('span', { class: `fv-asm-size ${sz}`, title: ref ? 'One value only, kept for reference' : `Up to ${f1(imp)}% on a preset at 180s`, text: szText }) : null, info),
             el('p', { class: 'fv-asm-short', text: a.short || a.description })),
           el('div', { class: 'fv-asm-body' }, ...(ref ? [...asmRefLine(a), el('p', { class: 'fv-asm-cap', text: REF_CAP })] : [
-            live ? el('p', { class: 'fv-asm-cap', text: picked ? 'DPS change at 180s if true, vs the ranking without your pick' : ASM_CAP }) : null,
+            live ? el('p', { class: 'fv-asm-cap', text: picked ? 'DPS change at 180s, vs the ranking without your pick' : ASM_CAP }) : null,
             asmMatrix(a, cur, (id) => asmPick(a, id)),
             !live ? el('p', { class: 'fv-asm-cap', text: a.status === 'pending' ? 'Not simulated yet.' : 'No longer applies.' }) : null]))));
       }

@@ -25,7 +25,7 @@
     "ok": true,
     "note": "+0.05 vs published"
   },
-  "summary": "Destruction keeping its own Curse of the Elements (rank 4, 10% magic damage taken) up for the raid, with the raid's copy off. Under Forever the curse has its own slot, so the bane stays. Costs 12.2 DPS at 180s.",
+  "summary": "Keeps its own Curse of the Elements up for the raid, with the raid's copy off. Under Forever the curse has its own slot, so the bane stays.",
   "keyTalents": [
     "Conflagrate",
     "Shadow and Flame",
@@ -66,17 +66,16 @@
     "Major Spellstone (weapon imbue)"
   ],
   "caveats": [
-    "Under Forever a bane and a curse use separate slots, so the duty curse costs only its GCDs and mana, not the bane.",
-    "Two synthetic item level 71 trinkets: 38 spell power and 13 crit rating, and an on-use 140 spell power for 20s every 2 min (at the pull, then on cooldown).",
+    "A bane and a curse use separate slots, so the duty curse costs only GCDs and mana.",
     "Demon sensitivity: no owner scaling 946.1, Succubus melee halved 947.4, both 922.9 (first set)",
     "Succubus 984.9 vs Felhunter 960.1, Imp 950.7, no demon 895.4; Spellstone and Firestone within 0.1 (first set)",
-    "Demon scaling uses Season of Discovery placeholder coefficients (Forever's are server side). Worth 49 on Demonology and 39 on the other builds.",
-    "Succubus base melee is unverified. Halving it would cost Demonology 43 and the other builds 38 to 39.",
-    "Bane of Doom's coefficient is 4.0 (Era 1.0), about 12% of Shadow Bolt builds' damage. At 2.0 they lose about 4%, at 1.0 about 6%.",
-    "No Ahn'Qiraj book ranks (Shadow Bolt IX, Immolate VII, Corruption VI). These are 7 to 13 DPS below ranks X, VIII and VII.",
+    "Demon scaling uses SoD placeholders. Worth 49 on Demonology, 39 on the other builds.",
+    "Succubus base melee is unverified. Halved, it would cost Demonology 43 and the others 38 to 39.",
+    "Bane of Doom's coefficient is 4.0 (Era 1.0). At 2.0 Shadow Bolt builds lose about 4%, at 1.0 about 6%.",
+    "No Ahn'Qiraj book ranks (Shadow Bolt IX, Immolate VII, Corruption VI): 7 to 13 DPS.",
     "Only the Demonheart Raiment 2-piece is live (the 5-piece added about +8 to +13 on the first set)",
     "Soul shards and Life Tap's health cost aren't tracked.",
-    "Demons use the warlock's spell crit as their own melee and spell crit, with no crit of their own (Blizzard's intent, forever-bugs #331). Worth 15 to 17 DPS."
+    "Demons use the warlock's spell crit (forever-bugs #331). Worth 15 to 17 DPS."
   ],
   "notes": "Request from mksettings with the same arguments as warlock__destruction except -apl level60_destruction_duty_curse, then raid.debuffs.curseOfElements set to false. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Spellstone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly.",
   "duty": "Curse of the Elements",

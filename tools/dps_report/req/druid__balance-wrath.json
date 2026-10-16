@@ -236,7 +236,7 @@
                       }
                     }
                   },
-                  "notes": "Free Starfire on Clearcasting. Wrath doesn't use it up."
+                  "notes": "Wrath doesn't use Clearcasting up."
                 },
                 {
                   "action": {
@@ -270,8 +270,7 @@
                         }
                       }
                     }
-                  },
-                  "notes": "When a Wrath would not land before the end."
+                  }
                 },
                 {
                   "action": {

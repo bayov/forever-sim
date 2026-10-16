@@ -56,21 +56,21 @@ OWN = {('Mage', 'arcaneBrilliance'): "The mage already brings its own Arcane Bri
        ('Hunter', 'trueshotAura'): "The hunter already brings its own Trueshot Aura"}
 
 DEFENSIVE = {
-    'thorns': "It only hurts attackers, and the boss attacks the tank, not you.",
-    'retributionAura': "It only hurts attackers, and the boss attacks the tank, not you.",
-    'devotionAura': "Armor only, and the boss attacks the tank, not you.",
-    'shadowProtection': "Shadow resistance only. Nothing in this fight deals Shadow damage to you.",
-    'fireResistanceAura': "Fire resistance only. Nothing in this fight deals Fire damage to you.",
-    'frostResistanceAura': "Frost resistance only. Nothing in this fight deals Frost damage to you.",
-    'powerWordFortitude': "Stamina only. Health doesn't change damage.",
-    'bloodPact': "Stamina only. Health doesn't change damage.",
-    'curseOfWeakness': "It weakens the boss's attacks, and the boss attacks the tank, not you.",
-    'demoralizingShout': "It lowers the boss's attack power, and the boss attacks the tank, not you.",
-    'demoralizingRoar': "It lowers the boss's attack power, and the boss attacks the tank, not you.",
-    'thunderClap': "It slows the boss's attacks, and the boss attacks the tank, not you.",
-    'insectSwarm': "It makes the boss miss more, and the boss attacks the tank, not you.",
-    'scorpidSting': "Defensive only. The sim gives it no effect.",
-    'judgementOfLight': "It heals whoever hits the boss. Healing doesn't add damage.",
+    'thorns': "The boss attacks the tank, not you.",
+    'retributionAura': "The boss attacks the tank, not you.",
+    'devotionAura': "The boss attacks the tank, not you.",
+    'shadowProtection': "Nothing here deals Shadow damage to you.",
+    'fireResistanceAura': "Nothing here deals Fire damage to you.",
+    'frostResistanceAura': "Nothing here deals Frost damage to you.",
+    'powerWordFortitude': "Stamina only.",
+    'bloodPact': "Stamina only.",
+    'curseOfWeakness': "The boss attacks the tank, not you.",
+    'demoralizingShout': "The boss attacks the tank, not you.",
+    'demoralizingRoar': "The boss attacks the tank, not you.",
+    'thunderClap': "The boss attacks the tank, not you.",
+    'insectSwarm': "The boss attacks the tank, not you.",
+    'scorpidSting': "Defensive only.",
+    'judgementOfLight': "Healing only.",
 }
 GONE = {
     'curseOfShadow': "Not in WoW Forever: its Curse of the Elements already covers Shadow and Arcane.",
@@ -93,8 +93,8 @@ ARMOR = {'sunderArmor', 'exposeArmor', 'faerieFire', 'curseOfRecklessness'}
 
 def mana_reason(g, cls):
     if cls in NO_MANA:
-        return f"It gives {g}, and {cls}s have no mana."
-    return f"It gives {g}, and this build never runs short of mana."
+        return f"{cls}s have no mana."
+    return "This build never runs short of mana."
 
 
 def reason(k, row, cls, role, abl_same, pair_same):
@@ -105,18 +105,18 @@ def reason(k, row, cls, role, abl_same, pair_same):
     if (cls, k) in OWN:
         return OWN[(cls, k)] + '.'
     if k in ARMOR and pair_same:
-        return "It lowers armor, and armor doesn't reduce this build's spell damage."
+        return "Armor doesn't reduce spell damage."
     if k in DEFENSIVE:
         return DEFENSIVE[k]
     if k == 'trueshotAura':
-        return "In WoW Forever it gives only ranged attack power, and this build doesn't attack at range."
+        return "Ranged attack power only in WoW Forever."
     if row['category'] == 'Professions':
         return "No effect on this build's damage."
     if row['category'] == 'Consumes':
         name = item.split(': ', 1)[1]
         g = CONSUME_GIVES.get(name)
         if g in SCHOOL_NONE:
-            return f"It adds {g}, and this build deals no {SCHOOL_NONE[g]} damage."
+            return f"This build deals no {SCHOOL_NONE[g]} damage."
         if k in ('defaultPotion', 'defaultConjured', 'sapperExplosive', 'fillerExplosive'):
             return "The rotation never uses it."
         if k == 'offHandImbue':
@@ -124,21 +124,21 @@ def reason(k, row, cls, role, abl_same, pair_same):
         if g and ('mana' in g or g in ('Intellect', 'Spirit')):
             return mana_reason(g, cls)
         if g == 'health':
-            return "Health only. Health doesn't change damage."
+            return "Health only."
         if g:
-            return f"It gives {g}, which this build doesn't use."
+            return f"This build doesn't use {g}."
         return "No effect on this build's damage."
     g = GIVES.get(k)
     if g and ('mana' in g or g in ('Intellect', 'Spirit')):
         return mana_reason(g, cls)
     if k in ('battleShout', 'blessingOfMight') and role == 'Ranged':
-        return "It gives melee attack power only, and this build attacks at range."
+        return "Melee only, and this build attacks at range."
     if k in ('battleShout', 'blessingOfMight') and role == 'Caster':
-        return "It gives attack power, which this build's spells don't use."
+        return "This build's spells don't use attack power."
     if k == 'judgementOfTheCrusader':
-        return "It raises Holy damage taken, but this build deals no Holy damage."
+        return "This build deals no Holy damage."
     if g:
-        return f"It gives {g}, which this build doesn't use."
+        return f"This build doesn't use {g}."
     return "No effect on this build's damage."
 
 
@@ -190,7 +190,7 @@ def annotate(setup, builds, stat_rows, path=os.path.join(D, 'abl', 'ablate.json'
             redundant = same and (not other_same or k != keep)
             if redundant:
                 what = pair[1][0]
-                tail = " In WoW Forever the two share one slot." if k in ('faerieFire', 'curseOfRecklessness', 'leaderOfThePack', 'moonkinAura') else " The two don't stack."
+                tail = " They share a slot in WoW Forever." if k in ('faerieFire', 'curseOfRecklessness', 'leaderOfThePack', 'moonkinAura') else ""
                 if k == 'exposeArmor':  # the sim's aura log shows Expose Armor up from 3s, as it takes the slot over
                     tail += " Its uptime still shows because the sim swaps it in after 3s."
                 r['active'], r['why'] = False, f"{NAME[other]} already gives {what}.{tail}"

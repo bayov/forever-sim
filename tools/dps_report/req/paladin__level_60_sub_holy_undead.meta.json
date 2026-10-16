@@ -25,14 +25,14 @@
     "ok": true,
     "note": "verify.py, 180s, seed 1"
   },
-  "summary": "The sub-Holy twist build with Holy Conduit 2, for an Undead or Demon boss, adding Exorcism and Holy Wrath. The best paladin build on such a boss at 300s. The Shock build is ahead at 120s and 180s.",
-  "advantage": "Exorcism and Holy Wrath only work on Undead and Demons, so here they add damage on top of the usual rotation. Holy Conduit 2 makes both 40% cheaper.",
+  "summary": "The sub-Holy twist build with Holy Conduit 2, adding Exorcism and Holy Wrath for an Undead or Demon boss.",
+  "advantage": "Exorcism and Holy Wrath only work on Undead and Demons. Holy Conduit 2 makes both 40% cheaper.",
   "advantageRefs": [
     "k:s10314",
     "k:s10318",
     "tal:Paladin:2:3"
   ],
-  "advantageShort": "Exorcism and Holy Wrath only hit Undead and Demons, so they add damage here. Holy Conduit 2 makes both 40% cheaper.",
+  "advantageShort": "Exorcism and Holy Wrath only hit Undead and Demons. Holy Conduit 2 makes both 40% cheaper.",
   "keyTalents": [
     "Twist of Light",
     "Seal of Command",
@@ -74,15 +74,11 @@
     "Demonic Rune"
   ],
   "caveats": [
-    "Exorcism and Holy Wrath only hit Undead and Demons, so this build is only for those bosses.",
-    "Two synthetic item level 71 trinkets: 32 spell power and 18 crit rating, and an on-use 140 spell power for 20s every 2 min (at the pull, then on cooldown).",
-    "0.6% behind the default at 120s and 0.9% at 300s, because it has no Precision.",
-    "Twisting down to 0% mana would gain 1.4 DPS, but it shares the twist rotation's 20% floor.",
-    "Holy Strike's flat bonus is inside the 50% weapon percent per client data. Not yet confirmed on the beta.",
-    "High Holy Strike and Consecration ranks may be out of date. Holding them to their level 30 trend would cost about 1.2%.",
-    "Seal of Righteousness adds 12% of spell power a hit with a two-hander, once, per the 70425 tooltip (the proc spell itself has 0). The SoD-style double count (2 x 11%) would be about 46-51 DPS higher. The proc spell's 0 would be about 53-59 lower.",
-    "Two-Handed Weapon Specialization applies to Holy seal damage (an Era sim choice, the client limits it to Physical). Removing it costs about 11.",
-    "Synthetic gear on the hybrid budget, with only the Justice Battlegear 2-piece active."
+    "0.6% behind the default at 120s and 0.9% at 300s (no Precision).",
+    "Holy Strike's flat bonus is inside the weapon percent (client data). Unconfirmed on the beta.",
+    "High Holy Strike and Consecration ranks may be out of date (about 1.2% at stake).",
+    "Seal of Righteousness adds 12% of spell power a hit with a two-hander, once (70425 tooltip). Counted twice it would be 46-51 DPS higher. At the proc spell's 0 it would be 53-59 lower.",
+    "Two-Handed Weapon Specialization boosts Holy seal damage (Era sim choice, the client says Physical only). Without it: -11."
   ],
   "notes": "Request from mksettings with the same arguments as paladin__level_60_sub_holy except talents and APL, then the target's mobType set to MobTypeUndead, as the class preset's encounter does.",
   "encounter": "Undead",

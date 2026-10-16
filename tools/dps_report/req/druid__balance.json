@@ -236,7 +236,7 @@
                       }
                     }
                   },
-                  "notes": "Free Starfire on Clearcasting. Wrath doesn't use it up."
+                  "notes": "Wrath doesn't use Clearcasting up."
                 },
                 {
                   "action": {
@@ -260,8 +260,7 @@
                         }
                       }
                     }
-                  },
-                  "notes": "When a Starfire would not land before the end."
+                  }
                 },
                 {
                   "action": {
@@ -304,8 +303,7 @@
                         ]
                       }
                     }
-                  },
-                  "notes": "Once Eclipse is on its last charge and no Wrath is in flight."
+                  }
                 },
                 {
                   "action": {

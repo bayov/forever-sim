@@ -25,7 +25,7 @@
     "ok": true,
     "note": "same sim as verify.py and the published number"
   },
-  "summary": "Melee Survival 7/10/34 with a one-hand axe, a dagger and a cat: Predator's Edge, Expose Prey into Mongoose Bite, Strider Kick and Lacerating Strikes. Forever's melee hunter build.",
+  "summary": "Forever's melee hunter: Survival with a cat, built on Expose Prey into Mongoose Bite.",
   "keyTalents": [
     "Predator's Edge",
     "Expose Prey",
@@ -60,17 +60,14 @@
     "Goblin Land Mine"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 32 Agility and 14 crit rating, and an on-use 335 attack power for 20s every 2 min (at the pull, then on cooldown).",
-    "Pet scaling: 10% of RAP plus the hunter's hit (SoD placeholder for hit). With SoD's full 22% pet scaling this build would gain 18.",
-    "Wildstalker Armor 4-piece and 5-piece aren't in the preset (2-piece only). They would add nothing.",
-    "Assumed: Raptor Strike rank 8 adds 96, halfway between the client's 70 and Era's 0.88. Lower ranks keep the client's values.",
-    "Left out: Fire-toasted Bun (+9, seasonal) and Elemental Sharpening Stone (plans only from Molten Core).",
-    "Assumed: 22% more crit per Agility than Classic, the beta's level 1 ratio carried to 60.",
-    "Assumed: a pet's hit scales with its attack speed as in Classic. On the beta every pet hits like a 2.0s pet. The cat is still the best pet, and every cat speed sims within 1 DPS.",
-    "Keeps Rhok'delar's 2.9s bow. Survival never shoots, so every ranged weapon sims the same.",
-    "Human is best (Ruthless, 2% crit with any weapon since client 70425): 0.8 ahead of Orc at 180s and 2.0 at 300s. Orc leads by 1.6 at 120s.",
-    "Immolation Trap adds 2% of ranged attack power a tick (+15.5 DPS at 180s). The 15 October dev notes say fire traps now scale with attack power, but the client has no coefficient. The assumption runs none, 2% (Wrath's value) and 4%.",
-    "The raid's Trueshot Aura (a raid aura since client 70425, from the raid's Marksmanship hunter) adds 1.0 at 180s. It works through the pet's 10% of ranged attack power, since Survival never shoots."
+    "Pet scaling uses 10% of RAP (SoD placeholder). SoD's 22% would add 18.",
+    "Assumed: Raptor Strike rank 8 adds 96, halfway between the client and Era.",
+    "Left out: Fire-toasted Bun (+9, seasonal) and Elemental Sharpening Stone (Molten Core plans).",
+    "Assumed: 22% more crit per Agility than Classic.",
+    "Assumed: pet hits scale with attack speed as in Classic. Every cat speed sims within 1 DPS.",
+    "Survival never shoots, so the ranged weapon doesn't matter.",
+    "Assumed: Immolation Trap adds 2% of ranged attack power a tick (+15.5 DPS). The client has no coefficient yet.",
+    "The raid's Trueshot Aura adds 1.0 through the pet."
   ],
   "notes": "Request written by mksettings (spec hunter_sv) unchanged; it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Distance is 5 yd as in the mksettings raid the number was measured in (the UI preset starts at 25 yd; the APL walks in 6s before the pull, which the preset says costs nothing). Survival keeps a 1.0s cat out (DefaultOptions)."
 }

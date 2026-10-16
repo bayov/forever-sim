@@ -161,7 +161,7 @@
                       }
                     }
                   },
-                  "notes": "When the fight starts at range."
+                  "notes": "Into melee."
                 },
                 {
                   "action": {
@@ -181,14 +181,13 @@
                         }
                       }
                     }
-                  },
-                  "notes": "If it ever drops."
+                  }
                 },
                 {
                   "action": {
                     "autocastOtherCooldowns": {}
                   },
-                  "notes": "Rapid Fire, racials, trinkets and potions on cooldown."
+                  "notes": "Rapid Fire, racials, trinkets and potions."
                 },
                 {
                   "action": {
@@ -397,7 +396,7 @@
                       }
                     }
                   },
-                  "notes": "Filler with mana to spare. Held when Mongoose Bite or Strider Kick is almost ready."
+                  "notes": "Filler."
                 }
               ]
             },

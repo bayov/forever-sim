@@ -40,8 +40,8 @@ PART_INFO = {
     'chastise': ('Chastise', 'Dwarf Priests: an instant Holy hit on a Humanoid, 2 min cooldown.'),
     'starshards': ('Starshards', 'Night Elf Priests: Arcane damage over 6s, 30s cooldown.'),
     'darksacrifice': ('Dark Sacrifice', 'Undead Priests: trade health for mana over 15s, 10 min cooldown.'),
-    'base': ('Base stats', "The race's own Strength, Agility, Stamina, Intellect and Spirit, with no racials."),
-    'target': ('Target type', 'What this creature type changes: racials, talents and spells that work only on some types.'),
+    'base': ('Base stats', "The race's own stats, with no racials."),
+    'target': ('Target type', 'Racials, talents and spells that work only on this creature type.'),
 }
 
 # The tooltip's one line for the parts whose text above runs long; the others show their text as it is.

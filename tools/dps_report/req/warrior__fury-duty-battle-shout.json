@@ -128,7 +128,7 @@
               ],
               "priorityList": [
                 {
-                  "notes": "Sunder Armor as the first GCD after the pull, as every warrior does. The tanks keep it up after.",
+                  "notes": "Sunder Armor once at the pull. The tanks keep it up after.",
                   "action": {
                     "sequence": {
                       "name": "sunder",
@@ -228,7 +228,7 @@
                   }
                 },
                 {
-                  "notes": "Orc. Waits for Death Wish or the fight's end when that loses no use. Other races can ignore the warning on this line.",
+                  "notes": "Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -302,7 +302,7 @@
                   }
                 },
                 {
-                  "notes": "Troll. Waits for Death Wish or the fight's end when that loses no use. Other races can ignore the warning on this line.",
+                  "notes": "Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -378,7 +378,7 @@
                   }
                 },
                 {
-                  "notes": "Night Elf. Waits for Death Wish when that loses no use. Other races can ignore the warning on this line.",
+                  "notes": "Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -452,7 +452,7 @@
                   }
                 },
                 {
-                  "notes": "At the pull. The last one is held for the end when that loses no use.",
+                  
                   "action": {
                     "condition": {
                       "or": {
@@ -535,7 +535,7 @@
                   }
                 },
                 {
-                  "notes": "When there is room for the Rage.",
+                  
                   "action": {
                     "condition": {
                       "cmp": {
@@ -567,7 +567,7 @@
                   }
                 },
                 {
-                  "notes": "Right after a main hand swing, so its 1s cast loses no swing time.",
+                  "notes": "Its 1s cast then loses no swing time.",
                   "action": {
                     "condition": {
                       "and": {
@@ -694,7 +694,7 @@
                   }
                 },
                 {
-                  "notes": "Queued on the next swing with Rage to spare.",
+                  
                   "action": {
                     "condition": {
                       "and": {
@@ -734,7 +734,7 @@
                   }
                 },
                 {
-                  "notes": "With Rage to spare, for the procs.",
+                  "notes": "For the procs.",
                   "action": {
                     "condition": {
                       "and": {
@@ -784,7 +784,7 @@
                   }
                 },
                 {
-                  "notes": "Back to Berserker Stance.",
+                  
                   "action": {
                     "condition": {
                       "not": {

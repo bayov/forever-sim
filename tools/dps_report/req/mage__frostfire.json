@@ -110,7 +110,7 @@
               ],
               "priorityList": [
                 {
-                  "notes": "Once Fire Vulnerability has 5 stacks, or on cooldown without Improved Scorch. Without the trinket ignore the warning on this line.",
+                  "notes": "Without the trinket ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -176,13 +176,13 @@
                   }
                 },
                 {
-                  "notes": "Arcane Power, Presence of Mind, Combustion, trinkets, racials and mana gems on a free GCD.",
+                  "notes": "Arcane Power, Presence of Mind, Combustion, trinkets, racials and mana gems.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }
                 },
                 {
-                  "notes": "Once mana runs low, with enough fight left to spend it.",
+                  
                   "action": {
                     "condition": {
                       "and": {
@@ -353,7 +353,7 @@
                   }
                 },
                 {
-                  "notes": "Builds 5 Fire Vulnerability stacks and refreshes them.",
+                  
                   "action": {
                     "condition": {
                       "and": {
@@ -471,7 +471,7 @@
                   }
                 },
                 {
-                  "notes": "On a Missile Barrage proc: free and twice as fast.",
+                  "notes": "Free and twice as fast.",
                   "action": {
                     "condition": {
                       "and": {
@@ -501,7 +501,7 @@
                   }
                 },
                 {
-                  "notes": "With mana to spare.",
+                  
                   "action": {
                     "condition": {
                       "cmp": {
@@ -574,7 +574,7 @@
                   }
                 },
                 {
-                  "notes": "Rank 2 when mana won't last the fight.",
+                  "notes": "Rank 2.",
                   "action": {
                     "condition": {
                       "and": {
@@ -654,7 +654,7 @@
                   }
                 },
                 {
-                  "notes": "Instant cast when the filler would not land before the fight ends.",
+                  
                   "action": {
                     "condition": {
                       "cmp": {

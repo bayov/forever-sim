@@ -25,7 +25,7 @@
     "ok": true,
     "note": "verify.py, 180s, seed 1"
   },
-  "summary": "Enhancement with Restoration points for Water Shield and Mana Tide Totem, cast at 20% mana for the group. Magma Totem rotation, and Lightning Shield kept up, which beat Water Shield at every raid hit rate tried. 7.9% behind the default at 180s.",
+  "summary": "Enhancement with Mana Tide Totem for the group, cast at 20% mana. Magma Totem rotation, with Lightning Shield kept up.",
   "keyTalents": [
     "Stormstrike",
     "Maelstrom Weapon",
@@ -71,14 +71,12 @@
     "Goblin Land Mine"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 32 Strength and 14 crit rating, and an on-use 335 attack power for 20s every 2 min (at the pull, then on cooldown).",
-    "Mana Tide Totem is worth about 0.1 for the shaman itself in a 3 min fight.",
-    "Water Shield does nothing: the rotation keeps Lightning Shield up, which stays ahead even with 70425's spell-crit globes.",
-    "Orc leads on Savage (1% crit with any weapon since client 70425). Windshaper Skyborne is 2.8 behind at 180s.",
+    "Mana Tide Totem is worth about 0.1 for the shaman itself.",
+    "Water Shield does nothing: Lightning Shield stays ahead.",
     "Assumed: Maelstrom Weapon procs at 2 PPM per point, until the beta reaches level 34.",
     "Elemental Focus triggers: if Stormstrike can trigger it, Enhancement gets too few Clearcasting procs.",
-    "Raid damage hits on the shaman (2 a minute, each fires Lightning Shield) are estimated from boss timers. The assumptions panel also runs 0 and 10.",
-    "Fire Nova was cut in client 70425: coefficient 0.143 (was 0.214), rank 5 base 232 to 259 (was 397 to 443)."
+    "Raid damage hits (2 a minute, each fires Lightning Shield) are an estimate.",
+    "Fire Nova uses the 70425 values: coefficient 0.143, rank 5 base 232 to 259."
   ],
   "notes": "mksettings -spec enh -apl mana_tide (standards 23: every shaman drops its own party totems; the raid's only totem is a second shaman's Grace of Air, standards 25, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself) ; edited startingTotems.fire to MagmaTotem with fireSecondsBeforePull 1, as the preset ships."
 }

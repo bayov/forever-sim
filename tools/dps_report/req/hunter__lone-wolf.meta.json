@@ -25,7 +25,7 @@
     "ok": true,
     "note": "same sim as verify.py and the published number"
   },
-  "summary": "Marksmanship 5/41/5 with Lone Wolf (+20% damage with no pet out). The hunter's default and best build. 44 DPS ahead of Marksmanship with a cat, because a Forever pet takes no player buffs.",
+  "summary": "Marksmanship with Lone Wolf (+20% damage with no pet out). It beats a cat because a Forever pet takes no player buffs.",
   "keyTalents": [
     "Lone Wolf",
     "Deadly Aspects",
@@ -60,16 +60,14 @@
     "Goblin Land Mine"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 32 Agility and 14 crit rating, and an on-use 415 ranged attack power for 20s every 2 min (at the pull, then on cooldown).",
-    "Assumed fixed onto the rank curve: Trueshot Aura's top rank gives 100 ranged attack power and Hunter's Mark's 140. The client has 50 and 71, below the older ranks' 75 and 98.",
-    "Aspect of the Hawk stays at rank 5 (90 RAP) because Forever's rank 6 gives only 55.",
-    "Arcane Shot takes 10% of ranged attack power and Serpent Sting 3% a tick (Forever hunter wiki). The beta log fit was 11% and 3.5%.",
+    "Assumed: Trueshot Aura's top rank gives 100 ranged attack power and Hunter's Mark's 140 (the client has 50 and 71).",
+    "Aspect of the Hawk stays at rank 5 (90 RAP). Forever's rank 6 gives only 55.",
+    "Arcane Shot takes 10% of ranged attack power and Serpent Sting 3% a tick (beta log fit: 11% and 3.5%).",
     "Assumed: Auto Shot fires through casts with no 0.5s aim.",
-    "Wildstalker Armor 4-piece and 5-piece aren't in the preset (2-piece only). They would add 17.",
-    "Rapid Killing's +20% after a kill never triggers on a single boss.",
-    "Assumed: 22% more crit per Agility than Classic, the beta's level 1 ratio carried to 60.",
-    "The ranged weapon is a 2.5s bow at Rhok'delar's 44.0 DPS. A 2.6s gun sims 0.3 to 1.0 higher with a 15% ammo pouch, but 3.4 to 5.2 lower with Era Phase 1's 14% pouch (Ribbly's Bandolier). The 15% quiver takes only arrows.",
-    "Windshaper is best (Wind Blessed, 3% haste since client 70425) at every fight length. On Lone Wolf and Marksmanship it is 1.2 to 1.6 ahead of High Order and 5 to 8 ahead of Night Elf. On Beast Mastery it is 0.3 to 0.9 ahead of Human."
+    "Wildstalker Armor 4-piece and 5-piece aren't active. They would add 17.",
+    "Rapid Killing never triggers on a single boss.",
+    "Assumed: 22% more crit per Agility than Classic.",
+    "A 2.5s bow at Rhok'delar's 44.0 DPS. A 2.6s gun sims 0.3 to 1.0 higher with a 15% ammo pouch, 3.4 to 5.2 lower with Era's 14% pouch."
   ],
   "notes": "Request written by mksettings (spec hunter_lw) unchanged; it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Pet set to none (petType omitted = PetNone)."
 }

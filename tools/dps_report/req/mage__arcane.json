@@ -110,7 +110,7 @@
               ],
               "priorityList": [
                 {
-                  "notes": "With the on-use trinket, unless the trinket won't be back in time. Without the talent ignore the warning on this line.",
+                  "notes": "Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -158,7 +158,7 @@
                   }
                 },
                 {
-                  "notes": "With Arcane Power and the trinket. Without the talent ignore the warning on this line.",
+                  "notes": "With Arcane Power. Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -206,7 +206,7 @@
                   }
                 },
                 {
-                  "notes": "Arcane Power, Presence of Mind, Combustion, trinkets, racials and mana gems on a free GCD.",
+                  "notes": "Arcane Power, Presence of Mind, Combustion, trinkets, racials and mana gems.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }
@@ -312,7 +312,7 @@
                   }
                 },
                 {
-                  "notes": "Instant cast when the filler would not land before the fight ends.",
+                  
                   "action": {
                     "condition": {
                       "cmp": {
@@ -347,7 +347,7 @@
                   }
                 },
                 {
-                  "notes": "Instant cast when the filler would not land before the fight ends.",
+                  
                   "action": {
                     "condition": {
                       "cmp": {
@@ -382,7 +382,7 @@
                   }
                 },
                 {
-                  "notes": "Low on mana: only one.",
+                  
                   "action": {
                     "condition": {
                       "and": {
@@ -442,7 +442,7 @@
                   }
                 },
                 {
-                  "notes": "Up to the stack target.",
+                  
                   "action": {
                     "condition": {
                       "and": {
@@ -546,7 +546,7 @@
                   }
                 },
                 {
-                  "notes": "On a Missile Barrage proc: free and twice as fast.",
+                  "notes": "Free and twice as fast.",
                   "action": {
                     "condition": {
                       "and": {
@@ -576,7 +576,7 @@
                   }
                 },
                 {
-                  "notes": "The filler.",
+                  
                   "action": {
                     "castSpell": {
                       "spellId": {

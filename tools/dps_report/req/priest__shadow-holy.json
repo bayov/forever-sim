@@ -150,7 +150,7 @@
               ],
               "priorityList": [
                 {
-                  "notes": "Undead. When mana runs low. Other races can ignore the warning on this line.",
+                  "notes": "Undead. Trades health for mana. Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -173,7 +173,7 @@
                   }
                 },
                 {
-                  "notes": "Racials and trinkets on cooldown.",
+                  "notes": "Racials and trinkets.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }
@@ -329,7 +329,6 @@
                   }
                 },
                 {
-                  "notes": "The filler, and when a DoT falls off.",
                   "action": {
                     "channelSpell": {
                       "spellId": {

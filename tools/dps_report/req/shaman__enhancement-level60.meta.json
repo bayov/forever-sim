@@ -25,7 +25,7 @@
     "ok": true,
     "note": "verify.py, 180s, seed 1"
   },
-  "summary": "Stormstrike and Maelstrom Weapon Enhancement with a two-hand axe, Windfury Weapon and Windfury Totem for the group. Concussion 5 instead of Convection 5. The default Enhancement build.",
+  "summary": "Stormstrike and Maelstrom Weapon with a two-hand axe, and Windfury Totem for the group.",
   "keyTalents": [
     "Stormstrike",
     "Maelstrom Weapon",
@@ -71,15 +71,12 @@
     "Goblin Land Mine"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 32 Strength and 14 crit rating, and an on-use 335 attack power for 20s every 2 min (at the pull, then on cooldown).",
-    "Orc leads on Savage (1% crit with any weapon since client 70425). Windshaper Skyborne is 2.7 behind at 180s.",
     "Assumed: Maelstrom Weapon procs at 2 PPM per point, until the beta reaches level 34.",
-    "No Ahn'Qiraj book ranks (Strength of Earth IV, Battle Shout VI). Every build loses about 7.7 DPS.",
-    "One 2% crit elixir per character. Mongoose, Grizzly and Owl stacked would add about 36 if Forever allows it.",
-    "Earth Shock VII's base damage is ×1.08, halfway to the level 24 rank's 0.66 of Era. The client has ×1.00.",
-    "Tier 1 4-piece and 5-piece bonuses aren't active.",
-    "Raid damage hits on the shaman (2 a minute, each fires Lightning Shield) are estimated from boss timers. The assumptions panel also runs 0 and 10.",
-    "Fire Nova was cut in client 70425: coefficient 0.143 (was 0.214), rank 5 base 232 to 259 (was 397 to 443)."
+    "No Ahn'Qiraj book ranks (Strength of Earth IV, Battle Shout VI): about 7.7 DPS.",
+    "One 2% crit elixir. Mongoose, Grizzly and Owl stacked would add about 36.",
+    "Earth Shock VII's base damage is ×1.08 (client ×1.00).",
+    "Raid damage hits (2 a minute, each fires Lightning Shield) are an estimate.",
+    "Fire Nova uses the 70425 values: coefficient 0.143, rank 5 base 232 to 259."
   ],
   "notes": "mksettings -spec enh -apl optimized (standards 23: every shaman drops its own party totems; the raid's only totem is a second shaman's Grace of Air, standards 25, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself)."
 }

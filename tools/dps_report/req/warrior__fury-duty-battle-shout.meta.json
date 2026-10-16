@@ -25,7 +25,7 @@
     "ok": true,
     "note": "same sim as the published number"
   },
-  "summary": "Fury Dual Wield keeping Battle Shout up for its party, with the raid's Battle Shout off. 3.9 DPS behind the base build at 180s.",
+  "summary": "Keeps Battle Shout up for its party, with the raid's Battle Shout off.",
   "keyTalents": [
     "Bloodthirst",
     "Flurry",
@@ -63,17 +63,14 @@
     "Dense Sharpening Stone"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 30 Strength and 16 crit rating, and an on-use 335 attack power for 20s every 2 min (at the pull, then on cooldown).",
-    "White hit Rage is normalized to the weapon: k × swing speed (k is 3.46 one-hand and 4.5 two-hand, measured at level 30). It grows with level to ×1.5 at 60, the same for the off hand. Not yet measured at 60.",
-    "Synthetic Phase 1 gear on Forever's physical budget (ids 991001-991018)",
+    "White hit Rage scales with weapon speed (measured at level 30, assumed ×1.5 at 60).",
     "No Ahn'Qiraj book ranks (Heroic Strike VIII, raid Battle Shout VI, Strength of Earth, Grace of Air)",
-    "Deep Wounds ticks can't crit (client data). Each crit restarting the Deep Wounds tick timer is our modeling choice.",
-    "Assumed: the crit Rage bonus is white hits only, and Heroic Strike swings count for Unbridled Wrath.",
-    "One +2% crit elixir per character, since it's unknown if Ferocity stacks with Mongoose. A second one (Grizzly) would add 15.1.",
-    "Battlegear of Glory 4-piece (+36 AP vs Humanoids) not counted. It would add 10.8 at 180s.",
+    "Deep Wounds ticks can't crit. Each crit restarts the tick timer (our choice).",
+    "Assumed: the crit Rage bonus is white hits only, and Heroic Strike counts for Unbridled Wrath.",
+    "One +2% crit elixir. A second (Grizzly) would add 15.1.",
+    "Battlegear of Glory 4-piece not counted. It would add 10.8 vs Humanoids.",
     "Second Mighty Rage Potion held for the last 20s: +6.4 at 180s, -3.0 at 120s.",
-    "Bloodthirst sometimes slips a GCD for lack of Rage. Holding fillers for it loses DPS.",
-    "Raid damage hits on the warrior (2 a minute at 1500 damage, about 15 Rage each) are estimated from boss timers. The assumptions panel also runs 0 and 10 a minute."
+    "Raid damage hits (2 a minute, about 15 Rage each) are an estimate."
   ],
   "notes": "Request from mksettings -spec fury -gear level60_phase1_synthetic_fury -apl level60_fury_battle_shout -talents 30305013002-25053005122010501-2 -race Orc -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts.",
   "duty": "Battle Shout",

@@ -25,7 +25,7 @@
     "ok": true,
     "note": "180s, 20000 iterations, seed 1 (seed 1000001: 886.4)"
   },
-  "summary": "The Shadow points with 18 Holy points of healing utility (Twilight Focus, Spell Warding, Inspiration, Improved Healing) instead of Discipline, so no Twin Disciplines or Mental Strength. For raids that want the Holy utility. 4.5% behind the default at 180s.",
+  "summary": "Shadow with Holy points of healing utility instead of Discipline.",
   "keyTalents": [
     "Shadowform",
     "Shadow Weaving",
@@ -57,13 +57,12 @@
     "Demonic Rune"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 36 spell power and 15 crit rating, and an on-use 140 spell power for 20s every 2 min (at the pull, then on cooldown).",
-    "The Holy points add no DPS except Twilight Focus (pushback protection). A free talent search drops Holy for the default build.",
-    "Runs out of mana on long fights now that Devouring Plague is every 24s. Human leads at 180s (886.4), but Undead's Dark Sacrifice wins at 300s (865.1 vs 802.9). Undead is the best Horde race, 3.5 behind at 180s.",
-    "Synthetic Phase 1 gear with only the 2-piece set bonus active. Raiments 4-piece and 5-piece (Devouring Plague without a cooldown) not measured again since its cooldown dropped to 24s.",
-    "Periodic spells roll crit per tick (Forever rule). Assumed: Shadow Weaving applies to the priest's own Shadow damage on every target.",
-    "Mind Flay rolls hit once and its channel isn't hasted. SW:Death backlash is ignored, and its numbers are untested on the beta.",
-    "Left out: Brilliant Wizard Oil (Zul'Gurub recipe, +12.5) and Elixir of Sages (one crit elixir rule, +13.9)."
+    "The Holy points add no DPS except Twilight Focus (pushback protection).",
+    "Runs out of mana on long fights. Undead's Dark Sacrifice wins at 300s (865.1 vs 802.9).",
+    "Only the 2-piece set bonus is active. Raiments 4-piece and 5-piece not measured since Devouring Plague's 24s cooldown.",
+    "Periodic spells crit per tick (Forever rule). Assumed: Shadow Weaving applies to the priest's own Shadow damage.",
+    "Mind Flay rolls hit once and isn't hasted. SW:Death backlash is ignored.",
+    "Left out: Brilliant Wizard Oil (+12.5) and Elixir of Sages (+13.9)."
   ],
   "notes": "mksettings request plus manaRegenElixir GreaterMagebloodElixir (ConsumesHoly in presets.ts). Only the Undead number is published for this build; no per-faction race table."
 }

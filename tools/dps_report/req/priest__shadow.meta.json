@@ -25,7 +25,7 @@
     "ok": true,
     "note": "180s, 20000 iterations, seed 1 (seed 1000001: 928.5)"
   },
-  "summary": "Deep Shadow (Shadowform, Shadow Weaving, Darkness, Improved Mind Flay, Early Demise) with 15 Discipline points for Twin Disciplines, Mental Strength and Inner Focus, and 3 Holy points for Twilight Focus's pushback protection. The priest's default and best build.",
+  "summary": "Deep Shadow with Discipline points for Twin Disciplines, Mental Strength and Inner Focus, and 3 Holy points for Twilight Focus's pushback protection.",
   "keyTalents": [
     "Shadowform",
     "Shadow Weaving",
@@ -57,13 +57,11 @@
     "Demonic Rune"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 36 spell power and 15 crit rating, and an on-use 140 spell power for 20s every 2 min (at the pull, then on cooldown).",
-    "Synthetic Phase 1 gear with only the 2-piece set bonus active. Raiments 4-piece and 5-piece (Devouring Plague without a cooldown) not measured again since its cooldown dropped to 24s.",
-    "Periodic spells roll crit per tick (Forever rule). Assumed: Shadow Weaving applies to the priest's own Shadow damage on every target.",
-    "Mind Flay rolls hit once and its channel isn't hasted. SW:Death backlash is ignored, and its numbers are untested on the beta.",
-    "Left out: Brilliant Wizard Oil (Zul'Gurub recipe, +12.5) and Elixir of Sages (one crit elixir rule, +13.9).",
-    "Human is best since client 70425's Ruthless (2% crit with any weapon). Undead is the best Horde race, 3.7 behind at 180s.",
-    "Improved Mind Flay (70425) read as compounding: each tick 20% more than the one before (1, 1.2, 1.44). Dark Inspiration's party Spirit applies to the priest only.",
+    "Only the 2-piece set bonus is active. Raiments 4-piece and 5-piece not measured since Devouring Plague's 24s cooldown.",
+    "Periodic spells crit per tick (Forever rule). Assumed: Shadow Weaving applies to the priest's own Shadow damage.",
+    "Mind Flay rolls hit once and isn't hasted. SW:Death backlash is ignored.",
+    "Left out: Brilliant Wizard Oil (+12.5) and Elixir of Sages (+13.9).",
+    "Improved Mind Flay compounds: each tick does 20% more than the last. Dark Inspiration's Spirit applies to the priest only.",
     "Mana barely matters (about 13 min to empty)."
   ],
   "notes": "Request from mksettings unchanged (spec shadow, 180s, durationVariation 20); it matches the shipped encounter and DefaultConsumes."

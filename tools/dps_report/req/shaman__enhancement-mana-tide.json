@@ -309,7 +309,7 @@
                   }
                 },
                 {
-                  "notes": "Starts the burst window. Without the talent ignore the warning on this line.",
+                  "notes": "Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -383,7 +383,7 @@
                   }
                 },
                 {
-                  "notes": "Orc. Waits for Rage of the Farseer when that loses no use. Other races can ignore the warning on this line.",
+                  "notes": "Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -457,7 +457,7 @@
                   }
                 },
                 {
-                  "notes": "Troll. Waits for Rage of the Farseer when that loses no use. Other races can ignore the warning on this line.",
+                  "notes": "Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "or": {
@@ -549,7 +549,7 @@
                   }
                 },
                 {
-                  "notes": "Once Maelstrom Weapon makes it quick. Without the talent ignore the warning on this line.",
+                  "notes": "Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -625,7 +625,7 @@
                   }
                 },
                 {
-                  "notes": "Unless Flame Shock is about to run out.",
+                  
                   "action": {
                     "condition": {
                       "and": {
@@ -658,7 +658,7 @@
                   }
                 },
                 {
-                  "notes": "When nothing above is ready. Raid damage on the shaman fires its orbs at the boss: three per cast, at most one every 3.5s.",
+                  "notes": "Raid damage on the shaman fires its orbs at the boss (3 per cast, at most one per 3.5s).",
                   "action": {
                     "condition": {
                       "not": {

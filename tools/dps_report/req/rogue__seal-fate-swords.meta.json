@@ -25,7 +25,7 @@
     "ok": true,
     "note": "same sim as the published number (seed 1)"
   },
-  "summary": "Sinister Strike with Seal Fate and Cold Blood from Assassination, and Blade Flurry and Improved Sinister Strike from Combat. A slow axe and a fast off-hand dagger. 5.1% behind Combat Swords.",
+  "summary": "Sinister Strike with Seal Fate from Assassination and Blade Flurry from Combat.",
   "keyTalents": [
     "Seal Fate 5/5",
     "Vile Poisons 5/5",
@@ -59,13 +59,10 @@
     "Deadly Poison (main hand) and Instant Poison (off hand), each beside a Dense Sharpening Stone"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 31 Agility and 15 crit rating, and an on-use 335 attack power for 20s every 2 min (at the pull, then on cooldown).",
-    "5.1% behind Combat Swords at 180s",
-    "Murder (+4% damage vs Humanoids and Giants) does nothing on the generic boss. Its 2 points go to Lethality (Vile Poisons for Seal Fate Daggers). The vs Humanoid build keeps Murder 2/2.",
+    "Murder does nothing on the generic boss, so its points go to Lethality (Vile Poisons for Seal Fate Daggers).",
     "No Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV). They would add 13 to 18.",
-    "Grimstitch 4-piece and 5-piece bonuses aren't active on the synthetic gear (about +8 and +6 for Combat Daggers).",
-    "Flask of Supreme Power and Greater Arcane Elixir left out for consistency (+8 through Dragonbreath Chili).",
-    "Best Alliance race is High Order. Since client 70425 the races are within about 3 DPS of each other."
+    "Grimstitch 4-piece and 5-piece aren't active (about +8 and +6).",
+    "Flask of Supreme Power and Greater Arcane Elixir left out (+8 through Dragonbreath Chili)."
   ],
   "notes": "Spec family set to Assassination (30 Assassination points); the PR frames it as a variant of Combat Swords and it uses the rogue_combat mksettings setup and the Combat Swords APL. The talent preset tooltip mentions Hack and Slash, but the talent string has no Hack and Slash point."
 }

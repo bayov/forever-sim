@@ -138,7 +138,7 @@
               ],
               "priorityList": [
                 {
-                  "notes": "For Recklessness at the end, with no more Rage than Tactical Mastery keeps.",
+                  "notes": "For Recklessness. Tactical Mastery keeps the Rage.",
                   "action": {
                     "condition": {
                       "and": {
@@ -198,7 +198,7 @@
                   }
                 },
                 {
-                  "notes": "Sunder Armor as the first GCD after the pull, as every warrior does. The tanks keep it up after.",
+                  "notes": "Sunder Armor once at the pull. The tanks keep it up after.",
                   "action": {
                     "sequence": {
                       "name": "sunder",
@@ -277,7 +277,7 @@
                   }
                 },
                 {
-                  "notes": "On cooldown, or held for the end when that loses no use. Without the talent ignore the warning on this line.",
+                  "notes": "Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "and": {
@@ -352,7 +352,7 @@
                   }
                 },
                 {
-                  "notes": "For the last seconds, in the execute phase.",
+                  
                   "action": {
                     "condition": {
                       "and": {
@@ -386,7 +386,7 @@
                   }
                 },
                 {
-                  "notes": "Orc. Waits for Death Wish or the fight's end when that loses no use. Other races can ignore the warning on this line.",
+                  "notes": "Other races can ignore the warning on this line.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -396,7 +396,7 @@
                   }
                 },
                 {
-                  "notes": "Troll. Waits for Death Wish or the fight's end when that loses no use. Other races can ignore the warning on this line.",
+                  "notes": "Other races can ignore the warning on this line.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -407,7 +407,7 @@
                   }
                 },
                 {
-                  "notes": "Night Elf. Waits for Death Wish when that loses no use. Other races can ignore the warning on this line.",
+                  "notes": "Other races can ignore the warning on this line.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -417,7 +417,7 @@
                   }
                 },
                 {
-                  "notes": "The last one is held for the end when that loses no use.",
+                  
                   "action": {
                     "condition": {
                       "or": {
@@ -481,7 +481,7 @@
                   }
                 },
                 {
-                  "notes": "When there is room for the Rage.",
+                  
                   "action": {
                     "condition": {
                       "cmp": {
@@ -513,7 +513,7 @@
                   }
                 },
                 {
-                  "notes": "Right after a main hand swing, so its 1s cast loses no swing time.",
+                  "notes": "Its 1s cast then loses no swing time.",
                   "action": {
                     "condition": {
                       "and": {
@@ -586,7 +586,7 @@
                   }
                 },
                 {
-                  "notes": "With Rage to spare.",
+                  
                   "action": {
                     "condition": {
                       "and": {
@@ -741,7 +741,7 @@
                   }
                 },
                 {
-                  "notes": "Queued on the next swing with Rage to spare.",
+                  
                   "action": {
                     "condition": {
                       "and": {
@@ -781,7 +781,7 @@
                   }
                 },
                 {
-                  "notes": "With Rage to spare, for the procs.",
+                  "notes": "For the procs.",
                   "action": {
                     "condition": {
                       "and": {
@@ -831,7 +831,7 @@
                   }
                 },
                 {
-                  "notes": "Back to the rotation's stance.",
+                  
                   "action": {
                     "condition": {
                       "and": {

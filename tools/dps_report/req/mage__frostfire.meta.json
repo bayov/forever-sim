@@ -25,7 +25,7 @@
     "ok": true,
     "note": "180s, 20000 iterations, seed 1, on the 70425 rotation (seed 100001 within 0.6)"
   },
-  "summary": "Fire 29 / Frost 22 built around Frostfire Bolt, which gets both trees' talents and feeds Heating Up and Fingers of Frost at once. The mage's default and best build at 180s.",
+  "summary": "Fire and Frost hybrid built on Frostfire Bolt, which gets both trees' talents.",
   "keyTalents": [
     "Improved Fireball",
     "Ignite",
@@ -68,13 +68,12 @@
     "Goblin Sapper"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 41 spell power and 11 crit rating, and an on-use 140 spell power for 20s every 2 min (at the pull, then on cooldown).",
-    "Ice Lance's spell power coefficient is 0.429, Season of Discovery's server value. Forever's client has 0, as SoD's did.",
-    "Heating Up: every Fire Blast adds a stack (two on a crit), from the 70425 tooltip. One Pyroblast uses them all.",
-    "Fire Power (70425) counts Fire Vulnerability and the Fireball, Pyroblast, Flamestrike and Ignite DoTs (at most 4), multiplied with Fire Vulnerability. Whether it adds or multiplies is open. Frostfire Bolt gets it, but its DoT doesn't count.",
+    "Ice Lance's spell power coefficient is 0.429 (SoD server value, the client has 0).",
+    "Heating Up: every Fire Blast adds a stack (two on a crit). One Pyroblast uses them all.",
+    "Fire Power counts Fire Vulnerability and up to 4 Fire DoTs. Open: whether it adds or multiplies. Frostfire Bolt gets it, but its DoT doesn't count.",
     "Manaflare 4-piece and 5-piece not modeled (2-piece only).",
-    "Frost Channeling 3 does nothing (the client leaves Frostfire Bolt out). It fills the path to Fingers of Frost.",
-    "Frostfire Bolt's DoT has no client coefficient. It takes both schools' talents.",
+    "Frost Channeling 3 does nothing but leads to Fingers of Frost.",
+    "Frostfire Bolt's DoT has no client coefficient.",
     "No Ahn'Qiraj book ranks (Fireball XI, Frostbolt X, Arcane Missiles VII). With the books: Frost +50, Arcane +30, Fire +17, Frostfire 0."
   ],
   "notes": "Request written by mksettings -spec mage_frostfire unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). It carries the spec's staff imbue scroll (Scroll of Imbue Greater Flame) as a mage option, as the preset does. Its rotation casts Ice Lance on every Fingers of Frost charge and Evocation below 30% mana with more than 60s left."

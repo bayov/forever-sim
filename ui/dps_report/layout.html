@@ -44,7 +44,7 @@
     <div class="content-block fv-card" id="asm-card">
       <div class="content-block-header fv-asm-head"><h6 class="content-block-title">Assumptions</h6><span class="fv-asm-badge" id="asm-badge" hidden>Custom assumptions</span>
         <span class="fv-asm-tools"><button class="fv-chip fv-chip-action" id="asm-reset" hidden>Reset</button></span></div>
-      <p class="fv-note">Mechanics Forever hasn't confirmed yet, biggest first. Each table shows the DPS change per spec at 180s if a choice is true. The ranking uses <b>Default</b>. Tap another column to apply it to the whole report.</p>
+      <p class="fv-note">Mechanics Forever hasn't confirmed yet, biggest first. Tap another column to apply it to the whole report.</p>
       <div id="asm-list" data-source="assumptions assumption_dps"></div>
     </div>
 
@@ -58,9 +58,9 @@
           <span class="fv-label">Filter</span>
           <div class="fv-seg" id="rank-role" role="group" aria-label="Role"></div>
           <div class="fv-seg" id="rank-fac" role="group" aria-label="Faction of the preset race"></div>
-          <button class="fv-chip" id="rank-best" aria-pressed="false" title="Only the top preset of each class">Best per class</button>
-          <button class="fv-chip" id="rank-enc" aria-pressed="false" title="Add presets built for one boss type (Humanoid, Undead, Dragonkin)">Advantaged</button>
-          <button class="fv-chip" id="rank-duty" aria-pressed="true" title="Add duty variants: the preset keeps a raid buff or debuff up itself, at a DPS cost. Sunder Armor and shaman totems are left out, since every warrior and shaman does those.">Duty</button>
+          <button class="fv-chip" id="rank-best" aria-pressed="false">Best per class</button>
+          <button class="fv-chip" id="rank-enc" aria-pressed="false" title="Presets built for one boss type">Advantaged</button>
+          <button class="fv-chip" id="rank-duty" aria-pressed="true" title="Presets that keep a raid buff or debuff up themselves">Duty</button>
           <button class="btn btn-link fv-reset" type="button" id="rank-reset" hidden>Clear filters</button>
         </div>
       </div>
@@ -69,13 +69,13 @@
 
     <div class="content-block fv-card" id="len-card">
       <div class="content-block-header"><h6 class="content-block-title">Short and long fights</h6></div>
-      <p class="fv-note">DPS at five fight lengths, as a share of 180s DPS.</p>
+      <p class="fv-note">As a share of 180s DPS.</p>
       <div class="fv-chart" id="lenchart" data-source="lengths builds"></div>
     </div>
 
     <div class="content-block fv-card" id="mana-card">
       <div class="content-block-header"><h6 class="content-block-title">Mana over a long fight</h6></div>
-      <p class="fv-note">Time until mana drops below 10%, in 8 minute fights.</p>
+      <p class="fv-note">Time to 10% mana, in 8 minute fights.</p>
       <p class="fv-note" id="mana-sum"></p>
       <div class="fv-mana">
         <div class="fv-chart" id="manachart" data-source="mana mana_summary builds"></div>
@@ -89,7 +89,7 @@
   <section class="tab-pane fv-page" id="races" data-page="races" hidden>
     <div class="content-block fv-card" id="race-rank-card">
       <div class="content-block-header"><h6 class="content-block-title">Best races</h6></div>
-      <p class="fv-note">Gray is the race without racials. Colors are what each racial adds. Over several presets, 100% means the best race on all of them. Pick one spec to see DPS.</p>
+      <p class="fv-note">Gray is the race without racials. Colors are what each racial adds.</p>
       <div class="fv-scope">
         <div class="fv-controls"><div class="fv-seg" id="rs-fac" role="group" aria-label="Faction"></div><div class="fv-seg" id="rs-role" role="group" aria-label="Role"></div></div>
         <div class="fv-controls" id="rs-cls" role="group" aria-label="Class filter"></div>
@@ -103,7 +103,7 @@
 
     <div class="content-block fv-card" id="racial-rank-card">
       <div class="content-block-header"><h6 class="content-block-title">Strongest racials</h6></div>
-      <p class="fv-note">What each racial adds to its race's DPS, averaged over the presets that race can play. No effect counts as zero. Pick one spec to see DPS.</p>
+      <p class="fv-note">Averaged over the presets the race can play. No effect counts as zero.</p>
       <div class="fv-scope">
         <div class="fv-controls"><div class="fv-seg" id="rl-fac" role="group" aria-label="Faction"></div><div class="fv-seg" id="rl-role" role="group" aria-label="Role"></div></div>
         <div class="fv-controls" id="rl-cls" role="group" aria-label="Class filter"></div>
@@ -116,7 +116,7 @@
 
     <div class="content-block fv-card" id="heat-card">
       <div class="content-block-header fv-hrow"><h6 class="content-block-title">Every race on every preset</h6></div>
-      <p class="fv-note">Percent behind the best race (★). Hatched: race can't be that class. Tap a preset name to compare its races above.</p>
+      <p class="fv-note">Percent behind the best race (★). Hatched: race can't be that class.</p>
       <div class="fv-controls" id="heat-classes" role="group" aria-label="Class filter"></div>
       <div class="fv-controls"><span class="fv-label">Races</span><div class="fv-seg" id="heat-fac" role="group" aria-label="Faction"></div><div class="fv-rs-opts" id="heat-opts"></div></div>
       <div class="fv-scroll" id="heat" data-source="race_variants builds"></div>
@@ -124,7 +124,7 @@
 
     <div class="content-block fv-card" id="racespread-card">
       <div class="content-block-header fv-hrow"><h6 class="content-block-title">How much race matters</h6></div>
-      <p class="fv-note">Gap between the best and worst race, as a share of the best.</p>
+      <p class="fv-note">Best to worst race, in %.</p>
       <div class="fv-controls"><span class="fv-label">Sort</span><div class="fv-seg" id="spread-sort" role="group" aria-label="Sort"></div><div class="fv-rs-opts" id="spread-opts"></div></div>
       <div class="fv-chart" id="racespread" data-source="racespread builds race_variants"></div>
     </div>
@@ -146,7 +146,7 @@
       <p class="fv-swipe">Swipe for the next preset</p>
     </div>
     <div class="fv-tiles" id="sp-tiles"></div>
-    <p class="fv-note" id="sp-asm" hidden>Mean DPS and rank use your custom assumptions. The rest of the page is as simmed.</p>
+    <p class="fv-note" id="sp-asm" hidden>Mean DPS and rank use your assumptions. The rest is as simmed.</p>
     <nav class="fv-jump" id="sp-jump-bar" aria-label="Jump to a section">
       <span class="fv-jump-title">Sections <span class="fv-jump-chev">›</span></span>
       <ul class="nav fv-jump-tabs" id="sp-jump"></ul>
@@ -168,7 +168,7 @@
       </div>
       <div class="content-block fv-card" id="sp-abil-card" data-jump="Damage">
         <div class="content-block-header"><h6 class="content-block-title">Where the damage comes from</h6></div>
-        <p class="fv-note">Share of total damage, pets included.</p>
+        <p class="fv-note">Pets included.</p>
         <div class="fv-seg" id="sp-abil-metric" role="group" aria-label="Show"></div>
         <div class="fv-sbar" id="sp-abil"></div>
       </div>
@@ -176,20 +176,19 @@
 
     <div class="content-block fv-card" id="sp-time-card" data-jump="Timeline">
       <div class="content-block-header"><h6 class="content-block-title">A fight, second by second</h6></div>
-      <p class="fv-note" id="sp-time-note">One simulated fight: typical, unlucky or lucky.</p>
+      <p class="fv-note" id="sp-time-note"></p>
       <div class="fv-events" id="sp-events"></div>
     </div>
 
     <div class="fv-grid">
       <div class="content-block fv-card" id="sp-auras-card" data-jump="Auras">
         <div class="content-block-header"><h6 class="content-block-title">Buff and debuff uptime</h6></div>
-        <p class="fv-note" id="sp-auras-note">The number is average uptime over all fights. The bar shows the sample fight picked above.</p>
+        <p class="fv-note" id="sp-auras-note">Number: average uptime. Bar: the fight picked above.</p>
         <div class="fv-controls"><div class="fv-seg" id="sp-aura-owner" role="group" aria-label="Whose auras"></div><button class="fv-chip" id="sp-alwayson" aria-pressed="true">Hide always-on</button></div>
         <div class="fv-sbar" id="sp-auras"></div>
       </div>
       <div class="content-block fv-card" id="sp-races-card" data-jump="Races">
         <div class="content-block-header"><h6 class="content-block-title">Races for this preset</h6></div>
-        <p class="fv-note">180s DPS on every race the class can be. ★ marks the best.</p>
         <div class="fv-chart" id="sp-races"></div>
         <button class="btn btn-link fv-linkbtn" type="button" id="sp-races-link">Racials, weapons and target types ›</button>
       </div>
@@ -198,14 +197,13 @@
     <div class="fv-grid">
       <div class="content-block fv-card" id="sp-len-card">
         <div class="content-block-header"><h6 class="content-block-title">Fight length</h6></div>
-        <p class="fv-note">Mean DPS by fight length.</p>
         <div class="fv-chart" id="sp-len"></div>
       </div>
     </div>
 
     <div class="content-block fv-card" id="sp-rot-card" data-jump="Rotation">
       <div class="content-block-header"><h6 class="content-block-title">Rotation</h6></div>
-      <p class="fv-note" id="sp-rot-note">Priority list: the sim casts the first line whose condition holds.</p>
+      <p class="fv-note" id="sp-rot-note">The sim casts the first line whose condition holds.</p>
       <div class="fv-prepull" id="sp-prepull" data-source="rotation names icons"></div>
       <ol class="fv-prio" id="sp-rotation" data-source="rotation abilities names icons tooltips"></ol>
     </div>
@@ -225,22 +223,21 @@
 
     <div class="content-block fv-card" id="sp-gear-card" data-jump="Gear">
       <div class="content-block-header"><h6 class="content-block-title">Gear</h6></div>
-      <p class="fv-note">Synthetic Phase 1 set, with two synthetic trinkets.</p>
+      <p class="fv-note">Synthetic Phase 1 gear.</p>
       <div class="fv-gearwrap">
         <div id="gear-tab"><div class="gear-picker-root" id="sp-gear" data-source="gear tooltips icons"></div></div>
         <div class="fv-gearside">
           <div class="character-stats-root fv-cstats" id="sp-stats-card">
             <h6 class="character-stats-label">Character stats</h6>
-            <p class="fv-note">With gear, talents, buffs and consumes.</p>
             <div id="sp-stats" data-source="stats"></div>
           </div>
           <div class="fv-cstats" id="sp-weights-card" data-jump="Stat weights">
             <h6 class="character-stats-label">Stat weights</h6>
-            <p class="fv-note" id="sp-weights-note">Each stat's worth in points of the main stat. Hit and crit are per rating point (10 hit or 14 crit rating = 1%).</p>
+            <p class="fv-note" id="sp-weights-note">In points of the main stat. Hit and crit per rating point (10 hit or 14 crit rating = 1%).</p>
             <div class="fv-sbar" id="sp-weights"></div>
             <details>
               <summary>Raw numbers</summary>
-              <p class="fv-note">DPS per point (per 1% for hit and crit), ± one standard error. Same seed as the baseline.</p>
+              <p class="fv-note">DPS per point (per 1% for hit and crit).</p>
               <div class="fv-scroll">
                 <table id="sp-wtab" data-source="weights" data-row-key="build,stat">
                   <thead><tr><th data-field="label">Stat</th><th class="n" data-field="dpsPer">DPS</th><th class="n" data-field="sePer">±</th><th class="n" data-field="worth">Worth</th><th class="n" data-field="ratingWorth">Per rating</th></tr></thead>
@@ -255,7 +252,6 @@
 
     <div class="content-block fv-card" id="sp-setup-card" data-jump="Consumes">
       <div class="content-block-header"><h6 class="content-block-title">Consumes and buffs</h6></div>
-      <p class="fv-note">Everything the preset turns on.</p>
       <p class="fv-boss" id="sp-boss"></p>
       <div class="fv-setup-bar"><p class="fv-note">Faded: on but no effect. Tap for why.</p><button class="fv-chip" id="sp-setup-hide" aria-pressed="false">Hide inactive</button></div>
       <div class="fv-setup" id="sp-setup" data-source="setup tooltips icons"></div>
@@ -295,7 +291,6 @@
     <div class="fv-grid">
       <div class="content-block fv-card" id="cmp-dist-card">
         <div class="content-block-header"><h6 class="content-block-title">Fight-to-fight spread</h6></div>
-        <p class="fv-note">Share of fights in each 5 DPS bin.</p>
         <div class="fv-chart" id="cmp-dist" data-source="hist"></div>
       </div>
       <div class="content-block fv-card" id="cmp-len-card">
@@ -305,12 +300,11 @@
     </div>
     <div class="content-block fv-card" id="cmp-w-card">
       <div class="content-block-header"><h6 class="content-block-title">Stat weights side by side</h6></div>
-      <p class="fv-note">Stat worth in each preset's main stat. Hit and crit per rating point.</p>
+      <p class="fv-note">In each preset's main stat. Hit and crit per rating point.</p>
       <div class="fv-grid" id="cmp-w" data-source="weights"></div>
     </div>
     <div class="content-block fv-card" id="cmp-abil-card">
       <div class="content-block-header"><h6 class="content-block-title">Damage sources side by side</h6></div>
-      <p class="fv-note">Top damage sources by share.</p>
       <div class="fv-grid" id="cmp-abil" data-source="abilities"></div>
     </div>
   </section>
@@ -320,14 +314,14 @@
     <div class="content-block fv-card" id="method-card">
       <div class="content-block-header"><h6 class="content-block-title">How these numbers were made</h6></div>
       <div class="fv-prose" id="method-prose">
-        <p>Every preset runs on the same sim build, with its own talents, rotation, race, consumes and synthetic Phase 1 gear, plus shared raid buffs and debuffs.</p>
+        <p>Every preset uses its own talents, rotation, race, consumes and synthetic Phase 1 gear, plus shared raid buffs.</p>
         <ul class="fv-list">
           <li><b>Main number:</b> mean of <b data-source="builds" data-field="iters" data-row="0">—</b> fights, same seed for every preset.</li>
-          <li><b>Fight:</b> <span data-source="builds" data-field="fightSecs" data-row="0">—</span> s (± <span data-source="builds" data-field="fightVar" data-row="0">—</span> s) vs a level <span data-source="builds" data-field="targetLevel" data-row="0">—</span> boss with no creature type and <span data-source="builds" data-field="targetArmor" data-row="0">—</span> armor before debuffs.</li>
+          <li><b>Fight:</b> <span data-source="builds" data-field="fightSecs" data-row="0">—</span>s (± <span data-source="builds" data-field="fightVar" data-row="0">—</span>s) vs a level <span data-source="builds" data-field="targetLevel" data-row="0">—</span> boss with no creature type and <span data-source="builds" data-field="targetArmor" data-row="0">—</span> armor before debuffs.</li>
           <li><b>Races:</b> <span data-source="builds" data-field="raceIters" data-row="0">—</span> fights on every race the class can be.</li>
           <li><b>Fight lengths:</b> <span data-source="builds" data-field="lengthIters" data-row="0">—</span> fights each.</li>
           <li><b>Sample fights:</b> the fights closest to the 10th, 50th and 90th percentile, out of the first <span data-source="builds" data-field="sampleSeeds" data-row="0">—</span> seeds.</li>
-          <li><b>Racial bars:</b> the race simmed with all racials off (base stats), then with one racial off at a time. Where two racials overlap, each gets the average of both orders, so the parts add up.</li>
+          <li><b>Racial bars:</b> all racials off (base stats), then one racial off at a time. Overlapping racials split the difference, so the parts add up.</li>
           <li><b>Target types:</b> only the boss's creature type changes.</li>
         </ul>
       </div>
@@ -338,7 +332,7 @@
     </div>
     <div class="content-block fv-card" id="method-asm-card">
       <div class="content-block-header"><h6 class="content-block-title">Assumptions</h6></div>
-      <p class="fv-note">The Ranking tab's assumptions in full, biggest first. The ranking uses <b>Default</b>.</p>
+      <p class="fv-note">The Ranking tab's assumptions in full.</p>
       <div id="method-asm" data-source="assumptions assumption_dps"></div>
     </div>
     <div class="content-block fv-card" id="method-cav-card">

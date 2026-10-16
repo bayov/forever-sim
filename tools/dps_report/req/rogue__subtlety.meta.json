@@ -25,7 +25,7 @@
     "ok": true,
     "note": "same sim as the published number (seed 1)"
   },
-  "summary": "Subtlety with Hemorrhage, Ghostly Strike, Premeditation and Preparation, plus Seal Fate from Assassination, on daggers.",
+  "summary": "Subtlety with Hemorrhage, Ghostly Strike and Preparation, on daggers.",
   "keyTalents": [
     "Hemorrhage",
     "Ghostly Strike",
@@ -61,16 +61,14 @@
     "Deadly Poison (main hand) and Instant Poison (off hand), each beside a Dense Sharpening Stone"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 31 Agility and 15 crit rating, and an on-use 335 attack power for 20s every 2 min (at the pull, then on cooldown).",
-    "The fight never opens from Stealth. Stealth only comes from Vanish.",
-    "Ghostly Strike adds nothing over Hemorrhage (removing it gains 0.5), but the build requires it.",
-    "Open for beta testing: Premeditation out of Stealth and Preparation's reset list.",
-    "Elusiveness is worth 0 at 180s and -2.9 at 300s.",
-    "Murder (+4% damage vs Humanoids and Giants) does nothing on the generic boss. Its 2 points go to Lethality (Vile Poisons for Seal Fate Daggers). The vs Humanoid build keeps Murder 2/2.",
+    "The fight doesn't open from Stealth. Only Vanish gives Stealth.",
+    "Ghostly Strike adds nothing over Hemorrhage (0.5), but the build requires it.",
+    "Open: Premeditation out of Stealth and Preparation's reset list.",
+    "Elusiveness: 0 at 180s, -2.9 at 300s.",
+    "Murder does nothing on the generic boss, so its points go to Lethality (Vile Poisons for Seal Fate Daggers).",
     "No Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV). They would add 13 to 18.",
-    "Grimstitch 4-piece and 5-piece bonuses aren't active on the synthetic gear (about +8 and +6 for Combat Daggers).",
-    "Flask of Supreme Power and Greater Arcane Elixir left out for consistency (+8 through Dragonbreath Chili).",
-    "Best Alliance race is High Order. Since client 70425 the races are within about 3 DPS of each other."
+    "Grimstitch 4-piece and 5-piece aren't active (about +8 and +6).",
+    "Flask of Supreme Power and Greater Arcane Elixir left out (+8 through Dragonbreath Chili)."
   ],
   "notes": "Only Subtlety build, so treated as the Subtlety default."
 }

@@ -25,7 +25,7 @@
     "ok": true,
     "note": "verify.py, 180s, seed 1"
   },
-  "summary": "The default Enhancement build with Improved Ghost Wolf 2 for utility, from the talent search with it pinned. 6.9 DPS behind at 180s.",
+  "summary": "The default Enhancement build with Improved Ghost Wolf for utility.",
   "keyTalents": [
     "Stormstrike",
     "Maelstrom Weapon",
@@ -71,13 +71,10 @@
     "Goblin Land Mine"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 32 Strength and 14 crit rating, and an on-use 335 attack power for 20s every 2 min (at the pull, then on cooldown).",
-    "Improved Ghost Wolf is utility only (no DPS change).",
-    "Orc leads on Savage (1% crit with any weapon since client 70425). Windshaper Skyborne is 3.0 behind at 180s.",
     "Assumed: Maelstrom Weapon procs at 2 PPM per point, until the beta reaches level 34.",
     "Elemental Focus triggers: if Stormstrike can trigger it, Enhancement gets too few Clearcasting procs.",
-    "Raid damage hits on the shaman (2 a minute, each fires Lightning Shield) are estimated from boss timers. The assumptions panel also runs 0 and 10.",
-    "Fire Nova was cut in client 70425: coefficient 0.143 (was 0.214), rank 5 base 232 to 259 (was 397 to 443)."
+    "Raid damage hits (2 a minute, each fires Lightning Shield) are an estimate.",
+    "Fire Nova uses the 70425 values: coefficient 0.143, rank 5 base 232 to 259."
   ],
   "notes": "mksettings -spec enh -apl optimized (standards 23: every shaman drops its own party totems; the raid's only totem is a second shaman's Grace of Air, standards 25, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself)."
 }

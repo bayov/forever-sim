@@ -25,7 +25,7 @@
     "ok": true,
     "note": "180s, seed 1"
   },
-  "summary": "Shred and Rip cat with Shifting Power for Energy and Berserk on cooldown, no Rake. Under Forever the cat swings at its weapon's DPS at 1.0s, and stones, potions, Thistle Tea and Windfury Totem work in Cat Form. The default Feral build.",
+  "summary": "Shred and Rip cat with Berserk on cooldown and no Rake. Under Forever the cat swings at 1.0s with its weapon's DPS, and stones, potions, Thistle Tea and Windfury Totem work in Cat Form.",
   "keyTalents": [
     "Shredding Attacks",
     "Shifting Power",
@@ -58,15 +58,14 @@
     "Thistle Tea"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 29 Agility and 17 Strength, and an on-use 165 Strength for 20s every 2 min (at the pull, then on cooldown).",
-    "Rip's level 31+ client ranks are 6-9% below Era. Era values would give +1.6%.",
+    "Rip's level 31+ client ranks are 6-9% below Era. Era values would add 1.6%.",
     "Howling Idol (0.5s off Shifting Power since client 1.60.1.70425) is worth 4.8 at 180s; 5-piece Grovekeeper Ferocity would add 5.9 (measured before the 5a and 1b rounds)",
     "Unverified: Shred's flat bonus, AP on Rip and Ferocious Bite, Rend and Tear's scope",
     "Keeping Rake up costs 33 DPS. Rip at 5 CP ties.",
-    "One +2% crit elixir per character. Grizzly in place of Ferocity would add 4.9.",
-    "Tiger's Fury is gone in Forever (replaced by Shifting Power). It was worth 24.9 at 180s.",
-    "The cat's swing damage spreads 20% either side of the weapon's DPS (the server's range isn't known).",
-    "Windfury Totem and a second shaman's Grace of Air in the melee group (they stack since client 70425). Dense Weightstone on the mace adds 4.9. Elemental Sharpening Stone is left out (plans only from Molten Core)."
+    "One +2% crit elixir. Grizzly instead of Ferocity would add 4.9.",
+    "Tiger's Fury is gone in Forever. It was worth 24.9.",
+    "Cat swing damage spreads 20% either side (the server's range is unknown).",
+    "Windfury Totem and a second shaman's Grace of Air in the melee group. Dense Weightstone adds 4.9. Elemental Sharpening Stone is left out (Molten Core plans)."
   ],
   "notes": "Request from mksettings -spec feral (melee group: Strength of Earth and Windfury Totem, all blessings, own Leader of the Pack; latency 100 ms). Duration 180s, durationVariation 20. Forever lets the cat drink in form, so Mighty Rage Potion and Thistle Tea are used. No edits needed."
 }

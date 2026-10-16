@@ -25,7 +25,7 @@
     "ok": true,
     "note": "+0.03 vs published"
   },
-  "summary": "Fire Destruction with Incinerate as the filler, plus Conflagrate, Fire and Brimstone, Shadow and Flame, Aftermath, Pandemic and Malevolence. Succubus out, Firestone, Undead. 1.7% behind Shadow Bolt Destruction.",
+  "summary": "Fire Destruction with Incinerate as the filler and a Firestone.",
   "keyTalents": [
     "Incinerate",
     "Conflagrate",
@@ -66,18 +66,16 @@
     "Major Firestone (weapon imbue)"
   ],
   "caveats": [
-    "Two synthetic item level 71 trinkets: 38 spell power and 13 crit rating, and an on-use 140 spell power for 20s every 2 min (at the pull, then on cooldown).",
     "Demon sensitivity: no owner scaling 937.3, Succubus melee halved 937.4, both 913.2; without owner scaling the Succubus-sacrifice build (950.8) would be the pick (first set)",
     "Firestone is 24 ahead of Spellstone. Felhunter is 25 behind, Imp 35.",
-    "Undead and Gnome are within noise at 180s. Undead is ahead at 300s.",
     "Unverified: whether Incinerate's 25% bonus applies to the whole hit. Bane of Havoc's point does nothing.",
-    "Demon scaling uses Season of Discovery placeholder coefficients (Forever's are server side). Worth 49 on Demonology and 39 on the other builds.",
-    "Succubus base melee is unverified. Halving it would cost Demonology 43 and the other builds 38 to 39.",
-    "Bane of Doom's coefficient is 4.0 (Era 1.0), about 12% of Shadow Bolt builds' damage. At 2.0 they lose about 4%, at 1.0 about 6%.",
-    "No Ahn'Qiraj book ranks (Shadow Bolt IX, Immolate VII, Corruption VI). These are 7 to 13 DPS below ranks X, VIII and VII.",
+    "Demon scaling uses SoD placeholders. Worth 49 on Demonology, 39 on the other builds.",
+    "Succubus base melee is unverified. Halved, it would cost Demonology 43 and the others 38 to 39.",
+    "Bane of Doom's coefficient is 4.0 (Era 1.0). At 2.0 Shadow Bolt builds lose about 4%, at 1.0 about 6%.",
+    "No Ahn'Qiraj book ranks (Shadow Bolt IX, Immolate VII, Corruption VI): 7 to 13 DPS.",
     "Only the Demonheart Raiment 2-piece is live (the 5-piece added about +8 to +13 on the first set)",
     "Soul shards and Life Tap's health cost aren't tracked.",
-    "Demons use the warlock's spell crit as their own melee and spell crit, with no crit of their own (Blizzard's intent, forever-bugs #331). Worth 15 to 17 DPS."
+    "Demons use the warlock's spell crit (forever-bugs #331). Worth 15 to 17 DPS."
   ],
   "notes": "Request straight from mksettings -spec destruction_fire -gear level60_phase1_synthetic -apl level60_destruction_fire -race Human -duration 180, no edits. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Firestone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly."
 }
