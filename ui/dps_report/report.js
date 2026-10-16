@@ -1882,10 +1882,18 @@ export function startReport(dash, events) {
         tt(el('span', { class: 'tr' }, el('span', { style: `width:${100 * a[mt] / max}%;background:${colors.get(a.key) || 'var(--cds-chart-muted)'}` })), 'k:' + a.key),
       ];
     }));
+    // A column that doesn't apply to an ability shows a dash, not 0: Deep Wounds or a proc that only ticks has no
+    // hits or casts, and a direct hit has no ticks.
+    const HIT_COLS = ['hits', 'crits', 'critPct', 'avgHit', 'avgCrit', 'misses', 'dodges', 'glances'];
+    const abilCell = (a, k) => {
+      const direct = a.hits + a.crits + a.misses + a.dodges + a.glances > 0;
+      if ((HIT_COLS.includes(k) && !direct) || ((k === 'ticks' || k === 'avgTick') && !(a.ticks > 0)) || (k === 'casts' && !(a.casts > 0))) return '–';
+      return ['avgHit', 'avgCrit', 'avgTick'].includes(k) ? f0(a[k]) : f1(a[k]);
+    };
     const tb = $('#sp-abiltab tbody');
     tb.replaceChildren(...abil.map((a) => tt(el('tr', { 'data-key': `${enc(b.id)},${enc(a.key)}` },
       el('td', { class: 'first' }, keyIcon(a.key), ' ' + a.ability), ...['dps', 'share', 'casts', 'hits', 'crits', 'critPct', 'ticks', 'avgHit', 'avgCrit', 'avgTick', 'misses', 'dodges', 'glances']
-        .map((k) => el('td', { class: 'n', text: ['avgHit', 'avgCrit', 'avgTick'].includes(k) ? f0(a[k]) : f1(a[k]) }))), 'k:' + a.key)));
+        .map((k) => el('td', { class: 'n', text: abilCell(a, k) }))), 'k:' + a.key)));
     $('#sp-abiltab').dataset.build = b.id;
   };
 
