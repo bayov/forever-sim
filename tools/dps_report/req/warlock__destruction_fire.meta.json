@@ -4,7 +4,7 @@
   "spec": "Destruction",
   "build": "Destruction Fire",
   "isDefault": false,
-  "pr": 103,
+  "pr": 104,
   "race": "Human",
   "talents": "25201020032-0002-0050355003101351",
   "treeNames": [
@@ -16,7 +16,7 @@
   "apl": "level60_destruction_fire",
   "published": {
     "dps": 1019.2,
-    "source": "PR (Affliction and Fire DoT end gates)"
+    "source": "PR #104"
   },
   "verify": {
     "dps": 1019.18,
