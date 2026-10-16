@@ -212,8 +212,8 @@ export const DefaultConsumes = Consumes.create({
 
 // The raid the Level 60 numbers were measured under (tools/rotopt/mksettings -spec feral): the
 // shared level 60 raid with the cat in a melee group, so a shaman's Strength of Earth and
-// Windfury Totem, as the warrior and rogue presets have (Forever's air totems don't stack in a
-// party, so Windfury takes Grace of Air's place; it works on a cat under Forever), every
+// Windfury Totem, as the warrior and rogue presets have (it works on a cat under Forever), and
+// Grace of Air from a second shaman in the raid as well (the user's ruling 2026-10-16, "both totems": client 1.60.1.70425 lets Grace of Air stack with Windfury Totem and makes both raid-wide), every
 // blessing, and its own Leader of the Pack. Under Forever the totems and Battle Shout are capped
 // below their Ahn'Qiraj book ranks (Strength of Earth 42, Battle Shout 115).
 export const DefaultRaidBuffs = RaidBuffs.create({
@@ -225,6 +225,7 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	fireResistanceAura: true,
 	frostResistanceAura: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
+	graceOfAirTotem: TristateEffect.TristateEffectRegular,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,
 	retributionAura: TristateEffect.TristateEffectImproved,
 	shadowProtection: true,

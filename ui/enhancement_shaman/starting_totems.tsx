@@ -2,7 +2,6 @@ import tippy from 'tippy.js';
 
 import { EnumValueConfig } from '../core/components/enum_picker';
 import { IconEnumRowPicker } from '../core/components/individual_sim_ui/player_pickers';
-import { otherShamanWindfuryTotem } from '../core/components/inputs/buffs_debuffs';
 import { NumberPicker } from '../core/components/number_picker';
 import { markUnstacked } from '../core/components/unstacked_mark';
 import { IndividualSimUI } from '../core/individual_sim_ui';
@@ -264,20 +263,6 @@ export function buildStartingTotemsSettings(parent: HTMLElement, simUI: Individu
 					(totems[totemElement.field] as number) = newValue;
 				}),
 		});
-
-		// Under Forever, Grace of Air doesn't stack with Windfury Totem for now, like in the party
-		// buffs.
-		const graceOfAir = picker.rootElem.querySelector<HTMLElement>('[style*="spell_nature_invisibilitytotem"]');
-		if (graceOfAir) {
-			markUnstacked(
-				graceOfAir,
-				() =>
-					startingTotems(player).air === AirTotem.GraceOfAirTotem && otherShamanWindfuryTotem(player)
-						? "Gives no Agility while another shaman's Windfury Totem is up. Under Forever they don't stack for now."
-						: undefined,
-				simUI.changeEmitter,
-			);
-		}
 
 		const secondsPicker = new NumberPicker(root, player, {
 			id: `starting-totem-${totemElement.field}-seconds`,

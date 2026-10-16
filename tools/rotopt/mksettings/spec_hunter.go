@@ -56,10 +56,11 @@ func hunterRangedRaid(raidBuffs *proto.RaidBuffs, buffs *proto.IndividualBuffs, 
 	debuffs.HuntersMark = proto.TristateEffect_TristateEffectImproved
 }
 
-// Survival melees, so it joins a melee group: Windfury Totem (its own one air totem, Forever stops
-// two from stacking) and Strength of Earth, plus Mana Spring, and the raid's Trueshot Aura.
+// Survival melees, so it joins a melee group: Windfury Totem and Strength of Earth, plus Mana Spring,
+// the raid's Trueshot Aura, and Grace of Air from the raid's second shaman (the user's ruling 2026-10-16, "both totems": client 1.60.1.70425 lets Grace of Air stack with Windfury Totem and makes both raid-wide).
 func hunterMeleeRaid(raidBuffs *proto.RaidBuffs, buffs *proto.IndividualBuffs, debuffs *proto.Debuffs) {
 	raidBuffs.TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffWindfury
+	raidBuffs.GraceOfAirTotem = proto.TristateEffect_TristateEffectRegular
 	raidBuffs.StrengthOfEarthTotem = proto.TristateEffect_TristateEffectRegular
 	raidBuffs.ManaSpringTotem = proto.TristateEffect_TristateEffectRegular
 	debuffs.HuntersMark = proto.TristateEffect_TristateEffectImproved

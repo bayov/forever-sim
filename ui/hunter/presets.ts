@@ -343,11 +343,11 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	trueshotAura: true,
 });
 
-// Survival melees, so its shaman drops Windfury Totem and Strength of Earth for the melee group
-// in place of Grace of Air.
+// Survival melees, so its shaman drops Windfury Totem and Strength of Earth for the melee group,
+// on top of the Grace of Air every hunter has (the user's ruling 2026-10-16, "both totems":
+// client 1.60.1.70425 lets Grace of Air stack with Windfury Totem and makes both raid-wide).
 export const SurvivalRaidBuffs = RaidBuffs.create({
 	...DefaultRaidBuffs,
-	graceOfAirTotem: TristateEffect.TristateEffectMissing,
 	strengthOfEarthTotem: TristateEffect.TristateEffectRegular,
 	totemWeaponBuff: TotemWeaponBuff.TotemWeaponBuffWindfury,
 });

@@ -9,6 +9,11 @@ import (
 func init() {
 	specs["enh"] = &specSetup{
 		uiDir: "ui/enhancement_shaman",
+		// The shaman drops its own party's totems (withSpec), and the raid's second shaman, the one
+		// whose Grace of Air every melee group gets, gives it Grace of Air too (the user's ruling 2026-10-16, "both totems": client 1.60.1.70425 lets Grace of Air stack with Windfury Totem and makes both raid-wide).
+		raid: func(raidBuffs *proto.RaidBuffs, _ *proto.IndividualBuffs, _ *proto.Debuffs) {
+			raidBuffs.GraceOfAirTotem = proto.TristateEffect_TristateEffectRegular
+		},
 		consumes: func() *proto.Consumes {
 			// The Level 60 preset's consumes (ui/enhancement_shaman/presets.ts). Under Forever the
 			// shaman imbue is a class option, so the main hand holds Shadow Oil beside it.
@@ -46,7 +51,8 @@ func init() {
 			player.Class = proto.Class_ClassShaman
 			// The shaman drops its melee party's totems itself (standards 23: no totem duty, every
 			// shaman puts its own down, like a warrior's Sunder): Strength of Earth, Windfury Totem
-			// (it can't stand with Grace of Air) and Mana Spring. The raid has none of its own.
+			// and Mana Spring. Its own Windfury Weapon turns Windfury Totem's buff off for itself;
+			// the totem is for the party.
 			startingTotems := &proto.StartingTotems{
 				Earth: proto.EarthTotem_StrengthOfEarthTotem, EarthSecondsBeforePull: 4,
 				Air: proto.AirTotem_WindfuryTotem, AirSecondsBeforePull: 3,
