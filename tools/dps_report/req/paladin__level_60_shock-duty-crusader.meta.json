@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_shock_crusader_duty",
   "published": {
-    "dps": 857.1,
-    "source": "Report re-sim on master 5bbcb0d, 2026-10-16: Grace of Air with Windfury in the melee raid, Windfury Totem main hand only, off-hand Rage 0.5 and channel pushback on hits taken (was 842.8)"
+    "dps": 858.3,
+    "source": "Paladin PR (rotation audit pass 23: Hammer of Wrath above Consecration, 2026-10-16)"
   },
   "verify": {
-    "dps": 857.15,
+    "dps": 858.32,
     "stderr": 0.24,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "verify.py, 180 s, seed 1"
   },
   "summary": "The Holy Shock build, keeping Judgement of the Crusader on the boss for the raid.",
   "keyTalents": [
@@ -38,12 +38,12 @@
   ],
   "rotation": [
     "Pre-pull: Seal of Righteousness at -4.5s, Light's Vigil at -3s, Seal of the Crusader at -1.5s",
+    "Hammer of Wrath below 20% health, first of all",
     "Judgement of the Crusader at the pull (the duty): 161 Holy damage taken for 40s, refreshed by the paladin's own melee hits, so one cast lasts the fight; judged again only if it drops",
     "Seal of Righteousness back up ahead of Consecration whenever it is down (right after the opening Judgement of the Crusader)",
     "Consecration on cooldown, down to the last point of mana",
     "Judgement on cooldown on Seal of Righteousness; re-seal Righteousness whenever it is down (no twisting)",
     "Holy Strike on cooldown",
-    "Hammer of Wrath below 20% health",
     "Light's Vigil whenever it is not on the target and mana is at or above 30%",
     "Holy Shock on a Vigil-marked target (detonates it, refunds 75% of its mana, starts no cooldown), or on cooldown below 30% mana; Divine Favor goes on a Holy Shock",
     "Racials, Goblin Sapper, Major Mana Potion and Demonic Rune on free GCDs"

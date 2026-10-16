@@ -6,6 +6,7 @@
         {"action":{"castSpell":{"spellId":{"spellId":20308}}},"doAtValue":{"const":{"val":"-1.5s"}}}
     ],
     "priorityList": [
+        {"action":{"castSpell":{"spellId":{"spellId":24239}}}},
         {"action":{"castSpell":{"spellId":{"itemId":992015}},"condition":{"or":{"vals":[{"cmp":{"lhs":{"currentTime":{}},"op":"OpLt","rhs":{"const":{"val":"1s"}}}},{"isExecutePhase":{"threshold":"E20"}},{"cmp":{"lhs":{"spellUsesLostByDelay":{"delay":{"math":{"lhs":{"math":{"lhs":{"math":{"lhs":{"remainingTime":{}},"op":"OpMul","rhs":{"const":{"val":"4"}}}},"op":"OpSub","rhs":{"currentTime":{}}}},"op":"OpDiv","rhs":{"const":{"val":"5"}}}},"minTimeLeft":{"const":{"val":"20s"}},"spellId":{"itemId":992015}}},"op":"OpGt","rhs":{"const":{"val":"0"}}}}]}}},"notes":"At the pull, then saved for the execute phase."},
         {"action":{"castSpell":{"spellId":{"itemId":10646}}}},
         {"action":{"castSpell":{"spellId":{"spellId":20271}},"condition":{"auraIsActive":{"auraId":{"spellId":20308}}}},"notes":"Judge Seal of the Crusader first, the judgement lasts 40s and every melee hit refreshes it."},
@@ -14,7 +15,6 @@
         {"action":{"castSpell":{"spellId":{"spellId":20924}}},"notes":"Until mana runs out."},
         {"action":{"castSpell":{"spellId":{"spellId":10333}}}},
         {"action":{"castSpell":{"spellId":{"spellId":20271}},"condition":{"and":{"vals":[{"auraIsActive":{"auraId":{"spellId":20293}}},{"auraIsActive":{"auraId":{"spellId":20303},"sourceUnit":{"type":"CurrentTarget"}}}]}}}},
-        {"action":{"castSpell":{"spellId":{"spellId":24239}}}},
         {"action":{"castSpell":{"spellId":{"spellId":10314}}},"notes":"Only against Undead and Demons."},
         {"action":{"castSpell":{"spellId":{"spellId":1311595}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.3"}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":1311597},"sourceUnit":{"type":"CurrentTarget"}}}}}]}}},"notes":"Without the talent ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":20930}},"condition":{"and":{"vals":[{"or":{"vals":[{"auraIsActive":{"auraId":{"spellId":1311597},"sourceUnit":{"type":"CurrentTarget"}}},{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpLt","rhs":{"const":{"val":"0.3"}}}}]}}]}}},"notes":"Detonates the Vigil with no cooldown."},

@@ -227,7 +227,15 @@
                   }
                 },
                 {
-                  
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 24239
+                      }
+                    }
+                  }
+                },
+                {
                   "action": {
                     "condition": {
                       "cmp": {
@@ -250,7 +258,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "and": {
@@ -405,7 +412,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "and": {
@@ -488,15 +494,6 @@
                     "castSpell": {
                       "spellId": {
                         "spellId": 10333
-                      }
-                    }
-                  }
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 24239
                       }
                     }
                   }
