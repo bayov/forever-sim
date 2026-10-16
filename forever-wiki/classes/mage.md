@@ -8,6 +8,25 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ settled by the 70338 trait curves] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Beta client 1.60.1.70425 (2026-10-16)
+
+The 2026-10-15 mage rework, read from the 70425 client tables (wago.tools SpellEffect, SpellLevels, SpellMisc, SpellPower, SpellCooldowns, SpellAuraOptions and the Trait tables of tree 1112) and wowhead's Forever tooltips. It supersedes the 70338 notes below wherever they disagree. `tools/forever_talents/client/mage.json` carries the new tree, and the talent strings changed with it (see the end of this section).
+
+- Arcane Blast: 1.5 sec cast (2.5 before), 42.9% coefficient (71.4%). Rank 5 deals 218 to 254 at 60 (base 236, 15.1% variance, +1.6 a level to 68). Ranks 1 to 4 run 33 to 39, 78 to 91, 101 to 117 and 165 to 192 at their caps. It still costs 15% of base mana, plus 175% per stack. Each stack (400573, up to 4) is now 15% of Intellect as spell damage on every school (aura 174), for 15 sec from the first stack. More stacks don't refresh it, and other spells no longer end it (no charges, no proc flags). The 10% damage bonus on the other spells is gone.
+- Arcane Wrath (new talent, Arcane row 4 column 4, needs Arcane Blast; ranks 1326079 to 1326082 at 25, 36, 48 and 60): rank 4 is 451 base (20.1% variance, so 406 to 496 at 60, +3 a level to 71), 100% coefficient, plus 5% of maximum mana as spell damage. 3.5 sec cast, 6 sec cooldown, 395 mana. The masks of Arcane Focus, Impact, Mind, Power, Instability, Improved Channeling and Geometry now include it.
+- Missile Barrage: 2 ranks, moved to Arcane row 1 column 4. The trait curve is 20 / 40. At rank 2, Arcane Blast has a 40% chance, each Arcane Missiles hit 10%, and Arcane Wrath, Fireball, Frostbolt and Frostfire Bolt 20%. Rank 1 is half of each. ProcChance is 100 now, so the tooltip's numbers stand.
+- Improved Fire Blast (11078, was Wake of Fire): 1 / 2 sec off Fire Blast's cooldown and 8 / 15 yds of range. The crit after a kill is gone.
+- Critical Mass: 5 ranks, 2% Fire crit each (3 before).
+- Fire Power: 3 ranks. Each rank gives 1% more Fire damage per Fire effect of the mage's on the target, up to 4 effects (3% each and at most 12% at rank 3). Effects that mix schools don't count. The sim counts Fire Vulnerability and the DoTs of Fireball, Pyroblast, Flamestrike and Ignite, and multiplies the bonus with Fire Vulnerability on the mage's attack table. Ignite takes no bonus itself, because its share of the crit already has it. Frostfire Bolt, being a Fire spell, does take the bonus. Its DoT doesn't count as an effect. Whether Frostfire Bolt's own damage qualifies is an assumption: the tooltip doesn't say.
+- Winter's Chill (12579): now +40% Cone of Cold damage taken per stack, up to 5 stacks, with a 20% chance per rank. It no longer gives crit, so the sim doesn't model it for a single target. Frostbite now freezes on 15% of chills, which a raid boss is immune to.
+- Ice Lance: 200% more damage on a Frozen target at every rank (300% before), so 3 times the damage.
+- Frost Channeling: the threat effect is now −10 / −20 / −30 (the mana part is unchanged).
+- Heating Up: every Fire Blast that deals damage adds a stack, two on a crit (the 400624 tooltip: "Fire Blast grants an additional stack every time it deals damage"), and a Pyroblast that Presence of Mind made instant no longer uses the stacks (development notes). Both are server side; the buff 400625 only changed its proc flags.
+- Pushback, now that the presets take 2 raid hits a minute: Burning Soul (11083 effect 0) gives Fireball, Scorch, Pyroblast, Flamestrike and Frostfire Bolt a 23 / 47 / 70% chance not to lose casting time, and Improved Channeling (11237) 20% a point on Arcane Missiles (effect 0) and 14% a point on Arcane Blast and Arcane Wrath (effect 1, whose mask gained Arcane Wrath). Frost has no pushback talent.
+- Frost Blast (new trainer spell, 1326053 to 1326055 at 24, 36 and 48): rank 3 is 80 to 89 at 60, 34.3% coefficient, 1.5 sec cast, 90 mana, and a 40% slow for 9 sec. Its damage per second of cast is under half of Frostbolt's, so the sim leaves it out.
+
+Talent strings: Missile Barrage now sits at Arcane index 3 and Arcane Wrath at index 14, so the Arcane tree has 19 talents and any saved string with Arcane points reads differently. Fire Power caps at 3, so the old Fire and Frostfire strings (Fire Power 5 and 4) are invalid. Combustion still needs Critical Mass maxed, now at 5 points.
+
 ## Beta client 1.60.1.69876 to 1.60.1.70338 (2026-10-12)
 
 The beta client's mage tree, read through [hyjal.cc](https://hyjal.cc/updates/1.60.1.69876) (1.60.1.69876), with the talents later builds changed brought up to 1.60.1.70338 from [foreverchanges.pro](https://foreverchanges.pro/talents/mage). Positions, rank counts and prerequisites match the BlizzCon data below. Ranks 2 and up are real numbers now, and `tools/forever_talents/data/mage.json` in the sim repo is regenerated from the client tree (`client/mage.json`), so the per-talent text below is superseded where the two differ. The spells are from the client's spell tables (wago.tools DB2, 1.60.1.70338).
@@ -72,10 +91,10 @@ Confirmed as the sim has them:
 Wands: the 2026-09-24 development notes say "Wands no longer gain any additional damage from the user's spell damage". Shoot (5019) and Wand Specialization (13 / 25%, now 2 points) are otherwise Era's, and wand damage still comes from ItemDamageWand. The sim doesn't model wands; a raid mage doesn't use one. Bonecreeper Stylus (13938) has no ItemSparse row in 70338, so the synthetic wand only borrows its damage and speed.
 
 Open, with what they are worth (notes.md):
-- Arcane Blast's stacks on Arcane Missiles. The tooltip of 400573 says "the damage of all other spells is increased by 10%" and the sim follows it, but the client's damage mask on 400573 leaves Arcane Missiles out, and 400586 (15% a stack on Arcane Missiles, SoD's) is still in the client. On the Arcane preset that is 829.7 at 180 sec as simmed, 751.0 with no bonus on the missiles and 869.0 with 15%.
-- 400573's and Arcane Power's periodic masks: Arcane Blast's covers the Fireball and Frostfire Bolt DoTs only, Arcane Power's leaves Frostfire Bolt's DoT out. The sim gives both to every DoT. No preset casts those spells with those buffs up.
+- Arcane Blast's stacks on Arcane Missiles: gone with 70425's redesign (the stacks are spell damage now).
+- 400573's periodic mask: gone in 70425 (the stacks are spell damage). Arcane Power's still leaves Frostfire Bolt's DoT out; the sim gives it to every DoT, and no preset has both.
 - Presence of Mind and Combustion share the client's category 1151 cooldown (3 min). A level 60 mage can't have both, so the sim keeps them apart.
-- Missile Barrage's talent spell (400588) has a ProcChance of 50 in SpellAuraOptions where the tooltip gives 40 / 20%. The sim follows the tooltip.
+- Missile Barrage's talent spell (400588): ProcChance 100 since 70425 (50 before), so the tooltip's numbers stand.
 
 ## Spellbook changes (trainer abilities)
 

@@ -101,12 +101,6 @@ func (mage *Mage) getArcaneMissilesSpellConfig(rank int) core.SpellConfig {
 				dot.TickLength = tickLength / 2
 				mage.MissileBarrageAura.Deactivate(sim)
 			}
-			// The missiles keep the Arcane Blast bonus the channel started with. Arcane
-			// Missiles is a damage spell other than Arcane Blast, so it ends the stacks.
-			mage.arcaneMissilesBlastBonus = mage.arcaneBlastBonus()
-			if mage.ArcaneBlastAura != nil {
-				mage.ArcaneBlastAura.Deactivate(sim)
-			}
 			dot.Apply(sim)
 		},
 		ExpectedTickDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
@@ -136,10 +130,7 @@ func (mage *Mage) getArcaneMissilesTickSpell(rank int) *core.Spell {
 		BonusCoefficient: spellCoeff,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			bonus := mage.arcaneMissilesBlastBonus
-			spell.DamageMultiplierAdditive += bonus
 			result := mage.calcMageDamage(sim, target, baseTickDamage, spell)
-			spell.DamageMultiplierAdditive -= bonus
 
 			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
 				spell.DealDamage(sim, result)
