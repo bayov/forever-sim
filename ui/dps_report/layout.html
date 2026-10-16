@@ -50,6 +50,7 @@
 
     <div class="content-block fv-card" id="rank-card">
       <div class="content-block-header"><h6 class="content-block-title">DPS by preset</h6></div>
+      <div class="fv-toolbar">
       <div class="fv-lenbar" id="rank-lenbar"><span class="fv-label">Fight length</span><div class="fv-seg" id="rank-len" role="group" aria-label="Fight length"></div></div>
       <div class="fv-controls" id="rank-classes" role="group" aria-label="Class filter"></div>
       <div class="fv-controls fv-ctl-row">
@@ -63,6 +64,7 @@
           <button class="fv-chip" id="rank-duty" aria-pressed="true" title="Presets that keep a raid buff or debuff up themselves">Duty</button>
           <button class="btn btn-link fv-reset" type="button" id="rank-reset" hidden>Clear filters</button>
         </div>
+      </div>
       </div>
       <div class="fv-rank" id="rank-chart" data-source="builds lengths"></div>
     </div>
@@ -90,7 +92,7 @@
     <div class="content-block fv-card" id="race-rank-card">
       <div class="content-block-header"><h6 class="content-block-title">Best races</h6></div>
       <p class="fv-note">Gray is the race without racials. Colors are what each racial adds.</p>
-      <div class="fv-scope">
+      <div class="fv-toolbar">
         <div class="fv-controls"><div class="fv-seg" id="rs-fac" role="group" aria-label="Faction"></div><div class="fv-seg" id="rs-role" role="group" aria-label="Role"></div></div>
         <div class="fv-controls" id="rs-cls" role="group" aria-label="Class filter"></div>
         <div class="fv-controls"><span class="fv-label">Spec</span><div class="fv-scope-spec" id="rs-spec"></div><div class="fv-rs-opts" id="rs-opts"></div></div>
@@ -104,7 +106,7 @@
     <div class="content-block fv-card" id="racial-rank-card">
       <div class="content-block-header"><h6 class="content-block-title">Strongest racials</h6></div>
       <p class="fv-note">Averaged over the presets the race can play. No effect counts as zero.</p>
-      <div class="fv-scope">
+      <div class="fv-toolbar">
         <div class="fv-controls"><div class="fv-seg" id="rl-fac" role="group" aria-label="Faction"></div><div class="fv-seg" id="rl-role" role="group" aria-label="Role"></div></div>
         <div class="fv-controls" id="rl-cls" role="group" aria-label="Class filter"></div>
         <div class="fv-controls"><span class="fv-label">Spec</span><div class="fv-scope-spec" id="rl-spec"></div><div class="fv-rs-opts" id="rl-opts"></div></div>
@@ -117,15 +119,17 @@
     <div class="content-block fv-card" id="heat-card">
       <div class="content-block-header fv-hrow"><h6 class="content-block-title">Every race on every preset</h6></div>
       <p class="fv-note">Percent behind the best race (★). Hatched: race can't be that class.</p>
-      <div class="fv-controls" id="heat-classes" role="group" aria-label="Class filter"></div>
-      <div class="fv-controls"><span class="fv-label">Races</span><div class="fv-seg" id="heat-fac" role="group" aria-label="Faction"></div><div class="fv-rs-opts" id="heat-opts"></div></div>
+      <div class="fv-toolbar">
+        <div class="fv-controls" id="heat-classes" role="group" aria-label="Class filter"></div>
+        <div class="fv-controls"><span class="fv-label">Races</span><div class="fv-seg" id="heat-fac" role="group" aria-label="Faction"></div><div class="fv-rs-opts" id="heat-opts"></div></div>
+      </div>
       <div class="fv-scroll" id="heat" data-source="race_variants builds"></div>
     </div>
 
     <div class="content-block fv-card" id="racespread-card">
       <div class="content-block-header fv-hrow"><h6 class="content-block-title">How much race matters</h6></div>
       <p class="fv-note">Best to worst race, in %.</p>
-      <div class="fv-controls"><span class="fv-label">Sort</span><div class="fv-seg" id="spread-sort" role="group" aria-label="Sort"></div><div class="fv-rs-opts" id="spread-opts"></div></div>
+      <div class="fv-toolbar"><div class="fv-controls"><span class="fv-label">Sort</span><div class="fv-seg" id="spread-sort" role="group" aria-label="Sort"></div><div class="fv-rs-opts" id="spread-opts"></div></div></div>
       <div class="fv-chart" id="racespread" data-source="racespread builds race_variants"></div>
     </div>
   </section>
@@ -154,7 +158,7 @@
 
     <div class="content-block fv-card" id="sp-tal-card" data-jump="Talents">
       <div class="content-block-header"><h6 class="content-block-title">Talents</h6></div>
-      <div class="fv-seg" id="sp-tal-seg" role="group" aria-label="Talent tree"></div>
+      <div class="fv-toolbar"><div class="fv-seg" id="sp-tal-seg" role="group" aria-label="Talent tree"></div></div>
       <div class="fv-trees" id="sp-tal"></div>
     </div>
 
@@ -162,14 +166,14 @@
       <div class="content-block fv-card" id="sp-dist-card" data-jump="Spread">
         <div class="content-block-header"><h6 class="content-block-title">How fights vary</h6></div>
         <p class="fv-note" id="sp-dist-note">DPS of every simulated fight, in 5 DPS bins.</p>
-        <div class="fv-controls"><div class="fv-seg" id="sp-dist-mode" role="group" aria-label="Show"></div></div>
+        <div class="fv-toolbar"><div class="fv-controls"><div class="fv-seg" id="sp-dist-mode" role="group" aria-label="Show"></div></div></div>
         <div class="fv-chart" id="sp-dist"></div>
         <div class="fv-scroll"><table id="sp-pct"><thead><tr></tr></thead><tbody><tr></tr></tbody></table></div>
       </div>
       <div class="content-block fv-card" id="sp-abil-card" data-jump="Damage">
         <div class="content-block-header"><h6 class="content-block-title">Where the damage comes from</h6></div>
         <p class="fv-note">Pets included.</p>
-        <div class="fv-seg" id="sp-abil-metric" role="group" aria-label="Show"></div>
+        <div class="fv-toolbar"><div class="fv-seg" id="sp-abil-metric" role="group" aria-label="Show"></div></div>
         <div class="fv-sbar" id="sp-abil"></div>
       </div>
     </div>
@@ -184,7 +188,7 @@
       <div class="content-block fv-card" id="sp-auras-card" data-jump="Auras">
         <div class="content-block-header"><h6 class="content-block-title">Buff and debuff uptime</h6></div>
         <p class="fv-note" id="sp-auras-note">Number: average uptime. Bar: the fight picked above.</p>
-        <div class="fv-controls"><div class="fv-seg" id="sp-aura-owner" role="group" aria-label="Whose auras"></div><button class="fv-chip" id="sp-alwayson" aria-pressed="true">Hide always-on</button></div>
+        <div class="fv-toolbar"><div class="fv-controls"><div class="fv-seg" id="sp-aura-owner" role="group" aria-label="Whose auras"></div><button class="fv-chip" id="sp-alwayson" aria-pressed="true">Hide always-on</button></div></div>
         <div class="fv-sbar" id="sp-auras"></div>
       </div>
       <div class="content-block fv-card" id="sp-races-card" data-jump="Races">
@@ -253,7 +257,8 @@
     <div class="content-block fv-card" id="sp-setup-card" data-jump="Consumes">
       <div class="content-block-header"><h6 class="content-block-title">Consumes and buffs</h6></div>
       <p class="fv-boss" id="sp-boss"></p>
-      <div class="fv-setup-bar"><p class="fv-note">Faded: on but no effect. Tap for why.</p><button class="fv-chip" id="sp-setup-hide" aria-pressed="false">Hide inactive</button></div>
+      <p class="fv-note">Faded: on but no effect. Tap for why.</p>
+      <div class="fv-toolbar"><div class="fv-controls"><button class="fv-chip" id="sp-setup-hide" aria-pressed="false">Hide inactive</button></div></div>
       <div class="fv-setup" id="sp-setup" data-source="setup tooltips icons"></div>
     </div>
 
@@ -272,6 +277,7 @@
     <div class="content-block fv-card" id="cmp-pick-card">
       <div class="content-block-header"><h6 class="content-block-title">Compare two presets</h6></div>
       <p class="fv-note">Pick one preset twice to compare its races or setups.</p>
+      <div class="fv-toolbar">
       <div class="fv-controls">
         <span class="fv-ab" id="cmp-dot-a">A</span><div id="cmp-a" data-label="Preset A"></div>
         <div class="fv-cmp-var" id="cmp-ar" data-label="Race for A"></div><div class="fv-cmp-var" id="cmp-av" data-label="Setup for A"></div>
@@ -279,6 +285,7 @@
       <div class="fv-controls">
         <span class="fv-ab" id="cmp-dot-b">B</span><div id="cmp-b" data-label="Preset B"></div>
         <div class="fv-cmp-var" id="cmp-br" data-label="Race for B"></div><div class="fv-cmp-var" id="cmp-bv" data-label="Setup for B"></div>
+      </div>
       </div>
       <div class="fv-scroll">
         <table id="cmp-table">
