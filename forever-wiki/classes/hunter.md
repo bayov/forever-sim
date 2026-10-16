@@ -16,7 +16,7 @@ Beast Mastery:
 
 - Deadly Aspects (replaces Improved Aspect of the Hawk): 2% a rank for Auto Shot to give Quick Shots (30% ranged attack speed, 12 sec) while Aspect of the Hawk is up, and for a melee auto attack to give Quick Strikes (30% melee attack speed, 12 sec) while Aspect of the Beast is up. The haste and duration do not grow with the ranks.
 - Endurance Training 3% pet health and armor a rank. Focused Fire 1% a rank on everything the hunter and the pet deal while the pet is out. Unleashed Fury 3% a rank on pets and hawks. Ferocity 2% crit a rank on pets and hawks. Frenzy is Classic's.
-- Improved Mend Pet 15 / 50% cleanse and 10 / 20% cheaper. Spirit Bond 1% health every 10 / 5 sec. Bestial Discipline 10 / 20% pet focus regen and 25 / 50% mana regen while casting.
+- Improved Mend Pet 15 / 50% cleanse and 10 / 20% cheaper (the cost curve read +10 / +20, a cost increase, until client 1.60.1.70425 turned it to -10 / -20; the sim casts no Mend Pet). Spirit Bond 1% health every 10 / 5 sec. Bestial Discipline 10 / 20% pet focus regen and 25 / 50% mana regen while casting.
 - Summon Hawk (16 points): the dive bomb deals 32 / 47 / 85 / 108 (ranks at 25 / 36 / 48 / 60) plus 5% of ranged attack power, for 80 / 105 / 135 / 190 mana. The hawk it leaves attacks for 18 sec, at most 2 at once. 6 sec cooldown shared with Arcane Shot.
 - Intimidation gives the pet's next attack 100% more crit, 8% of base mana, 1 min. Bestial Wrath is Classic's (50% pet damage for 18 sec, 2 min, 12% of base mana).
 - Gone: Improved Aspect of the Hawk, Thick Hide (folded into Endurance Training), Improved Eyes of the Beast (baseline).
@@ -38,7 +38,8 @@ Survival:
 - Improved Tracking (Monster and Humanoid Slaying): 1% damage a rank against the tracked creature type. Deflection 1% parry a rank (2% in the earlier beta builds). Entrapment roots for 1 to 5 sec.
 - Savage Strikes 2% crit a rank on the melee abilities (Raptor Strike, Mongoose Bite, Wing Clip, Strider Kick, Lacerate, Lacerating Strikes, Counterattack). Predator's Edge 6% crit damage a rank on the same abilities and 10% off hand damage a rank.
 - Survivalist 2% health a rank. Improved Wing Clip 7 / 13 / 20%. Clever Traps 15% a rank. Surefooted 1% hit a rank on every attack. Survival Tactics (Trap Mastery) 5% trap and Feign Death hit a rank.
-- Resourcefulness: traps and the melee abilities 30% cheaper a rank (not Strider Kick or Lacerate), and a crit has a 50% chance a rank to give 50% mana regen while casting for 30 sec (the tooltip shows "?%", 50 a rank is the rank curve).
+- Resourcefulness: traps and the melee abilities 30% cheaper a rank (not Lacerate; Strider Kick since client 1.60.1.70425, which added its bit to the cost effect's mask), and a crit has a 50% chance a rank to give 50% mana regen while casting for 30 sec (the tooltip shows "?%"; the chance's trait curve read -20 / -40 in 70338 and 50 / 100 in 70425, the 50 a rank the sim already took).
+- Client 1.60.1.70425 also raised the pet's Natural Armor aura from 22 to 674. Bosses hit the tank, not the pet, so it changes no damage in the sim.
 - Expose Prey: an attack on a target with Hunter's Mark has a 5% chance a rank to open Mongoose Bite, for 10 sec since build 70291 (5 before).
 - Survivalist's Discipline 20% off trap and Deterrence cooldowns a rank. Lightning Reflexes 2% Agility a rank (a 3% twin is parked off the tree).
 - Counterattack (16 points): 50% weapon damage plus 26 / 110 at ranks 1 and 4, after a parry. Strider Kick (21 points): 100% normalized weapon damage, 8 sec cooldown, 5.81% of base mana, 30% run speed for 3 sec. Lacerating Strikes (31 points): Mongoose Bite also bleeds 40% of its damage over 21 sec, the ticks can crit.
