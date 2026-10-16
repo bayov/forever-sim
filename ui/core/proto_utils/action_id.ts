@@ -163,6 +163,12 @@ export class ActionId {
 		return this.wowheadIconUrl && ActionId.iconUrlMapper ? ActionId.iconUrlMapper(this.wowheadIconUrl) : this.wowheadIconUrl;
 	}
 
+	// The wowhead URL of the icon, before the mapper. A copy of this ID takes this one, because
+	// the DPS Report maps each wowhead URL to a data URL, and mapping that again gives the "?" icon.
+	get sourceIconUrl(): string {
+		return this.wowheadIconUrl;
+	}
+
 	anyId(): number {
 		return this.itemId || this.spellId || this.otherId;
 	}
@@ -467,7 +473,7 @@ export class ActionId {
 	}
 
 	withoutTag(): ActionId {
-		return new ActionId(this.itemId, this.spellId, this.otherId, 0, this.baseName, this.baseName, this.iconUrl, this.rank, this.randomSuffixId);
+		return new ActionId(this.itemId, this.spellId, this.otherId, 0, this.baseName, this.baseName, this.wowheadIconUrl, this.rank, this.randomSuffixId);
 	}
 
 	static fromEmpty(): ActionId {

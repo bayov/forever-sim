@@ -230,7 +230,7 @@ export class SimResult {
 
 // The icons of each player's main hand and off-hand weapons, by raid index.
 const getWeaponIcons = async (raid: RaidProto | undefined): Promise<Map<number, WeaponIcons>> => {
-	const iconOf = async (itemId: number | undefined) => (itemId ? (await ActionId.fromItemId(itemId).fill()).iconUrl || undefined : undefined);
+	const iconOf = async (itemId: number | undefined) => (itemId ? (await ActionId.fromItemId(itemId).fill()).sourceIconUrl || undefined : undefined);
 	const icons = new Map<number, WeaponIcons>();
 	await Promise.all(
 		(raid?.parties ?? []).flatMap((party, partyIndex) =>
