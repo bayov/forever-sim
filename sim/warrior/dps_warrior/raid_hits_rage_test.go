@@ -13,7 +13,7 @@ import (
 //
 // A level 60 warrior with no gear, no stance and no rotation takes 10 hits a minute of 1500
 // damage for 9 min, so about 90 hits a fight. Under Forever each one gives 20 × 0.6 × 1500 /
-// 3993 (a level 60 normal mob's health) = 4.51 Rage (core.ForeverDamageTakenRage). Under
+// 5356 (a level 60 normal mob's health) = 3.36 Rage (core.ForeverDamageTakenRage). Under
 // Classic it gives 2.5 × 1500 / the level 63 boss's Rage conversion, 15.4 Rage. With no hits
 // there is no Rage from damage taken at all.
 func TestRaidDamageHits(t *testing.T) {

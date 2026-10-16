@@ -141,7 +141,7 @@ func TestForeverWarriorNormalizedRageLevels(t *testing.T) {
 }
 
 // TestForeverWarriorDamageTakenRage checks Forever's Rage from taking damage (standards 21):
-// 20 × (1 − 0.4) × damage / a level 60 normal mob's health (3993) at level 60, so 3.0 Rage for
+// 20 × (1 − 0.4) × damage / a level 60 normal mob's health (5356) at level 60, so 2.2 Rage for
 // 1000 damage, where Classic's damage × 2.5 / the conversion at the attacker's level gives 10.8.
 // The damage is the attacker's, before anything of ours: our damage taken modifiers (Defensive
 // Stance, Shield Wall), a block and an absorb take no Rage away (report assumption
