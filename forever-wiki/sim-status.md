@@ -267,16 +267,16 @@ Client 70425's racials (2026-10-16, with the raid hits; seed 1, and the top race
 
 ### Rogue
 
-Six builds, all on Undead (Touch of the Grave), in the shared level 60 raid with the rogue in a melee group (Battle Shout, Strength of Earth and Windfury Totem, which is 24 ahead of Grace of Air), against the generic Level 60 boss (no creature type, standards 19), 20000 iterations, standard error 0.1 to 0.3. Combat Daggers is the default build.
+Six builds, all on Undead, in the shared level 60 raid with the rogue in a melee group (Battle Shout, Strength of Earth and Windfury Totem, which is 24 ahead of Grace of Air), against the generic Level 60 boss (no creature type, standards 19), 20000 iterations, seed 1, standard error 0.1 to 0.3, measured on master aaa643f (2026-10-16: the client 70425 racials, raid hits of 1500 twice a minute, and the Phase 1 BiS weapon speeds of standards 22). Combat Daggers is the default build. Combat Swords now edges it at 180 sec (701.3 against 698.7) since its axes sim best.
 
 | Build | Talents | 120 / 180 / 300 sec |
 | --- | --- | --- |
-| Combat Daggers (Backstab) | `00530310501-30230320201513231-002` | 730.3 / 708.1 / 689.7 |
-| Seal Fate Daggers (Backstab) | `0053031055120005-322303200013-002` | 685.6 / 674.4 / 666.0 |
-| Mutilate | `0053031033150103-302303202015-002` | 680.4 / 669.8 / 662.1 |
-| Combat Swords (Sinister Strike) | `00530310501-32003311201515231` | 702.0 / 679.1 / 660.9 |
-| Subtlety (Hemorrhage) | `0053031035140004--3021203310113011` | 657.0 / 643.6 / 634.0 |
-| Seal Fate Swords (Sinister Strike) | `0053031045130005-3220132020141` | 655.0 / 644.7 / 635.6 |
+| Combat Daggers (Backstab) | `00530310501-30230320201513231-002` | 720.8 / 698.7 / 680.2 |
+| Seal Fate Daggers (Backstab) | `0053031055120005-322303200013-002` | 676.8 / 665.5 / 657.0 |
+| Mutilate | `0053031033150103-302303202015-002` | 680.6 / 669.9 / 661.7 |
+| Combat Swords (Sinister Strike) | `00530310501-32003311201515231` | 724.3 / 701.3 / 683.0 |
+| Subtlety (Hemorrhage) | `0053031035140004--3021203310113011` | 648.1 / 634.3 / 624.5 |
+| Seal Fate Swords (Sinister Strike) | `0053031045130005-3220132020141` | 675.6 / 665.4 / 656.0 |
 
 Combat Swords, Combat Daggers, Mutilate and Subtlety play differently and each has its own preset. Seal Fate Daggers (4.8% behind Combat Daggers) and Seal Fate Swords (5.1% behind Combat Swords) are the other builds within 10% of their spec, with the same rotations as their spec.
 
@@ -284,12 +284,12 @@ Murder (2/2, +4% against Humanoids and Giants) does nothing against the generic 
 
 | Build (vs Humanoid) | Talents | 120 / 180 / 300 sec |
 | --- | --- | --- |
-| Combat Daggers | `00532310301-30230320201513231-002` | 752.8 / 730.1 / 711.3 |
-| Seal Fate Daggers | `0053231053120005-322303200013-002` | 709.6 / 697.8 / 689.0 |
-| Mutilate | `0053231013150103-302303202015-002` | 703.9 / 693.0 / 685.1 |
-| Combat Swords | `00532310301-32003311201515231` | 726.3 / 702.8 / 684.0 |
-| Subtlety | `0053231015140004--3021203310113011` | 680.5 / 666.6 / 656.6 |
-| Seal Fate Swords | `0053231025130005-3220132020141` | 678.1 / 667.4 / 658.1 |
+| Combat Daggers | `00532310301-30230320201513231-002` | 743.0 / 720.4 / 701.3 |
+| Seal Fate Daggers | `0053231053120005-322303200013-002` | 700.3 / 688.6 / 679.7 |
+| Mutilate | `0053231013150103-302303202015-002` | 703.8 / 692.8 / 684.4 |
+| Combat Swords | `00532310301-32003311201515231` | 749.4 / 725.8 / 706.9 |
+| Subtlety | `0053231015140004--3021203310113011` | 671.3 / 656.9 / 646.8 |
+| Seal Fate Swords | `0053231025130005-3220132020141` | 699.4 / 688.9 / 679.2 |
 
 Expose Armor is out of every build and rotation (standards 18). It never added anything, since it does not stack with the raid's Sunder Armor.
 
@@ -298,12 +298,12 @@ No build uses Venom. As modelled (25 Energy, the cost still marked TODO in `veno
 Forever's rogue changes beyond the talent tree, and what each one is worth (2026-10-13, Combat Swords Undead at 180 sec unless said otherwise):
 - Poisons are class imbues. Forever's poisons (Deadly Poison 11356 and 25351, Instant Poison 11340, Wound Poison 13227) apply through SpellEffect 360, where Era used 54, the same weapon enchant effect as the sharpening stones and oils (Dense Sharpening Stone 16138, Elemental Sharpening Stone 25122). A poison and a stone sit on the same weapon (client 1.60.1.70338, wago.tools SpellEffect; found by the class changes auditor). The rogue takes its poisons from its own options now (a poison picker on each hand, the main hand Deadly Poison and the off hand Instant Poison), and the consumes put a Dense Sharpening Stone (+8 damage) on both blades: +9.5 for Combat Swords, +13.0 for Combat Daggers.
 - Windfury Totem with a main hand poison: the sim already let Windfury Totem proc next to a rogue poison (only a shaman's own Windfury Weapon blocks it), so nothing moved.
-- Axes: Forever's rogues can wield axes (Hack and Slash reads "Axe/Sword", and the rogue gear pool has had axes since 2026-09-23), and the Orc's Axe Specialization is 1% crit (Forever's racials, beta client). The same synthetic swords as axes (before the Chili fix) are worth +6.2 to the Orc on Combat Swords (680.3 against 674.1 at 180 sec), which puts an Orc with axes 1.5 ahead of the Undead (678.8, the same with either weapon) and 5.4 ahead of the Human with swords (674.9; the Human loses its sword racial with axes, 663.0). On Seal Fate Swords axes are +3.6 for the Orc (643.1), still 1.5 behind the Undead (644.6). No other race gains. Maces lose (674.7 for the Undead, and 663.2 for the Dwarf with its mace racial against 661.7 with swords). The presets stay on swords, the Era Phase 1 BiS type (standards 16), and on the Undead. An Orc playing Combat Swords should take axes.
+- Axes: Forever's rogues can wield axes (Hack and Slash reads "Axe/Sword"). Since client 70425 no racial depends on the weapon (the Orc's Savage and the Human's Ruthless work with any weapon, the Dwarf's Earth Fury replaced the mace crit), so a weapon type is chosen on its own merits: Combat Swords carries a 2.9 and a 1.7 sec axe because those Phase 1 BiS speeds sim best (standards 22).
 - Eureka! (the Gnome's 10% off for every class) was already in.
 - The Land Mine goes out after a main hand swing under Slice and Dice (+0.6 to +1.5 over throwing it at once), and the synthetic on-use trinket is its own line next to Earthstrike's.
 - Dragonbreath Chili's Forever damage, 61 to 69 a proc (client 70338, the shared consumes fix), adds 0.3.
 
-Gear: two synthetic Phase 1 sets (`tools/database/forever_synthetic_items_rogue.go`) on the shared item level table, swords for Sinister Strike (Vis'kag the Bloodletter and Brutality Blade's damage) and daggers for the rest (Perdition's Blade and Core Hound Tooth's), built to the cross-class Forever budget (standards 1b, 2026-10-13: physical melee, each armor piece's weighted linear total slot mod x (1.125 x ilvl + 2) x f within 1% and three stat lines so its 1.7-norm stays within 6% of the shape line; armor 650.5, two one-handers 31.9 each and a bow 19.5, 734.0 a set) in the fair stat mix of Season of Discovery rogue BiS (standards 5a, hit held at the cap and the rest in the table's proportions; linear shares Stamina / Strength / Agility / attack power / hit / crit: swords 20.6 / 17.8 / 37.2 / 5.6 / 6.8 / 12.0, daggers 20.7 / 18.0 / 34.1 / 7.5 / 6.8 / 12.9, every stat within 1 point of the hit-adjusted target). Both sets wear two synthetic ilvl 71 trinkets (31 Agility and 15 crit rating, and +335 attack power for 20 sec every 2 min, `sim/rogue/forever_synthetic_trinkets.go`), since Forever's real Phase 1 trinkets are removed or not simulated. Against the earlier 1a sets (793.5 linear points and no trinkets) every build gained 10 to 16 at 180 sec, and no talent, rotation or race changed. Both sets carry 5% hit, the 9% cap with Precision 3/3 and the 2 piece bonus of Grimstitch Armor (Forever's crafted rogue set, 1% hit). Its 4 piece (+36 attack power against Humanoids) would add about 8 DPS and the 5 piece (Eviscerate 5 Energy cheaper) about 6 more, for Combat Daggers and Combat Swords alike. The Ahn'Qiraj book ranks are out (Backstab, Eviscerate and Deadly Poison take ranks 8, 8 and 4). Consumes: Elixir of the Mongoose and Elixir of Ferocity, Juju Might, Ground Scorpok Assay, Flank au Poivre, Dragonbreath Chili, Major Frenzy Potion, Thistle Tea, Goblin Sapper and Land Mine, a Dense Sharpening Stone on each blade, with Deadly Poison on the main hand and Instant Poison on the off hand in the rogue's options (the best pair for every spec).
+Gear: four synthetic Phase 1 sets (`tools/database/forever_synthetic_items_rogue.go`: Combat Swords, Seal Fate Swords, Mutilate and the daggers shared by the other builds) on the shared item level table, the Sinister Strike weapons at Vis'kag the Bloodletter's and Brutality Blade's damage per second and the dagger weapons at Perdition's Blade's and Core Hound Tooth's, each at the Phase 1 BiS speed and type that sims best (standards 22: Combat Swords a 2.9 sec axe and a 1.7 sec axe, Seal Fate Swords the same main hand and a 1.6 sec dagger, Mutilate a 1.7 sec dagger and a 1.8 sec sword, the other dagger builds 1.8 and 1.6 sec daggers), built to the cross-class Forever budget (standards 1b, 2026-10-13: physical melee, each armor piece's weighted linear total slot mod x (1.125 x ilvl + 2) x f within 1% and three stat lines so its 1.7-norm stays within 6% of the shape line; armor 650.5, two one-handers 31.9 each and a bow 19.5, 734.0 a set) in the fair stat mix of Season of Discovery rogue BiS (standards 5a, hit held at the cap and the rest in the table's proportions; linear shares Stamina / Strength / Agility / attack power / hit / crit: swords 20.6 / 17.8 / 37.2 / 5.6 / 6.8 / 12.0, daggers 20.7 / 18.0 / 34.1 / 7.5 / 6.8 / 12.9, every stat within 1 point of the hit-adjusted target). Both sets wear two synthetic ilvl 71 trinkets (31 Agility and 15 crit rating, and +335 attack power for 20 sec every 2 min, `sim/rogue/forever_synthetic_trinkets.go`), since Forever's real Phase 1 trinkets are removed or not simulated. Against the earlier 1a sets (793.5 linear points and no trinkets) every build gained 10 to 16 at 180 sec, and no talent, rotation or race changed. Both sets carry 5% hit, the 9% cap with Precision 3/3 and the 2 piece bonus of Grimstitch Armor (Forever's crafted rogue set, 1% hit). Its 4 piece (+36 attack power against Humanoids) would add about 8 DPS and the 5 piece (Eviscerate 5 Energy cheaper) about 6 more, for Combat Daggers and Combat Swords alike. The Ahn'Qiraj book ranks are out (Backstab, Eviscerate and Deadly Poison take ranks 8, 8 and 4). Consumes: Elixir of the Mongoose and Elixir of Ferocity, Juju Might, Ground Scorpok Assay, Flank au Poivre, Dragonbreath Chili, Major Frenzy Potion, Thistle Tea, Goblin Sapper and Land Mine, a Dense Sharpening Stone on each blade, with Deadly Poison on the main hand and Instant Poison on the off hand in the rogue's options (the best pair for every spec).
 
 Talents and rotations come from `tools/rotopt` at 180 sec: a knob search, a talent search seeded from every archetype (deep Combat, Seal Fate with Combat, Mutilate, deep Subtlety, Subtlety with Seal Fate), and the knob search again until neither moved, with Mutilate, Seal Fate and Hemorrhage, Ghostly Strike and Premeditation pinned (`-require`) for their builds. The talent searches were run again after the Ahn'Qiraj ranks went out, after the Murder fix and after each gear rebudget, and kept every build. The rotations (`rogue_ss`, `rogue_bs`, `rogue_mut`, `rogue_sub`, regenerated by `rogue_presets.sh`):
 
@@ -314,31 +314,34 @@ Talents and rotations come from `tools/rotopt` at 180 sec: a knob search, a tale
 
 Rotation audit (the rotations auditor and our own timelines and breakdowns): Slice and Dice is up 96 to 97% of the fight, the cooldowns line up with Adrenaline Rush, the potion, Sapper, the on-use trinket and Land Mine go in the opening window (the Land Mine after a main hand swing), energy sits under the builder's cost 77 to 96% of the time and caps only in the opener (2 to 5 energy a fight lost to Thistle Tea). Refreshing Slice and Dice early, waiting for more points on a fresh one, Rupture at 4 or 5 points, Expose Armor and Ghostly Strike on the Combat builds all lose.
 
-Races against the generic boss (180 sec, 120 / 300 sec in the same order):
+Races against the generic boss (master aaa643f, 180 sec, 20000 iterations, seed 1, standard error 0.2; the same seed for every race, so the gaps are tighter than the error suggests):
 
 | Race | Combat Daggers | Seal Fate Daggers | Combat Swords | Seal Fate Swords | Mutilate | Subtlety |
 | --- | --- | --- | --- | --- | --- | --- |
-| Undead | 708.1 | 674.4 | 679.1 | 644.7 | 669.8 | 643.6 |
-| Orc | 699.2 | 664.4 | 674.6 | 639.4 | 657.3 | 634.8 |
-| Gnome | 693.3 | 662.4 | 669.0 | 636.1 | 655.7 | 629.7 |
-| Night Elf | 692.5 | 661.4 | 669.3 | 635.0 | 653.9 | 629.3 |
-| Troll | 692.0 | 659.1 | 667.6 | 633.4 | 652.5 | 626.5 |
-| Skyborne (Windshaper) | 691.7 | 658.9 | 667.3 | 633.2 | 652.4 | 627.0 |
-| Skyborne (High Order) | 691.6 | 658.7 | 667.1 | 633.0 | 652.2 | 626.9 |
-| Human | 688.2 | 655.6 | 675.4 | 634.9 | 648.7 | 624.3 |
-| Dwarf | 687.3 | 654.0 | 662.2 | 627.9 | 647.2 | 623.3 |
+| Undead | 698.7 | 665.5 | 701.3 | 665.4 | 669.9 | 634.3 |
+| Orc | 696.5 | 665.7 | 704.7 | 665.6 | 669.4 | 633.5 |
+| Skyborne (Windshaper) | 698.8 | 665.8 | 703.4 | 666.5 | 669.5 | 633.3 |
+| Skyborne (High Order) | 698.8 | 665.6 | 703.2 | 666.2 | 669.3 | 633.2 |
+| Dwarf | 696.7 | 662.6 | 699.1 | 662.0 | 665.8 | 630.5 |
+| Human | 691.7 | 662.2 | 704.1 | 661.2 | 665.5 | 629.2 |
+| Gnome | 692.6 | 661.7 | 698.1 | 663.1 | 666.3 | 631.2 |
+| Night Elf | 692.0 | 661.3 | 697.7 | 661.2 | 664.4 | 629.0 |
+| Troll | 691.7 | 658.8 | 696.1 | 659.7 | 662.8 | 626.7 |
 
-Best overall and best Horde is Undead for every build (Touch of the Grave): 3.7 to 4.0 ahead of the Human on Combat Swords, 5 to 7 ahead of the Orc on Seal Fate Swords, 8 to 14 ahead of the Orc on the dagger builds. Best Alliance:
-- Combat Daggers: Gnome (Eureka!), 0.7 to 0.8 ahead of the Night Elf at every length.
-- Seal Fate Daggers: Gnome, by 0.5 to 1.0.
-- Mutilate: Gnome, by 1.5 to 1.8.
-- Subtlety: Gnome, by 0.1 to 0.4.
-- Combat Swords: Human (+2% crit with swords), by 4.9 to 6.4.
-- Seal Fate Swords: Gnome, 1.1 ahead of the Night Elf at 180 sec, 0.1 to 0.2 at 120 and 300.
+Since client 70425 the races sit close together (Touch of the Grave once every 25 sec, Savage and Ruthless with any weapon, Earth Fury, Wind Blessed at 3% haste). The presets stay Undead:
+- Combat Swords: the Orc is best overall and best Horde (704.7, 3.4 over the Undead), the Human best Alliance (704.1, Ruthless).
+- Combat Daggers, Seal Fate Daggers and Seal Fate Swords: the Windshaper, High Order and Undead are within 1.1 of each other, and so is the Orc except on Combat Daggers (2.3 behind). Best Alliance is the High Order, 2.1 to 3.1 ahead of the next (Dwarf or Gnome).
+- Mutilate and Subtlety: the Undead is still best overall and best Horde, by 0.4 over the Windshaper and 0.7 over the Orc. Best Alliance is the High Order, 0.6 and 1.1 behind.
 
-Against a Humanoid (the "(vs Humanoid)" presets, Murder 2/2) the order is the same and the gaps 0.2 to 0.6 wider. Undead at 180 sec: Combat Daggers 730.1, Seal Fate Daggers 697.8, Combat Swords 702.8, Seal Fate Swords 667.4, Mutilate 693.0, Subtlety 666.6. Next: Orc 720.9 / 687.4 / Human 698.7 / Orc 661.9 / 679.9 / 657.4. Best Alliance: Gnome 714.6 / 685.3 / Human 698.7 / Gnome 658.4 / 678.3 / 652.0.
+Against a Humanoid (the "(vs Humanoid)" presets, Murder 2/2) the order is the same within 0.3. At 180 sec, Undead / best:
+- Combat Daggers 720.4 / Windshaper 720.5.
+- Seal Fate Daggers 688.6 / Orc 688.8.
+- Combat Swords 725.8 / Orc 729.2 (Human 728.4).
+- Seal Fate Swords 688.9 / Windshaper 690.0.
+- Mutilate 692.8 (best).
+- Subtlety 656.9 (best).
 
-The weapons are the Era Phase 1 BiS types (swords and daggers), so the only weapon racial in play is the Human's swords (and the Orc's axes, above, for a player who swaps). Undead has none, so with the weapon racials off the order of the specs is the same. The 120 and 300 sec columns keep the order but for near ties (within 0.7).
+No racial depends on the weapon any more, so there is no weapon-racial column.
 
 Talent verification (2026-10-12): every talent with points in the six builds was checked from runs rather than the code:
 - Debug logs: the attacker modifier and crit multiplier on each hit, the energy costs, the aura times.
