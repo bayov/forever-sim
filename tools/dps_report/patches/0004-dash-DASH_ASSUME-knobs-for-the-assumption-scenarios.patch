@@ -328,7 +328,7 @@ index 2efef73a3..1ba9d7c54 100644
 @@ -45,6 +45,10 @@ func (paladin *Paladin) registerConsecration() {
  		if paladin.Env.IsForever() {
  			tickDamage = (rank.foreverAll + rank.foreverExtra) / 8
- 			tickCoefficient = 0.095
+ 			tickCoefficient = 0.042 // client 70425 (spells 1280345-1280353; 0.095 in 70338)
 +			if v, ok := core.AssumeOk("pal_cons31"); ok && rank.level >= 40 {
 +				tickDamage *= v // dashboard assumption: the 31+ ranks held to the level 30 trend
 +			}

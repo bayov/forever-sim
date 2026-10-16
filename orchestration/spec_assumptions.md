@@ -221,7 +221,7 @@ Close behind: `flat_bonus_inside_pct` (est. −3.7% dagger rogues and +3% Retrib
 |---|---|---|---|---|---|---|---|
 | `pal_sor_sp_double` | Seal of Righteousness takes spell power twice | twist, sub Holy, Shock | twice (2 × 11% on a two-hander) | once (10%) | twice | = Expected | Low −5.3 to −6.6% (assumption sims, 180 s) |
 | `pal_sor_sp_speed` | Seal of Righteousness's spell power and weapon speed | twist, sub Holy, Shock | flat per swing | scales with weapon speed (TBC-like) | flat per swing | = Expected | Low −0.5 to −0.7% (assumption sims, 180 s) |
-| `pal_consecration_coef` | Consecration's coefficient a tick | twist, sub Holy, Shock | 9.5% | 4.2% (Era) | 9.5% | = Expected | Low −4.5 to −6.3% (assumption sims, 180 s) |
+| `pal_consecration_coef` | Consecration's coefficient a tick | twist, sub Holy, Shock | 4.2% (client 70425) | = Expected | 4.2% | 9.5% (client 70338) | settled by client 70425 (was Low −4.5 to −6.3%, assumption sims, 180 s) |
 | `pal_2h_spec_holy` | Two-Handed Weapon Spec on Holy seal damage | twist, sub Holy, Shock | yes | Physical only | yes | = Expected | Low −1.1% twist (PR) |
 | `pal_31plus_ranks` | Holy Strike and Consecration 31+ ranks | twist, sub Holy, Shock | client | held to the ≤30 trend | client | = Expected | Low −1.2% (PR) |
 
@@ -233,7 +233,7 @@ Retribution is also affected by `flat_bonus_inside_pct` (Holy Strike; +3.6 to +4
 - **Sim now:**
   - The proc's coefficient is 10% under Forever, ×1.1 on a two-hander (`sim/paladin/sor.go:105-112`).
   - It is added once into `baseDamage` (`:131`) and once more through `BonusCoefficient` (`:127`), so the effective coefficient is 2 × 11%.
-  - Judgement of Righteousness is 50% (`:94`).
+  - Judgement of Righteousness is 42.9% (`:94`, client 70425; 50% before).
 - **Source:** Season of Discovery sim tests ("from testing in SoD", `:111`). The Forever client has the same data as Season of Discovery's: Judgement of Righteousness (20286) carries the seal's 1786 / 47 at a 20% coefficient, twice the proc spell's 10%.
 - **Why uncertain:** the double count is a Season of Discovery server behaviour inferred from data, not a Forever measurement. A level 30 paladin with and without spell power would settle it.
 - **Settings:**
@@ -241,6 +241,7 @@ Retribution is also affected by `flat_bonus_inside_pct` (Holy Strike; +3.6 to +4
   - **Expected, twice (Sim now).** Forever's client matches Season of Discovery's data, where the double count was measured.
   - **High:** = Expected.
 - **Sensitivity (PR, results audit before the fairness round):** Low gives twist −49 (−5.1%) and Shock −42 (−4.4%); sub Holy is like twist. The build order doesn't change.
+- **Client 70425 (2026-10-16):** the proc spells (25713 and lower) now carry a 0 coefficient; Judgement of Righteousness's dummy effect still has 1786 / 47 at 20%. On the 70425 sim, once is −54 on twist and −50 on Shock at 180 s, and 0 is −105 and −99.
 - **Knob:** `sim/paladin/sor.go:131`. When the key is 1, drop the explicit `spell.BonusCoefficient*(...)` term; `:111` drops the ×1.1.
 
 ### `pal_sor_sp_speed`: does Seal of Righteousness's spell power grow with weapon speed?
@@ -259,7 +260,7 @@ Retribution is also affected by `flat_bonus_inside_pct` (Holy Strike; +3.6 to +4
 ### `pal_consecration_coef`: Consecration's spell power coefficient
 
 - **Builds:** twist and sub Holy (Consecration down to 20% mana, worth 109 DPS) and Shock (to the last point of mana).
-- **Sim now:** 9.5% of spell power a tick, 8 ticks, on the whole tick (the "everyone" quarter and the first-four extra together). `sim/paladin/consecration.go:47` (Forever) against `:44` (Era 0.042).
+- **Sim now:** 4.2% of spell power a tick (client 1.60.1.70425, spells 1280345 to 1280353; 9.5% in 70338), 8 ticks, on the whole tick (the "everyone" quarter and the first-four extra together). `sim/paladin/consecration.go:48`.
 - **Source:** "an older Forever tooltip" (`:13-15`). The damage runs through a server script, and no page shows the coefficient (sim-status, 2026-09-24 notes).
 - **Why uncertain:**
   - The script's coefficient is unpublished.
@@ -270,7 +271,8 @@ Retribution is also affected by `flat_bonus_inside_pct` (Holy Strike; +3.6 to +4
   - **Expected, 9.5% a tick (Sim now).** The only Forever number anyone has seen.
   - **High:** = Expected. The "split parts" 10.55% reading was dropped (user ruling 2026-10-15).
 - **Sensitivity (assumption sims, 180 s, at Low):** −4.5 to −6.3% (twist −6.3%, Shock −5.6%).
-- **Knob:** `sim/paladin/consecration.go:47`, `tickCoefficient = core.Assume("pal_consecration_coef", 0.095)`.
+- **Settled (2026-10-16):** client 70425 gives 4.2%, which is now Expected; 70338's 9.5% is kept as High.
+- **Knob:** `sim/paladin/consecration.go:48`, `tickCoefficient = core.Assume("pal_consecration_coef", tickCoefficient)`.
 
 ### `pal_2h_spec_holy`: Two-Handed Weapon Specialization on Holy seal damage
 

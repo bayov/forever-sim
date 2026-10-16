@@ -33,8 +33,20 @@ The [development notes of 24 September](https://www.wowhead.com/blue-tracker/top
 - Two-Handed Weapon Specialization is 2 / 4 / 6% (was 3 / 6 / 9%).
 - Twist of Light also takes 20% off the Mana cost of the seals.
 - Retribution Aura scales with the caster's spell power. The coefficient is unknown. The rank 1 tooltip stayed at 7 damage with 18 spell power on, so it is small, and the sim keeps the flat value.
-- Righteous Fury is 60% Holy threat (was 90%).
+- Righteous Fury is 60% Holy threat (was 90%). Client 70425 put it back to 90%.
 - Consecration had targeting fixes, and Echo of Justice (the Twist of Light echo) had its proc chance fixed. Neither changes the sim.
+
+## Client 1.60.1.70425 (2026-10-16)
+
+Diffed against 70338 for every paladin spell and trait curve (wago.tools SpellEffect, SpellLevels and TraitDefinitionEffectPoints). The sim takes all of it:
+
+- Judgement of Righteousness is 42.9% of spell power on every rank (was 50%), and Judgement of Fury 42.9% (was 45%).
+- Champion of the Light is 10 / 20 / 30% of Intellect as spell damage (trait curve 110350, was 20 / 40 / 60%).
+- Consecration's Forever ranks (1280345 to 1280353) are 4.2% of spell power a tick (was 9.5%), Era's value.
+- Righteous Fury is 90% Holy threat again (60% in 70338).
+- Seal of Fury rank 1 (20163) is learned at level 26 (was 25). Seal of Fury is not in the sim.
+- The Seal of Righteousness proc spells (25713 and the lower ranks) lost their 10% spell power coefficient (0 in 70425). Judgement of Righteousness still carries the seal's 1786 / 47 dummy effect at 20%. The sim keeps its proc at 10% of spell power, counted twice (the Season of Discovery tests), until that is settled: one coefficient would cost the twist build 54 DPS at 180 sec and Shock 50, none 105 and 99.
+- Improved Seals stores 0 on its spell (was 3); its trait curve is still 5 / 10 / 15%.
 
 ## Trait curves, client 1.60.1.70338 (2026-10-12)
 
@@ -61,7 +73,7 @@ Forever's talents are traits: TraitDefinitionEffectPoints gives every talent eff
 | One-Handed Weapon Specialization | 3 / 7 / 10% | same |
 | Vengeance | 1 / 2 / 3% a stack (the spell stores 5) | same |
 | Holy Power | 1 to 5% crit, 3 to 15% on its second effect | same (Holy Strike and Holy Shock 3% a point) |
-| Champion of the Light | 20 / 40 / 60% of Intellect | same |
+| Champion of the Light | 20 / 40 / 60% of Intellect (10 / 20 / 30% in 70425) | 10 / 20 / 30% |
 | Instrument of Law | -0.5 / -1.0 sec Hammer of Wrath cast | same |
 | Iron Creed | 5 to 25% threat | same |
 | Redoubt | 4 to 20% block | same |

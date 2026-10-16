@@ -228,6 +228,18 @@ export const DefaultAPL = APLPresets[Phase.Phase4][0];
 // of Light with the side points in Holy, the same with them in Protection, and a Holy Power
 // build that leaves Twist of Light out (30 Holy, 21 Retribution).
 //
+// Client 1.60.1.70425 (2026-10-16) cut Judgement of Righteousness to 42.9% of spell power,
+// Champion of the Light to 10 / 20 / 30% and Consecration to 4.2% a tick; the numbers in the
+// comments below are from before it. At 120 / 180 / 300 sec (20000 iterations) Level 60 is
+// now 879.0 / 874.4 / 865.8, Level 60 (sub Holy) 874.9 / 869.8 / 859.2 and Level 60 Shock
+// 917.0 / 899.8 / 859.9, so Shock is ahead of the twist builds up to 180 sec. Against an
+// Undead boss: vs Undead 972.4 / 967.3 / 949.0, sub Holy vs Undead 975.1 / 970.4 / 961.2 and
+// Shock vs Undead 1001.4 / 971.6 / 927.6. The talent searches at 180 sec kept every build
+// but two. On vs Undead, three Divine Intellect points into Divine Strength and Reverence into
+// Precision 3 (`520030002-503-05225231001330301`) was +8 / +5 / -5. On sub Holy, a Purifying
+// Power point into Holy Conduit 2 (`550030031--05225331001330321`) was a tie up to 180 sec and
+// +3.5 at 300. Both trade one fight length against another, so the presets stay.
+//
 // Level 60: the Retribution tree down to Twist of Light (Benediction, Improved Judgement, Holy
 // Conduit, Conviction, Vindication, Sanctified Judgement, Seal of Command, Sacred Arbiter,
 // Two-Handed Weapon Specialization, Vengeance, Champion of the Light, Instrument of Law 1),

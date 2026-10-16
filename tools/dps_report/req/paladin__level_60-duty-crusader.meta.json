@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_crusader_duty",
   "published": {
-    "dps": 973.1,
-    "source": "PR #33"
+    "dps": 866.4,
+    "source": "Paladin PR (client 70425: Judgement of Righteousness 42.9%, Champion of the Light 10 / 20 / 30%, Consecration 4.2% a tick, 2026-10-16)"
   },
   "verify": {
-    "dps": 973.1,
-    "stderr": 0.32,
+    "dps": 866.37,
+    "stderr": 0.31,
     "iters": 20000,
     "ok": true,
-    "note": "20k, seed 1; base 982.06, duty cost 8.96 at 180 s"
+    "note": "verify.py, 180 s, seed 1"
   },
   "summary": "Retribution down to Twist of Light with Precision 3 from Protection and Divine Strength, Divine Intellect and Improved Seals in Holy, twisting Seal of Command and Seal of Righteousness before every swing. This copy is on Judgement of the Crusader duty: it keeps the debuff on the boss for the raid instead of getting it from another paladin.",
   "keyTalents": [
@@ -69,12 +69,12 @@
   ],
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 spell power and 18 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Twisting is worth 126 DPS, Consecration 109, Holy Strike 99, Hammer of Wrath 29 at 180 s",
+    "Twisting is worth 126 DPS, Consecration 109, Holy Strike 99, Hammer of Wrath 29 at 180 s (measured before client 70425)",
     "Undead is best (Touch of the Grave)",
     "A second crit elixir (Mongoose) would add 14.9 DPS; one 2% crit elixir per character by ruling",
     "Holy Strike's flat part inside the 50% weapon percent comes from client data, not yet confirmed on the beta",
     "High Holy Strike and Consecration ranks may be stale: holding them to their level 30 trend would cost about 1.2%",
-    "Seal of Righteousness spell power counted twice on a two-hander (SoD-style 2 x 11%); one coefficient would be about 42-49 DPS lower",
+    "Seal of Righteousness spell power counted twice on a two-hander (SoD-style 2 x 11%); one coefficient would be about 50-54 DPS lower, and client 70425's 0 on the proc spells about 98-105 lower",
     "Two-Handed Weapon Specialization applied to Holy seal damage (Era sim choice vs client Physical mask): about -11 if removed",
     "Synthetic gear on the hybrid budget (only the Justice Battlegear 2-piece live)",
     "The request has the raid's Judgement of the Crusader off, so the debuff comes only from this paladin (standards 23)."
