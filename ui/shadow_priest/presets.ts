@@ -195,7 +195,7 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 //   Mental Agility, Meditation and the row 2 points fill the rows: mana never runs out.
 // - Early Demise 2 in place of 2 Mental Strength is 0.7 behind.
 // - The Power Infusion build loses Shadowform and is out of mana 107 sec in: 601 at 180 sec.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '00503521103--50052101231302051' }), {
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '00500501103-3-50052101231302251' }), {
 	tooltip: 'Level 60 talents from the talent search: deep Shadow with Twin Disciplines, Mental Strength and Inner Focus.',
 	group: 'Level 60',
 });
@@ -207,7 +207,7 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // 2.5% behind at 180 sec. A talent search from it trades Holy points for Twin Disciplines and
 // Shadow (+9.8 with 13 Holy), which defeats the build's purpose, so it keeps its 20 Holy. With
 // Dark Sacrifice left out of the rotation it would gain 5.1 (837.1).
-export const TalentsLevel60Holy = PresetUtils.makePresetTalents('Level 60 + Holy', SavedTalents.create({ talentsString: '-3025011323-50052101231302051' }), {
+export const TalentsLevel60Holy = PresetUtils.makePresetTalents('Level 60 + Holy', SavedTalents.create({ talentsString: '-3025011303-50052101231302251' }), {
 	tooltip: 'The Level 60 Shadow points with 20 Holy points for healing utility, about 22 DPS behind.',
 	group: 'Level 60',
 });
@@ -225,7 +225,7 @@ export const TalentsLevel60Holy = PresetUtils.makePresetTalents('Level 60 + Holy
 // / 300 sec as an Undead, whose Dark Sacrifice comes when the mana runs low. That is 17% behind
 // Shadow at 180 sec and 24% at 300: Smite is a mana hungry filler and nothing in the tree halves its cost the way
 // Shadowform does for Shadow spells.
-export const TalentsLevel60Smite = PresetUtils.makePresetTalents('Level 60 Smite', SavedTalents.create({ talentsString: '525035231030001001-00505113002-3' }), {
+export const TalentsLevel60Smite = PresetUtils.makePresetTalents('Level 60 Smite', SavedTalents.create({ talentsString: '525035231030001001-30505110002-3' }), {
 	tooltip: 'Holy damage talents: 31 Discipline (Power in Light, Penance, Power Infusion) and 17 Holy (Divine Fury, Searing Light).',
 	group: 'Level 60',
 });
