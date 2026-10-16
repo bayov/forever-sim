@@ -577,41 +577,53 @@
 	}
 }
 
-// At five Maelstrom Weapon stacks, cyan arcs light up on both sides of the pack, like the
-// PowerAuras textures of the WeakAura.
-.replay-center::before,
-.replay-center::after {
-	content: '';
+// At five Maelstrom Weapon stacks, cyan arcs light up in the middle of the screen, where our
+// character would stand, like the PowerAuras textures of the WeakAura. They sit above the procs,
+// with room for a second row of procs.
+.replay-alert {
 	position: absolute;
-	top: 30px;
-	width: 46px;
-	height: 120px;
-	border: 5px solid #00b8de;
-	border-radius: 50%;
+	bottom: calc(100% + 36px);
+	left: 50%;
+	width: 220px;
+	height: 130px;
+	transform: translateX(-50%);
 	opacity: 0;
-	filter: drop-shadow(0 0 6px #00b8de);
 	transition: opacity 0.12s;
+
+	&.on {
+		opacity: 1;
+		animation: replay-pulse 0.8s ease-in-out infinite alternate;
+	}
+}
+
+// Hidden arcs let the mouse through.
+.replay-alert.replay-tip:not(.on),
+.replay-alert:not(.on) {
 	pointer-events: none;
 }
 
-.replay-center::before {
-	left: -64px;
-	border-right-color: transparent;
-	border-top-color: transparent;
-	border-bottom-color: transparent;
-}
+.replay-alert-arc {
+	position: absolute;
+	top: 0;
+	width: 50px;
+	height: 100%;
+	border: 5px solid #00b8de;
+	border-radius: 50%;
+	filter: drop-shadow(0 0 6px #00b8de);
 
-.replay-center::after {
-	right: -64px;
-	border-left-color: transparent;
-	border-top-color: transparent;
-	border-bottom-color: transparent;
-}
+	&.left {
+		left: 0;
+		border-right-color: transparent;
+		border-top-color: transparent;
+		border-bottom-color: transparent;
+	}
 
-.replay-center.maelstrom-full::before,
-.replay-center.maelstrom-full::after {
-	opacity: 1;
-	animation: replay-pulse 0.8s ease-in-out infinite alternate;
+	&.right {
+		right: 0;
+		border-left-color: transparent;
+		border-top-color: transparent;
+		border-bottom-color: transparent;
+	}
 }
 
 @keyframes replay-pulse {

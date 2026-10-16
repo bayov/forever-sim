@@ -19,7 +19,7 @@ func (rogue *Rogue) registerMutilateSpell() {
 		SpellSchool: core.SpellSchoolPhysical,
 		DefenseType: core.DefenseTypeMelee,
 		ProcMask:    core.ProcMaskMeleeOHSpecial,
-		Flags:       SpellFlagBuilder | core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
+		Flags:       SpellFlagBuilder | SpellFlagColdBlooded | core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
 
 		// Puncturing Wounds raises the crit chance of the whole Mutilate, both halves.
 		BonusCritRating: 5 * core.CritRatingPerCritChance * float64(rogue.Talents.PuncturingWounds),
@@ -73,7 +73,7 @@ func (rogue *Rogue) registerMutilateSpell() {
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			rogue.BreakStealth(sim)
 
-			// Cold Blood is spent on the main hand half, which is the larger of the two.
+			// Cold Blood covers both halves and is spent by the off hand half (talents.go).
 			baseDamage := rogue.mutilateDamage(target, flatDamage, rogue.MHNormalizedWeaponDamage(sim, spell.MeleeAttackPower(target)))
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeWeaponSpecialHitAndCrit)
 			rogue.mutilateOH.Cast(sim, target)
