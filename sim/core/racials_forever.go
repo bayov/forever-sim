@@ -11,8 +11,8 @@ import (
 // forever-wiki/racials.md). Every race has two actives and two passives, the resistance
 // racials are gone and the weapon skill racials pay crit instead.
 //
-// Cooldowns per the client: Blood Fury, Eureka! and the Undead and Gnome utilities 2 min,
-// Berserking, Elune's Light and the Human, Dwarf and Orc utilities 3 min.
+// Cooldowns per the client: Eureka! and the Undead and Gnome utilities 2 min, Blood Fury
+// (since client 70425), Berserking, Elune's Light and the Human, Dwarf and Orc utilities 3 min.
 
 func applyForeverRaceEffects(agent Agent) {
 	character := agent.GetCharacter()
@@ -112,6 +112,9 @@ func (character *Character) mobTypeDamageAura(mobType proto.MobType, multiplier 
 // attack power alone gives 1.056. Stormstrike rolls the same weapon, so it gets it too, and
 // Stormstrikes with Blood Fury up fit that on a dagger and on a fist (2026-10-12). We add it
 // to each weapon's damage range, after the weapon enchants and stones.
+//
+// Client 70425 lengthens its cooldown from 2 min to 3 min (SpellCooldowns 120000 to 180000);
+// the effects are unchanged.
 func (character *Character) registerForeverBloodFury() {
 	actionID := ActionID{SpellID: 20572}
 
@@ -156,7 +159,7 @@ func (character *Character) registerForeverBloodFury() {
 		Cast: CastConfig{
 			CD: Cooldown{
 				Timer:    character.NewTimer(),
-				Duration: time.Minute * 2,
+				Duration: time.Minute * 3,
 			},
 		},
 		ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
@@ -199,13 +202,17 @@ func (character *Character) registerElunesLight() {
 	})
 }
 
-// Eureka!: the next 3 damaging abilities cost 10% less and deal 10% more damage, for
-// every class since the 2026-09-24 beta build (before it the discount was Energy 20%,
-// Rage 40%, Mana 50% and Priests 15%). A Priest's healing counts too. 2 min cooldown.
+// Eureka!: damaging abilities cost 10% less and deal 10% more damage for 8 sec, for every
+// class since the 2026-09-24 beta build (before it the discount was Energy 20%, Rage 40%,
+// Mana 50% and Priests 15%). A Priest's healing counts too. 2 min cooldown.
+//
+// Client 70425 shortened it from 15 sec to 8 sec (duration index 8 to 31) and dropped its
+// SpellAuraOptions row, so the 3-charge limit is gone: every ability in the 8 sec gets it.
+// Under 70338 it was the next 3 damaging abilities within 15 sec.
 //
 // A damaging ability is one the rotation can cast, that has a cost and that is set up to
 // deal damage. Slice and Dice, Expose Armor or a shout have no damage multiplier and are
-// left alone. Auto attacks are not abilities. A stack is spent on each cast.
+// left alone. Auto attacks are not abilities.
 func (character *Character) registerEureka() {
 	actionID := ActionID{SpellID: 1259812}
 	costReduction := int32(10)
@@ -223,10 +230,9 @@ func (character *Character) registerEureka() {
 
 	var affected []*Spell
 	aura := character.RegisterAura(Aura{
-		Label:     "Eureka!",
-		ActionID:  actionID,
-		Duration:  time.Second * 15, // SpellMisc duration 15000 in client 70338
-		MaxStacks: 3,
+		Label:    "Eureka!",
+		ActionID: actionID,
+		Duration: time.Second * 8, // duration index 31 in client 70425 (15 sec in 70338)
 		OnInit: func(aura *Aura, sim *Simulation) {
 			for _, spell := range character.Spellbook {
 				if affects(spell) {
@@ -246,16 +252,6 @@ func (character *Character) registerEureka() {
 				spell.Cost.Multiplier += costReduction
 			}
 		},
-		OnStacksChange: func(aura *Aura, sim *Simulation, oldStacks, newStacks int32) {
-			if newStacks == 0 {
-				aura.Deactivate(sim)
-			}
-		},
-		OnCastComplete: func(aura *Aura, sim *Simulation, spell *Spell) {
-			if aura.GetStacks() > 0 && affects(spell) {
-				aura.RemoveStack(sim)
-			}
-		},
 	})
 
 	spell := character.RegisterSpell(SpellConfig{
@@ -269,7 +265,6 @@ func (character *Character) registerEureka() {
 		},
 		ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
 			aura.Activate(sim)
-			aura.SetStacks(sim, aura.MaxStacks)
 		},
 	})
 
@@ -285,8 +280,11 @@ func (character *Character) registerEureka() {
 	})
 }
 
-// Touch of the Grave: spells and attacks have a 5% chance (10% for Mages, Priests and
-// Warlocks) to drain health from the target, up to 5% of the caster's maximum health.
+// Touch of the Grave: spells and attacks have a 20% chance (30% for Mages, Priests and
+// Warlocks) to drain health from the target, up to 5% of the caster's maximum health, at
+// most once every 25 sec. Client 70425 raised the chances from 5% and 10% and the
+// ProcCategoryRecovery from 1000 to 25000 ms on both procs (1260189 and 1260201); the
+// drain itself (1260198) is unchanged.
 //
 // "Up to" reads as a cap, and the amount under it is not published. The drain is modelled
 // at the cap, so this is the upper bound of what the racial can be worth. It is Shadow
@@ -316,11 +314,11 @@ func (character *Character) registerEureka() {
 // the beta on a missed swing and this is the quieter of the two guesses.
 func (character *Character) registerTouchOfTheGrave() {
 	actionID := ActionID{SpellID: 1260189}
-	procChance := 0.05
+	procChance := 0.20
 	switch character.Class {
 	case proto.Class_ClassMage, proto.Class_ClassPriest, proto.Class_ClassWarlock:
 		actionID = ActionID{SpellID: 1260201}
-		procChance = 0.10
+		procChance = 0.30
 	}
 	healthMetrics := character.NewHealthMetrics(actionID)
 
@@ -345,7 +343,7 @@ func (character *Character) registerTouchOfTheGrave() {
 
 	icd := Cooldown{
 		Timer:    character.NewTimer(),
-		Duration: time.Second,
+		Duration: time.Second * 25, // ProcCategoryRecovery 25000 in client 70425 (1000 in 70338)
 	}
 
 	proc := func(sim *Simulation, spell *Spell, result *SpellResult) {

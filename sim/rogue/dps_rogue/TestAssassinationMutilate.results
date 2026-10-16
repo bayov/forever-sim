@@ -246,15 +246,15 @@ dps_results: {
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Orc-combat_backstab_prebis-Poisons-forever_mutilate-FullBuffs-P1-Poison-Consumes-LongMultiTarget"
  value: {
-  dps: 195.29117
-  tps: 138.65802
+  dps: 194.70333
+  tps: 138.2401
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Orc-combat_backstab_prebis-Poisons-forever_mutilate-FullBuffs-P1-Poison-Consumes-LongSingleTarget"
  value: {
-  dps: 195.29117
-  tps: 138.65802
+  dps: 194.70333
+  tps: 138.2401
  }
 }
 dps_results: {
@@ -267,15 +267,15 @@ dps_results: {
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Orc-combat_backstab_prebis-Poisons-forever_mutilate-NoBuffs-P1-Poison-Consumes-LongMultiTarget"
  value: {
-  dps: 96.21217
-  tps: 68.31261
+  dps: 95.97433
+  tps: 68.14402
  }
 }
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-Settings-Orc-combat_backstab_prebis-Poisons-forever_mutilate-NoBuffs-P1-Poison-Consumes-LongSingleTarget"
  value: {
-  dps: 96.21217
-  tps: 68.31261
+  dps: 95.97433
+  tps: 68.14402
  }
 }
 dps_results: {
