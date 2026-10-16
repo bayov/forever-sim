@@ -186,7 +186,10 @@ func init() {
 	// https://www.wowhead.com/classic/item=14555/alcors-sunrazor
 	// Chance on hit: Blasts a target for 75 to 105 Fire damage.
 	// 1 PPM from Armaments Discord
-	itemhelpers.CreateWeaponCoHProcDamage(AlcorsSunrazor, "Alcor's Sunrazor", 1.0, 18833, core.SpellSchoolFire, 75, 30, 0, core.DefenseTypeMagic)
+	// Forever: Firebolt (18833) is 105 with variance 0.2, 94.5 to 115.5, since client 1.60.1.70425
+	// (90 with variance 0.333, 75 to 105, through 70374). Not in the development notes.
+	itemhelpers.CreateWeaponCoHProcDamageByRuleset(AlcorsSunrazor, "Alcor's Sunrazor", 1.0, 18833, core.SpellSchoolFire,
+		[2]float64{75, 30}, [2]float64{94.5, 21}, 0, core.DefenseTypeMagic)
 
 	//https://www.wowhead.com/classic/item=12798/annihilator
 	// Chance on hit: Reduces an enemy's armor by 200.  Stacks up to 3 times.
@@ -2079,7 +2082,9 @@ func init() {
 			ProcMask:         core.ProcMaskEmpty,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
-			BonusCoefficient: 1.0,
+			// The Forever client gives the item's Drain Life (21170, 100 to 180) no spell power
+			// since 1.60.1.70009 (EffectBonusCoefficient 1 to 0).
+			BonusCoefficient: core.TernaryFloat64(character.Env.IsForever(), 0, 1.0),
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				result := spell.CalcAndDealDamage(sim, target, sim.Roll(100, 180), spell.OutcomeMagicHit)
 				character.GainHealth(sim, result.Damage, healthMetrics)

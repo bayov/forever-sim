@@ -10,8 +10,29 @@ import (
 func CreateWeaponProcDamage(itemId int32, itemName string, ppm float64, spellId int32, school core.SpellSchool,
 	dmgMin float64, dmgRange float64, bonusCoef float64, defType core.DefenseType, spellFlagExclude core.SpellFlag) {
 
+	createWeaponProcDamage(itemId, itemName, ppm, spellId, school, func(*core.Character) (float64, float64) { return dmgMin, dmgRange },
+		bonusCoef, defType, spellFlagExclude)
+}
+
+// Creates a "Chance on Hit" weapon proc whose damage the Forever client changed: classic and
+// forever are each {min, range}.
+func CreateWeaponCoHProcDamageByRuleset(itemId int32, itemName string, ppm float64, spellId int32, school core.SpellSchool,
+	classic [2]float64, forever [2]float64, bonusCoef float64, defType core.DefenseType) {
+
+	createWeaponProcDamage(itemId, itemName, ppm, spellId, school, func(character *core.Character) (float64, float64) {
+		if character.Env.IsForever() {
+			return forever[0], forever[1]
+		}
+		return classic[0], classic[1]
+	}, bonusCoef, defType, core.SpellFlagSuppressWeaponProcs)
+}
+
+func createWeaponProcDamage(itemId int32, itemName string, ppm float64, spellId int32, school core.SpellSchool,
+	damage func(*core.Character) (float64, float64), bonusCoef float64, defType core.DefenseType, spellFlagExclude core.SpellFlag) {
+
 	core.NewItemEffect(itemId, func(agent core.Agent) {
 		character := agent.GetCharacter()
+		dmgMin, dmgRange := damage(character)
 
 		sc := core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: spellId},
