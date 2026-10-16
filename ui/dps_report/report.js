@@ -211,7 +211,8 @@ export function startReport(dash, events) {
     else fn();
   };
   // x and y are where the mark is in host, which the tooltip points at. head is a title (text, or tipTitle(...)), and
-  // lines are the tooltip pieces above (plain text lines still work).
+  // lines are the tooltip pieces above (plain text lines still work). With opts.end the tooltip ends at x instead of
+  // starting there.
   const showTip = (host, x, y, head, lines, opts = {}) => {
     hideTip();
     try { hideTT(); } catch {}
@@ -232,7 +233,7 @@ export function startReport(dash, events) {
     const at = () => { const r = host.getBoundingClientRect(); const px = r.left + x, py = r.top + y; return { width: 0, height: 0, x: px, y: py, left: px, right: px, top: py, bottom: py }; };
     tipTippy = tippy(host, {
       content: tipEl, trigger: 'manual', interactive: acts.length > 0, appendTo: document.body, hideOnClick: false,
-      placement: opts.below ? 'bottom-start' : 'top-start', offset: [10, 8], getReferenceClientRect: at, duration: 0,
+      placement: (opts.below ? 'bottom' : 'top') + (opts.end ? '-end' : '-start'), offset: [opts.end ? 0 : 10, 8], getReferenceClientRect: at, duration: 0,
     });
     tipTippy.show();
     if (acts.length) {
@@ -1272,7 +1273,7 @@ export function startReport(dash, events) {
   // the tooltip of the part it lands on, and a second tap on the same part closes it. tip(zone, node, pinned) gets
   // the part's element.
   const hoverZones = (row, tip) => {
-    let cur = null;
+    let cur = null, curN = null;
     const at = (e) => e.target.closest('[data-zone]');
     const zone = (n) => (n && row.contains(n) ? n.dataset.zone : null);
     const off = () => { cur = null; if (tipHl.includes(row)) hideTip(); };
@@ -1280,8 +1281,8 @@ export function startReport(dash, events) {
       if (e.pointerType !== 'mouse' || tipPinned) return;
       const n = at(e), z = zone(n);
       if (z == null) return off();
-      if (z === cur && tipHl.includes(row)) return;
-      cur = z;
+      if (z === cur && n === curN && tipHl.includes(row)) return;
+      cur = z; curN = n;
       tip(z, n, false);
     });
     row.addEventListener('pointerleave', (e) => { cur = null; if (e.pointerType === 'mouse' && !tipPinned && tipHl.includes(row)) hideTip(); });
@@ -1289,7 +1290,7 @@ export function startReport(dash, events) {
       if (e.pointerType === 'mouse' || e.target.closest('[data-tt]')) return;
       const n = at(e), z = zone(n);
       if (z == null || (tipPinned && tipHl.includes(row) && z === cur)) return off();
-      cur = z;
+      cur = z; curN = n;
       tip(z, n, true);
     });
   };
@@ -1588,7 +1589,9 @@ export function startReport(dash, events) {
           head = [tipKey(best.length ? `Best race on ${best.length}` : 'Never the best race', `of ${r.n} presets`),
             best.length ? null : el('span', { class: 'fv-tip-m', text: 'Closest on:' }), el('div', { class: 'fv-tip-specs' }, ...list)];
         }
-        showTip(card, 24, rw.bottom - cr.top + 4, title, [...head, null], { ...opts, hl: row });
+        // The tooltip goes under the part the pointer is on. Under the numbers on the right it ends where they end.
+        const at = node.getBoundingClientRect(), end = node.classList.contains('end');
+        showTip(card, end ? at.right - cr.left : Math.max(8, at.left - cr.left), at.bottom - cr.top + 4, title, [...head, null], { ...opts, end, hl: row });
       });
       return row;
     }));
