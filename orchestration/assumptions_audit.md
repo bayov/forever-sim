@@ -9,6 +9,8 @@ Every assumption the Level 60 DPS report and the sim maintain, checked against t
 
 Tier 3 precedents (SoD, TBC, Wrath) don't settle anything here.
 
+Coordination: the update auditor (session_01DLHrNhMbEVhmSed2oDxNRS) is building `orchestration/update_ledger.md`, which checks every announced game change against the client and the sim. It wasn't pushed when this audit ran. Where the two overlap on 70425 class diffs, this audit's readings stand until it lands; its PR #69 already covers Touch of the Grave and Gnome Eureka!.
+
 Verdicts:
 - **S=** settled, and the sim already matches;
 - **S!** settled, and the sim must change;
@@ -29,7 +31,8 @@ Verdicts:
 | X obsolete | 0 | 1 |
 
 PRs:
-- **#67** (warrior): `warr_crit_rage` settled. `warr_rage_oh` settled at 0.5, so the sim changes: dual-wield Fury goes from 1055.0 to 961.1 at 180 s.
+- **#67** (warrior): `warr_crit_rage` settled, no DPS change.
+- **#75**: `warr_rage_oh` settled at 0.5, so the sim changes: dual-wield Fury goes from 1055.0 to 961.1 at 180 s. Split from #67; held for Q6.
 - **#70** (priest and warlock): Power in Light counts Shadow Word: Pain (Smite +6.2), plus four notes items.
 - **#72** (flat bonus): `flat_bonus_inside_pct` and `druid_shred_flat` settled, no DPS change.
 - **#54** (paladin worker): takes `pal_sor_sp_double`, `pal_sor_sp_speed` and `pal_consecration_coef`, routed 2026-10-16.
@@ -119,7 +122,9 @@ Measured (10k iterations, seed 1, 180 s, today's master), DPS with 6% → with n
 
 The knob is `core.Assume("level_partial_resist", AverageMagicPartialResistPerLevelMultiplier)` at its two uses. The default is the sim's current behaviour until the user rules (**Q1**).
 
-### 2b. Proposed, not added
+### 2b. More proposals
+Added as pending rows on 2026-10-16 (the orchestrator's request): `lock_pet_crit` (as its own row rather than a setting on `lock_pet_scaling`, so that row keeps simulating), `lock_stone_with_oil` and `bleed_tick_crit`. Measured at 150%: Feral −3.2%, Subtlety −1.5%, Arms −0.4%. spec_assumptions.md has the knob locations. Deep Wounds' double dip went to the warrior worker.
+
 - **`lock_pet_scaling` High: "SoD + the warlock's spell crit (Blizzard's intent)".** AidanZMoon (forever-bugs #331) says demons should inherit the warlock's spell crit as melee and spell crit once the baseline crit is removed. Last measured at +2.1 to +2.4%. The setting was dropped on 2026-10-15; this is new evidence (**Q4**).
 - **Bleed tick crit size (`bleed_tick_crit`).** The sim crits bleeds (Rip, Rake, Rend, Rupture, Garrote) for 200% as melee. 70425 confirms they can crit (SpellMisc Attributes_8 0x200 on all of them, plus 0x1000 on the physical ones), but not the size. The only measured periodic crit is Flame Shock at 1.5×.
   - Settings: Low "150% (spell-like)" and Expected "200% (melee)".
@@ -133,7 +138,7 @@ The knob is `core.Assume("level_partial_resist", AverageMagicPartialResistPerLev
 - **Grace of Air now stacks with Windfury Totem.** The 15 October notes: "Grace of Air Totem is no longer exclusive with Windfury Totem and Flametongue Totem". The sim still switches Grace of Air off while a Windfury Totem buff is up (`sim/core/buffs.go`, `graceOfAirWindfuryCategory`, "For now Forever doesn't let the two stack").
   - With raid-wide totems, a raid with two shamans gives every melee both.
   - The raid composition is a user ruling (**Q5**). Shaman port and core.
-- **Touch of the Grave.** The 15 October note says "Touch of the Dead no longer scales with Shadow increases on the target or the caster". The sim's drain still takes every Shadow modifier (`sim/core/racials_forever.go`, DamageMultiplier 1 and nothing ignoring modifiers). The chance and 25 s ICD were already ported. Small with the 25 s ICD. Racials / core.
+- **Touch of the Grave** (covered by the update auditor's PR #69). The 15 October note says "Touch of the Dead no longer scales with Shadow increases on the target or the caster". The sim's drain still takes every Shadow modifier (`sim/core/racials_forever.go`, DamageMultiplier 1 and nothing ignoring modifiers). The chance and 25 s ICD were already ported. Small with the 25 s ICD. Racials / core.
 - **Ice Lance against frozen targets:** ×3 (+200%), not ×4. Mage port.
 - **Elemental Devastation** now procs on "Critical Strikes with direct damage spells" (70425 tooltip). Shaman port.
 - **Pet crit:** the hunter's higher of melee and ranged crit (15 October note). Hunter port.
