@@ -1492,7 +1492,7 @@ export class Replay extends ResultComponent {
 		setWidth(resources.swingFill, swing ? (time - swing.last) / (swing.next - swing.last) : 0);
 		const pips = this.pipsAt(model, time);
 		resources.pips.forEach((pip, i) => pip.classList.toggle('on', i < pips));
-		// At five Maelstrom Weapon stacks arcs light up where our character would stand, like the
+		// At five Maelstrom Weapon stacks arcs light up on both sides of the pack, like the
 		// PowerAuras textures of the user's WeakAura.
 		this.ui.alert.classList.toggle('on', !!model.maelstrom && pips >= 5);
 

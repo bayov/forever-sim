@@ -577,16 +577,15 @@
 	}
 }
 
-// At five Maelstrom Weapon stacks, cyan arcs light up in the middle of the screen, where our
-// character would stand, like the PowerAuras textures of the WeakAura. They sit above the procs,
-// with room for a second row of procs.
+// At five Maelstrom Weapon stacks, cyan arcs light up on both sides of the pack, like the
+// PowerAuras textures of the WeakAura. Each arc fits in the 36px gap between the pack and a unit
+// frame, from the maintain row down to the cooldowns, so it covers neither.
 .replay-alert {
 	position: absolute;
-	bottom: calc(100% + 36px);
-	left: 50%;
-	width: 220px;
-	height: 130px;
-	transform: translateX(-50%);
+	top: 26px;
+	left: -30px;
+	right: -30px;
+	height: 152px;
 	opacity: 0;
 	transition: opacity 0.12s;
 
@@ -596,20 +595,23 @@
 	}
 }
 
-// Hidden arcs let the mouse through.
-.replay-alert.replay-tip:not(.on),
-.replay-alert:not(.on) {
+// The box spans the pack, so only the arcs take the hover, and only while they show.
+.replay-alert.replay-tip {
 	pointer-events: none;
+}
+
+.replay-alert.on .replay-alert-arc {
+	pointer-events: auto;
 }
 
 .replay-alert-arc {
 	position: absolute;
 	top: 0;
-	width: 50px;
+	width: 24px;
 	height: 100%;
-	border: 5px solid #00b8de;
+	border: 4px solid #00b8de;
 	border-radius: 50%;
-	filter: drop-shadow(0 0 6px #00b8de);
+	filter: drop-shadow(0 0 4px #00b8de);
 
 	&.left {
 		left: 0;
