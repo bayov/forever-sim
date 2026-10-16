@@ -75,8 +75,8 @@ export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
 // 41 spell power and 11 crit rating, and an on-use +140 spell power for 20 sec every 2 min.
 //
 // The weapon is a staff with Staff of Dominance's damage. With Forever's 2H Spellblasting (+65
-// spell power) it is 32 to 43 ahead of the sword and off hand, and Human with the sword is still
-// behind Undead with the staff. The enchants are the best Phase 1 ones without a raid source:
+// spell power) it is 32 to 43 ahead of the sword and off hand. Since client 70425 no racial
+// depends on the weapon, so the sword no longer helps a Human. The enchants are the best Phase 1 ones without a raid source:
 // Lesser Arcanum of Voracity (Intellect), +6 spell power on the neck, Mystic Rugged Armor Kits
 // (+6 spell power) on chest, hands, legs and feet, Greater Spellpower (+16) on the wrist and
 // Spellblasting on the staff. Arcane wears Gloves - Arcane Power (+20 Arcane) instead of the kit,
@@ -103,53 +103,49 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // The Classic rotation the fork shipped. It still runs, but it was written for the Classic tree.
 export const APLP1DPS = PresetUtils.makePresetAPLRotation('DPS', P1APL);
 
-// Frostfire Bolt as the filler. Scorch puts up 5 stacks of Fire Vulnerability and keeps them,
-// Pyroblast waits for 3 Heating Up stacks (a 1.5 sec cast), Ice Lance goes on every Fingers of
-// Frost charge (with SoD's 42.9% spell power coefficient, +66 at 180 sec over none and +7 over
-// only the last charge), Arcane Missiles takes a Missile Barrage proc. Fire Blast only goes with
-// mana the fight can't use (above 150 a second of the fight left, +1.5 to +3.7); on cooldown its
-// mana is worth more as Frostfire Bolts. Evocation below 30% mana with at least 60 sec of the
-// fight left, then rank 2 Frostfire Bolt when the mana won't last. The knobs were searched over
-// 120, 180 and 300 sec together; with Ice Lance (2026-10-15) the search at 180 sec moved
-// Evocation up from below 10% with 30 sec left, for Ice Lance's mana: +6.2 at 180 sec, level at
-// 120 and -3.9 at 300 (below 20% with 60 sec left would be -0.4 at 180 and +3.0 at 300). The
-// on-use trinket waits for the 5th Fire Vulnerability stack (+3.7 at 180 sec). The Fingers of
-// Frost Ice Lance goes ahead of Scorch and Pyroblast (+18.9 / +17.9 / +19.4 at 120 / 180 / 300
-// sec), and when a Frostfire Bolt would not land before the end (its cast plus 1.5 sec) Ice Lance
-// goes instead (+26.5 / +22.8 / +22.2 with both, the rotation auditor's pass 19).
+// Frostfire Bolt as the filler. Scorch puts up 5 stacks of Fire Vulnerability and keeps them
+// (again with under 9 sec left on them), Pyroblast waits for 3 Heating Up stacks (a 1.5 sec
+// cast), Ice Lance goes on every Fingers of Frost charge, ahead of Scorch and Pyroblast (3 times
+// the damage on a Frozen target since client 70425, with SoD's 42.9% spell power coefficient), and
+// Arcane Missiles takes a Missile Barrage proc. Since 70425 every Fire Blast adds a Heating Up
+// stack, so Fire Blast goes on cooldown above 80% mana and below that with the mana the fight
+// can't use (above 100 a second of the fight left). Evocation below 20% mana with at least 60 sec
+// of the fight left, then rank 2 Frostfire Bolt when the mana won't last. The on-use trinket waits
+// for the 5th Fire Vulnerability stack. When a Frostfire Bolt would not land before the end (its
+// cast plus 1.5 sec) Ice Lance goes instead. The knobs were searched over 120, 180 and 300 sec
+// together, with the raid's hits (pushback).
 export const APLLevel60Frostfire = PresetUtils.makePresetAPLRotation('Level 60 Frostfire', Level60FrostfireAPL, {
-	tooltip: 'Frostfire Bolt, Pyroblast on 3 Heating Up stacks, Ice Lance on Fingers of Frost, Scorch for Fire Vulnerability.',
+	tooltip: 'Frostfire Bolt, Pyroblast on 3 Heating Up stacks, Ice Lance on Fingers of Frost, Scorch for Fire Vulnerability, Fire Blast.',
 	group: 'Level 60',
 });
-// Frostbolt, with Ice Lance on every Fingers of Frost charge (4 times the damage on a Frozen
-// target and Shatter's crit; with SoD's 42.9% spell power coefficient it is +175 at 180 sec over
-// no Ice Lance and +18 over only the last charge). Frost rarely runs low on mana, so Evocation
+// Frostbolt, with Ice Lance on every Fingers of Frost charge (3 times the damage on a Frozen
+// target and Shatter's crit), and one Arcane Blast every 15 sec for 15% of Intellect as spell
+// damage (more stacks cost more than they give). Frost rarely runs low on mana, so Evocation
 // almost never goes. When a Frostbolt would not land before the end (its cast plus 1 sec), Ice
-// Lance instead (+11.0 / +6.8 / +4.0 at 120 / 180 / 300 sec, the rotation auditor's pass 19).
+// Lance instead.
 export const APLLevel60Frost = PresetUtils.makePresetAPLRotation('Level 60 Frost', Level60FrostAPL, {
-	tooltip: 'Frostbolt, with Ice Lance on Fingers of Frost.',
+	tooltip: 'Frostbolt, with Ice Lance on Fingers of Frost and an Arcane Blast for spell damage.',
 	group: 'Level 60',
 });
 // Scorch to 5 Fire Vulnerability stacks and before they run out, Pyroblast at 3 Heating Up
-// stacks, Arcane Missiles on Missile Barrage, Fire Blast above 20% mana, and Fireball. Pyroblast
-// at 1 or 2 stacks, Frostfire Bolt or Scorch as the filler and holding Fire Blast while Heating Up
-// is full all lost. Combustion and the on-use trinket wait for the 5th Fire Vulnerability stack
-// (the trinket +1.6 at 180 sec). When a Fireball would not land before the end (its cast plus
-// 1.04 sec), Fire Blast and Scorch instead (+6.3 / +4.6 / +2.8, the rotation auditor's pass 19).
+// stacks, Arcane Missiles on Missile Barrage, Fire Blast above 20% mana (every Fire Blast adds a
+// Heating Up stack since client 70425, two on a crit), and Fireball. Combustion and the on-use
+// trinket wait for the 5th Fire Vulnerability stack. When a Fireball would not land before the
+// end (its cast plus 1.04 sec), Fire Blast and Scorch instead.
 export const APLLevel60Fire = PresetUtils.makePresetAPLRotation('Level 60 Fire', Level60FireAPL, {
 	tooltip: 'Fireball, Pyroblast on 3 Heating Up stacks, Scorch for Fire Vulnerability, Fire Blast.',
 	group: 'Level 60',
 });
-// Arcane Blast to 2 stacks, then Arcane Missiles on a Missile Barrage proc. Without one, Arcane
-// Blast goes on to 4 stacks and the missiles go anyway, ending the stacks and taking their
-// bonus. Below 20% mana one Arcane Blast and the missiles (30% was 1 behind on the fair mix gear, and the Forever budget gear kept it).
-// That is ahead of three Arcane Blasts and the missiles whatever the proc (the template's
-// default). No Evocation. Arcane Power and Presence of Mind wait for the on-use trinket unless it
-// won't be back before the last 15 sec (+1.6 at 300 sec, nothing lost shorter). When an Arcane
-// Blast would not land before the end, Fire Blast and Arcane Explosion instead (+10.4 / +7.1 /
-// +4.0 at 120 / 180 / 300 sec, the rotation auditor's pass 19).
+// Client 70425 made Arcane Blast's stacks spell damage: 15% of Intellect each, up to 4, for 15
+// sec from the first, and nothing ends them early. So Arcane casts four Arcane Blasts at the
+// start of every 15 sec (the fourth costs 6.25 times the first), and below 20% mana only one.
+// Arcane Missiles goes on a Missile Barrage proc (free and twice as fast), and Frostbolt is the
+// filler: it beats Arcane Missiles that aren't free. No Evocation. Arcane Power and Presence of
+// Mind wait for the on-use trinket unless it won't be back before the last 15 sec. When a
+// Frostbolt would not land before the end (its cast plus 0.75 sec), Fire Blast and Arcane
+// Explosion instead.
 export const APLLevel60Arcane = PresetUtils.makePresetAPLRotation('Level 60 Arcane', Level60ArcaneAPL, {
-	tooltip: 'Arcane Blast stacks spent by Arcane Missiles, on Missile Barrage where it can.',
+	tooltip: 'Four Arcane Blast stacks every 15 sec for spell damage, Arcane Missiles on Missile Barrage, Frostbolt.',
 	group: 'Level 60',
 });
 
@@ -163,55 +159,64 @@ export const DefaultAPL = APLLevel60Frostfire;
 //                                 Talent Presets
 ///////////////////////////////////////////////////////////////////////////
 
-// Each build is the talent search's best, seeded from every archetype players use and searched
-// again on the final rotation over 120, 180 and 300 sec.
+// Each build is the talent search's best on the client 1.60.1.70425 tree, seeded from the last
+// builds and searched again on the final rotation over 120, 180 and 300 sec together, with the
+// raid's 2 hits a minute (pushback). 70425 moved Missile Barrage to Arcane row 1 (2 points) and
+// added Arcane Wrath, so every Arcane string reads differently from the 70338 ones. Fire Power
+// is 3 points and Critical Mass 5, and Winter's Chill only helps Cone of Cold now.
 //
-// Frostfire (0/29/22): Wake of Fire, Incineration, Improved Fireball, Ignite, Pyroblast, Improved
-// Scorch, Heating Up, Master of Elements, Critical Mass and Fire Power 4 in Fire, Elemental
-// Precision, Ice Shards, Piercing Ice, Frost Channeling, Ice Lance, Shatter and Fingers of Frost in
-// Frost (Ice Lance for Fingers of Frost, and the rotation casts it on the charges). Frostfire
-// Bolt is Fire and Frost at once, so it gets Fire Power, Ignite and Critical Mass and also Ice
-// Shards, Piercing Ice and Shatter. foreverchanges.pro's popular Fire build is the same split. It
-// is 1040.8 / 1011.5 / 996.4 at 120 / 180 / 300 sec (Undead, with Ice Lance at SoD's 42.9% and the
-// Greater Flame scroll; the talent search on the Ice Lance rotation kept the build, 2026-10-15). Frost Channeling 3 does nothing for this build (the client
-// leaves Frostfire Bolt out of it, the talent verification shows 0.0 either way): the points are
-// the 20 in Frost that Fingers of Frost needs.
+// Frostfire (0/29/22): Incineration, Improved Fireball, Ignite, Burning Soul 3 (pushback),
+// Pyroblast, Improved Scorch, Heating Up, Master of Elements, Critical Mass 5 and Fire Power 3 in
+// Fire, Elemental Precision, Ice Shards, Piercing Ice, Frost Channeling, Ice Lance, Shatter and
+// Fingers of Frost in Frost. Frostfire Bolt is Fire and Frost at once, so it gets Fire Power,
+// Ignite and Critical Mass and also Ice Shards, Piercing Ice and Shatter. A second seed with
+// Arcane Blast (10 Arcane points, without Fingers of Frost) ended 65 behind on a Combustion build.
+// It is 1023.5 / 1010.8 / 979.2 at 120 / 180 / 300 sec (Human). Frost Channeling 3 does nothing for this build (the
+// client leaves Frostfire Bolt out of it): the points are the 20 in Frost that Fingers of Frost
+// needs.
 export const TalentsLevel60Frostfire = PresetUtils.makePresetTalents(
 	'Level 60 Frostfire',
-	SavedTalents.create({ talentsString: '-1355000013013304-00550003310003002' }),
+	SavedTalents.create({ talentsString: '-0155003013012503-00550003310003002' }),
 	{ tooltip: 'Fire and Frost for Frostfire Bolt: Heating Up, Fingers of Frost, Shatter.', group: 'Level 60' },
 );
-// Frost (10/3/38): every Frost damage talent to Winter's Chill and Ice Barrier, and Arcane
-// Concentration for Clearcasting. Incineration 3 is for Ice Lance, which the rotation casts on
-// every Fingers of Frost charge. Four seeds (deep Frost, Frost with Arcane Meditation, Frost with
-// Incineration and a 51 point Frost build) all ended within 0.2, and the talent search on the Ice
-// Lance rotation (2026-10-15) kept the build. It is 948.6 / 948.3 / 940.9 (High Order, with the
-// Major Spellblasting Potion and the Greater Frost scroll), 6% behind Frostfire and second of the
-// four now that Ice Lance takes SoD's 42.9% (with the client's 0 it was last, at 745.4).
-export const TalentsLevel60Frost = PresetUtils.makePresetTalents('Level 60 Frost', SavedTalents.create({ talentsString: '050005-03-0555300331001301251' }), {
-	tooltip: "Deep Frost: Frostbolt, Fingers of Frost, Shatter, Winter's Chill.",
-	group: 'Level 60',
-});
-// Fire (16/31/4): every Fire damage talent to Combustion, with Arcane Concentration and Missile
-// Barrage (Fireball has 20% to make Arcane Missiles free and fast) and Elemental Precision 4.
-// Arcane Impact 3 over Improved Channeling and Wake of Fire 2 over Master of Elements 3 are 1 and
-// 3 ahead. It is 904.4 / 889.1 / 872.6 (Undead, with the Greater Flame scroll), 12%
-// behind Frostfire. Fire with Frost (Elemental Precision, Ice Shards) was 740 at 180 sec on the
-// old rotation, 3% behind, and a Fire mage that goes into Frost is better off as Frostfire.
-export const TalentsLevel60Fire = PresetUtils.makePresetTalents(
-	'Level 60 Fire',
-	SavedTalents.create({ talentsString: '05020500300001-23550000130123051-004' }),
-	{ tooltip: 'Deep Fire to Combustion, with Missile Barrage from Arcane.', group: 'Level 60' },
+// Frost (17/3/31): every Frost damage talent to Ice Barrier but Winter's Chill (a Cone of Cold
+// debuff since 70425), with Arcane Concentration, Missile Barrage 2, Arcane Impact and Arcane
+// Blast from Arcane: one Arcane Blast every 15 sec is 15% of Intellect as spell damage. Incineration
+// 3 is for Ice Lance. The old Winter's Chill points went to Frost Channeling, Arcane Meditation and
+// Permafrost (a point the 30 for Ice Barrier needs). It is 827.9 / 827.3 / 822.4, 18% behind Frostfire (High Order, with the Major
+// Spellblasting Potion and the Greater Frost scroll). 70425 cost it Winter's Chill's crit and
+// Ice Lance's fourth times on a Frozen target.
+export const TalentsLevel60Frost = PresetUtils.makePresetTalents(
+	'Level 60 Frost',
+	SavedTalents.create({ talentsString: '05020050031001-03-0555100331001301201' }),
+	{
+		tooltip: 'Deep Frost: Frostbolt, Fingers of Frost, Shatter, with Arcane Blast for spell damage.',
+		group: 'Level 60',
+	},
 );
-// Arcane (33/3/15): Arcane to Arcane Power with Arcane Blast and Missile Barrage, and Incineration
-// 3 (it covers Arcane Blast). The 15 Frost points do nothing for Arcane Blast and Arcane Missiles:
-// the trees have nothing else they can buy, so they sit where a Frost filler would use them. Three
-// seeds (Arcane with Frost, Arcane with Fire, 47 point Arcane) ended on the same build. It is 856.0 /
-// 843.5 / 829.4 (Undead, on the Arcane gear, with the Precision scroll), 17% behind Frostfire.
-export const TalentsLevel60Arcane = PresetUtils.makePresetTalents('Level 60 Arcane', SavedTalents.create({ talentsString: '051225003100311531-03-02550003' }), {
-	tooltip: 'Arcane to Arcane Power: Arcane Blast and Missile Barrage.',
+// Fire (11/35/5): every Fire damage talent to Combustion with Critical Mass 5, Burning Soul 3
+// (pushback) and Master of Elements 3, with Arcane Concentration and Missile Barrage 2 (Fireball
+// has 20% to make Arcane Missiles free and fast) and Elemental Precision 5. It is 999.9 / 993.2 / 982.3
+// (Human, with the Greater Flame scroll). Every Fire Blast adds a Heating Up stack since 70425,
+// which puts Fire 2% behind Frostfire at 180 sec and ahead of it at 300.
+export const TalentsLevel60Fire = PresetUtils.makePresetTalents('Level 60 Fire', SavedTalents.create({ talentsString: '0402005-23550030130135031-005' }), {
+	tooltip: 'Deep Fire to Combustion, with Missile Barrage from Arcane.',
 	group: 'Level 60',
 });
+// Arcane (31/2/18): Arcane to Arcane Power with Arcane Blast, Missile Barrage 2 and Improved
+// Channeling 2 (pushback on Arcane Blast), Incineration 2 (it covers Arcane Blast) and Frost for
+// the Frostbolt filler (Improved Frostbolt, Elemental Precision, Ice Shards, Piercing Ice). Arcane
+// Wrath lost to Missile Barrage's second point: a free Arcane Missiles at twice the speed is worth
+// more than the 3.5 sec cast. It is 893.6 / 884.9 / 875.0, 12% behind Frostfire (Human, on the Arcane gear, with the Precision
+// scroll).
+export const TalentsLevel60Arcane = PresetUtils.makePresetTalents(
+	'Level 60 Arcane',
+	SavedTalents.create({ talentsString: '0522005003100301531-02-05550003' }),
+	{
+		tooltip: 'Arcane to Arcane Power: four Arcane Blast stacks for spell damage, Missile Barrage, Frostbolt.',
+		group: 'Level 60',
+	},
+);
 
 export const TalentPresets = {
 	[Phase.Phase1]: [TalentsLevel60Frostfire, TalentsLevel60Frost, TalentsLevel60Fire, TalentsLevel60Arcane],
@@ -330,7 +335,7 @@ export const OtherDefaults = {
 	distanceFromTarget: 25,
 	profession1: Profession.Engineering,
 	profession2: Profession.Tailoring,
-	race: Race.RaceUndead,
+	race: Race.RaceHuman,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -379,19 +384,15 @@ export const EncounterLevel60Frost = PresetUtils.makePresetEncounter('Level 60 (
 	consumes: Consumes.create({ ...DefaultConsumes, defaultPotion: Potions.MajorSpellblastingPotion }),
 });
 
-// Races, on each build with its rotation, 20000 iterations, 180 sec (120 and 300 sec in
-// forever-wiki/sim-status.md). The staff has no racial, so the table is the same with weapon
-// racials off. Undead (Touch of the Grave at 10% for mages) is best on Fire and Arcane. On Frostfire,
-// Orc, Undead and Gnome are within 1 (one standard error), with Undead ahead at 120 sec and Gnome at
-// 300, so the build keeps Undead. On Frost, Undead, High Order and Orc are within 0.7, so the build
-// keeps High Order. The best Alliance race is High Order on Frost and Gnome (5% more mana) on
-// Frostfire, Fire and Arcane. Windshaper can't be a mage. With Ice Lance, the staff imbue scrolls
-// and the rotation auditor's pass 19 (Frostfire's Ice Lance ahead of Scorch, and instants when the
-// filler would not land before the end, 2026-10-15):
-//   Frostfire: Orc 1012.1, Undead 1011.5, Gnome 1011.1, High Order 1010.1, Troll 1004.7, Human 1003.7.
-//   Fire:      Undead 889.1, Gnome 885.0, Orc 883.0, Human 877.1, High Order 876.8, Troll 876.1.
-//   Arcane:    Undead 843.5, Orc 834.5, Gnome 832.8, Troll 829.3, Human 826.2, High Order 824.1.
-//   Frost:     Undead 949.0, High Order 948.3, Orc 948.3, Gnome 947.1, Troll 946.0, Human 939.1.
+// Races, on each build with its rotation, 20000 iterations, 180 sec, with the 70425 racials (no
+// racial depends on the weapon any more). Human (Ruthless, 2% crit) is best on Frostfire, Fire and
+// Arcane, with Orc (Savage, 1% crit, and Blood Fury) 0.3 behind on Arcane, within the noise. On
+// Frost, High Order's 3% haste is ahead. The best Horde race is Orc on Arcane, Fire and Frost and
+// Orc on Frostfire too (High Order, 3.7 behind Human there, is Alliance). Windshaper can't be a mage.
+//   Frostfire: Human 1010.8, High Order 1007.1, Orc 1004.8, Gnome 996.5, Undead 996.2, Troll 989.1.
+//   Fire:      Human 993.2, Orc 989.0, Gnome 985.7, Undead 983.5, Troll 974.9, High Order 970.9.
+//   Arcane:    Human 884.9, Orc 884.6, Undead 878.4, High Order 877.6, Gnome 877.2, Troll 872.7.
+//   Frost:     High Order 827.3, Human 820.2, Orc 819.8, Undead 817.7, Gnome 814.9, Troll 814.2.
 const buildCommon = {
 	group: 'Level 60',
 	gear: GearLevel60Phase1Synthetic,
@@ -404,10 +405,10 @@ const buildCommon = {
 
 export const PresetBuildLevel60Frostfire = PresetUtils.makePresetBuild('Level 60 Frostfire', {
 	...buildCommon,
-	tooltip: 'Level 60 Undead Frostfire on the synthetic Phase 1 gear, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Human Frostfire on the synthetic Phase 1 gear, in a 3 minute raid fight.',
 	talents: TalentsLevel60Frostfire,
 	rotation: APLLevel60Frostfire,
-	race: Race.RaceUndead,
+	race: Race.RaceHuman,
 });
 export const PresetBuildLevel60Frost = PresetUtils.makePresetBuild('Level 60 Frost', {
 	...buildCommon,
@@ -420,17 +421,17 @@ export const PresetBuildLevel60Frost = PresetUtils.makePresetBuild('Level 60 Fro
 });
 export const PresetBuildLevel60Fire = PresetUtils.makePresetBuild('Level 60 Fire', {
 	...buildCommon,
-	tooltip: 'Level 60 Undead Fire on the synthetic Phase 1 gear, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Human Fire on the synthetic Phase 1 gear, in a 3 minute raid fight.',
 	talents: TalentsLevel60Fire,
 	rotation: APLLevel60Fire,
-	race: Race.RaceUndead,
+	race: Race.RaceHuman,
 });
 export const PresetBuildLevel60Arcane = PresetUtils.makePresetBuild('Level 60 Arcane', {
 	...buildCommon,
-	tooltip: 'Level 60 Undead Arcane on the synthetic Phase 1 gear, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Human Arcane on the synthetic Phase 1 gear, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1SyntheticArcane,
 	talents: TalentsLevel60Arcane,
 	rotation: APLLevel60Arcane,
-	race: Race.RaceUndead,
+	race: Race.RaceHuman,
 	options: ArcaneOptions,
 });

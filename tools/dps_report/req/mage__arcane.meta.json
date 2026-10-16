@@ -5,8 +5,8 @@
   "build": "Arcane",
   "isDefault": false,
   "pr": 6,
-  "race": "Undead",
-  "talents": "051225003100311531-03-02550003",
+  "race": "Human",
+  "talents": "0522005003100301531-02-05550003",
   "treeNames": [
     "Arcane",
     "Fire",
@@ -15,35 +15,35 @@
   "gearSet": "level60_phase1_synthetic_arcane",
   "apl": "level60_arcane",
   "published": {
-    "dps": 843.5,
-    "source": "PR (rotation auditor pass 19: end-of-fight instants, 2026-10-15)"
+    "dps": 884.9,
+    "source": "PR (client 1.60.1.70425 port, 2026-10-16)"
   },
   "verify": {
-    "dps": 843.5,
+    "dps": 884.9,
     "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "180 s, 20000 iterations, on the pass 19 rotation"
+    "note": "180 s, 20000 iterations, seed 1, on the 70425 rotation (seed 100001 within 0.6)"
   },
-  "summary": "Arcane to Arcane Power with Arcane Blast and Missile Barrage, on the Arcane gear variant (Gloves - Arcane Power). 15% behind Frostfire.",
+  "summary": "Arcane to Arcane Power, rebuilt for client 70425: four Arcane Blast stacks every 15 s for 60% of Intellect as spell damage, Missile Barrage 2 and a Frostbolt filler, on the Arcane gear variant (Gloves - Arcane Power). 12% behind Frostfire.",
   "keyTalents": [
     "Arcane Blast",
     "Missile Barrage",
+    "Improved Channeling",
     "Arcane Impact",
     "Arcane Mind",
     "Arcane Instability",
     "Arcane Power",
-    "Presence of Mind",
-    "Incineration"
+    "Presence of Mind"
   ],
   "rotation": [
-    "Pre-pull: Arcane Blast at -2.5 s so it lands at the pull",
-    "Cooldowns (Arcane Power, Presence of Mind, Demonic Rune) on a free GCD; mana gems never",
-    "Fire Blast, then Arcane Explosion, when an Arcane Blast would not land before the end",
-    "Below 20% mana: one Arcane Blast, then Arcane Missiles",
-    "Arcane Missiles on a Missile Barrage proc once Arcane Blast has 2 stacks",
-    "Arcane Blast up to 4 stacks",
-    "Filler: Arcane Missiles (ends the stacks and takes their bonus)",
+    "Pre-pull: Arcane Blast at -1.5 s so it lands at the pull",
+    "Arcane Power and Presence of Mind with the on-use trinket (unless it won't be back in time); other cooldowns on a free GCD; mana gems never",
+    "Fire Blast, then Arcane Explosion, when a Frostbolt would not land before the end (its cast plus 0.75 s)",
+    "Below 20% mana: one Arcane Blast per 15 s buff",
+    "Arcane Blast to 4 stacks at the start of each 15 s buff (each stack 15% of Intellect as spell damage)",
+    "Arcane Missiles on a Missile Barrage proc",
+    "Filler: Frostbolt",
     "No Evocation"
   ],
   "consumes": [
@@ -64,10 +64,10 @@
   ],
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 41 spell power and 11 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Arcane Blast's bonus on Arcane Missiles: the tooltip's 10% a stack; client buff 400573 leaves Missiles out and 400586 gives 15%",
+    "Arcane Blast stacks (70425): the stack lands after the cast's own hit and more stacks don't refresh the 15 s; both open",
+    "Arcane Wrath (new in 70425) lost its point to Missile Barrage 2",
     "Arcane Concentration on missile ticks with a 1 s internal cooldown (assumed)",
     "Arcane Mind crit semantics assumed",
-    "The 15 Frost points do nothing for this rotation",
     "No Ahn'Qiraj book ranks (Fireball XI, Frostbolt X, Arcane Missiles VII); with the books Frost +50, Arcane +30, Fire +17, Frostfire 0"
   ],
   "notes": "Request written by mksettings -spec mage_arcane unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). It carries the spec's staff imbue scroll (Scroll of Imbue Precision) as a mage option, as the preset does."
