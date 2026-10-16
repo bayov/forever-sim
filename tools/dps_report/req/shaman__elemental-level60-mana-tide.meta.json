@@ -41,10 +41,10 @@
   "rotation": [
     "Pre-pull: Lightning Shield at -5.4s, Mana Spring Totem at -3.9s, Lightning Bolt at -2.9s (lands 0.1s after the pull), Searing Totem at -0.9s",
     "Elemental Mastery and the other cooldowns (Sapper, Demonic Rune, Major Mana Potion, Land Mine) as they come up",
-    "Mana Tide Totem at 20% mana or less",
+    "Mana Tide Totem at 10% mana or less",
     "Mana Spring Totem when it is down, Mana Tide is not up and at least 20s remain",
     "Searing Totem when it is down and at least 20s remain",
-    "Flame Shock whenever its DoT is down",
+    "Flame Shock whenever its DoT is down and at least 9s remain",
     "Lava Burst on cooldown, unless Flame Shock would run out before the cast ends",
     "Earth Shock once a Lightning Bolt would no longer land before the fight ends",
     "Lightning Shield when it is down, above 50% mana with at least 60s left (orbs fire at the target on raid damage hits, 1 a minute)",

@@ -163,7 +163,7 @@ dps_results: {
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-TheEarthfury"
  value: {
-  dps: 703.03883
+  dps: 703.03433
   tps: 661.2137
   dtps: 1.5815
  }
@@ -171,7 +171,7 @@ dps_results: {
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-TheEarthshatterer"
  value: {
-  dps: 666.907
+  dps: 666.90217
   tps: 626.97757
   dtps: 1.76817
  }
@@ -179,7 +179,7 @@ dps_results: {
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-TheFiveThunders"
  value: {
-  dps: 761.20517
+  dps: 761.20033
   tps: 718.88457
   dtps: 1.67767
  }
@@ -187,7 +187,7 @@ dps_results: {
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-TheTenStorms"
  value: {
-  dps: 767.25383
+  dps: 767.24933
   tps: 723.05331
   dtps: 1.5815
  }
@@ -203,8 +203,8 @@ dps_results: {
 dps_results: {
  key: "TestElementalLevel60-Phase1-Average-Default"
  value: {
-  dps: 956.62436
-  tps: 902.84047
+  dps: 957.12033
+  tps: 903.83105
   dtps: 1.90587
  }
 }
@@ -235,16 +235,16 @@ dps_results: {
 dps_results: {
  key: "TestElementalLevel60-Phase1-Settings-Orc-level60_phase1_synthetic-Adaptive-level60-NoBuffs-Level60-Consumes-LongMultiTarget"
  value: {
-  dps: 632.80217
-  tps: 930.68115
+  dps: 632.98883
+  tps: 931.10382
   dtps: 1.917
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-Settings-Orc-level60_phase1_synthetic-Adaptive-level60-NoBuffs-Level60-Consumes-LongSingleTarget"
  value: {
-  dps: 550.9895
-  tps: 523.15154
+  dps: 551.12183
+  tps: 523.51085
   dtps: 1.81683
  }
 }
@@ -283,16 +283,16 @@ dps_results: {
 dps_results: {
  key: "TestElementalLevel60-Phase1-Settings-Tauren-level60_phase1_synthetic-Adaptive-level60-NoBuffs-Level60-Consumes-LongMultiTarget"
  value: {
-  dps: 628.4955
-  tps: 925.37493
+  dps: 628.45167
+  tps: 925.30325
   dtps: 1.917
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-Settings-Tauren-level60_phase1_synthetic-Adaptive-level60-NoBuffs-Level60-Consumes-LongSingleTarget"
  value: {
-  dps: 548.30283
-  tps: 520.52263
+  dps: 548.57783
+  tps: 520.81206
   dtps: 1.81683
  }
 }

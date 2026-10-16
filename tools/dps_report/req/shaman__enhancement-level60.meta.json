@@ -37,7 +37,7 @@
     "Thundering Strikes"
   ],
   "rotation": [
-    "Pre-pull: Lightning Shield at -3s, Searing Totem at -1.5s; starting totems Strength of Earth IV, Windfury Totem and Mana Spring at -4 / -3 / -2s (they run out a few seconds before a 300s fight ends), no mana cost",
+    "Pre-pull: Strength of Earth IV at -6s, Windfury Totem at -5s, Mana Spring at -4s, Lightning Shield at -3s, Searing Totem at -1.5s (the totems last the whole fight but run out a few seconds before a 300s one ends)",
     "Recast Strength of Earth, Windfury Totem and Mana Spring when down, with at least 20s left",
     "Searing Totem when it is down and at least 10s remain (after the pre-pull one)",
     "Rage of the Farseer on cooldown, waiting for the on-use trinket; Blood Fury lined up with it",

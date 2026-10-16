@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"math"
 
 	"github.com/wowsims/classic/sim/core/proto"
@@ -65,6 +66,19 @@ func (shamanEle) Knobs() []Knob {
 		// 1 casts Earth Shock at the end of the fight, once a Lightning Bolt (its cast and about 1
 		// sec of flight) would no longer land in time.
 		{Name: "earthShockFinish", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Mana Spring Totem is only recast with this many seconds left (0 always).
+		{Name: "waterTotemMinTime", Default: 0, Min: 0, Max: 30, Step: 10},
+		// Flame Shock only with this many seconds left (0 always): a DoT put up at the very end
+		// ticks too few times for its mana and GCD.
+		{Name: "flameShockMinTime", Default: 0, Min: 0, Max: 12, Step: 3},
+		// 1 keeps Lightning Shield up (raid damage that hits the shaman fires its orbs), recast in
+		// the fight after the end-of-fight Earth Shock, only above shieldMinMana% mana and with
+		// shieldMinTime sec left (0 for no gate).
+		{Name: "shield", Default: 0, Min: 0, Max: 1, Step: 1},
+		{Name: "shieldMinMana", Default: 0, Min: 0, Max: 80, Step: 10},
+		{Name: "shieldMinTime", Default: 0, Min: 0, Max: 120, Step: 30},
+		// 1 puts the shield up 1.5 sec before the first prepull action.
+		{Name: "prepullShield", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -77,6 +91,7 @@ func (shamanEle) Build(k Knobs) *proto.APLRotation {
 	lightningBolt := rankID(shaman.LightningBoltLevel[:], shaman.LightningBoltSpellId[:])
 	chainLightning := rankID(shaman.ChainLightningLevel[:], shaman.ChainLightningSpellId[:])
 	lavaBurst := rankID(shaman.LavaBurstLevel, shaman.LavaBurstSpellId)
+	lightningShield := rankID(shaman.LightningShieldLevel[:], shaman.LightningShieldSpellId[:])
 
 	manaFloor := func(pct float64) value {
 		if pct == 0 {
@@ -99,7 +114,12 @@ func (shamanEle) Build(k Knobs) *proto.APLRotation {
 			// Mana Spring would knock the tide down at once, so it waits for it to end.
 			when = and(when, not(auraIsActive(manaTideTotem)))
 		}
-		items = append(items, cast(manaSpringTotem, when, "Mana Spring Totem whenever it is down."))
+		notes := "Mana Spring Totem whenever it is down."
+		if t := k["waterTotemMinTime"]; t > 0 {
+			when = andAlso(when, ge(remainingTime(), seconds(t)))
+			notes = fmt.Sprintf("Mana Spring Totem whenever it is down, with %.0f sec or more of the fight left.", t)
+		}
+		items = append(items, cast(manaSpringTotem, when, notes))
 	}
 	if k["fireTotem"] == 1 {
 		totems = append(totems, searingTotem)
@@ -109,7 +129,12 @@ func (shamanEle) Build(k Knobs) *proto.APLRotation {
 		), "Searing Totem whenever it is down, unless the fight is about to end. It reaches 20 yards."))
 	}
 	if k["flameShock"] == 1 {
-		items = append(items, cast(flameShock, and(not(dotIsActive(flameShock)), manaFloor(k["shockMana"])), "Flame Shock when its DoT is down."))
+		when, notes := and(not(dotIsActive(flameShock)), manaFloor(k["shockMana"])), "Flame Shock when its DoT is down."
+		if t := k["flameShockMinTime"]; t > 0 {
+			when = andAlso(when, ge(remainingTime(), seconds(t)))
+			notes = fmt.Sprintf("Flame Shock when its DoT is down, with %.0f sec or more of the fight left.", t)
+		}
+		items = append(items, cast(flameShock, when, notes))
 	}
 	lavaBurstLine := func() {
 		switch k["lavaBurst"] {
@@ -157,6 +182,15 @@ func (shamanEle) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(earthShock, lt(remainingTime(), add(spellCastTime(lightningBolt), seconds(1))),
 			"Earth Shock when a Lightning Bolt would not land before the end."))
 	}
+	if k["shield"] == 1 {
+		when := not(auraIsActive(lightningShield))
+		notes := "Lightning Shield when it is down."
+		if m, t := k["shieldMinMana"], k["shieldMinTime"]; m > 0 || t > 0 {
+			when = and(when, manaFloor(m), ge(remainingTime(), seconds(t)))
+			notes = fmt.Sprintf("Lightning Shield again with %.0f%% of the mana or more and %.0f sec of the fight to go.", m, t)
+		}
+		items = append(items, cast(lightningShield, when, notes+" Raid damage that hits the shaman fires its orbs at the target, three to a cast, at most one every 3.5 sec."))
+	}
 	if r := int(k["lightningBoltDownrank"]); r > 0 {
 		top := len(shaman.LightningBoltLevel) - 1
 		for top > 0 && shaman.LightningBoltLevel[top] > int(playerLevel) {
@@ -195,6 +229,18 @@ func (shamanEle) Build(k Knobs) *proto.APLRotation {
 		if k["prepullTotems"] == 1 && k["fireTotem"] == 1 {
 			rot.PrepullActions = append(rot.PrepullActions, prepull(searingTotem, math.Round((boltLead-2)*10)/10))
 		}
+	}
+	// The shield goes up a 1.5 sec GCD before the earliest prepull action.
+	if k["shield"] == 1 && k["prepullShield"] == 1 {
+		first := boltLead
+		if k["prepullTotems"] == 1 {
+			for _, id := range totems {
+				if k["prepullBolt"] != 1 || id != searingTotem {
+					first++
+				}
+			}
+		}
+		rot.PrepullActions = append([]*proto.APLPrepullAction{prepull(lightningShield, math.Round((first+1.5)*10)/10)}, rot.PrepullActions...)
 	}
 	return rot
 }
