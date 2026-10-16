@@ -97,3 +97,37 @@ func TestJudgementOfTheCrusaderRank(t *testing.T) {
 		t.Errorf("Holy damage taken after Judgement of the Crusader = %.2f, want 161", got)
 	}
 }
+
+// TestSealOfRighteousnessSpellPowerOnce checks that a Seal of Righteousness proc under Forever
+// takes the tooltip's 12% of spell power with a two-hander (client 70425, description variables
+// 1023) once: 500 more spell power adds as much to a proc as to the spell power part alone.
+func TestSealOfRighteousnessSpellPowerOnce(t *testing.T) {
+	sim, ret := retSim(t, "", arcaniteReaper)
+	target := ret.CurrentTarget
+	proc := ret.GetSpell(core.ActionID{SpellID: 25713})
+	if proc == nil {
+		t.Fatalf("no Seal of Righteousness rank 9 proc")
+	}
+	if proc.BonusCoefficient != 0.12 {
+		t.Errorf("proc spell power coefficient = %.4f, want 0.12 with a two-hander", proc.BonusCoefficient)
+	}
+	proc.BonusCritRating = -10000 // no crits, so every proc is a plain hit
+	metrics := &proc.SpellMetrics[target.UnitIndex]
+	hit := func() float64 {
+		before := metrics.TotalDamage
+		proc.ApplyEffects(sim, target, proc)
+		return metrics.TotalDamage - before
+	}
+	spellPowerPart := func() float64 {
+		return proc.CalcDamage(sim, target, 0, proc.OutcomeAlwaysHit).Damage
+	}
+	lowHit, lowPart := hit(), spellPowerPart()
+	ret.AddStatDynamic(sim, stats.SpellPower, 500)
+	highHit, highPart := hit(), spellPowerPart()
+	if highPart-lowPart < 1 {
+		t.Fatalf("500 spell power adds %.2f to the spell power part", highPart-lowPart)
+	}
+	if got, want := highHit-lowHit, highPart-lowPart; got < want-0.01 || got > want+0.01 {
+		t.Errorf("500 spell power adds %.2f to a proc, want %.2f (counted once)", got, want)
+	}
+}
