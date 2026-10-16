@@ -46,6 +46,13 @@ export class Database {
 		return Database.loadPromise;
 	}
 
+	// Uses this database in place of the full one, which we then never load. The DPS Report shows
+	// sim results with only the names and icons of the spells and items in them, and its single
+	// file has no server to load the full database from.
+	static use(db: UIDatabase) {
+		Database.loadPromise = Promise.resolve(new Database(db));
+	}
+
 	static getLeftovers(): Promise<UIDatabase> {
 		if (READ_JSON) {
 			return fetch(leftoversUrlJson)

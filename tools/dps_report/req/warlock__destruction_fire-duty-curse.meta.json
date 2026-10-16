@@ -4,9 +4,9 @@
   "spec": "Destruction",
   "build": "Destruction Fire (Curse duty)",
   "isDefault": false,
-  "pr": 30,
-  "race": "Undead",
-  "talents": "2525000003-0002-0050355003101351",
+  "pr": 59,
+  "race": "Gnome",
+  "talents": "25201020032-0002-0050355003101351",
   "treeNames": [
     "Affliction",
     "Demonology",
@@ -15,12 +15,12 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_destruction_fire_duty_curse",
   "published": {
-    "dps": 963.1,
-    "source": "PR #30"
+    "dps": 942.8,
+    "source": "PR #59"
   },
   "verify": {
-    "dps": 963.08,
-    "stderr": 0.26,
+    "dps": 942.78,
+    "stderr": 0.27,
     "iters": 20000,
     "ok": true,
     "note": "-0.02 vs published"
@@ -32,9 +32,9 @@
     "Fire and Brimstone",
     "Shadow and Flame",
     "Aftermath",
-    "Malediction",
     "Pandemic",
-    "Ruin"
+    "Ruin",
+    "Malevolence"
   ],
   "rotation": [
     "Pre-pull: Immolate at -1.5 s",

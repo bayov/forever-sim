@@ -78,29 +78,77 @@ func ForeverNormalizedRage(weapon *Weapon, level int32) float64 {
 	return k * ForeverNormalizedRageK * ForeverNormalizedRageLevelFactor(level) * weapon.SwingSpeed
 }
 
-// ForeverDamageTakenRage is the Rage a hit taken gives under Forever. Forever scales it by the
-// health a normal mob of our level has rather than by the attacker's level: 20 Rage for a mob's
-// worth of health, counted as if armor took off a share that grows from 20% at level 1 to 40% at
-// 60. Damage counts before our armor and partial resists, crits included; absorbed damage gives
-// none. Blizzard's notes give the shape ("expected creature's health", crits count, 20-40% armor
-// by level); the constant comes from a fit of logged hits taken. At 60 a 1500 hit gives 4.5 Rage,
-// where Classic's rule gives 15.4.
-func ForeverDamageTakenRage(result *SpellResult, level int32) float64 {
-	if result.Damage <= 0 {
+// ForeverDamageTakenRage is the Rage a hit taken gives under Forever: K Rage for a normal mob's
+// worth of health at our level, counted as if armor took off a share that grows from 20% at level
+// 1 to 40% at 60.
+//
+// The damage it counts is the attacker's hit before anything of ours touches it, times the crit or
+// crushing blow multiplier. Blizzard's 8 October notes (us.forums.blizzard.com/en/wow/t/2360696,
+// post 5) replace our armor with an assumed "20% to 40% range, varying by level", use "an
+// expected creature's health" instead of ours, count "increased damage taken from combat
+// multipliers, in particular from taking critical strikes or crushing blows", and ignore absorbs
+// "as if the Warrior/Druid had no absorb active". The Warrior deep dive
+// (news.blizzard.com/en-us/article/24301514) says "wearing Armor will no longer reduce the Rage
+// you gain". Neither names stances, Shield Wall, talents or blocks; by the user's reading
+// (2026-10-16: being more defensive doesn't penalize Rage) those don't count either (report
+// assumption warr_dt_rage_mods). K = 20 comes from pre-fix beta logs (magey/forever-warrior
+// issue 3: 10 Rage a max health of damage with the 50% armor assumption, at levels 8 to 9). At
+// 60 a 1500 hit gives 4.5 Rage; Classic gave 15.4 from a level 63 attacker.
+func ForeverDamageTakenRage(spell *Spell, result *SpellResult, level int32) float64 {
+	if !result.Landed() {
 		return 0
 	}
-	preMitigation := result.Damage
-	if result.ResistanceMultiplier > 0 {
-		preMitigation /= result.ResistanceMultiplier
+	damage := foreverRageDamage(spell, result)
+	if damage <= 0 {
+		return 0
 	}
 	level = max(1, min(level, 60))
 	assumedArmor := 0.2 + 0.2*float64(level-1)/59
-	return ForeverDamageTakenRageK * (1 - assumedArmor) * preMitigation / NormalMobStatsAt(level).Health
+	return ForeverDamageTakenRageK * (1 - assumedArmor) * damage / NormalMobStatsAt(level).Health
+}
+
+// foreverRageDamage is the damage ForeverDamageTakenRage counts for a hit.
+func foreverRageDamage(spell *Spell, result *SpellResult) float64 {
+	if result.AttackerDamage <= 0 {
+		// A result built by hand rather than by CalcDamage has no attacker damage: count what
+		// landed before our armor and resists, which already carries its crit.
+		if result.ResistanceMultiplier <= 0 {
+			return result.Damage
+		}
+		return result.Damage / result.ResistanceMultiplier
+	}
+	damage := result.AttackerDamage
+	attackTable := spell.Unit.AttackTables[result.Target.UnitIndex][spell.CastType]
+	if result.DidCrit() && spell.DefenseType != DefenseTypeNone {
+		damage *= spell.CritMultiplier(attackTable)
+	} else if result.DidCrush() {
+		damage *= 1.5
+	}
+	switch ForeverDamageTakenRageMods {
+	case ForeverDamageTakenRageModsAll:
+		damage *= spell.TargetDamageMultiplier(attackTable, false)
+	case ForeverDamageTakenRageModsIncreases:
+		damage *= max(1, spell.TargetDamageMultiplier(attackTable, false))
+	}
+	return damage
 }
 
 // ForeverDamageTakenRageK is the Rage a full normal mob's health of damage taken gives, before the
-// assumed armor.
+// assumed armor (report assumption warr_dt_rage_k).
 const ForeverDamageTakenRageK = 20.0
+
+// Which of our damage taken modifiers (stances, Shield Wall, Recklessness, talents) change the
+// Rage a hit gives (report assumption warr_dt_rage_mods).
+const (
+	// None: a defensive choice costs no Rage, and Recklessness or Berserker Stance add none.
+	ForeverDamageTakenRageModsNone = 0
+	// All: the damage after our modifiers, before armor, as master had before 2026-10-16.
+	ForeverDamageTakenRageModsAll = 1
+	// Increases only: Recklessness and the like add Rage, reductions take none away.
+	ForeverDamageTakenRageModsIncreases = 2
+)
+
+var ForeverDamageTakenRageMods = ForeverDamageTakenRageModsNone
 
 func GetRageConversion(attacker_level int32) float64 {
 	if attacker_level == 25 {
@@ -193,7 +241,7 @@ func (unit *Unit) EnableRageBar(options RageBarOptions) {
 			}
 			var generatedRage float64
 			if sim.IsForever() {
-				generatedRage = ForeverDamageTakenRage(result, unit.Level)
+				generatedRage = ForeverDamageTakenRage(spell, result, unit.Level)
 			} else {
 				generatedRage = result.Damage * 2.5 / GetRageConversion(spell.Unit.Level)
 			}

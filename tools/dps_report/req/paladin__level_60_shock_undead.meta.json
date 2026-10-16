@@ -4,8 +4,8 @@
   "spec": "Retribution",
   "build": "Level 60 Shock (vs Undead)",
   "isDefault": false,
-  "pr": 3,
-  "race": "Undead",
+  "pr": 54,
+  "race": "Human",
   "talents": "55003003201121251--05225230001",
   "treeNames": [
     "Holy",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_shock_undead",
   "published": {
-    "dps": 1041.3,
-    "source": "PR #3 / class preset"
+    "dps": 924.1,
+    "source": "PR #54 (client 70425: Judgement of Righteousness 42.9%, Champion of the Light 10 / 20 / 30%, Consecration 4.2% a tick; Seal of Righteousness spell power once per the tooltip; Concentration Aura; Human, 2026-10-16)"
   },
   "verify": {
-    "dps": 1041.67,
-    "stderr": 0.27,
+    "dps": 924.14,
+    "stderr": 0.25,
     "iters": 20000,
     "ok": true,
-    "note": "+0.37 vs PR #3 / class preset, re-checked on master 250ec4a6c (2026-10-15)"
+    "note": "verify.py, 180 s, seed 1"
   },
   "summary": "The Holy Shock build on its own vs Undead rotation, which adds Exorcism and keeps more mana for Light's Vigil in longer fights.",
   "advantage": "Exorcism and Holy Wrath only work on Undead and Demons, so against such a boss they're extra damage on top of the usual rotation. This build adds Exorcism to its Holy Shock rotation.",
@@ -75,12 +75,12 @@
     "Exorcism only lands on Undead and Demons, so this build only applies to those bosses",
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 spell power and 18 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
     "Divine Precision's hit does not cover Judgement of Righteousness",
-    "Holy Shock is worth 148 DPS and Light's Vigil about 91",
+    "Holy Shock is worth 148 DPS and Light's Vigil about 91 (measured before client 70425)",
     "A missed Holy Shock consumes the Vigil with no detonation or refund (small at about 1% Holy miss)",
-    "Undead is best (Touch of the Grave)",
+    "Human is best since client 70425 (Ruthless, 2% crit with any weapon): about 2 to 3 ahead of Undead (Touch of the Grave) at 180 s",
     "Holy Strike's flat part inside the 50% weapon percent comes from client data, not yet confirmed on the beta",
     "High Holy Strike and Consecration ranks may be stale: holding them to their level 30 trend would cost about 1.2%",
-    "Seal of Righteousness spell power counted twice on a two-hander (SoD-style 2 x 11%); one coefficient would be about 42-49 DPS lower"
+    "Seal of Righteousness adds 12% of spell power a hit with a two-hander, once, per the 70425 tooltip (the proc spell itself carries 0): the SoD-style double count (2 x 11%) would be about 46-51 DPS higher, the proc spell's 0 about 53-59 lower"
   ],
   "notes": "Request from mksettings with the same arguments as paladin__level_60_shock except talents and APL, then the target's mobType set to MobTypeUndead, as the class preset's encounter does.",
   "encounter": "Undead",

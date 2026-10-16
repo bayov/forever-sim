@@ -36,20 +36,22 @@ func (priestShadow) Knobs() []Knob {
 	return []Knob{
 		// Shadow Word: Pain when it is down, with at least this many seconds of fight left.
 		{Name: "swpMinTime", Default: 9, Min: 0, Max: 18, Step: 3},
-		// Devouring Plague when it is down and off its 1 min cooldown, with at least this
+		// Devouring Plague when it is down and off its 24 sec cooldown, with at least this
 		// many seconds of fight left and above a mana floor in percent.
 		{Name: "dp", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "dpMinTime", Default: 12, Min: 0, Max: 24, Step: 6},
 		{Name: "dpMana", Default: 0, Min: 0, Max: 60, Step: 10},
-		// Shadow Word: Death on cooldown (15 sec), 2 for only in the execute phase.
+		// Shadow Word: Death on cooldown (18 sec), 2 for only in the execute phase.
 		{Name: "swd", Default: 1, Min: 0, Max: 2, Step: 1},
 		{Name: "swdMana", Default: 0, Min: 0, Max: 60, Step: 10},
-		// Shadow Word: Death above Mind Blast in the priority.
-		{Name: "swdFirst", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Shadow Word: Death above Mind Blast in the priority. On since 70425 (18 sec cooldown,
+		// 200% crits in Shadowform): +1.5 / +1.8 / +1.7 at 120 / 180 / 300 sec (2026-10-16).
+		{Name: "swdFirst", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Mind Blast above a mana floor.
 		{Name: "mbMana", Default: 0, Min: 0, Max: 40, Step: 10},
-		// Inner Focus: 0 never, 1 on Mind Blast, 2 on cooldown with whatever comes next.
-		{Name: "innerFocus", Default: 1, Min: 0, Max: 2, Step: 1},
+		// Inner Focus: 0 never, 1 on Mind Blast, 2 on cooldown with whatever comes next, 3 on
+		// Devouring Plague (free through the fourth class mask word, client 14751).
+		{Name: "innerFocus", Default: 1, Min: 0, Max: 3, Step: 1},
 		// Clip Mind Flay for a ready Mind Blast once this many ticks are in (0 never). The
 		// check runs after each tick and when the GCD comes back 1.5 sec in.
 		{Name: "mfClip", Default: 0, Min: 0, Max: 2, Step: 1},
@@ -63,8 +65,10 @@ func (priestShadow) Knobs() []Knob {
 		// Dwarf: Chastise on cooldown against a Humanoid. A GCD of Mind Flay is worth more,
 		// 4.7 DPS at 180 sec.
 		{Name: "chastise", Default: 0, Min: 0, Max: 1, Step: 1},
-		// Undead: Dark Sacrifice under this much mana in percent (0 never).
-		{Name: "darkSacrifice", Default: 40, Min: 0, Max: 80, Step: 10},
+		// Undead: Dark Sacrifice under this much mana in percent (0 never). 10% since 70425:
+		// Shadow + Holy now runs short (Devouring Plague every 24 sec) and casts it only when
+		// it must, +2.9 / +5.8 / +2.1 at 120 / 180 / 300 sec against 40% (2026-10-16).
+		{Name: "darkSacrifice", Default: 10, Min: 0, Max: 80, Step: 10},
 		// Vampiric Embrace kept on the target. It heals the party for 20% of the priest's
 		// Shadow damage and deals none, so each cast is a GCD of damage given up.
 		{Name: "vampiricEmbrace", Default: 0, Min: 0, Max: 1, Step: 1},
@@ -134,7 +138,12 @@ func (priestShadow) Build(k Knobs) *proto.APLRotation {
 		if k["dpMinTime"] > 0 {
 			dpTime = ge(remainingTime(), seconds(k["dpMinTime"]))
 		}
-		items = append(items, cast(devouringPlague, and(not(dotIsActive(devouringPlague)), dpTime, priestManaAbove(k["dpMana"])), "Devouring Plague whenever it is down and off cooldown."))
+		dpCond := and(not(dotIsActive(devouringPlague)), dpTime, priestManaAbove(k["dpMana"]))
+		if k["innerFocus"] == 3 {
+			// Shadow Word: Pain above would take the free cast, so only while it is up.
+			items = append(items, cast(innerFocus, and(dpCond, spellIsReady(devouringPlague), dotIsActive(shadowWordPain)), "Inner Focus right before Devouring Plague. Without the talent ignore the warning on this line."))
+		}
+		items = append(items, cast(devouringPlague, dpCond, "Devouring Plague whenever it is down and off cooldown."))
 	}
 
 	var swdLine *proto.APLListItem

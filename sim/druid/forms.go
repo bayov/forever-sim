@@ -216,10 +216,8 @@ func (druid *Druid) registerCatFormSpell() {
 	furorPerSecond := 2 * float64(druid.Talents.Furor)
 	furorCap := 20 * float64(druid.Talents.Furor)
 
-	hasWolfheadBonus := false
-	if head := druid.Equipment.Head(); head != nil && (head.ID == WolfsheadHelm) {
-		hasWolfheadBonus = true
-	}
+	// Forever's Wolfshead Helm gives its Energy on Shifting Power instead (shifting_power.go).
+	hasWolfheadBonus := !druid.Env.IsForever() && druid.hasWolfsheadHelm()
 
 	druid.CatForm = druid.RegisterSpell(Any, core.SpellConfig{
 		ActionID: actionID,
