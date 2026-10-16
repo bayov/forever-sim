@@ -83,7 +83,7 @@ func (priest *Priest) getSmiteBaseConfig(rank int) core.SpellConfig {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(baseDamageLow, baseDamageHigh)
-			multiplier := priest.powerInLightMultiplier(target)
+			multiplier := priest.PowerInLightMultiplier(target)
 			spell.DamageMultiplier *= multiplier
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			spell.DamageMultiplier /= multiplier

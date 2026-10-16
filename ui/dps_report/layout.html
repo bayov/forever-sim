@@ -182,30 +182,8 @@
 
     <div class="content-block fv-card" id="sp-time-card" data-jump="Timeline">
       <div class="content-block-header"><h6 class="content-block-title">A fight, second by second</h6></div>
-      <p class="fv-note" id="sp-time-note">One simulated fight. Pick a typical, unlucky or lucky one, zoom in, scroll sideways, and tap anywhere to see what happened at that moment.</p>
-      <div class="fv-controls">
-        <div class="fv-seg" id="tl-mode" role="group" aria-label="Layout"></div>
-        <div class="fv-seg" id="tl-samples" role="group" aria-label="Sample fight"></div>
-        <div class="fv-seg" id="tl-zoom" role="group" aria-label="Zoom">
-          <button data-z="fit" aria-pressed="true">Whole fight</button><button data-z="60" aria-pressed="false">1 min</button><button data-z="30" aria-pressed="false">30 s</button><button data-z="15" aria-pressed="false">15 s</button><button data-z="5" aria-pressed="false">5 s</button>
-        </div>
-      </div>
-      <div class="fv-controls fv-lanes"><span class="fv-label">Lanes</span><span id="tl-lanes" role="group" aria-label="Lanes shown"></span></div>
-      <div class="fv-controls fv-focus"><label class="fv-label" for="tl-focus">Highlight</label><select class="form-select" id="tl-focus"></select></div>
-      <div class="fv-tl" id="tl">
-        <div class="fv-tl-labels" id="tl-labels"></div>
-        <div class="fv-tl-scroll" id="tl-scroll"></div>
-      </div>
-      <div class="fv-tl-legend" id="tl-legend"></div>
-      <div class="fv-readout" id="tl-readout"><span class="fv-note">Tap the timeline to see the casts, hits and buffs at that moment.</span></div>
-      <details id="tl-logbox">
-        <summary>Event log for the part of the fight on screen</summary>
-        <div class="fv-controls">
-          <label class="fv-label" for="tl-filter">Show</label>
-          <select class="form-select" id="tl-filter"><option value="all">Everything</option><option value="cast">Casts</option><option value="dmg">Damage</option><option value="aura">Buffs and debuffs</option></select>
-        </div>
-        <div class="fv-log" id="tl-log"></div>
-      </details>
+      <p class="fv-note" id="sp-time-note">One simulated fight. Pick the typical, unlucky or lucky fight, and see it as a timeline, a chart, the combat log or a replay.</p>
+      <div class="fv-events" id="sp-events"></div>
     </div>
 
     <div class="fv-grid">

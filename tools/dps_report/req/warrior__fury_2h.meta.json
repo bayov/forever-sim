@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_fury_2h",
   "published": {
-    "dps": 944.5,
-    "source": "Fury 2H Bloodrage under 20 and Heroic Strike from 85 Rage (rotation audit pass 21), 2026-10-16"
+    "dps": 932.3,
+    "source": "Client 70425 racials and the raid damage hits, re-measured on master 4f5c608, 2026-10-16"
   },
   "verify": {
-    "dps": 944.47,
-    "stderr": 0.43,
+    "dps": 932.3,
+    "stderr": 0.4,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 180 s, seed 1"
+    "note": "same sim as the published number"
   },
   "summary": "Two-hand Fury with a 3.7 sec axe in Berserker Stance: Bloodthirst, Whirlwind, Flurry and Two-Handed Weapon Specialization. Shipped as the two-hand Fury variant; it trails dual wield Fury and Arms.",
   "keyTalents": [

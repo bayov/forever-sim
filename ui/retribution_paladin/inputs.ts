@@ -9,12 +9,14 @@ import { TypedEvent } from '../core/typed_event.js';
 // These don't need to be in a separate file but it keeps things cleaner.
 
 // Sanctity Aura is not in Forever's Retribution tree, so the paladin's own damage aura is
-// Retribution Aura, which only does anything while something hits the paladin.
+// Retribution Aura, which only does anything while something hits the paladin. Concentration
+// Aura gives a 35% chance to ignore pushback from the raid hits.
 export const AuraSelection = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecRetributionPaladin, PaladinAura>({
 	fieldName: 'aura',
 	values: [
 		{ value: PaladinAura.NoPaladinAura, tooltip: 'No Aura' },
 		{ actionId: () => ActionId.fromSpellId(10301), value: PaladinAura.RetributionAura },
+		{ actionId: () => ActionId.fromSpellId(19746), value: PaladinAura.ConcentrationAura },
 	],
 });
 

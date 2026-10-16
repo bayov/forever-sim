@@ -6,7 +6,7 @@
 # The settings, talent and knob searches behind the Level 60 presets:
 #
 #   go run --tags=with_db ./tools/rotopt/mksettings -spec shadow -gear level60_phase1_synthetic \
-#       -apl level60 -talents 005030211305--500321501201302051 -race Human -duration 180 -out sp.json
+#       -apl level60 -talents 00500501103-3-50052101231302251 -race Human -duration 180 -out sp.json
 #   go run --tags=with_db ./tools/rotopt -template priest_shadow -settings sp.json -durs 180 \
 #       -talent-search -iters 3000 -confirm-iters 20000
 #   go run --tags=with_db ./tools/rotopt -template priest_shadow -settings sp.json -durs 120,180,300 \

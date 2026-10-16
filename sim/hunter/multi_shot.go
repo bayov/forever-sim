@@ -9,7 +9,9 @@ import (
 
 // Forever's Multi-Shot (beta client, build 1.60.1.70338) has one rank, no flat bonus, a 0.5 sec
 // cast and 13.9% of base mana, and a 6 sec cooldown shared with Aimed Shot (Classic 10 sec alone,
-// up to +150 at rank 5).
+// up to +150 at rank 5). Its interrupt flags (SpellInterrupts, client 1.60.1.70425) are 9, without
+// the pushback bit (0x2) that Aimed Shot's and Sniper Shot's 7 carry, so a hit taken never pushes
+// its cast back.
 func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 	if hunter.Level < 18 {
 		return
@@ -56,9 +58,10 @@ func (hunter *Hunter) registerMultiShotSpell(timer *core.Timer) {
 
 		CritDamageBonus: hunter.mortalShots(),
 
-		DamageMultiplier: hunter.barrageMultiplier(),
-		ThreatMultiplier: 1,
-		BonusCoefficient: 1,
+		DamageMultiplier:  hunter.barrageMultiplier(),
+		ThreatMultiplier:  1,
+		PushbackReduction: 1,
+		BonusCoefficient:  1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			curTarget := target

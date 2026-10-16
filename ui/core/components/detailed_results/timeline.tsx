@@ -507,6 +507,10 @@ export class Timeline extends ResultComponent {
 	}
 
 	private updatePlot() {
+		// We keep the width even when we draw no rotation, like before the first result or for more
+		// than one player. Otherwise refitIfResized would draw again and again for a width we never
+		// take.
+		this.drawnWidth = this.rotationTimeline.clientWidth;
 		if (this.resultData == null) {
 			return;
 		}
@@ -528,7 +532,6 @@ export class Timeline extends ResultComponent {
 		if (this.mode == 'rotation' && players.length == 1) {
 			this.zoomAnimation = null;
 			window.clearTimeout(this.settleTimer);
-			this.drawnWidth = this.rotationTimeline.clientWidth;
 			this.drawnPxPerSecond = this.fitPxPerSecond(this.drawnWidth);
 			this.setPxPerSecond(this.drawnPxPerSecond);
 			try {

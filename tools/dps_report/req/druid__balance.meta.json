@@ -5,7 +5,7 @@
   "build": "Balance",
   "isDefault": true,
   "pr": 8,
-  "race": "NightElf",
+  "race": "Tauren",
   "talents": "5532220115501351--505",
   "treeNames": [
     "Balance",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 831.4,
-    "source": "end-of-fight Moonfire (rotation audit pass 19, 2026-10-15)"
+    "dps": 828.2,
+    "source": "Tauren, Nature's Focus pushback and the client 70425 racials (2026-10-16)"
   },
   "verify": {
-    "dps": 831.38,
+    "dps": 828.2,
     "stderr": 0.24,
     "iters": 20000,
     "ok": true,
-    "note": "180 s, seed 1, after the end-of-fight Moonfire line"
+    "note": "180 s, seed 1"
   },
   "summary": "41/0/10 moonkin that keeps Insect Swarm and Moonfire up and weaves Wrath and Starfire to spend every Eclipse charge. It is the talent search's best on the synthetic Phase 1 gear and the default Balance Level 60 preset.",
   "keyTalents": [

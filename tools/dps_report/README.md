@@ -15,6 +15,7 @@ merged tree ──► requests ──► sims ──► datasets ──► artif
    its class, spec, build name, preset race, talents, gear set, APL, published and verified DPS, summary, key talents, rotation,
    consumes and caveats.
 3. **Sims.** `run_build.py`, `weights.py`, `run_races.py`, `ablate.py` and `mana_curves.py` run the binaries on the requests.
+   After `build_data.py`, `events.py` sims the sample fights once more with their debug logs (see the datasets table).
 4. **Datasets.** `build_data.py` (with `build_races.py`, `setup_active.py`, `rotation.py` and `tooltips.py`) writes `data/*.json`.
 5. **Artifact.** Each changed data file is uploaded as an asset, and its `datasets/<id>` doc is repointed at it.
 
@@ -170,7 +171,9 @@ All are written by `build_data.py`. "out" means `out/<id>.json` from `run_build.
 | hist | build_data.py | out main run: all 20k fight DPS values, 5-DPS bins | run_build |
 | abilities | build_data.py | out main run per-action metrics, names | run_build |
 | auras | build_data.py | out main run aura uptimes and procs (player and target), names | run_build |
-| timeline_\<class\> (×9) | build_data.py | out sample fights: 3 logged one-iteration fights per build, picked from 30 seeds | run_build |
+| timeline_\<class\> (×9) | build_data.py | out sample fights: 3 logged one-iteration fights per build, picked from 30 seeds. Only their auras and pre-pull casts, for the aura bars. | run_build |
+| events/\<build\>.json.gz | events.py | the timeline datasets' seeds: each sample fight simmed again with its whole debug log, as a gzipped RaidSimRequest and RaidSimResult for the sim UI's events view | events.py (seconds) |
+| event_names, event_icons | events.py | every spell and item id in the fights, their metrics and weapons, named from `db.json` and then the wowhead cache, and the icons that icons/icons_more lack | events.py |
 | stats | build_data.py | out `stats`: dashstats `ComputeStats` final sheet | run_build |
 | gear | build_data.py | the request's equipment, item names, icons and ilvl from `db.json` and wowhead item csv | none (no sims) |
 | setup | build_data.py + setup_active.py | the request's consumes, buffs, debuffs and professions; `abl/ablate.json` for `active` / `why` | ablate.py |

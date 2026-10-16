@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_arms",
   "published": {
-    "dps": 954.1,
-    "source": "Raid damage hits on warriors (2 a minute, 1500 damage each), 2026-10-15"
+    "dps": 944.2,
+    "source": "Client 70425 racials and the raid damage hits, re-measured on master 4f5c608, 2026-10-16"
   },
   "verify": {
-    "dps": 954.1,
-    "stderr": 0.34,
+    "dps": 944.2,
+    "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 180 s, seed 1"
+    "note": "same sim as the published number"
   },
   "summary": "Two-hand Arms in Battle Stance: Mortal Strike, Slam on its cooldown, Overpower off dodges and Bloodthrill procs, with Rend kept up and Weaponmaster's axe crit. It is the Arms spec's Level 60 preset, about 10% behind dual wield Fury.",
   "keyTalents": [

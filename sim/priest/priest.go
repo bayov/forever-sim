@@ -62,8 +62,9 @@ type Priest struct {
 	Starshards        []*core.Spell
 	VampiricEmbrace   *core.Spell
 
-	InnerFocusAura *core.Aura
-	ShadowformAura *core.Aura
+	InnerFocusAura      *core.Aura
+	ShadowformAura      *core.Aura
+	DarkInspirationAura *core.Aura
 
 	ShadowWeavingAuras   core.AuraArray
 	VampiricEmbraceAuras core.AuraArray

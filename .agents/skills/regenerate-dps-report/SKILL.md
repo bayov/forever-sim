@@ -54,6 +54,14 @@ and rogue) through 100 fixed 480 s fights and reads its mana from the debug logs
 `mana_summary` (when mana runs low) datasets. It takes seconds per build. Rerun it with
 `--force <ids>` for every re-simmed build that uses mana.
 
+After `build_data.py`, run `python3 events.py --data "$DASH_DIR/data" <ids>` for the
+re-simmed builds. The Specs page shows each preset's typical, unlucky and lucky fight in the
+sim UI's events view (timeline, chart, log, replay), which needs the whole debug log of each
+fight. `events.py` sims those fights again from the seeds in the `timeline_<class>` datasets
+and writes `events/<id>.json.gz`, plus the `event_names` and `event_icons` lookups. It says
+so when a fight's DPS differs from the dataset's (then the binary isn't the one the numbers
+came from). It takes seconds.
+
 Skip the README's "Publishing" section and its `rd/` harness: they are for the old
 Dashboard-type artifact. Steps 3 to 5 here replace them.
 

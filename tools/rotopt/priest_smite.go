@@ -29,8 +29,10 @@ func (priestSmite) Knobs() []Knob {
 		{Name: "swp", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "swpMana", Default: 0, Min: 0, Max: 60, Step: 10},
 		{Name: "dp", Default: 1, Min: 0, Max: 1, Step: 1},
-		// Devouring Plague above 40% mana (2026-10-13, with the downranking penalty).
-		{Name: "dpMana", Default: 40, Min: 0, Max: 80, Step: 10},
+		// Devouring Plague above 60% mana. Its 24 sec cooldown (client 70425, was 1 min) would
+		// spend Smite's mana: above 40% it is 733.2 / 709.5 / 617.9 at 120 / 180 / 300 sec,
+		// above 60% with Inner Focus on cooldown 727.8 / 714.6 / 642.2 (2026-10-16).
+		{Name: "dpMana", Default: 60, Min: 0, Max: 80, Step: 10},
 		{Name: "mb", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "mbMana", Default: 20, Min: 0, Max: 60, Step: 10},
 		{Name: "swd", Default: 0, Min: 0, Max: 1, Step: 1},
@@ -39,9 +41,9 @@ func (priestSmite) Knobs() []Knob {
 		// off it is always ready then: +5.8 / +3.0 / +1.2 at 120 / 180 / 300 sec (rotation
 		// audit 19b). Mind Blast there adds nothing on top.
 		{Name: "swdEnd", Default: 1, Min: 0, Max: 1, Step: 1},
-		// Inner Focus: 0 never, 1 on Holy Fire, 2 on Smite, 3 on Mind Blast. Devouring Plague is
-		// not in its class mask (client 14751), so it is never free.
-		{Name: "innerFocus", Default: 1, Min: 0, Max: 3, Step: 1},
+		// Inner Focus: 0 never, 1 on Holy Fire, 2 on Smite, 3 on Mind Blast, 4 on Devouring
+		// Plague (free through the fourth class mask word, client 14751).
+		{Name: "innerFocus", Default: 2, Min: 0, Max: 4, Step: 1},
 		{Name: "powerInfusion", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "chastise", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "darkSacrifice", Default: 40, Min: 0, Max: 80, Step: 10},
@@ -93,7 +95,19 @@ func (priestSmite) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(shadowWordPain, and(not(dotIsActive(shadowWordPain)), ge(remainingTime(), seconds(9)), priestManaAbove(k["swpMana"])), "Shadow Word: Pain whenever it is down."))
 	}
 	if k["dp"] == 1 {
-		items = append(items, cast(devouringPlague, and(not(dotIsActive(devouringPlague)), ge(remainingTime(), seconds(12)), priestManaAbove(k["dpMana"])), "Devouring Plague whenever it is down and off cooldown."))
+		dpCond := and(not(dotIsActive(devouringPlague)), ge(remainingTime(), seconds(12)), priestManaAbove(k["dpMana"]))
+		if k["innerFocus"] == 4 {
+			// The lines above would take the free cast, so only while their spells are up.
+			var above []value
+			if k["holyFire"] == 1 {
+				above = append(above, dotIsActive(holyFire))
+			}
+			if k["swp"] == 1 {
+				above = append(above, dotIsActive(shadowWordPain))
+			}
+			items = append(items, cast(innerFocus, and(append([]value{dpCond, spellIsReady(devouringPlague)}, above...)...), "Inner Focus right before Devouring Plague. Without the talent ignore the warning on this line."))
+		}
+		items = append(items, cast(devouringPlague, dpCond, "Devouring Plague whenever it is down and off cooldown."))
 	}
 	if k["chastise"] == 1 {
 		items = append(items, cast(chastise, nil, "Dwarf. Chastise on cooldown against a Humanoid. Other races can ignore the warning on this line."))

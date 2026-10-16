@@ -5,7 +5,7 @@
   "build": "Survival (melee) (Hunter's Mark duty)",
   "isDefault": false,
   "pr": 5,
-  "race": "Orc",
+  "race": "Human",
   "talents": "502-005005-500230230250122151",
   "treeNames": [
     "Beast Mastery",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_survival",
   "apl": "sv_mark",
   "published": {
-    "dps": 891.3,
-    "source": "Hunter's Mark duty preset (standards 23), rotation audit pass 20 (2026-10-15): 180 s, 20000 iterations, seed 1"
+    "dps": 887.0,
+    "source": "client 1.60.1.70425 port and racials, with the raid hits (2026-10-16): 180 s, 20000 iterations, seed 1"
   },
   "verify": {
-    "dps": 891.31,
+    "dps": 887.0,
     "stderr": 0.27,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, same sim as the published number"
+    "note": "same sim as verify.py and the published number"
   },
   "summary": "Melee Survival 7/10/34 on a one-hand axe and a dagger with a cat: Predator's Edge, Expose Prey into Mongoose Bite, Strider Kick and Lacerating Strikes. It ships as Forever's melee hunter build; a ranged Survival build plays like Marksmanship and is only documented.",
   "keyTalents": [
@@ -65,12 +65,12 @@
     "Pet scaling: 10% of RAP plus hunter hit (SoD placeholder for hit); on SoD's full 22% pet scaling this build would gain +18 (2026-10-12 gear)",
     "Wildstalker Armor 4P/5P not in the preset (2P only); with them this build would gain 0 (measured on the 2026-10-12 gear)",
     "Raptor Strike rank 8 adds 96, halfway from the client's 70 to Era's 0.88 (assumption hunter_raptor_31plus, user ruling 2026-10-15); the ranks below keep the client's values",
-    "Orc is best through Axe Specialization on its main hand axe, 11 ahead of the Night Elf",
     "Fire-toasted Bun (+9) left out as a seasonal item; Elemental Sharpening Stone left out (MC-only plans)",
     "22% more crit per Agility than Classic (assumption hunter_crit_per_agi, user ruling 2026-10-15: the beta's level 1 ratio carried to 60)",
     "A pet's hit scales with its attack speed as in Classic (assumption hunter_pet_speed, user ruling 2026-10-15; on the beta every pet hits like a 2.0 sec pet); the cat is still the best pet and every cat speed sims within 1 DPS",
     "Keeps Rhok'delar's 2.9 sec bow: Survival never shoots, so every ranged candidate of standards 22 sims the same",
-    "Hunter's Mark duty (standards 23): the request switches the raid's Hunter's Mark off and the hunter keeps its own up, the first cast 1.5 s before the pull, then one GCD and 60 mana every 2 min; it costs 1.1 / 1.1 / 1.3 DPS at 120 / 180 / 300 s against hunter__survival"
+    "Hunter's Mark duty (standards 23): the request switches the raid's Hunter's Mark off and the hunter keeps its own up, the first cast 1.5 s before the pull, then one GCD and 60 mana every 2 min; it costs 0.8 / 1.2 / 1.5 DPS at 120 / 180 / 300 s against hunter__survival",
+    "Human is best (Ruthless, 2% crit with any weapon since client 70425), 1.1 ahead of the Orc at 180 s and 2.4 at 300 s; the Orc leads by 1.0 at 120 s"
   ],
   "notes": "Request is hunter__survival's with the rotation swapped for ui/hunter/apls/sv_mark.apl.json (the base APL plus the mark line, tools/rotopt/hunter_presets.sh) and debuffs.huntersMark removed; mksettings writes the same raid as spec hunter_sv_mark. Request written by mksettings (spec hunter_sv) unchanged; it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Distance is 5 yd as in the mksettings raid the number was measured in (the UI preset starts at 25 yd; the APL walks in 6 s before the pull, which the preset says costs nothing). Survival keeps a 1.0 sec cat out (DefaultOptions).",
   "duty": "Hunter's Mark",

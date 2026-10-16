@@ -169,3 +169,28 @@ func TestClearcastingMidCast(t *testing.T) {
 		t.Errorf("the Starfire spent %.1f mana, want its full cost %.1f", spent, fullCost)
 	}
 }
+
+// TestNaturesFocus checks Nature's Focus 5 (spell 17063): a 70% chance for Wrath, Starfire and
+// Hurricane to keep their cast time on a hit taken, and none without the talent or for Moonfire.
+func TestNaturesFocus(t *testing.T) {
+	_, moonkin := newMoonkinSim(t, "5532220115501351--505")
+	for name, spell := range map[string]*druid.DruidSpell{
+		"Wrath":     topRank(moonkin.Wrath),
+		"Starfire":  topRank(moonkin.Starfire),
+		"Hurricane": topRank(moonkin.Hurricane),
+	} {
+		if spell == nil {
+			t.Fatalf("no %s", name)
+		}
+		if got := spell.PushbackReduction; math.Abs(got-0.7) > 1e-9 {
+			t.Errorf("%s pushback reduction %.2f, want 0.70", name, got)
+		}
+	}
+	if got := topRank(moonkin.Moonfire).PushbackReduction; got != 0 {
+		t.Errorf("Moonfire pushback reduction %.2f, want 0", got)
+	}
+	_, none := newMoonkinSim(t, "")
+	if got := topRank(none.Wrath).PushbackReduction; got != 0 {
+		t.Errorf("Wrath pushback reduction without the talent %.2f, want 0", got)
+	}
+}
