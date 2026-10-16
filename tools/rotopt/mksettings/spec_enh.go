@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 
 	"github.com/wowsims/classic/sim/core/proto"
 )
@@ -12,6 +13,14 @@ func init() {
 		// whose Grace of Air every melee group gets, gives it Grace of Air too (the user's ruling 2026-10-16, "both totems": client 1.60.1.70425 lets Grace of Air stack with Windfury Totem and makes both raid-wide).
 		raid: func(raidBuffs *proto.RaidBuffs, _ *proto.IndividualBuffs, _ *proto.Debuffs) {
 			raidBuffs.GraceOfAirTotem = proto.TristateEffect_TristateEffectRegular
+			// That second shaman's fire slot holds Flametongue Totem at level 60 (the user's ruling
+			// 2026-10-16: "Let's assume it works, that it doesn't interfere with other melee getting
+			// Windfury Totem, and that shamans with their WF imbue get FTT on top"). Our Windfury
+			// Weapon turns our own Windfury Totem's buff off for us, so the raid's Flametongue Totem
+			// holds the weapon's totem slot.
+			if flag.Lookup("level").Value.String() == "60" {
+				raidBuffs.TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffFlametongue
+			}
 		},
 		consumes: func() *proto.Consumes {
 			// The Level 60 preset's consumes (ui/enhancement_shaman/presets.ts). Under Forever the

@@ -571,6 +571,32 @@
                   }
                 },
                 {
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "dotIsActive": {
+                                  "spellId": {
+                                    "spellId": 29228
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 29228
+                      }
+                    }
+                  }
+                },
+                {
                   "notes": "Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
@@ -616,32 +642,6 @@
                     "castSpell": {
                       "spellId": {
                         "spellId": 408345
-                      }
-                    }
-                  }
-                },
-                {
-                  "action": {
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "not": {
-                              "val": {
-                                "dotIsActive": {
-                                  "spellId": {
-                                    "spellId": 29228
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 29228
                       }
                     }
                   }
@@ -732,6 +732,7 @@
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
+      "totemWeaponBuff": "TotemWeaponBuffFlametongue",
       "salvation": true
     },
     "debuffs": {

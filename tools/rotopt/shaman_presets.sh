@@ -64,14 +64,21 @@ gen() {
 # Fire Nova outside Clearcasting needs 12 mana a second left in the fight in place of the 20%
 # floor (fireNovaManaPerSec=12, the rotation auditor, 2026-10-15): +0.4 / +2.2 / +1.7 on Level 60
 # and +0.5 / +2.2 / +0.3 on Imp GW at 120 / 180 / 300 sec, paired at 20000 iterations.
-gen optimized "shock=4,airTotem=2,fireTotem=1,fireTotemMinTime=10,fireNova=2,fireNovaMana=20,waterTotem=1,flameShockFirst=1,fireNovaClearcast=2,prepullTotems=1,rageHoldForTrinket=1,fireNovaManaPerSec=12,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1.5" -level 60
+# With the raid's Flametongue Totem (standards 25, the user's ruling 2026-10-16) Magma Totem beats
+# Searing Totem on the Level 60 build (fireTotem=2, fireTotemMinTime=2: +28.5 / +19.0 / +12.7 at
+# 120 / 180 / 300 sec; Trial by Fire's 20 sec on Magma Totem since client 70425 helps), and Earth Shock
+# waits for the Stormstrike mark (earthShockHold=1, +0.3 to +1.5 more), paired at 20000 iterations on two
+# seed sets. A knob search that could drop Windfury Totem dropped it; the builds keep it for the party.
+gen optimized "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,earthShockHold=1,fireNova=2,fireNovaMana=20,waterTotem=1,flameShockFirst=1,fireNovaClearcast=2,prepullTotems=1,rageHoldForTrinket=1,fireNovaManaPerSec=12,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1.5" -level 60
 # The Water Shield and Mana Tide talent builds have no Improved Fire Nova, so Magma Totem
 # beats Searing Totem there (899.7 against 879.5 at 180 sec on the Water Shield build). A
 # new Magma Totem goes down with as little as 10 sec left.
 # Since the rotation auditor's pass 23 (2026-10-16) a new Magma Totem goes down with as little as 2 sec
 # left (fireTotemMinTime=2): +1.17 / +0.88 / +0.55 at 120 / 180 / 300 sec on Water Shield and +0.63
 # at 180 on Mana Tide, paired at 20000 iterations on two seed sets.
-gen magma "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,fireNova=1,fireNovaMana=20,waterTotem=1,earthShockFlameShockLeft=1,prepullTotems=1,rageHoldForTrinket=1,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1" -level 60
+# Flame Shock ahead of the bolt (flameShockFirst=1) on the Water Shield build since the raid's
+# Flametongue Totem: +3.0 to +3.5 / +2.3 to +2.9 / +1.6 to +2.3 on two seed sets.
+gen magma "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,fireNova=1,fireNovaMana=20,waterTotem=1,earthShockFlameShockLeft=1,flameShockFirst=1,prepullTotems=1,rageHoldForTrinket=1,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1" -level 60
 # On 2026-10-12, on the searched Water Shield build (050031-053030031005112151-052030001), Fire
 # Nova ahead of the shocks is +2.7 here too, and holding Earth Shock while Flame Shock has 1 sec
 # or less left (so the shock cooldown is back when the DoT runs out) +1.0: 762.3 as the mean of
@@ -88,7 +95,9 @@ gen magma "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,fireNova=1,fireNova
 # Magma Totem with Mana Tide Totem at 20% mana, for the Mana Tide talent build. Fire Nova
 # goes ahead of the shocks here (fireNova=1): +4.4 at 180 sec and +1.7 at 300 on 2026-10-08.
 # On the Water Shield build that was +1.7 at 180 sec and even at 300, so magma keeps it after.
-gen mana_tide "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,fireNova=1,fireNovaMana=20,waterTotem=1,manaTideMana=20,earthShockFlameShockLeft=1,prepullTotems=1,rageHoldForTrinket=1,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1" -level 60
+# Fire Nova after the shocks (fireNova=2) on the Mana Tide build since the raid's Flametongue Totem:
+# +0.7 to +2.5 / +1.1 to +2.2 / +1.1 to +1.8 on two seed sets.
+gen mana_tide "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,fireNova=2,fireNovaMana=20,waterTotem=1,manaTideMana=20,earthShockFlameShockLeft=1,prepullTotems=1,rageHoldForTrinket=1,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1" -level 60
 # Level 30 with 5 extra talent points (26 in all), tuned for the 120 sec Level 30
 # encounter. Flame Shock when its DoT is down and Earth Shock otherwise (shock=4), because
 # Earth Shock spends the Stormstrike mark (+20%). Windfury Weapon from level 30 and Mana Spring Totem from 26, and shocks only
