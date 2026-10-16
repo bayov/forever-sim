@@ -26,19 +26,19 @@ What this repo's sim models of Forever as of 2026-09-20, and what it assumes whe
 
 ## Racials
 
-`sim/core/racials_forever.go`, written against [racials.md](racials.md), which carries the beta client's tooltips and cooldowns. Blood Fury and Eureka! are 2 min, Berserking and Elune's Light 3 min.
+`sim/core/racials_forever.go`, written against [racials.md](racials.md), which carries the client's tooltips and cooldowns (checked against 1.60.1.70425). Eureka! is 2 min, Blood Fury, Berserking and Elune's Light 3 min.
 
 | Race | Modelled | Assumption |
 | --- | --- | --- |
-| Human | 2% crit with swords (melee and spell), Spirit +5% | Weapon crit applies to auto attacks too, not only abilities |
-| Dwarf | 1% crit with maces, +5% vs Beasts | Same. Creature type bonuses follow the upstream Classic modelling and apply again on crits, so they measure about +8% at 50% crit |
+| Human | Ruthless: 2% crit with any weapon (melee, ranged and spell; swords only before client 70425), Spirit +5% | The crit applies to auto attacks too, not only abilities |
+| Dwarf | Earth Fury: crits do 2% more damage (204% melee, 153% spell; client 70425, it was 1% crit with maces), +5% vs Beasts | The 2% multiplies the whole crit damage, like Wrath's crit damage meta gems (aura 163), and covers spells too as the tooltip says (notes.md, Need to Verify). Creature type bonuses follow the upstream Classic modelling and apply again on crits, so they measure about +8% at 50% crit |
 | Night Elf | Elune's Light: +10% crit for 15 sec, Dodge +1% | |
 | Gnome | Eureka!: next 3 damaging abilities +10% damage and 10% less Energy, Rage or Mana (the 2026-09-24 build, it was 20% Energy, 40% Rage, 50% Mana and 15% for Priests, whose heals count too). Max mana, rage or energy +5% | A damaging ability is one with a cost that is set up to deal damage, so Slice and Dice, Expose Armor and shouts neither benefit nor spend a charge. The buff is assumed to last 30 sec |
 | Orc | 1% crit with any weapon (Savage; axes only before client 70425), Blood Fury +10% AP and SP for 15 sec | AP, ranged AP, SP and bonus healing x1.1 while it's up (it follows a buff gained during it), plus 10% of each weapon's average damage on its hits, off the GCD (beta, 2026-10-11 and 2026-10-12). Command (pet damage) is gone |
 | Undead | Touch of the Grave: 5% chance (10% for Mages, Priests and Warlocks) on spells and attacks to deal Shadow damage and heal for it. Since the 2026-09-24 build an ability with no damage component (Expose Armor) does not roll | Modelled at the 5% max health cap. No internal cooldown, the beta has none (we assumed 15 sec until 2026-09-23). The roll is on the use, not the landing: every hostile ability the player presses rolls once whether or not it lands, including ones that deal no damage, and a damage over time spell rolls when it goes up and not on its ticks. Auto attacks and the attacks the engine fires off another spell roll when they land instead, since they announce no cast. A missed swing rolling is the one thing we had to guess, and we guessed no |
-| Tauren | Health +5%, hit +1% (melee and spell) | |
+| Tauren | Health +5%, crits do 2% more damage (client 70425; it was 1% hit) | As Dwarf Earth Fury |
 | Troll | Berserking flat +10% for 10 sec, +5% vs Beasts | The client shows no duration, 10 sec is Classic's |
-| Skyborne | +1% melee, ranged and cast speed, +5% vs Elementals | No offensive active on either half, so High Order and Windshaper sim the same. Base stats sit at the class baseline, none published |
+| Skyborne | +3% melee, ranged and cast speed (1% before client 70425), +5% vs Elementals | No offensive active on either half, so High Order and Windshaper sim the same. Base stats sit at the class baseline, none published |
 
 The six new race and class pairings are selectable. Skyborne is two entries (High Order for Alliance, Windshaper for Horde) because faction is derived from race throughout the sim.
 
