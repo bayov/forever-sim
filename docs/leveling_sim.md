@@ -625,7 +625,10 @@ After the groundwork:
    - The BayovCore export (it was Pawn EP) writes the Current EP for BayovCore's Upgrades
      with its stat names, our level and talent tree, and Survival=own when the weights price
      Stamina or Armor, so Upgrades keeps them instead of its survival slider.
-8. **Synthetic gear curves** from 10 to 60 and the talent route search.
+8. **Gear from 1 to 60** and the talent route search. The leveling gear plan
+   (docs/leveling_gear.md, 2026-10-16) plays out how we gear up while leveling: random finds of
+   about our level, mostly white and then green with a few blues, worn only when they beat
+   what we have. The Leveling Gear tab shows it and takes items of our own.
 9. **UI**, done: "Leveling" is an Encounter Type next to PvP in the individual sims, with the
    session's options (the fight-only inputs hide). Results lead with mobs killed, XP an hour,
    deaths and mobs a pull, and the time split; the history and Compare tab compare mobs

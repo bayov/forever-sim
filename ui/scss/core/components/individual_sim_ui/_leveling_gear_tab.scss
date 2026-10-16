@@ -1,0 +1,176 @@
+// The Leveling Gear tab (leveling_gear_tab.tsx): the controls, the grid of levels by slots,
+// and under it the selected level's gear and our own items.
+#leveling-gear-tab {
+	.leveling-gear {
+		width: 100%;
+		display: flex;
+		flex-direction: column;
+		gap: var(--block-spacer);
+	}
+
+	.leveling-gear-controls {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem 1rem;
+
+		// The seed and the level sit in the row with their labels to the left.
+		.input-root {
+			display: flex;
+			align-items: center;
+			gap: 0.5rem;
+			width: auto;
+			margin-bottom: 0;
+
+			.form-label {
+				margin-bottom: 0;
+			}
+		}
+
+		input {
+			width: 6rem;
+		}
+	}
+
+	.leveling-gear-weights {
+		color: var(--bs-gray-500);
+	}
+
+	.leveling-gear-grid {
+		overflow-x: auto;
+	}
+
+	.leveling-gear-table {
+		border-collapse: separate;
+		border-spacing: 1px;
+
+		th {
+			font-weight: normal;
+			font-size: 0.75rem;
+			color: var(--bs-gray-500);
+			white-space: nowrap;
+			padding-right: 0.5rem;
+			cursor: pointer;
+		}
+
+		tr:first-child th {
+			text-align: left;
+			min-width: 0.9rem;
+			padding: 0;
+		}
+	}
+
+	.leveling-gear-cell {
+		width: 0.9rem;
+		height: 1.1rem;
+		cursor: pointer;
+		opacity: 0.55;
+
+		// A new item at this level: a full color block.
+		&.leveling-gear-changed {
+			opacity: 1;
+		}
+
+		// Our own item, with a gold edge.
+		&.leveling-gear-pinned {
+			box-shadow: inset 0 0 0 2px $item-quality-artifact;
+		}
+	}
+
+	.leveling-gear-q0 {
+		background: transparent;
+		opacity: 1;
+	}
+	.leveling-gear-q1 {
+		background: $item-quality-common;
+	}
+	.leveling-gear-q2 {
+		background: $item-quality-uncommon;
+	}
+	.leveling-gear-q3 {
+		background: $item-quality-rare;
+	}
+	.leveling-gear-q4 {
+		background: $item-quality-epic;
+	}
+
+	.leveling-gear-col-selected {
+		outline: 1px solid var(--bs-white);
+	}
+
+	.leveling-gear-bottom {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 2rem;
+		align-items: flex-start;
+	}
+
+	.leveling-gear-level-title {
+		font-family: var(--heading-font-family);
+		color: var(--gold);
+		margin-bottom: 0.5rem;
+	}
+
+	.leveling-gear-level-table,
+	.leveling-gear-pins-table {
+		td {
+			padding: 0.1rem 0.75rem 0.1rem 0;
+			vertical-align: middle;
+		}
+	}
+
+	.leveling-gear-slot,
+	.leveling-gear-since,
+	.leveling-gear-source {
+		color: var(--bs-gray-500);
+		white-space: nowrap;
+	}
+
+	.leveling-gear-icon {
+		display: inline-block;
+		width: 1.5rem;
+		height: 1.5rem;
+		margin-right: 0.5rem;
+		vertical-align: middle;
+		background-size: cover;
+		border-radius: 3px;
+	}
+
+	.leveling-gear-none {
+		color: var(--bs-gray-500);
+	}
+}
+
+.leveling-gear-add-modal {
+	.leveling-gear-add {
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+	}
+
+	.leveling-gear-add-row {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+
+		.form-label {
+			margin-bottom: 0;
+		}
+
+		input {
+			width: 6rem;
+		}
+	}
+
+	.leveling-gear-add-results {
+		display: flex;
+		flex-direction: column;
+		max-height: 50vh;
+		overflow-y: auto;
+	}
+
+	.leveling-gear-add-item {
+		padding: 0.15rem 0;
+		text-decoration: none;
+	}
+}

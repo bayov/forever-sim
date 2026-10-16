@@ -1,3 +1,4 @@
+import { PlainItems } from '../leveling_gear.js';
 import { MAX_CHARACTER_LEVEL } from '../constants/mechanics.js';
 import { WOWHEAD_DOMAIN, WOWHEAD_FALLBACK_DOMAIN } from '../constants/wowhead.js';
 import { foreverSpellIcons } from '../forever/racials';
@@ -72,7 +73,7 @@ export class Database {
 			return db;
 		}
 
-		const shouldLoadLeftovers = equipment.items.some(item => item.id != 0 && !db.items.has(item.id));
+		const shouldLoadLeftovers = equipment.items.some(item => item.id != 0 && !db.getItemById(item.id));
 		if (shouldLoadLeftovers) {
 			const leftoverDb = await Database.getLeftovers();
 			db.loadProto(leftoverDb);
@@ -92,9 +93,16 @@ export class Database {
 	private readonly itemIcons: Record<number, Promise<IconData>> = {};
 	private readonly spellIcons: Record<number, Promise<IconData>> = {};
 	private loadedLeftovers = false;
+	// The plain white items of the leveling gear plan (leveling_gear.ts). We can look them up by
+	// id, but they aren't in the item lists, so the gear picker doesn't offer them.
+	private readonly plainItems = new Map<number, Item>();
 
 	private constructor(db: UIDatabase) {
 		this.loadProto(db);
+		new PlainItems(this.getAllItems()).all().forEach(item => {
+			this.plainItems.set(item.id, item);
+			this.itemIcons[item.id] = Promise.resolve(IconData.create({ id: item.id, name: item.name, icon: item.icon }));
+		});
 	}
 
 	// Add all data from the db proto into this database.
@@ -146,7 +154,7 @@ export class Database {
 	}
 
 	getItemById(id: number): Item | undefined {
-		return this.items.get(id);
+		return this.items.get(id) ?? this.plainItems.get(id);
 	}
 
 	getRandomSuffixById(id: number): ItemRandomSuffix | undefined {
@@ -168,7 +176,7 @@ export class Database {
 	}
 
 	lookupItemSpec(itemSpec: ItemSpec): EquippedItem | null {
-		const item = this.items.get(itemSpec.id);
+		const item = this.getItemById(itemSpec.id);
 		if (!item) return null;
 
 		let enchant: Enchant | null = null;
