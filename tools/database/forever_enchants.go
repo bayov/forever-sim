@@ -73,7 +73,8 @@ var ForeverEnchants = []*proto.UIEnchant{
 	foreverEnchant(1248459, "Enchant Bracer - Minor Healing Power", proto.ItemType_ItemTypeWrist, stats.Stats{stats.HealingPower: 8, stats.SpellDamage: 3}),
 	foreverEnchant(1248460, "Enchant Bracer - Lesser Agility", proto.ItemType_ItemTypeWrist, stats.Stats{stats.Agility: 4}),
 	foreverEnchant(13536, "Enchant Bracer - Lesser Strength", proto.ItemType_ItemTypeWrist, stats.Stats{stats.Strength: 4}),
-	foreverEnchant(13622, "Enchant Bracer - Lesser Intellect", proto.ItemType_ItemTypeWrist, stats.Stats{stats.Intellect: 5}),
+	// Client 1.60.1.70425 points 13622 at enchant 8734, +3 (enchant 723, +5, through 70338).
+	foreverEnchant(13622, "Enchant Bracer - Lesser Intellect", proto.ItemType_ItemTypeWrist, stats.Stats{stats.Intellect: 3}),
 	foreverEnchant(13661, "Enchant Bracer - Strength", proto.ItemType_ItemTypeWrist, stats.Stats{stats.Strength: 5}),
 	foreverEnchant(1248497, "Enchant Bracer - Agility", proto.ItemType_ItemTypeWrist, stats.Stats{stats.Agility: 5}),
 	foreverEnchant(1248498, "Enchant Bracer - Lesser Healing Power", proto.ItemType_ItemTypeWrist, stats.Stats{stats.HealingPower: 16, stats.SpellDamage: 6}),
