@@ -143,3 +143,42 @@ func TestWarlockCurseOfRecklessnessLands(t *testing.T) {
 	})
 	runSim(sim)
 }
+
+// TestWarlockShadowMastery checks Shadow Mastery at 5/5: 10% on Shadow Bolt's damage and on
+// Corruption's ticks (2% a point since client 1.60.1.70425, 1% before).
+func TestWarlockShadowMastery(t *testing.T) {
+	_, without := newWarlockSim(t, "", &proto.WarlockOptions{})
+	_, with := newWarlockSim(t, "0000000000000005", &proto.WarlockOptions{})
+	last := func(spells []*core.Spell) *core.Spell { return spells[len(spells)-1] }
+
+	if got := last(with.ShadowBolt).ImpactDamageMultiplierAdditive - last(without.ShadowBolt).ImpactDamageMultiplierAdditive; got < 0.0999 || got > 0.1001 {
+		t.Errorf("Shadow Mastery 5/5 adds %.3f to Shadow Bolt, want 0.10", got)
+	}
+	if got := last(with.Corruption).PeriodicDamageMultiplierAdditive - last(without.Corruption).PeriodicDamageMultiplierAdditive; got < 0.0999 || got > 0.1001 {
+		t.Errorf("Shadow Mastery 5/5 adds %.3f to Corruption's ticks, want 0.10", got)
+	}
+}
+
+// TestWarlockPushbackProtection checks Intensity and Fel Concentration at 3/3: a 70% chance to
+// ignore a hit's pushback on the spells in their client masks, Incinerate not among Intensity's.
+func TestWarlockPushbackProtection(t *testing.T) {
+	_, intensity := newWarlockSim(t, "--0000000030000001", &proto.WarlockOptions{})
+	_, felConcentration := newWarlockSim(t, "00000003", &proto.WarlockOptions{})
+	last := func(spells []*core.Spell) *core.Spell { return spells[len(spells)-1] }
+
+	for _, c := range []struct {
+		name  string
+		spell *core.Spell
+		want  float64
+	}{
+		{"Intensity: Shadow Bolt", last(intensity.ShadowBolt), 0.70},
+		{"Intensity: Immolate", last(intensity.Immolate), 0.70},
+		{"Intensity: Incinerate", last(intensity.Incinerate), 0},
+		{"Fel Concentration: Drain Life", last(felConcentration.DrainLife), 0.70},
+		{"Fel Concentration: Shadow Bolt", last(felConcentration.ShadowBolt), 0},
+	} {
+		if got := c.spell.PushbackReduction; got < c.want-1e-9 || got > c.want+1e-9 {
+			t.Errorf("%s: pushback reduction %.2f, want %.2f", c.name, got, c.want)
+		}
+	}
+}

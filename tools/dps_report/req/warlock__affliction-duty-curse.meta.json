@@ -4,9 +4,9 @@
   "spec": "Affliction",
   "build": "Affliction (Curse duty)",
   "isDefault": false,
-  "pr": 30,
-  "race": "Gnome",
-  "talents": "2553000003520005--0550305003",
+  "pr": 59,
+  "race": "Human",
+  "talents": "2550102003520005--0550305003",
   "treeNames": [
     "Affliction",
     "Demonology",
@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_affliction_duty_curse",
   "published": {
-    "dps": 971.8,
-    "source": "PR #30"
+    "dps": 987.0,
+    "source": "PR #59"
   },
   "verify": {
-    "dps": 971.82,
+    "dps": 986.95,
     "stderr": 0.38,
     "iters": 20000,
     "ok": true,
-    "note": "+0.02 vs published"
+    "note": "-0.05 vs published"
   },
-  "summary": "Affliction on curse duty for the raid, casting Curse of the Elements (one curse duty per warlock; other warlocks cover the other curses): the warlock keeps its own Curse of the Elements (rank 4, 10% magic damage taken) up all fight, cast right after the opener and recast before it drops, and the raid's is off. Under Forever the curse has its own slot, so the bane stays. Costs 10.5 DPS at 180 s against the base build.",
+  "summary": "Affliction on curse duty for the raid, casting Curse of the Elements (one curse duty per warlock; other warlocks cover the other curses): the warlock keeps its own Curse of the Elements (rank 4, 10% magic damage taken) up all fight, cast right after the opener and recast before it drops, and the raid's is off. Under Forever the curse has its own slot, so the bane stays. Costs 11.0 DPS at 180 s against the base build.",
   "keyTalents": [
     "Shadow Mastery",
     "Pandemic",

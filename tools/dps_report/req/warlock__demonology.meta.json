@@ -4,7 +4,7 @@
   "spec": "Demonology",
   "build": "Demonology",
   "isDefault": true,
-  "pr": 2,
+  "pr": 59,
   "race": "Gnome",
   "talents": "011-0305003131221001351-0550005003",
   "treeNames": [
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_demonology",
   "apl": "level60_demonology",
   "published": {
-    "dps": 1115.5,
-    "source": "PR #25"
+    "dps": 1099.2,
+    "source": "PR #59"
   },
   "verify": {
-    "dps": 1115.52,
+    "dps": 1099.24,
     "stderr": 0.39,
     "iters": 20000,
     "ok": true,
-    "note": "+0.02 vs published"
+    "note": "+0.04 vs published"
   },
   "summary": "Demonic Pact build: the Imp is sacrificed before the pull for 15% Shadow damage and the Succubus stays out for Master Demonologist, Soul Link and Demonic Knowledge. The highest-DPS warlock build and the class default.",
   "keyTalents": [
