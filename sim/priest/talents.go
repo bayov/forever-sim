@@ -65,8 +65,9 @@ func spellIn(spell *core.Spell, codes ...int32) bool {
 
 // Twin Disciplines: 1% a rank more damage on the priest spells in its class masks (client
 // 1225132). 70425 widened both: the direct mask now has Shadow Word: Death, Chastise and
-// Penance's bolts, the periodic mask Shadow Word: Pain, Mind Flay and Starshards (70338:
-// Chastise, and Shadow Word: Pain).
+// Penance's bolts, the periodic mask Shadow Word: Pain, Mind Flay, Starshards and Devouring
+// Plague (70338: Chastise, and Shadow Word: Pain and Devouring Plague). Devouring Plague is
+// in through the fourth mask word (0x10), the bit Devouring Contagion uses.
 func (priest *Priest) applyTwinDisciplines() {
 	if priest.Talents.TwinDisciplines == 0 {
 		return
@@ -75,7 +76,7 @@ func (priest *Priest) applyTwinDisciplines() {
 	bonus := 0.01 * float64(priest.Talents.TwinDisciplines)
 	priest.OnSpellRegistered(func(spell *core.Spell) {
 		if spellIn(spell, SpellCode_PriestShadowWordDeath, SpellCode_PriestChastise, SpellCode_PriestPenance,
-			SpellCode_PriestShadowWordPain, SpellCode_PriestMindFlay, SpellCode_PriestStarshards) {
+			SpellCode_PriestShadowWordPain, SpellCode_PriestMindFlay, SpellCode_PriestStarshards, SpellCode_PriestDevouringPlague) {
 			spell.DamageMultiplierAdditive += bonus
 		}
 	})
@@ -282,10 +283,10 @@ func (priest *Priest) registerInnerFocus() {
 	// Ticks roll crit live under Forever, so the bonus stays off the periodic spells and
 	// channels, or their ticks would crit more while Inner Focus waits to be used. Holy Fire's
 	// own ticks take the bonus back off (holy_fire.go).
-	// The free cast's class mask (client 14751, effect 0) leaves out Devouring Plague, so it
-	// neither costs nothing under Inner Focus nor uses it up.
+	// The free cast's class mask (client 14751, effect 0) takes Devouring Plague through the
+	// fourth mask word (0x10), the bit Devouring Contagion uses, so it is free too.
 	freeSpell := func(spell *core.Spell) bool {
-		return spell.Flags.Matches(SpellFlagPriest) && spell.Cost != nil && spell.SpellCode != SpellCode_PriestDevouringPlague
+		return spell.Flags.Matches(SpellFlagPriest) && spell.Cost != nil
 	}
 	critSpell := func(spell *core.Spell) bool {
 		return spell.Flags.Matches(SpellFlagPriest) && spell.SpellCode != SpellCode_PriestShadowWordDeath &&

@@ -67,8 +67,8 @@ func TestShadowformCosts(t *testing.T) {
 	}
 }
 
-// TestShadowformCritBonus checks Shadowform's +100% crit bonus: Mind Blast crits for 200%,
-// Shadow Word: Death (not in its class mask) for 150%, and both go back after Shadowform.
+// TestShadowformCritBonus checks Shadowform's +100% crit bonus: Mind Blast and, since 70425,
+// Shadow Word: Death crit for 200%, and Mind Blast goes back after Shadowform.
 func TestShadowformCritBonus(t *testing.T) {
 	sim, sp := newShadowPriestSim(t, "00503523103--50052101231302051")
 	target := sp.CurrentTarget
@@ -126,19 +126,18 @@ func TestInnerFocusCrit(t *testing.T) {
 	}
 }
 
-// TestInnerFocusCost checks that Inner Focus makes Mind Blast free but not Devouring Plague,
-// which the free cast's class mask leaves out.
+// TestInnerFocusCost checks that Inner Focus makes Mind Blast and Devouring Plague free.
+// Devouring Plague is in the free cast's class mask through the fourth mask word.
 func TestInnerFocusCost(t *testing.T) {
 	sim, sp := newShadowPriestSim(t, "00503521103--50052101231302051")
 	mindBlast := topRank(t, "Mind Blast", sp.MindBlast)
 	plague := topRank(t, "Devouring Plague", sp.DevouringPlague)
-	plagueCost := plague.Cost.GetCurrentCost()
 	sp.InnerFocusAura.Activate(sim)
 	if got := mindBlast.Cost.GetCurrentCost(); got != 0 {
 		t.Errorf("Mind Blast costs %.2f under Inner Focus, want 0", got)
 	}
-	if got := plague.Cost.GetCurrentCost(); math.Abs(got-plagueCost) > 1e-9 {
-		t.Errorf("Devouring Plague costs %.2f under Inner Focus, want %.2f", got, plagueCost)
+	if got := plague.Cost.GetCurrentCost(); got != 0 {
+		t.Errorf("Devouring Plague costs %.2f under Inner Focus, want 0", got)
 	}
 }
 
