@@ -470,7 +470,7 @@ Talents were searched (`tools/rotopt -talent-search`) from several seeds per spe
 | Arcane | `0522005003100301531-02-05550003` | Arcane Blast precast, four Arcane Blast stacks every 15 sec (one below 20% mana), Missiles on Missile Barrage, Frostbolt filler, Arcane Power with the trinket, Fire Blast and Arcane Explosion at the end | 893.6 | 884.9 | 875.0 |
 | Frost | `05020050031001-03-0555100331001301201` | Frostbolt, Ice Lance on Fingers of Frost and at the end, one Arcane Blast every 15 sec | 827.9 | 827.3 | 822.4 |
 
-Against master's presets on the same tree before the port (master's code, Undead and High Order): Frostfire +7.1 / +22.7 / +5.3, Fire +116.7 / +123.9 / +130.0, Arcane +61.4 / +64.7 / +68.3, Frost -115.6 / -115.9 / -113.6. Fire gains the most from every Fire Blast adding a Heating Up stack, Burning Soul's pushback protection and Critical Mass 5; Arcane from Arcane Blast's stacks as spell damage (60% of Intellect at 4); Frost loses Winter's Chill's crit (a Cone of Cold debuff now) and a quarter of its Fingers of Frost Ice Lances (3 times the damage, was 4).
+Against master's presets on the same tree before the port (master's code, Undead and High Order): Frostfire +7.8 / +23.4 / +5.9, Fire +117.4 / +124.6 / +130.7, Arcane +62.2 / +65.5 / +69.1, Frost -115.6 / -115.9 / -113.6. Fire gains the most from every Fire Blast adding a Heating Up stack, Burning Soul's pushback protection and Critical Mass 5; Arcane from Arcane Blast's stacks as spell damage (60% of Intellect at 4); Frost loses Winter's Chill's crit (a Cone of Cold debuff now) and a quarter of its Fingers of Frost Ice Lances (3 times the damage, was 4).
 
 Frostfire Bolt is Fire and Frost at once, so it takes Fire Power, Ignite and Critical Mass along with Ice Shards, Piercing Ice and Shatter, and its crits and chills feed both Heating Up and Fingers of Frost. foreverchanges.pro's popular Fire build is the same 29 / 22 split. Evocation goes below 30% mana with 60 sec of the fight left on Frostfire (below 10% with 30 sec before Ice Lance spent mana: the 180 sec search moved it, +6.2 there, level at 120, -3.9 at 300), below 20% with 90 sec on Fire and Frost. Frostfire runs out of mana first, so once Evocation is spent (or under 60 sec are left) and the mana is under 60 a second of the fight left it casts rank 2 Frostfire Bolt (285 mana for 9% less damage). Ignite's ticks never crit (the crit they come from already did). Mana gems share the Demonic Rune's 2 min cooldown in the client (item category 1153), and the rune gives more, so Frostfire, Fire and Arcane skip the gems. Fire holds Combustion until Fire Vulnerability has 5 stacks, and Fire and Frostfire hold the on-use trinket for it too (+1.6 and +3.7 at 180 sec, from the rotation auditor). Since the rotation auditor's pass 19 (2026-10-15) every build also casts an instant when its filler would not land before the end of the fight (Frost and Frostfire Ice Lance, Fire Fire Blast and Scorch, Arcane Fire Blast and Arcane Explosion: +6.8, +4.6 and +7.1 at 180 sec), and Frostfire puts the Fingers of Frost Ice Lance ahead of Scorch and Pyroblast (+22.8 at 180 sec with its end of fight Ice Lance).
 
@@ -485,8 +485,8 @@ Races (180 sec, 20000 iterations, each build on its rotation, client 70425's rac
 | Human | 1010.8 | 993.2 | 884.9 | 820.2 |
 | High Order | 1007.1 | 970.9 | 877.6 | 827.3 |
 | Orc | 1004.8 | 989.0 | 884.6 | 819.8 |
-| Gnome | 996.5 | 985.7 | 877.2 | 814.9 |
-| Undead | 996.2 | 983.5 | 878.4 | 817.7 |
+| Gnome | 996.2 | 985.8 | 880.5 | 817.0 |
+| Undead | 995.5 | 982.7 | 877.6 | 816.9 |
 | Troll | 989.1 | 974.9 | 872.7 | 814.2 |
 
 Human (Ruthless, 2% crit) is best on Frostfire, Fire and Arcane, with Orc 0.3 behind on Arcane (within the noise); High Order's 3% haste is best on Frost. The best Horde race is Orc on all four.

@@ -389,10 +389,10 @@ export const EncounterLevel60Frost = PresetUtils.makePresetEncounter('Level 60 (
 // Arcane, with Orc (Savage, 1% crit, and Blood Fury) 0.3 behind on Arcane, within the noise. On
 // Frost, High Order's 3% haste is ahead. The best Horde race is Orc on Arcane, Fire and Frost and
 // Orc on Frostfire too (High Order, 3.7 behind Human there, is Alliance). Windshaper can't be a mage.
-//   Frostfire: Human 1010.8, High Order 1007.1, Orc 1004.8, Gnome 996.5, Undead 996.2, Troll 989.1.
-//   Fire:      Human 993.2, Orc 989.0, Gnome 985.7, Undead 983.5, Troll 974.9, High Order 970.9.
-//   Arcane:    Human 884.9, Orc 884.6, Undead 878.4, High Order 877.6, Gnome 877.2, Troll 872.7.
-//   Frost:     High Order 827.3, Human 820.2, Orc 819.8, Undead 817.7, Gnome 814.9, Troll 814.2.
+//   Frostfire: Human 1010.8, High Order 1007.1, Orc 1004.8, Gnome 996.2, Undead 995.5, Troll 989.1.
+//   Fire:      Human 993.2, Orc 989.0, Gnome 985.8, Undead 982.7, Troll 974.9, High Order 970.9.
+//   Arcane:    Human 884.9, Orc 884.6, Gnome 880.5, High Order 877.6, Undead 877.6, Troll 872.7.
+//   Frost:     High Order 827.3, Human 820.2, Orc 819.8, Gnome 817.0, Undead 816.9, Troll 814.2.
 const buildCommon = {
 	group: 'Level 60',
 	gear: GearLevel60Phase1Synthetic,
