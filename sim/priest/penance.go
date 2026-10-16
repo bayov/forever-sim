@@ -51,7 +51,7 @@ func (priest *Priest) registerPenanceRank(rank int, cdTimer *core.Timer) *core.S
 		BonusCoefficient: 0.19,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			multiplier := priest.powerInLightMultiplier(target)
+			multiplier := priest.PowerInLightMultiplier(target)
 			spell.DamageMultiplier *= multiplier
 			spell.CalcAndDealDamage(sim, target, boltDamage, spell.OutcomeMagicHitAndCrit)
 			spell.DamageMultiplier /= multiplier
@@ -98,15 +98,20 @@ func (priest *Priest) registerPenanceRank(rank int, cdTimer *core.Timer) *core.S
 	})
 }
 
-// powerInLightMultiplier is Power in Light's 2% a rank on Smite and Penance against a
-// target with the priest's Holy Fire on it.
-func (priest *Priest) powerInLightMultiplier(target *core.Unit) float64 {
+// PowerInLightMultiplier is Power in Light's 2% a rank on Smite and Penance against a
+// target with the priest's Holy Fire or Shadow Word: Pain on it (15 October beta notes: "Power in
+// Light now increases Smite and Penance if the target is afflicted by Holy Fire or Shadow Word
+// Pain"; client 1.60.1.70425 tooltip of 1309969: "your Holy Fire or Shadow Word: Pain").
+func (priest *Priest) PowerInLightMultiplier(target *core.Unit) float64 {
 	if priest.Talents.PowerInLight == 0 {
 		return 1
 	}
-	for _, spell := range priest.HolyFire {
-		if spell != nil && spell.Dot(target).IsActive() {
-			return 1 + 0.02*float64(priest.Talents.PowerInLight)
+	multiplier := 1 + 0.02*float64(priest.Talents.PowerInLight)
+	for _, spells := range [][]*core.Spell{priest.HolyFire, priest.ShadowWordPain} {
+		for _, spell := range spells {
+			if spell != nil && spell.Dot(target) != nil && spell.Dot(target).IsActive() {
+				return multiplier
+			}
 		}
 	}
 	return 1

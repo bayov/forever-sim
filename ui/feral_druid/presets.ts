@@ -118,8 +118,8 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // and again once it has under 7 sec left, so a miss gets a second try before it drops (99.7% uptime,
 // rotation auditor). Forever's Faerie Fire and Curse of Recklessness share the
 // minor armor slot (standards 20), so the line waits while the raid's Faerie Fire or a curse holds
-// it, and the duty's cost shows with both off: 6.0 / 5.1 / 4.4 DPS at 120 / 180 / 300 sec (718.2 /
-// 708.5 / 699.9, Tauren, 20,000 iterations), the GCDs and the moment before it lands, since the cat's own
+// it, and the duty's cost shows with both off: 4.2 / 3.1 / 2.2 DPS at 120 / 180 / 300 sec (719.9 /
+// 710.5 / 702.0, Tauren, 20,000 iterations; Faerie Fire no longer resets the swing), the GCDs and the moment before it lands, since the cat's own
 // hits get the armor. The knob search kept the rest of the rotation at 120, 180 and 300 sec.
 export const APLLevel60FaerieFire = PresetUtils.makePresetAPLRotation('Level 60 (Faerie Fire duty)', Level60FaerieFireAPLJSON, {
 	tooltip:

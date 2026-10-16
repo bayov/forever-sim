@@ -42,10 +42,11 @@ func (paladin *Paladin) registerSealOfRighteousness() {
 	}
 
 	// Improved Seals is Forever's version of Improved Seal of Righteousness, and it scales
-	// the judgement too. The judgement's spell power coefficient is 50% on every rank
+	// the judgement too. The judgement's spell power coefficient is 42.9% on every rank
 	// under Forever (Classic ramped it up over the first three ranks), its base damage
 	// is Classic's because wowhead hides it behind the coefficient. The seal's proc takes
-	// 10% of spell power on every rank (Classic started at 2.9%).
+	// the tooltip's 12% of spell power with a two-hander (7.65% with a one-hander) on every
+	// rank, counted once (Classic started at 2.9%).
 	//
 	// Classic's talent raised the seal's base points, so it left the spell power part
 	// alone. Forever's Improved Seals is a percent damage modifier on the proc and the
@@ -91,7 +92,7 @@ func (paladin *Paladin) registerSealOfRighteousness() {
 			DamageMultiplier: improvedSoR * core.TernaryFloat64(paladin.Ranged().ID == LibramOfLaw, 1.04, 1),
 			ThreatMultiplier: 1,
 
-			BonusCoefficient: core.TernaryFloat64(paladin.Env.IsForever(), 0.5, rank.judge.coeff),
+			BonusCoefficient: core.TernaryFloat64(paladin.Env.IsForever(), 0.429, rank.judge.coeff), // client 70425 (0.5 in 70338)
 			BonusCritRating:  paladin.holyPowerCrit(),
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -103,13 +104,23 @@ func (paladin *Paladin) registerSealOfRighteousness() {
 		value := 0.01 * (rank.proc.value + rank.proc.scale*float64(min(paladin.Level, rank.scaleLevel)-rank.level))
 
 		coeff := rank.proc.coeff
-		if paladin.Env.IsForever() {
-			coeff = 0.1
-		}
 		damage := value * 0.85 * paladin.MainHand().SwingSpeed
 		if paladin.has2hEquipped() {
 			coeff *= 1.1 // from testing in SoD
 			damage = value * 1.2 * paladin.MainHand().SwingSpeed
+		}
+		// Season of Discovery's tests found the proc's spell power and the target's damage taken
+		// bonus counted twice.
+		countTwice := true
+		if paladin.Env.IsForever() {
+			// Forever's seal tooltip (client 1.60.1.70425, description variables 1023) adds
+			// 7.65% of spell power a hit with a one-hander and 12% with a two-hander, flat per
+			// swing, while the proc spells' own coefficient is 0 since 70425 (0.1 before). So the
+			// bonus is added once, as the tooltip says. Blizzard's 15 October beta notes: "Fixed an
+			// issue causing Seal of Righteousness to gain almost twice as much benefit from Spell
+			// Damage than intended."
+			coeff = core.TernaryFloat64(paladin.has2hEquipped(), 0.12, 0.0765)
+			countTwice = false
 		}
 
 		procSpell := paladin.RegisterSpell(core.SpellConfig{
@@ -127,8 +138,11 @@ func (paladin *Paladin) registerSealOfRighteousness() {
 			BonusCoefficient: coeff,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				// effectively scales with coeff x 2, and damage dealt multipliers affect half the damage taken bonus
-				baseDamage := damage + spell.BonusCoefficient*(spell.GetBonusDamage(target)+target.GetSchoolBonusDamageTaken(spell))
+				baseDamage := damage
+				if countTwice {
+					// effectively scales with coeff x 2, and damage dealt multipliers affect half the damage taken bonus
+					baseDamage += spell.BonusCoefficient * (spell.GetBonusDamage(target) + target.GetSchoolBonusDamageTaken(spell))
+				}
 				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialCritOnly)
 			},
 		})

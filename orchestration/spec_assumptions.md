@@ -31,7 +31,7 @@ Sources, all read-only:
 | All classes | 2 | `flat_bonus_inside_pct`, `wf_totem_offhand` |
 | Priest | 2 | `priest_sf_tick_crit`, `priest_smite8_tuning` |
 | Warlock | 4 | `lock_pet_scaling`, `lock_demon_melee`, `lock_bod_coef`, `lock_incinerate_bonus` (one value, kept for reference) |
-| Paladin | 6 (+1 shared) | `pal_sor_sp_double`, `pal_sor_sp_speed`, `pal_consecration_coef`, `pal_2h_spec_holy`, `pal_31plus_ranks`, `pal_soc_wf` (+ `flat_bonus_inside_pct`) |
+| Paladin | 3 (+1 shared) | `pal_2h_spec_holy`, `pal_31plus_ranks`, `pal_soc_wf` (+ `flat_bonus_inside_pct`) |
 | Warrior | 3 (+1 shared) | `warr_rage_k`, `warr_rage_oh`, `warr_rend_ap` (+ `wf_totem_offhand`); `warr_crit_rage` settled 2026-10-16 |
 | Hunter | 5 (+1 shared) | `hunter_pet_scaling`, `hunter_pet_speed`, `hunter_tsa_hm_rank`, `hunter_crit_per_agi`, `hunter_raptor_31plus` (+ `wf_totem_offhand` for Survival) |
 | Mage | 3 | `mage_ice_lance_coef`, `mage_frostbolt10`, `mage_imbue_scrolls` |
@@ -39,7 +39,7 @@ Sources, all read-only:
 | Druid | 4 | `druid_ooc_rate` (one value, kept for reference), `druid_shred_flat`, `druid_rip_31plus`, `druid_wrath8_tuning` |
 | Rogue | 0 (+2 shared) | `flat_bonus_inside_pct` (Backstab, Mutilate), `wf_totem_offhand` |
 
-That makes 33 assumptions in `assumptions_def.py` (fewer since the 2026-10-16 assumptions audit, orchestration/assumptions_audit.md, which settled `warr_crit_rage`). The 2026-10-15 review removed `mage_ab_on_missiles`, `lock_decimation`, `oil_proc_damage` and `hunter_shot_ap_shares`, and added `pal_sor_sp_speed` (user rulings 2026-10-15). An assumption left with one value stays in the report as a reference row (user ruling 2026-10-15). The rogue has no material assumption of its own: the rank tuning audit found its spells Era-identical or client-tuned, and its open items are under 0.5% or client-sourced (see "Considered and left out"). Its two scenarios are the shared ones.
+That makes 33 assumptions in `assumptions_def.py` (PR #54 removed `pal_sor_sp_double`, `pal_sor_sp_speed` and `pal_consecration_coef`, settled 2026-10-16, and the assumptions audit, orchestration/assumptions_audit.md, removed `warr_crit_rage`). The 2026-10-15 review removed `mage_ab_on_missiles`, `lock_decimation`, `oil_proc_damage` and `hunter_shot_ap_shares`, and added `pal_sor_sp_speed` (user rulings 2026-10-15). An assumption left with one value stays in the report as a reference row (user ruling 2026-10-15). The rogue has no material assumption of its own: the rank tuning audit found its spells Era-identical or client-tuned, and its open items are under 0.5% or client-sourced (see "Considered and left out"). Its two scenarios are the shared ones.
 
 ### The ones that matter most
 
@@ -48,7 +48,7 @@ That makes 33 assumptions in `assumptions_def.py` (fewer since the 2026-10-16 as
    - Without owner scaling, every warlock build loses about 4%; with the Succubus melee halved, another 4%; with both, 7% (PR).
    - Demonology leads the ranking (1109.8), and the other three builds sit just above Retribution (969 to 985 against 960 to 967). These decide that order.
 3. **`lock_bod_coef`.** Bane of Doom's 4.0 coefficient is about 12% of every Shadow Bolt build's damage. At 2.0, every Shadow Bolt warlock loses 4.1% (PR), and Destruction and Affliction drop below the Retribution builds. I still expect 4.0 (it is the duration/15 rule), but it is untested in any beta build.
-4. **`pal_consecration_coef` and `pal_sor_sp_double`.** Consecration's 9.5% a tick comes from an old tooltip, against Era's 4.2% (est. −4% at Era's value). Seal of Righteousness counting spell power twice comes from Season of Discovery tests (−5.3 to −6.6% if counted once, assumption sims). Together with Consecration at Era's 4.2% (−4.5 to −6.3%) these could move every Retribution build about 11%.
+4. **Seal of Righteousness and Consecration (settled 2026-10-16, PR #54).** Blizzard's 15 October beta notes fixed Seal of Righteousness "to gain almost twice as much benefit from Spell Damage than intended" and give Consecration 0.042. The sim counts the seal's spell power once (12% a hit with a two-hander, 7.65% with a one-hander) and Consecration at 4.2%, so `pal_sor_sp_double`, `pal_sor_sp_speed` and `pal_consecration_coef` left the report (see "Settled, not a scenario").
 5. **`hunter_pet_speed` and `hunter_pet_scaling`.**
    - Pet speed: the beta's fast pets hit as hard as a 2.0 sec pet. The presets treat that as a bug and use Classic's speed-scaled hit (user ruling 2026-10-15, PR #22); the beta's rule would add 6.1% to Beast Mastery and 3.2% to Marksmanship (assumption sims, 180 s).
    - Pet scaling: Season of Discovery's 22% scaling instead of the measured 10% would add 41 / 23 / 18 to Beast Mastery / Marksmanship / Survival (PR).
@@ -219,58 +219,10 @@ Close behind: `flat_bonus_inside_pct` (est. −3.7% dagger rogues and +3% Retrib
 
 | Key | Label | Builds | Sim now | Low | Expected | High | Sensitivity |
 |---|---|---|---|---|---|---|---|
-| `pal_sor_sp_double` | Seal of Righteousness takes spell power twice | twist, sub Holy, Shock | twice (2 × 11% on a two-hander) | once (10%) | twice | = Expected | Low −5.3 to −6.6% (assumption sims, 180 s) |
-| `pal_sor_sp_speed` | Seal of Righteousness's spell power and weapon speed | twist, sub Holy, Shock | flat per swing | scales with weapon speed (TBC-like) | flat per swing | = Expected | Low −0.5 to −0.7% (assumption sims, 180 s) |
-| `pal_consecration_coef` | Consecration's coefficient a tick | twist, sub Holy, Shock | 9.5% | 4.2% (Era) | 9.5% | = Expected | Low −4.5 to −6.3% (assumption sims, 180 s) |
 | `pal_2h_spec_holy` | Two-Handed Weapon Spec on Holy seal damage | twist, sub Holy, Shock | yes | Physical only | yes | = Expected | Low −1.1% twist (PR) |
 | `pal_31plus_ranks` | Holy Strike and Consecration 31+ ranks | twist, sub Holy, Shock | client | held to the ≤30 trend | client | = Expected | Low −1.2% (PR) |
 
 Retribution is also affected by `flat_bonus_inside_pct` (Holy Strike; +3.6 to +4.2% at its Low, assumption sims).
-
-### `pal_sor_sp_double`: Seal of Righteousness counts spell power twice
-
-- **Builds:** Level 60 twist, sub Holy (both twist Seal of Righteousness in on every swing) and Shock (Seal of Righteousness stays up).
-- **Sim now:**
-  - The proc's coefficient is 10% under Forever, ×1.1 on a two-hander (`sim/paladin/sor.go:105-112`).
-  - It is added once into `baseDamage` (`:131`) and once more through `BonusCoefficient` (`:127`), so the effective coefficient is 2 × 11%.
-  - Judgement of Righteousness is 50% (`:94`).
-- **Source:** Season of Discovery sim tests ("from testing in SoD", `:111`). The Forever client has the same data as Season of Discovery's: Judgement of Righteousness (20286) carries the seal's 1786 / 47 at a 20% coefficient, twice the proc spell's 10%.
-- **Why uncertain:** the double count is a Season of Discovery server behaviour inferred from data, not a Forever measurement. A level 30 paladin with and without spell power would settle it.
-- **Settings:**
-  - **Low, once (10%, no two-hander factor).** The proc spell's own coefficient, read plainly.
-  - **Expected, twice (Sim now).** Forever's client matches Season of Discovery's data, where the double count was measured.
-  - **High:** = Expected.
-- **Sensitivity (PR, results audit before the fairness round):** Low gives twist −49 (−5.1%) and Shock −42 (−4.4%); sub Holy is like twist. The build order doesn't change.
-- **Knob:** `sim/paladin/sor.go:131`. When the key is 1, drop the explicit `spell.BonusCoefficient*(...)` term; `:111` drops the ×1.1.
-
-### `pal_sor_sp_speed`: does Seal of Righteousness's spell power grow with weapon speed?
-
-- **Builds:** all six Retribution builds (twist, sub Holy, Shock and their Undead encounters).
-- **Sim now:** each proc adds the same share of spell power whatever the weapon speed (`sim/paladin/sor.go`); only the base damage scales with the swing.
-- **Source:** Season of Discovery and Era measurements of the same seal: flat per swing. TBC's Seal of Righteousness scaled the spell power part with weapon speed.
-- **Why uncertain:** the seal's spell power handling is server side, and no Forever log has compared weapon speeds.
-- **Settings:**
-  - **Low, scales with weapon speed (TBC-like).** The proc's spell power share × weapon speed ÷ 3.6 sec on a two-hander, ÷ 2.4 sec on a one-hander, so a 3.6 / 2.4 sec weapon gets the flat value.
-  - **Expected, flat per swing (Sim now).** What Season of Discovery and Era measured (user ruling 2026-10-15).
-  - **High:** = Expected.
-- **Sensitivity (assumption sims, 180 s, at Low):** −0.53 to −0.66% (the presets swing a 3.4 sec two-hander, ×0.94).
-- **Knob:** `sim/paladin/sor.go`, `core.AssumeOk("pal_sor_sp_speed")` scales the proc's coefficient by the swing speed over 3.6 (two-hander) or 2.4 (one-hander) (patch 0004).
-
-### `pal_consecration_coef`: Consecration's spell power coefficient
-
-- **Builds:** twist and sub Holy (Consecration down to 20% mana, worth 109 DPS) and Shock (to the last point of mana).
-- **Sim now:** 9.5% of spell power a tick, 8 ticks, on the whole tick (the "everyone" quarter and the first-four extra together). `sim/paladin/consecration.go:47` (Forever) against `:44` (Era 0.042).
-- **Source:** "an older Forever tooltip" (`:13-15`). The damage runs through a server script, and no page shows the coefficient (sim-status, 2026-09-24 notes).
-- **Why uncertain:**
-  - The script's coefficient is unpublished.
-  - Rank 5's base is only 39 a tick, so at about 700 spell power the coefficient is about two thirds of each tick.
-  - The rank tuning audit also flags Consecration's ranks.
-- **Settings:**
-  - **Low, 4.2% a tick.** Era's 33% over 8 ticks, if the old tooltip's 9.5% was a leftover.
-  - **Expected, 9.5% a tick (Sim now).** The only Forever number anyone has seen.
-  - **High:** = Expected. The "split parts" 10.55% reading was dropped (user ruling 2026-10-15).
-- **Sensitivity (assumption sims, 180 s, at Low):** −4.5 to −6.3% (twist −6.3%, Shock −5.6%).
-- **Knob:** `sim/paladin/consecration.go:47`, `tickCoefficient = core.Assume("pal_consecration_coef", 0.095)`.
 
 ### `pal_2h_spec_holy`: Two-Handed Weapon Specialization on Holy seal damage
 
@@ -617,12 +569,27 @@ No assumptions of its own. The rogue's scenarios are the shared ones:
 
 ---
 
+### `level_partial_resist` (pending, added 2026-10-16 by the assumptions audit)
+
+- **Builds:** every caster and hybrid (mage, warlock, priest, Elemental, Enhancement, Balance, Retribution); not the rogues, warriors or hunters.
+- **Sim now:** Classic's 2% average partial resist per level above the caster on every non-binary spell, 6% against the level 63 boss (`AverageMagicPartialResistPerLevelMultiplier`, `sim/core/spell_resistances.go`, `spell.go`). notes.md said the sim drops it under Forever, but the code keeps it.
+- **Evidence:** 0 partial resists in 313 landed non-binary hits on normal beta mobs 3 to 5 levels up (shaman_audit.md 5.2). No boss or elite data.
+- **Settings:** Low (the sim now) is Classic's 6% at +3; Expected is none (the beta). The default stays on the sim's value until the user rules (orchestration/assumptions_audit.md, Q1).
+- **Sensitivity (10k iterations, seed 1, 180 s, None against 6%):** Fire +7.1%, Arcane +6.3%, Elemental +6.4%, Balance +5.4%, Destruction +5.2%, Affliction +5.3%, Ret +4.2%, Shadow +3.8%, Enhancement +3.0%, Frost 0 (Frostbolt is binary).
+- **Knob (to add):** `core.Assume("level_partial_resist", AverageMagicPartialResistPerLevelMultiplier)` at both uses.
+
 ## Settled, not a scenario
 
 - **Extra Rage from critical white hits: +100%** (was `warr_crit_rage`, removed 2026-10-16 by the assumptions audit, orchestration/assumptions_audit.md).
   - Blizzard's 1 October beta development notes (us.forums.blizzard.com/en/wow/t/2360696, post 4, Warrior): "Players now generate 75% increased Rage when landing a critical strike with a basic attack", then in the same post "Additional Rage generated from landing Critical Strikes increased to 100% increased Rage (was 75%)". Kaivax's 2 October post (t/2369360) says the same.
   - The 8 October notes (post 5, Druid) raised Bear Form's crit Rage to the same 100% ("Was 75%").
   - The 75% Low was Blizzard's own superseded first number, so nothing is left to support it. The sim already gives +100% (`sim/warrior/warrior.go`, `AddCritDealtRageMultiplier(2)`), so no DPS moves.
+- **Seal of Righteousness's spell power: once, 12% a hit with a two-hander and 7.65% with a one-hander, flat per swing** (was `pal_sor_sp_double` and `pal_sor_sp_speed`, removed 2026-10-16, PR #54).
+  - Blizzard's 15 October beta notes: "Fixed an issue causing Seal of Righteousness to gain almost twice as much benefit from Spell Damage than intended."
+  - The client 70425 seal tooltip agrees: description variables 1023, `$2h = 0.12*$SPH` and `$1h = 0.0765*$SPH`, added once to the s3/87 to s3/25 base. Wowhead's Forever tooltip reads "(2068/87 + 0.0765 × SP) to (2068/25 + 0.12 × SP)".
+  - It depends on one hand or two, not on the weapon's speed. Improved Seals multiplies all of it, and the target's damage taken bonus counts once.
+  - The sim used to count 2 × 11% (Season of Discovery's tests). That was 46 to 51 DPS more at 180 s, and the proc spell's 0 would be 53 to 59 less.
+- **Consecration's coefficient: 4.2% a tick** (was `pal_consecration_coef`, removed 2026-10-16, PR #54). Client 70425's damage spells (1280345 to 1280353) and Blizzard's 15 October notes both give 0.042. The 9.5% from 70338 and the old tooltip was a bug.
 - **Windfury Totem's internal cooldown: 1.5 sec.**
   - User ruling 2026-10-13, standards 17; the sim already uses it (`sim/core/buffs.go:1827`).
   - The Forever client's 100 ms and Era's no cooldown are closed.
@@ -664,7 +631,7 @@ These are below the 0.5% threshold, client-sourced, or have no sensible range.
 ## Where no sensible range was found
 
 These entries have only two sensible settings (High = Expected): either the evidence gives two readings and nothing beyond them, or the higher value is the sim's own.
-- `flat_bonus_inside_pct`, `wf_totem_offhand`, `priest_sf_tick_crit`, `pal_sor_sp_double`, `pal_sor_sp_speed`, `pal_consecration_coef`, `pal_2h_spec_holy`, `pal_31plus_ranks`, `pal_soc_wf`, `hunter_pet_speed` (no Low: Classic is Expected), `hunter_crit_per_agi`, `lock_pet_scaling`, `lock_demon_melee`, `lock_bod_coef`, `mage_imbue_scrolls` and `druid_rip_31plus` (no Low: the client is Expected). `hunter_tsa_hm_rank` and `mage_ice_lance_coef` have two settings below Expected and none above. `lock_incinerate_bonus` and `druid_ooc_rate` have one value.
+- `flat_bonus_inside_pct`, `wf_totem_offhand`, `priest_sf_tick_crit`, `pal_2h_spec_holy`, `pal_31plus_ranks`, `pal_soc_wf`, `hunter_pet_speed` (no Low: Classic is Expected), `hunter_crit_per_agi`, `lock_pet_scaling`, `lock_demon_melee`, `lock_bod_coef`, `mage_imbue_scrolls` and `druid_rip_31plus` (no Low: the client is Expected). `hunter_tsa_hm_rank` and `mage_ice_lance_coef` have two settings below Expected and none above. `lock_incinerate_bonus` and `druid_ooc_rate` have one value.
 
 Weakly grounded values:
 - `sham_mw_ppm` Low (5 PPM): no analogue below 10.
