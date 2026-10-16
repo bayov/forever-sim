@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_survival",
   "apl": "sv",
   "published": {
-    "dps": 904.6,
-    "source": "client 1.60.1.70425 (Sniper Shot in Efficiency and Mortal Shots, the raid's Trueshot Aura, hunter_trap_ap), 2026-10-16: 180s, 20000 iterations, seed 1"
+    "dps": 926.0,
+    "source": "Report re-sim on master 5bbcb0d, 2026-10-16: Grace of Air with Windfury in the melee raid, Windfury Totem main hand only, off-hand Rage 0.5 and channel pushback on hits taken (was 904.6)"
   },
   "verify": {
-    "dps": 904.58,
-    "stderr": 0.26,
+    "dps": 926.03,
+    "stderr": 0.28,
     "iters": 20000,
     "ok": true,
-    "note": "same sim as verify.py and the published number"
+    "note": "run_build.py main run, 180s, seed 1"
   },
   "summary": "Forever's melee hunter: Survival with a cat, built on Expose Prey into Mongoose Bite.",
   "keyTalents": [

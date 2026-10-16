@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_ff",
   "published": {
-    "dps": 710.5,
-    "source": "Tauren, Nature's Focus pushback and the client 70425 racials (2026-10-16)"
+    "dps": 749.3,
+    "source": "Report re-sim on master 5bbcb0d, 2026-10-16: Grace of Air with Windfury in the melee raid, Windfury Totem main hand only, off-hand Rage 0.5 and channel pushback on hits taken (was 710.5)"
   },
   "verify": {
-    "dps": 710.54,
+    "dps": 749.27,
     "stderr": 0.16,
     "iters": 20000,
     "ok": true,
-    "note": "180s, seed 1"
+    "note": "run_build.py main run, 180s, seed 1"
   },
   "summary": "The cat keeping Faerie Fire (Feral) on the boss for the raid. Its own attacks gain from the armor, so it only costs a few GCDs.",
   "keyTalents": [

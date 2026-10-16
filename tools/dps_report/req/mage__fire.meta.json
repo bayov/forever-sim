@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_fire",
   "published": {
-    "dps": 993.2,
-    "source": "PR #89 (client 1.60.1.70425 port, 2026-10-16)"
+    "dps": 993.7,
+    "source": "Report re-sim on master 5bbcb0d, 2026-10-16: Grace of Air with Windfury in the melee raid, Windfury Totem main hand only, off-hand Rage 0.5 and channel pushback on hits taken (was 993.2)"
   },
   "verify": {
-    "dps": 993.2,
-    "stderr": 0.4,
+    "dps": 993.72,
+    "stderr": 0.37,
     "iters": 20000,
     "ok": true,
-    "note": "180s, 20000 iterations, seed 1, on the 70425 rotation (seed 100001 within 0.6)"
+    "note": "run_build.py main run, 180s, seed 1"
   },
   "summary": "Deep Fire to Combustion, plus Arcane Concentration and Missile Barrage from Arcane.",
   "keyTalents": [

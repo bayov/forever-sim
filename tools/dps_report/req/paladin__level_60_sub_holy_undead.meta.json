@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_undead",
   "published": {
-    "dps": 922.0,
-    "source": "PR #54 (client 70425: Judgement of Righteousness 42.9%, Champion of the Light 10 / 20 / 30%, Consecration 4.2% a tick; Seal of Righteousness spell power once per the tooltip; Concentration Aura; Human, 2026-10-16)"
+    "dps": 945.3,
+    "source": "Report re-sim on master 5bbcb0d, 2026-10-16: Grace of Air with Windfury in the melee raid, Windfury Totem main hand only, off-hand Rage 0.5 and channel pushback on hits taken (was 922.0)"
   },
   "verify": {
-    "dps": 921.98,
-    "stderr": 0.31,
+    "dps": 945.28,
+    "stderr": 0.32,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 180s, seed 1"
+    "note": "run_build.py main run, 180s, seed 1"
   },
   "summary": "The sub-Holy twist build with Holy Conduit 2, adding Exorcism and Holy Wrath for an Undead or Demon boss.",
   "advantage": "Exorcism and Holy Wrath only work on Undead and Demons. Holy Conduit 2 makes both 40% cheaper.",

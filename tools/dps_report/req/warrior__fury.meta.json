@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_fury",
   "apl": "level60_fury",
   "published": {
-    "dps": 987.9,
-    "source": "Fury re-search after the off hand Rage x0.5, main hand only Windfury and Grace of Air rulings (#75, #86, #88), 2026-10-16"
+    "dps": 986.5,
+    "source": "Report re-sim on master 5bbcb0d, 2026-10-16: Grace of Air with Windfury in the melee raid, Windfury Totem main hand only, off-hand Rage 0.5 and channel pushback on hits taken (was 987.9)"
   },
   "verify": {
-    "dps": 987.9,
-    "stderr": 0.4,
+    "dps": 986.5,
+    "stderr": 0.38,
     "iters": 20000,
     "ok": true,
-    "note": "same sim as the published number"
+    "note": "run_build.py main run, 180s, seed 1"
   },
   "summary": "Dual wield Fury with a 2.8s sword and a 2.9s axe, and Death Wish and Recklessness at the pull.",
   "keyTalents": [

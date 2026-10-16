@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_frost",
   "published": {
-    "dps": 827.3,
-    "source": "PR #89 (client 1.60.1.70425 port, 2026-10-16)"
+    "dps": 826.0,
+    "source": "Report re-sim on master 5bbcb0d, 2026-10-16: Grace of Air with Windfury in the melee raid, Windfury Totem main hand only, off-hand Rage 0.5 and channel pushback on hits taken (was 827.3)"
   },
   "verify": {
-    "dps": 827.3,
-    "stderr": 0.3,
+    "dps": 826.04,
+    "stderr": 0.34,
     "iters": 20000,
     "ok": true,
-    "note": "180s, 20000 iterations, seed 1, on the 70425 rotation (seed 100001 within 0.6)"
+    "note": "run_build.py main run, 180s, seed 1"
   },
   "summary": "Deep Frost Frostbolt with Fingers of Frost and Shatter.",
   "keyTalents": [

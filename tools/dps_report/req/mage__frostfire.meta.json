@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_frostfire",
   "published": {
-    "dps": 1010.8,
-    "source": "PR #89 (client 1.60.1.70425 port, 2026-10-16)"
+    "dps": 1012.1,
+    "source": "Report re-sim on master 5bbcb0d, 2026-10-16: Grace of Air with Windfury in the melee raid, Windfury Totem main hand only, off-hand Rage 0.5 and channel pushback on hits taken (was 1010.8)"
   },
   "verify": {
-    "dps": 1010.8,
+    "dps": 1012.05,
     "stderr": 0.5,
     "iters": 20000,
     "ok": true,
-    "note": "180s, 20000 iterations, seed 1, on the 70425 rotation (seed 100001 within 0.6)"
+    "note": "run_build.py main run, 180s, seed 1"
   },
   "summary": "Fire and Frost hybrid built on Frostfire Bolt, which gets both trees' talents.",
   "keyTalents": [

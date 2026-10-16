@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "magma",
   "published": {
-    "dps": 795.2,
-    "source": "Shaman PR (client 1.60.1.70425: new talent tree with Elemental Mastery, Fire Nova cut, Lava Burst and Mana Tide ranks, searched talents, 2026-10-16)"
+    "dps": 795.3,
+    "source": "Report re-sim on master 5bbcb0d, 2026-10-16: Grace of Air with Windfury in the melee raid, Windfury Totem main hand only, off-hand Rage 0.5 and channel pushback on hits taken (was 795.2)"
   },
   "verify": {
     "dps": 795.25,
     "stderr": 0.35,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 180s, seed 1"
+    "note": "run_build.py main run, 180s, seed 1"
   },
   "summary": "Enhancement with Restoration points for Water Shield. It has no Improved Fire Nova, so it uses Magma Totem. Lightning Shield still beat Water Shield at every raid hit rate tried.",
   "keyTalents": [

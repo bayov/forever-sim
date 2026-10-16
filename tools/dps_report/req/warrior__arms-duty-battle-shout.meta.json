@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_arms_battle_shout",
   "published": {
-    "dps": 942.5,
-    "source": "Client 70425 racials and the raid damage hits, re-measured on master 4f5c608, 2026-10-16"
+    "dps": 974.6,
+    "source": "Report re-sim on master 5bbcb0d, 2026-10-16: Grace of Air with Windfury in the melee raid, Windfury Totem main hand only, off-hand Rage 0.5 and channel pushback on hits taken (was 942.5)"
   },
   "verify": {
-    "dps": 942.5,
-    "stderr": 0.3,
+    "dps": 974.58,
+    "stderr": 0.35,
     "iters": 20000,
     "ok": true,
-    "note": "same sim as the published number"
+    "note": "run_build.py main run, 180s, seed 1"
   },
   "summary": "Keeps Battle Shout up for its party, with the raid's Battle Shout off.",
   "keyTalents": [

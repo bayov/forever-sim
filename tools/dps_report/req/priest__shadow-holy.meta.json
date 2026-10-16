@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 886.4,
-    "source": "priest client 70425 port (DP 24s, talents and knobs re-searched with raid hits), 2026-10-16"
+    "dps": 883.6,
+    "source": "Report re-sim on master 5bbcb0d, 2026-10-16: Grace of Air with Windfury in the melee raid, Windfury Totem main hand only, off-hand Rage 0.5 and channel pushback on hits taken (was 886.4)"
   },
   "verify": {
-    "dps": 886.4,
-    "stderr": 0.16,
+    "dps": 883.62,
+    "stderr": 0.17,
     "iters": 20000,
     "ok": true,
-    "note": "180s, 20000 iterations, seed 1 (seed 1000001: 886.4)"
+    "note": "run_build.py main run, 180s, seed 1"
   },
   "summary": "Shadow with Holy points of healing utility instead of Discipline.",
   "keyTalents": [

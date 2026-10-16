@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_arms",
   "published": {
-    "dps": 944.2,
-    "source": "Client 70425 racials and the raid damage hits, re-measured on master 4f5c608, 2026-10-16"
+    "dps": 976.4,
+    "source": "Report re-sim on master 5bbcb0d, 2026-10-16: Grace of Air with Windfury in the melee raid, Windfury Totem main hand only, off-hand Rage 0.5 and channel pushback on hits taken (was 944.2)"
   },
   "verify": {
-    "dps": 944.2,
-    "stderr": 0.3,
+    "dps": 976.41,
+    "stderr": 0.35,
     "iters": 20000,
     "ok": true,
-    "note": "same sim as the published number"
+    "note": "run_build.py main run, 180s, seed 1"
   },
   "summary": "Two-hand Arms: Mortal Strike, Slam, Overpower off dodges and Bloodthrill procs, and Rend kept up.",
   "keyTalents": [

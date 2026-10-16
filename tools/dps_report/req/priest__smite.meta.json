@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_smite",
   "apl": "level60_smite",
   "published": {
-    "dps": 724.6,
-    "source": "Holy Fire dropped once Power in Light counts Shadow Word: Pain (update ledger PRI-70425-03), 2026-10-16"
+    "dps": 723.7,
+    "source": "Report re-sim on master 5bbcb0d, 2026-10-16: Grace of Air with Windfury in the melee raid, Windfury Totem main hand only, off-hand Rage 0.5 and channel pushback on hits taken (was 724.6)"
   },
   "verify": {
-    "dps": 724.6,
+    "dps": 723.72,
     "stderr": 0.17,
     "iters": 20000,
     "ok": true,
-    "note": "180s, 20000 iterations, seed 1 (seed 1000001: 724.9)"
+    "note": "run_build.py main run, 180s, seed 1"
   },
   "summary": "Holy damage priest casting Smite, with Shadow Word: Pain up for Power in Light, on its own hit-free gear. Smite's high mana cost holds it back.",
   "keyTalents": [

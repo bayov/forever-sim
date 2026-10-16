@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 713.7,
-    "source": "Tauren, Nature's Focus pushback and the client 70425 racials (2026-10-16)"
+    "dps": 752.7,
+    "source": "Report re-sim on master 5bbcb0d, 2026-10-16: Grace of Air with Windfury in the melee raid, Windfury Totem main hand only, off-hand Rage 0.5 and channel pushback on hits taken (was 713.7)"
   },
   "verify": {
-    "dps": 713.67,
-    "stderr": 0.16,
+    "dps": 752.66,
+    "stderr": 0.17,
     "iters": 20000,
     "ok": true,
-    "note": "180s, seed 1"
+    "note": "run_build.py main run, 180s, seed 1"
   },
   "summary": "Shred and Rip cat with Berserk on cooldown and no Rake. Under Forever the cat swings at 1.0s with its weapon's DPS, and stones, potions, Thistle Tea and Windfury Totem work in Cat Form.",
   "keyTalents": [
