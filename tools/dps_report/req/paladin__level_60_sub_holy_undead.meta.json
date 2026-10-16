@@ -5,7 +5,7 @@
   "build": "Level 60 (sub Holy, vs Undead)",
   "isDefault": false,
   "pr": 54,
-  "race": "Undead",
+  "race": "Human",
   "talents": "550030032--05225331001330311",
   "treeNames": [
     "Holy",
@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_undead",
   "published": {
-    "dps": 970.4,
-    "source": "PR #54 (client 70425: Judgement of Righteousness 42.9%, Champion of the Light 10 / 20 / 30%, Consecration 4.2% a tick, 2026-10-16)"
+    "dps": 973.3,
+    "source": "PR #54 (client 70425: Judgement of Righteousness 42.9%, Champion of the Light 10 / 20 / 30%, Consecration 4.2% a tick; Concentration Aura; Human, 2026-10-16)"
   },
   "verify": {
-    "dps": 970.41,
-    "stderr": 0.31,
+    "dps": 973.27,
+    "stderr": 0.32,
     "iters": 20000,
     "ok": true,
     "note": "verify.py, 180 s, seed 1"
   },
-  "summary": "The sub Holy twist build with Holy Conduit 2 against an Undead or Demon boss, with Exorcism and Holy Wrath in the rotation. The best paladin build on such a boss at 300 s; the Shock build is ahead at 120 s and level at 180 s.",
+  "summary": "The sub Holy twist build with Holy Conduit 2 against an Undead or Demon boss, with Exorcism and Holy Wrath in the rotation. The best paladin build on such a boss at 180 s and 300 s; the Shock build is ahead at 120 s.",
   "advantage": "Exorcism and Holy Wrath only work on Undead and Demons, so against such a boss they're extra damage on top of the usual rotation. This build also takes Holy Conduit 2, which makes both spells 40% cheaper.",
   "advantageRefs": [
     "k:s10314",
@@ -76,7 +76,7 @@
   "caveats": [
     "Exorcism and Holy Wrath only land on Undead and Demons, so this build only applies to those bosses",
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 spell power and 18 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "0.5% behind the default at 120 s and 0.8% at 300 s because it has no Precision",
+    "0.3% behind the default at 120 s and 0.6% at 300 s because it has no Precision",
     "Would gain 1.4 DPS twisting down to 0% mana, but shares the twist rotation's 20% floor",
     "Holy Strike's flat part inside the 50% weapon percent comes from client data, not yet confirmed on the beta",
     "High Holy Strike and Consecration ranks may be stale: holding them to their level 30 trend would cost about 1.2%",

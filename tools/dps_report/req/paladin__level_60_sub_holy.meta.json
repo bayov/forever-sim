@@ -5,7 +5,7 @@
   "build": "Level 60 (sub Holy)",
   "isDefault": false,
   "pr": 54,
-  "race": "Undead",
+  "race": "Human",
   "talents": "550030032--05215331001330321",
   "treeNames": [
     "Holy",
@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 869.8,
-    "source": "PR #54 (client 70425: Judgement of Righteousness 42.9%, Champion of the Light 10 / 20 / 30%, Consecration 4.2% a tick, 2026-10-16)"
+    "dps": 872.8,
+    "source": "PR #54 (client 70425: Judgement of Righteousness 42.9%, Champion of the Light 10 / 20 / 30%, Consecration 4.2% a tick; Concentration Aura; Human, 2026-10-16)"
   },
   "verify": {
-    "dps": 869.83,
+    "dps": 872.84,
     "stderr": 0.31,
     "iters": 20000,
     "ok": true,
     "note": "verify.py, 180 s, seed 1"
   },
-  "summary": "The twist build with its side points in Holy (Divine Intellect 5, Reverence, Purifying Power) instead of Protection's Precision. It is within 0.8% of the default at every length but a different talent split, so it ships as its own preset on the same rotation.",
+  "summary": "The twist build with its side points in Holy (Divine Intellect 5, Reverence, Purifying Power) instead of Protection's Precision. It is within 0.6% of the default at every length but a different talent split, so it ships as its own preset on the same rotation.",
   "keyTalents": [
     "Twist of Light",
     "Seal of Command",
@@ -68,7 +68,7 @@
   ],
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 spell power and 18 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "0.5% behind the default at 120 s and 0.8% at 300 s because it has no Precision",
+    "0.3% behind the default at 120 s and 0.6% at 300 s because it has no Precision",
     "Purifying Power does nothing on the generic boss (Exorcism and Holy Wrath are not cast); the vs Undead builds use it",
     "Would gain 1.4 DPS twisting down to 0% mana, but shares the twist rotation's 20% floor",
     "Holy Strike's flat part inside the 50% weapon percent comes from client data, not yet confirmed on the beta",

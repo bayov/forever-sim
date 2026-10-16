@@ -230,15 +230,19 @@ export const DefaultAPL = APLPresets[Phase.Phase4][0];
 //
 // Client 1.60.1.70425 (2026-10-16) cut Judgement of Righteousness to 42.9% of spell power,
 // Champion of the Light to 10 / 20 / 30% and Consecration to 4.2% a tick; the numbers in the
-// comments below are from before it. At 120 / 180 / 300 sec (20000 iterations) Level 60 is
-// now 879.0 / 874.4 / 865.8, Level 60 (sub Holy) 874.9 / 869.8 / 859.2 and Level 60 Shock
-// 917.0 / 899.8 / 859.9, so Shock is ahead of the twist builds up to 180 sec. Against an
-// Undead boss: vs Undead 972.4 / 967.3 / 949.0, sub Holy vs Undead 975.1 / 970.4 / 961.2 and
-// Shock vs Undead 1001.4 / 971.6 / 927.6. The talent searches at 180 sec kept every build
-// but two. On vs Undead, three Divine Intellect points into Divine Strength and Reverence into
-// Precision 3 (`520030002-503-05225231001330301`) was +8 / +5 / -5. On sub Holy, a Purifying
-// Power point into Holy Conduit 2 (`550030031--05225331001330321`) was a tie up to 180 sec and
-// +3.5 at 300. Both trade one fight length against another, so the presets stay.
+// comments below are from before it. On the 70425 tree (raid hits, Concentration Aura, Human),
+// at 120 / 180 / 300 sec with 20000 iterations:
+// - Level 60: 880.8 / 876.6 / 868.3.
+// - Level 60 (sub Holy): 878.2 / 872.8 / 862.7.
+// - Level 60 Shock: 912.6 / 896.9 / 858.2, ahead of the twist builds up to 180 sec.
+// - Against an Undead boss: vs Undead 974.3 / 969.5 / 952.0, sub Holy vs Undead
+//   977.1 / 973.3 / 964.4, Shock vs Undead 998.2 / 970.3 / 927.6.
+// The talent searches (180 sec, Undead, before the raid hits) kept every build but two. Both
+// moves trade one fight length against another, so the presets stay:
+// - vs Undead: three Divine Intellect points into Divine Strength and Reverence into Precision 3
+//   (`520030002-503-05225231001330301`) was +8 / +5 / -5.
+// - sub Holy: a Purifying Power point into Holy Conduit 2 (`550030031--05225331001330321`) was a
+//   tie up to 180 sec and +3.5 at 300.
 //
 // Level 60: the Retribution tree down to Twist of Light (Benediction, Improved Judgement, Holy
 // Conduit, Conviction, Vindication, Sanctified Judgement, Seal of Command, Sacred Arbiter,
@@ -444,7 +448,7 @@ export const DefaultDebuffs = Debuffs.create({
 export const OtherDefaults = {
 	profession1: Profession.Engineering,
 	profession2: Profession.Blacksmithing,
-	race: Race.RaceUndead,
+	race: Race.RaceHuman,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -486,22 +490,26 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
-// Level 60: the Undead on the synthetic set with the Level 60 talents and rotation. Every race a
-// paladin can be, on that build with the same seed at 50000 iterations (120 / 180 / 300 sec):
-// Undead 986.6 / 981.9 / 972.7, Human 971.0 / 966.4 / 957.6, Dwarf 970.3 / 965.7 / 956.9. Undead
-// is the best race and the only Horde paladin, Human the best Alliance one (5% Spirit), 1 ahead of
-// Dwarf. These are also the numbers with weapon racials off, since the axe gets none. Touch of the Grave rolls on every Judgement, Holy Strike and Consecration. The synthetic
-// two-hander is an axe like the Era Phase 1 Spinal Reaper, so neither Human's sword crit nor
-// Dwarf's mace crit counts. With a sword of the same stats Human would be about 996 at 180 sec,
-// ahead of Undead, and Dwarf with a mace about 973.
+// Level 60: the Human on the synthetic set with the Level 60 talents and rotation. Client 70425
+// made every racial weapon-free, and Human's Ruthless (2% crit) now beats Undead's Touch of the
+// Grave on every Level 60 build at every length. Seed 1, 20000 iterations, 120 / 180 / 300 sec,
+// client 70425, Concentration Aura:
+// - Level 60: Human 880.8 / 876.6 / 868.3, Undead 878.2 / 873.5 / 864.9, Dwarf 871.9 / 867.8 /
+//   859.7.
+// - sub Holy: Human 878.2 / 872.8 / 862.7, Undead 874.8 / 869.5 / 858.7, Dwarf 869.5 / 864.2 /
+//   853.7.
+// - Shock: Human 912.6 / 896.9 / 858.2, Undead 911.2 / 894.5 / 855.6, Dwarf 907.2 / 890.9 / 852.3.
+// Human is the best race and the best Alliance one. Undead is the best (and only) Horde
+// paladin. The earlier Undead pick (986.6 / 981.9 / 972.7 against Human's 971.0 / 966.4 / 957.6)
+// was before client 70425, when Human's crit only counted with a sword.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Undead on the synthetic Phase 1 gear with the Level 60 talents and rotation, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Human on the synthetic Phase 1 gear with the Level 60 talents and rotation, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60,
 	encounter: EncounterLevel60,
-	race: Race.RaceUndead,
+	race: Race.RaceHuman,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -511,12 +519,12 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 // 180 / 300 sec, Human 966.9 / 962.0 / 951.5, Dwarf 966.2 / 961.4 / 949.9.
 export const PresetBuildLevel60SubHoly = PresetUtils.makePresetBuild('Level 60 (sub Holy)', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Undead with the side talent points in Holy instead of Protection.',
+	tooltip: 'Level 60 Human with the side talent points in Holy instead of Protection.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60SubHoly,
 	rotation: APLLevel60,
 	encounter: EncounterLevel60,
-	race: Race.RaceUndead,
+	race: Race.RaceHuman,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -528,12 +536,12 @@ export const PresetBuildLevel60SubHoly = PresetUtils.makePresetBuild('Level 60 (
 // Dwarf 970.8 / 954.4 / 914.1.
 export const PresetBuildLevel60Shock = PresetUtils.makePresetBuild('Level 60 Shock', {
 	group: 'Level 60',
-	tooltip: "Level 60 Undead Holy Shock build with Light's Vigil, on the synthetic Phase 1 gear.",
+	tooltip: "Level 60 Human Holy Shock build with Light's Vigil, on the synthetic Phase 1 gear.",
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60Shock,
 	rotation: APLLevel60Shock,
 	encounter: EncounterLevel60,
-	race: Race.RaceUndead,
+	race: Race.RaceHuman,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -561,12 +569,12 @@ export const EncounterLevel60CrusaderDuty = PresetUtils.makePresetEncounter('Lev
 // has to put Seal of Righteousness back up.
 export const PresetBuildLevel60CrusaderDuty = PresetUtils.makePresetBuild('Level 60 (Crusader duty)', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Undead that keeps Judgement of the Crusader on the boss for the raid.',
+	tooltip: 'Level 60 Human that keeps Judgement of the Crusader on the boss for the raid.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60CrusaderDuty,
 	encounter: EncounterLevel60CrusaderDuty,
-	race: Race.RaceUndead,
+	race: Race.RaceHuman,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -574,12 +582,12 @@ export const PresetBuildLevel60CrusaderDuty = PresetUtils.makePresetBuild('Level
 });
 export const PresetBuildLevel60SubHolyCrusaderDuty = PresetUtils.makePresetBuild('Level 60 (sub Holy, Crusader duty)', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Undead with the sub Holy talents that keeps Judgement of the Crusader on the boss for the raid.',
+	tooltip: 'Level 60 Human with the sub Holy talents that keeps Judgement of the Crusader on the boss for the raid.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60SubHoly,
 	rotation: APLLevel60CrusaderDuty,
 	encounter: EncounterLevel60CrusaderDuty,
-	race: Race.RaceUndead,
+	race: Race.RaceHuman,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -587,12 +595,12 @@ export const PresetBuildLevel60SubHolyCrusaderDuty = PresetUtils.makePresetBuild
 });
 export const PresetBuildLevel60ShockCrusaderDuty = PresetUtils.makePresetBuild('Level 60 Shock (Crusader duty)', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Undead Holy Shock build that keeps Judgement of the Crusader on the boss for the raid.',
+	tooltip: 'Level 60 Human Holy Shock build that keeps Judgement of the Crusader on the boss for the raid.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60Shock,
 	rotation: APLLevel60ShockCrusaderDuty,
 	encounter: EncounterLevel60CrusaderDuty,
-	race: Race.RaceUndead,
+	race: Race.RaceHuman,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -622,18 +630,21 @@ const OptionsRighteousness = RetributionPaladinOptions.create({
 	aura: PaladinAura.ConcentrationAura,
 	primarySeal: PaladinSeal.Righteousness,
 });
-// The vs Undead builds, on an Undead boss (50000 iterations, 120 / 180 / 300 sec). Undead stays
-// the best race and Human the best Alliance one on each.
+// The vs Undead builds, on an Undead boss (50000 iterations, 120 / 180 / 300 sec). Undead was
+// the best race on each before client 70425. Now Human is (seed 1, 20000 iterations): vs Undead
+// Human 974.3 / 969.5 / 952.0 against Undead 970.3 / 965.5 / 947.6, sub Holy vs Undead
+// 977.1 / 973.3 / 964.4 against 973.7 / 969.3 / 960.1, Shock vs Undead 998.2 / 970.3 / 927.6
+// against 996.0 / 966.9 / 924.8. Dwarf is about 5 behind Undead. The older numbers:
 // Level 60 (vs Undead): Undead 1074.2 / 1069.7 / 1045.9, Human 1057.9 / 1053.9 / 1030.9, Dwarf
 // 1057.2 / 1053.2 / 1029.7.
 export const PresetBuildLevel60Undead = PresetUtils.makePresetBuild('Level 60 (vs Undead)', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Undead against an Undead or Demon boss, with Exorcism and Holy Wrath.',
+	tooltip: 'Level 60 Human against an Undead or Demon boss, with Exorcism and Holy Wrath.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60Undead,
 	rotation: APLLevel60Undead,
 	encounter: EncounterLevel60Undead,
-	race: Race.RaceUndead,
+	race: Race.RaceHuman,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -643,12 +654,12 @@ export const PresetBuildLevel60Undead = PresetUtils.makePresetBuild('Level 60 (v
 // 1046.3, Dwarf 1058.1 / 1055.2 / 1045.2. The best build against an Undead boss.
 export const PresetBuildLevel60SubHolyUndead = PresetUtils.makePresetBuild('Level 60 (sub Holy, vs Undead)', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Undead with the sub Holy talents against an Undead or Demon boss, with Exorcism and Holy Wrath.',
+	tooltip: 'Level 60 Human with the sub Holy talents against an Undead or Demon boss, with Exorcism and Holy Wrath.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60SubHolyUndead,
 	rotation: APLLevel60Undead,
 	encounter: EncounterLevel60Undead,
-	race: Race.RaceUndead,
+	race: Race.RaceHuman,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -660,12 +671,12 @@ export const PresetBuildLevel60SubHolyUndead = PresetUtils.makePresetBuild('Leve
 // 180 sec.
 export const PresetBuildLevel60ShockUndead = PresetUtils.makePresetBuild('Level 60 Shock (vs Undead)', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Undead Holy Shock build against an Undead or Demon boss, with Exorcism.',
+	tooltip: 'Level 60 Human Holy Shock build against an Undead or Demon boss, with Exorcism.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60Shock,
 	rotation: APLLevel60ShockUndead,
 	encounter: EncounterLevel60Undead,
-	race: Race.RaceUndead,
+	race: Race.RaceHuman,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],

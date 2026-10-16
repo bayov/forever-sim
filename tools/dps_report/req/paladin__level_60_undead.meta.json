@@ -5,7 +5,7 @@
   "build": "Level 60 (vs Undead)",
   "isDefault": false,
   "pr": 54,
-  "race": "Undead",
+  "race": "Human",
   "talents": "250030012-502-05225231001330301",
   "treeNames": [
     "Holy",
@@ -15,12 +15,12 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_undead",
   "published": {
-    "dps": 967.3,
-    "source": "PR #54 (client 70425: Judgement of Righteousness 42.9%, Champion of the Light 10 / 20 / 30%, Consecration 4.2% a tick, 2026-10-16)"
+    "dps": 969.5,
+    "source": "PR #54 (client 70425: Judgement of Righteousness 42.9%, Champion of the Light 10 / 20 / 30%, Consecration 4.2% a tick; Concentration Aura; Human, 2026-10-16)"
   },
   "verify": {
-    "dps": 967.31,
-    "stderr": 0.31,
+    "dps": 969.45,
+    "stderr": 0.32,
     "iters": 20000,
     "ok": true,
     "note": "verify.py, 180 s, seed 1"
@@ -76,7 +76,7 @@
     "Exorcism and Holy Wrath only land on Undead and Demons, so this build only applies to those bosses",
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 spell power and 18 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
     "Twisting is worth 126 DPS, Consecration 109, Holy Strike 99, Hammer of Wrath 29 at 180 s (measured before client 70425)",
-    "Undead is best (Touch of the Grave)",
+    "Human is best since client 70425 (Ruthless, 2% crit with any weapon): about 3 ahead of Undead (Touch of the Grave) at 180 s",
     "A second crit elixir (Mongoose) would add 14.9 DPS; one 2% crit elixir per character by ruling",
     "Holy Strike's flat part inside the 50% weapon percent comes from client data, not yet confirmed on the beta",
     "High Holy Strike and Consecration ranks may be stale: holding them to their level 30 trend would cost about 1.2%",
