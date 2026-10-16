@@ -225,6 +225,30 @@ One data-error case worth knowing under the new ruling: Seal of Fury rank 4 (204
 - wago.tools lists a new Forever build, 1.60.1.70374. Its SpellEffect, SpellPower, SpellMisc, SpellLevels, SpellCooldowns, SpellName, SkillLineAbility, TraitDefinition, TraitDefinitionEffectPoints and CurvePoint tables are byte-identical to 70338's, so nothing in this report changes.
 - Branch commits since 18:25 Oct 13 are UI, merges and a Retribution Shock rotation knob (Light's Vigil mana floor); none touch rank data.
 
+## Check 2026-10-16 06:50 UTC: client 1.60.1.70425, a real balance build
+
+wago.tools lists 1.60.1.70425. Unlike 70374 it changes a lot: 575 SpellEffect rows (82 on class spells), SpellLevels, SpellPower, SpellCooldowns, the talent trees (TraitNode, TraitNodeEntry, node groups) and 2,900 CurvePoint rows. **For the first time in the beta, Blizzard edited 31+ ranks and deep-tier talents on purpose:**
+
+| Change (70374 → 70425) | Ranks / tier | Presets affected |
+|---|---|---|
+| Arcane Blast: base ×0.6 and coefficient 0.714 → 0.429 at every rank (rank 5: 394 → 236) | all, 31+ included | Arcane mage (Arcane Blast ~52% of its damage): a large nerf |
+| Lava Burst: ranks moved 10 levels earlier (30 / 40 / 50), the talent moved from the 30-point gate to the 20-point gate, costs cut; per-level values kept, so the L60 rank (220) is gone and the best at 60 is rank 3 (196 + 1.1 a level to 58 ≈ 205, −7%) | 31-point talent → 21-point; Elemental Mastery (16166) is the new 30-point capstone | Elemental: Lava Burst −7%, and the talent string needs checking against the new tree |
+| Chain Lightning: costs −35% at every rank (485 → 315 at rank 4) | all, 31+ included | not cast by the presets |
+| Judgement of Righteousness coefficient 0.5 → 0.429, Judgement of Fury 0.45 → 0.429, every rank | all | Retribution (JoR 6–11% of its damage) |
+| Devouring Plague cooldown 60 → 24 sec at every rank; Vampiric Embrace 60 → 30 sec | all | Shadow, Smite |
+| Holy Fire rank 5 (L42) periodic 13 → 9: an out-of-line 31+ entry fixed (4/5/6/7/**13**/10/13/15) | one 31+ rank | none (rank 8 is cast) |
+| Shadow Mastery (25-point gate) 1–5% → 2–10% | deep tier | warlocks (Affliction / Demonology builds that take it) |
+| Champion of the Light (25-point) 20/40/60% → 10/20/30% of Intellect | deep tier | Retribution builds that take it |
+| Mage tree: Critical Mass 3 → 5 ranks, Fire Power 5 → 3 ranks (1/2/3%), Winter's Chill 5% at every rank, Missile Barrage, Frost Channeling, Improved Fire Blast reworked, Arcane Wrath added | several tiers | all mage presets |
+| Priest tree: Shadow Affinity and Improved Fade removed, Mental Strength and Improved Mind Flay reworked, Dark Inspiration added | several tiers | Shadow, Smite |
+| Warlock tree: Malediction removed, Grim Reach added; Curse of Recklessness reworked (armor via a new aura) | – | warlock talent strings; the raid's CoR |
+| Ice Lance 300 → 200 at every rank; Shred rank 1 moved to L20 (24 → 22); Moonkin Aura effect changed; Righteous Fury 60 → 90 | – | Frost / Frostfire, Balance |
+
+**What it means for this audit:**
+- The 31+ ranks I flagged as stale-shaped were **not** touched: Lightning Bolt, Smite, Wrath, Raptor Strike, Earth Shock, Rip, Holy Strike, Consecration and Bane of Doom's 4.0 coefficient are byte-identical. So are Shadow Bolt and the other tuned curves.
+- Blizzard now edits 31+ data, though: design changes at every rank (Arcane Blast, Judgements, Devouring Plague, Chain Lightning costs), a fix for one out-of-line 31+ rank (Holy Fire V), two 25-point talents retuned, and a 31-point talent pulled down into the playable tiers (Lava Burst). The verdicts above still describe 70425's 31+ data, but "never changed in a beta build" no longer holds for the deep tier as a whole.
+- Every class's sims are on 70338 values and need the 70425 deltas (the workers' and the Forever mechanics auditor's job). Talent strings may no longer fit the changed trees (Elemental, mage, priest, warlock). This report's sensitivities are percentages on 70338 data and will be re-run once the branches move to 70425.
+
 ## Cross-class summary
 
 **Specs whose standing rests on likely-stale or untested 31+ data:**
