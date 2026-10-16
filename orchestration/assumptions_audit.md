@@ -9,7 +9,7 @@ Every assumption the Level 60 DPS report and the sim maintain, checked against t
 
 Tier 3 precedents (SoD, TBC, Wrath) don't settle anything here.
 
-Coordination: the update auditor (session_01DLHrNhMbEVhmSed2oDxNRS) is building `orchestration/update_ledger.md`, which checks every announced game change against the client and the sim. It wasn't pushed when this audit ran. Where the two overlap on 70425 class diffs, this audit's readings stand until it lands; its PR #69 already covers Touch of the Grave and Gnome Eureka!.
+Coordination: the update auditor (session_01DLHrNhMbEVhmSed2oDxNRS) is building `orchestration/update_ledger.md`, which checks every announced game change against the client and the sim. It is now in PR #79 (branch claude/wow-forever-dps-presets-m9u15h-updates-ledger). Its verdicts on the report rows agree with this audit's: warr_crit_rage, Seal of Righteousness once and Consecration 0.042 are settled; the top ranks, Ice Lance, Bane of Doom, the pet scaling auras, the proc rates, Rend and Windfury Totem are unchanged in 70425. One addition: the client's hidden "Rule of Rage (DND)" 1322574 went from 10 to 100 base points in 70291, which also backs crit Rage at +100%. Its PR #69 covers Touch of the Grave and Gnome Eureka!.
 
 Verdicts:
 - **S=** settled, and the sim already matches;
@@ -141,7 +141,7 @@ Added as pending rows on 2026-10-16 (the orchestrator's request): `lock_pet_crit
 - **Touch of the Grave** (covered by the update auditor's PR #69). The 15 October note says "Touch of the Dead no longer scales with Shadow increases on the target or the caster". The sim's drain still takes every Shadow modifier (`sim/core/racials_forever.go`, DamageMultiplier 1 and nothing ignoring modifiers). The chance and 25 s ICD were already ported. Small with the 25 s ICD. Racials / core.
 - **Ice Lance against frozen targets:** ×3 (+200%), not ×4. Mage port.
 - **Elemental Devastation** now procs on "Critical Strikes with direct damage spells" (70425 tooltip). Shaman port.
-- **Pet crit:** the hunter's higher of melee and ranged crit (15 October note). Hunter port.
+- **Pet crit:** the hunter's higher of melee and ranged crit (15 October note). The update ledger notes the sim has one crit stat, so it already behaves this way; nothing to port.
 - **Smite rotation:** with Power in Light on Shadow Word: Pain (PR #70), dropping the Holy Fire line gains 4.7. Priest worker.
 - **Doc fixes for routing:**
   - notes.md Druid "Shred's flat bonus" and Paladin "Holy Strike's damage" are settled by PR #72's evidence.
