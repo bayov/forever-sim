@@ -5,8 +5,8 @@ import "github.com/wowsims/classic/sim/core/proto"
 // The level 60 rogue setup the Level 60 presets were searched under, shared by the
 // rogue_combat, rogue_assassination and rogue_subtlety specs. The rogue is in a melee
 // group with a warrior and an enhancement shaman, so it gets Battle Shout, Strength of
-// Earth and Windfury Totem. Under Forever only one air totem works in a party, and
-// Windfury Totem is 24 DPS ahead of Grace of Air for a Sinister Strike rogue (180 sec).
+// Earth and Windfury Totem, and Grace of Air from the raid's second shaman
+// (the user's ruling 2026-10-16, "both totems": client 1.60.1.70425 lets Grace of Air stack with Windfury Totem and makes both raid-wide).
 // The rest of the shared raid stays: both blessings (Wisdom does nothing for a rogue),
 // every debuff but Curse of Shadow, which Forever folds into Curse of the Elements (Sunder
 // Armor, Faerie Fire and Curse of Recklessness are the ones that matter to the rogue,
@@ -14,6 +14,7 @@ import "github.com/wowsims/classic/sim/core/proto"
 func rogueLevel60Raid(raidBuffs *proto.RaidBuffs, _ *proto.IndividualBuffs, debuffs *proto.Debuffs) {
 	raidBuffs.StrengthOfEarthTotem = proto.TristateEffect_TristateEffectRegular
 	raidBuffs.TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffWindfury
+	raidBuffs.GraceOfAirTotem = proto.TristateEffect_TristateEffectRegular
 }
 
 // rogueLevel60Consumes are the level 60 consumes, each kept because it helps (Sinister

@@ -4,7 +4,7 @@
   "className": "Mage",
   "dataVersion": 2,
   "dataSource": "client",
-  "generatedAt": "2026-10-12T07:08:12Z",
+  "generatedAt": "2026-10-16T07:00:19Z",
   "rules": {
     "pointsPerRow": 5,
     "maxPoints": 51,
@@ -308,23 +308,52 @@
           "maxRank": 1,
           "icon": "spell_arcane_blast",
           "iconSource": "client",
-          "description": "Blasts the target with energy, dealing {0} to {1} Arcane damage. Each time you cast Arcane Blast, the damage of all your other spells is increased by {2}% and the mana cost of Arcane Blast is increased by {3}%. Effect stacks up to {4} times and lasts {5} sec or until any other damage spell is cast.",
+          "description": "Blasts the target with energy, dealing {0} to {1} Arcane damage. Each time you cast Arcane Blast, you gain {2}% of your Intellect as Spell Damage and the mana cost of Arcane Blast is increased by {3}%. Effect stacks up to {4} times and lasts {5} sec from time of initial application.",
           "ranks": [
             [
-              57,
-              65,
-              10,
+              34,
+              38,
+              15,
               175,
               4,
-              8
+              15
             ]
           ],
           "ranksObserved": [
             1
           ],
           "ranksSource": "client",
-          "cost": "15% base Mana; 30 yd range; 2.5 sec cast",
+          "cost": "15% base Mana; 30 yd range; 1.5 sec cast",
           "spellId": 400574
+        },
+        {
+          "id": "arcane-wrath",
+          "name": "Arcane Wrath",
+          "row": 3,
+          "col": 3,
+          "maxRank": 1,
+          "icon": "ability_mage_netherwindpresence",
+          "iconSource": "client",
+          "description": "Launches a projectile of pure Arcane energy at the enemy target, causing {0} to {1} Arcane damage. This spell gains additional Spell Damage equal to {2}% of your maximum Mana.",
+          "ranks": [
+            [
+              122,
+              146,
+              5
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "140 Mana; 30 yd range; 3.5 sec cast; 6 sec cooldown",
+          "requires": [
+            {
+              "talent": "arcane-blast",
+              "rank": 1
+            }
+          ],
+          "spellId": 1326079
         },
         {
           "id": "arcane-shielding",
@@ -413,15 +442,24 @@
         {
           "id": "missile-barrage",
           "name": "Missile Barrage",
-          "row": 3,
+          "row": 0,
           "col": 3,
-          "maxRank": 1,
+          "maxRank": 2,
           "icon": "ability_mage_missilebarrage",
           "iconSource": "client",
-          "description": "Gives your Arcane Blast spell a {0}% chance, and your Fireball, Frostbolt, and Frostfire Bolt spells a {1}% chance to reduce the channeled duration of your next Arcane Missiles spell by {2}%, reduce the Mana cost by {3}%, and missiles fire every {4} sec.",
+          "description": "Gives your Arcane Blast spell a {0}% chance, your Arcane Missile hits a {1}% chance, and your Arcane Wrath, Fireball, Frostbolt, and Frostfire Bolt spells a {2}% chance to reduce the channeled duration of your next Arcane Missiles spell by {3}%, reduce the Mana cost by {4}%, and missiles fire every {5} sec.",
           "ranks": [
             [
+              20,
+              5,
+              10,
+              50,
+              100,
+              0.5
+            ],
+            [
               40,
+              10,
               20,
               50,
               100,
@@ -429,7 +467,8 @@
             ]
           ],
           "ranksObserved": [
-            1
+            1,
+            2
           ],
           "ranksSource": "client",
           "spellId": 400588
@@ -568,24 +607,22 @@
       "cols": 4,
       "talents": [
         {
-          "id": "wake-of-fire",
-          "name": "Wake of Fire",
+          "id": "improved-fire-blast",
+          "name": "Improved Fire Blast",
           "row": 0,
           "col": 0,
           "maxRank": 2,
           "icon": "spell_fire_lavaspawn",
           "iconSource": "client",
-          "description": "Reduces the cooldown of your Fire Blast spell by {0} sec. Killing a non-trivial target increases the critical strike chance of your next Fire Blast cast within {1} sec by {2}%.",
+          "description": "Reduces the cooldown of your Fire Blast spell by {0} sec and increases its range by {1} yards.",
           "ranks": [
             [
               1,
-              30,
-              25
+              8
             ],
             [
               2,
-              30,
-              50
+              15
             ]
           ],
           "ranksObserved": [
@@ -960,7 +997,7 @@
           "name": "Critical Mass",
           "row": 4,
           "col": 1,
-          "maxRank": 3,
+          "maxRank": 5,
           "icon": "spell_nature_wispheal",
           "iconSource": "client",
           "description": "Increases the critical strike chance of your Fire spells by {0}%.",
@@ -973,12 +1010,20 @@
             ],
             [
               6
+            ],
+            [
+              8
+            ],
+            [
+              10
             ]
           ],
           "ranksObserved": [
             1,
             2,
-            3
+            3,
+            4,
+            5
           ],
           "ranksSource": "client",
           "spellId": 11115
@@ -1012,33 +1057,28 @@
           "name": "Fire Power",
           "row": 5,
           "col": 2,
-          "maxRank": 5,
+          "maxRank": 3,
           "icon": "spell_fire_immolation",
           "iconSource": "client",
-          "description": "Increases the damage done by your Fire spells by {0}%.",
+          "description": "Increases the damage done by your Fire spells by {0}% per your Fire effects on the target, up to a maximum increase of {1}%. Effects which mix multiple schools of magic do not qualify.",
           "ranks": [
             [
-              2
-            ],
-            [
+              1,
               4
             ],
             [
-              6
-            ],
-            [
+              2,
               8
             ],
             [
-              10
+              3,
+              12
             ]
           ],
           "ranksObserved": [
             1,
             2,
-            3,
-            4,
-            5
+            3
           ],
           "ranksSource": "client",
           "spellId": 11124
@@ -1066,7 +1106,7 @@
           "requires": [
             {
               "talent": "critical-mass",
-              "rank": 3
+              "rank": 5
             }
           ],
           "spellId": 11129
@@ -1374,7 +1414,7 @@
             [
               28,
               32,
-              300
+              200
             ]
           ],
           "ranksObserved": [
@@ -1569,36 +1609,31 @@
           "maxRank": 5,
           "icon": "spell_frost_chillingblast",
           "iconSource": "client",
-          "description": "Gives your Frost damage spells a {0}% chance to apply the Winter's Chill effect, which increases the chance your Ice Lance and Frostbolt spells will critically hit the target by {1}% for {2} sec. Stacks up to {3} times.",
+          "description": "Gives your Frost damage spells a {0}% chance to apply the Winter's Chill effect, which increases the damage done by your Cone of Cold spell to the target by {1}%, stacking up to {2} times.",
           "ranks": [
             [
               20,
-              2,
-              15,
-              1
+              40,
+              5
             ],
             [
               40,
-              2,
-              15,
-              2
+              40,
+              5
             ],
             [
               60,
-              2,
-              15,
-              3
+              40,
+              5
             ],
             [
               80,
-              2,
-              15,
-              4
+              40,
+              5
             ],
             [
               100,
-              2,
-              15,
+              40,
               5
             ]
           ],
@@ -1644,6 +1679,6 @@
     }
   ],
   "notes": [
-    "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17, with the talents the 2026-10-01 and 2026-10-08 development notes changed (Wake of Fire, Hot Streak renamed Heating Up, Combustion) updated to build 1.60.1.70338 from foreverchanges.pro"
+    "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17, with the talents the 2026-10-01 and 2026-10-08 development notes changed (Wake of Fire, Hot Streak renamed Heating Up, Combustion) updated to build 1.60.1.70338 from foreverchanges.pro, and the 2026-10-15 tree rework (Arcane Blast, Arcane Wrath, Missile Barrage, Improved Fire Blast, Critical Mass, Fire Power, Winter's Chill, Ice Lance, Frost Channeling, Frostbite) updated to build 1.60.1.70425 from the client tables and Wowhead's Forever tooltips"
   ]
 }

@@ -78,11 +78,12 @@ func TestOrcRogueFlametongueTotemOffHand(t *testing.T) {
 	}
 }
 
-// TestOrcRogueWindfuryTotemOffHand checks that our off-hand white swings proc Windfury Totem
-// under Forever.
+// TestOrcRogueWindfuryTotemOffHand checks that only our main-hand hits proc Windfury Totem under
+// Forever: client 70425's description reads "Each main hand hit", and the user ruled for main hand
+// only (2026-10-16).
 //
-// We see a proc when the totem's cooldown starts during a hit. The off hand swings about 160
-// times in 5 minutes, so we expect around 20 procs from it.
+// We see a proc when the totem's cooldown starts during a hit. The main hand swings about 160
+// times in 5 minutes, so we expect around 20 procs from it and none from the off hand.
 func TestOrcRogueWindfuryTotemOffHand(t *testing.T) {
 	sim, rogue := newTotemRogueSim(60, proto.TotemWeaponBuff_TotemWeaponBuffWindfury, 300)
 
@@ -103,9 +104,10 @@ func TestOrcRogueWindfuryTotemOffHand(t *testing.T) {
 	for !sim.Step() {
 	}
 
-	for mask, name := range map[core.ProcMask]string{core.ProcMaskMeleeMHAuto: "main hand", core.ProcMaskMeleeOHAuto: "off hand"} {
-		if procs[mask] < 8 {
-			t.Errorf("only %d Windfury Totem procs from the %s", procs[mask], name)
-		}
+	if procs[core.ProcMaskMeleeMHAuto] < 8 {
+		t.Errorf("only %d Windfury Totem procs from the main hand", procs[core.ProcMaskMeleeMHAuto])
+	}
+	if procs[core.ProcMaskMeleeOHAuto] != 0 {
+		t.Errorf("%d Windfury Totem procs from the off hand, want none", procs[core.ProcMaskMeleeOHAuto])
 	}
 }

@@ -182,3 +182,28 @@ func TestWarlockPushbackProtection(t *testing.T) {
 		}
 	}
 }
+
+// TestWarlockDemonCrit checks that a demon's melee and spell crit are its master's spell crit and
+// nothing of its own (forever-bugs #331, Blizzard's intent), also after the warlock gains crit.
+func TestWarlockDemonCrit(t *testing.T) {
+	for _, summon := range []proto.WarlockOptions_Summon{proto.WarlockOptions_Succubus, proto.WarlockOptions_Imp, proto.WarlockOptions_Felhunter} {
+		sim, lock := newWarlockSim(t, "", &proto.WarlockOptions{Summon: summon})
+		check := func(when string) {
+			want := lock.GetStat(stats.SpellCrit)
+			for _, stat := range []stats.Stat{stats.MeleeCrit, stats.SpellCrit} {
+				if got := lock.ActivePet.GetStat(stat); got != want {
+					t.Errorf("%s %s: stat %d is %.3f, want the warlock's spell crit %.3f", summon, when, stat, got, want)
+				}
+			}
+		}
+		if lock.GetStat(stats.SpellCrit) <= 0 {
+			t.Fatalf("the warlock has no spell crit to pass on")
+		}
+		check("at the pull")
+		at(sim, 1, func(sim *core.Simulation) {
+			lock.AddStatDynamic(sim, stats.SpellCrit, 5*core.SpellCritRatingPerCritChance)
+		})
+		at(sim, 2, func(sim *core.Simulation) { check("after +5% spell crit") })
+		runSim(sim)
+	}
+}

@@ -233,6 +233,7 @@ export class SimLog {
 					MajorCooldownUsedLog.parse(params) ||
 					CastBeganLog.parse(params) ||
 					CastCompletedLog.parse(params) ||
+					CastInterruptedLog.parse(params) ||
 					StatChangeLog.parse(params) ||
 					ExtraAttackLog.parse(params) ||
 					CooldownLog.parse(params) ||
@@ -270,6 +271,10 @@ export class SimLog {
 
 	isCastCompleted(): this is CastCompletedLog {
 		return this instanceof CastCompletedLog;
+	}
+
+	isCastInterrupted(): this is CastInterruptedLog {
+		return this instanceof CastInterruptedLog;
 	}
 
 	isStatChange(): this is StatChangeLog {
@@ -1007,6 +1012,33 @@ export class CastCompletedLog extends SimLog {
 	}
 }
 
+// A hard cast cut off before it finished, like "Cast of {SpellID: 8008} interrupted" when we
+// start moving or die.
+export class CastInterruptedLog extends SimLog {
+	constructor(params: SimLogParams) {
+		super(params);
+	}
+
+	toHTML(includeTimestamp = true) {
+		return this.cacheOutput(includeTimestamp, () => (
+			<>
+				{this.toPrefix(includeTimestamp)} Cast of {this.newActionIdLink(this.actionId!)} interrupted.
+			</>
+		));
+	}
+
+	static parse(params: SimLogParams): Promise<CastInterruptedLog> | null {
+		const match = params.raw.match(/Cast of ({.*?}) interrupted/);
+		if (!match) return null;
+		return ActionId.fromLogString(match[1])
+			.fill(params.source?.index, params.source?.isPlayer)
+			.then(castId => {
+				params.actionId = castId;
+				return new CastInterruptedLog(params);
+			});
+	}
+}
+
 export class CastLog extends SimLog {
 	readonly castTime: number;
 	readonly effectiveTime: number;
@@ -1014,11 +1046,18 @@ export class CastLog extends SimLog {
 
 	readonly castBeganLog: CastBeganLog;
 	readonly castCompletedLog: CastCompletedLog | null;
+	// Set when the cast was cut off before it finished, like by moving or dying.
+	readonly castInterruptedLog: CastInterruptedLog | null;
 
 	// All instances of damage dealt from the completion of this cast until the completion of the next cast.
 	readonly damageDealtLogs: Array<DamageDealtLog>;
 
-	constructor(castBeganLog: CastBeganLog, castCompletedLog: CastCompletedLog | null, damageDealtLogs: Array<DamageDealtLog>) {
+	constructor(
+		castBeganLog: CastBeganLog,
+		castCompletedLog: CastCompletedLog | null,
+		damageDealtLogs: Array<DamageDealtLog>,
+		castInterruptedLog: CastInterruptedLog | null = null,
+	) {
 		super({
 			raw: castBeganLog.raw,
 			logIndex: castBeganLog.logIndex,
@@ -1032,10 +1071,13 @@ export class CastLog extends SimLog {
 		this.effectiveTime = castBeganLog.effectiveTime;
 		this.castBeganLog = castBeganLog;
 		this.castCompletedLog = castCompletedLog;
+		this.castInterruptedLog = castInterruptedLog;
 		this.damageDealtLogs = damageDealtLogs;
 
 		if (this.castCompletedLog && this.castBeganLog) {
 			this.castTime = this.castCompletedLog.timestamp - this.castBeganLog.timestamp;
+		} else if (this.castInterruptedLog) {
+			this.castTime = this.castInterruptedLog.timestamp - this.castBeganLog.timestamp;
 		}
 		if (
 			this.castCompletedLog &&
@@ -1064,6 +1106,7 @@ export class CastLog extends SimLog {
 	static fromLogs(logs: Array<SimLog>): Array<CastLog> {
 		const castBeganLogs = logs.filter((log): log is CastBeganLog => log.isCastBegan());
 		const castCompletedLogs = logs.filter((log): log is CastCompletedLog => log.isCastCompleted());
+		const castInterruptedLogs = logs.filter((log): log is CastInterruptedLog => log.isCastInterrupted());
 		const damageDealtLogs = logs.filter((log): log is DamageDealtLog => log.isDamageDealt());
 
 		const toBucketKey = (actionId: ActionId) => {
@@ -1077,6 +1120,7 @@ export class CastLog extends SimLog {
 		};
 		const castBeganLogsByAbility = bucket(castBeganLogs, log => toBucketKey(log.actionId!));
 		const castCompletedLogsByAbility = bucket(castCompletedLogs, log => toBucketKey(log.actionId!));
+		const castInterruptedLogsByAbility = bucket(castInterruptedLogs, log => toBucketKey(log.actionId!));
 		const damageDealtLogsByAbility = bucket(damageDealtLogs, log => toBucketKey(log.actionId!));
 
 		const castLogs: Array<CastLog> = [];
@@ -1085,20 +1129,56 @@ export class CastLog extends SimLog {
 			const abilityCastsCompleted = castCompletedLogsByAbility[bucketKey];
 			const abilityDamageDealt = damageDealtLogsByAbility[bucketKey];
 
+			// A cast that was interrupted, like a Lesser Healing Wave cut off when we died, never
+			// completes. It ends at its "Cast of ... interrupted" line, which belongs to the last cast
+			// of the ability that began before it. Without this, each later cast took the completion
+			// of the one after it, and the interrupted cast lasted until the next one completed.
+			//
+			// Once in a while a cast also ends with neither line, and the next cast of the ability
+			// begins later on (we've seen it with Lesser Healing Wave in a leveling session). It gets
+			// no completion either, so it shows for its cast time.
+			const endedEarly = new Map<CastBeganLog, CastInterruptedLog | null>();
+			(castInterruptedLogsByAbility[bucketKey] ?? []).forEach(interruptedLog => {
+				let began: CastBeganLog | undefined;
+				for (const log of abilityCastsBegan) {
+					if (log.logIndex > interruptedLog.logIndex) break;
+					began = log;
+				}
+				if (began && !endedEarly.has(began)) endedEarly.set(began, interruptedLog);
+			});
+			const completedIndexes = (abilityCastsCompleted ?? []).map(log => log.logIndex);
+			let nextCompleted = 0;
+			abilityCastsBegan.forEach((log, i) => {
+				while (nextCompleted < completedIndexes.length && completedIndexes[nextCompleted] < log.logIndex) nextCompleted++;
+				const next = abilityCastsBegan[i + 1];
+				// Two casts that begin at the same moment, like a double extra attack, may log both
+				// begins before the completions, so those keep pairing in order.
+				if (!next || endedEarly.has(log) || next.timestamp <= log.timestamp) return;
+				const completesBeforeNext = nextCompleted < completedIndexes.length && completedIndexes[nextCompleted] < next.logIndex;
+				if (!completesBeforeNext) endedEarly.set(log, null);
+			});
+
 			let ddIdx = 0;
+			// The other casts pair with the completed logs in order.
+			let completedIdx = 0;
 			for (let cbIdx = 0; cbIdx < abilityCastsBegan.length; cbIdx++) {
 				const cbLog = abilityCastsBegan[cbIdx];
+				if (endedEarly.has(cbLog)) {
+					castLogs.push(new CastLog(cbLog, null, [], endedEarly.get(cbLog)));
+					continue;
+				}
 
 				// Assume cast completed log is the same index because they always come in pairs.
 				// Only exception is final pair, where there might be a cast began without a cast completed.
 				let ccLog: CastCompletedLog | null = null;
 				let nextCcLog: CastCompletedLog | null = null;
-				if (abilityCastsCompleted && cbIdx < abilityCastsCompleted.length) {
-					ccLog = abilityCastsCompleted[cbIdx];
-					if (cbIdx + 1 < abilityCastsCompleted.length) {
-						nextCcLog = abilityCastsCompleted[cbIdx + 1];
+				if (abilityCastsCompleted && completedIdx < abilityCastsCompleted.length) {
+					ccLog = abilityCastsCompleted[completedIdx];
+					if (completedIdx + 1 < abilityCastsCompleted.length) {
+						nextCcLog = abilityCastsCompleted[completedIdx + 1];
 					}
 				}
+				completedIdx++;
 
 				// Find all damage dealt logs between the cur and next cast completed logs.
 				const ddLogs = [];

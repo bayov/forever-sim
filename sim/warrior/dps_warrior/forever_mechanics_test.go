@@ -79,8 +79,9 @@ func whiteRage(sim *core.Simulation, war *warrior.Warrior, auto *core.Spell, out
 // TestForeverWarriorNormalizedRage checks standards 21: under Forever a landed white hit gives
 // k × the weapon's swing speed in Rage, whatever its damage (Blizzard's Priest & Warrior deep dive:
 // "Rage gained is now based on the speed of the weapon that dealt the damage"), with k = 3.46 for
-// a one-hander and 4.5 for a two-hander, the off hand at the same rate, 100% more on a crit (the
-// 2 October post, https://us.forums.blizzard.com/en/wow/t/2369360) and dodges and parries giving
+// a one-hander and 4.5 for a two-hander, the off hand at half the rate (measured, see
+// core.ForeverNormalizedRageOffHand), 100% more on a crit (the 2 October post,
+// https://us.forums.blizzard.com/en/wow/t/2369360) and dodges and parries giving
 // the same as a hit. Abilities and Deep Wounds give no Rage for their damage.
 func TestForeverWarriorNormalizedRage(t *testing.T) {
 	near := func(name string, got, want float64) {
@@ -101,11 +102,11 @@ func TestForeverWarriorNormalizedRage(t *testing.T) {
 	near("a parried main hand swing", whiteRage(sim, war, mh, core.OutcomeParry, 0), l60*3.46*2.8)
 	near("a glancing main hand swing", whiteRage(sim, war, mh, core.OutcomeGlance, 200), l60*3.46*2.8)
 	near("a missed main hand swing", whiteRage(sim, war, mh, core.OutcomeMiss, 0), 0)
-	near("an off hand hit", whiteRage(sim, war, oh, core.OutcomeHit, 150), l60*3.46*1.7)
+	near("an off hand hit", whiteRage(sim, war, oh, core.OutcomeHit, 150), 0.5*l60*3.46*1.7)
 
 	// Dual Wield Specialization's off hand Rage (10% a point) stays on top.
 	sim, war = newForeverWarriorArmed(t, "-00000005", 991014, 991015)
-	near("an off hand hit with Dual Wield Specialization 5/5", whiteRage(sim, war, war.AutoAttacks.OHAuto(), core.OutcomeHit, 150), 1.5*l60*3.46*1.7)
+	near("an off hand hit with Dual Wield Specialization 5/5", whiteRage(sim, war, war.AutoAttacks.OHAuto(), core.OutcomeHit, 150), 1.5*0.5*l60*3.46*1.7)
 
 	sim, war = newForeverWarriorArmed(t, "", 991016, 0)
 	near("a two-hander hit", whiteRage(sim, war, war.AutoAttacks.MHAuto(), core.OutcomeHit, 500), l60*4.5*3.7)

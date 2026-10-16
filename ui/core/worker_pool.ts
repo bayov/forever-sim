@@ -163,6 +163,7 @@ export class WorkerPool {
 		delete resultJson!['logs'];
 		delete resultJson!['luckyIteration']?.['logs'];
 		delete resultJson!['unluckyIteration']?.['logs'];
+		delete resultJson!['diedIteration']?.['logs'];
 		worker.log('Raid sim result: ' + JSON.stringify(resultJson));
 		return result.finalRaidResult!;
 	}

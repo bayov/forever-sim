@@ -70,7 +70,7 @@
   ],
   "caveats": [
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 spell power and 18 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "Runs short of mana: 4.3% ahead of twist at 120 s (867.1 / 831.2), 2.9% at 180 s, 0.8% behind at 300 s",
+    "Runs short of mana: 4.0% ahead of twist at 120 s (867.1 / 833.4), 2.7% at 180 s, 1.0% behind at 300 s",
     "Divine Precision's hit does not cover Judgement of Righteousness",
     "Holy Shock is worth 148 DPS and Light's Vigil about 91 (measured before client 70425)",
     "A missed Holy Shock consumes the Vigil with no detonation or refund (small at about 1% Holy miss)",

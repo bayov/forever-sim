@@ -4,9 +4,9 @@
   "spec": "Retribution",
   "build": "Level 60 (Crusader duty)",
   "isDefault": false,
-  "pr": 54,
+  "pr": 81,
   "race": "Human",
-  "talents": "52003-503-05225331001330311",
+  "talents": "51003-503-05225331001330321",
   "treeNames": [
     "Holy",
     "Protection",
@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_crusader_duty",
   "published": {
-    "dps": 819.4,
-    "source": "PR #54 (client 70425: Judgement of Righteousness 42.9%, Champion of the Light 10 / 20 / 30%, Consecration 4.2% a tick; Seal of Righteousness spell power once per the tooltip; Concentration Aura; Human, 2026-10-16)"
+    "dps": 821.1,
+    "source": "PR #81 (re-searched talents, Instrument of Law 2; client 70425: Judgement of Righteousness 42.9%, Champion of the Light 10 / 20 / 30%, Consecration 4.2% a tick; Seal of Righteousness spell power once per the tooltip; Concentration Aura; Human, 2026-10-16)"
   },
   "verify": {
-    "dps": 819.35,
+    "dps": 821.08,
     "stderr": 0.3,
     "iters": 20000,
     "ok": true,

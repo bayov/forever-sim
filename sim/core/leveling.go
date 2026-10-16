@@ -23,7 +23,7 @@ import (
 // (leveling_world.go).
 //
 // One loop runs the session:
-//   - Searching: we run around for a random 5 to 11 sec (search_min / search_max), so we
+//   - Searching: we run around for a random 2 to 7 sec (search_min / search_max), so we
 //     can't hard cast, and find a mob standing 10 to 40 yards away (found_min / found_max).
 //     One that close to its aggro radius notices us at once.
 //   - Pulling: the mob waits there, as our target and the rotation's Pull Target. A spell
@@ -94,6 +94,9 @@ type levelingSession struct {
 
 	kills, xp float64
 	deaths    int
+	// The last session's score, mobs on us at the end counted by the share of their health
+	// we took, for the iteration picks (lastIteration).
+	lastKills float64
 
 	healthMetrics, foodMetrics, bandageMetrics, reviveHealthMetrics *ResourceMetrics
 	drinkMetrics, reviveManaMetrics                                 *ResourceMetrics
@@ -152,8 +155,8 @@ func resolveLevelingOptions(o *proto.LevelingOptions) levelingOptions {
 		mobType:           o.MobType,
 		armorMultiplier:   or(o.ArmorMultiplier, 1),
 		maxPack:           int(max(o.MaxPackSize, 0)),
-		searchMin:         seconds(o.SearchMin, 5),
-		searchMax:         seconds(o.SearchMax, 11),
+		searchMin:         seconds(o.SearchMin, 2),
+		searchMax:         seconds(o.SearchMax, 7),
 		chainSearchMin:    seconds(o.ChainSearchMin, 2),
 		chainSearchMax:    seconds(o.ChainSearchMax, 4),
 		chainSearchMoving: 0.75,
@@ -314,8 +317,23 @@ func (s *levelingSession) reset(sim *Simulation) {
 	s.startTicks(sim)
 }
 
+// levelingStateNames are the states as the "Leveling: now ..." log lines say them, for the
+// results' session strip.
+var levelingStateNames = [levelingStateCount]string{
+	levelingSearching: "searching",
+	levelingPulling:   "pulling",
+	levelingCombat:    "fighting",
+	levelingResting:   "resting",
+	levelingBandaging: "bandaging",
+	levelingDead:      "dead",
+	levelingReady:     "ready",
+}
+
 func (s *levelingSession) setState(sim *Simulation, state levelingState) {
 	s.seconds[s.state] += sim.CurrentTime - s.stateSince
+	if sim.Log != nil && (state != s.state || sim.CurrentTime == 0) {
+		s.player.Log(sim, "Leveling: now %s", levelingStateNames[state])
+	}
 	s.state, s.stateSince = state, sim.CurrentTime
 	cancel(sim, &s.next)
 }
@@ -533,6 +551,9 @@ func (s *levelingSession) onPlayerDeath(sim *Simulation) {
 
 // despawn sends a mob back to the pool without a kill.
 func (s *levelingSession) despawn(sim *Simulation, mob *Unit) {
+	if sim.Log != nil {
+		s.player.Log(sim, "Leveling: %s left", mob.Label)
+	}
 	mob.dead = true
 	mob.AutoAttacks.CancelAutoSwing(sim)
 	mob.auraTracker.expireAll(sim)
@@ -564,6 +585,7 @@ func (s *levelingSession) doneIteration(sim *Simulation) {
 		kills += share
 		xp += share * mobKillXP(s.level, mob.Level)
 	}
+	s.lastKills = kills
 
 	a := &s.agg
 	a.n++

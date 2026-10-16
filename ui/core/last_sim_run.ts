@@ -70,7 +70,7 @@ export async function saveHistoryRun(key: string, run: SimRun): Promise<void> {
 	const copy = SimRun.clone(run);
 	if (copy.result) {
 		copy.result.logs = '';
-		[copy.result.typicalIteration, copy.result.luckyIteration, copy.result.unluckyIteration].forEach(iteration => {
+		[copy.result.typicalIteration, copy.result.luckyIteration, copy.result.unluckyIteration, copy.result.diedIteration].forEach(iteration => {
 			if (iteration) iteration.logs = '';
 		});
 	}

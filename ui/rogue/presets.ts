@@ -631,8 +631,7 @@ export const DefaultConsumes = {
 };
 
 // The shared level 60 raid (both blessings, every debuff but Curse of Shadow), with the rogue in a melee
-// group: Battle Shout, Strength of Earth and Windfury Totem, 24 DPS ahead of Grace of Air (Forever lets
-// one air totem work in a party).
+// group: Battle Shout, Strength of Earth and Windfury Totem, and Grace of Air from a second shaman in the raid as well (the user's ruling 2026-10-16, "both totems": client 1.60.1.70425 lets Grace of Air stack with Windfury Totem and makes both raid-wide).
 export const P1RaidBuffs = RaidBuffs.create({
 	arcaneBrilliance: true,
 	battleShout: TristateEffect.TristateEffectImproved,
@@ -642,6 +641,7 @@ export const P1RaidBuffs = RaidBuffs.create({
 	fireResistanceAura: true,
 	frostResistanceAura: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
+	graceOfAirTotem: TristateEffect.TristateEffectRegular,
 	leaderOfThePack: true,
 	moonkinAura: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,

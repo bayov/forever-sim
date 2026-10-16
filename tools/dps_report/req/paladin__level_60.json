@@ -93,7 +93,7 @@
               "blessingOfWisdom": "TristateEffectImproved",
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "52003-503-05225331001330311",
+            "talentsString": "51003-503-05225331001330321",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Blacksmithing",
@@ -541,6 +541,7 @@
       "powerWordFortitude": "TristateEffectImproved",
       "bloodPact": "TristateEffectImproved",
       "strengthOfEarthTotem": "TristateEffectRegular",
+      "graceOfAirTotem": "TristateEffectRegular",
       "arcaneBrilliance": true,
       "divineSpirit": true,
       "battleShout": "TristateEffectImproved",

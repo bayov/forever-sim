@@ -178,9 +178,13 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // with Inner Focus on cooldown it is 727.8 / 714.6 / 642.2 on the old talents; at 300 sec
 // leaving it out is better still (+16), at 120 sec the 40% floor (+5). Devouring Plague is
 // free under Inner Focus (its fourth class mask word), but Inner Focus on it is behind.
+//
+// Power in Light also counts Shadow Word: Pain since 70425 (update ledger PRI-70425-03), so
+// Holy Fire's damage over time is no longer needed for it, and its mana goes to Smite:
+// 744.0 / 724.6 / 639.7 at 120 / 180 / 300 sec against 729.3 / 716.8 / 646.6 with it, with
+// Devouring Plague now above 80% mana (2026-10-16). The notes above are from before.
 export const APLLevel60Smite = PresetUtils.makePresetAPLRotation('Level 60 Smite', Level60SmiteAPL, {
-	tooltip:
-		"The optimizer's best rotation for the Smite talents: Holy Fire up for Power in Light, Shadow Word: Pain, Smite to fill, a lower rank once mana runs short.",
+	tooltip: "The optimizer's best rotation for the Smite talents: Shadow Word: Pain up for Power in Light, Smite to fill, a lower rank once mana runs short.",
 	group: 'Level 60',
 });
 
@@ -494,18 +498,18 @@ export const EncounterLevel60Smite = PresetUtils.makePresetEncounter('Level 60 S
 });
 
 // Smite as every race on its set and consumes (20000 iterations, 120 / 180 / 300 sec,
-// 2026-10-16, client 70425, with the raid hits):
-//   Undead    723.2 / 710.6 / 641.0  (best overall and Horde)
-//   Gnome     727.1 / 701.0 / 614.2  (best Alliance)
-//   Human     721.9 / 693.0 / 607.6
-//   Dwarf     718.7 / 687.6 / 601.0  (the generic boss is no Humanoid, so no Chastise)
-//   Night Elf 718.2 / 686.8 / 600.4
-//   Troll     716.6 / 685.6 / 597.4
+// 2026-10-16, client 70425, with the raid hits, without Holy Fire):
+//   Undead    744.0 / 724.6 / 639.7  (best overall and Horde)
+//   Gnome     742.0 / 706.8 / 609.8  (best Alliance)
+//   Human     732.9 / 697.1 / 602.5
+//   Dwarf     728.9 / 691.2 / 595.6  (the generic boss is no Humanoid, so no Chastise)
+//   Night Elf 728.7 / 690.2 / 595.2
+//   Troll     728.5 / 689.4 / 593.5
 // Undead's Dark Sacrifice and Gnome's larger mana pool and cheaper Eureka! casts are worth the
 // most once the mana runs out.
 export const PresetBuildLevel60Smite = PresetUtils.makePresetBuild('Level 60 Smite', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Undead Holy damage priest (Smite, Holy Fire, Power Infusion) on the synthetic Phase 1 gear, 23% behind Shadow.',
+	tooltip: 'Level 60 Undead Holy damage priest (Smite, Power Infusion) on the synthetic Phase 1 gear, 22% behind Shadow.',
 	gear: GearLevel60Phase1Smite,
 	talents: TalentsLevel60Smite,
 	rotation: APLLevel60Smite,

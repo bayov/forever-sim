@@ -8,6 +8,7 @@ import { ResourceType } from '../../proto/api.js';
 import { ActionId } from '../../proto_utils/action_id.js';
 import { CastLog, DamageDealtLog, ResourceChangedLog } from '../../proto_utils/logs_parser.js';
 import { resourceNames } from '../../proto_utils/names.js';
+import { TypedEvent } from '../../typed_event.js';
 import { formatToCompactNumber, formatToNumber } from '../../utils.js';
 import { EventFilter } from './events_filter.js';
 import { BUFF_GLOW, MISSING_GLOW, setGlow } from './replay_glow.js';
@@ -17,8 +18,8 @@ import {
 	AuraTrack,
 	buildReplayModel,
 	cooldownAt,
-	LANES,
 	lastIndexAtOrBefore,
+	placeCrits,
 	ReplayBar,
 	ReplayCast,
 	ReplayEnemy,
@@ -29,17 +30,24 @@ import {
 	TotemSlot,
 	TrackedCooldown,
 } from './replay_model.js';
+import { LevelingTransport, ReplayMap } from './replay_map.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 import { tooltipHit, tooltipRow, tooltipTitle } from './timeline.js';
 
 const SPEEDS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 3, 4];
+// A leveling session is 20 minutes, much of it searching and resting, so it plays faster too.
+const LEVELING_SPEEDS = [...SPEEDS, 8, 16, 32];
+// How often we tell the Events tab where we are while we play, in milliseconds.
+const TIME_EMIT_MS = 100;
 const SPEED_STORAGE_KEY = '__detailed_results_replay_speed__';
 
-// How far apart lines that start close together are, in pixels. When the area is short, the
-// lanes get closer, so they take at most this share of it.
+// How far apart the scrolling lines stay, in pixels. A new line starts at the frame or under
+// the cast history, and pushes the lines too close ahead of it further along, like MSBT.
 const LANE_PX = 28;
-const LANES_SHARE = 0.4;
-const STICKY_LANE_PX = 42;
+// The crits on each side take spots between the cast history and the procs over the class pack,
+// as many as fit at this spacing. The first crit takes the middle spot.
+const CRIT_SPOT_PX = 42;
+const MAX_CRIT_SPOTS = 5;
 // What we do to the enemies lines up on the left edge of the target's frame, so the icons
 // form a column over it. What happens to us lines up on the right edge of our frame, with the
 // icon after the text. Crits stay put in their own column, this many pixels toward the middle
@@ -49,6 +57,10 @@ const STICKY_GAP_PX = 32;
 // do scrolls up from just above the target's frame to under our buffs at the top right. This is
 // the room we keep from each of them, about half the height of a crit.
 const SCT_MARGIN_PX = 20;
+// The longest way a line scrolls, in pixels. In full screen the area is much taller, and the lines
+// would scroll too far and too fast. Outgoing lines still start at the target's frame and incoming
+// lines still end at our frame.
+const MAX_SCROLL_PX = 360;
 
 // The cast history is a timeline at the top left that ends at the current time, right under the
 // clock. Each cast sits at the moment we made it and slides left as time goes on. Casts too
@@ -81,8 +93,10 @@ const powerClass: Partial<Record<ResourceType, string>> = {
 const formatClock = (time: number, digits = 1): string => {
 	const sign = time < 0 ? '-' : '';
 	const abs = Math.abs(time);
-	const minutes = Math.floor(abs / 60);
-	const seconds = abs - minutes * 60;
+	// We round first, so 119.97 reads 2:00.0 and not 1:60.0.
+	const rounded = Math.round(abs * 10 ** digits) / 10 ** digits;
+	const minutes = Math.floor(rounded / 60);
+	const seconds = rounded - minutes * 60;
 	const secondsText = seconds.toFixed(digits).padStart(digits > 0 ? 3 + digits : 2, '0');
 	return `${sign}${minutes}:${secondsText}`;
 };
@@ -309,6 +323,18 @@ export class Replay extends ResultComponent {
 	private lastFrameAt = 0;
 	private wasPlayingBeforeScrub = false;
 
+	// The time we play at, for the session strip of the Events tab. It fires about ten times a
+	// second while we play, and on every seek.
+	readonly timeEmitter = new TypedEvent<number>('ReplayTime');
+	private lastTimeEmit = 0;
+	private emittedTime = NaN;
+	// A leveling session has a map in the middle and controls of its own. It plays the stretch
+	// picked on the session strip (the filter's From and To), or all of it.
+	private readonly map: ReplayMap;
+	private readonly transport: LevelingTransport;
+	private playRange = { start: 0, end: 0 };
+	private killTimes: Array<number> = [];
+
 	private readonly ui: {
 		player: HTMLElement;
 		stage: HTMLElement;
@@ -317,6 +343,7 @@ export class Replay extends ResultComponent {
 		hudTime: HTMLElement;
 		hudDps: HTMLElement;
 		hudDamage: HTMLElement;
+		hudKills: HTMLElement;
 		playerCol: HTMLElement;
 		enemyCol: HTMLElement;
 		history: HTMLElement;
@@ -325,6 +352,7 @@ export class Replay extends ResultComponent {
 		coreCooldowns: HTMLElement;
 		majorCooldowns: HTMLElement;
 		center: HTMLElement;
+		alert: HTMLElement;
 		resources: HTMLElement;
 		maintain: HTMLElement;
 		sctZone: HTMLElement;
@@ -347,7 +375,7 @@ export class Replay extends ResultComponent {
 	private playerFrame: UnitFrameRefs | null = null;
 	private resourceRefs: {
 		powers: Array<{ bar: ReplayBar; fill: HTMLElement; text: HTMLElement }>;
-		swingFill: HTMLElement;
+		swings: Array<{ fill: HTMLElement; times: Array<number>; mainHand: boolean }>;
 		pips: Array<HTMLElement>;
 	} | null = null;
 	private playerCastBar = makeCastBar('player');
@@ -373,6 +401,8 @@ export class Replay extends ResultComponent {
 	// Where each cast goes on the history timeline, by its index in the model's actions.
 	private historyLayout: Array<{ row: number; shift: number }> = [];
 	private sctElems = new Map<number, HTMLElement>();
+	// How many crit spots the model's crits are placed on.
+	private critSpots = 0;
 
 	// The hover tooltip. The parts of the screen move, come and go many times a second, so one
 	// tooltip serves all of them. It follows the part under the mouse and shows its state at the
@@ -398,7 +428,7 @@ export class Replay extends ResultComponent {
 
 		try {
 			const stored = parseFloat(window.localStorage.getItem(SPEED_STORAGE_KEY) ?? '');
-			if (SPEEDS.includes(stored)) this.speed = stored;
+			if (LEVELING_SPEEDS.includes(stored)) this.speed = stored;
 		} catch {
 			// The speed is a convenience, the replay works without it.
 		}
@@ -411,6 +441,7 @@ export class Replay extends ResultComponent {
 			hudTime: ref<HTMLSpanElement>(),
 			hudDps: ref<HTMLSpanElement>(),
 			hudDamage: ref<HTMLSpanElement>(),
+			hudKills: ref<HTMLSpanElement>(),
 			playerCol: ref<HTMLDivElement>(),
 			enemyCol: ref<HTMLDivElement>(),
 			history: ref<HTMLDivElement>(),
@@ -419,6 +450,7 @@ export class Replay extends ResultComponent {
 			coreCooldowns: ref<HTMLDivElement>(),
 			majorCooldowns: ref<HTMLDivElement>(),
 			center: ref<HTMLDivElement>(),
+			alert: ref<HTMLDivElement>(),
 			resources: ref<HTMLDivElement>(),
 			maintain: ref<HTMLDivElement>(),
 			sctZone: ref<HTMLDivElement>(),
@@ -449,9 +481,13 @@ export class Replay extends ResultComponent {
 							<span className="replay-hud-label">DPS</span>
 							<span ref={refs.hudDps} className="replay-hud-value" />
 						</span>
-						<span className="replay-hud-stat">
+						<span className="replay-hud-stat damage">
 							<span className="replay-hud-label">Damage</span>
 							<span ref={refs.hudDamage} className="replay-hud-value" />
+						</span>
+						<span className="replay-hud-stat kills">
+							<span className="replay-hud-label">Kills</span>
+							<span ref={refs.hudKills} className="replay-hud-value" />
 						</span>
 					</div>
 					<div className="replay-history">
@@ -466,6 +502,10 @@ export class Replay extends ResultComponent {
 					<div className="replay-frames">
 						<div ref={refs.playerCol} className="replay-col replay-col-player" />
 						<div ref={refs.center} className="replay-center">
+							<div ref={refs.alert} className="replay-alert">
+								<div className="replay-alert-arc left" />
+								<div className="replay-alert-arc right" />
+							</div>
 							<div ref={refs.procs} className="replay-procs" />
 							<div ref={refs.maintain} className="replay-maintain" />
 							<div ref={refs.resources} className="replay-resources" />
@@ -528,6 +568,7 @@ export class Replay extends ResultComponent {
 			hudTime: refs.hudTime.value!,
 			hudDps: refs.hudDps.value!,
 			hudDamage: refs.hudDamage.value!,
+			hudKills: refs.hudKills.value!,
 			playerCol: refs.playerCol.value!,
 			enemyCol: refs.enemyCol.value!,
 			history: refs.history.value!,
@@ -536,6 +577,7 @@ export class Replay extends ResultComponent {
 			coreCooldowns: refs.coreCooldowns.value!,
 			majorCooldowns: refs.majorCooldowns.value!,
 			center: refs.center.value!,
+			alert: refs.alert.value!,
 			resources: refs.resources.value!,
 			maintain: refs.maintain.value!,
 			sctZone: refs.sctZone.value!,
@@ -554,7 +596,7 @@ export class Replay extends ResultComponent {
 			fullscreenButton: refs.fullscreenButton.value!,
 		};
 
-		SPEEDS.forEach(speed => {
+		LEVELING_SPEEDS.forEach(speed => {
 			const option = (
 				<button className="replay-speed-option" type="button">
 					{speed == 1 ? 'Normal' : `${speed}x`}
@@ -573,6 +615,10 @@ export class Replay extends ResultComponent {
 		this.ui.playButton.addEventListener('click', () => this.togglePlay());
 		refs.back.value!.addEventListener('click', () => this.seek(this.time - 5));
 		refs.forward.value!.addEventListener('click', () => this.seek(this.time + 5));
+		this.transport = new LevelingTransport({ time: () => this.time, seek: time => this.seek(time), tip: (elem, content) => this.tip(elem, content) }, this.filter);
+		refs.forward.value!.after(this.transport.root);
+		this.map = new ReplayMap({ tip: (elem, content) => this.tip(elem, content) });
+		this.ui.sctZone.prepend(this.map.root);
 		this.ui.speedButton.addEventListener('click', event => {
 			event.stopPropagation();
 			this.ui.speedMenu.classList.toggle('hide');
@@ -617,6 +663,7 @@ export class Replay extends ResultComponent {
 				this.search.input.value = this.filter.search;
 			}
 			this.updateSearch();
+			this.applyRange();
 		});
 		this.rootElem.addEventListener('keydown', event => this.onKey(event));
 	}
@@ -637,7 +684,9 @@ export class Replay extends ResultComponent {
 		this.ui.message.classList.toggle('notice', !model.hasCooldownData);
 		this.ui.player.classList.remove('empty');
 		this.model = model;
-		this.time = model.start;
+		this.setLeveling(model);
+		this.playRange = this.rangeFor(model);
+		this.time = this.playRange.start;
 		this.build(model);
 		this.updateSearch();
 		this.draw();
@@ -668,9 +717,64 @@ export class Replay extends ResultComponent {
 		if (withFlash) this.flash(this.playing ? 'fa-play' : 'fa-pause');
 	}
 
+	// Sets the replay up for a leveling session, or back for a fight: the map, the session's
+	// controls and its faster speeds.
+	private setLeveling(model: ReplayModel) {
+		const leveling = model.leveling;
+		this.ui.player.classList.toggle('leveling', !!leveling);
+		this.map.setData(
+			leveling
+				? {
+						session: leveling,
+						playerLevel: model.playerLevel,
+						playerName: model.playerName,
+						classColor: `var(--bs-${model.player.classColor})`,
+						totems: model.shaman?.totems ?? [],
+						mobHealth: (targetIndex, time) => model.enemies.find(enemy => enemy.unit.index == targetIndex)?.healthFraction(time) ?? 1,
+					}
+				: null,
+		);
+		this.transport.setSession(leveling);
+		this.killTimes = leveling ? leveling.kills.map(kill => kill.t) : [];
+		const speeds = this.speeds();
+		this.ui.speedMenu.querySelectorAll<HTMLElement>('.replay-speed-option').forEach(option => {
+			option.classList.toggle('hide', !speeds.includes(parseFloat(option.dataset.speed!)));
+		});
+		if (!speeds.includes(this.speed)) {
+			this.speed = speeds[speeds.length - 1];
+			this.updateSpeed();
+		}
+	}
+
+	private speeds(): Array<number> {
+		return this.model?.leveling ? LEVELING_SPEEDS : SPEEDS;
+	}
+
+	// What we play: in a leveling session the stretch picked on the session strip, and otherwise
+	// the whole iteration.
+	private rangeFor(model: ReplayModel): { start: number; end: number } {
+		if (!model.leveling) return { start: model.start, end: model.end };
+		const clamp = (t: number) => Math.max(model.start, Math.min(model.end, t));
+		const start = this.filter.from == null ? model.start : clamp(this.filter.from);
+		const end = this.filter.to == null ? model.end : clamp(this.filter.to);
+		return end > start ? { start, end } : { start: model.start, end: model.end };
+	}
+
+	// A new stretch picked on the session strip: we play that, from its start.
+	private applyRange() {
+		const model = this.model;
+		if (!model?.leveling) return;
+		const range = this.rangeFor(model);
+		if (range.start == this.playRange.start && range.end == this.playRange.end) return;
+		this.playRange = range;
+		this.drawProgressMarks(model);
+		this.updateSearch();
+		this.seek(range.start);
+	}
+
 	private play() {
 		if (!this.model || this.playing) return;
-		if (this.time >= this.model.end) this.time = this.model.start;
+		if (this.time >= this.playRange.end) this.time = this.playRange.start;
 		this.playing = true;
 		this.lastFrameAt = performance.now();
 		this.frameRequest = requestAnimationFrame(now => this.tick(now));
@@ -694,18 +798,19 @@ export class Replay extends ResultComponent {
 		// jump ahead by all of it.
 		const elapsed = Math.min(0.25, (now - this.lastFrameAt) / 1000);
 		this.lastFrameAt = now;
-		this.time = Math.min(this.model.end, this.time + elapsed * this.speed);
+		this.time = Math.min(this.playRange.end, this.time + elapsed * this.speed);
 		this.draw();
-		if (this.time >= this.model.end) {
+		if (this.time >= this.playRange.end) {
 			this.pause();
 			return;
 		}
 		this.frameRequest = requestAnimationFrame(next => this.tick(next));
 	}
 
-	private seek(time: number) {
+	// Moves the replay to a time, kept within what we play.
+	seek(time: number) {
 		if (!this.model) return;
-		this.time = Math.max(this.model.start, Math.min(this.model.end, time));
+		this.time = Math.max(this.playRange.start, Math.min(this.playRange.end, time));
 		this.draw();
 	}
 
@@ -727,8 +832,9 @@ export class Replay extends ResultComponent {
 	}
 
 	private stepSpeed(direction: number) {
-		const i = SPEEDS.indexOf(this.speed);
-		const next = SPEEDS[Math.max(0, Math.min(SPEEDS.length - 1, i + direction))];
+		const speeds = this.speeds();
+		const i = speeds.indexOf(this.speed);
+		const next = speeds[Math.max(0, Math.min(speeds.length - 1, i + direction))];
 		this.setSpeed(next);
 		this.flash(null, `${next}x`);
 	}
@@ -756,7 +862,8 @@ export class Replay extends ResultComponent {
 		if (target.closest('input, textarea, select')) return;
 		if (target.closest('button') && (event.key == ' ' || event.key == 'Enter')) return;
 		const model = this.model;
-		const span = model.end - model.start;
+		const { start, end } = this.playRange;
+		const span = end - start;
 		switch (event.key) {
 			case ' ':
 			case 'k':
@@ -792,14 +899,27 @@ export class Replay extends ResultComponent {
 				this.toggleFullscreen();
 				break;
 			case 'Home':
-				this.seek(model.start);
+				this.seek(start);
 				break;
 			case 'End':
-				this.seek(model.end);
+				this.seek(end);
+				break;
+			// A leveling session's sections: the previous and the next one, and on to the next pull.
+			case '[':
+				if (!model.leveling) return;
+				this.transport.step(-1);
+				break;
+			case ']':
+				if (!model.leveling) return;
+				this.transport.step(1);
+				break;
+			case 's':
+				if (!model.leveling) return;
+				this.transport.skip();
 				break;
 			default:
 				if (/^[0-9]$/.test(event.key)) {
-					this.seek(model.start + (span * parseInt(event.key)) / 10);
+					this.seek(start + (span * parseInt(event.key)) / 10);
 					break;
 				}
 				return;
@@ -812,7 +932,8 @@ export class Replay extends ResultComponent {
 		const timeAt = (clientX: number) => {
 			const rect = progress.getBoundingClientRect();
 			const fraction = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
-			return this.model ? this.model.start + fraction * (this.model.end - this.model.start) : 0;
+			const { start, end } = this.playRange;
+			return this.model ? start + fraction * (end - start) : 0;
 		};
 		const showHover = (clientX: number) => {
 			if (!this.model) return;
@@ -940,8 +1061,9 @@ export class Replay extends ResultComponent {
 		// A tick on the progress bar for each match. Many matches close together share a tick,
 		// one for each of the bar's 400 slots.
 		if (!model) return;
-		const span = model.end - model.start;
-		const slots = new Set(this.matchTimes.map(time => Math.round(((time - model.start) / span) * 400)));
+		const { start, end } = this.playRange;
+		const span = end - start;
+		const slots = new Set(this.matchTimes.filter(time => time >= start && time <= end).map(time => Math.round(((time - start) / span) * 400)));
 		this.search.matches.replaceChildren(
 			...Array.from(slots).map(slot => {
 				const tick = (<div className="replay-progress-match" />) as HTMLElement;
@@ -1155,19 +1277,21 @@ export class Replay extends ResultComponent {
 	}
 
 	private updateButtons() {
-		const ended = !!this.model && this.time >= this.model.end;
+		const ended = !!this.model && this.time >= this.playRange.end;
 		const icon = this.playing ? 'fa-pause' : ended ? 'fa-rotate-right' : 'fa-play';
 		this.ui.playButton.querySelector('i')!.className = `fas ${icon}`;
 		this.ui.player.classList.toggle('paused', !this.playing);
 		// Like a video before we start it or after it ends, a big button in the middle asks us to
 		// play.
-		const atStart = !!this.model && this.time <= this.model.start;
-		this.ui.player.classList.toggle('show-big-play', !this.playing && (atStart || ended));
+		// A leveling session's map is what we look at, so we don't cover it.
+		const atStart = !!this.model && this.time <= this.playRange.start;
+		this.ui.player.classList.toggle('show-big-play', !this.playing && (atStart || ended) && !this.model?.leveling);
 		this.ui.player.querySelector('.replay-big-play i')!.className = `fas ${ended ? 'fa-rotate-right' : 'fa-play'}`;
 	}
 
 	// Builds the frames, the cooldown tracker and the progress bar markers for a new iteration.
 	private build(model: ReplayModel) {
+		this.critSpots = 0;
 		this.sctElems.forEach(elem => elem.remove());
 		this.sctElems.clear();
 		this.historyElems.forEach(elem => elem.remove());
@@ -1205,16 +1329,23 @@ export class Replay extends ResultComponent {
 		});
 		this.buildMaintain(model);
 
-		// The progress bar marks where we used a major cooldown, like chapters on a video.
-		const span = model.end - model.start;
+		this.drawProgressMarks(model);
+		this.ui.player.style.setProperty('--class-color', `var(--bs-${model.player.classColor})`);
+	}
+
+	// The progress bar marks where we used a major cooldown, like chapters on a video. A leveling
+	// session draws its states, kills and deaths along it instead, over the stretch we play.
+	private drawProgressMarks(model: ReplayModel) {
+		const { start, end } = this.playRange;
+		const span = Math.max(end - start, 0.001);
 		this.ui.markers.replaceChildren(
-			...model.markers.map(marker => {
+			...(model.leveling ? [] : model.markers).map(marker => {
 				const elem = (<div className="replay-progress-marker" />) as HTMLElement;
-				elem.style.left = `${((marker.time - model.start) / span) * 100}%`;
+				elem.style.left = `${((marker.time - start) / span) * 100}%`;
 				return elem;
 			}),
 		);
-		this.ui.player.style.setProperty('--class-color', `var(--bs-${model.player.classColor})`);
+		this.transport.drawProgress(this.ui.markers.parentElement!, start, end);
 	}
 
 	// A unit frame like the user's EllesmereUI ones: a flat health bar with a text on each side,
@@ -1257,11 +1388,20 @@ export class Replay extends ResultComponent {
 			) as HTMLElement;
 			return { bar, elem, fill: elem.querySelector<HTMLElement>('.replay-bar-fill')!, text: elem.querySelector<HTMLElement>('.replay-bar-center')! };
 		});
-		const swing = (
-			<div className="replay-swing">
-				<div className="replay-swing-fill" />
-			</div>
-		) as HTMLElement;
+		// A swing timer for each hand we swing with, the main hand above the off hand.
+		const swings = [
+			{ times: model.mainHandSwings, mainHand: true },
+			{ times: model.offHandSwings, mainHand: false },
+		]
+			.filter(({ times }) => times.length > 1)
+			.map(({ times, mainHand }) => {
+				const elem = (
+					<div className="replay-swing">
+						<div className="replay-swing-fill" />
+					</div>
+				) as HTMLElement;
+				return { elem, fill: elem.firstElementChild as HTMLElement, times, mainHand };
+			});
 		const pips: Array<HTMLElement> = [];
 		const pipKind = model.comboPoints ? 'combo' : model.maelstrom ? 'maelstrom' : '';
 		const pipRow = (<div className={`replay-pips ${pipKind}`} />) as HTMLElement;
@@ -1272,12 +1412,8 @@ export class Replay extends ResultComponent {
 				pips.push(pip);
 			}
 		}
-		// From the bottom, like the user's Bayov resource bars: power, the swing, then the pips.
-		this.ui.resources.replaceChildren(
-			...(pipKind ? [pipRow] : []),
-			...(model.mainHandSwings.length > 1 ? [swing] : []),
-			...powers.map(power => power.elem),
-		);
+		// From the bottom, like the user's Bayov resource bars: power, the swings, then the pips.
+		this.ui.resources.replaceChildren(...(pipKind ? [pipRow] : []), ...swings.map(swing => swing.elem), ...powers.map(power => power.elem));
 		// Each bar has its own tooltip, so we see the one resource under the mouse.
 		const rowsTip = (rows: () => Array<Element | null>) => () =>
 			(
@@ -1293,22 +1429,40 @@ export class Replay extends ResultComponent {
 				]),
 			),
 		);
-		this.tip(
-			swing,
-			rowsTip(() => {
-				const next = this.swingAt(model, this.time);
-				return [tooltipRow('Next main hand swing', next ? formatSeconds(next.next - this.time) : 'None')];
-			}),
+		swings.forEach(({ elem, times, mainHand }) =>
+			this.tip(
+				elem,
+				rowsTip(() => {
+					const next = this.swingAt(times, this.time);
+					const queued = mainHand ? this.swingQueuedAt(model, this.time) : null;
+					return [
+						tooltipRow(`Next ${mainHand ? 'main' : 'off'} hand swing`, next ? formatSeconds(next.next - this.time) : 'None'),
+						queued && tooltipRow('Queued', queued.name.replace(/ \(Queue\)/, '')),
+					];
+				}),
+			),
 		);
 		if (model.maelstrom) {
 			this.tip(pipRow, this.auraTip(model.maelstrom, 'us'));
+			const maelstromTip = this.auraTip(model.maelstrom, 'us');
+			this.tip(this.ui.alert, () => {
+				const tip = maelstromTip();
+				tip.insertBefore(
+					<div className="timeline-tooltip-meta">
+						These arcs light up at 5 stacks of Maelstrom Weapon, like a WeakAura spell alert. Each stack makes the next Lightning Bolt 4% faster and
+						cheaper for each talent point, so with 5 points it's instant and free.
+					</div>,
+					tip.children[1],
+				);
+				return tip;
+			});
 		} else if (model.comboPoints) {
 			this.tip(
 				pipRow,
 				rowsTip(() => [tooltipRow('Combo points', String(model.comboPoints!.at(this.time)))]),
 			);
 		}
-		this.resourceRefs = { powers, swingFill: swing.firstElementChild as HTMLElement, pips };
+		this.resourceRefs = { powers, swings, pips };
 	}
 
 	private pipsAt(model: ReplayModel, time: number): number {
@@ -1318,10 +1472,14 @@ export class Replay extends ResultComponent {
 		return aura ? Math.max(1, aura.stacks) : 0;
 	}
 
-	// The last and the next main hand swing around this time. A long gap, like while we were out
+	// The Heroic Strike (or Cleave, Maul, Raptor Strike) waiting for the next main hand swing.
+	private swingQueuedAt(model: ReplayModel, time: number): ActionId | null {
+		return model.swingQueue.find(track => activeAuraAt(track, time, model.end))?.actionId ?? null;
+	}
+
+	// The last and the next swing of a hand around this time. A long gap, like while we were out
 	// of range, has no swing timer.
-	private swingAt(model: ReplayModel, time: number): { last: number; next: number } | null {
-		const swings = model.mainHandSwings;
+	private swingAt(swings: Array<number>, time: number): { last: number; next: number } | null {
 		const i = lastIndexAtOrBefore(swings, time);
 		if (i < 0 || i + 1 >= swings.length || swings[i + 1] - swings[i] > 5) return null;
 		return { last: swings[i], next: swings[i + 1] };
@@ -1419,7 +1577,22 @@ export class Replay extends ResultComponent {
 		this.drawHistory(model, time);
 		this.drawSct(model, time);
 		this.drawControls(model, time);
+		if (model.leveling) {
+			this.map.draw(time);
+			this.transport.update(time);
+		}
 		this.updateHover();
+		this.emitTime(time);
+	}
+
+	// Tells the Events tab where we are, at most every TIME_EMIT_MS while we play.
+	private emitTime(time: number) {
+		if (time == this.emittedTime) return;
+		const now = performance.now();
+		if (this.playing && now - this.lastTimeEmit < TIME_EMIT_MS) return;
+		this.lastTimeEmit = now;
+		this.emittedTime = time;
+		this.timeEmitter.emit(TypedEvent.nextEventID(), time);
 	}
 
 	// Puts the unit frames level with the resource bar of the class pack. Everything above the
@@ -1430,7 +1603,8 @@ export class Replay extends ResultComponent {
 		const top = this.ui.resources.offsetTop;
 		if (top <= 0) return;
 		this.ui.playerCol.style.paddingTop = `${top}px`;
-		this.ui.enemyCol.style.paddingTop = this.enemyFrames.length > 2 ? '0' : `${top}px`;
+		// A leveling session has a frame for each mob of its pool, but only the few we pulled show.
+		this.ui.enemyCol.style.paddingTop = this.enemyFrames.length > 2 && !model.leveling ? '0' : `${top}px`;
 		this.alignedFor = model;
 	}
 
@@ -1439,6 +1613,10 @@ export class Replay extends ResultComponent {
 		const damage = model.damageDone.at(time);
 		setText(this.ui.hudDps, time >= 1 ? formatToNumber(damage / time, { maximumFractionDigits: 1, minimumFractionDigits: 1 }) : '–');
 		setText(this.ui.hudDamage, formatToCompactNumber(damage, { maximumFractionDigits: 1 }));
+		if (model.leveling) {
+			const kills = lastIndexAtOrBefore(this.killTimes, time) + 1;
+			setText(this.ui.hudKills, String(kills));
+		}
 	}
 
 	private drawPlayer(model: ReplayModel, time: number) {
@@ -1460,13 +1638,17 @@ export class Replay extends ResultComponent {
 			if (bar.type == ResourceType.ResourceTypeMana) fill.style.background = manaColor(fraction);
 			setText(text, String(Math.floor(value)));
 		});
-		const swing = this.swingAt(model, time);
-		setWidth(resources.swingFill, swing ? (time - swing.last) / (swing.next - swing.last) : 0);
+		resources.swings.forEach(({ fill, times, mainHand }) => {
+			const swing = this.swingAt(times, time);
+			setWidth(fill, swing ? (time - swing.last) / (swing.next - swing.last) : 0);
+			// The main hand's timer turns yellow while a Heroic Strike waits for its swing.
+			if (mainHand) fill.classList.toggle('queued', !!this.swingQueuedAt(model, time));
+		});
 		const pips = this.pipsAt(model, time);
 		resources.pips.forEach((pip, i) => pip.classList.toggle('on', i < pips));
-		// At five Maelstrom Weapon stacks the pack lights up around the middle, like the
+		// At five Maelstrom Weapon stacks arcs light up on both sides of the pack, like the
 		// PowerAuras textures of the user's WeakAura.
-		this.ui.center.classList.toggle('maelstrom-full', !!model.maelstrom && pips >= 5);
+		this.ui.alert.classList.toggle('on', !!model.maelstrom && pips >= 5);
 
 		// The procs and other buffs that come and go, in the middle above the cooldowns.
 		syncAuras(this.ui.procs, this.procElems, activeAuras(this.procTracks, time, model.end), 'proc', (elem, track) => {
@@ -1474,17 +1656,28 @@ export class Replay extends ResultComponent {
 			this.searchable(elem, track.actionId.name);
 		});
 
-		updateCastBar(this.playerCastBar, castAt(this.playerCasts, model.castStarts, time), time);
+		// The cast we started when we died in a leveling session never ends in the log, so the
+		// corpse run has no cast bar.
+		const dead = model.leveling?.stateAt(time) == 'dead';
+		updateCastBar(this.playerCastBar, dead ? null : castAt(this.playerCasts, model.castStarts, time), time);
 	}
 
 	private drawEnemies(model: ReplayModel, time: number) {
 		const focus = model.focus.at(time);
+		// In a leveling session only the mobs we pulled and that are still alive have a frame.
+		const pulled = model.leveling ? this.pulledEnemies(model, time) : null;
+		if (pulled) this.ui.enemyCol.classList.toggle('many', pulled.size > 2);
 		this.enemyFrames.forEach(frame => {
 			const { enemy } = frame;
+			if (pulled) {
+				const shown = pulled.has(enemy.unit.index);
+				frame.root.classList.toggle('hide', !shown);
+				if (!shown) return;
+			}
 			const fraction = enemy.healthFraction(time);
 			setWidth(frame.health, fraction);
 			setText(frame.leftText, `${(fraction * 100).toFixed(fraction < 0.1 ? 1 : 0)}%`);
-			frame.root.classList.toggle('focus', enemy.unit.index == focus && this.enemyFrames.length > 1);
+			frame.root.classList.toggle('focus', enemy.unit.index == focus && (pulled ? pulled.size : this.enemyFrames.length) > 1);
 			syncAuras(frame.auras, frame.auraElems, activeAuras(enemy.debuffs, time, model.end), 'debuff', (elem, track) => {
 				this.tip(elem, this.auraTip(track, enemy.name));
 				this.searchable(elem, track.actionId.name);
@@ -1728,7 +1921,8 @@ export class Replay extends ResultComponent {
 		const zone = this.ui.sctZone.getBoundingClientRect();
 		const playerFrame = this.playerFrame!.root.querySelector('.replay-unit-main')!.getBoundingClientRect();
 		const focus = model.focus.at(time);
-		const targetFrame = (this.enemyFrames.find(frame => frame.enemy.unit.index == focus) ?? this.enemyFrames[0])?.root
+		const shownFrames = this.enemyFrames.filter(frame => !frame.root.classList.contains('hide'));
+		const targetFrame = (shownFrames.find(frame => frame.enemy.unit.index == focus) ?? shownFrames[0])?.root
 			.querySelector('.replay-unit-main')!
 			.getBoundingClientRect();
 		const ourRight = zone.right - playerFrame.right;
@@ -1736,23 +1930,31 @@ export class Replay extends ResultComponent {
 
 		// Where each side's lines start and end, in pixels from the top of the area.
 		const history = this.ui.history.parentElement!.getBoundingClientRect();
-		const inTop = history.bottom - zone.top + SCT_MARGIN_PX;
 		const inBottom = playerFrame.top - zone.top - SCT_MARGIN_PX;
-		const outTop = this.buffsElem.getBoundingClientRect().bottom - zone.top + SCT_MARGIN_PX;
+		const inTop = Math.max(history.bottom - zone.top + SCT_MARGIN_PX, inBottom - MAX_SCROLL_PX);
 		const outBottom = (targetFrame ? targetFrame.top - zone.top : zone.height) - SCT_MARGIN_PX;
-		// A line that starts close after another starts a few lanes behind it. We keep the room for
-		// the lanes inside the area, so the last lane still starts clear of the frame or the history.
-		const lanes = (span: number) => {
-			const lanePx = Math.min(LANE_PX, (span * LANES_SHARE) / (LANES - 1));
-			return { lanePx, room: lanePx * (LANES - 1) };
-		};
-		const inLanes = lanes(inBottom - inTop);
-		const outLanes = lanes(outBottom - outTop);
+		const outTop = Math.max(this.buffsElem.getBoundingClientRect().bottom - zone.top + SCT_MARGIN_PX, outBottom - MAX_SCROLL_PX);
+		// Where the newer line on each side is. We place the lines from the newest back, so an older
+		// line too close to a newer one gets pushed ahead of it.
+		let newerIn = -Infinity;
+		let newerOut = Infinity;
+
+		// The crits' area has the same cap, so in full screen they stay near the scrolling lines.
+		const critBottom = this.ui.procs.getBoundingClientRect().top - zone.top;
+		const critTop = Math.max(history.bottom - zone.top, critBottom - MAX_SCROLL_PX);
+		const critSpan = critBottom - critTop;
+		const spots = Math.max(1, Math.min(MAX_CRIT_SPOTS, Math.floor(critSpan / CRIT_SPOT_PX)));
+		if (spots != this.critSpots) {
+			placeCrits(model.sct, spots);
+			this.critSpots = spots;
+		}
+		// The rows of the spots in the order the crits take them, from the middle out.
+		const critRows = Array.from({ length: spots }, (_, row) => row).sort((a, b) => Math.abs(a - (spots - 1) / 2) - Math.abs(b - (spots - 1) / 2) || a - b);
 
 		const first = lastIndexAtOrBefore(model.sctTimes, time - SCROLL_LIFE) + 1;
 		const last = lastIndexAtOrBefore(model.sctTimes, time);
 		const shown = new Set<number>();
-		for (let i = first; i <= last; i++) {
+		for (let i = last; i >= first; i--) {
 			const event = model.sct[i];
 			const age = time - event.time;
 			if (age > event.end) continue;
@@ -1766,18 +1968,19 @@ export class Replay extends ResultComponent {
 			const progress = age / event.end;
 			let y: number;
 			let scale = 1;
+			// A line pushed past the end of its area is gone.
+			let pushedOut = false;
 			if (event.sticky) {
-				// The crits' spots go from the middle of the side's area toward its end.
-				y = event.side == 'in' ? (inTop + inBottom) / 2 + event.lane * STICKY_LANE_PX : (outTop + outBottom) / 2 - event.lane * STICKY_LANE_PX;
+				y = critTop + ((critRows[event.lane] ?? 0) + 0.5) * (critSpan / spots);
 				scale = 1 + 0.55 * Math.max(0, 1 - age / 0.12);
 			} else if (event.side == 'out') {
-				const { lanePx, room } = outLanes;
-				y = outBottom - room - progress * (outBottom - outTop - room) + event.lane * lanePx;
+				y = newerOut = Math.min(outBottom - progress * (outBottom - outTop), newerOut - LANE_PX);
+				pushedOut = y < outTop;
 			} else {
-				const { lanePx, room } = inLanes;
-				y = inTop + room + progress * (inBottom - inTop - room) - event.lane * lanePx;
+				y = newerIn = Math.max(inTop + progress * (inBottom - inTop), newerIn + LANE_PX);
+				pushedOut = y > inBottom;
 			}
-			const opacity = Math.min(1, age / 0.06) * Math.min(1, (event.end - age) / (event.end - event.fadeAt));
+			const opacity = pushedOut ? 0 : Math.min(1, age / 0.06) * Math.min(1, (event.end - age) / (event.end - event.fadeAt));
 			elem.style.top = `${y.toFixed(1)}px`;
 			if (event.side == 'out' && !event.sticky) {
 				elem.style.left = `${targetLeft}px`;
@@ -1816,10 +2019,23 @@ export class Replay extends ResultComponent {
 	}
 
 	private drawControls(model: ReplayModel, time: number) {
-		const fraction = (time - model.start) / (model.end - model.start);
+		const { start, end } = this.playRange;
+		const fraction = (time - start) / Math.max(end - start, 0.001);
 		setWidth(this.ui.played, fraction);
 		this.ui.thumb.style.left = `${(fraction * 100).toFixed(3)}%`;
-		setText(this.ui.clock, `${formatClock(time)} / ${formatClock(model.end)}`);
+		// A picked stretch of a session shows where it starts and ends in the session.
+		const picked = end < model.end || start > model.start;
+		setText(this.ui.clock, picked ? `${formatClock(time)} · ${formatClock(start)} to ${formatClock(end)}` : `${formatClock(time)} / ${formatClock(end)}`);
 		this.updateButtons();
+	}
+
+	// The target indexes of the mobs out of the pool that we pulled and that are alive at this time.
+	private pulledEnemies(model: ReplayModel, time: number): Set<number> {
+		const pulled = new Set<number>();
+		for (const mob of model.leveling!.mobs) {
+			if (mob.foundAt > time) break;
+			if (mob.pulledAt != null && mob.pulledAt <= time && time < mob.end) pulled.add(mob.targetIndex);
+		}
+		return pulled;
 	}
 }

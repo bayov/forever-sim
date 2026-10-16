@@ -15,6 +15,7 @@ import { actionColors } from './color_settings.js';
 import { EventCategory, EventFilter } from './events_filter.js';
 import { hitOutcome, HitOutcomeKind, outcomeBadge } from './hit_outcome.js';
 import { iconColor } from './icon_color.js';
+import { formatClock, getLevelingSession, LevelingSession, mobName, SESSION_STATES, valueAt } from './leveling_session.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
 
 type TooltipHandler = (dataPointIndex: number) => Element;
@@ -22,6 +23,13 @@ type TooltipHandler = (dataPointIndex: number) => Element;
 const dpsColor = '#ed5653';
 const manaColor = '#2E93fA';
 const threatColor = '#b56d07';
+// The leveling chart's colors. Health and mana share the lower chart, and the pair passes the
+// dataviz palette checks on the dark card. Mobs killed is the only solid line of the upper chart,
+// and the average pace is a dashed gray line beside it.
+const killsColor = '#c8a24a';
+const paceColor = '#8e948f';
+const levelingHealthColor = '#3fa85a';
+const levelingManaColor = '#3d8ee0';
 
 // How the timeline shows the iteration. The rotation has a row per ability, aura and resource.
 // The chart draws DPS, mana and threat over time.
@@ -164,14 +172,27 @@ const tooltipChange = (log: SimLog, value: string, valueClass = ''): JSX.Element
 	</li>
 );
 
-// How many seconds of the rotation fit in the view, or 'fight' for the whole time range.
-export type ZoomSpan = number | 'fight';
+// How many seconds of the rotation fit in the view, or 'fight' for the whole time range. A
+// leveling session also has 'selection', which fits the From and To range the session strip
+// picked, and 'session', the whole session.
+export type ZoomSpan = number | 'fight' | 'selection' | 'session';
 
 export const zoomPresets: Array<{ span: ZoomSpan; label: string }> = [
 	{ span: 10, label: '10s' },
 	{ span: 30, label: '30s' },
 	{ span: 60, label: '1m' },
 	{ span: 'fight', label: 'Fight' },
+];
+
+// A session is 20 min, so the zoom goes further out. Selection fits the pull, rest or death we
+// picked on the session strip, or the whole session when we picked none.
+export const levelingZoomPresets: Array<{ span: ZoomSpan; label: string }> = [
+	{ span: 10, label: '10s' },
+	{ span: 30, label: '30s' },
+	{ span: 60, label: '1m' },
+	{ span: 300, label: '5m' },
+	{ span: 'selection', label: 'Selection' },
+	{ span: 'session', label: 'Session' },
 ];
 
 // The closest we zoom in, in pixels per second.
@@ -194,6 +215,12 @@ export class Timeline extends ResultComponent {
 	private readonly dpsResourcesPlotElem: HTMLElement;
 	private readonly chartLegend: HTMLElement;
 	private dpsResourcesPlot: any;
+	// In a leveling session the chart is two charts on one time axis: mobs killed on top, and
+	// health and mana under it. They have different scales, so they don't share an axis.
+	private readonly vitalsPlotElem: HTMLElement;
+	private readonly vitalsLegend: HTMLElement;
+	private vitalsPlot: any = null;
+	private chartIsLeveling = false;
 
 	private readonly rotationPlotElem: HTMLElement;
 	private readonly rotationLabels: HTMLElement;
@@ -201,6 +228,8 @@ export class Timeline extends ResultComponent {
 	private readonly emptyElem: HTMLElement;
 
 	private resultData: SimResultData | null;
+	// The leveling session of the iteration, or null for a normal fight.
+	private session: LevelingSession | null = null;
 	private rendered: boolean;
 	// Set when something changed while the timeline was hidden, so we draw it once it shows.
 	private dirty = true;
@@ -226,6 +255,13 @@ export class Timeline extends ResultComponent {
 
 	// Fires when the zoom changes, also from Alt + scroll.
 	readonly zoomEmitter = new TypedEvent<void>('TimelineZoom');
+	// Fires when the part of the iteration we can see changes, from a zoom or a scroll. The
+	// session strip draws that window over the session.
+	readonly viewEmitter = new TypedEvent<void>('TimelineView');
+	private viewFrame = 0;
+	// The dimmed parts outside the selection, in a leveling session. They follow the selection
+	// without drawing the rows again.
+	private selectionElem: HTMLElement | null = null;
 
 	// The chart's lines we don't show, by name. Threat starts hidden, because its axis climbs all
 	// fight and squeezes the other lines, and most of the time we look at DPS and mana.
@@ -245,6 +281,10 @@ export class Timeline extends ResultComponent {
 				<div className="timeline-plot dps-resources-plot hide">
 					<div className="chart-legend" attributes={{ role: 'group', 'aria-label': 'Lines' }}></div>
 					<div className="dps-resources-chart"></div>
+					<div className="leveling-vitals hide">
+						<div className="chart-legend" attributes={{ role: 'group', 'aria-label': 'Lines' }}></div>
+						<div className="leveling-vitals-chart"></div>
+					</div>
 				</div>
 				<div className="timeline-plot rotation-plot">
 					<div className="rotation-container">
@@ -258,7 +298,83 @@ export class Timeline extends ResultComponent {
 
 		this.dpsResourcesPlotElem = this.rootElem.querySelector('.dps-resources-plot')!;
 		this.chartLegend = this.dpsResourcesPlotElem.querySelector('.chart-legend')!;
-		this.dpsResourcesPlot = new ApexCharts(this.dpsResourcesPlotElem.querySelector('.dps-resources-chart')!, {
+		this.vitalsPlotElem = this.dpsResourcesPlotElem.querySelector('.leveling-vitals')!;
+		this.vitalsLegend = this.vitalsPlotElem.querySelector('.chart-legend')!;
+		this.dpsResourcesPlot = this.makeDpsResourcesPlot();
+		this.addOnDisposeCallback(() => {
+			this.dpsResourcesPlot.destroy();
+			this.vitalsPlot?.destroy();
+		});
+
+		this.rotationPlotElem = this.rootElem.querySelector('.rotation-plot')!;
+		this.rotationLabels = this.rootElem.querySelector('.rotation-labels')!;
+		this.rotationTimeline = this.rootElem.querySelector('.rotation-timeline')!;
+		this.emptyElem = this.rootElem.querySelector('.events-empty')!;
+
+		let isMouseDown = false;
+		let startX = 0;
+		let scrollLeft = 0;
+		this.rotationTimeline.addEventListener('dragstart', event => {
+			event.preventDefault();
+		});
+		this.rotationTimeline.addEventListener('mousedown', event => {
+			isMouseDown = true;
+			startX = event.pageX - this.rotationTimeline.offsetLeft;
+			scrollLeft = this.rotationTimeline.scrollLeft;
+			this.rotationTimeline.classList.add('dragging');
+		});
+		const stopDrag = () => {
+			isMouseDown = false;
+			this.rotationTimeline.classList.remove('dragging');
+		};
+		this.rotationTimeline.addEventListener('mouseleave', stopDrag);
+		this.rotationTimeline.addEventListener('mouseup', stopDrag);
+		this.rotationTimeline.addEventListener('mousemove', event => {
+			if (!isMouseDown) return;
+			event.preventDefault();
+			const x = event.pageX - this.rotationTimeline.offsetLeft;
+			const walk = x - startX;
+			this.rotationTimeline.scrollLeft = scrollLeft - walk;
+		});
+		this.rotationTimeline.addEventListener('scroll', () => this.emitView());
+
+		this.setUpWheelZoom();
+
+		// The zoom is in seconds, so a wider or narrower view needs new pixels per second. The view
+		// also gets its width back when the tab opens again.
+		const resizeObserver = new ResizeObserver(() => this.refitIfResized());
+		resizeObserver.observe(this.rotationTimeline);
+		this.addOnDisposeCallback(() => resizeObserver.disconnect());
+
+		let lastRange = [this.filter.from, this.filter.to];
+		this.filter.changeEmitter.on(() => {
+			// A new time range moves everything, so we draw the timeline again. The other filters
+			// only show and hide rows.
+			const rangeChanged = lastRange[0] != this.filter.from || lastRange[1] != this.filter.to;
+			lastRange = [this.filter.from, this.filter.to];
+			// A session's rotation always has the whole session drawn. A new range only zooms and
+			// scrolls to it, which is much faster than drawing 20 min of rows again.
+			if (rangeChanged && this.session && this.mode == 'rotation') {
+				if (this.hasSelection()) this.zoomSpan = 'selection';
+				// While another view shows, we zoom to the selection when the timeline draws next.
+				if (!this.dirty && this.isVisible()) {
+					this.applyFilter();
+					this.showSelection();
+				} else {
+					this.invalidate();
+				}
+			} else if (rangeChanged) {
+				this.invalidate();
+			} else {
+				this.applyFilter();
+			}
+		});
+	}
+
+	// The chart's base options. A session's chart takes other options, so going back to a normal
+	// fight starts over from these.
+	private makeDpsResourcesPlot(): any {
+		return new ApexCharts(this.dpsResourcesPlotElem.querySelector('.dps-resources-chart')!, {
 			chart: {
 				animations: {
 					enabled: false,
@@ -293,64 +409,85 @@ export class Timeline extends ResultComponent {
 				curve: 'straight',
 			},
 		});
-		this.addOnDisposeCallback(() => this.dpsResourcesPlot.destroy());
-
-		this.rotationPlotElem = this.rootElem.querySelector('.rotation-plot')!;
-		this.rotationLabels = this.rootElem.querySelector('.rotation-labels')!;
-		this.rotationTimeline = this.rootElem.querySelector('.rotation-timeline')!;
-		this.emptyElem = this.rootElem.querySelector('.events-empty')!;
-
-		let isMouseDown = false;
-		let startX = 0;
-		let scrollLeft = 0;
-		this.rotationTimeline.addEventListener('dragstart', event => {
-			event.preventDefault();
-		});
-		this.rotationTimeline.addEventListener('mousedown', event => {
-			isMouseDown = true;
-			startX = event.pageX - this.rotationTimeline.offsetLeft;
-			scrollLeft = this.rotationTimeline.scrollLeft;
-			this.rotationTimeline.classList.add('dragging');
-		});
-		const stopDrag = () => {
-			isMouseDown = false;
-			this.rotationTimeline.classList.remove('dragging');
-		};
-		this.rotationTimeline.addEventListener('mouseleave', stopDrag);
-		this.rotationTimeline.addEventListener('mouseup', stopDrag);
-		this.rotationTimeline.addEventListener('mousemove', event => {
-			if (!isMouseDown) return;
-			event.preventDefault();
-			const x = event.pageX - this.rotationTimeline.offsetLeft;
-			const walk = x - startX;
-			this.rotationTimeline.scrollLeft = scrollLeft - walk;
-		});
-
-		this.setUpWheelZoom();
-
-		// The zoom is in seconds, so a wider or narrower view needs new pixels per second. The view
-		// also gets its width back when the tab opens again.
-		const resizeObserver = new ResizeObserver(() => this.refitIfResized());
-		resizeObserver.observe(this.rotationTimeline);
-		this.addOnDisposeCallback(() => resizeObserver.disconnect());
-
-		let lastRange = [this.filter.from, this.filter.to];
-		this.filter.changeEmitter.on(() => {
-			// A new time range moves everything, so we draw the timeline again. The other filters
-			// only show and hide rows.
-			const rangeChanged = lastRange[0] != this.filter.from || lastRange[1] != this.filter.to;
-			lastRange = [this.filter.from, this.filter.to];
-			if (rangeChanged) {
-				this.invalidate();
-			} else {
-				this.applyFilter();
-			}
-		});
 	}
 
 	onSimResult(resultData: SimResultData) {
 		this.resultData = resultData;
+		const session = getLevelingSession(resultData.result);
+		// A session opens on its selection, or a minute from its start. A normal fight after one
+		// gets the fight's zoom back.
+		if (session && !this.session) {
+			this.zoomSpan = this.hasSelection() ? 'selection' : 60;
+		} else if (!session && (this.zoomSpan == 'selection' || this.zoomSpan == 'session')) {
+			this.zoomSpan = 'fight';
+		}
+		this.session = session;
 		this.invalidate();
+	}
+
+	// The part of the iteration we can see, in seconds. In the chart it's the time range of the
+	// axis.
+	getViewRange(): { start: number; end: number } {
+		if (this.mode != 'rotation' || !this.drawnWidth) return { start: this.viewStart, end: this.viewEnd };
+		const start = this.leftToTime(this.rotationTimeline.scrollLeft);
+		return { start, end: Math.min(this.viewEnd, start + this.rotationTimeline.clientWidth / this.pxPerSecond) };
+	}
+
+	// Lets the strip know the view moved, once a frame at most.
+	private emitView() {
+		if (this.viewFrame) return;
+		this.viewFrame = requestAnimationFrame(() => {
+			this.viewFrame = 0;
+			this.viewEmitter.emit(TypedEvent.nextEventID());
+		});
+	}
+
+	private hasSelection(): boolean {
+		return this.filter.from != null || this.filter.to != null;
+	}
+
+	// The selection of a session, clipped to it. The whole session when there is none.
+	private selectionRange(): { start: number; end: number } {
+		const start = Math.max(this.viewStart, Math.min(this.filter.from ?? this.viewStart, this.viewEnd));
+		const end = Math.min(this.viewEnd, this.filter.to ?? this.viewEnd);
+		return end > start ? { start, end } : { start, end: Math.min(this.viewEnd, start + 1) };
+	}
+
+	// Zooms the session's rotation to fit the selection and dims the rest. With no selection we
+	// keep the zoom and only take the dimming away.
+	private showSelection() {
+		this.drawSelection();
+		if (!this.hasSelection()) return;
+		this.zoomSpan = 'selection';
+		this.zoomEmitter.emit(TypedEvent.nextEventID());
+		this.zoomAnimation = null;
+		window.clearTimeout(this.settleTimer);
+		this.setPxPerSecond(this.fitPxPerSecond(this.drawnWidth));
+		this.rotationTimeline.scrollLeft = this.timeToLeftValue(this.selectionRange().start);
+		// The rows were drawn for another zoom. The resource charts stretch, but the labels on
+		// them should be as many as fit, so we draw again once the zoom settles.
+		this.settleTimer = window.setTimeout(() => {
+			if (Math.abs(this.pxPerSecond - this.drawnPxPerSecond) > 1e-6) this.redrawKeepingScroll();
+		}, 150);
+		this.emitView();
+	}
+
+	// The parts of the session outside the selection get a dark veil, and the selection's edges a
+	// gold line, so we can scroll past the selection and still see where it was.
+	private drawSelection() {
+		this.selectionElem?.remove();
+		this.selectionElem = null;
+		if (!this.session || !this.hasSelection()) return;
+		const { start, end } = this.selectionRange();
+		this.selectionElem = (
+			<div className="rotation-selection">
+				<div className="rotation-selection-veil" style={{ left: '0px', width: this.timeToPx(start - this.viewStart) }} />
+				<div className="rotation-selection-edge" style={{ left: this.timeToLeft(start) }} />
+				<div className="rotation-selection-edge" style={{ left: this.timeToLeft(end) }} />
+				<div className="rotation-selection-veil" style={{ left: this.timeToLeft(end), width: this.timeToPx(this.viewEnd - end) }} />
+			</div>
+		) as HTMLElement;
+		this.rotationTimeline.appendChild(this.selectionElem);
 	}
 
 	setMode(mode: TimelineMode) {
@@ -367,21 +504,26 @@ export class Timeline extends ResultComponent {
 
 	// Shows this many seconds of the rotation, keeping the time at the left of the view where it
 	// is.
+	// Selection zooms to the selection again even when it's the zoom already, because we may have
+	// scrolled away from it.
 	setZoom(span: ZoomSpan) {
-		if (span == this.zoomSpan) return;
-		this.zoomAround(span, 0);
+		if (span == this.zoomSpan && span != 'selection') return;
+		// Selection and Session start at their own start, the others keep the time at the left.
+		const anchorTime = span == 'selection' ? this.selectionRange().start : span == 'session' ? this.viewStart : undefined;
+		this.zoomAround(span, 0, anchorTime);
 	}
 
-	// Zooms so the time at this many pixels from the left of the view stays there. While the
-	// timeline is hidden, we only remember the zoom for when it draws.
-	private zoomAround(span: ZoomSpan, anchorX: number) {
+	// Zooms so the time at this many pixels from the left of the view stays there, or puts
+	// anchorTime there when we give one. While the timeline is hidden, we only remember the zoom
+	// for when it draws.
+	private zoomAround(span: ZoomSpan, anchorX: number, anchorTimeOverride?: number) {
 		this.zoomSpan = span;
 		this.zoomEmitter.emit(TypedEvent.nextEventID());
 		if (this.dirty || !this.isVisible()) {
 			this.invalidate();
 			return;
 		}
-		const anchorTime = this.leftToTime(this.rotationTimeline.scrollLeft + anchorX);
+		const anchorTime = anchorTimeOverride ?? this.leftToTime(this.rotationTimeline.scrollLeft + anchorX);
 		if (!this.zoomAnimation) requestAnimationFrame(now => this.stepZoomAnimation(now));
 		this.zoomAnimation = { anchorTime, anchorX, lastFrame: this.zoomAnimation?.lastFrame ?? performance.now() };
 	}
@@ -404,6 +546,7 @@ export class Timeline extends ResultComponent {
 		const done = Math.abs(remaining) < 0.002;
 		this.setPxPerSecond(done ? target : this.pxPerSecond * Math.exp(remaining * progress));
 		this.rotationTimeline.scrollLeft = this.timeToLeftValue(animation.anchorTime) - animation.anchorX;
+		this.emitView();
 
 		window.clearTimeout(this.settleTimer);
 		if (done) {
@@ -438,8 +581,10 @@ export class Timeline extends ResultComponent {
 				const anchorX = event.clientX - this.rotationTimeline.getBoundingClientRect().left;
 				// A notch during the animation goes on from where the last one was going.
 				const seconds = this.zoomSeconds(this.zoomSpan) * Math.exp(delta * 0.0015);
-				// Once the whole time range fits, we stop there and call it the whole fight.
-				this.zoomAround(seconds >= this.viewEnd - this.viewStart ? 'fight' : this.zoomSeconds(seconds), anchorX);
+				// Once the whole time range fits, we stop there and call it the whole fight, or the whole
+				// session.
+				const whole = this.session ? 'session' : 'fight';
+				this.zoomAround(seconds >= this.viewEnd - this.viewStart ? whole : this.zoomSeconds(seconds), anchorX);
 			},
 			{ passive: false },
 		);
@@ -449,7 +594,11 @@ export class Timeline extends ResultComponent {
 	// less than we can see at the closest zoom.
 	private zoomSeconds(span: ZoomSpan): number {
 		const rangeSeconds = this.viewEnd - this.viewStart;
-		if (span == 'fight') return rangeSeconds;
+		if (span == 'fight' || span == 'session') return rangeSeconds;
+		if (span == 'selection') {
+			const { start, end } = this.selectionRange();
+			span = end - start;
+		}
 		return Math.min(rangeSeconds, Math.max(this.drawnWidth / maxPxPerSecond, span));
 	}
 
@@ -516,14 +665,23 @@ export class Timeline extends ResultComponent {
 		}
 
 		const duration = this.resultData!.result.result.firstIterationDuration || 1;
-		// The prepull actions, like a totem 3 seconds before the pull, happen at negative times.
-		// Without a From time, the timeline starts at the first of them, on a whole second.
-		const firstEvent = this.resultData!.result.logs.reduce((first, log) => Math.min(first, log.timestamp), 0);
-		this.prepullStart = Math.floor(firstEvent);
-		this.viewStart = Math.max(this.prepullStart, Math.min(this.filter.from ?? this.prepullStart, duration));
-		this.viewEnd = Math.min(duration, this.filter.to ?? duration);
-		if (this.viewEnd <= this.viewStart) {
-			this.viewEnd = Math.min(duration, this.viewStart + 1);
+		if (this.session && this.mode == 'rotation') {
+			// A session has no prepull, and its rotation always has the whole session, so we can
+			// scroll from one pull to the next. The From and To range zooms to its part instead,
+			// see showSelection.
+			this.prepullStart = 0;
+			this.viewStart = 0;
+			this.viewEnd = duration;
+		} else {
+			// The prepull actions, like a totem 3 seconds before the pull, happen at negative times.
+			// Without a From time, the timeline starts at the first of them, on a whole second.
+			const firstEvent = this.session ? 0 : this.resultData!.result.logs.reduce((first, log) => Math.min(first, log.timestamp), 0);
+			this.prepullStart = Math.floor(firstEvent);
+			this.viewStart = Math.max(this.prepullStart, Math.min(this.filter.from ?? this.prepullStart, duration));
+			this.viewEnd = Math.min(duration, this.filter.to ?? duration);
+			if (this.viewEnd <= this.viewStart) {
+				this.viewEnd = Math.min(duration, this.viewStart + 1);
+			}
 		}
 
 		const players = this.resultData!.result.getRaidIndexedPlayers(this.resultData!.filter);
@@ -539,11 +697,31 @@ export class Timeline extends ResultComponent {
 			} catch (e) {
 				console.log('Failed to update rotation chart: ', e);
 			}
+			if (this.session) {
+				this.drawSelection();
+				if (this.zoomSpan == 'selection') this.rotationTimeline.scrollLeft = this.timeToLeftValue(this.selectionRange().start);
+			}
+			this.emitView();
 			return;
 		}
 		this.clearRotationChart();
 		this.dpsResourcesPlotElem.classList.remove('hide');
 		this.rotationPlotElem.classList.add('hide');
+
+		// The chart keeps options from the last time we drew it, so a switch between a session
+		// and a normal fight makes it again from the base options.
+		const levelingChart = !!this.session && players.length == 1;
+		if (levelingChart != this.chartIsLeveling) {
+			this.chartIsLeveling = levelingChart;
+			this.dpsResourcesPlot.destroy();
+			this.dpsResourcesPlot = this.makeDpsResourcesPlot();
+			this.dpsResourcesPlot.render();
+		}
+		this.vitalsPlotElem.classList.toggle('hide', !levelingChart);
+		if (levelingChart) {
+			this.updateLevelingChart(this.session!, duration);
+			return;
+		}
 
 		const options: any = {
 			theme: {
@@ -618,13 +796,230 @@ export class Timeline extends ResultComponent {
 		options.series.forEach((series: { name: string; hidden?: boolean }) => (series.hidden = this.hiddenChartSeries.has(series.name)));
 		options.legend = { show: false };
 		this.dpsResourcesPlot.updateOptions(options);
-		this.drawChartLegend(options.series.map((series: { name: string }, i: number) => ({ name: series.name, color: options.colors[i] })));
+		this.drawChartLegend(
+			options.series.map((series: { name: string }, i: number) => ({ name: series.name, color: options.colors[i] })),
+			this.dpsResourcesPlot,
+			this.chartLegend,
+		);
+	}
+
+	// A session's chart, as two charts on one time axis. The upper one has the mobs killed so far
+	// against the average session's pace, so we can see where this session fell behind or got
+	// ahead. The lower one has health and mana in percent. Both get the session's states as faint
+	// bands and a red line at each death. The DPS over a session's downtime says little, so it
+	// isn't here.
+	//
+	// The axis covers the selection, or the whole session without one. A drag on either chart
+	// zooms both.
+	private updateLevelingChart(session: LevelingSession, duration: number) {
+		const xMin = this.hasSelection() ? this.selectionRange().start : 0;
+		const xMax = this.hasSelection() ? this.selectionRange().end : duration;
+		const averageKills = this.resultData!.result.result.encounterMetrics?.leveling?.mobsKilled ?? 0;
+
+		const bands = session.spans
+			.filter(span => span.state != 'fighting' && span.end > span.start)
+			.map(span => ({ x: span.start, x2: span.end, fillColor: SESSION_STATES[span.state].color, opacity: 0.1, borderColor: 'transparent' }));
+		const deathLines = session.deaths.map(death => ({
+			x: death.t,
+			borderColor: SESSION_STATES.dead.color,
+			strokeDashArray: 0,
+			label: {
+				text: 'Died',
+				borderColor: 'transparent',
+				orientation: 'horizontal',
+				style: { background: 'transparent', color: SESSION_STATES.dead.color, fontSize: '11px' },
+			},
+		}));
+		const annotations = { position: 'back', xaxis: [...bands, ...deathLines] };
+
+		const xaxis = {
+			type: 'numeric',
+			min: xMin,
+			max: xMax,
+			// A tick a minute over the whole session, and ApexCharts' own steps over a short selection.
+			tickAmount: xMax - xMin >= 300 ? Math.min(20, Math.round((xMax - xMin) / 60)) : 12,
+			labels: { formatter: (value: string) => formatClock(parseFloat(value)) },
+			title: { text: undefined },
+			tooltip: { enabled: false },
+		};
+		const chart = (id: string, height: number) => ({
+			id,
+			group: 'leveling-session',
+			height,
+			type: 'line',
+			animations: { enabled: false },
+			background: 'transparent',
+			foreColor: '#8e948f',
+			fontFamily: 'inherit',
+			toolbar: { show: false },
+			zoom: { enabled: true, allowMouseWheelZoom: false },
+			events: { beforeResetZoom: () => ({ xaxis: { min: xMin, max: xMax } }) },
+		});
+
+		// Mobs killed is a step up at each kill. The average pace is a straight line from none to the
+		// average session's kills at the end.
+		const killPoints: Array<{ x: number; y: number }> = [{ x: 0, y: 0 }];
+		session.kills.forEach(({ t }, i) => killPoints.push({ x: t, y: i }, { x: t, y: i + 1 }));
+		killPoints.push({ x: duration, y: session.kills.length });
+		const killsAt = (t: number) => session.kills.filter(kill => kill.t <= t).length;
+		const paceAt = (t: number) => (averageKills * t) / duration;
+		const stateLine = (t: number) => {
+			const state = session.stateAt(t);
+			const pull = session.sectionAt(t, 'pull')?.pull;
+			return `${SESSION_STATES[state].label}${state == 'fighting' && pull ? `, pull ${pull.number}` : ''}`;
+		};
+		const tooltipAt = (t: number, rows: Array<JSX.Element>) => (
+			<div className="timeline-tooltip">
+				<div className="timeline-tooltip-title">
+					<span className="timeline-tooltip-name">{formatClock(t, true)}</span>
+					<span className="timeline-tooltip-note">{stateLine(t)}</span>
+				</div>
+				<div className="timeline-tooltip-rows">{rows}</div>
+			</div>
+		);
+		const xOf = (w: any, seriesIndex: number, dataPointIndex: number): number => w.globals.seriesX[seriesIndex]?.[dataPointIndex] ?? 0;
+
+		const yMax = Math.max(1, Math.ceil(Math.max(session.kills.length, averageKills)));
+		const killsSeries = [
+			{ name: 'Mobs killed', type: 'line', data: killPoints },
+			{
+				name: 'Average pace',
+				type: 'line',
+				data: [
+					{ x: 0, y: 0 },
+					{ x: duration, y: averageKills },
+				],
+			},
+		];
+		const killsOptions: any = {
+			theme: { mode: 'dark' },
+			chart: chart('dpsResources', 300),
+			colors: [killsColor, paceColor],
+			stroke: { width: [2, 2], curve: 'straight', dashArray: [0, 6] },
+			series: killsSeries,
+			xaxis: { ...xaxis, labels: { show: false } },
+			yaxis: [
+				{
+					min: 0,
+					max: yMax,
+					tickAmount: Math.min(10, yMax),
+					decimalsInFloat: 0,
+					title: { text: 'Mobs killed' },
+					labels: { minWidth: 40 },
+				},
+			],
+			grid: { borderColor: 'rgba(255, 255, 255, 0.06)' },
+			annotations,
+			legend: { show: false },
+			tooltip: {
+				enabled: true,
+				custom: ({ seriesIndex, dataPointIndex, w }: any) => {
+					const t = xOf(w, seriesIndex, dataPointIndex);
+					return tooltipAt(t, [
+						tooltipRow('Mobs killed', String(killsAt(t))),
+						tooltipRow('Average pace', formatAmount(paceAt(t), 1)),
+					]);
+				},
+			},
+		};
+		killsOptions.series.forEach((series: { name: string; hidden?: boolean }) => (series.hidden = this.hiddenChartSeries.has(series.name)));
+		// The two charts are in one group so they zoom and point at the same time together. An
+		// update would also go to the other chart of the group by default, and give it this chart's
+		// lines and dashes, so we keep each update to its own chart.
+		this.dpsResourcesPlot.updateOptions(killsOptions, false, false, false);
+		this.drawChartLegend(
+			killsSeries.map((series, i) => ({ name: series.name, color: killsOptions.colors[i] })),
+			this.dpsResourcesPlot,
+			this.chartLegend,
+		);
+
+		// Health and mana change many times a second, so we keep one point per small step of the
+		// session. Health keeps the lowest value of each step too, so a near death still shows.
+		const step = duration / 2400;
+		const thin = (samples: Array<{ t: number; value: number }>, keepLowest: boolean) => {
+			const points: Array<{ x: number; y: number }> = [];
+			let bucketEnd = -Infinity;
+			let lowest: { t: number; value: number } | null = null;
+			let last: { t: number; value: number } | null = null;
+			const flush = () => {
+				if (keepLowest && lowest && last && lowest !== last) points.push({ x: lowest.t, y: lowest.value * 100 });
+				if (last) points.push({ x: last.t, y: last.value * 100 });
+			};
+			samples.forEach(sample => {
+				// After a long gap with no change, like the corpse run, the old value held until now. A
+				// straight line to the new one would draw health coming back slowly.
+				if (last && sample.t - last.t > 2 * step) {
+					flush();
+					points.push({ x: sample.t, y: last.value * 100 });
+					lowest = null;
+					last = null;
+					bucketEnd = sample.t + step;
+				}
+				if (sample.t >= bucketEnd) {
+					flush();
+					bucketEnd = sample.t + step;
+					lowest = null;
+				}
+				if (!lowest || sample.value < lowest.value) lowest = sample;
+				last = sample;
+			});
+			flush();
+			if (points.length) points.push({ x: duration, y: points[points.length - 1].y });
+			return points;
+		};
+		const healthPoints = [{ x: 0, y: 100 }, ...thin(session.health, true)];
+		const manaPoints = session.mana.length ? [{ x: 0, y: 100 }, ...thin(session.mana, false)] : [];
+		const vitalsSeries = [{ name: 'Health', type: 'line', data: healthPoints }];
+		if (manaPoints.length) vitalsSeries.push({ name: 'Mana', type: 'line', data: manaPoints });
+		const colors = [levelingHealthColor, levelingManaColor].slice(0, vitalsSeries.length);
+		const vitalsOptions: any = {
+			theme: { mode: 'dark' },
+			chart: chart('levelingVitals', 240),
+			colors,
+			stroke: { width: 2, curve: 'straight', dashArray: 0 },
+			series: vitalsSeries,
+			noData: { text: '' },
+			xaxis,
+			yaxis: [
+				{
+					min: 0,
+					max: 100,
+					tickAmount: 4,
+					title: { text: 'Health and mana' },
+					labels: { minWidth: 40, formatter: (value: number) => `${value.toFixed(0)}%` },
+				},
+			],
+			grid: { borderColor: 'rgba(255, 255, 255, 0.06)' },
+			annotations,
+			legend: { show: false },
+			tooltip: {
+				enabled: true,
+				custom: ({ seriesIndex, dataPointIndex, w }: any) => {
+					const t = xOf(w, seriesIndex, dataPointIndex);
+					const rows = [tooltipRow('Health', `${(valueAt(session.health, t, 1) * 100).toFixed(0)}%`)];
+					if (session.mana.length) rows.push(tooltipRow('Mana', `${(valueAt(session.mana, t, 1) * 100).toFixed(0)}%`));
+					return tooltipAt(t, rows);
+				},
+			},
+		};
+		vitalsOptions.series.forEach((series: { name: string; hidden?: boolean }) => (series.hidden = this.hiddenChartSeries.has(series.name)));
+		if (!this.vitalsPlot) {
+			this.vitalsPlot = new ApexCharts(this.vitalsPlotElem.querySelector('.leveling-vitals-chart')!, vitalsOptions);
+			this.vitalsPlot.render();
+		} else {
+			this.vitalsPlot.updateOptions(vitalsOptions, false, false, false);
+		}
+		this.drawChartLegend(
+			vitalsSeries.map((series, i) => ({ name: series.name, color: colors[i] })),
+			this.vitalsPlot,
+			this.vitalsLegend,
+		);
 	}
 
 	// Our own legend above the chart, with a chip for each line like the filters. A chip shows or
 	// hides its line, and we remember that for the next iteration we draw.
-	private drawChartLegend(lines: Array<{ name: string; color: string }>) {
-		this.chartLegend.replaceChildren(
+	private drawChartLegend(lines: Array<{ name: string; color: string }>, plot: any, legend: HTMLElement) {
+		legend.replaceChildren(
 			...lines.map(({ name, color }) => {
 				const chip = (
 					<button className="filter-chip chart-legend-chip" type="button">
@@ -640,10 +1035,10 @@ export class Timeline extends ResultComponent {
 				};
 				chip.addEventListener('click', () => {
 					if (this.hiddenChartSeries.delete(name)) {
-						this.dpsResourcesPlot.showSeries(name);
+						plot.showSeries(name);
 					} else {
 						this.hiddenChartSeries.add(name);
-						this.dpsResourcesPlot.hideSeries(name);
+						plot.hideSeries(name);
 					}
 					update();
 				});
@@ -918,23 +1313,26 @@ export class Timeline extends ResultComponent {
 	}
 
 	private updateRotationChart(player: UnitMetrics, duration: number) {
-		const targets = this.resultData!.result.getTargets(this.resultData!.filter);
+		// A session fights a pool of mobs, Target 1 to N, and any of them can be the one we're on.
+		// So we take them all, and their casts and debuffs share a row by spell: one Flame Shock row
+		// whichever mob it's on.
+		const targets = this.session ? this.resultData!.result.getTargets() : this.resultData!.result.getTargets(this.resultData!.filter);
 		if (targets.length == 0) {
 			return;
 		}
 		const target = targets[0];
+		const targetAuraLogs = this.session ? targets.flatMap(t => t.auraUptimeLogs).sort((a, b) => a.gainedAt - b.gainedAt) : target.auraUptimeLogs;
 
 		this.clearRotationChart();
 		this.dpsResourcesPlotElem.classList.add('hide');
 		this.rotationPlotElem.classList.remove('hide');
-
 
 		orderedResourceTypes.forEach(resourceType => this.addResourceRow(resourceType, player.groupedResourceLogs[resourceType], duration));
 		this.addGcdRow(player, duration);
 
 		const buffsById = Object.values(bucket(player.auraUptimeLogs, log => log.actionId!.toString()));
 		buffsById.sort((a, b) => stringComparator(a[0].actionId!.name, b[0].actionId!.name));
-		const debuffsById = Object.values(bucket(target.auraUptimeLogs, log => log.actionId!.toString()));
+		const debuffsById = Object.values(bucket(targetAuraLogs, log => log.actionId!.toString()));
 		debuffsById.sort((a, b) => stringComparator(a[0].actionId!.name, b[0].actionId!.name));
 		const buffsAndDebuffsById = buffsById.concat(debuffsById);
 
@@ -974,7 +1372,7 @@ export class Timeline extends ResultComponent {
 			buffsToShow.forEach(auraUptimeLogs => this.addAuraRow(auraUptimeLogs, duration));
 		}
 
-		const targetCastsByAbility = this.getSortedCastsByAbility(target);
+		const targetCastsByAbility = this.session ? this.getSortedCastsByAbility(target, targets.flatMap(t => t.castLogs).sort((a, b) => a.timestamp - b.timestamp)) : this.getSortedCastsByAbility(target);
 		if (targetCastsByAbility.length > 0) {
 			this.addSeparatorRow();
 			targetCastsByAbility.forEach(castLogs => this.addCastRow(castLogs, buffsAndDebuffsById));
@@ -995,6 +1393,75 @@ export class Timeline extends ResultComponent {
 		this.drawRotationTimeRuler(header);
 		this.drawPull();
 		this.drawGrid(header);
+		if (this.session) this.drawSession(header, this.session);
+	}
+
+	// The session's states as bands behind the rows: hatched while we search, rest, wait or lie
+	// dead, a faint blue while a found mob waits for its pull, and nothing while we fight. Each
+	// kill gets a tick under the ruler and each death a red line through the rows, with a
+	// tooltip. They're all in --px-per-second, so they follow the zoom without drawing again.
+	private drawSession(header: HTMLElement, session: LevelingSession) {
+		const top = `${header.offsetTop + header.offsetHeight}px`;
+		const bands = session.spans
+			.filter(span => span.state != 'fighting' && span.end > span.start)
+			.map(span => {
+				const band = (
+					<div className={`rotation-session-band state-${span.state}`} style={{ left: this.timeToLeft(span.start), width: this.timeToPx(span.end - span.start), top }}>
+						{/* A name that doesn't fit would be cut off, so a narrow band goes without. */}
+						{(span.end - span.start) * this.pxPerSecond >= 72 && <span className="rotation-session-band-label">{SESSION_STATES[span.state].label}</span>}
+					</div>
+				) as HTMLElement;
+				band.style.setProperty('--band-color', SESSION_STATES[span.state].color);
+				return band;
+			});
+		this.rotationTimeline.prepend(<div className="rotation-session-bands">{bands}</div>);
+
+		const markers = (<div className="rotation-session-markers" style={{ top: `${header.offsetTop}px`, height: `${header.offsetHeight}px` }} />) as HTMLElement;
+		session.kills.forEach(({ t, mob }) => {
+			const tick = (<div className="rotation-kill-tick" style={{ left: this.timeToLeft(t) }} />) as HTMLElement;
+			markers.appendChild(tick);
+			this.lazyTooltip(tick, () => (
+				<div className="timeline-tooltip">
+					<div className="timeline-tooltip-title">
+						<span className="timeline-tooltip-name">{`${mobName(mob)} died`}</span>
+						<span className="timeline-tooltip-note">{formatClock(t, true)}</span>
+					</div>
+					<div className="timeline-tooltip-meta">{`Level ${mob.level}${mob.pull ? `, pull ${mob.pull.number}` : ''}`}</div>
+				</div>
+			));
+		});
+		session.deaths.forEach(death => {
+			const line = (<div className="rotation-death-line" style={{ left: this.timeToLeft(death.t), top }} />) as HTMLElement;
+			this.rotationTimeline.appendChild(line);
+			const skull = (
+				<div className="rotation-death-marker" style={{ left: this.timeToLeft(death.t) }}>
+					<i className="fas fa-skull" />
+				</div>
+			) as HTMLElement;
+			markers.appendChild(skull);
+			this.lazyTooltip(skull, () => (
+				<div className="timeline-tooltip">
+					<div className="timeline-tooltip-title">
+						<span className="timeline-tooltip-name">We died</span>
+						<span className="timeline-tooltip-note">{formatClock(death.t, true)}</span>
+					</div>
+					<div className="timeline-tooltip-meta">{`${death.pull ? `In pull ${death.pull.number}. ` : ''}Back at ${formatClock(death.backAt)} after the corpse run.`}</div>
+				</div>
+			));
+		});
+		this.rotationTimeline.appendChild(markers);
+	}
+
+	// A tooltip that we only make the first time the mouse comes over its element. A session has
+	// thousands of casts, and a tippy for each one up front made drawing the rotation slow.
+	private lazyTooltip(elem: HTMLElement, content: () => Element, props: Partial<Props> = {}) {
+		const onEnter = () => {
+			elem.removeEventListener('mouseenter', onEnter);
+			const tooltip = tippy(elem, { placement: 'bottom', ...props, content: content() });
+			tooltip.show();
+			this.addOnResetCallback(() => tooltip.destroy());
+		};
+		elem.addEventListener('mouseenter', onEnter);
 	}
 
 	// Shows the rows the filter lets through, and the separators between groups that still have
@@ -1065,7 +1532,9 @@ export class Timeline extends ResultComponent {
 		this.rotationTimeline.appendChild(row.row);
 	}
 
-	private getSortedCastsByAbility(player: UnitMetrics): Array<Array<CastLog>> {
+	// The casts of the unit by ability. castLogs takes the place of the unit's own, like the casts of
+	// every mob of a session.
+	private getSortedCastsByAbility(player: UnitMetrics, castLogs: Array<CastLog> = player.castLogs): Array<Array<CastLog>> {
 		const meleeActionIds = player.getMeleeActions().map(action => action.actionId);
 		const spellActionIds = player.getSpellActions().map(action => action.actionId);
 		const getActionCategory = (actionId: ActionId): number => {
@@ -1082,7 +1551,7 @@ export class Timeline extends ResultComponent {
 		};
 
 		const castsByAbility = Object.values(
-			bucket(player.castLogs, log => {
+			bucket(castLogs, log => {
 				if (idsToGroupForRotation.includes(log.actionId!.spellId)) {
 					return log.actionId!.toStringIgnoringTag();
 				} else {
@@ -1257,7 +1726,11 @@ export class Timeline extends ResultComponent {
 		let lastLabelX = -Infinity;
 		resourceLogs.forEach(resourceLogGroup => {
 			const x = this.timeToLeftValue(resourceLogGroup.timestamp);
-			if (x - lastLabelX >= 48) {
+			// In a session, a death and the revive after it always get their label (0%, then the
+			// health we came back with), so the empty lane through the corpse run reads as 0%.
+			const deathOrRevive =
+				!!this.session && resourceType == ResourceType.ResourceTypeHealth && (resourceLogGroup.valueAfter <= 0 || resourceLogGroup.valueBefore <= 0);
+			if (x - lastLabelX >= 48 || deathOrRevive) {
 				lastLabelX = x;
 				rowElem.appendChild(
 					<span className={`rotation-resource-label series-color ${cNames}`} style={{ left: this.timeToLeft(resourceLogGroup.timestamp) }}>
@@ -1312,18 +1785,34 @@ export class Timeline extends ResultComponent {
 		const row: RotationRow = { label: document.createElement('div'), row: rowElem, name: 'GCD', actionId: null, category: 'casts', events: [] };
 
 		// We count the idle time and the share under the GCD from the pull on, so the prepull
-		// doesn't count.
+		// doesn't count. In a leveling session we only count the time we fight. Searching,
+		// resting and the corpse run are no time to press anything.
+		const fighting = this.session
+			? this.session.spans.filter(span => span.state == 'fighting').map(span => [span.start, span.end] as [number, number])
+			: [[0, duration] as [number, number]];
+		const fightingTime = sum(fighting.map(([from, to]) => to - from));
+		// How much of from to to is fighting time.
+		const fightingOverlap = (from: number, to: number) => sum(fighting.map(([a, b]) => Math.max(0, Math.min(to, b) - Math.max(from, a))));
 		let busyUntil = 0;
 		let busyTime = 0;
 		const addIdle = (from: number, to: number) => {
+			if (this.session) {
+				// Only the parts that fall in a fight are idle.
+				fighting.forEach(([a, b]) => {
+					if (Math.min(to, b) > Math.max(from, a)) drawIdle(Math.max(from, a), Math.min(to, b));
+				});
+			} else {
+				drawIdle(from, to);
+			}
+		};
+		const drawIdle = (from: number, to: number) => {
 			// Gaps shorter than this are the sim's reaction time, not a missed GCD.
 			if (to - from < 0.05) return;
 			const idleElem = (<div className="rotation-gcd-idle" style={{ left: this.timeToLeft(from), width: this.timeToPx(to - from) }} />) as HTMLElement;
 			rowElem.appendChild(idleElem);
-			const tooltip = tippy(idleElem, {
-				...followAlong,
-				placement: 'bottom',
-				content: (
+			this.lazyTooltip(
+				idleElem,
+				() => (
 					<div className="timeline-tooltip">
 						<div className="timeline-tooltip-title">
 							<span className="timeline-tooltip-name">Idle</span>
@@ -1333,15 +1822,15 @@ export class Timeline extends ResultComponent {
 						</div>
 					</div>
 				),
-			});
-			this.addOnResetCallback(() => tooltip.destroy());
+				followAlong,
+			);
 		};
 
 		casts.forEach(castLog => {
 			const start = castLog.timestamp;
 			const end = start + castLog.effectiveTime;
 			if (start > busyUntil) addIdle(Math.max(0, busyUntil), start);
-			busyTime += Math.max(0, Math.min(end, duration) - Math.max(start, busyUntil, 0));
+			busyTime += fightingOverlap(Math.max(start, busyUntil, 0), Math.min(end, duration));
 			busyUntil = Math.max(busyUntil, end);
 
 			const actionId = castLog.actionId!;
@@ -1361,21 +1850,20 @@ export class Timeline extends ResultComponent {
 			const timing = [`${formatSeconds(start)} to ${formatSeconds(end)}`];
 			if (castLog.castTime > 0) timing.push(`${formatSeconds(castLog.castTime)} cast`);
 			timing.push(`${formatSeconds(castLog.effectiveTime)} GCD`);
-			const tooltip = tippy(gcdElem, {
-				...followAlong,
-				placement: 'bottom',
-				content: (
+			this.lazyTooltip(
+				gcdElem,
+				() => (
 					<div className="timeline-tooltip">
 						{tooltipTitle(actionId)}
 						<div className="timeline-tooltip-meta">{timing.join(' · ')}</div>
 					</div>
 				),
-			});
-			this.addOnResetCallback(() => tooltip.destroy());
+				followAlong,
+			);
 		});
 		if (busyUntil < duration) addIdle(Math.max(0, busyUntil), duration);
 
-		const usage = duration > 0 ? (busyTime / duration) * 100 : 0;
+		const usage = fightingTime > 0 ? (busyTime / fightingTime) * 100 : 0;
 		const labelElem = (
 			<div className="rotation-label rotation-row rotation-gcd-label">
 				<span className="rotation-label-icon rotation-gcd-label-icon">
@@ -1387,7 +1875,9 @@ export class Timeline extends ResultComponent {
 		) as HTMLElement;
 		const labelTooltip = tippy(labelElem, {
 			placement: 'right',
-			content: 'The share of the fight, from the pull on, that we spent under the global cooldown or casting. Striped gaps are time with the GCD ready and nothing pressed.',
+			content: this.session
+				? 'The share of the time fighting that we spent under the global cooldown or casting. Searching, resting and the corpse run don\'t count. Striped gaps are time in a fight with the GCD ready and nothing pressed.'
+				: 'The share of the fight, from the pull on, that we spent under the global cooldown or casting. Striped gaps are time with the GCD ready and nothing pressed.',
 		});
 		this.addOnResetCallback(() => labelTooltip.destroy());
 		row.label = labelElem;
@@ -1490,7 +1980,7 @@ export class Timeline extends ResultComponent {
 			if (castLog.effectiveTime > 0) timing.push(`${formatSeconds(castLog.effectiveTime)} GCD`);
 			if (travelTime > 0) timing.push(`${formatSeconds(travelTime)} travel`);
 
-			const tt = (
+			const tt = () => (
 				<div className="timeline-tooltip">
 					{tooltipTitle(castLog.actionId!)}
 					<div className="timeline-tooltip-meta">{timing.join(' · ')}</div>
@@ -1508,11 +1998,7 @@ export class Timeline extends ResultComponent {
 				</div>
 			);
 
-			tippy(castElem, {
-				...followAlong,
-				placement: 'bottom',
-				content: tt,
-			});
+			this.lazyTooltip(castElem as HTMLElement, tt, followAlong);
 
 			if (stackedIconCount > 1) {
 				castElem.appendChild(<div className="stacked-icon-count">{String(stackedDamageCount)}</div>);
@@ -1532,17 +2018,12 @@ export class Timeline extends ResultComponent {
 					rowElem.appendChild(tickElem);
 					row.events.push({ elem: tickElem, text: searchText([ddl]) });
 
-					const tt = (
+					this.lazyTooltip(tickElem as HTMLElement, () => (
 						<div className="timeline-tooltip">
 							{tooltipTitle(ddl.actionId!, 'Tick')}
 							<ul className="timeline-tooltip-hits">{tooltipHit(ddl)}</ul>
 						</div>
-					);
-
-					tippy(tickElem, {
-						placement: 'bottom',
-						content: tt,
-					});
+					));
 				});
 		});
 
@@ -1593,21 +2074,18 @@ export class Timeline extends ResultComponent {
 			}
 			row.events.push({ elem: auraElem, text: searchText([aul, ...aul.stacksChange]) });
 
-			const tt = (
-				<div className="timeline-tooltip">
-					{tooltipTitle(aul.actionId!)}
-					<div className="timeline-tooltip-meta">
-						{`${formatSeconds(aul.gainedAt)} to ${formatSeconds(aul.fadedAt)} · ${formatSeconds(aul.fadedAt - aul.gainedAt)}`}
+			this.lazyTooltip(
+				auraElem as HTMLElement,
+				() => (
+					<div className="timeline-tooltip">
+						{tooltipTitle(aul.actionId!)}
+						<div className="timeline-tooltip-meta">
+							{`${formatSeconds(aul.gainedAt)} to ${formatSeconds(aul.fadedAt)} · ${formatSeconds(aul.fadedAt - aul.gainedAt)}`}
+						</div>
 					</div>
-				</div>
+				),
+				followAlong,
 			);
-
-			const tooltip = tippy(auraElem, {
-				...followAlong,
-				placement: 'bottom',
-				content: tt,
-			});
-			this.addOnResetCallback(() => tooltip.destroy());
 
 			aul.stacksChange.forEach((scl, i) => {
 				if (scl.timestamp == aul.fadedAt) {
@@ -2095,3 +2573,4 @@ const formatRulerTime = (time: number): string => {
 	const seconds = Math.round(time - minutes * 60);
 	return `${minutes}:${String(seconds).padStart(2, '0')}`;
 };
+

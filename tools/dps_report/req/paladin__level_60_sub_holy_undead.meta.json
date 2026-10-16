@@ -76,7 +76,7 @@
   "caveats": [
     "Exorcism and Holy Wrath only land on Undead and Demons, so this build only applies to those bosses",
     "Two synthetic item level 71 trinkets (Forever's launch trinkets aren't simulated): 32 spell power and 18 crit rating, and 140 spell power for 20 s every 2 min, used in the opening seconds and again on cooldown",
-    "0.4% behind the default at 120 s and 0.7% at 300 s because it has no Precision",
+    "0.6% behind the default at 120 s and 0.9% at 300 s because it has no Precision",
     "Would gain 1.4 DPS twisting down to 0% mana, but shares the twist rotation's 20% floor",
     "Holy Strike's flat part inside the 50% weapon percent comes from client data, not yet confirmed on the beta",
     "High Holy Strike and Consecration ranks may be stale: holding them to their level 30 trend would cost about 1.2%",

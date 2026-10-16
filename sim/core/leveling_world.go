@@ -164,6 +164,7 @@ func (s *levelingSession) setVelocity(sim *Simulation, vel Vec2) {
 		s.player.interruptHardcast(sim)
 	}
 	s.vel = vel
+	s.logPosition(sim)
 	s.player.MovementHandler.Moving = !vel.IsZero()
 	s.chase(sim)
 	if s.found != nil && s.found == s.player.CurrentTarget {
@@ -199,6 +200,7 @@ func (s *levelingSession) move(sim *Simulation, goal levelingGoal, toward Vec2, 
 		s.move(sim, goalNone, Vec2{}, 0, nil)
 		// Exactly there, not a rounding error short of a spell's range.
 		s.pos = toward.toward(from, within)
+		s.logPosition(sim)
 		s.scheduleProximity(sim)
 	})
 }
@@ -222,6 +224,7 @@ func (s *levelingSession) chase(sim *Simulation) {
 			continue
 		}
 		m.dir = rel.Scale(-1 / rel.Len())
+		s.logMobPosition(sim, mob)
 		t, ok := whenWithin(rel, m.dir.Scale(mobRunSpeed(mob)).Sub(s.vel), levelingMeleeRange)
 		if ok && (s.vel.IsZero() || t <= levelingChaseTurn.Seconds()) {
 			s.after(sim, &m.arrival, DurationFromSeconds(t), func(sim *Simulation) { s.arrive(sim, mob) })
@@ -254,6 +257,28 @@ func (s *levelingSession) scheduleProximity(sim *Simulation) {
 			s.aggro(sim, mob)
 		}
 	})
+}
+
+// logPosition logs where we are and how we move, for the replay's map. We move in straight
+// lines between these.
+func (s *levelingSession) logPosition(sim *Simulation) {
+	if sim.Log != nil {
+		s.player.Log(sim, "Leveling: we're at (%.2f, %.2f), moving (%.2f, %.2f)", s.pos.X, s.pos.Y, s.vel.X, s.vel.Y)
+	}
+}
+
+// logMobPosition logs where a mob we found or pulled is and how it moves, for the replay's
+// map. A running mob turns toward us now and then, and each turn logs a new line.
+func (s *levelingSession) logMobPosition(sim *Simulation, mob *Unit) {
+	if sim.Log == nil {
+		return
+	}
+	m := &s.mobs[mob.Index]
+	vel := Vec2{}
+	if m.state == mobRunning {
+		vel = m.dir.Scale(mobRunSpeed(mob))
+	}
+	s.player.Log(sim, "Leveling: %s at (%.2f, %.2f), moving (%.2f, %.2f)", mob.Label, m.x.X, m.x.Y, vel.X, vel.Y)
 }
 
 // search: out of combat and ready, we run around looking for the next mob.
@@ -295,6 +320,7 @@ func (s *levelingSession) find(sim *Simulation) *Unit {
 	mob.auraTracker.respawn(sim)
 	s.mobs[mob.Index] = levelingMob{state: mobFound, x: s.playerPosition(sim).Add(direction.Scale(distance)), xAt: sim.CurrentTime}
 	s.found, s.foundAt = mob, sim.CurrentTime
+	s.logMobPosition(sim, mob)
 	if sim.Log != nil {
 		s.player.Log(sim, "Leveling: found %s (level %d) %.0f yards away, bearing %.0f°", mob.Label, mob.Level, distance, math.Mod(math.Atan2(direction.Y, direction.X)*180/math.Pi+360, 360))
 	}
@@ -428,6 +454,9 @@ func (s *levelingSession) arrive(sim *Simulation, mob *Unit) {
 		return
 	}
 	m.state = mobArrived
+	if sim.Log != nil {
+		s.player.Log(sim, "Leveling: %s reached us", mob.Label)
+	}
 	aa := &mob.AutoAttacks
 	swing := DurationFromSeconds(aa.MH().SwingSpeed / mob.SwingSpeed())
 	aa.mh.swingAt = sim.CurrentTime + time.Duration(sim.RandomFloat("Leveling First Swing")*float64(swing))

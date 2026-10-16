@@ -22,7 +22,7 @@ Ranks the BlizzCon data guessed wrong:
 
 - Enrage is a flat 30% chance for 2 / 4 / 6 / 8 / 10% Physical damage (the guess was 30% a point for a flat 2%).
 - Unbridled Wrath is 12% a point, 1 Rage whatever the weapon (two-handers no longer get 2).
-- Dual Wield Specialization is 5% off hand damage and 10% off hand Rage a point, no hit.
+- Dual Wield Specialization is 5% off hand damage and 10% off hand Rage a point, no hit. The off hand's own white-hit Rage is half the main hand's for the same speed (a beta combat log with advanced logging (Arlewow's gist https://gist.github.com/Arlewow/a622100ad149f4fc31ddf95f9b3aab2c, linked from magey/forever-warrior issue 3, 20 September, level 13 warrior with a 1.8 sec main hand and 1.6 sec off hand dagger) shows 6.2 to 6.3 Rage a main hand swing (3.46 × 1.8) and 2.7 to 2.8 an off hand swing (3.46 × 1.6 × 0.5), glancing blows included, on about 50 and 60 clean swings (assumptions audit, 2026-10-16)).
 - Bloodthrill is 4% a point (2% before 24 September), from main hand attacks only. The Overpower window it opens is spell 1282733, 5 sec (since client 70009; it was 1289681, 6 sec).
 - Slam is no longer pushed back by damage (development notes, 15 October, build 70425), and Weaponmaster's sword extra attack can't come from Shield Bash or Shield Slam (same notes).
 - Improved Rend is 12 / 23 / 35%, Improved Execute 3 / 5 Rage.
@@ -48,7 +48,7 @@ Spells at level 60:
 - Recklessness: 100% crit for 15 sec, 30 min. Death Wish: 20% Physical damage, 5% more damage taken, 3 min, 10 Rage.
 - Tactical Mastery is a trainer spell at 14 that keeps 10 Rage, and Improved Tactical Mastery adds 3 a point. Berserker Rage is trained at 30 and makes no Rage of its own without the talent.
 - Thunder Clap rank 6: 103 damage, 20% slow, 6 sec cooldown, Battle or Defensive Stance. Last Stand: 3 min.
-- A critical white hit gives 100% more Rage (75% in the 1 October build, 100% from Kaivax's 2 October "Warrior Updates in Today's Beta Build" post, https://us.forums.blizzard.com/en/wow/t/2369360). Rage from white hits is normalized to weapon speed (standards 21); all the Rage rules are assumptions until the beta test in orchestration/followups.md ("Rage needs a beta test"). A queued Heroic Strike no longer raises the off hand's hit chance.
+- A critical white hit gives 100% more Rage. Blizzard's 1 October beta development notes (https://us.forums.blizzard.com/en/wow/t/2360696 post 4) say "Additional Rage generated from landing Critical Strikes increased to 100% increased Rage (was 75%)", as does Kaivax's 2 October post (t/2369360); Bear Form got the same 100% on 8 October. Settled from the notes (assumptions audit, 2026-10-16), no longer a report assumption. Rage from white hits is normalized to weapon speed (standards 21); the other Rage rules are assumptions until the beta test in orchestration/followups.md ("Rage needs a beta test"). A queued Heroic Strike no longer raises the off hand's hit chance.
 - Battlegear of Glory (set 2102, Helm, Shoulders, Breastplate, Gauntlets, Legplates and Greaves of Glory, item level 65) is the Arms and Fury tier set (its icon is a Hyjal helm, and which raid drops it in Forever is not confirmed): 2 pieces 1% attack and cast speed, 3 Intimidating Shout 30 sec sooner, 4 +36 attack power against Humanoids, 5 Recklessness 30 sec sooner. Battleplate of Glory (set 2103) is the Protection one.
 
 Checked against client 70338, wowhead's Forever tooltips (dataEnv 17) and Blizzard's posts on 13 October:

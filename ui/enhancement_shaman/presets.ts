@@ -705,9 +705,11 @@ export const DefaultConsumes = Consumes.create({
 
 // The raid the level 60 numbers were measured under (the rogue search's export minus
 // the totems): both paladin blessings, Judgement of Wisdom and every debuff, but no
-// second shaman in the group, so the player's own Strength of Earth and Grace of Air
-// are what the rotation casts and there is no Mana Spring. Judgement of Wisdom alone is
-// 60 DPS here because without it the shaman is out of mana two minutes in.
+// second shaman in the group, so the player's own totems are what the rotation casts.
+// Judgement of Wisdom alone is 60 DPS here because without it the shaman is out of mana
+// two minutes in. Grace of Air comes from the raid's second shaman, the one whose Grace of
+// Air every melee group gets (the user's ruling 2026-10-16, "both totems": client
+// 1.60.1.70425 lets it stack with Windfury Totem and makes both raid-wide).
 export const DefaultRaidBuffs = RaidBuffs.create({
 	arcaneBrilliance: true,
 	battleShout: TristateEffect.TristateEffectImproved,
@@ -717,6 +719,7 @@ export const DefaultRaidBuffs = RaidBuffs.create({
 	fireResistanceAura: true,
 	frostResistanceAura: true,
 	giftOfTheWild: TristateEffect.TristateEffectImproved,
+	graceOfAirTotem: TristateEffect.TristateEffectRegular,
 	leaderOfThePack: true,
 	moonkinAura: true,
 	powerWordFortitude: TristateEffect.TristateEffectImproved,

@@ -82,5 +82,5 @@
     "Tier 1 4/5-piece bonuses not live",
     "Raid damage hits on the shaman (2 a minute, which fires Lightning Shield) are an estimate from boss timers, not measured in logs; the assumptions panel runs 0 and 10"
   ],
-  "notes": "mksettings -spec enh -apl optimized (standards 23: every shaman drops its own party totems; the raid has none, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself)."
+  "notes": "mksettings -spec enh -apl optimized (standards 23: every shaman drops its own party totems; the raid's only totem is a second shaman's Grace of Air, standards 25, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself)."
 }
