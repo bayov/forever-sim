@@ -29,10 +29,12 @@ func normalMobRequest(mobs []*proto.Target, inFront bool, iterations int32) *pro
 }
 
 // TestNormalMobStats checks the average normal mob table against a few mobs it's made from.
-// A level 30 mob's health sits between Young Stranglethorn Tiger's (1050 at 30, health
-// multiplier 1.1) and the plain level 30 warrior class mob's 955 in the 1.12 database, and
-// it hits for about what the 30 to 31 mobs there do (Young Stranglethorn Tiger: 29 to 36
-// plus 15 attack power on a 1.3 sec swing).
+//
+// Health is Forever's, from our beta logs: 156 at level 8 (as in 1.12), 521 at 18 and 1164 at
+// 28 (Needles Cougar, 896 in 1.12), and the level 30 mobs of the Shimmering Flats had 1366. At
+// 60 it's the 1.12 warrior class mob's 4120 and 30% more, which we haven't seen in a log yet.
+// A level 30 mob hits for about what the 30 to 31 mobs in the 1.12 database do (Young
+// Stranglethorn Tiger: 29 to 36 plus 15 attack power on a 1.3 sec swing).
 func TestNormalMobStats(t *testing.T) {
 	for _, c := range []struct {
 		level                int32
@@ -40,8 +42,11 @@ func TestNormalMobStats(t *testing.T) {
 		minDamage, maxDamage [2]float64
 	}{
 		{1, [2]float64{40, 45}, [2]float64{10, 20}, [2]float64{0.5, 1.5}, [2]float64{1, 2}},
-		{30, [2]float64{955, 1100}, [2]float64{1150, 1350}, [2]float64{40, 55}, [2]float64{50, 65}},
-		{60, [2]float64{3600, 4300}, [2]float64{3400, 3900}, [2]float64{105, 135}, [2]float64{130, 165}},
+		{8, [2]float64{155, 157}, [2]float64{300, 400}, [2]float64{8, 13}, [2]float64{12, 17}},
+		{18, [2]float64{520, 522}, [2]float64{700, 850}, [2]float64{25, 32}, [2]float64{30, 38}},
+		{28, [2]float64{1163, 1166}, [2]float64{1050, 1250}, [2]float64{38, 50}, [2]float64{48, 60}},
+		{30, [2]float64{1360, 1370}, [2]float64{1150, 1350}, [2]float64{40, 55}, [2]float64{50, 65}},
+		{60, [2]float64{5300, 5400}, [2]float64{3400, 3900}, [2]float64{105, 135}, [2]float64{130, 165}},
 	} {
 		mob := core.NormalMobStatsAt(c.level)
 		for _, check := range []struct {
@@ -184,9 +189,9 @@ func TestSoloNormalMob(t *testing.T) {
 		}
 	}
 
-	// About 8 white swings of 120 on a 3.6 sec axe.
-	if d := behind.AvgIterationDuration; d < 25 || d > 40 {
-		t.Errorf("killing a level 30 mob took %.1f sec, want 25 to 40", d)
+	// About 11 white swings of 120 on a 3.6 sec axe.
+	if d := behind.AvgIterationDuration; d < 34 || d > 52 {
+		t.Errorf("killing a level 30 mob took %.1f sec, want 34 to 52", d)
 	}
 
 	// Our armor and dodge, from a single sim of the same character.
@@ -202,10 +207,10 @@ func TestSoloNormalMob(t *testing.T) {
 	if got := player.Dtps.Avg; math.Abs(got-wantDTPS) > 0.03*wantDTPS {
 		t.Errorf("from behind we took %.2f damage a second, want %.2f", got, wantDTPS)
 	}
-	// Naked, with 815 health and only white swings, we take about 790 in the 32 sec it
-	// takes, so we die some of the time but not most of it.
-	if cod := player.ChanceOfDeath; cod < 0.1 || cod > 0.6 {
-		t.Errorf("a naked level 30 died to one level 30 mob %.1f%% of the time, want 10 to 60%%", 100*cod)
+	// Naked, with 815 health and only white swings, we take about 1000 in the 42 sec it
+	// takes, so we die most of the time but not always.
+	if cod := player.ChanceOfDeath; cod < 0.75 || cod > 0.99 {
+		t.Errorf("a naked level 30 died to one level 30 mob %.1f%% of the time, want 75 to 99%%", 100*cod)
 	}
 	if got, back := front.RaidMetrics.Parties[0].Players[0].Dtps.Avg, player.Dtps.Avg; got <= back {
 		t.Errorf("from the front we took %.2f damage a second, from behind %.2f: parry haste should add some", got, back)
