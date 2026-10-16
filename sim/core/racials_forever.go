@@ -104,14 +104,15 @@ func (character *Character) critDamageBonus(multiplier float64) {
 }
 
 // Damage against one creature type, like Troll Beast Slaying. Applied to the attack
-// tables after finalize because the targets are not known before then.
+// tables after finalize because the targets are not known before then. The client gives Beast
+// Slaying, Big Game Hunter and Elemental Insight aura 168 at 5% (damage done against the creature
+// type), a plain damage aura: a crit doubles the bigger hit and gets no 5% of its own.
 func (character *Character) mobTypeDamageAura(mobType proto.MobType, multiplier float64) {
 	character.Env.RegisterPostFinalizeEffect(func() {
 		for _, t := range character.Env.Encounter.Targets {
 			if t.MobType == mobType {
 				for _, at := range character.AttackTables[t.UnitIndex] {
 					at.DamageDealtMultiplier *= multiplier
-					at.CritMultiplier *= multiplier
 				}
 			}
 		}
