@@ -4,9 +4,9 @@
   "spec": "Destruction",
   "build": "Destruction (Curse duty)",
   "isDefault": false,
-  "pr": 30,
-  "race": "Gnome",
-  "talents": "25510000035--055030500310035",
+  "pr": 59,
+  "race": "Human",
+  "talents": "255000000351--055030500310035",
   "treeNames": [
     "Affliction",
     "Demonology",
@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_destruction_duty_curse",
   "published": {
-    "dps": 977.0,
-    "source": "PR #30"
+    "dps": 968.5,
+    "source": "PR #59"
   },
   "verify": {
-    "dps": 977.05,
+    "dps": 968.51,
     "stderr": 0.36,
     "iters": 20000,
     "ok": true,
-    "note": "+0.05 vs published"
+    "note": "+0.01 vs published"
   },
-  "summary": "Destruction on curse duty for the raid, casting Curse of the Elements (one curse duty per warlock; other warlocks cover the other curses): the warlock keeps its own Curse of the Elements (rank 4, 10% magic damage taken) up all fight, cast right after the opener and recast before it drops, and the raid's is off. Under Forever the curse has its own slot, so the bane stays. Costs 13.0 DPS at 180 s against the base build.",
+  "summary": "Destruction on curse duty for the raid, casting Curse of the Elements (one curse duty per warlock; other warlocks cover the other curses): the warlock keeps its own Curse of the Elements (rank 4, 10% magic damage taken) up all fight, cast right after the opener and recast before it drops, and the raid's is off. Under Forever the curse has its own slot, so the bane stays. Costs 12.2 DPS at 180 s against the base build.",
   "keyTalents": [
     "Conflagrate",
     "Shadow and Flame",

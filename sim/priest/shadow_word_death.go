@@ -10,7 +10,8 @@ const ShadowWordDeathRanks = 4
 
 // Shadow Word: Death is new in Forever, trained from level 32 (foreverchanges.pro
 // spellbook). Damage at each rank's cap, growth per level and coefficient from the
-// client (1.60.1.70338, wago.tools). Instant, 15 sec cooldown. When the target lives,
+// client (1.60.1.70338, wago.tools). Instant, 18 sec cooldown (client 1.60.1.70425; 15
+// sec in 70338). When the target lives,
 // the priest takes 10% of their maximum health, which the sim leaves out.
 var ShadowWordDeathSpellId = [ShadowWordDeathRanks + 1]int32{0, 1309595, 1309633, 1309635, 1309636}
 var ShadowWordDeathBaseDamage = [ShadowWordDeathRanks + 1][]float64{{0}, {293.35, 311.65}, {368.02, 390.98}, {401.48, 426.52}, {444.15, 471.85}}
@@ -56,7 +57,7 @@ func (priest *Priest) getShadowWordDeathConfig(rank int, cdTimer *core.Timer) co
 			},
 			CD: core.Cooldown{
 				Timer:    cdTimer,
-				Duration: time.Second * 15,
+				Duration: time.Second * 18,
 			},
 		},
 

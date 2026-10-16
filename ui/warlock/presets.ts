@@ -197,26 +197,31 @@ export const TalentsLevel60Demonology = PresetUtils.makePresetTalents(
 );
 // The best build with 30 points in Destruction: Conflagrate, Fire and Brimstone and Shadow and
 // Flame, with Pandemic and Malevolence from Affliction. Incinerate and Bane of Havoc lost to two
-// points of Malevolence and Shadowburn to more Pandemic.
+// points of Malevolence and Shadowburn to more Pandemic. Under client 1.60.1.70425 Malediction's
+// point went to Nightfall (searched again 2026-10-16).
 export const TalentsLevel60Destruction = PresetUtils.makePresetTalents(
 	'Level 60 Destruction',
-	SavedTalents.create({ talentsString: '25510000035--055030500310035' }),
+	SavedTalents.create({ talentsString: '255000000351--055030500310035' }),
 	{ group: 'Level 60', tooltip: 'Conflagrate and Shadow and Flame, with Pandemic and Malevolence.' },
 );
 // The best build with 30 points in Affliction: Shadow Mastery, Pandemic, Malevolence and
-// Nightfall, with Improved Shadow Bolt, Ruin and Agonizing Flames. Wrack and Soul Siphon lost
+// Nightfall, with Improved Shadow Bolt, Ruin and Agonizing Flames. Under client 1.60.1.70425
+// Shadow Mastery is 10% and Malediction is gone: its 3 points went to Improved Bane of Agony and one
+// Soul Harvest point that only fills the 25 point gate (searched again 2026-10-16). Wrack and Soul Siphon lost
 // their points to Ruin, the drains being no match for Shadow Bolt. A damage over time variant with
 // Siphon Life, Soul Siphon and Wrack (25530000035001351--0550005003, the best build with both, on
 // the same Shadow Bolt rotation) is 55 behind, and casting its Wrack costs 34; its drain filler
 // versions lose 124 to 349. It played the same as this build, so it is not shipped as a spec.
 export const TalentsLevel60Affliction = PresetUtils.makePresetTalents(
 	'Level 60 Affliction',
-	SavedTalents.create({ talentsString: '2553000003520005--0550305003' }),
+	SavedTalents.create({ talentsString: '2550102003520005--0550305003' }),
 	{ group: 'Level 60', tooltip: 'Shadow Mastery, Pandemic and Nightfall, with Improved Shadow Bolt and Ruin.' },
 );
 
 // Destruction fire, its own spec: Incinerate, Conflagrate, Fire and Brimstone, Shadow and Flame and
-// Aftermath, with Malediction and Pandemic and the Succubus out, and Firestone. Searched with
+// Aftermath, with Pandemic and the Succubus out, and Firestone. Under client 1.60.1.70425 the five
+// Malediction points went to Improved Bane of Agony (2), Malevolence (2) and one
+// Soul Harvest point that fills the Pandemic gate (searched again 2026-10-16). Searched with
 // Incinerate and Conflagrate kept (-require). Since the demons scale from the warlock's stats the
 // Succubus out beats the earlier build that sacrificed it for 15% Fire damage (950.8) by 25; the
 // Felhunter out is 25 behind, the Imp 35, and Spellstone in place of Firestone 24. Without the owner
@@ -224,8 +229,8 @@ export const TalentsLevel60Affliction = PresetUtils.makePresetTalents(
 // point does nothing in the sim (it is the one point left over).
 export const TalentsLevel60DestructionFire = PresetUtils.makePresetTalents(
 	'Level 60 Destruction Fire',
-	SavedTalents.create({ talentsString: '2525000003-0002-0050355003101351' }),
-	{ group: 'Level 60', tooltip: 'Incinerate, Conflagrate and Shadow and Flame, with Malediction and Pandemic and the Succubus out.' },
+	SavedTalents.create({ talentsString: '25201020032-0002-0050355003101351' }),
+	{ group: 'Level 60', tooltip: 'Incinerate, Conflagrate and Shadow and Flame, with Pandemic and the Succubus out.' },
 );
 
 export const TalentPresets = [TalentsLevel60Demonology, TalentsLevel60Destruction, TalentsLevel60Affliction, TalentsLevel60DestructionFire];
@@ -401,22 +406,22 @@ export const EncounterLevel60 = level60Encounter('Level 60', DefaultDebuffs);
 // brings it; the raid's other curses and Faerie Fire stay on (other players' duties).
 export const EncounterLevel60CurseDuty = level60Encounter('Level 60 (Curse duty)', Debuffs.create({ ...DefaultDebuffs, curseOfElements: false }));
 
-// The Level 60 builds at 120 / 180 / 300 sec (20000 iterations, 2026-10-13, the Forever budget sets
-// with the synthetic trinkets): Demonology (Gnome) 1130.2 / 1115.5 / 1084.3, Destruction (Gnome) 999.9
-// / 990.0 / 969.1, Affliction (Gnome) 990.5 / 982.3 / 961.3, Destruction fire (Undead) 979.5 / 973.6
-// / 956.7. Forever teaches no Ahn'Qiraj book ranks, so Shadow Bolt is rank IX, Immolate VII and
+// The Level 60 builds at 120 / 180 / 300 sec (20000 iterations, 2026-10-16, client 1.60.1.70425 with
+// the raid's 2 hits a minute): Demonology (Gnome) 1114.8 / 1099.2 / 1068.0, Destruction (Human) 987.3
+// / 980.7 / 963.0, Affliction (Human) 1006.5 / 998.0 / 977.6, Destruction fire (Gnome) 960.2 / 953.3
+// / 935.3. Forever teaches no Ahn'Qiraj book ranks, so Shadow Bolt is rank IX, Immolate VII and
 // Corruption VI. The demons take no player buffs and scale from the warlock's stats with Season of
 // Discovery's numbers as a placeholder (notes.md). The demon is the least sourced input: on the first
 // set at 180 sec, without the owner scaling Demonology was 1037.8 and the other builds 937 to 946, with
 // the Succubus's melee halved 1044.5 and 937 to 947.
 //
-// Races at 180 sec: the Gnome is first on Demonology (4.9 ahead of the Undead), Destruction (1.5 ahead
-// of the Orc) and Affliction (3.8 ahead of the Orc), and level with the Undead on Destruction fire
-// (Undead 973.6, Gnome 973.1; the Undead is 1.8 ahead at 300 sec, so that build is Undead). The Gnome is the best
-// Alliance race on every build. For the Horde the Undead and the Orc are within 0.6 of each other on
-// the Shadow Bolt builds and the Undead is 2.5 ahead on Destruction fire, so the Undead is the best
-// Horde race. With the staff no warlock race has a weapon racial; on the old Azuresong sword the Human's
-// Sword Specialization had put it first. The full table is in forever-wiki/sim-status.md.
+// Races at 180 sec, client 70425 (Human Ruthless is 2% crit with every spell, Orc Savage 1%, both
+// seeds): the Human is first on Destruction (1.2 / 2.5 ahead of the Gnome) and Affliction (1.0 / 2.4,
+// and 3.6 at 300 sec). Demonology is level between the Gnome and the Human (1099.2 / 1099.7 against
+// 1099.1 / 1100.0; the Gnome 2.2 ahead at 120 sec, the Human 2.9 at 300) and stays Gnome. On
+// Destruction fire the Gnome, the Human and the Orc are within 0.9 and the Gnome is first at 180 sec;
+// the Undead, its race before Touch of the Grave's 70425 lockout, is 5.1 behind. The best Horde race is
+// the Orc on every build. The full table is in forever-wiki/sim-status.md.
 export const PresetBuildLevel60Demonology = PresetUtils.makePresetBuild('Level 60 Demonology', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Gnome Demonology warlock on the synthetic Phase 1 gear, the Imp sacrificed and the Succubus out, in a 3 minute raid fight.',
@@ -432,12 +437,12 @@ export const PresetBuildLevel60Demonology = PresetUtils.makePresetBuild('Level 6
 });
 export const PresetBuildLevel60Destruction = PresetUtils.makePresetBuild('Level 60 Destruction', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Gnome Destruction warlock on the synthetic Phase 1 gear with the Succubus out, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Human Destruction warlock on the synthetic Phase 1 gear with the Succubus out, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60Destruction,
 	rotation: RotationLevel60Destruction,
 	encounter: EncounterLevel60,
-	race: Race.RaceGnome,
+	race: Race.RaceHuman,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -445,12 +450,12 @@ export const PresetBuildLevel60Destruction = PresetUtils.makePresetBuild('Level 
 });
 export const PresetBuildLevel60Affliction = PresetUtils.makePresetBuild('Level 60 Affliction', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Gnome Affliction warlock on the synthetic Phase 1 gear with the Succubus out, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Human Affliction warlock on the synthetic Phase 1 gear with the Succubus out, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60Affliction,
 	rotation: RotationLevel60Affliction,
 	encounter: EncounterLevel60,
-	race: Race.RaceGnome,
+	race: Race.RaceHuman,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -459,12 +464,12 @@ export const PresetBuildLevel60Affliction = PresetUtils.makePresetBuild('Level 6
 
 export const PresetBuildLevel60DestructionFire = PresetUtils.makePresetBuild('Level 60 Destruction Fire', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Undead Destruction fire warlock on the synthetic Phase 1 gear with the Succubus out, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Gnome Destruction fire warlock on the synthetic Phase 1 gear with the Succubus out, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60DestructionFire,
 	rotation: RotationLevel60DestructionFire,
 	encounter: EncounterLevel60,
-	race: Race.RaceUndead,
+	race: Race.RaceGnome,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],

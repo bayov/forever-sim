@@ -10,14 +10,15 @@ import (
 )
 
 // The Forever warlock talents, from the beta client tree (tools/forever_talents/client,
-// build 1.60.1.69876, checked against 1.60.1.70338). Per rank values are the client tooltips.
+// build 1.60.1.69876, checked against 1.60.1.70338 and brought up to 1.60.1.70425: Grim Reach
+// in Malediction's place, Shadow Mastery 2% a point). Per rank values are the client tooltips.
 // Which spells a talent touches is the client's class mask on the talent's effect
 // (wago.tools SpellEffect, 70338), and a percent on a spell's damage is a direct damage
 // modifier (impact) or a periodic one depending on the effect, which add up with each other
 // like 1.12's spell modifiers.
 
 var (
-	// Malediction, Pandemic and the periodic half of Shadow Mastery.
+	// Pandemic and the periodic half of Shadow Mastery.
 	afflictionPeriodicSpells = []int32{SpellCode_WarlockBaneOfAgony, SpellCode_WarlockBaneOfDoom, SpellCode_WarlockCorruption,
 		SpellCode_WarlockDrainLife, SpellCode_WarlockDrainSoul, SpellCode_WarlockSiphonLife, SpellCode_WarlockWrack}
 	// Malevolence.
@@ -30,6 +31,14 @@ var (
 		SpellCode_WarlockSearingPain, SpellCode_WarlockShadowBolt, SpellCode_WarlockShadowburn, SpellCode_WarlockSoulFire}
 	// Improved Drains and Soul Siphon.
 	drainSpells = []int32{SpellCode_WarlockDrainLife, SpellCode_WarlockDrainSoul, SpellCode_WarlockWrack}
+	// Fel Concentration's pushback protection: the drains and Wrack by the client's mask.
+	felConcentrationSpells = drainSpells
+	// Intensity's pushback protection by the client's mask (0x3E5): Shadow Bolt, Immolate, Searing
+	// Pain, Soul Fire, Shadowburn, Conflagrate, Hellfire and Rain of Fire, not Incinerate.
+	intensitySpells = []int32{SpellCode_WarlockShadowBolt, SpellCode_WarlockImmolate, SpellCode_WarlockSearingPain,
+		SpellCode_WarlockSoulFire, SpellCode_WarlockShadowburn, SpellCode_WarlockConflagrate}
+	// Fel Concentration and Intensity: 23 / 47 / 70% to ignore a hit's pushback (client curves).
+	pushbackProtection = []float64{0, 0.23, 0.47, 0.70}
 )
 
 func (warlock *Warlock) onSpellCodes(codes []int32, apply func(spell *core.Spell)) {
@@ -46,9 +55,9 @@ func (warlock *Warlock) ApplyTalents() {
 	// Affliction
 	warlock.applySuppression()
 	warlock.applyImprovedCorruption()
-	warlock.applyMalediction()
 	warlock.applyImprovedDrains()
 	warlock.applyImprovedBaneOfAgony()
+	warlock.applyFelConcentration()
 	warlock.applyPandemic()
 	warlock.applyMalevolence()
 	warlock.applyNightfall()
@@ -74,6 +83,7 @@ func (warlock *Warlock) ApplyTalents() {
 	warlock.applyCataclysm()
 	warlock.applyAftermath()
 	warlock.applyRuin()
+	warlock.applyIntensity()
 	warlock.applyAgonizingFlames()
 	warlock.applyFireAndBrimstone()
 	warlock.applyShadowAndFlame()
@@ -140,18 +150,6 @@ func (warlock *Warlock) applyImprovedCorruption() {
 
 	bonus := 0.02 * float64(warlock.Talents.ImprovedCorruption)
 	warlock.onSpellCodes([]int32{SpellCode_WarlockCorruption}, func(spell *core.Spell) {
-		spell.PeriodicDamageMultiplierAdditive += bonus
-	})
-}
-
-// Malediction: 1% periodic damage a point on every warlock damage over time spell.
-func (warlock *Warlock) applyMalediction() {
-	if warlock.Talents.Malediction == 0 {
-		return
-	}
-
-	bonus := 0.01 * float64(warlock.Talents.Malediction)
-	warlock.onSpellCodes(append(slices.Clone(afflictionPeriodicSpells), SpellCode_WarlockImmolate), func(spell *core.Spell) {
 		spell.PeriodicDamageMultiplierAdditive += bonus
 	})
 }
@@ -248,14 +246,14 @@ func (warlock *Warlock) applyNightfall() {
 	}))
 }
 
-// Shadow Mastery: 1% a point, as a direct damage modifier on Shadow Bolt, Shadowburn and
+// Shadow Mastery: 2% a point (1% before client 1.60.1.70425), as a direct damage modifier on Shadow Bolt, Shadowburn and
 // Death Coil and a periodic one on the Affliction damage over time spells.
 func (warlock *Warlock) applyShadowMastery() {
 	if warlock.Talents.ShadowMastery == 0 {
 		return
 	}
 
-	bonus := 0.01 * float64(warlock.Talents.ShadowMastery)
+	bonus := 0.02 * float64(warlock.Talents.ShadowMastery)
 	warlock.onSpellCodes(shadowMasteryDirectSpells, func(spell *core.Spell) {
 		spell.ImpactDamageMultiplierAdditive += bonus
 	})
@@ -980,4 +978,30 @@ func (warlock *Warlock) applyTargetDamageModifiers() {
 			}
 		}
 	}
+}
+
+// Fel Concentration: a 23 / 47 / 70% chance that a hit taken doesn't push back Drain Life, Drain
+// Soul or Wrack (SPELLMOD_NOT_LOSE_CASTING_TIME, client 1.60.1.70425).
+func (warlock *Warlock) applyFelConcentration() {
+	if warlock.Talents.FelConcentration == 0 {
+		return
+	}
+
+	chance := pushbackProtection[warlock.Talents.FelConcentration]
+	warlock.onSpellCodes(felConcentrationSpells, func(spell *core.Spell) {
+		spell.PushbackReduction += chance
+	})
+}
+
+// Intensity: a 23 / 47 / 70% chance that a hit taken doesn't push back the Destruction spells in
+// its mask. Incinerate is outside it (client 1.60.1.70425).
+func (warlock *Warlock) applyIntensity() {
+	if warlock.Talents.Intensity == 0 {
+		return
+	}
+
+	chance := pushbackProtection[warlock.Talents.Intensity]
+	warlock.onSpellCodes(intensitySpells, func(spell *core.Spell) {
+		spell.PushbackReduction += chance
+	})
 }

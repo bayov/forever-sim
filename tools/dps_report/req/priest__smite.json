@@ -86,7 +86,7 @@
               "blessingOfKings": true,
               "blessingOfWisdom": "TristateEffectImproved"
             },
-            "talentsString": "525030231305001001-00505113002-3",
+            "talentsString": "525035231030001001-30505110002-3",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Tailoring",
@@ -160,33 +160,6 @@
                   "notes": "Racials and trinkets on cooldown.",
                   "action": {
                     "autocastOtherCooldowns": {}
-                  }
-                },
-                {
-                  "notes": "Inner Focus right before Holy Fire. Without the talent ignore the warning on this line.",
-                  "action": {
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "not": {
-                              "val": {
-                                "dotIsActive": {
-                                  "spellId": {
-                                    "spellId": 15261
-                                  }
-                                }
-                              }
-                            }
-                          }
-                        ]
-                      }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 14751
-                      }
-                    }
                   }
                 },
                 {
@@ -294,7 +267,7 @@
                               },
                               "rhs": {
                                 "const": {
-                                  "val": "0.4"
+                                  "val": "0.6"
                                 }
                               }
                             }
@@ -340,6 +313,16 @@
                     "castSpell": {
                       "spellId": {
                         "spellId": 1309636
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Inner Focus on cooldown, for the next Smite. Without the talent ignore the warning on this line.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 14751
                       }
                     }
                   }

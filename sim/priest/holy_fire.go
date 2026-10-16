@@ -14,9 +14,10 @@ var HolyFireSpellId = [HolyFireRanks + 1]int32{0, 14914, 15262, 15263, 15264, 15
 // Damage at each rank's cap, growth per level and the tick damage from the Forever
 // client (1.60.1.70338, wago.tools). Forever halved it (rank 8: 184 to 232 plus 75 over
 // 10 sec, Classic 355 to 449 plus 145) and gave every rank 75% direct and 5% a tick.
+// 70425 cut rank 5's tick from 13 to 9, in line with the ranks around it.
 var HolyFireBaseDamage = [HolyFireRanks + 1][]float64{{0}, {56.02, 70.38}, {63.47, 79.33}, {78.85, 99.15}, {89.12, 112.88}, {101.56, 128.44}, {131.59, 166.81}, {162.49, 206.31}, {183.68, 232.32}}
 var HolyFireScaling = [HolyFireRanks + 1]core.RankScaling{{}, {24, 1.3}, {30, 1.4}, {36, 1.5}, {42, 1.5}, {48, 1.5}, {54, 1.7}, {60, 1.9}, {60, 2}}
-var HolyFireTickDamage = [HolyFireRanks + 1]float64{0, 4, 5, 6, 7, 13, 10, 13, 15}
+var HolyFireTickDamage = [HolyFireRanks + 1]float64{0, 4, 5, 6, 7, 9, 10, 13, 15}
 var HolyFireManaCost = [HolyFireRanks + 1]float64{0, 85, 95, 125, 145, 170, 200, 230, 255}
 var HolyFireLevel = [HolyFireRanks + 1]int{0, 20, 24, 30, 36, 42, 48, 54, 60}
 
