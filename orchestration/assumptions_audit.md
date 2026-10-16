@@ -223,7 +223,7 @@ Items not listed are still open with no new evidence. Verdict, then the evidence
 - **Q1, level partial resist:** "Can you research more into this? I believe some kind of partial resists exists, lowering damage of spells. This is something we need To Verify." The sim keeps Classic's 6% default. `level_partial_resist` stays pending; see section 7 for the research.
 - **Q2, Windfury Totem off hand:** "Main hand only, and keep as assumption with only 1 value." Settled by ruling, done in PR #86 (the orchestrator's): main-hand procs only under Forever, `wf_totem_offhand` is a one-value row, and the rogue totem test is flipped.
 - **Q3, hunter pet hit size:** "Keep treating it as a bug." `hunter_pet_speed` is unchanged: Classic's attack-speed scaling stays the default, and the beta's same-size hit stays the High setting.
-- **Q4, demon crit:** "Yes, as Blizzard intends", locked to one value. The warlock worker implements it and makes `lock_pet_crit` a single setting. Settled by ruling once that lands.
+- **Q4, demon crit:** "Yes, as Blizzard intends", locked to one value. Settled by ruling, merged in PR #85 (the warlock worker's): demons inherit the warlock's spell crit, and `lock_pet_crit` is a one-value row.
 - **Q5, Grace of Air with Windfury Totem:** "both totems". The update auditor has it.
 - **Q6, off-hand Rage:** "Use 0.5, and remove other assumption values (keep assumption but locked to one value, 0.5)". Settled by ruling, merged in PR #75: `warr_rage_oh` is a one-value row at 0.5.
 
