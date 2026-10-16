@@ -288,25 +288,17 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 		ThornsAura(character, GetTristateValueInt32(raidBuffs.Thorns, 0, 3))
 	}
 
-	if character.Env.IsForever() {
-		// Forever's Moonkin Form and Leader of the Pack both give 3% crit to spells and
-		// attacks, and the two do not stack.
-		if raidBuffs.MoonkinAura || raidBuffs.LeaderOfThePack {
-			character.AddStats(stats.Stats{
-				stats.MeleeCrit: 3 * CritRatingPerCritChance,
-				stats.SpellCrit: 3 * SpellCritRatingPerCritChance,
-			})
-		}
-	} else {
-		if raidBuffs.MoonkinAura {
-			character.AddStat(stats.SpellCrit, 3*SpellCritRatingPerCritChance)
-		}
+	// Moonkin Aura gives 3% spell crit and Leader of the Pack 3% melee and ranged crit, both
+	// raid wide. Client 70338 had both as party auras giving all crit, which did not stack;
+	// client 70425 (24907 and 24932, effect 65 with auras 57 and 52) went back to the Era split.
+	if raidBuffs.MoonkinAura {
+		character.AddStat(stats.SpellCrit, 3*SpellCritRatingPerCritChance)
+	}
 
-		if raidBuffs.LeaderOfThePack {
-			character.AddStats(stats.Stats{
-				stats.MeleeCrit: 3 * CritRatingPerCritChance,
-			})
-		}
+	if raidBuffs.LeaderOfThePack {
+		character.AddStats(stats.Stats{
+			stats.MeleeCrit: 3 * CritRatingPerCritChance,
+		})
 	}
 
 	if raidBuffs.TrueshotAura {
