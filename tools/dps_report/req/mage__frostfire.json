@@ -182,7 +182,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "and": {
@@ -208,7 +207,7 @@
                               },
                               "rhs": {
                                 "const": {
-                                  "val": "60s"
+                                  "val": "45s"
                                 }
                               }
                             }
@@ -353,7 +352,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "and": {
@@ -406,7 +404,7 @@
                                     },
                                     "rhs": {
                                       "const": {
-                                        "val": "9s"
+                                        "val": "7s"
                                       }
                                     }
                                   }
@@ -501,7 +499,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "cmp": {
@@ -543,7 +540,7 @@
                                   },
                                   "rhs": {
                                     "const": {
-                                      "val": "100"
+                                      "val": "70"
                                     }
                                   }
                                 }
@@ -654,7 +651,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "cmp": {

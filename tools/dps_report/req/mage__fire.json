@@ -228,7 +228,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "and": {
@@ -518,7 +517,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "cmp": {
@@ -528,7 +526,7 @@
                         },
                         "rhs": {
                           "const": {
-                            "val": "0.2"
+                            "val": "0.1"
                           }
                         }
                       }
@@ -541,7 +539,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "cmp": {
@@ -576,7 +573,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "cmp": {
@@ -611,7 +607,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "castSpell": {
                       "spellId": {

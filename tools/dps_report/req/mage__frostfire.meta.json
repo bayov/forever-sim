@@ -4,7 +4,7 @@
   "spec": "Frostfire",
   "build": "Frostfire",
   "isDefault": true,
-  "pr": 89,
+  "pr": 98,
   "race": "Human",
   "talents": "-0155003013012503-00550003310003002",
   "treeNames": [
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_frostfire",
   "published": {
-    "dps": 1012.1,
-    "source": "Report re-sim on master 5bbcb0d, 2026-10-16: Grace of Air with Windfury in the melee raid, Windfury Totem main hand only, off-hand Rage 0.5 and channel pushback on hits taken (was 1010.8)"
+    "dps": 1018.1,
+    "source": "PR #98 (rotation auditor pass 23, 2026-10-16)"
   },
   "verify": {
-    "dps": 1012.05,
+    "dps": 1018.1,
     "stderr": 0.5,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "180 s, 20000 iterations, seed 1, on the pass 23 rotation (seed 100001 within 0.5)"
   },
   "summary": "Fire and Frost hybrid built on Frostfire Bolt, which gets both trees' talents.",
   "keyTalents": [
@@ -41,12 +41,12 @@
   "rotation": [
     "Pre-pull: Frostfire Bolt at -3s",
     "The on-use trinket once Fire Vulnerability has 5 stacks; other cooldowns on a free GCD; mana gems never (they share the rune's cooldown)",
-    "Evocation below 20% mana with more than 60s left",
+    "Evocation below 20% mana with more than 45s left",
     "Ice Lance on every Fingers of Frost charge, ahead of Scorch and Pyroblast (3 times the damage, Shatter crit)",
-    "Scorch to 5 Fire Vulnerability stacks and again with under 9s left",
+    "Scorch to 5 Fire Vulnerability stacks and again with under 7s left",
     "Pyroblast at 3 Heating Up stacks (1.5s cast)",
     "Arcane Missiles on a Missile Barrage proc",
-    "Fire Blast on cooldown above 80% mana, and with mana the fight can't use (above 100 per second of fight left); every Fire Blast adds a Heating Up stack",
+    "Fire Blast on cooldown above 80% mana, and with mana the fight can't use (above 70 per second of fight left); every Fire Blast adds a Heating Up stack",
     "Rank 2 Frostfire Bolt once Evocation is spent or under 60s left, while mana is under 60 per second of fight left",
     "Ice Lance instead when a Frostfire Bolt would not land before the end (its cast plus 1.5s)",
     "Filler: Frostfire Bolt"

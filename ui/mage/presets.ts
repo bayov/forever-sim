@@ -104,16 +104,17 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 export const APLP1DPS = PresetUtils.makePresetAPLRotation('DPS', P1APL);
 
 // Frostfire Bolt as the filler. Scorch puts up 5 stacks of Fire Vulnerability and keeps them
-// (again with under 9 sec left on them), Pyroblast waits for 3 Heating Up stacks (a 1.5 sec
+// (again with under 7 sec left on them), Pyroblast waits for 3 Heating Up stacks (a 1.5 sec
 // cast), Ice Lance goes on every Fingers of Frost charge, ahead of Scorch and Pyroblast (3 times
 // the damage on a Frozen target since client 70425, with SoD's 42.9% spell power coefficient), and
 // Arcane Missiles takes a Missile Barrage proc. Since 70425 every Fire Blast adds a Heating Up
 // stack, so Fire Blast goes on cooldown above 80% mana and below that with the mana the fight
-// can't use (above 100 a second of the fight left). Evocation below 20% mana with at least 60 sec
+// can't use (above 70 a second of the fight left). Evocation below 20% mana with at least 45 sec
 // of the fight left, then rank 2 Frostfire Bolt when the mana won't last. The on-use trinket waits
 // for the 5th Fire Vulnerability stack. When a Frostfire Bolt would not land before the end (its
 // cast plus 1.5 sec) Ice Lance goes instead. The knobs were searched over 120, 180 and 300 sec
-// together, with the raid's hits (pushback).
+// together, with the raid's hits (pushback); the rotation auditor's pass 23 moved the Scorch
+// refresh, Evocation and spare-mana Fire Blast thresholds (+6.0 at 180 sec).
 export const APLLevel60Frostfire = PresetUtils.makePresetAPLRotation('Level 60 Frostfire', Level60FrostfireAPL, {
 	tooltip: 'Frostfire Bolt, Pyroblast on 3 Heating Up stacks, Ice Lance on Fingers of Frost, Scorch for Fire Vulnerability, Fire Blast.',
 	group: 'Level 60',
@@ -128,8 +129,9 @@ export const APLLevel60Frost = PresetUtils.makePresetAPLRotation('Level 60 Frost
 	group: 'Level 60',
 });
 // Scorch to 5 Fire Vulnerability stacks and before they run out, Pyroblast at 3 Heating Up
-// stacks, Arcane Missiles on Missile Barrage, Fire Blast above 20% mana (every Fire Blast adds a
-// Heating Up stack since client 70425, two on a crit), and Fireball. Combustion and the on-use
+// stacks, Arcane Missiles on Missile Barrage, Fire Blast above 10% mana (every Fire Blast adds a
+// Heating Up stack since client 70425, two on a crit; 20% before the rotation auditor's pass 23),
+// and Fireball. Combustion and the on-use
 // trinket wait for the 5th Fire Vulnerability stack. When a Fireball would not land before the
 // end (its cast plus 1.04 sec), Fire Blast and Scorch instead.
 export const APLLevel60Fire = PresetUtils.makePresetAPLRotation('Level 60 Fire', Level60FireAPL, {
@@ -137,13 +139,14 @@ export const APLLevel60Fire = PresetUtils.makePresetAPLRotation('Level 60 Fire',
 	group: 'Level 60',
 });
 // Client 70425 made Arcane Blast's stacks spell damage: 15% of Intellect each, up to 4, for 15
-// sec from the first, and nothing ends them early. So Arcane casts four Arcane Blasts at the
-// start of every 15 sec (the fourth costs 6.25 times the first), and below 20% mana only one.
-// Arcane Missiles goes on a Missile Barrage proc (free and twice as fast), and Frostbolt is the
-// filler: it beats Arcane Missiles that aren't free. No Evocation. Arcane Power and Presence of
-// Mind wait for the on-use trinket unless it won't be back before the last 15 sec. When a
-// Frostbolt would not land before the end (its cast plus 0.75 sec), Fire Blast and Arcane
-// Explosion instead.
+// sec from the first, and nothing ends them early. So Arcane builds four stacks at the start of
+// every 15 sec (the fourth costs 6.25 times the first), and below 20% mana only one. Arcane
+// Missiles on a Missile Barrage proc goes first, ahead of the Arcane Blasts: each Arcane Blast has
+// 40% to proc it, so a proc during the ramp is used while the stacks boost it instead of being
+// rolled over (+40.5 at 180 sec, the rotation auditor's pass 23). Frostbolt is the filler: it
+// beats Arcane Missiles that aren't free. No Evocation. Arcane Power and Presence of Mind wait for
+// the on-use trinket unless it won't be back before the last 15 sec. When a Frostbolt would not
+// land before the end (its cast plus 0.75 sec), Fire Blast and Arcane Explosion instead.
 export const APLLevel60Arcane = PresetUtils.makePresetAPLRotation('Level 60 Arcane', Level60ArcaneAPL, {
 	tooltip: 'Four Arcane Blast stacks every 15 sec for spell damage, Arcane Missiles on Missile Barrage, Frostbolt.',
 	group: 'Level 60',
@@ -171,7 +174,7 @@ export const DefaultAPL = APLLevel60Frostfire;
 // Fingers of Frost in Frost. Frostfire Bolt is Fire and Frost at once, so it gets Fire Power,
 // Ignite and Critical Mass and also Ice Shards, Piercing Ice and Shatter. A second seed with
 // Arcane Blast (10 Arcane points, without Fingers of Frost) ended 65 behind on a Combustion build.
-// It is 1023.5 / 1010.8 / 979.2 at 120 / 180 / 300 sec (Human). Frost Channeling 3 does nothing for this build (the
+// It is 1025.4 / 1018.1 / 980.6 at 120 / 180 / 300 sec (Human). Frost Channeling 3 does nothing for this build (the
 // client leaves Frostfire Bolt out of it): the points are the 20 in Frost that Fingers of Frost
 // needs.
 export const TalentsLevel60Frostfire = PresetUtils.makePresetTalents(
@@ -183,7 +186,7 @@ export const TalentsLevel60Frostfire = PresetUtils.makePresetTalents(
 // debuff since 70425), with Arcane Concentration, Missile Barrage 2, Arcane Impact and Arcane
 // Blast from Arcane: one Arcane Blast every 15 sec is 15% of Intellect as spell damage. Incineration
 // 3 is for Ice Lance. The old Winter's Chill points went to Frost Channeling, Arcane Meditation and
-// Permafrost (a point the 30 for Ice Barrier needs). It is 827.9 / 827.3 / 822.4, 18% behind Frostfire (High Order, with the Major
+// Permafrost (a point the 30 for Ice Barrier needs). It is 827.9 / 827.3 / 822.4, 19% behind Frostfire (High Order, with the Major
 // Spellblasting Potion and the Greater Frost scroll). 70425 cost it Winter's Chill's crit and
 // Ice Lance's fourth times on a Frozen target.
 export const TalentsLevel60Frost = PresetUtils.makePresetTalents(
@@ -196,7 +199,7 @@ export const TalentsLevel60Frost = PresetUtils.makePresetTalents(
 );
 // Fire (11/35/5): every Fire damage talent to Combustion with Critical Mass 5, Burning Soul 3
 // (pushback) and Master of Elements 3, with Arcane Concentration and Missile Barrage 2 (Fireball
-// has 20% to make Arcane Missiles free and fast) and Elemental Precision 5. It is 999.9 / 993.2 / 982.3
+// has 20% to make Arcane Missiles free and fast) and Elemental Precision 5. It is 1001.2 / 995.5 / 983.4
 // (Human, with the Greater Flame scroll). Every Fire Blast adds a Heating Up stack since 70425,
 // which puts Fire 2% behind Frostfire at 180 sec and ahead of it at 300.
 export const TalentsLevel60Fire = PresetUtils.makePresetTalents('Level 60 Fire', SavedTalents.create({ talentsString: '0402005-23550030130135031-005' }), {
@@ -207,7 +210,7 @@ export const TalentsLevel60Fire = PresetUtils.makePresetTalents('Level 60 Fire',
 // Channeling 2 (pushback on Arcane Blast), Incineration 2 (it covers Arcane Blast) and Frost for
 // the Frostbolt filler (Improved Frostbolt, Elemental Precision, Ice Shards, Piercing Ice). Arcane
 // Wrath lost to Missile Barrage's second point: a free Arcane Missiles at twice the speed is worth
-// more than the 3.5 sec cast. It is 893.6 / 884.9 / 875.0, 12% behind Frostfire (Human, on the Arcane gear, with the Precision
+// more than the 3.5 sec cast. It is 929.3 / 922.9 / 913.9, 9% behind Frostfire (Human, on the Arcane gear, with the Precision
 // scroll).
 export const TalentsLevel60Arcane = PresetUtils.makePresetTalents(
 	'Level 60 Arcane',
@@ -385,7 +388,7 @@ export const EncounterLevel60Frost = PresetUtils.makePresetEncounter('Level 60 (
 });
 
 // Races, on each build with its rotation, 20000 iterations, 180 sec, with the 70425 racials (no
-// racial depends on the weapon any more). Human (Ruthless, 2% crit) is best on Frostfire, Fire and
+// racial depends on the weapon any more), before the rotation auditor's pass 23. Human (Ruthless, 2% crit) is best on Frostfire, Fire and
 // Arcane, with Orc (Savage, 1% crit, and Blood Fury) 0.3 behind on Arcane, within the noise. On
 // Frost, High Order's 3% haste is ahead. The best Horde race is Orc on Arcane, Fire and Frost and
 // Orc on Frostfire too (High Order, 3.7 behind Human there, is Alliance). Windshaper can't be a mage.

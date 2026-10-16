@@ -4,7 +4,7 @@
   "spec": "Fire",
   "build": "Fire",
   "isDefault": false,
-  "pr": 89,
+  "pr": 98,
   "race": "Human",
   "talents": "0402005-23550030130135031-005",
   "treeNames": [
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_fire",
   "published": {
-    "dps": 993.7,
-    "source": "Report re-sim on master 5bbcb0d, 2026-10-16: Grace of Air with Windfury in the melee raid, Windfury Totem main hand only, off-hand Rage 0.5 and channel pushback on hits taken (was 993.2)"
+    "dps": 995.5,
+    "source": "PR #98 (rotation auditor pass 23, 2026-10-16)"
   },
   "verify": {
-    "dps": 993.72,
-    "stderr": 0.37,
+    "dps": 995.5,
+    "stderr": 0.4,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "180 s, 20000 iterations, seed 1, on the pass 23 rotation (seed 100001 within 0.5)"
   },
   "summary": "Deep Fire to Combustion, plus Arcane Concentration and Missile Barrage from Arcane.",
   "keyTalents": [
@@ -46,7 +46,7 @@
     "Scorch to 5 Fire Vulnerability stacks and before they run out",
     "Pyroblast at 3 Heating Up stacks (1.5s cast)",
     "Arcane Missiles on a Missile Barrage proc",
-    "Fire Blast on cooldown at 20% mana or more (every Fire Blast adds a Heating Up stack)",
+    "Fire Blast on cooldown at 10% mana or more (every Fire Blast adds a Heating Up stack)",
     "Fire Blast, then Scorch, when a Fireball would not land before the end (its cast plus 1.04s)",
     "Filler: Fireball"
   ],

@@ -58,7 +58,8 @@ func arcaneKnobs(stacks float64, wrath float64) []Knob {
 		// Arcane Blast up to this many stacks, 0 never.
 		{Name: "blastBuff", Default: stacks, Min: 0, Max: 4, Step: 1},
 		// More stacks only while the buff has more than this many seconds left, so the
-		// expensive ones aren't bought for a buff about to end. A new buff always starts.
+		// expensive ones aren't bought for a buff about to end. A new buff always starts. 0
+		// stacks whenever.
 		{Name: "blastRefresh", Default: 9, Min: 0, Max: 12, Step: 3},
 		// Arcane Wrath on cooldown (1), never (0).
 		{Name: "arcaneWrath", Default: wrath, Min: 0, Max: 1, Step: 1},
@@ -72,8 +73,11 @@ func arcaneBlastBuffLines(k Knobs, s mageSpells, extra value) []*proto.APLListIt
 		return nil
 	}
 	stacks := auraNumStacks(arcaneBlastAura)
-	cond := and(auraIsKnown(arcaneBlastAura), lt(stacks, num(k["blastBuff"])),
-		or(not(auraIsActive(arcaneBlastAura)), gt(auraRemainingTime(arcaneBlastAura), seconds(k["blastRefresh"]))),
+	var window value
+	if k["blastRefresh"] > 0 {
+		window = or(not(auraIsActive(arcaneBlastAura)), gt(auraRemainingTime(arcaneBlastAura), seconds(k["blastRefresh"])))
+	}
+	cond := and(auraIsKnown(arcaneBlastAura), lt(stacks, num(k["blastBuff"])), window,
 		// Not in the last seconds, when the spell damage has nothing left to go on.
 		gt(remainingTime(), seconds(4)), extra)
 	return []*proto.APLListItem{cast(s.arcaneBlast, cond, "Arcane Blast up to the stack target: each stack is 15% of Intellect as spell damage for 15 sec from the first.")}
