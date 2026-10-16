@@ -41,20 +41,20 @@ func (shamanEnhLeveling) Knobs() []Knob {
 		{Name: "restUntil", Default: 90, Min: 60, Max: 100, Step: 10},
 		{Name: "restUntilMana", Default: 80, Min: 60, Max: 100, Step: 10},
 		// Pulling: 0 none (walk up), 1 Earth Shock rank 1, 2 Earth Shock, 3 Flame Shock.
-		{Name: "pullSpell", Default: 0, Min: 0, Max: 3, Step: 1},
+		{Name: "pullSpell", Default: 3, Min: 0, Max: 3, Step: 1},
 		{Name: "pullBolt", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Chain pulls: 0 off, else look while fewer than chainMax mobs are pulled, and pull
 		// what we find above chainHealth and chainMana.
 		{Name: "chainMax", Default: 2, Min: 0, Max: 4, Step: 1},
-		{Name: "chainHealth", Default: 90, Min: 30, Max: 90, Step: 10},
+		{Name: "chainHealth", Default: 70, Min: 30, Max: 90, Step: 10},
 		{Name: "chainMana", Default: 50, Min: 0, Max: 80, Step: 10},
 		// Look for the next mob above this health even when we won't pull it yet; 0 looks
 		// only when we'd pull it (chainHealth and chainMana).
-		{Name: "lookAheadHealth", Default: 50, Min: 0, Max: 70, Step: 10},
+		{Name: "lookAheadHealth", Default: 40, Min: 0, Max: 70, Step: 10},
 		// With one mob pulled and our target below this share of its health, pull the next
 		// one as it dies, above chainDyingHealth and chainDyingMana; 0 off.
 		{Name: "chainDyingBelow", Default: 20, Min: 0, Max: 40, Step: 10},
-		{Name: "chainDyingHealth", Default: 70, Min: 50, Max: 90, Step: 10},
+		{Name: "chainDyingHealth", Default: 50, Min: 50, Max: 90, Step: 10},
 		{Name: "chainDyingMana", Default: 40, Min: 0, Max: 80, Step: 20},
 		// How we look for the next mob while fighting: 0 run around for it, 1 stand and keep
 		// fighting (a longer search), 2 stand while a totem of ours is down and in reach, so

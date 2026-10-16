@@ -524,6 +524,8 @@ After the groundwork:
      | Optimizer pass 7: no Mana Spring, a heal below 40% between pulls, shocks above 60% mana | 73.7 | 0.01 | 42,600 | 121 s | 282 s | 795 s | 2.03 |
      | Pass 7's rotation after we leave combat 1 to 2 s after a kill, mobs crit only above our level, searches 0 to 10 s and chain searches 0 to 3 s running and 0 to 5 s standing | 77.2 | 0.00 | - | 74 s | 298 s | 828 s | 2.31 |
      | Optimizer pass 8: stand for chain searches, Mana Spring and Strength of Earth, full rank Searing, pull in melee | 82.1 | 0.00 | - | 88 s | 294 s | 818 s | 2.37 |
+     | Pass 8's rotation with mobs found 10 to 40 yd after a search we run for and 20 to 60 yd after one we stand for | 77.5 | 0.00 | - | 134 s | 277 s | 789 s | 1.76 |
+     | Optimizer pass 9: pull with Flame Shock, chain pull above 70% health, look ahead above 40% | 79.6 | 0.00 | - | 92 s | 290 s | 819 s | 2.19 |
 
      The rows down to pass 3 ran with Rockbiter Weapon and Windfury Weapon both on the main
      hand: the settings had Rockbiter in the consumes and Windfury in the class options, and
@@ -570,6 +572,16 @@ After the groundwork:
      - Mana Spring Totem (+1.2) and Strength of Earth Totem (+0.7). With fewer crits on us,
        fights are less about health and more about mana and damage.
      - Walk up and pull in melee, with no shock (+0.2).
+
+     Then the mob a standing chain search finds got its own distance, 20 to 60 yards, where a
+     running search's stays 10 to 40 (the user's numbers: standing still we look out over the
+     area and spot mobs further off). Walking 40 to 60 yards to the next mob with the mobs on
+     us following costs pass 8 4.6 mobs (77.5). Pass 9 kept standing and found 79.6 on seed 1
+     and 79.5 on seed 1000001. It pulls with Flame Shock, and it pulls the next mob mid-fight
+     from 70% health instead of 90%, and from 50% instead of 70% when our target is nearly
+     dead. Running for chain searches with pass 8's other knobs ties it (79.5 on both seeds),
+     and a pass that started there found nothing better. Pass 9's dying-target health is the
+     knob's lowest value, so a wider range may find a little more.
 
      Pass 1: sit down below 80% health and stand at 90% instead of 50% and 100%, no Flame
      Shock DoT in the fight, Lesser Healing Wave below 30% in combat, no buff totems (their
