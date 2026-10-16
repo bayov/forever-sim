@@ -23,9 +23,9 @@ Beast Mastery:
 
 Marksmanship:
 
-- Lethal Attacks (Lethal Shots) 1% crit a rank with every attack. Efficiency 3% a rank on shots, stings and melee abilities (its class mask leaves out Sniper Shot and Strider Kick).
+- Lethal Attacks (Lethal Shots) 1% crit a rank with every attack. Efficiency 3% a rank on shots, stings and melee abilities (its class mask leaves out Strider Kick; Sniper Shot is in it since client 1.60.1.70425).
 - Improved Stings: Serpent Sting 6 / 13 / 20%, Viper Sting's cooldown 2 / 4 / 6 sec shorter, Scorpid Sting 15 / 30 / 45 sec longer.
-- Careful Aim: 20% of Intellect a rank as melee and ranged attack power. Mortal Shots needs it, 6% crit damage a rank on Auto Shot, Aimed, Arcane and Multi-Shot, Serpent Sting and Volley (not Sniper Shot).
+- Careful Aim: 20% of Intellect a rank as melee and ranged attack power. Mortal Shots needs it, 6% crit damage a rank on Auto Shot, Aimed, Arcane and Multi-Shot, Serpent Sting, Volley and, since client 1.60.1.70425, Sniper Shot (the dev notes' "Sniper Shot was not benefitting from a few Marksmanship talents": Efficiency's and Mortal Shots' masks gained its bit).
 - Rapid Killing: Rapid Fire's cooldown 1 min shorter a rank, and 10 / 20% on the next shot within 20 sec of a kill. Rapid Recuperation: a Serpent Sting hit gives 25 / 50% of mana regen while casting for 15 sec, using Rapid Killing 50 / 100%.
 - Improved Arcane Shot 0.3 sec a rank, on Arcane Shot only. Lone Wolf 20% damage with no pet out.
 - Trueshot Aura (row 4, 21 points) is a party aura of ranged attack power only, with trainer ranks 30 / 40 / 50 / 75 / 50 at 25 / 32 / 40 / 50 / 60 (Classic's rank 3 at 60 was 100). A level 60 hunter would cast rank 4's 75, the strongest it knows (standards 8a); Hunter's Mark likewise has rank 3's 98 over rank 4's 71 (Classic 110). The sim gives rank 5 100 and Hunter's Mark rank 4 140, as if Blizzard fixes both top ranks onto the curve, so the top ranks are cast (report assumption hunter_tsa_hm_rank, user ruling 2026-10-15).
@@ -38,7 +38,7 @@ Survival:
 - Improved Tracking (Monster and Humanoid Slaying): 1% damage a rank against the tracked creature type. Deflection 1% parry a rank (2% in the earlier beta builds). Entrapment roots for 1 to 5 sec.
 - Savage Strikes 2% crit a rank on the melee abilities (Raptor Strike, Mongoose Bite, Wing Clip, Strider Kick, Lacerate, Lacerating Strikes, Counterattack). Predator's Edge 6% crit damage a rank on the same abilities and 10% off hand damage a rank.
 - Survivalist 2% health a rank. Improved Wing Clip 7 / 13 / 20%. Clever Traps 15% a rank. Surefooted 1% hit a rank on every attack. Survival Tactics (Trap Mastery) 5% trap and Feign Death hit a rank.
-- Resourcefulness: traps and the melee abilities 30% cheaper a rank (not Lacerate; Strider Kick since client 1.60.1.70425, which added its bit to the cost effect's mask), and a crit has a 50% chance a rank to give 50% mana regen while casting for 30 sec (the tooltip shows "?%"; the chance's trait curve read -20 / -40 in 70338 and 50 / 100 in 70425, the 50 a rank the sim already took).
+- Resourcefulness: traps and the melee abilities 30% cheaper a rank (not Lacerate; Strider Kick since client 1.60.1.70425, which added its bit to the cost effect's mask), and a crit has a 50% chance a rank to give 50% mana regen while casting for 30 sec (the tooltip shows "?%"; the chance's trait curve read -20 / -40 in 70338 and 50 / 100 in 70425, the 50 a rank the sim already took). 70425 also narrowed its proc to melee and ranged ability crits (proc flags 272, no autos or traps), as the 15 October dev notes say.
 - Client 1.60.1.70425 also raised the pet's Natural Armor aura from 22 to 674. Bosses hit the tank, not the pet, so it changes no damage in the sim.
 - Expose Prey: an attack on a target with Hunter's Mark has a 5% chance a rank to open Mongoose Bite, for 10 sec since build 70291 (5 before).
 - Survivalist's Discipline 20% off trap and Deterrence cooldowns a rank. Lightning Reflexes 2% Agility a rank (a 3% twin is parked off the tree).

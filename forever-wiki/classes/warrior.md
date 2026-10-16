@@ -23,7 +23,8 @@ Ranks the BlizzCon data guessed wrong:
 - Enrage is a flat 30% chance for 2 / 4 / 6 / 8 / 10% Physical damage (the guess was 30% a point for a flat 2%).
 - Unbridled Wrath is 12% a point, 1 Rage whatever the weapon (two-handers no longer get 2).
 - Dual Wield Specialization is 5% off hand damage and 10% off hand Rage a point, no hit.
-- Bloodthrill is 4% a point (2% before 24 September), from main hand attacks only.
+- Bloodthrill is 4% a point (2% before 24 September), from main hand attacks only. The Overpower window it opens is spell 1282733, 5 sec (since client 70009; it was 1289681, 6 sec).
+- Slam is no longer pushed back by damage (development notes, 15 October, build 70425), and Weaponmaster's sword extra attack can't come from Shield Bash or Shield Slam (same notes).
 - Improved Rend is 12 / 23 / 35%, Improved Execute 3 / 5 Rage.
 - Booming Voice widens every shout by 10% a point and takes 5% a point off their Rage cost.
 - Raging Blows takes 3 Rage off Cleave and Whirlwind, and Whirlwind strikes with both weapons without it.

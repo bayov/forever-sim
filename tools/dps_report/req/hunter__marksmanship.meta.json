@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic_ranged",
   "apl": "mm",
   "published": {
-    "dps": 1024.9,
-    "source": "client 1.60.1.70425 port and racials, with the raid hits (2026-10-16): 180 s, 20000 iterations, seed 1"
+    "dps": 1029.6,
+    "source": "client 1.60.1.70425 (Sniper Shot in Efficiency and Mortal Shots, the raid's Trueshot Aura, hunter_trap_ap), 2026-10-16: 180 s, 20000 iterations, seed 1"
   },
   "verify": {
-    "dps": 1024.85,
+    "dps": 1029.65,
     "stderr": 0.24,
     "iters": 20000,
     "ok": true,

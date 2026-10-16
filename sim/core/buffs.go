@@ -1613,12 +1613,13 @@ func GraceOfAirTotemAura(unit *Unit, multiplier float64) *Aura {
 	return aura
 }
 
-// graceOfAirWindfuryCategory holds Grace of Air's Agility and, under Forever, the Windfury
-// Totem buff.
+// graceOfAirWindfuryCategory holds Grace of Air's Agility, so two Grace of Air totems don't
+// stack.
 //
-// For now Forever doesn't let the two stack. While a Windfury Totem buff is up, from our own
-// totem or another shaman's, Grace of Air gives no Agility, and it comes back when the
-// Windfury Totem goes down. Outside Forever the Windfury Totem buff isn't in the category.
+// Forever made Grace of Air and Windfury Totem exclusive, then undid it in client 1.60.1.70425
+// ("Grace of Air Totem is no longer exclusive with Windfury Totem and Flametongue Totem",
+// development notes 2026-10-15; Grace of Air's SpellMisc Attributes_11 lost 1024 on 10626 and
+// 25360). Windfury Totem and Flametongue Totem stay exclusive (totem_weapon_buffs.go).
 const graceOfAirWindfuryCategory = "GraceOfAirWindfury"
 
 const BattleShoutRanks = 7
@@ -2005,9 +2006,6 @@ func WindfuryTotemBuffAura(character *Character, rank int32, label string) *Aura
 	}
 	aura := CreateExtraAttackAuraCommon(character, buffActionID, label, rank, GetWindfuryAP, blocked, procMask)
 	if character.Env.IsForever() {
-		// It has nothing of its own to give, but it's above Grace of Air, so it turns it off.
-		aura.NewExclusiveEffect(graceOfAirWindfuryCategory, false, ExclusiveEffect{Priority: 2})
-
 		// The attack power lasts 1 sec under Forever.
 		//
 		// The Forever client (70291) gives the buff spells 8516, 10608 and 10610 a 1 sec
