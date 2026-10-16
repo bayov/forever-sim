@@ -17,8 +17,8 @@ import {
 	AuraTrack,
 	buildReplayModel,
 	cooldownAt,
-	LANES,
 	lastIndexAtOrBefore,
+	placeCrits,
 	ReplayBar,
 	ReplayCast,
 	ReplayEnemy,
@@ -35,11 +35,13 @@ import { tooltipHit, tooltipRow, tooltipTitle } from './timeline.js';
 const SPEEDS = [0.25, 0.5, 0.75, 1, 1.25, 1.5, 2, 3, 4];
 const SPEED_STORAGE_KEY = '__detailed_results_replay_speed__';
 
-// How far apart lines that start close together are, in pixels. When the area is short, the
-// lanes get closer, so they take at most this share of it.
+// How far apart the scrolling lines stay, in pixels. A new line starts at the frame or under
+// the cast history, and pushes the lines too close ahead of it further along, like MSBT.
 const LANE_PX = 28;
-const LANES_SHARE = 0.4;
-const STICKY_LANE_PX = 42;
+// The crits on each side take spots between the cast history and the procs over the class pack,
+// as many as fit at this spacing. The first crit takes the middle spot.
+const CRIT_SPOT_PX = 42;
+const MAX_CRIT_SPOTS = 5;
 // What we do to the enemies lines up on the left edge of the target's frame, so the icons
 // form a column over it. What happens to us lines up on the right edge of our frame, with the
 // icon after the text. Crits stay put in their own column, this many pixels toward the middle
@@ -49,6 +51,10 @@ const STICKY_GAP_PX = 32;
 // do scrolls up from just above the target's frame to under our buffs at the top right. This is
 // the room we keep from each of them, about half the height of a crit.
 const SCT_MARGIN_PX = 20;
+// The longest way a line scrolls, in pixels. In full screen the area is much taller, and the lines
+// would scroll too far and too fast. Outgoing lines still start at the target's frame and incoming
+// lines still end at our frame.
+const MAX_SCROLL_PX = 360;
 
 // The cast history is a timeline at the top left that ends at the current time, right under the
 // clock. Each cast sits at the moment we made it and slides left as time goes on. Casts too
@@ -374,6 +380,8 @@ export class Replay extends ResultComponent {
 	// Where each cast goes on the history timeline, by its index in the model's actions.
 	private historyLayout: Array<{ row: number; shift: number }> = [];
 	private sctElems = new Map<number, HTMLElement>();
+	// How many crit spots the model's crits are placed on.
+	private critSpots = 0;
 
 	// The hover tooltip. The parts of the screen move, come and go many times a second, so one
 	// tooltip serves all of them. It follows the part under the mouse and shows its state at the
@@ -1175,6 +1183,7 @@ export class Replay extends ResultComponent {
 
 	// Builds the frames, the cooldown tracker and the progress bar markers for a new iteration.
 	private build(model: ReplayModel) {
+		this.critSpots = 0;
 		this.sctElems.forEach(elem => elem.remove());
 		this.sctElems.clear();
 		this.historyElems.forEach(elem => elem.remove());
@@ -1755,23 +1764,31 @@ export class Replay extends ResultComponent {
 
 		// Where each side's lines start and end, in pixels from the top of the area.
 		const history = this.ui.history.parentElement!.getBoundingClientRect();
-		const inTop = history.bottom - zone.top + SCT_MARGIN_PX;
 		const inBottom = playerFrame.top - zone.top - SCT_MARGIN_PX;
-		const outTop = this.buffsElem.getBoundingClientRect().bottom - zone.top + SCT_MARGIN_PX;
+		const inTop = Math.max(history.bottom - zone.top + SCT_MARGIN_PX, inBottom - MAX_SCROLL_PX);
 		const outBottom = (targetFrame ? targetFrame.top - zone.top : zone.height) - SCT_MARGIN_PX;
-		// A line that starts close after another starts a few lanes behind it. We keep the room for
-		// the lanes inside the area, so the last lane still starts clear of the frame or the history.
-		const lanes = (span: number) => {
-			const lanePx = Math.min(LANE_PX, (span * LANES_SHARE) / (LANES - 1));
-			return { lanePx, room: lanePx * (LANES - 1) };
-		};
-		const inLanes = lanes(inBottom - inTop);
-		const outLanes = lanes(outBottom - outTop);
+		const outTop = Math.max(this.buffsElem.getBoundingClientRect().bottom - zone.top + SCT_MARGIN_PX, outBottom - MAX_SCROLL_PX);
+		// Where the newer line on each side is. We place the lines from the newest back, so an older
+		// line too close to a newer one gets pushed ahead of it.
+		let newerIn = -Infinity;
+		let newerOut = Infinity;
+
+		// The crits' area has the same cap, so in full screen they stay near the scrolling lines.
+		const critBottom = this.ui.procs.getBoundingClientRect().top - zone.top;
+		const critTop = Math.max(history.bottom - zone.top, critBottom - MAX_SCROLL_PX);
+		const critSpan = critBottom - critTop;
+		const spots = Math.max(1, Math.min(MAX_CRIT_SPOTS, Math.floor(critSpan / CRIT_SPOT_PX)));
+		if (spots != this.critSpots) {
+			placeCrits(model.sct, spots);
+			this.critSpots = spots;
+		}
+		// The rows of the spots in the order the crits take them, from the middle out.
+		const critRows = Array.from({ length: spots }, (_, row) => row).sort((a, b) => Math.abs(a - (spots - 1) / 2) - Math.abs(b - (spots - 1) / 2) || a - b);
 
 		const first = lastIndexAtOrBefore(model.sctTimes, time - SCROLL_LIFE) + 1;
 		const last = lastIndexAtOrBefore(model.sctTimes, time);
 		const shown = new Set<number>();
-		for (let i = first; i <= last; i++) {
+		for (let i = last; i >= first; i--) {
 			const event = model.sct[i];
 			const age = time - event.time;
 			if (age > event.end) continue;
@@ -1785,18 +1802,19 @@ export class Replay extends ResultComponent {
 			const progress = age / event.end;
 			let y: number;
 			let scale = 1;
+			// A line pushed past the end of its area is gone.
+			let pushedOut = false;
 			if (event.sticky) {
-				// The crits' spots go from the middle of the side's area toward its end.
-				y = event.side == 'in' ? (inTop + inBottom) / 2 + event.lane * STICKY_LANE_PX : (outTop + outBottom) / 2 - event.lane * STICKY_LANE_PX;
+				y = critTop + ((critRows[event.lane] ?? 0) + 0.5) * (critSpan / spots);
 				scale = 1 + 0.55 * Math.max(0, 1 - age / 0.12);
 			} else if (event.side == 'out') {
-				const { lanePx, room } = outLanes;
-				y = outBottom - room - progress * (outBottom - outTop - room) + event.lane * lanePx;
+				y = newerOut = Math.min(outBottom - progress * (outBottom - outTop), newerOut - LANE_PX);
+				pushedOut = y < outTop;
 			} else {
-				const { lanePx, room } = inLanes;
-				y = inTop + room + progress * (inBottom - inTop - room) - event.lane * lanePx;
+				y = newerIn = Math.max(inTop + progress * (inBottom - inTop), newerIn + LANE_PX);
+				pushedOut = y > inBottom;
 			}
-			const opacity = Math.min(1, age / 0.06) * Math.min(1, (event.end - age) / (event.end - event.fadeAt));
+			const opacity = pushedOut ? 0 : Math.min(1, age / 0.06) * Math.min(1, (event.end - age) / (event.end - event.fadeAt));
 			elem.style.top = `${y.toFixed(1)}px`;
 			if (event.side == 'out' && !event.sticky) {
 				elem.style.left = `${targetLeft}px`;
