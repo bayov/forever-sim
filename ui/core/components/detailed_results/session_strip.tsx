@@ -1,3 +1,4 @@
+import tippy, { Instance as TippyInstance } from 'tippy.js';
 import { ref } from 'tsx-vanilla';
 
 import { EventFilter } from './events_filter.js';
@@ -31,7 +32,11 @@ export interface SessionStripConfig {
 // Clicking a part of the bar picks it: a pull, the rest after it, a search or a death. The pick
 // is the filter's From and To, so the timeline, the log, the pulls and the replay all show that
 // part. Dragging picks any range. The arrows go to the previous and next part of the kind we
-// chose (pulls by default), and "Whole session" clears the pick.
+// chose (pulls by default), and "Whole session" clears the pick. A click on the part between the
+// arrows lists every part of that kind to pick from.
+//
+// Choosing another kind while a part is picked goes to the nearest part of that kind, like the
+// rest after a pull.
 export class SessionStrip {
 	readonly rootElem: HTMLElement;
 	private readonly filter: EventFilter;
@@ -44,6 +49,8 @@ export class SessionStrip {
 		kindButtons: Map<SectionKind, HTMLButtonElement>;
 		prev: HTMLButtonElement;
 		next: HTMLButtonElement;
+		current: HTMLButtonElement;
+		menu: HTMLElement;
 		all: HTMLButtonElement;
 		title: HTMLElement;
 		detail: HTMLElement;
@@ -59,12 +66,16 @@ export class SessionStrip {
 		hover: HTMLElement;
 		tooltip: HTMLElement;
 	};
+	private readonly currentTooltip: TippyInstance;
+	private tooltipText = '';
 
 	constructor(config: SessionStripConfig) {
 		this.filter = config.filter;
 		const refs = {
 			prev: ref<HTMLButtonElement>(),
 			next: ref<HTMLButtonElement>(),
+			current: ref<HTMLButtonElement>(),
+			menu: ref<HTMLDivElement>(),
 			all: ref<HTMLButtonElement>(),
 			title: ref<HTMLSpanElement>(),
 			detail: ref<HTMLSpanElement>(),
@@ -102,21 +113,24 @@ export class SessionStrip {
 						})}
 					</div>
 					<div className="session-strip-step">
-						<button
-							ref={refs.prev}
-							className="btn btn-outline-secondary session-strip-arrow"
-							type="button"
-							attributes={{ 'aria-label': 'Previous' }}>
-							<i className="fas fa-chevron-left" />
-						</button>
-						<div className="session-strip-current">
-							<span ref={refs.title} className="session-strip-title"></span>
-							<span ref={refs.detail} className="session-strip-detail"></span>
+						<div className="segmented session-strip-picker">
+							<button ref={refs.prev} className="segmented-option session-strip-arrow" type="button" attributes={{ 'aria-label': 'Previous' }}>
+								<i className="fas fa-chevron-left" />
+							</button>
+							<button
+								ref={refs.current}
+								className="segmented-option session-strip-current"
+								type="button">
+								<span ref={refs.title} className="session-strip-title"></span>
+								<i className="fas fa-caret-down session-strip-caret" />
+							</button>
+							<button ref={refs.next} className="segmented-option session-strip-arrow" type="button" attributes={{ 'aria-label': 'Next' }}>
+								<i className="fas fa-chevron-right" />
+							</button>
 						</div>
-						<button ref={refs.next} className="btn btn-outline-secondary session-strip-arrow" type="button" attributes={{ 'aria-label': 'Next' }}>
-							<i className="fas fa-chevron-right" />
-						</button>
+						<div ref={refs.menu} className="session-strip-menu hide" attributes={{ role: 'listbox' }} />
 					</div>
+					<span ref={refs.detail} className="session-strip-detail"></span>
 					<button ref={refs.all} className="btn btn-link session-strip-all" type="button">
 						<i className="fas fa-expand me-1" />
 						Whole session
@@ -142,6 +156,8 @@ export class SessionStrip {
 			kindButtons,
 			prev: refs.prev.value!,
 			next: refs.next.value!,
+			current: refs.current.value!,
+			menu: refs.menu.value!,
 			all: refs.all.value!,
 			title: refs.title.value!,
 			detail: refs.detail.value!,
@@ -158,6 +174,17 @@ export class SessionStrip {
 			tooltip: refs.tooltip.value!,
 		};
 
+		this.currentTooltip = tippy(this.ui.current, {
+			content: '',
+			onShow: instance => {
+				if (!this.tooltipText || !this.ui.menu.classList.contains('hide')) return false;
+				instance.setContent(this.tooltipText);
+				return undefined;
+			},
+		});
+		this.ui.current.setAttribute('aria-haspopup', 'listbox');
+		this.ui.current.setAttribute('aria-expanded', 'false');
+		this.bindMenu();
 		this.ui.prev.addEventListener('click', () => this.step(-1));
 		this.ui.next.addEventListener('click', () => this.step(1));
 		this.ui.all.addEventListener('click', () => this.filter.setRange(null, null));
@@ -228,10 +255,88 @@ export class SessionStrip {
 		return `${((100 * t) / this.session!.length).toFixed(4)}%`;
 	}
 
+	// With a part picked, another kind goes to its nearest part. Otherwise the arrows go through
+	// the new kind from where we are.
 	private setKind(kind: SectionKind) {
+		const selected = this.selectedSection();
 		this.kind = kind;
-		this.updateSelection();
+		const nearest = selected && selected.kind != kind ? this.nearest(selected, kind) : null;
+		if (nearest) this.pick(nearest);
+		else this.updateSelection();
 		this.ui.bar.focus({ preventScroll: true });
+	}
+
+	// The part of the kind closest to the section. Parts right next to it are closest, and of
+	// two, the one after it wins, so a pull goes to the rest after it.
+	private nearest(section: SessionSection, kind: SectionKind): SessionSection | null {
+		let best: SessionSection | null = null;
+		let bestGap = Infinity;
+		for (const other of this.session?.sections ?? []) {
+			if (other.kind != kind) continue;
+			const gap = Math.max(0, other.start - section.end, section.start - other.end);
+			if (gap < bestGap || (gap == bestGap && best && other.start > best.start)) {
+				best = other;
+				bestGap = gap;
+			}
+		}
+		return best;
+	}
+
+	// Every part of our kind, from a click on the picker. A click on one picks it. Escape, a
+	// second click on the picker or a click elsewhere closes the list.
+	private bindMenu() {
+		const { current, menu } = this.ui;
+		const close = () => {
+			menu.classList.add('hide');
+			current.setAttribute('aria-expanded', 'false');
+		};
+		const open = () => {
+			const sections = this.sectionsOfKind();
+			if (!sections.length) return;
+			const selected = this.selectedSection();
+			menu.replaceChildren(
+				...sections.map(section => {
+					const item = (
+						<button
+							className={`session-strip-menu-item ${section === selected ? 'active' : ''}`}
+							type="button"
+							attributes={{ role: 'option', 'aria-selected': section === selected }}>
+							<span className="session-strip-menu-name">{sectionTitle(section)}</span>
+							<span className="session-strip-menu-time">{formatClock(section.start)}</span>
+							<span className="session-strip-menu-summary">{sectionSummary(section)}</span>
+						</button>
+					) as HTMLButtonElement;
+					item.addEventListener('click', () => {
+						close();
+						this.pick(section);
+						current.focus({ preventScroll: true });
+					});
+					return item;
+				}),
+			);
+			menu.classList.remove('hide');
+			current.setAttribute('aria-expanded', 'true');
+			this.currentTooltip.hide();
+			const active = menu.querySelector<HTMLElement>('.active') ?? menu.firstElementChild as HTMLElement | null;
+			active?.scrollIntoView({ block: 'center' });
+			active?.focus({ preventScroll: true });
+		};
+		current.addEventListener('click', () => (menu.classList.contains('hide') ? open() : close()));
+		menu.addEventListener('keydown', event => {
+			const items = [...menu.querySelectorAll<HTMLElement>('.session-strip-menu-item')];
+			const index = items.indexOf(document.activeElement as HTMLElement);
+			if (event.key == 'Escape') {
+				close();
+				current.focus({ preventScroll: true });
+			} else if (event.key == 'ArrowDown' || event.key == 'ArrowUp') {
+				items[Math.max(0, Math.min(items.length - 1, index + (event.key == 'ArrowDown' ? 1 : -1)))]?.focus();
+			} else return;
+			event.preventDefault();
+		});
+		document.addEventListener('pointerdown', event => {
+			if (menu.classList.contains('hide')) return;
+			if (!menu.contains(event.target as Node) && !current.contains(event.target as Node)) close();
+		});
 	}
 
 	private sectionsOfKind(): Array<SessionSection> {
@@ -292,17 +397,23 @@ export class SessionStrip {
 		});
 		const sections = this.sectionsOfKind();
 		if (selected) {
-			this.ui.title.textContent = `${sectionTitle(selected)} of ${sections.length}`;
+			this.ui.title.textContent = `${sectionTitle(selected)} / ${sections.length}`;
 			this.ui.detail.textContent = `${formatClock(selected.start)} to ${formatClock(selected.end)} · ${sectionSummary(selected)}`;
+			this.tooltipText = `${sectionTitle(selected)} of ${sections.length}, ${formatClock(selected.start)} to ${formatClock(
+				selected.end,
+			)} (${formatSpan(selected.end - selected.start)}): ${sectionSummary(selected, true)}`;
 		} else if (has) {
 			this.ui.title.textContent = 'Range';
 			this.ui.detail.textContent = `${formatClock(start)} to ${formatClock(end)} · ${formatSpan(end - start)}`;
+			this.tooltipText = `${this.ui.detail.textContent}. Click to pick one of the ${sections.length} ${SECTION_LABELS[this.kind].many.toLowerCase()}.`;
 		} else {
-			this.ui.title.textContent = 'Whole session';
+			this.ui.title.textContent = `${sections.length} ${SECTION_LABELS[this.kind].many.toLowerCase()}`;
 			this.ui.detail.textContent = `${formatClock(session.length)} · pick a part of the bar, or step through the ${SECTION_LABELS[
 				this.kind
 			].many.toLowerCase()}`;
+			this.tooltipText = `The whole session. Click to pick one of the ${sections.length} ${SECTION_LABELS[this.kind].many.toLowerCase()}.`;
 		}
+		this.ui.current.disabled = !sections.length;
 		this.ui.prev.disabled = !sections.length || (selected?.kind == this.kind && sections.indexOf(selected) == 0);
 		this.ui.next.disabled = !sections.length || (selected?.kind == this.kind && sections.indexOf(selected) == sections.length - 1);
 	}

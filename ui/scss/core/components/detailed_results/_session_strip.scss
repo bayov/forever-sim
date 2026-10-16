@@ -59,31 +59,118 @@
 	opacity: 0.7;
 }
 
+// The arrows and the part we picked, as tall as the kind buttons beside them. The middle has a
+// fixed width, so the arrows stay put while we step through the parts.
 .session-strip-step {
+	position: relative;
 	display: flex;
-	align-items: center;
-	gap: var(--spacer-2);
+}
+
+.session-strip-picker {
+	.segmented-option {
+		justify-content: center;
+	}
 }
 
 .session-strip-arrow {
-	padding: 0.2rem 0.55rem;
-	font-size: 0.75rem;
-	line-height: 1.4;
+	padding-left: 0.55rem;
+	padding-right: 0.55rem;
+	font-size: 0.7rem;
 }
 
 .session-strip-current {
-	display: flex;
-	flex-direction: column;
-	min-width: 16rem;
-	line-height: 1.2;
+	width: 9.5rem;
+	color: var(--gold-soft);
+	background: $panel-bg-2;
+	box-shadow: inset 0 0 0 1px var(--line-color-strong);
+	font-variant-numeric: tabular-nums;
+
+	&:hover:not(:disabled) {
+		color: var(--gold-soft);
+	}
 }
 
 .session-strip-title {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.session-strip-caret {
+	font-size: 0.7rem;
+	opacity: 0.7;
+}
+
+// Every part of the kind, under the picker.
+.session-strip-menu {
+	position: absolute;
+	top: calc(100% + 4px);
+	left: 0;
+	z-index: 20;
+	display: flex;
+	flex-direction: column;
+	min-width: 100%;
+	width: max-content;
+	max-width: 28rem;
+	max-height: 22rem;
+	overflow-y: auto;
+	padding: 3px;
+	border-radius: var(--bs-border-radius);
+	background: rgba(12, 14, 20, 0.98);
+	box-shadow:
+		0 0 0 1px var(--line-color-strong),
+		0 6px 16px rgba(0, 0, 0, 0.55);
+}
+
+.session-strip-menu-item {
+	display: grid;
+	grid-template-columns: 6.5rem 3.2rem minmax(0, 1fr);
+	gap: var(--spacer-2);
+	align-items: baseline;
+	padding: 0.3rem 0.6rem;
+	border: 0;
+	border-radius: calc(var(--bs-border-radius) - 1px);
+	background: transparent;
+	color: var(--bs-body-color);
+	font-size: 0.8125rem;
+	text-align: left;
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+
+	&:hover,
+	&:focus-visible {
+		outline: none;
+		background: rgba(255, 255, 255, 0.06);
+	}
+
+	&.active {
+		background: $panel-bg-2;
+		box-shadow: inset 0 0 0 1px var(--gold-soft);
+	}
+}
+
+.session-strip-menu-name {
 	font-weight: 600;
 	color: var(--gold-soft);
 }
 
+.session-strip-menu-time,
+.session-strip-menu-summary {
+	font-size: 0.75rem;
+	color: var(--text-muted-color);
+}
+
+.session-strip-menu-summary {
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+// What the part was, next to the picker while there's room. The picker's tooltip has it all.
 .session-strip-detail {
+	flex: 1 1 0;
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 	font-size: 0.75rem;
 	color: var(--text-muted-color);
 	font-variant-numeric: tabular-nums;
