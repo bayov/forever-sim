@@ -18,6 +18,11 @@ type SpellResult struct {
 	ResistanceMultiplier float64 // Partial Resists / Armor multiplier
 	PreOutcomeDamage     float64 // Damage done by this cast before Outcome is applied
 
+	// AttackerDamage is the damage after the attacker's multipliers, before anything on the
+	// target's side: flat reductions, armor and resists, damage taken modifiers, the outcome
+	// (crit, crush, block) and absorbs.
+	AttackerDamage float64
+
 	inUse bool
 }
 
@@ -30,6 +35,7 @@ func (spell *Spell) NewResult(target *Unit) *SpellResult {
 	result.Target = target
 	result.Damage = 0
 	result.Threat = 0
+	result.AttackerDamage = 0
 	result.Outcome = OutcomeEmpty // for blocks
 	result.inUse = true
 
@@ -275,6 +281,7 @@ func (spell *Spell) calcDamageInternal(sim *Simulation, target *Unit, baseDamage
 	result := spell.NewResult(target)
 	result.Damage = baseDamage
 	result.Damage *= attackerMultiplier
+	result.AttackerDamage = result.Damage
 
 	if sim.Log == nil {
 		result.applyResistances(sim, spell, isPeriodic, attackTable)
