@@ -80,4 +80,15 @@ Report to the user:
   cost per day;
 - what is exact and what is estimated.
 
-Publish it as a Dashboard artifact when the user wants something to keep or share.
+## 4. Refresh the dashboard
+
+The report lives at https://claude.ai/artifact/PjE6v8aq8FkVjLPHm8k1dT (a Dashboard artifact; its
+page reads one data file and works out every total itself). To refresh it:
+
+```bash
+python3 tools/token_audit/dashboard_rows.py $D
+```
+
+Then upload `$D/token_audit_sessions.json` to that artifact as an asset and point its
+`datasets/sessions` document at the new `/_blob/...` url (update `url`, `name`, `updated`).
+Update the page's "How this was measured" text if the method changed.
