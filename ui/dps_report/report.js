@@ -814,11 +814,14 @@ export function startReport(dash, events) {
   // ---------- ranking ----------
   // a segmented control bound to one state key
   const seg = (host, key, opts, onPick) => {
+    // We build the buttons only once, but onPick changes with each call. On the Specs page it draws the preset it
+    // was made for, so the buttons call the latest one, or a click after switching presets draws the old preset.
+    host._onPick = onPick;
     const sig = opts.map((o) => o[0] + (o[2] ? '+' : '')).join('|');
     if (host.dataset.built !== sig) {
       host.replaceChildren(...opts.map(([v, lbl, ico]) => {
         const b = el('button', { 'data-v': v }, ico || null, lbl);
-        b.addEventListener('click', (e) => { e.stopPropagation(); st[key] = v; persist(); hideTip(); if (onPick) onPick(v); else render(); });
+        b.addEventListener('click', (e) => { e.stopPropagation(); st[key] = v; persist(); hideTip(); if (host._onPick) host._onPick(v); else render(); });
         return b;
       }));
       host.dataset.built = sig;
