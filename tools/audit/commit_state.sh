@@ -2,7 +2,8 @@
 # usage: tools/audit/commit_state.sh "<commit message>" [extra paths...]
 # Commits the audit loop's machine-written files (orchestration/audit/state, findings, log.md, ref,
 # reports, plus any extra paths, such as the docs an auditor "owns" in the registry) and pushes them
-# to master, rebasing over anyone else's push (4 tries, never force). Does nothing when they didn't change.
+# to master as HEAD:master from whatever local branch the run is on (README: a throwaway audit-run branch),
+# rebasing over anyone else's push (4 tries, never force). Does nothing when they didn't change.
 set -uo pipefail
 cd "$(git rev-parse --show-toplevel)"
 P="orchestration/audit"

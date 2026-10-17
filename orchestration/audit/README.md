@@ -33,9 +33,11 @@ no longer apply.
 
 This is what the routine session does, start to finish. Run every command from the repo root.
 
-1. **Set up.** `git checkout -q master && git pull -q origin master`, then
-   `source tools/audit/setup.sh`. If the repo isn't checked out, or `git push --dry-run origin HEAD:master`
-   is refused, reply in one line saying which and stop.
+1. **Set up.** `git fetch -q origin --prune && git checkout -q -B audit-run origin/master`, then
+   `source tools/audit/setup.sh`. Work on that throwaway `audit-run` branch: never on the checkout's own
+   `master`, which can be a stale copy that has diverged from `origin/master` (that stopped the first test
+   run). Leave any other local branches and commits alone. If the repo isn't checked out, or
+   `git push --dry-run origin HEAD:master` is refused, reply in one line saying which and stop.
 2. **Gate.** `git fetch -q origin --prune`, then `python3 tools/audit/gate.py` (a short table) and
    `python3 tools/audit/gate.py --json > $AUDIT_WORK/gate.json`. It needs no model: due means a
    watched file changed on master since that auditor's last pass, a newer client build appeared on

@@ -264,4 +264,6 @@ def mapper(html):
     i = html.find('g_mapperData = ')
     if i < 0:
         return {}
-    return _js_value(html, i + len('g_mapperData = '))
+    pins = _js_value(html, i + len('g_mapperData = '))
+    # An NPC wowhead has no position for (Plugger Spazzring in Blackrock Depths) has [].
+    return pins if isinstance(pins, dict) else {}

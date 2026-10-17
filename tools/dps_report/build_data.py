@@ -216,7 +216,8 @@ SETUP_ICON = {'manaSpringTotem': 'spell_nature_manaregentotem', 'windfuryTotem':
               'blessingOfKings': 'spell_magic_magearmor', 'blessingOfMight': 'spell_holy_fistofjustice', 'blessingOfWisdom': 'spell_holy_sealofwisdom',
               'arcaneBrilliance': 'spell_holy_magicalsentry', 'divineSpirit': 'spell_holy_divinespirit', 'giftOfTheWild': 'spell_nature_regeneration',
               'powerWordFortitude': 'spell_holy_wordfortitude', 'thorns': 'spell_nature_thorns', 'improvedScorch': 'spell_fire_soulburn',
-              'wintersChill': 'spell_frost_chillingblast', 'shadowWeaving': 'spell_shadow_blackplague', 'stormstrike': 'spell_holy_sealofmight'}
+              'wintersChill': 'spell_frost_chillingblast', 'shadowWeaving': 'spell_shadow_blackplague', 'stormstrike': 'spell_holy_sealofmight',
+              'salvation': 'spell_holy_sealofsalvation'}
 
 
 CONSUME_ICON = {'scroll of imbue greater flame': 'inv_10_inscription2_repcontracts_scroll_02_uprez_color2',
@@ -230,13 +231,14 @@ CONSUME_ICON = {'scroll of imbue greater flame': 'inv_10_inscription2_repcontrac
                 'elixir of greater spirit': 'inv_potion_09', 'major mana potion': 'inv_potion_76', 'major frenzy potion': 'inv_potion_41',
                 'mighty rage potion': 'inv_potion_41', 'major spellblasting potion': 'inv_potion_25', 'conjured demonic rune': 'inv_misc_rune_04',
                 'conjured rogue thistle tea': 'inv_drink_milk_05', 'goblin sapper': 'spell_fire_selfdestruct', 'explosive goblin land mine': 'inv_shield_08',
-                'lobster stew': 'inv_misc_food_86', 'grilled squid': 'inv_misc_fish_13', 'smoked desert dumpling': 'inv_misc_food_64',
+                'lobster stew': 'inv_drink_17', 'grilled squid': 'inv_misc_fish_13', 'smoked desert dumpling': 'inv_misc_food_64',
                 'flank au poivre': 'inv_misc_food_65', 'wizard oil': 'inv_potion_105', 'shadow oil': 'inv_potion_23',
                 'dense sharpening stone': 'inv_stone_sharpeningstone_05', 'instant poison': 'ability_poisons', 'deadly poison': 'ability_rogue_dualweild',
                 'cerebral cortex compound': 'inv_potion_32', 'ground scorpok assay': 'inv_misc_dust_02', 'roids': 'inv_stone_15',
                 'alchemy': 'trade_alchemy', 'blacksmithing': 'trade_blacksmithing', 'engineering': 'trade_engineering', 'leatherworking': 'inv_misc_armorkit_17',
                 'tailoring': 'trade_tailoring', 'enchanting': 'trade_engraving', 'hunters mark': 'ability_hunter_snipershot',
-                'totem weapon buff windfury': 'spell_nature_cyclone', 'dragon breath chili': 'inv_misc_food_49'}
+                'totem weapon buff windfury': 'spell_nature_cyclone', 'totem weapon buff flametongue': 'spell_nature_guardianward',
+                'elixir of cunning': 'inv_potion_166', 'dragon breath chili': 'inv_misc_food_49'}
 
 
 def setup_icon(k, v, cat):
@@ -698,7 +700,7 @@ extra = set(RACE_ICON.values()) | set(FACTION_ICON.values()) | {'classicon_' + c
 extra |= set(build_races.PART_ICON.values())
 # every racial's icon, for its card in the race tooltips
 extra |= {v['icon'] for lst in json.load(open(os.path.join(TREE, 'ui/core/forever/racials.json'))).values() for r in lst for v in r.get('variants', []) if v.get('icon')}
-extra |= {g['icon'] for g in gear if g.get('icon')} | {x['icon'] for x in setup if x.get('icon')} | {x['icon'] for x in auras if x.get('icon')} | {b['specIcon'] for b in builds}
+extra |= {g['icon'] for g in gear if g.get('icon')} | {x['icon'] for x in setup if x.get('icon')} | {t['icon'] for t in tt_rows if t.get('icon')} | {x['icon'] for x in auras if x.get('icon')} | {b['specIcon'] for b in builds}
 want = sorted({t['icon'] for t in trees} | {n['icon'] for n in names.values() if n.get('icon')} | {'inv_misc_questionmark'} | extra)
 def fetch(ic):
     path = os.path.join(D, 'icons', ic + '.jpg')

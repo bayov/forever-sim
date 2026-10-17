@@ -17,14 +17,14 @@ import (
 // plus 10% of spell power that doesn't grow with speed. A crit deals 1.5 times that. On the
 // beta with 91 spell power, Rage of the Storm (3.3 speed) hit 33.3 on average in 230 hits, where
 // this gives 33.27. We also check Bloody Brass Knuckles (1.6), so a coefficient that grows with
-// speed would fail.
+// speed would fail. Build 70450 slowed Rage of the Storm to 3.2 (91 to 137), so we test that.
 func TestOrcShamanFlametongueWeapon(t *testing.T) {
 	const spellPower = 91.0
 	weapons := []struct {
 		name  string
 		id    int32
 		speed float64
-	}{{"Rage of the Storm", 280604, 3.3}, {"Bloody Brass Knuckles", 7683, 1.6}}
+	}{{"Rage of the Storm", 280604, 3.2}, {"Bloody Brass Knuckles", 7683, 1.6}}
 	for _, w := range weapons {
 		t.Run(w.name, func(t *testing.T) {
 			sim, enh := weaponSim{level: 30, weapon: &proto.ItemSpec{Id: w.id}, imbue: proto.WeaponImbue_FlametongueWeapon, seconds: 10}.start()
