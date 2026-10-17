@@ -35,7 +35,7 @@ var exactId = flag.Int("id", 0, "ID to scan for")
 var minId = flag.Int("minid", 1, "Minimum ID to scan for")
 var maxId = flag.Int("maxid", 31000, "Maximum ID to scan for")
 var outDir = flag.String("outDir", "assets", "Path to output directory for writing generated .go files.")
-var genAsset = flag.String("gen", "", "Asset to generate. Valid values are 'db', 'atlasloot', 'wowhead-items', 'wowhead-spells', 'wowhead-itemdb', 'wotlk-items', and 'wago-db2-items'")
+var genAsset = flag.String("gen", "", "Asset to generate. Valid values are 'db', 'atlasloot', 'wowhead-items', 'wowhead-spells', 'wowhead-gearplannerdb' and 'wago-db2-items'")
 
 func main() {
 	flag.Parse()
@@ -373,9 +373,15 @@ func AttachFactionInformation(db *database.WowDatabase, factionRestrictions map[
 }
 
 // AttachItemSetIDs attaches item set ids to the DB items.
+//
+// wagoItems is Classic 1.15.3's ItemSparse, which has none of Forever's own items. So we
+// only take a set ID for an item that file has, and an item it doesn't have keeps the set
+// ID another source gave it, instead of losing it to 0.
 func AttachItemSetIDs(db *database.WowDatabase, wagoItems map[int32]database.WagoDbItem) {
 	for _, item := range db.Items {
-		item.SetId = wagoItems[item.Id].ItemSetID
+		if wagoItem, ok := wagoItems[item.Id]; ok {
+			item.SetId = wagoItem.ItemSetID
+		}
 	}
 }
 

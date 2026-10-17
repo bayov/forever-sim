@@ -108,9 +108,6 @@ item stats (`jsonequip`).
 
 ## Not covered here
 
-- `tools/scrape_talents_*.py` and `tools/scrape_enchant_descriptions.*` are
-  upstream wowsims tools for Classic's own pages, written for Selenium. Forever
-  doesn't use them.
 - The daily cloud routine doesn't scrape Wowhead. It runs where we can't count on
   Chrome, and stale.py in the WoW folder flags scrapes older than a week, so this
   skill runs locally.
