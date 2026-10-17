@@ -591,7 +591,7 @@ for w in sorted(glob.glob(os.path.join(D, 'weights', '*.json'))):
                       'unit': '1%' if pct else 'point', 'dpsPer': round(r['dpsPer'], 3), 'sePer': round(r['sePer'], 3),
                       'worth': round(r['vsPrimary'], 2) if r['vsPrimary'] is not None else None,
                       'ratingWorth': round(r['perRatingVsPrimary'], 2) if r.get('perRatingVsPrimary') is not None else None,
-                      'iters': w['iters']})
+                      'iters': r.get('iters', w['iters'])})
 if wrows:
     dump('weights', wrows)
 
