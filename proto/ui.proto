@@ -335,6 +335,17 @@ message LevelingPlanSettings {
 	// rank we know, as they have since 2026-10-17. Plans saved before named the highest rank
 	// at their level, and the Leveling Plan tab moves them over once.
 	bool rotations_name_top_ranks = 8;
+	// Talents we take whatever the sim says, like Improved Ghost Wolf for walking to quests
+	// and grind spots, which a grinding session doesn't sim. The talent search keeps them.
+	repeated LevelingTalentRequirement required_talents = 9;
+}
+
+// A talent we must have at least points in from level on.
+message LevelingTalentRequirement {
+	int32 tree = 1;
+	int32 talent = 2;
+	int32 points = 3;
+	int32 level = 4;
 }
 
 // A talent build and the order we put its points in. At each level we have the first picks,

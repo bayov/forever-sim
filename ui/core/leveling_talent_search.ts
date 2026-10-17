@@ -1,5 +1,5 @@
 import { countsOf, countsToTalentsString, pickProblems, TalentShape } from './leveling_plan';
-import { LevelingTalentPick } from './proto/ui';
+import { LevelingTalentPick, LevelingTalentRequirement } from './proto/ui';
 
 // The talent route search of the leveling plan (docs/leveling_plan.md, Talent search).
 //
@@ -15,13 +15,19 @@ import { LevelingTalentPick } from './proto/ui';
 // one of those to another, because the points in between are worse, so we score them all and
 // search from the best few. From each start we keep making the change to the route that saves
 // the most hours over all the levels, until no change saves any. The changes are:
-// - Swapping two picks up to SWAP_WINDOW points apart, so a talent comes earlier or later.
+// - Swapping two picks up to SWAP_WINDOW points apart, or moving a pick up to that far with
+//   the picks in between shifting over, so a talent comes earlier or later.
 // - Taking out the last point of a talent and putting a point in another talent instead, in its
 //   place or at the end of the route.
+// A change is kept when it saves more hours than the noise of the levels it changes.
 //
 // Each level is simmed on its own fixed sessions, so two routes with the same talents at a
 // level get the same hours there, and we sim each level and talents only once. That keeps the
 // search to a few hundred sims of a level for each start.
+//
+// Required talents (LevelingPlanSettings.required_talents, like Improved Ghost Wolf for walking)
+// are rules, not something we sim for. Every route we look at has them by their level, and a
+// change that takes them out or moves them later isn't one we try.
 //
 // A respec at a milestone level (like 30) is the same search over the levels from it on, with
 // all our points free to go anywhere at that level. We compare it with the best route without
@@ -36,6 +42,8 @@ export interface TalentRouteSpace {
 	// Whether we may put points in a talent. The sim gives nothing for some talents, like
 	// Improved Ghost Wolf, so a point there would be wasted.
 	allowed: (tree: number, talent: number) => boolean;
+	// Talents every route must have, with at least their points from their level on.
+	required?: LevelingTalentRequirement[];
 }
 
 export interface LevelHours {
@@ -60,12 +68,18 @@ export interface RouteResult {
 	levels: Array<{ level: number } & LevelHours>;
 }
 
+// A search that can't run, like one whose required talents no route can have.
+export class RouteSearchError extends Error {}
+
 // How far apart two picks can be for a swap.
 const SWAP_WINDOW = 3;
 // How many of the point moves that look best at the screening levels we sim over all levels.
 const SET_MOVES_KEPT = 6;
-// The least share of the hours a change must save to be kept. Below it we'd follow the noise of
-// the sessions.
+// The least a change must save to be kept, so we don't follow the luck of the sessions: the
+// noise of the levels it changes, or 0.05% of the hours when that's less. The noise adds up the
+// noise of each level's sessions, but two routes play the same sessions and most of it cancels.
+// So for a change of many levels it's far more than the real noise, and 0.05% is the bar.
+const MIN_GAIN_NOISE = 1;
 const MIN_GAIN = 0.0005;
 // How many starts we search from, the best ones by their own hours.
 const STARTS_SEARCHED = 3;
@@ -141,8 +155,70 @@ export class TalentRouteSearch {
 		};
 	}
 
-	private valid(route: LevelingTalentPick[]): boolean {
+	// Whether the route keeps the tree's rules: each point's row is open and the talent it
+	// needs is full.
+	private treeValid(route: LevelingTalentPick[]): boolean {
 		return pickProblems(route, this.space.shape).every(problem => problem == null);
+	}
+
+	// The level we check a requirement at, when we score the levels: its own level, or the
+	// first level we score when that comes later (a respec puts all its points in there), or
+	// the last when the requirement's level is past the plan.
+	private requirementLevel(requirement: LevelingTalentRequirement, levels: number[]): number {
+		return Math.min(Math.max(requirement.level, levels[0]), levels[levels.length - 1]);
+	}
+
+	// Whether the route keeps the tree's rules and has every required talent by its level.
+	private valid(route: LevelingTalentPick[], levels: number[]): boolean {
+		if (!this.treeValid(route)) return false;
+		return (this.space.required ?? []).every(requirement => {
+			const points = this.space.pointsAt(this.requirementLevel(requirement, levels));
+			return route.slice(0, points).filter(pick => pick.tree == requirement.tree && pick.talent == requirement.talent).length >= requirement.points;
+		});
+	}
+
+	// The route with the required talents in it by their levels. Each missing point goes in as
+	// late as it can and still make its level, and the route loses its last points to make room.
+	// Null when a requirement can't be met, like a talent whose row isn't open by its level.
+	withRequired(route: LevelingTalentPick[], levels: number[]): LevelingTalentPick[] | null {
+		let result = [...route];
+		const required = [...(this.space.required ?? [])].sort((a, b) => a.level - b.level);
+		for (const requirement of required) {
+			const deadline = this.space.pointsAt(this.requirementLevel(requirement, levels));
+			const same = (pick: LevelingTalentPick) => pick.tree == requirement.tree && pick.talent == requirement.talent;
+			// Its points after the deadline come before it instead.
+			result = result.filter((pick, i) => i < deadline || !same(pick));
+			let have = result.slice(0, deadline).filter(same).length;
+			while (have < requirement.points) {
+				const pick = LevelingTalentPick.create({ tree: requirement.tree, talent: requirement.talent });
+				let placed = false;
+				for (let p = Math.min(deadline - 1, result.length); p >= 0 && !placed; p--) {
+					let next = [...result.slice(0, p), pick, ...result.slice(p)];
+					if (pickProblems(next.slice(0, p + 1), this.space.shape)[p] != null) continue;
+					// The point we put in pushes the last point before the deadline past it. When
+					// that's one of this talent's, another point after ours goes past instead.
+					if (next.length > deadline && same(next[deadline])) {
+						const swapped = [...Array(deadline - p - 1).keys()]
+							.map(k => deadline - 1 - k)
+							.filter(j => !same(next[j]))
+							.map(j => {
+								const t = [...next];
+								[t[j], t[deadline]] = [t[deadline], t[j]];
+								return t;
+							})
+							.find(t => this.treeValid(t.slice(0, deadline + 1)));
+						if (!swapped) continue;
+						next = swapped;
+					}
+					result = next;
+					placed = true;
+				}
+				if (!placed) return null;
+				have++;
+			}
+		}
+		result = this.extend(result.slice(0, this.routeLength));
+		return this.valid(result, levels) ? result : null;
 	}
 
 	// A route of routeLength points that starts with the picks. We fill what's missing from
@@ -162,7 +238,7 @@ export class TalentRouteSearch {
 					.sort((a, b) => a.config.row - b.config.row || a.i - b.i);
 				for (const { i } of talents) {
 					const pick = LevelingTalentPick.create({ tree: t, talent: i });
-					if (this.valid([...route, pick])) {
+					if (this.treeValid([...route, pick])) {
 						next = pick;
 						break;
 					}
@@ -183,7 +259,7 @@ export class TalentRouteSearch {
 		const config = shape.trees[tree].talents[talent];
 		const route: LevelingTalentPick[] = [];
 		const add = (pick: LevelingTalentPick) => {
-			if (route.length >= this.routeLength || !this.valid([...route, pick])) return false;
+			if (route.length >= this.routeLength || !this.treeValid([...route, pick])) return false;
 			route.push(pick);
 			return true;
 		};
@@ -215,9 +291,11 @@ export class TalentRouteSearch {
 			tree.talents.flatMap((config, i) => (config.row > 0 && this.space.allowed(t, i) ? [this.rush(t, i, starts[0] ?? [])] : [])),
 		);
 		const candidates = [...starts.map(start => this.extend(start)), ...shape.trees.map((_, t) => this.extend([], t)), ...rushes].filter(
-			(route): route is LevelingTalentPick[] => !!route && route.length == this.routeLength && this.valid(route),
+			(route): route is LevelingTalentPick[] => !!route && route.length == this.routeLength && this.treeValid(route),
 		);
-		const unique = [...new Map(candidates.map(route => [JSON.stringify(route), route])).values()];
+		const meeting = candidates.map(route => this.withRequired(route, levels)).filter((route): route is LevelingTalentPick[] => !!route);
+		if (!meeting.length) throw new RouteSearchError('No talent route has the required talents by their levels. A talent needs its row open by then.');
+		const unique = [...new Map(meeting.map(route => [JSON.stringify(route), route])).values()];
 
 		// We score the starts at every other level, which is enough to tell the good ones.
 		this.progress(`Scoring ${unique.length} starts`, Infinity);
@@ -258,12 +336,29 @@ export class TalentRouteSearch {
 			const scores = await this.score(moves, levels);
 			let bestIndex = -1;
 			scores.forEach((score, i) => {
-				if (score < current.hours * (1 - MIN_GAIN) && (bestIndex < 0 || score < scores[bestIndex])) bestIndex = i;
+				const bar = Math.min(MIN_GAIN_NOISE * this.noiseOfChange(current.route, moves[i], levels), MIN_GAIN * current.hours);
+				if (score < current.hours - bar - 1e-9 && (bestIndex < 0 || score < scores[bestIndex])) bestIndex = i;
 			});
 			if (bestIndex < 0 || this.stopped) break;
 			current = { route: moves[bestIndex], hours: scores[bestIndex] };
 		}
 		return current;
+	}
+
+	// The noise of the hours a change saves: that of each level whose talents it changes, added
+	// up for both routes.
+	private noiseOfChange(from: LevelingTalentPick[], to: LevelingTalentPick[], levels: number[]): number {
+		let variance = 0;
+		for (const level of levels) {
+			const a = this.talentsAt(from, level);
+			const b = this.talentsAt(to, level);
+			if (a == b) continue;
+			for (const talents of [a, b]) {
+				const result = this.cache.get(this.key(level, talents));
+				if (result) variance += (result.hours * result.relativeError) ** 2;
+			}
+		}
+		return Math.sqrt(variance);
 	}
 
 	// Whether some level we score has the pick at index i but not the one at j (i < j), so a
@@ -282,7 +377,22 @@ export class TalentRouteSearch {
 				if (samePick(route[i], route[j]) || !this.swapMatters(i, j, levels)) continue;
 				const move = [...route];
 				[move[i], move[j]] = [move[j], move[i]];
-				if (this.valid(move)) moves.push(move);
+				if (this.valid(move, levels)) moves.push(move);
+			}
+		}
+		// A pick moved to another place, with the picks in between shifting over one. A swap
+		// can't take a talent past one that needs it, like Shamanistic Focus past the points
+		// that open its row.
+		const seen = new Set(moves.map(move => JSON.stringify(move)));
+		for (let i = 0; i < route.length; i++) {
+			for (let j = Math.max(0, i - SWAP_WINDOW); j < Math.min(route.length, i + 1 + SWAP_WINDOW); j++) {
+				if (Math.abs(i - j) < 2 || !this.swapMatters(Math.min(i, j), Math.max(i, j), levels)) continue;
+				const move = [...route];
+				move.splice(j, 0, ...move.splice(i, 1));
+				const key = JSON.stringify(move);
+				if (seen.has(key) || JSON.stringify(route) == key || !this.valid(move, levels)) continue;
+				seen.add(key);
+				moves.push(move);
 			}
 		}
 		return moves;
@@ -310,7 +420,7 @@ export class TalentRouteSearch {
 					const inPlace = [...route];
 					inPlace[index] = to;
 					const atEnd = [...route.slice(0, index), ...route.slice(index + 1), to];
-					const move = this.valid(inPlace) ? inPlace : this.valid(atEnd) ? atEnd : null;
+					const move = this.valid(inPlace, levels) ? inPlace : this.valid(atEnd, levels) ? atEnd : null;
 					if (move) moves.push({ route: move, from, to });
 				}),
 			);

@@ -80,11 +80,13 @@ its gold.
   fills each tree from the top, and one for each deeper talent that goes straight for it (like
   Stormstrike at 25). It searches from the best three.
 - **Changes.** From a start we keep making the change that saves the most hours over all the
-  levels, until none saves more than 0.05% (less is the noise of the sessions). A change swaps
-  two picks up to three points apart, or takes the last point out of a talent and puts it in
-  another one. There are too many of the second kind to sim each at every level, so we first
-  guess each one from the build at the middle and the last level without the point and with the
-  new one, and sim the best six at every level.
+  levels, until none saves more than the noise of the levels it changes (or 0.05% of the hours
+  when that's less, because two routes play the same sessions and most of the noise cancels).
+  A change swaps two picks up to three points apart, moves a pick up to three places (the ones
+  in between shift over), or takes the last point out of a talent and puts it in another one.
+  There are too many of the last kind to sim each at every level, so we first guess each one
+  from the build at the middle and the last level without the point and with the new one, and
+  sim the best six at every level.
 - **The same sessions.** Each level is simmed on its own seed, so two routes with the same
   talents at a level get the same hours there, and we sim each level and talents once. A search
   of the 10 to 30 plan takes about 1,800 sims of a level at 50 sessions each (a few minutes).
@@ -95,8 +97,15 @@ its gold.
 - **The numbers we show** come from other sessions, at the run's iterations, so the search
   can't have picked a route by the luck of its own sessions. The search's own best is a few
   minutes lower than that.
-- **Talents the sim gives nothing for** (`notSimulated`, like Improved Ghost Wolf) get no
-  points. Threat isn't simmed either, and solo leveling doesn't need Spirit Weapons.
+- **Required talents.** Some talents we take whatever the sim says, like Improved Ghost Wolf
+  for walking to quests and grind spots, which a grinding session doesn't sim. The plan's
+  Required talents (`LevelingPlanSettings.required_talents`) say a talent, its points and the
+  level we want them by, like `-require` in the DPS talent search (tools/rotopt). Every route the
+  search looks at has them by then, and each respec has them from its level on. A new one
+  starts at the earliest level its row allows. The enhancement shaman's plan requires Improved
+  Ghost Wolf 2/2 by 20.
+- **Talents the sim gives nothing for** (`notSimulated`) get no points unless they're
+  required. Threat isn't simmed either, and solo leveling doesn't need Spirit Weapons.
 - **Rotations stay as they are.** A respec into another tree plays the plan's rotation for
   those levels, so it can look worse than it is.
 
@@ -104,7 +113,8 @@ The first search (2026-10-17, enhancement shaman, 10 to 30, the spec's plan) fou
 25 minutes faster than the plan's talents (19h 22m at 3000 sessions a level). It puts Improved
 Lightning Shield and Elemental Weapons where the plan had Improved Ghost Wolf, and after
 Stormstrike it takes Tidal Focus, Concussion and Elemental Weapons over Flurry. A respec at 20
-saves nothing.
+saves nothing. With Improved Ghost Wolf 2/2 required by 20 (2026-10-18) the route takes
+19h 30m, 8 minutes more, with Improved Ghost Wolf at 17 and 19.
 
 ## The run
 

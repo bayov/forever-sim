@@ -2,12 +2,12 @@ import tippy from 'tippy.js';
 import { ref } from 'tsx-vanilla';
 
 import { IndividualSimUI } from '../../individual_sim_ui';
-import { countsOf, hoursAtLevel, pickLevel, planLevels, sortedBuilds, talentName, talentPointsAt, talentsAt } from '../../leveling_plan';
-import { LevelHours, RouteSearchProgress, TalentRouteSearch } from '../../leveling_talent_search';
+import { countsOf, hoursAtLevel, pickLevel, planLevels, sortedBuilds, talentName, talentPointsAt, talentsAt, talentsStringToCounts } from '../../leveling_plan';
+import { LevelHours, RouteSearchError, RouteSearchProgress, TalentRouteSearch } from '../../leveling_talent_search';
 import { Player } from '../../player';
 import { ErrorOutcomeType, RaidSimRequest } from '../../proto/api';
 import { Spec } from '../../proto/common';
-import { LevelingTalentBuild, LevelingTalentPick } from '../../proto/ui';
+import { LevelingTalentBuild, LevelingTalentPick, LevelingTalentRequirement } from '../../proto/ui';
 import { RequestTypes } from '../../sim_signal_manager';
 import { TypedEvent } from '../../typed_event';
 import { ContentBlock } from '../content_block';
@@ -64,6 +64,8 @@ const BIG_SAVING = 0.02;
 export class LevelingTalentSearch {
 	private readonly player: Player<Spec>;
 	private readonly statusElem: HTMLElement;
+	private readonly requiredElem: HTMLElement;
+	private readonly addRequiredSelect: HTMLSelectElement;
 	private readonly resultElem: HTMLElement;
 	private readonly button: HTMLButtonElement;
 	private readonly respecInput: HTMLInputElement;
@@ -93,9 +95,16 @@ export class LevelingTalentSearch {
 		const sessions = ref<HTMLInputElement>();
 		const status = ref<HTMLParagraphElement>();
 		const result = ref<HTMLDivElement>();
+		const required = ref<HTMLDivElement>();
+		const addRequired = ref<HTMLSelectElement>();
 		const options = this.loadOptions();
 		block.bodyElement.appendChild(
 			<>
+				<div className="leveling-plan-required-block">
+					<span className="form-label leveling-plan-required-title">Required talents</span>
+					<div className="leveling-plan-required" ref={required} />
+					<select className="form-select leveling-plan-required-add" ref={addRequired} />
+				</div>
 				<div className="leveling-plan-search-controls">
 					<label className="form-label">
 						Respec levels
@@ -116,6 +125,18 @@ export class LevelingTalentSearch {
 		this.sessionsInput = sessions.value!;
 		this.statusElem = status.value!;
 		this.resultElem = result.value!;
+		this.requiredElem = required.value!;
+		this.addRequiredSelect = addRequired.value!;
+		tippy(this.requiredElem.previousElementSibling!, {
+			content:
+				"Talents we take whatever the sim says, like Improved Ghost Wolf for walking to quests and grind spots, which a grinding session doesn't sim. Every route the search finds has their points by their level, and each respec has them from its level on.",
+		});
+		this.fillAddRequired();
+		this.addRequiredSelect.addEventListener('change', () => {
+			const [tree, talent] = this.addRequiredSelect.value.split(',').map(Number);
+			this.addRequiredSelect.value = '';
+			if (!isNaN(tree) && !isNaN(talent)) this.addRequirement(tree, talent);
+		});
 		tippy(this.respecInput.closest('label')!, {
 			content: 'The levels we look for a respec at. Only the ones inside the plan count.',
 		});
@@ -131,6 +152,105 @@ export class LevelingTalentSearch {
 		this.result = this.loadResult();
 		TypedEvent.onAny([this.player.levelingPlanChangeEmitter]).on(() => this.render());
 		this.render();
+	}
+
+	// The talents we can add as required, by tree.
+	private fillAddRequired() {
+		const shape = this.talents.shape;
+		this.addRequiredSelect.replaceChildren(
+			<option value="">Add a required talent...</option>,
+			...shape.trees.map((tree, t) => (
+				<optgroup label={tree.name}>
+					{tree.talents.map((talent, i) => (
+						<option value={`${t},${i}`}>{talent.name}</option>
+					))}
+				</optgroup>
+			)),
+		);
+	}
+
+	// The earliest level a talent can have points by: its row must be open and the talent it
+	// needs full.
+	private earliestLevel(tree: number, talent: number, points: number): number {
+		const plan = this.player.getLevelingPlan();
+		const shape = this.talents.shape;
+		const config = shape.trees[tree].talents[talent];
+		const before = Math.max(config.row * shape.pointsPerRow, config.prereq !== undefined ? shape.trees[tree].talents[config.prereq].maxPoints : 0);
+		return pickLevel(before + points - 1, plan.fromLevel, plan.bonusTalentPoints);
+	}
+
+	private addRequirement(tree: number, talent: number) {
+		const plan = this.player.getLevelingPlan();
+		const points = this.talents.shape.trees[tree].talents[talent].maxPoints;
+		plan.requiredTalents = [
+			...plan.requiredTalents.filter(r => r.tree != tree || r.talent != talent),
+			LevelingTalentRequirement.create({ tree, talent, points, level: this.earliestLevel(tree, talent, points) }),
+		];
+		this.player.setLevelingPlan(TypedEvent.nextEventID(), plan);
+	}
+
+	private changeRequirement(index: number, change: (requirement: LevelingTalentRequirement) => void) {
+		const plan = this.player.getLevelingPlan();
+		const requirement = plan.requiredTalents[index];
+		if (!requirement) return;
+		change(requirement);
+		this.player.setLevelingPlan(TypedEvent.nextEventID(), plan);
+	}
+
+	private renderRequired() {
+		const plan = this.player.getLevelingPlan();
+		const shape = this.talents.shape;
+		const rows = plan.requiredTalents.map((requirement, index) => {
+			const config = shape.trees[requirement.tree]?.talents[requirement.talent];
+			if (!config) return null;
+			const icon = (<span className="leveling-plan-talent-icon small" />) as HTMLElement;
+			this.talents.talentIcon(requirement.tree, requirement.talent, url => (icon.style.backgroundImage = `url('${url}')`));
+			const points = ref<HTMLSelectElement>();
+			const level = ref<HTMLInputElement>();
+			const remove = ref<HTMLButtonElement>();
+			// The plan's own builds may not have it, like ones from before we required it.
+			const missing = planLevels(plan).find(
+				l =>
+					l >= requirement.level &&
+					(talentsStringToCounts(talentsAt(plan, l, shape), shape)[requirement.tree]?.[requirement.talent] ?? 0) < requirement.points,
+			);
+			const earliest = this.earliestLevel(requirement.tree, requirement.talent, requirement.points);
+			const row = (
+				<div className="leveling-plan-required-row">
+					{icon}
+					<span>{config.name}</span>
+					<select className="form-select" ref={points}>
+						{Array.from({ length: config.maxPoints }, (_, n) => (
+							<option value={String(n + 1)} selected={n + 1 == requirement.points}>{`${n + 1}/${config.maxPoints}`}</option>
+						))}
+					</select>
+					<span>by level</span>
+					<input className="form-control leveling-plan-level-input" type="number" value={String(requirement.level)} ref={level} />
+					<button className="btn btn-link link-danger leveling-plan-remove" ref={remove}>
+						<i className="fas fa-times" />
+					</button>
+					{requirement.level < earliest ? (
+						<span className="leveling-plan-search-warning">{`Its row opens at ${earliest} at the earliest.`}</span>
+					) : missing !== undefined ? (
+						<span className="leveling-plan-search-warning">{`The plan's talents don't have it at ${missing}.`}</span>
+					) : null}
+				</div>
+			) as HTMLElement;
+			points.value!.addEventListener('change', () => this.changeRequirement(index, r => (r.points = Number(points.value!.value))));
+			level.value!.addEventListener('change', () => {
+				const value = Math.round(Number(level.value!.value));
+				if (value > 0) this.changeRequirement(index, r => (r.level = value));
+				else level.value!.value = String(requirement.level);
+			});
+			tippy(remove.value!, { content: 'No longer require it' });
+			remove.value!.addEventListener('click', () => {
+				const newPlan = this.player.getLevelingPlan();
+				newPlan.requiredTalents = newPlan.requiredTalents.filter((_, i) => i != index);
+				this.player.setLevelingPlan(TypedEvent.nextEventID(), newPlan);
+			});
+			return row;
+		});
+		this.requiredElem.replaceChildren(...rows.filter((row): row is HTMLElement => !!row));
 	}
 
 	private respecLevels(): number[] {
@@ -191,7 +311,13 @@ export class LevelingTalentSearch {
 		const pointsAt = (level: number) => talentPointsAt(level, plan.bonusTalentPoints);
 		let stage = '';
 		const search = new TalentRouteSearch(
-			{ shape, levels, pointsAt, allowed: (tree, talent) => !shape.trees[tree].talents[talent].notSimulated },
+			{
+				shape,
+				levels,
+				pointsAt,
+				allowed: (tree, talent) => !shape.trees[tree].talents[talent].notSimulated,
+				required: plan.requiredTalents,
+			},
 			jobs => this.simLevels(jobs, iterations, seed),
 			progress => this.showProgress(stage, progress),
 		);
@@ -290,7 +416,8 @@ export class LevelingTalentSearch {
 			this.storeResult(this.result);
 			this.statusElem.textContent = '';
 		} catch (e) {
-			this.simUI.handleCrash(e);
+			if (e instanceof RouteSearchError) this.statusElem.textContent = e.message;
+			else this.simUI.handleCrash(e);
 		} finally {
 			this.search = null;
 			this.render();
@@ -309,6 +436,7 @@ export class LevelingTalentSearch {
 		);
 		this.button.classList.toggle('btn-danger', !!this.search);
 		this.button.classList.toggle('btn-primary', !this.search);
+		this.renderRequired();
 		this.renderResult();
 	}
 

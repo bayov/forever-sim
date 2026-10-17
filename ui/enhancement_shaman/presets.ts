@@ -37,7 +37,7 @@ import {
 	ZanzaBuff,
 } from '../core/proto/common.js';
 import { EnhancementShaman_Options as EnhancementShamanOptions, ShamanSyncType } from '../core/proto/shaman.js';
-import { LevelingPlanSettings, LevelingRotation, LevelingRotationPreset, SavedTalents } from '../core/proto/ui.js';
+import { LevelingPlanSettings, LevelingRotation, LevelingRotationPreset, LevelingTalentRequirement, SavedTalents } from '../core/proto/ui.js';
 import { buildFromMilestones, talentShape } from '../core/leveling_plan.js';
 import { shamanTalentsConfig } from '../core/talents/shaman.js';
 import { Stats } from '../core/proto_utils/stats.js';
@@ -1689,4 +1689,7 @@ export const DefaultLevelingPlan = LevelingPlanSettings.create({
 		}),
 	),
 	rotationsNameTopRanks: true,
+	// Improved Ghost Wolf for walking to quests and grind spots, which the grinding sessions
+	// don't sim.
+	requiredTalents: [LevelingTalentRequirement.create({ tree: 1, talent: 5, points: 2, level: 20 })],
 });

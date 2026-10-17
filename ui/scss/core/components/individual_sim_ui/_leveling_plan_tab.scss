@@ -404,6 +404,40 @@
 		}
 	}
 
+	.leveling-plan-required-block {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: var(--spacer-1);
+		margin-bottom: var(--spacer-3);
+
+		.form-label {
+			margin: 0;
+		}
+	}
+
+	.leveling-plan-required-row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--spacer-2);
+
+		.form-select {
+			width: auto;
+			height: 1.9rem;
+			padding-top: 0;
+			padding-bottom: 0;
+		}
+	}
+
+	.leveling-plan-required-add {
+		width: auto;
+	}
+
+	.leveling-plan-search-warning {
+		color: var(--bs-warning);
+	}
+
 	.leveling-plan-search-route {
 		display: flex;
 		flex-wrap: wrap;
