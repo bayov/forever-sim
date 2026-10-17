@@ -13,12 +13,12 @@
 
 **20k sim inputs and outputs:** `$AUDIT_WORK/m2_<preset>.in.json` and `m2_<preset>_<tag>.out.json`, about 60 KB each, ~150 files. Re-create them with `tools/audit/rank_tuning/run_all.sh` (all presets) or `run_all.sh <preset> ...`.
 
-**Client db2 tables:** `$AUDIT_WORK/db/B_<buildno>_<Table>.csv`, from wago.tools. The tracked tables are CurvePoint, SkillLineAbility, SpellCastTimes, SpellCooldowns, SpellDuration, SpellEffect, SpellItemEnchantment, SpellLevels, SpellMisc, SpellName, SpellPower, TraitCond, TraitDefinition, TraitDefinitionEffectPoints, TraitNode, TraitNodeEntry, TraitNodeGroupXTraitCond, TraitNodeGroupXTraitNode and TraitNodeXTraitNodeEntry.
+**Client db2 tables:** the shared cache `tools/sources/wago.py` keeps, from wago.tools. The tracked tables are its `rank_tuning` set: CurvePoint, SkillLineAbility, SpellCastTimes, SpellCooldowns, SpellDuration, SpellEffect, SpellItemEnchantment, SpellLevels, SpellMisc, SpellName, SpellPower, TraitCond, TraitDefinition, TraitDefinitionEffectPoints, TraitNode, TraitNodeEntry, TraitNodeGroupXTraitCond, TraitNodeGroupXTraitNode and TraitNodeXTraitNodeEntry.
 - The baseline is build 1.60.1.70450 (70425 is identical apart from cosmetic additions).
-- Re-create it with `AUDIT_WORK=<dir> tools/audit/rank_tuning/db2_fetch.sh 1.60.1.70450`.
-- For a new build N, run `db2_fetch.sh 1.60.1.N`, then `python3 -I tools/audit/rank_tuning/db2_rowdiff.py $AUDIT_WORK/db 70450 N`.
+- Re-create it with `python3 tools/sources/wago.py fetch 1.60.1.70450 --set rank_tuning`.
+- For a new build N, run `wago.py fetch 1.60.1.N --set rank_tuning`, then `python3 -I tools/sources/wago.py diff 70450 N --set rank_tuning`.
 
 **Older builds and tables, not needed for the recurring pass:**
 - The first-pass analysis also kept 69876–70334 SpellEffect/SpellLevels/SpellName, Era 1.15.9.70003 (E_*) and 70338 (F_*, N_*) copies, plus one-off ratio and rank-inversion scripts.
 - Their method and results are written up in `orchestration/rank_tuning.md`.
-- Re-download any build with `db2_fetch.sh <build> <Table>` (Era: build 1.15.9.70003).
+- Re-download any build with `wago.py fetch <build> <Table>` (Era: build 1.15.9.70003).

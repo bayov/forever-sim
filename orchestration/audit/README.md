@@ -22,7 +22,7 @@ $2 to $6, and the auditors cost about $85 a day while nothing moved (token audit
 | `ref/<id>/` | Small reference outputs a pass compares against (sim summaries, budget tables). |
 | `log.md` | One line per pass, newest last. |
 | `ROUTINE.md` | The routine's prompt and settings. |
-| `tools/audit/` | The scripts: `gate.py` (who is due), `setup.sh`, `build_cli.sh`, `run_reqs.py`, `compare_runs.py`, `wago_latest.py`, `commit_state.sh`, and per-auditor helpers in `tools/audit/<id>/`. |
+| `tools/audit/` | The scripts: `gate.py` (who is due), `setup.sh`, `build_cli.sh`, `run_reqs.py`, `compare_runs.py`, `commit_state.sh`, and per-auditor helpers in `tools/audit/<id>/`. The client tables and the newest build come from `tools/sources/wago.py`. |
 
 The role briefs (what each auditor is for, at length) stay where they were:
 `orchestration/auditor_*.md` and `auditors_common.md`. A pass reads them only when its

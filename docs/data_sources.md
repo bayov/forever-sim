@@ -37,24 +37,16 @@ It reads four things from us: `assets/database/db.json`, `ui/*/bis/*.bis.json`,
 - **What:** every table of each Forever beta build: spells, talents, items, enchants and the
   rest. We use them for the client diffs, the audit loop's checks, talent trees, racials,
   logcheck's spell and enchant names, and the regen gametables.
-- **URLs:** `https://wago.tools/db2/<Table>/csv?build=1.60.1.<n>`, `https://wago.tools/api/builds`,
-  and the HTML page `https://wago.tools/db2/<Table>?build=` (only `wago_builds.sh` reads it).
-- **Fetchers.** Each auditor has its own today. Phase 2 folds them into one `tools/sources/wago.py`.
-  - Newest build: `tools/audit/wago_latest.py [--probe N]` (the audit gate runs it with
-    `--probe 300`), `tools/audit/client_update/latest_build.sh`,
-    `tools/audit/mechanics/probe_builds.sh <first> <last>`,
-    `tools/audit/rank_tuning/wago_builds.sh [known build]`.
-  - Tables: `tools/audit/client_update/wago_fetch.sh <build>...` (tables in its
-    `tables.txt`), `tools/audit/consumables/fetch_db2.sh <build>`,
-    `tools/audit/mechanics/fetch_db2.sh <build> [Table...]`,
-    `tools/audit/rank_tuning/db2_fetch.sh <build> [table...]`,
-    `orchestration/tools/wago_db2_fetch.sh <dir>` (its builds are hard-coded, 69893 to 70425).
-  - logcheck downloads what it needs itself: `tools/logcheck/wago.go`.
-- **Cache (none committed):** `$AUDIT_WORK/db2/...` and `$AUDIT_WORK/db/...` per auditor
-  (`AUDIT_WORK` defaults to `/tmp/audit-work`, `tools/audit/setup.sh`), `<dir>/<T>.<b>.csv`
-  for the orchestration script, and `~/forever-logs/wago/<build>/<T>.csv` for logcheck.
+- **URLs:** `https://wago.tools/db2/<Table>/csv?build=<version>` and `https://wago.tools/api/builds`.
+- **Fetcher:** `tools/sources/wago.py`, for every reader in this repo. `latest [--probe N]` for
+  the newest build, `fetch <build> --set <reader>` for a reader's tables (the sets are in its
+  `SETS`), `diff <old> <new>` to compare two builds, and `tools/sources/db2diff.py` for the
+  report grouped by class. logcheck has the same fetcher in Go, `tools/logcheck/wago.go`.
+- **Cache (not committed):** `~/.cache/wow-data/wago/<version>/<Table>.csv`, shared with
+  bayovui's build scripts and logcheck. `WOW_DATA_CACHE` moves it, and `tools/audit/setup.sh`
+  points it into `$AUDIT_WORK` for a cloud pass.
 - **Committed results:** the diffs `orchestration/audit/ref/client_update/diffs/<a>-<b>.md`
-  (from `db2diff.py`), `orchestration/audit/ref/consumables/builddiff_*.txt`, the talent
+  (from `tools/sources/db2diff.py`), `orchestration/audit/ref/consumables/builddiff_*.txt`, the talent
   files in `tools/forever_talents/client/`, and `assets/db_inputs/basestats/octregenhp.txt`
   and `regenhpperspt.txt` (below).
 - **Readers:** `orchestration/update_ledger.md`, the audit findings, hand edits to the sim,
@@ -65,7 +57,7 @@ It reads four things from us: `assets/database/db.json`, `ui/*/bis/*.bis.json`,
   wago.tools DB2 data for build N" in `TASKS.md`. Then the `dps-report` skill's full pass.
 - **Behind when:** `stale.py` compares the newest build we know (the installed beta, and
   `TASKS.md`) with `foreverClientBuild` in `.agents/skills/dps-report/state.json`.
-  `tools/audit/gate.py` compares `wago_latest.py` with each auditor's state.
+  `tools/audit/gate.py` compares `wago.py latest --probe 300` with each auditor's state.
 - **Note:** the passes say not to reach wago.tools any other way when it refuses.
 
 ### wago.tools ItemSparse, Classic 1.15.3.55646

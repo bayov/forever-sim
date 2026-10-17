@@ -33,9 +33,8 @@ current when a pass verifies or settles something.
 source tools/audit/setup.sh                            # AUDIT_WORK, protoc, protoc-gen-go
 export AUDIT_TREE=$PWD                                  # the repo checkout
 # Client tables (see orchestration/audit/ref/mechanics/MANIFEST.md):
-tools/audit/mechanics/fetch_db2.sh 1.60.1.70450
-tools/audit/mechanics/fetch_db2.sh 1.60.1.70425
-export AUDIT_DB=$AUDIT_WORK/db2/1.60.1.70450
+python3 tools/sources/wago.py fetch 1.60.1.70425 --set mechanics
+export AUDIT_DB=$(python3 tools/sources/wago.py fetch 1.60.1.70450 --set mechanics)   # prints the build's folder
 # Sim, only when a pass needs numbers (the loop may already have built one: use its CLI path):
 CLI=$(tools/audit/build_cli.sh origin/master)
 go run --tags=with_db ./tools/rotopt/mksettings -spec <name> -gear <set> -apl <rotation> -talents <str> -race <Race> -duration 180 -out $AUDIT_WORK/mechanics/x.json
@@ -48,7 +47,7 @@ $CLI sim --infile $AUDIT_WORK/mechanics/x.json --outfile $AUDIT_WORK/mechanics/o
 removed. Before looking at commits, establish the newest state of the game, and treat anything newer
 than a verdict as a reason to re-check it:
 
-- **Client build:** the newest 1.60 build (the gate's `client_build`, or `python3 tools/audit/wago_latest.py --probe 300`).
+- **Client build:** the newest 1.60 build (the gate's `client_build`, or `python3 tools/sources/wago.py latest --probe 300`).
   If it's newer than the build a verdict in `ref/mechanics/verdicts.md` rests on, re-check that verdict's spell
   data on the new build (step 5).
 - **Blizzard:** every development-notes post, hotfix post and blue post on the WoW Forever forums newer than
@@ -84,14 +83,13 @@ Record what you read as `dev_notes_seen` and `client_build` in your state, so th
    Rage. `git grep` for the changed symbol's users.
 5. **New client build.** The gate already probes wago.tools (300 builds past the newest listed one) and tells you
    when there's a newer build than `client_build` in your state. Then:
-   - run `fetch_db2.sh` for it, then
-     `python3 tools/audit/mechanics/bdiff2.py db2/<old> db2/<new> > $AUDIT_WORK/mechanics/diff.txt`;
+   - run `python3 tools/sources/wago.py fetch <new> --set mechanics`, then
+     `python3 -I tools/sources/wago.py diff <old> <new> --by-spell > $AUDIT_WORK/mechanics/diff.txt`;
    - group the diff by spell name, grep it for shared spells (racials, raid buffs and debuffs, totems, consumes,
      trinkets, enchants), and diff SpellItemEnchantment, TraitDefinitionEffectPoints and CurvePoint separately;
    - class deltas: the rank tuning auditor tracks 31+ ranks in `orchestration/rank_tuning.md`, and the client update
      auditor writes the ledger; file class deltas the sim must port as findings.
    - Set `client_build` in your state.
-   `tools/audit/mechanics/probe_builds.sh <first> <last>` probes a range by hand.
 6. **Blizzard notes:** covered by "Get current first" above. The gate starts you at least every 72 hours even when
    nothing changed in the repo, so this check never goes stale for long.
    Quote the exact wording for anything you rely on. Record the newest post you read as `dev_notes_seen` in your state

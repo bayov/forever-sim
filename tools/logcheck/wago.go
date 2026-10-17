@@ -12,9 +12,9 @@ import (
 
 // clientTables holds what we read from the Forever client's DB2 tables on wago.tools.
 //
-// We download each table once per client build into the archive's wago/ folder. When
-// wago.tools doesn't have the export's build (or we're offline), we fall back to the newest
-// build we already have.
+// We download each table once per client build into the shared cache (wagoCache), the same
+// folder tools/sources/wago.py and bayovui's build scripts use. When wago.tools doesn't have
+// the export's build (or we're offline), we fall back to the newest build we already have.
 type clientTables struct {
 	build string
 	// spellNames names every spell, for the sim's spells that never show up in the log.
@@ -37,6 +37,18 @@ type clientEnchant struct {
 
 type enchantEffect struct {
 	kind, amount, arg int32
+}
+
+// wagoCache is the folder of client tables every tool shares, <version>/<Table>.csv under it.
+// It's ~/.cache/wow-data/wago, or wago/ under $WOW_DATA_CACHE when that's set (see
+// tools/sources/wago.py).
+func wagoCache() string {
+	root := os.Getenv("WOW_DATA_CACHE")
+	if root == "" {
+		home, _ := os.UserHomeDir()
+		root = filepath.Join(home, ".cache", "wow-data")
+	}
+	return filepath.Join(root, "wago")
 }
 
 func loadClientTables(dir, build string) (*clientTables, error) {

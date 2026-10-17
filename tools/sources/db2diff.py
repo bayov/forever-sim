@@ -1,15 +1,23 @@
-"""Diff wago DB2 CSV dumps between consecutive builds, grouped by class and spell.
+"""Diff the client's DB2 tables between two builds, grouped by class and spell.
 
-usage: python3 -I db2diff.py <db2dir> <oldbuild> <newbuild> <outfile>
+usage: python3 -I tools/sources/db2diff.py <oldbuild> <newbuild> <outfile>
+  e.g. python3 -I tools/sources/db2diff.py 70425 70450 $AUDIT_WORK/diffs/70425-70450.md
+Covers the spell-keyed, talent and lookup tables (SpellItemEnchantment and ChrRaces among the
+lookups); ItemSparse has its own script, tools/audit/client_update/items_diff.py. It reads the
+tables through wago.py, which downloads what isn't cached yet (`wago.py fetch <build> --set
+client_update` gets them all first).
 """
 import csv, sys, os, collections
 
-D, OLD, NEW, OUT = sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4]
-csv.field_size_limit(10**9)
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+import wago  # noqa: E402
+
+OLD, NEW, OUT = sys.argv[1], sys.argv[2], sys.argv[3]
 
 def load(t, b):
-    p = os.path.join(D, f"{t}.{b}.csv")
-    if not os.path.exists(p):
+    try:
+        p = wago.path(t, b)
+    except OSError:
         return None, None
     with open(p, newline='', encoding='utf-8') as f:
         r = csv.reader(f)

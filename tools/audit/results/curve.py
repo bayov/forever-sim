@@ -1,18 +1,18 @@
-# Usage: python3 curve.py <spellId> [<spellId> ...]
+# Usage: python3 -I curve.py <build> <spellId> [<spellId> ...]   (build like 1.60.1.70450 or 70450)
 # Prints the talent-rank curve points (TraitDefinitionEffectPoints -> CurvePoint) for each spell, from the Forever client
-# tables TraitDefinition.csv, TraitDefinitionEffectPoints.csv and CurvePoint.csv in AUDIT_DB (default $AUDIT_WORK/db; see
-# orchestration/audit/ref/results/MANIFEST.md for how to download them).
-import csv, os, sys
-W = os.environ.get('AUDIT_WORK') or os.path.join(os.environ.get('TMPDIR', '/tmp'), 'audit-results')
-D = (os.environ.get('AUDIT_DB') or os.path.join(W, 'db')) + '/'
+# tables TraitDefinition, TraitDefinitionEffectPoints and CurvePoint at that build (tools/sources/wago.py downloads them).
+import os, sys
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../sources'))
+import wago  # noqa: E402
+B = sys.argv.pop(1)
 td = {}
-for r in csv.DictReader(open(D + 'TraitDefinition.csv')):
+for r in wago.rows('TraitDefinition', B):
     td.setdefault(r['SpellID'], []).append(r['ID'])
 ep = {}
-for r in csv.DictReader(open(D + 'TraitDefinitionEffectPoints.csv')):
+for r in wago.rows('TraitDefinitionEffectPoints', B):
     ep.setdefault(r['TraitDefinitionID'], []).append(r)
 cp = {}
-for r in csv.DictReader(open(D + 'CurvePoint.csv')):
+for r in wago.rows('CurvePoint', B):
     cp.setdefault(r['CurveID'], []).append((int(r['OrderIndex']), float(r['Pos_0']), float(r['Pos_1'])))
 for s in sys.argv[1:]:
     if s not in td:

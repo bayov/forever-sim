@@ -1,19 +1,18 @@
-"""usage: AUDIT_WORK=<scratch> python3 -I table_summary.py <oldbuild> <newbuild>
-Per table in tables.txt: identical, or rows added / removed / changed by ID (VerifiedBuild ignored).
+"""usage: python3 -I table_summary.py <oldbuild> <newbuild>
+Per table in wago.py's client_update set: identical, or rows added / removed / changed by ID (VerifiedBuild ignored).
 The first look at a new build: a table marked identical needs no further reading."""
 import csv, os, sys
 csv.field_size_limit(10**9)
-D = os.path.join(os.environ['AUDIT_WORK'], 'db2')
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../sources'))
+import wago  # noqa: E402
 old, new = sys.argv[1], sys.argv[2]
-tables = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tables.txt')).read().split()
+tables = wago.SETS['client_update']
 
 def load(t, b):
-    p = os.path.join(D, f'{t}.{b}.csv')
-    if not os.path.exists(p):
+    rows = wago.by_id(t, b)
+    if rows is None:
         return None
-    with open(p, newline='', encoding='utf-8') as f:
-        r = csv.DictReader(f)
-        return {row['ID']: {k: v for k, v in row.items() if k != 'VerifiedBuild'} for row in r}
+    return {k: {c: v for c, v in row.items() if c != 'VerifiedBuild'} for k, row in rows.items()}
 
 for t in tables:
     a, b = load(t, old), load(t, new)

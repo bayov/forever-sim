@@ -52,8 +52,8 @@ Hard rules:
    (warrior, paladin, hunter, rogue, priest, shaman, mage, warlock, druid) and the shared
    `...-m9u15h-consumes`. Only a branch **ahead of master** needs auditing, and only its own commits.
 3. **New Forever client builds** on wago.tools:
-   `curl -sS https://wago.tools/api/builds`, versions starting `1.60`.
-   On a new build, fetch it and run `builddiff.py`.
+   `python3 tools/sources/wago.py latest --probe 300` (the gate runs it too).
+   On a new build, fetch it with `wago.py fetch <new> --set consumables` and run `builddiff.py`.
 4. Blizzard's Forever development notes, when a branch or user ruling cites them. Tooltips and wowhead Forever pages
    for item sources.
 
@@ -66,7 +66,7 @@ send a two-line "no findings, nothing moved" summary and stop.
 source tools/audit/setup.sh             # AUDIT_WORK and the toolchain
 export AUDIT_TREE=$PWD                  # the repo checkout (master)
 export AUDIT_WORK=$AUDIT_WORK/consumables; mkdir -p $AUDIT_WORK
-tools/audit/consumables/fetch_db2.sh 1.60.1.70450   # and the previous build, to diff against
+python3 tools/sources/wago.py fetch 1.60.1.70450 --set consumables   # and the previous build, to diff against. Prints the build's folder, the <db2_dir> q.py, food.py, ench.py and src.py take
 git -C $AUDIT_TREE show origin/master:tools/database/forever_enchants.go > $AUDIT_WORK/fe.go
 ```
 
@@ -211,4 +211,4 @@ Then make variants with `python3 -I tools/audit/consumables/var.py base.json out
    proto/enum exists on that branch.
 9. **Building mksettings after a proto change** needs
    `PATH=$PATH:$HOME/go/bin make -B sim/core/proto/api.pb.go`.
-10. **Item.csv** wasn't refetched for every build. builddiff.py falls back to the older build's (ClassID is stable).
+10. **Item.csv** wasn't refetched for every build until 2026-10-17, so builddiff.py used the older build's. It reads each build's own now, which is why the 70425 to 70450 diff now also lists two ensembles (new consumable items).

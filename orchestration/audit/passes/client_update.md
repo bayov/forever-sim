@@ -34,9 +34,9 @@ git fetch origin master
 
 ### 1. Detect a new build and its notes
 
-1. `$T/latest_build.sh` prints the newest 1.60 build on wago.tools.
-   - It takes the maximum across all products: Forever appears under `wow_classic_beta`, `wow_cn_beta` and `wowf`, and `wowf` lags by days.
-   - If the result is the baseline (`client_build` in your state, or what the ledger last records), the pass is done: report "no new build". The gate probes db2 URLs too, so it can see a build `latest_build.sh` doesn't list yet: trust the gate's build number.
+1. `python3 tools/sources/wago.py latest --probe 300` prints the newest 1.60 build on wago.tools. The gate runs the same command, so its `client_build` is the same answer.
+   - It takes the maximum across all products (Forever appears under `wow_classic_beta`, `wow_cn_beta` and `wowf`, and `wowf` lags by days). Then it probes the db2 exports past that, because the build list has lagged behind them before.
+   - If the result is the baseline (`client_build` in your state, or what the ledger last records), the pass is done: report "no new build".
 2. **Blizzard development notes** (topic 2360696). Fetch the thread slowly, since the forum rate-limits:
 
    ```sh
@@ -65,10 +65,10 @@ git fetch origin master
 ### 2. Download and diff
 
 ```sh
-$T/wago_fetch.sh <baseline> <new>          # e.g. 70450 70471
+for b in <baseline> <new>; do python3 tools/sources/wago.py fetch $b --set client_update; done   # e.g. 70450 70471
 python3 -I $T/table_summary.py <baseline> <new>
 mkdir -p $AUDIT_WORK/diffs
-python3 -I $T/db2diff.py $AUDIT_WORK/db2 <baseline> <new> $AUDIT_WORK/diffs/<baseline>-<new>.md
+python3 -I tools/sources/db2diff.py <baseline> <new> $AUDIT_WORK/diffs/<baseline>-<new>.md
 python3 -I $T/items_diff.py <baseline> <new>
 python3 -I $T/enchant_diff.py <baseline> <new>
 ```

@@ -148,10 +148,10 @@ Each section below has five parts:
 4. Need to Verify candidates. These are also copied to notes.md, "Game-update audit (2026-10-16)".
 5. Counts.
 
-`S/db2/<Table>.<build>.csv` and `S/diffs/<old>-<new>.md` in the sections below are the auditor's working copies. To rebuild them:
+`S/db2/<Table>.<build>.csv` and `S/diffs/<old>-<new>.md` in the sections below are the auditor's working copies. The tables now live in the shared cache (`tools/sources/wago.py dir <build>`). To rebuild them:
 
-1. Run `orchestration/tools/wago_db2_fetch.sh <dir>` to download the tables.
-2. Run `python3 -I orchestration/tools/db2diff.py <dir> <old> <new> <out.md>` for each pair of consecutive builds.
+1. Run `python3 tools/sources/wago.py fetch <build> --set client_update` for each build to download the tables.
+2. Run `python3 -I tools/sources/db2diff.py <old> <new> <out.md>` for each pair of consecutive builds.
 
 Row IDs: `<CLASS>-<build>-NN` for an announced line, `<CLASS>-U-NN` for an unannounced client change, `DD-NN` for a deep-dive statement. Sources: DN or P with a number is a dev-notes post, DD a deep dive, FC foreverchanges.
 

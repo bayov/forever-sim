@@ -1,13 +1,14 @@
-# usage: python3 -I builddiff.py <old_db2_dir> <new_db2_dir> <forever_enchants.go>
+# usage: python3 -I builddiff.py <old build> <new build> <forever_enchants.go>   (builds like 1.60.1.70450 or 70450)
 # Diffs a new Forever client build against the last audited one, for what this audit owns:
 #  1. every consumable item's (Item.ClassID 0) on-use spells, their trigger spells (2 levels) and the spells their
 #     imbue enchants call (SpellEffect 53/54/92/360 -> SpellItemEnchantment EffectArg);
 #  2. every enchant in tools/database/forever_enchants.go (spell -> enchant id -> enchant points).
 # Armor auras re-encoded 22 -> 674 with the same points are reported as "armor re-encode" and are not findings.
-# Item.csv: the new dir's if present, else the old dir's (ClassID doesn't move between builds).
 import csv,os,re,sys
+sys.path.insert(0,os.path.join(os.path.dirname(os.path.abspath(__file__)),'../../sources'))
+import wago  # noqa: E402
 O,N,FE=sys.argv[1:4]
-def L(d,t): return list(csv.DictReader(open(os.path.join(d,t+'.csv'),newline='',encoding='utf-8')))
+def L(b,t): return wago.rows(t,b)
 def se(d):
     s={}
     for r in L(d,'SpellEffect'):
@@ -17,7 +18,7 @@ def se(d):
 o,n=se(O),se(N)
 sn={r['ID']:r['Name_lang'] for r in L(N,'SpellName')}
 names={r['ID']:r['Display_lang'] for r in L(N,'ItemSparse')}
-item={r['ID']:r for r in L(N if os.path.exists(os.path.join(N,'Item.csv')) else O,'Item')}
+item={r['ID']:r for r in L(N,'Item')}
 ie={r['ID']:r for r in L(N,'ItemEffect')}
 oe={r['ID']:r for r in L(O,'SpellItemEnchantment')}; ne={r['ID']:r for r in L(N,'SpellItemEnchantment')}
 spells=set(); owner={}

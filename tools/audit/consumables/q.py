@@ -1,4 +1,4 @@
-# usage: python3 -I q.py <db2_dir> item|spell <regex-or-spellid>...   (db2_dir: $AUDIT_WORK/db2/<build>)
+# usage: python3 -I q.py <db2_dir> item|spell <regex-or-spellid>...   (db2_dir: `python3 tools/sources/wago.py dir <build>`)
 # Prints items (with on-use effects) or spells (with SpellEffect rows) from a wago.tools db2 CSV dump.
 import csv,sys,re,os
 D=sys.argv[1]
