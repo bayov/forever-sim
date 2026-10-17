@@ -339,6 +339,9 @@ anything leveling-specific exists.
      Mental Quickness). A rotation can heal on `currentHealthPercent`. A naked level 30 dies
      to one level 30 mob 46% of the time with white swings only, and never with Lesser Healing
      Wave below 40% health.
+     Our beta logs (2026-10-17) agree on every heal's amount, crit, cast time and cost at
+     levels 1 to 7 and 30. A rotation that names a rank we haven't learned casts the
+     highest rank we know.
    - Still to do, other classes:
      - Priest: Lesser Heal, Heal, Flash Heal, Greater Heal and Renew (today commented out or
        missing).
