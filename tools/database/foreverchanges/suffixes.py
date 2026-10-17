@@ -13,7 +13,9 @@
 #
 # Forever also added suffixes Classic never had ("of Magic" spell power, "of the Knight",
 # "of the Bandit"). Those, and the ones whose stats match no wowhead suffix, get new IDs
-# from 990000 up.
+# from 990000 up. A suffix the current file already numbered keeps its ID, because the BiS
+# lists (ui/*/bis/*.bis.json) and gear saved in the sim store it, and a renumbered "of
+# Magic" would turn into some other suffix there.
 #
 # We scrape the items that already roll suffixes in Classic wowhead's gear planner
 # (assets/db_inputs/wowhead_gearplannerdb.txt) and need level MAX_LEVEL or lower on Forever.
@@ -120,6 +122,13 @@ def main():
     items = [i for i in planner_page(planner, 'item').values()
              if i.get('randomEnchants') and level(i) <= max_level]
 
+    # The IDs the current file gave its suffixes, by name and stats.
+    numbered = {}
+    if os.path.exists(OUT):
+        for suffix in json.load(open(OUT))['suffixes']:
+            numbered[(suffix['name'], json.dumps(sorted((int(k), v) for k, v in suffix['stats'].items())))] = suffix['id']
+    next_id = max([FIRST_NEW_ID - 1, *numbered.values()]) + 1
+
     new, options = {}, {}
     for item in sorted(items, key=lambda i: i['id']):
         have = {wowhead[str(o)]['name'] for o in item['randomEnchants'] if str(o) in wowhead}
@@ -131,11 +140,30 @@ def main():
             if key in known:
                 suffix_id = known[key]
             else:
-                suffix_id = new.setdefault(key, FIRST_NEW_ID + len(new))
+                if key not in new:
+                    if key in numbered:
+                        new[key] = numbered[key]
+                    else:
+                        new[key], next_id = next_id, next_id + 1
+                suffix_id = new[key]
             if suffix_id not in added:
                 added.append(suffix_id)
         if added:
             options[str(item['id'])] = added
+
+    # A suffix the current file had under the wrong name (it once called 302 items' "of the
+    # Prophet" "of the Physician") keeps its ID under the right one: a new suffix takes the
+    # ID of an unused old one with the same stats, so what was stored keeps its stats.
+    used = set(new.values())
+    by_stats = {}
+    for (name, stats), suffix_id in numbered.items():
+        if suffix_id not in used:
+            by_stats.setdefault(stats, suffix_id)
+    renumber = {}
+    for key, suffix_id in sorted(new.items(), key=lambda kv: kv[1]):
+        if key not in numbered and key[1] in by_stats:
+            renumber[suffix_id] = new[key] = by_stats.pop(key[1])
+    options = {item: [renumber.get(o, o) for o in opts] for item, opts in options.items()}
 
     out = {
         'suffixes': [{'id': i, 'name': k[0], 'stats': {str(s): v for s, v in json.loads(k[1])}} for k, i in new.items()],
