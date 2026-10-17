@@ -25,7 +25,7 @@ import (
 // go run ./tools/database/gen_db -outDir=assets -gen=wowhead-spells -maxid=31000
 // go run ./tools/database/gen_db -outDir=assets -gen=wowhead-gearplannerdb
 // go run ./tools/database/gen_db -outDir=assets -gen=wago-db2-items
-// python3 tools/database/forever_wowhead/scrape.py 25   (wowhead Forever listings, needs Chrome)
+// uv run tools/database/forever_wowhead/scrape.py   (wowhead Forever listings, the scrape-wowhead skill)
 
 // Lastly run the following to generate db.json (ensure to delete cached versions and/or rebuild for copying of assets during local development)
 // Note: This does not make network requests, only regenerates core db binary and json files from existing inputs
