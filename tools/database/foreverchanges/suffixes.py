@@ -26,10 +26,11 @@
 #
 #   python3 tools/database/foreverchanges/suffixes.py 30 /tmp/fc_items
 #   go run ./tools/database/gen_db -outDir=assets -gen=db
-import html, json, os, re, sys, time, urllib.error, urllib.request
+import html, json, os, re, sys, time
 
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../sources'))
-from meta import meta
+import foreverchanges  # noqa: E402
+from meta import meta  # noqa: E402
 
 ROOT = os.path.join(os.path.dirname(__file__), '../../..')
 OUT = os.path.join(ROOT, 'assets/db_inputs/foreverchanges_suffixes.json')
@@ -52,17 +53,9 @@ def fetch(item_id, cache_dir):
     path = os.path.join(cache_dir, f'{item_id}.html')
     if os.path.exists(path) and os.path.getsize(path) > 0:
         return open(path).read()
-    req = urllib.request.Request(f'https://foreverchanges.pro/item/{item_id}', headers={'User-Agent': 'Mozilla/5.0'})
-    try:
-        with urllib.request.urlopen(req, timeout=60) as r:
-            page = r.read().decode()
-    except urllib.error.HTTPError as e:
-        # The planner has Classic items the site has no page for (ones Forever left
-        # out). They roll nothing new, and we keep the 404 so a rerun doesn't ask again.
-        if e.code != 404:
-            raise
-        page = '<!-- 404 -->'
-    open(path, 'w').write(page)
+    # The planner has Classic items the site has no page for (ones Forever left
+    # out). They roll nothing new, and we keep the 404 so a rerun doesn't ask again.
+    page = foreverchanges.fetch(f'/item/{item_id}', cache=path, missing_ok=True)
     time.sleep(0.3)
     return page
 

@@ -130,7 +130,7 @@ report what the client says, so they rank with it when they show client data. Th
   `tools/database/forever_wowhead/wowhead.py`, which earns the bot check's token in headless
   Chrome and fetches with curl_cffi. `scrape.py` also asks the tooltips below whether a
   crafted item binds on pickup. The `scrape-wowhead` skill has the procedure and the rate limit.
-- **Cache:** `~/.cache/forever-wowhead/pages` (gzipped pages, `WOWHEAD_CACHE_DAYS`, default 7).
+- **Cache:** `~/.cache/wow-data/wowhead/pages` (gzipped pages, `WOWHEAD_CACHE_DAYS`, default 7).
 - **Inputs:** `assets/db_inputs/forever_wowhead_items.json`,
   `assets/db_inputs/forever_wowhead_recipes.json`, both with a `meta` block (dataEnv 16).
 - **Generator:** `gen_db -gen=db` (`tools/database/forever_wowhead.go`) for the items.
@@ -188,7 +188,9 @@ report what the client says, so they rank with it when they show client data. Th
 - **URLs:** `https://foreverchanges.pro/dungeons/<slug>`, `https://foreverchanges.pro/item/<id>`,
   `/hidden-items`, `/patch-notes`.
 - **Fetchers:** `python3 tools/database/foreverchanges/scrape.py`,
-  `python3 tools/database/foreverchanges/suffixes.py <max level> <cache dir>`.
+  `python3 tools/database/foreverchanges/suffixes.py <max level> <cache dir>`. Both fetch
+  pages and read their Next.js payload through `tools/sources/foreverchanges.py`, and so does
+  the daily routine for the hidden items page.
 - **Cache:** suffixes keeps `<cache dir>/<id>.html` (404s too). scrape.py has none.
 - **Inputs:** `assets/db_inputs/foreverchanges_loot.json`,
   `assets/db_inputs/foreverchanges_suffixes.json`, both with a `meta` block.

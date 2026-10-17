@@ -8,7 +8,7 @@
 # So we open one page in headless Chrome to earn the cookie, and then fetch everything
 # with curl_cffi, which sends Chrome's TLS fingerprint, plus that cookie. That's much
 # faster than rendering every page in Chrome. The cookie is kept in
-# ~/.cache/forever-wowhead/token.json, so a second run within a few days never starts
+# ~/.cache/wow-data/wowhead/token.json, so a second run within a few days never starts
 # Chrome at all. When wowhead challenges us again (a 202), we earn a new one.
 #
 # wowhead also limits how fast one address may ask. On 2026-10-17 about 110 requests in
@@ -18,7 +18,8 @@
 # slow down for the rest of the run.
 #
 # That makes a full scrape slow, so every page we fetch is kept, gzipped, in
-# ~/.cache/forever-wowhead/pages. A run that stops halfway (a block that never lifts,
+# ~/.cache/wow-data/wowhead/pages (the cache bayovui and forever-sim share, which
+# WOW_DATA_CACHE moves). A run that stops halfway (a block that never lifts,
 # a closed terminal) picks up where it stopped, and a page younger than
 # WOWHEAD_CACHE_DAYS (an environment variable, 7 by default) isn't fetched again. Set it
 # to 0 to fetch everything fresh.
@@ -31,8 +32,9 @@ import gzip, json, os, re, subprocess, sys, threading, time, urllib.parse, urlli
 from curl_cffi import requests
 
 BASE = 'https://www.wowhead.com/'
-TOKEN_FILE = os.path.expanduser('~/.cache/forever-wowhead/token.json')
-PAGES = os.path.expanduser('~/.cache/forever-wowhead/pages')
+CACHE = os.path.join(os.environ.get('WOW_DATA_CACHE') or os.path.expanduser('~/.cache/wow-data'), 'wowhead')
+TOKEN_FILE = os.path.join(CACHE, 'token.json')
+PAGES = os.path.join(CACHE, 'pages')
 # Seconds between requests, and the most we slow down to after blocks.
 DELAY, MAX_DELAY = 3.5, 20.0
 # How long we wait out each block in a row, in seconds. After the last we give up.
@@ -46,7 +48,7 @@ USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTM
 def earn_token():
     """Open one wowhead page in headless Chrome and return its aws-waf-token cookie."""
     import websocket
-    profile = os.path.expanduser('~/.cache/forever-wowhead/chrome')
+    profile = os.path.join(CACHE, 'chrome')
     chrome = subprocess.Popen(['google-chrome', '--headless=new', '--no-sandbox', '--disable-gpu',
         f'--remote-debugging-port={PORT}', '--remote-allow-origins=*', '--window-size=1600,1200',
         f'--user-data-dir={profile}', f'--user-agent={USER_AGENT}', 'about:blank'],
