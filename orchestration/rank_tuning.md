@@ -380,6 +380,35 @@ I re-ran all 66 bases and every sensitivity anyway, since #108 (Salvation) and t
 
 The only bases that moved more than 0.4% are the four Enhancement presets, up 0.8–1.2% from the totem change in water_totems.go: Enhancement 848.1, Imp GW 841.6, Water Shield 819.3, Mana Tide 781.7. As a result, Elemental's largest case (836.6) now ends just below Imp GW Enhancement instead of passing it, at place 46 rather than 45. Everything else in the 15:30 table stands, including Demonology at 1177.7 (coefficient 2.0: 1130.7) ahead of Lone Wolf at 1094.1.
 
+## Check 2026-10-17 03:25 UTC: client 70450 and master d2633f4
+
+**Client 1.60.1.70450 is cosmetic.** I diffed all 19 tables I track against 70425 row by row: SpellEffect, SpellLevels, SpellMisc, SpellPower, SpellCastTimes, SpellCooldowns, SpellDuration, SpellName, SkillLineAbility, SpellItemEnchantment, CurvePoint and the seven Trait tables. No existing row changed. The only additions are:
+- Spells: mounts (Spectral Wolf Pack, Verdant Sea Turtle, Crimson Rooster; skill line 777) and pets (Pinky, Blossoming Ancient, Gill'el; skill line 778).
+- Others: Adventurer's Tent, two transmog ensembles, three new curves (29893, 29895, 29896) and their spells' cooldown and level rows.
+
+No rank, talent or proc value moved, so every verdict above holds for 70450. The update ledger (#113) reached the same conclusion.
+
+**Master d2633f4:** #109–#114 changed no sim code, only presets for Beast Mastery, the two Undead Ret presets and the four Enhancement presets. I re-ran those seven presets and Earth Shock at 20k iterations:
+
+| Preset | Before | Now |
+|---|---|---|
+| Enhancement | 848.1 | 892.2 |
+| Enhancement Imp GW | 841.6 | 887.8 |
+| Enhancement + Water Shield | 819.3 | 842.2 |
+| Enhancement + Mana Tide | 781.7 | 802.8 |
+| Ret twist Undead | 974.1 | 976.3 |
+| Ret sub-Holy Undead | 978.4 | 980.7 |
+| Beast Mastery | 969.3 | 970.7 |
+
+Every sensitivity percentage is unchanged. The only ranking effects that move come from Enhancement now sitting about 45 higher:
+- **Ret:** the −1.4% puts Ret twist (876.9) below Imp GW Enhancement as well. Ret Shock (888.7) stays 0.9 above it.
+- **Enhancement, Earth Shock ×1.16:** 892.2 → 901.4 (+1.0%), level with Ret Shock (901.7) within noise.
+- **Frost:** at 855.6 it no longer passes any Enhancement preset. It stays below Balance.
+- **Balance Wrath-only:** at 840.5 it stays just below Water Shield Enhancement (842.2).
+- **Elemental:** its largest case (836.6) still lands below Balance with Faerie Fire duty (840.3).
+
+The warlock, Smite and Feral effects are as in the 15:30 table.
+
 ## Cross-class summary
 
 **Specs whose standing rests on likely-stale or untested 31+ data:**
