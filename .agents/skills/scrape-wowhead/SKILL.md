@@ -109,5 +109,6 @@ item stats (`jsonequip`).
 ## Not covered here
 
 - The daily cloud routine doesn't scrape Wowhead. It runs where we can't count on
-  Chrome, and stale.py in the WoW folder flags scrapes older than a week, so this
-  skill runs locally.
+  Chrome, and `tools/sources/stale.py` flags scrapes older than a week (by the fetch
+  date in each file's `meta` block), so this skill runs locally. `docs/data_sources.md`
+  lists every source the scrapes feed and who reads them.

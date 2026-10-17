@@ -1,4 +1,5 @@
-{"items": [
+{"meta": {"fetched": "2026-10-07T18:43Z", "source": "foreverchanges.pro", "tool": "tools/database/foreverchanges/scrape.py"},
+"items": [
 {"dungeon":"ragefire-chasm","boss":"Oggleflint","kind":"boss","id":272999,"name":"Barbaric Crossbow","reqlevel":13,"status":"new","tooltip":["Binds when picked up","Ranged\tCrossbow","15 - 23 Damage\tSpeed 2.00","(9.5 damage per second)","Requires Level 13","Chance on hit: Wounds the target for 14 Physical damage.","Sell Price: 9s 20c"]},
 {"dungeon":"ragefire-chasm","boss":"Oggleflint","kind":"boss","id":272996,"name":"Trogg Scepter","reqlevel":13,"status":"new","tooltip":["Binds when picked up","Main Hand\tMace","13 - 26 Damage\tSpeed 2.40","(8.1 damage per second)","+4 Spirit","Requires Level 13","Equip: +33 Healing","Equip: +11 Spell Damage","Sell Price: 13s 42c"]},
 {"dungeon":"ragefire-chasm","boss":"Oggleflint","kind":"boss","id":272998,"name":"Bone Knuckles","reqlevel":13,"status":"new","tooltip":["Binds when picked up","Main Hand\tFist Weapon","17 - 32 Damage\tSpeed 2.00","(12.3 damage per second)","Requires Level 13","Equip: +6 Attack Power Vs Beasts","Equip: +6 Attack Power","Sell Price: 13s 52c"]},

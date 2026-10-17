@@ -19,6 +19,9 @@
 #   go run ./tools/database/gen_db -outDir=assets -gen=db
 import json, os, re, sys, time, urllib.request
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../sources'))
+from meta import line, meta
+
 OUT = os.path.join(os.path.dirname(__file__), '../../../assets/db_inputs/foreverchanges_loot.json')
 DUNGEONS = ['ragefire-chasm', 'the-deadmines', 'wailing-caverns', 'hall-of-thanes', 'ruins-of-lordaeron', 'shadowfang-keep',
             'blackfathom-deeps', 'the-stockade', 'gnomeregan', 'razorfen-kraul',
@@ -60,7 +63,8 @@ def main():
         print(f'{slug}: {n} drops', file=sys.stderr)
         time.sleep(1)
     with open(OUT, 'w') as f:
-        f.write('{"items": [\n')
+        f.write('{' + line(meta('foreverchanges.pro', 'tools/database/foreverchanges/scrape.py')))
+        f.write('"items": [\n')
         f.write(',\n'.join(json.dumps(r, ensure_ascii=False, separators=(',', ':')) for r in rows))
         f.write('\n]}\n')
     print(f'{len(rows)} drops written to {OUT}', file=sys.stderr)

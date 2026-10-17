@@ -28,6 +28,9 @@
 #   go run ./tools/database/gen_db -outDir=assets -gen=db
 import html, json, os, re, sys, time, urllib.error, urllib.request
 
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../sources'))
+from meta import meta
+
 ROOT = os.path.join(os.path.dirname(__file__), '../../..')
 OUT = os.path.join(ROOT, 'assets/db_inputs/foreverchanges_suffixes.json')
 FIRST_NEW_ID = 990000
@@ -169,6 +172,7 @@ def main():
         'suffixes': [{'id': i, 'name': k[0], 'stats': {str(s): v for s, v in json.loads(k[1])}} for k, i in new.items()],
         'items': options,
     }
+    out = dict(meta=meta('foreverchanges.pro', 'tools/database/foreverchanges/suffixes.py'), **out)
     json.dump(out, open(OUT, 'w'), indent=None, separators=(',', ':'))
     print(f'{len(items)} items, {len(options)} gain suffixes, {sum(map(len, options.values()))} in all, {len(new)} new suffixes')
 
