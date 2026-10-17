@@ -9,6 +9,9 @@ fails when a file in `assets/db_inputs/`, or a script under `tools/` or `orchest
 downloads something, isn't named in this file. `make test` runs it, so add a new input or
 fetcher here in the same commit.
 
+The `update-sources` skill (`.agents/skills/update-sources/`) is the procedure that runs the
+fetchers below in order, regenerates the database and tests.
+
 bayovui (the WoW folder's addons) keeps its own registry in `bayovui/docs/data_sources.md`.
 It reads four things from us: `assets/database/db.json`, `ui/*/bis/*.bis.json`,
 `assets/db_inputs/forever_wowhead_items.json` and `forever_wowhead_recipes.json`.
