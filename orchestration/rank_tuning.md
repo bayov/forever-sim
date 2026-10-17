@@ -409,6 +409,12 @@ Every sensitivity percentage is unchanged. The only ranking effects that move co
 
 The warlock, Smite and Feral effects are as in the 15:30 table.
 
+## Check 2026-10-17 14:58 UTC: master 0a204d4
+
+No client build is newer than 70450. Since d2633f4, master changed two things under `sim/`: b803e88 registers the shaman heals (Healing Wave, Lesser Healing Wave, Chain Heal) as rank families, and b1b0763 regenerates the item database from a fresh Wowhead scrape. Neither touches a spell in the sensitivity set or a request file, and the only test changes are heal tests and golden results.
+
+The shared 20k run on 0a204d4 matches the d2633f4 baseline for all 66 bases to within 0.001%, level within noise. With the bases and the patched spells' code unchanged, every sensitivity percentage and place shift in the 03:25 table stands. I didn't re-run the sensitivities. The baseline stays `baseline_d2633f4.csv`.
+
 ## Cross-class summary
 
 **Specs whose standing rests on likely-stale or untested 31+ data:**
