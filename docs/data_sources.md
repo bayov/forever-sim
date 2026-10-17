@@ -13,6 +13,19 @@ bayovui (the WoW folder's addons) keeps its own registry in `bayovui/docs/data_s
 It reads four things from us: `assets/database/db.json`, `ui/*/bis/*.bis.json`,
 `assets/db_inputs/forever_wowhead_items.json` and `forever_wowhead_recipes.json`.
 
+## Which source wins
+
+When two sources disagree, the one higher in this list wins:
+
+1. The Forever client and beta itself: its DB2 tables (wago.tools), its tooltips, and what we
+   see in game and in combat logs.
+2. Season of Discovery.
+3. Anniversary, then 2019 Classic.
+
+Never cite vmangos, and never change the sim on a tooltip alone. Wowhead and foreverchanges.pro
+report what the client says, so they rank with it when they show client data. The daily routine
+(`tools/forever_update/ROUTINE.md`) and the audit passes rank sources by this list.
+
 ## Provenance
 
 - **Scraped inputs carry a `meta` block** as their first key: source, tool, fetch date (UTC),
@@ -137,7 +150,7 @@ It reads four things from us: `assets/database/db.json`, `ui/*/bis/*.bis.json`,
 - **Fetchers:** `python3 tools/dps_report/whcache.py [--retry] <ids.json>` (the id lists
   `tools/dps_report/fortt_ids.json` and `talent_ids.json` come from `whids.py` and
   `talent_links.py ids`), `forever_wowhead/scrape.py` (bind on pickup, no cache), and the
-  daily routine's `tools/forever_update/build.py` (on the routine's branch only).
+  daily routine's `tools/forever_update/build.py`.
 - **Cache:** `tools/dps_report/forever_tt_cache/{forever,classic}/{item,spell}/<id>.json`,
   committed (`DASH_TT_CACHE` overrides it). The routine uses `~/.cache/forever_update`.
 - **Readers:** the DPS report (`tools/dps_report/build_data.py`, `tooltips.py`). The browser
@@ -259,11 +272,11 @@ It reads four things from us: `assets/database/db.json`, `ui/*/bis/*.bis.json`,
 
 ## News and official notes
 
-- **The daily routine** (`tools/forever_update/ROUTINE.md`, on its branch
-  `claude/eager-dirac-9tn5t5`) reads Blizzard's news and forums, Wowhead news, other news
+- **The daily routine** (`tools/forever_update/ROUTINE.md`, whose instructions its trigger
+  prompt points at) reads Blizzard's news and forums, Wowhead news, other news
   sites, foreverchanges.pro's reveals, Forever tooltips and wago.tools builds each day. It
-  opens a `forever-update/<date>` PR and logs what it couldn't finish in `TASKS.md`.
-  `stale.py` lists its open PRs and the builds it logged.
+  opens a `forever-update/<date>` PR and logs what it couldn't finish in `TASKS.md`, each item
+  tagged with its source. `stale.py` lists its open PRs and the builds it logged.
 - **The audit loop** reads Blizzard's dev notes thread
   (`https://us.forums.blizzard.com/en/wow/t/2360696.json?print=true`, parsed by
   `tools/audit/client_update/devnotes.py`) and foreverchanges.pro's patch notes. Snapshots go

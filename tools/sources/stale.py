@@ -10,8 +10,9 @@ the registry of every source it checks.
 - The newest client build we know of, against the build the DPS report was
   audited against (`foreverClientBuild` in .agents/skills/dps-report/state.json).
   We know a build from --client-build (bayovui's stale.py passes the installed
-  beta's) and from the daily update routine's "Pull wago.tools DB2 data for
-  build N" tasks in TASKS.md. A newer one means forever-sim has catching up
+  beta's) and from the daily update routine's open TASKS.md items tagged
+  [source: wago build N] (or, before the tags, worded "Pull wago.tools DB2
+  data for build N"). A newer one means forever-sim has catching up
   to do, and the weights and BiS lists bayovui takes from us with it.
 - The talent trees' build per class: the newest build tools/forever_talents/
   client/<class>.json names. Only shown, since a build that changed no talent
@@ -93,12 +94,15 @@ def audited():
 
 
 def build_tasks():
-    """The open "Pull wago.tools DB2 data for build N" items in TASKS.md."""
+    """The builds of the open client build items in TASKS.md."""
     path = os.path.join(ROOT, 'TASKS.md')
     if not os.path.exists(path):
         return []
     with open(path, encoding='utf-8') as f:
-        return re.findall(r'^- \[ \] .*?Pull wago\.tools DB2 data for build ([\d.]+)', f.read(), re.M)
+        text = f.read()
+    tagged = re.findall(r'^- \[ \] .*\[source: wago build ([\d.]+)\]', text, re.M)
+    worded = re.findall(r'^- \[ \] .*?Pull wago\.tools DB2 data for build ([\d.]+)', text, re.M)
+    return list(dict.fromkeys(tagged + worded))
 
 
 def talent_builds():

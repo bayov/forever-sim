@@ -9,9 +9,14 @@ Tick an item when it's done.
 Item format:
 
 ```
-- [ ] YYYY-MM-DD — <what to do> (<why / source>)
+- [ ] YYYY-MM-DD — <what to do> (<why / source>) [source: <tag>]
   - <details: build number, wago.tools links, spell or item IDs, sim files, notes.md or audit items>
 ```
+
+The tag is one of `wago build <N>`, `wowhead`, `foreverchanges`, `blizzard` or `tooltip`
+(tools/forever_update/ROUTINE.md says which). `tools/sources/stale.py` finds unprocessed client
+builds by the `wago build` tag. Items from before 2026-10-17 have none, and it matches their
+wording instead.
 
 
 - [ ] 2026-10-13 — Check Baron Charr's Sceptre's fire proc, 35 → 90 on the Forever tooltip (revealed Oct 11–12, client tooltip only)
