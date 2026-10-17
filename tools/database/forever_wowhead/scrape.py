@@ -1,4 +1,7 @@
 #!/usr/bin/env python3
+# /// script
+# dependencies = ["curl_cffi", "websocket-client"]
+# ///
 # Scrape wowhead's Forever item listings into assets/db_inputs/forever_wowhead_items.json.
 #
 # wowhead's Forever database (https://www.wowhead.com/forever/items) reads the beta
@@ -6,54 +9,40 @@
 # of low level gear traded Spirit for Spell Power, dungeon weapons hit harder). The
 # listing pages embed every row as `listviewitems` and each item's stats as
 # `g_items[id].jsonequip`, which is all the sim needs, so we take those instead of
-# parsing tooltips. The pages need a real browser (curl gets a 403), so this drives
-# headless Chrome over the DevTools protocol.
+# parsing tooltips. wowhead.py says how we get past wowhead's bot check.
 #
 # The quest listing comes along too, because a quest row is the only place that says
 # which classes and which side can take it, and Forever hands out class gear from quests
 # that say nothing about the class on the item itself.
 #
-#   pip install websocket-client
-#   python3 tools/database/forever_wowhead/scrape.py 25
+#   uv run tools/database/forever_wowhead/scrape.py [max required level]
 #   go run ./tools/database/gen_db -outDir=assets -gen=db
 #
-# The argument is the highest required level to scrape. Items with no required level
-# (Forever quest rewards) come along whatever their item level.
-import concurrent.futures, json, os, subprocess, sys, time, urllib.request
-import websocket
+# The argument is the highest required level to scrape, by default the one the current
+# file was scraped with. Items with no required level (Forever quest rewards) come along
+# whatever their item level.
+import concurrent.futures, json, os, sys, urllib.request
 
-MAX_REQ_LEVEL = int(sys.argv[1]) if len(sys.argv) > 1 else 25
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from wowhead import Wowhead, gatherer, listview_items, listview_template
+
 OUT = os.path.join(os.path.dirname(__file__), '../../../assets/db_inputs/forever_wowhead_items.json')
+
+def scraped_level():
+    try:
+        with open(OUT) as f:
+            return json.loads(f.readline() + ']}')['maxReqLevel']
+    except (OSError, ValueError, KeyError):
+        return 60
+
+MAX_REQ_LEVEL = int(sys.argv[1]) if len(sys.argv) > 1 else scraped_level()
 # wowhead inventory slots: every slot a character can wear, shirts and tabards left out.
 SLOTS = [1, 2, 3, 16, 5, 9, 10, 6, 7, 8, 11, 12, 13, 14, 17, 21, 22, 23, 15, 25, 26, 28]
-PORT = 9334
-# CloudFront answers headless Chrome's own user agent with a 403, a desktop one gets through.
-USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36'
 # Row fields worth keeping, and jsonequip keys that are not stats (prices, looks).
 ROW_KEYS = ['id', 'name', 'quality', 'level', 'reqlevel', 'slot', 'classs', 'subclass', 'reqclass', 'side', 'source', 'sourcemore', 'speed', 'dps', 'armor']
 EQ_SKIP = {'appearances', 'displayid', 'sellprice', 'buyprice', 'avgbuyout', 'dura', 'itemSquishEraId', 'sheathtype', 'maxcount'}
 
-EXPR = '''(() => {
-    const s = [...document.scripts].map(x => x.textContent).join("\\n");
-    const i = s.indexOf("listviewitems = ");
-    if (i < 0) return document.body && document.body.innerText.includes("No items") ? {rows: [], g: {}} : null;
-    const j = s.indexOf("];", i);
-    const rows = eval(s.slice(i + 16, j + 1));
-    const g = {};
-    for (const r of rows) { const e = g_items[r.id]; if (e) g[r.id] = {icon: e.icon, eq: e.jsonequip}; }
-    return {rows, g};
-})()'''
-
 TOOLTIP = 'https://nether.wowhead.com/forever/tooltip/item/{}?dataEnv=16&locale=0'
-# The quest listing builds its rows into the Listview call instead of a variable.
-QUEST_EXPR = '''(() => {
-    const s = [...document.scripts].map(x => x.textContent).join("\\n");
-    const i = s.indexOf("template: 'quest'");
-    if (i < 0) return document.body && document.body.innerText.includes("No quests") ? [] : null;
-    const j = s.indexOf("data:[", i);
-    const k = s.indexOf("]});", j);
-    return JSON.parse(s.slice(j + 5, k + 1));
-})()'''
 
 def mark_bind_on_pickup(items):
     """Set bop on the crafted items that bind when picked up.
@@ -77,7 +66,7 @@ def mark_bind_on_pickup(items):
                 item['bop'] = True
     print(f"{sum(1 for i in crafted if i.get('bop'))} of {len(crafted)} crafted items bind on pickup", file=sys.stderr)
 
-def scrape_quests(fetch):
+def scrape_quests(wh):
     """Every quest wowhead knows, by id.
 
     A quest row says which classes and which side can take the quest, and that is the
@@ -88,9 +77,10 @@ def scrape_quests(fetch):
     while ranges:
         lo, hi = ranges.pop()
         url = f'https://www.wowhead.com/forever/quests/min-req-level:{lo}/max-req-level:{hi}'
-        rows = fetch(url, QUEST_EXPR)
+        html = wh.page(url)
+        rows = listview_template(html, 'quest') if html else None
         if rows is None:
-            print('failed', url, file=sys.stderr)
+            print('no quest listing at', url, file=sys.stderr)
             continue
         # Same 1000 row ceiling as the item listing, so a range that comes back that big
         # is split by required level and fetched again.
@@ -139,77 +129,49 @@ def mark_quest_restrictions(items, quests):
     print(f"{classes} items come from a class's own quest, {sides} from one side's", file=sys.stderr)
 
 def main():
-    chrome = subprocess.Popen(['google-chrome', '--headless=new', '--no-sandbox', '--disable-gpu',
-        f'--remote-debugging-port={PORT}', '--remote-allow-origins=*', '--window-size=1600,1200',
-        '--user-data-dir=/tmp/forever-wowhead-chrome', f'--user-agent={USER_AGENT}', 'about:blank'], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    try:
-        for _ in range(50):
-            try:
-                tabs = json.load(urllib.request.urlopen(f'http://127.0.0.1:{PORT}/json')); break
-            except Exception:
-                time.sleep(0.2)
-        ws = websocket.create_connection([t for t in tabs if t['type'] == 'page'][0]['webSocketDebuggerUrl'])
-        ws.settimeout(90)
-        seq = [0]
-        def send(method, **params):
-            seq[0] += 1
-            ws.send(json.dumps({'id': seq[0], 'method': method, 'params': params}))
-            while True:
-                m = json.loads(ws.recv())
-                if m.get('id') == seq[0]: return m.get('result', {})
-        def fetch(url, expr=EXPR):
-            send('Page.navigate', url=url)
-            for _ in range(60):
-                time.sleep(0.5)
-                try:
-                    val = send('Runtime.evaluate', expression=expr, returnByValue=True).get('result', {}).get('value')
-                except Exception:
-                    val = None
-                if val is not None: return val
-            return None
-        send('Page.enable')
-        items = {}
-        for slot in SLOTS:
-            # wowhead stops a listing somewhere above 1000 rows, so a range that comes back
-            # that big is split by required level and fetched again.
-            ranges = [(0, MAX_REQ_LEVEL)]
-            while ranges:
-                lo, hi = ranges.pop()
-                url = f'https://www.wowhead.com/forever/items/slot:{slot}/min-req-level:{lo}/max-req-level:{hi}'
-                val = fetch(url)
-                if val is None:
-                    print('failed', url, file=sys.stderr); continue
-                if len(val['rows']) >= 1000 and lo < hi:
-                    mid = (lo + hi) // 2
-                    ranges += [(lo, mid), (mid + 1, hi)]
-                    continue
-                n = 0
-                for r in val['rows']:
-                    # Random suffix variants repeat the base row.
-                    if 'parentListviewRowItem' in r or r['id'] in items: continue
-                    g = val['g'].get(str(r['id']))
-                    if not g: continue
-                    item = {k: r[k] for k in ROW_KEYS if k in r}
-                    # wowhead writes a nonsense side on the rows that carry a bonustree
-                    # (Willow Vest and 145 others), so only the three real values count.
-                    if item.get('side') not in (1, 2, 3):
-                        item.pop('side', None)
-                    item['icon'] = g['icon']
-                    item['eq'] = {k: v for k, v in (g['eq'] or {}).items() if k not in EQ_SKIP}
-                    items[r['id']] = item
-                    n += 1
-                print(f'slot {slot} levels {lo}-{hi}: {n} items', file=sys.stderr)
-        mark_bind_on_pickup(items)
-        mark_quest_restrictions(items, scrape_quests(fetch))
-        out = sorted(items.values(), key=lambda x: x['id'])
-        # One item per line, so a rescrape diffs item by item.
-        with open(OUT, 'w') as f:
-            f.write('{"maxReqLevel": %d, "items": [\n' % MAX_REQ_LEVEL)
-            f.write(',\n'.join(json.dumps(i, sort_keys=True, separators=(',', ':')) for i in out))
-            f.write('\n]}\n')
-        print(f'{len(out)} items written to {OUT}', file=sys.stderr)
-    finally:
-        chrome.terminate()
+    wh = Wowhead()
+    items = {}
+    for slot in SLOTS:
+        # wowhead stops a listing somewhere above 1000 rows, so a range that comes back
+        # that big is split by required level and fetched again.
+        ranges = [(0, MAX_REQ_LEVEL)]
+        while ranges:
+            lo, hi = ranges.pop()
+            url = f'https://www.wowhead.com/forever/items/slot:{slot}/min-req-level:{lo}/max-req-level:{hi}'
+            html = wh.page(url)
+            rows = listview_items(html) if html else None
+            if rows is None:
+                print('no item listing at', url, file=sys.stderr); continue
+            if len(rows) >= 1000 and lo < hi:
+                mid = (lo + hi) // 2
+                ranges += [(lo, mid), (mid + 1, hi)]
+                continue
+            n = 0
+            g = gatherer(html, 3)
+            for r in rows:
+                # Random suffix variants repeat the base row.
+                if 'parentListviewRowItem' in r or r['id'] in items: continue
+                e = g.get(str(r['id']))
+                if not e: continue
+                item = {k: r[k] for k in ROW_KEYS if k in r}
+                # wowhead writes a nonsense side on the rows that carry a bonustree
+                # (Willow Vest and 145 others), so only the three real values count.
+                if item.get('side') not in (1, 2, 3):
+                    item.pop('side', None)
+                item['icon'] = e['icon']
+                item['eq'] = {k: v for k, v in (e.get('jsonequip') or {}).items() if k not in EQ_SKIP}
+                items[r['id']] = item
+                n += 1
+            print(f'slot {slot} levels {lo}-{hi}: {n} items', file=sys.stderr)
+    mark_bind_on_pickup(items)
+    mark_quest_restrictions(items, scrape_quests(wh))
+    out = sorted(items.values(), key=lambda x: x['id'])
+    # One item per line, so a rescrape diffs item by item.
+    with open(OUT, 'w') as f:
+        f.write('{"maxReqLevel": %d, "items": [\n' % MAX_REQ_LEVEL)
+        f.write(',\n'.join(json.dumps(i, sort_keys=True, separators=(',', ':')) for i in out))
+        f.write('\n]}\n')
+    print(f'{len(out)} items written to {OUT}', file=sys.stderr)
 
 if __name__ == '__main__':
     main()
