@@ -1,6 +1,6 @@
 # Rank tuning audit tools
 
-Each script starts with a usage line. The pass that uses them is in `orchestration/audit/handoff/rank_tuning.md`.
+Each script starts with a usage line. The pass that uses them is in `orchestration/audit/passes/rank_tuning.md`.
 
 **Environment:**
 - `AUDIT_TREE`: a throwaway checkout of origin/master to patch and sim.

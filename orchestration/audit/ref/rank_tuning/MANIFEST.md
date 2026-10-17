@@ -20,5 +20,5 @@
 
 **Older builds and tables, not needed for the recurring pass:**
 - The first-pass analysis also kept 69876–70334 SpellEffect/SpellLevels/SpellName, Era 1.15.9.70003 (E_*) and 70338 (F_*, N_*) copies, plus one-off ratio and rank-inversion scripts.
-- Their method and results are written up in `orchestration/rank_tuning.md` on the coordination branch `claude/wow-forever-dps-presets-m9u15h`.
+- Their method and results are written up in `orchestration/rank_tuning.md`.
 - Re-download any build with `db2_fetch.sh <build> <Table>` (Era: build 1.15.9.70003).

@@ -1,4 +1,6 @@
-# Handoff: level 31+ rank tuning auditor
+# Pass: level 31+ rank tuning
+
+Follow `orchestration/audit/PASS.md` around this doc. It started as the long-running auditor's handoff (2026-10-17); keep it current when the method changes.
 
 ## The role
 
@@ -11,9 +13,9 @@ The auditor:
 - measures each one's DPS sensitivity by rescaling the 31+ data in a patched sim;
 - watches for new client builds and master changes that could change either.
 
-**Write only the report**, `orchestration/rank_tuning.md`, on the coordination branch `claude/wow-forever-dps-presets-m9u15h`. Make no other repo changes and post no PR comments.
+**Write only** the report `orchestration/rank_tuning.md` (on master; this auditor `owns` it) and your audit-loop files (`PASS.md`). The run commits them. Post no PR comments.
 
-**Workers don't change their sims on this audit's verdicts alone.** The orchestrator, or the user, rules.
+**Nobody changes the sim on this audit's verdicts alone.** The orchestrator, or the user, rules on each finding.
 
 The full method, the per-class verdict tables, the rank inversion scan and every pass's results are in that report. Read its "Method" and "Main finding" sections once before the first pass.
 
@@ -23,8 +25,7 @@ The full method, the per-class verdict tables, the rank inversion scan and every
 - Never use vmangos as a source. Never decide from a tooltip alone; use client db2 data.
 - wago.tools is the client data source. If it refuses a request, don't reach it any other way. A 503 is Cloudflare or the site being down; retry on a later pass.
 - Put no model names in anything written.
-- Commit trailer: the session's usual `Co-Authored-By:` / `Claude-Session:` lines.
-- Push with `git push`. On a race, fetch and rebase. Never force-push.
+- Don't commit or push: the audit run does that once at the end.
 
 ## What to watch, and when a pass is quiet
 
@@ -47,14 +48,14 @@ The full method, the per-class verdict tables, the rank inversion scan and every
 
 Diff by sha, not by `git log --since`. A time window once missed a merge that landed a minute before it, and a by-sha diff can't do that.
 
-**A pass is quiet** when there's no new build and no change under `sim/` (except results files) or `tools/dps_report/req`. A quiet pass writes nothing and messages no one.
+**A pass is quiet** when there's no new build and no change under `sim/` (except results files) or `tools/dps_report/req`. The audit loop's gate (`tools/audit/gate.py`) already checks both before starting you, so you normally run only when one of them moved. A quiet pass updates only `state/rank_tuning.json`.
 
 ## The pass, step by step
 
 ```bash
 export AUDIT_WORK=<scratch dir>             # binary, 20k inputs and outputs, db2 tables
 export AUDIT_TREE=<scratch checkout>        # throwaway: git worktree add --detach $AUDIT_TREE origin/master
-A=tools/audit/rank_tuning                    # run from a checkout of the branch that holds these scripts
+A=tools/audit/rank_tuning                    # run from the repo root (master)
 REF=orchestration/audit/ref/rank_tuning/baseline_d2633f4.csv
 
 # 1. New client build?
@@ -88,22 +89,21 @@ python3 $A/summarize.py $AUDIT_WORK --write <new baseline csv>   # once accepted
   - a sensitivity whose percentage moved more than 0.2 points;
   - a sensitivity whose place shift changed, meaning which presets it would pass or fall behind among the 66 bases.
 - A sensitivity percentage that moves means the spell's share or data changed. That's a finding.
-- Base moves that only shift places are worth a short report note. Message the orchestrator only if a ranking effect named in the report changes, such as who is first, or a spec passing or falling behind another.
+- Base moves that only shift places are worth a short report note. File a finding only if a ranking effect named in the report changes, such as who is first, or a spec passing or falling behind another.
 - Differences under about 1 DPS (stdev/√20000 ≈ 0.2–0.3) are noise. Say "level within noise".
 
 ### Where findings go
 
 1. Add a dated `## Check <date> <time> UTC: ...` section to `orchestration/rank_tuning.md`, just above `## Cross-class summary`.
-2. Commit and push to the coordination branch.
-3. Then send a short summary to the orchestrator: the class, the spell, the % and the ranking effect.
-
-If a build changes a class's 31+ or deep-tier data, also tell that class's worker the deltas, and ask it to port them in a PR against master with paired 20k before/after numbers (120/180/300 s, two seed sets), never merging. The orchestrator asked for this on 70425.
+2. Add each finding to `orchestration/audit/findings/rank_tuning.md` (format in `PASS.md`): the class, the spell, the % and the ranking effect. A ranking effect named in the report that changes (who is first, a spec passing or falling behind another) is `severity: high`.
+3. If a build changes a class's 31+ or deep-tier data, the finding's proposed fix is a port of the deltas in a PR against master with paired 20k before/after numbers (120/180/300 s, two seed sets), `needs: orchestrator fix`. The orchestrator asked for this on 70425.
+4. When you accept a new sim baseline, write it as `orchestration/audit/ref/rank_tuning/baseline_<sha>.csv`, delete the old one, and record its name in `state/rank_tuning.json` as `baseline`.
 
 ## Current baseline (2026-10-17)
 
 - **Client:** 1.60.1.70450. It's cosmetic against 70425: all 19 tables row-diffed, no existing row changed.
 - **Master:** last audited at **d2633f4**. b389688, master at handoff, changed nothing under `sim/` or the req files.
-- **Reference numbers:** `orchestration/audit/ref/rank_tuning/baseline_d2633f4.csv`. Headline values (180 s, 20k iterations):
+- **Reference numbers:** `orchestration/audit/ref/rank_tuning/baseline_d2633f4.csv` (the newest is named in `state/rank_tuning.json` as `baseline`). Headline values (180 s, 20k iterations):
 
 | Sensitivity (`jobs.txt` tag) | Base → rescaled | Change | Place of 66 |
 |---|---|---|---|

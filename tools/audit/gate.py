@@ -31,6 +31,8 @@ def git(*a):
 
 
 def changed(old, new, paths, exclude, three_dot=False):
+    if not paths:
+        return []
     if not old:
         return ['(no previous commit recorded)']
     if old == new:
@@ -55,7 +57,8 @@ master = git('rev-parse', 'origin/master')
 remote_branches = [b.strip().removeprefix('origin/') for b in git('branch', '-r', '--format=%(refname:short)').splitlines()]
 client = None
 if any('wago_build' in a.get('external', []) for a in reg['auditors']):
-    r = subprocess.run([sys.executable, os.path.join(REPO, 'tools/audit/wago_latest.py')], capture_output=True, text=True)
+    probe = ['--probe', str(reg['wago_probe'])] if reg.get('wago_probe') else []
+    r = subprocess.run([sys.executable, os.path.join(REPO, 'tools/audit/wago_latest.py'), *probe], capture_output=True, text=True)
     client = r.stdout.strip() if r.returncode == 0 else None
 
 out = []

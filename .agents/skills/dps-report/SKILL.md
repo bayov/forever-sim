@@ -5,7 +5,9 @@ description: Orchestrate and refresh the WoW Forever level 60 DPS report. That c
 
 # DPS report orchestration
 
-You are the **orchestrator**. You don't do the class work yourself. You decide what needs to run, start or reuse sessions and subagents, keep the shared rules consistent, relay findings and decisions to the user, and publish the report. The user talks to you; class sessions and auditors report to you.
+You are the **orchestrator**. You don't do the class work yourself. You decide what needs to run, start sessions and subagents for it, keep the shared rules consistent, relay findings and decisions to the user, and publish the report. The user talks to you; the subagents and sessions you start report to you, and the auditors report through `orchestration/audit/findings/`.
+
+You are a **fresh session per task**, not a standing one (section 7). Everything a later orchestrator needs goes into the repo before you finish: `state.json`, `orchestration/*.md`, the findings files.
 
 This skill is a toolbox, not a fixed script. Read the request, work out which **building blocks** it needs (section 3), and run only those. "Light" and "Full" (section 4) are the common combinations, not the only ones.
 
@@ -28,25 +30,23 @@ All paths are on `master`: the orchestration docs, the pipeline and this skill w
 3. `orchestration/spec_assumptions.md`: every uncertain assumption, with Low / Expected / High settings. It feeds the report's assumption picker.
 4. `orchestration/forever_class_changes.md`: Forever-vs-Classic mechanics findings and their status.
 5. `orchestration/followups.md`: known open items.
-6. `.agents/skills/dps-report/state.json`: what the last report was built from (branch heads, client build, report artifact). Compare it with now to find what's stale.
-7. `tools/dps_report/README.md`: the dataset pipeline (scripts, inputs, runtimes, per-dataset dependencies).
-8. The class briefs `orchestration/brief_<class>.md` and auditor briefs `orchestration/auditor_*.md` + `auditors_common.md`. They're historical and still useful for roles and method, but their gear numbers are superseded by standards 1b.
+6. `orchestration/audit/findings/*.md` (the `## Open` sections) and the newest lines of `orchestration/audit/log.md`: what the auditors found since the last report (B13).
+7. `orchestration/handoff_orchestrator.md`: what the last long-running orchestrator knew that wasn't written elsewhere (2026-10-17): parked threads, working rules for rotation, talent and race changes, PR verification and pipeline lessons.
+8. `.agents/skills/dps-report/state.json`: what the last report was built from (branch heads, client build, report artifact). Compare it with now to find what's stale.
+9. `tools/dps_report/README.md`: the dataset pipeline (scripts, inputs, runtimes, per-dataset dependencies).
+10. The class briefs `orchestration/brief_<class>.md` and auditor briefs `orchestration/auditor_*.md` + `auditors_common.md`. They're historical and still useful for roles and method, but their gear numbers are superseded by standards 1b.
 
 ## 2. Roles you can start
 
-Start long-lived roles as cloud sessions (claude-code-remote MCP `create_session`, source the repo, revision = the relevant branch). They message you with `send_message` to `@parent`. Use local subagents (Agent tool, background) for one-off jobs in your own container: dashboard work, analyses, shared-branch fixes. The prompt templates are in `prompts/`.
+Prefer local subagents (Agent tool, background) in your own container: class fixes, dashboard work, analyses, shared-branch fixes. Start a cloud session (claude-code-remote MCP `create_session`, source the repo, revision = the relevant branch) only for work that has to outlive your session or run in parallel for hours, and archive it (`archive_session`) as soon as its work is merged or handed back. Nothing stays alive waiting for the next task: no standing class workers, no check-ins that wake a big session. Sessions you start message you with `send_message` to `@parent` once, when they're done. The prompt templates are in `prompts/`.
+
+The **auditors are not sessions any more.** They run as the audit loop: one scheduled routine, every 6 hours, a fresh session per run that passes only the auditors whose watched files changed (`orchestration/audit/README.md`). Don't start auditor sessions. To get a pass now, use B5.
 
 | Role | Template | Owns | Typical trigger |
 |---|---|---|---|
-| Class worker (×9) | `prompts/class_worker.md` (+ `orchestration/brief_<class>.md`) | its branch `claude/wow-forever-dps-presets-m9u15h-<class>`, PR, presets, sim code for its class | any class change, research, new rule |
-| Forever class changes auditor | `prompts/auditor_class_changes.md` | `orchestration/forever_class_changes.md` | new Forever build, "check what Forever changed" |
-| Forever mechanics auditor | `orchestration/auditor_forever.md` | verdicts with tier-1 sources | disputed mechanics |
-| Rank tuning auditor | `orchestration/auditor_rank_tuning.md` | rank and coefficient checks per client build | new client build |
-| Gear auditor | `orchestration/auditor_gear.md` | standards 1b / 5a compliance | any gear change |
-| Fairness auditor | `orchestration/auditor_fairness.md` | cross-spec ranking (§1), fairness questions | after any round |
-| Results auditor | `orchestration/auditor_results.md` | reproduces published numbers | after any round |
-| Rotation auditor | `orchestration/auditor_rotations.md` | APL review, cooldown stacking | rotation changes |
-| Consumables auditor | `orchestration/auditor_consumes.md` | consumes, buffs, debuffs, enchants vs the rules | consumable/buff changes, new Forever items |
+| Class worker (per task) | `prompts/class_worker.md` (+ `orchestration/brief_<class>.md`) | a branch and PR for that task, presets, sim code for its class | a class change, research, a new rule; archived when its PR is merged |
+| Forever class changes auditor (one-off) | `prompts/auditor_class_changes.md` | `orchestration/forever_class_changes.md` | a new Forever build, "check what Forever changed"; run it as a subagent, not a standing session |
+| Auditors (results, rotations, gear, consumables, mechanics, rank tuning, fairness) | `orchestration/audit/passes/<id>.md` | `orchestration/audit/findings/<id>.md` | the audit loop, on its own; B5 for a pass now |
 | Report jobs (local subagents) | `prompts/dashboard/HANDOFF_*.md` (legacy names) | `ui/dps_report/` and its data | refresh, new feature, fixes |
 | One-off analyses (local subagents) | `prompts/dashboard/HANDOFF_budget.md`, `HANDOFF_bis_realism.md` as examples | an `orchestration/*.md` write-up | new rule questions |
 
@@ -79,7 +79,7 @@ Each block lists its inputs, its outputs and how to run it. Combine them freely.
 - Then tell every class to merge it. On conflicts in `assets/database/db.json` / `db.bin`, regenerate with `go run ./tools/database/gen_db -outDir=assets -gen=db`; never hand-merge.
 - Classes then regenerate goldens and re-run finals if their presets use the changed thing.
 
-**B5. Audit pass.** Ask the relevant auditors for a pass on the current heads. Typical after-round order: gear → consumables → results → fairness (§1 ranking). Auditors send findings straight to class workers and summaries to you.
+**B5. Audit pass.** The audit loop passes an auditor on its own once its watched files change on master, at most 6 hours later. For a pass now (say, before publishing), run it yourself as `orchestration/audit/README.md` "Running a pass by hand" says: `python3 tools/audit/gate.py --force <ids>`, then steps 4 to 7 of "A run", one subagent per auditor with the model the registry names. Typical after-round order: gear → consumables → results → fairness (§1 ranking). Read the results in `orchestration/audit/findings/<id>.md` and `reports/<id>.md`.
 
 **B6. Gear round.** Only when the budget rules change.
 1. Update standards 1b and gear_targets (re-run `gear_targets_v3.py`).
@@ -119,6 +119,11 @@ Template: `prompts/dashboard/HANDOFF_assumptions.md`. Re-run it whenever presets
 - Update PR bodies (class workers do their own).
 - Tell the user what changed, with the ranking.
 
+**B13. Audit findings.** The auditors file findings in `orchestration/audit/findings/<id>.md` and send nothing to anyone; the routine's notification tells the user they exist. When the user asks you to act on them ("handle the audit findings"):
+1. Read every `## Open` finding. Check each against master: is it still true, and is the evidence sound? A finding is a claim to verify, not an order.
+2. Group them: `needs: user ruling` → ask the user with your recommendation (section 5); fixes → B3 (class) or B4 (shared), done by subagents.
+3. Once a fix is on master, the auditor's next pass moves the finding to `## Resolved`. When you resolve one yourself (a ruling that closes it, a finding you showed is wrong), move it there with the date, the commit or ruling, and one line why.
+
 **B12. Merge into master.** Report-only changes (`ui/dps_report`, its data and `tools/dps_report`) go straight to master (B8). Sim, preset and class changes still go through PRs, and you open or merge those only when the user asks.
 1. **Order.** Shared sim changes go first (the `-consumes` branch), then coordination, then the class PRs one at a time. Start with the classes that touch the least shared code.
 2. **Merge method.** Use merge commits, not squash or rebase. Every class branch carries the shared commits, so their commit IDs must survive for the class diffs to shrink cleanly.
@@ -139,7 +144,8 @@ Template: `prompts/dashboard/HANDOFF_assumptions.md`. Re-run it whenever presets
 ## 4. Common workflows (presets of the blocks above)
 
 - **Light refresh** ("update the report"): B1 → B7 for stale classes only → B8 only if the page needs no changes beyond data → B11.
-- **Full pass** (new Forever build, or "re-audit everything"): B1 → class changes auditor and rank tuning auditor on the new build → B3 research and fixes per class → B4 shared fixes → B5 audit pass → B7 → B9 → B11.
+- **Act on audit findings** ("handle the audit findings", after a notification): B1 → B13 → B3/B4 for the fixes → B5 for the auditors that found them → B7 → B11.
+- **Full pass** (new Forever build, or "re-audit everything"): B1 → class changes auditor (a subagent) and a rank tuning pass (B5) on the new build → B3 research and fixes per class → B4 shared fixes → B5 audit pass → B7 → B9 → B11.
 - **One class** ("re-check druids"): B1 for that class → B3 → B5 (results, and fairness for the ranking) → B7 for that class → B11.
 - **Rule change** ("assume X", "use Sunder not Expose"): B2 → B3 for affected classes → B5 → B7 → B11.
 - **Report feature** ("add Y to the report"): B8 (plus B7 if new data is needed) → B11.
@@ -172,3 +178,15 @@ For anything else, map the request to blocks. When it's ambiguous whether the us
 - open items.
 
 Update it at B11. A new session compares it with `git rev-parse origin/<branch>` and wago.tools' newest build to decide what's stale.
+
+## 7. Cost rules
+
+Measured on 2026-10-17 (`.agents/skills/token-audit`): the long-running orchestrator, nine workers and seven auditors cost about $4,450 at list price in five days, mostly from re-reading 150k to 750k tokens of context on every wake. So:
+
+- **One task, one fresh session.** Start the orchestrator for a task, finish it, write what's left to `state.json` or `orchestration/*.md`, and stop. Don't keep it alive for the next task or schedule check-ins into it.
+- **Archive what you start.** A worker session is archived once its work is merged or handed back (`archive_session`). Prefer subagents: they end on their own.
+- **No broadcasts.** Message a session only with a task or an answer it needs. Quiet status goes to files.
+- **Keep big output out of every context.** Sim results, combat logs, db2 tables and long diffs go to files; read summaries (`tools/audit/compare_runs.py`, `jq`, `grep`, `head`). Delegate heavy reading to a subagent that returns only its conclusion.
+- **Pick the model for the job.** Sonnet for mechanical work (running sims and comparing numbers, regenerating data, applying a known fix); Opus where the work judges mechanics, balance or design.
+- **Check the cost.** `/token-audit` shows what each kind of session spent.
+

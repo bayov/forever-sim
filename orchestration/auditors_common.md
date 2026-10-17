@@ -1,5 +1,7 @@
 # Auditor brief (shared by the four auditors)
 
+> **Since 2026-10-17 the auditors run as the audit loop** (`orchestration/audit/README.md`): one fresh session per pass, findings in `orchestration/audit/findings/<id>.md`. The parts below about sessions, messaging workers and the orchestrator, and 45-minute passes no longer apply; `orchestration/audit/PASS.md` replaces them. The rest (the standards, how to run the sim, what to check) is still the background for each pass.
+
 You are one of four read-only auditors on the forever-sim repo (github.com/bayov/forever-sim, a fork of wowsims/classic modelling World of Warcraft: Forever). Nine class workers, each its own Claude session, are building Level 60 presets for every DPS spec of their class, and they keep refining them while you work. The orchestrator (session `session_01AGmMcVxGoubbDodiQDQwhz`) coordinates them and reports to the user.
 
 **You never change the repo.** No commits, no pushes, no PR comments, no PR reviews. You read, you run sims locally to check claims, and you send findings to the class worker that owns the spec (with `send_message`, claude-code-remote MCP server; load it with ToolSearch `select:mcp__claude-code-remote__send_message` if needed). The worker decides and makes the change. Send the orchestrator a short summary after each full pass, and right away for anything that affects several classes.

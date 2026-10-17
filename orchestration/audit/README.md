@@ -1,7 +1,7 @@
 # The audit loop
 
-The DPS report's auditors (results, rotations, gear, consumables, mechanics, rank tuning, fairness)
-run as one scheduled routine. Every run is a **fresh cloud session** that reads everything it needs
+The DPS report's auditors (results, rotations, gear, consumables, mechanics, rank tuning, fairness,
+and client updates for each new Forever build) run as one scheduled routine. Every run is a **fresh cloud session** that reads everything it needs
 from this directory, so no auditor carries a growing context from pass to pass.
 
 Why: on 2026-10-17 the seven auditors lived in their own long-running sessions with 150k to 700k
@@ -15,12 +15,11 @@ $2 to $6, and the auditors cost about $85 a day while nothing moved (token audit
 |---|---|
 | `auditors.json` | The registry: each auditor's watched paths, outside sources, model, whether it sims, and the docs it owns. |
 | `PASS.md` | The protocol every pass follows: what it may touch, how it reports, how it keeps its context small. |
-| `passes/<id>.md` | Each auditor's pass, step by step: what to check, the commands, the tolerances, what's settled. |
+| `passes/<id>.md` | Each auditor's pass, step by step: what to check, the commands, the tolerances, what's settled. They started as the handoffs the long-running auditor sessions wrote when they were retired (2026-10-17). |
 | `state/<id>.json` | What each auditor last audited: master commit, client build, pass number, result, baselines. |
 | `findings/<id>.md` | Each auditor's findings: open ones on top, resolved ones below. This replaces messages to workers and the orchestrator. |
 | `reports/<id>.md` | The latest pass report per auditor, overwritten each pass. |
 | `ref/<id>/` | Small reference outputs a pass compares against (sim summaries, budget tables). |
-| `handoff/<id>.md` | What the long-running auditor sessions handed over when they were retired (historical). |
 | `log.md` | One line per pass, newest last. |
 | `ROUTINE.md` | The routine's prompt and settings. |
 | `tools/audit/` | The scripts: `gate.py` (who is due), `setup.sh`, `build_cli.sh`, `run_reqs.py`, `compare_runs.py`, `wago_latest.py`, `commit_state.sh`, and per-auditor helpers in `tools/audit/<id>/`. |
@@ -104,5 +103,5 @@ These rules are in `PASS.md` for the passes; they apply to any agent session in 
 - **Message only when it matters.** Findings go to `findings/<id>.md`. Nothing is sent to other
   sessions, and quiet passes write one log line.
 - **Pick the model for the job.** Mechanical passes (results, gear, consumables) run on Sonnet. Passes
-  that judge mechanics or balance (rotations, mechanics, rank tuning, fairness) run on Opus. The
+  that judge mechanics or balance (rotations, mechanics, rank tuning, fairness, client updates) run on Opus. The
   run session itself is Sonnet.
