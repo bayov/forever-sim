@@ -1,6 +1,6 @@
 {
-  "updated": "2026-10-16",
-  "note": "Every class PR through #97 is merged into master. The report data in ui/dps_report was re-simmed in full on 2026-10-16 (provenance recorded at 5bbcb0d for all 66 builds) after the 70425 class ports and racials, Grace of Air with Windfury, main-hand Windfury Totem, off-hand Rage 0.5 and the Fury and rogue re-searches. Use `node tools/dps_report/stale.mjs` to see what's stale.",
+  "updated": "2026-10-17",
+  "note": "Every class PR through #114 is merged into master. The report data in ui/dps_report was re-simmed in full on 2026-10-17 (sims on 787da848, provenance recorded at 1735382c for all 66 builds) after Salvation in every request (#108), the raid's Flametongue Totem and the Enhancement rotation and talents (#109 to #112, #114), BM (#110) and Ret vs Undead (#111). Use `node tools/dps_report/stale.mjs` to see what's stale.",
   "foreverClientBuild": "1.60.1.70450 (spells, talents, racials and enchants identical to 70425)",
   "coordinationBranch": {
     "name": "claude/wow-forever-dps-presets-m9u15h",
@@ -51,8 +51,8 @@
   },
   "reportArtifact": {
     "url": "https://claude.ai/artifact/RUzPysb5dSk2RAXzXij4oR",
-    "version": 31,
-    "publishedFrom": "59d8e8d3b",
-    "date": "2026-10-16"
+    "version": 35,
+    "publishedFrom": "437b92161",
+    "date": "2026-10-17"
   }
 }
