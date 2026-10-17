@@ -1,0 +1,35 @@
+990012 Enhancement Synthetic Two-Hand (Phas Axe TwoHand 220.2-332.6@3.7 dps 74.70 spread 1.510
+990113 Elemental Synthetic Staff (Phase 1)  Staff TwoHand 126.0-205.0@2.9 dps 57.07 spread 1.627
+991013 Warrior Synthetic Ranged (Phase 1)   Bow None 69.0-129.0@2.5 dps 39.60 spread 1.870
+991014 Fury Synthetic Main Hand (Phase 1)   Sword OneHand 107.9-201.2@2.8 dps 55.20 spread 1.865
+991015 Fury Synthetic Off Hand (Phase 1)    Axe OneHand 104.3-194.9@2.9 dps 51.59 spread 1.869
+991016 Arms Synthetic Two-Hand (Phase 1)    Axe TwoHand 223.7-337.8@3.7 dps 75.88 spread 1.510
+992012 Retribution Synthetic Two-Hand (Phas Axe TwoHand 203.0-305.0@3.4 dps 74.71 spread 1.502
+993013 Ranged Hunter Synthetic Two-Hand (Ph Sword TwoHand 138.0-207.0@3.2 dps 53.91 spread 1.500
+993014 Ranged Hunter Synthetic Ranged (Phas Bow None 76.6-143.2@2.5 dps 43.96 spread 1.869
+993113 Survival Synthetic Main Hand (Phase  Axe OneHand 104.3-194.9@2.9 dps 51.59 spread 1.869
+993114 Survival Synthetic Off Hand (Phase 1 Dagger OneHand 57.4-107.7@1.6 dps 51.59 spread 1.876
+993115 Survival Synthetic Ranged (Phase 1)  Bow None 89.0-166.0@2.9 dps 43.97 spread 1.865
+994013 Combat Swords Synthetic Main Hand (P Axe OneHand 111.6-208.5@2.9 dps 55.19 spread 1.868
+994014 Combat Swords Synthetic Off Hand (Ph Mace OneHand 90.0-168.0@2.5 dps 51.60 spread 1.867
+994015 Combat Swords Synthetic Ranged (Phas Bow None 69.0-129.0@2.5 dps 39.60 spread 1.870
+994017 Seal Fate Swords Synthetic Off Hand  Dagger OneHand 57.4-107.7@1.6 dps 51.59 spread 1.876
+994113 Daggers Synthetic Main Hand (Phase 1 Dagger OneHand 73.0-137.0@1.8 dps 58.33 spread 1.877
+994114 Daggers Synthetic Off Hand (Phase 1) Dagger OneHand 57.0-107.0@1.6 dps 51.25 spread 1.877
+994115 Daggers Synthetic Ranged (Phase 1)   Bow None 69.0-129.0@2.5 dps 39.60 spread 1.870
+994116 Mutilate Synthetic Off Hand (Phase 1 Sword OneHand 64.4-120.1@1.8 dps 51.25 spread 1.865
+994117 Mutilate Synthetic Main Hand (Phase  Dagger OneHand 69.1-129.2@1.7 dps 58.32 spread 1.870
+994118 Combat Daggers Synthetic Off Hand (P Mace OneHand 89.4-166.9@2.5 dps 51.26 spread 1.867
+995015 Shadow Synthetic Wand (Phase 1)      Wand None 83.0-155.0@1.9 dps 62.63 spread 1.867
+995027 Smite Synthetic Wand (Phase 1)       Wand None 83.0-155.0@1.9 dps 62.63 spread 1.867
+995028 Shadow Synthetic Staff (Phase 1)     Staff TwoHand 105.0-197.0@2.9 dps 52.07 spread 1.876
+995029 Smite Synthetic Staff (Phase 1)      Staff TwoHand 105.0-197.0@2.9 dps 52.07 spread 1.876
+996015 Mage Synthetic Wand (Phase 1)        Wand None 83.0-155.0@1.9 dps 62.63 spread 1.867
+996016 Mage Synthetic Staff (Phase 1)       Staff TwoHand 126.0-205.0@2.9 dps 57.07 spread 1.627
+996029 Mage Arcane Synthetic Staff (Phase 1 Staff TwoHand 126.0-205.0@2.9 dps 57.07 spread 1.627
+996030 Mage Arcane Synthetic Wand (Phase 1) Wand None 83.0-155.0@1.9 dps 62.63 spread 1.867
+997015 Warlock Synthetic Wand (Phase 1)     Wand None 102.0-191.0@2.0 dps 73.25 spread 1.873
+997019 Warlock Synthetic Staff of Precision Staff TwoHand 126.0-205.0@2.9 dps 57.07 spread 1.627
+997020 Warlock Synthetic Staff (Phase 1)    Staff TwoHand 126.0-205.0@2.9 dps 57.07 spread 1.627
+998013 Balance Synthetic Two-Hand (Phase 1) Staff TwoHand 126.0-205.0@2.9 dps 57.07 spread 1.627
+998113 Feral Synthetic Two-Hand (Phase 1)   Mace TwoHand 175.0-263.0@3.5 dps 62.57 spread 1.503

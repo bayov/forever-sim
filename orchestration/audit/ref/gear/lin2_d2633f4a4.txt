@@ -1,0 +1,127 @@
+master--ui_balance_druid_gear_sets_level60_phase1_synthetic.ge arch=caster target=Balance druid (and Wrath) total L 902
+     [trk1 trinket id998014 Balance Synthetic Stat Trinket (Phase 1) L46.0 {'SP': 30.96, 'Crit': 15.0}]
+     [trk2 on-use trinket id998015 (check sim code)]
+     [mh id998013 Weapon TwoHand il76 L 193.0 = 2.206 x L(76)]
+     shares (actual/target, non-Sta/Spi/Hit rescaled to the room left): Sta 15.1/15.0 Spi 9.9/10.0 Hit 12.2 Int 16.3/16.3 SP 35.7/35.8 Crit 10.9/10.8 top SP 42%
+master--ui_balance_druid_gear_sets_level60_phase1_synthetic_wr arch=caster target=Balance druid (and Wrath) total L 902
+     [trk1 trinket id998014 Balance Synthetic Stat Trinket (Phase 1) L46.0 {'SP': 30.96, 'Crit': 15.0}]
+     [trk2 on-use trinket id998015 (check sim code)]
+     [mh id998013 Weapon TwoHand il76 L 193.0 = 2.206 x L(76)]
+     shares (actual/target, non-Sta/Spi/Hit rescaled to the room left): Sta 15.1/15.0 Spi 9.9/10.0 Hit 12.2 Int 16.3/16.3 SP 35.7/35.8 Crit 10.9/10.8 top SP 42%
+master--ui_elemental_shaman_gear_sets_level60_phase1_synthetic arch=caster target=Elemental shaman total L 903
+     [trk1 trinket id990114 Elemental Synthetic Trinket (Phase 1) L45.8 {'SP': 31.82, 'Crit': 14.0}]
+     [trk2 on-use trinket id990115 (check sim code)]
+     [mh id990113 Weapon TwoHand il76 L 193.3 = 2.209 x L(76)]
+     shares (actual/target, non-Sta/Spi/Hit rescaled to the room left): Sta 15.2/16.1 Spi 9.5/10.0 Hit 11.1 Int 18.2/18.0 SP 35.0/35.1 Crit 11.1/11.1 top SP 41%
+master--ui_enhancement_shaman_gear_sets_level60_phase1_synthet arch=hybrid target=Enhancement shaman total L 839
+     [trk1 trinket id990014 Enhancement Synthetic Trinket (Phase 1) L46.0 {'Str': 32.0, 'Crit': 14.0}]
+     [trk2 on-use trinket id990015 (check sim code)]
+     [mh id990012 Weapon TwoHand il76 L 90.8 = 1.037 x L(76)]
+     shares (actual/target, non-Sta/Spi/Hit rescaled to the room left): Sta 19.5/19.4 Spi 9.9/10.0 Hit 10.7 SP(held) 30.5/30.7 Int(held) 10.2/10.4 Str 9.7/9.4 Agi 2.1/2.1 AP 2.9/2.8 Crit 4.4/4.4 top SP 38%
+master--ui_feral_druid_gear_sets_level60_phase1_synthetic.gear arch=phys target=Feral druid total L 729
+     [trk1 trinket id998114 Feral Synthetic Stat Trinket (Phase 1) L46.0 {'Str': 17.0, 'Agi': 29.0}]
+     [trk2 on-use trinket id998115 (check sim code)]
+     [mh id998113 Weapon TwoHand il76 L 79.0 = 0.903 x L(76)]
+     shares (actual/target, non-Sta/Spi/Hit rescaled to the room left): Sta 19.6/19.7 Spi 0.0/0 Hit 12.3 Str 24.3/24.4 Agi 25.9/25.9 Int 6.2/6.1 AP 2.2/2.2 Crit 9.5/9.4 top Agi 32%
+master--ui_hunter_gear_sets_level60_phase1_synthetic_ranged.ge arch=hunter target=Hunter ranged (BM / MM) total L 809
+     [trk1 trinket id993015 Ranged Hunter Synthetic Trinket (Phase 1 L46.0 {'Agi': 32.0, 'Crit': 14.0}]
+     [trk2 on-use trinket id993016 (check sim code)]
+     [mh id993013 Weapon TwoHand il76 L 85.6 = 0.978 x L(76)]
+     [rng id993014 Ranged Bow il71 L 19.8 = 0.242 x L(71)]
+     shares (actual/target, non-Sta/Spi/Hit rescaled to the room left): Sta 17.2/17.2 Spi 10.0/10.0 Hit 11.1 Str 1.1/1.2 Agi 34.6/34.6 Int 3.5/3.5 AP 4.7/4.6 Crit 17.8/17.9 top Agi 42%
+master--ui_hunter_gear_sets_level60_phase1_synthetic_survival. arch=hunter target=Hunter Survival total L 794
+     [trk1 trinket id993116 Survival Synthetic Trinket (Phase 1) L46.0 {'Agi': 32.0, 'Crit': 14.0}]
+     [trk2 on-use trinket id993117 (check sim code)]
+     [mh id993113 Weapon OneHand il71 L 34.5 = 0.421 x L(71)]
+     [oh id993114 Weapon OneHand il71 L 34.5 = 0.421 x L(71)]
+     [rng id993115 Ranged Bow il71 L 19.5 = 0.238 x L(71)]
+     shares (actual/target, non-Sta/Spi/Hit rescaled to the room left): Sta 15.4/15.5 Spi 10.1/10.0 Hit 7.6 Str 11.2/11.2 Agi 31.1/31.0 Int 0.0/0.3 AP 9.9/9.7 Crit 14.7/14.8 top Agi 37%
+master--ui_mage_gear_sets_level60_phase1_synthetic.gear.json   arch=caster target=Mage (Frostfire / Frost / Fire) total L 923
+     [trk1 trinket id996031 Mage Synthetic Trinket (Phase 1) L46.3 {'SP': 35.26, 'Crit': 11.0}]
+     [trk2 on-use trinket id996032 (check sim code)]
+     [mh id996016 Weapon TwoHand il76 L 193.7 = 2.213 x L(76)]
+     [rng id996015 Ranged Wand il71 L 21.2 = 0.259 x L(71)]
+     shares (actual/target, non-Sta/Spi/Hit rescaled to the room left): Sta 12.9/13.9 Spi 9.5/10.0 Hit 10.8 Int 16.4/16.6 SP 39.2/38.2 Crit 11.2/12.0 top SP 45%
+master--ui_mage_gear_sets_level60_phase1_synthetic_arcane.gear arch=caster target=Mage Arcane total L 923
+     [trk1 trinket id996031 Mage Synthetic Trinket (Phase 1) L46.3 {'SP': 35.26, 'Crit': 11.0}]
+     [trk2 on-use trinket id996032 (check sim code)]
+     [mh id996029 Weapon TwoHand il76 L 193.8 = 2.215 x L(76)]
+     [rng id996030 Ranged Wand il71 L 21.2 = 0.259 x L(71)]
+     shares (actual/target, non-Sta/Spi/Hit rescaled to the room left): Sta 13.1/14.2 Spi 9.6/10.0 Hit 10.8 Int 15.9/16.2 SP 42.9/41.6 Crit 7.6/8.2 MP5 0.0/0.4 top SP 49%
+master--ui_retribution_paladin_gear_sets_level60_phase1_synthe arch=hybrid target=Ret paladin total L 842
+     [trk1 trinket id992014 Retribution Synthetic Trinket (Phase 1) L45.5 {'SP': 27.52, 'Crit': 18.0}]
+     [trk2 on-use trinket id992015 (check sim code)]
+     [mh id992012 Weapon TwoHand il76 L 91.1 = 1.041 x L(76)]
+     shares (actual/target, non-Sta/Spi/Hit rescaled to the room left): Sta 17.6/17.7 Spi 10.0/10.0 Hit 10.7 SP(held) 28.3/28.4 Int(held) 10.0/10.0 Str 12.6/12.4 Agi 2.5/2.4 AP 1.5/1.5 Crit 6.9/7.1 top SP 34%
+master--ui_rogue_gear_sets_level60_phase1_synthetic_combat_dag arch=phys target=Rogue daggers total L 734
+     [trk1 trinket id994201 Rogue Synthetic Trinket (Phase 1) L46.0 {'Agi': 31.0, 'Crit': 15.0}]
+     [trk2 on-use trinket id994202 (check sim code)]
+     [mh id994113 Weapon OneHand il71 L 32.0 = 0.391 x L(71)]
+     [oh id994118 Weapon OneHand il71 L 32.0 = 0.391 x L(71)]
+     [rng id994115 Ranged Bow il71 L 19.5 = 0.238 x L(71)]
+     shares (actual/target, non-Sta/Spi/Hit rescaled to the room left): Sta 20.7/20.6 Spi 0.0/0 Hit 6.8 Str 18.0/17.5 Agi 34.1/34.8 AP 7.5/7.2 Crit 12.9/12.9 top Agi 43%
+master--ui_rogue_gear_sets_level60_phase1_synthetic_daggers.ge arch=phys target=Rogue daggers total L 734
+     [trk1 trinket id994201 Rogue Synthetic Trinket (Phase 1) L46.0 {'Agi': 31.0, 'Crit': 15.0}]
+     [trk2 on-use trinket id994202 (check sim code)]
+     [mh id994113 Weapon OneHand il71 L 32.0 = 0.391 x L(71)]
+     [oh id994114 Weapon OneHand il71 L 32.0 = 0.391 x L(71)]
+     [rng id994115 Ranged Bow il71 L 19.5 = 0.238 x L(71)]
+     shares (actual/target, non-Sta/Spi/Hit rescaled to the room left): Sta 20.7/20.6 Spi 0.0/0 Hit 6.8 Str 18.0/17.5 Agi 34.1/34.8 AP 7.5/7.2 Crit 12.9/12.9 top Agi 43%
+master--ui_rogue_gear_sets_level60_phase1_synthetic_mutilate.g arch=phys target=Rogue daggers total L 734
+     [trk1 trinket id994201 Rogue Synthetic Trinket (Phase 1) L46.0 {'Agi': 31.0, 'Crit': 15.0}]
+     [trk2 on-use trinket id994202 (check sim code)]
+     [mh id994117 Weapon OneHand il71 L 32.0 = 0.391 x L(71)]
+     [oh id994116 Weapon OneHand il71 L 32.0 = 0.391 x L(71)]
+     [rng id994115 Ranged Bow il71 L 19.5 = 0.238 x L(71)]
+     shares (actual/target, non-Sta/Spi/Hit rescaled to the room left): Sta 20.7/20.6 Spi 0.0/0 Hit 6.8 Str 18.0/17.5 Agi 34.1/34.8 AP 7.5/7.2 Crit 12.9/12.9 top Agi 43%
+master--ui_rogue_gear_sets_level60_phase1_synthetic_seal_fate_ arch=phys target=Rogue swords total L 734
+     [trk1 trinket id994201 Rogue Synthetic Trinket (Phase 1) L46.0 {'Agi': 31.0, 'Crit': 15.0}]
+     [trk2 on-use trinket id994202 (check sim code)]
+     [mh id994013 Weapon OneHand il71 L 32.0 = 0.391 x L(71)]
+     [oh id994017 Weapon OneHand il71 L 32.0 = 0.391 x L(71)]
+     [rng id994015 Ranged Bow il71 L 19.5 = 0.238 x L(71)]
+     shares (actual/target, non-Sta/Spi/Hit rescaled to the room left): Sta 20.6/20.4 Spi 0.0/0 Hit 6.8 Str 17.8/17.2 Agi 37.2/38.0 AP 5.6/5.1 Crit 12.0/12.3 top Agi 47%
+master--ui_rogue_gear_sets_level60_phase1_synthetic_swords.gea arch=phys target=Rogue swords total L 734
+     [trk1 trinket id994201 Rogue Synthetic Trinket (Phase 1) L46.0 {'Agi': 31.0, 'Crit': 15.0}]
+     [trk2 on-use trinket id994202 (check sim code)]
+     [mh id994013 Weapon OneHand il71 L 32.0 = 0.391 x L(71)]
+     [oh id994014 Weapon OneHand il71 L 32.0 = 0.391 x L(71)]
+     [rng id994015 Ranged Bow il71 L 19.5 = 0.238 x L(71)]
+     shares (actual/target, non-Sta/Spi/Hit rescaled to the room left): Sta 20.6/20.4 Spi 0.0/0 Hit 6.8 Str 17.8/17.2 Agi 37.2/38.0 AP 5.6/5.1 Crit 12.0/12.3 top Agi 47%
+master--ui_shadow_priest_gear_sets_level60_phase1_smite.gear.j arch=caster target=Smite priest total L 924
+     [trk1 trinket id995033 Priest Synthetic Trinket (Phase 1) L46.0 {'SP': 30.96, 'Crit': 15.0}]
+     [trk2 on-use trinket id995034 (check sim code)]
+     [mh id995029 Weapon TwoHand il76 L 194.0 = 2.217 x L(76)]
+     [rng id995027 Ranged Wand il71 L 21.5 = 0.262 x L(71)]
+     shares (actual/target, non-Sta/Spi/Hit rescaled to the room left): Sta 16.6/16.6 Spi 10.0/10.0 Hit 0.0 Int 17.8/17.8 SP 43.5/43.5 Crit 12.2/12.1 top SP 52%
+master--ui_shadow_priest_gear_sets_level60_phase1_synthetic.ge arch=caster target=Shadow priest total L 926
+     [trk1 trinket id995033 Priest Synthetic Trinket (Phase 1) L46.0 {'SP': 30.96, 'Crit': 15.0}]
+     [trk2 on-use trinket id995034 (check sim code)]
+     [mh id995028 Weapon TwoHand il76 L 194.2 = 2.219 x L(76)]
+     [rng id995015 Ranged Wand il71 L 21.2 = 0.258 x L(71)]
+     shares (actual/target, non-Sta/Spi/Hit rescaled to the room left): Sta 16.4/16.6 Spi 10.0/10.0 Hit 10.8 Int 15.4/15.3 SP 37.0/37.2 Crit 10.4/10.3 top SP 44%
+master--ui_warlock_gear_sets_level60_phase1_synthetic.gear.jso arch=caster target=Warlock (Destruction / Affliction / Fire) total L 924
+     [trk1 trinket id997021 Warlock Synthetic Trinket (Phase 1) L45.7 {'SP': 32.68, 'Crit': 13.0}]
+     [trk2 on-use trinket id997022 (check sim code)]
+     [mh id997020 Weapon TwoHand il76 L 193.4 = 2.210 x L(76)]
+     [rng id997015 Ranged Wand il71 L 21.3 = 0.260 x L(71)]
+     shares (actual/target, non-Sta/Spi/Hit rescaled to the room left): Sta 14.4/14.2 Spi 10.1/10.0 Hit 10.8 Int 16.0/16.2 SP 38.3/37.3 Crit 10.4/11.2 top SP 45%
+master--ui_warlock_gear_sets_level60_phase1_synthetic_demonolo arch=caster target=Warlock Demonology total L 925
+     [trk1 trinket id997021 Warlock Synthetic Trinket (Phase 1) L45.7 {'SP': 32.68, 'Crit': 13.0}]
+     [trk2 on-use trinket id997022 (check sim code)]
+     [mh id997019 Weapon TwoHand il76 L 193.6 = 2.213 x L(76)]
+     [rng id997015 Ranged Wand il71 L 21.3 = 0.260 x L(71)]
+     shares (actual/target, non-Sta/Spi/Hit rescaled to the room left): Sta 13.5/13.5 Spi 9.9/10.0 Hit 15.1 Int 12.9/13.8 SP 36.4/34.5 Crit 12.1/13.2 top SP 42%
+master--ui_warrior_gear_sets_level60_phase1_synthetic_arms.gea arch=phys target=Warrior Arms / Fury 2H total L 748
+     [trk1 trinket id991017 Warrior Synthetic Trinket (Phase 1) L46.0 {'Str': 30.0, 'Crit': 16.0}]
+     [trk2 on-use trinket id991018 (check sim code)]
+     [mh id991016 Weapon TwoHand il76 L 79.0 = 0.903 x L(76)]
+     [rng id991013 Ranged Bow il71 L 19.5 = 0.238 x L(71)]
+     shares (actual/target, non-Sta/Spi/Hit rescaled to the room left): Sta 19.9/19.7 Spi 0.0/0 Hit 12.0 Str 33.9/34.3 Agi 16.8/16.9 AP 7.5/7.2 Crit 9.8/9.7 top Str 42%
+master--ui_warrior_gear_sets_level60_phase1_synthetic_fury.gea arch=phys target=Warrior Fury total L 734
+     [trk1 trinket id991017 Warrior Synthetic Trinket (Phase 1) L46.0 {'Str': 30.0, 'Crit': 16.0}]
+     [trk2 on-use trinket id991018 (check sim code)]
+     [mh id991014 Weapon OneHand il71 L 32.0 = 0.391 x L(71)]
+     [oh id991015 Weapon OneHand il71 L 32.0 = 0.391 x L(71)]
+     [rng id991013 Ranged Bow il71 L 19.5 = 0.238 x L(71)]
+     shares (actual/target, non-Sta/Spi/Hit rescaled to the room left): Sta 19.8/19.6 Spi 0.0/0 Hit 12.3 Str 33.3/33.5 Agi 15.8/15.8 AP 6.6/6.3 Crit 12.3/12.3 top Str 41%

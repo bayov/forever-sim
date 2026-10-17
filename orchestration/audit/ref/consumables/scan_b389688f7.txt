@@ -1,0 +1,13 @@
+== banned (raid-only sources, Revelation item, ruled-out buffs, Expose Armor on)
+== Revelation outside the shamans
+== non-synthetic trinkets (slots 12/13 must be 99xxxx or empty)
+== more than one +2% crit elixir in a Consumes preset
+== counts
+minor-armor exclusive effects in debuffs.go (expect 2): 2
+mksettings main.go:       1 MobTypeHumanoid       1 MobTypeUnknown       1 Salvation: true       1 SunderArmor:            true   (expect MobTypeUnknown default; Humanoid only as the alternate)
+warrior raid air/weapon totems: graceOfAirTotem: TristateEffect.TristateEffectRegular totemWeaponBuff: TotemWeaponBuff.TotemWeaponBuffWindfury 
+retribution_paladin raid air/weapon totems: graceOfAirTotem: TristateEffect.TristateEffectRegular totemWeaponBuff: TotemWeaponBuff.TotemWeaponBuffWindfury 
+rogue raid air/weapon totems: graceOfAirTotem: TristateEffect.TristateEffectRegular totemWeaponBuff: TotemWeaponBuff.TotemWeaponBuffWindfury 
+feral_druid raid air/weapon totems: graceOfAirTotem: TristateEffect.TristateEffectRegular totemWeaponBuff: TotemWeaponBuff.TotemWeaponBuffWindfury 
+enhancement_shaman raid air/weapon totems: graceOfAirTotem: TristateEffect.TristateEffectRegular totemWeaponBuff: TotemWeaponBuff.TotemWeaponBuffFlametongue 
+hunter raid air/weapon totems: graceOfAirTotem: TristateEffect.TristateEffectRegular totemWeaponBuff: TotemWeaponBuff.TotemWeaponBuffWindfury 

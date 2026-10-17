@@ -1,0 +1,9 @@
+{
+ "_doc": "USD per million tokens, used only for local CLI sessions (cloud sessions report their own list-price cost). Fitted on 2026-10-17 from 29 cloud sessions' modelUsage costUSD (weighted least squares, within about 2% on most sessions). out_mult and out_per_call estimate output tokens from a message's visible text and tool input (chars / 3.5), since the transcript's per-message output_tokens is only a stream-start snapshot; calibrated on one cloud session where the exact output was known.",
+ "models": {
+  "default": {"in": 9.9, "cw": 7.78, "cr": 0.194, "out": 20.5},
+  "claude-haiku-5-5": {"in": 0.33, "cw": 0.4, "cr": 0.03, "out": 0.9}
+ },
+ "out_mult": 1.6,
+ "out_per_call": 165
+}

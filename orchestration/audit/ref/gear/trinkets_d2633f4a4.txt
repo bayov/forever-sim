@@ -1,0 +1,13 @@
+druid    BalanceSyntheticSpellPowerTrinket        {'SpellPower': 140.0} 20s/120s avg 26.8 vs 27
+druid    FeralSyntheticStrengthTrinket            {'Strength': 165.0} 20s/120s avg 36.7 vs 37
+hunter   SyntheticRangedOnUseTrinket              {'RangedAttackPower': 415.0} 20s/120s avg 36.9 vs 37
+hunter   SyntheticSurvivalOnUseTrinket            {'AttackPower': 335.0} 20s/120s avg 37.2 vs 37
+mage     MageSyntheticTalisman                    {'SpellPower': 140.0} 20s/120s avg 26.8 vs 27
+paladin  SyntheticSpellPowerOnUseTrinket          {'SpellPower': 140.0} 20s/120s avg 26.8 vs 27
+priest   PriestSyntheticOnUseTrinket              {'SpellPower': 140.0} 20s/120s avg 26.8 vs 27
+rogue    RogueSyntheticOnUseTrinket               {'AttackPower': 335.0} 20s/120s avg 37.2 vs 37
+shaman   ElementalSyntheticOnUseTrinket           {'SpellPower': 140.0} 20s/120s avg 26.8 vs 27
+shaman   EnhancementSyntheticOnUseTrinket         {'AttackPower': 335.0} 20s/120s avg 37.2 vs 37
+shaman   EnhancementSyntheticSpellOnUseTrinket    {'SpellPower': 140.0} 20s/120s avg 26.8 vs 27
+warlock  WarlockSyntheticTalisman                 {'SpellPower': 140.0} 20s/120s avg 26.8 vs 27
+warrior  WarriorSyntheticBattleTrinket            {'AttackPower': 335.0} 20s/120s avg 37.2 vs 37

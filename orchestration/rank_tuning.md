@@ -225,6 +225,190 @@ One data-error case worth knowing under the new ruling: Seal of Fury rank 4 (204
 - wago.tools lists a new Forever build, 1.60.1.70374. Its SpellEffect, SpellPower, SpellMisc, SpellLevels, SpellCooldowns, SpellName, SkillLineAbility, TraitDefinition, TraitDefinitionEffectPoints and CurvePoint tables are byte-identical to 70338's, so nothing in this report changes.
 - Branch commits since 18:25 Oct 13 are UI, merges and a Retribution Shock rotation knob (Light's Vigil mana floor); none touch rank data.
 
+## Check 2026-10-16 06:50 UTC: client 1.60.1.70425, a real balance build
+
+wago.tools lists 1.60.1.70425. Unlike 70374 it changes a lot: 575 SpellEffect rows (82 on class spells), SpellLevels, SpellPower, SpellCooldowns, the talent trees (TraitNode, TraitNodeEntry, node groups) and 2,900 CurvePoint rows. **For the first time in the beta, Blizzard edited 31+ ranks and deep-tier talents on purpose:**
+
+| Change (70374 → 70425) | Ranks / tier | Presets affected |
+|---|---|---|
+| Arcane Blast: base ×0.6 and coefficient 0.714 → 0.429 at every rank (rank 5: 394 → 236) | all, 31+ included | Arcane mage (Arcane Blast ~52% of its damage): a large nerf |
+| Lava Burst: ranks moved 10 levels earlier (30 / 40 / 50), the talent moved from the 30-point gate to the 20-point gate, costs cut; per-level values kept, so the L60 rank (220) is gone and the best at 60 is rank 3 (196 + 1.1 a level to 58 ≈ 205, −7%) | 31-point talent → 21-point; Elemental Mastery (16166) is the new 30-point capstone | Elemental: Lava Burst −7%, and the talent string needs checking against the new tree |
+| Chain Lightning: costs −35% at every rank (485 → 315 at rank 4) | all, 31+ included | not cast by the presets |
+| Judgement of Righteousness coefficient 0.5 → 0.429, Judgement of Fury 0.45 → 0.429, every rank | all | Retribution (JoR 6–11% of its damage) |
+| Devouring Plague cooldown 60 → 24 sec at every rank; Vampiric Embrace 60 → 30 sec | all | Shadow, Smite |
+| Holy Fire rank 5 (L42) periodic 13 → 9: an out-of-line 31+ entry fixed (4/5/6/7/**13**/10/13/15) | one 31+ rank | none (rank 8 is cast) |
+| Shadow Mastery (25-point gate) 1–5% → 2–10% | deep tier | warlocks (Affliction / Demonology builds that take it) |
+| Champion of the Light (25-point) 20/40/60% → 10/20/30% of Intellect | deep tier | Retribution builds that take it |
+| Mage tree: Critical Mass 3 → 5 ranks, Fire Power 5 → 3 ranks (1/2/3%), Winter's Chill 5% at every rank, Missile Barrage, Frost Channeling, Improved Fire Blast reworked, Arcane Wrath added | several tiers | all mage presets |
+| Priest tree: Shadow Affinity and Improved Fade removed, Mental Strength and Improved Mind Flay reworked, Dark Inspiration added | several tiers | Shadow, Smite |
+| Warlock tree: Malediction removed, Grim Reach added; Curse of Recklessness reworked (armor via a new aura) | – | warlock talent strings; the raid's CoR |
+| Ice Lance 300 → 200 at every rank; Shred rank 1 moved to L20 (24 → 22); Moonkin Aura effect changed; Righteous Fury 60 → 90 | – | Frost / Frostfire, Balance |
+
+Also changed in 70425, on proc / aura spells (found by the paladin, the druid and a second diff):
+
+| Change | Presets affected |
+|---|---|
+| Seal of Righteousness proc spells 25713–25742: coefficient 0.1 → 0 | Retribution (the paladin left the sim as is, pending a ruling) |
+| Consecration tick spells 1280345–1280353: coefficient 0.095 → 0.042 | Retribution |
+| Shaman Fire Nova damage 408423–408428: base about ×0.6, coefficient 0.214 → 0.143 | Enhancement |
+| Mana Tide restore 197 → 133 and 290 → 197 | Elemental + Mana Tide |
+| Strength of Earth, Grace of Air, Windfury Totem, Flametongue Totem, Trueshot Aura, Leader of the Pack: party area aura → raid area aura (Effect 35 → 65); Leader of the Pack is now 3% physical crit, Moonkin Aura 3% spell crit | shared raid layout |
+| Howling Idol's Shifting Power cooldown cut −1000 → −500 ms (1291059) | Feral (about −7.5 DPS) |
+| Wind Blessed (Skyborne) 1 → 3; Earth Fury (1259719) changed | racials |
+
+The class ports so far: paladin PR #54 (twist and sub-Holy about −102 DPS, Shock about −64; Shock now leads up to 180 sec) and druid PR #52.
+
+**What it means for this audit:**
+- The 31+ ranks I flagged as stale-shaped were **not** touched: Lightning Bolt, Smite, Wrath, Raptor Strike, Earth Shock, Rip, Holy Strike, Consecration and Bane of Doom's 4.0 coefficient are byte-identical. So are Shadow Bolt and the other tuned curves.
+- Blizzard now edits 31+ data, though: design changes at every rank (Arcane Blast, Judgements, Devouring Plague, Chain Lightning costs), a fix for one out-of-line 31+ rank (Holy Fire V), two 25-point talents retuned, and a 31-point talent pulled down into the playable tiers (Lava Burst). The verdicts above still describe 70425's 31+ data, but "never changed in a beta build" no longer holds for the deep tier as a whole.
+- Every class's sims are on 70338 values and need the 70425 deltas (the workers' and the Forever mechanics auditor's job). Talent strings may no longer fit the changed trees (Elemental, mage, priest, warlock). This report's sensitivities are percentages on 70338 data and will be re-run once the branches move to 70425.
+
+## Check 2026-10-16 08:55 UTC: sensitivities on master with the 70425 ports
+
+Master d511c09 has the 70425 racials (#50, #53, #56), raid hits (#55), the damage-taken Rage change (#57) and the warlock (#59), priest (#58, #60), warrior (#62), druid (#61, #64), hunter (#65) and rogue (#66) ports. Mage, paladin (#54) and shaman are still pending. No client build is newer than 70425.
+
+Re-run on the master request files (tools/dps_report/req, 20k iterations, same local patches):
+
+| Preset | Base | 31+ rescale | Change |
+|---|---|---|---|
+| Demonology, Bane of Doom coefficient 2.0 | 1099.2 | 1053.1 | −4.2% |
+| Destruction, Bane coefficient 2.0 | 980.7 | 941.4 | −4.0% |
+| Affliction, Bane coefficient 2.0 | 998.0 | 956.4 | −4.2% |
+| Destruction Fire, Bane coefficient 2.0 | 953.3 | 917.7 | −3.7% |
+| Smite, 31+ Smite ranks ×1.18 | 710.6 | 725.4 | +2.1% |
+| Feral, Rip 31+ ×1.13 | 713.7 | 726.3 | +1.8% |
+
+**What the Bane of Doom risk now means for the ranking:** dual-wield Fury on Orc is 1055.1 after #62. At coefficient 2.0, Demonology (1053.1) would fall just below Fury. Once the paladin's #54 lands (about −100 for twist and sub-Holy), Destruction and Affliction stay above Retribution even at coefficient 2.0. So the swing now decides first place (Demonology vs Fury), not warlocks vs Retribution.
+
+Still to re-run when their ports merge: Elemental (Lightning Bolt / Lava Burst on the new Lava Burst ranks), Retribution (Holy Strike / Consecration with Consecration's new 0.042 ticks), Balance Wrath.
+
+## Check 2026-10-16 11:00 UTC: paladin and mage ports on master
+
+Master 4477bcb now has the paladin (#54, #81) and mage (#89, #90) ports, the off-hand Rage ruling (#67, #75), demons inheriting spell crit (#85), Smite without Holy Fire (#83) and the hunter (#76, #82) and rogue (#73, #80) follow-ups. The shaman 70425 port hasn't merged yet. No client build is newer than 70425.
+
+Re-run on the master request files (20k iterations, same local patches; I re-simmed every preset's base for the ranking):
+
+| Preset | Base | 31+ rescale | Change |
+|---|---|---|---|
+| Demonology, Bane coefficient 2.0 | 1118.3 | 1074.1 | −4.0% |
+| Affliction, Bane coefficient 2.0 | 1013.3 | 971.6 | −4.1% |
+| Destruction, Bane coefficient 2.0 | 995.9 | 956.6 | −3.9% |
+| Destruction Fire, Bane coefficient 2.0 | 970.2 | 936.1 | −3.5% |
+| Ret twist (level_60), Holy Strike ×0.52 / Consecration ×0.82 / both | 852.7 | 849.1 / 844.8 / 841.2 | −0.4% / −0.9% / −1.3% |
+| Ret Shock, both | 865.2 | 852.9 | −1.4% |
+| Ret sub-Holy, both | 846.5 | 835.2 | −1.3% |
+| Frost, Frostbolt 31+ ×1.08 | 827.3 | 839.4 | +1.5% |
+| Frostfire, Frostbolt 31+ ×1.08 | 1010.8 | 1010.8 | 0 (casts no Frostbolt) |
+| Smite, 31+ Smite ×1.18 | 723.7 | 743.3 | +2.7% |
+| Feral, Rip 31+ ×1.13 | 752.7 | 765.7 | +1.7% |
+
+Consecration's share went up with 70425's 0.042 tick coefficient on master, so its ratio risk is now the larger half of Ret's (−0.9% of −1.3%). Frost's swing is smaller than on 70338 (+2.8%) because Frost now leans less on Frostbolt.
+
+**Ranking effects (master bases):**
+- **First place:** Demonology 1118.3, Lone Wolf hunter 1075.7. Fury dropped to 970.8 after the off-hand Rage ruling. At coefficient 2.0, Demonology (1074.1) lands 1.6 below Lone Wolf, so the Bane of Doom risk still decides first place, now against Lone Wolf instead of Fury.
+- **Affliction and Destruction:** at coefficient 2.0, Affliction (971.6) falls below Arms on dragonkin (1015.4), Frostfire (1010.8), Fire (993.2) and Arms (976.4). Destruction (956.6) also falls below Fury (970.8) and Fury 2H (969.3).
+- **Frost:** +1.5% lifts it from 827.3 to 839.4, past Balance (828.2). It stays below Ret twist (852.7).
+- **Smite:** at 743.3 it passes both Combat rogue presets on humanoids (740.5, 734.1), and stays below Feral (752.7).
+- **Feral:** at 765.7 it passes Balance Wrath duty-FF (755.8), and stays below Balance Wrath (784.4).
+- **Ret:** −1.3% doesn't change the order: Ret twist at 841.2 is still above Balance (828.2), and Enhancement (852.9) was already above it.
+
+Balance (druid ports #61 and #64 are already on master), with Wrath 31+ ×1.17: Balance Wrath goes 784.4 → 798.1 (+1.7%), still below Enhancement + Water Shield (804.2). Balance goes 828.2 → 831.8 (+0.4%). Neither changes the order.
+
+## Check 2026-10-16 15:15 UTC: the shaman port on master
+
+The shaman 70425 port (#91) merged at 10:59 UTC. The 13:05 check missed it because it only searched from 11:00. Re-run on master 0bf4de5 with the shaman patches added, 20k iterations, and every preset's base re-simmed for the ranking. No client build is newer than 70425.
+
+| Preset | Base | 31+ rescale | Change |
+|---|---|---|---|
+| Elemental, Lightning Bolt X ×1.12 (70291's ≤30 raise) | 724.9 | 740.4 | +2.1% |
+| Elemental, Lightning Bolt X ×1.38 (held at the 0.61 ratio) | 724.9 | 774.0 | +6.8% |
+| Elemental, Lightning Bolt ×1.38 and Lava Burst ×1.38 | 724.9 | 785.7 | +8.4% |
+| Enhancement, Earth Shock 31+ ×1.16 | 818.5 | 827.0 | +1.0% |
+
+The 70425 port lifted Elemental from 684.9 to 724.9, with Lava Burst now a 20-point talent. It sits 52nd of 64 presets, just above Smite (723.7).
+
+**Ranking effects:**
+- **Lightning Bolt ×1.12:** Elemental at 740.4 passes nothing new and stays below Combat Daggers on humanoids (744.6).
+- **Lightning Bolt ×1.38:** at 774.0 it passes both Combat rogue presets on humanoids, Feral (752.7), Enhancement + Mana Tide (752.6) and Balance Wrath duty-FF (755.8). It stays below Balance Wrath (784.4).
+- **Lightning Bolt and Lava Burst ×1.38:** at 785.7 it passes Balance Wrath too and lands 1.8 below Enhancement + Water Shield (787.5). That's still the largest upward swing in the audit, about 13 places at most.
+- **Enhancement:** with Earth Shock ×1.16 it goes 818.5 → 827.0, 1.0 above Frost (826.0) and 1.2 below Balance (828.2). That margin is within noise, so call it no change in order.
+
+The other current bases are unchanged since the 11:00 check, apart from small moves from the new ports: Fury 989.0, Frostfire 1018.1, Arcane 922.9. Demonology (1118.3) and Lone Wolf (1075.7) are still first and second, so the Bane of Doom finding at 11:00 stands: coefficient 2.0 gives 1074.1, 1.6 below Lone Wolf.
+
+Every rank-tuning sensitivity has now been re-run on master with the 70425 ports.
+
+
+## Check 2026-10-16 15:30 UTC: re-baseline on master ddb095a (no level-based partial resists)
+
+This section replaces the ranking effects in the 11:00 and 15:15 sections. Since then master has merged #102 (no level-based partial resist under Forever, a user ruling), #98 (Arcane), #99 (Survival), #100 (Ret) and #101 (Fury). I re-simmed all 66 presets' bases and every sensitivity on ddb095a: same local patches, 20k iterations, 180 s.
+
+| Preset | Base | 31+ rescale | Change | Place (of 66): before → after |
+|---|---|---|---|---|
+| Demonology, Bane coefficient 2.0 | 1176.3 | 1129.3 | −4.0% | 1 → 2, behind only its own duty-curse preset (1164.7) |
+| Affliction, Bane coefficient 2.0 | 1066.0 | 1021.7 | −4.2% | 7 → 12 |
+| Destruction, Bane coefficient 2.0 | 1047.4 | 1005.6 | −4.0% | 9 → 15 |
+| Destruction Fire, Bane coefficient 2.0 | 1018.5 | 982.2 | −3.6% | 13 → 18 |
+| Ret twist, Holy Strike ×0.52 and Consecration ×0.82 | 889.2 | 876.9 | −1.4% | 36 → 39 |
+| Ret Shock, same | 901.7 | 888.7 | −1.4% | 34 → 36 |
+| Ret sub-Holy, same | 883.1 | 871.1 | −1.4% | 37 → 41 |
+| Frost, Frostbolt 31+ ×1.08 | 843.3 | 855.6 | +1.5% | 42 → 42 |
+| Enhancement, Earth Shock 31+ ×1.16 | 841.4 | 850.5 | +1.1% | 43 → 42 |
+| Balance, Wrath 31+ ×1.17 | 872.8 | 876.6 | +0.4% | 41 → 40 |
+| Balance Wrath-only, Wrath 31+ ×1.17 | 825.9 | 840.5 | +1.8% | 46 → 44 |
+| Elemental, Lightning Bolt X ×1.12 | 771.1 | 787.6 | +2.1% | 50 → 49 |
+| Elemental, Lightning Bolt X ×1.38 | 771.1 | 823.3 | +6.8% | 50 → 47 |
+| Elemental, Lightning Bolt and Lava Burst ×1.38 | 771.1 | 835.8 | +8.4% | 50 → 45 |
+| Smite, 31+ ×1.18 | 765.4 | 786.3 | +2.7% | 51 → 49 |
+| Feral, Rip 31+ ×1.13 | 752.9 | 765.9 | +1.7% | 53 → 51 |
+
+**What changed:** #102 lifted the warlocks more than the hunters. Demonology is now 82 above Lone Wolf (1094.1), so Bane of Doom at coefficient 2.0 (1129.3) **no longer decides first place**. It still costs every Shadow Bolt warlock about 4%:
+- Affliction falls below Fire, Marksmanship and Destruction.
+- Destruction falls below Destruction Fire and Arms on dragonkin.
+- Destruction Fire falls below Fury.
+
+**Other specs:**
+- Ret's −1.4% puts sub-Holy just below Balance.
+- Elemental's biggest case (+8.4%) passes Water Shield Enhancement, Balance Wrath-only and Imp GW Enhancement. It stays below Balance with Faerie Fire duty.
+- Smite's +2.7% passes Elemental and Mana Tide Enhancement.
+- Balance (+0.4%), Frost and Enhancement move within noise.
+
+## Check 2026-10-16 21:20 UTC: master 7f9bbc2
+
+No client build is newer than 70425. Since ddb095a, master has merged #103–#108 and the 2026-10-15/16 Forever updates. None of them touches a spell in the sensitivity set (curses.go, Smite, Rip, Wrath, Frostbolt, Holy Strike, Consecration, Lightning Bolt, Lava Burst, Earth Shock).
+
+I re-ran all 66 bases and every sensitivity anyway, since #108 (Salvation) and the warlock, shaman and paladin presets touched 58 request files. Every sensitivity percentage is the same as at 15:30 to 0.1%.
+
+The only bases that moved more than 0.4% are the four Enhancement presets, up 0.8–1.2% from the totem change in water_totems.go: Enhancement 848.1, Imp GW 841.6, Water Shield 819.3, Mana Tide 781.7. As a result, Elemental's largest case (836.6) now ends just below Imp GW Enhancement instead of passing it, at place 46 rather than 45. Everything else in the 15:30 table stands, including Demonology at 1177.7 (coefficient 2.0: 1130.7) ahead of Lone Wolf at 1094.1.
+
+## Check 2026-10-17 03:25 UTC: client 70450 and master d2633f4
+
+**Client 1.60.1.70450 is cosmetic.** I diffed all 19 tables I track against 70425 row by row: SpellEffect, SpellLevels, SpellMisc, SpellPower, SpellCastTimes, SpellCooldowns, SpellDuration, SpellName, SkillLineAbility, SpellItemEnchantment, CurvePoint and the seven Trait tables. No existing row changed. The only additions are:
+- Spells: mounts (Spectral Wolf Pack, Verdant Sea Turtle, Crimson Rooster; skill line 777) and pets (Pinky, Blossoming Ancient, Gill'el; skill line 778).
+- Others: Adventurer's Tent, two transmog ensembles, three new curves (29893, 29895, 29896) and their spells' cooldown and level rows.
+
+No rank, talent or proc value moved, so every verdict above holds for 70450. The update ledger (#113) reached the same conclusion.
+
+**Master d2633f4:** #109–#114 changed no sim code, only presets for Beast Mastery, the two Undead Ret presets and the four Enhancement presets. I re-ran those seven presets and Earth Shock at 20k iterations:
+
+| Preset | Before | Now |
+|---|---|---|
+| Enhancement | 848.1 | 892.2 |
+| Enhancement Imp GW | 841.6 | 887.8 |
+| Enhancement + Water Shield | 819.3 | 842.2 |
+| Enhancement + Mana Tide | 781.7 | 802.8 |
+| Ret twist Undead | 974.1 | 976.3 |
+| Ret sub-Holy Undead | 978.4 | 980.7 |
+| Beast Mastery | 969.3 | 970.7 |
+
+Every sensitivity percentage is unchanged. The only ranking effects that move come from Enhancement now sitting about 45 higher:
+- **Ret:** the −1.4% puts Ret twist (876.9) below Imp GW Enhancement as well. Ret Shock (888.7) stays 0.9 above it.
+- **Enhancement, Earth Shock ×1.16:** 892.2 → 901.4 (+1.0%), level with Ret Shock (901.7) within noise.
+- **Frost:** at 855.6 it no longer passes any Enhancement preset. It stays below Balance.
+- **Balance Wrath-only:** at 840.5 it stays just below Water Shield Enhancement (842.2).
+- **Elemental:** its largest case (836.6) still lands below Balance with Faerie Fire duty (840.3).
+
+The warlock, Smite and Feral effects are as in the 15:30 table.
+
 ## Cross-class summary
 
 **Specs whose standing rests on likely-stale or untested 31+ data:**

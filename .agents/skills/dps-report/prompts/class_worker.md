@@ -30,3 +30,4 @@ Method:
   - re-run the race sweep (best overall / Horde / Alliance);
   - update presets.ts, goldens, the wiki and the PR body.
 - Report back in one message: what changed, its source and its DPS effect, the new numbers per build, and anything that needs a cross-class ruling.
+- When the task is done, send that one report and stop. Don't schedule check-ins: the orchestrator archives this session once your work is merged.

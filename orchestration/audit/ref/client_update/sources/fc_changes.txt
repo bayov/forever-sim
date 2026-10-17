@@ -1,0 +1,127 @@
+     
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+-   WoW Forever class changes vs Classic · ForeverChanges   
+-  
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+-               
+- 
+- 
+-   
+      Online now        
+    Updated ·  Beta build 1.60.1.70425    Beta realms offline  Beta back online 
+  Launch in      days      hrs      min      sec    
+  Changes  Talents    Updated on October 15  , updated    Spellbook    Updated on October 15  , updated    Legacy  Professions  Races  Dungeons  Items  Quests  BiS list    Updated on October 15  , updated    World map  Guides  Patch notes  
+    Search   /   
+Loading the page…
+ Tip:   Lie in the Cozy Sleeping Bag for three minutes and you earn 3% more experience for two hours.
+      Online now        
+    Updated ·  Beta build 1.60.1.70425    Beta realms offline  Beta back online 
+  Launch in      days      hrs      min      sec    
+  Changes  Talents    Updated on October 15  , updated    Spellbook    Updated on October 15  , updated    Legacy  Professions  Races  Dungeons  Items  Quests  BiS list    Updated on October 15  , updated    World map  Guides  Patch notes  
+    Search   /   
+Loading the page…
+ Tip:   Lie in the Cozy Sleeping Bag for three minutes and you earn 3% more experience for two hours.
+               All       Warrior       Hunter       Mage       Rogue       Priest       Warlock       Paladin       Druid       Shaman   
+## WoW Forever changes vs Classic 
+Every World of Warcraft: Forever talent and spell change, compared with Classic: 114 new talents, 301 changed talents and 264 changed spells across the nine classes. Pick a class to read its changes.
+Talents and spells are read from the Forever beta client and compared with the Classic Era client.
+ 301  Talents changed 
+ 114  New talents 
+ 264  Spells changed 
+         All       Warrior       Hunter       Mage       Rogue       Priest       Warlock       Paladin       Druid       Shaman    All changes  Top  ↑ 
+    All changes  759    New talents  114    Changed talents  301    Removed talents  80    Spells  419    Everything  965       Talent calculator ↗   Choose a class and plan your build       Spellbook ↗   Choose a class to compare its spells with Classic      
+## All changes 
+    Improved Heroic Strike   Same numbers, reworded.     Changed  Talent  · Arms   ›      Improved Rend    Rend  's bleed-damage bonus changes from 15% to 12% at rank 1.     Changed  Talent  · Arms   ›      Improved Charge   Same numbers, reworded.     Changed  Talent  · Arms   ›      Improved Tactical Mastery   Replaces    Tactical Mastery  .     Changed  Talent  · Arms   ›      Improved Overpower   Moved from tier 3 to tier 2.     Moved  Talent  · Arms   ›      Anger Management   Tooltip now explicitly grants 1 Rage every 3 sec in combat; out-of-combat wording changes from slower decay to reduced Rage loss.     Changed  Talent  · Arms   ›      Deep Wounds   Same numbers, reworded.     Changed  Talent  · Arms   ›      Spearing Strike   A brutal attack that deals 40% weapon damage. Deals an additional 80% weapon damage against Giants, Dragonkin, and mounted targets.     New  Talent  · Arms   ›      Two-Handed Weapon Specialization   3 ranks (Classic: 5).     Changed  Talent  · Arms   ›      Impale   Effect rewritten.     Changed  Talent  · Arms   ›      Bloodthrill   Grants your Main Hand melee attacks against enemies afflicted by your    Rend   a 4% chance to allow an activation of    Overpower  .     New  Talent  · Arms   ›      Weaponmaster   Weapon-dependent bonuses: Axe/Polearm crit chance, Mace/Staff Armor penetration, or Sword extra attacks.     New  Talent  · Arms   ›      Improved Slam   2 ranks (Classic: 5). Moved from Fury to Arms. Effect rewritten.     Changed  Talent  · Arms   ›      Booming Voice   Effect rewritten.     Changed  Talent  · Fury   ›      Cruelty   Same numbers, reworded.     Changed  Talent  · Fury   ›      Lingering Rage   Increases the time before your Rage begins to decay after leaving combat by 2 sec.     New  Talent  · Fury   ›      Unbridled Wrath   Numbers and wording changed.     Changed  Talent  · Fury   ›      Furious Precision   Increases your chance to hit with off-hand attacks by 4%.     New  Talent  · Fury   ›      Piercing Howl   Numbers and wording changed.     Changed  Talent  · Fury   ›      Blood Craze   Numbers and wording changed.     Changed  Talent  · Fury   ›      Dual Wield Specialization   Effect rewritten.     Changed  Talent  · Fury   ›      Raging Blows   Reduces the Rage cost of your Cleave and    Whirlwind   abilities by 3.     New  Talent  · Fury   ›      Enrage   Effect rewritten.     Changed  Talent  · Fury   ›      Improved Execute   Moved from column 2 to column 4. 3 instead of 2.     Changed  Talent  · Fury   ›      Improved Berserker Rage   Moved from tier 6 to tier 5. Effect rewritten.     Changed  Talent  · Fury   ›      Death Wish   Replaces the 20% Armor/resistance penalty with 5% increased damage taken; the damage bonus and Fear immunity remain.     Changed  Talent  · Fury   ›      Flurry   Moved from column 3 to column 2. Requires    Death Wish   (Classic:    Enrage  ). Rank 5: 25% instead of 30%, reworded.     Changed  Talent  · Fury   ›      Gore Drinker   Your    Enrage  ,    Berserker Rage  ,    Bloodrage  ,    Death Wish  , and    Bloodthirst   abilities cause your next 3 melee attacks to restore 0.5% of your maximum Health.     New  Talent  · Fury   ›      Bloodthirst   No longer requires    Death Wish  . Effect rewritten.     Changed  Talent  · Fury   ›      Improved Bloodrage   Moved from tier 2 to tier 1. Rank 2: 50% instead of 5, reworded.     Changed  Talent  · Protection   ›      Shield Specialization   Rank 5: 5 instead of 1, reworded.     Changed  Talent  · Protection   ›      Iron Will   Moved from tier 2 to tier 1. Effect rewritten.     Changed  Talent  · Protection   ›      Anticipation   Moved from tier 1 to tier 2. Rank 5: 20 instead of 10.     Changed  Talent  · Protection   ›      Improved Revenge   Moved from tier 3 to tier 2. Effect rewritten.     Changed  Talent  · Protection   ›      Improved Thunder Clap   Moved from Arms to Protection. Rank 3: 6 instead of 4, reworded.     Changed  Talent  · Protection   ›      Last Stand   No longer requires    Improved Bloodrage  . Same numbers, reworded.     Changed  Talent  · Protection   ›      Master of Defense   Grants you a 50% chance to generate 5 Rage when you Dodge or Parry while a shield is equipped.     New  Talent  · Protection   ›      Improved Disarm   Moved from tier 4 to tier 3. Rank 3: 20 secs instead of 3 secs, reworded.     Changed  Talent  · Protection   ›      Defiance   3 ranks (Classic: 5). Effect rewritten.     Changed  Talent  · Protection   ›      Improved Sunder Armor   Same numbers, reworded.     Changed  Talent  · Protection   ›      Vanguard   Your Charge ability is now usable while in    Defensive Stance  .     New  Talent  · Protection   ›      Improved Shield Bash   Moved from tier 5 to tier 4.     Moved  Talent  · Protection   ›      Improved Shield Wall   Replaces longer    Shield Wall   duration with a 5.5 min cooldown reduction at rank 1.     Changed  Talent  · Protection   ›      Concussion Blow   Same numbers, reworded.     Changed  Talent  · Protection   ›      Focused Rage   Reduces the Rage cost of your offensive abilities by 1.     New  Talent  · Protection   ›      Bastion   Replaces    One-Handed Weapon Specialization  .     Changed  Talent  · Protection   ›      Shield Slam   421 to 439 instead of 225 to 235, reworded.     Changed  Talent  · Protection   ›      Sword Specialization   Now part of    Weaponmaster  .     Removed  Talent  · Arms   ›      Mace Specialization   Now part of    Weaponmaster  .     Removed  Talent  · Arms   ›      Axe Specialization   Now part of    Weaponmaster  .     Removed  Talent  · Arms   ›      Polearm Specialization   Now part of    Weaponmaster  .     Removed  Talent  · Arms   ›      Toughness   Not in the Protection tree any more.     Removed  Talent  · Protection   ›      Improved Taunt   Not in the Protection tree any more.     Removed  Talent  · Protection   ›      Improved Shield Block   Not in the Protection tree any more.     Removed  Talent  · Protection   ›      Improved Battle Shout   Not in the Fury tree any more.     Removed  Talent  · Fury   ›      Improved Demoralizing Shout   Not in the Fury tree any more.     Removed  Talent  · Fury   ›      Improved Cleave   Not in the Fury tree any more.     Removed  Talent  · Fury   ›      Healing Light   Moved from tier 3 to tier 2. Same numbers, reworded.     Changed  Talent  · Holy   ›      Spiritual Focus   2 ranks (Classic: 5). Rank 2: 70% instead of 28%, reworded.     Changed  Talent  · Holy   ›      Improved Seals   Replaces    Improved Seal of Righteousness  . 3 ranks (Classic: 5).     Changed  Talent  · Holy   ›   Show 120 more of 699 remaining 
+## Improved Heroic Strike 
+Talent  · Arms  ·  Changed  
+ See it in the Arms tree   ↗  
+ Rank  1  2  3 
+## Classic 
+ Reduces the cost of your    Heroic Strike   ability by 1    rage       point   . 
+## Forever 
+ Reduces the cost of your    Heroic Strike   ability by 1    Rage   . 
+ See it in the Arms tree   ↗    Details   Classic baseline  Classic Era game client, build 1.15.9.69722  Change  Modified  Evidence  Client data  Collected  2026-10-15  Tree position  Row 1, column 1  ·  Client data  Prerequisite  None  ·  Client data   
+-  WoW Forever beta client, build 1.60.1.70425  ↗  Client data  
+-  Classic Era client, build 1.15.9.69722: Improved Heroic Strike  ↗  Classic client data    About the data   ↗    
+## Classes  
+-  Warrior  
+-  Paladin  
+-  Hunter  
+-  Rogue  
+-  Priest  
+-  Shaman  
+-  Mage  
+-  Warlock  
+-  Druid   
+## Character  
+-  Talent calculator  
+-  Spellbook  
+-  Legacy perks  
+-  Races  
+-  Professions  
+-  Downrank calculator  
+-  Tier list maker   
+## Gear  
+-  BiS list  
+-  Items  
+-  Hidden items  
+-  Transmog   
+## World  
+-  World map  
+-  Dungeons  
+-  Quests  
+-  Dungeon quests  
+-  Rare spawns  
+-  Library books   
+## Guides  
+-  Tanning Rack  
+-  PvP ranks  
+-  Downranking  
+-  Booty Bay Bruiser's Buckshot  
+-  Scarlet Banner  
+-  $100,000 duel tournament  
+-  Level 30  
+-  Druid Cat Form quest  
+-  Addons  
+-  Savory Whimsyfin Delight  
+-  Druid snake form  
+-  Battle mage  
+-  Cozy Sleeping Bag  
+-  Merchant's Favor  
+-  Hunter pets   
+## Beta  
+-  Patch notes  
+-  Changes vs Classic  
+-  Beta and launch dates  
+-  Server status   
+##      
+ Language  
+-  English 
+-  Français  
+-  Deutsch  
+-  繁體中文  
+-  简体中文  
+-  Русский   
+ForeverChanges is an unofficial fan site, not affiliated with or endorsed by Blizzard Entertainment. World of Warcraft and Warcraft are trademarks or registered trademarks of Blizzard Entertainment, Inc. in the U.S. and/or other countries. Game content and images © Blizzard Entertainment, Inc.
+ Tell me what to improve   About the data  Privacy  Terms  Legal notice  
+   

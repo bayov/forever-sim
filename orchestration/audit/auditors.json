@@ -1,0 +1,178 @@
+{
+ "_doc": "The audit loop's registry. gate.py reads it to decide who is due; each pass follows passes/<id>.md. Fields: watch/exclude are git globs (relative to the repo root); branches (optional) are globs of origin branches also watched while ahead of master; none are watched today, since class work lands on master through PRs and the old class branches still count hundreds of commits ahead after their merges; external lists outside sources ('wago_build': gate.py checks wago.tools for a newer 1.60 client build); external_every_h forces a pass that often for sources git can't see; max_quiet_days is a safety net; model is the subagent model for the pass ('sonnet' for mechanical passes, 'opus' where the pass judges mechanics or balance); sims marks passes that sim the report's requests on the new master (the loop runs them once and shares the run). branch_active_days: a branch ahead of master counts only while its newest commit is at most this many days old, so old unmerged branches don't trigger passes. owns: repo docs the pass keeps current besides its own audit files (committed with the run). wago_probe: how many build numbers past the newest one wago.tools lists the gate probes in the db2 exports (the builds list lags).",
+ "branch_active_days": 2,
+ "wago_probe": 300,
+ "auditors": [
+  {
+   "id": "results",
+   "title": "Results and spec strength",
+   "brief": "orchestration/auditor_results.md",
+   "model": "sonnet",
+   "sims": true,
+   "watch": [
+    "sim/**",
+    "proto/**",
+    "tools/rotopt/mksettings/**",
+    "tools/database/**",
+    "ui/*/presets.ts",
+    "ui/*/apls/**",
+    "ui/*/gear_sets/**",
+    "tools/dps_report/req/**",
+    "ui/dps_report/data/builds.json",
+    "assets/database/**"
+   ],
+   "exclude": [
+    "**/*.results",
+    "**/*_test.go",
+    "sim/core/proto/**",
+    "tools/database/forever_wowhead/**"
+   ],
+   "max_quiet_days": 7
+  },
+  {
+   "id": "rotations",
+   "title": "Rotations and resources",
+   "brief": "orchestration/auditor_rotations.md",
+   "model": "opus",
+   "sims": true,
+   "watch": [
+    "ui/*/apls/**",
+    "tools/rotopt/**",
+    "sim/**"
+   ],
+   "exclude": [
+    "**/*.results",
+    "**/*_test.go",
+    "sim/core/proto/**"
+   ],
+   "max_quiet_days": 7
+  },
+  {
+   "id": "gear",
+   "title": "Synthetic gear",
+   "brief": "orchestration/auditor_gear.md",
+   "model": "sonnet",
+   "watch": [
+    "tools/database/forever_synthetic_items*.go",
+    "tools/database/forever_enchants.go",
+    "tools/database/forever_items.go",
+    "tools/database/*trinket*",
+    "ui/*/gear_sets/**",
+    "orchestration/standards.md",
+    "orchestration/gear_targets.md"
+   ],
+   "max_quiet_days": 7
+  },
+  {
+   "id": "consumables",
+   "title": "Consumables, buffs and debuffs",
+   "brief": "orchestration/auditor_consumes.md",
+   "model": "sonnet",
+   "watch": [
+    "ui/*/presets.ts",
+    "ui/*/gear_sets/*level60*",
+    "tools/rotopt/mksettings/**",
+    "sim/core/consumes*.go",
+    "sim/core/buffs*.go",
+    "sim/core/debuffs*.go",
+    "sim/core/totem_weapon_buffs.go",
+    "sim/common/**",
+    "tools/database/forever_enchants.go",
+    "tools/dps_report/assumptions_def.py",
+    "sim/mage/forever_staff_imbue.go",
+    "orchestration/standards.md"
+   ],
+   "exclude": [
+    "**/*_test.go"
+   ],
+   "external": [
+    "wago_build"
+   ],
+   "max_quiet_days": 7
+  },
+  {
+   "id": "mechanics",
+   "title": "Forever mechanics",
+   "brief": "orchestration/auditor_forever.md",
+   "model": "opus",
+   "watch": [
+    "sim/**",
+    "tools/rotopt/mksettings/**"
+   ],
+   "exclude": [
+    "**/*.results",
+    "**/*_test.go",
+    "sim/core/proto/**"
+   ],
+   "external": [
+    "wago_build",
+    "blizzard_dev_notes"
+   ],
+   "external_every_h": 24,
+   "max_quiet_days": 7
+  },
+  {
+   "id": "rank_tuning",
+   "title": "Level 31+ rank tuning",
+   "brief": "orchestration/auditor_rank_tuning.md",
+   "model": "opus",
+   "sims": true,
+   "watch": [
+    "sim/**",
+    "tools/dps_report/req/**"
+   ],
+   "exclude": [
+    "**/*.results",
+    "**/*_test.go",
+    "sim/core/proto/**"
+   ],
+   "external": [
+    "wago_build"
+   ],
+   "max_quiet_days": 7,
+   "owns": [
+    "orchestration/rank_tuning.md"
+   ]
+  },
+  {
+   "id": "fairness",
+   "title": "Fairness between specs",
+   "brief": "orchestration/auditor_fairness.md",
+   "model": "opus",
+   "sims": true,
+   "watch": [
+    "sim/**",
+    "ui/*/presets.ts",
+    "tools/dps_report/req/**",
+    "ui/*/gear_sets/**",
+    "ui/*/apls/**",
+    "tools/database/**",
+    "orchestration/standards.md"
+   ],
+   "exclude": [
+    "**/*.results",
+    "**/*_test.go",
+    "sim/core/proto/**",
+    "tools/database/forever_wowhead/**"
+   ],
+   "max_quiet_days": 7,
+   "owns": [
+    "orchestration/fairness_report.md"
+   ]
+  },
+  {
+   "id": "client_update",
+   "title": "Forever client updates",
+   "brief": "orchestration/update_ledger.md",
+   "model": "opus",
+   "watch": [],
+   "external": [
+    "wago_build"
+   ],
+   "owns": [
+    "orchestration/update_ledger.md"
+   ],
+   "max_quiet_days": 30
+  }
+ ]
+}

@@ -1,0 +1,383 @@
+master--ui_balance_druid_gear_sets_level60_phase1_synthetic.ge armor12 393.2 hit 11.0% crit 8.1% spi 11% cw 102.6
+     5a: Sta 17% of set; top non-Sta stat SpellPower 33% of non-Sta; other useful stats (>=3%): Intellect,Crit,Spirit
+     - head cost 43.9 vs 42.8 (+2.7%)
+     - neck cost 24.4 vs 27.5 (-11.3%)
+     - shoulder cost 33.8 vs 33.0 (+2.6%)
+     - back cost 24.4 vs 27.5 (-11.1%)
+     - chest cost 43.9 vs 42.8 (+2.7%)
+     - wrist cost 24.4 vs 27.5 (-11.0%)
+     - waist cost 36.0 vs 37.6 (-4.2%)
+     - legs cost 45.8 vs 42.8 (+7.0%)
+     - feet cost 31.9 vs 33.0 (-3.1%)
+     - fing1 cost 26.7 vs 27.5 (-2.7%)
+     - fing2 cost 24.4 vs 27.5 (-11.0%)
+     - TRINKET 998014 present
+     - TRINKET 998015 present
+     - rng is real item 272430 Swarming Idol {} (check it does something; il71 x0.32 = 15.6)
+     - caster weapons total 102.6 vs ~73
+     ench: head=Lesser Arcanum of Voracity neck=Necklace - Spell Power shoulder=- back=- chest=Mystic Rugged Armor Kit wrist=Bracer - Greater Spellpower hands=Gloves - Arcane Power waist=- legs=Mystic Rugged Armor Kit feet=Mystic Rugged Armor Kit fing1=- fing2=- trk1=- trk2=- mh=2H Weapon - Spellblasting oh=- rng=-
+master--ui_balance_druid_gear_sets_level60_phase1_synthetic_wr armor12 393.2 hit 11.0% crit 8.1% spi 11% cw 102.6
+     5a: Sta 17% of set; top non-Sta stat SpellPower 33% of non-Sta; other useful stats (>=3%): Intellect,Crit,Spirit
+     - head cost 43.9 vs 42.8 (+2.7%)
+     - neck cost 24.4 vs 27.5 (-11.3%)
+     - shoulder cost 33.8 vs 33.0 (+2.6%)
+     - back cost 24.4 vs 27.5 (-11.1%)
+     - chest cost 43.9 vs 42.8 (+2.7%)
+     - wrist cost 24.4 vs 27.5 (-11.0%)
+     - waist cost 36.0 vs 37.6 (-4.2%)
+     - legs cost 45.8 vs 42.8 (+7.0%)
+     - feet cost 31.9 vs 33.0 (-3.1%)
+     - fing1 cost 26.7 vs 27.5 (-2.7%)
+     - fing2 cost 24.4 vs 27.5 (-11.0%)
+     - TRINKET 998014 present
+     - TRINKET 998015 present
+     - rng is real item 272430 Swarming Idol {} (check it does something; il71 x0.32 = 15.6)
+     - caster weapons total 102.6 vs ~73
+     ench: head=Lesser Arcanum of Voracity neck=Necklace - Spell Power shoulder=- back=- chest=Mystic Rugged Armor Kit wrist=Bracer - Greater Spellpower hands=Gloves - Natural Power waist=- legs=Mystic Rugged Armor Kit feet=Mystic Rugged Armor Kit fing1=- fing2=- trk1=- trk2=- mh=2H Weapon - Spellblasting oh=- rng=-
+master--ui_elemental_shaman_gear_sets_level60_phase1_synthetic armor12 389.1 hit 10.0% crit 8.1% spi 10% cw 97.7
+     5a: Sta 17% of set; top non-Sta stat SpellPower 32% of non-Sta; other useful stats (>=3%): Intellect,Crit,Spirit
+     - neck cost 25.5 vs 27.5 (-7.1%)
+     - shoulder cost 32.1 vs 33.0 (-2.5%)
+     - back cost 25.4 vs 27.5 (-7.6%)
+     - wrist cost 25.5 vs 27.5 (-7.1%)
+     - hands cost 32.1 vs 33.0 (-2.7%)
+     - waist cost 34.3 vs 37.6 (-8.7%)
+     - legs cost 44.1 vs 42.8 (+3.0%)
+     - feet cost 32.1 vs 33.0 (-2.5%)
+     - fing1 cost 25.4 vs 27.5 (-7.6%)
+     - fing2 cost 25.4 vs 27.5 (-7.6%)
+     - TRINKET 990114 present
+     - TRINKET 990115 present
+     - rng is real item 272433 Burning Totem {} (check it does something; il71 x0.32 = 15.6)
+     - caster weapons total 97.7 vs ~73
+     ench: head=Lesser Arcanum of Voracity neck=Necklace - Spell Power shoulder=- back=Cloak - Greater Resistance chest=Mystic Rugged Armor Kit wrist=Bracer - Greater Spellpower hands=Gloves - Natural Power waist=- legs=Mystic Rugged Armor Kit feet=Mystic Rugged Armor Kit fing1=- fing2=- trk1=- trk2=- mh=2H Weapon - Spellblasting oh=- rng=-
+master--ui_enhancement_shaman_gear_sets_level60_phase1_synthet armor12 401.2 hit 9.0% crit 3.6% spi 10% cw 0.0
+     5a: Sta 21% of set; top non-Sta stat SpellPower 26% of non-Sta; other useful stats (>=3%): Strength,Intellect,Crit,Spirit,AttackPower
+     - head cost 44.1 vs 42.8 (+3.0%)
+     - neck cost 25.2 vs 27.5 (-8.3%)
+     - back cost 26.1 vs 27.5 (-4.8%)
+     - wrist cost 26.5 vs 27.5 (-3.6%)
+     - waist cost 40.8 vs 37.6 (+8.5%)
+     - fing1 cost 26.3 vs 27.5 (-4.2%)
+     - fing2 cost 26.1 vs 27.5 (-4.8%)
+     - TRINKET 990014 present
+     - TRINKET 990015 present
+     - mh 2H cost 42.7 vs 54.8 (il76)
+     - rng is real item 272433 Burning Totem {} (check it does something; il71 x0.32 = 15.6)
+     - 5a: Stamina 20.7% of set (want 18% +/-1.5)
+     ench: head=Lesser Arcanum of Voracity neck=Necklace - Strength shoulder=- back=Cloak - Agility chest=Chest - Greater Stats wrist=Bracer - Superior Strength hands=Gloves - Superior Strength waist=- legs=Lesser Arcanum of Voracity feet=Boots - Greater Agility fing1=- fing2=- trk1=- trk2=- mh=Weapon - Crusader oh=- rng=-
+master--ui_feral_druid_gear_sets_level60_phase1_synthetic.gear armor12 453.8 hit 9.0% crit 4.9% spi 0% cw 0.0
+     5a: Sta 18% of set; top non-Sta stat Agility 34% of non-Sta; other useful stats (>=3%): Strength,Crit,Intellect
+     - head cost 50.2 vs 42.8 (+17.3%)
+     - neck cost 29.8 vs 27.5 (+8.5%)
+     - shoulder cost 38.2 vs 33.0 (+16.0%)
+     - back cost 29.5 vs 27.5 (+7.5%)
+     - chest cost 50.2 vs 42.8 (+17.3%)
+     - wrist cost 29.3 vs 27.5 (+6.7%)
+     - hands cost 38.2 vs 33.0 (+16.0%)
+     - waist cost 40.9 vs 37.6 (+9.0%)
+     - legs cost 49.9 vs 42.8 (+16.7%)
+     - feet cost 38.8 vs 33.0 (+17.8%)
+     - fing1 cost 29.2 vs 27.5 (+6.4%)
+     - fing2 cost 29.4 vs 27.5 (+7.3%)
+     - TRINKET 998114 present
+     - TRINKET 998115 present
+     - mh: enchant 2H Agility (check source)
+     - mh 2H cost 46.9 vs 54.8 (il76)
+     - rng is real item 272427 Howling Idol {} (check it does something; il71 x0.32 = 15.6)
+     ench: head=Lesser Arcanum of Voracity neck=Necklace - Agility shoulder=- back=Cloak - Agility chest=Chest - Greater Stats wrist=Bracer - Superior Strength hands=Gloves - Superior Strength waist=- legs=Lesser Arcanum of Voracity feet=Boots - Greater Agility fing1=- fing2=- trk1=- trk2=- mh=2H Weapon - Agility oh=- rng=-
+master--ui_hunter_gear_sets_level60_phase1_synthetic_ranged.ge armor12 463.3 hit 9.0% crit 11.3% spi 9% cw 0.0
+     5a: Sta 16% of set; top non-Sta stat Agility 44% of non-Sta; other useful stats (>=3%): Intellect,Crit,Spirit,RangedAttackPower
+     - head cost 50.0 vs 42.8 (+16.8%)
+     - neck cost 31.3 vs 27.5 (+14.0%)
+     - shoulder cost 38.1 vs 33.0 (+15.5%)
+     - back cost 31.8 vs 27.5 (+15.9%)
+     - chest cost 49.9 vs 42.8 (+16.5%)
+     - wrist cost 31.6 vs 27.5 (+15.0%)
+     - hands cost 38.3 vs 33.0 (+16.2%)
+     - waist cost 41.6 vs 37.6 (+10.6%)
+     - legs cost 49.7 vs 42.8 (+16.2%)
+     - feet cost 38.1 vs 33.0 (+15.6%)
+     - fing1 cost 31.3 vs 27.5 (+14.0%)
+     - fing2 cost 31.7 vs 27.5 (+15.5%)
+     - TRINKET 993015 present
+     - TRINKET 993016 present
+     - mh: enchant 2H Agility (check source)
+     - mh 2H cost 56.6 vs 54.8 (il76)
+     - rng cost 16.1 vs 15.6 (il71)
+     - 5a: Stamina 16.2% of set (want 18% +/-1.5)
+     ench: head=Lesser Arcanum of Voracity neck=Necklace - Agility shoulder=- back=Cloak - Agility chest=Chest - Greater Stats wrist=Bracer - Agility hands=Boots - Greater Agility waist=- legs=Lesser Arcanum of Voracity feet=Boots - Greater Agility fing1=- fing2=- trk1=- trk2=- mh=2H Weapon - Agility oh=- rng=Sniper Scope
+master--ui_hunter_gear_sets_level60_phase1_synthetic_survival. armor12 465.1 hit 6.0% crit 9.4% spi 10% cw 0.0
+     5a: Sta 15% of set; top non-Sta stat Agility 39% of non-Sta; other useful stats (>=3%): Strength,Crit,Spirit,AttackPower
+     - head cost 50.3 vs 42.8 (+17.5%)
+     - neck cost 31.5 vs 27.5 (+14.7%)
+     - shoulder cost 38.4 vs 33.0 (+16.5%)
+     - back cost 31.4 vs 27.5 (+14.4%)
+     - chest cost 49.5 vs 42.8 (+15.6%)
+     - wrist cost 31.5 vs 27.5 (+14.8%)
+     - hands cost 39.3 vs 33.0 (+19.1%)
+     - waist cost 41.8 vs 37.6 (+11.3%)
+     - legs cost 49.8 vs 42.8 (+16.4%)
+     - feet cost 38.1 vs 33.0 (+15.5%)
+     - fing1 cost 32.0 vs 27.5 (+16.7%)
+     - fing2 cost 31.5 vs 27.5 (+14.8%)
+     - TRINKET 993116 present
+     - TRINKET 993117 present
+     - mh phys 1H cost 24.1 vs 20.5 (il71)
+     - oh: enchant Gloves - Superior Agility (Cenarion, phase 5?)
+     - oh phys 1H cost 24.1 vs 20.5 (il71)
+     - 5a: Stamina 14.5% of set (want 18% +/-1.5)
+     ench: head=Lesser Arcanum of Voracity neck=Necklace - Agility shoulder=- back=Cloak - Agility chest=Chest - Greater Stats wrist=Bracer - Agility hands=Boots - Greater Agility waist=- legs=Lesser Arcanum of Voracity feet=Boots - Greater Agility fing1=- fing2=- trk1=- trk2=- mh=Weapon - Crusader oh=Weapon - Agility rng=Sniper Scope
+master--ui_mage_gear_sets_level60_phase1_synthetic.gear.json   armor12 393.1 hit 10.0% crit 8.1% spi 11% cw 99.5
+     5a: Sta 14% of set; top non-Sta stat SpellPower 36% of non-Sta; other useful stats (>=3%): Intellect,Crit,Spirit
+     - head cost 47.1 vs 42.8 (+10.0%)
+     - neck cost 24.4 vs 27.5 (-11.1%)
+     - shoulder cost 31.3 vs 33.0 (-4.9%)
+     - back cost 24.4 vs 27.5 (-11.1%)
+     - wrist cost 24.6 vs 27.5 (-10.3%)
+     - hands cost 34.8 vs 33.0 (+5.6%)
+     - waist cost 36.7 vs 37.6 (-2.3%)
+     - feet cost 31.8 vs 33.0 (-3.6%)
+     - fing2 cost 24.8 vs 27.5 (-9.7%)
+     - TRINKET 996031 present
+     - TRINKET 996032 present
+     - rng cost 12.0 vs 15.6 (il71)
+     - caster weapons total 99.5 vs ~73
+     - 5a: Stamina 14.4% of set (want 18% +/-1.5)
+     ench: head=Lesser Arcanum of Voracity neck=Necklace - Spell Power shoulder=- back=- chest=Mystic Rugged Armor Kit wrist=Bracer - Greater Spellpower hands=Mystic Rugged Armor Kit waist=- legs=Mystic Rugged Armor Kit feet=Mystic Rugged Armor Kit fing1=- fing2=- trk1=- trk2=- mh=2H Weapon - Spellblasting oh=- rng=-
+master--ui_mage_gear_sets_level60_phase1_synthetic_arcane.gear armor12 395.1 hit 10.0% crit 5.8% spi 11% cw 99.1
+     5a: Sta 15% of set; top non-Sta stat SpellPower 40% of non-Sta; other useful stats (>=3%): Intellect,Crit,Spirit
+     - head cost 47.1 vs 42.8 (+10.0%)
+     - neck cost 24.4 vs 27.5 (-11.0%)
+     - shoulder cost 31.6 vs 33.0 (-4.2%)
+     - back cost 24.4 vs 27.5 (-11.0%)
+     - wrist cost 25.2 vs 27.5 (-8.3%)
+     - hands cost 34.4 vs 33.0 (+4.5%)
+     - legs cost 43.8 vs 42.8 (+2.3%)
+     - feet cost 32.0 vs 33.0 (-3.0%)
+     - fing2 cost 25.0 vs 27.5 (-8.8%)
+     - TRINKET 996031 present
+     - TRINKET 996032 present
+     - rng cost 12.0 vs 15.6 (il71)
+     - caster weapons total 99.1 vs ~73
+     - 5a: Stamina 14.9% of set (want 18% +/-1.5)
+     ench: head=Lesser Arcanum of Voracity neck=Necklace - Spell Power shoulder=- back=- chest=Mystic Rugged Armor Kit wrist=Bracer - Greater Spellpower hands=Gloves - Arcane Power waist=- legs=Mystic Rugged Armor Kit feet=Mystic Rugged Armor Kit fing1=- fing2=- trk1=- trk2=- mh=2H Weapon - Spellblasting oh=- rng=-
+master--ui_retribution_paladin_gear_sets_level60_phase1_synthe armor12 417.5 hit 9.0% crit 5.4% spi 11% cw 0.0
+     5a: Sta 19% of set; top non-Sta stat SpellPower 26% of non-Sta; other useful stats (>=3%): Strength,Intellect,Crit,Agility,Spirit
+     - head cost 44.4 vs 42.8 (+3.8%)
+     - neck cost 26.1 vs 27.5 (-4.8%)
+     - shoulder cost 34.9 vs 33.0 (+5.9%)
+     - back cost 24.7 vs 27.5 (-9.9%)
+     - chest cost 44.5 vs 42.8 (+3.9%)
+     - wrist cost 26.1 vs 27.5 (-4.8%)
+     - hands cost 35.4 vs 33.0 (+7.4%)
+     - waist cost 42.9 vs 37.6 (+14.2%)
+     - legs cost 53.5 vs 42.8 (+25.1%)
+     - fing1 cost 26.1 vs 27.5 (-4.8%)
+     - fing2 cost 26.1 vs 27.5 (-4.8%)
+     - TRINKET 992014 present
+     - TRINKET 992015 present
+     - mh 2H cost 46.5 vs 54.8 (il76)
+     - rng is real item 272435 Libram of Law {} (check it does something; il71 x0.32 = 15.6)
+     ench: head=Lesser Arcanum of Voracity neck=Necklace - Spell Power shoulder=- back=Cloak - Agility chest=Chest - Greater Stats wrist=Bracer - Greater Spellpower hands=Gloves - Holy Power waist=- legs=Lesser Arcanum of Voracity feet=Mystic Rugged Armor Kit fing1=- fing2=- trk1=- trk2=- mh=2H Weapon - Spellblasting oh=- rng=-
+master--ui_rogue_gear_sets_level60_phase1_synthetic_combat_dag armor12 455.8 hit 5.0% crit 7.9% spi 0% cw 0.0
+     5a: Sta 19% of set; top non-Sta stat Agility 45% of non-Sta; other useful stats (>=3%): Crit,Strength,AttackPower
+     - head cost 52.2 vs 42.8 (+22.0%)
+     - neck cost 29.1 vs 27.5 (+6.1%)
+     - shoulder cost 38.2 vs 33.0 (+15.8%)
+     - back cost 29.2 vs 27.5 (+6.4%)
+     - chest cost 50.0 vs 42.8 (+16.7%)
+     - wrist cost 29.4 vs 27.5 (+7.3%)
+     - hands cost 38.1 vs 33.0 (+15.7%)
+     - waist cost 42.2 vs 37.6 (+12.4%)
+     - legs cost 50.5 vs 42.8 (+18.0%)
+     - feet cost 38.2 vs 33.0 (+15.8%)
+     - fing1 cost 29.4 vs 27.5 (+7.2%)
+     - fing2 cost 29.2 vs 27.5 (+6.4%)
+     - TRINKET 994201 present
+     - TRINKET 994202 present
+     - rng cost 13.6 vs 15.6 (il71)
+     ench: head=Lesser Arcanum of Voracity neck=Necklace - Agility shoulder=- back=Cloak - Agility chest=Chest - Greater Stats wrist=Bracer - Superior Strength hands=Gloves - Superior Strength waist=- legs=Lesser Arcanum of Voracity feet=Boots - Greater Agility fing1=- fing2=- trk1=- trk2=- mh=Weapon - Crusader oh=Weapon - Crusader rng=-
+master--ui_rogue_gear_sets_level60_phase1_synthetic_daggers.ge armor12 455.8 hit 5.0% crit 7.9% spi 0% cw 0.0
+     5a: Sta 19% of set; top non-Sta stat Agility 45% of non-Sta; other useful stats (>=3%): Crit,Strength,AttackPower
+     - head cost 52.2 vs 42.8 (+22.0%)
+     - neck cost 29.1 vs 27.5 (+6.1%)
+     - shoulder cost 38.2 vs 33.0 (+15.8%)
+     - back cost 29.2 vs 27.5 (+6.4%)
+     - chest cost 50.0 vs 42.8 (+16.7%)
+     - wrist cost 29.4 vs 27.5 (+7.3%)
+     - hands cost 38.1 vs 33.0 (+15.7%)
+     - waist cost 42.2 vs 37.6 (+12.4%)
+     - legs cost 50.5 vs 42.8 (+18.0%)
+     - feet cost 38.2 vs 33.0 (+15.8%)
+     - fing1 cost 29.4 vs 27.5 (+7.2%)
+     - fing2 cost 29.2 vs 27.5 (+6.4%)
+     - TRINKET 994201 present
+     - TRINKET 994202 present
+     - rng cost 13.6 vs 15.6 (il71)
+     ench: head=Lesser Arcanum of Voracity neck=Necklace - Agility shoulder=- back=Cloak - Agility chest=Chest - Greater Stats wrist=Bracer - Superior Strength hands=Gloves - Superior Strength waist=- legs=Lesser Arcanum of Voracity feet=Boots - Greater Agility fing1=- fing2=- trk1=- trk2=- mh=Weapon - Crusader oh=Weapon - Crusader rng=-
+master--ui_rogue_gear_sets_level60_phase1_synthetic_mutilate.g armor12 455.8 hit 5.0% crit 7.9% spi 0% cw 0.0
+     5a: Sta 19% of set; top non-Sta stat Agility 45% of non-Sta; other useful stats (>=3%): Crit,Strength,AttackPower
+     - head cost 52.2 vs 42.8 (+22.0%)
+     - neck cost 29.1 vs 27.5 (+6.1%)
+     - shoulder cost 38.2 vs 33.0 (+15.8%)
+     - back cost 29.2 vs 27.5 (+6.4%)
+     - chest cost 50.0 vs 42.8 (+16.7%)
+     - wrist cost 29.4 vs 27.5 (+7.3%)
+     - hands cost 38.1 vs 33.0 (+15.7%)
+     - waist cost 42.2 vs 37.6 (+12.4%)
+     - legs cost 50.5 vs 42.8 (+18.0%)
+     - feet cost 38.2 vs 33.0 (+15.8%)
+     - fing1 cost 29.4 vs 27.5 (+7.2%)
+     - fing2 cost 29.2 vs 27.5 (+6.4%)
+     - TRINKET 994201 present
+     - TRINKET 994202 present
+     - rng cost 13.6 vs 15.6 (il71)
+     ench: head=Lesser Arcanum of Voracity neck=Necklace - Agility shoulder=- back=Cloak - Agility chest=Chest - Greater Stats wrist=Bracer - Superior Strength hands=Gloves - Superior Strength waist=- legs=Lesser Arcanum of Voracity feet=Boots - Greater Agility fing1=- fing2=- trk1=- trk2=- mh=Weapon - Crusader oh=Weapon - Crusader rng=-
+master--ui_rogue_gear_sets_level60_phase1_synthetic_seal_fate_ armor12 457.9 hit 5.0% crit 7.4% spi 0% cw 0.0
+     5a: Sta 19% of set; top non-Sta stat Agility 48% of non-Sta; other useful stats (>=3%): Crit,Strength,AttackPower
+     - head cost 52.3 vs 42.8 (+22.2%)
+     - neck cost 29.1 vs 27.5 (+6.2%)
+     - shoulder cost 38.2 vs 33.0 (+16.0%)
+     - back cost 29.7 vs 27.5 (+8.0%)
+     - chest cost 50.0 vs 42.8 (+16.8%)
+     - wrist cost 29.4 vs 27.5 (+7.3%)
+     - hands cost 38.2 vs 33.0 (+15.8%)
+     - waist cost 42.3 vs 37.6 (+12.6%)
+     - legs cost 51.3 vs 42.8 (+19.9%)
+     - feet cost 38.2 vs 33.0 (+16.0%)
+     - fing1 cost 29.4 vs 27.5 (+7.3%)
+     - fing2 cost 29.7 vs 27.5 (+8.0%)
+     - TRINKET 994201 present
+     - TRINKET 994202 present
+     - rng cost 13.9 vs 15.6 (il71)
+     - 5a: Agility is 48.3% of non-Stamina budget (>45%)
+     ench: head=Lesser Arcanum of Voracity neck=Necklace - Agility shoulder=- back=Cloak - Agility chest=Chest - Greater Stats wrist=Bracer - Superior Strength hands=Gloves - Superior Strength waist=- legs=Lesser Arcanum of Voracity feet=Boots - Greater Agility fing1=- fing2=- trk1=- trk2=- mh=Weapon - Crusader oh=Weapon - Crusader rng=-
+master--ui_rogue_gear_sets_level60_phase1_synthetic_swords.gea armor12 457.9 hit 5.0% crit 7.4% spi 0% cw 0.0
+     5a: Sta 19% of set; top non-Sta stat Agility 48% of non-Sta; other useful stats (>=3%): Crit,Strength,AttackPower
+     - head cost 52.3 vs 42.8 (+22.2%)
+     - neck cost 29.1 vs 27.5 (+6.2%)
+     - shoulder cost 38.2 vs 33.0 (+16.0%)
+     - back cost 29.7 vs 27.5 (+8.0%)
+     - chest cost 50.0 vs 42.8 (+16.8%)
+     - wrist cost 29.4 vs 27.5 (+7.3%)
+     - hands cost 38.2 vs 33.0 (+15.8%)
+     - waist cost 42.3 vs 37.6 (+12.6%)
+     - legs cost 51.3 vs 42.8 (+19.9%)
+     - feet cost 38.2 vs 33.0 (+16.0%)
+     - fing1 cost 29.4 vs 27.5 (+7.3%)
+     - fing2 cost 29.7 vs 27.5 (+8.0%)
+     - TRINKET 994201 present
+     - TRINKET 994202 present
+     - rng cost 13.9 vs 15.6 (il71)
+     - 5a: Agility is 48.3% of non-Stamina budget (>45%)
+     ench: head=Lesser Arcanum of Voracity neck=Necklace - Agility shoulder=- back=Cloak - Agility chest=Chest - Greater Stats wrist=Bracer - Superior Strength hands=Gloves - Superior Strength waist=- legs=Lesser Arcanum of Voracity feet=Boots - Greater Agility fing1=- fing2=- trk1=- trk2=- mh=Weapon - Crusader oh=Weapon - Crusader rng=-
+master--ui_shadow_priest_gear_sets_level60_phase1_smite.gear.j armor12 380.8 hit 0.0% crit 9.1% spi 11% cw 99.7
+     5a: Sta 19% of set; top non-Sta stat SpellPower 42% of non-Sta; other useful stats (>=3%): Intellect,Crit,Spirit
+     - neck cost 24.7 vs 27.5 (-10.1%)
+     - shoulder cost 31.7 vs 33.0 (-3.8%)
+     - back cost 24.3 vs 27.5 (-11.4%)
+     - wrist cost 24.8 vs 27.5 (-9.8%)
+     - hands cost 31.7 vs 33.0 (-3.9%)
+     - waist cost 33.6 vs 37.6 (-10.6%)
+     - feet cost 31.1 vs 33.0 (-5.7%)
+     - fing1 cost 24.7 vs 27.5 (-10.0%)
+     - fing2 cost 24.3 vs 27.5 (-11.4%)
+     - TRINKET 995033 present
+     - TRINKET 995034 present
+     - rng cost 10.9 vs 15.6 (il71)
+     - caster weapons total 99.7 vs ~73
+     ench: head=Lesser Arcanum of Voracity neck=Necklace - Spell Power shoulder=- back=- chest=Mystic Rugged Armor Kit wrist=Bracer - Greater Spellpower hands=Gloves - Holy Power waist=- legs=Mystic Rugged Armor Kit feet=Mystic Rugged Armor Kit fing1=- fing2=- trk1=- trk2=- mh=2H Weapon - Spellblasting oh=- rng=-
+master--ui_shadow_priest_gear_sets_level60_phase1_synthetic.ge armor12 385.9 hit 10.0% crit 7.9% spi 11% cw 96.6
+     5a: Sta 18% of set; top non-Sta stat SpellPower 35% of non-Sta; other useful stats (>=3%): Intellect,Crit,Spirit
+     - head cost 43.7 vs 42.8 (+2.2%)
+     - neck cost 25.2 vs 27.5 (-8.1%)
+     - shoulder cost 31.7 vs 33.0 (-3.9%)
+     - back cost 24.8 vs 27.5 (-9.5%)
+     - chest cost 43.7 vs 42.8 (+2.1%)
+     - wrist cost 24.9 vs 27.5 (-9.4%)
+     - hands cost 32.3 vs 33.0 (-2.0%)
+     - waist cost 34.1 vs 37.6 (-9.3%)
+     - feet cost 31.9 vs 33.0 (-3.1%)
+     - fing1 cost 25.1 vs 27.5 (-8.5%)
+     - fing2 cost 25.0 vs 27.5 (-9.0%)
+     - TRINKET 995033 present
+     - TRINKET 995034 present
+     - rng cost 10.7 vs 15.6 (il71)
+     - caster weapons total 96.6 vs ~73
+     ench: head=Lesser Arcanum of Voracity neck=Necklace - Spell Power shoulder=- back=- chest=Mystic Rugged Armor Kit wrist=Bracer - Greater Spellpower hands=Mystic Rugged Armor Kit waist=- legs=Mystic Rugged Armor Kit feet=Mystic Rugged Armor Kit fing1=- fing2=- trk1=- trk2=- mh=2H Weapon - Spellblasting oh=- rng=-
+master--ui_warlock_gear_sets_level60_phase1_synthetic.gear.jso armor12 386.4 hit 10.0% crit 7.8% spi 11% cw 99.8
+     5a: Sta 16% of set; top non-Sta stat SpellPower 35% of non-Sta; other useful stats (>=3%): Intellect,Crit,Spirit
+     - neck cost 24.8 vs 27.5 (-9.7%)
+     - shoulder cost 31.9 vs 33.0 (-3.1%)
+     - back cost 25.0 vs 27.5 (-8.9%)
+     - chest cost 44.0 vs 42.8 (+2.7%)
+     - wrist cost 24.8 vs 27.5 (-9.7%)
+     - hands cost 32.1 vs 33.0 (-2.5%)
+     - waist cost 34.3 vs 37.6 (-8.7%)
+     - legs cost 44.0 vs 42.8 (+2.7%)
+     - feet cost 32.0 vs 33.0 (-3.0%)
+     - fing1 cost 25.4 vs 27.5 (-7.6%)
+     - fing2 cost 24.8 vs 27.5 (-9.7%)
+     - TRINKET 997021 present
+     - TRINKET 997022 present
+     - rng cost 12.2 vs 15.6 (il71)
+     - caster weapons total 99.8 vs ~73
+     - 5a: Stamina 16.0% of set (want 18% +/-1.5)
+     ench: head=Lesser Arcanum of Voracity neck=Necklace - Spell Power shoulder=- back=- chest=Mystic Rugged Armor Kit wrist=Bracer - Greater Spellpower hands=Mystic Rugged Armor Kit waist=- legs=Mystic Rugged Armor Kit feet=Mystic Rugged Armor Kit fing1=- fing2=- trk1=- trk2=- mh=2H Weapon - Spellblasting oh=- rng=-
+master--ui_warlock_gear_sets_level60_phase1_synthetic_demonolo armor12 388.3 hit 14.0% crit 8.9% spi 11% cw 98.7
+     5a: Sta 15% of set; top non-Sta stat SpellPower 33% of non-Sta; other useful stats (>=3%): Intellect,Crit,Spirit
+     - neck cost 24.8 vs 27.5 (-9.7%)
+     - shoulder cost 31.9 vs 33.0 (-3.1%)
+     - back cost 25.0 vs 27.5 (-8.9%)
+     - chest cost 44.3 vs 42.8 (+3.5%)
+     - wrist cost 24.8 vs 27.5 (-9.7%)
+     - hands cost 32.1 vs 33.0 (-2.5%)
+     - waist cost 34.8 vs 37.6 (-7.4%)
+     - legs cost 45.1 vs 42.8 (+5.4%)
+     - feet cost 32.0 vs 33.0 (-3.0%)
+     - fing1 cost 25.4 vs 27.5 (-7.6%)
+     - fing2 cost 24.8 vs 27.5 (-9.7%)
+     - TRINKET 997021 present
+     - TRINKET 997022 present
+     - rng cost 12.2 vs 15.6 (il71)
+     - caster weapons total 98.7 vs ~73
+     - 5a: Stamina 14.9% of set (want 18% +/-1.5)
+     ench: head=Lesser Arcanum of Voracity neck=Necklace - Spell Power shoulder=- back=- chest=Mystic Rugged Armor Kit wrist=Bracer - Greater Spellpower hands=Mystic Rugged Armor Kit waist=- legs=Mystic Rugged Armor Kit feet=Mystic Rugged Armor Kit fing1=- fing2=- trk1=- trk2=- mh=2H Weapon - Spellblasting oh=- rng=-
+master--ui_warrior_gear_sets_level60_phase1_synthetic_arms.gea armor12 460.5 hit 9.0% crit 6.4% spi 0% cw 0.0
+     5a: Sta 19% of set; top non-Sta stat Strength 44% of non-Sta; other useful stats (>=3%): Crit,Agility,AttackPower
+     - head cost 50.7 vs 42.8 (+18.4%)
+     - neck cost 29.7 vs 27.5 (+8.0%)
+     - shoulder cost 38.8 vs 33.0 (+17.8%)
+     - back cost 29.7 vs 27.5 (+8.0%)
+     - chest cost 51.7 vs 42.8 (+20.8%)
+     - wrist cost 29.4 vs 27.5 (+7.2%)
+     - hands cost 39.4 vs 33.0 (+19.4%)
+     - waist cost 41.8 vs 37.6 (+11.3%)
+     - legs cost 51.7 vs 42.8 (+20.8%)
+     - feet cost 38.8 vs 33.0 (+17.8%)
+     - fing1 cost 29.4 vs 27.5 (+7.2%)
+     - fing2 cost 29.4 vs 27.5 (+7.2%)
+     - TRINKET 991017 present
+     - TRINKET 991018 present
+     - mh 2H cost 48.9 vs 54.8 (il76)
+     ench: head=Lesser Arcanum of Voracity neck=Necklace - Strength shoulder=- back=Cloak - Agility chest=Chest - Greater Stats wrist=Bracer - Superior Strength hands=Gloves - Superior Strength waist=- legs=Lesser Arcanum of Voracity feet=Boots - Greater Agility fing1=- fing2=- trk1=- trk2=- mh=Weapon - Crusader oh=- rng=-
+master--ui_warrior_gear_sets_level60_phase1_synthetic_fury.gea armor12 460.5 hit 9.0% crit 7.6% spi 0% cw 0.0
+     5a: Sta 19% of set; top non-Sta stat Strength 43% of non-Sta; other useful stats (>=3%): Crit,Agility,AttackPower
+     - head cost 50.7 vs 42.8 (+18.4%)
+     - neck cost 29.7 vs 27.5 (+8.0%)
+     - shoulder cost 38.8 vs 33.0 (+17.8%)
+     - back cost 29.7 vs 27.5 (+8.0%)
+     - chest cost 51.7 vs 42.8 (+20.8%)
+     - wrist cost 29.4 vs 27.5 (+7.2%)
+     - hands cost 39.4 vs 33.0 (+19.4%)
+     - waist cost 41.8 vs 37.6 (+11.3%)
+     - legs cost 51.7 vs 42.8 (+20.8%)
+     - feet cost 38.8 vs 33.0 (+17.8%)
+     - fing1 cost 29.4 vs 27.5 (+7.2%)
+     - fing2 cost 29.4 vs 27.5 (+7.2%)
+     - TRINKET 991017 present
+     - TRINKET 991018 present
+     - mh phys 1H cost 22.0 vs 20.5 (il71)
+     - oh phys 1H cost 22.0 vs 20.5 (il71)
+     ench: head=Lesser Arcanum of Voracity neck=Necklace - Strength shoulder=- back=Cloak - Agility chest=Chest - Greater Stats wrist=Bracer - Superior Strength hands=Gloves - Superior Strength waist=- legs=Lesser Arcanum of Voracity feet=Boots - Greater Agility fing1=- fing2=- trk1=- trk2=- mh=Weapon - Crusader oh=Weapon - Crusader rng=-
