@@ -1,6 +1,6 @@
 # The audit loop
 
-The DPS report's auditors (results, rotations, gear, consumables, mechanics, rank tuning, fairness,
+The DPS report's auditors (results, rotations, gear, consumables, mechanics, fairness,
 and client updates for each new Forever build) run as one scheduled routine. Every run is a **fresh cloud session** that reads everything it needs
 from this directory, so no auditor carries a growing context from pass to pass.
 
@@ -105,5 +105,5 @@ These rules are in `PASS.md` for the passes; they apply to any agent session in 
 - **Message only when it matters.** Findings go to `findings/<id>.md`. Nothing is sent to other
   sessions, and quiet passes write one log line.
 - **Pick the model for the job.** Mechanical passes (results, gear, consumables) run on Sonnet. Passes
-  that judge mechanics or balance (rotations, mechanics, rank tuning, fairness, client updates) run on Opus. The
+  that judge mechanics or balance (rotations, mechanics, fairness, client updates) run on Opus. Rank tuning is disabled (2026-10-17). The
   run session itself is Sonnet.

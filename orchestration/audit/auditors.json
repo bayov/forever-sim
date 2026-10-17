@@ -132,7 +132,9 @@
    "max_quiet_days": 7,
    "owns": [
     "orchestration/rank_tuning.md"
-   ]
+   ],
+   "enabled": false,
+   "disabled_note": "Dropped by the user on 2026-10-17. Its pass doc, tools, baseline and state stay in the repo; set enabled to true to bring it back."
   },
   {
    "id": "fairness",
