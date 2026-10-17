@@ -523,6 +523,10 @@ message AuraStats {
 	int32 max_stacks = 2;
 	bool has_icd = 3;
 	bool has_exclusive_effect = 4;
+	// Set when this is the highest rank of its ability that the unit has, below the ability's
+	// top rank: the top rank's spell ID. A rotation names it to mean the highest rank at any
+	// level.
+	int32 highest_rank_id = 5;
 }
 message SpellStats {
 	ActionID id = 1;
@@ -534,6 +538,10 @@ message SpellStats {
 	bool has_shield = 6; // Whether this spell applies a shield effect.
 	bool prepull_only = 5; // Whether this spell may only be cast during prepull.
 	bool encounter_only = 8; // Whether this spell may only be cast during the encounter (not prepull).
+	// Set when this is the highest rank of its ability that the unit knows, below the ability's
+	// top rank: the top rank's spell ID. A rotation names it to cast the highest rank at any
+	// level.
+	int32 highest_rank_id = 9;
 }
 message APLActionStats {
 	repeated string warnings = 1;

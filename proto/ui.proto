@@ -331,6 +331,10 @@ message LevelingPlanSettings {
 	bool use_settings_buffs = 6;
 	// The plan's own rotations, by name. The level ranges in rotations pick from them.
 	repeated LevelingRotationPreset rotation_library = 7;
+	// Whether the library's rotations name an ability's top rank where they mean the highest
+	// rank we know, as they have since 2026-10-17. Plans saved before named the highest rank
+	// at their level, and the Leveling Plan tab moves them over once.
+	bool rotations_name_top_ranks = 8;
 }
 
 // A talent build and the order we put its points in. At each level we have the first picks,

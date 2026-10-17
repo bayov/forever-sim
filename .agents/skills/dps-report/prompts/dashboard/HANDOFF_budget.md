@@ -11,9 +11,9 @@ that only Forever items with item level <= 30 count: Forever's beta caps at leve
   quality (2 green, 3 blue, 4 epic), slot (Wowhead inventory slot: 1 head, 2 neck, 3 shoulder, 5/20 chest, 6 waist, 7 legs, 8 feet, 9 wrist,
   10 hands, 11 finger, 12 trinket, 16 back, 13/17/21/22 weapons, 15/25/26 ranged, 23 off-hand, 28 relic), and eq stats
   (str, agi, sta, int, spi, critstrkrtng, hitrtng, splpwr, splheal, spldmg, atkpwr, rgdatkpwr, manargn, school spell power, resistances, ...).
-- /home/user/w-dash/assets/db_inputs/wago_db2_items.csv: the Forever client's ItemSparse (static stat values in StatModifier_bonusStat_N /
+- /home/user/w-dash/assets/db_inputs/wago_db2_items.csv: Classic 1.15.3.55646's ItemSparse, not the Forever client's (static stat values in StatModifier_bonusStat_N /
   StatModifier_bonusAmount_N, ItemLevel, InventoryType, OverallQualityID). Stat enum: 3 Agi, 4 Str, 5 Int, 6 Spi, 7 Sta, and the classic ids
-  for ratings / power. Use it to cross-check the Wowhead listing for ilvl <= 30 items.
+  for ratings / power. It has none of Forever's own items and none of its stat changes, so it's an Era baseline, not a check of the Wowhead listing.
 - Era/Classic baseline for comparison: the same item IDs in Classic Era. /home/user/w-dash/assets/db_inputs/wowhead_item_tooltips.csv (classic tooltips, HTML)
   or the SoD repo's db (/home/user/wowsims/sod/assets/database/db.json, classic items + SoD items; stats array indices: 0 Str 1 Agi 2 Sta 3 Int 4 Spi 5 SP ... 17 AP 18 MeleeHit% 19 MeleeCrit% 27 RAP).
 - Existing scripts to adapt: orchestration/tools/{primary.py, fit.py, single.py, epic.py, linear_total.py}. numpy and pandas are available, no scipy.

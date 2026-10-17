@@ -72,7 +72,7 @@ Manaflare Regalia (280450 to 280455, item level 65, no stats in the client yet) 
 
 ## Mechanics check against the sim (2026-10-13)
 
-Every mage spell and talent the sim models was compared again with the 70338 client (wago.tools DB2: SpellEffect, SpellMisc, SpellPower, SpellCooldowns, SpellCategories, SpellAuraOptions, Trait tables), wowhead's Forever tooltips (`nether.wowhead.com/forever/tooltip/spell/<id>?dataEnv=17`), Blizzard's Forever development notes (us.forums.blizzard.com/en/wow/t/2360696) and mage deep dive (worldofwarcraft.blizzard.com/news/24302097), and foreverchanges.pro/class/mage.
+Every mage spell and talent the sim models was compared again with the 70338 client (wago.tools DB2: SpellEffect, SpellMisc, SpellPower, SpellCooldowns, SpellCategories, SpellAuraOptions, Trait tables), wowhead's Forever tooltips (`nether.wowhead.com/forever/tooltip/spell/<id>?dataEnv=16`), Blizzard's Forever development notes (us.forums.blizzard.com/en/wow/t/2360696) and mage deep dive (worldofwarcraft.blizzard.com/news/24302097), and foreverchanges.pro/class/mage.
 
 Fixed in the sim (no change to the single target presets):
 - Blizzard's ticks are the area trigger's own spells (1279976 to 1279980, 1279949), each with a 4.2% coefficient (SpellEffect EffectBonusCoefficient 0.042). The 3% the sim used is Blizzard's dummy effect (10187 effect 0).

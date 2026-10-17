@@ -23,6 +23,33 @@ export type ACTION_ID_SET =
 	| 'dot_spells'
 	| 'shield_spells';
 
+// The " (Rank 5)" or " (Highest rank)" after a ranked spell's name.
+const rankSuffix = / \((Rank \d+|Highest rank)\)/g;
+
+// A unit's spells or auras, with a "Highest rank" pick in front of each ability's ranks when
+// the unit knows a rank below the top one.
+//
+// The pick names the ability's top rank, and the sim casts that as the highest rank the
+// character knows (TopRankID in spell_ranks.go). So a rotation made at one level keeps up as
+// the character learns new ranks, like a Leveling Plan rotation over its level range. A rank
+// picked by its number stays that rank, to downrank on purpose.
+function withHighestRanks<T extends { id: ActionId; data: { highestRankId: number } }>(entries: T[]): T[] {
+	const out: T[] = [];
+	const seen = new Set<string>();
+	for (const entry of entries) {
+		const base = entry.id.name.replace(rankSuffix, '');
+		if (!seen.has(base)) {
+			seen.add(base);
+			const highest = entries.find(e => e.data.highestRankId && e.id.name.replace(rankSuffix, '') == base);
+			if (highest) out.push({ ...highest, id: highest.id.asHighestRank(highest.data.highestRankId) });
+		}
+		out.push(entry);
+	}
+	return out;
+}
+const spellsOf = (metadata: UnitMetadata) => withHighestRanks(metadata.getSpells());
+const aurasOf = (metadata: UnitMetadata) => withHighestRanks(metadata.getAuras());
+
 const actionIdSets: Record<
 	ACTION_ID_SET,
 	{
@@ -33,13 +60,14 @@ const actionIdSets: Record<
 	auras: {
 		defaultLabel: 'Aura',
 		getActionIDs: async metadata => {
-			return metadata.getAuras().map(actionId => {
-				const baseActionName = actionId.id.name.replace(/ \(Rank \d+\)/g, '');
-				const rankedNameRegex = new RegExp(`${baseActionName} \\(Rank [0-9]+\\)`);
-				const hasRanks = metadata.getAuras().filter(spell => !!spell.id.name.match(rankedNameRegex)).length > 1;
+			const all = aurasOf(metadata);
+			return all.map(actionId => {
+				const baseActionName = actionId.id.name.replace(rankSuffix, '');
+				const rankedNameRegex = new RegExp(`${baseActionName} \\((Rank [0-9]+|Highest rank)\\)`);
+				const hasRanks = all.filter(spell => !!spell.id.name.match(rankedNameRegex)).length > 1;
 				return {
 					value: actionId.id,
-					submenu: hasRanks ? [actionId.id.name.replace(/ \(Rank \d+\)/g, '')] : [],
+					submenu: hasRanks ? [actionId.id.name.replace(rankSuffix, '')] : [],
 				};
 			});
 		},
@@ -47,13 +75,13 @@ const actionIdSets: Record<
 	stackable_auras: {
 		defaultLabel: 'Aura',
 		getActionIDs: async metadata => {
-			return metadata
-				.getAuras()
+			const all = aurasOf(metadata);
+			return all
 				.filter(aura => aura.data.maxStacks > 0)
 				.map(actionId => {
-					const baseActionName = actionId.id.name.replace(/ \(Rank \d+\)/g, '');
-					const rankedNameRegex = new RegExp(`${baseActionName} \\(Rank [0-9]+\\)`);
-					const hasRanks = metadata.getAuras().filter(spell => !!spell.id.name.match(rankedNameRegex)).length > 1;
+					const baseActionName = actionId.id.name.replace(rankSuffix, '');
+					const rankedNameRegex = new RegExp(`${baseActionName} \\((Rank [0-9]+|Highest rank)\\)`);
+					const hasRanks = all.filter(spell => !!spell.id.name.match(rankedNameRegex)).length > 1;
 					return {
 						value: actionId.id,
 						submenu: hasRanks ? [baseActionName] : [],
@@ -64,13 +92,13 @@ const actionIdSets: Record<
 	icd_auras: {
 		defaultLabel: 'Aura',
 		getActionIDs: async metadata => {
-			return metadata
-				.getAuras()
+			const all = aurasOf(metadata);
+			return all
 				.filter(aura => aura.data.hasIcd)
 				.map(actionId => {
-					const baseActionName = actionId.id.name.replace(/ \(Rank \d+\)/g, '');
-					const rankedNameRegex = new RegExp(`${baseActionName} \\(Rank [0-9]+\\)`);
-					const hasRanks = metadata.getAuras().filter(spell => !!spell.id.name.match(rankedNameRegex)).length > 1;
+					const baseActionName = actionId.id.name.replace(rankSuffix, '');
+					const rankedNameRegex = new RegExp(`${baseActionName} \\((Rank [0-9]+|Highest rank)\\)`);
+					const hasRanks = all.filter(spell => !!spell.id.name.match(rankedNameRegex)).length > 1;
 					return {
 						value: actionId.id,
 						submenu: hasRanks ? [baseActionName] : [],
@@ -81,13 +109,13 @@ const actionIdSets: Record<
 	exclusive_effect_auras: {
 		defaultLabel: 'Aura',
 		getActionIDs: async metadata => {
-			return metadata
-				.getAuras()
+			const all = aurasOf(metadata);
+			return all
 				.filter(aura => aura.data.hasExclusiveEffect)
 				.map(actionId => {
-					const baseActionName = actionId.id.name.replace(/ \(Rank \d+\)/g, '');
-					const rankedNameRegex = new RegExp(`${baseActionName} \\(Rank [0-9]+\\)`);
-					const hasRanks = metadata.getAuras().filter(spell => !!spell.id.name.match(rankedNameRegex)).length > 1;
+					const baseActionName = actionId.id.name.replace(rankSuffix, '');
+					const rankedNameRegex = new RegExp(`${baseActionName} \\((Rank [0-9]+|Highest rank)\\)`);
+					const hasRanks = all.filter(spell => !!spell.id.name.match(rankedNameRegex)).length > 1;
 					return {
 						value: actionId.id,
 						submenu: hasRanks ? [baseActionName] : [],
@@ -98,7 +126,7 @@ const actionIdSets: Record<
 	castable_spells: {
 		defaultLabel: 'Spell',
 		getActionIDs: async metadata => {
-			const castableSpells = metadata.getSpells().filter(spell => spell.data.isCastable);
+			const castableSpells = spellsOf(metadata).filter(spell => spell.data.isCastable);
 
 			// Split up non-cooldowns and cooldowns into separate sections for easier browsing.
 			const { spells: spells, cooldowns: cooldowns } = bucket(castableSpells, spell => (spell.data.isMajorCooldown ? 'cooldowns' : 'spells'));
@@ -118,9 +146,9 @@ const actionIdSets: Record<
 					},
 				],
 				(spells || []).map(actionId => {
-					const baseActionName = actionId.id.name.replace(/ \(Rank \d+\)/g, '');
+					const baseActionName = actionId.id.name.replace(rankSuffix, '');
 					// Escape "("" and ")" used to denote (DoT)
-					const rankedNameRegex = new RegExp(`${baseActionName.replace('(', '\\(').replace(')', '\\)')} \\(Rank [0-9]+\\)`);
+					const rankedNameRegex = new RegExp(`${baseActionName.replace('(', '\\(').replace(')', '\\)')} \\((Rank [0-9]+|Highest rank)\\)`);
 					const hasRanks = spells.filter(spell => !!spell.id.name.match(rankedNameRegex)).length > 1;
 
 					return {
@@ -143,7 +171,7 @@ const actionIdSets: Record<
 				(cooldowns || []).map(actionId => {
 					// This regex also captures the percentages used in the custom Berserking cooldowns
 					const baseActionName = actionId.id.name.replace(/ \([\w\s%]+\)/g, '');
-					const rankedNameRegex = new RegExp(`${baseActionName} \\(Rank [0-9]+\\)`);
+					const rankedNameRegex = new RegExp(`${baseActionName} \\((Rank [0-9]+|Highest rank)\\)`);
 					const hasRanks = cooldowns.filter(spell => !!spell.id.name.match(rankedNameRegex)).length > 1;
 					return {
 						value: actionId.id,
@@ -175,13 +203,13 @@ const actionIdSets: Record<
 	channel_spells: {
 		defaultLabel: 'Channeled Spell',
 		getActionIDs: async metadata => {
-			return metadata
-				.getSpells()
+			const all = spellsOf(metadata);
+			return all
 				.filter(spell => spell.data.isCastable && spell.data.isChanneled)
 				.map(actionId => {
-					const baseActionName = actionId.id.name.replace(/ \(Rank \d+\)/g, '');
-					const rankedNameRegex = new RegExp(`${baseActionName} \\(Rank [0-9]+\\)`);
-					const hasRanks = metadata.getSpells().filter(spell => !!spell.id.name.match(rankedNameRegex)).length > 1;
+					const baseActionName = actionId.id.name.replace(rankSuffix, '');
+					const rankedNameRegex = new RegExp(`${baseActionName} \\((Rank [0-9]+|Highest rank)\\)`);
+					const hasRanks = all.filter(spell => !!spell.id.name.match(rankedNameRegex)).length > 1;
 					return {
 						value: actionId.id,
 						submenu: hasRanks ? [baseActionName] : [],
@@ -192,14 +220,14 @@ const actionIdSets: Record<
 	dot_spells: {
 		defaultLabel: 'DoT Spell',
 		getActionIDs: async metadata => {
-			return metadata
-				.getSpells()
+			const all = spellsOf(metadata);
+			return all
 				.filter(spell => spell.data.hasDot)
 				.map(actionId => {
-					const baseActionName = actionId.id.name.replace(/ \(Rank \d+\)/g, '');
+					const baseActionName = actionId.id.name.replace(rankSuffix, '');
 					// Escape "("" and ")" used to denote (DoT)
-					const rankedNameRegex = new RegExp(`${baseActionName.replace('(', '\\(').replace(')', '\\)')} \\(Rank [0-9]+\\)`);
-					const hasRanks = metadata.getSpells().filter(spell => !!spell.id.name.match(rankedNameRegex)).length > 1;
+					const rankedNameRegex = new RegExp(`${baseActionName.replace('(', '\\(').replace(')', '\\)')} \\((Rank [0-9]+|Highest rank)\\)`);
+					const hasRanks = all.filter(spell => !!spell.id.name.match(rankedNameRegex)).length > 1;
 					return {
 						value: actionId.id,
 						submenu: hasRanks ? [baseActionName] : [],
@@ -210,13 +238,13 @@ const actionIdSets: Record<
 	shield_spells: {
 		defaultLabel: 'Shield Spell',
 		getActionIDs: async metadata => {
-			return metadata
-				.getSpells()
+			const all = spellsOf(metadata);
+			return all
 				.filter(spell => spell.data.hasShield)
 				.map(actionId => {
-					const baseActionName = actionId.id.name.replace(/ \(Rank \d+\)/g, '');
-					const rankedNameRegex = new RegExp(`${baseActionName} \\(Rank [0-9]+\\)`);
-					const hasRanks = metadata.getSpells().filter(spell => !!spell.id.name.match(rankedNameRegex)).length > 1;
+					const baseActionName = actionId.id.name.replace(rankSuffix, '');
+					const rankedNameRegex = new RegExp(`${baseActionName} \\((Rank [0-9]+|Highest rank)\\)`);
+					const hasRanks = all.filter(spell => !!spell.id.name.match(rankedNameRegex)).length > 1;
 					return {
 						value: actionId.id,
 						submenu: hasRanks ? [baseActionName] : [],

@@ -46,7 +46,7 @@ The **auditors are not sessions any more.** They run as the audit loop: one sche
 |---|---|---|---|
 | Class worker (per task) | `prompts/class_worker.md` (+ `orchestration/brief_<class>.md`) | a branch and PR for that task, presets, sim code for its class | a class change, research, a new rule; archived when its PR is merged |
 | Forever class changes auditor (one-off) | `prompts/auditor_class_changes.md` | `orchestration/forever_class_changes.md` | a new Forever build, "check what Forever changed"; run it as a subagent, not a standing session |
-| Auditors (results, rotations, gear, consumables, mechanics, rank tuning, fairness) | `orchestration/audit/passes/<id>.md` | `orchestration/audit/findings/<id>.md` | the audit loop, on its own; B5 for a pass now |
+| Auditors (results, rotations, gear, consumables, mechanics, fairness, client update; rank tuning disabled) | `orchestration/audit/passes/<id>.md` | `orchestration/audit/findings/<id>.md` | the audit loop, on its own; B5 for a pass now |
 | Report jobs (local subagents) | `prompts/dashboard/HANDOFF_*.md` (legacy names) | `ui/dps_report/` and its data | refresh, new feature, fixes |
 | One-off analyses (local subagents) | `prompts/dashboard/HANDOFF_budget.md`, `HANDOFF_bis_realism.md` as examples | an `orchestration/*.md` write-up | new rule questions |
 
@@ -145,7 +145,7 @@ Template: `prompts/dashboard/HANDOFF_assumptions.md`. Re-run it whenever presets
 
 - **Light refresh** ("update the report"): B1 → B7 for stale classes only → B8 only if the page needs no changes beyond data → B11.
 - **Act on audit findings** ("handle the audit findings", after a notification): B1 → B13 → B3/B4 for the fixes → B5 for the auditors that found them → B7 → B11.
-- **Full pass** (new Forever build, or "re-audit everything"): B1 → class changes auditor (a subagent) and a rank tuning pass (B5) on the new build → B3 research and fixes per class → B4 shared fixes → B5 audit pass → B7 → B9 → B11.
+- **Full pass** (new Forever build, or "re-audit everything"): B1 → class changes auditor (a subagent) and a client update pass (B5) on the new build → B3 research and fixes per class → B4 shared fixes → B5 audit pass → B7 → B9 → B11.
 - **One class** ("re-check druids"): B1 for that class → B3 → B5 (results, and fairness for the ranking) → B7 for that class → B11.
 - **Rule change** ("assume X", "use Sunder not Expose"): B2 → B3 for affected classes → B5 → B7 → B11.
 - **Report feature** ("add Y to the report"): B8 (plus B7 if new data is needed) → B11.

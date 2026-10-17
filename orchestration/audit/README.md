@@ -1,6 +1,6 @@
 # The audit loop
 
-The DPS report's auditors (results, rotations, gear, consumables, mechanics, rank tuning, fairness,
+The DPS report's auditors (results, rotations, gear, consumables, mechanics, fairness,
 and client updates for each new Forever build) run as one scheduled routine. Every run is a **fresh cloud session** that reads everything it needs
 from this directory, so no auditor carries a growing context from pass to pass.
 
@@ -49,7 +49,12 @@ This is what the routine session does, start to finish. Run every command from t
    - `CLI=$(tools/audit/build_cli.sh origin/master)` (a few minutes; cached per commit);
    - `python3 tools/audit/run_reqs.py $CLI $AUDIT_WORK/runs/master` (all report requests, 20k
      iterations, seed 1);
-   - `python3 tools/audit/compare_runs.py --published $AUDIT_WORK/runs/master/summary.tsv > $AUDIT_WORK/runs/vs_published.txt`.
+   - `python3 tools/audit/compare_runs.py --published $AUDIT_WORK/runs/master/summary.tsv > $AUDIT_WORK/runs/vs_published.txt`;
+   - **movement check:** `python3 tools/audit/gate.py --movement $AUDIT_WORK/runs/master/summary.tsv` (the table) and
+     the same with `--json > $AUDIT_WORK/gate.json`. When no report build moved more than 0.5 DPS against the
+     previous shared run, it drops the auditors marked `skip_if_no_movement` (rotations, fairness, results) unless a
+     file in their `always_pass` list changed. Use this new gate output from here on. If nothing is due any more,
+     go to step 6 with no passes.
    Every sim pass starts from this run instead of simming the same requests again.
 5. **Passes.** For each due auditor, start a subagent (the Agent tool) with the auditor's `model`
    from the gate output and this prompt, filled in:
@@ -64,11 +69,14 @@ This is what the routine session does, start to finish. Run every command from t
    they share the CPUs.
 6. **Record.** For each pass, append one line to `log.md`:
    `<UTC date time> | <id> | pass <n> | master <sha> | <quiet / N new findings / error: ...> | <one-line summary>`.
-   Then `python3 tools/audit/gate.py --advance` (moves the auditors that weren't due) and
+   Skipped auditors get no log line. Then `python3 tools/audit/gate.py --advance` (moves the auditors that weren't
+   due), adding `--movement $AUDIT_WORK/runs/master/summary.tsv` when step 4 ran so the skipped ones move too. When
+   step 4 ran, also `mkdir -p orchestration/audit/ref/shared && cp $AUDIT_WORK/runs/master/summary.tsv orchestration/audit/ref/shared/summary.tsv`:
+   it is the baseline the next movement check compares against. Then
    `tools/audit/commit_state.sh "Audit loop: <ids> (<N> new findings)" <owned docs of the auditors that ran>`,
    ending the commit message with your session's attribution trailer. Never commit anything else.
 7. **Reply.** Your last message is the phone notification, 2 to 4 lines:
-   - which auditors ran and why, in a few words;
+   - which auditors ran and why, in a few words (and which were skipped because nothing moved);
    - the new findings, one line each with severity, or "no new findings";
    - when there are new findings, a link to them:
      `https://github.com/bayov/forever-sim/blob/master/orchestration/audit/findings/<id>.md`.
@@ -105,5 +113,5 @@ These rules are in `PASS.md` for the passes; they apply to any agent session in 
 - **Message only when it matters.** Findings go to `findings/<id>.md`. Nothing is sent to other
   sessions, and quiet passes write one log line.
 - **Pick the model for the job.** Mechanical passes (results, gear, consumables) run on Sonnet. Passes
-  that judge mechanics or balance (rotations, mechanics, rank tuning, fairness, client updates) run on Opus. The
+  that judge mechanics or balance (rotations, mechanics, fairness, client updates) run on Opus. Rank tuning is disabled (2026-10-17). The
   run session itself is Sonnet.

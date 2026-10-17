@@ -1,5 +1,6 @@
-import json, collections, statistics
-d = json.load(open('/home/user/w-dash/assets/db_inputs/forever_wowhead_items.json'))['items']
+import json, collections, statistics, os
+from b30_data import INPUTS
+d = json.load(open(os.path.join(INPUTS, 'forever_wowhead_items.json')))['items']
 IGNORE = {'slotbak', 'reqlevel', 'armor', 'classes', 'itemset', 'races', 'reqfaction', 'reqrep', 'reqskill', 'reqskillrank'}
 SLOT = {1: 'head', 2: 'neck', 3: 'shoulder', 5: 'chest', 20: 'chest', 6: 'waist', 7: 'legs', 8: 'feet', 9: 'wrist', 10: 'hands', 11: 'finger', 16: 'back'}
 PRIM = {'str', 'agi', 'sta', 'int', 'spi'}

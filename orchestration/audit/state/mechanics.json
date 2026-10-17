@@ -1,10 +1,11 @@
 {
  "last": {
-  "master": "b389688f7a26bf683abcbda0a4d2c890a207b5e1"
+  "master": "dc37245e5fdfcf6ab7f10970a56df45851ca5ecc"
  },
- "last_pass_at": "2026-10-17T13:00:00Z",
- "pass": 29,
+ "last_pass_at": "2026-10-17T14:57:03Z",
+ "pass": 30,
  "result": "quiet",
- "note": "Seeded from the long-running mechanics auditor: pass 29 (its last) was quiet on b389688f7; no build after 70450 up to 70750.",
- "client_build": "1.60.1.70450"
+ "note": "Pass 30: only b803e8568 (shaman heal rank families via RegisterSpellRanks; class-only, no new client values, no preset casts a heal). Dev notes not re-read this pass.",
+ "client_build": "1.60.1.70450",
+ "checked_at": "2026-10-17T15:04:43Z"
 }

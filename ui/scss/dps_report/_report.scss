@@ -2663,24 +2663,20 @@ div.tt-embed:not(.fv-tt) {
 }
 
 // Every icon is a bag slot, like the sim's picks: a black border and a thin light edge.
+//
+// Unlike the sim's picks, these only show a tooltip. So they get no hover highlight and no hand cursor (which the
+// tap tooltips' [data-tt-tap] rule would give them).
 .fv-sgrp .fv-pick {
+	cursor: default;
 	border: 1px solid #000;
 	border-radius: 3px;
 	outline: 1px solid #3c3a35;
 	background-color: #0c0c0f;
-
-	&:hover {
-		outline-color: var(--gold-soft);
-	}
 }
 
 // On but no effect: gray, like a pick the sim's settings page doesn't have.
 .fv-sgrp .fv-pick.off {
 	filter: grayscale(1) brightness(0.55);
-
-	&:hover {
-		filter: grayscale(0.3) brightness(0.85);
-	}
 }
 
 .fv-setup.hide-off .fv-pick.off,

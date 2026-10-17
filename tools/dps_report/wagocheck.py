@@ -1,4 +1,8 @@
-"""wagocheck.py: item level and stats of the dashboard's real items, Forever wowhead vs the Forever client (wago ItemSparse) vs the sim's db."""
+"""wagocheck.py: item level and stats of the dashboard's real items, Forever wowhead vs Classic's ItemSparse vs the sim's db.
+
+assets/db_inputs/wago_db2_items.csv is ItemSparse of Classic 1.15.3.55646 (gen_db fetches that
+build), not the Forever client. So "client" below is Classic's value, and a MISMATCH is often a
+change Forever made rather than a wowhead error. Forever's own items aren't in it at all."""
 import csv, json, os, re, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from dashpaths import D, TREE

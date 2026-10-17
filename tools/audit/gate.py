@@ -2,7 +2,7 @@
 """Decide which auditors need a pass, without a model: git diffs on each auditor's watched paths,
 new Forever client builds, and periodic checks of outside sources.
 
-usage: gate.py [--advance] [--force ID[,ID]] [--all] [--json]
+usage: gate.py [--advance] [--force ID[,ID]] [--all] [--json] [--movement <shared run summary.tsv>]
 
 Reads orchestration/audit/auditors.json (the registry) and orchestration/audit/state/<id>.json (what
 each auditor last audited). Run it after `git fetch origin --prune`.
@@ -15,19 +15,62 @@ An auditor is due when one of these holds:
 - "external_every_h" hours passed since its last pass (for sources git can't see, like dev notes);
 - "max_quiet_days" days passed since its last pass (a safety net).
 
+--movement, after the loop's shared sims: an auditor with "skip_if_no_movement" that is due only
+because of master file changes is skipped when no report build moved more than 0.5 DPS against the
+previous shared run (orchestration/audit/ref/shared/summary.tsv) and none of its changed files match
+its "always_pass" globs. With no previous run, everything counts as moved.
+
 --advance moves each auditor that isn't due up to the current heads, so its next diff starts there.
 It changes state files only; commit them with commit_state.sh. Prints a short table, or JSON with --json.
 """
-import fnmatch, json, os, subprocess, sys
+import fnmatch, json, os, re, shutil, subprocess, sys
 from datetime import datetime, timezone
 
-REPO = subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], text=True).strip()
+# The cloud runs use git. A local checkout that jj manages asks jj instead, because agents
+# there aren't allowed to call git (a wrapper refuses it), so the gate couldn't run when
+# someone wants to check which auditors a change would wake. Run `jj git fetch` first then.
+JJ = subprocess.run(['jj', 'root'], capture_output=True, text=True) if shutil.which('jj') else None
+if JJ and JJ.returncode == 0:
+    REPO = JJ.stdout.strip()
+else:
+    JJ = None
+    REPO = subprocess.check_output(['git', 'rev-parse', '--show-toplevel'], text=True).strip()
 AUD = os.path.join(REPO, 'orchestration/audit')
 NOW = datetime.now(timezone.utc)
 
 
 def git(*a):
     return subprocess.run(['git', '-C', REPO, *a], capture_output=True, text=True).stdout.strip()
+
+
+def jj(*a):
+    return subprocess.run(['jj', '-R', REPO, '--ignore-working-copy', *a], capture_output=True, text=True).stdout.strip()
+
+
+def jj_one(revset, template):
+    return jj('log', '--no-graph', '-r', revset, '-T', template)
+
+
+def origin(branch):
+    """A branch on origin as a jj revset. Names like forever-update/2026-10-16 need quotes."""
+    return f'"{branch}"@origin'
+
+
+def glob_re(pattern):
+    """A git :(glob) pathspec as a regex: ** crosses folders, * and ? don't."""
+    out, i = '', 0
+    while i < len(pattern):
+        if pattern.startswith('**/', i):
+            out, i = out + '(?:.*/)?', i + 3
+        elif pattern.startswith('**', i):
+            out, i = out + '.*', i + 2
+        elif pattern[i] == '*':
+            out, i = out + '[^/]*', i + 1
+        elif pattern[i] == '?':
+            out, i = out + '[^/]', i + 1
+        else:
+            out, i = out + re.escape(pattern[i]), i + 1
+    return re.compile(out + r'\Z')
 
 
 def changed(old, new, paths, exclude, three_dot=False):
@@ -37,9 +80,45 @@ def changed(old, new, paths, exclude, three_dot=False):
         return ['(no previous commit recorded)']
     if old == new:
         return []
+    if JJ:
+        base = jj_one(f'fork_point({old} | {new})', 'commit_id') if three_dot else old
+        names = jj('diff', '--name-only', '--from', base, '--to', new).splitlines()
+        want, skip = [glob_re(p) for p in paths], [glob_re(p) for p in exclude]
+        return [n for n in names if any(w.match(n) for w in want) and not any(x.match(n) for x in skip)]
     spec = [f':(glob){p}' for p in paths] + [f':(glob,exclude){p}' for p in exclude]
     rng = f'{old}...{new}' if three_dot else f'{old}..{new}'
     return [l for l in git('diff', '--name-only', rng, '--', *spec).splitlines() if l]
+
+
+def glob_re(g):
+    out = ''
+    i = 0
+    while i < len(g):
+        if g.startswith('**/', i):
+            out += '(?:.*/)?'; i += 3
+        elif g.startswith('**', i):
+            out += '.*'; i += 2
+        elif g[i] == '*':
+            out += '[^/]*'; i += 1
+        else:
+            out += re.escape(g[i]); i += 1
+    return re.compile(out + '$')
+
+
+def movement(path, tol=0.5):
+    """How many report builds moved more than tol DPS against the previous shared run (None: no previous run)."""
+    base = os.path.join(AUD, 'ref/shared/summary.tsv')
+    if not os.path.exists(base):
+        return None
+    def load(p):
+        rows = {}
+        for l in open(p).read().splitlines()[1:]:
+            f = l.split('\t')
+            if len(f) > 1 and f[1]:
+                rows[f[0]] = float(f[1])
+        return rows
+    old, new = load(base), load(path)
+    return sum(1 for i in set(old) | set(new) if i not in old or i not in new or abs(new[i] - old[i]) > tol)
 
 
 def hours_since(ts):
@@ -53,8 +132,16 @@ force = set()
 if '--force' in args:
     force = set(args[args.index('--force') + 1].split(','))
 reg = json.load(open(os.path.join(AUD, 'auditors.json')))
-master = git('rev-parse', 'origin/master')
-remote_branches = [b.strip().removeprefix('origin/') for b in git('branch', '-r', '--format=%(refname:short)').splitlines()]
+moved = None
+if '--movement' in args:
+    moved = movement(args[args.index('--movement') + 1])
+if JJ:
+    master = jj_one('master@origin', 'commit_id')
+    remote_branches = jj_one('remote_bookmarks(remote=exact:"origin")',
+                             'remote_bookmarks.map(|b| if(b.remote() == "origin", b.name())).join(" ") ++ " "').split()
+else:
+    master = git('rev-parse', 'origin/master')
+    remote_branches = [b.strip().removeprefix('origin/') for b in git('branch', '-r', '--format=%(refname:short)').splitlines()]
 client = None
 if any('wago_build' in a.get('external', []) for a in reg['auditors']):
     probe = ['--probe', str(reg['wago_probe'])] if reg.get('wago_probe') else []
@@ -77,10 +164,16 @@ for a in reg['auditors']:
     for b in remote_branches:
         if b in ('master', 'HEAD') or not any(fnmatch.fnmatch(b, g) for g in a.get('branches', [])):
             continue
-        head = git('rev-parse', f'origin/{b}')
-        if git('rev-list', '--count', f'origin/master..origin/{b}') in ('', '0'):
-            continue
-        age_h = (NOW.timestamp() - int(git('log', '-1', '--format=%ct', head) or 0)) / 3600
+        if JJ:
+            head = jj_one(origin(b), 'commit_id')
+            if not jj_one(f'master@origin..{origin(b)}', '"x"'):
+                continue
+            age_h = (NOW.timestamp() - int(jj_one(head, 'committer.timestamp().format("%s")') or 0)) / 3600
+        else:
+            head = git('rev-parse', f'origin/{b}')
+            if git('rev-list', '--count', f'origin/master..origin/{b}') in ('', '0'):
+                continue
+            age_h = (NOW.timestamp() - int(git('log', '-1', '--format=%ct', head) or 0)) / 3600
         if age_h > 24 * reg.get('branch_active_days', 2):  # old unmerged branches aren't live work
             continue
         heads[b] = head
@@ -99,6 +192,12 @@ for a in reg['auditors']:
         reasons.append(f'no pass for {h / 24:.1f} days')
     if a['id'] in force or '--all' in args:
         reasons.append('forced')
+    if (moved == 0 and a.get('skip_if_no_movement') and reasons and all(r.startswith('master:') for r in reasons)
+            and not any(glob_re(g).match(f) for g in a.get('always_pass', []) for f in files)):
+        reasons = []
+        skipped = 'no report build moved against the previous shared run'
+    else:
+        skipped = None
     due = bool(reasons)
     if not due and '--advance' in args:
         st.setdefault('last', {})
@@ -109,12 +208,12 @@ for a in reg['auditors']:
         os.makedirs(os.path.dirname(sp), exist_ok=True)
         json.dump(st, open(sp, 'w'), indent=1)
         open(sp, 'a').write('\n')
-    out.append({'id': a['id'], 'due': due, 'reasons': reasons, 'files': files[:40], 'model': a.get('model', 'sonnet'),
+    out.append({'id': a['id'], 'due': due, 'reasons': reasons, 'skipped': skipped, 'files': files[:40], 'model': a.get('model', 'sonnet'),
                 'sims': a.get('sims', False), 'last_master': last.get('master'), 'heads': heads})
 
 if '--json' in args:
-    print(json.dumps({'master': master, 'client_build': client, 'auditors': out}, indent=1))
+    print(json.dumps({'master': master, 'client_build': client, 'moved': moved, 'auditors': out}, indent=1))
 else:
-    print(f'master {master[:10]}  client {client or "unknown"}')
+    print(f'master {master[:10]}  client {client or "unknown"}' + (f'  moved {moved if moved is not None else "n/a (no previous run)"}' if '--movement' in args else ''))
     for o in out:
-        print(f"{'DUE ' if o['due'] else 'quiet'} {o['id']:12s} {'; '.join(o['reasons']) or '-'}")
+        print(f"{'DUE ' if o['due'] else 'quiet'} {o['id']:12s} {'; '.join(o['reasons']) or ('skipped: ' + o['skipped'] if o['skipped'] else '-')}")

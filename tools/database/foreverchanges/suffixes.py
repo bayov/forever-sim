@@ -13,14 +13,20 @@
 #
 # Forever also added suffixes Classic never had ("of Magic" spell power, "of the Knight",
 # "of the Bandit"). Those, and the ones whose stats match no wowhead suffix, get new IDs
-# from 990000 up.
+# from 990000 up. A suffix the current file already numbered keeps its ID, because the BiS
+# lists (ui/*/bis/*.bis.json) and gear saved in the sim store it, and a renumbered "of
+# Magic" would turn into some other suffix there.
 #
-# We scrape the items in assets/database/db.json that already roll suffixes and need level
-# MAX_LEVEL or lower. The pages are cached in CACHE_DIR, so a rerun only fetches what is new.
+# We scrape the items that already roll suffixes in Classic wowhead's gear planner
+# (assets/db_inputs/wowhead_gearplannerdb.txt) and need level MAX_LEVEL or lower on Forever.
+# We read the planner, not assets/database/db.json, because db.json already holds the
+# suffixes our last run added. Reading it, a rerun would count those as wowhead's and leave
+# them out of the new file. The pages are cached in CACHE_DIR, so a rerun only fetches what
+# is new.
 #
 #   python3 tools/database/foreverchanges/suffixes.py 30 /tmp/fc_items
 #   go run ./tools/database/gen_db -outDir=assets -gen=db
-import html, json, os, re, sys, time, urllib.request
+import html, json, os, re, sys, time, urllib.error, urllib.request
 
 ROOT = os.path.join(os.path.dirname(__file__), '../../..')
 OUT = os.path.join(ROOT, 'assets/db_inputs/foreverchanges_suffixes.json')
@@ -44,8 +50,15 @@ def fetch(item_id, cache_dir):
     if os.path.exists(path) and os.path.getsize(path) > 0:
         return open(path).read()
     req = urllib.request.Request(f'https://foreverchanges.pro/item/{item_id}', headers={'User-Agent': 'Mozilla/5.0'})
-    with urllib.request.urlopen(req, timeout=60) as r:
-        page = r.read().decode()
+    try:
+        with urllib.request.urlopen(req, timeout=60) as r:
+            page = r.read().decode()
+    except urllib.error.HTTPError as e:
+        # The planner has Classic items the site has no page for (ones Forever left
+        # out). They roll nothing new, and we keep the 404 so a rerun doesn't ask again.
+        if e.code != 404:
+            raise
+        page = '<!-- 404 -->'
     open(path, 'w').write(page)
     time.sleep(0.3)
     return page
@@ -79,26 +92,46 @@ def site_stats(parts):
     return stats
 
 
+def planner_page(planner, name):
+    """One WH.setPageData object of the gear planner file, like its items or randomEnchant."""
+    start = planner.index(f'"wow.gearPlanner.classic.{name}",') + len(f'"wow.gearPlanner.classic.{name}",')
+    # The object's closing brace is the one in "});". The item object also ends with a
+    # trailing comma, which JSON doesn't allow.
+    body = planner[start:planner.index('});', start)].strip()
+    return json.loads(re.sub(r',$', '', body) + '}')
+
+
 def main():
     max_level, cache_dir = int(sys.argv[1]), sys.argv[2]
     os.makedirs(cache_dir, exist_ok=True)
 
     planner = open(os.path.join(ROOT, 'assets/db_inputs/wowhead_gearplannerdb.txt')).read()
-    start = planner.index('wow.gearPlanner.classic.randomEnchant",') + len('wow.gearPlanner.classic.randomEnchant",')
-    wowhead, _ = json.JSONDecoder().raw_decode(planner, start)
+    wowhead = planner_page(planner, 'randomEnchant')
     known = {}
     for key, suffix in wowhead.items():
         stats = {WOWHEAD_STATS[k]: v for k, v in suffix['stats'].items() if v and k in WOWHEAD_STATS}
         known.setdefault((suffix['name'], json.dumps(sorted(stats.items()))), int(key))
 
-    db = json.load(open(os.path.join(ROOT, 'assets/database/db.json')))
-    suffix_names = {s['id']: s['name'] for s in db['randomSuffixes']}
-    items = [i for i in db['items']
-             if i.get('randomSuffixOptions') and (i.get('requiredLevel') or i.get('ilvl', 0) - 6) <= max_level]
+    # Forever changed some items' required level, and its wowhead listing has the new one.
+    listing = json.load(open(os.path.join(ROOT, 'assets/db_inputs/forever_wowhead_items.json')))
+    forever_level = {i['id']: i['reqlevel'] for i in listing['items'] if i.get('reqlevel')}
+
+    def level(item):
+        return forever_level.get(item['id']) or item.get('requiredLevel') or item.get('itemLevel', 0) - 6
+
+    items = [i for i in planner_page(planner, 'item').values()
+             if i.get('randomEnchants') and level(i) <= max_level]
+
+    # The IDs the current file gave its suffixes, by name and stats.
+    numbered = {}
+    if os.path.exists(OUT):
+        for suffix in json.load(open(OUT))['suffixes']:
+            numbered[(suffix['name'], json.dumps(sorted((int(k), v) for k, v in suffix['stats'].items())))] = suffix['id']
+    next_id = max([FIRST_NEW_ID - 1, *numbered.values()]) + 1
 
     new, options = {}, {}
     for item in sorted(items, key=lambda i: i['id']):
-        have = {suffix_names[o] for o in item['randomSuffixOptions']}
+        have = {wowhead[str(o)]['name'] for o in item['randomEnchants'] if str(o) in wowhead}
         added = []
         for name, parts in site_suffixes(fetch(item['id'], cache_dir)):
             if name in have:
@@ -107,11 +140,30 @@ def main():
             if key in known:
                 suffix_id = known[key]
             else:
-                suffix_id = new.setdefault(key, FIRST_NEW_ID + len(new))
+                if key not in new:
+                    if key in numbered:
+                        new[key] = numbered[key]
+                    else:
+                        new[key], next_id = next_id, next_id + 1
+                suffix_id = new[key]
             if suffix_id not in added:
                 added.append(suffix_id)
         if added:
             options[str(item['id'])] = added
+
+    # A suffix the current file had under the wrong name (it once called 302 items' "of the
+    # Prophet" "of the Physician") keeps its ID under the right one: a new suffix takes the
+    # ID of an unused old one with the same stats, so what was stored keeps its stats.
+    used = set(new.values())
+    by_stats = {}
+    for (name, stats), suffix_id in numbered.items():
+        if suffix_id not in used:
+            by_stats.setdefault(stats, suffix_id)
+    renumber = {}
+    for key, suffix_id in sorted(new.items(), key=lambda kv: kv[1]):
+        if key not in numbered and key[1] in by_stats:
+            renumber[suffix_id] = new[key] = by_stats.pop(key[1])
+    options = {item: [renumber.get(o, o) for o in opts] for item, opts in options.items()}
 
     out = {
         'suffixes': [{'id': i, 'name': k[0], 'stats': {str(s): v for s, v in json.loads(k[1])}} for k, i in new.items()],

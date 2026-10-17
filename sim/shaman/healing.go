@@ -213,14 +213,12 @@ func healRankIDs(ranks []healRank) []int32 {
 	return ids
 }
 
-// HighestHealRankID is the spell ID of the highest rank of a heal (HealingWaveRanks,
-// LesserHealingWaveRanks) a shaman of this level knows, 0 for none.
-func HighestHealRankID(ranks []healRank, level int32) int32 {
-	id := int32(0)
-	for _, r := range ranks {
-		if r.learnLevel <= level {
-			id = r.spellID
-		}
+// TopHealRankID is the spell ID of a heal's top rank (HealingWaveRanks,
+// LesserHealingWaveRanks) once a shaman of this level knows any rank of it, 0 before. A
+// rotation that names it casts the highest rank the shaman knows (core.TopRankID).
+func TopHealRankID(ranks []healRank, level int32) int32 {
+	if ranks[1].learnLevel > level {
+		return 0
 	}
-	return id
+	return ranks[len(ranks)-1].spellID
 }

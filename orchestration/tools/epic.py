@@ -1,6 +1,6 @@
-import json, math, collections, statistics
+import json, math, collections, os, statistics
 import numpy as np
-exec(open('/tmp/claude-0/-home-user-forever-sim/ca4b4203-ff20-5bf4-98f0-d157160fd32d/scratchpad/ilvl/fit.py').read().split("for band, flt in")[0])
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fit.py')).read().split("for band, flt in")[0])
 SM = {'head': 1, 'chest': 1, 'legs': 1, 'shoulder': .77, 'hands': .77, 'waist': .77, 'feet': .77, 'neck': .5625, 'back': .5625, 'wrist': .5625, 'finger': .5625}
 def lin(r, w):
     return sum(w[k] * x for k, x in r['v'].items())

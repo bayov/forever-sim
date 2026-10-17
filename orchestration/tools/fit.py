@@ -1,6 +1,10 @@
-import json, math, collections
+import json, math, collections, os, tempfile
 import numpy as np
-d = json.load(open('/home/user/w-dash/assets/db_inputs/forever_wowhead_items.json'))['items']
+from b30_data import INPUTS
+d = json.load(open(os.path.join(INPUTS, 'forever_wowhead_items.json')))['items']
+# Each band's fit goes to a json file here. Nothing in the repo reads them.
+OUT = os.environ.get('FIT_OUT', os.path.join(tempfile.gettempdir(), 'forever-ilvl-fit'))
+os.makedirs(OUT, exist_ok=True)
 STATS = ['str', 'agi', 'sta', 'int', 'spi', 'critstrkrtng', 'hitrtng', 'splpwr', 'atkpwr', 'manargn', 'splheal', 'spldmg']
 FIXED = {'str': 1, 'agi': 1, 'sta': 1, 'int': 1, 'spi': 1}
 IGNORE = {'slotbak', 'reqlevel', 'armor', 'classes', 'itemset', 'races', 'reqfaction', 'reqrep', 'reqskill', 'reqskillrank'}
@@ -77,4 +81,4 @@ for band, flt in (('ilvl 1-35 (beta-tuned range)', lambda r: r['ilvl'] <= 35), (
     print(f'  best p={pb}: weights', {k: round(w[k], 2) for k in stats_free})
     print('  slot mods', {s: round(m[s], 3) for s in slots})
     print('  V(ilvl) = a*ilvl + b per quality', {q: (round(a, 3), round(b, 2)) for q, (a, b) in ab.items()})
-    json.dump({'p': pb, 'w': w, 'm': m, 'ab': {str(q): v for q, v in ab.items()}}, open(f'/tmp/claude-0/-home-user-forever-sim/ca4b4203-ff20-5bf4-98f0-d157160fd32d/scratchpad/ilvl/fit_{band.split()[1]}.json', 'w'))
+    json.dump({'p': pb, 'w': w, 'm': m, 'ab': {str(q): v for q, v in ab.items()}}, open(os.path.join(OUT, f'fit_{band.split()[1] if " " in band else band}.json'), 'w'))
