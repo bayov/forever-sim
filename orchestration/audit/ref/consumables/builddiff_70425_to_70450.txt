@@ -1,0 +1,4 @@
+== consumable spells
+consumable spell changes: 0
+== forever_enchants.go
+enchants checked 53, changed 0
