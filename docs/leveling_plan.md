@@ -61,6 +61,51 @@ part has the session's options). The mode comes from the encounter like the othe
   "Settings tab's buffs" is on. The Settings tab usually has a raid's, and Goblin Sapper
   Charges hurt a level 10 more than the mobs do.
 
+## Talent search
+
+The Talents part has a Talent search (`ui/core/leveling_talent_search.ts`). It finds the order
+of talent points that levels us the fastest over all the plan's levels, with the plan's gear
+and rotations, and the best build to respec into at each respec level (20, 30, 40 and 50 by
+default, the ones inside the plan count). Nothing in the plan changes until we click "Use this
+route" or "Add this respec to the plan". We decide on a respec by the hours it saves against
+its gold.
+
+- **Whole routes, never one level at a time.** A route is the order of all our points, and its
+  score is the hours of all the levels added up. Taking the best point at each level would be
+  a greedy search, and it can be slower overall: the point that does the most at level 10 can
+  keep us out of a row we want at 20. So a change to a route is kept only when the total goes
+  down.
+- **Starts.** A change at a time can't get from one kind of route to another, because the
+  points in between are worse. So the search scores many starts: the plan's own build, one that
+  fills each tree from the top, and one for each deeper talent that goes straight for it (like
+  Stormstrike at 25). It searches from the best three.
+- **Changes.** From a start we keep making the change that saves the most hours over all the
+  levels, until none saves more than 0.05% (less is the noise of the sessions). A change swaps
+  two picks up to three points apart, or takes the last point out of a talent and puts it in
+  another one. There are too many of the second kind to sim each at every level, so we first
+  guess each one from the build at the middle and the last level without the point and with the
+  new one, and sim the best six at every level.
+- **The same sessions.** Each level is simmed on its own seed, so two routes with the same
+  talents at a level get the same hours there, and we sim each level and talents once. A search
+  of the 10 to 30 plan takes about 1,800 sims of a level at 50 sessions each (a few minutes).
+- **Respecs.** At a respec level all our points are free, and we search the levels from it on.
+  A respec's build is also a route from the first level, and sometimes it's the better route
+  (it only moves a point the route could have put there too). So we search the route again from
+  the respec builds, and a respec then only shows what a respec saves.
+- **The numbers we show** come from other sessions, at the run's iterations, so the search
+  can't have picked a route by the luck of its own sessions. The search's own best is a few
+  minutes lower than that.
+- **Talents the sim gives nothing for** (`notSimulated`, like Improved Ghost Wolf) get no
+  points. Threat isn't simmed either, and solo leveling doesn't need Spirit Weapons.
+- **Rotations stay as they are.** A respec into another tree plays the plan's rotation for
+  those levels, so it can look worse than it is.
+
+The first search (2026-10-17, enhancement shaman, 10 to 30, the spec's plan) found a route
+25 minutes faster than the plan's talents (19h 22m at 3000 sessions a level). It puts Improved
+Lightning Shield and Elemental Weapons where the plan had Improved Ghost Wolf, and after
+Stormstrike it takes Tidal Focus, Concussion and Elemental Weapons over Flurry. A respec at 20
+saves nothing.
+
 ## The run
 
 Simulate runs one grinding session request per level, each with the main iterations, then the
@@ -92,7 +137,6 @@ first level then (Ranks, above).
 
 ## Open
 
-- Searching the talent order and the respecs, level by level.
 - A sim history for the Leveling mode.
 - Rotations searched at more levels, and for the levels past 30 once the beta opens them.
 - Forever's XP table.

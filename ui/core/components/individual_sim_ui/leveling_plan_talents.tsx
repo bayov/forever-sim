@@ -518,12 +518,12 @@ function mainTree(counts: number[][]): number {
 }
 
 // The points in each tree, like "0/21/0".
-function treeSplit(counts: number[][]): string {
+export function treeSplit(counts: number[][]): string {
 	return counts.map(tree => tree.reduce((sum, n) => sum + n, 0)).join('/');
 }
 
 // The talents with points in the two deepest rows of a build, deepest first.
-function keyTalents(counts: number[][], shape: TalentShape): LevelingTalentPick[] {
+export function keyTalents(counts: number[][], shape: TalentShape): LevelingTalentPick[] {
 	const talents: Array<{ tree: number; talent: number; row: number }> = [];
 	counts.forEach((tree, t) =>
 		tree.forEach((points, i) => {

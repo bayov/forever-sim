@@ -39,6 +39,7 @@ wording instead.
   - Talents are picked at each level, so the search finds the best order to spend points in, not just the final build.
   - It would let us compare paths, for example whether respeccing at some level beats keeping one build the whole way.
   - Design and defaults settled 2026-10-15: `docs/leveling_sim.md` (score: mobs killed in a 20 min session; Enhancement shaman first). The groundwork items below come first.
+  - 2026-10-17: the Leveling Plan's Talent search (`docs/leveling_plan.md`, Talent search) scores whole talent routes by the plan's total hours, and the best respec at 20, 30, 40 and 50 against keeping the route. Still open: rotations searched along with the talents.
 - [ ] 2026-10-15 — Leveling groundwork 1: damage taken from mobs (`docs/leveling_sim.md`, Groundwork)
   - A table of normal mob HP, armor, damage and swing speed by level (Classic averages to start).
   - Check the player's defenses at low level (dodge per Agility for every class, block, armor), spell pushback (`sim/core/cast.go`) and parry and block from in front.

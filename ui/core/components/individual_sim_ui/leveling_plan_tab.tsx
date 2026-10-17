@@ -35,6 +35,7 @@ import { SimTab } from '../sim_tab';
 import { LevelingPlanCharacter } from './leveling_plan_character';
 import { LevelingGearSection } from './leveling_plan_gear';
 import { LevelingRotationsSection } from './leveling_plan_rotations';
+import { LevelingTalentSearch, LevelRequestOptions } from './leveling_plan_talent_search';
 import { LevelingTalentsSection } from './leveling_plan_talents';
 
 // What one level of a plan run came to.
@@ -242,6 +243,7 @@ export class LevelingPlanTab extends SimTab {
 			level => this.grind(level),
 		);
 		this.talents = new LevelingTalentsSection(this.sections.get('talents')!, simUI);
+		new LevelingTalentSearch(this.talents.rootElem, simUI, this.talents, (level, options) => this.makeRequest(level, options));
 		this.rotations = new LevelingRotationsSection(
 			this.sections.get('rotations')!,
 			simUI,
@@ -312,19 +314,21 @@ export class LevelingPlanTab extends SimTab {
 
 	// The request of one level: the plan's gear, talents and rotation there, in the grinding
 	// session of the Encounter settings. With buildIndex we take that talent build instead of
-	// the plan's, like the one we had before a respec. With seed, the sessions are those of
-	// that seed, so a respec and the build we had play the same mobs and the same rolls.
-	private makeRequest(level: number, buildIndex?: number, seed?: bigint): RaidSimRequest | null {
+	// the plan's, like the one we had before a respec, and with talents those talents. With
+	// seed, the sessions are those of that seed, so a respec and the build we had play the same
+	// mobs and the same rolls.
+	private makeRequest(level: number, options: LevelRequestOptions & { buildIndex?: number } = {}): RaidSimRequest | null {
 		const plan = this.player.getLevelingPlan();
 		const gear = this.gear.gearAt(level);
 		if (!gear) return null;
 		const request = this.simUI.sim.makeRaidSimRequest(false);
 		request.simOptions!.debugFirstIteration = false;
-		if (seed !== undefined) request.simOptions!.randomSeed = seed;
+		if (options.seed !== undefined) request.simOptions!.randomSeed = options.seed;
+		if (options.iterations !== undefined) request.simOptions!.iterations = options.iterations;
 		const player = request.raid!.parties[0].players[0];
 		player.level = level;
 		player.bonusTalentPoints = level >= BONUS_TALENT_POINTS_LEVEL ? plan.bonusTalentPoints : 0;
-		player.talentsString = talentsAt(plan, level, this.talents.shape, buildIndex);
+		player.talentsString = options.talents ?? talentsAt(plan, level, this.talents.shape, options.buildIndex);
 		player.equipment = gear.asSpec();
 		player.database = Database.mergeSimDatabases(gear.toDatabase(), this.player.getItemSwapGear().toDatabase());
 		if (!plan.useSettingsBuffs) {
@@ -364,7 +368,10 @@ export class LevelingPlanTab extends SimTab {
 		try {
 			for (let i = 0; i < jobs.length; i++) {
 				const job = jobs[i];
-				const request = this.makeRequest(job.level, job.kept !== undefined ? job.kept - 1 : undefined, seed + BigInt(job.level) * 1_000_003n);
+				const request = this.makeRequest(job.level, {
+					buildIndex: job.kept !== undefined ? job.kept - 1 : undefined,
+					seed: seed + BigInt(job.level) * 1_000_003n,
+				});
 				if (!request) break;
 				const result = await this.simUI.sim.runRaidSimRequest(request, (progress: ProgressMetrics) => {
 					this.progress = ProgressMetrics.create({

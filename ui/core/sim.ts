@@ -327,13 +327,17 @@ export class Sim {
 
 	// Runs a request the caller made, like one level of the leveling plan (leveling_plan.ts).
 	// The result only goes to the caller. Stop aborts it like a raid sim.
-	async runRaidSimRequest(request: RaidSimRequest, onProgress: (_?: any) => void): Promise<RaidSimResult> {
+	//
+	// With split false, one worker runs all of its iterations. The talent search runs many small
+	// requests at once, and then each worker taking whole ones is faster than splitting each.
+	async runRaidSimRequest(request: RaidSimRequest, onProgress: (_?: any) => void, split = true): Promise<RaidSimResult> {
 		await this.waitForInit();
 		const signals = this.signalManager.registerRunning(RequestTypes.RaidSim);
 		try {
-			const result = (await this.shouldUseWasmConcurrency())
-				? await runConcurrentSim(request, this.workerPool, onProgress, signals)
-				: await this.workerPool.raidSimAsync(request, onProgress, signals);
+			const result =
+				split && (await this.shouldUseWasmConcurrency())
+					? await runConcurrentSim(request, this.workerPool, onProgress, signals)
+					: await this.workerPool.raidSimAsync(request, onProgress, signals);
 			if (result.error?.type == ErrorOutcomeType.ErrorOutcomeError) throw new SimError(result.error.message);
 			return result;
 		} finally {

@@ -207,7 +207,8 @@ export interface TalentShape {
 	pointsPerRow: number;
 	trees: Array<{
 		name: string;
-		talents: Array<{ name: string; row: number; col: number; maxPoints: number; prereq?: number }>;
+		// notSimulated: the sim gives nothing for the talent, like Improved Ghost Wolf.
+		talents: Array<{ name: string; row: number; col: number; maxPoints: number; prereq?: number; notSimulated?: boolean }>;
 	}>;
 }
 
@@ -224,6 +225,7 @@ export function talentShape(config: TalentsConfig<any>, pointsPerRow = 5): Talen
 				prereq: talent.prereqLocation
 					? tree.talents.findIndex(t => t.location.rowIdx == talent.prereqLocation!.rowIdx && t.location.colIdx == talent.prereqLocation!.colIdx)
 					: undefined,
+				notSimulated: talent.notSimulated,
 			})),
 		})),
 	};
