@@ -66,6 +66,7 @@ SCRAPES = [
 CLIENT_INPUTS = [
     ('assets/db_inputs/forever_client_items.meta.json', 'python3 tools/sources/itemsparse.py %s'),
     ('assets/db_inputs/forever_enchants.json', 'python3 tools/sources/enchants.py %s'),
+    ('ui/core/forever/racials.meta.json', 'python3 tools/sources/racials.py %s --write'),
 ]
 
 # The AtlasLoot files gen_db -gen=atlasloot reads, in the order it hashes them

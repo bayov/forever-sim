@@ -14,7 +14,7 @@ Everything we could find about World of Warcraft: Forever as of 2026-09-14, two 
 - [legacy-tree.md](legacy-tree.md): the account-wide Legacy Tree nodes.
 - [references.md](references.md): source URLs and related projects (including an existing wowsims fork for Forever).
 - [sim-status.md](sim-status.md): what this repo's sim models of Forever, the assumptions behind it, and how to regenerate the talent trees.
-- [data/](data/): the raw JSON the class files were generated from (`talents.json`, `abilities.json`).
+- [data/](data/): `abilities.json`, every class ability with its text per rank, generated from the beta client's tables (`tools/sources/abilities.py`).
 
 ## How much to trust the numbers
 
@@ -30,4 +30,4 @@ Where the fan dataset marks something as "not yet verified" or "Classic placehol
 
 ## Regenerating the class files
 
-`data/talents.json` and `data/abilities.json` were pulled from wowforevertalents.com (embedded in its page bundle). The generator script lives in the session scratchpad, not the repo. The beta client's trees (build 1.60.1.69876, read through hyjal.cc) are vendored in the sim repo under `tools/forever_talents/client/`, and the Rogue, Shaman and Paladin pages open with what changed against this data. The other class pages are still the BlizzCon data.
+The class pages were generated from wowforevertalents.com's BlizzCon transcription (`talents.json` and `abilities.json`, embedded in its page bundle), with a generator that lived in a session scratchpad, not the repo. That data is gone from the repo now. The beta client's trees are generated from its tables into `tools/forever_talents/client/` (`tools/forever_talents/import_db2.py`), and `data/abilities.json` from its spell tables (`tools/sources/abilities.py`). The Rogue, Shaman and Paladin pages open with what changed against the BlizzCon data. The other class pages are still the BlizzCon text, so read the client files for current numbers.

@@ -1,6 +1,6 @@
 ---
 name: update-sources
-description: Pull forever-sim's game data inputs from their sources and regenerate the item database. A new client build's wago.tools tables and their diff, the foreverchanges.pro scrapes, the Wowhead scrapes (through scrape-wowhead), the installed AtlasLoot Forever and its cross-check against Wowhead, then gen_db, the tests and a commit. Use when tools/sources/stale.py (or bayovui's) says an input is behind, when a new Forever client build is out, when AtlasLoot updated on CurseForge, when the dps-report skill's full pass starts, when bayovui's /update-data runs its forever-sim step, or when the user asks to refresh, pull or update the sim's sources, or types /update-sources.
+description: Pull forever-sim's game data inputs from their sources and regenerate the item database. A new client build's wago.tools tables and their diff, the talent trees, racials, abilities, enchant values and item sets read from them, the foreverchanges.pro scrapes, the Wowhead scrapes (through scrape-wowhead), the installed AtlasLoot Forever and its cross-check against Wowhead, then gen_db, the tests and a commit. Use when tools/sources/stale.py (or bayovui's) says an input is behind, when a new Forever client build is out, when AtlasLoot updated on CurseForge, when the dps-report skill's full pass starts, when bayovui's /update-data runs its forever-sim step, or when the user asks to refresh, pull or update the sim's sources, or types /update-sources.
 ---
 
 # Update forever-sim's sources
@@ -72,11 +72,26 @@ knows it. Tell the user about new conflicts and about Forever items only Wowhead
 because those are loot AtlasLoot hasn't caught up with. AtlasLoot lists Zul'Gurub's
 quest rewards as drops, so those show up every time.
 
-## 6. Talents, racials and enchant values
+## 6. What we read out of the client's tables
 
-They are typed in from hyjal.cc and the client today (the registry's "Talents, racials and
-enchants"). Phase 3 of the data sources plan builds an importer from the client's tables.
-Until then, a build that changes them is part of the dps-report full pass.
+After a new client build is fetched (step 2), these follow it. `stale.py` names the ones
+behind.
+
+```bash
+python3 tools/sources/itemsparse.py <new>                      # item sets, factions, PvP ranks
+python3 tools/sources/enchants.py <new>                        # enchant values
+python3 tools/sources/racials.py <new> --write                 # racial text for the UI
+python3 tools/sources/abilities.py <new>                       # ability text for the DPS report
+python3 tools/forever_talents/import_db2.py <new>              # talent trees, prints what changes
+python3 tools/forever_talents/import_db2.py <new> --write
+```
+
+Read what each prints. The talent importer lists every talent whose structure, numbers or
+wording changed, and a renamed talent changes the sim's talent strings once its tree is
+regenerated (`import_client.py` and `import_talents.py`), so that part waits for the
+`dps-report` skill's full pass. The enchant and item inputs only change the database,
+which step 7 regenerates. A racial whose numbers changed needs `sim/core/racials_forever*.go`
+too.
 
 ## 7. Regenerate, test, commit
 

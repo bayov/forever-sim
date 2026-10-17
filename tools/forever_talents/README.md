@@ -5,22 +5,50 @@ talents messages in `proto/*.proto`.
 
 ## Where it comes from
 
-Two sources. `client/` is the beta client's trees (build 1.60.1.69876, with the paladin and
-shaman talents the 2026-09-24 development notes changed brought up to build 1.60.1.70009
-from foreverchanges.pro's talent calculator), and `data/` is what
-the importer reads. For Rogue, Shaman and Paladin `data/` is generated from `client/` with
-`import_client.py`, so every rank is the client's. The other six classes still carry the
+Two sources. `client/` is the beta client's trees, generated from the client's own game
+tables at one build by `import_db2.py` (see below), and `data/` is what the importer reads.
+For Rogue, Shaman and Paladin `data/` is generated from `client/` with `import_client.py`, so
+every rank is the client's. The other six classes still carry the
 BlizzCon transcription described below, and converting one of them means running
 `import_client.py <class>`, diffing the result against the sim code (the ranks 2+ guesses
 the class was implemented with are usually wrong somewhere), then `import_talents.py`.
 
 ### The client trees
 
-`client/<class>.json` is the tree hyjal.cc's talent calculator ships in its page bundle,
-read out of the client tables (its `tooltip.source` is `client`, with the build number and
-spell id per talent). One tooltip per rank with the numbers filled in, plus the cost line
-for actives. Two values were unavailable in the client data and show as `?` (the Riposte
-disarm duration, Berserking's duration), `overrides/` keeps Classic's number for those.
+`client/<class>.json` is one class's tree as the client has it: each talent's place, rank
+count and prerequisite, and one tooltip per rank with the numbers filled in, plus the cost
+line for actives (`tooltip.source` is `client`, with the build number and spell id per
+talent). A few values the tooltips ask for aren't in the client tables and show as `?`, with
+`tooltip.source` set to `client-partial` and a note saying what is missing (the Riposte
+disarm duration, an effect Amplify Curse lost in 1.60.1.70450). `overrides/` keeps Classic's
+number for the ones the sim needs.
+
+These files used to be put together by hand from hyjal.cc's talent calculator,
+foreverchanges.pro and wago.tools tables at several builds. They are generated now.
+
+### Regenerating client/ from the client tables
+
+	tools/forever_talents/import_db2.py 1.60.1.70450                 # what would change, per class
+	tools/forever_talents/import_db2.py 1.60.1.70450 shaman --write  # rewrite client/shaman.json
+
+It reads the trait tables (TraitTree, TraitNode, TraitNodeEntry, TraitDefinition,
+TraitDefinitionEffectPoints and CurvePoint for the per-rank values, TraitEdge for
+prerequisites) and TalentTab and SkillLine for the tree names, backgrounds and icons, through
+`tools/sources/wago.py`, which downloads any table the shared cache doesn't have yet (the
+`talents` and `spelltext` sets). The tooltips, cost lines and icons come from
+`tools/sources/spelltext.py`, which fills the spell description templates the way the game
+does, for a level 60 character with no bonuses, and notes every value it couldn't fill.
+
+Without `--write` it prints each class's differences from the current file in three kinds:
+structure (talents added, removed, moved, renamed, or given another rank count, prerequisite
+or node ID), numbers (a rank's numbers differ), and wording (the same numbers in other words).
+Read that before writing, since a structure change usually means the sim's tree needs work.
+
+The tables don't know a few things the files carry, and the importer keeps them from the
+current file: each tree's `removed` list (talents earlier builds had) and the hand-written
+notes in `tooltip.notes`. The file's `source` says when it did. Writing `client/` changes
+nothing in the sim by itself: `import_client.py` and `import_talents.py` still have to be run
+for a class, which is a separate decision.
 
 ### The BlizzCon transcription
 

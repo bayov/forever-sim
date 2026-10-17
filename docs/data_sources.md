@@ -39,12 +39,14 @@ report what the client says, so they rank with it when they show client data. Th
   `foreverchanges_suffixes.json`. Their first blocks (2026-10-17) took the date of the commit
   that last changed each file.
 - **The 2024 Classic snapshots and the gametables carry nothing.** Their build is only in
-  this file and in the fetching code. Phase 3 of the data sources plan replaces them with
-  the Forever client's own tables.
+  this file and in the fetching code. They stay for now: the Forever client's ItemSparse on
+  wago.tools lacks most Classic items (see "Item facts" below).
 - **Hand-typed data names its source in a comment**, like `// source: wago
-  SpellItemEnchantment 1.60.1.70425`, as bayovui does. The talent files already do better:
-  each `tools/forever_talents/client/<class>.json` has a `source` string and a `build` per
-  talent.
+  SpellItemEnchantment 1.60.1.70425`, as bayovui does.
+- **Inputs read out of the client's tables name the build** in a meta block:
+  `forever_enchants.json`, `forever_client_items.meta.json`, `ui/core/forever/racials.meta.json`
+  and `forever-wiki/data/abilities.meta.json`. The talent files have a `source` string and a
+  `build` per talent.
 
 ## The game client's tables
 
@@ -202,7 +204,9 @@ report what the client says, so they rank with it when they show client data. Th
 - **Generator:** `gen_db -gen=db`.
 - **Readers:** `assets/database/db.*`, `tools/database/foreverchanges/suffixes.py` (the
   planner), the DPS report, `orchestration/tools/b30_data.py` and `bis_data.py`.
-- **Refresh:** never. Fetching again would mix in today's Classic data. Phase 3 replaces them.
+- **Refresh:** never. Fetching again would mix in today's Classic data. Replacing them with the
+  Forever listing plus the client's tables is still to evaluate, now that phase 3 showed the
+  Forever ItemSparse alone lacks 6,662 of our items.
 
 ## foreverchanges.pro
 
@@ -251,28 +255,40 @@ report what the client says, so they rank with it when they show client data. Th
   (HiKwonko/AtlasLootClassic_SoD). Switching dropped 1165 SoD-only items and added 116 of
   Forever's, and 914 items gained drop sources.
 
-## Talents, racials and enchants (hand-vendored)
+## Talents, racials and abilities: the client's spell tables
 
-- **hyjal.cc:** the talent calculator's bundle for 7 classes
-  (`tools/forever_talents/client/*.json`, build 1.60.1.69876, brought up to later builds from
-  wago.tools talent by talent) and racial text (`ui/core/forever/racials.json`). Fetched by
-  hand, no fetcher. Enchant values come from the client now (above).
-- **wago.tools Trait tables:** the druid and warrior `client/*.json` (70338).
+All three are generated from the Forever client's tables through `wago.py`, and the
+spell text in them (tooltip templates filled in, cost lines, icons) comes from one reader,
+`tools/sources/spelltext.py`.
+
+- **Talent trees:** `python3 tools/forever_talents/import_db2.py <build> [class...] --write`
+  writes `tools/forever_talents/client/<class>.json` from the Trait tables (TraitNode,
+  TraitNodeEntry, TraitDefinition, TraitEdge, TraitDefinitionEffectPoints and CurvePoint),
+  TalentTab, SkillLine and the spell tables. Without `--write` it prints what would change.
+  The `removed` lists and a few hand notes are carried over from the current files.
+  Then `tools/forever_talents/import_client.py <class>` and `import_talents.py <class>
+  --write` → `ui/core/talents/trees/*.json` and the protos, which is a sim change and part
+  of the `dps-report` skill's full pass.
+- **Racials:** `python3 tools/sources/racials.py <build> --write` writes
+  `ui/core/forever/racials.json` (SkillLineAbility on the racial skill lines, CharBaseInfo
+  for which classes each race can be) and `racials.meta.json` with the build. The sim's
+  racials are in `sim/core/racials_forever*.go`, by hand.
+- **Abilities:** `python3 tools/sources/abilities.py <build>` writes
+  `forever-wiki/data/abilities.json`, every class ability with its text per rank, for the
+  DPS report (`tools/dps_report/build_data.py`, `tooltips.py`), and `abilities.meta.json`.
 - **BlizzCon transcription (Deradon/wow-forever-talent-calc, MIT, see
   `tools/forever_talents/LICENSE.upstream`):** the hand corrections in
   `tools/forever_talents/overrides/*.json`. Every class's `data/*.json` now says
   `dataSource: client`.
-- **Generator:** `tools/forever_talents/import_client.py <class>`, then
-  `import_talents.py <class> --write` → `ui/core/talents/trees/*.json` and the protos.
-- **Behind when:** `stale.py` shows the newest build each class's file names. Phase 3 replaces
-  all of this with an importer from the client's Trait tables.
+- **Refresh:** each new client build. **Behind when:** `stale.py` compares the racials' meta
+  build with the newest client build, and shows the build each talent file names.
 
 ## wowforevertalents.com
 
-- **What:** `forever-wiki/data/abilities.json` and `talents.json` (2026-09-14, pre-beta), and
-  the quest names, levels and factions typed into `tools/database/forever_items.go`.
-- **Fetcher:** none in the repo. `tools/dps_report/build_data.py` and `tooltips.py` read
-  `abilities.json`. Nothing reads `talents.json`. Phase 3 removes both.
+- **What:** nothing anymore. Its pre-beta `abilities.json` and `talents.json` were replaced
+  by the client's tables in phase 3 of the data sources plan (above). The quest names and
+  levels it gave `tools/database/forever_items.go` were checked against QuestieDB and
+  Wowhead on 2026-10-17. The prose in `forever-wiki/classes/*.md` still quotes it.
 
 ## Icons: wow.zamimg.com
 

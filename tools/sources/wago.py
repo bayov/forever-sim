@@ -100,6 +100,20 @@ SETS = {
         'TraitNodeEntry', 'TraitNodeGroupXTraitCond', 'TraitNodeGroupXTraitNode',
         'TraitNodeXTraitNodeEntry',
     ],
+    # tools/sources/spelltext.py (spell tooltips, cost lines, icons), and the
+    # talent tree importer tools/forever_talents/import_db2.py on top of it.
+    'spelltext': [
+        'Spell', 'SpellName', 'SpellEffect', 'SpellMisc', 'SpellLevels', 'SpellDuration', 'SpellRange',
+        'SpellRadius', 'SpellCastTimes', 'SpellCooldowns', 'SpellPower', 'SpellAuraOptions',
+        'SpellTargetRestrictions', 'SpellXDescriptionVariables', 'SpellDescriptionVariables',
+        'SpellShapeshift', 'SpellShapeshiftForm', 'SpellEquippedItems', 'ItemSubClass',
+        'ManifestInterfaceData',
+    ],
+    'talents': [
+        'TraitTree', 'TraitNode', 'TraitNodeEntry', 'TraitNodeXTraitNodeEntry', 'TraitDefinition',
+        'TraitDefinitionEffectPoints', 'TraitEdge', 'CurvePoint', 'TalentTab', 'ChrClasses',
+        'SpellClassOptions', 'SkillLine', 'SkillLineAbility',
+    ],
 }
 
 # The spell tables --by-spell reads, keyed by their SpellID column.

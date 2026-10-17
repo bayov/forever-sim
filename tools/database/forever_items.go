@@ -14,9 +14,11 @@ import (
 // The Classic inputs (wowhead dump, atlasloot, wago) know nothing about them,
 // so we type the stats from the wowhead Forever tooltips
 // (https://nether.wowhead.com/forever/tooltip/item/ID?dataEnv=16&locale=0) and
-// merge them in after the Classic items. Quest names, quest levels and
-// factions come from https://wowforevertalents.com/dungeons/ and
-// /reputations/, which read the beta client. Chance on hit effects
+// merge them in after the Classic items. The quest names and levels match
+// QuestieDB's Forever data and Wowhead's Forever listing (checked 2026-10-17:
+// every name, and every level but Leaders of the Fang's, which QuestieDB has
+// from level 11). Two quests, Abominable Creatures and The Windshaper's
+// Wrath, aren't on Wowhead yet. Chance on hit effects
 // (Plaguefang) are not implemented in the sim, the weapon is listed with its
 // plain stats.
 //
