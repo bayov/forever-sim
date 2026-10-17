@@ -1,11 +1,16 @@
 {
  "last": {
-  "master": "dc37245e5fdfcf6ab7f10970a56df45851ca5ecc"
+  "master": "1e2f7ec5b88436c7528d68085bd65747e0742bef"
  },
- "last_pass_at": "2026-10-17T14:57:03Z",
- "pass": 30,
+ "last_pass_at": "2026-10-17T18:50:20Z",
+ "pass": 31,
  "result": "quiet",
- "note": "Pass 30: only b803e8568 (shaman heal rank families via RegisterSpellRanks; class-only, no new client values, no preset casts a heal). Dev notes not re-read this pass.",
+ "note": "Pass 31: only bdf075ccc (TopRankID / highest-rank metadata in sim/core, TopHealRankID in shaman); rotation-editor and rank-lookup plumbing, no formula or client value. No build past 70450 (probe 300). Dev notes thread newest is /6 (70425, edit 10-16 20:50), already in the ledger.",
  "client_build": "1.60.1.70450",
- "checked_at": "2026-10-17T15:04:43Z"
+ "checked_at": "2026-10-17T18:56:03Z",
+ "dev_notes_seen": {
+  "url": "https://us.forums.blizzard.com/en/wow/t/2360696/6",
+  "date": "2026-10-16T00:15:23Z",
+  "edited": "2026-10-16T20:50:17Z"
+ }
 }

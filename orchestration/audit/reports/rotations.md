@@ -1,22 +1,21 @@
-# Rotations and resources: pass 27
+# Rotations and resources: pass 28 (2026-10-17T18:50:34Z)
 
-- Master audited: 0a204d43d (previous: d2633f4a4), 2026-10-17.
-- Result: quiet.
+Master 1e2f7ec5b (last audited dc37245e5). Result: quiet, 0 new findings.
 
-## What changed
+## Checked
 
-| Area | Change | Reaches raid presets? |
-|---|---|---|
-| Level 60 APLs | `apl_logic_diff.py d2633f4a4 0a204d43d`: 0 APL files touched | n/a |
-| `sim/shaman/healing.go`, `shaman.go` | Register Healing Wave, Lesser Healing Wave and Chain Heal rank families (`core.RegisterSpellRanks`) | No: no Level 60 shaman APL casts a heal |
-| `tools/dps_report/req/*.json` | unchanged | n/a |
-| Item database (`leftover_db`, Wowhead scrape) | regenerated; test `.results` moved | Checked with the shared run |
+| Change | Reaches raid presets? |
+|---|---|
+| Level 60 APLs (apl_logic_diff.py) | 0 APL files touched; only leveling_plan_* / level30_leveling changed |
+| sim/core/spell_ranks.go: TopRankID registry | No: used by rotation-editor metadata and leveling rotations |
+| sim/core/unit.go: HighestRankId in unit metadata | No: metadata only, no combat logic |
+| sim/shaman/healing.go: TopHealRankID | No: only tools/rotopt/shaman_enh_leveling.go calls it (ranks[1] is right; index 0 is a placeholder) |
+| ui/core/forever/racials.json | No: UI text only (Go doesn't read it); Blood Fury 3 min already in the sim |
+| ui/enhancement_shaman/presets.ts | Leveling plan flag only |
+| update_ledger.md | Tool-path wording only; no new client build |
 
-## Check
+Shared run (20k, seed 1) vs published: 0 of 66 requests moved more than 0.5 DPS.
 
-Shared run (20k iterations, seed 1) against the published numbers: `compare_runs`: 0 of 66 presets moved more than 0.5 DPS.
-The baseline stays `baseline_d2633f4_3000it_seed424242.tsv`, because no sim change reaches the presets.
+## Open items
 
-## Optional
-
-None new. The optional list in `passes/rotations.md` still stands.
+Unchanged from passes/rotations.md (Balance Night Elf, Elemental Mastery hold, warlock duty-curse screens).

@@ -1,39 +1,42 @@
-# Fairness pass 1 (2026-10-17 15:04 UTC, master 0a204d4)
+# Fairness pass 2 (2026-10-17 18:55 UTC, master 1e2f7ec)
 
 Result: quiet. No new findings, none open.
 
 ## Why it ran
 
-Since 1735382: item database regenerated from a Wowhead refresh (b1b07631) and shaman heal rank
-families (b803e856, `sim/shaman/healing.go`, `shaman.go`). Both are on the full-pass list (item
-database, class code), so a full pass was done.
+Since 0a204d4, 14 watched files changed. The item database was regenerated with enchant values and
+item sets taken from the Forever client's tables (cb3f64fa). There were also protos, `sim/core/spell_ranks.go`,
+`sim/core/unit.go` and `sim/shaman/healing.go` (top-rank IDs for "highest rank" rotations, bdf075cc),
+and `ui/enhancement_shaman/presets.ts` (`rotationsNameTopRanks` on the leveling plan). The item
+database and `sim/core` are on the full-pass list, so a full pass was done.
 
 ## What was checked
 
 | Check | Result |
 |---|---|
 | `audit1b.py` (19 gear sets) | all `5a PASS | 1b PASS` |
-| Synthetic items (ids 99xxxx) in the db.json diff | none changed (context lines only) |
+| db.json diff | set names, the enchant/set import and random-suffix entries (990xxx "of the Physician/Prophet"); no report-request item changed |
 | Shared run vs published (`runs/vs_published.txt`) | 0 of 66 moved more than 0.5 DPS |
-| Full race sweep, 5000 it, seed 1, vs 1735382 baseline | byte-identical per build and race |
+| Full race sweep, 5000 it, seed 1, vs 0a204d4 baseline | byte-identical per build and race |
+| `table.py` | no `<--` rows |
 | Published vs current | every build within 1.2 DPS |
 | Best race vs report race | report race is best everywhere (Arcane, Survival exact ties) |
 | `findings/results.md` | no open findings to confirm |
 
-The shaman change only registers heal ranks as rank families (Healing Wave, Lesser Healing Wave,
-Chain Heal); no DPS spell is touched, and Elemental / Enhancement sweep numbers are unchanged.
-The `.results` churn in rogue and shaman tests comes from real items in the test gear, not the
-report's synthetic sets.
+The code changes add `highest_rank_id` metadata, and rotations that name a top rank now cast the
+highest rank the unit knows. At level 60 every report build knows its top ranks, so nothing changes
+there, and the sweep confirms it. The racials in 1e2f7ec5 regenerate only `ui/core/forever/racials.json`
+text; the sim's racial code didn't change.
 
 ## Ranking
 
-Unchanged from the baseline: Demonology 1177.8 top, Subtlety 656.7 bottom, 1.79×. Full table in
+Unchanged: Demonology 1177.8 top, Subtlety 656.7 bottom, 1.79×. Full table in
 `ref/fairness/table_baseline.md` and `orchestration/fairness_report.md` §1.
 
 ## Baseline
 
-Refreshed `ref/fairness/sweep_baseline.log` (same numbers) and `table_baseline.md` (Before column now
-1735382); `state/fairness.json` baseline = 0a204d4.
+Kept `ref/fairness/sweep_baseline.log` (same bytes). Refreshed `table_baseline.md` (its Before
+column is now 0a204d4). `state/fairness.json` baseline = 1e2f7ec5.
 
 ## Open items carried over (no change)
 

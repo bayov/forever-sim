@@ -8,3 +8,9 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-10-17 15:04 | mechanics | pass 30 | master 0a204d4 | quiet | Only change is shaman heal rank families; no new client values.
 2026-10-17 15:04 | rank_tuning | pass 1 | master 0a204d4 | quiet | 66 presets match baseline_d2633f4 within 0.001%.
 2026-10-17 15:04 | fairness | pass 1 | master 0a204d4 | quiet | Full race sweep identical to baseline; 19 gear sets pass; ranking unchanged.
+2026-10-17 18:56 | results | pass 44 | master 1e2f7ec5b | quiet | no new findings
+2026-10-17 18:56 | rotations | pass 28 | master 1e2f7ec5b | quiet | no new findings
+2026-10-17 18:56 | gear | pass 37 | master 1e2f7ec5b | quiet | no new findings
+2026-10-17 18:56 | consumables | pass 33 | master 1e2f7ec5b | quiet | no new findings
+2026-10-17 18:56 | mechanics | pass 31 | master 1e2f7ec5b | quiet | no new findings
+2026-10-17 18:56 | fairness | pass 2 | master 1e2f7ec5b | quiet | no new findings

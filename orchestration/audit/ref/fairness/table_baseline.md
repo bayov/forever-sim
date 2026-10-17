@@ -1,4 +1,4 @@
-| # | Spec | Best race | DPS | Best Horde / Alliance | Report race (DPS here) | Report's published | Gap | Before (1735382) |
+| # | Spec | Best race | DPS | Best Horde / Alliance | Report race (DPS here) | Report's published | Gap | Before (0a204d4) |
 |---|---|---|---|---|---|---|---|---|
 | 1 | Demonology | Human | 1177.8 | Orc 1173.6 / Human | Human (1177.8) | 1177.7 | +0.1 | 1177.8 (+0.0%) |
 | 2 | Lone Wolf (hunter) | Windshaper | 1094.6 | Windshaper / High Order 1093.2 | Windshaper (1094.6) | 1094.1 | +0.5 | 1094.6 (+0.0%) |

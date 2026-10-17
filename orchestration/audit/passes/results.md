@@ -128,7 +128,7 @@ Don't repeat a finding the owner already answered unless you have new evidence. 
 
 - **Last full run:** master 1735382cd (pass 40, 2026-10-17 00:34 UTC). All 66 requests are exact against published; the drift report is the reference copy; unread fields: only `notes`.
 - **Quiet since:** d2633f4a4 (pass 41: report v35 republish, builds.json matches the reference on all 66) and b389688f7 (Wowhead scraper only).
-- **Next pass starts from b389688f7.** b803e8568 (shaman heal rank families, `sim/shaman/healing.go` and `shaman.go`) landed after the last audit and is unaudited: run the full pass on it.
+- **Next pass starts from 1e2f7ec5b (pass 44, quiet; b803e8568 audited, no move).**
 - **Client build:** 1.60.1.70450 (spells, talents, racials and enchants identical to 70425). The report is v35, published from 437b92161.
 - **Base presets** (180 s, 20k, seed 1; the full 66 are in `orchestration/audit/ref/results/req_summary.txt`):
 
