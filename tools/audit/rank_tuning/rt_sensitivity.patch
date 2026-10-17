@@ -1,0 +1,244 @@
+diff --git a/sim/druid/rip.go b/sim/druid/rip.go
+index 4d285552c..2509613c0 100644
+--- a/sim/druid/rip.go
++++ b/sim/druid/rip.go
+@@ -1,6 +1,8 @@
+ package druid
+ 
+ import (
++	"os"
++	"strconv"
+ 	"time"
+ 
+ 	"github.com/wowsims/classic/sim/core"
+@@ -77,6 +79,9 @@ func (druid *Druid) newRipSpellConfig(ripRank RipRankInfo) core.SpellConfig {
+ 				cp := float64(druid.ComboPoints())
+ 				cpScaling := core.TernaryFloat64(cp == 5, 4, cp)
+ 				baseDamage := ripRank.dmgTickBase + ripRank.dmgTickPerCombo*cp
++				if m, err := strconv.ParseFloat(os.Getenv("RT_RIP_MULT"), 64); err == nil && ripRank.level > 30 {
++					baseDamage *= m
++				}
+ 				// AP scaling is 6% per combo point from 1 to 4, and 24% again for 5
+ 				tickDamage := baseDamage + 0.01*cpScaling*dot.Spell.MeleeAttackPower(target)
+ 				dot.Snapshot(target, tickDamage, isRollover)
+diff --git a/sim/druid/wrath.go b/sim/druid/wrath.go
+index a1dfe7401..389760124 100644
+--- a/sim/druid/wrath.go
++++ b/sim/druid/wrath.go
+@@ -1,6 +1,8 @@
+ package druid
+ 
+ import (
++	"os"
++	"strconv"
+ 	"time"
+ 
+ 	"github.com/wowsims/classic/sim/core"
+@@ -52,6 +54,10 @@ func WrathBaseDamageAt(rank int, level int32) (float64, float64) {
+ func (druid *Druid) newWrathSpellConfig(rank int) core.SpellConfig {
+ 	spellId := WrathSpellId[rank]
+ 	baseDamageLow, baseDamageHigh := WrathBaseDamageAt(rank, druid.Level)
++	if m, err := strconv.ParseFloat(os.Getenv("RT_WRATH_MULT"), 64); err == nil && WrathLevel[rank] > 30 {
++		baseDamageLow *= m
++		baseDamageHigh *= m
++	}
+ 	spellCoeff := WrathSpellCoeff[rank]
+ 	manaCost := WrathManaCost[rank]
+ 	castTime := WrathCastTime[rank]
+diff --git a/sim/mage/frostbolt.go b/sim/mage/frostbolt.go
+index 695855682..4dc5aa4ee 100644
+--- a/sim/mage/frostbolt.go
++++ b/sim/mage/frostbolt.go
+@@ -1,6 +1,8 @@
+ package mage
+ 
+ import (
++	"os"
++	"strconv"
+ 	"time"
+ 
+ 	"github.com/wowsims/classic/sim/core"
+@@ -52,6 +54,10 @@ func FrostboltBaseDamageAt(rank int, level int32) (float64, float64) {
+ func (mage *Mage) getFrostboltConfig(rank int) core.SpellConfig {
+ 	spellId := FrostboltSpellId[rank]
+ 	baseDamageLow, baseDamageHigh := FrostboltBaseDamageAt(rank, mage.Level)
++	if m, err := strconv.ParseFloat(os.Getenv("RT_FB_MULT"), 64); err == nil && FrostboltLevel[rank] > 30 {
++		baseDamageLow *= m
++		baseDamageHigh *= m
++	}
+ 	spellCoeff := FrostboltSpellCoeff[rank]
+ 	castTime := FrostboltCastTime[rank]
+ 	manaCost := FrostboltManaCost[rank]
+diff --git a/sim/paladin/consecration.go b/sim/paladin/consecration.go
+index e68aed5d4..11cea3c88 100644
+--- a/sim/paladin/consecration.go
++++ b/sim/paladin/consecration.go
+@@ -1,6 +1,7 @@
+ package paladin
+ 
+ import (
++	"os"
+ 	"strconv"
+ 	"time"
+ 
+@@ -45,6 +46,9 @@ func (paladin *Paladin) registerConsecration() {
+ 		tickCoefficient := 0.042
+ 		if paladin.Env.IsForever() {
+ 			tickDamage = (rank.foreverAll + rank.foreverExtra) / 8
++			if m, err := strconv.ParseFloat(os.Getenv("RT_CONS_MULT"), 64); err == nil && rank.level > 30 {
++				tickDamage *= m
++			}
+ 			tickCoefficient = 0.042 // client 70425 (spells 1280345-1280353; 0.095 in 70338)
+ 		}
+ 
+diff --git a/sim/paladin/holy_strike.go b/sim/paladin/holy_strike.go
+index 351c3edc7..3af107157 100644
+--- a/sim/paladin/holy_strike.go
++++ b/sim/paladin/holy_strike.go
+@@ -1,6 +1,8 @@
+ package paladin
+ 
+ import (
++	"os"
++	"strconv"
+ 	"time"
+ 
+ 	"github.com/wowsims/classic/sim/core"
+@@ -67,6 +69,9 @@ func (paladin *Paladin) registerHolyStrike() {
+ 			break
+ 		}
+ 		holy := rank.holy + rank.scale*float64(min(paladin.Level, rank.scaleLevel)-rank.level)
++		if m, err := strconv.ParseFloat(os.Getenv("RT_HS_MULT"), 64); err == nil && rank.level > 30 {
++			holy *= m
++		}
+ 
+ 		paladin.RegisterSpell(core.SpellConfig{
+ 			ActionID:    core.ActionID{SpellID: rank.spellID},
+diff --git a/sim/priest/smite.go b/sim/priest/smite.go
+index 3634ec634..b8ae2aa4a 100644
+--- a/sim/priest/smite.go
++++ b/sim/priest/smite.go
+@@ -1,6 +1,8 @@
+ package priest
+ 
+ import (
++	"os"
++	"strconv"
+ 	"time"
+ 
+ 	"github.com/wowsims/classic/sim/core"
+@@ -50,6 +52,10 @@ func SmiteBaseDamageAt(rank int, level int32) (float64, float64) {
+ func (priest *Priest) getSmiteBaseConfig(rank int) core.SpellConfig {
+ 	spellId := SmiteSpellId[rank]
+ 	baseDamageLow, baseDamageHigh := SmiteBaseDamageAt(rank, priest.Level)
++	if m, err := strconv.ParseFloat(os.Getenv("RT_SMITE_MULT"), 64); err == nil && SmiteLevel[rank] > 30 {
++		baseDamageLow *= m
++		baseDamageHigh *= m
++	}
+ 	spellCoeff := SmiteSpellCoef[rank]
+ 	castTime := SmiteCastTime[rank]
+ 	manaCost := SmiteManaCost[rank]
+diff --git a/sim/shaman/earth_shock.go b/sim/shaman/earth_shock.go
+index ae2cf63fa..1b43915d2 100644
+--- a/sim/shaman/earth_shock.go
++++ b/sim/shaman/earth_shock.go
+@@ -1,6 +1,8 @@
+ package shaman
+ 
+ import (
++	"os"
++	"strconv"
+ 	"github.com/wowsims/classic/sim/core"
+ )
+ 
+@@ -51,6 +53,10 @@ func EarthShockBaseDamageAt(rank int, level int32) (float64, float64) {
+ func (shaman *Shaman) newEarthShockSpellConfig(rank int, shockTimer *core.Timer) core.SpellConfig {
+ 	spellId := EarthShockSpellId[rank]
+ 	baseDamageLow, baseDamageHigh := EarthShockBaseDamageAt(rank, shaman.Level)
++	if m, err := strconv.ParseFloat(os.Getenv("RT_ES_MULT"), 64); err == nil && EarthShockLevel[rank] > 30 {
++		baseDamageLow *= m
++		baseDamageHigh *= m
++	}
+ 	spellCoeff := EarthShockSpellCoef[rank]
+ 	manaCost := EarthShockManaCost[rank]
+ 	level := EarthShockLevel[rank]
+diff --git a/sim/shaman/lava_burst.go b/sim/shaman/lava_burst.go
+index 79f8a2716..4a6b3a7ff 100644
+--- a/sim/shaman/lava_burst.go
++++ b/sim/shaman/lava_burst.go
+@@ -1,6 +1,8 @@
+ package shaman
+ 
+ import (
++	"os"
++	"strconv"
+ 	"time"
+ 
+ 	"github.com/wowsims/classic/sim/core"
+@@ -30,6 +32,10 @@ func (shaman *Shaman) registerLavaBurstSpell() {
+ 	rank := max(core.HighestRankAt(shaman.Level, LavaBurstLevel), 1)
+ 	baseDamageLow := LavaBurstScaling[rank].At(LavaBurstBaseDamage[rank][0], shaman.Level)
+ 	baseDamageHigh := LavaBurstScaling[rank].At(LavaBurstBaseDamage[rank][1], shaman.Level)
++	if m, err := strconv.ParseFloat(os.Getenv("RT_LVB_MULT"), 64); err == nil {
++		baseDamageLow *= m
++		baseDamageHigh *= m
++	}
+ 	spellCoeff := 0.714
+ 	castTime := time.Millisecond * 2500
+ 
+diff --git a/sim/shaman/lightning_bolt.go b/sim/shaman/lightning_bolt.go
+index 86ba71779..18fe8e9e6 100644
+--- a/sim/shaman/lightning_bolt.go
++++ b/sim/shaman/lightning_bolt.go
+@@ -1,6 +1,8 @@
+ package shaman
+ 
+ import (
++	"os"
++	"strconv"
+ 	"time"
+ 
+ 	"github.com/wowsims/classic/sim/core"
+@@ -65,6 +67,10 @@ func LightningBoltBaseDamageAt(rank int, level int32) (float64, float64) {
+ func (shaman *Shaman) newLightningBoltSpellConfig(rank int) core.SpellConfig {
+ 	spellId := LightningBoltSpellId[rank]
+ 	baseDamageLow, baseDamageHigh := LightningBoltBaseDamageAt(rank, shaman.Level)
++	if m, err := strconv.ParseFloat(os.Getenv("RT_LB_MULT"), 64); err == nil && rank == LightningBoltRanks {
++		baseDamageLow *= m
++		baseDamageHigh *= m
++	}
+ 	level := LightningBoltLevel[rank]
+ 	spellCoeff := shaman.downrankCoefficient(LightningBoltSpellCoef[rank], level)
+ 	castTime := LightningBoltCastTime[rank]
+diff --git a/sim/warlock/curses.go b/sim/warlock/curses.go
+index 24c1db186..6f85f9f2c 100644
+--- a/sim/warlock/curses.go
++++ b/sim/warlock/curses.go
+@@ -1,6 +1,7 @@
+ package warlock
+ 
+ import (
++	"os"
+ 	"strconv"
+ 	"time"
+ 
+@@ -287,7 +288,7 @@ func (warlock *Warlock) registerBaneOfDoomSpell() {
+ 			},
+ 			NumberOfTicks:    1,
+ 			TickLength:       time.Minute,
+-			BonusCoefficient: 4,
++			BonusCoefficient: rtBaneCoef(),
+ 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+ 				dot.Snapshot(target, 1742, isRollover)
+ 			},
+@@ -307,3 +308,10 @@ func (warlock *Warlock) registerBaneOfDoomSpell() {
+ 		},
+ 	})
+ }
++
++func rtBaneCoef() float64 {
++	if m, err := strconv.ParseFloat(os.Getenv("RT_BANE_COEF"), 64); err == nil {
++		return m
++	}
++	return 4
++}

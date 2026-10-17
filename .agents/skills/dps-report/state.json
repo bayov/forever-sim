@@ -1,21 +1,21 @@
 {
   "updated": "2026-10-17",
-  "note": "Every class PR through #114 is merged into master. The report data in ui/dps_report was re-simmed in full on 2026-10-17 (sims on 787da848, provenance recorded at 1735382c for all 66 builds) after Salvation in every request (#108), the raid's Flametongue Totem and the Enhancement rotation and talents (#109 to #112, #114), BM (#110) and Ret vs Undead (#111). Use `node tools/dps_report/stale.mjs` to see what's stale.",
+  "note": "Every class PR through #114 is merged into master. The report data in ui/dps_report was re-simmed in full on 2026-10-17 (sims on 787da848, provenance recorded at 1735382c for all 66 builds) after Salvation in every request (#108), the raid's Flametongue Totem and the Enhancement rotation and talents (#109 to #112, #114), BM (#110) and Ret vs Undead (#111). Use `node tools/dps_report/stale.mjs` to see what's stale. On 2026-10-17 the long-running orchestrator, class workers and auditor sessions were retired; read orchestration/handoff_orchestrator.md for open threads and working rules.",
   "foreverClientBuild": "1.60.1.70450 (spells, talents, racials and enchants identical to 70425)",
   "coordinationBranch": {
     "name": "claude/wow-forever-dps-presets-m9u15h",
-    "head": "b23485514"
+    "head": "1e1d201af"
   },
   "classBranches": {
-    "warrior": "aa11a4f47",
-    "paladin": "d24d52372",
-    "hunter": "241349145",
-    "rogue": "4064116f2",
-    "priest": "81d751f0b",
-    "shaman": "8529c9075",
-    "mage": "fd1ba1fc8",
-    "warlock": "bfb8961a5",
-    "druid": "28da841e9"
+    "warrior": "521f02e4a",
+    "paladin": "958bb4828",
+    "hunter": "18665d787",
+    "rogue": "f8696df90",
+    "priest": "d9485d107",
+    "shaman": "787da848b",
+    "mage": "5029a15b1",
+    "warlock": "dbaddacc2",
+    "druid": "7b56acd5a"
   },
   "consumesBranch": {
     "name": "claude/wow-forever-dps-presets-m9u15h-consumes",
@@ -25,7 +25,9 @@
     "Gnome Eureka! spell mask (forever_class_changes G1, minor, shared racials_forever.go)",
     "APL duration x fractional constant truncates to 0 (sim/core/apl_values_operators.go)",
     "Beta measurements wanted: Rage (orchestration/followups.md 'Rage needs a beta test'), Shadow Oil proc damage above 61",
-    "mksettings gives the Smite build the generic shadow consumes, not ConsumesSmite (rotation auditor note; only matters when reproducing Smite from mksettings)"
+    "mksettings gives the Smite build the generic shadow consumes, not ConsumesSmite (rotation auditor note; only matters when reproducing Smite from mksettings)",
+    "orchestration/rank_tuning.md: 9 doc-only commits on the coordination branch (head 1e1d201af) not yet on master",
+    "Fairness auditor: the user's call on the mage_ice_lance_coef Low range (never asked); parked: hunter end-of-fight gate (+0.7), Mutilate window (+0.8), hunter pre-pull Auto Shot bug (shared code)"
   ],
   "merged": {
     "date": "2026-10-13",
