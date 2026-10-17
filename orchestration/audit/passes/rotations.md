@@ -1,17 +1,17 @@
-# Rotation audit: handoff
+# Pass: rotations and resources
 
-This document briefs a fresh auditor of the Level 60 DPS rotations (APLs) on how to run a pass.
+Follow `orchestration/audit/PASS.md` around this doc. It started as the long-running rotation auditor's handoff (2026-10-17); keep it current when the method changes.
 
 ## Role
 
 - **What:** audit every class's Level 60 rotations for DPS gains and resource handling (mana, rage,
   energy).
 - **Don't:**
-  - Don't change rotations or class branches. You audit; the class workers and the orchestrator apply.
+  - Don't change rotations or class branches, and don't commit. You audit and file findings; the orchestrator applies them (B13).
   - Don't use tools/rotopt searches, or the cli flags `-eval`, `-timeline` or `-breakdown`.
 - **Do:** use paired A/B runs with hand-edited APL copies (`tools/audit/rotations/ab.py`), and
   debug logs (`prepull_log.py`, or `simOptions.debug`).
-- **Cadence:** one pass about every 6 h. Run one sooner if a branch moves.
+- **Cadence:** the audit loop's gate starts a pass when a watched file changes on master (checked every 6 h).
 
 ## What to watch
 
@@ -36,13 +36,15 @@ master. The pass is quiet when both of these hold:
 - No Level 60 APL logic changed (notes-only edits don't count).
 - No non-test sim `.go` changed, or only leveling code that the raid presets don't reach.
 
-On a quiet pass, report one line to the orchestrator and re-arm.
+The gate already filters on the paths; if `apl_logic_diff.py` shows only notes-only edits and no sim change the presets reach, the pass is quiet: update `state/rotations.json` and stop.
 
 ## Running a pass
 
 ```
-export AUDIT_TREE=<a checkout of origin/master>   # a git worktree; never edit it
-export AUDIT_WORK=<scratch dir>
+source tools/audit/setup.sh                       # AUDIT_WORK and the toolchain
+export AUDIT_TREE=$(dirname $(tools/audit/build_cli.sh origin/master))/tree   # a detached checkout of origin/master; never edit it
+# The loop's shared run ($AUDIT_WORK/runs/master/summary.tsv, 20k, seed 1) already sims every request on the new master.
+# Old CLI for regress.py: tools/audit/build_cli.sh <last.master from state/rotations.json>
 tools/audit/rotations/apl_logic_diff.py <last_sha> origin/master
 tools/audit/rotations/build_cli.sh cli_new
 tools/audit/rotations/baseline.py $AUDIT_WORK/cli_new > $AUDIT_WORK/base.tsv    # diff against ref/rotations/baseline_*.tsv
@@ -53,14 +55,14 @@ tools/audit/rotations/ab.py ... --s0 200000000                                  
 
 ### Verifying merged findings
 
-- First check that each finding sent last pass landed as sent. Use the logic diff on the APL file.
+- First check that each open finding in `findings/rotations.md` that has since landed on master landed as written. Use the logic diff on the APL file, and move it to `## Resolved`.
 - Workers sometimes re-measure and apply a variant instead. That's fine when their re-measurement backs it.
   Spot-check one with `ab.py` if in doubt.
 
 ### Large changes
 
 When a pass touches many classes (a client data update, a sim mechanic change, new rulings), fan out to
-about 4 subagents:
+about 4 subagents (Sonnet is enough for the A/B runs; keep the judgment in your own context):
 - warrior + paladin
 - rogue + hunter + feral
 - mage + priest
@@ -83,33 +85,12 @@ Give each the brief in `tools/audit/rotations/brief.txt`, with its "What changed
 
 ## Where findings go
 
-All of these sessions are reached with the claude-code-remote `send_message` tool.
-
-| Who | Session |
-|---|---|
-| Orchestrator (the DPS report) | session_01AGmMcVxGoubbDodiQDQwhz |
-| Warrior | session_015iR24bY4HHiF8QjAZjGNYP |
-| Paladin | session_011duYnBELJhnsho8f4q6w2h |
-| Hunter | session_01PWWhtyzQa5FqLAmBcxcTj1 |
-| Rogue | session_01M2zYuexoQpBjqcWdyN44Fn |
-| Priest | session_018Cwk1JUM7nb5qPpuwh3Zqp |
-| Shaman | session_01Pe2HfoGHLpExHKyZsSE43D |
-| Mage | session_014G7sS5vENT2BgvtV3xb8Lj |
-| Warlock | session_01WanF2pctFjdhAXFCeSzwWt |
-| Druid | session_012e53DVbJdcEwgUK3m15hrz |
-
-These IDs may change under the routine setup, so ask the user if one doesn't respond.
-
-- **Routing:**
-  - **Warrior and hunter:** findings go to the orchestrator.
-  - **Paladin:** findings go to the orchestrator and the paladin worker.
-  - **Everything else:** findings go to the class worker.
-  - **Summaries:** after every pass, send the orchestrator a summary.
-- **Format of a finding:**
-  - the exact JSON line or lines
-  - file:line in master's APL
-  - paired numbers for both seed sets and pooled, at 120/180/300 s
-  - baselines at 180 s
+- Every finding goes to `orchestration/audit/findings/rotations.md` (format in `PASS.md`), `needs: orchestrator fix`. Add to its evidence:
+  - the exact JSON line or lines, and the file:line in master's APL;
+  - paired numbers for both seed sets and pooled, at 120/180/300 s;
+  - the baseline at 180 s.
+- Optional results under the bar go in `reports/rotations.md` under "Optional", not in the findings file.
+- When a regression baseline moves (sim changed), write the new `baseline.py` output as `orchestration/audit/ref/rotations/baseline_<sha>_3000it_seed424242.tsv`, delete the old one, and record its name in `state/rotations.json` as `baseline`.
 
 ## Current baseline (pass 26, 2026-10-17)
 
@@ -122,7 +103,7 @@ These IDs may change under the routine setup, so ask the user if one doesn't res
   - Racials rework: Blood Fury is on a 3-minute cooldown; Windshaper, Human, Undead and High Order are
     passive-only in raid.
   - Curse of the Elements and Mana Spring last 300 s.
-- **Reference DPS:** `orchestration/audit/ref/rotations/baseline_d2633f4_3000it_seed424242.tsv`.
+- **Reference DPS:** `orchestration/audit/ref/rotations/baseline_d2633f4_3000it_seed424242.tsv` (the newest is named in `state/rotations.json` as `baseline`).
 
 ## Open items and pending rulings
 
@@ -132,7 +113,7 @@ These IDs may change under the routine setup, so ask the user if one doesn't res
 - **Elemental Mastery:** holding it was never tested; it's on autocast, fired with the trinket.
 - **Warlock duty-curse presets:** Life Tap, Doom and DoT variants weren't screened separately; the base
   results should carry over.
-- **Optional (under the bar), offered to workers:**
+- **Optional (under the bar), offered to the class workers before they were retired:**
   - Rogue Mutilate window 0.5 s (about +0.7).
   - Warrior Fury-BS Heroic Strike 55 (inconsistent between seed sets).
   - Hunter end-of-fight Aimed or Sniper gates (+0.5–0.8).
@@ -176,7 +157,7 @@ These IDs may change under the routine setup, so ask the user if one doesn't res
   Attribute moves via `git log`, not that table.
 - The shared `$AUDIT_TREE` checkout may be read by subagents. Don't move it while they run. Give
   each subagent its own worktree if master may move.
-- The machine can get heavily loaded with parallel agents. Prune screens, and ask agents for an interim
-  report after about 2 h.
+- The machine can get heavily loaded with parallel agents. Keep to about 4, and bound each one's work: a pass
+  shouldn't run for hours (`PASS.md`).
 - Workers merge fast. Before reporting a branch as "not merged", check `git log origin/master` for the
   merge.

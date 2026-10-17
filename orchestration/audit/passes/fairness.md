@@ -1,4 +1,6 @@
-# Fairness auditor: handoff
+# Pass: fairness between specs
+
+Follow `orchestration/audit/PASS.md` around this doc. It started as the long-running fairness auditor's handoff (2026-10-17); keep it current when the method changes.
 
 ## The role
 
@@ -9,15 +11,16 @@ Make sure the Level 60 DPS presets compare fairly across classes. That means:
 - a published cross-spec ranking that matches what the current requests actually sim.
 
 Rules:
-- Don't fix class code yourself.
-- Class-specific defects go to the orchestrator (or the class worker, when the orchestrator allows it).
-- Cross-class questions go to the orchestrator as a proposal with measured options, then wait for its ruling or the user's.
+- Don't fix class code yourself, and don't commit: the audit run commits your files.
+- Class-specific defects are findings, `needs: orchestrator fix`.
+- Cross-class questions are findings with measured options, `needs: user ruling`. Don't act on them until the ruling is recorded in `orchestration/standards.md`.
 - No PR comments. Don't use `tools/rotopt`.
-- Never change master or class branches.
 
 ## What to watch
 
 On each pass:
+
+The audit loop's gate already runs this diff (the paths are in `auditors.json`) and starts you only when it's non-empty. The last audited sha is `last.master` in `state/fairness.json`.
 
 ```sh
 git fetch origin master
@@ -43,7 +46,8 @@ A new client build usually brings shared changes such as racials and raid buffs.
 ## Commands
 
 ```sh
-export AUDIT_TREE=/path/to/checkout-at-origin-master AUDIT_WORK=/path/to/scratch
+source tools/audit/setup.sh                          # AUDIT_WORK and the toolchain
+export AUDIT_TREE=$(dirname $(tools/audit/build_cli.sh origin/master))/tree   # a detached checkout of origin/master
 tools/audit/fairness/build.sh                         # $AUDIT_WORK/wowsimcli
 python3 tools/audit/fairness/audit1b.py               # 19 lines, each "5a PASS | 1b PASS"
 python3 tools/audit/fairness/sweep.py > $AUDIT_WORK/sweep.log      # about 20 min, 4 threads
@@ -64,13 +68,14 @@ python3 tools/audit/fairness/table.py $AUDIT_WORK/sweep.log \
   - a pushback-avoid talent taken but not modelled;
   - one class's numbers re-simmed after a ruling and the others not.
   
-  Measure the size (a local hook or a request edit, never a commit) and propose options to the orchestrator.
+  Measure the size (a local hook or a request edit, never a commit) and file it as a finding with the options and their measured effect on the ranking.
 
 ## Where findings go
 
-- Cross-class findings and the ranking summary: the orchestrator session, `session_01AGmMcVxGoubbDodiQDQwhz` (as of 2026-10-17).
-- The results auditor (`session_01X9dJY1kQbnkLdLwRbqh6GT`) re-sims the report at 20k iterations and often reports the same gaps. Don't duplicate a point it has already raised; confirm it independently instead.
-- Keep `orchestration/audit/ref/fairness/fairness_report.md` §1 current: the new table, the old one moved into a `<details>` block, and a short "what moved / findings" list.
+- Findings: `orchestration/audit/findings/fairness.md` (format in `PASS.md`). The ranking summary goes in `reports/fairness.md`.
+- The results auditor re-sims the report at 20k iterations and often reports the same gaps. Read `findings/results.md` first: don't duplicate a point it has already raised; add your independent confirmation under its finding's id in your report instead.
+- Keep `orchestration/fairness_report.md` (this auditor `owns` it) §1 current: the new table, the old one moved into a `<details>` block, and a short "what moved / findings" list.
+- After a full sweep, replace `orchestration/audit/ref/fairness/sweep_baseline.log` and `table_baseline.md` with the new ones and record the sha in `state/fairness.json` as `baseline`.
 
 ## Baseline (2026-10-17 00:50 UTC)
 
