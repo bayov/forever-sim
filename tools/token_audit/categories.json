@@ -1,0 +1,10 @@
+{
+ "_doc": "How aggregate.py buckets sessions. Rules are tried in order; the first match wins.",
+ "orchestrators": ["session_01AGmMcVxGoubbDodiQDQwhz"],
+ "long_running_min_span_h": 24,
+ "rules": [
+  {"type": "Scheduled auditors", "origin": "claude_code_mcp_seed", "title_re": "(?i)audit"},
+  {"type": "Orchestrator", "orchestrator": true},
+  {"type": "Spawned workers", "origin": "claude_code_mcp_seed"}
+ ]
+}
