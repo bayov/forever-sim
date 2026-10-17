@@ -14,6 +14,9 @@ the registry of every source it checks.
   [source: wago build N] (or, before the tags, worded "Pull wago.tools DB2
   data for build N"). A newer one means forever-sim has catching up
   to do, and the weights and BiS lists bayovui takes from us with it.
+- The inputs read out of the client's tables (CLIENT_INPUTS), against the
+  newest client build we know. Each names its build in its meta block, and a
+  newer client means running its script again.
 - The talent trees' build per class: the newest build tools/forever_talents/
   client/<class>.json names. Only shown, since a build that changed no talent
   doesn't touch the file.
@@ -56,6 +59,13 @@ SCRAPES = [
     ('forever_wowhead_recipes.json', 7, 'the scrape-wowhead skill (recipes)'),
     ('foreverchanges_loot.json', 14, 'python3 tools/database/foreverchanges/scrape.py'),
     ('foreverchanges_suffixes.json', 14, 'python3 tools/database/foreverchanges/suffixes.py <max level> <cache dir>'),
+]
+
+# The inputs we read out of the client's tables, with the build in their meta
+# block, and the script that reads them again.
+CLIENT_INPUTS = [
+    ('assets/db_inputs/forever_client_items.meta.json', 'python3 tools/sources/itemsparse.py %s'),
+    ('assets/db_inputs/forever_enchants.json', 'python3 tools/sources/enchants.py %s'),
 ]
 
 # The AtlasLoot files gen_db -gen=atlasloot reads, in the order it hashes them
@@ -180,6 +190,20 @@ def check(client_build, addons=None):
                         'hours of agents, so ask)' % latest)
     else:
         say('  ?     no audited client build in %s' % os.path.relpath(STATE, ROOT))
+
+    if len(newest) > 0:
+        latest = max(newest, key=build_no)
+        for rel, refresh in CLIENT_INPUTS:
+            path = os.path.join(ROOT, rel)
+            m = read_meta(path) if os.path.exists(path) else None
+            if not m or 'build' not in m:
+                say('  ?     %s has no client build in its meta block' % rel)
+                todo.append(refresh % latest)
+            elif build_no(m['build']) < build_no(latest):
+                say('  OLD   %s is from client build %s, %s is out' % (rel, m['build'], latest))
+                todo.append(refresh % latest)
+            else:
+                say('  ok    %s, client build %s' % (rel, m['build']))
 
     talents = talent_builds()
     if talents:

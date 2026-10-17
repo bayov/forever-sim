@@ -76,18 +76,43 @@ report what the client says, so they rank with it when they show client data. Th
   `tools/audit/gate.py` compares `wago.py latest --probe 300` with each auditor's state.
 - **Note:** the passes say not to reach wago.tools any other way when it refuses.
 
-### wago.tools ItemSparse, Classic 1.15.3.55646
+### Item facts: the Forever client's ItemSparse over Classic 1.15.3.55646's
 
-- **What:** item set IDs and factions (`gen_db`), required levels (rotopt), a cross-check.
-  It's Classic's file, so it has none of Forever's own items.
-- **URL:** `https://wago.tools/db2/ItemSparse/csv?build=1.15.3.55646`
-- **Fetcher:** `go run ./tools/database/gen_db -outDir=assets -gen=wago-db2-items`, through
-  `ReadWeb` in `tools/io_utils.go`. No cache.
-- **Input:** `assets/db_inputs/wago_db2_items.csv` (2024).
-- **Generator:** `go run ./tools/database/gen_db -outDir=assets -gen=db`.
-- **Readers:** `assets/database/db.*`, `tools/rotopt` (`-item-levels`),
-  `tools/dps_report/wagocheck.py`, `orchestration/tools/b30_era.py`.
-- **Refresh:** never. It's pinned, and phase 3 replaces it with the Forever client's ItemSparse.
+- **What:** item set IDs and factions (`gen_db`), which items need a PvP rank (rotopt), and a
+  cross-check of item levels and stats.
+- **Why two files:** the Forever client's ItemSparse on wago.tools has about 19,000 rows, and
+  6,662 of db.json's 11,356 items aren't among them (most Classic items). So the Classic file
+  stays, pinned, and the Forever one is laid over it: an item the Forever file has takes its
+  set and faction from there.
+- **Forever:** `python3 tools/sources/itemsparse.py <build>` writes
+  `assets/db_inputs/forever_client_items.csv` (ID, name, item level, Flags_1, PvP rank and
+  set, from the build's ItemSparse and ItemSet tables through `wago.py`) and
+  `forever_client_items.meta.json` with the build. Set IDs come from the ItemSet table's
+  member lists first, because it also lists Classic items ItemSparse lacks.
+- **Classic:** `assets/db_inputs/wago_db2_items.csv` (2024), the whole ItemSparse of
+  `https://wago.tools/db2/ItemSparse/csv?build=1.15.3.55646`. Pinned, no fetcher.
+- **Generator:** `go run ./tools/database/gen_db -outDir=assets -gen=db`
+  (`OverlayForeverClientItems` in `tools/database/wago_db.go`).
+- **Readers:** `assets/database/db.*`, `tools/rotopt` (`-item-levels`, both files),
+  `tools/dps_report/wagocheck.py` and `orchestration/tools/b30_era.py` (the Classic file, on
+  purpose: they compare Forever with Era).
+- **Refresh:** each new client build. **Behind when:** `stale.py` compares the meta build with
+  the newest client build.
+
+### Enchant values: SpellItemEnchantment
+
+- **What:** what each enchant and armor kit in `tools/database/forever_enchants.go` gives.
+  The Go list says which enchants we offer, their slots and level rules. The numbers come
+  from the client.
+- **Fetcher:** `python3 tools/sources/enchants.py <build>` reads SpellEffect,
+  SpellItemEnchantment, SkillLineAbility, ItemEffect and ItemXItemEffect through `wago.py`,
+  the same join as bayovui's `build/enchants.py`, into
+  `assets/db_inputs/forever_enchants.json` (one entry per enchanting spell, kit item use and
+  kit recipe, with a meta block naming the build).
+- **Generator:** `gen_db -gen=db` (`ApplyClientEnchantStats`). It stops when a listed enchant
+  is missing from the file or gives a stat the sim has no name for.
+- **Refresh:** each new client build. **Behind when:** `stale.py` compares the meta build with
+  the newest client build.
 
 ### Client gametables and cmangos
 
@@ -230,8 +255,8 @@ report what the client says, so they rank with it when they show client data. Th
 
 - **hyjal.cc:** the talent calculator's bundle for 7 classes
   (`tools/forever_talents/client/*.json`, build 1.60.1.69876, brought up to later builds from
-  wago.tools talent by talent), racial text (`ui/core/forever/racials.json`), and enchant and
-  armor kit values (`tools/database/forever_enchants.go`). Fetched by hand, no fetcher.
+  wago.tools talent by talent) and racial text (`ui/core/forever/racials.json`). Fetched by
+  hand, no fetcher. Enchant values come from the client now (above).
 - **wago.tools Trait tables:** the druid and warrior `client/*.json` (70338).
 - **BlizzCon transcription (Deradon/wow-forever-talent-calc, MIT, see
   `tools/forever_talents/LICENSE.upstream`):** the hand corrections in
@@ -294,8 +319,7 @@ report what the client says, so they rank with it when they show client data. Th
 
 - `db` (also `make items`): reads every input above and writes `assets/database/db.{bin,json}`
   and `leftover_db.{bin,json}`.
-- `atlasloot`, `wowhead-items`, `wowhead-spells`, `wowhead-gearplannerdb`, `wago-db2-items`:
-  the fetchers above.
+- `atlasloot`, `wowhead-items`, `wowhead-spells`, `wowhead-gearplannerdb`: the fetchers above.
 
 Overrides on top of the inputs live in `tools/database/overrides.go` (allow and deny lists),
 `tools/database/enchant_overrides.go`, `forever_enchants.go`, `forever_items.go` and

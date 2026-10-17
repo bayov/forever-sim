@@ -113,9 +113,9 @@ python3 -I $T/enchant_diff.py <baseline> <new>
 |---|---|---|
 | Cosmetic | pets, mounts, toys, appearances, ensembles, tents, visuals, tooltip text, labels, NPC or quest spells, new low-level items | One summary line in the build's ledger section. No rows. |
 | Class (spell, talent, pet) | coefficients, base points, costs, cooldowns, cast times, procs, talent values, new or removed talents | A ledger row per change. Send it to the class worker through the orchestrator. |
-| Racial | ChrRaces, racial spells (Eureka!, Touch of the Grave, Blood Fury…) | A ledger row. Fix it yourself in `sim/core/racials_forever*.go`. |
+| Racial | ChrRaces, racial spells (Eureka!, Touch of the Grave, Blood Fury…) | A ledger row. Fix it yourself in `sim/core/racials_forever*.go`. The UI text follows with `python3 tools/sources/racials.py <build> --write`. |
 | Item | ItemSparse stats on any level 60 or preset item, ItemEffect or proc spell changes | A ledger row. Fix it in `tools/database/forever_items.go` and regenerate the db, or in `sim/common/item_effects.go` and the weapon procs. |
-| Enchant | SpellItemEnchantment | A ledger row. Fix it in `tools/database/forever_enchants.go` and regenerate. |
+| Enchant | SpellItemEnchantment | A ledger row. The values follow with `python3 tools/sources/enchants.py <build>` and a db regenerate. Edit `tools/database/forever_enchants.go` only to add or drop an enchant. |
 | Shared mechanic, buff or debuff | raid buffs, totems, shouts, consumables | A ledger row. Fix it in `sim/core/buffs.go`, `debuffs.go` and `consumes`. |
 
 **Does it matter to level 60 DPS?** Each row gets one value:

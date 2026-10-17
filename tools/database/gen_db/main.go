@@ -25,7 +25,8 @@ import (
 // go run ./tools/database/gen_db -outDir=assets -gen=wowhead-items
 // go run ./tools/database/gen_db -outDir=assets -gen=wowhead-spells -maxid=31000
 // go run ./tools/database/gen_db -outDir=assets -gen=wowhead-gearplannerdb
-// go run ./tools/database/gen_db -outDir=assets -gen=wago-db2-items
+// python3 tools/sources/itemsparse.py <client build>   (the Forever client's ItemSparse)
+// python3 tools/sources/enchants.py <client build>     (enchant stats, forever_enchants.json)
 // uv run tools/database/forever_wowhead/scrape.py   (wowhead Forever listings, the scrape-wowhead skill)
 
 // Lastly run the following to generate db.json (ensure to delete cached versions and/or rebuild for copying of assets during local development)
@@ -36,7 +37,7 @@ var exactId = flag.Int("id", 0, "ID to scan for")
 var minId = flag.Int("minid", 1, "Minimum ID to scan for")
 var maxId = flag.Int("maxid", 31000, "Maximum ID to scan for")
 var outDir = flag.String("outDir", "assets", "Path to output directory for writing generated .go files.")
-var genAsset = flag.String("gen", "", "Asset to generate. Valid values are 'db', 'atlasloot', 'wowhead-items', 'wowhead-spells', 'wowhead-gearplannerdb' and 'wago-db2-items'")
+var genAsset = flag.String("gen", "", "Asset to generate. Valid values are 'db', 'atlasloot', 'wowhead-items', 'wowhead-spells', and 'wowhead-gearplannerdb'")
 var atlasLootDir = flag.String("atlasloot", "", "For -gen=atlasloot: the Interface/AddOns folder of the client that has AtlasLoot Forever installed")
 
 func main() {
@@ -82,9 +83,6 @@ func main() {
 	} else if *genAsset == "wowhead-gearplannerdb" {
 		tools.WriteFile(fmt.Sprintf("%s/wowhead_gearplannerdb.txt", inputsDir), tools.ReadWebRequired("https://nether.wowhead.com/classic/data/gear-planner?dv=100"))
 		return
-	} else if *genAsset == "wago-db2-items" {
-		tools.WriteFile(fmt.Sprintf("%s/wago_db2_items.csv", inputsDir), tools.ReadWebRequired("https://wago.tools/db2/ItemSparse/csv?build=1.15.3.55646"))
-		return
 	} else if *genAsset != "db" {
 		panic("Invalid gen value")
 	}
@@ -94,6 +92,7 @@ func main() {
 	wowheadDB := database.ParseWowheadDB(tools.ReadFile(fmt.Sprintf("%s/wowhead_gearplannerdb.txt", inputsDir)))
 	atlaslootDB := database.ReadDatabaseFromJson(tools.ReadFile(fmt.Sprintf("%s/atlasloot_db.json", inputsDir)))
 	wagoItems := database.ParseWagoDB(tools.ReadFile(fmt.Sprintf("%s/wago_db2_items.csv", inputsDir)))
+	database.OverlayForeverClientItems(wagoItems, tools.ReadFile(fmt.Sprintf("%s/forever_client_items.csv", inputsDir)))
 	foreverWowheadDB := database.ParseForeverWowheadDB(tools.ReadFile(fmt.Sprintf("%s/forever_wowhead_items.json", inputsDir)))
 	foreverChangesLoot := database.ParseForeverChangesLoot(tools.ReadFile(fmt.Sprintf("%s/foreverchanges_loot.json", inputsDir)))
 	foreverChangesSuffixes := database.ParseForeverChangesSuffixes(tools.ReadFile(fmt.Sprintf("%s/foreverchanges_suffixes.json", inputsDir)))
@@ -189,6 +188,7 @@ func main() {
 	db.AttachForeverChangesSuffixes(foreverChangesSuffixes)
 	db.MergeFactions(database.ForeverFactions)
 	db.MergeEnchants(database.EnchantOverrides)
+	database.ApplyClientEnchantStats(database.ForeverEnchants, fmt.Sprintf("%s/forever_enchants.json", inputsDir))
 	db.ReplaceForeverEnchants(database.ForeverEnchants)
 	ApplyGlobalFilters(db)
 	AttachFactionInformation(db, wagoItems)
@@ -391,9 +391,10 @@ func AttachFactionInformation(db *database.WowDatabase, factionRestrictions map[
 
 // AttachItemSetIDs attaches item set ids to the DB items.
 //
-// wagoItems is Classic 1.15.3's ItemSparse, which has none of Forever's own items. So we
-// only take a set ID for an item that file has, and an item it doesn't have keeps the set
-// ID another source gave it, instead of losing it to 0.
+// wagoItems is Classic 1.15.3's ItemSparse with the Forever client's items laid over it
+// (database.OverlayForeverClientItems). Neither has the items Forever hides until someone
+// finds them, so we only take a set ID for an item they have, and an item they don't have
+// keeps the set ID another source gave it, instead of losing it to 0.
 func AttachItemSetIDs(db *database.WowDatabase, wagoItems map[int32]database.WagoDbItem) {
 	for _, item := range db.Items {
 		if wagoItem, ok := wagoItems[item.Id]; ok {

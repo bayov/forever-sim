@@ -2255,7 +2255,7 @@
 {"effectId":1248460,"spellId":1248460,"name":"Enchant Bracer - Lesser Agility","type":6,"stats":[0,4,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"quality":1},
 {"effectId":1248497,"spellId":1248497,"name":"Enchant Bracer - Agility","type":6,"stats":[0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"quality":1},
 {"effectId":1248498,"spellId":1248498,"name":"Enchant Bracer - Lesser Healing Power","type":6,"stats":[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,16,6,0],"quality":1},
-{"effectId":1248510,"spellId":1248510,"name":"Enchant 2H Weapon - Lesser Agility","type":13,"enchantType":1,"stats":[0,15,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"quality":1},
+{"effectId":1248510,"spellId":1248510,"name":"Enchant 2H Weapon - Lesser Agility","type":13,"enchantType":1,"stats":[0,9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"quality":1},
 {"effectId":1248511,"spellId":1248511,"name":"Enchant 2H Weapon - Lesser Strength","type":13,"enchantType":1,"stats":[15,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"quality":1},
 {"effectId":1248599,"spellId":1248599,"name":"Enchant Bracer - Superior Agility","type":6,"stats":[0,9,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"quality":1},
 {"effectId":1248607,"spellId":1248607,"name":"Enchant 2H Weapon - Mighty Spell Power","type":13,"enchantType":1,"stats":[0,0,0,0,0,55,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],"quality":1},

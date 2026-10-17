@@ -1,0 +1,8 @@
+{
+  "meta": {
+    "build": "1.60.1.70450",
+    "fetched": "2026-10-17T17:58Z",
+    "source": "client beta 1.60.1.70450 (wago.tools ItemSparse and ItemSet)",
+    "tool": "tools/sources/itemsparse.py"
+  }
+}

@@ -72,6 +72,7 @@
    "watch": [
     "tools/database/forever_synthetic_items*.go",
     "tools/database/forever_enchants.go",
+    "assets/db_inputs/forever_enchants.json",
     "tools/database/forever_items.go",
     "tools/database/*trinket*",
     "ui/*/gear_sets/**",
@@ -95,6 +96,7 @@
     "sim/core/totem_weapon_buffs.go",
     "sim/common/**",
     "tools/database/forever_enchants.go",
+    "assets/db_inputs/forever_enchants.json",
     "tools/dps_report/assumptions_def.py",
     "sim/mage/forever_staff_imbue.go",
     "orchestration/standards.md"
