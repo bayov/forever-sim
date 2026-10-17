@@ -1,6 +1,6 @@
-import json, statistics
+import json, os, statistics
 import numpy as np
-exec(open('/tmp/claude-0/-home-user-forever-sim/ca4b4203-ff20-5bf4-98f0-d157160fd32d/scratchpad/ilvl/fit.py').read().split("for band, flt in")[0])
+exec(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fit.py')).read().split("for band, flt in")[0])
 w = {'str': 1, 'agi': 1, 'sta': 1, 'int': 1, 'spi': 1, 'critstrkrtng': 1.0, 'hitrtng': 1.0, 'splpwr': 0.86, 'atkpwr': 0.5, 'manargn': 2.5, 'splheal': 0.45, 'spldmg': 0.86}
 SM = {'head': 1, 'chest': 1, 'legs': 1, 'shoulder': .77, 'hands': .77, 'waist': .77, 'feet': .77, 'neck': .5625, 'back': .5625, 'wrist': .5625, 'finger': .5625}
 lin = lambda r: sum(w[k] * x for k, x in r['v'].items())

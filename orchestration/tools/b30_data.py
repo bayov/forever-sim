@@ -2,7 +2,7 @@
 "ilvl <= 30 only").
 
 Two item sets in one stat vocabulary:
-  forever(): Wowhead's Forever listing (assets/db_inputs/forever_wowhead_items.json in w-dash).
+  forever(): Wowhead's Forever listing (assets/db_inputs/forever_wowhead_items.json).
   era():     Classic Era items (versionNum 11300) from Wowhead's classic gear planner dump
              (assets/db_inputs/wowhead_gearplannerdb.txt), the same jsonequip keys.
 Note: wago_db2_items.csv is ItemSparse of build 1.15.3.55646 (the 2024 Era/SoD client, not
@@ -21,7 +21,7 @@ expertise, ...) marks the item 'other' and the fits leave it out.
 """
 import json, os, re
 
-INPUTS = os.environ.get('FOREVER_INPUTS', '/home/user/w-dash/assets/db_inputs')
+INPUTS = os.environ.get('FOREVER_INPUTS', os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../assets/db_inputs'))
 
 SLOT = {1: 'head', 2: 'neck', 3: 'shoulder', 5: 'chest', 20: 'chest', 6: 'waist', 7: 'legs', 8: 'feet',
         9: 'wrist', 10: 'hands', 11: 'finger', 12: 'trinket', 16: 'back',

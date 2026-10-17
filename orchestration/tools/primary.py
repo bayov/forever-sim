@@ -1,5 +1,6 @@
-import json, collections, statistics, math
-d = json.load(open('/home/user/w-dash/assets/db_inputs/forever_wowhead_items.json'))['items']
+import json, collections, statistics, math, os
+from b30_data import INPUTS
+d = json.load(open(os.path.join(INPUTS, 'forever_wowhead_items.json')))['items']
 PRIM = ['str', 'agi', 'sta', 'int', 'spi']
 ALLOWED = set(PRIM) | {'slotbak', 'reqlevel', 'armor', 'classes', 'itemset', 'races', 'reqfaction', 'reqrep', 'reqskill', 'reqskillrank', 'dmgrange', 'speed', 'dps', 'dmgmax1', 'dmgmin1', 'dmgtype1', 'mledps', 'mlespeed', 'mledmgmax', 'mledmgmin', 'rgddmgmax', 'rgddmgmin', 'rgddps', 'rgdspeed'}
 ARMOR_SLOTS = {1, 2, 3, 5, 6, 7, 8, 9, 10, 11, 16, 20}
