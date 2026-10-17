@@ -1,7 +1,7 @@
 #!/bin/bash
 # Usage: build.sh
 # Regenerates the Go protos in AUDIT_TREE and builds wowsimcli and mksettings (both --tags=with_db) into AUDIT_BIN.
-# Needs protoc and protoc-gen-go (see orchestration/audit/handoff/results.md, "Setup").
+# Needs protoc and protoc-gen-go (see orchestration/audit/passes/results.md, "Setup").
 # Env: AUDIT_TREE (default: this repo), AUDIT_WORK (default ${TMPDIR:-/tmp}/audit-results), AUDIT_BIN (default $AUDIT_WORK/bin).
 set -eu
 D=$(cd "$(dirname "$0")" && pwd)

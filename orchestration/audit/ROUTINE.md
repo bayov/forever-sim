@@ -7,8 +7,8 @@ everything it does is in the repo, so changing the loop is a commit, not a routi
 
 - **Name:** Forever audit loop
 - **Repository:** bayov/forever-sim, with push access (the run commits its state to master).
-  A routine created from a chat session has no repository attached and can't push, so create or
-  edit it in the claude.ai routines page with the repository selected.
+  A routine created from a chat session (`create_trigger`) gets no repository and can't push, so
+  after creating it that way, open it in the claude.ai routines page and add the repository there.
 - **Schedule:** every 6 hours (`0 */6 * * *`).
 - **New session each run:** yes. Never bind it to one long-lived session; that is what this
   replaced.

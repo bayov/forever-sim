@@ -1,4 +1,6 @@
-# Results audit: handoff
+# Pass: results and spec strength
+
+Follow `orchestration/audit/PASS.md` around this doc. It started as the long-running results auditor's handoff (2026-10-17); keep it current when the method changes.
 
 For a new auditor who has only the repo. It covers the pass as it ran through pass 42 (2026-10-17). The role itself is in
 `orchestration/auditor_results.md` and the shared rules in `orchestration/auditors_common.md`. In short: explain why each spec is as
@@ -6,7 +8,7 @@ strong or weak as it is, flag numbers that look like modelling errors rather tha
 the same way (same raid, budget, iterations and fight lengths).
 
 Standing rules from the briefs:
-- Read-only. Never commit, push or comment on PRs; findings go to the people listed under "Findings".
+- Read-only on code, presets and docs; don't commit (the audit run commits your files) or comment on PRs. Findings go to `orchestration/audit/findings/results.md`.
 - Don't use `tools/rotopt` (its searches, `-eval`, `-timeline`, `-breakdown`). mksettings, which only writes the settings JSON, and wowsimcli are fine.
 - Don't put model names in anything you write.
 - Sources for Forever facts, best first: the Forever client data (wago.tools db2, newest build), then Season of Discovery, then Anniversary or 2019 Classic. Avoid vmangos. Tooltips can be wrong.
@@ -54,8 +56,11 @@ cites the client, check the cited values against the db2 tables (see `orchestrat
     apt-get install -y protobuf-compiler || (apt-get update && apt-get install -y protobuf-compiler)
     go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
     export PATH=$PATH:$HOME/go/bin
-    export AUDIT_TREE=<a checkout at origin/master>     # e.g. git worktree add --detach ../w-master origin/master
-    export AUDIT_WORK=<scratch dir>                     # binaries, runs, drift output
+    source tools/audit/setup.sh                         # AUDIT_WORK and the toolchain
+    export AUDIT_TREE=$(dirname $(tools/audit/build_cli.sh origin/master))/tree   # a detached checkout of origin/master
+    export AUDIT_WORK=$AUDIT_WORK/results; mkdir -p $AUDIT_WORK   # binaries, runs, drift output
+    # The loop's shared run ($AUDIT_WORK/../runs/master/summary.tsv: every request, 20k, seed 1, the same settings as runreq.sh)
+    # can stand in for step 2; check its settings match before you reuse it.
     export AUDIT_REF=$AUDIT_TREE/orchestration/audit/ref/results
 
 Re-run the proto generation after every master update (`build.sh` does it). Without it, a build after a merge fails on
@@ -113,14 +118,9 @@ and Subtlety are `rogue_assassination` and `rogue_subtlety`, with every other ro
 
 ## Findings: where they go
 
-Before the migration, findings went by `send_message` (claude-code-remote) to:
-- the class worker that owns the spec (sessions in `orchestration/auditors_common.md`), one numbered message per worker, each item with evidence (file and line, numbers, the paired sim or arithmetic) and a suggested change;
-- the orchestrator `session_01AGmMcVxGoubbDodiQDQwhz`: a short summary after each pass, and right away for anything that crosses classes;
-- the fairness auditor `session_01QnE9gpZ5kp8fwRANBsMoqP`: the base preset table, only when numbers moved.
+Every finding goes to `orchestration/audit/findings/results.md` (format in `PASS.md`), with its evidence (file and line, numbers, the paired sim or arithmetic) and a suggested change. A class-specific one names the class in `affects`; a cross-class one is `severity: high`. The fairness auditor reads your findings file, so nothing is sent to it.
 
-If those sessions have been replaced by routines too, follow the routine's routing.
-
-Cadence: about 2 hours after a pass where numbers moved, about 6 hours after a quiet one, and right away on a code change or a message.
+Every pass writes `reports/results.md`: the base preset table when numbers moved, and your explanation of the ranking (below). When a new run becomes the reference, replace `ref/results/req_summary.txt` (and `drift_report.txt` when it changed) and record the sha in `state/results.json` as `baseline`.
 
 Don't repeat a finding the owner already answered unless you have new evidence. Don't send nits.
 

@@ -1,8 +1,10 @@
-# Gear auditor handoff
+# Pass: synthetic gear
+
+Follow `orchestration/audit/PASS.md` around this doc. It started as the long-running gear auditor's handoff (2026-10-17); keep it current when the method changes.
 
 This file is the brief for whoever runs the synthetic gear audit next, with only the repo to go on. The role brief is `orchestration/auditor_gear.md`, with the common auditor rules in `auditors_common.md`. The rules you check against are in `orchestration/standards.md` and `orchestration/gear_targets.md`.
 
-The auditor never changes the repo: no commits, no pushes, no PR comments. Don't use `tools/rotopt`, and don't put model names in anything you write. Findings go to the class session that owns the set, and a summary goes to the orchestrator.
+The auditor never changes code, presets or docs, and doesn't commit (the audit run commits its files). No PR comments. Don't use `tools/rotopt`, and don't put model names in anything you write. Findings go to `orchestration/audit/findings/gear.md`.
 
 ## What is audited
 
@@ -33,8 +35,9 @@ The Level 60 presets run on synthetic Phase 1 gear:
 ## A pass, step by step
 
 ```
-export AUDIT_TREE=$PWD                     # repo checkout
-export AUDIT_WORK=${AUDIT_WORK:-/tmp/audit-gear}; mkdir -p $AUDIT_WORK
+source tools/audit/setup.sh                # AUDIT_WORK and the toolchain
+export AUDIT_TREE=$PWD                     # repo checkout (master)
+export AUDIT_WORK=$AUDIT_WORK/gear; mkdir -p $AUDIT_WORK
 export AUDIT_REF=$AUDIT_TREE/orchestration/audit/ref/gear
 export AUDIT_GITREF=origin/master
 git fetch -q origin
@@ -72,9 +75,10 @@ F='synthetic|gear.json|forever_enchants|trinkets|items.go'
    - For a changed item, read its Go comment. It names the Era item it stands in for and the speed source.
    - For a real item's numbers, `python3 tools/audit/gear/tt.py ID` fetches the wowhead Era tooltip.
 4. **Report.**
-   - A break goes to the class session that owns the set, with the item id, the number and the rule (the standards item), and then to the orchestrator.
-   - A clean pass with something new (a new set, new weapons, a ruling that touches gear) gets a short summary to the orchestrator.
-   - A quiet pass gets no messages.
+   - A break is a finding in `findings/gear.md` (format in `PASS.md`), with the item id, the number and the rule (the standards item), `needs: orchestrator fix`.
+   - A clean pass with something new (a new set, new weapons, a ruling that touches gear) gets a short `reports/gear.md`.
+   - A quiet pass only updates `state/gear.json`.
+   - When the reference outputs change for a known reason, write the new ones as `ref/gear/*_<sha>.txt`, delete the old ones, and record the sha in `state/gear.json` as `baseline`.
 
 ## Checks and tolerances (standards 1b and 5a)
 
@@ -163,4 +167,4 @@ F='synthetic|gear.json|forever_enchants|trinkets|items.go'
 - The paladin's items use a helper constructor. audit.parse finds items by `Id: 99xxxx` blocks, so keep ids literal.
 - A set's slot order in the gear.json files is head, neck, shoulder, back, chest, wrist, hands, waist, legs, feet, finger 1, finger 2, trinket 1, trinket 2, main hand, off hand, ranged. Enchant ids are effect ids; read their names from std.py's `ench:` line.
 - Branch diffs: use `origin/master...<branch>` (three dots). Two dots lists everything a branch hasn't merged yet as changes.
-- Cadence used so far: 6 hours when quiet, 45 minutes while a round is landing.
+- Cadence: the audit loop's gate starts a pass when a watched gear file changes on master (checked every 6 hours).
