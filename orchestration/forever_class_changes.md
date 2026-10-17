@@ -2,7 +2,7 @@
 
 Class-level and cross-class mechanics that WoW Forever (client 1.60.1.70338) changed from Classic Era (1.15.9.70003), checked against the sim on each class branch. Kept up to date by the Forever class changes auditor.
 
-Source tiers: 1 client data on wago.tools (db2 tables); 2 Wowhead Forever tooltips (dataEnv=17); 3 Blizzard posts; 4 foreverchanges.pro; 5 the repo's wiki and notes.
+Source tiers: 1 client data on wago.tools (db2 tables); 2 Wowhead Forever tooltips (dataEnv=16); 3 Blizzard posts; 4 foreverchanges.pro; 5 the repo's wiki and notes.
 
 Measurements are paired sims on each class branch's own build: the same mksettings settings run with and without the change, through a local measurement patch that is never committed. 20,000 iterations, 180 sec, the Level 60 generic boss. The error is about +-0.2 to 0.5 DPS.
 
