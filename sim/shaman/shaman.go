@@ -41,6 +41,9 @@ func init() {
 	core.RegisterSpellRanks(HealingStreamTotemSpellId[1:]...)
 	core.RegisterSpellRanks(ManaSpringTotemSpellId[1:]...)
 	core.RegisterSpellRanks(LavaBurstSpellId[1:]...)
+	core.RegisterSpellRanks(healRankIDs(HealingWaveRanks)...)
+	core.RegisterSpellRanks(healRankIDs(LesserHealingWaveRanks)...)
+	core.RegisterSpellRanks(healRankIDs(ChainHealRanks)...)
 }
 
 func NewShaman(character *core.Character, talents string) *Shaman {

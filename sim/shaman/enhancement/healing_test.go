@@ -1,7 +1,9 @@
 package enhancement
 
 import (
+	"fmt"
 	"math"
+	"strconv"
 	"testing"
 	"time"
 
@@ -351,5 +353,35 @@ func TestHealingKeepsUsAlive(t *testing.T) {
 	t.Logf("we died %.1f%% of the time without heals and %.1f%% with them", 100*without, 100*with)
 	if without < 0.1 || with > 0.01 {
 		t.Errorf("we died %.1f%% of the time without heals and %.1f%% with them, want some and none", 100*without, 100*with)
+	}
+}
+
+// TestHealRankFamily: a rotation that names a heal rank we haven't learned, like one written
+// at 60, casts the highest rank of that heal our level knows. A level 30 shaman casts Healing
+// Wave rank 5 for rank 10 and Lesser Healing Wave rank 2 for rank 6.
+func TestHealRankFamily(t *testing.T) {
+	for _, c := range []struct {
+		named, cast int32
+	}{
+		{25357, 939},
+		{10468, 8008},
+	} {
+		req := normalMobRequest([]*proto.Target{core.NormalMobTarget(30, proto.MobType_MobTypeBeast, 1)}, true, 1)
+		req = withRotation(t, req, rotationOf(fmt.Sprintf(
+			`{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"60%%"}}}},"castSpell":{"spellId":{"spellId":%d}}}}`, c.named)))
+		req.SimOptions.Debug = true
+		result := core.RunRaidSim(req)
+		if result.Error != nil {
+			t.Fatal(result.Error.Message)
+		}
+		casts := 0
+		logLines(t, result.Logs, func(_ float64, line string) {
+			if m := completedLine.FindStringSubmatch(line); m != nil && m[1] == strconv.Itoa(int(c.cast)) {
+				casts++
+			}
+		})
+		if casts == 0 {
+			t.Errorf("a rotation naming %d cast no %d", c.named, c.cast)
+		}
 	}
 }

@@ -204,6 +204,15 @@ func (shaman *Shaman) riptideChainHealMultiplier(spell *core.Spell) float64 {
 	return 1 + RiptideChainHealBonus
 }
 
+// healRankIDs are the spell IDs of every rank of a heal, for its rank family.
+func healRankIDs(ranks []healRank) []int32 {
+	ids := make([]int32, 0, len(ranks)-1)
+	for _, r := range ranks[1:] {
+		ids = append(ids, r.spellID)
+	}
+	return ids
+}
+
 // HighestHealRankID is the spell ID of the highest rank of a heal (HealingWaveRanks,
 // LesserHealingWaveRanks) a shaman of this level knows, 0 for none.
 func HighestHealRankID(ranks []healRank, level int32) int32 {
