@@ -14,8 +14,8 @@ import (
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
-// Restoration talent strings (the tree's order: Improved Healing Wave, Totemic Focus,
-// Mindfulness, Natural Grace, Tidal Focus, Improved Reincarnation, Ancestral Healing, Healing
+// Restoration talent strings (the tree's order: Improved Healing Wave, Tidal Focus,
+// Mindfulness, Natural Grace, Totemic Focus, Improved Reincarnation, Ancestral Healing, Healing
 // Focus, Water Shield, Tidal Mastery, Restorative Totems, Mana Tide Totem, Healing Way,
 // Nature's Swiftness, Purification, Riptide).
 const (
