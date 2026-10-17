@@ -1,0 +1,16 @@
+warlock__demonology c2 RT_BANE_COEF=2
+warlock__affliction c2 RT_BANE_COEF=2
+warlock__destruction c2 RT_BANE_COEF=2
+warlock__destruction_fire c2 RT_BANE_COEF=2
+priest__smite s118 RT_SMITE_MULT=1.18
+druid__feral-cat r113 RT_RIP_MULT=1.13
+druid__balance-wrath w117 RT_WRATH_MULT=1.17
+druid__balance w117 RT_WRATH_MULT=1.17
+mage__frost fb RT_FB_MULT=1.08
+paladin__level_60 both RT_HS_MULT=0.52 RT_CONS_MULT=0.82
+paladin__level_60_shock both RT_HS_MULT=0.52 RT_CONS_MULT=0.82
+paladin__level_60_sub_holy both RT_HS_MULT=0.52 RT_CONS_MULT=0.82
+shaman__elemental-level60 lb112 RT_LB_MULT=1.12
+shaman__elemental-level60 lb138 RT_LB_MULT=1.38
+shaman__elemental-level60 lb138lvb RT_LB_MULT=1.38 RT_LVB_MULT=1.38
+shaman__enhancement-level60 es116 RT_ES_MULT=1.16
