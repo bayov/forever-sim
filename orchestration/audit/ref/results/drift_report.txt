@@ -1,0 +1,117 @@
+## druid__balance-duty-ff spec=balance diffs=2 (apl/prepull 0)
+   .raid.debuffs.curseOfRecklessness: committed=False regen=True
+   .raid.debuffs.faerieFire: committed=False regen=True
+## druid__balance-wrath-duty-ff spec=balance diffs=2 (apl/prepull 0)
+   .raid.debuffs.curseOfRecklessness: committed=False regen=True
+   .raid.debuffs.faerieFire: committed=False regen=True
+## druid__balance-wrath spec=balance diffs=0 (apl/prepull 0)
+## druid__balance spec=balance diffs=0 (apl/prepull 0)
+## druid__feral-cat-duty-ff spec=feral diffs=2 (apl/prepull 0)
+   .raid.debuffs.curseOfRecklessness: committed=False regen=True
+   .raid.debuffs.faerieFire: committed=False regen=True
+## druid__feral-cat spec=feral diffs=0 (apl/prepull 0)
+## hunter__beast-mastery-duty-mark spec=hunter_bm_mark diffs=0 (apl/prepull 0)
+## hunter__beast-mastery-duty-scorpid spec=hunter_bm_scorpid diffs=0 (apl/prepull 0)
+## hunter__beast-mastery spec=hunter_bm diffs=0 (apl/prepull 0)
+## hunter__lone-wolf-duty-mark spec=hunter_lw_mark diffs=0 (apl/prepull 0)
+## hunter__lone-wolf-duty-scorpid spec=hunter_lw_scorpid diffs=0 (apl/prepull 0)
+## hunter__lone-wolf spec=hunter_lw diffs=0 (apl/prepull 0)
+## hunter__marksmanship-duty-mark spec=hunter_mm_mark diffs=0 (apl/prepull 0)
+## hunter__marksmanship-duty-scorpid spec=hunter_mm_scorpid diffs=0 (apl/prepull 0)
+## hunter__marksmanship spec=hunter_mm diffs=0 (apl/prepull 0)
+## hunter__survival-duty-mark spec=hunter_sv_mark diffs=0 (apl/prepull 0)
+## hunter__survival spec=hunter_sv diffs=0 (apl/prepull 0)
+## mage__arcane spec=mage_arcane diffs=0 (apl/prepull 0)
+## mage__fire spec=mage_fire diffs=0 (apl/prepull 0)
+## mage__frost spec=mage_frost diffs=0 (apl/prepull 0)
+## mage__frostfire spec=mage_frostfire diffs=0 (apl/prepull 0)
+## paladin__level_60-duty-crusader spec=ret diffs=2 (apl/prepull 0)
+   .raid.debuffs.judgementOfTheCrusader: committed=<absent> regen=TristateEffectImproved
+   .raid.parties[0].players[0].retributionPaladin.options.primarySeal: committed=Command regen=Righteousness
+## paladin__level_60 spec=ret diffs=1 (apl/prepull 0)
+   .raid.parties[0].players[0].retributionPaladin.options.primarySeal: committed=Command regen=Righteousness
+## paladin__level_60_shock-duty-crusader spec=ret diffs=1 (apl/prepull 0)
+   .raid.debuffs.judgementOfTheCrusader: committed=<absent> regen=TristateEffectImproved
+## paladin__level_60_shock spec=ret diffs=0 (apl/prepull 0)
+## paladin__level_60_shock_undead spec=ret diffs=1 (apl/prepull 0)
+   .encounter.targets[0].mobType: committed=MobTypeUndead regen=<absent>
+## paladin__level_60_sub_holy-duty-crusader spec=ret diffs=2 (apl/prepull 0)
+   .raid.debuffs.judgementOfTheCrusader: committed=<absent> regen=TristateEffectImproved
+   .raid.parties[0].players[0].retributionPaladin.options.primarySeal: committed=Command regen=Righteousness
+## paladin__level_60_sub_holy spec=ret diffs=1 (apl/prepull 0)
+   .raid.parties[0].players[0].retributionPaladin.options.primarySeal: committed=Command regen=Righteousness
+## paladin__level_60_sub_holy_undead spec=ret diffs=1 (apl/prepull 0)
+   .encounter.targets[0].mobType: committed=MobTypeUndead regen=<absent>
+## paladin__level_60_undead spec=ret diffs=1 (apl/prepull 0)
+   .encounter.targets[0].mobType: committed=MobTypeUndead regen=<absent>
+## priest__shadow-holy spec=shadow diffs=1 (apl/prepull 0)
+   .raid.parties[0].players[0].consumes.manaRegenElixir: committed=GreaterMagebloodElixir regen=<absent>
+## priest__shadow spec=shadow diffs=0 (apl/prepull 0)
+## priest__smite spec=shadow diffs=4 (apl/prepull 0)
+   .raid.parties[0].players[0].consumes.defaultPotion: committed=MajorManaPotion regen=MajorSpellblastingPotion
+   .raid.parties[0].players[0].consumes.firePowerBuff: committed=ElixirOfGreaterFirepower regen=<absent>
+   .raid.parties[0].players[0].consumes.manaRegenElixir: committed=GreaterMagebloodElixir regen=<absent>
+   .raid.parties[0].players[0].consumes.spiritElixir: committed=ElixirOfGreaterSpirit regen=<absent>
+## rogue__combat-daggers-humanoid spec=rogue_combat diffs=1 (apl/prepull 0)
+   .encounter.targets[0].mobType: committed=MobTypeHumanoid regen=<absent>
+## rogue__combat-daggers spec=rogue_combat diffs=0 (apl/prepull 0)
+## rogue__combat-swords-humanoid spec=rogue_combat diffs=1 (apl/prepull 0)
+   .encounter.targets[0].mobType: committed=MobTypeHumanoid regen=<absent>
+## rogue__combat-swords spec=rogue_combat diffs=0 (apl/prepull 0)
+## rogue__mutilate-humanoid spec=rogue_assassination diffs=1 (apl/prepull 0)
+   .encounter.targets[0].mobType: committed=MobTypeHumanoid regen=<absent>
+## rogue__mutilate spec=rogue_assassination diffs=0 (apl/prepull 0)
+## rogue__seal-fate-daggers-humanoid spec=rogue_combat diffs=1 (apl/prepull 0)
+   .encounter.targets[0].mobType: committed=MobTypeHumanoid regen=<absent>
+## rogue__seal-fate-daggers spec=rogue_combat diffs=0 (apl/prepull 0)
+## rogue__seal-fate-swords-humanoid spec=rogue_combat diffs=1 (apl/prepull 0)
+   .encounter.targets[0].mobType: committed=MobTypeHumanoid regen=<absent>
+## rogue__seal-fate-swords spec=rogue_combat diffs=0 (apl/prepull 0)
+## rogue__subtlety-humanoid spec=rogue_subtlety diffs=1 (apl/prepull 0)
+   .encounter.targets[0].mobType: committed=MobTypeHumanoid regen=<absent>
+## rogue__subtlety spec=rogue_subtlety diffs=0 (apl/prepull 0)
+## shaman__elemental-level60-mana-tide spec=ele diffs=0 (apl/prepull 0)
+## shaman__elemental-level60 spec=ele diffs=0 (apl/prepull 0)
+## shaman__enhancement-imp-gw spec=enh diffs=0 (apl/prepull 0)
+## shaman__enhancement-level60 spec=enh diffs=0 (apl/prepull 0)
+## shaman__enhancement-mana-tide spec=enh diffs=0 (apl/prepull 0)
+## shaman__enhancement-water-shield spec=enh diffs=0 (apl/prepull 0)
+## warlock__affliction-duty-curse spec=affliction diffs=3 (apl/prepull 0)
+   .raid.buffs.sanctityAura: committed=False regen=<absent>
+   .raid.debuffs.curseOfElements: committed=False regen=True
+   .raid.debuffs.curseOfShadow: committed=False regen=<absent>
+## warlock__affliction spec=affliction diffs=2 (apl/prepull 0)
+   .raid.buffs.sanctityAura: committed=False regen=<absent>
+   .raid.debuffs.curseOfShadow: committed=False regen=<absent>
+## warlock__demonology-duty-curse spec=demonology diffs=3 (apl/prepull 0)
+   .raid.buffs.sanctityAura: committed=False regen=<absent>
+   .raid.debuffs.curseOfElements: committed=False regen=True
+   .raid.debuffs.curseOfShadow: committed=False regen=<absent>
+## warlock__demonology spec=demonology diffs=2 (apl/prepull 0)
+   .raid.buffs.sanctityAura: committed=False regen=<absent>
+   .raid.debuffs.curseOfShadow: committed=False regen=<absent>
+## warlock__destruction-duty-curse spec=destruction diffs=3 (apl/prepull 0)
+   .raid.buffs.sanctityAura: committed=False regen=<absent>
+   .raid.debuffs.curseOfElements: committed=False regen=True
+   .raid.debuffs.curseOfShadow: committed=False regen=<absent>
+## warlock__destruction spec=destruction diffs=2 (apl/prepull 0)
+   .raid.buffs.sanctityAura: committed=False regen=<absent>
+   .raid.debuffs.curseOfShadow: committed=False regen=<absent>
+## warlock__destruction_fire-duty-curse spec=destruction_fire diffs=3 (apl/prepull 0)
+   .raid.buffs.sanctityAura: committed=False regen=<absent>
+   .raid.debuffs.curseOfElements: committed=False regen=True
+   .raid.debuffs.curseOfShadow: committed=False regen=<absent>
+## warlock__destruction_fire spec=destruction_fire diffs=2 (apl/prepull 0)
+   .raid.buffs.sanctityAura: committed=False regen=<absent>
+   .raid.debuffs.curseOfShadow: committed=False regen=<absent>
+## warrior__arms-duty-battle-shout spec=arms diffs=1 (apl/prepull 0)
+   .raid.buffs.battleShout: committed=<absent> regen=TristateEffectImproved
+## warrior__arms spec=arms diffs=0 (apl/prepull 0)
+## warrior__arms_dragonkin spec=arms diffs=1 (apl/prepull 0)
+   .encounter.targets[0].mobType: committed=MobTypeDragonkin regen=<absent>
+## warrior__fury-duty-battle-shout spec=fury diffs=1 (apl/prepull 0)
+   .raid.buffs.battleShout: committed=<absent> regen=TristateEffectImproved
+## warrior__fury spec=fury diffs=0 (apl/prepull 0)
+## warrior__fury_2h-duty-battle-shout spec=fury diffs=1 (apl/prepull 0)
+   .raid.buffs.battleShout: committed=<absent> regen=TristateEffectImproved
+## warrior__fury_2h spec=fury diffs=0 (apl/prepull 0)
