@@ -2,7 +2,7 @@
 """Decide which auditors need a pass, without a model: git diffs on each auditor's watched paths,
 new Forever client builds, and periodic checks of outside sources.
 
-usage: gate.py [--advance] [--force ID[,ID]] [--all] [--json]
+usage: gate.py [--advance] [--force ID[,ID]] [--all] [--json] [--movement <shared run summary.tsv>]
 
 Reads orchestration/audit/auditors.json (the registry) and orchestration/audit/state/<id>.json (what
 each auditor last audited). Run it after `git fetch origin --prune`.
@@ -14,6 +14,11 @@ An auditor is due when one of these holds:
 - "wago_build" is in its "external" list and wago.tools has a newer 1.60 build than it last audited;
 - "external_every_h" hours passed since its last pass (for sources git can't see, like dev notes);
 - "max_quiet_days" days passed since its last pass (a safety net).
+
+--movement, after the loop's shared sims: an auditor with "skip_if_no_movement" that is due only
+because of master file changes is skipped when no report build moved more than 0.5 DPS against the
+previous shared run (orchestration/audit/ref/shared/summary.tsv) and none of its changed files match
+its "always_pass" globs. With no previous run, everything counts as moved.
 
 --advance moves each auditor that isn't due up to the current heads, so its next diff starts there.
 It changes state files only; commit them with commit_state.sh. Prints a short table, or JSON with --json.
@@ -85,6 +90,37 @@ def changed(old, new, paths, exclude, three_dot=False):
     return [l for l in git('diff', '--name-only', rng, '--', *spec).splitlines() if l]
 
 
+def glob_re(g):
+    out = ''
+    i = 0
+    while i < len(g):
+        if g.startswith('**/', i):
+            out += '(?:.*/)?'; i += 3
+        elif g.startswith('**', i):
+            out += '.*'; i += 2
+        elif g[i] == '*':
+            out += '[^/]*'; i += 1
+        else:
+            out += re.escape(g[i]); i += 1
+    return re.compile(out + '$')
+
+
+def movement(path, tol=0.5):
+    """How many report builds moved more than tol DPS against the previous shared run (None: no previous run)."""
+    base = os.path.join(AUD, 'ref/shared/summary.tsv')
+    if not os.path.exists(base):
+        return None
+    def load(p):
+        rows = {}
+        for l in open(p).read().splitlines()[1:]:
+            f = l.split('\t')
+            if len(f) > 1 and f[1]:
+                rows[f[0]] = float(f[1])
+        return rows
+    old, new = load(base), load(path)
+    return sum(1 for i in set(old) | set(new) if i not in old or i not in new or abs(new[i] - old[i]) > tol)
+
+
 def hours_since(ts):
     if not ts:
         return 1e9
@@ -96,6 +132,9 @@ force = set()
 if '--force' in args:
     force = set(args[args.index('--force') + 1].split(','))
 reg = json.load(open(os.path.join(AUD, 'auditors.json')))
+moved = None
+if '--movement' in args:
+    moved = movement(args[args.index('--movement') + 1])
 if JJ:
     master = jj_one('master@origin', 'commit_id')
     remote_branches = jj_one('remote_bookmarks(remote=exact:"origin")',
@@ -153,6 +192,12 @@ for a in reg['auditors']:
         reasons.append(f'no pass for {h / 24:.1f} days')
     if a['id'] in force or '--all' in args:
         reasons.append('forced')
+    if (moved == 0 and a.get('skip_if_no_movement') and reasons and all(r.startswith('master:') for r in reasons)
+            and not any(glob_re(g).match(f) for g in a.get('always_pass', []) for f in files)):
+        reasons = []
+        skipped = 'no report build moved against the previous shared run'
+    else:
+        skipped = None
     due = bool(reasons)
     if not due and '--advance' in args:
         st.setdefault('last', {})
@@ -163,12 +208,12 @@ for a in reg['auditors']:
         os.makedirs(os.path.dirname(sp), exist_ok=True)
         json.dump(st, open(sp, 'w'), indent=1)
         open(sp, 'a').write('\n')
-    out.append({'id': a['id'], 'due': due, 'reasons': reasons, 'files': files[:40], 'model': a.get('model', 'sonnet'),
+    out.append({'id': a['id'], 'due': due, 'reasons': reasons, 'skipped': skipped, 'files': files[:40], 'model': a.get('model', 'sonnet'),
                 'sims': a.get('sims', False), 'last_master': last.get('master'), 'heads': heads})
 
 if '--json' in args:
-    print(json.dumps({'master': master, 'client_build': client, 'auditors': out}, indent=1))
+    print(json.dumps({'master': master, 'client_build': client, 'moved': moved, 'auditors': out}, indent=1))
 else:
-    print(f'master {master[:10]}  client {client or "unknown"}')
+    print(f'master {master[:10]}  client {client or "unknown"}' + (f'  moved {moved if moved is not None else "n/a (no previous run)"}' if '--movement' in args else ''))
     for o in out:
-        print(f"{'DUE ' if o['due'] else 'quiet'} {o['id']:12s} {'; '.join(o['reasons']) or '-'}")
+        print(f"{'DUE ' if o['due'] else 'quiet'} {o['id']:12s} {'; '.join(o['reasons']) or ('skipped: ' + o['skipped'] if o['skipped'] else '-')}")

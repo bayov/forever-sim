@@ -1,5 +1,5 @@
 {
- "_doc": "The audit loop's registry. gate.py reads it to decide who is due; each pass follows passes/<id>.md. Fields: watch/exclude are git globs (relative to the repo root); branches (optional) are globs of origin branches also watched while ahead of master; none are watched today, since class work lands on master through PRs and the old class branches still count hundreds of commits ahead after their merges; external lists outside sources ('wago_build': gate.py checks wago.tools for a newer 1.60 client build); external_every_h forces a pass that often for sources git can't see; max_quiet_days is a safety net; model is the subagent model for the pass ('sonnet' for mechanical passes, 'opus' where the pass judges mechanics or balance); sims marks passes that sim the report's requests on the new master (the loop runs them once and shares the run). branch_active_days: a branch ahead of master counts only while its newest commit is at most this many days old, so old unmerged branches don't trigger passes. owns: repo docs the pass keeps current besides its own audit files (committed with the run). wago_probe: how many build numbers past the newest one wago.tools lists the gate probes in the db2 exports (the builds list lags).",
+ "_doc": "The audit loop's registry. gate.py reads it to decide who is due; each pass follows passes/<id>.md. Fields: watch/exclude are git globs (relative to the repo root); branches (optional) are globs of origin branches also watched while ahead of master; none are watched today, since class work lands on master through PRs and the old class branches still count hundreds of commits ahead after their merges; external lists outside sources ('wago_build': gate.py checks wago.tools for a newer 1.60 client build); external_every_h forces a pass that often for sources git can't see; max_quiet_days is a safety net; model is the subagent model for the pass ('sonnet' for mechanical passes, 'opus' where the pass judges mechanics or balance); sims marks passes that sim the report's requests on the new master (the loop runs them once and shares the run). branch_active_days: a branch ahead of master counts only while its newest commit is at most this many days old, so old unmerged branches don't trigger passes. owns: repo docs the pass keeps current besides its own audit files (committed with the run). wago_probe: how many build numbers past the newest one wago.tools lists the gate probes in the db2 exports (the builds list lags). skip_if_no_movement: after the loop's shared sims, the pass is skipped (recorded as quiet) when no report build moved more than 0.5 DPS against the previous shared run (ref/shared/summary.tsv), unless a changed file matches always_pass or the auditor is due for another reason. Leveling-only paths (**/*leveling*, **/leveling/**, the level 30 APLs) are excluded from the level 60 DPS auditors, as the old auditors excluded leveling-only work.",
  "branch_active_days": 2,
  "wago_probe": 300,
  "auditors": [
@@ -25,9 +25,18 @@
     "**/*.results",
     "**/*_test.go",
     "sim/core/proto/**",
-    "tools/database/forever_wowhead/**"
+    "tools/database/forever_wowhead/**",
+    "**/*leveling*",
+    "**/leveling/**",
+    "ui/*/apls/level30*"
    ],
-   "max_quiet_days": 7
+   "max_quiet_days": 7,
+   "skip_if_no_movement": true,
+   "always_pass": [
+    "tools/rotopt/mksettings/**",
+    "tools/dps_report/req/**",
+    "ui/*/presets.ts"
+   ]
   },
   {
    "id": "rotations",
@@ -43,9 +52,17 @@
    "exclude": [
     "**/*.results",
     "**/*_test.go",
-    "sim/core/proto/**"
+    "sim/core/proto/**",
+    "**/*leveling*",
+    "**/leveling/**",
+    "ui/*/apls/level30*"
    ],
-   "max_quiet_days": 7
+   "max_quiet_days": 7,
+   "skip_if_no_movement": true,
+   "always_pass": [
+    "ui/*/apls/**",
+    "tools/dps_report/req/**"
+   ]
   },
   {
    "id": "gear",
@@ -108,7 +125,7 @@
     "wago_build",
     "blizzard_dev_notes"
    ],
-   "external_every_h": 24,
+   "external_every_h": 72,
    "max_quiet_days": 7
   },
   {
@@ -155,11 +172,20 @@
     "**/*.results",
     "**/*_test.go",
     "sim/core/proto/**",
-    "tools/database/forever_wowhead/**"
+    "tools/database/forever_wowhead/**",
+    "**/*leveling*",
+    "**/leveling/**",
+    "ui/*/apls/level30*"
    ],
    "max_quiet_days": 7,
    "owns": [
     "orchestration/fairness_report.md"
+   ],
+   "skip_if_no_movement": true,
+   "always_pass": [
+    "orchestration/standards.md",
+    "ui/*/gear_sets/**",
+    "tools/dps_report/req/**"
    ]
   },
   {
