@@ -1,0 +1,3025 @@
+     
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+-   WoW Forever patch notes (October 15): buffs and nerfs by class   
+-  
+- 
+- 
+- 
+- 
+- 
+- 
+- 
+-               
+- 
+- 
+-   
+      Online now        
+    Updated ·  Beta build 1.60.1.70425    Beta realms offline  Beta back online 
+  Launch in      days      hrs      min      sec    
+  Changes  Talents    Updated on October 15  , updated    Spellbook    Updated on October 15  , updated    Legacy  Professions  Races  Dungeons  Items  Quests  BiS list    Updated on October 15  , updated    World map  Guides  Patch notes  
+    Search   /   
+Loading the page…
+ Tip:   Lie in the Cozy Sleeping Bag for three minutes and you earn 3% more experience for two hours.
+      Online now        
+    Updated ·  Beta build 1.60.1.70425    Beta realms offline  Beta back online 
+  Launch in      days      hrs      min      sec    
+  Changes  Talents    Updated on October 15  , updated    Spellbook    Updated on October 15  , updated    Legacy  Professions  Races  Dungeons  Items  Quests  BiS list    Updated on October 15  , updated    World map  Guides  Patch notes  
+    Search   /   
+Loading the page…
+ Tip:   Lie in the Cozy Sleeping Bag for three minutes and you earn 3% more experience for two hours.
+ WoW Forever
+## Patch notes   Every beta update, class by class  
+What each update of the World of Warcraft: Forever beta changed, newest first. Open your class to see its buffs, nerfs and other changes, spell by spell and talent by talent; point at a spell or an item to see its tooltip before and after. Every line follows Blizzard’s notes, unless a grey line under it says I found it in the game.
+Latest balance changes
+ October 15, 2026 
+-  
+ 53 buffs 
+-  
+ 22 nerfs 
+-  
+ 37 other changes 
+- 4 talent tree changes 
+- 5 new items 
+- 236 changed items   
+  Blue posts 
+-   Oct 8  Re:  WoW Forever Beta Known Issues - October 8  Kaivax   Known Issues - New October 8. • While texture updates to Skyborne druid bear and travel form are updated, texture updates to Skyborne druid cat form, various creatures in Zephras Isle, and some mounts, pets, and other creatures will arrive…    Kaivax Community Manager   Known Issues - New October 8. • While texture updates to Skyborne druid bear and travel form are updated, texture updates to Skyborne druid cat form, various creatures in Zephras Isle, and some mounts, pets, and other creatures will arrive…  Read it on the official forums    
+ 70 posts   
+- 
+##  October 15, 2026   Build 1.60.1.70425  Current build 
+From  Blizzard’s notes :
+## General  
+- A new tutorial for new players. 
+- Wands now need you to stand still for 0.5 sec before they shoot, as in early World of Warcraft. 
+- Horde players can no longer gain Kirin Tor reputation, monsters regenerate health out of combat again, drink tooltips show the right total mana, and the fog is no longer too bright at low shadow settings.    
+## Items  
+- Mystic Mushroom and the Insight enchant now raise Spirit as they should. Scrolls now trigger the global cooldown. 
+- Many crafted items sell to vendors for less. 
+- Draught of Predatory Senses becomes a potion, shares the combat potion cooldown, and lasts less.    
+## Legacy  
+- Bartering no longer discounts training and repairs. Master Chef and Luremaster move one column left on the tree (they already needed only 5 points). The Quick and the Dead affects more Priest spells.    
+## PvP  
+- Battleground Marks of Honor stack to 30 (was 20).    
+## Quests  
+- Dalaran: the Horde is attacked on sight in the city, whatever the quest. The City of Dalaran dungeon stays open to them, but the Dalaran Sewer Key questline no longer opens the city in the open world. 
+- More Bloodtooth Guards for “Raene’s Cleansing” (Ashenvale). 
+- The furbolg camps of “How Big a Threat?” give credit (Darkshore). 
+- “For Love Eternal” can always be turned in. 
+- Cenarion Moondust is no longer used up in “Body and Heart”. 
+- The Novice Warriors of “Sparring Match” no longer flag you for PvP (Mulgore). 
+- “The Attack!” is no longer an escort and can be shared (Stormwind). 
+- Lord Melenas no longer evades in “Twisted Hatred” (Teldrassil). 
+- Faster respawns in the Wetlands. 
+- Halaan’s Gift works again for “The Anchors of Zephras”.    
+## Interface  
+- Hunters can turn on an Auto Attack/Auto Shot setting that switches between the two on its own, gamepad included. 
+- Bloom Intensity becomes a slider, in the Advanced graphics options. 
+- New unit frames and minimap header. 
+- The Auction House gets a column for the level needed to equip, and shows the stats of random-suffix items (“of the Monkey”). 
+- Level-up messages show stat gains and talent points again. 
+- /who finds subzones. 
+- Spell ranks count as one entry in the Cooldown Manager. 
+- Enemy and NPC nameplates far above or below you show at a shorter distance (your target’s is unchanged). 
+- More Scrolling Combat Text options. 
+- Gamepad: a swing timer on the center reticle, and trade, guild, chat channels and transmog windows usable with a gamepad.   
+Found in the game:
+- Nine white items become green, with a stat: Ice-covered Bracers, Royal Frostmane Girdle, Wendigo Fur Cloak, Wispy Cloak, Ghostly Bracers, Ratty Old Belt, Lithe Boots, Fingerless Gloves and Staff of the Mountain. 
+- The Tinkerbox, its three modules and their seven engineering schematics are gone from the client, as are the Disorienting Smog Potion and its recipe. 
+- Sixteen centaur items (Kolkar and Magram) now need level 35, and twelve of them drop to item level 38 or 42 (was 43).  
+##  Warrior  
+-   Buffs 
+    Battle Shout :  Now covers the whole raid.  
+-   Buffs 
+    Slam :  No longer suffers spell pushback.  
+-   Buffs 
+    Overpower :  Can trigger against much lower level enemies again.  
+-   Buffs 
+    Lingering Rage :  No longer stops your health regeneration after combat.  
+-   Buffs 
+    Improved Berserker Rage :  Removes movement-impairing effects again.  
+-   Nerfs 
+    Weaponmaster :  Its Sword Specialization can no longer trigger from Shield Bash and Shield Slam.     
+##  Paladin  
+-   Buffs 
+    Righteous Fury :  Holy damage threat raised to 90% (was 60%).  
+-   Nerfs 
+    Seal of Righteousness :  Got almost twice the spell damage it should: fixed. Judgement of Righteousness and Judgement of Fury get the instant-spell coefficients.  
+-   Nerfs 
+    Consecration :  Gets 4.2% of spell power per tick (was 9.5%).  
+-   Nerfs 
+    Infusion of Light :  No longer gives Holy Shock 50% more damage against enemies. Light’s Vigil works with focus macros.  
+-   Nerfs 
+    Shield Specialization :  Restores 4% mana (was 6%), still every 3 sec at most.  
+-   Nerfs 
+    Champion of the Light :  Gives spell damage equal to 10/20/30% of your Intellect (was 20/40/60%).  
+-   Changes 
+    Salvation :  Replaces Blessing of Salvation, and Mass Salvation replaces Greater Blessing of Salvation: cast the same way, but they no longer take a Blessing slot. You also learn Revoke, which removes them from a party or raid member.  
+-   Changes 
+    Seal of Fury :  Is no longer overwritten by Power Word: Shield. Its rank 3 is trained at level 26 (was 25).  
+-   Changes 
+    Reckoning :  Stores up to 4 charges again, as in Classic Era: each trigger adds one, and your next swing spends them all as extra attacks.  
+-   Changes 
+    Sanctified Judgement :  Its mana return no longer generates threat.  
+-   Changes 
+    Sense Undead :  Is no longer in the spellbook. Not in Blizzard’s notes, found in the game.      
+##  Hunter  
+-   Buffs 
+    Immolation Trap :  Fire traps scale with attack power, and you can have one fire trap and one frost trap out at once (was one trap in all).  
+-   Buffs 
+    Pets :  Benefit from Expertise, and take your higher critical chance, melee or ranged (was always melee).  
+-   Buffs 
+    Summon Hawk :  Spawns the hawk at your target and keeps it there.  
+-   Buffs 
+    Improved Mend Pet :  Lowers Mend Pet’s mana cost instead of raising it.  
+-   Buffs 
+    Trueshot Aura :  Now covers the whole raid. Sniper Shot benefits from the Marksmanship talents it missed.  
+-   Buffs 
+    Strider Kick :  Can be used while disarmed or with no main-hand weapon, and Resourcefulness lowers its cost.  
+-   Buffs 
+    Multi-Shot :  Is now instant (was a 0.5 sec cast). Not in Blizzard’s notes, found in the game.   
+-   Nerfs 
+    Auto Shot :  Needs you to stand still for 0.5 sec before it shoots, as in early World of Warcraft. You still fire it while casting Aimed Shot or Sniper Shot.  
+-   Nerfs 
+    Dismember :  Crocolisk ability: healing reduction 25% (was 50%), 6 sec (was 10), 15 sec cooldown (was 6).  
+-   Nerfs 
+    Sonic Blast :  Bat ability: cast slow 30% (was 60%), 20 sec (was 30), 60 sec cooldown (was 30).  
+-   Nerfs 
+    Mine! :  Bird of Prey ability: 3 sec (was 4), 90 sec cooldown (was 60).  
+-   Changes 
+    Resourcefulness :  Triggers on critical strikes again, but only from melee and ranged abilities, not traps.  
+-   Changes 
+    Bows :  Show the arrow while drawn.  
+-   Changes 
+    Predator's Edge :  Its tooltip now says it only raises your abilities’ critical damage.     
+##  Rogue  
+-   Nerfs 
+    Poisons :  No longer trigger against targets attacking you, and Sap no longer triggers weapon procs.  
+-   Nerfs 
+    Energy :  Swapping specializations no longer keeps it full.  
+-   Nerfs 
+    Cold Blood :  Is spent when Mutilate crits.     
+##  Priest  
+-   Buffs 
+    Devouring Plague :  Cooldown drops to 24 sec (was 1 min).  
+-   Buffs 
+    Power in Light :  Also raises Smite and Penance on a target with Holy Fire or Shadow Word: Pain.  
+-   Buffs 
+    Silent Resolve :  Its threat reduction applies to all spells.  
+-   Buffs 
+    Twin Disciplines :  Also works with Shadow Word: Death, Mind Flay, Starshards and Penance.  
+-   Buffs 
+    Shadow Word: Death :  Benefits from Shadowform’s critical damage bonus.  
+-   Buffs 
+    Vampiric Embrace :  Can’t be resisted, and its cooldown drops to 30 sec (was 1 min).  
+-   Buffs 
+    Dark Inspiration :  New Shadow talent on row 4: Mind Blast and a full Mind Flay raise your party’s Spirit by 3/6/9/12/15% for 10 sec.  
+-   Buffs 
+    Devouring Contagion :  Spreads to 2 targets, and the copied Devouring Plague no longer costs mana or puts yours on cooldown.  
+-   Nerfs 
+    Shadow Word: Death :  Cooldown rises to 18 sec (was 12).  
+-   Changes 
+    Renew :  A high rank no longer stops other priests’ Renew.  
+-   Changes 
+    Holy Fire :  Rank 5 no longer ticks harder than rank 6.  
+-   Changes 
+    Mind Vision :  No longer makes the target stand up and stop drinking.  
+-   Changes 
+    Inner Focus :  Is spent on one spell only, even when a spell is queued during Penance. Divine Aegis’s tooltip says it needs a non-periodic critical heal and gives its shield’s maximum.  
+-   Changes 
+    Improved Fade :  Removed, as is Shadow Affinity (Blizzard’s notes call it Shadow Infinity). Improved Mind Blast moves to row 2 (was 3).  
+-   Changes 
+    Improved Mind Flay :  Each Mind Flay tick deals 10/20% more than the one before.  
+-   Changes 
+    Mental Strength  moved :  Moves to row 2 (was 4) and raises Intellect by 2/4/6/8/10%. Improved Power Word: Shield moves to row 3 (was 2).     
+##  Shaman  
+-   Buffs 
+    Grace of Air Totem :  Now covers the whole raid, as do Strength of Earth, Windfury and Flametongue Totems. It no longer excludes Windfury and Flametongue, which still exclude each other, and those two only affect players.  
+-   Buffs 
+    Chain Lightning :  Costs about 35% less mana at every rank.  
+-   Buffs 
+    Elemental Mastery :  Returns as the 31-point gold medal talent: Lightning Bolt and Lava Burst cast 0.5 sec faster and Chain Lightning has no cooldown for 15 sec, 3 min cooldown. Needs Lava Burst.  
+-   Buffs 
+    Elemental Reach :  Also lowers Totemic Projection’s cooldown by 10/20 sec, and Call of Flame extends Flame Shock by 3/6/9 sec.  
+-   Buffs 
+    Lightning Overload :  No longer spends Clearcasting, and Elemental Focus can no longer be spent on the Fire Nova that triggered it.  
+-   Buffs 
+    Mana Tide Totem :  Gets a new rank at level 38 (ranks at 25, 38, 48 and 58).  
+-   Buffs 
+    Restorative Totems :  Raises all of Healing Stream Totem’s healing (was its base value).  
+-   Buffs 
+    Water Shield :  Can trigger from any of your spell crits (was heals only).  
+-   Buffs 
+    Fire Resistance Totem :  Also covers the whole raid. Not in Blizzard’s notes, found in the game.   
+-   Nerfs 
+    Fire Nova :  Much lower base damage and mana cost, and 14.3% of spell power (was 21.4%).  
+-   Changes 
+    Grounding Totem :  Is destroyed after redirecting a spell. Totemic Recall costs 22 silver at the trainer (was 70).  
+-   Changes 
+    Elemental Fury :  Needs Lightning Overload, which needs Elemental Alacrity. Elemental Alacrity moves to row 2, Elemental Warding to row 3, Earthbound becomes the 16-point gold medal talent on row 4, and Call of Thunder is removed.  
+-   Changes 
+    Stormstrike :  Costs 8% of base mana (was 125 at every level). Its debuff is no longer spent by a spell that misses, or by other players and pets.  
+-   Changes 
+    Lava Burst :  Its first rank is learned at level 30 (was 40) and costs 135 mana (was 165), for 114 to 145 damage (was 150 to 192). Not in Blizzard’s notes, found in the game.   
+-   Changes 
+    Lava Burst  moved :  Moves from row 7 to row 5 as the 21-point gold medal talent, with no prerequisite and a new rank 4.  
+-   Changes 
+    Tidal Focus  moved :  Moves to row 1 and Totemic Focus to row 2.     
+##  Mage  
+-   Buffs 
+    Frost Blast :  New spell at level 24: a 1.5 sec cast that deals damage and slows by 40%, and benefits from every Frostbolt talent. It replaces rank 1 Frostbolt’s use, now that downranking is penalized, with a higher cost and a little more damage.  
+-   Buffs 
+    Arcane Wrath :  New Arcane 16-point gold medal talent: a 3.5 sec cast with Fireball-like damage, plus spell power equal to 5% of your maximum mana. 6 sec cooldown.  
+-   Buffs 
+    Heating Up :  Is no longer spent when Presence of Mind is used on Pyroblast, and Fire Blast always adds a charge (a Fire Blast crit gives 2).  
+-   Buffs 
+    Critical Mass :  Goes to 5 points, 10% critical chance in all.  
+-   Buffs 
+    Frost Channeling :  Lowers your threat as it should.  
+-   Buffs 
+    Frostbite :  Can trigger from Ice Armor and Frost Armor, as can Fingers of Frost.  
+-   Buffs 
+    Cone of Cold :  Slows its first 4 targets by 10% more, for 3 sec longer.  
+-   Nerfs 
+    Arcane Concentration :  Its Clearcasting no longer rolls once per target hit, triggers from Dampen or Amplify Magic, or triggers out of combat.  
+-   Nerfs 
+    Ice Lance :  Deals 200% more to frozen targets (was 300%).  
+-   Changes 
+    Arcane Blast :  Is redesigned: a 1.5 sec cast; each cast adds spell damage equal to 15% of your Intellect and raises its cost, up to 4 times, for 15 sec from the first stack. Same mana cost, but damage and spell damage coefficient 40% lower.  
+-   Changes 
+    Presence of Mind :  Is spent by spell casts, and Missile Barrage no longer lowers the cost and duration of a second Arcane Missiles.  
+-   Changes 
+    Improved Fire Blast :  Wake of Fire becomes Improved Fire Blast again: no bonus on kills, and Fire Blast gets 8/15 yards more range.  
+-   Changes 
+    Fire Power :  Is redesigned, 3 points: 1/2/3% more Fire damage for each of your Fire effects on the target (Ignite, Improved Scorch, Fireball, Pyroblast, Impact), up to 12%. Frostfire Bolt benefits but doesn’t count.  
+-   Changes 
+    Winter's Chill :  Redesigned: no more critical chance. Frostbolt, Frost Blast and Fingers of Frost Ice Lances have a 20/40/60/80/100% chance to apply it, up to 5 stacks, each raising your next Cone of Cold’s damage by 5% and its spell damage by 7%, spent by that Cone of Cold.  
+-   Changes 
+    Ice Block :  Is less transparent.  
+-   Buffs 
+    Missile Barrage  moved :  Moves to row 1 as a 2-point talent, and Arcane Missiles hits can trigger it.     
+##  Warlock  
+-   Buffs 
+    Shadow Mastery :  Raises Shadow damage by 2/4/6/8/10% (was 1/2/3/4/5%).  
+-   Buffs 
+    Soul Link :  Can be cast on your pet again.  
+-   Buffs 
+    Amplify Curse :  Raises your next Curse of Exhaustion by 50% (was 20%). Not in Blizzard’s notes, found in the game.   
+-   Nerfs 
+    Summon Incubus :  Is no longer free of Soul Shards with the Reagent Economy Legacy perk, and Curse of Recklessness can no longer stack twice on a target.  
+-   Nerfs 
+    Portal of Summoning :  Costs 100% of base mana (was 12%) and has a 1 hour cooldown (was 2 min). Not in Blizzard’s notes, found in the game.   
+-   Changes 
+    Grim Reach :  Replaces Malediction: 10/20% more range for Affliction spells.  
+-   Changes 
+    Destructive Reach :  10/20% more range for Destruction spells.     
+##  Druid  
+-   Buffs 
+    Faerie Fire :  Generates threat in Bear and Dire Bear Form (it only started combat), and can no longer be on a target twice.  
+-   Buffs 
+    Shred :  Rank 1 is learned at level 20 (was 22).  
+-   Buffs 
+    Furor :  Keeps the Energy you had in Cat Form through Bear and Dire Bear Form (Energy still doesn’t regenerate in them).  
+-   Nerfs 
+    Omen of Clarity :  Can no longer trigger from Faerie Fire in Cat, Bear or Dire Bear Form.  
+-   Changes 
+    Rejuvenation :  A high rank no longer stops other druids’ Rejuvenation.  
+-   Changes 
+    Heart of the Wild :  Applies again after logging in, as do Feral Swiftness, Thick Hide and Leader of the Pack.  
+-   Changes 
+    Moonkin Form :  Its aura now only raises spell critical chance, and covers the whole raid. Several Insect Swarms no longer stack their hit reduction.  
+-   Changes 
+    Leader of the Pack :  Now only raises melee and ranged critical chance, and covers the whole raid.  
+-   Changes 
+    Shred :  Its tooltip now counts Savage Fury in its flat damage (the damage was already right).     
+##  Human  
+-   Changes 
+    Ruthless :  Replaces Sword Specialization: 2% critical strike chance.     
+##  Orc  
+-   Nerfs 
+    Blood Fury :  Cooldown rises to 3 min (was 2).  
+-   Changes 
+    Savage :  Replaces Axe Specialization: 1% critical strike chance.  
+-   Changes 
+    Shatter Curse :  Now dispels Curses and Banes (it gave immunity), and lowers magic damage taken by 5% (was 15%).     
+##  Dwarf  
+-   Buffs 
+    Find Treasure :  Also gives a chance at extra items in most chests.  
+-   Changes 
+    Earth Fury :  Replaces Mace Specialization: 2% more critical damage and healing.     
+##  Night Elf  
+-   Buffs 
+    Quickness :  Stacks with other movement speed bonuses. Night Elves no longer show their shield in Wisp Form.     
+##  Undead  
+-   Nerfs 
+    Will of the Forsaken :  Can’t be used under Scatter Shot.  
+-   Changes 
+    Touch of the Grave :  Procs more evenly: a 30% chance for casters and 20% for Paladins, Rogues and Warriors (Blizzard’s notes call it Touch of the Dead), with a 25 sec internal cooldown. It no longer scales with Shadow damage bonuses, and no longer loses power with a lower spell rank.     
+##  Tauren  
+-   Buffs 
+    Cultivation :  Cooldown drops to 15 min (was 60).  
+-   Buffs 
+    War Stomp :  Cooldown drops to 90 sec (was 2 min).  
+-   Changes 
+    Endurance :  Gives 2% more critical damage and healing (was 1% hit chance).  
+-   Changes 
+    Plainsrunning :  Also gives 3% mounted speed, which stacks with other mount speed bonuses. It now needs you to keep moving a minimum distance each second: stutter-stepping no longer keeps it up.     
+##  Gnome  
+-   Changes 
+    Eureka! :  Becomes an 8 sec buff with no charges, with the same effect on damage and costs, and now also works with Power Word: Shield.     
+##  Troll  
+-   Buffs 
+    Regeneration :  Raises health regeneration by 20% (was 10%).     
+##  Skyborne  
+-   Buffs 
+    Wind Blessed :  Gives 3% haste (was 1%).  
+-   Buffs 
+    Skysight :  Can be cast while moving.  
+-   Buffs 
+    Read Leyline :  Can be cast while moving and lasts at least 30 sec (was 20).  
+-   Buffs 
+    Walk on Air :  Cooldown drops to 90 sec (was 2 min).  
+-   Buffs 
+    Elemental Insight :  More Elemental Convergences and Leylines spawn in most zones of the Eastern Kingdoms and Kalimdor.    
+## Items and Blizzard’s other words     Items  5 new items, 236 changed items, 7 in our BiS lists  
+Nine white items become green with a stat, the Tinkerbox and its schematics are gone, and sixteen centaur items now need level 35.
+## In our BiS lists 
+The lists were reordered where these changes moved an item past its neighbours:  the BiS lists .
+-    
+ Mystic Mushroom 
+-    
+ Tenets of the Silver Hand 
+-    
+ Violet Sorcerer's Leggings 
+-    
+ Violet Sorcerer's Robes 
+-    
+ Violet Sorcerer's Sandals 
+-    
+ Clanking Cord 
+-    
+ Transformative Cocoon 
+## New items  
+-    
+ Blue Firework 
+Other
+-    
+ Green Firework 
+Other
+-    
+ Red Firework 
+Other
+-    
+ Red Streaks Firework 
+Other
+-    
+ Yellow Rose Firework 
+Other
+## Changed weapons and armor  
+-    
+ Acolyte's Chain Helm 
+-    
+ Acolyte's Chain Leggings 
+-    
+ Acolyte's Chain Shirt 
+-    
+ Blindwatcher's Sight 
+-    
+ Crusader's Chain Helm 
+-    
+ Crusader's Chain Leggings 
+-    
+ Crusader's Chain Shirt 
+-    
+ Dull Sawblade 
+-    
+ Encroacher's Claim 
+-    
+ Glowing Copper Boots 
+-    
+ Hermit's Pauldron 
+-    
+ Jereman's Bauble 
+-    
+ Orb of Mystic Insight 
+-    
+ Orb of Souls 
+-    
+ Pathfinder's Clearway 
+-    
+ Polished Driftwood Icon 
+-    
+ Protector's Chain Belt 
+-    
+ Protector's Chain Helm 
+-    
+ Protector's Chain Leggings 
+-    
+ Protector's Chain Shirt 
+-    
+ Rage of the Storm 
+-    
+ Sharpened Cutlery 
+-    
+ Skum's Bucket 
+-    
+ Strange Copper Boots 
+-    
+ Traveler's Shawl 
+-    
+ Violet Sorcerer's Mantle 
+-    
+ Violet Sorcerer's Wraps 
+-    
+ Abandoned Boots 
+-    
+ Abigail's Hope 
+-    
+ Bael'dun Tankard 
+-    
+ Big Bronze Knife 
+-    
+ Blunderflame Bone Bow 
+-    
+ Bristlebark Bow 
+-    
+ Bristlecone Cloak 
+-    
+ Bronze Axe 
+-    
+ Bronze Dory 
+-    
+ Bronze Mace 
+-    
+ Bronze Shortsword 
+-    
+ Bronze Warhammer 
+-    
+ Carved Furbolg Tooth 
+-    
+ Claw of Shalla'kal 
+-    
+ Copper Battle Axe 
+-    
+ Cracked Blacksmith Hammer 
+-    
+ Cremation Longbow 
+-    
+ Crowfeather Tunic 
+-    
+ Crystal Thread Cloak 
+-    
+ Cured Staghide Leggings 
+-    
+ Deadly Blunderbuss 
+-    
+ Deadly Bronze Poniard 
+-    
+ Dusksteel Throwing Knife 
+-    
+ Embossed Leather Boots 
+-    
+ Farmer's Shovel 
+-    
+ Field Agent Beverage 
+-    
+ Fine Leather Boots 
+-    
+ Fingerless Gloves 
+-    
+ Forgotten Trompers 
+-    
+ Furlfeather Ring 
+-    
+ Ghostfang's Steps 
+-    
+ Ghostly Bracers 
+-    
+ Gnarlpine Leggings 
+-    
+ Gray Leather Boots 
+-    
+ Hand-Hewn Buckler 
+-    
+ Heavy Copper Broadsword 
+-    
+ Heavy Copper Maul 
+-    
+ Helm Splitter 
+-    
+ Hillman's Shoulders 
+-    
+ Ice-covered Bracers 
+-    
+ Igleggings 
+-    
+ Iron Star 
+-    
+ Ironforge Breastplate 
+-    
+ Ironforge Chain 
+-    
+ Jagged Knives 
+-    
+ Keen Skinning Knife 
+-    
+ Lichbane 
+-    
+ Lithe Boots 
+-    
+ Lost Veteran's Sabatons 
+-    
+ Murkborn Girdle 
+-    
+ Patterned Bronze Bracers 
+-    
+ Pelt Pants 
+-    
+ Plain Handwraps 
+-    
+ Punchy's Punchers 
+-    
+ Ratty Old Belt 
+-    
+ Replica Crescent Necklace 
+-    
+ Rocket Pilot Gloves 
+-    
+ Rot-Covered Harpoon 
+-    
+ Rough Bronze Bracers 
+-    
+ Rough Bronze Cuirass 
+-    
+ Rough Bronze Leggings 
+-    
+ Royal Frostmane Girdle 
+-    
+ Rusty Propeller Blade 
+-    
+ Satchel of Bronze Bombs 
+-    
+ Satchel of Copper Bombs 
+-    
+ Sawyer Family Seal 
+-    
+ Scoutmaster's Eyepatch 
+-    
+ Shal'ma's Shawl 
+-    
+ Shallow Bindings 
+-    
+ Silver Star 
+-    
+ Silvered Bronze Boots 
+-    
+ Silvered Bronze Leggings 
+-    
+ Silvered Bronze Shoulders 
+-    
+ Snarlsnout Shooter 
+-    
+ Sterling Silver Breastplate 
+-    
+ Sterling Silver Shoulders 
+-    
+ Stormwind Intelligence Seal 
+-    
+ Tattered Sandals 
+-    
+ Thaelemaches' Talisman 
+-    
+ Thick War Axe 
+-    
+ Ukta's Conduit 
+-    
+ Unstable Power Core 
+-    
+ Vicious Throwing Stars 
+-    
+ Walton's Second-Favorite Gun 
+-    
+ War Painted Cuffs 
+-    
+ Wendigo Fur Cloak 
+-    
+ Wildgore Greatsword 
+-    
+ Wisesight Wand 
+-    
+ Wispy Cloak 
+-    
+ Wool-Stitched Waistband 
+-    
+ Wrathroot 
+-    
+ Balanced Throwing Dagger 
+-    
+ Brawler's Boots 
+-    
+ Crude Throwing Axe 
+-    
+ Dark Iron Leather 
+-    
+ Deadly Throwing Axe 
+-    
+ Footpad's Shoes 
+-    
+ Grove Scoundrel's Boots 
+-    
+ Heavy Throwing Dagger 
+-    
+ Keen Machete 
+-    
+ Keen Throwing Knife 
+-    
+ Mantle of the Fire Festival 
+-    
+ Recruit's Boots 
+-    
+ Recruit's Boots 
+-    
+ Rugged Trapper's Boots 
+-    
+ Sentinel's Slasher 
+-    
+ Sharp Throwing Axe 
+-    
+ Small Throwing Knife 
+-    
+ Squire's Boots 
+-    
+ Thendal Novice's Boots 
+-    
+ Thendal Survivalist's Boots 
+-    
+ Thendal Warrior's Boots 
+-    
+ Thug Boots 
+-    
+ Thug Boots 
+-    
+ Trapper's Boots 
+-    
+ Weighted Throwing Axe 
+## Changed consumables and other items  
+-    
+ Manual of Battle Shout VII 
+-    
+ Pattern: Mender's Leather Shoulders 
+-    
+ Pattern: Mender's Mail Shoulders 
+-    
+ Pattern: Prowler's Leather Shoulders 
+-    
+ Pattern: Skirmisher's Mail Shoulders 
+-    
+ Pattern: Skycaller's Leather Shoulders 
+-    
+ Pattern: Skycaller's Mail Shoulders 
+-    
+ Pattern: Stalker's Mail Shoulders 
+-    
+ Pattern: Warden's Leather Shoulders 
+-    
+ Tablet of Grace of Air Totem III 
+-    
+ Tablet of Strength of Earth Totem V 
+-    
+ 9-60 Battery Pack 
+-    
+ Azerothium Bar 
+-    
+ Cerulean Dye 
+-    
+ Heavy Thorium Bar 
+-    
+ Pattern: Blue Suede Shoulders 
+-    
+ Pattern: Charged Scorpid Shoulders 
+-    
+ Pattern: Supple Scorpid Shoulders 
+-    
+ Pattern: Wicked Leather Shoulders 
+-    
+ SAF-T Teleport 
+-    
+ Staff of the Mountain 
+-    
+ Barkskin Purification Tonic 
+-    
+ Blended Bean Brew 
+-    
+ Bubbling Water 
+-    
+ Calcified Smoothie 
+-    
+ Cenarion Moondust 
+-    
+ Compact Critter Carrier 
+-    
+ Concoction of Cleansing 
+-    
+ Conjured Fresh Water 
+-    
+ Conjured Purified Water 
+-    
+ Conjured Spring Water 
+-    
+ Conjured Water 
+-    
+ Corrupted Totems 
+-    
+ Crisp Spring Water 
+-    
+ Enchant Bracer - Lesser Intellect 
+-    
+ Enchant Cloak - Defense 
+-    
+ Enchanted Water 
+-    
+ Faintly Glowing Staff 
+-    
+ Fizzy Faire Drink 
+-    
+ Flare Gun 
+-    
+ Flash Bundle 
+-    
+ Flowery Lashling Bud 
+-    
+ Frosty Lashling Bud 
+-    
+ Goldthorn Tea 
+-    
+ Grant's Shield 
+-    
+ Green Garden Tea 
+-    
+ Green Tea Leaf 
+-    
+ Gustberry Juice 
+-    
+ Ice Cold Milk 
+-    
+ Ira's Dagger 
+-    
+ Libram: Seal of Salvation 
+-    
+ Lily Root 
+-    
+ Lucky Lure 
+-    
+ Mana Well 
+-    
+ Mana-Siphoning Wand 
+-    
+ Melon Juice 
+-    
+ Merrick's Bow 
+-    
+ Metal Bracket 
+-    
+ Mild Spices 
+-    
+ Minor Mana Oil 
+-    
+ Mrrggl Smrrthle 
+-    
+ Mulgore Expansion Plans 
+-    
+ Peace Tea 
+-    
+ Phial of Scrying 
+-    
+ Potion of Predatory Senses 
+-    
+ Recipe: Potion of Beast Slaying 
+-    
+ Recipe: Potion of Predatory Senses 
+-    
+ Recipe: Savory Stag Sliders 
+-    
+ Recipe: Sweetpaw Jam 
+-    
+ Refreshing Spring Water 
+-    
+ Root Tea 
+-    
+ Royal Tea 
+-    
+ Silvia's Sword 
+-    
+ Slimy Pinecone 
+-    
+ Slimy Smoothie 
+-    
+ Small Shot Pouch 
+-    
+ Sweet Nectar 
+-    
+ Swineherd's Staff 
+-    
+ Syndicate Uniform 
+-    
+ Timbermaw War Banner 
+-    
+ Triage Tea 
+-    
+ Tuft of Fox Fur 
+-    
+ Venomous Smoothie 
+-    
+ Viridian Lashling Bud 
+-    
+ Wilted Lashling Bud 
+-    
+ Woolen Reagent Bag 
+- 
+##  October 14, 2026   Build 1.60.1.70374 
+A small client update, followed by nearly two hours of maintenance for internal tests, with no list of changes. The client itself only updates sound and graphics files, the game loader and crash reporting. Talents, spells and items did not change.
+- 
+##  October 10, 2026   Build 1.60.1.70338 
+A small client update, without a restart. It only adds three cosmetic items whose source Blizzard has not given yet: the Tabard of Eternal Exploration, the Eternal Explorer’s Backpack, worn in the cloak slot, and Azurky, a murloc companion. Talents, spells and the other items did not change.
+- 
+##  October 9, 2026   Build 1.60.1.70334 
+Blizzard restarted the realms on the evening of October 9, with only a notice in the game, for about 40 minutes. The client itself only updates crash reporting, the game loader and graphics files. Talents, spells and items did not change. Since then testers report a WowB_loader.dll error, which goes away once the file is renamed and the launcher downloads it again. The bag sort button, gone since October 8, is still missing: typing /click BagItemAutoSortButton in the chat sorts the bags.
+- 
+##  October 8, 2026   Build 1.60.1.70291 
+From  Blizzard’s notes :
+- The  City of Dalaran  dungeon opens. 
+- Monsters in dungeons give about 20% more experience, and each player now earns a kill’s experience by their own level. 
+- Warriors and Druids gain more Rage from taking damage, after several fixes. 
+- Critical strikes against players are no longer reduced. 
+- Every tester gets the Legacy Challenge ( 16 Legacy points ), and the cheapest Legacy reset costs 1 silver. 
+- The first ranks of several caster spells are reworked so each new rank is an upgrade. 
+- You can again swap several weapons within one global cooldown. 
+- A creature that dropped nothing can be interacted with as in Classic. 
+- The Cooldown Manager supports every class.  
+Found in the game:
+- Resurrecting at the Spirit Healer costs 25% durability, was 50%.  
+    Warrior   
+-   Buffs 
+    Demoralizing Shout :  Now also generates threat on every enemy it hits.  
+-   Buffs 
+    Spearing Strike :  Now dismounts mounted targets. Not in Blizzard’s notes, found in the game.   
+-   Buffs 
+    Last Stand :  Gives the right amount of health again.  
+-   Changes 
+    Deep Wounds :  Is again required to reach Impale, and no longer scales with attack power on your off-hand weapon.        Paladin   
+-   Nerfs 
+    Retribution Aura :  Back to its Vanilla damage, about a third less (rank 2: 8, was 12), with 6% of spell power, was 13.3%. It also used the struck ally’s spell power instead of the paladin’s.  
+-   Nerfs 
+    Reckoning :  The extra attacks can now trigger at most once every 1.5 sec.  
+-   Nerfs 
+    Seal of Fury :  No longer gives mana back without the Improved Seal of Fury talent.  
+-   Changes 
+    Improved Seal of Fury :  No longer generates threat when it restores mana, nor does Shield Specialization.        Hunter   
+-   Buffs 
+    Expose Prey :  Mongoose Bite stays usable for 10 sec, was 5.  
+-   Buffs 
+    Disengage :  Now removes twice as much threat, as intended.  
+-   Buffs 
+    Unleashed Fury :  Now really increases your pet’s damage.  
+-   Nerfs 
+    Entrapment :  Now has diminishing returns and only triggers when Frost Trap first goes off.  
+-   Nerfs 
+    Pets :  A bug no longer makes them regain health over and over when their health is low.  
+-   Changes 
+    Improved Concussive Shot :  Now has the right chance to trigger. So does Improved Wing Clip, which triggers less with ranks far below your level.        Priest   
+-   Buffs 
+    Lesser Heal :  Ranks 2 and 3 heal about 15% more (rank 3: 157 to 181, was 138 to 160).  
+-   Nerfs 
+    Penance :  Brought in line with other strong spells with a cooldown: it was treated as a 3 sec channel instead of 2 sec. Rank 1 now deals 45 damage or heals 134 per volley, was 81 or 184, for 150 mana, was 100, with 19% of spell power per volley, was 28.5%. Every rank deals and heals less (rank 4: 92 damage or 425 healing per volley, was 131 or 673), and ranks 2 and 4 also cost more mana.  
+-   Nerfs 
+    Heal :  Heals about 8% less (rank 2: 364 to 415, was 394 to 448).  
+-   Nerfs 
+    Smite :  Hits a little less at ranks 1 to 4 (rank 4: 59 to 68, was 60 to 68).        Shaman   
+-   Buffs 
+    Elemental Focus :  No longer triggered and used up at once by Fire Nova.  
+-   Changes 
+    Lightning Bolt :  Ranks 1 to 3 hit a little less, ranks 4 and 5 hit harder (rank 5: 79 to 90, was 71 to 80).  
+-   Changes 
+    Flametongue Totem :  Uses a shapeshifted target’s attack speed instead of its weapon’s.  
+-   Changes 
+    Mana Tide Totem :  Shows its pulse again.  
+-   Changes 
+    Water Shield :  Its tooltip no longer shows a 15 sec cooldown: it never had one. Its buff now shows the mana it restores.        Mage   
+-   Buffs 
+    Arcane Missiles :  Ranks 2 and 3 hit about 6% harder (rank 3: 49 per second, was 46).  
+-   Nerfs 
+    Impact :  Can no longer trigger from Flamestrike’s damage over time.  
+-   Changes 
+    Fireball :  Ranks 1 to 3 hit a little less, ranks 4 and 5 hit harder (rank 5: 108 to 143, was 98 to 130).  
+-   Changes 
+    Frostbolt :  Ranks 1 to 3 hit a little less, ranks 4 and 5 hit harder (rank 5: 104 to 114, was 97 to 105).        Warlock   
+-   Nerfs 
+    Summoning a demon :  Your current pet is now stunned while you summon a new one.  
+-   Changes 
+    Shadow Bolt :  Ranks 2 and 3 hit a little less, rank 4 a little harder (rank 4: 58 to 66, was 57 to 64).  
+-   Changes 
+    Demonic Brand :  Your pet’s attacks on the branded target generate high threat only when they deal Shadow damage.        Druid   
+-   Buffs 
+    Natural Instinct :  Was Predatory Instincts. Still 20% more critical strike damage for melee abilities, and now also spell healing increased by 25% of your Intellect.  
+-   Buffs 
+    Bear Form :  Generates 50% more threat, was 30%, as does Dire Bear Form. Critical strikes give 100% more Rage, was 75%.  
+-   Buffs 
+    Demoralizing Roar :  Now also generates threat on every enemy it hits.  
+-   Buffs 
+    Cat Form :  No longer lowers your maximum health. You can now drink Mana Potions in Cat, Bear and Dire Bear Form.  
+-   Nerfs 
+    Wrath :  Hits a little less at ranks 1 to 5 (rank 2: 21 to 24, was 25 to 28; rank 5: 46 to 52, was 47 to 53).  
+-   Nerfs 
+    Thorns :  Back to its Vanilla damage (rank 3: 9, was 11), with 6% of spell power, was 13.3%.  
+-   Nerfs 
+    Furor :  The Energy kept for Cat Form is lost in Bear Form and Dire Bear Form, and stops coming back while you are in them. Not in Blizzard’s notes, found in the game.   
+-   Changes 
+    Shifting Power :  Can no longer be used at full Energy. Wolfshead Helm now adds 5 Energy to it, was 20.  
+-   Changes 
+    Thick Hide :  Now works in the game’s code instead of a script, so changing gear while shapeshifted no longer misses it. Its tooltip now shows a much larger number per level: the talent still gives 3 armor per level.        Undead   
+-   Buffs 
+    Will of the Forsaken :  Can be used again while asleep or charmed.    
+## Items and Blizzard’s other words     Items  1 new dungeon set, 16 new items, 331 changed items  
+Truthseeker’s Bow now needs level 40, Booty Bay Bruiser’s Buckshot no longer knocks back, and the dungeon quest rewards that turned green lost about a quarter of their stats.
+## New dungeon set 
+ Violet Sorcerer's Vestments , from  City of Dalaran 
+-    
+ Violet Sorcerer's Mantle 
+Shoulder, Cloth
+-    
+ Violet Sorcerer's Leggings 
+Legs, Cloth
+-    
+ Violet Sorcerer's Sandals 
+Feet, Cloth
+-    
+ Violet Sorcerer's Wraps 
+Hands, Cloth
+-    
+ Violet Sorcerer's Robes 
+Chest, Cloth
+- (2) Set: +5 Arcane Resistance. 
+- (3) Set: +10 Spirit. 
+- (4) Set: Chance on damaging spell to allow 15% of your Mana regeneration to continue while casting for 15 sec. Mana regen amount is doubled in Strongholds and Cities. 
+- (5) Set: Chance on damaging spell to summon an Arcane elemental to aid you in combat.    
+## New items  
+-    
+ Elemental Sharpening Stone 
+Other
+-    
+ Free Action Potion 
+Potions
+-    
+ Greater Healing Potion 
+Potions
+-    
+ Grilled Squid 
+Food & Drink
+-    
+ Lesser Healing Potion 
+Potions
+-    
+ Lesser Mana Potion 
+Potions
+-    
+ Lesser Wizard Oil 
+Enchanting
+-    
+ Minor Healing Potion 
+Potions
+-    
+ Minor Mana Potion 
+Potions
+-    
+ Morning Glory Dew 
+Food & Drink
+-    
+ Roasted Quail 
+Food & Drink
+-    
+ Rough Sharpening Stone 
+Other
+-    
+ Rumsey Rum Dark 
+Food & Drink
+-    
+ Swiftness Potion 
+Potions
+-    
+ Tender Wolf Steak 
+Food & Drink
+-    
+ Woolen Bag 
+## Changed weapons and armor  
+-    
+ Abandoned Ferocity 
+-    
+ Algae Fists 
+-    
+ Armor of the Fang 
+-    
+ Batwing Mantle 
+-    
+ Beguiler Robes 
+-    
+ Bloody Apron 
+-    
+ Bludgeon of Betrayed Virtues 
+-    
+ Crescent Staff 
+-    
+ Cursed Murloc Eye 
+-    
+ Deep Fathom Ring 
+-    
+ Defender of Dalaran 
+-    
+ Defias Renegade Ring 
+-    
+ Enchanted Sandals 
+-    
+ Explorer's League Dustcover 
+-    
+ Fenrus' Hide 
+-    
+ Furs of the Earthen Ring 
+-    
+ Garb of Florid Feathers 
+-    
+ Geomancer Headdress 
+-    
+ Glinteye Slippers 
+-    
+ Glowing Lizardscale Cloak 
+-    
+ Gravestone Scepter 
+-    
+ Greatstaff of the Necrokhans 
+-    
+ Hammerbone 
+-    
+ Headbasher 
+-    
+ Heavehammer 
+-    
+ Magistrate's Pantaloons 
+-    
+ Pronged Reaver 
+-    
+ Rage of the Storm 
+-    
+ Raptor's Gaze 
+-    
+ Reliquary Mantle 
+-    
+ Ring of Power Regulation 
+-    
+ Rot-Covered Harpoon 
+-    
+ Saltscale Girdle 
+-    
+ Scavenged Magram Armament 
+-    
+ Scholarly Robes 
+-    
+ Seal of Wrynn 
+-    
+ Seedcloud Buckler 
+-    
+ Serpent's Shoulders 
+-    
+ Soulsplatter Mace 
+-    
+ Spellguard Pauldrons 
+-    
+ Striking Staff 
+-    
+ Stygian Bone Amulet 
+-    
+ Tail Spike 
+-    
+ Thrice-Damned Effigy 
+-    
+ Vendetta 
+-    
+ Whirlwind Axe 
+-    
+ Whirlwind Sword 
+-    
+ Whirlwind Warhammer 
+-    
+ Whisperwind Headdress 
+-    
+ Wind Spirit Staff 
+-    
+ Ambassador's Boots 
+-    
+ Amulet of Forgiveness 
+-    
+ Amulet of Vengeance 
+-    
+ Arcane Infused Rod 
+-    
+ Band of the Fist 
+-    
+ Beetle Clasps 
+-    
+ Blade of the Magram Clan 
+-    
+ Bloodsnout Striker 
+-    
+ Boar Signet 
+-    
+ Bristle Hills Mystic Robe 
+-    
+ Bristlepelt Vest 
+-    
+ Bronzed Shoulderguards 
+-    
+ Brute Slayer Band 
+-    
+ Centaur Spear 
+-    
+ Charged Leather Bracers 
+-    
+ Chestnut Mantle 
+-    
+ Clobrok's Block Rock 
+-    
+ Construct Cloak 
+-    
+ Cultist's Chestguard 
+-    
+ Curl of Life 
+-    
+ Curly's Chopper 
+-    
+ Daewyn's Girdle 
+-    
+ Dagmire Gauntlets 
+-    
+ Dancing Flame 
+-    
+ Darkshire Mail Leggings 
+-    
+ Desert Crawler's Claw 
+-    
+ Desperate Barrier 
+-    
+ Dirt-Heavy Bracers 
+-    
+ Doomcaller's Pants 
+-    
+ Doomsayer's Robe 
+-    
+ Dreamer's Chestguard 
+-    
+ Duracin Bracers 
+-    
+ Energized Stone Circle 
+-    
+ Everlast Boots 
+-    
+ Excavator Gauntlets 
+-    
+ Fairywing Mantle 
+-    
+ Fallen Guard's Pendant 
+-    
+ Fire-welded Bracers 
+-    
+ Fists of Impending Doom 
+-    
+ Ghostly Mantle 
+-    
+ Gnoll Crusher Leggings 
+-    
+ Gnollblood Robe 
+-    
+ Gnollhide Tunic 
+-    
+ Gravewalker Boots 
+-    
+ Greater Magic Wand 
+-    
+ Grimsteel Cape 
+-    
+ Grizzled Boots 
+-    
+ Hardened Root Staff 
+-    
+ Heartwood Girdle 
+-    
+ High Order Pendant 
+-    
+ Hornbeam Heft 
+-    
+ Hurley's Felling Axe 
+-    
+ Ironwood Destroyer 
+-    
+ Knife-Polishing Rag 
+-    
+ Lancer Boots 
+-    
+ Lesser Magic Wand 
+-    
+ Lesser Mystic Wand 
+-    
+ Lucine Longsword 
+-    
+ Lumber Luggers 
+-    
+ Mantle of Woe 
+-    
+ Mechanic's Pipehammer 
+-    
+ Monkey Ring 
+-    
+ Moonsilver Blade 
+-    
+ Mourning Shawl 
+-    
+ Naga Priestess's Mantle 
+-    
+ Nail Spitter 
+-    
+ Nimbus Boots 
+-    
+ Nogg's Gold Ring 
+-    
+ Operator's Gloves 
+-    
+ Outlaw Sabre 
+-    
+ Prelacy Cape 
+-    
+ Prospector Gloves 
+-    
+ Quagmire Galoshes 
+-    
+ Repairman's Cape 
+-    
+ Restorer's Fine Gloves 
+-    
+ Runebound Gloves 
+-    
+ Sacristan Band 
+-    
+ Satchel of Potions 
+-    
+ Sentinel's Boots 
+-    
+ Serrated Raptor Claw 
+-    
+ Shilly Mitts 
+-    
+ Shoni's Disarming Tool 
+-    
+ Silver Star 
+-    
+ Silvered Gauntlets 
+-    
+ Sizzle Stick 
+-    
+ Skullbreaker 
+-    
+ Slick Deviate Leggings 
+-    
+ Snake Hoop 
+-    
+ Songblade Stabilizer 
+-    
+ Southern Watch Leggings 
+-    
+ Staff of Revelations 
+-    
+ Staghide Armguards 
+-    
+ Steel-clasped Bracers 
+-    
+ Sustaining Ring 
+-    
+ Talbar Mantle 
+-    
+ Talvash's Gold Ring 
+-    
+ Tanned Shoulderpads 
+-    
+ Tattered Mittens 
+-    
+ Technician's Bracers 
+-    
+ Thorn Protecting Girdle 
+-    
+ Tidesoaked Leggings 
+-    
+ Tiger Band 
+-    
+ Town Clerk's Mittens 
+-    
+ Unbalanced Fighting Stick 
+-    
+ Undead Knight's Bracers 
+-    
+ Unstable Power Core 
+-    
+ Ursine Hammer 
+-    
+ Verger Greaves 
+-    
+ Vine Pruner's Cloak 
+-    
+ Violet Sash 
+-    
+ Vorrel's Boots 
+-    
+ Wanderer's Broadsword 
+-    
+ Windstorm Hammer 
+-    
+ Witch's Finger 
+-    
+ Zealot's Robe 
+-    
+ Acolyte's Shoes 
+-    
+ Apprentice's Boots 
+-    
+ Brawler's Boots 
+-    
+ Footpad's Shoes 
+-    
+ Grove Scoundrel's Boots 
+-    
+ Grove Scoundrel's Pants 
+-    
+ Letter Opener 
+-    
+ Neophyte's Boots 
+-    
+ Novice's Practice Wand 
+-    
+ Recruit's Boots 
+-    
+ Recruit's Boots 
+-    
+ Squire's Boots 
+-    
+ Thendal Apprentice's Boots 
+-    
+ Thendal Apprentice's Pants 
+-    
+ Thendal Novice's Boots 
+-    
+ Thendal Novice's Pants 
+-    
+ Thendal Survivalist's Boots 
+-    
+ Thendal Survivalist's Pants 
+-    
+ Thendal Warrior's Boots 
+-    
+ Thendal Warrior's Pants 
+-    
+ Thug Boots 
+-    
+ Trapper's Boots 
+-    
+ Veteran Adventurer's Belt 
+-    
+ Veteran Adventurer's Boots 
+-    
+ Veteran Adventurer's Bracer 
+-    
+ Veteran Adventurer's Chestpiece 
+-    
+ Veteran Adventurer's Cloak 
+-    
+ Veteran Adventurer's Gloves 
+-    
+ Veteran Adventurer's Hood 
+-    
+ Veteran Adventurer's Legguards 
+-    
+ Veteran Adventurer's Rucksack 
+-    
+ Veteran Adventurer's Shoulderpads 
+## Changed consumables and other items  
+-    
+ Formula: Enchant Off Hand - Excellent Spirit 
+-    
+ Formula: Enchant Off Hand - Superior Intellect 
+-    
+ Formula: Enchant Off Hand - Wisdom 
+-    
+ Formula: Totem of Ancestral Protection 
+-    
+ Cerulean Dye 
+-    
+ Formula: Enchant Gloves - Arcane Power 
+-    
+ Formula: Enchant Gloves - Holy Power 
+-    
+ Formula: Enchant Gloves - Natural Power 
+-    
+ Magenta Dye 
+-    
+ Manual: Clever Poultice 
+-    
+ Manual: Potent Anti-Venom 
+-    
+ Manual: Powerful Poultice 
+-    
+ Manual: Superior Poultice 
+-    
+ Sulfuric Acid 
+-    
+ Viridian Dye 
+-    
+ Al'Aketh Cultist's Ear 
+-    
+ Bloody Parchment 
+-    
+ Book Bag 
+-    
+ Book of Soothe Animal 
+-    
+ Book of Soothe Animal II 
+-    
+ Book of Soothe Animal III 
+-    
+ Book of Thorns 
+-    
+ Book of Thorns II 
+-    
+ Book of Thorns III 
+-    
+ Book of Thorns IV 
+-    
+ Book of Thorns V 
+-    
+ Book of Thorns VI 
+-    
+ Book of Wrath 
+-    
+ Book of Wrath II 
+-    
+ Book of Wrath III 
+-    
+ Book of Wrath IV 
+-    
+ Book of Wrath V 
+-    
+ Brimstone 
+-    
+ Canvas Latchbag 
+-    
+ Charged Stone 
+-    
+ Codex of Heal 
+-    
+ Codex of Heal II 
+-    
+ Codex of Holy Smite II 
+-    
+ Codex of Holy Smite III 
+-    
+ Codex of Holy Smite IV 
+-    
+ Codex of Lesser Heal II 
+-    
+ Codex of Lesser Heal III 
+-    
+ Collecting Basket 
+-    
+ Damaged Blue Crystal 
+-    
+ Grimoire of Health Funnel III 
+-    
+ Grimoire of Health Funnel IV 
+-    
+ Grimoire of Life Tap 
+-    
+ Grimoire of Shadow Bolt II 
+-    
+ Grimoire of Shadow Bolt III 
+-    
+ Grimoire of Shadow Bolt IV 
+-    
+ Grimoire of Shadow Bolt V 
+-    
+ Grimoire of Shadow Bolt VI 
+-    
+ Harvester Gyrostabilizer 
+-    
+ Magic Candle 
+-    
+ Minor Wizard Oil 
+-    
+ Parchment of Chaos 
+-    
+ Parchment of Darkness 
+-    
+ Recipe: Peace Tea 
+-    
+ Recipe: Raging Raptor Ribs 
+-    
+ Schematic: EZ-Thro Magnetic Displacer 
+-    
+ Scorched Leather Pouch 
+-    
+ Soft Saber Sack 
+-    
+ Sprouted Frond 
+-    
+ Tablet of Earth Shock V 
+-    
+ Tablet of Fire Nova Totem IV 
+-    
+ Tablet of Fire Resistance Totem 
+-    
+ Tablet of Fire Resistance Totem II 
+-    
+ Tablet of Fire Resistance Totem III 
+-    
+ Tablet of Flame Shock II 
+-    
+ Tablet of Flame Shock III 
+-    
+ Tablet of Flame Shock IV 
+-    
+ Tablet of Flametongue Totem 
+-    
+ Tablet of Flametongue Totem II 
+-    
+ Tablet of Flametongue Weapon III 
+-    
+ Tablet of Flametongue Weapon IV 
+-    
+ Tablet of Frost Shock IV 
+-    
+ Tablet of Grace of Air Totem 
+-    
+ Tablet of Healing Stream Totem IV 
+-    
+ Tablet of Healing Wave IV 
+-    
+ Tablet of Lightning Bolt II 
+-    
+ Tablet of Lightning Bolt III 
+-    
+ Tablet of Lightning Bolt IV 
+-    
+ Tablet of Lightning Bolt V 
+-    
+ Tablet of Lightning Bolt VI 
+-    
+ Tablet of Lightning Bolt VII 
+-    
+ Tablet of Lightning Bolt VIII 
+-    
+ Tablet of Lightning Shock II 
+-    
+ Tablet of Magma Totem 
+-    
+ Tablet of Magma Totem IV 
+-    
+ Tablet of Mana Font Totem 
+-    
+ Tablet of Mana Font Totem II 
+-    
+ Tablet of Rockbiter Weapon 
+-    
+ Tablet of Rockbiter Weapon II 
+-    
+ Tablet of Rockbiter Weapon V 
+-    
+ Tablet of Searing Totem V 
+-    
+ Tablet of Stoneclaw Totem II 
+-    
+ Tablet of Stoneclaw Totem III 
+-    
+ Tablet of Stoneclaw Totem VI 
+-    
+ Tablet of Windfury Weapon 
+-    
+ Taming Rod 
+-    
+ Taming Rod 
+-    
+ Taming Rod 
+-    
+ Taming Rod 
+-    
+ Taming Rod 
+-    
+ Tome of Arcane Missiles II 
+-    
+ Tome of Arcane Missiles III 
+-    
+ Tome of Arcane Missiles IV 
+-    
+ Tome of Arcane Missiles V 
+-    
+ Tome of Arcane Missiles VI 
+-    
+ Tome of Arcane Missiles VII 
+-    
+ Tome of Fireball 
+-    
+ Tome of Fireball II 
+-    
+ Tome of Fireball III 
+-    
+ Tome of Fireball IV 
+-    
+ Tome of Fireball IX 
+-    
+ Tome of Fireball V 
+-    
+ Tome of Fireball VI 
+-    
+ Tome of Fireball VII 
+-    
+ Tome of Fireball VIII 
+-    
+ Tome of Fireball X 
+-    
+ Tome of Fireball XI 
+-    
+ Tome of Frostbolt 
+-    
+ Tome of Frostbolt II 
+-    
+ Tome of Frostbolt III 
+-    
+ Tome of Frostbolt IV 
+-    
+ Tome of Frostbolt IX 
+-    
+ Tome of Frostbolt V 
+-    
+ Tome of Frostbolt VI 
+-    
+ Tome of Frostbolt VII 
+-    
+ Tome of Frostbolt VIII 
+-    
+ Tome of Frostbolt X 
+-    
+ Tome of Sleep II 
+-    
+ Tome of Sleep III 
+-    
+ Tome of Sleep IV 
+     What Blizzard said too  3 known issues, 3 from the developers  
+## Known issues  
+- 
+Skyborne druids’ Cat Form, some creatures on Zephras Isle and some mounts and pets still wait for their new textures.   forum 
+- 
+Hunters with the Ferocity talent do not see their pet’s critical strike chance rise on the character sheet. Only the display is wrong.   forum 
+- 
+Some icons in the Professions window look broken.   forum 
+## From the developers  
+- 
+Blizzard had balanced Rage for 50% armor, right for a tank but not for a warrior out questing. It is now balanced for 20 to 40% armor depending on level.   forum 
+- 
+A druid’s form must stay visible in combat: only effects with another use, such as Noggenfogger Elixir’s underwater breathing, still change it.   forum 
+- 
+As before, no one in a group earns experience when a member is far above the enemy’s level.   forum 
+- 
+##  October 6, 2026   Build 1.60.1.70245 
+Blizzard restarted the realms for “priority fixes”: quest items that should be restocked in a chest but had gone missing, a bug that could sometimes disconnect you on an elevator or a transport, and an error when joining or leaving a guild. The client itself only updates crash reporting and the game loader. Talents, spells and items did not change.
+- 
+##  October 5, 2026   Build 1.60.1.70235 
+Blizzard restarted the realms “to apply some fixes”, without saying which. Players report that the Auction House of the PvP 2 realm, closed since October 4, works again, and that the friends list has a new look, with new tabs. The client itself only updates crash reporting and the game loader. Talents, spells and items did not change.
+- 
+##  October 3, 2026   Build 1.60.1.70205 
+A small fix: a talent’s tooltip now shows in full the first time you point at it, and whispering a player whose name has accented or non-Latin letters works better. The rest is crash reporting, the game loader and graphics files. Talents, spells and items did not change.
+- 
+##  October 1, 2026   Build 1.60.1.70170 
+The level cap rises to 30. The Excavation Site opens in the Wetlands (levels 26 to 31), and Razorfen Downs (25+) and Uldaman (30+) join the dungeons already open.  Blizzard’s notes  also announce: half the bonus experience from dungeon quests, PvP gear costing about 50% more Honor, with the cap raised to 25,000, 100% more Rage from a warrior’s critical strikes (75% for bears), Aggressive mode back for hunter and warlock pets, and barbershops in Darnassus and Thunder Bluff. Last, a BoE item whose appearance you have not collected can no longer go to your other characters once sold to a vendor.
+ Completed on October 2:   Blizzard added a second warrior pass to its notes, in the Warrior list below: the Fury and Protection trees are rearranged, and Rage from critical strikes goes from 75 to 100%.   forum 
+    Warrior   
+-   Buffs 
+    Rend :  Now tags the enemy for you at once, as does Sunder Armor.  
+-   Buffs 
+    Booming Voice :  Now widens every shout, and also cuts their Rage cost by 5 to 25%.  
+-   Buffs 
+    Bloodthirst :  Deals 45% of your attack power instead of 35%. Not in Blizzard’s notes, found in the game: it no longer needs Death Wish.   
+-   Buffs 
+    Whirlwind :  Now strikes with both weapons, without Raging Blows.  
+-   Buffs 
+    Raging Blows :  Cuts the Rage cost of Whirlwind as well as Cleave, by 3 instead of 2. Whirlwind now strikes with both weapons without it.  
+-   Buffs 
+    Improved Slam :  Takes 3 sec off Slam’s cooldown per rank instead of 1.5. Not in Blizzard’s notes, found in the game.   
+-   Buffs 
+    Berserker Rage :  Trained at 30 instead of 32, so you can learn it at the level cap.  
+-   Nerfs 
+    Heroic Strike :  Queuing it no longer raises your off-hand hit chance.  
+-   Nerfs 
+    Dual Wield Specialization :  No longer gives hit chance: Furious Precision does now, for your off-hand only. Your off-hand attacks generate 10 to 50% more Rage, instead of 20 to 100%. Not in Blizzard’s notes, found in the game: the 10 to 50% more Rage, which Aidan Moon confirmed on X.   
+-   Nerfs 
+    Blood Craze :  Bloodthirst no longer triggers it.  
+-   Changes 
+    Unbridled Wrath :  Now triggers as often as intended, but no longer gives 2 Rage with a two-handed weapon: 1 Rage whatever you wield.  
+-   Changes 
+    Spearing Strike :  No longer needs a two-handed weapon, but needs Battle Stance. Not in Blizzard’s notes, found in the game: its tooltip no longer says it dismounts mounted targets.   
+-   Changes 
+    Lingering Rage  new talent :  New talent in row 2, in Iron Will’s place: your Rage starts to fade 2 to 10 sec later after a fight. Not yet translated in the game.  
+-   Changes 
+    Furious Precision  new talent :  New talent in row 3, in Boundless Rage’s place: 4, 7 or 10% more chance to hit with your off-hand. Not yet translated in the game.  
+-   Changes 
+    Gore Drinker  new talent :  New talent in row 6, under Enrage: after Enrage, Berserker Rage, Bloodrage, Death Wish or Bloodthirst, your next 3 melee attacks each heal you for 0.5 or 1% of your maximum health. Not yet translated in the game.  
+-   Changes 
+    Improved Cleave  removed :  Removed from the Fury tree: Raging Blows cuts Cleave’s cost instead.  
+-   Changes 
+    Boundless Rage  removed :  Removed from the Fury tree.  
+-   Changes 
+    Precision  removed :  Removed from the Fury tree: Furious Precision gives hit chance to your off-hand only. Not in Blizzard’s notes, found in the game.   
+-   Changes 
+    Toughness  removed :  Removed from the Protection tree.  
+-   Changes 
+    Iron Will  moved :  Moves from Fury row 2 to Protection row 1.  
+-   Changes 
+    Flurry  moved :  Now needs Death Wish instead of Enrage, and sits under it.  
+-   Changes 
+    Improved Berserker Rage  moved :  Moves up from row 6 to row 5.  
+-   Changes 
+    Bastion  moved :  Moves down to row 6, and Focused Rage up to row 5: the swap Blizzard announced on September 24.  
+-   Changes 
+    Improved Bloodrage  moved :  Moves up to row 1, and Anticipation down to row 2.  
+-   Changes 
+    Last Stand  moved :  No longer needs Improved Bloodrage. Not in Blizzard’s notes, found in the game.   
+-   Changes 
+    Improved Revenge  moved :  Moves up from row 3 to row 2.  
+-   Changes 
+    Improved Disarm  moved :  Moves up from row 4 to row 3.  
+-   Changes 
+    Improved Shield Bash  moved :  Moves up from row 5 to row 4.  
+-   Changes 
+    Bloodrage :  Its tooltip no longer says you stay in combat while it lasts. Not in Blizzard’s notes, found in the game.         Paladin   
+-   Buffs 
+    Holy Shield :  30% block chance instead of 20%.  
+-   Nerfs 
+    Redoubt :  4 to 20% block chance instead of 6 to 30%.  
+-   Nerfs 
+    Champion of the Light :  20, 40 or 60% of your Intellect as spell damage instead of 33, 66 or 100%. It never raised healing: that tooltip line is gone.        Hunter   
+-   Buffs 
+    Sniper Shot :  45 yd range, and your next 3 shots within 10 sec reach 10 yd farther.  
+-   Nerfs 
+    Deflection :  1 to 5% more parry chance instead of 2 to 10%.  
+-   Changes 
+    Trueshot Aura :  Its tooltip no longer gives a duration of 30 min. Not in Blizzard’s notes, found in the game.         Rogue   
+-   Buffs 
+    Expose Armor :  A miss no longer costs you all your combo points.  
+-   Nerfs 
+    Setup :  Only adds combo points to your current target when that is the enemy whose attack you dodged or whose spell you resisted.        Priest   
+-   Buffs 
+    Devouring Plague :  Can now land critical hits.  
+-   Buffs 
+    Shadow Weaving :  Can no longer fail to apply.  
+-   Nerfs 
+    Shadow Word: Death :  No longer always gets the bonus of Early Demise: only when the target’s health is low enough.  
+-   Nerfs 
+    Inner Focus :  Its critical strike bonus no longer applies to periodic effects.        Shaman   
+-   Buffs 
+    Disease Cleansing Totem :  Lasts 5 minutes, as it should.  
+-   Buffs 
+    Totemic Recall :  Gives mana back again.        Mage   
+-   Buffs 
+    Improved Scorch :  Its Fire Vulnerability no longer rolls a second time to be resisted.  
+-   Buffs 
+    Winter's Chill :  Can no longer be resisted when it applies: the spell that triggers it has already hit.  
+-   Nerfs 
+    Comprehend Scroll :  Every scroll it reads had another balance pass, and none can be cast while moving any more.  
+-   Nerfs 
+    Combustion :  3 charges again instead of 4.  
+-   Changes 
+    Heating Up :  The new name of Hot Streak: it no longer needs a streak. Not yet translated in the game.        Warlock   
+-   Buffs 
+    Hellfire :  Can now land critical hits.  
+-   Buffs 
+    Soul Harvest :  The new name of Soul Harvesting. It now really gives its 50 or 100% more mana regeneration. Not yet translated in the game.  
+-   Nerfs 
+    Drain Soul :  Now stops when you start casting another spell.        Druid   
+-   Buffs 
+    Bear Form :  75% more Rage from your critical strikes, in Dire Bear Form too.  
+-   Buffs 
+    Swipe :  Now gains 3% of your attack power, as it was meant to. The tooltip does not say so yet.  
+-   Buffs 
+    Cat Form :  Your forms are now immune to Disarm. Disarmed before you shift, you stay disarmed and deal less damage until it ends.  
+-   Buffs 
+    Faerie Fire :  No longer resets your swing timer.  
+-   Buffs 
+    Primal Bite :  About twice the threat, and trainers now teach ranks 2 to 4, at levels 36, 48 and 60. Not yet translated in the game. Not in Blizzard’s notes, found in the game: trainers teaching ranks 2 to 4.   
+-   Changes 
+    Shifting Power  new talent :  New talent in row 4, after Shredding Attacks. Cat Form only, 16 sec cooldown: turns 55% of your base mana into 40 Energy, for the same mana as Cat Form. Not yet translated in the game.  
+-   Changes 
+    Improved Shifting Power  new talent :  New talent in row 5, after Shifting Power: 4 or 8 sec off its cooldown. Not yet translated in the game.  
+-   Changes 
+    Tiger's Fury  removed :  Removed from the game.  
+-   Changes 
+    King of the Jungle  removed :  Removed from the talent tree.  
+-   Changes 
+    Shredding Attacks  moved :  Moves up to row 3, with Shifting Power under it in row 4. Not in Blizzard’s notes, found in the game.   
+-   Changes 
+    Predatory Instincts  moved :  Moves to the right end of row 5: Improved Shifting Power takes its place. Not in Blizzard’s notes, found in the game.         Undead   
+-   Nerfs 
+    Cannibalize :  Cannot be used while you are immune to Physical damage.        Gnome   
+-   Nerfs 
+    Eureka! :  No longer helps periodic effects at all. Channeled spells do not count as periodic.    
+## Items and Blizzard’s other words     Items  2 new items, 338 changed items  
+Blizzard’s notes name only the enchanters’ wands, now sold for 1 copper. The rest was found in the game: 30 items go from blue to green, among them the library rewards, 39 change sell price, and most of the others change stats.
+## New items  
+-    
+ Tender Strider Meat 
+Quest
+-    
+ Truskis' Cheesecake Slice 
+Food & Drink
+## Changed weapons and armor  
+-    
+ Abomination Bones 
+-    
+ Aetherwisp Bracers 
+-    
+ Agamaggan's Clutch 
+-    
+ Antique Bulwark 
+-    
+ Artifact Seeker's Pendant 
+-    
+ Atrophic Girdle 
+-    
+ Axe of Orgrimmar 
+-    
+ Baron's Scepter 
+-    
+ Bloodied Chestwraps 
+-    
+ Bonerust Leggings 
+-    
+ Cavedweller Bracers 
+-    
+ Chanting Blade 
+-    
+ Chasm Walkers 
+-    
+ Coldflame Saber 
+-    
+ Coldspire Staff 
+-    
+ Cookie's Stirring Rod 
+-    
+ Cookie's Tenderizer 
+-    
+ Corpse Chopper 
+-    
+ Crystalline Cuffs 
+-    
+ Dull Sawblade 
+-    
+ Durgen's Crescent Axe 
+-    
+ Emberstone Staff 
+-    
+ Ephemeral Choker 
+-    
+ Field Researcher's Loop 
+-    
+ First Mate Band 
+-    
+ Flamefist Grips 
+-    
+ Forsaken Greataxe 
+-    
+ Gnarled Necromancer's Staff 
+-    
+ Gold-plated Buckler 
+-    
+ Golemguard Chest 
+-    
+ Golemheart Stave 
+-    
+ Grip of Fear 
+-    
+ Hammer of Orgrimmar 
+-    
+ Ironforge Greathammer 
+-    
+ Kindlegem Girdle 
+-    
+ Kris of Orgrimmar 
+-    
+ Leftover Abomination Skin 
+-    
+ Mark of the Pack Leader 
+-    
+ Martyr's Chain 
+-    
+ Meathook Slicer 
+-    
+ Mirror of Rath'mael 
+-    
+ Museum Keeper's Chain 
+-    
+ Nightskulker Ring 
+-    
+ Philanthropist's Ring 
+-    
+ Rage of the Storm 
+-    
+ Raptor Hide Cloak 
+-    
+ Robe of Evocation 
+-    
+ Robes of the Disgraced Thane 
+-    
+ Rockslicer 
+-    
+ Roogug's Severed Head 
+-    
+ Rot-Covered Harpoon 
+-    
+ Rotmender's Garb 
+-    
+ Rotmender's Gloves 
+-    
+ Rotmender's Leggings 
+-    
+ Rotmender's Sash 
+-    
+ Rotmender's Treads 
+-    
+ Scepter of the Abandoned 
+-    
+ Searing Dagger 
+-    
+ Segmented Spider Leg 
+-    
+ Signet of the Zhevra 
+-    
+ Silverlaine's Family Seal 
+-    
+ Smite's Reaver 
+-    
+ Spiked Shell Band 
+-    
+ Spiritwraith Drape 
+-    
+ Sporid Cape 
+-    
+ Staff of Orgrimmar 
+-    
+ Staff of Westfall 
+-    
+ Strike of the Hydra 
+-    
+ Treads of the Protector Golem 
+-    
+ Truthseeker's Bow 
+-    
+ Tuskwrap Belt 
+-    
+ Verigan's Fist 
+-    
+ Vileblood Scimitar 
+-    
+ Whipfang's Skinsearer 
+-    
+ Witherbite Bracers 
+-    
+ Blight Gloves 
+-    
+ Bramblebark Barrier 
+-    
+ Bravo's Armbands 
+-    
+ Bristlecone Cloak 
+-    
+ Catacomb Cloak 
+-    
+ Cryptwalker Bracers 
+-    
+ Deepdive Helmet 
+-    
+ Deepgrave Trousers 
+-    
+ Depleted Eye of Influence 
+-    
+ Dreamer's Leggings 
+-    
+ Dredgemire Leggings 
+-    
+ Dusty Belt 
+-    
+ Duty Bound Leggings 
+-    
+ Dwarven Tome 
+-    
+ Edward's Knife 
+-    
+ Erudite's Amulet 
+-    
+ Featherbead Bracers 
+-    
+ Gargoyle Leggings 
+-    
+ Garrison Cuffs 
+-    
+ Ghastly Trousers 
+-    
+ Ghoulfang 
+-    
+ Grave Shroud 
+-    
+ Greater Magic Wand 
+-    
+ Idol of Shifting Tides 
+-    
+ Lesser Magic Wand 
+-    
+ Lesser Mystic Wand 
+-    
+ Monstrous Cleaver 
+-    
+ Plaguefang 
+-    
+ Polar Gauntlets 
+-    
+ Reforged Spear 
+-    
+ Remembrance Armor 
+-    
+ Sable Wand 
+-    
+ Savannah Bracers 
+-    
+ Scholarly Pendant 
+-    
+ Slain Baron's Signet 
+-    
+ Small Green Dagger 
+-    
+ Spare Part Bindings 
+-    
+ Tabitha's Cuffs 
+-    
+ Tarnished Locket 
+-    
+ Thaelemaches' Talisman 
+-    
+ The Stitcher 
+-    
+ Tomb Robber's Gloves 
+-    
+ Totem of Charged Flames 
+-    
+ EZ-Thro Bronze Mortar 
+## Changed consumables and other items  
+-    
+ Dark Skeletal Horse 
+-    
+ Gift of Galloping 
+-    
+ Green Skeletal Horse 
+-    
+ Pachimari 
+-    
+ Dathrohan's Correspondence 
+-    
+ Formula: Libram of Invocation 
+-    
+ Formula: Tenets of the Silver Hand 
+-    
+ Formula: Totem of Ancestral Protection 
+-    
+ Minfernal 
+-    
+ Wild Leather Armor Kit 
+-    
+ Blueprint: Iron Oven 
+-    
+ Ceremonial Mastic 
+-    
+ Forceful Heavy Armor Kit 
+-    
+ Forceful Medium Armor Kit 
+-    
+ Forceful Rugged Armor Kit 
+-    
+ Forceful Thick Armor Kit 
+-    
+ Formula: Enchant Bracer - Superior Deflection 
+-    
+ Formula: Enchant Gloves - Natural Power 
+-    
+ Formula: Enchant Weapon - Revelation 
+-    
+ Mystic Heavy Armor Kit 
+-    
+ Mystic Medium Armor Kit 
+-    
+ Mystic Rugged Armor Kit 
+-    
+ Mystic Thick Armor Kit 
+-    
+ Plans: Rough Copper Chain Boots 
+-    
+ Recipe: Transmute Earth to Water 
+-    
+ Scroll of Imbue Accuracy 
+-    
+ Scroll of Imbue Baleflame 
+-    
+ Scroll of Imbue Balefrost 
+-    
+ Scroll of Imbue Manablade 
+-    
+ Scroll of Imbue Precision 
+-    
+ Scroll of Imbue Spark 
+-    
+ Tenn's Road-Worn Flute 
+-    
+ Abominable Head 
+-    
+ Al'Alketh Cultist's Ear 
+-    
+ Alchemy Ward - Fel Ash Experimentation Notes 
+-    
+ Ashen Infused Crystal 
+-    
+ Baked Salmon 
+-    
+ Barbecued Buzzard Wing 
+-    
+ Bat Hachee 
+-    
+ Bear Brisket 
+-    
+ Bear Bruscitti 
+-    
+ Beer Basted Boar Ribs 
+-    
+ Big Bear Steak 
+-    
+ Blackrock Supplies 
+-    
+ Blood Sausage 
+-    
+ Bloodied Insignia 
+-    
+ Bloodkelp Elixir of Dodging 
+-    
+ Bloodkelp Elixir of Resistance 
+-    
+ Bloody Heirloom 
+-    
+ Bloody Parchment 
+-    
+ Breakfast Omelette 
+-    
+ Brilliant Smallfish 
+-    
+ Briny Seafood Stew 
+-    
+ Bristle Whisker Catfish 
+-    
+ Calcified Smoothie 
+-    
+ Camp Chair 
+-    
+ Carrion Surprise 
+-    
+ Charged Crystal 
+-    
+ Chef's Knife 
+-    
+ Clever Poultice 
+-    
+ Cooked Crab Claw 
+-    
+ Cooked Glossy Mightfish 
+-    
+ Corrupted Grovewalker Sap 
+-    
+ Coyote Steak 
+-    
+ Crab Cake 
+-    
+ Crate of Exotic Parts 
+-    
+ Crate of Radioactive Refuse 
+-    
+ Crispy Bat Wing 
+-    
+ Crispy Lizard Tail 
+-    
+ Crocolisk Gumbo 
+-    
+ Crocolisk Steak 
+-    
+ Curiously Tasty Omelet 
+-    
+ Discolored Healing Potion 
+-    
+ Disease Ward - Fel Ash Experimentation Notes 
+-    
+ Drained Crystal Fragment 
+-    
+ Draught of Predatory Senses 
+-    
+ Dry Pork Ribs 
+-    
+ Elixir of Cunning 
+-    
+ Elixir of the Phalanx 
+-    
+ Enchant Gloves - Natural Power 
+-    
+ Enchant Weapon - Revelation 
+-    
+ Enchanted Lute 
+-    
+ Expiring Crab Cake 
+-    
+ Expiring Crocolisk Steak 
+-    
+ Explorers' League Cartographer's Kit 
+-    
+ EZ-Thro Copper Bomb XL 
+-    
+ EZ-Thro Dark Bomb 
+-    
+ EZ-Thro Grenade 
+-    
+ EZ-Thro Mana Bomb 
+-    
+ EZ-Thro Thorium Grenade 
+-    
+ Faction Banner 
+-    
+ Faction Banner 
+-    
+ Fel Ash Experimentation Notes 
+-    
+ Fel Ash Sample 
+-    
+ Filet of Redgill 
+-    
+ Fillet of Frenzy 
+-    
+ First Aid Kit 
+-    
+ Fish Bowl 
+-    
+ Fishing Hut 
+-    
+ Fishing Rack 
+-    
+ Flank au Poivre 
+-    
+ Giant Clam Scorcho 
+-    
+ Giant Scrambled Eggs 
+-    
+ Goldthorn Tea 
+-    
+ Gooey Spider Cake 
+-    
+ Goretusk Liver Pie 
+-    
+ Greater Discolored Healing Potion 
+-    
+ Greater Mageblood Elixir 
+-    
+ Grilled Squid 
+-    
+ Heavy Crocolisk Stew 
+-    
+ Heavy Kodo Stew 
+-    
+ Herb Baked Egg 
+-    
+ Holy Hand Grenade of Alterac 
+-    
+ Hot Lion Chops 
+-    
+ Hot Smoked Bass 
+-    
+ Hot Wolf Ribs 
+-    
+ Incense Candle 
+-    
+ Jungle Stew 
+-    
+ Kaldorei Spider Kabob 
+-    
+ Lean Venison 
+-    
+ Lean Wolf Steak 
+-    
+ Leather Tourniquet 
+-    
+ Leather-bound Flask 
+-    
+ Lesser Discolored Healing Potion 
+-    
+ Lesser Mageblood Elixir 
+-    
+ Lightning in a Bottle 
+-    
+ Lobster Stew 
+-    
+ Loch Frenzy Delight 
+-    
+ Lodestone 
+-    
+ Longjaw Mud Snapper 
+-    
+ Loose Clearcutter Blade 
+-    
+ Mana Well 
+-    
+ Mightfish Steak 
+-    
+ Miniature Morphologic Mimic Encabulator 
+-    
+ Minor Discolored Healing Potion 
+-    
+ Minor Mageblood Elixir 
+-    
+ Mithril Head Trout 
+-    
+ Moist Crystal 
+-    
+ Mrrggl Smrrthle 
+-    
+ Murloc Fin Soup 
+-    
+ Mystery Stew 
+-    
+ Nightfin Soup 
+-    
+ Peace Tea 
+-    
+ Pincer Bites 
+-    
+ Plague Doctor's Laboratory 
+-    
+ Plain Ol' Paletusk 
+-    
+ Plated Armorfish 
+-    
+ Poached Sunscale Salmon 
+-    
+ Powerful Poultice 
+-    
+ Prehistoric Pulled Raptor 
+-    
+ Raging Raptor Ribs 
+-    
+ Rainbow Fin Albacore 
+-    
+ Raptor Rouladen 
+-    
+ Redridge Goulash 
+-    
+ Roast Raptor 
+-    
+ Roasted Boar Meat 
+-    
+ Roasted Kodo Meat 
+-    
+ Rockscale Cod 
+-    
+ Root Tea 
+-    
+ Royal Tea 
+-    
+ Runn Tum Tuber Surprise 
+-    
+ SAF-T Bomb 
+-    
+ SAF-T Bronze Bomb 
+-    
+ SAF-T Clever Dynamite 
+-    
+ SAF-T Copper Bomb 
+-    
+ SAF-T Dynamite 
+-    
+ SAF-T Jumbo Dynamite 
+-    
+ Sage's Tea 
+-    
+ Sagefish Delight 
+-    
+ Savory Stag Sliders 
+-    
+ Savory Turtle Stew 
+-    
+ Schematic: EZ-Thro Tru-Trigger 
+-    
+ Scribbled Directions to Sulfur Vents 
+-    
+ Scroll of Confuse Beast 
+-    
+ Scroll of Greater Cryoblast 
+-    
+ Scroll of Rebuke Elemental 
+-    
+ Seasoned Wolf Kabob 
+-    
+ Sharpening Wheel 
+-    
+ Simple Poultice 
+-    
+ Skywall Souffle 
+-    
+ Slime Ward - Fel Ash Experimentation Notes 
+-    
+ Slimy Pinecone 
+-    
+ Slimy Smoothie 
+-    
+ Slitherskin Mackerel 
+-    
+ Smoked Bear Meat 
+-    
+ Smoked Desert Dumplings 
+-    
+ Smoked Sagefish 
+-    
+ Snowy Wolf Pup 
+-    
+ Soaring Pamplona 
+-    
+ Soothing Turtle Bisque 
+-    
+ Spiced Chili Crab 
+-    
+ Spiced Wolf Meat 
+-    
+ Spicy Smoothie 
+-    
+ Spider Sausage 
+-    
+ Spinefin Halibut 
+-    
+ Spotted Yellowtail 
+-    
+ Steaming Stag Steak 
+-    
+ Strider Stew 
+-    
+ Succulent Pork Ribs 
+-    
+ Sunny Tea 
+-    
+ Superior Discolored Healing Potion 
+-    
+ Superior Poultice 
+-    
+ Surgical Tourniquet 
+-    
+ Sweetpaw Jam 
+-    
+ Swiftstrike Steak 
+-    
+ Taming Rod 
+-    
+ Tasty Lion Steak 
+-    
+ Tasty Raptor Bites 
+-    
+ Tender Wolf Steak 
+-    
+ Toxin Study 
+-    
+ Triage Tea 
+-    
+ Tru-Trigger Frag Bomb 
+-    
+ Tuft of Fox Fur 
+-    
+ Twice-Spiced Raptor Slice 
+-    
+ Venomous Smoothie 
+-    
+ Vessel Ward - Fel Ash Experimentation Notes 
+-    
+ Westfall Stew 
+-    
+ Wicked Smoothie 
+-    
+ Woolen Tourniquet 
+     What Blizzard said too  5 known issues, 2 announcements, 2 from the developers  
+## Known issues  
+- 
+Eureka! does not yet work on every damaging or healing spell of some classes. Blizzard says it is fixed in a later build.   forum 
+- 
+Enemies can parry and block your attacks from behind when you stand very close to them. Until the fix, keep a little distance.   forum 
+- 
+Retribution Aura uses the target’s spell power instead of the paladin’s.   forum 
+- 
+Some debuffs, such as Faerie Fire and Demoralizing Shout, cause no threat.   forum 
+- 
+Dual Wield Specialization gave its hit chance to both hands. Fixed the same night by the second warrior pass.   forum 
+## Announcements  
+- 
+In a later week of the beta, every tester gets 16 Legacy points, kept until the end of the beta, to try the system without levelling several classes or clearing dungeons.   forum 
+- 
+Blizzard keeps closing the accounts that bot for gold or buy it, and the game will soon warn you when you trade with a stranger.   forum 
+## From the developers  
+- 
+Aidan Moon explained on X that a bug in the warrior’s Rage had skewed their tests, and gave the new numbers: 100% more Rage on critical strikes, 50% more off-hand Rage from Dual Wield Specialization.   X 
+- 
+A spell cast at a rank far below your level gets less from your spell damage and healing, and triggers class talents less often: a rank 1 Frostbolt at level 60 never triggers Frostbite. The character sheet now says so.   forum 
+- 
+##  September 30, 2026   Build 1.60.1.70124 
+A small fix: crash reporting, the game loader and one new item icon. Talents, spells and items did not change.
+- 
+##  September 29, 2026   Build 1.60.1.70058 
+Fixes for playing with a gamepad: the world map (the cursor, its coordinates and the zone names under it), the action bars, tooltips and the pages of books and letters. Talents, spells and items did not change.
+- 
+##  September 24, 2026   Build 1.60.1.70009 
+The first balance changes of the beta, put online during the September 24 maintenance, with the Cooldown Manager, a Statistics tab, Discord voice chat and new gamepad options. Also in  Blizzard’s notes : wands no longer gain spell power, Wizard Oils go back to their Classic values, the hunter pets’ Furious Howl gives 40% less attack power, and a respec costs 1 silver for now.
+    Warrior   
+-   Buffs 
+    Improved Slam :  Also cuts Slam’s cooldown by 1.5 sec per rank, and Slam no longer delays your swing.  
+-   Buffs 
+    Bloodthrill :  Twice the chance to allow Overpower (up to 20%), from main-hand attacks only.  
+-   Buffs 
+    Sunder Armor :  More threat at every rank, and a little more from attack power.  
+-   Nerfs 
+    Slam :  Cooldown 18 sec instead of 15.  
+-   Changes 
+    Bastion :  Blizzard swaps it with Focused Rage (rows 5 and 6).        Paladin   
+-   Buffs 
+    Holy Strike :  Cooldown 10 sec instead of 12, and more damage at most ranks.  
+-   Buffs 
+    Sacred Arbiter :  Holy Strike deals 20% more damage instead of 10%.  
+-   Buffs 
+    Holy Power :  Its critical strike bonus for Holy Shock now covers Holy Strike too.  
+-   Buffs 
+    Twist of Light :  Also lowers the mana cost of your Seals by 20%.  
+-   Buffs 
+    Retribution Aura :  Now grows with your spell power.  
+-   Nerfs 
+    Righteous Fury :  Raises the threat of your Holy attacks by 60% instead of 90%.  
+-   Nerfs 
+    Two-Handed Weapon Specialization :  2% more damage per rank instead of 3%.  
+-   Nerfs 
+    Vengeance :  Stacks up to 3 times instead of 5, and damage over time no longer triggers it.  
+-   Changes 
+    Crusade :  Gone from the Retribution tree in the game client. Blizzard’s notes do not mention it.  
+-   Changes 
+    Consecration :  Several fixes: it now reaches every target, and no longer pulls enemies above or below you.  
+-   Changes 
+    Improved Holy Strike  removed :  Removed from the Holy tree: Holy Strike’s cooldown drops to 10 sec for every Paladin.        Hunter   
+-   Buffs 
+    Strider Kick :  Also raises your movement speed by 30% for 3 sec.  
+-   Buffs 
+    Lacerating Strikes :  Can now land critical hits.  
+-   Nerfs 
+    Tame Beast :  No longer works on beasts above your level.        Priest   
+-   Buffs 
+    Renew :  Can now land critical hits.  
+-   Changes 
+    Power Word: Shield :  Can now replace a shield already on a target without Weakened Soul.        Shaman   
+-   Buffs 
+    Lava Burst :  More damage at both ranks.  
+-   Buffs 
+    Lightning Bolt :  Ranks 3 and 4 deal more damage.  
+-   Buffs 
+    Riptide :  Can now land critical hits.  
+-   Nerfs 
+    Rage of the Farseer :  No longer speeds up your spellcasting.  
+-   Nerfs 
+    Flametongue Totem :  No longer stacks with itself, with Flametongue Weapon or with Windfury Totem.  
+-   Nerfs 
+    Windfury Totem :  No longer stacks with Grace of Air Totem or the other air totems, even from different Shamans.  
+-   Changes 
+    Call of Thunder :  Now needs Elemental Alacrity instead of Elemental Fury.  
+-   Changes 
+    Elemental Alacrity  moved :  Moves up to tier 3 and no longer needs Call of Thunder.  
+-   Changes 
+    Elemental Fury  moved :  Moves down to tier 6 and now needs Call of Thunder.        Mage   
+-   Buffs 
+    Hot Streak :  Lasts 20 sec instead of 15.  
+-   Buffs 
+    Wake of Fire :  The bonus to your next Fire Blast lasts 30 sec instead of 20.  
+-   Buffs 
+    Arcane Missiles :  Line of sight is checked once, when the channel starts: a target that moves out of sight keeps taking the missiles.  
+-   Nerfs 
+    Ignite :  No longer counts damage bonuses twice.        Druid   
+-   Buffs 
+    Wrath :  About 50% more damage at every rank.  
+-   Buffs 
+    Rejuvenation :  Can now land critical hits, as can Tranquility and Wild Growth.  
+-   Buffs 
+    Thorns :  Now grows with your spell power.  
+-   Changes 
+    Primal Bite :  The new name of Mangle, which loses its debuff. Not yet translated in the game.  
+-   Changes 
+    Blood Frenzy :  The new name of Primal Fury, same effect. Not yet translated in the game.        Night Elf   
+-   Buffs 
+    Starshards :  Twilight Focus now protects it from spell pushback, as it should.        Undead   
+-   Changes 
+    Touch of the Grave :  No longer breaks crowd control, and only triggers from spells and abilities that deal damage: Shadow Word: Pain on its cast but not its ticks, never Distract or Pick Pocket.  
+-   Changes 
+    Dark Sacrifice :  No longer breaks crowd control that breaks on damage. Its tooltip now says the mana grows with Spirit, which it already did.        Tauren   
+-   Nerfs 
+    Cultivation :  Now asks for a player level: the herb’s Herbalism skill divided by 5, and level 60 for herbs above 300 skill.        Gnome   
+-   Buffs 
+    Contingency Plan :  Can now land critical hits.  
+-   Nerfs 
+    Eureka! :  Your next 3 abilities now cost 10% less for every class. It used to be 50% for Mages and Warlocks, 40% for Warriors, 20% for Rogues and 15% for Priests. The 10% damage bonus is unchanged.    
+## Items and Blizzard’s other words     Items  1 new dungeon set, 27 new items, 96 changed items  
+## New dungeon set 
+ Rotmender's Raiment , from  Ruins of Lordaeron 
+-    
+ Rotmender's Robes 
+Chest, Cloth
+-    
+ Rotmender's Sash 
+Waist, Cloth
+-    
+ Rotmender's Leggings 
+Legs, Cloth
+-    
+ Rotmender's Treads 
+Feet, Cloth
+-    
+ Rotmender's Gloves 
+Hands, Cloth
+- (2) Set: +10 Intellect. 
+- (3) Set: Reduces all threat generated by 5%. 
+- (4) Set: When your Mana falls below 15% restore 600 Mana over 15 sec. This effect can only trigger once every 5 min. 
+- (5) Set: Grant your healing spells a chance to apply Rotmending, restoring 40 Health every 3 sec for 15 sec.    
+## New items  
+-    
+ Aggor's Refitted Belt 
+Waist, Mail
+-    
+ Bristlebark Bow 
+Ranged, Bow
+-    
+ Furlfeather Ring 
+-    
+ Ghostfang's Steps 
+Feet, Cloth
+-    
+ Helm Splitter 
+One-Hand, Sword
+-    
+ Igleggings 
+Legs, Leather
+-    
+ Pristine Orcish Dagger 
+One-Hand, Dagger
+-    
+ Riptear's Cleaver 
+Two-Hand, Axe
+-    
+ Riptear's Spare Arm 
+Ranged, Wand
+-    
+ Snarlsnout Shooter 
+Ranged, Gun
+-    
+ Thrice-Stitched Flesh 
+Back, Cloth
+-    
+ Ukta's Conduit 
+Two-Hand, Staff
+-    
+ Wisesight Wand 
+Ranged, Wand
+-    
+ Avala's Binding 
+-    
+ Centaur Skull Basher 
+Two-Hand, Mace
+-    
+ Fightin' Fish 
+One-Hand, Mace
+-    
+ Kolkar Bow 
+Ranged, Bow
+-    
+ Kolkar Hammer 
+One-Hand, Mace
+-    
+ Proud Brave's Guard 
+Off Hand, Shield
+-    
+ Sentinel's Slasher 
+One-Hand, Sword
+-    
+ Shal'ma's Shawl 
+Back, Cloth
+-    
+ Sharpened Letter Opener 
+-    
+ Wrathroot 
+Two-Hand, Staff
+-    
+ Ban'ethil Quiver 
+Bag, Quiver
+-    
+ Depleted Crystal Heart 
+Quest
+-    
+ Depleted Crystal Heart 
+Quest
+-    
+ Shiny Silver Coin 
+Other
+## Changed weapons and armor  
+-    
+ Abomination Bones 
+-    
+ Blackwater Cutlass 
+-    
+ Boahn's Fang 
+-    
+ Deepblaze 
+-    
+ Duty Bound Leggings 
+-    
+ Garrison Cuffs 
+-    
+ Goblin Screwdriver 
+-    
+ Linken's Sword of Mastery 
+-    
+ Remembrance Armor 
+-    
+ Serpent's Kiss 
+-    
+ Silk-threaded Trousers 
+-    
+ Spirit of Aquementas 
+-    
+ Stonemason Trousers 
+-    
+ Brambleweed Leggings 
+-    
+ Buckler of the Seas 
+-    
+ Girdle of Nobility 
+-    
+ Harvester's Robe 
+-    
+ Ironplate Buckler 
+-    
+ Leggings of the People's Militia 
+-    
+ Misplaced Shooter 
+-    
+ Mug of Muddled Memories 
+-    
+ Noble's Robe 
+-    
+ Rancher's Trousers 
+-    
+ Runescale Girdle 
+-    
+ Staff of Nobles 
+-    
+ Tim's Lost Rib 
+-    
+ Walking Boots 
+## Changed consumables and other items  
+-    
+ Broken Blade of Heroes 
+-    
+ Corrupted Amethrax Shard 
+-    
+ Corrupted Chillhowl Shard 
+-    
+ Corrupted Dreadspinner Shard 
+-    
+ Corrupted Sorrowful Shard 
+-    
+ Corrupted Tangleclaw Shard 
+-    
+ Index Esoteria 
+-    
+ Book of Soothe Animal 
+-    
+ Book of Soothe Animal II 
+-    
+ Book of Soothe Animal III 
+-    
+ Book of Wrath 
+-    
+ Book of Wrath II 
+-    
+ Book of Wrath III 
+-    
+ Book of Wrath IV 
+-    
+ Book of Wrath V 
+-    
+ Book of Wrath VI 
+-    
+ Book of Wrath VII 
+-    
+ Book of Wrath VIII 
+-    
+ Caustic Smog Potion 
+-    
+ Dragonfire Potion 
+-    
+ Draught of Predatory Senses 
+-    
+ Frenzy Potion 
+-    
+ Greater Frenzy Potion 
+-    
+ Greater Mender's Potion 
+-    
+ Greater Spellblasting Potion 
+-    
+ Grimoire of Burning Spirit 
+-    
+ Grimoire of Burning Spirit II 
+-    
+ Grimoire of Burning Spirit III 
+-    
+ Hissing Serum 
+-    
+ Lesser Frenzy Potion 
+-    
+ Lesser Mender's Potion 
+-    
+ Lesser Spellblasting Potion 
+-    
+ Lesser Wizard Oil 
+-    
+ Major Frenzy Potion 
+-    
+ Major Mender's Potion 
+-    
+ Major Spellblasting Potion 
+-    
+ Mender's Potion 
+-    
+ Minor Frenzy Potion 
+-    
+ Minor Mender's Potion 
+-    
+ Minor Spellblasting Potion 
+-    
+ Minor Wizard Oil 
+-    
+ Potion of Beast Slaying 
+-    
+ Potion of Demon Slaying 
+-    
+ Potion of Elemental Purging 
+-    
+ Recipe: Potion of Beast Slaying 
+-    
+ Recipe: Potion of Demon Slaying 
+-    
+ Recipe: Potion of Elemental Purging 
+-    
+ Spellblasting Potion 
+-    
+ Superior Frenzy Potion 
+-    
+ Superior Mender's Potion 
+-    
+ Superior Spellblasting Potion 
+-    
+ Swineherd's Staff 
+-    
+ Tablet of Earth Shock V 
+-    
+ Tablet of Fire Resistance Totem 
+-    
+ Tablet of Flame Shock II 
+-    
+ Tablet of Flame Shock III 
+-    
+ Tablet of Flame Shock IV 
+-    
+ Tablet of Flametongue Totem 
+-    
+ Tablet of Flametongue Weapon III 
+-    
+ Tablet of Healing Wave IV 
+-    
+ Tablet of Lightning Bolt III 
+-    
+ Tablet of Lightning Bolt IV 
+-    
+ Tablet of Magma Totem 
+-    
+ Tablet of Mana Font Totem 
+-    
+ Tablet of Mana Font Totem II 
+-    
+ Tablet of Stoneclaw Totem II 
+-    
+ Tablet of Stoneclaw Totem III 
+-    
+ Tablet of Windfury Weapon 
+-    
+ Wizard Oil 
+- 
+##  September 23, 2026   Build 1.60.1.69977 
+Fixes for Macs (display and stability) and for gamepads: the character selection screen, and items that start a quest. Talents, spells and items did not change.
+- 
+##  September 18, 2026   Build 1.60.1.69913 
+A small fix: the launcher, crash reporting and some graphics files. Talents, spells and items did not change.
+- 
+##  September 16, 2026   Build 1.60.1.69893 
+Put online the day before the beta opened, with many changes from the BlizzCon demo: spellbooks go to level 60, Wrack (Warlock) and Flawless Execution (Rogue) are new talents, Vitality, Drain Hope, Restless Blades and Balance of Nature are gone, and several talents moved or changed prerequisites.
+- 
+##  September 12, 2026   BlizzCon demo 
+The version shown at BlizzCon, played at level 38. Until the beta client came out, this site's talents and spells were read off its footage.
+The beta dates, how to get in and the road to launch are on the  Beta page .
+## Classes  
+-  Warrior  
+-  Paladin  
+-  Hunter  
+-  Rogue  
+-  Priest  
+-  Shaman  
+-  Mage  
+-  Warlock  
+-  Druid   
+## Character  
+-  Talent calculator  
+-  Spellbook  
+-  Legacy perks  
+-  Races  
+-  Professions  
+-  Downrank calculator  
+-  Tier list maker   
+## Gear  
+-  BiS list  
+-  Items  
+-  Hidden items  
+-  Transmog   
+## World  
+-  World map  
+-  Dungeons  
+-  Quests  
+-  Dungeon quests  
+-  Rare spawns  
+-  Library books   
+## Guides  
+-  Tanning Rack  
+-  PvP ranks  
+-  Downranking  
+-  Booty Bay Bruiser's Buckshot  
+-  Scarlet Banner  
+-  $100,000 duel tournament  
+-  Level 30  
+-  Druid Cat Form quest  
+-  Addons  
+-  Savory Whimsyfin Delight  
+-  Druid snake form  
+-  Battle mage  
+-  Cozy Sleeping Bag  
+-  Merchant's Favor  
+-  Hunter pets   
+## Beta  
+-  Patch notes  
+-  Changes vs Classic  
+-  Beta and launch dates  
+-  Server status   
+##      
+ Language  
+-  English 
+-  Français  
+-  Deutsch  
+-  繁體中文  
+-  简体中文  
+-  Русский   
+ForeverChanges is an unofficial fan site, not affiliated with or endorsed by Blizzard Entertainment. World of Warcraft and Warcraft are trademarks or registered trademarks of Blizzard Entertainment, Inc. in the U.S. and/or other countries. Game content and images © Blizzard Entertainment, Inc.
+ Tell me what to improve   About the data  Privacy  Terms  Legal notice  
+   
