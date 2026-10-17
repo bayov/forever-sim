@@ -371,9 +371,13 @@ SETUP_ALIAS = {'goblin sapper': 'Goblin Sapper Charge', 'explosive goblin land m
                'wizard oil': 'Wizard Oil', 'food flank au poivre': 'Flank au Poivre', 'flank au poivre': 'Flank au Poivre',
                'food grilled squid': 'Grilled Squid', 'food lobster stew': 'Lobster Stew', 'food smoked desert dumpling': 'Smoked Desert Dumplings',
                'dragon breath chili': 'Dragonbreath Chili', 'hunters mark': "Hunter's Mark", 'curse of elements': 'Curse of the Elements',
-               'totem weapon buff (totemweaponbuffwindfury)': 'Windfury Totem', 'blood pact': 'Blood Pact', 'sanctity aura': 'Sanctity Aura',
+               'totem weapon buff (totemweaponbuffwindfury)': 'Windfury Totem', 'totem weapon buff (totemweaponbuffflametongue)': 'Flametongue Totem',
+               'blood pact': 'Blood Pact', 'sanctity aura': 'Sanctity Aura',
                'leader of the pack': 'Leader of the Pack', 'moonkin aura': 'Moonkin Aura', 'judgement of the crusader': 'Judgement of the Crusader',
                'major frenzy potion': 'Major Frenzy Potion', 'major spellblasting potion': 'Major Spellblasting Potion'}
+# Chips with no tooltip text anywhere, in the sim's words. Forever's Salvation (client 1.60.1.70425) is a raid buff
+# that no longer takes a Blessing slot, so neither Wowhead nor the wiki has its text yet.
+SETUP_TEXT = {'Salvation': 'Reduces the threat caused by all raid members by 30%. It takes no Blessing slot.'}
 # The id behind each consumes / buffs / debuffs chip, as the sim UI's pickers link it (ui/core/components/inputs/*.ts),
 # by the chip's value with any "(improved)" dropped. Forever's own ids where the UI uses them (Curse of the Elements, the 25xxxx consumables),
 # and the rank the sim casts where Forever's launch lacks the top one (Battle Shout 6, Strength of Earth 4, Grace of Air 2: Ahn'Qiraj books).
@@ -403,6 +407,7 @@ SETUP_IDS = {
     'Mana Spring Totem': ('spell', 10497), 'Moonkin Aura': ('spell', 24907), 'Power Word Fortitude': ('spell', 10938),
     'Retribution Aura': ('spell', 10301), 'Sanctity Aura': ('spell', 20218), 'Shadow Protection': ('spell', 10958),
     'Strength Of Earth Totem': ('spell', 10442), 'Thorns': ('spell', 9910), 'Totem Weapon Buff (TotemWeaponBuffWindfury)': ('spell', 10614),
+    'Totem Weapon Buff (TotemWeaponBuffFlametongue)': ('spell', 16387),
     'Trueshot Aura': ('spell', 20906), 'Blessing Of Kings': ('spell', 20217), 'Blessing Of Might': ('spell', 25291),
     'Blessing Of Wisdom': ('spell', 25290),
 }
@@ -935,6 +940,8 @@ def build(tree, names, gear, setup, outs, abilities, auras, timelines, builds, i
                     row.update(title=j['name'], icon=j.get('icon'))
                     row['lines'], row['src'] = [['m', CLASSIC_NOTE]] + [l for l in ls if l[0] == 'y'], 'classic'
                     break
+        if not row['lines'] and val in SETUP_TEXT:
+            row['lines'], row['src'] = [['y', SETUP_TEXT[val]]], 'sim'
         if not row['lines']:
             mi = next((v for k, v in MANUAL_ITEM.items() if norm(k) in (norm(val), norm(stripped))), None)
             if mi:
