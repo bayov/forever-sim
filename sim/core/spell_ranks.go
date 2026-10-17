@@ -9,6 +9,9 @@ import "sync"
 
 var spellRankFamilies = map[int32]int32{}
 
+// The top rank of each family, by the family's first ID.
+var spellRankTops = map[int32]int32{}
+
 // Every character registers its ranks as it is built, and sims build characters in
 // parallel, so the registry is locked. Lookups happen when a rotation is built.
 var spellRankMutex sync.RWMutex
@@ -30,6 +33,22 @@ func RegisterSpellRanks(spellIDs ...int32) {
 	for _, id := range spellIDs {
 		spellRankFamilies[id] = head
 	}
+	// The class tables list ranks from the lowest to the highest.
+	spellRankTops[head] = spellIDs[len(spellIDs)-1]
+}
+
+// TopRankID is the spell ID of the highest rank of the ability, 0 when it has no ranks.
+//
+// A rotation that names it casts the highest rank the character knows, whatever its level
+// (getSpellByRankFamily). That's how a rotation asks for the highest rank, where naming a
+// lower rank the character knows casts that rank, to downrank on purpose.
+func TopRankID(spellID int32) int32 {
+	spellRankMutex.RLock()
+	defer spellRankMutex.RUnlock()
+	if head, ok := spellRankFamilies[spellID]; ok {
+		return spellRankTops[head]
+	}
+	return 0
 }
 
 // SameRankFamily is true when both IDs are ranks of the same ability.

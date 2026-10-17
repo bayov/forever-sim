@@ -45,6 +45,13 @@ part has the session's options). The mode comes from the encounter like the othe
   until the next range's. A shaman's range also picks the weapon imbue, because Windfury
   Weapon only comes at 30. Plans saved before the library held each range's rotation in the
   range, and we move those into the library when we load them.
+- **Ranks.** A rotation casts the highest rank we know of a spell when it names the spell's
+  top rank, which is the "Highest rank" pick in the editor's rank menu. A rank picked by its
+  number stays that rank, to downrank on purpose. So a range's rotation learns the new ranks
+  as we level through the range: the Level 10 rotation casts Healing Wave rank 3 from 12 and
+  Earth Shock rank 3 from 14. The spec's rotations name top ranks. Plans saved before
+  2026-10-17 named the ranks of their level, and the tab moves them over once: each
+  rotation's spells at the highest rank of its first range's level name the top rank.
 - **The plan's character.** The rotation editor's spell lists come from the character's level
   and talents, and the gear pane's item list from its level and stat weights. So the Gear and
   Rotations parts each have a character of their own (`LevelingPlanCharacter`), made from the
@@ -80,7 +87,8 @@ Flurry), and the "Level N Leveling Plan" rotations, the leveling optimizer's bes
 
 A first run (2026-10-16, 300 sessions a level) takes about 19 hours from 10 to 30. XP an
 hour goes from 19,000 at 10 to 31,000 at 25, and falls inside each five levels as the gear
-and the rotation fall behind the level.
+and the rotation fall behind the level. The rotations still cast the ranks of their range's
+first level then (Ranks, above).
 
 ## Open
 

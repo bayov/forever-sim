@@ -84,20 +84,19 @@ func (shamanEnhLeveling) Knobs() []Knob {
 }
 
 func (shamanEnhLeveling) Build(k Knobs) *proto.APLRotation {
-	soeLevels, soeIDs := shaman.StrengthOfEarthTotemLevel[:], shaman.StrengthOfEarthTotemSpellId[:]
-	strengthOfEarth := rankID(soeLevels[:len(soeLevels)-1], soeIDs[:len(soeIDs)-1])
-	searingTotem := rankID(shaman.SearingTotemLevel[:], shaman.SearingTotemSpellId[:])
-	magmaTotem := rankID(shaman.MagmaTotemLevel[:], shaman.MagmaTotemSpellId[:])
-	flametongueTotem := rankID(shaman.FlametongueTotemLevel[:], shaman.FlametongueTotemSpellId[:])
-	manaSpringTotem := rankID(shaman.ManaSpringTotemLevel[:], shaman.ManaSpringTotemSpellId[:])
-	fireNova := rankID(shaman.FireNovaLevel[:], shaman.FireNovaSpellId[:])
-	lightningShield := rankID(shaman.LightningShieldLevel[:], shaman.LightningShieldSpellId[:])
-	earthShock := rankID(shaman.EarthShockLevel[:], shaman.EarthShockSpellId[:])
+	strengthOfEarth := highestRankID(shaman.StrengthOfEarthTotemLevel[:], shaman.StrengthOfEarthTotemSpellId[:])
+	searingTotem := highestRankID(shaman.SearingTotemLevel[:], shaman.SearingTotemSpellId[:])
+	magmaTotem := highestRankID(shaman.MagmaTotemLevel[:], shaman.MagmaTotemSpellId[:])
+	flametongueTotem := highestRankID(shaman.FlametongueTotemLevel[:], shaman.FlametongueTotemSpellId[:])
+	manaSpringTotem := highestRankID(shaman.ManaSpringTotemLevel[:], shaman.ManaSpringTotemSpellId[:])
+	fireNova := highestRankID(shaman.FireNovaLevel[:], shaman.FireNovaSpellId[:])
+	lightningShield := highestRankID(shaman.LightningShieldLevel[:], shaman.LightningShieldSpellId[:])
+	earthShock := highestRankID(shaman.EarthShockLevel[:], shaman.EarthShockSpellId[:])
 	earthShock1 := spellID(shaman.EarthShockSpellId[1])
-	flameShock := rankID(shaman.FlameShockLevel[:], shaman.FlameShockSpellId[:])
+	flameShock := highestRankID(shaman.FlameShockLevel[:], shaman.FlameShockSpellId[:])
 	lightningBolt1 := spellID(shaman.LightningBoltSpellId[1])
-	lesserHealingWave := spellID(shaman.HighestHealRankID(shaman.LesserHealingWaveRanks, playerLevel))
-	healingWave := spellID(shaman.HighestHealRankID(shaman.HealingWaveRanks, playerLevel))
+	lesserHealingWave := spellID(shaman.TopHealRankID(shaman.LesserHealingWaveRanks, playerLevel))
+	healingWave := spellID(shaman.TopHealRankID(shaman.HealingWaveRanks, playerLevel))
 	heal := lesserHealingWave
 	if lesserHealingWave.GetSpellId() == 0 {
 		heal = healingWave

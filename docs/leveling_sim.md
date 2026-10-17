@@ -340,8 +340,9 @@ anything leveling-specific exists.
      to one level 30 mob 46% of the time with white swings only, and never with Lesser Healing
      Wave below 40% health.
      Our beta logs (2026-10-17) agree on every heal's amount, crit, cast time and cost at
-     levels 1 to 7 and 30. A rotation that names a rank we haven't learned casts the
-     highest rank we know.
+     levels 1 to 7 and 30. A rotation that names a heal's top rank, or a rank we haven't
+     learned, casts the highest rank we know. Every point of each healing talent matches the
+     client's curve (`healing_talents_test.go`, 2026-10-17).
    - Still to do, other classes:
      - Priest: Lesser Heal, Heal, Flash Heal, Greater Heal and Renew (today commented out or
        missing).

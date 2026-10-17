@@ -1688,4 +1688,5 @@ export const DefaultLevelingPlan = LevelingPlanSettings.create({
 			imbue: i < 4 ? WeaponImbue.RockbiterWeapon : WeaponImbue.WindfuryWeapon,
 		}),
 	),
+	rotationsNameTopRanks: true,
 });

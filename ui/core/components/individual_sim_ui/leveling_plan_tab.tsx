@@ -21,6 +21,7 @@ import {
 } from '../../leveling_plan';
 import { Player } from '../../player';
 import { ErrorOutcomeType, ProgressMetrics, RaidSimRequest } from '../../proto/api';
+import { APLRotation } from '../../proto/apl';
 import { Consumes, Debuffs, IndividualBuffs, PartyBuffs, RaidBuffs, Spec } from '../../proto/common';
 import { LevelingPlanSettings } from '../../proto/ui';
 import { ActionId } from '../../proto_utils/action_id';
@@ -261,8 +262,38 @@ export class LevelingPlanTab extends SimTab {
 			const defaults = this.simUI.individualConfig.defaults.levelingPlan;
 			if (defaults && !plan.builds.length && !plan.rotations.length) this.player.setLevelingPlan(TypedEvent.nextEventID(), defaults);
 			this.render();
+			this.moveRotationsToTopRanks();
 			TypedEvent.onAny([this.player.levelingPlanChangeEmitter, this.gear.planChangeEmitter]).on(() => this.render());
 		});
+	}
+
+	// Plans saved before 2026-10-17 name the ranks their rotations had at one level, so a
+	// rotation cast those ranks over its whole level range. Now a rotation names an ability's
+	// top rank to cast the highest rank we know (the rotation editor's "Highest rank"). We move
+	// a saved plan over once. Each library rotation goes to the level of the first range that
+	// plays it, and its spells at that level's highest rank name the top rank instead. A lower
+	// rank stays, because it was a downrank on purpose.
+	private async moveRotationsToTopRanks() {
+		const plan = this.player.getLevelingPlan();
+		if (plan.rotationsNameTopRanks || !plan.rotationLibrary.length) return;
+		const result = LevelingPlanSettings.clone(plan);
+		for (const preset of result.rotationLibrary) {
+			if (!preset.rotation) continue;
+			const levels = result.rotations.filter(range => range.name == preset.name).map(range => Math.max(range.level, result.fromLevel));
+			const request = this.makeRequest(levels.length ? Math.min(...levels) : result.fromLevel);
+			if (!request) continue;
+			const metadata = (await this.simUI.sim.computeStatsOfRequest(request)).raidStats?.parties[0]?.players[0]?.metadata;
+			if (!metadata) continue;
+			const tops = new Map<number, number>();
+			for (const known of [...metadata.spells, ...metadata.auras]) {
+				if (known.id?.rawId.oneofKind == 'spellId' && known.highestRankId) tops.set(known.id.rawId.spellId, known.highestRankId);
+			}
+			const json = JSON.stringify(APLRotation.toJson(preset.rotation));
+			preset.rotation = APLRotation.fromJson(JSON.parse(json, (key, value) => (key == 'spellId' && tops.has(value) ? tops.get(value) : value)));
+		}
+		result.rotationsNameTopRanks = true;
+		// The plan may have changed while we asked the sim, and then we try again next time.
+		if (LevelingPlanSettings.equals(this.player.getLevelingPlan(), plan)) this.player.setLevelingPlan(TypedEvent.nextEventID(), result);
 	}
 
 	protected buildTabContent() {

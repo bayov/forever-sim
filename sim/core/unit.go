@@ -620,6 +620,32 @@ func (unit *Unit) GetUnit(ref *proto.UnitReference) *Unit {
 	return unit.Env.GetUnit(ref, unit)
 }
 
+// highestRankID is the top rank's ID of the spell's ability when the spell is the highest
+// rank of it we know and not the top rank itself, for the rotation editor's "highest rank"
+// pick. 0 otherwise.
+func (unit *Unit) highestRankID(actionID ActionID, rank int) int32 {
+	top := TopRankID(actionID.SpellID)
+	if top == 0 || top == actionID.SpellID {
+		return 0
+	}
+	for _, other := range unit.Spellbook {
+		if other.ActionID.Tag == actionID.Tag && other.Rank > rank && SameRankFamily(other.ActionID.SpellID, actionID.SpellID) {
+			return 0
+		}
+	}
+	return top
+}
+
+// highestAuraRankID is highestRankID for an aura. Auras have no rank, so the highest spell
+// ID of the family stands for it, as when a rotation looks the aura up (getAuraByRankFamily).
+func (unit *Unit) highestAuraRankID(actionID ActionID) int32 {
+	top := TopRankID(actionID.SpellID)
+	if top == 0 || top == actionID.SpellID || unit.getAuraByRankFamily(actionID) != unit.GetAuraByID(actionID) {
+		return 0
+	}
+	return top
+}
+
 func (unit *Unit) GetMetadata() *proto.UnitMetadata {
 	metadata := &proto.UnitMetadata{
 		Name: unit.Label,
@@ -636,6 +662,7 @@ func (unit *Unit) GetMetadata() *proto.UnitMetadata {
 			HasShield:       spell.shields != nil || spell.selfShield != nil,
 			PrepullOnly:     spell.Flags.Matches(SpellFlagPrepullOnly),
 			EncounterOnly:   spell.Flags.Matches(SpellFlagEncounterOnly),
+			HighestRankId:   unit.highestRankID(spell.ActionID, spell.Rank),
 		}
 	})
 
@@ -648,6 +675,7 @@ func (unit *Unit) GetMetadata() *proto.UnitMetadata {
 			MaxStacks:          aura.MaxStacks,
 			HasIcd:             aura.Icd != nil,
 			HasExclusiveEffect: len(aura.ExclusiveEffects) > 0,
+			HighestRankId:      unit.highestAuraRankID(aura.ActionID),
 		}
 	})
 

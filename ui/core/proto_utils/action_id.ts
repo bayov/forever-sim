@@ -159,6 +159,25 @@ export class ActionId {
 		if (this.name) this.name += rank ? ` (Rank ${rank})` : '';
 	}
 
+	// The "highest rank" pick of a ranked spell, for the rotation editor. It's the ability's top
+	// rank (topSpellId), which the sim casts as the highest rank the character knows at any level.
+	// It shows this rank's icon and tooltip, the rank the character casts now.
+	asHighestRank(topSpellId: number): ActionId {
+		const id = new ActionId(
+			this.itemId,
+			topSpellId,
+			this.otherId,
+			this.tag,
+			this.baseName,
+			`${this.name.replace(/ \(Rank \d+\)$/, '')} (Highest rank)`,
+			this.sourceIconUrl,
+			0,
+			this.randomSuffixId,
+		);
+		(id as { spellIdTooltipOverride: number | null }).spellIdTooltipOverride = this.spellIdTooltipOverride || this.spellId;
+		return id;
+	}
+
 	get iconUrl(): string {
 		return this.wowheadIconUrl && ActionId.iconUrlMapper ? ActionId.iconUrlMapper(this.wowheadIconUrl) : this.wowheadIconUrl;
 	}

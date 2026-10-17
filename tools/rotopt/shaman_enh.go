@@ -27,6 +27,17 @@ func rankID[L int | int32](levels []L, ids []int32) *proto.ActionID {
 	return spellID(ids[core.HighestRankAt(playerLevel, levels)])
 }
 
+// highestRankID names the ability's top rank once the player's level knows any rank of it,
+// which the sim casts as the highest rank the character knows at any level
+// (core.TopRankID). A rotation made for one level then keeps up with the ranks a character
+// learns over a level range, as in the Leveling Plan. It's spell ID 0 before the first rank.
+func highestRankID[L int | int32](levels []L, ids []int32) *proto.ActionID {
+	if core.HighestRankAt(playerLevel, levels) == 0 {
+		return spellID(0)
+	}
+	return spellID(ids[len(ids)-1])
+}
+
 var (
 	stormstrike      = spellID(17364)
 	maelstromWeapon  = spellID(408505)
