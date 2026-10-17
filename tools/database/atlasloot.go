@@ -2,26 +2,34 @@ package database
 
 import (
 	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"regexp"
 	"strconv"
 	"strings"
 
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
-	"github.com/wowsims/classic/tools"
 )
 
-func ReadAtlasLootData(inputsDir string) *WowDatabase {
+// ReadAtlasLootData reads the item sources of the AtlasLoot Forever addon installed in a client,
+// from addonsDir (the client's Interface/AddOns). It's the CurseForge project 1422985, and its
+// Forever tocs load these four files. We used to read a 2024 Season of Discovery fork from
+// GitHub, which had none of Forever's own dungeons and items. A CurseForge update is now a quick
+// refresh: run this again, then gen_db.
+func ReadAtlasLootData(inputsDir, addonsDir string) *WowDatabase {
 	db := NewWowDatabase()
 
-	readAtlasLootSourceData(db, proto.Expansion_ExpansionVanilla, "https://raw.githubusercontent.com/HiKwonko/AtlasLootClassic_SoD/master/AtlasLootClassic_Data/source.lua")
-	readAtlasLootDungeonData(db, proto.Expansion_ExpansionVanilla, "https://raw.githubusercontent.com/HiKwonko/AtlasLootClassic_SoD/master/AtlasLootClassic_DungeonsAndRaids/data.lua")
-	readAtlasLootPVPData(db, proto.Expansion_ExpansionVanilla, "https://raw.githubusercontent.com/HiKwonko/AtlasLootClassic_SoD/master/AtlasLootClassic_PvP/data.lua")
-	readAtlasLootFactionData(db, proto.Expansion_ExpansionVanilla, "https://raw.githubusercontent.com/HiKwonko/AtlasLootClassic_SoD/master/AtlasLootClassic_Factions/data.lua")
+	files := AtlasLootFiles(addonsDir)
+	readAtlasLootSourceData(db, proto.Expansion_ExpansionVanilla, files[0])
+	readAtlasLootDungeonData(db, proto.Expansion_ExpansionVanilla, files[1])
+	readAtlasLootPVPData(db, proto.Expansion_ExpansionVanilla, files[2])
+	readAtlasLootFactionData(db, proto.Expansion_ExpansionVanilla, files[3])
 
 	readZoneData(db)
 	readFactionData(db, inputsDir)
@@ -29,13 +37,62 @@ func ReadAtlasLootData(inputsDir string) *WowDatabase {
 	return db
 }
 
-func readAtlasLootSourceData(db *WowDatabase, expansion proto.Expansion, srcUrl string) {
-	srcTxt, err := tools.ReadWeb(srcUrl)
+// AtlasLootFiles are the four files we read, in the order ReadAtlasLootData reads them.
+// tools/sources/stale.py hashes the same four, in the same order.
+func AtlasLootFiles(addonsDir string) []string {
+	return []string{
+		filepath.Join(addonsDir, "AtlasLootClassic_Data", "source.lua"),
+		filepath.Join(addonsDir, "AtlasLootClassic_DungeonsAndRaids", "data.lua"),
+		filepath.Join(addonsDir, "AtlasLootClassic_PvP", "data.lua"),
+		filepath.Join(addonsDir, "AtlasLootClassic_Factions", "data.lua"),
+	}
+}
+
+// AtlasLootHash is the first 12 hex digits of the SHA-256 of the four files, one after the
+// other. The toc's version stays "Forever 1.60.1" across CurseForge updates, so this is how we
+// tell that the installed copy changed.
+func AtlasLootHash(addonsDir string) string {
+	h := sha256.New()
+	for _, path := range AtlasLootFiles(addonsDir) {
+		data, err := os.ReadFile(path)
+		if err != nil {
+			log.Fatalf("Error reading atlasloot file %s", err)
+		}
+		h.Write(data)
+	}
+	return hex.EncodeToString(h.Sum(nil))[:12]
+}
+
+// AtlasLootVersion is the "## Version" of the installed AtlasLoot's Forever toc, like
+// "Forever 1.60.1", for the meta file next to atlasloot_db.json.
+func AtlasLootVersion(addonsDir string) string {
+	toc, err := os.ReadFile(filepath.Join(addonsDir, "AtlasLootClassic", "AtlasLootClassic_Forever.toc"))
+	if err != nil {
+		log.Fatalf("Error reading the AtlasLoot toc: %s", err)
+	}
+	if m := regexp.MustCompile(`(?m)^## Version: (.+?)\s*$`).FindSubmatch(toc); m != nil {
+		return string(m[1])
+	}
+	return ""
+}
+
+// readAtlasLootFile reads one of the addon's Lua files with Unix line endings. CurseForge
+// ships them with Windows ones, and the patterns below match whole lines.
+func readAtlasLootFile(path string) string {
+	data, err := os.ReadFile(path)
 	if err != nil {
 		log.Fatalf("Error reading atlasloot file %s", err)
 	}
+	return strings.ReplaceAll(string(data), "\r\n", "\n")
+}
 
-	itemPattern := regexp.MustCompile(`^\[([0-9]+)\] = {(.*)},$`)
+func readAtlasLootSourceData(db *WowDatabase, expansion proto.Expansion, path string) {
+	srcTxt := readAtlasLootFile(path)
+
+	// The Forever copy indents its rows and puts a space after each comma, and its last row has
+	// no comma. We skip its SOURCE_DATA["ItemData"][id] lines, which only apply before
+	// Classic's phase 5.
+	itemPattern := regexp.MustCompile(`^\s*\[([0-9]+)\] = {(.*)},?$`)
 	typePattern := regexp.MustCompile(`\[3\] = (\d+),.*\[4\] = (\d+)`)
 	lines := strings.Split(srcTxt, "\n")
 
@@ -71,11 +128,8 @@ func readAtlasLootSourceData(db *WowDatabase, expansion proto.Expansion, srcUrl 
 	}
 }
 
-func readAtlasLootDungeonData(db *WowDatabase, expansion proto.Expansion, srcUrl string) {
-	srcTxt, err := tools.ReadWeb(srcUrl)
-	if err != nil {
-		log.Fatalf("Error reading atlasloot file %s", err)
-	}
+func readAtlasLootDungeonData(db *WowDatabase, expansion proto.Expansion, path string) {
+	srcTxt := readAtlasLootFile(path)
 
 	// Convert newline to '@@@' so we can do regexes on the whole file as 1 line.
 	regex := regexp.MustCompile(`\r?\n`)
@@ -84,7 +138,9 @@ func readAtlasLootDungeonData(db *WowDatabase, expansion proto.Expansion, srcUrl
 
 	dungeonPattern := regexp.MustCompile(`data\["([^"]+)"] = {(.*?)items = {(.*?)@@@}@@@`)
 	mapIdRegexp := regexp.MustCompile(`MapID = (\d+),`)
-	npcNameAndIDPattern := regexp.MustCompile(`^[^@]*?AL\["(.*?)"\]\)?(.*?(@@@\s*npcID = {?(\d+),))?`)
+	// A boss's name is AL["..."], or a plain string for Forever's own dungeons, which also have
+	// no npcID or MapID yet.
+	npcNameAndIDPattern := regexp.MustCompile(`^[^@]*?(?:AL\["(.*?)"\]|"(.*?)")\)?(.*?(@@@\s*npcID = {?(\d+),))?`)
 	diffItemsPattern := regexp.MustCompile(`\[([A-Z0-9]+_DIFF)\] = (({.*?@@@\s*},?@@@)|(.*?@@@\s*\),?@@@))`)
 	itemsPattern := regexp.MustCompile(`@@@\s+{(.*?)},`)
 	itemParamPattern := regexp.MustCompile(`AL\["(.*?)"\]`)
@@ -112,11 +168,8 @@ func readAtlasLootDungeonData(db *WowDatabase, expansion proto.Expansion, srcUrl
 			if npcMatch == nil {
 				panic("No npc match: " + npcSplit)
 			}
-			npcName := npcMatch[1]
-			npcID := 0
-			if len(npcMatch) > 3 {
-				npcID, _ = strconv.Atoi(npcMatch[4])
-			}
+			npcName := npcMatch[1] + npcMatch[2]
+			npcID, _ := strconv.Atoi(npcMatch[5])
 			fmt.Printf("NPC: %s/%d\n", npcName, npcID)
 			if npcID != 0 {
 				db.MergeNpc(&proto.UINPC{
@@ -188,11 +241,8 @@ func readAtlasLootDungeonData(db *WowDatabase, expansion proto.Expansion, srcUrl
 	}
 }
 
-func readAtlasLootPVPData(db *WowDatabase, expansion proto.Expansion, srcUrl string) {
-	srcTxt, err := tools.ReadWeb(srcUrl)
-	if err != nil {
-		log.Fatalf("Error reading atlasloot file %s", err)
-	}
+func readAtlasLootPVPData(db *WowDatabase, expansion proto.Expansion, path string) {
+	srcTxt := readAtlasLootFile(path)
 
 	// Convert newline to '@@@' so we can do regexes on the whole file as 1 line.
 	regex := regexp.MustCompile(`\r?\n`)
@@ -268,11 +318,8 @@ func readAtlasLootPVPData(db *WowDatabase, expansion proto.Expansion, srcUrl str
 	}
 }
 
-func readAtlasLootFactionData(db *WowDatabase, expansion proto.Expansion, srcUrl string) {
-	srcTxt, err := tools.ReadWeb(srcUrl)
-	if err != nil {
-		log.Fatalf("Error reading atlasloot file %s", err)
-	}
+func readAtlasLootFactionData(db *WowDatabase, expansion proto.Expansion, path string) {
+	srcTxt := readAtlasLootFile(path)
 
 	// Convert newline to '@@@' so we can do regexes on the whole file as 1 line.
 	regex := regexp.MustCompile(`\r?\n`)

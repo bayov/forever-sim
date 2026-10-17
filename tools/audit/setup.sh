@@ -5,6 +5,9 @@
 export AUDIT_REPO="${AUDIT_REPO:-$(git rev-parse --show-toplevel)}"
 export AUDIT_WORK="${AUDIT_WORK:-/tmp/audit-work}"
 export AUDIT_CACHE="${AUDIT_CACHE:-/tmp/audit-cache}"
+# tools/sources/wago.py keeps the client tables here. A cloud session's home doesn't last, so the
+# cache goes in the scratch space with everything else.
+export WOW_DATA_CACHE="${WOW_DATA_CACHE:-$AUDIT_WORK/wow-data}"
 export PATH="$PATH:$HOME/go/bin:/root/go/bin"
 mkdir -p "$AUDIT_WORK" "$AUDIT_CACHE"
 if ! command -v protoc >/dev/null; then

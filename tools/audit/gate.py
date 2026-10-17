@@ -145,7 +145,7 @@ else:
 client = None
 if any('wago_build' in a.get('external', []) for a in reg['auditors']):
     probe = ['--probe', str(reg['wago_probe'])] if reg.get('wago_probe') else []
-    r = subprocess.run([sys.executable, os.path.join(REPO, 'tools/audit/wago_latest.py'), *probe], capture_output=True, text=True)
+    r = subprocess.run([sys.executable, os.path.join(REPO, 'tools/sources/wago.py'), 'latest', *probe], capture_output=True, text=True)
     client = r.stdout.strip() if r.returncode == 0 else None
 
 out = []

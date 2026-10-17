@@ -90,3 +90,54 @@ func ParseWagoDB(dbContents string) map[int32]WagoDbItem {
 
 	return result
 }
+
+// OverlayForeverClientItems lays the Forever client's item facts over Classic's.
+//
+// wagoItems is Classic 1.15.3's ItemSparse (wago_db2_items.csv), and contents is
+// forever_client_items.csv from tools/sources/itemsparse.py. An item in the Forever file
+// takes its set from there, and its faction too when the file has its ItemSparse row
+// (Flags_1 is blank for an item only the ItemSet table lists). Every other item keeps
+// Classic's, because the Forever ItemSparse on wago.tools lacks most Classic items.
+func OverlayForeverClientItems(wagoItems map[int32]WagoDbItem, contents string) {
+	r := csv.NewReader(strings.NewReader(contents))
+	header, err := r.Read()
+	if err != nil {
+		log.Fatalf("Cannot read forever_client_items.csv header row: %v", err)
+	}
+	col := map[string]int{}
+	for i, name := range header {
+		col[name] = i
+	}
+	for _, name := range []string{itemIDHeader, flags1Header, itemSetHeader} {
+		if _, ok := col[name]; !ok {
+			log.Fatalf("forever_client_items.csv has no %s column. All columns: %#v", name, header)
+		}
+	}
+	for {
+		row, err := r.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			log.Fatalf("Cannot read forever_client_items.csv row: %v", err)
+		}
+		itemID, err := strconv.Atoi(row[col[itemIDHeader]])
+		if err != nil {
+			log.Fatalf("Cannot parse ID from row %v: %v", row, err)
+		}
+		item := wagoItems[int32(itemID)]
+		if flags := row[col[flags1Header]]; flags != "" {
+			flags1, err := strconv.Atoi(flags)
+			if err != nil {
+				log.Fatalf("Cannot parse Flags_1 from row %v: %v", row, err)
+			}
+			item.FactionRestriction = flags1ToFactionRestriction(flags1)
+		}
+		itemSet, err := strconv.Atoi(row[col[itemSetHeader]])
+		if err != nil {
+			log.Fatalf("Cannot parse ItemSet from row %v: %v", row, err)
+		}
+		item.ItemSetID = int32(itemSet)
+		wagoItems[int32(itemID)] = item
+	}
+}

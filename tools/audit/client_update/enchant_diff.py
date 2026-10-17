@@ -1,11 +1,12 @@
-"""usage: AUDIT_WORK=<scratch> python3 -I enchant_diff.py <build> <build> [<build>...]
+"""usage: python3 -I enchant_diff.py <build> <build> [<build>...]
 SpellItemEnchantment between each consecutive pair of the builds given: added, removed and changed
 enchants with the changed fields. The sim's Forever enchants live in tools/database/forever_enchants.go."""
 import csv, os, sys
 csv.field_size_limit(10**9)
-D = os.path.join(os.environ['AUDIT_WORK'], 'db2')
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../sources'))
+import wago  # noqa: E402
 B = sys.argv[1:]
-def load(b): return {r['ID']: r for r in csv.DictReader(open(os.path.join(D, f'SpellItemEnchantment.{b}.csv'), newline='', encoding='utf-8'))}
+def load(b): return wago.by_id('SpellItemEnchantment', b)
 prev = load(B[0])
 for b in B[1:]:
     cur = load(b); print('==', b)

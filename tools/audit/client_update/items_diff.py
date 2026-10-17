@@ -1,16 +1,16 @@
-"""usage: AUDIT_WORK=<scratch> AUDIT_TREE=<checkout> python3 -I items_diff.py <oldbuild> <newbuild>
+"""usage: AUDIT_TREE=<checkout> python3 -I items_diff.py <oldbuild> <newbuild>
 ItemSparse between two builds: added items (name, ilvl, required level, quality) and changed items
 with the changed fields. Flags items worn by a DPS-report request (tools/dps_report/req/*.json in
 AUDIT_TREE) and items at ilvl >= 55 or required level >= 50, the ones a level 60 preset could use."""
 import csv, glob, json, os, sys
 csv.field_size_limit(10**9)
-D = os.path.join(os.environ['AUDIT_WORK'], 'db2')
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../sources'))
+import wago  # noqa: E402
 old, new = sys.argv[1], sys.argv[2]
 SKIP = {'VerifiedBuild', 'SellPrice', 'BuyPrice'}
 
 def load(b):
-    with open(os.path.join(D, f'ItemSparse.{b}.csv'), newline='', encoding='utf-8') as f:
-        return {r['ID']: r for r in csv.DictReader(f)}
+    return wago.by_id('ItemSparse', b)
 
 used = {}
 tree = os.environ.get('AUDIT_TREE')

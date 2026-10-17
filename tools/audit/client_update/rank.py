@@ -1,11 +1,12 @@
-"""usage: AUDIT_WORK=<scratch> python3 -I rank.py <build> <effectIndex> <spellID>...
+"""usage: python3 -I rank.py <build> <effectIndex> <spellID>...
 Damage of one effect of each spell rank at level 60: base points plus per-level growth up to the
 rank's max level, the variance range, spell coefficient, mana cost and period. What the sim's
 rank tables (sim/<class>/*.go) should match."""
 import csv, os, sys
-D = os.path.join(os.environ['AUDIT_WORK'], 'db2')
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../sources'))
+import wago  # noqa: E402
 b, idx, ids = sys.argv[1], int(sys.argv[2]), sys.argv[3:]
-def rows(t): return list(csv.DictReader(open(os.path.join(D, f'{t}.{b}.csv'), newline='', encoding='utf-8')))
+def rows(t): return wago.rows(t, b)
 eff = {(r['SpellID'], int(r['EffectIndex'])): r for r in rows('SpellEffect') if r['SpellID'] in ids}
 lv = {r['SpellID']: r for r in rows('SpellLevels') if r['SpellID'] in ids}
 pw = {r['SpellID']: r for r in rows('SpellPower') if r['SpellID'] in ids}

@@ -10,29 +10,29 @@ export AUDIT_REF=$AUDIT_TREE/orchestration/audit/ref/client_update
 
 ## Not committed (re-create on demand)
 
-### DB2 tables: `$AUDIT_WORK/db2/<Table>.<build>.csv`
+### DB2 tables: the shared wago cache
 
-- **Source:** wago.tools CSV dumps, `https://wago.tools/db2/<Table>/csv?build=1.60.1.<build>`.
-- **Tables:** `tools/audit/client_update/tables.txt` lists 39. That's everything in the ledger's "How it was checked" list, plus ItemXItemEffect, SpellXSpellVisual, SpellRadius and SpellRange.
+- **Source:** wago.tools CSV dumps, through `tools/sources/wago.py`, which keeps them at `$WOW_DATA_CACHE/wago/<version>/<Table>.csv` (`setup.sh` puts that under `$AUDIT_WORK`). `wago.py dir <build>` prints a build's folder.
+- **Tables:** wago.py's `client_update` set lists 39. That's everything in the ledger's "How it was checked" list, plus ItemXItemEffect, SpellXSpellVisual, SpellRadius and SpellRange.
   - SpellProcsPerMinuteMod and SpellScaling are not served for 1.60 builds, so the list leaves them out.
   - The trait curve tables (Curve, CurvePoint) were never downloaded. A talent changed only through its curve shows as a `TraitDefinitionEffectPoints ... CurveID: a -> b` line. Read the rank spells' own SpellEffect rows instead.
 - **Builds held:**
   - 69893 (beta open), 70009, 70170, 70291, 70334, 70338, 70374, 70425 and 70450.
   - ItemXItemEffect only for 70425 and 70450.
-  - About 20 MB a build, 169 MB in all.
+  - About 20 MB a build, 169 MB in all. (Those were the old `$AUDIT_WORK/db2/<Table>.<build>.csv` copies, from before 2026-10-17.)
 - **To re-create:**
 
   ```sh
-  tools/audit/client_update/wago_fetch.sh 70425 70450   # any builds; skips files already present
+  for b in 70425 70450; do python3 tools/sources/wago.py fetch $b --set client_update; done   # skips tables already cached
   ```
 
-  A routine pass needs only the previous baseline and the new build, e.g. `wago_fetch.sh 70450 <new>`. Re-create older builds only for a question about history.
+  A routine pass needs only the previous baseline and the new build, e.g. `wago.py fetch <new> --set client_update`. Re-create older builds only for a question about history.
 
 ### Build diffs: `$AUDIT_WORK/diffs/<old>-<new>.md`
 
 ```sh
 mkdir -p $AUDIT_WORK/diffs
-python3 -I tools/audit/client_update/db2diff.py $AUDIT_WORK/db2 70425 70450 $AUDIT_WORK/diffs/70425-70450.md
+python3 -I tools/sources/db2diff.py 70425 70450 $AUDIT_WORK/diffs/70425-70450.md
 ```
 
 The diffs for every consecutive pair from 69893 to 70450 are committed in `diffs/` here, so the history doesn't need re-downloading. `trait_tree.py` reads them from `$AUDIT_WORK/diffs`, so copy them there (`cp $AUDIT_REF/diffs/*.md $AUDIT_WORK/diffs/`).

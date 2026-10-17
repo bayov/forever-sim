@@ -41,7 +41,7 @@ var repoRoot = "."
 
 func main() {
 	home, _ := os.UserHomeDir()
-	archive := flag.String("archive", filepath.Join(home, "forever-logs"), "the log archive: logs under <flavor>/, exports under exports/, client tables under wago/")
+	archive := flag.String("archive", filepath.Join(home, "forever-logs"), "the log archive: logs under <flavor>/, exports under exports/")
 	flavor := flag.String("flavor", "", "the game folder in the archive to read, like _classic_beta_ (default: every one)")
 	logPath := flag.String("log", "", "the combat log to read (default: the newest one in the archive)")
 	exportPath := flag.String("export", "", "the /bayov export JSON of the character (default: the newest one before the window ends)")
@@ -157,7 +157,7 @@ func main() {
 		log.Fatal(err)
 	}
 	build := fmt.Sprintf("%s.%d", ex.When.Version, ex.When.Build)
-	tables, err := loadClientTables(filepath.Join(*archive, "wago"), build)
+	tables, err := loadClientTables(wagoCache(), build)
 	if err != nil {
 		log.Fatal(err)
 	}

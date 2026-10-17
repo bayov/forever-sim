@@ -25,7 +25,7 @@ Wowhead sits behind AWS WAF, and there are two separate checks:
    lasts about four days. `wowhead.py` earns it once in headless Chrome
    (`google-chrome` has to be installed), then fetches every page with
    curl_cffi, which looks like Chrome. It keeps the cookie in
-   `~/.cache/forever-wowhead/token.json`.
+   `~/.cache/wow-data/wowhead/token.json`.
 2. **A rate limit.** About 110 requests in a minute or two got our address a 403
    for everything, browser or not, for some minutes. A new token doesn't help.
    `wowhead.py` asks once every 3.5 seconds (`DELAY`). When a 403 comes anyway it
@@ -33,7 +33,7 @@ Wowhead sits behind AWS WAF, and there are two separate checks:
    run two scrapes at once, and don't loop over Wowhead pages from your own code.
    Use `Wowhead.page()`.
 
-Every page is kept, gzipped, in `~/.cache/forever-wowhead/pages`, so a run that
+Every page is kept, gzipped, in `~/.cache/wow-data/wowhead/pages`, so a run that
 stops picks up where it left off. A page younger than `WOWHEAD_CACHE_DAYS` (7 by
 default) isn't fetched again. Use `WOWHEAD_CACHE_DAYS=0` when Wowhead changed
 something today that you need.
@@ -109,5 +109,6 @@ item stats (`jsonequip`).
 ## Not covered here
 
 - The daily cloud routine doesn't scrape Wowhead. It runs where we can't count on
-  Chrome, and stale.py in the WoW folder flags scrapes older than a week, so this
-  skill runs locally.
+  Chrome, and `tools/sources/stale.py` flags scrapes older than a week (by the fetch
+  date in each file's `meta` block), so this skill runs locally. `docs/data_sources.md`
+  lists every source the scrapes feed and who reads them.

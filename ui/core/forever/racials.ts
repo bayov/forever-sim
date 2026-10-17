@@ -3,9 +3,10 @@ import { IconData } from '../proto/ui';
 import RacialsJson from './racials.json';
 
 // The Forever racials, two actives and two passives per race, as the beta client shows
-// them (build 1.60.1.69876, read through hyjal.cc). A racial with class variants, like
-// Eureka! or Touch of the Grave, lists one entry per variant with the classes it applies
-// to. Berserking's duration is not in the client data, the 10 sec is Classic's.
+// them. racials.json is generated from the client's tables by tools/sources/racials.py,
+// and racials.meta.json says which build. A racial with class variants, like Eureka! or
+// Touch of the Grave, lists one entry per variant with the classes it applies to.
+// Berserking's duration is not in the client data, the 10 sec is Classic's.
 
 export interface RacialVariant {
 	spellId: number;

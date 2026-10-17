@@ -16,6 +16,4 @@ Each script starts with a usage line. The pass that uses them is in `orchestrati
 - `run2.sh`: sim one preset at 20k iterations with optional env vars.
 - `run_all.sh`: sim every preset's base plus all sensitivities, or only the named presets.
 - `summarize.py`: print each sensitivity with its place, write or compare the reduced baseline CSV.
-- `wago_builds.sh`: list the Forever client builds on wago.tools.
-- `db2_fetch.sh`: download the 19 tracked db2 tables for a build.
-- `db2_rowdiff.py`: row-diff every table between two builds.
+- The client tables come from `tools/sources/wago.py`: `latest` for the newest build, `fetch <build> --set rank_tuning` for the 19 tracked tables, `diff <old> <new> --set rank_tuning` to row-diff them.

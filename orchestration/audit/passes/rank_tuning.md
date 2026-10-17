@@ -29,7 +29,7 @@ The full method, the per-class verdict tables, the rank inversion scan and every
 
 ## What to watch, and when a pass is quiet
 
-1. **A new Forever client build on wago.tools:** `tools/audit/rank_tuning/wago_builds.sh` lists the 1.60.x builds. The baseline is **1.60.1.70450**.
+1. **A new Forever client build on wago.tools:** `python3 tools/sources/wago.py latest --probe 300` prints the newest 1.60 build. The baseline is **1.60.1.70450**.
 2. **Master changes to the sensitivity spells:**
 
    ```
@@ -59,10 +59,10 @@ A=tools/audit/rank_tuning                    # run from the repo root (master)
 REF=orchestration/audit/ref/rank_tuning/baseline_d2633f4.csv
 
 # 1. New client build?
-$A/wago_builds.sh
-AUDIT_WORK=$AUDIT_WORK $A/db2_fetch.sh 1.60.1.70450     # baseline tables, first time only
-AUDIT_WORK=$AUDIT_WORK $A/db2_fetch.sh 1.60.1.<new>
-python3 -I $A/db2_rowdiff.py $AUDIT_WORK/db 70450 <new>
+python3 tools/sources/wago.py latest --probe 300
+python3 tools/sources/wago.py fetch 1.60.1.70450 --set rank_tuning   # baseline tables, first time only
+python3 tools/sources/wago.py fetch 1.60.1.<new> --set rank_tuning
+python3 -I tools/sources/wago.py diff 70450 <new> --set rank_tuning
 
 # 2. Master moved? Run the two git diffs above.
 

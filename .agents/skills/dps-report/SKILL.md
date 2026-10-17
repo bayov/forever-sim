@@ -61,7 +61,7 @@ Rules for every role (put them in each prompt):
 
 Each block lists its inputs, its outputs and how to run it. Combine them freely.
 
-**B1. Status check.** Inputs: state.json, `git log` per branch, wago.tools builds, Blizzard dev notes. Output: a short "what changed since last report" list (new client build, branch commits, open followups). Always do this first. It's cheap.
+**B1. Status check.** Inputs: state.json, `git log` per branch, `python3 tools/sources/stale.py` (new builds, scrape ages, the routine's PRs), Blizzard dev notes. Output: a short "what changed since last report" list (new client build, branch commits, open followups). Always do this first. It's cheap.
 
 **B2. Rule change.**
 - When the user rules on something cross-class, record it in `orchestration/standards.md` as a new numbered item, with the user's words and the date.
@@ -145,7 +145,7 @@ Template: `prompts/dashboard/HANDOFF_assumptions.md`. Re-run it whenever presets
 
 - **Light refresh** ("update the report"): B1 → B7 for stale classes only → B8 only if the page needs no changes beyond data → B11.
 - **Act on audit findings** ("handle the audit findings", after a notification): B1 → B13 → B3/B4 for the fixes → B5 for the auditors that found them → B7 → B11.
-- **Full pass** (new Forever build, or "re-audit everything"): B1 → class changes auditor (a subagent) and a client update pass (B5) on the new build → B3 research and fixes per class → B4 shared fixes → B5 audit pass → B7 → B9 → B11.
+- **Full pass** (new Forever build, or "re-audit everything"): B1 → the `update-sources` skill (it pulls the build's tables and diff and regenerates the database) → class changes auditor (a subagent) and a client update pass (B5) on the new build → B3 research and fixes per class → B4 shared fixes → B5 audit pass → B7 → B9 → B11.
 - **One class** ("re-check druids"): B1 for that class → B3 → B5 (results, and fairness for the ranking) → B7 for that class → B11.
 - **Rule change** ("assume X", "use Sunder not Expose"): B2 → B3 for affected classes → B5 → B7 → B11.
 - **Report feature** ("add Y to the report"): B8 (plus B7 if new data is needed) → B11.

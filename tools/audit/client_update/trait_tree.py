@@ -1,13 +1,18 @@
 """usage: AUDIT_WORK=<scratch> python3 -I trait_tree.py <TraitTreeID> <build>...
 Every talent-tree diff line (from db2diff.py outputs in $AUDIT_WORK/diffs/*.md) that touches the
 given class tree: its nodes, entries, definitions and effect points across the builds given.
-Find a class's TraitTreeID in TraitTree.<build>.csv or from a talent spell's TraitDefinition."""
+Find a class's TraitTreeID in the build's TraitTree table (`tools/sources/wago.py path <build>
+TraitTree`) or from a talent spell's TraitDefinition."""
 import csv, glob, os, re, sys
-W = os.environ['AUDIT_WORK']; D = os.path.join(W, 'db2')
+W = os.environ['AUDIT_WORK']
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../sources'))
+import wago  # noqa: E402
 tree, builds = sys.argv[1], sys.argv[2:]
 def rows(t, b):
-    p = os.path.join(D, f'{t}.{b}.csv')
-    return list(csv.DictReader(open(p, newline='', encoding='utf-8'))) if os.path.exists(p) else []
+    try:
+        return wago.rows(t, b)
+    except OSError:
+        return []
 nodes, entries, defs, ep = set(), set(), set(), set()
 for b in builds:
     nodes |= {r['ID'] for r in rows('TraitNode', b) if r['TraitTreeID'] == tree}

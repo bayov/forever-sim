@@ -29,6 +29,8 @@ import json, os, sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from wowhead import Wowhead, listview, listview_items, mapper
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../sources'))
+from meta import line, meta
 
 OUT = os.path.join(os.path.dirname(__file__), '../../../assets/db_inputs/forever_wowhead_recipes.json')
 # wowhead's recipe listings by subclass. Fishing has books, the rest are professions.
@@ -124,7 +126,8 @@ def main():
     def block(d):
         return ',\n'.join('%s:%s' % (json.dumps(str(k)), json.dumps(v, sort_keys=True, separators=(',', ':'))) for k, v in sorted(d.items()))
     with open(OUT, 'w') as f:
-        f.write('{"items": [\n')
+        f.write('{' + line(meta('www.wowhead.com/forever', 'tools/database/forever_wowhead/recipes.py', dataEnv=16)))
+        f.write('"items": [\n')
         f.write(',\n'.join(json.dumps(i, sort_keys=True, separators=(',', ':')) for i in sorted(items.values(), key=lambda x: x['id'])))
         f.write('\n],\n"npcs": {\n%s\n},\n"objects": {\n%s\n},\n"quests": {\n%s\n}}\n' % (block(npcs), block(objects), block(quests)))
     print(f'written to {OUT}', file=sys.stderr)

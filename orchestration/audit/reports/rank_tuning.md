@@ -6,7 +6,7 @@ Result: **quiet** (no findings).
 
 | Check | Result |
 |---|---|
-| New client build (`wago_builds.sh`) | none; newest is 1.60.1.70450 (baseline) |
+| New client build (`wago.py latest`) | none; newest is 1.60.1.70450 (baseline) |
 | Sensitivity spell files, d2633f4..0a204d4 | unchanged |
 | `sim/` and `tools/dps_report/req`, d2633f4..0a204d4 | b803e88: shaman heal rank families (`healing.go`, `shaman.go`, heal tests); b1b0763: item db regenerated from the Wowhead scrape (golden results only). No req file changed. |
 | 66 bases, shared 20k run vs `baseline_d2633f4.csv` | 66/66 matched, largest move 0.001%: level within noise |

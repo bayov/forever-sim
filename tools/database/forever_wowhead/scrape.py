@@ -25,6 +25,8 @@ import concurrent.futures, json, os, sys, urllib.request
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from wowhead import Wowhead, gatherer, listview_items, listview_template
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../sources'))
+from meta import line, meta
 
 OUT = os.path.join(os.path.dirname(__file__), '../../../assets/db_inputs/forever_wowhead_items.json')
 
@@ -168,7 +170,8 @@ def main():
     out = sorted(items.values(), key=lambda x: x['id'])
     # One item per line, so a rescrape diffs item by item.
     with open(OUT, 'w') as f:
-        f.write('{"maxReqLevel": %d, "items": [\n' % MAX_REQ_LEVEL)
+        f.write('{' + line(meta('www.wowhead.com/forever', 'tools/database/forever_wowhead/scrape.py', dataEnv=16)))
+        f.write('"maxReqLevel": %d, "items": [\n' % MAX_REQ_LEVEL)
         f.write(',\n'.join(json.dumps(i, sort_keys=True, separators=(',', ':')) for i in out))
         f.write('\n]}\n')
     print(f'{len(out)} items written to {OUT}', file=sys.stderr)

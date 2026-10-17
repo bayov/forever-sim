@@ -74,7 +74,7 @@ func main() {
 	gearSynthetic := flag.Bool("gear-synthetic", false, "gear search: also consider the made up Phase 1 items (ids from 990000, tools/database/forever_synthetic_items.go)")
 	gearPhase := flag.Int("gear-phase", 0, "highest raid phase the gear search considers (1 MC, 2 DM, 3 BWL, 4 ZG, 5 AQ, 6 Naxx), 0 for all")
 	dbPath := flag.String("db", "assets/database/db.json", "UI item database for the gear search")
-	itemLevelsPath := flag.String("item-levels", "assets/db_inputs/wago_db2_items.csv", "wago item export, for which items need a PvP rank")
+	itemLevelsPath := flag.String("item-levels", "assets/db_inputs/wago_db2_items.csv,assets/db_inputs/forever_client_items.csv", "wago item exports, comma separated with the later winning, for which items need a PvP rank")
 	foreverItemsPath := flag.String("forever-items", "assets/db_inputs/forever_wowhead_items.json", "wowhead Forever listing, for which items it has no source for")
 	evalOnly := flag.Bool("eval", false, "only run the starting knobs, no search")
 	outDir := flag.String("out", "", "directory to write <name>[_<dur>s].apl.json into")

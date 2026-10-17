@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"path/filepath"
 	"time"
 
 	"google.golang.org/protobuf/encoding/protojson"
@@ -48,7 +47,7 @@ func writePlayer(archive, exportPath, char string, fullSkill bool, out string) e
 		return err
 	}
 	build := fmt.Sprintf("%s.%d", ex.When.Version, ex.When.Build)
-	tables, err := loadClientTables(filepath.Join(archive, "wago"), build)
+	tables, err := loadClientTables(wagoCache(), build)
 	if err != nil {
 		return err
 	}

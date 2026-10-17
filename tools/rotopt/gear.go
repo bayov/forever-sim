@@ -93,18 +93,33 @@ func contains[T comparable](list []T, v T) bool {
 	return false
 }
 
-// The items that need a PvP rank, from the wago export. Only that file records it.
-func loadPvpRankItems(path string) (map[int32]bool, error) {
+// The items that need a PvP rank, from the wago exports. Only those files record it.
+//
+// paths is a comma separated list, and a later file wins for the items it has a rank for.
+// The default is Classic's ItemSparse and then the Forever client's
+// (forever_client_items.csv), because the Forever one lacks most Classic items. A blank
+// rank, for an item the Forever file only knows from the ItemSet table, says nothing.
+func loadPvpRankItems(paths string) (map[int32]bool, error) {
+	ranked := map[int32]bool{}
+	for _, path := range strings.Split(paths, ",") {
+		if err := readPvpRanks(path, ranked); err != nil {
+			return nil, err
+		}
+	}
+	return ranked, nil
+}
+
+func readPvpRanks(path string, ranked map[int32]bool) error {
 	f, err := os.Open(path)
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer f.Close()
 	r := csv.NewReader(f)
 	r.LazyQuotes = true
 	header, err := r.Read()
 	if err != nil {
-		return nil, err
+		return err
 	}
 	idCol, rankCol := -1, -1
 	for i, name := range header {
@@ -116,23 +131,24 @@ func loadPvpRankItems(path string) (map[int32]bool, error) {
 		}
 	}
 	if idCol < 0 || rankCol < 0 {
-		return nil, fmt.Errorf("%s: no ID/RequiredPVPRank columns", path)
+		return fmt.Errorf("%s: no ID/RequiredPVPRank columns", path)
 	}
-	ranked := map[int32]bool{}
 	for {
 		row, err := r.Read()
 		if err == io.EOF {
 			break
 		}
 		if err != nil {
-			return nil, err
+			return err
 		}
-		if rank, _ := strconv.Atoi(row[rankCol]); rank > 0 {
-			id, _ := strconv.Atoi(row[idCol])
-			ranked[int32(id)] = true
+		if row[rankCol] == "" {
+			continue
 		}
+		id, _ := strconv.Atoi(row[idCol])
+		rank, _ := strconv.Atoi(row[rankCol])
+		ranked[int32(id)] = rank > 0
 	}
-	return ranked, nil
+	return nil
 }
 
 // Whether a random suffix does anything for the class: a physical stat for a melee, and

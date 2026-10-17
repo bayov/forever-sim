@@ -9,9 +9,14 @@ Tick an item when it's done.
 Item format:
 
 ```
-- [ ] YYYY-MM-DD — <what to do> (<why / source>)
+- [ ] YYYY-MM-DD — <what to do> (<why / source>) [source: <tag>]
   - <details: build number, wago.tools links, spell or item IDs, sim files, notes.md or audit items>
 ```
+
+The tag is one of `wago build <N>`, `wowhead`, `foreverchanges`, `blizzard` or `tooltip`
+(tools/forever_update/ROUTINE.md says which). `tools/sources/stale.py` finds unprocessed client
+builds by the `wago build` tag. Items from before 2026-10-17 have none, and it matches their
+wording instead.
 
 
 - [ ] 2026-10-13 — Check Baron Charr's Sceptre's fire proc, 35 → 90 on the Forever tooltip (revealed Oct 11–12, client tooltip only)
@@ -91,3 +96,6 @@ Item format:
 - [ ] 2026-10-16 — Grounding Totem breaks on non-damaging spells in 70425; a beta hotfix is promised (forever-bugs #354, AidanZMoon "Will be hotfixed into beta", tracker)
   - Not simulated (PvP and utility). Check after the hotfix whether anything in the sim or the docs assumes the old rule. https://github.com/ClassicWoWCommunity/forever-bugs/issues/354
   - Also new on the tracker, no dev reply yet: #370 Elemental Reach lost its Flame Shock range (the 70425 tooltip agrees), #358 Ghost Wolf, Cure Poison and Cure Disease use up Water Shield charges.
+- [ ] 2026-10-17 — Give Ankle Slicers 284587 a source once one is known, and decide on its slow proc (foreverchanges.pro hidden items, October 15 to 16 group, revealed after PR #107; client)
+  - Epic thrown, ilvl 63, req 58, BoE: 51–96 / 1.80, +9 Sta, Equip: +12 Attack Power. Chance on hit: Sliced Ankle (spell 1316346), 30% movement slow for 6 sec, not modelled (no DPS effect).
+  - Its stats are already in db.json from the Oct 17 Wowhead refresh (b1b0763), with no source. Ranged-slot option for Rogue and Warrior at 60 (+12 AP). https://foreverchanges.pro/item/284587

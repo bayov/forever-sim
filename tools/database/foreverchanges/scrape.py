@@ -17,7 +17,11 @@
 #
 #   python3 tools/database/foreverchanges/scrape.py
 #   go run ./tools/database/gen_db -outDir=assets -gen=db
-import json, os, re, sys, time, urllib.request
+import json, os, re, sys, time
+
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../sources'))
+from foreverchanges import fetch, payload
+from meta import line, meta
 
 OUT = os.path.join(os.path.dirname(__file__), '../../../assets/db_inputs/foreverchanges_loot.json')
 DUNGEONS = ['ragefire-chasm', 'the-deadmines', 'wailing-caverns', 'hall-of-thanes', 'ruins-of-lordaeron', 'shadowfang-keep',
@@ -25,17 +29,6 @@ DUNGEONS = ['ragefire-chasm', 'the-deadmines', 'wailing-caverns', 'hall-of-thane
             'scarlet-monastery-graveyard', 'scarlet-monastery-library', 'scarlet-monastery-armory',
             'scarlet-monastery-cathedral', 'razorfen-downs']
 BOSS = re.compile(r'\{"name":"[^"]*","kind":"[^"]*"')
-
-
-def fetch(path):
-    req = urllib.request.Request('https://foreverchanges.pro' + path, headers={'User-Agent': 'Mozilla/5.0'})
-    with urllib.request.urlopen(req, timeout=60) as r:
-        return r.read().decode()
-
-
-def payload(page):
-    chunks = re.findall(r'self\.__next_f\.push\(\[1,(".*?")\]\)</script>', page, re.S)
-    return ''.join(json.loads(c) for c in chunks)
 
 
 def main():
@@ -60,7 +53,8 @@ def main():
         print(f'{slug}: {n} drops', file=sys.stderr)
         time.sleep(1)
     with open(OUT, 'w') as f:
-        f.write('{"items": [\n')
+        f.write('{' + line(meta('foreverchanges.pro', 'tools/database/foreverchanges/scrape.py')))
+        f.write('"items": [\n')
         f.write(',\n'.join(json.dumps(r, ensure_ascii=False, separators=(',', ':')) for r in rows))
         f.write('\n]}\n')
     print(f'{len(rows)} drops written to {OUT}', file=sys.stderr)
