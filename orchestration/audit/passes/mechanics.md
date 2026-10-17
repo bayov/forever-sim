@@ -44,6 +44,28 @@ $CLI sim --infile $AUDIT_WORK/mechanics/x.json --outfile $AUDIT_WORK/mechanics/o
 
 ## The pass
 
+**Get current first, on every pass.** The sim must never keep a mechanic Forever has since changed or
+removed. Before looking at commits, establish the newest state of the game, and treat anything newer
+than a verdict as a reason to re-check it:
+
+- **Client build:** the newest 1.60 build (the gate's `client_build`, or `python3 tools/audit/wago_latest.py --probe 300`).
+  If it's newer than the build a verdict in `ref/mechanics/verdicts.md` rests on, re-check that verdict's spell
+  data on the new build (step 5).
+- **Blizzard:** every development-notes post, hotfix post and blue post on the WoW Forever forums newer than
+  `dev_notes_seen` in your state (the thread us.forums.blizzard.com/en/wow/t/2360696 and the category's blue
+  tracker; posters Kaivax, Aggrend, Gnedi, Linxy and Brenoch). An edited post keeps its date, so compare edit times.
+- **What the daily update found:** the WoW Forever Daily Update routine reads the news every day and lands what it
+  finds in the repo. Read what changed since your last pass:
+  `git log --format='%h %ad %s' --date=short <last.master>..origin/master -- TASKS.md orchestration/update_ledger.md`,
+  the merged `forever-update/*` PRs (`git log --merges --oneline <last.master>..origin/master | grep forever-update`),
+  and the TASKS.md items they added.
+- **Re-verify:** for each new change to a shared mechanic, racial, raid buff or debuff, consumable or enchant,
+  check the matching row of `verdicts.md` and the sim. A sim value that a newer tier 1 source contradicts is a
+  finding (`severity: high` when it moves DPS by 1% or more), even when no commit touched it. Update the row and the
+  file's "as of" line when you confirm a value still holds on the newer build.
+
+Record what you read as `dev_notes_seen` and `client_build` in your state, so the next pass starts from there.
+
 1. **Fetch:** `git fetch -q origin --prune`.
 2. **List what moved** since the master commit you last audited (`last.master` in `state/mechanics.json`). Diff by
    sha, not by time: a time window once missed a merge that landed a minute before it.
@@ -70,12 +92,14 @@ $CLI sim --infile $AUDIT_WORK/mechanics/x.json --outfile $AUDIT_WORK/mechanics/o
      auditor writes the ledger; file class deltas the sim must port as findings.
    - Set `client_build` in your state.
    `tools/audit/mechanics/probe_builds.sh <first> <last>` probes a range by hand.
-6. **Blizzard notes:** read the newest development-notes post (the gate starts you at least once a day for this).
+6. **Blizzard notes:** covered by "Get current first" above. The gate starts you at least every 72 hours even when
+   nothing changed in the repo, so this check never goes stale for long.
    Quote the exact wording for anything you rely on. Record the newest post you read as `dev_notes_seen` in your state
    (its URL and date), so the next pass reads only what's newer.
 7. **Report.** New findings go to the findings file with evidence (spell IDs, fields, values, build) and a proposed
    fix; update `ref/mechanics/verdicts.md` with anything newly verified or settled; write `reports/mechanics.md`. A
-   quiet pass (no shared-mechanic commits, no new build, no new notes) only updates the state.
+   quiet pass (no shared-mechanic commits, no new build, no new Blizzard or daily-update information) only updates
+   the state, including `dev_notes_seen`.
 
 ## What counts as a finding
 
