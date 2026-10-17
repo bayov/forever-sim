@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Say which of forever-sim's inputs are behind their source, and what to run.
 
-    python3 tools/sources/stale.py [--client-build 1.60.1.70450] [--json]
+    python3 tools/sources/stale.py [--client-build 1.60.1.70450] [--addons <client's Interface/AddOns>] [--json]
     python3 tools/sources/stale.py --registry
 
 It only reads, and it never goes online (gh aside). docs/data_sources.md is
@@ -19,6 +19,9 @@ the registry of every source it checks.
 - How old each scrape is, from its `meta` block (tools/sources/meta.py), not
   the file's modification time, which a checkout resets.
 - The daily update routine's open `forever-update/<date>` PRs (with gh).
+- With --addons, whether the installed AtlasLoot Forever changed since we read
+  it: the hash of its four data files against assets/db_inputs/atlasloot_db.meta.json.
+  bayovui's stale.py passes the beta client's AddOns folder.
 
 --json prints {"lines": [...], "todo": [...]} for bayovui's stale.py, which
 runs this first and prints both.
@@ -29,6 +32,7 @@ it doesn't. `make test` runs it, so the registry can't fall behind the code.
 """
 import argparse
 import glob
+import hashlib
 import json
 import os
 import re
@@ -51,6 +55,16 @@ SCRAPES = [
     ('forever_wowhead_recipes.json', 7, 'the scrape-wowhead skill (recipes)'),
     ('foreverchanges_loot.json', 14, 'python3 tools/database/foreverchanges/scrape.py'),
     ('foreverchanges_suffixes.json', 14, 'python3 tools/database/foreverchanges/suffixes.py <max level> <cache dir>'),
+]
+
+# The AtlasLoot files gen_db -gen=atlasloot reads, in the order it hashes them
+# (AtlasLootFiles in tools/database/atlasloot.go).
+ATLASLOOT_META = os.path.join(INPUTS, 'atlasloot_db.meta.json')
+ATLASLOOT_FILES = [
+    ('AtlasLootClassic_Data', 'source.lua'),
+    ('AtlasLootClassic_DungeonsAndRaids', 'data.lua'),
+    ('AtlasLootClassic_PvP', 'data.lua'),
+    ('AtlasLootClassic_Factions', 'data.lua'),
 ]
 
 # Where scripts that download something live, and how we spot one.
@@ -121,7 +135,19 @@ def routine_prs(name):
     return [tuple(ln.split('\t', 1)) for ln in r.stdout.splitlines() if ln.strip()]
 
 
-def check(client_build):
+def atlasloot_hash(addons):
+    """The installed AtlasLoot's hash, as gen_db writes it, or None when it isn't installed."""
+    h = hashlib.sha256()
+    for addon, name in ATLASLOOT_FILES:
+        path = os.path.join(addons, addon, name)
+        if not os.path.exists(path):
+            return None
+        with open(path, 'rb') as f:
+            h.update(f.read())
+    return h.hexdigest()[:12]
+
+
+def check(client_build, addons=None):
     lines, todo = [], []
     say = lines.append
 
@@ -155,6 +181,21 @@ def check(client_build):
     if talents:
         say('  info  talent trees by class, newest build each names: %s' % ', '.join(
             '%s %s' % (c, b or '?') for c, b in talents.items()))
+
+    if addons:
+        rel = os.path.relpath(ATLASLOOT_META, ROOT)
+        m = read_meta(ATLASLOOT_META) if os.path.exists(ATLASLOOT_META) else None
+        installed = atlasloot_hash(addons)
+        if installed is None:
+            say('  ?     AtlasLoot Forever isn\'t installed in %s' % addons)
+        elif not m:
+            say('  ?     %s is missing, so we don\'t know which AtlasLoot we read' % rel)
+            todo.append('the update-sources skill\'s AtlasLoot step')
+        elif m.get('sha256') != installed:
+            say('  NEW   AtlasLoot Forever changed since %s (%s)' % (m.get('fetched'), m.get('version')))
+            todo.append('the update-sources skill\'s AtlasLoot step')
+        else:
+            say('  ok    AtlasLoot Forever, read %s (%s)' % (m.get('fetched'), m.get('version')))
 
     now = datetime.datetime.now(datetime.timezone.utc)
     for name, days, refresh in SCRAPES:
@@ -215,6 +256,7 @@ def unlisted():
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
     ap.add_argument('--client-build', help='the installed client\'s version, like 1.60.1.70450')
+    ap.add_argument('--addons', help='the beta client\'s Interface/AddOns, to check AtlasLoot')
     ap.add_argument('--json', action='store_true')
     ap.add_argument('--registry', action='store_true',
                     help='only check that docs/data_sources.md names every input and fetcher')
@@ -226,7 +268,7 @@ def main():
             print('%s is missing from docs/data_sources.md' % m)
         return 1 if missing else 0
 
-    lines, todo = check(a.client_build)
+    lines, todo = check(a.client_build, a.addons)
     if missing:
         lines.append('  MISSING from docs/data_sources.md: %s' % ', '.join(missing))
         todo.append('add %s to docs/data_sources.md' % ', '.join(missing))

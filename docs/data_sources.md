@@ -183,18 +183,30 @@ It reads four things from us: `assets/database/db.json`, `ui/*/bis/*.bis.json`,
 
 ## AtlasLoot
 
-- **What:** item sources (drops, crafts, PvP, factions), zones, NPCs, factions.
-- **URLs:** `https://raw.githubusercontent.com/HiKwonko/AtlasLootClassic_SoD/master/...` (four
-  data files of a 2024 Season of Discovery fork), zone names from
-  `nether.wowhead.com/classic/tooltip/zone/<id>`.
-- **Fetcher:** `go run ./tools/database/gen_db -outDir=assets -gen=atlasloot`
-  (`tools/database/atlasloot.go`). It also reads `assets/db_inputs/factions.json`, a hand
-  list of faction IDs and names from upstream.
-- **Input:** `assets/db_inputs/atlasloot_db.json`.
+- **What:** item sources (boss drops, crafts, PvP and faction rewards), zones, NPCs and
+  factions, from the AtlasLoot Forever addon (CurseForge 1422985) installed in the beta
+  client. Its loot tables already list Forever's new dungeons. Its Forever bosses have
+  names but no NPC IDs yet, so their drops carry the boss's name only.
+- **Read from:** the client's `Interface/AddOns`: `AtlasLootClassic_Data/source.lua`,
+  `AtlasLootClassic_DungeonsAndRaids/data.lua`, `AtlasLootClassic_PvP/data.lua` and
+  `AtlasLootClassic_Factions/data.lua`. Zone names come from
+  `nether.wowhead.com/classic/tooltip/zone/<id>`, and faction names from
+  `assets/db_inputs/factions.json`, a hand list from upstream.
+- **Fetcher:** `go run ./tools/database/gen_db -outDir=assets -gen=atlasloot -atlasloot=<the
+  beta's Interface/AddOns>` (`tools/database/atlasloot.go`). It only runs locally, since the
+  addon is on our machine. The daily routine and the audit loop read the committed input.
+- **Input:** `assets/db_inputs/atlasloot_db.json`, and `assets/db_inputs/atlasloot_db.meta.json`
+  next to it with the addon's version and a hash of the four files. The input is read as a
+  proto, which has no room for a meta block.
 - **Generator:** `gen_db -gen=db`.
-- **Refresh:** never, as it stands. Phase 2 reads the Forever AtlasLoot installed in the beta
-  client instead (CurseForge 1422985, "Forever 1.60.1"), as a quick source and a cross-check
-  for Wowhead.
+- **Cross-check:** `python3 -I tools/sources/crosscheck.py` lists the items where AtlasLoot and
+  Wowhead's gear listing disagree on a drop, or only one of them knows it.
+- **Refresh:** when CurseForge updates the addon. The `update-sources` skill's AtlasLoot step.
+- **Behind when:** `stale.py --addons <AddOns>` hashes the installed files and compares the hash
+  with the meta file. bayovui's `stale.py` passes the beta's folder.
+- **History:** until 2026-10-17 we read a 2024 Season of Discovery fork from GitHub
+  (HiKwonko/AtlasLootClassic_SoD). Switching dropped 1165 SoD-only items and added 116 of
+  Forever's, and 914 items gained drop sources.
 
 ## Talents, racials and enchants (hand-vendored)
 

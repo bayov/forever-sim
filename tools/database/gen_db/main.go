@@ -10,6 +10,7 @@ import (
 	"slices"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/wowsims/classic/sim"
 	"github.com/wowsims/classic/sim/core"
@@ -20,7 +21,7 @@ import (
 )
 
 // To do a full re-scrape, delete the previous output file first.
-// go run ./tools/database/gen_db -outDir=assets -gen=atlasloot
+// go run ./tools/database/gen_db -outDir=assets -gen=atlasloot -atlasloot=<the beta client's Interface/AddOns>
 // go run ./tools/database/gen_db -outDir=assets -gen=wowhead-items
 // go run ./tools/database/gen_db -outDir=assets -gen=wowhead-spells -maxid=31000
 // go run ./tools/database/gen_db -outDir=assets -gen=wowhead-gearplannerdb
@@ -36,6 +37,7 @@ var minId = flag.Int("minid", 1, "Minimum ID to scan for")
 var maxId = flag.Int("maxid", 31000, "Maximum ID to scan for")
 var outDir = flag.String("outDir", "assets", "Path to output directory for writing generated .go files.")
 var genAsset = flag.String("gen", "", "Asset to generate. Valid values are 'db', 'atlasloot', 'wowhead-items', 'wowhead-spells', 'wowhead-gearplannerdb' and 'wago-db2-items'")
+var atlasLootDir = flag.String("atlasloot", "", "For -gen=atlasloot: the Interface/AddOns folder of the client that has AtlasLoot Forever installed")
 
 func main() {
 	flag.Parse()
@@ -53,8 +55,23 @@ func main() {
 	inputsDir := fmt.Sprintf("%s/db_inputs", *outDir)
 
 	if *genAsset == "atlasloot" {
-		db := database.ReadAtlasLootData(inputsDir)
+		if *atlasLootDir == "" {
+			log.Fatalf("-gen=atlasloot needs -atlasloot=<the client's Interface/AddOns folder>")
+		}
+		db := database.ReadAtlasLootData(inputsDir, *atlasLootDir)
 		db.WriteJson(fmt.Sprintf("%s/atlasloot_db.json", inputsDir))
+		// atlasloot_db.json is read as a proto, which has no room for a meta block, so the
+		// installed version goes next to it. tools/sources/stale.py compares its hash with the
+		// installed files.
+		meta := map[string]map[string]string{"meta": {
+			"source":  "AtlasLoot Forever (CurseForge 1422985)",
+			"version": database.AtlasLootVersion(*atlasLootDir),
+			"sha256":  database.AtlasLootHash(*atlasLootDir),
+			"tool":    "tools/database/gen_db -gen=atlasloot",
+			"fetched": time.Now().UTC().Format("2006-01-02T15:04Z"),
+		}}
+		out, _ := json.MarshalIndent(meta, "", "  ")
+		tools.WriteFile(fmt.Sprintf("%s/atlasloot_db.meta.json", inputsDir), string(out)+"\n")
 		return
 	} else if *genAsset == "wowhead-items" {
 		database.NewWowheadItemTooltipManager(fmt.Sprintf("%s/wowhead_item_tooltips.csv", inputsDir)).Fetch(int32(*minId), int32(*maxId), database.OtherItemIdsToFetch)
