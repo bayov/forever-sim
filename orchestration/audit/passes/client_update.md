@@ -1,6 +1,10 @@
-# Handoff: client_update auditor
+# Pass: Forever client updates
 
-This auditor makes sure every change in a new WoW Forever client build, announced or not, is recorded in `orchestration/update_ledger.md` and, where it matters to level 60 DPS, lands in the sim. Run a pass whenever wago.tools shows a 1.60 build newer than the baseline.
+Follow `orchestration/audit/PASS.md` around this doc. It started as the long-running game-update auditor's handoff (2026-10-17); keep it current when the method changes.
+
+This auditor makes sure every change in a new WoW Forever client build, announced or not, is recorded in `orchestration/update_ledger.md` (this auditor `owns` it), and that every change that matters to level 60 DPS is filed as a finding, sized, for the orchestrator to land. The audit loop starts a pass only when its gate sees a 1.60 build on wago.tools newer than `client_build` in `state/client_update.json`.
+
+**What changed with the audit loop:** a pass no longer opens PRs or messages workers. It writes the ledger, files one finding per DPS-relevant change (with the before/after numbers from step 4 when it can size it cheaply), and stops. Landing the fixes is the orchestrator's job (`.agents/skills/dps-report`, B13); steps 4 and 5 below are the method it follows.
 
 **Baseline:** 1.60.1.70450, 2026-10-16. It is cosmetic only against 70425. The ledger covers 70009 to 70450.
 
@@ -10,18 +14,20 @@ This auditor makes sure every change in a new WoW Forever client build, announce
 
 ## Rules
 
-- Never merge, never force-push, never push to master. Land sim changes as small PRs on `claude/wow-forever-dps-presets-m9u15h-updates-<topic>`. A docs-only ledger update is also a small PR unless the orchestrator merges it for you.
+- In a pass, write only the ledger and your audit-loop files (`PASS.md`); the run commits them. No branches, PRs or messages. What used to become a `notes.md` "Need to Verify" item becomes a low-severity finding instead (`notes.md` belongs to other sessions).
+- When the orchestrator lands a fix (B13): never merge without the user's go-ahead, never force-push. Land sim changes as small PRs on `claude/wow-forever-dps-presets-m9u15h-updates-<topic>`.
 - Gate every Forever change behind the Forever ruleset (`sim.Env.IsForever()` or the ruleset check the surrounding code uses). Classic behaviour must not change.
 - Read `orchestration/standards.md` before touching a preset.
-- Class changes go to the class worker for that class through the orchestrator. Fix shared mechanics, racials, items, enchants and consumables yourself.
-- Never change the sim on a tooltip alone. The client data (DB2) or Blizzard's notes must back the change. A server-side change the client doesn't show becomes a notes.md "Need to Verify" item.
+- Class changes, shared mechanics, racials, items, enchants and consumables all become findings: `needs: orchestrator fix`, with the class or system in `affects`.
+- Never change the sim on a tooltip alone. The client data (DB2) or Blizzard's notes must back the change. A server-side change the client doesn't show becomes a "needs verify" finding.
 
 ## Step by step
 
 ### 0. Setup
 
 ```sh
-export AUDIT_TREE=$PWD AUDIT_WORK=<scratch> AUDIT_REF=$AUDIT_TREE/orchestration/audit/ref/client_update
+source tools/audit/setup.sh                 # AUDIT_WORK and the toolchain
+export AUDIT_TREE=$PWD AUDIT_REF=$AUDIT_TREE/orchestration/audit/ref/client_update
 T=tools/audit/client_update
 git fetch origin master
 ```
@@ -30,7 +36,7 @@ git fetch origin master
 
 1. `$T/latest_build.sh` prints the newest 1.60 build on wago.tools.
    - It takes the maximum across all products: Forever appears under `wow_classic_beta`, `wow_cn_beta` and `wowf`, and `wowf` lags by days.
-   - If the result is the baseline (70450 or what the ledger last records), the pass is done: report "no new build".
+   - If the result is the baseline (`client_build` in your state, or what the ledger last records), the pass is done: report "no new build". The gate probes db2 URLs too, so it can see a build `latest_build.sh` doesn't list yet: trust the gate's build number.
 2. **Blizzard development notes** (topic 2360696). Fetch the thread slowly, since the forum rate-limits:
 
    ```sh
@@ -117,7 +123,7 @@ python3 -I $T/enchant_diff.py <baseline> <new>
 - `minor`: it is modelled, but no preset uses it.
 - `n/a`: healing, tanking, threat, PvP, leveling or UI.
 
-**Announced but absent from the client:** the change is server side (a hotfix), or it lands in a later client. The 10-02 warrior pass showed up only in 70291. Mark it `ambiguous (needs verify)` and add a notes.md item.
+**Announced but absent from the client:** the change is server side (a hotfix), or it lands in a later client. The 10-02 warrior pass showed up only in 70291. Mark it `ambiguous (needs verify)` and file a low-severity finding.
 
 ### 4. Check the sim and size the impact
 
@@ -174,21 +180,18 @@ python3 -I $T/enchant_diff.py <baseline> <new>
 - Update the Summary table counts.
 - Update "This audit's PRs" for any PR you open.
 - Update "Rulings needed" for anything only the user can decide.
-- Update `.agents/skills/dps-report/state.json` `foreverClientBuild` to the new build, with a short parenthetical when nothing changed.
-- Add Need to Verify items to `notes.md` under "Game-update audit (<date>)", in the style of that file's existing items.
+- Note the new build for `.agents/skills/dps-report/state.json` `foreverClientBuild` in your report; the orchestrator updates that file.
+- Leave `notes.md` alone; its "Need to Verify" items come from the findings, when the orchestrator handles them.
 
 **Large builds.** For a build with many class changes (like 70425), split the work with one agent per class, using `orchestration/audit/ref/client_update/class_audit_brief.md` adapted to the new build, then review and merge their sections.
 
 ### 7. Report
 
-Send the orchestrator:
-- the build;
-- one line per DPS-relevant change, with its sim status;
-- the PRs, with their DPS tables;
-- the class items routed to workers;
-- the rulings needed.
+- One finding per DPS-relevant change (`yes` or `minor` with status `missing`, `partial` or `wrong`) in `findings/client_update.md`, with the ledger row ID, the client check, the sim location and the sized effect. Things only the user can decide are `needs: user ruling` (and go in the ledger's "Rulings needed").
+- `reports/client_update.md`: the build, one line per DPS-relevant change with its sim status, and the ledger section you added.
+- Set `client_build` in your state to the build you processed.
 
-If nothing DPS-relevant changed, say so in two or three lines.
+If nothing DPS-relevant changed, the report says so in two or three lines and there are no findings.
 
 ## Current state (2026-10-17)
 

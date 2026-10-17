@@ -48,7 +48,7 @@ go build --tags=with_db -o $AUDIT_WORK/bin/after ./cmd/wowsimcli
 
 ### Raw web pages
 
-The raw forum JSON and the foreverchanges and Blizzard news HTML can be fetched again. The commands are in `orchestration/audit/handoff/client_update.md`, step 1.
+The raw forum JSON and the foreverchanges and Blizzard news HTML can be fetched again. The commands are in `orchestration/audit/passes/client_update.md`, step 1.
 
 ## Committed here
 
