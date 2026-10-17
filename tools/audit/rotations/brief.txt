@@ -1,0 +1,52 @@
+# Subagent brief for one rotation re-audit slice. Paths: $AUDIT_TREE = checkout to sim, $AUDIT_WORK = scratch. Update "What changed" each pass.
+Common brief: you are re-auditing Level 60 rotations (APLs) in the forever-sim repo (a WoW Forever DPS sim, a fork of wowsims/classic) at master e64360398.
+
+Do NOT change $AUDIT_TREE or $AUDIT_TREE: no commits, no edits. Work only in your own directory under $AUDIT_WORK/.
+
+What changed since the last audit (26b4145ce → e64360398). Use git -C $AUDIT_TREE diff/log 26b4145ce origin/master to see the details.
+- Client 1.60.1.70425 data, with new spell ids for some spells.
+- A racials rework: sim/core/racials_forever.go and racials_forever_eureka.go.
+- sim/core/rage.go: off-hand Rage at 0.5, a user ruling.
+- Raid hits moved to sim/core/raid_hits.go.
+- sim/core/cast.go: pushback, and channels pushed back on hits.
+- Talent re-searches per class.
+- Windfury Totem procs from main-hand hits only.
+- Demons take the warlock's spell crit.
+- Multi-Shot is instant.
+- Beast Slaying, Big Game Hunter and Elemental Insight are damage only.
+- Many rotation edits by the class workers.
+- Line notes were shortened; ignore notes-only diffs.
+
+Tools:
+- Prebuilt cli: $AUDIT_WORK/cli (`cli sim --infile X --outfile Y`).
+- Settings: $AUDIT_TREE/tools/dps_report/req/<class>__<preset>.json. The rotation is embedded at raid.parties[0].players[0].rotation. Set encounter.duration and keep durationVariation.
+- APLs: $AUDIT_TREE/ui/<spec>/apls/level60*.apl.json.
+- Copy and adapt a harness: tools/audit/rotations/ab.py.
+- Forbidden: tools/rotopt searches, and the cli flags -eval, -timeline and -breakdown. Use paired A/B runs with hand-edited APL copies, plus debug logs (simOptions.debug) when you need to see behaviour.
+
+Method:
+- Paired runs: 20,000 iterations as 8 blocks of 2,500, seeds S0 + k·3e6 with S0 = 1e6, the same seeds for A and B.
+- Report B−A ± SE (stdev of block differences / √8) at 120/180/300 s.
+- Screen at 180 s.
+- MANDATORY: confirm every candidate on a second independent seed set (S0 = 2e8) and report the pooled mean. Earlier audits found the 8-block SE understates the spread between seed sets by about 40%.
+- Report only changes with a pooled gain of at least about 1 DPS at 180 s that don't lose at 120 or 300 s, plus correctness bugs.
+
+Rules:
+- Damage counts from t ≥ 0; pre-casts must land at ≥ 0.
+- Pre-pull self-buffs and cooldowns are OK.
+- No Stealth or Prowl opener. No pet consumables. The demon gets no melee party buffs.
+- Mana gems and runes share one cooldown. Potions have their own 2-minute cooldown. Sapper and Land Mine share a 1-minute explosive cooldown.
+- The Land Mine's 1 s cast restarts swing timers, so it is thrown right after a main-hand swing.
+- Duration × a fractional constant truncates to 0 in APL math.
+- auraRemainingTime on an expired aura returns −currentTime, not 0.
+
+Audit, per preset in your scope:
+(a) Read the new APL and its diff since 26b4145ce. Check that every worker edit is correct: right spell ids for the 70425 data, conditions that can fire, no dead lines.
+(b) Re-scan the key thresholds, priorities and cooldown holds against the new sim.
+(c) Check that the pass-19 end-of-fight instant lines and the pass-20/21 duty and threshold findings are still present and still pay.
+(d) Check whether racial cooldowns are used well under the racials rework.
+
+Report concisely:
+- Baseline DPS at 180 s per preset.
+- Each finding: exact JSON, file:line, and the paired numbers for both seed sets.
+- Correctness bugs.
