@@ -17,7 +17,7 @@ import argparse, base64, html, json, os, re, subprocess, sys
 from html.parser import HTMLParser
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-TOOLTIP_URL = 'https://nether.wowhead.com/forever/tooltip/{kind}/{id}?dataEnv=17&locale=0'
+TOOLTIP_URL = 'https://nether.wowhead.com/forever/tooltip/{kind}/{id}?dataEnv=16&locale=0'
 ICON_URL = 'https://wow.zamimg.com/images/wow/icons/large/{name}.jpg'
 CLASSES = ['Shaman', 'Paladin', 'Rogue', 'Warrior', 'Hunter', 'Mage', 'Priest', 'Warlock', 'Druid']
 STATUSES = {'official', 'hotfix', 'blue', 'interview', 'client', 'datamined', 'tracker', 'tooltip', 'unclear'}
