@@ -36,6 +36,7 @@ func main() {
 	serve := flag.String("serve", "", "address to serve the UI's searches on, like localhost:3001")
 	in := flag.String("in", "", "a LevelingPlanSearchRequest JSON to search, without the UI")
 	out := flag.String("out", "", "with -in, where to write the LevelingPlanSearchResult JSON (stdout when empty)")
+	keep := flag.String("keep", "", "with -serve, a file to write each request to, to run it again with -in")
 	flag.Parse()
 
 	if !core.WITH_DB {
@@ -49,7 +50,7 @@ func main() {
 	switch {
 	case *serve != "":
 		log.Printf("serving leveling plan searches on http://%s/search", *serve)
-		http.HandleFunc("/search", searchHandler(db))
+		http.HandleFunc("/search", searchHandler(db, *keep))
 		if err := http.ListenAndServe(*serve, nil); err != nil {
 			log.Fatal(err)
 		}
@@ -94,6 +95,7 @@ func searchFile(db *proto.UIDatabase, in, out string) error {
 			fmt.Fprintf(os.Stderr, "%s, %d sims, best %.2fh\n", update.Stage, update.Sims, update.BestHours)
 		}
 	})
+	log.Printf("done in %.0fs, %d sims: %s", result.Seconds, result.Sims, summary(result))
 	data, err = protojson.MarshalOptions{Multiline: true}.Marshal(result)
 	if err != nil {
 		return err
@@ -110,7 +112,7 @@ var busy sync.Mutex
 
 // searchHandler answers a search with a LevelingPlanSearchUpdate JSON a line: progress every
 // half second, then the result. The UI's Stop closes the request, and the search stops.
-func searchHandler(db *proto.UIDatabase) http.HandlerFunc {
+func searchHandler(db *proto.UIDatabase, keep string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// The UI comes from the dev server on another port.
 		w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -132,6 +134,11 @@ func searchHandler(db *proto.UIDatabase) http.HandlerFunc {
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusBadRequest)
 			return
+		}
+		if keep != "" {
+			if err := os.WriteFile(keep, data, 0o644); err != nil {
+				log.Printf("keeping the request: %v", err)
+			}
 		}
 		if !busy.TryLock() {
 			http.Error(w, "Another search is running.", http.StatusConflict)

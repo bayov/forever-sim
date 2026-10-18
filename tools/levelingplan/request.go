@@ -37,10 +37,8 @@ type planner struct {
 	plan  *proto.LevelingPlanSettings
 	shape *proto.LevelingTalentShape
 	gear  *gearPlan
-	// The plain items of the gear plan, as the sim's database has them.
-	plainDB map[int32]*proto.SimItem
-	seed    int64
-	sims    atomic.Int32
+	seed  int64
+	sims  atomic.Int32
 }
 
 func newPlanner(req *proto.LevelingPlanSearchRequest, db *proto.UIDatabase) (*planner, error) {
@@ -52,14 +50,17 @@ func newPlanner(req *proto.LevelingPlanSearchRequest, db *proto.UIDatabase) (*pl
 	if err := p.checkUIGear(); err != nil {
 		return nil, err
 	}
-	p.plainDB = map[int32]*proto.SimItem{}
-	for id, item := range p.gear.madeUp {
+	// The sims read the item database without a lock, so we add the plain items now, before
+	// any sim runs. A request's own database would add them while other sims read it.
+	database := &proto.SimDatabase{}
+	for _, item := range p.gear.madeUp {
 		sim, err := simItem(item)
 		if err != nil {
 			return nil, err
 		}
-		p.plainDB[id] = sim
+		database.Items = append(database.Items, sim)
 	}
+	core.AddToDatabase(database)
 	return p, nil
 }
 
@@ -175,7 +176,6 @@ func (p *planner) request(level int32, talents string, iterations int32, seed in
 	player.TalentsString = talents
 
 	equipment := &proto.EquipmentSpec{Items: make([]*proto.ItemSpec, len(gearSlots))}
-	database := &proto.SimDatabase{}
 	gear := p.gear.levels[min(int(level), len(p.gear.levels))-1].gear
 	for i, slot := range gearSlots {
 		equipment.Items[i] = &proto.ItemSpec{}
@@ -187,12 +187,8 @@ func (p *planner) request(level int32, talents string, iterations int32, seed in
 		if piece.suffix != nil {
 			equipment.Items[i].RandomSuffix = piece.suffix.Id
 		}
-		if sim, plain := p.plainDB[piece.item.Id]; plain {
-			database.Items = append(database.Items, sim)
-		}
 	}
 	player.Equipment = equipment
-	player.Database = database
 
 	if !p.plan.UseSettingsBuffs {
 		player.Consumes = &proto.Consumes{}

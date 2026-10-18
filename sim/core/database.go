@@ -17,6 +17,14 @@ var ItemsByID = map[int32]Item{}
 var RandomSuffixesByID = map[int32]RandomSuffix{}
 var EnchantsByEffectID = map[int32]Enchant{}
 
+// AddToDatabase adds the items, random suffixes and enchants we don't have yet. A tool that
+// runs sims on many goroutines, with items of its own, adds them here before. A request's own
+// database would add them while the other sims read the maps, and those reads don't take the
+// lock.
+func AddToDatabase(newDB *proto.SimDatabase) {
+	addToDatabase(newDB)
+}
+
 func addToDatabase(newDB *proto.SimDatabase) {
 	for _, v := range newDB.Items {
 		rwMutex.Lock()
