@@ -78,6 +78,7 @@ After a new client build is fetched (step 2), these follow it. `stale.py` names 
 behind.
 
 ```bash
+python3 tools/sources/dbcache.py "<beta client>" --write       # our client's hotfix cache
 python3 tools/sources/itemsparse.py <new>                      # item sets, factions, PvP ranks
 python3 tools/sources/enchants.py <new>                        # enchant values
 python3 tools/sources/racials.py <new> --write                 # racial text for the UI
@@ -97,9 +98,15 @@ too.
 
 ```bash
 go run ./tools/database/gen_db -outDir=assets -gen=db
+python3 tools/sources/hidden.py
 make test
 python3 tools/audit/gate.py
 ```
+
+`hidden.py` lists the items Forever still hides and says which were revealed since the
+last run. Those are worth a Wowhead scrape for their stats. `dbcache.py` reads our own
+client, so it runs whenever the user has played since the last run (`stale.py --addons`
+says when it was sent hidden items), not only on a new build.
 
 Before committing, compare the new `assets/database/db.json` with the old one by item:
 how many items were added or removed, and which fields changed. A refreshed scrape

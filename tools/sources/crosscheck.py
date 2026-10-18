@@ -18,6 +18,14 @@ and reads what it prints:
   AtlasLoot hasn't added yet, like a new Forever dungeon's.
 
 It only compares items both files cover, and Wowhead's listing is gear only.
+
+A last section compares our client's hotfix cache (forever_client_cache.json,
+tools/sources/dbcache.py) with the sim's database: Classic items whose
+primary stats differ. The cache stores stats as shares of a budget that
+RandPropPoints gives, which holds for Classic's items only (see dbcache.py),
+so Forever's own items are left out. The sim leaves out negative stats, so
+those don't count either. A difference is often a cache row from an earlier
+push, so it's for a look, not a fix.
 Wowhead often names a zone but no NPC (an item with several bosses), and
 that isn't a conflict. It prints the first 10 of each with their names, or
 every one with --all.
@@ -80,12 +88,58 @@ def main():
         elif wn & set(npc_names) and not al_drops(item):
             wh_only.append((iid, w['name'], 'Wowhead: %s' % names(wn, npc_names)))
 
+    cache = cache_differences()
     print('AtlasLoot %d items, Wowhead %d, both %d' % (len(al_items), len(wh), len(set(al_items) & set(wh))))
-    for title, rows in (('conflict', conflict), ('AtlasLoot only', al_only), ('Wowhead only', wh_only)):
+    for title, rows in (('conflict', conflict), ('AtlasLoot only', al_only), ('Wowhead only', wh_only),
+                        ('client cache vs the sim', cache)):
         print('\n%s: %d' % (title, len(rows)))
         for iid, name, why in rows if a.all else rows[:10]:
             print('  %d %s (%s)' % (iid, name, why))
     return 0
+
+
+# Item stat numbers of the primary stats, to their index in the sim's stats.
+PRIMARY = {4: 0, 3: 1, 7: 2, 5: 3, 6: 4}
+STAT_NAMES = ['Strength', 'Agility', 'Stamina', 'Intellect', 'Spirit']
+# RandPropPoints' column for each quality, and its slot index for each inventory type.
+QUALITY = {2: 'Good', 3: 'Superior', 4: 'Epic'}
+BUDGET_SLOT = {1: 0, 4: 0, 5: 0, 7: 0, 17: 0, 20: 0, 3: 1, 6: 1, 8: 1, 10: 1, 12: 1, 2: 2, 9: 2, 11: 2,
+               14: 2, 16: 2, 23: 2, 13: 3, 21: 3, 22: 3, 15: 4, 25: 4, 26: 4, 28: 4}
+SOD_FIRST_ID = 200000
+
+
+def cache_differences():
+    """(id, name, why) for the Classic items whose cached primary stats differ from the sim's."""
+    import sys
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import wago
+    path = os.path.join(ROOT, 'assets', 'db_inputs', 'forever_client_cache.json')
+    if not os.path.exists(path):
+        return []
+    with open(path, encoding='utf-8') as f:
+        cache = json.load(f)
+    with open(os.path.join(ROOT, 'assets', 'database', 'db.json'), encoding='utf-8') as f:
+        sim = {i['id']: i for i in json.load(f)['items']}
+    points = wago.by_id('RandPropPoints', cache['meta']['build']) or {}
+    out = []
+    for key, e in sorted(cache['items'].items(), key=lambda kv: int(kv[0])):
+        iid = int(key)
+        if iid >= SOD_FIRST_ID or iid not in sim or 'statShares' not in e:
+            continue
+        shares = [(t, v) for t, v in e['statShares'] if t in PRIMARY and v > 0]
+        column = QUALITY.get(e.get('quality'))
+        slot = BUDGET_SLOT.get(e.get('inventoryType'))
+        row = points.get(str(e.get('ilvl')))
+        if not shares or column is None or slot is None or row is None:
+            continue
+        budget = float(row['%s_%d' % (column, slot)])
+        cached = {PRIMARY[t]: int(budget * v / 10000 + 0.5) for t, v in shares}
+        theirs = {k: sim[iid]['stats'][k] for k in PRIMARY.values() if sim[iid]['stats'][k] > 0}
+        cached = {k: v for k, v in cached.items() if v}
+        if cached != theirs:
+            fmt = lambda d: ' '.join('%s %g' % (STAT_NAMES[k], v) for k, v in sorted(d.items())) or 'none'
+            out.append((iid, sim[iid]['name'], 'client cache: %s, sim: %s' % (fmt(cached), fmt(theirs))))
+    return out
 
 
 def names(ids, npc_names):

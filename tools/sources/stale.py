@@ -17,6 +17,11 @@ the registry of every source it checks.
 - The inputs read out of the client's tables (CLIENT_INPUTS), against the
   newest client build we know. Each names its build in its meta block, and a
   newer client means running its script again.
+- The items Forever still hides (assets/database/hidden_items.json, from
+  tools/sources/hidden.py): how many, and with --addons, which of them our
+  client has since been sent (its hotfix cache, read with
+  tools/sources/dbcache.py). Those were revealed, so their stats are worth
+  fetching.
 - The talent trees' build per class: the newest build tools/forever_talents/
   client/<class>.json names. Only shown, since a build that changed no talent
   doesn't touch the file.
@@ -67,7 +72,11 @@ CLIENT_INPUTS = [
     ('assets/db_inputs/forever_client_items.meta.json', 'python3 tools/sources/itemsparse.py %s'),
     ('assets/db_inputs/forever_enchants.json', 'python3 tools/sources/enchants.py %s'),
     ('ui/core/forever/racials.meta.json', 'python3 tools/sources/racials.py %s --write'),
+    ('assets/db_inputs/forever_client_cache.json', 'python3 tools/sources/dbcache.py <beta client> --write (%s)'),
 ]
+
+HIDDEN = os.path.join(ROOT, 'assets', 'database', 'hidden_items.json')
+CLIENT_CACHE = os.path.join(INPUTS, 'forever_client_cache.json')
 
 # The AtlasLoot files gen_db -gen=atlasloot reads, in the order it hashes them
 # (AtlasLootFiles in tools/database/atlasloot.go).
@@ -206,6 +215,10 @@ def check(client_build, addons=None):
             else:
                 say('  ok    %s, client build %s' % (rel, m['build']))
 
+    hidden_lines, hidden_todo = check_hidden(addons)
+    lines += hidden_lines
+    todo += hidden_todo
+
     talents = talent_builds()
     if talents:
         say('  info  talent trees by class, newest build each names: %s' % ', '.join(
@@ -246,6 +259,43 @@ def check(client_build, addons=None):
         say('  %s %s, fetched %s (%d days ago)' % ('ok   ' if ok else 'OLD  ', rel, m['fetched'], age))
         if not ok:
             todo.append(refresh)
+    return lines, todo
+
+
+def check_hidden(addons):
+    """Lines and to-dos about the hidden items, and the reveals in our client."""
+    lines, todo = [], []
+    rel = os.path.relpath(HIDDEN, ROOT)
+    if not os.path.exists(HIDDEN):
+        return ['  ?     %s is missing' % rel], ['python3 tools/sources/hidden.py']
+    with open(HIDDEN, encoding='utf-8') as f:
+        hidden = json.load(f)
+    c = hidden['counts']
+    lines.append('  info  %d items still hidden, %d of them gear: %d in the sim with Classic stats, '
+                 '%d partly, %d of Forever\'s not in it (%s)' % (
+                     c['hidden'], c['hiddenGear'], c['inSimWithClassicStats'], c['inSimPartly'],
+                     c['foreverNotInSim'], rel))
+    if not addons:
+        return lines, todo
+    client = os.path.dirname(os.path.dirname(os.path.abspath(addons)))
+    try:
+        import dbcache
+        _build, rows = dbcache.entries(os.path.join(client, dbcache.CACHE))
+    except (OSError, ValueError) as e:
+        lines.append('  ?     our client\'s hotfix cache: %s' % e)
+        return lines, todo
+    sent = {rid for table, rid, status, data in rows
+            if table == dbcache.ITEM_SPARSE_HASH and status == dbcache.VALID and data}
+    revealed = [i for i, e in hidden['items'].items() if e['state'] == 'hidden' and int(i) in sent]
+    if revealed:
+        names = [hidden['items'][i].get('name') or i for i in revealed]
+        lines.append('  NEW   our client was sent %d items hidden_items.json calls hidden: %s%s' % (
+            len(revealed), ', '.join(names[:8]), ' ...' if len(names) > 8 else ''))
+        todo.append('python3 tools/sources/dbcache.py "%s" --write, then python3 tools/sources/hidden.py'
+                    % client)
+        todo.append('the scrape-wowhead skill, for the revealed items\' stats')
+    else:
+        lines.append('  ok    no hidden item revealed in our client since %s' % hidden['meta']['fetched'])
     return lines, todo
 
 

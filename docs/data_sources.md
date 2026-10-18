@@ -255,6 +255,32 @@ report what the client says, so they rank with it when they show client data. Th
   (HiKwonko/AtlasLootClassic_SoD). Switching dropped 1165 SoD-only items and added 116 of
   Forever's, and 914 items gained drop sources.
 
+## Our client's hotfix cache, and the hidden items
+
+Forever took the stats of thousands of items out of the client's files, so players find
+them in game. The client still ships each one's Item row (class, subclass, slot) but no
+ItemSparse row. When the server first sends an item to a player it's revealed: the row
+arrives as a hotfix, and the client keeps it in `Cache/ADB/enUS/DBCache.bin`.
+
+- **Fetcher:** `python3 tools/sources/dbcache.py "<beta client folder>" --write` reads the
+  cache's ItemSparse and Item rows (layouts from WoWDBDefs, checked against wago.tools'
+  copy of the same build on every run) into `assets/db_inputs/forever_client_cache.json`,
+  with a meta block naming the build. Local only: the cloud has no client.
+- **What it's good for:** which items exist and which the server still hides, and their
+  name, quality, item level and slot. Stats are stored as the row has them, shares of a
+  RandPropPoints budget, which gives Classic's items exactly but not Forever's newer ones,
+  so nothing turns them into sim stats.
+- **The hidden items:** `python3 tools/sources/hidden.py` writes
+  `assets/database/hidden_items.json`: every hidden weapon and armor piece that matters to
+  the sim, which sources know it (AtlasLoot, foreverchanges.pro, Wowhead, the sim), and
+  counts. At 70450 it finds 7,841 hidden items where foreverchanges.pro counts 7,843.
+  1,605 hidden items are in the sim with Classic's stats and 152 with only part of theirs.
+  bayovui's `bis.py` marks those in the BiS tab.
+- **Behind when:** `stale.py --addons` reads the client's cache and lists the items
+  `hidden_items.json` calls hidden that our client has since been sent, and compares the
+  cache file's build with the client's. `crosscheck.py` lists Classic items whose cached
+  stats differ from the sim's.
+
 ## Talents, racials and abilities: the client's spell tables
 
 All three are generated from the Forever client's tables through `wago.py`, and the
