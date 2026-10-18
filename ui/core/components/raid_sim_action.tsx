@@ -58,6 +58,7 @@ export function addRaidSimAction(simUI: SimUI): RaidSimResultsManager {
 			resultsManager.simHistory?.finishRun();
 		}
 
+		await progressBar.finish();
 		progressBar.remove();
 		simUI.simActionsContainer.classList.remove('running');
 		button.style.minWidth = '';

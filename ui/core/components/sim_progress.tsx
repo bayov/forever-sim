@@ -9,6 +9,10 @@ import { ProgressMetrics } from '../proto/api';
 //
 // The sidebar's bar is too narrow for all of that on one line. So there the caller passes a
 // countParent (the Iterations label), and the iteration count goes there instead of on the bar.
+//
+// Progress comes in every 100ms or so, so a short sim can jump from 40% to done, and the caller
+// would remove the bar before we ever see it full. So when the sim is done, the bar fills the rest
+// of the way and flashes, and the caller awaits finish() before it removes the bar.
 export class SimProgress {
 	readonly rootElem: HTMLElement;
 	private readonly fillElem: HTMLElement;
@@ -18,6 +22,11 @@ export class SimProgress {
 	// When the first iterations completed, and how many had, so the presims don't slow down the
 	// estimate.
 	private start: { time: number; iterations: number } | null = null;
+	// The last counts we showed, so the final progress (which may not have counts, like for stat
+	// weights) can show them full.
+	private last: { total: number; totalSims: number } = { total: 0, totalSims: 0 };
+	// When the sim finished well, or null while it runs or when it was aborted or failed.
+	private completedAt: number | null = null;
 
 	constructor(className = '', countParent?: HTMLElement) {
 		this.countElem = countParent ? ((<span className="sim-progress-count" />) as HTMLElement) : null;
@@ -37,6 +46,12 @@ export class SimProgress {
 	}
 
 	update(progress: ProgressMetrics) {
+		const final = progress.finalRaidResult ?? progress.finalWeightResult ?? progress.finalBulkResult;
+		if (final) {
+			if (!final.error) this.complete();
+			return;
+		}
+
 		const total = progress.totalIterations;
 		const completed = progress.completedIterations;
 		const running = !progress.presimRunning && total > 0 && completed > 0;
@@ -48,18 +63,18 @@ export class SimProgress {
 			return;
 		}
 
-		const fraction = Math.min(completed / total, 1);
+		this.last = { total, totalSims: progress.totalSims };
+		// The leveling plan sends no final result, so we also count a run whose iterations all
+		// completed as done.
+		if (completed >= total) {
+			this.complete();
+			return;
+		}
+
+		const fraction = completed / total;
 		const percent = Math.floor(fraction * 100);
 		this.fillElem.style.width = `${fraction * 100}%`;
-		this.rootElem.setAttribute('aria-valuenow', String(percent));
-		const sims = progress.totalSims > 1 ? ` · ${progress.completedSims} / ${progress.totalSims} sims` : '';
-		const iterations = `${count(completed, total)} / ${count(total, total)}${sims}`;
-		if (this.countElem) {
-			this.doneElem.textContent = `${percent}%`;
-			this.countElem.textContent = iterations;
-		} else {
-			this.doneElem.textContent = `${percent}% · ${iterations}`;
-		}
+		this.setCounts(percent, completed, total, progress.completedSims, progress.totalSims);
 
 		const now = performance.now();
 		if (!this.start) this.start = { time: now, iterations: completed };
@@ -68,11 +83,46 @@ export class SimProgress {
 		this.etaElem.textContent = now - this.start.time > 1000 && rate > 0 ? `${timeLeft((total - completed) / rate)} left` : '';
 	}
 
+	// Waits until the finish animation has played, when the sim finished well. When it was
+	// aborted or failed, the bar didn't fill, and we return right away.
+	async finish() {
+		if (this.completedAt === null) return;
+		const wait = this.completedAt + FINISH_MS - performance.now();
+		if (wait > 0) await new Promise(resolve => setTimeout(resolve, wait));
+	}
+
+	private complete() {
+		if (this.completedAt !== null) return;
+		this.completedAt = performance.now();
+		this.rootElem.classList.remove('sim-progress-indeterminate');
+		this.rootElem.classList.add('sim-progress-complete');
+		this.fillElem.style.width = '100%';
+		const { total, totalSims } = this.last;
+		this.setCounts(100, total, total, totalSims, totalSims);
+		this.etaElem.replaceChildren(<i className="fas fa-check me-1" />, 'Done');
+	}
+
+	private setCounts(percent: number, completed: number, total: number, completedSims: number, totalSims: number) {
+		this.rootElem.setAttribute('aria-valuenow', String(percent));
+		const sims = totalSims > 1 ? ` · ${completedSims} / ${totalSims} sims` : '';
+		const iterations = total > 0 ? `${count(completed, total)} / ${count(total, total)}${sims}` : '';
+		if (this.countElem) {
+			this.doneElem.textContent = `${percent}%`;
+			this.countElem.textContent = iterations;
+		} else {
+			this.doneElem.textContent = iterations ? `${percent}% · ${iterations}` : `${percent}%`;
+		}
+	}
+
 	remove() {
 		this.rootElem.remove();
 		this.countElem?.remove();
 	}
 }
+
+// How long the bar takes to fill the rest of the way and flash when the sim is done. It matches
+// .sim-progress-complete in _raid_sim_action.scss.
+const FINISH_MS = 600;
 
 // An iteration count, like '2,500', or '110K' when the total is big, so the text fits the
 // sidebar's bar.

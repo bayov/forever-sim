@@ -301,6 +301,7 @@ class EpWeightsMenu extends Component {
 				(progress: ProgressMetrics) => progressBar.update(progress),
 				iterations,
 			);
+			await progressBar.finish();
 			this.container.classList.remove('pending');
 			this.resultsViewer.hideAll();
 
