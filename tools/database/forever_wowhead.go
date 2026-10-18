@@ -72,12 +72,11 @@ func ParseForeverWowheadDB(contents string) ForeverWowheadDB {
 	return db
 }
 
-// jsonequip stat keys and the sim stat they feed. Both spell power flavours land on
-// SpellPower, healing only gear keeps its own stat.
+// jsonequip stat keys and the sim stat they feed. The spell power keys aren't here,
+// spellStats reads them.
 var foreverWowheadStats = map[string]proto.Stat{
 	"str": proto.Stat_StatStrength, "agi": proto.Stat_StatAgility, "sta": proto.Stat_StatStamina,
 	"int": proto.Stat_StatIntellect, "spi": proto.Stat_StatSpirit,
-	"splpwr": proto.Stat_StatSpellPower, "spldmg": proto.Stat_StatSpellPower, "splheal": proto.Stat_StatHealingPower,
 	"arcsplpwr": proto.Stat_StatArcanePower, "firsplpwr": proto.Stat_StatFirePower, "frosplpwr": proto.Stat_StatFrostPower,
 	"holsplpwr": proto.Stat_StatHolyPower, "natsplpwr": proto.Stat_StatNaturePower, "shasplpwr": proto.Stat_StatShadowPower,
 	"manargn": proto.Stat_StatMP5, "splhitpct": proto.Stat_StatSpellHit, "splcritstrkpct": proto.Stat_StatSpellCrit,
@@ -91,6 +90,30 @@ var foreverWowheadStats = map[string]proto.Stat{
 	"health": proto.Stat_StatHealth, "mana": proto.Stat_StatMana,
 	"arcres": proto.Stat_StatArcaneResistance, "firres": proto.Stat_StatFireResistance, "frores": proto.Stat_StatFrostResistance,
 	"natres": proto.Stat_StatNatureResistance, "shares": proto.Stat_StatShadowResistance,
+}
+
+// spellStats turns Wowhead's three spell power keys into the sim's stats.
+//
+// The game has three spell stats: "damage and healing" (Mug of Muddled Memories), damage
+// only (Braided Seer Stones) and healing only. An item with "healing done by up to 94 and
+// damage done by up to 31" (Staff of the Deeproar) has the last two, and it heals with 94,
+// not 94 + 31. Wowhead's numbers add up to the tooltip as splpwr + spldmg for damage and
+// splpwr + splheal for healing. Staff of the Deeproar is spldmg 31 and splheal 94, Thrash's
+// Trash is splpwr 5 and spldmg 9 for "healing by up to 5 and damage by up to 14", and Naga
+// Battle Gloves are splpwr 5 and splheal 10 for "healing by up to 15 and damage by up to 5".
+// The tooltips are the ones BayovCore's item sweep recorded on the beta.
+//
+// The sim deals damage with SpellPower plus SpellDamage and heals with SpellPower plus
+// HealingPower (sim/core/spell_result.go). We put what damage and healing share on
+// SpellPower and only the rest on the other two, the way the Classic items already are
+// (Naga Battle Gloves). That matters for healers, who have no weight for SpellDamage or
+// HealingPower: Barkskin Scepter's "damage and healing by up to 50" as SpellDamage 50 plus
+// HealingPower 50 would heal right in the sim but score nothing in a healer's gear list.
+func (wi ForeverWowheadItem) spellStats() (spellPower, spellDamage, healingPower float64) {
+	damage := wi.num("splpwr") + wi.num("spldmg")
+	healing := wi.num("splpwr") + wi.num("splheal")
+	spellPower = min(damage, healing)
+	return spellPower, damage - spellPower, healing - spellPower
 }
 
 // Rating stats the sim cannot use. Counted so the run reports how much it dropped.
@@ -349,6 +372,7 @@ func (wi ForeverWowheadItem) ToProto() (*proto.UIItem, int) {
 	for key, stat := range foreverWowheadStats {
 		statsArr[stat] += wi.num(key)
 	}
+	statsArr[proto.Stat_StatSpellPower], statsArr[proto.Stat_StatSpellDamage], statsArr[proto.Stat_StatHealingPower] = wi.spellStats()
 	// "+12 Attack Power" is ranged attack power too, as the Classic tooltips read it.
 	statsArr[proto.Stat_StatRangedAttackPower] += wi.num("atkpwr")
 	// Expertise is a flat percent like hit and crit: the tooltip shows 10 rating as "1.0%"

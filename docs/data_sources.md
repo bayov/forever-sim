@@ -165,6 +165,10 @@ report what the client says, so they rank with it when they show client data. Th
   `assets/db_inputs/forever_wowhead_recipes.json`, both with a `meta` block (dataEnv 16).
 - **Generator:** `gen_db -gen=db` (`tools/database/forever_wowhead.go`) for the items.
   Nothing here reads the recipes: bayovui's `recipesources.py` does.
+- **Spell stats:** `splpwr` is damage and healing, `spldmg` is damage only and `splheal` is
+  healing only, so an item heals with `splpwr + splheal`. gen_db puts what damage and healing
+  share on SpellPower and the rest on SpellDamage or HealingPower (`spellStats`). Until
+  2026-10-18 `spldmg` went on SpellPower, so the sim healed with both numbers added together.
 - **Readers:** `assets/database/db.*`, `tools/rotopt` (`-forever-items`),
   `tools/database/foreverchanges/suffixes.py` (required levels), `orchestration/tools/`
   (`b30_data.py`, `bis_data.py`, `fit.py`, `primary.py`, `single.py`), bayovui's `bis.py`

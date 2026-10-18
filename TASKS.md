@@ -23,8 +23,9 @@ wording instead.
   - The sim keeps 35: `BaronCharrsSceptre` in `sim/common/item_effects.go`, proc spell 13442. Its ilvl, required level and damage went in with PR #12.
   - https://wago.tools/db2/SpellEffect?build=1.60.1.70338&filter[SpellID]=13442 and https://wago.tools/db2/ItemEffect?build=1.60.1.70338&filter[ParentItemID]=18671
   - https://foreverchanges.pro/item/18671
-- [ ] 2026-10-13 — Decide how "+X healing and +Y spell damage" items go into the DB, then add the ones waiting on it (wowhead's Forever data mixes two conventions)
-  - Staff of Nobles 3902: `spldmg 7 + splheal 22` for a 29-healing tooltip. Grimlok's Tribal Vestments 9415: `splpwr 10 + splheal 19` for a 29-healing tooltip.
+- [ ] 2026-10-13 — Add the "+X healing and +Y spell damage" items waiting on the convention, now decided
+  - Decided 2026-10-18 (`spellStats` in `tools/database/forever_wowhead.go`): healing is `splpwr + splheal` and damage is `splpwr + spldmg`. All 184 Forever items with spell stats that BayovCore's item sweep recorded match it.
+  - Staff of Nobles 3902 is the one doubt: `spldmg 7 + splheal 22`, noted on 2026-10-13 as a 29-healing tooltip, which the rule makes 22. Nothing on record says where the 29 came from. The next full sweep reads Classic IDs too, and bayovui's `seen_items.py` will list it if the game disagrees. Grimlok's Tribal Vestments 9415 (`splpwr 10 + splheal 19`, 29 healing) fits the rule.
   - Waiting on it: Stone Keeper Spire 274432 (+103 Healing, +34 Spell Damage, +19 Sta, +180 Armor, 81–122 / 3.20, req 44), https://foreverchanges.pro/item/274432
   - Papal Fez 9431: the DB has the Classic healing-only stat. Forever shows +17 Int, +9 Spi, +22 Healing, +8 Spell Damage. https://foreverchanges.pro/item/9431
 - [ ] 2026-10-13 — Revealed items left out: unmodelled effects or stats (foreverchanges.pro hidden items)
