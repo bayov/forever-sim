@@ -103,7 +103,7 @@ its gold.
   level we want them by, like `-require` in the DPS talent search (tools/rotopt). Every route the
   search looks at has them by then, and each respec has them from its level on. A new one
   starts at the earliest level its row allows. The enhancement shaman's plan requires Improved
-  Ghost Wolf 2/2 by 20.
+  Ghost Wolf 2/2 by 16, as early as its row opens.
 - **Talents the sim gives nothing for** (`notSimulated`) get no points unless they're
   required. Threat isn't simmed either, and solo leveling doesn't need Spirit Weapons.
 - **Rotations stay as they are.** A respec into another tree plays the plan's rotation for
@@ -114,7 +114,9 @@ The first search (2026-10-17, enhancement shaman, 10 to 30, the spec's plan) fou
 Lightning Shield and Elemental Weapons where the plan had Improved Ghost Wolf, and after
 Stormstrike it takes Tidal Focus, Concussion and Elemental Weapons over Flurry. A respec at 20
 saves nothing. With Improved Ghost Wolf 2/2 required by 20 (2026-10-18) the route takes
-19h 30m, 8 minutes more, with Improved Ghost Wolf at 17 and 19.
+19h 30m, 8 minutes more, with Improved Ghost Wolf at 17 and 19. The spec's plan now requires it
+by 16, as early as its row opens, and its own build takes it at 15 and 16. A search of that plan
+finds 19h 11m, 13 minutes faster than its talents.
 
 ## The run
 
@@ -134,10 +136,9 @@ The last run stays in the browser's storage. The Leveling mode has no sim histor
 
 ## The enhancement shaman's plan
 
-`DefaultLevelingPlan` in `ui/enhancement_shaman/presets.ts`: the Level 30 Leveling build in
-the order the leveling stat weights were measured with (Thundering Strikes, Mental Dexterity,
-Improved Ghost Wolf, Shamanistic Focus, Ancestral Knowledge, then Stormstrike at 25 and
-Flurry), and the "Level N Leveling Plan" rotations, the leveling optimizer's best at levels 10,
+`DefaultLevelingPlan` in `ui/enhancement_shaman/presets.ts`: the Level 30 Leveling build
+(Thundering Strikes, Improved Ghost Wolf at 15 and 16, Mental Dexterity, Shamanistic Focus,
+Ancestral Knowledge, then Stormstrike at 25 and Flurry), and the "Level N Leveling Plan" rotations, the leveling optimizer's best at levels 10,
 15, 20, 25 and 30 on the plan's gear, with Rockbiter Weapon until 30.
 
 A first run (2026-10-16, 300 sessions a level) takes about 19 hours from 10 to 30. XP an

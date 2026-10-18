@@ -1668,17 +1668,17 @@ export const PresetBuildLevel30Leveling = PresetUtils.makePresetBuild('Level 30 
 
 // The leveling plan of the Leveling mode (ui/core/leveling_plan.ts), from level 10 to 30.
 //
-// The talents go to the Level 30 Leveling build in the order the leveling stat weights were
-// measured with: Thundering Strikes first, then Mental Dexterity, Improved Ghost Wolf,
-// Shamanistic Focus and Ancestral Knowledge. The plan has no extra talent points by default,
-// so the 16th point at 25 goes to Stormstrike (a 15 point talent), and Flurry comes after it.
+// The talents go to the Level 30 Leveling build: Thundering Strikes first, then Improved Ghost
+// Wolf at 15 and 16 (required, for walking), Mental Dexterity, Shamanistic Focus and Ancestral
+// Knowledge. The plan has no extra talent points by default, so the 16th point at 25 goes to
+// Stormstrike (a 15 point talent), and Flurry comes after it.
 // The rotations are the Leveling Plan ones, with Rockbiter Weapon until Windfury Weapon at 30.
 export const DefaultLevelingPlan = LevelingPlanSettings.create({
 	fromLevel: 10,
 	toLevel: 30,
 	bonusTalentPoints: 0,
 	builds: [
-		buildFromMilestones(10, ['-01', '-05001', '-050032001', '-0540320010001', '-0540320010051', '-0540320010051122'], talentShape(shamanTalentsConfig)),
+		buildFromMilestones(10, ['-01', '-050002', '-050032001', '-0540320010001', '-0540320010051', '-0540320010051122'], talentShape(shamanTalentsConfig)),
 	],
 	rotationLibrary: APLLevelingPlan.map(preset => LevelingRotationPreset.create({ name: preset.name, rotation: preset.rotation.rotation })),
 	rotations: APLLevelingPlan.map((preset, i) =>
@@ -1689,7 +1689,7 @@ export const DefaultLevelingPlan = LevelingPlanSettings.create({
 		}),
 	),
 	rotationsNameTopRanks: true,
-	// Improved Ghost Wolf for walking to quests and grind spots, which the grinding sessions
-	// don't sim.
-	requiredTalents: [LevelingTalentRequirement.create({ tree: 1, talent: 5, points: 2, level: 20 })],
+	// Improved Ghost Wolf as early as its row opens (15 and 16), for walking to quests and grind
+	// spots, which the grinding sessions don't sim.
+	requiredTalents: [LevelingTalentRequirement.create({ tree: 1, talent: 5, points: 2, level: 16 })],
 });
