@@ -1,6 +1,6 @@
 {
-"meta": {"build": "1.60.1.70450", "fetched": "2026-10-18T21:03Z", "source": "client beta 1.60.1.70450 Item and ItemSparse tables, and our client cache of 2026-10-18T21:01Z", "tool": "tools/sources/hidden.py"},
-"counts": {"hidden": 7840, "hiddenGear": 2607, "inSimWithClassicStats": 1605, "inSimPartly": 107, "inSimFromWowhead": 46, "foreverNotInSim": 847, "revealedNotInSim": 2, "revealedGear": 4698},
+"meta": {"build": "1.60.1.70450", "fetched": "2026-10-18T21:14Z", "source": "client beta 1.60.1.70450 Item and ItemSparse tables, and our client cache of 2026-10-18T21:01Z, and the reveals BayovCore saw in game", "tool": "tools/sources/hidden.py"},
+"counts": {"hidden": 7838, "hiddenGear": 2605, "inSimWithClassicStats": 1604, "inSimPartly": 106, "inSimFromWowhead": 46, "foreverNotInSim": 847, "revealedNotInSim": 2, "revealedGear": 4700},
 "items": {
 "647": {"name": "Destiny", "simStats": "classic", "slot": "two-hand", "sources": [], "state": "hidden"},
 "809": {"name": "Bloodrazor", "simStats": "classic", "slot": "main hand", "sources": [], "state": "hidden"},
@@ -1143,7 +1143,6 @@
 "19437": {"name": "Boots of Pure Thought", "simStats": "classic", "slot": "feet", "sources": ["AtlasLoot"], "state": "hidden"},
 "19438": {"name": "Ringo's Blizzard Boots", "simStats": "classic", "slot": "feet", "sources": ["AtlasLoot"], "state": "hidden"},
 "19439": {"name": "Interlaced Shadow Jerkin", "simStats": "classic", "slot": "chest", "sources": ["AtlasLoot"], "state": "hidden"},
-"19509": {"name": "Dusty Mail Boots", "simStats": "classic", "slot": "feet", "sources": ["AtlasLoot: High Inquisitor Fairbanks", "foreverchanges.pro: scarlet-monastery-cathedral, High Inquisitor Fairbanks", "Wowhead"], "state": "hidden"},
 "19812": {"name": "Rune of the Dawn", "simStats": "classic", "slot": "trinket", "sources": [], "state": "hidden"},
 "19852": {"name": "Ancient Hakkari Manslayer", "simStats": "classic", "slot": "one-hand", "sources": ["AtlasLoot: Hakkar"], "state": "hidden"},
 "19853": {"name": "Gurubashi Dwarf Destroyer", "simStats": "classic", "slot": "ranged", "sources": ["AtlasLoot: Hakkar"], "state": "hidden"},
@@ -2439,7 +2438,6 @@
 "281642": {"slot": "wrist", "sources": [], "state": "hidden"},
 "281650": {"slot": "shield", "sources": [], "state": "hidden"},
 "281666": {"slot": "chest", "sources": [], "state": "hidden"},
-"281676": {"name": "Rog'mar Trainee Shoulderpads", "simStats": "partial", "slot": "shoulder", "sources": [], "state": "hidden"},
 "281679": {"slot": "head", "sources": [], "state": "hidden"},
 "282004": {"slot": "shoulder", "sources": [], "state": "hidden"},
 "282005": {"slot": "back", "sources": [], "state": "hidden"},
@@ -7310,5 +7308,7 @@
 {"id": 11992, "name": "Vermilion Band", "slot": "finger", "inventoryType": 11, "ilvl": 63, "quality": 2, "requiredLevel": 58, "push": 112864, "date": null},
 {"id": 11994, "name": "Coral Band", "slot": "finger", "inventoryType": 11, "ilvl": 25, "quality": 2, "requiredLevel": 20, "push": 112864, "date": null},
 {"id": 12027, "name": "Vermilion Necklace", "slot": "neck", "inventoryType": 2, "ilvl": 63, "quality": 2, "requiredLevel": 58, "push": 112864, "date": null},
-{"id": 13123, "name": "Dreamwalker Armor", "slot": "chest", "inventoryType": 5, "ilvl": 62, "quality": 3, "requiredLevel": 57, "push": 112864, "date": null}
+{"id": 13123, "name": "Dreamwalker Armor", "slot": "chest", "inventoryType": 5, "ilvl": 62, "quality": 3, "requiredLevel": 57, "push": 112864, "date": null},
+{"id": 19509, "name": "Dusty Mail Boots", "slot": "feet", "inventoryType": 8, "ilvl": null, "quality": null, "push": null, "date": "2026-10-18"},
+{"id": 281676, "name": "Rog'mar Trainee Shoulderpads", "slot": "shoulder", "inventoryType": 3, "ilvl": null, "quality": null, "push": null, "date": "2026-10-18"}
 ]}
