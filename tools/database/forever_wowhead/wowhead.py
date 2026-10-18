@@ -253,6 +253,14 @@ def listview_items(html):
     return _js_value(html, i + len('listviewitems = '))
 
 
+def listview_spells(html):
+    """The rows of a spell listing page (its `listviewspells` variable), or None."""
+    i = html.find('listviewspells = ')
+    if i < 0:
+        return None
+    return _js_value(html, i + len('listviewspells = '))
+
+
 def gatherer(html, type):
     """Every WH.Gatherer.addData block of this type merged by id (3 is items)."""
     out = {}

@@ -18,9 +18,19 @@
 # say how rare a drop is rather than its exact Forever rate. Last we open each vendor's
 # own page for where it stands, because a vendor Forever added has no spawn in QuestieDB.
 #
+# Each profession's spell listing then gives us what a trainer asks for each recipe it
+# teaches and for each rank, like Journeyman (the money and the skill), the specialization a recipe asks for (Armorsmith,
+# Gnomish Engineer, Dragonscale Leatherworking...), and the reagents every recipe uses.
+# A trainer recipe's own page says which trainers teach it, since not every trainer
+# teaches every recipe: a Journeyman trainer stops early, and only a Goblin Engineer
+# teaches Goblin Sapper Charge. BayovCore only learns a trainer's prices when a character
+# opens one, so until then it plans with these. Each reagent's page says who sells it
+# and whether in limited stock, so the planner knows which reagents a vendor restocks,
+# like Coarse Thread, and where, before a character has opened that vendor.
+#
 #   uv run tools/database/forever_wowhead/recipes.py
 #
-# It's about 1,700 pages. wowhead.py asks for one every few seconds, so a full scrape
+# It's about 2,900 pages. wowhead.py asks for one every few seconds, so a full scrape
 # takes a couple of hours. It keeps every page, so a run that stops picks up where it
 # left off, and a run within a week only fetches what's new. A recipe wowhead lists
 # with no source at all has nothing on its page either, so we don't open those.
@@ -28,7 +38,7 @@
 import json, os, sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from wowhead import Wowhead, listview, listview_items, mapper
+from wowhead import Wowhead, listview, listview_items, listview_spells, mapper
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../sources'))
 from meta import line, meta
 
@@ -36,6 +46,17 @@ OUT = os.path.join(os.path.dirname(__file__), '../../../assets/db_inputs/forever
 # wowhead's recipe listings by subclass. Fishing has books, the rest are professions.
 PROFESSIONS = ['alchemy', 'blacksmithing', 'cooking', 'enchanting', 'engineering', 'first-aid',
                'fishing', 'leatherworking', 'tailoring']
+# wowhead's spell listings of the professions that craft, with each one's skill line.
+# Mining's are the smelting recipes. Cooking and first aid are secondary skills, and a
+# wrong path doesn't 404 but gives every profession's spells, cut at 1,000. So we keep
+# only the rows of the skill line we asked for.
+SPELL_PROFESSIONS = {
+    'professions/alchemy': 171, 'professions/blacksmithing': 164, 'professions/enchanting': 333,
+    'professions/engineering': 202, 'professions/leatherworking': 165, 'professions/mining': 186,
+    'professions/tailoring': 197, 'secondary-skills/cooking': 185, 'secondary-skills/first-aid': 129,
+}
+# wowhead's source code for a trainer, in a spell's `source` list.
+SOURCE_TRAINER = 6
 # A world drop is on hundreds of mobs. We keep the ones it drops from most often.
 TOP_DROPS = 12
 
@@ -48,11 +69,16 @@ def pct(row):
     return float('%.3g' % (100 * count / outof))
 
 
+def keep_npc(npcs, r):
+    """Keeps what an NPC row of a listing says about the NPC, and answers its id."""
+    npcs.setdefault(r['id'], {k: r[k] for k in ('name', 'tag', 'minlevel', 'maxlevel', 'react', 'location', 'classification') if r.get(k) is not None})
+    return r['id']
+
+
 def item_sources(html, npcs, objects, quests):
     """The sources on one recipe item's page, filling in npcs, objects and quests."""
     def npc(r):
-        npcs.setdefault(r['id'], {k: r[k] for k in ('name', 'tag', 'minlevel', 'maxlevel', 'react', 'location', 'classification') if r.get(k) is not None})
-        return r['id']
+        return keep_npc(npcs, r)
     out = {}
     sold = listview(html, 'sold-by')
     if sold:
@@ -122,6 +148,54 @@ def main():
             npcs[npc_id]['coords'] = coords
     print(f'{len(items)} recipes, {len(npcs)} npcs ({len(vendors)} vendors), {len(objects)} objects, {len(quests)} quests', file=sys.stderr)
 
+    # What a trainer asks for each recipe, by spell. A recipe a trainer doesn't teach
+    # has no trainingcost, and the reagents of every recipe go in `reagents`.
+    # `specializations` is the spell a recipe asks the crafter to know, by recipe.
+    trainers, specializations, reagents = {}, {}, {}
+    for prof, skill in SPELL_PROFESSIONS.items():
+        rows = listview_spells(wh.page(f'forever/spells/{prof}') or '')
+        rows = [r for r in rows or [] if skill in (r.get('skill') or [])]
+        if not rows:
+            sys.exit(f'no spell listing for {prof}, did wowhead change its URLs?')
+        if len(rows) >= 1000:
+            print(f'{prof}: {len(rows)} spells, wowhead may have cut the listing short', file=sys.stderr)
+        taught = 0
+        for r in rows:
+            if SOURCE_TRAINER in (r.get('source') or []) and r.get('trainingcost') is not None:
+                trainers[r['id']] = {'cost': r['trainingcost'], 'req': r.get('learnedat') or 1}
+                # A rank of the profession itself, like Journeyman Tailoring, is in the
+                # listing too, with the skill line it raises.
+                if r.get('rank'):
+                    trainers[r['id']].update(rank=r['rank'].strip(), skill=skill)
+                taught += 1
+            if r.get('specialization'):
+                specializations[r['id']] = r['specialization']
+            for reagent, _ in r.get('reagents') or []:
+                reagents.setdefault(reagent, {})
+        print(f'{prof}: {len(rows)} spells, {taught} from a trainer', file=sys.stderr)
+
+    # Which trainers teach each recipe. The NPCs go in `npcs`, like the vendors.
+    for n, spell in enumerate(sorted(trainers), 1):
+        html = wh.page(f'forever/spell={spell}')
+        taught = listview(html, 'taught-by-npc') if html else []
+        trainers[spell]['npcs'] = sorted(keep_npc(npcs, r) for r in taught)
+        if n % 100 == 0:
+            print(f'{n} of {len(trainers)} trainer recipe pages ({wh.fetched} fetched, {wh.cached} from the cache)',
+                  file=sys.stderr)
+
+    # Who sells each reagent. `stock` is -1 when the vendor never runs out.
+    for n, item_id in enumerate(sorted(reagents), 1):
+        html = wh.page(f'forever/item={item_id}')
+        sold = listview(html, 'sold-by') if html else []
+        if sold:
+            reagents[item_id]['vendors'] = [{'id': keep_npc(npcs, r), 'stock': r.get('stock')} for r in sold]
+        if n % 100 == 0:
+            print(f'{n} of {len(reagents)} reagent pages ({wh.fetched} fetched, {wh.cached} from the cache)',
+                  file=sys.stderr)
+    reagents = {i: r for i, r in reagents.items() if r}
+    print(f'{len(trainers)} recipes from a trainer, {len(specializations)} that ask for a specialization, '
+          f'{len(reagents)} reagents a vendor sells', file=sys.stderr)
+
     # One entry per line, so a rescrape diffs recipe by recipe.
     def block(d):
         return ',\n'.join('%s:%s' % (json.dumps(str(k)), json.dumps(v, sort_keys=True, separators=(',', ':'))) for k, v in sorted(d.items()))
@@ -129,7 +203,8 @@ def main():
         f.write('{' + line(meta('www.wowhead.com/forever', 'tools/database/forever_wowhead/recipes.py', dataEnv=16)))
         f.write('"items": [\n')
         f.write(',\n'.join(json.dumps(i, sort_keys=True, separators=(',', ':')) for i in sorted(items.values(), key=lambda x: x['id'])))
-        f.write('\n],\n"npcs": {\n%s\n},\n"objects": {\n%s\n},\n"quests": {\n%s\n}}\n' % (block(npcs), block(objects), block(quests)))
+        f.write('\n],\n"npcs": {\n%s\n},\n"objects": {\n%s\n},\n"quests": {\n%s\n},\n"trainers": {\n%s\n},\n"specializations": {\n%s\n},\n"reagents": {\n%s\n}}\n'
+                % (block(npcs), block(objects), block(quests), block(trainers), block(specializations), block(reagents)))
     print(f'written to {OUT}', file=sys.stderr)
 
 

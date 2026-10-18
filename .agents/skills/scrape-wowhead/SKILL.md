@@ -12,7 +12,7 @@ does. We scrape two things from it into `assets/db_inputs/`:
 | Script | Writes | Read by |
 |---|---|---|
 | `tools/database/forever_wowhead/scrape.py` | `forever_wowhead_items.json`: every wearable item up to a required level, with stats, sources, and the class or side of the quest it comes from | `gen_db` (the item database), `rotopt` (items with no known source), bayovui's `bis.py` (BiS sources), `orchestration/tools/*` |
-| `tools/database/forever_wowhead/recipes.py` | `forever_wowhead_recipes.json`: every recipe item, with its vendors (stock, price, map pins), drops with chances, chests, quests, pickpocketing, fishing and containers | bayovui's `recipesources.py` (BayovCore's recipe planner), nothing in the sim |
+| `tools/database/forever_wowhead/recipes.py` | `forever_wowhead_recipes.json`: every recipe item, with its vendors (stock, price, map pins), drops with chances, chests, quests, pickpocketing, fishing and containers. Also what a trainer asks for each recipe, and who sells each reagent and whether in limited stock | bayovui's `recipesources.py` (BayovCore's recipe planner), nothing in the sim |
 
 Both use `tools/database/forever_wowhead/wowhead.py`. Its header has the details.
 
@@ -49,7 +49,7 @@ their own dependencies, so `uv run` them.
 1. **Scrape.** Both are long, so run them in the background:
 
    ```bash
-   uv run tools/database/forever_wowhead/recipes.py   # ~1,700 pages, a couple of hours fresh
+   uv run tools/database/forever_wowhead/recipes.py   # ~2,900 pages, a couple of hours fresh
    uv run tools/database/forever_wowhead/scrape.py    # a few hundred pages
    ```
 
