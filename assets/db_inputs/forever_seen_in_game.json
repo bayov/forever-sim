@@ -1,6 +1,7 @@
 {
-"meta": {"build": "1.60.1.70450", "fetched": "2026-10-18T06:46Z", "source": "BayovCore in game (beta)", "tool": "bayovui/build/seen_items.py"},
+"meta": {"build": "1.60.1.70450", "fetched": "2026-10-18T16:26Z", "source": "BayovCore in game (beta)", "tool": "bayovui/build/seen_items.py"},
 "items": {
+"154": {"name": "Primitive Mantle", "ilvl": 1, "quality": 1, "stats": {}, "inventoryType": 4, "classID": 4, "subclassID": 0, "seen": "2026-10-18", "by": "Bayov"},
 "1557": {"name": "Buckler of the Seas", "ilvl": 20, "quality": 2, "stats": {"Spirit": 2, "SpellPower": 2, "BlockValue": 7, "Armor": 411}, "by": "hand"},
 "1561": {"name": "Harvester's Robe", "ilvl": 15, "quality": 2, "stats": {"Spirit": 2, "SpellPower": 2, "Armor": 28}, "by": "hand"},
 "1929": {"name": "Silk-threaded Trousers", "ilvl": 18, "requiredLevel": 13, "quality": 3, "stats": {"Agility": 5, "SpellPower": 7, "Armor": 31}, "by": "hand"},
@@ -11,6 +12,9 @@
 "3160": {"name": "Ironplate Buckler", "ilvl": 15, "quality": 2, "stats": {"SpellPower": 2, "BlockValue": 5, "Armor": 328}, "by": "hand"},
 "3902": {"name": "Staff of Nobles", "ilvl": 20, "requiredLevel": 15, "quality": 2, "stats": {"Stamina": 2, "Spirit": 5, "SpellPower": 7, "HealingPower": 22}, "weaponDamageMin": 25, "weaponDamageMax": 38, "weaponSpeed": 3.2, "by": "hand"},
 "4660": {"name": "Walking Boots", "ilvl": 20, "requiredLevel": 15, "quality": 2, "stats": {"Agility": 3, "Intellect": 4, "Armor": 23}, "by": "hand"},
+"4914": {"name": "Battleworn Leather Gloves", "ilvl": 5, "quality": 1, "stats": {"Armor": 21}, "inventoryType": 10, "classID": 4, "subclassID": 2, "seen": "2026-10-18", "by": "Bayov"},
+"4921": {"name": "Dust-covered Leggings", "ilvl": 5, "quality": 1, "stats": {"Armor": 29}, "inventoryType": 7, "classID": 4, "subclassID": 2, "seen": "2026-10-18", "by": "Bayov"},
+"4933": {"name": "Seasoned Fighter's Cloak", "ilvl": 9, "quality": 1, "stats": {"Armor": 8}, "inventoryType": 16, "classID": 4, "subclassID": 1, "seen": "2026-10-18", "by": "Bayov"},
 "5422": {"name": "Brambleweed Leggings", "ilvl": 22, "requiredLevel": 17, "quality": 2, "stats": {"Agility": 5, "Spirit": 5, "Armor": 71}, "by": "hand"},
 "5423": {"name": "Boahn's Fang", "ilvl": 22, "requiredLevel": 17, "quality": 3, "stats": {"Strength": 10, "Spirit": 4}, "weaponDamageMin": 38, "weaponDamageMax": 57, "weaponSpeed": 2.5, "by": "hand"},
 "5425": {"name": "Runescale Girdle", "ilvl": 21, "requiredLevel": 16, "quality": 2, "stats": {"Strength": 5, "Armor": 96}, "by": "hand"},
@@ -35,6 +39,7 @@
 "279869": {"name": "Remembrance Armor", "ilvl": 24, "quality": 3, "stats": {"Strength": 5, "Stamina": 9, "Spirit": 6, "Armor": 198}, "by": "hand"},
 "279896": {"name": "Deepblaze", "ilvl": 18, "quality": 3, "stats": {"FireResistance": 3}, "weaponDamageMin": 22, "weaponDamageMax": 41, "weaponSpeed": 1.7, "by": "hand"},
 "282064": {"name": "Tim's Lost Rib", "ilvl": 12, "quality": 2, "stats": {"Agility": 1, "Stamina": 1}, "weaponDamageMin": 7, "weaponDamageMax": 14, "weaponSpeed": 1.7, "by": "hand"},
-"285292": {"name": "Dull Sawblade", "ilvl": 21, "requiredLevel": 16, "quality": 3, "stats": {"Agility": 2}, "weaponDamageMin": 15, "weaponDamageMax": 28, "weaponSpeed": 1.7, "by": "hand"}
+"285292": {"name": "Dull Sawblade", "ilvl": 21, "requiredLevel": 16, "quality": 3, "stats": {"Agility": 2}, "weaponDamageMin": 15, "weaponDamageMax": 28, "weaponSpeed": 1.7, "by": "hand"},
+"286728": {"name": "Kolkar Hammer", "ilvl": 8, "quality": 1, "stats": {}, "weaponDamageMin": 5, "weaponDamageMax": 11, "weaponSpeed": 2.4, "inventoryType": 13, "classID": 2, "subclassID": 4, "seen": "2026-10-18", "by": "Bayov"}
 }
 }
