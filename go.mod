@@ -2,7 +2,7 @@ module github.com/wowsims/classic
 
 go 1.23.0
 
-toolchain go1.23.4
+toolchain go1.27.2
 
 require (
 	github.com/google/go-cmp v0.6.0
