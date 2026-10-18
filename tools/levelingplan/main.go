@@ -187,5 +187,9 @@ func summary(result *proto.LevelingPlanSearchResult) string {
 	if result.Error != "" {
 		return result.Error
 	}
-	return fmt.Sprintf("route %.2fh, plan %.2fh (±%.2fh)", result.RouteHours, result.PlanHours, result.Noise)
+	text := fmt.Sprintf("route %.2fh, plan %.2fh (±%.2fh)", result.RouteHours, result.PlanHours, result.Noise)
+	if result.Passes > 0 {
+		text += fmt.Sprintf(", plan's talents with the rotations found %.2fh (±%.2fh), %d passes", result.RotationOnlyHours, result.RotationOnlyNoise, result.Passes)
+	}
+	return text
 }

@@ -7,6 +7,9 @@ import { Player } from '../../player';
 import { Spec } from '../../proto/common';
 import {
 	LevelingPlanSearchProgress,
+	LevelingRotation,
+	LevelingRotationBand,
+	LevelingRotationPreset,
 	LevelingPlanSearchRequest,
 	LevelingPlanSearchResult,
 	LevelingPlanSearchUpdate,
@@ -47,6 +50,25 @@ interface SearchResult {
 		keptHours: number;
 		noise: number;
 	}>;
+	// With the rotation search: the rotations the route is with, as JSON of the plan's
+	// library entries and level ranges, and the ranges' reasons and changes. The plan's
+	// talents take rotationOnlyHours with them.
+	rotationLibrary?: unknown[];
+	rotations?: unknown[];
+	bands?: unknown[];
+	rotationOnlyHours?: number;
+	rotationOnlyNoise?: number;
+	passes?: number;
+}
+
+// The search's rotations in the plan's library are named like this, and a search's result
+// takes the place of the one before.
+const SEARCHED_PREFIX = 'Searched ';
+
+// An ability's name in the rotation template, like chainLightning, as words.
+function abilityName(name: string): string {
+	const words = name.replace(/([A-Z])/g, ' $1');
+	return words.charAt(0).toUpperCase() + words.slice(1);
 }
 
 const SEARCH_RESULT_KEY = '__levelingTalentSearch__';
@@ -72,6 +94,7 @@ export class LevelingTalentSearch {
 	private readonly button: HTMLButtonElement;
 	private readonly respecInput: HTMLInputElement;
 	private readonly sessionsInput: HTMLInputElement;
+	private readonly rotationInput: HTMLInputElement;
 	private abort: AbortController | null = null;
 	private result: SearchResult | null;
 
@@ -86,7 +109,7 @@ export class LevelingTalentSearch {
 			header: {
 				title: 'Talent search',
 				tooltip:
-					'Finds the order of talent points that levels us the fastest over all the levels of the plan, with its gear and rotations. It scores each order by the hours of all the levels together, so a point that does the most at level 10 but slows us later loses. At each respec level it also finds the best build to respec into there, and how many hours that saves over keeping the route. Nothing changes in the plan until we take a route or a respec.',
+					'Finds the order of talent points that levels us the fastest over all the levels of the plan, with its gear and rotations. It scores each order by the hours of all the levels together, so a point that does the most at level 10 but slows us later loses. At each respec level it also finds the best build to respec into there, and how many hours that saves over keeping the route. With Rotations too, it first tunes a rotation for each level range, from each level that brings a new ability or rank, then the route with them, then the rotations again, until neither changes. Nothing changes in the plan until we take a route or a respec.',
 			},
 		});
 		// Under the builds, the part of the plan the search changes.
@@ -94,6 +117,7 @@ export class LevelingTalentSearch {
 		const button = ref<HTMLButtonElement>();
 		const respecs = ref<HTMLInputElement>();
 		const sessions = ref<HTMLInputElement>();
+		const rotations = ref<HTMLInputElement>();
 		const status = ref<HTMLParagraphElement>();
 		const result = ref<HTMLDivElement>();
 		const required = ref<HTMLDivElement>();
@@ -115,6 +139,10 @@ export class LevelingTalentSearch {
 						Sessions a sim
 						<input className="form-control" type="number" min="10" value={String(options.sessions)} ref={sessions} />
 					</label>
+					<label className="form-check-label leveling-plan-search-check">
+						<input className="form-check-input" type="checkbox" checked={options.rotationSearch} ref={rotations} />
+						Rotations too
+					</label>
 					<button className="btn btn-primary" ref={button} />
 				</div>
 				<p className="leveling-plan-note" ref={status} />
@@ -124,6 +152,7 @@ export class LevelingTalentSearch {
 		this.button = button.value!;
 		this.respecInput = respecs.value!;
 		this.sessionsInput = sessions.value!;
+		this.rotationInput = rotations.value!;
 		this.statusElem = status.value!;
 		this.resultElem = result.value!;
 		this.requiredElem = required.value!;
@@ -145,9 +174,14 @@ export class LevelingTalentSearch {
 			content:
 				"The search sims each level with these many sessions. The route it finds and the plan are simmed again with the run's iterations, on other sessions, for the numbers we show.",
 		});
+		tippy(this.rotationInput.closest('label')!, {
+			content:
+				"Also tune the rotation of each level range, with the spells and ranks we know there, in turns with the route. It takes several times longer, about 15 min for 10 to 60. Without it the route plays the plan's rotations.",
+		});
 		const saveOptions = () => this.storeOptions();
 		this.respecInput.addEventListener('change', saveOptions);
 		this.sessionsInput.addEventListener('change', saveOptions);
+		this.rotationInput.addEventListener('change', saveOptions);
 		this.button.addEventListener('click', () => (this.abort ? this.stop() : this.run()));
 
 		this.result = this.loadResult();
@@ -282,6 +316,7 @@ export class LevelingTalentSearch {
 		request.respecLevels = this.respecLevels();
 		request.sessions = this.sessions();
 		request.confirmSessions = this.simUI.sim.getIterations();
+		request.rotationSearch = this.rotationInput.checked;
 		const abort = new AbortController();
 		this.abort = abort;
 		this.render();
@@ -348,6 +383,14 @@ export class LevelingTalentSearch {
 				noise: respec.noise,
 			})),
 		};
+		if (result.passes > 0) {
+			this.result.rotationLibrary = result.rotationLibrary.map(preset => LevelingRotationPreset.toJson(preset));
+			this.result.rotations = result.rotations.map(range => LevelingRotation.toJson(range));
+			this.result.bands = result.bands.map(band => LevelingRotationBand.toJson(band));
+			this.result.rotationOnlyHours = result.rotationOnlyHours;
+			this.result.rotationOnlyNoise = result.rotationOnlyNoise;
+			this.result.passes = result.passes;
+		}
 		this.storeResult(this.result);
 		this.statusElem.textContent = '';
 	}
@@ -379,11 +422,13 @@ export class LevelingTalentSearch {
 		const route = result.route.map(pick => LevelingTalentPick.fromJson(pick as any));
 		const samePlan = result.fromLevel == plan.fromLevel && result.toLevel == plan.toLevel;
 		const saved = result.planHours - result.routeHours;
+		const fasterOrSlower = (hours: number) => (hours >= 0 ? `${formatHours(hours)} faster` : `${formatHours(-hours)} slower`);
+		const withRotations = !!result.rotations?.length;
 		const routeLine = (
 			<p className={`leveling-plan-respec ${saved > result.noise ? 'leveling-plan-better' : ''}`}>
-				{`Best route: ${formatHours(result.routeHours)} from ${result.fromLevel} to ${result.toLevel}, ${
-					saved >= 0 ? `${formatHours(saved)} faster` : `${formatHours(-saved)} slower`
-				} than the plan's talents (±${formatHours(result.noise)}).`}
+				{`${withRotations ? 'Best route and rotations' : 'Best route'}: ${formatHours(result.routeHours)} from ${result.fromLevel} to ${
+					result.toLevel
+				}, ${fasterOrSlower(saved)} than the plan's ${withRotations ? 'talents and rotations' : 'talents'} (±${formatHours(result.noise)}).`}
 			</p>
 		);
 		const useRoute = ref<HTMLButtonElement>();
@@ -395,17 +440,30 @@ export class LevelingTalentSearch {
 				{samePlan ? '' : ' The plan has other levels now, so search again.'}
 			</p>,
 			routeLine,
+			...(withRotations ? this.rotationElems(result) : []),
 			this.routeElem(route, result.fromLevel, plan.bonusTalentPoints),
 			<div className="leveling-plan-buttons">
 				<button className="btn btn-outline-primary" ref={useRoute}>
 					<i className="fas fa-check me-1" />
-					Use this route
+					{withRotations ? 'Use this route and rotations' : 'Use this route'}
 				</button>
 			</div>,
 		];
-		tippy(useRoute.value!, { content: "Make this route the plan's starting build. The respecs stay as they are." });
+		tippy(useRoute.value!, {
+			content: withRotations
+				? `Make this route the plan's starting build, and play the rotations the search found at their levels. They go in the plan's rotation library as "${SEARCHED_PREFIX}10" and so on, in place of an earlier search's. The respecs stay as they are.`
+				: "Make this route the plan's starting build. The respecs stay as they are.",
+		});
 		useRoute.value!.addEventListener('click', () => {
 			const newPlan = this.player.getLevelingPlan();
+			if (withRotations) {
+				newPlan.rotationLibrary = [
+					...newPlan.rotationLibrary.filter(preset => !preset.name.startsWith(SEARCHED_PREFIX)),
+					...result.rotationLibrary!.map(preset => LevelingRotationPreset.fromJson(preset as any)),
+				];
+				newPlan.rotations = result.rotations!.map(range => LevelingRotation.fromJson(range as any));
+				newPlan.rotationsNameTopRanks = true;
+			}
 			newPlan.builds = sortedBuilds(newPlan);
 			if (newPlan.builds.length) newPlan.builds[0].picks = route;
 			else newPlan.builds = [LevelingTalentBuild.create({ level: newPlan.fromLevel, picks: route })];
@@ -447,6 +505,35 @@ export class LevelingTalentSearch {
 		}
 		if (!result.respecs.length) elems.push(<p className="leveling-plan-note">No respec level inside the plan's levels.</p>);
 		this.resultElem.replaceChildren(...elems);
+	}
+
+	// What the rotations alone save, and a chip for each level range: what starts it, with the
+	// knobs it changed in its tooltip.
+	private rotationElems(result: SearchResult): Element[] {
+		const bands = (result.bands ?? []).map(band => LevelingRotationBand.fromJson(band as any));
+		const chips = (<div className="leveling-plan-search-route" />) as HTMLElement;
+		for (const band of bands) {
+			const why = band.newAbilities.length ? band.newAbilities.map(abilityName).join(', ') : 'New ranks';
+			const chip = (
+				<span className="leveling-plan-talent-gain">
+					<span className="leveling-plan-search-levels">{String(band.level)}</span>
+					<span>{band.changes || band.level == result.fromLevel ? why : `${why}, no change`}</span>
+				</span>
+			) as HTMLElement;
+			tippy(chip, { content: band.changes ? band.changes.split(' ').join(', ') : 'The knobs of the range before.' });
+			chips.appendChild(chip);
+		}
+		const alone = result.planHours - (result.rotationOnlyHours ?? result.planHours);
+		return [
+			<p className="leveling-plan-note">
+				{`With the plan's talents, the rotations alone are ${
+					alone >= 0 ? `${formatHours(alone)} faster` : `${formatHours(-alone)} slower`
+				} (±${formatHours(result.rotationOnlyNoise ?? 0)}). We tuned the rotations and then the route ${
+					result.passes == 1 ? 'once' : `${result.passes} times`
+				}. A range starts at each level with a new ability or rank:`}
+			</p>,
+			chips,
+		];
 	}
 
 	// The route's talents in the order we take them, a chip for each run of points in one talent.
@@ -496,23 +583,27 @@ export class LevelingTalentSearch {
 		return elem;
 	}
 
-	private loadOptions(): { respecLevels: number[]; sessions: number } {
+	private loadOptions(): { respecLevels: number[]; sessions: number; rotationSearch: boolean } {
 		try {
 			const json = window.localStorage.getItem(this.simUI.getStorageKey(SEARCH_OPTIONS_KEY));
 			const options = json ? JSON.parse(json) : null;
 			if (options && Array.isArray(options.respecLevels))
-				return { respecLevels: options.respecLevels, sessions: options.sessions || DEFAULT_SEARCH_SESSIONS };
+				return {
+					respecLevels: options.respecLevels,
+					sessions: options.sessions || DEFAULT_SEARCH_SESSIONS,
+					rotationSearch: options.rotationSearch ?? true,
+				};
 		} catch (e) {
 			console.warn('Failed to load the talent search options: ' + e);
 		}
-		return { respecLevels: DEFAULT_RESPEC_LEVELS, sessions: DEFAULT_SEARCH_SESSIONS };
+		return { respecLevels: DEFAULT_RESPEC_LEVELS, sessions: DEFAULT_SEARCH_SESSIONS, rotationSearch: true };
 	}
 
 	private storeOptions() {
 		try {
 			window.localStorage.setItem(
 				this.simUI.getStorageKey(SEARCH_OPTIONS_KEY),
-				JSON.stringify({ respecLevels: this.respecLevels(), sessions: this.sessions() }),
+				JSON.stringify({ respecLevels: this.respecLevels(), sessions: this.sessions(), rotationSearch: this.rotationInput.checked }),
 			);
 		} catch (e) {
 			console.warn('Failed to save the talent search options: ' + e);

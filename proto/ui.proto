@@ -434,6 +434,9 @@ message LevelingPlanSearchRequest {
 	// same gear plan itself (tools/levelingplan/gear.go), and stops with an error when the two
 	// don't agree, so the gear we sim is the gear the UI shows.
 	repeated EquipmentSpec ui_gear = 12;
+	// Whether we also search the rotation of each level range, in turns with the talent route
+	// until neither changes (tools/levelingplan/rotation.go, docs/leveling_plan.md).
+	bool rotation_search = 13;
 }
 
 message LevelingGearWeights {
@@ -508,6 +511,29 @@ message LevelingPlanSearchResult {
 	string error = 11;
 	// The seconds the search took.
 	double seconds = 12;
+	// With rotation_search: the rotations the search found, which route_hours and the respecs
+	// are with, as the plan's library and level ranges have them. The plan's own talents with
+	// them take rotation_only_hours, with the noise of what that saves against plan_hours.
+	repeated LevelingRotationPreset rotation_library = 13;
+	repeated LevelingRotation rotations = 14;
+	repeated LevelingRotationBand bands = 15;
+	double rotation_only_hours = 16;
+	double rotation_only_noise = 17;
+	// How many times we searched the rotations and then the route.
+	int32 passes = 18;
+}
+
+// A level range of the rotation search: why it starts at its level, and what it changed.
+message LevelingRotationBand {
+	int32 level = 1;
+	// The abilities that start it (like Chain Lightning), or none at a level where only a rank
+	// is new, where we tune only the rest and mana thresholds.
+	repeated string new_abilities = 2;
+	// The knobs that differ from the range before, as name=value.
+	string changes = 3;
+	WeaponImbue imbue = 4;
+	// The sims of a level this range's search ran.
+	int32 sims = 5;
 }
 
 // The best build to respec into at a level, against keeping the route, both over the levels

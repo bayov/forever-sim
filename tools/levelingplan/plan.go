@@ -224,3 +224,16 @@ func pickProblems(route []pick, shape *proto.LevelingTalentShape) []bool {
 func treeValid(route []pick, shape *proto.LevelingTalentShape) bool {
 	return !slices.Contains(pickProblems(route, shape), true)
 }
+
+// parseTalents reads a talents string, like 05-0532-1, into each talent's points.
+func parseTalents(talents string, shape *proto.LevelingTalentShape) [][]int {
+	counts := emptyCounts(shape)
+	for t, part := range strings.Split(talents, "-") {
+		for i, c := range part {
+			if t < len(counts) && i < len(counts[t]) {
+				counts[t][i] = int(c - '0')
+			}
+		}
+	}
+	return counts
+}

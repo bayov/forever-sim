@@ -41,6 +41,7 @@ wording instead.
   - Design and defaults settled 2026-10-15: `docs/leveling_sim.md` (score: mobs killed in a 20 min session; Enhancement shaman first). The groundwork items below come first.
   - 2026-10-17: the Leveling Plan's Talent search (`docs/leveling_plan.md`, Talent search) scores whole talent routes by the plan's total hours, and the best respec at 20, 30, 40 and 50 against keeping the route. Still open: rotations searched along with the talents.
   - 2026-10-18: the default enhancement plan goes from 10 to 60 (grinding up to 59), with the talents on to the Level 60 + Imp GW build. Still open: rotations and stat weights past 30. A rotation search has to know the spells and ranks of each level (Chain Lightning at 32, new ranks mid range).
+  - 2026-10-18: the Talent search tunes the rotations too (Rotations too, `docs/leveling_plan.md`, Rotation search), a range at each level with a new ability or rank, in turns with the route. The leveling template moved to `tools/rotopt/aplkit` and has rules past 30 (Maelstrom Weapon bolts, Chain Lightning, air totems). Still open: stat weights past 30, templates for the other specs.
 - [ ] 2026-10-15 — Leveling groundwork 1: damage taken from mobs (`docs/leveling_sim.md`, Groundwork)
   - A table of normal mob HP, armor, damage and swing speed by level (Classic averages to start).
   - Check the player's defenses at low level (dodge per Agility for every class, block, armor), spell pushback (`sim/core/cast.go`) and parry and block from in front.

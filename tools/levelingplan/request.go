@@ -24,10 +24,14 @@ type levelHours struct {
 	relativeError float64
 }
 
-// One sim to run: a level with a talents string.
+// One sim to run: a level with a talents string. A rotation search's job also has its own
+// rotation and imbue in place of the plan's at the level, or another plan's.
 type levelJob struct {
-	level   int32
-	talents string
+	level    int32
+	talents  string
+	plan     *proto.LevelingPlanSettings
+	rotation *proto.APLRotation
+	imbue    proto.WeaponImbue
 }
 
 // planner holds the plan and its gear plan, and makes and runs each level's request the way
@@ -161,8 +165,13 @@ func simItem(item *proto.UIItem) (*proto.SimItem, error) {
 	return out, err
 }
 
-// The request of one level, with these talents, sessions and seed.
-func (p *planner) request(level int32, talents string, iterations int32, seed int64) *proto.RaidSimRequest {
+// The request of a job, with these sessions and seed.
+func (p *planner) request(job levelJob, iterations int32, seed int64) *proto.RaidSimRequest {
+	level, talents := job.level, job.talents
+	plan := p.plan
+	if job.plan != nil {
+		plan = job.plan
+	}
 	request := goproto.Clone(p.req.Base).(*proto.RaidSimRequest)
 	request.SimOptions.DebugFirstIteration = false
 	request.SimOptions.RandomSeed = seed
@@ -171,7 +180,7 @@ func (p *planner) request(level int32, talents string, iterations int32, seed in
 	player.Level = level
 	player.BonusTalentPoints = 0
 	if level >= bonusTalentPointsLevel {
-		player.BonusTalentPoints = p.plan.BonusTalentPoints
+		player.BonusTalentPoints = plan.BonusTalentPoints
 	}
 	player.TalentsString = talents
 
@@ -190,7 +199,7 @@ func (p *planner) request(level int32, talents string, iterations int32, seed in
 	}
 	player.Equipment = equipment
 
-	if !p.plan.UseSettingsBuffs {
+	if !plan.UseSettingsBuffs {
 		player.Consumes = &proto.Consumes{}
 		player.Buffs = &proto.IndividualBuffs{}
 		request.Raid.Buffs = &proto.RaidBuffs{}
@@ -199,11 +208,18 @@ func (p *planner) request(level int32, talents string, iterations int32, seed in
 			party.Buffs = &proto.PartyBuffs{}
 		}
 	}
-	if rotation := rotationAt(p.plan, level); rotation != nil {
+	rotation, imbue := job.rotation, job.imbue
+	if rotation == nil {
+		rotation = rotationAt(plan, level)
+		if r := rangeAt(plan, level); r != nil {
+			imbue = r.Imbue
+		}
+	}
+	if rotation != nil {
 		player.Rotation = rotation
 	}
-	if r := rangeAt(p.plan, level); r != nil && r.Imbue != proto.WeaponImbue_WeaponImbueUnknown {
-		setShamanImbue(player, r.Imbue)
+	if imbue != proto.WeaponImbue_WeaponImbueUnknown {
+		setShamanImbue(player, imbue)
 	}
 	if leveling := request.Encounter.GetLeveling(); leveling != nil {
 		leveling.Plan = false
@@ -256,7 +272,7 @@ func (p *planner) simLevels(ctx context.Context, jobs []levelJob, iterations int
 					return
 				}
 				job := jobs[i]
-				res := core.RunRaidSim(p.request(job.level, job.talents, iterations, levelSeed(seed, job.level)))
+				res := core.RunRaidSim(p.request(job, iterations, levelSeed(seed, job.level)))
 				if res.Error != nil {
 					continue
 				}

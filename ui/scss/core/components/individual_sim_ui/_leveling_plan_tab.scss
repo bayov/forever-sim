@@ -402,6 +402,14 @@
 		input[type='number'] {
 			width: 6rem;
 		}
+
+		.leveling-plan-search-check {
+			display: flex;
+			align-items: center;
+			gap: var(--spacer-1);
+			// Level with the inputs' boxes next to it.
+			min-height: calc(1.5em + 0.75rem + 2px);
+		}
 	}
 
 	.leveling-plan-required-block {

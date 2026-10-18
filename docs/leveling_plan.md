@@ -129,6 +129,46 @@ saves nothing. With Improved Ghost Wolf 2/2 required by 20 (2026-10-18) the rout
 by 16, as early as its row opens, and its own build takes it at 15 and 16. A search of that plan
 finds 19h 11m, 13 minutes faster than its talents.
 
+## Rotation search
+
+With Rotations too (`rotation_search`), the search also tunes a rotation for each level range,
+in turns with the route: the rotations with the plan's talents, then the route with them, then
+the rotations of the ranges whose talents the route changed, until neither changes (at most 3
+times). It's `tools/levelingplan/rotation.go`, on the leveling rotation template that the
+leveling optimizer uses too (`tools/rotopt/aplkit/shaman_enh_leveling.go`, only the
+enhancement shaman's for now).
+
+- **Ranges.** A range starts at each level that brings an ability the template can use (a
+  spell like Chain Lightning at 32, a talent like Stormstrike, an imbue like Windfury Weapon)
+  or a new rank of a spell it casts. For the shaman that's every even level and the talent
+  levels. A range's rotation names the top ranks, so it casts each new rank as we learn it.
+- **Knobs.** A range tunes only the knobs its levels can change. The first range, and a new
+  ability 15 levels after we last did, tune every knob. A new ability tunes the rest and mana
+  thresholds and that ability's knobs (`Knob.Needs`). A new rank only tunes the thresholds,
+  since the rank costs more mana. The other knobs carry over from the range before.
+- **Elimination.** Each round tries every one-knob change of the range's knobs (a threshold
+  only within 2 steps of where it is). All start at 50 sessions on up to 3 of the range's
+  levels (only its first for a new rank), and the best quarter goes on to 200, then 800. A
+  change wins when it saves more than its noise at 800. We take the best winner, or the best
+  of each knob together when that saves more. A range makes up to 3 rounds (1 for a new rank).
+- **Later passes** keep the knobs of a range whose levels and talents stayed the same, and
+  start the others from the pass before.
+- **The numbers we show** compare the route with its rotations against the plan's talents
+  with the plan's rotations, and the plan's talents with the rotations found, on the confirm
+  sessions. "Use this route and rotations" puts the rotations in the plan's library as
+  "Searched 10" and so on, in place of an earlier search's, with the level ranges and imbues.
+
+Template rules past 30 (2026-10-18), off by default so the Level 30 rotations stay as they
+were: Lightning Bolt at a number of Maelstrom Weapon stacks, Chain Lightning with a number of
+mobs on us, and Grace of Air or Windfury Totem.
+
+The first run (2026-10-18, enhancement shaman, the spec's plan, 10 to 60, 3 passes, 20 min):
+the plan's talents and rotations take 123h 42m. The rotations found take 112h 27m with the
+same talents, and with the route 107h 48m, 15h 54m faster (±3m). Past 30 they take Windfury
+Weapon and Windfury Totem at 32, then at 42 Flametongue Weapon with Windfury Totem in place of
+Strength of Earth Totem, and Lightning Bolt at 5 Maelstrom Weapon stacks. The respecs save
+nothing. A 10 to 30 run takes 6 min and saves 37 minutes, 31 of them the rotations'.
+
 ## The run
 
 Simulate runs one grinding session request per level, each with the main iterations, then the
@@ -167,9 +207,7 @@ than they should be.
 ## Open
 
 - A sim history for the Leveling mode.
-- Rotations searched at more levels, and for the levels past 30. A rotation search at a level
-  has to know which spells and ranks we have there. A spell we learn later (Chain Lightning at
-  32 for the shaman) isn't in the earlier ranges, and a rank we learn mid range changes the
-  spell's damage and cost from that level on (top ranks, Ranks above).
+- Rotation templates for the other specs, and more rules past 30 (Frost Shock, Healing Stream
+  Totem, Lava Burst).
 - Leveling stat weights above 30, for the gear plan.
 - Forever's XP table.

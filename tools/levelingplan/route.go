@@ -92,7 +92,7 @@ func (s *routeSearch) score(routes [][]pick, levels []int32) []float64 {
 	var jobs []levelJob
 	for _, route := range routes {
 		for _, level := range levels {
-			jobs = append(jobs, levelJob{level, s.talentsAt(route, level)})
+			jobs = append(jobs, levelJob{level: level, talents: s.talentsAt(route, level)})
 		}
 	}
 	s.simMissing(jobs)
@@ -595,12 +595,12 @@ func (s *routeSearch) pointMoves(route []pick, levels []int32) [][]pick {
 	}
 	var jobs []levelJob
 	for _, level := range screenLevels {
-		jobs = append(jobs, levelJob{level, s.talentsAt(route, level)})
+		jobs = append(jobs, levelJob{level: level, talents: s.talentsAt(route, level)})
 		for _, p := range taken {
-			jobs = append(jobs, levelJob{level, withChange(level, p, -1)})
+			jobs = append(jobs, levelJob{level: level, talents: withChange(level, p, -1)})
 		}
 		for _, m := range moves {
-			jobs = append(jobs, levelJob{level, withChange(level, m.to, 1)})
+			jobs = append(jobs, levelJob{level: level, talents: withChange(level, m.to, 1)})
 		}
 	}
 	s.simMissing(jobs)

@@ -117,18 +117,6 @@ func djb2(s string) uint32 {
 	return h
 }
 
-func parseTalents(talents string, shape *proto.LevelingTalentShape) [][]int {
-	counts := emptyCounts(shape)
-	for t, part := range strings.Split(talents, "-") {
-		for i, c := range part {
-			if t < len(counts) && i < len(counts[t]) {
-				counts[t][i] = int(c - '0')
-			}
-		}
-	}
-	return counts
-}
-
 // The shaman's trees from the UI's talent files, with Improved Ghost Wolf not simmed.
 func shamanShape(t *testing.T) *proto.LevelingTalentShape {
 	data, err := os.ReadFile("../../ui/core/talents/trees/shaman.json")
