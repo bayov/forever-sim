@@ -98,6 +98,9 @@ class Wowhead:
         self.token = None
         self.last = 0.0
         self.fetched = self.cached = 0
+        # When the oldest page we answered with was fetched (unix time), so a
+        # scrape can say how old its content really is, not just when it ran.
+        self.oldest = None
         try:
             with open(TOKEN_FILE) as f:
                 token = json.load(f)
@@ -143,8 +146,10 @@ class Wowhead:
         cache = self._cache_path(url)
         with self.lock:
             try:
-                if time.time() - os.path.getmtime(cache) < self.cache_days * 86400:
+                mtime = os.path.getmtime(cache)
+                if time.time() - mtime < self.cache_days * 86400:
                     self.cached += 1
+                    self.oldest = mtime if self.oldest is None else min(self.oldest, mtime)
                     with gzip.open(cache, 'rt', encoding='utf-8') as f:
                         return f.read() or None
             except OSError:
@@ -167,6 +172,8 @@ class Wowhead:
                     with gzip.open(cache, 'wt', encoding='utf-8') as f:
                         f.write(text)
                     self.fetched += 1
+                    if self.oldest is None:
+                        self.oldest = time.time()
                     return text or None
                 if r.status_code == 202 or waf == 'challenge':
                     # The token is spent. A fresh one fixes this, twice is suspicious.
@@ -228,11 +235,17 @@ def _js_value(html, start):
 
 
 def listview(html, id):
-    """The rows of the Listview tab with this id ('sold-by', 'dropped-by', ...), or []."""
+    """The rows of the Listview tab with this id ('sold-by', 'dropped-by', ...), or [].
+
+    Wowhead cuts a long tab short and says so with `_truncated` in its options,
+    like the 200 of 228 vendors of Refreshing Spring Water. We say so on stderr.
+    """
     m = re.search(r"new Listview\(\{[^{}]*?id: *'%s'" % re.escape(id), html)
     if not m:
         return []
     i = html.find('data:', m.start())
+    if re.search(r'_truncated: *1', html[m.start():i]):
+        print(f'wowhead cut its {id} tab short', file=sys.stderr)
     return _js_value(html, i + len('data:'))
 
 

@@ -150,8 +150,9 @@ report what the client says, so they rank with it when they show client data. Th
   and every quest's class and side restriction. `recipes.py` takes the recipe items of each
   profession: vendors (stock, cost, map pins), drops with chances, objects, containers,
   fishing, pickpocket and quests. From each profession's spell listing it also takes what a
-  trainer asks for each recipe (`trainers`), and who sells each reagent and in what stock
-  (`reagents`).
+  trainer asks for each recipe and rank (`trainers`), the specialization each recipe asks
+  for (`specializations`), and who sells each reagent, in what stock and for what
+  (`reagents`). Its meta block's `oldestPage` is when the oldest page it used was fetched.
 - **URLs:** `https://www.wowhead.com/forever/items/slot:<s>/min-req-level:<lo>/max-req-level:<hi>`,
   `/forever/quests/...`, `/forever/items/recipes/<prof>`, `/forever/spells/professions/<prof>` (`secondary-skills/` for cooking and first aid), `/forever/item=<id>`, `/forever/npc=<id>`.
 - **Fetchers:** `uv run tools/database/forever_wowhead/scrape.py [max required level]` and

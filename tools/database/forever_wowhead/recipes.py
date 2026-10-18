@@ -35,7 +35,7 @@
 # left off, and a run within a week only fetches what's new. A recipe wowhead lists
 # with no source at all has nothing on its page either, so we don't open those.
 # wowhead.py also says how we get past wowhead's bot check.
-import json, os, sys
+import datetime, json, os, sys, time
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from wowhead import Wowhead, listview, listview_items, listview_spells, mapper
@@ -46,17 +46,18 @@ OUT = os.path.join(os.path.dirname(__file__), '../../../assets/db_inputs/forever
 # wowhead's recipe listings by subclass. Fishing has books, the rest are professions.
 PROFESSIONS = ['alchemy', 'blacksmithing', 'cooking', 'enchanting', 'engineering', 'first-aid',
                'fishing', 'leatherworking', 'tailoring']
-# wowhead's spell listings of the professions that craft, with each one's skill line.
-# Mining's are the smelting recipes. Cooking and first aid are secondary skills, and a
-# wrong path doesn't 404 but gives every profession's spells, cut at 1,000. So we keep
-# only the rows of the skill line we asked for.
+# wowhead's spell listings of the professions, with each one's skill line. Mining's are
+# the smelting recipes, and herbalism, skinning and fishing have only their ranks.
+# Cooking, first aid and fishing are secondary skills, and a wrong path doesn't 404 but
+# gives every profession's spells, cut at 1,000. So we keep only the rows of the skill
+# line we asked for. Rogue poisons aren't here: neither professions/poisons nor
+# class-skills/rogue/poisons is their listing.
 SPELL_PROFESSIONS = {
     'professions/alchemy': 171, 'professions/blacksmithing': 164, 'professions/enchanting': 333,
     'professions/engineering': 202, 'professions/leatherworking': 165, 'professions/mining': 186,
-    'professions/tailoring': 197, 'secondary-skills/cooking': 185, 'secondary-skills/first-aid': 129,
+    'professions/tailoring': 197, 'professions/herbalism': 182, 'professions/skinning': 393,
+    'secondary-skills/cooking': 185, 'secondary-skills/first-aid': 129, 'secondary-skills/fishing': 356,
 }
-# wowhead's source code for a trainer, in a spell's `source` list.
-SOURCE_TRAINER = 6
 # A world drop is on hundreds of mobs. We keep the ones it drops from most often.
 TOP_DROPS = 12
 
@@ -161,7 +162,9 @@ def main():
             print(f'{prof}: {len(rows)} spells, wowhead may have cut the listing short', file=sys.stderr)
         taught = 0
         for r in rows:
-            if SOURCE_TRAINER in (r.get('source') or []) and r.get('trainingcost') is not None:
+            # A training cost is the test. Some specialization recipes have one but no
+            # `source` at all, like the armorsmith's and the goblin engineer's.
+            if r.get('trainingcost') is not None:
                 trainers[r['id']] = {'cost': r['trainingcost'], 'req': r.get('learnedat') or 1}
                 # A rank of the profession itself, like Journeyman Tailoring, is in the
                 # listing too, with the skill line it raises.
@@ -183,12 +186,15 @@ def main():
             print(f'{n} of {len(trainers)} trainer recipe pages ({wh.fetched} fetched, {wh.cached} from the cache)',
                   file=sys.stderr)
 
-    # Who sells each reagent. `stock` is -1 when the vendor never runs out.
+    # Who sells each reagent. `stock` is -1 when the vendor never runs out, and `cost`
+    # is [[copper, [[currency, n]], [[item, n]]]], since some vendors ask for currency
+    # or items, like Lokhtos' Essences for Firelands Embers.
     for n, item_id in enumerate(sorted(reagents), 1):
         html = wh.page(f'forever/item={item_id}')
         sold = listview(html, 'sold-by') if html else []
         if sold:
-            reagents[item_id]['vendors'] = [{'id': keep_npc(npcs, r), 'stock': r.get('stock')} for r in sold]
+            reagents[item_id]['vendors'] = [{'id': keep_npc(npcs, r), 'stock': r.get('stock'), 'cost': r.get('cost')}
+                                            for r in sold]
         if n % 100 == 0:
             print(f'{n} of {len(reagents)} reagent pages ({wh.fetched} fetched, {wh.cached} from the cache)',
                   file=sys.stderr)
@@ -200,7 +206,12 @@ def main():
     def block(d):
         return ',\n'.join('%s:%s' % (json.dumps(str(k)), json.dumps(v, sort_keys=True, separators=(',', ':'))) for k, v in sorted(d.items()))
     with open(OUT, 'w') as f:
-        f.write('{' + line(meta('www.wowhead.com/forever', 'tools/database/forever_wowhead/recipes.py', dataEnv=16)))
+        # `oldestPage` is when the oldest page we used was fetched. A page comes from the
+        # cache for a week, so it can be older than `fetched`. bayovui weighs what BayovCore
+        # saw in game against it.
+        oldest = datetime.datetime.fromtimestamp(wh.oldest or time.time(), datetime.timezone.utc)
+        f.write('{' + line(meta('www.wowhead.com/forever', 'tools/database/forever_wowhead/recipes.py', dataEnv=16,
+                                oldestPage=oldest.strftime('%Y-%m-%dT%H:%MZ'))))
         f.write('"items": [\n')
         f.write(',\n'.join(json.dumps(i, sort_keys=True, separators=(',', ':')) for i in sorted(items.values(), key=lambda x: x['id'])))
         f.write('\n],\n"npcs": {\n%s\n},\n"objects": {\n%s\n},\n"quests": {\n%s\n},\n"trainers": {\n%s\n},\n"specializations": {\n%s\n},\n"reagents": {\n%s\n}}\n'

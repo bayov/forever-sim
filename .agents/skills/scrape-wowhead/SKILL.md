@@ -36,7 +36,11 @@ Wowhead sits behind AWS WAF, and there are two separate checks:
 Every page is kept, gzipped, in `~/.cache/wow-data/wowhead/pages`, so a run that
 stops picks up where it left off. A page younger than `WOWHEAD_CACHE_DAYS` (7 by
 default) isn't fetched again. Use `WOWHEAD_CACHE_DAYS=0` when Wowhead changed
-something today that you need.
+something today that you need, and for `recipes.py` after the game patched.
+Its meta block's `oldestPage` says how old the oldest page it used is, and
+BayovCore lets that data replace what it saw at a vendor or trainer only when
+the scrape is newer than its look, so cached pages from before the patch
+can't.
 
 The tooltip API (`nether.wowhead.com/forever/tooltip/item/<id>?dataEnv=16`) has
 neither check, and plain urllib works for it. `scrape.py` uses it for binding.
