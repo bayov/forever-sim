@@ -1,12 +1,6 @@
-# Results audit, pass 44 (master 1e2f7ec5b)
+# Results pass 45 (master d70ef8ca3, quiet)
 
-Full pass on 20 watched files (db regen, proto, spell_ranks.go, unit.go, shaman healing.go, tools/database, enhancement presets.ts).
-
-| Check | Result |
-|---|---|
-| 66 requests, 20k, seed 1 (shared run) vs published | 0 of 66 off by more than 0.15 |
-| vs reference req_summary.txt | 0 moved |
-| drift_report.txt (mksettings rebuilt at 1e2f7ec5b) vs reference | identical |
-| unread fields | only `notes` |
-
-Why nothing moved: the changes are leveling and healing plumbing (TopHealRankID, rotationsNameTopRanks in the Enhancement leveling plan, core.TopRankID), the regenerated item db and the client-table generators; none reach a level 60 DPS request. No findings. Ranking explanation unchanged from pass 40.
+Changed watched files since 06e84d595: assets/database/hidden_items.json (new hidden-item list), proto/ui.proto
+(LevelingTalentRequirement, leveling plan only), ui/enhancement_shaman/presets.ts (leveling plan talent order, Improved Ghost Wolf).
+None touch the level 60 requests. Shared run (/tmp/audit-work/runs/master, 66 requests, 20k, seed 1): compare_runs reports 0 of 66
+moved more than 0.5 DPS; vs_published has no gaps. No new findings.
