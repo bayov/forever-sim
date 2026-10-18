@@ -37,6 +37,7 @@ func main() {
 	in := flag.String("in", "", "a LevelingPlanSearchRequest JSON to search, without the UI")
 	out := flag.String("out", "", "with -in, where to write the LevelingPlanSearchResult JSON (stdout when empty)")
 	keep := flag.String("keep", "", "with -serve, a file to write each request to, to run it again with -in")
+	levelRequests := flag.String("level-requests", "", "with -in, write each level's sim request (the plan's gear, talents and rotation there) into this directory as level_NN.json and don't search, for rotopt -settings")
 	flag.Parse()
 
 	if !core.WITH_DB {
@@ -53,6 +54,11 @@ func main() {
 		http.HandleFunc("/search", searchHandler(db, *keep))
 		if err := http.ListenAndServe(*serve, nil); err != nil {
 			log.Fatal(err)
+		}
+	case *in != "" && *levelRequests != "":
+		if err := writeLevelRequests(db, *in, *levelRequests); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
 		}
 	case *in != "":
 		if err := searchFile(db, *in, *out); err != nil {
@@ -105,6 +111,48 @@ func searchFile(db *proto.UIDatabase, in, out string) error {
 		return err
 	}
 	return os.WriteFile(out, data, 0o644)
+}
+
+// writeLevelRequests writes the request the plan sims at each level, so rotopt can read its
+// sessions (-session) or try another rotation there (-apl).
+func writeLevelRequests(db *proto.UIDatabase, in, dir string) error {
+	data, err := os.ReadFile(in)
+	if err != nil {
+		return err
+	}
+	req, err := readRequest(data)
+	if err != nil {
+		return err
+	}
+	p, err := newPlanner(req, db)
+	if err != nil {
+		return err
+	}
+	if err := os.MkdirAll(dir, 0o755); err != nil {
+		return err
+	}
+	// The plan's plain items aren't in the item database, so each request carries them.
+	madeUp := &proto.SimDatabase{}
+	for _, item := range p.gear.madeUp {
+		sim, err := simItem(item)
+		if err != nil {
+			return err
+		}
+		madeUp.Items = append(madeUp.Items, sim)
+	}
+	for _, level := range planLevels(p.plan) {
+		job := levelJob{level: level, talents: planTalentsAt(p.plan, level, p.shape)}
+		request := p.request(job, 1000, levelSeed(p.seed, level))
+		request.Raid.Parties[0].Players[0].Database = madeUp
+		data, err := protojson.MarshalOptions{Multiline: true}.Marshal(request)
+		if err != nil {
+			return err
+		}
+		if err := os.WriteFile(fmt.Sprintf("%s/level_%02d.json", dir, level), data, 0o644); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 // One search at a time, because each one takes all the cores.

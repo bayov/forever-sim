@@ -101,11 +101,11 @@ func (s *setup) sessionLog(rot *proto.APLRotation, seed int64) string {
 
 var (
 	sessionTime     = regexp.MustCompile(`^\s*\[(-?[0-9.]+)\] `)
-	sessionPlayer   = regexp.MustCompile(`^\s*\[[0-9.]+\] \[ \(#1\)\] `)
-	sessionHealth   = regexp.MustCompile(`\] \[ \(#1\)\] (?:Spent|Gained) [0-9.]+ health from .*\(([0-9.]+) --> ([0-9.]+)\)`)
-	sessionMana     = regexp.MustCompile(`\] \[ \(#1\)\] (?:Spent|Gained) [0-9.]+ mana from .*\(([0-9.]+) --> ([0-9.]+)\)`)
-	sessionDamage   = regexp.MustCompile(`\] \[ \(#1\)\] Spent ([0-9.]+) health from \{OtherID: 11\}`)
-	sessionCast     = regexp.MustCompile(`\] \[ \(#1\)\] Casting \{SpellID: (\d+)\}`)
+	sessionPlayer   = regexp.MustCompile(`^\s*\[[0-9.]+\] \[[^\]]*\(#1\)\] `)
+	sessionHealth   = regexp.MustCompile(`\] \[[^\]]*\(#1\)\] (?:Spent|Gained) [0-9.]+ health from .*\(([0-9.]+) --> ([0-9.]+)\)`)
+	sessionMana     = regexp.MustCompile(`\] \[[^\]]*\(#1\)\] (?:Spent|Gained) [0-9.]+ mana from .*\(([0-9.]+) --> ([0-9.]+)\)`)
+	sessionDamage   = regexp.MustCompile(`\] \[[^\]]*\(#1\)\] Spent ([0-9.]+) health from \{OtherID: 11\}`)
+	sessionCast     = regexp.MustCompile(`\] \[[^\]]*\(#1\)\] Casting \{SpellID: (\d+)\}`)
 	sessionLeveling = regexp.MustCompile(`Leveling: (.*)$`)
 	sessionMobDied  = regexp.MustCompile(`\] \[(Target \d+)\] Died`)
 )
