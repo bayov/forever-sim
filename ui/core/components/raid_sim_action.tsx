@@ -39,7 +39,7 @@ export function addRaidSimAction(simUI: SimUI): RaidSimResultsManager {
 		}
 		isRunning = true;
 
-		const progressBar = new SimProgress();
+		const progressBar = new SimProgress('', simUI.iterationsPicker.querySelector<HTMLElement>('.form-label') ?? undefined);
 		simUI.iterationsPicker.appendChild(progressBar.rootElem);
 		simUI.simActionsContainer.classList.add('running');
 		// Stop is shorter than Simulate, and the button keeps its width so the bar doesn't grow.
@@ -58,7 +58,7 @@ export function addRaidSimAction(simUI: SimUI): RaidSimResultsManager {
 			resultsManager.simHistory?.finishRun();
 		}
 
-		progressBar.rootElem.remove();
+		progressBar.remove();
 		simUI.simActionsContainer.classList.remove('running');
 		button.style.minWidth = '';
 		button.textContent = 'Simulate';
