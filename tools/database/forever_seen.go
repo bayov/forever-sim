@@ -77,7 +77,13 @@ func ReadForeverSeenInGame(path string, have map[int32]*proto.UIItem) []*proto.U
 			HitRating: e.HitRating, CritRating: e.CritRating,
 			Ilvl: e.Ilvl, RequiredLevel: e.RequiredLevel, Quality: proto.ItemQuality(e.Quality),
 		}
-		_, known := have[int32(id)]
+		old, known := have[int32(id)]
+		// MergeItem takes no faction restriction to mean none, and the game doesn't
+		// tell us an item's faction. So an item keeps the one it has (Ring of Scorn
+		// is Horde only).
+		if known {
+			item.FactionRestriction = old.FactionRestriction
+		}
 		if !known || e.InventoryType != 0 {
 			wi := ForeverWowheadItem{ID: int32(id), Slot: e.InventoryType, Class: e.ClassID, Subclass: e.SubclassID}
 			itemType, handType, ok := wi.itemType()
