@@ -205,8 +205,8 @@ func (s *searcher) searchEnchants(best []*proto.ItemSpec, bestScore *result, kno
 		if len(options) == 1 {
 			continue
 		}
-		bestEnchant, bestGain := int32(-1), 0.0
-		var bestEnchantScore result
+		var enchants []int32
+		var pending []*pendingScore
 		for _, e := range options {
 			if e == item.Enchant {
 				continue
@@ -215,7 +215,13 @@ func (s *searcher) searchEnchants(best []*proto.ItemSpec, bestScore *result, kno
 			candidate[slot] = goproto.Clone(item).(*proto.ItemSpec)
 			candidate[slot].Enchant = e
 			s.setGear(candidate)
-			score := s.score(knobs)
+			enchants = append(enchants, e)
+			pending = append(pending, s.prepare(knobs))
+		}
+		bestEnchant, bestGain := int32(-1), 0.0
+		var bestEnchantScore result
+		for i, score := range s.scoreAll(pending) {
+			e := enchants[i]
 			gain := s.objective(score) - s.objective(*bestScore)
 			noise := math.Sqrt(score.stderr*score.stderr + bestScore.stderr*bestScore.stderr)
 			if gain > s.confidence*noise && gain > bestGain {

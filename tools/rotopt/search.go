@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"sync"
 
 	"github.com/wowsims/classic/sim/core/proto"
 )
@@ -60,40 +61,112 @@ type searcher struct {
 
 // Mean DPS and end mana over the fight lengths, with the standard errors of those means.
 func (s *searcher) score(knobs Knobs) result {
+	return s.scoreAll([]*pendingScore{s.prepare(knobs)})[0]
+}
+
+// pendingScore is a score still to work out: a sim request for each fight length, made from
+// the setup as it was when we asked. So the gear and talent searches can change the setup for
+// the next candidate before the runs happen, see scoreAll.
+type pendingScore struct {
+	knobs Knobs
+	// The cache it was made against. The gear search starts a new one for each gear set, so
+	// the results must go into this one.
+	cache    map[string]result
+	keys     []string
+	requests []*proto.RaidSimRequest // nil where the cache had the result
+	results  []result
+
+	health, armor float64
+}
+
+func (s *searcher) prepare(knobs Knobs) *pendingScore {
 	rot := s.template.Build(knobs)
-	var sum, variance, mana, manaVariance, tto float64
-	var leveling *proto.LevelingMetrics
+	p := &pendingScore{knobs: knobs, cache: s.cache}
 	for _, d := range s.durations {
 		key := fmt.Sprintf("%s|%g|%s|%d", s.setup.talents, d, knobs, s.iterations)
 		r, ok := s.cache[key]
+		var request *proto.RaidSimRequest
 		if !ok {
-			var err error
-			r, err = s.setup.run(rot, d, s.iterations)
-			if err != nil {
-				fmt.Fprintf(os.Stderr, "sim failed for %s at %gs: %v\n", knobs, d, err)
-				os.Exit(1)
-			}
-			s.cache[key] = r
-			s.evals++
+			request = s.setup.runRequest(rot, d, s.iterations)
 		}
+		p.keys = append(p.keys, key)
+		p.requests = append(p.requests, request)
+		p.results = append(p.results, r)
+	}
+	if s.survival || s.minHealth > 0 || s.minArmor > 0 || s.healthWeight != 0 || s.armorWeight != 0 {
+		p.health, p.armor = s.setup.unbuffedStats()
+	}
+	return p
+}
+
+// How many sim runs scoreAll runs side by side. Each run already splits its iterations over
+// all the CPUs, but at the iterations a search uses, the splits are short, and the CPUs wait
+// for the slowest one before the next run starts. A few runs side by side keep them busy.
+const scoreParallel = 4
+
+// scoreAll works out the scores, running the sims side by side. The results are the same as
+// scoring them one by one, because each run has its own fixed random seed.
+func (s *searcher) scoreAll(pending []*pendingScore) []result {
+	type run struct {
+		p   *pendingScore
+		i   int
+		err error
+	}
+	var runs []*run
+	for _, p := range pending {
+		for i, request := range p.requests {
+			if request != nil {
+				runs = append(runs, &run{p: p, i: i})
+			}
+		}
+	}
+	var wg sync.WaitGroup
+	slots := make(chan struct{}, scoreParallel)
+	for _, r := range runs {
+		wg.Add(1)
+		slots <- struct{}{}
+		go func() {
+			defer wg.Done()
+			r.p.results[r.i], r.err = simulate(r.p.requests[r.i])
+			<-slots
+		}()
+	}
+	wg.Wait()
+	for _, r := range runs {
+		if r.err != nil {
+			fmt.Fprintf(os.Stderr, "sim failed for %s at %gs: %v\n", r.p.knobs, s.durations[r.i], r.err)
+			os.Exit(1)
+		}
+		r.p.cache[r.p.keys[r.i]] = r.p.results[r.i]
+		s.evals++
+	}
+
+	results := make([]result, len(pending))
+	for i, p := range pending {
+		results[i] = s.combine(p)
+	}
+	return results
+}
+
+// combine is the mean over the fight lengths of a score whose runs are done.
+func (s *searcher) combine(p *pendingScore) result {
+	var sum, variance, mana, manaVariance, tto float64
+	for _, r := range p.results {
 		sum += r.dps
 		variance += r.stderr * r.stderr
 		mana += r.mana
 		manaVariance += r.manaStderr * r.manaStderr
 		tto += r.tto
-		leveling = r.leveling
 	}
 	n := float64(len(s.durations))
 	r := result{
 		dps: sum / n, stderr: math.Sqrt(variance) / n,
 		mana: mana / n, manaStderr: math.Sqrt(manaVariance) / n,
 		tto: tto / n,
+		health: p.health, armor: p.armor,
 	}
 	if len(s.durations) == 1 {
-		r.leveling = leveling
-	}
-	if s.survival || s.minHealth > 0 || s.minArmor > 0 || s.healthWeight != 0 || s.armorWeight != 0 {
-		r.health, r.armor = s.setup.unbuffedStats()
+		r.leveling = p.results[0].leveling
 	}
 	return r
 }
@@ -117,8 +190,8 @@ func (s *searcher) search(start Knobs) (Knobs, result) {
 		improved := false
 		for _, knob := range s.template.Knobs() {
 			current := best[knob.Name]
-			var bestValue float64
-			bestGain := 0.0
+			var values []float64
+			var pending []*pendingScore
 			for _, v := range knob.Values() {
 				if v == current {
 					continue
@@ -128,7 +201,13 @@ func (s *searcher) search(start Knobs) (Knobs, result) {
 					candidate[name] = val
 				}
 				candidate[knob.Name] = v
-				score := s.score(candidate)
+				values = append(values, v)
+				pending = append(pending, s.prepare(candidate))
+			}
+			var bestValue float64
+			bestGain := 0.0
+			for i, score := range s.scoreAll(pending) {
+				v := values[i]
 				gain := score.dps - bestScore.dps
 				noise := math.Sqrt(score.stderr*score.stderr + bestScore.stderr*bestScore.stderr)
 				fmt.Printf("  %s=%g: %s (%+.1f, noise %.1f)\n", knob.Name, v, score, gain, noise)

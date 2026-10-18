@@ -432,13 +432,18 @@ func (s *searcher) screenGear(options []gearOption, candidateWith func(gearOptio
 		dps    float64
 	}
 	var scored []screened
+	var pending []*pendingScore
 	full := s.iterations
 	s.iterations = s.screenIterations
 	for _, o := range options {
 		if candidate := candidateWith(o); candidate != nil {
 			s.setGear(candidate)
-			scored = append(scored, screened{o, s.objective(s.score(knobs))})
+			scored = append(scored, screened{option: o})
+			pending = append(pending, s.prepare(knobs))
 		}
+	}
+	for i, score := range s.scoreAll(pending) {
+		scored[i].dps = s.objective(score)
 	}
 	s.iterations = full
 	sort.Slice(scored, func(i, j int) bool { return scored[i].dps > scored[j].dps })
@@ -551,16 +556,21 @@ func (s *searcher) searchGear(pool [][]gearOption, knobs Knobs) ([]*proto.ItemSp
 				return candidate
 			}
 			options = s.screenGear(options, candidateWith, knobs)
-			var bestOption *gearOption
-			bestGain := 0.0
-			for i := range options {
-				o := options[i]
+			var scoredOptions []gearOption
+			var pending []*pendingScore
+			for _, o := range options {
 				candidate := candidateWith(o)
 				if candidate == nil {
 					continue
 				}
 				s.setGear(candidate)
-				score := s.score(knobs)
+				scoredOptions = append(scoredOptions, o)
+				pending = append(pending, s.prepare(knobs))
+			}
+			var bestOption *gearOption
+			bestGain := 0.0
+			for i, score := range s.scoreAll(pending) {
+				o := scoredOptions[i]
 				gain := s.objective(score) - s.objective(bestScore)
 				noise := math.Sqrt(score.stderr*score.stderr + bestScore.stderr*bestScore.stderr)
 				if gain > s.confidence*noise && gain > bestGain {

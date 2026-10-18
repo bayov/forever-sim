@@ -117,12 +117,21 @@ func (r result) String() string {
 // One sim run. The random seed is fixed so two rotations see the same crit rolls and
 // the difference between them is far less noisy than either number alone.
 func (s *setup) run(rot *proto.APLRotation, duration float64, iterations int32) (result, error) {
+	return simulate(s.runRequest(rot, duration, iterations))
+}
+
+// The request for one sim run.
+func (s *setup) runRequest(rot *proto.APLRotation, duration float64, iterations int32) *proto.RaidSimRequest {
 	request := s.clone()
 	request.Raid.Parties[0].Players[0].Rotation = rot
 	request.Encounter.Duration = duration
 	request.SimOptions.Iterations = iterations
 	request.SimOptions.RandomSeed = simSeed
+	return request
+}
 
+func simulate(request *proto.RaidSimRequest) (result, error) {
+	iterations := request.SimOptions.Iterations
 	res := core.RunRaidSimConcurrent(request)
 	if res.Error != nil {
 		return result{}, fmt.Errorf("%s", res.Error.Message)
