@@ -281,6 +281,20 @@ arrives as a hotfix, and the client keeps it in `Cache/ADB/enUS/DBCache.bin`.
   cache file's build with the client's. `crosscheck.py` lists Classic items whose cached
   stats differ from the sim's.
 
+## Items seen in game
+
+- **What:** items whose stats in game differ from Wowhead's Forever listing, or that our
+  database lacks. The beta server sends some items with stats the client's files and
+  Wowhead don't have.
+- **Fetcher:** BayovCore records every weapon and armor piece the user sees in game
+  (`bayovui/addons/BayovCore/ItemsSeen.lua`), and bayovui's `build/seen_items.py <client>`,
+  which the `sync` skill runs, writes the ones that differ into
+  `assets/db_inputs/forever_seen_in_game.json`. Entries with `"by": "hand"` are the ones we
+  typed in before (the old `ForeverSeenInGame` list), and the daily routine adds changed
+  items it finds with `"by"` naming its source.
+- **Generator:** `gen_db -gen=db` (`ReadForeverSeenInGame` in `tools/database/forever_seen.go`)
+  merges them after the Wowhead listing, so they win.
+
 ## Talents, racials and abilities: the client's spell tables
 
 All three are generated from the Forever client's tables through `wago.py`, and the

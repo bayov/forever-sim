@@ -183,7 +183,7 @@ func main() {
 	db.MergeItems(database.ForeverItems)
 	db.MergeItems(database.ForeverSyntheticItems)
 	MergeForeverWowheadItems(db, foreverWowheadDB)
-	db.MergeItems(database.ForeverSeenInGame)
+	db.MergeItems(database.ReadForeverSeenInGame(fmt.Sprintf("%s/forever_seen_in_game.json", inputsDir), db.Items))
 	AttachForeverChangesSources(db, foreverChangesLoot)
 	db.AttachForeverChangesSuffixes(foreverChangesSuffixes)
 	db.MergeFactions(database.ForeverFactions)
