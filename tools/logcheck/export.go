@@ -13,6 +13,7 @@ import (
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/stats"
+	googleProto "google.golang.org/protobuf/proto"
 )
 
 // export is the character JSON from the user's /bayov export (BayovCore addon).
@@ -522,6 +523,52 @@ func dbEnchants() []dbEnchant {
 	}
 	enchantsCache = db.Enchants
 	return enchantsCache
+}
+
+// addLeftoverItems puts the items of assets/database/leftover_db.bin in the sim's item table.
+//
+// gen_db leaves the grey and white gear and anything below item level 10 out of the sim's
+// database, and writes it to the leftover database the UI loads on its own. But that's what a
+// new character wears, like the Ragged Leather Vest and the Kolkar Hammer. Without it the sim
+// swings unarmed with too little armor, and every Melee row of the window is wrong.
+//
+// We add them once at startup, because the audit replays windows in parallel and the sim reads
+// the item table without a lock.
+func addLeftoverItems() error {
+	data, err := os.ReadFile(filepath.Join(repoRoot, "assets/database/leftover_db.bin"))
+	if err != nil {
+		return err
+	}
+	db := &proto.UIDatabase{}
+	if err := googleProto.Unmarshal(data, db); err != nil {
+		return fmt.Errorf("leftover_db.bin: %w", err)
+	}
+	for _, item := range db.Items {
+		if _, ok := core.ItemsByID[item.Id]; ok {
+			continue
+		}
+		core.ItemsByID[item.Id] = core.ItemFromProto(&proto.SimItem{
+			Id:                  item.Id,
+			ClassAllowlist:      item.ClassAllowlist,
+			Name:                item.Name,
+			Type:                item.Type,
+			ArmorType:           item.ArmorType,
+			WeaponType:          item.WeaponType,
+			HandType:            item.HandType,
+			RangedWeaponType:    item.RangedWeaponType,
+			Stats:               item.Stats,
+			BonusPhysicalDamage: item.BonusPhysicalDamage,
+			WeaponDamageMin:     item.WeaponDamageMin,
+			WeaponDamageMax:     item.WeaponDamageMax,
+			WeaponSpeed:         item.WeaponSpeed,
+			SetName:             item.SetName,
+			SetId:               item.SetId,
+			WeaponSkills:        item.WeaponSkills,
+			HitRating:           item.HitRating,
+			CritRating:          item.CritRating,
+		})
+	}
+	return nil
 }
 
 // setTalents builds the talent string from the export's talent names.

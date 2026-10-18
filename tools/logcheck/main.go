@@ -68,6 +68,9 @@ func main() {
 	if _, err := os.Stat(filepath.Join(repoRoot, "ui/core/talents/trees")); err != nil {
 		log.Fatal("run logcheck from the repo root")
 	}
+	if err := addLeftoverItems(); err != nil {
+		log.Fatal(err)
+	}
 
 	if *playerOut != "" {
 		if err := writePlayer(*archive, *exportPath, *charFlag, *fullSkill, *playerOut); err != nil {
