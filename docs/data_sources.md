@@ -273,6 +273,12 @@ arrives as a hotfix, and the client keeps it in `Cache/ADB/enUS/DBCache.bin`.
   cache's ItemSparse and Item rows (layouts from WoWDBDefs, checked against wago.tools'
   copy of the same build on every run) into `assets/db_inputs/forever_client_cache.json`,
   with a meta block naming the build. Local only: the cloud has no client.
+- **Push IDs:** each entry in the cache names the hotfix push it came in, and real pushes
+  count up over time. But a reveal doesn't come in a real push. Its push ID is 2^24 plus
+  the item ID (17061803 for Ankle Slicers, 284587), so it says nothing about when the item
+  was revealed. At 70450 all 4,778 reveals came that way, and the 94 rows with a real push
+  (112618 to 112887) are later hotfixes: 87 of items the build ships, 7 reveals sent again
+  unchanged. So an item's `"push"` is there only when its row came in a real push.
 - **What it's good for:** which items exist and which the server still hides, and their
   name, quality, item level and slot. Stats are stored as the row has them, shares of a
   RandPropPoints budget, which gives Classic's items exactly but not Forever's newer ones,
@@ -287,6 +293,21 @@ arrives as a hotfix, and the client keeps it in `Cache/ADB/enUS/DBCache.bin`.
   of those in the BiS tab. gen_db marks them too (`UIItem.hidden_stats`, from the
   `hidden_items.json` of the last run, `tools/database/forever_hidden.go`), and the gear
   picker shows an orange question mark on them whose tooltip says where the stats came from.
+- **The reveals:** `hidden_items.json` also has `reveals`, one line per weapon and armor
+  piece Forever hid and has revealed (no shipped ItemSparse row, and a cache row with data
+  or an entry in the file below), for BayovCore's Reveals page: id, name, slot,
+  inventoryType, ilvl, quality, requiredLevel, push and date, the newest last. Shirts,
+  tabards, bags, ammo and items without a slot are left out. The order is the push, then
+  the date BayovCore saw it, and entries with neither go first by ID. Since no reveal has a
+  real push (above), only the in-game dates really order them, and until BayovCore has
+  those the list is in ID order: at 70450 that's 4,698 reveals, 6 with a push (the
+  re-sent ones) and none with a date. `counts.revealedGear` is how many.
+- **Reveals seen in game:** `assets/db_inputs/forever_revealed_in_game.json`, written by
+  bayovui from what BayovCore saw: `{"meta": {...}, "items": {"<id>": {"name", "revealed"
+  ("YYYY-MM-DD HH:MM", when it saw the reveal happen, optional), "seen" ("YYYY-MM-DD", when
+  the game first showed us its stats), "by" (the character)}}}`. An item there isn't hidden
+  any more, even before our cache snapshot has its row, and its date orders the reveals.
+  It's optional: a missing file lists nothing.
 - **Other players' finds reach us too.** A reveal is a hotfix the server sends every client
   at login, not only to the player who found the item. So our cache holds every item
   revealed server wide up to our last login (4,864 rows where foreverchanges.pro counts

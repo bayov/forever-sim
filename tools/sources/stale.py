@@ -272,9 +272,10 @@ def check_hidden(addons):
         hidden = json.load(f)
     c = hidden['counts']
     lines.append('  info  %d items still hidden, %d of them gear: %d in the sim with Classic stats, '
-                 '%d partly, %d with Wowhead\'s unconfirmed stats, %d of Forever\'s not in it (%s)' % (
+                 '%d partly, %d with Wowhead\'s unconfirmed stats, %d of Forever\'s not in it, '
+                 'and %d pieces of gear revealed (%s)' % (
                      c['hidden'], c['hiddenGear'], c['inSimWithClassicStats'], c['inSimPartly'],
-                     c.get('inSimFromWowhead', 0), c['foreverNotInSim'], rel))
+                     c.get('inSimFromWowhead', 0), c['foreverNotInSim'], c.get('revealedGear', 0), rel))
     if not addons:
         return lines, todo
     client = os.path.dirname(os.path.dirname(os.path.abspath(addons)))
@@ -284,7 +285,7 @@ def check_hidden(addons):
     except (OSError, ValueError) as e:
         lines.append('  ?     our client\'s hotfix cache: %s' % e)
         return lines, todo
-    sent = {rid for table, rid, status, data in rows
+    sent = {rid for table, rid, status, data, _push in rows
             if table == dbcache.ITEM_SPARSE_HASH and status == dbcache.VALID and data}
     revealed = [i for i, e in hidden['items'].items() if e['state'] == 'hidden' and int(i) in sent]
     if revealed:

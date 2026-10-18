@@ -15,7 +15,10 @@ client keeps it in its cache (tools/sources/dbcache.py). So an item is hidden
 when the client build has an Item row for it, no shipped ItemSparse row, and
 no row in our client's cache. At 70450 that gives 7,841 hidden items, where
 https://foreverchanges.pro/hidden-items counted 7,843 (12,618 less the 4,775
-revealed), so the two agree.
+revealed), so the two agree. An item BayovCore saw revealed in game
+(assets/db_inputs/forever_revealed_in_game.json, which bayovui writes) isn't
+hidden either, even before our cache snapshot has its row. That file is
+optional, and a missing one lists nothing.
 
 We list hidden weapons and armor that matter to the sim:
 
@@ -40,6 +43,19 @@ Each item says which sources know it (`sources`): AtlasLoot (a drop), the
 foreverchanges.pro loot tables, Wowhead's Forever listing, the sim. The
 counts at the top are what stale.py compares, so a run that finds fewer
 hidden items means something was revealed.
+
+`reveals` is a separate list, for BayovCore's Reveals page: every weapon and
+armor piece Forever hid and has revealed, one line each, the newest last. The
+game can't tell an addon when an item was revealed, so the order has to come
+from here. We'd like to order them by the hotfix push their row came in, but
+a reveal doesn't come in a real push (see dbcache.py), so at 70450 not one
+reveal has its own. Only 6 have a push at all, because the server sent their
+rows again later (Aegis of Stormwind in push 112864), and that says when it
+sent them again, not when they were revealed. So the order is the push when
+there is one, then the date BayovCore saw the reveal (or else first saw the
+item) for the rest, and the ones with neither go first, by ID. Until
+BayovCore has dates for them, that's most of the list. Shirts, tabards, bags,
+ammo and items without a slot are left out.
 """
 import argparse
 import collections
@@ -69,6 +85,8 @@ SLOTS = {1: 'head', 2: 'neck', 3: 'shoulder', 4: 'shirt', 5: 'chest', 6: 'waist'
          14: 'shield', 15: 'ranged', 16: 'back', 17: 'two-hand', 18: 'bag', 19: 'tabard',
          20: 'chest', 21: 'main hand', 22: 'off hand', 23: 'held in off hand', 24: 'ammo',
          25: 'thrown', 26: 'ranged', 28: 'relic'}
+# Gear that isn't worth a line in the reveals: shirts, bags, tabards and ammo.
+NOT_REVEALS = (4, 18, 19, 24)
 
 
 def load(name, folder=INPUTS):
@@ -76,11 +94,57 @@ def load(name, folder=INPUTS):
         return json.load(f)
 
 
+def in_game():
+    """{item: entry} of the reveals BayovCore saw in game, {} until there's a file."""
+    path = os.path.join(INPUTS, 'forever_revealed_in_game.json')
+    if not os.path.exists(path):
+        return {}
+    return {int(k): v for k, v in load(path)['items'].items()}
+
+
+def reveals(item, shipped, revealed, seen):
+    """Every weapon and armor piece Forever hid and has revealed, the newest last.
+
+    The order is the push, then the date BayovCore saw it, and the ones with
+    neither go first, by ID, since we can't tell when they came (the module
+    docstring says why so few have a push).
+    """
+    out = []
+    for i in sorted(set(revealed) | set(seen)):
+        row = item.get(str(i))
+        if not row or str(i) in shipped or row['ClassID'] not in (WEAPON, ARMOR):
+            continue
+        r, g = revealed.get(i, {}), seen.get(i, {})
+        if not (r.get('name') or g):
+            continue
+        slot = r.get('inventoryType') or int(row['InventoryType'])
+        if not slot or slot in NOT_REVEALS:
+            continue
+        entry = collections.OrderedDict([
+            ('id', i), ('name', r.get('name') or g.get('name')), ('slot', SLOTS.get(slot, slot)),
+            ('inventoryType', slot), ('ilvl', r.get('ilvl')), ('quality', r.get('quality'))])
+        if r.get('name'):
+            # dbcache.py leaves out zeros, so a row with data and no required level has none.
+            entry['requiredLevel'] = r.get('requiredLevel', 0)
+        entry['push'] = r.get('push')
+        entry['date'] = g.get('revealed') or g.get('seen')
+        out.append(entry)
+
+    def order(e):
+        if e['push'] is not None:
+            return (1, e['push'], '', e['id'])
+        if e['date']:
+            return (2, 0, e['date'], e['id'])
+        return (0, 0, '', e['id'])
+    return sorted(out, key=order)
+
+
 def read(build):
     item = wago.by_id('Item', build)
     shipped = wago.by_id('ItemSparse', build)
     cache = load('forever_client_cache.json')
     revealed = {int(k): v for k, v in cache['items'].items() if v['state'] == 'valid'}
+    seen = in_game()
     sim = {x['id']: x for x in load('db.json', DATABASE)['items']}
     sim.update({x['id']: x for x in load('leftover_db.json', DATABASE)['items'] if x['id'] not in sim})
     wowhead = {x['id']: x for x in load('forever_wowhead_items.json')['items']}
@@ -88,7 +152,7 @@ def read(build):
     npcs = {n['id']: n.get('name', '') for n in load('atlasloot_db.json').get('npcs', []) if 'id' in n}
     fc = {x['id']: x for x in load('foreverchanges_loot.json')['items']}
 
-    hidden = {int(i) for i in item if i not in shipped and int(i) not in revealed}
+    hidden = {int(i) for i in item if i not in shipped and int(i) not in revealed and int(i) not in seen}
     out = {}
     for i in sorted(hidden):
         row = item[str(i)]
@@ -125,6 +189,7 @@ def read(build):
                       'name': r.get('name'), 'ilvl': r.get('ilvl'), 'quality': r.get('quality'), 'sources': []}
 
     gear = [e for e in out.values() if e['state'] == 'hidden']
+    shown = reveals(item, shipped, revealed, seen)
     counts = collections.OrderedDict([
         ('hidden', len(hidden)),
         ('hiddenGear', len(gear)),
@@ -134,8 +199,9 @@ def read(build):
         ('foreverNotInSim', sum(1 for i, e in out.items() if e['state'] == 'hidden'
                                 and i >= FOREVER_FIRST_ID and 'simStats' not in e)),
         ('revealedNotInSim', sum(1 for e in out.values() if e['state'] == 'revealed')),
+        ('revealedGear', len(shown)),
     ])
-    return counts, out, cache['meta']
+    return counts, out, shown, cache['meta'], bool(seen)
 
 
 def main():
@@ -143,18 +209,21 @@ def main():
     ap.add_argument('build', nargs='?', help='the client build (default: the client cache\'s)')
     a = ap.parse_args()
     build = wago.version(a.build or load('forever_client_cache.json')['meta']['build'])
-    counts, items, cache_meta = read(build)
+    counts, items, shown, cache_meta, seen = read(build)
     previous = None
     if os.path.exists(OUT):
         with open(OUT, encoding='utf-8') as f:
             previous = json.load(f)
-    m = meta.meta('client beta %s Item and ItemSparse tables, and our client cache of %s' % (
-        build, cache_meta.get('fetched')), 'tools/sources/hidden.py', build=build)
+    m = meta.meta('client beta %s Item and ItemSparse tables, and our client cache of %s%s' % (
+        build, cache_meta.get('fetched'), ', and the reveals BayovCore saw in game' if seen else ''),
+        'tools/sources/hidden.py', build=build)
     with open(OUT, 'w', encoding='utf-8') as f:
         f.write('{\n' + meta.line(m) + '"counts": %s,\n"items": {\n' % json.dumps(counts))
         f.write(',\n'.join('%s: %s' % (json.dumps(str(i)), json.dumps(e, sort_keys=True, ensure_ascii=False))
                            for i, e in sorted(items.items())))
-        f.write('\n}}\n')
+        f.write('\n},\n"reveals": [\n')
+        f.write(',\n'.join(json.dumps(e, ensure_ascii=False) for e in shown))
+        f.write('\n]}\n')
     print(', '.join('%s %d' % kv for kv in counts.items()))
     if previous:
         gone = [i for i, e in previous['items'].items() if e['state'] == 'hidden'

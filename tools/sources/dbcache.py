@@ -16,7 +16,8 @@ meta block naming the build. Without --write it prints what it found. It runs
 locally only, since the cloud has no client.
 
 Each item there has its state and, for a row with data, its name, quality,
-item level, required level, slot, set, class and subclass, and its stats as
+item level, required level, slot, set, class and subclass, the hotfix push its
+ItemSparse row came in when it came in a real one (below), and its stats as
 the row stores them: [stat, share] pairs, where the share is ten thousandths
 of the item's stat budget. That budget is RandPropPoints for the item level,
 quality and slot, which gives Classic's items exactly (2,809 of them checked
@@ -39,6 +40,19 @@ invalid, and 4 one that isn't public yet. We read ItemSparse (table hash
 in order, with strings inline and null-terminated, and without the ID, which
 is the record ID. The field layouts are WoWDBDefs' for this client (ITEM_SPARSE
 and ITEM below).
+
+The push ID is the hotfix push a row came in. Real pushes count up over time
+(112618 to 112887 at 70450), so they order the rows that came in them. But a
+revealed item's row doesn't come in a real push. Its push ID (and unique ID)
+is 2^24 plus the record ID, like 17061803 for Ankle Slicers (284587), so it
+says nothing about when the item was revealed. At 70450 every one of the
+4,778 revealed items arrived that way. The 94 ItemSparse rows with a real
+push came in later hotfixes: 87 are items the build ships, and 7 are reveals
+the server sent again unchanged (Aegis of Stormwind, 1203, first came as
+2^24 + 1203 and again in push 112864). So we keep `push` only when it's a
+real one. A row the server removed or calls invalid has -1, which we drop
+too. When a row came several times, its data and push are the last entry's,
+as in the client.
 
 A layout is only right for the builds it was written for, so before we trust
 a decode we check it against the rows the cache shares with wago.tools' copy
@@ -71,6 +85,8 @@ ITEM_SPARSE_HASH, ITEM_HASH = 0x919BE54E, 0x50238EC2
 # A row that differs from wago.tools in this many fields, or this share of
 # rows differing at all, means the layout is wrong.
 LAYOUT_BROKEN_FIELDS, LAYOUT_BROKEN_SHARE = 3, 0.2
+# A row that didn't come in a real push has 2^24 plus its record ID instead.
+SYNTHETIC_PUSH = 1 << 24
 
 # source: WoWDBDefs ItemSparse.dbd layout 6FCC3191 and Item.dbd layout 9A2A4834, client beta 1.60.1.70450
 # Each field: (name, struct code, count). 's' is an inline string. A name
@@ -113,7 +129,7 @@ ITEM = [
 
 
 def entries(path):
-    """(build, [(table hash, record ID, status, data)]) of a DBCache.bin."""
+    """(build, [(table hash, record ID, status, data, push ID)]) of a DBCache.bin."""
     with open(path, 'rb') as f:
         d = f.read()
     if d[:4] != MAGIC:
@@ -122,11 +138,16 @@ def entries(path):
     out = []
     i = d.find(MAGIC, 4)
     while i != -1 and i + 32 <= len(d):
-        _region, _push, _unique, table, record, size = struct.unpack_from('<iiIIiI', d, i + 4)
+        _region, push, _unique, table, record, size = struct.unpack_from('<iiIIiI', d, i + 4)
         status = d[i + 28]
-        out.append((table, record, status, d[i + 32:i + 32 + size]))
+        out.append((table, record, status, d[i + 32:i + 32 + size], push))
         i = d.find(MAGIC, i + 32 + size)
     return build, out
+
+
+def real_push(push):
+    """The push ID when it's a real hotfix push, else None (see the docstring)."""
+    return push if 0 < push < SYNTHETIC_PUSH else None
 
 
 def decode(data, layout):
@@ -179,13 +200,15 @@ def read(client):
     """{build, items: {id: entry}, states: Counter} from a client folder's cache."""
     build, rows = entries(os.path.join(client, CACHE))
     version = wago.version(str(build))
-    sparse, item, state = {}, {}, {}
-    for table, rid, status, data in rows:
+    sparse, item, state, push = {}, {}, {}, {}
+    for table, rid, status, data, push_id in rows:
         if table not in (ITEM_SPARSE_HASH, ITEM_HASH):
             continue
         if status == VALID and data:
             layout = ITEM_SPARSE if table == ITEM_SPARSE_HASH else ITEM
             (sparse if table == ITEM_SPARSE_HASH else item)[rid] = decode(data, layout)
+            if table == ITEM_SPARSE_HASH:
+                push[rid] = real_push(push_id)
         if table == ITEM_SPARSE_HASH:
             # A later entry for the same row wins, as in the client.
             state[rid] = status
@@ -208,7 +231,7 @@ def read(client):
         if sp:
             entry.update(name=sp['Display_lang'], quality=sp['OverallQualityID'], ilvl=sp['ItemLevel'],
                          requiredLevel=sp['RequiredLevel'], inventoryType=sp['InventoryType'],
-                         set=sp['ItemSet'], delay=sp['ItemDelay'],
+                         set=sp['ItemSet'], delay=sp['ItemDelay'], push=push.get(rid),
                          statShares=[[sp['StatModifier_bonusStat_%d' % k], sp['StatPercentEditor_%d' % k]]
                                      for k in range(10) if sp['StatModifier_bonusStat_%d' % k] > 0])
         if it:
