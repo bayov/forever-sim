@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "209208949f2536c2277f740d14faf8f91edf4182"
+  "master": "b2eac486728e293fb2b72bbfa579e968aedbc5d9"
  },
- "last_pass_at": "2026-10-17T18:50:20Z",
- "pass": 31,
+ "last_pass_at": "2026-10-18T18:53:00Z",
+ "pass": 32,
  "result": "quiet",
- "note": "Pass 31: only bdf075ccc (TopRankID / highest-rank metadata in sim/core, TopHealRankID in shaman); rotation-editor and rank-lookup plumbing, no formula or client value. No build past 70450 (probe 300). Dev notes thread newest is /6 (70425, edit 10-16 20:50), already in the ledger.",
+ "note": "Pass 32: only fa8f7bba5 (exported AddToDatabase in sim/core/database.go for leveling-tool item preloading); no formula or client value. No build past 70450 (probe 300). Dev notes thread newest still /6 (edit 10-16 20:50). Blue tracker since: Kaivax 10-16 stress test date (Oct 21) and datamined-art notice, no mechanics.",
  "client_build": "1.60.1.70450",
- "checked_at": "2026-10-18T12:50:00Z",
+ "checked_at": "2026-10-18T18:53:15Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/6",
   "date": "2026-10-16T00:15:23Z",
