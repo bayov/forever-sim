@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"net"
 	"net/http"
 	_ "net/http/pprof"
 	"os"
@@ -324,7 +325,20 @@ func (s *server) runServer(useFS bool, host string, launchBrowser bool, simName 
 
 	go func() {
 		// Launch server!
-		if err := http.ListenAndServe(host, nil); err != nil {
+		//
+		// When air rebuilds the dev server, it starts the new binary right after it kills the
+		// old one, and the old one may not have let go of the port yet. So we retry for a few
+		// seconds instead of exiting, or the dev server stays down until the next Go change.
+		listener, err := net.Listen("tcp", host)
+		for retry := 0; err != nil && retry < 50; retry++ {
+			time.Sleep(100 * time.Millisecond)
+			listener, err = net.Listen("tcp", host)
+		}
+		if err != nil {
+			log.Printf("Failed to listen on %s: %s", host, err)
+			os.Exit(1)
+		}
+		if err := http.Serve(listener, nil); err != nil {
 			log.Printf("Failed to shutdown server: %s", err)
 			os.Exit(1)
 		}
