@@ -272,7 +272,7 @@ export class LevelingGearSection {
 	//
 	// They're the "Leveling Gear Plan" presets, measured on the plan's own gear. A spec without
 	// them falls back to its "Leveling" presets.
-	private levelingWeights(): Array<{ level: number; weights: Stats }> {
+	weightPresets(): Array<{ level: number; weights: Stats }> {
 		const presets = this.simUI.individualConfig.presets.epWeights ?? [];
 		const planPresets = presets.filter(preset => preset.group == 'Leveling Gear Plan');
 		return (planPresets.length ? planPresets : presets.filter(preset => preset.group == 'Leveling'))
@@ -287,7 +287,7 @@ export class LevelingGearSection {
 	// ones. Below the lowest and above the highest we take that one. A spec without leveling
 	// presets uses the Current EP.
 	private weightsAt(level: number): Stats {
-		const presets = this.levelingWeights();
+		const presets = this.weightPresets();
 		if (!presets.length) return this.player.getEpWeights();
 		const above = presets.findIndex(preset => preset.level >= level);
 		if (above == -1) return presets[presets.length - 1].weights;
@@ -299,7 +299,7 @@ export class LevelingGearSection {
 	}
 
 	private weightsNote(): string {
-		const levels = this.levelingWeights().map(preset => preset.level);
+		const levels = this.weightPresets().map(preset => preset.level);
 		if (!levels.length) return 'We judge items by the Current EP.';
 		if (levels.length == 1) return `We judge items by the Level ${levels[0]} Leveling stat weights.`;
 		return `We judge items by the leveling sim's stat weights at levels ${levels.slice(0, -1).join(', ')} and ${

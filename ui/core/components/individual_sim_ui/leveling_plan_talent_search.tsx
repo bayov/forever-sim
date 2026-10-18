@@ -2,24 +2,24 @@ import tippy from 'tippy.js';
 import { ref } from 'tsx-vanilla';
 
 import { IndividualSimUI } from '../../individual_sim_ui';
-import { countsOf, hoursAtLevel, pickLevel, planLevels, sortedBuilds, talentName, talentPointsAt, talentsAt, talentsStringToCounts } from '../../leveling_plan';
-import { LevelHours, RouteSearchError, RouteSearchProgress, TalentRouteSearch } from '../../leveling_talent_search';
+import { countsOf, pickLevel, planLevels, sortedBuilds, talentName, talentPointsAt, talentsAt, talentsStringToCounts } from '../../leveling_plan';
 import { Player } from '../../player';
-import { ErrorOutcomeType, RaidSimRequest } from '../../proto/api';
 import { Spec } from '../../proto/common';
-import { LevelingTalentBuild, LevelingTalentPick, LevelingTalentRequirement } from '../../proto/ui';
-import { RequestTypes } from '../../sim_signal_manager';
+import {
+	LevelingPlanSearchProgress,
+	LevelingPlanSearchRequest,
+	LevelingPlanSearchResult,
+	LevelingPlanSearchUpdate,
+	LevelingTalentBuild,
+	LevelingTalentPick,
+	LevelingTalentRequirement,
+} from '../../proto/ui';
 import { TypedEvent } from '../../typed_event';
 import { ContentBlock } from '../content_block';
 import { keyTalents, LevelingTalentsSection, treeSplit } from './leveling_plan_talents';
 
-export interface LevelRequestOptions {
-	talents?: string;
-	seed?: bigint;
-	iterations?: number;
-}
-
-type MakeLevelRequest = (level: number, options: LevelRequestOptions) => RaidSimRequest | null;
+// The Go search's local server (tools/levelingplan -serve).
+const SEARCH_SERVER = 'http://localhost:3001/search';
 
 // What a search found, as we keep it in the browser's storage.
 interface SearchResult {
@@ -29,6 +29,8 @@ interface SearchResult {
 	iterations: number;
 	confirmIterations: number;
 	sims: number;
+	// The seconds the search took, in searches since it runs in Go.
+	seconds?: number;
 	stopped?: boolean;
 	// The best route without a respec, and the plan's own builds, over all the levels on the
 	// confirm sessions.
@@ -55,7 +57,7 @@ const DEFAULT_SEARCH_SESSIONS = 50;
 // don't mark it.
 const BIG_SAVING = 0.02;
 
-// The talent search of the Talents part (leveling_talent_search.ts, docs/leveling_plan.md).
+// The talent search of the Talents part (tools/levelingplan, docs/leveling_plan.md).
 //
 // It finds the order of talent points that levels us the fastest over the whole plan, and at
 // each respec level (20, 30, 40 and 50 by default) the build we'd respec into there. It tells us
@@ -70,15 +72,14 @@ export class LevelingTalentSearch {
 	private readonly button: HTMLButtonElement;
 	private readonly respecInput: HTMLInputElement;
 	private readonly sessionsInput: HTMLInputElement;
-	private search: TalentRouteSearch | null = null;
-	private stopRequested = false;
+	private abort: AbortController | null = null;
 	private result: SearchResult | null;
 
 	constructor(
 		parentElem: HTMLElement,
 		private readonly simUI: IndividualSimUI<Spec>,
 		private readonly talents: LevelingTalentsSection,
-		private readonly makeRequest: MakeLevelRequest,
+		private readonly makeSearchRequest: () => LevelingPlanSearchRequest | null,
 	) {
 		this.player = simUI.player;
 		const block = new ContentBlock(parentElem, 'leveling-plan-search-block', {
@@ -147,7 +148,7 @@ export class LevelingTalentSearch {
 		const saveOptions = () => this.storeOptions();
 		this.respecInput.addEventListener('change', saveOptions);
 		this.sessionsInput.addEventListener('change', saveOptions);
-		this.button.addEventListener('click', () => (this.search ? this.stop() : this.run()));
+		this.button.addEventListener('click', () => (this.abort ? this.stop() : this.run()));
 
 		this.result = this.loadResult();
 		TypedEvent.onAny([this.player.levelingPlanChangeEmitter]).on(() => this.render());
@@ -266,176 +267,103 @@ export class LevelingTalentSearch {
 	}
 
 	private stop() {
-		this.stopRequested = true;
-		this.search?.stop();
-		this.simUI.sim.signalManager.abortType(RequestTypes.RaidSim);
+		this.abort?.abort();
 	}
 
-	// Sims each level with its talents on its own sessions. A level's seed comes from its number,
-	// so two talents strings at a level play the same mobs and the same rolls.
-	private async simLevels(jobs: Array<{ level: number; talents: string }>, iterations: number, seed: bigint) {
-		const results: LevelHours[] = new Array(jobs.length);
-		let next = 0;
-		const simOne = async () => {
-			while (next < jobs.length && !this.stopRequested) {
-				const i = next++;
-				const { level, talents } = jobs[i];
-				const request = this.makeRequest(level, { talents, iterations, seed: seed + BigInt(level) * 1_000_003n });
-				if (!request) continue;
-				const result = await this.simUI.sim.runRaidSimRequest(request, () => {}, false);
-				if (result.error?.type == ErrorOutcomeType.ErrorOutcomeAborted) {
-					this.stop();
-					return;
-				}
-				const metrics = result.encounterMetrics?.leveling;
-				if (!metrics) continue;
-				results[i] = {
-					hours: hoursAtLevel(level, metrics.xpPerHour),
-					relativeError: metrics.mobsKilled > 0 ? metrics.mobsKilledStdev / Math.sqrt(iterations) / metrics.mobsKilled : 0,
-				};
-			}
-		};
-		// More sims in flight than workers, so a worker never waits for the next one.
-		const inFlight = 2 * Math.max(2, this.simUI.sim.getWasmConcurrency());
-		await Promise.all(Array.from({ length: inFlight }, simOne));
-		return results;
-	}
-
+	// Sends the plan to the Go search (tools/levelingplan) and shows its progress until it
+	// answers. The search runs natively on all the cores, which the browser's wasm sims were too
+	// slow for.
 	private async run() {
-		const plan = this.player.getLevelingPlan();
-		const levels = planLevels(plan);
-		const shape = this.talents.shape;
-		if (!levels.length) return;
-		const iterations = this.sessions();
-		const seed = this.simUI.sim.makeRaidSimRequest(false).simOptions!.randomSeed;
-		const pointsAt = (level: number) => talentPointsAt(level, plan.bonusTalentPoints);
-		let stage = '';
-		const search = new TalentRouteSearch(
-			{
-				shape,
-				levels,
-				pointsAt,
-				allowed: (tree, talent) => !shape.trees[tree].talents[talent].notSimulated,
-				required: plan.requiredTalents,
-			},
-			jobs => this.simLevels(jobs, iterations, seed),
-			progress => this.showProgress(stage, progress),
-		);
-		this.search = search;
-		this.stopRequested = false;
+		const request = this.makeSearchRequest();
+		if (!request) {
+			this.statusElem.textContent = "The gear plan hasn't loaded yet.";
+			return;
+		}
+		request.respecLevels = this.respecLevels();
+		request.sessions = this.sessions();
+		request.confirmSessions = this.simUI.sim.getIterations();
+		const abort = new AbortController();
+		this.abort = abort;
 		this.render();
+		this.statusElem.textContent = 'Starting the search...';
 		try {
-			const start = sortedBuilds(plan)[0]?.picks ?? [];
-			stage = 'Route';
-			let route = await search.search([start]);
-			const respecs: Array<{ level: number; picks: LevelingTalentPick[] }> = [];
-			for (const level of this.respecLevels().filter(level => level > plan.fromLevel && level < plan.toLevel)) {
-				if (search.isStopped) break;
-				stage = `Respec at ${level}`;
-				const found = await search.search(
-					[route.picks, start],
-					levels.filter(l => l >= level),
-				);
-				respecs.push({ level, picks: found.picks });
-			}
-			// A respec's build is also a route from the first level, and it can be the better
-			// route, like when it only moves a point the route could have put there too. So we
-			// search the route again from them, and a respec then only saves what a respec does.
-			if (respecs.length && !search.isStopped) {
-				stage = 'Route again';
-				route = await search.search([route.picks, ...respecs.map(respec => respec.picks)]);
-			}
-
-			// The numbers we show come from other sessions, at the run's iterations, so the search
-			// can't have picked the route by the luck of its own sessions.
-			const confirmIterations = this.simUI.sim.getIterations();
-			const confirmSeed = seed + 7_777_777n;
-			const jobs = new Map<string, { level: number; talents: string }>();
-			const add = (level: number, talents: string) => jobs.set(`${level}|${talents}`, { level, talents });
-			levels.forEach(level => {
-				add(level, talentsAt(plan, level, shape));
-				add(level, search.talentsAt(route.picks, level));
+			const response = await fetch(SEARCH_SERVER, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(LevelingPlanSearchRequest.toJson(request)),
+				signal: abort.signal,
 			});
-			respecs.forEach(respec => levels.filter(l => l >= respec.level).forEach(level => add(level, search.talentsAt(respec.picks, level))));
-			if (search.isStopped) {
-				this.statusElem.textContent = 'Stopped.';
+			if (!response.ok || !response.body) {
+				this.statusElem.textContent = (await response.text()).trim() || `The search server answered ${response.status}.`;
 				return;
 			}
-			this.statusElem.textContent = `Simming the route${respecs.length ? ' and the respecs' : ''} again with ${confirmIterations} sessions a level...`;
-			const list = [...jobs.values()];
-			const results = await this.simLevels(list, confirmIterations, confirmSeed);
-			if (this.stopRequested || results.some(r => !r)) {
-				this.statusElem.textContent = 'Stopped.';
-				return;
+			const reader = response.body.getReader();
+			const decoder = new TextDecoder();
+			let buffer = '';
+			for (;;) {
+				const { done, value } = await reader.read();
+				if (done) break;
+				buffer += decoder.decode(value, { stream: true });
+				const lines = buffer.split('\n');
+				buffer = lines.pop() ?? '';
+				for (const line of lines) {
+					if (!line.trim()) continue;
+					const update = LevelingPlanSearchUpdate.fromJsonString(line, { ignoreUnknownFields: true }).update;
+					if (update.oneofKind == 'progress') this.showProgress(update.progress);
+					else if (update.oneofKind == 'result') this.takeResult(update.result);
+				}
 			}
-			const byKey = new Map(list.map((job, i) => [`${job.level}|${job.talents}`, results[i]]));
-			const at = (level: number, talents: string) => byKey.get(`${level}|${talents}`)!;
-			// Both play the same sessions, so their noise mostly cancels, and adding it up is the
-			// most it can be.
-			const compare = (forLevels: number[], a: (level: number) => string, b: (level: number) => string) => {
-				const hoursA = forLevels.reduce((sum, level) => sum + at(level, a(level)).hours, 0);
-				const hoursB = forLevels.reduce((sum, level) => sum + at(level, b(level)).hours, 0);
-				const variance = forLevels.reduce((sum, level) => {
-					const x = at(level, a(level));
-					const y = at(level, b(level));
-					return sum + (x.hours * x.relativeError) ** 2 + (y.hours * y.relativeError) ** 2;
-				}, 0);
-				return { hoursA, hoursB, noise: 1.96 * Math.sqrt(variance) };
-			};
-			const main = compare(
-				levels,
-				level => search.talentsAt(route.picks, level),
-				level => talentsAt(plan, level, shape),
-			);
-			this.result = {
-				time: Date.now(),
-				fromLevel: plan.fromLevel,
-				toLevel: plan.toLevel,
-				iterations,
-				confirmIterations,
-				sims: search.sims,
-				route: route.picks.map(pick => LevelingTalentPick.toJson(pick)),
-				routeHours: main.hoursA,
-				planHours: main.hoursB,
-				noise: main.noise,
-				respecs: respecs.map(respec => {
-					const c = compare(
-						levels.filter(l => l >= respec.level),
-						level => search.talentsAt(respec.picks, level),
-						level => search.talentsAt(route.picks, level),
-					);
-					return {
-						level: respec.level,
-						route: respec.picks.map(pick => LevelingTalentPick.toJson(pick)),
-						respecHours: c.hoursA,
-						keptHours: c.hoursB,
-						noise: c.noise,
-					};
-				}),
-			};
-			this.storeResult(this.result);
-			this.statusElem.textContent = '';
 		} catch (e) {
-			if (e instanceof RouteSearchError) this.statusElem.textContent = e.message;
-			else this.simUI.handleCrash(e);
+			this.statusElem.textContent = abort.signal.aborted
+				? 'Stopped.'
+				: `The search runs in Go, and nothing answers at ${SEARCH_SERVER}. Start it with: go run --tags=with_db ./tools/levelingplan -serve localhost:3001`;
 		} finally {
-			this.search = null;
+			this.abort = null;
 			this.render();
 		}
 	}
 
-	private showProgress(stage: string, progress: RouteSearchProgress) {
-		const best = isFinite(progress.bestHours) ? `, best so far ${formatHours(progress.bestHours)}` : '';
-		this.statusElem.textContent = `${stage}: ${progress.stage.toLowerCase()}, ${progress.sims} sims of a level${best}.`;
+	private takeResult(result: LevelingPlanSearchResult) {
+		if (result.error) {
+			this.statusElem.textContent = result.error;
+			return;
+		}
+		this.result = {
+			time: Date.now(),
+			fromLevel: result.fromLevel,
+			toLevel: result.toLevel,
+			iterations: result.sessions,
+			confirmIterations: result.confirmSessions,
+			sims: result.sims,
+			seconds: result.seconds,
+			route: result.route.map(pick => LevelingTalentPick.toJson(pick)),
+			routeHours: result.routeHours,
+			planHours: result.planHours,
+			noise: result.noise,
+			respecs: result.respecs.map(respec => ({
+				level: respec.level,
+				route: respec.route.map(pick => LevelingTalentPick.toJson(pick)),
+				respecHours: respec.respecHours,
+				keptHours: respec.keptHours,
+				noise: respec.noise,
+			})),
+		};
+		this.storeResult(this.result);
+		this.statusElem.textContent = '';
+	}
+
+	private showProgress(progress: LevelingPlanSearchProgress) {
+		const best = progress.bestHours > 0 ? `, best so far ${formatHours(progress.bestHours)}` : '';
+		this.statusElem.textContent = `${progress.stage}, ${progress.sims} sims of a level${best}.`;
 	}
 
 	private render() {
 		this.button.replaceChildren(
-			this.search ? <i className="fas fa-stop me-1" /> : <i className="fas fa-magnifying-glass me-1" />,
-			this.search ? 'Stop' : 'Search',
+			this.abort ? <i className="fas fa-stop me-1" /> : <i className="fas fa-magnifying-glass me-1" />,
+			this.abort ? 'Stop' : 'Search',
 		);
-		this.button.classList.toggle('btn-danger', !!this.search);
-		this.button.classList.toggle('btn-primary', !this.search);
+		this.button.classList.toggle('btn-danger', !!this.abort);
+		this.button.classList.toggle('btn-primary', !this.abort);
 		this.renderRequired();
 		this.renderResult();
 	}
@@ -461,9 +389,9 @@ export class LevelingTalentSearch {
 		const useRoute = ref<HTMLButtonElement>();
 		const elems: Element[] = [
 			<p className="leveling-plan-note">
-				{`Searched ${new Date(result.time).toLocaleString()}, ${result.sims} sims of a level with ${result.iterations} sessions each, then ${
-					result.confirmIterations
-				} sessions a level for the numbers below.`}
+				{`Searched ${new Date(result.time).toLocaleString()}, ${result.sims} sims of a level with ${result.iterations} sessions each${
+					result.seconds ? ` in ${formatSeconds(result.seconds)}` : ''
+				}, then ${result.confirmIterations} sessions a level for the numbers below.`}
 				{samePlan ? '' : ' The plan has other levels now, so search again.'}
 			</p>,
 			routeLine,
@@ -609,6 +537,10 @@ export class LevelingTalentSearch {
 			console.warn('Failed to save the talent search: ' + e);
 		}
 	}
+}
+
+function formatSeconds(seconds: number): string {
+	return seconds < 90 ? `${Math.round(seconds)}s` : `${Math.round(seconds / 60)} min`;
 }
 
 export function formatHours(hours: number): string {

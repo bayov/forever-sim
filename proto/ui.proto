@@ -395,6 +395,116 @@ message LevelingGearPin {
 	ItemSpec item = 3;
 }
 
+// What the UI sends the Go leveling plan search (tools/levelingplan, docs/leveling_plan.md,
+// Talent search). The search builds each level's request from base the way the Leveling Plan
+// tab does: the gear plan's gear there, the talents, the rotation and the imbue.
+message LevelingPlanSearchRequest {
+	// The request of the settings, as the UI makes it for a sim.
+	RaidSimRequest base = 1;
+	LevelingPlanSettings plan = 2;
+	LevelingGearPlanSettings gear_plan = 3;
+	// The stat weights presets the gear plan judges items by, at their levels. With none it
+	// takes gear_default_weights.
+	repeated LevelingGearWeights gear_weights = 4;
+	UnitStats gear_default_weights = 5;
+	LevelingGearClassRules class_rules = 6;
+	Faction faction = 7;
+	LevelingTalentShape talent_shape = 8;
+	// The levels we look for a respec at.
+	repeated int32 respec_levels = 9;
+	// The sessions of each sim during the search, and of the sims for the numbers we show.
+	int32 sessions = 10;
+	int32 confirm_sessions = 11;
+	// The UI's gear plan at each of the plan's levels, from from_level. The search makes the
+	// same gear plan itself (tools/levelingplan/gear.go), and stops with an error when the two
+	// don't agree, so the gear we sim is the gear the UI shows.
+	repeated EquipmentSpec ui_gear = 12;
+}
+
+message LevelingGearWeights {
+	int32 level = 1;
+	UnitStats weights = 2;
+}
+
+// What the class can wear and wield (proto_utils/utils.ts).
+message LevelingGearClassRules {
+	// The best armor type we can wear at each level, from level 1.
+	repeated ArmorType max_armor_type = 1;
+	repeated WeaponType weapon_types = 2;
+	// Those of weapon_types we can also wield two-handed.
+	repeated WeaponType two_hand_weapon_types = 3;
+	repeated RangedWeaponType ranged_weapon_types = 4;
+	bool can_dual_wield = 5;
+}
+
+// The class's talent trees as the leveling plan needs them (leveling_plan.ts, TalentShape).
+message LevelingTalentShape {
+	int32 points_per_row = 1;
+	repeated LevelingTalentTree trees = 2;
+}
+
+message LevelingTalentTree {
+	string name = 1;
+	repeated LevelingTalentConfig talents = 2;
+}
+
+message LevelingTalentConfig {
+	string name = 1;
+	int32 row = 2;
+	int32 col = 3;
+	int32 max_points = 4;
+	// The talent of the same tree it needs full first, or -1.
+	int32 prereq = 5;
+	// The sim gives nothing for it, like Improved Ghost Wolf.
+	bool not_simulated = 6;
+}
+
+// One line of the search's answer: how far it is, or what it found.
+message LevelingPlanSearchUpdate {
+	oneof update {
+		LevelingPlanSearchProgress progress = 1;
+		LevelingPlanSearchResult result = 2;
+	}
+}
+
+message LevelingPlanSearchProgress {
+	string stage = 1;
+	int32 sims = 2;
+	// The best route's hours so far, 0 before we have one.
+	double best_hours = 3;
+}
+
+message LevelingPlanSearchResult {
+	int32 from_level = 1;
+	int32 to_level = 2;
+	int32 sessions = 3;
+	int32 confirm_sessions = 4;
+	// The sims of a level the search ran, before the confirm sims.
+	int32 sims = 5;
+	// The best route without a respec, and the plan's own talents, over all the levels on the
+	// confirm sessions, with the 95% noise of the hours the route saves.
+	repeated LevelingTalentPick route = 6;
+	double route_hours = 7;
+	double plan_hours = 8;
+	double noise = 9;
+	repeated LevelingRespecResult respecs = 10;
+	// Why the search couldn't run, like required talents no route can have. The rest is empty
+	// then.
+	string error = 11;
+	// The seconds the search took.
+	double seconds = 12;
+}
+
+// The best build to respec into at a level, against keeping the route, both over the levels
+// from the respec on.
+message LevelingRespecResult {
+	int32 level = 1;
+	repeated LevelingTalentPick route = 2;
+	double respec_hours = 3;
+	double kept_hours = 4;
+	double noise = 5;
+}
+
 // Local storage data for gear settings.
 message SavedGearSet {
 	EquipmentSpec gear = 1;

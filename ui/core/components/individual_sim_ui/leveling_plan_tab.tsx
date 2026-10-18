@@ -22,10 +22,11 @@ import {
 import { Player } from '../../player';
 import { ErrorOutcomeType, ProgressMetrics, RaidSimRequest } from '../../proto/api';
 import { APLRotation } from '../../proto/apl';
-import { Consumes, Debuffs, IndividualBuffs, PartyBuffs, RaidBuffs, Spec } from '../../proto/common';
-import { LevelingPlanSettings } from '../../proto/ui';
+import { Consumes, Debuffs, EquipmentSpec, IndividualBuffs, PartyBuffs, RaidBuffs, Spec } from '../../proto/common';
+import { LevelingGearClassRules, LevelingGearWeights, LevelingPlanSearchRequest, LevelingPlanSettings, LevelingTalentShape } from '../../proto/ui';
 import { ActionId } from '../../proto_utils/action_id';
 import { Database } from '../../proto_utils/database';
+import { classToEligibleRangedWeaponTypes, classToEligibleWeaponTypes, dualWieldClasses, maxArmorTypeAt, raceToFaction } from '../../proto_utils/utils';
 import { encounterMode } from '../../sim_mode';
 import { TypedEvent } from '../../typed_event';
 import { BooleanPicker } from '../boolean_picker';
@@ -35,7 +36,7 @@ import { SimTab } from '../sim_tab';
 import { LevelingPlanCharacter } from './leveling_plan_character';
 import { LevelingGearSection } from './leveling_plan_gear';
 import { LevelingRotationsSection } from './leveling_plan_rotations';
-import { LevelingTalentSearch, LevelRequestOptions } from './leveling_plan_talent_search';
+import { LevelingTalentSearch } from './leveling_plan_talent_search';
 import { LevelingTalentsSection } from './leveling_plan_talents';
 
 // What one level of a plan run came to.
@@ -243,7 +244,7 @@ export class LevelingPlanTab extends SimTab {
 			level => this.grind(level),
 		);
 		this.talents = new LevelingTalentsSection(this.sections.get('talents')!, simUI);
-		new LevelingTalentSearch(this.talents.rootElem, simUI, this.talents, (level, options) => this.makeRequest(level, options));
+		new LevelingTalentSearch(this.talents.rootElem, simUI, this.talents, () => this.searchRequest());
 		this.rotations = new LevelingRotationsSection(
 			this.sections.get('rotations')!,
 			simUI,
@@ -317,18 +318,17 @@ export class LevelingPlanTab extends SimTab {
 	// the plan's, like the one we had before a respec, and with talents those talents. With
 	// seed, the sessions are those of that seed, so a respec and the build we had play the same
 	// mobs and the same rolls.
-	private makeRequest(level: number, options: LevelRequestOptions & { buildIndex?: number } = {}): RaidSimRequest | null {
+	private makeRequest(level: number, options: { seed?: bigint; buildIndex?: number } = {}): RaidSimRequest | null {
 		const plan = this.player.getLevelingPlan();
 		const gear = this.gear.gearAt(level);
 		if (!gear) return null;
 		const request = this.simUI.sim.makeRaidSimRequest(false);
 		request.simOptions!.debugFirstIteration = false;
 		if (options.seed !== undefined) request.simOptions!.randomSeed = options.seed;
-		if (options.iterations !== undefined) request.simOptions!.iterations = options.iterations;
 		const player = request.raid!.parties[0].players[0];
 		player.level = level;
 		player.bonusTalentPoints = level >= BONUS_TALENT_POINTS_LEVEL ? plan.bonusTalentPoints : 0;
-		player.talentsString = options.talents ?? talentsAt(plan, level, this.talents.shape, options.buildIndex);
+		player.talentsString = talentsAt(plan, level, this.talents.shape, options.buildIndex);
 		player.equipment = gear.asSpec();
 		player.database = Database.mergeSimDatabases(gear.toDatabase(), this.player.getItemSwapGear().toDatabase());
 		if (!plan.useSettingsBuffs) {
@@ -348,6 +348,48 @@ export class LevelingPlanTab extends SimTab {
 		}
 		if (request.encounter?.leveling) request.encounter.leveling.plan = false;
 		return request;
+	}
+
+	// What the Go talent search needs (tools/levelingplan): the settings' request, which it makes
+	// each level's request from like makeRequest does, the plan and its gear plan, and our gear
+	// at each level, which it checks its own gear plan against. Null before the database loads.
+	private searchRequest(): LevelingPlanSearchRequest | null {
+		const plan = this.player.getLevelingPlan();
+		const levels = planLevels(plan);
+		const gear = levels.map(level => this.gear.gearAt(level));
+		if (gear.some(g => !g)) return null;
+		const playerClass = this.player.getClass();
+		const shape = this.talents.shape;
+		return LevelingPlanSearchRequest.create({
+			base: this.simUI.sim.makeRaidSimRequest(false),
+			plan,
+			gearPlan: this.player.getLevelingGearPlan(),
+			gearWeights: this.gear.weightPresets().map(preset => LevelingGearWeights.create({ level: preset.level, weights: preset.weights.toProto() })),
+			gearDefaultWeights: this.player.getEpWeights().toProto(),
+			classRules: LevelingGearClassRules.create({
+				maxArmorType: Array.from({ length: LEVELING_PLAN_MAX_LEVEL }, (_, i) => maxArmorTypeAt(playerClass, i + 1)),
+				weaponTypes: classToEligibleWeaponTypes[playerClass].map(wt => wt.weaponType),
+				twoHandWeaponTypes: classToEligibleWeaponTypes[playerClass].filter(wt => wt.canUseTwoHand).map(wt => wt.weaponType),
+				rangedWeaponTypes: classToEligibleRangedWeaponTypes[playerClass],
+				canDualWield: dualWieldClasses.includes(playerClass),
+			}),
+			faction: raceToFaction[this.player.getRace()],
+			talentShape: LevelingTalentShape.create({
+				pointsPerRow: shape.pointsPerRow,
+				trees: shape.trees.map(tree => ({
+					name: tree.name,
+					talents: tree.talents.map(talent => ({
+						name: talent.name,
+						row: talent.row,
+						col: talent.col,
+						maxPoints: talent.maxPoints,
+						prereq: talent.prereq ?? -1,
+						notSimulated: !!talent.notSimulated,
+					})),
+				})),
+			}),
+			uiGear: gear.map(g => g?.asSpec() ?? EquipmentSpec.create()),
+		});
 	}
 
 	// Sims each level of the plan, then each respec's levels with the build we had before it.

@@ -64,13 +64,23 @@ part has the session's options). The mode comes from the encounter like the othe
 
 ## Talent search
 
-The Talents part has a Talent search (`ui/core/leveling_talent_search.ts`). It finds the order
+The Talents part has a Talent search. It finds the order
 of talent points that levels us the fastest over all the plan's levels, with the plan's gear
 and rotations, and the best build to respec into at each respec level (20, 30, 40 and 50 by
 default, the ones inside the plan count). Nothing in the plan changes until we click "Use this
 route" or "Add this respec to the plan". We decide on a respec by the hours it saves against
 its gold.
 
+- **It runs in Go.** The search is `tools/levelingplan`, natively on all the cores, because the
+  browser's wasm sims were too slow for a plan from 10 to 60. Search sends the plan to its local
+  server, which we start with `go run --tags=with_db ./tools/levelingplan -serve localhost:3001`.
+  It answers with progress lines and then the result, and Stop ends the search. The server makes
+  each level's request the way the tab does, and the gear plan the way the Gear part does
+  (`tools/levelingplan/gear.go`, a port of `ui/core/leveling_gear.ts`). The UI sends its own
+  gear at each level too, and the search stops with an error when the two don't agree, so a
+  change to one gear plan needs the same change in the other. The route search is a port of the
+  browser's, and `route_test.go` checks it finds the same routes with the same sims on a made up
+  problem. A 10 to 30 search takes 17s on 16 cores, where the browser took 3.5 minutes.
 - **Whole routes, never one level at a time.** A route is the order of all our points, and its
   score is the hours of all the levels added up. Taking the best point at each level would be
   a greedy search, and it can be slower overall: the point that does the most at level 10 can
@@ -90,7 +100,7 @@ its gold.
   sim the best six at every level.
 - **The same sessions.** Each level is simmed on its own seed, so two routes with the same
   talents at a level get the same hours there, and we sim each level and talents once. A search
-  of the 10 to 30 plan takes about 1,800 sims of a level at 50 sessions each (a few minutes).
+  of the 10 to 30 plan takes 600 to 1,800 sims of a level at 50 sessions each.
 - **Respecs.** At a respec level all our points are free, and we search the levels from it on.
   A respec's build is also a route from the first level, and sometimes it's the better route
   (it only moves a point the route could have put there too). So we search the route again from
