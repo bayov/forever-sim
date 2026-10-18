@@ -44,7 +44,14 @@ func (ShamanEnhLeveling) Knobs() []Knob {
 		// Totemic Recall's global cooldown before each search costs more than a quarter of
 		// the totems' mana gives back (audit round 2).
 		{Name: "recall", Default: 0, Min: 0, Max: 1, Step: 1, Needs: []string{"totemicRecall"}, Kind: KnobSteady},
-		{Name: "oocHealBelow", Default: 40, Min: 0, Max: 60, Step: 20, Needs: []string{"healingWave", "lesserHealingWave"}, Kind: KnobThreshold},
+		// Eat or heal. Between pulls we heal below oocHealBelow while mana is at oocHealMana or
+		// more, since a heal turns mana into health and eating takes time. oocHealSpell picks
+		// the heal there: 0 Lesser Healing Wave once we know it, 1 Healing Wave, which heals
+		// more for its mana and casts slower. combatHealSpell is the same pick in combat.
+		{Name: "oocHealBelow", Default: 40, Min: 0, Max: 80, Step: 10, Needs: []string{"healingWave", "lesserHealingWave"}, Kind: KnobThreshold},
+		{Name: "oocHealMana", Default: 0, Min: 0, Max: 80, Step: 20, Needs: []string{"healingWave", "lesserHealingWave"}, Kind: KnobThreshold},
+		{Name: "oocHealSpell", Default: 0, Min: 0, Max: 1, Step: 1, Needs: []string{"lesserHealingWave"}},
+		{Name: "combatHealSpell", Default: 0, Min: 0, Max: 1, Step: 1, Needs: []string{"lesserHealingWave"}},
 		{Name: "bandageBelow", Default: 0, Min: 0, Max: 80, Step: 20, Kind: KnobThreshold},
 		{Name: "restHealth", Default: 90, Min: 20, Max: 90, Step: 10, Kind: KnobThreshold},
 		{Name: "restMana", Default: 50, Min: 10, Max: 70, Step: 10, Kind: KnobThreshold},
@@ -153,7 +160,15 @@ func (t ShamanEnhLeveling) Build(k Knobs) *proto.APLRotation {
 			"Totemic Recall once the fight is over: a quarter of the totems' mana back, and they'd be left behind anyway."))
 	}
 	if k["oocHealBelow"] > 0 {
-		items = append(items, Cast(heal, And(noMobs, Lt(CurrentHealthPercent(), Pct(k["oocHealBelow"]))),
+		oocHeal := heal
+		if k["oocHealSpell"] == 1 {
+			oocHeal = healingWave
+		}
+		var manaFloor Value
+		if k["oocHealMana"] > 0 {
+			manaFloor = Ge(CurrentManaPercent(), Pct(k["oocHealMana"]))
+		}
+		items = append(items, Cast(oocHeal, And(noMobs, Lt(CurrentHealthPercent(), Pct(k["oocHealBelow"])), manaFloor),
 			"A heal between pulls instead of eating."))
 	}
 	if k["bandageBelow"] > 0 {
@@ -175,7 +190,11 @@ func (t ShamanEnhLeveling) Build(k Knobs) *proto.APLRotation {
 
 	// The fight's heal comes before pulling more.
 	if k["combatHealBelow"] > 0 {
-		items = append(items, Cast(heal, And(inCombat, Lt(CurrentHealthPercent(), Pct(k["combatHealBelow"]))),
+		combatHeal := heal
+		if k["combatHealSpell"] == 1 {
+			combatHeal = healingWave
+		}
+		items = append(items, Cast(combatHeal, And(inCombat, Lt(CurrentHealthPercent(), Pct(k["combatHealBelow"]))),
 			"A heal in combat when health runs low."))
 	}
 

@@ -1677,14 +1677,14 @@ export const PresetBuildLevel30Leveling = PresetUtils.makePresetBuild('Level 30 
 // grind up to 59, and 60 is where we stop.
 //
 // The talents and rotations are what the Talent search with Rotations too found from 10 to 60
-// (docs/leveling_plan.md, Rotation search, 2026-10-18): 105h 48m, against 123h 42m for the
-// plan we had before. The route takes Thundering Strikes, Improved Ghost Wolf at 15 and 16
-// (required, for walking), Mental Dexterity, Shamanistic Focus, Elemental Weapons and
-// Stormstrike at 25, then Flurry, Improved Stormstrike, Spirit Weapons, Tidal Focus, Maelstrom
-// Weapon from 38 and Rage of the Farseer at 43, and goes into Elemental from 44. No respec
-// saved time. The rotations are the search's "Searched 10" and so on, in one range for each
-// level that changed something. They play Rockbiter Weapon, with Windfury Totem from 32, and
-// Flametongue Weapon with Windfury Totem from 42.
+// (docs/leveling_plan.md, Rotation search, 2026-10-19): 107h 5m on the item data of that day.
+// The plan we had before 2026-10-18 took 123h 42m on the data then. The route takes
+// Thundering Strikes, Improved Ghost Wolf at 15 and 16 (required, for walking), Mental
+// Dexterity, Shamanistic Focus, Elemental Weapons and Stormstrike at 25, then Flurry, Improved
+// Stormstrike, Spirit Weapons, Tidal Focus, Maelstrom Weapon from 38 and Rage of the Farseer
+// at 43, and goes into Elemental from 44. No respec saved time. The rotations are the
+// search's "Searched 10" and so on, in one range for each level that changed something. They
+// play Rockbiter Weapon all the way, with Windfury Totem from 32.
 export const DefaultLevelingPlan = LevelingPlanSettings.create({
 	fromLevel: 10,
 	toLevel: 60,

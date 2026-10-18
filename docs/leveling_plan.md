@@ -183,6 +183,26 @@ with the route, 17h 55m faster than the plan (±3m). They take Healing Stream To
 and Flametongue Weapon with Windfury Totem from 42, without Strength of Earth Totem. The
 respecs still save nothing.
 
+A third run (2026-10-19, 19 min) started from that plan, with the eat or heal knobs below.
+The item data had changed since (the items seen in game), so the same plan took 107h 20m. The
+search found 107h 5m (±2m), most of it from the route. It keeps Rockbiter Weapon past 42,
+where Flametongue Weapon was less than 1% ahead before, and keeps Strength of Earth Totem.
+
+Eat or heal (2026-10-19). Between pulls we heal below a threshold (now in 10% steps up to 80%),
+only above a mana floor (`oocHealMana`), with Lesser Healing Wave or Healing Wave
+(`oocHealSpell`, and `combatHealSpell` in combat). Healing Wave heals more for its mana, but
+it loses everywhere: 1.5 min at 30 to 3.5 min at 58 between pulls, because a heal there stands
+in for sitting down and its cast time is the whole cost. In combat it also dies more. The
+search takes a mana floor of 20 to 60% from 32, which saves little.
+
+Checks of the searched picks (2026-10-19). Chain Lightning stays off. Cast with one mob on us
+it costs 20 to 25% a level, with two 4 to 6%, and with three it hardly ever casts. An instant
+Chain Lightning at 5 Maelstrom Weapon stacks in place of Lightning Bolt loses 2 to 3% too,
+because Forever's ranks do about as much over two mobs as a Lightning Bolt does to one, for
+more mana. Fire Nova goes off 7 to 10 times a session (a pull is 1.5 to 1.8 mobs), so it hardly
+matters. On it would save about a minute at 32 to 35, which the search misses because that
+range doesn't tune Fire Nova.
+
 ## The run
 
 Simulate runs one grinding session request per level, each with the main iterations, then the
@@ -202,13 +222,13 @@ The last run stays in the browser's storage. The Leveling mode has no sim histor
 ## The enhancement shaman's plan
 
 `DefaultLevelingPlan` in `ui/enhancement_shaman/presets.ts`, since 2026-10-19 the route and
-rotations of the 10 to 60 rotation search (Rotation search, the second run): 105h 48m. The
+rotations of the 10 to 60 rotation search (Rotation search, the third run): 107h 5m. The
 route and the ranges are in `ui/enhancement_shaman/apls/leveling_plan_searched.json`, with a
 range only where the rotation or the imbue changes. Thundering Strikes, Improved Ghost Wolf at
 15 and 16 (required), Mental Dexterity, Shamanistic Focus, Elemental Weapons, Stormstrike at 25,
 then Flurry, Improved Stormstrike, Spirit Weapons, Tidal Focus, Maelstrom Weapon from 38 and
-Rage of the Farseer at 43, and Elemental from 44. Rockbiter Weapon, with Windfury Totem from 32,
-then Flametongue Weapon with Windfury Totem from 42.
+Rage of the Farseer at 43, and Elemental from 44. Rockbiter Weapon all the way, with Windfury
+Totem from 32.
 
 Before that it was the Level 30 Leveling build into Elemental toward the Level 60 + Imp GW
 build, and the "Level N Leveling Plan" rotations (the leveling optimizer's best at 10, 15, 20,
