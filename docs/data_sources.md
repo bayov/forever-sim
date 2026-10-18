@@ -274,8 +274,14 @@ arrives as a hotfix, and the client keeps it in `Cache/ADB/enUS/DBCache.bin`.
   `assets/database/hidden_items.json`: every hidden weapon and armor piece that matters to
   the sim, which sources know it (AtlasLoot, foreverchanges.pro, Wowhead, the sim), and
   counts. At 70450 it finds 7,841 hidden items where foreverchanges.pro counts 7,843.
-  1,605 hidden items are in the sim with Classic's stats and 152 with only part of theirs.
-  bayovui's `bis.py` marks those in the BiS tab.
+  1,605 hidden items are in the sim with Classic's stats and 106 with only part of theirs.
+  46 more are Forever items Wowhead lists with stats while our client still calls them
+  hidden, so we can't tell where Wowhead's numbers come from. bayovui's `bis.py` marks all
+  of those in the BiS tab.
+- **Other players' finds reach us too.** A reveal is a hotfix the server sends every client
+  at login, not only to the player who found the item. So our cache holds every item
+  revealed server wide up to our last login (4,864 rows where foreverchanges.pro counts
+  4,775 revealed), and Wowhead gets the stats from the same hotfixes.
 - **Behind when:** `stale.py --addons` reads the client's cache and lists the items
   `hidden_items.json` calls hidden that our client has since been sent, and compares the
   cache file's build with the client's. `crosscheck.py` lists Classic items whose cached

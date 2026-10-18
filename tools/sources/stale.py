@@ -272,9 +272,9 @@ def check_hidden(addons):
         hidden = json.load(f)
     c = hidden['counts']
     lines.append('  info  %d items still hidden, %d of them gear: %d in the sim with Classic stats, '
-                 '%d partly, %d of Forever\'s not in it (%s)' % (
+                 '%d partly, %d with Wowhead\'s unconfirmed stats, %d of Forever\'s not in it (%s)' % (
                      c['hidden'], c['hiddenGear'], c['inSimWithClassicStats'], c['inSimPartly'],
-                     c['foreverNotInSim'], rel))
+                     c.get('inSimFromWowhead', 0), c['foreverNotInSim'], rel))
     if not addons:
         return lines, todo
     client = os.path.dirname(os.path.dirname(os.path.abspath(addons)))

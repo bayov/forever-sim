@@ -24,6 +24,12 @@ We list hidden weapons and armor that matter to the sim:
 - Forever's own hidden items the sim has from a source that knows part of
   them, like Wowhead's armor without stats (the Manaflare set). `simStats` is
   "partial".
+- Forever's own hidden items Wowhead lists with stats (Ouroboros Ring,
+  Shapeshifter's Helm), so the sim has them all, but our client says the item
+  is still hidden and Wowhead doesn't say where the numbers come from. They
+  may be from before Blizzard hid them, or from Wowhead's in-game uploader.
+  `simStats` is "wowhead". Wowhead's stats for hidden Classic items are
+  Classic's, so those stay "classic".
 - Forever's own hidden items the sim doesn't have at all.
 - Hidden Classic items another source names, like an AtlasLoot drop.
 
@@ -56,6 +62,8 @@ WEAPON, ARMOR = '2', '4'
 # Discovery's (200000 on), which the Forever client still carries.
 FOREVER_FIRST_ID = 250000
 SOD_FIRST_ID = 200000
+# Wowhead's names for the primary stats in a listing's "eq".
+PRIMARY = ('str', 'agi', 'sta', 'int', 'spi')
 SLOTS = {1: 'head', 2: 'neck', 3: 'shoulder', 4: 'shirt', 5: 'chest', 6: 'waist', 7: 'legs',
          8: 'feet', 9: 'wrist', 10: 'hands', 11: 'finger', 12: 'trinket', 13: 'one-hand',
          14: 'shield', 15: 'ranged', 16: 'back', 17: 'two-hand', 18: 'bag', 19: 'tabard',
@@ -103,7 +111,12 @@ def read(build):
         if name:
             entry['name'] = name
         if i in sim:
-            entry['simStats'] = 'partial' if forever else 'classic'
+            if not forever:
+                entry['simStats'] = 'classic'
+            elif any(k in wowhead.get(i, {}).get('eq', {}) for k in PRIMARY):
+                entry['simStats'] = 'wowhead'
+            else:
+                entry['simStats'] = 'partial'
         entry['sources'] = sources
         out[i] = entry
     for i, r in sorted(revealed.items()):
@@ -117,6 +130,7 @@ def read(build):
         ('hiddenGear', len(gear)),
         ('inSimWithClassicStats', sum(1 for e in gear if e.get('simStats') == 'classic')),
         ('inSimPartly', sum(1 for e in gear if e.get('simStats') == 'partial')),
+        ('inSimFromWowhead', sum(1 for e in gear if e.get('simStats') == 'wowhead')),
         ('foreverNotInSim', sum(1 for i, e in out.items() if e['state'] == 'hidden'
                                 and i >= FOREVER_FIRST_ID and 'simStats' not in e)),
         ('revealedNotInSim', sum(1 for e in out.values() if e['state'] == 'revealed')),
