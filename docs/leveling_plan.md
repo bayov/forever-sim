@@ -201,22 +201,19 @@ The last run stays in the browser's storage. The Leveling mode has no sim histor
 
 ## The enhancement shaman's plan
 
-`DefaultLevelingPlan` in `ui/enhancement_shaman/presets.ts`: the Level 30 Leveling build
-(Thundering Strikes, Improved Ghost Wolf at 15 and 16, Mental Dexterity, Shamanistic Focus,
-Ancestral Knowledge, then Stormstrike at 25 and Flurry), and the "Level N Leveling Plan" rotations, the leveling optimizer's best at levels 10,
-15, 20, 25 and 30 on the plan's gear, with Rockbiter Weapon until 30. From 31 the talents
-finish Enhancement (Maelstrom Weapon, then Rage of the Farseer at 41) and go into Elemental
-toward the Level 60 + Imp GW build. The Level 30 rotation goes on to 59.
+`DefaultLevelingPlan` in `ui/enhancement_shaman/presets.ts`, since 2026-10-19 the route and
+rotations of the 10 to 60 rotation search (Rotation search, the second run): 105h 48m. The
+route and the ranges are in `ui/enhancement_shaman/apls/leveling_plan_searched.json`, with a
+range only where the rotation or the imbue changes. Thundering Strikes, Improved Ghost Wolf at
+15 and 16 (required), Mental Dexterity, Shamanistic Focus, Elemental Weapons, Stormstrike at 25,
+then Flurry, Improved Stormstrike, Spirit Weapons, Tidal Focus, Maelstrom Weapon from 38 and
+Rage of the Farseer at 43, and Elemental from 44. Rockbiter Weapon, with Windfury Totem from 32,
+then Flametongue Weapon with Windfury Totem from 42.
 
-A first run (2026-10-16, 300 sessions a level) takes about 19 hours from 10 to 30. XP an
-hour goes from 19,000 at 10 to 31,000 at 25, and falls inside each five levels as the gear
-and the rotation fall behind the level. The rotations still cast the ranks of their range's
-first level then (Ranks, above).
-
-A run of 10 to 60 (2026-10-18, 200 sessions a level, 28s) takes about 120 hours, 19.4 of them
-from 10 to 30. XP an hour stays near 30,000 to 39,000 from 31 on, and a level takes 5.6 hours
-at 59. Those levels have the Level 30 rotation and the level 30 stat weights, so they are slower
-than they should be.
+Before that it was the Level 30 Leveling build into Elemental toward the Level 60 + Imp GW
+build, and the "Level N Leveling Plan" rotations (the leveling optimizer's best at 10, 15, 20,
+25 and 30, still in the rotation presets), with the Level 30 one up to 59. A run of 10 to 60
+(2026-10-18, 200 sessions a level) took about 120 hours, 19.4 of them from 10 to 30.
 
 ## Open
 

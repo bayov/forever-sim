@@ -37,9 +37,15 @@ import {
 	ZanzaBuff,
 } from '../core/proto/common.js';
 import { EnhancementShaman_Options as EnhancementShamanOptions, ShamanSyncType } from '../core/proto/shaman.js';
-import { LevelingPlanSettings, LevelingRotation, LevelingRotationPreset, LevelingTalentRequirement, SavedTalents } from '../core/proto/ui.js';
-import { buildFromMilestones, talentShape } from '../core/leveling_plan.js';
-import { shamanTalentsConfig } from '../core/talents/shaman.js';
+import {
+	LevelingPlanSettings,
+	LevelingRotation,
+	LevelingRotationPreset,
+	LevelingTalentBuild,
+	LevelingTalentPick,
+	LevelingTalentRequirement,
+	SavedTalents,
+} from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import GraceOfAirAPLJSON from './apls/grace_of_air.apl.json';
 import Level30LevelingAPLJSON from './apls/level30_leveling.apl.json';
@@ -50,6 +56,7 @@ import LevelingPlan15APLJSON from './apls/leveling_plan_15.apl.json';
 import LevelingPlan20APLJSON from './apls/leveling_plan_20.apl.json';
 import LevelingPlan25APLJSON from './apls/leveling_plan_25.apl.json';
 import LevelingPlan30APLJSON from './apls/leveling_plan_30.apl.json';
+import LevelingPlanSearchedJSON from './apls/leveling_plan_searched.json';
 import MagmaAPLJSON from './apls/magma.apl.json';
 import ManaTideAPLJSON from './apls/mana_tide.apl.json';
 import OptimizedAPLJSON from './apls/optimized.apl.json';
@@ -1669,34 +1676,22 @@ export const PresetBuildLevel30Leveling = PresetUtils.makePresetBuild('Level 30 
 // The leveling plan of the Leveling mode (ui/core/leveling_plan.ts), from level 10 to 60. We
 // grind up to 59, and 60 is where we stop.
 //
-// The talents go to the Level 30 Leveling build: Thundering Strikes first, then Improved Ghost
-// Wolf at 15 and 16 (required, for walking), Mental Dexterity, Shamanistic Focus and Ancestral
-// Knowledge. The plan has no extra talent points by default, so the 16th point at 25 goes to
-// Stormstrike (a 15 point talent), and Flurry comes after it. From 31 we finish Enhancement
-// with Maelstrom Weapon and Rage of the Farseer at 41, then go into Elemental toward the Level
-// 60 + Imp GW build. We keep Improved Stormstrike 2, so the build's Tidal Focus point is left
-// out. The last point (Improved Fire Nova at 60) is after the plan.
-// The rotations are the Leveling Plan ones, with Rockbiter Weapon until Windfury Weapon at 30.
-// The Level 30 one goes on to 59, so it doesn't cast the spells we learn after 30 yet.
+// The talents and rotations are what the Talent search with Rotations too found from 10 to 60
+// (docs/leveling_plan.md, Rotation search, 2026-10-18): 105h 48m, against 123h 42m for the
+// plan we had before. The route takes Thundering Strikes, Improved Ghost Wolf at 15 and 16
+// (required, for walking), Mental Dexterity, Shamanistic Focus, Elemental Weapons and
+// Stormstrike at 25, then Flurry, Improved Stormstrike, Spirit Weapons, Tidal Focus, Maelstrom
+// Weapon from 38 and Rage of the Farseer at 43, and goes into Elemental from 44. No respec
+// saved time. The rotations are the search's "Searched 10" and so on, in one range for each
+// level that changed something. They play Rockbiter Weapon, with Windfury Totem from 32, and
+// Flametongue Weapon with Windfury Totem from 42.
 export const DefaultLevelingPlan = LevelingPlanSettings.create({
 	fromLevel: 10,
 	toLevel: 60,
 	bonusTalentPoints: 0,
-	builds: [
-		buildFromMilestones(
-			10,
-			['-01', '-050002', '-050032001', '-0540320010001', '-0540320010051', '-0540320010051122', '-054032001005112251', '053503102-054032001005112251'],
-			talentShape(shamanTalentsConfig),
-		),
-	],
-	rotationLibrary: APLLevelingPlan.map(preset => LevelingRotationPreset.create({ name: preset.name, rotation: preset.rotation.rotation })),
-	rotations: APLLevelingPlan.map((preset, i) =>
-		LevelingRotation.create({
-			level: [10, 15, 20, 25, 30][i],
-			name: preset.name,
-			imbue: i < 4 ? WeaponImbue.RockbiterWeapon : WeaponImbue.WindfuryWeapon,
-		}),
-	),
+	builds: [LevelingTalentBuild.create({ level: 10, picks: LevelingPlanSearchedJSON.route.map(pick => LevelingTalentPick.fromJson(pick as any)) })],
+	rotationLibrary: LevelingPlanSearchedJSON.rotationLibrary.map(preset => LevelingRotationPreset.fromJson(preset as any)),
+	rotations: LevelingPlanSearchedJSON.rotations.map(range => LevelingRotation.fromJson(range)),
 	rotationsNameTopRanks: true,
 	// Improved Ghost Wolf as early as its row opens (15 and 16), for walking to quests and grind
 	// spots, which the grinding sessions don't sim.
