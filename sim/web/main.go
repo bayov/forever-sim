@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"encoding/binary"
 	"encoding/json"
 	"flag"
 	"fmt"
@@ -158,6 +159,13 @@ func (s *server) addNewSim() *asyncProgress {
 	return simProgress
 }
 
+// handleAsyncAPI runs an async sim and streams its progress back in the response.
+//
+// The body is a stream of frames. Each frame is a 4 byte big endian length
+// followed by a marshaled ProgressMetrics. We write a frame as soon as the sim
+// reports progress, and the last frame is the one with the final result. This
+// replaces the old asyncProgress polling, which made the UI wait up to 500ms
+// after a sim had already finished.
 func (s *server) handleAsyncAPI(w http.ResponseWriter, r *http.Request) {
 	body, err := io.ReadAll(r.Body)
 	if err != nil {
@@ -178,97 +186,74 @@ func (s *server) handleAsyncAPI(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// reporter channel is handed into the core simulation.
-	//  as the simulation advances it will push changes to the channel
-	//  these changes will be consumed by the goroutine below so the asyncProgress endpoint can fetch the results.
+	// The core simulation pushes its progress into the reporter channel, and we
+	// forward each report to the client below.
+	requestId := r.URL.Query().Get("requestId")
 	reporter := make(chan *proto.ProgressMetrics, 100)
-	handler.handle(msg, reporter, r.URL.Query().Get("requestId"))
+	handler.handle(msg, reporter, requestId)
 
-	// Generate a new async simulation
+	// We keep the latest progress in asyncProgresses only for the "sims" console command.
 	simProgress := s.addNewSim()
-
-	// Now launch a background process that pulls progress reports off the reporter channel
-	// and pushes it into the async progress cache.
-	go func() {
-		for {
-			select {
-			case <-time.After(time.Minute * 10):
-				// if we get no progress after 10 minutes, delete the pending sim and exit.
-				s.progMut.Lock()
-				delete(s.asyncProgresses, simProgress.id)
-				s.progMut.Unlock()
-				return
-			case progMetric := <-reporter:
-				if progMetric == nil {
-					return
-				}
-				simProgress.latestProgress.Store(progMetric)
-				if progMetric.FinalRaidResult != nil || progMetric.FinalWeightResult != nil || progMetric.FinalBulkResult != nil {
-					return
-				}
-			}
-		}
+	defer func() {
+		s.progMut.Lock()
+		delete(s.asyncProgresses, simProgress.id)
+		s.progMut.Unlock()
 	}()
 
-	protoResult := &proto.AsyncAPIResult{
-		ProgressId: simProgress.id,
-	}
+	w.Header().Set("Content-Type", "application/x-protobuf")
+	w.Header().Set("Cache-Control", "no-cache")
+	w.Header().Set("X-Content-Type-Options", "nosniff")
+	w.WriteHeader(http.StatusOK)
+	rc := http.NewResponseController(w)
 
-	outbytes, err := googleProto.Marshal(protoResult)
+	clientGone := r.Context().Done()
+	for {
+		select {
+		case <-clientGone:
+			// The tab was closed or reloaded, so nobody wants the result. We abort
+			// the sim, and keep reading the channel until it sends its final
+			// report, so the sim never blocks on a full channel.
+			simsignals.AbortById(requestId)
+			clientGone = nil
+		case <-time.After(time.Minute * 10):
+			log.Printf("[ERROR] No progress from async sim %s in 10 minutes, dropping it.", simProgress.id)
+			return
+		case progMetric := <-reporter:
+			if progMetric == nil {
+				return
+			}
+			simProgress.latestProgress.Store(progMetric)
+			isFinal := progMetric.FinalRaidResult != nil || progMetric.FinalWeightResult != nil || progMetric.FinalBulkResult != nil
+			if clientGone != nil {
+				if err := writeProgressFrame(w, rc, progMetric); err != nil {
+					log.Printf("[ERROR] Failed to stream progress: %s", err.Error())
+					simsignals.AbortById(requestId)
+					clientGone = nil
+				}
+			}
+			if isFinal {
+				return
+			}
+		}
+	}
+}
+
+func writeProgressFrame(w http.ResponseWriter, rc *http.ResponseController, progMetric *proto.ProgressMetrics) error {
+	outbytes, err := googleProto.Marshal(progMetric)
 	if err != nil {
-		log.Printf("[ERROR] Failed to marshal result: %s", err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
-		return
+		return err
 	}
-
-	w.Header().Add("Content-Type", "application/x-protobuf")
-	w.Write(outbytes)
+	frame := binary.BigEndian.AppendUint32(make([]byte, 0, 4+len(outbytes)), uint32(len(outbytes)))
+	if _, err := w.Write(append(frame, outbytes...)); err != nil {
+		return err
+	}
+	return rc.Flush()
 }
 
 func (s *server) setupAsyncServer() {
-	// All async handlers here will call the addNewSim, generating a new UUID and cached progress state.
 	for route := range asyncAPIHandlers {
 		http.Handle(route, corsMiddleware(http.HandlerFunc(s.handleAsyncAPI)))
 	}
-
-	// asyncProgress will fetch the current progress of a simulation by its UUID.
-	http.Handle("/asyncProgress", corsMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		body, err := io.ReadAll(r.Body)
-		if err != nil {
-			return
-		}
-		msg := &proto.AsyncAPIResult{}
-		if err := googleProto.Unmarshal(body, msg); err != nil {
-			log.Printf("Failed to parse request: %s", err.Error())
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		// Read lock the map of all progress statuses, fetching current one.
-		s.progMut.RLock()
-		progress, ok := s.asyncProgresses[msg.ProgressId]
-		s.progMut.RUnlock()
-		if !ok {
-			w.WriteHeader(http.StatusNoContent)
-			return
-		}
-		latest := progress.latestProgress.Load().(*proto.ProgressMetrics)
-		outbytes, err := googleProto.Marshal(latest)
-		if err != nil {
-			log.Printf("[ERROR] Failed to marshal result: %s", err.Error())
-			w.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		// If this was the last result, delete the cache for this simulation.
-		if latest.FinalRaidResult != nil || latest.FinalWeightResult != nil || latest.FinalBulkResult != nil {
-			s.progMut.Lock()
-			delete(s.asyncProgresses, msg.ProgressId)
-			s.progMut.Unlock()
-		}
-		w.Header().Add("Content-Type", "application/x-protobuf")
-		w.Write(outbytes)
-	})))
 }
 func corsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

@@ -1,4 +1,3 @@
-import { noop, sleep } from '../core/utils';
 import { HandlerFunction, WorkerInterface } from './worker_interface';
 
 const defaultRequestOptions = {
@@ -6,6 +5,14 @@ const defaultRequestOptions = {
 	headers: {
 		'Content-Type': 'application/x-protobuf',
 	},
+};
+
+const concatBytes = (a: Uint8Array, b: Uint8Array): Uint8Array => {
+	if (a.length === 0) return b;
+	const out = new Uint8Array(a.length + b.length);
+	out.set(a);
+	out.set(b, a.length);
+	return out;
 };
 
 export const setupHttpWorker = (baseURL: string) => {
@@ -21,21 +28,30 @@ export const setupHttpWorker = (baseURL: string) => {
 		return new Uint8Array(ab);
 	};
 
+	// The server streams progress as frames of a 4 byte big endian length and a
+	// ProgressMetrics, and the last frame holds the final result.
 	const asyncHandler: HandlerFunction = async (inputData, progress, id, msg) => {
-		const asyncApiResult = await syncHandler(inputData, noop, id, msg);
+		const response = await makeHttpApiRequest(msg, inputData, id);
+		if (!response.ok || !response.body) {
+			console.error(`${msg} failed with HTTP ${response.status}`);
+			return new Uint8Array();
+		}
+
+		const reader = response.body.getReader();
+		let buffer = new Uint8Array();
 		let outputData = new Uint8Array();
 		while (true) {
-			const progressResponse = await makeHttpApiRequest('asyncProgress', asyncApiResult, id);
+			const { done, value } = await reader.read();
+			if (done) break;
+			buffer = concatBytes(buffer, value);
 
-			// If no new data available, stop querying.
-			if ([204, 404].includes(progressResponse.status)) {
-				break;
+			while (buffer.length >= 4) {
+				const frameLength = new DataView(buffer.buffer, buffer.byteOffset, 4).getUint32(0);
+				if (buffer.length < 4 + frameLength) break;
+				outputData = buffer.slice(4, 4 + frameLength);
+				buffer = buffer.slice(4 + frameLength);
+				progress(outputData);
 			}
-
-			const ab = await progressResponse.arrayBuffer();
-			outputData = new Uint8Array(ab);
-			progress(outputData);
-			await sleep(500);
 		}
 		return outputData;
 	};
