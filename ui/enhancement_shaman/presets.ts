@@ -1666,19 +1666,28 @@ export const PresetBuildLevel30Leveling = PresetUtils.makePresetBuild('Level 30 
 //                                 Leveling Plan
 ///////////////////////////////////////////////////////////////////////////
 
-// The leveling plan of the Leveling mode (ui/core/leveling_plan.ts), from level 10 to 30.
+// The leveling plan of the Leveling mode (ui/core/leveling_plan.ts), from level 10 to 60. We
+// grind up to 59, and 60 is where we stop.
 //
 // The talents go to the Level 30 Leveling build: Thundering Strikes first, then Improved Ghost
 // Wolf at 15 and 16 (required, for walking), Mental Dexterity, Shamanistic Focus and Ancestral
 // Knowledge. The plan has no extra talent points by default, so the 16th point at 25 goes to
-// Stormstrike (a 15 point talent), and Flurry comes after it.
+// Stormstrike (a 15 point talent), and Flurry comes after it. From 31 we finish Enhancement
+// with Maelstrom Weapon and Rage of the Farseer at 41, then go into Elemental toward the Level
+// 60 + Imp GW build. We keep Improved Stormstrike 2, so the build's Tidal Focus point is left
+// out. The last point (Improved Fire Nova at 60) is after the plan.
 // The rotations are the Leveling Plan ones, with Rockbiter Weapon until Windfury Weapon at 30.
+// The Level 30 one goes on to 59, so it doesn't cast the spells we learn after 30 yet.
 export const DefaultLevelingPlan = LevelingPlanSettings.create({
 	fromLevel: 10,
-	toLevel: 30,
+	toLevel: 60,
 	bonusTalentPoints: 0,
 	builds: [
-		buildFromMilestones(10, ['-01', '-050002', '-050032001', '-0540320010001', '-0540320010051', '-0540320010051122'], talentShape(shamanTalentsConfig)),
+		buildFromMilestones(
+			10,
+			['-01', '-050002', '-050032001', '-0540320010001', '-0540320010051', '-0540320010051122', '-054032001005112251', '053503102-054032001005112251'],
+			talentShape(shamanTalentsConfig),
+		),
 	],
 	rotationLibrary: APLLevelingPlan.map(preset => LevelingRotationPreset.create({ name: preset.name, rotation: preset.rotation.rotation })),
 	rotations: APLLevelingPlan.map((preset, i) =>

@@ -19,8 +19,9 @@ part has the session's options). The mode comes from the encounter like the othe
 
 ## The plan
 
-- **Levels.** We sim each level from From level up to, but not including, To level (10 to 30
-  by default, the beta's cap).
+- **Levels.** We sim each level from From level up to, but not including, To level (10 to 60
+  by default). We grind up to 59, and 60 is where we stop. The gear plan, the XP table and the
+  mob table go to 60, but the stat weights and the rotations stop at 30 for now (Open).
 - **Gear.** The leveling gear plan (docs/leveling_gear.md), as before. The Gear part shows the selected level's gear in the Gear tab's gear pane. A click
   on a slot opens the Gear tab's item list with the items that level can wear, sorted by the
   stat weights of that level, and the item we pick becomes one of ours from that level on.
@@ -139,15 +140,26 @@ The last run stays in the browser's storage. The Leveling mode has no sim histor
 `DefaultLevelingPlan` in `ui/enhancement_shaman/presets.ts`: the Level 30 Leveling build
 (Thundering Strikes, Improved Ghost Wolf at 15 and 16, Mental Dexterity, Shamanistic Focus,
 Ancestral Knowledge, then Stormstrike at 25 and Flurry), and the "Level N Leveling Plan" rotations, the leveling optimizer's best at levels 10,
-15, 20, 25 and 30 on the plan's gear, with Rockbiter Weapon until 30.
+15, 20, 25 and 30 on the plan's gear, with Rockbiter Weapon until 30. From 31 the talents
+finish Enhancement (Maelstrom Weapon, then Rage of the Farseer at 41) and go into Elemental
+toward the Level 60 + Imp GW build. The Level 30 rotation goes on to 59.
 
 A first run (2026-10-16, 300 sessions a level) takes about 19 hours from 10 to 30. XP an
 hour goes from 19,000 at 10 to 31,000 at 25, and falls inside each five levels as the gear
 and the rotation fall behind the level. The rotations still cast the ranks of their range's
 first level then (Ranks, above).
 
+A run of 10 to 60 (2026-10-18, 200 sessions a level, 28s) takes about 120 hours, 19.4 of them
+from 10 to 30. XP an hour stays near 30,000 to 39,000 from 31 on, and a level takes 5.6 hours
+at 59. Those levels have the Level 30 rotation and the level 30 stat weights, so they are slower
+than they should be.
+
 ## Open
 
 - A sim history for the Leveling mode.
-- Rotations searched at more levels, and for the levels past 30 once the beta opens them.
+- Rotations searched at more levels, and for the levels past 30. A rotation search at a level
+  has to know which spells and ranks we have there. A spell we learn later (Chain Lightning at
+  32 for the shaman) isn't in the earlier ranges, and a rank we learn mid range changes the
+  spell's damage and cost from that level on (top ranks, Ranks above).
+- Leveling stat weights above 30, for the gear plan.
 - Forever's XP table.
