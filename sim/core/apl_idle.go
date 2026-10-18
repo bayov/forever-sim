@@ -1,8 +1,6 @@
 package core
 
 import (
-	"cmp"
-	"slices"
 	"time"
 
 	"github.com/wowsims/classic/sim/core/proto"
@@ -29,6 +27,19 @@ import (
 // turns), so that float rounding can't make us skip a check that would have found something.
 const aplIdleMargin = time.Millisecond
 
+// Working out the earliest time an action could be ready costs about as much as two or three
+// checks of the priority list. For most rotations it's worth it, because we skip many checks each
+// time: a rogue waiting for energy skips about six. But a hunter's auto shots and pet attacks
+// come so often that it skips only about two, and then working it out costs more than it saves.
+//
+// So once a rotation has tried it aplIdleTries times, we stop when it skipped fewer than
+// aplIdleMinSkips checks each time. That only changes how fast we run, not what the rotation
+// does.
+const (
+	aplIdleTries    = 200
+	aplIdleMinSkips = 3
+)
+
 // doNextActionOnWakeUp is DoNextAction for the rotation's own wake-up (the GCD action), which may
 // skip the check, see canSkipCheck.
 func (apl *APLRotation) doNextActionOnWakeUp(sim *Simulation) {
@@ -51,14 +62,19 @@ func (apl *APLRotation) canSkipCheck(sim *Simulation) bool {
 	if !apl.idleBounded {
 		// When the last time we worked it out we couldn't tell, and nothing but our wake-ups
 		// happened since, we couldn't tell now either. So we don't try again until an event.
-		if apl.idleHopeless {
+		if apl.idleHopeless || (apl.idleTries >= aplIdleTries && apl.idleSkips < aplIdleMinSkips*apl.idleTries) {
 			return false
 		}
 		apl.idleBounded = true
+		apl.idleTries++
 		apl.idleUntil = apl.readyNotBefore(sim)
 		apl.idleHopeless = apl.idleUntil <= sim.CurrentTime
 	}
-	return sim.CurrentTime < apl.idleUntil
+	if sim.CurrentTime < apl.idleUntil {
+		apl.idleSkips++
+		return true
+	}
+	return false
 }
 
 // noteIdle is for a check that found nothing to do, see canSkipCheck.
@@ -78,10 +94,10 @@ func (apl *APLRotation) readyNotBefore(sim *Simulation) time.Duration {
 	// First we work out when each action itself could be ready, which is cheap. Then we look at
 	// the conditions, starting with the action that could be ready soonest, and stop once no other
 	// action could come before what we found. That way we look at as few conditions as we can.
-	if len(apl.idleOrder) != len(apl.priorityList) {
-		apl.idleOrder = make([]int, len(apl.priorityList))
+	if len(apl.idleBounds) != len(apl.priorityList) {
 		apl.idleBounds = make([]time.Duration, len(apl.priorityList))
 	}
+	bounds := apl.idleBounds
 	for i, action := range apl.priorityList {
 		if action.bound == nil {
 			return sim.CurrentTime
@@ -90,25 +106,31 @@ func (apl *APLRotation) readyNotBefore(sim *Simulation) time.Duration {
 		if t <= sim.CurrentTime && action.condition == nil {
 			return sim.CurrentTime
 		}
-		apl.idleBounds[i] = t
-		apl.idleOrder[i] = i
+		bounds[i] = t
 	}
-	slices.SortFunc(apl.idleOrder, func(a, b int) int { return cmp.Compare(apl.idleBounds[a], apl.idleBounds[b]) })
 
+	// We pick the soonest action each time with a scan instead of sorting them all, because we
+	// usually stop after a few. We mark an action we looked at with NeverExpires.
 	until := NeverExpires
-	for _, i := range apl.idleOrder {
-		t := apl.idleBounds[i]
-		if t >= until {
-			break
+	for {
+		next := -1
+		for i, t := range bounds {
+			if t < until && (next < 0 || t < bounds[next]) {
+				next = i
+			}
 		}
-		if condition := apl.priorityList[i].condition; condition != nil && !condition.GetBool(sim) {
+		if next < 0 {
+			return until
+		}
+		t := bounds[next]
+		bounds[next] = NeverExpires
+		if condition := apl.priorityList[next].condition; condition != nil && !condition.GetBool(sim) {
 			t = max(t, aplSteadyUntil(sim, condition))
 		}
 		if until = min(until, t); until <= sim.CurrentTime {
 			return sim.CurrentTime
 		}
 	}
-	return until
 }
 
 // aplActionReadyBound is for actions that can tell, without side effects, the earliest time they
@@ -157,37 +179,78 @@ func (action *APLActionCastSpell) readyNotBefore(sim *Simulation) time.Duration 
 	if action.target.IsDynamic() && action.target.Get() == nil {
 		return sim.CurrentTime
 	}
-	return action.spell.castableNotBefore(sim)
+	return action.spell.castableNotBefore(sim, action.target.Get())
 }
 
 func (action *APLActionCastSpell) mayBeReadyNow(sim *Simulation) bool {
-	return action.spell.castableNow(sim)
+	return action.spell.castableNow(sim, &action.target)
 }
 
 func (action *APLActionChannelSpell) readyNotBefore(sim *Simulation) time.Duration {
-	return action.spell.castableNotBefore(sim)
+	return action.spell.castableNotBefore(sim, action.target.Get())
 }
 func (action *APLActionChannelSpell) mayBeReadyNow(sim *Simulation) bool {
-	return action.spell.castableNow(sim)
+	return action.spell.castableNow(sim, &action.target)
+}
+
+// Moving waits for us to stop moving and to finish a cast, and it only goes somewhere else than
+// where we are. We only stop moving with an event, and we only get somewhere with one, like the
+// PvP downtime that takes us out of range and back.
+func (action *APLActionMove) readyNotBefore(sim *Simulation) time.Duration {
+	if sim.CurrentTime < 0 || aplSteadyUntil(sim, action.moveRange) <= sim.CurrentTime {
+		return sim.CurrentTime
+	}
+	if action.unit.IsMoving() || action.moveRange.GetFloat(sim) == action.unit.DistanceFromTarget {
+		return NeverExpires
+	}
+	return max(sim.CurrentTime, action.unit.Hardcast.Expires)
+}
+func (action *APLActionMove) mayBeReadyNow(sim *Simulation) bool {
+	return !action.unit.IsMoving() && !action.unit.IsCasting(sim)
 }
 
 // The first major cooldown that is ready and should be used, once the GCD is up.
-//
-// A cooldown that is ready gets asked whether it can be cast (getFirstReadyMCD), which for one
-// we lack the mana for starts the time we count as out of mana. So we only say it can wait for
-// an event when it costs no mana.
 func (action *APLActionAutocastOtherCooldowns) readyNotBefore(sim *Simulation) time.Duration {
 	character := action.character
+	// No cooldown goes before this, so once one could go by then, we needn't look at the others.
+	floor := max(sim.CurrentTime, character.GCD.ReadyAt(), character.minReady)
 	first := NeverExpires
 	for _, mcd := range character.majorCooldowns {
-		t := max(mcd.ReadyAt(), mcd.Spell.castableNotBefore(sim))
-		if t <= sim.CurrentTime && mcd.ShouldActivateNeedsEvent && mcd.numUsages >= len(mcd.timings) &&
-			(mcd.Spell.Cost == nil || mcd.Spell.Cost.CostType() != CostTypeMana) && !mcd.ShouldActivate(sim, character) {
+		if mcd.ReadyAt() >= first {
+			continue
+		}
+		t := max(mcd.ReadyAt(), mcd.Spell.castableNotBefore(sim, character.CurrentTarget))
+		if t <= sim.CurrentTime && mcd.waitsForEvent(sim, character) {
 			t = NeverExpires
 		}
-		first = min(first, t)
+		if first = min(first, t); first <= floor {
+			break
+		}
 	}
-	return max(sim.CurrentTime, character.GCD.ReadyAt(), character.minReady, first)
+	return max(floor, first)
+}
+
+// waitsForEvent is whether a cooldown that is ready won't be used before something happens in
+// the sim, and asking about it now has no side effects (see shouldActivateHelper).
+//
+// A cooldown that is ready gets asked whether it can be cast. For one we lack the mana for, that
+// starts the time we count as out of mana, and for one we have the mana for, it ends that time.
+// So we only say a cooldown with a mana cost waits for an event when we have the mana for it and
+// aren't out of mana. Mana only goes up as time passes, so that stays true until an event.
+func (mcd *MajorCooldown) waitsForEvent(sim *Simulation, character *Character) bool {
+	if mcd.numUsages < len(mcd.timings) {
+		return false
+	}
+	if cost := mcd.Spell.Cost; cost != nil && cost.CostType() == CostTypeMana &&
+		(character.IsOOM() || character.CurrentMana() < cost.GetCurrentCost()) {
+		return false
+	}
+	// We only use survival cooldowns below some health, and health only changes with a hit or a
+	// heal.
+	if mcd.Type.Matches(CooldownTypeSurvival) && character.CurrentHealthPercent() > character.cooldownConfigs.HpPercentForDefensives {
+		return true
+	}
+	return mcd.ShouldActivateNeedsEvent && !mcd.ShouldActivate(sim, character)
 }
 
 // IsReady asks every ready cooldown whether it can be cast before it looks at the GCD, so we
@@ -209,7 +272,10 @@ func (action *APLActionSequence) readyNotBefore(sim *Simulation) time.Duration {
 
 // castableNow is a quick check, without side effects, of what castableNotBefore looks at: when
 // it returns false, CanCast returns false too.
-func (spell *Spell) castableNow(sim *Simulation) bool {
+//
+// It runs for every action of every check, so we only look up the target when the spell's own
+// condition needs it.
+func (spell *Spell) castableNow(sim *Simulation, target *UnitReference) bool {
 	if spell == nil {
 		return true
 	}
@@ -219,18 +285,27 @@ func (spell *Spell) castableNow(sim *Simulation) bool {
 	if !BothTimersReady(spell.CD.Timer, spell.SharedCD.Timer, sim) {
 		return false
 	}
-	if spell.Cost == nil {
-		return true
+	if spell.Cost != nil {
+		switch spell.Cost.CostType() {
+		case CostTypeEnergy:
+			if spell.Unit.CurrentEnergy() < spell.Cost.GetCurrentCost() {
+				return false
+			}
+		case CostTypeRage:
+			if spell.Unit.CurrentRage() < spell.Cost.GetCurrentCost() {
+				return false
+			}
+		case CostTypeFocus:
+			if spell.Unit.CurrentFocus() < spell.Cost.GetCurrentCost() {
+				return false
+			}
+		case CostTypeMana:
+			if spell.Unit.IsOOM() && spell.Unit.CurrentMana() < spell.Cost.GetCurrentCost() {
+				return false
+			}
+		}
 	}
-	switch spell.Cost.CostType() {
-	case CostTypeEnergy:
-		return spell.Unit.CurrentEnergy() >= spell.Cost.GetCurrentCost()
-	case CostTypeRage:
-		return spell.Unit.CurrentRage() >= spell.Cost.GetCurrentCost()
-	case CostTypeFocus:
-		return spell.Unit.CurrentFocus() >= spell.Cost.GetCurrentCost()
-	}
-	return true
+	return !spell.extraCastConditionNeedsEvent || spell.ExtraCastCondition(sim, target.Get())
 }
 
 // castableNotBefore is the earliest time CanCast could return true when nothing happens in the
@@ -239,12 +314,16 @@ func (spell *Spell) castableNow(sim *Simulation) bool {
 //
 // Rage and focus only come with an event (a hit, a focus tick), so when we lack them, nothing
 // changes until one. Under Forever energy comes at a steady rate, so we know when we will have
-// enough. We leave mana to CanCast, because its check also keeps track of the time we spend out
-// of mana.
-func (spell *Spell) castableNotBefore(sim *Simulation) time.Duration {
+// enough. Mana also comes at a steady rate, but its check keeps track of the time we spend out of
+// mana, see manaBar.castableNotBefore. The spell's own condition we only look at when it says it
+// changes only with an event, like Hammer of Wrath's execute phase.
+func (spell *Spell) castableNotBefore(sim *Simulation, target *Unit) time.Duration {
 	t := sim.CurrentTime
 	if spell == nil {
 		return t
+	}
+	if spell.extraCastConditionNeedsEvent && !spell.ExtraCastCondition(sim, target) {
+		return NeverExpires
 	}
 	if spell.DefaultCast.GCD > 0 {
 		t = max(t, spell.Unit.GCD.ReadyAt())
@@ -266,8 +345,32 @@ func (spell *Spell) castableNotBefore(sim *Simulation) time.Duration {
 		if spell.Unit.CurrentFocus() < spell.Cost.GetCurrentCost() {
 			return NeverExpires
 		}
+	case CostTypeMana:
+		t = max(t, spell.Unit.manaBar.castableNotBefore(sim, spell))
 	}
 	return t
+}
+
+// castableNotBefore is the earliest time a spell that costs mana could pass its mana check when
+// nothing happens in the sim before then, or the current time when we can't tell.
+//
+// The check has side effects (ManaCost.MeetsRequirement). When we lack the mana, it starts the
+// time we count as out of mana, and when we have it, it ends that time. So we can only tell
+// while we're already out of mana and still lack it, because then the check changes nothing,
+// and it stays that way until regen brings us the mana.
+func (mb *manaBar) castableNotBefore(sim *Simulation, spell *Spell) time.Duration {
+	if !mb.IsOOM() {
+		return sim.CurrentTime
+	}
+	cost := spell.Cost.GetCurrentCost()
+	if cost <= 0 || mb.unit.CurrentMana() >= cost {
+		return sim.CurrentTime
+	}
+	rate, until := mb.manaPerSecond(sim)
+	if rate <= 0 {
+		return until
+	}
+	return min(until, sim.CurrentTime+DurationFromSeconds((cost-mb.unit.CurrentMana())/rate)-aplIdleMargin)
 }
 
 // gainedNotBefore is the earliest time we have gained the given energy when nothing happens in
@@ -564,6 +667,11 @@ func (value *APLValueCurrentComboPoints) trend(_ *Simulation) (float64, time.Dur
 }
 
 func (value *APLValueIsExecutePhase) steadyUntil(_ *Simulation) time.Duration {
+	return NeverExpires
+}
+
+// We only get in or out of range with an event, see APLActionMove.
+func (value *APLValueInMeleeRange) steadyUntil(_ *Simulation) time.Duration {
 	return NeverExpires
 }
 

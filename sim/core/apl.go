@@ -39,9 +39,12 @@ type APLRotation struct {
 	idleUntil   time.Duration
 	// Whether we couldn't tell that time, and nothing but our wake-ups happened since.
 	idleHopeless bool
-	// Room for noteIdle to sort the priority list by when each action could be ready.
-	idleOrder  []int
+	// Room for readyNotBefore to keep when each action could be ready.
 	idleBounds []time.Duration
+	// How many times we worked out that time, and how many checks it let us skip, over all
+	// iterations. See aplIdleMinSkips.
+	idleTries int
+	idleSkips int
 
 	// Validation warnings that occur during proto parsing.
 	// We return these back to the user for display in the UI.

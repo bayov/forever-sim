@@ -53,6 +53,8 @@ func (hunter *Hunter) getArcaneShotConfig(rank int, timer *core.Timer) core.Spel
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
 			return hunter.inRangedRange()
 		},
+		// We only get in or out of range with an event, like the PvP downtime.
+		ExtraCastConditionNeedsEvent: true,
 
 		CritDamageBonus: hunter.mortalShots(),
 

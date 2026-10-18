@@ -37,6 +37,12 @@ type SpellConfig struct {
 	Cast               CastConfig
 	ExtraCastCondition CanCastCondition
 
+	// ExtraCastConditionNeedsEvent says that once ExtraCastCondition is false, it stays false
+	// until something happens in the sim (a hit, an aura, the execute phase), not just as time
+	// passes. A rotation waiting for something to do then knows it can't cast the spell yet,
+	// see apl_idle.go.
+	ExtraCastConditionNeedsEvent bool
+
 	BonusHitRating  float64
 	BonusCritRating float64
 
@@ -117,6 +123,8 @@ type Spell struct {
 	CD                 Cooldown
 	SharedCD           Cooldown
 	ExtraCastCondition CanCastCondition
+
+	extraCastConditionNeedsEvent bool
 
 	castTimeFn func(spell *Spell) time.Duration // allows to override CastTime()
 
@@ -257,6 +265,8 @@ func (unit *Unit) RegisterSpell(config SpellConfig) *Spell {
 		CD:                 config.Cast.CD,
 		SharedCD:           config.Cast.SharedCD,
 		ExtraCastCondition: config.ExtraCastCondition,
+
+		extraCastConditionNeedsEvent: config.ExtraCastConditionNeedsEvent,
 
 		castTimeFn: config.Cast.CastTime,
 

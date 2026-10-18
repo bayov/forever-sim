@@ -80,6 +80,7 @@ func (paladin *Paladin) registerExorcism() {
 			ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
 				return target.MobType == proto.MobType_MobTypeDemon || target.MobType == proto.MobType_MobTypeUndead
 			},
+			ExtraCastConditionNeedsEvent: true,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				spell.CalcAndDealDamage(sim, target, sim.Roll(minDamage, maxDamage), spell.OutcomeMagicHitAndCrit)

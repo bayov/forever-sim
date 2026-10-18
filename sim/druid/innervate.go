@@ -71,5 +71,7 @@ func (druid *Druid) registerInnervateCD() {
 			// activating innervate from the smallest amount of mana possible.
 			return innervateTarget.CurrentMana() <= innervateManaThreshold && !druid.form.Matches(Cat|Bear)
 		},
+		// Mana only goes up as time passes, and we only change forms with a cast.
+		ShouldActivateNeedsEvent: true,
 	})
 }

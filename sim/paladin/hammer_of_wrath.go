@@ -73,6 +73,7 @@ func (paladin *Paladin) registerHammerOfWrath() {
 			ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
 				return sim.IsExecutePhase20()
 			},
+			ExtraCastConditionNeedsEvent: true,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				damage := sim.Roll(rank.minDamage, rank.maxDamage)
