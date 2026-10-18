@@ -1,9 +1,9 @@
-# Consumables report, pass 34
+# Consumables report, pass 35
 
-Master d70ef8ca3. Result: quiet, no findings.
+Master 209208949. Result: quiet, no findings.
 
-- Moved file: ui/enhancement_shaman/presets.ts. The diff only touches the Level 10 to 30 leveling plan
-  (DefaultLevelingPlan): a LevelingTalentRequirement import, a talent milestone string, a comment and
-  requiredTalents (Improved Ghost Wolf). No Consumes, buffs, debuffs, gear or enchants changed.
-- Wago latest 1.60 build is still 1.60.1.70450, so there is no new client build.
+- Moved file: ui/enhancement_shaman/presets.ts. The diff only extends the leveling plan (levels 10 to 60: talent milestones and comments). No Consumes, buffs, debuffs, enchants or gear sets changed.
+- scan.sh on master: banned, Revelation, trinkets and crit elixir sections all empty.
+- Class and consumes branches list as "ahead" only because of squash-merge history; nothing new in audited files beyond what pass 34 saw.
+- wago: latest 1.60 build is still 1.60.1.70450.
 - No open items.
