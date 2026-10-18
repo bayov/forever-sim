@@ -19,6 +19,10 @@ type Knob struct {
 	// often else the search tunes it.
 	Needs []string
 	Kind  KnobKind
+	// The knob's worth depends on the weapon imbue, so the search tries its values together
+	// with each imbue too. Windfury Totem does nothing next to Windfury Weapon, so from
+	// Windfury Weapon neither the totem alone nor Rockbiter alone would win.
+	WithImbue bool
 }
 
 // How often the leveling plan's rotation search tunes a knob.

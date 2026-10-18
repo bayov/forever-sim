@@ -20,7 +20,7 @@ import (
 // knobs that what's new there can change:
 //   - At the plan's first level, and at a new ability anchorEvery levels after we last did,
 //     every knob.
-//   - At a new ability, the rest and mana thresholds and the knobs of that ability.
+//   - At a new ability, the rest and mana thresholds, the imbue and the knobs of that ability.
 //   - At a new rank only, the thresholds, since the rank costs more mana.
 //
 // Each change is scored by the hours of up to bandSampleLevels levels of the range (its first
@@ -126,7 +126,8 @@ type rotationSearch struct {
 type rotationCandidate struct {
 	knobs aplkit.Knobs
 	imbue proto.WeaponImbue
-	// The knob it changes from the current, or "imbue", for combining winners.
+	// The knob it changes from the current, "imbue", or "imbue+" and a knob, for combining
+	// winners.
 	changed string
 }
 
@@ -199,13 +200,20 @@ func (rs *rotationSearch) knobsToTune(b *rotationBand) ([]aplkit.Knob, bool) {
 			out = append(out, knob)
 		}
 	}
-	newImbue := slices.ContainsFunc(imbueAbilities, func(x struct {
-		ability string
-		imbue   proto.WeaponImbue
-	}) bool {
-		return slices.Contains(b.added, x.ability)
-	})
-	return out, b.every || newImbue
+	// Any new ability can change which imbue is best, not only a new imbue. Windfury Totem at
+	// 32 makes Rockbiter beat Windfury Weapon again, say.
+	return out, b.every || len(b.added) > 0
+}
+
+// The knobs to try together with each imbue: the ones the range has the abilities for.
+func (rs *rotationSearch) imbueKnobs(b *rotationBand) []aplkit.Knob {
+	var out []aplkit.Knob
+	for _, knob := range rs.template.Knobs() {
+		if knob.WithImbue && slices.ContainsFunc(knob.Needs, func(a string) bool { return slices.Contains(b.abilities, a) }) {
+			out = append(out, knob)
+		}
+	}
+	return out
 }
 
 func (rs *rotationSearch) imbues(b *rotationBand) []proto.WeaponImbue {
@@ -302,8 +310,18 @@ func (rs *rotationSearch) tuneBand(b *rotationBand, talentsAt func(int32) string
 		}
 		if tuneImbue {
 			for _, imbue := range rs.imbues(b) {
-				if imbue != current.imbue {
-					candidates = append(candidates, rotationCandidate{knobs: current.knobs, imbue: imbue, changed: "imbue"})
+				if imbue == current.imbue {
+					continue
+				}
+				candidates = append(candidates, rotationCandidate{knobs: current.knobs, imbue: imbue, changed: "imbue"})
+				for _, knob := range rs.imbueKnobs(b) {
+					for _, v := range knob.Values() {
+						if v != current.knobs[knob.Name] {
+							next := maps(current.knobs)
+							next[knob.Name] = v
+							candidates = append(candidates, rotationCandidate{knobs: next, imbue: imbue, changed: "imbue+" + knob.Name})
+						}
+					}
 				}
 			}
 		}
@@ -318,20 +336,28 @@ func (rs *rotationSearch) tuneBand(b *rotationBand, talentsAt func(int32) string
 		best := winners[0]
 		// The best winner of each other knob, on top of the best one.
 		together := rotationCandidate{knobs: maps(best.c.knobs), imbue: best.c.imbue, changed: "together"}
-		seen := map[string]bool{best.c.changed: true}
+		seen := map[string]bool{}
+		for _, name := range strings.Split(best.c.changed, "+") {
+			seen[name] = true
+		}
+		combined := false
 		for _, w := range winners[1:] {
-			if seen[w.c.changed] {
+			names := strings.Split(w.c.changed, "+")
+			if slices.ContainsFunc(names, func(name string) bool { return seen[name] }) {
 				continue
 			}
-			seen[w.c.changed] = true
-			if w.c.changed == "imbue" {
-				together.imbue = w.c.imbue
-			} else {
-				together.knobs[w.c.changed] = w.c.knobs[w.c.changed]
+			for _, name := range names {
+				seen[name] = true
+				if name == "imbue" {
+					together.imbue = w.c.imbue
+				} else {
+					together.knobs[name] = w.c.knobs[name]
+				}
 			}
+			combined = true
 		}
 		next := best.c
-		if len(seen) > 1 {
+		if combined {
 			scores, err := rs.score(b, []rotationCandidate{current, best.c, together}, halvingSessions[len(halvingSessions)-1], talentsAt)
 			if err != nil {
 				return err

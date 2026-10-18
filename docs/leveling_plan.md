@@ -144,13 +144,17 @@ enhancement shaman's for now).
   levels. A range's rotation names the top ranks, so it casts each new rank as we learn it.
 - **Knobs.** A range tunes only the knobs its levels can change. The first range, and a new
   ability 15 levels after we last did, tune every knob. A new ability tunes the rest and mana
-  thresholds and that ability's knobs (`Knob.Needs`). A new rank only tunes the thresholds,
+  thresholds, the imbue and that ability's knobs (`Knob.Needs`). A new rank only tunes the thresholds,
   since the rank costs more mana. The other knobs carry over from the range before.
 - **Elimination.** Each round tries every one-knob change of the range's knobs (a threshold
   only within 2 steps of where it is). All start at 50 sessions on up to 3 of the range's
   levels (only its first for a new rank), and the best quarter goes on to 200, then 800. A
   change wins when it saves more than its noise at 800. We take the best winner, or the best
   of each knob together when that saves more. A range makes up to 3 rounds (1 for a new rank).
+  A knob whose worth depends on the imbue (`Knob.WithImbue`, the air totem) is also tried
+  together with each other imbue. Windfury Totem does nothing next to Windfury Weapon, so
+  from Windfury Weapon neither the totem alone nor Rockbiter alone wins, but the two together
+  do.
 - **Later passes** keep the knobs of a range whose levels and talents stayed the same, and
   start the others from the pass before.
 - **The numbers we show** compare the route with its rotations against the plan's talents
@@ -160,14 +164,24 @@ enhancement shaman's for now).
 
 Template rules past 30 (2026-10-18), off by default so the Level 30 rotations stay as they
 were: Lightning Bolt at a number of Maelstrom Weapon stacks, Chain Lightning with a number of
-mobs on us, and Grace of Air or Windfury Totem.
+mobs on us, Grace of Air or Windfury Totem, Healing Stream Totem in place of Mana Spring Totem,
+and Lava Burst for a route that takes the Elemental talent. Frost Shock has no rule, because
+its slow does nothing in the sim: our mobs don't flee and we never kite.
 
 The first run (2026-10-18, enhancement shaman, the spec's plan, 10 to 60, 3 passes, 20 min):
 the plan's talents and rotations take 123h 42m. The rotations found take 112h 27m with the
 same talents, and with the route 107h 48m, 15h 54m faster (±3m). Past 30 they take Windfury
-Weapon and Windfury Totem at 32, then at 42 Flametongue Weapon with Windfury Totem in place of
+Weapon at 32, then at 42 Flametongue Weapon with Windfury Totem in place of
 Strength of Earth Totem, and Lightning Bolt at 5 Maelstrom Weapon stacks. The respecs save
 nothing. A 10 to 30 run takes 6 min and saves 37 minutes, 31 of them the rotations'.
+
+That run missed Rockbiter with Windfury Totem at 32, because it tried the imbue and the air
+totem only one at a time, and it didn't tune the imbue at 32. With both fixed and the new rules
+(2026-10-18, 28 min): the rotations found take 111h 2m with the plan's talents, and 105h 48m
+with the route, 17h 55m faster than the plan (±3m). They take Healing Stream Totem from 20 to
+24, Rockbiter with Windfury Totem from 32 (about 5% faster a level than Windfury Weapon there),
+and Flametongue Weapon with Windfury Totem from 42, without Strength of Earth Totem. The
+respecs still save nothing.
 
 ## The run
 
@@ -207,7 +221,7 @@ than they should be.
 ## Open
 
 - A sim history for the Leveling mode.
-- Rotation templates for the other specs, and more rules past 30 (Frost Shock, Healing Stream
-  Totem, Lava Burst).
+- Rotation templates for the other specs.
+- Fleeing mobs in the leveling sim, which Frost Shock would be for.
 - Leveling stat weights above 30, for the gear plan.
 - Forever's XP table.
