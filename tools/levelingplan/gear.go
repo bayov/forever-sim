@@ -78,7 +78,7 @@ const (
 	emptySlotPreferred = 0.01
 )
 
-var dungeonRunLevels = []int32{1, 3}
+var dungeonRunLevels = []int32{1}
 
 var levelingDungeons = []struct {
 	zoneID  int32

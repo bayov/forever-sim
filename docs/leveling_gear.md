@@ -28,10 +28,11 @@ We don't take the best item for each level. While leveling we gear up as we go:
   take the best of 3 for us (`QUEST_CHOICES`). That's where the plan picks what our spec wants.
   The rest are drops, with whatever stats they have.
 - **Dungeons.** We run the dungeons of our faction (`LEVELING_DUNGEONS`) with an 80% chance
-  each, twice: 1 and 3 levels after the lowest level their loot needs. Each boss drops one
-  item from its own loot, or two half the time, and we win an item we'd wear half the time,
-  since the group rolls on it too. So Ragefire Chasm's blues come at 14 and 16, and Ruins of
-  Lordaeron's (a Forever dungeon) at 16 and 18. Boss loot isn't a find out in the world.
+  each, once: 1 level after the lowest level their loot needs. A second run is rare while
+  leveling. Each boss drops one item from its own loot, or two half the time, and we win an
+  item we'd wear half the time, since the group rolls on it too. So Ragefire Chasm's blues
+  come at 14, and Ruins of Lordaeron's (a Forever dungeon) at 16. Boss loot isn't a find out
+  in the world.
 - **Wearing it.** We put a find on only when it beats what we wear in that slot, by the stat
   weights at that level. Most finds don't, so a slot can keep a lucky blue for ten or twenty
   levels. A ring or a trinket replaces the weaker of the two, and a two-hander also takes the

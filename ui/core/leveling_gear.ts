@@ -27,8 +27,8 @@ import { Stats } from './proto_utils/stats.js';
 // Most finds are quest rewards, and there we pick the best of a few for our spec, the way an
 // enhancement shaman takes the mail with Strength over the cloth with Intellect. The rest are
 // drops, which have whatever stats they have. On top of those we run the dungeons of our
-// faction once or twice in their level range, and their bosses drop the blues that make a
-// big step, like Ragefire Chasm's at 13 or the axe from Ruins of Lordaeron.
+// faction once in their level range, and their bosses drop the blues that make a big step,
+// like Ragefire Chasm's at 13 or the axe from Ruins of Lordaeron.
 //
 // The items are real ones from the item database: one we could find at that level, of that
 // quality and for that slot, picked at random. A random suffix item rolls one of its
@@ -81,11 +81,12 @@ export const QUEST_SHARE = 0.6;
 export const QUEST_CHOICES = 3;
 
 // The dungeons we run while leveling, if our faction goes there. Each one we run with this
-// chance, twice: 1 and 3 levels after the lowest level its loot needs. Each boss drops one item
+// chance, once: 1 level after the lowest level its loot needs. A second run is rare while
+// leveling, so what we didn't get on the first one we don't get. Each boss drops one item
 // from its own loot, or two half the time, and we win an item we'd wear with WIN_CHANCE, since
 // others in the group roll on it too. Raids and battlegrounds aren't here.
 export const DUNGEON_RUN_CHANCE = 0.8;
-export const DUNGEON_RUN_LEVELS = [1, 3];
+export const DUNGEON_RUN_LEVELS = [1];
 export const DUNGEON_WIN_CHANCE = 0.5;
 export const LEVELING_DUNGEONS: Array<{ zoneId: number; faction?: Faction }> = [
 	{ zoneId: 2437, faction: Faction.Horde }, // Ragefire Chasm, in Orgrimmar
