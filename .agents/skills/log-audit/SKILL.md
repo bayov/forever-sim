@@ -26,6 +26,9 @@ open:
 - **An hourly run** (the scheduled prompt `/log-audit hourly`): run the audit, triage only the
   new windows, and collect what we find in `tools/logcheck/findings.md` (section 6). The user
   may be away, so it changes nothing else.
+- **`/log-audit daily`**: the same as `/log-audit`, but the unattended runs come once a day
+  (cron like `13 9 * * *`, still with the prompt `/log-audit hourly`) instead of every hour.
+  When an hourly job is already scheduled, replace it.
 - **`/log-audit stop`**: delete the hourly job (CronList, then CronDelete) and say so.
 
 ## 1. Run the audit
