@@ -23,7 +23,7 @@ Run everything from the repo root.
 go build -tags=with_db -o /tmp/rotopt ./tools/rotopt
 ```
 
-Pick the template and settings. Today: `shaman_enh_leveling` (`tools/rotopt/shaman_enh_leveling.go`)
+Pick the template and settings. Today: `shaman_enh_leveling` (`tools/rotopt/aplkit/shaman_enh_leveling.go`)
 with `tools/rotopt/leveling/level30_enh_solo.json` (the Level 30 Enhancement preset's gear and
 talents, solo: no party or raid buffs, no starting totems, no explosives or potions; level 29 to
 31 mobs). For another level or class, make a settings file the same way and say so in the docs.

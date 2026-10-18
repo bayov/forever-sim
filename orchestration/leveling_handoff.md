@@ -66,7 +66,7 @@ is the first class done end to end.
 | APL | `sim/core/apl_values_leveling.go`, `sim/core/apl_action.go`, `proto/apl.proto`; UI `ui/core/components/individual_sim_ui/apl_values.ts`, `apl_actions.ts` |
 | Shaman totems | `sim/shaman/totems.go`, `totem_reach.go`, `earth_totems.go` |
 | Tests | `sim/core/leveling_test.go`, `leveling_world_test.go`, `sim/shaman/enhancement/leveling_*_test.go`, `tools/rotopt/leveling_test.go` |
-| Optimizer | `tools/rotopt/leveling.go` (scoring, `-session` summary), `apl_leveling.go` (APL helpers), `shaman_enh_leveling.go` (template and knobs), `leveling/level30_enh_solo.json` (settings), `leveling/shaman_enh_leveling_30.apl.json` (best rotation) |
+| Optimizer | `tools/rotopt/leveling.go` (scoring, `-session` summary), `aplkit/apl_leveling.go` (APL helpers), `aplkit/shaman_enh_leveling.go` (template and knobs, shared with tools/levelingplan), `leveling/level30_enh_solo.json` (settings), `leveling/shaman_enh_leveling_30.apl.json` (best rotation) |
 | Auditor | `orchestration/auditor_leveling.md` (brief), `orchestration/leveling_audit_log.md` (what was tried) |
 | Loop skill | `.agents/skills/leveling-opt/SKILL.md` (`.claude/skills` links to it) |
 

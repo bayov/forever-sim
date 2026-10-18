@@ -18,7 +18,7 @@ The prompt that starts you names:
 
 - the settings file (character, gear, talents, session options), for example
   `tools/rotopt/leveling/level30_enh_solo.json`;
-- the template (for example `shaman_enh_leveling`, in `tools/rotopt/shaman_enh_leveling.go`)
+- the template (for example `shaman_enh_leveling`, in `tools/rotopt/aplkit/shaman_enh_leveling.go`)
   and the knob values the optimizer found;
 - the optimized rotation JSON, and its score with the standard error;
 - what earlier audits already tried, so you don't repeat it.

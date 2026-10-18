@@ -213,6 +213,16 @@ func healRankIDs(ranks []healRank) []int32 {
 	return ids
 }
 
+// HealRankLevels are the levels a shaman learns each rank of a heal at (HealingWaveRanks,
+// LesserHealingWaveRanks), with 0 for rank 0 like the other spells' level tables.
+func HealRankLevels(ranks []healRank) []int32 {
+	levels := make([]int32, len(ranks))
+	for i, r := range ranks {
+		levels[i] = r.learnLevel
+	}
+	return levels
+}
+
 // TopHealRankID is the spell ID of a heal's top rank (HealingWaveRanks,
 // LesserHealingWaveRanks) once a shaman of this level knows any rank of it, 0 before. A
 // rotation that names it casts the highest rank the shaman knows (core.TopRankID).
