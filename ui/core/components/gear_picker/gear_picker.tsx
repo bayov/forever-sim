@@ -3,6 +3,7 @@ import { ref } from 'tsx-vanilla';
 import { setItemQualityCssClass } from '../../css_utils';
 import { Player } from '../../player';
 import { ItemSlot, ItemSpec } from '../../proto/common';
+import { UIItem } from '../../proto/ui';
 import { ActionId } from '../../proto_utils/action_id';
 import { getEnchantDescription } from '../../proto_utils/enchants';
 import { EquippedItem } from '../../proto_utils/equipped_item';
@@ -16,6 +17,7 @@ import { itemLink, enchantLink } from './item_links';
 import { hideTooltipIconsWhileHovered } from './item_comparison';
 import { GearData } from './item_list';
 import SelectorModal, { SelectorModalOptions, SelectorModalTabs } from './selector_modal';
+import { hiddenStatsBadge } from './hidden_stats';
 import { getEmptySlotIconUrl } from './utils';
 
 export default class GearPicker extends Component {
@@ -71,6 +73,8 @@ export class ItemRenderer extends Component {
 	readonly nameElem: HTMLAnchorElement;
 	readonly ilvlElem: HTMLSpanElement;
 	readonly enchantElem: HTMLAnchorElement;
+	readonly iconWrapperElem: HTMLDivElement;
+	private hiddenStatsElem: HTMLElement | null = null;
 
 	constructor(parent: HTMLElement, root: HTMLElement, player: Player<any>) {
 		super(parent, 'item-picker-root', root);
@@ -80,9 +84,10 @@ export class ItemRenderer extends Component {
 		const nameElem = ref<HTMLAnchorElement>();
 		const ilvlElem = ref<HTMLSpanElement>();
 		const enchantElem = ref<HTMLAnchorElement>();
+		const iconWrapperElem = ref<HTMLDivElement>();
 		this.rootElem.appendChild(
 			<>
-				<div className="item-picker-icon-wrapper">
+				<div className="item-picker-icon-wrapper" ref={iconWrapperElem}>
 					<span className="item-picker-ilvl" ref={ilvlElem} />
 					<a ref={iconElem} className="item-picker-icon" href="javascript:void(0)" attributes={{ role: 'button' }}></a>
 				</div>
@@ -97,6 +102,13 @@ export class ItemRenderer extends Component {
 		this.nameElem = nameElem.value!;
 		this.ilvlElem = ilvlElem.value!;
 		this.enchantElem = enchantElem.value!;
+		this.iconWrapperElem = iconWrapperElem.value!;
+	}
+
+	private setHiddenStats(item: UIItem | null) {
+		this.hiddenStatsElem?.remove();
+		this.hiddenStatsElem = item ? hiddenStatsBadge(item, 'item-picker-hidden-stats') : null;
+		if (this.hiddenStatsElem) this.iconWrapperElem.appendChild(this.hiddenStatsElem);
 	}
 
 	clear() {
@@ -113,6 +125,7 @@ export class ItemRenderer extends Component {
 		this.nameElem.innerText = '';
 		this.ilvlElem.innerText = '';
 		this.enchantElem.innerText = '';
+		this.setHiddenStats(null);
 	}
 
 	update(newItem: EquippedItem) {
@@ -124,6 +137,7 @@ export class ItemRenderer extends Component {
 		}
 
 		setItemQualityCssClass(this.nameElem, newItem.item.quality);
+		this.setHiddenStats(newItem.item);
 
 		this.player.setWowheadData(newItem, this.iconElem);
 		this.player.setWowheadData(newItem, this.nameElem);

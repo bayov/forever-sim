@@ -117,6 +117,12 @@
 		align-items: center;
 	}
 
+	// After the name, the mark on an item whose stats Forever still hides.
+	.selector-modal-list-item-hidden-stats {
+		margin-left: var(--spacer-2);
+		font-size: 1rem;
+	}
+
 	// The icon has a thin edge in the item's quality color.
 	.selector-modal-list-item-icon {
 		@include wowhead-background-icon;

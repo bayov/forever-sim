@@ -22,6 +22,7 @@ import { makePhaseSelector, makeShow1hWeaponsSelector, makeShow2hWeaponsSelector
 import Toast from '../toast';
 import { Clusterize } from '../virtual_scroll/clusterize';
 import { FiltersMenu } from './filters_menu';
+import { hiddenStatsBadge } from './hidden_stats';
 import { attachItemComparison, hideTooltipIconsWhileHovered } from './item_comparison';
 import { SelectorModalTabs } from './selector_modal';
 
@@ -470,6 +471,8 @@ export default class ItemList<T extends ItemListType> {
 							{itemData.name}
 						</label>
 					</a>
+					{this.label === SelectorModalTabs.Items &&
+						hiddenStatsBadge(itemData.item as unknown as UIItem, 'selector-modal-list-item-hidden-stats')}
 				</div>
 				{this.label === SelectorModalTabs.Items && (
 					<div className="selector-modal-list-item-source-container">{this.getSourceInfo(itemData.item as unknown as UIItem, this.player.sim)}</div>

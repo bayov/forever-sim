@@ -279,7 +279,9 @@ arrives as a hotfix, and the client keeps it in `Cache/ADB/enUS/DBCache.bin`.
   1,605 hidden items are in the sim with Classic's stats and 106 with only part of theirs.
   46 more are Forever items Wowhead lists with stats while our client still calls them
   hidden, so we can't tell where Wowhead's numbers come from. bayovui's `bis.py` marks all
-  of those in the BiS tab.
+  of those in the BiS tab. gen_db marks them too (`UIItem.hidden_stats`, from the
+  `hidden_items.json` of the last run, `tools/database/forever_hidden.go`), and the gear
+  picker shows an orange question mark on them whose tooltip says where the stats came from.
 - **Other players' finds reach us too.** A reveal is a hotfix the server sends every client
   at login, not only to the player who found the item. So our cache holds every item
   revealed server wide up to our last login (4,864 rows where foreverchanges.pro counts

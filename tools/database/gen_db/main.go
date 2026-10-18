@@ -193,6 +193,7 @@ func main() {
 	ApplyGlobalFilters(db)
 	AttachFactionInformation(db, wagoItems)
 	AttachItemSetIDs(db, wagoItems)
+	database.MarkHiddenStats(db, fmt.Sprintf("%s/hidden_items.json", dbDir))
 
 	leftovers := db.Clone()
 	ApplyNonSimmableFilters(leftovers)
