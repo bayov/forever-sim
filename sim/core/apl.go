@@ -29,6 +29,20 @@ type APLRotation struct {
 	// Used to avoid recursive APL loops.
 	inLoop bool
 
+	// Whether DoNextAction runs for the rotation's own wake-up, see apl_idle.go.
+	wakeUp bool
+	// When the last check found nothing to do: the sim's event count then, and the earliest
+	// time an action could be ready, once we worked it out. See canSkipCheck.
+	idle        bool
+	idleEvents  uint64
+	idleBounded bool
+	idleUntil   time.Duration
+	// Whether we couldn't tell that time, and nothing but our wake-ups happened since.
+	idleHopeless bool
+	// Room for noteIdle to sort the priority list by when each action could be ready.
+	idleOrder  []int
+	idleBounds []time.Duration
+
 	// Validation warnings that occur during proto parsing.
 	// We return these back to the user for display in the UI.
 	curWarnings          []string
@@ -169,6 +183,8 @@ func (rot *APLRotation) allPrepullActions() []*APLAction {
 func (rot *APLRotation) reset(sim *Simulation) {
 	rot.controllingActions = nil
 	rot.inLoop = false
+	rot.idle = false
+	rot.idleHopeless = false
 	rot.interruptChannelIf = nil
 	rot.allowChannelRecastOnInterrupt = false
 	for _, action := range rot.allAPLActions() {
@@ -190,11 +206,26 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 
 	if apl.shouldInterruptChannel(sim) {
 		apl.unit.ChanneledDot.Cancel(sim)
+		apl.idle = false
 	}
 
 	if apl.unit.IsChanneling(sim) {
 		return
 	}
+
+	if apl.canSkipCheck(sim) {
+		// This check would find nothing to do, like the one before it. We take back the event
+		// this wake-up counted, so the next one can skip its check too.
+		sim.events--
+		if sim.Log != nil {
+			apl.unit.Log(sim, "No available actions!")
+		}
+		if apl.unit.GCD.IsReady(sim) {
+			apl.unit.WaitUntil(sim, sim.CurrentTime+time.Millisecond*50)
+		}
+		return
+	}
+	apl.idle = false
 
 	i := 0
 	apl.inLoop = true
@@ -213,6 +244,9 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 	}
 	if i == 0 && sim.Encounter.leveling != nil {
 		sim.Encounter.leveling.onRotationIdle(sim, apl.unit)
+	}
+	if i == 0 {
+		apl.noteIdle(sim)
 	}
 
 	gcdReady := apl.unit.GCD.IsReady(sim)

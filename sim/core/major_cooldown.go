@@ -56,6 +56,12 @@ type MajorCooldown struct {
 	// automatic timing.
 	ShouldActivate CooldownActivationCondition
 
+	// Whether ShouldActivate, once it is false, stays false until something happens in the sim.
+	// That holds when it only looks at what changes with events, or at what only moves away from
+	// activating as time passes, like mana that regen fills up. A rotation waiting for something
+	// to do then knows this cooldown won't need it, see apl_idle.go.
+	ShouldActivateNeedsEvent bool
+
 	// Fixed timings at which to use this cooldown. If these are specified, they
 	// are used instead of ShouldActivate.
 	timings []time.Duration

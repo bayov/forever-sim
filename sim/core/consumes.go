@@ -1331,6 +1331,8 @@ func makeManaConsumableMCD(itemId int32, character *Character, cdTimer *Timer) M
 			totalRegen := character.ManaRegenPerSecondWhileCasting() * 2
 			return (character.MaxMana()-(character.CurrentMana()+totalRegen) >= maxRoll) && character.canUseItemsInForm()
 		},
+		// Regen only adds mana, so we only come to miss enough of it when we spend some.
+		ShouldActivateNeedsEvent: true,
 		Spell: character.GetOrRegisterSpell(SpellConfig{
 			ActionID: actionID,
 			Flags:    SpellFlagNoOnCastComplete,

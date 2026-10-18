@@ -9,6 +9,9 @@ import (
 type APLAction struct {
 	condition APLValue
 	impl      APLActionImpl
+	// The impl, when it can tell the earliest time it could be ready, see IsReady and
+	// apl_idle.go. Nil when it can't, or when the condition has side effects.
+	bound aplActionReadyBound
 }
 
 func (action *APLAction) Finalize(rot *APLRotation) {
@@ -16,9 +19,23 @@ func (action *APLAction) Finalize(rot *APLRotation) {
 	for _, value := range action.GetAllAPLValues() {
 		value.Finalize(rot)
 	}
+	if bound, ok := action.impl.(aplActionReadyBound); ok && !aplHasSideEffects(action.condition) {
+		action.bound = bound
+	}
 }
 
+// IsReady checks the condition first and the action second, but before both we take a quick
+// look at whether the action could be ready now.
+//
+// Most of the time a spell is on cooldown or we lack the energy or rage for it, and then we
+// skip the condition, which can be a deep tree of values. We can't simply check the action
+// before the condition, because its check isn't free of side effects: a spell we lack the
+// mana for starts the time we count as out of mana, and that should only happen for spells
+// the rotation wants to cast.
 func (action *APLAction) IsReady(sim *Simulation) bool {
+	if action.bound != nil && !action.bound.mayBeReadyNow(sim) {
+		return false
+	}
 	return (action.condition == nil || action.condition.GetBool(sim)) && action.impl.IsReady(sim)
 }
 

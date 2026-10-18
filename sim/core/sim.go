@@ -54,6 +54,11 @@ type Simulation struct {
 	// instead of after the player's reaction time. See Aura.SeenActive.
 	noReaction int32
 
+	// events counts what happens in the sim: each pending action, weapon swing, task and aura
+	// expiry, and each change of execute phase. A rotation that found nothing to do uses it to
+	// tell that nothing happened since, see APLRotation.canSkipCheck.
+	events uint64
+
 	executePhase int32 // 20, 25, or 35 for the respective execute range, 100 otherwise
 
 	executePhaseCallbacks []func(*Simulation, int32) // 2nd parameter is 35 for 35%, 25 for 25% and 20 for 20%
@@ -759,6 +764,7 @@ func (sim *Simulation) Step() bool {
 	if pa.cancelled {
 		return false
 	}
+	sim.events++
 	pa.OnAction(sim)
 	return false
 }
@@ -767,6 +773,7 @@ func (sim *Simulation) advanceWeaponAttacks() {
 	if sim.minWeaponAttackTime > sim.CurrentTime {
 		sim.advance(sim.minWeaponAttackTime)
 	}
+	sim.events++
 
 	sim.minWeaponAttackTime = NeverExpires
 	for _, wa := range sim.weaponAttacks {
@@ -778,6 +785,7 @@ func (sim *Simulation) advanceTasks() {
 	if sim.minTaskTime > sim.CurrentTime {
 		sim.advance(sim.minTaskTime)
 	}
+	sim.events++
 
 	sim.minTaskTime = NeverExpires
 	for _, t := range sim.tasks {
@@ -796,6 +804,7 @@ func (sim *Simulation) advance(nextTime time.Duration) {
 	// this is a loop to handle duplicate ExecuteProportions, e.g. if they're all set to 100%, you reach
 	// execute phases 35%, 25%, and 20% in the first advance() call.
 	for sim.CurrentTime >= sim.nextExecuteDuration || sim.Encounter.DamageTaken >= sim.nextExecuteDamage {
+		sim.events++
 		sim.nextExecutePhase()
 		for _, callback := range sim.executePhaseCallbacks {
 			callback(sim, sim.executePhase)
@@ -803,6 +812,7 @@ func (sim *Simulation) advance(nextTime time.Duration) {
 	}
 
 	if sim.CurrentTime >= sim.minTrackerTime {
+		sim.events++
 		sim.minTrackerTime = NeverExpires
 		for _, t := range sim.trackers {
 			sim.minTrackerTime = min(sim.minTrackerTime, t.tryAdvance(sim))

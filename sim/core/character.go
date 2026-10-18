@@ -487,6 +487,8 @@ func (character *Character) initialize(agent Agent) {
 		Priority: ActionPriorityGCD,
 		OnAction: func(sim *Simulation) {
 			if hc := &character.Hardcast; hc.Expires != startingCDTime && !character.IsCasting(sim) {
+				// The cast that completes is another event, on top of this wake-up.
+				sim.events++
 				hc.Expires = startingCDTime
 				if hc.OnComplete != nil {
 					hc.OnComplete(sim, hc.Target)
@@ -505,7 +507,7 @@ func (character *Character) initialize(agent Agent) {
 			}
 
 			if character.Rotation != nil {
-				character.Rotation.DoNextAction(sim)
+				character.Rotation.doNextActionOnWakeUp(sim)
 				return
 			}
 		},
