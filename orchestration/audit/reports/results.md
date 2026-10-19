@@ -1,6 +1,5 @@
-# Results pass 45 (master d70ef8ca3, quiet)
+# Results pass 47, master e6d1a5ad9
 
-Changed watched files since 06e84d595: assets/database/hidden_items.json (new hidden-item list), proto/ui.proto
-(LevelingTalentRequirement, leveling plan only), ui/enhancement_shaman/presets.ts (leveling plan talent order, Improved Ghost Wolf).
-None touch the level 60 requests. Shared run (/tmp/audit-work/runs/master, 66 requests, 20k, seed 1): compare_runs reports 0 of 66
-moved more than 0.5 DPS; vs_published has no gaps. No new findings.
+Quiet. Shared run (20k, seed 1) vs published: 66 of 66 within 0.15, none moved against ref/results/req_summary.txt.
+Watched changes (core apl/spell/consumes, hunter/paladin/druid/shaman spells, db, proto, web) moved no published number.
+mksettings unchanged since the last pass, so the drift check was not re-run; unread-fields not re-run.
