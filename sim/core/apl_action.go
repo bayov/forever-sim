@@ -19,8 +19,13 @@ func (action *APLAction) Finalize(rot *APLRotation) {
 	for _, value := range action.GetAllAPLValues() {
 		value.Finalize(rot)
 	}
-	if bound, ok := action.impl.(aplActionReadyBound); ok && !aplHasSideEffects(action.condition) {
+	if aplHasSideEffects(action.condition) {
+		return
+	}
+	if bound, ok := action.impl.(aplActionReadyBound); ok {
 		action.bound = bound
+	} else if bound, ok := action.impl.(APLActionReadyBound); ok {
+		action.bound = exportedReadyBound{bound}
 	}
 }
 

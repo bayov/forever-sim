@@ -148,6 +148,44 @@ func (s *levelingSession) distance(sim *Simulation, mob *Unit) float64 {
 	return math.Inf(1)
 }
 
+// still is whether nothing moves: we stand, and no mob we pulled is running at us. Then every
+// distance stays the same until something happens in the sim, since we only start to move and a
+// mob only starts to run with an event.
+func (s *levelingSession) still() bool {
+	if !s.vel.IsZero() {
+		return false
+	}
+	for _, mob := range s.env.Encounter.ActiveTargetUnits {
+		if s.mobs[mob.Index].state == mobRunning {
+			return false
+		}
+	}
+	return true
+}
+
+// inRangeNotBefore is the earliest time the mob could be within yards of us when nothing happens
+// in the sim before then. We and a mob running at us only turn with an event.
+func (s *levelingSession) inRangeNotBefore(sim *Simulation, mob *Unit, yards float64) time.Duration {
+	yards += levelingYardTolerance
+	m := &s.mobs[mob.Index]
+	var vel Vec2
+	switch m.state {
+	case mobFound:
+	case mobRunning:
+		vel = m.dir.Scale(mobRunSpeed(mob))
+	default:
+		return sim.CurrentTime
+	}
+	if s.distance(sim, mob) <= yards {
+		return sim.CurrentTime
+	}
+	t, ok := whenWithin(s.mobPosition(sim, mob).Sub(s.playerPosition(sim)), vel.Sub(s.vel), yards)
+	if !ok {
+		return NeverExpires
+	}
+	return max(sim.CurrentTime, sim.CurrentTime+DurationFromSeconds(t)-aplIdleMargin)
+}
+
 // aggroRadius is how close we can get to a mob before it notices us.
 func (s *levelingSession) aggroRadius(mob *Unit) float64 {
 	levelDiff := max(s.level-mob.Level, -25)
@@ -346,15 +384,25 @@ func (s *levelingSession) startPull(sim *Simulation) {
 // casting and hasn't moved for a second, we walk up to it until it notices us. That keeps a
 // rotation without pull lines grinding; one with them pulls or walks up within the second. In
 // combat the rotation looked for the mob, and it decides what to do with it.
-func (s *levelingSession) pollPull(sim *Simulation) {
+//
+// It says whether we set off.
+func (s *levelingSession) pollPull(sim *Simulation) bool {
 	mob := s.found
 	if mob == nil || s.state != levelingPulling || s.mobs[mob.Index].incoming {
-		return
+		return false
 	}
+	walked := false
 	if s.goal == goalNone && sim.CurrentTime-max(s.foundAt, s.stoppedAt) >= levelingFacePullAfter && !s.player.IsCasting(sim) {
 		s.walkToFound(sim, 0)
+		walked = true
 	}
-	s.after(sim, &s.next, levelingPullPoll, s.pollPull)
+	s.after(sim, &s.next, levelingPullPoll, func(sim *Simulation) {
+		// A poll that doesn't set us off changes nothing.
+		if !s.pollPull(sim) {
+			sim.NothingHappened()
+		}
+	})
+	return walked
 }
 
 // walkToFound walks up to the mob we found until we're within yards of it, or it notices us.

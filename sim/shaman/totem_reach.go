@@ -58,13 +58,16 @@ func (shaman *Shaman) setTotemAuraReach(slot int, aura *core.Aura) {
 		})
 }
 
-// checkTotemReach turns each standing totem's buff on or off by where we are.
-func (shaman *Shaman) checkTotemReach(sim *core.Simulation) {
+// checkTotemReach turns each standing totem's buff on or off by where we are, and says whether
+// it changed any.
+func (shaman *Shaman) checkTotemReach(sim *core.Simulation) bool {
+	changed := false
 	for slot, reach := range shaman.totemReaches {
 		if reach == nil || !shaman.totemIsDown(sim, slot) {
 			continue
 		}
 		if inReach := shaman.inTotemReach(sim, slot); inReach != reach.inReach {
+			changed = true
 			reach.inReach = inReach
 			if inReach {
 				reach.on(sim)
@@ -73,6 +76,7 @@ func (shaman *Shaman) checkTotemReach(sim *core.Simulation) {
 			}
 		}
 	}
+	return changed
 }
 
 // destroyTotems ends every totem we have down, as when we die or recall them.
@@ -106,8 +110,12 @@ func (shaman *Shaman) registerTotemReach() {
 	}
 	shaman.RegisterResetEffect(func(sim *core.Simulation) {
 		core.StartPeriodicAction(sim, core.PeriodicActionOptions{
-			Period:   totemReachCheck,
-			OnAction: shaman.checkTotemReach,
+			Period: totemReachCheck,
+			OnAction: func(sim *core.Simulation) {
+				if !shaman.checkTotemReach(sim) {
+					sim.NothingHappened()
+				}
+			},
 		})
 	})
 	shaman.RegisterLevelingDeathEffect(shaman.destroyTotems)

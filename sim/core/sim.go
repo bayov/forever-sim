@@ -769,6 +769,13 @@ func (sim *Simulation) Step() bool {
 	return false
 }
 
+// NothingHappened takes back the event that a pending action counted, for one that turned out
+// to change nothing the rotations see, like a check that finds nothing to do. Then the rotations
+// can go on skipping their checks (see APLRotation.canSkipCheck).
+func (sim *Simulation) NothingHappened() {
+	sim.events--
+}
+
 func (sim *Simulation) advanceWeaponAttacks() {
 	if sim.minWeaponAttackTime > sim.CurrentTime {
 		sim.advance(sim.minWeaponAttackTime)

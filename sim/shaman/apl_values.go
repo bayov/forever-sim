@@ -155,3 +155,40 @@ func (value *APLValueTotemRemainingTime) GetDuration(sim *core.Simulation) time.
 func (value *APLValueTotemRemainingTime) String() string {
 	return fmt.Sprintf("Totem Remaining Time(%s)", value.totemType.String())
 }
+
+// The totem's time left counts down until it expires, see core.APLValueTrend.
+func (value *APLValueTotemRemainingTime) Trend(sim *core.Simulation) (float64, time.Duration, bool) {
+	slot := totemSlot(value.totemType)
+	if slot < 0 {
+		return core.APLSteadyTrend()
+	}
+	return core.APLCountdownTrend(sim, value.shaman.TotemExpirations[slot])
+}
+
+// A totem stays where we dropped it, so the distance to it only changes while we move. Once the
+// totem expires the distance is 0, which happens as time passes, without an event.
+func (value *APLValueTotemDistance) Trend(sim *core.Simulation) (float64, time.Duration, bool) {
+	if value.shaman.IsMoving() {
+		return 0, sim.CurrentTime, false
+	}
+	slot := totemSlot(value.totemType)
+	if !value.shaman.totemIsDown(sim, slot) {
+		return core.APLSteadyTrend()
+	}
+	return 0, value.shaman.TotemExpirations[slot], true
+}
+
+// We only walk to a totem that stands, which only drops with an event. We only walk when we
+// stand, and then the distance to it stays the same. While we move we only stop with an event.
+func (action *APLActionWalkToTotem) ReadyNotBefore(sim *core.Simulation) time.Duration {
+	if action.IsReady(sim) {
+		return sim.CurrentTime
+	}
+	if action.within == nil {
+		return core.NeverExpires
+	}
+	return core.APLSteadyUntil(sim, action.within)
+}
+func (action *APLActionWalkToTotem) MayBeReadyNow(sim *core.Simulation) bool {
+	return action.shaman.totemIsDown(sim, action.slot)
+}

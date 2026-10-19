@@ -542,15 +542,25 @@ func (s *levelingSession) tick(sim *Simulation, dt time.Duration) {
 	if s.character.Race == proto.Race_RaceTroll {
 		regen *= trollHealthRegenMultiplier
 	}
+	healed := false
 	switch s.state {
 	case levelingSearching, levelingPulling, levelingResting, levelingBandaging:
 		if s.state == levelingResting {
 			regen *= sittingHealthRegenMultiplier
 		}
-		s.heal(sim, regen, s.healthMetrics)
+		healed = s.heal(sim, regen, s.healthMetrics)
 	case levelingCombat:
 		if s.character.Race == proto.Race_RaceTroll {
-			s.heal(sim, regen*trollCombatHealthRegen, s.healthMetrics)
+			healed = s.heal(sim, regen*trollCombatHealthRegen, s.healthMetrics)
+		}
+	}
+
+	switch s.state {
+	case levelingBandaging, levelingResting:
+	default:
+		// A tick that heals nothing, like each one in combat, changes nothing.
+		if !healed {
+			sim.NothingHappened()
 		}
 	}
 
@@ -565,11 +575,14 @@ func (s *levelingSession) tick(sim *Simulation, dt time.Duration) {
 	}
 }
 
-func (s *levelingSession) heal(sim *Simulation, amount float64, metrics *ResourceMetrics) {
+// heal heals us up to our max health, and says whether it healed anything.
+func (s *levelingSession) heal(sim *Simulation, amount float64, metrics *ResourceMetrics) bool {
 	amount = min(amount, s.player.MaxHealth()-s.player.CurrentHealth())
 	if amount > 0 {
 		s.player.GainHealth(sim, amount, metrics)
+		return true
 	}
+	return false
 }
 
 // onPlayerDeath: the mobs on us leave, and we run back as a ghost.

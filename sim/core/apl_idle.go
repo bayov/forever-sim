@@ -32,12 +32,15 @@ const aplIdleMargin = time.Millisecond
 // time: a rogue waiting for energy skips about six. But a hunter's auto shots and pet attacks
 // come so often that it skips only about two, and then working it out costs more than it saves.
 //
-// So once a rotation has tried it aplIdleTries times, we stop when it skipped fewer than
-// aplIdleMinSkips checks each time. That only changes how fast we run, not what the rotation
-// does.
+// So each time a rotation has tried it aplIdleTries times, we look at how many checks it skipped
+// each time. When it's fewer than aplIdleMinSkips, we don't try for the next aplIdlePause
+// wake-ups, and then try again. A leveling rotation goes through stretches where it pays and
+// stretches where it doesn't, so we don't stop for good. That only changes how fast we run, not
+// what the rotation does.
 const (
 	aplIdleTries    = 200
 	aplIdleMinSkips = 3
+	aplIdlePause    = 2000
 )
 
 // doNextActionOnWakeUp is DoNextAction for the rotation's own wake-up (the GCD action), which may
@@ -62,13 +65,22 @@ func (apl *APLRotation) canSkipCheck(sim *Simulation) bool {
 	if !apl.idleBounded {
 		// When the last time we worked it out we couldn't tell, and nothing but our wake-ups
 		// happened since, we couldn't tell now either. So we don't try again until an event.
-		if apl.idleHopeless || (apl.idleTries >= aplIdleTries && apl.idleSkips < aplIdleMinSkips*apl.idleTries) {
+		if apl.idleHopeless {
+			return false
+		}
+		if apl.idlePause > 0 {
+			apl.idlePause--
 			return false
 		}
 		apl.idleBounded = true
-		apl.idleTries++
 		apl.idleUntil = apl.readyNotBefore(sim)
 		apl.idleHopeless = apl.idleUntil <= sim.CurrentTime
+		if apl.idleTries++; apl.idleTries == aplIdleTries {
+			if apl.idleSkips < aplIdleMinSkips*aplIdleTries {
+				apl.idlePause = aplIdlePause
+			}
+			apl.idleTries, apl.idleSkips = 0, 0
+		}
 	}
 	if sim.CurrentTime < apl.idleUntil {
 		apl.idleSkips++
@@ -79,8 +91,7 @@ func (apl *APLRotation) canSkipCheck(sim *Simulation) bool {
 
 // noteIdle is for a check that found nothing to do, see canSkipCheck.
 func (apl *APLRotation) noteIdle(sim *Simulation) {
-	// A leveling session moves us and the mobs around in ways the bounds don't know about.
-	if len(apl.controllingActions) != 0 || sim.Encounter.leveling != nil {
+	if len(apl.controllingActions) != 0 {
 		return
 	}
 	apl.idle = true
@@ -124,8 +135,8 @@ func (apl *APLRotation) readyNotBefore(sim *Simulation) time.Duration {
 		}
 		t := bounds[next]
 		bounds[next] = NeverExpires
-		if condition := apl.priorityList[next].condition; condition != nil && !condition.GetBool(sim) {
-			t = max(t, aplSteadyUntil(sim, condition))
+		if condition := apl.priorityList[next].condition; condition != nil {
+			t = max(t, aplFalseUntil(sim, condition))
 		}
 		if until = min(until, t); until <= sim.CurrentTime {
 			return sim.CurrentTime
@@ -142,6 +153,31 @@ type aplActionReadyBound interface {
 	mayBeReadyNow(sim *Simulation) bool
 }
 
+// APLActionReadyBound, APLValueSteady and APLValueTrend are aplActionReadyBound, aplValueSteady
+// and aplValueTrend for the actions and values of class packages, which can't have their
+// unexported methods.
+type APLActionReadyBound interface {
+	ReadyNotBefore(sim *Simulation) time.Duration
+	MayBeReadyNow(sim *Simulation) bool
+}
+type APLValueSteady interface {
+	SteadyUntil(sim *Simulation) time.Duration
+}
+type APLValueTrend interface {
+	Trend(sim *Simulation) (perSecond float64, until time.Duration, ok bool)
+}
+
+type exportedReadyBound struct {
+	APLActionReadyBound
+}
+
+func (b exportedReadyBound) readyNotBefore(sim *Simulation) time.Duration {
+	return b.ReadyNotBefore(sim)
+}
+func (b exportedReadyBound) mayBeReadyNow(sim *Simulation) bool {
+	return b.MayBeReadyNow(sim)
+}
+
 // readyNotBefore is the earliest time the action could be ready when nothing happens in the sim
 // before then, or the current time when we can't tell.
 func (action *APLAction) readyNotBefore(sim *Simulation) time.Duration {
@@ -149,10 +185,61 @@ func (action *APLAction) readyNotBefore(sim *Simulation) time.Duration {
 		return sim.CurrentTime
 	}
 	t := action.bound.readyNotBefore(sim)
-	if action.condition == nil || action.condition.GetBool(sim) {
+	if action.condition == nil {
 		return t
 	}
-	return max(t, aplSteadyUntil(sim, action.condition))
+	return max(t, aplFalseUntil(sim, action.condition))
+}
+
+// aplFalseUntil is how long a condition that is false stays false when nothing happens in the
+// sim. It returns the current time when the condition is true, or when we can't tell.
+//
+// It's the same as checking the condition and then asking aplSteadyUntil, but it looks at each
+// value once, and it stops as soon as it finds a false part of an AND that stays false until an
+// event, like no mob on us. Working out the bounds costs a lot less that way.
+func aplFalseUntil(sim *Simulation, value APLValue) time.Duration {
+	return aplHoldsUntil(sim, value, false)
+}
+
+// aplHoldsUntil is how long the condition keeps the given result, or the current time when it
+// doesn't have it now or we can't tell.
+func aplHoldsUntil(sim *Simulation, value APLValue, result bool) time.Duration {
+	switch v := value.(type) {
+	case *APLValueAnd:
+		// A false AND stays false while any of its false values does, and a true one stays true
+		// while all of its values do.
+		return aplLogicHoldsUntil(sim, v.vals, result, !result)
+	case *APLValueOr:
+		return aplLogicHoldsUntil(sim, v.vals, result, result)
+	case *APLValueNot:
+		return aplHoldsUntil(sim, v.val, !result)
+	}
+	if value.GetBool(sim) != result {
+		return sim.CurrentTime
+	}
+	return aplSteadyUntil(sim, value)
+}
+
+// aplLogicHoldsUntil is aplHoldsUntil for the values of an AND or an OR. When any is enough, the
+// result holds while any of the values keeps it (an AND that is false, an OR that is true).
+// Otherwise it holds while all of them keep it.
+func aplLogicHoldsUntil(sim *Simulation, vals []APLValue, result bool, any bool) time.Duration {
+	if any {
+		until := sim.CurrentTime
+		for _, val := range vals {
+			if until = max(until, aplHoldsUntil(sim, val, result)); until == NeverExpires {
+				break
+			}
+		}
+		return until
+	}
+	until := NeverExpires
+	for _, val := range vals {
+		if until = min(until, aplHoldsUntil(sim, val, result)); until <= sim.CurrentTime {
+			return sim.CurrentTime
+		}
+	}
+	return until
 }
 
 // aplHasSideEffects is whether evaluating the value can change the sim, so we must not skip it.
@@ -175,9 +262,10 @@ func aplHasSideEffects(value APLValue) bool {
 	return false
 }
 
+// A cast at the leveling session's Pull Target waits for one, which only comes with an event.
 func (action *APLActionCastSpell) readyNotBefore(sim *Simulation) time.Duration {
 	if action.target.IsDynamic() && action.target.Get() == nil {
-		return sim.CurrentTime
+		return NeverExpires
 	}
 	return action.spell.castableNotBefore(sim, action.target.Get())
 }
@@ -325,6 +413,18 @@ func (spell *Spell) castableNotBefore(sim *Simulation, target *Unit) time.Durati
 	if spell.extraCastConditionNeedsEvent && !spell.ExtraCastCondition(sim, target) {
 		return NeverExpires
 	}
+	// We only get in or out of melee range with an event, see APLActionMove.
+	if spell.outOfPvPRange() {
+		return NeverExpires
+	}
+	if l := spell.Unit.Env.Encounter.leveling; l != nil {
+		if spell.Unit == l.player && l.sitting() {
+			return NeverExpires
+		}
+		if spell.MaxRange > 0 && target != nil && target.Type == EnemyUnit {
+			t = max(t, l.inRangeNotBefore(sim, target, spell.MaxRange))
+		}
+	}
 	if spell.DefaultCast.GCD > 0 {
 		t = max(t, spell.Unit.GCD.ReadyAt())
 	}
@@ -431,6 +531,9 @@ func aplSteadyUntil(sim *Simulation, value APLValue) time.Duration {
 	if steady, ok := value.(aplValueSteady); ok {
 		return max(sim.CurrentTime, steady.steadyUntil(sim))
 	}
+	if steady, ok := value.(APLValueSteady); ok {
+		return max(sim.CurrentTime, steady.SteadyUntil(sim))
+	}
 	if perSecond, until, ok := aplTrend(sim, value); ok && perSecond == 0 {
 		return max(sim.CurrentTime, until)
 	}
@@ -441,7 +544,22 @@ func aplTrend(sim *Simulation, value APLValue) (float64, time.Duration, bool) {
 	if trend, ok := value.(aplValueTrend); ok {
 		return trend.trend(sim)
 	}
+	if trend, ok := value.(APLValueTrend); ok {
+		return trend.Trend(sim)
+	}
 	return 0, sim.CurrentTime, false
+}
+
+// APLSteadyUntil, APLSteadyTrend and APLCountdownTrend are aplSteadyUntil, aplSteadyTrend and
+// aplCountdownTrend for class packages.
+func APLSteadyUntil(sim *Simulation, value APLValue) time.Duration {
+	return aplSteadyUntil(sim, value)
+}
+func APLSteadyTrend() (float64, time.Duration, bool) {
+	return aplSteadyTrend()
+}
+func APLCountdownTrend(sim *Simulation, at time.Duration) (float64, time.Duration, bool) {
+	return aplCountdownTrend(sim, at)
 }
 
 // aplNumber is a number value as a float, with durations in seconds.
@@ -658,6 +776,14 @@ func (value *APLValueCurrentManaPercent) trend(sim *Simulation) (float64, time.D
 	return perSecond / unit.MaxMana(), until, true
 }
 
+// Health only changes with a hit or a heal.
+func (value *APLValueCurrentHealth) trend(_ *Simulation) (float64, time.Duration, bool) {
+	return aplSteadyTrend()
+}
+func (value *APLValueCurrentHealthPercent) trend(_ *Simulation) (float64, time.Duration, bool) {
+	return aplSteadyTrend()
+}
+
 func (value *APLValueCurrentRage) trend(_ *Simulation) (float64, time.Duration, bool) {
 	return aplSteadyTrend()
 }
@@ -819,4 +945,83 @@ func usesRemainingSteadyUntil(sim *Simulation, spell *Spell, minTimeLeftValue AP
 		return until
 	}
 	return min(until, sim.CurrentTime+window-time.Duration(window/cooldown)*cooldown)
+}
+
+// In a leveling session (leveling.go) what the session is doing, the mob we found and the mobs we
+// pulled only change with an event. Distances change as we and the mobs move, but a spell out of
+// range only makes an action less ready, so the bounds still hold. Only a value that says how far
+// something is must look at whether anything moves.
+
+func (value *APLValueIsMoving) steadyUntil(_ *Simulation) time.Duration {
+	return NeverExpires
+}
+
+func (value *APLValueLevelingDistance) trend(sim *Simulation) (float64, time.Duration, bool) {
+	if l := sim.Encounter.leveling; l != nil && !l.still() {
+		return 0, sim.CurrentTime, false
+	}
+	return aplSteadyTrend()
+}
+
+func (value *APLValueLevelingMobsRunningIn) trend(_ *Simulation) (float64, time.Duration, bool) {
+	return aplSteadyTrend()
+}
+
+func (value *APLValueLevelingMobsOnUs) trend(_ *Simulation) (float64, time.Duration, bool) {
+	return aplSteadyTrend()
+}
+
+// aplOptionalSteadyUntil is aplSteadyUntil for a value an action may leave out.
+func aplOptionalSteadyUntil(sim *Simulation, value APLValue) time.Duration {
+	if value == nil {
+		return NeverExpires
+	}
+	return aplSteadyUntil(sim, value)
+}
+
+func (action *APLActionLevelingLookForMob) readyNotBefore(sim *Simulation) time.Duration {
+	if action.IsReady(sim) {
+		return sim.CurrentTime
+	}
+	return NeverExpires
+}
+func (action *APLActionLevelingLookForMob) mayBeReadyNow(sim *Simulation) bool {
+	return action.IsReady(sim)
+}
+
+// We only walk up to the Pull Target when we stand, and then the distance to it stays the same.
+// While we move we only stop with an event.
+func (action *APLActionLevelingWalkToPullTarget) readyNotBefore(sim *Simulation) time.Duration {
+	if action.IsReady(sim) {
+		return sim.CurrentTime
+	}
+	return aplOptionalSteadyUntil(sim, action.within)
+}
+func (action *APLActionLevelingWalkToPullTarget) mayBeReadyNow(sim *Simulation) bool {
+	return sim.Encounter.LevelingPullTarget() != nil
+}
+
+// A rest we don't need now we don't need until an event either: health only changes with a hit
+// or a heal, and mana only goes up as time passes.
+func (action *APLActionLevelingRest) readyNotBefore(sim *Simulation) time.Duration {
+	if action.IsReady(sim) {
+		return sim.CurrentTime
+	}
+	return min(aplOptionalSteadyUntil(sim, action.healthUntil), aplOptionalSteadyUntil(sim, action.manaUntil))
+}
+func (action *APLActionLevelingRest) mayBeReadyNow(sim *Simulation) bool {
+	s := sim.Encounter.leveling
+	return s != nil && s.outOfCombatState() && !s.player.IsCasting(sim)
+}
+
+// A bandage waits for Recently Bandaged to run out.
+func (action *APLActionLevelingBandage) readyNotBefore(sim *Simulation) time.Duration {
+	s := sim.Encounter.leveling
+	if s == nil || !s.outOfCombatState() || s.player.IsCasting(sim) || s.player.CurrentHealth() >= s.player.MaxHealth() {
+		return NeverExpires
+	}
+	return max(sim.CurrentTime, s.bandageReadyAt)
+}
+func (action *APLActionLevelingBandage) mayBeReadyNow(sim *Simulation) bool {
+	return sim.Encounter.LevelingBandageReady(sim)
 }

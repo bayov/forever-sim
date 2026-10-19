@@ -41,10 +41,11 @@ type APLRotation struct {
 	idleHopeless bool
 	// Room for readyNotBefore to keep when each action could be ready.
 	idleBounds []time.Duration
-	// How many times we worked out that time, and how many checks it let us skip, over all
-	// iterations. See aplIdleMinSkips.
+	// How many times we worked out that time, and how many checks it let us skip, in the current
+	// round of aplIdleTries, and how many more wake-ups we don't try for. See aplIdleMinSkips.
 	idleTries int
 	idleSkips int
+	idlePause int
 
 	// Validation warnings that occur during proto parsing.
 	// We return these back to the user for display in the UI.
@@ -222,6 +223,10 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 		sim.events--
 		if sim.Log != nil {
 			apl.unit.Log(sim, "No available actions!")
+		}
+		// The leveling session hears about it like about any check that finds nothing.
+		if sim.Encounter.leveling != nil {
+			sim.Encounter.leveling.onRotationIdle(sim, apl.unit)
 		}
 		if apl.unit.GCD.IsReady(sim) {
 			apl.unit.WaitUntil(sim, sim.CurrentTime+time.Millisecond*50)
