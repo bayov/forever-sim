@@ -24,6 +24,18 @@ type levelHours struct {
 	relativeError float64
 }
 
+// merged is the hours over the sessions of both sims, a over na sessions and b over nb.
+//
+// The hours come from the XP an hour, so we average that by sessions. Both are noise on the
+// same hours, so their noise adds up as for any average.
+func (a levelHours) merged(na int32, b levelHours, nb int32) levelHours {
+	wa, wb := float64(na), float64(nb)
+	return levelHours{
+		hours:         (wa + wb) / (wa/a.hours + wb/b.hours),
+		relativeError: math.Sqrt(wa*wa*a.relativeError*a.relativeError+wb*wb*b.relativeError*b.relativeError) / (wa + wb),
+	}
+}
+
 // One sim to run: a level with a talents string. A rotation search's job also has its own
 // rotation and imbue in place of the plan's at the level, or another plan's.
 type levelJob struct {

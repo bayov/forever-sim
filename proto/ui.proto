@@ -427,7 +427,8 @@ message LevelingPlanSearchRequest {
 	LevelingTalentShape talent_shape = 8;
 	// The levels we look for a respec at.
 	repeated int32 respec_levels = 9;
-	// The sessions of each sim during the search, and of the sims for the numbers we show.
+	// The sessions of each sim during the search, and the most sessions of the sims for the
+	// numbers we show (they stop once the noise is at most 0.1h).
 	int32 sessions = 10;
 	int32 confirm_sessions = 11;
 	// The UI's gear plan at each of the plan's levels, from from_level. The search makes the
@@ -496,6 +497,7 @@ message LevelingPlanSearchResult {
 	int32 from_level = 1;
 	int32 to_level = 2;
 	int32 sessions = 3;
+	// The sessions a level the confirm sims took to get the noise down.
 	int32 confirm_sessions = 4;
 	// The sims of a level the search ran, before the confirm sims.
 	int32 sims = 5;

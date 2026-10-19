@@ -17,6 +17,17 @@ import (
 // from the luck of the sessions the search picked the route on.
 const confirmSeedOffset = 7_777_777
 
+// confirmNoise is the most noise we want on each number the confirm sims show, in hours.
+//
+// The confirm sims only measure the route, the respecs and the rotations the search already
+// picked, so it doesn't change what we find. ±0.1h is about 6 minutes on a 10 to 60 plan of
+// about 97 hours, and it takes about 530 sessions a level there.
+//
+// We start with confirmFirstSessions a level, and sim more sessions only while a number's noise
+// is above confirmNoise, up to the request's confirm_sessions.
+const confirmNoise = 0.1
+const confirmFirstSessions = 200
+
 var errStopped = errors.New("Stopped.")
 
 // runSearch finds the best talent route over the plan's levels and the best respec at each
@@ -30,7 +41,8 @@ var errStopped = errors.New("Stopped.")
 //     level, and it can be the better route, like when it only moves a point the route could
 //     have put there too. Then a respec only shows what a respec saves.
 //  4. The route, the respecs and the plan's own talents and rotations again on other
-//     sessions, at confirm_sessions, for the numbers we show.
+//     sessions, for the numbers we show. We sim more sessions until their noise is at most
+//     confirmNoise, up to confirm_sessions.
 func runSearch(ctx context.Context, req *proto.LevelingPlanSearchRequest, p *planner, progress func(*proto.LevelingPlanSearchProgress)) *proto.LevelingPlanSearchResult {
 	started := time.Now()
 	plan := req.Plan
@@ -172,7 +184,6 @@ func runSearch(ctx context.Context, req *proto.LevelingPlanSearchRequest, p *pla
 		return fail(errStopped)
 	}
 
-	report(fmt.Sprintf("Simming the route and the respecs again with %d sessions a level", result.ConfirmSessions), inf)
 	// "own" is the plan's own rotations and "found" the ones we found. They're the same
 	// without rotation_search.
 	ownTag := "own"
@@ -208,16 +219,11 @@ func runSearch(ctx context.Context, req *proto.LevelingPlanSearchRequest, p *pla
 			add("found", level, search.talentsAt(r.route, level))
 		}
 	}
-	results, done := p.simLevels(ctx, jobs, result.ConfirmSessions, p.seed+confirmSeedOffset)
-	for i, job := range jobs {
-		if !done[i] {
-			return fail(errStopped)
-		}
-		tag := "found"
+	jobKey := func(job levelJob) string {
 		if job.plan != nil {
-			tag = "own"
+			return key("own", job.level, job.talents)
 		}
-		confirm[key(tag, job.level, job.talents)] = results[i]
+		return key("found", job.level, job.talents)
 	}
 	// Both play the same sessions, so their noise mostly cancels, and adding it up is the most
 	// it can be.
@@ -231,6 +237,48 @@ func runSearch(ctx context.Context, req *proto.LevelingPlanSearchRequest, p *pla
 		}
 		return hoursA, hoursB, 1.96 * math.Sqrt(variance)
 	}
+	worstNoise := func() float64 {
+		_, _, worst := compare(levels, "found", routeAt, ownTag, planAt)
+		if req.RotationSearch {
+			_, _, noise := compare(levels, "found", planAt, ownTag, planAt)
+			worst = max(worst, noise)
+		}
+		for _, r := range respecs {
+			respecAt := func(level int32) string { return search.talentsAt(r.route, level) }
+			_, _, noise := compare(levelsFrom(levels, r.level), "found", respecAt, "found", routeAt)
+			worst = max(worst, noise)
+		}
+		return worst
+	}
+	sessions := int32(0)
+	for round := int64(1); sessions < result.ConfirmSessions; round++ {
+		want := min(result.ConfirmSessions, confirmFirstSessions)
+		if sessions > 0 {
+			noise := worstNoise()
+			if noise <= confirmNoise {
+				break
+			}
+			// The noise goes down with the square root of the sessions. We aim a bit lower, so
+			// a second round is almost always the last.
+			want = min(result.ConfirmSessions, int32(math.Ceil(float64(sessions)*1.1*(noise/confirmNoise)*(noise/confirmNoise))))
+		}
+		report(fmt.Sprintf("Simming the route and the respecs again, %d sessions a level", want), inf)
+		// Each round plays new sessions, which both sides of a comparison share again.
+		results, done := p.simLevels(ctx, jobs, want-sessions, p.seed+round*confirmSeedOffset)
+		for i, job := range jobs {
+			if !done[i] {
+				return fail(errStopped)
+			}
+			k := jobKey(job)
+			if sessions == 0 {
+				confirm[k] = results[i]
+			} else {
+				confirm[k] = confirm[k].merged(sessions, results[i], want-sessions)
+			}
+		}
+		sessions = want
+	}
+	result.ConfirmSessions = sessions
 	result.Route = picksToProto(route)
 	result.RouteHours, result.PlanHours, result.Noise = compare(levels, "found", routeAt, ownTag, planAt)
 	if req.RotationSearch {
