@@ -98,6 +98,18 @@ its gold.
   There are too many of the last kind to sim each at every level, so we first guess each one
   from the build at the middle and the last level without the point and with the new one, and
   sim the best six at every level.
+- **Bigger changes** (`tools/levelingplan/escape.go`). The small changes can't move several
+  points far at once, like Tidal Focus 4 and 5 from 56 and 59 to 38 with Mindfulness after
+  them, because each step on the way is worse. So once the best start stops improving, we sim a
+  worth table: the hours at six levels with one point more in each talent we could take and one
+  less in each we have, the tree rules ignored. By that table we price two kinds of change, all
+  of a talent's points moved together to any place, and from any level going straight for a
+  talent with the points its row needs. We sim only the best four at every level, take the one
+  that saves the most, search on from it with the small changes, and do that up to three times.
+  On 2026-10-19, a route search of the enhancement plan from the old searched route found the
+  Restoration turn at 38 by itself: 104h 41m against 106h 20m without the bigger changes, in
+  222s against 179s. With the audited rotations it found 102h 37m against 103h 4m, in 272s
+  against 243s. The audited route is still 30 min faster than that.
 - **The same sessions.** Each level is simmed on its own seed, so two routes with the same
   talents at a level get the same hours there, and we sim each level and talents once. A search
   of the 10 to 30 plan takes 600 to 1,800 sims of a level at 50 sessions each.
@@ -302,10 +314,7 @@ build, and the "Level N Leveling Plan" rotations (the leveling optimizer's best 
   condition. The Maelstrom line used to hard cast Lightning Bolt all fight without the talent
   for that reason. It now checks Talent Points (4 or more in Maelstrom Weapon) first, which
   any line can use, but other lines on missing auras still act this way.
-- The route search: a move that takes a talent's points (or a run of picks) anywhere in the
-  route, and starts that go for a talent in another tree with the points it needs first. Both
-  would have found Mindfulness at 38. The rotation search should tune `maelstromStacks` again
-  at the 4th Maelstrom Weapon point.
+- The rotation search should tune `maelstromStacks` again at the 4th Maelstrom Weapon point.
 - Ghost Wolf's run speed between pulls isn't simmed, so Improved Ghost Wolf is worth nothing
   in the sim.
 - Leveling stat weights above 30, for the gear plan.

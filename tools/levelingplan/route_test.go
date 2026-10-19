@@ -157,3 +157,72 @@ func shamanShape(t *testing.T) *proto.LevelingTalentShape {
 	}
 	return shape
 }
+
+// TestRouteBigChanges: Mindfulness (Restoration, row 2) is worth a lot, but it needs 5
+// Restoration points first, and the row 1 talents there are worth almost nothing. Every small
+// change toward it is worse than the all Enhancement route, so the search without the bigger
+// changes never takes Mindfulness. With them it goes straight for it.
+func TestRouteBigChanges(t *testing.T) {
+	shape := shamanShape(t)
+	worth := func(tree, i int) float64 {
+		switch {
+		case tree == 2 && i == 2:
+			return 0.06
+		case tree == 2:
+			return 0.0005
+		case tree == 1:
+			return 0.01
+		}
+		return 0.002
+	}
+	hours := func(level int32, talents string) float64 {
+		v := 0.0
+		for tree, c := range parseTalents(talents, shape) {
+			for i, n := range c {
+				v += float64(n) * worth(tree, i)
+			}
+		}
+		return (1 + float64(level)/10) / (1 + v)
+	}
+	var levels []int32
+	for l := int32(10); l < 40; l++ {
+		levels = append(levels, l)
+	}
+	search := func(big bool) ([]pick, float64, int) {
+		s := &routeSearch{
+			shape:      shape,
+			levels:     levels,
+			ctx:        context.Background(),
+			cache:      map[string]levelHours{},
+			progress:   func(string, float64) {},
+			bigChanges: big,
+			sim: func(jobs []levelJob) ([]levelHours, []bool) {
+				out := make([]levelHours, len(jobs))
+				done := make([]bool, len(jobs))
+				for i, j := range jobs {
+					out[i], done[i] = levelHours{hours: hours(j.level, j.talents), relativeError: 0.001}, true
+				}
+				return out, done
+			},
+		}
+		route, err := s.search([][]pick{s.extend(nil, 1)}, levels)
+		if err != nil {
+			t.Fatal(err)
+		}
+		total := 0.0
+		for _, l := range levels {
+			total += s.hoursAt(l, s.talentsAt(route, l))
+		}
+		return route, total, s.sims
+	}
+	small, smallHours, smallSims := search(false)
+	big, bigHours, bigSims := search(true)
+	t.Logf("small changes: %.3fh, %d sims, %s", smallHours, smallSims, routeString(small))
+	t.Logf("bigger changes too: %.3fh, %d sims, %s", bigHours, bigSims, routeString(big))
+	if countOf(small, 2, 2) != 0 {
+		t.Fatalf("the small changes found Mindfulness, so this doesn't test the bigger ones")
+	}
+	if countOf(big, 2, 2) != 3 || bigHours >= smallHours {
+		t.Errorf("with the bigger changes: Mindfulness %d/3 and %.3fh, want 3/3 and less than %.3fh", countOf(big, 2, 2), bigHours, smallHours)
+	}
+}

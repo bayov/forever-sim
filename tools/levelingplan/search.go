@@ -80,7 +80,8 @@ func runSearch(ctx context.Context, req *proto.LevelingPlanSearchRequest, p *pla
 			sim: func(jobs []levelJob) ([]levelHours, []bool) {
 				return p.simLevels(ctx, jobs, result.Sessions, p.seed)
 			},
-			progress: func(inner string, best float64) { report(stage+": "+strings.ToLower(inner), best) },
+			progress:   func(inner string, best float64) { report(stage+": "+strings.ToLower(inner), best) },
+			bigChanges: true,
 		}
 	}
 

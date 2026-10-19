@@ -67,6 +67,9 @@ type routeSearch struct {
 	progress func(stage string, best float64)
 	cache    map[string]levelHours
 	sims     int
+	// Whether the best start also gets the bigger changes (escape.go). The UI's TS search had
+	// none, and TestRouteSearchMatchesTS keeps that search as it was.
+	bigChanges bool
 }
 
 func (s *routeSearch) pointsAt(level int32) int { return talentPointsAt(level, s.bonus) }
@@ -428,6 +431,9 @@ func (s *routeSearch) search(starts [][]pick, levels []int32) ([]pick, error) {
 		if s.stopped() {
 			break
 		}
+	}
+	if s.bigChanges && !s.stopped() {
+		best, _ = s.escape(best, bestHours, levels)
 	}
 	return best, nil
 }
