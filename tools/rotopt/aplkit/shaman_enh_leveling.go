@@ -31,6 +31,10 @@ import (
 //     Lightning and Lava Burst, an air totem, and Healing Stream Totem for the water one.
 //     Frost Shock has no rule, because its slow does nothing in the sim: our mobs don't flee
 //     and we never kite.
+//   - From the plan audit of 2026-10-19 (docs/leveling_plan.md, The audit), off by default:
+//     Stoneskin Totem for the earth totem, a gate on the target's health for in-combat pulls,
+//     Earth Shock a rank down, Searing Totem only while we stand or on a fresh target and
+//     dropped again past its 20 yards, and Flame Shock's DoT only on a fresh target.
 type ShamanEnhLeveling struct {
 	// The level we build the rotation for. It has the abilities we know there, by their top
 	// rank, which the sim casts as the highest rank we know (core.TopRankID). So it also
@@ -80,20 +84,39 @@ func (ShamanEnhLeveling) Knobs() []Knob {
 		// In combat, walk up to the mob we found only when it's within this many yards, and
 		// otherwise leave it for after the fight; 0 always walks up. Out of combat we always do.
 		{Name: "chainWalkMax", Default: 0, Min: 0, Max: 40, Step: 10, Kind: KnobSteady},
-		// Totems, once a mob is pulled. Fire: 0 none, 1 Flametongue, 2 Searing, 3 Magma
-		// with 2 mobs on us.
-		{Name: "strengthOfEarth", Default: 1, Min: 0, Max: 1, Step: 1, Needs: []string{"strengthOfEarth"}, Kind: KnobSteady},
+		// In combat, pull the mob we found above chainHealth and chainMana only while our
+		// target is under this share of its health; 100 off. Two mobs at full health on us
+		// is how the low levels die (the 2026-10-19 audit).
+		{Name: "chainTargetBelow", Default: 100, Min: 40, Max: 100, Step: 30, Kind: KnobThreshold},
+		// Totems, once a mob is pulled. Earth: 0 none, 1 Strength of Earth, 2 Stoneskin,
+		// which takes a few points off every mob swing, from earthMinPulled mobs pulled.
+		// Fire: 0 none, 1 Flametongue, 2 Searing, 3 Magma with 2 mobs on us.
+		{Name: "earthTotem", Default: 1, Min: 0, Max: 2, Step: 1, Needs: []string{"strengthOfEarth", "stoneskinTotem"}},
+		{Name: "earthMinPulled", Default: 1, Min: 1, Max: 2, Step: 1, Needs: []string{"strengthOfEarth", "stoneskinTotem"}},
 		{Name: "manaSpring", Default: 1, Min: 0, Max: 1, Step: 1, Needs: []string{"manaSpring"}},
 		{Name: "fireTotem", Default: 2, Min: 0, Max: 3, Step: 1, Needs: []string{"searingTotem", "magmaTotem", "flametongueTotem"}},
 		// Searing Totem: rank 1 (25 mana) or the top rank, and from how many mobs pulled.
 		{Name: "searingRank1", Default: 0, Min: 0, Max: 1, Step: 1, Needs: []string{"searingTotem"}, Kind: KnobSteady},
 		{Name: "searingMinPulled", Default: 2, Min: 1, Max: 2, Step: 1, Needs: []string{"searingTotem"}},
+		// Searing Totem only while we stand (1), since one dropped as we walk to the next mob
+		// is left behind. And with one mob pulled only while our target has more than
+		// searingFreshAbove of its health, since a totem for a mob about to die is wasted; 0 off.
+		{Name: "searingReach", Default: 15, Min: 15, Max: 20, Step: 5, Needs: []string{"searingTotem"}, Kind: KnobSteady},
+		{Name: "searingStill", Default: 0, Min: 0, Max: 1, Step: 1, Needs: []string{"searingTotem"}, Kind: KnobSteady},
+		{Name: "searingFreshAbove", Default: 0, Min: 0, Max: 40, Step: 40, Needs: []string{"searingTotem"}},
 		// When we've moved out of Mana Spring Totem's reach in a fight and it's still up, walk
 		// back to it (1) instead of dropping a new one (0).
 		{Name: "totemWalkBack", Default: 0, Min: 0, Max: 1, Step: 1, Needs: []string{"manaSpring"}, Kind: KnobSteady},
 		// The fight.
 		{Name: "shockMana", Default: 60, Min: 0, Max: 60, Step: 10, Kind: KnobThreshold},
+		// Earth Shock one rank under the highest we know (1), cheaper for its damage while
+		// mana is what we rest for. It names a fixed rank, so the search tunes it at each
+		// new rank.
+		{Name: "earthShockDownrank", Default: 0, Min: 0, Max: 1, Step: 1, Needs: []string{"earthShock"}, Kind: KnobThreshold},
+		// Flame Shock when its DoT is down (1), only while the target has more than
+		// flameShockFreshAbove of its health, so the DoT ticks out; 0 at any health.
 		{Name: "flameShock", Default: 0, Min: 0, Max: 1, Step: 1, Needs: []string{"flameShock"}},
+		{Name: "flameShockFreshAbove", Default: 0, Min: 0, Max: 70, Step: 35, Needs: []string{"flameShock"}},
 		{Name: "fireNova", Default: 1, Min: 0, Max: 1, Step: 1, Needs: []string{"fireNova"}},
 		{Name: "lightningShield", Default: 1, Min: 0, Max: 1, Step: 1, Needs: []string{"lightningShield"}, Kind: KnobSteady},
 		{Name: "combatHealBelow", Default: 30, Min: 0, Max: 50, Step: 10, Needs: []string{"healingWave", "lesserHealingWave"}, Kind: KnobThreshold},
@@ -115,6 +138,7 @@ func (ShamanEnhLeveling) Knobs() []Knob {
 
 func (t ShamanEnhLeveling) Build(k Knobs) *proto.APLRotation {
 	strengthOfEarth := topRankID(t.Level, shaman.StrengthOfEarthTotemLevel[:], shaman.StrengthOfEarthTotemSpellId[:])
+	stoneskinTotem := topRankID(t.Level, shaman.StoneskinTotemLevel[:], shaman.StoneskinTotemSpellId[:])
 	searingTotem := topRankID(t.Level, shaman.SearingTotemLevel[:], shaman.SearingTotemSpellId[:])
 	magmaTotem := topRankID(t.Level, shaman.MagmaTotemLevel[:], shaman.MagmaTotemSpellId[:])
 	flametongueTotem := topRankID(t.Level, shaman.FlametongueTotemLevel[:], shaman.FlametongueTotemSpellId[:])
@@ -179,7 +203,11 @@ func (t ShamanEnhLeveling) Build(k Knobs) *proto.APLRotation {
 	// We pull the mob we found once we're fit for it: in combat above the chain thresholds,
 	// out of combat once we don't need a rest. Until then it waits.
 	chainFit := And(Gt(CurrentHealthPercent(), Pct(k["chainHealth"])), Ge(CurrentManaPercent(), Pct(k["chainMana"])))
-	pullFit := Or(And(inCombat, chainFit), And(noMobs, Not(needRest)))
+	combatFit := chainFit
+	if k["chainTargetBelow"] > 0 && k["chainTargetBelow"] < 100 {
+		combatFit = And(chainFit, Lt(TargetHealthPercent(), Pct(k["chainTargetBelow"])))
+	}
+	pullFit := Or(And(inCombat, combatFit), And(noMobs, Not(needRest)))
 	if k["chainDyingBelow"] > 0 {
 		// The next mob as our target dies, while we're fit enough for one more.
 		pullFit = Or(pullFit, And(Eq(MobsPulled(), Num(1)),
@@ -259,8 +287,18 @@ func (t ShamanEnhLeveling) Build(k Knobs) *proto.APLRotation {
 	dropTotem := func(totem *proto.ActionID, slot proto.ShamanTotems_TotemType, reach float64, extra Value, notes string) {
 		items = append(items, Cast(totem, And(inCombat, extra, Or(Eq(TotemRemainingTime(slot), Num(0)), Gt(TotemDistance(slot), Num(reach)))), notes))
 	}
-	if k["strengthOfEarth"] == 1 {
-		dropTotem(strengthOfEarth, proto.ShamanTotems_Earth, 30, nil, "Strength of Earth Totem in combat.")
+	var earthPulled Value
+	earthNotes := " in combat."
+	if k["earthMinPulled"] >= 2 {
+		earthPulled, earthNotes = Ge(MobsPulled(), Num(k["earthMinPulled"])), " with two mobs pulled."
+	}
+	switch k["earthTotem"] {
+	case 1:
+		dropTotem(strengthOfEarth, proto.ShamanTotems_Earth, 30, earthPulled, "Strength of Earth Totem"+earthNotes)
+	case 2:
+		if stoneskinTotem.GetSpellId() != 0 {
+			dropTotem(stoneskinTotem, proto.ShamanTotems_Earth, 30, earthPulled, "Stoneskin Totem"+earthNotes+" It takes a few points off every mob swing.")
+		}
 	}
 	if waterTotem != nil {
 		if k["totemWalkBack"] == 1 {
@@ -278,7 +316,21 @@ func (t ShamanEnhLeveling) Build(k Knobs) *proto.APLRotation {
 		if k["searingRank1"] == 1 {
 			searing = SpellID(shaman.SearingTotemSpellId[1])
 		}
-		dropTotem(searing, proto.ShamanTotems_Fire, 15, Ge(MobsPulled(), Num(k["searingMinPulled"])), "Searing Totem with enough mobs pulled.")
+		cond := Ge(MobsPulled(), Num(k["searingMinPulled"]))
+		notes := "Searing Totem with enough mobs pulled."
+		if k["searingFreshAbove"] > 0 {
+			cond = And(cond, Or(Ge(MobsPulled(), Num(2)), Gt(TargetHealthPercent(), Pct(k["searingFreshAbove"]))))
+			notes += " With one, only while it has health left to burn."
+		}
+		if k["searingStill"] == 1 {
+			cond = And(cond, Not(IsMoving()))
+			notes += " Not while we walk, or it's left behind."
+		}
+		reach := k["searingReach"]
+		if reach == 0 {
+			reach = 15
+		}
+		dropTotem(searing, proto.ShamanTotems_Fire, reach, cond, notes)
 	case 3:
 		dropTotem(magmaTotem, proto.ShamanTotems_Fire, 4, Ge(MobsOnUs(), Num(2)), "Magma Totem with two mobs on us.")
 	}
@@ -314,9 +366,20 @@ func (t ShamanEnhLeveling) Build(k Knobs) *proto.APLRotation {
 		items = append(items, Cast(chainLightning, And(Ge(MobsOnUs(), Num(k["chainLightning"])), shockFloor), "Chain Lightning with enough mobs on us."))
 	}
 	if k["flameShock"] == 1 {
-		items = append(items, Cast(flameShock, And(inCombat, Not(DotIsActive(flameShock)), shockFloor), "Flame Shock when its DoT is down."))
+		var fresh Value
+		notes := "Flame Shock when its DoT is down."
+		if k["flameShockFreshAbove"] > 0 {
+			fresh, notes = Gt(TargetHealthPercent(), Pct(k["flameShockFreshAbove"])), "Flame Shock when its DoT is down, on a target with health left for it to tick out."
+		}
+		items = append(items, Cast(flameShock, And(inCombat, Not(DotIsActive(flameShock)), fresh, shockFloor), notes))
 	}
-	items = append(items, Cast(earthShock, And(inCombat, shockFloor), "Earth Shock otherwise."))
+	shock, shockNotes := earthShock, "Earth Shock otherwise."
+	if k["earthShockDownrank"] == 1 {
+		if rank := core.HighestRankAt(t.Level, toInt32(shaman.EarthShockLevel[:])); rank >= 2 {
+			shock, shockNotes = SpellID(shaman.EarthShockSpellId[rank-1]), "Earth Shock otherwise, a rank under our highest for its mana."
+		}
+	}
+	items = append(items, Cast(shock, And(inCombat, shockFloor), shockNotes))
 	if k["fireNova"] == 1 {
 		items = append(items, Cast(fireNova, And(Ge(MobsOnUs(), Num(2)), shockFloor), "Fire Nova with two mobs on us, around the fire totem."))
 	}
@@ -354,6 +417,7 @@ func (t ShamanEnhLeveling) Abilities(hasTalent func(name string) bool) []string 
 	learned("flameShock", toInt32(shaman.FlameShockLevel[:]))
 	learned("lightningShield", toInt32(shaman.LightningShieldLevel[:]))
 	learned("strengthOfEarth", toInt32(shaman.StrengthOfEarthTotemLevel[:]))
+	learned("stoneskinTotem", toInt32(shaman.StoneskinTotemLevel[:]))
 	learned("searingTotem", toInt32(shaman.SearingTotemLevel[:]))
 	learned("magmaTotem", toInt32(shaman.MagmaTotemLevel[:]))
 	learned("flametongueTotem", toInt32(shaman.FlametongueTotemLevel[:]))
@@ -384,7 +448,7 @@ func (t ShamanEnhLeveling) NewRank() bool {
 		shaman.HealRankLevels(shaman.HealingWaveRanks), shaman.HealRankLevels(shaman.LesserHealingWaveRanks),
 		toInt32(shaman.EarthShockLevel[:]), toInt32(shaman.FlameShockLevel[:]), toInt32(shaman.LightningShieldLevel[:]),
 		toInt32(shaman.LightningBoltLevel[:]), toInt32(shaman.ChainLightningLevel[:]), toInt32(shaman.FireNovaLevel[:]),
-		toInt32(shaman.StrengthOfEarthTotemLevel[:]), toInt32(shaman.SearingTotemLevel[:]), toInt32(shaman.MagmaTotemLevel[:]),
+		toInt32(shaman.StrengthOfEarthTotemLevel[:]), toInt32(shaman.StoneskinTotemLevel[:]), toInt32(shaman.SearingTotemLevel[:]), toInt32(shaman.MagmaTotemLevel[:]),
 		toInt32(shaman.FlametongueTotemLevel[:]), toInt32(shaman.ManaSpringTotemLevel[:]), toInt32(shaman.HealingStreamTotemLevel[:]),
 		toInt32(shaman.WindfuryTotemLevel[:]),
 		toInt32(shaman.GraceOfAirTotemLevel[:]),

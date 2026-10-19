@@ -56,7 +56,7 @@ import LevelingPlan15APLJSON from './apls/leveling_plan_15.apl.json';
 import LevelingPlan20APLJSON from './apls/leveling_plan_20.apl.json';
 import LevelingPlan25APLJSON from './apls/leveling_plan_25.apl.json';
 import LevelingPlan30APLJSON from './apls/leveling_plan_30.apl.json';
-import LevelingPlanSearchedJSON from './apls/leveling_plan_searched.json';
+import LevelingPlanAuditedJSON from './apls/leveling_plan_audited.json';
 import MagmaAPLJSON from './apls/magma.apl.json';
 import ManaTideAPLJSON from './apls/mana_tide.apl.json';
 import OptimizedAPLJSON from './apls/optimized.apl.json';
@@ -1676,22 +1676,23 @@ export const PresetBuildLevel30Leveling = PresetUtils.makePresetBuild('Level 30 
 // The leveling plan of the Leveling mode (ui/core/leveling_plan.ts), from level 10 to 60. We
 // grind up to 59, and 60 is where we stop.
 //
-// The talents and rotations are what the Talent search with Rotations too found from 10 to 60
-// (docs/leveling_plan.md, Rotation search, 2026-10-19): 107h 5m on the item data of that day.
-// The plan we had before 2026-10-18 took 123h 42m on the data then. The route takes
-// Thundering Strikes, Improved Ghost Wolf at 15 and 16 (required, for walking), Mental
-// Dexterity, Shamanistic Focus, Elemental Weapons and Stormstrike at 25, then Flurry, Improved
-// Stormstrike, Spirit Weapons, Tidal Focus, Maelstrom Weapon from 38 and Rage of the Farseer
-// at 43, and goes into Elemental from 44. No respec saved time. The rotations are the
-// search's "Searched 10" and so on, in one range for each level that changed something. They
-// play Rockbiter Weapon all the way, with Windfury Totem from 32.
+// The talents and rotations come from the 2026-10-19 audit of the searched plan
+// (docs/leveling_plan.md, The audit): agents read sessions at each level band, wrote new
+// rules into the rotations and tried other talent routes, and we kept what held on two seeds.
+// It takes 102h 8m, against 107h 5m for the search's plan. The route is the search's to 37
+// (Thundering Strikes, Improved Ghost Wolf at 15 and 16, required, for walking, Mental
+// Dexterity, Shamanistic Focus, Elemental Weapons, Stormstrike at 25, Flurry, Improved
+// Stormstrike, Spirit Weapons and Tidal Focus), then Tidal Focus 4 and 5 and Mindfulness at
+// 38 to 42, Maelstrom Weapon at 43 to 47, Rage of the Farseer at 48, and Convection and Call
+// of Flame after. The rotations are "Audited 10" and so on, one range for each level that
+// changed something, all on Rockbiter Weapon.
 export const DefaultLevelingPlan = LevelingPlanSettings.create({
 	fromLevel: 10,
 	toLevel: 60,
 	bonusTalentPoints: 0,
-	builds: [LevelingTalentBuild.create({ level: 10, picks: LevelingPlanSearchedJSON.route.map(pick => LevelingTalentPick.fromJson(pick as any)) })],
-	rotationLibrary: LevelingPlanSearchedJSON.rotationLibrary.map(preset => LevelingRotationPreset.fromJson(preset as any)),
-	rotations: LevelingPlanSearchedJSON.rotations.map(range => LevelingRotation.fromJson(range)),
+	builds: [LevelingTalentBuild.create({ level: 10, picks: LevelingPlanAuditedJSON.route.map(pick => LevelingTalentPick.fromJson(pick as any)) })],
+	rotationLibrary: LevelingPlanAuditedJSON.rotationLibrary.map(preset => LevelingRotationPreset.fromJson(preset as any)),
+	rotations: LevelingPlanAuditedJSON.rotations.map(range => LevelingRotation.fromJson(range)),
 	rotationsNameTopRanks: true,
 	// Improved Ghost Wolf as early as its row opens (15 and 16), for walking to quests and grind
 	// spots, which the grinding sessions don't sim.

@@ -203,6 +203,61 @@ more mana. Fire Nova goes off 7 to 10 times a session (a pull is 1.5 to 1.8 mobs
 matters. On it would save about a minute at 32 to 35, which the search misses because that
 range doesn't tune Fire Nova.
 
+## The audit
+
+The searches only reach what the template's knobs and the route moves can reach. On
+2026-10-19 we audited the searched enhancement plan (107h 5m) with agents instead: four read
+sample sessions in a level band each (10 to 19, 20 to 31, 32 to 44, 45 to 59), wrote new
+rules straight into the rotations and measured them, and one tried other talent routes. We
+kept a change only when it held at 4000 sessions on two seeds far apart. Together they take
+the plan to 102h 8m, 4h 57m less. The tools for it:
+
+- `levelingplan -in <request> -level-requests <dir>` writes the plan's request at each level
+  (its gear, talents, imbue and rotation), which `rotopt -settings <file> -apl <rotation>`
+  reads for `-session` and `-eval -objective xp`.
+- A script that runs that eval at every level and adds up the hours from the XP table. It
+  reproduces the plan's own total.
+
+What paid, by how much over its band:
+
+- **Stoneskin Totem in place of Strength of Earth Totem** at every level. Strength of Earth
+  does about nothing while leveling, and Stoneskin takes 4 to 7 points (more at higher ranks)
+  off every mob swing. Deaths were most of the time lost at 13 to 24, mostly in pulls of two
+  or three mobs. At 20 to 43 it pays from two mobs pulled, below and above that on every pull.
+- **Restoration at 38** (the talent auditor): Tidal Focus 4 and 5 at 38 and 39 and Mindfulness
+  at 40 to 42, before Maelstrom Weapon (43 to 47) and Rage of the Farseer (48). Mindfulness
+  keeps half our Spirit regen going while we cast, so rests get shorter. 2h 38m over 38 to 59
+  with the old rotations. The route search missed it for two reasons. Its moves reach only 3
+  places, and Tidal Focus 4 and 5 sat at 56 and 59. And any route that took Maelstrom Weapon
+  later broke the range rotations' Maelstrom line (Open).
+- **Convection and Call of Flame after 48** (the 45 to 59 auditor) beat the route's
+  Enhancement tail by 5 min, together with Flame Shock when its DoT is down from 55, which
+  pays once Call of Flame has points.
+- At 10 to 19: Earth Shock a rank under our highest at 14 to 19, and in combat we pull the
+  mob we found only once our target is under 70%. With Stoneskin, 17.7 min.
+- At 20 to 31: Flame Shock on a fresh target (above 70%), Searing Totem dropped again only
+  past 20 yards (its reach) instead of 15, no Fire Nova once rank 2 is what we'd cast (22),
+  Frost Shock rank 1 in place of Earth Shock at 22 to 24 (it hits harder than our Earth Shock
+  rank, and Stormstrike's mark only helps Earth Shock from 25), and Stormstrike above the
+  totems. With Stoneskin, 29 min.
+- At 32 to 44: Lightning Bolt at 5 Maelstrom Weapon stacks from the 4th point, not the 5th,
+  and Searing Totem with one mob pulled only while our target has more than 40% of its health.
+  With Stoneskin, 28 min.
+- At 45 to 59: Searing Totem only while we stand, since one dropped as we walk to the next mob
+  is left behind.
+
+Healing Stream Totem in place of Mana Spring Totem paid at 42 to 47 with Mindfulness and the
+old totems, but not once Stoneskin was in. The template now has knobs for these rules
+(`earthTotem`, `earthMinPulled`, `chainTargetBelow`, `searingStill`, `searingFreshAbove`,
+`earthShockDownrank`), with defaults that keep the old rotation. The auditors' tried lists are
+in `orchestration/leveling_audit_log.md`.
+
+The audit also found two sim bugs, now fixed with tests. Dot Is Active and Dot Remaining Time
+looked at the DoT on the target we had when the rotation was built, so in a session "Flame
+Shock when its DoT is down" recast Flame Shock on every cooldown (the reason the search
+turned the `flameShock` knob off). And Current Health and Current Health % of the Pull Target
+gave up when the rotation was built, before any mob was found.
+
 ## The run
 
 Simulate runs one grinding session request per level, each with the main iterations, then the
@@ -221,16 +276,19 @@ The last run stays in the browser's storage. The Leveling mode has no sim histor
 
 ## The enhancement shaman's plan
 
-`DefaultLevelingPlan` in `ui/enhancement_shaman/presets.ts`, since 2026-10-19 the route and
-rotations of the 10 to 60 rotation search (Rotation search, the third run): 107h 5m. The
-route and the ranges are in `ui/enhancement_shaman/apls/leveling_plan_searched.json`, with a
-range only where the rotation or the imbue changes. Thundering Strikes, Improved Ghost Wolf at
-15 and 16 (required), Mental Dexterity, Shamanistic Focus, Elemental Weapons, Stormstrike at 25,
-then Flurry, Improved Stormstrike, Spirit Weapons, Tidal Focus, Maelstrom Weapon from 38 and
-Rage of the Farseer at 43, and Elemental from 44. Rockbiter Weapon all the way, with Windfury
-Totem from 32.
+`DefaultLevelingPlan` in `ui/enhancement_shaman/presets.ts`, since 2026-10-19 the audited
+plan (The audit): 102h 8m. The route and the ranges are in
+`ui/enhancement_shaman/apls/leveling_plan_audited.json`, with a range only where the rotation
+changes. Thundering Strikes, Improved Ghost Wolf at 15 and 16 (required), Mental Dexterity,
+Shamanistic Focus, Elemental Weapons, Stormstrike at 25, then Flurry, Improved Stormstrike,
+Spirit Weapons and Tidal Focus, then Tidal Focus 4 and 5 and Mindfulness at 38 to 42,
+Maelstrom Weapon at 43 to 47, Rage of the Farseer at 48, and Convection, Anticipation, Call of
+Flame, Improved Lightning Shield and Flurry 5 after. Rockbiter Weapon all the way, with
+Windfury Totem from 32 and Stoneskin Totem for the earth totem.
 
-Before that it was the Level 30 Leveling build into Elemental toward the Level 60 + Imp GW
+Before the audit it was the route and rotations of the 10 to 60 rotation search (Rotation
+search, the third run): 107h 5m, in `leveling_plan_searched.json` (removed, it's in the
+history). Before that it was the Level 30 Leveling build into Elemental toward the Level 60 + Imp GW
 build, and the "Level N Leveling Plan" rotations (the leveling optimizer's best at 10, 15, 20,
 25 and 30, still in the rotation presets), with the Level 30 one up to 59. A run of 10 to 60
 (2026-10-18, 200 sessions a level) took about 120 hours, 19.4 of them from 10 to 30.
@@ -240,5 +298,15 @@ build, and the "Level N Leveling Plan" rotations (the leveling optimizer's best 
 - A sim history for the Leveling mode.
 - Rotation templates for the other specs.
 - Fleeing mobs in the leveling sim, which Frost Shock would be for.
+- A rotation line on an aura we don't have loses its condition (Aura Num Stacks of Maelstrom
+  Weapon without the talent), so the Maelstrom line hard casts Lightning Bolt all fight in a
+  range played without the talent. An aura value we can't find should read 0, or the template
+  should leave the line out without the talent.
+- The route search: a move that takes a talent's points (or a run of picks) anywhere in the
+  route, and starts that go for a talent in another tree with the points it needs first. Both
+  would have found Mindfulness at 38. The rotation search should tune `maelstromStacks` again
+  at the 4th Maelstrom Weapon point.
+- Ghost Wolf's run speed between pulls isn't simmed, so Improved Ghost Wolf is worth nothing
+  in the sim.
 - Leveling stat weights above 30, for the gear plan.
 - Forever's XP table.
