@@ -62,6 +62,7 @@ TALENTS = os.path.join(ROOT, 'tools', 'forever_talents', 'client')
 SCRAPES = [
     ('forever_wowhead_items.json', 7, 'the scrape-wowhead skill (items)'),
     ('forever_wowhead_recipes.json', 7, 'the scrape-wowhead skill (recipes)'),
+    ('forever_wowhead_class_spells.json', 7, 'the scrape-wowhead skill (class spells)'),
     ('foreverchanges_loot.json', 14, 'python3 tools/database/foreverchanges/scrape.py'),
     ('foreverchanges_suffixes.json', 14, 'python3 tools/database/foreverchanges/suffixes.py <max level> <cache dir>'),
 ]

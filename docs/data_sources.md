@@ -13,8 +13,10 @@ The `update-sources` skill (`.agents/skills/update-sources/`) is the procedure t
 fetchers below in order, regenerates the database and tests.
 
 bayovui (the WoW folder's addons) keeps its own registry in `bayovui/docs/data_sources.md`.
-It reads four things from us: `assets/database/db.json`, `ui/*/bis/*.bis.json`,
-`assets/db_inputs/forever_wowhead_items.json` and `forever_wowhead_recipes.json`.
+It reads these from us: `assets/database/db.json`, `ui/*/bis/*.bis.json`, the leveling plans
+(`ui/<spec>/presets.ts` and their `apls/leveling_plan_*.json`),
+`assets/db_inputs/forever_wowhead_items.json`, `forever_wowhead_recipes.json` and
+`forever_wowhead_class_spells.json`.
 
 ## Which source wins
 
@@ -34,8 +36,8 @@ report what the client says, so they rank with it when they show client data. Th
 - **Scraped inputs carry a `meta` block** as their first key: source, tool, fetch date (UTC),
   and Wowhead's dataEnv where it applies. `tools/sources/meta.py` writes and reads it, and
   `stale.py` reads a scrape's age from it rather than from the file's modification time.
-  Today that's the four scrapes we wrote ourselves: `forever_wowhead_items.json`,
-  `forever_wowhead_recipes.json`, `foreverchanges_loot.json` and
+  Today that's the scrapes we wrote ourselves: `forever_wowhead_items.json`,
+  `forever_wowhead_recipes.json`, `forever_wowhead_class_spells.json`, `foreverchanges_loot.json` and
   `foreverchanges_suffixes.json`. Their first blocks (2026-10-17) took the date of the commit
   that last changed each file.
 - **The 2024 Classic snapshots and the gametables carry nothing.** Their build is only in
@@ -153,18 +155,23 @@ report what the client says, so they rank with it when they show client data. Th
   trainer asks for each recipe and rank (`trainers`), the specialization each recipe asks
   for (`specializations`), and who sells each reagent, in what stock and for what
   (`reagents`). Its meta block's `oldestPage` is when the oldest page it used was fetched.
+  `class_spells.py` takes each class's ability listing: every rank's level, what a trainer
+  asks for it (`cost`) and where it comes from (`source`: 6 a trainer, 4 a quest, 2 a drop).
 - **URLs:** `https://www.wowhead.com/forever/items/slot:<s>/min-req-level:<lo>/max-req-level:<hi>`,
-  `/forever/quests/...`, `/forever/items/recipes/<prof>`, `/forever/spells/professions/<prof>` (`secondary-skills/` for cooking and first aid), `/forever/item=<id>`, `/forever/npc=<id>`.
+  `/forever/quests/...`, `/forever/items/recipes/<prof>`, `/forever/spells/professions/<prof>` (`secondary-skills/` for cooking and first aid), `/forever/item=<id>`, `/forever/npc=<id>`, `/forever/spells/abilities/<class>`.
 - **Fetchers:** `uv run tools/database/forever_wowhead/scrape.py [max required level]` and
-  `uv run tools/database/forever_wowhead/recipes.py`, through
+  `uv run tools/database/forever_wowhead/recipes.py` and
+  `uv run tools/database/forever_wowhead/class_spells.py` (nine pages), through
   `tools/database/forever_wowhead/wowhead.py`, which earns the bot check's token in headless
   Chrome and fetches with curl_cffi. `scrape.py` also asks the tooltips below whether a
   crafted item binds on pickup. The `scrape-wowhead` skill has the procedure and the rate limit.
 - **Cache:** `~/.cache/wow-data/wowhead/pages` (gzipped pages, `WOWHEAD_CACHE_DAYS`, default 7).
 - **Inputs:** `assets/db_inputs/forever_wowhead_items.json`,
-  `assets/db_inputs/forever_wowhead_recipes.json`, both with a `meta` block (dataEnv 16).
+  `assets/db_inputs/forever_wowhead_recipes.json` and
+  `assets/db_inputs/forever_wowhead_class_spells.json`, all with a `meta` block (dataEnv 16).
 - **Generator:** `gen_db -gen=db` (`tools/database/forever_wowhead.go`) for the items.
-  Nothing here reads the recipes: bayovui's `recipesources.py` does.
+  Nothing here reads the recipes: bayovui's `recipesources.py` does. Nor the class spells:
+  bayovui's `classspells.py` does, for BayovCore's Training prices.
 - **Spell stats:** `splpwr` is damage and healing, `spldmg` is damage only and `splheal` is
   healing only, so an item heals with `splpwr + splheal`. gen_db puts what damage and healing
   share on SpellPower and the rest on SpellDamage or HealingPower (`spellStats`). Until
