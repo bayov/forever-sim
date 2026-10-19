@@ -25,8 +25,11 @@ export class WorkerInterface {
 
 			const handlerFunc = this.handlers?.[msg];
 
+			// A worker built before a request was added answers it with no bytes, which the caller reads as
+			// "not in this build" (see WorkerPool.resolveComp). Without an answer the caller would wait forever.
 			if (!handlerFunc) {
 				console.error(`Request msg: ${msg}, id: ${id}, is not handled!`);
+				this.postMessage({ msg, id, outputData: new Uint8Array() });
 				return;
 			}
 
