@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "a51dde78eb19206c3dd2294017b948a2bfe09e34"
+  "master": "f73aab7879fd9b3bbf440e681c372e387039aefc"
  },
  "last_pass_at": "2026-10-19T00:51:15Z",
  "pass": 33,
  "result": "quiet",
  "note": "Pass 33: 2e4a69823/43adac272 (web dev server), 70352aeb8 (leveling template move, shaman HealRankLevels helper), d95249e30/ad3137b85 (APL idle-check skipping: sim.events counter, ShouldActivateNeedsEvent/ExtraCastConditionNeedsEvent on mana consumes, Innervate, hunter shots, Exorcism, Hammer of Wrath). No formula or client value. Verified identical: all 66 tools/dps_report/req requests, seed 1, 300 iterations, b2eac4867 vs e6d1a5ad9 -> 0 DPS differences. Daily update since: only c18d5325f (Wowhead heal item stats) and a leveling TASKS item, no mechanics. No build past 70450 (probe 300). Dev notes thread newest still /6 (edit 10-16 20:50). Blue posts since: Kaivax none after 10-16; Linxy 10-17 posts are Midnight retail hotfixes.",
  "client_build": "1.60.1.70450",
- "checked_at": "2026-10-19T06:44:52Z",
+ "checked_at": "2026-10-19T12:45:04Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/6",
   "date": "2026-10-16T00:15:23Z",
