@@ -1625,50 +1625,6 @@ export const PresetBuildLevel30PvPVsProt = makeLevel30PvPBuild(
 	EPLevel30PvPVsProt,
 );
 
-// Leveling is a grinding session in place of one fight (docs/leveling_sim.md): 20 min against
-// mobs of our level, give or take one, with every leveling option at its default. The sim makes
-// up the mobs and the session's length, so the duration and the target here only count when
-// the Leveling mode is off again. They are the Level 30 encounter's.
-//
-// We level alone: no raid or party buffs, no Blessing of Kings and no debuffs from others.
-export const EncounterLeveling = PresetUtils.makePresetEncounter(
-	'Leveling',
-	Encounter.create({
-		...EncounterLevel30.encounter,
-		leveling: LevelingOptions.create(),
-	}),
-	{
-		group: 'Leveling',
-		tanks: EncounterLevel30.tanks,
-		raidBuffs: RaidBuffs.create(),
-		partyBuffs: PartyBuffs.create(),
-		debuffs: Debuffs.create(),
-		buffs: IndividualBuffs.create(),
-		consumes: Consumes.create(),
-		inFrontOfTarget: true,
-	},
-);
-// The solo level 30 setup the leveling optimizer ran with (tools/rotopt/leveling/
-// level30_enh_solo.json): the Level 30 + 5 gear, talents and professions, an Orc with 5 extra
-// talent points, Windfury Weapon, and no starting totems, explosives or potions.
-//
-// The game takes one shaman imbue on the weapon. Windfury Weapon kills more mobs a session
-// than Rockbiter Weapon with this rotation (89.6 to 86.3 at 2000 sessions, 2026-10-15).
-export const PresetBuildLevel30Leveling = PresetUtils.makePresetBuild('Level 30 Leveling (solo)', {
-	group: 'Leveling',
-	tooltip: 'A level 30 Orc grinding mobs of its level alone for 20 min, with the Level 30 + 5 gear and talents and no buffs or consumes.',
-	gear: GearLevel30p5,
-	talents: TalentsLevel30Leveling,
-	rotation: APLLevel30Leveling,
-	epWeights: EPLevel30Leveling,
-	encounter: EncounterLeveling,
-	race: Race.RaceOrc,
-	level: 30,
-	bonusTalentPoints: 5,
-	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: PresetBuildOptions,
-});
-
 ///////////////////////////////////////////////////////////////////////////
 //                                 Leveling Plan
 ///////////////////////////////////////////////////////////////////////////
@@ -1697,4 +1653,24 @@ export const DefaultLevelingPlan = LevelingPlanSettings.create({
 	// Improved Ghost Wolf as early as its row opens (15 and 16), for walking to quests and grind
 	// spots, which the grinding sessions don't sim.
 	requiredTalents: [LevelingTalentRequirement.create({ tree: 1, talent: 5, points: 2, level: 16 })],
+});
+
+// The Leveling mode with the plan above. The plan levels alone without the Settings tab's buffs,
+// so we leave those as they are. The fight's duration and target are the Level 30 encounter's,
+// and they only count when we go back to the DPS mode.
+export const EncounterLevelingPlan = PresetUtils.makePresetEncounter(
+	'Leveling',
+	Encounter.create({
+		...EncounterLevel30.encounter,
+		leveling: LevelingOptions.create({ plan: true }),
+	}),
+	{ group: 'Leveling' },
+);
+export const PresetBuildLeveling10to60 = PresetUtils.makePresetBuild('Leveling 10-60', {
+	group: 'Leveling',
+	tooltip: 'The Leveling mode with our 10 to 60 plan: an Orc grinding alone, with its talent route and rotations.',
+	encounter: EncounterLevelingPlan,
+	race: Race.RaceOrc,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	levelingPlan: DefaultLevelingPlan,
 });

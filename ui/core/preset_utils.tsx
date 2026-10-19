@@ -18,7 +18,7 @@ import {
 	Spec,
 	UnitReference,
 } from './proto/common.js';
-import { SavedRotation, SavedTalents } from './proto/ui.js';
+import { LevelingPlanSettings, SavedRotation, SavedTalents } from './proto/ui.js';
 import { Stats } from './proto_utils/stats.js';
 import { SpecOptions, SpecRotation, specTypeFunctions } from './proto_utils/utils.js';
 
@@ -115,6 +115,9 @@ export interface PresetBuild {
 	// goggles, Goblin Sapper Charge). Left out means the build does not touch them.
 	professions?: [Profession, Profession];
 	options?: Partial<SpecOptions<any>>;
+	// The Leveling mode's plan: its levels, talent builds and rotations. The gear plan stays as
+	// it is, like with the Leveling Plan tab's Spec's plan button.
+	levelingPlan?: LevelingPlanSettings;
 }
 
 export interface PresetBuildOptions extends Omit<PresetBuild, 'name'> {}

@@ -3,7 +3,7 @@ import { IndividualSimUI } from '../../individual_sim_ui';
 import { PresetBuild } from '../../preset_utils';
 import { APLRotation, APLRotation_Type } from '../../proto/apl';
 import { Consumes, Debuffs, Encounter, EquipmentSpec, HealingModel, IndividualBuffs, PartyBuffs, RaidBuffs, Spec } from '../../proto/common';
-import { IndividualSimSettings, SavedTalents } from '../../proto/ui';
+import { IndividualSimSettings, LevelingPlanSettings, SavedTalents } from '../../proto/ui';
 import { statNames } from '../../proto_utils/names';
 import { normalizeDebuffs } from '../../raid';
 import { EventID, TypedEvent } from '../../typed_event';
@@ -32,6 +32,7 @@ const BUILD_PARTS: Array<{ name: string; has: (build: PresetBuild) => boolean }>
 	{ name: 'Level and extra talent points', has: build => build.level !== undefined || build.bonusTalentPoints !== undefined },
 	{ name: 'Professions', has: build => !!build.professions },
 	{ name: 'Class options', has: build => !!build.options },
+	{ name: 'Leveling plan', has: build => !!build.levelingPlan },
 ];
 
 // A configuration in the list: one of the spec's preset builds, which sets the parts it
@@ -106,7 +107,7 @@ export class PresetConfigurationPicker extends Component {
 
 	private applyBuild(
 		eventID: EventID,
-		{ gear, rotation, rotationType, talents, epWeights, encounter, race, level, bonusTalentPoints, professions, options }: PresetBuild,
+		{ gear, rotation, rotationType, talents, epWeights, encounter, race, level, bonusTalentPoints, professions, options, levelingPlan }: PresetBuild,
 	) {
 		TypedEvent.freezeAllAndDo(() => {
 			if (gear) this.simUI.player.setGear(eventID, this.simUI.sim.db.lookupEquipmentSpec(gear.gear));
@@ -141,6 +142,7 @@ export class PresetConfigurationPicker extends Component {
 					...options,
 				} as SpecOptions<Spec>);
 			}
+			if (levelingPlan) this.simUI.player.setLevelingPlan(eventID, levelingPlan);
 		});
 	}
 
@@ -179,6 +181,7 @@ export class PresetConfigurationPicker extends Component {
 		bonusTalentPoints,
 		professions,
 		options,
+		levelingPlan,
 	}: PresetBuild): string[] {
 		const player = this.simUI.player;
 		const hasGear = gear ? EquipmentSpec.equals(gear.gear, player.getGear().asSpec()) : true;
@@ -224,6 +227,7 @@ export class PresetConfigurationPicker extends Component {
 		// The raid turns some debuffs off, see normalizeDebuffs, so a preset that has them still matches.
 		const hasDebuffs = encounter?.debuffs ? Debuffs.equals(normalizeDebuffs(encounter.debuffs, this.simUI.sim.getRuleset()), raid.getDebuffs()) : true;
 		const hasConsumes = encounter?.consumes ? Consumes.equals(encounter.consumes, player.getConsumes()) : true;
+		const hasLevelingPlan = levelingPlan ? LevelingPlanSettings.equals(levelingPlan, player.getLevelingPlan()) : true;
 
 		const changed: Array<[boolean, string]> = [
 			[hasGear, 'gear'],
@@ -238,6 +242,7 @@ export class PresetConfigurationPicker extends Component {
 			[hasLevel && hasBonusTalentPoints, 'level'],
 			[hasProfessions, 'professions'],
 			[hasOptions, 'class options'],
+			[hasLevelingPlan, 'leveling plan'],
 		];
 		return changed.filter(([matches]) => !matches).map(([_, name]) => name);
 	}

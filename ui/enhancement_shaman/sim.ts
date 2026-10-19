@@ -141,7 +141,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 			Presets.PresetBuildLevel30PvPVsShaman,
 			Presets.PresetBuildLevel30PvPVsWarrior,
 			Presets.PresetBuildLevel30PvPVsProt,
-			Presets.PresetBuildLevel30Leveling,
+			Presets.PresetBuildLeveling10to60,
 		],
 		epWeights: Presets.EPPresets,
 		talents: [
