@@ -1,4 +1,4 @@
-# Mechanics audit: verdicts and settled items (as of 2026-10-17 13:00 UTC, master b389688f7)
+# Mechanics audit: verdicts and settled items (as of 2026-10-19 18:50 UTC, master 753d81da7)
 
 Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 = Era / Classic. Never cite vmangos.
 
@@ -38,6 +38,7 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 | Continuous energy | Confirmed by the user | |
 | Periodic crits | Attributes_8 0x200 marks the DoTs that can crit; SpellFlagNoPeriodicCrit opts out | pass 1 |
 | Druid forms | Weapon DPS at speed 1.0 / 2.5; enchants and procs work in form; potions and runes too | article 24301515, client flags |
+| Stoneskin Totem (Forever) | Top rank at our level off each physical non-periodic hit before armor; a hit it cuts still deals at least 1 after armor (ad5e98ae6) | beta logs 10-11 (rank 3) and 10-16 / 10-17 (rank 1: raw 3 and 4 dealt 1, no 0 hit), user agreed; shaman_audit.md 7.29 |
 | Ahn'Qiraj book ranks | Excluded (standards 8a, IncludeAQRanks) | |
 | Strongest learned rank | bestLearnedRank | 55c9744 |
 

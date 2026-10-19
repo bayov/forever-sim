@@ -1,10 +1,9 @@
-# Consumables pass 36 (master e6d1a5ad9)
+# Consumables pass 37
 
-Moved: sim/core/consumes.go, ui/enhancement_shaman/presets.ts. No findings.
+Master 753d81da74, previous audited f73aab7879. Result: quiet, no findings.
 
-- consumes.go: `ShouldActivateNeedsEvent: true` on makeManaConsumableMCD. Flag exists (major_cooldown.go:63, apl_idle.go:253); no value change.
-- enhancement_shaman presets.ts: leveling plan swapped for the searched route/rotations (imports, DefaultLevelingPlan only). Level 60 Consumes, raid buffs and gear untouched.
-- scan.sh on master: banned, Revelation, trinket and crit-elixir sections empty; counts as before (minor-armor effects 2).
-- wago latest: still 1.60.1.70450. No class branch audited (own-commit review not needed beyond master).
-
-No open items.
+- Moved file: ui/enhancement_shaman/presets.ts (14+, 13-). The diff only swaps the leveling plan source
+  (leveling_plan_searched.json to leveling_plan_audited.json) and its comment. No Consumes, buffs, debuffs,
+  enchants or gear touched.
+- wago latest 1.60 build: 1.60.1.70450, unchanged.
+- No open items.
