@@ -192,6 +192,10 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 	case *proto.APLValue_AuraShouldRefresh:
 		return rot.newValueAuraShouldRefresh(config.GetAuraShouldRefresh())
 
+	// Talents
+	case *proto.APLValue_TalentPoints:
+		return rot.newValueTalentPoints(config.GetTalentPoints())
+
 	// Dots
 	case *proto.APLValue_DotIsActive:
 		return rot.newValueDotIsActive(config.GetDotIsActive())

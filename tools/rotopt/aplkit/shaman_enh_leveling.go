@@ -350,8 +350,11 @@ func (t ShamanEnhLeveling) Build(k Knobs) *proto.APLRotation {
 	shockFloor := Ge(CurrentManaPercent(), Pct(k["shockMana"]))
 	items = append(items, Cast(SpellID(17364), nil, "Stormstrike on cooldown. Without the talent ignore the warning on this line."))
 	if k["maelstromStacks"] > 0 {
-		items = append(items, Cast(lightningBolt, And(inCombat, Ge(AuraNumStacks(SpellID(408505)), Num(k["maelstromStacks"]))),
-			"Lightning Bolt at enough Maelstrom Weapon stacks, 5 is instant. Without the talent ignore the warning on this line."))
+		// Below 4 points the stacks come too slowly to pay for a cast that stops our swings
+		// (the 2026-10-19 audit). Without the talent its aura is missing, and a line on it would
+		// hard cast Lightning Bolt all fight.
+		items = append(items, Cast(lightningBolt, And(inCombat, Ge(TalentPoints("maelstromWeapon"), Num(4)), Ge(AuraNumStacks(SpellID(408505)), Num(k["maelstromStacks"]))),
+			"Lightning Bolt at enough Maelstrom Weapon stacks, 5 is instant, with 4 or more points in the talent."))
 	}
 	if k["lavaBurst"] > 0 {
 		cond := And(inCombat, shockFloor)

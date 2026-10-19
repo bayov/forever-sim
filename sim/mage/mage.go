@@ -158,7 +158,7 @@ func NewMage(character *core.Character, options *proto.Player) *Mage {
 		Talents:   &proto.MageTalents{},
 		Options:   mageOptions.Options,
 	}
-	core.FillTalentsProto(mage.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
+	mage.FillTalents(mage.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
 
 	mage.EnableManaBar()
 

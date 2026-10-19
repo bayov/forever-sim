@@ -52,7 +52,7 @@ func NewShaman(character *core.Character, talents string) *Shaman {
 		Talents:   &proto.ShamanTalents{},
 	}
 
-	core.FillTalentsProto(shaman.Talents.ProtoReflect(), talents, TalentTreeSizes)
+	shaman.FillTalents(shaman.Talents.ProtoReflect(), talents, TalentTreeSizes)
 	shaman.EnableManaBar()
 
 	// Add Shaman stat dependencies

@@ -187,7 +187,7 @@ func NewWarlock(character *core.Character, options *proto.Player, warlockOptions
 		Talents:   &proto.WarlockTalents{},
 		Options:   warlockOptions,
 	}
-	core.FillTalentsProto(warlock.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
+	warlock.FillTalents(warlock.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
 	warlock.EnableManaBar()
 
 	warlock.AddStatDependency(stats.Strength, stats.AttackPower, core.APPerStrength[character.Class])

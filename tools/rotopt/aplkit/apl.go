@@ -185,6 +185,11 @@ func AuraNumStacks(aura *proto.ActionID) Value {
 	return &proto.APLValue{Value: &proto.APLValue_AuraNumStacks{AuraNumStacks: &proto.APLValueAuraNumStacks{AuraId: aura}}}
 }
 
+// TalentPoints is our points in a talent, by its field name in the class's talents.
+func TalentPoints(talent string) Value {
+	return &proto.APLValue{Value: &proto.APLValue_TalentPoints{TalentPoints: &proto.APLValueTalentPoints{Talent: talent}}}
+}
+
 // InMeleeRange is false only in PvP mode, while the player is out of melee range.
 func InMeleeRange() Value {
 	return &proto.APLValue{Value: &proto.APLValue_InMeleeRange{InMeleeRange: &proto.APLValueInMeleeRange{}}}

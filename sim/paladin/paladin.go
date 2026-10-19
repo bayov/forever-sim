@@ -164,7 +164,7 @@ func NewPaladin(character *core.Character, options *proto.Player, paladinOptions
 		Talents:   &proto.PaladinTalents{},
 		Options:   paladinOptions,
 	}
-	core.FillTalentsProto(paladin.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
+	paladin.FillTalents(paladin.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
 
 	paladin.primaryPaladinAura = paladin.Options.Aura
 

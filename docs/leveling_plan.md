@@ -298,10 +298,10 @@ build, and the "Level N Leveling Plan" rotations (the leveling optimizer's best 
 - A sim history for the Leveling mode.
 - Rotation templates for the other specs.
 - Fleeing mobs in the leveling sim, which Frost Shock would be for.
-- A rotation line on an aura we don't have loses its condition (Aura Num Stacks of Maelstrom
-  Weapon without the talent), so the Maelstrom line hard casts Lightning Bolt all fight in a
-  range played without the talent. An aura value we can't find should read 0, or the template
-  should leave the line out without the talent.
+- A rotation condition on an aura we don't have is dropped, so the line runs as if it had no
+  condition. The Maelstrom line used to hard cast Lightning Bolt all fight without the talent
+  for that reason. It now checks Talent Points (4 or more in Maelstrom Weapon) first, which
+  any line can use, but other lines on missing auras still act this way.
 - The route search: a move that takes a talent's points (or a run of picks) anywhere in the
   route, and starts that go for a talent in another tree with the points it needs first. Both
   would have found Mindfulness at 38. The rotation search should tune `maelstromStacks` again

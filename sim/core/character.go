@@ -44,6 +44,9 @@ type Character struct {
 	// Current gear.
 	Equipment
 
+	// The class's talents proto, for the rotation's Talent Points (see FillTalents).
+	talents protoreflect.Message
+
 	// The weapon buff from another shaman's Windfury or Flametongue Totem, nil without
 	// one. A shaman turns it off while their own totem's buff takes the slot.
 	RaidTotemWeaponBuff *Aura
@@ -796,6 +799,37 @@ func GetPrimaryTalentTreeIndex(talentStr string) uint8 {
 // of talents in each tree, usually around 30. This is needed because talent
 // strings truncate 0's at the end of each tree, so we can't infer the start index
 // of the tree from the string.
+// FillTalents fills the class's talents from the talents string, like FillTalentsProto, and
+// keeps them for the rotation's Talent Points.
+func (character *Character) FillTalents(data protoreflect.Message, talentsStr string, treeSizes [3]int) {
+	FillTalentsProto(data, talentsStr, treeSizes)
+	character.talents = data
+}
+
+// TalentPoints is the points we have in a talent, by its field name in the class's talents
+// proto ("maelstromWeapon" or "maelstrom_weapon"), and whether the class has that talent.
+func (character *Character) TalentPoints(name string) (int32, bool) {
+	if character.talents == nil {
+		return 0, false
+	}
+	fields := character.talents.Descriptor().Fields()
+	fd := fields.ByJSONName(name)
+	if fd == nil {
+		fd = fields.ByName(protoreflect.Name(name))
+	}
+	if fd == nil {
+		return 0, false
+	}
+	value := character.talents.Get(fd)
+	if fd.Kind() == protoreflect.BoolKind {
+		if value.Bool() {
+			return 1, true
+		}
+		return 0, true
+	}
+	return int32(value.Int()), true
+}
+
 func FillTalentsProto(data protoreflect.Message, talentsStr string, treeSizes [3]int) {
 	treeStrs := strings.Split(talentsStr, "-")
 	fieldDescriptors := data.Descriptor().Fields()

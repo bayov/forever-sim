@@ -57,6 +57,7 @@ import {
 	APLValueRemainingTime,
 	APLValueRemainingTimePercent,
 	APLValueRuneIsEquipped,
+	APLValueTalentPoints,
 	APLValueSequenceIsComplete,
 	APLValueSequenceIsReady,
 	APLValueSequenceTimeToReady,
@@ -83,6 +84,7 @@ import {
 } from '../../proto/apl.js';
 import { Class, Spec } from '../../proto/common.js';
 import { ShamanTotems_TotemType as TotemType } from '../../proto/shaman.js';
+import { classTalentsConfig } from '../../talents/factory.js';
 import { EventID } from '../../typed_event.js';
 import { randomUUID } from '../../utils.js';
 import { TextDropdownPicker, TextDropdownValueConfig } from '../dropdown_picker.js';
@@ -320,6 +322,26 @@ function comparisonOperatorFieldConfig(field: string): AplHelpers.APLPickerBuild
 					{ value: ComparisonOperator.OpLe, label: '<=' },
 					{ value: ComparisonOperator.OpLt, label: '<' },
 				],
+			}),
+	};
+}
+
+// The class's talents by their field names, which the sim reads the points of.
+function talentFieldConfig(field: string): AplHelpers.APLPickerBuilderFieldConfig<any, any> {
+	return {
+		field: field,
+		newValue: () => '',
+		factory: (parent, player, config) =>
+			new TextDropdownPicker(parent, player, {
+				id: randomUUID(),
+				...config,
+				defaultLabel: 'Talent',
+				equals: (a, b) => a === b,
+				values: classTalentsConfig[player.getClass()].flatMap(tree =>
+					tree.talents
+						.filter(talent => talent.fieldName)
+						.map(talent => ({ value: String(talent.fieldName), label: `${tree.name}: ${talent.name ?? String(talent.fieldName)}` })),
+				),
 			}),
 	};
 }
@@ -1036,6 +1058,18 @@ const valueKindFactories: { [f in NonNullable<APLValueKind>]: ValueKindConfig<AP
 		shortDescription: '<b>True</b> if the rune is currently equipped, otherwise <b>False</b>.',
 		newValue: APLValueRuneIsEquipped.create,
 		fields: [AplHelpers.runeFieldConfig('runeId')],
+	}),
+
+	// Talents
+	talentPoints: inputBuilder({
+		label: 'Talent Points',
+		submenu: ['Talents'],
+		shortDescription: 'The points we have in the talent, 0 without it.',
+		fullDescription: `
+		<p>Use it to cast a spell only with the talent that makes it worth casting, like Lightning Bolt on Maelstrom Weapon stacks only with <b>Maelstrom Weapon</b> at 4 points or more. A rotation then still plays right with a build that doesn't have the talent yet.</p>
+		`,
+		newValue: APLValueTalentPoints.create,
+		fields: [talentFieldConfig('talent')],
 	}),
 
 	// DoT

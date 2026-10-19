@@ -162,7 +162,7 @@ func NewRogue(character *core.Character, options *proto.Player, rogueOptions *pr
 		Talents:   &proto.RogueTalents{},
 		Options:   rogueOptions,
 	}
-	core.FillTalentsProto(rogue.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
+	rogue.FillTalents(rogue.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
 
 	// Passive rogue threat reduction: https://wotlk.wowhead.com/spell=21184/rogue-passive-dnd
 	rogue.PseudoStats.ThreatMultiplier *= 0.71

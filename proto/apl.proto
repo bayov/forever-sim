@@ -162,6 +162,9 @@ message APLValue {
         // Rune values TODO: remove once APLs for classes are updated
         APLValueRuneIsEquipped rune_is_equipped = 74;
 
+        // Talent values
+        APLValueTalentPoints talent_points = 88;
+
         // Dot values
         APLValueDotIsActive dot_is_active = 6;
         APLValueDotRemainingTime dot_remaining_time = 13;
@@ -601,6 +604,13 @@ message APLValueAuraShouldRefresh {
 // TODO: remove once APLs for classes are updated
 message APLValueRuneIsEquipped {
     ActionID rune_id = 1;
+}
+
+// The points we have in a talent, by its field name in the class's talents (like
+// "maelstromWeapon"), 0 for a talent we don't have. A line can then cast a spell only with
+// enough points in the talent that makes it worth casting.
+message APLValueTalentPoints {
+    string talent = 1;
 }
 
 message APLValueDotIsActive {

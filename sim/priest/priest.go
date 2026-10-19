@@ -120,7 +120,7 @@ func New(character *core.Character, talents string) *Priest {
 		Character: *character,
 		Talents:   &proto.PriestTalents{},
 	}
-	core.FillTalentsProto(priest.Talents.ProtoReflect(), talents, TalentTreeSizes)
+	priest.FillTalents(priest.Talents.ProtoReflect(), talents, TalentTreeSizes)
 
 	priest.EnableManaBar()
 

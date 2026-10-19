@@ -249,7 +249,7 @@ func NewWarrior(character *core.Character, talents string, inputs WarriorInputs)
 		Talents:       &proto.WarriorTalents{},
 		WarriorInputs: inputs,
 	}
-	core.FillTalentsProto(warrior.Talents.ProtoReflect(), talents, TalentTreeSizes)
+	warrior.FillTalents(warrior.Talents.ProtoReflect(), talents, TalentTreeSizes)
 
 	warrior.PseudoStats.CanParry = true
 
