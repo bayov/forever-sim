@@ -16,7 +16,7 @@ import (
 // for rank 3 at level 30 and 30 for rank 6 at 60. On the beta our rank 3 totem's 11 fit the
 // hits we took in two logs. With 572 armor it fit only before armor. Guardian Totems adds
 // 10% a point, so 2 points make it 13.2. Another shaman's totem in the raid buffs gives the top
-// rank at our level too. A hit smaller than the reduction deals nothing, and the reduction
+// rank at our level too. A hit smaller than the reduction still deals 1, and the reduction
 // goes when a Tremor Totem takes the earth slot. We wear 512 armor, which makes 572 at level 30
 // with our Agility, as in the first log.
 func TestOrcShamanStoneskinTotem(t *testing.T) {
@@ -61,8 +61,8 @@ func TestOrcShamanStoneskinTotem(t *testing.T) {
 				if got, want := hit(sim, 100), (100-c.reduction)*throughArmor; math.Abs(got-want) > 1e-9 {
 					t.Errorf("a 100 damage hit dealt %.3f through %.0f armor, want %.3f (%.1f off before armor)", got, armor, want, c.reduction)
 				}
-				if got := hit(sim, c.reduction-1); got != 0 {
-					t.Errorf("a %.1f damage hit dealt %.3f, want 0", c.reduction-1, got)
+				if got := hit(sim, c.reduction-1); got != 1 {
+					t.Errorf("a %.1f damage hit dealt %.3f, want 1", c.reduction-1, got)
 				}
 				if !c.raid {
 					castNow(t, sim, enh, enh.TremorTotem)

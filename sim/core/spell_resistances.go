@@ -10,14 +10,22 @@ func (result *SpellResult) applyResistances(sim *Simulation, spell *Spell, isPer
 	// On the beta our rank 3 totem's 11 fit the hits we took only when it comes off before armor
 	// (shaman_audit.md 7.29). We leave periodic damage alone, because no enemy in the sim deals
 	// physical damage over time.
+	//
+	// A hit it cuts still deals at least 1 damage after armor. On the beta our rank 1 totem's 4
+	// left 1 damage from raw 3 and 4 swings, and no hit in any log dealt 0.
+	flatReduced := false
 	if bonus := attackTable.Defender.PseudoStats.BonusPhysicalDamageTakenBeforeArmor; bonus != 0 && !isPeriodic &&
 		spell.SpellSchool.Matches(SpellSchoolPhysical) && !spell.Flags.Matches(SpellFlagIgnoreTargetModifiers) {
+		flatReduced = result.Damage > 0
 		result.Damage = max(0, result.Damage+bonus)
 	}
 
 	resistanceMultiplier, outcome := spell.ResistanceMultiplier(sim, isPeriodic, attackTable)
 
 	result.Damage *= resistanceMultiplier
+	if flatReduced {
+		result.Damage = max(1, result.Damage)
+	}
 	result.Outcome |= outcome
 
 	result.ResistanceMultiplier = resistanceMultiplier
