@@ -15,6 +15,10 @@ type APLValueCurrentHealth struct {
 func (rot *APLRotation) newValueCurrentHealth(config *proto.APLValueCurrentHealth) APLValue {
 	unit := rot.GetSourceUnit(config.SourceUnit)
 	if unit.Get() == nil {
+		// The leveling session's Pull Target isn't there yet when we build the rotation.
+		if unit.IsDynamic() {
+			return &APLValueCurrentHealth{unit: unit}
+		}
 		return nil
 	}
 	if !unit.Get().HasHealthBar() {
@@ -29,7 +33,11 @@ func (value *APLValueCurrentHealth) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeFloat
 }
 func (value *APLValueCurrentHealth) GetFloat(_ *Simulation) float64 {
-	return value.unit.Get().CurrentHealth()
+	unit := value.unit.Get()
+	if unit == nil {
+		return 0
+	}
+	return unit.CurrentHealth()
 }
 func (value *APLValueCurrentHealth) String() string {
 	return "Current Health"
@@ -43,6 +51,10 @@ type APLValueCurrentHealthPercent struct {
 func (rot *APLRotation) newValueCurrentHealthPercent(config *proto.APLValueCurrentHealthPercent) APLValue {
 	unit := rot.GetSourceUnit(config.SourceUnit)
 	if unit.Get() == nil {
+		// The leveling session's Pull Target isn't there yet when we build the rotation.
+		if unit.IsDynamic() {
+			return &APLValueCurrentHealthPercent{unit: unit}
+		}
 		return nil
 	}
 	if !unit.Get().HasHealthBar() {
@@ -57,7 +69,11 @@ func (value *APLValueCurrentHealthPercent) Type() proto.APLValueType {
 	return proto.APLValueType_ValueTypeFloat
 }
 func (value *APLValueCurrentHealthPercent) GetFloat(_ *Simulation) float64 {
-	return value.unit.Get().CurrentHealthPercent()
+	unit := value.unit.Get()
+	if unit == nil {
+		return 0
+	}
+	return unit.CurrentHealthPercent()
 }
 func (value *APLValueCurrentHealthPercent) String() string {
 	return fmt.Sprintf("Current Health %%")

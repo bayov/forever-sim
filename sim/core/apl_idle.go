@@ -858,7 +858,7 @@ func (value *APLValueDotIsActive) steadyUntil(_ *Simulation) time.Duration {
 }
 
 func (value *APLValueDotRemainingTime) trend(sim *Simulation) (float64, time.Duration, bool) {
-	if value.dot.expires == NeverExpires {
+	if dot := value.dot.get(); dot == nil || dot.expires == NeverExpires {
 		return aplSteadyTrend()
 	}
 	return -1, NeverExpires, true
