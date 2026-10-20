@@ -103,3 +103,10 @@ wording instead.
 - [ ] 2026-10-17 — Give Ankle Slicers 284587 a source once one is known, and decide on its slow proc (foreverchanges.pro hidden items, October 15 to 16 group, revealed after PR #107; client)
   - Epic thrown, ilvl 63, req 58, BoE: 51–96 / 1.80, +9 Sta, Equip: +12 Attack Power. Chance on hit: Sliced Ankle (spell 1316346), 30% movement slow for 6 sec, not modelled (no DPS effect).
   - Its stats are already in db.json from the Oct 17 Wowhead refresh (b1b0763), with no source. Ranged-slot option for Rogue and Warrior at 60 (+12 AP). https://foreverchanges.pro/item/284587
+- [ ] 2026-10-20 — Decide on Pendulum of Doom 9425's Forever proc and new equip (revealed October 19 to 20, client tooltip only; left out of PR #115) [source: foreverchanges]
+  - Chance on hit: Classic's 250–350 → 259–363 Physical, and now "Deals 50% increased damage to targets below 25% health". `PendulumOfDoom` in `sim/common/item_effects.go` still has `250, 100` (proc spell 10373). Wowhead's Forever tooltip agrees.
+  - New Equip: "Each swing alternates your attack speed between 100% faster and 50% slower" (4.00 speed, so 2.00 then 6.00 in turn). Needs new code; average speed stays 4.00, but swing timing and Windfury/procs per swing change.
+  - https://foreverchanges.pro/item/9425 , https://wago.tools/db2/ItemEffect?build=1.60.1.70450&filter[ParentItemID]=9425 , https://wago.tools/db2/SpellEffect?build=1.60.1.70450&filter[SpellID]=10373
+- [ ] 2026-10-20 — Axe of Inevitable Ruin 274484: model its chance on hit and give it a source once known (revealed October 19 to 20; stats in PR #115) [source: foreverchanges]
+  - 2H axe 89–134 / 3.00, req 37, BoP. Chance on hit: "Wounds the target for 140 to 196 damage" (proc rate unknown). Use: combines with Axe of Lingering Dread 274485 (still hidden, ilvl 44, req 39) into Pendulum of Doom. Probably Uldaman, unconfirmed.
+  - https://foreverchanges.pro/item/274484 , https://wago.tools/db2/ItemEffect?build=1.60.1.70450&filter[ParentItemID]=274484
