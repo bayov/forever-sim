@@ -110,3 +110,8 @@ wording instead.
 - [ ] 2026-10-20 — Axe of Inevitable Ruin 274484: model its chance on hit and give it a source once known (revealed October 19 to 20; stats in PR #115) [source: foreverchanges]
   - 2H axe 89–134 / 3.00, req 37, BoP. Chance on hit: "Wounds the target for 140 to 196 damage" (proc rate unknown). Use: combines with Axe of Lingering Dread 274485 (still hidden, ilvl 44, req 39) into Pendulum of Doom. Probably Uldaman, unconfirmed.
   - https://foreverchanges.pro/item/274484 , https://wago.tools/db2/ItemEffect?build=1.60.1.70450&filter[ParentItemID]=274484
+- [ ] 2026-10-21 — Check the Oct 20 mage Frost talent hotfix against the client and apply it (foreverchanges.pro "Hotfix", first seen October 20 on build 70450; not in Blizzard's notes) [source: foreverchanges]
+  - Elemental Precision: 5 ranks of 1% → 3 ranks of 2% (6% max). `sim/mage/talents.go` · `applyFrostTalents` uses 1% per point; `ui/core/talents/trees/mage.json` has maxPoints 5 (spells 29438, 29439, 29440).
+  - Piercing Ice (11151, 12952, 12953, 2/4/6% Frost damage) removed from the tree. Frost Channeling moves row 3 column 2 → 1, Improved Blizzard row 3 column 4 → 2.
+  - Ice Barrier rank 1 absorb 448 → 493; Frost Ward rank 1 162 → 178, plus 10% of Frost spell power. Frost Warding raises both absorbs by 10/20%, and its Frost Ward chance now negates instead of reflecting.
+  - Wowhead's Forever tooltips (dataEnv 16) still show the old values today, and wago.tools returned 503. Check https://wago.tools/db2/Talent?build=1.60.1.70450 , https://wago.tools/db2/SpellEffect?build=1.60.1.70450&filter[SpellID]=29438 and the hotfix table, then re-import the mage tree (`tools/forever_talents/import_client.py`). https://foreverchanges.pro/patch-notes
