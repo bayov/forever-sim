@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "e29b1c8c2e78db6da316285e0e060080fd131574"
+  "master": "9ea9b3d90fa43beaf42f483ba15a712f77e7b348"
  },
  "last_pass_at": "2026-10-19T18:50:49Z",
  "pass": 34,
  "result": "quiet",
  "note": "Pass 34: ad5e98ae6 (Stoneskin flat cut now leaves at least 1 damage after armor; tier 1 beta logs, user agreed, leveling-only effect, no golden changed; added to verdicts), a5aba7447 (Talent Points APL value), 7a6c78bed (DoT values follow current target, health values read Pull Target), e20c5b3cf (leveling idle-check skipping, identical results). No formula or client value beyond Stoneskin. No daily-update TASKS/ledger changes or forever-update merges since f73aab787. No build past 70450 (probe 300). Dev notes thread newest still /6 (edit 10-16 20:50). Blue posts: Aggrend last 10-08 podcast, Linxy 10-17 retail/Midnight only.",
  "client_build": "1.60.1.70450",
- "checked_at": "2026-10-20T18:45:16Z",
+ "checked_at": "2026-10-21T00:44:28Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/6",
   "date": "2026-10-16T00:15:23Z",
