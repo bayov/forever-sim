@@ -1,12 +1,12 @@
-# Consumables pass 38
+# Consumables report, pass 39
 
-Master 1ab3ec28a0, previous audited 753d81da74. Result: quiet, no findings.
+Master 599f9de74. Client 1.60.1.70450 -> 1.60.1.70532.
 
-- Moved file: ui/enhancement_shaman/presets.ts (20+, 44-). The diff removes the solo Level 30 leveling
-  encounter and build (EncounterLeveling, PresetBuildLevel30Leveling) and adds EncounterLevelingPlan and
-  PresetBuildLeveling10to60. Leveling presets only; no Level 60 Consumes, buffs, debuffs, enchants or gear touched.
-- scan.sh on master: every section above "== counts" empty; counts as expected (2 minor-armor effects,
-  MobTypeUnknown default, Salvation and Sunder on, totem set per spec as ruled).
-- wago latest 1.60 build: 1.60.1.70450, unchanged.
-- Class branches show only stale copies of other classes' files (gotcha 1); not audited.
-- No open items.
+Findings: none.
+
+Verified:
+- changes.sh: no watched file moved on master since 7c02c45cf. The class-branch "ahead" lines are stale-copy noise (gotcha 1); no own-spec commits audited.
+- builddiff.py 70450 -> 70532: consumable spell changes 0; Forever enchants checked 53, changed 0.
+- scan.sh on master: banned, Revelation, trinket and crit-elixir sections empty; counts identical to the ref baseline.
+
+No open items.

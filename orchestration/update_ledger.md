@@ -42,16 +42,16 @@ Every change announced for the WoW Forever beta, from build 1.60.1.70009 (the fi
 | Class / system | Rows | Landed | In flight | Missing | Partial | Wrong | Not simulated on purpose | Ambiguous | n/a | Other |
 |---|---|---|---|---|---|---|---|---|---|---|
 | Warrior | 83 | 52 | 0 | 2 | 0 | 2 | 0 | 4 | 23 | 0 |
-| Paladin | 65 | 37 | 5 | 2 | 0 | 2 | 1 | 2 | 14 | 2 superseded |
+| Paladin | 66 | 37 | 5 | 2 | 0 | 2 | 1 | 3 | 14 | 2 superseded |
 | Hunter | 82 | 44 | 2 | 7 | 1 | 1 | 3 | 1 | 22 | 1 info |
 | Rogue | 68 | 38 | 0 | 0 | 2 | 2 | 1 | 3 | 22 | 0 |
-| Priest | 54 | 20 | 14 | 2 | 0 | 2 | 1 | 1 | 14 | 0 |
+| Priest | 55 | 20 | 14 | 2 | 0 | 2 | 1 | 1 | 15 | 0 |
 | Shaman | 102 | 57 | 12 | 4 | 0 | 2 | 2 | 2 | 23 | 0 |
-| Mage | 48 | 15 | 9 | 3 | 0 | 1 | 4 | 0 | 16 | 0 |
-| Warlock | 86 | 47 | 4 | 0 | 0 | 1 | 3 | 1 | 29 | 1 covered by another row |
+| Mage | 53 | 15 | 9 | 3 | 0 | 1 | 4 | 4 | 17 | 0 |
+| Warlock | 87 | 47 | 4 | 0 | 0 | 1 | 3 | 1 | 30 | 1 covered by another row |
 | Druid | 69 | 31 | 0 | 2 | 2 | 2 | 2 | 0 | 30 | 0 |
 | Shared (races, mechanics, items) | 61 | 25 | 1 | 2 | 3 | 2 | 2 | 2 | 24 | 0 |
-| **Total** | **718** | **366** | **47** | **24** | **8** | **17** | **19** | **16** | **217** | **4** |
+| **Total** | **726** | **366** | **47** | **24** | **8** | **17** | **19** | **21** | **220** | **4** |
 
 The counts are as audited, before this audit's own PRs. A row that touches two scopes, such as Eureka!, Touch of the Grave or Grace of Air, appears under each class it affects.
 
@@ -137,6 +137,21 @@ For the assumptions audit (orchestration/assumptions_audit.md). Keys are from to
 ## Build 1.60.1.70450 (2026-10-16)
 
 70450: cosmetic only. Diffed against 70425 on the same tables. 22 spells changed: pets, mounts, two appearance ensembles and the Adventurer's Tent. 23 cosmetic items were added. No class, racial, talent, enchant or existing-item change. Dev notes post /6 got a wording-only edit. No rows added.
+
+## Build 1.60.1.70532 (2026-10-21)
+
+70532: client-identical to 70450. All 39 tables in wago.py's `client_update` set are byte-identical, including SpellEffect, Spell, the Trait* tables, ItemSparse, ItemEffect, SpellItemEnchantment and ChrRaces. There are no added rows, not even cosmetic ones. Dev notes: no new post and no edit since post /6's 2026-10-16 edit. foreverchanges.pro does not list 70532 yet. It does list three unannounced server-side hotfixes to 70425/70450 that the client does not show. They are recorded below as `ambiguous (needs verify)`. The 70532 client still has the old values: Piercing Ice node 130502 is still in the tree (3 ranks), Elemental Precision entry 130507 still has MaxRanks 5, and Champion of the Light is still on its curve.
+
+| ID | Source | Change | L60 DPS? | Client check | Sim status | Code location / note |
+|---|---|---|---|---|---|---|
+| MAGE-U-HF1 | FC, hotfix first seen 10-20 (70450) | Piercing Ice (2/4/6% Frost damage) removed from the Frost tree | yes (Frost presets that take it) | 70532: TraitDefinition 135303 (spell 11151) on node 130502, still in the tree; 11151 aura 108 bp 2 unchanged | ambiguous (needs verify) | `sim/mage/talents.go:186-191`; also TASKS.md 2026-10-21 item |
+| MAGE-U-HF2 | FC, 10-20 | Elemental Precision 5 ranks × 1% hit → 3 ranks × 2% (6% max) | yes | 70532: entry 130507 (def 135308, spell 29438) MaxRanks 5, unchanged | ambiguous (needs verify) | `sim/mage/talents.go:170-175` (1%/point); `ui/core/talents/trees/mage.json` maxPoints 5 |
+| MAGE-U-HF3 | FC, 10-20 | Ice Barrier absorb +10% (r1 448 → 493); FC also says "+3% Frost damage for 1 min, 3% more while the shield holds" | minor (no preset casts Ice Barrier) | not in client (SpellEffect identical) | ambiguous (needs verify) | `sim/mage` Ice Barrier has no damage effect; the damage part is FC's wording alone |
+| MAGE-U-HF4 | FC, 10-20 | Frost Ward r1 162 → 178 (+10% Frost SP); Frost Warding +10/20% absorbs, negate instead of reflect | n/a | not in client | n/a | defensive |
+| MAGE-U-HF5 | FC, hotfix 10-16 (70425) | Frost Blast can trigger Missile Barrage | minor (no preset casts Frost Blast) | not in client (proc masks identical) | ambiguous (needs verify) | `sim/mage` applyMissileBarrage |
+| PAL-U-HF1 | FC, hotfix 10-16 (70425) | Champion of the Light back to 20/40/60% of Intellect as spell damage (was 10/20/30% since 70425) | **yes** (sub Holy, undead, twist presets) | spell 1311084 values come from a trait curve that isn't downloaded; TraitDefinitionEffectPoints identical | ambiguous (needs verify) | `sim/paladin/talents.go:48-49` uses `.1,.2,.3`; reverses PAL-70425-05 / NtV-3 if true |
+| WL-U-HF1 | FC, hotfix 10-16 | Amplify Curse: Curse of Exhaustion +20% instead of +50% | n/a | not in client | n/a | no preset uses CoEx (see WL-U-06) |
+| PRI-U-HF1 | FC, hotfix 10-18 | Holy Fire rank 1: 57-70 → 53-65 | n/a (rank 8 used) | not in client | n/a | |
 
 ## Per-class ledgers
 

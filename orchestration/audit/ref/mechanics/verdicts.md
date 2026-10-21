@@ -1,10 +1,10 @@
-# Mechanics audit: verdicts and settled items (as of 2026-10-19 18:50 UTC, master 753d81da7)
+# Mechanics audit: verdicts and settled items (as of 2026-10-21 18:50 UTC, master 599f9de74)
 
 Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 = Era / Classic. Never cite vmangos.
 
 ## Baseline
 
-- Client: 1.60.1.70450, current. Its spell data equals 70425's, apart from 22 cosmetic rows (pets, mounts, Adventurer's Tent, ensembles). TraitDefinitionEffectPoints, TraitNodeEntry and SpellItemEnchantment are identical to 70425's. 17 CurvePoint rows changed, none on a talent curve.
+- Client: 1.60.1.70532, current (no build answered 70533-70832). All 43 mechanics-set tables are byte-identical to 70450's, so every verdict below holds on 70532. Before that, 1.60.1.70450: Its spell data equals 70425's, apart from 22 cosmetic rows (pets, mounts, Adventurer's Tent, ensembles). TraitDefinitionEffectPoints, TraitNodeEntry and SpellItemEnchantment are identical to 70425's. 17 CurvePoint rows changed, none on a talent curve.
 - The last balance build is 70425: 575 SpellEffect rows changed against 70338. The orchestration/rank_tuning.md table (8e30e52) lists the class deltas.
 - The wago.tools builds API lists only 70374 / 70338 / 70334 under wow_cn_beta. 70425 and 70450 were found by probing the db2 CSV URLs.
 
