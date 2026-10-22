@@ -12,7 +12,8 @@
 # we look at them. The log-audit skill's runs (by hand and hourly) are what keep the archive up
 # to date.
 #
-# It also copies BayovCore's character history out of the SavedVariables (history.py), which
+# It also copies BayovCore's character history out of the SavedVariables (history.py, which reads
+# BayovExportHistory.lua and, for older history, BayovCore.lua), which
 # logcheck uses to know the gear, talents and skills at each moment of a log.
 #
 # FLAVORS lists the game folders we archive, and we skip one that doesn't exist. The beta is

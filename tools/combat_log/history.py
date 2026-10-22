@@ -6,6 +6,11 @@ records the character's setup as it changes: a full snapshot at login, then each
 talent change, level up and skill up, and the sheet after a change. Each record is a compact JSON
 string. Sheets and talent lists are stored once and records point at them by id.
 
+Since 2026-10-22 the history is in its own addon's saved variables, BayovExportHistory.lua
+(BayovExportHistoryDB.chars), so it isn't part of BayovCore's own file. Before that it was in
+BayovCore.lua (BayovCoreDB.modules.export.chars), and a client the addon isn't deployed to still
+keeps it there, so we read both.
+
 The addon keeps only the last 7 days, and WoW writes the file only on /reload, logout or exit.
 So archive.sh runs this on each logcheck run, and we keep every record we've ever seen. An
 audit has to run at least once a week, or the addon drops records we never copied:
@@ -133,13 +138,21 @@ def unescape(s):
     return out.decode('utf-8', errors='replace')
 
 
+# The saved variables files that hold the history: BayovExportHistory's since 2026-10-22, and
+# BayovCore's own before that (and on a client without BayovExportHistory).
+FILES = ('BayovExportHistory.lua', 'BayovCore.lua')
+
+
 def history_chars(path):
     """The export module's history, by character, in one SavedVariables file, or {} when it has none."""
     with open(path, encoding='utf-8', errors='replace') as f:
         text = f.read()
     if '"chars"' not in text:
         return {}
-    db = LuaParser(text).globals().get('BayovCoreDB') or {}
+    found = LuaParser(text).globals()
+    if os.path.basename(path) == 'BayovExportHistory.lua':
+        return (found.get('BayovExportHistoryDB') or {}).get('chars') or {}
+    db = found.get('BayovCoreDB') or {}
     export = ((db.get('modules') or {}).get('export') or {})
     return export.get('chars') or {}
 
@@ -209,8 +222,10 @@ def main():
     args = p.parse_args()
 
     for flavor in args.flavors.split():
-        pattern = os.path.join(args.game, flavor, 'WTF', 'Account', '*', 'SavedVariables', 'BayovCore.lua')
-        for path in sorted(glob.glob(pattern)):
+        paths = []
+        for name in FILES:
+            paths += glob.glob(os.path.join(args.game, flavor, 'WTF', 'Account', '*', 'SavedVariables', name))
+        for path in sorted(paths):
             try:
                 chars = history_chars(path)
             except (ValueError, IndexError) as e:

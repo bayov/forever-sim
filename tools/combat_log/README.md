@@ -55,7 +55,8 @@ named after their `when.date`. `tools/logcheck` pairs each log window with the e
 closest before it.
 
 `archive.sh` also runs `history.py`, which copies BayovCore's character history out of the
-game's `SavedVariables/BayovCore.lua` into `~/forever-logs/history/`. The addon records each
+game's saved variables (`SavedVariables/BayovExportHistory.lua` since 2026-10-22, and
+`BayovCore.lua` before that) into `~/forever-logs/history/`. The addon records each
 gear swap, talent change, level up and skill up as it happens, and keeps the last 7 days. We
 keep every record, so the archive is the only full copy. That's why an audit has to run at
 least once a week, or the oldest records are gone before we copy them. `tools/logcheck` rebuilds an export
