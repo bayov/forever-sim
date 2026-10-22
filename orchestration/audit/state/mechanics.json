@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "4fcc81cdc1b644bae9b7f1519ce165a259eb2fca"
+  "master": "2b97d42793710005c9cb034bead6b2dea5110acb"
  },
  "last_pass_at": "2026-10-21T18:46:42Z",
  "pass": 35,
  "result": "quiet",
  "note": "Pass 35: new build 70532; all 43 mechanics-set tables byte-identical to 70450 (re-checked per-file, build answers, 70533+ does not; probe 300). No sim/mksettings commits since 7c02c45cf. Daily update added only a TASKS.md item for the Oct 20 mage Frost talent hotfix (foreverchanges, class-only, not in 70532 db2: 29438 still one effect bp 6 aura 107, Piercing Ice 11151 still present) - mage worker/rank tuning territory. Dev notes thread newest still /6 (edit 10-16 20:50). Blue posts: Aggrend last 10-08, Linxy 10-21 retail/Midnight only.",
  "client_build": "1.60.1.70532",
- "checked_at": "2026-10-22T12:45:03Z",
+ "checked_at": "2026-10-22T18:44:15Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/6",
   "date": "2026-10-16T00:15:23Z",
