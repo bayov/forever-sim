@@ -131,8 +131,8 @@ dps_results: {
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-Champion'sPursuit"
  value: {
-  dps: 1384.93967
-  tps: 1063.79095
+  dps: 1385.33267
+  tps: 1063.86679
   dtps: 1.803
  }
 }
@@ -171,9 +171,9 @@ dps_results: {
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-FieldMarshal'sPursuit"
  value: {
-  dps: 1547.1035
-  tps: 1209.52995
-  dtps: 1.84583
+  dps: 1427.1385
+  tps: 1102.6931
+  dtps: 1.803
  }
 }
 dps_results: {
@@ -235,8 +235,8 @@ dps_results: {
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-LieutenantCommander'sPursuit"
  value: {
-  dps: 1384.93967
-  tps: 1063.79095
+  dps: 1385.33267
+  tps: 1063.86679
   dtps: 1.803
  }
 }
@@ -283,9 +283,9 @@ dps_results: {
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-Warlord'sPursuit"
  value: {
-  dps: 1547.1035
-  tps: 1209.52995
-  dtps: 1.84583
+  dps: 1427.1385
+  tps: 1102.6931
+  dtps: 1.803
  }
 }
 dps_results: {

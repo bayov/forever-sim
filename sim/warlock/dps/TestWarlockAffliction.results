@@ -105,6 +105,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestWarlockAffliction-Phase1-AllItems-Champion'sThreads"
+ value: {
+  dps: 1114.29917
+  tps: 870.18677
+  hps: 2.2915
+ }
+}
+dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-DeathmistRaiment"
  value: {
   dps: 1093.265
@@ -139,9 +147,9 @@ dps_results: {
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-FieldMarshal'sThreads"
  value: {
-  dps: 1242.32917
-  tps: 969.99457
-  hps: 2.8785
+  dps: 1162.1675
+  tps: 906.59706
+  hps: 2.7445
  }
 }
 dps_results: {
@@ -166,6 +174,14 @@ dps_results: {
   dps: 1179.77217
   tps: 920.33779
   hps: 3.383
+ }
+}
+dps_results: {
+ key: "TestWarlockAffliction-Phase1-AllItems-LieutenantCommander'sThreads"
+ value: {
+  dps: 1114.29917
+  tps: 870.18677
+  hps: 2.2915
  }
 }
 dps_results: {
@@ -203,9 +219,9 @@ dps_results: {
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-Warlord'sThreads"
  value: {
-  dps: 1242.32917
-  tps: 969.99457
-  hps: 2.8785
+  dps: 1162.1675
+  tps: 906.59706
+  hps: 2.7445
  }
 }
 dps_results: {

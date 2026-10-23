@@ -118,6 +118,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestCombatDaggers-Phase5-AllItems-Champion'sVestments"
+ value: {
+  dps: 850.9855
+  tps: 604.1924
+ }
+}
+dps_results: {
+ key: "TestCombatDaggers-Phase5-AllItems-Champion'sVestments-522"
+ value: {
+  dps: 854.96717
+  tps: 607.01554
+ }
+}
+dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-CombatSwordsSynthetic(Phase1)"
  value: {
   dps: 951.00517
@@ -134,8 +148,8 @@ dps_results: {
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-DarkmantleArmor"
  value: {
-  dps: 983.799
-  tps: 698.4881
+  dps: 956.7605
+  tps: 679.28911
  }
 }
 dps_results: {
@@ -155,8 +169,8 @@ dps_results: {
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-FieldMarshal'sVestments"
  value: {
-  dps: 937.49883
-  tps: 665.61331
+  dps: 868.23883
+  tps: 616.44511
  }
 }
 dps_results: {
@@ -164,6 +178,13 @@ dps_results: {
  value: {
   dps: 914.0815
   tps: 648.99438
+ }
+}
+dps_results: {
+ key: "TestCombatDaggers-Phase5-AllItems-LieutenantCommander'sVestments"
+ value: {
+  dps: 854.96717
+  tps: 607.01554
  }
 }
 dps_results: {
@@ -190,8 +211,8 @@ dps_results: {
 dps_results: {
  key: "TestCombatDaggers-Phase5-AllItems-Warlord'sVestments"
  value: {
-  dps: 937.49883
-  tps: 665.61331
+  dps: 868.23883
+  tps: 616.44511
  }
 }
 dps_results: {

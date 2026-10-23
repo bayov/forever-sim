@@ -118,6 +118,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestCombatSinisterStrike-Phase5-AllItems-Champion'sVestments"
+ value: {
+  dps: 778.17533
+  tps: 552.49679
+ }
+}
+dps_results: {
+ key: "TestCombatSinisterStrike-Phase5-AllItems-Champion'sVestments-522"
+ value: {
+  dps: 775.46933
+  tps: 550.5812
+ }
+}
+dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-CombatSwordsSynthetic(Phase1)"
  value: {
   dps: 889.048
@@ -134,8 +148,8 @@ dps_results: {
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-DarkmantleArmor"
  value: {
-  dps: 914.64017
-  tps: 649.38981
+  dps: 885.17383
+  tps: 628.47202
  }
 }
 dps_results: {
@@ -155,8 +169,8 @@ dps_results: {
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-FieldMarshal'sVestments"
  value: {
-  dps: 878.82933
-  tps: 623.96314
+  dps: 788.56417
+  tps: 559.87662
  }
 }
 dps_results: {
@@ -164,6 +178,13 @@ dps_results: {
  value: {
   dps: 850.01883
   tps: 603.51524
+ }
+}
+dps_results: {
+ key: "TestCombatSinisterStrike-Phase5-AllItems-LieutenantCommander'sVestments"
+ value: {
+  dps: 775.46933
+  tps: 550.5812
  }
 }
 dps_results: {
@@ -190,8 +211,8 @@ dps_results: {
 dps_results: {
  key: "TestCombatSinisterStrike-Phase5-AllItems-Warlord'sVestments"
  value: {
-  dps: 878.82933
-  tps: 623.96314
+  dps: 788.56417
+  tps: 559.87662
  }
 }
 dps_results: {

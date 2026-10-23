@@ -169,7 +169,9 @@ var ItemSetIllusionistsAttire = core.NewItemSet(core.ItemSet{
 //                            Phase 5 Item Sets - AQ
 ///////////////////////////////////////////////////////////////////////////
 
+// Forever keeps the layout (client ItemSetSpell for set 517).
 var ItemSetSorcerersRegalia = core.NewItemSet(core.ItemSet{
+	ID:   517,
 	Name: "Sorcerer's Regalia",
 	Bonuses: map[int32]core.ApplyEffect{
 		// +8 All Resistances.

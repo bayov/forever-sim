@@ -7,11 +7,13 @@ import (
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
-//We can place these in the class items_sets_pve.go if wanted.
+// The Dungeon Set 1 sets. Each keeps its Classic layout here, and under the Forever ruleset takes
+// the layout in forever_dungeon_sets.go.
 
 var ItemSetWildheartRaiment = core.NewItemSet(core.ItemSet{
+	ID:   185,
 	Name: "Wildheart Raiment",
-	Bonuses: map[int32]core.ApplyEffect{
+	Bonuses: core.RulesetSetBonuses(map[int32]core.ApplyEffect{
 		// +200 Armor.
 		2: func(agent core.Agent) {
 			c := agent.GetCharacter()
@@ -59,12 +61,13 @@ var ItemSetWildheartRaiment = core.NewItemSet(core.ItemSet{
 			c := agent.GetCharacter()
 			c.AddResistances(8)
 		},
-	},
+	}, foreverWildheartRaiment),
 })
 
 var ItemSetBeaststalkerArmor = core.NewItemSet(core.ItemSet{
+	ID:   186,
 	Name: "Beaststalker Armor",
-	Bonuses: map[int32]core.ApplyEffect{
+	Bonuses: core.RulesetSetBonuses(map[int32]core.ApplyEffect{
 		// +200 Armor.
 		2: func(agent core.Agent) {
 			c := agent.GetCharacter()
@@ -103,12 +106,13 @@ var ItemSetBeaststalkerArmor = core.NewItemSet(core.ItemSet{
 			c := agent.GetCharacter()
 			c.AddResistances(8)
 		},
-	},
+	}, foreverBeaststalkerArmor),
 })
 
 var ItemSetMagistersRegalia = core.NewItemSet(core.ItemSet{
+	ID:   181,
 	Name: "Magister's Regalia",
-	Bonuses: map[int32]core.ApplyEffect{
+	Bonuses: core.RulesetSetBonuses(map[int32]core.ApplyEffect{
 		// +200 Armor.
 		2: func(agent core.Agent) {
 			c := agent.GetCharacter()
@@ -128,12 +132,13 @@ var ItemSetMagistersRegalia = core.NewItemSet(core.ItemSet{
 			c := agent.GetCharacter()
 			c.AddResistances(8)
 		},
-	},
+	}, foreverMagistersRegalia),
 })
 
 var ItemSetLightforgeArmor = core.NewItemSet(core.ItemSet{
+	ID:   188,
 	Name: "Lightforge Armor",
-	Bonuses: map[int32]core.ApplyEffect{
+	Bonuses: core.RulesetSetBonuses(map[int32]core.ApplyEffect{
 		// +200 Armor.
 		2: func(agent core.Agent) {
 			c := agent.GetCharacter()
@@ -158,13 +163,13 @@ var ItemSetLightforgeArmor = core.NewItemSet(core.ItemSet{
 			}
 
 			core.MakeProcTriggerAura(&c.Unit, core.ProcTrigger{
-				ActionID:   actionID,
-				Name:       "Item - Crusader's Wrath Proc - Lightforge Armor",
-				Callback:   core.CallbackOnSpellHitDealt,
-				Outcome:    core.OutcomeLanded,
-				ProcMask:   core.ProcMaskMeleeWhiteHit,
-				PPM:        3, //6% is the sod proc rate, best data I could find online says 3 ppm
-				Handler:    handler,
+				ActionID: actionID,
+				Name:     "Item - Crusader's Wrath Proc - Lightforge Armor",
+				Callback: core.CallbackOnSpellHitDealt,
+				Outcome:  core.OutcomeLanded,
+				ProcMask: core.ProcMaskMeleeWhiteHit,
+				PPM:      3, //6% is the sod proc rate, best data I could find online says 3 ppm
+				Handler:  handler,
 			})
 		},
 		// +8 All Resistances.
@@ -172,12 +177,13 @@ var ItemSetLightforgeArmor = core.NewItemSet(core.ItemSet{
 			c := agent.GetCharacter()
 			c.AddResistances(8)
 		},
-	},
+	}, foreverLightforgeArmor),
 })
 
 var ItemSetVestmentsOfTheDevout = core.NewItemSet(core.ItemSet{
+	ID:   182,
 	Name: "Vestments of the Devout",
-	Bonuses: map[int32]core.ApplyEffect{
+	Bonuses: core.RulesetSetBonuses(map[int32]core.ApplyEffect{
 		// +200 Armor.
 		2: func(agent core.Agent) {
 			c := agent.GetCharacter()
@@ -197,12 +203,13 @@ var ItemSetVestmentsOfTheDevout = core.NewItemSet(core.ItemSet{
 			c := agent.GetCharacter()
 			c.AddResistances(8)
 		},
-	},
+	}, foreverVestmentsOfTheDevout),
 })
 
 var ItemSetShadowcraftArmor = core.NewItemSet(core.ItemSet{
+	ID:   184,
 	Name: "Shadowcraft Armor",
-	Bonuses: map[int32]core.ApplyEffect{
+	Bonuses: core.RulesetSetBonuses(map[int32]core.ApplyEffect{
 		// +200 Armor.
 		2: func(agent core.Agent) {
 			c := agent.GetCharacter()
@@ -241,12 +248,13 @@ var ItemSetShadowcraftArmor = core.NewItemSet(core.ItemSet{
 			c := agent.GetCharacter()
 			c.AddResistances(8)
 		},
-	},
+	}, foreverShadowcraftArmor),
 })
 
 var ItemSetTheElements = core.NewItemSet(core.ItemSet{
+	ID:   187,
 	Name: "The Elements",
-	Bonuses: map[int32]core.ApplyEffect{
+	Bonuses: core.RulesetSetBonuses(map[int32]core.ApplyEffect{
 		// +200 Armor.
 		2: func(agent core.Agent) {
 			c := agent.GetCharacter()
@@ -284,12 +292,13 @@ var ItemSetTheElements = core.NewItemSet(core.ItemSet{
 			c := agent.GetCharacter()
 			c.AddResistances(8)
 		},
-	},
+	}, foreverTheElements),
 })
 
 var ItemSetDreadmistRaiment = core.NewItemSet(core.ItemSet{
+	ID:   183,
 	Name: "Dreadmist Raiment",
-	Bonuses: map[int32]core.ApplyEffect{
+	Bonuses: core.RulesetSetBonuses(map[int32]core.ApplyEffect{
 		// +200 Armor.
 		2: func(agent core.Agent) {
 			c := agent.GetCharacter()
@@ -309,12 +318,13 @@ var ItemSetDreadmistRaiment = core.NewItemSet(core.ItemSet{
 			c := agent.GetCharacter()
 			c.AddResistances(8)
 		},
-	},
+	}, foreverDreadmistRaiment),
 })
 
 var ItemSetBattlegearOfValor = core.NewItemSet(core.ItemSet{
+	ID:   189,
 	Name: "Battlegear of Valor",
-	Bonuses: map[int32]core.ApplyEffect{
+	Bonuses: core.RulesetSetBonuses(map[int32]core.ApplyEffect{
 		// +200 Armor.
 		2: func(agent core.Agent) {
 			c := agent.GetCharacter()
@@ -351,5 +361,5 @@ var ItemSetBattlegearOfValor = core.NewItemSet(core.ItemSet{
 			c := agent.GetCharacter()
 			c.AddResistances(8)
 		},
-	},
+	}, foreverBattlegearOfValor),
 })

@@ -221,3 +221,44 @@ var ItemSetRetributionSyntheticPhase1 = core.NewItemSet(core.ItemSet{
 	Name:    "Retribution Synthetic (Phase 1)",
 	Bonuses: justiceBattlegearBonuses,
 })
+
+// https://www.wowhead.com/forever/item-set=516/soulforge-armor
+//
+// Dungeon Set 2, with its Forever rows (client ItemSetSpell for set 516). The sim had no Classic
+// version of the set, so it has bonuses under Forever only.
+var ItemSetSoulforgeArmor = core.NewItemSet(core.ItemSet{
+	ID:   516,
+	Name: "Soulforge Armor",
+	Bonuses: core.RulesetSetBonuses(nil, map[int32]core.ApplyEffect{
+		// 18679: +8 All Resistances.
+		2: func(agent core.Agent) {
+			agent.GetCharacter().AddResistances(8)
+		},
+		// 27498: a melee swing can increase damage and healing done by magical spells and effects by
+		// up to 65 for 10 sec (Crusader's Wrath, 27499). The row states 100% on every swing and no
+		// rate, so we keep the 3 per minute our Classic Lightforge Armor gives the same buff.
+		4: func(agent core.Agent) {
+			c := agent.GetCharacter()
+			buff := c.NewTemporaryStatsAura("Crusader's Wrath", core.ActionID{SpellID: 27499}, stats.Stats{stats.SpellPower: 65}, time.Second*10)
+			core.MakeProcTriggerAura(&c.Unit, core.ProcTrigger{
+				ActionID: core.ActionID{SpellID: 27498},
+				Name:     "Item - Crusader's Wrath Proc - Soulforge Armor",
+				Callback: core.CallbackOnSpellHitDealt,
+				Outcome:  core.OutcomeLanded,
+				ProcMask: core.ProcMaskMeleeWhiteHit,
+				PPM:      3,
+				Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+					buff.Activate(sim)
+				},
+			})
+		},
+		// 14049: +40 Attack Power.
+		6: func(agent core.Agent) {
+			agent.GetCharacter().AddStats(stats.Stats{stats.AttackPower: 40, stats.RangedAttackPower: 40})
+		},
+		// 14803: +200 Armor.
+		8: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.Armor, 200)
+		},
+	}),
+})

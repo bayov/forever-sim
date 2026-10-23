@@ -111,6 +111,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestP1Mage-Phase1-AllItems-Champion'sRegalia"
+ value: {
+  dps: 1120.2685
+  tps: 703.43661
+ }
+}
+dps_results: {
+ key: "TestP1Mage-Phase1-AllItems-Champion'sRegalia-546"
+ value: {
+  dps: 1096.439
+  tps: 687.57347
+ }
+}
+dps_results: {
  key: "TestP1Mage-Phase1-AllItems-EnigmaVestments"
  value: {
   dps: 1380.49733
@@ -120,8 +134,8 @@ dps_results: {
 dps_results: {
  key: "TestP1Mage-Phase1-AllItems-FieldMarshal'sRegalia"
  value: {
-  dps: 1287.342
-  tps: 808.44588
+  dps: 1135.99583
+  tps: 713.00746
  }
 }
 dps_results: {
@@ -153,6 +167,13 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestP1Mage-Phase1-AllItems-LieutenantCommander'sRegalia"
+ value: {
+  dps: 1096.439
+  tps: 687.57347
+ }
+}
+dps_results: {
  key: "TestP1Mage-Phase1-AllItems-MageSynthetic(Phase1)"
  value: {
   dps: 1358.13617
@@ -176,8 +197,8 @@ dps_results: {
 dps_results: {
  key: "TestP1Mage-Phase1-AllItems-Warlord'sRegalia"
  value: {
-  dps: 1287.342
-  tps: 808.44588
+  dps: 1135.99583
+  tps: 713.00746
  }
 }
 dps_results: {

@@ -33,12 +33,17 @@ var bluePvPBonuses = map[int32]core.ApplyEffect{
 	},
 }
 
+// Forever's warlock PvP sets keep the Classic rows (client ItemSetSpell, 1.60.1.70532). Warlord's and
+// Field Marshal's Threads are new pieces that carry only the set ID; Champion's and Lieutenant
+// Commander's Dreadgear keep their Classic pieces.
 var ItemSetChampionsThreads = core.NewItemSet(core.ItemSet{
+	ID:      541,
 	Name:    "Champion's Dreadgear",
 	Bonuses: bluePvPBonuses,
 })
 
 var ItemSetLieutenantCommandersThreads = core.NewItemSet(core.ItemSet{
+	ID:      547,
 	Name:    "Lieutenant Commander's Dreadgear",
 	Bonuses: bluePvPBonuses,
 })
@@ -70,11 +75,27 @@ var epicPvpBonuses = map[int32]core.ApplyEffect{
 }
 
 var ItemSetWarlordsThreads = core.NewItemSet(core.ItemSet{
+	ID:      391,
 	Name:    "Warlord's Threads",
 	Bonuses: epicPvpBonuses,
 })
 
 var ItemSetFieldMarshalsThreads = core.NewItemSet(core.ItemSet{
+	ID:      392,
 	Name:    "Field Marshal's Threads",
 	Bonuses: epicPvpBonuses,
+})
+
+// Forever's Champion's Threads (345) and Lieutenant Commander's Threads (346), on new pieces, with
+// bonuses under Forever only since the sim had no Classic version of them.
+var ItemSetForeverChampionsThreads = core.NewItemSet(core.ItemSet{
+	ID:      345,
+	Name:    "Champion's Threads",
+	Bonuses: core.RulesetSetBonuses(nil, bluePvPBonuses),
+})
+
+var ItemSetForeverLieutenantCommandersThreads = core.NewItemSet(core.ItemSet{
+	ID:      346,
+	Name:    "Lieutenant Commander's Threads",
+	Bonuses: core.RulesetSetBonuses(nil, bluePvPBonuses),
 })

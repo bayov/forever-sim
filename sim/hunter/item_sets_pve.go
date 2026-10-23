@@ -8,7 +8,6 @@ import (
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
-
 ///////////////////////////////////////////////////////////////////////////
 //                            Phase 1 Item Sets - Molten Core
 ///////////////////////////////////////////////////////////////////////////
@@ -87,7 +86,7 @@ var ItemSetDragonstalkersArmor = core.NewItemSet(core.ItemSet{
 		// (8) Set: You have a chance whenever you deal ranged damage to apply an Expose Weakness effect to the target. Expose Weakness increases the Ranged Attack Power of all attackers against that target by 450 for 7 sec.
 		8: func(agent core.Agent) {
 			hunter := agent.(HunterAgent).GetHunter()
-			
+
 			debuffAuras := hunter.NewEnemyAuraArray(core.ExposeWeaknessAura)
 
 			core.MakeProcTriggerAura(&hunter.Unit, core.ProcTrigger{
@@ -143,7 +142,9 @@ var ItemSetPredatorsArmor = core.NewItemSet(core.ItemSet{
 ///////////////////////////////////////////////////////////////////////////
 
 // hhttps://www.wowhead.com/classic/item-set=515/beastmaster-armor
+// Forever keeps the layout (client ItemSetSpell for set 515).
 var ItemSetBeastmasterArmor = core.NewItemSet(core.ItemSet{
+	ID:   515,
 	Name: "Beastmaster Armor",
 	Bonuses: map[int32]core.ApplyEffect{
 		// +8 All Resistances.
@@ -191,7 +192,7 @@ var ItemSetBeastmasterArmor = core.NewItemSet(core.ItemSet{
 var ItemSetStrikersGarb = core.NewItemSet(core.ItemSet{
 	Name: "Striker's Garb",
 	Bonuses: map[int32]core.ApplyEffect{
-		// (3) Set : Reduces the cost of your Arcane Shots by 10%. 
+		// (3) Set : Reduces the cost of your Arcane Shots by 10%.
 		3: func(agent core.Agent) {
 			hunter := agent.(HunterAgent).GetHunter()
 			core.MakePermanent(hunter.RegisterAura(core.Aura{
@@ -203,7 +204,7 @@ var ItemSetStrikersGarb = core.NewItemSet(core.ItemSet{
 				},
 			}))
 		},
-		// (5) Set : Reduces the cooldown of your Rapid Fire ability by 2 minutes. 
+		// (5) Set : Reduces the cooldown of your Rapid Fire ability by 2 minutes.
 		5: func(agent core.Agent) {
 			hunter := agent.(HunterAgent).GetHunter()
 			core.MakePermanent(hunter.RegisterAura(core.Aura{
@@ -273,7 +274,7 @@ var ItemSetCryptstalkerArmor = core.NewItemSet(core.ItemSet{
 					}
 				},
 			})
-			
+
 		},
 		// (8) Set : Reduces the mana cost of your Multi-Shot and Aimed Shot by 20.
 		8: func(agent core.Agent) {

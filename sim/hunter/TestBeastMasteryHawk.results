@@ -131,8 +131,8 @@ dps_results: {
 dps_results: {
  key: "TestBeastMasteryHawk-Phase1-AllItems-Champion'sPursuit"
  value: {
-  dps: 1385.95983
-  tps: 994.18894
+  dps: 1388.85
+  tps: 996.23222
   dtps: 1.803
  }
 }
@@ -171,9 +171,9 @@ dps_results: {
 dps_results: {
  key: "TestBeastMasteryHawk-Phase1-AllItems-FieldMarshal'sPursuit"
  value: {
-  dps: 1558.75867
-  tps: 1139.01517
-  dtps: 1.84583
+  dps: 1431.974
+  tps: 1033.64837
+  dtps: 1.803
  }
 }
 dps_results: {
@@ -235,8 +235,8 @@ dps_results: {
 dps_results: {
  key: "TestBeastMasteryHawk-Phase1-AllItems-LieutenantCommander'sPursuit"
  value: {
-  dps: 1385.95983
-  tps: 994.18894
+  dps: 1388.85
+  tps: 996.23222
   dtps: 1.803
  }
 }
@@ -283,9 +283,9 @@ dps_results: {
 dps_results: {
  key: "TestBeastMasteryHawk-Phase1-AllItems-Warlord'sPursuit"
  value: {
-  dps: 1558.75867
-  tps: 1139.01517
-  dtps: 1.84583
+  dps: 1431.974
+  tps: 1033.64837
+  dtps: 1.803
  }
 }
 dps_results: {

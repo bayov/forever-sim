@@ -131,8 +131,8 @@ dps_results: {
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-Champion'sPursuit"
  value: {
-  dps: 1215.52117
-  tps: 1028.24385
+  dps: 1221.16883
+  tps: 1035.91313
   dtps: 1.803
  }
 }
@@ -171,8 +171,8 @@ dps_results: {
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-FieldMarshal'sPursuit"
  value: {
-  dps: 1327.29033
-  tps: 1124.96542
+  dps: 1252.8275
+  tps: 1064.75421
   dtps: 1.803
  }
 }
@@ -235,8 +235,8 @@ dps_results: {
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-LieutenantCommander'sPursuit"
  value: {
-  dps: 1215.52117
-  tps: 1028.24385
+  dps: 1221.16883
+  tps: 1035.91313
   dtps: 1.803
  }
 }
@@ -283,8 +283,8 @@ dps_results: {
 dps_results: {
  key: "TestSurvival-Phase1-AllItems-Warlord'sPursuit"
  value: {
-  dps: 1327.29033
-  tps: 1124.96542
+  dps: 1252.8275
+  tps: 1064.75421
   dtps: 1.803
  }
 }

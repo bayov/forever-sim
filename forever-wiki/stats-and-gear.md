@@ -24,6 +24,24 @@ Blizzard called this "a deliberate un-solving of the Classic gear meta". These a
 - Belt buckles from Blacksmithing add "socketed stats" to waist armor (wording from a fan transcription, exact mechanic unknown).
 - Ring enchants from Enchanting. Armor kits for leather and mail from Leatherworking. Embroidery on cloth from Tailoring. Alchemy makes an upgradeable trinket (Philosopher's Stone) and longer or stronger elixirs and flasks (Mixology).
 
+## Set bonuses
+
+Read from the client's ItemSetSpell table (build 70532) and modelled in the sim under the Forever ruleset (2026-10-23). The 4-piece Dungeon Set 1 bonuses all trigger when struck (freeze, shield, fear, silence, disarm, snare or stun removal, speed) and are left out.
+
+| Set | 2 | 3 | 5 | 6 |
+|---|---|---|---|---|
+| Magister's Regalia (181), Vestments of the Devout (182) | +8 resistances | +18 spell damage and healing | 5% of spell casts: 200 mana | 8 mp5 |
+| Dreadmist Raiment (183) | +8 resistances | +18 spell damage and healing | 5% of spell casts: 300 heal | 8 mp5 |
+| Wildheart Raiment (185) | +8 resistances | +18 spell damage and healing, +30 attack power | 5% of spell casts: 200 mana | 8 mp5 |
+| Beaststalker Armor (186) | +8 resistances | +30 attack power | 5% of melee and ranged swings: 200 mana | 8 mp5 |
+| The Elements (187), Lightforge Armor (188) | +8 resistances | +18 spell damage and healing | swings and spell casts: +65 spell damage and healing for 10 sec | 8 mp5 |
+| Shadowcraft Armor (184) | +8 resistances | +30 attack power | swings: 20 Energy | health regen |
+| Battlegear of Valor (189) | +8 resistances | +15 Strength | swings: heal 88 to 132 and 10 Rage | health regen |
+| Imperial Plate (321, now with Gauntlets 250589) | +7 Defense | +1% hit | +20 Strength | +1% crit |
+| Blessed Plate (1968, new) | +10 Shadow resistance | +20 Strength | +2% hit | +29 Holy damage |
+
+The Dungeon Set 2 sets keep Classic's 2 / 4 / 6 / 8 layout (resistances, the proc, the stat, 200 armor), but Darkmantle's Energy proc gives 20 instead of 35 and The Five Thunders' and Soulforge's buff 65 instead of 95. The PvP sets keep their Classic rows on new "Premier" pieces, except that the healer sets (druid Refuge, priest Investiture, paladin Aegis, shaman Wartide) give +44 healing and +15 spell damage where Classic gave 40 attack power or 23 spell damage and healing, the new rank 7 and 8 pieces give 20 Stamina at 6 pieces where some Classic sets gave 15, and Champion's and Lieutenant Commander's Pursuit give +20 Agility for Classic's 1% parry. Rates the rows leave to the server are in notes.md.
+
 ## Racial stat effects that touch DPS
 
 Pulled together here because they are what a sim would model. Full list in [racials.md](racials.md).

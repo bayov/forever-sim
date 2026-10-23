@@ -131,8 +131,8 @@ dps_results: {
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-Champion'sPursuit"
  value: {
-  dps: 1478.593
-  tps: 1503.99525
+  dps: 1491.57167
+  tps: 1517.21454
   dtps: 2.3305
  }
 }
@@ -171,9 +171,9 @@ dps_results: {
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-FieldMarshal'sPursuit"
  value: {
-  dps: 1700.7755
-  tps: 1726.66927
-  dtps: 2.38883
+  dps: 1548.19567
+  tps: 1573.84586
+  dtps: 2.3305
  }
 }
 dps_results: {
@@ -235,8 +235,8 @@ dps_results: {
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-LieutenantCommander'sPursuit"
  value: {
-  dps: 1478.593
-  tps: 1503.99525
+  dps: 1491.57167
+  tps: 1517.21454
   dtps: 2.3305
  }
 }
@@ -283,9 +283,9 @@ dps_results: {
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-Warlord'sPursuit"
  value: {
-  dps: 1700.7755
-  tps: 1726.66927
-  dtps: 2.38883
+  dps: 1548.19567
+  tps: 1573.84586
+  dtps: 2.3305
  }
 }
 dps_results: {

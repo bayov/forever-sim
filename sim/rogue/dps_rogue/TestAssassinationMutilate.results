@@ -118,6 +118,20 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestAssassinationMutilate-Phase5-AllItems-Champion'sVestments"
+ value: {
+  dps: 739.29083
+  tps: 524.89148
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-AllItems-Champion'sVestments-522"
+ value: {
+  dps: 738.84667
+  tps: 524.57075
+ }
+}
+dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-CombatSwordsSynthetic(Phase1)"
  value: {
   dps: 828.817
@@ -134,8 +148,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-DarkmantleArmor"
  value: {
-  dps: 847.32533
-  tps: 601.59123
+  dps: 832.1005
+  tps: 590.78692
  }
 }
 dps_results: {
@@ -155,8 +169,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-FieldMarshal'sVestments"
  value: {
-  dps: 818.23983
-  tps: 580.94151
+  dps: 752.87183
+  tps: 534.53393
  }
 }
 dps_results: {
@@ -164,6 +178,13 @@ dps_results: {
  value: {
   dps: 795.9595
   tps: 565.11585
+ }
+}
+dps_results: {
+ key: "TestAssassinationMutilate-Phase5-AllItems-LieutenantCommander'sVestments"
+ value: {
+  dps: 738.84667
+  tps: 524.57075
  }
 }
 dps_results: {
@@ -190,8 +211,8 @@ dps_results: {
 dps_results: {
  key: "TestAssassinationMutilate-Phase5-AllItems-Warlord'sVestments"
  value: {
-  dps: 818.23983
-  tps: 580.94151
+  dps: 752.87183
+  tps: 534.53393
  }
 }
 dps_results: {

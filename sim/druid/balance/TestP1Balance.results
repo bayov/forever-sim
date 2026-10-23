@@ -113,8 +113,22 @@ dps_results: {
 dps_results: {
  key: "TestP1Balance-Phase1-AllItems-Champion'sRefuge"
  value: {
-  dps: 864.68367
-  tps: 880.5084
+  dps: 828.80083
+  tps: 844.44072
+ }
+}
+dps_results: {
+ key: "TestP1Balance-Phase1-AllItems-Champion'sSanctuary"
+ value: {
+  dps: 766.88833
+  tps: 782.18844
+ }
+}
+dps_results: {
+ key: "TestP1Balance-Phase1-AllItems-Champion'sWildhide"
+ value: {
+  dps: 853.707
+  tps: 869.53938
  }
 }
 dps_results: {
@@ -139,17 +153,45 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestP1Balance-Phase1-AllItems-FieldMarshal'sRefuge"
+ value: {
+  dps: 853.171
+  tps: 868.97902
+ }
+}
+dps_results: {
  key: "TestP1Balance-Phase1-AllItems-FieldMarshal'sSanctuary"
  value: {
-  dps: 878.47667
-  tps: 894.12711
+  dps: 774.52583
+  tps: 789.81311
+ }
+}
+dps_results: {
+ key: "TestP1Balance-Phase1-AllItems-FieldMarshal'sWildhide"
+ value: {
+  dps: 885.30317
+  tps: 901.11677
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-AllItems-LieutenantCommander'sRefuge"
  value: {
-  dps: 864.68367
-  tps: 880.5084
+  dps: 828.80083
+  tps: 844.44072
+ }
+}
+dps_results: {
+ key: "TestP1Balance-Phase1-AllItems-LieutenantCommander'sSanctuary"
+ value: {
+  dps: 766.88833
+  tps: 782.18844
+ }
+}
+dps_results: {
+ key: "TestP1Balance-Phase1-AllItems-LieutenantCommander'sWildhide"
+ value: {
+  dps: 853.707
+  tps: 869.53938
  }
 }
 dps_results: {
@@ -167,10 +209,24 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestP1Balance-Phase1-AllItems-Warlord'sRefuge"
+ value: {
+  dps: 853.171
+  tps: 868.97902
+ }
+}
+dps_results: {
  key: "TestP1Balance-Phase1-AllItems-Warlord'sSanctuary"
  value: {
-  dps: 878.47667
-  tps: 894.12711
+  dps: 774.52583
+  tps: 789.81311
+ }
+}
+dps_results: {
+ key: "TestP1Balance-Phase1-AllItems-Warlord'sWildhide"
+ value: {
+  dps: 885.30317
+  tps: 901.11677
  }
 }
 dps_results: {

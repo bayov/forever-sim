@@ -99,8 +99,8 @@ stat_weights_results: {
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 783.47733
-  tps: 741.07785
+  dps: 744.28633
+  tps: 703.94361
   dtps: 1.89983
  }
 }
@@ -109,6 +109,22 @@ dps_results: {
  value: {
   dps: 785.506
   tps: 742.55613
+  dtps: 1.89983
+ }
+}
+dps_results: {
+ key: "TestElementalLevel60-Phase1-AllItems-Champion'sThunderfist"
+ value: {
+  dps: 802.463
+  tps: 759.21775
+  dtps: 1.89983
+ }
+}
+dps_results: {
+ key: "TestElementalLevel60-Phase1-AllItems-Champion'sWartide"
+ value: {
+  dps: 768.27367
+  tps: 726.72273
   dtps: 1.89983
  }
 }
@@ -145,11 +161,59 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestElementalLevel60-Phase1-AllItems-FieldMarshal'sEarthshaker"
+ value: {
+  dps: 764.031
+  tps: 722.60842
+  dtps: 1.89983
+ }
+}
+dps_results: {
+ key: "TestElementalLevel60-Phase1-AllItems-FieldMarshal'sThunderfist"
+ value: {
+  dps: 828.497
+  tps: 783.535
+  dtps: 1.89983
+ }
+}
+dps_results: {
+ key: "TestElementalLevel60-Phase1-AllItems-FieldMarshal'sWartide"
+ value: {
+  dps: 788.79517
+  tps: 746.25724
+  dtps: 1.89983
+ }
+}
+dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-GiftoftheGatheringStorm"
  value: {
   dps: 862.33967
   tps: 816.6712
   dtps: 1.91017
+ }
+}
+dps_results: {
+ key: "TestElementalLevel60-Phase1-AllItems-LieutenantCommander'sEarthshaker"
+ value: {
+  dps: 744.28633
+  tps: 703.94361
+  dtps: 1.89983
+ }
+}
+dps_results: {
+ key: "TestElementalLevel60-Phase1-AllItems-LieutenantCommander'sThunderfist"
+ value: {
+  dps: 802.463
+  tps: 759.21775
+  dtps: 1.89983
+ }
+}
+dps_results: {
+ key: "TestElementalLevel60-Phase1-AllItems-LieutenantCommander'sWartide"
+ value: {
+  dps: 768.27367
+  tps: 726.72273
+  dtps: 1.89983
  }
 }
 dps_results: {
@@ -179,9 +243,9 @@ dps_results: {
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-TheFiveThunders"
  value: {
-  dps: 757.41267
-  tps: 715.24468
-  dtps: 1.82433
+  dps: 770.5665
+  tps: 727.79334
+  dtps: 1.853
  }
 }
 dps_results: {
@@ -195,8 +259,24 @@ dps_results: {
 dps_results: {
  key: "TestElementalLevel60-Phase1-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 808.72983
-  tps: 764.73291
+  dps: 764.031
+  tps: 722.60842
+  dtps: 1.89983
+ }
+}
+dps_results: {
+ key: "TestElementalLevel60-Phase1-AllItems-Warlord'sThunderfist"
+ value: {
+  dps: 828.497
+  tps: 783.535
+  dtps: 1.89983
+ }
+}
+dps_results: {
+ key: "TestElementalLevel60-Phase1-AllItems-Warlord'sWartide"
+ value: {
+  dps: 788.79517
+  tps: 746.25724
   dtps: 1.89983
  }
 }

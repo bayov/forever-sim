@@ -121,9 +121,14 @@ var ItemSetGreenDragonMail = core.NewItemSet(core.ItemSet{
 })
 
 // https://www.wowhead.com/classic/item-set=321/imperial-plate
+//
+// Forever reworked the set (client ItemSetSpell, as wowsims/forever's items_sets.go has it): the
+// Imperial Plate Gauntlets (250589) join the seven Classic pieces, and every bonus is new. The
+// 4-piece bonus (1302372) keeps movement speed from dropping below 80% and has no place in the sim.
 var ItemSetImperialPlate = core.NewItemSet(core.ItemSet{
+	ID:   321,
 	Name: "Imperial Plate",
-	Bonuses: map[int32]core.ApplyEffect{
+	Bonuses: core.RulesetSetBonuses(map[int32]core.ApplyEffect{
 		// +100 Armor.
 		2: func(agent core.Agent) {
 			character := agent.GetCharacter()
@@ -140,7 +145,61 @@ var ItemSetImperialPlate = core.NewItemSet(core.ItemSet{
 			character := agent.GetCharacter()
 			character.AddStat(stats.Stamina, 18)
 		},
-	},
+	}, map[int32]core.ApplyEffect{
+		// 13385: Increased Defense +7.
+		2: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.Defense, 7)
+		},
+		// 1251990: Improves your chance to hit by 1%, with melee and ranged attacks and with spells.
+		3: func(agent core.Agent) {
+			agent.GetCharacter().AddStats(stats.Stats{
+				stats.MeleeHit: 1 * core.MeleeHitRatingPerHitChance,
+				stats.SpellHit: 1 * core.SpellHitRatingPerHitChance,
+			})
+		},
+		// 1251984: +20 Strength.
+		5: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.Strength, 20)
+		},
+		// 1251991: Improves your chance to get a critical strike by 1%, with every school.
+		6: func(agent core.Agent) {
+			agent.GetCharacter().AddStats(stats.Stats{
+				stats.MeleeCrit: 1 * core.CritRatingPerCritChance,
+				stats.SpellCrit: 1 * core.SpellCritRatingPerCritChance,
+			})
+		},
+	}),
+})
+
+// https://www.wowhead.com/forever/item-set=1968/blessed-plate
+//
+// New in Forever (Blacksmithing, items 250586 to 250594), so it has bonuses under Forever only. The
+// 4-piece bonus (1302375) restores 20 health every 5 sec to party members within 10 yards, which
+// the sim does not track.
+var ItemSetBlessedPlate = core.NewItemSet(core.ItemSet{
+	ID:   1968,
+	Name: "Blessed Plate",
+	Bonuses: core.RulesetSetBonuses(nil, map[int32]core.ApplyEffect{
+		// 14673: Increased Shadow Resistance +10.
+		2: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.ShadowResistance, 10)
+		},
+		// 1252009: +20 Strength.
+		3: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.Strength, 20)
+		},
+		// 1252013: Improves your chance to hit by 2%.
+		5: func(agent core.Agent) {
+			agent.GetCharacter().AddStats(stats.Stats{
+				stats.MeleeHit: 2 * core.MeleeHitRatingPerHitChance,
+				stats.SpellHit: 2 * core.SpellHitRatingPerHitChance,
+			})
+		},
+		// 21518: Increases damage done by Holy spells and effects by up to 29.
+		6: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.HolyPower, 29)
+		},
+	}),
 })
 
 // https://www.wowhead.com/classic/item-set=144/ironfeather-armor

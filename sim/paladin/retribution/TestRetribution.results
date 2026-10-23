@@ -111,10 +111,31 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRetribution-Phase5-AllItems-Champion'sAegis"
+ value: {
+  dps: 355.69883
+  tps: 381.67951
+ }
+}
+dps_results: {
+ key: "TestRetribution-Phase5-AllItems-Champion'sVindication"
+ value: {
+  dps: 377.04817
+  tps: 403.67707
+ }
+}
+dps_results: {
  key: "TestRetribution-Phase5-AllItems-FieldMarshal'sAegis"
  value: {
-  dps: 445.7195
-  tps: 471.18893
+  dps: 371.4125
+  tps: 397.0879
+ }
+}
+dps_results: {
+ key: "TestRetribution-Phase5-AllItems-FieldMarshal'sVindication"
+ value: {
+  dps: 399.53133
+  tps: 426.15507
  }
 }
 dps_results: {
@@ -139,10 +160,24 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestRetribution-Phase5-AllItems-LieutenantCommander'sAegis"
+ value: {
+  dps: 355.69883
+  tps: 381.67951
+ }
+}
+dps_results: {
  key: "TestRetribution-Phase5-AllItems-LieutenantCommander'sRedoubt"
  value: {
   dps: 414.67
   tps: 441.29697
+ }
+}
+dps_results: {
+ key: "TestRetribution-Phase5-AllItems-LieutenantCommander'sVindication"
+ value: {
+  dps: 377.04817
+  tps: 403.67707
  }
 }
 dps_results: {
@@ -171,6 +206,27 @@ dps_results: {
  value: {
   dps: 322.34233
   tps: 348.9757
+ }
+}
+dps_results: {
+ key: "TestRetribution-Phase5-AllItems-SoulforgeArmor"
+ value: {
+  dps: 436.86083
+  tps: 462.83601
+ }
+}
+dps_results: {
+ key: "TestRetribution-Phase5-AllItems-Warlord'sAegis"
+ value: {
+  dps: 371.4125
+  tps: 397.0879
+ }
+}
+dps_results: {
+ key: "TestRetribution-Phase5-AllItems-Warlord'sVindication"
+ value: {
+  dps: 399.53133
+  tps: 426.15507
  }
 }
 dps_results: {

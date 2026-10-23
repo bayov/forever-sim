@@ -8,7 +8,9 @@ import (
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
+// Forever keeps the layout (client ItemSetSpell for set 518).
 var ItemSetDeathmistRaiment = core.NewItemSet(core.ItemSet{
+	ID:   518,
 	Name: "Deathmist Raiment",
 	Bonuses: map[int32]core.ApplyEffect{
 		// +8 All Resistances.

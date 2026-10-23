@@ -105,6 +105,14 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestWarlockDestructionFire-Phase1-AllItems-Champion'sThreads"
+ value: {
+  dps: 1018.09667
+  tps: 792.56206
+  hps: 1.49867
+ }
+}
+dps_results: {
  key: "TestWarlockDestructionFire-Phase1-AllItems-DeathmistRaiment"
  value: {
   dps: 999.596
@@ -139,9 +147,9 @@ dps_results: {
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-AllItems-FieldMarshal'sThreads"
  value: {
-  dps: 1115.45317
-  tps: 867.48172
-  hps: 2.10967
+  dps: 1048.611
+  tps: 815.23319
+  hps: 1.92733
  }
 }
 dps_results: {
@@ -166,6 +174,14 @@ dps_results: {
   dps: 1079.16017
   tps: 838.86059
   hps: 2.1385
+ }
+}
+dps_results: {
+ key: "TestWarlockDestructionFire-Phase1-AllItems-LieutenantCommander'sThreads"
+ value: {
+  dps: 1018.09667
+  tps: 792.56206
+  hps: 1.49867
  }
 }
 dps_results: {
@@ -203,9 +219,9 @@ dps_results: {
 dps_results: {
  key: "TestWarlockDestructionFire-Phase1-AllItems-Warlord'sThreads"
  value: {
-  dps: 1115.45317
-  tps: 867.48172
-  hps: 2.10967
+  dps: 1048.611
+  tps: 815.23319
+  hps: 1.92733
  }
 }
 dps_results: {

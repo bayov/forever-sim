@@ -393,8 +393,8 @@ stat_weights_results: {
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 1097.19033
-  tps: 810.56846
+  dps: 1082.22433
+  tps: 796.38752
  }
 }
 dps_results: {
@@ -402,6 +402,20 @@ dps_results: {
  value: {
   dps: 1129.50967
   tps: 832.34326
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase1-AllItems-Champion'sThunderfist"
+ value: {
+  dps: 1068.53
+  tps: 789.15196
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase1-AllItems-Champion'sWartide"
+ value: {
+  dps: 1051.30633
+  tps: 774.3069
  }
 }
 dps_results: {
@@ -440,10 +454,52 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-Phase1-AllItems-FieldMarshal'sEarthshaker"
+ value: {
+  dps: 1119.2825
+  tps: 823.19116
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase1-AllItems-FieldMarshal'sThunderfist"
+ value: {
+  dps: 1107.479
+  tps: 819.71913
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase1-AllItems-FieldMarshal'sWartide"
+ value: {
+  dps: 1077.685
+  tps: 794.28809
+ }
+}
+dps_results: {
  key: "TestEnhancement-Phase1-AllItems-GiftoftheGatheringStorm"
  value: {
   dps: 933.25833
   tps: 699.02329
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase1-AllItems-LieutenantCommander'sEarthshaker"
+ value: {
+  dps: 1082.22433
+  tps: 796.38752
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase1-AllItems-LieutenantCommander'sThunderfist"
+ value: {
+  dps: 1068.53
+  tps: 789.15196
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase1-AllItems-LieutenantCommander'sWartide"
+ value: {
+  dps: 1051.30633
+  tps: 774.3069
  }
 }
 dps_results: {
@@ -470,8 +526,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-TheFiveThunders"
  value: {
-  dps: 1104.567
-  tps: 815.33286
+  dps: 1110.101
+  tps: 819.9091
  }
 }
 dps_results: {
@@ -484,8 +540,22 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 1161.59233
-  tps: 855.86277
+  dps: 1119.2825
+  tps: 823.19116
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase1-AllItems-Warlord'sThunderfist"
+ value: {
+  dps: 1107.479
+  tps: 819.71913
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase1-AllItems-Warlord'sWartide"
+ value: {
+  dps: 1077.685
+  tps: 794.28809
  }
 }
 dps_results: {
@@ -1009,8 +1079,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 1130.86167
-  tps: 836.56526
+  dps: 1112.47883
+  tps: 820.2499
  }
 }
 dps_results: {
@@ -1018,6 +1088,20 @@ dps_results: {
  value: {
   dps: 1170.5895
   tps: 863.39438
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase2-AllItems-Champion'sThunderfist"
+ value: {
+  dps: 1104.94217
+  tps: 819.24265
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase2-AllItems-Champion'sWartide"
+ value: {
+  dps: 1085.47283
+  tps: 803.89138
  }
 }
 dps_results: {
@@ -1056,10 +1140,52 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-Phase2-AllItems-FieldMarshal'sEarthshaker"
+ value: {
+  dps: 1153.0435
+  tps: 850.85997
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase2-AllItems-FieldMarshal'sThunderfist"
+ value: {
+  dps: 1137.444
+  tps: 842.34283
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase2-AllItems-FieldMarshal'sWartide"
+ value: {
+  dps: 1112.82933
+  tps: 823.08632
+ }
+}
+dps_results: {
  key: "TestEnhancement-Phase2-AllItems-GiftoftheGatheringStorm"
  value: {
   dps: 960.23433
   tps: 720.67023
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase2-AllItems-LieutenantCommander'sEarthshaker"
+ value: {
+  dps: 1112.47883
+  tps: 820.2499
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase2-AllItems-LieutenantCommander'sThunderfist"
+ value: {
+  dps: 1104.94217
+  tps: 819.24265
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase2-AllItems-LieutenantCommander'sWartide"
+ value: {
+  dps: 1085.47283
+  tps: 803.89138
  }
 }
 dps_results: {
@@ -1086,8 +1212,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-TheFiveThunders"
  value: {
-  dps: 1133.44267
-  tps: 835.86612
+  dps: 1139.135
+  tps: 840.55793
  }
 }
 dps_results: {
@@ -1100,8 +1226,22 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 1208.062
-  tps: 891.76356
+  dps: 1153.0435
+  tps: 850.85997
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase2-AllItems-Warlord'sThunderfist"
+ value: {
+  dps: 1137.444
+  tps: 842.34283
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase2-AllItems-Warlord'sWartide"
+ value: {
+  dps: 1112.82933
+  tps: 823.08632
  }
 }
 dps_results: {
@@ -1289,8 +1429,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 1140.96717
-  tps: 840.53482
+  dps: 1124.0945
+  tps: 826.44513
  }
 }
 dps_results: {
@@ -1298,6 +1438,20 @@ dps_results: {
  value: {
   dps: 1179.66833
   tps: 867.59514
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase3-AllItems-Champion'sThunderfist"
+ value: {
+  dps: 1116.7095
+  tps: 823.74119
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase3-AllItems-Champion'sWartide"
+ value: {
+  dps: 1092.11067
+  tps: 804.91759
  }
 }
 dps_results: {
@@ -1336,10 +1490,52 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-Phase3-AllItems-FieldMarshal'sEarthshaker"
+ value: {
+  dps: 1164.175
+  tps: 854.53611
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase3-AllItems-FieldMarshal'sThunderfist"
+ value: {
+  dps: 1150.83167
+  tps: 848.56591
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase3-AllItems-FieldMarshal'sWartide"
+ value: {
+  dps: 1123.83317
+  tps: 826.82807
+ }
+}
+dps_results: {
  key: "TestEnhancement-Phase3-AllItems-GiftoftheGatheringStorm"
  value: {
   dps: 985.1035
   tps: 736.51265
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase3-AllItems-LieutenantCommander'sEarthshaker"
+ value: {
+  dps: 1124.0945
+  tps: 826.44513
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase3-AllItems-LieutenantCommander'sThunderfist"
+ value: {
+  dps: 1116.7095
+  tps: 823.74119
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase3-AllItems-LieutenantCommander'sWartide"
+ value: {
+  dps: 1092.11067
+  tps: 804.91759
  }
 }
 dps_results: {
@@ -1366,8 +1562,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-TheFiveThunders"
  value: {
-  dps: 1144.04417
-  tps: 839.76981
+  dps: 1149.48167
+  tps: 844.21855
  }
 }
 dps_results: {
@@ -1380,8 +1576,22 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 1211.38633
-  tps: 891.12819
+  dps: 1164.175
+  tps: 854.53611
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase3-AllItems-Warlord'sThunderfist"
+ value: {
+  dps: 1150.83167
+  tps: 848.56591
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase3-AllItems-Warlord'sWartide"
+ value: {
+  dps: 1123.83317
+  tps: 826.82807
  }
 }
 dps_results: {
@@ -1569,8 +1779,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 1197.375
-  tps: 883.82636
+  dps: 1174.98817
+  tps: 864.55699
  }
 }
 dps_results: {
@@ -1578,6 +1788,20 @@ dps_results: {
  value: {
   dps: 1231.607
   tps: 906.947
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase5-AllItems-Champion'sThunderfist"
+ value: {
+  dps: 1169.31383
+  tps: 864.75976
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase5-AllItems-Champion'sWartide"
+ value: {
+  dps: 1153.22933
+  tps: 852.43266
  }
 }
 dps_results: {
@@ -1616,10 +1840,52 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestEnhancement-Phase5-AllItems-FieldMarshal'sEarthshaker"
+ value: {
+  dps: 1218.177
+  tps: 896.34377
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase5-AllItems-FieldMarshal'sThunderfist"
+ value: {
+  dps: 1206.882
+  tps: 892.19355
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase5-AllItems-FieldMarshal'sWartide"
+ value: {
+  dps: 1174.96633
+  tps: 867.08426
+ }
+}
+dps_results: {
  key: "TestEnhancement-Phase5-AllItems-GiftoftheGatheringStorm"
  value: {
   dps: 974.66067
   tps: 730.29793
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase5-AllItems-LieutenantCommander'sEarthshaker"
+ value: {
+  dps: 1174.98817
+  tps: 864.55699
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase5-AllItems-LieutenantCommander'sThunderfist"
+ value: {
+  dps: 1169.31383
+  tps: 864.75976
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase5-AllItems-LieutenantCommander'sWartide"
+ value: {
+  dps: 1153.22933
+  tps: 852.43266
  }
 }
 dps_results: {
@@ -1646,8 +1912,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-TheFiveThunders"
  value: {
-  dps: 1175.57
-  tps: 866.27323
+  dps: 1181.21983
+  tps: 870.91432
  }
 }
 dps_results: {
@@ -1660,8 +1926,22 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 1268.37233
-  tps: 933.51466
+  dps: 1218.177
+  tps: 896.34377
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase5-AllItems-Warlord'sThunderfist"
+ value: {
+  dps: 1206.882
+  tps: 892.19355
+ }
+}
+dps_results: {
+ key: "TestEnhancement-Phase5-AllItems-Warlord'sWartide"
+ value: {
+  dps: 1174.96633
+  tps: 867.08426
  }
 }
 dps_results: {

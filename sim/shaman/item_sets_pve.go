@@ -9,9 +9,13 @@ import (
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
+// Forever keeps the layout (client ItemSetSpell for set 519), but its The Furious Storm (27775)
+// gives 65 spell damage and healing, not 95. Its 6-piece row (14047) is the 23 spell damage and
+// healing; the Classic map gives resistances there, a slip left as it was for the Classic rulesets.
 var ItemSetTheFiveThunders = core.NewItemSet(core.ItemSet{
+	ID:   519,
 	Name: "The Five Thunders",
-	Bonuses: map[int32]core.ApplyEffect{
+	Bonuses: core.RulesetSetBonuses(map[int32]core.ApplyEffect{
 		// +8 All Resistances.
 		2: func(agent core.Agent) {
 			c := agent.GetCharacter()
@@ -43,7 +47,35 @@ var ItemSetTheFiveThunders = core.NewItemSet(core.ItemSet{
 			c := agent.GetCharacter()
 			c.AddStat(stats.Armor, 200)
 		},
-	},
+	}, map[int32]core.ApplyEffect{
+		// 18679: +8 All Resistances.
+		2: func(agent core.Agent) {
+			agent.GetCharacter().AddResistances(8)
+		},
+		// 27774: a 4% chance on a spell cast to increase your damage and healing by up to 65 for 10 sec.
+		4: func(agent core.Agent) {
+			c := agent.GetCharacter()
+
+			procAura := c.NewTemporaryStatsAura("The Furious Storm", core.ActionID{SpellID: 27775}, stats.Stats{stats.SpellPower: 65}, time.Second*10)
+			core.MakeProcTriggerAura(&c.Unit, core.ProcTrigger{
+				Name:       "Item - The Furious Storm Proc (Spell Cast)",
+				Callback:   core.CallbackOnCastComplete,
+				ProcMask:   core.ProcMaskSpellDamage | core.ProcMaskSpellHealing,
+				ProcChance: 0.04,
+				Handler: func(sim *core.Simulation, spell *core.Spell, _ *core.SpellResult) {
+					procAura.Activate(sim)
+				},
+			})
+		},
+		// 14047: Increases damage and healing done by magical spells and effects by up to 23.
+		6: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.SpellPower, 23)
+		},
+		// 14803: +200 Armor.
+		8: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.Armor, 200)
+		},
+	}),
 })
 
 var ItemSetTheEarthfury = core.NewItemSet(core.ItemSet{

@@ -105,10 +105,26 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestP1Shadow-Phase1-AllItems-Champion'sInvestiture-2072"
+ value: {
+  dps: 1028.37283
+  tps: 1039.08889
+  dtps: 1.9175
+ }
+}
+dps_results: {
  key: "TestP1Shadow-Phase1-AllItems-Champion'sRaiment"
  value: {
   dps: 1072.1045
   tps: 1082.89836
+  dtps: 1.9175
+ }
+}
+dps_results: {
+ key: "TestP1Shadow-Phase1-AllItems-Champion'sRaiment-549"
+ value: {
+  dps: 1056.46833
+  tps: 1067.59175
   dtps: 1.9175
  }
 }
@@ -121,10 +137,18 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestP1Shadow-Phase1-AllItems-FieldMarshal'sInvestiture"
+ value: {
+  dps: 1044.7395
+  tps: 1055.46041
+  dtps: 1.9175
+ }
+}
+dps_results: {
  key: "TestP1Shadow-Phase1-AllItems-FieldMarshal'sRaiment"
  value: {
-  dps: 1127.73367
-  tps: 1138.45898
+  dps: 1088.84267
+  tps: 1099.9567
   dtps: 1.9175
  }
 }
@@ -147,16 +171,16 @@ dps_results: {
 dps_results: {
  key: "TestP1Shadow-Phase1-AllItems-LieutenantCommander'sInvestiture"
  value: {
-  dps: 1083.62183
-  tps: 1094.25785
+  dps: 1028.37283
+  tps: 1039.08889
   dtps: 1.9175
  }
 }
 dps_results: {
  key: "TestP1Shadow-Phase1-AllItems-LieutenantCommander'sRaiment"
  value: {
-  dps: 1072.1045
-  tps: 1082.89836
+  dps: 1056.46833
+  tps: 1067.59175
   dtps: 1.9175
  }
 }
@@ -201,10 +225,26 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestP1Shadow-Phase1-AllItems-VestmentsoftheVirtuous"
+ value: {
+  dps: 1031.61883
+  tps: 1039.35076
+  dtps: 1.99417
+ }
+}
+dps_results: {
+ key: "TestP1Shadow-Phase1-AllItems-Warlord'sInvestiture"
+ value: {
+  dps: 1044.7395
+  tps: 1055.46041
+  dtps: 1.9175
+ }
+}
+dps_results: {
  key: "TestP1Shadow-Phase1-AllItems-Warlord'sRaiment"
  value: {
-  dps: 1127.73367
-  tps: 1138.45898
+  dps: 1088.84267
+  tps: 1099.9567
   dtps: 1.9175
  }
 }

@@ -131,8 +131,8 @@ dps_results: {
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-Champion'sPursuit"
  value: {
-  dps: 1466.36483
-  tps: 1288.35815
+  dps: 1463.797
+  tps: 1289.29092
   dtps: 1.803
  }
 }
@@ -171,9 +171,9 @@ dps_results: {
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-FieldMarshal'sPursuit"
  value: {
-  dps: 1667.82867
-  tps: 1473.82515
-  dtps: 1.84583
+  dps: 1517.95083
+  tps: 1340.39887
+  dtps: 1.803
  }
 }
 dps_results: {
@@ -235,8 +235,8 @@ dps_results: {
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-LieutenantCommander'sPursuit"
  value: {
-  dps: 1466.36483
-  tps: 1288.35815
+  dps: 1463.797
+  tps: 1289.29092
   dtps: 1.803
  }
 }
@@ -283,9 +283,9 @@ dps_results: {
 dps_results: {
  key: "TestMarksmanship-Phase1-AllItems-Warlord'sPursuit"
  value: {
-  dps: 1667.82867
-  tps: 1473.82515
-  dtps: 1.84583
+  dps: 1517.95083
+  tps: 1340.39887
+  dtps: 1.803
  }
 }
 dps_results: {

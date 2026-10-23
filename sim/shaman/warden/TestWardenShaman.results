@@ -99,8 +99,8 @@ stat_weights_results: {
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 327.25617
-  tps: 546.04646
+  dps: 322.87317
+  tps: 533.3239
  }
 }
 dps_results: {
@@ -108,6 +108,20 @@ dps_results: {
  value: {
   dps: 341.15783
   tps: 562.1435
+ }
+}
+dps_results: {
+ key: "TestWardenShaman-Phase1-AllItems-Champion'sThunderfist"
+ value: {
+  dps: 315.79317
+  tps: 533.4596
+ }
+}
+dps_results: {
+ key: "TestWardenShaman-Phase1-AllItems-Champion'sWartide"
+ value: {
+  dps: 306.64333
+  tps: 515.91845
  }
 }
 dps_results: {
@@ -146,10 +160,52 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestWardenShaman-Phase1-AllItems-FieldMarshal'sEarthshaker"
+ value: {
+  dps: 338.99917
+  tps: 557.16298
+ }
+}
+dps_results: {
+ key: "TestWardenShaman-Phase1-AllItems-FieldMarshal'sThunderfist"
+ value: {
+  dps: 329.22017
+  tps: 554.43442
+ }
+}
+dps_results: {
+ key: "TestWardenShaman-Phase1-AllItems-FieldMarshal'sWartide"
+ value: {
+  dps: 315.70883
+  tps: 530.4212
+ }
+}
+dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-GiftoftheGatheringStorm"
  value: {
   dps: 560.4425
   tps: 1044.84064
+ }
+}
+dps_results: {
+ key: "TestWardenShaman-Phase1-AllItems-LieutenantCommander'sEarthshaker"
+ value: {
+  dps: 322.87317
+  tps: 533.3239
+ }
+}
+dps_results: {
+ key: "TestWardenShaman-Phase1-AllItems-LieutenantCommander'sThunderfist"
+ value: {
+  dps: 315.79317
+  tps: 533.4596
+ }
+}
+dps_results: {
+ key: "TestWardenShaman-Phase1-AllItems-LieutenantCommander'sWartide"
+ value: {
+  dps: 306.64333
+  tps: 515.91845
  }
 }
 dps_results: {
@@ -176,8 +232,8 @@ dps_results: {
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-TheFiveThunders"
  value: {
-  dps: 345.44733
-  tps: 570.50591
+  dps: 348.824
+  tps: 577.6233
  }
 }
 dps_results: {
@@ -190,8 +246,22 @@ dps_results: {
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 353.872
-  tps: 582.35677
+  dps: 338.99917
+  tps: 557.16298
+ }
+}
+dps_results: {
+ key: "TestWardenShaman-Phase1-AllItems-Warlord'sThunderfist"
+ value: {
+  dps: 329.22017
+  tps: 554.43442
+ }
+}
+dps_results: {
+ key: "TestWardenShaman-Phase1-AllItems-Warlord'sWartide"
+ value: {
+  dps: 315.70883
+  tps: 530.4212
  }
 }
 dps_results: {

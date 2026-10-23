@@ -237,3 +237,27 @@ var ItemSetSmiteSyntheticPhase1 = core.NewItemSet(core.ItemSet{
 	Name:    "Smite Synthetic (Phase 1)",
 	Bonuses: vestmentsOfConvictionBonuses,
 })
+
+// https://www.wowhead.com/forever/item-set=514/vestments-of-the-virtuous
+//
+// Dungeon Set 2, with its Forever rows (client ItemSetSpell for set 514, as wowsims/forever has it).
+// The sim had no Classic version of the set, so it has bonuses under Forever only. The 4-piece
+// bonus (27778) shields the wearer when struck, which a boss fight does not test.
+var ItemSetVestmentsOfTheVirtuous = core.NewItemSet(core.ItemSet{
+	ID:   514,
+	Name: "Vestments of the Virtuous",
+	Bonuses: core.RulesetSetBonuses(nil, map[int32]core.ApplyEffect{
+		// 18679: +8 All Resistances.
+		2: func(agent core.Agent) {
+			agent.GetCharacter().AddResistances(8)
+		},
+		// 14047: Increases damage and healing done by magical spells and effects by up to 23.
+		6: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.SpellPower, 23)
+		},
+		// 14803: +200 Armor.
+		8: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.Armor, 200)
+		},
+	}),
+})

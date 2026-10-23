@@ -187,7 +187,11 @@ var ItemSetEmblemsOfVeiledShadows = core.NewItemSet(core.ItemSet{
 })
 
 // https://www.wowhead.com/classic/item-set=512/darkmantle-armor
+//
+// Forever keeps the layout (client ItemSetSpell for set 512), but its Rogue Armor Energize (27788)
+// restores 20 Energy, not 35.
 var ItemSetDarkmantleArmor = core.NewItemSet(core.ItemSet{
+	ID:   512,
 	Name: "Darkmantle Armor",
 	Bonuses: map[int32]core.ApplyEffect{
 		// +8 All Resistances.
@@ -198,6 +202,10 @@ var ItemSetDarkmantleArmor = core.NewItemSet(core.ItemSet{
 		// Chance on melee attack to restore 35 energy.
 		4: func(agent core.Agent) {
 			c := agent.GetCharacter()
+			if c.Env.IsForever() {
+				foreverRogueArmorEnergize(c)
+				return
+			}
 			actionID := core.ActionID{SpellID: 27787}
 			energyMetrics := c.NewEnergyMetrics(actionID)
 
@@ -230,6 +238,26 @@ var ItemSetDarkmantleArmor = core.NewItemSet(core.ItemSet{
 		},
 	},
 })
+
+// Rogue Armor Energize under Forever, as sim/common/item_sets has it for Shadowcraft Armor: a melee
+// swing restores 20 Energy (27788). The row states 100% on every swing (proc flags 0x4) and no rate,
+// so we keep 1 per minute as a literal, as wowsims/forever does.
+func foreverRogueArmorEnergize(c *core.Character) {
+	energyMetrics := c.NewEnergyMetrics(core.ActionID{SpellID: 27788})
+	core.MakeProcTriggerAura(&c.Unit, core.ProcTrigger{
+		ActionID: core.ActionID{SpellID: 27787},
+		Name:     "Rogue Armor Energize",
+		Callback: core.CallbackOnSpellHitDealt,
+		Outcome:  core.OutcomeLanded,
+		ProcMask: core.ProcMaskMeleeWhiteHit,
+		PPM:      1,
+		Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+			if c.HasEnergyBar() {
+				c.AddEnergy(sim, 20, energyMetrics)
+			}
+		},
+	})
+}
 
 // https://www.wowhead.com/classic/item-set=497/deathdealers-embrace
 var ItemSetDeathdealersEmbrace = core.NewItemSet(core.ItemSet{
