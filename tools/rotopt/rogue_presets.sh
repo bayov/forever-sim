@@ -58,7 +58,8 @@ gen rogue_bs level30p5_backstab "ruptureCp=5,ruptureSnd=0,ghostly=0,hemoForRuptu
 # creature type) and the synthetic Phase 1 sets with the
 # mksettings rogue_combat, rogue_assassination and rogue_subtlety setups (knob search,
 # talent search, knob search again). These need no settings argument, each builds its own.
-# The Seal Fate builds use the Combat ones' rotations, the search kept every knob.
+# Seal Fate Daggers uses the Combat Daggers rotation, the search kept every knob. Seal Fate Swords
+# is the Combat Swords one with 4 point Eviscerates.
 gen60() {
 	spec=$1
 	gear=$2
@@ -76,6 +77,7 @@ gen60() {
 	echo "wrote ui/rogue/apls/$name.apl.json ($knobs)"
 }
 gen60 rogue_combat level60_phase1_synthetic_swords rogue_ss level60_combat_swords 00530310501-32003311201515231 "arEnergy=39,bfPrepull=1"
-gen60 rogue_combat level60_phase1_synthetic_combat_daggers rogue_bs level60_combat_daggers 00530310501-30230320201513231-002 "arEnergy=39,bfPrepull=1,bfSnd=0,bsAfterSwing=0.25,bsEnergy=100,evisCp=4,ghostly=0,vanishCp=3"
-gen60 rogue_assassination level60_phase1_synthetic_daggers rogue_mut level60_mutilate 0053031033150103-302303202015-002 "bsAfterSwing=0.75,sndRefresh=1,evisCp=4"
-gen60 rogue_subtlety level60_phase1_synthetic_daggers rogue_sub level60_subtlety 0053031035140004--3021203310113011 "bsAfterSwing=0.25,hemoFiller=1,ruptureCp=3,ruptureSnd=0,vanishCp=3,vanishPool=1"
+gen60 rogue_combat level60_phase1_synthetic_combat_daggers rogue_bs level60_combat_daggers 005303104-30230320201515231-002 "arEnergy=39,bfPrepull=1,bfSnd=0,bsAfterSwing=0.25,bsEnergy=100,evisCp=4,ghostly=0,vanishCp=3"
+gen60 rogue_assassination level60_phase1_synthetic_mutilate rogue_mut level60_mutilate 0053031033150103-302303202015-002 "bsAfterSwing=0.75,sndRefresh=1,evisCp=4,vanishCp=3"
+gen60 rogue_subtlety level60_phase1_synthetic_subtlety rogue_sub level60_subtlety 0053031035140004--3021203310113011 "bsAfterSwing=0.25,hemoFiller=1,ruptureCp=3,ruptureSnd=0,vanishCp=3,vanishPool=1"
+gen60 rogue_combat level60_phase1_synthetic_seal_fate_swords rogue_ss level60_seal_fate_swords 0053031034150005-3220132020141 "arEnergy=39,bfPrepull=1,evisCp=4"

@@ -72,6 +72,7 @@
               ]
             },
             "consumes": {
+              "flask": "FlaskOfNaturalAccuracy",
               "food": "FoodFlankAuPoivre",
               "agilityElixir": "ElixirOfTheMongoose",
               "strengthBuff": "ElixirOfFerocity",
@@ -114,7 +115,6 @@
               ],
               "priorityList": [
                 {
-                  
                   "action": {
                     "condition": {
                       "auraIsActive": {
@@ -943,7 +943,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "cmp": {
@@ -1224,6 +1223,96 @@
                       "spellId": {
                         "spellId": 1856
                       }
+                    }
+                  }
+                },
+                {
+                  "notes": "Night Elf: Shadowmeld into Ambush, as the Vanish line. Other races can ignore the warning on this line.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "spellIsReady": {
+                              "spellId": {
+                                "spellId": 20580
+                              }
+                            }
+                          },
+                          {
+                            "not": {
+                              "val": {
+                                "frontOfTarget": {}
+                              }
+                            }
+                          },
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 1787
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpLe",
+                              "lhs": {
+                                "currentComboPoints": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "3"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "currentEnergy": {}
+                              },
+                              "rhs": {
+                                "spellCurrentCost": {
+                                  "spellId": {
+                                    "spellId": 11269
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "spellId": 6774,
+                                "rank": 2
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "strictSequence": {
+                      "actions": [
+                        {
+                          "castSpell": {
+                            "spellId": {
+                              "spellId": 20580
+                            }
+                          }
+                        },
+                        {
+                          "castSpell": {
+                            "spellId": {
+                              "spellId": 11269
+                            }
+                          }
+                        }
+                      ]
                     }
                   }
                 },
@@ -1516,7 +1605,8 @@
       }
     ],
     "raidDamageHitsPerMinute": 2,
-    "raidDamagePerHit": 1500
+    "raidDamagePerHit": 1500,
+    "naturalFlaskZone": true
   },
   "simOptions": {
     "iterations": 1000,

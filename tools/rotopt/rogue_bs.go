@@ -26,6 +26,7 @@ var (
 	thousandCuts  = spellID(1310723)
 	mutilate      = spellID(1310707)
 	venom         = spellID(1310703)
+	shadowmeld    = spellID(20580)
 )
 
 func (rogueBS) Knobs() []Knob {
@@ -56,6 +57,9 @@ func (rogueBS) Knobs() []Knob {
 		// Pool energy for the Ambush while Vanish is ready, so the builders do not keep it
 		// below 60 (an energy starved build otherwise leaves Vanish idle).
 		Knob{Name: "vanishPool", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Night Elf: Shadowmeld into Ambush at this many combo points or fewer, 9 for never.
+		// The line does nothing for the other races.
+		Knob{Name: "meldCp", Default: 3, Min: 0, Max: 9, Step: 3},
 		// Backstab only at this many Thousand Cuts stacks, or when energy is pooled. 0 ignores stacks.
 		Knob{Name: "bsStacks", Default: 0, Min: 0, Max: 5, Step: 1},
 		Knob{Name: "bsAfterSwing", Default: 0, Min: 0, Max: 1, Step: 0.25},
@@ -117,15 +121,39 @@ func (rogueBS) Build(k Knobs) *proto.APLRotation {
 	// Vanish is only an Ambush at a low combo count, so the points are not wasted over 5.
 	// Ambush breaks the stealth right after. Preparation gives a second Vanish once the
 	// first is spent. Cutthroat Ambushes ride on the same line.
-	if k["vanishCp"] < 9 {
-		items = append(items,
-			cast(vanish, and(
+	// Shadowmeld is a Night Elf's second Vanish (standards 13: only in the fight), off the
+	// GCD, and needs the target's back. The Ambush goes out in the same sequence.
+	meld := &proto.APLListItem{
+		Notes: "Night Elf: Shadowmeld into Ambush, as the Vanish line. Other races can ignore the warning on this line.",
+		Action: &proto.APLAction{
+			Condition: and(
+				spellIsReady(shadowmeld),
+				not(&proto.APLValue{Value: &proto.APLValue_FrontOfTarget{FrontOfTarget: &proto.APLValueFrontOfTarget{}}}),
 				not(auraIsActive(stealth)),
-				le(comboPoints(), num(k["vanishCp"])),
+				le(comboPoints(), num(k["meldCp"])),
 				ge(energy(), spellCurrentCost(ambush)),
 				auraIsActive(sliceAndDice),
-				gt(remainingTime(), seconds(10)),
-			), "Vanish for an Ambush at low combo points."),
+			),
+			Action: &proto.APLAction_StrictSequence{StrictSequence: &proto.APLActionStrictSequence{Actions: []*proto.APLAction{
+				{Action: &proto.APLAction_CastSpell{CastSpell: &proto.APLActionCastSpell{SpellId: shadowmeld}}},
+				{Action: &proto.APLAction_CastSpell{CastSpell: &proto.APLActionCastSpell{SpellId: ambush}}},
+			}}},
+		},
+	}
+	if k["vanishCp"] < 9 {
+		items = append(items, cast(vanish, and(
+			not(auraIsActive(stealth)),
+			le(comboPoints(), num(k["vanishCp"])),
+			ge(energy(), spellCurrentCost(ambush)),
+			auraIsActive(sliceAndDice),
+			gt(remainingTime(), seconds(10)),
+		), "Vanish for an Ambush at low combo points."))
+	}
+	if k["meldCp"] < 9 {
+		items = append(items, meld)
+	}
+	if k["vanishCp"] < 9 {
+		items = append(items,
 			cast(ambush, or(auraIsActive(stealth), auraIsActive(cutthroat)),
 				"Ambush from stealth after Vanish, or when Cutthroat lets it go out after a Backstab."),
 			cast(preparation, and(

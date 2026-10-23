@@ -5,8 +5,8 @@
   "build": "Seal Fate Daggers",
   "isDefault": false,
   "pr": 9,
-  "race": "SkyborneWindshaper",
-  "talents": "0053031055120005-322303200013-002",
+  "race": "Orc",
+  "talents": "0053031052150005-322303200013-002",
   "treeNames": [
     "Assassination",
     "Combat",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_daggers",
   "apl": "level60_combat_daggers",
   "published": {
-    "dps": 687.1,
-    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 683.0)"
+    "dps": 730.6,
+    "source": "Rogue regear round 2026-10-23: the 8% hit cap (the sets' wrists trade 10 hit rating for 20 attack power, Subtlety keeps its hit), the natural flasks, the wowsims/forever alignment round; 180 s, 20,000 iterations, seed 1 (was 687.1)"
   },
   "verify": {
-    "dps": 687.07,
+    "dps": 730.58,
     "stderr": 0.21,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "sim of the request, 180s, seed 1 (rogue worker, 2026-10-23)"
   },
   "summary": "Backstab on daggers with Seal Fate from Assassination.",
   "keyTalents": [
@@ -31,7 +31,7 @@
     "Lethality 5/5",
     "Puncturing Wounds",
     "Cold Blood",
-    "Vile Poisons",
+    "Improved Poisons 5/5",
     "Improved Eviscerate",
     "Opportunity"
   ],
@@ -44,6 +44,7 @@
     "Backstab right after a main-hand swing (0.25s), or at 100 energy"
   ],
   "consumes": [
+    "Flask of Natural Precision",
     "Elixir of the Mongoose",
     "Elixir of Ferocity",
     "Juju Might",
@@ -61,7 +62,8 @@
     "Murder does nothing on the generic boss, so its points go to Lethality (Vile Poisons for Seal Fate Daggers).",
     "No Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV). They would add 13 to 18.",
     "Grimstitch 4-piece and 5-piece aren't active (about +8 and +6).",
-    "Flask of Supreme Power and Greater Arcane Elixir left out (+8 through Dragonbreath Chili)."
+    "Natural flasks on (standards 11: Hyjal Summit or the Barrow Deeps).",
+    "Hit held at the 8% yellow cap (standards 4); the old 9% sets did 0.4 to 2.8 more through the white hits."
   ],
-  "notes": "Spec family set to Assassination (30 Assassination points); the PR frames it as a variant of Combat Daggers and it uses the rogue_combat mksettings setup and the Combat Daggers APL. The talent preset tooltip mentions Blade Flurry, but the talent string has no Blade Flurry point."
+  "notes": "Spec family set to Assassination (30 Assassination points); the PR frames it as a variant of Combat Daggers and it uses the rogue_combat mksettings setup and the Combat Daggers APL."
 }
