@@ -26,7 +26,6 @@ func (warrior *Warrior) RegisterShieldBlockCD() {
 		MaxStacks: charges,
 
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			aura.SetStacks(sim, aura.MaxStacks)
 			warrior.AddStatDynamic(sim, stats.Block, 75*core.BlockRatingPerBlockChance)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
@@ -57,8 +56,11 @@ func (warrior *Warrior) RegisterShieldBlockCD() {
 			return warrior.PseudoStats.CanBlock
 		},
 
+		// A cast while the buff is still up (7 sec on a 5 sec cooldown under Forever) refreshes it
+		// with its charges refilled (wowsims/forever shield_block.go).
 		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 			warrior.ShieldBlockAura.Activate(sim)
+			warrior.ShieldBlockAura.SetStacks(sim, warrior.ShieldBlockAura.MaxStacks)
 		},
 	})
 

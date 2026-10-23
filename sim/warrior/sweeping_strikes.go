@@ -12,13 +12,23 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 	}
 
 	// Procs from auto attacks and most abilities https://www.wowhead.com/classic/spell=12723/sweeping-strikes
+	//
+	// Under Forever the copy is the first hit's final damage with the first target's armor taken
+	// out: the attacker and target damage multipliers already went into it, so it skips them and
+	// takes only the second target's armor (wowsims/forever talents_arms.go copies Damage /
+	// ArmorAndResistanceMultiplier with SpellFlagIgnoreModifiers). Classic runs the copy through
+	// the damage multipliers a second time.
 	var curDmg float64
+	copyFlags := core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete
+	if warrior.Env.IsForever() {
+		copyFlags |= core.SpellFlagIgnoreModifiers
+	}
 	hitSchoolDamagWithValue := warrior.RegisterSpell(AnyStance, core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 12723},
 		SpellSchool: core.SpellSchoolPhysical,
 		DefenseType: core.DefenseTypeMelee,
 		ProcMask:    core.ProcMaskEmpty, // No proc mask, so it won't proc itself.
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
+		Flags:       copyFlags,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,

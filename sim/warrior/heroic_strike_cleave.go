@@ -85,6 +85,26 @@ func (warrior *Warrior) registerCleaveSpell(realismICD *core.Cooldown) {
 				target = sim.Environment.NextTargetUnit(target)
 			}
 
+			// Under Forever Cleave's flat threat is its total, split between the targets it lands
+			// on (wowsims/forever 913a5bcf69, the owner's in-game threat measurements). Classic
+			// gives each target all of it.
+			if sim.IsForever() {
+				landed := 0
+				for _, result := range hits {
+					if result.Landed() {
+						landed++
+					}
+				}
+				if landed > 1 {
+					flatThreat := spell.FlatThreatBonus
+					spell.FlatThreatBonus /= float64(landed)
+					for _, result := range hits {
+						result.Threat = spell.ThreatFromDamage(result.Outcome, result.Damage)
+					}
+					spell.FlatThreatBonus = flatThreat
+				}
+			}
+
 			for _, result := range hits {
 				spell.DealDamage(sim, result)
 			}

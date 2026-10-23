@@ -18,12 +18,18 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 
 	apCoef := 0.15
 	blockValueCoef := 2.0
+	procMask := core.ProcMaskMeleeMHSpecial
 	// Forever's rank 4 deals 655 ± 4.57% (625 to 685) plus the block value once, with no attack
 	// power (client 70425, spell 23925; wowsims/forever's Shield Slam).
+	//
+	// It is struck with the shield, so it is an off-hand special: no Windfury Totem or main hand
+	// weapon procs (wowsims/forever b6ce30c972). With no off-hand weapon behind it, it takes none
+	// of the off-hand weapon modifiers (isShieldStrike), and its attack table stays the main hand's.
 	if warrior.Env.IsForever() {
 		damageLow, damageHigh = 625, 685
 		apCoef = 0
 		blockValueCoef = 1
+		procMask = core.ProcMaskMeleeOHSpecial
 	}
 
 	warrior.ShieldSlam = warrior.RegisterSpell(AnyStance, core.SpellConfig{
@@ -31,7 +37,7 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 		ActionID:    core.ActionID{SpellID: spellID},
 		SpellSchool: core.SpellSchoolPhysical,
 		DefenseType: core.DefenseTypeMelee,
-		ProcMask:    core.ProcMaskMeleeMHSpecial, // TODO really?
+		ProcMask:    procMask,
 		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL | SpellFlagOffensive,
 
 		RageCost: core.RageCostOptions{

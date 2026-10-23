@@ -1020,8 +1020,16 @@ func (aa *AutoAttacks) NewPPMManager(ppm float64, procMask ProcMask) PPMManager 
 		ppmm.procChances = append(ppmm.procChances, speed)
 	}
 
-	mergeOrAppend(aa.mh.SwingSpeed, procMask&^ProcMaskRanged&^ProcMaskMeleeOH) // "everything else", even if not explicitly flagged MH
-	mergeOrAppend(aa.oh.SwingSpeed, procMask&ProcMaskMeleeOH)
+	mhMask := procMask &^ ProcMaskRanged &^ ProcMaskMeleeOH // "everything else", even if not explicitly flagged MH
+	ohMask := procMask & ProcMaskMeleeOH
+	if aa.oh.SwingSpeed == 0 {
+		// With no off-hand weapon an off-hand hit is a shield's (Forever's Shield Slam), and its
+		// procs per minute go by the main hand's speed (wowsims/forever b6ce30c972).
+		mhMask |= ohMask
+		ohMask = 0
+	}
+	mergeOrAppend(aa.mh.SwingSpeed, mhMask)
+	mergeOrAppend(aa.oh.SwingSpeed, ohMask)
 	mergeOrAppend(aa.ranged.SwingSpeed, procMask&ProcMaskRanged)
 
 	for i := range ppmm.procChances {
@@ -1040,6 +1048,8 @@ func (aa *AutoAttacks) NewPPMManager(ppm float64, procMask ProcMask) PPMManager 
 		if character != nil {
 			if ohWeapon := character.GetOHWeapon(); ohWeapon != nil {
 				ppmm.ohSpecialProcChance = ohWeapon.SwingSpeed * ppm / 60
+			} else if mhWeapon := character.GetMHWeapon(); mhWeapon != nil {
+				ppmm.ohSpecialProcChance = mhWeapon.SwingSpeed * ppm / 60
 			}
 		}
 	}
@@ -1058,7 +1068,8 @@ func (aa *AutoAttacks) PPMProc(sim *Simulation, ppm float64, procMask ProcMask, 
 	case spell.ProcMask.Matches(procMask &^ ProcMaskMeleeOH &^ ProcMaskRanged):
 		return sim.RandomFloat(label) < ppm*aa.mh.SwingSpeed/60.0
 	case spell.ProcMask.Matches(procMask & ProcMaskMeleeOH):
-		return sim.RandomFloat(label) < ppm*aa.oh.SwingSpeed/60.0
+		// A shield's hit goes by the main hand's speed, as in NewPPMManager.
+		return sim.RandomFloat(label) < ppm*TernaryFloat64(aa.oh.SwingSpeed == 0, aa.mh.SwingSpeed, aa.oh.SwingSpeed)/60.0
 	case spell.ProcMask.Matches(procMask & ProcMaskRanged):
 		return sim.RandomFloat(label) < ppm*aa.ranged.SwingSpeed/60.0
 	}

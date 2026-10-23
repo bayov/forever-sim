@@ -97,13 +97,13 @@ func (warrior *Warrior) applyWeaponmaster() {
 	case core.ProcMaskMeleeMH:
 		warrior.AddStat(stats.MeleeCrit, 1*core.CritRatingPerCritChance*float64(points))
 		warrior.OnSpellRegistered(func(spell *core.Spell) {
-			if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
+			if isOffHandWeaponAttack(spell) {
 				spell.BonusCritRating -= 1 * core.CritRatingPerCritChance * float64(points)
 			}
 		})
 	case core.ProcMaskMeleeOH:
 		warrior.OnSpellRegistered(func(spell *core.Spell) {
-			if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
+			if isOffHandWeaponAttack(spell) {
 				spell.BonusCritRating += 1 * core.CritRatingPerCritChance * float64(points)
 			}
 		})
@@ -117,6 +117,18 @@ func isShieldBash(spellID int32) bool {
 		return true
 	}
 	return false
+}
+
+// isShieldStrike is Shield Slam or Shield Bash. Under Forever they are off-hand specials struck with
+// the shield, so the off-hand weapon modifiers (Dual Wield Specialization, Furious Precision,
+// Weaponmaster's off-hand crit) pass them by (wowsims/forever b6ce30c972).
+func isShieldStrike(spell *core.Spell) bool {
+	return spell.SpellCode == SpellCode_WarriorShieldSlam || isShieldBash(spell.SpellID)
+}
+
+// isOffHandWeaponAttack is an attack made with the off-hand weapon.
+func isOffHandWeaponAttack(spell *core.Spell) bool {
+	return spell.ProcMask.Matches(core.ProcMaskMeleeOH) && !isShieldStrike(spell)
 }
 
 func (warrior *Warrior) registerWeaponmasterExtraAttack(procMask core.ProcMask, procChance float64) {
@@ -140,7 +152,7 @@ func (warrior *Warrior) registerWeaponmasterExtraAttack(procMask core.ProcMask, 
 			}
 			// "Fixed an issue where Weaponmaster's Sword Specialization could be activated by
 			// Shield Bash and Shield Slam" (development notes, 2026-10-15, build 1.60.1.70425).
-			if spell.SpellCode == SpellCode_WarriorShieldSlam || isShieldBash(spell.SpellID) {
+			if isShieldStrike(spell) {
 				return
 			}
 			if !icd.IsReady(sim) {
@@ -237,7 +249,7 @@ func (warrior *Warrior) applyDualWieldSpecialization() {
 	warrior.AddOffHandDealtRageMultiplier(1 + 0.1*float64(points))
 
 	warrior.OnSpellRegistered(func(spell *core.Spell) {
-		if spell.ProcMask.Matches(core.ProcMaskMeleeOH) && spell.BonusCoefficient > 0 {
+		if isOffHandWeaponAttack(spell) && spell.BonusCoefficient > 0 {
 			spell.DamageMultiplier *= multiplier
 		}
 	})
@@ -251,7 +263,7 @@ func (warrior *Warrior) applyFuriousPrecision() {
 
 	bonusHit := []float64{0, 4, 7, 10}[warrior.Talents.FuriousPrecision] * core.MeleeHitRatingPerHitChance
 	warrior.OnSpellRegistered(func(spell *core.Spell) {
-		if spell.ProcMask.Matches(core.ProcMaskMeleeOH) {
+		if isOffHandWeaponAttack(spell) {
 			spell.BonusHitRating += bonusHit
 		}
 	})

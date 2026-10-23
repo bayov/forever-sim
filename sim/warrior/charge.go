@@ -30,6 +30,10 @@ func (warrior *Warrior) registerChargeSpell() {
 
 	actionID := core.ActionID{SpellID: rank.spellID}
 	rageMetrics := warrior.NewRageMetrics(actionID)
+	// Under Forever Charge's Rage makes no threat: a threat capture's Charge window shows the melee
+	// hit's threat alone, and the client flags every rank and Vanguard's 1240289 with
+	// ATTR_EX_1_NO_THREAT (wowsims/forever 6067c8469d).
+	rageMetrics.NoThreat = warrior.Env.IsForever()
 	rage := rank.rage + 3*float64(warrior.Talents.ImprovedCharge)
 
 	stances := BattleStance

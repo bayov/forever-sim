@@ -29,6 +29,8 @@ type rageBar struct {
 	currentRage  float64
 	maxRage      float64
 
+	rageGainSpell *Spell // Holds the threat from Rage gains.
+
 	RageRefundMetrics *ResourceMetrics
 }
 
@@ -309,7 +311,7 @@ func (unit *Unit) EnableRageBar(options RageBarOptions) {
 				}
 				metrics = spell.ResourceMetrics
 			}
-			unit.AddRage(sim, generatedRage, metrics)
+			unit.rageBar.addRage(sim, generatedRage, metrics, false)
 		},
 		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
 			if unit.GetCurrentPowerBar() != RageBar {
@@ -323,7 +325,7 @@ func (unit *Unit) EnableRageBar(options RageBarOptions) {
 			}
 			generatedRage *= unit.rageBar.damageTakenMultiplier
 			generatedRage += unit.rageBar.flatDamageTakenBonusRage
-			unit.AddRage(sim, generatedRage, rageFromDamageTakenMetrics)
+			unit.rageBar.addRage(sim, generatedRage, rageFromDamageTakenMetrics, false)
 		},
 		// Under Forever a periodic tick taken gives Rage like a direct hit (wowsims/forever
 		// 5ac4ffbcb6); Classic's ticks give none.
@@ -333,13 +335,13 @@ func (unit *Unit) EnableRageBar(options RageBarOptions) {
 			}
 			generatedRage := ForeverDamageTakenRage(spell, result) * unit.rageBar.damageTakenMultiplier
 			if generatedRage > 0 {
-				unit.AddRage(sim, generatedRage, rageFromDamageTakenMetrics)
+				unit.rageBar.addRage(sim, generatedRage, rageFromDamageTakenMetrics, false)
 			}
 		},
 	})
 
 	// Not a real spell, just holds metrics from rage gain threat.
-	unit.RegisterSpell(SpellConfig{
+	rageGainSpell := unit.RegisterSpell(SpellConfig{
 		ActionID: ActionID{OtherID: proto.OtherAction_OtherActionRageGain},
 	})
 
@@ -351,8 +353,10 @@ func (unit *Unit) EnableRageBar(options RageBarOptions) {
 		critDealtMultiplier:    1,
 		startingRage:           max(0, min(options.StartingRage, MaxRage)),
 		maxRage:                MaxRage,
+		rageGainSpell:          rageGainSpell,
 		RageRefundMetrics:      unit.NewRageMetrics(ActionID{OtherID: proto.OtherAction_OtherActionRefund}),
 	}
+	unit.rageBar.RageRefundMetrics.NoThreat = true
 }
 
 func (unit *Unit) HasRageBar() bool {
@@ -405,12 +409,22 @@ func (rb *rageBar) CurrentRage() float64 {
 }
 
 func (rb *rageBar) AddRage(sim *Simulation, amount float64, metrics *ResourceMetrics) {
+	rb.addRage(sim, amount, metrics, !metrics.NoThreat)
+}
+
+// addRage adds Rage. Under Forever a gain that makes threat books it at once (foreverRageGainThreat);
+// Rage from hits dealt or taken and from refunds makes none.
+func (rb *rageBar) addRage(sim *Simulation, amount float64, metrics *ResourceMetrics, threat bool) {
 	if amount < 0 {
 		panic("Trying to add negative rage!")
 	}
 
 	newRage := min(rb.currentRage+amount, rb.maxRage)
 	metrics.AddEvent(amount, newRage-rb.currentRage)
+
+	if gain := newRage - rb.currentRage; gain > 0 && threat && sim.IsForever() {
+		rb.foreverRageGainThreat(sim, gain)
+	}
 
 	if sim.Log != nil {
 		rb.unit.Log(sim, "Gained %0.3f rage from %s (%0.3f --> %0.3f).", amount, metrics.ActionID, rb.currentRage, newRage)
@@ -454,12 +468,29 @@ func (rb *rageBar) reset(_ *Simulation) {
 	rb.currentRage = rb.startingRage
 }
 
-func (rb *rageBar) doneIteration() {
-	if rb.unit == nil {
+// foreverRageGainThreat books a Rage gain's threat under Forever: 5 threat a Rage, times the unit's
+// threat multiplier at the time (a warrior's stance and Defiance), split between the targets in
+// combat at the time. wowsims/forever 913a5bcf69 and c48ea6cea3 have it from the owner's in-game
+// threat measurements; Classic gives 5 a Rage to every target, with no multiplier, at the end of the
+// iteration (doneIteration).
+func (rb *rageBar) foreverRageGainThreat(sim *Simulation, gain float64) {
+	targets := sim.Encounter.ActiveTargetUnits
+	if len(targets) == 0 {
+		return
+	}
+	threat := gain * ThreatPerRageGained * rb.unit.PseudoStats.ThreatMultiplier / float64(len(targets))
+	for _, target := range targets {
+		rb.rageGainSpell.SpellMetrics[target.UnitIndex].TotalThreat += threat
+	}
+	rb.rageGainSpell.SpellMetrics[0].Casts++
+}
+
+func (rb *rageBar) doneIteration(sim *Simulation) {
+	if rb.unit == nil || sim.IsForever() {
 		return
 	}
 
-	rageGainSpell := rb.unit.GetSpell(ActionID{OtherID: proto.OtherAction_OtherActionRageGain})
+	rageGainSpell := rb.rageGainSpell
 
 	for _, resourceMetrics := range rb.unit.Metrics.resources {
 		if resourceMetrics.Type != proto.ResourceType_ResourceTypeRage {
@@ -544,7 +575,7 @@ func (rc *RageCost) IssueRefund(sim *Simulation, spell *Spell) {
 		refund = rc.Refund * spell.CurCast.Cost
 	}
 	if refund > 0 {
-		spell.Unit.AddRage(sim, refund, rc.RefundMetrics)
+		spell.Unit.rageBar.addRage(sim, refund, rc.RefundMetrics, false)
 	}
 }
 

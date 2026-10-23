@@ -37,10 +37,18 @@ func newForeverWarrior(t *testing.T, talents string) (*core.Simulation, *warrior
 // hand (991014, a 2.8 sec sword, and 991015, a 1.7 sec axe) or the synthetic Arms two-hander
 // (991016, a 3.7 sec axe).
 func newForeverWarriorArmed(t *testing.T, talents string, mainHand, offHand int32) (*core.Simulation, *warrior.Warrior) {
-	// A boss that swings, for Rage from damage taken.
-	target := core.NewDefaultTarget()
-	target.MinBaseDamage = 3000
-	target.SwingSpeed = 2
+	return newForeverWarriorTargets(t, talents, mainHand, offHand, 1)
+}
+
+// newForeverWarriorTargets is newForeverWarriorArmed against numTargets bosses.
+func newForeverWarriorTargets(t *testing.T, talents string, mainHand, offHand int32, numTargets int) (*core.Simulation, *warrior.Warrior) {
+	// Bosses that swing, for Rage from damage taken.
+	targets := make([]*proto.Target, numTargets)
+	for i := range targets {
+		targets[i] = core.NewDefaultTarget()
+		targets[i].MinBaseDamage = 3000
+		targets[i].SwingSpeed = 2
+	}
 	items := make([]*proto.ItemSpec, 17)
 	for i := range items {
 		items[i] = &proto.ItemSpec{}
@@ -58,7 +66,7 @@ func newForeverWarriorArmed(t *testing.T, talents string, mainHand, offHand int3
 	}
 	sim := core.NewSim(&proto.RaidSimRequest{
 		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
-		Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{target}},
+		Encounter:  &proto.Encounter{Duration: 60, Targets: targets},
 		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
 	}, simsignals.CreateSignals())
 	sim.Reset()
@@ -303,7 +311,9 @@ func TestForeverWarriorDeepWoundsRolls(t *testing.T) {
 
 // TestForeverWarriorDeepWoundsKeepsTimer checks that under Forever a crit while Deep Wounds is up
 // keeps the first application's 3 sec tick timer and gives it 4 ticks from the next one
-// (wowsims/forever c4a5402aa9, from a Forever combat log).
+// (wowsims/forever c4a5402aa9, from a Forever combat log). The second crit lands at 4 sec, after
+// the first tick, so a restarted timer (next tick at 7 sec, the end at 16) or a bleed that isn't
+// extended (the end at 12, 4 ticks in all) both fail.
 func TestForeverWarriorDeepWoundsKeepsTimer(t *testing.T) {
 	sim, war := newForeverWarrior(t, "00305003")
 	war.AutoAttacks.CancelAutoSwing(sim)
@@ -321,20 +331,24 @@ func TestForeverWarriorDeepWoundsKeepsTimer(t *testing.T) {
 
 	start := sim.CurrentTime
 	crit(sim)
-	sim.AddPendingAction(&core.PendingAction{NextActionAt: start + 2*time.Second, OnAction: crit})
-	for !sim.Step() && sim.CurrentTime < start+2*time.Second {
+	sim.AddPendingAction(&core.PendingAction{NextActionAt: start + 4*time.Second, OnAction: crit})
+	for !sim.Step() && sim.CurrentTime < start+4*time.Second {
 	}
-	if got, want := dot.NextTickAt(), start+3*time.Second; got != want {
+	if got := war.DeepWounds.SpellMetrics[target.UnitIndex].Ticks; got != 1 {
+		t.Fatalf("the bleed ticked %d times before the second crit, want 1", got)
+	}
+	if got, want := dot.NextTickAt(), start+6*time.Second; got != want {
 		t.Errorf("after the second crit the next tick is at %s, want the first's timer: %s", got, want)
 	}
-	if got, want := dot.ExpiresAt(), start+12*time.Second; got != want {
+	if got, want := dot.ExpiresAt(), start+15*time.Second; got != want {
 		t.Errorf("after the second crit the bleed ends at %s, want 4 ticks from the next one: %s", got, want)
 	}
 
-	for !sim.Step() && sim.CurrentTime <= start+15*time.Second {
+	sim.AddPendingAction(&core.PendingAction{NextActionAt: start + 20*time.Second, OnAction: func(*core.Simulation) {}})
+	for !sim.Step() && sim.CurrentTime < start+20*time.Second {
 	}
-	if got := war.DeepWounds.SpellMetrics[target.UnitIndex].Ticks; got != 4 {
-		t.Errorf("the bleed ticked %d times, want 4", got)
+	if got := war.DeepWounds.SpellMetrics[target.UnitIndex].Ticks; got != 5 {
+		t.Errorf("the bleed ticked %d times, want 5: 1 before the second crit and 4 after", got)
 	}
 }
 
@@ -514,5 +528,116 @@ func TestForeverWarriorTwoHandedSpecialization(t *testing.T) {
 	}
 	if got := war.Rend.DamageMultiplier; got != 1 {
 		t.Errorf("Rend's own multiplier is %.3f; the talent belongs on the school", got)
+	}
+}
+
+// TestForeverWarriorSweepingStrikesCopiesFinalDamage checks that under Forever Sweeping Strikes
+// copies the first hit's final damage to the second target, so the damage multipliers that went
+// into it don't apply again (wowsims/forever talents_arms.go: Damage / ArmorAndResistanceMultiplier
+// with SpellFlagIgnoreModifiers). The two bosses have the same armor, so the copy is the hit.
+func TestForeverWarriorSweepingStrikesCopiesFinalDamage(t *testing.T) {
+	sim, war := newForeverWarriorTargets(t, "00000000000010000", 991016, 0, 2) // Sweeping Strikes, a two-hander
+	war.AutoAttacks.CancelAutoSwing(sim)
+	first, second := sim.Encounter.TargetUnits[0], sim.Encounter.TargetUnits[1]
+	ss := war.GetAura("Sweeping Strikes")
+	war.PseudoStats.DamageDealtMultiplier *= 1.5
+
+	slam := war.Slam.Spell
+	copies := 0
+	for i := 0; i < 50; i++ {
+		ss.Activate(sim)
+		ss.SetStacks(sim, ss.MaxStacks)
+		before := slam.SpellMetrics[first.UnitIndex].TotalDamage
+		slam.ApplyEffects(sim, first, slam)
+		if slam.SpellMetrics[first.UnitIndex].TotalDamage > before {
+			copies++
+		}
+	}
+
+	hit := slam.SpellMetrics[first.UnitIndex].TotalDamage
+	copied := war.GetSpell(core.ActionID{SpellID: 12723}).SpellMetrics[second.UnitIndex].TotalDamage
+	// Forever rounds damage to whole numbers, so each copy comes within 1 of its hit.
+	if copies == 0 || math.Abs(copied-hit) > float64(copies) {
+		t.Errorf("Sweeping Strikes copied %.1f damage of %.1f over %d hits", copied, hit, copies)
+	}
+}
+
+// TestForeverWarriorRageGainThreat checks the Forever rage threat the owner measured in game
+// (wowsims/forever 913a5bcf69, 6067c8469d): 5 threat a Rage, times the threat multiplier when the
+// Rage comes, split between the targets in combat; none from Charge, from hits dealt or taken, or
+// from refunds.
+func TestForeverWarriorRageGainThreat(t *testing.T) {
+	sim, war := newForeverWarriorTargets(t, "00020000000010001", 991016, 0, 2) // Improved Charge 2/2
+	war.AutoAttacks.CancelAutoSwing(sim)
+	rageGain := war.GetSpell(core.ActionID{OtherID: proto.OtherAction_OtherActionRageGain})
+	threat := func() (float64, float64) {
+		targets := sim.Encounter.TargetUnits
+		return rageGain.SpellMetrics[targets[0].UnitIndex].TotalThreat, rageGain.SpellMetrics[targets[1].UnitIndex].TotalThreat
+	}
+
+	war.Stance = warrior.BattleStance
+	war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
+	if !war.Charge.Cast(sim, war.CurrentTarget) {
+		t.Fatal("Charge should cast in Battle Stance before the pull")
+	}
+	war.AddRage(sim, 10, war.RageRefundMetrics)
+	whiteRage(sim, war, war.AutoAttacks.MHAuto(), core.OutcomeHit, 500)
+	if a, b := threat(); a != 0 || b != 0 {
+		t.Errorf("Charge, a refund and a white hit made %.2f and %.2f rage threat, want none", a, b)
+	}
+
+	war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
+	war.PseudoStats.ThreatMultiplier = 1.3
+	war.AddRage(sim, 10, war.NewRageMetrics(core.ActionID{SpellID: 2687}))
+	want := 10 * 5 * 1.3 / 2
+	if a, b := threat(); math.Abs(a-want) > 1e-9 || math.Abs(b-want) > 1e-9 {
+		t.Errorf("10 Rage at a 1.3 threat multiplier made %.2f and %.2f threat on the two targets, want %.2f each", a, b, want)
+	}
+}
+
+// TestForeverWarriorCleaveSplitsFlatThreat checks that under Forever Cleave's flat threat is split
+// between the targets it lands on (wowsims/forever 913a5bcf69, the owner's in-game measurements).
+func TestForeverWarriorCleaveSplitsFlatThreat(t *testing.T) {
+	sim, war := newForeverWarriorTargets(t, "", 991016, 0, 2)
+	war.AutoAttacks.CancelAutoSwing(sim)
+	cleave := war.Cleave.Spell
+	targets := sim.Encounter.TargetUnits
+	threatMultiplier := war.PseudoStats.ThreatMultiplier
+	flat := cleave.FlatThreatBonus
+
+	both, one := 0, 0
+	for i := 0; i < 200 && (both == 0 || one == 0); i++ {
+		var before [2]core.SpellMetrics
+		for j, target := range targets {
+			before[j] = cleave.SpellMetrics[target.UnitIndex]
+		}
+		cleave.ApplyEffects(sim, targets[0], cleave)
+		landed := 0
+		var flats []float64
+		for j, target := range targets {
+			after := cleave.SpellMetrics[target.UnitIndex]
+			if after.Hits+after.Crits == before[j].Hits+before[j].Crits {
+				continue
+			}
+			landed++
+			flats = append(flats, (after.TotalThreat-before[j].TotalThreat)/threatMultiplier-(after.TotalDamage-before[j].TotalDamage))
+		}
+		if landed == 0 {
+			continue
+		}
+		if landed == 2 {
+			both++
+		} else {
+			one++
+		}
+		for _, got := range flats {
+			// Forever rounds the damage dealt, after the threat is worked out.
+			if want := flat / float64(landed); math.Abs(got-want) > 1 {
+				t.Errorf("Cleave landing on %d targets gave %.2f flat threat each, want %.2f", landed, got, want)
+			}
+		}
+	}
+	if both == 0 || one == 0 {
+		t.Fatalf("Cleave landed on both targets %d times and on one %d times", both, one)
 	}
 }

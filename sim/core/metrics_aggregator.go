@@ -284,6 +284,7 @@ func NewUnitMetrics() UnitMetrics {
 type ResourceMetrics struct {
 	ActionID ActionID
 	Type     proto.ResourceType
+	NoThreat bool // Under Forever, Rage gained from this source generates no threat.
 
 	Events     int32
 	Gain       float64
