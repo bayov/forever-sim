@@ -396,9 +396,9 @@ export const DefaultConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfCunning,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
 	defaultConjured: Conjured.ConjuredDemonicRune,
-	// The Dragonfire Potion is +5.0 / +5.3 / +8.6 / +10.2 over the Major Mana Potion on Level 60 / sub
-	// Holy / vs Undead / sub Holy vs Undead at 180 sec, and 12.8 / 18.5 behind on Shock / Shock vs
-	// Undead, which run short of mana.
+	// The Dragonfire Potion is +5.2 / +5.2 over the Major Mana Potion on Level 60 / sub Holy at 180 sec
+	// (2026-10-23 regear; the Major Spellblasting Potion is within 1). The Shock builds run short of
+	// mana and take the Major Mana Potion (ShockConsumes).
 	defaultPotion: Potions.DragonfirePotion,
 	dragonBreathChili: true,
 	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
@@ -416,6 +416,16 @@ export const DefaultConsumes = Consumes.create({
 	spiritElixir: SpiritElixir.ElixirOfGreaterSpirit,
 	strengthBuff: StrengthBuff.ElixirOfFerocity,
 	zanzaBuff: ZanzaBuff.ROIDS,
+});
+
+// The Shock builds' consumes (mksettings spec ret_shock): the Major Mana Potion, +12.8 / +18.4 / +12.8
+// over the Dragonfire Potion on Shock / Shock vs Undead / Shock Crusader duty at 180 sec (+14.1 /
+// +28.7 / +15.0 at 300; the Major Spellblasting Potion is 11 to 27 behind it). Every other slot
+// keeps DefaultConsumes: the Flask of Supreme Power is 45 to 52 over the best natural flask
+// (Aggression), and the Spirit and mana regen elixirs are within 0.6 of the next best.
+export const ShockConsumes = Consumes.create({
+	...DefaultConsumes,
+	defaultPotion: Potions.MajorManaPotion,
 });
 
 // The level 60 raid (tools/rotopt/mksettings): both paladin blessings, Kings, Judgement of the
@@ -523,6 +533,14 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
+// The Level 60 encounter with the Shock consumes.
+export const EncounterLevel60Shock = PresetUtils.makePresetEncounter('Level 60 (Shock)', EncounterLevel60.encounter!, {
+	tanks: [],
+	raidBuffs: DefaultRaidBuffs,
+	debuffs: DefaultDebuffs,
+	buffs: DefaultIndividualBuffs,
+	consumes: ShockConsumes,
+});
 // Level 60: the Human on the synthetic set with the Level 60 talents and rotation. Client 70425
 // made every racial weapon-free, and Human's Ruthless (2% crit) now beats Undead's Touch of the
 // Grave on every Level 60 build at every length (+0.7 to +4.0 on two seed sets). Seed 1, 20000
@@ -573,7 +591,7 @@ export const PresetBuildLevel60Shock = PresetUtils.makePresetBuild('Level 60 Sho
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60Shock,
 	rotation: APLLevel60Shock,
-	encounter: EncounterLevel60,
+	encounter: EncounterLevel60Shock,
 	race: Race.RaceHuman,
 	level: 60,
 	bonusTalentPoints: 0,
@@ -593,6 +611,13 @@ export const EncounterLevel60CrusaderDuty = PresetUtils.makePresetEncounter('Lev
 	debuffs: Debuffs.create({ ...DefaultDebuffs, judgementOfTheCrusader: TristateEffect.TristateEffectMissing }),
 	buffs: DefaultIndividualBuffs,
 	consumes: DefaultConsumes,
+});
+export const EncounterLevel60ShockCrusaderDuty = PresetUtils.makePresetEncounter('Level 60 (Shock, Crusader duty)', EncounterLevel60.encounter!, {
+	tanks: [],
+	raidBuffs: DefaultRaidBuffs,
+	debuffs: Debuffs.create({ ...DefaultDebuffs, judgementOfTheCrusader: TristateEffect.TristateEffectMissing }),
+	buffs: DefaultIndividualBuffs,
+	consumes: ShockConsumes,
 });
 // The Judgement of the Crusader duty presets: each base build with its duty rotation and the duty
 // encounter. Undead, 20000 iterations, 120 / 180 / 300 sec, against the base build on the
@@ -632,7 +657,7 @@ export const PresetBuildLevel60ShockCrusaderDuty = PresetUtils.makePresetBuild('
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60Shock,
 	rotation: APLLevel60ShockCrusaderDuty,
-	encounter: EncounterLevel60CrusaderDuty,
+	encounter: EncounterLevel60ShockCrusaderDuty,
 	race: Race.RaceHuman,
 	level: 60,
 	bonusTalentPoints: 0,
@@ -659,6 +684,13 @@ export const EncounterLevel60Undead = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
+export const EncounterLevel60ShockUndead = PresetUtils.makePresetEncounter('Level 60 (Shock, vs Undead)', EncounterLevel60Undead.encounter!, {
+	tanks: [],
+	raidBuffs: DefaultRaidBuffs,
+	debuffs: DefaultDebuffs,
+	buffs: DefaultIndividualBuffs,
+	consumes: ShockConsumes,
+});
 const OptionsRighteousness = RetributionPaladinOptions.create({
 	aura: PaladinAura.ConcentrationAura,
 	primarySeal: PaladinSeal.Righteousness,
@@ -708,7 +740,7 @@ export const PresetBuildLevel60ShockUndead = PresetUtils.makePresetBuild('Level 
 	gear: GearLevel60Phase1SyntheticUndead,
 	talents: TalentsLevel60Shock,
 	rotation: APLLevel60ShockUndead,
-	encounter: EncounterLevel60Undead,
+	encounter: EncounterLevel60ShockUndead,
 	race: Race.RaceHuman,
 	level: 60,
 	bonusTalentPoints: 0,
