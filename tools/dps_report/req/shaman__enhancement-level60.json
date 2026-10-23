@@ -64,7 +64,7 @@
                 },
                 {},
                 {
-                  "id": 272433
+                  "id": 272432
                 }
               ]
             },
@@ -94,7 +94,7 @@
               "blessingOfWisdom": "TristateEffectImproved",
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "053503102-055030011005112151-01",
+            "talentsString": "053503102-055030011005112251",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Leatherworking",
@@ -628,45 +628,6 @@
                 {
                   "notes": "Earth Shock otherwise.",
                   "action": {
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "or": {
-                              "vals": [
-                                {
-                                  "auraIsActive": {
-                                    "sourceUnit": {
-                                      "type": "CurrentTarget"
-                                    },
-                                    "auraId": {
-                                      "spellId": 17364
-                                    }
-                                  }
-                                },
-                                {
-                                  "cmp": {
-                                    "op": "OpGt",
-                                    "lhs": {
-                                      "spellTimeToReady": {
-                                        "spellId": {
-                                          "spellId": 17364
-                                        }
-                                      }
-                                    },
-                                    "rhs": {
-                                      "const": {
-                                        "val": "1s"
-                                      }
-                                    }
-                                  }
-                                }
-                              ]
-                            }
-                          }
-                        ]
-                      }
-                    },
                     "castSpell": {
                       "spellId": {
                         "spellId": 10414
@@ -882,7 +843,8 @@
       }
     ],
     "raidDamageHitsPerMinute": 2,
-    "raidDamagePerHit": 1500
+    "raidDamagePerHit": 1500,
+    "naturalFlaskZone": true
   },
   "simOptions": {
     "iterations": 1000,

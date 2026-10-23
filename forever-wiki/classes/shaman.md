@@ -8,6 +8,16 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks settled by the 70338 trait curves] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Regear and rotation round (2026-10-23)
+
+The alignment round's sim (no melee hit suppression, Fire Nova's hits a proc that item procs, Judgement of Wisdom and Water Shield's crit trigger don't hear, Frost Shock binary under Forever, the natural flask zone in every Level 60 fight) and the presets redone on it:
+
+- Enhancement's set had 90 hit rating for Classic's 9% cap. The cap is 8% now, so the neck's 10 hit rating became 10 crit rating. Hit above 8% still feeds the spells (about 4 DPS a 1% at 180 sec), but 10 crit rating is worth 5.5. Elemental's 100 hit rating is still the 16% spell cap with Tidal Focus 5 and the 2 piece.
+- Forever's Totem of the Storm (Lightning Bolt can trigger Maelstrom Weapon at half the chance) now beats Burning Totem on Level 60 and Imp GW (+0.9 to +2.1 at every length). Mana Tide keeps Burning Totem.
+- Optimized drops the Earth Shock hold for the Stormstrike mark. Level 60 and Imp GW take Improved Stormstrike 2 for their Tidal Focus point (tuned at 180 sec). Elemental, Water Shield and Mana Tide keep their talents and rotations.
+- Elemental Mana Tide drinks the Major Mana Potion, Level 60 the Caustic Smog Potion.
+- 180 sec: Elemental 776.4 (Windshaper Skyborne), Elemental + Mana Tide 761.4, Enhancement 880.1 (Orc), Imp GW 876.2, Water Shield 831.6, Enhancement + Mana Tide 792.2. Details and race tables in sim-status.md.
+
 ## Client 1.60.1.70425 (2026-10-16)
 
 From wago.tools, diffing every shaman spell-class spell, the talent tree (TraitNode, TraitNodeEntry, TraitDefinition, TraitCond, TraitEdge) and the trait curves between builds 70338 and 70425, with the 15 October development notes. The talent sections below are the BlizzCon transcription and predate this; `tools/forever_talents/client/shaman.json` and `ui/core/talents/trees/shaman.json` have the 70425 tree.

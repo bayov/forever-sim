@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 771.8,
-    "source": "Shaman PR (rotation audit pass 23: Flame Shock 9 s end gate, Mana Tide at 10%, Magma Totem to 2 s; requests rebuilt with the prepull totems, 2026-10-16)"
+    "dps": 776.4,
+    "source": "Shaman regear round (2026-10-23): requests rebuilt from the presets with the natural flask zone"
   },
   "verify": {
-    "dps": 771.83,
+    "dps": 776.41,
     "stderr": 0.19,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 180s, seed 1"
+    "note": "sim.py, 180s, seed 1"
   },
   "summary": "Deep Elemental caster with a staff, built on Lava Burst and Elemental Mastery.",
   "keyTalents": [
@@ -40,13 +40,13 @@
   ],
   "rotation": [
     "Pre-pull: Lightning Shield at -5.4s, Mana Spring Totem at -3.9s, Lightning Bolt at -2.9s (lands 0.1s after the pull), Searing Totem at -0.9s",
-    "Elemental Mastery and the other cooldowns (Sapper, Demonic Rune, Major Mana Potion, Land Mine) as they come up",
+    "Elemental Mastery and the other cooldowns (Sapper, Demonic Rune, Caustic Smog Potion, Land Mine) as they come up",
     "Mana Spring Totem when it is down and at least 20s remain",
     "Searing Totem when it is down and at least 20s remain",
     "Flame Shock whenever its DoT is down and at least 9s remain",
     "Lava Burst on cooldown, unless Flame Shock would run out before the cast ends",
     "Earth Shock once a Lightning Bolt would no longer land before the fight ends",
-    "Lightning Shield when it is down, above 50% mana with at least 60s left (orbs fire at the target on raid damage hits, 1 a minute)",
+    "Lightning Shield when it is down, above 50% mana with at least 60s left (orbs fire at the target on raid damage hits, 2 a minute)",
     "Lightning Bolt rank 8 below 20% mana",
     "Lightning Bolt rank 10 as filler (no Chain Lightning on one target)"
   ],
@@ -61,7 +61,7 @@
     "Cerebral Cortex Compound",
     "Lobster Stew",
     "Wizard Oil",
-    "Major Mana Potion",
+    "Caustic Smog Potion",
     "Demonic Rune",
     "Goblin Sapper Charge",
     "Goblin Land Mine"
@@ -72,7 +72,7 @@
     "One 2% crit elixir. Owl on top of Sages would add about 10.",
     "Elemental Focus proc rate on low ranks was cut on 7 Oct, by an unknown amount.",
     "Searing Totem's reach from a ranged shaman isn't modeled.",
-    "Raid damage hits (1 a minute, each fires Lightning Shield) are an estimate.",
+    "Raid damage hits (2 a minute, each fires Lightning Shield) are an estimate.",
     "Eye of the Storm 3 stops 70% of pushback from the 2 raid hits a minute."
   ],
   "notes": "mksettings -spec ele -apl level60 (standards 23: every shaman drops its own party totems; the raid has none, the shaman drops Mana Spring Totem itself); race SkyborneWindshaper (the best race since client 70425's Wind Blessed 3% haste)."

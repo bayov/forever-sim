@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 7,
   "race": "Orc",
-  "talents": "053503102-054032001005112151-01",
+  "talents": "053503102-054032001005112251",
   "treeNames": [
     "Elemental",
     "Enhancement",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "optimized",
   "published": {
-    "dps": 887.8,
-    "source": "Shaman PR (the raid's Flametongue Totem on the Enhancement weapon, user ruling 2026-10-16; rotation pass 24, Lightning Bolt after the shocks, 2026-10-16)"
+    "dps": 876.2,
+    "source": "Shaman regear round (2026-10-23): the 8% melee cap (neck hit to crit), Totem of the Storm, Earth Shock without the Stormstrike hold, Improved Stormstrike 2 for Tidal Focus 1; requests rebuilt from the presets with the natural flask zone"
   },
   "verify": {
-    "dps": 887.76,
+    "dps": 876.21,
     "stderr": 0.38,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 180s, seed 1"
+    "note": "sim.py, 180s, seed 1"
   },
   "summary": "The default Enhancement build with Improved Ghost Wolf for utility, with Magma Totem and the raid's Flametongue Totem on its weapon.",
   "keyTalents": [
@@ -33,7 +33,8 @@
     "Flurry",
     "Mental Dexterity",
     "Improved Fire Nova",
-    "Improved Ghost Wolf"
+    "Improved Ghost Wolf",
+    "Improved Stormstrike"
   ],
   "rotation": [
     "Pre-pull: Strength of Earth IV at -6s, Windfury Totem at -5s, Mana Spring at -4s, Lightning Shield at -3s, Magma Totem at -1.5s (the totems last the whole fight but run out a few seconds before a 300s one ends)",
@@ -44,7 +45,7 @@
     "Stormstrike on cooldown",
     "Fire Nova while Clearcasting is up",
     "Flame Shock when its DoT is down",
-    "Earth Shock while the Stormstrike mark is up, or with Stormstrike more than 1s from ready",
+    "Earth Shock otherwise",
     "Lightning Bolt at 5 Maelstrom Weapon stacks",
     "Fire Nova while the mana covers 12 a second for the rest of the fight",
     "Lightning Shield when it is down and nothing else is ready (orbs fire at the target on raid damage hits, 2 a minute)"
@@ -52,8 +53,8 @@
   "consumes": [
     "Windfury Weapon (shaman imbue) + Shadow Oil (main hand)",
     "Flask of Supreme Power",
-    "Elixir of Greater Agility",
-    "Juju Power",
+    "Elixir of Cunning",
+    "Elixir of Ferocity",
     "Juju Might",
     "R.O.I.D.S.",
     "Elixir of the Sages",
@@ -75,7 +76,9 @@
     "Elemental Focus triggers: if Stormstrike can trigger it, Enhancement gets too few Clearcasting procs.",
     "Raid damage hits (2 a minute, each fires Lightning Shield) are an estimate.",
     "Fire Nova uses the 70425 values: coefficient 0.143, rank 5 base 232 to 259.",
-    "The raid's second shaman's Flametongue Totem holds the weapon's totem slot next to our Windfury Weapon (user ruling 2026-10-16, assumed; to verify in game): +18 to +19 at 180 s"
+    "The raid's second shaman's Flametongue Totem holds the weapon's totem slot next to our Windfury Weapon (user ruling 2026-10-16, assumed; to verify in game): +18 to +19 at 180 s",
+    "Improved Stormstrike 2 in place of Tidal Focus 1 is tuned at 180 s: about -3 at 120 s for +1 to +2 at 180 s and +4 to +5 at 300 s, paired at 20000 iterations on two seed sets.",
+    "Relic: Totem of the Storm (Lightning Bolt can trigger Maelstrom Weapon at half the chance), +0.9 to +2.1 over Burning Totem at every length."
   ],
   "notes": "mksettings -spec enh -apl optimized (standards 23: every shaman drops its own party totems; the raid's only totem is a second shaman's Grace of Air, standards 25, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself)."
 }
