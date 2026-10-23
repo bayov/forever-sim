@@ -66,7 +66,11 @@ func (warlock *Warlock) makeImp() *WarlockPet {
 		}
 	}
 
-	return warlock.makePet(cfg, warlock.Options.Summon == proto.WarlockOptions_Imp)
+	imp := warlock.makePet(cfg, warlock.Options.Summon == proto.WarlockOptions_Imp)
+	// The Imp stands beside the warlock, closing in to Firebolt's 30 yd range when the warlock stands
+	// farther (wowsims/forever pets.go), so its bolts travel the warlock's distance.
+	imp.StartDistanceFromTarget = min(warlock.StartDistanceFromTarget, 30)
+	return imp
 }
 
 func (wp *WarlockPet) registerImpFireboltSpell() {
@@ -99,6 +103,9 @@ func (wp *WarlockPet) registerImpFireboltSpell() {
 		ProcMask:      core.ProcMaskSpellDamage,
 		Rank:          rank,
 		RequiredLevel: level,
+		// Every rank's row has Speed 16 (11763 and the ranks before it), and the bolt lands after its
+		// travel (wowsims/forever a21497c37b). The Imp casts back to back, with no artificial delay.
+		MissileSpeed: 16,
 
 		ManaCost: core.ManaCostOptions{
 			FlatCost: manaCost,
@@ -107,11 +114,6 @@ func (wp *WarlockPet) registerImpFireboltSpell() {
 			DefaultCast: core.Cast{
 				GCD:      time.Millisecond * 1000,
 				CastTime: data.castTime(),
-			},
-			// Adding an artificial CD to account for real delay in imp casts in-game
-			CD: core.Cooldown{
-				Timer:    wp.NewTimer(),
-				Duration: time.Millisecond * 200,
 			},
 		},
 
@@ -125,8 +127,9 @@ func (wp *WarlockPet) registerImpFireboltSpell() {
 			baseDamage := sim.Roll(damageLow, damageHigh)
 
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
-
-			spell.DealDamage(sim, result)
+			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
+				spell.DealDamage(sim, result)
+			})
 		},
 	})
 }

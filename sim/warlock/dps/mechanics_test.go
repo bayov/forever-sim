@@ -8,6 +8,7 @@ import (
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/simsignals"
 	"github.com/wowsims/classic/sim/core/stats"
+	"github.com/wowsims/classic/sim/warlock"
 )
 
 func newWarlockSim(t *testing.T, talents string, options *proto.WarlockOptions) (*core.Simulation, *DpsWarlock) {
@@ -422,3 +423,78 @@ func TestWarlockSpellstone(t *testing.T) {
 }
 
 func last(spells []*core.Spell) *core.Spell { return spells[len(spells)-1] }
+
+// TestWarlockSummonSwap checks a summon cast mid-fight: the demon out stays, stunned for Summoning
+// Disorientation's 6 sec from the start of the cast, until the 10 sec cast ends and the new demon
+// replaces it (wowsims/forever summon.go, d7968fbd13).
+func TestWarlockSummonSwap(t *testing.T) {
+	sim, lock := newWarlockSim(t, "", &proto.WarlockOptions{Summon: proto.WarlockOptions_Succubus})
+	summonImp := lock.GetSpell(core.ActionID{SpellID: 688})
+	at(sim, 1, func(sim *core.Simulation) {
+		castNow(t, sim, lock, summonImp)
+	})
+	check := func(when float64, wantPet *warlock.WarlockPet, wantStun bool) {
+		at(sim, when, func(sim *core.Simulation) {
+			if lock.ActivePet != wantPet || !wantPet.IsEnabled() {
+				t.Errorf("at %.1f s: %s out (enabled %v), want %s", when, lock.ActivePet.Name, lock.ActivePet.IsEnabled(), wantPet.Name)
+			}
+			if stunned := lock.Succubus.SummonStunAura.IsActive(); stunned != wantStun {
+				t.Errorf("at %.1f s: Succubus stunned %v, want %v", when, stunned, wantStun)
+			}
+		})
+	}
+	check(3, lock.Succubus, true)
+	check(8, lock.Succubus, false)
+	check(12, lock.Imp, false)
+	at(sim, 12, func(sim *core.Simulation) {
+		if lock.Succubus.IsEnabled() {
+			t.Errorf("Succubus still out after the Imp's summon")
+		}
+	})
+	runSim(sim)
+}
+
+// TestWarlockSummonCostFactors checks that Master Summoner's 20% a point and Fel Domination's 50%
+// multiply on a summon's cost (wowsims/forever fef2bcaebd): 0.6 x 0.5 at 2/2.
+func TestWarlockSummonCostFactors(t *testing.T) {
+	sim, lock := newWarlockSim(t, "-0000000000201", &proto.WarlockOptions{Summon: proto.WarlockOptions_Imp})
+	summon := lock.GetSpell(core.ActionID{SpellID: 712})
+	if got := summon.Cost.Factor; math.Abs(got-0.6) > 1e-9 {
+		t.Errorf("Master Summoner 2/2: cost x%.4f, want x0.6", got)
+	}
+	lock.GetAura("Fel Domination").Activate(sim)
+	if got := summon.Cost.Factor; math.Abs(got-0.3) > 1e-9 {
+		t.Errorf("Master Summoner 2/2 and Fel Domination: cost x%.4f, want x0.3", got)
+	}
+}
+
+// TestWarlockDemonicBrandAlwaysHits checks that Demonic Brand's damage never misses: both rows
+// (1293697, 1293698) carry ATTR_EX_3_ALWAYS_HIT.
+func TestWarlockDemonicBrandAlwaysHits(t *testing.T) {
+	sim, lock := newWarlockSim(t, "-00000000000003", &proto.WarlockOptions{Summon: proto.WarlockOptions_Imp})
+	brand := lock.Imp.GetSpell(core.ActionID{SpellID: 1293695})
+	target := lock.CurrentTarget
+	at(sim, 1, func(sim *core.Simulation) {
+		lock.Imp.AddStatDynamic(sim, stats.SpellHit, -300*core.SpellHitRatingPerHitChance)
+		for range 100 {
+			brand.Cast(sim, target)
+		}
+		if m := brand.SpellMetrics[target.UnitIndex]; m.Misses != 0 || m.Hits+m.Crits != 100 {
+			t.Errorf("Demonic Brand at -300%% hit: %d misses, %d hits and %d crits in 100", m.Misses, m.Hits, m.Crits)
+		}
+	})
+	runSim(sim)
+}
+
+// TestWarlockImpFireboltTravel checks that the Imp's Firebolt flies at its rows' Speed 16 from the
+// warlock's distance, up to its 30 yd range, and has no cooldown (wowsims/forever a21497c37b).
+func TestWarlockImpFireboltTravel(t *testing.T) {
+	_, lock := newWarlockSim(t, "", &proto.WarlockOptions{Summon: proto.WarlockOptions_Imp})
+	firebolt := lock.Imp.GetSpell(core.ActionID{SpellID: 11763})
+	if firebolt.MissileSpeed != 16 || firebolt.CD.Timer != nil {
+		t.Errorf("Firebolt: speed %.0f, cooldown %v, want 16 and none", firebolt.MissileSpeed, firebolt.CD.Timer != nil)
+	}
+	if got, want := lock.Imp.StartDistanceFromTarget, min(lock.StartDistanceFromTarget, 30); got != want {
+		t.Errorf("Imp's distance %.0f, want %.0f", got, want)
+	}
+}

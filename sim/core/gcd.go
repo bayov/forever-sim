@@ -93,6 +93,14 @@ func (unit *Unit) WaitUntil(sim *Simulation, readyTime time.Duration) {
 	}
 }
 
+// InterruptHardcast stops the cast in progress, if there is one, as interruptHardcast does: for a
+// stun or another effect that breaks a cast.
+func (unit *Unit) InterruptHardcast(sim *Simulation) {
+	if unit.IsCasting(sim) {
+		unit.interruptHardcast(sim)
+	}
+}
+
 // interruptHardcast stops the cast in progress without finishing it: it costs nothing (a
 // cast pays when it completes), does nothing, and gives back the cooldown it started (the
 // spell was ready when the cast began). The unit can act again once the GCD the cast started

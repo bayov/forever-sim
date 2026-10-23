@@ -384,7 +384,8 @@ func (warlock *Warlock) applyMasterSummoner() {
 	}
 
 	castTimeReduction := time.Second * 2 * time.Duration(warlock.Talents.MasterSummoner)
-	costReduction := 20 * warlock.Talents.MasterSummoner
+	// A percent cost row, its own factor beside Fel Domination's (wowsims/forever fef2bcaebd).
+	costFactor := 1 - 0.2*float64(warlock.Talents.MasterSummoner)
 
 	// Use an aura because the summon spells aren't registered by this point
 	warlock.RegisterAura(core.Aura{
@@ -396,13 +397,13 @@ func (warlock *Warlock) applyMasterSummoner() {
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			for _, spell := range warlock.SummonDemonSpells {
 				spell.DefaultCast.CastTime -= castTimeReduction
-				spell.Cost.Multiplier -= costReduction
+				spell.Cost.Factor *= costFactor
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			for _, spell := range warlock.SummonDemonSpells {
 				spell.DefaultCast.CastTime += castTimeReduction
-				spell.Cost.Multiplier += costReduction
+				spell.Cost.Factor /= costFactor
 			}
 		},
 	})
@@ -789,7 +790,8 @@ func (warlock *Warlock) procDecimation(sim *core.Simulation, result *core.SpellR
 // hits on it deal more, Fire for the Imp (1293698) and Shadow for the others (1293697). The
 // rows state no amount; their description variables do, as wowsims/forever reads them
 // (pets.go): (level - 26) x 1.5 + 14 to 17, plus 7.8% of the warlock's spell power of the
-// school (65 to 68 and the spell power at 60), rolled to hit and to crit like a spell.
+// school (65 to 68 and the spell power at 60). Both rows carry ATTR_EX_3_ALWAYS_HIT (Attr[3]
+// 0x40000), so it never misses and rolls only to crit.
 func (warlock *Warlock) applyDemonicBrand() {
 	if warlock.Talents.DemonicBrand == 0 {
 		return
@@ -823,7 +825,7 @@ func (warlock *Warlock) applyDemonicBrand() {
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				spellPower := warlock.GetStat(stats.SpellPower) + warlock.GetStat(stats.SpellDamage) + warlock.GetStat(schoolPower)
 				base := float64(min(warlock.Level, 60)-26)*1.5 + 0.078*spellPower
-				spell.CalcAndDealDamage(sim, target, sim.Roll(base+14, base+17), spell.OutcomeMagicHitAndCrit)
+				spell.CalcAndDealDamage(sim, target, sim.Roll(base+14, base+17), spell.OutcomeMagicCrit)
 			},
 		})
 

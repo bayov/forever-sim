@@ -10,14 +10,19 @@ func (warlock *Warlock) registerSummonDemon() {
 	manaCost := core.ManaCostOptions{
 		FlatCost: warlock.BaseMana,
 	}
-	// All have a default cast time of 10s and the active pet is dismissed when the cast starts
+	// All have a default cast time of 10s. The demon out stays, with its buffs (Master Demonologist,
+	// Demonic Knowledge, Soul Link), until the cast ends and the new one replaces it, but is stunned
+	// from the start of the cast (Summoning Disorientation, makePet; wowsims/forever summon.go).
 	cast := core.CastConfig{
 		DefaultCast: core.Cast{
 			GCD:      core.GCDDefault,
 			CastTime: time.Second * 10,
 		},
 		ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-			warlock.changeActivePet(sim, nil, false)
+			// ModifyCast runs before the cast's checks, so only a summon that will start stuns.
+			if warlock.ActivePet != nil && warlock.ActivePet.IsEnabled() && spell.CanCast(sim, warlock.CurrentTarget) {
+				warlock.ActivePet.SummonStunAura.Activate(sim)
+			}
 		},
 	}
 

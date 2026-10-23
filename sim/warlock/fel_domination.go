@@ -18,16 +18,18 @@ func (warlock *Warlock) registerFelDominationCD() {
 		ActionID: actionID,
 		Label:    "Fel Domination",
 		Duration: time.Second * 15,
+		// The 50% is a percent cost row, its own factor beside Master Summoner's (wowsims/forever
+		// fef2bcaebd): with Master Summoner 2/2 a summon costs 0.6 x 0.5 = 30% of its mana, not 10%.
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			for _, spell := range warlock.SummonDemonSpells {
 				spell.DefaultCast.CastTime -= time.Millisecond * 5500
-				spell.Cost.Multiplier -= 50
+				spell.Cost.Factor *= 0.5
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			for _, spell := range warlock.SummonDemonSpells {
 				spell.DefaultCast.CastTime += time.Millisecond * 5500
-				spell.Cost.Multiplier += 50
+				spell.Cost.Factor /= 0.5
 			}
 		},
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {

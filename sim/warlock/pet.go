@@ -22,6 +22,9 @@ type WarlockPet struct {
 
 	SoulLinkAura *core.Aura
 
+	// Summoning Disorientation: the demon out while the warlock summons another (registerSummonDemon)
+	SummonStunAura *core.Aura
+
 	LifeTapManaMetrics *core.ResourceMetrics
 
 	manaPooling bool
@@ -75,6 +78,8 @@ func (warlock *Warlock) setDefaultActivePet() {
 
 func (warlock *Warlock) changeActivePet(sim *core.Simulation, newPet *WarlockPet, isSacrifice bool) {
 	if warlock.ActivePet != nil {
+		// Before the dismissal, so the stun ending does not set the dismissed demon going again
+		warlock.ActivePet.SummonStunAura.Deactivate(sim)
 		warlock.ActivePet.Disable(sim, isSacrifice)
 
 		// Sacrificed pets lose all buffs
@@ -146,6 +151,28 @@ func (warlock *Warlock) makePet(cfg PetConfig, enabledOnStart bool) *WarlockPet 
 		wp.EnableAutoAttacks(wp, cfg.AutoAttacks)
 	}
 
+	// Summoning Disorientation (1249755): the demon out is stunned for 6 sec from the start of a summon's
+	// cast. The development notes of the 2026-10-08 build say "A Warlock's current pet will now be stunned
+	// while summoning a new pet", but the row has only dummy effects, so the stun is read from its name and
+	// the notes, and the 6 sec from its duration (wowsims/forever d7968fbd13 does the same). A summon cast
+	// in less, under Fel Domination or Master Summoner, dismisses the demon before the stun runs out.
+	wp.SummonStunAura = wp.RegisterAura(core.Aura{
+		Label:    "Summoning Disorientation",
+		ActionID: core.ActionID{SpellID: 1249755},
+		Duration: time.Second * 6,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			wp.InterruptHardcast(sim)
+			wp.CancelGCDTimer(sim)
+			wp.AutoAttacks.CancelAutoSwing(sim)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			if wp.IsEnabled() {
+				wp.AutoAttacks.EnableAutoSwing(sim)
+				wp.SetGCDTimer(sim, sim.CurrentTime)
+			}
+		},
+	})
+
 	warlock.AddPet(wp)
 
 	return wp
@@ -190,7 +217,7 @@ func (wp *WarlockPet) ApplyOnPetDisable(newOnPetDisable OnPetDisable) {
 }
 
 func (wp *WarlockPet) ExecuteCustomRotation(sim *core.Simulation) {
-	if !wp.IsEnabled() || wp.primaryAbility == nil {
+	if !wp.IsEnabled() || wp.primaryAbility == nil || wp.SummonStunAura.IsActive() {
 		return
 	}
 
