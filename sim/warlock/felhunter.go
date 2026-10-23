@@ -8,8 +8,12 @@ import (
 
 func (warlock *Warlock) makeFelhunter() *WarlockPet {
 	cfg := PetConfig{
-		Name:          "Felhunter",
-		PowerModifier: 0.77,
+		Name:                 "Felhunter",
+		ManaPerIntellect:     11.5,
+		MP5PerOwnerIntellect: 0.10,
+		APPerStrength:        2,
+		// The pet model sheet's (wowsims/forever pets.go); the Felhunter's melee is unmeasured.
+		DamageMultiplier: 0.8,
 	}
 	switch warlock.Level {
 	case 25:

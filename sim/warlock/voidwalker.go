@@ -8,8 +8,12 @@ import (
 
 func (warlock *Warlock) makeVoidwalker() *WarlockPet {
 	cfg := PetConfig{
-		Name:          "Voidwalker",
-		PowerModifier: 0.77,
+		Name:                 "Voidwalker",
+		ManaPerIntellect:     11.5,
+		MP5PerOwnerIntellect: 0.10,
+		// Its melee is halved (wowsims/forever 43fce5a834: at level 30, +20 attack power moved its sheet's
+		// damage by half of 20 x 2 / 14).
+		DamageMultiplier: 0.5,
 	}
 
 	switch warlock.Level {
@@ -88,13 +92,14 @@ func (warlock *Warlock) makeVoidwalker() *WarlockPet {
 		}
 		cfg.AutoAttacks = core.AutoAttackOptions{
 			MainHand: core.Weapon{
-				BaseDamageMin: 31,
-				BaseDamageMax: 46,
+				BaseDamageMin: voidwalkerSwingAverage * (1 - 0.264),
+				BaseDamageMax: voidwalkerSwingAverage * (1 + 0.264),
 				SwingSpeed:    2,
 			},
 			AutoSwingMelee: true,
 		}
 	}
 
+	cfg.Stats[stats.AttackPower] = demonAttackPower(warlock.Level)
 	return warlock.makePet(cfg, warlock.Options.Summon == proto.WarlockOptions_Voidwalker)
 }

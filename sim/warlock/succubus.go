@@ -10,8 +10,9 @@ import (
 
 func (warlock *Warlock) makeSuccubus() *WarlockPet {
 	cfg := PetConfig{
-		Name:          "Succubus",
-		PowerModifier: 0.77,
+		Name:                 "Succubus",
+		ManaPerIntellect:     11.5,
+		MP5PerOwnerIntellect: 0.10,
 	}
 
 	switch warlock.Level {
@@ -90,14 +91,15 @@ func (warlock *Warlock) makeSuccubus() *WarlockPet {
 		}
 		cfg.AutoAttacks = core.AutoAttackOptions{
 			MainHand: core.Weapon{
-				BaseDamageMin: 95,
-				BaseDamageMax: 131,
+				BaseDamageMin: sayaadSwingAverage * (1 - 0.215),
+				BaseDamageMax: sayaadSwingAverage * (1 + 0.215),
 				SwingSpeed:    2,
 			},
 			AutoSwingMelee: true,
 		}
 	}
 
+	cfg.Stats[stats.AttackPower] = demonAttackPower(warlock.Level)
 	return warlock.makePet(cfg, warlock.Options.Summon == proto.WarlockOptions_Succubus)
 }
 

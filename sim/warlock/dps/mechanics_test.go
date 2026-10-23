@@ -207,3 +207,68 @@ func TestWarlockDemonCrit(t *testing.T) {
 		runSim(sim)
 	}
 }
+
+// TestWarlockDemonStatInheritance checks Warlock Pet Scaling's shares (wowsims/forever's): 0.17
+// attack power and 0.10 spell damage a point of the warlock's spell damage, its spell hit whole and
+// 8/17 of it as melee hit, 7.5 health a point of its Stamina, 35% of its armor and MP5 from its
+// Intellect (0.30 for the Imp, 0.10 for the others), also after the warlock gains stats. The Imp's
+// mana is 576 + 5 a point of its Intellect, and no demon gets regen from its Spirit.
+func TestWarlockDemonStatInheritance(t *testing.T) {
+	near := func(a, b float64) bool { return a-b < 1e-6 && b-a < 1e-6 }
+	for _, c := range []struct {
+		summon       proto.WarlockOptions_Summon
+		mp5PerOwnInt float64
+	}{{proto.WarlockOptions_Succubus, 0.10}, {proto.WarlockOptions_Imp, 0.30}} {
+		sim, lock := newWarlockSim(t, "", &proto.WarlockOptions{Summon: c.summon})
+		pet := lock.ActivePet
+		before := pet.GetStats()
+		owner := lock.GetStats()
+
+		if got, want := pet.GetStat(stats.MP5), owner[stats.Intellect]*c.mp5PerOwnInt; !near(got, want) {
+			t.Errorf("%s: MP5 %.2f, want %.2f", c.summon, got, want)
+		}
+		if got, want := pet.GetStat(stats.MeleeHit)/core.MeleeHitRatingPerHitChance, owner[stats.SpellHit]/core.SpellHitRatingPerHitChance*8/17; !near(got, want) {
+			t.Errorf("%s: melee hit %.3f%%, want %.3f%%", c.summon, got, want)
+		}
+		if got := pet.ManaRegenPerSecondWhileNotCasting(); !near(got, pet.GetStat(stats.MP5)/5) {
+			t.Errorf("%s: regen %.3f a second out of casting, want only its MP5's %.3f", c.summon, got, pet.GetStat(stats.MP5)/5)
+		}
+		if c.summon == proto.WarlockOptions_Imp {
+			if got, want := pet.MaxMana(), 576+5*pet.GetStat(stats.Intellect); !near(got, want) {
+				t.Errorf("Imp: mana %.1f, want %.1f", got, want)
+			}
+		}
+
+		at(sim, 1, func(sim *core.Simulation) {
+			lock.AddStatsDynamic(sim, stats.Stats{
+				stats.ShadowPower: 100,
+				stats.SpellHit:    2 * core.SpellHitRatingPerHitChance,
+				stats.Stamina:     10,
+				stats.Armor:       200,
+			})
+		})
+		at(sim, 2, func(sim *core.Simulation) {
+			after := pet.GetStats()
+			for _, s := range []struct {
+				name string
+				stat stats.Stat
+				want float64
+			}{
+				{"attack power", stats.AttackPower, 17},
+				{"spell damage", stats.SpellDamage, 10},
+				{"spell hit", stats.SpellHit, 2 * core.SpellHitRatingPerHitChance},
+				{"melee hit", stats.MeleeHit, 2 * 8.0 / 17 * core.MeleeHitRatingPerHitChance},
+				{"armor", stats.Armor, 70},
+			} {
+				if got := after[s.stat] - before[s.stat]; !near(got, s.want) {
+					t.Errorf("%s: +100 Shadow power, +2%% hit, +200 armor: %s +%.3f, want +%.3f", c.summon, s.name, got, s.want)
+				}
+			}
+			// The warlock's Stamina is worth 10 health to it, the demon's share 7.5 a point.
+			if got, want := after[stats.Health]-before[stats.Health], 7.5*(lock.GetStat(stats.Stamina)-owner[stats.Stamina]); !near(got, want) {
+				t.Errorf("%s: +10 Stamina: health +%.2f, want +%.2f", c.summon, got, want)
+			}
+		})
+		runSim(sim)
+	}
+}

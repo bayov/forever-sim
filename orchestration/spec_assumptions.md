@@ -44,7 +44,7 @@ That makes 35 assumptions in `assumptions_def.py`, 7 of them pending (no knob ye
 ### The ones that matter most
 
 1. **`mage_ice_lance_coef`.** Ice Lance's spell power coefficient is 0 in the client; Season of Discovery's client had 0 too, and its server gave the same spell 42.9%. The sim uses 42.9% and Frost and Frostfire cast Ice Lance on every Fingers of Frost charge (user ruling 2026-10-15, PR #21): Frost went from last among the mages to second. At half that, Frost loses 10.9% and Frostfire 7.3%; at the client's 0, where the better rotation never casts Ice Lance, Frost loses 19.1% and Frostfire 9.4% (assumption sims, 180 s).
-2. **`lock_pet_scaling` + `lock_demon_melee`.** Both are Season of Discovery placeholders or 1.12 carry-overs.
+2. **`lock_pet_scaling` + `lock_demon_melee`.** Both are Season of Discovery placeholders or 1.12 carry-overs. (Superseded 2026-10-23 by wowsims/forever's measured shares and melee, see their sections; the numbers below are the old model's.)
    - Without owner scaling, every warlock build loses about 4%; with the Succubus melee halved, another 4%; with both, 7% (PR).
    - Demonology leads the ranking (1109.8), and the other three builds sit just above Retribution (969 to 985 against 960 to 967). These decide that order.
 3. **`lock_bod_coef`.** Bane of Doom's 4.0 coefficient is about 12% of every Shadow Bolt build's damage. At 2.0, every Shadow Bolt warlock loses 4.1% (PR), and Destruction and Affliction drop below the Retribution builds. I still expect 4.0 (it is the duration/15 rule), but it is untested in any beta build.
@@ -132,6 +132,8 @@ Close behind: `sham_lb_31plus` (−1.9% / +4.1% Elemental around the presets' ×
 
 ### `lock_pet_scaling`: Warlock Pet Scaling coefficients
 
+- **Superseded 2026-10-23:** the sim no longer uses the Season of Discovery shares below. It takes wowsims/forever's measured ones (0.17 attack power and 0.10 spell damage a point of the warlock's spell damage, 8/17 of its spell hit as melee hit, 7.5 health a point of Stamina, 35% armor, MP5 from Intellect; c3d9ea9516, 9ce48b6aba, 19922b122e, 7097a63bc9, f5b2f7ef33; notes.md). The settings and the knob in `tools/dps_report/patches/0004` still describe the old model and need redoing before the next assumption run.
+
 - **Builds:** Demonology, Destruction, Affliction, Destruction Fire (the Succubus is out for every build).
 - **Sim now:** the demon gets:
   - 0.5 attack power and 0.25 spell damage per point of the warlock's highest-school spell power;
@@ -151,6 +153,8 @@ Close behind: `sham_lb_31plus` (−1.9% / +4.1% Elemental around the presets' ×
 - **Knob:** `sim/warlock/pet.go`, each inherited field scaled by `Assume("lock_pet_scaling", 1)` (0.5 for Low).
 
 ### `lock_demon_melee`: the Succubus's melee damage
+
+- **Superseded 2026-10-23:** the Succubus swings for 66 to 103 at 60 on a fixed 186 attack power (0.698 of the creature auto attack dps, ±21.5%, wowsims/forever b207517048, from level 20 and 30 sheets). The 1.12 values below are no longer the sim's; the settings need redoing.
 
 - **Builds:** all four (the Succubus is out in each).
 - **Sim now:** 1.12's level 60 base melee, 95 to 131 every 2.0 sec. `sim/warlock/succubus.go:93-95`.

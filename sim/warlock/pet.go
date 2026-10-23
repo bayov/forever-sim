@@ -28,10 +28,36 @@ type WarlockPet struct {
 }
 
 type PetConfig struct {
-	Name          string
-	PowerModifier float64 // GetUnitPowerModifier("pet")
-	Stats         stats.Stats
-	AutoAttacks   core.AutoAttackOptions
+	Name             string
+	ManaPerIntellect float64 // mana a point of the demon's own Intellect, on top of its base Mana
+	Stats            stats.Stats
+	AutoAttacks      core.AutoAttackOptions
+
+	MP5PerOwnerIntellect float64 // MP5 a point of the warlock's Intellect (makeStatInheritance)
+	APPerStrength        float64 // attack power a point of the demon's Strength, 0 for a fixed attack power in Stats
+	DamageMultiplier     float64 // on everything the demon deals, 0 for none
+}
+
+// A demon's own weapon is a fixed share of the creature auto attack dps for its level (ExpectedStat,
+// ExpansionID -2: 60.4529 at level 60), read off naked-warlock pet sheets at levels 20 and 30 by
+// wowsims/forever (pets.go). The level 60 weapons follow from those shares; they are not yet read at 60.
+// The other levels keep 1.12's weapons.
+const creatureAutoAttackDps60 = 60.4529
+
+// The Sayaad's average swing before attack power: 0.698 of the creature dps at 2.0 sec, spanning 21.5%
+// either side (b207517048: 22.8% at level 20, 20.7% at 30), 66 to 103 at 60 (1.12 95 to 131).
+const sayaadSwingAverage = 0.698 * creatureAutoAttackDps60 * 2
+
+// The Voidwalker's average swing before its melee is halved: 0.494 of the creature dps at 2.0 sec,
+// spanning 26.4% either side (43fce5a834, the best fit to three level 30 sheets at attack power 96, 108
+// and 116), 44 to 76 at 60 (1.12 31 to 46).
+const voidwalkerSwingAverage = 0.494 * creatureAutoAttackDps60 * 2
+
+// The Sayaad's and the Voidwalker's own attack power is 3 x level + 6, with none from Strength
+// (b207517048: "Attack Power 103 (96 + 7)" at level 30 and 66 at 20; 43fce5a834: 96 on a level 30
+// Voidwalker). Not yet read at 60, where it gives 186.
+func demonAttackPower(level int32) float64 {
+	return 3*float64(level) + 6
 }
 
 func (warlock *Warlock) setDefaultActivePet() {
@@ -85,7 +111,7 @@ func (warlock *Warlock) makePet(cfg PetConfig, enabledOnStart bool) *WarlockPet 
 	cfg.Stats[stats.SpellCrit] = 0
 
 	wp := &WarlockPet{
-		Pet:          core.NewPet(cfg.Name, &warlock.Character, cfg.Stats, warlock.makeStatInheritance(), enabledOnStart, false),
+		Pet:          core.NewPet(cfg.Name, &warlock.Character, cfg.Stats, warlock.makeStatInheritance(cfg.MP5PerOwnerIntellect), enabledOnStart, false),
 		owner:        warlock,
 		OnPetDisable: func(sim *core.Simulation, isSacrifice bool) {},
 	}
@@ -97,23 +123,26 @@ func (warlock *Warlock) makePet(cfg PetConfig, enabledOnStart bool) *WarlockPet 
 	// the warlock's stats instead, see makeStatInheritance. Debuffs on the target still count.
 	wp.Pet.IgnoresPlayerBuffs = true
 
-	wp.EnableManaBarWithModifier(cfg.PowerModifier)
+	// A demon's mana is its base Mana plus a share of its own Intellect, with none of the player's base
+	// mana curve: the Imp's is 576 + 5 a point at level 60 (wowsims/forever's pet model, pets.go).
+	modifier := cfg.ManaPerIntellect / 15
+	wp.EnableManaBarWithModifier(modifier)
+	wp.AddStat(stats.Mana, 15*20*modifier-20)
 
-	if cfg.Name == "Imp" {
-		// Imp gets 1mp/5 non casting regen per spirit
-		wp.PseudoStats.SpiritRegenMultiplier = 1
-		wp.PseudoStats.SpiritRegenRateCasting = 0
-		wp.SpiritManaRegenPerSecond = func() float64 {
-			// 1mp5 per spirit
-			return wp.GetStat(stats.Spirit) / 5
-		}
+	// A demon's Spirit gives no regen: its regen is all MP5 from the warlock's Intellect, earned while
+	// casting too (wowsims/forever f5b2f7ef33: at level 30 with 110 Intellect the pet panes read 33 MP5
+	// for the Imp and 11 for the Voidwalker and Sayaad, nothing from the demon's own stats).
+	wp.PseudoStats.SpiritRegenMultiplier = 0
 
-	} else {
-		// Warrior scaling for all other pets
-		wp.AddStat(stats.AttackPower, -20)
-		wp.AddStatDependency(stats.Strength, stats.AttackPower, 2)
+	if cfg.APPerStrength > 0 {
+		wp.AddStatDependency(stats.Strength, stats.AttackPower, cfg.APPerStrength)
+	}
+	if cfg.DamageMultiplier > 0 {
+		wp.PseudoStats.DamageDealtMultiplier *= cfg.DamageMultiplier
+	}
 
-		// Imps generally don't melee
+	// Imps don't melee
+	if cfg.Name != "Imp" {
 		wp.EnableAutoAttacks(wp, cfg.AutoAttacks)
 	}
 
@@ -197,35 +226,41 @@ func (wp *WarlockPet) ExecuteCustomRotation(sim *core.Simulation) {
 	}
 }
 
-// makeStatInheritance is the Warlock Pet Scaling aura (client 70338, spell 416189, which carries the
-// attack power, damage done, hit, crit and resistance auras; Blizzard's warlock deep dive of 2026-10-07:
-// "pets now scale from their summoner's stats"). Forever's amounts are server side (every base point is
-// 0 in the client) and unmeasured, so these are Season of Discovery's as a placeholder (the user's backup
-// source, orchestration/pet_buffs.md):
-//   - Hit: 100% of the warlock's spell hit (the higher of Fire and Shadow, one number in the sim) for the
-//     demon's spells and 80% of it as physical hit (Blizzard's Season of Discovery hotfix, 2024-12-04).
-//   - Attack power: 0.5 per point of the warlock's highest school's spell power (a Season of Discovery
-//     player test, 2024-01-06).
-//   - Spell damage: about 25% of that spell power (the same test; the tester was unsure of it).
-//   - Stamina, Intellect and armor: the test says they are inherited but gives no shares, so none here.
+// makeStatInheritance is the Warlock Pet Scaling aura (client 70338, spell 416189, which names health,
+// attack power, damage done, resistances, armor, hit, crit, haste and mana regen; Blizzard's warlock deep
+// dive of 2026-10-07: "pets now scale from their summoner's stats"). Every base point is 0 in the client,
+// so the shares are wowsims/forever's, read off beta pet sheets and logs (pets.go):
+//   - Attack power: 0.17 and spell damage 0.10 a point of the warlock's spell damage, its generic spell
+//     damage plus the better of Shadow and Fire (c3d9ea9516: at 30 spell damage the warlock's tooltip reads
+//     "Increases your pet's Attack Power by 5 and Spell Damage by 3", and a Sayaad logged with 3 Spell
+//     Damage at the warlock's 30 and 9 at ~96; measured on the Sayaad only).
+//   - Hit: the warlock's spell hit whole for the demon's spells and 8/17 of it as melee hit (9ce48b6aba,
+//     forever-bugs #394; not yet read on a pet sheet).
+//   - Health: 7.5 a point of the warlock's Stamina (19922b122e, the 2026-10-13 Sayaad sheets). Armor: 35%
+//     of the warlock's, Demon Armor included (7097a63bc9, a level 30 Imp's sheet).
+//   - MP5: a share of the warlock's Intellect, 0.30 for the Imp and 0.10 for the others (f5b2f7ef33, level
+//     30 pet panes; the Felhunter's not read).
 //   - Crit: the warlock's spell crit, as the demon's melee and its spell crit, and no crit of the demon's
 //     own (no base crit, none from its Agility or Intellect). Blizzard's intent: AidanZMoon on forever-bugs
 //     #331 (13 to 14 October), demons "should be getting their master's spell crit as their own melee AND
 //     spell crit chance", the scaling held back on the beta "until the baseline critical strike chance is
 //     removed" (user ruling 2026-10-16: model Blizzard's intent, one value).
 //
-// notes.md lists it under Need to Verify.
-func (warlock *Warlock) makeStatInheritance() core.PetStatInheritance {
+// notes.md lists what is still unmeasured.
+func (warlock *Warlock) makeStatInheritance(mp5PerOwnerIntellect float64) core.PetStatInheritance {
 	return func(ownerStats stats.Stats) stats.Stats {
 		ownerHitChance := ownerStats[stats.SpellHit] / core.SpellHitRatingPerHitChance
 		ownerCritChance := ownerStats[stats.SpellCrit] / core.SpellCritRatingPerCritChance
-		highestSchoolPower := ownerStats[stats.SpellPower] + ownerStats[stats.SpellDamage] + max(ownerStats[stats.FirePower], ownerStats[stats.ShadowPower])
+		spellDamage := ownerStats[stats.SpellPower] + ownerStats[stats.SpellDamage] + max(ownerStats[stats.FirePower], ownerStats[stats.ShadowPower])
 
 		return stats.Stats{
-			stats.AttackPower: highestSchoolPower * 0.5,
-			stats.SpellDamage: highestSchoolPower * 0.25,
+			stats.Health:      ownerStats[stats.Stamina] * 7.5,
+			stats.Armor:       ownerStats[stats.Armor] * 0.35,
+			stats.MP5:         ownerStats[stats.Intellect] * mp5PerOwnerIntellect,
+			stats.AttackPower: spellDamage * 0.17,
+			stats.SpellDamage: spellDamage * 0.10,
 			stats.SpellHit:    ownerHitChance * core.SpellHitRatingPerHitChance,
-			stats.MeleeHit:    ownerHitChance * 0.8 * core.MeleeHitRatingPerHitChance,
+			stats.MeleeHit:    ownerHitChance * 8 / 17 * core.MeleeHitRatingPerHitChance,
 			stats.SpellCrit:   ownerCritChance * core.SpellCritRatingPerCritChance,
 			stats.MeleeCrit:   ownerCritChance * core.CritRatingPerCritChance,
 		}

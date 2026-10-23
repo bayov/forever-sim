@@ -10,8 +10,9 @@ import (
 
 func (warlock *Warlock) makeImp() *WarlockPet {
 	cfg := PetConfig{
-		Name:          "Imp",
-		PowerModifier: 0.33,
+		Name:                 "Imp",
+		ManaPerIntellect:     5,
+		MP5PerOwnerIntellect: 0.30,
 	}
 
 	switch warlock.Level {
@@ -82,7 +83,8 @@ func (wp *WarlockPet) registerImpFireboltSpell() {
 	}
 
 	// Forever halved Firebolt too (42.6 to 47.8 at rank 7 and level 60, 1.12 85 to 96,
-	// client 11763). The coefficient is on the imp's own spell power, which it has none of.
+	// client 11763). The coefficient is on the Imp's spell damage, a tenth of the warlock's
+	// (makeStatInheritance) plus Demonic Knowledge's share.
 	data := impFireboltRanks[rank]
 	spellCoeff := data.Coef
 	damageLow, damageHigh := data.rangeAt(warlockLevel)
