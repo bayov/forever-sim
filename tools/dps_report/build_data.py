@@ -111,7 +111,7 @@ for _s in db['spellIcons']:
 racial_names = {}
 MANUAL = {'i10646': 'Goblin Sapper Charge', 'i12662': 'Demonic Rune', 'i13444': 'Major Mana Potion', 'i5513': 'Mana Jade', 'i5514': 'Mana Agate', 'i8007': 'Mana Citrine', 'i8008': 'Mana Ruby', 's15851': 'Dragonbreath Chili',
           's11281': 'Backstab', 's11356': 'Deadly Poison', 's11780': 'Lash of Pain', 's1293813': 'Incinerate', 's1310786': 'Sniper Shot',
-          's1311598': "Light's Vigil", 's1329': 'Mutilate', 's1329t1': 'Mutilate (main hand)', 's1329t2': 'Mutilate (off hand)', 's1382': 'Shadow Oil',
+          's1311598': "Light's Vigil", 's1310707': 'Mutilate', 's1310707t1': 'Mutilate (main hand)', 's1310707t2': 'Mutilate (off hand)', 's1382': 'Shadow Oil',
           's17261': 'Bite', 's20947': 'Seal of Command', 's20966': 'Judgement of Command', 's3009': 'Claw', 'i4395': 'Goblin Land Mine', 'i7676': 'Thistle Tea',
           **{f's11300t{i}': f'Eviscerate ({i} CP)' for i in range(1, 6)}, 's11300': 'Eviscerate',
           's1293527': 'Summon Hawk', 's1293527t1': 'Hawk 1', 's1293527t2': 'Hawk 2', 's460534': 'Cutthroat',

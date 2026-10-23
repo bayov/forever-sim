@@ -59,6 +59,13 @@ func (rogue *Rogue) registerGarrote() {
 				dot.Snapshot(target, damage, isRollover)
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				// Under Forever each tick reads attack power and the damage modifiers when it lands
+				// (wowsims/forever 36cfc58328, "Periodic damage does not snapshot in Forever").
+				if sim.IsForever() {
+					damage := baseDamage + dot.Spell.MeleeAttackPower(target)*0.03
+					dot.Spell.CalcAndDealPeriodicDamage(sim, target, damage, dot.OutcomeTick)
+					return
+				}
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
 			},
 		},

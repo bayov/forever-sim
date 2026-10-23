@@ -24,7 +24,7 @@ var (
 	stealth       = spellID(1787)
 	cutthroat     = spellID(462707)
 	thousandCuts  = spellID(1310723)
-	mutilate      = spellID(1329)
+	mutilate      = spellID(1310707)
 	venom         = spellID(1310703)
 )
 

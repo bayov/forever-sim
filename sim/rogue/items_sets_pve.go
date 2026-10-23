@@ -399,8 +399,9 @@ var ItemSetBonescytheArmor = core.NewItemSet(core.ItemSet{
 // 280872 and Boots 280878, item level 65, from the 1.60.1.70338 client). The client spells are named "Item -
 // Tier 1 - Rogue": 1300956, 1301047, 1301088 and 1301708.
 //
-// The client pieces carry no stats yet, so no real set is registered for them. We give the bonuses to the
-// synthetic Phase 1 rogue sets below, the way the shaman's synthetic set carries The Spiritcaller's Rage.
+// The client pieces carry only armor so far. They count toward set 2099 by the client's set ID, and the
+// synthetic Phase 1 rogue sets below carry the same bonuses, the way the shaman's synthetic set carries
+// The Spiritcaller's Rage.
 var grimstitchBonuses = map[int32]core.ApplyEffect{
 	// Improves your chance to hit by 1% (melee and spell, auras 54 and 55).
 	2: func(agent core.Agent) {
@@ -448,6 +449,12 @@ var grimstitchBonuses = map[int32]core.ApplyEffect{
 		})
 	},
 }
+
+var ItemSetGrimstitchArmor = core.NewItemSet(core.ItemSet{
+	ID:      2099,
+	Name:    "Grimstitch Armor",
+	Bonuses: core.RulesetSetBonuses(nil, grimstitchBonuses),
+})
 
 // The synthetic Phase 1 rogue sets (tools/database/forever_synthetic_items_rogue.go), with the Grimstitch
 // Armor bonuses.

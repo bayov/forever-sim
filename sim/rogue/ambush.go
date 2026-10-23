@@ -42,6 +42,11 @@ func (rogue *Rogue) registerAmbushSpell() {
 			if !rogue.HasDagger(core.MainHand) {
 				return false
 			}
+			// Under Forever Ambush needs the rogue behind the target, from Stealth or through
+			// Cutthroat (wowsims/forever ambush.go).
+			if rogue.Env.IsForever() && rogue.PseudoStats.InFrontOfTarget {
+				return false
+			}
 			// Cutthroat lets the Stealth requirement slide for a short while after a Backstab.
 			return rogue.IsStealthed() || (rogue.CutthroatAura != nil && rogue.CutthroatAura.IsActive())
 		},

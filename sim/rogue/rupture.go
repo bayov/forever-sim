@@ -58,6 +58,18 @@ func (rogue *Rogue) registerRupture() {
 				dot.Snapshot(target, damage, isRollover)
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				// Under Forever each tick reads attack power, the damage modifiers and Hemorrhage when
+				// it lands; only the combo points are kept from the cast, in the tick count
+				// (wowsims/forever 36cfc58328, "Periodic damage does not snapshot in Forever", and
+				// the Rend log in 1172f1c745).
+				if sim.IsForever() {
+					damage := rogue.RuptureDamage(target, dot.NumberOfTicks-rogue.RuptureTicks(0))
+					if rogue.isHemorrhaging(target) {
+						damage *= HemorrhageRuptureMultiplier
+					}
+					dot.Spell.CalcAndDealPeriodicDamage(sim, target, damage, dot.OutcomeTick)
+					return
+				}
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
 			},
 		},

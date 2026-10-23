@@ -6,7 +6,8 @@ import (
 	"github.com/wowsims/classic/sim/core"
 )
 
-var MutilateActionID = core.ActionID{SpellID: 1329}
+// The client's Mutilate cast (1310707); the off hand half is tag 2.
+var MutilateActionID = core.ActionID{SpellID: 1310707}
 
 func (rogue *Rogue) registerMutilateSpell() {
 	if !rogue.Talents.Mutilate {

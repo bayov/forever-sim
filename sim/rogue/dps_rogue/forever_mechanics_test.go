@@ -11,12 +11,17 @@ import (
 )
 
 func newForeverRogueSim(t *testing.T, talents string, mainHandID, offHandID int32, numTargets int) (*core.Simulation, *DpsRogue) {
+	return newForeverRogueSimItems(t, talents, map[proto.ItemSlot]int32{
+		proto.ItemSlot_ItemSlotMainHand: mainHandID,
+		proto.ItemSlot_ItemSlotOffHand:  offHandID,
+	}, numTargets)
+}
+
+func newForeverRogueSimItems(t *testing.T, talents string, itemIDs map[proto.ItemSlot]int32, numTargets int) (*core.Simulation, *DpsRogue) {
 	items := make([]*proto.ItemSpec, proto.ItemSlot_ItemSlotOffHand+1)
 	for i := range items {
-		items[i] = &proto.ItemSpec{}
+		items[i] = &proto.ItemSpec{Id: itemIDs[proto.ItemSlot(i)]}
 	}
-	items[proto.ItemSlot_ItemSlotMainHand] = &proto.ItemSpec{Id: mainHandID}
-	items[proto.ItemSlot_ItemSlotOffHand] = &proto.ItemSpec{Id: offHandID}
 	player := &proto.Player{
 		Race:          proto.Race_RaceHuman,
 		Class:         proto.Class_ClassRogue,
@@ -125,5 +130,128 @@ func TestForeverInstantPoisonAttackPower(t *testing.T) {
 	want := 0.005 * 2000 * poison.DamageMultiplier * (float64(metrics.Hits) + 1.5*float64(metrics.Crits))
 	if got := more - base; math.Abs(got-want) > 0.01*want {
 		t.Errorf("2000 attack power added %.1f Instant Poison damage over %d casts, want %.1f", got, casts, want)
+	}
+}
+
+// The Subtlety preset's talents (tools/dps_report/req/rogue__subtlety.json), with Hemorrhage and
+// Serrated Blades.
+const subtletyPresetTalents = "0053031035140004--3021203310113011"
+
+// Under Forever Rupture's ticks read attack power, the damage modifiers and Hemorrhage when they
+// land, and keep only the combo points from the cast (wowsims/forever 36cfc58328, "Periodic damage
+// does not snapshot in Forever").
+func TestForeverRuptureTicksOnLiveStats(t *testing.T) {
+	sim, rogue := newForeverRogueSim(t, subtletyPresetTalents, 18805, 18805, 1) // Core Hound Tooth
+	if rogue.HemorrhageAuras == nil {
+		t.Fatal("the talents give no Hemorrhage")
+	}
+	target := rogue.CurrentTarget
+	rogue.Rupture.BonusCritRating -= 1000 * core.CritRatingPerCritChance
+	rogue.AddComboPoints(sim, 5, target, rogue.Rupture.ComboPointMetrics())
+	rogue.AddStatDynamic(sim, stats.MeleeHit, 20*core.MeleeHitRatingPerHitChance)
+	for !rogue.Rupture.Dot(target).IsActive() {
+		rogue.AddEnergy(sim, 100, rogue.EnergyRefundMetrics)
+		rogue.SetGCDTimer(sim, sim.CurrentTime)
+		rogue.Rupture.Cast(sim, target)
+	}
+	dot := rogue.Rupture.Dot(target)
+	if dot.NumberOfTicks != 8 {
+		t.Fatalf("a 5 point Rupture has %d ticks, want 8", dot.NumberOfTicks)
+	}
+	metrics := &rogue.Rupture.SpellMetrics[target.UnitIndex]
+	tick := func() float64 {
+		before := metrics.TotalDamage
+		dot.TickOnce(sim)
+		return metrics.TotalDamage - before
+	}
+
+	for i, extra := range []float64{0, 1000, 0} {
+		rogue.AddStatDynamic(sim, stats.AttackPower, extra)
+		rogue.PseudoStats.DamageDealtMultiplier *= 1.1
+		hemorrhage := 1.0
+		if i == 2 {
+			rogue.HemorrhageAuras.Get(target).Activate(sim)
+			hemorrhage = 1.15
+		}
+		ap := rogue.Rupture.MeleeAttackPower(target)
+		multiplier := rogue.Rupture.AttackerDamageMultiplier(rogue.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand], true)
+		want := (469.0/8 + 0.03*ap) * hemorrhage * multiplier
+		if got := tick(); math.Abs(got-want) >= 1 {
+			t.Errorf("Rupture at %.0f attack power ticks for %.3f, want %.3f", ap, got, want)
+		}
+	}
+}
+
+// Under Forever Garrote's ticks read attack power and the damage modifiers when they land
+// (wowsims/forever 36cfc58328).
+func TestForeverGarroteTicksOnLiveStats(t *testing.T) {
+	sim, rogue := newForeverRogueSim(t, "", 18805, 18805, 1)
+	target := rogue.CurrentTarget
+	dot := rogue.Garrote.Dot(target)
+	dot.Apply(sim)
+	metrics := &rogue.Garrote.SpellMetrics[target.UnitIndex]
+	for _, extra := range []float64{0, 1000} {
+		rogue.AddStatDynamic(sim, stats.AttackPower, extra)
+		rogue.PseudoStats.DamageDealtMultiplier *= 1.1
+		ap := rogue.Garrote.MeleeAttackPower(target)
+		multiplier := rogue.Garrote.AttackerDamageMultiplier(rogue.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand], true)
+		want := (92 + 0.03*ap) * multiplier
+		before := metrics.TotalDamage
+		dot.TickOnce(sim)
+		if got := metrics.TotalDamage - before; math.Abs(got-want) >= 1 {
+			t.Errorf("Garrote at %.0f attack power ticks for %.3f, want %.3f", ap, got, want)
+		}
+	}
+}
+
+// Under Forever Ambush needs the rogue behind the target, from Stealth and through Cutthroat alike
+// (wowsims/forever ambush.go).
+func TestForeverAmbushFromBehind(t *testing.T) {
+	sim, rogue := newForeverRogueSim(t, "--302120331011301105", 18805, 18805, 1) // 5 points of Cutthroat
+	if rogue.CutthroatAura == nil {
+		t.Fatal("the talents give no Cutthroat")
+	}
+	target := rogue.CurrentTarget
+	rogue.CutthroatAura.Activate(sim)
+	rogue.AddEnergy(sim, 100, rogue.EnergyRefundMetrics)
+	for _, inFront := range []bool{false, true} {
+		rogue.PseudoStats.InFrontOfTarget = inFront
+		if got := rogue.Ambush.CanCast(sim, target); got == inFront {
+			t.Errorf("Ambush through Cutthroat with the rogue in front %v: castable %v", inFront, got)
+		}
+	}
+	rogue.CutthroatAura.Deactivate(sim)
+	rogue.StealthAura.Activate(sim)
+	if rogue.Ambush.CanCast(sim, target) {
+		t.Error("Ambush from Stealth in front of the target is castable")
+	}
+	rogue.PseudoStats.InFrontOfTarget = false
+	if !rogue.Ambush.CanCast(sim, target) {
+		t.Error("Ambush from Stealth behind the target isn't castable")
+	}
+}
+
+// The client's Grimstitch Armor pieces carry set ID 2099 and no set name, so they count toward
+// the set registered with that ID: two pieces give 1% hit.
+func TestForeverGrimstitchArmorBySetID(t *testing.T) {
+	_, rogue := newForeverRogueSimItems(t, "", map[proto.ItemSlot]int32{
+		proto.ItemSlot_ItemSlotHead:     280877, // Grimstitch Mask
+		proto.ItemSlot_ItemSlotShoulder: 280876, // Grimstitch Spaulders
+		proto.ItemSlot_ItemSlotChest:    280879, // Grimstitch Chestpiece
+		proto.ItemSlot_ItemSlotHands:    280875, // Grimstitch Gloves
+		proto.ItemSlot_ItemSlotLegs:     280872, // Grimstitch Pants
+		proto.ItemSlot_ItemSlotFeet:     280878, // Grimstitch Boots
+	}, 1)
+	var pieces []int32
+	for _, bonus := range rogue.GetActiveSetBonuses() {
+		if bonus.Name == "Grimstitch Armor" {
+			pieces = append(pieces, bonus.NumPieces)
+		}
+	}
+	if len(pieces) != 4 {
+		t.Errorf("six Grimstitch pieces give the bonuses at %v pieces, want 2, 3, 4 and 5", pieces)
+	}
+	if got := rogue.GetStat(stats.MeleeHit); got != float64(core.MeleeHitRatingPerHitChance) {
+		t.Errorf("six Grimstitch pieces give %.2f melee hit rating, want %.2f", got, float64(core.MeleeHitRatingPerHitChance))
 	}
 }
