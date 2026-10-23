@@ -41,8 +41,8 @@ func TestLoneWolf(t *testing.T) {
 }
 
 // The test suite puts every player 5 yards from the target. The ranged rotations walk to 12 yards
-// before the pull and melee weave from there (the turret rotation steps back to 25 yards at the
-// pull), Survival melees.
+// before the pull and melee weave from there (Marksmanship and Lone Wolf while the mana lasts; the
+// turret rotation steps back to 25 yards at the pull), Survival melees.
 func TestSurvival(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
 		hunterSuite(SurvivalTalents, "level60_phase1_synthetic_survival", "sv", SurvivalConsumes, PlayerOptionsCat),
@@ -72,9 +72,9 @@ func hunterSuite(talents string, gear string, apl string, consumes core.Consumes
 }
 
 // The level 60 builds in ui/hunter/presets.ts.
-var BeastMasteryTalents = "5020121505021241-00520503014"
-var BeastMasteryHawkTalents = "5020121505111241-00520503014"
-var MarksmanshipTalents = "502-0053452501503051-5"
+var BeastMasteryTalents = "5020121505021241-00520503005"
+var BeastMasteryHawkTalents = "5020121505111241-00520503005"
+var MarksmanshipTalents = "502-0053551501503051-5"
 var LoneWolfTalents = "5-0053552511503051-5"
 var SurvivalTalents = "502-005005-500230230250122151"
 

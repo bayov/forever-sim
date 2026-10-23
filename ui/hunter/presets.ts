@@ -80,8 +80,8 @@ export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
 // The ranged weapon keeps Rhok'delar's damage per second as a 2.5 sec bow, Striker's Mark's speed and
 // spread, the Phase 1 BiS speed the three ranged specs sim best with (standards 22, Ranged: +3.5 /
 // +2.7 / +3.3 over Rhok'delar's 2.9 sec bow at 180 sec), with the 15% quiver.
-// Stamina 17.2% of the points and Spirit 10% (the 5a targets), hit 90 rating (9%, the ranged cap
-// against a level 63 boss), then Agility 34.6%, crit 17.8%, ranged attack power 4.7%, Intellect
+// Stamina 17.2% of the points and Spirit 10% (the 5a targets), hit 80 rating (8%, the ranged cap
+// against a level 63 boss with no hit suppression), then Agility 35.2%, crit 18.4%, ranged attack power 4.7%, Intellect
 // 3.5% and Strength 1.1%. The head and chest carry Wildstalker Armor, so only its 2 piece bonus (1%
 // attack and cast speed) is live.
 // Trinkets are synthetic too (standards 1b), since Forever's launch trinkets are not simulated: 32
@@ -95,11 +95,11 @@ export const GearLevel60Ranged = PresetUtils.makePresetGear('Level 60 Phase 1 Sy
 // one-handers for Predator's Edge's off hand bonus at Brutality Blade's damage per second (a 2.9 sec
 // axe and a 1.6 sec dagger, the Era Phase 1 BiS types and speeds Survival sims best with, standards
 // 22), and
-// 6% hit, since Survival takes Surefooted's 3% (9% yellow cap). Totals: armor 705.5 (target 706.1),
+// 5% hit, since Survival takes Surefooted's 3% (8% yellow cap). Totals: armor 705.5 (target 706.1),
 // swords 34.5 each (the standard has no hunter one-hander: the physical 0.39 x the hunter /
 // physical two-hander ratio, 0.42 x L(71)), bow 19.5 (Rhok'delar's 2.9 sec: Survival never shoots,
-// so every ranged candidate sims the same for it). Stamina 15.4%, Spirit 10.1%, Agility 31.1%,
-// crit 14.7%, Strength 11.2%, attack power 9.9%, hit 7.6%. Crusader on the main hand and Agility on
+// so every ranged candidate sims the same for it). Stamina 15.4%, Spirit 10.1%, Agility 32.1%,
+// crit 15.0%, Strength 11.2%, attack power 9.9%, hit 6.3%. Crusader on the main hand and Agility on
 // the off hand (+4 over Agility on both). Trinkets: 32 Agility and 14 crit rating, and an on-use
 // 335 attack power and ranged attack power for 20 sec every 2 min.
 export const GearLevel60Survival = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic Survival', Level60SurvivalGear, {
@@ -122,25 +122,34 @@ export const DefaultGear = GearLevel60Ranged;
 // ranged rotations only weigh the shots against each other: Serpent Sting when it is down,
 // Aimed Shot on the cooldown it shares with Multi-Shot, Arcane Shot on its own (shared with
 // Summon Hawk), Sniper Shot on its own, Rapid Fire, Bestial Wrath and the racials at the pull and
-// on cooldown. The knob searches on each build (2026-10-12, 180 sec, on the standard gear): Marksmanship
-// and Lone Wolf put Arcane Shot above Aimed Shot and spend their mana with no floors (+15 with
-// Improved Arcane Shot 5), and both cast Serpent Sting after Aimed Shot (+1.7 and +2.1). Beast Mastery
-// keeps Aimed Shot first and its floors.
-// Since 2026-10-23 the ranged rotations melee weave from 12 yd: between Auto Shots the hunter walks in
-// for a main hand swing with Raptor Strike queued, when that holds the next Auto Shot back 1.2 sec or
-// less and the shot cooldowns stay down meanwhile (Beast Mastery +9.8, Marksmanship +2.7 at 180 sec).
-// The turret rotations stand at range.
+// on cooldown. The knob searches (last 2026-10-23, at 120 / 180 / 300 sec on the gear for the 8% hit
+// cap): all three put Arcane Shot above Aimed Shot with no mana floor on it or on Serpent Sting
+// (Beast Mastery +4.4, Serpent Sting last). Marksmanship and Lone Wolf cast Serpent Sting after
+// Aimed Shot, Aimed Shot only above 40% mana, and Sniper Shot while the mana covers 10 a second of the
+// fight left.
+// The ranged rotations melee weave from 12 yd: between Auto Shots the hunter walks in for a main hand
+// swing with Raptor Strike queued, when that holds the next Auto Shot back 1.2 sec or less and the
+// shot cooldowns stay down meanwhile (Beast Mastery +9.5 over standing at range). Marksmanship and
+// Lone Wolf weave only while the mana covers 25 a second of the fight left: weaving wins a short
+// fight and costs a long one its mana (2026-10-23; at range Marksmanship is 4.7 behind at 120 sec,
+// 1.3 and 1.8 ahead at 180 and 300). The turret rotations stand at range.
 const weaveTooltip = ' Melee weaves from 12 yd: walks in for a main hand swing with Raptor Strike queued when the next Auto Shot waits 1.2 sec or less.';
+const manaWeaveTooltip =
+	' Melee weaves from 12 yd while the mana covers 25 a second of the fight left: walks in for a main hand swing with Raptor Strike queued when the next Auto Shot waits 1.2 sec or less.';
 export const APLBeastMastery = PresetUtils.makePresetAPLRotation('Beast Mastery', BeastMasteryAPL, {
-	tooltip: 'Aimed Shot, Sniper Shot and Arcane Shot on cooldown, then Serpent Sting when down, Bestial Wrath and Rapid Fire on cooldown.' + weaveTooltip,
+	tooltip:
+		'Arcane Shot, Aimed Shot and Sniper Shot on cooldown, then Serpent Sting when down, Bestial Wrath and Rapid Fire on cooldown, no mana floors.' +
+		weaveTooltip,
 	group: 'Level 60',
 });
 export const APLMarksmanship = PresetUtils.makePresetAPLRotation('Marksmanship', MarksmanshipAPL, {
-	tooltip: 'Arcane Shot, Aimed Shot, Serpent Sting when down and Sniper Shot on cooldown, Rapid Fire on cooldown, no mana floors.' + weaveTooltip,
+	tooltip:
+		'Arcane Shot, Aimed Shot above 40% mana, Serpent Sting when down, and Sniper Shot while the mana lasts the fight, Rapid Fire on cooldown.' +
+		manaWeaveTooltip,
 	group: 'Level 60',
 });
 export const APLLoneWolf = PresetUtils.makePresetAPLRotation('Lone Wolf', LoneWolfAPL, {
-	tooltip: 'The Marksmanship rotation, for no pet.' + weaveTooltip,
+	tooltip: 'The Marksmanship rotation, for no pet.' + manaWeaveTooltip,
 	group: 'Level 60',
 });
 export const APLBeastMasteryTurret = PresetUtils.makePresetAPLRotation('Beast Mastery (turret)', BeastMasteryTurretAPL, {
@@ -227,7 +236,7 @@ export const APLPresets = {
 	],
 };
 
-export const DefaultAPL = APLLoneWolf;
+export const DefaultAPL = APLBeastMastery;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Talent Presets
@@ -235,26 +244,29 @@ export const DefaultAPL = APLLoneWolf;
 
 // The talent searches (tools/rotopt -talent-search, a hill climb) ran on the synthetic sets in
 // the mksettings raid at 180 sec, from several starting builds per spec, on 2026-10-12, and last
-// on the standards 1b gear with its trinkets (2026-10-13), where every build held.
+// on the standards 1b gear with its trinkets (2026-10-13), where every build held, and again on
+// 2026-10-23 on the gear for the 8% hit cap, where Lone Wolf and Survival held.
 //
 // Beast Mastery 31/20: Bestial Wrath, Frenzy 4, Ferocity, Unleashed Fury, Focused Fire and
-// Deadly Aspects, and Careful Aim, Lethal Attacks, Improved Arcane Shot 3, Improved Stings 2,
-// Trueshot Aura and Mortal Shots 4 in Marksmanship. The Beast Mastery searches dropped Summon
-// Hawk: on the cooldown it shares with Arcane Shot, the hawk deals less than the shot.
-export const TalentsBeastMastery = PresetUtils.makePresetTalents('Beast Mastery', SavedTalents.create({ talentsString: '5020121505021241-00520503014' }), {
+// Deadly Aspects, and Careful Aim, Lethal Attacks, Improved Arcane Shot 3, Improved Stings 2 and
+// Mortal Shots 5 in Marksmanship. The 2026-10-23 search (8% hit cap gear, 180 sec) moved the
+// Trueshot Aura point to Mortal Shots (+12.2): the raid's Trueshot Aura already covers the hunter.
+// The searches drop Summon Hawk: for a point of Spirit Bond it is 11.8 behind at 180 sec.
+export const TalentsBeastMastery = PresetUtils.makePresetTalents('Beast Mastery', SavedTalents.create({ talentsString: '5020121505021241-00520503005' }), {
 	tooltip: 'Level 60 Beast Mastery 31/20 from the talent search.',
 	group: 'Level 60',
 });
-// Marksmanship 7/39/5 with a pet: Efficiency 4, Careful Aim, Rapid Killing, Improved Arcane Shot 5,
+// Marksmanship 7/39/5 with a pet: Efficiency 5, Careful Aim, Rapid Killing 1, Improved Arcane Shot 5,
 // Trueshot Aura, Mortal Shots, Barrage, Ranged Weapon Specialization, Sniper Shot, Improved
 // Stings, Deadly Aspects, Focused Fire and Improved Tracking 5. A search from a ranged Survival
-// build ended on Marksmanship too.
-export const TalentsMarksmanship = PresetUtils.makePresetTalents('Marksmanship', SavedTalents.create({ talentsString: '502-0053452501503051-5' }), {
+// build ended on Marksmanship too. The 2026-10-23 search moved a Rapid Killing point (it never
+// triggers on a single boss) into Efficiency 5 (+4.3 at 180 sec).
+export const TalentsMarksmanship = PresetUtils.makePresetTalents('Marksmanship', SavedTalents.create({ talentsString: '502-0053551501503051-5' }), {
 	tooltip: 'Level 60 Marksmanship 7/39/5 from the talent search, with a pet.',
 	group: 'Level 60',
 });
-// Marksmanship with Lone Wolf (20% damage with no pet out) and the pet dismissed: Efficiency 5 and
-// Lone Wolf where the pet build has Efficiency 4 and Focused Fire.
+// Marksmanship with Lone Wolf (20% damage with no pet out) and the pet dismissed: Lone Wolf and Rapid
+// Killing 2 where the pet build has Focused Fire.
 export const TalentsLoneWolf = PresetUtils.makePresetTalents('Lone Wolf', SavedTalents.create({ talentsString: '5-0053552511503051-5' }), {
 	tooltip: 'Level 60 Marksmanship 5/41/5 with Lone Wolf, played without a pet.',
 	group: 'Level 60',
@@ -273,16 +285,18 @@ export const TalentPresets = {
 	[Phase.Phase1]: [TalentsBeastMastery, TalentsMarksmanship, TalentsLoneWolf, TalentsSurvival],
 };
 
-export const DefaultTalents = TalentsLoneWolf;
+export const DefaultTalents = TalentsBeastMastery;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Options
 ///////////////////////////////////////////////////////////////////////////
 
 // A cat at 1.0 sec (Broken Tooth, Badlands). With the family abilities from the client (2026-10-23,
-// 180 sec, 20000 iterations) the raptor's Savage Rend puts it 1.8 Beast Mastery, 1.5 Marksmanship and
-// 0.7 Survival over a cat of the same speed, but each slower step costs about 4 (Pet Aggression's 8 a
-// hit), and no source shows a raptor as fast as Broken Tooth, so the preset keeps the cat. The
+// 180 sec, 20000 iterations, rechecked on the gear for the 8% hit cap) the raptor's Savage Rend puts
+// it 2.5 Beast Mastery, 1.5 Marksmanship and 1.5 Survival over a cat of the same speed, but at 1.2 sec
+// it is 2.0, 1.0 and 0.8 behind the 1.0 sec cat, and no tamable raptor swings faster than 2.0 sec in
+// the creature data (the beasts' Faster Attack passives aren't in it) nor in any source we have, so
+// the preset keeps the cat. Slower Attack III (2.7 sec) costs 16.4, 8.7 and 9.4. The
 // numbers below are from before the family abilities. A pet's hit scales with its attack speed, as in
 // Classic (report assumption hunter_pet_speed, user ruling 2026-10-15: the beta's "every pet hits
 // like a 2.0 sec pet" is treated as a bug), so its white damage a second is the same at any speed.
@@ -325,9 +339,11 @@ export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorManaPotion,
 	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
-	// The natural flask (standards 11, 2026-10-23): Aggression, +36.8 / +23.8 / +22.7 over the Flask of
-	// Distilled Wisdom on Beast Mastery / Lone Wolf / Marksmanship at 180 sec (Swiftness +25.4 / +20.2
-	// / +13.3; Accuracy adds nothing with the hit capped).
+	// The natural flask (standards 11, 2026-10-23, rechecked on the gear for the 8% hit cap):
+	// Aggression, on Beast Mastery / Lone Wolf at 180 sec 14.4 / 6.6 ahead of Swiftness, 37.1 / 39.6 of
+	// Accuracy (the hit is capped) and 36.0 / 20.9 of the Flask of Distilled Wisdom. Major Mana Potion is
+	// 25.7 / 46.1 ahead of Major Frenzy Potion, and the Dragonfire and Caustic Smog Potions are as far
+	// behind.
 	flask: Flask.FlaskOfNaturalAggression,
 	food: Food.FoodFlankAuPoivre,
 	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
@@ -347,8 +363,9 @@ export const SurvivalConsumes = Consumes.create({
 	defaultPotion: Potions.MajorFrenzyPotion,
 	dragonBreathChili: true,
 	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
-	// The natural flask (standards 11, 2026-10-23): Precision, +50.7 over none at 180 sec (Aggression
-	// +23.7, Swiftness +21.6, Accuracy +20.9).
+	// The natural flask (standards 11, 2026-10-23): Precision, +50.7 over none at 180 sec; on the gear
+	// for the 8% hit cap +30.0 over Accuracy, +31.3 over Swiftness and +32.8 over Aggression. Major
+	// Frenzy Potion stays 1.0 ahead of the Dragonfire Potion and 1.4 of Caustic Smog.
 	flask: Flask.FlaskOfNaturalPrecision,
 	food: Food.FoodFlankAuPoivre,
 	mainHandImbue: WeaponImbue.DenseSharpeningStone,
@@ -422,7 +439,7 @@ export const OtherDefaults = {
 	distanceFromTarget: 25,
 	profession1: Profession.Engineering,
 	profession2: Profession.Alchemy,
-	race: Race.RaceSkyborneWindshaper,
+	race: Race.RaceHuman,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -496,22 +513,22 @@ export const EncounterLevel60ScorpidDuty = PresetUtils.makePresetEncounter('Leve
 
 // The numbers are without the Ahn'Qiraj book ranks (Aspect of the Hawk 5, Serpent Sting 8) and
 // with the shared raid buff caps (Grace of Air 77, Strength of Earth 42, Battle Shout 115).
-// Races (client 1.60.1.70425 racials, with the raid hits, 20000 iterations at 120 / 180 / 300 sec,
-// forever-wiki/sim-status.md has the table): no racial depends on the weapon any more. The
-// Windshaper is best for the three ranged specs (Wind Blessed's 3% haste), 1.2 to 1.6 ahead of the
-// High Order and 5 to 8 ahead of the Night Elf on Lone Wolf and Marksmanship (0.3 to 0.9 ahead of the
-// Human on Beast Mastery). For Survival the Human is best at 180 and 300 sec (Ruthless's 2% crit),
-// 0.8 and 2.0 ahead of the Orc, which leads by 1.6 at 120 sec (with the trap scaling, Blood Fury's
-// attack power reaches the trap too). With the Wildstalker Armor 4
+// Races (2026-10-23, the gear for the 8% hit cap and the talents and rotations above, 20000
+// iterations at 120 / 180 / 300 sec on seeds 1 and 1000003, forever-wiki/sim-status.md has the
+// table): no racial depends on the weapon. Beast Mastery is best as a Human (Ruthless's 2% crit
+// reaches its weave swings and, through the hunter's melee crit, the pet), 3.7 ahead of the Orc and 5.0
+// of the Windshaper at 180 sec. The Windshaper is best for Marksmanship and Lone Wolf (Wind Blessed's
+// 3% haste), 1.6 and 1.7 ahead of the High Order. For Survival the Human is best at 180 and 300 sec,
+// 0.8 and 2.2 ahead of the Orc, which leads by 1.9 at 120 sec. With the Wildstalker Armor 4
 // and 5 piece bonuses on top of the 2 piece (the presets carry the 2 piece only, as every class
 // does), Lone Wolf would gain 17, Marksmanship 13, Beast Mastery 1 and Survival nothing, with the
 // rotations re-tuned for the shorter Aimed Shot cooldown (measured on the 2026-10-12 gear, before
 // standards 1b and its trinkets).
 const professions: [Profession, Profession] = [OtherDefaults.profession1, OtherDefaults.profession2];
 
-// 976.4 / 970.7 / 962.1 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16, Serpent Sting last since rotation
-// audit pass 24: +2.8 / +1.5 / +1.2). The pet deals 21% of
-// it.
+// 1176.9 / 1172.0 / 1159.3 at 120 / 180 / 300 sec (20000 iterations, 2026-10-23, on seeds 1 and
+// 1000003 within 0.5), the class's best at 180 sec: a Human, Mortal Shots 5 for Trueshot Aura, and
+// Arcane Shot first with no mana floors. It was 1151.4 / 1145.6 / 1124.3 on the Windshaper before.
 export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Beast Mastery', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Beast Mastery on the synthetic Phase 1 ranged gear with a 1.0 sec cat, in a 3 minute raid fight.',
@@ -519,13 +536,13 @@ export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Bea
 	talents: TalentsBeastMastery,
 	rotation: APLBeastMastery,
 	encounter: EncounterLevel60,
-	race: Race.RaceSkyborneWindshaper,
+	race: Race.RaceHuman,
 	professions,
 	options: DefaultOptions,
 });
-// 973.6 / 969.1 / 960.2 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 2.8 / 1.6 / 1.9 behind the
-// base preset: the raid's Hunter's Mark is off and the hunter casts its own 1.5 sec before the
-// pull and before it drops (standards 23).
+// 1176.5 / 1171.5 / 1157.9 at 120 / 180 / 300 sec (20000 iterations, 2026-10-23), 0.4 / 0.5 / 1.4
+// behind the base preset: the raid's Hunter's Mark is off and the hunter casts its own 1.5 sec before
+// the pull and before it drops (standards 23).
 export const PresetBuildBeastMasteryMark = PresetUtils.makePresetBuild("Level 60 Beast Mastery (Hunter's Mark duty)", {
 	group: 'Level 60',
 	tooltip:
@@ -534,11 +551,13 @@ export const PresetBuildBeastMasteryMark = PresetUtils.makePresetBuild("Level 60
 	talents: TalentsBeastMastery,
 	rotation: APLBeastMasteryMark,
 	encounter: EncounterLevel60MarkDuty,
-	race: Race.RaceSkyborneWindshaper,
+	race: Race.RaceHuman,
 	professions,
 	options: DefaultOptions,
 });
-// 887.0 / 881.8 / 873.1 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 89.4 / 88.8 / 89.0 behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in place of Serpent Sting, refreshed 4 sec before it drops (standards 23).
+// 1081.0 / 1076.5 / 1067.2 at 120 / 180 / 300 sec (20000 iterations, 2026-10-23), 95.9 / 95.5 / 92.1
+// behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in place of
+// Serpent Sting, refreshed 4 sec before it drops (standards 23), on Beast Mastery's earlier knobs.
 export const PresetBuildBeastMasteryScorpid = PresetUtils.makePresetBuild('Level 60 Beast Mastery (Scorpid Sting duty)', {
 	group: 'Level 60',
 	tooltip:
@@ -547,12 +566,13 @@ export const PresetBuildBeastMasteryScorpid = PresetUtils.makePresetBuild('Level
 	talents: TalentsBeastMastery,
 	rotation: APLBeastMasteryScorpid,
 	encounter: EncounterLevel60ScorpidDuty,
-	race: Race.RaceSkyborneWindshaper,
+	race: Race.RaceHuman,
 	professions,
 	options: DefaultOptions,
 });
-// 1034.4 / 1029.6 / 1007.9 at 120 / 180 / 300 sec, 75 ahead of Beast Mastery at 180. The pet deals
-// 11% of it. It runs short of mana in a 5 minute fight.
+// 1184.8 / 1167.6 / 1140.2 at 120 / 180 / 300 sec (20000 iterations, 2026-10-23), 4.4 behind
+// Beast Mastery at 180 sec (1176.2 / 1145.7 / 1108.4 before the 8% hit cap gear, Efficiency 5 and the
+// mana-gated weave).
 export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Marksmanship', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Marksmanship on the synthetic Phase 1 ranged gear with a 1.0 sec cat, in a 3 minute raid fight.',
@@ -564,9 +584,9 @@ export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Mar
 	professions,
 	options: DefaultOptions,
 });
-// 1033.0 / 1028.2 / 1006.3 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 1.4 / 1.4 / 1.5 behind the
-// base preset: the raid's Hunter's Mark is off and the hunter casts its own 1.5 sec before the
-// pull and before it drops (standards 23).
+// 1183.5 / 1166.1 / 1137.3 at 120 / 180 / 300 sec (20000 iterations, 2026-10-23), 1.3 / 1.5 / 2.9
+// behind the base preset: the raid's Hunter's Mark is off and the hunter casts its own 1.5 sec before
+// the pull and before it drops (standards 23).
 export const PresetBuildMarksmanshipMark = PresetUtils.makePresetBuild("Level 60 Marksmanship (Hunter's Mark duty)", {
 	group: 'Level 60',
 	tooltip:
@@ -579,7 +599,9 @@ export const PresetBuildMarksmanshipMark = PresetUtils.makePresetBuild("Level 60
 	professions,
 	options: DefaultOptions,
 });
-// 952.5 / 949.2 / 946.6 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 81.9 / 80.4 / 61.3 behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in place of Serpent Sting (standards 23).
+// 1091.3 / 1083.0 / 1079.4 at 120 / 180 / 300 sec (20000 iterations, 2026-10-23), 93.5 / 84.6 / 60.8
+// behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in place of
+// Serpent Sting (standards 23).
 export const PresetBuildMarksmanshipScorpid = PresetUtils.makePresetBuild('Level 60 Marksmanship (Scorpid Sting duty)', {
 	group: 'Level 60',
 	tooltip:
@@ -592,8 +614,9 @@ export const PresetBuildMarksmanshipScorpid = PresetUtils.makePresetBuild('Level
 	professions,
 	options: DefaultOptions,
 });
-// 1080.2 / 1075.7 / 1055.3 at 120 / 180 / 300 sec, the best of the four: Lone Wolf's 20% is worth more
-// than a pet that takes no player buffs (46 ahead of Marksmanship at 180). Holds up in a 5 minute fight with Sniper Shot held back for mana.
+// 1174.2 / 1159.3 / 1122.8 at 120 / 180 / 300 sec (20000 iterations, 2026-10-23): Lone Wolf's 20% is
+// now 8.3 behind a cat at 180 sec (it was 1166.0 / 1139.5 / 1101.8). Holds up in a 5 minute fight with
+// Sniper Shot and the weave held back for mana.
 export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wolf', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Marksmanship with Lone Wolf and no pet, on the synthetic Phase 1 ranged gear, in a 3 minute raid fight.',
@@ -605,9 +628,9 @@ export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wo
 	professions,
 	options: LoneWolfOptions,
 });
-// 1078.4 / 1073.7 / 1053.2 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 1.8 / 2.0 / 2.1 behind the
-// base preset: the raid's Hunter's Mark is off and the hunter casts its own 1.5 sec before the
-// pull and before it drops (standards 23).
+// 1172.9 / 1156.8 / 1119.3 at 120 / 180 / 300 sec (20000 iterations, 2026-10-23), 1.3 / 2.5 / 3.5
+// behind the base preset: the raid's Hunter's Mark is off and the hunter casts its own 1.5 sec before
+// the pull and before it drops (standards 23).
 export const PresetBuildLoneWolfMark = PresetUtils.makePresetBuild("Level 60 Lone Wolf (Hunter's Mark duty)", {
 	group: 'Level 60',
 	tooltip:
@@ -620,7 +643,9 @@ export const PresetBuildLoneWolfMark = PresetUtils.makePresetBuild("Level 60 Lon
 	professions,
 	options: LoneWolfOptions,
 });
-// 983.3 / 980.2 / 978.2 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 96.9 / 95.5 / 77.1 behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in place of Serpent Sting (standards 23).
+// 1064.7 / 1059.3 / 1050.3 at 120 / 180 / 300 sec (20000 iterations, 2026-10-23), 109.5 / 100.0 /
+// 72.5 behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in
+// place of Serpent Sting (standards 23).
 export const PresetBuildLoneWolfScorpid = PresetUtils.makePresetBuild('Level 60 Lone Wolf (Scorpid Sting duty)', {
 	group: 'Level 60',
 	tooltip:
@@ -633,8 +658,9 @@ export const PresetBuildLoneWolfScorpid = PresetUtils.makePresetBuild('Level 60 
 	professions,
 	options: LoneWolfOptions,
 });
-// 936.7 / 929.7 / 923.1 at 120 / 180 / 300 sec in the mksettings raid (Human, 2026-10-16, rotation audit pass 23). The rotation walks in
-// before the pull, so starting at 25 yards in the UI costs nothing.
+// 1058.0 / 1049.3 / 1041.6 at 120 / 180 / 300 sec in the mksettings raid (Human, 20000 iterations,
+// 2026-10-23; 1056.7 / 1047.8 / 1040.0 at 9% hit). The rotation walks in before the pull, so starting
+// at 25 yards in the UI costs nothing.
 export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Survival', {
 	group: 'Level 60',
 	tooltip: 'Level 60 melee Survival on the synthetic Phase 1 Survival gear, in a 3 minute raid fight with a melee group.',
@@ -646,9 +672,9 @@ export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Surviva
 	professions,
 	options: DefaultOptions,
 });
-// 935.8 / 928.4 / 921.5 at 120 / 180 / 300 sec (20000 iterations, 2026-10-16), 0.9 / 1.3 / 1.6 behind the
-// base preset: the raid's Hunter's Mark is off and the hunter casts its own 1.5 sec before the
-// pull and before it drops (standards 23).
+// 1056.9 / 1047.9 / 1039.9 at 120 / 180 / 300 sec (20000 iterations, 2026-10-23), 1.1 / 1.4 / 1.7
+// behind the base preset: the raid's Hunter's Mark is off and the hunter casts its own 1.5 sec before
+// the pull and before it drops (standards 23).
 export const PresetBuildSurvivalMark = PresetUtils.makePresetBuild("Level 60 Survival (Hunter's Mark duty)", {
 	group: 'Level 60',
 	tooltip:

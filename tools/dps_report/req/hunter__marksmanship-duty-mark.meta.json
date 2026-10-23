@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 5,
   "race": "SkyborneWindshaper",
-  "talents": "502-0053452501503051-5",
+  "talents": "502-0053551501503051-5",
   "treeNames": [
     "Beast Mastery",
     "Marksmanship",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_ranged",
   "apl": "mm_mark",
   "published": {
-    "dps": 1043.9,
-    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 1028.2)"
+    "dps": 1166.1,
+    "source": "Regear and rotation round (branch claude/keen-brown-o2g32n-hunter, 2026-10-23): the 8% hit cap gear, re-searched talents and rotations, race sweep (was 1043.9)"
   },
   "verify": {
-    "dps": 1043.86,
-    "stderr": 0.24,
+    "dps": 1166.15,
+    "stderr": 0.26,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "180s, seed 1; seed 1000003 gives 1165.6"
   },
   "summary": "Marksmanship with a cat instead of Lone Wolf. The pet deals about 11% of the damage.",
   "keyTalents": [
@@ -47,7 +47,7 @@
     "Cat (1.0s) bites and claws on its own; Auto Shot throughout"
   ],
   "consumes": [
-    "Flask of Distilled Wisdom",
+    "Flask of Natural Aggression",
     "Elixir of the Mongoose",
     "Elixir of Ferocity",
     "Elixir of Greater Intellect",
@@ -61,19 +61,19 @@
     "Goblin Land Mine"
   ],
   "caveats": [
-    "Assumed: Trueshot Aura's top rank gives 100 ranged attack power and Hunter's Mark's 140 (the client has 50 and 71).",
+    "Assumed: Trueshot Aura's top rank gives 100 ranged attack power (the client has 50). Hunter's Mark gives 143, the server hotfix (the client has 71).",
     "Aspect of the Hawk stays at rank 5 (90 RAP). Forever's rank 6 gives only 55.",
-    "Pet scaling uses 10% of RAP (SoD placeholder). SoD's 22% would add 23.",
+    "The pet takes 10% of the hunter's ranged attack power, its crit and its hit, on its own 254 attack power (beta pet sheets).",
     "Arcane Shot takes 10% of ranged attack power and Serpent Sting 3% a tick (beta log fit: 11% and 3.5%).",
-    "Assumed: Auto Shot fires through casts with no 0.5s aim.",
+    "Auto Shot fires through casts and winds up 0.5s, which moving cancels.",
     "Wildstalker Armor 4-piece and 5-piece aren't active. They would add 13.",
-    "Runs short of mana at 300s (998.5 DPS).",
+    "Holds Sniper Shot and the weave back for mana; 1140.2 DPS at 300s.",
     "Assumed: 22% more crit per Agility than Classic.",
-    "Assumed: pet hits scale with attack speed as in Classic. Every cat speed sims within 1 DPS.",
+    "Assumed: pet hits scale with attack speed as in Classic. A 1.0s raptor would add about 2 (Savage Rend), but none that fast is known.",
     "A 2.5s bow at Rhok'delar's 44.0 DPS. A 2.6s gun sims 0.3 to 1.0 higher with a 15% ammo pouch, 3.4 to 5.2 lower with Era's 14% pouch.",
     "Costs 1.4 / 1.4 / 1.5 DPS vs Marksmanship at 120s / 180s / 300s."
   ],
-  "notes": "Request is hunter__marksmanship's with the rotation swapped for ui/hunter/apls/mm_mark.apl.json (the base APL plus the mark line, tools/rotopt/hunter_presets.sh) and debuffs.huntersMark removed; mksettings writes the same raid as spec hunter_mm_mark. Request written by mksettings (spec hunter_mm) unchanged; it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions.",
+  "notes": "Request is hunter__marksmanship's with the rotation swapped for ui/hunter/apls/mm_mark.apl.json (the base APL plus the mark line, tools/rotopt/hunter_presets.sh) and debuffs.huntersMark removed; mksettings writes the same raid as spec hunter_mm_mark. Request written by mksettings (spec hunter_mm, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions.",
   "duty": "Hunter's Mark",
   "baseBuild": "hunter__marksmanship"
 }

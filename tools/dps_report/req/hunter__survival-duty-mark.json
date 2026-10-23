@@ -73,6 +73,7 @@
               ]
             },
             "consumes":  {
+              "flask":  "FlaskOfNaturalPrecision",
               "food":  "FoodFlankAuPoivre",
               "agilityElixir":  "ElixirOfTheMongoose",
               "strengthBuff":  "ElixirOfFerocity",
@@ -145,7 +146,7 @@
               ],
               "priorityList":  [
                 {
-                  "notes":  "Into melee.",
+                  "notes":  "Walk into melee range when the fight starts at range.",
                   "action":  {
                     "condition":  {
                       "not":  {
@@ -164,6 +165,7 @@
                   }
                 },
                 {
+                  "notes":  "Aspect of the Beast if it ever drops.",
                   "action":  {
                     "condition":  {
                       "not":  {
@@ -184,7 +186,7 @@
                   }
                 },
                 {
-                  "notes":  "Rapid Fire, racials, trinkets and potions.",
+                  "notes":  "Rapid Fire, racials, trinkets and potions on cooldown.",
                   "action":  {
                     "autocastOtherCooldowns":  {}
                   }
@@ -220,7 +222,7 @@
                   }
                 },
                 {
-                  "notes":  "When Expose Prey or a dodge opens it.",
+                  "notes":  "Mongoose Bite whenever Expose Prey or a dodge opens it.",
                   "action":  {
                     "castSpell":  {
                       "spellId":  {
@@ -230,7 +232,7 @@
                   }
                 },
                 {
-                  "notes":  "With the talent.",
+                  "notes":  "Strider Kick on cooldown, with the talent.",
                   "action":  {
                     "castSpell":  {
                       "spellId":  {
@@ -240,7 +242,7 @@
                   }
                 },
                 {
-                  "notes":  "At the hunter's feet.",
+                  "notes":  "Immolation Trap at the hunter's feet on cooldown.",
                   "action":  {
                     "condition":  {
                       "cmp":  {
@@ -263,7 +265,7 @@
                   }
                 },
                 {
-                  "notes":  "Queued on the next swing.",
+                  "notes":  "Queue Raptor Strike on the next swing when it is ready.",
                   "action":  {
                     "castSpell":  {
                       "spellId":  {
@@ -274,6 +276,7 @@
                   }
                 },
                 {
+                  "notes":  "Lacerate when it is down.",
                   "action":  {
                     "condition":  {
                       "and":  {
@@ -313,7 +316,7 @@
                   }
                 },
                 {
-                  "notes":  "Filler.",
+                  "notes":  "Wing Clip as a filler with the mana to spare, held when an opened Mongoose Bite is about ready.",
                   "action":  {
                     "condition":  {
                       "and":  {
@@ -391,8 +394,8 @@
                 "ammo":  "SwiftfeatherArrow",
                 "quiverBonus":  "Speed15",
                 "petType":  "Cat",
-                "cobraReflexes": true,
-                "petUptime":  1
+                "petUptime":  1,
+                "cobraReflexes":  true
               }
             }
           }
@@ -502,7 +505,8 @@
       }
     ],
     "raidDamageHitsPerMinute":  2,
-    "raidDamagePerHit":  1500
+    "raidDamagePerHit":  1500,
+    "naturalFlaskZone":  true
   },
   "simOptions":  {
     "iterations":  1000,

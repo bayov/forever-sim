@@ -5,8 +5,8 @@
   "build": "Beast Mastery (Scorpid Sting duty)",
   "isDefault": false,
   "pr": 5,
-  "race": "SkyborneWindshaper",
-  "talents": "5020121505021241-00520503014",
+  "race": "Human",
+  "talents": "5020121505021241-00520503005",
   "treeNames": [
     "Beast Mastery",
     "Marksmanship",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_ranged",
   "apl": "bm_scorpid",
   "published": {
-    "dps": 881.8,
-    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 872.9)"
+    "dps": 1076.5,
+    "source": "Regear and rotation round (branch claude/keen-brown-o2g32n-hunter, 2026-10-23): the 8% hit cap gear, re-searched talents and rotations, race sweep (was 881.8)"
   },
   "verify": {
-    "dps": 881.85,
-    "stderr": 0.2,
+    "dps": 1076.49,
+    "stderr": 0.21,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "180s, seed 1; seed 1000003 gives 1076.6"
   },
   "summary": "Beast Mastery with a cat: Bestial Wrath, Frenzy and Unleashed Fury. The pet deals about 21% of the damage.",
   "keyTalents": [
@@ -46,7 +46,7 @@
     "Cat (1.0s) bites and claws on cooldown, Frenzy up about 178 of 180s; Auto Shot throughout"
   ],
   "consumes": [
-    "Flask of Distilled Wisdom",
+    "Flask of Natural Aggression",
     "Elixir of the Mongoose",
     "Elixir of Ferocity",
     "Elixir of Greater Intellect",
@@ -60,21 +60,21 @@
     "Goblin Land Mine"
   ],
   "caveats": [
-    "Assumed: Trueshot Aura's top rank gives 100 ranged attack power and Hunter's Mark's 140 (the client has 50 and 71).",
+    "Assumed: Trueshot Aura's top rank gives 100 ranged attack power (the client has 50). Hunter's Mark gives 143, the server hotfix (the client has 71).",
     "Aspect of the Hawk stays at rank 5 (90 RAP). Forever's rank 6 gives only 55.",
-    "Pet scaling uses 10% of RAP (SoD placeholder). SoD's 22% would add 41.",
+    "The pet takes 10% of the hunter's ranged attack power, its crit and its hit, on its own 254 attack power (beta pet sheets).",
     "Arcane Shot takes 10% of ranged attack power and Serpent Sting 3% a tick (beta log fit: 11% and 3.5%).",
-    "Assumed: Auto Shot fires through casts with no 0.5s aim.",
+    "Auto Shot fires through casts and winds up 0.5s, which moving cancels.",
     "Pet consumables are off (Forever pets take no player buffs). They would add 17.",
     "Intimidation is talented but not cast.",
-    "Major Frenzy Potion: +5 at 120s and 180s, -19 at 300s, so the preset uses Major Mana Potion.",
+    "Major Frenzy Potion is 25.7 behind Major Mana Potion at 180s.",
     "Assumed: 22% more crit per Agility than Classic.",
-    "Assumed: pet hits scale with attack speed as in Classic. Every cat speed sims within 1 DPS.",
     "A 2.5s bow at Rhok'delar's 44.0 DPS. A 2.6s gun sims 0.3 to 1.0 higher with a 15% ammo pouch, 3.4 to 5.2 lower with Era's 14% pouch.",
     "Costs 81.4 / 82.2 / 82.3 DPS vs Beast Mastery at 120s / 180s / 300s, mostly Serpent Sting's damage.",
-    "The sting only lowers the boss's hit by 2%. It adds no raid damage."
+    "The sting only lowers the boss's hit by 2%. It adds no raid damage.",
+    "Assumed: pet hits scale with attack speed as in Classic. A 1.0s raptor would add about 2.5 (Savage Rend), but none that fast is known."
   ],
-  "notes": "Request is hunter__beast-mastery's with the rotation swapped for ui/hunter/apls/bm_scorpid.apl.json (tools/rotopt/hunter_presets.sh) and debuffs.scorpidSting removed; mksettings writes the same raid as spec hunter_bm_scorpid. Request written by mksettings (spec hunter_bm) unchanged; it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions.",
+  "notes": "Request is hunter__beast-mastery's with the rotation swapped for ui/hunter/apls/bm_scorpid.apl.json (tools/rotopt/hunter_presets.sh) and debuffs.scorpidSting removed; mksettings writes the same raid as spec hunter_bm_scorpid. Request written by mksettings (spec hunter_bm, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions.",
   "duty": "Scorpid Sting",
   "baseBuild": "hunter__beast-mastery"
 }
