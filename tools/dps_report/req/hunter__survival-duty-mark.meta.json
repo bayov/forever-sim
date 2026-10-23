@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_survival",
   "apl": "sv_mark",
   "published": {
-    "dps": 934.1,
-    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 928.4)"
+    "dps": 1047.9,
+    "source": "Regear and rotation round (branch claude/keen-brown-o2g32n-hunter, 2026-10-23): the 8% hit cap gear, re-searched talents and rotations, race sweep (was 934.1)"
   },
   "verify": {
-    "dps": 934.07,
+    "dps": 1047.89,
     "stderr": 0.27,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "180s, seed 1; seed 1000003 gives 1047.5"
   },
   "summary": "Forever's melee hunter: Survival with a cat, built on Expose Prey into Mongoose Bite.",
   "keyTalents": [
@@ -48,6 +48,7 @@
     "Wing Clip in free GCDs (mana >= 50%), held when an opened Mongoose Bite is about ready"
   ],
   "consumes": [
+    "Flask of Natural Precision",
     "Elixir of the Mongoose",
     "Elixir of Ferocity",
     "Elixir of Greater Intellect",
@@ -61,17 +62,16 @@
     "Goblin Land Mine"
   ],
   "caveats": [
-    "Pet scaling uses 10% of RAP (SoD placeholder). SoD's 22% would add 18.",
+    "The pet takes 10% of the hunter's ranged attack power, its crit and its hit, on its own 254 attack power (beta pet sheets).",
     "Assumed: Raptor Strike rank 8 adds 96, halfway between the client and Era.",
     "Left out: Fire-toasted Bun (+9, seasonal) and Elemental Sharpening Stone (Molten Core plans).",
     "Assumed: 22% more crit per Agility than Classic.",
-    "Assumed: pet hits scale with attack speed as in Classic. Every cat speed sims within 1 DPS.",
+    "Assumed: pet hits scale with attack speed as in Classic. A 1.0s raptor would add about 2 (Savage Rend), but none that fast is known.",
     "Survival never shoots, so the ranged weapon doesn't matter.",
     "Costs 1.1 / 1.3 / 1.1 DPS vs Survival at 120s / 180s / 300s.",
-    "Assumed: Immolation Trap adds 2% of ranged attack power a tick (+15.5 DPS). The client has no coefficient yet.",
-    "The raid's Trueshot Aura adds 1.0 through the pet."
+    "Immolation Trap adds 10% of ranged attack power over the trap (Blizzard's notes, no log)."
   ],
-  "notes": "Request is hunter__survival's with the rotation swapped for ui/hunter/apls/sv_mark.apl.json (the base APL plus the mark line, tools/rotopt/hunter_presets.sh) and debuffs.huntersMark removed; mksettings writes the same raid as spec hunter_sv_mark. Request written by mksettings (spec hunter_sv) unchanged; it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Distance is 5 yd as in the mksettings raid the number was measured in (the UI preset starts at 25 yd; the APL walks in 6s before the pull, which the preset says costs nothing). Survival keeps a 1.0s cat out (DefaultOptions).",
+  "notes": "Request is hunter__survival's with the rotation swapped for ui/hunter/apls/sv_mark.apl.json (the base APL plus the mark line, tools/rotopt/hunter_presets.sh) and debuffs.huntersMark removed; mksettings writes the same raid as spec hunter_sv_mark. Request written by mksettings (spec hunter_sv, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Distance is 5 yd as in the mksettings raid the number was measured in (the UI preset starts at 25 yd; the APL walks in 6s before the pull, which the preset says costs nothing). Survival keeps a 1.0s cat out (DefaultOptions).",
   "duty": "Hunter's Mark",
   "baseBuild": "hunter__survival"
 }
