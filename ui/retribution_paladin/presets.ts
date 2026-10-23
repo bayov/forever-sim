@@ -42,6 +42,7 @@ import Level60CrusaderDutyAPLJSON from './apls/level60_crusader_duty.apl.json';
 import Level60ShockAPLJSON from './apls/level60_shock.apl.json';
 import Level60ShockCrusaderDutyAPLJSON from './apls/level60_shock_crusader_duty.apl.json';
 import Level60ShockUndeadAPLJSON from './apls/level60_shock_undead.apl.json';
+import Level60SubHolyAPLJSON from './apls/level60_sub_holy.apl.json';
 import Level60UndeadAPLJSON from './apls/level60_undead.apl.json';
 import BlankGear from './gear_sets/blank.gear.json';
 import Level30p5GearJSON from './gear_sets/level30p5.gear.json';
@@ -174,6 +175,10 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // Shock +0.8 / +1.4 / +0.5, Shock duty +1.9 / +1.1 / +0.8. Shock vs Undead keeps its order;
 // pass 24 put Hammer of Wrath above Holy Strike in the vs Undead twist rotation, where Consecration
 // is already last (see APLLevel60Undead).
+// Regear and rotation round (2026-10-23, the search over 120, 180 and 300 sec together, then paired
+// at 20000 iterations on seeds 1 and 1000003): the twist goes on at any mana (it stopped below 20%),
+// +0.0 / +0.1 / +5.7 at 120 / 180 / 300 sec, the Crusader duty copy +0.0 / +0.1 / +6.2. The 20%
+// floor never binds in a 120 sec fight.
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
 	tooltip: 'Level 60 rotation: Consecration, Seal of Command twisted with Seal of Righteousness before every swing, Judgement and Holy Strike on cooldown.',
 	group: 'Level 60',
@@ -183,8 +188,22 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // cooldown on Seal of Righteousness, Holy Strike on cooldown (90 DPS), Light's Vigil above 40%
 // mana just before Holy Shock is ready (64), so the Holy Shock after it detonates it and starts no
 // cooldown, then Holy Shock (148), and Hammer of Wrath below 20% health (23).
+// Regear and rotation round (2026-10-23): Light's Vigil only when the next swing is more than 2 sec
+// off. Its 1.5 sec cast resets the swing when it completes, so a Vigil started just before a swing
+// cost a white hit: +45.6 / +35.4 / +26.3 at 120 / 180 / 300 sec (paired, two seed sets; 1.5 sec
+// +47.6 / +34.4 / +24.3, 2.5 sec +39.8 / +32.8 / +25.3; a 10, 50 or 70% Vigil floor is 8 to 14
+// behind 30% at 180 sec with it). The Shock vs Undead and Shock duty rotations take it too.
 export const APLLevel60Shock = PresetUtils.makePresetAPLRotation('Level 60 Shock', Level60ShockAPLJSON, {
 	tooltip: "Level 60 Holy Shock rotation: Consecration, Light's Vigil and Holy Shock, Judgement and Holy Strike on cooldown.",
+	group: 'Level 60',
+});
+// Level 60 (sub Holy): the twist rotation with Seal of Righteousness as the seal that stays up,
+// twisting to Seal of Command before each swing (regear and rotation round, 2026-10-23): +1.1 /
+// +0.5 / +0.9 at 120 / 180 / 300 sec on the sub Holy talents (paired, two seed sets). The twist
+// talents keep Seal of Command, and the sub Holy Crusader duty is 0.4 behind with it, so that one
+// keeps the twist duty rotation.
+export const APLLevel60SubHoly = PresetUtils.makePresetAPLRotation('Level 60 (sub Holy)', Level60SubHolyAPLJSON, {
+	tooltip: 'Level 60 sub Holy rotation: the twist rotation with Seal of Righteousness up, twisted to Seal of Command before every swing.',
 	group: 'Level 60',
 });
 // Level 60 (vs Undead), for an Undead or Demon boss, where Exorcism and Holy Wrath land
@@ -195,14 +214,20 @@ export const APLLevel60Shock = PresetUtils.makePresetAPLRotation('Level 60 Shock
 // and Exorcism on cooldown, Holy Wrath above 80% mana (2.4 DPS), Consecration last above 20%.
 // Rotation audit pass 24 (2026-10-16): Hammer of Wrath above Holy Strike, paired over two seed sets
 // at 20000 iterations: +2.0 / +2.4 / +1.4 at 120 / 180 / 300 sec, sub Holy vs Undead +1.4 / +2.2 / +1.9.
+// Regear and rotation round (2026-10-23): no Holy Wrath. Its 2 sec cast resets the swing when it
+// completes and costs more than it adds: +9.6 / +6.8 / +8.3 at 120 / 180 / 300 sec on the new vs
+// Undead talents (paired, two seed sets).
 export const APLLevel60Undead = PresetUtils.makePresetAPLRotation('Level 60 (vs Undead)', Level60UndeadAPLJSON, {
-	tooltip: 'Level 60 rotation against an Undead or Demon boss: the twist rotation with Exorcism and Holy Wrath.',
+	tooltip: 'Level 60 rotation against an Undead or Demon boss: the twist rotation with Exorcism.',
 	group: 'Level 60',
 });
 // Level 60 Shock (vs Undead): the Shock rotation with Exorcism on cooldown, and Light's Vigil
 // above 30% mana in fights up to 240 sec and above 60% in longer ones, which leaves the mana for
 // Exorcism in long fights (a flat 60% was 9.7 / 10.5 behind at 120 / 180 sec). Holy Wrath is 4 to
-// 11 behind: its 2 sec cast pushes back Holy Shocks and Holy Strikes.
+// 11 behind: its 2 sec cast pushes back Holy Shocks and Holy Strikes. Since the regear round
+// (2026-10-23) Light's Vigil waits until the next swing is more than 2 sec off, as in
+// APLLevel60Shock: +52.8 / +40.4 / +17.5 at 120 / 180 / 300 sec (a flat 50 or 70% Vigil floor with
+// it is 4.7 and 13.5 behind at 180 sec).
 export const APLLevel60ShockUndead = PresetUtils.makePresetAPLRotation('Level 60 Shock (vs Undead)', Level60ShockUndeadAPLJSON, {
 	tooltip: 'Level 60 Holy Shock rotation against an Undead or Demon boss, with Exorcism and more mana kept for it in long fights.',
 	group: 'Level 60',
@@ -214,6 +239,9 @@ export const APLLevel60ShockUndead = PresetUtils.makePresetAPLRotation('Level 60
 // again only if it ever drops). The twist duty keeps the twist knobs. The Shock duty puts Seal of
 // Righteousness back up ahead of Consecration, since the opener's Judgement leaves it down (rotation
 // audit pass 20: +6.0 / +3.0 / +0.5 at 120 / 180 / 300 sec), and Holy Strike ahead of Holy Shock.
+// Since the regear round (2026-10-23) the twist duty twists at any mana (as APLLevel60) and the
+// Shock duty holds Light's Vigil until the next swing is more than 2 sec off (as APLLevel60Shock:
+// +37.0 / +32.2 / +24.3 at 120 / 180 / 300 sec).
 export const APLLevel60CrusaderDuty = PresetUtils.makePresetAPLRotation('Level 60 (Crusader duty)', Level60CrusaderDutyAPLJSON, {
 	tooltip: 'Level 60 twist rotation that also keeps Judgement of the Crusader on the boss for the raid.',
 	group: 'Level 60',
@@ -242,6 +270,7 @@ export const APLPresets = {
 	[Phase.Phase3]: [],
 	[Phase.Phase4]: [
 		APLLevel60,
+		APLLevel60SubHoly,
 		APLLevel60CrusaderDuty,
 		APLLevel60Shock,
 		APLLevel60ShockCrusaderDuty,
@@ -306,7 +335,7 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // 180 / 300 sec, 0.5% behind Level 60 at 120 sec and 0.8% at 300 because it has no Precision.
 export const TalentsLevel60SubHoly = PresetUtils.makePresetTalents(
 	'Level 60 (sub Holy)',
-	SavedTalents.create({ talentsString: '550030032--05215331001330321' }),
+	SavedTalents.create({ talentsString: '550030022--05225331001330321' }),
 	{ tooltip: 'Level 60 talents with the side points in Holy instead of Protection.', group: 'Level 60' },
 );
 // Level 60 Shock: the Holy Shock playstyle, its own talent and rotation search from a 31 Holy
@@ -330,7 +359,7 @@ export const TalentsLevel60Shock = PresetUtils.makePresetTalents('Level 60 Shock
 // Level 60 on its own boss at 180 sec. The sub Holy one below is ahead at every length.
 export const TalentsLevel60Undead = PresetUtils.makePresetTalents(
 	'Level 60 (vs Undead)',
-	SavedTalents.create({ talentsString: '250030012-502-05225231001330301' }),
+	SavedTalents.create({ talentsString: '550030022--05225331001330321' }),
 	{ tooltip: 'Level 60 talents for an Undead or Demon boss: Purifying Power for Exorcism and Holy Wrath.', group: 'Level 60' },
 );
 // Level 60 (sub Holy, vs Undead): the talent search from Level 60 (sub Holy) on an Undead boss
@@ -340,7 +369,7 @@ export const TalentsLevel60Undead = PresetUtils.makePresetTalents(
 // boss at 180 sec): its Divine Intellect 5 and Reverence 3 pay for the extra spells.
 export const TalentsLevel60SubHolyUndead = PresetUtils.makePresetTalents(
 	'Level 60 (sub Holy, vs Undead)',
-	SavedTalents.create({ talentsString: '550030032--05225331001330311' }),
+	SavedTalents.create({ talentsString: '550030022--05225331001330321' }),
 	{ tooltip: 'Level 60 sub Holy talents for an Undead or Demon boss, with Holy Conduit 2.', group: 'Level 60' },
 );
 // Level 30 with 5 extra talent points (26 in all), Pursuit of Justice 2 pinned. Holy
@@ -592,7 +621,7 @@ export const PresetBuildLevel60SubHoly = PresetUtils.makePresetBuild('Level 60 (
 	tooltip: 'Level 60 Human with the side talent points in Holy instead of Protection.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60SubHoly,
-	rotation: APLLevel60,
+	rotation: APLLevel60SubHoly,
 	encounter: EncounterLevel60,
 	race: Race.RaceHuman,
 	level: 60,

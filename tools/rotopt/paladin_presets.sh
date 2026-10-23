@@ -41,7 +41,11 @@ gen() {
 # From the rotation audit (2026-10-13): the spell power on-use trinket and the Goblin Sapper
 # Charge at the top of the list instead of on the autocast line, which a GCD line above it
 # nearly always beat, so they went out 3 to 4.5 sec late and drifted from there.
-gen level60 "seal=2,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistMana=20,twistWindow=15,hammerOfWrathMana=0,prepullTwo=1,judgeRighteousnessWindow=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1" -level 60
+# Regear and rotation round (2026-10-23, knob search over 120, 180 and 300 sec together, then
+# paired at 20000 iterations on seeds 1 and 1000003): twist at any mana (twistMana=0, was 20):
+# +0.0 / +0.1 / +5.7 at 120 / 180 / 300 sec (the 20% floor never binds at 120), the Crusader duty
+# copy +0.0 / +0.1 / +6.2.
+gen level60 "seal=2,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistMana=0,twistWindow=15,hammerOfWrathMana=0,prepullTwo=1,judgeRighteousnessWindow=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1" -level 60
 # Level 60 Shock, for the Holy Shock talents (no Twist of Light, so no twisting): Consecration
 # first down to the last point of mana (2 ahead of a 20% floor), Judgement on cooldown on Seal of
 # Righteousness, Holy Strike on cooldown (90), Light's Vigil above 40% mana just before Holy
@@ -54,7 +58,19 @@ gen level60 "seal=2,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=2
 # From the rotation audit (2026-10-13): the spell power on-use trinket and the Goblin Sapper
 # Charge at the top of the list instead of on the autocast line, which a GCD line above it
 # nearly always beat, so they went out 3 to 4.5 sec late and drifted from there.
-gen level60_shock "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,lightsVigilMana=30,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1" -level 60
+# Regear and rotation round (2026-10-23): Light's Vigil only when the next swing is more than 2 sec
+# off (vigilSwing=20). Its 1.5 sec cast resets the swing when it completes (216d430cbf), so a Vigil
+# started just before a swing cost a white hit: +45.6 / +35.4 / +26.3 at 120 / 180 / 300 sec (1.5
+# sec is +47.6 / +34.4 / +24.3, 2.5 sec +39.8 / +32.8 / +25.3; a 10, 50 or 70% Vigil floor with it
+# is 8 to 14 behind 30% at 180 sec). Shock vs Undead +52.8 / +40.4 / +17.5 and the Shock duty
+# +37.0 / +32.2 / +24.3 with it (paired, seeds 1 and 1000003).
+gen level60_shock "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,lightsVigilMana=30,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1,vigilSwing=20" -level 60
+# Level 60 (sub Holy) gets its own rotation since the regear round (2026-10-23): the twist one with
+# Seal of Righteousness as the seal that stays up, twisting to Seal of Command (seal=1): +1.1 /
+# +0.5 / +0.9 at 120 / 180 / 300 sec on its new talents (paired, two seed sets, all positive). The
+# twist talents keep Seal of Command, and the sub Holy Crusader duty is 0.4 behind with seal=1, so
+# it keeps the twist duty rotation.
+gen level60_sub_holy "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistMana=0,twistWindow=15,hammerOfWrathMana=0,prepullTwo=1,judgeRighteousnessWindow=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1" -level 60
 # Level 60 (vs Undead), for an Undead or Demon boss (standards 19, 2026-10-13): Exorcism and Holy
 # Wrath now land. Searched on an Undead boss over 120, 180 and 300 sec together from each twist
 # build, with a talent search in between, until neither moved. Seal of Righteousness stays up and
@@ -62,14 +78,17 @@ gen level60_shock "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecration
 # seal is up, Holy Strike, Hammer of Wrath and Exorcism on cooldown, Holy Wrath above 80% mana,
 # Consecration last above 20%. The searches on the twist and sub Holy talents ended within 2 DPS
 # of each other summed over both builds, and this one keeps more mana at 300 sec.
-gen level60_undead "seal=1,jotc=0,consecration=1,consecrationFirst=0,consecrationMana=20,twist=1,twistMana=0,twistWindow=15,hammerOfWrathMana=0,prepullTwo=1,judgeRighteousnessWindow=0,cooldownsFirst=1,holyWrathMana=80,trinketExecute=1,hammerOfWrathFirst=3" -level 60
+# Regear and rotation round (2026-10-23): no Holy Wrath (holyWrathMana=100, was 80). Its 2 sec
+# cast resets the swing and costs more than it adds: +9.6 / +6.8 / +8.3 at 120 / 180 / 300 sec on the
+# new vs Undead talents (paired, two seed sets).
+gen level60_undead "seal=1,jotc=0,consecration=1,consecrationFirst=0,consecrationMana=20,twist=1,twistMana=0,twistWindow=15,hammerOfWrathMana=0,prepullTwo=1,judgeRighteousnessWindow=0,cooldownsFirst=1,holyWrathMana=100,trinketExecute=1,hammerOfWrathFirst=3" -level 60
 # Level 60 Shock (vs Undead): the Shock rotation, with Light's Vigil above 30% mana in fights up
 # to 240 sec and above 60% in longer ones, to leave mana for Exorcism (rotation audit pass 13: a
 # flat 60% left 1300 to 1700 mana unspent at 120 and 180 sec; +9.7 / +10.5 / 0 at 120 / 180 /
 # 300 sec; any switch point from 210 to 270 sec is the same). On the generic boss the longer
 # floor only loses, so level60_shock keeps a flat 30%. Holy Wrath does not make it: its 2 sec cast is worth less
 # than the Holy Shocks and Holy Strikes it pushes back.
-gen level60_shock_undead "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,lightsVigilMana=30,vigilLongFight=240,vigilLongMana=60,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1" -level 60
+gen level60_shock_undead "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,lightsVigilMana=30,vigilLongFight=240,vigilLongMana=60,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1,vigilSwing=20" -level 60
 # Judgement of the Crusader duty (standards 23): the base rotation plus Seal of the Crusader at
 # -1.5 sec after the base pre-pull and its Judgement at the pull (jotc=1). Under Forever the
 # judgement adds 161 Holy damage taken for 40 sec and the paladin's own melee hits refresh it, so
@@ -80,8 +99,8 @@ gen level60_shock_undead "seal=1,jotc=0,consecration=1,consecrationFirst=1,conse
 # Rotation audit pass 20: the Shock duty puts Seal of Righteousness back up ahead of Consecration
 # (sealFirst), since the opener's Judgement of the Crusader leaves it down: +6.0 / +3.0 / +0.5 at 120
 # / 180 / 300 sec (base Shock, which never loses its seal early, is 1.6 behind with it at 180 sec).
-gen level60_crusader_duty "seal=2,jotc=1,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistMana=20,twistWindow=15,hammerOfWrathMana=0,prepullTwo=1,judgeRighteousnessWindow=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1" -level 60
-gen level60_shock_crusader_duty "seal=1,jotc=1,sealFirst=1,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,holyStrikeFirst=1,lightsVigilMana=30,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=2" -level 60
+gen level60_crusader_duty "seal=2,jotc=1,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistMana=0,twistWindow=15,hammerOfWrathMana=0,prepullTwo=1,judgeRighteousnessWindow=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1" -level 60
+gen level60_shock_crusader_duty "seal=1,jotc=1,sealFirst=1,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,holyStrikeFirst=1,lightsVigilMana=30,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=2,vigilSwing=20" -level 60
 # Rotation audit pass 23 (2026-10-16): Hammer of Wrath above Consecration, so in the execute phase
 # it isn't held behind a Consecration that ticks for less (hammerOfWrathFirst=1; 2 puts it at the
 # very top, which is where the Shock duty list gains most). Paired over two seed sets at 20k, 120 /
