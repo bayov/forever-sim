@@ -494,7 +494,8 @@ type RageCostOptions struct {
 	RefundMetrics *ResourceMetrics // Optional, will default to unit.RageRefundMetrics if not supplied.
 }
 type RageCost struct {
-	Refund          float64
+	Refund          float64 // The share of the cost a miss refunds.
+	refundBase      float64 // The base cost Classic refunds that share of.
 	RefundMetrics   *ResourceMetrics
 	ResourceMetrics *ResourceMetrics
 }
@@ -510,7 +511,8 @@ func newRageCost(spell *Spell, options RageCostOptions) *SpellCost {
 		Multiplier: 100,
 		Factor:     1,
 		SpellCostFunctions: &RageCost{
-			Refund:          options.Refund * options.Cost,
+			Refund:          options.Refund,
+			refundBase:      options.Cost,
 			RefundMetrics:   options.RefundMetrics,
 			ResourceMetrics: spell.Unit.NewRageMetrics(spell.ActionID),
 		},
@@ -533,9 +535,16 @@ func (rc *RageCost) SpendCost(sim *Simulation, spell *Spell) {
 		spell.Unit.SpendRage(sim, spell.CurCast.Cost, rc.ResourceMetrics)
 	}
 }
+
+// Under Forever a miss refunds its share of the rage the cast paid, after talents and other cost
+// modifiers, as energy and focus do (wowsims/forever: Refund * CurCast.Cost, only when above 0).
 func (rc *RageCost) IssueRefund(sim *Simulation, spell *Spell) {
-	if rc.Refund > 0 {
-		spell.Unit.AddRage(sim, rc.Refund, rc.RefundMetrics)
+	refund := rc.Refund * rc.refundBase
+	if sim.IsForever() {
+		refund = rc.Refund * spell.CurCast.Cost
+	}
+	if refund > 0 {
+		spell.Unit.AddRage(sim, refund, rc.RefundMetrics)
 	}
 }
 

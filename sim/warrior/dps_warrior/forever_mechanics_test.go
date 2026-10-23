@@ -226,6 +226,20 @@ func TestForeverWarriorSpellValues(t *testing.T) {
 	}
 }
 
+// TestForeverWarriorRefundsPaidRage checks that a miss refunds 80% of the Rage the cast paid,
+// after Improved Execute's discount, not 80% of the base cost (wowsims/forever's RageCost
+// refunds Refund * CurCast.Cost).
+func TestForeverWarriorRefundsPaidRage(t *testing.T) {
+	sim, war := newForeverWarrior(t, "00000000000000200-50000000102")
+	execute := war.Execute.Spell
+	war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
+	execute.CurCast.Cost = execute.Cost.GetCurrentCost()
+	execute.IssueRefund(sim)
+	if got := war.CurrentRage(); math.Abs(got-8) > 1e-9 {
+		t.Errorf("a missed 10 Rage Execute refunded %.3f Rage, want 8", got)
+	}
+}
+
 // TestForeverWarriorDeepWoundsAndFlurry checks two client 70338 values: Deep Wounds' damage spell
 // (412613) cannot crit, so its ticks never do, and the Flurry buff (12966) lasts 15 sec.
 func TestForeverWarriorDeepWoundsAndFlurry(t *testing.T) {

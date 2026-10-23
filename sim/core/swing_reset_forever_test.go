@@ -244,6 +244,52 @@ func TestForeverCompletedCastResetsSwingTimer(t *testing.T) {
 		}
 	})
 
+	// An extra attack swings right after the hit that granted it, as its own cast
+	// (wowsims/forever extra_attack.go), so a resetting cast started on that instant doesn't
+	// hold it, and one completing before it swings doesn't push it a full swing.
+	t.Run("an extra attack swings through a resetting cast started with it", func(t *testing.T) {
+		sim, fc := setupSwingResetSim(t, proto.Ruleset_RulesetForever)
+		aa := &fc.AutoAttacks
+		procAt := sim.CurrentTime
+
+		aa.ExtraMHAttack(sim, 1, ActionID{SpellID: 15600}, ActionID{OtherID: proto.OtherAction_OtherActionAttack})
+		fc.Resetting.Cast(sim, fc.CurrentTarget)
+		castEnd := sim.CurrentTime + swingResetCastTime
+		stepSwingSim(t, sim, castEnd)
+
+		if aa.mh.lastSwingAt != procAt {
+			t.Fatalf("MH extra attack: expected it at %v, got the last swing at %v", procAt, aa.mh.lastSwingAt)
+		}
+		if expected := castEnd + aa.MainhandSwingSpeed(); aa.MainhandSwingAt() != expected {
+			t.Fatalf("MH swing: expected %v, got %v", expected, aa.MainhandSwingAt())
+		}
+	})
+
+	t.Run("a cast completing before a pending extra attack leaves it to swing", func(t *testing.T) {
+		sim, fc := setupSwingResetSim(t, proto.Ruleset_RulesetForever)
+		aa := &fc.AutoAttacks
+
+		fc.Resetting.Cast(sim, fc.CurrentTarget)
+		castEnd := sim.CurrentTime + swingResetCastTime
+		stepSwingSim(t, sim, castEnd-SpellBatchWindow/2)
+		// As a swing that procs an extra attack leaves it: due one batch later.
+		extraAt := sim.CurrentTime + SpellBatchWindow
+		aa.mh.extraAttacksPending = 1
+		aa.mh.swingAt = extraAt
+		sim.rescheduleWeaponAttack(extraAt)
+		stepSwingSim(t, sim, extraAt+time.Millisecond)
+
+		if aa.mh.lastSwingAt != extraAt {
+			t.Fatalf("MH extra attack: expected it at %v, got the last swing at %v", extraAt, aa.mh.lastSwingAt)
+		}
+		if expected := extraAt + aa.MainhandSwingSpeed(); aa.MainhandSwingAt() != expected {
+			t.Fatalf("MH swing: expected %v, got %v", expected, aa.MainhandSwingAt())
+		}
+		if expected := castEnd + aa.OffhandSwingSpeed(); aa.OffhandSwingAt() != expected {
+			t.Fatalf("OH swing: expected the cast to reset it to %v, got %v", expected, aa.OffhandSwingAt())
+		}
+	})
+
 	t.Run("an instant cast leaves the swing timer alone", func(t *testing.T) {
 		sim, fc := setupSwingResetSim(t, proto.Ruleset_RulesetForever)
 		aa := &fc.AutoAttacks

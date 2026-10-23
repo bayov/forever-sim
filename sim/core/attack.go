@@ -318,7 +318,10 @@ func (wa *WeaponAttack) swing(sim *Simulation) time.Duration {
 
 	// Under Forever a melee swing waits out a cast that resets it. The completed cast sets the
 	// real swing time; this one only has to land past the cast's end, wherever pushback moves it.
-	if hc := &wa.unit.Hardcast; hc.ResetsSwing && hc.Expires > sim.CurrentTime && wa != &wa.unit.AutoAttacks.ranged {
+	// An extra attack doesn't wait: it swings right after the hit that granted it, in the same
+	// instant, as its own cast (wowsims/forever extra_attack.go), so a resetting cast started on
+	// that instant can't swallow it.
+	if hc := &wa.unit.Hardcast; hc.ResetsSwing && hc.Expires > sim.CurrentTime && wa != &wa.unit.AutoAttacks.ranged && wa.extraAttacksPending == 0 {
 		wa.swingAt = hc.Expires + wa.curSwingDuration
 		wa.heldByCast = true
 		return wa.swingAt
@@ -361,6 +364,7 @@ func (wa *WeaponAttack) swing(sim *Simulation) time.Duration {
 
 		wa.swingAt = sim.CurrentTime + wa.curSwingDuration
 		wa.lastSwingAt = sim.CurrentTime
+		wa.heldByCast = false
 
 		// don't update isExtraAttack here
 
@@ -866,11 +870,19 @@ func (aa *AutoAttacks) StopMeleeUntil(sim *Simulation, readyAt time.Duration, de
 		return
 	}
 
-	aa.mh.swingAt = readyAt + aa.mh.curSwingDuration
-	aa.mh.heldByCast = false
-	sim.rescheduleWeaponAttack(aa.mh.swingAt)
+	// Under Forever a swing reset that takes effect now leaves a pending extra attack to swing at
+	// once; the extra attack then resets the swing itself.
+	keepExtraAttack := func(wa *WeaponAttack) bool {
+		return wa.extraAttacksPending > 0 && readyAt <= sim.CurrentTime && sim.IsForever()
+	}
 
-	if aa.IsDualWielding {
+	if !keepExtraAttack(&aa.mh) {
+		aa.mh.swingAt = readyAt + aa.mh.curSwingDuration
+		aa.mh.heldByCast = false
+		sim.rescheduleWeaponAttack(aa.mh.swingAt)
+	}
+
+	if aa.IsDualWielding && !keepExtraAttack(&aa.oh) {
 		aa.oh.swingAt = readyAt + aa.oh.curSwingDuration
 		aa.oh.heldByCast = false
 		if desyncOH {
