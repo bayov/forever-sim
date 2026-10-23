@@ -37,6 +37,7 @@ const (
 	SpellCode_WarlockSiphonLife
 	SpellCode_WarlockWrack
 	SpellCode_WarlockIncinerate
+	SpellCode_WarlockRainOfFire
 )
 
 type Warlock struct {

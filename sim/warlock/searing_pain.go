@@ -34,6 +34,7 @@ func (warlock *Warlock) getSearingPainBaseConfig(rank int) core.SpellConfig {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			result := spell.CalcAndDealDamage(sim, target, sim.Roll(damageLow, damageHigh), spell.OutcomeMagicHitAndCrit)
+			warlock.procDecimation(sim, result)
 			if result.Landed() {
 				warlock.applyDemonicBrandTo(sim, target)
 			}

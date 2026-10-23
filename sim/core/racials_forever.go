@@ -326,7 +326,8 @@ func (character *Character) registerEureka() {
 
 // applyEureka adds (sign 1) or takes back (sign -1) Eureka!'s 10% on one spell. A spell whose
 // damage all counts (direct damage with no ticks, a channel, a spell covered both ways) gets
-// a 10% multiplier; Immolate or Holy Fire, covered on the hit only, get 10% on the hit only.
+// a 10% multiplier; Immolate or Holy Fire, covered on the hit only, get a 10% multiplier on the
+// hit only.
 // The cost cut is its own factor too: in game each percent cost row multiplies the others
 // (wowsims/forever fef2bcaebd: Improved Wrath with Moonglow leaves a 120-mana Wrath at 45, not 30).
 func applyEureka(spell *Spell, scope uint8, sign float64) {
@@ -343,7 +344,13 @@ func applyEureka(spell *Spell, scope uint8, sign float64) {
 	}
 	hasTicks := len(spell.Dots()) > 0 || spell.AOEDot() != nil
 	if direct && hasTicks && !periodic {
-		spell.ImpactDamageMultiplierAdditive += 0.1 * sign
+		// A factor of its own on the hit too, beside the class's percent rows (Aftermath and
+		// Agonizing Flames on Immolate multiply the impact multiplier).
+		if sign > 0 {
+			spell.ImpactDamageMultiplierAdditive *= 1.1
+		} else {
+			spell.ImpactDamageMultiplierAdditive /= 1.1
+		}
 		return
 	}
 	if sign > 0 {

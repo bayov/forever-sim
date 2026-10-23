@@ -7,8 +7,8 @@ import (
 )
 
 // Conflagrate is a row 4 talent with trainer ranks behind it under Forever (client: learned at
-// 25, 32, 40, 48, 54 and 60). It consumes the warlock's own Immolate, unless Shadow and Flame
-// keeps it.
+// 25, 32, 40, 48, 54 and 60). A hit that lands consumes the warlock's own Immolate, unless Shadow
+// and Flame keeps it; a miss leaves it burning (wowsims/forever conflagrate.go).
 func (warlock *Warlock) getConflagrateConfig(rank int) core.SpellConfig {
 	data := conflagrateRanks[rank]
 	damageLow, damageHigh := data.rangeAt(warlock.Level)
@@ -44,7 +44,10 @@ func (warlock *Warlock) getConflagrateConfig(rank int) core.SpellConfig {
 		BonusCoefficient: data.Coef,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			spell.CalcAndDealDamage(sim, target, sim.Roll(damageLow, damageHigh), spell.OutcomeMagicHitAndCrit)
+			result := spell.CalcAndDealDamage(sim, target, sim.Roll(damageLow, damageHigh), spell.OutcomeMagicHitAndCrit)
+			if !result.Landed() {
+				return
+			}
 
 			keepChance := 0.2 * float64(warlock.Talents.ShadowAndFlame)
 			if keepChance > 0 && sim.Proc(keepChance, "Shadow and Flame") {

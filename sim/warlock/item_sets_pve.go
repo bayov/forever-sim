@@ -85,14 +85,14 @@ var ItemSetDemoniacsThreads = core.NewItemSet(core.ItemSet{
 			warlock := agent.(WarlockAgent).GetWarlock()
 			warlock.AddStat(stats.SpellPower, 12)
 		},
-		// 3 pieces: Increases the damage of Corruption by 2%.
+		// 3 pieces: Increases the damage of Corruption by 2% (24486, a SPELLMOD_DOT row).
 		3: func(agent core.Agent) {
 			warlock := agent.(WarlockAgent).GetWarlock()
 			warlock.RegisterAura(core.Aura{
 				Label: "Improved Corruption (Demoniac's Threads)",
 				OnInit: func(aura *core.Aura, sim *core.Simulation) {
 					for _, spell := range warlock.Corruption {
-						spell.DamageMultiplierAdditive += 0.02
+						changePeriodicDamagePercent(spell, 0.02, true)
 					}
 				},
 			})
@@ -127,14 +127,15 @@ var ItemSetDoomcallersAttire = core.NewItemSet(core.ItemSet{
 				},
 			})
 		},
-		// 5 pieces: Reduces the mana cost of Shadow Bolt by 15%.
+		// 5 pieces: Reduces the mana cost of Shadow Bolt by 15% (26117, a percent cost row, its own
+		// factor beside Cataclysm's).
 		5: func(agent core.Agent) {
 			warlock := agent.(WarlockAgent).GetWarlock()
 			warlock.RegisterAura(core.Aura{
 				Label: "Doomcaller Reduced Shadow Bolt Cost",
 				OnInit: func(aura *core.Aura, sim *core.Simulation) {
 					for _, spell := range warlock.ShadowBolt {
-						spell.Cost.Multiplier -= 15
+						spell.Cost.Factor *= 0.85
 					}
 				},
 			})
@@ -146,14 +147,14 @@ var ItemSetPlagueheartRaiment = core.NewItemSet(core.ItemSet{
 	Name: "Plagueheart Raiment",
 	Bonuses: map[int32]core.ApplyEffect{
 		// 2 pieces: Your Shadow Bolts now have a chance to heal you for 270 to 330.
-		// 4 pieces: Increases damage caused by your Corruption by 12%.
+		// 4 pieces: Increases damage caused by your Corruption by 12% (28829, a SPELLMOD_DOT row).
 		4: func(agent core.Agent) {
 			warlock := agent.(WarlockAgent).GetWarlock()
 			warlock.RegisterAura(core.Aura{
 				Label: "Corruption (Plagueheart Raiment)",
 				OnInit: func(aura *core.Aura, sim *core.Simulation) {
 					for _, spell := range warlock.Corruption {
-						spell.DamageMultiplierAdditive += 0.12
+						changePeriodicDamagePercent(spell, 0.12, true)
 					}
 				},
 			})

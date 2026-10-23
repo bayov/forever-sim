@@ -7,31 +7,32 @@ import (
 	"github.com/wowsims/classic/sim/core"
 )
 
-const RainOfFireRanks = 4
-
+// Rain of Fire is an 8 sec channel whose periodic dummy fires a wave every 2 sec at every enemy
+// in the area, each wave a hit that rolls hit and crit on each target (wowsims/forever
+// f1533984eb, rain_of_fire.go). The wave rows carry Rain of Fire's class flags, so Ruin,
+// Cataclysm, Agonizing Flames and Intensity reach it.
 func (warlock *Warlock) getRainOfFireBaseConfig(rank int) core.SpellConfig {
-	spellId := [RainOfFireRanks + 1]int32{0, 5740, 6219, 11677, 11678}[rank]
-	spellCoeff := [RainOfFireRanks + 1]float64{0, 0.083, 0.083, 0.083, 0.083}[rank]
-	baseDamage := [RainOfFireRanks + 1]float64{0, 42, 92, 155, 226}[rank]
-	manaCost := [RainOfFireRanks + 1]float64{0, 295, 605, 885, 1185}[rank]
-	level := [RainOfFireRanks + 1]int{0, 20, 34, 46, 58}[rank]
+	data := rainOfFireRanks[rank]
+	waveDamage := data.damageAt(warlock.Level)
 
 	flags := core.SpellFlagAPL | core.SpellFlagResetAttackSwing | WarlockFlagDestruction | core.SpellFlagChanneled
 
-	config := core.SpellConfig{
-		ActionID:      core.ActionID{SpellID: spellId},
+	return core.SpellConfig{
+		SpellCode:     SpellCode_WarlockRainOfFire,
+		ActionID:      core.ActionID{SpellID: data.SpellID},
 		SpellSchool:   core.SpellSchoolFire,
 		DefenseType:   core.DefenseTypeMagic,
 		ProcMask:      core.ProcMaskSpellDamage,
 		Flags:         flags,
-		RequiredLevel: level,
+		RequiredLevel: data.Level,
 		Rank:          rank,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
+		BonusCoefficient: data.Coef,
 
 		ManaCost: core.ManaCostOptions{
-			FlatCost: manaCost,
+			FlatCost: data.Cost,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -43,18 +44,13 @@ func (warlock *Warlock) getRainOfFireBaseConfig(rank int) core.SpellConfig {
 			Aura: core.Aura{
 				Label: "RainOfFire-" + warlock.Label + strconv.Itoa(rank),
 			},
-			NumberOfTicks:    4,
-			TickLength:       time.Second * 2,
-			BonusCoefficient: spellCoeff,
+			NumberOfTicks: 4,
+			TickLength:    time.Second * 2,
 
-			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-				dot.Snapshot(target, baseDamage, isRollover)
-			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
-					dot.CalcAndDealPeriodicSnapshotDamage(sim, aoeTarget, dot.OutcomeTick)
+					dot.Spell.CalcAndDealDamage(sim, aoeTarget, waveDamage, dot.Spell.OutcomeMagicHitAndCrit)
 				}
-
 			},
 		},
 
@@ -62,13 +58,11 @@ func (warlock *Warlock) getRainOfFireBaseConfig(rank int) core.SpellConfig {
 			spell.AOEDot().Apply(sim)
 		},
 	}
-
-	return config
 }
 
 func (warlock *Warlock) registerRainOfFireSpell() {
 	warlock.RainOfFire = make([]*core.Spell, 0)
-	for rank := 1; rank <= RainOfFireRanks; rank++ {
+	for rank := 1; rank < len(rainOfFireRanks); rank++ {
 		config := warlock.getRainOfFireBaseConfig(rank)
 
 		if config.RequiredLevel <= int(warlock.Level) {

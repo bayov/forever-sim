@@ -1,6 +1,7 @@
 package dps
 
 import (
+	"math"
 	"testing"
 
 	"github.com/wowsims/classic/sim/core"
@@ -151,11 +152,11 @@ func TestWarlockShadowMastery(t *testing.T) {
 	_, with := newWarlockSim(t, "0000000000000005", &proto.WarlockOptions{})
 	last := func(spells []*core.Spell) *core.Spell { return spells[len(spells)-1] }
 
-	if got := last(with.ShadowBolt).ImpactDamageMultiplierAdditive - last(without.ShadowBolt).ImpactDamageMultiplierAdditive; got < 0.0999 || got > 0.1001 {
-		t.Errorf("Shadow Mastery 5/5 adds %.3f to Shadow Bolt, want 0.10", got)
+	if got := last(with.ShadowBolt).ImpactDamageMultiplierAdditive / last(without.ShadowBolt).ImpactDamageMultiplierAdditive; got < 1.0999 || got > 1.1001 {
+		t.Errorf("Shadow Mastery 5/5 makes Shadow Bolt x%.3f, want x1.10", got)
 	}
-	if got := last(with.Corruption).PeriodicDamageMultiplierAdditive - last(without.Corruption).PeriodicDamageMultiplierAdditive; got < 0.0999 || got > 0.1001 {
-		t.Errorf("Shadow Mastery 5/5 adds %.3f to Corruption's ticks, want 0.10", got)
+	if got := last(with.Corruption).PeriodicDamageMultiplierAdditive / last(without.Corruption).PeriodicDamageMultiplierAdditive; got < 1.0999 || got > 1.1001 {
+		t.Errorf("Shadow Mastery 5/5 makes Corruption's ticks x%.3f, want x1.10", got)
 	}
 }
 
@@ -272,3 +273,115 @@ func TestWarlockDemonStatInheritance(t *testing.T) {
 		runSim(sim)
 	}
 }
+
+// TestWarlockPercentModsMultiply checks that the percent damage rows on a spell are each their own
+// factor (wowsims/forever fef2bcaebd, #377): Aftermath 5/5 with Agonizing Flames 3/3 makes Immolate's
+// hit 1.5 x 1.1 = 1.65 and its ticks 1.1, Improved Corruption 5/5 with Shadow Mastery 5/5 makes
+// Corruption's ticks 1.1 x 1.1 = 1.21, and Cataclysm 3/3 is a 0.9 cost factor on Shadow Bolt.
+func TestWarlockPercentModsMultiply(t *testing.T) {
+	_, without := newWarlockSim(t, "", &proto.WarlockOptions{})
+	_, destro := newWarlockSim(t, "--0000350003", &proto.WarlockOptions{})
+	_, affli := newWarlockSim(t, "0050000000000005", &proto.WarlockOptions{})
+	last := func(spells []*core.Spell) *core.Spell { return spells[len(spells)-1] }
+	near := func(a, b float64) bool { return math.Abs(a-b) < 1e-9 }
+
+	for _, c := range []struct {
+		name      string
+		got, want float64
+	}{
+		{"Immolate's hit", last(destro.Immolate).ImpactDamageMultiplierAdditive / last(without.Immolate).ImpactDamageMultiplierAdditive, 1.65},
+		{"Immolate's ticks", last(destro.Immolate).PeriodicDamageMultiplierAdditive / last(without.Immolate).PeriodicDamageMultiplierAdditive, 1.1},
+		{"Corruption's ticks", last(affli.Corruption).PeriodicDamageMultiplierAdditive / last(without.Corruption).PeriodicDamageMultiplierAdditive, 1.21},
+		{"Shadow Bolt's cost", last(destro.ShadowBolt).Cost.Factor / last(without.ShadowBolt).Cost.Factor, 0.9},
+		{"Rain of Fire's hit", last(destro.RainOfFire).ImpactDamageMultiplierAdditive / last(without.RainOfFire).ImpactDamageMultiplierAdditive, 1.1},
+	} {
+		if !near(c.got, c.want) {
+			t.Errorf("%s: x%.4f, want x%.4f", c.name, c.got, c.want)
+		}
+	}
+}
+
+// TestWarlockConflagrateMiss checks that a Conflagrate that misses leaves Immolate burning and one
+// that lands consumes it (wowsims/forever conflagrate.go).
+func TestWarlockConflagrateMiss(t *testing.T) {
+	for _, lands := range []bool{false, true} {
+		sim, lock := newWarlockSim(t, "--00000000001", &proto.WarlockOptions{})
+		immolate := last(lock.Immolate)
+		at(sim, 0.5, func(sim *core.Simulation) {
+			lock.AddStatDynamic(sim, stats.SpellHit, 20*core.SpellHitRatingPerHitChance)
+			castNow(t, sim, lock, immolate)
+		})
+		at(sim, 3, func(sim *core.Simulation) {
+			if !immolate.Dot(lock.CurrentTarget).IsActive() {
+				t.Fatalf("Immolate not up before Conflagrate (mana %.0f)", lock.CurrentMana())
+			}
+			if !lands {
+				lock.AddStatDynamic(sim, stats.SpellHit, -300*core.SpellHitRatingPerHitChance)
+			}
+			// Not castNow: Immolate's cast is over, and moving its end to now would complete it again.
+			lock.SetGCDTimer(sim, sim.CurrentTime)
+			if !last(lock.Conflagrate).Cast(sim, lock.CurrentTarget) {
+				t.Fatalf("Conflagrate didn't cast")
+			}
+		})
+		at(sim, 4, func(sim *core.Simulation) {
+			if up := immolate.Dot(lock.CurrentTarget).IsActive(); up == lands {
+				t.Errorf("Conflagrate landing %v: Immolate up %v, want %v", lands, up, !lands)
+			}
+		})
+		runSim(sim)
+	}
+}
+
+// TestWarlockDecimation checks Decimation 2/2 with the fight under 35% from the start: Shadow Bolt
+// and Searing Pain hit for 6% more as a factor on the hit, and only a Searing Pain that lands gives
+// the Soul Fire buff (wowsims/forever 13b1bd31c5).
+func TestWarlockDecimation(t *testing.T) {
+	for _, lands := range []bool{false, true} {
+		player := &proto.Player{
+			Race:          proto.Race_RaceOrc,
+			Class:         proto.Class_ClassWarlock,
+			Level:         60,
+			Equipment:     &proto.EquipmentSpec{},
+			TalentsString: "-000000000002",
+			Rotation:      &proto.APLRotation{},
+			Spec:          &proto.Player_Warlock{Warlock: &proto.Warlock{Options: &proto.WarlockOptions{}}},
+		}
+		sim := core.NewSim(&proto.RaidSimRequest{
+			Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+			Encounter:  &proto.Encounter{Duration: 60, ExecuteProportion_35: 1, Targets: []*proto.Target{core.NewDefaultTarget()}},
+			SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+		}, simsignals.CreateSignals())
+		sim.Reset()
+		sim.PrePull()
+		lock := sim.Raid.Parties[0].Players[0].(*DpsWarlock)
+
+		at(sim, 0.5, func(sim *core.Simulation) {
+			if got := last(lock.ShadowBolt).ImpactDamageMultiplierAdditive; math.Abs(got-1.06) > 1e-9 {
+				t.Errorf("Shadow Bolt's hit under 35%%: x%.4f, want x1.06", got)
+			}
+			lock.AddStatDynamic(sim, stats.SpellHit, core.TernaryFloat64(lands, 20, -300)*core.SpellHitRatingPerHitChance)
+			castNow(t, sim, lock, last(lock.SearingPain))
+		})
+		at(sim, 3, func(sim *core.Simulation) {
+			if up := lock.DecimationAura.IsActive(); up != lands {
+				t.Errorf("Searing Pain landing %v: Decimation up %v, want %v", lands, up, lands)
+			}
+		})
+		runSim(sim)
+	}
+}
+
+// TestWarlockSpellstone checks that Major Spellstone gives its 21 damage to Fire and Shadow spells
+// both (1237165 effect 0: Misc 36, Fire | Shadow).
+func TestWarlockSpellstone(t *testing.T) {
+	_, without := newWarlockSim(t, "", &proto.WarlockOptions{})
+	_, with := newWarlockSim(t, "", &proto.WarlockOptions{WeaponImbue: proto.WarlockOptions_Spellstone})
+	for _, stat := range []stats.Stat{stats.FirePower, stats.ShadowPower} {
+		if got := with.GetStat(stat) - without.GetStat(stat); got != 21 {
+			t.Errorf("Major Spellstone: stat %d +%.0f, want +21", stat, got)
+		}
+	}
+}
+
+func last(spells []*core.Spell) *core.Spell { return spells[len(spells)-1] }

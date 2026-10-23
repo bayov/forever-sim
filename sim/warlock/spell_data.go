@@ -173,3 +173,13 @@ var lashOfPainRanks = []spellRank{
 	{SpellID: 11779, Level: 52, MaxLevel: 0, Base: 43, PerLevel: 0, Variance: 0, Coef: 0.429, Cost: 145, CastMs: 0},
 	{SpellID: 11780, Level: 60, MaxLevel: 0, Base: 50, PerLevel: 0, Variance: 0, Coef: 0.429, Cost: 160, CastMs: 0},
 }
+
+// Rain of Fire's wave (1282380, 1282383, 1282384 and 1282385, the rows the channels 5740, 6219,
+// 11677 and 11678 fire every 2 sec), from wowsims/forever's store: 221.2 at 60 for rank 4.
+var rainOfFireRanks = []spellRank{
+	{},
+	{SpellID: 5740, Level: 20, MaxLevel: 25, Base: 40, PerLevel: 0.3, Variance: 0, Coef: 0.083, Cost: 295, CastMs: 0},
+	{SpellID: 6219, Level: 34, MaxLevel: 39, Base: 91, PerLevel: 0.4, Variance: 0, Coef: 0.083, Cost: 605, CastMs: 0},
+	{SpellID: 11677, Level: 46, MaxLevel: 51, Base: 149, PerLevel: 0.5, Variance: 0, Coef: 0.083, Cost: 885, CastMs: 0},
+	{SpellID: 11678, Level: 58, MaxLevel: 63, Base: 220, PerLevel: 0.6, Variance: 0, Coef: 0.083, Cost: 1185, CastMs: 0},
+}

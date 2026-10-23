@@ -14,8 +14,8 @@ import (
 // in Malediction's place, Shadow Mastery 2% a point). Per rank values are the client tooltips.
 // Which spells a talent touches is the client's class mask on the talent's effect
 // (wago.tools SpellEffect, 70338), and a percent on a spell's damage is a direct damage
-// modifier (impact) or a periodic one depending on the effect, which add up with each other
-// like 1.12's spell modifiers.
+// modifier (impact) or a periodic one depending on the effect. Each of them is its own factor,
+// see changeImpactDamagePercent.
 
 var (
 	// Pandemic and the periodic half of Shadow Mastery.
@@ -26,9 +26,11 @@ var (
 		SpellCode_WarlockShadowburn)
 	// Shadow Mastery's direct half.
 	shadowMasteryDirectSpells = []int32{SpellCode_WarlockShadowBolt, SpellCode_WarlockShadowburn, SpellCode_WarlockDeathCoil}
-	// Ruin, Cataclysm and Agonizing Flames: the Destruction spells by the client's mask.
+	// Ruin, Cataclysm and Agonizing Flames: the Destruction spells by the client's mask, Rain of
+	// Fire's waves among them (wowsims/forever f1533984eb: the wave row carries its class flags).
 	destructionSpells = []int32{SpellCode_WarlockConflagrate, SpellCode_WarlockImmolate, SpellCode_WarlockIncinerate,
-		SpellCode_WarlockSearingPain, SpellCode_WarlockShadowBolt, SpellCode_WarlockShadowburn, SpellCode_WarlockSoulFire}
+		SpellCode_WarlockRainOfFire, SpellCode_WarlockSearingPain, SpellCode_WarlockShadowBolt, SpellCode_WarlockShadowburn,
+		SpellCode_WarlockSoulFire}
 	// Improved Drains and Soul Siphon.
 	drainSpells = []int32{SpellCode_WarlockDrainLife, SpellCode_WarlockDrainSoul, SpellCode_WarlockWrack}
 	// Fel Concentration's pushback protection: the drains and Wrack by the client's mask.
@@ -36,10 +38,33 @@ var (
 	// Intensity's pushback protection by the client's mask (0x3E5): Shadow Bolt, Immolate, Searing
 	// Pain, Soul Fire, Shadowburn, Conflagrate, Hellfire and Rain of Fire, not Incinerate.
 	intensitySpells = []int32{SpellCode_WarlockShadowBolt, SpellCode_WarlockImmolate, SpellCode_WarlockSearingPain,
-		SpellCode_WarlockSoulFire, SpellCode_WarlockShadowburn, SpellCode_WarlockConflagrate}
+		SpellCode_WarlockSoulFire, SpellCode_WarlockShadowburn, SpellCode_WarlockConflagrate, SpellCode_WarlockRainOfFire}
 	// Fel Concentration and Intensity: 23 / 47 / 70% to ignore a hit's pushback (client curves).
 	pushbackProtection = []float64{0, 0.23, 0.47, 0.70}
 )
+
+// changeImpactDamagePercent puts on (gain) or takes off a SPELLMOD_DAMAGE row on spell's direct
+// hit, 0.1 for 10% more. In game each SPELLMOD_DAMAGE and SPELLMOD_DOT row that reaches a spell is
+// its own factor (wowsims/forever fef2bcaebd, #377: Aftermath 5/5 with Agonizing Flames 3/3 makes
+// Immolate's hit 1.5 x 1.1 = 1.65, not 1.6), so the row multiplies the spell's impact multiplier.
+func changeImpactDamagePercent(spell *core.Spell, bonus float64, gain bool) {
+	if gain {
+		spell.ImpactDamageMultiplierAdditive *= 1 + bonus
+	} else {
+		spell.ImpactDamageMultiplierAdditive /= 1 + bonus
+	}
+}
+
+// changePeriodicDamagePercent is changeImpactDamagePercent for a SPELLMOD_DOT row, which raises the
+// ticks: Improved Corruption 5/5, Shadow Mastery 5/5 and the Plagueheart 4 piece make Corruption
+// 1.1 x 1.1 x 1.12 = 1.355, not 1.32.
+func changePeriodicDamagePercent(spell *core.Spell, bonus float64, gain bool) {
+	if gain {
+		spell.PeriodicDamageMultiplierAdditive *= 1 + bonus
+	} else {
+		spell.PeriodicDamageMultiplierAdditive /= 1 + bonus
+	}
+}
 
 func (warlock *Warlock) onSpellCodes(codes []int32, apply func(spell *core.Spell)) {
 	warlock.OnSpellRegistered(func(spell *core.Spell) {
@@ -91,8 +116,9 @@ func (warlock *Warlock) ApplyTalents() {
 
 // Firestone and Spellstone are weapon imbues under Forever (the same enchant effect as the
 // shaman imbues and rogue poisons, so they stack with an oil). Major Firestone (56): Fire
-// damage up to 21 and 2% spell crit. Major Spellstone (60): Shadow damage up to 21 and 2%
-// spell haste (client 23480 to 23483 and 1237162 to 1237165).
+// damage up to 21 and 2% spell crit. Major Spellstone (60): Fire and Shadow damage up to 21
+// and 2% spell haste (client 23480 to 23483 and 1237162 to 1237165; every Spellstone row's
+// damage effect has Misc 36, Fire | Shadow, though the spell is named "Increase Shadow Dam").
 var firestoneRanks = []struct {
 	level      int32
 	damage     float64
@@ -118,6 +144,7 @@ func (warlock *Warlock) applyWeaponImbue() {
 	case proto.WarlockOptions_Spellstone:
 		for i := len(spellstoneRanks) - 1; i >= 0; i-- {
 			if r := spellstoneRanks[i]; warlock.Level >= r.level {
+				warlock.AddStat(stats.FirePower, r.damage)
 				warlock.AddStat(stats.ShadowPower, r.damage)
 				warlock.MultiplyCastSpeed(1 + r.critOrHast/100)
 				return
@@ -150,7 +177,7 @@ func (warlock *Warlock) applyImprovedCorruption() {
 
 	bonus := 0.02 * float64(warlock.Talents.ImprovedCorruption)
 	warlock.onSpellCodes([]int32{SpellCode_WarlockCorruption}, func(spell *core.Spell) {
-		spell.PeriodicDamageMultiplierAdditive += bonus
+		changePeriodicDamagePercent(spell, bonus, true)
 	})
 }
 
@@ -162,7 +189,7 @@ func (warlock *Warlock) applyImprovedDrains() {
 
 	bonus := []float64{0, 0.07, 0.13, 0.20}[warlock.Talents.ImprovedDrains]
 	warlock.onSpellCodes(drainSpells, func(spell *core.Spell) {
-		spell.PeriodicDamageMultiplierAdditive += bonus
+		changePeriodicDamagePercent(spell, bonus, true)
 	})
 }
 
@@ -174,7 +201,7 @@ func (warlock *Warlock) applyImprovedBaneOfAgony() {
 
 	bonus := 0.05 * float64(warlock.Talents.ImprovedBaneOfAgony)
 	warlock.onSpellCodes([]int32{SpellCode_WarlockBaneOfAgony}, func(spell *core.Spell) {
-		spell.PeriodicDamageMultiplierAdditive += bonus
+		changePeriodicDamagePercent(spell, bonus, true)
 	})
 }
 
@@ -255,10 +282,10 @@ func (warlock *Warlock) applyShadowMastery() {
 
 	bonus := 0.02 * float64(warlock.Talents.ShadowMastery)
 	warlock.onSpellCodes(shadowMasteryDirectSpells, func(spell *core.Spell) {
-		spell.ImpactDamageMultiplierAdditive += bonus
+		changeImpactDamagePercent(spell, bonus, true)
 	})
 	warlock.onSpellCodes(afflictionPeriodicSpells, func(spell *core.Spell) {
-		spell.PeriodicDamageMultiplierAdditive += bonus
+		changePeriodicDamagePercent(spell, bonus, true)
 	})
 }
 
@@ -279,7 +306,8 @@ func (warlock *Warlock) applyWrack() {
 // soulSiphonMultiplier is Soul Siphon on the drains: 4% a point for each of the warlock's
 // other Affliction effects on the target, up to 3 of them. We count Corruption, the bane,
 // Siphon Life and the curse. The client leaves the count to the server, so which effects
-// count is our reading of the tooltip, and we multiply it with the drains' other bonuses.
+// count is our reading of the tooltip. It is a dummy row, not a percent modifier, and we multiply
+// it with the drains' other bonuses.
 func (warlock *Warlock) soulSiphonMultiplier(target *core.Unit) float64 {
 	if warlock.Talents.SoulSiphon == 0 {
 		return 1
@@ -684,10 +712,15 @@ func (warlock *Warlock) applyDemonicKnowledge() {
 	}
 }
 
-// Decimation: Shadow Bolt and Searing Pain deal 3% more a point to a target under 35% health,
-// and casting one at it takes 20% a point off the next 10 sec of Soul Fire casts (and their
-// shard, which we don't track). The cooldown part is in getSoulFireBaseConfig. The damage part
-// is the tooltip's ("they deal 3% increased damage"), the client leaves it to the server.
+// Decimation: Shadow Bolt and Searing Pain deal 3% more a point once the fight is under 35%,
+// and a cast of either that lands then takes 20% a point off the next 10 sec of Soul Fire casts
+// (and their shard, which we don't track). The cooldown part is in getSoulFireBaseConfig.
+//
+// The damage part is a SPELLMOD_DAMAGE row on the two spells (440870 effect 4, 3 / 6% in the
+// talent's curve), so it is a factor on their direct hit from the moment the fight reaches 35%,
+// as in wowsims/forever (talents_demonology.go). The buff comes only with a cast whose hit lands,
+// in the same batch (wowsims/forever 13b1bd31c5 and 1158a3e84e, from their logs: a miss or a full
+// resist grants nothing); procDecimation is called from the spells' cast.
 func (warlock *Warlock) applyDecimation() {
 	if warlock.Talents.Decimation == 0 {
 		return
@@ -711,26 +744,52 @@ func (warlock *Warlock) applyDecimation() {
 		},
 	})
 
-	core.MakePermanent(warlock.RegisterAura(core.Aura{
-		Label: "Decimation Trigger",
-		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			if (spell.SpellCode == SpellCode_WarlockShadowBolt || spell.SpellCode == SpellCode_WarlockSearingPain) && sim.IsExecutePhase35() {
-				warlock.DecimationAura.Activate(sim)
+	bonus := 0.03 * points
+	var affectedSpells []*core.Spell
+	executeAura := warlock.RegisterAura(core.Aura{
+		Label:    "Decimation - Execute",
+		ActionID: core.ActionID{SpellID: 440870},
+		Duration: core.NeverExpires,
+		OnInit: func(aura *core.Aura, sim *core.Simulation) {
+			affectedSpells = append(slices.Clone(warlock.ShadowBolt), warlock.SearingPain...)
+		},
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			for _, spell := range affectedSpells {
+				changeImpactDamagePercent(spell, bonus, true)
 			}
 		},
-	}))
-
-	warlock.targetDamageModifiers = append(warlock.targetDamageModifiers, func(spell *core.Spell, target *core.Unit) float64 {
-		if (spell.SpellCode == SpellCode_WarlockShadowBolt || spell.SpellCode == SpellCode_WarlockSearingPain) && warlock.sim.IsExecutePhase35() {
-			return 1 + 0.03*points
-		}
-		return 1
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			for _, spell := range affectedSpells {
+				changeImpactDamagePercent(spell, bonus, false)
+			}
+		},
 	})
+	// Registered after the execute aura, so that aura is reset before this one turns it on.
+	core.MakePermanent(warlock.RegisterAura(core.Aura{
+		Label: "Decimation - Execute Trigger",
+		OnReset: func(aura *core.Aura, sim *core.Simulation) {
+			sim.RegisterExecutePhaseCallback(func(sim *core.Simulation, isExecute int32) {
+				if isExecute <= 35 && !executeAura.IsActive() {
+					executeAura.Activate(sim)
+				}
+			})
+		},
+	}))
+}
+
+// procDecimation gives Decimation's buff for a Shadow Bolt or Searing Pain cast whose hit landed
+// once the fight is under 35%.
+func (warlock *Warlock) procDecimation(sim *core.Simulation, result *core.SpellResult) {
+	if warlock.DecimationAura != nil && result.Landed() && sim.IsExecutePhase35() {
+		warlock.DecimationAura.Activate(sim)
+	}
 }
 
 // Demonic Brand: Searing Pain brands the target for 10 sec, and the demon's next 2 / 4 / 6
-// hits on it deal 65 to 68 more, Fire for the Imp and Shadow for the others. The damage is
-// the 69876 client's tooltip, 70338 shows a placeholder.
+// hits on it deal more, Fire for the Imp (1293698) and Shadow for the others (1293697). The
+// rows state no amount; their description variables do, as wowsims/forever reads them
+// (pets.go): (level - 26) x 1.5 + 14 to 17, plus 7.8% of the warlock's spell power of the
+// school (65 to 68 and the spell power at 60), rolled to hit and to crit like a spell.
 func (warlock *Warlock) applyDemonicBrand() {
 	if warlock.Talents.DemonicBrand == 0 {
 		return
@@ -747,9 +806,9 @@ func (warlock *Warlock) applyDemonicBrand() {
 	})
 
 	for _, pet := range warlock.BasePets {
-		school := core.SpellSchoolShadow
+		school, schoolPower := core.SpellSchoolShadow, stats.ShadowPower
 		if pet == warlock.Imp {
-			school = core.SpellSchoolFire
+			school, schoolPower = core.SpellSchoolFire, stats.FirePower
 		}
 		brandSpell := pet.RegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 1293695},
@@ -762,7 +821,9 @@ func (warlock *Warlock) applyDemonicBrand() {
 			ThreatMultiplier: 1,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				spell.CalcAndDealDamage(sim, target, sim.Roll(65, 68), spell.OutcomeMagicCrit)
+				spellPower := warlock.GetStat(stats.SpellPower) + warlock.GetStat(stats.SpellDamage) + warlock.GetStat(schoolPower)
+				base := float64(min(warlock.Level, 60)-26)*1.5 + 0.078*spellPower
+				spell.CalcAndDealDamage(sim, target, sim.Roll(base+14, base+17), spell.OutcomeMagicHitAndCrit)
 			},
 		})
 
@@ -847,16 +908,18 @@ func (warlock *Warlock) applyBane() {
 	})
 }
 
-// Cataclysm: 3 / 6 / 10% off the cost of the Destruction spells.
+// Cataclysm: 3 / 6 / 10% off the cost of the Destruction spells. Each percent cost row is its own
+// factor in game (wowsims/forever fef2bcaebd: Improved Wrath with Moonglow leaves a 120-mana Wrath
+// at 45, not 30), so it goes on Cost.Factor.
 func (warlock *Warlock) applyCataclysm() {
 	if warlock.Talents.Cataclysm == 0 {
 		return
 	}
 
-	reduction := []int32{0, 3, 6, 10}[warlock.Talents.Cataclysm]
+	factor := 1 - []float64{0, 0.03, 0.06, 0.10}[warlock.Talents.Cataclysm]
 	warlock.onSpellCodes(destructionSpells, func(spell *core.Spell) {
 		if spell.Cost != nil {
-			spell.Cost.Multiplier -= reduction
+			spell.Cost.Factor *= factor
 		}
 	})
 }
@@ -869,7 +932,7 @@ func (warlock *Warlock) applyAftermath() {
 
 	bonus := 0.1 * float64(warlock.Talents.Aftermath)
 	warlock.onSpellCodes([]int32{SpellCode_WarlockImmolate}, func(spell *core.Spell) {
-		spell.ImpactDamageMultiplierAdditive += bonus
+		changeImpactDamagePercent(spell, bonus, true)
 	})
 }
 
@@ -885,8 +948,9 @@ func (warlock *Warlock) applyRuin() {
 	})
 }
 
-// Agonizing Flames: 3 / 7 / 10% damage on the Destruction spells (Immolate's ticks too) and
-// the same in crit on Searing Pain.
+// Agonizing Flames: 3 / 7 / 10% damage on the Destruction spells' direct hits (Rain of Fire's
+// waves are hits) and on Immolate's ticks, and the same in crit on Searing Pain (17927: effect 1
+// SPELLMOD_DAMAGE, effect 2 SPELLMOD_DOT on Immolate and Rain of Fire).
 func (warlock *Warlock) applyAgonizingFlames() {
 	if warlock.Talents.AgonizingFlames == 0 {
 		return
@@ -894,9 +958,9 @@ func (warlock *Warlock) applyAgonizingFlames() {
 
 	bonus := []float64{0, 0.03, 0.07, 0.10}[warlock.Talents.AgonizingFlames]
 	warlock.onSpellCodes(destructionSpells, func(spell *core.Spell) {
-		spell.ImpactDamageMultiplierAdditive += bonus
+		changeImpactDamagePercent(spell, bonus, true)
 		if spell.SpellCode == SpellCode_WarlockImmolate {
-			spell.PeriodicDamageMultiplierAdditive += bonus
+			changePeriodicDamagePercent(spell, bonus, true)
 		}
 		if spell.SpellCode == SpellCode_WarlockSearingPain {
 			spell.BonusCritRating += 100 * bonus * core.SpellCritRatingPerCritChance

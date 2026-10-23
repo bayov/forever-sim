@@ -44,13 +44,13 @@ func TestForeverEurekaWarlockScope(t *testing.T) {
 	cases := []struct {
 		name               string
 		spell              *core.Spell
-		mult, impact, cost float64 // the change Eureka! makes; the cost is a factor of its own
+		mult, impact, cost float64 // the factors Eureka! puts on; each is a factor of its own
 	}{
-		{"Shadow Bolt", top(lock.ShadowBolt), 1.1, 0, 0.9},
-		{"Immolate", top(lock.Immolate), 1, 0.1, 0.9},
-		{"Drain Life", top(lock.DrainLife), 1.1, 0, 0.9},
-		{"Corruption", top(lock.Corruption), 1, 0, 1},
-		{"Bane of Agony", top(lock.BaneOfAgony), 1, 0, 1},
+		{"Shadow Bolt", top(lock.ShadowBolt), 1.1, 1, 0.9},
+		{"Immolate", top(lock.Immolate), 1, 1.1, 0.9},
+		{"Drain Life", top(lock.DrainLife), 1.1, 1, 0.9},
+		{"Corruption", top(lock.Corruption), 1, 1, 1},
+		{"Bane of Agony", top(lock.BaneOfAgony), 1, 1, 1},
 	}
 	before := make([]snapshot, len(cases))
 	for i, c := range cases {
@@ -64,10 +64,10 @@ func TestForeverEurekaWarlockScope(t *testing.T) {
 	eureka.Activate(sim)
 	for i, c := range cases {
 		got := snap(c.spell)
-		if math.Abs(got.mult/before[i].mult-c.mult) > 1e-9 || math.Abs(got.impact-before[i].impact-c.impact) > 1e-9 ||
+		if math.Abs(got.mult/before[i].mult-c.mult) > 1e-9 || math.Abs(got.impact/before[i].impact-c.impact) > 1e-9 ||
 			math.Abs(got.cost/before[i].cost-c.cost) > 1e-9 {
-			t.Errorf("%s (%d) with Eureka!: damage x%.3f, hit +%.2f, cost x%.3f; want x%.3f, +%.2f, x%.3f", c.name, c.spell.SpellID,
-				got.mult/before[i].mult, got.impact-before[i].impact, got.cost/before[i].cost, c.mult, c.impact, c.cost)
+			t.Errorf("%s (%d) with Eureka!: damage x%.3f, hit x%.3f, cost x%.3f; want x%.3f, x%.3f, x%.3f", c.name, c.spell.SpellID,
+				got.mult/before[i].mult, got.impact/before[i].impact, got.cost/before[i].cost, c.mult, c.impact, c.cost)
 		}
 	}
 
