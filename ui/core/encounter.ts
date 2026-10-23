@@ -26,6 +26,8 @@ export class Encounter {
 	// Raid damage on the players the boss isn't tanking (sim/core/raid_hits.go).
 	private raidDamageHitsPerMinute = 0;
 	private raidDamagePerHit = 0;
+	// The fight is where Forever's natural flasks give their bonus beyond Stamina (Hyjal, the Barrow Deeps).
+	private naturalFlaskZone = false;
 	// Set in Leveling mode, a grinding session in place of one fight (docs/leveling_sim.md).
 	private leveling: LevelingOptions | undefined = undefined;
 
@@ -159,6 +161,16 @@ export class Encounter {
 		this.durationChangeEmitter.emit(eventID);
 	}
 
+	getNaturalFlaskZone(): boolean {
+		return this.naturalFlaskZone;
+	}
+	setNaturalFlaskZone(eventID: EventID, newValue: boolean) {
+		if (newValue == this.naturalFlaskZone) return;
+
+		this.naturalFlaskZone = newValue;
+		this.durationChangeEmitter.emit(eventID);
+	}
+
 	// The leveling session's options, or undefined when we sim one fight. An empty
 	// LevelingOptions is a session with every option at its default. We return a copy.
 	getLeveling(): LevelingOptions | undefined {
@@ -202,6 +214,7 @@ export class Encounter {
 			pvpMeleeDowntime: this.pvpMeleeDowntime,
 			raidDamageHitsPerMinute: this.raidDamageHitsPerMinute,
 			raidDamagePerHit: this.raidDamagePerHit,
+			naturalFlaskZone: this.naturalFlaskZone,
 			targets: this.targets,
 			leveling: this.getLeveling(),
 		});
@@ -219,6 +232,7 @@ export class Encounter {
 			this.setPvpMeleeDowntime(eventID, proto.pvpMeleeDowntime);
 			this.setRaidDamageHitsPerMinute(eventID, proto.raidDamageHitsPerMinute);
 			this.setRaidDamagePerHit(eventID, proto.raidDamagePerHit);
+			this.setNaturalFlaskZone(eventID, proto.naturalFlaskZone);
 			this.setLeveling(eventID, proto.leveling);
 			// We copy the targets, so editing one later doesn't change the preset or the saved
 			// settings they came from.

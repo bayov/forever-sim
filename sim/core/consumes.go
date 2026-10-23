@@ -24,6 +24,7 @@ func applyConsumeEffects(agent Agent, raidBuffs *proto.RaidBuffs) {
 	applyPhysicalBuffConsumes(character, consumes)
 	applySpellBuffConsumes(character, consumes, raidBuffs)
 	applyZanzaBuffConsumes(character, consumes)
+	applyForeverElixirCrit(character, consumes)
 	applyHitConsumableConsumes(character, consumes)
 	applyMiscConsumes(character, consumes.MiscConsumes)
 
@@ -68,6 +69,45 @@ func applyFlaskConsumes(character *Character, consumes *proto.Consumes) {
 		})
 	case proto.Flask_FlaskOfChromaticResistance:
 		character.AddResistances(25)
+	case proto.Flask_FlaskOfNaturalAccuracy, proto.Flask_FlaskOfNaturalAggression,
+		proto.Flask_FlaskOfNaturalPrecision, proto.Flask_FlaskOfNaturalSwiftness:
+		applyNaturalFlask(character, consumes.Flask)
+	}
+}
+
+// Forever's Flasks of Natural Accuracy, Aggression, Precision and Swiftness (items 274273 to
+// 274276, spells 1293740 to 1293743) give 60 Stamina anywhere. Their second effect, an A_DUMMY,
+// is the bonus the tooltip grants in Mount Hyjal, Hyjal Summit and the Barrow Deeps, and the
+// auras after it name what that bonus is (wowsims/forever's consumables_natural_flasks.go):
+//   - Accuracy: 5% melee and ranged hit (A_MOD_HIT_CHANCE) and 5% spell hit.
+//   - Aggression: 4% crit (A_MOD_CRIT_PCT), melee, ranged and spell.
+//   - Precision: 5% expertise (A_MOD_EXPERTISE), 5% off the target's dodge and parry.
+//   - Swiftness: 5% melee and ranged attack speed (A_MOD_MELEE_RANGED_HASTE_2) and 5% casting
+//     speed (A_MOD_CASTING_SPEED_NOT_STACK).
+//
+// The zone bonus applies only when the encounter says the fight is in one of those zones.
+func applyNaturalFlask(character *Character, flask proto.Flask) {
+	character.AddStat(stats.Stamina, 60)
+	if !character.Env.Encounter.NaturalFlaskZone {
+		return
+	}
+	switch flask {
+	case proto.Flask_FlaskOfNaturalAccuracy:
+		character.AddStats(stats.Stats{
+			stats.MeleeHit: 5 * MeleeHitRatingPerHitChance,
+			stats.SpellHit: 5 * SpellHitRatingPerHitChance,
+		})
+	case proto.Flask_FlaskOfNaturalAggression:
+		character.AddStats(stats.Stats{
+			stats.MeleeCrit: 4 * CritRatingPerCritChance,
+			stats.SpellCrit: 4 * SpellCritRatingPerCritChance,
+		})
+	case proto.Flask_FlaskOfNaturalPrecision:
+		character.AddStat(stats.Expertise, 5*ExpertiseRatingPerExpertiseChance)
+	case proto.Flask_FlaskOfNaturalSwiftness:
+		character.PseudoStats.MeleeSpeedMultiplier *= 1.05
+		character.PseudoStats.RangedSpeedMultiplier *= 1.05
+		character.PseudoStats.CastSpeedMultiplier *= 1.05
 	}
 }
 
@@ -697,7 +737,8 @@ func applyPhysicalBuffConsumes(character *Character, consumes *proto.Consumes) {
 		case proto.AgilityElixir_ElixirOfTheMongoose:
 			if character.Env.IsForever() {
 				// Forever's Mongoose (17538) is all crit (aura 290), like the other +2% elixirs.
-				character.AddStats(foreverElixirCrit.Add(stats.Stats{stats.Agility: 25}))
+				// The crit is applyForeverElixirCrit's.
+				character.AddStat(stats.Agility, 25)
 			} else {
 				character.AddStats(stats.Stats{
 					stats.Agility:   25,
@@ -747,7 +788,7 @@ func applyPhysicalBuffConsumes(character *Character, consumes *proto.Consumes) {
 		case proto.StrengthBuff_ElixirOfStrength:
 			character.AddStat(stats.Strength, 10)
 		case proto.StrengthBuff_ElixirOfTheGrizzly:
-			character.AddStats(foreverElixirCrit.Add(stats.Stats{stats.Strength: 25}))
+			character.AddStat(stats.Strength, 25)
 		case proto.StrengthBuff_ElixirOfFerocity:
 			character.AddStats(stats.Stats{
 				stats.Strength: 18,
@@ -762,6 +803,22 @@ func applyPhysicalBuffConsumes(character *Character, consumes *proto.Consumes) {
 var foreverElixirCrit = stats.Stats{
 	stats.MeleeCrit: 2 * CritRatingPerCritChance,
 	stats.SpellCrit: 2 * SpellCritRatingPerCritChance,
+}
+
+// Five elixirs state 2% crit beside their own stat: Forever's Elixir of the Mongoose (Agility),
+// Grizzly (Strength), Owl (Intellect), and Sages and Whale (Spirit). Each sits in its own stat's
+// slot, so the stats stack, but only one elixir's crit counts: the game files carry no stacking
+// table that lets four of them add 8%, and that much free crit is not plausible in game
+// (wowsims/forever 2c0fd57e68, one ElixirCrit category where only the strongest applies).
+func applyForeverElixirCrit(character *Character, consumes *proto.Consumes) {
+	mongoose := consumes.AgilityElixir == proto.AgilityElixir_ElixirOfTheMongoose && character.Env.IsForever()
+	if mongoose ||
+		consumes.StrengthBuff == proto.StrengthBuff_ElixirOfTheGrizzly ||
+		consumes.IntellectElixir == proto.IntellectElixir_ElixirOfTheOwl ||
+		consumes.SpiritElixir == proto.SpiritElixir_ElixirOfSages ||
+		consumes.SpiritElixir == proto.SpiritElixir_ElixirOfTheWhale {
+		character.AddStats(foreverElixirCrit)
+	}
 }
 
 // Scrolls of Agility and Strength give 5 / 9 / 13 / 17 at ranks I to IV, which need
@@ -890,13 +947,6 @@ func applySpellBuffConsumes(character *Character, consumes *proto.Consumes, raid
 		if elixir > 0 {
 			character.AddStat(stats.Spirit, elixir)
 		}
-	}
-	// The crit is separate from the stat, so it counts whatever the scroll does.
-	if consumes.IntellectElixir == proto.IntellectElixir_ElixirOfTheOwl {
-		character.AddStats(foreverElixirCrit)
-	}
-	if consumes.SpiritElixir == proto.SpiritElixir_ElixirOfSages || consumes.SpiritElixir == proto.SpiritElixir_ElixirOfTheWhale {
-		character.AddStats(foreverElixirCrit)
 	}
 }
 
@@ -1095,6 +1145,32 @@ var SolidDynamiteActionID = ActionID{ItemID: 10507}
 var DenseDynamiteActionID = ActionID{ItemID: 18641}
 var ThoriumGrenadeActionID = ActionID{ItemID: 15993}
 var GoblinLandMineActionID = ActionID{ItemID: 4395}
+var EZThroDarkBombActionID = ActionID{ItemID: 260817}
+var EZThroThoriumGrenadeActionID = ActionID{ItemID: 260816}
+var HolyHandGrenadeActionID = ActionID{ItemID: 284868}
+
+// Forever's explosives that need no profession, on the 60 sec category (24) every explosive
+// shares. Each casts in 1 sec, like the Engineering ones, and needs its item's level:
+//   - EZ-Thro Dark Bomb 260817 (1269334): 450 Fire ±50% (Variance 1), 225 to 675, level 60.
+//   - EZ-Thro Thorium Grenade 260816 (1269330): 400 Fire ±25% (Variance 0.5), 300 to 500, level 57.
+//   - Holy Hand Grenade of Alterac 284868 (1317268): 400 Holy ±25%, 300 to 500, level 52.
+//
+// The two EZ-Thro rows lack SPELL_ATTR0_NOT_SHAPESHIFTED (Attributes[0] 0x10000), which every
+// Engineering explosive's row but the sapper's and the Holy Hand Grenade's carry, so a druid
+// throws them without leaving its form (wowsims/forever's NewSpellDataExplosive).
+type openExplosive struct {
+	actionID      ActionID
+	school        SpellSchool
+	min, max      float64
+	requiredLevel int32
+	inForm        bool
+}
+
+var openExplosives = map[proto.Explosive]openExplosive{
+	proto.Explosive_ExplosiveEZThroDarkBomb:       {EZThroDarkBombActionID, SpellSchoolFire, 225, 675, 60, true},
+	proto.Explosive_ExplosiveEZThroThoriumGrenade: {EZThroThoriumGrenadeActionID, SpellSchoolFire, 300, 500, 57, true},
+	proto.Explosive_ExplosiveHolyHandGrenade:      {HolyHandGrenadeActionID, SpellSchoolHoly, 300, 500, 52, false},
+}
 
 func registerExplosivesCD(agent Agent, consumes *proto.Consumes) {
 	character := agent.GetCharacter()
@@ -1106,10 +1182,7 @@ func registerExplosivesCD(agent Agent, consumes *proto.Consumes) {
 	}
 	sharedTimer := character.NewTimer()
 
-	if hasSapper {
-		if !character.HasProfession(proto.Profession_Engineering) {
-			return
-		}
+	if hasSapper && character.HasProfession(proto.Profession_Engineering) {
 		var filler *Spell
 		switch consumes.SapperExplosive {
 		case proto.SapperExplosive_SapperGoblinSapper:
@@ -1123,6 +1196,25 @@ func registerExplosivesCD(agent Agent, consumes *proto.Consumes) {
 				return !character.IsShapeshifted()
 			},
 		})
+	}
+
+	if explosive, ok := openExplosives[consumes.FillerExplosive]; ok {
+		if character.Level < explosive.requiredLevel {
+			return
+		}
+		config := character.newBasicExplosiveSpellConfig(sharedTimer, explosive.actionID, explosive.school, explosive.min, explosive.max, Cooldown{}, 0, 0)
+		if explosive.inForm {
+			config.Cast.ModifyCast = nil
+		}
+		character.AddMajorCooldown(MajorCooldown{
+			Spell:    character.GetOrRegisterSpell(config),
+			Type:     CooldownTypeDPS | CooldownTypeExplosive,
+			Priority: CooldownPriorityLow + 10,
+			ShouldActivate: func(s *Simulation, c *Character) bool {
+				return explosive.inForm || !character.IsShapeshifted()
+			},
+		})
+		return
 	}
 
 	if hasFiller {
@@ -1545,6 +1637,126 @@ func makeStatBuffPotionMCD(itemId int32, label string, buff stats.Stats, charact
 	}
 }
 
+// makeDragonfirePotionMCD is Forever's Dragonfire Potion 250953 (1252554, category 4 with the
+// other potions, 2 min): 280 Fire to every enemy in a 12 yd cone, and 35 Fire every 2 sec for 8
+// sec on each. The row states Fixed Travel Time at Speed 1, so the fire lands 1 sec after use
+// from any distance, and Always Hit, so it rolls no miss; the hit can crit (wowsims/forever
+// 5b8a1fbc24). It has no spell power coefficient. It reaches only as far as the cone's radius.
+func makeDragonfirePotionMCD(character *Character, cdTimer *Timer) MajorCooldown {
+	const coneRadius = 12
+	actionID := ActionID{ItemID: 250953}
+	var spell *Spell
+	spell = character.GetOrRegisterSpell(SpellConfig{
+		ActionID:    actionID,
+		SpellSchool: SpellSchoolFire,
+		DefenseType: DefenseTypeMagic,
+		ProcMask:    ProcMaskEmpty,
+		Flags:       SpellFlagNoOnCastComplete,
+		Cast: CastConfig{
+			CD: Cooldown{
+				Timer:    cdTimer,
+				Duration: time.Minute * 2,
+			},
+		},
+		ExtraCastCondition: func(_ *Simulation, _ *Unit) bool {
+			return character.DistanceFromTarget <= coneRadius
+		},
+
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+
+		Dot: DotConfig{
+			Aura: Aura{
+				Label: "Dragonfire Potion",
+			},
+			NumberOfTicks: 4,
+			TickLength:    time.Second * 2,
+			OnTick: func(sim *Simulation, target *Unit, dot *Dot) {
+				dot.Spell.CalcAndDealPeriodicDamage(sim, target, 35, dot.OutcomeTick)
+			},
+		},
+
+		ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
+			StartDelayedAction(sim, DelayedActionOptions{
+				DoAt: sim.CurrentTime + time.Second,
+				OnAction: func(sim *Simulation) {
+					for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
+						spell.CalcAndDealDamage(sim, aoeTarget, 280*sim.Encounter.AOECapMultiplier(), spell.OutcomeMagicCrit)
+						spell.Dot(aoeTarget).Apply(sim)
+					}
+				},
+			})
+		},
+	})
+	return MajorCooldown{
+		Type: CooldownTypeDPS,
+		ShouldActivate: func(sim *Simulation, character *Character) bool {
+			return character.canUseItemsInForm()
+		},
+		Spell: spell,
+	}
+}
+
+// makeCausticSmogPotionMCD is Forever's Caustic Smog Potion 250951 (category 4 with the other
+// potions, 2 min). Its 1252525 is a missile, range 20, at 10 yd/sec for no less than 1.5 sec,
+// that leaves the cloud 1252526 for 12 sec, which puts 1252543 on every enemy inside it: 33
+// Nature a second, rolled each tick from 31 to 35 (Variance 0.1). 1252543 states Always Hit, so
+// no tick misses (wowsims/forever 5b8a1fbc24). It has no spell power coefficient.
+func makeCausticSmogPotionMCD(character *Character, cdTimer *Timer) MajorCooldown {
+	const maxRange = 20
+	actionID := ActionID{ItemID: 250951}
+	var spell *Spell
+	spell = character.GetOrRegisterSpell(SpellConfig{
+		ActionID:     actionID,
+		SpellSchool:  SpellSchoolNature,
+		DefenseType:  DefenseTypeMagic,
+		ProcMask:     ProcMaskEmpty,
+		Flags:        SpellFlagNoOnCastComplete,
+		MissileSpeed: 10,
+		Cast: CastConfig{
+			CD: Cooldown{
+				Timer:    cdTimer,
+				Duration: time.Minute * 2,
+			},
+		},
+		ExtraCastCondition: func(_ *Simulation, _ *Unit) bool {
+			return character.DistanceFromTarget <= maxRange
+		},
+
+		DamageMultiplier: 1,
+		ThreatMultiplier: 1,
+
+		Dot: DotConfig{
+			Aura: Aura{
+				Label: "Caustic Smog Potion",
+			},
+			NumberOfTicks: 12,
+			TickLength:    time.Second,
+			OnTick: func(sim *Simulation, target *Unit, dot *Dot) {
+				dot.Spell.CalcAndDealPeriodicDamage(sim, target, sim.Roll(31, 35), dot.OutcomeTick)
+			},
+		},
+
+		ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
+			StartDelayedAction(sim, DelayedActionOptions{
+				DoAt: sim.CurrentTime + max(spell.TravelTime(), time.Millisecond*1500),
+				OnAction: func(sim *Simulation) {
+					for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
+						spell.Dot(aoeTarget).Apply(sim)
+					}
+				},
+			})
+		},
+	})
+	return MajorCooldown{
+		Type: CooldownTypeDPS,
+		ShouldActivate: func(sim *Simulation, character *Character) bool {
+			return character.canUseItemsInForm()
+		},
+		Spell: spell,
+	}
+}
+
 func makePotionActivationInternal(potionType proto.Potions, character *Character, potionCD *Timer) MajorCooldown {
 	if potionType == proto.Potions_UnknownPotion {
 		return MajorCooldown{}
@@ -1612,6 +1824,10 @@ func makePotionActivationInternal(potionType proto.Potions, character *Character
 		return makeStatBuffPotionMCD(250936, "Superior Spellblasting Potion", stats.Stats{stats.SpellDamage: 33}, character, potionCD)
 	case proto.Potions_MajorSpellblastingPotion:
 		return makeStatBuffPotionMCD(250937, "Major Spellblasting Potion", stats.Stats{stats.SpellDamage: 47}, character, potionCD)
+	case proto.Potions_DragonfirePotion:
+		return makeDragonfirePotionMCD(character, potionCD)
+	case proto.Potions_CausticSmogPotion:
+		return makeCausticSmogPotionMCD(character, potionCD)
 	// case proto.Potions_GreaterArcaneProtectionPotion:
 	// 	return makeSchoolProtectionConsumableMCD(13461, character, potionCD)
 	// case proto.Potions_GreaterFireProtectionPotion:

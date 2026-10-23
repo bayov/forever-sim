@@ -110,6 +110,7 @@ func TestForeverWeaponProcDamage(t *testing.T) {
 		{"Ebon Hand", 19170, 18211, 18211, 161, 301, 125, 275},
 		{"Teebu's Blazing Longsword", 1728, 1300753, 18086, 140, 140, 150, 150},
 		{"The Lobotomizer", 19324, 1290950, 24388, 200, 300, 200, 300},
+		{"Gryphon Rider's Stormhammer", 9651, 18081, 18081, 77, 105, 91, 125},
 	} {
 		for _, r := range []struct {
 			ruleset  proto.Ruleset
@@ -128,6 +129,71 @@ func TestForeverWeaponProcDamage(t *testing.T) {
 			lo, hi := procRange(sim, war, spell, 2000)
 			if lo < r.min-1e-6 || hi > r.max+1e-6 || lo > r.min+0.02*(r.max-r.min)+1e-6 || hi < r.max-0.02*(r.max-r.min)-1e-6 {
 				t.Errorf("%s %s: %.1f to %.1f, want %.0f to %.0f", r.ruleset, c.name, lo, hi, r.min, r.max)
+			}
+		}
+	}
+}
+
+// Thunderstrike's blast goes to up to 3 different targets, once each: one target takes one blast,
+// three take one each. Forever's is Chain Lightning 21179, Classic's 461686, 150 to 250 first.
+func TestThunderstrikeHitsEachTargetOnce(t *testing.T) {
+	for _, c := range []struct {
+		ruleset proto.Ruleset
+		spellID int32
+	}{
+		{proto.Ruleset_RulesetForever, 21179},
+		{proto.Ruleset_RulesetClassic, 461686},
+	} {
+		for _, targets := range []int{1, 2, 3, 4} {
+			items := make([]*proto.ItemSpec, 17)
+			for i := range items {
+				items[i] = &proto.ItemSpec{}
+			}
+			items[proto.ItemSlot_ItemSlotMainHand] = &proto.ItemSpec{Id: 17223}
+			player := &proto.Player{
+				Race: proto.Race_RaceTauren, Class: proto.Class_ClassWarrior, Level: 60,
+				Equipment: &proto.EquipmentSpec{Items: items}, Consumes: &proto.Consumes{}, Rotation: &proto.APLRotation{},
+				Spec: &proto.Player_Warrior{Warrior: &proto.Warrior{Options: &proto.Warrior_Options{}}},
+			}
+			encounter := &proto.Encounter{Duration: 600}
+			for range targets {
+				encounter.Targets = append(encounter.Targets, core.NewDefaultTarget())
+			}
+			sim := core.NewSim(&proto.RaidSimRequest{
+				Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+				Encounter:  encounter,
+				SimOptions: &proto.SimOptions{Ruleset: c.ruleset, RandomSeed: 1, ExactDamage: true},
+			}, simsignals.CreateSignals())
+			sim.Reset()
+			sim.PrePull()
+			war := sim.Raid.Parties[0].Players[0].(*DpsWarrior)
+			spell := war.GetSpell(core.ActionID{SpellID: c.spellID})
+			if spell == nil {
+				t.Fatalf("%s: no Thunderstrike proc %d", c.ruleset, c.spellID)
+			}
+			spell.Flags |= core.SpellFlagIgnoreResists
+			war.AddStatsDynamic(sim, stats.Stats{stats.SpellHit: 100 * core.SpellHitRatingPerHitChance})
+			const casts = 200
+			for range casts {
+				spell.Cast(sim, war.CurrentTarget)
+			}
+			for i := range targets {
+				m := spell.SpellMetrics[sim.GetTargetUnit(int32(i)).UnitIndex]
+				blasts := m.Hits + m.Crits + m.Misses
+				lo, hi := int32(casts), int32(casts)
+				switch {
+				case i >= 3:
+					lo, hi = 0, 0
+				case c.ruleset == proto.Ruleset_RulesetClassic && i == 0:
+					// Classic's first roll is an outcome check of its own, counted as a hit or a miss.
+					lo, hi = casts, 2*casts
+				case c.ruleset == proto.Ruleset_RulesetClassic:
+					// Classic's jumps go out only after the first roll lands.
+					lo = casts * 9 / 10
+				}
+				if blasts < lo || blasts > hi {
+					t.Errorf("%s, %d targets: target %d took %d blasts in %d procs, want %d to %d", c.ruleset, targets, i, blasts, casts, lo, hi)
+				}
 			}
 		}
 	}

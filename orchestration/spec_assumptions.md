@@ -602,7 +602,7 @@ None of these has a knob yet. The report-tree rebuild adds them; the defaults ke
   - Its off-hand question stays open, as `wf_totem_offhand`.
 - **Rage of the Farseer's cooldown: 3 min.** It was a guess in sim-status, but the client (1.60.1.70291) and Blizzard's 2026-10-07 deep dive both give 3 minutes (`sim/shaman/talents.go:553-555`).
 - **Lava Burst's cast time and cooldown.** These are the client's 2.5 sec and 10 sec now, not WotLK's (shaman_audit.md 7.14). Its Flame Shock 20% is below the threshold; see the next section.
-- **One +2% crit elixir a character** (standards 10). A second one would add 10 to 36 a build (Enhancement +36, warrior +11 to +15, Ret +12 to +15, warlock +20, the casters +10 to +21). This is a ruling, not a sim constant. If the orchestrator wants it as a scenario, it's a consumes toggle per build, not a code knob.
+- **One +2% crit elixir a character** (standards 10). A second one would add 10 to 36 a build (Enhancement +36, warrior +11 to +15, Ret +12 to +15, warlock +20, the casters +10 to +21). Since 2026-10-23 the sim enforces the crit part (wowsims/forever 2c0fd57e68): only one elixir's 2% crit counts, so a second crit elixir adds only its 25 of a stat, and those numbers are what the crit would add if Forever let it stack.
 - **No Ahn'Qiraj book ranks** (standards 8a). With them: Frost +50, Arcane +30, Fire +17, warlocks +7 to +13, rogues +13 to +18, Fury +22.6, Balance +13. A scenario would be `env.IncludeAQRanks()` flipped, if the orchestrator reopens it.
 - **Pets and demons take no player buffs** (standards 14; client flag SPELL_ATTR3 0x100, forever-bugs #27).
 - **Windfury Weapon rank 4: 333 attack power at 60.** wowhead's 433 is its level 68 value (`sim/shaman/windfury_weapon.go:16-22`).

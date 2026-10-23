@@ -39,6 +39,9 @@ type Encounter struct {
 	// The raid damage on the players the boss isn't tanking, see raid_hits.go.
 	RaidDamageHitsPerMinute float64
 	RaidDamagePerHit        float64
+
+	// The fight is in a zone where Forever's natural flasks give their bonus beyond Stamina.
+	NaturalFlaskZone bool
 }
 
 func NewEncounter(options *proto.Encounter) Encounter {
@@ -57,6 +60,7 @@ func NewEncounter(options *proto.Encounter) Encounter {
 
 		RaidDamageHitsPerMinute: max(options.RaidDamageHitsPerMinute, 0),
 		RaidDamagePerHit:        max(options.RaidDamagePerHit, 0),
+		NaturalFlaskZone:        options.NaturalFlaskZone,
 	}
 	// If UseHealth is set, we use the sum of targets health.
 	if options.UseHealth {

@@ -1337,7 +1337,10 @@ func init() {
 	core.NewMobTypeAttackPowerEffect(GrileksGrinder, []proto.MobType{proto.MobType_MobTypeDragonkin}, 48)
 
 	// https://www.wowhead.com/classic/item=9651/gryphon-riders-stormhammer
-	itemhelpers.CreateWeaponCoHProcDamage(GryphonRidersStormhammer, "Gryphon Rider's Stormhammer", 1.0, 18081, core.SpellSchoolNature, 91, 34, 0, core.DefenseTypeMagic)
+	// Forever: Lightning Bolt (18081) is 91 with variance 0.315, 77 to 105, in place of Classic's 91
+	// to 125 (wowsims/forever's client store and db.json, 1 PPM).
+	itemhelpers.CreateWeaponCoHProcDamageByRuleset(GryphonRidersStormhammer, "Gryphon Rider's Stormhammer", 1.0, 18081, core.SpellSchoolNature,
+		[2]float64{91, 34}, [2]float64{77, 28}, 0, core.DefenseTypeMagic)
 
 	// https://www.wowhead.com/classic/item=17071/gutgore-ripper
 	// Chance on hit: Sends a shadowy bolt at the enemy causing 75 Shadow damage and lowering all stats by 25 for 30 sec.
@@ -2554,26 +2557,42 @@ func init() {
 
 	// https://www.wowhead.com/classic/item=17223/thunderstrike
 	// Chance on hit: Blasts up to 3 targets for 150 to 250 Nature damage. Each target after the first takes less damage.
-	// TODO: Proc rate assumed and needs testing
+	// Each blast goes to a different target, so one target takes one. Forever's is Chain Lightning
+	// 21179 at 1.5 PPM: 200 with variance 0.5, 150 to 250, to 3 targets, each jump keeping 70% of
+	// the damage (EffectChainAmplitude 0.7), and each target rolls its own hit (wowsims/forever's
+	// client store and db.json).
+	// TODO: Classic's proc rate assumed and needs testing
 	itemhelpers.CreateWeaponProcSpell(Thunderstrike, "Thunderstrike", 1.5, func(character *core.Character) *core.Spell {
+		forever := character.Env.IsForever()
+		spellID := core.TernaryInt32(forever, 21179, 461686)
+		jumpMultiplier := core.TernaryFloat64(forever, 0.7, 0.65)
 		return character.RegisterSpell(core.SpellConfig{
-			ActionID:         core.ActionID{SpellID: 461686},
+			ActionID:         core.ActionID{SpellID: spellID},
 			SpellSchool:      core.SpellSchoolNature,
 			DefenseType:      core.DefenseTypeMagic,
 			ProcMask:         core.ProcMaskEmpty,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				numTargets := sim.Encounter.AoETargetCount(3)
+				if forever {
+					damageMultiplier := 1.0
+					for range numTargets {
+						spell.CalcAndDealDamage(sim, target, sim.Roll(150, 250)*damageMultiplier, spell.OutcomeMagicHitAndCrit)
+						target = sim.Environment.NextTargetUnit(target)
+						damageMultiplier *= jumpMultiplier
+					}
+					return
+				}
 				initialResult := spell.CalcOutcome(sim, target, spell.OutcomeMagicHit)
 				// Only the initial hit can be fully resisted according to a wowhead comment
 				if initialResult.Landed() {
 					damageMultiplier := 1.0
-					for numHits := 0; numHits < 3; numHits++ {
+					for range numTargets {
 						spell.CalcAndDealDamage(sim, target, sim.Roll(150, 250)*damageMultiplier, spell.OutcomeMagicCrit)
-						numHits++
-						target = character.Env.NextTargetUnit(target)
+						target = sim.Environment.NextTargetUnit(target)
 						// TODO: Couldn't find information on what the multiplier actually is
-						damageMultiplier *= .65
+						damageMultiplier *= jumpMultiplier
 					}
 				}
 			},

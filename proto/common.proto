@@ -326,9 +326,14 @@ enum Explosive {
 	ExplosiveDenseDynamite = 2;
 	ExplosiveThoriumGrenade = 3;
 	ExplosiveGoblinLandMine = 4;
+
+	// Forever's explosives that need no profession.
+	ExplosiveEZThroDarkBomb = 5;
+	ExplosiveEZThroThoriumGrenade = 6;
+	ExplosiveHolyHandGrenade = 7;
 }
 
-// NextIndex: 28
+// NextIndex: 53
 enum Potions {
 	UnknownPotion = 0;
 
@@ -393,6 +398,7 @@ enum Potions {
 	SuperiorDiscoloredHealingPotion = 49;
 	PotionOfBeastSlaying = 50;
 	PotionOfElementalPurging = 51;
+	CausticSmogPotion = 52;
 
 	LesserManaPotion = 1 [deprecated = true];
 }
@@ -1052,6 +1058,10 @@ message Encounter {
 	// spell pushback). See sim/core/raid_hits.go.
 	double raid_damage_hits_per_minute = 11;
 	double raid_damage_per_hit = 12;
+
+	// The fight is in Mount Hyjal, Hyjal Summit or the Barrow Deeps, where Forever's natural
+	// flasks give their bonus beyond Stamina.
+	bool natural_flask_zone = 13;
 }
 
 // A grinding session (docs/leveling_sim.md). A field left at 0 takes its default.

@@ -230,11 +230,33 @@ export const ExplosiveThoriumGrenade: ConsumableInputConfig<Explosive> = {
 	value: Explosive.ExplosiveThoriumGrenade,
 };
 
+// Forever's explosives that need no profession, only the item's level.
+export const ExplosiveEZThroDarkBomb: ConsumableInputConfig<Explosive> = {
+	actionId: () => ActionId.fromItemId(260817),
+	showWhen: player => player.getLevel() >= 60,
+	value: Explosive.ExplosiveEZThroDarkBomb,
+};
+
+export const ExplosiveEZThroThoriumGrenade: ConsumableInputConfig<Explosive> = {
+	actionId: () => ActionId.fromItemId(260816),
+	showWhen: player => player.getLevel() >= 57,
+	value: Explosive.ExplosiveEZThroThoriumGrenade,
+};
+
+export const ExplosiveHolyHandGrenade: ConsumableInputConfig<Explosive> = {
+	actionId: () => ActionId.fromItemId(284868),
+	showWhen: player => player.getLevel() >= 52,
+	value: Explosive.ExplosiveHolyHandGrenade,
+};
+
 export const EXPLOSIVES_CONFIG: ConsumableStatOption<Explosive>[] = [
 	{ config: ExplosiveSolidDynamite, stats: [] },
 	{ config: ExplosiveDenseDynamite, stats: [] },
 	{ config: ExplosiveThoriumGrenade, stats: [] },
 	{ config: ExplosiveGoblinLandMine, stats: [] },
+	{ config: ExplosiveEZThroDarkBomb, stats: [] },
+	{ config: ExplosiveEZThroThoriumGrenade, stats: [] },
+	{ config: ExplosiveHolyHandGrenade, stats: [] },
 ];
 
 export const SAPPER_CONFIG: ConsumableStatOption<SapperExplosive>[] = [{ config: SapperGoblinSapper, stats: [] }];
@@ -278,10 +300,11 @@ export const FLASKS_CONFIG: ConsumableStatOption<Flask>[] = [
 	{ config: FlaskOfDistilledWisdom, stats: [Stat.StatIntellect] },
 	{ config: FlaskOfSupremePower, stats: [Stat.StatMP5, Stat.StatSpellPower, Stat.StatSpellDamage] },
 	{ config: FlaskOfChromaticResistance, stats: [] },
-	{ config: notSimulated('flask', 274273, Flask.FlaskOfNaturalAccuracy), stats: [] },
-	{ config: notSimulated('flask', 274274, Flask.FlaskOfNaturalAggression), stats: [] },
-	{ config: notSimulated('flask', 274275, Flask.FlaskOfNaturalPrecision), stats: [] },
-	{ config: notSimulated('flask', 274276, Flask.FlaskOfNaturalSwiftness), stats: [] },
+	// 60 Stamina, and their bonus when the encounter is in a natural flask zone (Hyjal, the Barrow Deeps).
+	{ config: consumable(274273, Flask.FlaskOfNaturalAccuracy), stats: [] },
+	{ config: consumable(274274, Flask.FlaskOfNaturalAggression), stats: [] },
+	{ config: consumable(274275, Flask.FlaskOfNaturalPrecision), stats: [] },
+	{ config: consumable(274276, Flask.FlaskOfNaturalSwiftness), stats: [] },
 ];
 
 export const makeFlasksInput = makeConsumeInputFactory({ consumesFieldName: 'flask' });
@@ -949,7 +972,8 @@ export const POTIONS_CONFIG: ConsumableStatOption<Potions>[] = [
 	{ config: notSimulated('defaultPotion', 250945, Potions.LesserMendersPotion), stats: [Stat.StatHealingPower] },
 	{ config: notSimulated('defaultPotion', 250944, Potions.MinorMendersPotion), stats: [Stat.StatHealingPower] },
 
-	{ config: notSimulated('defaultPotion', 250953, Potions.DragonfirePotion), stats: [] },
+	{ config: consumable(250953, Potions.DragonfirePotion), stats: [] },
+	{ config: consumable(250951, Potions.CausticSmogPotion), stats: [] },
 
 	{ config: MightRagePotion, stats: [] },
 	{ config: GreatRagePotion, stats: [] },

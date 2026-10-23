@@ -790,6 +790,20 @@ function addEncounterFieldPickers(rootElem: HTMLElement, encounter: Encounter) {
 		showWhen: (encounter: Encounter) => !encounter.isLeveling(),
 	});
 
+	new BooleanPicker<Encounter>(typeGroup, encounter, {
+		id: 'encounter-natural-flask-zone',
+		label: 'Natural flask zone',
+		labelTooltip:
+			"The fight is in Mount Hyjal, Hyjal Summit or the Barrow Deeps, where Forever's Flasks of Natural Accuracy, Aggression, Precision and Swiftness give their bonus beyond Stamina: 5% hit, 4% crit, 5% expertise or 5% haste.",
+		inline: true,
+		changedEvent: (encounter: Encounter) => encounter.changeEmitter,
+		getValue: (encounter: Encounter) => encounter.getNaturalFlaskZone(),
+		setValue: (eventID: EventID, encounter: Encounter, newValue: boolean) => {
+			encounter.setNaturalFlaskZone(eventID, newValue);
+		},
+		showWhen: (encounter: Encounter) => !encounter.isLeveling(),
+	});
+
 	// The three execute phases share one label. Each field's own label is the health its phase
 	// starts at, and its value is the share of the fight in that phase.
 	const executeSection = document.createElement('div');
