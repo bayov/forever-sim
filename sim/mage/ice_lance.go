@@ -77,7 +77,7 @@ func (mage *Mage) newIceLanceSpellConfig(rank int) core.SpellConfig {
 			if frozen {
 				spell.DamageMultiplier *= IceLanceFrozenMultiplier
 			}
-			result := mage.calcMageDamage(sim, target, baseDamage, spell)
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			if frozen {
 				spell.DamageMultiplier /= IceLanceFrozenMultiplier
 			}

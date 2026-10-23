@@ -52,9 +52,11 @@ func (mage *Mage) registerArcaneBlastSpell() {
 			if newStacks > 0 {
 				mage.EnableDynamicStatDep(sim, spellPowerDeps[newStacks])
 			}
+			// One cost row of 175% a stack, which multiplies Arcane Power's under Forever.
 			for _, spell := range mage.ArcaneBlast {
 				if spell != nil {
-					spell.Cost.Multiplier += 175 * (newStacks - oldStacks)
+					mage.changeCostPercent(spell, 175*oldStacks, false)
+					mage.changeCostPercent(spell, 175*newStacks, true)
 				}
 			}
 		},
@@ -98,7 +100,7 @@ func (mage *Mage) newArcaneBlastSpellConfig(rank int) core.SpellConfig {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(baseDamageLow, baseDamageHigh)
-			spell.DealDamage(sim, mage.calcMageDamage(sim, target, baseDamage, spell))
+			spell.DealDamage(sim, spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit))
 			// The stack comes after the hit, so this cast doesn't use its own spell damage.
 			// More stacks don't move the 15 sec on from the first one.
 			if !mage.ArcaneBlastAura.IsActive() {

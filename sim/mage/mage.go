@@ -104,6 +104,9 @@ type Mage struct {
 
 	// When Presence of Mind was last used up, so Heating Up can tell it made that Pyroblast instant.
 	presenceOfMindSpentAt time.Duration
+
+	// Counts the Fingers of Frost grants, so a deferred spend can tell charges came after its cast.
+	fingersOfFrostGrants int
 }
 
 // Agent is a generic way to access underlying mage on any of the agents.

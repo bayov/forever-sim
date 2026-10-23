@@ -422,7 +422,7 @@ func TestMagePushbackProtection(t *testing.T) {
 }
 
 // Since the 2026-10-20 hotfix Ice Barrier raises Frost damage by 3% while the shield holds, and
-// every cast gives Frigid Power, 3% more for a minute. The absorb is the rank's base and 10% of
+// every cast gives Frigid Power, 3% more for a minute, each its own factor. The absorb is the rank's base and 10% of
 // Frost spell power, and Frost Warding raises it 10% a point. Elemental Precision is 2% hit a
 // point.
 func TestMageIceBarrier(t *testing.T) {
@@ -433,16 +433,16 @@ func TestMageIceBarrier(t *testing.T) {
 	if got, want := frostbolt.BonusHitRating, 6*float64(core.SpellHitRatingPerHitChance); math.Abs(got-want) > 1e-9 {
 		t.Errorf("Frostbolt gets %.1f hit rating from Elemental Precision 3, want %.1f", got, want)
 	}
-	frostBase, fireBase := frostbolt.DamageMultiplierAdditive, fireBlast.DamageMultiplierAdditive
+	frostBase, fireBase := frostbolt.DamageMultiplier, fireBlast.DamageMultiplier
 
 	mage.SetGCDTimer(sim, sim.CurrentTime)
 	if !topRank(t, "Ice Barrier", mage.IceBarrier).Cast(sim, &mage.Unit) {
 		t.Fatalf("Ice Barrier didn't cast")
 	}
-	if got := frostbolt.DamageMultiplierAdditive - frostBase; math.Abs(got-0.06) > 1e-9 {
-		t.Errorf("Frostbolt gets %.3f more damage with the shield and Frigid Power up, want 0.06", got)
+	if got := frostbolt.DamageMultiplier / frostBase; math.Abs(got-1.03*1.03) > 1e-9 {
+		t.Errorf("Frostbolt does %.4f times the damage with the shield and Frigid Power up, want 1.0609", got)
 	}
-	if got := fireBlast.DamageMultiplierAdditive; got != fireBase {
+	if got := fireBlast.DamageMultiplier; got != fireBase {
 		t.Errorf("Fire Blast's damage multiplier moved to %.3f, want %.3f", got, fireBase)
 	}
 
@@ -470,10 +470,206 @@ func TestMageIceBarrier(t *testing.T) {
 	if !mage.FrigidPowerAura.IsActive() {
 		t.Errorf("Frigid Power went with the shield")
 	}
-	if got := frostbolt.DamageMultiplierAdditive - frostBase; math.Abs(got-0.03) > 1e-9 {
-		t.Errorf("Frostbolt gets %.3f more damage with Frigid Power alone, want 0.03", got)
+	if got := frostbolt.DamageMultiplier / frostBase; math.Abs(got-1.03) > 1e-9 {
+		t.Errorf("Frostbolt does %.4f times the damage with Frigid Power alone, want 1.03", got)
 	}
 	if got := hit(1000); got != 1000 {
 		t.Errorf("a 1000 hit does %.1f with the shield gone, want 1000", got)
+	}
+}
+
+// Under Forever each percent damage and cost row is its own factor (wowsims/forever fef2bcaebd and
+// 810101380a). Arcane Power with Arcane Instability 3 is 1.3 x 1.03, four Arcane Blast stacks
+// under Arcane Power cost 8 x 1.3 times the base, a Missile Barrage Arcane Missiles is free under
+// Arcane Power, and the Gnome's Eureka! multiplies Arcane Power's cost too.
+func TestMageModifiersMultiply(t *testing.T) {
+	// The Arcane preset's tree: Missile Barrage 2, Arcane Blast, Arcane Instability 3, Arcane Power.
+	sim, mage := newMageSim(t, "0552205003100301531")
+	fireball := topRank(t, "Fireball", mage.Fireball)
+	arcaneBlast := topRank(t, "Arcane Blast", mage.ArcaneBlast)
+	arcaneMissiles := topRank(t, "Arcane Missiles", mage.ArcaneMissiles)
+	if got := fireball.DamageMultiplier; math.Abs(got-1.03) > 1e-9 {
+		t.Errorf("Fireball does %.4f times the damage with Arcane Instability 3, want 1.03", got)
+	}
+	fireballCost := fireball.Cost.GetCurrentCost()
+	blastCost := arcaneBlast.Cost.GetCurrentCost()
+	missilesCost := arcaneMissiles.Cost.GetCurrentCost()
+
+	mage.ArcanePowerAura.Activate(sim)
+	if got := fireball.DamageMultiplier; math.Abs(got-1.339) > 1e-9 {
+		t.Errorf("Fireball does %.4f times the damage with Arcane Power and Arcane Instability 3, want 1.339", got)
+	}
+	mage.ArcaneBlastAura.Activate(sim)
+	mage.ArcaneBlastAura.SetStacks(sim, 4)
+	if got, want := arcaneBlast.Cost.GetCurrentCost(), blastCost*8*1.3; math.Abs(got-want) > 1e-6 {
+		t.Errorf("Arcane Blast costs %.1f at 4 stacks under Arcane Power, want %.1f (10.4 times the base)", got, want)
+	}
+	mage.MissileBarrageAura.Activate(sim)
+	if got := arcaneMissiles.Cost.GetCurrentCost(); got != 0 {
+		t.Errorf("Arcane Missiles costs %.1f with Missile Barrage under Arcane Power, want 0", got)
+	}
+	eureka := mage.GetAura("Eureka!")
+	eureka.Activate(sim)
+	if got, want := fireball.Cost.GetCurrentCost(), fireballCost*1.3*0.9; math.Abs(got-want) > 1e-6 {
+		t.Errorf("Fireball costs %.1f with Arcane Power and Eureka!, want %.1f", got, want)
+	}
+
+	eureka.Deactivate(sim)
+	mage.MissileBarrageAura.Deactivate(sim)
+	mage.ArcaneBlastAura.Deactivate(sim)
+	mage.ArcanePowerAura.Deactivate(sim)
+	for _, c := range []struct {
+		name      string
+		spell     *core.Spell
+		got, want float64
+	}{
+		{"Fireball", fireball, fireball.Cost.GetCurrentCost(), fireballCost},
+		{"Arcane Blast", arcaneBlast, arcaneBlast.Cost.GetCurrentCost(), blastCost},
+		{"Arcane Missiles", arcaneMissiles, arcaneMissiles.Cost.GetCurrentCost(), missilesCost},
+	} {
+		if math.Abs(c.got-c.want) > 1e-6 {
+			t.Errorf("%s costs %.3f once the buffs are gone, want %.3f", c.name, c.got, c.want)
+		}
+	}
+	if got := fireball.DamageMultiplier; math.Abs(got-1.03) > 1e-9 {
+		t.Errorf("Fireball does %.4f times the damage once Arcane Power is gone, want 1.03", got)
+	}
+}
+
+// Frost Channeling's cost row (11160 effect 0) takes Frostfire Bolt by word 1 bit 12, the bit Ice
+// Shards and Critical Mass reach it by, and Ice Barrier too.
+func TestMageFrostChanneling(t *testing.T) {
+	// Frost to Ice Barrier, with Frost Channeling 3.
+	_, mage := newMageSim(t, "--053500030101301221")
+	for _, c := range []struct {
+		name  string
+		spell *core.Spell
+	}{
+		{"Frostbolt", topRank(t, "Frostbolt", mage.Frostbolt)},
+		{"Frostfire Bolt", topRank(t, "Frostfire Bolt", mage.FrostfireBolt)},
+		{"Ice Barrier", topRank(t, "Ice Barrier", mage.IceBarrier)},
+	} {
+		if got, want := c.spell.Cost.GetCurrentCost(), c.spell.Cost.BaseCost*0.85; math.Abs(got-want) > 1e-6 {
+			t.Errorf("%s costs %.1f with Frost Channeling 3, want %.1f", c.name, got, want)
+		}
+	}
+	if got := topRank(t, "Fireball", mage.Fireball); got.Cost.GetCurrentCost() != got.Cost.BaseCost {
+		t.Errorf("Fireball costs %.1f with Frost Channeling 3, want %.1f", got.Cost.GetCurrentCost(), got.Cost.BaseCost)
+	}
+}
+
+// Fingers of Frost, as wowsims/forever has it from their logs (1373a0b96f): Shatter's crit reaches
+// every mage damage spell, a cast spends its charge a spell batch after it finishes, a channel
+// spends none at its cast, and each Arcane Missiles missile that lands spends one.
+func TestMageFingersOfFrostCharges(t *testing.T) {
+	// Frost to Winter's Chill 2, with Shatter 3 and Fingers of Frost 2.
+	sim, mage := newMageSim(t, "--05350003010130122")
+	target := mage.CurrentTarget
+	fireBlast := topRank(t, "Fire Blast", mage.FireBlast)
+	arcaneMissiles := topRank(t, "Arcane Missiles", mage.ArcaneMissiles)
+	fof := mage.FingersOfFrostAura
+	advance := func(by time.Duration) {
+		until := sim.CurrentTime + by
+		sim.AddPendingAction(&core.PendingAction{NextActionAt: until, OnAction: func(*core.Simulation) {}})
+		for sim.CurrentTime < until && !sim.Step() {
+		}
+	}
+	// The charges come a little before the cast: a cast at the moment they came granted them.
+	grant := func() {
+		fof.Activate(sim)
+		fof.SetStacks(sim, 2)
+		advance(100 * time.Millisecond)
+	}
+	// Free, so the mana lasts.
+	fireBlast.Cost.Multiplier = 0
+	arcaneMissiles.Cost.Multiplier = 0
+
+	// 51% crit without Shatter and every spell hits, so only Shatter's 50% makes every cast crit.
+	fireBlast.BonusHitRating += 100 * core.SpellHitRatingPerHitChance
+	fireBlast.BonusCritRating += 51*core.SpellCritRatingPerCritChance - 100*fireBlast.SpellCritChance(target)*core.SpellCritRatingPerCritChance
+	const casts = 12
+	for i := 0; i < casts; i++ {
+		grant()
+		fireBlast.CD.Reset()
+		mage.SetGCDTimer(sim, sim.CurrentTime)
+		if !fireBlast.Cast(sim, target) {
+			t.Fatalf("Fire Blast didn't cast")
+		}
+		if got := fof.GetStacks(); got != 2 {
+			t.Fatalf("%d Fingers of Frost charges right after a Fire Blast, want 2 until the batch ends", got)
+		}
+		advance(core.SpellBatchWindow)
+		if got := fof.GetStacks(); got != 1 {
+			t.Fatalf("%d Fingers of Frost charges a batch after a Fire Blast, want 1", got)
+		}
+	}
+	metrics := fireBlast.SpellMetrics[target.UnitIndex]
+	if got := metrics.Crits + metrics.ResistedCrits; got != casts {
+		t.Errorf("%d of %d Fire Blasts crit at 51%% crit with Fingers of Frost, want all (Shatter's 50%%)", got, casts)
+	}
+
+	// A cast spends the charge a batch late, so a spell in the same batch still reads Frozen.
+	grant()
+	fof.SetStacks(sim, 1)
+	fireBlast.CD.Reset()
+	mage.SetGCDTimer(sim, sim.CurrentTime)
+	if !fireBlast.Cast(sim, target) {
+		t.Fatalf("Fire Blast didn't cast")
+	}
+	if !mage.isTargetFrozen(target) {
+		t.Errorf("the target stopped counting as Frozen at the cast that spends the last charge")
+	}
+	advance(core.SpellBatchWindow)
+	if fof.IsActive() {
+		t.Errorf("Fingers of Frost is still up a batch after its last charge was spent")
+	}
+
+	// The channel spends nothing; each missile that lands spends a charge.
+	grant()
+	for _, tick := range mage.ArcaneMissilesTickSpell {
+		if tick != nil {
+			tick.BonusHitRating += 100 * core.SpellHitRatingPerHitChance
+		}
+	}
+	mage.SetGCDTimer(sim, sim.CurrentTime)
+	if !arcaneMissiles.Cast(sim, target) {
+		t.Fatalf("Arcane Missiles didn't cast")
+	}
+	advance(core.SpellBatchWindow)
+	if got := fof.GetStacks(); got != 2 {
+		t.Errorf("%d Fingers of Frost charges after Arcane Missiles started, want 2", got)
+	}
+	advance(time.Second)
+	if got := fof.GetStacks(); got != 1 {
+		t.Errorf("%d Fingers of Frost charges after the first missile, want 1", got)
+	}
+	advance(time.Second)
+	if fof.IsActive() {
+		t.Errorf("Fingers of Frost is still up after two missiles")
+	}
+}
+
+// Master of Elements gives back its share of the base cost on any Fire or Frost crit, a
+// Clearcasting cast's too (wowsims/forever c999a66b3f).
+func TestMageMasterOfElements(t *testing.T) {
+	// The Fire preset's tree: Arcane Concentration 5, Master of Elements 3.
+	sim, mage := newMageSim(t, "0402205-23550030130135031")
+	target := mage.CurrentTarget
+	fireBlast := topRank(t, "Fire Blast", mage.FireBlast)
+	fireBlast.BonusHitRating += 100 * core.SpellHitRatingPerHitChance
+	fireBlast.BonusCritRating += 100 * core.SpellCritRatingPerCritChance
+
+	mage.SpendMana(sim, 1000, mage.NewManaMetrics(core.ActionID{OtherID: proto.OtherAction_OtherActionNone}))
+	mage.ClearcastingAura.Activate(sim)
+	if got := fireBlast.Cost.GetCurrentCost(); got != 0 {
+		t.Fatalf("Fire Blast costs %.1f with Clearcasting, want 0", got)
+	}
+	before := mage.CurrentMana()
+	mage.SetGCDTimer(sim, sim.CurrentTime)
+	if !fireBlast.Cast(sim, target) {
+		t.Fatalf("Fire Blast didn't cast")
+	}
+	if got, want := mage.CurrentMana()-before, 0.3*fireBlast.Cost.BaseCost; math.Abs(got-want) > 1e-6 {
+		t.Errorf("a free Fire Blast crit gave back %.1f mana, want %.1f (30%% of its base cost)", got, want)
 	}
 }

@@ -130,7 +130,8 @@ func (mage *Mage) getArcaneMissilesTickSpell(rank int) *core.Spell {
 		BonusCoefficient: spellCoeff,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			result := mage.calcMageDamage(sim, target, baseTickDamage, spell)
+			result := spell.CalcDamage(sim, target, baseTickDamage, spell.OutcomeMagicHitAndCrit)
+			mage.spendFingersOfFrostOnMissile(sim, result)
 
 			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
 				spell.DealDamage(sim, result)

@@ -87,7 +87,7 @@ func (mage *Mage) newFrostfireBoltSpellConfig(rank int) core.SpellConfig {
 				bonusCrit = mage.frostfireCombustionCrit
 			}
 			spell.BonusCritRating += bonusCrit
-			result := mage.calcMageDamage(sim, target, baseDamage, spell)
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			spell.BonusCritRating -= bonusCrit
 
 			spell.WaitTravelTime(sim, func(sim *core.Simulation) {

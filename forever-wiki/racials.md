@@ -54,6 +54,7 @@ Classes: Mage, Priest (new), Rogue, Warlock, Warrior.
   - Warlock: Your damaging abilities have their Mana cost reduced by 10% and deal 10% more damage.
   - Mage: Your non-periodic damaging abilities have their Mana cost reduced by 10% and deal 10% more damage.
   - Priest: Your non-periodic damaging or healing abilities have their Mana cost reduced by 10% and deal 10% more damage or healing.
+  - The sim multiplies the 10% off with the other percent cost cuts since 2026-10-23 (it added to them before): each percent cost row is its own factor in game (wowsims/forever fef2bcaebd). With Cataclysm 3/3 a Destruction spell costs 81% under Eureka!, not 80%.
   - Which spells count is set by each class's own Eureka! spell (Rogue 1259812, Warrior 1259813, Mage 1259817, Warlock 1259821, Priest 1259823): a class mask for the cost, one for direct damage and one for periodic damage. Only the Warlock's Drain Life, Drain Soul and Wrack and the Priest's Mind Flay, Penance and Starshards get it on their ticks ("channeled spells do not count as periodics", development notes 2026-10-01). Corruption, the banes, Siphon Life, Incinerate, Shadow Word: Pain, Devouring Plague, Rupture, Garrote and Rend get nothing; Immolate and Holy Fire get it on the hit only. The sim follows the masks (sim/core/racials_forever_eureka.go).
 - Expansive Mind (passive) CHANGED:
   - Mage, Priest, Warlock: Maximum Mana increased by 5%.

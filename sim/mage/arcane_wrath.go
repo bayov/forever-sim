@@ -75,7 +75,7 @@ func (mage *Mage) newArcaneWrathSpellConfig(rank int, cdTimer *core.Timer) core.
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(baseDamageLow, baseDamageHigh) + ArcaneWrathSpellCoeff*ArcaneWrathMaxManaSpellDamage*mage.MaxMana()
-			result := mage.calcMageDamage(sim, target, baseDamage, spell)
+			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
 				spell.DealDamage(sim, result)
 			})

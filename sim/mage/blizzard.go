@@ -98,7 +98,10 @@ func (mage *Mage) newBlizzardSpellConfig(rank int) core.SpellConfig {
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
-					dot.CalcAndDealPeriodicSnapshotDamage(sim, aoeTarget, dot.OutcomeTick)
+					// Shatter's crit, as on the mage's other damage spells.
+					mage.withPersonalCrit(dot.Spell, aoeTarget, func() {
+						dot.CalcAndDealPeriodicSnapshotDamage(sim, aoeTarget, dot.OutcomeTick)
+					})
 
 					if improvedBlizzardProcApplication != nil {
 						improvedBlizzardProcApplication.Cast(sim, aoeTarget)

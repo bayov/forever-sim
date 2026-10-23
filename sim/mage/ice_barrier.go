@@ -32,11 +32,12 @@ const FrigidPowerSpellId = 1326891
 //
 // The shield's effects 2 and 3 raise Frost damage by 3% while it holds, and every cast also gives
 // Frigid Power, 3% more for the full minute however soon the shield breaks. Both take the mask
-// Piercing Ice had, every Frost spell Frostfire Bolt included, and add to the other damage bonuses
-// as Piercing Ice did. The absorb takes 10% of Frost spell power, and Frost Warding's effect 3 (10%
-// a point) raises the whole of it. The only damage a DPS mage takes is the encounter's raid hits
-// (raid_hits.go), so those are what break the shield. A hit the shield takes whole does no damage
-// and so pushes back no cast; the hit that breaks it pushes back as any other does.
+// Piercing Ice had, every Frost spell Frostfire Bolt included. Under Forever each is its own
+// damage factor, as every percent damage row is (wowsims/forever fef2bcaebd). The absorb takes
+// 10% of Frost spell power, and Frost Warding's effect 3 (10% a point) raises the whole of it.
+// The only damage a DPS mage takes is the encounter's raid hits (raid_hits.go), so those are what
+// break the shield. A hit the shield takes whole does no damage and so pushes back no cast; the
+// hit that breaks it pushes back as any other does.
 func (mage *Mage) registerIceBarrierSpell() {
 	if !mage.Talents.IceBarrier {
 		return
@@ -49,9 +50,9 @@ func (mage *Mage) registerIceBarrierSpell() {
 	mage.onMageSpellOfSchool(core.SpellSchoolFrost, func(spell *core.Spell) {
 		frostSpells = append(frostSpells, spell)
 	})
-	addFrostDamage := func(bonus float64) {
+	frostDamage := func(gain bool) {
 		for _, spell := range frostSpells {
-			spell.DamageMultiplierAdditive += bonus
+			mage.changeDamagePercent(spell, 0.03, gain)
 		}
 	}
 
@@ -60,10 +61,10 @@ func (mage *Mage) registerIceBarrierSpell() {
 		Label:    "Frigid Power",
 		Duration: time.Minute,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			addFrostDamage(0.03)
+			frostDamage(true)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			addFrostDamage(-0.03)
+			frostDamage(false)
 		},
 	})
 
@@ -80,10 +81,10 @@ func (mage *Mage) registerIceBarrierSpell() {
 			Label:    fmt.Sprintf("Ice Barrier (Rank %d)", rank),
 			Duration: time.Minute,
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
-				addFrostDamage(0.03)
+				frostDamage(true)
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-				addFrostDamage(-0.03)
+				frostDamage(false)
 				shieldStrength = 0
 				if mage.activeBarrier == aura {
 					mage.activeBarrier = nil

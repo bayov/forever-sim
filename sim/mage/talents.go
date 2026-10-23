@@ -27,6 +27,42 @@ func (mage *Mage) onMageSpellOfSchool(school core.SpellSchool, f func(spell *cor
 	})
 }
 
+// changeCostPercent puts on (gain) or takes off a percent cost modifier on spell, +30 for 30% more.
+// Under Forever each SPELLMOD_COST row multiplies the others (wowsims/forever fef2bcaebd: Improved
+// Wrath with Moonglow leaves a 120-mana Wrath at 45, not 30), and a row of -100% or lower makes the
+// spell free while it is up, whatever the other rows are. The free rows go on Cost.Multiplier, the
+// rest on Cost.Factor. Classic adds them all up.
+func (mage *Mage) changeCostPercent(spell *core.Spell, percent int32, gain bool) {
+	if spell.Cost == nil {
+		return
+	}
+	if !mage.Env.IsForever() || percent <= -100 {
+		spell.Cost.Multiplier += core.TernaryInt32(gain, percent, -percent)
+		return
+	}
+	if gain {
+		spell.Cost.Factor *= 1 + float64(percent)/100
+	} else {
+		spell.Cost.Factor /= 1 + float64(percent)/100
+	}
+}
+
+// changeDamagePercent puts on (gain) or takes off a percent damage modifier on spell, 0.3 for 30%
+// more. Under Forever each SPELLMOD_DAMAGE and SPELLMOD_DOT row is its own factor (wowsims/forever
+// fef2bcaebd and 810101380a: Arcane Power with Arcane Instability 3 is 1.3 x 1.03), so it goes on
+// DamageMultiplier. Classic adds them up.
+func (mage *Mage) changeDamagePercent(spell *core.Spell, bonus float64, gain bool) {
+	if !mage.Env.IsForever() {
+		spell.DamageMultiplierAdditive += core.TernaryFloat64(gain, bonus, -bonus)
+		return
+	}
+	if gain {
+		spell.DamageMultiplier *= 1 + bonus
+	} else {
+		spell.DamageMultiplier /= 1 + bonus
+	}
+}
+
 func (mage *Mage) applyArcaneTalents() {
 	mage.applyArcaneConcentration()
 	mage.applyMissileBarrage()
@@ -100,12 +136,12 @@ func (mage *Mage) applyArcaneTalents() {
 
 	// Arcane Instability: 1% damage and 1% crit with every spell per point.
 	if mage.Talents.ArcaneInstability > 0 {
-		bonusDamageMultiplierAdditive := .01 * float64(mage.Talents.ArcaneInstability)
+		bonusDamage := .01 * float64(mage.Talents.ArcaneInstability)
 		bonusCritRating := 1 * float64(mage.Talents.ArcaneInstability) * core.SpellCritRatingPerCritChance
 
 		mage.OnSpellRegistered(func(spell *core.Spell) {
 			if spell.Flags.Matches(SpellFlagMage) {
-				spell.DamageMultiplierAdditive += bonusDamageMultiplierAdditive
+				mage.changeDamagePercent(spell, bonusDamage, true)
 				spell.BonusCritRating += bonusCritRating
 			}
 		})
@@ -164,6 +200,7 @@ func (mage *Mage) applyFrostTalents() {
 	mage.registerColdSnapCD()
 	mage.registerIceBarrierSpell()
 	mage.applyFingersOfFrost()
+	mage.applyShatter()
 
 	// Elemental Precision: 2% hit with Fire and Frost spells per point, 3 points since the
 	// 2026-10-20 hotfix to 70450 (5 points of 1% before; Classic took 2% off the resist chance).
@@ -182,19 +219,20 @@ func (mage *Mage) applyFrostTalents() {
 		})
 	}
 
-	// Frost Channeling: 5% cheaper Frost spells and 10% less threat per point. The client's
-	// spell mask leaves Frostfire Bolt out.
+	// Frost Channeling: 5% cheaper Frost spells and 10% less threat per point. The cost row's
+	// mask (11160 effect 0: 0xA0000, word 1 0x1000) takes Frostfire Bolt by word 1 bit 12, the
+	// bit Ice Shards and Critical Mass reach it by, and Ice Barrier too.
 	if mage.Talents.FrostChanneling > 0 {
-		manaCostMultiplier := 5 * mage.Talents.FrostChanneling
+		costPercent := -5 * mage.Talents.FrostChanneling
 		threatMultiplier := 1 - .10*float64(mage.Talents.FrostChanneling)
 		mage.onMageSpellOfSchool(core.SpellSchoolFrost, func(spell *core.Spell) {
-			if spell.SpellCode == SpellCode_MageFrostfireBolt {
-				return
-			}
-			if spell.Cost != nil {
-				spell.Cost.Multiplier -= manaCostMultiplier
-			}
+			mage.changeCostPercent(spell, costPercent, true)
 			spell.ThreatMultiplier *= threatMultiplier
+		})
+		mage.OnSpellRegistered(func(spell *core.Spell) {
+			if slices.Contains(IceBarrierSpellId[1:], spell.SpellID) {
+				mage.changeCostPercent(spell, costPercent, true)
+			}
 		})
 	}
 }
@@ -283,16 +321,16 @@ func (mage *Mage) applyMissileBarrage() {
 		OnInit: func(aura *core.Aura, sim *core.Simulation) {
 			arcaneMissiles = core.FilterSlice(mage.ArcaneMissiles, func(spell *core.Spell) bool { return spell != nil })
 		},
-		// The client takes 100% off the cost. Percent cost modifiers add up, so Arcane Power's
-		// 30% is still paid.
+		// The client takes 100% off the cost (400589 effect 2). Under Forever that makes the
+		// missiles free whatever else is up, Arcane Power included.
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			for _, spell := range arcaneMissiles {
-				spell.Cost.Multiplier -= 100
+				mage.changeCostPercent(spell, -100, true)
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			for _, spell := range arcaneMissiles {
-				spell.Cost.Multiplier += 100
+				mage.changeCostPercent(spell, -100, false)
 			}
 		},
 	})
@@ -413,18 +451,14 @@ func (mage *Mage) registerArcanePowerCD() {
 		Duration: time.Second * 15,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			for _, spell := range affectedSpells {
-				spell.DamageMultiplierAdditive += 0.3
-				if spell.Cost != nil {
-					spell.Cost.Multiplier += 30
-				}
+				mage.changeDamagePercent(spell, 0.3, true)
+				mage.changeCostPercent(spell, 30, true)
 			}
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			for _, spell := range affectedSpells {
-				spell.DamageMultiplierAdditive -= 0.3
-				if spell.Cost != nil {
-					spell.Cost.Multiplier -= 30
-				}
+				mage.changeDamagePercent(spell, 0.3, false)
+				mage.changeCostPercent(spell, 30, false)
 			}
 		},
 	})
@@ -542,6 +576,8 @@ func (mage *Mage) applyFireTargetMultipliers() {
 	})
 }
 
+// Master of Elements: Fire and Frost crits give back 10% of the spell's base cost per point.
+// Under Forever a Clearcasting cast's crit does too (wowsims/forever c999a66b3f).
 func (mage *Mage) applyMasterOfElements() {
 	if mage.Talents.MasterOfElements == 0 {
 		return
@@ -560,7 +596,7 @@ func (mage *Mage) applyMasterOfElements() {
 			if !spell.ProcMask.Matches(core.ProcMaskSpellDamage) || !spell.SpellSchool.Matches(core.SpellSchoolFire|core.SpellSchoolFrost) {
 				return
 			}
-			if spell.Cost == nil || spell.CurCast.Cost == 0 {
+			if spell.Cost == nil || spell.Cost.BaseCost == 0 || (!mage.Env.IsForever() && spell.CurCast.Cost == 0) {
 				return
 			}
 			if result.DidCrit() {
@@ -747,7 +783,12 @@ func (mage *Mage) registerColdSnapCD() {
 
 // Fingers of Frost: Chill effects have a 15% chance to make the next spell (two spells at rank 2)
 // within 15 sec act as if the target were Frozen, which turns on Shatter and Ice Lance's bonus.
-// A charge goes when a damage spell finishes casting, as in the SoD sim.
+// As in wowsims/forever (talents_frost.go, 1373a0b96f), from their logs: every damage spell the
+// rotation casts spends a charge a spell batch (10 ms) after it finishes, so a spell cast in the
+// same batch still reads the target as Frozen, and charges granted inside that batch stay full.
+// A channel spends none at its cast (Blizzard casts with charges up spent none); each Arcane
+// Missiles missile that lands spends one as it rolls its damage. The cast that granted the charges
+// spends none of them.
 func (mage *Mage) applyFingersOfFrost() {
 	if mage.Talents.FingersOfFrost == 0 {
 		return
@@ -765,10 +806,22 @@ func (mage *Mage) applyFingersOfFrost() {
 			if aura.RemainingDuration(sim) == aura.Duration {
 				return
 			}
-			if !spell.Flags.Matches(SpellFlagMage) || !spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
+			if !spell.Flags.Matches(SpellFlagMage) || !spell.Flags.Matches(core.SpellFlagAPL) || spell.Flags.Matches(core.SpellFlagChanneled) {
 				return
 			}
-			aura.RemoveStack(sim)
+			if !spell.ProcMask.Matches(core.ProcMaskSpellDamage) {
+				return
+			}
+			grantsAtCast := mage.fingersOfFrostGrants
+			core.StartDelayedAction(sim, core.DelayedActionOptions{
+				DoAt:     sim.CurrentTime + core.SpellBatchWindow,
+				Priority: core.ActionPriorityDOT,
+				OnAction: func(sim *core.Simulation) {
+					if aura.IsActive() && mage.fingersOfFrostGrants == grantsAtCast {
+						aura.RemoveStack(sim)
+					}
+				},
+			})
 		},
 	})
 
@@ -786,6 +839,13 @@ func (mage *Mage) applyFingersOfFrost() {
 	})
 }
 
+// spendFingersOfFrostOnMissile takes the charge an Arcane Missiles missile that lands spends.
+func (mage *Mage) spendFingersOfFrostOnMissile(sim *core.Simulation, result *core.SpellResult) {
+	if mage.FingersOfFrostAura != nil && mage.FingersOfFrostAura.IsActive() && result.Landed() {
+		mage.FingersOfFrostAura.RemoveStack(sim)
+	}
+}
+
 // procFingersOfFrost rolls Fingers of Frost for a chill effect from spell.
 func (mage *Mage) procFingersOfFrost(sim *core.Simulation, spell *core.Spell) {
 	if mage.FingersOfFrostAura == nil {
@@ -798,6 +858,7 @@ func (mage *Mage) procFingersOfFrost(sim *core.Simulation, spell *core.Spell) {
 	if sim.Proc(chance, "Fingers of Frost") {
 		mage.FingersOfFrostAura.Activate(sim)
 		mage.FingersOfFrostAura.SetStacks(sim, mage.FingersOfFrostAura.MaxStacks)
+		mage.fingersOfFrostGrants++
 	}
 }
 
@@ -818,11 +879,30 @@ func (mage *Mage) personalCritRating(spell *core.Spell, target *core.Unit) float
 	return bonus
 }
 
-// calcMageDamage is spell.CalcDamage with the mage's personal crit on the target.
-func (mage *Mage) calcMageDamage(sim *core.Simulation, target *core.Unit, baseDamage float64, spell *core.Spell) *core.SpellResult {
+// applyShatter gives every mage damage spell Shatter's crit while it rolls, as theirs does
+// (wowsims/forever talents_frost.go: the bonus is on each matching spell for its own effects).
+// Blizzard's ticks take it too: theirs are a spell of their own.
+func (mage *Mage) applyShatter() {
+	if mage.Talents.Shatter == 0 {
+		return
+	}
+	mage.OnSpellRegistered(func(spell *core.Spell) {
+		if !spell.Flags.Matches(SpellFlagMage) || !spell.ProcMask.Matches(core.ProcMaskSpellDamage) || spell.ApplyEffects == nil {
+			return
+		}
+		applyEffects := spell.ApplyEffects
+		spell.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+			mage.withPersonalCrit(spell, target, func() {
+				applyEffects(sim, target, spell)
+			})
+		}
+	})
+}
+
+// withPersonalCrit runs f with the mage's personal crit on target added to spell.
+func (mage *Mage) withPersonalCrit(spell *core.Spell, target *core.Unit, f func()) {
 	bonus := mage.personalCritRating(spell, target)
 	spell.BonusCritRating += bonus
-	result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+	f()
 	spell.BonusCritRating -= bonus
-	return result
 }

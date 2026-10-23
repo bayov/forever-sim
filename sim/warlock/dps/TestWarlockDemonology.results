@@ -123,17 +123,17 @@ dps_results: {
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-Doomcaller'sAttire"
  value: {
-  dps: 1497.052
-  tps: 1319.66225
+  dps: 1496.06183
+  tps: 1318.67823
   hps: 3.2135
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-FelheartRaiment"
  value: {
-  dps: 1245.51417
-  tps: 1091.66651
-  hps: 3.725
+  dps: 1246.8565
+  tps: 1092.91111
+  hps: 3.529
  }
 }
 dps_results: {
