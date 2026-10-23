@@ -781,7 +781,8 @@ func retributionAura(character *Character, spellID int32, damage float64, bonusC
 		ActionID:    actionID,
 		SpellSchool: SpellSchoolHoly,
 		ProcMask:    ProcMaskEmpty,
-		Flags:       SpellFlagBinary | SpellFlagNoOnCastComplete | SpellFlagPassiveSpell,
+		// Forever's damage shields are never partially resisted (wowsims/forever 78adad9607).
+		Flags: SpellFlagBinary | SpellFlagNoPartialResist | SpellFlagNoOnCastComplete | SpellFlagPassiveSpell,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
@@ -835,7 +836,8 @@ func ThornsAura(character *Character, points int32) *Aura {
 		ActionID:    actionID,
 		SpellSchool: SpellSchoolNature,
 		ProcMask:    ProcMaskEmpty,
-		Flags:       SpellFlagBinary | SpellFlagNoOnCastComplete | SpellFlagPassiveSpell,
+		// Forever's damage shields are never partially resisted (wowsims/forever 78adad9607).
+		Flags: SpellFlagBinary | SpellFlagNoPartialResist | SpellFlagNoOnCastComplete | SpellFlagPassiveSpell,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,

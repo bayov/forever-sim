@@ -275,6 +275,21 @@ func (spell *Spell) CalcOutcome(sim *Simulation, target *Unit, outcomeApplier Ou
 	return result
 }
 
+// applyOutcomeUnlessFullyResisted runs the outcome applier, unless a Forever resist took the whole
+// hit. That is a miss, as a binary spell's full resist is: it rolls no hit or crit, lands nothing and
+// counts one miss (wowsims/forever 2c1f50c90e). It returns the partial outcome left to restore.
+func (spell *Spell) applyOutcomeUnlessFullyResisted(sim *Simulation, result *SpellResult, attackTable *AttackTable, outcomeApplier OutcomeApplier, partialOutcome HitOutcome) HitOutcome {
+	if partialOutcome.ResistedTenths() < 10 {
+		outcomeApplier(sim, result, attackTable)
+		return partialOutcome
+	}
+	result.Outcome = OutcomeMiss
+	result.Damage = 0
+	result.ResistanceMultiplier = 1
+	spell.SpellMetrics[result.Target.UnitIndex].Misses++
+	return OutcomeEmpty
+}
+
 func (spell *Spell) calcDamageInternal(sim *Simulation, target *Unit, baseDamage float64, attackerMultiplier float64, isPeriodic bool, outcomeApplier OutcomeApplier) *SpellResult {
 	attackTable := spell.Unit.AttackTables[target.UnitIndex][spell.CastType]
 
@@ -294,7 +309,7 @@ func (spell *Spell) calcDamageInternal(sim *Simulation, target *Unit, baseDamage
 		}
 
 		// outcome applier overwrites the Outcome
-		outcomeApplier(sim, result, attackTable)
+		partialOutcome = spell.applyOutcomeUnlessFullyResisted(sim, result, attackTable, outcomeApplier, partialOutcome)
 
 		// Restore partial outcome
 		if partialOutcome != OutcomeEmpty {
@@ -316,7 +331,7 @@ func (spell *Spell) calcDamageInternal(sim *Simulation, target *Unit, baseDamage
 		}
 
 		// outcome applier overwrites the Outcome
-		outcomeApplier(sim, result, attackTable)
+		partialOutcome = spell.applyOutcomeUnlessFullyResisted(sim, result, attackTable, outcomeApplier, partialOutcome)
 
 		// Restore partial outcome
 		if partialOutcome != OutcomeEmpty {

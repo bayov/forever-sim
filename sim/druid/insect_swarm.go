@@ -48,7 +48,10 @@ func (druid *Druid) registerInsectSwarmSpell() {
 				SpellSchool: core.SpellSchoolNature,
 				DefenseType: core.DefenseTypeMagic,
 				ProcMask:    core.ProcMaskSpellDamage,
-				Flags:       SpellFlagOmen | core.SpellFlagAPL | core.SpellFlagBinary,
+				// Under Forever its ticks meet the target's full resistance, where other DoTs' meet a
+				// tenth (wowsims/forever a59a3e4931: 21 of 22 ticks resisted, 20.8 expected at the full
+				// resistance).
+				Flags: SpellFlagOmen | core.SpellFlagAPL | core.SpellFlagBinary | core.SpellFlagFullResistanceTicks,
 
 				ManaCost: core.ManaCostOptions{
 					FlatCost: manaCost,

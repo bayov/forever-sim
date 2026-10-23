@@ -530,6 +530,7 @@ No assumptions of its own. The rogue's scenarios are the shared ones:
 - **Settings:** Low (the sim now) is Classic's 6% at +3, relabelled "bosses keep it", the only reading the beta leaves room for. Expected is none (the beta). A 10%-step setting isn't needed: step size changes the variance, not the mean, and WotLK's 5 resistance a level would give 4.5% at +3, close to Low. The default stays on the sim's value: the user asked for more verification (Q1, 2026-10-16), with the settling test in notes.md.
 - **Sensitivity (10k iterations, seed 1, 180 s, None against 6%):** Fire +7.1%, Arcane +6.3%, Elemental +6.4%, Balance +5.4%, Destruction +5.2%, Affliction +5.3%, Ret +4.2%, Shadow +3.8%, Enhancement +3.0%, Frost 0 (Frostbolt is binary).
 - **Knob (to add):** `core.Assume("level_partial_resist", AverageMagicPartialResistPerLevelMultiplier)` at both uses.
+- **Update 2026-10-23:** settled as none (user ruling 2026-10-16), and wowsims/forever's logs agree (ed4b4e93e5: no level-based partial resist in thousands of hits on mobs 1 to 9 levels up). The resist from school resistance now follows wowsims/forever's model (R / (|R| + 9L), 10% steps, Spell Penetration adding damage past the resistance; see notes.md). Against the 0-resistance boss it moves only builds with Spell Penetration.
 
 ### Pending rows added 2026-10-16 (assumptions audit, orchestrator's request)
 

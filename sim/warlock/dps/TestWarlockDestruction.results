@@ -123,8 +123,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlockDestruction-Phase1-AllItems-Doomcaller'sAttire"
  value: {
-  dps: 1306.42533
-  tps: 972.01475
+  dps: 1321.69433
+  tps: 984.23153
   hps: 2.30083
  }
 }
@@ -179,8 +179,8 @@ dps_results: {
 dps_results: {
  key: "TestWarlockDestruction-Phase1-AllItems-PlagueheartRaiment"
  value: {
-  dps: 1315.15817
-  tps: 905.51312
+  dps: 1319.8525
+  tps: 909.16376
   hps: 2.22783
  }
 }

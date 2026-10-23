@@ -13,13 +13,15 @@ import (
 // TestOrcShamanEarthShockResists checks what a target's Nature resistance does to our Earth
 // Shock (shaman_audit.md 7.8).
 //
-// Under Forever it takes part of the damage, as it does for Lightning Bolt. On the beta the
-// Elder Cloud Serpents took 30% off every Earth Shock that landed on them. Under Classic
-// Earth Shock is binary. It never loses part of its damage, but it misses in full more often.
+// It is binary under both rulesets, so it misses in full more often. Under Forever one that lands
+// still takes part of the damage: on the beta the Elder Cloud Serpents fully resisted 3 of 9 Earth
+// Shocks and took 30% off every one that landed. Under Classic it never loses part of its damage.
 //
-// A level 30 target with 75 Nature resistance has half the resistance cap at our level. Then
-// 88% of the spells that can be partly resisted lose part of their damage. A binary spell
-// lands on 96% times 1 - 0.75 * 0.5 of the rolls, which is 60%.
+// Under Forever a level 30 target with 75 Nature resistance resists 75 / (75 + 9 * 30), 21.7%, of
+// our damage on average. Earth Shock lands on 96% times 1 - 0.217 of the rolls, 75%, and the roll
+// in 10% steps around the average always takes at least 10% off. Under Classic the target has half
+// the resistance cap at our level, and a binary spell lands on 96% times 1 - 0.75 * 0.5 of the
+// rolls, which is 60%.
 func TestOrcShamanEarthShockResists(t *testing.T) {
 	const rolls = 2000
 	for _, c := range []struct {
@@ -27,7 +29,7 @@ func TestOrcShamanEarthShockResists(t *testing.T) {
 		landed  float64
 		partial float64
 	}{
-		{proto.Ruleset_RulesetForever, 0.96, 0.88},
+		{proto.Ruleset_RulesetForever, 0.96 * (1 - 75.0/345), 1},
 		{proto.Ruleset_RulesetClassic, 0.6, 0},
 	} {
 		target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)

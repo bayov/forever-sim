@@ -38,7 +38,7 @@ export const hitOutcome = (ddl: DamageDealtLog): { label: string; kind: HitOutco
 		: ddl.tick
 		? 'Tick'
 		: 'Hit';
-	const resisted = ddl.partialResist1_4 ? 25 : ddl.partialResist2_4 ? 50 : ddl.partialResist3_4 ? 75 : 0;
+	const resisted = ddl.resistPercent;
 	const prefix = ddl.isHealing() ? 'Heal ' : ddl.isShielding() ? 'Shield ' : '';
 	return { label: prefix + label, kind: outcomeKinds[label], resisted };
 };

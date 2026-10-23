@@ -1,6 +1,7 @@
 package retribution
 
 import (
+	"math"
 	"testing"
 
 	"github.com/wowsims/classic/sim/core"
@@ -79,7 +80,8 @@ func TestHolyStrikeDamage(t *testing.T) {
 	if hits < 1000 {
 		t.Fatalf("only %d hits", hits)
 	}
-	if minHit < lo-1e-6 || maxHit > hi+1e-6 {
+	// Each hit is rounded to whole points, up or down at random.
+	if minHit < math.Floor(lo)-1e-6 || maxHit > math.Ceil(hi)+1e-6 {
 		t.Errorf("hits %.1f to %.1f, want within %.1f to %.1f", minHit, maxHit, lo, hi)
 	}
 	if minHit > lo+5 || maxHit < hi-5 {

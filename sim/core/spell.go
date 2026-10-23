@@ -143,6 +143,7 @@ type Spell struct {
 	// Optional field. Calculates expected average damage.
 	expectedInitialDamageInternal ExpectedDamageCalculator
 	expectedTickDamageInternal    ExpectedDamageCalculator
+	expecting                     bool // Inside an expected damage call, which takes a Forever resist's average instead of rolling it.
 
 	// The current or most recent cast data.
 	CurCast    Cast
@@ -632,7 +633,8 @@ func (spell *Spell) ApplyAOEThreat(threatAmount float64) {
 }
 
 func (spell *Spell) finalizeExpectedDamage(result *SpellResult) {
-	if !spell.SpellSchool.Matches(SpellSchoolPhysical) {
+	// Under Forever the resist already took its average.
+	if !spell.SpellSchool.Matches(SpellSchoolPhysical) && !spell.Unit.foreverResists() {
 		result.Damage /= result.ResistanceMultiplier
 		averagePartialResistMultiplier := 1.0 - spell.Unit.partialResistPerLevel()*float64(result.Target.Level-spell.Unit.Level)
 		result.Damage *= averagePartialResistMultiplier
@@ -640,20 +642,21 @@ func (spell *Spell) finalizeExpectedDamage(result *SpellResult) {
 	}
 	result.inUse = false
 }
-func (spell *Spell) ExpectedInitialDamage(sim *Simulation, target *Unit) float64 {
-	result := spell.expectedInitialDamageInternal(sim, target, spell, false)
+func (spell *Spell) expectedDamage(sim *Simulation, target *Unit, calculator ExpectedDamageCalculator, useSnapshot bool) float64 {
+	spell.expecting = true
+	result := calculator(sim, target, spell, useSnapshot)
+	spell.expecting = false
 	spell.finalizeExpectedDamage(result)
 	return result.Damage
+}
+func (spell *Spell) ExpectedInitialDamage(sim *Simulation, target *Unit) float64 {
+	return spell.expectedDamage(sim, target, spell.expectedInitialDamageInternal, false)
 }
 func (spell *Spell) ExpectedTickDamage(sim *Simulation, target *Unit) float64 {
-	result := spell.expectedTickDamageInternal(sim, target, spell, false)
-	spell.finalizeExpectedDamage(result)
-	return result.Damage
+	return spell.expectedDamage(sim, target, spell.expectedTickDamageInternal, false)
 }
 func (spell *Spell) ExpectedTickDamageFromCurrentSnapshot(sim *Simulation, target *Unit) float64 {
-	result := spell.expectedTickDamageInternal(sim, target, spell, true)
-	spell.finalizeExpectedDamage(result)
-	return result.Damage
+	return spell.expectedDamage(sim, target, spell.expectedTickDamageInternal, true)
 }
 
 // Time until either the cast is finished or GCD is ready again, whichever is longer

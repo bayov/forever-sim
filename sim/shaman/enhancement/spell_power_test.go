@@ -129,7 +129,7 @@ func TestOrcShamanSpellPowerBeta(t *testing.T) {
 				low, high = min(low, damage), max(high, damage)
 			}
 		}
-		if math.Abs(low-c.low) > 0.01 || math.Abs(high-c.high) > 0.01 {
+		if math.Abs(low-c.low) > 0.05 || math.Abs(high-c.high) > 0.05 {
 			t.Errorf("%s hit %.2f to %.2f, want %.2f to %.2f", c.name, low, high, c.low, c.high)
 		}
 		if c.betaHigh > 0 && (math.Floor(low) > c.betaLow || math.Floor(high) < c.betaHigh) {

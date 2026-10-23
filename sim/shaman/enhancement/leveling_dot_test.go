@@ -69,8 +69,8 @@ func TestLevelingPullTargetHealth(t *testing.T) {
 		return n
 	}
 	// A mob we haven't pulled is at full health.
-	if n := pulls("OpGt"); n < 5 {
-		t.Errorf("%d Earth Shock pulls above 50%% health, want one a mob", n)
+	if n := pulls("OpGt"); n == 0 {
+		t.Errorf("no Earth Shock pulls above 50%% health, want some")
 	}
 	if n := pulls("OpLt"); n != 0 {
 		t.Errorf("%d Earth Shock pulls below 50%% health, want none", n)

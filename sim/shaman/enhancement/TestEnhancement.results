@@ -449,8 +449,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Phase1-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 1191.28883
-  tps: 878.76353
+  dps: 1193.09117
+  tps: 880.18378
  }
 }
 dps_results: {
@@ -1065,8 +1065,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Phase2-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 1235.57867
-  tps: 911.43319
+  dps: 1237.39133
+  tps: 912.86936
  }
 }
 dps_results: {
@@ -1345,8 +1345,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Phase3-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 1251.46117
-  tps: 922.36748
+  dps: 1253.37083
+  tps: 923.90629
  }
 }
 dps_results: {
@@ -1625,8 +1625,8 @@ dps_results: {
 dps_results: {
  key: "TestEnhancement-Phase5-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 1291.32017
-  tps: 951.26593
+  dps: 1293.07983
+  tps: 952.60176
  }
 }
 dps_results: {

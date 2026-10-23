@@ -346,9 +346,9 @@ export class DamageDealtLog extends SimLog {
 	readonly block: boolean;
 	readonly blockedCrit: boolean;
 	readonly tick: boolean;
-	readonly partialResist1_4: boolean;
-	readonly partialResist2_4: boolean;
-	readonly partialResist3_4: boolean;
+	// The share of the damage a partial resist took, in percent: 25, 50 or 75 under Classic, a 10%
+	// step under Forever, 0 for none.
+	readonly resistPercent: number;
 
 	constructor(
 		params: SimLogParams,
@@ -363,9 +363,7 @@ export class DamageDealtLog extends SimLog {
 		block: boolean,
 		blockedCrit: boolean,
 		tick: boolean,
-		partialResist1_4: boolean,
-		partialResist2_4: boolean,
-		partialResist3_4: boolean,
+		resistPercent: number,
 	) {
 		super(params);
 		this.amount = amount;
@@ -380,9 +378,7 @@ export class DamageDealtLog extends SimLog {
 		this.crit = crit;
 		this.crush = crush;
 		this.tick = tick;
-		this.partialResist1_4 = partialResist1_4;
-		this.partialResist2_4 = partialResist2_4;
-		this.partialResist3_4 = partialResist3_4;
+		this.resistPercent = resistPercent;
 	}
 
 	isDamage(): boolean {
@@ -427,15 +423,7 @@ export class DamageDealtLog extends SimLog {
 					<>
 						{` `}
 						for <strong className="text-danger">{this.amount.toFixed(2)} damage</strong>
-						{this.partialResist1_4 ? (
-							<> (25% Resist)</>
-						) : this.partialResist2_4 ? (
-							<> (50% Resist)</>
-						) : this.partialResist3_4 ? (
-							<> (75% Resist)</>
-						) : (
-							''
-						)}
+						{this.resistPercent > 0 ? <> ({this.resistPercent}% Resist)</> : ''}
 						.
 					</>
 				) : (
@@ -484,9 +472,7 @@ export class DamageDealtLog extends SimLog {
 						match[3] == 'Block',
 						match[3] == 'BlockedCrit',
 						Boolean(match[2]) && match[2].includes('tick'),
-						match[13] == '25',
-						match[13] == '50',
-						match[13] == '75',
+						match[13] ? parseInt(match[13]) : 0,
 					);
 				});
 		} else {

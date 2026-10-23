@@ -1090,7 +1090,8 @@ func init() {
 			SpellSchool:      core.SpellSchoolFire,
 			DefenseType:      core.DefenseTypeMagic,
 			ProcMask:         core.ProcMaskEmpty,
-			BonusCoefficient: 1, // Only the shield portion has scaling
+			Flags:            core.SpellFlagNoPartialResist, // Forever's damage shields are never partially resisted (wowsims/forever 78adad9607).
+			BonusCoefficient: 1,                             // Only the shield portion has scaling
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
@@ -2142,6 +2143,7 @@ func init() {
 			ActionID:    immolationActionID,
 			SpellSchool: core.SpellSchoolFire,
 			ProcMask:    core.ProcMaskEmpty,
+			Flags:       core.SpellFlagNoPartialResist, // Forever's damage shields are never partially resisted (wowsims/forever 78adad9607).
 
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
@@ -3649,7 +3651,8 @@ func thornsArcaneDamageEffect(agent core.Agent, itemID int32, itemName string, d
 		ActionID:    core.ActionID{ItemID: itemID},
 		SpellSchool: core.SpellSchoolArcane,
 		ProcMask:    core.ProcMaskEmpty,
-		Flags:       core.SpellFlagBinary | core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell,
+		// Forever's damage shields are never partially resisted (wowsims/forever 78adad9607).
+		Flags: core.SpellFlagBinary | core.SpellFlagNoPartialResist | core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,

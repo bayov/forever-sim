@@ -1,5 +1,7 @@
 package core
 
+import "fmt"
+
 type ProcMask uint32
 
 // Returns whether there is any overlap between the given masks.
@@ -111,11 +113,18 @@ const (
 	OutcomePartial1_4 // 1/4 of the spell was resisted.
 	OutcomePartial2_4 // 2/4 of the spell was resisted.
 	OutcomePartial3_4 // 3/4 of the spell was resisted.
+
+	// Forever resists in 10% steps. These four bits hold the resisted tenths, 1 to 10, as a number.
+	OutcomePartialTenths1
+	OutcomePartialTenths2
+	OutcomePartialTenths4
+	OutcomePartialTenths8
 )
 
 const (
-	OutcomePartial = OutcomePartial1_4 | OutcomePartial2_4 | OutcomePartial3_4
-	OutcomeLanded  = OutcomeHit | OutcomeCrit | OutcomeCrush | OutcomeGlance | OutcomeBlock
+	OutcomePartialTenths = OutcomePartialTenths1 | OutcomePartialTenths2 | OutcomePartialTenths4 | OutcomePartialTenths8
+	OutcomePartial       = OutcomePartial1_4 | OutcomePartial2_4 | OutcomePartial3_4 | OutcomePartialTenths
+	OutcomeLanded        = OutcomeHit | OutcomeCrit | OutcomeCrush | OutcomeGlance | OutcomeBlock
 )
 
 func (ho HitOutcome) String() string {
@@ -142,8 +151,20 @@ func (ho HitOutcome) String() string {
 	}
 }
 
+// partialResistOutcome is the outcome of a Forever resist of the given tenths of the damage.
+func partialResistOutcome(tenths int) HitOutcome {
+	return HitOutcome(tenths) * OutcomePartialTenths1
+}
+
+// ResistedTenths is how many tenths of the damage a Forever resist took, 0 for none.
+func (ho HitOutcome) ResistedTenths() int {
+	return int((ho & OutcomePartialTenths) / OutcomePartialTenths1)
+}
+
 func (ho HitOutcome) PartialResistString() string {
-	if ho.Matches(OutcomePartial1_4) {
+	if tenths := ho.ResistedTenths(); tenths > 0 {
+		return fmt.Sprintf(" (%d%% Resist)", 10*tenths)
+	} else if ho.Matches(OutcomePartial1_4) {
 		return " (25% Resist)"
 	} else if ho.Matches(OutcomePartial2_4) {
 		return " (50% Resist)"
@@ -167,7 +188,7 @@ const (
 	SpellFlagIgnoreResists           SpellFlag = 1 << iota // skip spell resist/armor
 	SpellFlagIgnoreTargetModifiers                         // skip target damage modifiers
 	SpellFlagIgnoreAttackerModifiers                       // skip attacker damage modifiers
-	SpellFlagBinary                                        // Does not do partial resists or blocks and could need a different hit roll.
+	SpellFlagBinary                                        // Resisted in full on its hit roll instead of in part, and fully blocked. Under Forever a binary spell that lands still rolls a partial resist.
 	SpellFlagChanneled                                     // Spell is channeled
 	SpellFlagDisease                                       // Spell is categorized as disease
 	SpellFlagPoison                                        // Spell is categorized as poison
@@ -195,6 +216,8 @@ const (
 	SpellFlagNoPeriodicCrit                                // Indicates this spell's periodic damage can never crit, even under rulesets where dots normally can
 	SpellFlagCastFromTotem                                 // Indicates this spell goes off from a totem, not the caster (Forever's Fire Nova), so effects on the caster's next spell cast skip it
 	SpellFlagCastWhileCasting                              // Indicates this spell can go off while the caster is casting another (Forever's Auto Shot)
+	SpellFlagFullResistanceTicks                           // Under Forever its ticks meet the target's full resistance, as channel ticks do, where other ticks meet a tenth (Insect Swarm)
+	SpellFlagNoPartialResist                               // Under Forever its hits never lose damage to a partial resist or gain the Spell Penetration bonus (damage shields)
 
 	// Used to let agents categorize their spells.
 	SpellFlagAgentReserved1

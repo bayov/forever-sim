@@ -1,6 +1,8 @@
 package core
 
 import (
+	"math"
+
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
@@ -51,6 +53,10 @@ func (spell *Spell) ResistanceMultiplier(sim *Simulation, isPeriodic bool, attac
 	}
 
 	// Magical resistance.
+	if attackTable.Attacker.foreverResists() {
+		return spell.foreverResistanceMultiplier(sim, isPeriodic, attackTable)
+	}
+
 	if spell.Flags.Matches(SpellFlagBinary) {
 		return 1, OutcomeEmpty
 	}
@@ -141,18 +147,135 @@ func (unit *Unit) GetResistanceForSchool(schoolIndex stats.SchoolIndex) float64 
 // https://royalgiraffe.github.io/resist-guide
 
 // partialResistPerLevel is the average partial resist a non-binary spell meets for each level its
-// target is above the caster: Classic's 2%, 6% against a level 63 boss. Forever has none. Its
-// character sheet gives the average resist as 0.75 x resistance / (5 x caster level), school
-// resistance only, with no level term (client UI Camelot/PaperDollFrameStats.lua, every beta build
-// since 69876), and about 520 beta hits on normal mobs 3 to 5 levels up were never partly resisted
-// while mobs with school resistance were, in 10% steps. A boss log would confirm it for bosses
-// (user ruling 2026-10-16: no level partial resist, the one value of report assumption
-// level_partial_resist).
+// target is above the caster: Classic's 2%, 6% against a level 63 boss. Forever has none: about 520
+// beta hits on normal mobs 3 to 5 levels up were never partly resisted while mobs with school
+// resistance were (user ruling 2026-10-16, report assumption level_partial_resist), and
+// wowsims/forever's logs agree (ed4b4e93e5: none in thousands of hits on mobs 1 to 9 levels up).
 func (unit *Unit) partialResistPerLevel() float64 {
-	if unit.Env != nil && unit.Env.IsForever() {
+	if unit.foreverResists() {
 		return 0
 	}
 	return AverageMagicPartialResistPerLevelMultiplier
+}
+
+// foreverResists is whether the unit's spells meet Forever's resistance model.
+func (unit *Unit) foreverResists() bool {
+	return unit.Env != nil && unit.Env.IsForever()
+}
+
+// schoolResistance is the target's resistance to the spell's school, the lowest of a multi school
+// spell's schools.
+func (unit *Unit) schoolResistance(spell *Spell) float64 {
+	if !spell.SchoolIndex.IsMultiSchool() {
+		return unit.GetResistanceForSchool(spell.SchoolIndex)
+	}
+	resistance := 1000.0
+	for _, baseSchoolIndex := range spell.SchoolBaseIndices {
+		resistance = min(resistance, unit.GetResistanceForSchool(baseSchoolIndex))
+	}
+	return resistance
+}
+
+// foreverResistanceMultiplier is a magic hit's resist under Forever: a roll in 10% steps around the
+// target's average resist (wowsims/forever 679ca6f875, chi-squared fits of their combat logs; our
+// Elder Cloud Serpents took 20% or 30%, never 25 or 50%). A binary spell that lands rolls it too
+// (78adad9607: Frostbolt 120 partials and 57 bonus hits in 1,166). Spell Penetration beyond the
+// resistance makes the average negative, and the same roll adds 10% or 20% damage (679ca6f875: a mage
+// with 15 Spell Penetration gained 10 or 20% on 1,671 of 2,960 hits on mobs with no resistance).
+func (spell *Spell) foreverResistanceMultiplier(sim *Simulation, isPeriodic bool, attackTable *AttackTable) (float64, HitOutcome) {
+	if spell.Flags.Matches(SpellFlagNoPartialResist) {
+		return 1, OutcomeEmpty
+	}
+
+	averageResist := attackTable.Defender.foreverAverageResist(spell, attackTable.Attacker, isPeriodic)
+	if averageResist == 0 {
+		return 1, OutcomeEmpty
+	}
+	// Expected damage takes the average, which is the roll's mean.
+	if spell.expecting {
+		return 1 - averageResist, OutcomeEmpty
+	}
+
+	tenths := rollResistTenths(sim, math.Abs(averageResist))
+	if tenths == 0 {
+		return 1, OutcomeEmpty
+	}
+	if averageResist < 0 {
+		return 1 + 0.1*float64(tenths), OutcomeEmpty
+	}
+	return 1 - 0.1*float64(tenths), partialResistOutcome(tenths)
+}
+
+// foreverAverageResist is the average share of a spell's damage the target resists under Forever,
+// R / (|R| + 9L) for the caster's level L, with the caster's Spell Penetration taken off R. The
+// target's own resistance stops at 0, so a debuff that takes it below 0 adds nothing, and Holy has
+// none. A target above the caster's level resists no more for its level.
+//
+// 9L fits wowsims/forever's Spell Penetration logs at levels 20 to 30 (8249a6d0e3: K = 179 at level
+// 20 up to 270 at 30, chi-squared 3.0 over the four levels, where 5L + 80 gives 19.5). A log at 40 to
+// 60 would tell it from creature curves that part from it above 30. The client's character sheet
+// shows 0.75 R / 5L (Camelot/PaperDollFrameStats.lua since build 69876), which the logs would fit only
+// with the caster near level 30 (679ca6f875).
+//
+// A DoT's tick, a hybrid's included, meets a tenth of the resistance. Channel ticks and spells
+// flagged SpellFlagFullResistanceTicks meet the full amount (a59a3e4931: Serpent Sting 7 of 36 ticks
+// resisted, 7.5 expected at a tenth and 35.6 at the full amount; Mind Flay 9 of 22; Insect Swarm 21
+// of 22).
+func (unit *Unit) foreverAverageResist(spell *Spell, attacker *Unit, isPeriodic bool) float64 {
+	if spell.SchoolIndex <= stats.SchoolIndexPhysical || spell.SpellSchool.Matches(SpellSchoolHoly) {
+		return 0
+	}
+
+	resistance := max(0, unit.schoolResistance(spell)) - attacker.stats[stats.SpellPenetration]
+	averageResist := resistance / (math.Abs(resistance) + 9*float64(attacker.Level))
+
+	if isPeriodic && !spell.Flags.Matches(SpellFlagChanneled|SpellFlagFullResistanceTicks) {
+		averageResist /= 10
+	}
+	return averageResist
+}
+
+// rollResistTenths is Forever's partial resist roll, in tenths of the damage, around the average
+// share a (wowsims/forever 679ca6f875; their Thunderhawks fit it at chi-squared 4.5 and 4.9 on 2
+// degrees of freedom). Up to a = 10% it gives 0, 1 or 2 tenths at 1 - 7.5a, 5a and 2.5a, from 90% the
+// same mirrored from 10 tenths, and in between each 10% step x within 20% of a at 0.5 - 2.5|x - a|.
+// Its mean is a.
+func rollResistTenths(sim *Simulation, a float64) int {
+	roll := sim.RandomFloat("Partial Resist")
+	if a <= 0.1 {
+		switch {
+		case roll < 1-7.5*a:
+			return 0
+		case roll < 1-2.5*a:
+			return 1
+		default:
+			return 2
+		}
+	}
+	if a >= 0.9 {
+		switch {
+		case roll < 1-7.5*(1-a):
+			return 10
+		case roll < 1-2.5*(1-a):
+			return 9
+		default:
+			return 8
+		}
+	}
+
+	cumulative, last := 0.0, 0
+	for tenths := 0; tenths <= 10; tenths++ {
+		chance := 0.5 - 2.5*math.Abs(float64(tenths)/10-a)
+		if chance <= 0 {
+			continue
+		}
+		cumulative += chance
+		last = tenths
+		if roll < cumulative {
+			return tenths
+		}
+	}
+	return last
 }
 
 func (unit *Unit) resistCoeff(spell *Spell, attacker *Unit, binary bool, pureDot bool) float64 {
@@ -160,22 +283,7 @@ func (unit *Unit) resistCoeff(spell *Spell, attacker *Unit, binary bool, pureDot
 		return 0
 	}
 
-	var resistance float64
-
-	if spell.SchoolIndex.IsMultiSchool() {
-		// Multi school: Choose the lowest resistance available.
-		resistance = 1000.0
-		for _, baseSchoolIndex := range spell.SchoolBaseIndices {
-			resiVal := unit.GetResistanceForSchool(baseSchoolIndex)
-			if resiVal < resistance {
-				resistance = resiVal
-			}
-		}
-	} else {
-		resistance = unit.GetResistanceForSchool(spell.SchoolIndex)
-	}
-
-	resistance = max(0, resistance-attacker.stats[stats.SpellPenetration])
+	resistance := max(0, unit.schoolResistance(spell)-attacker.stats[stats.SpellPenetration])
 
 	resistanceCap := float64(attacker.Level * 5)
 	resistanceCoef := resistance / resistanceCap
@@ -195,7 +303,13 @@ func (unit *Unit) resistCoeff(spell *Spell, attacker *Unit, binary bool, pureDot
 	return min(1, resistanceCoef)
 }
 
+// binaryHitChance is the share of a binary spell's hit rolls its target doesn't resist in full. Under
+// Forever that takes the average resist as the chance (wowsims/forever 679ca6f875: Insect Swarm 3 of 10
+// fully resisted by Grimtotems that took 34.9% off Wrath).
 func (unit *Unit) binaryHitChance(spell *Spell, attacker *Unit) float64 {
+	if attacker.foreverResists() {
+		return 1 - max(0, unit.foreverAverageResist(spell, attacker, false))
+	}
 	resistCoeff := unit.resistCoeff(spell, attacker, true, false)
 	return 1 - 0.75*resistCoeff
 }

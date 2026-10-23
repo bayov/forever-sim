@@ -155,8 +155,8 @@ dps_results: {
 dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 360.02667
-  tps: 597.06709
+  dps: 360.88867
+  tps: 598.78236
  }
 }
 dps_results: {

@@ -645,8 +645,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase1-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 536.9455
-  tps: 434.80458
+  dps: 539.565
+  tps: 436.746
  }
 }
 dps_results: {
@@ -841,8 +841,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase2-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 561.4685
-  tps: 457.63774
+  dps: 564.11267
+  tps: 459.60735
  }
 }
 dps_results: {
@@ -1037,8 +1037,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase3-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 610.9445
-  tps: 494.6583
+  dps: 614.2035
+  tps: 497.15893
  }
 }
 dps_results: {
@@ -1233,8 +1233,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase4-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 623.7775
-  tps: 503.84734
+  dps: 627.15967
+  tps: 506.46003
  }
 }
 dps_results: {
@@ -1429,8 +1429,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase5-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 671.11233
-  tps: 539.96346
+  dps: 674.62333
+  tps: 542.63582
  }
 }
 dps_results: {
@@ -1625,8 +1625,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase6-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 697.723
-  tps: 562.52002
+  dps: 701.50083
+  tps: 565.43162
  }
 }
 dps_results: {

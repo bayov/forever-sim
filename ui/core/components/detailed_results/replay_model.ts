@@ -812,8 +812,8 @@ const buildSct = (
 		if (logs.length > 1) notes.push(`×${logs.length}`);
 		if (landed.some(log => log.glance)) notes.push('glancing');
 		if (landed.some(log => log.block || log.blockedCrit)) notes.push('blocked');
-		const resist = landed.find(log => log.partialResist1_4 || log.partialResist2_4 || log.partialResist3_4);
-		if (resist) notes.push(`${resist.partialResist1_4 ? 25 : resist.partialResist2_4 ? 50 : 75}% resisted`);
+		const resist = landed.find(log => log.resistPercent > 0);
+		if (resist) notes.push(`${resist.resistPercent}% resisted`);
 		events.push({
 			time: first.timestamp,
 			side: 'out',
