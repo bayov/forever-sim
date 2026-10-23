@@ -312,9 +312,9 @@ export const DefaultOptions = Options.create({
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorSpellblastingPotion,
-	// The natural flask (standards 11, 2026-10-23): Aggression, 54 / 52 / 69 behind the Flask of Supreme
-	// Power on Shadow / Shadow + Holy / Smite at 180 sec, ahead of the other three (the hit is capped).
-	flask: Flask.FlaskOfNaturalAggression,
+	// The fight is in a natural flask zone (standards 11), but the best natural flask, Aggression, is 54
+	// / 52 / 69 behind the Flask of Supreme Power on Shadow / Shadow + Holy / Smite at 180 sec.
+	flask: Flask.FlaskOfSupremePower,
 	food: Food.FoodLobsterStew,
 	intellectElixir: IntellectElixir.ElixirOfTheOwl,
 	mainHandImbue: WeaponImbue.WizardOil,

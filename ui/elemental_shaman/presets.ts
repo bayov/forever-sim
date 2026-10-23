@@ -239,13 +239,14 @@ export const DefaultOptions = ElementalShamanOptions.create({});
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	// The Caustic Smog Potion (range 20) is +4.4 over the Major Mana Potion at 180 sec, and 1.7
-	// behind with Mana Tide.
+	// behind with Mana Tide (1.8 with the Flask of Supreme Power).
 	defaultPotion: Potions.CausticSmogPotion,
 	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
 	firePowerBuff: FirePowerBuff.ElixirOfFirepower,
-	// The natural flask (standards 11, 2026-10-23): Aggression, 74 behind the Flask of Supreme Power at
-	// 180 sec (Swiftness 78, Accuracy and Precision 95 behind, the hit is capped).
-	flask: Flask.FlaskOfNaturalAggression,
+	// The fight is in a natural flask zone (standards 11), but the best natural flask, Aggression, is 74
+	// behind the Flask of Supreme Power at 180 sec (Swiftness 78, Accuracy and Precision 95, the hit is
+	// capped).
+	flask: Flask.FlaskOfSupremePower,
 	food: Food.FoodLobsterStew,
 	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
 	mainHandImbue: WeaponImbue.WizardOil,

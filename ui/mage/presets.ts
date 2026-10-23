@@ -283,9 +283,10 @@ export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorManaPotion,
 	firePowerBuff: FirePowerBuff.ElixirOfFirepower,
-	// The natural flask (standards 11, 2026-10-23): Aggression, 63 / 79 / 80 behind the Flask of Supreme
-	// Power on Arcane / Fire / Frostfire at 180 sec. Frost takes Swiftness (61 behind, Aggression 66).
-	flask: Flask.FlaskOfNaturalAggression,
+	// The fight is in a natural flask zone (standards 11), but the best natural flask is 61 to 80 behind
+	// the Flask of Supreme Power at 180 sec (Aggression on Arcane, Fire and Frostfire, Swiftness on
+	// Frost).
+	flask: Flask.FlaskOfSupremePower,
 	food: Food.FoodLobsterStew,
 	frostPowerBuff: FrostPowerBuff.ElixirOfFrostPower,
 	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
@@ -407,7 +408,7 @@ export const EncounterLevel60Frost = PresetUtils.makePresetEncounter('Level 60 (
 	raidBuffs: DefaultRaidBuffs,
 	debuffs: DefaultDebuffs,
 	buffs: DefaultIndividualBuffs,
-	consumes: Consumes.create({ ...DefaultConsumes, defaultPotion: Potions.MajorSpellblastingPotion, flask: Flask.FlaskOfNaturalSwiftness }),
+	consumes: Consumes.create({ ...DefaultConsumes, defaultPotion: Potions.MajorSpellblastingPotion }),
 });
 
 // Races, on each build with its rotation, 20000 iterations, 180 sec, with the 70425 racials (no

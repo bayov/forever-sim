@@ -396,16 +396,16 @@ export const DefaultConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfCunning,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
 	defaultConjured: Conjured.ConjuredDemonicRune,
-	// The Dragonfire Potion is +6.0 / +5.7 / +9.1 / +10.4 over the Major Mana Potion on Level 60 / sub
-	// Holy / vs Undead / sub Holy vs Undead at 180 sec, and 8.3 / 13.5 behind on Shock / Shock vs
+	// The Dragonfire Potion is +5.0 / +5.3 / +8.6 / +10.2 over the Major Mana Potion on Level 60 / sub
+	// Holy / vs Undead / sub Holy vs Undead at 180 sec, and 12.8 / 18.5 behind on Shock / Shock vs
 	// Undead, which run short of mana.
 	defaultPotion: Potions.DragonfirePotion,
 	dragonBreathChili: true,
 	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
 	firePowerBuff: FirePowerBuff.ElixirOfGreaterFirepower,
-	// The natural flask (standards 11, 2026-10-23): Precision, 19 to 26 behind the Flask of Supreme Power
-	// at 180 sec (Shock 50 to 54; Aggression is 3 better there, 11 to 21 worse on the rest).
-	flask: Flask.FlaskOfNaturalPrecision,
+	// The fight is in a natural flask zone (standards 11), but the best natural flask, Precision, is 19
+	// to 26 behind the Flask of Supreme Power at 180 sec (Aggression 48 to 52 behind on Shock).
+	flask: Flask.FlaskOfSupremePower,
 	food: Food.FoodLobsterStew,
 	intellectElixir: IntellectElixir.ElixirOfTheOwl,
 	mainHandImbue: WeaponImbue.ShadowOil,

@@ -26,7 +26,7 @@ func init() {
 			return &proto.Consumes{
 				DefaultPotion:   proto.Potions_MajorSpellblastingPotion,
 				DefaultConjured: proto.Conjured_ConjuredDemonicRune,
-				Flask:           proto.Flask_FlaskOfNaturalAggression,
+				Flask:           proto.Flask_FlaskOfSupremePower,
 				Food:            proto.Food_FoodLobsterStew,
 				IntellectElixir: proto.IntellectElixir_ElixirOfTheOwl,
 				MainHandImbue:   proto.WeaponImbue_WizardOil,

@@ -288,9 +288,9 @@ export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorManaPotion,
 	firePowerBuff: FirePowerBuff.ElixirOfFirepower,
-	// The natural flask (standards 11, 2026-10-23): Aggression, 80 to 89 behind the Flask of Supreme Power
-	// at 180 sec (Swiftness 99 to 102, Accuracy and Precision 112 to 127 behind, the hit is capped).
-	flask: Flask.FlaskOfNaturalAggression,
+	// The fight is in a natural flask zone (standards 11), but the best natural flask, Aggression, is 80
+	// to 89 behind the Flask of Supreme Power at 180 sec (the hit is capped).
+	flask: Flask.FlaskOfSupremePower,
 	food: Food.FoodLobsterStew,
 	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
 	mainHandImbue: WeaponImbue.WizardOil,

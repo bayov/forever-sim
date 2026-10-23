@@ -208,10 +208,10 @@ export const DefaultOptions = BalanceDruidOptions.create({
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorSpellblastingPotion,
-	// The natural flask (standards 11, the user's decision 2026-10-23: the fight is in Hyjal Summit or
-	// the Barrow Deeps): Aggression, 85 behind the Flask of Supreme Power at 180 sec on both builds
-	// (Swiftness 101, Accuracy and Precision 112 behind, the hit is capped).
-	flask: Flask.FlaskOfNaturalAggression,
+	// The fight is in a natural flask zone (standards 11), but the best natural flask, Aggression, is 85
+	// behind the Flask of Supreme Power at 180 sec on both builds (Swiftness 101, Accuracy and Precision
+	// 112 behind, the hit is capped).
+	flask: Flask.FlaskOfSupremePower,
 	food: Food.FoodLobsterStew,
 	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
 	mainHandImbue: WeaponImbue.WizardOil,

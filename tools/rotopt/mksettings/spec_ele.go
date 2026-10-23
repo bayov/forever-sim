@@ -20,7 +20,7 @@ func init() {
 				DefaultConjured: proto.Conjured_ConjuredDemonicRune,
 				FillerExplosive: proto.Explosive_ExplosiveGoblinLandMine,
 				FirePowerBuff:   proto.FirePowerBuff_ElixirOfFirepower,
-				Flask:           proto.Flask_FlaskOfNaturalAggression,
+				Flask:           proto.Flask_FlaskOfSupremePower,
 				Food:            proto.Food_FoodLobsterStew,
 				IntellectElixir: proto.IntellectElixir_ElixirOfGreaterIntellect,
 				MainHandImbue:   proto.WeaponImbue_WizardOil,

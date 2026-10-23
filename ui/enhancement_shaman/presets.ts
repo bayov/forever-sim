@@ -732,11 +732,11 @@ export const DefaultConsumes = Consumes.create({
 	dragonBreathChili: true,
 	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
 	firePowerBuff: FirePowerBuff.ElixirOfFirepower,
-	// The natural flask (standards 11, 2026-10-23): Precision, 7 behind the Flask of Supreme Power at 180
-	// sec (2 to 5 with Mana Tide or Water Shield; Aggression 13 to 16, Accuracy and Swiftness 20 to 36
-	// behind). The Dragonfire Potion is 17 behind the Major Mana Potion, 4 to 5 ahead with Mana Tide or
-	// Water Shield.
-	flask: Flask.FlaskOfNaturalPrecision,
+	// The fight is in a natural flask zone (standards 11), but the best natural flask, Precision, is 7
+	// behind the Flask of Supreme Power at 180 sec (2 to 5 with Mana Tide or Water Shield; Aggression 13
+	// to 16, Accuracy and Swiftness 20 to 36 behind). The Dragonfire Potion is 17 behind the Major Mana
+	// Potion, 4 to 5 ahead with Mana Tide or Water Shield.
+	flask: Flask.FlaskOfSupremePower,
 	food: Food.FoodGrilledSquid,
 	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
 	mainHandImbue: WeaponImbue.ShadowOil,

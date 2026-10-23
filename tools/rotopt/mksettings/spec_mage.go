@@ -37,7 +37,7 @@ func mageSpec(staffImbue proto.Mage_Options_StaffImbue) *specSetup {
 				DefaultConjured: proto.Conjured_ConjuredDemonicRune,
 				FirePowerBuff:   proto.FirePowerBuff_ElixirOfFirepower,
 				FrostPowerBuff:  proto.FrostPowerBuff_ElixirOfFrostPower,
-				Flask:           proto.Flask_FlaskOfNaturalAggression,
+				Flask:           proto.Flask_FlaskOfSupremePower,
 				Food:            proto.Food_FoodLobsterStew,
 				IntellectElixir: proto.IntellectElixir_ElixirOfGreaterIntellect,
 				MainHandImbue:   proto.WeaponImbue_WizardOil,

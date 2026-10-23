@@ -31,6 +31,9 @@ func init() {
 			}
 			if twoHand {
 				consumes.OffHandImbue = proto.WeaponImbue_WeaponImbueUnknown
+				// Arms takes Aggression, +31.8 over the Flask of the Titans to Precision's +10.0
+				// (ui/warrior/presets.ts ArmsConsumes).
+				consumes.Flask = proto.Flask_FlaskOfNaturalAggression
 			}
 			return consumes
 		}

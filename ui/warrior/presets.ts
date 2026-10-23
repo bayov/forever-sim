@@ -306,10 +306,9 @@ export const DefaultConsumes = Consumes.create({
 	defaultPotion: Potions.MightyRagePotion,
 	dragonBreathChili: true,
 	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
-	// The natural flask (standards 11, 2026-10-23): Precision, +66.4 / +68.1 / +10.0 over the Flask of
-	// the Titans on Fury / Fury two-hand / Arms at 180 sec. Arms would do better with Aggression (+31.8),
-	// but the builds share these consumes. Accuracy is +34.3 on dual wield Fury and nothing with a
-	// two-hander (the yellow hit is capped).
+	// The natural flask (standards 11, 2026-10-23): Precision, +66.4 / +68.1 over the Flask of the Titans
+	// on Fury / Fury two-hand at 180 sec. Arms takes Aggression (ArmsConsumes). Accuracy is +34.3 on dual
+	// wield Fury and nothing with a two-hander (the yellow hit is capped).
 	flask: Flask.FlaskOfNaturalPrecision,
 	food: Food.FoodSmokedDesertDumpling,
 	mainHandImbue: WeaponImbue.DenseSharpeningStone,
@@ -317,6 +316,14 @@ export const DefaultConsumes = Consumes.create({
 	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	strengthBuff: StrengthBuff.ElixirOfFerocity,
 	zanzaBuff: ZanzaBuff.ROIDS,
+});
+
+// Arms takes the Flask of Natural Aggression, +31.8 over the Flask of the Titans at 180 sec (+33.1 vs
+// Dragonkin) where Precision is +10.0 (+12.8) and Swiftness +27.6: its talents already take most of
+// the dodge off.
+export const ArmsConsumes = Consumes.create({
+	...DefaultConsumes,
+	flask: Flask.FlaskOfNaturalAggression,
 });
 
 // The raid the level 60 numbers were measured under (tools/rotopt/mksettings, spec fury and arms):
@@ -463,9 +470,25 @@ export const EncounterLevel60Dragonkin = PresetUtils.makePresetEncounter(
 		raidBuffs: DefaultRaidBuffs,
 		debuffs: DefaultDebuffs,
 		buffs: DefaultIndividualBuffs,
-		consumes: DefaultConsumes,
+		consumes: ArmsConsumes,
 	},
 );
+
+// The Level 60 encounters with the Arms consumes.
+export const EncounterLevel60Arms = PresetUtils.makePresetEncounter('Level 60 (Arms)', EncounterLevel60.encounter, {
+	tanks: [],
+	raidBuffs: DefaultRaidBuffs,
+	debuffs: DefaultDebuffs,
+	buffs: DefaultIndividualBuffs,
+	consumes: ArmsConsumes,
+});
+export const EncounterLevel60ArmsBattleShoutDuty = PresetUtils.makePresetEncounter('Level 60 (Arms, Battle Shout duty)', EncounterLevel60.encounter, {
+	tanks: [],
+	raidBuffs: RaidBuffs.create({ ...DefaultRaidBuffs, battleShout: TristateEffect.TristateEffectMissing }),
+	debuffs: DefaultDebuffs,
+	buffs: DefaultIndividualBuffs,
+	consumes: ArmsConsumes,
+});
 
 // On 2026-10-15 at 20,000 iterations, 120 / 180 / 300 sec: Level 60 Fury (Undead) 1091.9 / 1057.9 /
 // 1035.9, Level 60 Fury (Two-Hand) (Orc) 962.5 / 925.7 / 895.4 and Level 60 Arms (Orc) 963.5 /
@@ -567,7 +590,7 @@ export const PresetBuildLevel60Arms = PresetUtils.makePresetBuild('Level 60 Arms
 	gear: GearLevel60Phase1SyntheticArms,
 	talents: TalentsLevel60Arms,
 	rotation: APLLevel60Arms,
-	encounter: EncounterLevel60,
+	encounter: EncounterLevel60Arms,
 	race: Race.RaceOrc,
 	level: 60,
 	bonusTalentPoints: 0,
@@ -580,7 +603,7 @@ export const PresetBuildLevel60ArmsShout = PresetUtils.makePresetBuild('Level 60
 	gear: GearLevel60Phase1SyntheticArms,
 	talents: TalentsLevel60Arms,
 	rotation: APLLevel60ArmsShout,
-	encounter: EncounterLevel60BattleShoutDuty,
+	encounter: EncounterLevel60ArmsBattleShoutDuty,
 	race: Race.RaceOrc,
 	level: 60,
 	bonusTalentPoints: 0,

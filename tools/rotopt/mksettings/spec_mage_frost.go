@@ -10,8 +10,6 @@ func init() {
 	spec.consumes = func() *proto.Consumes {
 		c := consumes()
 		c.DefaultPotion = proto.Potions_MajorSpellblastingPotion
-		// Swiftness is 4.8 ahead of Aggression for Frost (ui/mage/presets.ts).
-		c.Flask = proto.Flask_FlaskOfNaturalSwiftness
 		return c
 	}
 	specs["mage_frost"] = spec
