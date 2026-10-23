@@ -67,7 +67,8 @@ func init() {
 	specs["demonology"] = warlockSpec(proto.WarlockOptions_Succubus, proto.WarlockOptions_Imp, proto.WarlockOptions_Spellstone)
 	specs["destruction"] = warlockSpec(proto.WarlockOptions_Succubus, proto.WarlockOptions_NoSummon, proto.WarlockOptions_Spellstone)
 	specs["affliction"] = warlockSpec(proto.WarlockOptions_Succubus, proto.WarlockOptions_NoSummon, proto.WarlockOptions_Spellstone)
-	specs["destruction_fire"] = warlockSpec(proto.WarlockOptions_Succubus, proto.WarlockOptions_NoSummon, proto.WarlockOptions_Firestone)
+	// The fire build sacrifices the Succubus (15% Fire damage) and keeps no demon out.
+	specs["destruction_fire"] = warlockSpec(proto.WarlockOptions_NoSummon, proto.WarlockOptions_Succubus, proto.WarlockOptions_Firestone)
 
 	// Every demon and sacrifice pair for the talent searches, as warlock_<demon out>_<demon
 	// sacrificed>_<imbue>, warlock_succubus_imp_spellstone say.

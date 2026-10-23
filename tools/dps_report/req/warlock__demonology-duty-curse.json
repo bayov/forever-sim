@@ -152,13 +152,13 @@
               ],
               "priorityList": [
                 {
-                  "notes": "Racials and trinkets.",
+                  "notes": "Racials and trinkets on cooldown.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }
                 },
                 {
-                  
+                  "notes": "Life Tap when the mana runs low or the filler costs more than is left.",
                   "action": {
                     "condition": {
                       "or": {
@@ -247,7 +247,7 @@
                   }
                 },
                 {
-                  
+                  "notes": "Bane of Doom when it lands before the fight ends.",
                   "action": {
                     "condition": {
                       "and": {
@@ -287,7 +287,7 @@
                   }
                 },
                 {
-                  
+                  "notes": "Bane of Agony while Bane of Doom is on cooldown or would not land.",
                   "action": {
                     "condition": {
                       "and": {
@@ -374,6 +374,7 @@
                   }
                 },
                 {
+                  "notes": "Corruption when it is down.",
                   "action": {
                     "condition": {
                       "and": {
@@ -420,7 +421,7 @@
                               },
                               "rhs": {
                                 "const": {
-                                  "val": "12s"
+                                  "val": "15s"
                                 }
                               }
                             }
@@ -436,6 +437,7 @@
                   }
                 },
                 {
+                  "notes": "Immolate when it is down.",
                   "action": {
                     "condition": {
                       "and": {
@@ -482,7 +484,7 @@
                               },
                               "rhs": {
                                 "const": {
-                                  "val": "9s"
+                                  "val": "15s"
                                 }
                               }
                             }
@@ -498,7 +500,7 @@
                   }
                 },
                 {
-                  
+                  "notes": "Death Coil when the filler would not land before the end.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -533,7 +535,7 @@
                   }
                 },
                 {
-                  
+                  "notes": "Searing Pain when the filler would not land before the end.",
                   "action": {
                     "condition": {
                       "and": {
@@ -589,7 +591,7 @@
                   }
                 },
                 {
-                  
+                  "notes": "Shadow Bolt as the filler.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -630,7 +632,6 @@
       "thorns": "TristateEffectImproved",
       "devotionAura": "TristateEffectImproved",
       "retributionAura": "TristateEffectImproved",
-      "sanctityAura": false,
       "salvation": true
     },
     "debuffs": {
@@ -639,7 +640,6 @@
       "judgementOfTheCrusader": "TristateEffectImproved",
       "faerieFire": true,
       "curseOfElements": false,
-      "curseOfShadow": false,
       "sunderArmor": true,
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,
@@ -714,7 +714,8 @@
       }
     ],
     "raidDamageHitsPerMinute": 2,
-    "raidDamagePerHit": 1500
+    "raidDamagePerHit": 1500,
+    "naturalFlaskZone": true
   },
   "simOptions": {
     "iterations": 1000,

@@ -116,7 +116,11 @@ export const DefaultGear = GearLevel60Phase1SyntheticDemonology;
 // starts 2.5 sec before the pull so it lands just after it (damage before the pull does not
 // count), Life Tap also goes out when the filler costs more than the mana left, and Demonology
 // recasts Corruption and Immolate 1.5 sec early and taps once before the pull to pay for Soul
-// Link (the rotation audit's fixes, +10 to +14 at 180 sec).
+// Link (the rotation audit's fixes, +10 to +14 at 180 sec). Since 2026-10-23 every build casts a new
+// Immolate only with more than 15 sec of the fight left, and Demonology and the fire build a new
+// Corruption too (the knob search's near misses, positive at 120 / 180 / 300 sec on both seed sets:
+// Demonology +0.8 to +2.2, Destruction +0.3 to +0.6, Affliction +0.3 to +0.8, fire +0.5 to +1.4 with
+// its Immolate recast 1.5 sec early).
 export const RotationLevel60Demonology = PresetUtils.makePresetAPLRotation('Level 60 Demonology', Level60DemonologyAPL, {
 	group: 'Level 60',
 	tooltip: 'The Level 60 rotation with Soul Link before the pull, for the Demonology talents.',
@@ -135,7 +139,7 @@ export const RotationLevel60Affliction = PresetUtils.makePresetAPLRotation('Leve
 });
 // Destruction fire: Incinerate while Immolate is up (25% more), Conflagrate on cooldown, Immolate
 // opens the fight (started 1.5 sec before the pull, so it lands as the fight starts) and is
-// recast 2 sec before it runs out.
+// recast 1.5 sec before it runs out, Corruption too.
 export const RotationLevel60DestructionFire = PresetUtils.makePresetAPLRotation('Level 60 Destruction Fire', Level60DestructionFireAPL, {
 	group: 'Level 60',
 	tooltip: 'The Level 60 rotation with Incinerate as the filler, for the Destruction fire talents.',
@@ -190,6 +194,11 @@ export const DefaultAPL = RotationLevel60Demonology;
 // Wrack build), then again on the searched rotation. Every Demonic Pact start ended on the same
 // build. It sacrifices the Imp before the pull (15% Shadow damage) and keeps the Succubus out
 // (Master Demonologist's 10% Shadow damage, Soul Link, Demonic Knowledge's 60 spell damage).
+// Searched again from every preset on 2026-10-23, after the demons took wowsims/forever's measured
+// shares and melee (about 4% less): the three Shadow builds kept every point, and the fire build
+// moved to its Demonic Sacrifice build. A Demonic Sacrifice of the Imp with no demon out (the search
+// from 252-0050003201-055030500310035 and 2550102003520005-0050003201-055) is 31 behind on
+// Destruction and 84 on Affliction.
 export const TalentsLevel60Demonology = PresetUtils.makePresetTalents(
 	'Level 60 Demonology',
 	SavedTalents.create({ talentsString: '011-0305003131221001351-0550005003' }),
@@ -219,18 +228,17 @@ export const TalentsLevel60Affliction = PresetUtils.makePresetTalents(
 );
 
 // Destruction fire, its own spec: Incinerate, Conflagrate, Fire and Brimstone, Shadow and Flame and
-// Aftermath, with Pandemic and the Succubus out, and Firestone. Under client 1.60.1.70425 the five
-// Malediction points went to Improved Bane of Agony (2), Malevolence (2) and one
-// Soul Harvest point that fills the Pandemic gate (searched again 2026-10-16). Searched with
-// Incinerate and Conflagrate kept (-require). Since the demons scale from the warlock's stats the
-// Succubus out beats the earlier build that sacrificed it for 15% Fire damage (950.8) by 25; the
-// Felhunter out is 25 behind, the Imp 35, and Spellstone in place of Firestone 24. Without the owner
-// scaling (notes.md) the sacrifice build would be the pick again. Bane of Havoc's
-// point does nothing in the sim (it is the one point left over).
+// Aftermath, with Demonic Sacrifice (the Succubus sacrificed before the pull for 15% Fire damage, no
+// demon out), Suppression 5/5 and Firestone. Searched with Incinerate and Conflagrate kept
+// (-require). Since the demons take wowsims/forever's measured shares and melee (2026-10-23) the
+// sacrifice build is back ahead: 986.1 against 981.0 for the best build with the Succubus out
+// (25201020034--0050355003101351, the old preset's search) at 180 sec; with the Succubus out on this
+// build 950.3, the Imp sacrificed 917.5, the Felhunter 885.4, and Spellstone 9.7 behind Firestone. A
+// talent search from it moved nothing. Bane of Havoc's point does nothing in the sim.
 export const TalentsLevel60DestructionFire = PresetUtils.makePresetTalents(
 	'Level 60 Destruction Fire',
-	SavedTalents.create({ talentsString: '25201020032-0002-0050355003101351' }),
-	{ group: 'Level 60', tooltip: 'Incinerate, Conflagrate and Shadow and Flame, with Pandemic and the Succubus out.' },
+	SavedTalents.create({ talentsString: '252-0050003201-0050345003101351' }),
+	{ group: 'Level 60', tooltip: 'Incinerate, Conflagrate and Shadow and Flame, with the Succubus sacrificed for 15% Fire damage.' },
 );
 
 export const TalentPresets = [TalentsLevel60Demonology, TalentsLevel60Destruction, TalentsLevel60Affliction, TalentsLevel60DestructionFire];
@@ -241,10 +249,10 @@ export const DefaultTalents = TalentsLevel60Demonology;
 //                                 Options
 ///////////////////////////////////////////////////////////////////////////
 
-// The Succubus is out for every Level 60 build. Forever's demons take no player buffs and scale
-// from the warlock's stats (Season of Discovery's coefficients as a placeholder, notes.md), and the
-// Succubus's melee gets the most from it: on Destruction it is 25 ahead of the Felhunter and 34 of
-// the Imp. Spellstone and Firestone are within 1 there.
+// The Succubus is out for the Shadow builds, the fire build sacrifices it. Forever's demons take no
+// player buffs and scale from the warlock's stats (wowsims/forever's measured shares, notes.md). At
+// 180 sec (2026-10-23): on Destruction the Succubus is 17.7 ahead of the Felhunter and 24.9 of the
+// Imp, Spellstone 3.6 ahead of Firestone; on Affliction 16.2 and 24.6.
 export const DefaultOptions = WarlockOptions.create({
 	armor: Armor.DemonArmor,
 	summon: Summon.Succubus,
@@ -260,8 +268,8 @@ const PresetBuildOptionsDemonology = {
 };
 const PresetBuildOptionsFire = {
 	armor: Armor.DemonArmor,
-	summon: Summon.Succubus,
-	sacrificedPet: Summon.NoSummon,
+	summon: Summon.NoSummon,
+	sacrificedPet: Summon.Succubus,
 	weaponImbue: WarlockWeaponImbue.Firestone,
 };
 const PresetBuildOptionsSuccubus = {
@@ -410,21 +418,21 @@ export const EncounterLevel60 = level60Encounter('Level 60', DefaultDebuffs);
 // brings it; the raid's other curses and Faerie Fire stay on (other players' duties).
 export const EncounterLevel60CurseDuty = level60Encounter('Level 60 (Curse duty)', Debuffs.create({ ...DefaultDebuffs, curseOfElements: false }));
 
-// The Level 60 builds at 120 / 180 / 300 sec (20000 iterations, 2026-10-16, client 1.60.1.70425 with
-// the raid's 2 hits a minute, demons taking the warlock's spell crit): Demonology 1131.8 / 1118.3 / 1090.0,
-// Destruction 1002.5 / 995.9 / 978.2, Affliction 1021.8 / 1013.3 / 992.8, Destruction fire
-// 976.3 / 970.2 / 953.7, all Human. Forever teaches no Ahn'Qiraj book ranks, so Shadow Bolt is rank IX,
-// Immolate VII and Corruption VI. The demons take no player buffs and scale from the warlock's stats with
-// Season of Discovery's numbers as a placeholder (notes.md), and their melee and spell crit are the
-// warlock's spell crit with none of their own (Blizzard's intent, forever-bugs #331). The demon is the
-// least sourced input: on the first set at 180 sec, without the owner scaling Demonology was 1037.8 and
-// the other builds 937 to 946, with the Succubus's melee halved 1044.5 and 937 to 947.
+// The Level 60 builds at 120 / 180 / 300 sec (20000 iterations, seed 1, 2026-10-23, the natural flask
+// zone, wowsims/forever's measured demon shares and melee): Demonology 1148.4 / 1133.2 / 1101.6,
+// Destruction 1018.8 / 1011.8 / 992.4, Affliction 1044.9 / 1035.3 / 1013.3, Destruction fire
+// 998.7 / 987.4 / 964.5, all Human (seed 1000003 within 0.9). Forever teaches no Ahn'Qiraj book ranks,
+// so Shadow Bolt is rank IX, Immolate VII and Corruption VI. The demons take no player buffs and scale
+// from the warlock's stats (notes.md), and their melee and spell crit are the warlock's spell crit with
+// none of their own (Blizzard's intent, forever-bugs #331). The demon shares are read at levels 20 and
+// 30, not 60. Every build sits at the 16% spell hit cap.
 //
 // Races at 180 sec, both seed sets (standards 16: a switch needs a lead over 0.5 on both): the Human is
-// first on every build. Human Ruthless is 2% crit with every spell, and the demons now take it from the
-// warlock. Demonology 15.7 / 15.1 ahead of the Gnome and 3.9 / 3.5 of the Orc, Destruction 3.2 / 3.0 of
-// the Orc, Affliction 3.0 / 2.8 of the Orc, Destruction fire 1.0 / 1.3 of the Orc. The best Horde race is
-// the Orc on every build. The full table is in forever-wiki/sim-status.md.
+// first on every build. Human Ruthless is 2% crit with every spell, and the demons take it from the
+// warlock. Demonology 15.9 / 15.7 ahead of the Gnome and 4.3 / 3.8 of the Orc, Destruction 3.2 / 3.1 of
+// the Orc, Affliction 3.2 / 3.2 of the Orc. Destruction fire is a tie with the Orc (0.1 / 0.0), so it
+// stays Human. The best Horde race is the Orc on every build. The full table is in
+// forever-wiki/sim-status.md.
 export const PresetBuildLevel60Demonology = PresetUtils.makePresetBuild('Level 60 Demonology', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Human Demonology warlock on the synthetic Phase 1 gear, the Imp sacrificed and the Succubus out, in a 3 minute raid fight.',
@@ -467,7 +475,7 @@ export const PresetBuildLevel60Affliction = PresetUtils.makePresetBuild('Level 6
 
 export const PresetBuildLevel60DestructionFire = PresetUtils.makePresetBuild('Level 60 Destruction Fire', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Human Destruction fire warlock on the synthetic Phase 1 gear with the Succubus out, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Human Destruction fire warlock on the synthetic Phase 1 gear, the Succubus sacrificed, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60DestructionFire,
 	rotation: RotationLevel60DestructionFire,
