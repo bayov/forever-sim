@@ -111,14 +111,58 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "spellId": 11551,
-                        "rank": 6
+                        "rank": 6,
+                        "spellId": 11551
                       }
                     }
                   },
                   "doAtValue": {
                     "const": {
                       "val": "-3s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 2457
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-2.5s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "rank": 3,
+                        "spellId": 11578
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-1.5s"
+                    }
+                  },
+                  "notes": "15 Rage to open, from Battle Stance."
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 2458
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-0.5s"
                     }
                   }
                 }

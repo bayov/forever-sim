@@ -105,6 +105,22 @@
                       "val": "-1s"
                     }
                   }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "rank": 3,
+                        "spellId": 11578
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-0.5s"
+                    }
+                  },
+                  "notes": "15 Rage to open."
                 }
               ],
               "priorityList": [

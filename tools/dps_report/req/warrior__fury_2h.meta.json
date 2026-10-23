@@ -36,7 +36,7 @@
     "Enrage"
   ],
   "rotation": [
-    "Start in Berserker Stance with no Rage; Battle Shout from the raid",
+    "Start with no Rage; before the pull Battle Stance, Charge for 15 Rage and back to Berserker Stance; Battle Shout from the raid",
     "Sunder Armor as the first GCD after the pull (every warrior; the tanks keep it up after)",
     "Death Wish held for the last 36s, Recklessness for the last 30s",
     "Blood Fury and Berserking held for the last 30s, Elune's Light with Death Wish; Mighty Rage Potion at the pull, second held for the last 20s",
@@ -63,7 +63,7 @@
     "The on-use trinket's last use is held for the final 34s.",
     "White hit Rage scales with weapon speed (measured at level 30, assumed ×1.5 at 60).",
     "No Ahn'Qiraj book ranks (Heroic Strike VIII, raid Battle Shout VI, Strength of Earth, Grace of Air)",
-    "Deep Wounds ticks can't crit. Each crit restarts the tick timer (our choice).",
+    "Deep Wounds ticks can't crit.",
     "Assumed: the crit Rage bonus is white hits only, and Heroic Strike counts for Unbridled Wrath.",
     "One +2% crit elixir. A second (Grizzly) would add 12.0.",
     "Battlegear of Glory 4-piece not counted. It would add 8.8 vs Humanoids.",

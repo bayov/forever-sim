@@ -636,15 +636,15 @@ index 5788df3c8..e704f2cb5 100644
  }
  
 diff --git a/sim/warrior/rend.go b/sim/warrior/rend.go
-index 1352185d2..68c2b4645 100644
+index 908df2ecd..d4a7ed2de 100644
 --- a/sim/warrior/rend.go
 +++ b/sim/warrior/rend.go
-@@ -58,7 +58,7 @@ func (warrior *Warrior) registerRendSpell() {
- 			TickLength:    time.Second * 3,
- 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
+@@ -69,7 +69,7 @@ func (warrior *Warrior) registerRendSpell() {
+ 				// cancelling Battle Shout mid-Rend lowers the next ticks (wowsims/forever 1172f1c745
+ 				// and 36cfc58328, level 13 and 14 combat logs).
  				if sim.IsForever() {
--					dot.Snapshot(target, baseDamage+ForeverRendAPPerTick*dot.Spell.MeleeAttackPower(target), isRollover)
-+					dot.Snapshot(target, baseDamage+core.Assume("warr_rend_ap", ForeverRendAPPerTick)*dot.Spell.MeleeAttackPower(target) /* dashboard assumption */, isRollover)
+-					damage := baseDamage + ForeverRendAPPerTick*dot.Spell.MeleeAttackPower(target)
++					damage := baseDamage + core.Assume("warr_rend_ap", ForeverRendAPPerTick)*dot.Spell.MeleeAttackPower(target) /* dashboard assumption */
+ 					dot.Spell.CalcAndDealPeriodicDamage(sim, target, damage, dot.OutcomeTick)
  					return
  				}
- 				dot.Snapshot(target, baseDamage, isRollover)

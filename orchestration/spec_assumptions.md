@@ -263,15 +263,15 @@ Dual-wield Fury is also affected by `wf_totem_offhand` (est. −2 to −3% at it
 ### `warr_rend_ap`: Rend's attack power share
 
 - **Builds:** Arms and Arms vs Dragonkin (the two-hand builds that keep Rend up).
-- **Sim now:** each Rend tick adds 2% of attack power (`ForeverRendAPPerTick`, `sim/warrior/rend.go`; user ruling 2026-10-15, PR #22), about 14% of attack power over a full Rend.
-- **Source:** Blizzard's warrior development notes say Rend now "scales significantly" with attack power; client 70338 holds no coefficient.
-- **Why uncertain:** the share is server side and Rend at 60 is untested.
+- **Sim now:** each Rend tick adds 2% of attack power (`ForeverRendAPPerTick`, `sim/warrior/rend.go`; user ruling 2026-10-15, PR #22), about 14% of attack power over a full Rend. Since 2026-10-23 (user-approved) the tick reads attack power and the damage modifiers when it lands, not at the application, its crits take Impale, and it crits as before (wowsims/forever 1172f1c745, 36cfc58328, 872e6def91).
+- **Source:** Blizzard's warrior development notes say Rend now "scales significantly" with attack power; client 70338 holds no coefficient. wowsims/forever 1172f1c745 measured 2% a tick on rank 2 (level 13 and 14 combat logs, 99 to 154 attack power: 7 + 0.02 × attack power, read on every tick), which backs Expected.
+- **Why uncertain:** the share is server side, measured on rank 2 only, and Rend at 60 is untested.
 - **Settings:**
   - **Low, none.** The client as it is.
   - **Expected, 2% a tick (Sim now).** A modest share.
   - **High, 5% a tick.** About 35% of attack power over a full Rend.
 - **Sensitivity (assumption sims, 180 s, against 2%):** Low −2.0%, High +3.0% on both builds.
-- **Knob:** `core.Assume("warr_rend_ap", ForeverRendAPPerTick)` in Rend's snapshot (patch 0004).
+- **Knob:** `core.Assume("warr_rend_ap", ForeverRendAPPerTick)` in Rend's tick (patch 0004; in its snapshot until 2026-10-23).
 
 ---
 
@@ -605,7 +605,7 @@ These are below the 0.5% threshold, client-sourced, or have no sensible range.
 - **Deadly Poison re-snapshot on each application.** It measured +6.3 on an old Mutilate set, but what still feeds it on the final builds is unclear. Likely under 0.5%.
 - **Percent talent modifiers: add or multiply** (rogue Improved Eviscerate × Aggression, Opportunity × Aggression; the warlock adds). +0.7 on Sinister Strike; under 0.5% everywhere.
 - **Whirlwind's off-hand strike.** Blizzard's 1 October notes made it baseline; only its exact form (normalized off hand, 50%, Dual Wield Specialization) is server side, about 1% of Fury in total.
-- **Weaponmaster's 200 ms internal cooldown, Deep Wounds' tick restart, Heroic Strike counting for Unbridled Wrath.** All small or unknowable without a log.
+- **Weaponmaster's 200 ms internal cooldown, Heroic Strike counting for Unbridled Wrath.** All small or unknowable without a log. (Deep Wounds' tick timer was on this list until 2026-10-23: wowsims/forever's log, c4a5402aa9, shows a refresh keeps it.)
 - **Dark Sacrifice's mana** (Undead priests). Shadow never runs out of mana; it only moves the Smite race table, where Undead leads the Gnome by 5.5.
 - **Shadow Word: Death, Demonic Pact, Wrack, Incinerate's base, Sniper Shot, Light's Vigil, the other 31-point capstones.** Forever's own values, untested, with no analogue to give a range.
 - **Arcane Shot and Aimed Shot cooldown sharing, Auto Shot through casts, Expose Prey, Lacerate, Lacerating Strikes.** Beta-tested or client data, or under the threshold.

@@ -95,6 +95,52 @@
             "profession2":  "Alchemy",
             "rotation":  {
               "type":  "TypeAPL",
+              "prepullActions":  [
+                {
+                  "action":  {
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  2457
+                      }
+                    }
+                  },
+                  "doAtValue":  {
+                    "const":  {
+                      "val":  "-2.5s"
+                    }
+                  }
+                },
+                {
+                  "action":  {
+                    "castSpell":  {
+                      "spellId":  {
+                        "rank":  3,
+                        "spellId":  11578
+                      }
+                    }
+                  },
+                  "doAtValue":  {
+                    "const":  {
+                      "val":  "-1.5s"
+                    }
+                  },
+                  "notes":  "15 Rage to open, from Battle Stance."
+                },
+                {
+                  "action":  {
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  2458
+                      }
+                    }
+                  },
+                  "doAtValue":  {
+                    "const":  {
+                      "val":  "-0.5s"
+                    }
+                  }
+                }
+              ],
               "priorityList":  [
                 {
                   "notes":  "Sunder Armor once at the pull. The tanks keep it up after.",

@@ -81,6 +81,7 @@ type Warrior struct {
 
 	Bloodrage         *WarriorSpell
 	BerserkerRage     *WarriorSpell
+	Charge            *WarriorSpell
 	Bloodthirst       *WarriorSpell
 	DeathWish         *WarriorSpell
 	DemoralizingShout *WarriorSpell
@@ -211,6 +212,7 @@ func (warrior *Warrior) Initialize() {
 	warrior.registerCleaveSpell(queuedRealismICD)
 
 	warrior.registerBloodrageCD()
+	warrior.registerChargeSpell()
 	warrior.RegisterRecklessnessCD()
 }
 

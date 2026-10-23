@@ -37,8 +37,8 @@
     "Cruelty"
   ],
   "rotation": [
-    "Pre-pull: Bloodrage and Battle Shout 3s before the pull",
-    "Pre-pull: Battle Stance",
+    "Pre-pull: Bloodrage and Battle Shout 3s before the pull, then Charge for 15 Rage",
+    "Pre-pull: Battle Stance, then Charge for 15 Rage",
     "Battle Shout again with 35s of it left (about 142s in, before the execute phase), unless it lasts the fight (Forever's lasts 3 min)",
     "Sunder Armor as the first GCD after the pull (every warrior; the tanks keep it up after)",
     "With 25s left, Recklessness ready and under 25 Rage: swap to Berserker Stance, and back to Battle Stance once Recklessness is out",
@@ -66,7 +66,7 @@
   "caveats": [
     "White hit Rage scales with weapon speed (measured at level 30, assumed ×1.5 at 60).",
     "No Ahn'Qiraj book ranks (Heroic Strike VIII, raid Battle Shout VI, Strength of Earth, Grace of Air)",
-    "Deep Wounds ticks can't crit. Each crit restarts the tick timer (our choice).",
+    "Deep Wounds ticks can't crit.",
     "Assumed: the crit Rage bonus is white hits only, and Heroic Strike counts for Unbridled Wrath.",
     "One +2% crit elixir. A second (Grizzly) would add 10.9.",
     "Battlegear of Glory 4-piece not counted. It would add 8.4 vs Humanoids.",

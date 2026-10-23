@@ -247,54 +247,179 @@ func TestForeverWarriorDeepWoundsAndFlurry(t *testing.T) {
 
 // TestForeverWarriorDeepWoundsRolls checks the 8 October development notes: under Forever, Deep
 // Wounds doesn't scale with attack power, and it is a rolling DoT, so a crit while it is up adds
-// the damage not yet ticked to the new one.
+// the damage not yet ticked to the new one. Either hand's crit takes the main hand's average weapon
+// damage, and the damage modifiers come once, at the tick (wowsims/forever 3281b13bbe, 36cfc58328).
 func TestForeverWarriorDeepWoundsRolls(t *testing.T) {
-	sim, war := newForeverWarrior(t, "00305003")
-	war.AutoAttacks.MH().BaseDamageMin = 100
-	war.AutoAttacks.MH().BaseDamageMax = 200
-	mh := war.AutoAttacks.MHAuto()
-	dot := war.DeepWounds.Dot(war.CurrentTarget)
-	crit := func() float64 {
-		result := mh.NewResult(war.CurrentTarget)
+	sim, war := newForeverWarriorArmed(t, "00305003", 991014, 991015)
+	war.AutoAttacks.CancelAutoSwing(sim)
+	target := war.CurrentTarget
+	dot := war.DeepWounds.Dot(target)
+	crit := func(auto *core.Spell) float64 {
+		result := auto.NewResult(target)
 		result.Outcome = core.OutcomeCrit
 		result.Damage = 300
-		mh.DealDamage(sim, result)
+		auto.DealDamage(sim, result)
 		return dot.SnapshotBaseDamage
 	}
 
-	first := crit()
-	if first <= 0 {
-		t.Fatalf("a crit should apply Deep Wounds, its tick is %.3f", first)
+	want := war.AutoAttacks.MH().AverageDamage() * 0.6 / 4
+	war.PseudoStats.DamageDealtMultiplier *= 1.2
+	if got := crit(war.AutoAttacks.MHAuto()); math.Abs(got-want) > 1e-6 {
+		t.Errorf("a main hand crit stored a %.3f tick, want the main hand's weapon damage only: %.3f", got, want)
 	}
-	if got := crit(); math.Abs(got-2*first) > 1e-6 {
-		t.Errorf("a second crit before any tick gave a %.3f tick, want the first's 4 ticks rolled in: %.3f", got, 2*first)
+	if got := crit(war.AutoAttacks.OHAuto()); math.Abs(got-2*want) > 1e-6 {
+		t.Errorf("an off hand crit before any tick gave a %.3f tick, want the first's 4 ticks and the main hand's share: %.3f", got, 2*want)
+	}
+
+	metrics := &war.DeepWounds.SpellMetrics[target.UnitIndex]
+	before := metrics.TotalDamage
+	dot.TickOnce(sim)
+	multiplier := war.DeepWounds.AttackerDamageMultiplier(war.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand], true)
+	// Forever rounds damage to whole numbers.
+	if got := metrics.TotalDamage - before; math.Abs(got-2*want*multiplier) > 0.5 {
+		t.Errorf("a tick dealt %.3f, want the stored %.3f times the modifiers once (%.3f): %.3f", got, 2*want, multiplier, 2*want*multiplier)
 	}
 
 	dot.Cancel(sim)
 	war.AddStatDynamic(sim, stats.AttackPower, 1000)
-	if got := crit(); math.Abs(got-first) > 1e-6 {
-		t.Errorf("with 1000 more attack power a crit gave a %.3f tick, want %.3f", got, first)
+	if got := crit(war.AutoAttacks.MHAuto()); math.Abs(got-want) > 1e-6 {
+		t.Errorf("with 1000 more attack power a crit gave a %.3f tick, want %.3f", got, want)
+	}
+}
+
+// TestForeverWarriorDeepWoundsKeepsTimer checks that under Forever a crit while Deep Wounds is up
+// keeps the first application's 3 sec tick timer and gives it 4 ticks from the next one
+// (wowsims/forever c4a5402aa9, from a Forever combat log).
+func TestForeverWarriorDeepWoundsKeepsTimer(t *testing.T) {
+	sim, war := newForeverWarrior(t, "00305003")
+	war.AutoAttacks.CancelAutoSwing(sim)
+	war.AutoAttacks.MH().BaseDamageMin = 100
+	war.AutoAttacks.MH().BaseDamageMax = 200
+	target := war.CurrentTarget
+	dot := war.DeepWounds.Dot(target)
+	crit := func(sim *core.Simulation) {
+		mh := war.AutoAttacks.MHAuto()
+		result := mh.NewResult(target)
+		result.Outcome = core.OutcomeCrit
+		result.Damage = 300
+		mh.DealDamage(sim, result)
+	}
+
+	start := sim.CurrentTime
+	crit(sim)
+	sim.AddPendingAction(&core.PendingAction{NextActionAt: start + 2*time.Second, OnAction: crit})
+	for !sim.Step() && sim.CurrentTime < start+2*time.Second {
+	}
+	if got, want := dot.NextTickAt(), start+3*time.Second; got != want {
+		t.Errorf("after the second crit the next tick is at %s, want the first's timer: %s", got, want)
+	}
+	if got, want := dot.ExpiresAt(), start+12*time.Second; got != want {
+		t.Errorf("after the second crit the bleed ends at %s, want 4 ticks from the next one: %s", got, want)
+	}
+
+	for !sim.Step() && sim.CurrentTime <= start+15*time.Second {
+	}
+	if got := war.DeepWounds.SpellMetrics[target.UnitIndex].Ticks; got != 4 {
+		t.Errorf("the bleed ticked %d times, want 4", got)
 	}
 }
 
 // TestForeverWarriorRendAttackPower checks report assumption warr_rend_ap (user ruling
-// 2026-10-15): under Forever each Rend tick adds 2% of attack power to rank 4's 21.
+// 2026-10-15): under Forever each Rend tick adds 2% of attack power to rank 7's 21, read when the
+// tick lands with the damage modifiers of that moment (wowsims/forever 1172f1c745, 36cfc58328).
+// Its ticks crit, with Impale (872e6def91).
 func TestForeverWarriorRendAttackPower(t *testing.T) {
-	sim, war := newForeverWarrior(t, "")
+	sim, war := newForeverWarrior(t, "00305003032")
 	target := war.CurrentTarget
+	dot := war.Rend.Dot(target)
+	dot.Apply(sim)
+	metrics := &war.Rend.SpellMetrics[target.UnitIndex]
 	tick := func() float64 {
-		dot := war.Rend.Dot(target)
-		dot.Apply(sim)
-		got := dot.SnapshotBaseDamage
-		dot.Cancel(sim)
-		return got
+		before := metrics.TotalDamage
+		dot.TickOnce(sim)
+		return metrics.TotalDamage - before
 	}
+
+	war.Rend.BonusCritRating -= 1000 * core.CritRatingPerCritChance
 	for _, extra := range []float64{0, 1000} {
 		war.AddStatDynamic(sim, stats.AttackPower, extra)
+		war.PseudoStats.DamageDealtMultiplier *= 1.1
 		ap := war.Rend.MeleeAttackPower(target)
-		want := (21 + 0.02*ap) * war.Rend.BaseDamageMultiplierAdditive
-		if got := tick(); math.Abs(got-want) > 1e-6 {
+		multiplier := war.Rend.AttackerDamageMultiplier(war.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand], true)
+		want := (21 + 0.02*ap) * multiplier
+		if got := tick(); math.Abs(got-want) > 0.5 {
 			t.Errorf("Rend at %.0f attack power ticks for %.3f, want %.3f", ap, got, want)
 		}
+	}
+
+	if got := war.Rend.CritDamageBonus; got != 1.2 {
+		t.Errorf("Rend's crit damage bonus is %.2f, want 1.2 with 2 points of Impale", got)
+	}
+	war.Rend.BonusCritRating += 2000 * core.CritRatingPerCritChance
+	before := metrics.CritTicks
+	tick()
+	if metrics.CritTicks != before+1 {
+		t.Error("a Rend tick at 100% crit chance didn't crit")
+	}
+}
+
+// TestForeverWarriorBloodthrillSources checks that Bloodthrill procs only from main hand white
+// swings, Heroic Strike and Cleave (wowsims/forever 788f62ce0f: Hamstring 0/99, Overpower 0/9,
+// Execute 0/7, off hand 0/200 in their logs).
+func TestForeverWarriorBloodthrillSources(t *testing.T) {
+	sim, war := newForeverWarriorArmed(t, armsPresetTalents, 991014, 991015)
+	war.AutoAttacks.CancelAutoSwing(sim)
+	target := war.CurrentTarget
+	war.Rend.Dot(target).Apply(sim)
+	procs := func(spell *core.Spell) int {
+		n := 0
+		for i := 0; i < 200; i++ {
+			war.BloodthrillAura.Deactivate(sim)
+			result := spell.NewResult(target)
+			result.Outcome = core.OutcomeHit
+			result.Damage = 100
+			spell.DealDamage(sim, result)
+			if war.BloodthrillAura.IsActive() {
+				n++
+			}
+		}
+		return n
+	}
+	for _, spell := range []*core.Spell{war.AutoAttacks.MHAuto(), war.HeroicStrike.Spell, war.Cleave.Spell} {
+		if procs(spell) == 0 {
+			t.Errorf("%s never procced Bloodthrill in 200 hits", spell.ActionID)
+		}
+	}
+	for _, spell := range []*core.Spell{war.AutoAttacks.OHAuto(), war.Hamstring.Spell, war.Overpower.Spell, war.MortalStrike.Spell} {
+		if n := procs(spell); n != 0 {
+			t.Errorf("%s procced Bloodthrill %d times in 200 hits, want none", spell.ActionID, n)
+		}
+	}
+}
+
+// TestForeverWarriorSweepingStrikesAndCharge checks two client rows: Sweeping Strikes lasts 20 sec
+// (12292), and Charge gives 15 Rage (11578), 3 more a point of Improved Charge (12285), before the
+// pull only.
+func TestForeverWarriorSweepingStrikesAndCharge(t *testing.T) {
+	sim, war := newForeverWarrior(t, "00020000000010001")
+	if ss := war.GetAura("Sweeping Strikes"); ss == nil || ss.Duration != 20*time.Second {
+		t.Errorf("Sweeping Strikes should last 20s, got %v", ss)
+	}
+	if war.Charge == nil {
+		t.Fatal("no Charge at 60")
+	}
+	war.Stance = warrior.BattleStance
+	war.SpendRage(sim, war.CurrentRage(), war.RageRefundMetrics)
+	if !war.Charge.Cast(sim, war.CurrentTarget) {
+		t.Fatal("Charge should cast in Battle Stance before the pull")
+	}
+	if got := war.CurrentRage(); got != 21 {
+		t.Errorf("Charge with 2 points of Improved Charge gave %.0f Rage, want 21", got)
+	}
+	sim.AddPendingAction(&core.PendingAction{NextActionAt: 20 * time.Second, OnAction: func(*core.Simulation) {}})
+	for !sim.Step() && sim.CurrentTime < 20*time.Second {
+	}
+	if war.Charge.CanCast(sim, war.CurrentTarget) {
+		t.Error("Charge should not be usable in combat")
 	}
 }

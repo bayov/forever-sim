@@ -1,5 +1,10 @@
 {
     "type": "TypeAPL",
+    "prepullActions": [
+        {"action":{"castSpell":{"spellId":{"spellId":2457}}},"doAtValue":{"const":{"val":"-2.5s"}}},
+        {"action":{"castSpell":{"spellId":{"rank":3,"spellId":11578}}},"doAtValue":{"const":{"val":"-1.5s"}},"notes":"15 Rage to open, from Battle Stance."},
+        {"action":{"castSpell":{"spellId":{"spellId":2458}}},"doAtValue":{"const":{"val":"-0.5s"}}}
+    ],
     "priorityList": [
         {"action":{"sequence":{"actions":[{"castSpell":{"spellId":{"spellId":11597}}}],"name":"sunder"}},"notes":"Sunder Armor once at the pull. The tanks keep it up after."},
         {"action":{"castSpell":{"spellId":{"spellId":12328}},"condition":{"and":{"vals":[{"or":{"vals":[{"cmp":{"lhs":{"remainingTime":{}},"op":"OpLe","rhs":{"const":{"val":"36s"}}}},{"cmp":{"lhs":{"spellUsesLostByDelay":{"delay":{"math":{"lhs":{"remainingTime":{}},"op":"OpSub","rhs":{"const":{"val":"36s"}}}},"minTimeLeft":{"const":{"val":"30s"}},"spellId":{"spellId":12328}}},"op":"OpGt","rhs":{"const":{"val":"0"}}}}]}},{"sequenceIsComplete":{"sequenceName":"sunder"}}]}}},"notes":"Without the talent ignore the warning on this line."},

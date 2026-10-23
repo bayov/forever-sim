@@ -41,7 +41,7 @@
     "Two-Handed Weapon Specialization"
   ],
   "rotation": [
-    "Pre-pull: Battle Stance",
+    "Pre-pull: Battle Stance, then Charge for 15 Rage",
     "Sunder Armor as the first GCD after the pull (every warrior; the tanks keep it up after)",
     "With 25s left, Recklessness ready and under 25 Rage: swap to Berserker Stance, and back to Battle Stance once Recklessness is out",
     "Death Wish held for the last 36s, Recklessness in the last 25s; racials with Death Wish (Blood Fury and Berserking also at the end of the fight)",
@@ -70,7 +70,7 @@
     "White hit Rage scales with weapon speed (measured at level 30, assumed ×1.5 at 60).",
     "No Fury Dragonkin build: Spearing Strike adds only 0.4% (dual wield) and 0.8% (two-hand).",
     "No Ahn'Qiraj book ranks (Heroic Strike VIII, raid Battle Shout VI, Strength of Earth, Grace of Air)",
-    "Deep Wounds ticks can't crit. Each crit restarts the tick timer (our choice).",
+    "Deep Wounds ticks can't crit.",
     "Assumed: the crit Rage bonus is white hits only, and Heroic Strike counts for Unbridled Wrath.",
     "One +2% crit elixir. A second (Grizzly) would add 10.9.",
     "Battlegear of Glory 4-piece not counted. It would add 8.4 vs Humanoids.",

@@ -148,8 +148,10 @@ func (warrior *Warrior) registerWeaponmasterExtraAttack(procMask core.ProcMask, 
 }
 
 // Bloodthrill hands out Overpower charges off the back of Rend instead of waiting for a dodge.
-// 4% a point from main hand white hits and abilities (client 70338: curve 4 to 20, proc types
-// melee auto and melee ability, and the tooltip says main hand).
+// 4% a point (client 70338: curve 4 to 20) from main hand white swings, extra attacks included,
+// and the on-next-swing Heroic Strike and Cleave. The row's proc types also name melee abilities,
+// but in game the instant specials never proc it (wowsims/forever 788f62ce0f, combat logs:
+// Hamstring 0/99, Overpower 0/9, Execute 0/7, off hand 0/200, Thunder Clap 0/13).
 func (warrior *Warrior) applyBloodthrill() {
 	if warrior.Talents.Bloodthrill == 0 {
 		return
@@ -168,7 +170,8 @@ func (warrior *Warrior) applyBloodthrill() {
 	core.MakePermanent(warrior.RegisterAura(core.Aura{
 		Label: "Bloodthrill Trigger",
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeMH) {
+			// Heroic Strike and Cleave carry the main hand auto mask as well.
+			if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMeleeMHAuto) {
 				return
 			}
 

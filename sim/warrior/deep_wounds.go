@@ -40,6 +40,12 @@ func (warrior *Warrior) applyDeepWounds() {
 			TickLength:    time.Second * 3,
 
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				// Under Forever the damage modifiers count once, at the tick: the stored damage is
+				// weapon damage only (wowsims/forever 36cfc58328).
+				if sim.IsForever() {
+					dot.Spell.CalcAndDealPeriodicDamage(sim, target, dot.SnapshotBaseDamage, dot.OutcomeTick)
+					return
+				}
 				attackTable := warrior.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand]
 				dot.SnapshotAttackerMultiplier = dot.Spell.AttackerDamageMultiplier(attackTable, true) // Double dips on attackers mods
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
@@ -47,7 +53,17 @@ func (warrior *Warrior) applyDeepWounds() {
 		},
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			spell.Dot(target).Apply(sim) //Resets the tick counter with Apply vs ApplyorRefresh
+			dot := spell.Dot(target)
+			if sim.IsForever() && dot.IsActive() {
+				// Under Forever a crit while the bleed is up keeps the first application's 3 sec
+				// tick timer and gives it a full 4 ticks from the next one (wowsims/forever
+				// c4a5402aa9, from a Forever combat log).
+				nextTick := dot.NextTickAt()
+				dot.ApplyOrRefresh(sim)
+				dot.UpdateExpires(sim, nextTick+dot.TickPeriod()*time.Duration(dot.NumberOfTicks-1))
+			} else {
+				dot.Apply(sim) //Resets the tick counter with Apply vs ApplyorRefresh
+			}
 			spell.CalcAndDealOutcome(sim, target, spell.OutcomeAlwaysHitNoHitCounter)
 		},
 	})
@@ -74,10 +90,24 @@ func (warrior *Warrior) applyDeepWounds() {
 func (warrior *Warrior) procDeepWounds(sim *core.Simulation, target *core.Unit, isOh bool) {
 	dot := warrior.DeepWounds.Dot(target)
 
-	// Under Forever, Deep Wounds doesn't scale with attack power and is a rolling DoT (the
-	// 8 October development notes): a new crit adds the damage not yet ticked to the new DoT.
-	forever := warrior.Env.IsForever()
-	ap := core.TernaryFloat64(forever, 0, dot.Spell.MeleeAttackPower(target))
+	if warrior.Env.IsForever() {
+		// Under Forever, Deep Wounds doesn't scale with attack power and is a rolling DoT (the
+		// 8 October development notes): a new crit adds the damage not yet ticked to the new DoT.
+		// Either hand's crit takes the main hand's average weapon damage (wowsims/forever
+		// 3281b13bbe: in a 1.60.1 dual-wield log off-hand crits apply bleeds of 25 and 27 next to
+		// the main hand's 30), and the damage modifiers come at the tick.
+		newDamage := warrior.AutoAttacks.MH().AverageDamage() * 0.2 * float64(warrior.Talents.DeepWounds)
+		if dot.IsActive() {
+			newDamage += dot.SnapshotBaseDamage * float64(dot.MaxTicksRemaining())
+		}
+		dot.SnapshotBaseDamage = newDamage / float64(dot.NumberOfTicks)
+		dot.SnapshotAttackerMultiplier = 1
+
+		warrior.DeepWounds.Cast(sim, target)
+		return
+	}
+
+	ap := dot.Spell.MeleeAttackPower(target)
 
 	var awd float64
 	if isOh {
@@ -91,9 +121,6 @@ func (warrior *Warrior) procDeepWounds(sim *core.Simulation, target *core.Unit, 
 	}
 
 	newDamage := awd * 0.2 * float64(warrior.Talents.DeepWounds) // 60% of average attackers damage
-	if forever && dot.IsActive() {
-		newDamage += dot.SnapshotBaseDamage * float64(dot.MaxTicksRemaining())
-	}
 
 	dot.SnapshotBaseDamage = newDamage / 4.0 // spread over 4 ticks of the dot
 	dot.SnapshotAttackerMultiplier = 1

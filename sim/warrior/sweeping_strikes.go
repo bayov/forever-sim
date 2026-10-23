@@ -47,10 +47,12 @@ func (warrior *Warrior) registerSweepingStrikesCD() {
 
 	actionID := core.ActionID{SpellID: 12292}
 
+	// Forever's Sweeping Strikes lasts 20 sec (client row 12292, DurationMs 20000; Wowhead's Forever
+	// buff tooltip reads "20 seconds remaining").
 	ssAura := warrior.RegisterAura(core.Aura{
 		Label:     "Sweeping Strikes",
 		ActionID:  actionID,
-		Duration:  time.Second * 10,
+		Duration:  core.TernaryDuration(warrior.Env.IsForever(), time.Second*20, time.Second*10),
 		MaxStacks: 5,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.SetStacks(sim, 5)

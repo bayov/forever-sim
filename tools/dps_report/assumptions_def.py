@@ -142,7 +142,7 @@ A = [
  dict(key='warr_rend_ap', cls='Warrior', label='How much attack power does Rend get?',
       short='Blizzard says Rend scales strongly with attack power. The client has no number.',
       desc='Blizzard says Rend scales strongly with attack power, but the client has no number. The presets add 2% of attack power a tick.',
-      src="Blizzard's warrior notes. Forever client 70338.",
+      src="Blizzard's warrior notes. Forever client 70338. wowsims/forever's rank 2 logs (2% a tick).",
       builds=['warrior__arms', 'warrior__arms_dragonkin'],
       settings=[S('low', 'None (client)', 'no attack power', 'The client.', {'warr_rend_ap': 0}),
                 S('expected', 'Small (2% a tick)', '2% of attack power a tick', 'About 14% of attack power over a full Rend.'),
