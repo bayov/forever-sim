@@ -102,6 +102,10 @@ func (hunterRanged) Knobs() []Knob {
 		{Name: "weaveShotSlack", Default: 3, Min: 0, Max: 3, Step: 0.25},
 		// Walk in only for a swing Raptor Strike is ready for (1), or for white swings too (0).
 		{Name: "weaveRaptor", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Walk in only while the mana covers this much a second of the fight left (0 off). Raptor
+		// Strike costs mana and a weave can push a shot back, so a long fight stops weaving when the
+		// mana runs short.
+		{Name: "weaveManaPerSec", Default: 0, Min: 0, Max: 60, Step: 5},
 	}
 }
 
@@ -278,8 +282,9 @@ const (
 )
 
 // hunterWeave is the weave of the hunter_ranged template: the knobs weave, weaveDelay, weaveReact,
-// weaveMeleeWait and weaveCasts. A weave walks in when the main hand swing is ready by the time the
-// hunter gets there, and only when it holds the next Auto Shot back by weaveDelay or less: Auto Shot
+// weaveMeleeWait, weaveCasts, weaveShotSlack, weaveRaptor and weaveManaPerSec. A weave walks in when
+// the main hand swing is ready by the time the hunter gets there, and only when it holds the next
+// Auto Shot back by weaveDelay or less: Auto Shot
 // can't go off on the move, and after the walk out it winds up for 0.5 sec a reaction time after the
 // hunter stops (core.AutoAttacks.resumeRangedAfterMove). The walks take the hunter's run speed
 // (Move Time), so Strider Kick and the run speed buffs shorten them.
@@ -340,6 +345,9 @@ func (w hunterWeave) walkIn() []*proto.APLListItem {
 	ready := le(mainHandTimeToNext(), w.walk())
 	if w.k["weaveRaptor"] == 1 {
 		ready = and(ready, le(spellTimeToReady(hunterRaptorStrike), w.walk()))
+	}
+	if w.k["weaveManaPerSec"] > 0 {
+		ready = and(ready, ge(hunterCurrentMana(), hunterMul(remainingTime(), num(w.k["weaveManaPerSec"]))))
 	}
 	return []*proto.APLListItem{
 		hunterWait(sub(react, sinceShot), and(ready, w.fits(), lt(sinceShot, react)),

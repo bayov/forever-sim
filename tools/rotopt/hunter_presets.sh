@@ -43,15 +43,18 @@ mm="$mmBase,sniperManaPerSec=10"
 # hunter walks from 12 yd into melee for a main hand swing Raptor Strike is ready for, when that holds
 # the next Auto Shot back 1.2 sec or less and Arcane Shot and the Aimed Shot cooldown stay down until
 # it is back but 0.75 sec. It keeps the player's 0.2 sec reaction before the walk in and after the
-# walk out (the search's 0.1 sec is +3.3 more, but faster than a player). Beast Mastery weaves (+12.0
-# combined over standing at range, 20000 iterations). Since the 8% cap and the new mana knobs,
-# Marksmanship and Lone Wolf do better at range: weaving is 2.9 behind on Marksmanship at a 1.2 sec
-# delay and 0.8 behind at 1.0 sec or less, 2.7 on Lone Wolf. Their presets take the turret rotations;
-# mm and lw are the weave rotations on the same knobs.
+# walk out (the search's 0.1 sec is +3.3 more, but faster than a player). Beast Mastery weaves (+9.5
+# combined over standing at range, 20000 iterations). Marksmanship and Lone Wolf weave only while the
+# mana covers 25 a second of the fight left (weaveManaPerSec): weaving wins a short fight (+4 at 120
+# sec) and costs a long one the mana (-11 at 180 sec, -15 at 300 sec without the gate). With the gate
+# Marksmanship reads 1184.8 / 1167.6 / 1140.2 at 120 / 180 / 300 sec, against 1180.1 / 1168.9 / 1142.0
+# at range, and stays above the 2026-10-23 rotation at all three lengths, which the turret rotation
+# doesn't (-4 at 120 sec).
 weave="weave=1,weaveRaptor=1,weaveDelay=1.2,weaveShotSlack=0.75"
+mmWeave="$weave,weaveManaPerSec=25"
 gen hunter_ranged bm "$bm,$weave"
-gen hunter_ranged mm "$mm,$weave"
-gen hunter_ranged lw "$mm,$weave"
+gen hunter_ranged mm "$mm,$mmWeave"
+gen hunter_ranged lw "$mm,$mmWeave"
 gen hunter_ranged bm_turret "$bm"
 gen hunter_ranged mm_turret "$mm"
 gen hunter_ranged lw_turret "$mm"
@@ -75,16 +78,19 @@ gen hunter_sv sv "$sv"
 # +4.7 / +3.3 / +3.4 / +1.4 at 180 sec on Beast Mastery / Marksmanship / Lone Wolf / Survival, 20000
 # iterations). It is not held back for the hunter's own DPS (user ruling).
 gen hunter_ranged bm_mark "$bm,mark=1,markPrepull=1.5,$weave"
-gen hunter_ranged mm_mark "$mm,mark=1,markPrepull=1.5"
-gen hunter_ranged lw_mark "$mm,mark=1,markPrepull=1.5"
+gen hunter_ranged mm_mark "$mm,mark=1,markPrepull=1.5,$mmWeave"
+gen hunter_ranged lw_mark "$mm,mark=1,markPrepull=1.5,$mmWeave"
 gen hunter_sv sv_mark "$sv,mark=1,markPrepull=1.5"
 # Scorpid Sting duty (standards 23), for the ranged hunters only (user ruling 2026-10-15, not melee
 # Survival): Scorpid Sting kept up in place of Serpent Sting, for the presets with the raid's Scorpid
 # Sting off (mksettings specs hunter_{bm,mm,lw}_scorpid). Without Serpent Sting Marksmanship and Lone
 # Wolf have the mana for Sniper Shot at 5 and 10 a second of the fight left (2026-10-23 knob search,
-# 120 / 180 / 300 sec combined, 20000 iterations: +5.5 and +6.5 over 15). Marksmanship stays at range
-# (weaving is 1.3 behind). Beast Mastery refreshes the sting 4 sec before it drops, not 2: with its
-# busier global cooldowns the 2 sec refresh lets it lapse (+3.6 over 2, +1.6 over 3).
-gen hunter_ranged bm_scorpid "$bm,scorpid=1,scorpidLead=4,$weave"
-gen hunter_ranged mm_scorpid "$mmBase,scorpid=1,sniperManaPerSec=5"
-gen hunter_ranged lw_scorpid "$mmBase,scorpid=1,sniperManaPerSec=10"
+# 120 / 180 / 300 sec combined, 20000 iterations: +5.5 and +6.5 over 15), and weave as their bases do.
+# Beast Mastery refreshes the sting 4 sec before it drops, not 2: with its
+# busier global cooldowns the 2 sec refresh lets it lapse (+3.6 over 2, +1.6 over 3). It keeps Beast
+# Mastery's rotation from before 2026-10-23 (Aimed Shot first, the 30% and 20% mana floors on Serpent
+# Sting and Arcane Shot): the new one is +0.3 to +0.6 at 120 sec but 0.3 to 0.4 behind at 180 and 300.
+bmOld="$ranged,arcaneFirst=0,arcaneMana=20,serpentLate=0,serpentMana=30,holdElune=1"
+gen hunter_ranged bm_scorpid "$bmOld,scorpid=1,scorpidLead=4,$weave"
+gen hunter_ranged mm_scorpid "$mmBase,scorpid=1,sniperManaPerSec=5,$mmWeave"
+gen hunter_ranged lw_scorpid "$mmBase,scorpid=1,sniperManaPerSec=10,$mmWeave"

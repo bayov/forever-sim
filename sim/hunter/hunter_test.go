@@ -29,21 +29,20 @@ func TestBeastMasteryHawk(t *testing.T) {
 
 func TestMarksmanship(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
-		hunterSuite(MarksmanshipTalents, "level60_phase1_synthetic_ranged", "mm_turret", RangedConsumes, PlayerOptionsCat),
+		hunterSuite(MarksmanshipTalents, "level60_phase1_synthetic_ranged", "mm", RangedConsumes, PlayerOptionsCat),
 	}))
 }
 
-// Lone Wolf is Marksmanship without a pet. Both stand at range, as their presets do since the 8% hit
-// cap (2026-10-23).
+// Lone Wolf is Marksmanship without a pet.
 func TestLoneWolf(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
-		hunterSuite(LoneWolfTalents, "level60_phase1_synthetic_ranged", "lw_turret", RangedConsumes, PlayerOptionsNoPet),
+		hunterSuite(LoneWolfTalents, "level60_phase1_synthetic_ranged", "lw", RangedConsumes, PlayerOptionsNoPet),
 	}))
 }
 
-// The test suite puts every player 5 yards from the target. Beast Mastery's rotation walks to 12 yards
-// before the pull and melee weaves from there (the turret rotations step back to 25 yards at the
-// pull), Survival melees.
+// The test suite puts every player 5 yards from the target. The ranged rotations walk to 12 yards
+// before the pull and melee weave from there (Marksmanship and Lone Wolf while the mana lasts; the
+// turret rotation steps back to 25 yards at the pull), Survival melees.
 func TestSurvival(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
 		hunterSuite(SurvivalTalents, "level60_phase1_synthetic_survival", "sv", SurvivalConsumes, PlayerOptionsCat),
