@@ -46,6 +46,7 @@ import Level60UndeadAPLJSON from './apls/level60_undead.apl.json';
 import BlankGear from './gear_sets/blank.gear.json';
 import Level30p5GearJSON from './gear_sets/level30p5.gear.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
+import Level60Phase1SyntheticUndeadGearJSON from './gear_sets/level60_phase1_synthetic_undead.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -100,7 +101,9 @@ export const GearLevel30p5 = PresetUtils.makePresetGear('Level 30 + 5', Level30p
 // The two-hander is an axe with Spinal Reaper's 203 - 305 at 3.4, the Era Phase 1 retribution
 // weapon, so no paladin race gets a weapon racial from it. The relic is Libram of Law (Pix
 // Xizzix, 4% Judgement of Righteousness damage), 0.8 ahead of no libram on the twist build and
-// 3.8 on Shock (measured on an earlier set). Libram of Fervor does nothing for these builds. The
+// 3.8 on Shock (measured on an earlier set). Libram of Invocation (5% off the seals) is 2.3 behind
+// Law on the twist build at 180 sec (paired, 20000 iterations, 2026-10-23): the mana it saves is
+// worth less than Law's 4% on Judgement of Righteousness. Libram of Fervor does nothing for these builds. The
 // trinkets are synthetic (Forever's launch trinkets are not simulated, standards 8a): a stat
 // trinket of 32 spell power and 18 crit rating (45.5 linear) and an on-use trinket of 140 spell
 // power for 20 sec every 2 min. The enchants are the
@@ -112,6 +115,15 @@ export const GearLevel30p5 = PresetUtils.makePresetGear('Level 30 + 5', Level30p
 // boots. The gear stays fixed for the talent, rotation and race searches.
 export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGearJSON, {
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game.',
+	group: 'Level 60',
+});
+
+// The same set with Tenets of the Silver Hand (1% more damage against Undead, spell 1302545) in the
+// relic slot, for the vs Undead builds. Paired at 180 sec with 20000 iterations against an Undead
+// boss it beats Libram of Law by 6.2 on Level 60 (vs Undead), 6.3 on sub Holy vs Undead and 3.4 on
+// Shock vs Undead (2026-10-23).
+export const GearLevel60Phase1SyntheticUndead = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic (vs Undead)', Level60Phase1SyntheticUndeadGearJSON, {
+	tooltip: 'The Level 60 Phase 1 Synthetic set with Tenets of the Silver Hand, for an Undead boss.',
 	group: 'Level 60',
 });
 
@@ -655,7 +667,7 @@ const OptionsRighteousness = RetributionPaladinOptions.create({
 export const PresetBuildLevel60Undead = PresetUtils.makePresetBuild('Level 60 (vs Undead)', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Human against an Undead or Demon boss, with Exorcism and Holy Wrath.',
-	gear: GearLevel60Phase1Synthetic,
+	gear: GearLevel60Phase1SyntheticUndead,
 	talents: TalentsLevel60Undead,
 	rotation: APLLevel60Undead,
 	encounter: EncounterLevel60Undead,
@@ -670,7 +682,7 @@ export const PresetBuildLevel60Undead = PresetUtils.makePresetBuild('Level 60 (v
 export const PresetBuildLevel60SubHolyUndead = PresetUtils.makePresetBuild('Level 60 (sub Holy, vs Undead)', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Human with the sub Holy talents against an Undead or Demon boss, with Exorcism and Holy Wrath.',
-	gear: GearLevel60Phase1Synthetic,
+	gear: GearLevel60Phase1SyntheticUndead,
 	talents: TalentsLevel60SubHolyUndead,
 	rotation: APLLevel60Undead,
 	encounter: EncounterLevel60Undead,
@@ -687,7 +699,7 @@ export const PresetBuildLevel60SubHolyUndead = PresetUtils.makePresetBuild('Leve
 export const PresetBuildLevel60ShockUndead = PresetUtils.makePresetBuild('Level 60 Shock (vs Undead)', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Human Holy Shock build against an Undead or Demon boss, with Exorcism.',
-	gear: GearLevel60Phase1Synthetic,
+	gear: GearLevel60Phase1SyntheticUndead,
 	talents: TalentsLevel60Shock,
 	rotation: APLLevel60ShockUndead,
 	encounter: EncounterLevel60Undead,
