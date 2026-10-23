@@ -107,10 +107,10 @@ index 83f346dbf..1be52fe51 100644
  		}
  	}
 diff --git a/sim/core/rage.go b/sim/core/rage.go
-index a695b498a..8d5a83337 100644
+index a4c416866..71b2d2a6b 100644
 --- a/sim/core/rage.go
 +++ b/sim/core/rage.go
-@@ -67,7 +67,7 @@ func ForeverNormalizedRageLevelFactor(level int32) float64 {
+@@ -68,7 +68,7 @@
  	if level <= 30 {
  		return 1
  	}
@@ -119,17 +119,17 @@ index a695b498a..8d5a83337 100644
  }
  
  // ForeverNormalizedRage is the Rage a landed white hit with this weapon gives a character of this
-@@ -107,7 +107,8 @@ func ForeverDamageTakenRage(spell *Spell, result *SpellResult, level int32) floa
+@@ -144,7 +144,8 @@
+ 		return 0
  	}
- 	level = max(1, min(level, 60))
- 	assumedArmor := 0.2 + 0.2*float64(level-1)/59
--	return ForeverDamageTakenRageK * (1 - assumedArmor) * damage / NormalMobStatsAt(level).Health
+ 	attackerLevel := spell.Unit.Level
+-	return ForeverDamageTakenRageFactor * (1 - foreverDamageTakenRageArmor(attackerLevel)) * damage / foreverRageConversion(attackerLevel)
 +	// dashboard assumption warr_dt_rage_k
-+	return Assume("warr_dt_rage_k", ForeverDamageTakenRageK) * (1 - assumedArmor) * damage / NormalMobStatsAt(level).Health
++	return Assume("warr_dt_rage_k", ForeverDamageTakenRageFactor) * (1 - foreverDamageTakenRageArmor(attackerLevel)) * damage / foreverRageConversion(attackerLevel)
  }
  
- // foreverRageDamage is the damage ForeverDamageTakenRage counts for a hit.
-@@ -127,7 +128,7 @@ func foreverRageDamage(spell *Spell, result *SpellResult) float64 {
+ // ForeverDamageTakenRageFactor is the 2.5 of ForeverDamageTakenRage (report assumption
+@@ -204,7 +205,7 @@
  	} else if result.DidCrush() {
  		damage *= 1.5
  	}

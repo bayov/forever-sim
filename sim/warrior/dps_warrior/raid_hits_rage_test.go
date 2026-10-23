@@ -12,14 +12,14 @@ import (
 // tanking at the set rate, and give the Rage of damage taken.
 //
 // A level 60 warrior with no gear, no stance and no rotation takes 10 hits a minute of 1500
-// damage for 9 min, so about 90 hits a fight. Under Forever each one gives 20 × 0.6 × 1500 /
-// 5356 (a level 60 normal mob's health) = 3.36 Rage (core.ForeverDamageTakenRage). Under
-// Classic it gives 2.5 × 1500 / the level 63 boss's Rage conversion, 15.4 Rage. With no hits
-// there is no Rage from damage taken at all.
+// damage for 9 min, so about 90 hits a fight. Under Forever each one gives 2.5 × (1 − 0.4) ×
+// 1500 / the level 63 boss's Rage conversion = 9.2 Rage (core.ForeverDamageTakenRage). Under
+// Classic it gives 2.5 × 1500 / the same conversion, 15.4 Rage. With no hits there is no Rage
+// from damage taken at all.
 func TestRaidDamageHits(t *testing.T) {
 	const minutes, iterations = 9, 200
 	for _, ruleset := range []proto.Ruleset{proto.Ruleset_RulesetForever, proto.Ruleset_RulesetClassic} {
-		wantPerHit := 20 * 0.6 * 1500 / core.NormalMobStatsAt(60).Health
+		wantPerHit := 2.5 * 0.6 * 1500 / core.GetRageConversion(63)
 		if ruleset == proto.Ruleset_RulesetClassic {
 			wantPerHit = 1500 * 2.5 / core.GetRageConversion(63)
 		}

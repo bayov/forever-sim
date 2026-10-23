@@ -47,7 +47,8 @@ type RageBarOptions struct {
 // shows a 1.8 sec main hand dagger giving 6.2 to 6.3 Rage a swing (3.46 × 1.8) and a 1.6 sec off
 // hand dagger 2.7 to 2.8 (3.46 × 1.6 × 0.5), glancing blows included, on about 50 and 60 clean
 // swings (assumptions audit, 2026-10-16). Talent multipliers (Dual Wield Specialization's 10% off
-// hand Rage a point, client 1.60.1.70425 curve 111755) and the crit bonus stay on top. The rest is
+// hand Rage a point, client 1.60.1.70425 curve 111755) stay on top, and a crit adds its bonus at
+// the one-hand rate (foreverWhiteHitRage). Misses, dodges and parries give nothing. The rest is
 // an assumption until the beta test in orchestration/followups.md ("Rage needs a beta test"). k is a level 30 number, and flat at 60 it gives about half of Classic's Rage a swing, so
 // how it grows past 30 is an assumption too (standards 21): k(L) = k30 × (1 + s × (L − 30) / 30),
 // with s = 0 flat, 0.5 the midpoint (×1.5 at 60, the default) and 1 Classic-like (×2 at 60). The
@@ -73,31 +74,68 @@ func ForeverNormalizedRageLevelFactor(level int32) float64 {
 // ForeverNormalizedRage is the Rage a landed white hit with this weapon gives a character of this
 // level under Forever, before the off hand, crit and talent multipliers.
 func ForeverNormalizedRage(weapon *Weapon, level int32) float64 {
-	k := ForeverNormalizedRageOneHand
-	if weapon.NormalizedSwingSpeed >= foreverTwoHandNormalizedSpeed {
-		k = ForeverNormalizedRageTwoHand
-	}
-	return k * ForeverNormalizedRageK * ForeverNormalizedRageLevelFactor(level) * weapon.SwingSpeed
+	return foreverOneHandRateRage(weapon, level) * foreverTwoHandRageFactor(weapon)
 }
 
-// ForeverDamageTakenRage is the Rage a hit taken gives under Forever: K Rage for a normal mob's
-// worth of health at our level, counted as if armor took off a share that grows from 20% at level
-// 1 to 40% at 60.
+// foreverOneHandRateRage is the Rage a landed white hit with this weapon would give at the
+// one-hand rate.
+func foreverOneHandRateRage(weapon *Weapon, level int32) float64 {
+	return ForeverNormalizedRageOneHand * ForeverNormalizedRageK * ForeverNormalizedRageLevelFactor(level) * weapon.SwingSpeed
+}
+
+// foreverTwoHandRageFactor is 4.5 / 3.46 for a two-hander and 1 for a one-hander.
+func foreverTwoHandRageFactor(weapon *Weapon) float64 {
+	if weapon.NormalizedSwingSpeed >= foreverTwoHandNormalizedSpeed {
+		return ForeverNormalizedRageTwoHand / ForeverNormalizedRageOneHand
+	}
+	return 1
+}
+
+// foreverWhiteHitRage is the Rage a white swing gives under Forever, before the flat bonus. Only a
+// swing that lands makes Rage: misses, dodges and parries make none (wowsims/forever f9f9f21883,
+// six level 8 and 9 combat logs). The off hand, Dual Wield Specialization and the other talent
+// multipliers scale the swing's Rage at the one-hand rate; the two-hand factor then multiplies it,
+// and a crit adds the crit bonus (100%) times the one-hand-rate Rage on top, so a two-hander crit
+// gives (4.5 + 3.46) × speed, not 9 × speed. The game files' Rule of Rage (DND) row 1322574
+// states the 100; warrior and bear combat logs show the bonus (wowsims/forever 5ac4ffbcb6,
+// 913fb51b9f).
+func (unit *Unit) foreverWhiteHitRage(spell *Spell, result *SpellResult) float64 {
+	if !result.Landed() {
+		return 0
+	}
+	weapon := unit.AutoAttacks.MH()
+	swingRage := unit.rageBar.damageDealtMultiplier
+	if spell.ProcMask == ProcMaskMeleeOHAuto {
+		weapon = unit.AutoAttacks.OH()
+		swingRage *= ForeverNormalizedRageOffHand * unit.rageBar.offHandDealtMultiplier
+	}
+	swingRage *= foreverOneHandRateRage(weapon, unit.Level)
+
+	generatedRage := swingRage * foreverTwoHandRageFactor(weapon)
+	if result.DidCrit() {
+		generatedRage += (unit.rageBar.critDealtMultiplier - 1) * swingRage
+	}
+	return generatedRage
+}
+
+// ForeverDamageTakenRage is the Rage a hit or a periodic tick taken gives under Forever:
+// 2.5 × (1 − A) × D / c, with c the Rage conversion at the attacker's level (230.6 at 60) and A
+// the armor the game assumes in place of ours, by the attacker's level (see
+// foreverDamageTakenRageArmor). Our level, health and armor play no part. wowsims/forever
+// ee2d69b16a, 73b317c7cf and de550b7df9 fit it on combat logs from after the 8 October build:
+// warriors at 18 and 20 and bears at 30, attackers from level 16 to 60, geared and naked alike,
+// periodic ticks included (5ac4ffbcb6). At 60 a 1500 hit from a level 63 boss gives 9.2 Rage;
+// Classic gave 15.4.
 //
-// The damage it counts is the attacker's hit before anything of ours touches it, times the crit or
-// crushing blow multiplier. Blizzard's 8 October notes (us.forums.blizzard.com/en/wow/t/2360696,
-// post 5) replace our armor with an assumed "20% to 40% range, varying by level", use "an
-// expected creature's health" instead of ours, count "increased damage taken from combat
-// multipliers, in particular from taking critical strikes or crushing blows", and ignore absorbs
-// "as if the Warrior/Druid had no absorb active". The Warrior deep dive
-// (news.blizzard.com/en-us/article/24301514) says "wearing Armor will no longer reduce the Rage
-// you gain". Neither names stances, Shield Wall, talents or blocks; by the user's reading
+// D is the attacker's hit before anything of ours touches it, times the crit or crushing blow
+// multiplier. Blizzard's 8 October notes (us.forums.blizzard.com/en/wow/t/2360696, post 5) count
+// "increased damage taken from combat multipliers, in particular from taking critical strikes or
+// crushing blows" and ignore absorbs "as if the Warrior/Druid had no absorb active". The Warrior
+// deep dive (news.blizzard.com/en-us/article/24301514) says "wearing Armor will no longer reduce
+// the Rage you gain". Neither names stances, Shield Wall, talents or blocks; by the user's reading
 // (2026-10-16: being more defensive doesn't penalize Rage) those don't count either (report
-// assumption warr_dt_rage_mods). K = 20 comes from pre-fix beta logs (magey/forever-warrior
-// issue 3: 10 Rage a max health of damage with the 50% armor assumption, at levels 8 to 9). At
-// 60 a 1500 hit gives 3.4 Rage (a level 60 normal mob has 5356 health in Forever's creature table);
-// Classic gave 15.4 from a level 63 attacker.
-func ForeverDamageTakenRage(spell *Spell, result *SpellResult, level int32) float64 {
+// assumption warr_dt_rage_mods).
+func ForeverDamageTakenRage(spell *Spell, result *SpellResult) float64 {
 	if !result.Landed() {
 		return 0
 	}
@@ -105,9 +143,48 @@ func ForeverDamageTakenRage(spell *Spell, result *SpellResult, level int32) floa
 	if damage <= 0 {
 		return 0
 	}
-	level = max(1, min(level, 60))
-	assumedArmor := 0.2 + 0.2*float64(level-1)/59
-	return ForeverDamageTakenRageK * (1 - assumedArmor) * damage / NormalMobStatsAt(level).Health
+	attackerLevel := spell.Unit.Level
+	return ForeverDamageTakenRageFactor * (1 - foreverDamageTakenRageArmor(attackerLevel)) * damage / foreverRageConversion(attackerLevel)
+}
+
+// ForeverDamageTakenRageFactor is the 2.5 of ForeverDamageTakenRage (report assumption
+// warr_dt_rage_k).
+const ForeverDamageTakenRageFactor = 2.5
+
+// The armor ForeverDamageTakenRage assumes, by the attacker's level: 20% up to 42, 30% at 44, 36%
+// at 46 and 38% at 50 from the logs (wowsims/forever 73b317c7cf: k 1.993 on 187 melee hits from
+// attackers 16 to 42, 1.752 at 44, 1.611 at 46, 1.552 from 50 to 60), and 40% at 63, the top of
+// the notes' "20% to 40% range, varying by level" (de550b7df9). Levels in between interpolate.
+var foreverDamageTakenRageArmorRows = []struct {
+	level     int32
+	reduction float64
+}{
+	{42, 0.20},
+	{44, 0.30},
+	{46, 0.36},
+	{50, 0.38},
+	{63, 0.40},
+}
+
+func foreverDamageTakenRageArmor(attackerLevel int32) float64 {
+	rows := foreverDamageTakenRageArmorRows
+	if attackerLevel <= rows[0].level {
+		return rows[0].reduction
+	}
+	for i := 1; i < len(rows); i++ {
+		if attackerLevel <= rows[i].level {
+			lo, hi := rows[i-1], rows[i]
+			return lo.reduction + (hi.reduction-lo.reduction)*float64(attackerLevel-lo.level)/float64(hi.level-lo.level)
+		}
+	}
+	return rows[len(rows)-1].reduction
+}
+
+// foreverRageConversion is the Rage conversion ForeverDamageTakenRage was fitted with: Classic's
+// level 45 and up formula at every level.
+func foreverRageConversion(level int32) float64 {
+	l := float64(level)
+	return 0.0091107836*l*l + 3.225598133*l + 4.2652911
 }
 
 // foreverRageDamage is the damage ForeverDamageTakenRage counts for a hit.
@@ -135,10 +212,6 @@ func foreverRageDamage(spell *Spell, result *SpellResult) float64 {
 	}
 	return damage
 }
-
-// ForeverDamageTakenRageK is the Rage a full normal mob's health of damage taken gives, before the
-// assumed armor (report assumption warr_dt_rage_k).
-const ForeverDamageTakenRageK = 20.0
 
 // Which of our damage taken modifiers (stances, Shield Wall, Recklessness, talents) change the
 // Rage a hit gives (report assumption warr_dt_rage_mods).
@@ -202,27 +275,27 @@ func (unit *Unit) EnableRageBar(options RageBarOptions) {
 				return
 			}
 
-			damage := result.Damage
-			if result.Outcome.Matches(OutcomeDodge | OutcomeParry) {
-				// Rage is still generated for dodges/parries, based on the damage it WOULD have done.
-				damage = result.PreOutcomeDamage
-			}
-
-			generatedRage := damage * 7.5 / rageConversion
+			var generatedRage float64
 			if unit.rageBar.normalizedDealt {
-				// Dodges and parries give the same Rage as a hit, as Classic's do.
-				if spell.ProcMask == ProcMaskMeleeOHAuto {
-					generatedRage = ForeverNormalizedRage(unit.AutoAttacks.OH(), unit.Level) * ForeverNormalizedRageOffHand
-				} else {
-					generatedRage = ForeverNormalizedRage(unit.AutoAttacks.MH(), unit.Level)
+				generatedRage = unit.foreverWhiteHitRage(spell, result)
+				if generatedRage <= 0 {
+					return
 				}
-			}
-			generatedRage *= unit.rageBar.damageDealtMultiplier
-			if spell.ProcMask == ProcMaskMeleeOHAuto {
-				generatedRage *= unit.rageBar.offHandDealtMultiplier
-			}
-			if result.Outcome.Matches(OutcomeCrit) {
-				generatedRage *= unit.rageBar.critDealtMultiplier
+			} else {
+				damage := result.Damage
+				if result.Outcome.Matches(OutcomeDodge | OutcomeParry) {
+					// Rage is still generated for dodges/parries, based on the damage it WOULD have done.
+					damage = result.PreOutcomeDamage
+				}
+
+				generatedRage = damage * 7.5 / rageConversion
+				generatedRage *= unit.rageBar.damageDealtMultiplier
+				if spell.ProcMask == ProcMaskMeleeOHAuto {
+					generatedRage *= unit.rageBar.offHandDealtMultiplier
+				}
+				if result.Outcome.Matches(OutcomeCrit) {
+					generatedRage *= unit.rageBar.critDealtMultiplier
+				}
 			}
 			generatedRage += unit.rageBar.flatDamageDealtBonusRage
 
@@ -244,13 +317,24 @@ func (unit *Unit) EnableRageBar(options RageBarOptions) {
 			}
 			var generatedRage float64
 			if sim.IsForever() {
-				generatedRage = ForeverDamageTakenRage(spell, result, unit.Level)
+				generatedRage = ForeverDamageTakenRage(spell, result)
 			} else {
 				generatedRage = result.Damage * 2.5 / GetRageConversion(spell.Unit.Level)
 			}
 			generatedRage *= unit.rageBar.damageTakenMultiplier
 			generatedRage += unit.rageBar.flatDamageTakenBonusRage
 			unit.AddRage(sim, generatedRage, rageFromDamageTakenMetrics)
+		},
+		// Under Forever a periodic tick taken gives Rage like a direct hit (wowsims/forever
+		// 5ac4ffbcb6); Classic's ticks give none.
+		OnPeriodicDamageTaken: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+			if unit.GetCurrentPowerBar() != RageBar || !sim.IsForever() {
+				return
+			}
+			generatedRage := ForeverDamageTakenRage(spell, result) * unit.rageBar.damageTakenMultiplier
+			if generatedRage > 0 {
+				unit.AddRage(sim, generatedRage, rageFromDamageTakenMetrics)
+			}
 		},
 	})
 
@@ -292,7 +376,8 @@ func (unit *Unit) AddCritDealtRageMultiplier(multi float64) {
 }
 
 // EnableForeverNormalizedRage switches Rage from dealing damage to Forever's normalized Rage (see
-// ForeverNormalizedRage). Rage from taking damage stays Classic's.
+// ForeverNormalizedRage). Rage from taking damage follows Forever's rule for any Rage bar under
+// the Forever ruleset (ForeverDamageTakenRage).
 func (unit *Unit) EnableForeverNormalizedRage() {
 	if unit.Env.IsForever() {
 		unit.rageBar.normalizedDealt = true
