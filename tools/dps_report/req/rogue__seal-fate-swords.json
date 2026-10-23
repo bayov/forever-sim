@@ -4,7 +4,7 @@
       {
         "players": [
           {
-            "race": "RaceSkyborneWindshaper",
+            "race": "RaceOrc",
             "class": "ClassRogue",
             "equipment": {
               "items": [
@@ -72,6 +72,7 @@
               ]
             },
             "consumes": {
+              "flask": "FlaskOfNaturalPrecision",
               "food": "FoodFlankAuPoivre",
               "agilityElixir": "ElixirOfTheMongoose",
               "strengthBuff": "ElixirOfFerocity",
@@ -90,7 +91,7 @@
               "blessingOfWisdom": "TristateEffectImproved",
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "0053031035140005-3220132020141",
+            "talentsString": "0053031034150005-3220132020141",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Leatherworking",
@@ -1145,7 +1146,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "cmp": {
@@ -1263,7 +1263,7 @@
                                     },
                                     "rhs": {
                                       "const": {
-                                        "val": "5"
+                                        "val": "4"
                                       }
                                     }
                                   }
@@ -1538,7 +1538,8 @@
       }
     ],
     "raidDamageHitsPerMinute": 2,
-    "raidDamagePerHit": 1500
+    "raidDamagePerHit": 1500,
+    "naturalFlaskZone": true
   },
   "simOptions": {
     "iterations": 1000,

@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_mutilate",
   "apl": "level60_mutilate",
   "published": {
-    "dps": 707.3,
-    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 702.6)"
+    "dps": 742.2,
+    "source": "Rogue regear round 2026-10-23: the 8% hit cap (the sets' wrists trade 10 hit rating for 20 attack power, Subtlety keeps its hit), the natural flasks, the wowsims/forever alignment round; 180 s, 20,000 iterations, seed 1 (was 707.3)"
   },
   "verify": {
-    "dps": 707.3,
-    "stderr": 0.2,
+    "dps": 742.16,
+    "stderr": 0.19,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "sim of the request, 180s, seed 1 (rogue worker, 2026-10-23)"
   },
   "summary": "Mutilate with Murder 2/2, for a Humanoid or Giant boss.",
   "advantage": "Murder 2/2 adds 4% damage against Humanoids and Giants. It does nothing against other bosses.",
@@ -46,10 +46,12 @@
     "Cold Blood right before a 5-point Eviscerate",
     "Thistle Tea at 10 energy or less; Sapper, Land Mine and potion while Slice and Dice is up",
     "Eviscerate at 4+ combo points (with Slice and Dice up, 79+ energy, or under 6s left); spend leftover points in the last 3s",
+    "Vanish into Ambush at 3 combo points or fewer (Shadowmeld into Ambush for a Night Elf)",
     "Mutilate right after a main-hand swing (0.75s)",
     "Backstab as fallback builder"
   ],
   "consumes": [
+    "Flask of Natural Precision",
     "Elixir of the Mongoose",
     "Elixir of Ferocity",
     "Juju Might",
@@ -64,12 +66,12 @@
   ],
   "caveats": [
     "Murder (+4% damage) only works against Humanoids and Giants.",
-    "Backstab with the same talents is about 20 DPS ahead.",
+    "Backstab with the same talents is the Seal Fate Daggers build, 13 DPS ahead.",
     "Venom (25 Energy) always loses DPS.",
-    "Open: does Mutilate need only a main-hand dagger?",
     "No Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV). They would add 13 to 18.",
     "Grimstitch 4-piece and 5-piece aren't active (about +8 and +6).",
-    "Flask of Supreme Power and Greater Arcane Elixir left out (+8 through Dragonbreath Chili)."
+    "Natural flasks on (standards 11: Hyjal Summit or the Barrow Deeps).",
+    "Hit held at the 8% yellow cap (standards 4); the old 9% sets did 0.4 to 2.8 more through the white hits."
   ],
   "notes": "Request from mksettings with the same arguments as rogue__mutilate except talents, then the target's mobType set to MobTypeHumanoid, as the class preset's encounter does.",
   "encounter": "Humanoid",

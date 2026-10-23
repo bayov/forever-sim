@@ -5,25 +5,25 @@
   "build": "Subtlety",
   "isDefault": true,
   "pr": 9,
-  "race": "Orc",
+  "race": "NightElf",
   "talents": "0053031035140004--3021203310113011",
   "treeNames": [
     "Assassination",
     "Combat",
     "Subtlety"
   ],
-  "gearSet": "level60_phase1_synthetic_daggers",
+  "gearSet": "level60_phase1_synthetic_subtlety",
   "apl": "level60_subtlety",
   "published": {
-    "dps": 656.3,
-    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 652.0)"
+    "dps": 714.5,
+    "source": "Rogue regear round 2026-10-23: the 8% hit cap (the sets' wrists trade 10 hit rating for 20 attack power, Subtlety keeps its hit), the natural flasks, the wowsims/forever alignment round; 180 s, 20,000 iterations, seed 1 (was 656.3)"
   },
   "verify": {
-    "dps": 656.33,
+    "dps": 714.46,
     "stderr": 0.19,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "sim of the request, 180s, seed 1 (rogue worker, 2026-10-23)"
   },
   "summary": "Subtlety with Hemorrhage, Ghostly Strike and Preparation, on daggers.",
   "keyTalents": [
@@ -43,11 +43,12 @@
     "3-point Rupture when not ticking, with Hemorrhage right before it",
     "Premeditation at 3 combo points or fewer (no Stealth needed)",
     "Eviscerate at 5 combo points",
-    "Vanish into Ambush at 3 combo points or fewer, pooling energy; Preparation resets Vanish and Premeditation",
+    "Vanish into Ambush at 3 combo points or fewer, pooling energy, and the Night Elf's Shadowmeld into Ambush on the same terms; Preparation resets Vanish and Premeditation",
     "Ghostly Strike on cooldown",
     "Hemorrhage as the filler builder"
   ],
   "consumes": [
+    "Flask of Natural Precision",
     "Elixir of the Mongoose",
     "Elixir of Ferocity",
     "Juju Might",
@@ -61,14 +62,15 @@
     "Deadly Poison (main hand) and Instant Poison (off hand), each beside a Dense Sharpening Stone"
   ],
   "caveats": [
-    "The fight doesn't open from Stealth. Only Vanish gives Stealth.",
+    "The fight doesn't open from Stealth. Only Vanish and the Night Elf's Shadowmeld give Stealth.",
     "Ghostly Strike adds nothing over Hemorrhage (0.5), but the build requires it.",
     "Open: Premeditation out of Stealth and Preparation's reset list.",
     "Elusiveness: 0 at 180s, -2.9 at 300s.",
     "Murder does nothing on the generic boss, so its points go to Lethality (Vile Poisons for Seal Fate Daggers).",
     "No Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV). They would add 13 to 18.",
     "Grimstitch 4-piece and 5-piece aren't active (about +8 and +6).",
-    "Flask of Supreme Power and Greater Arcane Elixir left out (+8 through Dragonbreath Chili)."
+    "Natural flasks on (standards 11: Hyjal Summit or the Barrow Deeps).",
+    "No Precision, so 6% hit (5% on the gear), under the 8% cap."
   ],
   "notes": "Only Subtlety build, so treated as the Subtlety default."
 }

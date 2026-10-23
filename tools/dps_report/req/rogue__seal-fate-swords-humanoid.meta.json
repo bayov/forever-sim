@@ -5,25 +5,25 @@
   "build": "Seal Fate Swords (vs Humanoid)",
   "isDefault": false,
   "pr": 9,
-  "race": "SkyborneWindshaper",
-  "talents": "0053231015140005-3220132020141",
+  "race": "Orc",
+  "talents": "0053231014150005-3220132020141",
   "treeNames": [
     "Assassination",
     "Combat",
     "Subtlety"
   ],
   "gearSet": "level60_phase1_synthetic_seal_fate_swords",
-  "apl": "level60_combat_swords",
+  "apl": "level60_seal_fate_swords",
   "published": {
-    "dps": 701.7,
-    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 697.3)"
+    "dps": 752.4,
+    "source": "Rogue regear round 2026-10-23: the 8% hit cap (the sets' wrists trade 10 hit rating for 20 attack power, Subtlety keeps its hit), the natural flasks, the wowsims/forever alignment round; 180 s, 20,000 iterations, seed 1 (was 701.7)"
   },
   "verify": {
-    "dps": 701.75,
-    "stderr": 0.24,
+    "dps": 752.44,
+    "stderr": 0.25,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "sim of the request, 180s, seed 1 (rogue worker, 2026-10-23)"
   },
   "summary": "Seal Fate Swords with Murder 2/2, for a Humanoid or Giant boss.",
   "advantage": "Murder 2/2 adds 4% damage against Humanoids and Giants. It does nothing against other bosses.",
@@ -34,7 +34,8 @@
   "keyTalents": [
     "Murder 2/2",
     "Seal Fate 5/5",
-    "Vile Poisons 5/5",
+    "Improved Poisons 5/5",
+    "Vile Poisons 4/5",
     "Improved Sinister Strike",
     "Blade Flurry",
     "Cold Blood",
@@ -42,16 +43,17 @@
     "Dual Wield Specialization 4/5"
   ],
   "rotation": [
-    "Uses the Combat Swords rotation (no Adrenaline Rush talent, so that line is skipped)",
+    "The Combat Swords rotation with 4-point Eviscerates (no Adrenaline Rush talent, so that line is skipped)",
     "Pre-pull: Blade Flurry at -1s",
     "Slice and Dice at 1+ combo points when down; refresh at 5 when about to drop",
     "Blade Flurry on cooldown while Slice and Dice is up",
     "Cold Blood right before a 5-point Eviscerate",
     "Thistle Tea at 10 energy or less; Sapper, Land Mine and potion while Slice and Dice is up",
-    "Eviscerate at 5 combo points (with Slice and Dice up, 79+ energy, or under 6s left); spend leftover points in the last 3s",
+    "Eviscerate at 4+ combo points (with Slice and Dice up, 79+ energy, or under 6s left); spend leftover points in the last 3s",
     "Sinister Strike right after a main-hand swing (0.5s), or at 79+ energy"
   ],
   "consumes": [
+    "Flask of Natural Precision",
     "Elixir of the Mongoose",
     "Elixir of Ferocity",
     "Juju Might",
@@ -68,7 +70,8 @@
     "Murder (+4% damage) only works against Humanoids and Giants.",
     "No Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV). They would add 13 to 18.",
     "Grimstitch 4-piece and 5-piece aren't active (about +8 and +6).",
-    "Flask of Supreme Power and Greater Arcane Elixir left out (+8 through Dragonbreath Chili)."
+    "Natural flasks on (standards 11: Hyjal Summit or the Barrow Deeps).",
+    "Hit held at the 8% yellow cap (standards 4); the old 9% sets did 0.4 to 2.8 more through the white hits."
   ],
   "notes": "Request from mksettings with the same arguments as rogue__seal-fate-swords except talents, then the target's mobType set to MobTypeHumanoid, as the class preset's encounter does.",
   "encounter": "Humanoid",
