@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_wrath",
   "apl": "level60_wrath_ff",
   "published": {
-    "dps": 795.5,
-    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 755.8)"
+    "dps": 786.8,
+    "source": "Druid class worker finals, 2026-10-23 regear and rotation round (Nature's Grace a batch late, the natural flask zone; talents and rotation kept): 120/180/300s 782.7/786.8/784.3 (seed 1), 782.6/786.7/784.3 (seed 1000003)"
   },
   "verify": {
-    "dps": 795.54,
+    "dps": 786.79,
     "stderr": 0.19,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "class worker sim of this request, 180s, seed 1"
   },
   "summary": "The Wrath-only build keeping Faerie Fire on the boss for the raid. Moonkin gains nothing from the armor, so it only costs GCDs.",
   "keyTalents": [
@@ -60,7 +60,7 @@
     "Cerebral Cortex Compound"
   ],
   "caveats": [
-    "Costs 30.5 / 28.6 / 27.1 DPS vs the base build at 120s / 180s / 300s.",
+    "Costs 31.8 / 29.4 / 27.7 DPS vs the base build at 120s / 180s / 300s.",
     "Wrath VIII's base damage is ×1.085 (client ×1.00).",
     "Natural Power gloves are +8.1 over Arcane Power.",
     "Heart of the Wild 3 over Moonglow 3 is +2.6."

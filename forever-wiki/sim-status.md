@@ -587,10 +587,12 @@ Both DPS playstyles have their own gear, talents, rotation and build: Balance (m
 
 | Race | 120 sec | 180 sec | 300 sec | |
 |---|---|---|---|---|
-| Night Elf | 829.8 | 827.0 | 817.7 | best overall and Alliance |
-| Tauren | 818.2 | 817.8 | 809.0 | best Horde |
-| Windshaper Skyborne | 806.9 | 811.9 | 806.8 | |
-| High Order Skyborne | 806.8 | 811.7 | 806.6 | |
+| Tauren | 864.0 | 862.4 | 853.1 | best overall and Horde |
+| Night Elf | 865.2 | 861.5 | 851.2 | best Alliance (ahead at 120 sec) |
+| Windshaper Skyborne | 852.4 | 855.9 | 849.6 | |
+| High Order Skyborne | 852.3 | 855.8 | 849.3 | |
+
+(2026-10-23 regear and rotation round, 20,000 iterations, seed 1; seed 1000003 within 0.5. The Wrath build: Tauren 814.5 / 816.2 / 812.0, Windshaper Skyborne 815.1 / 816.6 / 812.5, best Alliance and 0.5 / 0.6 ahead at 180 sec on the two seed sets, under the 0.5 lead on both that a race switch needs.)
 
 Wrath VIII x1.085 (the user's ruling, 2026-10-15): Balance is 828.5 at 180 sec (+1.7) and the Wrath build 782.7 (+6.4), 20000 iterations; the Balance numbers above are from before. Both Balance rotations then cast Moonfire in the last seconds, once their filler would no longer land before the end (a Starfire for Balance, a Wrath plus 1.5 sec for the Wrath build; rotation auditor, 2026-10-15): Balance 835.9 / 831.6 / 820.7 at 120 / 180 / 300 sec (+4.4 / +2.9 / +1.4) and the Wrath build 787.0 / 786.6 / 782.3 (+5.9 / +3.8 / +2.2), 40,000 iterations; the DPS report's 180 sec runs (20,000, seed 1) give 831.4 and 786.5.
 
@@ -604,16 +606,18 @@ Wrath VIII x1.085 (the user's ruling, 2026-10-15): Balance is 828.5 at 180 sec (
 
 The moonkin gets nothing from the armor, so its duty costs the 4 to 5 GCDs a fight. The cat's own hits get the armor, so its duty costs only its 1 sec GCDs and the moment before the first cast lands.
 
-**Feral.** Gear: 998101-998113, priced by standards 1b (Forever's physical budget, 3 stat lines a piece, the two-hander at 78.8 with no attack power) in the 5a stat mix: 189 Agility, 177 Strength, 143 Stamina, 90 hit rating (9%, the cap when the set was built, 1% over the 8% cap since 2026-10-23), 69 crit rating (4.9%), 45 Intellect, 32 attack power, no Spirit, two synthetic trinkets (29 Agility and 17 Strength; 165 Strength for 20 sec every 2 min), Grovekeeper Ferocity on two pieces (the 5 piece would add 5.9) and Howling Idol (12.5; both measured before the 5a rebudget, before the 5a and 1b rebudgets). Talents `05002-05200332021031212051-05501` (Genesis and Nature's Majesty, 34 Feral with Rend and Tear 5 and Berserk, Furor, Naturalist and Natural Shapeshifter). Rotation (`ui/feral_druid/apls/level60.apl.json`): Rip at 4 combo points whenever it is down, Ferocious Bite at 5 while Rip has 6 sec left, Shred, Shifting Power at 50 Energy or less but not while a Bite is due, Berserk on cooldown (Forever removed Tiger's Fury), no new Rip in the last 8 sec and Bite at any combo points in the last 2, no Rake (keeping it up costs 33).
+**Feral.** Gear: 998101-998113, priced by standards 1b (Forever's physical budget, 3 stat lines a piece, the two-hander at 78.8 with no attack power) in the 5a stat mix: 194 Agility, 182 Strength, 143 Stamina, 80 hit rating (8%, the cap since 2026-10-23; the 10 the set carried for the old 9% went into 5 Strength and 5 Agility on the legs, +5.5), 69 crit rating (4.9%), 45 Intellect, 32 attack power, no Spirit, two synthetic trinkets (29 Agility and 17 Strength; 165 Strength for 20 sec every 2 min), Grovekeeper Ferocity on two pieces (the 5 piece would add 5.9) and Idol of the Dream (Rip 2 sec longer, 3.0 ahead of Howling Idol). Talents `05002-55100032021030212051-05501` (Genesis and Nature's Majesty, 34 Feral with Ferocity 5, Rend and Tear 5 and Berserk, Furor, Naturalist and Natural Shapeshifter). Options: Clearcasting fished for before the pull. Rotation (`ui/feral_druid/apls/level60.apl.json`): Rip at 5 combo points whenever it is down, Ferocious Bite at 5 while Rip has 6 sec left, Shadowmeld into Ravage on Clearcasting or in the last 10 sec (Night Elf), Rake whenever it is down with more than 6 sec left, Shred, Shifting Power at 50 Energy or less but not while a Bite is due, Berserk held for the Strength trinket and Elune's Light outside it (Forever removed Tiger's Fury), no new Rip in the last 8 sec and Bite at any combo points in the last 2.
 
 Under Forever the cat swings its equipped weapon (its DPS at a 1.0 sec swing), uses weapon imbues, and drinks potions and Thistle Tea in form (Blizzard's class deep dive; classes/druid.md). The preset carries Dense Weightstone (Elemental Sharpening Stone's plans only drop in Molten Core), Mighty Rage Potion and Thistle Tea. Together that took Feral from 689.1 to 734.1 at 180 sec, Forever's removal of Tiger's Fury takes it to 709.2, and a Windfury Totem in place of Grace of Air (the melee group the warrior and rogue presets have) to 722.4. Dense Weightstone in place of Elemental Sharpening Stone and the shared consumables' Forever Dragonbreath Chili (61-69) leave it at 717.2.
 
 | Race | 120 sec | 180 sec | 300 sec | |
 |---|---|---|---|---|
-| Tauren | 724.2 | 713.7 | 704.3 | best overall and Horde |
-| High Order Skyborne | 721.5 | 711.2 | 702.0 | best Alliance |
-| Windshaper Skyborne | 721.6 | 711.2 | 702.1 | |
-| Night Elf | 722.0 | 709.7 | 701.3 | |
+| Night Elf | 881.1 | 868.2 | 857.7 | best overall and Alliance |
+| Tauren | 872.9 | 862.9 | 854.7 | best Horde |
+| Windshaper Skyborne | 866.0 | 856.5 | 848.5 | |
+| High Order Skyborne | 865.9 | 856.5 | 848.5 | |
+
+(2026-10-23 regear and rotation round, 20,000 iterations, seed 1; seed 1000003 within 0.3.)
 
 No druid race has a weapon type racial, so the ranking with weapon type racials off is the same.
 
@@ -628,6 +632,8 @@ No druid race has a weapon type racial, so the ranking with weapon type racials 
 **wowsims/forever's feral evidence** (2026-10-23). Five changes from their beta work (classes/druid.md, notes.md Druid): Omen of Clarity rolls on specials at the 1.0 sec swing speed, not the weapon's 3.5 (ca7b3ab462, their issue #225), Rend and Tear raises the Rake and Rip ticks (921f40098f, a tester's table), Rake's ticks gain 0.055 attack power (their fit to PR #149's tests), Rip and Ferocious Bite refund 80% on a miss (the client's ATTR_EX_1_DISCOUNT_POWER_ON_MISS) (Bite's refund dropped in the second pass below), and enchant and stone damage goes on the cat's swing whole (b5d2e0b992, a560405a65). At 180 sec, 20,000 iterations, seed 1: Feral 753.0 -> 771.7, the Faerie Fire duty 749.8 -> 768.5. Item by item on Feral (each one turned off against the new total): Omen of Clarity -10.4 (8.49 -> 6.16 Clearcasts a fight), Rend and Tear on ticks +13.5, Dense Weightstone's 8 whole +18.1 over none (about +12.9 over the old 8 / 3.5), Rip's refund +2.6, Bite's +0.25, Rake 0 (no preset casts it). The caveats "Dense Weightstone adds 4.9" and "keeping Rake up costs 33" predate this; neither the gear nor the rotation was searched again.
 
 **wowsims/forever's feral evidence, second pass** (2026-10-23, notes.md Druid). Natural Instinct's crit damage covers Rip (its mask, 1223242), a failed Ferocious Bite spends its extra Energy and refunds nothing (c742250b22, a beta report), Rip ticks read attack power and multipliers live, caster-form swings keep the weapon's enchant and stone damage, Feralheart's 4 piece only procs when struck (27781), and Idol of the Dream, Talons of Wrath, Mystic Mushroom, Haruspex's Garb and a `prepull_clearcasting` Feral option are in. The Excess Energy APL value now keeps back what the coming Rip and Rake refreshes need (d9e8603294). At 180 sec, 20,000 iterations, seed 1: Feral 771.7 -> 781.8, the Faerie Fire duty 768.5 -> 778.6; Natural Instinct +11.1, Bite -0.5, live Rip -0.5. Balance does not move. Not in the presets: Idol of the Dream +3.1 over Howling Idol (+3.5 on the duty), pre-pull Clearcasting +0.9 (+0.5), +2.4 (+2.0) with the idol.
+
+**Regear and rotation round** (2026-10-23, orchestration/alignment_round_2026-10-23.md). Feral: the hit over the new 8% cap went into Strength and Agility (+5.5), Idol of the Dream (+3.0) and pre-pull Clearcasting (+4.6 on the Night Elf) are in, the rotation keeps Rake up (more than 6 sec left; 38 to 42 ahead of no Rake at every length on both seed sets) with Shadowmeld into Ravage ahead of it and Rip at 5 combo points (2.0 to 5.6), and the talent search took Ferocity 5 for Blood Frenzy 1, Thick Hide 3 and a Feral Swiftness point (+11.7). The Night Elf leads the Tauren by 5.2, so the Feral presets are Night Elf. At 120 / 180 / 300 sec, 20,000 iterations, seed 1: Feral 816.1 / 806.8 / 796.9 (Tauren, the old preset on the new sim) -> 881.1 / 868.2 / 857.7, its Faerie Fire duty 809.8 / 802.3 / 794.2 -> 874.0 / 863.0 / 854.3 (cost 7.1 / 5.2 / 3.4). Balance keeps its gear (the 16% spell cap is unchanged), talents, rotations and race: Balance 864.0 / 862.4 / 853.1, the Wrath build 814.5 / 816.2 / 812.0, their duties 830.4 / 831.0 / 824.0 and 782.7 / 786.8 / 784.3. The Major Spellblasting Potion stays 10 to 12 ahead of the Dragonfire and Caustic Smog Potions.
 
 ## Low levels
 
