@@ -25,10 +25,13 @@ const (
 	Shadowblade               = 2163
 	GutRipper                 = 2164
 	HandOfEdwardTheOdd        = 2243
+	BladeOfHanna              = 2801
 	BowOfSearingArrows        = 2825
+	LordSakrasisScepter       = 5028
 	Gutwrencher               = 5616
 	SwordOfZeal               = 6622
 	Ravager                   = 7717
+	PhantomBlade              = 7961
 	HanzoSword                = 8190
 	TheJackhammer             = 9423
 	PendulumOfDoom            = 9425
@@ -69,6 +72,10 @@ const (
 	Frostguard                = 12797
 	Annihlator                = 12798
 	SerpentSlicer             = 13035
+	HeartseekingCrossbow      = 13040
+	Witchfury                 = 13051
+	Doombringer               = 13053
+	GrimReaper                = 13054
 	TheNeedler                = 13060
 	Chillpike                 = 13148
 	Venomspitter              = 13183
@@ -169,7 +176,12 @@ const (
 	JomGabbar                  = 23570
 
 	// Forever
-	DullSawblade = 285292
+	FrozenHeartOfTheMountain = 249469
+	MoltenHeartOfTheMountain = 249470
+	GoldenBanana             = 270226
+	GraverobbersShovel       = 273817
+	EverlookDeliveryBot      = 274760
+	DullSawblade             = 285292
 )
 
 func init() {
@@ -636,6 +648,66 @@ func init() {
 		})
 	})
 
+	// https://www.wowhead.com/forever/item=2801/blade-of-hanna
+	// Forever: Equip: Each melee hit grants you a stack of Improving Form. At 30 stacks perfect your
+	// form, inflicting 490 Physical damage to your current target and increasing all your stats by 20
+	// for 20 sec. Improving Form (1325535) adds a stack of 1325509 on each landed auto attack; at the
+	// 30 its second effect names, Perfected Form (1325508) strikes on the melee table, gives the
+	// stats and takes the stacks (wowsims/forever's client store). No row states a cooldown. The
+	// Classic sword has stats and no effect.
+	core.NewItemEffect(BladeOfHanna, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		if !character.Env.IsForever() {
+			return
+		}
+
+		perfectedFormAura := character.NewTemporaryStatsAura("Perfected Form", core.ActionID{SpellID: 1325508}, stats.Stats{
+			stats.Strength:  20,
+			stats.Agility:   20,
+			stats.Stamina:   20,
+			stats.Intellect: 20,
+			stats.Spirit:    20,
+		}, time.Second*20)
+
+		perfectedForm := character.RegisterSpell(core.SpellConfig{
+			ActionID:    core.ActionID{SpellID: 1325508},
+			SpellSchool: core.SpellSchoolPhysical,
+			DefenseType: core.DefenseTypeMelee,
+			ProcMask:    core.ProcMaskEmpty,
+			Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell,
+
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				spell.CalcAndDealDamage(sim, target, 490, spell.OutcomeMeleeSpecialHitAndCrit)
+				perfectedFormAura.Activate(sim)
+			},
+		})
+
+		improvingForm := character.RegisterAura(core.Aura{
+			Label:     "Improving Form",
+			ActionID:  core.ActionID{SpellID: 1325509},
+			Duration:  core.NeverExpires,
+			MaxStacks: 30,
+		})
+
+		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			Name:     "Blade of Hanna",
+			Callback: core.CallbackOnSpellHitDealt,
+			ProcMask: core.ProcMaskMeleeWhiteHit,
+			Outcome:  core.OutcomeLanded,
+			Handler: func(sim *core.Simulation, _ *core.Spell, result *core.SpellResult) {
+				improvingForm.Activate(sim)
+				improvingForm.AddStack(sim)
+				if improvingForm.GetStacks() >= improvingForm.MaxStacks {
+					improvingForm.Deactivate(sim)
+					perfectedForm.Cast(sim, result.Target)
+				}
+			},
+		})
+	})
+
 	// https://www.wowhead.com/classic/item=12777/blazing-rapier
 	// Chance on hit: Burns the enemy for 100 damage over 30 sec.
 	// 1 PPM Assumed
@@ -826,6 +898,15 @@ func init() {
 			},
 		})
 	})
+
+	// https://www.wowhead.com/forever/item=13053/doombringer
+	// Forever: Chance on hit: Shadow Bolt (18211), 231 with variance 0.609, 161 to 301, at the 0.75
+	// PPM the item's chance-on-hit entry carries (wowsims/forever's client store and db.json). Not
+	// simulated under Classic.
+	itemhelpers.CreateWeaponCoHProcByRuleset(Doombringer, "Doombringer", core.SpellSchoolShadow,
+		itemhelpers.WeaponProc{},
+		itemhelpers.WeaponProc{PPM: 0.75, SpellID: 18211, DmgMin: 161, DmgRange: 140},
+		0, core.DefenseTypeMagic)
 
 	// https://www.wowhead.com/classic/item=10847/dragons-call
 	// Chance on hit: Calls forth an Emerald Dragon Whelp to protect you in battle for a short period of time.
@@ -1294,6 +1375,12 @@ func init() {
 	// 1.4 PPM from Armaments Discord
 	itemhelpers.CreateWeaponCoHProcDamage(GlacialBlade, "Glacial Blade", 1.4, 18398, core.SpellSchoolFrost, 45, 0, 0, core.DefenseTypeMagic)
 
+	// https://www.wowhead.com/forever/item=273817/graverobbers-shovel
+	// Forever: Equip 1319047 gives 12 attack power and 12 ranged attack power, which the item's
+	// stats carry, and 12 more of each against Undead (its effects 3 and 4, wowsims/forever's
+	// client store).
+	core.NewMobTypeAttackPowerEffect(GraverobbersShovel, []proto.MobType{proto.MobType_MobTypeUndead}, 12)
+
 	// https://www.wowhead.com/classic/item=13983/gravestone-war-axe
 	// Chance on hit: Diseases target enemy for 55 Nature damage every 3 sec for 15 sec.
 	// TODO: Proc rate assumed and needs testing
@@ -1335,6 +1422,15 @@ func init() {
 	// https://www.wowhead.com/classic/item=19961/grileks-grinder
 	// +48 Attack Power when fighting Dragonkin.
 	core.NewMobTypeAttackPowerEffect(GrileksGrinder, []proto.MobType{proto.MobType_MobTypeDragonkin}, 48)
+
+	// https://www.wowhead.com/forever/item=13054/grim-reaper
+	// Forever: Chance on hit: Wound (14126), 130 Physical on the melee table, at the 0.87 PPM the
+	// item's chance-on-hit entry carries (wowsims/forever's client store and db.json). Not simulated
+	// under Classic.
+	itemhelpers.CreateWeaponCoHProcByRuleset(GrimReaper, "Grim Reaper", core.SpellSchoolPhysical,
+		itemhelpers.WeaponProc{},
+		itemhelpers.WeaponProc{PPM: 0.87, SpellID: 14126, DmgMin: 130},
+		0, core.DefenseTypeMelee)
 
 	// https://www.wowhead.com/classic/item=9651/gryphon-riders-stormhammer
 	// Forever: Lightning Bolt (18081) is 91 with variance 0.315, 77 to 105, in place of Classic's 91
@@ -1530,6 +1626,15 @@ func init() {
 		})
 	}) */
 
+	// https://www.wowhead.com/forever/item=13040/heartseeking-crossbow
+	// Forever: Equip: Chance to strike your ranged target with a Shadowbolt for 13 to 19 Shadow
+	// damage. 29626 procs 29640, 16 with variance 0.375 on the ranged table, at the 3 PPM the item's
+	// entry carries (wowsims/forever's client store and db.json). Not simulated under Classic.
+	itemhelpers.CreateWeaponCoHProcByRuleset(HeartseekingCrossbow, "Heartseeking Crossbow", core.SpellSchoolShadow,
+		itemhelpers.WeaponProc{},
+		itemhelpers.WeaponProc{PPM: 3, SpellID: 29640, DmgMin: 13, DmgRange: 6},
+		0, core.DefenseTypeRanged)
+
 	// https://www.wowhead.com/classic/item=11635/hookfang-shanker
 	itemhelpers.CreateWeaponProcSpell(HookfangShanker, "Hookfang Shanker", 1.0, func(character *core.Character) *core.Spell {
 		return character.GetOrRegisterSpell(core.SpellConfig{
@@ -1708,6 +1813,41 @@ func init() {
 		})
 	})
 
+	// https://www.wowhead.com/forever/item=5028/lord-sakrasis-scepter
+	// Forever: each harmful spell cast smites the target for 56 Holy damage. 1326019 procs Holy Smite
+	// (1312330) every time on the done-harmful-spell flags (0x11000), with no cooldown and no spell
+	// power coefficient (wowsims/forever's client store). The Classic off hand has no effect.
+	core.NewItemEffect(LordSakrasisScepter, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		if !character.Env.IsForever() {
+			return
+		}
+
+		holySmite := character.RegisterSpell(core.SpellConfig{
+			ActionID:    core.ActionID{SpellID: 1312330},
+			SpellSchool: core.SpellSchoolHoly,
+			DefenseType: core.DefenseTypeMagic,
+			ProcMask:    core.ProcMaskEmpty,
+			Flags:       core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell,
+
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				spell.CalcAndDealDamage(sim, target, 56, spell.OutcomeMagicHitAndCrit)
+			},
+		})
+
+		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
+			Name:     "Lord Sakrasis' Scepter",
+			Callback: core.CallbackOnCastComplete,
+			ProcMask: core.ProcMaskSpellDamage,
+			Handler: func(sim *core.Simulation, _ *core.Spell, _ *core.SpellResult) {
+				holySmite.Cast(sim, character.CurrentTarget)
+			},
+		})
+	})
+
 	// https://www.wowhead.com/classic/item=9449/manual-crowd-pummeler
 
 	core.NewItemEffect(ManualCrowdPummeler, func(agent core.Agent) {
@@ -1872,6 +2012,26 @@ func init() {
 	// https://www.wowhead.com/classic/item=18816/perditions-blade
 	// Chance on hit: Blasts a target for 40 to 56 Fire damage.
 	itemhelpers.CreateWeaponCoHProcDamage(PerditionsBlade, "Perdition's Blade", 2.8, 23267, core.SpellSchoolFire, 40, 56, 0, core.DefenseTypeMagic)
+
+	// https://www.wowhead.com/forever/item=7961/phantom-blade
+	// Forever: Chance on hit: Phantom Strike (9806) takes 100 armor from the target for 20 sec, at
+	// the 1 PPM the item's chance-on-hit entry carries (wowsims/forever's client store and db.json).
+	// The debuff is its own row, so it stacks with Sunder Armor and Faerie Fire. Not simulated under
+	// Classic.
+	itemhelpers.CreateWeaponProcSpellByRuleset(PhantomBlade, "Phantom Blade", 0, 1.0, func(character *core.Character) *core.Spell {
+		phantomStrikeAuras := character.NewEnemyAuraArray(PhantomStrikeAura)
+
+		return character.GetOrRegisterSpell(core.SpellConfig{
+			ActionID:    core.ActionID{SpellID: 9806},
+			SpellSchool: core.SpellSchoolNature,
+			DefenseType: core.DefenseTypeMagic,
+			ProcMask:    core.ProcMaskEmpty,
+
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				phantomStrikeAuras.Get(target).Activate(sim)
+			},
+		})
+	})
 
 	// https://www.wowhead.com/classic/item=19963/pitchfork-of-madness
 	// +117 Attack Power when fighting Demons.
@@ -2690,6 +2850,15 @@ func init() {
 		})
 	})
 
+	// https://www.wowhead.com/forever/item=13051/witchfury
+	// Forever: Chance on hit: Shadow Bolt (18214), 150 Shadow, at the 1.25 PPM the item's
+	// chance-on-hit entry carries (wowsims/forever's client store and db.json). Not simulated under
+	// Classic.
+	itemhelpers.CreateWeaponCoHProcByRuleset(Witchfury, "Witchfury", core.SpellSchoolShadow,
+		itemhelpers.WeaponProc{},
+		itemhelpers.WeaponProc{PPM: 1.25, SpellID: 18214, DmgMin: 150},
+		0, core.DefenseTypeMagic)
+
 	// https://www.wowhead.com/classic/item=11920/wraith-scythe
 	// Chance on hit: Steals 45 life from target enemy.
 	itemhelpers.CreateWeaponProcSpell(WraithScythe, "Wraith Scythe", 1.0, func(character *core.Character) *core.Spell {
@@ -2903,6 +3072,87 @@ func init() {
 		})
 	})
 
+	// https://www.wowhead.com/forever/item=274760/everlook-delivery-bot
+	// Forever: Use: marks the target for 20 sec (1295271), and once 6 to 8 spells or attacks have
+	// landed on it, the bot delivers 467 Fire damage (1295633) and the mark goes. The count is
+	// rolled as the mark goes on, between its first two effects, and the mark's proc flags count
+	// every landed direct melee, ranged and harmful spell hit taken, from anyone. The delivery
+	// cannot crit and flies at 10 yards a second. 5 min cooldown, and 20 sec on category 1141, which
+	// the other Forever on-use trinkets share (wowsims/forever's client store and db.json). The
+	// tooltip halves the count in snowy areas, which the row names no area for, so the sim does
+	// not.
+	core.NewItemEffect(EverlookDeliveryBot, func(agent core.Agent) {
+		character := agent.GetCharacter()
+
+		delivery := character.RegisterSpell(core.SpellConfig{
+			ActionID:     core.ActionID{SpellID: 1295633},
+			SpellSchool:  core.SpellSchoolFire,
+			DefenseType:  core.DefenseTypeMagic,
+			ProcMask:     core.ProcMaskEmpty,
+			Flags:        core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell,
+			MissileSpeed: 10,
+
+			DamageMultiplier: 1,
+			ThreatMultiplier: 1,
+
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				result := spell.CalcDamage(sim, target, 467, spell.OutcomeMagicHit)
+				spell.WaitTravelTime(sim, func(sim *core.Simulation) {
+					spell.DealDamage(sim, result)
+				})
+			},
+		})
+
+		marks := character.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+			var needed int32
+			return target.RegisterAura(core.Aura{
+				Label:     "Everlook Delivery Bot-" + character.Label,
+				ActionID:  core.ActionID{SpellID: 1295271},
+				Duration:  time.Second * 20,
+				MaxStacks: 99,
+				OnGain: func(aura *core.Aura, sim *core.Simulation) {
+					needed = 6 + int32(sim.RandomFloat("Everlook Delivery Bot")*3)
+				},
+				OnSpellHitTaken: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
+					if !result.Landed() || spell == delivery {
+						return
+					}
+					aura.AddStack(sim)
+					if aura.GetStacks() >= needed {
+						aura.Deactivate(sim)
+						delivery.Cast(sim, aura.Unit)
+					}
+				},
+			})
+		})
+
+		spell := character.RegisterSpell(core.SpellConfig{
+			ActionID: core.ActionID{ItemID: EverlookDeliveryBot},
+			ProcMask: core.ProcMaskEmpty,
+			Flags:    core.SpellFlagNoOnCastComplete | core.SpellFlagOffensiveEquipment,
+
+			Cast: core.CastConfig{
+				CD: core.Cooldown{
+					Timer:    character.NewTimer(),
+					Duration: time.Minute * 5,
+				},
+				SharedCD: core.Cooldown{
+					Timer:    character.GetOffensiveTrinketCD(),
+					Duration: time.Second * 20,
+				},
+			},
+
+			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				marks.Get(target).Activate(sim)
+			},
+		})
+
+		character.AddMajorCooldown(core.MajorCooldown{
+			Type:  core.CooldownTypeDPS,
+			Spell: spell,
+		})
+	})
+
 	// https://www.wowhead.com/classic/item=21473/eye-of-moam
 	// Use: Increases damage done by magical spells and effects by up to 50, and decreases the magical resistances of your spell targets by 100 for 30 sec. (3 Min Cooldown)
 	core.NewSimpleStatOffensiveTrinketEffect(EyeOfMoam, stats.Stats{stats.SpellDamage: 50, stats.SpellPenetration: 100}, time.Second*30, time.Minute*3)
@@ -2945,6 +3195,24 @@ func init() {
 			},
 		})
 	})
+
+	// https://www.wowhead.com/forever/item=249469/frozen-heart-of-the-mountain
+	// Forever: Use: Chthonic Power (1249110), 29 Frost and Shadow damage (misc 48) for 15 sec. 5 min
+	// cooldown, 15 sec on the shared trinket category (wowsims/forever's client store and db.json).
+	// The doubling in snowy areas is left out.
+	core.NewSimpleStatOffensiveTrinketEffect(FrozenHeartOfTheMountain, stats.Stats{stats.FrostPower: 29, stats.ShadowPower: 29}, time.Second*15, time.Minute*5)
+
+	// https://www.wowhead.com/forever/item=270226/golden-banana
+	// Forever: Use: Monkey Business (1287571), 16 to all stats for 15 sec. 5 min cooldown, 15 sec on
+	// the shared trinket category (wowsims/forever's client store and db.json). The doubling in
+	// forest and grassland areas is left out.
+	core.NewSimpleStatOffensiveTrinketEffect(GoldenBanana, stats.Stats{
+		stats.Strength:  16,
+		stats.Agility:   16,
+		stats.Stamina:   16,
+		stats.Intellect: 16,
+		stats.Spirit:    16,
+	}, time.Second*15, time.Minute*5)
 
 	// https://www.wowhead.com/classic/item=22321/heart-of-wyrmthalak
 	// Equip: Chance to bathe your melee target in flames for 120 to 180 Fire damage.
@@ -3069,6 +3337,12 @@ func init() {
 			},
 		}))
 	})
+
+	// https://www.wowhead.com/forever/item=249470/molten-heart-of-the-mountain
+	// Forever: Use: Molten Fury (1249113), 55 attack power and 55 ranged attack power for 15 sec.
+	// 5 min cooldown, 15 sec on the shared trinket category (wowsims/forever's client store and
+	// db.json). The doubling in volcanic areas is left out.
+	core.NewSimpleStatOffensiveTrinketEffect(MoltenHeartOfTheMountain, stats.Stats{stats.AttackPower: 55, stats.RangedAttackPower: 55}, time.Second*15, time.Minute*5)
 
 	// https://www.wowhead.com/classic/item=19947/nat-pagles-broken-reel
 	core.NewSimpleStatOffensiveTrinketEffect(NatPaglesBrokenReel, stats.Stats{
@@ -3790,6 +4064,21 @@ func PunctureArmorAura(target *core.Unit) *core.Aura {
 	})
 
 	return aura
+}
+
+// Phantom Blade's Phantom Strike (9806): 100 armor off for 20 sec, in no exclusive category.
+func PhantomStrikeAura(target *core.Unit) *core.Aura {
+	return target.GetOrRegisterAura(core.Aura{
+		Label:    "Phantom Strike",
+		ActionID: core.ActionID{SpellID: 9806},
+		Duration: time.Second * 20,
+		OnGain: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.AddStatDynamic(sim, stats.Armor, -100)
+		},
+		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
+			aura.Unit.AddStatDynamic(sim, stats.Armor, 100)
+		},
+	})
 }
 
 // Forever's Armor Shatter takes 165 a stack and bids in a category of its own, so it stacks

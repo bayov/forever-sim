@@ -37,6 +37,7 @@ func CreateWeaponCoHProcDamageByRuleset(itemId int32, itemName string, ppm float
 }
 
 // Creates a "Chance on Hit" weapon proc whose rate, spell or damage the Forever client changed.
+// A rate of 0 leaves that ruleset without the proc, for an effect only the Forever client gives.
 func CreateWeaponCoHProcByRuleset(itemId int32, itemName string, school core.SpellSchool,
 	classic WeaponProc, forever WeaponProc, bonusCoef float64, defType core.DefenseType) {
 
@@ -54,6 +55,9 @@ func createWeaponProcDamage(itemId int32, itemName string, school core.SpellScho
 	core.NewItemEffect(itemId, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		proc := procFor(character)
+		if proc.PPM == 0 {
+			return
+		}
 		ppm, spellId, dmgMin, dmgRange := proc.PPM, proc.SpellID, proc.DmgMin, proc.DmgRange
 		rollDamage := func(sim *core.Simulation) float64 {
 			dmg := dmgMin + core.TernaryFloat64(dmgRange > 0, sim.RandomFloat(itemName)*dmgRange, 0)
@@ -142,8 +146,18 @@ func CreateWeaponEquipProcDamage(itemId int32, itemName string, ppm float64, spe
 
 // Create a weapon proc using a custom spell.
 func CreateWeaponProcSpell(itemId int32, itemName string, ppm float64, procSpellGenerator func(character *core.Character) *core.Spell) {
+	CreateWeaponProcSpellByRuleset(itemId, itemName, ppm, ppm, procSpellGenerator)
+}
+
+// Create a weapon proc using a custom spell, whose rate the Forever client changed. A rate of 0
+// leaves that ruleset without the proc.
+func CreateWeaponProcSpellByRuleset(itemId int32, itemName string, classicPPM float64, foreverPPM float64, procSpellGenerator func(character *core.Character) *core.Spell) {
 	core.NewItemEffect(itemId, func(agent core.Agent) {
 		character := agent.GetCharacter()
+		ppm := core.TernaryFloat64(character.Env.IsForever(), foreverPPM, classicPPM)
+		if ppm == 0 {
+			return
+		}
 
 		procSpell := procSpellGenerator(character)
 		procSpell.Flags |= core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell
@@ -171,11 +185,15 @@ func CreateWeaponProcAura(itemId int32, itemName string, ppm float64, procAuraGe
 	CreateWeaponProcAuraByRuleset(itemId, itemName, ppm, ppm, procAuraGenerator)
 }
 
-// Create a weapon proc for a custom aura whose rate the Forever client changed.
+// Create a weapon proc for a custom aura whose rate the Forever client changed. A rate of 0 leaves
+// that ruleset without the proc.
 func CreateWeaponProcAuraByRuleset(itemId int32, itemName string, classicPPM float64, foreverPPM float64, procAuraGenerator func(character *core.Character) *core.Aura) {
 	core.NewItemEffect(itemId, func(agent core.Agent) {
 		character := agent.GetCharacter()
 		ppm := core.TernaryFloat64(character.Env.IsForever(), foreverPPM, classicPPM)
+		if ppm == 0 {
+			return
+		}
 
 		procAura := procAuraGenerator(character)
 

@@ -69,7 +69,8 @@ Classes: Mage, Priest (new), Rogue, Warlock, Warrior.
 Classes: Druid, Hunter, Mage, Rogue, Warrior.
 
 - Walk on Air (active) NEW: [Instant; 1.5 min cooldown, 2 min in 70338] Glide downward through the air for 10 sec while controlling your direction of travel.
-- Read Leyline (active) NEW: [2 sec cast; 2 min cooldown] Attempt to tap into the power of a nearby leyline, increasing your Health and Mana regeneration by 100%. Lasts 15 sec if no leyline is nearby, and 15 min if one is found.
+- Read Leyline (active) NEW: [2 sec cast; 2 min cooldown] Attempt to tap into the power of a nearby leyline, increasing your Health and Mana regeneration by 100%. Lasts 30 sec if no leyline is nearby, and 15 min if one is found. (15 sec in 70338: client 70425 moved Energized 1270842 from DurationIndex 8 to 9, wowsims/forever e307ef4b0a.)
+  - The sim (since 2026-10-23) casts it only from an APL and gives the 30 sec version. Energized is aura 110 (MOD_POWER_REGEN_PERCENT), Innervate's and Evocation's, so it doubles the Spirit part of the regen and not mp5; wowsims/forever doubles the whole regen. No preset casts it: it lost on the Level 60 Frost, Arcane, Fire and Balance builds at 180 sec, and Frost never gets low enough on mana to want it, even at 480 sec.
 - Wind Blessed (passive) NEW: Increases your spellcasting, melee, and ranged Haste by 3%. (1% in 70338.)
 - Elemental Insight (passive) NEW: Damage dealt versus Elementals increased by 5%.
 

@@ -1,7 +1,9 @@
 package dpswarrior
 
 import (
+	"math"
 	"testing"
+	"time"
 
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
@@ -279,3 +281,99 @@ func TestForeverElementalSharpeningStoneHand(t *testing.T) {
 }
 
 func nearly(a, b float64) bool { return a-b < 1e-6 && b-a < 1e-6 }
+
+// Chance-on-hit damage only the Forever client gives these weapons (wowsims/forever's store and
+// db.json). Classic has no proc spell for them.
+func TestForeverOnlyWeaponProcDamage(t *testing.T) {
+	for _, c := range []struct {
+		name     string
+		item     int32
+		spellID  int32
+		min, max float64
+	}{
+		{"Doombringer", 13053, 18211, 161, 301},
+		{"Witchfury", 13051, 18214, 150, 150},
+		{"Grim Reaper", 13054, 14126, 130, 130},
+	} {
+		sim, war := newWarriorWithMainHand(t, proto.Ruleset_RulesetForever, c.item)
+		spell := war.GetSpell(core.ActionID{SpellID: c.spellID})
+		if spell == nil {
+			t.Errorf("Forever %s: no proc spell %d", c.name, c.spellID)
+			continue
+		}
+		// Grim Reaper's Wound is physical: take the boss's armor off for the range.
+		war.CurrentTarget.AddStatDynamic(sim, stats.Armor, -war.CurrentTarget.GetStat(stats.Armor))
+		lo, hi := procRange(sim, war, spell, 2000)
+		if lo < c.min-1e-6 || hi > c.max+1e-6 || lo > c.min+0.02*(c.max-c.min)+1e-6 || hi < c.max-0.02*(c.max-c.min)-1e-6 {
+			t.Errorf("Forever %s: %.1f to %.1f, want %.0f to %.0f", c.name, lo, hi, c.min, c.max)
+		}
+
+		_, era := newWarriorWithMainHand(t, proto.Ruleset_RulesetClassic, c.item)
+		if era.GetSpell(core.ActionID{SpellID: c.spellID}) != nil {
+			t.Errorf("Classic %s: has proc spell %d", c.name, c.spellID)
+		}
+	}
+}
+
+// Phantom Blade's Phantom Strike (9806) takes 100 armor for 20 sec under Forever, on top of the
+// boss's other armor debuffs.
+func TestForeverPhantomBlade(t *testing.T) {
+	sim, war := newWarriorWithMainHand(t, proto.Ruleset_RulesetForever, 7961)
+	spell := war.GetSpell(core.ActionID{SpellID: 9806})
+	if spell == nil {
+		t.Fatal("no Phantom Strike with Phantom Blade")
+	}
+	before := war.CurrentTarget.GetStat(stats.Armor)
+	spell.Cast(sim, war.CurrentTarget)
+	if got := before - war.CurrentTarget.GetStat(stats.Armor); math.Abs(got-100) > 1e-9 {
+		t.Errorf("Phantom Strike took %.0f armor, want 100", got)
+	}
+	if d := war.CurrentTarget.GetAura("Phantom Strike").Duration; d != 20*time.Second {
+		t.Errorf("Phantom Strike lasts %v, want 20s", d)
+	}
+
+	_, era := newWarriorWithMainHand(t, proto.Ruleset_RulesetClassic, 7961)
+	if era.GetSpell(core.ActionID{SpellID: 9806}) != nil {
+		t.Error("Classic Phantom Blade has Phantom Strike")
+	}
+}
+
+// Blade of Hanna: the 30th landed auto attack under Forever casts Perfected Form (1325508), 490
+// Physical and 20 to all stats for 20 sec, and takes the Improving Form stacks.
+func TestForeverBladeOfHanna(t *testing.T) {
+	sim, war := newWarriorWithMainHand(t, proto.Ruleset_RulesetForever, 2801)
+	perfectedForm := war.GetSpell(core.ActionID{SpellID: 1325508})
+	if perfectedForm == nil {
+		t.Fatal("no Perfected Form with Blade of Hanna")
+	}
+	stacks, buff := war.GetAura("Improving Form"), war.GetAura("Perfected Form")
+	mh := war.AutoAttacks.MHAuto()
+	swing := func(outcome core.HitOutcome) {
+		result := mh.NewResult(war.CurrentTarget)
+		result.Outcome = outcome
+		result.Damage = 100
+		mh.DealDamage(sim, result)
+	}
+	swing(core.OutcomeMiss)
+	swing(core.OutcomeDodge)
+	for range 29 {
+		swing(core.OutcomeHit)
+	}
+	if got := stacks.GetStacks(); got != 29 || buff.IsActive() {
+		t.Fatalf("after 29 hits and 2 misses: %d stacks, Perfected Form up %v; want 29 and no buff", got, buff.IsActive())
+	}
+	strength := war.GetStat(stats.Strength)
+	swing(core.OutcomeCrit)
+	if stacks.IsActive() || !buff.IsActive() || perfectedForm.SpellMetrics[war.CurrentTarget.UnitIndex].Casts != 1 {
+		t.Errorf("the 30th hit: stacks up %v, Perfected Form up %v, %d casts; want no stacks, the buff and 1 cast",
+			stacks.IsActive(), buff.IsActive(), perfectedForm.SpellMetrics[war.CurrentTarget.UnitIndex].Casts)
+	}
+	if got := war.GetStat(stats.Strength) - strength; got < 20-1e-9 {
+		t.Errorf("Perfected Form added %.1f Strength, want at least 20", got)
+	}
+
+	_, era := newWarriorWithMainHand(t, proto.Ruleset_RulesetClassic, 2801)
+	if era.GetSpell(core.ActionID{SpellID: 1325508}) != nil {
+		t.Error("Classic Blade of Hanna has Perfected Form")
+	}
+}

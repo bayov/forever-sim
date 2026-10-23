@@ -795,3 +795,109 @@ func TestMageConeOfColdAndWintersChill(t *testing.T) {
 		t.Errorf("%d Fingers of Frost charges after a Cone of Cold cast with 2 up, want 1", got)
 	}
 }
+
+func newMageSimWithItems(t *testing.T, items map[proto.ItemSlot]int32) (*core.Simulation, *Mage) {
+	specs := make([]*proto.ItemSpec, 17)
+	for i := range specs {
+		specs[i] = &proto.ItemSpec{}
+	}
+	for slot, id := range items {
+		specs[slot] = &proto.ItemSpec{Id: id}
+	}
+	player := &proto.Player{
+		Race:      proto.Race_RaceGnome,
+		Class:     proto.Class_ClassMage,
+		Level:     60,
+		Equipment: &proto.EquipmentSpec{Items: specs},
+		Spec:      &proto.Player_Mage{Mage: &proto.Mage{Options: &proto.Mage_Options{}}},
+		Rotation:  &proto.APLRotation{},
+	}
+	sim := core.NewSim(&proto.RaidSimRequest{
+		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+		Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{core.NewDefaultTarget()}},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+	}, simsignals.CreateSignals())
+	sim.Reset()
+	sim.PrePull()
+	return sim, sim.Raid.Parties[0].Players[0].(*Mage)
+}
+
+// Lord Sakrasis' Scepter smites the target with Holy Smite (1312330) on each harmful spell cast
+// under Forever.
+func TestForeverLordSakrasisScepter(t *testing.T) {
+	sim, mage := newMageSimWithItems(t, map[proto.ItemSlot]int32{proto.ItemSlot_ItemSlotOffHand: 5028})
+	smite := mage.GetSpell(core.ActionID{SpellID: 1312330})
+	if smite == nil {
+		t.Fatal("no Holy Smite with Lord Sakrasis' Scepter")
+	}
+	topRank(t, "Fire Blast", mage.FireBlast).Cast(sim, mage.CurrentTarget)
+	if got := smite.SpellMetrics[mage.CurrentTarget.UnitIndex].Casts; got != 1 {
+		t.Errorf("Fire Blast cast %d Holy Smites, want 1", got)
+	}
+}
+
+// Everlook Delivery Bot marks the target, and the 6th to 8th landed hit on it brings 467 Fire.
+func TestForeverEverlookDeliveryBot(t *testing.T) {
+	sim, mage := newMageSimWithItems(t, map[proto.ItemSlot]int32{proto.ItemSlot_ItemSlotTrinket1: 274760})
+	use := mage.GetSpell(core.ActionID{ItemID: 274760})
+	delivery := mage.GetSpell(core.ActionID{SpellID: 1295633})
+	if use == nil || delivery == nil {
+		t.Fatal("no Everlook Delivery Bot use or delivery")
+	}
+	use.Cast(sim, mage.CurrentTarget)
+	fireBlast := topRank(t, "Fire Blast", mage.FireBlast)
+	hits := 0
+	for delivery.SpellMetrics[mage.CurrentTarget.UnitIndex].Casts == 0 && hits < 20 {
+		result := fireBlast.NewResult(mage.CurrentTarget)
+		result.Outcome = core.OutcomeHit
+		result.Damage = 100
+		fireBlast.DealDamage(sim, result)
+		hits++
+	}
+	if hits < 6 || hits > 8 {
+		t.Errorf("the delivery came after %d hits, want 6 to 8", hits)
+	}
+}
+
+// The High Order's Read Leyline is a 2 sec cast on a 2 min cooldown, and its Energized doubles
+// the Spirit part of the mana regen for 30 sec (client 70425's DurationIndex 9).
+func TestForeverReadLeyline(t *testing.T) {
+	sim, mage := newMageWithRace(proto.Race_RaceSkyborneHighOrder)
+
+	readLeyline := mage.GetSpell(core.ActionID{SpellID: 1259705})
+	if readLeyline == nil {
+		t.Fatal("a High Order mage has no Read Leyline")
+	}
+	if readLeyline.DefaultCast.CastTime != 2*time.Second || readLeyline.CD.Duration != 2*time.Minute {
+		t.Errorf("Read Leyline casts in %v on a %v cooldown, want 2s and 2m", readLeyline.DefaultCast.CastTime, readLeyline.CD.Duration)
+	}
+	energized := mage.GetAura("Energized")
+	if energized.Duration != 30*time.Second {
+		t.Errorf("Energized lasts %v, want 30s", energized.Duration)
+	}
+	regen := mage.ManaRegenPerSecondWhileNotCasting()
+	spirit := mage.SpiritManaRegenPerSecondDefault()
+	energized.Activate(sim)
+	if got := mage.ManaRegenPerSecondWhileNotCasting() - regen; math.Abs(got-spirit) > 1e-9 {
+		t.Errorf("Energized added %.3f mana a second, want the Spirit regen %.3f", got, spirit)
+	}
+
+	if _, gnome := newMageWithRace(proto.Race_RaceGnome); gnome.GetSpell(core.ActionID{SpellID: 1259705}) != nil {
+		t.Error("a Gnome mage has Read Leyline")
+	}
+}
+
+func newMageWithRace(race proto.Race) (*core.Simulation, *Mage) {
+	player := &proto.Player{
+		Race: race, Class: proto.Class_ClassMage, Level: 60, Equipment: &proto.EquipmentSpec{},
+		Spec:     &proto.Player_Mage{Mage: &proto.Mage{Options: &proto.Mage_Options{}}},
+		Rotation: &proto.APLRotation{},
+	}
+	sim := core.NewSim(&proto.RaidSimRequest{
+		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+		Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{core.NewDefaultTarget()}},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+	}, simsignals.CreateSignals())
+	sim.Reset()
+	return sim, sim.Raid.Parties[0].Players[0].(*Mage)
+}

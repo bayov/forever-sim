@@ -37,7 +37,8 @@ var ItemSetFelheartRaiment = core.NewItemSet(core.ItemSet{
 	Bonuses: map[int32]core.ApplyEffect{
 		// 3 pieces: Health or Mana gained from Drain Life and Drain Mana increased by 15%.
 		// 5 pieces: Your pet gains 15 stamina and 100 spell resistance against all schools of magic.
-		// 8 pieces: Mana cost of Shadow spells reduced by 15%.
+		// 8 pieces: Mana cost of Shadow spells reduced by 15%. A percent cost row is its own factor
+		// beside the others (wowsims/forever fef2bcaebd), as Doomcaller's 5 piece and Cataclysm are.
 		8: func(agent core.Agent) {
 			warlock := agent.(WarlockAgent).GetWarlock()
 			warlock.RegisterAura(core.Aura{
@@ -45,7 +46,7 @@ var ItemSetFelheartRaiment = core.NewItemSet(core.ItemSet{
 				OnInit: func(aura *core.Aura, sim *core.Simulation) {
 					for _, spell := range warlock.Spellbook {
 						if spell.SpellSchool.Matches(core.SpellSchoolShadow) && spell.Cost != nil {
-							spell.Cost.Multiplier -= 15
+							spell.Cost.Factor *= 0.85
 						}
 					}
 				},

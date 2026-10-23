@@ -81,13 +81,57 @@ func applyForeverRaceEffects(agent Agent) {
 
 	case proto.Race_RaceSkyborneHighOrder, proto.Race_RaceSkyborneWindshaper:
 		// Wind Blessed (1259710: 3% spellcasting, melee and ranged haste since client 70425, 1% in
-		// 70338) and Elemental Insight. The actives (Walk on Air, Read Leyline, Skysight) are
-		// movement and regeneration, so the two halves sim the same.
+		// 70338) and Elemental Insight. Walk on Air and Skysight are movement; the High Order's
+		// Read Leyline is regeneration, the one active the sim models.
 		character.PseudoStats.MeleeSpeedMultiplier *= 1.03
 		character.PseudoStats.RangedSpeedMultiplier *= 1.03
 		character.PseudoStats.CastSpeedMultiplier *= 1.03
 		character.mobTypeDamageAura(proto.MobType_MobTypeElemental, 1.05)
+		if character.Race == proto.Race_RaceSkyborneHighOrder {
+			character.registerReadLeyline()
+		}
 	}
+}
+
+// Read Leyline (1259705): a 2 sec cast on a 2 min cooldown that triggers Energized (1270842),
+// 100% more mana regeneration (aura 110, MOD_POWER_REGEN_PERCENT) and health regeneration (aura
+// 88). With no leyline near it lasts 30 sec, DurationIndex 9 since client 70425 (15 sec, index 8,
+// before; wowsims/forever e307ef4b0a). The sim fights away from leylines, so it never gets the
+// 15 min version. Aura 110 is the one Innervate and Evocation use, so it doubles the Spirit part
+// of the regen and leaves mp5 alone, and it adds nothing inside the five second rule unless some
+// of the Spirit regen goes on while casting. The sim leaves it to the APL.
+func (character *Character) registerReadLeyline() {
+	energized := character.RegisterAura(Aura{
+		Label:    "Energized",
+		ActionID: ActionID{SpellID: 1270842},
+		Duration: time.Second * 30,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			character.PseudoStats.SpiritRegenMultiplier += 1
+			character.UpdateManaRegenRates()
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			character.PseudoStats.SpiritRegenMultiplier -= 1
+			character.UpdateManaRegenRates()
+		},
+	})
+
+	character.RegisterSpell(SpellConfig{
+		ActionID: ActionID{SpellID: 1259705},
+		Flags:    SpellFlagAPL | SpellFlagNoOnCastComplete,
+		Cast: CastConfig{
+			DefaultCast: Cast{
+				GCD:      GCDDefault,
+				CastTime: time.Second * 2,
+			},
+			CD: Cooldown{
+				Timer:    character.NewTimer(),
+				Duration: time.Minute * 2,
+			},
+		},
+		ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
+			energized.Activate(sim)
+		},
+	})
 }
 
 // critDamageBonus multiplies the damage of every critical strike, melee, ranged and spell, like
