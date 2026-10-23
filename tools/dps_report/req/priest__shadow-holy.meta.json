@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 917.1,
-    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 883.6)"
+    "dps": 918.9,
+    "source": "Class worker round on claude/keen-brown-o2g32n 0569745, 2026-10-23: the wowsims/forever alignment round (natural flask zone, wand Shoot, Troll Shadowguard), 20000 iterations, seeds 1 and 1000003 agree within 0.2 (was 917.1)"
   },
   "verify": {
-    "dps": 917.08,
+    "dps": 918.9,
     "stderr": 0.17,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "class worker finals, 180s, seed 1 (seed 1000003 within 0.2)"
   },
   "summary": "Shadow with Holy points of healing utility instead of Discipline.",
   "keyTalents": [
@@ -36,12 +36,14 @@
     "Twilight Focus"
   ],
   "rotation": [
-    "Pre-pull: Shadowform at -3s, Mind Blast at -1.5s that lands at the pull; the on-use trinket and Major Spellblasting Potion at -0.1s",
+    "Pre-pull: Shadowform at -4.5s, Shadowguard (Troll) at -3s, Mind Blast at -1.5s that lands at the pull; the on-use trinket and Major Spellblasting Potion at -0.1s",
     "Dark Sacrifice (Undead) below 10% mana; racials and trinkets on cooldown",
     "Shadow Word: Pain whenever it is down (9+ s left in the fight)",
     "Devouring Plague whenever it is down and off its 24s cooldown (12+ s left)",
     "Shadow Word: Death on cooldown, then Inner Focus right before Mind Blast and Mind Blast on cooldown",
-    "Mind Flay to fill; clipped after the second tick if SW:P or Devouring Plague fell off, never clipped for Mind Blast"
+    "Shadowguard (Troll) again once its charges are spent, with 60+ s left and 40%+ mana",
+    "Mind Flay to fill; clipped after the second tick if SW:P or Devouring Plague fell off, never clipped for Mind Blast",
+    "Wand Shoot from 10% to 20% mana with 60+ s left, and when nothing else can be cast"
   ],
   "consumes": [
     "Flask of Supreme Power",
@@ -58,11 +60,11 @@
   ],
   "caveats": [
     "The Holy points add no DPS except Twilight Focus (pushback protection).",
-    "Runs out of mana on long fights. Undead's Dark Sacrifice wins at 300s (865.1 vs 802.9).",
+    "Runs out of mana on long fights. Undead's Dark Sacrifice wins at 300s (876.9 vs 858.8 with the wand).",
     "Only the 2-piece set bonus is active. Raiments 4-piece and 5-piece not measured since Devouring Plague's 24s cooldown.",
     "Periodic spells crit per tick (Forever rule). Assumed: Shadow Weaving applies to the priest's own Shadow damage.",
     "Mind Flay rolls hit once and isn't hasted. SW:Death backlash is ignored.",
     "Left out: Brilliant Wizard Oil (+12.5) and Elixir of Sages (+13.9)."
   ],
-  "notes": "mksettings request plus manaRegenElixir GreaterMagebloodElixir (ConsumesHoly in presets.ts). Only the Undead number is published for this build; no per-faction race table."
+  "notes": "mksettings request plus manaRegenElixir GreaterMagebloodElixir (ConsumesHoly in presets.ts). Only the Undead number is published for this build; no per-faction race table. Regenerated 2026-10-23 from mksettings (natural flask zone on) and the ui APLs, which tools/rotopt/priest_presets.sh writes from the templates."
 }

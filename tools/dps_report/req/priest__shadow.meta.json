@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 960.7,
-    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 926.0)"
+    "dps": 962.7,
+    "source": "Class worker round on claude/keen-brown-o2g32n 0569745, 2026-10-23: the wowsims/forever alignment round (natural flask zone, wand Shoot, Troll Shadowguard), 20000 iterations, seeds 1 and 1000003 agree within 0.2 (was 960.7)"
   },
   "verify": {
-    "dps": 960.72,
+    "dps": 962.7,
     "stderr": 0.18,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "class worker finals, 180s, seed 1 (seed 1000003 within 0.2)"
   },
   "summary": "Deep Shadow with Discipline points for Twin Disciplines, Mental Strength and Inner Focus, and 3 Holy points for Twilight Focus's pushback protection.",
   "keyTalents": [
@@ -37,12 +37,14 @@
     "Twilight Focus"
   ],
   "rotation": [
-    "Pre-pull: Shadowform at -3s, Mind Blast at -1.5s that lands at the pull; the on-use trinket and Major Spellblasting Potion at -0.1s",
+    "Pre-pull: Shadowform at -4.5s, Shadowguard (Troll) at -3s, Mind Blast at -1.5s that lands at the pull; the on-use trinket and Major Spellblasting Potion at -0.1s",
     "Dark Sacrifice (Undead) below 10% mana; racials and trinkets on cooldown",
     "Shadow Word: Pain whenever it is down (9+ s left in the fight)",
     "Devouring Plague whenever it is down and off its 24s cooldown (12+ s left)",
     "Shadow Word: Death on cooldown, then Inner Focus right before Mind Blast and Mind Blast on cooldown",
-    "Mind Flay to fill; clipped after the second tick if SW:P or Devouring Plague fell off, never clipped for Mind Blast"
+    "Shadowguard (Troll) again once its charges are spent, with 60+ s left and 40%+ mana",
+    "Mind Flay to fill; clipped after the second tick if SW:P or Devouring Plague fell off, never clipped for Mind Blast",
+    "Wand Shoot from 10% to 20% mana with 60+ s left, and when nothing else can be cast (Shadow never gets that low)"
   ],
   "consumes": [
     "Flask of Supreme Power",
@@ -64,5 +66,5 @@
     "Improved Mind Flay compounds: each tick does 20% more than the last. Dark Inspiration's Spirit applies to the priest only.",
     "Mana barely matters (about 13 min to empty)."
   ],
-  "notes": "Request from mksettings unchanged (spec shadow, 180s, durationVariation 20); it matches the shipped encounter and DefaultConsumes."
+  "notes": "Request from mksettings unchanged (spec shadow, 180s, durationVariation 20); it matches the shipped encounter and DefaultConsumes. Regenerated 2026-10-23 from mksettings (natural flask zone on) and the ui APLs, which tools/rotopt/priest_presets.sh writes from the templates."
 }

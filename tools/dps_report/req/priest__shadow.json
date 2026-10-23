@@ -100,6 +100,20 @@
                   },
                   "doAtValue": {
                     "const": {
+                      "val": "-4.5s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 19312
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
                       "val": "-3s"
                     }
                   }
@@ -149,7 +163,7 @@
               ],
               "priorityList": [
                 {
-                  "notes": "Undead. Trades health for mana. Other races can ignore the warning on this line.",
+                  "notes": "Undead. Dark Sacrifice when mana runs low. Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -172,12 +186,68 @@
                   }
                 },
                 {
-                  "notes": "Racials and trinkets.",
+                  "notes": "Racials and trinkets on cooldown.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }
                 },
                 {
+                  "notes": "Shoot the wand from 10% mana to 20% with 60 sec or more to go, to regenerate outside the five second rule.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "cmp": {
+                              "op": "OpLe",
+                              "lhs": {
+                                "currentManaPercent": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0.1"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "60s"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "channelSpell": {
+                      "spellId": {
+                        "spellId": 5019
+                      },
+                      "interruptIf": {
+                        "cmp": {
+                          "op": "OpGe",
+                          "lhs": {
+                            "currentManaPercent": {}
+                          },
+                          "rhs": {
+                            "const": {
+                              "val": "0.2"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Shadow Word: Pain whenever it is down.",
                   "action": {
                     "condition": {
                       "and": {
@@ -217,6 +287,7 @@
                   }
                 },
                 {
+                  "notes": "Devouring Plague whenever it is down and off cooldown.",
                   "action": {
                     "condition": {
                       "and": {
@@ -256,6 +327,7 @@
                   }
                 },
                 {
+                  "notes": "Shadow Word: Death on cooldown.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -265,7 +337,7 @@
                   }
                 },
                 {
-                  "notes": "Right before Mind Blast. Without the talent ignore the warning on this line.",
+                  "notes": "Inner Focus right before Mind Blast. Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "and": {
@@ -319,6 +391,7 @@
                   }
                 },
                 {
+                  "notes": "Mind Blast on cooldown.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -328,6 +401,60 @@
                   }
                 },
                 {
+                  "notes": "Troll. Shadowguard again once its charges are spent. Other races can ignore the warning on this line.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 19312
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "60s"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "currentManaPercent": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0.4"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 19312
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Mind Flay fills, and when a damage over time spell fell off.",
                   "action": {
                     "channelSpell": {
                       "spellId": {
@@ -402,6 +529,16 @@
                             }
                           ]
                         }
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Shoot the wand when nothing else can be cast (out of mana).",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 5019
                       }
                     }
                   }
@@ -520,7 +657,8 @@
       }
     ],
     "raidDamageHitsPerMinute": 2,
-    "raidDamagePerHit": 1500
+    "raidDamagePerHit": 1500,
+    "naturalFlaskZone": true
   },
   "simOptions": {
     "iterations": 1000,

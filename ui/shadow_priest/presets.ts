@@ -156,6 +156,9 @@ export const APLP1Shadow = PresetUtils.makePresetAPLRotation('Shadow', P1APL);
 // Blast and again after its 3 min, Shadow Word: Pain and Devouring Plague go back up within a GCD
 // of falling off, no GCD is idle, and mana stays above 6000.
 //
+// The knob search on the 2026-10-23 sim keeps every knob at 120 / 180 / 300 sec. For Shadow +
+// Holy, Shadow Word: Death below Mind Blast is +2.2 at 300 sec but -1.0 at 180, so it stays.
+//
 // Wand Shoot (2026-10-23, forever-wiki/sim-status.md): from 10% mana to 20% with a minute or
 // more to go, and when nothing else can be cast. The Shadow build never runs that low; Shadow +
 // Holy goes from 916.0 / 918.9 / 829.7 / 711.6 to 916.0 / 918.9 / 859.3 / 786.4 at 120 / 180 /
@@ -192,6 +195,10 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // Holy Fire's damage over time is no longer needed for it, and its mana goes to Smite:
 // 744.0 / 724.6 / 639.7 at 120 / 180 / 300 sec against 729.3 / 716.8 / 646.6 with it, with
 // Devouring Plague now above 80% mana (2026-10-16). The notes above are from before.
+//
+// The knob search on the 2026-10-23 sim (seeds 1 and 1000003) finds nothing positive at all three
+// lengths: Devouring Plague above 50% mana is +4.5 at 120 sec and -7.3 at 180, Holy Fire -21.8 /
+// -10.6 / +9.5, and floors on mana per second of fight left for either lose at 180 sec.
 //
 // Wand Shoot (2026-10-23, forever-wiki/sim-status.md): from 10% mana to 20% with a minute or
 // more to go, and when nothing else can be cast: 785.6 / 765.4 / 675.3 / 580.4 to 785.7 /
@@ -425,16 +432,17 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 	},
 );
 
-// Every race a priest can be under Forever, on the Level 60 build with the same seed (20000
-// iterations, standard error 0.2 or less), at 120 / 180 / 300 sec (2026-10-16, client 70425,
-// with the raid hits):
-//   Human     924.6 / 928.6 / 926.0  (best overall and Alliance)
-//   Gnome     921.1 / 927.2 / 923.5
-//   Undead    921.4 / 924.9 / 921.9  (best Horde)
-//   Dwarf     919.6 / 923.5 / 920.8
-//   Night Elf 918.3 / 920.8 / 917.8
-//   Troll     909.5 / 913.4 / 910.7
-// Client 70425 made Human's Ruthless 2% crit with any weapon (and spell), which puts Human ahead
+// Every race a priest can be under Forever, on the Level 60 build (20000 iterations, standard
+// error 0.2 or less, seeds 1 and 1000003 within 0.4 of each other; the numbers are seed 1), at
+// 120 / 180 / 300 sec (2026-10-23, the wowsims/forever alignment round: natural flask zone,
+// wand, Troll Shadowguard):
+//   Human     959.8 / 962.7 / 959.0  (best overall and Alliance)
+//   Dwarf     954.5 / 957.2 / 953.6
+//   Troll     954.3 / 955.5 / 950.2  (best Horde, Shadowguard; 0.9 ahead of the Undead at 180 sec on both seed sets)
+//   Night Elf 953.2 / 954.6 / 950.8
+//   Undead    951.8 / 954.6 / 950.9
+//   Gnome     949.4 / 952.4 / 948.4
+// The talent and knob searches on this round's sim keep the build and the rotation. Client 70425 made Human's Ruthless 2% crit with any weapon (and spell), which puts Human ahead
 // of Undead's Touch of the Grave. Troll's Berserking only speeds up Mind Blast's cast, channels
 // and the GCD do not speed up, so it is worth nothing. Starshards and Chastise lose DPS (see the
 // rotation).
@@ -453,15 +461,16 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 // Without Twin Disciplines and Mental Strength the Holy build runs low on a long fight, so it
 // adds the Greater Mageblood Elixir. With it the Major Spellblasting Potion beat the Major Mana
 // Potion at every length on the earlier gear (rotation audit, 2026-10-12). Every race on it
-// (2026-10-16, client 70425, with the raid hits, 120 / 180 / 300 sec):
-//   Human     882.0 / 886.4 / 802.9  (best at 180 sec, and best Alliance)
-//   Gnome     878.6 / 884.9 / 822.2
-//   Undead    879.3 / 882.9 / 865.1  (best Horde, and best at 300 sec)
-//   Dwarf     876.7 / 881.0 / 797.4
-//   Night Elf 875.8 / 878.9 / 796.3
-//   Troll     867.5 / 871.8 / 788.1
+// (2026-10-23, the alignment round, 20000 iterations, seeds 1 and 1000003 within 0.3, 120 / 180 / 300 sec):
+//   Human     915.5 / 918.9 / 858.8  (best at 180 sec, and best Alliance)
+//   Dwarf     909.7 / 913.2 / 852.6
+//   Troll     910.2 / 912.0 / 845.7  (best Horde at 180 sec, 0.7 ahead of the Undead on both seed sets)
+//   Undead    908.2 / 911.3 / 876.9  (best at 300 sec)
+//   Night Elf 909.0 / 911.1 / 851.2
+//   Gnome     905.4 / 909.0 / 859.8
 // Devouring Plague every 24 sec (client 70425) empties the mana before 300 sec. Undead's Dark
-// Sacrifice keeps it going (865.1 at 300 sec); every other race runs dry. The preset follows
+// Sacrifice keeps it going (876.9 at 300 sec); the wand carries the rest. The Major Mana Potion
+// is 10.0 behind the Major Spellblasting Potion at 180 sec and 47.6 ahead at 300 (906.4). The preset follows
 // the 180 sec fight like the others and takes the Human.
 export const ConsumesHoly = Consumes.create({
 	...DefaultConsumes,
@@ -491,7 +500,7 @@ export const PresetBuildLevel60Holy = PresetUtils.makePresetBuild('Level 60 + Ho
 });
 
 // The Smite build is short of mana, so its consumes keep the Major Mana Potion (the Major
-// Spellblasting Potion is 8 behind at 180 sec) and add the Greater Mageblood Elixir. Forever
+// Spellblasting Potion is 49.7 behind at 180 sec in the 2026-10-23 round, the Dragonfire Potion 51.8) and add the Greater Mageblood Elixir. Forever
 // turns the Elixir of Greater Firepower into the Elixir of Holy Power (40 Holy damage) for Smite
 // and Holy Fire: +15.8 at 180 sec. The Elixir of Greater Spirit adds 0.2 (1.1 at 300 sec), the
 // Elixir of Sages would add 6.4 but is a second crit elixir. Kreeg's Stout Beatdown is a Dire
@@ -515,13 +524,13 @@ export const EncounterLevel60Smite = PresetUtils.makePresetEncounter('Level 60 S
 });
 
 // Smite as every race on its set and consumes (20000 iterations, 120 / 180 / 300 sec,
-// 2026-10-16, client 70425, with the raid hits, without Holy Fire):
-//   Undead    744.0 / 724.6 / 639.7  (best overall and Horde)
-//   Gnome     742.0 / 706.8 / 609.8  (best Alliance)
-//   Human     732.9 / 697.1 / 602.5
-//   Dwarf     728.9 / 691.2 / 595.6  (the generic boss is no Humanoid, so no Chastise)
-//   Night Elf 728.7 / 690.2 / 595.2
-//   Troll     728.5 / 689.4 / 593.5
+// 2026-10-23, the alignment round, seeds 1 and 1000003 within 0.6):
+//   Undead    786.1 / 765.7 / 689.7  (best overall and Horde)
+//   Gnome     781.2 / 742.8 / 664.6  (best Alliance)
+//   Human     777.3 / 737.5 / 662.0
+//   Dwarf     773.3 / 731.9 / 655.6  (the generic boss is no Humanoid, so no Chastise)
+//   Night Elf 773.0 / 731.1 / 654.8
+//   Troll     773.0 / 730.4 / 654.5
 // Undead's Dark Sacrifice and Gnome's larger mana pool and cheaper Eureka! casts are worth the
 // most once the mana runs out.
 export const PresetBuildLevel60Smite = PresetUtils.makePresetBuild('Level 60 Smite', {
