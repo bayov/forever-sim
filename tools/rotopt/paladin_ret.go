@@ -103,6 +103,11 @@ func (paladinRet) Knobs() []Knob {
 		// seal that drops (after the Judgement of the Crusader opener, or after 30 sec) is
 		// recast first.
 		{Name: "sealFirst", Default: 0, Min: 0, Max: 1, Step: 1},
+		// With twisting and jotc: put only the primary seal up before Seal of the Crusader in the
+		// prepull, and after the opener's Judgement put the other damage seal up first, so the
+		// primary seal's Echo (left by Seal of the Crusader) is not dropped by recasting it and
+		// the first swing gets both seals. Twist of Light keeps one Echo at a time.
+		{Name: "dutyEcho", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -209,8 +214,16 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 			judgeWhen = or(auraIsActive(sealOfCommand), and(auraIsActive(sealOfRighteousness), gt(mainHandTimeToNext(), seconds(k["judgeRighteousnessWindow"]/10))))
 			judgeNotes = "Judgement on cooldown on Seal of Command, and on Seal of Righteousness only when the next swing is a while off (Judgement of Command hits harder)."
 		}
+		items = append(items, cast(judgement, and(judgeWhen, jotcUp), judgeNotes))
+		if k["jotc"] == 1 && k["dutyEcho"] == 1 {
+			echoOfSeal := echoOfRighteousness
+			if k["seal"] == 2 {
+				echoOfSeal = echoOfCommand
+			}
+			items = append(items, cast(otherSeal, and(not(sealUp), jotcUp, auraIsActive(echoOfSeal)),
+				"After the Judgement of the Crusader opener, the other damage seal first: recasting the seal whose Echo is up would drop the Echo."))
+		}
 		items = append(items,
-			cast(judgement, and(judgeWhen, jotcUp), judgeNotes),
 			cast(seal, and(not(sealUp), jotcUp), sealNotes),
 			cast(otherSeal, and(auraIsActive(seal), swingSoon, floor),
 				"Twist of Light: swap to the other damage seal just before the swing, which then gets the Echo of the old one too."),
@@ -311,7 +324,11 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 		if k["holyShock"] > 0 && k["lightsVigilMana"] < 100 {
 			first, second = seal, lightsVigil
 		}
-		if k["jotc"] == 1 {
+		if k["jotc"] == 1 && twist && k["dutyEcho"] == 1 {
+			// The raid duty with one Echo: the primary seal, then Seal of the Crusader, whose
+			// cast leaves the primary seal's Echo for the first swing.
+			rot.PrepullActions = append(rot.PrepullActions, prepull(seal, 3))
+		} else if k["jotc"] == 1 {
 			// The raid duty: the same two pre-pull casts 1.5 sec earlier, then Seal of the
 			// Crusader last, judged at the pull. Replacing a damage seal with it still leaves
 			// Twist of Light's Echo for the first swing.
