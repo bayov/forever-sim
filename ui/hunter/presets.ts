@@ -235,26 +235,29 @@ export const DefaultAPL = APLLoneWolf;
 
 // The talent searches (tools/rotopt -talent-search, a hill climb) ran on the synthetic sets in
 // the mksettings raid at 180 sec, from several starting builds per spec, on 2026-10-12, and last
-// on the standards 1b gear with its trinkets (2026-10-13), where every build held.
+// on the standards 1b gear with its trinkets (2026-10-13), where every build held, and again on
+// 2026-10-23 on the gear for the 8% hit cap, where Lone Wolf and Survival held.
 //
 // Beast Mastery 31/20: Bestial Wrath, Frenzy 4, Ferocity, Unleashed Fury, Focused Fire and
-// Deadly Aspects, and Careful Aim, Lethal Attacks, Improved Arcane Shot 3, Improved Stings 2,
-// Trueshot Aura and Mortal Shots 4 in Marksmanship. The Beast Mastery searches dropped Summon
-// Hawk: on the cooldown it shares with Arcane Shot, the hawk deals less than the shot.
-export const TalentsBeastMastery = PresetUtils.makePresetTalents('Beast Mastery', SavedTalents.create({ talentsString: '5020121505021241-00520503014' }), {
+// Deadly Aspects, and Careful Aim, Lethal Attacks, Improved Arcane Shot 3, Improved Stings 2 and
+// Mortal Shots 5 in Marksmanship. The 2026-10-23 search (8% hit cap gear, 180 sec) moved the
+// Trueshot Aura point to Mortal Shots (+12.2): the raid's Trueshot Aura already covers the hunter.
+// The searches drop Summon Hawk: for a point of Spirit Bond it is 11.8 behind at 180 sec.
+export const TalentsBeastMastery = PresetUtils.makePresetTalents('Beast Mastery', SavedTalents.create({ talentsString: '5020121505021241-00520503005' }), {
 	tooltip: 'Level 60 Beast Mastery 31/20 from the talent search.',
 	group: 'Level 60',
 });
-// Marksmanship 7/39/5 with a pet: Efficiency 4, Careful Aim, Rapid Killing, Improved Arcane Shot 5,
+// Marksmanship 7/39/5 with a pet: Efficiency 5, Careful Aim, Rapid Killing 1, Improved Arcane Shot 5,
 // Trueshot Aura, Mortal Shots, Barrage, Ranged Weapon Specialization, Sniper Shot, Improved
 // Stings, Deadly Aspects, Focused Fire and Improved Tracking 5. A search from a ranged Survival
-// build ended on Marksmanship too.
-export const TalentsMarksmanship = PresetUtils.makePresetTalents('Marksmanship', SavedTalents.create({ talentsString: '502-0053452501503051-5' }), {
+// build ended on Marksmanship too. The 2026-10-23 search moved a Rapid Killing point (it never
+// triggers on a single boss) into Efficiency 5 (+4.3 at 180 sec).
+export const TalentsMarksmanship = PresetUtils.makePresetTalents('Marksmanship', SavedTalents.create({ talentsString: '502-0053551501503051-5' }), {
 	tooltip: 'Level 60 Marksmanship 7/39/5 from the talent search, with a pet.',
 	group: 'Level 60',
 });
-// Marksmanship with Lone Wolf (20% damage with no pet out) and the pet dismissed: Efficiency 5 and
-// Lone Wolf where the pet build has Efficiency 4 and Focused Fire.
+// Marksmanship with Lone Wolf (20% damage with no pet out) and the pet dismissed: Lone Wolf and Rapid
+// Killing 2 where the pet build has Focused Fire.
 export const TalentsLoneWolf = PresetUtils.makePresetTalents('Lone Wolf', SavedTalents.create({ talentsString: '5-0053552511503051-5' }), {
 	tooltip: 'Level 60 Marksmanship 5/41/5 with Lone Wolf, played without a pet.',
 	group: 'Level 60',

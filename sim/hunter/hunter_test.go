@@ -29,19 +29,20 @@ func TestBeastMasteryHawk(t *testing.T) {
 
 func TestMarksmanship(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
-		hunterSuite(MarksmanshipTalents, "level60_phase1_synthetic_ranged", "mm", RangedConsumes, PlayerOptionsCat),
+		hunterSuite(MarksmanshipTalents, "level60_phase1_synthetic_ranged", "mm_turret", RangedConsumes, PlayerOptionsCat),
 	}))
 }
 
-// Lone Wolf is Marksmanship without a pet.
+// Lone Wolf is Marksmanship without a pet. Both stand at range, as their presets do since the 8% hit
+// cap (2026-10-23).
 func TestLoneWolf(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
-		hunterSuite(LoneWolfTalents, "level60_phase1_synthetic_ranged", "lw", RangedConsumes, PlayerOptionsNoPet),
+		hunterSuite(LoneWolfTalents, "level60_phase1_synthetic_ranged", "lw_turret", RangedConsumes, PlayerOptionsNoPet),
 	}))
 }
 
-// The test suite puts every player 5 yards from the target. The ranged rotations walk to 12 yards
-// before the pull and melee weave from there (the turret rotation steps back to 25 yards at the
+// The test suite puts every player 5 yards from the target. Beast Mastery's rotation walks to 12 yards
+// before the pull and melee weaves from there (the turret rotations step back to 25 yards at the
 // pull), Survival melees.
 func TestSurvival(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
@@ -72,9 +73,9 @@ func hunterSuite(talents string, gear string, apl string, consumes core.Consumes
 }
 
 // The level 60 builds in ui/hunter/presets.ts.
-var BeastMasteryTalents = "5020121505021241-00520503014"
-var BeastMasteryHawkTalents = "5020121505111241-00520503014"
-var MarksmanshipTalents = "502-0053452501503051-5"
+var BeastMasteryTalents = "5020121505021241-00520503005"
+var BeastMasteryHawkTalents = "5020121505111241-00520503005"
+var MarksmanshipTalents = "502-0053551501503051-5"
 var LoneWolfTalents = "5-0053552511503051-5"
 var SurvivalTalents = "502-005005-500230230250122151"
 
