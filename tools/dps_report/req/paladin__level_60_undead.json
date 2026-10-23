@@ -80,7 +80,7 @@
               "firePowerBuff": "ElixirOfGreaterFirepower",
               "fillerExplosive": "ExplosiveGoblinLandMine",
               "mainHandImbue": "ShadowOil",
-              "defaultPotion": "MajorManaPotion",
+              "defaultPotion": "DragonfirePotion",
               "defaultConjured": "ConjuredDemonicRune",
               "dragonBreathChili": true,
               "zanzaBuff": "ROIDS",
@@ -93,7 +93,7 @@
               "blessingOfWisdom": "TristateEffectImproved",
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "250030012-502-05225231001330301",
+            "talentsString": "550030022--05225331001330321",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Blacksmithing",
@@ -131,7 +131,7 @@
               ],
               "priorityList": [
                 {
-                  "notes": "At the pull, then saved for the execute phase.",
+                  "notes": "The spell power on-use trinket at the pull, then held for the execute phase when that loses no use.",
                   "action": {
                     "condition": {
                       "or": {
@@ -218,6 +218,7 @@
                   }
                 },
                 {
+                  "notes": "Goblin Sapper Charge on cooldown.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -227,6 +228,7 @@
                   }
                 },
                 {
+                  "notes": "Judgement on cooldown, on whichever damage seal is up.",
                   "action": {
                     "condition": {
                       "and": {
@@ -262,7 +264,7 @@
                   }
                 },
                 {
-                  "notes": "Judgement doesn't use it up in Forever.",
+                  "notes": "Seal of Righteousness whenever it is down. Judgement does not consume it under Forever.",
                   "action": {
                     "condition": {
                       "and": {
@@ -302,7 +304,7 @@
                   }
                 },
                 {
-                  "notes": "Twist of Light: the swing also gets the old seal's Echo.",
+                  "notes": "Twist of Light: swap to the other damage seal just before the swing, which then gets the Echo of the old one too.",
                   "action": {
                     "condition": {
                       "and": {
@@ -368,6 +370,7 @@
                   }
                 },
                 {
+                  "notes": "And back again before the next swing.",
                   "action": {
                     "condition": {
                       "and": {
@@ -433,6 +436,7 @@
                   }
                 },
                 {
+                  "notes": "Hammer of Wrath below 20% health.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -442,6 +446,7 @@
                   }
                 },
                 {
+                  "notes": "Holy Strike on cooldown.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -451,7 +456,7 @@
                   }
                 },
                 {
-                  "notes": "Only against Undead and Demons.",
+                  "notes": "Exorcism on cooldown, only against Undead and Demons.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -461,29 +466,7 @@
                   }
                 },
                 {
-                  "notes": "Only against Undead and Demons.",
-                  "action": {
-                    "condition": {
-                      "cmp": {
-                        "op": "OpGe",
-                        "lhs": {
-                          "currentManaPercent": {}
-                        },
-                        "rhs": {
-                          "const": {
-                            "val": "0.8"
-                          }
-                        }
-                      }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 10318
-                      }
-                    }
-                  }
-                },
-                {
+                  "notes": "Consecration with the mana to spare.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -506,7 +489,7 @@
                   }
                 },
                 {
-                  "notes": "Racials and trinkets.",
+                  "notes": "Racials and trinkets on a free GCD.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }
@@ -630,7 +613,8 @@
       }
     ],
     "raidDamageHitsPerMinute": 2,
-    "raidDamagePerHit": 1500
+    "raidDamagePerHit": 1500,
+    "naturalFlaskZone": true
   },
   "simOptions": {
     "iterations": 1000,

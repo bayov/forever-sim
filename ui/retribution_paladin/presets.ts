@@ -92,9 +92,11 @@ export const GearLevel30p5 = PresetUtils.makePresetGear('Level 30 + 5', Level30p
 // 1.7-norm shape line (4 or 5 stat lines a piece), on the shared item level table (66 for head,
 // shoulders, chest, hands, legs and feet, 71 for neck, back, wrist, waist and rings). Armor totals
 // 750.6, the two-hander 91.1 (target 90.6). The mix is Ret's hybrid one at the hit-adjusted
-// targets: Stamina 17.6%, Strength 12.6, Agility 2.5, Intellect 10.0, Spirit 10.0, attack power
-// 1.5, spell power 28.3, crit 6.9, hit 10.7 (90 rating, 9%, the melee cap from gear; 60 rating
-// was 9 / 34 / 11 behind on twist / sub Holy / Shock). The file has every piece's numbers. The
+// targets: Stamina 17.6%, Strength 13.2, Agility 2.5, Intellect 10.0, Spirit 10.0, attack power
+// 1.5, spell power 28.3, crit 7.5, hit 9.5 (80 rating, 8%, the melee cap from gear since Forever has
+// no hit suppression; the 2026-10-23 regear moved the shoulders' 10 hit rating to 5 Strength and 5
+// crit rating, +2.7 / +2.3 / +2.3 at 180 sec on twist / sub Holy / Shock). The file has every
+// piece's numbers. The
 // head and chest carry Justice Battlegear, Forever's Tier 1 retribution set, so only its 2-piece
 // bonus (1% attack and cast speed) is live, the same shape as every class's preset. The 4-piece
 // (36 attack power against Undead) adds nothing on the raid boss, and the 5-piece (0.5 sec off
@@ -282,7 +284,9 @@ export const APLPresets = {
 	[Phase.Phase5]: [],
 };
 
-export const DefaultAPL = APLPresets[Phase.Phase4][0];
+// Since the regear round (2026-10-23) the class default is Level 60 (sub Holy), the build highest at
+// 180 sec (944.5 against twist's 943.3).
+export const DefaultAPL = APLLevel60SubHoly;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Talent presets
@@ -325,6 +329,23 @@ export const DefaultAPL = APLPresets[Phase.Phase4][0];
 // (2026-10-16, Human) moved a Divine Intellect point into Instrument of Law 2
 // (`51003-503-05225331001330321`): +2.2 / +2.0 / +1.4 at 120 / 180 / 300 sec (paired 20000
 // iterations, two seed sets), and the same on the Crusader duty copy.
+//
+// Regear and rotation round (2026-10-23: no melee hit suppression, so the cap is 8% and the set
+// carries 8% hit; talent searches at 180 sec from each preset, then paired at 120 / 180 / 300 sec,
+// 20000 iterations, seeds 1 and 1000003). Precision is now over the cap for melee, so the vs Undead
+// search dropped Protection for the sub Holy side, and every sub Holy and vs Undead build takes
+// `550030022--05225331001330321` (Divine Strength 5, Divine Intellect 5, Improved Seals 3,
+// Reverence 2, Purifying Power 2, and Holy Conduit 2 for a Reverence point): sub Holy +0.1 / +1.0 /
+// +12.6, vs Undead +28.0 / +29.0 / +32.5, sub Holy vs Undead +21.1 / +20.7 / +8.9 (seed 1). Twist
+// keeps its talents (the same string is +0.5 / +0.8 / +10.2 on seed 1 and +0.2 / -0.0 / +10.1 on
+// seed 1000003), and so does Shock (no move). Finals, Human, 120 / 180 / 300 sec, seed 1 (seed
+// 1000003 within 1):
+// - Level 60: 949.3 / 943.3 / 929.8. Level 60 (sub Holy): 950.9 / 944.5 / 935.2, the class default.
+// - Level 60 Shock: 879.0 / 865.5 / 838.9.
+// - Crusader duty: twist 936.8 / 936.8 / 928.0, sub Holy 936.9 / 936.6 / 932.1, Shock 876.4 / 868.6
+//   / 843.7 (ahead of its base from 180 sec: Libram of Fervor's +33 Holy damage taken).
+// - Against an Undead boss: vs Undead and sub Holy vs Undead 1053.2 / 1047.8 / 1029.3 (the same
+//   build now), Shock vs Undead 982.3 / 965.2 / 934.4.
 export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '51003-503-05225331001330321' }), {
 	tooltip: 'Level 60 talents from the talent search: Retribution to Twist of Light, Precision, Divine Strength and Improved Seals.',
 	group: 'Level 60',
@@ -397,7 +418,7 @@ export const TalentPresets = {
 	[Phase.Phase4]: [TalentsLevel60, TalentsLevel60SubHoly, TalentsLevel60Shock, TalentsLevel60Undead, TalentsLevel60SubHolyUndead, TalentsLevel30p5],
 };
 
-export const DefaultTalents = TalentPresets[Phase.Phase4][0];
+export const DefaultTalents = TalentsLevel60SubHoly;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Options
@@ -589,6 +610,11 @@ export const EncounterLevel60Shock = PresetUtils.makePresetEncounter('Level 60 (
 	buffs: DefaultIndividualBuffs,
 	consumes: ShockConsumes,
 });
+// Races after the regear round (2026-10-23; 20000 iterations, seeds 1 and 1000003, 180 sec, seed 1):
+// Human is the best race and the best Alliance one on every build, Undead the best (and only) Horde
+// paladin, and Dwarf last. Human leads Undead by 5.1 / 5.8 / 2.4 on Level 60 / sub Holy / Shock, 6.0
+// vs Undead, 3.7 Shock vs Undead and 5.4 / 5.6 / 2.9 on the three Crusader duty builds, with the same
+// lead on the second seed set; Dwarf is 4.7 to 9.0 behind Human.
 // Level 60: the Human on the synthetic set with the Level 60 talents and rotation. Client 70425
 // made every racial weapon-free, and Human's Ruthless (2% crit) now beats Undead's Touch of the
 // Grave on every Level 60 build at every length (+0.7 to +4.0 on two seed sets). Seed 1, 20000

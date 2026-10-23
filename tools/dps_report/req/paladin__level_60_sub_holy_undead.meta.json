@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 111,
   "race": "Human",
-  "talents": "550030032--05225331001330311",
+  "talents": "550030022--05225331001330321",
   "treeNames": [
     "Holy",
     "Protection",
@@ -15,33 +15,32 @@
   "gearSet": "level60_phase1_synthetic_undead",
   "apl": "level60_undead",
   "published": {
-    "dps": 980.7,
-    "source": "PR #111 (rotation audit pass 24: Hammer of Wrath above Holy Strike vs Undead, 2026-10-16)"
+    "dps": 1047.8,
+    "source": "Class worker regear and rotation round, 2026-10-23: 8% hit cap regear, talents and rotations re-searched (seeds 1 and 1000003, 20000 iterations, 120 / 180 / 300 s)"
   },
   "verify": {
-    "dps": 980.7,
-    "stderr": 0.33,
+    "dps": 1047.79,
+    "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 180 s, seed 1"
+    "note": "verify.py, 180 s, seed 1 (seed 1000003: 1048.17)"
   },
-  "summary": "The sub-Holy twist build with Holy Conduit 2, adding Exorcism and Holy Wrath for an Undead or Demon boss.",
-  "advantage": "Exorcism and Holy Wrath only work on Undead and Demons. Holy Conduit 2 makes both 40% cheaper.",
+  "summary": "The sub Holy twist build with Exorcism, for an Undead or Demon boss. Since the 2026-10-23 regear it has the same talents, gear and rotation as Level 60 (vs Undead).",
+  "advantage": "Exorcism only works on Undead and Demons. Purifying Power 2 makes its cooldown a third shorter.",
   "advantageRefs": [
     "k:s10314",
-    "k:s10318",
-    "tal:Paladin:2:3"
+    "tal:Paladin:0:8"
   ],
-  "advantageShort": "Exorcism and Holy Wrath only hit Undead and Demons. Holy Conduit 2 makes both 40% cheaper.",
+  "advantageShort": "Exorcism only hits Undead and Demons. Purifying Power 2 makes its cooldown a third shorter.",
   "keyTalents": [
+    "Purifying Power",
     "Twist of Light",
     "Seal of Command",
     "Improved Seals",
-    "Reverence",
     "Divine Intellect",
+    "Divine Strength",
     "Instrument of Law",
-    "Vengeance",
-    "Champion of the Light"
+    "Vengeance"
   ],
   "rotation": [
     "Pre-pull: Seal of Command at -3s, Seal of Righteousness at -1.5s so the first swing gets the Echo",
@@ -51,13 +50,12 @@
     "Hammer of Wrath below 20% health, ahead of Holy Strike",
     "Holy Strike on cooldown",
     "Exorcism on cooldown (Undead and Demons)",
-    "Holy Wrath on cooldown at or above 80% mana (Undead and Demons)",
     "Consecration last, while mana is at or above 20%",
-    "Racials, Goblin Sapper, Major Mana Potion and Demonic Rune on free GCDs"
+    "Racials, Goblin Sapper, Dragonfire Potion and Demonic Rune on free GCDs"
   ],
   "consumes": [
     "Flask of Supreme Power",
-    "Elixir of Greater Agility",
+    "Elixir of Cunning",
     "Elixir of Ferocity",
     "Juju Might",
     "Elixir of Greater Firepower (Forever's Holy Power elixir)",
@@ -72,15 +70,16 @@
     "Shadow Oil",
     "Goblin Sapper",
     "Goblin Land Mine",
-    "Major Mana Potion",
+    "Dragonfire Potion",
     "Demonic Rune"
   ],
   "caveats": [
-    "0.6% behind the default at 120s and 0.9% at 300s (no Precision).",
+    "Holy Wrath is left out: its 2s cast resets the swing and cost 6.8 at 180s.",
     "Holy Strike's flat bonus is inside the weapon percent (client data). Unconfirmed on the beta.",
     "High Holy Strike and Consecration ranks may be out of date (about 1.2% at stake).",
     "Seal of Righteousness adds 12% of spell power a hit with a two-hander, once (70425 tooltip). Counted twice it would be 46-51 DPS higher. At the proc spell's 0 it would be 53-59 lower.",
-    "Two-Handed Weapon Specialization boosts Holy seal damage (Era sim choice, the client says Physical only). Without it: -11."
+    "Two-Handed Weapon Specialization boosts Holy seal damage (Era sim choice, the client says Physical only). Without it: -11.",
+    "The Goblin Land Mine (autocast, about 2.3 a fight) costs 1 to 6 DPS here; kept because every preset carries explosives (standards 11)."
   ],
   "notes": "Request from mksettings with the same arguments as paladin__level_60_sub_holy except talents and APL, then the target's mobType set to MobTypeUndead, as the class preset's encounter does.",
   "encounter": "Undead",

@@ -131,7 +131,7 @@
               ],
               "priorityList": [
                 {
-                  "notes": "At the pull, then saved for the execute phase.",
+                  "notes": "The spell power on-use trinket at the pull, then held for the execute phase when that loses no use.",
                   "action": {
                     "condition": {
                       "or": {
@@ -218,6 +218,7 @@
                   }
                 },
                 {
+                  "notes": "Goblin Sapper Charge on cooldown.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -227,7 +228,7 @@
                   }
                 },
                 {
-                  "notes": "Until mana runs out.",
+                  "notes": "Consecration on cooldown, down to the last point of mana.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -237,6 +238,7 @@
                   }
                 },
                 {
+                  "notes": "Judgement on cooldown.",
                   "action": {
                     "condition": {
                       "and": {
@@ -259,7 +261,7 @@
                   }
                 },
                 {
-                  "notes": "Judgement doesn't use it up in Forever.",
+                  "notes": "Seal of Righteousness whenever it is down. Judgement does not consume it under Forever.",
                   "action": {
                     "condition": {
                       "and": {
@@ -286,6 +288,7 @@
                   }
                 },
                 {
+                  "notes": "Holy Strike on cooldown.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -295,6 +298,7 @@
                   }
                 },
                 {
+                  "notes": "Hammer of Wrath below 20% health.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -304,7 +308,7 @@
                   }
                 },
                 {
-                  "notes": "Only against Undead and Demons.",
+                  "notes": "Exorcism on cooldown, only against Undead and Demons.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -314,7 +318,7 @@
                   }
                 },
                 {
-                  "notes": "Without the talent ignore the warning on this line.",
+                  "notes": "Light's Vigil whenever it is not on the target, with the mana to spare. Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "and": {
@@ -323,16 +327,58 @@
                             "and": {
                               "vals": [
                                 {
-                                  "cmp": {
-                                    "op": "OpGe",
-                                    "lhs": {
-                                      "currentManaPercent": {}
-                                    },
-                                    "rhs": {
-                                      "const": {
-                                        "val": "0.3"
+                                  "and": {
+                                    "vals": [
+                                      {
+                                        "and": {
+                                          "vals": [
+                                            {
+                                              "cmp": {
+                                                "op": "OpGe",
+                                                "lhs": {
+                                                  "currentManaPercent": {}
+                                                },
+                                                "rhs": {
+                                                  "const": {
+                                                    "val": "0.3"
+                                                  }
+                                                }
+                                              }
+                                            },
+                                            {
+                                              "cmp": {
+                                                "op": "OpGt",
+                                                "lhs": {
+                                                  "autoTimeToNext": {
+                                                    "autoType": "MainHand"
+                                                  }
+                                                },
+                                                "rhs": {
+                                                  "const": {
+                                                    "val": "2s"
+                                                  }
+                                                }
+                                              }
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      {
+                                        "cmp": {
+                                          "op": "OpGt",
+                                          "lhs": {
+                                            "autoTimeToNext": {
+                                              "autoType": "MainHand"
+                                            }
+                                          },
+                                          "rhs": {
+                                            "const": {
+                                              "val": "2s"
+                                            }
+                                          }
+                                        }
                                       }
-                                    }
+                                    ]
                                   }
                                 },
                                 {
@@ -403,7 +449,7 @@
                   }
                 },
                 {
-                  "notes": "Detonates the Vigil with no cooldown.",
+                  "notes": "Holy Shock on the Vigil, so it detonates it and starts no cooldown, or on cooldown once the mana is too low for the Vigil.",
                   "action": {
                     "condition": {
                       "and": {
@@ -427,16 +473,58 @@
                                       "and": {
                                         "vals": [
                                           {
-                                            "cmp": {
-                                              "op": "OpGe",
-                                              "lhs": {
-                                                "currentManaPercent": {}
-                                              },
-                                              "rhs": {
-                                                "const": {
-                                                  "val": "0.3"
+                                            "and": {
+                                              "vals": [
+                                                {
+                                                  "and": {
+                                                    "vals": [
+                                                      {
+                                                        "cmp": {
+                                                          "op": "OpGe",
+                                                          "lhs": {
+                                                            "currentManaPercent": {}
+                                                          },
+                                                          "rhs": {
+                                                            "const": {
+                                                              "val": "0.3"
+                                                            }
+                                                          }
+                                                        }
+                                                      },
+                                                      {
+                                                        "cmp": {
+                                                          "op": "OpGt",
+                                                          "lhs": {
+                                                            "autoTimeToNext": {
+                                                              "autoType": "MainHand"
+                                                            }
+                                                          },
+                                                          "rhs": {
+                                                            "const": {
+                                                              "val": "2s"
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    ]
+                                                  }
+                                                },
+                                                {
+                                                  "cmp": {
+                                                    "op": "OpGt",
+                                                    "lhs": {
+                                                      "autoTimeToNext": {
+                                                        "autoType": "MainHand"
+                                                      }
+                                                    },
+                                                    "rhs": {
+                                                      "const": {
+                                                        "val": "2s"
+                                                      }
+                                                    }
+                                                  }
                                                 }
-                                              }
+                                              ]
                                             }
                                           },
                                           {
@@ -498,7 +586,7 @@
                   }
                 },
                 {
-                  "notes": "Racials and trinkets.",
+                  "notes": "Racials and trinkets on a free GCD.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }
@@ -622,7 +710,8 @@
       }
     ],
     "raidDamageHitsPerMinute": 2,
-    "raidDamagePerHit": 1500
+    "raidDamagePerHit": 1500,
+    "naturalFlaskZone": true
   },
   "simOptions": {
     "iterations": 1000,

@@ -80,7 +80,7 @@
               "firePowerBuff": "ElixirOfGreaterFirepower",
               "fillerExplosive": "ExplosiveGoblinLandMine",
               "mainHandImbue": "ShadowOil",
-              "defaultPotion": "MajorManaPotion",
+              "defaultPotion": "DragonfirePotion",
               "defaultConjured": "ConjuredDemonicRune",
               "dragonBreathChili": true,
               "zanzaBuff": "ROIDS",
@@ -131,7 +131,7 @@
               ],
               "priorityList": [
                 {
-                  "notes": "At the pull, then saved for the execute phase.",
+                  "notes": "The spell power on-use trinket at the pull, then held for the execute phase when that loses no use.",
                   "action": {
                     "condition": {
                       "or": {
@@ -218,6 +218,7 @@
                   }
                 },
                 {
+                  "notes": "Goblin Sapper Charge on cooldown.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -227,6 +228,7 @@
                   }
                 },
                 {
+                  "notes": "Hammer of Wrath below 20% health.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -236,6 +238,7 @@
                   }
                 },
                 {
+                  "notes": "Consecration with the mana to spare.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -258,6 +261,7 @@
                   }
                 },
                 {
+                  "notes": "Judgement on cooldown, on whichever damage seal is up.",
                   "action": {
                     "condition": {
                       "and": {
@@ -293,7 +297,7 @@
                   }
                 },
                 {
-                  "notes": "Judgement doesn't use it up in Forever. Without the talent ignore the warning on this line.",
+                  "notes": "Seal of Command whenever it is down. Judgement does not consume it under Forever. Without the talent ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "and": {
@@ -333,7 +337,7 @@
                   }
                 },
                 {
-                  "notes": "Twist of Light: the swing also gets the old seal's Echo.",
+                  "notes": "Twist of Light: swap to the other damage seal just before the swing, which then gets the Echo of the old one too.",
                   "action": {
                     "condition": {
                       "and": {
@@ -387,19 +391,6 @@
                                 }
                               ]
                             }
-                          },
-                          {
-                            "cmp": {
-                              "op": "OpGe",
-                              "lhs": {
-                                "currentManaPercent": {}
-                              },
-                              "rhs": {
-                                "const": {
-                                  "val": "0.2"
-                                }
-                              }
-                            }
                           }
                         ]
                       }
@@ -412,6 +403,7 @@
                   }
                 },
                 {
+                  "notes": "And back again before the next swing.",
                   "action": {
                     "condition": {
                       "and": {
@@ -465,19 +457,6 @@
                                 }
                               ]
                             }
-                          },
-                          {
-                            "cmp": {
-                              "op": "OpGe",
-                              "lhs": {
-                                "currentManaPercent": {}
-                              },
-                              "rhs": {
-                                "const": {
-                                  "val": "0.2"
-                                }
-                              }
-                            }
                           }
                         ]
                       }
@@ -490,6 +469,7 @@
                   }
                 },
                 {
+                  "notes": "Holy Strike on cooldown.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -499,7 +479,7 @@
                   }
                 },
                 {
-                  "notes": "Only against Undead and Demons.",
+                  "notes": "Exorcism on cooldown, only against Undead and Demons.",
                   "action": {
                     "castSpell": {
                       "spellId": {
@@ -509,7 +489,7 @@
                   }
                 },
                 {
-                  "notes": "Racials and trinkets.",
+                  "notes": "Racials and trinkets on a free GCD.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }
@@ -632,7 +612,8 @@
       }
     ],
     "raidDamageHitsPerMinute": 2,
-    "raidDamagePerHit": 1500
+    "raidDamagePerHit": 1500,
+    "naturalFlaskZone": true
   },
   "simOptions": {
     "iterations": 1000,
