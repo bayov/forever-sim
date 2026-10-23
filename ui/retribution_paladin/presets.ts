@@ -46,6 +46,7 @@ import Level60UndeadAPLJSON from './apls/level60_undead.apl.json';
 import BlankGear from './gear_sets/blank.gear.json';
 import Level30p5GearJSON from './gear_sets/level30p5.gear.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
+import Level60Phase1SyntheticCrusaderDutyGearJSON from './gear_sets/level60_phase1_synthetic_crusader_duty.gear.json';
 import Level60Phase1SyntheticUndeadGearJSON from './gear_sets/level60_phase1_synthetic_undead.gear.json';
 
 // Preset options for this spec.
@@ -101,9 +102,12 @@ export const GearLevel30p5 = PresetUtils.makePresetGear('Level 30 + 5', Level30p
 // The two-hander is an axe with Spinal Reaper's 203 - 305 at 3.4, the Era Phase 1 retribution
 // weapon, so no paladin race gets a weapon racial from it. The relic is Libram of Law (Pix
 // Xizzix, 4% Judgement of Righteousness damage), 0.8 ahead of no libram on the twist build and
-// 3.8 on Shock (measured on an earlier set). Libram of Invocation (5% off the seals) is 2.3 behind
-// Law on the twist build at 180 sec (paired, 20000 iterations, 2026-10-23): the mana it saves is
-// worth less than Law's 4% on Judgement of Righteousness. Libram of Fervor does nothing for these builds. The
+// 3.8 on Shock (measured on an earlier set). After the 2026-10-23 regear (paired, 20000
+// iterations, seeds 1 and 1000003, 120 / 180 / 300 sec), Libram of Invocation (5% off the seals) is
+// -2.0 / -2.1 / +3.0 against Law on twist and -2.5 / -2.3 / +2.1 on sub Holy: the mana it saves only
+// pays in long fights, so Law stays (talents and relics are judged at 180 sec). On Shock Invocation
+// is about 4 behind and Libram of Infusion (6% crit on Holy Shock) 1.3. The Crusader duty builds
+// take Libram of Fervor (GearLevel60Phase1SyntheticCrusaderDuty). The
 // trinkets are synthetic (Forever's launch trinkets are not simulated, standards 8a): a stat
 // trinket of 32 spell power and 18 crit rating (45.5 linear) and an on-use trinket of 140 spell
 // power for 20 sec every 2 min. The enchants are the
@@ -126,6 +130,21 @@ export const GearLevel60Phase1SyntheticUndead = PresetUtils.makePresetGear('Leve
 	tooltip: 'The Level 60 Phase 1 Synthetic set with Tenets of the Silver Hand, for an Undead boss.',
 	group: 'Level 60',
 });
+
+// The same set with Libram of Fervor (+33 to Judgement of the Crusader's Holy damage taken, a Phase 1
+// world drop) in the relic slot, for the Crusader duty builds, which judge the Crusader themselves.
+// Paired at 120 / 180 / 300 sec (20000 iterations, seeds 1 and 1000003, 2026-10-23 regear) it beats
+// Libram of Law by +5.9 / +5.9 / +5.8 on Level 60 (Crusader duty) and +8.0 / +7.7 / +7.1 on Shock
+// (Crusader duty). On the base builds it does nothing: the raid's Judgement of the Crusader is
+// someone else's.
+export const GearLevel60Phase1SyntheticCrusaderDuty = PresetUtils.makePresetGear(
+	'Level 60 Phase 1 Synthetic (Crusader duty)',
+	Level60Phase1SyntheticCrusaderDutyGearJSON,
+	{
+		tooltip: 'The Level 60 Phase 1 Synthetic set with Libram of Fervor, for the Crusader duty builds.',
+		group: 'Level 60',
+	},
+);
 
 export const GearPresets = {};
 
@@ -628,7 +647,7 @@ export const EncounterLevel60ShockCrusaderDuty = PresetUtils.makePresetEncounter
 export const PresetBuildLevel60CrusaderDuty = PresetUtils.makePresetBuild('Level 60 (Crusader duty)', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Human that keeps Judgement of the Crusader on the boss for the raid.',
-	gear: GearLevel60Phase1Synthetic,
+	gear: GearLevel60Phase1SyntheticCrusaderDuty,
 	talents: TalentsLevel60,
 	rotation: APLLevel60CrusaderDuty,
 	encounter: EncounterLevel60CrusaderDuty,
@@ -641,7 +660,7 @@ export const PresetBuildLevel60CrusaderDuty = PresetUtils.makePresetBuild('Level
 export const PresetBuildLevel60SubHolyCrusaderDuty = PresetUtils.makePresetBuild('Level 60 (sub Holy, Crusader duty)', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Human with the sub Holy talents that keeps Judgement of the Crusader on the boss for the raid.',
-	gear: GearLevel60Phase1Synthetic,
+	gear: GearLevel60Phase1SyntheticCrusaderDuty,
 	talents: TalentsLevel60SubHoly,
 	rotation: APLLevel60CrusaderDuty,
 	encounter: EncounterLevel60CrusaderDuty,
@@ -654,7 +673,7 @@ export const PresetBuildLevel60SubHolyCrusaderDuty = PresetUtils.makePresetBuild
 export const PresetBuildLevel60ShockCrusaderDuty = PresetUtils.makePresetBuild('Level 60 Shock (Crusader duty)', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Human Holy Shock build that keeps Judgement of the Crusader on the boss for the raid.',
-	gear: GearLevel60Phase1Synthetic,
+	gear: GearLevel60Phase1SyntheticCrusaderDuty,
 	talents: TalentsLevel60Shock,
 	rotation: APLLevel60ShockCrusaderDuty,
 	encounter: EncounterLevel60ShockCrusaderDuty,
