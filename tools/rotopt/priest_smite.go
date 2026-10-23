@@ -58,6 +58,15 @@ func (priestSmite) Knobs() []Knob {
 		// 706.5 / 643.8 at 180 / 300 sec against 701.4 / 545.0 for the earlier rank 4 below 20.
 		{Name: "smiteDownrank", Default: 7, Min: 0, Max: 7, Step: 1},
 		{Name: "smiteManaRate", Default: 35, Min: 15, Max: 45, Step: 5},
+		// Wand Shoot from wandLow percent mana up to wandHigh (0 never) with at least wandMinTime
+		// seconds of fight left, to regenerate outside the five second rule, and wandFallback
+		// when nothing else can be cast (out of mana). Shoot gives way to the next cast after
+		// each shot (sim/core/wand.go). wowsims/forever's Smite line (Shoot at 10% or less) and
+		// 20% to 40% lost to 10% to 20% (2026-10-23).
+		{Name: "wandLow", Default: 10, Min: 0, Max: 30, Step: 5},
+		{Name: "wandHigh", Default: 20, Min: 10, Max: 50, Step: 10},
+		{Name: "wandMinTime", Default: 60, Min: 0, Max: 120, Step: 30},
+		{Name: "wandFallback", Default: 1, Min: 0, Max: 1, Step: 1},
 		// A Smite 2 sec before the pull (Divine Fury 5/5), landing at 0.
 		{Name: "prepullSmite", Default: 1, Min: 0, Max: 1, Step: 1},
 		// The Level 60 on-use trinket at -0.1 sec, so the pre-cast Smite landing at 0 gets it.
@@ -84,12 +93,14 @@ func (priestSmite) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(powerInfusion, nil, "Power Infusion on cooldown. Without the talent ignore the warning on this line."))
 	}
 	items = append(items, autocastOtherCooldowns(nil, "Racials and trinkets on cooldown."))
+	items = append(items, priestWandRegen(k)...)
 
 	if k["holyFire"] == 1 {
+		hfCond := and(not(dotIsActive(holyFire)), priestManaAbove(k["holyFireMana"]))
 		if k["innerFocus"] == 1 {
-			items = append(items, cast(innerFocus, and(not(dotIsActive(holyFire)), priestManaAbove(k["holyFireMana"])), "Inner Focus right before Holy Fire. Without the talent ignore the warning on this line."))
+			items = append(items, cast(innerFocus, hfCond, "Inner Focus right before Holy Fire. Without the talent ignore the warning on this line."))
 		}
-		items = append(items, cast(holyFire, and(not(dotIsActive(holyFire)), priestManaAbove(k["holyFireMana"])), "Holy Fire whenever its damage over time is down, for Power in Light."))
+		items = append(items, cast(holyFire, hfCond, "Holy Fire whenever its damage over time is down, for Power in Light."))
 	}
 	if k["penance"] == 1 {
 		items = append(items, channel(penance, nil, nil, "Penance on cooldown. Without the talent ignore the warning on this line."))
@@ -142,6 +153,7 @@ func (priestSmite) Build(k Knobs) *proto.APLRotation {
 	} else {
 		items = append(items, cast(smite, nil, "Smite fills."))
 	}
+	items = append(items, priestWandFallback(k)...)
 	rot := rotation(items...)
 	if k["prepullSmite"] == 1 {
 		rot.PrepullActions = append(rot.PrepullActions, prepull(smite, 2))

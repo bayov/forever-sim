@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"strings"
 
 	"github.com/wowsims/classic/sim/core/proto"
@@ -28,6 +29,7 @@ var (
 	shadowform      = spellID(15473)
 	powerInfusion   = spellIDTag(10060, 0)
 	vampiricEmbrace = spellID(15286)
+	wandShoot       = spellID(5019)
 )
 
 // majorSpellblastingPotion (druid_balance.go) is the Major Spellblasting Potion's item id.
@@ -85,6 +87,15 @@ func (priestShadow) Knobs() []Knob {
 		{Name: "shadowguard", Default: 1, Min: 0, Max: 1, Step: 1},
 		{Name: "shadowguardRecast", Default: 60, Min: 0, Max: 100, Step: 20},
 		{Name: "shadowguardMana", Default: 40, Min: 0, Max: 80, Step: 20},
+		// Wand Shoot from wandLow percent mana up to wandHigh (0 never) with at least wandMinTime
+		// seconds of fight left, to regenerate outside the five second rule, and wandFallback
+		// when nothing else can be cast (out of mana). Shoot gives way to the next cast after
+		// each shot (sim/core/wand.go). wowsims/forever's Smite line (Shoot at 10% or less) and
+		// 20% to 40% lost to 10% to 20% (2026-10-23).
+		{Name: "wandLow", Default: 10, Min: 0, Max: 30, Step: 5},
+		{Name: "wandHigh", Default: 20, Min: 10, Max: 50, Step: 10},
+		{Name: "wandMinTime", Default: 60, Min: 0, Max: 120, Step: 30},
+		{Name: "wandFallback", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Before the pull: 0 Shadowform only (1.5 sec out), 1 Shadowform 3 sec out and a Mind
 		// Blast 1.5 sec out that lands at 0, 2 the same with Inner Focus on that Mind Blast.
 		{Name: "prepull", Default: 1, Min: 0, Max: 2, Step: 1},
@@ -133,6 +144,7 @@ func (priestShadow) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(powerInfusion, nil, "Power Infusion on cooldown. Without the talent ignore the warning on this line."))
 	}
 	items = append(items, autocastOtherCooldowns(nil, "Racials and trinkets on cooldown."))
+	items = append(items, priestWandRegen(k)...)
 
 	if k["vampiricEmbrace"] == 1 {
 		items = append(items, cast(vampiricEmbrace, not(targetAuraIsActive(vampiricEmbrace)), "Vampiric Embrace whenever it is down, for the party's healing. Without the talent ignore the warning on this line."))
@@ -220,6 +232,7 @@ func (priestShadow) Build(k Knobs) *proto.APLRotation {
 		mfNotes = strings.TrimSuffix(mfNotes, ".") + ", and when a damage over time spell fell off."
 	}
 	items = append(items, channel(mindFlay, nil, clip, mfNotes))
+	items = append(items, priestWandFallback(k)...)
 
 	rot := rotation(items...)
 	// Shadowguard needs Shadowform, so Shadowform goes a GCD earlier for it.
@@ -249,6 +262,28 @@ func (priestShadow) Build(k Knobs) *proto.APLRotation {
 		rot.PrepullActions = append(rot.PrepullActions, prepull(itemID(majorSpellblastingPotion), 0.1))
 	}
 	return rot
+}
+
+// The wand line that regenerates mana outside the five second rule, from the wandLow,
+// wandHigh and wandMinTime knobs, for priestShadow and priestSmite.
+func priestWandRegen(k Knobs) []*proto.APLListItem {
+	if k["wandLow"] <= 0 {
+		return nil
+	}
+	var minTime value
+	if k["wandMinTime"] > 0 {
+		minTime = ge(remainingTime(), seconds(k["wandMinTime"]))
+	}
+	return []*proto.APLListItem{channel(wandShoot, and(le(currentManaPercent(), num(k["wandLow"]/100)), minTime), ge(currentManaPercent(), num(k["wandHigh"]/100)),
+		fmt.Sprintf("Shoot the wand from %.0f%% mana to %.0f%% with %.0f sec or more to go, to regenerate outside the five second rule.", k["wandLow"], k["wandHigh"], k["wandMinTime"]))}
+}
+
+// The wand when nothing else can be cast (out of mana), from the wandFallback knob.
+func priestWandFallback(k Knobs) []*proto.APLListItem {
+	if k["wandFallback"] != 1 {
+		return nil
+	}
+	return []*proto.APLListItem{cast(wandShoot, nil, "Shoot the wand when nothing else can be cast (out of mana).")}
 }
 
 func channeledTicks(spell *proto.ActionID) value {

@@ -1,6 +1,7 @@
 #!/bin/sh
 # Regenerates the priest Level 60 rotations in ui/shadow_priest/apls from the priest_shadow
-# and priest_smite templates, with the knobs the searches settled on (2026-10-12): the
+# and priest_smite templates, with the knobs the searches settled on (2026-10-12, rerun on
+# 2026-10-23 with the wand knobs, which keep every value): the
 # templates' defaults, which are the searched values at 120, 180 and 300 sec.
 #
 # The settings, talent and knob searches behind the Level 60 presets:
