@@ -24,7 +24,7 @@ import (
 // percent). Armor is free, and the weapons' damage and speed are the Era weapons' and free. Below,
 // each piece's weighted linear total and its target, then its 1.7-norm value and its shape target:
 //
-//	Head       66  T1        72.0  72.4   46.8  46.5  str 26 sta 16 hit 30
+//	Head       66  T1        72.0  72.4   46.9  46.5  str 31 sta 16 hit 25
 //	Neck       71  T3        42.0  42.0   27.4  28.0  str 15 sta 9 crit 18
 //	Shoulder   66  T2        55.0  54.8   35.9  34.9  str 19 sta 12 crit 24
 //	Back       71  T3        42.0  42.0   27.4  28.0  str 15 sta 9 crit 18
@@ -33,7 +33,7 @@ import (
 //	Hands      66  T2        55.0  54.8   36.5  34.9  str 17 sta 11 agi 27
 //	Waist      71  T2        59.0  58.9   38.7  37.4  str 21 sta 12 hit 26
 //	Legs       66  T1        72.0  72.4   48.1  46.5  str 22 sta 14 agi 36
-//	Feet       66  T2        55.0  54.8   35.9  34.9  str 19 sta 12 hit 24
+//	Feet       66  T2        55.0  54.8   35.9  34.9  str 24 sta 12 hit 19
 //	Finger     71  T3        42.0  42.0   27.1  28.0  str 16 sta 10 ap 32
 //	Finger II  71  T3        42.0  42.0   27.1  28.0  str 16 sta 10 ap 32
 //	Ranged     71  ranged    19.5  19.6      -     -  agi 9 ap 1 hit 10
@@ -46,15 +46,18 @@ import (
 //
 // The stat mix is the fair-mix standard (orchestration/standards.md 5a, gear_targets.md at
 // da0a4c79e): the shares of Season of Discovery level 60 BiS warrior gear, Stamina at the spec's own
-// SoD share. Hit is set at the cap (90 rating, 9% for special attacks against a level 63 boss,
-// and no warrior talent adds main hand hit) and the other stats keep the table's proportions.
+// SoD share. Hit is set at the cap (80 rating, 8% for special attacks against a level 63 boss with no
+// hit suppression under Forever, standards 4, and no warrior talent adds main hand hit) and the other
+// stats keep the table's proportions. The sets were built to Classic's 9% (90 rating) until
+// 2026-10-23, when the head and feet each traded 5 hit for 5 Strength, the stat furthest under its
+// hit-adjusted target and the best one per point (orchestration/stat_weights.md).
 // Linear shares, enchants and trinkets left out:
 //
 //	Set                     Sta   Str   Agi   AP    Crit  Hit
 //	Fury target             19.6  36.0  17.0  6.8   13.2  7.4 (SoD; the cap here)
-//	Fury (these items)      19.8  33.3  15.8  6.6   12.3  12.3
+//	Fury (these items)      19.8  34.6  15.8  6.6   12.3  10.9
 //	Arms / Fury 2H target   19.7  36.6  18.0  7.7   10.4  7.7 (SoD; the cap here)
-//	Arms / Fury 2H (items)  19.9  33.9  16.8  7.5   9.8   12.0
+//	Arms / Fury 2H (items)  19.9  35.3  16.8  7.5   9.8   10.7
 //
 // Every armor piece carries Strength and Stamina and one more stat: hit on the head, waist and feet,
 // Agility on the chest, legs and hands, crit on the shoulders, neck and back, attack power on the
@@ -91,8 +94,8 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 	{
 		Id: 991001, Name: "Warrior Synthetic Head (Phase 1)", Icon: "inv_helm_plate_raidwarriorhyjalc60_d_01",
 		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypePlate,
-		Stats:     stats.Stats{stats.Strength: 26, stats.Stamina: 16, stats.Armor: 608}.ToFloatArray(),
-		HitRating: 30,
+		Stats:     stats.Stats{stats.Strength: 31, stats.Stamina: 16, stats.Armor: 608}.ToFloatArray(),
+		HitRating: 25,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
 		SetName:        "Warrior Synthetic (Phase 1)",
@@ -170,8 +173,8 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 	{
 		Id: 991010, Name: "Warrior Synthetic Feet (Phase 1)", Icon: "inv_boot_plate_raidwarriorhyjalc60_d_01",
 		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypePlate,
-		Stats:     stats.Stats{stats.Strength: 19, stats.Stamina: 12, stats.Armor: 515}.ToFloatArray(),
-		HitRating: 24,
+		Stats:     stats.Stats{stats.Strength: 24, stats.Stamina: 12, stats.Armor: 515}.ToFloatArray(),
+		HitRating: 19,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
 	},
