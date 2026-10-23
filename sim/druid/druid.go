@@ -26,6 +26,7 @@ const (
 	SpellCode_DruidInsectSwarm
 	SpellCode_DruidMoonfire
 	SpellCode_DruidRake
+	SpellCode_DruidRavage
 	SpellCode_DruidRip
 	SpellCode_DruidShiftingPower
 	SpellCode_DruidShred
@@ -71,8 +72,10 @@ type Druid struct {
 	Maul                 *DruidSpell
 	MaulQueueSpell       *DruidSpell
 	Moonfire             []*DruidSpell
+	Prowl                *DruidSpell
 	Rebirth              *DruidSpell
 	Rake                 *DruidSpell
+	Ravage               *DruidSpell
 	Rip                  *DruidSpell
 	ShiftingPower        *DruidSpell
 	Shred                *DruidSpell
@@ -102,6 +105,7 @@ type Druid struct {
 	MoonkinFormAura          *core.Aura
 	NaturesGraceProcAura     *core.Aura
 	PredatoryInstinctsAura   *core.Aura
+	ProwlAura                *core.Aura
 	TigersFuryAura           *core.Aura
 
 	BleedCategories core.ExclusiveCategoryArray
@@ -206,6 +210,11 @@ func (druid *Druid) RegisterFeralCatSpells() {
 	druid.registerTigersFurySpell()
 	druid.registerShiftingPowerSpell()
 	druid.registerBerserkCD()
+	// Ravage and Prowl are Forever's (ravage.go, prowl.go); the Classic sim never had them.
+	if druid.Env.IsForever() {
+		druid.registerRavageSpell()
+		druid.registerProwlSpell()
+	}
 }
 
 // TODO: Classic feral tank

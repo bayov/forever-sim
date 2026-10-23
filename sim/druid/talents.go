@@ -307,16 +307,16 @@ func (druid *Druid) applySavageFury() {
 }
 
 // Natural Instinct: 10% a point more crit damage bonus on the melee abilities (its healing
-// part does nothing here). The modifier's class mask (1223242, word 0 0x839800) takes in Rip
-// through the bit it shares with Ferocious Bite (0x800000), so Rip's ticks, which crit under
-// Forever, get it too.
+// part does nothing here). The modifier's class mask (1223242, word 0 0x839800) takes in Ravage
+// (0x10000), and Rip through the bit it shares with Ferocious Bite (0x800000), so Rip's ticks,
+// which crit under Forever, get it too.
 func (druid *Druid) applyNaturalInstinct() {
 	points := float64(druid.Talents.NaturalInstinct)
 	if points == 0 {
 		return
 	}
 	druid.onInit("Natural Instinct", func() {
-		for _, spell := range []*DruidSpell{druid.Claw, druid.Rake, druid.Shred, druid.FerociousBite, druid.Rip} {
+		for _, spell := range []*DruidSpell{druid.Claw, druid.Rake, druid.Shred, druid.Ravage, druid.FerociousBite, druid.Rip} {
 			if spell != nil {
 				spell.CritDamageBonus += 0.1 * points
 			}
@@ -326,7 +326,7 @@ func (druid *Druid) applyNaturalInstinct() {
 
 // Rend and Tear: 2% a point more damage from the melee abilities on a bleeding target. The
 // effect is a dummy the server runs. The sim takes it as a multiplier on the hits of Claw,
-// Shred, Rake and Ferocious Bite and on the Rake and Rip ticks, not on white hits, while our
+// Shred, Ravage, Rake and Ferocious Bite and on the Rake and Rip ticks, not on white hits, while our
 // Rake or Rip is up or the spec assumes another bleed on the target. The ticks are from a
 // tester's table on wowsims/forever PR #149 (921f40098f): Rake and Rip ticks, Rake's hit and
 // Claw rise by the talent's percent with a bleed on the target.

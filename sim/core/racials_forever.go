@@ -40,6 +40,7 @@ func applyForeverRaceEffects(agent Agent) {
 		// Quickness keeps its dodge. Elune's Light is the new offensive cooldown.
 		character.AddStat(stats.Dodge, 1)
 		character.registerElunesLight()
+		character.registerShadowmeld()
 
 	case proto.Race_RaceGnome:
 		// Expansive Mind raises the resource pool itself now rather than Intellect.
@@ -226,6 +227,72 @@ func (character *Character) registerElunesLight() {
 		Spell: spell,
 		Type:  CooldownTypeDPS,
 	})
+}
+
+// Shadowmeld (20580, client 1.60.1.70532): no global cooldown (no StartRecoveryCategory), a 10
+// sec category cooldown that the tooltip raises to 2 min in combat, A_MOD_STEALTH, a threat drop
+// (A_MOD_TOTAL_THREAT -999999) and the cancel auto attack bit (Attributes[0] 0x100000). Unlike
+// Prowl and Stealth it has no not-in-combat bit, so it goes in combat. While it is up the
+// character counts as stealthed for the abilities that need stealth (Ravage, Ambush, Garrote),
+// melee is paused, and the next cast breaks it (AuraInterruptFlags 0x3C0F). As in
+// wowsims/forever's shadowmeld.go the threat drop is left out: it does not change damage.
+//
+// The fight is in combat from the pull, so it always takes the 2 min cooldown. It cannot go
+// before the pull: no class starts the fight in Stealth (orchestration/standards.md item 13).
+// It is not a major cooldown, so only an APL line that follows it with a stealth ability casts it.
+func (character *Character) registerShadowmeld() {
+	actionID := ActionID{SpellID: 20580}
+
+	var meleePaused bool
+	character.ShadowmeldAura = character.RegisterAura(Aura{
+		Label:    "Shadowmeld",
+		ActionID: actionID,
+		Duration: NeverExpires,
+		OnGain: func(aura *Aura, sim *Simulation) {
+			meleePaused = character.AutoAttacks.enabled
+			character.AutoAttacks.CancelAutoSwing(sim)
+		},
+		OnExpire: func(aura *Aura, sim *Simulation) {
+			if meleePaused {
+				character.AutoAttacks.EnableAutoSwing(sim)
+			}
+		},
+		OnCastComplete: func(aura *Aura, sim *Simulation, spell *Spell) {
+			if spell.ActionID != actionID && spell.Flags.Matches(SpellFlagAPL|SpellFlagMCD) {
+				aura.Deactivate(sim)
+			}
+		},
+	})
+
+	character.Shadowmeld = character.RegisterSpell(SpellConfig{
+		ActionID: actionID,
+		Flags:    SpellFlagAPL | SpellFlagNoOnCastComplete,
+		Cast: CastConfig{
+			CD: Cooldown{
+				Timer:    character.NewTimer(),
+				Duration: time.Minute * 2,
+			},
+		},
+		ExtraCastCondition: func(sim *Simulation, _ *Unit) bool {
+			return sim.CurrentTime >= 0 && !character.ShadowmeldAura.IsActive()
+		},
+		ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
+			character.ShadowmeldAura.Activate(sim)
+		},
+	})
+}
+
+// IsShadowmelded is whether Shadowmeld is up, which counts as stealth for the abilities that
+// need it.
+func (character *Character) IsShadowmelded() bool {
+	return character.ShadowmeldAura != nil && character.ShadowmeldAura.IsActive()
+}
+
+// BreakShadowmeld ends Shadowmeld, as the stealth abilities do when they land.
+func (character *Character) BreakShadowmeld(sim *Simulation) {
+	if character.IsShadowmelded() {
+		character.ShadowmeldAura.Deactivate(sim)
+	}
 }
 
 // Eureka!: damaging abilities cost 10% less and deal 10% more damage for 8 sec, for every

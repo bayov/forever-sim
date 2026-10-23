@@ -18,12 +18,16 @@ func newForeverRogueSim(t *testing.T, talents string, mainHandID, offHandID int3
 }
 
 func newForeverRogueSimItems(t *testing.T, talents string, itemIDs map[proto.ItemSlot]int32, numTargets int) (*core.Simulation, *DpsRogue) {
+	return newForeverRogueSimRace(t, proto.Race_RaceHuman, talents, itemIDs, numTargets)
+}
+
+func newForeverRogueSimRace(t *testing.T, race proto.Race, talents string, itemIDs map[proto.ItemSlot]int32, numTargets int) (*core.Simulation, *DpsRogue) {
 	items := make([]*proto.ItemSpec, proto.ItemSlot_ItemSlotOffHand+1)
 	for i := range items {
 		items[i] = &proto.ItemSpec{Id: itemIDs[proto.ItemSlot(i)]}
 	}
 	player := &proto.Player{
-		Race:          proto.Race_RaceHuman,
+		Race:          race,
 		Class:         proto.Class_ClassRogue,
 		Level:         60,
 		TalentsString: talents,
@@ -228,6 +232,29 @@ func TestForeverAmbushFromBehind(t *testing.T) {
 	rogue.PseudoStats.InFrontOfTarget = false
 	if !rogue.Ambush.CanCast(sim, target) {
 		t.Error("Ambush from Stealth behind the target isn't castable")
+	}
+}
+
+// A Night Elf's Shadowmeld (20580) counts as stealth, so Ambush (from behind) and Garrote can
+// follow it in combat, and Ambush ends it.
+func TestForeverShadowmeldIntoAmbush(t *testing.T) {
+	sim, rogue := newForeverRogueSimRace(t, proto.Race_RaceNightElf, "", map[proto.ItemSlot]int32{
+		proto.ItemSlot_ItemSlotMainHand: 18805, // Core Hound Tooth
+	}, 1)
+	target := rogue.CurrentTarget
+	rogue.AddEnergy(sim, 100, rogue.EnergyRefundMetrics)
+	rogue.SetGCDTimer(sim, sim.CurrentTime)
+	if rogue.Ambush.CanCast(sim, target) || rogue.Garrote.CanCast(sim, target) {
+		t.Fatal("Ambush or Garrote is castable out of stealth")
+	}
+	if !rogue.Shadowmeld.Cast(sim, target) {
+		t.Fatal("Shadowmeld didn't cast")
+	}
+	if !rogue.IsStealthed() || !rogue.Ambush.CanCast(sim, target) || !rogue.Garrote.CanCast(sim, target) {
+		t.Fatal("Ambush or Garrote isn't castable from Shadowmeld")
+	}
+	if !rogue.Ambush.Cast(sim, target) || rogue.IsStealthed() {
+		t.Error("Ambush didn't cast or left Shadowmeld up")
 	}
 }
 

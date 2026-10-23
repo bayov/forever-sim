@@ -50,6 +50,9 @@ type Character struct {
 	// The weapon buff from another shaman's Windfury or Flametongue Totem, nil without
 	// one. A shaman turns it off while their own totem's buff takes the slot.
 	RaidTotemWeaponBuff *Aura
+	// The Night Elf's Shadowmeld under Forever (registerShadowmeld), nil for other races.
+	Shadowmeld     *Spell
+	ShadowmeldAura *Aura
 	//Item Swap Handler
 	ItemSwap ItemSwap
 

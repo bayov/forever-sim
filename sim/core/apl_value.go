@@ -215,6 +215,8 @@ func (rot *APLRotation) newAPLValue(config *proto.APLValue) APLValue {
 		return rot.newValueChannelClipDelay(config.GetChannelClipDelay())
 	case *proto.APLValue_InMeleeRange:
 		return rot.newValueInMeleeRange(config.GetInMeleeRange())
+	case *proto.APLValue_FrontOfTarget:
+		return rot.newValueFrontOfTarget(config.GetFrontOfTarget())
 
 	default:
 		return nil

@@ -85,17 +85,36 @@ func TestCatShiftingPower(t *testing.T) {
 	}
 }
 
-// TestCatBuffs checks Berserk (100% crit on the builders, not on Rip or Ferocious Bite).
+// TestCatBuffs checks Berserk (100% crit on the builders, Ravage among them, not on Rip or
+// Ferocious Bite).
 func TestCatBuffs(t *testing.T) {
 	sim, cat := newCatSim(t, catTalents)
 
-	shredCrit, biteCrit := cat.Shred.BonusCritRating, cat.FerociousBite.BonusCritRating
+	shredCrit, ravageCrit, biteCrit := cat.Shred.BonusCritRating, cat.Ravage.BonusCritRating, cat.FerociousBite.BonusCritRating
 	cat.BerserkAura.Activate(sim)
 	if got := cat.Shred.BonusCritRating - shredCrit; got != 100 {
 		t.Errorf("Berserk gives Shred %.0f crit, want 100", got)
 	}
+	if got := cat.Ravage.BonusCritRating - ravageCrit; got != 100 {
+		t.Errorf("Berserk gives Ravage %.0f crit, want 100", got)
+	}
 	if got := cat.FerociousBite.BonusCritRating - biteCrit; got != 0 {
 		t.Errorf("Berserk gives Ferocious Bite %.0f crit, want 0", got)
+	}
+}
+
+// TestCatRavageDamage checks Ravage against the client's effects (9867): (weapon damage + 98) *
+// 350%, with no talents, armor or crits in the way.
+func TestCatRavageDamage(t *testing.T) {
+	sim, cat := newCatSim(t, "")
+	target := cat.CurrentTarget
+	target.AddStatDynamic(sim, stats.Armor, -target.GetStat(stats.Armor))
+	ap := cat.Ravage.MeleeAttackPower(target)
+	weapon := cat.AutoAttacks.MH()
+	want := (98 + (weapon.BaseDamageMin+weapon.BaseDamageMax)/2 + ap/14) * 3.5
+	result := cat.Ravage.CalcDamage(sim, target, 98+weapon.CalculateAverageWeaponDamage(ap), cat.Ravage.OutcomeAlwaysHit)
+	if math.Abs(result.Damage-want) > 1e-6 {
+		t.Errorf("Ravage hits for %.2f, want %.2f", result.Damage, want)
 	}
 }
 
@@ -253,7 +272,7 @@ func newCatSimWith(t *testing.T, talents string, slot int, item int32, options *
 // whose bit its class mask shares with Ferocious Bite (1223242, word 0 0x839800).
 func TestCatNaturalInstinctRip(t *testing.T) {
 	_, cat := newCatSim(t, catTalents)
-	for _, spell := range []*druid.DruidSpell{cat.Claw, cat.Rake, cat.Shred, cat.FerociousBite, cat.Rip} {
+	for _, spell := range []*druid.DruidSpell{cat.Claw, cat.Rake, cat.Shred, cat.Ravage, cat.FerociousBite, cat.Rip} {
 		if !near(spell.CritDamageBonus, 1.2) {
 			t.Errorf("%s has %.2f crit damage bonus with Natural Instinct 2, want 1.20", spell.ActionID, spell.CritDamageBonus)
 		}

@@ -199,11 +199,13 @@ func NewRogue(character *core.Character, options *proto.Player, rogueOptions *pr
 }
 
 // Deactivate Stealth if it is active. This must be added to all abilities that cause Stealth to fade.
+// A Night Elf's Shadowmeld goes with it, and restarts melee itself.
 func (rogue *Rogue) BreakStealth(sim *core.Simulation) {
 	if rogue.StealthAura.IsActive() {
 		rogue.StealthAura.Deactivate(sim)
 		rogue.AutoAttacks.EnableAutoSwing(sim)
 	}
+	rogue.BreakShadowmeld(sim)
 }
 
 // Does the rogue have a dagger equipped in the specified hand (main or offhand)?
@@ -214,9 +216,10 @@ func (rogue *Rogue) HasDagger(hand core.Hand) bool {
 	return rogue.OffHand().WeaponType == proto.WeaponType_WeaponTypeDagger
 }
 
-// Check if the rogue is considered in "stealth" for the purpose of casting abilities
+// Check if the rogue is considered in "stealth" for the purpose of casting abilities. Under
+// Forever a Night Elf's Shadowmeld counts, so Ambush and Garrote can follow it in combat.
 func (rogue *Rogue) IsStealthed() bool {
-	return rogue.StealthAura.IsActive()
+	return rogue.StealthAura.IsActive() || rogue.IsShadowmelded()
 }
 
 // Agent is a generic way to access underlying rogue on any of the agents.
