@@ -134,7 +134,7 @@ func TestAoEOnlyHitsLivingMobs(t *testing.T) {
 	checked := false
 	at(sim, 10, func(sim *core.Simulation) {
 		checked = true
-		for _, spell := range []*core.Spell{chain, nova} {
+		for _, spell := range []*core.Spell{chain, topRank(t, "Fire Nova", enh.FireNovaHits)} {
 			got := hits[spell.ActionID]
 			if len(got) != 1 || got[mobs[2]] != 1 {
 				t.Errorf("%s hit %v, want the living mob once", spell.ActionID, got)

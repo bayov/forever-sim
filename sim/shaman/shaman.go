@@ -208,6 +208,7 @@ type Shaman struct {
 	EarthShield            *core.Spell
 	EarthShock             []*core.Spell
 	FireNova               []*core.Spell
+	FireNovaHits           []*core.Spell
 	TotemicRecall          *core.Spell
 	TotemicProjection      *core.Spell
 	FlametongueTotem       []*core.Spell

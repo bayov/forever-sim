@@ -65,3 +65,40 @@ func TestOrcShamanEarthShockResists(t *testing.T) {
 		check("Earth Shock lost part of its damage", partial, landed, c.partial)
 	}
 }
+
+// TestOrcShamanFrostShockResists checks that Frost Shock is binary under Forever, like Earth
+// Shock, Frostbolt and Cone of Cold, as its row (10473) carries the slow. A level 30 target with
+// 75 Frost resistance resists it in full on 21.7% of the rolls, so it lands on 96% times
+// 1 - 0.217 of them. Under Classic it isn't binary and lands on 96%.
+func TestOrcShamanFrostShockResists(t *testing.T) {
+	const rolls = 2000
+	for _, c := range []struct {
+		ruleset proto.Ruleset
+		landed  float64
+	}{
+		{proto.Ruleset_RulesetForever, 0.96 * (1 - 75.0/345)},
+		{proto.Ruleset_RulesetClassic, 0.96},
+	} {
+		target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)
+		target.Level = 30
+		target.Stats[proto.Stat_StatFrostResistance] = 75
+		sim := core.NewSim(&proto.RaidSimRequest{
+			Raid:       core.SinglePlayerRaidProto(newOrcShaman(30, "", &proto.EnhancementShaman_Options{}), &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+			Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{target}},
+			SimOptions: &proto.SimOptions{Ruleset: c.ruleset, RandomSeed: 1, ExactDamage: true},
+		}, simsignals.CreateSignals())
+		sim.Reset()
+		enh := sim.Raid.Parties[0].Players[0].(*EnhancementShaman)
+
+		frostShock := topRank(t, "Frost Shock", enh.FrostShock)
+		landed := 0
+		for range rolls {
+			if frostShock.CalcDamage(sim, enh.CurrentTarget, 100, frostShock.OutcomeMagicHit).Landed() {
+				landed++
+			}
+		}
+		if se := math.Sqrt(c.landed * (1 - c.landed) / rolls); math.Abs(float64(landed)/rolls-c.landed) > 4*se {
+			t.Errorf("%s: Frost Shock landed on %d of %d, want %.2f", c.ruleset, landed, rolls, c.landed)
+		}
+	}
+}

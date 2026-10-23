@@ -331,6 +331,10 @@ export class ActionId {
 			case 'Flame Shock':
 				if (this.tag === 1) name = `${name} (DoT)`;
 				break;
+			// The cast's hits report under its spell, tagged 1.
+			case 'Fire Nova':
+				if (this.tag === 1) name = `${name} (Damage)`;
+				break;
 			// Channeled Tick Spells
 			case 'Evocation':
 			case 'Mind Flay':

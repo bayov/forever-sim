@@ -43,7 +43,7 @@ func TestOrcShamanElementalFury(t *testing.T) {
 			{"Flame Shock", topRank(t, "Flame Shock", enh.FlameShock)},
 			{"Frost Shock", topRank(t, "Frost Shock", enh.FrostShock)},
 			{"Lava Burst", enh.LavaBurst},
-			{"Fire Nova", topRank(t, "Fire Nova", enh.FireNova)},
+			{"Fire Nova", topRank(t, "Fire Nova", enh.FireNovaHits)},
 			{"Searing Totem", lastSpell(enh, shaman.SearingTotemAttackSpellId[:], 0)},
 			{"Magma Totem", enh.GetSpell(core.ActionID{SpellID: shaman.MagmaTotemAoeSpellId[4]})},
 			{"Flametongue Weapon", lastSpell(enh, shaman.FlametongueWeaponSpellId[:], 0)},

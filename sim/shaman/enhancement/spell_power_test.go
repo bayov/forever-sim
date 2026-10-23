@@ -109,10 +109,10 @@ func TestOrcShamanSpellPowerBeta(t *testing.T) {
 		{"Searing Totem rank 3", lastSpell(enh, shaman.SearingTotemAttackSpellId[:], 0), 20.55, 26.55, 20, 26, 0, 0},
 		// Client 1.60.1.70425 cut Fire Nova (the beta's 70338 log showed 124 to 135 raw for rank 2,
 		// which the sim's 122.41 to 136.53 covered), and no log of the new values exists yet.
-		{"Fire Nova rank 2", topRank(t, "Fire Nova", enh.FireNova), 67.29, 74.73, 0, 0, 0, 0},
+		{"Fire Nova rank 2", topRank(t, "Fire Nova", enh.FireNovaHits), 67.29, 74.73, 0, 0, 0, 0},
 	}
 	frostShock := rollCase{"Frost Shock rank 1", topRank(t, "Frost Shock", enh.FrostShock), 87.11, 91.71, 88, 91, 0, 0}
-	if shield.Rank != 3 || flameShock[1].Rank != 3 || cases[1].spell.Rank != 4 || cases[6].spell.Rank != 2 || frostShock.spell.Rank != 1 {
+	if shield.Rank != 3 || flameShock[1].Rank != 3 || cases[1].spell.Rank != 4 || topRank(t, "Fire Nova", enh.FireNova).Rank != 2 || cases[6].spell != enh.FireNovaHits[2] || frostShock.spell.Rank != 1 {
 		t.Fatalf("the level 30 ranks changed")
 	}
 	check := func(sim *core.Simulation, c rollCase) {

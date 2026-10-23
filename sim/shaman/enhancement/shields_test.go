@@ -92,6 +92,34 @@ func TestOrcShamanShieldTriggers(t *testing.T) {
 	runSim(sim)
 }
 
+// TestOrcShamanWaterShieldOwnCrits checks that our own spell crits spend a Water Shield globe,
+// but Fire Nova's do not: its hits are a proc, and Water Shield's row lacks Can Proc From Procs
+// (wowsims/forever 3c39b8afe6 and 07da4353e1).
+func TestOrcShamanWaterShieldOwnCrits(t *testing.T) {
+	sim, enh := newShamanSim(newOrcShaman(60, "--000000001", &proto.EnhancementShaman_Options{}), &proto.Debuffs{}, 60)
+	for i, c := range []struct {
+		name  string
+		spell *core.Spell
+		spent bool
+	}{
+		{"Earth Shock crit", topRank(t, "Earth Shock", enh.EarthShock), true},
+		{"Fire Nova crit", topRank(t, "Fire Nova", enh.FireNovaHits), false},
+	} {
+		at(sim, 4*float64(i+1), func(sim *core.Simulation) {
+			castNow(t, sim, enh, enh.WaterShield)
+			c.spell.CalcAndDealDamage(sim, enh.CurrentTarget, 100, forcedOutcome(core.OutcomeCrit))
+			want := int32(3)
+			if c.spent {
+				want = 2
+			}
+			if got := enh.WaterShieldAura.GetStacks(); got != want {
+				t.Errorf("%s: %d globes left, want %d", c.name, got, want)
+			}
+		})
+	}
+	runSim(sim)
+}
+
 // TestOrcShamanRaidDamageHits checks that the encounter's raid hits fire Lightning Shield's
 // orbs at our target, and that the hits land at random times.
 //

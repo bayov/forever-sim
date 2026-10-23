@@ -93,7 +93,8 @@ func testTalentProcTriggers(t *testing.T) {
 			attack{spell.name, top, core.OutcomeHit, nil},
 			attack{spell.name + " crit", top, core.OutcomeCrit, []string{elementalDevastation}})
 	}
-	attacks = append(attacks, attack{"Fire Nova crit", topRank(t, "Fire Nova", enh.FireNova), core.OutcomeCrit, nil})
+	// Fire Nova's hits are a proc, which Elemental Devastation doesn't hear.
+	attacks = append(attacks, attack{"Fire Nova crit", topRank(t, "Fire Nova", enh.FireNovaHits), core.OutcomeCrit, nil})
 
 	for _, a := range attacks {
 		seen := map[string]bool{}

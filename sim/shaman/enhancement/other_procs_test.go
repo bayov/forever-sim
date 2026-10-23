@@ -22,7 +22,7 @@ const (
 // Judgement of Wisdom gives us mana on half of our white hits, even the misses, and on half
 // of our landed Stormstrikes, Windfury Weapon attacks and spells. The melee item procs
 // trigger on landed white hits, Stormstrikes and Windfury Weapon attacks. None of them come
-// from proc damage, totem attacks or Lightning Shield orbs.
+// from proc damage (Fire Nova's hits among it), totem attacks or Lightning Shield orbs.
 //
 // We force each outcome 2000 times, 2 sec apart, because Hand of Justice procs on 1% with a
 // 2 sec cooldown. It misses all 2000 one time in 500 million.
@@ -61,10 +61,11 @@ func TestOrcShamanOtherProcs(t *testing.T) {
 			{"Frost Shock", enh.FrostShock},
 			{"Lightning Bolt", enh.LightningBolt},
 			{"Chain Lightning", enh.ChainLightning},
-			{"Fire Nova", enh.FireNova},
 		} {
 			list = append(list, attack{spell.name, topRank(t, spell.name, spell.ranks), core.OutcomeHit, []string{judgementOfWisdom}})
 		}
+		// Fire Nova's hits are a proc, so Judgement of Wisdom doesn't hear them.
+		list = append(list, attack{"Fire Nova", topRank(t, "Fire Nova", enh.FireNovaHits), core.OutcomeHit, nil})
 		return list
 	}
 

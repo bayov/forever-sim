@@ -24,7 +24,8 @@ func (shaman *Shaman) registerWaterShieldSpell() {
 	// any of the Shaman's critical spells").
 	//
 	// Like Lightning Shield, melee, ranged attacks and harmful spells all count, AoE too, but
-	// damage over time ticks don't. The tooltip only says "Only one globe will activate every
+	// damage over time ticks don't, nor do procs such as Fire Nova's hits: the row lacks Can Proc
+	// From Procs (wowsims/forever 3c39b8afe6 and 07da4353e1). The tooltip only says "Only one globe will activate every
 	// few seconds", but the client (70291) gives the spell a 3500 ms proc cooldown, like
 	// Lightning Shield's, and the same proc flags plus our heals (0x262a8).
 	icd := core.Cooldown{

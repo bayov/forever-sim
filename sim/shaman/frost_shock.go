@@ -47,6 +47,13 @@ func (shaman *Shaman) newFrostShockSpellConfig(rank int, shockTimer *core.Timer)
 		shockTimer,
 	)
 
+	// Under Forever Frost Shock is binary, like Earth Shock, Frostbolt and Cone of Cold: the
+	// client's row (10473) carries the slow as well as the damage. A binary spell that lands
+	// still rolls a partial resist under Forever (earth_shock.go).
+	if shaman.Env.IsForever() {
+		spell.Flags |= core.SpellFlagBinary
+	}
+
 	spell.SpellCode = SpellCode_ShamanFrostShock
 	spell.RequiredLevel = level
 	spell.Rank = rank

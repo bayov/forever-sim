@@ -89,7 +89,7 @@ func testImbueProcs(t *testing.T, level, weapon int32, imbue proto.WeaponImbue, 
 		{"parried Stormstrike", stormstrikeSpell, core.OutcomeParry, nil, ""},
 		{"Earth Shock", topRank(t, "Earth Shock", enh.EarthShock), core.OutcomeHit, nil, ""},
 		{"Lightning Bolt", topRank(t, "Lightning Bolt", enh.LightningBolt), core.OutcomeHit, nil, ""},
-		{"Fire Nova", topRank(t, "Fire Nova", enh.FireNova), core.OutcomeHit, nil, ""},
+		{"Fire Nova", topRank(t, "Fire Nova", enh.FireNovaHits), core.OutcomeHit, nil, ""},
 		{"Searing Totem attack", lastSpell(enh, shaman.SearingTotemAttackSpellId[:], 0), core.OutcomeHit, nil, ""},
 		{"Lightning Shield orb", topRank(t, "Lightning Shield", enh.LightningShieldProcs), core.OutcomeHit, nil, ""},
 	}

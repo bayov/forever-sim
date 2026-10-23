@@ -378,7 +378,7 @@ func TestOrcShamanFireNova(t *testing.T) {
 			castNow(t, sim, enh, magma)
 			castNow(t, sim, enh, fireNova)
 			for i, u := range targets {
-				if m := fireNova.SpellMetrics[u.UnitIndex]; m.Hits+m.Crits+m.Misses != 1 {
+				if m := topRank(t, "Fire Nova", enh.FireNovaHits).SpellMetrics[u.UnitIndex]; m.Hits+m.Crits+m.Misses != 1 {
 					t.Errorf("talents %q: Fire Nova rolled %d times on target %d, want 1", c.talents, m.Hits+m.Crits+m.Misses, i+1)
 				}
 			}

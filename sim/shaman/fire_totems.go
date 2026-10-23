@@ -250,18 +250,19 @@ var FireNovaLevel = [FireNovaRanks + 1]int{0, 12, 22, 32, 42, 52}
 
 func (shaman *Shaman) registerFireNovaSpell() {
 	shaman.FireNova = make([]*core.Spell, FireNovaRanks+1)
+	shaman.FireNovaHits = make([]*core.Spell, FireNovaRanks+1)
 
 	for rank := 1; rank <= FireNovaRanks; rank++ {
 		if FireNovaLevel[rank] <= int(shaman.Level) {
-			shaman.FireNova[rank] = shaman.RegisterSpell(shaman.newFireNovaSpellConfig(rank))
+			shaman.FireNovaHits[rank] = shaman.RegisterSpell(shaman.newFireNovaHitSpellConfig(rank))
+			shaman.FireNova[rank] = shaman.RegisterSpell(shaman.newFireNovaSpellConfig(rank, shaman.FireNovaHits[rank]))
 		}
 	}
 }
 
-func (shaman *Shaman) newFireNovaSpellConfig(rank int) core.SpellConfig {
-	baseDamageLow := FireNovaScaling[rank].At(FireNovaBaseDamage[rank][0], shaman.Level)
-	baseDamageHigh := FireNovaScaling[rank].At(FireNovaBaseDamage[rank][1], shaman.Level)
-
+// The cast deals nothing itself: it casts the damage spell of its rank, which hits. So the
+// cast spends Clearcasting and rolls Elemental Focus, and the hit carries the damage talents.
+func (shaman *Shaman) newFireNovaSpellConfig(rank int, hits *core.Spell) core.SpellConfig {
 	return core.SpellConfig{
 		SpellCode:   SpellCode_ShamanFireNova,
 		ActionID:    core.ActionID{SpellID: FireNovaSpellId[rank]},
@@ -289,6 +290,31 @@ func (shaman *Shaman) newFireNovaSpellConfig(rank int) core.SpellConfig {
 			return shaman.ActiveTotems[FireTotem] != nil && shaman.TotemExpirations[FireTotem] > sim.CurrentTime &&
 				sim.Encounter.LevelingPosition(sim).Dist(shaman.totemPositions[FireTotem]) <= fireNovaCastRange
 		},
+
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, _ *core.Spell) {
+			hits.Cast(sim, target)
+		},
+	}
+}
+
+// Fire Nova's hits are a proc, so item procs and talents that listen to spell hits don't hear
+// them: the damage row is a triggered spell that lacks Not a Proc. In wowsims/forever's combat
+// logs Cursed Murloc Eye, a 100% proc on melee and spell hits, fired on 14 of 533 Fire Nova hits,
+// all coincidences, against 80 to 100% of direct spells (3c39b8afe6). On the beta 4 Fire Nova
+// crits gave no Elemental Devastation (shaman_audit.md 4.13). Judgement of Wisdom and Water
+// Shield, whose rows can't proc from procs either, give no mana for them. The hits report as the
+// cast's spell tagged 1.
+func (shaman *Shaman) newFireNovaHitSpellConfig(rank int) core.SpellConfig {
+	baseDamageLow := FireNovaScaling[rank].At(FireNovaBaseDamage[rank][0], shaman.Level)
+	baseDamageHigh := FireNovaScaling[rank].At(FireNovaBaseDamage[rank][1], shaman.Level)
+
+	return core.SpellConfig{
+		ActionID:    core.ActionID{SpellID: FireNovaSpellId[rank], Tag: 1},
+		SpellSchool: core.SpellSchoolFire,
+		DefenseType: core.DefenseTypeMagic,
+		ProcMask:    core.ProcMaskSpellDamageProc,
+		// A shaman spell, so Elemental Fury raises its crits.
+		Flags: SpellFlagShaman | core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell,
 
 		// Call of Flame and Improved Fire Nova multiply each other under Forever.
 		//

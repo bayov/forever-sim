@@ -165,7 +165,7 @@ func TestOrcShamanSpellDamageModifiers(t *testing.T) {
 			{"Frost Shock", topRank(t, "Frost Shock", enh.FrostShock), false},
 			{"Flame Shock", topRank(t, "Flame Shock", enh.FlameShock), false},
 			{"Lava Burst", enh.LavaBurst, false},
-			{"Fire Nova", topRank(t, "Fire Nova", enh.FireNova), false},
+			{"Fire Nova", topRank(t, "Fire Nova", enh.FireNovaHits), false},
 			{"Searing Totem", lastSpell(enh, shaman.SearingTotemAttackSpellId[:], 0), false},
 			{"Magma Totem", enh.GetSpell(core.ActionID{SpellID: shaman.MagmaTotemAoeSpellId[4]}), false},
 			{"Lightning Shield orb", topRank(t, "Lightning Shield orb", enh.LightningShieldProcs), false},
