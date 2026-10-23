@@ -292,8 +292,8 @@ var foreverSyntheticDruidItems = []*proto.UIItem{
 	{
 		Id: 998109, Name: "Feral Synthetic Legs (Phase 1)", Icon: "inv_pants_wolf",
 		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeLeather,
-		Stats:     stats.Stats{stats.Strength: 25, stats.Agility: 24, stats.Armor: 175}.ToFloatArray(),
-		HitRating: 23,
+		Stats:     stats.Stats{stats.Strength: 30, stats.Agility: 29, stats.Armor: 175}.ToFloatArray(),
+		HitRating: 13,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassDruid},
 	},

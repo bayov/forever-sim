@@ -31,6 +31,8 @@ var (
 	// Faerie Fire (Feral): a trainer spell at 25 under Forever, cast from Cat Form, free, 1 sec
 	// global cooldown, 6 sec cooldown.
 	druidFaerieFireFeral = spellID(17392)
+	druidShadowmeld      = spellID(20580)
+	druidRavage          = spellID(9867)
 )
 
 func (druidFeral) Knobs() []Knob {
@@ -49,8 +51,16 @@ func (druidFeral) Knobs() []Knob {
 		// biteCapEnergy, so a cat waiting on Rip does not sit at full Energy. 0 never.
 		{Name: "biteAtCap", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "biteCapEnergy", Default: 90, Min: 60, Max: 100, Step: 10},
-		// Keep Rake up, 0/1.
+		// Keep Rake up, 0/1, but not with rakeMinTime seconds of the fight or less left.
 		{Name: "rake", Default: 0, Min: 0, Max: 1, Step: 1},
+		{Name: "rakeMinTime", Default: 0, Min: 0, Max: 9, Step: 1},
+		// The Night Elf's Shadowmeld into Ravage ahead of the builder, from behind, 0/1: on
+		// Clearcasting, or in the last shadowmeldEnd seconds with the Energy for it. It does nothing
+		// for other races.
+		{Name: "shadowmeld", Default: 1, Min: 0, Max: 1, Step: 1},
+		{Name: "shadowmeldEnd", Default: 10, Min: 0, Max: 20, Step: 5},
+		// With 1 the Shadowmeld line goes ahead of Rake, with 0 between Rake and the builder.
+		{Name: "meldBeforeRake", Default: 1, Min: 0, Max: 1, Step: 1},
 		// The builder: 0 Shred (from behind), 1 Claw.
 		{Name: "builder", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Shifting Power at or below this much Energy, 0 never.
@@ -172,8 +182,38 @@ func (druidFeral) Build(k Knobs) *proto.APLRotation {
 	case 2:
 		items = append(items, cast(bite, and(eq(comboPoints(), num(5)), ge(energy(), num(k["biteEnergy"]))), "Ferocious Bite at 5 combo points."))
 	}
+	var meld *proto.APLListItem
+	if k["shadowmeld"] == 1 {
+		trigger := auraIsActive(druidClearcasting)
+		if k["shadowmeldEnd"] > 0 {
+			trigger = or(trigger, and(ge(energy(), spellCurrentCost(druidRavage)), lt(remainingTime(), seconds(k["shadowmeldEnd"]))))
+		}
+		meld = &proto.APLListItem{
+			Notes: "Night Elf: Shadowmeld into Ravage on Clearcasting, or in the last seconds with the Energy for it. Other races can ignore the warning on this line.",
+			Action: &proto.APLAction{
+				Condition: and(spellIsReady(druidShadowmeld), not(&proto.APLValue{Value: &proto.APLValue_FrontOfTarget{FrontOfTarget: &proto.APLValueFrontOfTarget{}}}),
+					lt(comboPoints(), num(5)), trigger),
+				Action: &proto.APLAction_StrictSequence{StrictSequence: &proto.APLActionStrictSequence{Actions: []*proto.APLAction{
+					{Action: &proto.APLAction_CastSpell{CastSpell: &proto.APLActionCastSpell{SpellId: druidShadowmeld}}},
+					{Action: &proto.APLAction_CastSpell{CastSpell: &proto.APLActionCastSpell{SpellId: druidRavage}}},
+				}}},
+			},
+		}
+	}
+	if meld != nil && k["meldBeforeRake"] == 1 {
+		items = append(items, meld)
+	}
 	if k["rake"] == 1 {
-		items = append(items, cast(rake, and(not(dotIsActive(rake)), lt(comboPoints(), num(5))), "Rake whenever it is down."))
+		cond := and(not(dotIsActive(rake)), lt(comboPoints(), num(5)))
+		note := "Rake whenever it is down."
+		if k["rakeMinTime"] > 0 {
+			cond = and(cond, gt(remainingTime(), seconds(k["rakeMinTime"])))
+			note = "Rake whenever it is down, but not at the very end of the fight."
+		}
+		items = append(items, cast(rake, cond, note))
+	}
+	if meld != nil && k["meldBeforeRake"] == 0 {
+		items = append(items, meld)
 	}
 	items = append(items, cast(builder, lt(comboPoints(), num(5)), "The builder."))
 
