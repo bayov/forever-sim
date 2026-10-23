@@ -110,6 +110,13 @@ func (rogue *Rogue) finisherFlags() core.SpellFlag {
 	return core.SpellFlagMeleeMetrics | core.SpellFlagAPL
 }
 
+// The share of a finisher's Energy a miss gives back. Every Forever rank of Eviscerate, Rupture,
+// Expose Armor, Kidney Shot, Slice and Dice and Venom carries ATTR_EX_1_DISCOUNT_POWER_ON_MISS
+// (0x8000000, client 1.60.1.70338), which refunds 80% as for the builders. The combo points stay.
+func (rogue *Rogue) finisherMissRefund() float64 {
+	return core.TernaryFloat64(rogue.Env.IsForever(), 0.8, 0)
+}
+
 func (rogue *Rogue) builderFlags() core.SpellFlag {
 	return SpellFlagBuilder | SpellFlagColdBlooded | core.SpellFlagMeleeMetrics | core.SpellFlagAPL
 }

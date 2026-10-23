@@ -39,7 +39,7 @@ func (rogue *Rogue) registerEviscerate() {
 		// Flawless Execution takes 10 off the cost.
 		EnergyCost: core.EnergyCostOptions{
 			Cost:   35 - core.TernaryFloat64(rogue.Talents.FlawlessExecution, 10, 0),
-			Refund: 0,
+			Refund: rogue.finisherMissRefund(),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

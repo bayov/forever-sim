@@ -25,7 +25,7 @@ func (rogue *Rogue) registerRupture() {
 
 		EnergyCost: core.EnergyCostOptions{
 			Cost:   25,
-			Refund: 0,
+			Refund: rogue.finisherMissRefund(),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

@@ -47,7 +47,7 @@ func (rogue *Rogue) registerExposeArmorSpell() {
 
 		EnergyCost: core.EnergyCostOptions{
 			Cost:   energyCost,
-			Refund: 0,
+			Refund: rogue.finisherMissRefund(),
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{

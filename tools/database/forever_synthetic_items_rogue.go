@@ -53,10 +53,11 @@ import (
 // Daggers Perdition's Blade and Ebon Hand: since Windfury Totem procs from the main hand only, a slow
 // off hand wins for the Combat builds, and a mace takes Hack and Slash's armor ignore.
 // Seal Fate Swords holds the same main hand and Core Hound Tooth's 1.6 sec dagger. Seal Fate Daggers
-// and Subtlety keep Perdition's Blade and Core Hound Tooth. Mutilate holds Felstriker's 1.7 sec dagger and Dal'Rend's
-// Tribal Guardian's 1.8 sec sword, because its off hand strike is normalised to 2.4 sec for any weapon
-// but a dagger. A fast off hand applies more poison. The ranged slot is a bow with Striker's Mark's
-// damage.
+// and Subtlety keep Perdition's Blade and Core Hound Tooth. Mutilate holds Felstriker's 1.7 sec dagger and
+// the Daggers set's off hand: Mutilate needs a dagger in both hands, and Core Hound Tooth's 1.6 sec sims
+// best of the Phase 1 BiS dagger speeds (2026-10-23, 180 sec, 20,000 iterations: 685.6 against 684.6 at
+// Felstriker's 1.7 sec and 684.0 at Perdition's Blade's 1.8 sec). A fast off hand applies more poison.
+// The ranged slot is a bow with Striker's Mark's damage.
 //
 // The hands and legs of each set form a set with the bonuses of Grimstitch Armor, Forever's crafted level 60
 // rogue set (see sim/rogue/items_sets_pve.go), so only its 2 piece bonus (1% hit) is live, as for every
@@ -357,18 +358,6 @@ var rogueSyntheticItems = []*proto.UIItem{
 		Stats: stats.Stats{stats.Strength: 7, stats.Agility: 7, stats.AttackPower: 11, stats.RangedAttackPower: 11}.ToFloatArray(),
 		// Striker's Mark damage and speed.
 		WeaponDamageMin: 69, WeaponDamageMax: 129, WeaponSpeed: 2.5,
-		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
-		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
-	},
-	// Mutilate off hand: the dagger off hand's stats as a sword, at the speed Mutilate sims best with.
-	{
-		Id: 994116, Name: "Mutilate Synthetic Off Hand (Phase 1)", Icon: "inv_sword_40",
-		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeOneHand,
-		Stats:      stats.Stats{stats.Agility: 9, stats.Stamina: 8, stats.AttackPower: 12, stats.RangedAttackPower: 12}.ToFloatArray(),
-		CritRating: 9,
-		// Dal'Rend's Tribal Guardian's speed and damage spread at Core Hound Tooth's 51.3 DPS (standards 22:
-		// a Phase 1 BiS speed, the one that sims best).
-		WeaponDamageMin: 64.4, WeaponDamageMax: 120.1, WeaponSpeed: 1.8,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
 	},

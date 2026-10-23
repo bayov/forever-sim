@@ -275,11 +275,10 @@ func (rogue *Rogue) applyCutthroat() {
 	// TODO: Only rank 1 was seen, the proc chance is assumed to scale linearly. Beta will confirm.
 	procChance := 0.03 * float64(rogue.Talents.Cutthroat)
 
-	// The proc has no spell id of its own in the data yet, so it gets a placeholder in the
-	// range the other Forever additions use. A rotation needs an id to check for the buff.
+	// The client's proc buff (462707, triggered by the talent 462708).
 	rogue.CutthroatAura = rogue.RegisterAura(core.Aura{
 		Label:    "Cutthroat",
-		ActionID: core.ActionID{SpellID: 460534},
+		ActionID: core.ActionID{SpellID: 462707},
 		Duration: time.Second * 10,
 	})
 
@@ -310,7 +309,7 @@ func (rogue *Rogue) applyThousandCuts() {
 	var affectedSpells []*core.Spell
 	rogue.ThousandCutsAura = rogue.RegisterAura(core.Aura{
 		Label:     "Thousand Cuts",
-		ActionID:  core.ActionID{SpellID: 460535},
+		ActionID:  core.ActionID{SpellID: 1310723}, // The client's stacking buff, triggered by the talent 1310721.
 		Duration:  time.Second * 10,
 		MaxStacks: 5,
 		OnInit: func(aura *core.Aura, sim *core.Simulation) {
@@ -364,14 +363,22 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 		return
 	}
 
-	// TODO verify that this double dips from damage modifiers
-
 	var curDmg float64
+	// Under Forever the second target takes the first hit's final damage as it is: the damage
+	// multipliers and armor already went into it, so the copy skips both (wowsims/forever
+	// talents_combat.go copies result.Damage with IgnoreResists and IgnoreModifiers). Classic
+	// takes the armor back out and lets the copy through the second target's armor and the
+	// damage multipliers again.
+	forever := rogue.Env.IsForever()
+	bfFlags := core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete
+	if forever {
+		bfFlags |= core.SpellFlagIgnoreResists | core.SpellFlagIgnoreModifiers
+	}
 	bfHit := rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: 22482},
 		SpellSchool: core.SpellSchoolPhysical,
 		ProcMask:    core.ProcMaskEmpty, // No proc mask, so it won't proc itself.
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagNoOnCastComplete,
+		Flags:       bfFlags,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
@@ -400,8 +407,11 @@ func (rogue *Rogue) registerBladeFlurryCD() {
 				return
 			}
 
-			// Undo armor reduction to get the raw damage value.
-			curDmg = result.Damage / result.ResistanceMultiplier
+			curDmg = result.Damage
+			if !forever {
+				// Undo armor reduction to get the raw damage value.
+				curDmg /= result.ResistanceMultiplier
+			}
 
 			bfHit.Cast(sim, rogue.Env.NextTargetUnit(result.Target))
 			bfHit.SpellMetrics[result.Target.UnitIndex].Casts--

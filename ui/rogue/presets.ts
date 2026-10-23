@@ -157,8 +157,8 @@ export const GearLevel60SyntheticCombatDaggers = PresetUtils.makePresetGear('Lev
 	tooltip: 'A guess at Phase 1 BiS under Forever for Combat Backstab, made of synthetic items that are not in the game.',
 	group: 'Level 60',
 });
-// The daggers set with a 1.7 sec dagger main hand and a 1.8 sec sword off hand, which Mutilate sims best
-// with: its off hand strike is normalised to 2.4 sec for any weapon but a dagger.
+// The daggers set with a 1.7 sec dagger main hand, which Mutilate sims best with, and the set's 1.6 sec
+// dagger off hand: Mutilate needs a dagger in both hands (client 70338, 2026-10-23).
 export const GearLevel60SyntheticMutilate = PresetUtils.makePresetGear('Level 60 Synthetic Mutilate', Level60SyntheticMutilateGear, {
 	tooltip: 'A guess at Phase 1 BiS under Forever for Mutilate, made of synthetic items that are not in the game.',
 	group: 'Level 60',
@@ -777,7 +777,7 @@ export const EncounterLevel60Humanoid = level60Encounter('Level 60 (vs Humanoid)
 // Combat Swords holds a 2.9 sec axe and a 2.5 sec mace, Combat Daggers a 1.8 sec dagger and the same
 // mace (since Windfury Totem procs from the main hand only, a slow off hand wins for the Combat builds,
 // and a mace takes Hack and Slash's armor ignore), Seal Fate Swords the 2.9 sec axe and a 1.6 sec
-// dagger, and Mutilate a 1.7 sec dagger and a 1.8 sec sword. Seal Fate Daggers and Subtlety keep
+// dagger, and Mutilate a 1.7 sec dagger and a 1.6 sec dagger. Seal Fate Daggers and Subtlety keep
 // Perdition's Blade and Core Hound Tooth.
 // The "(vs Humanoid)" builds (Murder 2/2, Humanoid boss, the same race as their build) at 180 sec:
 // Combat Swords 748.2, Combat Daggers 744.6, Seal Fate Daggers 706.7, Mutilate 702.6, Seal Fate Swords
@@ -843,7 +843,7 @@ export const PresetBuildLevel60SealFateSwords = level60Build(
 );
 export const PresetBuildLevel60Mutilate = level60Build(
 	'Level 60 Mutilate',
-	'Level 60 Windshaper Assassination Mutilate on the synthetic Phase 1 dagger and a fast sword off hand.',
+	'Level 60 Windshaper Assassination Mutilate on two synthetic Phase 1 daggers.',
 	GearLevel60SyntheticMutilate,
 	TalentsLevel60Mutilate,
 	ROTATION_PRESET_LEVEL60_MUTILATE,

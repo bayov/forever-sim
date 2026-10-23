@@ -56,10 +56,10 @@ func (rogue *Rogue) registerMutilateSpell() {
 			IgnoreHaste: true,
 		},
 		ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-			// The client (SpellEquippedItems, 1.60.1.70338) asks for a dagger on the cast and its
-			// main hand half (1310707, 1310706) but not on the off hand half (1310705), so unlike
-			// the TBC Mutilate the off hand can be any weapon. We read that as a main hand dagger.
-			return rogue.HasDagger(core.MainHand) && rogue.HasOHWeapon()
+			// Both hands need a dagger: the client (SpellEquippedItems, 1.60.1.70338) asks for one
+			// on the cast and on both halves, every rank (1310707, 1310706, 1310705, 399961, 1241588,
+			// 1241590), and the class deep dive says "both must be daggers".
+			return rogue.HasDagger(core.MainHand) && rogue.HasDagger(core.OffHand)
 		},
 
 		BonusCritRating: 5 * core.CritRatingPerCritChance * float64(rogue.Talents.PuncturingWounds),

@@ -16,6 +16,14 @@ import (
 // Instant Poison: 13-17 at 20, 20-26 at 28, 29-37 at 36, 45-57 at 44, 62-80 at 52, 76-100 at 60.
 // Deadly Poison over 12 sec: 24 at 30, 36 at 38, 56 at 46, 72 at 54, 92 at 60 (rank 5 is by book).
 // Wound Poison is unchanged from Classic, it only lowers healing.
+//
+// Forever's poisons also scale with attack power: Instant Poison adds 0.5% of it a hit, and each
+// Deadly Poison stack 0.45% of it over the whole 12 sec, read when each tick lands (wowsims/forever
+// 16d879ae28 and a8f1e0b5d2, "Confirmed by Zirene"). The client has no coefficient for either.
+const (
+	instantPoisonAPCoefficient = 0.005
+	deadlyPoisonAPCoefficient  = 0.0045
+)
 
 // TODO: Add charges to poisons
 
@@ -154,6 +162,7 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 		30: 2823, 38: 2824, 46: 11355, 54: 11356, 60: core.TernaryInt32(rogue.Env.IncludeAQRanks(), 25347, 11356),
 	})
 	core.RegisterSpellRanks(11356, 25347)
+	apPerTick := core.TernaryFloat64(rogue.Env.IsForever(), deadlyPoisonAPCoefficient/4, 0)
 
 	rogue.deadlyPoisonTick = rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: spellID, Tag: 100},
@@ -187,6 +196,9 @@ func (rogue *Rogue) registerDeadlyPoisonSpell() {
 			},
 
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				if apPerTick > 0 {
+					dot.SnapshotBaseDamage = (baseDamageTick + apPerTick*dot.Spell.MeleeAttackPower(target)) * float64(dot.GetStacks())
+				}
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
 			},
 		},
@@ -230,6 +242,7 @@ func (rogue *Rogue) makeInstantPoison() *core.Spell {
 	spellID := rankSpellID(rogue.Level, map[int32]int32{
 		20: 8679, 28: 8686, 36: 8688, 44: 11338, 52: 11339, 60: 11340,
 	})
+	apCoefficient := core.TernaryFloat64(rogue.Env.IsForever(), instantPoisonAPCoefficient, 0)
 
 	return rogue.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: spellID},
@@ -242,7 +255,7 @@ func (rogue *Rogue) makeInstantPoison() *core.Spell {
 		ThreatMultiplier: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := sim.Roll(baseDamageByLevel, baseDamageByLevel+damageVariance)
+			baseDamage := sim.Roll(baseDamageByLevel, baseDamageByLevel+damageVariance) + apCoefficient*spell.MeleeAttackPower(target)
 			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 		},
 	})

@@ -11,8 +11,8 @@ func (rogue *Rogue) registerVenom() {
 		return
 	}
 
-	// The Envenom icon is the closest match until the beta client gives Venom its own spell.
-	actionID := core.ActionID{SpellID: 32645}
+	// The client's Venom (1310703), the finisher and its buff.
+	actionID := core.ActionID{SpellID: 1310703}
 
 	durations := [6]time.Duration{
 		0,
@@ -44,7 +44,7 @@ func (rogue *Rogue) registerVenom() {
 		Flags:        rogue.finisherFlags(),
 		MetricSplits: 6,
 
-		// TODO: The tooltip showed no Energy cost, the 25 matches the other Rogue finishers.
+		// 25 Energy and the combo points in the client (1310703).
 		EnergyCost: core.EnergyCostOptions{
 			Cost: 25,
 		},

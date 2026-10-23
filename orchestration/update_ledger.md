@@ -726,7 +726,7 @@ Tooltip-only rogue rows were skipped: 70170's Expose Armor, Venom, Main Gauche, 
 - Impact: Gnome rogues in the race table only, a fraction of a DPS. No preset is affected.
 
 **F4. Cosmetic and stale comments (no DPS change)**
-- Venom's action ID 32645 → 1310703 (venom.go:15). Remove its "TODO: tooltip showed no Energy cost"; the client cost is 25.
+- Venom's action ID 32645 → 1310703 (venom.go:15). Remove its "TODO: tooltip showed no Energy cost"; the client cost is 25. Done 2026-10-23, with Hemorrhage 17348 → 16511, Cutthroat 460534 → 462707 and Thousand Cuts 460535 → 1310723 in the code, the APLs, the rotopt template and the DPS report requests.
 - rogue.go:130-135 still says Eureka! "buffs the next 3 abilities". Since 70425 it is an 8 sec window with no charges. The hold for an Eviscerate within 8 sec is still sensible.
 
 **F5. Grace of Air in the reference raid (ROG-70425-07, cross-scope)**

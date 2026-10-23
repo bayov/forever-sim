@@ -16,7 +16,8 @@ func (rogue *Rogue) registerHemorrhageSpell() {
 		return
 	}
 
-	spellID := int32(17348)
+	// The client's one Forever rank (16511).
+	spellID := int32(16511)
 
 	actionID := core.ActionID{SpellID: spellID}
 
