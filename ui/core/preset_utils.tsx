@@ -239,6 +239,10 @@ function makePresetRotationHelper(name: string, rotation: SavedRotation, options
 // hit for about 1000 to 2500 in Classic.
 export const LEVEL_60_RAID_DAMAGE = { raidDamageHitsPerMinute: 2, raidDamagePerHit: 1500 };
 
+// Every level 60 preset's fight is in Hyjal Summit or the Barrow Deeps (the user's ruling
+// 2026-10-23), where Forever's natural flasks give their bonus beyond Stamina.
+export const LEVEL_60_ZONE = { naturalFlaskZone: true };
+
 export const makePresetEncounter = (name: string, encounter?: PresetEncounter['encounter'] | string, options?: PresetEncounterOptions): PresetEncounter => {
 	let healingModel: PresetEncounter['healingModel'] = undefined;
 	let tanks: PresetEncounter['tanks'] = undefined;

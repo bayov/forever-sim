@@ -8,6 +8,7 @@ import {
 	Debuffs,
 	Encounter,
 	Explosive,
+	Flask,
 	Food,
 	IndividualBuffs,
 	MobType,
@@ -627,6 +628,10 @@ export const P1Consumes = Consumes.create({
 	defaultPotion: Potions.MajorFrenzyPotion,
 	dragonBreathChili: true,
 	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
+	// The natural flask (standards 11, the user's decision 2026-10-23: the fight is in Hyjal Summit or the
+	// Barrow Deeps): Precision, +28 to +44 over none at 180 sec. Accuracy is within 1.5 of it (0.8
+	// ahead on Combat daggers), Swiftness +16 to +21, Aggression +9 to +12.
+	flask: Flask.FlaskOfNaturalPrecision,
 	food: Food.FoodFlankAuPoivre,
 	mainHandImbue: WeaponImbue.DenseSharpeningStone,
 	offHandImbue: WeaponImbue.DenseSharpeningStone,
@@ -730,6 +735,7 @@ const level60Encounter = (name: string, mobType: MobType) =>
 			executeProportion25: 0.25,
 			executeProportion35: 0.35,
 			...PresetUtils.LEVEL_60_RAID_DAMAGE,
+			...PresetUtils.LEVEL_60_ZONE,
 			targets: [
 				{
 					id: 213336,

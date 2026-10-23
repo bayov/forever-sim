@@ -291,9 +291,9 @@ const PresetBuildOptionsArms = { ...PresetBuildOptionsFury, stance: WarriorStanc
 // (+13.9 over none), Smoked Desert Dumplings (+0.8 over Mightfish Steak, +7.2 over Flank au Poivre),
 // the Mighty Rage Potion (+9.5 over the Major Frenzy Potion), R.O.I.D.S. and Dragonbreath Chili.
 // Goblin Land Mine between Sappers is +1.2 on Fury, +3.4 on Fury two-hand and +0.9 on Arms, a little
-// ahead of Thorium Grenades and Dense Dynamite. The flask is Flask of the Titans, which does nothing
-// for the DPS. Flask of Supreme Power is +7, all of it Dragonbreath Chili scaling with spell power,
-// so it stays out.
+// ahead of Thorium Grenades and Dense Dynamite (EZ-Thro Dark Bomb in its place is 6 to 15 behind:
+// the rotations time the Land Mine). The flask was Flask of the Titans, which does nothing for the
+// DPS, until the natural flasks (2026-10-23, below).
 //
 // The presets only take what Phase 1 can get without a raid that is not open yet. Elemental
 // Sharpening Stone's plans drop only in Molten Core, so the swords get Dense Sharpening Stones (10
@@ -306,7 +306,11 @@ export const DefaultConsumes = Consumes.create({
 	defaultPotion: Potions.MightyRagePotion,
 	dragonBreathChili: true,
 	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
-	flask: Flask.FlaskOfTheTitans,
+	// The natural flask (standards 11, 2026-10-23): Precision, +66.4 / +68.1 / +10.0 over the Flask of
+	// the Titans on Fury / Fury two-hand / Arms at 180 sec. Arms would do better with Aggression (+31.8),
+	// but the builds share these consumes. Accuracy is +34.3 on dual wield Fury and nothing with a
+	// two-hander (the yellow hit is capped).
+	flask: Flask.FlaskOfNaturalPrecision,
 	food: Food.FoodSmokedDesertDumpling,
 	mainHandImbue: WeaponImbue.DenseSharpeningStone,
 	offHandImbue: WeaponImbue.DenseSharpeningStone,
@@ -395,6 +399,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		executeProportion25: 0.25,
 		executeProportion35: 0.35,
 		...PresetUtils.LEVEL_60_RAID_DAMAGE,
+		...PresetUtils.LEVEL_60_ZONE,
 		targets: [
 			{
 				id: 213336,
@@ -438,6 +443,7 @@ export const EncounterLevel60Dragonkin = PresetUtils.makePresetEncounter(
 		executeProportion25: 0.25,
 		executeProportion35: 0.35,
 		...PresetUtils.LEVEL_60_RAID_DAMAGE,
+		...PresetUtils.LEVEL_60_ZONE,
 		targets: [
 			{
 				id: 213336,

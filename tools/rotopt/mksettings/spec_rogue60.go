@@ -38,6 +38,7 @@ func rogueLevel60Consumes() *proto.Consumes {
 		DefaultPotion:     proto.Potions_MajorFrenzyPotion,
 		DragonBreathChili: true,
 		FillerExplosive:   proto.Explosive_ExplosiveGoblinLandMine,
+		Flask:             proto.Flask_FlaskOfNaturalPrecision,
 		Food:              proto.Food_FoodFlankAuPoivre,
 		MainHandImbue:     proto.WeaponImbue_DenseSharpeningStone,
 		OffHandImbue:      proto.WeaponImbue_DenseSharpeningStone,

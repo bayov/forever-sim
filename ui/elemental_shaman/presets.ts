@@ -238,10 +238,14 @@ export const DefaultOptions = ElementalShamanOptions.create({});
 // Sages would add about 10. Brilliant Wizard Oil would add 10.8, but its recipe is from Zul'Gurub.
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
-	defaultPotion: Potions.MajorManaPotion,
+	// The Caustic Smog Potion (range 20) is +4.4 over the Major Mana Potion at 180 sec, and 1.7
+	// behind with Mana Tide.
+	defaultPotion: Potions.CausticSmogPotion,
 	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
 	firePowerBuff: FirePowerBuff.ElixirOfFirepower,
-	flask: Flask.FlaskOfSupremePower,
+	// The natural flask (standards 11, 2026-10-23): Aggression, 74 behind the Flask of Supreme Power at
+	// 180 sec (Swiftness 78, Accuracy and Precision 95 behind, the hit is capped).
+	flask: Flask.FlaskOfNaturalAggression,
 	food: Food.FoodLobsterStew,
 	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
 	mainHandImbue: WeaponImbue.WizardOil,
@@ -333,6 +337,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		executeProportion25: 0.25,
 		executeProportion35: 0.35,
 		...PresetUtils.LEVEL_60_RAID_DAMAGE,
+		...PresetUtils.LEVEL_60_ZONE,
 		targets: [
 			{
 				id: 213336,

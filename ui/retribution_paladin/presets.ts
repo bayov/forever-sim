@@ -396,11 +396,16 @@ export const DefaultConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfCunning,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
 	defaultConjured: Conjured.ConjuredDemonicRune,
-	defaultPotion: Potions.MajorManaPotion,
+	// The Dragonfire Potion is +6.0 / +5.7 / +9.1 / +10.4 over the Major Mana Potion on Level 60 / sub
+	// Holy / vs Undead / sub Holy vs Undead at 180 sec, and 8.3 / 13.5 behind on Shock / Shock vs
+	// Undead, which run short of mana.
+	defaultPotion: Potions.DragonfirePotion,
 	dragonBreathChili: true,
 	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
 	firePowerBuff: FirePowerBuff.ElixirOfGreaterFirepower,
-	flask: Flask.FlaskOfSupremePower,
+	// The natural flask (standards 11, 2026-10-23): Precision, 19 to 26 behind the Flask of Supreme Power
+	// at 180 sec (Shock 50 to 54; Aggression is 3 better there, 11 to 21 worse on the rest).
+	flask: Flask.FlaskOfNaturalPrecision,
 	food: Food.FoodLobsterStew,
 	intellectElixir: IntellectElixir.ElixirOfTheOwl,
 	mainHandImbue: WeaponImbue.ShadowOil,
@@ -495,6 +500,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		executeProportion25: 0.25,
 		executeProportion35: 0.35,
 		...PresetUtils.LEVEL_60_RAID_DAMAGE,
+		...PresetUtils.LEVEL_60_ZONE,
 		targets: [
 			{
 				id: 213336,

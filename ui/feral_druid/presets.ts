@@ -7,6 +7,7 @@ import {
 	Consumes,
 	Debuffs,
 	Encounter,
+	Explosive,
 	Flask,
 	Food,
 	IndividualBuffs,
@@ -196,14 +197,18 @@ export const DefaultOptions = FeralDruidOptions.create({
 // 9.5, but its plans only drop in Molten Core), Thistle Tea 8.0 ahead of the
 // Demonic Rune (12.2 drunk at 25 Energy or less, sim/druid/thistle_tea.go), and the Mighty Rage
 // Potion's 60 Strength 6.3 ahead of the Major Mana Potion (Major Frenzy Potion 5.0), also at 300
-// sec. Explosives still can't be used in form.
+// sec. The Engineering explosives can't be used in form, but EZ-Thro Dark Bomb can (+1.5 at 180
+// sec). The natural flask (standards 11, the user's decision 2026-10-23: the fight is in Hyjal
+// Summit or the Barrow Deeps) is Aggression, +23.6 over the Flask of Distilled Wisdom (Precision
+// +22.2, Swiftness +13.8, Accuracy +0.2 with the hit capped).
 export const DefaultConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
 	defaultConjured: Conjured.ConjuredRogueThistleTea,
 	defaultPotion: Potions.MightyRagePotion,
 	dragonBreathChili: true,
-	flask: Flask.FlaskOfDistilledWisdom,
+	fillerExplosive: Explosive.ExplosiveEZThroDarkBomb,
+	flask: Flask.FlaskOfNaturalAggression,
 	food: Food.FoodFlankAuPoivre,
 	mainHandImbue: WeaponImbue.DenseWeightstone,
 	strengthBuff: StrengthBuff.ElixirOfFerocity,
@@ -286,6 +291,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		executeProportion25: 0.25,
 		executeProportion35: 0.35,
 		...PresetUtils.LEVEL_60_RAID_DAMAGE,
+		...PresetUtils.LEVEL_60_ZONE,
 		targets: [
 			{
 				id: 213336,

@@ -325,7 +325,10 @@ export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorManaPotion,
 	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
-	flask: Flask.FlaskOfDistilledWisdom,
+	// The natural flask (standards 11, 2026-10-23): Aggression, +36.8 / +23.8 / +22.7 over the Flask of
+	// Distilled Wisdom on Beast Mastery / Lone Wolf / Marksmanship at 180 sec (Swiftness +25.4 / +20.2
+	// / +13.3; Accuracy adds nothing with the hit capped).
+	flask: Flask.FlaskOfNaturalAggression,
 	food: Food.FoodFlankAuPoivre,
 	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
@@ -344,6 +347,9 @@ export const SurvivalConsumes = Consumes.create({
 	defaultPotion: Potions.MajorFrenzyPotion,
 	dragonBreathChili: true,
 	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
+	// The natural flask (standards 11, 2026-10-23): Precision, +50.7 over none at 180 sec (Aggression
+	// +23.7, Swiftness +21.6, Accuracy +20.9).
+	flask: Flask.FlaskOfNaturalPrecision,
 	food: Food.FoodFlankAuPoivre,
 	mainHandImbue: WeaponImbue.DenseSharpeningStone,
 	offHandImbue: WeaponImbue.DenseSharpeningStone,
@@ -430,6 +436,7 @@ const level60Boss = Encounter.create({
 	executeProportion25: 0.25,
 	executeProportion35: 0.35,
 	...PresetUtils.LEVEL_60_RAID_DAMAGE,
+	...PresetUtils.LEVEL_60_ZONE,
 	targets: [
 		{
 			id: 213336,

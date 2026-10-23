@@ -208,7 +208,10 @@ export const DefaultOptions = BalanceDruidOptions.create({
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorSpellblastingPotion,
-	flask: Flask.FlaskOfSupremePower,
+	// The natural flask (standards 11, the user's decision 2026-10-23: the fight is in Hyjal Summit or
+	// the Barrow Deeps): Aggression, 85 behind the Flask of Supreme Power at 180 sec on both builds
+	// (Swiftness 101, Accuracy and Precision 112 behind, the hit is capped).
+	flask: Flask.FlaskOfNaturalAggression,
 	food: Food.FoodLobsterStew,
 	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
 	mainHandImbue: WeaponImbue.WizardOil,
@@ -295,6 +298,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		executeProportion25: 0.25,
 		executeProportion35: 0.35,
 		...PresetUtils.LEVEL_60_RAID_DAMAGE,
+		...PresetUtils.LEVEL_60_ZONE,
 		targets: [
 			{
 				id: 213336,

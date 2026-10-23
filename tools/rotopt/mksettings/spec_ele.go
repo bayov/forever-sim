@@ -16,11 +16,11 @@ func init() {
 		// The Level 60 preset's consumes (ui/elemental_shaman/presets.ts has what each is worth).
 		consumes: func() *proto.Consumes {
 			return &proto.Consumes{
-				DefaultPotion:   proto.Potions_MajorManaPotion,
+				DefaultPotion:   proto.Potions_CausticSmogPotion,
 				DefaultConjured: proto.Conjured_ConjuredDemonicRune,
 				FillerExplosive: proto.Explosive_ExplosiveGoblinLandMine,
 				FirePowerBuff:   proto.FirePowerBuff_ElixirOfFirepower,
-				Flask:           proto.Flask_FlaskOfSupremePower,
+				Flask:           proto.Flask_FlaskOfNaturalAggression,
 				Food:            proto.Food_FoodLobsterStew,
 				IntellectElixir: proto.IntellectElixir_ElixirOfGreaterIntellect,
 				MainHandImbue:   proto.WeaponImbue_WizardOil,

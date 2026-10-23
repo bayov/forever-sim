@@ -117,6 +117,9 @@ func main() {
 		// (ui/core/preset_utils.tsx LEVEL_60_RAID_DAMAGE). A low level encounter has none.
 		RaidDamageHitsPerMinute: 2,
 		RaidDamagePerHit:        1500,
+		// The fight is in Hyjal Summit or the Barrow Deeps (ui/core/preset_utils.tsx
+		// LEVEL_60_ZONE), where the natural flasks give their bonus.
+		NaturalFlaskZone: true,
 		Targets: []*proto.Target{{
 			Id:      213336,
 			Name:    "Level 60",

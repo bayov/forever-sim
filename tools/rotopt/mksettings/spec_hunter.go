@@ -122,6 +122,9 @@ func hunterConsumes(melee bool) *proto.Consumes {
 		ZanzaBuff:       proto.ZanzaBuff_GroundScorpokAssay,
 	}
 	if melee {
+		// The natural flasks (standards 11, ui/hunter/presets.ts): Precision for Survival, Aggression
+		// for the ranged specs.
+		consumes.Flask = proto.Flask_FlaskOfNaturalPrecision
 		consumes.DefaultPotion = proto.Potions_MajorFrenzyPotion
 		consumes.DragonBreathChili = true
 		consumes.MainHandImbue = proto.WeaponImbue_DenseSharpeningStone
@@ -130,7 +133,7 @@ func hunterConsumes(melee bool) *proto.Consumes {
 		consumes.DefaultPotion = proto.Potions_MajorManaPotion
 		consumes.DefaultConjured = proto.Conjured_ConjuredDemonicRune
 		consumes.ManaRegenElixir = proto.ManaRegenElixir_GreaterMagebloodElixir
-		consumes.Flask = proto.Flask_FlaskOfDistilledWisdom
+		consumes.Flask = proto.Flask_FlaskOfNaturalAggression
 	}
 	return consumes
 }

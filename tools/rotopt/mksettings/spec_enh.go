@@ -33,7 +33,7 @@ func init() {
 				DragonBreathChili: true,
 				FillerExplosive:   proto.Explosive_ExplosiveGoblinLandMine,
 				FirePowerBuff:     proto.FirePowerBuff_ElixirOfFirepower,
-				Flask:             proto.Flask_FlaskOfSupremePower,
+				Flask:             proto.Flask_FlaskOfNaturalPrecision,
 				Food:              proto.Food_FoodGrilledSquid,
 				IntellectElixir:   proto.IntellectElixir_ElixirOfGreaterIntellect,
 				MainHandImbue:     proto.WeaponImbue_ShadowOil,

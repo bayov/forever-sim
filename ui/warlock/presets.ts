@@ -288,7 +288,9 @@ export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorManaPotion,
 	firePowerBuff: FirePowerBuff.ElixirOfFirepower,
-	flask: Flask.FlaskOfSupremePower,
+	// The natural flask (standards 11, 2026-10-23): Aggression, 80 to 89 behind the Flask of Supreme Power
+	// at 180 sec (Swiftness 99 to 102, Accuracy and Precision 112 to 127 behind, the hit is capped).
+	flask: Flask.FlaskOfNaturalAggression,
 	food: Food.FoodLobsterStew,
 	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
 	mainHandImbue: WeaponImbue.WizardOil,
@@ -380,6 +382,7 @@ const level60Encounter = (name: string, debuffs: Debuffs) =>
 			executeProportion25: 0.25,
 			executeProportion35: 0.35,
 			...PresetUtils.LEVEL_60_RAID_DAMAGE,
+			...PresetUtils.LEVEL_60_ZONE,
 			targets: [
 				{
 					id: 213336,
