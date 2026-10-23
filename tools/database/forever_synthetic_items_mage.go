@@ -28,7 +28,7 @@ import (
 //
 // Per slot, the budget and what the stats add up to (main set, then Arcane), and the shape
 // check's target and the pieces' 1.7-norms:
-//   head 80.3 (79.9, 79.9), norm 46.5 (48.2, 48.2); neck 45.8 (45.6, 45.6), norm 28.0 (27.7,
+//   head 80.3 (79.8, 79.9), norm 46.5 (47.6, 48.2); neck 45.8 (45.6, 45.6), norm 28.0 (27.7,
 //   27.7); shoulders 58.7 (58.7, 58.8), norm 34.9 (35.6, 35.4); back 45.8 (45.6, 45.6), norm
 //   28.0 (27.7, 27.7); chest 80.3 (80.4, 80.1), norm 46.5 (48.2, 48.7); wrist 45.8 (45.8, 46.1),
 //   norm 28.0 (27.5, 27.2); hands 58.7 (58.9, 58.9), norm 34.9 (35.9, 35.5); waist 63.0 (62.6,
@@ -37,8 +37,8 @@ import (
 //   second finger 45.8 (45.9, 45.9), norm 28.0 (27.2, 27.5); staff 193.4 (193.7, 193.8); wand
 //   21.3 (21.2, 21.2); main hand 149.1 (149.6); off hand 43.4 (43.2).
 // Armor 708.2 (main) and 707.6 (Arcane), weapons 214.8 and 215.0. For example the main set's
-// head: 10 + 13 + 29 * 0.86 + 32 = 79.9 against 80.3, and (10^1.7 + 13^1.7 + 24.9^1.7 +
-// 32^1.7)^(1/1.7) = 48.2 against 46.5.
+// head: 10 + 16 + 37 * 0.86 + 22 = 79.8 against 80.3, and (10^1.7 + 16^1.7 + 31.8^1.7 +
+// 22^1.7)^(1/1.7) = 47.6 against 46.5.
 //
 // The presets use the staff with Forever's 2H Spellblasting (+65 spell power). The main hand and
 // off hand split the main staff's stats between them. Weapon damage and speed are the Era items'
@@ -48,13 +48,13 @@ import (
 // proportions Season of Discovery's level 60 BiS mage sets carry (orchestration/gear_targets.md),
 // with each spec's own SoD Stamina share and Spirit at about 10%. Shares are linear: a stat's
 // weighted amount over the set's total (the twelve armor slots, the staff and the wand; enchants
-// and trinkets left out). Hit is at the cap (item 4), 10.8% of the set where SoD's sets carry
+// and trinkets left out). Hit is at the cap (item 4), 9.8% of the main set and 10.8% of Arcane's, where SoD's sets carry
 // about 3% (SoD gave mages hit from runes), so the other stats sit below their targets in about
 // the table's proportions, spell power taking the most of the rest:
 //
 //   set      share     Sta   Int   Spi   SP    Hit   Crit
 //   main     target    13.9  18.1  10    41.7  3.2   13.1
-//   main     actual    12.9  16.4  9.5   39.2  10.8  11.2   (119, 151, 88, 421 SP, 100, 103)
+//   main     actual    12.9  16.7  9.5   40.0  9.8   11.2   (119, 154, 88, 429 SP, 90, 103)
 //   Arcane   target    14.2  17.7  10    45.4  3.4   8.9    (and 0.4 MP5, left out)
 //   Arcane   actual    13.1  15.9  9.6   42.9  10.8  7.6    (121, 147, 89, 460 SP, 100, 70)
 //
@@ -65,8 +65,11 @@ import (
 // item level 71, the same for both sets: 41 spell power and 11 crit rating (46.3, 1.7-norm 38.1),
 // and an on-use +140 spell power for 20 sec every 2 min.
 //
-// Hit stays at the cap against a level 63 boss (16% spell miss) in both sets: 100 hit rating
-// (10%), with 5% from Elemental Precision or Arcane Focus and Manaflare's 2 piece 1%.
+// Hit stays at the cap against a level 63 boss (16% spell miss) in both sets. The main set has 90
+// hit rating (9%), with 6% from Elemental Precision 3 (three ranks of 2% since the 2026-10-20
+// hotfix) and Manaflare's 2 piece 1%. On 2026-10-23 its head gave 10 hit rating (the one percent
+// the hotfix put over the cap) to 3 Intellect and 8 spell power: +2 to +7 DPS on Frostfire, Fire
+// and Frost. The Arcane set keeps 100 (10%) for Arcane Focus's 5% on the Arcane spells.
 //
 // Only the head and chest carry the Manaflare Regalia set (Forever's level 60 mage set, see
 // sim/mage/item_sets_pve.go), in both sets, so only its 2 piece bonus is live, the same for
@@ -82,8 +85,8 @@ var foreverSyntheticMageItems = []*proto.UIItem{
 	{
 		Id: 996001, Name: "Mage Synthetic Head (Phase 1)", Icon: "inv_helmet_53",
 		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypeCloth,
-		Stats:     stats.Stats{stats.Stamina: 10, stats.Intellect: 13, stats.SpellPower: 29, stats.Armor: 83}.ToFloatArray(),
-		HitRating: 32,
+		Stats:     stats.Stats{stats.Stamina: 10, stats.Intellect: 16, stats.SpellPower: 37, stats.Armor: 83}.ToFloatArray(),
+		HitRating: 22,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassMage},
 		SetName:        "Mage Synthetic (Phase 1)",

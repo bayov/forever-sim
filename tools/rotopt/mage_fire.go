@@ -76,6 +76,7 @@ func (mageFire) Build(k Knobs) *proto.APLRotation {
 	}
 	items = append(items, finisherLines(k, filler, s.fireBlast, s.scorch)...)
 	items = append(items, cast(filler, nil, "The filler."))
+	items = append(items, wandLines(k)...)
 	rot := rotation(items...)
 	if k["prepull"] == 1 {
 		rot.PrepullActions = append(rot.PrepullActions, prepull(filler, 3))
