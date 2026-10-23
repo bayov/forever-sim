@@ -6,11 +6,20 @@ import (
 	"github.com/wowsims/classic/sim/core"
 )
 
-// TODO: Classic Update
 func (warrior *Warrior) RegisterShieldWallCD() {
 	duration := time.Second * 10
 	//This is the inverse of the tooltip since it is a damage TAKEN coefficient
 	damageTaken := 0.25
+	cooldownBase := time.Minute * 30
+	gcd := time.Duration(0)
+	// Forever's Shield Wall takes 60% less damage for 12 sec on a 15 min cooldown and the global
+	// cooldown (client 70425, spell 871).
+	if warrior.Env.IsForever() {
+		duration = time.Second * 12
+		damageTaken = 0.4
+		cooldownBase = time.Minute * 15
+		gcd = core.GCDDefault
+	}
 
 	actionID := core.ActionID{SpellID: 871}
 	swAura := warrior.RegisterAura(core.Aura{
@@ -25,16 +34,16 @@ func (warrior *Warrior) RegisterShieldWallCD() {
 		},
 	})
 
-	// Improved Shield Wall reduces the cooldown instead of extending the duration in Forever.
-	// TODO: only rank 1 was shown, beta will confirm that rank 2 is another 5.5 minutes.
-	cooldownDur := time.Minute*30 - time.Second*330*time.Duration(warrior.Talents.ImprovedShieldWall)
+	// Improved Shield Wall takes 5.5 / 11 min off the cooldown instead of extending the duration
+	// (client 70338, curve of spell 12312).
+	cooldownDur := cooldownBase - time.Second*330*time.Duration(warrior.Talents.ImprovedShieldWall)
 
 	swSpell := warrior.RegisterSpell(DefensiveStance, core.SpellConfig{
 		ActionID: actionID,
 
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD: 0,
+				GCD: gcd,
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{

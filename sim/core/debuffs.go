@@ -208,7 +208,7 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 		if !forever {
 			MakePermanent(DemoralizingShoutAura(target, 0, GetTristateValueInt32(debuffs.DemoralizingShout, 0, 5)))
 		} else if rank, reduction := foreverDemoralizingShout.at(level); rank > 0 {
-			MakePermanent(foreverDemoralizingAura(target, "Demoralizing Shout", foreverDemoralizingShout.spellID[rank], time.Second*45, reduction))
+			MakePermanent(foreverDemoralizingAura(target, "Demoralizing Shout", foreverDemoralizingShout.spellID[rank], foreverDemoralizingShoutDuration, reduction))
 		}
 	}
 	if debuffs.HuntersMark != proto.TristateEffect_TristateEffectMissing {
@@ -1091,6 +1091,16 @@ var foreverDemoralizingShout = foreverDemoralizingRanks{
 	spellID:  [6]int32{0, 1160, 6190, 11554, 11555, 11556},
 	base:     [6]float64{0, 49, 77, 98, 147, 196},
 	perLevel: [6]float64{0, 1.4, 1.4, 1.4, 1.4, 1.4},
+}
+
+// Every rank of Forever's Demoralizing Shout lasts 45 sec (client 70425, spell 11556).
+const foreverDemoralizingShoutDuration = time.Second * 45
+
+// ForeverDemoralizingShoutAura is a warrior's own Demoralizing Shout on the target under Forever,
+// the highest rank at the warrior's level.
+func ForeverDemoralizingShoutAura(target *Unit, level int32) *Aura {
+	rank, reduction := foreverDemoralizingShout.at(level)
+	return foreverDemoralizingAura(target, "DemoralizingShout-Forever", foreverDemoralizingShout.spellID[rank], foreverDemoralizingShoutDuration, reduction)
 }
 
 // Rank 5 of Demoralizing Roar takes 204 attack power at 60 and rank 2 88 at 30. Feral

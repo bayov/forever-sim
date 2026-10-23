@@ -29,7 +29,7 @@ Ranks the BlizzCon data guessed wrong:
 - Booming Voice widens every shout by 10% a point and takes 5% a point off their Rage cost.
 - Raging Blows takes 3 Rage off Cleave and Whirlwind, and Whirlwind strikes with both weapons without it.
 - Improved Slam takes 0.25 / 0.5 sec off Slam's cast and GCD, stops it delaying the swing, and takes 3 sec off its cooldown (no rank curve on that effect, so 3 sec at either rank; ForeverChanges reads 3 a rank).
-- Master of Defense is 50 / 100% for 5 Rage. Improved Bloodrage is 25 / 50% of all of Bloodrage's Rage. Weaponmaster, Bastion and Focused Rage scale linearly as guessed (1% crit, 3% armor, 1% extra attack; 2%; 1 Rage).
+- Master of Defense is 50 / 100% for 5 Rage. Improved Bloodrage is 25 / 50% of all of Bloodrage's Rage. Weaponmaster, Bastion and Focused Rage scale linearly as guessed (1% crit, 3% armor, 1% extra attack; 2%; 1 Rage). Bastion's and Two-Handed Weapon Specialization's damage effects (16538, 12163) name the Physical school only, so neither raises Fire or other magic damage, and Two-Handed Weapon Specialization raises every Physical attack with a two-hander, Rend and Thunder Clap included (the sim since 2026-10-23).
 
 Every talent's per-rank values, from TraitDefinitionEffectPoints (these override the rank 1 spell's base points, which are sometimes Classic leftovers). The sim was checked against each modeled one on 2026-10-12 and matches:
 
@@ -48,7 +48,8 @@ Spells at level 60:
 - Recklessness: 100% crit for 15 sec, 30 min. Death Wish: 20% Physical damage, 5% more damage taken, 3 min, 10 Rage.
 - Charge rank 3 (11578): 15 Rage (Improved Charge 3 / 6 more), Battle Stance (and Defensive with Vanguard), not in combat. The sim casts it before the pull (standards 13); every Level 60 warrior APL opens with it since 2026-10-23, Fury from Battle Stance and back to Berserker Stance before 0, as wowsims/forever's APLs do.
 - Tactical Mastery is a trainer spell at 14 that keeps 10 Rage, and Improved Tactical Mastery adds 3 a point. Berserker Rage is trained at 30 and makes no Rage of its own without the talent.
-- Thunder Clap rank 6: 103 damage, 20% slow, 6 sec cooldown, Battle or Defensive Stance. Last Stand: 3 min.
+- Thunder Clap rank 6: 103 damage plus 7% of attack power, 20% slow, 6 sec cooldown, Battle or Defensive Stance. The row states no attack power; wowsims/forever measured floor(10 + 0.07 × attack power) on rank 1 in a log (1172f1c745), and the sim gives every rank that share since 2026-10-23. Last Stand: 3 min.
+- Protection at 60 (client 70425/70450 rows, in the sim since 2026-10-23): Shield Wall (871) 60% less damage taken for 12 sec, 15 min cooldown, on the GCD, Defensive Stance and a shield; Improved Shield Wall takes 5.5 / 11 min off it. Shield Block (2565) 75% block for 2 blocks over 7 sec, 10 Rage, 5 sec cooldown. Shield Slam rank 4 (23925) 625 to 685 (655 ± 4.57%) plus the block value once, no attack power, 20 Rage, 6 sec. Revenge rank 5 (11601) 97 to 145 (121 ± 19.7%) plus 28% of attack power, 5 Rage, 5 sec; the share is wowsims/forever's log fit (3a6c7df46e: 0.277 ± 0.009 over 254 rank 1 hits), and its threat is 2.25 times its damage with nothing on top (913a5bcf69, measured in game). Rank 6 (25288) comes from an Ahn'Qiraj book, so the sim uses rank 5.
 - A critical white hit gives 100% more Rage. Blizzard's 1 October beta development notes (https://us.forums.blizzard.com/en/wow/t/2360696 post 4) say "Additional Rage generated from landing Critical Strikes increased to 100% increased Rage (was 75%)", as does Kaivax's 2 October post (t/2369360); Bear Form got the same 100% on 8 October. Settled from the notes (assumptions audit, 2026-10-16), no longer a report assumption. The bonus is 100% of the swing's one-hand-rate Rage, added before the two-hand factor, so a two-hander crit gives (4.5 + 3.46) × speed rather than double (the game files' Rule of Rage (DND) row 1322574; wowsims/forever 5ac4ffbcb6). Rage from white hits is normalized to weapon speed (standards 21), and misses, dodges and parries give none (wowsims/forever f9f9f21883, level 8 and 9 logs). A hit or periodic tick taken gives 2.5 × (1 − A) × damage / the Rage conversion at the attacker's level, with A the armor assumed by the attacker's level (20% to 42, 40% at 63), doubled under Berserker Rage (wowsims/forever ee2d69b16a, 73b317c7cf, de550b7df9; sim rules since 2026-10-23); the other Rage rules are assumptions until the beta test in orchestration/followups.md ("Rage needs a beta test"). A queued Heroic Strike no longer raises the off hand's hit chance.
 - Battlegear of Glory (set 2102, Helm, Shoulders, Breastplate, Gauntlets, Legplates and Greaves of Glory, item level 65) is the Arms and Fury tier set (its icon is a Hyjal helm, and which raid drops it in Forever is not confirmed): 2 pieces 1% attack and cast speed, 3 Intimidating Shout 30 sec sooner, 4 +36 attack power against Humanoids, 5 Recklessness 30 sec sooner. Battleplate of Glory (set 2103) is the Protection one.
 
@@ -558,7 +559,7 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
   - Rank 3: Increases all damage you deal by 6% while a shield is equipped.
   - Rank 4: Increases all damage you deal by 8% while a shield is equipped.
   - Rank 5: Increases all damage you deal by 10% while a shield is equipped.
-  - Note: Filled the question-mark placeholder with the WotLK Shield Mastery icon.
+  - Note: Filled the question-mark placeholder with the WotLK Shield Mastery icon. The client row (16538) raises Physical damage only.
 
 #### Row 7 (30 points)
 
@@ -567,3 +568,4 @@ Mortal Strike, Bloodthirst, Recklessness, Shield Slam
   - Cost: 20 Rage, Melee Range, Instant, 6 sec cooldown
   - Slam the target with your shield, causing 421 to 439 damage, increased by your Block Value, and has a 50% chance of dispelling 1 magic effect on the target. Causes a very high amount of threat.
   - Classic: Slam the target with your shield, causing 225 to 235 damage, modified by your shield block value, and has a 50% chance of dispelling 1 magic effect on the target. Also causes a high amount of threat.
+  - Note: 421 to 439 is the level 38 demo's tooltip. Rank 4 at 60 is 625 to 685 plus the block value (see the top of this page).

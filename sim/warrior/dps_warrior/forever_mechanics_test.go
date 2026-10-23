@@ -423,3 +423,82 @@ func TestForeverWarriorSweepingStrikesAndCharge(t *testing.T) {
 		t.Error("Charge should not be usable in combat")
 	}
 }
+
+// landedRange casts the spell's effects n times and returns the lowest and highest damage of its
+// plain hits (no crit, block or avoid).
+func landedRange(sim *core.Simulation, spell *core.Spell, target *core.Unit, n int) (float64, float64) {
+	low, high := math.Inf(1), math.Inf(-1)
+	metrics := &spell.SpellMetrics[target.UnitIndex]
+	for i := 0; i < n; i++ {
+		before := *metrics
+		spell.ApplyEffects(sim, target, spell)
+		if metrics.Hits == before.Hits || metrics.Crits != before.Crits || metrics.Blocks != before.Blocks {
+			continue
+		}
+		damage := metrics.TotalDamage - before.TotalDamage
+		low, high = min(low, damage), max(high, damage)
+	}
+	return low, high
+}
+
+// TestForeverWarriorProtectionValues checks the Protection rows under Forever (client 70425):
+// Revenge rank 5 rolls 97 to 145 plus 28% of attack power (11601; wowsims/forever 3a6c7df46e),
+// Shield Slam 625 to 685 plus the block value once and no attack power (23925), Thunder Clap 103
+// plus 7% of attack power (11581; 1172f1c745), Demoralizing Shout lasts 45 sec (11556), and
+// Bastion raises Physical damage only (16538).
+func TestForeverWarriorProtectionValues(t *testing.T) {
+	sim, war := newForeverWarriorArmed(t, "--251533120331221351", 991014, 19349)
+	war.AutoAttacks.CancelAutoSwing(sim)
+	target := war.CurrentTarget
+	target.AddStatDynamic(sim, stats.Armor, -target.GetStat(stats.Armor))
+	war.AddStatDynamic(sim, stats.AttackPower, 1000)
+	at := war.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand]
+
+	if got := war.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical]; math.Abs(got-1.1) > 1e-9 {
+		t.Errorf("Bastion 5/5 with a shield raises Physical damage by %.3f, want 1.1", got)
+	}
+	if got := war.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire]; got != 1 {
+		t.Errorf("Bastion raises Fire damage by %.3f, want nothing", got)
+	}
+
+	check := func(name string, spell *core.Spell, low, high, apCoef float64) {
+		t.Helper()
+		spell.BonusCritRating -= 200 * core.CritRatingPerCritChance
+		ap := spell.MeleeAttackPower(target)
+		m := spell.AttackerDamageMultiplier(at, false)
+		wantLow, wantHigh := (low+apCoef*ap)*m, (high+apCoef*ap)*m
+		gotLow, gotHigh := landedRange(sim, spell, target, 600)
+		// Forever rounds damage to whole numbers (before the last multipliers, so within 1), and 600
+		// rolls come within 1% of the ends.
+		slack := 1 + 0.01*(wantHigh-wantLow)
+		if gotLow < wantLow-1 || gotLow > wantLow+slack || gotHigh > wantHigh+1 || gotHigh < wantHigh-slack {
+			t.Errorf("%s at %.0f attack power hits for %.1f to %.1f, want %.1f to %.1f", name, ap, gotLow, gotHigh, wantLow, wantHigh)
+		}
+	}
+	check("Revenge", war.Revenge.Spell, 97, 145, 0.28)
+	check("Shield Slam", war.ShieldSlam.Spell, 625+war.BlockValue(), 685+war.BlockValue(), 0)
+	check("Thunder Clap", war.ThunderClap.Spell, 103, 103, 0.07)
+
+	if got := war.Revenge.FlatThreatBonus; got != 0 {
+		t.Errorf("Revenge has %.0f flat threat, want none on top of 2.25 times its damage", got)
+	}
+	if got := war.DemoralizingShoutAuras.Get(target).Duration; got != 45*time.Second {
+		t.Errorf("Demoralizing Shout lasts %s, want 45s", got)
+	}
+}
+
+// TestForeverWarriorTwoHandedSpecialization checks that under Forever Two-Handed Weapon
+// Specialization raises all Physical damage with a two-hander, Rend included, and nothing else
+// (client 70425, spell 12163).
+func TestForeverWarriorTwoHandedSpecialization(t *testing.T) {
+	_, war := newForeverWarriorArmed(t, "0000000003", 991016, 0)
+	if got := war.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical]; math.Abs(got-1.03) > 1e-9 {
+		t.Errorf("3 points with a two-hander raise Physical damage by %.3f, want 1.03", got)
+	}
+	if got := war.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexFire]; got != 1 {
+		t.Errorf("3 points raise Fire damage by %.3f, want nothing", got)
+	}
+	if got := war.Rend.DamageMultiplier; got != 1 {
+		t.Errorf("Rend's own multiplier is %.3f; the talent belongs on the school", got)
+	}
+}

@@ -17,9 +17,21 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 	aq := warrior.Env.IncludeAQRanks()
 	actionID := core.ActionID{SpellID: core.TernaryInt32(aq, 25288, 11601)}
 	has2pcDreadnaught := warrior.HasSetBonus(ItemSetDreadnaughtsBattlegear, 2)
-	basedamageLow := core.TernaryFloat64(aq, 81, 64) + core.TernaryFloat64(has2pcDreadnaught, 75, 0)
-	basedamageHigh := core.TernaryFloat64(aq, 99, 78) + core.TernaryFloat64(has2pcDreadnaught, 75, 0)
+	damageLow := core.TernaryFloat64(aq, 81, 64)
+	damageHigh := core.TernaryFloat64(aq, 99, 78)
 	revengeLevel := core.TernaryFloat64(aq, 60.0, 54.0)
+	apCoef := 0.0
+	flatThreat := 2.25 * 2 * revengeLevel
+	// Forever's rank 5 deals 121 ± 19.7% (97 to 145) (client 70425, spell 11601) plus 28% of
+	// attack power, which wowsims/forever fits from logs (3a6c7df46e: 0.277 ± 0.009 over 254 rank 1
+	// hits). Its threat is 2.25 times its damage with nothing on top (913a5bcf69, measured in game).
+	if warrior.Env.IsForever() && !aq {
+		damageLow, damageHigh = 97, 145
+		apCoef = 0.28
+		flatThreat = 0
+	}
+	basedamageLow := damageLow + core.TernaryFloat64(has2pcDreadnaught, 75, 0)
+	basedamageHigh := damageHigh + core.TernaryFloat64(has2pcDreadnaught, 75, 0)
 
 	warrior.revengeProcAura = warrior.RegisterAura(core.Aura{
 		Label:    "Revenge",
@@ -70,11 +82,11 @@ func (warrior *Warrior) registerRevengeSpell(cdTimer *core.Timer) {
 
 		DamageMultiplier: 1 + 0.2*float64(warrior.Talents.ImprovedRevenge),
 		ThreatMultiplier: 2.25,
-		FlatThreatBonus:  2.25 * 2 * revengeLevel,
+		FlatThreatBonus:  flatThreat,
 		BonusCoefficient: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			baseDamage := sim.Roll(basedamageLow, basedamageHigh)
+			baseDamage := sim.Roll(basedamageLow, basedamageHigh) + apCoef*spell.MeleeAttackPower(target)
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 
 			if !result.Landed() {

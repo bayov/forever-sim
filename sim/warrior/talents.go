@@ -57,6 +57,13 @@ func (warrior *Warrior) applyTwoHandedWeaponSpecialization() {
 	}
 
 	multiplier := 1 + 0.01*float64(warrior.Talents.TwoHandedWeaponSpecialization)
+	// Under Forever it raises all Physical damage while a two-hander is equipped, Rend, Deep
+	// Wounds and Thunder Clap included (client 70425, spell 12163: A_MOD_DAMAGE_PERCENT_DONE on
+	// school 1, equip class two-handers).
+	if warrior.Env.IsForever() {
+		warrior.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= multiplier
+		return
+	}
 	warrior.OnSpellRegistered(func(spell *core.Spell) {
 		if spell.BonusCoefficient > 0 {
 			spell.DamageMultiplier *= multiplier
@@ -419,13 +426,14 @@ func (warrior *Warrior) applyMasterOfDefense() {
 	})
 }
 
-// 2% a point with a shield (client 70338, curve of spell 16538).
+// 2% a point of Physical damage with a shield (client 70338, curve of spell 16538; its
+// A_MOD_DAMAGE_PERCENT_DONE names school 1 only).
 func (warrior *Warrior) applyBastion() {
 	if warrior.Talents.Bastion == 0 || !warrior.PseudoStats.CanBlock {
 		return
 	}
 
-	warrior.PseudoStats.DamageDealtMultiplier *= 1 + 0.02*float64(warrior.Talents.Bastion)
+	warrior.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexPhysical] *= 1 + 0.02*float64(warrior.Talents.Bastion)
 }
 
 // 1 Rage a point off the offensive abilities (client 70338, curve of spell 29787).

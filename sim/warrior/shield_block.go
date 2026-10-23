@@ -10,12 +10,20 @@ import (
 func (warrior *Warrior) RegisterShieldBlockCD() {
 	actionID := core.ActionID{SpellID: 2565}
 	cooldownDur := time.Second * 5
+	duration := time.Second * 5
+	charges := int32(1)
+	// Forever's Shield Block blocks 2 attacks over 7 sec (client 70425, spell 2565), what the old
+	// Improved Shield Block talent added.
+	if warrior.Env.IsForever() {
+		duration = time.Second * 7
+		charges = 2
+	}
 
 	warrior.ShieldBlockAura = warrior.RegisterAura(core.Aura{
 		Label:     "Shield Block",
 		ActionID:  actionID,
-		Duration:  time.Second * 5,
-		MaxStacks: 1,
+		Duration:  duration,
+		MaxStacks: charges,
 
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			aura.SetStacks(sim, aura.MaxStacks)

@@ -13,9 +13,12 @@ func (warrior *Warrior) registerThunderClapSpell() {
 	attackSpeedReduction := core.TernaryInt32(has5pcConq, 15, 10)
 	stanceMask := BattleStance
 	cooldown := time.Second * 4
+	apCoef := 0.0
 	// Forever's Thunder Clap slows by 20% on a 6 sec cooldown and works in Defensive Stance too
-	// (client 70338, spell 11581).
+	// (client 70338, spell 11581). It adds 7% of attack power, which wowsims/forever fits from rank 1
+	// logs (1172f1c745: floor(10 + 0.07 × attack power) before armor).
 	if warrior.Env.IsForever() {
+		apCoef = 0.07
 		attackSpeedReduction += 10
 		stanceMask |= DefensiveStance
 		cooldown = time.Second * 6
@@ -57,7 +60,7 @@ func (warrior *Warrior) registerThunderClapSpell() {
 			// Only living targets, each one once.
 			hits := results[:sim.Encounter.AoETargetCount(int32(len(results)))]
 			for idx := range hits {
-				results[idx] = spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
+				results[idx] = spell.CalcDamage(sim, target, baseDamage+apCoef*spell.MeleeAttackPower(target), spell.OutcomeMagicHitAndCrit)
 				target = sim.Environment.NextTargetUnit(target)
 			}
 

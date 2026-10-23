@@ -17,6 +17,14 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 	threat := 254.0
 
 	apCoef := 0.15
+	blockValueCoef := 2.0
+	// Forever's rank 4 deals 655 ± 4.57% (625 to 685) plus the block value once, with no attack
+	// power (client 70425, spell 23925; wowsims/forever's Shield Slam).
+	if warrior.Env.IsForever() {
+		damageLow, damageHigh = 625, 685
+		apCoef = 0
+		blockValueCoef = 1
+	}
 
 	warrior.ShieldSlam = warrior.RegisterSpell(AnyStance, core.SpellConfig{
 		SpellCode:   SpellCode_WarriorShieldSlam,
@@ -52,7 +60,7 @@ func (warrior *Warrior) registerShieldSlamSpell() {
 		BonusCoefficient: 1,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-			damage := sim.Roll(damageLow, damageHigh) + warrior.BlockValue()*2 + apCoef*spell.MeleeAttackPower(target)
+			damage := sim.Roll(damageLow, damageHigh) + warrior.BlockValue()*blockValueCoef + apCoef*spell.MeleeAttackPower(target)
 			result := spell.CalcAndDealDamage(sim, target, damage, spell.OutcomeMeleeSpecialHitAndCrit)
 
 			if !result.Landed() {
