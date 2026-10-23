@@ -2,7 +2,7 @@
     "type": "TypeAPL",
     "prepullActions": [
         {"action":{"castSpell":{"spellId":{"spellId":2457}}},"doAtValue":{"const":{"val":"-1s"}}},
-        {"action":{"castSpell":{"spellId":{"rank":3,"spellId":11578}}},"doAtValue":{"const":{"val":"-0.5s"}},"notes":"15 Rage to open."}
+        {"action":{"castSpell":{"spellId":{"rank":3,"spellId":11578}}},"doAtValue":{"const":{"val":"-0.5s"}}}
     ],
     "priorityList": [
         {"action":{"castSpell":{"spellId":{"spellId":2458}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"remainingTime":{}},"op":"OpLe","rhs":{"const":{"val":"25s"}}}},{"not":{"val":{"auraIsActive":{"auraId":{"spellId":2458}}}}},{"spellIsReady":{"spellId":{"spellId":1719}}},{"cmp":{"lhs":{"currentRage":{}},"op":"OpLe","rhs":{"const":{"val":"25"}}}}]}}},"notes":"For Recklessness. Tactical Mastery keeps the Rage."},
