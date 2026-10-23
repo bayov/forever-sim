@@ -24,7 +24,9 @@ import { SavedTalents } from '../core/proto/ui.js';
 import { TankWarrior_Options as TankWarriorOptions, WarriorShout, WarriorStance } from '../core/proto/warrior.js';
 import APLNoReckJSON from './apls/dps_no_reck.apl.json';
 import APLReckJSON from './apls/dps_reck.apl.json';
+import ProtectionAPLJSON from './apls/protection.apl.json';
 import P0BISGear from './gear_sets/p0.bis.gear.json';
+import P0BISSwordBoardGear from './gear_sets/p0.bis_sword_board.gear.json';
 import P1BISGear from './gear_sets/p1.bis.gear.json';
 
 ///////////////////////////////////////////////////////////////////////////
@@ -33,12 +35,15 @@ import P1BISGear from './gear_sets/p1.bis.gear.json';
 
 export const GearP0BIS = PresetUtils.makePresetGear('Pre-BiS', P0BISGear);
 export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
+// The Pre-BiS armor with a sword and a shield (Mirah's Song, Draconian Deflector), so Shield Slam,
+// Shield Block and Revenge have a shield to use. The golden suite (sim/warrior/tank_warrior) uses it.
+export const GearP0BISSwordBoard = PresetUtils.makePresetGear('Pre-BiS (Sword and Board)', P0BISSwordBoardGear);
 
 export const GearPresets = {
-	[Phase.Phase1]: [GearP0BIS, GearP1BIS],
+	[Phase.Phase1]: [GearP0BISSwordBoard, GearP0BIS, GearP1BIS],
 };
 
-export const DefaultGear = GearP0BIS;
+export const DefaultGear = GearP0BISSwordBoard;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets
@@ -46,9 +51,13 @@ export const DefaultGear = GearP0BIS;
 
 export const AplReck = PresetUtils.makePresetAPLRotation('DPS (With Reck)', APLReckJSON);
 export const APLNoReck = PresetUtils.makePresetAPLRotation('DPS (No Reck)', APLNoReckJSON);
+// A plain Protection rotation in Defensive Stance: Shield Block whenever it is down, Shield Slam on
+// cooldown, Revenge, Sunder Armor to 5 stacks, Heroic Strike from 50 Rage and Sunder Armor as the
+// filler from 40, Bloodrage under 30 Rage.
+export const APLProtection = PresetUtils.makePresetAPLRotation('Protection', ProtectionAPLJSON);
 
 export const APLPresets = {
-	[Phase.Phase1]: [APLNoReck, AplReck],
+	[Phase.Phase1]: [APLProtection, APLNoReck, AplReck],
 };
 
 export const DefaultAPL = APLPresets[Phase.Phase1][0];
@@ -91,8 +100,9 @@ export const DefaultConsumes = Consumes.create({
 	food: Food.FoodSmokedDesertDumpling,
 	flask: Flask.FlaskOfTheTitans,
 	healthElixir: HealthElixir.ElixirOfFortitude,
-	mainHandImbue: WeaponImbue.Windfury,
-	offHandImbue: WeaponImbue.ElementalSharpeningStone,
+	// The stone goes on the main hand: a shield can't hold one, and under Forever Elemental Sharpening
+	// Stone crits only the hand it is on (da4f2018a7).
+	mainHandImbue: WeaponImbue.ElementalSharpeningStone,
 	strengthBuff: StrengthBuff.JujuPower,
 	zanzaBuff: ZanzaBuff.ROIDS,
 });

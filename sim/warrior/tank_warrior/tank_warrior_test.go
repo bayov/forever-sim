@@ -20,12 +20,13 @@ func TestP1TankWarrior(t *testing.T) {
 			Race:       proto.Race_RaceOrc,
 			OtherRaces: []proto.Race{proto.Race_RaceHuman},
 
+			// A sword and a shield with the Protection rotation, so the suite covers Shield Slam,
+			// Revenge and Shield Block, with the boss on the warrior.
 			Talents:  P1Talents,
-			GearSet:  core.GetGearSet("../../../ui/tank_warrior/gear_sets", "p0.bis"),
-			Rotation: core.GetAplRotation("../../../ui/warrior/apls", "dps_reck"),
-			OtherRotations: []core.RotationCombo{
-				core.GetAplRotation("../../../ui/warrior/apls", "dps_no_reck"),
-			},
+			GearSet:  core.GetGearSet("../../../ui/tank_warrior/gear_sets", "p0.bis_sword_board"),
+			Rotation: core.GetAplRotation("../../../ui/tank_warrior/apls", "protection"),
+			IsTank:   true,
+
 			Buffs:       core.ForeverBuffs,
 			Consumes:    P1Consumes,
 			SpecOptions: core.SpecOptionsCombo{Label: "Protection", SpecOptions: PlayerOptionsBasic},
@@ -61,7 +62,7 @@ var P1Consumes = core.ConsumesCombo{
 		DragonBreathChili: true,
 		Flask:             proto.Flask_FlaskOfTheTitans,
 		Food:              proto.Food_FoodSmokedDesertDumpling,
-		MainHandImbue:     proto.WeaponImbue_Windfury,
+		MainHandImbue:     proto.WeaponImbue_ElementalSharpeningStone,
 		StrengthBuff:      proto.StrengthBuff_JujuPower,
 	},
 }
