@@ -308,8 +308,8 @@ stat_weights_results: {
   weights: 0.26565
   weights: 0
   weights: 0
-  weights: 5.95234
-  weights: 3.54744
+  weights: 5.96206
+  weights: 3.54297
   weights: 0
   weights: 0
   weights: 0
@@ -347,7 +347,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.64108
+  weights: 0.64411
   weights: 0
   weights: 0.46743
   weights: 0
@@ -357,8 +357,8 @@ stat_weights_results: {
   weights: 0.27544
   weights: 0
   weights: 0
-  weights: 6.54442
-  weights: 3.82535
+  weights: 6.58501
+  weights: 3.82274
   weights: 0
   weights: 0
   weights: 0
@@ -638,8 +638,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase1-AllItems-GiftoftheGatheringStorm"
  value: {
-  dps: 484.76917
-  tps: 391.82655
+  dps: 484.801
+  tps: 391.85837
  }
 }
 dps_results: {
@@ -687,8 +687,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase1-Average-Default"
  value: {
-  dps: 493.79043
-  tps: 399.43502
+  dps: 493.81211
+  tps: 399.4567
  }
 }
 dps_results: {
@@ -778,22 +778,22 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase1-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 490.742
-  tps: 396.43822
+  dps: 490.78783
+  tps: 396.48402
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-Champion'sEarthshaker"
  value: {
-  dps: 459.21817
-  tps: 374.9798
+  dps: 459.56183
+  tps: 375.32345
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-Champion'sStormcaller"
  value: {
-  dps: 467.2215
-  tps: 380.65151
+  dps: 467.57567
+  tps: 381.00614
  }
 }
 dps_results: {
@@ -806,29 +806,29 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase2-AllItems-ElementalSyntheticOn-UseTrinket(Phase1)-990115"
  value: {
-  dps: 531.03517
-  tps: 432.09758
+  dps: 531.33217
+  tps: 432.39466
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-EnhancementSynthetic(Phase1)"
  value: {
-  dps: 531.21967
-  tps: 431.93986
+  dps: 531.175
+  tps: 431.89506
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-EnhancementSyntheticOn-UseTrinket(Phase1)-990015"
  value: {
-  dps: 519.198
-  tps: 422.59929
+  dps: 519.48183
+  tps: 422.88321
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-EnhancementSyntheticSpellOn-UseTrinket(Phase1)-990016"
  value: {
-  dps: 531.03517
-  tps: 432.09758
+  dps: 531.33217
+  tps: 432.39466
  }
 }
 dps_results: {
@@ -841,50 +841,50 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase2-AllItems-Stormcaller'sGarb"
  value: {
-  dps: 561.0805
-  tps: 457.24937
+  dps: 561.4685
+  tps: 457.63774
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-TheEarthfury"
  value: {
-  dps: 481.68717
-  tps: 392.42052
+  dps: 481.944
+  tps: 392.67787
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-TheEarthshatterer"
  value: {
-  dps: 466.77633
-  tps: 380.20871
+  dps: 467.0425
+  tps: 380.47536
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-TheFiveThunders"
  value: {
-  dps: 494.752
-  tps: 403.66145
+  dps: 495.0325
+  tps: 403.94205
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-TheTenStorms"
  value: {
-  dps: 522.08683
-  tps: 424.90948
+  dps: 522.38333
+  tps: 425.20661
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-AllItems-Warlord'sEarthshaker"
  value: {
-  dps: 497.52567
-  tps: 405.24157
+  dps: 497.88617
+  tps: 405.60217
  }
 }
 dps_results: {
  key: "TestElemental-Phase2-Average-Default"
  value: {
-  dps: 534.84516
-  tps: 434.93958
+  dps: 534.95984
+  tps: 435.05427
  }
 }
 dps_results: {
@@ -974,8 +974,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase2-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 529.488
-  tps: 430.34635
+  dps: 529.5385
+  tps: 430.39698
  }
 }
 dps_results: {
@@ -1002,8 +1002,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase3-AllItems-ElementalSyntheticOn-UseTrinket(Phase1)-990115"
  value: {
-  dps: 584.11883
-  tps: 472.56934
+  dps: 584.06967
+  tps: 472.52015
  }
 }
 dps_results: {
@@ -1016,15 +1016,15 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase3-AllItems-EnhancementSyntheticOn-UseTrinket(Phase1)-990015"
  value: {
-  dps: 570.42933
-  tps: 461.59406
+  dps: 570.38017
+  tps: 461.54487
  }
 }
 dps_results: {
  key: "TestElemental-Phase3-AllItems-EnhancementSyntheticSpellOn-UseTrinket(Phase1)-990016"
  value: {
-  dps: 584.11883
-  tps: 472.56934
+  dps: 584.06967
+  tps: 472.52015
  }
 }
 dps_results: {
@@ -1639,8 +1639,8 @@ dps_results: {
 dps_results: {
  key: "TestElemental-Phase6-AllItems-TheEarthshatterer"
  value: {
-  dps: 569.47033
-  tps: 460.60357
+  dps: 569.376
+  tps: 460.50916
  }
 }
 dps_results: {

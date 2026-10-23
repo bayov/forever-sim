@@ -99,7 +99,7 @@ stat_weights_results: {
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-Champion'sDreadgear"
  value: {
-  dps: 1217.68767
+  dps: 1218.876
   tps: 911.88882
   hps: 3.80217
  }
@@ -107,7 +107,7 @@ dps_results: {
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-DeathmistRaiment"
  value: {
-  dps: 1128.55933
+  dps: 1129.78967
   tps: 842.79158
   hps: 2.08617
  }
@@ -131,7 +131,7 @@ dps_results: {
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-FelheartRaiment"
  value: {
-  dps: 1148.00667
+  dps: 1148.78133
   tps: 852.50338
   hps: 3.6405
  }
@@ -139,7 +139,7 @@ dps_results: {
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-FieldMarshal'sThreads"
  value: {
-  dps: 1283.31067
+  dps: 1284.21667
   tps: 962.73824
   hps: 2.9355
  }
@@ -155,7 +155,7 @@ dps_results: {
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-IronweaveBattlesuit"
  value: {
-  dps: 965.8885
+  dps: 967.03383
   tps: 721.2735
   hps: 2.073
  }
@@ -163,7 +163,7 @@ dps_results: {
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-LieutenantCommander'sDreadgear"
  value: {
-  dps: 1217.68767
+  dps: 1218.876
   tps: 911.88882
   hps: 3.80217
  }
@@ -171,7 +171,7 @@ dps_results: {
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-NemesisRaiment"
  value: {
-  dps: 1223.49783
+  dps: 1224.39967
   tps: 799.84782
   hps: 1.89467
  }
@@ -179,7 +179,7 @@ dps_results: {
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-PlagueheartRaiment"
  value: {
-  dps: 1378.489
+  dps: 1380.016
   tps: 958.48943
   hps: 2.142
  }
@@ -203,7 +203,7 @@ dps_results: {
 dps_results: {
  key: "TestWarlockAffliction-Phase1-AllItems-Warlord'sThreads"
  value: {
-  dps: 1283.31067
+  dps: 1284.21667
   tps: 962.73824
   hps: 2.9355
  }

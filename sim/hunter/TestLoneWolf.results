@@ -99,48 +99,48 @@ stat_weights_results: {
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-BeastmasterArmor"
  value: {
-  dps: 1503.483
-  tps: 1531.13996
+  dps: 1518.25467
+  tps: 1546.1075
   dtps: 2.19517
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-BloodGuard'sChainGauntlets-16530"
  value: {
-  dps: 1637.98383
-  tps: 1663.82165
+  dps: 1644.0585
+  tps: 1670.00602
   dtps: 2.254
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-BloodGuard'sChainVices-22862"
  value: {
-  dps: 1648.6505
-  tps: 1674.49969
+  dps: 1662.73433
+  tps: 1688.68811
   dtps: 2.254
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-Champion'sPursuance"
  value: {
-  dps: 1569.60583
-  tps: 1595.08872
+  dps: 1583.977
+  tps: 1609.60255
   dtps: 2.31883
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-Champion'sPursuit"
  value: {
-  dps: 1468.752
-  tps: 1494.00196
+  dps: 1478.593
+  tps: 1503.99525
   dtps: 2.254
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-CryptstalkerArmor"
  value: {
-  dps: 1790.63283
-  tps: 1820.2866
+  dps: 1806.895
+  tps: 1836.48025
   dtps: 2.31883
  }
 }
@@ -163,32 +163,32 @@ dps_results: {
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-DragonstalkerArmor"
  value: {
-  dps: 1672.73683
-  tps: 1698.36249
+  dps: 1690.42167
+  tps: 1716.20091
   dtps: 1.98583
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-FieldMarshal'sPursuit"
  value: {
-  dps: 1684.06383
-  tps: 1709.828
+  dps: 1700.7755
+  tps: 1726.66927
   dtps: 2.31883
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-General'sChainGloves-16571"
  value: {
-  dps: 1673.05383
-  tps: 1699.00379
+  dps: 1682.00483
+  tps: 1708.03605
   dtps: 2.31883
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-GiantstalkerArmor"
  value: {
-  dps: 1596.42667
-  tps: 1622.13845
+  dps: 1605.3225
+  tps: 1631.17435
   dtps: 2.05383
  }
 }
@@ -211,48 +211,48 @@ dps_results: {
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-Knight-Lieutenant'sChainGauntlets-16403"
  value: {
-  dps: 1637.98383
-  tps: 1663.82165
+  dps: 1644.0585
+  tps: 1670.00602
   dtps: 2.254
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-Knight-Lieutenant'sChainVices-23279"
  value: {
-  dps: 1648.6505
-  tps: 1674.49969
+  dps: 1662.73433
+  tps: 1688.68811
   dtps: 2.254
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-LieutenantCommander'sPursuance"
  value: {
-  dps: 1569.60583
-  tps: 1595.08872
+  dps: 1583.977
+  tps: 1609.60255
   dtps: 2.31883
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-LieutenantCommander'sPursuit"
  value: {
-  dps: 1468.752
-  tps: 1494.00196
+  dps: 1478.593
+  tps: 1503.99525
   dtps: 2.254
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-Marshal'sChainGrips-16463"
  value: {
-  dps: 1673.05383
-  tps: 1699.00379
+  dps: 1682.00483
+  tps: 1708.03605
   dtps: 2.31883
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-Predator'sArmor"
  value: {
-  dps: 1605.228
-  tps: 1631.03915
+  dps: 1613.95867
+  tps: 1639.83701
   dtps: 2.254
  }
 }
@@ -267,8 +267,8 @@ dps_results: {
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-Striker'sGarb"
  value: {
-  dps: 1744.83633
-  tps: 1771.00248
+  dps: 1756.20717
+  tps: 1782.47691
   dtps: 2.31883
  }
 }
@@ -283,8 +283,8 @@ dps_results: {
 dps_results: {
  key: "TestLoneWolf-Phase1-AllItems-Warlord'sPursuit"
  value: {
-  dps: 1684.06383
-  tps: 1709.828
+  dps: 1700.7755
+  tps: 1726.66927
   dtps: 2.31883
  }
 }

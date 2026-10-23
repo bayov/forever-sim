@@ -106,8 +106,8 @@ dps_results: {
 dps_results: {
  key: "TestP1Balance-Phase1-AllItems-CenarionRaiment"
  value: {
-  dps: 769.8285
-  tps: 785.67644
+  dps: 769.515
+  tps: 785.36271
  }
 }
 dps_results: {
@@ -134,8 +134,8 @@ dps_results: {
 dps_results: {
  key: "TestP1Balance-Phase1-AllItems-FeralheartRaiment"
  value: {
-  dps: 803.901
-  tps: 821.55542
+  dps: 804.05
+  tps: 821.7043
  }
 }
 dps_results: {
@@ -155,8 +155,8 @@ dps_results: {
 dps_results: {
  key: "TestP1Balance-Phase1-AllItems-StormrageRaiment"
  value: {
-  dps: 742.16317
-  tps: 756.63438
+  dps: 742.09517
+  tps: 756.56608
  }
 }
 dps_results: {

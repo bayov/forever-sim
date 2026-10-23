@@ -15,10 +15,10 @@ import (
 // target's level, our weapon skill and our hit.
 //
 // Miss is 5% plus 0.1% for each point the target's defense (its level times 5) is above
-// our weapon skill, or 0.2% a point when that gap is more than 10. Our hit comes off it.
-// When the gap is more than 10, the first (gap - 10) * 0.2% of our hit does nothing, so a
-// level 60 with 300 skill needs 9% hit against a level 63 boss (magey's 2019 Classic attack
-// table tests, and the 1% Blizzard described).
+// our weapon skill, or 0.2% a point when that gap is more than 10. Our hit comes off it, all
+// of it: Forever has none of Classic's hit suppression, so a level 60 with 300 skill needs 8%
+// hit against a level 63 boss, not 9% (wowsims/forever 3af105fe16: 4,259 white swings at 1%
+// hit against +3 mobs missed 7.04%).
 //
 // Forever's Orc Axe Specialization is crit, not skill, so our axes add no skill here.
 // Huge Thorium Battleaxe gives 2 two-handed axe skill under Forever (10 in Classic), and
@@ -34,16 +34,16 @@ func TestOrcShamanMissChance(t *testing.T) {
 		want               float64
 	}{
 		{"level 60 against a level 63 boss", 60, 63, darkEdge, 0, stormstrike, 0, 0.08},
-		{"the first 1% of hit does nothing against the boss", 60, 63, darkEdge, 0, stormstrike, 1, 0.08},
-		{"5% hit against the boss", 60, 63, darkEdge, 0, stormstrike, 5, 0.04},
-		{"the 9% hit cap", 60, 63, darkEdge, 0, stormstrike, 9, 0},
+		{"1% hit against the boss", 60, 63, darkEdge, 0, stormstrike, 1, 0.07},
+		{"5% hit against the boss", 60, 63, darkEdge, 0, stormstrike, 5, 0.03},
+		{"the 8% hit cap", 60, 63, darkEdge, 0, stormstrike, 8, 0},
 		{"hit over the cap", 60, 63, darkEdge, 0, stormstrike, 12, 0},
-		{"Tidal Focus 5/5 against the boss", 60, 63, darkEdge, 0, stormstrike + "-05", 0, 0.04},
+		{"Tidal Focus 5/5 against the boss", 60, 63, darkEdge, 0, stormstrike + "-05", 0, 0.03},
 		{"level 30 against Vishas (level 32)", 30, 32, whirlwind, 0, stormstrike, 0, 0.06},
 		{"1% hit against Vishas", 30, 32, whirlwind, 0, stormstrike, 1, 0.05},
 		{"level 30 against a level 33", 30, 33, whirlwind, 0, stormstrike, 0, 0.08},
 		{"152 skill against a level 33", 30, 33, whirlwind, 2, stormstrike, 0, 0.076},
-		{"152 skill and 1% hit against a level 33", 30, 33, whirlwind, 2, stormstrike, 1, 0.072},
+		{"152 skill and 1% hit against a level 33", 30, 33, whirlwind, 2, stormstrike, 1, 0.066},
 		{"Huge Thorium Battleaxe's +2 skill against the boss", 60, 63, thorium, 0, stormstrike, 0, 0.076},
 		{"the same level", 30, 30, whirlwind, 0, stormstrike, 0, 0.05},
 		{"5 levels below us", 30, 25, whirlwind, 0, stormstrike, 0, 0.025},

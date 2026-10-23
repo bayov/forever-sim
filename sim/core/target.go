@@ -365,6 +365,13 @@ func newWeaponAttackTable(attacker *Unit, defender *Unit, weapon *Item, skillGap
 			table.HitSuppression = 0
 			table.BaseMissChance = 0.05 + (targetDefense-weaponSkill)*0.001
 		}
+		// Forever has no hit suppression: every point of hit takes a point off the miss, so
+		// the yellow cap against a level 63 boss at 300 skill is the 8% base miss. Its logs
+		// show 4,259 white swings at 1% hit against +3 mobs missing 7.04% (wowsims/forever
+		// 3af105fe16, Wilson 95% CI 6.31% to 7.85%), where suppression gives 8%.
+		if attacker.Env != nil && attacker.Env.IsForever() {
+			table.HitSuppression = 0
+		}
 
 		if targetDefense-cappedSkill > 10 {
 			table.BaseParryChance = 0.05 + (targetDefense-cappedSkill)*0.006 // = 14

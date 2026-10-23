@@ -43,3 +43,30 @@ func TestWeaponSkillGap(t *testing.T) {
 		}
 	}
 }
+
+// TestHitSuppressionByRuleset checks that the first (skill gap - 10) x 0.2% of hit does nothing
+// in Classic, 1% for a level 60 at 300 skill against a level 63 boss, and that Forever has no
+// such loss (wowsims/forever 3af105fe16). The base miss is 8% either way.
+func TestHitSuppressionByRuleset(t *testing.T) {
+	sword := &Item{WeaponType: proto.WeaponType_WeaponTypeSword, HandType: proto.HandType_HandTypeOneHand}
+	cases := []struct {
+		ruleset           proto.Ruleset
+		mobLevel          int32
+		miss, suppression float64
+	}{
+		{proto.Ruleset_RulesetForever, 63, 8, 0},
+		{proto.Ruleset_RulesetForever, 62, 6, 0},
+		{proto.Ruleset_RulesetClassic, 63, 8, 1},
+		{proto.Ruleset_RulesetClassic, 62, 6, 0},
+	}
+	for _, c := range cases {
+		env := &Environment{Ruleset: c.ruleset}
+		attacker := &Unit{Type: PlayerUnit, Level: 60, Env: env, stats: stats.Stats{}}
+		defender := &Unit{Type: EnemyUnit, Level: c.mobLevel, Env: env, stats: stats.Stats{}}
+		table := NewAttackTable(attacker, defender, sword)
+		if math.Abs(100*table.BaseMissChance-c.miss) > 1e-9 || math.Abs(100*table.HitSuppression-c.suppression) > 1e-9 {
+			t.Errorf("%s, level %d mob: miss %.2f%% and hit suppression %.2f%%, want %.2f%% and %.2f%%",
+				c.ruleset, c.mobLevel, 100*table.BaseMissChance, 100*table.HitSuppression, c.miss, c.suppression)
+		}
+	}
+}

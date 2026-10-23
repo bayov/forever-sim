@@ -847,7 +847,10 @@ export class Player<SpecType extends Spec> {
 
 		const skillDiff = defenderDefense - weaponSkill;
 		// Due to warrior HS bug, hit cap for crit cap calculation ignores the 19% penalty
-		let meleeHitCap = skillDiff <= 10 ? 5.0 + skillDiff * 0.1 : 5.0 + skillDiff * 0.2 + (skillDiff - 10) * 0.2;
+		// Classic ignores the first (skillDiff - 10) * 0.2% of hit. Forever has no such loss, so the cap is
+		// the base miss: 8% at 300 skill against a level 63 (wowsims/forever 3af105fe16).
+		const hitSuppression = skillDiff > 10 && this.sim.getRuleset() !== Ruleset.RulesetForever ? (skillDiff - 10) * 0.2 : 0.0;
+		let meleeHitCap = (skillDiff <= 10 ? 5.0 + skillDiff * 0.1 : 5.0 + skillDiff * 0.2) + hitSuppression;
 		meleeHitCap = this.getGear().isDualWielding() && (this.spec !== Spec.SpecWarrior || useDWPenalty) ? meleeHitCap + 19.0 : meleeHitCap + 0.0;
 
 		const dodgeCap = 5.0 + skillDiff * 0.1;

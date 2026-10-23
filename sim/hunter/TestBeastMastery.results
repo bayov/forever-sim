@@ -99,48 +99,48 @@ stat_weights_results: {
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-BeastmasterArmor"
  value: {
-  dps: 1291.077
-  tps: 1081.60564
+  dps: 1300.57033
+  tps: 1085.7144
   dtps: 1.68283
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-BloodGuard'sChainGauntlets-16530"
  value: {
-  dps: 1395.523
-  tps: 1164.75845
+  dps: 1410.79017
+  tps: 1175.63408
   dtps: 1.73083
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-BloodGuard'sChainVices-22862"
  value: {
-  dps: 1401.89633
-  tps: 1172.78144
+  dps: 1416.9485
+  tps: 1183.39423
   dtps: 1.73083
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-Champion'sPursuance"
  value: {
-  dps: 1345.92317
-  tps: 1130.32356
+  dps: 1363.22167
+  tps: 1143.63999
   dtps: 1.77833
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-Champion'sPursuit"
  value: {
-  dps: 1267.47283
-  tps: 1056.67598
+  dps: 1278.55267
+  tps: 1063.38525
   dtps: 1.73083
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-CryptstalkerArmor"
  value: {
-  dps: 1494.11017
-  tps: 1259.86515
+  dps: 1516.1645
+  tps: 1279.24014
   dtps: 1.77833
  }
 }
@@ -163,32 +163,32 @@ dps_results: {
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-DragonstalkerArmor"
  value: {
-  dps: 1406.1445
-  tps: 1184.58212
+  dps: 1422.375
+  tps: 1197.28602
   dtps: 1.53283
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-FieldMarshal'sPursuit"
  value: {
-  dps: 1427.5785
-  tps: 1200.18672
+  dps: 1446.49133
+  tps: 1215.23257
   dtps: 1.77833
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-General'sChainGloves-16571"
  value: {
-  dps: 1417.25317
-  tps: 1187.25962
+  dps: 1432.823
+  tps: 1198.54708
   dtps: 1.77833
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-GiantstalkerArmor"
  value: {
-  dps: 1359.12533
-  tps: 1137.74617
+  dps: 1371.049
+  tps: 1145.78436
   dtps: 1.58667
  }
 }
@@ -211,48 +211,48 @@ dps_results: {
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-Knight-Lieutenant'sChainGauntlets-16403"
  value: {
-  dps: 1395.523
-  tps: 1164.75845
+  dps: 1410.79017
+  tps: 1175.63408
   dtps: 1.73083
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-Knight-Lieutenant'sChainVices-23279"
  value: {
-  dps: 1401.89633
-  tps: 1172.78144
+  dps: 1416.9485
+  tps: 1183.39423
   dtps: 1.73083
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-LieutenantCommander'sPursuance"
  value: {
-  dps: 1345.92317
-  tps: 1130.32356
+  dps: 1363.22167
+  tps: 1143.63999
   dtps: 1.77833
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-LieutenantCommander'sPursuit"
  value: {
-  dps: 1267.47283
-  tps: 1056.67598
+  dps: 1278.55267
+  tps: 1063.38525
   dtps: 1.73083
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-Marshal'sChainGrips-16463"
  value: {
-  dps: 1417.25317
-  tps: 1187.25962
+  dps: 1432.823
+  tps: 1198.54708
   dtps: 1.77833
  }
 }
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-Predator'sArmor"
  value: {
-  dps: 1337.81683
-  tps: 1115.00009
+  dps: 1350.71917
+  tps: 1124.80889
   dtps: 1.73083
  }
 }
@@ -267,8 +267,8 @@ dps_results: {
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-Striker'sGarb"
  value: {
-  dps: 1433.115
-  tps: 1205.84625
+  dps: 1447.0695
+  tps: 1217.05518
   dtps: 1.77833
  }
 }
@@ -283,8 +283,8 @@ dps_results: {
 dps_results: {
  key: "TestBeastMastery-Phase1-AllItems-Warlord'sPursuit"
  value: {
-  dps: 1427.5785
-  tps: 1200.18672
+  dps: 1446.49133
+  tps: 1215.23257
   dtps: 1.77833
  }
 }

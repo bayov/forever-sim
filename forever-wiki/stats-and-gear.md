@@ -5,6 +5,7 @@ Blizzard called this "a deliberate un-solving of the Classic gear meta". These a
 ## Combat stat changes (from the Deep Dive panel)
 
 - Hit chance is one stat across melee, ranged and spell.
+- Physical attacks lose no hit against higher-level targets (from logs, not the panel). Classic ignored the first (skill gap - 10) x 0.2% of hit, 1% at 300 skill against a level 63, so its cap was 9%. Forever logs show every point counts: 4,259 white swings at 1% hit against +3 mobs missed 7.04% (wowsims/forever 3af105fe16), where Classic gives 8%. The cap against a level 63 boss is the 8% base miss, 27% for dual-wield white hits.
 - Critical strike chance is one stat across melee, ranged and spell. The crit racials follow this: they apply to spells as well as attacks. Until client 70425 they needed a weapon type (Human swords 2%, Dwarf maces 1%, Orc axes 1%). 70425 made Human Ruthless and Orc Savage work with any weapon and replaced the Dwarf's with Earth Fury, 2% more crit damage.
 - Weapon skill survives but is spread more thinly across items and "is no longer overwhelming". Weapon skill racials are gone, replaced by crit (see [racials.md](racials.md)).
 - A new stat reduces the chance your attacks get dodged or parried (an expertise-like stat). Mostly aimed at tanks.
