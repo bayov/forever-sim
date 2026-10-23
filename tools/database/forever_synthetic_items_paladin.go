@@ -29,7 +29,7 @@ import (
 //
 //	head     66   83.66 /  83.34   45.5 /  46.5
 //	neck     71   48.64 /  48.27   29.0 /  28.0
-//	shoulder 66   63.48 /  63.08   34.0 /  34.9
+//	shoulder 66   63.48 /  63.08   34.2 /  34.9
 //	back     71   47.92 /  48.27   27.0 /  28.0
 //	chest    66   83.52 /  83.34   46.0 /  46.5
 //	wrist    71   48.64 /  48.27   29.0 /  28.0
@@ -42,11 +42,15 @@ import (
 //	twohand  76   91.08 /  90.56
 //
 // Armor 750.6, weapon 91.1. Stat mix (standards 5a and 5b, gear_targets.md at the hit-adjusted
-// targets): Stamina 17.6% of the set (target 17.7), Strength 12.6 (12.3), Agility 2.5 (2.4),
-// Intellect 10.0 (10.0), Spirit 10.0 (10.0), attack power 1.5 (1.5), spell power 28.3 (28.4), crit
-// 6.9 (7.0), hit 10.7. Ret keeps its Intellect and spell power amounts; the physical stats share
-// what hit leaves. 90 hit rating (9%) is the melee cap from gear for the sub Holy and Shock builds;
-// the same set with 60 hit rating simmed 9 / 34 / 11 DPS lower on twist / sub Holy / Shock.
+// targets): Stamina 17.6% of the set (target 17.7), Strength 13.2 (12.9), Agility 2.5 (2.5),
+// Intellect 10.0 (10.0), Spirit 10.0 (10.0), attack power 1.5 (1.6), spell power 28.3 (28.4), crit
+// 7.5 (7.4), hit 9.5. Ret keeps its Intellect and spell power amounts; the physical stats share
+// what hit leaves. 80 hit rating (8%) is the melee cap from gear for the sub Holy and Shock builds
+// (Forever has no hit suppression, so the yellow cap against a level 63 boss is the 8% base miss,
+// standards 4). The set was built to the old 9% cap; the 2026-10-23 regear took the shoulders' 10
+// hit rating and gave it 5 Strength and 5 crit rating, which follows the 5a mix: +2.7 / +2.3 / +2.3
+// at 180 sec on twist / sub Holy / Shock (all 10 into crit rating on the boots is 0.7 more, Strength
+// 0.7 less). Earlier the same set with 60 hit rating simmed 9 / 34 / 11 DPS lower than with 90.
 //
 // Trinkets (standards 1b, 8a): a stat trinket at 0.56 x L(71) = 45.9 linear (spell power 32 and crit
 // rating 18: 45.5, 1.7-norm 34.7), and an on-use trinket of 140 spell power for 20 sec every 2 min
@@ -92,8 +96,8 @@ func init() {
 		retribution(&proto.UIItem{
 			Id: 992003, Name: "Retribution Synthetic Shoulder (Phase 1)", Icon: "inv_shoulder_10",
 			Type: proto.ItemType_ItemTypeShoulder, ArmorType: proto.ArmorType_ArmorTypePlate,
-			Stats:     stats.Stats{stats.Strength: 6, stats.Stamina: 14, stats.Intellect: 18, stats.SpellPower: 18, stats.Armor: 562}.ToFloatArray(),
-			HitRating: 10,
+			Stats:      stats.Stats{stats.Strength: 11, stats.Stamina: 14, stats.Intellect: 18, stats.SpellPower: 18, stats.Armor: 562}.ToFloatArray(),
+			CritRating: 5,
 			Ilvl:      66,
 		}),
 		// Back, item level 71, in place of Cape of the Black Baron.

@@ -12,18 +12,18 @@
     "Protection",
     "Retribution"
   ],
-  "gearSet": "level60_phase1_synthetic",
+  "gearSet": "level60_phase1_synthetic_crusader_duty",
   "apl": "level60_shock_crusader_duty",
   "published": {
-    "dps": 893.0,
-    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 858.3)"
+    "dps": 868.6,
+    "source": "Class worker regear and rotation round, 2026-10-23: 8% hit cap regear, talents and rotations re-searched (seeds 1 and 1000003, 20000 iterations, 120 / 180 / 300 s)"
   },
   "verify": {
-    "dps": 893.01,
-    "stderr": 0.24,
+    "dps": 868.56,
+    "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "verify.py, 180 s, seed 1 (seed 1000003: 867.56)"
   },
   "summary": "The Holy Shock build, keeping Judgement of the Crusader on the boss for the raid.",
   "keyTalents": [
@@ -44,13 +44,13 @@
     "Consecration on cooldown, down to the last point of mana",
     "Judgement on cooldown on Seal of Righteousness; re-seal Righteousness whenever it is down (no twisting)",
     "Holy Strike on cooldown",
-    "Light's Vigil whenever it is not on the target and mana is at or above 30%",
+    "Light's Vigil whenever it is not on the target, mana is at or above 30% and the next swing is more than 2s off (its cast resets the swing)",
     "Holy Shock on a Vigil-marked target (detonates it, refunds 75% of its mana, starts no cooldown), or on cooldown below 30% mana; Divine Favor goes on a Holy Shock",
     "Racials, Goblin Sapper, Major Mana Potion and Demonic Rune on free GCDs"
   ],
   "consumes": [
     "Flask of Supreme Power",
-    "Elixir of Greater Agility",
+    "Elixir of Cunning",
     "Elixir of Ferocity",
     "Juju Might",
     "Elixir of Greater Firepower (Forever's Holy Power elixir)",
@@ -69,13 +69,15 @@
     "Demonic Rune"
   ],
   "caveats": [
-    "Runs short of mana: 4.0% ahead of twist at 120s, 2.7% at 180s, 1.0% behind at 300s.",
+    "Carries Libram of Fervor (+33 to Judgement of the Crusader), +5.9 over Libram of Law on twist duty and +7.7 on Shock duty at 180s.",
+    "Runs short of mana: 7.4% behind twist at 120s, 8.2% at 180s, 9.8% at 300s.",
     "Divine Precision's hit doesn't cover Judgement of Righteousness.",
     "Holy Shock is worth 148 DPS and Light's Vigil about 91 (before client 70425).",
     "A missed Holy Shock wastes the Vigil (about 1% Holy miss).",
     "Holy Strike's flat bonus is inside the weapon percent (client data). Unconfirmed on the beta.",
     "High Holy Strike and Consecration ranks may be out of date (about 1.2% at stake).",
-    "Seal of Righteousness adds 12% of spell power a hit with a two-hander, once (70425 tooltip). Counted twice it would be 46-51 DPS higher. At the proc spell's 0 it would be 53-59 lower."
+    "Seal of Righteousness adds 12% of spell power a hit with a two-hander, once (70425 tooltip). Counted twice it would be 46-51 DPS higher. At the proc spell's 0 it would be 53-59 lower.",
+    "The Goblin Land Mine (autocast, about 2.3 a fight) costs 1 to 6 DPS here; kept because every preset carries explosives (standards 11)."
   ],
   "notes": "Request: paladin__level_60_shock with raid debuff judgementOfTheCrusader removed and the level60_shock_crusader_duty rotation.",
   "duty": "Judgement of the Crusader",

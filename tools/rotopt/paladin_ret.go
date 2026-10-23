@@ -103,6 +103,10 @@ func (paladinRet) Knobs() []Knob {
 		// seal that drops (after the Judgement of the Crusader opener, or after 30 sec) is
 		// recast first.
 		{Name: "sealFirst", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Light's Vigil only when the next swing is more than this many tenths of a second off,
+		// so its cast (which resets the swing when it completes) goes out right after a swing
+		// rather than just before one. 0 any time.
+		{Name: "vigilSwing", Default: 0, Min: 0, Max: 30, Step: 5},
 	}
 }
 
@@ -231,6 +235,12 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 			var vigilFloor value
 			if k["lightsVigilMana"] > 0 {
 				vigilFloor = ge(currentManaPercent(), num(k["lightsVigilMana"]/100))
+			}
+			if k["vigilSwing"] > 0 {
+				vigilFloor = and(vigilFloor, gt(mainHandTimeToNext(), seconds(k["vigilSwing"]/10)))
+			}
+			if k["vigilSwing"] > 0 {
+				vigilFloor = and(vigilFloor, gt(mainHandTimeToNext(), seconds(k["vigilSwing"]/10)))
 			}
 			if k["vigilLongFight"] > 0 {
 				// The fight is short when the time left is under vigilLongFight minus the time spent.

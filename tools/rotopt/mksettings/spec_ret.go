@@ -7,7 +7,14 @@ import (
 )
 
 func init() {
-	specs["ret"] = &specSetup{
+	specs["ret"] = retSpec(false)
+	specs["ret_shock"] = retSpec(true)
+}
+
+// retSpec is the Retribution setup. The Holy Shock builds (shock) take their own consumes
+// (ShockConsumes in ui/retribution_paladin/presets.ts), as they run short of mana.
+func retSpec(shock bool) *specSetup {
+	return &specSetup{
 		uiDir: "ui/retribution_paladin",
 		// The paladin is in a melee group with a shaman. Enhancing Totems is not in Forever's tree,
 		// so the totems are the regular ones: Windfury Totem, Mana Spring Totem, and Grace of Air
@@ -21,7 +28,7 @@ func init() {
 		// The consumes the level 60 search kept, each tried slot by slot on the synthetic Phase 1
 		// set at 180 and 300 sec (see the Level 60 consumes in ui/retribution_paladin/presets.ts).
 		consumes: func() *proto.Consumes {
-			return &proto.Consumes{
+			consumes := &proto.Consumes{
 				AgilityElixir:     proto.AgilityElixir_ElixirOfCunning,
 				AttackPowerBuff:   proto.AttackPowerBuff_JujuMight,
 				DefaultPotion:     proto.Potions_DragonfirePotion,
@@ -41,6 +48,10 @@ func init() {
 				StrengthBuff:      proto.StrengthBuff_ElixirOfFerocity,
 				ZanzaBuff:         proto.ZanzaBuff_ROIDS,
 			}
+			if shock {
+				consumes.DefaultPotion = proto.Potions_MajorManaPotion
+			}
+			return consumes
 		},
 		// The paladin's own blessing, one at a time, where everyone else assumes a paladin in
 		// the group and takes Kings. Kings won the level 20 search (see the wiki), the flag is

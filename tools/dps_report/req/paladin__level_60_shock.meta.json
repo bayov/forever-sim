@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_shock",
   "published": {
-    "dps": 901.7,
-    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 866.8)"
+    "dps": 865.5,
+    "source": "Class worker regear and rotation round, 2026-10-23: 8% hit cap regear, talents and rotations re-searched (seeds 1 and 1000003, 20000 iterations, 120 / 180 / 300 s)"
   },
   "verify": {
-    "dps": 901.7,
-    "stderr": 0.25,
+    "dps": 865.46,
+    "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "verify.py, 180 s, seed 1 (seed 1000003: 865.17)"
   },
   "summary": "Deep Holy to Light's Vigil with Holy Shock and Seal of Righteousness, no twisting.",
   "keyTalents": [
@@ -42,13 +42,13 @@
     "Consecration on cooldown, down to the last point of mana",
     "Judgement on cooldown on Seal of Righteousness; re-seal Righteousness whenever it is down (no twisting)",
     "Holy Strike on cooldown",
-    "Light's Vigil whenever it is not on the target and mana is at or above 30%",
+    "Light's Vigil whenever it is not on the target, mana is at or above 30% and the next swing is more than 2s off (its cast resets the swing)",
     "Holy Shock on a Vigil-marked target (detonates it, refunds 75% of its mana, starts no cooldown), or on cooldown below 30% mana; Divine Favor goes on a Holy Shock",
     "Racials, Goblin Sapper, Major Mana Potion and Demonic Rune on free GCDs"
   ],
   "consumes": [
     "Flask of Supreme Power",
-    "Elixir of Greater Agility",
+    "Elixir of Cunning",
     "Elixir of Ferocity",
     "Juju Might",
     "Elixir of Greater Firepower (Forever's Holy Power elixir)",
@@ -67,13 +67,14 @@
     "Demonic Rune"
   ],
   "caveats": [
-    "Runs short of mana: 4.0% ahead of twist at 120s, 2.7% at 180s, 1.0% behind at 300s.",
+    "Runs short of mana: 7.4% behind twist at 120s, 8.2% at 180s, 9.8% at 300s.",
     "Divine Precision's hit doesn't cover Judgement of Righteousness.",
     "Holy Shock is worth 148 DPS and Light's Vigil about 91 (before client 70425).",
     "A missed Holy Shock wastes the Vigil (about 1% Holy miss).",
     "Holy Strike's flat bonus is inside the weapon percent (client data). Unconfirmed on the beta.",
     "High Holy Strike and Consecration ranks may be out of date (about 1.2% at stake).",
-    "Seal of Righteousness adds 12% of spell power a hit with a two-hander, once (70425 tooltip). Counted twice it would be 46-51 DPS higher. At the proc spell's 0 it would be 53-59 lower."
+    "Seal of Righteousness adds 12% of spell power a hit with a two-hander, once (70425 tooltip). Counted twice it would be 46-51 DPS higher. At the proc spell's 0 it would be 53-59 lower.",
+    "The Goblin Land Mine (autocast, about 2.3 a fight) costs 1 to 6 DPS here; kept because every preset carries explosives (standards 11)."
   ],
   "notes": "Preset options are primarySeal Righteousness, as mksettings writes."
 }

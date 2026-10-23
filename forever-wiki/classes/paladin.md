@@ -70,6 +70,16 @@ Where wowsims/forever has in-game measurements or the game files on its side, th
 
 At 180 sec (20,000 iterations, seed 1), the Level 60 presets: twist 877.2 -> 935.2, sub Holy 871.1 -> 935.0, Shock 780.3 -> 827.7, and the undead and Crusader duty variants alike. Champion of the Light is +34 to +39 on the builds that take it, Judgement of Righteousness on the melee table +22 to +25 (+40 to +44 on Shock, which judges Righteousness), Judgement of Command +4 to +7, Hammer of Wrath -1.5 to -2, Consecration's Holy Power +2 on Shock, the Seal of Righteousness proc's lost Holy Power -2.6 on Shock, Sanctified Judgement's larger refund -1.7 to +5.0 (noise, except +1.9 and +5.0 on the mana-short Shock builds) and Vindication under 0.5.
 
+## Regear and rotation round (2026-10-23)
+
+With no melee hit suppression under Forever the yellow cap against a level 63 boss is 8% (standards 4), and the Level 60 presets were re-tuned against it (20,000 iterations, seeds 1 and 1000003, paired at 120 / 180 / 300 sec):
+
+- Gear: the shoulders' 10 hit rating went to 5 Strength and 5 crit rating (80 rating, 8% from gear), +2.3 to +2.8 on every build. Precision now puts the twist build's melee hit 3% over the cap (it still adds spell hit).
+- Talents: the sub Holy and both vs Undead builds take `550030022--05225331001330321` (no Protection points: Divine Strength 5, Divine Intellect 5, Improved Seals 3, Reverence 2, Purifying Power 2, Holy Conduit 2): vs Undead +29.0 at 180 sec, sub Holy vs Undead +20.7, sub Holy +1.0 (+12.6 at 300). Twist and Shock keep theirs.
+- Rotations: Light's Vigil waits until the next swing is more than 2 sec off, since its 1.5 sec cast resets the swing when it completes (+35 / +40 / +32 at 180 sec on Shock / Shock vs Undead / Shock duty); the vs Undead rotation drops Holy Wrath (2 sec cast, +6.8); sub Holy keeps Seal of Righteousness up, twisting to Seal of Command (+0.5 to +1.1); the twist goes on at any mana (+0.1 at 180 sec, +5.7 at 300).
+- Relics and consumables: Libram of Fervor (+33 to Judgement of the Crusader's Holy damage taken, a world drop) for the Crusader duty builds (+5.9 twist, +7.7 Shock); Libram of Law stays elsewhere (Libram of Invocation is -2.1 / -2.3 on twist / sub Holy at 180 sec, +3 and +2 at 300). The Shock builds take the Major Mana Potion (+12.8 to +18.4 over the Dragonfire Potion), the twist builds keep the Dragonfire Potion. The Goblin Land Mine costs 1 to 6 on every build and stays (standards 11).
+- Human stays the best race on every build (2.4 to 6.0 over Undead at 180 sec). At 180 sec: sub Holy 944.5 (the class default now), twist 943.3, Shock 865.5, vs Undead 1047.8, Shock vs Undead 965.2.
+
 ## Trait curves, client 1.60.1.70338 (2026-10-12)
 
 Forever's talents are traits: TraitDefinitionEffectPoints gives every talent effect a per-rank curve, and the curve overrides the base points on the rank 1 spell, which can be a Classic leftover. The paladin tree (TraitTree 1100) per rank:
