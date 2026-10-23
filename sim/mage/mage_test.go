@@ -37,7 +37,7 @@ func TestP1Mage(t *testing.T) {
 }
 
 // The Level 60 Frostfire build (ui/mage/presets.ts).
-var P1Talents = "-0155003013012503-00550003310003002"
+var P1Talents = "-0155003013012503-0235000311203002"
 
 var PlayerOptions = &proto.Player_Mage{
 	Mage: &proto.Mage{

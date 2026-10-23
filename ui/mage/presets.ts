@@ -168,53 +168,71 @@ export const DefaultAPL = APLLevel60Frostfire;
 // added Arcane Wrath, so every Arcane string reads differently from the 70338 ones. Fire Power
 // is 3 points and Critical Mass 5, and Winter's Chill only helps Cone of Cold now.
 //
+// The 2026-10-20 hotfix to 70450 took Piercing Ice out of the Frost tree, made Elemental Precision
+// 3 points of 2%, and swapped Frostbite with Permafrost and Frost Channeling with Improved Blizzard
+// (the Frost strings read differently from here on). The freed points were placed by sims at 180
+// sec, 10,000 to 40,000 iterations; the other points are as the search left them.
+//
 // Frostfire (0/29/22): Incineration, Improved Fireball, Ignite, Burning Soul 3 (pushback),
 // Pyroblast, Improved Scorch, Heating Up, Master of Elements, Critical Mass 5 and Fire Power 3 in
-// Fire, Elemental Precision, Ice Shards, Piercing Ice, Frost Channeling, Ice Lance, Shatter and
-// Fingers of Frost in Frost. Frostfire Bolt is Fire and Frost at once, so it gets Fire Power,
-// Ignite and Critical Mass and also Ice Shards, Piercing Ice and Shatter. A second seed with
-// Arcane Blast (10 Arcane points, without Fingers of Frost) ended 65 behind on a Combustion build.
-// It is 1025.4 / 1018.1 / 980.6 at 120 / 180 / 300 sec (Human). Frost Channeling 3 does nothing for this build (the
-// client leaves Frostfire Bolt out of it): the points are the 20 in Frost that Fingers of Frost
-// needs.
+// Fire, Elemental Precision, Ice Shards, Frost Channeling, Ice Lance, Shatter and Fingers of Frost
+// in Frost. Frostfire Bolt is Fire and Frost at once, so it gets Fire Power, Ignite and Critical
+// Mass and also Ice Shards and Shatter. A second seed with Arcane Blast (10 Arcane points, without
+// Fingers of Frost) ended 65 behind on a Combustion build. It is 1047.6 / 1041.5 / 997.8 at 120 /
+// 180 / 300 sec (Human; 1081.9 at 180 before the hotfix). Frost Channeling 3 does nothing for this
+// build (the client leaves Frostfire Bolt out of it): the points are the 20 in Frost that Fingers
+// of Frost needs, and since the hotfix so are Improved Frostbolt 2, Improved Blizzard 1 and Arctic
+// Reach 2, the five Piercing Ice and Elemental Precision gave back. Leaving Fingers of Frost for 12
+// Arcane points (Arcane Subtlety, Arcane Concentration) is 1009.3.
 export const TalentsLevel60Frostfire = PresetUtils.makePresetTalents(
 	'Level 60 Frostfire',
-	SavedTalents.create({ talentsString: '-0155003013012503-00550003310003002' }),
+	SavedTalents.create({ talentsString: '-0155003013012503-0235000311203002' }),
 	{ tooltip: 'Fire and Frost for Frostfire Bolt: Heating Up, Fingers of Frost, Shatter.', group: 'Level 60' },
 );
 // Frost (17/3/31): every Frost damage talent to Ice Barrier but Winter's Chill (a Cone of Cold
 // debuff since 70425), with Arcane Concentration, Missile Barrage 2, Arcane Impact and Arcane
 // Blast from Arcane: one Arcane Blast every 15 sec is 15% of Intellect as spell damage. Incineration
 // 3 is for Ice Lance. The old Winter's Chill points went to Frost Channeling, Arcane Meditation and
-// Permafrost (a point the 30 for Ice Barrier needs). It is 827.9 / 827.3 / 822.4, 19% behind Frostfire (High Order, with the Major
-// Spellblasting Potion and the Greater Frost scroll). 70425 cost it Winter's Chill's crit and
-// Ice Lance's fourth times on a Frozen target.
+// Permafrost (a point the 30 for Ice Barrier needs). Ice Barrier gives 3% Frost damage for a minute
+// and 3% more while the shield holds since the hotfix, and the five points Piercing Ice and
+// Elemental Precision gave back are Frost Warding 2 (a fifth more absorb) and Improved Blizzard 3,
+// which do nothing for the damage but are what the 30 for Ice Barrier needs. It is 823.8 / 820.8 /
+// 814.3, 21% behind Frostfire (High Order, with the Major Spellblasting Potion and the Greater Frost
+// scroll; 843.9 at 180 before the hotfix). Stopping at Fingers of Frost (22 Frost) for Arcane
+// Subtlety, Arcane Mind and Arcane Instability is 885.1 at 180 sec, and Arcane Subtlety in place
+// of two Incineration points 839.2. 70425 cost it Winter's Chill's crit and Ice Lance's fourth
+// times on a Frozen target.
 export const TalentsLevel60Frost = PresetUtils.makePresetTalents(
 	'Level 60 Frost',
-	SavedTalents.create({ talentsString: '05020050031001-03-0555100331001301201' }),
+	SavedTalents.create({ talentsString: '05020050031001-03-253500133101301201' }),
 	{
 		tooltip: 'Deep Frost: Frostbolt, Fingers of Frost, Shatter, with Arcane Blast for spell damage.',
 		group: 'Level 60',
 	},
 );
-// Fire (11/35/5): every Fire damage talent to Combustion with Critical Mass 5, Burning Soul 3
+// Fire (13/35/3): every Fire damage talent to Combustion with Critical Mass 5, Burning Soul 3
 // (pushback) and Master of Elements 3, with Arcane Concentration and Missile Barrage 2 (Fireball
-// has 20% to make Arcane Missiles free and fast) and Elemental Precision 5. It is 1001.2 / 995.5 / 983.4
-// (Human, with the Greater Flame scroll). Every Fire Blast adds a Heating Up stack since 70425,
-// which puts Fire 2% behind Frostfire at 180 sec and ahead of it at 300.
-export const TalentsLevel60Fire = PresetUtils.makePresetTalents('Level 60 Fire', SavedTalents.create({ talentsString: '0402005-23550030130135031-005' }), {
+// has 20% to make Arcane Missiles free and fast) and Elemental Precision 3. The two points the
+// hotfix took off Elemental Precision are Arcane Subtlety 2 (30 less resistance on the boss), worth
+// more than Improved Flamestrike and Blast Wave (1067.2) or Improved Channeling 2 (1067.1). It is
+// 1100.8 / 1094.3 / 1080.9 (Human, with the Greater Flame scroll; 1067.6 at 180 before the
+// hotfix). Every Fire Blast adds a Heating Up stack since 70425, which puts Fire ahead of Frostfire.
+export const TalentsLevel60Fire = PresetUtils.makePresetTalents('Level 60 Fire', SavedTalents.create({ talentsString: '0402205-23550030130135031-003' }), {
 	tooltip: 'Deep Fire to Combustion, with Missile Barrage from Arcane.',
 	group: 'Level 60',
 });
-// Arcane (31/2/18): Arcane to Arcane Power with Arcane Blast, Missile Barrage 2 and Improved
-// Channeling 2 (pushback on Arcane Blast), Incineration 2 (it covers Arcane Blast) and Frost for
-// the Frostbolt filler (Improved Frostbolt, Elemental Precision, Ice Shards, Piercing Ice). Arcane
-// Wrath lost to Missile Barrage's second point: a free Arcane Missiles at twice the speed is worth
-// more than the 3.5 sec cast. It is 929.3 / 922.9 / 913.9, 9% behind Frostfire (Human, on the Arcane gear, with the Precision
-// scroll).
+// Arcane (36/2/13): Arcane to Arcane Power with Arcane Blast, Missile Barrage 2 and Improved
+// Channeling 5 (pushback on Arcane Blast), Arcane Subtlety 2, Incineration 2 (it covers Arcane
+// Blast) and Frost for the Frostbolt filler (Improved Frostbolt, Elemental Precision, Ice Shards).
+// Arcane Wrath lost to Missile Barrage's second point: a free Arcane Missiles at twice the speed is
+// worth more than the 3.5 sec cast. The five points Piercing Ice and Elemental Precision gave back
+// are Arcane Subtlety 2 and Improved Channeling 3 (982.0 at 180 sec, 40,000 iterations), ahead of
+// Arcane Subtlety with Frost Channeling 3 (977.3) and of Frost Channeling and Ice Lance (951.1). It
+// is 989.5 / 981.9 / 971.4, 6% behind Frostfire (Human, on the Arcane gear, with the Precision
+// scroll; 964.7 at 180 before the hotfix).
 export const TalentsLevel60Arcane = PresetUtils.makePresetTalents(
 	'Level 60 Arcane',
-	SavedTalents.create({ talentsString: '0522005003100301531-02-05550003' }),
+	SavedTalents.create({ talentsString: '0552205003100301531-02-0535' }),
 	{
 		tooltip: 'Arcane to Arcane Power: four Arcane Blast stacks for spell damage, Missile Barrage, Frostbolt.',
 		group: 'Level 60',

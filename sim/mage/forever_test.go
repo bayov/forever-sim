@@ -277,7 +277,7 @@ func TestMageFireVulnerability(t *testing.T) {
 // 1.60.1.70425.
 func TestMageShatter(t *testing.T) {
 	// Frost to Winter's Chill 2, with Shatter 3 and Fingers of Frost 2.
-	sim, mage := newMageSim(t, "--055500033100130122")
+	sim, mage := newMageSim(t, "--05350003010130122")
 	target := mage.CurrentTarget
 	frostbolt := topRank(t, "Frostbolt", mage.Frostbolt)
 	iceLance := topRank(t, "Ice Lance", mage.IceLance)
@@ -321,7 +321,7 @@ func TestMageAreaCoefficientsAndCombustion(t *testing.T) {
 // The report assumptions the user ruled on 2026-10-15: Ice Lance takes SoD's 42.9% of spell power
 // on every rank, and Frostbolt rank 10 deals 4% more than the client (rank 9 is unchanged).
 func TestMageRankTuning(t *testing.T) {
-	_, mage := newMageSim(t, "--055500033100130122")
+	_, mage := newMageSim(t, "--05350003010130122")
 	for rank, spell := range mage.IceLance {
 		if spell == nil {
 			continue
@@ -418,5 +418,62 @@ func TestMagePushbackProtection(t *testing.T) {
 		if math.Abs(c.spell.PushbackReduction-c.want) > 1e-9 {
 			t.Errorf("%s ignores pushback %.2f of the time, want %.2f", c.name, c.spell.PushbackReduction, c.want)
 		}
+	}
+}
+
+// Since the 2026-10-20 hotfix Ice Barrier raises Frost damage by 3% while the shield holds, and
+// every cast gives Frigid Power, 3% more for a minute. The absorb is the rank's base and 10% of
+// Frost spell power, and Frost Warding raises it 10% a point. Elemental Precision is 2% hit a
+// point.
+func TestMageIceBarrier(t *testing.T) {
+	// Frost Warding 2, Elemental Precision 3, to Ice Barrier.
+	sim, mage := newMageSim(t, "--253500133101301201")
+	frostbolt := topRank(t, "Frostbolt", mage.Frostbolt)
+	fireBlast := topRank(t, "Fire Blast", mage.FireBlast)
+	if got, want := frostbolt.BonusHitRating, 6*float64(core.SpellHitRatingPerHitChance); math.Abs(got-want) > 1e-9 {
+		t.Errorf("Frostbolt gets %.1f hit rating from Elemental Precision 3, want %.1f", got, want)
+	}
+	frostBase, fireBase := frostbolt.DamageMultiplierAdditive, fireBlast.DamageMultiplierAdditive
+
+	mage.SetGCDTimer(sim, sim.CurrentTime)
+	if !topRank(t, "Ice Barrier", mage.IceBarrier).Cast(sim, &mage.Unit) {
+		t.Fatalf("Ice Barrier didn't cast")
+	}
+	if got := frostbolt.DamageMultiplierAdditive - frostBase; math.Abs(got-0.06) > 1e-9 {
+		t.Errorf("Frostbolt gets %.3f more damage with the shield and Frigid Power up, want 0.06", got)
+	}
+	if got := fireBlast.DamageMultiplierAdditive; got != fireBase {
+		t.Errorf("Fire Blast's damage multiplier moved to %.3f, want %.3f", got, fireBase)
+	}
+
+	// Rank 4 at 60 is 811 + 2 levels of 4, times 1.2 for Frost Warding 2.
+	if got, want := IceBarrierAbsorbAt(4, 60, 0, 2), 819*1.2; math.Abs(got-want) > 1e-9 {
+		t.Errorf("absorb %.1f with no spell power, want %.1f", got, want)
+	}
+	absorb := IceBarrierAbsorbAt(4, 60, mage.frostSpellPower(), 2)
+	hit := func(damage float64) float64 {
+		result := &core.SpellResult{Damage: damage}
+		for _, modifier := range mage.DynamicDamageTakenModifiers {
+			modifier(sim, nil, result)
+		}
+		return result.Damage
+	}
+	if got := hit(500); got != 0 {
+		t.Errorf("a 500 hit does %.1f through the shield, want 0", got)
+	}
+	if got, want := hit(1000), 1500-absorb; math.Abs(got-want) > 1e-9 {
+		t.Errorf("a 1000 hit does %.1f through what is left of the shield, want %.1f", got, want)
+	}
+	if mage.IceBarrierAuras[4].IsActive() {
+		t.Errorf("the shield is still up after it absorbed %.1f", absorb)
+	}
+	if !mage.FrigidPowerAura.IsActive() {
+		t.Errorf("Frigid Power went with the shield")
+	}
+	if got := frostbolt.DamageMultiplierAdditive - frostBase; math.Abs(got-0.03) > 1e-9 {
+		t.Errorf("Frostbolt gets %.3f more damage with Frigid Power alone, want 0.03", got)
+	}
+	if got := hit(1000); got != 1000 {
+		t.Errorf("a 1000 hit does %.1f with the shield gone, want 1000", got)
 	}
 }

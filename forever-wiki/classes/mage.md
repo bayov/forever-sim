@@ -8,6 +8,21 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ settled by the 70338 trait curves] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Server hotfix to 1.60.1.70450 (2026-10-20)
+
+A Frost hotfix the client tables don't carry (70532 still has the old tree). It is in wago.tools' hotfix table (push of 2026-10-20 09:51, build 70450) and on foreverchanges.pro's 2026-10-20 hotfix list, and wowsims/forever applied it in 983ea6fcc1 ("mage hotfix and talent shift"). `tools/forever_talents/client/mage.json` carries it by hand until a client build does. It supersedes the notes below wherever they disagree.
+
+- Piercing Ice (11151, 2 / 4 / 6% Frost damage) is gone (TraitNode 105773 deleted). The Frost tree has 18 talents.
+- The tree moved: Frostbite is now row 2 column 2 and Permafrost row 2 column 4 (they swapped), Frost Channeling row 3 column 1 and Improved Blizzard row 3 column 2 (TraitNode 105774, 105776, 105772, 105771). Ice Lance stays at row 3 column 3.
+- Elemental Precision: 3 ranks of 2% (TraitNodeEntry 130507, curve 2 / 4 / 6), 6% hit at most (5 ranks of 1% before). With the synthetic gear's 11% that is 17%, a point over the 16% cap against a level 63 boss; 2 ranks are 1% short.
+- Ice Barrier (11426 to 13033): "Shield yourself, absorbing $s1 + 10% of your Frost spell power (raised by Frost Warding) damage and increasing your Frost damage by 3% for 1 min. While shielded, your Frost damage is increased by an additional 3% and you do not lose casting time when you take damage." Every cast gives Frigid Power (1326891), 3% more Frost damage for 60 sec however soon the shield breaks, and the shield's own effects 2 and 3 add 3% while it holds. Both take Piercing Ice's old mask, every Frost spell Frostfire Bolt included. The absorb's base points did not change (rank 4 is 819 at 60), so it holds a 1500 raid hit for 819 + 10% of Frost spell power, times 1.2 with Frost Warding 2: the first raid hit breaks it.
+- Frost Warding (11189): its Frost Ward chance negates the spell instead of reflecting it, and a new effect 3 raises the Ice Barrier and Frost Ward absorbs by 10 / 20%. Frost Ward's absorb gained 10% of Frost spell power (the sim has no Frost Ward).
+- Also in the same push, not simulated (no preset takes it): Winter's Chill's tooltip (11180) now reads "Gives your Frostbolt, Frost Blast, and Fingers of Frost empowered Ice Lance spells a $m2% chance to apply Winter's Chill, increasing the target's damage taken from your next Cone of Cold by $12579s1% and it gains an additional $s3% of your spell damage, stacking up to $s1 times", with new effects on 11180 and 12579 (SpellEffect 688253, 1364854, 1364855). Not checked further.
+
+The sim (`sim/mage/ice_barrier.go`, `talents.go`): Ice Barrier is a real absorb on the mage now, and the encounter's raid hits are the only damage a DPS mage takes, so a hit breaks it and takes its 3% with it, while Frigid Power stays. A hit the shield takes whole does no damage and pushes back nothing; the hit that breaks it pushes back as any other. The 3% bonuses add to the other damage bonuses, as Piercing Ice did. The Frost rotation casts Ice Barrier before the pull and again when Frigid Power has under 2 sec left (821.7 at 180 sec, against 813.4 recasting whenever the shield is down and 812.4 never casting it).
+
+Talent strings: the Frost tree reads Frost Warding, Improved Frostbolt, Elemental Precision, Ice Shards, Frostbite, Improved Frost Nova, Permafrost, Frost Channeling, Improved Blizzard, Ice Lance, Arctic Reach, Ice Block, Shatter, Improved Cone of Cold, Cold Snap, Fingers of Frost, Winter's Chill, Ice Barrier, so every saved string with Frost points past Ice Shards reads differently. The presets moved to Frostfire `-0155003013012503-0235000311203002` (1081.9 → 1041.5 at 180 sec), Frost `05020050031001-03-253500133101301201` (843.9 → 820.8), Fire `0402205-23550030130135031-003` (1067.6 → 1094.3) and Arcane `0552205003100301531-02-0535` (964.7 → 981.9). Frostfire and Frost need the five freed points in Frost to keep Fingers of Frost and Ice Barrier, on talents that do no damage; Fire and Arcane put them in Arcane Subtlety (and Improved Channeling), which is why they gained. See `ui/mage/presets.ts` for the alternatives simmed.
+
 ## Beta client 1.60.1.70425 (2026-10-16)
 
 The 2026-10-15 mage rework, read from the 70425 client tables (wago.tools SpellEffect, SpellLevels, SpellMisc, SpellPower, SpellCooldowns, SpellAuraOptions and the Trait tables of tree 1112) and wowhead's Forever tooltips. It supersedes the 70338 notes below wherever they disagree. `tools/forever_talents/client/mage.json` carries the new tree, and the talent strings changed with it (see the end of this section).
@@ -35,7 +50,7 @@ Every multi-rank talent's per-rank values were checked on 2026-10-12 against the
 
 Talents (client ranks where the BlizzCon data guessed):
 
-- Arcane Focus and Elemental Precision are 1% hit per rank to 5%. Arcane Impact is 2 / 4 / 6% crit on all Arcane spells. Arcane Subtlety is 8 / 15 resistance. Magic Absorption is 5 / 10 resistance.
+- Arcane Focus and Elemental Precision are 1% hit per rank to 5% (Elemental Precision is 3 ranks of 2% since the 2026-10-20 hotfix). Arcane Impact is 2 / 4 / 6% crit on all Arcane spells. Arcane Subtlety is 8 / 15 resistance. Magic Absorption is 5 / 10 resistance.
 - Arcane Meditation is 17 / 33 / 50% casting regen (Classic 5 / 10 / 15%). Arcane Resilience is 25 / 50% of Intellect as armor.
 - Arcane Mind is 2% Intellect and 20% Arcane crit damage bonus per rank (Classic gave max mana). Arcane Instability is 1% damage and 1% crit per rank on every spell.
 - Arcane Concentration has a 1 sec internal cooldown in the client (11213), so one Arcane Missiles can't roll it five times.
@@ -388,7 +403,7 @@ Frost Armor, Frostbolt, Frost Nova, Blizzard, Frost Ward, Cone of Cold, Ice Armo
   - Rank 3: Reduces the casting time of your Frostbolt spell by 0.3 sec.
   - Rank 4: Reduces the casting time of your Frostbolt spell by 0.4 sec.
   - Rank 5: Reduces the casting time of your Frostbolt spell by 0.5 sec.
-- **Elemental Precision** (5 ranks, column 3) [CHANGED] [ranks 2+ settled by the 70338 trait curves]
+- **Elemental Precision** (5 ranks, column 3) [CHANGED] [ranks 2+ settled by the 70338 trait curves] [3 ranks of 2% since the 2026-10-20 hotfix, see the top]
   - Rank 1: Increases your chance to hit with Frost and Fire spells by 1%.
   - Rank 2: Increases your chance to hit with Frost and Fire spells by 2%.
   - Rank 3: Increases your chance to hit with Frost and Fire spells by 3%.
@@ -427,7 +442,7 @@ Frost Armor, Frostbolt, Frost Nova, Blizzard, Frost Ward, Cone of Cold, Ice Armo
 
 #### Row 3 (10 points)
 
-- **Piercing Ice** (3 ranks, column 1) [unchanged]
+- **Piercing Ice** (3 ranks, column 1) [unchanged] [removed by the 2026-10-20 hotfix, see the top]
   - Rank 1: Increases the damage done by your Frost spells by 2%.
   - Rank 2: Increases the damage done by your Frost spells by 4%.
   - Rank 3: Increases the damage done by your Frost spells by 6%.
@@ -509,7 +524,7 @@ Frost Armor, Frostbolt, Frost Nova, Blizzard, Frost Ward, Cone of Cold, Ice Armo
 
 #### Row 7 (30 points)
 
-- **Ice Barrier** (1 rank, column 2) [CHANGED]
+- **Ice Barrier** (1 rank, column 2) [CHANGED] [3% Frost damage while shielded and Frigid Power since the 2026-10-20 hotfix, see the top]
   - Requires: Cold Snap (1/1)
   - Cost: 305 Mana, Instant, 30 sec cooldown
   - Instantly shields you, absorbing 431 damage. Lasts 1 min. While the shield holds, your spellcasts will not be interrupted or delayed from taking damage.

@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 89,
   "race": "SkyborneHighOrder",
-  "talents": "05020050031001-03-0555100331001301201",
+  "talents": "05020050031001-03-253500133101301201",
   "treeNames": [
     "Arcane",
     "Fire",
@@ -32,11 +32,12 @@
     "Arcane Blast",
     "Improved Frostbolt",
     "Ice Shards",
-    "Piercing Ice",
+    "Ice Barrier",
     "Shatter",
     "Fingers of Frost"
   ],
   "rotation": [
+    "Pre-pull: Ice Barrier at -4s, and again when Frigid Power has under 2s left (3% Frost damage for 1 min, 3% more while the shield holds)",
     "Pre-pull: Frostbolt at -2.5s",
     "Cooldowns (Demonic Rune, racial) on a free GCD",
     "Evocation below 20% mana with more than 90s left (almost never fires)",

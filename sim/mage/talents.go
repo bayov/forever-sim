@@ -165,10 +165,10 @@ func (mage *Mage) applyFrostTalents() {
 	mage.registerIceBarrierSpell()
 	mage.applyFingersOfFrost()
 
-	// Elemental Precision: 1% hit with Fire and Frost spells per point (Classic took 2% off the
-	// resist chance, 3 points).
+	// Elemental Precision: 2% hit with Fire and Frost spells per point, 3 points since the
+	// 2026-10-20 hotfix to 70450 (5 points of 1% before; Classic took 2% off the resist chance).
 	if mage.Talents.ElementalPrecision > 0 {
-		bonusHit := float64(mage.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance
+		bonusHit := 2 * float64(mage.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance
 		mage.onMageSpellOfSchool(core.SpellSchoolFire|core.SpellSchoolFrost, func(spell *core.Spell) {
 			spell.BonusHitRating += bonusHit
 		})
@@ -179,14 +179,6 @@ func (mage *Mage) applyFrostTalents() {
 		critBonus := .20 * float64(mage.Talents.IceShards)
 		mage.onMageSpellOfSchool(core.SpellSchoolFrost, func(spell *core.Spell) {
 			spell.CritDamageBonus += critBonus
-		})
-	}
-
-	// Piercing Ice
-	if mage.Talents.PiercingIce > 0 {
-		bonusDamageMultiplierAdditive := 0.02 * float64(mage.Talents.PiercingIce)
-		mage.onMageSpellOfSchool(core.SpellSchoolFrost, func(spell *core.Spell) {
-			spell.DamageMultiplierAdditive += bonusDamageMultiplierAdditive
 		})
 	}
 

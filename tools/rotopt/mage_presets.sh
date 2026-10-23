@@ -38,8 +38,11 @@ gen mage_fire level60_fire "scorchRefresh=5,pyroStacks=3,fireBlastMana=10,fireBl
 # target since 70425, with SoD's 42.9% spell power coefficient), and one Arcane Blast every 15 sec
 # for 15% of Intellect as spell damage. Frost rarely runs low on mana, so Evocation (below 20%
 # with 90 sec left) almost never goes. When a Frostbolt would not land before the end (its cast
-# plus 1 sec), Ice Lance instead.
-gen mage_frost level60_frost "iceLance=1,missileBarrage=1,fireBlastMana=0,evocationMana=20,evocationMinTime=90,blastBuff=1,blastRefresh=9,arcaneWrath=0,finisher=1,finishPad=1"
+# plus 1 sec), Ice Lance instead. Since the 2026-10-20 hotfix Ice Barrier goes before the pull and
+# again when Frigid Power has under 2 sec left: its 3% Frost damage for a minute, and 3% more while
+# the shield holds (a raid hit breaks it). Recasting it whenever the shield is down costs more
+# GCDs than the 3% gives back (+8.4 at 180 sec over the shield-down rule, +8.4 over no Ice Barrier).
+gen mage_frost level60_frost "iceLance=1,missileBarrage=1,fireBlastMana=0,evocationMana=20,evocationMinTime=90,blastBuff=1,blastRefresh=9,arcaneWrath=0,finisher=1,finishPad=1,iceBarrier=2,iceBarrierRefresh=2,iceBarrierPrepull=1"
 # Scorch to 5 Fire Vulnerability stacks and again with under 7 sec left on it, Pyroblast at 3
 # Heating Up stacks, Ice Lance on every Fingers of Frost charge (ahead of Scorch and Pyroblast),
 # Frostfire Bolt. Since 70425 every Fire Blast adds a Heating Up stack, so Fire Blast goes on

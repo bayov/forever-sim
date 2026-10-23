@@ -33,7 +33,7 @@ const (
 	SpellCode_MageArcaneWrath
 )
 
-var TalentTreeSizes = [3]int{19, 17, 19}
+var TalentTreeSizes = [3]int{19, 17, 18}
 
 func RegisterMage() {
 	core.RegisterAgentFactory(
@@ -87,6 +87,7 @@ type Mage struct {
 	ClearcastingAura    *core.Aura
 	CombustionAura      *core.Aura
 	FingersOfFrostAura  *core.Aura
+	FrigidPowerAura     *core.Aura
 	HeatingUpAura       *core.Aura
 	IceArmorAura        *core.Aura
 	IceBarrierAuras     []*core.Aura

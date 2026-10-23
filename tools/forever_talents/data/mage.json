@@ -4,7 +4,7 @@
   "className": "Mage",
   "dataVersion": 2,
   "dataSource": "client",
-  "generatedAt": "2026-10-16T07:00:19Z",
+  "generatedAt": "2026-10-23T02:40:36Z",
   "rules": {
     "pointsPerRow": 5,
     "maxPoints": 51,
@@ -96,7 +96,7 @@
           "maxRank": 5,
           "icon": "spell_nature_starfall",
           "iconSource": "client",
-          "description": "Gives you a {0}% chance to avoid interruption caused by damage while channeling Arcane Missiles and a {1}% chance while casting Arcane Blast.",
+          "description": "Gives you a {0}% chance to avoid interruption caused by damage while channeling Arcane Missiles and a {1}% chance while casting Arcane Blast or Arcane Wrath.",
           "ranks": [
             [
               20,
@@ -128,6 +128,40 @@
           ],
           "ranksSource": "client",
           "spellId": 11237
+        },
+        {
+          "id": "missile-barrage",
+          "name": "Missile Barrage",
+          "row": 0,
+          "col": 3,
+          "maxRank": 2,
+          "icon": "ability_mage_missilebarrage",
+          "iconSource": "client",
+          "description": "Gives your Arcane Blast spell a {0}% chance, your Arcane Missile hits a {1}% chance, and your Arcane Wrath, Fireball, Frostbolt, and Frostfire Bolt spells a {2}% chance to reduce the channeled duration of your next Arcane Missiles spell by {3}%, reduce the Mana cost by {4}%, and missiles fire every {5} sec.",
+          "ranks": [
+            [
+              20,
+              5,
+              10,
+              50,
+              100,
+              0.5
+            ],
+            [
+              40,
+              10,
+              20,
+              50,
+              100,
+              0.5
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 400588
         },
         {
           "id": "arcane-subtlety",
@@ -327,35 +361,6 @@
           "spellId": 400574
         },
         {
-          "id": "arcane-wrath",
-          "name": "Arcane Wrath",
-          "row": 3,
-          "col": 3,
-          "maxRank": 1,
-          "icon": "ability_mage_netherwindpresence",
-          "iconSource": "client",
-          "description": "Launches a projectile of pure Arcane energy at the enemy target, causing {0} to {1} Arcane damage. This spell gains additional Spell Damage equal to {2}% of your maximum Mana.",
-          "ranks": [
-            [
-              122,
-              146,
-              5
-            ]
-          ],
-          "ranksObserved": [
-            1
-          ],
-          "ranksSource": "client",
-          "cost": "140 Mana; 30 yd range; 3.5 sec cast; 6 sec cooldown",
-          "requires": [
-            {
-              "talent": "arcane-blast",
-              "rank": 1
-            }
-          ],
-          "spellId": 1326079
-        },
-        {
           "id": "arcane-shielding",
           "name": "Arcane Shielding",
           "row": 3,
@@ -440,38 +445,33 @@
           "spellId": 18462
         },
         {
-          "id": "missile-barrage",
-          "name": "Missile Barrage",
-          "row": 0,
+          "id": "arcane-wrath",
+          "name": "Arcane Wrath",
+          "row": 3,
           "col": 3,
-          "maxRank": 2,
-          "icon": "ability_mage_missilebarrage",
+          "maxRank": 1,
+          "icon": "ability_mage_netherwindpresence",
           "iconSource": "client",
-          "description": "Gives your Arcane Blast spell a {0}% chance, your Arcane Missile hits a {1}% chance, and your Arcane Wrath, Fireball, Frostbolt, and Frostfire Bolt spells a {2}% chance to reduce the channeled duration of your next Arcane Missiles spell by {3}%, reduce the Mana cost by {4}%, and missiles fire every {5} sec.",
+          "description": "Launches a projectile of pure Arcane energy at the enemy target, causing {0} to {1} Arcane damage. This spell gains additional Spell Damage equal to {2}% of your maximum Mana.",
           "ranks": [
             [
-              20,
-              5,
-              10,
-              50,
-              100,
-              0.5
-            ],
-            [
-              40,
-              10,
-              20,
-              50,
-              100,
-              0.5
+              122,
+              146,
+              5
             ]
           ],
           "ranksObserved": [
-            1,
-            2
+            1
           ],
           "ranksSource": "client",
-          "spellId": 400588
+          "cost": "140 Mana; 30 yd range; 3.5 sec cast; 6 sec cooldown",
+          "requires": [
+            {
+              "talent": "arcane-blast",
+              "rank": 1
+            }
+          ],
+          "spellId": 1326079
         },
         {
           "id": "presence-of-mind",
@@ -942,9 +942,9 @@
           "row": 3,
           "col": 2,
           "maxRank": 1,
-          "icon": "ability_mage_hotstreak",
+          "icon": "spell_fire_firebolt",
           "iconSource": "client",
-          "description": "Non-periodic critical strikes with Fireball, Frostfire Bolt, Fire Blast, and Scorch reduce the cast time of your next Pyroblast cast within {0} sec by {1}%, stacking up to {2} times.",
+          "description": "Non-periodic critical strikes with Fireball, Frostfire Bolt, Fire Blast, and Scorch reduce the cast time of your next Pyroblast cast within {0} sec by {1}%, stacking up to {2} times. Fire Blast grants an additional stack every time it deals damage.",
           "ranks": [
             [
               20,
@@ -1130,14 +1130,16 @@
           "maxRank": 2,
           "icon": "spell_frost_frostward",
           "iconSource": "client",
-          "description": "Increases the Armor and resistance given by your Frost Armor and Ice Armor spells by {0}%. In addition, gives your Frost Ward a {1}% chance to reflect Frost spells and effects while active.",
+          "description": "Increases the Armor and resistances granted by your Frost Armor and Ice Armor spells by {0}%, gives your Frost Ward a {1}% chance to negate the warded damage spell, and increases the amount absorbed by your Ice Barrier and Frost Ward by {2}%.",
           "ranks": [
             [
               15,
+              10,
               10
             ],
             [
               30,
+              20,
               20
             ]
           ],
@@ -1156,7 +1158,7 @@
           "maxRank": 5,
           "icon": "spell_frost_frostbolt02",
           "iconSource": "client",
-          "description": "Reduces the casting time of your Frostbolt spell by {0} sec.",
+          "description": "Reduces the casting time of your Frostbolt and Frost Blast spells by {0} sec.",
           "ranks": [
             [
               0.1
@@ -1189,33 +1191,25 @@
           "name": "Elemental Precision",
           "row": 0,
           "col": 2,
-          "maxRank": 5,
+          "maxRank": 3,
           "icon": "spell_ice_magicdamage",
           "iconSource": "client",
           "description": "Improves your chance to hit with Frost and Fire spells by {0}%.",
           "ranks": [
             [
-              1
-            ],
-            [
               2
-            ],
-            [
-              3
             ],
             [
               4
             ],
             [
-              5
+              6
             ]
           ],
           "ranksObserved": [
             1,
             2,
-            3,
-            4,
-            5
+            3
           ],
           "ranksSource": "client",
           "spellId": 29438
@@ -1260,7 +1254,7 @@
           "id": "permafrost",
           "name": "Permafrost",
           "row": 1,
-          "col": 1,
+          "col": 3,
           "maxRank": 3,
           "icon": "spell_frost_wisp",
           "iconSource": "client",
@@ -1315,7 +1309,7 @@
           "id": "frostbite",
           "name": "Frostbite",
           "row": 1,
-          "col": 3,
+          "col": 1,
           "maxRank": 3,
           "icon": "spell_frost_frostarmor",
           "iconSource": "client",
@@ -1343,38 +1337,10 @@
           "spellId": 11071
         },
         {
-          "id": "piercing-ice",
-          "name": "Piercing Ice",
-          "row": 2,
-          "col": 0,
-          "maxRank": 3,
-          "icon": "spell_frost_frostbolt",
-          "iconSource": "client",
-          "description": "Increases the damage done by your Frost spells by {0}%.",
-          "ranks": [
-            [
-              2
-            ],
-            [
-              4
-            ],
-            [
-              6
-            ]
-          ],
-          "ranksObserved": [
-            1,
-            2,
-            3
-          ],
-          "ranksSource": "client",
-          "spellId": 11151
-        },
-        {
           "id": "frost-channeling",
           "name": "Frost Channeling",
           "row": 2,
-          "col": 1,
+          "col": 0,
           "maxRank": 3,
           "icon": "spell_frost_stun",
           "iconSource": "client",
@@ -1428,7 +1394,7 @@
           "id": "improved-blizzard",
           "name": "Improved Blizzard",
           "row": 2,
-          "col": 3,
+          "col": 1,
           "maxRank": 3,
           "icon": "spell_frost_icestorm",
           "iconSource": "client",
@@ -1463,7 +1429,7 @@
           "maxRank": 2,
           "icon": "spell_shadow_darkritual",
           "iconSource": "client",
-          "description": "Increases the range of your Frostbolt and Blizzard spells and the radius of your Frost Nova and Cone of Cold spells by {0}%.",
+          "description": "Increases the range of your Frostbolt, Frost Blast, and Blizzard spells and the radius of your Frost Nova and Cone of Cold spells by {0}%.",
           "ranks": [
             [
               10
@@ -1655,11 +1621,13 @@
           "maxRank": 1,
           "icon": "spell_ice_lament",
           "iconSource": "client",
-          "description": "Instantly shields you, absorbing {0} damage. Lasts {1} min. While the shield holds, your spellcasts will not be interrupted or delayed from taking damage.",
+          "description": "Shield yourself, absorbing {0} damage and increasing your Frost damage by {1}% for {2} min. While shielded, your Frost damage is increased by an additional {3}% and you do not lose casting time when you take damage.",
           "ranks": [
             [
-              447.8,
-              1
+              448,
+              3,
+              1,
+              3
             ]
           ],
           "ranksObserved": [
@@ -1679,6 +1647,6 @@
     }
   ],
   "notes": [
-    "hyjal.cc talent calculator bundle, WoW Forever beta client build 1.60.1.69876, fetched 2026-09-17, with the talents the 2026-10-01 and 2026-10-08 development notes changed (Wake of Fire, Hot Streak renamed Heating Up, Combustion) updated to build 1.60.1.70338 from foreverchanges.pro, and the 2026-10-15 tree rework (Arcane Blast, Arcane Wrath, Missile Barrage, Improved Fire Blast, Critical Mass, Fire Power, Winter's Chill, Ice Lance, Frost Channeling, Frostbite) updated to build 1.60.1.70425 from the client tables and Wowhead's Forever tooltips"
+    "wago.tools Trait, TalentTab, SkillLine and Spell tables of the WoW Forever beta client build 1.60.1.70450 (TraitTree 1112), generated by tools/forever_talents/import_db2.py. The trees' removed lists carried over from the hand-assembled files these replaced. The Frost tree carries the 2026-10-20 server hotfix to 70450 by hand (wago.tools/hotfixes, push of 2026-10-20 09:51: TraitNode 105771, 105772, 105774 and 105776 moved, 105773 Piercing Ice deleted, TraitNodeEntry 130507 MaxRanks 3, CurvePoint 241098-241100 and the Spell rows of 11189, 11426-13033 and 1326891), which the client tables don't have; import_db2.py undoes it until a client build does."
   ]
 }

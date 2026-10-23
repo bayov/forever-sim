@@ -39,6 +39,12 @@ prerequisites) and TalentTab and SkillLine for the tree names, backgrounds and i
 `tools/sources/spelltext.py`, which fills the spell description templates the way the game
 does, for a level 60 character with no bonuses, and notes every value it couldn't fill.
 
+A server hotfix the client tables don't have yet is carried in `client/` by hand, with the
+hotfix named in the file's `source` and in the talents' `tooltip.notes` (`tooltip.source` is
+`hotfix`). The mage's Frost tree carries the 2026-10-20 hotfix to 70450 that way (Piercing Ice
+removed, four talents moved, Elemental Precision 3 ranks), from wago.tools' hotfix table. Running
+`import_db2.py mage --write` on a build without it puts the old tree back, so check the diff.
+
 Without `--write` it prints each class's differences from the current file in three kinds:
 structure (talents added, removed, moved, renamed, or given another rank count, prerequisite
 or node ID), numbers (a rank's numbers differ), and wording (the same numbers in other words).

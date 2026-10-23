@@ -5,8 +5,14 @@ import "github.com/wowsims/classic/sim/core/proto"
 // Frost under Forever rules. Frostbolt is the filler. Fingers of Frost (15% on a chill) makes
 // the next spells treat the boss as Frozen, which turns on Shatter and Ice Lance's 3 times damage,
 // so the main decision is what to spend the charges on. Winter's Chill is a Cone of Cold debuff
-// since the client 1.60.1.70425.
+// since the client 1.60.1.70425. Ice Barrier, the 31 point talent, raises Frost damage by 3% while
+// the shield holds and gives Frigid Power, 3% more for a minute, since the 2026-10-20 hotfix.
 type mageFrost struct{}
+
+var (
+	iceBarrier  = spellID(13033)
+	frigidPower = spellID(1326891)
+)
 
 func init() {
 	templates["mage_frost"] = mageFrost{}
@@ -24,6 +30,12 @@ func (mageFrost) Knobs() []Knob {
 		Knob{Name: "fireBlastMana", Default: 0, Min: 0, Max: 80, Step: 20},
 		// Precast Frostbolt so the first one lands at the pull.
 		Knob{Name: "prepull", Default: 1, Min: 0, Max: 1, Step: 1},
+		// Ice Barrier: 0 never, 1 whenever the shield is down (a raid hit breaks it), 2 only
+		// when Frigid Power has under iceBarrierRefresh seconds left, about once a minute.
+		Knob{Name: "iceBarrier", Default: 2, Min: 0, Max: 2, Step: 1},
+		Knob{Name: "iceBarrierRefresh", Default: 2, Min: 0, Max: 20, Step: 2},
+		// Cast Ice Barrier before the pull, ahead of the Frostbolt precast.
+		Knob{Name: "iceBarrierPrepull", Default: 1, Min: 0, Max: 1, Step: 1},
 	)
 }
 
@@ -36,6 +48,13 @@ func (mageFrost) Build(k Knobs) *proto.APLRotation {
 	case 2:
 		items = append(items, cast(s.iceLance, known(fingersOfFrost, eq(auraNumStacks(fingersOfFrost), num(1))), "Ice Lance on the last Fingers of Frost charge, the first goes on a Frostbolt."))
 	}
+	// Not in the last seconds, when the 3% has too little left to work on to pay for the GCD.
+	switch k["iceBarrier"] {
+	case 1:
+		items = append(items, cast(iceBarrier, and(not(auraIsActive(iceBarrier)), gt(remainingTime(), seconds(10))), "Ice Barrier whenever the shield is down: 3% Frost damage while it holds, and Frigid Power's 3% for a minute. Without the talent ignore the warning on this line."))
+	case 2:
+		items = append(items, cast(iceBarrier, and(lt(auraRemainingTime(frigidPower), seconds(k["iceBarrierRefresh"])), gt(remainingTime(), seconds(10))), "Ice Barrier when Frigid Power is about to run out: its 3% for another minute, and 3% more while the shield holds. Without the talent ignore the warning on this line."))
+	}
 	items = append(items, arcaneBlastBuffLines(k, s, nil)...)
 	items = append(items, arcaneWrathLines(k, s)...)
 	if k["missileBarrage"] == 1 {
@@ -47,6 +66,9 @@ func (mageFrost) Build(k Knobs) *proto.APLRotation {
 	items = append(items, finisherLines(k, s.frostbolt, s.iceLance)...)
 	items = append(items, cast(s.frostbolt, nil, "Frostbolt."))
 	rot := rotation(items...)
+	if k["iceBarrier"] > 0 && k["iceBarrierPrepull"] == 1 {
+		rot.PrepullActions = append(rot.PrepullActions, prepull(iceBarrier, 4))
+	}
 	if k["prepull"] == 1 {
 		rot.PrepullActions = append(rot.PrepullActions, prepull(s.frostbolt, 2.5))
 	}
