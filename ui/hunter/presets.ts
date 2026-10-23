@@ -80,8 +80,8 @@ export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
 // The ranged weapon keeps Rhok'delar's damage per second as a 2.5 sec bow, Striker's Mark's speed and
 // spread, the Phase 1 BiS speed the three ranged specs sim best with (standards 22, Ranged: +3.5 /
 // +2.7 / +3.3 over Rhok'delar's 2.9 sec bow at 180 sec), with the 15% quiver.
-// Stamina 17.2% of the points and Spirit 10% (the 5a targets), hit 90 rating (9%, the ranged cap
-// against a level 63 boss), then Agility 34.6%, crit 17.8%, ranged attack power 4.7%, Intellect
+// Stamina 17.2% of the points and Spirit 10% (the 5a targets), hit 80 rating (8%, the ranged cap
+// against a level 63 boss with no hit suppression), then Agility 35.2%, crit 18.4%, ranged attack power 4.7%, Intellect
 // 3.5% and Strength 1.1%. The head and chest carry Wildstalker Armor, so only its 2 piece bonus (1%
 // attack and cast speed) is live.
 // Trinkets are synthetic too (standards 1b), since Forever's launch trinkets are not simulated: 32
@@ -95,11 +95,11 @@ export const GearLevel60Ranged = PresetUtils.makePresetGear('Level 60 Phase 1 Sy
 // one-handers for Predator's Edge's off hand bonus at Brutality Blade's damage per second (a 2.9 sec
 // axe and a 1.6 sec dagger, the Era Phase 1 BiS types and speeds Survival sims best with, standards
 // 22), and
-// 6% hit, since Survival takes Surefooted's 3% (9% yellow cap). Totals: armor 705.5 (target 706.1),
+// 5% hit, since Survival takes Surefooted's 3% (8% yellow cap). Totals: armor 705.5 (target 706.1),
 // swords 34.5 each (the standard has no hunter one-hander: the physical 0.39 x the hunter /
 // physical two-hander ratio, 0.42 x L(71)), bow 19.5 (Rhok'delar's 2.9 sec: Survival never shoots,
-// so every ranged candidate sims the same for it). Stamina 15.4%, Spirit 10.1%, Agility 31.1%,
-// crit 14.7%, Strength 11.2%, attack power 9.9%, hit 7.6%. Crusader on the main hand and Agility on
+// so every ranged candidate sims the same for it). Stamina 15.4%, Spirit 10.1%, Agility 32.1%,
+// crit 15.0%, Strength 11.2%, attack power 9.9%, hit 6.3%. Crusader on the main hand and Agility on
 // the off hand (+4 over Agility on both). Trinkets: 32 Agility and 14 crit rating, and an on-use
 // 335 attack power and ranged attack power for 20 sec every 2 min.
 export const GearLevel60Survival = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic Survival', Level60SurvivalGear, {
