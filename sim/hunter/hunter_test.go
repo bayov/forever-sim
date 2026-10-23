@@ -18,6 +18,14 @@ func TestBeastMastery(t *testing.T) {
 	}))
 }
 
+// Beast Mastery with Summon Hawk for a point of Spirit Bond, which no Level 60 preset takes: the
+// rotation sends a hawk on the cooldown it shares with Arcane Shot while fewer than 2 are out.
+func TestBeastMasteryHawk(t *testing.T) {
+	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
+		hunterSuite(BeastMasteryHawkTalents, "level60_phase1_synthetic_ranged", "bm", RangedConsumes, PlayerOptionsCat),
+	}))
+}
+
 func TestMarksmanship(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
 		hunterSuite(MarksmanshipTalents, "level60_phase1_synthetic_ranged", "mm", RangedConsumes, PlayerOptionsCat),
@@ -63,6 +71,7 @@ func hunterSuite(talents string, gear string, apl string, consumes core.Consumes
 
 // The level 60 builds in ui/hunter/presets.ts.
 var BeastMasteryTalents = "5020121505021241-00520503014"
+var BeastMasteryHawkTalents = "5020121505111241-00520503014"
 var MarksmanshipTalents = "502-0053452501503051-5"
 var LoneWolfTalents = "5-0053552511503051-5"
 var SurvivalTalents = "502-005005-500230230250122151"

@@ -3,6 +3,7 @@ package hunter
 import (
 	"math"
 	"testing"
+	"time"
 
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
@@ -155,6 +156,112 @@ func TestForeverHunterCritPerAgility(t *testing.T) {
 		want := 100 * core.CritPerAgi(proto.Class_ClassHunter, 60) * c.scale
 		if math.Abs(got-want) > 1e-9 {
 			t.Errorf("ruleset %v: 100 Agility gives %.4f%% crit, want %.4f%%", c.ruleset, got, want)
+		}
+	}
+}
+
+// Summon Hawk's hawk, wowsims/forever's log fit (81651da664, b89878e6f9, 0fc13fcb30): a 2.5 sec swing
+// of 0.0815 of the creature dps over the swing before Unleashed Fury, a third either side, on 80% of
+// the hunter's ranged attack power at 112 × 1.15 a point of dps; half the hunter's crit plus
+// Ferocity whole, its hit; Unleashed Fury and the hunter's damage done at the summon. It swings on
+// arrival and follows the hunter's ranged speed but not its attack speed, and a third hawk replaces
+// the one with the least time left.
+func TestSummonHawkHawks(t *testing.T) {
+	sim, hunter := newHunterSim(t, BeastMasteryHawkTalents, &proto.Debuffs{})
+	if !hunter.Talents.SummonHawk || len(hunter.hawks) != 2 {
+		t.Fatalf("Summon Hawk %v with %d hawks, want 2", hunter.Talents.SummonHawk, len(hunter.hawks))
+	}
+	target := hunter.CurrentTarget
+	summon := func() { hunter.SummonHawk.ApplyEffects(sim, target, hunter.SummonHawk) }
+	stepTo := func(at time.Duration) {
+		for sim.CurrentTime < at && !sim.Step() {
+		}
+	}
+	lifetime := func(i int) *core.Dot {
+		return hunter.GetSpell(core.ActionID{SpellID: 1293527, Tag: int32(i + 1)}).AOEDot()
+	}
+	hawk1, hawk2 := hunter.hawks[0], hunter.hawks[1]
+
+	mh := hawk1.AutoAttacks.MH()
+	if avg := 0.0815 * 60.4529 * 2.5 / 1.15; math.Abs(mh.BaseDamageMin-avg*2/3) > 1e-9 || math.Abs(mh.BaseDamageMax-avg*4/3) > 1e-9 {
+		t.Errorf("hawk swing %.2f to %.2f, want %.2f to %.2f", mh.BaseDamageMin, mh.BaseDamageMax, avg*2/3, avg*4/3)
+	}
+	if mh.SwingSpeed != 2.5 || math.Abs(mh.AttackPowerPerDPS-112*1.15) > 1e-9 {
+		t.Errorf("hawk swings every %v sec at %v attack power a point of dps, want 2.5 and 128.8", mh.SwingSpeed, mh.AttackPowerPerDPS)
+	}
+
+	summon()
+	if !hawk1.IsEnabled() || hawk2.IsEnabled() {
+		t.Fatalf("after one Summon Hawk the hawks are out %v %v, want the first only", hawk1.IsEnabled(), hawk2.IsEnabled())
+	}
+	if got, want := hawk1.GetStat(stats.AttackPower), 0.8*hunter.GetStat(stats.RangedAttackPower); math.Abs(got-want) > 1e-6 {
+		t.Errorf("hawk attack power %.2f, want %.2f", got, want)
+	}
+	if got, want := hawk1.GetStat(stats.MeleeCrit), 0.5*hunter.GetStat(stats.MeleeCrit)+10*core.CritRatingPerCritChance; math.Abs(got-want) > 1e-6 {
+		t.Errorf("hawk crit %.4f, want half the hunter's plus Ferocity's 10%%, %.4f", got, want)
+	}
+	if got, want := hawk1.GetStat(stats.MeleeHit), hunter.GetStat(stats.MeleeHit); got != want {
+		t.Errorf("hawk hit %.4f, want the hunter's %.4f", got, want)
+	}
+	if got, want := hawk1.PseudoStats.DamageDealtMultiplier, 1.15*hunter.PseudoStats.DamageDealtMultiplier; math.Abs(got-want) > 1e-9 {
+		t.Errorf("hawk damage multiplier %.4f, want Unleashed Fury times the hunter's, %.4f", got, want)
+	}
+	if hawk1.AutoAttacks.MainhandSwingAt() > sim.CurrentTime {
+		t.Errorf("the hawk first swings at %v, want on arrival at %v", hawk1.AutoAttacks.MainhandSwingAt(), sim.CurrentTime)
+	}
+	rap := hunter.GetStat(stats.RangedAttackPower)
+	hunter.AddStatDynamic(sim, stats.RangedAttackPower, 100)
+	if got := hawk1.GetStat(stats.AttackPower) - 0.8*rap; math.Abs(got-80) > 1e-6 {
+		t.Errorf("100 hunter ranged attack power gives the hawk %.2f attack power, want 80", got)
+	}
+	hunter.AddStatDynamic(sim, stats.RangedAttackPower, -100)
+
+	quiver := hunter.PseudoStats.RangedSpeedMultiplier
+	if quiver < 1.15 {
+		t.Fatalf("hunter ranged speed %v, want the 15%% quiver at least", quiver)
+	}
+	if got := hawk1.SwingSpeed(); math.Abs(got-quiver) > 1e-9 {
+		t.Errorf("hawk speed %.4f, want the hunter's ranged %.4f", got, quiver)
+	}
+	hunter.MultiplyRangedSpeed(sim, 1.3)
+	hunter.MultiplyAttackSpeed(sim, 1.1)
+	if got := hawk1.SwingSpeed(); math.Abs(got-quiver*1.3) > 1e-9 {
+		t.Errorf("hawk speed %.4f with Quick Shots and Berserking, want the ranged %.4f", got, quiver*1.3)
+	}
+
+	stepTo(time.Second)
+	summon()
+	if got := hawk2.SwingSpeed(); !hawk2.IsEnabled() || math.Abs(got-quiver*1.3) > 1e-9 {
+		t.Errorf("second hawk out %v at speed %.4f, want out at %.4f", hawk2.IsEnabled(), got, quiver*1.3)
+	}
+	hunter.MultiplyAttackSpeed(sim, 1/1.1)
+	hunter.MultiplyRangedSpeed(sim, 1/1.3)
+	for i, hawk := range hunter.hawks {
+		if got := hawk.SwingSpeed(); math.Abs(got-quiver) > 1e-9 {
+			t.Errorf("hawk %d speed %.4f after the hastes fade, want %.4f", i+1, got, quiver)
+		}
+	}
+
+	stepTo(2 * time.Second)
+	left2 := lifetime(1).RemainingDuration(sim)
+	summon()
+	if got := lifetime(0).RemainingDuration(sim); got != hawkDuration || lifetime(1).RemainingDuration(sim) != left2 {
+		t.Errorf("a third hawk left %v and %v, want the first replaced (18s) and the second at %v", got, lifetime(1).RemainingDuration(sim), left2)
+	}
+	if !hawk1.IsEnabled() || hawk1.AutoAttacks.MainhandSwingAt() > sim.CurrentTime {
+		t.Errorf("the replaced hawk is out %v and swings at %v, want out and swinging at %v", hawk1.IsEnabled(), hawk1.AutoAttacks.MainhandSwingAt(), sim.CurrentTime)
+	}
+
+	stepTo(25 * time.Second)
+	for i, hawk := range hunter.hawks {
+		if hawk.IsEnabled() {
+			t.Errorf("hawk %d still out after 18 sec", i+1)
+		}
+		if got := hawk.SwingSpeed(); math.Abs(got-1) > 1e-9 {
+			t.Errorf("hawk %d keeps speed %.4f once gone, want 1", i+1, got)
+		}
+		if got := hawk.PseudoStats.DamageDealtMultiplier; math.Abs(got-1.15) > 1e-9 {
+			t.Errorf("hawk %d keeps damage multiplier %.4f once gone, want Unleashed Fury's 1.15", i+1, got)
 		}
 	}
 }

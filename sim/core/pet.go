@@ -48,6 +48,11 @@ type Pet struct {
 	// DK pets also inherit their owner's MeleeSpeed. This replace OwnerAttackSpeedChanged.
 	dynamicMeleeSpeedInheritance PetMeleeSpeedInheritance
 
+	// The pet swings at its owner's ranged speed while it is out, without what the owner's attack
+	// speed effects add (the Summon Hawk hawks). Set at construction.
+	FollowsOwnerRangedSpeed bool
+	inheritedRangedSpeed    float64
+
 	isReset bool
 
 	// Some pets expire after a certain duration. This is the pending action that disables
@@ -154,6 +159,12 @@ func (pet *Pet) Enable(sim *Simulation, petAgent PetAgent) {
 	//reset current mana after applying stats
 	pet.manaBar.reset(sim)
 
+	if pet.FollowsOwnerRangedSpeed {
+		pet.inheritedRangedSpeed = 1
+		pet.dynamicRangedSpeedInheritance(sim, pet.Owner.PseudoStats.RangedSpeedMultiplier/pet.Owner.PseudoStats.AttackSpeedMultiplier)
+		pet.Owner.DynamicRangedSpeedPets = append(pet.Owner.DynamicRangedSpeedPets, pet)
+	}
+
 	// Call onEnable callbacks before enabling auto swing
 	// to not have to reorder PAs multiple times
 	pet.enabled = true
@@ -224,6 +235,12 @@ func (pet *Pet) EnableDynamicMeleeSpeed(inheritance PetMeleeSpeedInheritance) {
 	pet.dynamicMeleeSpeedInheritance = inheritance
 }
 
+// Multiplies the pet's melee speed by a change in its owner's ranged speed.
+func (pet *Pet) dynamicRangedSpeedInheritance(sim *Simulation, amount float64) {
+	pet.inheritedRangedSpeed *= amount
+	pet.MultiplyMeleeSpeed(sim, amount)
+}
+
 func (pet *Pet) Disable(sim *Simulation) {
 	if !pet.enabled {
 		if sim.Log != nil {
@@ -253,6 +270,13 @@ func (pet *Pet) Disable(sim *Simulation) {
 	pet.AutoAttacks.CancelAutoSwing(sim)
 	pet.focusBar.disable(sim)
 	pet.enabled = false
+
+	if pet.FollowsOwnerRangedSpeed {
+		if idx := slices.Index(pet.Owner.DynamicRangedSpeedPets, pet); idx != -1 {
+			pet.Owner.DynamicRangedSpeedPets = removeBySwappingToBack(pet.Owner.DynamicRangedSpeedPets, idx)
+		}
+		pet.dynamicRangedSpeedInheritance(sim, 1/pet.inheritedRangedSpeed)
+	}
 
 	// If a pet is immediately re-summoned it might try to use GCD, so we need to clear it.
 	pet.Hardcast = Hardcast{}

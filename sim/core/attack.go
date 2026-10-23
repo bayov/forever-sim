@@ -697,6 +697,12 @@ func (aa *AutoAttacks) CancelAutoSwing(sim *Simulation) {
 	}
 }
 
+// Has the next EnableAutoSwing swing the main hand at once, not when the swing left from before
+// CancelAutoSwing comes due: for a guardian that arrives anew each time it is summoned.
+func (aa *AutoAttacks) ResetMeleeSwingAt() {
+	aa.mh.swingAt = 0
+}
+
 // Re-enables the auto swing action for the iteration
 func (aa *AutoAttacks) EnableAutoSwing(sim *Simulation) {
 	if !aa.AutoSwingMelee && !aa.AutoSwingRanged {

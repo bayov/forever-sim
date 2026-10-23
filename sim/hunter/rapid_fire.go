@@ -7,8 +7,9 @@ import (
 )
 
 // Forever's Rapid Fire speeds up melee attacks too (40% ranged and melee for 15 sec, Classic ranged
-// only), 5 min cooldown. Rapid Killing takes 1 min off a rank. Its other half, 20% on the next shot
-// after a kill, needs a kill, which a boss fight doesn't have.
+// only), 5 min cooldown. Its ranged half reaches the Summon Hawk hawks, which swing at the hunter's
+// ranged speed (wowsims/forever 0fc13fcb30). Rapid Killing takes 1 min off a rank. Its other half,
+// 20% on the next shot after a kill, needs a kill, which a boss fight doesn't have.
 func (hunter *Hunter) registerRapidFire() {
 	if hunter.Level < 26 {
 		return
@@ -24,17 +25,15 @@ func (hunter *Hunter) registerRapidFire() {
 
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
 			if sim.IsForever() {
-				aura.Unit.MultiplyAttackSpeed(sim, 1.4)
-			} else {
-				aura.Unit.MultiplyRangedSpeed(sim, 1.4)
+				aura.Unit.MultiplyMeleeSpeed(sim, 1.4)
 			}
+			aura.Unit.MultiplyRangedSpeed(sim, 1.4)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			if sim.IsForever() {
-				aura.Unit.MultiplyAttackSpeed(sim, 1/1.4)
-			} else {
-				aura.Unit.MultiplyRangedSpeed(sim, 1/1.4)
+				aura.Unit.MultiplyMeleeSpeed(sim, 1/1.4)
 			}
+			aura.Unit.MultiplyRangedSpeed(sim, 1/1.4)
 		},
 	})
 

@@ -401,6 +401,9 @@ type PseudoStats struct {
 	CastSpeedMultiplier   float64
 	MeleeSpeedMultiplier  float64
 	RangedSpeedMultiplier float64
+	// The part of both speed multipliers from attack speed (MultiplyAttackSpeed), which a pet that
+	// follows its owner's ranged speed doesn't take.
+	AttackSpeedMultiplier float64
 
 	MeleeCritMultiplier float64
 
@@ -513,6 +516,7 @@ func NewPseudoStats() PseudoStats {
 		CastSpeedMultiplier:   1,
 		MeleeSpeedMultiplier:  1,
 		RangedSpeedMultiplier: 1,
+		AttackSpeedMultiplier: 1,
 		SpiritRegenMultiplier: 1,
 
 		MeleeCritMultiplier: 1,

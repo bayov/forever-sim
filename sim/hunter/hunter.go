@@ -84,7 +84,8 @@ type Hunter struct {
 	Talents *proto.HunterTalents
 	Options *proto.Hunter_Options
 
-	pet *HunterPet
+	pet   *HunterPet
+	hawks []*HawkPet // Summon Hawk's, summon_hawk.go
 
 	AmmoDPS                   float64
 	AmmoDamageBonus           float64
@@ -330,6 +331,7 @@ func NewHunter(character *core.Character, options *proto.Player) *Hunter {
 	}
 
 	hunter.pet = hunter.NewHunterPet()
+	hunter.hawks = hunter.newHawks()
 
 	hunter.AddStatDependency(stats.Strength, stats.AttackPower, core.APPerStrength[character.Class])
 	hunter.AddStatDependency(stats.Agility, stats.AttackPower, 1)
