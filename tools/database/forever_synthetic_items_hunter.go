@@ -48,13 +48,18 @@ import (
 // The stat mix is the 5a target for the spec (orchestration/gear_targets.md), linear shares of the
 // set's weighted total with the trinkets left out. Stamina is the spec's own share (17.2% ranged,
 // 15.5% Survival) and Spirit 10%, as for every mana user. Hit goes to the cap against a level 63
-// boss and no further: 90 rating (9%, the ranged cap) for the ranged set, 60 (6%) for Survival,
-// whose Surefooted gives the other 3% of the 9% yellow cap. The other stats keep the table's
-// proportions in the room left: ranged Agility 34.6%, crit 17.8%, ranged attack power 4.7%,
-// Intellect 3.5%, Strength 1.1%; Survival Agility 31.1%, crit 14.7%, Strength 11.2%, attack power
+// boss and no further: 80 rating (8%, the ranged cap) for the ranged set, 50 (5%) for Survival,
+// whose Surefooted gives the other 3% of the 8% yellow cap. The other stats keep the table's
+// proportions in the room left: ranged Agility 35.2%, crit 18.4%, ranged attack power 4.7%,
+// Intellect 3.5%, Strength 1.1%; Survival Agility 32.1%, crit 15.0%, Strength 11.2%, attack power
 // 9.9% and no Intellect (its 0.3% is 2 points). The amounts were fitted by a script in the session
 // scratchpad: proportional fitting to both the piece totals and the set shares, then rounding with
-// one line per piece taking up the rounding.
+// one line per piece taking up the rounding. The sets were made for a 9% cap (90 and 60 rating);
+// since the 2026-10-23 alignment round dropped hit suppression the cap is 8%, and the 10 rating over
+// it went back into the same pieces: the ranged legs (hit 19 to 14, Agility 26 to 31) and hands
+// (hit 14 to 9, crit 19 to 24), and Survival's neck (hit 12 to 10, crit 19 to 21), wrist (16 to 13,
+// Agility 18 to 21), feet (16 to 13, Agility 18 to 21) and second ring (16 to 14, Agility 18 to 20).
+// Every piece keeps its total and its stat lines, and its 1.7-norm stays within the 6%.
 //
 // The head and chest of each set form a set with the bonuses of Wildstalker Armor, Forever's own
 // Molten Core tier set for the hunter (set 2101, items 280893 to 280898, client 1.60.1.70338, see
@@ -128,7 +133,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 		Id: 993007, Name: "Ranged Hunter Synthetic Hands (Phase 1)", Icon: "inv_gauntlets_10",
 		Type: proto.ItemType_ItemTypeHands, ArmorType: proto.ArmorType_ArmorTypeMail,
 		Stats:     stats.Stats{stats.Agility: 17, stats.Stamina: 10, stats.Armor: 264}.ToFloatArray(),
-		HitRating: 14, CritRating: 19,
+		HitRating: 9, CritRating: 24,
 		Ilvl: 66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
 	},
@@ -145,8 +150,8 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993009, Name: "Ranged Hunter Synthetic Legs (Phase 1)", Icon: "inv_pants_mail_03",
 		Type: proto.ItemType_ItemTypeLegs, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:     stats.Stats{stats.Agility: 26, stats.Stamina: 14, stats.Spirit: 19, stats.Armor: 369}.ToFloatArray(),
-		HitRating: 19,
+		Stats:     stats.Stats{stats.Agility: 31, stats.Stamina: 14, stats.Spirit: 19, stats.Armor: 369}.ToFloatArray(),
+		HitRating: 14,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
 	},
@@ -230,7 +235,7 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 		Id: 993102, Name: "Survival Synthetic Neck (Phase 1)", Icon: "inv_jewelry_necklace_09",
 		Type:      proto.ItemType_ItemTypeNeck,
 		Stats:     stats.Stats{stats.Agility: 14}.ToFloatArray(),
-		HitRating: 12, CritRating: 19,
+		HitRating: 10, CritRating: 21,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
 	},
@@ -263,8 +268,8 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993106, Name: "Survival Synthetic Wrist (Phase 1)", Icon: "inv_bracer_17",
 		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:     stats.Stats{stats.Agility: 18, stats.Stamina: 11, stats.Armor: 198}.ToFloatArray(),
-		HitRating: 16,
+		Stats:     stats.Stats{stats.Agility: 21, stats.Stamina: 11, stats.Armor: 198}.ToFloatArray(),
+		HitRating: 13,
 		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
 	},
@@ -298,8 +303,8 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993110, Name: "Survival Synthetic Feet (Phase 1)", Icon: "inv_boots_chain_04",
 		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypeMail,
-		Stats:     stats.Stats{stats.Agility: 18, stats.Stamina: 11, stats.Spirit: 15, stats.Armor: 290}.ToFloatArray(),
-		HitRating: 16,
+		Stats:     stats.Stats{stats.Agility: 21, stats.Stamina: 11, stats.Spirit: 15, stats.Armor: 290}.ToFloatArray(),
+		HitRating: 13,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
 	},
@@ -316,8 +321,8 @@ var foreverSyntheticHunterItems = []*proto.UIItem{
 	{
 		Id: 993112, Name: "Survival Synthetic Finger II (Phase 1)", Icon: "inv_jewelry_ring_15",
 		Type:      proto.ItemType_ItemTypeFinger,
-		Stats:     stats.Stats{stats.Agility: 18, stats.Stamina: 11}.ToFloatArray(),
-		HitRating: 16,
+		Stats:     stats.Stats{stats.Agility: 20, stats.Stamina: 11}.ToFloatArray(),
+		HitRating: 14,
 		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassHunter},
 	},
