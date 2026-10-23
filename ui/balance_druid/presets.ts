@@ -331,20 +331,22 @@ export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('L
 	buffs: DefaultIndividualBuffs,
 	consumes: DefaultConsumes,
 });
-// The Level 60 build, Tauren: 830.0 / 828.2 / 818.6 at 120 / 180 / 300 sec. Every race a druid
-// can be under Forever on it with the same seed, 40,000 iterations (standard error 0.1 to 0.2),
-// on client 1.60.1.70425's racials (Tauren crits do 2% more, Skyborne have 3% haste) and the
-// raid's damage hits, whose pushback Nature's Focus 5 avoids 70% of the time:
+// The Level 60 build, Tauren: 864.0 / 862.4 / 853.1 at 120 / 180 / 300 sec (seed 1, 20,000
+// iterations; 864.5 / 862.8 / 853.6 on seed 1000003), on the 2026-10-23 sim (Nature's Grace a
+// batch late, the natural flask zone). The talent and knob searches kept both builds. Every race a
+// druid can be under Forever on it, seed 1 (the Night Elf with its Elune's Light lines):
 //
 //	                     120 sec  180 sec  300 sec
-//	Tauren                830.2    828.4    818.7   best overall and Horde
-//	Night Elf             831.6    827.3    817.1   best Alliance (ahead at 120 sec)
-//	Windshaper Skyborne   818.1    820.9    813.2
-//	High Order Skyborne   818.0    820.7    812.9
+//	Tauren                864.0    862.4    853.1   best overall and Horde
+//	Night Elf             865.2    861.5    851.2   best Alliance (ahead at 120 sec)
+//	Windshaper Skyborne   852.4    855.9    849.6
+//	High Order Skyborne   852.3    855.8    849.3
 //
-// The Wrath build: Tauren 782.7 / 784.5 / 780.6 (best overall and Horde), Night Elf 783.4 /
-// 782.9 / 778.6 (best Alliance), Windshaper Skyborne 777.6 / 779.3 / 775.3, High Order Skyborne
-// 777.5 / 779.1 / 775.2. No racial goes by weapon type.
+// The Wrath build: Tauren 814.5 / 816.2 / 812.0, Windshaper Skyborne 815.1 / 816.6 / 812.5 (best
+// Alliance; 0.5 and 0.6 ahead at 180 sec on the two seed sets, under the 0.5 lead on both a race
+// switch needs), High Order Skyborne 815.0 / 816.5 / 812.4, Night Elf 815.1 / 814.4 / 810.1. Its
+// knob search would weave Starfire (filler 3, +32), which is the Level 60 build, so the Wrath
+// build keeps Wrath as its filler. No racial goes by weapon type.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Tauren on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',

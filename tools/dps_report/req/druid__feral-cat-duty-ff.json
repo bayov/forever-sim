@@ -4,7 +4,7 @@
       {
         "players": [
           {
-            "race": "RaceTauren",
+            "race": "RaceNightElf",
             "class": "ClassDruid",
             "equipment": {
               "items": [
@@ -64,16 +64,17 @@
                 },
                 {},
                 {
-                  "id": 272427
+                  "id": 220606
                 }
               ]
             },
             "consumes": {
-              "flask": "FlaskOfDistilledWisdom",
+              "flask": "FlaskOfNaturalAggression",
               "food": "FoodFlankAuPoivre",
               "agilityElixir": "ElixirOfTheMongoose",
               "strengthBuff": "ElixirOfFerocity",
               "attackPowerBuff": "JujuMight",
+              "fillerExplosive": "ExplosiveEZThroDarkBomb",
               "mainHandImbue": "DenseWeightstone",
               "defaultPotion": "MightyRagePotion",
               "defaultConjured": "ConjuredRogueThistleTea",
@@ -85,7 +86,7 @@
               "blessingOfWisdom": "TristateEffectImproved",
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "05002-05200332021031212051-05501",
+            "talentsString": "05002-55100032021030212051-05501",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Alchemy",
@@ -93,18 +94,14 @@
               "type": "TypeAPL",
               "priorityList": [
                 {
+                  "notes": "Racials, trinkets, potions and runes.",
                   "action": {
                     "autocastOtherCooldowns": {}
-                  },
-                  "notes": "Racials, trinkets, potions and runes."
+                  }
                 },
                 {
+                  "notes": "Berserk with the trinket, unless waiting for it would lose a use. Without the talent ignore the warning on this line.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 417141
-                      }
-                    },
                     "condition": {
                       "or": {
                         "vals": [
@@ -117,6 +114,7 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "spellTimeToReady": {
                                   "spellId": {
@@ -124,13 +122,12 @@
                                   }
                                 }
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "math": {
+                                  "op": "OpSub",
                                   "lhs": {
                                     "remainingTime": {}
                                   },
-                                  "op": "OpSub",
                                   "rhs": {
                                     "const": {
                                       "val": "10s"
@@ -142,8 +139,12 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "spellUsesLostByDelay": {
+                                  "spellId": {
+                                    "spellId": 417141
+                                  },
                                   "delay": {
                                     "spellTimeToReady": {
                                       "spellId": {
@@ -155,13 +156,9 @@
                                     "const": {
                                       "val": "15s"
                                     }
-                                  },
-                                  "spellId": {
-                                    "spellId": 417141
                                   }
                                 }
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "0"
@@ -171,17 +168,90 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Without the talent ignore the warning on this line."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 17392
+                        "spellId": 417141
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Elune's Light outside Berserk, unless waiting would lose a use.",
+                  "action": {
+                    "condition": {
+                      "or": {
+                        "vals": [
+                          {
+                            "and": {
+                              "vals": [
+                                {
+                                  "not": {
+                                    "val": {
+                                      "auraIsActive": {
+                                        "auraId": {
+                                          "spellId": 417141
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "not": {
+                                    "val": {
+                                      "spellIsReady": {
+                                        "spellId": {
+                                          "spellId": 417141
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "spellUsesLostByDelay": {
+                                  "spellId": {
+                                    "spellId": 1259799
+                                  },
+                                  "delay": {
+                                    "auraRemainingTime": {
+                                      "auraId": {
+                                        "spellId": 417141
+                                      }
+                                    }
+                                  },
+                                  "minTimeLeft": {
+                                    "const": {
+                                      "val": "0s"
+                                    }
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0"
+                                }
+                              }
+                            }
+                          }
+                        ]
                       }
                     },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1259799
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Faerie Fire (Feral) on the target, refreshed before it drops, unless another minor armor debuff holds the slot (Faerie Fire duty).",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
@@ -189,11 +259,11 @@
                             "not": {
                               "val": {
                                 "auraIsActive": {
-                                  "auraId": {
-                                    "spellId": 9907
-                                  },
                                   "sourceUnit": {
                                     "type": "CurrentTarget"
+                                  },
+                                  "auraId": {
+                                    "spellId": 9907
                                   }
                                 }
                               }
@@ -203,11 +273,11 @@
                             "not": {
                               "val": {
                                 "auraIsActive": {
-                                  "auraId": {
-                                    "spellId": 11717
-                                  },
                                   "sourceUnit": {
                                     "type": "CurrentTarget"
+                                  },
+                                  "auraId": {
+                                    "spellId": 11717
                                   }
                                 }
                               }
@@ -215,17 +285,17 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpLt",
                               "lhs": {
                                 "auraRemainingTime": {
-                                  "auraId": {
-                                    "spellId": 17392
-                                  },
                                   "sourceUnit": {
                                     "type": "CurrentTarget"
+                                  },
+                                  "auraId": {
+                                    "spellId": 17392
                                   }
                                 }
                               },
-                              "op": "OpLt",
                               "rhs": {
                                 "const": {
                                   "val": "7s"
@@ -235,26 +305,26 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Faerie Fire (Feral) on the target, refreshed before it drops, unless another minor armor debuff holds the slot (Faerie Fire duty)."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 1322605
+                        "spellId": 17392
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Shifting Power once the Energy is low, but not while a Ferocious Bite is due (its Energy goes into Shreds). Without the talent ignore the warning on this line.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
                           {
                             "cmp": {
+                              "op": "OpLe",
                               "lhs": {
                                 "currentEnergy": {}
                               },
-                              "op": "OpLe",
                               "rhs": {
                                 "const": {
                                   "val": "50"
@@ -269,10 +339,10 @@
                                   "vals": [
                                     {
                                       "cmp": {
+                                        "op": "OpEq",
                                         "lhs": {
                                           "currentComboPoints": {}
                                         },
-                                        "op": "OpEq",
                                         "rhs": {
                                           "const": {
                                             "val": "5"
@@ -282,6 +352,7 @@
                                     },
                                     {
                                       "cmp": {
+                                        "op": "OpGe",
                                         "lhs": {
                                           "dotRemainingTime": {
                                             "spellId": {
@@ -289,7 +360,6 @@
                                             }
                                           }
                                         },
-                                        "op": "OpGe",
                                         "rhs": {
                                           "const": {
                                             "val": "6s"
@@ -304,26 +374,26 @@
                           }
                         ]
                       }
-                    }
-                  },
-                  "notes": "Its Energy goes into Shreds. Without the talent ignore the warning on this line."
-                },
-                {
-                  "action": {
+                    },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 22829
+                        "spellId": 1322605
                       }
-                    },
+                    }
+                  }
+                },
+                {
+                  "notes": "Ferocious Bite at any combo points in the last seconds of the fight.",
+                  "action": {
                     "condition": {
                       "and": {
                         "vals": [
                           {
                             "cmp": {
+                              "op": "OpGe",
                               "lhs": {
                                 "currentComboPoints": {}
                               },
-                              "op": "OpGe",
                               "rhs": {
                                 "const": {
                                   "val": "1"
@@ -333,10 +403,10 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpLt",
                               "lhs": {
                                 "remainingTime": {}
                               },
-                              "op": "OpLt",
                               "rhs": {
                                 "const": {
                                   "val": "2s"
@@ -346,28 +416,29 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 22829
+                      }
                     }
                   }
                 },
                 {
+                  "notes": "Rip whenever it is down.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 9896
-                      }
-                    },
                     "condition": {
                       "and": {
                         "vals": [
                           {
                             "cmp": {
+                              "op": "OpGe",
                               "lhs": {
                                 "currentComboPoints": {}
                               },
-                              "op": "OpGe",
                               "rhs": {
                                 "const": {
-                                  "val": "4"
+                                  "val": "5"
                                 }
                               }
                             }
@@ -385,10 +456,10 @@
                           },
                           {
                             "cmp": {
+                              "op": "OpGt",
                               "lhs": {
                                 "remainingTime": {}
                               },
-                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "8s"
@@ -398,16 +469,17 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 9896
+                      }
                     }
                   }
                 },
                 {
+                  "notes": "Ferocious Bite at 5 combo points while Rip has time left.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 22829
-                      }
-                    },
                     "condition": {
                       "and": {
                         "vals": [
@@ -416,10 +488,10 @@
                               "vals": [
                                 {
                                   "cmp": {
+                                    "op": "OpEq",
                                     "lhs": {
                                       "currentComboPoints": {}
                                     },
-                                    "op": "OpEq",
                                     "rhs": {
                                       "const": {
                                         "val": "5"
@@ -429,10 +501,10 @@
                                 },
                                 {
                                   "cmp": {
+                                    "op": "OpGe",
                                     "lhs": {
                                       "currentEnergy": {}
                                     },
-                                    "op": "OpGe",
                                     "rhs": {
                                       "const": {
                                         "val": "35"
@@ -448,6 +520,7 @@
                               "vals": [
                                 {
                                   "cmp": {
+                                    "op": "OpGe",
                                     "lhs": {
                                       "dotRemainingTime": {
                                         "spellId": {
@@ -455,7 +528,6 @@
                                         }
                                       }
                                     },
-                                    "op": "OpGe",
                                     "rhs": {
                                       "const": {
                                         "val": "6s"
@@ -465,10 +537,10 @@
                                 },
                                 {
                                   "cmp": {
+                                    "op": "OpLe",
                                     "lhs": {
                                       "remainingTime": {}
                                     },
-                                    "op": "OpLe",
                                     "rhs": {
                                       "const": {
                                         "val": "8s"
@@ -481,27 +553,195 @@
                           }
                         ]
                       }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 22829
+                      }
                     }
                   }
                 },
                 {
+                  "notes": "Night Elf: Shadowmeld into Ravage on Clearcasting, or in the last seconds with the Energy for it. Other races can ignore the warning on this line.",
                   "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 9830
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "spellIsReady": {
+                              "spellId": {
+                                "spellId": 20580
+                              }
+                            }
+                          },
+                          {
+                            "not": {
+                              "val": {
+                                "frontOfTarget": {}
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpLt",
+                              "lhs": {
+                                "currentComboPoints": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "5"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "or": {
+                              "vals": [
+                                {
+                                  "auraIsActive": {
+                                    "auraId": {
+                                      "spellId": 16870
+                                    }
+                                  }
+                                },
+                                {
+                                  "and": {
+                                    "vals": [
+                                      {
+                                        "cmp": {
+                                          "op": "OpGe",
+                                          "lhs": {
+                                            "currentEnergy": {}
+                                          },
+                                          "rhs": {
+                                            "spellCurrentCost": {
+                                              "spellId": {
+                                                "spellId": 9867
+                                              }
+                                            }
+                                          }
+                                        }
+                                      },
+                                      {
+                                        "cmp": {
+                                          "op": "OpLt",
+                                          "lhs": {
+                                            "remainingTime": {}
+                                          },
+                                          "rhs": {
+                                            "const": {
+                                              "val": "10s"
+                                            }
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
                       }
                     },
+                    "strictSequence": {
+                      "actions": [
+                        {
+                          "castSpell": {
+                            "spellId": {
+                              "spellId": 20580
+                            }
+                          }
+                        },
+                        {
+                          "castSpell": {
+                            "spellId": {
+                              "spellId": 9867
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                {
+                  "notes": "Rake whenever it is down, but not at the very end of the fight.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "and": {
+                              "vals": [
+                                {
+                                  "not": {
+                                    "val": {
+                                      "dotIsActive": {
+                                        "spellId": {
+                                          "spellId": 9904
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "cmp": {
+                                    "op": "OpLt",
+                                    "lhs": {
+                                      "currentComboPoints": {}
+                                    },
+                                    "rhs": {
+                                      "const": {
+                                        "val": "5"
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "6s"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 9904
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "The builder.",
+                  "action": {
                     "condition": {
                       "cmp": {
+                        "op": "OpLt",
                         "lhs": {
                           "currentComboPoints": {}
                         },
-                        "op": "OpLt",
                         "rhs": {
                           "const": {
                             "val": "5"
                           }
                         }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 9830
                       }
                     }
                   }
@@ -514,7 +754,8 @@
             "feralDruid": {
               "options": {
                 "innervateTarget": {},
-                "latencyMs": 100
+                "latencyMs": 100,
+                "prepullClearcasting": true
               }
             }
           }
@@ -621,7 +862,8 @@
       }
     ],
     "raidDamageHitsPerMinute": 2,
-    "raidDamagePerHit": 1500
+    "raidDamagePerHit": 1500,
+    "naturalFlaskZone": true
   },
   "simOptions": {
     "iterations": 1000,

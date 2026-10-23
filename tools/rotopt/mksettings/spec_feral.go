@@ -41,6 +41,8 @@ func init() {
 				Options: &proto.FeralDruid_Options{
 					InnervateTarget: &proto.UnitReference{},
 					LatencyMs:       100,
+					// Clearcasting fished for before the pull (standards 13 allows it).
+					PrepullClearcasting: true,
 				},
 			}}
 		},

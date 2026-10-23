@@ -184,7 +184,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 			consumes: Presets.DefaultConsumes,
 			defaultFactionRaces: {
 				[Faction.Unknown]: Race.RaceUnknown,
-				[Faction.Alliance]: Race.RaceSkyborneHighOrder,
+				[Faction.Alliance]: Race.RaceNightElf,
 				[Faction.Horde]: Race.RaceTauren,
 			},
 			defaultGear: {

@@ -5,8 +5,8 @@
 # The rotations do not depend on the settings, only the sanity sim does.
 #
 #   tools/rotopt/druid_presets.sh balance.json feral.json
-# Every rotation leaves Elune's Light out (elune=0): the presets are Tauren since client 1.60.1.70425's
-# racials, and a Night Elf still uses it through the autocast line.
+# The Balance rotations leave Elune's Light out (elune=0): those presets are Tauren, and a Night Elf
+# still uses it through the autocast line. The Feral presets are Night Elf and keep it in.
 set -e
 balance=$1
 feral=$2
@@ -43,18 +43,18 @@ gen druid_balance "$balance" ui/balance_druid/apls level60_ff "innervateMana=0,f
 gen druid_balance "$balance" ui/balance_druid/apls level60_wrath "innervateMana=0,filler=1,prepull=2,prepullTime=1.5,prepullTrinket=1,cdStack=1,endMoonfire=2,endMoonfireSlack=1.5,elune=0"
 # The Wrath build's Faerie Fire duty, the same way.
 gen druid_balance "$balance" ui/balance_druid/apls level60_wrath_ff "innervateMana=0,filler=1,prepull=2,prepullTime=1.5,prepullTrinket=1,cdStack=1,endMoonfire=2,endMoonfireSlack=1.5,faerieFire=1,elune=0"
-# Feral cat on the Level 60 talents (05002-05200332021031212051-05501): Rip at 4 combo points
-# whenever it is down, Ferocious Bite at 5 while Rip has 6 sec left, Shred, no Rake (keeping it
-# up costs 33), Shifting Power at 50 Energy or less but not while a Bite is due (0.6 to 0.9
-# ahead: its Energy goes into Shreds, not the Bite), Berserk on cooldown, no Tiger's Fury (Forever
-# removed it, sim/druid/tigers_fury.go). The
-# search on the 1b gear kept that at 120 and 180 sec (at 300 sec Shifting Power at 40 Energy is
-# 0.3 ahead).
-# At the end of the fight: no new Rip in the last 8 sec, and Ferocious Bite at any combo points
-# in the last 2 sec (0.6 to 1.4 together, the rogue's end-of-fight Eviscerate idea).
-gen druid_feral "$feral" ui/feral_druid/apls level60 "rake=0,ripCP=4,shiftEnergy=50,shiftHoldForBite=1,endBite=2,ripMinTime=8,biteRipTime=6,cdStack=1,tigersFury=0,elune=0"
+# Feral cat on the Level 60 talents (05002-55100032021030212051-05501), Night Elf: Rip at 5 combo
+# points whenever it is down (2.0 to 5.6 ahead of 4 with Idol of the Dream's longer Rip), Ferocious
+# Bite at 5 while Rip has 6 sec left, Shadowmeld into Ravage on Clearcasting or in the last 10 sec,
+# Rake whenever it is down with more than 6 sec left (with Ferocity 5; 38 to 42 ahead of no Rake
+# under the 2026-10-23 sim, Rake's attack power and Rend and Tear on its ticks), Shred, Shifting
+# Power at 50 Energy or less but not while a Bite is due, Berserk held for the Strength trinket,
+# Elune's Light outside Berserk, no Tiger's Fury (Forever removed it, sim/druid/tigers_fury.go). No
+# new Rip in the last 8 sec, and Ferocious Bite at any combo points in the last 2 sec. The knob
+# search kept the rest at 120, 180 and 300 sec.
+gen druid_feral "$feral" ui/feral_druid/apls level60 "rake=1,rakeMinTime=6,shadowmeld=1,shadowmeldEnd=10,meldBeforeRake=1,ripCP=5,shiftEnergy=50,shiftHoldForBite=1,endBite=2,ripMinTime=8,biteRipTime=6,cdStack=1,tigersFury=0,elune=1"
 # The cat's Faerie Fire duty: Faerie Fire (Feral) from Cat Form, first after the cooldowns and
 # again once it has under 7 sec left, so a missed cast (its 6 sec cooldown) gets a second try before
-# the debuff drops (rotation auditor: 99.7% uptime against 98.7% at 1 sec, same DPS). The knob
-# search kept the rest at 120, 180 and 300 sec.
-gen druid_feral "$feral" ui/feral_druid/apls level60_ff "rake=0,ripCP=4,shiftEnergy=50,shiftHoldForBite=1,endBite=2,ripMinTime=8,biteRipTime=6,cdStack=1,tigersFury=0,faerieFire=1,ffRefresh=7,elune=0"
+# the debuff drops (rotation auditor: 99.7% uptime against 98.7% at 1 sec, same DPS). After Rip, or
+# at 3 sec, is within the noise.
+gen druid_feral "$feral" ui/feral_druid/apls level60_ff "rake=1,rakeMinTime=6,shadowmeld=1,shadowmeldEnd=10,meldBeforeRake=1,ripCP=5,shiftEnergy=50,shiftHoldForBite=1,endBite=2,ripMinTime=8,biteRipTime=6,cdStack=1,tigersFury=0,faerieFire=1,ffRefresh=7,elune=1"

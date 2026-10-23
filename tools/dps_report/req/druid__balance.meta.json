@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 872.8,
-    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 828.2)"
+    "dps": 862.4,
+    "source": "Druid class worker finals, 2026-10-23 regear and rotation round (Nature's Grace a batch late, the natural flask zone; talents and rotation kept): 120/180/300s 864.0/862.4/853.1 (seed 1), 864.5/862.8/853.6 (seed 1000003)"
   },
   "verify": {
-    "dps": 872.79,
-    "stderr": 0.24,
+    "dps": 862.43,
+    "stderr": 0.23,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "class worker sim of this request, 180s, seed 1"
   },
   "summary": "Moonkin keeping Insect Swarm and Moonfire up, weaving Wrath and Starfire to spend every Eclipse charge.",
   "keyTalents": [
