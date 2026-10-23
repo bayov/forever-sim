@@ -354,7 +354,11 @@ func (hunter *Hunter) OnGCDReady(_ *core.Simulation) {
 }
 
 // The hunter's ranged spells need the target out of melee range, its melee spells need it in.
+// Forever's deadzone ends at core.ForeverMinRangedAttackDistance (see minRangedAttackDistance).
 func (hunter *Hunter) inRangedRange() bool {
+	if hunter.Env.IsForever() {
+		return hunter.DistanceFromTarget >= core.ForeverMinRangedAttackDistance
+	}
 	return hunter.DistanceFromTarget >= core.MinRangedAttackDistance
 }
 

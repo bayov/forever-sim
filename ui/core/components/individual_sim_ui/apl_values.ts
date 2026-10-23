@@ -36,6 +36,7 @@ import {
 	APLValueFrontOfTarget,
 	APLValueInMeleeRange,
 	APLValueIsMoving,
+	APLValueMoveTime,
 	APLValueLevelingBandageReady,
 	APLValueLevelingDistance,
 	APLValueLevelingMobsOnUs,
@@ -643,6 +644,18 @@ const valueKindFactories: { [f in NonNullable<APLValueKind>]: ValueKindConfig<AP
 		shortDescription: '<b>True</b> while you run: searching for a mob or walking up to one in a leveling session. Only instants go out then.',
 		newValue: APLValueIsMoving.create,
 		fields: [],
+	}),
+	moveTime: inputBuilder({
+		label: 'Move Time',
+		submenu: ['Encounter'],
+		shortDescription: 'How long a Move to this range would take from where you stand, at your current run speed.',
+		newValue: APLValueMoveTime.create,
+		fields: [
+			valueFieldConfig('rangeFromTarget', {
+				label: 'to Range',
+				labelTooltip: 'Range from target.',
+			}),
+		],
 	}),
 	levelingDistance: inputBuilder({
 		label: 'Distance (Leveling)',

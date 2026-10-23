@@ -22,6 +22,7 @@ var (
 	hunterAspectOfTheHawk  = spellID(14321) // rank 5, see sim/hunter/aspects.go
 	hunterAspectOfTheBeast = spellID(1299447)
 	hunterRaptorStrikeQ    = spellIDTag(14266, 3)
+	hunterRaptorStrike     = spellID(14266)
 	hunterMongooseBite     = spellID(14271)
 	hunterStriderKick      = spellID(1317257)
 	hunterLacerate         = spellID(1299332)
@@ -82,6 +83,25 @@ func (hunterRanged) Knobs() []Knob {
 		{Name: "scorpid", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Seconds left on the sting when the duty refreshes it.
 		{Name: "scorpidLead", Default: 2, Min: 1, Max: 6, Step: 1},
+		// Melee weaving (hunterWeave): between Auto Shots the hunter walks into melee for a main hand
+		// swing, with Raptor Strike queued on it, and back out past the deadzone. 0 stands at range.
+		{Name: "weave", Default: 0, Min: 0, Max: 1, Step: 1},
+		// The most a weave may hold the next Auto Shot back, in seconds.
+		{Name: "weaveDelay", Default: 1.2, Min: 0, Max: 2.5, Step: 0.1},
+		// The reaction the weave allows for, in seconds: after an Auto Shot before walking in, and
+		// after a walk out before Auto Shot starts again (the sim's reaction time, see
+		// core.AutoAttacks.resumeRangedAfterMove).
+		{Name: "weaveReact", Default: 0.2, Min: 0, Max: 0.4, Step: 0.05},
+		// Seconds in melee after the swing before walking out.
+		{Name: "weaveMeleeWait", Default: 0.2, Min: 0, Max: 0.4, Step: 0.05},
+		// Aimed Shot and Sniper Shot, which hold the hunter still, only when the cast ends before the
+		// walk in (1), or whenever ready (0).
+		{Name: "weaveCasts", Default: 1, Min: 0, Max: 1, Step: 1},
+		// Walk in only when Arcane Shot and the Aimed Shot / Multi-Shot cooldown stay down until the
+		// hunter is back at range, less this many seconds (off at 3).
+		{Name: "weaveShotSlack", Default: 3, Min: 0, Max: 3, Step: 0.25},
+		// Walk in only for a swing Raptor Strike is ready for (1), or for white swings too (0).
+		{Name: "weaveRaptor", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -93,6 +113,7 @@ func (hunterRanged) Build(k Knobs) *proto.APLRotation {
 		return ge(currentManaPercent(), num(k[name]/100))
 	}
 
+	weave := hunterWeave{k}
 	items := []*proto.APLListItem{
 		{
 			Notes: "Step back to 25 yards when the fight starts in melee range, inside the 8 yard minimum.",
@@ -102,6 +123,9 @@ func (hunterRanged) Build(k Knobs) *proto.APLRotation {
 			},
 		},
 		cast(hunterAspectOfTheHawk, not(auraIsActive(hunterAspectOfTheHawk)), "Aspect of the Hawk if it ever drops."),
+	}
+	if weave.on() {
+		items = append(weave.melee(), items[1:]...)
 	}
 	if k["holdRapid"] == 1 {
 		items = append(items, cast(hunterRapidFire, alignedWith(hunterRapidFire, hunterRangedOnUse), "Rapid Fire with the on-use trinket, unless waiting would cost a use."))
@@ -144,12 +168,12 @@ func (hunterRanged) Build(k Knobs) *proto.APLRotation {
 	if k["sniperManaPerSec"] > 0 {
 		sniperGate = ge(hunterCurrentMana(), hunterMul(remainingTime(), num(k["sniperManaPerSec"])))
 	}
-	sniper := cast(hunterSniperShot, sniperGate, "Sniper Shot on cooldown, with the talent, while the mana lasts the fight.")
+	sniper := cast(hunterSniperShot, weave.castFits(hunterSniperShot, sniperGate), "Sniper Shot on cooldown, with the talent, while the mana lasts the fight.")
 	if k["sniper"] == 1 && k["sniperFirst"] == 1 {
 		items = append(items, sniper)
 	}
 	if k["aimed"] == 1 {
-		items = append(items, cast(hunterAimedShot, floor("aimedMana"), "Aimed Shot on the cooldown it shares with Multi-Shot."))
+		items = append(items, cast(hunterAimedShot, weave.castFits(hunterAimedShot, floor("aimedMana")), "Aimed Shot on the cooldown it shares with Multi-Shot."))
 	}
 	items = append(items, cast(hunterMultiShot, nil, "Multi-Shot when Aimed Shot is not taken."))
 	if serpentOn && k["serpentLate"] == 1 {
@@ -164,8 +188,18 @@ func (hunterRanged) Build(k Knobs) *proto.APLRotation {
 	if serpentOn && k["serpentLate"] == 2 {
 		items = append(items, serpent)
 	}
+	if weave.on() {
+		items = append(items, weave.walkIn()...)
+	}
 
 	rot := rotation(items...)
+	if weave.on() {
+		// Into position before the pull, from wherever the fight starts.
+		rot.PrepullActions = append(rot.PrepullActions, &proto.APLPrepullAction{
+			Action:    &proto.APLAction{Action: &proto.APLAction_Move{Move: &proto.APLActionMove{RangeFromTarget: num(hunterWeaveShootSpot)}}},
+			DoAtValue: seconds(-6),
+		})
+	}
 	rot.PrepullActions = append(rot.PrepullActions, prepull(hunterAspectOfTheHawk, 3))
 	if k["mark"] == 1 && k["markPrepull"] > 0 {
 		rot.PrepullActions = append(rot.PrepullActions, prepull(hunterHuntersMark, k["markPrepull"]))
@@ -201,4 +235,117 @@ func hunterScorpidDuty(k Knobs) *proto.APLListItem {
 
 func hunterScorpidDue(k Knobs) value {
 	return lt(targetAuraRemainingTime(hunterScorpidSting), seconds(k["scorpidLead"]))
+}
+
+func hunterMax(vals ...value) value {
+	return &proto.APLValue{Value: &proto.APLValue_Max{Max: &proto.APLValueMax{Vals: vals}}}
+}
+
+func hunterMin(vals ...value) value {
+	return &proto.APLValue{Value: &proto.APLValue_Min{Min: &proto.APLValueMin{Vals: vals}}}
+}
+
+func hunterRangedTimeToNext() value {
+	return &proto.APLValue{Value: &proto.APLValue_AutoTimeToNext{AutoTimeToNext: &proto.APLValueAutoTimeToNext{AutoType: proto.APLValueAutoTimeToNext_Ranged}}}
+}
+
+func hunterRangedSwingTime() value {
+	return &proto.APLValue{Value: &proto.APLValue_AutoSwingTime{AutoSwingTime: &proto.APLValueAutoSwingTime{AutoType: proto.APLValueAutoSwingTime_Ranged}}}
+}
+
+func hunterGCDTimeToReady() value {
+	return &proto.APLValue{Value: &proto.APLValue_GcdTimeToReady{GcdTimeToReady: &proto.APLValueGCDTimeToReady{}}}
+}
+
+func hunterMoveTime(yards float64) value {
+	return &proto.APLValue{Value: &proto.APLValue_MoveTime{MoveTime: &proto.APLValueMoveTime{RangeFromTarget: num(yards)}}}
+}
+
+func hunterMove(yards float64, condition value, notes string) *proto.APLListItem {
+	return action(condition, notes, &proto.APLAction{Action: &proto.APLAction_Move{Move: &proto.APLActionMove{RangeFromTarget: num(yards)}}})
+}
+
+func hunterWait(duration value, condition value, notes string) *proto.APLListItem {
+	return action(condition, notes, &proto.APLAction{Action: &proto.APLAction_Wait{Wait: &proto.APLActionWait{Duration: duration}}})
+}
+
+// Where a weave shoots from and walks in to. Forever's deadzone ends at 11.67 yd (8 yd past both
+// combat reaches, core.ForeverMinRangedAttackDistance); the weave shoots from 12, the third of a yard
+// past it a player overshoots by (wowsims/forever 4e02d3ce95), and walks in to just inside melee range.
+const (
+	hunterWeaveShootSpot = 12
+	hunterWeaveMeleeSpot = 4.99
+)
+
+// hunterWeave is the weave of the hunter_ranged template: the knobs weave, weaveDelay, weaveReact,
+// weaveMeleeWait and weaveCasts. A weave walks in when the main hand swing is ready by the time the
+// hunter gets there, and only when it holds the next Auto Shot back by weaveDelay or less: Auto Shot
+// can't go off on the move, and after the walk out it winds up for 0.5 sec a reaction time after the
+// hunter stops (core.AutoAttacks.resumeRangedAfterMove). The walks take the hunter's run speed
+// (Move Time), so Strider Kick and the run speed buffs shorten them.
+type hunterWeave struct{ k Knobs }
+
+func (w hunterWeave) on() bool { return w.k["weave"] == 1 }
+
+// The walk either way, as seen from the shoot spot.
+func (w hunterWeave) walk() value { return hunterMoveTime(hunterWeaveMeleeSpot) }
+
+// When the hunter is back at the shoot spot after a weave that starts now or once the swing allows.
+func (w hunterWeave) back() value {
+	return add(add(hunterMax(mainHandTimeToNext(), w.walk()), seconds(w.k["weaveMeleeWait"])), w.walk())
+}
+
+// The weave fits when the next Auto Shot goes off no more than weaveDelay late: the hunter is back
+// out, with the reaction and the windup, by then. With weaveShotSlack below 3 the shots on the
+// global cooldown must also stay on cooldown until about then.
+func (w hunterWeave) fits() value {
+	fits := ge(add(hunterRangedTimeToNext(), seconds(w.k["weaveDelay"])), add(w.back(), seconds(w.k["weaveReact"]+0.5)))
+	if w.k["weaveShotSlack"] >= 3 {
+		return fits
+	}
+	shotsDown := sub(w.back(), seconds(w.k["weaveShotSlack"]))
+	return and(fits, ge(spellTimeToReady(hunterArcaneShot), shotsDown), ge(spellTimeToReady(hunterMultiShot), shotsDown))
+}
+
+// The condition of a cast that holds the hunter still: with weaveCasts it goes out only when it ends
+// before the walk in, or when no weave fits before the next Auto Shot.
+func (w hunterWeave) castFits(spell *proto.ActionID, condition value) value {
+	if !w.on() || w.k["weaveCasts"] == 0 {
+		return condition
+	}
+	return and(condition, or(not(w.fits()), le(add(spellCastTime(spell), w.walk()), mainHandTimeToNext())))
+}
+
+// In melee: Raptor Strike queued, the swing, a moment, and back out to the shoot spot. Nothing
+// else goes out in melee.
+func (w hunterWeave) melee() []*proto.APLListItem {
+	sinceSwing := sub(mainHandSwingTime(), mainHandTimeToNext())
+	return []*proto.APLListItem{
+		cast(hunterRaptorStrikeQ, nil, "Weave: Raptor Strike queued on the swing."),
+		cast(hunterMongooseBite, nil, "Weave: Mongoose Bite when a dodge opens it."),
+		cast(hunterStriderKick, nil, "Weave: Strider Kick, with the talent, for its run speed out."),
+		hunterWait(add(mainHandTimeToNext(), seconds(0.001)), and(inMeleeRange(), gt(sinceSwing, seconds(0.5))),
+			"Weave: in melee, wait for the swing."),
+		hunterWait(sub(seconds(w.k["weaveMeleeWait"]), sinceSwing), and(inMeleeRange(), lt(sinceSwing, seconds(w.k["weaveMeleeWait"]))),
+			"Weave: a moment after the swing."),
+		hunterMove(hunterWeaveShootSpot, inMeleeRange(), "Weave: back out past the deadzone."),
+	}
+}
+
+// At range, below every shot: walk in when the swing is ready on arrival and the weave fits, a
+// reaction after the Auto Shot that just went off, or wait for that moment.
+func (w hunterWeave) walkIn() []*proto.APLListItem {
+	sinceShot := sub(hunterRangedSwingTime(), hunterRangedTimeToNext())
+	react := seconds(w.k["weaveReact"])
+	ready := le(mainHandTimeToNext(), w.walk())
+	if w.k["weaveRaptor"] == 1 {
+		ready = and(ready, le(spellTimeToReady(hunterRaptorStrike), w.walk()))
+	}
+	return []*proto.APLListItem{
+		hunterWait(sub(react, sinceShot), and(ready, w.fits(), lt(sinceShot, react)),
+			"Weave: a reaction after the Auto Shot."),
+		hunterMove(hunterWeaveMeleeSpot, and(ready, w.fits()), "Weave: walk in for the swing."),
+		hunterWait(hunterMin(sub(mainHandTimeToNext(), w.walk()), hunterMax(hunterGCDTimeToReady(), seconds(0.05))),
+			and(not(ready), w.fits()), "Weave: wait for the walk in."),
+	}
 }

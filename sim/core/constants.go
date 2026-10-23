@@ -16,6 +16,13 @@ const ArmorPenPerPercentArmor = 13.99
 const MaxMeleeAttackDistance = 5
 const MinRangedAttackDistance = 12
 
+// Forever's, see minRangedAttackDistance.
+const ForeverMinRangedAttackDistance = MaxMeleeAttackDistance + 8 - 4.0/3.0
+
+// Under Forever a ranged auto winds up for this long before it fires. Haste doesn't shorten it, and
+// it runs inside the swing, so it doesn't lengthen it (wowsims/forever core/attack.go).
+const RangedSwingWindup = time.Millisecond * 500
+
 const MissDodgeParryBlockCritChancePerDefense = 0.04
 
 const DefenseRatingToChanceReduction = (1.0 / DefenseRatingPerDefense) * MissDodgeParryBlockCritChancePerDefense / 100

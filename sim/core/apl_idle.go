@@ -801,6 +801,11 @@ func (value *APLValueInMeleeRange) steadyUntil(_ *Simulation) time.Duration {
 	return NeverExpires
 }
 
+// The distance and the run speed only change with an event.
+func (value *APLValueMoveTime) steadyUntil(sim *Simulation) time.Duration {
+	return aplSteadyUntil(sim, value.moveRange)
+}
+
 func (value *APLValueAuraIsKnown) steadyUntil(_ *Simulation) time.Duration {
 	return NeverExpires
 }

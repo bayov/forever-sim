@@ -380,6 +380,9 @@ func (wa *WeaponAttack) swing(sim *Simulation) time.Duration {
 		if throughCast {
 			wa.unit.swingSpellThroughCast = attackSpell
 		}
+		if sim.IsForever() && wa == &wa.unit.AutoAttacks.ranged {
+			wa.unit.AutoAttacks.meleeAttackOff = true
+		}
 		attackSpell.Cast(sim, wa.unit.CurrentTarget)
 		wa.unit.swingSpellThroughCast = nil
 
@@ -438,6 +441,10 @@ type AutoAttacks struct {
 	ranged WeaponAttack
 
 	enabled bool
+
+	// Under Forever starting a ranged auto turns the melee attack off, so the next walk into melee
+	// starts it again (see EnableAutoSwing).
+	meleeAttackOff bool
 }
 
 // Options for initializing auto attacks.
@@ -602,6 +609,7 @@ func (aa *AutoAttacks) reset(sim *Simulation) {
 	}
 
 	aa.enabled = false
+	aa.meleeAttackOff = false
 
 	aa.mh.swingAt = NeverExpires
 	aa.oh.swingAt = NeverExpires
@@ -671,7 +679,11 @@ func (aa *AutoAttacks) startPull(sim *Simulation) {
 		}
 	}
 
-	if aa.AutoSwingRanged && aa.mh.unit.DistanceFromTarget >= MinRangedAttackDistance {
+	if aa.AutoSwingRanged && aa.mh.unit.DistanceFromTarget >= minRangedAttackDistance(sim) {
+		if sim.IsForever() {
+			// The first shot winds up too.
+			aa.ranged.swingAt = max(aa.ranged.swingAt, RangedSwingWindup)
+		}
 		aa.ranged.addWeaponAttack(sim, aa.ranged.unit.RangedSwingSpeed())
 	}
 }
@@ -725,12 +737,46 @@ func (aa *AutoAttacks) EnableAutoSwing(sim *Simulation) {
 		if aa.IsDualWielding {
 			aa.oh.swingAt = max(aa.oh.swingAt, sim.CurrentTime, 0)
 			aa.oh.addWeaponAttack(sim, aa.mh.unit.SwingSpeed())
+			// The attack Auto Shot turned off starts again, and the off hand's first swing comes
+			// half a swing after it (wowsims/forever start_attack_test.go).
+			if aa.meleeAttackOff {
+				aa.oh.swingAt = max(aa.oh.swingAt, sim.CurrentTime+aa.oh.curSwingDuration/2)
+				sim.rescheduleWeaponAttack(aa.oh.swingAt)
+			}
 		}
+		aa.meleeAttackOff = false
 	}
 
-	if aa.AutoSwingRanged && aa.mh.unit.DistanceFromTarget >= MinRangedAttackDistance {
+	if aa.AutoSwingRanged && aa.mh.unit.DistanceFromTarget >= minRangedAttackDistance(sim) {
 		aa.ranged.swingAt = max(aa.ranged.swingAt, sim.CurrentTime, 0)
 		aa.ranged.addWeaponAttack(sim, aa.ranged.unit.RangedSwingSpeed())
+	}
+}
+
+// Bows, guns and crossbows can't fire inside this range. Forever keeps the 8 yd minimum of Auto
+// Shot's row, counted from both units' combat reach, where melee range is both reaches plus 4/3 yd:
+// the deadzone past melee range is 8 - 4/3 yd whatever the target's size (wowsims/forever
+// 8a192337d8, from a positioned weaving log on the Gordok Spirit).
+func minRangedAttackDistance(sim *Simulation) float64 {
+	if sim.IsForever() {
+		return ForeverMinRangedAttackDistance
+	}
+	return MinRangedAttackDistance
+}
+
+// Under Forever a ranged auto winds up for RangedSwingWindup before it fires, inside its swing, and
+// moving cancels the windup, so a shot can't go off on the move. A shot whose windup the move
+// overlapped, or that came due on the way or in melee, winds up a reaction time after the move
+// ends, as the player starts Auto Shot again by hand (wowsims/forever 11f285a52a and 966362d038:
+// in the weaving log the windup started 0.20 to 0.35 sec after each walk out). A walk into position
+// before the pull starts it at the pull, as Auto Shot would pull.
+func (aa *AutoAttacks) resumeRangedAfterMove(sim *Simulation) {
+	if !sim.IsForever() || !aa.AutoSwingRanged || !aa.enabled || aa.ranged.unit.DistanceFromTarget < ForeverMinRangedAttackDistance {
+		return
+	}
+	if aa.ranged.swingAt < max(sim.CurrentTime, 0)+RangedSwingWindup {
+		aa.ranged.swingAt = max(sim.CurrentTime+aa.ranged.unit.ReactionTime, 0) + RangedSwingWindup
+		sim.rescheduleWeaponAttack(aa.ranged.swingAt)
 	}
 }
 

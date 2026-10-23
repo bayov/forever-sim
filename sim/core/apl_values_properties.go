@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/wowsims/classic/sim/core/proto"
@@ -64,4 +65,33 @@ func (value *APLValueInMeleeRange) GetBool(sim *Simulation) bool {
 }
 func (value *APLValueInMeleeRange) String() string {
 	return "In Melee Range()"
+}
+
+type APLValueMoveTime struct {
+	DefaultAPLValueImpl
+	unit      *Unit
+	moveRange APLValue
+}
+
+func (rot *APLRotation) newValueMoveTime(config *proto.APLValueMoveTime) APLValue {
+	moveRange := rot.coerceTo(rot.newAPLValue(config.RangeFromTarget), proto.APLValueType_ValueTypeFloat)
+	if moveRange == nil {
+		return nil
+	}
+	return &APLValueMoveTime{
+		unit:      rot.unit,
+		moveRange: moveRange,
+	}
+}
+func (value *APLValueMoveTime) GetInnerValues() []APLValue {
+	return []APLValue{value.moveRange}
+}
+func (value *APLValueMoveTime) Type() proto.APLValueType {
+	return proto.APLValueType_ValueTypeDuration
+}
+func (value *APLValueMoveTime) GetDuration(sim *Simulation) time.Duration {
+	return value.unit.TimeToMoveTo(value.moveRange.GetFloat(sim))
+}
+func (value *APLValueMoveTime) String() string {
+	return fmt.Sprintf("Move Time(%s)", value.moveRange)
 }

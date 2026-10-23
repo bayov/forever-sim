@@ -179,6 +179,7 @@ message APLValue {
         APLValueFrontOfTarget front_of_target = 63;
         APLValueInMeleeRange in_melee_range = 80;
         APLValueIsMoving is_moving = 84;
+        APLValueMoveTime move_time = 89;
 
         // Leveling session values (Encounter.leveling)
         APLValueLevelingDistance leveling_distance = 81;
@@ -513,6 +514,11 @@ message APLValueInMeleeRange {
 
 // True while we run: searching for a mob, or walking up to one. Only instants go out then.
 message APLValueIsMoving {
+}
+
+// How long a Move to this range would take from where we stand, at the current run speed.
+message APLValueMoveTime {
+    APLValue range_from_target = 1;
 }
 
 // Yards to the unit in a leveling session (default the current target): where a mob we
