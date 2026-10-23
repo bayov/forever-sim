@@ -180,9 +180,38 @@ func TestPetAbilityDamage(t *testing.T) {
 	}
 }
 
+// TestForeverPetAbilityRows checks the level 60 Lightning Breath, Demoralizing Screech and Scorpid
+// Poison under Forever against their client rows (25012, 24579, 24587): base points times 1 -/+
+// half the variance, rounded, and the pet's 1.5 sec global cooldown.
+func TestForeverPetAbilityRows(t *testing.T) {
+	for _, c := range []struct {
+		name                 string
+		got                  [2]float64
+		basePoints, variance float64
+	}{
+		{"Lightning Breath", foreverLightningBreath60, 92, 0.1320754736661911},
+		{"Demoralizing Screech", foreverScreech60, 33, 0.5555555820465088},
+	} {
+		want := [2]float64{math.Round(c.basePoints * (1 - c.variance/2)), math.Round(c.basePoints * (1 + c.variance/2))}
+		if c.got != want {
+			t.Errorf("%s at level 60: %v, want %v", c.name, c.got, want)
+		}
+	}
+	if foreverScorpidPoisonTick60 != 5 {
+		t.Errorf("Scorpid Poison ticks for %v at 60, want 5", foreverScorpidPoisonTick60)
+	}
+
+	_, hunter := newHunterSim(t, "", &proto.Debuffs{})
+	for _, spell := range []*core.Spell{hunter.pet.specialAbility, hunter.pet.focusDump} {
+		if got := spell.DefaultCast.GCD; got != 1500*time.Millisecond {
+			t.Errorf("%v: the pet's global cooldown is %v, want 1.5s", spell.ActionID, got)
+		}
+	}
+}
+
 // TestHuntersMarkDuty checks the hunter's own Hunter's Mark, cast by the presets on Hunter's Mark
 // duty (standards 23) with the raid's debuff off: it puts the same mark on the target as the
-// debuff (140 ranged attack power at level 60, core.ForeverHuntersMarkRank4), for 2 min, at 60 mana.
+// debuff (143 ranged attack power at level 60, core.ForeverHuntersMarkRank4), for 2 min, at 60 mana.
 func TestHuntersMarkDuty(t *testing.T) {
 	sim, hunter := newHunterSim(t, "", &proto.Debuffs{})
 	target := hunter.CurrentTarget

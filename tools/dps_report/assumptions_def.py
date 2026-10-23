@@ -172,7 +172,7 @@ A = [
       builds=['hunter__lone-wolf', 'hunter__marksmanship', 'hunter__beast-mastery'],
       settings=[S('low', 'Top ranks as written', 'Trueshot Aura +50, Hunter\'s Mark +71 attack power', 'Only the top ranks usable.', {'hunter_tsa60': 50, 'hunter_hm60': 71}),
                 S('mid', 'Best older rank', 'Trueshot Aura +75, Hunter\'s Mark +98 attack power', 'Cast the older rank.', {'hunter_tsa60': 75, 'hunter_hm60': 98}),
-                S('expected', 'Top ranks fixed', 'Trueshot Aura +100, Hunter\'s Mark +140 attack power', 'Fixed onto the curve.')],
+                S('expected', 'Top ranks fixed', 'Trueshot Aura +100, Hunter\'s Mark +143 attack power', 'Trueshot Aura fixed onto the curve, Hunter\'s Mark hotfixed (2026-10-21).')],
       default='expected', expected='expected'),
  dict(key='hunter_crit_per_agi', cls='Hunter', label='Hunter crit per Agility at 60',
       short='Level 1 hunters get 22% more crit per Agility than Classic. At 60?',

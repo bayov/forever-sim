@@ -11,6 +11,17 @@ type PetAbilityType int
 // Pet AI doesn't use abilities immediately, so model this with a 1.6s GCD.
 const PetGCD = time.Millisecond * 1600
 
+// Under Forever the pet's global cooldown is the client's 1.5 sec (GCDMs on every pet ability row),
+// as wowsims/forever has it.
+const ForeverPetGCD = time.Millisecond * 1500
+
+func (hp *HunterPet) gcd() time.Duration {
+	if hp.Env.IsForever() {
+		return ForeverPetGCD
+	}
+	return PetGCD
+}
+
 const (
 	Unknown PetAbilityType = iota
 	Bite
@@ -52,6 +63,16 @@ var (
 	petBiteDamage = map[int32][2]float64{25: {31, 37}, 40: {49, 59}, 50: {66, 80}, 60: {81, 99}}
 )
 
+// The level 60 ranks under Forever, from the client rows the same way: Lightning Breath rank 6
+// (25012: 92, variance 0.132; Classic 99 to 113), Demoralizing Screech rank 4 (24579: 33, variance
+// 0.556; Classic 26 to 46) and Scorpid Poison rank 4's tick (24587: 5; Classic 8).
+var (
+	foreverLightningBreath60 = [2]float64{86, 98}
+	foreverScreech60         = [2]float64{24, 42}
+)
+
+const foreverScorpidPoisonTick60 = 5
+
 func (hp *HunterPet) newClaw() *core.Spell {
 	baseDamageMin, baseDamageMax := petClawDamage[hp.Owner.Level][0], petClawDamage[hp.Owner.Level][1]
 
@@ -75,7 +96,7 @@ func (hp *HunterPet) newClaw() *core.Spell {
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD: PetGCD,
+				GCD: hp.gcd(),
 			},
 			IgnoreHaste: true,
 		},
@@ -114,7 +135,7 @@ func (hp *HunterPet) newBite() *core.Spell {
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD: PetGCD,
+				GCD: hp.gcd(),
 			},
 			CD: core.Cooldown{
 				Timer:    hp.NewTimer(),
@@ -156,6 +177,10 @@ func (hp *HunterPet) newLightningBreath() *core.Spell {
 		60: 25012,
 	}[hp.Owner.Level]
 
+	if hp.Env.IsForever() && hp.Owner.Level == 60 {
+		baseDamageMin, baseDamageMax = foreverLightningBreath60[0], foreverLightningBreath60[1]
+	}
+
 	return hp.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: spellID},
 		SpellCode:   SpellCode_HunterPetLightningBreath,
@@ -168,7 +193,7 @@ func (hp *HunterPet) newLightningBreath() *core.Spell {
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD: PetGCD,
+				GCD: hp.gcd(),
 			},
 			IgnoreHaste: true,
 		},
@@ -207,6 +232,23 @@ func (hp *HunterPet) newScreech() *core.Spell {
 		60: 24582,
 	}[hp.Owner.Level]
 
+	// Forever's rank 4 (client 24579, which 24582 teaches) has a 10 sec cooldown and takes the
+	// target's attack power down 198 at 56 and 1.6 a level more, 204 at 60, for 30 sec. The reduction
+	// is the one Demoralizing Shout's takes, so the strongest counts.
+	var cooldown core.Cooldown
+	var apReduction core.AuraArray
+	if hp.Env.IsForever() && hp.Owner.Level == 60 {
+		spellID = 24579
+		baseDamageMin, baseDamageMax = foreverScreech60[0], foreverScreech60[1]
+		cooldown = core.Cooldown{
+			Timer:    hp.NewTimer(),
+			Duration: time.Second * 10,
+		}
+		apReduction = hp.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+			return core.ForeverDemoralizingScreechAura(target, 204)
+		})
+	}
+
 	return hp.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: spellID},
 		SpellCode:   SpellCode_HunterPetScreech,
@@ -220,8 +262,9 @@ func (hp *HunterPet) newScreech() *core.Spell {
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD: PetGCD,
+				GCD: hp.gcd(),
 			},
+			CD:          cooldown,
 			IgnoreHaste: true,
 		},
 
@@ -230,8 +273,11 @@ func (hp *HunterPet) newScreech() *core.Spell {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(baseDamageMin, baseDamageMax)
-			// This ability also applies a melee attack power reduction similar to demoralizing shout - left it out for now
-			spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+			// Outside Forever the attack power reduction, like Demoralizing Shout's, is left out.
+			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
+			if apReduction != nil && result.Landed() {
+				apReduction.Get(target).Activate(sim)
+			}
 		},
 	})
 }
@@ -289,6 +335,9 @@ func (hp *HunterPet) newScorpidPoison() *core.Spell {
 		50: 6,
 		60: 8,
 	}[hp.Owner.Level]
+	if hp.Env.IsForever() && hp.Owner.Level == 60 {
+		baseDamageTick = foreverScorpidPoisonTick60
+	}
 	spellID := map[int32]int32{
 		25: 24583,
 		40: 24586,
@@ -309,7 +358,7 @@ func (hp *HunterPet) newScorpidPoison() *core.Spell {
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD: PetGCD,
+				GCD: hp.gcd(),
 			},
 			IgnoreHaste: true,
 			CD: core.Cooldown{

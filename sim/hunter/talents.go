@@ -80,9 +80,16 @@ func (hunter *Hunter) applyMarksmanshipTalents() {
 		hunter.AddStatDependency(stats.Intellect, stats.RangedAttackPower, apPerInt)
 	}
 
-	// Lone Wolf: 20% damage done while no pet is out.
-	if hunter.Talents.LoneWolf && hunter.pet == nil {
-		hunter.PseudoStats.DamageDealtMultiplier *= 1.2
+	// Lone Wolf: 20% damage done while no pet is out. With a pet out the server takes the 20% back off
+	// the hunter and the pet both, so the hunter gains nothing and the pet deals 1/1.2: a level 30 Cat
+	// at 1.3 sec and 152 attack power read 36-48 on its sheet with the talent, where the pet without it
+	// would read 43.7-57.8 (wowsims/forever a4d0d9e4fc, 56e9bc08e0).
+	if hunter.Talents.LoneWolf {
+		if hunter.pet == nil {
+			hunter.PseudoStats.DamageDealtMultiplier *= 1.2
+		} else {
+			hunter.pet.PseudoStats.DamageDealtMultiplier /= 1.2
+		}
 	}
 
 	// Rapid Killing: rapid_fire.go. Improved Stings: serpent_sting.go. Improved Arcane Shot:

@@ -61,6 +61,7 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 		attackSpeed = 2.5
 	}
 
+	// Classic's pet weapon and stats. Forever's weapon and attack power are set in applyForeverRules.
 	baseMinDamage = 18.17 * attackSpeed
 	baseMaxDamage = 27.66 * attackSpeed
 
@@ -104,12 +105,6 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 	hp.PseudoStats.ArmorMultiplier *= hp.config.Armor
 	hp.MultiplyStat(stats.Health, hp.config.Health)
 
-	hp.AddStatDependency(stats.Strength, stats.AttackPower, 2)
-
-	// Warrior crit scaling
-	hp.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritPerAgiAtLevel[proto.Class_ClassWarrior]*core.CritRatingPerCritChance)
-	hp.AddStatDependency(stats.Intellect, stats.SpellCrit, core.CritPerIntAtLevel[proto.Class_ClassWarrior]*core.SpellCritRatingPerCritChance)
-
 	core.ApplyPetConsumeEffects(&hp.Character, hunter.Consumes)
 
 	hunter.AddPet(hp)
@@ -134,6 +129,11 @@ func (hp *HunterPet) Initialize() {
 
 	if hp.Env.IsForever() {
 		hp.applyForeverRules()
+	} else {
+		// Classic's pet: warrior attack power and crit scaling.
+		hp.AddStatDependency(stats.Strength, stats.AttackPower, 2)
+		hp.AddStatDependency(stats.Agility, stats.MeleeCrit, core.CritPerAgiAtLevel[proto.Class_ClassWarrior]*core.CritRatingPerCritChance)
+		hp.AddStatDependency(stats.Intellect, stats.SpellCrit, core.CritPerIntAtLevel[proto.Class_ClassWarrior]*core.SpellCritRatingPerCritChance)
 	}
 }
 
@@ -141,6 +141,20 @@ func (hp *HunterPet) Initialize() {
 // Classic (report assumption hunter_pet_speed, user ruling 2026-10-15). False gives the beta's
 // behaviour, where every pet hits like a 2.0 sec pet.
 const ForeverPetHitScalesWithSpeed = true
+
+// The creature auto attack dps for level 60 in the client's ExpectedStat table (ExpansionID -2).
+const creatureAutoAttackDps60 = 60.4529
+
+// A Forever pet's swing before attack power, at 2.0 sec: the creature dps for its level over the
+// swing, 20% either side, 97 to 145 at 60. Its own attack power is 30% of the creature dps as attack
+// power (14 a point of dps), 254 at 60, with nothing from Strength. wowsims/forever fitted both to
+// beta pet sheets (643d636345): a level 11 Carrion Bird's 20-27 at 44 attack power and 2.0 sec, a
+// level 17 Cat's 28-37 at 75 attack power and 1.5 sec, and attack power of 36, 61 and 103 at levels
+// 11, 17 and 30, each the creature dps x 4.2 beside the hunter's 10%.
+const (
+	foreverPetSwingAverage = creatureAutoAttackDps60 * 2
+	foreverPetAttackPower  = 0.3 * 14 * creatureAutoAttackDps60
+)
 
 // What Forever changed about pets.
 func (hp *HunterPet) applyForeverRules() {
@@ -151,12 +165,22 @@ func (hp *HunterPet) applyForeverRules() {
 	//
 	// Report assumption hunter_pet_speed, user ruling 2026-10-15: the beta's behaviour is treated as
 	// a bug, so the hit scales with the swing as in Classic (a 1.0 sec pet's hit is half a 2.0 sec
-	// pet's, NewHunterPet), and every pet's white damage a second is the same.
+	// pet's), and every pet's white damage a second is the same.
+	hitSeconds := hp.AutoAttacks.MH().SwingSpeed
 	if !ForeverPetHitScalesWithSpeed {
-		mh := hp.AutoAttacks.MH()
-		mh.BaseDamageMin = 18.17 * 2
-		mh.BaseDamageMax = 27.66 * 2
+		hitSeconds = 2
 	}
+	mh := hp.AutoAttacks.MH()
+	mh.BaseDamageMin = foreverPetSwingAverage * (1 - 0.2) * hitSeconds / 2
+	mh.BaseDamageMax = foreverPetSwingAverage * (1 + 0.2) * hitSeconds / 2
+
+	// The pet's attack power is its own fixed share and the hunter's 10% (makeStatInheritance), with
+	// none from Strength; Classic's 2 a point less 20 is not added (Initialize). Its crit is all the
+	// hunter's, with none from Agility: wowsims/forever's Ragefire Chasm logs of a level 30 pet
+	// (e56aaeb1a9) read the owner's sheet crit plus the pet's skill over the mobs' defense and nothing
+	// of the pet's own (a staff at 1 skill and a bow at 150: pet 3.5% in 964 swings, a knife and a bow
+	// at 150 with 5.96% on the sheet: 9.6% in 2,516).
+	hp.AddStat(stats.AttackPower, 20+foreverPetAttackPower)
 
 	// Focus comes back 10 a second, continuously (client PowerType Focus RegenCombat 10, and beta
 	// logs where busy pets spend 9.5+ a second). Classic's is 26.25 every 5.25 sec.
@@ -228,20 +252,26 @@ func (hp *HunterPet) ExecuteCustomRotation(sim *core.Simulation) {
 // against 1537 melee), so the pet takes 10% of that. The inheritance also runs on every stat change
 // in the fight, so it has to stay linear: a max() of the two would keep each proc's gain and
 // drop its loss.
-// The pet also takes the hunter's hit. Blizzard's 09-17 beta known issues say "Pet Hit chance for
-// both Hunters and Warlocks do not display the master's scaling coefficient", so it inherits by some
-// coefficient Forever hasn't published. We use Season of Discovery's Hunter Pet Scaling (the same
-// aura 415429 Forever carries; wowsims/sod sim/hunter/pet.go) as a placeholder: 1:1 melee hit.
+// The crit is the higher of the hunter's melee and ranged crit (wowsims/forever 684209eb0a, after
+// e56aaeb1a9's Ragefire Chasm logs). Here both are the hunter's MeleeCrit: the only ranged-only crit
+// is a per-spell bonus, and the only one a hunter can have is Elemental Sharpening Stone's -2%, which
+// leaves melee the higher. Their 0.04% off a point of weapon skill below the level's maximum is
+// always 0 here, where every weapon skill is at the maximum.
+// The pet takes the hunter's ranged hit as melee hit and 17/8 of it as spell hit, so Lightning Breath
+// doesn't roll from 0% hit (forever-bugs #394, wowsims/forever 9ce48b6aba). The hunter's ranged hit
+// is its MeleeHit; Biznick's Accurascope's ranged-only 3% doesn't reach the pet.
 // Classic pets inherit nothing.
 func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
 	return func(ownerStats stats.Stats) stats.Stats {
 		if !hunter.Env.IsForever() {
 			return stats.Stats{}
 		}
+		hitPercent := ownerStats[stats.MeleeHit] / core.MeleeHitRatingPerHitChance
 		return stats.Stats{
 			stats.AttackPower: 0.1 * ownerStats[stats.RangedAttackPower],
 			stats.MeleeCrit:   ownerStats[stats.MeleeCrit],
 			stats.MeleeHit:    ownerStats[stats.MeleeHit],
+			stats.SpellHit:    hitPercent * 17 / 8 * core.SpellHitRatingPerHitChance,
 			// The 15 October dev notes: "Pets now correctly benefit from Expertise." No hunter gear
 			// or talent gives any, so this is worth nothing today.
 			stats.Expertise: ownerStats[stats.Expertise],

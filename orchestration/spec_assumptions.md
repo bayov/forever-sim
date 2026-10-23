@@ -279,9 +279,9 @@ Dual-wield Fury is also affected by `wf_totem_offhand` (est. −2 to −3% at it
 
 | Key | Label | Builds | Sim now | Low | Expected | High | Sensitivity |
 |---|---|---|---|---|---|---|---|
-| `hunter_pet_scaling` | Pet scaling from the hunter | BM, MM, SV | 10% RAP + 1:1 hit | 10% RAP, no hit | 10% RAP + hit | SoD: 22% RAP + hit | Low −17 / −10 / −10, High +41 / +23 / +18 (PR) |
+| `hunter_pet_scaling` | Pet scaling from the hunter | BM, MM, SV | 10% RAP + 1:1 hit (17/8 as spell hit) | 10% RAP, no hit | 10% RAP + hit | SoD: 22% RAP + hit | Low −17 / −10 / −10, High +41 / +23 / +18 (PR) |
 | `hunter_pet_speed` | Pet hits normalized to a 2.0 sec pet | BM, MM | no: Classic, the hit scales with speed | = Expected | Classic | the beta's same hit | High +6.1% BM, +3.2% MM (assumption sims, 180 s) |
-| `hunter_tsa_hm_rank` | Trueshot Aura and Hunter's Mark at 60 | LW, MM, BM | 100 / 140 (top ranks fixed) | 50 / 71 (top ranks as written); Mid 75 / 98 (best older rank) | 100 / 140 | = Expected | Low −2.6 to −3.1%, Mid −1.4 to −1.7% (assumption sims, 180 s) |
+| `hunter_tsa_hm_rank` | Trueshot Aura and Hunter's Mark at 60 | LW, MM, BM | 100 / 143 (Trueshot Aura fixed, Hunter's Mark hotfixed) | 50 / 71 (top ranks as written); Mid 75 / 98 (best older rank) | 100 / 143 | = Expected | Low −2.6 to −3.1%, Mid −1.4 to −1.7% (assumption sims, 180 s) |
 | `hunter_crit_per_agi` | Crit per Agility at 60 | all four | ×1.22 | Classic (53 Agi a 1%) | ×1.22 | = Expected | Low −2.6 to −2.8% (assumption sims, 180 s) |
 | `hunter_raptor_31plus` | Raptor Strike 31+ flat bonuses | Survival | 96 at rank 8 | 70 | 96 | 123 | Low −0.5%, High +0.5% (assumption sims, 180 s) |
 
@@ -290,7 +290,7 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 ### `hunter_pet_scaling`: Hunter Pet Scaling (attack power and hit)
 
 - **Builds:** Beast Mastery (pet 26% of the damage), Marksmanship (14%), Survival. Lone Wolf has no pet.
-- **Sim now:** the pet takes 10% of the hunter's ranged attack power, all of the hunter's melee crit and its melee hit 1:1. `sim/hunter/pet.go:226-237` (values at `:232-234`).
+- **Sim now:** the pet takes 10% of the hunter's ranged attack power, all of the hunter's melee crit (the higher of its melee and ranged crit, which is the melee crit in the sim) and its melee hit 1:1, plus 17/8 of that hit as spell hit since 2026-10-23 (forever-bugs #394, wowsims/forever 9ce48b6aba). `makeStatInheritance` in `sim/hunter/pet.go`. Since 2026-10-23 the pet's own attack power is a fixed 254 (30% of the level 60 creature dps as attack power) with none from Strength, its swing is the creature dps over the swing ±20%, and it has no crit from Agility (wowsims/forever 643d636345, e56aaeb1a9, 684209eb0a): the earlier sensitivities below predate that.
 - **Source:**
   - Attack power and crit: beta measurements (ForeverChanges' hunter pets page, the forever-hunter wiki).
   - Hit: Season of Discovery's Hunter Pet Scaling 415429 as a placeholder. Blizzard's 09-17 known issues say pet hit takes "the master's scaling coefficient" without giving it.
@@ -305,7 +305,7 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 ### `hunter_pet_speed`: a fast pet hits as hard as a 2.0 sec pet
 
 - **Builds:** Beast Mastery (a 1.0 sec cat) and Marksmanship (a cat; check that its speed option is the same).
-- **Sim now:** Classic's rule: a pet's hit scales with its attack speed, so every pet has the same white damage a second (`ForeverPetHitScalesWithSpeed`, `sim/hunter/pet.go`; user ruling 2026-10-15, PR #22). On the beta every pet's auto attack hits the size of a 2.0 sec pet's (18.17 to 27.66 × 2) at any attack speed, so the fastest pet deals the most.
+- **Sim now:** Classic's rule: a pet's hit scales with its attack speed, so every pet has the same white damage a second (`ForeverPetHitScalesWithSpeed`, `sim/hunter/pet.go`; user ruling 2026-10-15, PR #22). On the beta every pet's auto attack hits the size of a 2.0 sec pet's (97 to 145 at 60 since 2026-10-23, the creature dps over 2 sec ±20%; Classic's 18.17 to 27.66 × 2 before) at any attack speed, so the fastest pet deals the most.
 - **Source:** beta players, gathered on ForeverChanges' hunter pets page and the forever-hunter wiki. The code comment says "nobody knows yet whether that is intended".
 - **Why uncertain:** it could be a beta bug that Blizzard fixes, which would bring back Classic's hit size scaling with the swing.
 - **Reconfirmed 2026-10-16:** the assumptions audit found the beta behaviour still standing: EU forum thread 632244 (level 16 Tallstriders, a 1.3 sec pet hitting 27 to 38 against 31 to 42 for a 2.0 sec pet), forever-bugs #31 still open, and no fix in any note through 15 October. Asked again, the user ruled "Keep treating it as a bug", so Classic's speed scaling stays the default.
@@ -319,7 +319,7 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 ### `hunter_tsa_hm_rank`: Trueshot Aura and Hunter's Mark at level 60
 
 - **Builds:** Lone Wolf, Marksmanship, Beast Mastery. Both are ranged attack power only, so Survival is unaffected.
-- **Sim now:** the top ranks fixed onto the curve, Trueshot Aura rank 5 +100 RAP and Hunter's Mark rank 4 +140 RAP, cast directly (`ForeverTrueshotAuraRank5RAP`, `ForeverHuntersMarkRank4` in sim/core; user ruling 2026-10-15, PR #22; standards 8a).
+- **Sim now:** the top ranks cast directly, Trueshot Aura rank 5 +100 RAP (fixed onto the curve, user ruling 2026-10-15, PR #22) and Hunter's Mark rank 4 +143 RAP (`ForeverTrueshotAuraRank5RAP`, `ForeverHuntersMarkRank4` in sim/core; standards 8a). Hunter's Mark was +140 by the 2026-10-15 ruling; on 2026-10-23 the user took the +143 of the server hotfix foreverchanges.pro saw on 2026-10-21 (client 70532 still reads 71), so only Trueshot Aura's rank is still assumed.
 - **Source:**
   - Client 70338: Trueshot Aura ranks 30 / 40 / 50 / 75 / 50, Hunter's Mark 26 / 59 / 98 / 71. Both top ranks sit below the rank before them.
   - Standards 8a: use the strongest learned rank. The hunter branch implements it (PR #5), worth +10.7 to +14.3 DPS.
@@ -327,7 +327,7 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 - **Settings:**
   - **Low, 50 / 71, top ranks as written.** If only the weaker top ranks count.
   - **Mid, 75 / 98, best older rank.** A player casts the stronger lower rank (the presets' setting before PR #22).
-  - **Expected, 100 / 140 (Sim now).** Blizzard fixes the top ranks onto the curve of the ranks before them: Trueshot Aura +25 a rank; Hunter's Mark about +40 a rank, Forever's ranks 1 to 3 running about 1.3× Classic's 20 / 45 / 75 / 110 (user ruling 2026-10-15).
+  - **Expected, 100 / 143 (Sim now).** Blizzard fixes the top ranks onto the curve of the ranks before them: Trueshot Aura +25 a rank (user ruling 2026-10-15). Hunter's Mark was taken at about +40 a rank (140, Forever's ranks 1 to 3 running about 1.3× Classic's 20 / 45 / 75 / 110); the 2026-10-21 server hotfix put it at 143 (user, 2026-10-23).
   - **High:** = Expected.
 - **Sensitivity (assumption sims, 180 s):** Low −2.6% BM, −3.1% LW, −2.8% MM; Mid −1.4% BM, −1.7% LW, −1.6% MM. Trueshot Aura is a raid buff in 38 of the 46 report requests (and in every hunter request since client 70425 made it a raid aura, 2026-10-16: the sensitivity above predates that and now covers Survival too), but it gives ranged attack power only, so only the hunters move.
 - **Knob:** `Assume("hunter_tsa60", …)` and `Assume("hunter_hm60", …)` override the level 60 values `bestLearnedRank` returns (patch 0004); the settings set 75 / 98 and 50 / 71.

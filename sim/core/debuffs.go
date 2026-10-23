@@ -291,10 +291,9 @@ var (
 	foreverJudgementOfWisdomLevel = [...]int{0, 38, 48, 58}
 	foreverJudgementOfWisdomMana  = [...]float64{0, 33, 46, 59}
 
-	// Client 70338, wowhead and ForeverChanges all have rank 4 (14325, 71; Classic 110) below
-	// rank 3 (14324, 98). Report assumption hunter_tsa_hm_rank, user ruling 2026-10-15: rank 4
-	// gives 140, as if Blizzard fixes the top rank onto the curve, so the mark gives 98 from level
-	// 40 and 140 from 58 (standards 8a; bestLearnedRank).
+	// Client 70338, wowhead and ForeverChanges all had rank 4 (14325, 71; Classic 110) below
+	// rank 3 (14324, 98). The 2026-10-21 server hotfix gives rank 4 143 (ForeverHuntersMarkRank4),
+	// so the mark gives 98 from level 40 and 143 from 58 (standards 8a; bestLearnedRank).
 	foreverHuntersMarkLevel = [...]int{0, 6, 22, 40, 58}
 	foreverHuntersMark      = [...]float64{0, 26, 59, 98, ForeverHuntersMarkRank4}
 )
@@ -962,9 +961,11 @@ func curseOfWeaknessAuraInternal(target *Unit, label string, spellID int32, modD
 
 const HuntersMarkAuraTag = "HuntersMark"
 
-// ForeverHuntersMarkRank4 is Hunter's Mark rank 4's ranged attack power under Forever (report
-// assumption hunter_tsa_hm_rank, user ruling 2026-10-15: the client's 71 fixed onto the curve).
-const ForeverHuntersMarkRank4 = 140
+// ForeverHuntersMarkRank4 is Hunter's Mark rank 4's ranged attack power under Forever: 143 since the
+// server hotfix foreverchanges.pro saw on 2026-10-21 (client 70532 still has 71). The sim had 140 by
+// report assumption hunter_tsa_hm_rank (user ruling 2026-10-15: the client's 71 fixed onto the curve);
+// the user took the hotfix's 143 on 2026-10-23.
+const ForeverHuntersMarkRank4 = 143
 
 func HuntersMarkAura(target *Unit, points int32) *Aura {
 	return huntersMarkAura(target, 110.0*(1+0.03*float64(points)))
@@ -1099,6 +1100,12 @@ var foreverDemoralizingRoar = foreverDemoralizingRanks{
 	spellID:  [6]int32{0, 99, 1735, 9490, 9747, 9898},
 	base:     [6]float64{0, 46, 74, 95, 144, 193},
 	perLevel: [6]float64{0, 1, 1.4, 1, 1.4, 1.4},
+}
+
+// ForeverDemoralizingScreechAura is a bat's Demoralizing Screech rank 4 (client 24579) on the target
+// for 30 sec, in the same attack power reduction slot as Demoralizing Shout and Roar.
+func ForeverDemoralizingScreechAura(target *Unit, apReduction float64) *Aura {
+	return foreverDemoralizingAura(target, "Demoralizing Screech", 24579, time.Second*30, apReduction)
 }
 
 func foreverDemoralizingAura(target *Unit, label string, spellID int32, duration time.Duration, apReduction float64) *Aura {

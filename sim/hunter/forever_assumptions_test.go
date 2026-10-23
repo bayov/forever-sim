@@ -51,6 +51,8 @@ func newHunterPetSim(t *testing.T, speed proto.Hunter_Options_PetAttackSpeed, ru
 
 // Report assumption hunter_pet_speed (user ruling 2026-10-15): under Forever a pet's white hit
 // scales with its attack speed as in Classic, so a 1.0 sec pet hits half as hard as a 2.0 sec pet.
+// A 2.0 sec pet's hit is the creature dps for level 60 over 2 sec, 20% either side (wowsims/forever
+// 643d636345). Classic keeps its 18.17 to 27.66 a second.
 func TestForeverPetHitScalesWithSpeed(t *testing.T) {
 	for _, c := range []struct {
 		speed   proto.Hunter_Options_PetAttackSpeed
@@ -60,14 +62,79 @@ func TestForeverPetHitScalesWithSpeed(t *testing.T) {
 		{proto.Hunter_Options_OneFive, 1.5},
 		{proto.Hunter_Options_Two, 2.0},
 	} {
-		_, hunter := newHunterPetSim(t, c.speed, proto.Ruleset_RulesetForever)
-		mh := hunter.pet.AutoAttacks.MH()
-		if math.Abs(mh.BaseDamageMin-18.17*c.seconds) > 1e-9 || math.Abs(mh.BaseDamageMax-27.66*c.seconds) > 1e-9 {
-			t.Errorf("a %.1f sec pet hits for %.2f to %.2f, want %.2f to %.2f", c.seconds, mh.BaseDamageMin, mh.BaseDamageMax, 18.17*c.seconds, 27.66*c.seconds)
+		for _, r := range []struct {
+			ruleset  proto.Ruleset
+			min, max float64
+		}{
+			{proto.Ruleset_RulesetForever, 60.4529 * 0.8, 60.4529 * 1.2},
+			{proto.Ruleset_RulesetClassic, 18.17, 27.66},
+		} {
+			_, hunter := newHunterPetSim(t, c.speed, r.ruleset)
+			mh := hunter.pet.AutoAttacks.MH()
+			if math.Abs(mh.BaseDamageMin-r.min*c.seconds) > 1e-9 || math.Abs(mh.BaseDamageMax-r.max*c.seconds) > 1e-9 {
+				t.Errorf("ruleset %v: a %.1f sec pet hits for %.2f to %.2f, want %.2f to %.2f", r.ruleset, c.seconds, mh.BaseDamageMin, mh.BaseDamageMax, r.min*c.seconds, r.max*c.seconds)
+			}
+			if mh.SwingSpeed != c.seconds {
+				t.Errorf("ruleset %v: the pet swings every %.1f sec, want %.1f", r.ruleset, mh.SwingSpeed, c.seconds)
+			}
 		}
-		if mh.SwingSpeed != c.seconds {
-			t.Errorf("the pet swings every %.1f sec, want %.1f", mh.SwingSpeed, c.seconds)
-		}
+	}
+}
+
+// Under Forever a pet's attack power is its own 30% of the creature dps as attack power (254 at 60)
+// and 10% of the hunter's ranged attack power, with none from Strength (wowsims/forever 643d636345).
+// Its crit is the hunter's with none from Agility (e56aaeb1a9, 684209eb0a), and it takes the
+// hunter's hit as melee hit and 17/8 of it as spell hit (9ce48b6aba). Classic's pet keeps 2 attack
+// power a point of Strength and its Agility crit.
+func TestForeverPetStats(t *testing.T) {
+	sim, hunter := newHunterPetSim(t, proto.Hunter_Options_Two, proto.Ruleset_RulesetForever)
+	pet := hunter.pet
+	if got, want := pet.GetStat(stats.AttackPower), 0.3*14*60.4529+0.1*hunter.GetStat(stats.RangedAttackPower); math.Abs(got-want) > 1e-6 {
+		t.Errorf("pet attack power %.2f, want %.2f", got, want)
+	}
+	if got, want := pet.GetStat(stats.MeleeCrit), hunter.GetStat(stats.MeleeCrit); math.Abs(got-want) > 1e-9 {
+		t.Errorf("pet crit %.4f%%, want the hunter's %.4f%%", got, want)
+	}
+
+	ap, crit := pet.GetStat(stats.AttackPower), pet.GetStat(stats.MeleeCrit)
+	pet.AddStatDynamic(sim, stats.Strength, 100)
+	pet.AddStatDynamic(sim, stats.Agility, 100)
+	if got := pet.GetStat(stats.AttackPower); got != ap {
+		t.Errorf("100 pet Strength moves its attack power from %.2f to %.2f, want no change", ap, got)
+	}
+	if got := pet.GetStat(stats.MeleeCrit); got != crit {
+		t.Errorf("100 pet Agility moves its crit from %.4f to %.4f, want no change", crit, got)
+	}
+
+	melee, spell := pet.GetStat(stats.MeleeHit), pet.GetStat(stats.SpellHit)
+	hunter.AddStatDynamic(sim, stats.MeleeHit, 4*core.MeleeHitRatingPerHitChance)
+	if got := pet.GetStat(stats.MeleeHit) - melee; math.Abs(got-4*core.MeleeHitRatingPerHitChance) > 1e-9 {
+		t.Errorf("4%% hunter hit gives the pet %.4f melee hit, want 4%%", got)
+	}
+	if got := pet.GetStat(stats.SpellHit) - spell; math.Abs(got-8.5*core.SpellHitRatingPerHitChance) > 1e-9 {
+		t.Errorf("4%% hunter hit gives the pet %.4f spell hit, want 8.5%%", got)
+	}
+
+	sim, hunter = newHunterPetSim(t, proto.Hunter_Options_Two, proto.Ruleset_RulesetClassic)
+	ap = hunter.pet.GetStat(stats.AttackPower)
+	hunter.pet.AddStatDynamic(sim, stats.Strength, 100)
+	if got := hunter.pet.GetStat(stats.AttackPower) - ap; math.Abs(got-200) > 1e-9 {
+		t.Errorf("Classic: 100 pet Strength gives %.2f attack power, want 200", got)
+	}
+}
+
+// Lone Wolf with a pet out gives the hunter nothing and divides the pet's damage by 1.2
+// (wowsims/forever 56e9bc08e0).
+func TestLoneWolfWithAPet(t *testing.T) {
+	_, hunter := newHunterSim(t, LoneWolfTalents, &proto.Debuffs{})
+	if !hunter.Talents.LoneWolf {
+		t.Fatal("LoneWolfTalents has no Lone Wolf")
+	}
+	if got := hunter.PseudoStats.DamageDealtMultiplier; got != 1 {
+		t.Errorf("hunter damage multiplier %.4f with a pet out, want 1", got)
+	}
+	if got, want := hunter.pet.PseudoStats.DamageDealtMultiplier, 1.25/1.2; math.Abs(got-want) > 1e-9 {
+		t.Errorf("pet damage multiplier %.4f, want happiness's 1.25 / 1.2 = %.4f", got, want)
 	}
 }
 

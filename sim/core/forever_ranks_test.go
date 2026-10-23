@@ -6,7 +6,8 @@ import "testing"
 // strongest rank learned by a level, not the highest (standards 8a: players cast any rank they
 // know). Client 70338 gives Trueshot Aura rank 5 (level 60) 50 against rank 4's 75, and Hunter's
 // Mark rank 4 (level 58) 71 against rank 3's 98; report assumption hunter_tsa_hm_rank (user ruling
-// 2026-10-15) fixes both top ranks onto the curve, at 100 and 140, so the top ranks are cast.
+// 2026-10-15) fixes Trueshot Aura's onto the curve at 100, and the 2026-10-21 server hotfix gives
+// Hunter's Mark rank 4 143, so the top ranks are cast.
 func TestForeverBestLearnedRank(t *testing.T) {
 	for _, c := range []struct {
 		name   string
@@ -23,7 +24,7 @@ func TestForeverBestLearnedRank(t *testing.T) {
 		{"Hunter's Mark", foreverHuntersMarkLevel[:], foreverHuntersMark[:], 30, 59},
 		{"Hunter's Mark", foreverHuntersMarkLevel[:], foreverHuntersMark[:], 40, 98},
 		{"Hunter's Mark", foreverHuntersMarkLevel[:], foreverHuntersMark[:], 57, 98},
-		{"Hunter's Mark", foreverHuntersMarkLevel[:], foreverHuntersMark[:], 60, 140},
+		{"Hunter's Mark", foreverHuntersMarkLevel[:], foreverHuntersMark[:], 60, 143},
 	} {
 		if got := bestLearnedRank(c.level, c.levels, c.values); got != c.want {
 			t.Errorf("%s at level %d: %.0f, want %.0f", c.name, c.level, got, c.want)
