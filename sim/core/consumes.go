@@ -94,21 +94,18 @@ func (character *Character) weaponEffectsWork() bool {
 }
 
 // addImbueWeaponDamage adds a sharpening stone's or weightstone's flat damage to a weapon. A
-// Forever cat swings its weapon's DPS at its own speed (sim/druid/forms.go), so the stone goes
-// in as the weapon's bonus DPS, and its damage per hit scales with the cat's swing.
+// Forever cat takes it on its paw whole, like a weapon enchant's (sim/druid/forms.go,
+// GetCatWeapon).
 func addImbueWeaponDamage(character *Character, isMh bool, amount float64) {
-	if !character.PseudoStats.FeralCombatEnabled {
-		weapon := character.AutoAttacks.MH()
-		if !isMh {
-			weapon = character.AutoAttacks.OH()
-		}
-		weapon.BaseDamageMin += amount
-		weapon.BaseDamageMax += amount
-	} else if character.Env.IsForever() && isMh {
-		if mh := character.GetMHWeapon(); mh != nil && mh.SwingSpeed > 0 {
-			character.PseudoStats.BonusMHDps += amount / mh.SwingSpeed
-		}
+	if character.PseudoStats.FeralCombatEnabled && !(character.Env.IsForever() && isMh) {
+		return
 	}
+	weapon := character.AutoAttacks.MH()
+	if !isMh {
+		weapon = character.AutoAttacks.OH()
+	}
+	weapon.BaseDamageMin += amount
+	weapon.BaseDamageMax += amount
 }
 
 // Forever's wizard oils add as much healing as spell damage.

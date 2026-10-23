@@ -22,6 +22,13 @@ var rakeSpells = []RakeRankInfo{
 	{id: 9904, level: 54, initialDamage: 61, dotTickDamage: 34},
 }
 
+// rakeTickAPCoefficient is the attack power share of a Forever Rake tick, every rank. The client
+// leaves it to the server; wowsims/forever fits 0.055 to testers' rank 1 ticks at 136, 162, 217
+// and 237 attack power ("Aus and Chalkie, Rake and swipe AP scaling tests, 2026-10-01", PR #149)
+// and gives ranks 2 to 4 the same. The tick reads the attack power when it lands, as theirs
+// does, and the initial hit has none.
+const rakeTickAPCoefficient = 0.055
+
 func (druid *Druid) registerRakeSpell() {
 	// Add highest available rake rank for level.
 	for rank := len(rakeSpells) - 1; rank >= 0; rank-- {
@@ -37,6 +44,10 @@ func (druid *Druid) newRakeSpellConfig(rakeRank RakeRankInfo) core.SpellConfig {
 	baseDamageInitial := rakeRank.initialDamage
 	baseDamageTick := rakeRank.dotTickDamage
 	energyCost := 40 - float64(druid.Talents.Ferocity)
+	tickAPCoefficient := core.TernaryFloat64(druid.Env.IsForever(), rakeTickAPCoefficient, 0)
+	tickBase := func(target *core.Unit, spell *core.Spell) float64 {
+		return (baseDamageTick + tickAPCoefficient*spell.MeleeAttackPower(target)) * druid.RendAndTearMultiplier(target)
+	}
 
 	return core.SpellConfig{
 		SpellCode:   SpellCode_DruidRake,
@@ -71,6 +82,7 @@ func (druid *Druid) newRakeSpellConfig(rakeRank RakeRankInfo) core.SpellConfig {
 				dot.Snapshot(target, damage, isRollover)
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				dot.SnapshotBaseDamage = tickBase(target, dot.Spell) * dot.Spell.BaseDamageMultiplierAdditive
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
 			},
 		},
@@ -101,8 +113,7 @@ func (druid *Druid) newRakeSpellConfig(rakeRank RakeRankInfo) core.SpellConfig {
 			return initial
 		},
 		ExpectedTickDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {
-			tickBase := baseDamageTick
-			ticks := spell.CalcPeriodicDamage(sim, target, tickBase, spell.OutcomeExpectedMagicAlwaysHit)
+			ticks := spell.CalcPeriodicDamage(sim, target, tickBase(target, spell), spell.OutcomeExpectedMagicAlwaysHit)
 			return ticks
 		},
 	}

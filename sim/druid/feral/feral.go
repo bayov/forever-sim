@@ -78,7 +78,9 @@ func (cat *FeralDruid) MissChance() float64 {
 
 func (cat *FeralDruid) Initialize() {
 	cat.Druid.Initialize()
-	// Forever's cat swings its weapon (druid.GetCatWeapon), which needs the Env.
+	// Forever's cat swings its weapon (druid.GetCatWeapon), which needs the Env. It keeps the
+	// flat damage the weapon enchants and stones put on the placeholder paw.
+	cat.KeepFlatWeaponDamage()
 	cat.AutoAttacks.SetMH(cat.GetCatWeapon())
 	cat.RegisterBalanceSpells()
 	cat.RegisterFeralCatSpells()

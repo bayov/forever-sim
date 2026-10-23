@@ -106,6 +106,9 @@ type Druid struct {
 	form         DruidForm
 	disabledMCDs []*core.MajorCooldown
 
+	// The flat damage weapon enchants and stones add to each cat swing (GetCatWeapon).
+	catFlatWeaponDamage float64
+
 	// Furor gives back part of the Energy we left Cat Form with.
 	lastCatEnergy float64
 	leftCatAt     time.Duration

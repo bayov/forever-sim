@@ -27,7 +27,7 @@ func newCatSim(t *testing.T, talents string) (*core.Simulation, *FeralDruid) {
 	sim := core.NewSim(&proto.RaidSimRequest{
 		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
 		Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{core.NewDefaultTarget()}},
-		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1, ExactDamage: true},
 	}, simsignals.CreateSignals())
 	sim.Reset()
 	sim.PrePull()
@@ -125,5 +125,94 @@ func TestCatRendAndTear(t *testing.T) {
 	cat.Rake.Dot(target).Apply(sim)
 	if got := cat.RendAndTearMultiplier(target); math.Abs(got-1.1) > 1e-9 {
 		t.Errorf("Rend and Tear 5/5 on a bleeding target %.2f, want 1.1", got)
+	}
+}
+
+// noCritsNoArmor takes the cat's crits and the target's armor away, for exact damage checks.
+func noCritsNoArmor(sim *core.Simulation, cat *FeralDruid) *core.Unit {
+	target := cat.CurrentTarget
+	target.AddStatDynamic(sim, stats.Armor, -target.GetStat(stats.Armor))
+	cat.AddStatDynamic(sim, stats.MeleeCrit, -1000*core.CritRatingPerCritChance)
+	return target
+}
+
+func nearDamage(got, want float64) bool { return math.Abs(got-want) < 1e-6 }
+
+// tickDamage is what one tick of the dot deals.
+func tickDamage(sim *core.Simulation, spell *druid.DruidSpell, target *core.Unit) float64 {
+	metrics := &spell.SpellMetrics[target.UnitIndex]
+	before := metrics.TotalDamage
+	spell.Dot(target).TickOnce(sim)
+	return metrics.TotalDamage - before
+}
+
+// TestCatRakeTickAttackPower checks Rake's tick under Forever: 34 + 0.055 attack power, the
+// attack power read when the tick lands (wowsims/forever's fit to PR #149's tests).
+func TestCatRakeTickAttackPower(t *testing.T) {
+	sim, cat := newCatSim(t, "")
+	target := noCritsNoArmor(sim, cat)
+	dot := cat.Rake.Dot(target)
+	dot.Apply(sim)
+	ap := cat.Rake.MeleeAttackPower(target)
+	if got, want := tickDamage(sim, cat.Rake, target), (34+0.055*ap)*dot.SnapshotAttackerMultiplier; !nearDamage(got, want) {
+		t.Errorf("Rake ticks for %.3f at %.0f attack power, want %.3f", got, ap, want)
+	}
+	cat.AddStatDynamic(sim, stats.AttackPower, 1000)
+	if got, want := tickDamage(sim, cat.Rake, target), (34+0.055*(ap+1000))*dot.SnapshotAttackerMultiplier; !nearDamage(got, want) {
+		t.Errorf("Rake ticks for %.3f after 1000 attack power more, want %.3f", got, want)
+	}
+}
+
+// TestCatRendAndTearBleeds checks that Rend and Tear 5/5 raises the Rake and Rip ticks by 10%
+// (a tester's table on wowsims/forever PR #149).
+func TestCatRendAndTearBleeds(t *testing.T) {
+	for _, talents := range []string{"", catTalents} {
+		sim, cat := newCatSim(t, talents)
+		target := noCritsNoArmor(sim, cat)
+		rendAndTear := core.TernaryFloat64(talents == "", 1, 1.1)
+
+		rake := cat.Rake.Dot(target)
+		rake.Apply(sim)
+		ap := cat.Rake.MeleeAttackPower(target)
+		want := (34 + 0.055*ap) * cat.Rake.BaseDamageMultiplierAdditive * rake.SnapshotAttackerMultiplier * rendAndTear
+		if got := tickDamage(sim, cat.Rake, target); !nearDamage(got, want) {
+			t.Errorf("talents %q: Rake ticks for %.3f, want %.3f", talents, got, want)
+		}
+
+		cat.AddComboPoints(sim, 5, target, cat.Rip.ComboPointMetrics())
+		rip := cat.Rip.Dot(target)
+		rip.Apply(sim)
+		want = rip.SnapshotBaseDamage * rip.SnapshotAttackerMultiplier * rendAndTear
+		if got := tickDamage(sim, cat.Rip, target); !nearDamage(got, want) {
+			t.Errorf("talents %q: Rip ticks for %.3f, want %.3f", talents, got, want)
+		}
+	}
+}
+
+// TestCatFinisherMissRefunds checks that a dodged Rip or Ferocious Bite gives back 80% of its
+// cost (ATTR_EX_1_DISCOUNT_POWER_ON_MISS on every rank), keeps the combo points, and that Bite
+// keeps its extra Energy.
+func TestCatFinisherMissRefunds(t *testing.T) {
+	for _, spell := range []func(*FeralDruid) *druid.DruidSpell{
+		func(cat *FeralDruid) *druid.DruidSpell { return cat.Rip },
+		func(cat *FeralDruid) *druid.DruidSpell { return cat.FerociousBite },
+	} {
+		sim, cat := newCatSim(t, "")
+		target := cat.CurrentTarget
+		cat.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand].BaseDodgeChance = 1
+		cat.AddStatDynamic(sim, stats.MeleeHit, 100*core.MeleeHitRatingPerHitChance)
+		finisher := spell(cat)
+		cat.AddComboPoints(sim, 5, target, finisher.ComboPointMetrics())
+		cat.AddEnergy(sim, cat.MaxEnergy(), finisher.EnergyMetrics())
+		cat.SetGCDTimer(sim, sim.CurrentTime)
+		if !finisher.Cast(sim, target) {
+			t.Fatalf("%s didn't cast", finisher.ActionID)
+		}
+		if got, want := cat.CurrentEnergy(), 100-0.2*finisher.DefaultCast.Cost; math.Abs(got-want) > 1e-6 {
+			t.Errorf("%s dodged at 100 Energy leaves %.1f Energy, want %.1f", finisher.ActionID, got, want)
+		}
+		if cat.ComboPoints() != 5 {
+			t.Errorf("%s dodged leaves %d combo points, want 5", finisher.ActionID, cat.ComboPoints())
+		}
 	}
 }

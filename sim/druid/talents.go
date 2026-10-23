@@ -305,8 +305,10 @@ func (druid *Druid) applyNaturalInstinct() {
 
 // Rend and Tear: 2% a point more damage from the melee abilities on a bleeding target. The
 // effect is a dummy the server runs. The sim takes it as a multiplier on the hits of Claw,
-// Shred, Rake and Ferocious Bite, not on bleeds, while our Rake or Rip is up or the spec
-// assumes another bleed on the target.
+// Shred, Rake and Ferocious Bite and on the Rake and Rip ticks, not on white hits, while our
+// Rake or Rip is up or the spec assumes another bleed on the target. The ticks are from a
+// tester's table on wowsims/forever PR #149 (921f40098f): Rake and Rip ticks, Rake's hit and
+// Claw rise by the talent's percent with a bleed on the target.
 func (druid *Druid) RendAndTearMultiplier(target *core.Unit) float64 {
 	if druid.Talents.RendAndTear == 0 {
 		return 1
@@ -367,8 +369,12 @@ func (druid *Druid) applyFuror() {
 // halves the cooldown (its spell modifiers on Omen of Clarity, +100% chance and -50%).
 //
 // The client leaves the chance to the server. The sim keeps 1.12's 2 procs a minute on
-// melee hits (weapon speed based), and gives a damage spell that lands the same rate over
-// its cast time, 2 * max(cast time, 1.5 sec) / 60 a cast, which is our own guess.
+// melee hits, and gives a damage spell that lands the same rate over its cast time,
+// 2 * max(cast time, 1.5 sec) / 60 a cast, which is our own guess. Under Forever white hits and
+// specials both roll at the swing speed, 1.0 sec in Cat Form: wowsims/forever (ca7b3ab462,
+// af6df6c0e4, their issue #225) has rolling specials at the equipped weapon's speed, as 1.12
+// did, as "a game bug fixed in the next beta build". Outside Forever specials keep the
+// weapon's speed.
 func (druid *Druid) applyOmenOfClarity() {
 	if druid.Level < 20 {
 		return
@@ -440,7 +446,11 @@ func (druid *Druid) applyOmenOfClarity() {
 			}
 			procced := false
 			if spell.ProcMask.Matches(core.ProcMaskMelee) {
-				procced = ppmm.ProcWithWeaponSpecials(sim, spell.ProcMask, "Omen of Clarity")
+				if sim.IsForever() {
+					procced = sim.Proc(2*druid.AutoAttacks.MH().SwingSpeed/60, "Omen of Clarity")
+				} else {
+					procced = ppmm.ProcWithWeaponSpecials(sim, spell.ProcMask, "Omen of Clarity")
+				}
 			} else if spell.ProcMask.Matches(core.ProcMaskSpellDamage) && spell.Flags.Matches(SpellFlagOmen) {
 				chance := 2 * max(spell.DefaultCast.CastTime, core.GCDDefault).Seconds() / 60
 				if inMoonkin() {

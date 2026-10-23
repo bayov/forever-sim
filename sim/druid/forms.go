@@ -35,33 +35,43 @@ func (druid *Druid) InForm(form DruidForm) bool {
 // weapon. But the speed of attack is changed to 1.0 or 2.5 seconds, depending on the form.
 // Abilities that deal weapon damage likewise use these damage values." (Blizzard's World of
 // Warcraft: Forever class deep dive, Druid; client 1.60.1.70338 SpellShapeshiftForm gives Cat
-// Form a 1000 ms CombatRoundTime.) The swing averages the weapon's DPS times 1.0 sec, its bonus
-// DPS (weightstones and sharpening stones) included, and spreads 20% either side of that: the
-// client's DamageVariance of 0.4 for Cat Form (an assumption, as nothing shows the server's
-// range; most weapons spread about that much anyway). Without a weapon, or outside Forever, the
-// cat keeps the 1.12 paw. The Env is not set yet when the feral druid is built, so the feral
-// spec swaps the paw for this in Initialize.
+// Form a 1000 ms CombatRoundTime.) The swing averages the weapon's DPS times 1.0 sec and
+// spreads 20% either side of that: the client's DamageVariance of 0.4 for Cat Form (an
+// assumption, as nothing shows the server's range; most weapons spread about that much
+// anyway). The flat damage of weapon enchants (Striking, Impact) and stones goes on whole,
+// after the scaling, as wowsims/forever has it (b5d2e0b992, a560405a65). Without a weapon, or
+// outside Forever, the cat keeps the 1.12 paw. The Env is not set yet when the feral druid is
+// built, so the feral spec swaps the paw for this in Initialize.
 func (druid *Druid) GetCatWeapon() core.Weapon {
 	if druid.Env != nil && druid.Env.IsForever() && druid.HasMHWeapon() {
 		weapon := druid.WeaponFromMainHand()
 		if weapon.SwingSpeed > 0 {
 			average := weapon.DPS() * catSwingSpeed
 			return core.Weapon{
-				BaseDamageMin:        average * (1 - catDamageVariance/2),
-				BaseDamageMax:        average * (1 + catDamageVariance/2),
+				BaseDamageMin:        average*(1-catDamageVariance/2) + druid.catFlatWeaponDamage,
+				BaseDamageMax:        average*(1+catDamageVariance/2) + druid.catFlatWeaponDamage,
 				SwingSpeed:           catSwingSpeed,
 				NormalizedSwingSpeed: catSwingSpeed,
 				AttackPowerPerDPS:    core.DefaultAttackPowerPerDPS,
 			}
 		}
 	}
-	return core.Weapon{
-		BaseDamageMin:        43.84,
-		BaseDamageMax:        65.76,
-		SwingSpeed:           1.0,
-		NormalizedSwingSpeed: 1.0,
-		AttackPowerPerDPS:    core.DefaultAttackPowerPerDPS,
-	}
+	return classicCatPaw
+}
+
+// classicCatPaw is 1.12's Cat Form weapon, and the placeholder the feral druid is built with.
+var classicCatPaw = core.Weapon{
+	BaseDamageMin:        43.84,
+	BaseDamageMax:        65.76,
+	SwingSpeed:           1.0,
+	NormalizedSwingSpeed: 1.0,
+	AttackPowerPerDPS:    core.DefaultAttackPowerPerDPS,
+}
+
+// KeepFlatWeaponDamage takes the flat damage that weapon enchants and stones added to the
+// placeholder paw (they are applied before Initialize), for GetCatWeapon to add whole.
+func (druid *Druid) KeepFlatWeaponDamage() {
+	druid.catFlatWeaponDamage = druid.AutoAttacks.MH().BaseDamageMin - classicCatPaw.BaseDamageMin
 }
 
 // Func (druid *Druid) GetBearWeapon() core.Weapon {

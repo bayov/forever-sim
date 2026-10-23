@@ -40,6 +40,9 @@ func (druid *Druid) registerRipSpell() {
 
 func (druid *Druid) newRipSpellConfig(ripRank RipRankInfo) core.SpellConfig {
 	energyCost := 30.0
+	// Every Forever Rip rank carries ATTR_EX_1_DISCOUNT_POWER_ON_MISS (0x8000000, client rows
+	// 1079 to 9896), so a miss gives back 80% of the cost (wowsims/forever's rip.go reads it).
+	refund := core.TernaryFloat64(druid.Env.IsForever(), 0.8, 0)
 
 	return core.SpellConfig{
 		SpellCode:   SpellCode_DruidRip,
@@ -51,7 +54,7 @@ func (druid *Druid) newRipSpellConfig(ripRank RipRankInfo) core.SpellConfig {
 
 		EnergyCost: core.EnergyCostOptions{
 			Cost:   energyCost,
-			Refund: 0,
+			Refund: refund,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -82,7 +85,10 @@ func (druid *Druid) newRipSpellConfig(ripRank RipRankInfo) core.SpellConfig {
 				dot.Snapshot(target, tickDamage, isRollover)
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				rendAndTear := druid.RendAndTearMultiplier(target)
+				dot.SnapshotAttackerMultiplier *= rendAndTear
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)
+				dot.SnapshotAttackerMultiplier /= rendAndTear
 			},
 		},
 

@@ -3,6 +3,7 @@ package feral
 import (
 	"math"
 	"testing"
+	"time"
 
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
@@ -118,8 +119,7 @@ func TestForeverCatThistleTea(t *testing.T) {
 
 // "Weapon enchantments and procs now all work while shapeshifted, including effects like
 // weightstones, Crusader enchant, and Windfury Totem." An Elemental Sharpening Stone's 2% crit
-// counts for the cat; a Dense Weightstone's 8 damage a swing goes in as the weapon's DPS, so the
-// 1.0 sec cat swing gets 8 / 3.5 of it.
+// counts for the cat (the weightstone's damage is in TestForeverCatFlatWeaponDamage).
 func TestForeverCatWeaponImbues(t *testing.T) {
 	_, plain := newFormSim(t, proto.Ruleset_RulesetForever, &proto.Consumes{})
 	_, stone := newFormSim(t, proto.Ruleset_RulesetForever, &proto.Consumes{MainHandImbue: proto.WeaponImbue_ElementalSharpeningStone})
@@ -130,11 +130,6 @@ func TestForeverCatWeaponImbues(t *testing.T) {
 	_, eraPlain := newFormSim(t, proto.Ruleset_RulesetClassic, &proto.Consumes{})
 	if got := era.GetStat(stats.MeleeCrit) - eraPlain.GetStat(stats.MeleeCrit); got != 0 {
 		t.Errorf("Classic Elemental Sharpening Stone gave the cat %.2f crit, want 0", got)
-	}
-
-	_, weight := newFormSim(t, proto.Ruleset_RulesetForever, &proto.Consumes{MainHandImbue: proto.WeaponImbue_DenseWeightstone})
-	if got := weight.AutoAttacks.MH().DPS() - plain.AutoAttacks.MH().DPS(); !near(got, 8/3.5) {
-		t.Errorf("Dense Weightstone added %.3f DPS to the cat's swing, want %.3f", got, 8/3.5)
 	}
 }
 
@@ -220,5 +215,85 @@ func TestForeverCritAuras(t *testing.T) {
 	}
 	if !near(melee(both), 3*core.CritRatingPerCritChance) || !near(spell(both), 3*core.SpellCritRatingPerCritChance) {
 		t.Errorf("both auras gave %.2f melee and %.2f spell crit rating, want 3%% each", melee(both), spell(both))
+	}
+}
+
+// A permanent "+N weapon damage" enchant goes on the cat's swing whole, as does a stone's flat
+// damage (wowsims/forever b5d2e0b992, a560405a65): 2H Impact's +6 and a Dense Weightstone's +8
+// raise the 1.0 sec swing by 6 and 8.
+func TestForeverCatFlatWeaponDamage(t *testing.T) {
+	newSim := func(enchant int32, consumes *proto.Consumes) *FeralDruid {
+		t.Helper()
+		player := &proto.Player{
+			Race:      proto.Race_RaceTauren,
+			Class:     proto.Class_ClassDruid,
+			Level:     60,
+			Equipment: &proto.EquipmentSpec{Items: []*proto.ItemSpec{{}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {Id: earthshaker, Enchant: enchant}, {}, {}}},
+			Consumes:  consumes,
+			Rotation:  &proto.APLRotation{},
+			Spec: &proto.Player_FeralDruid{FeralDruid: &proto.FeralDruid{Options: &proto.FeralDruid_Options{
+				InnervateTarget: &proto.UnitReference{},
+			}}},
+		}
+		sim := core.NewSim(&proto.RaidSimRequest{
+			Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+			Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{core.NewDefaultTarget()}},
+			SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+		}, simsignals.CreateSignals())
+		sim.Reset()
+		sim.PrePull()
+		cat := sim.Raid.Parties[0].Players[0].(*FeralDruid)
+		if !cat.InForm(druid.Cat) {
+			t.Fatal("not in Cat Form")
+		}
+		return cat
+	}
+	plain := newSim(0, &proto.Consumes{}).AutoAttacks.MH()
+	for _, c := range []struct {
+		name     string
+		enchant  int32
+		consumes *proto.Consumes
+		want     float64
+	}{
+		{"Impact", 13695, &proto.Consumes{}, 6},
+		{"Dense Weightstone", 0, &proto.Consumes{MainHandImbue: proto.WeaponImbue_DenseWeightstone}, 8},
+		{"both", 13695, &proto.Consumes{MainHandImbue: proto.WeaponImbue_DenseWeightstone}, 14},
+	} {
+		mh := newSim(c.enchant, c.consumes).AutoAttacks.MH()
+		if !near(mh.BaseDamageMin-plain.BaseDamageMin, c.want) || !near(mh.BaseDamageMax-plain.BaseDamageMax, c.want) {
+			t.Errorf("%s added %.2f-%.2f to the cat's swing, want %.0f", c.name, mh.BaseDamageMin-plain.BaseDamageMin, mh.BaseDamageMax-plain.BaseDamageMax, c.want)
+		}
+	}
+}
+
+// Omen of Clarity rolls 2 procs a minute on a cat's special at the 1.0 sec swing speed under
+// Forever, 3.3% a Shred (wowsims/forever ca7b3ab462: the equipped weapon's speed "is a game bug
+// fixed in the next beta build"), and at Earthshaker's 3.5 sec, 11.7%, under Classic.
+func TestForeverOmenOfClaritySwingSpeed(t *testing.T) {
+	for _, c := range []struct {
+		ruleset proto.Ruleset
+		want    float64
+	}{
+		{proto.Ruleset_RulesetForever, 2 * 1.0 / 60},
+		{proto.Ruleset_RulesetClassic, 2 * 3.5 / 60},
+	} {
+		sim, cat := newFormSim(t, c.ruleset, &proto.Consumes{})
+		omen := cat.GetAura("Omen of Clarity")
+		const trials = 6000
+		procs := 0
+		for range trials {
+			// Past the 10 sec cooldown each time.
+			sim.CurrentTime += 11 * time.Second
+			cat.ClearcastingAura.Deactivate(sim)
+			result := cat.Shred.NewResult(cat.CurrentTarget)
+			result.Outcome = core.OutcomeHit
+			omen.OnSpellHitDealt(omen, sim, cat.Shred.Spell, result)
+			if cat.ClearcastingAura.IsActive() {
+				procs++
+			}
+		}
+		if got := float64(procs) / trials; math.Abs(got-c.want) > 0.01 {
+			t.Errorf("%s: Omen of Clarity on %.1f%% of Shreds, want %.1f%%", c.ruleset, 100*got, 100*c.want)
+		}
 	}
 }
