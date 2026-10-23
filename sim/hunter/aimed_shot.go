@@ -23,7 +23,7 @@ func (hunter *Hunter) getAimedShotConfig(rank int, timer *core.Timer) core.Spell
 		SpellSchool:   core.SpellSchoolPhysical,
 		DefenseType:   core.DefenseTypeRanged,
 		ProcMask:      core.ProcMaskRangedSpecial,
-		Flags:         core.SpellFlagMeleeMetrics | core.SpellFlagAPL | SpellFlagShot,
+		Flags:         core.SpellFlagMeleeMetrics | core.SpellFlagAPL | SpellFlagShot | core.SpellFlagKeepsSwingTimer, // Do Not Reset Combat Timers in the client (Attributes[2] 0x20000 on every rank)
 		CastType:      proto.CastType_CastTypeRanged,
 		Rank:          rank,
 		RequiredLevel: level,

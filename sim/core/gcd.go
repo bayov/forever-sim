@@ -83,7 +83,7 @@ func (unit *Unit) WaitUntil(sim *Simulation, readyTime time.Duration) {
 // cast pays when it completes), does nothing, and gives back the cooldown it started (the
 // spell was ready when the cast began). The unit can act again once the GCD the cast started
 // has run out. A target dying mid-cast does this (target_death.go), as the game does when
-// the target of a cast dies.
+// the target of a cast dies. The swings the cast held land at once.
 func (unit *Unit) interruptHardcast(sim *Simulation) {
 	castStart := unit.Hardcast.Start
 	if sim.Log != nil {
@@ -98,6 +98,7 @@ func (unit *Unit) interruptHardcast(sim *Simulation) {
 		}
 	}
 	unit.Hardcast = Hardcast{Expires: startingCDTime}
+	unit.AutoAttacks.releaseMeleeHeldByCast(sim)
 	unit.ChanneledDot = nil
 	if unit.hardcastAction != nil && !unit.hardcastAction.consumed {
 		unit.hardcastAction.Cancel(sim)

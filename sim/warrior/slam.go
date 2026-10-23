@@ -27,13 +27,21 @@ func (warrior *Warrior) registerSlamSpell() {
 		}
 	}
 
+	// Under Forever the core resets the swing when Slam's cast completes. Improved Slam's Slam
+	// (1310196-1310200) is marked Do Not Reset Combat Timers (Attributes[2] 0x20000), the
+	// base ranks are not (wowsims/forever 4fb2849945).
+	flags := core.SpellFlagMeleeMetrics | core.SpellFlagAPL | SpellFlagOffensive
+	if warrior.Talents.ImprovedSlam > 0 {
+		flags |= core.SpellFlagKeepsSwingTimer
+	}
+
 	warrior.Slam = warrior.RegisterSpell(AnyStance, core.SpellConfig{
 		SpellCode:   SpellCode_WarriorSlam,
 		ActionID:    core.ActionID{SpellID: spellID},
 		SpellSchool: core.SpellSchoolPhysical,
 		DefenseType: core.DefenseTypeMelee,
 		ProcMask:    core.ProcMaskMeleeMHSpecial,
-		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL | SpellFlagOffensive,
+		Flags:       flags,
 
 		RequiredLevel: requiredLevel,
 
@@ -48,7 +56,7 @@ func (warrior *Warrior) registerSlamSpell() {
 			},
 			CD: cooldown,
 			ModifyCast: func(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
-				if warrior.Talents.ImprovedSlam == 0 && spell.CastTime() > 0 {
+				if !warrior.Env.IsForever() && warrior.Talents.ImprovedSlam == 0 && spell.CastTime() > 0 {
 					warrior.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+cast.CastTime, true)
 				}
 			},

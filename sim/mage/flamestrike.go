@@ -55,7 +55,7 @@ func (mage *Mage) newFlamestrikeSpellConfig(rank int) core.SpellConfig {
 		SpellSchool: core.SpellSchoolFire,
 		DefenseType: core.DefenseTypeMagic,
 		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       SpellFlagMage | core.SpellFlagAPL,
+		Flags:       SpellFlagMage | core.SpellFlagAPL | core.SpellFlagKeepsSwingTimer, // Do Not Reset Combat Timers in the client (Attributes[2] 0x20000 on every rank)
 		SpellCode:   SpellCode_MageFlamestrike,
 
 		RequiredLevel: level,

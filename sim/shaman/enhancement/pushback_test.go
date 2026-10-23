@@ -56,11 +56,13 @@ func TestOrcShamanCastPushback(t *testing.T) {
 	runSim(sim)
 }
 
-// TestLevelingHealPushback grinds a session where we cast Lesser Healing Wave below 40%
+// TestLevelingHealPushback grinds a session where we cast Healing Wave (3 sec) below 40%
 // health. Every mob hit that lands while we cast pushes the heal back, and a whole session
-// has plenty of them.
+// has plenty of them: the heal outlasts a mob's swing. Lesser Healing Wave's 1.5 sec, cast
+// just after the hit that took us under 40%, ends before the next one.
 func TestLevelingHealPushback(t *testing.T) {
-	req := levelingRequest(t, &proto.LevelingOptions{MaxPackSize: 3}, 1)
+	healingWave := `{"action":{"condition":{"cmp":{"op":"OpLt","lhs":{"currentHealthPercent":{}},"rhs":{"const":{"val":"40%"}}}},"castSpell":{"spellId":{"spellId":939}}}}`
+	req := withRotation(t, levelingRequest(t, &proto.LevelingOptions{MaxPackSize: 3}, 1), rotationOf(healingWave))
 	req.SimOptions.Debug = true
 	result := runLeveling(t, req)
 
@@ -74,10 +76,10 @@ func TestLevelingHealPushback(t *testing.T) {
 		}
 		event := line[len(m[0]):]
 		switch {
-		case strings.HasPrefix(event, "[ (#1)] Casting {SpellID: 8008}"):
+		case strings.HasPrefix(event, "[ (#1)] Casting {SpellID: 939}"):
 			casting = true
 			casts++
-		case strings.HasPrefix(event, "[ (#1)] Completed cast {SpellID: 8008}"):
+		case strings.HasPrefix(event, "[ (#1)] Completed cast {SpellID: 939}"):
 			casting = false
 		case casting && mobHit.MatchString(event):
 			hits++
@@ -89,6 +91,6 @@ func TestLevelingHealPushback(t *testing.T) {
 		t.Fatalf("%d mob hits landed in %d heals, want more to check pushback", hits, casts)
 	}
 	if pushbacks != hits {
-		t.Errorf("%d mob hits landed while we cast Lesser Healing Wave, but %d pushed it back", hits, pushbacks)
+		t.Errorf("%d mob hits landed while we cast Healing Wave, but %d pushed it back", hits, pushbacks)
 	}
 }

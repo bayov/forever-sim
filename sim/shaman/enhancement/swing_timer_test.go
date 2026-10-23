@@ -10,8 +10,9 @@ import (
 
 // TestOrcShamanCastSwingTimer checks what our casts do to the swing timer at level 60.
 //
-// We don't swing during a cast, and the swing timer starts over when it ends. So the next
-// swing comes one full swing after the cast. An instant Lightning Bolt (5 Maelstrom Weapon
+// We don't swing during a cast, and the swing timer starts over when it completes, as for every
+// cast with a cast time under Forever (wowsims/forever 4fb2849945). So the next swing comes one
+// full swing after the cast. An instant Lightning Bolt (5 Maelstrom Weapon
 // stacks or Nature's Swiftness) leaves the swing timer alone, like a shock (the user,
 // 2026-10-08).
 func TestOrcShamanCastSwingTimer(t *testing.T) {
@@ -63,13 +64,21 @@ func TestOrcShamanCastSwingTimer(t *testing.T) {
 				}
 				castNow(t, sim, enh, c.spell)
 
-				want := swingAt
-				if c.castTime >= 0 {
-					want = sim.CurrentTime + c.castTime + enh.AutoAttacks.MainhandSwingSpeed()
+				if c.castTime < 0 {
+					if got := enh.AutoAttacks.MainhandSwingAt(); got != swingAt {
+						t.Errorf("%s: the next swing comes at %s, want %s", c.label, got, swingAt)
+					}
+					return
 				}
-				if got := enh.AutoAttacks.MainhandSwingAt(); (got - want).Abs() > time.Microsecond {
-					t.Errorf("%s: the next swing comes at %s, want %s (it was %s)", c.label, got, want, swingAt)
-				}
+				// The swing that came due during the cast waits for it, and the cast's end
+				// starts a full swing.
+				castEnd := sim.CurrentTime + c.castTime
+				sim.AddPendingAction(&core.PendingAction{NextActionAt: castEnd + time.Millisecond, OnAction: func(sim *core.Simulation) {
+					want := castEnd + enh.AutoAttacks.MainhandSwingSpeed()
+					if got := enh.AutoAttacks.MainhandSwingAt(); (got - want).Abs() > time.Microsecond {
+						t.Errorf("%s: the next swing comes at %s, want %s (it was %s)", c.label, got, want, swingAt)
+					}
+				}})
 			}})
 		})
 	}

@@ -22,6 +22,9 @@ type Hardcast struct {
 	CastTime time.Duration
 	// When the cast started.
 	Start time.Duration
+	// Under Forever the melee swing waits out the cast, then starts a full swing when it
+	// completes.
+	ResetsSwing bool
 }
 
 // Input for constructing the CastSpell function for a spell.
@@ -75,6 +78,18 @@ func (spell *Spell) castFailureHelper(sim *Simulation, message string, vals ...a
 		}
 	}
 	return false
+}
+
+// Under Forever every cast with a cast time holds the melee swing and starts a full swing when
+// it completes, at the attack speed it completes with (wowsims/forever 4fb2849945). A cast that
+// fails or is interrupted lets the held swings land at once (wowsims/forever 7146db7c30). Spells
+// the client marks Do Not Reset Combat Timers (Attributes[2] 0x20000) carry
+// SpellFlagKeepsSwingTimer: Aimed Shot, Sniper Shot, Slam with Improved Slam and Flamestrike.
+// Channels and Auto Shot are left out, and instants only reset it by SpellFlagResetAttackSwing.
+func (spell *Spell) resetsSwingOnCast(sim *Simulation) bool {
+	return sim.IsForever() &&
+		!spell.Flags.Matches(SpellFlagChanneled|SpellFlagKeepsSwingTimer) &&
+		!spell.ProcMask.Matches(ProcMaskRangedAuto)
 }
 
 // applySpellPushback: a hit that lands and does damage pushes back the cast or channel we're
@@ -153,8 +168,11 @@ func (unit *Unit) applySpellPushback() {
 				// Update GCDTimer
 				aura.Unit.SetGCDTimer(sim, aura.Unit.Hardcast.Expires)
 
-				// Update Swing timer
-				aura.Unit.AutoAttacks.StopMeleeUntil(sim, aura.Unit.Hardcast.Expires, false)
+				// Update Swing timer. Under Forever a cast that resets the swing holds it to its
+				// new end (WeaponAttack.swing), and one that keeps it leaves it alone.
+				if !sim.IsForever() {
+					aura.Unit.AutoAttacks.StopMeleeUntil(sim, aura.Unit.Hardcast.Expires, false)
+				}
 				return
 			}
 
@@ -288,14 +306,17 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 			return spell.castFailureHelper(sim, "casting/channeling while moving not allowed!")
 		}
 
-		// Non melee casts
-		if spell.Flags.Matches(SpellFlagResetAttackSwing) && spell.Unit.AutoAttacks.enabled {
+		// Non melee casts. Under Forever a cast with a cast time resets the swing when it
+		// completes instead (Hardcast.ResetsSwing); instants and channels keep this.
+		if spell.Flags.Matches(SpellFlagResetAttackSwing) && spell.Unit.AutoAttacks.enabled && !(sim.IsForever() && spell.CurCast.CastTime > 0) {
 			restartMeleeAt := sim.CurrentTime + spell.CurCast.CastTime
 			spell.Unit.AutoAttacks.StopMeleeUntil(sim, restartMeleeAt, false)
 		}
 
 		// Hardcasts
 		if spell.CurCast.CastTime > 0 {
+			resetsSwing := spell.resetsSwingOnCast(sim)
+
 			if sim.Log != nil && !spell.Flags.Matches(SpellFlagNoLogs) {
 				spell.Unit.Log(sim, "Casting %s (Cost = %0.03f, Cast Time = %s, Effective Time = %s)",
 					spell.ActionID, max(0, spell.CurCast.Cost), spell.CurCast.CastTime, spell.CurCast.EffectiveTime())
@@ -317,8 +338,16 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 					if spell.Cost != nil {
 						if !spell.Cost.MeetsRequirement(sim, spell) {
 							spell.castFailureHelper(sim, spell.Cost.CostFailureReason(sim, spell))
+							spell.Unit.AutoAttacks.releaseMeleeHeldByCast(sim)
 							return
 						}
+					}
+
+					if resetsSwing {
+						spell.Unit.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime, false)
+					}
+
+					if spell.Cost != nil {
 						spell.Cost.SpendCost(sim, spell)
 					}
 
@@ -332,7 +361,8 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 						spell.Unit.Rotation.DoNextAction(sim)
 					}
 				},
-				Target: target,
+				Target:      target,
+				ResetsSwing: resetsSwing,
 			}
 
 			if spell.Unit.Hardcast.Expires != spell.Unit.NextGCDAt() {

@@ -193,7 +193,8 @@ func TestLevelingChase(t *testing.T) {
 	if walks < 3 {
 		t.Errorf("%d walks back to the totem with a mob running in, want a few", walks)
 	}
-	if m.MobsKilled < 15 {
+	// About 14.5: every Lesser Healing Wave starts our swing over when it completes.
+	if m.MobsKilled < 12 {
 		t.Errorf("%.1f mobs killed, want a steady stream: a mob chasing us must still reach us", m.MobsKilled)
 	}
 }

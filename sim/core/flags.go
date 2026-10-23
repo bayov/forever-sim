@@ -218,6 +218,7 @@ const (
 	SpellFlagCastWhileCasting                              // Indicates this spell can go off while the caster is casting another (Forever's Auto Shot)
 	SpellFlagFullResistanceTicks                           // Under Forever its ticks meet the target's full resistance, as channel ticks do, where other ticks meet a tenth (Insect Swarm)
 	SpellFlagNoPartialResist                               // Under Forever its hits never lose damage to a partial resist or gain the Spell Penetration bonus (damage shields)
+	SpellFlagKeepsSwingTimer                               // Under Forever completing its cast leaves the melee swing timer running: the client's Do Not Reset Combat Timers (Attributes[2] 0x20000)
 
 	// Used to let agents categorize their spells.
 	SpellFlagAgentReserved1

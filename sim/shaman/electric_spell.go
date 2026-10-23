@@ -19,11 +19,14 @@ const (
 
 // Shared precomputation logic for LB and CL.
 // stopMeleeForCast holds our swings until a spell's cast ends, and the swing timer starts
-// over from there.
+// over from there. Under Forever the core does this for every cast with a cast time.
 //
 // An instant cast leaves the swing timer alone, like a shock (the user, 2026-10-08). That's
 // Lightning Bolt with 5 Maelstrom Weapon stacks or Nature's Swiftness.
 func (shaman *Shaman) stopMeleeForCast(sim *core.Simulation, spell *core.Spell, cast *core.Cast) {
+	if shaman.Env.IsForever() {
+		return
+	}
 	if castTime := shaman.ApplyCastSpeedForSpell(cast.CastTime, spell); castTime > 0 {
 		shaman.AutoAttacks.StopMeleeUntil(sim, sim.CurrentTime+castTime, false)
 	}

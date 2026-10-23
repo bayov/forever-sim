@@ -253,6 +253,7 @@ type WeaponAttack struct {
 
 	curSwingSpeed    float64
 	curSwingDuration time.Duration
+	heldByCast       bool // The swing came due during a cast that resets it and waits for the cast to end.
 }
 
 func (wa *WeaponAttack) getWeapon() *Weapon {
@@ -309,6 +310,15 @@ func (wa *WeaponAttack) castExtraAttacks(sim *Simulation, numExtraAttacks int32,
 }
 
 func (wa *WeaponAttack) swing(sim *Simulation) time.Duration {
+	// Under Forever a melee swing waits out a cast that resets it, one due at the cast's last
+	// instant included. The completed cast sets the real swing time; this one only has to land
+	// past the cast's end, wherever pushback moves it.
+	if hc := &wa.unit.Hardcast; hc.ResetsSwing && hc.Expires >= sim.CurrentTime && wa != &wa.unit.AutoAttacks.ranged {
+		wa.swingAt = hc.Expires + wa.curSwingDuration
+		wa.heldByCast = true
+		return wa.swingAt
+	}
+
 	isExtraAttack := wa.extraAttacksPending > 0
 
 	if isExtraAttack {
@@ -572,6 +582,8 @@ func (aa *AutoAttacks) reset(sim *Simulation) {
 
 	aa.mh.swingAt = NeverExpires
 	aa.oh.swingAt = NeverExpires
+	aa.mh.heldByCast = false
+	aa.oh.heldByCast = false
 
 	// Make sure extra attacks are reset
 	aa.mh.extraAttacks = 0
@@ -830,15 +842,29 @@ func (aa *AutoAttacks) StopMeleeUntil(sim *Simulation, readyAt time.Duration, de
 	}
 
 	aa.mh.swingAt = readyAt + aa.mh.curSwingDuration
+	aa.mh.heldByCast = false
 	sim.rescheduleWeaponAttack(aa.mh.swingAt)
 
 	if aa.IsDualWielding {
 		aa.oh.swingAt = readyAt + aa.oh.curSwingDuration
+		aa.oh.heldByCast = false
 		if desyncOH {
 			// Used by warrior to desync offhand after unglyphed Shattering Throw.
 			aa.oh.swingAt += aa.oh.curSwingDuration / 2
 		}
 		sim.rescheduleWeaponAttack(aa.oh.swingAt)
+	}
+}
+
+// A cast that ends without completing lets the swings it held land at once: their timers ran out
+// while it was underway (wowsims/forever 7146db7c30).
+func (aa *AutoAttacks) releaseMeleeHeldByCast(sim *Simulation) {
+	for _, wa := range []*WeaponAttack{&aa.mh, &aa.oh} {
+		if wa.heldByCast {
+			wa.heldByCast = false
+			wa.swingAt = sim.CurrentTime
+			sim.rescheduleWeaponAttack(wa.swingAt)
+		}
 	}
 }
 
