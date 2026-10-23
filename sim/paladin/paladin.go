@@ -1,6 +1,8 @@
 package paladin
 
 import (
+	"time"
+
 	"github.com/wowsims/classic/sim/common/guardians"
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
@@ -92,6 +94,11 @@ type Paladin struct {
 
 	// Swift Judgement's free next Judgement, see swift_judgement.go. Nil without the talent.
 	swiftJudgementAura *core.Aura
+
+	// Flat Holy damage taken added to Judgement of the Crusader by the PvP gloves (items.go).
+	judgementOfTheCrusaderBonus float64
+	// Time taken off Forbearance by Justice Battleplate's 5-piece bonus.
+	forbearanceReduction time.Duration
 }
 
 // Implemented by each Paladin spec.
@@ -230,6 +237,7 @@ func (paladin *Paladin) getPrimarySealSpell(primarySeal proto.PaladinSeal) *core
 
 func (paladin *Paladin) applySeal(newSeal *core.Aura, judgement *core.Spell, sealSpell *core.Spell, sim *core.Simulation) {
 	paladin.leaveEcho(sim, newSeal)
+	paladin.dropOwnEcho(sim, newSeal)
 	if paladin.currentSeal != nil {
 		paladin.currentSeal.Deactivate(sim)
 	}

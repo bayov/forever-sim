@@ -61,7 +61,7 @@ func (paladin *Paladin) registerSealOfTheCrusader() {
 		}
 	}
 	debuffs := paladin.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
-		return core.JudgementOfTheCrusaderAura(&paladin.Unit, target, ranks[top].judge.bonus*improvedSotC+libramBonus, judgementDuration)
+		return core.JudgementOfTheCrusaderAura(&paladin.Unit, target, ranks[top].judge.bonus*improvedSotC+libramBonus+paladin.judgementOfTheCrusaderBonus, judgementDuration)
 	})
 
 	for i, rank := range ranks {
@@ -114,6 +114,7 @@ func (paladin *Paladin) registerSealOfTheCrusader() {
 			ManaCost: core.ManaCostOptions{
 				FlatCost:   rank.manaCost - paladin.getLibramSealCostReduction(),
 				Multiplier: paladin.sealCostMultiplier(),
+				Factor:     paladin.sealCostFactor(),
 			},
 			Cast: core.CastConfig{
 				DefaultCast: core.Cast{

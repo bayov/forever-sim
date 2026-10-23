@@ -101,6 +101,16 @@ func (paladin *Paladin) sealCostMultiplier() int32 {
 	return paladin.benediction()
 }
 
+// Libram of Invocation's 5% off the seals (item 249442, as wowsims/forever has it in
+// item_librams.go) is another percent cost modifier, so it multiplies with the others. It also
+// counts in Sanctified Judgement's refund (sanctifiedJudgementBase).
+func (paladin *Paladin) sealCostFactor() float64 {
+	if paladin.Ranged().ID == LibramOfInvocation {
+		return 0.95
+	}
+	return 1
+}
+
 // Holy Conduit takes 20% per point off Consecration, Holy Wrath, Exorcism and Hammer of Wrath.
 func (paladin *Paladin) holyConduit() int32 {
 	return []int32{100, 80, 60}[paladin.Talents.HolyConduit]

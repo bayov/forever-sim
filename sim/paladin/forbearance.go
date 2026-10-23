@@ -12,7 +12,7 @@ func (paladin *Paladin) registerForbearance() {
 	forbearanceAura := paladin.RegisterAura(core.Aura{
 		Label:    "Forbearance",
 		ActionID: actionID,
-		Duration: time.Minute * 1,
+		Duration: time.Minute*1 - paladin.forbearanceReduction,
 	})
 
 	paladin.OnSpellRegistered(func(spell *core.Spell) {

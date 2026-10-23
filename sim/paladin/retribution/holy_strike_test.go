@@ -23,6 +23,12 @@ func retSim(t *testing.T, talents string, weapon int32) (*core.Simulation, *Retr
 // retSimTargets is retSim against n such targets.
 func retSimTargets(t *testing.T, talents string, weapon int32, n int) (*core.Simulation, *RetributionPaladin) {
 	t.Helper()
+	return retSimGear(t, talents, map[proto.ItemSlot]int32{proto.ItemSlot_ItemSlotMainHand: weapon}, n, proto.MobType_MobTypeUnknown)
+}
+
+// retSimGear is retSim with items in their slots, against n targets of mobType.
+func retSimGear(t *testing.T, talents string, items map[proto.ItemSlot]int32, n int, mobType proto.MobType) (*core.Simulation, *RetributionPaladin) {
+	t.Helper()
 	player := &proto.Player{
 		Race:          proto.Race_RaceHuman,
 		Class:         proto.Class_ClassPaladin,
@@ -34,15 +40,15 @@ func retSimTargets(t *testing.T, talents string, weapon int32, n int) (*core.Sim
 			Options: &proto.PaladinOptions{PrimarySeal: proto.PaladinSeal_Righteousness},
 		}},
 	}
-	for range proto.ItemSlot_ItemSlotMainHand {
-		player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{})
+	for slot := range proto.ItemSlot_ItemSlotRanged + 1 {
+		player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{Id: items[slot]})
 	}
-	player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{Id: weapon})
 	var targets []*proto.Target
 	for range n {
 		target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)
 		target.Level = 60
 		target.Stats[proto.Stat_StatArmor] = 0
+		target.MobType = mobType
 		targets = append(targets, target)
 	}
 	sim := core.NewSim(&proto.RaidSimRequest{

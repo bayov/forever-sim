@@ -166,8 +166,8 @@ var ItemSetRedemptionArmor = core.NewItemSet(core.ItemSet{
 // (item set 2106: head 280930, shoulders 280929, chest 280928, legs 280927, hands 280925, feet 280926,
 // from the 1.60.1.70338 client, spells 1300951, 1301036, 1301084 and 1301702).
 //
-// The client pieces carry no stats yet, so no real set is registered for them. We give the same bonuses
-// to the synthetic Phase 1 retribution set below.
+// The client pieces carry no stats yet. The set is registered by its client ID below, and the synthetic
+// Phase 1 retribution set carries the same bonuses.
 var justiceBattlegearBonuses = map[int32]core.ApplyEffect{
 	// Increases your attack speed and casting speed by 1%.
 	2: func(agent core.Agent) {
@@ -220,6 +220,73 @@ var justiceBattlegearBonuses = map[int32]core.ApplyEffect{
 var ItemSetRetributionSyntheticPhase1 = core.NewItemSet(core.ItemSet{
 	Name:    "Retribution Synthetic (Phase 1)",
 	Bonuses: justiceBattlegearBonuses,
+})
+
+// Forever's Tier 1 paladin sets, by the client's set IDs (ItemSetSpell, as wowsims/forever registers
+// them in item_sets.go). Their 18 pieces carry the set ID and armor only. Each set's 3-piece bonus is a
+// utility cooldown the sim does not cast: Hammer of Justice (2106), Blessing of Protection (2107) and
+// Turn Undead's cast time (2108).
+
+// https://www.wowhead.com/forever/item-set=2106/justice-battlegear
+var ItemSetJusticeBattlegear = core.NewItemSet(core.ItemSet{
+	ID:      2106,
+	Name:    "Justice Battlegear",
+	Bonuses: core.RulesetSetBonuses(nil, justiceBattlegearBonuses),
+})
+
+// https://www.wowhead.com/forever/item-set=2107/justice-armor
+var ItemSetJusticeArmor = core.NewItemSet(core.ItemSet{
+	ID:   2107,
+	Name: "Justice Armor",
+	Bonuses: core.RulesetSetBonuses(nil, map[int32]core.ApplyEffect{
+		// 1300948: +10 Spirit.
+		2: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.Spirit, 10)
+		},
+		// Reduces the cooldown of your Blessing of Protection by 30 sec.
+		3: func(agent core.Agent) {
+			// Nothing to do
+		},
+		// 1301080: increases healing done by up to 26 and damage done by up to 9 for all magical
+		// spells and effects.
+		4: func(agent core.Agent) {
+			agent.GetCharacter().AddStats(stats.Stats{stats.HealingPower: 26, stats.SpellDamage: 9})
+		},
+		// 1301694: reduces the cooldown of your Holy Shock by 1 sec.
+		5: func(agent core.Agent) {
+			paladin := agent.(PaladinAgent).GetPaladin()
+			paladin.OnSpellRegistered(func(spell *core.Spell) {
+				if spell.SpellCode == SpellCode_PaladinHolyShock {
+					spell.CD.Duration -= time.Second
+				}
+			})
+		},
+	}),
+})
+
+// https://www.wowhead.com/forever/item-set=2108/justice-battleplate
+var ItemSetJusticeBattleplate = core.NewItemSet(core.ItemSet{
+	ID:   2108,
+	Name: "Justice Battleplate",
+	Bonuses: core.RulesetSetBonuses(nil, map[int32]core.ApplyEffect{
+		// 1300949: +7 Defense.
+		2: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.Defense, 7)
+		},
+		// Reduces the cast time of your Turn Undead by 1.5 sec.
+		3: func(agent core.Agent) {
+			// Nothing to do
+		},
+		// 1301083: 12 expertise rating, 1.2% off the chance to be dodged or parried at Forever's 10
+		// rating a percent (wowsims/forever's ExpertiseRatingPerExpertisePercent).
+		4: func(agent core.Agent) {
+			agent.GetCharacter().AddStat(stats.Expertise, 1.2*core.ExpertiseRatingPerExpertiseChance)
+		},
+		// 1301697: reduces the duration of Forbearance by 10 sec.
+		5: func(agent core.Agent) {
+			agent.(PaladinAgent).GetPaladin().forbearanceReduction += time.Second * 10
+		},
+	}),
 })
 
 // https://www.wowhead.com/forever/item-set=516/soulforge-armor

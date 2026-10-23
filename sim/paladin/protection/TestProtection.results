@@ -153,6 +153,41 @@ dps_results: {
  }
 }
 dps_results: {
+ key: "TestProtection-Phase4-AllItems-JusticeArmor"
+ value: {
+  dps: 271.19867
+  tps: 418.12106
+ }
+}
+dps_results: {
+ key: "TestProtection-Phase4-AllItems-JusticeBattlegear"
+ value: {
+  dps: 271.28317
+  tps: 416.71001
+ }
+}
+dps_results: {
+ key: "TestProtection-Phase4-AllItems-JusticeBattleplate"
+ value: {
+  dps: 272.14317
+  tps: 418.01278
+ }
+}
+dps_results: {
+ key: "TestProtection-Phase4-AllItems-Knight-Lieutenant'sLamellarGauntlets-16410"
+ value: {
+  dps: 272.0135
+  tps: 417.19707
+ }
+}
+dps_results: {
+ key: "TestProtection-Phase4-AllItems-Knight-Lieutenant'sLamellarGauntlets-23274"
+ value: {
+  dps: 273.488
+  tps: 419.34071
+ }
+}
+dps_results: {
  key: "TestProtection-Phase4-AllItems-LawbringerArmor"
  value: {
   dps: 288.809
@@ -178,6 +213,13 @@ dps_results: {
  value: {
   dps: 304.39267
   tps: 462.77662
+ }
+}
+dps_results: {
+ key: "TestProtection-Phase4-AllItems-Marshal'sLamellarGloves-16471"
+ value: {
+  dps: 275.03117
+  tps: 420.96018
  }
 }
 dps_results: {
@@ -213,6 +255,13 @@ dps_results: {
  value: {
   dps: 338.404
   tps: 510.94327
+ }
+}
+dps_results: {
+ key: "TestProtection-Phase4-AllItems-TenetsoftheSilverHand-249397"
+ value: {
+  dps: 268.61783
+  tps: 413.79597
  }
 }
 dps_results: {

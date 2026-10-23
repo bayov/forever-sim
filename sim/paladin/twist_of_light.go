@@ -15,6 +15,11 @@ import (
 // chance and cooldown, and an Echo of Righteousness always fires. We assume a swing that
 // misses, or is dodged or parried, keeps the Echo, as a seal proc needs a hit. Seal of
 // Fury and Seal of Justice echoes are not modelled, the sim has neither seal.
+//
+// The tooltip has one Echo that the next melee attack consumes, so a new Echo replaces the
+// one that was up, and casting a seal drops that seal's own Echo: the Echo stands in for a
+// seal that was replaced, and a seal and its Echo are never up together. wowsims/forever
+// models both the same way (a9392a4b5c, e7f7cad34e); no log has checked either.
 func (paladin *Paladin) registerTwistOfLight() {
 	if !paladin.Talents.TwistOfLight {
 		return
@@ -69,5 +74,20 @@ func (paladin *Paladin) leaveEcho(sim *core.Simulation, newSeal *core.Aura) {
 		return
 	}
 	paladin.echoApply[old.aura] = old.apply
+	for _, echo := range []*core.Aura{paladin.echoOfCommand, paladin.echoOfRighteousness} {
+		if echo != old.aura {
+			echo.Deactivate(sim)
+		}
+	}
 	old.aura.Activate(sim)
+}
+
+// dropOwnEcho is called when newSeal goes up, and takes off newSeal's own Echo.
+func (paladin *Paladin) dropOwnEcho(sim *core.Simulation, newSeal *core.Aura) {
+	if paladin.sealEchoes == nil {
+		return
+	}
+	if own, ok := paladin.sealEchoes[newSeal]; ok {
+		own.aura.Deactivate(sim)
+	}
 }
