@@ -83,6 +83,18 @@ func (priest *Priest) applyTwinDisciplines() {
 	})
 }
 
+// reduceCost takes a talent's percent off a spell's cost. Under Forever each percent cost
+// row multiplies the others (wowsims/forever fef2bcaebd: Improved Wrath with Moonglow leaves
+// a 120-mana Wrath at 45, not 30), so Mental Agility and Devouring Contagion on Devouring
+// Plague leave 50% of 90%. Classic adds them up.
+func (priest *Priest) reduceCost(spell *core.Spell, percent int32) {
+	if priest.Env.IsForever() {
+		spell.Cost.Factor *= 1 - float64(percent)/100
+	} else {
+		spell.Cost.Multiplier -= percent
+	}
+}
+
 // Mental Agility: 3, 7 and 10% off the mana cost of Smite, Holy Fire and the instant
 // spells in its mask (Shadow Word: Pain, Devouring Plague, Vampiric Embrace, Shadowform,
 // Power Infusion, Chastise and others). Mind Blast, Mind Flay and Shadow Word: Death
@@ -99,7 +111,7 @@ func (priest *Priest) applyMentalAgility() {
 		}
 		if spellIn(spell, SpellCode_PriestShadowWordPain, SpellCode_PriestDevouringPlague, SpellCode_PriestSmite, SpellCode_PriestHolyFire, SpellCode_PriestChastise) ||
 			slices.Contains([]int32{15286, 15473, 10060}, spell.SpellID) {
-			spell.Cost.Multiplier -= discount
+			priest.reduceCost(spell, discount)
 		}
 	})
 }
@@ -219,16 +231,17 @@ func (priest *Priest) applyDevouringContagion() {
 
 	priest.OnSpellRegistered(func(spell *core.Spell) {
 		if spell.Cost != nil && spellIn(spell, SpellCode_PriestDevouringPlague) {
-			spell.Cost.Multiplier -= 25 * priest.Talents.DevouringContagion
+			priest.reduceCost(spell, 25*priest.Talents.DevouringContagion)
 		}
 	})
 }
 
 // Shadow Weaving under Forever: each landed Shadow damage spell has a 33, 67 or 100%
 // chance (the client's curve) to put a stack of 15258 on the target, up to 5. Each stack
-// is 2% more Shadow damage from the priest who put it there (aura 270 on the target), so
-// the sim gives it to the priest's own Shadow damage. That is the same thing against one
-// target. Under Classic it is the 3% a stack debuff for everyone.
+// is 2% more Shadow damage taken from the priest who put it there (aura 270 on the
+// target), counted when each hit or tick lands, so a running DoT gains the stacks put on
+// after it (wowsims/forever talents_shadow.go). Under Classic it is the 3% a stack debuff
+// for everyone.
 func (priest *Priest) applyShadowWeaving() {
 	if priest.Talents.ShadowWeaving == 0 {
 		return
@@ -246,10 +259,30 @@ func (priest *Priest) applyShadowWeaving() {
 				ActionID:  core.ActionID{SpellID: 15258},
 				Duration:  time.Second * 15,
 				MaxStacks: 5,
-				OnStacksChange: func(aura *core.Aura, sim *core.Simulation, oldStacks int32, newStacks int32) {
-					priest.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexShadow] *= (1.0 + 0.02*float64(newStacks)) / (1.0 + 0.02*float64(oldStacks))
-				},
 			})
+		})
+
+		// The attack tables are made after the talents.
+		priest.Env.RegisterPostFinalizeEffect(func() {
+			for _, target := range priest.Env.Encounter.TargetUnits {
+				aura := priest.ShadowWeavingAuras.Get(target)
+				for _, at := range priest.AttackTables[target.UnitIndex] {
+					if at == nil {
+						continue
+					}
+					previous := at.DamageDoneByCasterMultiplier
+					at.DamageDoneByCasterMultiplier = func(spell *core.Spell, at *core.AttackTable) float64 {
+						multiplier := 1.0
+						if previous != nil {
+							multiplier = previous(spell, at)
+						}
+						if aura.IsActive() && spell.SpellSchool.Matches(core.SpellSchoolShadow) {
+							multiplier *= 1 + 0.02*float64(aura.GetStacks())
+						}
+						return multiplier
+					}
+				}
+			}
 		})
 	}
 
@@ -366,9 +399,9 @@ func (priest *Priest) registerInnerFocus() {
 // Shadow spells, double the crit bonus of the Shadow damage spells in its mask (Shadow
 // Word: Pain, Mind Blast, Mind Flay, Devouring Plague and, since 70425, Shadow Word: Death,
 // so crits deal 200%) and 15% less Physical damage taken. It costs 40% of base mana and blocks
-// healing spells, not Smite or Holy Fire. The cost cut is a school power cost aura (72),
-// which multiplies with the talents' percent cost mods (Devouring Contagion, Mental
-// Agility) where those add up among themselves.
+// healing spells and Chastise (StanceExclude), not Smite or Holy Fire. The cost cut is a
+// school power cost aura (72), which multiplies with the talents' percent cost mods
+// (Devouring Contagion, Mental Agility).
 func (priest *Priest) registerShadowform() {
 	if !priest.Talents.Shadowform {
 		return

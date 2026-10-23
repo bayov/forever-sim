@@ -56,9 +56,11 @@ func (priest *Priest) registerChastiseSpell() {
 					Duration: time.Minute * 2,
 				},
 			},
+			// Not in Shadowform: rank 5 (1277335) has StanceExclude 0x8000000.
 			ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
-				return target.MobType == proto.MobType_MobTypeHumanoid
+				return target.MobType == proto.MobType_MobTypeHumanoid && (priest.ShadowformAura == nil || !priest.ShadowformAura.IsActive())
 			},
+			ExtraCastConditionNeedsEvent: true,
 
 			DamageMultiplier: 1,
 			// "Very low threat", not given a number.

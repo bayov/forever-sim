@@ -78,7 +78,10 @@ func (priest *Priest) getMindBlastBaseConfig(rank int, cdTimer *core.Timer) core
 				priest.AddShadowWeavingStack(sim, target)
 			}
 			spell.DealDamage(sim, result)
-			priest.triggerDarkInspiration(sim)
+			// Dark Inspiration needs a Mind Blast that lands (wowsims/forever talents_shadow.go).
+			if result.Landed() {
+				priest.triggerDarkInspiration(sim)
+			}
 		},
 
 		ExpectedInitialDamage: func(sim *core.Simulation, target *core.Unit, spell *core.Spell, _ bool) *core.SpellResult {

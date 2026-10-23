@@ -13,8 +13,12 @@ import (
 )
 
 func newShadowPriestSim(t *testing.T, talents string) (*core.Simulation, *ShadowPriest) {
+	return newShadowPriestSimRace(t, talents, proto.Race_RaceUndead)
+}
+
+func newShadowPriestSimRace(t *testing.T, talents string, race proto.Race) (*core.Simulation, *ShadowPriest) {
 	player := &proto.Player{
-		Race:          proto.Race_RaceUndead,
+		Race:          race,
 		Class:         proto.Class_ClassPriest,
 		Level:         60,
 		Equipment:     &proto.EquipmentSpec{},
@@ -41,9 +45,9 @@ func topRank(t *testing.T, name string, ranks []*core.Spell) *core.Spell {
 	return nil
 }
 
-// TestShadowformCosts checks that Shadowform's half cost multiplies with the percent cost
-// talents, which add up among themselves (Devouring Contagion 2/2 and Mental Agility 3/3 on
-// Devouring Plague: 40% of the cost, then half of that), and which spells each one reaches.
+// TestShadowformCosts checks that Shadowform's half cost and the percent cost talents all
+// multiply (Devouring Contagion 2/2 and Mental Agility 3/3 on Devouring Plague: 50% of 90%,
+// then half of that; wowsims/forever fef2bcaebd), and which spells each one reaches.
 // Mental Agility leaves out Mind Blast, Mind Flay and Shadow Word: Death.
 func TestShadowformCosts(t *testing.T) {
 	sim, sp := newShadowPriestSim(t, "00503523103--50052101231302051")
@@ -54,7 +58,7 @@ func TestShadowformCosts(t *testing.T) {
 		spell *core.Spell
 		want  float64
 	}{
-		{"Devouring Plague", topRank(t, "Devouring Plague", sp.DevouringPlague), 985 * 0.4 * 0.5},
+		{"Devouring Plague", topRank(t, "Devouring Plague", sp.DevouringPlague), 985 * 0.5 * 0.9 * 0.5},
 		{"Shadow Word: Pain", topRank(t, "Shadow Word: Pain", sp.ShadowWordPain), 470 * 0.9 * 0.5},
 		{"Mind Blast", topRank(t, "Mind Blast", sp.MindBlast), 350 * 0.5},
 		{"Mind Flay", topRank(t, "Mind Flay", sp.MindFlay), 205 * 0.5},
@@ -266,5 +270,83 @@ func TestPowerInLight(t *testing.T) {
 		if got, want := sp.PowerInLightMultiplier(target), 1.1; math.Abs(got-want) > 1e-9 {
 			t.Errorf("Power in Light %.3f with %s on the target, want %.3f", got, c.name, want)
 		}
+	}
+}
+
+// TestShadowWeavingLive checks that Forever's Shadow Weaving stacks sit on the target as
+// Shadow damage taken from the priest, so a Shadow Word: Pain already ticking gains the
+// stacks put on after it, and that they do not touch the priest's Holy damage.
+func TestShadowWeavingLive(t *testing.T) {
+	sim, sp := newShadowPriestSim(t, "00503523103--50052101231302051")
+	if sp.Talents.ShadowWeaving == 0 {
+		t.Fatal("the build has no Shadow Weaving")
+	}
+	target := sim.GetTargetUnit(0)
+	at := sp.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand]
+	pain := topRank(t, "Shadow Word: Pain", sp.ShadowWordPain)
+	smite := topRank(t, "Smite", sp.Smite)
+
+	dot := pain.Dot(target)
+	dot.Apply(sim)
+	snapshot := dot.SnapshotAttackerMultiplier
+	before := pain.TargetDamageMultiplier(at, true)
+	smiteBefore := smite.TargetDamageMultiplier(at, false)
+
+	aura := sp.ShadowWeavingAuras.Get(target)
+	aura.Activate(sim)
+	aura.SetStacks(sim, 5)
+
+	if got, want := pain.TargetDamageMultiplier(at, true), before*1.1; math.Abs(got-want) > 1e-9 {
+		t.Errorf("Shadow Word: Pain ticks take %.4f with 5 stacks, want %.4f", got, want)
+	}
+	if got := dot.SnapshotAttackerMultiplier; got != snapshot {
+		t.Errorf("the running dot's snapshot moved from %.4f to %.4f", snapshot, got)
+	}
+	if got := smite.TargetDamageMultiplier(at, false); got != smiteBefore {
+		t.Errorf("Smite takes %.4f with 5 stacks, want %.4f", got, smiteBefore)
+	}
+}
+
+// TestDarkInspirationNeedsHit checks that only a Mind Blast that lands gives Dark Inspiration.
+func TestDarkInspirationNeedsHit(t *testing.T) {
+	sim, sp := newShadowPriestSim(t, "00503523103--50052101231302051")
+	target := sim.GetTargetUnit(0)
+	mindBlast := topRank(t, "Mind Blast", sp.MindBlast)
+	mindBlast.BonusHitRating -= 20 * core.SpellHitRatingPerHitChance
+
+	metrics := &mindBlast.SpellMetrics[target.UnitIndex]
+	missed, landed := false, false
+	for i := 0; i < 200 && !(missed && landed); i++ {
+		sp.DarkInspirationAura.Deactivate(sim)
+		misses := metrics.Misses
+		mindBlast.ApplyEffects(sim, target, mindBlast)
+		miss := metrics.Misses > misses
+		if active := sp.DarkInspirationAura.IsActive(); active == miss {
+			t.Fatalf("Dark Inspiration active %v after a Mind Blast that missed %v", active, miss)
+		}
+		missed, landed = missed || miss, landed || !miss
+	}
+	if !missed || !landed {
+		t.Fatalf("no miss and hit in 200 Mind Blasts (missed %v, landed %v)", missed, landed)
+	}
+}
+
+// TestChastiseShadowform checks that Chastise cannot be cast in Shadowform (StanceExclude
+// 0x8000000 on 1277335).
+func TestChastiseShadowform(t *testing.T) {
+	sim, sp := newShadowPriestSimRace(t, "00503523103--50052101231302051", proto.Race_RaceDwarf)
+	target := sim.GetTargetUnit(0)
+	target.MobType = proto.MobType_MobTypeHumanoid
+	chastise := topRank(t, "Chastise", sp.Chastise)
+	if !chastise.CanCast(sim, target) {
+		t.Fatal("Chastise cannot be cast in caster form")
+	}
+	sp.ShadowformAura.Activate(sim)
+	if chastise.CanCast(sim, target) {
+		t.Error("Chastise can be cast in Shadowform")
+	}
+	sp.ShadowformAura.Deactivate(sim)
+	if !chastise.CanCast(sim, target) {
+		t.Error("Chastise cannot be cast after Shadowform")
 	}
 }

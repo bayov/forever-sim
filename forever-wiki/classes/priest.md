@@ -17,9 +17,9 @@ Talents (the ranks the BlizzCon data guessed that were wrong):
 - Wand Specialization 13 / 25%. Improved Power Word: Shield 7 / 14 / 20%. Mental Agility 3 / 7 / 10%. Twilight Focus 23 / 47 / 70%. Blessed Recovery 8 / 17 / 25%. Inspiration 8 / 17 / 25%. Searing Light 2 / 5% Holy damage. Spiritual Guidance 1 / 3 / 5 / 6 / 8% of Spirit as spell damage (5% a rank as healing). Spiritual Healing 3 / 7 / 10%. Shadow Weaving 33 / 67 / 100%.
 - Penance (20 point Discipline talent) at 60: 3 bolts of 92 Holy damage at 19% each, 385 Mana, 12 sec cooldown. Power Infusion needs Penance. Inner Focus now says its crit is only for a non-periodic spell.
 - Spirit Tap also triggers when an enemy with the priest's Vampiric Embrace dies. Vampiric Embrace lasts 30 sec (30 sec cooldown since client 70425, 1 min before) and can't be resisted (70425) and Improved Vampiric Embrace is gone, so it always heals for 20%.
-- Shadow Weaving puts a 2% stack (up to 5, 15 sec) on the target that only raises the Shadow damage of the priest who put it there (aura 270).
-- Shadowform: 10% more Shadow damage, 50% off the mana cost of Shadow spells (a school cost aura, so it multiplies with the talent cost cuts), +100% critical strike damage bonus for Shadow Word: Pain, Mind Blast, Mind Flay, Devouring Plague, Mana Burn and Shadowguard (crits deal 200%), 15% less Physical damage taken. It costs 40% of base mana and blocks healing spells only, so Smite and Holy Fire are castable in it.
-- Darkness and Searing Light are school damage auras (they cover every Shadow or Holy damage the priest deals and multiply with Shadowform). Twin Disciplines' class mask covers the periodic part of Shadow Word: Pain and Devouring Plague and the direct part of Chastise, Holy Nova, Shadowguard and Touch of Weakness, not Shadow Word: Death or Mind Blast. Mental Agility's covers Shadow Word: Pain, Devouring Plague, Vampiric Embrace, Shadowform, Power Infusion, Smite, Holy Fire and Chastise, not Mind Blast, Mind Flay or Shadow Word: Death. Inner Focus's crit leaves out Shadow Word: Death.
+- Shadow Weaving puts a 2% stack (up to 5, 15 sec) on the target that only raises the Shadow damage of the priest who put it there (aura 270). It counts on each hit and tick, so a damage over time spell already ticking gains the stacks put on after it (the sim since 2026-10-23).
+- Shadowform: 10% more Shadow damage, 50% off the mana cost of Shadow spells (a school cost aura; it and the talent cost cuts all multiply, wowsims/forever fef2bcaebd), +100% critical strike damage bonus for Shadow Word: Pain, Mind Blast, Mind Flay, Devouring Plague, Mana Burn, Shadowguard and, since client 70425, Shadow Word: Death (crits deal 200%), 15% less Physical damage taken. It costs 40% of base mana and blocks healing spells and Chastise (StanceExclude 0x8000000 on 1277335), so Smite and Holy Fire are castable in it.
+- Darkness and Searing Light are school damage auras (they cover every Shadow or Holy damage the priest deals and multiply with Shadowform). Twin Disciplines' class mask covers the periodic part of Shadow Word: Pain and Devouring Plague and the direct part of Chastise, Holy Nova, Shadowguard and Touch of Weakness; client 70425 added Shadow Word: Death and Penance's bolts to the direct mask and Mind Flay and Starshards to the periodic one. Mind Blast is in neither. Mental Agility's covers Shadow Word: Pain, Devouring Plague, Vampiric Embrace, Shadowform, Power Infusion, Smite, Holy Fire and Chastise, not Mind Blast, Mind Flay or Shadow Word: Death. Percent cost cuts multiply each other, so Mental Agility 3/3 with Devouring Contagion 2/2 leaves Devouring Plague at 45% of its cost (the sim added them up to 40% until 2026-10-23). Inner Focus's crit leaves out Shadow Word: Death.
 
 Spells at their top rank (level 60):
 
@@ -27,7 +27,7 @@ Spells at their top rank (level 60):
 - Mind Blast 477 to 503 (Classic 508 to 537), 42.9% for every rank.
 - Mind Flay 390 over 3 sec (Classic 426) at 16.7% a tick (Classic 15%).
 - Devouring Plague: every race learns it, 106 every 3 sec for 24 sec (848, Classic 904) at 10% a tick, 24 sec cooldown since client 70425 (1 min before, Classic 3 min).
-- Shadow Word: Death (new, trained from 32): 444 to 472 at 42.9%, 340 Mana, instant, 15 sec cooldown. If the target lives, the priest takes 10% of their maximum health.
+- Shadow Word: Death (new, trained from 32): 444 to 472 at 42.9%, 340 Mana, instant, 18 sec cooldown since client 70425 (15 sec before). If the target lives, the priest takes 10% of their maximum health.
 - Smite 167 to 186 (Classic 384 to 429; the sim deals 9% more with rank 8, 182 to 203, as if the retune of the low ranks reached it, by the user's ruling on the report assumptions, 2026-10-15) and Holy Fire 184 to 232 plus 75 over 10 sec (Classic 355 to 449 plus 145). Both are usable in Shadowform.
 - Racial priest spells. Night Elf: Starshards 1800 Arcane over 6 sec (Classic 936) at 16.7% a tick, now on a 30 sec cooldown. Dwarf: Chastise (new), 272 to 306 Holy at 14.3%, instant, 2 min cooldown, Humanoids only. Undead: Dark Sacrifice (new), gives up 1600 health over 15 sec for 1600 mana plus the priest's Spirit, 10 min cooldown. Troll: Shadowguard 96 a hit (Classic 116). Human: Feedback, Divine Grace. Gnome: Confounding Flash, Contingency Plan. Fear Ward and Desperate Prayer are no longer tied to one race.
 
@@ -87,14 +87,18 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
   - Rank 1: Increases your chance to hit with Holy spells by 6%.
   - Rank 2: Increases your chance to hit with Holy spells by 12%.
   - Rank 3: Increases your chance to hit with Holy spells by 18%.
-- **Improved Power Word: Shield** (3 ranks, column 3) [CHANGED] [ranks settled by client trait curves]
-  - Rank 1: Increases the damage absorbed by your Power Word: Shield by 7%.
-  - Rank 2: Increases the damage absorbed by your Power Word: Shield by 14%.
-  - Rank 3: Increases the damage absorbed by your Power Word: Shield by 21%.
-  - Classic (3 ranks):
-    - Rank 1: Increases the damage absorbed by your Power Word: Shield by 5%.
-    - Rank 2: Increases the damage absorbed by your Power Word: Shield by 10%.
-    - Rank 3: Increases the damage absorbed by your Power Word: Shield by 15%.
+- **Mental Strength** (5 ranks, column 3) [CHANGED] [ranks settled by client trait curves] [70425: row 2, 2% a rank]
+  - Rank 1: Increases your total Intellect by 2%.
+  - Rank 2: Increases your total Intellect by 4%.
+  - Rank 3: Increases your total Intellect by 6%.
+  - Rank 4: Increases your total Intellect by 8%.
+  - Rank 5: Increases your total Intellect by 10%.
+  - Classic (5 ranks):
+    - Rank 1: Increases your maximum Mana by 2%.
+    - Rank 2: Increases your maximum Mana by 4%.
+    - Rank 3: Increases your maximum Mana by 6%.
+    - Rank 4: Increases your maximum Mana by 8%.
+    - Rank 5: Increases your maximum Mana by 10%.
 - **Martyrdom** (2 ranks, column 4) [CHANGED] [ranks settled by client trait curves]
   - Rank 1: Gives you a 50% chance to gain Focused Casting for 6 sec after being the victim of a melee or ranged critical strike. The Focused Casting effect prevents you from losing casting time when taking damage and increases your resistance to Interrupt effects by 20%.
   - Rank 2: Gives you a 100% chance to gain Focused Casting for 6 sec after being the victim of a melee or ranged critical strike. The Focused Casting effect prevents you from losing casting time when taking damage and increases your resistance to Interrupt effects by 20%.
@@ -117,6 +121,14 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
 - **Inner Focus** (1 rank, column 2) [unchanged]
   - Cost: Instant, 3 min cooldown
   - When activated, reduces the Mana cost of your next spell by 100% and increases its critical effect chance by 25% if it is capable of a critical effect.
+- **Improved Power Word: Shield** (3 ranks, column 3) [CHANGED] [ranks settled by client trait curves] [70425: row 3]
+  - Rank 1: Increases the damage absorbed by your Power Word: Shield by 7%.
+  - Rank 2: Increases the damage absorbed by your Power Word: Shield by 14%.
+  - Rank 3: Increases the damage absorbed by your Power Word: Shield by 21%.
+  - Classic (3 ranks):
+    - Rank 1: Increases the damage absorbed by your Power Word: Shield by 5%.
+    - Rank 2: Increases the damage absorbed by your Power Word: Shield by 10%.
+    - Rank 3: Increases the damage absorbed by your Power Word: Shield by 15%.
 - **Meditation** (3 ranks, column 4) [CHANGED] [ranks settled by client trait curves]
   - Rank 1: Allows 17% of your Mana regeneration to continue while casting.
   - Rank 2: Allows 33% of your Mana regeneration to continue while casting.
@@ -136,32 +148,19 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
     - Rank 1: Increases the Armor bonus of your Inner Fire spell by 10%.
     - Rank 2: Increases the Armor bonus of your Inner Fire spell by 20%.
     - Rank 3: Increases the Armor bonus of your Inner Fire spell by 30%.
-- **Mental Strength** (5 ranks, column 2) [CHANGED] [ranks settled by client trait curves]
-  - Rank 1: Increases your total Intellect by 3%.
-  - Rank 2: Increases your total Intellect by 6%.
-  - Rank 3: Increases your total Intellect by 9%.
-  - Rank 4: Increases your total Intellect by 12%.
-  - Rank 5: Increases your total Intellect by 15%.
-  - Classic (5 ranks):
-    - Rank 1: Increases your maximum Mana by 2%.
-    - Rank 2: Increases your maximum Mana by 4%.
-    - Rank 3: Increases your maximum Mana by 6%.
-    - Rank 4: Increases your maximum Mana by 8%.
-    - Rank 5: Increases your maximum Mana by 10%.
-- **Soul Warding** (1 rank, column 3) [NEW]
-  - Requires: Improved Power Word: Shield (3/3)
-  - Reduces the cooldown on your Power Word: Shield spell by 4 sec and reduces its mana cost by 15%.
-- **Improved Mana Burn** (2 ranks, column 4) [CHANGED] [ranks settled by client trait curves]
+- **Improved Mana Burn** (2 ranks, column 2) [CHANGED] [ranks settled by client trait curves]
   - Rank 1: Reduces the casting time of your Mana Burn spell by 0.5 sec.
   - Rank 2: Reduces the casting time of your Mana Burn spell by 1 sec.
   - Classic (2 ranks):
     - Rank 1: Reduces the casting time of your Mana Burn spell by 0.25 secs.
     - Rank 2: Reduces the casting time of your Mana Burn spell by 0.5 sec.
+- **Soul Warding** (1 rank, column 3) [NEW]
+  - Requires: Improved Power Word: Shield (3/3)
+  - Reduces the cooldown on your Power Word: Shield spell by 4 sec and reduces its mana cost by 15%.
 
 #### Row 5 (20 points)
 
 - **Penance** (1 rank, column 2) [NEW]
-  - Requires: Mental Strength (5/5)
   - Cost: 100 Mana, Enemy: 36 yd range / Friendly: 40 yd range, Channeled, 12 sec cooldown
   - Launches a volley of holy light at the target, causing 96 Holy damage to an enemy, or 233 healing to an ally. Instantly and every 1 sec for 2 sec.
 - **Renewed Hope** (5 ranks, column 3) [NEW] [ranks settled by client trait curves]
@@ -317,7 +316,7 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
 
 ### Shadow Magic
 
-18 talents, 3 new. 31-point talent: Shadowform.
+18 talents, 3 new (4 with 70425's Dark Inspiration, which took the place of Shadow Affinity and Improved Fade). 31-point talent: Shadowform.
 
 #### Row 1 (0 points)
 
@@ -354,14 +353,12 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
 
 #### Row 2 (5 points)
 
-- **Shadow Affinity** (3 ranks, column 1) [CHANGED] [ranks settled by client trait curves]
-  - Rank 1: Reduces the threat generated by your Shadow spells by 10%.
-  - Rank 2: Reduces the threat generated by your Shadow spells by 20%.
-  - Rank 3: Reduces the threat generated by your Shadow spells by 30%.
-  - Classic (3 ranks):
-    - Rank 1: Reduces the threat generated by your Shadow spells by 8%.
-    - Rank 2: Reduces the threat generated by your Shadow spells by 16%.
-    - Rank 3: Reduces the threat generated by your Shadow spells by 25%.
+- **Improved Mind Blast** (5 ranks, column 1) [unchanged] [70425: row 2]
+  - Rank 1: Reduces the cooldown of your Mind Blast spell by 0.5 sec.
+  - Rank 2: Reduces the cooldown of your Mind Blast spell by 1 sec.
+  - Rank 3: Reduces the cooldown of your Mind Blast spell by 1.5 sec.
+  - Rank 4: Reduces the cooldown of your Mind Blast spell by 2 sec.
+  - Rank 5: Reduces the cooldown of your Mind Blast spell by 2.5 sec.
 - **Improved Shadow Word: Pain** (2 ranks, column 3) [unchanged]
   - Rank 1: Increases the duration of your Shadow Word: Pain spell by 3 sec.
   - Rank 2: Increases the duration of your Shadow Word: Pain spell by 6 sec.
@@ -375,12 +372,6 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
 
 #### Row 3 (10 points)
 
-- **Improved Mind Blast** (5 ranks, column 1) [unchanged]
-  - Rank 1: Reduces the cooldown of your Mind Blast spell by 0.5 sec.
-  - Rank 2: Reduces the cooldown of your Mind Blast spell by 1 sec.
-  - Rank 3: Reduces the cooldown of your Mind Blast spell by 1.5 sec.
-  - Rank 4: Reduces the cooldown of your Mind Blast spell by 2 sec.
-  - Rank 5: Reduces the cooldown of your Mind Blast spell by 2.5 sec.
 - **Improved Psychic Scream** (2 ranks, column 2) [unchanged]
   - Requires: Blackout (5/5)
   - Rank 1: Reduces the cooldown of your Psychic Scream spell by 2 sec.
@@ -391,22 +382,27 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
   - Classic: Assault the target's mind with Shadow energy, causing 75 Shadow damage over 3 sec and slowing their movement speed by 50%.
 - **Improved Mind Flay** (2 ranks, column 4) [NEW] [ranks settled by client trait curves]
   - Requires: Mind Flay (1/1)
-  - Rank 1: Your Mind Flay now deals 10% more damage, gains 5 yards increased range, but slows the target's movement speed by 35%.
-  - Rank 2: Your Mind Flay now deals 20% more damage, gains 10 yards increased range, but slows the target's movement speed by 20%.
+  - Rank 1: Each instance of damage of Mind Flay deals 10% more damage than its previous instance of damage.
+  - Rank 2: Each instance of damage of Mind Flay deals 20% more damage than its previous instance of damage.
+  - 70425 text. The sim reads it as compounding: at 2 points the three ticks deal 1, 1.2 and 1.44 times a plain tick. Before 70425 it was 10% a rank on every tick, more range and a slow.
 
 #### Row 4 (15 points)
 
-- **Improved Fade** (2 ranks, column 1) [unchanged]
-  - Rank 1: Decreases the cooldown of your Fade ability by 3 sec.
-  - Rank 2: Decreases the cooldown of your Fade ability by 6 sec.
+- **Dark Inspiration** (5 ranks, column 1) [NEW in 70425] [ranks settled by client trait curves]
+  - Rank 1: Your Mind Blast and fully channeled Mind Flay causes Dark Inspiration, increasing yours and your party's Spirit by 3% for 10 sec.
+  - Rank 2: Your Mind Blast and fully channeled Mind Flay causes Dark Inspiration, increasing yours and your party's Spirit by 6% for 10 sec.
+  - Rank 3: Your Mind Blast and fully channeled Mind Flay causes Dark Inspiration, increasing yours and your party's Spirit by 9% for 10 sec.
+  - Rank 4: Your Mind Blast and fully channeled Mind Flay causes Dark Inspiration, increasing yours and your party's Spirit by 12% for 10 sec.
+  - Rank 5: Your Mind Blast and fully channeled Mind Flay causes Dark Inspiration, increasing yours and your party's Spirit by 15% for 10 sec.
+  - Client 1326159, buff 1326168. Only a Mind Blast that lands triggers it (wowsims/forever talents_shadow.go). The sim gives the buff to the priest only.
 - **Vampiric Embrace** (1 rank, column 2) [CHANGED]
   - Cost: 40 Mana, 30 yd range, Instant, 1 min cooldown
   - Afflicts your target with Shadow energy that causes all party members to be healed for 20% of any Shadow spell damage you deal for 30 sec. Vampiric Embrace also grants a chance for your Spirit Tap talent to trigger when enemies afflicted by it die.
   - Classic: Afflicts your target with Shadow energy that causes all party members to be healed for 20% of any Shadow spell damage you deal for 1 min.
 - **Shadow Weaving** (3 ranks, column 3) [CHANGED] [ranks settled by client trait curves]
-  - Rank 1: Your Shadow damage spells have a 33% chance to increase the Shadow damage you deal by 2% for 15 sec, stacking up to 5 times.
-  - Rank 2: Your Shadow damage spells have a 66% chance to increase the Shadow damage you deal by 2% for 15 sec, stacking up to 5 times.
-  - Rank 3: Your Shadow damage spells have a 100% chance to increase the Shadow damage you deal by 2% for 15 sec, stacking up to 5 times.
+  - Rank 1: Your Shadow damage spells have a 33% chance to increase the Shadow damage the target takes from you by 2% for 15 sec, stacking up to 5 times.
+  - Rank 2: Your Shadow damage spells have a 67% chance to increase the Shadow damage the target takes from you by 2% for 15 sec, stacking up to 5 times.
+  - Rank 3: Your Shadow damage spells have a 100% chance to increase the Shadow damage the target takes from you by 2% for 15 sec, stacking up to 5 times.
   - Classic (5 ranks):
     - Rank 1: Your Shadow damage spells have a 20% chance to cause your target to be vulnerable to Shadow damage. This vulnerability increases the Shadow damage dealt to your target by 3% and lasts 15 sec. Stacks up to 5 times.
     - Rank 2: Your Shadow damage spells have a 40% chance to cause your target to be vulnerable to Shadow damage. This vulnerability increases the Shadow damage dealt to your target by 3% and lasts 15 sec. Stacks up to 5 times.
@@ -417,7 +413,6 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
 #### Row 5 (20 points)
 
 - **Silence** (1 rank, column 1) [CHANGED]
-  - Requires: Improved Fade (2/2)
   - Cost: 225 Mana, 20 yd range, Instant, 45 sec cooldown
   - Silences the target, preventing them from casting spells for 5 sec and interrupting their spellcasts for 3 sec.
   - Classic: Silences the target, preventing them from casting spells for 5 sec.
