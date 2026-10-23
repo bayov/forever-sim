@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arcane",
   "apl": "level60_arcane",
   "published": {
-    "dps": 964.8,
-    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 922.9)"
+    "dps": 982.5,
+    "source": "Class worker round 2026-10-23 on claude/keen-brown-o2g32n-mage: main set's hit to the 16% cap, the regenerated rotations and Frost's 29/0/22 build (was 964.8)"
   },
   "verify": {
-    "dps": 964.8,
-    "stderr": 0.34,
+    "dps": 982.5,
+    "stderr": 0.37,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "sim of the regenerated request, 180s, seed 1 (seed 1000003 within 1.1)"
   },
   "summary": "Arcane Power with four Arcane Blast stacks every 15s (60% of Intellect as spell damage) and a Frostbolt filler, on the Arcane gear (Gloves - Arcane Power).",
   "keyTalents": [
@@ -44,7 +44,8 @@
     "Below 20% mana: one Arcane Blast per 15s buff",
     "Arcane Blast to 4 stacks (each 15% of Intellect as spell damage for 15s from the first)",
     "Filler: Frostbolt",
-    "No Evocation"
+    "No Evocation",
+    "Shoot the wand when nothing else can be cast (out of mana)"
   ],
   "consumes": [
     "Flask of Supreme Power",

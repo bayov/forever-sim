@@ -3,7 +3,7 @@
   "class": "Mage",
   "spec": "Frostfire",
   "build": "Frostfire",
-  "isDefault": true,
+  "isDefault": false,
   "pr": 98,
   "race": "Human",
   "talents": "-0155003013012503-0235000311203002",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_frostfire",
   "published": {
-    "dps": 1082.5,
-    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 1018.1)"
+    "dps": 1096.4,
+    "source": "Class worker round 2026-10-23 on claude/keen-brown-o2g32n-mage: main set's hit to the 16% cap, the regenerated rotations and Frost's 29/0/22 build (was 1082.5)"
   },
   "verify": {
-    "dps": 1082.52,
-    "stderr": 0.51,
+    "dps": 1096.4,
+    "stderr": 0.59,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "sim of the regenerated request, 180s, seed 1 (seed 1000003 within 1.1)"
   },
   "summary": "Fire and Frost hybrid built on Frostfire Bolt, which gets both trees' talents.",
   "keyTalents": [
@@ -41,15 +41,16 @@
   "rotation": [
     "Pre-pull: Frostfire Bolt at -3s",
     "The on-use trinket once Fire Vulnerability has 5 stacks; other cooldowns on a free GCD; mana gems never (they share the rune's cooldown)",
-    "Evocation below 20% mana with more than 45s left",
-    "Ice Lance on every Fingers of Frost charge, ahead of Scorch and Pyroblast (3 times the damage, Shatter crit)",
+    "Evocation below 10% mana with more than 90s left",
+    "Ice Lance on the last Fingers of Frost charge, ahead of Scorch and Pyroblast (3 times the damage, Shatter crit); the first charge goes on a Frostfire Bolt",
     "Scorch to 5 Fire Vulnerability stacks and again with under 7s left",
     "Pyroblast at 3 Heating Up stacks (1.5s cast)",
     "Arcane Missiles on a Missile Barrage proc",
     "Fire Blast on cooldown above 80% mana, and with mana the fight can't use (above 70 per second of fight left); every Fire Blast adds a Heating Up stack",
-    "Rank 2 Frostfire Bolt once Evocation is spent or under 60s left, while mana is under 60 per second of fight left",
+    "Rank 2 Frostfire Bolt once Evocation is spent or under 60s left, while mana is under 30 per second of fight left",
     "Ice Lance instead when a Frostfire Bolt would not land before the end (its cast plus 1.5s)",
-    "Filler: Frostfire Bolt"
+    "Filler: Frostfire Bolt",
+    "Shoot the wand when nothing else can be cast (out of mana)"
   ],
   "consumes": [
     "Flask of Supreme Power",

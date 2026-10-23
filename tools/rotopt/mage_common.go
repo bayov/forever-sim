@@ -156,7 +156,17 @@ func mageCommonKnobs() []Knob {
 		// client puts gems and runes in one category with a 2 min cooldown, and the sim's
 		// autocast takes the smallest gem first.
 		{Name: "gems", Default: 1, Min: 0, Max: 1, Step: 1},
+		// Shoot the wand when nothing else can be cast (out of mana), 0 never.
+		{Name: "wand", Default: 1, Min: 0, Max: 1, Step: 1},
 	}
+}
+
+// wandLines shoot the wand as the last line, when the mana runs out (Shoot, sim/core/wand.go).
+func wandLines(k Knobs) []*proto.APLListItem {
+	if k["wand"] != 1 {
+		return nil
+	}
+	return []*proto.APLListItem{cast(spellID(5019), nil, "Shoot the wand when nothing else can be cast (out of mana).")}
 }
 
 // scorchFirstKnob holds Combustion until Scorch has 5 stacks of Fire Vulnerability up, so its
@@ -240,4 +250,23 @@ func finisherLines(k Knobs, filler *proto.ActionID, instants ...*proto.ActionID)
 		items = append(items, cast(instant, tooLate, "An instant when the filler would not land before the end of the fight."))
 	}
 	return items
+}
+
+// iceLanceAfterBolt is the iceLance knob's 3 and 4: Ice Lance in the same spell batch as the
+// bolt that just completed. Fingers of Frost spends a charge a batch (10 ms) after each cast
+// (sim/mage/talents.go), and the bolt rolls its damage when its cast completes, so both read the
+// target as Frozen: on the last charge one charge buys two Frozen spells. The bolt still in
+// flight tells the two apart from an Ice Lance a GCD later. At 3 every charge goes that way, at 4
+// only the last (with two charges the first goes on the bolt alone).
+func iceLanceAfterBolt(k Knobs, bolt, iceLance *proto.ActionID) []*proto.APLListItem {
+	var charges value
+	switch k["iceLance"] {
+	case 3:
+		charges = auraIsActive(fingersOfFrost)
+	case 4:
+		charges = eq(auraNumStacks(fingersOfFrost), num(1))
+	default:
+		return nil
+	}
+	return []*proto.APLListItem{cast(iceLance, known(fingersOfFrost, and(charges, spellInFlight(bolt))), "Ice Lance as the bolt completes: the Fingers of Frost charge is spent a spell batch late, so both read the target as Frozen.")}
 }

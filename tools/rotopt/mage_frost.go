@@ -22,8 +22,10 @@ func init() {
 func (mageFrost) Knobs() []Knob {
 	return append(append(append(mageCommonKnobs(), arcaneKnobs(0, 0)...), finisherKnobs(1)...),
 		// Ice Lance while Fingers of Frost is up: 0 never, 1 every charge, 2 only the last
-		// charge (the first goes on a Frostbolt).
-		Knob{Name: "iceLance", Default: 1, Min: 0, Max: 2, Step: 1},
+		// charge (the first goes on a Frostbolt), 3 right after a Frostbolt completes (a charge
+		// is spent a spell batch after the cast, so the Frostbolt and the Ice Lance both read
+		// the target as Frozen), 4 the same on the last charge only.
+		Knob{Name: "iceLance", Default: 1, Min: 0, Max: 4, Step: 1},
 		// Arcane Missiles on a Missile Barrage proc (Frostbolt has 20%), for builds with the
 		// Arcane talent.
 		Knob{Name: "missileBarrage", Default: 1, Min: 0, Max: 1, Step: 1},
@@ -53,6 +55,8 @@ func (mageFrost) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(s.iceLance, known(fingersOfFrost, auraIsActive(fingersOfFrost)), "Ice Lance while Fingers of Frost makes the boss count as Frozen (3 times the damage, Shatter's crit)."))
 	case 2:
 		items = append(items, cast(s.iceLance, known(fingersOfFrost, eq(auraNumStacks(fingersOfFrost), num(1))), "Ice Lance on the last Fingers of Frost charge, the first goes on a Frostbolt."))
+	default:
+		items = append(items, iceLanceAfterBolt(k, s.frostbolt, s.iceLance)...)
 	}
 	if k["coneOfCold"] == 1 {
 		if k["coldSnapCone"] > 0 {
@@ -77,6 +81,7 @@ func (mageFrost) Build(k Knobs) *proto.APLRotation {
 	}
 	items = append(items, finisherLines(k, s.frostbolt, s.iceLance)...)
 	items = append(items, cast(s.frostbolt, nil, "Frostbolt."))
+	items = append(items, wandLines(k)...)
 	rot := rotation(items...)
 	if k["iceBarrier"] > 0 && k["iceBarrierPrepull"] == 1 {
 		rot.PrepullActions = append(rot.PrepullActions, prepull(iceBarrier, 4))

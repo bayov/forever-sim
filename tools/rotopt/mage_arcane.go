@@ -82,6 +82,7 @@ func (mageArcane) Build(k Knobs) *proto.APLRotation {
 		items = append(items, barrage...)
 	}
 	items = append(items, cast(filler, nil, "The filler."))
+	items = append(items, wandLines(k)...)
 	rot := rotation(items...)
 	if k["prepull"] == 1 {
 		rot.PrepullActions = append(rot.PrepullActions, prepull(s.arcaneBlast, 1.5))

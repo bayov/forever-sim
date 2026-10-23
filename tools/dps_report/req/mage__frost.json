@@ -86,7 +86,7 @@
               "blessingOfKings": true,
               "blessingOfWisdom": "TristateEffectImproved"
             },
-            "talentsString": "05020050031001-03-253500133101301201",
+            "talentsString": "055220200310000153--0535000301003002",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Tailoring",
@@ -110,13 +110,13 @@
               ],
               "priorityList": [
                 {
-                  "notes": "Arcane Power, Presence of Mind, Combustion, trinkets, racials and mana gems.",
+                  "notes": "Arcane Power, Presence of Mind, Combustion, trinkets, racials and the mana gems on a free GCD.",
                   "action": {
                     "autocastOtherCooldowns": {}
                   }
                 },
                 {
-                  
+                  "notes": "Evocation once the mana runs low, with enough of the fight left to spend it.",
                   "action": {
                     "condition": {
                       "and": {
@@ -188,7 +188,7 @@
                   }
                 },
                 {
-                  
+                  "notes": "Arcane Blast up to the stack target: each stack is 15% of Intellect as spell damage for 15 sec from the first.",
                   "action": {
                     "condition": {
                       "and": {
@@ -212,7 +212,7 @@
                               },
                               "rhs": {
                                 "const": {
-                                  "val": "1"
+                                  "val": "2"
                                 }
                               }
                             }
@@ -275,7 +275,7 @@
                   }
                 },
                 {
-                  "notes": "Free and twice as fast.",
+                  "notes": "Arcane Missiles on a Missile Barrage proc, free and twice as fast.",
                   "action": {
                     "condition": {
                       "and": {
@@ -305,7 +305,7 @@
                   }
                 },
                 {
-                  
+                  "notes": "An instant when the filler would not land before the end of the fight.",
                   "action": {
                     "condition": {
                       "cmp": {
@@ -340,10 +340,21 @@
                   }
                 },
                 {
+                  "notes": "Frostbolt.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "spellId": 10181
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Shoot the wand when nothing else can be cast (out of mana).",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 5019
                       }
                     }
                   }
@@ -463,7 +474,8 @@
       }
     ],
     "raidDamageHitsPerMinute": 2,
-    "raidDamagePerHit": 1500
+    "raidDamagePerHit": 1500,
+    "naturalFlaskZone": true
   },
   "simOptions": {
     "iterations": 1000,

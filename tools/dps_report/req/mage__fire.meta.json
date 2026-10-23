@@ -3,7 +3,7 @@
   "class": "Mage",
   "spec": "Fire",
   "build": "Fire",
-  "isDefault": false,
+  "isDefault": true,
   "pr": 98,
   "race": "Human",
   "talents": "0402205-23550030130135031-003",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_fire",
   "published": {
-    "dps": 1067.0,
-    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 995.5)"
+    "dps": 1101.0,
+    "source": "Class worker round 2026-10-23 on claude/keen-brown-o2g32n-mage: main set's hit to the 16% cap, the regenerated rotations and Frost's 29/0/22 build (was 1067.0)"
   },
   "verify": {
-    "dps": 1067.02,
-    "stderr": 0.38,
+    "dps": 1101.0,
+    "stderr": 0.39,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "sim of the regenerated request, 180s, seed 1 (seed 1000003 within 1.1)"
   },
   "summary": "Deep Fire to Combustion, plus Arcane Concentration and Missile Barrage from Arcane.",
   "keyTalents": [
@@ -48,7 +48,8 @@
     "Arcane Missiles on a Missile Barrage proc",
     "Fire Blast on cooldown at 10% mana or more (every Fire Blast adds a Heating Up stack)",
     "Fire Blast, then Scorch, when a Fireball would not land before the end (its cast plus 1.04s)",
-    "Filler: Fireball"
+    "Filler: Fireball",
+    "Shoot the wand when nothing else can be cast (out of mana)"
   ],
   "consumes": [
     "Flask of Supreme Power",

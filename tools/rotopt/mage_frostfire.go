@@ -22,8 +22,10 @@ func (mageFrostfire) Knobs() []Knob {
 		Knob{Name: "scorchRefresh", Default: 5, Min: 0, Max: 9, Step: 3},
 		// Pyroblast at this many Heating Up stacks, 0 never.
 		Knob{Name: "pyroStacks", Default: 3, Min: 0, Max: 3, Step: 1},
-		// Ice Lance while Fingers of Frost is up: 0 never, 1 every charge, 2 the last one.
-		Knob{Name: "iceLance", Default: 1, Min: 0, Max: 2, Step: 1},
+		// Ice Lance while Fingers of Frost is up: 0 never, 1 every charge, 2 the last one, 3 right
+		// after a Frostfire Bolt completes (both read the target as Frozen), 4 the same on the
+		// last charge only.
+		Knob{Name: "iceLance", Default: 1, Min: 0, Max: 4, Step: 1},
 		// The Fingers of Frost Ice Lance ahead of Scorch and Pyroblast.
 		Knob{Name: "iceLanceFirst", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Pyroblast only above this much mana, 0 any time. A Pyroblast costs more than the filler,
@@ -56,6 +58,8 @@ func (mageFrostfire) Build(k Knobs) *proto.APLRotation {
 			items = append(items, cast(s.iceLance, known(fingersOfFrost, auraIsActive(fingersOfFrost)), "Ice Lance while Fingers of Frost is up."))
 		case 2:
 			items = append(items, cast(s.iceLance, known(fingersOfFrost, eq(auraNumStacks(fingersOfFrost), num(1))), "Ice Lance on the last Fingers of Frost charge."))
+		default:
+			items = append(items, iceLanceAfterBolt(k, s.frostfireBolt, s.iceLance)...)
 		}
 	}
 	if k["iceLanceFirst"] == 1 {
@@ -96,6 +100,7 @@ func (mageFrostfire) Build(k Knobs) *proto.APLRotation {
 	}
 	items = append(items, finisherLines(k, s.frostfireBolt, s.iceLance)...)
 	items = append(items, cast(s.frostfireBolt, nil, "Frostfire Bolt."))
+	items = append(items, wandLines(k)...)
 	rot := rotation(items...)
 	if k["prepull"] == 1 {
 		rot.PrepullActions = append(rot.PrepullActions, prepull(s.frostfireBolt, 3))
