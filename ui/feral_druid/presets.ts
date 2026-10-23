@@ -59,17 +59,18 @@ export const GearP6BIS = PresetUtils.makePresetGear('P6 BiS', P6BISGear);
 // standards 1b (Forever's physical budget per piece, 3 stat lines a piece, the two-hander at 0.90
 // of the item level line with no attack power) on the shared item level table, in the standards
 // 5a stat mix (the SoD level 60 BiS proportions, orchestration/gear_targets.md): armor 650.0 and
-// two-hander 79.0 weighted points, 189 Agility, 177 Strength, 143 Stamina (19.6%), 9% hit (the
-// special attack hit cap against a level 63 boss; moving 10 hit rating into Agility ties, into
-// crit is 1.2 behind), 4.9% crit, 45 Intellect for Shifting Power's mana, 32 attack power and no
+// two-hander 79.0 weighted points, 194 Agility, 182 Strength, 143 Stamina (19.6%), 8% hit (the
+// hit cap against a level 63 boss since 2026-10-23, no hit suppression; the 10 hit rating the set
+// carried for the old 9% cap went into 5 Strength and 5 Agility on the legs, 5.5 ahead at 180 sec,
+// where all 10 as crit is 1.4 behind), 4.9% crit, 45 Intellect for Shifting Power's mana, 32 attack power and no
 // Spirit (the cross-class rule for Energy users). Two synthetic item level 71 trinkets
 // (standards 1b): 29 Agility and 17 Strength, and 165 Strength for 20 sec every 2 min (2.9 ahead
 // of the same on-use as 165 Agility, 3.0 ahead of 335 attack power). Only the head and chest carry
 // Grovekeeper Ferocity, Forever's crafted Feral set, so only its 2 piece (1% attack speed) is
 // live, like every class's set; the 5 piece (1 sec off Shifting Power) would add 5.9 at 180 sec.
-// Howling Idol (0.5 sec off Shifting Power since client 1.60.1.70425, 1 sec before; a real Forever
-// Phase 1 idol) is worth 4.8 at 180 sec (12.5 at 1 sec; the 5 piece and the enchant comparisons
-// below measured on the set before the 5a rebudget). Enchants are the
+// Idol of the Dream (Rip 2 sec longer, a seventh tick; Sunken Temple or crafted, a real Forever
+// Phase 1 idol) is 3.0 ahead of Howling Idol (0.5 sec off Shifting Power) at 180 sec on both seed
+// sets (the 5 piece and the enchant comparisons below measured on the set before the 5a rebudget). Enchants are the
 // best Phase 1 ones a cat can get, nothing from a raid: Lesser Arcanum of Voracity (Agility) on
 // the head and legs, Forever's +5 Agility on the neck, Agility on the back, Greater Stats, +9
 // Strength on the wrist, Superior Strength on the gloves (3.2 ahead of Greater Agility), +7
@@ -95,21 +96,19 @@ export const APLFeral = PresetUtils.makePresetAPLRotation('Feral', FeralAPL);
 export const APLSimpleVael = PresetUtils.makePresetAPLRotation('Simple Vaelastrasz', SimpleVaelAPL);
 
 // The tools/rotopt druid_feral template's best (druid_presets.sh) on the synthetic set and the
-// Level 60 talents: Rip at 4 combo points whenever it is down, Ferocious Bite at 5 while Rip
-// has 6 sec left (1 to 3 ahead of 4), Shred, Shifting Power at 50 Energy or less but not while a Bite is due (its
-// Energy goes into Shreds, 0.6 to 0.9 ahead), Berserk on cooldown, no Tiger's Fury (Forever
-// removed it, sim/druid/tigers_fury.go; with it the cat did 24.9 more), no new Rip
-// in the last 8 sec and Ferocious Bite at any combo points in the last 2 (0.6 to 1.4). No
-// Rake: 40 Energy for about 160 damage where a Shred does 740, and Rip keeps Rend and Tear's
-// bleed up on its own (keeping Rake up costs 33 at every length). Rip at 5 combo
-// points is 1 to 2 behind. The search on the 1b gear kept every knob at 120 and 180 sec (at 300
-// sec Shifting Power at 40 Energy is 0.3 ahead). Berserk's later uses wait for the Strength
-// trinket when waiting loses no use, and Elune's Light (the Night Elf's 10% crit) stayed out of
-// Berserk, where every builder crits anyway: 2.5 / 0.9 / 2.7 ahead at 120 / 180 / 300 sec
-// (rotation auditor's cooldown pass). The presets are Tauren since client 1.60.1.70425's racials, so
-// the Elune's Light line is out; a Night Elf still uses it on cooldown through the autocast line.
+// Level 60 talents, re-searched on 2026-10-23's sim (Rake's attack power, Rend and Tear on its
+// ticks, Omen at the swing speed, the live Rip): Rip at 5 combo points whenever it is down (2.0 to
+// 5.6 ahead of 4 with Idol of the Dream), Ferocious Bite at 5 while Rip has 6 sec left, Shadowmeld
+// into Ravage on Clearcasting or in the last 10 sec (the Night Elf; ahead of Rake, 5 ahead of after
+// it), Rake whenever it is down with more than 6 sec left, Shred, Shifting Power at 50 Energy or
+// less but not while a Bite is due (its Energy goes into Shreds), Berserk held for the Strength
+// trinket when waiting loses no use, Elune's Light outside Berserk, no Tiger's Fury (Forever
+// removed it, sim/druid/tigers_fury.go), no new Rip in the last 8 sec and Ferocious Bite at any
+// combo points in the last 2. Keeping Rake up is now 38 to 42 ahead of no Rake at 120 / 180 / 300
+// sec on both seed sets (836.8 / 823.8 / 813.3 to 875.5 / 864.7 / 855.5, seed 1). The knob search
+// kept the rest at 120, 180 and 300 sec.
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
-	tooltip: "The optimizer's best level 60 rotation: Rip at 4 combo points, Shred, Shifting Power and Berserk on cooldown.",
+	tooltip: "The optimizer's best level 60 rotation: Rip at 5 combo points, Rake kept up, Shred, Shadowmeld into Ravage, Shifting Power and Berserk.",
 	group: 'Level 60',
 });
 
@@ -119,9 +118,10 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // and again once it has under 7 sec left, so a miss gets a second try before it drops (99.7% uptime,
 // rotation auditor). Forever's Faerie Fire and Curse of Recklessness share the
 // minor armor slot (standards 20), so the line waits while the raid's Faerie Fire or a curse holds
-// it, and the duty's cost shows with both off: 4.2 / 3.1 / 2.2 DPS at 120 / 180 / 300 sec (719.9 /
-// 710.5 / 702.0, Tauren, 20,000 iterations; Faerie Fire no longer resets the swing), the GCDs and the moment before it lands, since the cat's own
-// hits get the armor. The knob search kept the rest of the rotation at 120, 180 and 300 sec.
+// it, and the duty's cost shows with both off: 7.1 / 5.2 / 3.4 DPS at 120 / 180 / 300 sec (874.0 /
+// 863.0 / 854.3, Night Elf, 20,000 iterations, seed 1; Faerie Fire no longer resets the swing), the
+// GCDs and the moment before it lands, since the cat's own hits get the armor. Refreshing at 3 sec,
+// or casting it after Rip, is within the noise.
 export const APLLevel60FaerieFire = PresetUtils.makePresetAPLRotation('Level 60 (Faerie Fire duty)', Level60FaerieFireAPLJSON, {
 	tooltip:
 		"The Level 60 rotation, keeping Faerie Fire (Feral) on the target for the raid. Pick the duty build to switch off the raid's Faerie Fire and Curse of Recklessness.",
@@ -151,16 +151,15 @@ export const SIMPLE_ROTATION_DEFAULT = PresetUtils.makePresetSimpleRotation('Sim
 
 // The talent search's best (tools/rotopt -talent-search) on the synthetic set with the Level 60
 // rotation at 180 sec: Genesis 5 (Rip's ticks) and Nature's Majesty 2 (crit) from Balance, 34
-// Feral with Shredding Attacks, Savage Fury, Sharpened Claws, Shifting Power and Improved
-// Shifting Power, Predatory Strikes, Blood Frenzy 1, Leader of the Pack, Natural Instinct, Rend
-// and Tear 5 and Berserk, and Furor 5, Naturalist 5 and Natural Shapeshifter 1 in Restoration.
-// Searches started from pure Feral builds (0 / 35 / 16 with Ferocity and Reflection, 0 / 33 / 18
-// with Heart of the Wild and Thick Hide) and from the Balance split, and all of them moved
-// their spare points into Genesis and Nature's Majesty. On the final set the fifth point of
-// Rend and Tear is 1.5 ahead of the second point of Blood Frenzy (659.3 against 657.8).
-// Ferocity buys nothing once the rotation drops Rake, so its row 1 points sit in Feral
-// Swiftness and Thick Hide for the same DPS.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '05002-05200332021031212051-05501' }), {
+// Feral with Ferocity 5, Feral Swiftness 1, Shredding Attacks, Savage Fury, Sharpened Claws,
+// Shifting Power and Improved Shifting Power, Predatory Strikes, Leader of the Pack, Natural
+// Instinct, Rend and Tear 5 and Berserk, and Furor 5, Naturalist 5 and Natural Shapeshifter 1 in
+// Restoration. With Rake back in the rotation (2026-10-23), the search moved Blood Frenzy 1, Thick
+// Hide 3 and a point of Feral Swiftness into Ferocity 5 (Rake and Shred 5 Energy cheaper): 852.7
+// to 864.4 at 180 sec. Earlier searches started from pure Feral builds (0 / 35 / 16 with Ferocity
+// and Reflection, 0 / 33 / 18 with Heart of the Wild and Thick Hide) and from the Balance split, and
+// all of them moved their spare points into Genesis and Nature's Majesty.
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '05002-55100032021030212051-05501' }), {
 	tooltip: 'The talent search best on the synthetic Phase 1 set.',
 	group: 'Level 60',
 });
@@ -175,8 +174,12 @@ export const DefaultTalents = TalentsLevel60;
 //                                 Options
 ///////////////////////////////////////////////////////////////////////////
 
+// Clearcasting fished for before the pull (standards 13 allows pre-pull casts; wowsims/forever
+// b324dba843), so the fight opens with it and Omen's cooldown running: 4.6 ahead for the Night Elf
+// (its Shadowmeld into Ravage spends it) and 1.2 for the Tauren at 180 sec, before the Rake change.
 export const DefaultOptions = FeralDruidOptions.create({
 	latencyMs: 100,
+	prepullClearcasting: true,
 });
 
 // The level 60 consumables, Forever launch Phase 1 only (nothing from Molten Core, Zul'Gurub,
@@ -200,7 +203,8 @@ export const DefaultOptions = FeralDruidOptions.create({
 // sec. The Engineering explosives can't be used in form, but EZ-Thro Dark Bomb can (+1.5 at 180
 // sec). The natural flask (standards 11, the user's decision 2026-10-23: the fight is in Hyjal
 // Summit or the Barrow Deeps) is Aggression, +23.6 over the Flask of Distilled Wisdom (Precision
-// +22.2, Swiftness +13.8, Accuracy +0.2 with the hit capped).
+// +22.2, Swiftness +13.8, Accuracy +0.2 with the hit capped). Rechecked on the 2026-10-23 rotation:
+// Precision 2.9 and Swiftness 10.7 behind Aggression at 180 sec.
 export const DefaultConsumes = Consumes.create({
 	agilityElixir: AgilityElixir.ElixirOfTheMongoose,
 	attackPowerBuff: AttackPowerBuff.JujuMight,
@@ -273,7 +277,7 @@ export const DefaultDebuffs = Debuffs.create({
 export const OtherDefaults = {
 	profession1: Profession.Engineering,
 	profession2: Profession.Alchemy,
-	race: Race.RaceTauren,
+	race: Race.RaceNightElf,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -324,26 +328,27 @@ export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('L
 	buffs: DefaultIndividualBuffs,
 	consumes: DefaultConsumes,
 });
-// The Level 60 build, Tauren: 724.1 / 713.7 / 704.3 at 120 / 180 / 300 sec (client 1.60.1.70425,
-// where Howling Idol takes 0.5 sec off Shifting Power and Tauren crits do 2% more). Every race a
-// druid can be under Forever on it with the same seed, 40,000 iterations (standard error 0.1):
+// The Level 60 build, Night Elf: 881.1 / 868.2 / 857.7 at 120 / 180 / 300 sec (seed 1, 20,000
+// iterations; 881.0 / 868.0 / 857.5 on seed 1000003). Every race a druid can be under Forever on it,
+// seed 1 (seed 1000003 within 0.3):
 //
 //	                     120 sec  180 sec  300 sec
-//	Tauren                724.2    713.7    704.3   best overall and Horde
-//	High Order Skyborne   721.5    711.2    702.0   best Alliance
-//	Windshaper Skyborne   721.6    711.2    702.1
-//	Night Elf             722.0    709.7    701.3
+//	Night Elf             881.1    868.2    857.7   best overall and Alliance
+//	Tauren                872.9    862.9    854.7   best Horde
+//	Windshaper Skyborne   866.0    856.5    848.5
+//	High Order Skyborne   865.9    856.5    848.5
 //
-// The Skyborne's 3% haste and the Tauren's crit damage now beat the Night Elf's Agility. No racial
-// goes by weapon type.
+// The Night Elf's Shadowmeld into Ravage (on Clearcasting, which the pre-pull fishing and Rake's
+// extra Omen rolls make more of) and Elune's Light put it 5.2 ahead of the Tauren at 180 sec on both
+// seed sets. No racial goes by weapon type.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Tauren on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Night Elf on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60,
 	encounter: EncounterLevel60,
-	race: Race.RaceTauren,
+	race: Race.RaceNightElf,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -356,7 +361,7 @@ export const PresetBuildLevel60FaerieFire = PresetUtils.makePresetBuild('Level 6
 	talents: TalentsLevel60,
 	rotation: APLLevel60FaerieFire,
 	encounter: EncounterLevel60FaerieFireDuty,
-	race: Race.RaceTauren,
+	race: Race.RaceNightElf,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],

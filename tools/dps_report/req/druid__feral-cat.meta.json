@@ -5,8 +5,8 @@
   "build": "Feral cat",
   "isDefault": true,
   "pr": 8,
-  "race": "Tauren",
-  "talents": "05002-05200332021031212051-05501",
+  "race": "Night Elf",
+  "talents": "05002-55100032021030212051-05501",
   "treeNames": [
     "Balance",
     "Feral Combat",
@@ -15,38 +15,40 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 752.9,
-    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 752.7)"
+    "dps": 868.2,
+    "source": "Druid class worker finals, 2026-10-23 regear and rotation round: 120/180/300s 881.1/868.2/857.7 (seed 1), 881.0/868.0/857.5 (seed 1000003)"
   },
   "verify": {
-    "dps": 752.86,
-    "stderr": 0.17,
+    "dps": 868.18,
+    "stderr": 0.16,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "class worker sim of this request, 180s, seed 1"
   },
-  "summary": "Shred and Rip cat with Berserk on cooldown and no Rake. Under Forever the cat swings at 1.0s with its weapon's DPS, and stones, potions, Thistle Tea and Windfury Totem work in Cat Form.",
+  "summary": "Shred, Rake and Rip cat with Berserk and Shadowmeld into Ravage. Under Forever the cat swings at 1.0s with its weapon's DPS, and stones, potions, Thistle Tea and Windfury Totem work in Cat Form.",
   "keyTalents": [
     "Shredding Attacks",
     "Shifting Power",
     "Improved Shifting Power",
     "Rend and Tear",
     "Berserk",
+    "Ferocity",
     "Savage Fury",
-    "Sharpened Claws",
     "Naturalist"
   ],
   "rotation": [
-    "Opener: plain Cat Form (no Stealth/Prowl or Ravage)",
-    "Racials, trinkets and potions on cooldown; Berserk with the on-use trinket",
+    "Opener: plain Cat Form (no Stealth/Prowl); a Night Elf's Shadowmeld in the fight opens Ravage",
+    "Racials, trinkets and potions on cooldown; Berserk with the on-use trinket, Elune's Light outside Berserk",
     "Shifting Power at 50 Energy or less, unless a Ferocious Bite is due (5 CP and Rip has 6s or more)",
     "Ferocious Bite at any combo points in the last 2s",
-    "Rip at 4+ combo points when it is down (not in the last 8s)",
+    "Rip at 5 combo points when it is down (not in the last 8s)",
     "Ferocious Bite at 5 combo points and 35 Energy while Rip has 6s or more left (or in the last 8s)",
+    "Shadowmeld into Ravage from behind on Clearcasting, or in the last 10s with the Energy for it",
+    "Rake below 5 combo points when it is down (not in the last 6s)",
     "Shred below 5 combo points"
   ],
   "consumes": [
-    "Flask of Distilled Wisdom",
+    "Flask of Natural Aggression",
     "Elixir of the Mongoose",
     "Elixir of Ferocity",
     "Juju Might",
@@ -55,17 +57,19 @@
     "Ground Scorpok Assay",
     "Dense Weightstone",
     "Mighty Rage Potion",
-    "Thistle Tea"
+    "Thistle Tea",
+    "EZ-Thro Dark Bomb"
   ],
   "caveats": [
     "Rip's level 31+ client ranks are 6-9% below Era. Era values would add 1.6%.",
-    "Howling Idol (0.5s off Shifting Power since client 1.60.1.70425) is worth 4.8 at 180s; 5-piece Grovekeeper Ferocity would add 5.9 (measured before the 5a and 1b rounds)",
+    "Idol of the Dream (Rip 2s longer) is 3.0 ahead of Howling Idol at 180s; 5-piece Grovekeeper Ferocity would add 5.9 (measured before the 5a and 1b rounds)",
+    "Clearcasting is fished for before the pull (standards 13), worth 4.6 to the Night Elf.",
     "Unverified: Shred's flat bonus, AP on Rip and Ferocious Bite, Rend and Tear's scope",
-    "Keeping Rake up costs 33 DPS. Rip at 5 CP ties.",
-    "One +2% crit elixir. Grizzly instead of Ferocity would add 4.9.",
-    "Tiger's Fury is gone in Forever. It was worth 24.9.",
+    "Rake's 5.5% attack power a tick is wowsims/forever's fit to testers' rank 1 ticks. Keeping Rake up is 38-42 ahead of no Rake.",
+    "One +2% crit elixir. Grizzly instead of Ferocity adds only its 25 Strength.",
+    "Tiger's Fury is gone in Forever.",
     "Cat swing damage spreads 20% either side (the server's range is unknown).",
-    "Windfury Totem and a second shaman's Grace of Air in the melee group. Dense Weightstone adds 4.9. Elemental Sharpening Stone is left out (Molten Core plans)."
+    "Windfury Totem and a second shaman's Grace of Air in the melee group. Elemental Sharpening Stone is left out (Molten Core plans)."
   ],
-  "notes": "Request from mksettings -spec feral (melee group: Strength of Earth and Windfury Totem, all blessings, own Leader of the Pack; latency 100 ms). Duration 180s, durationVariation 20. Forever lets the cat drink in form, so Mighty Rage Potion and Thistle Tea are used. No edits needed."
+  "notes": "Request from mksettings -spec feral (melee group: Strength of Earth and Windfury Totem, all blessings, own Leader of the Pack; latency 100 ms). Duration 180s, durationVariation 20. Forever lets the cat drink in form, so Mighty Rage Potion and Thistle Tea are used. Feral options: prepull Clearcasting on. No edits needed."
 }
