@@ -97,13 +97,18 @@ func NewPet(name string, owner *Character, baseStats stats.Stats, statInheritanc
 	return pet
 }
 
-// Updates the stats for this pet in response to a stat change on the owner.
-// addedStats is the amount of stats added to the owner (will be negative if the
-// owner lost stats).
-func (pet *Pet) addOwnerStats(sim *Simulation, addedStats stats.Stats) {
-	inheritedChange := pet.dynamicStatInheritance(addedStats)
+// Updates the stats for this pet in response to a stat change on the owner. The inheritance is
+// worked out again from the owner's new totals and the pet takes the difference, as wowsims/forever
+// does (af11e5e9ff, RefreshInheritedStats): an inheritance that isn't linear, like the demons' larger
+// of Fire and Shadow power, can't be applied to the change alone.
+func (pet *Pet) addOwnerStats(sim *Simulation, _ stats.Stats) {
+	inherited := pet.dynamicStatInheritance(pet.Owner.GetStats())
+	inheritedChange := inherited.Subtract(pet.inheritedStats)
+	if inheritedChange == (stats.Stats{}) {
+		return
+	}
 
-	pet.inheritedStats.AddInplace(&inheritedChange)
+	pet.inheritedStats = inherited
 	pet.AddStatsDynamic(sim, inheritedChange)
 }
 

@@ -32,7 +32,13 @@ func applyConsumeEffects(agent Agent, raidBuffs *proto.RaidBuffs) {
 	registerExplosivesCD(agent, consumes)
 }
 
+// Under Forever pets take no consumables: the pet scrolls' spells (Scroll of Agility IV's 12174,
+// Scroll of Strength IV's 12179) carry SPELL_ATTR3_ONLY_TARGET_PLAYERS (Attributes[3] 0x100),
+// and the client has no pet food item (wowsims/forever a1d94ad2f0, abbf9e3a6f).
 func ApplyPetConsumeEffects(pet *Character, ownerConsumes *proto.Consumes) {
+	if pet.Env.IsForever() {
+		return
+	}
 	pet.AddStat(stats.AttackPower, []float64{0, 40}[ownerConsumes.PetAttackPowerConsumable])
 	pet.AddStat(stats.Agility, []float64{0, 17, 13, 9, 5}[ownerConsumes.PetAgilityConsumable])
 	pet.AddStat(stats.Strength, []float64{0, 30, 17, 13, 9, 5}[ownerConsumes.PetStrengthConsumable])

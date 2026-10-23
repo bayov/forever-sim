@@ -146,8 +146,6 @@ func (warlock *Warlock) makePet(cfg PetConfig, enabledOnStart bool) *WarlockPet 
 		wp.EnableAutoAttacks(wp, cfg.AutoAttacks)
 	}
 
-	core.ApplyPetConsumeEffects(&wp.Character, warlock.Consumes)
-
 	warlock.AddPet(wp)
 
 	return wp
@@ -163,6 +161,8 @@ func (wp *WarlockPet) GetPet() *core.Pet {
 }
 
 func (wp *WarlockPet) Initialize() {
+	// Here rather than at construction, which doesn't know the ruleset yet.
+	core.ApplyPetConsumeEffects(&wp.Character, wp.Owner.Consumes)
 }
 
 func (wp *WarlockPet) Reset(_ *core.Simulation) {

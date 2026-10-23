@@ -30,7 +30,12 @@ func TestHunterShotSharesAndRaptorStrike(t *testing.T) {
 
 // newHunterPetSim builds a level 60 hunter with a cat at the given attack speed, under the ruleset.
 func newHunterPetSim(t *testing.T, speed proto.Hunter_Options_PetAttackSpeed, ruleset proto.Ruleset) (*core.Simulation, *Hunter) {
+	return newHunterPetSimWith(t, speed, ruleset, nil)
+}
+
+func newHunterPetSimWith(t *testing.T, speed proto.Hunter_Options_PetAttackSpeed, ruleset proto.Ruleset, consumes *proto.Consumes) (*core.Simulation, *Hunter) {
 	player := &proto.Player{
+		Consumes:  consumes,
 		Class:     proto.Class_ClassHunter,
 		Race:      proto.Race_RaceHuman,
 		Level:     60,
@@ -48,6 +53,22 @@ func newHunterPetSim(t *testing.T, speed proto.Hunter_Options_PetAttackSpeed, ru
 	}, simsignals.CreateSignals())
 	sim.Reset()
 	return sim, sim.Raid.Parties[0].Players[0].(HunterAgent).GetHunter()
+}
+
+// Under Forever a pet takes no consumables: the pet scrolls' spells carry
+// SPELL_ATTR3_ONLY_TARGET_PLAYERS (wowsims/forever a1d94ad2f0, abbf9e3a6f). Classic's pet takes them.
+func TestForeverPetTakesNoConsumables(t *testing.T) {
+	scrolls := &proto.Consumes{PetAttackPowerConsumable: 1, PetAgilityConsumable: 1, PetStrengthConsumable: 1}
+	for _, c := range []struct {
+		ruleset  proto.Ruleset
+		strength float64
+	}{{proto.Ruleset_RulesetForever, 0}, {proto.Ruleset_RulesetClassic, 30}} {
+		_, without := newHunterPetSimWith(t, proto.Hunter_Options_Two, c.ruleset, nil)
+		_, with := newHunterPetSimWith(t, proto.Hunter_Options_Two, c.ruleset, scrolls)
+		if got := with.pet.GetStat(stats.Strength) - without.pet.GetStat(stats.Strength); math.Abs(got-c.strength) > 1e-6 {
+			t.Errorf("%s: the pet scrolls gave the pet %.1f Strength, want %.0f", c.ruleset, got, c.strength)
+		}
+	}
 }
 
 // Report assumption hunter_pet_speed (user ruling 2026-10-15): under Forever a pet's white hit

@@ -274,6 +274,43 @@ func TestWarlockDemonStatInheritance(t *testing.T) {
 	}
 }
 
+// TestWarlockDemonSchoolPowerInheritance checks that a demon's share of its master's spell damage is
+// worked out from the master's totals, as wowsims/forever does (af11e5e9ff): it takes the larger of
+// Fire and Shadow power, so +100 Shadow power with a Firestone's 21 Fire power up is worth 79, and a
+// Shadow power buff that falls off leaves the demon as it was.
+func TestWarlockDemonSchoolPowerInheritance(t *testing.T) {
+	near := func(a, b float64) bool { return math.Abs(a-b) < 1e-6 }
+	for _, c := range []struct {
+		imbue proto.WarlockOptions_WeaponImbue
+		gain  float64
+	}{{proto.WarlockOptions_NoWeaponImbue, 100}, {proto.WarlockOptions_Firestone, 79}} {
+		sim, lock := newWarlockSim(t, "", &proto.WarlockOptions{Summon: proto.WarlockOptions_Succubus, WeaponImbue: c.imbue})
+		pet := lock.ActivePet
+		before := pet.GetStats()
+
+		at(sim, 1, func(sim *core.Simulation) { lock.AddStatDynamic(sim, stats.ShadowPower, 100) })
+		at(sim, 2, func(sim *core.Simulation) {
+			after := pet.GetStats()
+			if got, want := after[stats.AttackPower]-before[stats.AttackPower], 0.17*c.gain; !near(got, want) {
+				t.Errorf("%s: +100 Shadow power: attack power +%.3f, want +%.3f", c.imbue, got, want)
+			}
+			if got, want := after[stats.SpellDamage]-before[stats.SpellDamage], 0.10*c.gain; !near(got, want) {
+				t.Errorf("%s: +100 Shadow power: spell damage +%.3f, want +%.3f", c.imbue, got, want)
+			}
+			lock.AddStatDynamic(sim, stats.ShadowPower, -100)
+		})
+		at(sim, 3, func(sim *core.Simulation) {
+			after := pet.GetStats()
+			for _, stat := range []stats.Stat{stats.AttackPower, stats.SpellDamage} {
+				if !near(after[stat], before[stat]) {
+					t.Errorf("%s: after the Shadow power falls off, stat %d is %.3f, want %.3f", c.imbue, stat, after[stat], before[stat])
+				}
+			}
+		})
+		runSim(sim)
+	}
+}
+
 // TestWarlockPercentModsMultiply checks that the percent damage rows on a spell are each their own
 // factor (wowsims/forever fef2bcaebd, #377): Aftermath 5/5 with Agonizing Flames 3/3 makes Immolate's
 // hit 1.5 x 1.1 = 1.65 and its ticks 1.1, Improved Corruption 5/5 with Shadow Mastery 5/5 makes

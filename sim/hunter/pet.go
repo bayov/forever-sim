@@ -105,8 +105,6 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 	hp.PseudoStats.ArmorMultiplier *= hp.config.Armor
 	hp.MultiplyStat(stats.Health, hp.config.Health)
 
-	core.ApplyPetConsumeEffects(&hp.Character, hunter.Consumes)
-
 	hunter.AddPet(hp)
 
 	return hp
@@ -117,6 +115,9 @@ func (hp *HunterPet) GetPet() *core.Pet {
 }
 
 func (hp *HunterPet) Initialize() {
+	// Here rather than at construction, which doesn't know the ruleset yet.
+	core.ApplyPetConsumeEffects(&hp.Character, hp.hunterOwner.Consumes)
+
 	hp.specialAbility = hp.NewPetAbility(hp.config.SpecialAbility, true)
 	hp.focusDump = hp.NewPetAbility(hp.config.FocusDump, false)
 
