@@ -10,8 +10,19 @@ import (
 func CreateWeaponProcDamage(itemId int32, itemName string, ppm float64, spellId int32, school core.SpellSchool,
 	dmgMin float64, dmgRange float64, bonusCoef float64, defType core.DefenseType, spellFlagExclude core.SpellFlag) {
 
-	createWeaponProcDamage(itemId, itemName, ppm, spellId, school, func(*core.Character) (float64, float64) { return dmgMin, dmgRange },
+	proc := WeaponProc{PPM: ppm, SpellID: spellId, DmgMin: dmgMin, DmgRange: dmgRange}
+	createWeaponProcDamage(itemId, itemName, school, func(*core.Character) WeaponProc { return proc },
 		bonusCoef, defType, spellFlagExclude)
+}
+
+// WeaponProc is a damage proc's rate, spell and damage, DmgMin to DmgMin + DmgRange. A non-zero
+// ExecuteMultiplier multiplies the damage on a target below 25% health.
+type WeaponProc struct {
+	PPM               float64
+	SpellID           int32
+	DmgMin            float64
+	DmgRange          float64
+	ExecuteMultiplier float64
 }
 
 // Creates a "Chance on Hit" weapon proc whose damage the Forever client changed: classic and
@@ -19,20 +30,38 @@ func CreateWeaponProcDamage(itemId int32, itemName string, ppm float64, spellId 
 func CreateWeaponCoHProcDamageByRuleset(itemId int32, itemName string, ppm float64, spellId int32, school core.SpellSchool,
 	classic [2]float64, forever [2]float64, bonusCoef float64, defType core.DefenseType) {
 
-	createWeaponProcDamage(itemId, itemName, ppm, spellId, school, func(character *core.Character) (float64, float64) {
+	CreateWeaponCoHProcByRuleset(itemId, itemName, school,
+		WeaponProc{PPM: ppm, SpellID: spellId, DmgMin: classic[0], DmgRange: classic[1]},
+		WeaponProc{PPM: ppm, SpellID: spellId, DmgMin: forever[0], DmgRange: forever[1]},
+		bonusCoef, defType)
+}
+
+// Creates a "Chance on Hit" weapon proc whose rate, spell or damage the Forever client changed.
+func CreateWeaponCoHProcByRuleset(itemId int32, itemName string, school core.SpellSchool,
+	classic WeaponProc, forever WeaponProc, bonusCoef float64, defType core.DefenseType) {
+
+	createWeaponProcDamage(itemId, itemName, school, func(character *core.Character) WeaponProc {
 		if character.Env.IsForever() {
-			return forever[0], forever[1]
+			return forever
 		}
-		return classic[0], classic[1]
+		return classic
 	}, bonusCoef, defType, core.SpellFlagSuppressWeaponProcs)
 }
 
-func createWeaponProcDamage(itemId int32, itemName string, ppm float64, spellId int32, school core.SpellSchool,
-	damage func(*core.Character) (float64, float64), bonusCoef float64, defType core.DefenseType, spellFlagExclude core.SpellFlag) {
+func createWeaponProcDamage(itemId int32, itemName string, school core.SpellSchool,
+	procFor func(*core.Character) WeaponProc, bonusCoef float64, defType core.DefenseType, spellFlagExclude core.SpellFlag) {
 
 	core.NewItemEffect(itemId, func(agent core.Agent) {
 		character := agent.GetCharacter()
-		dmgMin, dmgRange := damage(character)
+		proc := procFor(character)
+		ppm, spellId, dmgMin, dmgRange := proc.PPM, proc.SpellID, proc.DmgMin, proc.DmgRange
+		rollDamage := func(sim *core.Simulation) float64 {
+			dmg := dmgMin + core.TernaryFloat64(dmgRange > 0, sim.RandomFloat(itemName)*dmgRange, 0)
+			if proc.ExecuteMultiplier > 0 && sim.IsExecutePhase25() {
+				dmg *= proc.ExecuteMultiplier
+			}
+			return dmg
+		}
 
 		sc := core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: spellId},
@@ -49,12 +78,12 @@ func createWeaponProcDamage(itemId int32, itemName string, ppm float64, spellId 
 		switch defType {
 		case core.DefenseTypeNone:
 			sc.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				dmg := dmgMin + core.TernaryFloat64(dmgRange > 0, sim.RandomFloat(itemName)*dmgRange, 0)
+				dmg := rollDamage(sim)
 				spell.CalcAndDealDamage(sim, target, dmg, spell.OutcomeAlwaysHit)
 			}
 		case core.DefenseTypeMagic:
 			sc.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				dmg := dmgMin + core.TernaryFloat64(dmgRange > 0, sim.RandomFloat(itemName)*dmgRange, 0)
+				dmg := rollDamage(sim)
 				spell.CalcAndDealDamage(sim, target, dmg, spell.OutcomeMagicHitAndCrit)
 			}
 		case core.DefenseTypeMelee:
@@ -65,12 +94,12 @@ func createWeaponProcDamage(itemId int32, itemName string, ppm float64, spellId 
 			sc.Flags = core.SpellFlagSuppressEquipProcs
 
 			sc.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				dmg := dmgMin + core.TernaryFloat64(dmgRange > 0, sim.RandomFloat(itemName)*dmgRange, 0)
+				dmg := rollDamage(sim)
 				spell.CalcAndDealDamage(sim, target, dmg, spell.OutcomeMeleeSpecialHitAndCrit)
 			}
 		case core.DefenseTypeRanged:
 			sc.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				dmg := dmgMin + core.TernaryFloat64(dmgRange > 0, sim.RandomFloat(itemName)*dmgRange, 0)
+				dmg := rollDamage(sim)
 				spell.CalcAndDealDamage(sim, target, dmg, spell.OutcomeRangedHitAndCrit)
 			}
 		}
@@ -139,8 +168,14 @@ func CreateWeaponProcSpell(itemId int32, itemName string, ppm float64, procSpell
 
 // Create a weapon proc for a custom aura.
 func CreateWeaponProcAura(itemId int32, itemName string, ppm float64, procAuraGenerator func(character *core.Character) *core.Aura) {
+	CreateWeaponProcAuraByRuleset(itemId, itemName, ppm, ppm, procAuraGenerator)
+}
+
+// Create a weapon proc for a custom aura whose rate the Forever client changed.
+func CreateWeaponProcAuraByRuleset(itemId int32, itemName string, classicPPM float64, foreverPPM float64, procAuraGenerator func(character *core.Character) *core.Aura) {
 	core.NewItemEffect(itemId, func(agent core.Agent) {
 		character := agent.GetCharacter()
+		ppm := core.TernaryFloat64(character.Env.IsForever(), foreverPPM, classicPPM)
 
 		procAura := procAuraGenerator(character)
 

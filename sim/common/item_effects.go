@@ -194,6 +194,8 @@ func init() {
 	//https://www.wowhead.com/classic/item=12798/annihilator
 	// Chance on hit: Reduces an enemy's armor by 200.  Stacks up to 3 times.
 	// 1 PPM from Armaments Discord but may be higher
+	// Forever: Armor Shatter (16928) is 165 a stack, and the item's chance-on-hit entry carries
+	// 1 PPM (wowsims/forever's client store and db.json).
 	itemhelpers.CreateWeaponProcSpell(Annihlator, "Annihlator", 1.0, func(character *core.Character) *core.Spell {
 		armorShatterAuras := character.NewEnemyAuraArray(ArmorShatterAuras)
 
@@ -299,7 +301,9 @@ func init() {
 	// https://www.wowhead.com/classic/item=18671/baron-charrs-sceptre
 	// Chance on hit: Blasts a target for 35 Fire damage.
 	// 1 PPM assumed
-	itemhelpers.CreateWeaponCoHProcDamage(BaronCharrsSceptre, "Baron Charr's Sceptre", 1.0, 13442, core.SpellSchoolFire, 35, 0, 0, core.DefenseTypeMagic)
+	// Forever: Firebolt (13442) is 90 (wowsims/forever's client store). The item's entry states no rate.
+	itemhelpers.CreateWeaponCoHProcDamageByRuleset(BaronCharrsSceptre, "Baron Charr's Sceptre", 1.0, 13442, core.SpellSchoolFire,
+		[2]float64{35, 0}, [2]float64{90, 0}, 0, core.DefenseTypeMagic)
 
 	// https://www.wowhead.com/classic/item=14541/barovian-family-sword
 	// Chance on hit: Deals 30 Shadow damage every 3 sec for 15 sec. All damage done is then transferred to the caster.
@@ -635,7 +639,10 @@ func init() {
 	// https://www.wowhead.com/classic/item=12777/blazing-rapier
 	// Chance on hit: Burns the enemy for 100 damage over 30 sec.
 	// 1 PPM Assumed
+	// Forever: Blaze (16898) burns for 20 every 3 sec, 200 over 30 sec, at 1 PPM (wowsims/forever's
+	// client store and db.json).
 	itemhelpers.CreateWeaponProcSpell(BlazingRapier, "Blazing Rapier", 1.0, func(character *core.Character) *core.Spell {
+		tickDamage := core.TernaryFloat64(character.Env.IsForever(), 20, 10)
 		return character.GetOrRegisterSpell(core.SpellConfig{
 			ActionID:         core.ActionID{SpellID: 16898},
 			SpellSchool:      core.SpellSchoolFire,
@@ -657,7 +664,7 @@ func init() {
 					Label: "Blaze",
 				},
 				OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
-					dot.Spell.CalcAndDealPeriodicDamage(sim, target, 10, dot.OutcomeTick)
+					dot.Spell.CalcAndDealPeriodicDamage(sim, target, tickDamage, dot.OutcomeTick)
 				},
 			},
 		})
@@ -765,7 +772,12 @@ func init() {
 
 	// https://www.wowhead.com/classic/item=2825/bow-of-searing-arrows
 	// Equip: Chance to strike your ranged target with a Searing Arrow for 18 to 26 Fire damage.
+	// Forever: Searing Arrow (29638) is 28 with variance 0.364, 23 to 33 (wowsims/forever's client store).
 	itemhelpers.CreateWeaponProcSpell(BowOfSearingArrows, "Bow of Searing Arrows", 3.35, func(character *core.Character) *core.Spell {
+		minDamage, maxDamage := 18.0, 26.0
+		if character.Env.IsForever() {
+			minDamage, maxDamage = 23, 33
+		}
 		return character.GetOrRegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 29638},
 			SpellSchool: core.SpellSchoolFire,
@@ -776,7 +788,7 @@ func init() {
 			ThreatMultiplier: 1,
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				dmg := sim.Roll(18, 26)
+				dmg := sim.Roll(minDamage, maxDamage)
 				spell.CalcAndDealDamage(sim, target, dmg, spell.OutcomeRangedCritOnly)
 			},
 		})
@@ -854,7 +866,12 @@ func init() {
 	// https://www.wowhead.com/classic/item=19170/ebon-hand
 	// Chance on hit: Sends a shadowy bolt at the enemy causing 125 to 275 Shadow damage.
 	// TODO: Proc rate assumed and needs testing
-	itemhelpers.CreateWeaponCoHProcDamage(EbonHand, "Ebon Hand", 1.0, 18211, core.SpellSchoolShadow, 125, 150, 0, core.DefenseTypeMagic)
+	// Forever: Shadow Bolt (18211) is 231 with variance 0.609, 161 to 301, and the item's
+	// chance-on-hit entry carries 0.4 PPM (wowsims/forever's client store and db.json).
+	itemhelpers.CreateWeaponCoHProcByRuleset(EbonHand, "Ebon Hand", core.SpellSchoolShadow,
+		itemhelpers.WeaponProc{PPM: 1.0, SpellID: 18211, DmgMin: 125, DmgRange: 150},
+		itemhelpers.WeaponProc{PPM: 0.4, SpellID: 18211, DmgMin: 161, DmgRange: 140},
+		0, core.DefenseTypeMagic)
 
 	// https://www.wowhead.com/classic/item=14576/ebon-hilt-of-marduk
 	// Chance on hit: Corrupts the target, causing 210 damage over 3 sec.
@@ -1017,7 +1034,13 @@ func init() {
 	core.NewMobTypeAttackPowerEffect(FiendishMachete, []proto.MobType{proto.MobType_MobTypeElemental}, 36)
 
 	// https://www.wowhead.com/classic/item=870/fiery-war-axe
+	// Forever: Fireball (18796) is 262 with variance 0.239, 231 to 293, and 20 every 2 sec for 6 sec
+	// (wowsims/forever's client store).
 	itemhelpers.CreateWeaponProcSpell(FieryWarAxe, "Fiery War Axe", 1.0, func(character *core.Character) *core.Spell {
+		minDamage, maxDamage, tickDamage := 155.0, 197.0, 8.0
+		if character.Env.IsForever() {
+			minDamage, maxDamage, tickDamage = 231, 293, 20
+		}
 		return character.GetOrRegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 18796},
 			SpellSchool: core.SpellSchoolFire,
@@ -1035,7 +1058,7 @@ func init() {
 				NumberOfTicks: 3,
 
 				OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-					dot.Snapshot(target, 8, isRollover)
+					dot.Snapshot(target, tickDamage, isRollover)
 				},
 
 				OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
@@ -1044,7 +1067,7 @@ func init() {
 			},
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				dmg := sim.Roll(155, 197)
+				dmg := sim.Roll(minDamage, maxDamage)
 				result := spell.CalcAndDealDamage(sim, target, dmg, spell.OutcomeMagicHitAndCrit)
 				if result.Landed() {
 					spell.Dot(target).Apply(sim)
@@ -1394,7 +1417,13 @@ func init() {
 	})
 
 	// https://www.wowhead.com/classic/item=2164/gut-ripper
-	itemhelpers.CreateWeaponCoHProcDamage(GutRipper, "Gut Ripper", 1.0, 18107, core.SpellSchoolPhysical, 95, 26, 0, core.DefenseTypeMelee)
+	// Forever: Wound (18107) is 105, rolled by its variance 0.241 either side as a physical hit,
+	// 80 to 130, and its other two effects double it on a target below 25% health (wowsims/forever's
+	// client store: "Deals 100% increased damage to targets below 25% health").
+	itemhelpers.CreateWeaponCoHProcByRuleset(GutRipper, "Gut Ripper", core.SpellSchoolPhysical,
+		itemhelpers.WeaponProc{PPM: 1.0, SpellID: 18107, DmgMin: 95, DmgRange: 26},
+		itemhelpers.WeaponProc{PPM: 1.0, SpellID: 18107, DmgMin: 80, DmgRange: 50, ExecuteMultiplier: 2},
+		0, core.DefenseTypeMelee)
 
 	// https://www.wowhead.com/classic/item=19874/halberd-of-smiting
 	// Equip: Chance to decapitate the target on a melee swing, causing 452 to 676 damage.
@@ -1432,7 +1461,9 @@ func init() {
 	})
 
 	// https://www.wowhead.com/classic/item=810/hammer-of-the-northern-wind
-	itemhelpers.CreateWeaponCoHProcDamage(HammerOfTheNorthernWind, "Hammer of the Northern Wind", 3.5, 13439, core.SpellSchoolFrost, 20, 10, 0, core.DefenseTypeMagic)
+	// Forever: Frostbolt (13439) is 50 with variance 0.4, 40 to 60 (wowsims/forever's client store).
+	itemhelpers.CreateWeaponCoHProcDamageByRuleset(HammerOfTheNorthernWind, "Hammer of the Northern Wind", 3.5, 13439, core.SpellSchoolFrost,
+		[2]float64{20, 10}, [2]float64{40, 20}, 0, core.DefenseTypeMagic)
 
 	// https://www.wowhead.com/classic/item=2243/hand-of-edward-the-odd
 	// Chance on hit: Next spell cast within 4 sec will cast instantly.
@@ -1596,15 +1627,29 @@ func init() {
 	})
 
 	// https://www.wowhead.com/classic/item=11902/linkens-sword-of-mastery
-	itemhelpers.CreateWeaponCoHProcDamage(LinkensSwordOfMastery, "Linken's Sword of Mastery", 1.0, 18089, core.SpellSchoolNature, 45, 30, 0, core.DefenseTypeMagic)
+	// Forever: Lightning Bolt (18089) is 98 with variance 0.5, 74 to 122 (wowsims/forever's client store).
+	itemhelpers.CreateWeaponCoHProcDamageByRuleset(LinkensSwordOfMastery, "Linken's Sword of Mastery", 1.0, 18089, core.SpellSchoolNature,
+		[2]float64{45, 30}, [2]float64{74, 48}, 0, core.DefenseTypeMagic)
 
 	//https://www.wowhead.com/classic/item=19324/the-lobotomizer
 	// Chance on hit: Wounds the target for 200 to 300 damage and lowers Intellect of target by 25 for 30 sec.
 	// 0.4 PPM from Armaments Disc
+	// Forever: Brain Damage is a new row, 1290950: 250 Shadow damage with variance 0.4, 200 to 300,
+	// and 25% slower casting on the target for 30 sec in place of the Intellect, at 0.4 PPM
+	// (wowsims/forever's client store and db.json). The target's casting is not simulated.
 	itemhelpers.CreateWeaponProcSpell(TheLobotomizer, "The Lobotomizer", .4, func(character *core.Character) *core.Spell {
+		isForever := character.Env.IsForever()
+		actionID := core.ActionID{SpellID: core.TernaryInt32(isForever, 1290950, 24388)}
 		procAuras := character.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+			if isForever {
+				return target.GetOrRegisterAura(core.Aura{
+					ActionID: actionID,
+					Label:    "Brain Damage",
+					Duration: time.Second * 30,
+				})
+			}
 			return target.GetOrRegisterAura(core.Aura{
-				ActionID: core.ActionID{SpellID: 24388},
+				ActionID: actionID,
 				Label:    "Brain Damage",
 				Duration: time.Second * 30,
 				OnGain: func(aura *core.Aura, sim *core.Simulation) {
@@ -1621,9 +1666,9 @@ func init() {
 		})
 
 		return character.GetOrRegisterSpell(core.SpellConfig{
-			ActionID:         core.ActionID{SpellID: 24388},
-			SpellSchool:      core.SpellSchoolPhysical,
-			DefenseType:      core.DefenseTypeMelee,
+			ActionID:         actionID,
+			SpellSchool:      core.Ternary(isForever, core.SpellSchoolShadow, core.SpellSchoolPhysical),
+			DefenseType:      core.Ternary(isForever, core.DefenseTypeMagic, core.DefenseTypeMelee),
 			ProcMask:         core.ProcMaskEmpty,
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
@@ -1765,10 +1810,15 @@ func init() {
 	})
 
 	// https://www.wowhead.com/classic/item=1982/nightblade
-	itemhelpers.CreateWeaponCoHProcDamage(Nightblade, "Nightblade", 1.0, 18211, core.SpellSchoolShadow, 125, 150, 0, core.DefenseTypeMagic)
+	// Forever: Shadow Bolt (18211) is 231 with variance 0.609, 161 to 301 (wowsims/forever's client store).
+	itemhelpers.CreateWeaponCoHProcDamageByRuleset(Nightblade, "Nightblade", 1.0, 18211, core.SpellSchoolShadow,
+		[2]float64{125, 150}, [2]float64{161, 140}, 0, core.DefenseTypeMagic)
 
 	// https://www.wowhead.com/classic/item=19169/nightfall
 	// Chance on hit: Spell damage taken by target increased by 15% for 5 sec.
+	// Spell Vulnerability (23605) is A_MOD_DAMAGE_PERCENT_TAKEN 15 for the six magic schools
+	// (misc 126), at 2 PPM in both rulesets (wowsims/forever's client store and db.json). It is a
+	// multiplier on the target's damage taken, so it stacks with Curse of the Elements.
 	core.NewItemEffect(Nightfall, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
@@ -1778,20 +1828,14 @@ func init() {
 				ActionID: core.ActionID{SpellID: 23605},
 				Duration: time.Second * 5,
 				OnGain: func(aura *core.Aura, sim *core.Simulation) {
-					aura.Unit.PseudoStats.SchoolBonusDamageTaken[stats.SchoolIndexArcane] *= 1.15
-					aura.Unit.PseudoStats.SchoolBonusDamageTaken[stats.SchoolIndexFire] *= 1.15
-					aura.Unit.PseudoStats.SchoolBonusDamageTaken[stats.SchoolIndexFrost] *= 1.15
-					aura.Unit.PseudoStats.SchoolBonusDamageTaken[stats.SchoolIndexHoly] *= 1.15
-					aura.Unit.PseudoStats.SchoolBonusDamageTaken[stats.SchoolIndexNature] *= 1.15
-					aura.Unit.PseudoStats.SchoolBonusDamageTaken[stats.SchoolIndexShadow] *= 1.15
+					for school := stats.SchoolIndexArcane; school < stats.SchoolLen; school++ {
+						aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[school] *= 1.15
+					}
 				},
 				OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-					aura.Unit.PseudoStats.SchoolBonusDamageTaken[stats.SchoolIndexArcane] /= 1.15
-					aura.Unit.PseudoStats.SchoolBonusDamageTaken[stats.SchoolIndexFire] /= 1.15
-					aura.Unit.PseudoStats.SchoolBonusDamageTaken[stats.SchoolIndexFrost] /= 1.15
-					aura.Unit.PseudoStats.SchoolBonusDamageTaken[stats.SchoolIndexHoly] /= 1.15
-					aura.Unit.PseudoStats.SchoolBonusDamageTaken[stats.SchoolIndexNature] /= 1.15
-					aura.Unit.PseudoStats.SchoolBonusDamageTaken[stats.SchoolIndexShadow] /= 1.15
+					for school := stats.SchoolIndexArcane; school < stats.SchoolLen; school++ {
+						aura.Unit.PseudoStats.SchoolDamageTakenMultiplier[school] /= 1.15
+					}
 				},
 			})
 		})
@@ -1810,7 +1854,14 @@ func init() {
 	})
 
 	// https://www.wowhead.com/classic/item=9425/pendulum-of-doom
-	itemhelpers.CreateWeaponCoHProcDamage(PendulumOfDoom, "Pendulum of Doom", 0.5, 10373, core.SpellSchoolPhysical, 250, 100, 0, core.DefenseTypeMelee)
+	// Forever: Fatal Wound (10373) is 311, rolled by its variance 0.333 either side as a physical
+	// hit, 207 to 415, and 50% more on a target below 25% health (wowsims/forever's client store).
+	// The item's entry states no rate, so 0.5 PPM stays. Its new equip effect (1293881, each swing
+	// alternates the attack speed between 100% faster and 50% slower) is not simulated.
+	itemhelpers.CreateWeaponCoHProcByRuleset(PendulumOfDoom, "Pendulum of Doom", core.SpellSchoolPhysical,
+		itemhelpers.WeaponProc{PPM: 0.5, SpellID: 10373, DmgMin: 250, DmgRange: 100},
+		itemhelpers.WeaponProc{PPM: 0.5, SpellID: 10373, DmgMin: 207, DmgRange: 208, ExecuteMultiplier: 1.5},
+		0, core.DefenseTypeMelee)
 
 	// https://www.wowhead.com/classic/item=12709/pips-skinner
 	core.NewMobTypeAttackPowerEffect(PipsSkinner, []proto.MobType{proto.MobType_MobTypeBeast}, 45)
@@ -2134,6 +2185,8 @@ func init() {
 	// https://www.wowhead.com/classic/item=17182/sulfuras-hand-of-ragnaros
 	// Chance on hit: Hurls a fiery ball that causes 273 to 333 Fire damage and an additional 75 damage over 10 sec.
 	// Equip: Deals 5 Fire damage to anyone who strikes you with a melee attack.
+	// Forever: the item's chance-on-hit entry carries 0.7 PPM for the Fireball (wowsims/forever's
+	// db.json); its rows are Classic's.
 	core.NewItemEffect(SulfurasHandOfRagnaros, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
@@ -2205,7 +2258,7 @@ func init() {
 			Callback: core.CallbackOnSpellHitDealt,
 			Outcome:  core.OutcomeLanded,
 			ProcMask: core.ProcMaskMelee,
-			PPM:      1, // Estimated based on data from WoW Armaments Discord
+			PPM:      core.TernaryFloat64(character.Env.IsForever(), 0.7, 1), // Classic's estimated based on data from WoW Armaments Discord
 			Handler: func(sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
 				fireballSpell.Cast(sim, result.Target)
 			},
@@ -2265,7 +2318,8 @@ func init() {
 	// https://www.wowhead.com/classic/item=6622/sword-of-zeal
 	// Chance on hit: A burst of energy fills the caster, increasing his damage by 10 and armor by 150 for 15 sec.
 	// 1.8 PPM from Armaments discord
-	itemhelpers.CreateWeaponProcAura(SwordOfZeal, "Sword of Zeal", 1.0, func(character *core.Character) *core.Aura {
+	// Forever: the item's chance-on-hit entry carries 1.8 PPM (wowsims/forever's db.json).
+	itemhelpers.CreateWeaponProcAuraByRuleset(SwordOfZeal, "Sword of Zeal", 1.0, 1.8, func(character *core.Character) *core.Aura {
 		return character.GetOrRegisterAura(core.Aura{
 			ActionID: core.ActionID{SpellID: 8191},
 			Label:    "Zeal",
@@ -2284,7 +2338,12 @@ func init() {
 	// https://www.wowhead.com/classic/item=1728/teebus-blazing-longsword
 	// Chance on hit: Blasts a target for 150 Fire damage.
 	// Chance on Hit Assumed: 1 PPM
-	itemhelpers.CreateWeaponCoHProcDamage(TeebusBlazingLongsword, "Teebu's Blazing Longsword", 1.0, 18086, core.SpellSchoolFire, 150, 0, 0, core.DefenseTypeMagic)
+	// Forever: the item casts a new Firebolt, 1300753, for 140, at 1 PPM (wowsims/forever's client
+	// store and db.json).
+	itemhelpers.CreateWeaponCoHProcByRuleset(TeebusBlazingLongsword, "Teebu's Blazing Longsword", core.SpellSchoolFire,
+		itemhelpers.WeaponProc{PPM: 1.0, SpellID: 18086, DmgMin: 150},
+		itemhelpers.WeaponProc{PPM: 1.0, SpellID: 1300753, DmgMin: 140},
+		0, core.DefenseTypeMagic)
 
 	// https://www.wowhead.com/classic/item=13401/the-cruel-hand-of-timmy
 	// Chance on hit: Lowers all attributes of target by 15 for 1 min.
@@ -2570,7 +2629,13 @@ func init() {
 	// https://www.wowhead.com/classic/item=12792/volcanic-hammer
 	// Chance on hit: Hurls a fiery ball that causes 100 to 128 Fire damage and an additional 18 damage over 6 sec.
 	// Assumed 1 PPM
+	// Forever: Fireball (18082) is 228 with variance 0.246, 200 to 256, and 12 every 2 sec for 6 sec,
+	// at 1 PPM (wowsims/forever's client store and db.json).
 	itemhelpers.CreateWeaponProcSpell(VolcanicHammer, "Volcanic Hammer", 1.0, func(character *core.Character) *core.Spell {
+		minDamage, maxDamage, tickDamage := 100.0, 128.0, 6.0
+		if character.Env.IsForever() {
+			minDamage, maxDamage, tickDamage = 200, 256, 12
+		}
 		return character.GetOrRegisterSpell(core.SpellConfig{
 			ActionID:    core.ActionID{SpellID: 18082},
 			SpellSchool: core.SpellSchoolFire,
@@ -2588,7 +2653,7 @@ func init() {
 				NumberOfTicks: 3,
 
 				OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-					dot.Snapshot(target, 6, isRollover)
+					dot.Snapshot(target, tickDamage, isRollover)
 				},
 
 				OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
@@ -2597,7 +2662,7 @@ func init() {
 			},
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
-				dmg := sim.Roll(100, 128)
+				dmg := sim.Roll(minDamage, maxDamage)
 				result := spell.CalcAndDealDamage(sim, target, dmg, spell.OutcomeMagicHitAndCrit)
 				if result.Landed() {
 					spell.Dot(target).Apply(sim)
@@ -2689,6 +2754,8 @@ func init() {
 
 	// https://www.wowhead.com/classic/item=19288/darkmoon-card-blue-dragon
 	// Equip: 2% chance on successful spellcast to allow 100% of your Mana regeneration to continue while casting for 15 sec.
+	// Forever: Aura of the Blue Dragon (23684) raises Spirit by 150 for 15 sec instead (wowsims/forever's
+	// client store: A_MOD_STAT misc 4, 150), still at 2%.
 	core.NewItemEffect(DarkmoonCardBlueDragon, func(agent core.Agent) {
 		character := agent.GetCharacter()
 
@@ -2698,7 +2765,12 @@ func init() {
 			Label:    "Aura of the Blue Dragon",
 			ActionID: actionID,
 			Duration: time.Second * 15,
-		}).AttachAdditivePseudoStatBuff(&character.PseudoStats.SpiritRegenRateCasting, 1)
+		})
+		if character.Env.IsForever() {
+			procAura.AttachStatBuff(stats.Spirit, 150)
+		} else {
+			procAura.AttachAdditivePseudoStatBuff(&character.PseudoStats.SpiritRegenRateCasting, 1)
+		}
 
 		core.MakeProcTriggerAura(&character.Unit, core.ProcTrigger{
 			Name:       "Aura of the Blue Dragon Trigger",
@@ -3701,8 +3773,16 @@ func PunctureArmorAura(target *core.Unit) *core.Aura {
 	return aura
 }
 
+// Forever's Armor Shatter takes 165 a stack and bids in a category of its own, so it stacks
+// with Faerie Fire and Curse of Recklessness (wowsims/forever's client store 16928, and
+// 4f557cea22, which bids it in the Armor Shatter category apart from the minor armor debuffs).
 func ArmorShatterAuras(target *core.Unit) *core.Aura {
 	arpen := float64(200)
+	category := minorArmorReductionEffectCategory
+	if target.Env.IsForever() {
+		arpen = 165
+		category = "ArmorShatter"
+	}
 
 	var effect *core.ExclusiveEffect
 	aura := target.GetOrRegisterAura(core.Aura{
@@ -3715,7 +3795,7 @@ func ArmorShatterAuras(target *core.Unit) *core.Aura {
 		},
 	})
 
-	effect = aura.NewExclusiveEffect(minorArmorReductionEffectCategory, true, core.ExclusiveEffect{
+	effect = aura.NewExclusiveEffect(category, true, core.ExclusiveEffect{
 		Priority: 0,
 		OnGain: func(ee *core.ExclusiveEffect, sim *core.Simulation) {
 			ee.Aura.Unit.AddStatDynamic(sim, stats.Armor, -ee.Priority)

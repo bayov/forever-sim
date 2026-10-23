@@ -108,6 +108,30 @@ func addImbueWeaponDamage(character *Character, isMh bool, amount float64) {
 	weapon.BaseDamageMax += amount
 }
 
+// addForeverWeaponCrit is Forever's Elemental Sharpening Stone, Critical Weapon +2 (22755): its
+// crit reaches only the attacks made with the weapon the stone is on, not ranged attacks or spells
+// (wowsims/forever 90a276c26a, 002fddc3f2). The main hand's goes on the sheet's melee crit and is
+// taken back off the off hand's attacks and the ranged ones; the off hand's goes on its attacks.
+func addForeverWeaponCrit(character *Character, isMh bool, crit float64) {
+	bonus := crit * CritRatingPerCritChance
+	if isMh {
+		character.AddStat(stats.MeleeCrit, bonus)
+		character.OnSpellRegistered(func(spell *Spell) {
+			offHandOnly := spell.ProcMask.Matches(ProcMaskMeleeOH) && !spell.ProcMask.Matches(ProcMaskMeleeMH)
+			ranged := spell.CastType == proto.CastType_CastTypeRanged || spell.ProcMask.Matches(ProcMaskRanged)
+			if offHandOnly || ranged {
+				spell.BonusCritRating -= bonus
+			}
+		})
+		return
+	}
+	character.OnSpellRegistered(func(spell *Spell) {
+		if spell.ProcMask.Matches(ProcMaskMeleeOH) {
+			spell.BonusCritRating += bonus
+		}
+	})
+}
+
 // Forever's wizard oils add as much healing as spell damage.
 func addForeverOilHealing(character *Character, amount float64) {
 	if character.Env.IsForever() {
@@ -140,7 +164,10 @@ func addImbueStats(character *Character, imbue proto.WeaponImbue, isMh bool, sha
 				stats.SpellCrit:  1 * SpellCritRatingPerCritChance,
 			})
 			addForeverOilHealing(character, 36)
+		// Forever's Blessed Wizard Oil is 58 spell damage against Undead (wowsims/forever's client
+		// store 28890, "Increase Spell Dam Undead 58").
 		case proto.WeaponImbue_BlessedWizardOil:
+			bonus := TernaryFloat64(character.Env.IsForever(), 58, 60)
 			character.Env.RegisterPostFinalizeEffect(func() {
 				for _, target := range character.Env.Encounter.TargetUnits {
 					if target.MobType != proto.MobType_MobTypeUndead {
@@ -148,7 +175,7 @@ func addImbueStats(character *Character, imbue proto.WeaponImbue, isMh bool, sha
 					}
 
 					for _, at := range character.AttackTables[target.UnitIndex] {
-						at.BonusSpellDamageTaken += 60
+						at.BonusSpellDamageTaken += bonus
 					}
 				}
 			})
@@ -179,13 +206,18 @@ func addImbueStats(character *Character, imbue proto.WeaponImbue, isMh bool, sha
 		case proto.WeaponImbue_DenseSharpeningStone:
 			addImbueWeaponDamage(character, isMh, 8)
 		case proto.WeaponImbue_ElementalSharpeningStone:
-			if character.weaponEffectsWork() {
+			if character.Env.IsForever() {
+				addForeverWeaponCrit(character, isMh, 2)
+			} else if character.weaponEffectsWork() {
 				character.AddStats(stats.Stats{
 					stats.MeleeCrit: 2 * CritRatingPerCritChance,
 				})
 				character.AddBonusRangedCritRating(-2.0)
 			}
+		// Forever's Consecrated Sharpening Stone is 99 attack power against Undead, once per hand
+		// it is on (wowsims/forever's client store 28893, "Undead Slayer 99", and fcf802739d).
 		case proto.WeaponImbue_ConsecratedSharpeningStone:
+			bonus := TernaryFloat64(character.Env.IsForever(), 99, 100)
 			character.Env.RegisterPostFinalizeEffect(func() {
 				for _, target := range character.Env.Encounter.TargetUnits {
 					if target.MobType != proto.MobType_MobTypeUndead {
@@ -193,7 +225,7 @@ func addImbueStats(character *Character, imbue proto.WeaponImbue, isMh bool, sha
 					}
 
 					for _, at := range character.AttackTables[target.UnitIndex] {
-						at.BonusAttackPowerTaken += 100
+						at.BonusAttackPowerTaken += bonus
 					}
 				}
 			})

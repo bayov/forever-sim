@@ -19,7 +19,8 @@ builds by the `wago build` tag. Items from before 2026-10-17 have none, and it m
 wording instead.
 
 
-- [ ] 2026-10-13 — Check Baron Charr's Sceptre's fire proc, 35 → 90 on the Forever tooltip (revealed Oct 11–12, client tooltip only)
+- [x] 2026-10-13 — Check Baron Charr's Sceptre's fire proc, 35 → 90 on the Forever tooltip (revealed Oct 11–12, client tooltip only)
+  - Done 2026-10-23: Firebolt 13442 is 90 in wowsims/forever's client store, and the sim gives 90 under Forever (`CreateWeaponCoHProcDamageByRuleset`). The item's entry states no rate, so 1 PPM stays.
   - The sim keeps 35: `BaronCharrsSceptre` in `sim/common/item_effects.go`, proc spell 13442. Its ilvl, required level and damage went in with PR #12.
   - https://wago.tools/db2/SpellEffect?build=1.60.1.70338&filter[SpellID]=13442 and https://wago.tools/db2/ItemEffect?build=1.60.1.70338&filter[ParentItemID]=18671
   - https://foreverchanges.pro/item/18671
@@ -105,6 +106,7 @@ wording instead.
   - Its stats are already in db.json from the Oct 17 Wowhead refresh (b1b0763), with no source. Ranged-slot option for Rogue and Warrior at 60 (+12 AP). https://foreverchanges.pro/item/284587
 - [ ] 2026-10-20 — Decide on Pendulum of Doom 9425's Forever proc and new equip (revealed October 19 to 20, client tooltip only; left out of PR #115) [source: foreverchanges]
   - Chance on hit: Classic's 250–350 → 259–363 Physical, and now "Deals 50% increased damage to targets below 25% health". `PendulumOfDoom` in `sim/common/item_effects.go` still has `250, 100` (proc spell 10373). Wowhead's Forever tooltip agrees.
+  - Proc done 2026-10-23: Fatal Wound 10373 is 311 with variance 0.333 in wowsims/forever's client store, rolled the whole variance either side as a physical hit (their 0dfbb7b009, measured on Revenge), 207–415, with 50% more below 25% health; the tooltip's 259–363 has the same average. The item still states no rate (0.5 PPM stays). The equip below is open.
   - New Equip: "Each swing alternates your attack speed between 100% faster and 50% slower" (4.00 speed, so 2.00 then 6.00 in turn). Needs new code; average speed stays 4.00, but swing timing and Windfury/procs per swing change.
   - https://foreverchanges.pro/item/9425 , https://wago.tools/db2/ItemEffect?build=1.60.1.70450&filter[ParentItemID]=9425 , https://wago.tools/db2/SpellEffect?build=1.60.1.70450&filter[SpellID]=10373
 - [ ] 2026-10-20 — Axe of Inevitable Ruin 274484: model its chance on hit and give it a source once known (revealed October 19 to 20; stats in PR #115) [source: foreverchanges]
