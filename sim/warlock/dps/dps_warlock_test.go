@@ -55,15 +55,16 @@ func TestWarlockDestructionFire(t *testing.T) {
 var TalentsDemonology = "011-0305003131221001351-0550005003"
 var TalentsDestruction = "255000000351--055030500310035"
 var TalentsAffliction = "2550102003520005--0550305003"
-var TalentsDestructionFire = "25201020032-0002-0050355003101351"
+var TalentsDestructionFire = "252-0050003201-0050345003101351"
 
-// Keeps the Succubus out with Firestone.
+// Sacrifices the Succubus before the pull (15% Fire damage) with no demon out, and Firestone.
 var FireWarlock = &proto.Player_Warlock{
 	Warlock: &proto.Warlock{
 		Options: &proto.WarlockOptions{
-			Armor:       proto.WarlockOptions_DemonArmor,
-			Summon:      proto.WarlockOptions_Succubus,
-			WeaponImbue: proto.WarlockOptions_Firestone,
+			Armor:         proto.WarlockOptions_DemonArmor,
+			Summon:        proto.WarlockOptions_NoSummon,
+			SacrificedPet: proto.WarlockOptions_Succubus,
+			WeaponImbue:   proto.WarlockOptions_Firestone,
 		},
 	},
 }

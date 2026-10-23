@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_demonology",
   "apl": "level60_demonology",
   "published": {
-    "dps": 1177.7,
-    "source": "PR #103"
+    "dps": 1133.2,
+    "source": "warlock round 2026-10-23"
   },
   "verify": {
-    "dps": 1177.74,
+    "dps": 1133.21,
     "stderr": 0.39,
     "iters": 20000,
     "ok": true,
-    "note": "+0.04 vs published"
+    "note": "+0.01 vs published"
   },
   "summary": "Demonic Pact build. The Imp is sacrificed before the pull for 15% Shadow damage, and the Succubus stays out.",
   "keyTalents": [
@@ -42,8 +42,8 @@
     "Life Tap below 5% mana or when the filler costs more than the mana left",
     "Bane of Doom when it lands before the fight ends (more than 60s left)",
     "Bane of Agony while Bane of Doom is on cooldown or would not land",
-    "Corruption when down or under 1.5s left (more than 9s of fight left)",
-    "Immolate when down or under 1.5s left (more than 6s of fight left)",
+    "Corruption when down or under 1.5s left (more than 15s of fight left)",
+    "Immolate when down or under 1.5s left (more than 15s of fight left)",
     "Death Coil, then Searing Pain, when the filler would not land before the fight ends",
     "Shadow Bolt as the filler"
   ],
@@ -64,11 +64,9 @@
     "Major Spellstone (weapon imbue)"
   ],
   "caveats": [
-    "Demon model is most sensitive here: no owner scaling 1037.8, Succubus melee halved 1044.5, both 1011.5 (first set)",
     "Uses the Demonology hit gear (14% hit). Suppression 5/5 is 72 behind.",
     "Decimation's 3% is from the tooltip only.",
-    "Demon scaling uses SoD placeholders. Worth 49 on Demonology, 39 on the other builds.",
-    "Succubus base melee is unverified. Halved, it would cost Demonology 43 and the others 38 to 39.",
+    "Demon shares and Succubus melee are wowsims/forever's, read on pet sheets at levels 20 and 30, not 60.",
     "Bane of Doom's coefficient is 4.0 (Era 1.0). At 2.0 Shadow Bolt builds lose about 4%, at 1.0 about 6%.",
     "No Ahn'Qiraj book ranks (Shadow Bolt IX, Immolate VII, Corruption VI): 7 to 13 DPS.",
     "Only the Demonheart Raiment 2-piece is live (the 5-piece added about +8 to +13 on the first set)",

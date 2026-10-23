@@ -8,6 +8,14 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks settled: 70338 trait curves] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Level 60 presets after the wowsims/forever alignment (2026-10-23)
+
+The demons now take wowsims/forever's measured stat shares and melee (about 4% less on every build), so the sim's Level 60 presets were searched again (talents, rotation knobs, demon and sacrifice choices, races, consumes); [sim-status.md](../sim-status.md) has the numbers.
+
+- Destruction fire sacrifices the Succubus before the pull (Demonic Sacrifice, 15% Fire damage) and keeps no demon out: `252-0050003201-0050345003101351`, 986.1 against 981.0 for the best build with the Succubus out at 180 sec. The three Shadow builds keep their talents and the Succubus out; sacrificing the Imp with no demon out loses 31 on Destruction and 84 on Affliction.
+- Every build casts a new Immolate only with more than 15 sec of the fight left, Demonology and the fire build a new Corruption too, and the fire build recasts both 1.5 sec early (was 2): +0.3 to +2.2 at 120 / 180 / 300 sec on both seed sets.
+- The Human stays first on every build (the fire build ties the Orc). The spell hit cap is unchanged at 16%, and the consumes are unchanged (Major Spellblasting Potion, Caustic Smog Potion and the Flask of Natural Aggression all lose).
+
 ## Beta client 1.60.1.70425 (2026-10-16)
 
 The sim is on 70425 for the warlock since 2026-10-16 (wago.tools DB2 tables of builds 1.60.1.70338 and 1.60.1.70425 diffed: TraitNode, TraitNodeEntry, TraitDefinition, TraitDefinitionEffectPoints, CurvePoint, TraitCond, TraitEdge, SpellEffect, SpellMisc, SpellCooldowns, SpellPower, SpellLevels, SpellAuraOptions, SpellClassOptions).

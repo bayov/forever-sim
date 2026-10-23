@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_affliction_duty_curse",
   "published": {
-    "dps": 1054.7,
-    "source": "PR #104"
+    "dps": 1023.7,
+    "source": "warlock round 2026-10-23"
   },
   "verify": {
-    "dps": 1054.75,
+    "dps": 1023.71,
     "stderr": 0.38,
     "iters": 20000,
     "ok": true,
-    "note": "+0.05 vs published"
+    "note": "+0.01 vs published"
   },
   "summary": "Keeps its own Curse of the Elements up for the raid, with the raid's copy off. Under Forever the curse has its own slot, so the bane stays.",
   "keyTalents": [
@@ -43,7 +43,7 @@
     "Bane of Doom when it lands before the fight ends (more than 60s left)",
     "Bane of Agony while Bane of Doom is on cooldown or would not land",
     "Corruption when it is down (more than 9s left)",
-    "Immolate when down or when less than its cast time remains",
+    "Immolate when down or when less than its cast time remains (more than 15s left)",
     "Death Coil, then Searing Pain, when the filler would not land before the fight ends",
     "Shadow Bolt as the filler (instant on Nightfall procs)"
   ],
@@ -65,10 +65,8 @@
   ],
   "caveats": [
     "A bane and a curse use separate slots, so the duty curse costs only GCDs and mana.",
-    "Demon sensitivity: no owner scaling 937.0, Succubus melee halved 938.7, both 913.8 (first set)",
     "The Wrack and Siphon Life DoT variant is 55 behind. Drain fillers are 124 to 349 behind.",
-    "Demon scaling uses SoD placeholders. Worth 49 on Demonology, 39 on the other builds.",
-    "Succubus base melee is unverified. Halved, it would cost Demonology 43 and the others 38 to 39.",
+    "Demon shares and Succubus melee are wowsims/forever's, read on pet sheets at levels 20 and 30, not 60.",
     "Bane of Doom's coefficient is 4.0 (Era 1.0). At 2.0 Shadow Bolt builds lose about 4%, at 1.0 about 6%.",
     "No Ahn'Qiraj book ranks (Shadow Bolt IX, Immolate VII, Corruption VI): 7 to 13 DPS.",
     "Only the Demonheart Raiment 2-piece is live (the 5-piece added about +8 to +13 on the first set)",
