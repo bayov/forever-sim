@@ -25,17 +25,24 @@ import (
 // Two sets, one for swords (Sinister Strike) and one for daggers (Backstab, Mutilate and Subtlety). Each
 // carries the fair stat mix of standards 5a at the 1b weights, the proportions the fairness auditor took
 // from Season of Discovery level 60 rogue BiS (orchestration/gear_targets.md). Hit is held at the cap (item 4):
-// 50 rating, 5%, which with the set's 2 piece bonus (1%) and Precision 3/3 is the 9% a Sinister Strike or
-// Backstab needs against a level 63 boss. The share SoD gives hit (14%) goes to the other stats in their
-// proportions, each kept within 3 points of its target. Shares are linear, trinkets and enchants left out:
+// 40 rating, 4%, which with the set's 2 piece bonus (1%) and Precision 3/3 is the 8% a Sinister Strike or
+// Backstab needs against a level 63 boss (no hit suppression under Forever, 2026-10-23; the sets carried 5%
+// for the old 9% until then, and the wrists' 10 hit rating became 20 attack power, the one stat with room
+// under its target). The share SoD gives hit (14%) goes to the other stats in their proportions, each kept
+// within 3 points of its target. Shares are linear, trinkets and enchants left out:
 //
 //	Set            Stamina  Strength  Agility  Attack power  Hit       Crit
-//	Combat Swords  151      131       273      82            50 (5%)   88 (6.3%)
-//	  share (L)    20.6     17.8      37.2     5.6           6.8       12.0
+//	Combat Swords  151      131       273      102           40 (4%)   88 (6.3%)
+//	  share (L)    20.6     17.8      37.2     6.9           5.4       12.0
 //	  target       20.4     15.6      34.5     4.6           13.7      11.2
-//	Daggers        152      132       250      110           50 (5%)   95 (6.8%)
-//	  share (L)    20.7     18.0      34.1     7.5           6.8       12.9
+//	Daggers        152      132       250      130           40 (4%)   95 (6.8%)
+//	  share (L)    20.7     18.0      34.1     8.9           5.4       12.9
 //	  target       20.6     15.7      31.3     6.5           14.2      11.6
+//
+// Subtlety takes no Precision, so it wears the Daggers set with the old hit wrist (994119) and keeps 5% on
+// the gear, 6% with the 2 piece, under the cap. Against the attack power wrist it is worth 4.3 at 180 sec.
+// Hit over the 8% yellow cap still helps the white hits up to the 27% dual wield cap: the old 9% sets did
+// 0.4 to 2.8 more than these at 180 sec (Combat Daggers 768.7 against 765.9), item 4 rules it out.
 //
 // Agility is 46.8% (swords) and 43.0% (daggers) of the non-Stamina total, under the 55% guardrail.
 //
@@ -114,9 +121,8 @@ var rogueSyntheticItems = []*proto.UIItem{
 	{
 		Id: 994006, Name: "Combat Swords Synthetic Wrist (Phase 1)", Icon: "inv_bracer_02",
 		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeLeather,
-		Stats:     stats.Stats{stats.Strength: 17, stats.Stamina: 15, stats.Armor: 88}.ToFloatArray(),
-		HitRating: 10,
-		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		Stats: stats.Stats{stats.Strength: 17, stats.Stamina: 15, stats.AttackPower: 20, stats.Armor: 88, stats.RangedAttackPower: 20}.ToFloatArray(),
+		Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
 	},
 	// Hands, item level 66, in place of Devilsaur Gauntlets (58, 15063). Linear 55.0 of 54.8, 1.7-norm 35.0 of 34.9.
@@ -269,9 +275,8 @@ var rogueSyntheticItems = []*proto.UIItem{
 	{
 		Id: 994106, Name: "Daggers Synthetic Wrist (Phase 1)", Icon: "inv_bracer_02",
 		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeLeather,
-		Stats:     stats.Stats{stats.Strength: 17, stats.Stamina: 15, stats.Armor: 88}.ToFloatArray(),
-		HitRating: 10,
-		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		Stats: stats.Stats{stats.Strength: 17, stats.Stamina: 15, stats.AttackPower: 20, stats.Armor: 88, stats.RangedAttackPower: 20}.ToFloatArray(),
+		Ilvl:  71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
 	},
 	// Hands, item level 66, in place of Devilsaur Gauntlets (58, 15063). Linear 55.0 of 54.8, 1.7-norm 35.0 of 34.9.
@@ -371,6 +376,18 @@ var rogueSyntheticItems = []*proto.UIItem{
 		// a Phase 1 BiS speed, the one that sims best).
 		WeaponDamageMin: 69.1, WeaponDamageMax: 129.2, WeaponSpeed: 1.7,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
+	},
+
+	// Subtlety wrist: the Daggers wrist as it was before the 8% cap, with 10 hit rating in place of the 20
+	// attack power. Subtlety takes no Precision, so its 6% hit (5% on the gear and the 2 piece's 1%) is under
+	// the cap and keeps its hit (standards 4). Linear 42.0 of 42.0, 1.7-norm 27.1 of 28.0.
+	{
+		Id: 994119, Name: "Subtlety Synthetic Wrist (Phase 1)", Icon: "inv_bracer_02",
+		Type: proto.ItemType_ItemTypeWrist, ArmorType: proto.ArmorType_ArmorTypeLeather,
+		Stats:     stats.Stats{stats.Strength: 17, stats.Stamina: 15, stats.Armor: 88}.ToFloatArray(),
+		HitRating: 10,
+		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassRogue},
 	},
 
