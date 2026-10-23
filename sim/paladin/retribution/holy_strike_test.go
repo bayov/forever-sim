@@ -17,6 +17,12 @@ const thunderfury = 19019    // 44 - 115, 1.9 speed, one-hand sword
 // against a level 60 target with no armor, and returns it before the first action.
 func retSim(t *testing.T, talents string, weapon int32) (*core.Simulation, *RetributionPaladin) {
 	t.Helper()
+	return retSimTargets(t, talents, weapon, 1)
+}
+
+// retSimTargets is retSim against n such targets.
+func retSimTargets(t *testing.T, talents string, weapon int32, n int) (*core.Simulation, *RetributionPaladin) {
+	t.Helper()
 	player := &proto.Player{
 		Race:          proto.Race_RaceHuman,
 		Class:         proto.Class_ClassPaladin,
@@ -32,12 +38,16 @@ func retSim(t *testing.T, talents string, weapon int32) (*core.Simulation, *Retr
 		player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{})
 	}
 	player.Equipment.Items = append(player.Equipment.Items, &proto.ItemSpec{Id: weapon})
-	target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)
-	target.Level = 60
-	target.Stats[proto.Stat_StatArmor] = 0
+	var targets []*proto.Target
+	for range n {
+		target := googleProto.Clone(core.NewDefaultTarget()).(*proto.Target)
+		target.Level = 60
+		target.Stats[proto.Stat_StatArmor] = 0
+		targets = append(targets, target)
+	}
 	sim := core.NewSim(&proto.RaidSimRequest{
 		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
-		Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{target}},
+		Encounter:  &proto.Encounter{Duration: 60, Targets: targets},
 		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
 	}, simsignals.CreateSignals())
 	sim.Reset()

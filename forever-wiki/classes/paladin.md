@@ -14,7 +14,7 @@ Every retribution spell and talent checked against the client tables on [wago.to
 
 - Holy Strike is built like Backstab: a normalized weapon damage effect that carries the flat Holy part (93 at rank 8, a 25% spread, 42.9% of spell power), then a weapon damage percent (50% at rank 8). The server adds the flat part before it takes the percent, so the flat part and its spell power are halved too, though the tooltip shows "plus 93". The normalized speed is Forever's 3.6 for a two-hander (2.7 for a one-hander), as the beta's Stormstrike showed for the same effect.
 - Improved Seals is a damage modifier on the seal procs and judgements themselves, so it scales the spell power part of Seal of Righteousness too. Its spell carries 3%, the talent tooltips 5 / 10 / 15%.
-- Holy Power's 1% per point is a crit modifier on a list of spells: Consecration, Exorcism, Holy Wrath, Hammer of Wrath, both seal procs and both judgements (Holy Shock and Holy Strike get 3%).
+- Holy Power's 1% per point is a crit modifier on a list of spells: Consecration, Exorcism, Holy Wrath, Hammer of Wrath, both seal procs and both judgements (Holy Shock and Holy Strike get 3%). Corrected 2026-10-23: the list (effect 0's mask) has the Seal of Command proc 20424 but not the Seal of Righteousness procs (25713-25742), see the 2026-10-23 section.
 - Precision gives spell hit as well as melee hit.
 - Benediction's spell list leaves out Hammer of Wrath, Twist of Light's covers the three seals.
 - Twist of Light's Echo is two spells, Echo of Command (1311703, "a chance to activate Seal of Command") and Echo of Righteousness (1311704), one charge each and no duration, used up by the next auto attack.
@@ -41,15 +41,32 @@ The [development notes of 24 September](https://www.wowhead.com/blue-tracker/top
 Diffed against 70338 for every paladin spell and trait curve (wago.tools SpellEffect, SpellLevels and TraitDefinitionEffectPoints). The sim takes all of it:
 
 - Judgement of Righteousness is 42.9% of spell power on every rank (was 50%), and Judgement of Fury 42.9% (was 45%).
-- Champion of the Light is 10 / 20 / 30% of Intellect as spell damage (trait curve 110350, was 20 / 40 / 60%).
+- Champion of the Light is 10 / 20 / 30% of Intellect as spell damage (trait curve 110350, was 20 / 40 / 60%). The 2026-10-20 server hotfix put it back to 20 / 40 / 60%, see the 2026-10-23 section.
 - Consecration's Forever ranks (1280345 to 1280353) are 4.2% of spell power a tick (was 9.5%), Era's value. The 15 October beta notes give 0.042 too, and say Judgement of Righteousness and Judgement of Fury now have "correct spell power coefficients for instant cast spells".
 - Righteous Fury is 90% Holy threat again (60% in 70338).
 - Shield Specialization's mana is 4% of maximum mana a block (1310925, was 6%).
 - Reckoning stores its extra attacks as charges, up to 4 (new spell 1326084), and the next auto attack spends them all; 70338 swung at once (trigger 20178).
 - Seal of Fury rank 1 (20163) is learned at level 26 (was 25). Seal of Fury is not in the sim.
-- The Seal of Righteousness proc spells (25713 and the lower ranks) lost their 10% spell power coefficient (0 in 70425). The seal's tooltip (auras 20154, 20287 to 20293, 21084) still adds `$1h` = 7.65% and `$2h` = 12% of spell power (description variables 1023) to each hit's s3/87 to s3/25, so the bonus reads as moved server side. Blizzard's 15 October beta notes confirm it: "Fixed an issue causing Seal of Righteousness to gain almost twice as much benefit from Spell Damage than intended." The sim adds it once: 12% with a two-hander, flat per swing. It used to count 2 x 11%, the Season of Discovery tests; that would be 50 DPS more on twist at 180 sec, and the proc's 0 would be 57 less.
+- The Seal of Righteousness proc spells (25713 and the lower ranks) lost their 10% spell power coefficient (0 in 70425). The seal's tooltip (auras 20154, 20287 to 20293, 21084) still adds `$1h` = 7.65% and `$2h` = 12% of spell power (description variables 1023) to each hit's s3/87 to s3/25, so the bonus reads as moved server side. Blizzard's 15 October beta notes confirm it: "Fixed an issue causing Seal of Righteousness to gain almost twice as much benefit from Spell Damage than intended." The sim adds it once: 12% with a two-hander, flat per swing (10% with a one-hander since 2026-10-23, see below). It used to count 2 x 11%, the Season of Discovery tests; that would be 50 DPS more on twist at 180 sec, and the proc's 0 would be 57 less.
 - Improved Seals stores 0 on its spell (was 3); its trait curve is still 5 / 10 / 15%.
 - Blessing of Salvation is now Salvation (1038), a threat buff outside the blessing slot, and Greater Blessing of Salvation is Mass Salvation (25895). No DPS change.
+
+## Aligned with wowsims/forever, and the 2026-10-20 hotfix (2026-10-23)
+
+Where wowsims/forever has in-game measurements or the game files on its side, the sim now follows it (all under the Forever ruleset):
+
+- Judgement of Righteousness is a melee attack (client 20286 and the lower ranks are DefenseType 2 with No Active Defense): it rolls melee hit and crit, crits for double, can't be dodged, parried or blocked, and One- and Two-Handed Weapon Specialization raise it (wowsims/forever e10ca32c3d, d35afca4da). It used to roll spell hit and crit at 1.5x. As a main hand ability it now hears weapon procs, Windfury Totem and Vindication, as Judgement of Command already did; white-hit-only effects still don't.
+- Judgement of Command rolls once on the melee table (20968 and 20966 are both melee), not spell hit first and then melee crit (e10ca32c3d, 447d83b595).
+- Sanctified Judgement refunds its share of the seal's base cost with the seal's percent cut added on top: Benediction 5/5 makes a 90 mana seal cost 81 and 3/3 return 60% of 99 = 59.4, measured at Benediction 0, 1, 3 and 5 (04b40b17b8). It used to return a share of the discounted cost. With Twist of Light's 20% the two cuts multiply before the flip (Seal of Righteousness rank 8: 200 x 1.28 x 0.6 = 153.6), as theirs has it; that part is unmeasured.
+- Seal of Righteousness with a one-hander: 10% of spell power (the tooltip's 7.65% fits none of their 1.8, 2.2 and 2.8 speed hits) and a weapon factor of 0.85 - 0.2 x max(0, 2.0 - speed), so 0.83 at 1.9 and 0.79 at 1.7 (18 weapons from 1.7 to 3.7, 49f94c9326). Two-handers keep 1.2 and 12%.
+- Holy Power follows effect 0's mask on 5923: Consecration's ticks get it (they crit under Forever, 2f953756bd and fd449cd4eb), the Seal of Righteousness procs don't.
+- Holy Shield's damage takes 8% of spell power (20925, 20927 and 20928, effect 1; it was Classic's 5%). Its outcome stays a spell crit roll that can't miss: theirs rolls spell hit with no crit but cites nothing.
+- Vindication procs 5 times a minute on the main hand's speed (Seal of the Crusader's faster swings each carry 1/1.4 of the chance), measured at 1.6 and 3.6 speed (54edb1d2e2); it used to proc on every landed melee hit. The Seal of Righteousness proc doesn't trigger it (a proc, which the talent can't proc from). Its debuff's own spell hit roll isn't modelled because the debuff isn't scored.
+- Consecration's extra damage and its 4.2% of spell power go to the first 4 enemies only (the rank's periodic dummy names 4), and so does the mark (client 1280353) that carries Consecrated Ground. Later enemies take the 12 a tick base alone (theirs consecration.go).
+- Hammer of Wrath keeps Precision (20189 is an unscoped A_MOD_HIT_CHANCE) and gets no Conviction (20117 is melee weapon crit), as theirs conviction_test.go has it.
+- Champion of the Light is 20 / 40 / 60% again: the server hotfix pushed on 2026-10-20 to build 70450 (wago.tools hotfix push 112842, CurvePoint 331369-331371) sets curve 110350 to 20 / 40 / 60. That curve is Champion of the Light's (TraitDefinition 142634, spell 1311084, TraitDefinitionEffectPoints 24621). The 70532 client tables still read 10 / 20 / 30, as they still have the old mage tree from the same push. foreverchanges.pro's 2026-10-16 hotfix list says the same.
+
+At 180 sec (20,000 iterations, seed 1), the Level 60 presets: twist 877.2 -> 935.2, sub Holy 871.1 -> 935.0, Shock 780.3 -> 827.7, and the undead and Crusader duty variants alike. Champion of the Light is +34 to +39 on the builds that take it, Judgement of Righteousness on the melee table +22 to +25 (+40 to +44 on Shock, which judges Righteousness), Judgement of Command +4 to +7, Hammer of Wrath -1.5 to -2, Consecration's Holy Power +2 on Shock, the Seal of Righteousness proc's lost Holy Power -2.6 on Shock, Sanctified Judgement's larger refund -1.7 to +5.0 (noise, except +1.9 and +5.0 on the mana-short Shock builds) and Vindication under 0.5.
 
 ## Trait curves, client 1.60.1.70338 (2026-10-12)
 
@@ -69,14 +86,14 @@ Forever's talents are traits: TraitDefinitionEffectPoints gives every talent eff
 | Purifying Power | -17 / -33% Exorcism and Holy Wrath cooldown (and -10 / -20% Cleanse cost) | same (cooldown) |
 | Sacred Duty | 2 / 4% Stamina | same |
 | Vindication | 1 / 2 / 3% | same |
-| Sanctified Judgement | 33 / 66 / 100% chance, 20 / 40 / 60% refund | same |
+| Sanctified Judgement | 33 / 66 / 100% chance, 20 / 40 / 60% refund | same (of the seal's base cost with its cut flipped on top since 2026-10-23) |
 | Divine Precision | 6 / 12 / 18% Holy hit | same |
 | Consecrated Ground | 5 / 10% | same |
 | Two-Handed Weapon Specialization | 2 / 4 / 6% | same |
 | One-Handed Weapon Specialization | 3 / 7 / 10% | same |
 | Vengeance | 1 / 2 / 3% a stack (the spell stores 5) | same |
 | Holy Power | 1 to 5% crit, 3 to 15% on its second effect | same (Holy Strike and Holy Shock 3% a point) |
-| Champion of the Light | 20 / 40 / 60% of Intellect (10 / 20 / 30% in 70425) | 10 / 20 / 30% |
+| Champion of the Light | 20 / 40 / 60% of Intellect (10 / 20 / 30% in 70425, 20 / 40 / 60% again by the 2026-10-20 hotfix) | 20 / 40 / 60% |
 | Instrument of Law | -0.5 / -1.0 sec Hammer of Wrath cast | same |
 | Iron Creed | 5 to 25% threat | same |
 | Redoubt | 4 to 20% block | same |

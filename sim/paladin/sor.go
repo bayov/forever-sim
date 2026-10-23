@@ -45,8 +45,8 @@ func (paladin *Paladin) registerSealOfRighteousness() {
 	// the judgement too. The judgement's spell power coefficient is 42.9% on every rank
 	// under Forever (Classic ramped it up over the first three ranks), its base damage
 	// is Classic's because wowhead hides it behind the coefficient. The seal's proc takes
-	// the tooltip's 12% of spell power with a two-hander (7.65% with a one-hander) on every
-	// rank, counted once (Classic started at 2.9%).
+	// 12% of spell power with a two-hander and 10% with a one-hander on every rank, counted
+	// once (Classic started at 2.9%).
 	//
 	// Classic's talent raised the seal's base points, so it left the spell power part
 	// alone. Forever's Improved Seals is a percent damage modifier on the proc and the
@@ -67,13 +67,14 @@ func (paladin *Paladin) registerSealOfRighteousness() {
 		 * (Judgement of Righteousness):
 		 *   - Deals flat damage that is affected by Improved SoR talent, and
 		 *     has a spellpower scaling that is unaffected by that talent.
-		 *   - Targets magic defense and rolls to hit and crit.
+		 *   - Targets magic defense and rolls to hit and crit (melee under Forever, see below).
 		 *
 		 * (Seal of Righteousness):
 		 *   - Procs from white hits.
 		 *   - Cannot miss or be dodged/parried/blocked if the underlying white hit lands.
 		 *   - Deals damage that is a function of weapon speed, and spellpower.
-		 *   - Has 0.85 scale factor on base damage if using 1h, 1.2 if using 2h.
+		 *   - Has 0.85 scale factor on base damage if using 1h, 1.2 if using 2h (Forever lowers
+		 *     the 1h factor below 2.0 speed, see below).
 		 *   - Calculates damage including spellpower scaling but ignoring damage multipliers,
 		 *      then feeds that value as base damage into the proc spell.
 		 */
@@ -81,7 +82,7 @@ func (paladin *Paladin) registerSealOfRighteousness() {
 		minDamage := rank.judge.minDamage + rank.judge.scale*float64(min(paladin.Level, rank.scaleLevel)-rank.level)
 		maxDamage := rank.judge.maxDamage + rank.judge.scale*float64(min(paladin.Level, rank.scaleLevel)-rank.level)
 
-		judgeSpell := paladin.RegisterSpell(core.SpellConfig{
+		judgeConfig := core.SpellConfig{
 			SpellCode:   SpellCode_PaladinJudgementOfRighteousness,
 			ActionID:    core.ActionID{SpellID: rank.judge.spellID},
 			SpellSchool: core.SpellSchoolHoly,
@@ -99,7 +100,24 @@ func (paladin *Paladin) registerSealOfRighteousness() {
 				baseDamage := sim.Roll(minDamage, maxDamage)
 				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			},
-		})
+		}
+		if paladin.Env.IsForever() {
+			// Forever's judgement is a melee attack (client 20286 and the lower ranks: DefenseType 2,
+			// No Active Defense), so it rolls melee hit and crit, crits for double and can't be
+			// dodged, parried or blocked, and the weapon specializations reach it (wowsims/forever
+			// e10ca32c3d, d35afca4da: in game One- and Two-Handed Weapon Specialization raise Seal and
+			// Judgement of Righteousness). It is a main hand ability hit to the listeners, weapon procs
+			// included, as Judgement of Command is: the rows carry no Suppress Weapon Procs.
+			judgeConfig.DefenseType = core.DefenseTypeMelee
+			judgeConfig.ProcMask = core.ProcMaskMeleeMHSpecial
+			judgeConfig.Flags = core.SpellFlagMeleeMetrics | core.SpellFlagBinary
+			judgeConfig.DamageMultiplier *= paladin.getWeaponSpecializationModifier()
+			judgeConfig.ApplyEffects = func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
+				baseDamage := sim.Roll(minDamage, maxDamage)
+				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
+			}
+		}
+		judgeSpell := paladin.RegisterSpell(judgeConfig)
 
 		value := 0.01 * (rank.proc.value + rank.proc.scale*float64(min(paladin.Level, rank.scaleLevel)-rank.level))
 
@@ -114,23 +132,36 @@ func (paladin *Paladin) registerSealOfRighteousness() {
 		countTwice := true
 		if paladin.Env.IsForever() {
 			// Forever's seal tooltip (client 1.60.1.70425, description variables 1023) adds
-			// 7.65% of spell power a hit with a one-hander and 12% with a two-hander, flat per
-			// swing, while the proc spells' own coefficient is 0 since 70425 (0.1 before). So the
-			// bonus is added once, as the tooltip says. Blizzard's 15 October beta notes: "Fixed an
-			// issue causing Seal of Righteousness to gain almost twice as much benefit from Spell
-			// Damage than intended."
-			coeff = core.TernaryFloat64(paladin.has2hEquipped(), 0.12, 0.0765)
+			// spell power once, flat per swing, while the proc spells' own coefficient is 0 since
+			// 70425 (0.1 before). Blizzard's 15 October beta notes: "Fixed an issue causing Seal of
+			// Righteousness to gain almost twice as much benefit from Spell Damage than intended."
+			// The tooltip's 12% with a two-hander fits the game, but its 7.65% with a one-hander
+			// doesn't: one-handers at 1.8, 2.2 and 2.8 speed fit 0.096 to 0.101 at 0 and 50 spell
+			// power (wowsims/forever 49f94c9326, 1.60.1.70425 beta, level 30, rank 4).
+			//
+			// The same measurements put a one-hander's weapon factor at 0.85 from 2.0 speed up and
+			// 0.02 lower for each tenth of a second below (0.79 at 1.7, as fast as the test went;
+			// eighteen weapons from 1.7 to 3.7 at level 20, ranks 1-3). Two-handers are 1.2 at every
+			// speed. The fast weapon penalty leaves the spell power part alone.
 			countTwice = false
+			if paladin.has2hEquipped() {
+				coeff = 0.12
+			} else {
+				coeff = 0.1
+				damage = value * (0.85 - 0.2*max(0, 2.0-paladin.MainHand().SwingSpeed)) * paladin.MainHand().SwingSpeed
+			}
 		}
 
 		procSpell := paladin.RegisterSpell(core.SpellConfig{
+			SpellCode:   SpellCode_PaladinSealOfRighteousnessProc,
 			ActionID:    core.ActionID{SpellID: rank.proc.spellID},
 			SpellSchool: core.SpellSchoolHoly,
 			DefenseType: core.DefenseTypeMelee,
 			ProcMask:    core.ProcMaskMeleeMHSpecial,                                   //changed to ProcMaskMeleeMHSpecial, to allow procs from weapons/oils which do proc from SoR,
 			Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagSuppressEquipProcs, // but Wild Strikes does not proc, nor equip procs
 
-			BonusCritRating: paladin.holyPowerCrit(),
+			// Holy Power's list (client 5923) leaves the procs out under Forever.
+			BonusCritRating: core.TernaryFloat64(paladin.Env.IsForever(), 0, paladin.holyPowerCrit()),
 
 			DamageMultiplier: paladin.getWeaponSpecializationModifier() * improvedSoR,
 			ThreatMultiplier: 1,

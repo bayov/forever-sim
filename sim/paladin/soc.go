@@ -17,7 +17,8 @@ import (
 // server's script sets the rate, as in Classic. The sim keeps Classic's 7 a minute.
 const SealOfCommandPPM = 7.0
 
-// Judgement of Command has some unusual behaviour in classic:
+// Judgement of Command has some unusual behaviour in classic (Forever rolls it once on the melee
+// table, see ApplyEffects below):
 // - The judgement operates via a dummy spell, that likely figures out whether to apply
 //   half damage if the target is not stunned or not (counter to the tooltip, the base damage only is
 //   multiplied by 2 if the target is stunned). These dummy spells are implemented as targetting
@@ -91,6 +92,14 @@ func (paladin *Paladin) registerSealOfCommand() {
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				baseDamage := sim.Roll(minDamage, maxDamage) * 0.5 // unless stunned
+
+				// Forever's judgement dummy (client 20968) and the damage spell it casts (20966) are
+				// both melee (DefenseType 2) with No Active Defense: one roll on the melee table for
+				// hit and crit, never dodged, parried or blocked (wowsims/forever e10ca32c3d, 447d83b595).
+				if sim.IsForever() {
+					spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialNoBlockDodgeParry)
+					return
+				}
 
 				// Seal of Command requires this spell to act as its intermediary dummy,
 				// rolling on the spell hit table. If it succeeds, the actual Judgement of Command rolls on the

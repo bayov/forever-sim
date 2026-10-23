@@ -44,9 +44,12 @@ func (paladin *Paladin) ApplyTalents() {
 	// Champion of the Light turns Intellect into spell damage and healing.
 	//
 	// The 2026-10-01 development notes cut it to 20 / 40 / 60% (it was 33 / 66 / 100%), and
-	// client 1.60.1.70425 to 10 / 20 / 30% (trait curve 110350).
+	// client 1.60.1.70425 to 10 / 20 / 30% (trait curve 110350, TraitDefinitionEffectPoints
+	// 24621 of trait 142634, spell 1311084). The server hotfix of 2026-10-20 to build 70450 put
+	// the curve back at 20 / 40 / 60% (wago.tools hotfix push 112842, CurvePoint 331369-331371;
+	// the 70532 client tables still have 10 / 20 / 30).
 	if paladin.Talents.ChampionOfTheLight > 0 {
-		paladin.AddStatDependency(stats.Intellect, stats.SpellPower, []float64{0, .1, .2, .3}[paladin.Talents.ChampionOfTheLight])
+		paladin.AddStatDependency(stats.Intellect, stats.SpellPower, []float64{0, .2, .4, .6}[paladin.Talents.ChampionOfTheLight])
 	}
 
 	paladin.applyWeaponSpecialization()
@@ -66,9 +69,10 @@ func (paladin *Paladin) improvedSeals() float64 {
 // Holy Power's crit for the spells that roll on the melee or ranged table. The talent is
 // a crit modifier on a list of the paladin's spells (client 1.60.1.70338, spell 5923):
 // 3% per point for Holy Shock and Holy Strike, and 1% per point for the rest, which takes
-// in Consecration, Exorcism, Holy Wrath, Hammer of Wrath, the Seal of Command and Seal of
-// Righteousness procs and their judgements. It goes on those spells only, so the
-// consumables' and racials' spells (Dragonbreath Chili, Shadow Oil, the Sapper) get none.
+// in Consecration's ticks, Exorcism, Holy Wrath, Hammer of Wrath, Light's Vigil, the Seal
+// of Command proc and both judgements (and the heals). The Seal of Righteousness procs
+// (25713-25742) are not on it. It goes on those spells only, so the consumables' and
+// racials' spells (Dragonbreath Chili, Shadow Oil, the Sapper) get none.
 func (paladin *Paladin) holyPowerCrit() float64 {
 	return float64(paladin.Talents.HolyPower) * core.CritRatingPerCritChance
 }
@@ -298,6 +302,16 @@ func (paladin *Paladin) applyVengeance() {
 
 // Vindication gives the paladin 1% per point of attack power for 30 sec on a melee hit
 // (and takes attack power from the target, which the sim does not score).
+//
+// Under Forever it procs 5 times a minute on the main hand's speed, measured on swings at 1.6
+// and 3.6 speed under Seal of Righteousness and Seal of the Crusader (wowsims/forever
+// 54edb1d2e2; the client's ProcChance reads 100). Seal of the Crusader's faster swings each
+// carry 1/1.4 of the chance, so the procs a minute hold. The talent hears white hits and melee
+// abilities (client 9452, proc flags 0x14) that land, but not the Seal of Righteousness proc,
+// a proc the talent can't proc from. The target's debuff rolls spell hit of its own there, which
+// does nothing here since the sim doesn't score it.
+const vindicationPPM = 5.0
+
 func (paladin *Paladin) applyVindication() {
 	if paladin.Talents.Vindication == 0 {
 		return
@@ -322,31 +336,56 @@ func (paladin *Paladin) applyVindication() {
 			aura.Activate(sim)
 		},
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			// TODO: Replace with actual proc mask / proc chance
-			if result.Landed() && spell.ProcMask.Matches(core.ProcMaskMelee) {
-				vindicationAura.Activate(sim)
+			if !result.Landed() || !spell.ProcMask.Matches(core.ProcMaskMelee) {
+				return
 			}
+			if sim.IsForever() {
+				if spell.SpellCode == SpellCode_PaladinSealOfRighteousnessProc {
+					return
+				}
+				chance := vindicationPPM / 60 * paladin.MainHand().SwingSpeed
+				if paladin.sealOfTheCrusaderActive() {
+					chance /= sealOfTheCrusaderSpeed
+				}
+				if !sim.Proc(chance, "Vindication") {
+					return
+				}
+			}
+			vindicationAura.Activate(sim)
 		},
 	})
 }
 
-// Consecrated Ground: Holy spells deal 5% per point more to the first four enemies
-// inside the paladin's Consecration. The sim's targets all stand in it, so the bonus is
-// a paladin buff that Consecration puts up for its 8 sec.
+// Consecrated Ground: Holy spells deal 5% per point more to the first four enemies inside
+// the paladin's Consecration. It is a Holy damage from caster modifier on Consecration's mark
+// (client 1280353, aura 271 with the Holy school), which goes on those four, so a fifth enemy
+// gets no bonus (wowsims/forever 7b094b56f0).
 func (paladin *Paladin) applyConsecratedGround() {
 	if paladin.Talents.ConsecratedGround == 0 {
 		return
 	}
 	multiplier := 1 + 0.05*float64(paladin.Talents.ConsecratedGround)
-	paladin.consecratedGroundAura = paladin.RegisterAura(core.Aura{
-		Label:    "Consecrated Ground",
-		ActionID: core.ActionID{SpellID: 1310905},
-		Duration: time.Second * 8,
-		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			paladin.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] *= multiplier
-		},
-		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			paladin.PseudoStats.SchoolDamageDealtMultiplier[stats.SchoolIndexHoly] /= multiplier
-		},
+
+	// The attack tables are made after the talents, and the marks with Consecration.
+	paladin.Env.RegisterPostFinalizeEffect(func() {
+		for _, target := range paladin.Env.Encounter.TargetUnits {
+			mark := paladin.consecrationMarks.Get(target)
+			for _, at := range paladin.AttackTables[target.UnitIndex] {
+				if at == nil {
+					continue
+				}
+				previous := at.DamageDoneByCasterMultiplier
+				at.DamageDoneByCasterMultiplier = func(spell *core.Spell, at *core.AttackTable) float64 {
+					m := 1.0
+					if previous != nil {
+						m = previous(spell, at)
+					}
+					if mark.IsActive() && spell.SpellSchool.Matches(core.SpellSchoolHoly) {
+						m *= multiplier
+					}
+					return m
+				}
+			}
+		}
 	})
 }

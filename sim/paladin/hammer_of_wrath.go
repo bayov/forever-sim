@@ -67,8 +67,8 @@ func (paladin *Paladin) registerHammerOfWrath() {
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1,
 			BonusCoefficient: 0.429,
-			BonusHitRating:   -float64(paladin.Talents.Precision) * core.MeleeHitRatingPerHitChance,
-			BonusCritRating:  paladin.holyPowerCrit(),
+			BonusHitRating:   paladin.hammerOfWrathHitRating(),
+			BonusCritRating:  paladin.hammerOfWrathCritRating(),
 
 			ExtraCastCondition: func(sim *core.Simulation, target *core.Unit) bool {
 				return sim.IsExecutePhase20()
@@ -81,4 +81,23 @@ func (paladin *Paladin) registerHammerOfWrath() {
 			},
 		})
 	}
+}
+
+// Classic's Precision is melee hit only, so the sim takes it back off this ranged attack. Forever's
+// (client 20189) is an unscoped A_MOD_HIT_CHANCE, so Hammer of Wrath keeps it.
+func (paladin *Paladin) hammerOfWrathHitRating() float64 {
+	if paladin.Env.IsForever() {
+		return 0
+	}
+	return -float64(paladin.Talents.Precision) * core.MeleeHitRatingPerHitChance
+}
+
+// Forever's Conviction (client 20117) is A_MOD_WEAPON_CRIT_PERCENT on melee weapons, so it reaches
+// the attacks made with the weapon and not Hammer of Wrath, which the sim's melee crit stat would
+// give it (wowsims/forever conviction_test.go: Conviction 5/5, Hammer of Wrath 0%).
+func (paladin *Paladin) hammerOfWrathCritRating() float64 {
+	if paladin.Env.IsForever() {
+		return paladin.holyPowerCrit() - float64(paladin.Talents.Conviction)*core.CritRatingPerCritChance
+	}
+	return paladin.holyPowerCrit()
 }

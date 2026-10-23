@@ -55,7 +55,9 @@ func (paladin *Paladin) registerHolyShield() {
 
 			DamageMultiplier: 1,
 			ThreatMultiplier: 1.2,
-			BonusCoefficient: 0.05,
+			// Forever's rows give the damage 8% of spell power (client 20925, 20927 and 20928,
+			// effect 1; Classic's 5%).
+			BonusCoefficient: core.TernaryFloat64(paladin.Env.IsForever(), 0.08, 0.05),
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				// Spell damage from Holy Shield can crit, but does not miss.

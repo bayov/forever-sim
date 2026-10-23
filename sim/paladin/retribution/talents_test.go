@@ -41,19 +41,128 @@ func TestHolyPowerOnItsSpellsOnly(t *testing.T) {
 	}
 }
 
-// TestConsecratedGroundOnConsecration checks that Consecrated Ground (client 1310905, 5% a
-// point to Holy spells against targets in the Consecration) reaches Consecration's own ticks:
-// at 2 points the ticks snapshot 10% more than without the talent.
-func TestConsecratedGroundOnConsecration(t *testing.T) {
-	snapshot := func(talents string) float64 {
-		sim, ret := retSim(t, talents, arcaniteReaper)
+// TestConsecrationFirstFourTargets checks Consecration rank 5 under Forever against five
+// targets: the first four take the extra damage, its 4.2% of spell power and Consecrated
+// Ground's 10% (2 points, on the mark of client 1280353), and the fifth takes the flat 12 a tick
+// alone (wowsims/forever consecration.go).
+func TestConsecrationFirstFourTargets(t *testing.T) {
+	tick := func(spellPower float64) (first, fifth float64, firstMult, fifthMult float64) {
+		sim, ret := retSimTargets(t, "55003003201121251--05225230001", arcaniteReaper, 5)
+		ret.AddStatDynamic(sim, stats.SpellPower, spellPower)
+		consecration := ret.GetSpell(core.ActionID{SpellID: 20924})
+		consecration.BonusHitRating = 10000
+		consecration.BonusCritRating = -10000
 		castByID(sim, ret, 20924)
-		return ret.GetSpell(core.ActionID{SpellID: 20924}).AOEDot().SnapshotAttackerMultiplier
+		targets := sim.Encounter.ActiveTargetUnits
+		for i, target := range targets {
+			mark := target.GetAura("Consecration Mark" + ret.Label)
+			if got, want := mark != nil && mark.IsActive(), i < 4; got != want {
+				t.Fatalf("target %d marked = %v, want %v", i+1, got, want)
+			}
+		}
+		consecration.AOEDot().TickOnce(sim)
+		first = consecration.SpellMetrics[targets[0].UnitIndex].TotalDamage
+		fifth = consecration.SpellMetrics[targets[4].UnitIndex].TotalDamage
+		firstMult = consecration.TargetDamageMultiplier(ret.AttackTables[targets[0].UnitIndex][consecration.CastType], true)
+		fifthMult = consecration.TargetDamageMultiplier(ret.AttackTables[targets[4].UnitIndex][consecration.CastType], true)
+		return
 	}
-	with := snapshot("55003003201121251--05225230001")
-	without := snapshot("55003003201121051--05225230001")
-	if ratio := with / without; ratio < 1.0999 || ratio > 1.1001 {
-		t.Errorf("Consecration tick multiplier with Consecrated Ground 2 / without = %.4f, want 1.1000", ratio)
+	lowFirst, lowFifth, firstMult, fifthMult := tick(0)
+	highFirst, highFifth, _, _ := tick(1000)
+	if ratio := firstMult / fifthMult; ratio < 1.0999 || ratio > 1.1001 {
+		t.Errorf("Consecrated Ground on the first target / the fifth = %.4f, want 1.1000", ratio)
+	}
+	if lowFifth < 11.5 || lowFifth > 12.5 {
+		t.Errorf("the fifth target's tick = %.2f, want 12", lowFifth)
+	}
+	if highFifth != lowFifth {
+		t.Errorf("1000 spell power moved the fifth target's tick from %.2f to %.2f", lowFifth, highFifth)
+	}
+	// The ticks deal whole points of damage.
+	if got, want := highFirst-lowFirst, 1000*0.042*1.1; got < want-1 || got > want+1 {
+		t.Errorf("1000 spell power adds %.2f to the first target's tick, want %.2f", got, want)
+	}
+	if got, want := lowFirst, (12+27)*1.1; got < want-1 || got > want+1 {
+		t.Errorf("the first target's tick = %.2f, want %.2f", got, want)
+	}
+}
+
+// TestHolyPowerOnConsecration checks that Holy Power's list (client 5923) takes in Consecration
+// and leaves out the Seal of Righteousness proc.
+func TestHolyPowerOnConsecration(t *testing.T) {
+	_, ret := retSim(t, "55003003201121251--05225230001", arcaniteReaper)
+	for _, c := range []struct {
+		name    string
+		spellID int32
+		want    float64
+	}{
+		{"Consecration", 20924, 5},
+		{"Seal of Righteousness proc", 25713, 0},
+	} {
+		if got := ret.GetSpell(core.ActionID{SpellID: c.spellID}).BonusCritRating; got != c.want {
+			t.Errorf("%s bonus crit = %.1f, want %.1f", c.name, got, c.want)
+		}
+	}
+}
+
+// TestJudgementOfRighteousnessMelee checks that Forever's Judgement of Righteousness (client
+// 20286, DefenseType 2) is a melee attack: it crits for double and Two-Handed Weapon
+// Specialization (3/3: 6%) reaches it.
+func TestJudgementOfRighteousnessMelee(t *testing.T) {
+	_, with := retSim(t, "--00000000000300", arcaniteReaper)
+	_, without := retSim(t, "", arcaniteReaper)
+	jor := with.GetSpell(core.ActionID{SpellID: 20286})
+	if jor.DefenseType != core.DefenseTypeMelee || jor.ProcMask != core.ProcMaskMeleeMHSpecial {
+		t.Fatalf("Judgement of Righteousness defense %v, proc mask %v, want melee and main hand special", jor.DefenseType, jor.ProcMask)
+	}
+	if got := jor.CritMultiplier(with.AttackTables[with.CurrentTarget.UnitIndex][jor.CastType]); got != 2 {
+		t.Errorf("Judgement of Righteousness crit multiplier = %.2f, want 2", got)
+	}
+	ratio := jor.DamageMultiplier / without.GetSpell(core.ActionID{SpellID: 20286}).DamageMultiplier
+	if ratio < 1.0599 || ratio > 1.0601 {
+		t.Errorf("Two-Handed Weapon Specialization 3/3 on Judgement of Righteousness = %.4f, want 1.06", ratio)
+	}
+}
+
+// TestSanctifiedJudgementRefund checks Sanctified Judgement 3/3 under Forever against
+// wowsims/forever's measurement (04b40b17b8): the refund is 60% of the seal's base cost with the
+// percent cost cut added on top, so Seal of Righteousness rank 8 (200 mana) returns
+// 200 x 1.1 x 0.6 = 132 with Benediction 5/5, and 200 x 1.28 x 0.6 = 153.6 with Twist of Light's
+// 20% multiplied in.
+func TestSanctifiedJudgementRefund(t *testing.T) {
+	for _, c := range []struct {
+		name    string
+		talents string
+		want    float64
+	}{
+		{"Benediction", "--0500003", 132},
+		{"Benediction and Twist of Light", "--05000030000000001", 153.6},
+	} {
+		t.Run(c.name, func(t *testing.T) {
+			sim, ret := retSim(t, c.talents, arcaniteReaper)
+			castByID(sim, ret, 20293)
+			ret.SpendMana(sim, 0.5*ret.MaxMana(), ret.NewManaMetrics(core.ActionID{OtherID: 1}))
+			before := ret.CurrentMana()
+			castByID(sim, ret, 20271)
+			if got := ret.CurrentMana() - before; got < c.want-0.01 || got > c.want+0.01 {
+				t.Errorf("Judgement refunded %.2f mana, want %.2f", got, c.want)
+			}
+		})
+	}
+}
+
+// TestHammerOfWrathHitAndCrit checks Precision and Conviction on Hammer of Wrath under Forever:
+// Precision (client 20189, aura 54) is unscoped hit, so the ranged Hammer keeps it, and
+// Conviction (20117, weapon crit) only reaches the melee weapon's attacks (wowsims/forever
+// conviction_test.go).
+func TestHammerOfWrathHitAndCrit(t *testing.T) {
+	_, ret := retSim(t, "-003-00005", arcaniteReaper)
+	hammer := ret.GetSpell(core.ActionID{SpellID: 24239})
+	if hammer.BonusHitRating != 0 {
+		t.Errorf("Hammer of Wrath bonus hit = %.1f, want 0 (Precision kept)", hammer.BonusHitRating)
+	}
+	if got, want := hammer.BonusCritRating, -5.0; got != want {
+		t.Errorf("Hammer of Wrath bonus crit = %.1f, want %.1f (Conviction 5/5 taken back off)", got, want)
 	}
 }
 
@@ -99,18 +208,20 @@ func TestJudgementOfTheCrusaderRank(t *testing.T) {
 }
 
 // TestSealOfRighteousnessSpellPowerOnce checks that a Seal of Righteousness proc under Forever
-// takes the tooltip's spell power once (client 70425, description variables 1023; Blizzard's
-// 15 October beta notes fixed it gaining "almost twice as much benefit from Spell Damage"):
-// 12% with a two-hander and 7.65% with a one-hander, and 2000 more spell power adds as much to
-// a proc as to the spell power part alone.
+// takes spell power once (Blizzard's 15 October beta notes fixed it gaining "almost twice as
+// much benefit from Spell Damage"): 12% with a two-hander and 10% with a one-hander, as
+// wowsims/forever measured (49f94c9326), and 2000 more spell power adds as much to a proc as to
+// the spell power part alone. The one-hander's weapon factor is 0.85 less 0.02 a tenth of a
+// second under 2.0 speed, so 0.83 for Thunderfury's 1.9.
 func TestSealOfRighteousnessSpellPowerOnce(t *testing.T) {
 	cases := []struct {
 		name   string
 		weapon int32
 		coeff  float64
+		hand   float64
 	}{
-		{"two-hander", arcaniteReaper, 0.12},
-		{"one-hander", thunderfury, 0.0765},
+		{"two-hander", arcaniteReaper, 0.12, 1.2},
+		{"one-hander", thunderfury, 0.1, 0.83},
 	}
 	for _, c := range cases {
 		t.Run(c.name, func(t *testing.T) {
@@ -142,6 +253,11 @@ func TestSealOfRighteousnessSpellPowerOnce(t *testing.T) {
 			// The procs deal whole points of damage, so allow 1 either way.
 			if got, want := highHit-lowHit, highPart-lowPart; got < want-1 || got > want+1 {
 				t.Errorf("2000 spell power adds %.2f to a proc, want %.2f (counted once)", got, want)
+			}
+			// Rank 8 at level 60 is 18.8 per hundred of swing speed, times the hand's factor.
+			speed := ret.MainHand().SwingSpeed
+			if got, want := lowHit-lowPart, 18.8*speed*c.hand; got < want-1 || got > want+1 {
+				t.Errorf("the proc's weapon part = %.2f, want %.2f (%.2f at %.1f speed)", got, want, c.hand, speed)
 			}
 		})
 	}

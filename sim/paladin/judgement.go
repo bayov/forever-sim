@@ -43,7 +43,7 @@ func (paladin *Paladin) registerJudgement() {
 				paladin.swiftJudgementAura.Deactivate(sim)
 			}
 			if refundChance > 0 && sim.Proc(refundChance, "Sanctified Judgement") {
-				paladin.AddMana(sim, refundPortion*paladin.currentSealSpell.DefaultCast.Cost, refundMetrics)
+				paladin.AddMana(sim, refundPortion*paladin.sanctifiedJudgementBase(sim), refundMetrics)
 			}
 		},
 	})
@@ -58,4 +58,21 @@ func (paladin *Paladin) castSpecificJudgement(sim *core.Simulation, target *core
 	if !sim.IsForever() {
 		matchingSeal.Deactivate(sim)
 	}
+}
+
+// The seal cost Sanctified Judgement refunds a share of. Under Forever it is the seal's base
+// cost with its percent cost cut added on top instead of taken off: Benediction 5/5 makes a
+// 90 mana seal cost 81 and Sanctified Judgement 3/3 return 60% of 99, 59.4, measured in game
+// at Benediction 0, 1, 3 and 5 (wowsims/forever 04b40b17b8). With Twist of Light's cut the two
+// cuts are multiplied before the flip (0.72 at Benediction 5 gives 128%), as wowsims/forever
+// has it; no log has checked that. Classic refunds a share of the discounted cost.
+func (paladin *Paladin) sanctifiedJudgementBase(sim *core.Simulation) float64 {
+	seal := paladin.currentSealSpell
+	if !sim.IsForever() {
+		return seal.DefaultCast.Cost
+	}
+	cost := seal.Cost
+	baseCost := max(0, cost.BaseCost+float64(cost.FlatModifier))
+	percent := float64(paladin.GetSchoolCostModifier(seal)) / 100 * float64(cost.Multiplier) / 100 * cost.Factor
+	return baseCost * (2 - percent)
 }

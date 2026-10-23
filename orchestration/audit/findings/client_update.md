@@ -11,6 +11,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - evidence: foreverchanges.pro/patch-notes "Hotfix-2026-10-16" (third party, tier: unconfirmed): "Champion of the Light gives spell damage equal to 20/40/60% of your Intellect again, as before October 15 (10/20/30%)". Not in Blizzard's notes. Client 70532 (identical to 70450) can't confirm: the ranks come from trait curve 110350, and the Curve tables aren't downloaded. Sim: `sim/paladin/talents.go:49` uses `{0, .1, .2, .3}` (PAL-70425-05). Ledger row PAL-U-HF1.
 - proposed fix: verify in game (the character sheet's spell power with 3/3 vs 0/3) or with the client's Curve/CurvePoint rows for curve 110350 in a hotfixed export. If confirmed, change the multipliers to `.2,.4,.6` (Forever-gated) and rerun the paladin presets.
 - needs: user ruling (in-game check) then orchestrator fix
+- resolved 2026-10-23: confirmed in wago.tools' hotfix table. Push 112842 (2026-10-20 09:51 on 70450) sets CurvePoint 331369-331371 of curve 110350 to 20 / 40 / 60, and curve 110350 is Champion of the Light's (TraitDefinition 142634 for spell 1311084, TraitDefinitionEffectPoints 24621). No later push touches it. Applied (Forever's curve only, `sim/paladin/talents.go`): +34 to +39 at 180 sec on the twist, sub Holy and undead presets; Shock doesn't take the talent.
 
 ### client_update-20261021-2: Oct 20 mage Frost hotfix (Piercing Ice removed, Elemental Precision 3x2%), not in the client
 - severity: low (needs verify; if real it moves Frost DPS by several percent, since Piercing Ice is +6% Frost damage at 3/3)

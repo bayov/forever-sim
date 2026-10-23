@@ -1,12 +1,20 @@
 package paladin
 
 import (
+	"slices"
 	"strconv"
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/stats"
 )
+
+// Seal of the Crusader swings the weapon 1.4 times as fast for 1/1.4 of the damage a swing.
+const sealOfTheCrusaderSpeed = 1.4
+
+func (paladin *Paladin) sealOfTheCrusaderActive() bool {
+	return paladin.currentSeal != nil && paladin.currentSeal.IsActive() && slices.Contains(paladin.aurasSotC, paladin.currentSeal)
+}
 
 func (paladin *Paladin) registerSealOfTheCrusader() {
 	type judge struct {
@@ -82,13 +90,13 @@ func (paladin *Paladin) registerSealOfTheCrusader() {
 			ActionID: core.ActionID{SpellID: rank.spellID},
 			Duration: time.Second * 30,
 			OnGain: func(_ *core.Aura, sim *core.Simulation) {
-				paladin.MultiplyMeleeSpeed(sim, 1.4)
-				paladin.AutoAttacks.MHAuto().DamageMultiplier /= 1.4
+				paladin.MultiplyMeleeSpeed(sim, sealOfTheCrusaderSpeed)
+				paladin.AutoAttacks.MHAuto().DamageMultiplier /= sealOfTheCrusaderSpeed
 				paladin.AddStatDynamic(sim, stats.AttackPower, ap+libramAp)
 			},
 			OnExpire: func(_ *core.Aura, sim *core.Simulation) {
-				paladin.MultiplyMeleeSpeed(sim, 1/1.4)
-				paladin.AutoAttacks.MHAuto().DamageMultiplier *= 1.4
+				paladin.MultiplyMeleeSpeed(sim, 1/sealOfTheCrusaderSpeed)
+				paladin.AutoAttacks.MHAuto().DamageMultiplier *= sealOfTheCrusaderSpeed
 				paladin.AddStatDynamic(sim, stats.AttackPower, -(ap + libramAp))
 			},
 		})

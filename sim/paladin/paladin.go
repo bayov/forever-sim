@@ -28,6 +28,7 @@ const (
 	SpellCode_PaladinLayOnHands
 	SpellCode_PaladinHammerOfWrath
 	SpellCode_PaladinHolyStrike
+	SpellCode_PaladinSealOfRighteousnessProc
 )
 
 type SealJudgeCode uint8
@@ -75,8 +76,9 @@ type Paladin struct {
 	sealOfRighteousness *core.Spell
 	sealOfCommand       *core.Spell
 
-	// Consecrated Ground's Holy damage buff, up while Consecration ticks.
-	consecratedGroundAura *core.Aura
+	// Consecration's mark on the first four enemies in it, which takes its extra damage and
+	// Consecrated Ground's bonus.
+	consecrationMarks core.AuraArray
 
 	// Light's Vigil's hook on Holy Shock, see lights_vigil.go. Nil without the talent.
 	lightsVigil func(sim *core.Simulation, target *core.Unit, holyShock *core.Spell, landed bool)
