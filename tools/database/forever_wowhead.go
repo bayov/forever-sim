@@ -405,6 +405,11 @@ func (wi ForeverWowheadItem) ToProto() (*proto.UIItem, int) {
 		item.WeaponDamageMax = wi.num("dmgmax1")
 		item.WeaponSpeed = wi.num("speed")
 	}
+	// A wand's school, for the wands neither ItemSparse has (AttachWandSchools). Wowhead's
+	// dmgtype1 matches ItemSparse's DamageType on every wand both have.
+	if item.RangedWeaponType == proto.RangedWeaponType_RangedWeaponTypeWand {
+		item.SpellSchool = DamageTypeSchool(int(wi.num("dmgtype1")))
+	}
 	// Only a profession the item needs to be worn counts, like "Requires Engineering (215)"
 	// on Spellpower Goggles Xtreme (its reqskill). Crafting a bind on pickup item does not
 	// count. A player can level the profession, craft the item and then drop the

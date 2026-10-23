@@ -1171,6 +1171,8 @@ message SimItem {
 
 	double hit_rating = 20;
 	double crit_rating = 21;
+
+	SpellSchool spell_school = 22; // A wand's damage school; physical (unset) for every other item.
 }
 
 // Extra enum for describing which items are eligible for an enchant, when

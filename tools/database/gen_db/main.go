@@ -193,6 +193,7 @@ func main() {
 	ApplyGlobalFilters(db)
 	AttachFactionInformation(db, wagoItems)
 	AttachItemSetIDs(db, wagoItems)
+	AttachWandSchools(db, wagoItems)
 	database.MarkHiddenStats(db, fmt.Sprintf("%s/hidden_items.json", dbDir))
 
 	leftovers := db.Clone()
@@ -400,6 +401,21 @@ func AttachItemSetIDs(db *database.WowDatabase, wagoItems map[int32]database.Wag
 	for _, item := range db.Items {
 		if wagoItem, ok := wagoItems[item.Id]; ok {
 			item.SetId = wagoItem.ItemSetID
+		}
+	}
+}
+
+// AttachWandSchools gives each wand its damage school from ItemSparse's DamageType: the
+// Forever client's where it has the item, Classic 1.15.3's otherwise (they agree on every wand
+// both have). A wand neither has keeps Wowhead's (forever_wowhead.go), and a synthetic one its
+// own. Other weapons stay physical: the sim only reads the school of a wand's shots.
+func AttachWandSchools(db *database.WowDatabase, wagoItems map[int32]database.WagoDbItem) {
+	for _, item := range db.Items {
+		if item.RangedWeaponType != proto.RangedWeaponType_RangedWeaponTypeWand {
+			continue
+		}
+		if wagoItem, ok := wagoItems[item.Id]; ok && wagoItem.HasDamageType {
+			item.SpellSchool = database.DamageTypeSchool(wagoItem.DamageType)
 		}
 	}
 }

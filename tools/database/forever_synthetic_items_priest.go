@@ -207,7 +207,8 @@ var foreverSyntheticPriestItems = []*proto.UIItem{
 		Type: proto.ItemType_ItemTypeRanged, RangedWeaponType: proto.RangedWeaponType_RangedWeaponTypeWand,
 		Stats:     stats.Stats{stats.Stamina: 3, stats.Intellect: 4, stats.Spirit: 3, stats.SpellPower: 6}.ToFloatArray(),
 		HitRating: 3, CritRating: 3,
-		// Bonecreeper Stylus damage and speed.
+		// Bonecreeper Stylus damage, speed and school.
+		SpellSchool:     proto.SpellSchool_SpellSchoolArcane,
 		WeaponDamageMin: 83, WeaponDamageMax: 155, WeaponSpeed: 1.9,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassPriest},
@@ -316,7 +317,8 @@ var foreverSyntheticPriestItems = []*proto.UIItem{
 		Type: proto.ItemType_ItemTypeRanged, RangedWeaponType: proto.RangedWeaponType_RangedWeaponTypeWand,
 		Stats:      stats.Stats{stats.Stamina: 3, stats.Intellect: 4, stats.Spirit: 2, stats.SpellPower: 11}.ToFloatArray(),
 		CritRating: 3,
-		// Bonecreeper Stylus damage and speed.
+		// Bonecreeper Stylus damage, speed and school.
+		SpellSchool:     proto.SpellSchool_SpellSchoolArcane,
 		WeaponDamageMin: 83, WeaponDamageMax: 155, WeaponSpeed: 1.9,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassPriest},

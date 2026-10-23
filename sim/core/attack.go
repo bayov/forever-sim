@@ -52,13 +52,19 @@ func newWeaponFromItem(item *Item, bonusDps float64) Weapon {
 		normalizedWeaponSpeed = 2.8
 	}
 
-	return Weapon{
+	weapon := Weapon{
 		BaseDamageMin:        item.WeaponDamageMin + bonusDps*item.SwingSpeed,
 		BaseDamageMax:        item.WeaponDamageMax + bonusDps*item.SwingSpeed,
 		SwingSpeed:           item.SwingSpeed,
 		NormalizedSwingSpeed: normalizedWeaponSpeed,
 		AttackPowerPerDPS:    DefaultAttackPowerPerDPS,
 	}
+	// A wand deals its own school's damage. Every other weapon leaves it unset, which reads
+	// as physical.
+	if item.SpellSchool != proto.SpellSchool_SpellSchoolPhysical {
+		weapon.SpellSchool = SpellSchoolFromProto(item.SpellSchool)
+	}
+	return weapon
 }
 
 // Returns weapon stats using the main hand equipped weapon.

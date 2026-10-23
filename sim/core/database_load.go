@@ -35,6 +35,7 @@ func init() {
 			WeaponDamageMin:     item.WeaponDamageMin,
 			WeaponDamageMax:     item.WeaponDamageMax,
 			WeaponSpeed:         item.WeaponSpeed,
+			SpellSchool:         item.SpellSchool,
 			SetName:             item.SetName,
 			SetId:               item.SetId,
 			WeaponSkills:        item.WeaponSkills,

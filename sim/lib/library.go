@@ -116,6 +116,7 @@ func getDatabase(itemIds *int32, numItems int32, enchantIds *int32, numEnchants 
 			WeaponDamageMin:  item.WeaponDamageMin,
 			WeaponDamageMax:  item.WeaponDamageMax,
 			WeaponSpeed:      item.SwingSpeed,
+			SpellSchool:      item.SpellSchool,
 			SetName:          item.SetName,
 			SetId:            item.SetID,
 			HitRating:        item.HitRating,

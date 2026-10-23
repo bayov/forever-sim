@@ -246,7 +246,8 @@ var warlockSyntheticItems = []*proto.UIItem{
 		Id: 997015, Name: "Warlock Synthetic Wand (Phase 1)", Icon: "inv_wand_09",
 		Type: proto.ItemType_ItemTypeRanged, RangedWeaponType: proto.RangedWeaponType_RangedWeaponTypeWand,
 		Stats: stats.Stats{stats.Stamina: 5, stats.Intellect: 6, stats.SpellPower: 12}.ToFloatArray(),
-		// Crimson Shocker damage and speed.
+		// Crimson Shocker damage, speed and school.
+		SpellSchool:     proto.SpellSchool_SpellSchoolFire,
 		WeaponDamageMin: 102, WeaponDamageMax: 191, WeaponSpeed: 2,
 		Ilvl: 71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarlock},

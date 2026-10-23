@@ -115,6 +115,10 @@ message UIItem {
 	}
 
 	HiddenStats hidden_stats = 35;
+
+	// A wand's damage school, from ItemSparse's DamageType. Physical (unset) for every
+	// other item.
+	SpellSchool spell_school = 36;
 }
 
 enum Expansion {
