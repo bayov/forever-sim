@@ -148,8 +148,8 @@ dps_results: {
 dps_results: {
  key: "TestP1Balance-Phase1-AllItems-FeralheartRaiment"
  value: {
-  dps: 782.473
-  tps: 799.71665
+  dps: 785.85483
+  tps: 801.5258
  }
 }
 dps_results: {
@@ -171,6 +171,13 @@ dps_results: {
  value: {
   dps: 885.30317
   tps: 901.11677
+ }
+}
+dps_results: {
+ key: "TestP1Balance-Phase1-AllItems-Haruspex'sGarb"
+ value: {
+  dps: 871.90667
+  tps: 887.64863
  }
 }
 dps_results: {

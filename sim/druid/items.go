@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
+	"github.com/wowsims/classic/sim/core/stats"
 )
 
 // Item IDs
@@ -17,6 +18,10 @@ const (
 	// Forever's Phase 1 idols (1.60.1.70338 client).
 	HowlingIdol  = 272427
 	SwarmingIdol = 272430
+
+	IdolOfTheDream = 220606
+	TalonsOfWrath  = 249441
+	MysticMushroom = 249396
 )
 
 func init() {
@@ -62,6 +67,35 @@ func init() {
 	core.NewItemEffect(SwarmingIdol, func(agent core.Agent) {
 		druid := agent.(DruidAgent).GetDruid()
 		druid.InsectSwarmBonusDuration += time.Second * 2
+	})
+
+	// Idol of the Dream, Forever. Equip: Increases the duration of your Rip by 2 sec (spell 446212,
+	// a flat duration modifier of +2000 ms on Rip's class mask), a seventh tick of the same damage.
+	core.NewItemEffect(IdolOfTheDream, func(agent core.Agent) {
+		druid := agent.(DruidAgent).GetDruid()
+		druid.RipBonusTicks += 1
+	})
+
+	// Talons of Wrath, Forever. A Wrath cast has a 50% chance to return 35 mana (1248996, ProcFlags
+	// 0x10000, a harmful spell cast, which triggers 1302521, a 35 mana energize). The proc row names
+	// no spell; the tooltip names Wrath.
+	core.NewItemEffect(TalonsOfWrath, func(agent core.Agent) {
+		druid := agent.(DruidAgent).GetDruid()
+		manaMetrics := druid.NewManaMetrics(core.ActionID{SpellID: 1302521})
+		core.MakePermanent(druid.RegisterAura(core.Aura{
+			Label: "Talons of Wrath",
+			OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
+				if spell.SpellCode == SpellCode_DruidWrath && sim.Proc(0.5, "Talons of Wrath") {
+					druid.AddMana(sim, 35, manaMetrics)
+				}
+			},
+		}))
+	})
+
+	// Mystic Mushroom, Forever. Equip: Increases your Spirit by 5% (spell 1248751).
+	core.NewItemEffect(MysticMushroom, func(agent core.Agent) {
+		character := agent.GetCharacter()
+		character.MultiplyStat(stats.Spirit, 1.05)
 	})
 
 	// https://www.wowhead.com/classic/item=23198/idol-of-brutality

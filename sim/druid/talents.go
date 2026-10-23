@@ -307,14 +307,16 @@ func (druid *Druid) applySavageFury() {
 }
 
 // Natural Instinct: 10% a point more crit damage bonus on the melee abilities (its healing
-// part does nothing here).
+// part does nothing here). The modifier's class mask (1223242, word 0 0x839800) takes in Rip
+// through the bit it shares with Ferocious Bite (0x800000), so Rip's ticks, which crit under
+// Forever, get it too.
 func (druid *Druid) applyNaturalInstinct() {
 	points := float64(druid.Talents.NaturalInstinct)
 	if points == 0 {
 		return
 	}
 	druid.onInit("Natural Instinct", func() {
-		for _, spell := range []*DruidSpell{druid.Claw, druid.Rake, druid.Shred, druid.FerociousBite} {
+		for _, spell := range []*DruidSpell{druid.Claw, druid.Rake, druid.Shred, druid.FerociousBite, druid.Rip} {
 			if spell != nil {
 				spell.CritDamageBonus += 0.1 * points
 			}
@@ -447,10 +449,11 @@ func (druid *Druid) applyOmenOfClarity() {
 	})
 
 	ppmm := druid.AutoAttacks.NewPPMManager(2.0, core.ProcMaskMelee)
-	icd := core.Cooldown{
+	druid.omenICD = core.Cooldown{
 		Timer:    druid.NewTimer(),
 		Duration: time.Second * 10,
 	}
+	icd := &druid.omenICD
 	inMoonkin := func() bool { return druid.MoonkinFormAura != nil && druid.MoonkinFormAura.IsActive() }
 
 	druid.RegisterAura(core.Aura{
@@ -485,6 +488,20 @@ func (druid *Druid) applyOmenOfClarity() {
 				druid.ClearcastingAura.Activate(sim)
 			}
 		},
+	})
+}
+
+// PrepullClearcasting has the druid fish for Clearcasting out of combat (wowsims/forever
+// b324dba843): any druid spell rolls Omen of Clarity, so the fight opens with Clearcasting up
+// and Omen's cooldown started. The shift back to Cat Form takes a global cooldown before the
+// pull, so the proc lands at -1.5 sec at the latest.
+func (druid *Druid) PrepullClearcasting() {
+	if druid.ClearcastingAura == nil {
+		return
+	}
+	druid.RegisterPrepullAction(-core.GCDDefault, func(sim *core.Simulation) {
+		druid.ClearcastingAura.Activate(sim)
+		druid.omenICD.Use(sim)
 	})
 }
 

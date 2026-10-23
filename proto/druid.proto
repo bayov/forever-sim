@@ -91,6 +91,9 @@ message FeralDruid {
     UnitReference innervate_target = 1;
     int32 latency_ms = 2;
     bool assume_bleed_active = 4;
+    // Fish for Clearcasting out of combat, so the fight opens with it and with Omen of
+    // Clarity's cooldown already running.
+    bool prepull_clearcasting = 5;
   }
   Options options = 3;
 }

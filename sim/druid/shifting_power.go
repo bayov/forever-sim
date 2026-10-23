@@ -25,6 +25,7 @@ func (druid *Druid) registerShiftingPowerSpell() {
 	if druid.hasWolfsheadHelm() {
 		energy += 5
 	}
+	druid.ShiftingPowerEnergy = energy
 
 	druid.ShiftingPower = druid.RegisterSpell(Cat, core.SpellConfig{
 		SpellCode: SpellCode_DruidShiftingPower,

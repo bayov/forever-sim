@@ -44,6 +44,7 @@ func NewFeralDruid(character *core.Character, options *proto.Player) *FeralDruid
 	}
 
 	cat.AssumeBleedActive = feralOptions.Options.AssumeBleedActive
+	cat.prepullClearcasting = feralOptions.Options.PrepullClearcasting
 
 	cat.EnableEnergyBar(100.0)
 	cat.EnableRageBar(core.RageBarOptions{DamageDealtMultiplier: 1, DamageTakenMultiplier: 1})
@@ -62,7 +63,8 @@ func NewFeralDruid(character *core.Character, options *proto.Player) *FeralDruid
 type FeralDruid struct {
 	*druid.Druid
 
-	latency time.Duration
+	latency             time.Duration
+	prepullClearcasting bool
 }
 
 func (cat *FeralDruid) GetDruid() *druid.Druid {
@@ -84,6 +86,9 @@ func (cat *FeralDruid) Initialize() {
 	cat.AutoAttacks.SetMH(cat.GetCatWeapon())
 	cat.RegisterBalanceSpells()
 	cat.RegisterFeralCatSpells()
+	if cat.prepullClearcasting {
+		cat.PrepullClearcasting()
+	}
 }
 
 func (cat *FeralDruid) Reset(sim *core.Simulation) {

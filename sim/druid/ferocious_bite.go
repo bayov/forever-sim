@@ -76,12 +76,12 @@ func (druid *Druid) registerFerociousBiteSpell() {
 }
 
 func (druid *Druid) newFerociousBiteSpellConfig(rank FerociousBiteRankInfo) core.SpellConfig {
-	// Every Forever Ferocious Bite rank carries ATTR_EX_1_DISCOUNT_POWER_ON_MISS (0x8000000,
-	// client rows 22568 to 31018), as Rip does, so a miss gives back 80% of the 35 Energy cost.
-	// The extra Energy goes into the damage, the second effect, which only runs on a hit, so a
-	// miss keeps it. wowsims/forever spends the extra Energy on a miss and refunds nothing
-	// (c742250b22, on a beta report in their PR #149 that a failed Bite leaves no Energy).
-	refund := core.TernaryFloat64(druid.Env.IsForever(), 0.8, 0)
+	// Under Forever a Bite that misses spends its 35 Energy and all the extra Energy and gives
+	// nothing back, and the combo points stay (wowsims/forever c742250b22, on a beta report in
+	// their PR #149 that "a failed Bite leaves zero energy"). The rows carry
+	// ATTR_EX_1_DISCOUNT_POWER_ON_MISS (0x8000000, 22568 to 31018), as Rip's do, but the game
+	// gives no refund for it on Bite.
+	spendExtraOnMiss := druid.Env.IsForever()
 
 	return core.SpellConfig{
 		SpellCode:   SpellCode_DruidFerociousBite,
@@ -92,8 +92,7 @@ func (druid *Druid) newFerociousBiteSpellConfig(rank FerociousBiteRankInfo) core
 		Flags:       SpellFlagOmen | core.SpellFlagMeleeMetrics | core.SpellFlagAPL,
 
 		EnergyCost: core.EnergyCostOptions{
-			Cost:   35,
-			Refund: refund,
+			Cost: 35,
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
@@ -124,11 +123,11 @@ func (druid *Druid) newFerociousBiteSpellConfig(rank FerociousBiteRankInfo) core
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 			spell.DamageMultiplier /= rendAndTear
 
-			if result.Landed() {
+			if result.Landed() || spendExtraOnMiss {
 				druid.SpendEnergy(sim, excessEnergy, spell.EnergyMetrics())
+			}
+			if result.Landed() {
 				druid.SpendComboPoints(sim, spell)
-			} else {
-				spell.IssueRefund(sim)
 			}
 		},
 	}

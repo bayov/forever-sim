@@ -612,7 +612,7 @@ These are below the 0.5% threshold, client-sourced, or have no sensible range.
 - **Lava Burst's Flame Shock 20%: add or multiply with Call of Flame** (1.35 or 1.38; `sim/shaman/lava_burst.go:9`, `:67-69`).
   - This is one of the round's examples, but it is about 0.3%: Lava Burst is about 14% of Elemental's damage, and the difference is 2.2% of that.
   - Season of Discovery's sure crit is not a candidate: Forever's tooltip says 20% more damage.
-- **Rip and Ferocious Bite attack power** (server side; `sim/druid/rip.go:81`, `ferocious_bite.go:112`): no sensible spread. The preset rips at 4 combo points, where 1.12's 24% and WotLK's 1% a point a tick (24% over 6 ticks) agree. Bite is 7% of the damage.
+- **Rip and Ferocious Bite attack power** (server side; `sim/druid/rip.go:53`, `ferocious_bite.go:118`): no sensible spread. Since 2026-10-23 Rip's ticks read attack power live (wowsims/forever's rip.go). The preset rips at 4 combo points, where 1.12's 24% and WotLK's 1% a point a tick (24% over 6 ticks) agree. Bite is 7% of the damage.
 - **Ignite: no cap (Season of Discovery) or a stop after 5 crits (Era).** Five crits inside one 4 sec window is rare at the presets' crit, under 0.5% for Fire and Frostfire.
 - **Premeditation out of Stealth** (Subtlety, −7.7 if it needed Stealth). Client 14183 dropped the stealth-only attribute, and ForeverChanges reads it the same way. Preparation's reset list is Classic's.
 - **Deadly Poison re-snapshot on each application.** It measured +6.3 on an old Mutilate set, but what still feeds it on the final builds is unclear. Likely under 0.5%.

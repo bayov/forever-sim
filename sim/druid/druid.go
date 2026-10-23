@@ -45,6 +45,9 @@ type Druid struct {
 
 	// Item bonuses that make Insect Swarm last longer, the Grovekeeper Eclipse 5 piece.
 	InsectSwarmBonusDuration time.Duration
+	RipBonusTicks            int32
+	// The Energy Shifting Power gives.
+	ShiftingPowerEnergy float64
 
 	RebirthTiming     float64
 	BleedsActive      int
@@ -108,6 +111,9 @@ type Druid struct {
 
 	// The flat damage weapon enchants and stones add to each cat swing (GetCatWeapon).
 	catFlatWeaponDamage float64
+
+	// Omen of Clarity's 10 sec cooldown.
+	omenICD core.Cooldown
 
 	// Furor gives back part of the Energy we left Cat Form with.
 	lastCatEnergy float64

@@ -8,6 +8,7 @@ import (
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/simsignals"
+	"github.com/wowsims/classic/sim/core/stats"
 	"github.com/wowsims/classic/sim/druid"
 )
 
@@ -324,5 +325,73 @@ func TestForeverMoonkinSwingAndHurricane(t *testing.T) {
 	}
 	if metrics.Ticks+metrics.Misses != 10 {
 		t.Errorf("Hurricane rolled %d ticks and %d misses, want 10 rolls", metrics.Ticks, metrics.Misses)
+	}
+}
+
+func newMoonkinSimWearing(t *testing.T, items map[proto.ItemSlot]int32) (*core.Simulation, *BalanceDruid) {
+	specs := make([]*proto.ItemSpec, 17)
+	for i := range specs {
+		specs[i] = &proto.ItemSpec{Id: items[proto.ItemSlot(i)]}
+	}
+	player := &proto.Player{
+		Race:      proto.Race_RaceTauren,
+		Class:     proto.Class_ClassDruid,
+		Level:     60,
+		Equipment: &proto.EquipmentSpec{Items: specs},
+		Rotation:  &proto.APLRotation{},
+		Spec:      &proto.Player_BalanceDruid{BalanceDruid: &proto.BalanceDruid{Options: &proto.BalanceDruid_Options{}}},
+	}
+	sim := core.NewSim(&proto.RaidSimRequest{
+		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+		Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{core.NewDefaultTarget()}},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+	}, simsignals.CreateSignals())
+	sim.Reset()
+	sim.PrePull()
+	return sim, sim.Raid.Parties[0].Players[0].(*BalanceDruid)
+}
+
+// TestBalanceRelicsAndHaruspex checks Mystic Mushroom (249396, spell 1248751: 5% more Spirit),
+// Haruspex's Garb at 5 pieces (24480: Starfire 3% more crit, 21618: 4 mana every 5 sec) and
+// Talons of Wrath (249441, 1248996: a Wrath cast gives back 35 mana half the time).
+func TestBalanceRelicsAndHaruspex(t *testing.T) {
+	_, plain := newMoonkinSimWearing(t, nil)
+	_, mushroom := newMoonkinSimWearing(t, map[proto.ItemSlot]int32{proto.ItemSlot_ItemSlotRanged: druid.MysticMushroom})
+	if got, want := mushroom.GetStat(stats.Spirit), math.Floor(plain.GetStat(stats.Spirit)*1.05); math.Abs(got-want) > 1e-6 {
+		t.Errorf("Mystic Mushroom gives %.2f Spirit, want %.2f", got, want)
+	}
+
+	_, haruspex := newMoonkinSimWearing(t, map[proto.ItemSlot]int32{
+		proto.ItemSlot_ItemSlotNeck:     19613,
+		proto.ItemSlot_ItemSlotChest:    19838,
+		proto.ItemSlot_ItemSlotWaist:    19839,
+		proto.ItemSlot_ItemSlotWrist:    19840,
+		proto.ItemSlot_ItemSlotTrinket1: 19955,
+	})
+	starfire := topRank(haruspex.Starfire)
+	if got, want := starfire.BonusCritRating-topRank(plain.Starfire).BonusCritRating, 3*float64(core.SpellCritRatingPerCritChance); math.Abs(got-want) > 1e-6 {
+		t.Errorf("Haruspex's Garb gives Starfire %.2f crit rating, want %.2f", got, want)
+	}
+
+	sim, talons := newMoonkinSimWearing(t, map[proto.ItemSlot]int32{proto.ItemSlot_ItemSlotRanged: druid.TalonsOfWrath})
+	wrath := topRank(talons.Wrath)
+	metrics := talons.NewManaMetrics(core.ActionID{SpellID: 1})
+	// An instant Wrath with no global cooldown, so the casts can follow one another.
+	wrath.DefaultCast.CastTime = 0
+	casts, procs := 400, 0
+	for i := 0; i < casts; i++ {
+		talons.AddMana(sim, talons.MaxMana(), metrics)
+		talons.SpendMana(sim, 1000, metrics)
+		talons.SetGCDTimer(sim, sim.CurrentTime)
+		before, cost := talons.CurrentMana(), wrath.Cost.GetCurrentCost()
+		if !wrath.Cast(sim, talons.CurrentTarget) {
+			t.Fatalf("Wrath didn't cast at %v", sim.CurrentTime)
+		}
+		if talons.CurrentMana()-(before-cost) >= 30 {
+			procs++
+		}
+	}
+	if got := float64(procs) / float64(casts); math.Abs(got-0.5) > 0.08 {
+		t.Errorf("Talons of Wrath gave back 35 mana on %.0f%% of Wraths, want 50%%", 100*got)
 	}
 }

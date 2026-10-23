@@ -26,6 +26,30 @@ var ItemSetFeralheartRaiment = core.NewItemSet(core.ItemSet{
 			energyMetrics := c.NewEnergyMetrics(actionID)
 			rageMetrics := c.NewRageMetrics(actionID)
 
+			// Under Forever the proc only comes from being struck: 27781's ProcFlags are 0x28, a
+			// melee swing or a melee ability taken, at 2%. Its spell (27798) is a dummy, so the
+			// server picks the resource; the sim gives the one of the power bar in use.
+			if c.Env.IsForever() {
+				core.MakeProcTriggerAura(&c.Unit, core.ProcTrigger{
+					Name:       "Nature's Bounty",
+					Callback:   core.CallbackOnSpellHitTaken,
+					Outcome:    core.OutcomeLanded,
+					ProcMask:   core.ProcMaskMelee,
+					ProcChance: 0.02,
+					Handler: func(sim *core.Simulation, spell *core.Spell, _ *core.SpellResult) {
+						switch {
+						case c.GetCurrentPowerBar() == core.EnergyBar && c.HasEnergyBar():
+							c.AddEnergy(sim, 40, energyMetrics)
+						case c.GetCurrentPowerBar() == core.RageBar && c.HasRageBar():
+							c.AddRage(sim, 10, rageMetrics)
+						case c.HasManaBar():
+							c.AddMana(sim, 300, manaMetrics)
+						}
+					},
+				})
+				return
+			}
+
 			core.MakeProcTriggerAura(&c.Unit, core.ProcTrigger{
 				Name:       "Nature's Bounty (Mana)",
 				Callback:   core.CallbackOnCastComplete,
@@ -89,6 +113,32 @@ var ItemSetCenarionRaiment = core.NewItemSet(core.ItemSet{
 		// (8) Set : Reduces the cooldown of your Tranquility and Hurricane spells by 50%.
 		8: func(agent core.Agent) {
 			// Nothing to do
+		},
+	},
+})
+
+// Haruspex's Garb, the Zul'Gurub druid set (client ItemSet 479: 21618, 24479 and 24480).
+var ItemSetHaruspexsGarb = core.NewItemSet(core.ItemSet{
+	ID:   479,
+	Name: "Haruspex's Garb",
+	Bonuses: map[int32]core.ApplyEffect{
+		// (2) Set : Restores 4 mana per 5 sec.
+		2: func(agent core.Agent) {
+			c := agent.GetCharacter()
+			c.AddStat(stats.MP5, 4)
+		},
+		// (3) Set : Increases the duration of Faerie Fire by 5 sec.
+		3: func(agent core.Agent) {
+			// Nothing to do
+		},
+		// (5) Set : Increases the critical strike chance of Starfire by 3%.
+		5: func(agent core.Agent) {
+			druid := agent.(DruidAgent).GetDruid()
+			druid.OnSpellRegistered(func(spell *core.Spell) {
+				if spell.SpellCode == SpellCode_DruidStarfire {
+					spell.BonusCritRating += 3 * core.SpellCritRatingPerCritChance
+				}
+			})
 		},
 	},
 })

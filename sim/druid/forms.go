@@ -74,6 +74,15 @@ func (druid *Druid) KeepFlatWeaponDamage() {
 	druid.catFlatWeaponDamage = druid.AutoAttacks.MH().BaseDamageMin - classicCatPaw.BaseDamageMin
 }
 
+// humanoidWeapon is what the druid swings out of Cat Form: the equipped weapon with the flat
+// damage of its enchant and stone, which KeepFlatWeaponDamage took off the paw.
+func (druid *Druid) humanoidWeapon() core.Weapon {
+	weapon := druid.WeaponFromMainHand()
+	weapon.BaseDamageMin += druid.catFlatWeaponDamage
+	weapon.BaseDamageMax += druid.catFlatWeaponDamage
+	return weapon
+}
+
 // Func (druid *Druid) GetBearWeapon() core.Weapon {
 // 	return core.Weapon{
 // 		BaseDamageMin:        109,
@@ -191,7 +200,7 @@ func (druid *Druid) registerCatFormSpell() {
 				druid.TigersFuryAura.Deactivate(sim)
 			}
 
-			druid.AutoAttacks.SetMH(druid.WeaponFromMainHand())
+			druid.AutoAttacks.SetMH(druid.humanoidWeapon())
 
 			druid.PseudoStats.ThreatMultiplier /= 0.71
 			druid.AddStatDynamic(sim, stats.Dodge, -2*float64(druid.Talents.FeralSwiftness))

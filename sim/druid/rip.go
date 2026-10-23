@@ -44,6 +44,15 @@ func (druid *Druid) newRipSpellConfig(ripRank RipRankInfo) core.SpellConfig {
 	// 1079 to 9896), so a miss gives back 80% of the cost (wowsims/forever's rip.go reads it).
 	refund := core.TernaryFloat64(druid.Env.IsForever(), 0.8, 0)
 
+	// The combo points the Rip went up with, per target.
+	comboPoints := map[int32]float64{}
+	// AP scaling is 6% per combo point from 1 to 4, and 24% again for 5
+	tickDamage := func(target *core.Unit, spell *core.Spell) float64 {
+		cp := comboPoints[target.UnitIndex]
+		cpScaling := core.TernaryFloat64(cp == 5, 4, cp)
+		return ripRank.dmgTickBase + ripRank.dmgTickPerCombo*cp + 0.01*cpScaling*spell.MeleeAttackPower(target)
+	}
+
 	return core.SpellConfig{
 		SpellCode:   SpellCode_DruidRip,
 		ActionID:    core.ActionID{SpellID: ripRank.id},
@@ -73,18 +82,23 @@ func (druid *Druid) newRipSpellConfig(ripRank RipRankInfo) core.SpellConfig {
 			Aura: core.Aura{
 				Label: "Rip",
 			},
-			NumberOfTicks: RipTicks,
+			NumberOfTicks: RipTicks + druid.RipBonusTicks,
 			TickLength:    time.Second * 2,
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-				cp := float64(druid.ComboPoints())
-				cpScaling := core.TernaryFloat64(cp == 5, 4, cp)
-				baseDamage := ripRank.dmgTickBase + ripRank.dmgTickPerCombo*cp
-				// AP scaling is 6% per combo point from 1 to 4, and 24% again for 5
-				tickDamage := baseDamage + 0.01*cpScaling*dot.Spell.MeleeAttackPower(target)
-				dot.Snapshot(target, tickDamage, isRollover)
+				comboPoints[target.UnitIndex] = float64(druid.ComboPoints())
+				dot.Snapshot(target, tickDamage(target, dot.Spell), isRollover)
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+				// Under Forever each tick reads attack power and the damage modifiers when it
+				// lands; only the combo points are kept from the cast (wowsims/forever's rip.go,
+				// as for Rake, Rend, Rupture and Garrote: 36cfc58328, "Periodic damage does not
+				// snapshot in Forever").
+				if sim.IsForever() {
+					damage := tickDamage(target, dot.Spell) * druid.RendAndTearMultiplier(target)
+					dot.Spell.CalcAndDealPeriodicDamage(sim, target, damage, dot.OutcomeTick)
+					return
+				}
 				rendAndTear := druid.RendAndTearMultiplier(target)
 				dot.SnapshotAttackerMultiplier *= rendAndTear
 				dot.CalcAndDealPeriodicSnapshotDamage(sim, target, dot.OutcomeTick)

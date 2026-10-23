@@ -220,9 +220,9 @@ func TestForeverCritAuras(t *testing.T) {
 
 // A permanent "+N weapon damage" enchant goes on the cat's swing whole, as does a stone's flat
 // damage (wowsims/forever b5d2e0b992, a560405a65): 2H Impact's +6 and a Dense Weightstone's +8
-// raise the 1.0 sec swing by 6 and 8.
+// raise the 1.0 sec swing by 6 and 8. Out of Cat Form the weapon's own swing keeps them.
 func TestForeverCatFlatWeaponDamage(t *testing.T) {
-	newSim := func(enchant int32, consumes *proto.Consumes) *FeralDruid {
+	newSim := func(enchant int32, consumes *proto.Consumes) (*core.Simulation, *FeralDruid) {
 		t.Helper()
 		player := &proto.Player{
 			Race:      proto.Race_RaceTauren,
@@ -246,9 +246,18 @@ func TestForeverCatFlatWeaponDamage(t *testing.T) {
 		if !cat.InForm(druid.Cat) {
 			t.Fatal("not in Cat Form")
 		}
-		return cat
+		return sim, cat
 	}
-	plain := newSim(0, &proto.Consumes{}).AutoAttacks.MH()
+	humanoid := func(sim *core.Simulation, cat *FeralDruid) core.Weapon {
+		cat.CancelShapeshift(sim)
+		if cat.InForm(druid.Cat) {
+			t.Fatal("still in Cat Form")
+		}
+		return *cat.AutoAttacks.MH()
+	}
+	plainSim, plainCat := newSim(0, &proto.Consumes{})
+	plain := *plainCat.AutoAttacks.MH()
+	plainHumanoid := humanoid(plainSim, plainCat)
 	for _, c := range []struct {
 		name     string
 		enchant  int32
@@ -259,9 +268,14 @@ func TestForeverCatFlatWeaponDamage(t *testing.T) {
 		{"Dense Weightstone", 0, &proto.Consumes{MainHandImbue: proto.WeaponImbue_DenseWeightstone}, 8},
 		{"both", 13695, &proto.Consumes{MainHandImbue: proto.WeaponImbue_DenseWeightstone}, 14},
 	} {
-		mh := newSim(c.enchant, c.consumes).AutoAttacks.MH()
+		sim, cat := newSim(c.enchant, c.consumes)
+		mh := cat.AutoAttacks.MH()
 		if !near(mh.BaseDamageMin-plain.BaseDamageMin, c.want) || !near(mh.BaseDamageMax-plain.BaseDamageMax, c.want) {
 			t.Errorf("%s added %.2f-%.2f to the cat's swing, want %.0f", c.name, mh.BaseDamageMin-plain.BaseDamageMin, mh.BaseDamageMax-plain.BaseDamageMax, c.want)
+		}
+		weapon := humanoid(sim, cat)
+		if !near(weapon.BaseDamageMin-plainHumanoid.BaseDamageMin, c.want) || !near(weapon.BaseDamageMax-plainHumanoid.BaseDamageMax, c.want) {
+			t.Errorf("%s added %.2f-%.2f to the swing out of Cat Form, want %.0f", c.name, weapon.BaseDamageMin-plainHumanoid.BaseDamageMin, weapon.BaseDamageMax-plainHumanoid.BaseDamageMax, c.want)
 		}
 	}
 }

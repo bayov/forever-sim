@@ -189,30 +189,148 @@ func TestCatRendAndTearBleeds(t *testing.T) {
 	}
 }
 
-// TestCatFinisherMissRefunds checks that a dodged Rip or Ferocious Bite gives back 80% of its
-// cost (ATTR_EX_1_DISCOUNT_POWER_ON_MISS on every rank), keeps the combo points, and that Bite
-// keeps its extra Energy.
+// TestCatFinisherMissRefunds checks that a dodged Rip gives back 80% of its cost
+// (ATTR_EX_1_DISCOUNT_POWER_ON_MISS), that a dodged Ferocious Bite spends its cost and all the
+// extra Energy (wowsims/forever c742250b22, a beta report on their PR #149), and that both keep
+// the combo points.
 func TestCatFinisherMissRefunds(t *testing.T) {
-	for _, spell := range []func(*FeralDruid) *druid.DruidSpell{
-		func(cat *FeralDruid) *druid.DruidSpell { return cat.Rip },
-		func(cat *FeralDruid) *druid.DruidSpell { return cat.FerociousBite },
+	for _, tc := range []struct {
+		spell      func(*FeralDruid) *druid.DruidSpell
+		energyLeft func(cost float64) float64
+	}{
+		{func(cat *FeralDruid) *druid.DruidSpell { return cat.Rip }, func(cost float64) float64 { return 100 - 0.2*cost }},
+		{func(cat *FeralDruid) *druid.DruidSpell { return cat.FerociousBite }, func(float64) float64 { return 0 }},
 	} {
 		sim, cat := newCatSim(t, "")
 		target := cat.CurrentTarget
 		cat.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand].BaseDodgeChance = 1
 		cat.AddStatDynamic(sim, stats.MeleeHit, 100*core.MeleeHitRatingPerHitChance)
-		finisher := spell(cat)
+		finisher := tc.spell(cat)
 		cat.AddComboPoints(sim, 5, target, finisher.ComboPointMetrics())
 		cat.AddEnergy(sim, cat.MaxEnergy(), finisher.EnergyMetrics())
 		cat.SetGCDTimer(sim, sim.CurrentTime)
 		if !finisher.Cast(sim, target) {
 			t.Fatalf("%s didn't cast", finisher.ActionID)
 		}
-		if got, want := cat.CurrentEnergy(), 100-0.2*finisher.DefaultCast.Cost; math.Abs(got-want) > 1e-6 {
+		if got, want := cat.CurrentEnergy(), tc.energyLeft(finisher.DefaultCast.Cost); math.Abs(got-want) > 1e-6 {
 			t.Errorf("%s dodged at 100 Energy leaves %.1f Energy, want %.1f", finisher.ActionID, got, want)
 		}
 		if cat.ComboPoints() != 5 {
 			t.Errorf("%s dodged leaves %d combo points, want 5", finisher.ActionID, cat.ComboPoints())
 		}
+	}
+}
+
+// newCatSimWith builds the cat with one item on (by slot index in the equipment list) and the
+// given options.
+func newCatSimWith(t *testing.T, talents string, slot int, item int32, options *proto.FeralDruid_Options) (*core.Simulation, *FeralDruid) {
+	items := make([]*proto.ItemSpec, 17)
+	for i := range items {
+		items[i] = &proto.ItemSpec{}
+	}
+	items[slot].Id = item
+	options.InnervateTarget = &proto.UnitReference{}
+	player := &proto.Player{
+		Race:          proto.Race_RaceTauren,
+		Class:         proto.Class_ClassDruid,
+		Level:         60,
+		Equipment:     &proto.EquipmentSpec{Items: items},
+		TalentsString: talents,
+		Rotation:      &proto.APLRotation{},
+		Spec:          &proto.Player_FeralDruid{FeralDruid: &proto.FeralDruid{Options: options}},
+	}
+	sim := core.NewSim(&proto.RaidSimRequest{
+		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+		Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{core.NewDefaultTarget()}},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1, ExactDamage: true},
+	}, simsignals.CreateSignals())
+	sim.Reset()
+	sim.PrePull()
+	return sim, sim.Raid.Parties[0].Players[0].(*FeralDruid)
+}
+
+// TestCatNaturalInstinctRip checks that Natural Instinct's crit damage bonus reaches Rip,
+// whose bit its class mask shares with Ferocious Bite (1223242, word 0 0x839800).
+func TestCatNaturalInstinctRip(t *testing.T) {
+	_, cat := newCatSim(t, catTalents)
+	for _, spell := range []*druid.DruidSpell{cat.Claw, cat.Rake, cat.Shred, cat.FerociousBite, cat.Rip} {
+		if !near(spell.CritDamageBonus, 1.2) {
+			t.Errorf("%s has %.2f crit damage bonus with Natural Instinct 2, want 1.20", spell.ActionID, spell.CritDamageBonus)
+		}
+	}
+}
+
+// TestCatRipTicksLive checks that a Forever Rip tick reads attack power and the damage
+// multipliers when it lands, with the combo points kept from the cast: 15 + 25.5 a point and
+// 1% of attack power a point, the fifth counted as the fourth.
+func TestCatRipTicksLive(t *testing.T) {
+	sim, cat := newCatSim(t, "")
+	target := noCritsNoArmor(sim, cat)
+	cat.AddComboPoints(sim, 5, target, cat.Rip.ComboPointMetrics())
+	dot := cat.Rip.Dot(target)
+	dot.Apply(sim)
+	cat.SpendComboPoints(sim, cat.Rip.Spell)
+	ap := cat.Rip.MeleeAttackPower(target)
+	multiplier := dot.SnapshotAttackerMultiplier
+	if got, want := tickDamage(sim, cat.Rip, target), (15+25.5*5+0.04*ap)*multiplier; !nearDamage(got, want) {
+		t.Errorf("Rip ticks for %.3f at %.0f attack power, want %.3f", got, ap, want)
+	}
+	cat.AddStatDynamic(sim, stats.AttackPower, 1000)
+	cat.PseudoStats.DamageDealtMultiplier *= 1.1
+	if got, want := tickDamage(sim, cat.Rip, target), (15+25.5*5+0.04*(ap+1000))*multiplier*1.1; !nearDamage(got, want) {
+		t.Errorf("Rip ticks for %.3f after 1000 attack power and 10%% damage more, want %.3f", got, want)
+	}
+}
+
+// TestCatIdolOfTheDream checks that Idol of the Dream (220606, spell 446212: Rip +2000 ms)
+// gives Rip a seventh tick of the same damage.
+func TestCatIdolOfTheDream(t *testing.T) {
+	for _, c := range []struct {
+		item  int32
+		ticks int32
+	}{{0, 6}, {druid.IdolOfTheDream, 7}} {
+		sim, cat := newCatSimWith(t, "", 16, c.item, &proto.FeralDruid_Options{})
+		cat.AddComboPoints(sim, 5, cat.CurrentTarget, cat.Rip.ComboPointMetrics())
+		dot := cat.Rip.Dot(cat.CurrentTarget)
+		dot.Apply(sim)
+		if dot.NumberOfTicks != c.ticks || dot.Duration != time.Duration(c.ticks)*2*time.Second {
+			t.Errorf("item %d: Rip has %d ticks over %v, want %d", c.item, dot.NumberOfTicks, dot.Duration, c.ticks)
+		}
+	}
+}
+
+// TestCatPrepullClearcasting checks that the prepull_clearcasting option opens the fight with
+// Clearcasting, which went up a global cooldown before the pull, and Omen of Clarity's 10 sec
+// cooldown running from then.
+func TestCatPrepullClearcasting(t *testing.T) {
+	for _, on := range []bool{false, true} {
+		sim, cat := newCatSimWith(t, "", 0, 0, &proto.FeralDruid_Options{PrepullClearcasting: on})
+		for sim.CurrentTime < 0 && !sim.Step() {
+		}
+		if active := cat.ClearcastingAura.IsActive(); active != on {
+			t.Errorf("option %v: Clearcasting up at the pull is %v", on, active)
+		}
+		if on && cat.ClearcastingAura.ExpiresAt() != 15*time.Second-core.GCDDefault {
+			t.Errorf("Clearcasting expires at %v, want %v", cat.ClearcastingAura.ExpiresAt(), 15*time.Second-core.GCDDefault)
+		}
+	}
+}
+
+// TestCatExcessEnergy checks the Excess Energy value: with 50 Energy and a Rip at 5 combo
+// points running out in 2 sec, the 20 Energy regenerated by then pays for 20 of the new Rip's
+// 30, so 10 is kept.
+func TestCatExcessEnergy(t *testing.T) {
+	sim, cat := newCatSim(t, "")
+	target := cat.CurrentTarget
+	cat.AddComboPoints(sim, 5, target, cat.Rip.ComboPointMetrics())
+	if got := cat.ExcessEnergy(sim); !near(got, cat.CurrentEnergy()) {
+		t.Errorf("excess Energy is %.2f with no bleed up, want all %.2f", got, cat.CurrentEnergy())
+	}
+	dot := cat.Rip.Dot(target)
+	dot.Apply(sim)
+	dot.UpdateExpires(sim, sim.CurrentTime+2*time.Second)
+	cat.SpendEnergy(sim, cat.CurrentEnergy()-50, cat.Rip.EnergyMetrics())
+	if got := cat.ExcessEnergy(sim); !near(got, 40) {
+		t.Errorf("excess Energy is %.2f, want 40", got)
 	}
 }
