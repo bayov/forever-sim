@@ -35,6 +35,7 @@ type FakeSwingCaster struct {
 	Resetting *Spell // A hardcast that restarts the melee swing under Forever.
 	Keeping   *Spell // The same hardcast, flagged to leave the swing timer running.
 	Instant   *Spell // An instant cast.
+	Channel   *Spell // A 3 sec channel.
 }
 
 func (fc *FakeSwingCaster) GetCharacter() *Character { return &fc.Character }
@@ -57,6 +58,22 @@ func (fc *FakeSwingCaster) Initialize() {
 	fc.Resetting = register(1, 0, swingResetCastTime)
 	fc.Keeping = register(2, SpellFlagKeepsSwingTimer, swingResetCastTime)
 	fc.Instant = register(3, 0, 0)
+	fc.Channel = fc.RegisterSpell(SpellConfig{
+		ActionID:    ActionID{SpellID: 4},
+		SpellSchool: SpellSchoolHoly,
+		ProcMask:    ProcMaskEmpty,
+		Flags:       SpellFlagChanneled | SpellFlagNoMetrics,
+		Cast:        CastConfig{DefaultCast: Cast{GCD: GCDDefault}},
+		Dot: DotConfig{
+			Aura:          Aura{Label: "fake channel"},
+			NumberOfTicks: 3,
+			TickLength:    time.Second,
+			OnTick:        func(_ *Simulation, _ *Unit, _ *Dot) {},
+		},
+		ApplyEffects: func(sim *Simulation, target *Unit, spell *Spell) {
+			spell.Dot(target).Apply(sim)
+		},
+	})
 }
 
 func NewFakeSwingCaster(char *Character, _ *proto.Player) Agent {
@@ -174,21 +191,56 @@ func TestForeverCompletedCastResetsSwingTimer(t *testing.T) {
 		}
 	})
 
-	t.Run("a cast that keeps the swing timer does not restart it", func(t *testing.T) {
-		sim, fc := setupSwingResetSim(t, proto.Ruleset_RulesetForever)
-		aa := &fc.AutoAttacks
+	// A cast that keeps the swing timer, and a channel, let a swing land when it comes due.
+	for _, c := range []struct {
+		label string
+		spell func(fc *FakeSwingCaster) *Spell
+	}{
+		{"a cast that keeps the swing timer", func(fc *FakeSwingCaster) *Spell { return fc.Keeping }},
+		{"a channel", func(fc *FakeSwingCaster) *Spell { return fc.Channel }},
+	} {
+		t.Run(c.label+" lets the swings land during it", func(t *testing.T) {
+			sim, fc := setupSwingResetSim(t, proto.Ruleset_RulesetForever)
+			aa := &fc.AutoAttacks
+			mhDue := aa.MainhandSwingAt()
 
-		fc.Keeping.Cast(sim, fc.CurrentTarget)
-		castEnd := sim.CurrentTime + swingResetCastTime
-		stepSwingSim(t, sim, castEnd)
+			if !c.spell(fc).Cast(sim, fc.CurrentTarget) {
+				t.Fatalf("the spell didn't cast")
+			}
+			stepSwingSim(t, sim, sim.CurrentTime+swingResetCastTime*19/20)
+			if !fc.IsCasting(sim) && !fc.IsChanneling(sim) {
+				t.Fatalf("expected the cast or channel underway at %v", sim.CurrentTime)
+			}
 
-		// The swings that came due during the cast land as it ends, and the timer runs on
-		// from there.
-		if aa.mh.lastSwingAt != castEnd {
-			t.Fatalf("MH swing: expected it at the cast's end %v, got %v", castEnd, aa.mh.lastSwingAt)
+			if aa.mh.lastSwingAt != mhDue {
+				t.Fatalf("MH swing: expected it to land during the cast at %v, got %v", mhDue, aa.mh.lastSwingAt)
+			}
+			if expected := mhDue + aa.MainhandSwingSpeed(); aa.MainhandSwingAt() != expected {
+				t.Fatalf("MH swing: expected the next one at %v, got %v", expected, aa.MainhandSwingAt())
+			}
+		})
+	}
+
+	t.Run("a cast ending as a swing comes due completes before the swing", func(t *testing.T) {
+		sim, fc := setupSwingResetSim(t, proto.Ruleset_RulesetClassic)
+
+		// A cast that ends as the MH swing after next comes due. The weapon attacks at an
+		// instant go before its pending actions, so stepping to it stops after the swing.
+		stepSwingSim(t, sim, fc.AutoAttacks.MainhandSwingAt())
+		mhDue := fc.AutoAttacks.MainhandSwingAt()
+		stepSwingSim(t, sim, mhDue-swingResetCastTime)
+		// The empty rotation pauses the GCD 50ms at a time.
+		fc.GCD.Reset()
+		if !fc.Keeping.Cast(sim, fc.CurrentTarget) {
+			t.Fatalf("the cast didn't start")
 		}
-		if expected := castEnd + aa.MainhandSwingSpeed(); aa.MainhandSwingAt() != expected {
-			t.Fatalf("MH swing: expected the next one at %v, got %v", expected, aa.MainhandSwingAt())
+		stepSwingSim(t, sim, mhDue)
+
+		if fc.Hardcast.Expires != startingCDTime {
+			t.Fatalf("expected the cast to have completed at %v, before the swing ran the rotation", sim.CurrentTime)
+		}
+		if fc.AutoAttacks.mh.lastSwingAt != mhDue {
+			t.Fatalf("MH swing: expected it at the cast's end %v, got %v", mhDue, fc.AutoAttacks.mh.lastSwingAt)
 		}
 	})
 

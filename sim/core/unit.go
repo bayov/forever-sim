@@ -144,6 +144,10 @@ type Unit struct {
 	// For channeled spells, only Expires is set.
 	// No more than one cast may be active at any given time.
 	Hardcast Hardcast
+	// A swing under Forever lands through a cast that keeps the swing timer and through a channel
+	// (WeaponAttack.swing).
+	swingingThroughCast   bool
+	swingSpellThroughCast *Spell
 
 	// GCD-related PendingActions.
 	gcdAction      *PendingAction

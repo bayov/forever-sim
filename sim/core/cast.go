@@ -227,6 +227,12 @@ func (unit *Unit) applySpellPushback() {
 
 func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 	return func(sim *Simulation, target *Unit) bool {
+		spell.Unit.completeDueHardcast(sim)
+
+		// A Heroic Strike that a swing through a cast or channel lands (WeaponAttack.swing).
+		throughCast := spell.Unit.swingSpellThroughCast == spell
+		spell.Unit.swingSpellThroughCast = nil
+
 		spell.CurCast = spell.DefaultCast
 
 		if config.ModifyCast != nil {
@@ -282,11 +288,11 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
 			return spell.castFailureHelper(sim, "GCD on cooldown for %s, curTime = %s", spell.Unit.GCD.TimeToReady(sim), sim.CurrentTime)
 		}
 
-		if hc := spell.Unit.Hardcast; spell.Unit.IsCasting(sim) {
+		if hc := spell.Unit.Hardcast; spell.Unit.IsCasting(sim) && !throughCast {
 			return spell.castFailureHelper(sim, "casting/channeling %v for %s, curTime = %s", hc.ActionID, hc.Expires-sim.CurrentTime, sim.CurrentTime)
 		}
 
-		if dot := spell.Unit.ChanneledDot; spell.Unit.IsChanneling(sim) {
+		if dot := spell.Unit.ChanneledDot; spell.Unit.IsChanneling(sim) && !throughCast {
 			return spell.castFailureHelper(sim, "channeling %v for %s, curTime = %s", dot.ActionID, dot.expires-sim.CurrentTime, sim.CurrentTime)
 		}
 

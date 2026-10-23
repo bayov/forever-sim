@@ -36,6 +36,20 @@ func (unit *Unit) newHardcastAction(sim *Simulation) {
 	sim.AddPendingAction(unit.hardcastAction)
 }
 
+// completeDueHardcast lands a hardcast whose cast bar runs out at this instant but whose
+// completion hasn't run yet. The weapon attacks and tasks due at the cast's end run before its
+// pending action, and a swing there runs the rotation. A cast started then would replace the
+// hardcast, which never landed, and the rotation's GCD pause would move the GCD action it
+// completes on. So a swing, a cast or the rotation at that instant completes the cast first.
+func (unit *Unit) completeDueHardcast(sim *Simulation) {
+	if hc := &unit.Hardcast; hc.Expires == sim.CurrentTime && hc.OnComplete != nil {
+		// The cast that completes is another event, as when the GCD action completes it.
+		sim.events++
+		hc.Expires = startingCDTime
+		hc.OnComplete(sim, hc.Target)
+	}
+}
+
 func (unit *Unit) NextGCDAt() time.Duration {
 	return unit.gcdAction.NextActionAt
 }

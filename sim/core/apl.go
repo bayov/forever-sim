@@ -204,6 +204,13 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 		return
 	}
 
+	// A cast ending now lands before we pick what comes after it. Its completion runs this
+	// check itself, or the GCD action due with it does when the cast fails at the end.
+	if hc := &apl.unit.Hardcast; hc.Expires == sim.CurrentTime && hc.OnComplete != nil {
+		apl.unit.completeDueHardcast(sim)
+		return
+	}
+
 	if apl.inLoop {
 		return
 	}

@@ -310,10 +310,15 @@ func (wa *WeaponAttack) castExtraAttacks(sim *Simulation, numExtraAttacks int32,
 }
 
 func (wa *WeaponAttack) swing(sim *Simulation) time.Duration {
-	// Under Forever a melee swing waits out a cast that resets it, one due at the cast's last
-	// instant included. The completed cast sets the real swing time; this one only has to land
-	// past the cast's end, wherever pushback moves it.
-	if hc := &wa.unit.Hardcast; hc.ResetsSwing && hc.Expires >= sim.CurrentTime && wa != &wa.unit.AutoAttacks.ranged {
+	// A cast ending now lands first, and one that resets the swing moves this one.
+	wa.unit.completeDueHardcast(sim)
+	if sim.CurrentTime < wa.swingAt {
+		return wa.swingAt
+	}
+
+	// Under Forever a melee swing waits out a cast that resets it. The completed cast sets the
+	// real swing time; this one only has to land past the cast's end, wherever pushback moves it.
+	if hc := &wa.unit.Hardcast; hc.ResetsSwing && hc.Expires > sim.CurrentTime && wa != &wa.unit.AutoAttacks.ranged {
 		wa.swingAt = hc.Expires + wa.curSwingDuration
 		wa.heldByCast = true
 		return wa.swingAt
@@ -332,15 +337,25 @@ func (wa *WeaponAttack) swing(sim *Simulation) time.Duration {
 
 	attackSpell := wa.spell
 
+	// Under Forever only a cast that resets the swing holds it (above). A swing lands through a
+	// cast that keeps the swing timer and through a channel, and so does a queued Heroic Strike
+	// or Raptor Strike (wowsims/forever 4fb2849945).
+	throughCast := sim.IsForever() && wa != &wa.unit.AutoAttacks.ranged
+
 	if wa.replaceSwing != nil {
 		// Need to check APL here to allow last-moment HS queue casts.
 		wa.unit.Rotation.DoNextAction(sim)
 
 		// Allow MH swing to be overridden for abilities like Heroic Strike.
+		wa.unit.swingingThroughCast = throughCast
 		attackSpell = wa.replaceSwing(sim, attackSpell)
 	}
 
-	if attackSpell.CanCast(sim, wa.unit.CurrentTarget) {
+	wa.unit.swingingThroughCast = throughCast
+	canSwing := attackSpell.CanCast(sim, wa.unit.CurrentTarget)
+	wa.unit.swingingThroughCast = false
+
+	if canSwing {
 		// Update swing timer BEFORE the cast, so that APL checks for TimeToNextAuto behave correctly
 		// if the attack causes APL evaluations (e.g. from rage gain).
 
@@ -358,7 +373,11 @@ func (wa *WeaponAttack) swing(sim *Simulation) time.Duration {
 			wa.spell.SetMetricsSplit(0)
 		}
 
+		if throughCast {
+			wa.unit.swingSpellThroughCast = attackSpell
+		}
 		attackSpell.Cast(sim, wa.unit.CurrentTarget)
+		wa.unit.swingSpellThroughCast = nil
 
 		moreAttacks := !isExtraAttack && wa.extraAttacksPending > 0 // True if above cast is a normal Auto attack that triggered an Extra Attack
 		wa.castExtraAttacksTriggered(sim, moreAttacks)              // more attacks means we don't count the above cast
