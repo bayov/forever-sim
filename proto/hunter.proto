@@ -99,6 +99,9 @@ message Hunter {
 			IceThreadedBullet = 10;
 			ThoriumShells = 11;
 			MiniatureCannonBalls = 12;
+			// 65, Engineering 300 (Forever)
+			SwiftfeatherArrow = 13;
+			SwiftstrikeShot = 14;
 		}
 		Ammo ammo = 1;
 
@@ -135,6 +138,10 @@ message Hunter {
 			Turtle = 17;
 		}
 
+		// Under Forever, the beast's Faster Attack or Slower Attack passive, by the swing it gives a
+		// 2.0 sec pet (client skill line 270, "Pet - Generic"): Faster Attack VII to I are One to
+		// OneSeven, Slower Attack II TwoFive and Slower Attack III TwoSeven. TwoFour is Classic's;
+		// no Forever pet carries Slower Attack I, its row.
 		enum PetAttackSpeed {
 			One = 0;
 			OneTwo = 1;
@@ -146,6 +153,7 @@ message Hunter {
 			Two = 7;
 			TwoFour = 8;
 			TwoFive = 9;
+			TwoSeven = 10;
 		}
 
 		PetType pet_type = 3;
@@ -156,6 +164,9 @@ message Hunter {
 		bool new_raptor_strike = 6;
 
 		PetAttackSpeed pet_attack_speed = 7;
+
+		// Beast Training's Cobra Reflexes (25076): the pet attacks 30% faster.
+		bool cobra_reflexes = 8;
 	}
 	Options options = 2;
 }

@@ -9,7 +9,16 @@ import (
 )
 
 // The Forever trap cooldown is 30 sec (Classic 15). The damage is Classic's (client 14315, build
-// 1.60.1.70338: 208 to 264 and 330 over 20 sec at rank 3).
+// 1.60.1.70338: 208 to 264 and 330 over 20 sec at rank 3), and under Forever adds ranged attack
+// power: 10% on the hit and 10% over the ten ticks, 1% a tick, read when the trap goes off. That is
+// the 15 October dev notes' "Fire traps now correctly scale with Attack Power" as wowsims/forever
+// reads it (3993d79540: 10% of ranged attack power over a trap's ticks, and 10% more on Explosive
+// Trap's hit), the same share as Immolation Trap's 2% a tick (report assumption hunter_trap_ap).
+const (
+	ExplosiveTrapRAPOnHit   = 0.10
+	ExplosiveTrapRAPPerTick = 0.01
+)
+
 func (hunter *Hunter) getExplosiveTrapConfig(rank int, timer *core.Timer) core.SpellConfig {
 	spellId := [4]int32{0, 13813, 14316, 14317}[rank]
 	dotDamage := [4]float64{0, 15, 24, 33}[rank]
@@ -56,7 +65,11 @@ func (hunter *Hunter) getExplosiveTrapConfig(rank int, timer *core.Timer) core.S
 			TickLength:    time.Second * 2,
 
 			OnSnapshot: func(sim *core.Simulation, target *core.Unit, dot *core.Dot, isRollover bool) {
-				dot.Snapshot(target, dotDamage, isRollover)
+				tickDamage := dotDamage
+				if sim.IsForever() {
+					tickDamage += ExplosiveTrapRAPPerTick * dot.Spell.RangedAttackPower(target, false)
+				}
+				dot.Snapshot(target, tickDamage, isRollover)
 			},
 			OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
 				for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
@@ -79,6 +92,9 @@ func (hunter *Hunter) getExplosiveTrapConfig(rank int, timer *core.Timer) core.S
 				spell.Unit.AddStatDynamic(sim, stats.SpellHit, spellHit*-1)
 				for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
 					baseDamage := sim.Roll(minDamage, maxDamage)
+					if sim.IsForever() {
+						baseDamage += ExplosiveTrapRAPOnHit * spell.RangedAttackPower(aoeTarget, false)
+					}
 					baseDamage *= sim.Encounter.AOECapMultiplier()
 					spell.CalcAndDealDamage(sim, aoeTarget, baseDamage, spell.OutcomeMagicHitAndCrit)
 				}

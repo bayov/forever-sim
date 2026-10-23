@@ -130,6 +130,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 		inputs: [
 			//HunterInputs.NewRaptorStrike,
 			HunterInputs.PetAttackSpeedInput,
+			HunterInputs.PetCobraReflexesInput,
 			HunterInputs.PetUptime,
 			OtherInputs.DistanceFromTarget,
 			OtherInputs.TankAssignment,

@@ -116,11 +116,12 @@ var SurvivalConsumes = core.ConsumesCombo{
 var PlayerOptionsCat = &proto.Player_Hunter{
 	Hunter: &proto.Hunter{
 		Options: &proto.Hunter_Options{
-			Ammo:           proto.Hunter_Options_ThoriumHeadedArrow,
+			Ammo:           proto.Hunter_Options_SwiftfeatherArrow,
 			QuiverBonus:    proto.Hunter_Options_Speed15,
 			PetType:        proto.Hunter_Options_Cat,
 			PetUptime:      1,
 			PetAttackSpeed: proto.Hunter_Options_One,
+			CobraReflexes:  true,
 		},
 	},
 }
@@ -128,7 +129,7 @@ var PlayerOptionsCat = &proto.Player_Hunter{
 var PlayerOptionsNoPet = &proto.Player_Hunter{
 	Hunter: &proto.Hunter{
 		Options: &proto.Hunter_Options{
-			Ammo:        proto.Hunter_Options_ThoriumHeadedArrow,
+			Ammo:        proto.Hunter_Options_SwiftfeatherArrow,
 			QuiverBonus: proto.Hunter_Options_Speed15,
 			PetType:     proto.Hunter_Options_PetNone,
 		},

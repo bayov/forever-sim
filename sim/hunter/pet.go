@@ -2,6 +2,7 @@ package hunter
 
 import (
 	"fmt"
+	"math"
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
@@ -17,6 +18,7 @@ type HunterPet struct {
 	hunterOwner *Hunter
 
 	specialAbility *core.Spell
+	secondSpecial  *core.Spell
 	focusDump      *core.Spell
 
 	uptimePercent    float64
@@ -59,6 +61,8 @@ func (hunter *Hunter) NewHunterPet() *HunterPet {
 		attackSpeed = 2.4
 	case proto.Hunter_Options_TwoFive:
 		attackSpeed = 2.5
+	case proto.Hunter_Options_TwoSeven:
+		attackSpeed = 2.7
 	}
 
 	// Classic's pet weapon and stats. Forever's weapon and attack power are set in applyForeverRules.
@@ -118,8 +122,13 @@ func (hp *HunterPet) Initialize() {
 	// Here rather than at construction, which doesn't know the ruleset yet.
 	core.ApplyPetConsumeEffects(&hp.Character, hp.hunterOwner.Consumes)
 
-	hp.specialAbility = hp.NewPetAbility(hp.config.SpecialAbility, true)
-	hp.focusDump = hp.NewPetAbility(hp.config.FocusDump, false)
+	abilities := PetAbilities{SpecialAbility: hp.config.SpecialAbility, FocusDump: hp.config.FocusDump}
+	if hp.Env.IsForever() && hp.config.Forever != nil {
+		abilities = *hp.config.Forever
+	}
+	hp.specialAbility = hp.NewPetAbility(abilities.SpecialAbility, true)
+	hp.secondSpecial = hp.NewPetAbility(abilities.SecondSpecial, false)
+	hp.focusDump = hp.NewPetAbility(abilities.FocusDump, false)
 
 	// Bestial Discipline: 10% focus regen a rank.
 	hp.EnableFocusBar(1+0.1*float64(hp.hunterOwner.Talents.BestialDiscipline), func(sim *core.Simulation) {
@@ -157,8 +166,48 @@ const (
 	foreverPetAttackPower  = 0.3 * 14 * creatureAutoAttackDps60
 )
 
+// Under Forever every pet swings every 2.0 sec, and the beast's Faster Attack or Slower Attack
+// passive speeds that up by its row's percent (client 1.60.1.70532, skill line 270 "Pet - Generic"):
+// Faster Attack VII to I (1263110, 1263109, 1263107, 1263104, 1263102, 1263100, 1263099) are 100,
+// 67, 54, 43, 33, 25 and 17%, Slower Attack II and III (1263113, 1263114) -20 and -26%. Classic's
+// 2.4 sec option takes Slower Attack I's row (1263111, -17%), which is on no skill line.
+var foreverPetAttackSpeedPercent = map[proto.Hunter_Options_PetAttackSpeed]float64{
+	proto.Hunter_Options_One:      100,
+	proto.Hunter_Options_OneTwo:   67,
+	proto.Hunter_Options_OneThree: 54,
+	proto.Hunter_Options_OneFour:  43,
+	proto.Hunter_Options_OneFive:  33,
+	proto.Hunter_Options_OneSix:   25,
+	proto.Hunter_Options_OneSeven: 17,
+	proto.Hunter_Options_Two:      0,
+	proto.Hunter_Options_TwoFour:  -17,
+	proto.Hunter_Options_TwoFive:  -20,
+	proto.Hunter_Options_TwoSeven: -26,
+}
+
+// Beast Training's Cobra Reflexes (25076, which 25077 on skill line 261 teaches): 30% attack speed.
+// The tooltip's "but reduces damage" states no number. Report assumption hunter_pet_speed's reading
+// (user ruling 2026-10-23) has its hits shrink with the speed, as a faster beast's do.
+const foreverCobraReflexesSpeedPercent = 30.0
+
+// The pet's swing under Forever: 2.0 sec sped up by the beast's passive and Cobra Reflexes.
+func (hp *HunterPet) foreverSwingSpeed() float64 {
+	swing := 2 / (1 + foreverPetAttackSpeedPercent[hp.hunterOwner.Options.PetAttackSpeed]/100)
+	if hp.hunterOwner.Options.CobraReflexes {
+		swing /= 1 + foreverCobraReflexesSpeedPercent/100
+	}
+	return swing
+}
+
+// Beast Training's Pet Aggression, rank 5 (6317; skill line 270 "Pet - Generic" has the pet
+// learn 6311 to 6317): A_MOD_DAMAGE_DONE 8 to physical (misc 1), so 8 more on each white hit, Bite
+// and Claw (each row's bonus coefficient 1). wowsims/forever takes rank 5 by default (pets.go:173).
+const foreverPetAggressionDamage = 8
+
 // What Forever changed about pets.
 func (hp *HunterPet) applyForeverRules() {
+	hp.AutoAttacks.MH().SwingSpeed = hp.foreverSwingSpeed()
+
 	// Every pet swings every 2.0 sec, and a passive the beast brings (Faster Attack I to VII, Slower
 	// Attack II and III) moves that to the beast's Classic speed. On the beta its hits stay the size
 	// of a 2.0 sec pet's, so a fast pet deals more damage (beta players, gathered on ForeverChanges'
@@ -183,6 +232,12 @@ func (hp *HunterPet) applyForeverRules() {
 	// at 150 with 5.96% on the sheet: 9.6% in 2,516).
 	hp.AddStat(stats.AttackPower, 20+foreverPetAttackPower)
 
+	hp.PseudoStats.BonusPhysicalDamage += foreverPetAggressionDamage
+
+	// The pet starts at the hunter's distance and runs in at the pull (wowsims/forever pets.go,
+	// StartsAtOwnerDistance), not swinging or casting till it is in melee range.
+	hp.StartDistanceFromTarget = hp.hunterOwner.StartDistanceFromTarget
+
 	// Focus comes back 10 a second, continuously (client PowerType Focus RegenCombat 10, and beta
 	// logs where busy pets spend 9.5+ a second). Classic's is 26.25 every 5.25 sec.
 	hp.SetFocusRegen(2.5, time.Millisecond*250)
@@ -202,6 +257,11 @@ func (hp *HunterPet) ExecuteCustomRotation(sim *core.Simulation) {
 	if hp.hasOwnerCooldown && hp.CurrentFocus() < 50 {
 		// When a major ability (Furious Howl or Savage Rend) is ready, pool enough
 		// energy to use on-demand.
+		return
+	}
+
+	if hp.DistanceFromTarget > core.MaxMeleeAttackDistance {
+		hp.runIn(sim)
 		return
 	}
 
@@ -238,12 +298,27 @@ func (hp *HunterPet) ExecuteCustomRotation(sim *core.Simulation) {
 			if !tryCast(hp.specialAbility) && hp.GCD.IsReady(sim) {
 				hp.WaitUntil(sim, sim.CurrentTime+time.Millisecond*500)
 			}
+		} else if hp.secondSpecial != nil && hp.secondSpecial.IsReady(sim) {
+			if !tryCast(hp.secondSpecial) && hp.GCD.IsReady(sim) {
+				hp.WaitUntil(sim, sim.CurrentTime+time.Millisecond*500)
+			}
 		} else if hp.focusDump.IsReady(sim) {
 			if !tryCast(hp.focusDump) && hp.GCD.IsReady(sim) {
 				hp.WaitUntil(sim, sim.CurrentTime+time.Millisecond*500)
 			}
 		}
 	}
+}
+
+// Runs the pet into melee range in whole yards, the steps MoveTo takes, and has it act again when it
+// gets there.
+func (hp *HunterPet) runIn(sim *core.Simulation) {
+	if hp.IsMoving() {
+		return
+	}
+	yards := math.Ceil(hp.DistanceFromTarget - core.MaxMeleeAttackDistance)
+	hp.MoveTo(hp.DistanceFromTarget-yards, sim)
+	hp.WaitUntil(sim, sim.CurrentTime+time.Duration(yards)*time.Millisecond*time.Duration(1000/hp.MovementHandler.MoveSpeed))
 }
 
 // Forever's pets scale with the hunter's gear (Blizzard's hunter deep dive). The numbers are beta
@@ -280,12 +355,25 @@ func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
 	}
 }
 
+// The damage abilities a pet casts: SpecialAbility and SecondSpecial on their cooldowns, in that
+// order, and FocusDump with the focus left.
+type PetAbilities struct {
+	SpecialAbility PetAbilityType
+	SecondSpecial  PetAbilityType
+	FocusDump      PetAbilityType
+}
+
 type PetConfig struct {
 	Name    string
 	MobType proto.MobType
 
 	SpecialAbility PetAbilityType
 	FocusDump      PetAbilityType
+
+	// Under Forever, the abilities the family's skill line teaches (client 1.60.1.70532
+	// SkillLineAbility, "Pet - <family>"), where they differ from Classic's. Of a family's abilities
+	// the sim has Bite, Claw, Demoralizing Screech, Lightning Breath and Scorpid Poison.
+	Forever *PetAbilities
 
 	Health float64
 	Armor  float64
@@ -338,6 +426,9 @@ var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 
 		SpecialAbility: Bite,
 		FocusDump:      Screech,
+		// Forever's Bat (skill line 653 and 3015) learns Bite and Dive; Sonic Blast, on 653, is
+		// taught by no hunter family.
+		Forever: &PetAbilities{SpecialAbility: Bite},
 
 		Health: 1.00,
 		Armor:  1.00,
@@ -370,7 +461,7 @@ var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 		Name:    "Boar",
 		MobType: proto.MobType_MobTypeBeast,
 
-		//SpecialAbility: Gore,
+		// Forever's Boar (skill line 211): Bite, Charge and Dash.
 		FocusDump: Bite,
 
 		Health: 1.04,
@@ -381,8 +472,10 @@ var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 		Name:    "Carrion Bird",
 		MobType: proto.MobType_MobTypeBeast,
 
-		SpecialAbility: Bite, // Screech
+		SpecialAbility: Bite,
 		FocusDump:      Claw,
+		// Forever's Carrion Bird (skill line 213): Bite, Claw, Demoralizing Screech and Dive.
+		Forever: &PetAbilities{SpecialAbility: Bite, SecondSpecial: Screech, FocusDump: Claw},
 
 		Health: 1.00,
 		Armor:  1.05,
@@ -392,7 +485,7 @@ var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 		Name:    "Owl",
 		MobType: proto.MobType_MobTypeBeast,
 
-		//SpecialAbility: Screech,
+		// Forever's Bird of Prey (skill line 655): Claw, Dive and Mine!.
 		FocusDump: Claw,
 
 		Health: 1.00,

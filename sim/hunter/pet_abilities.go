@@ -233,8 +233,9 @@ func (hp *HunterPet) newScreech() *core.Spell {
 	}[hp.Owner.Level]
 
 	// Forever's rank 4 (client 24579, which 24582 teaches) has a 10 sec cooldown and takes the
-	// target's attack power down 198 at 56 and 1.6 a level more, 204 at 60, for 30 sec. The reduction
-	// is the one Demoralizing Shout's takes, so the strongest counts.
+	// attack power of every enemy within 5 yd of the pet (effect 2, radius 5) down 198 at 56 and 1.6
+	// a level more, 204 at 60, for 30 sec. The reduction is the one Demoralizing Shout's takes, so
+	// the strongest counts.
 	var cooldown core.Cooldown
 	var apReduction core.AuraArray
 	if hp.Env.IsForever() && hp.Owner.Level == 60 {
@@ -273,10 +274,13 @@ func (hp *HunterPet) newScreech() *core.Spell {
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			baseDamage := sim.Roll(baseDamageMin, baseDamageMax)
-			// Outside Forever the attack power reduction, like Demoralizing Shout's, is left out.
+			// Outside Forever the attack power reduction, like Demoralizing Shout's, is left out. The
+			// sim's enemies all stand within 5 yd of the pet's target, as wowsims/forever has them.
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 			if apReduction != nil && result.Landed() {
-				apReduction.Get(target).Activate(sim)
+				for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
+					apReduction.Get(aoeTarget).Activate(sim)
+				}
 			}
 		},
 	})

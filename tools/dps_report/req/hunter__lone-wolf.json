@@ -450,7 +450,7 @@
             "distanceFromTarget": 25,
             "hunter": {
               "options": {
-                "ammo": "ThoriumHeadedArrow",
+                "ammo": "SwiftfeatherArrow",
                 "quiverBonus": "Speed15",
                 "petUptime": 1
               }

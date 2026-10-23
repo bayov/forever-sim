@@ -34,21 +34,32 @@ func newHunterPetSim(t *testing.T, speed proto.Hunter_Options_PetAttackSpeed, ru
 }
 
 func newHunterPetSimWith(t *testing.T, speed proto.Hunter_Options_PetAttackSpeed, ruleset proto.Ruleset, consumes *proto.Consumes) (*core.Simulation, *Hunter) {
+	return newHunterPetSimOpts(t, &proto.Hunter_Options{
+		PetType:        proto.Hunter_Options_Cat,
+		PetUptime:      1,
+		PetAttackSpeed: speed,
+	}, ruleset, consumes, 0, 1)
+}
+
+// newHunterPetSimOpts builds a level 60 hunter with the given options, standing at the distance from
+// the first of the targets.
+func newHunterPetSimOpts(t *testing.T, options *proto.Hunter_Options, ruleset proto.Ruleset, consumes *proto.Consumes, distance float64, targets int) (*core.Simulation, *Hunter) {
 	player := &proto.Player{
-		Consumes:  consumes,
-		Class:     proto.Class_ClassHunter,
-		Race:      proto.Race_RaceHuman,
-		Level:     60,
-		Equipment: &proto.EquipmentSpec{},
-		Spec: &proto.Player_Hunter{Hunter: &proto.Hunter{Options: &proto.Hunter_Options{
-			PetType:        proto.Hunter_Options_Cat,
-			PetUptime:      1,
-			PetAttackSpeed: speed,
-		}}},
+		Consumes:           consumes,
+		Class:              proto.Class_ClassHunter,
+		Race:               proto.Race_RaceHuman,
+		Level:              60,
+		Equipment:          &proto.EquipmentSpec{},
+		DistanceFromTarget: distance,
+		Spec:               &proto.Player_Hunter{Hunter: &proto.Hunter{Options: options}},
+	}
+	encounter := &proto.Encounter{Duration: 60}
+	for i := 0; i < targets; i++ {
+		encounter.Targets = append(encounter.Targets, core.NewDefaultTarget())
 	}
 	sim := core.NewSim(&proto.RaidSimRequest{
 		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
-		Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{core.NewDefaultTarget()}},
+		Encounter:  encounter,
 		SimOptions: &proto.SimOptions{Ruleset: ruleset, RandomSeed: 1},
 	}, simsignals.CreateSignals())
 	sim.Reset()
@@ -74,31 +85,138 @@ func TestForeverPetTakesNoConsumables(t *testing.T) {
 // Report assumption hunter_pet_speed (user ruling 2026-10-15): under Forever a pet's white hit
 // scales with its attack speed as in Classic, so a 1.0 sec pet hits half as hard as a 2.0 sec pet.
 // A 2.0 sec pet's hit is the creature dps for level 60 over 2 sec, 20% either side (wowsims/forever
-// 643d636345). Classic keeps its 18.17 to 27.66 a second.
+// 643d636345). The swing is 2.0 sec sped up by the beast's passive's row: Faster Attack VII 100%,
+// III 33%, Slower Attack III -26%. Classic keeps its 18.17 to 27.66 a second and round speeds.
 func TestForeverPetHitScalesWithSpeed(t *testing.T) {
 	for _, c := range []struct {
-		speed   proto.Hunter_Options_PetAttackSpeed
-		seconds float64
+		speed            proto.Hunter_Options_PetAttackSpeed
+		forever, classic float64
 	}{
-		{proto.Hunter_Options_One, 1.0},
-		{proto.Hunter_Options_OneFive, 1.5},
-		{proto.Hunter_Options_Two, 2.0},
+		{proto.Hunter_Options_One, 1.0, 1.0},
+		{proto.Hunter_Options_OneFive, 2 / 1.33, 1.5},
+		{proto.Hunter_Options_Two, 2.0, 2.0},
+		{proto.Hunter_Options_TwoSeven, 2 / 0.74, 2.7},
 	} {
 		for _, r := range []struct {
 			ruleset  proto.Ruleset
 			min, max float64
+			seconds  float64
 		}{
-			{proto.Ruleset_RulesetForever, 60.4529 * 0.8, 60.4529 * 1.2},
-			{proto.Ruleset_RulesetClassic, 18.17, 27.66},
+			{proto.Ruleset_RulesetForever, 60.4529 * 0.8, 60.4529 * 1.2, c.forever},
+			{proto.Ruleset_RulesetClassic, 18.17, 27.66, c.classic},
 		} {
 			_, hunter := newHunterPetSim(t, c.speed, r.ruleset)
 			mh := hunter.pet.AutoAttacks.MH()
-			if math.Abs(mh.BaseDamageMin-r.min*c.seconds) > 1e-9 || math.Abs(mh.BaseDamageMax-r.max*c.seconds) > 1e-9 {
-				t.Errorf("ruleset %v: a %.1f sec pet hits for %.2f to %.2f, want %.2f to %.2f", r.ruleset, c.seconds, mh.BaseDamageMin, mh.BaseDamageMax, r.min*c.seconds, r.max*c.seconds)
+			if math.Abs(mh.BaseDamageMin-r.min*r.seconds) > 1e-9 || math.Abs(mh.BaseDamageMax-r.max*r.seconds) > 1e-9 {
+				t.Errorf("ruleset %v: a %.3f sec pet hits for %.2f to %.2f, want %.2f to %.2f", r.ruleset, r.seconds, mh.BaseDamageMin, mh.BaseDamageMax, r.min*r.seconds, r.max*r.seconds)
 			}
-			if mh.SwingSpeed != c.seconds {
-				t.Errorf("ruleset %v: the pet swings every %.1f sec, want %.1f", r.ruleset, mh.SwingSpeed, c.seconds)
+			if math.Abs(mh.SwingSpeed-r.seconds) > 1e-9 {
+				t.Errorf("ruleset %v: the pet swings every %.3f sec, want %.3f", r.ruleset, mh.SwingSpeed, r.seconds)
 			}
+		}
+	}
+}
+
+// Cobra Reflexes (25076) speeds the pet up 30%, and its hits shrink with the speed (report assumption
+// hunter_pet_speed's reading, user ruling 2026-10-23). Pet Aggression rank 5 (6317) adds 8 to each
+// physical hit. Neither is in Classic's pet.
+func TestForeverCobraReflexesAndPetAggression(t *testing.T) {
+	for _, c := range []struct {
+		ruleset proto.Ruleset
+		swing   float64
+		bonus   float64
+	}{
+		{proto.Ruleset_RulesetForever, 1 / 1.3, 8},
+		{proto.Ruleset_RulesetClassic, 1, 0},
+	} {
+		_, hunter := newHunterPetSimOpts(t, &proto.Hunter_Options{
+			PetType: proto.Hunter_Options_Cat, PetUptime: 1, PetAttackSpeed: proto.Hunter_Options_One, CobraReflexes: true,
+		}, c.ruleset, nil, 0, 1)
+		mh := hunter.pet.AutoAttacks.MH()
+		if math.Abs(mh.SwingSpeed-c.swing) > 1e-9 {
+			t.Errorf("ruleset %v: a 1.0 sec pet with Cobra Reflexes swings every %.4f sec, want %.4f", c.ruleset, mh.SwingSpeed, c.swing)
+		}
+		if c.ruleset == proto.Ruleset_RulesetForever {
+			if want := 60.4529 * 0.8 * c.swing; math.Abs(mh.BaseDamageMin-want) > 1e-9 {
+				t.Errorf("ruleset %v: the pet's least hit is %.2f, want %.2f", c.ruleset, mh.BaseDamageMin, want)
+			}
+		}
+		if got := hunter.pet.PseudoStats.BonusPhysicalDamage; got != c.bonus {
+			t.Errorf("ruleset %v: Pet Aggression adds %.0f a hit, want %.0f", c.ruleset, got, c.bonus)
+		}
+	}
+}
+
+// Under Forever the Bat learns Bite and Dive, and the Carrion Bird Bite, Claw, Demoralizing Screech
+// and Dive (client 70532 skill lines 653 and 213). Classic's Bat keeps its Screech.
+func TestForeverPetFamilyAbilities(t *testing.T) {
+	code := func(spell *core.Spell) int32 {
+		if spell == nil {
+			return 0
+		}
+		return spell.SpellCode
+	}
+	for _, c := range []struct {
+		pet                   proto.Hunter_Options_PetType
+		ruleset               proto.Ruleset
+		special, second, dump int32
+	}{
+		{proto.Hunter_Options_Bat, proto.Ruleset_RulesetForever, SpellCode_HunterPetBite, 0, 0},
+		{proto.Hunter_Options_Bat, proto.Ruleset_RulesetClassic, SpellCode_HunterPetBite, 0, SpellCode_HunterPetScreech},
+		{proto.Hunter_Options_CarrionBird, proto.Ruleset_RulesetForever, SpellCode_HunterPetBite, SpellCode_HunterPetScreech, SpellCode_HunterPetClaw},
+		{proto.Hunter_Options_CarrionBird, proto.Ruleset_RulesetClassic, SpellCode_HunterPetBite, 0, SpellCode_HunterPetClaw},
+		{proto.Hunter_Options_Owl, proto.Ruleset_RulesetForever, 0, 0, SpellCode_HunterPetClaw},
+	} {
+		_, hunter := newHunterPetSimOpts(t, &proto.Hunter_Options{PetType: c.pet, PetUptime: 1}, c.ruleset, nil, 0, 1)
+		pet := hunter.pet
+		if got := [3]int32{code(pet.specialAbility), code(pet.secondSpecial), code(pet.focusDump)}; got != [3]int32{c.special, c.second, c.dump} {
+			t.Errorf("%v %v: abilities %v, want %v", c.ruleset, c.pet, got, [3]int32{c.special, c.second, c.dump})
+		}
+	}
+}
+
+// Demoralizing Screech's attack power reduction reaches every enemy within 5 yd of the pet (24579
+// effect 2, radius 5), which is every enemy the sim has.
+func TestForeverScreechHitsEveryEnemy(t *testing.T) {
+	sim, hunter := newHunterPetSimOpts(t, &proto.Hunter_Options{PetType: proto.Hunter_Options_CarrionBird, PetUptime: 1}, proto.Ruleset_RulesetForever, nil, 0, 2)
+	screech := hunter.pet.secondSpecial
+	targets := sim.Encounter.TargetUnits
+	aura := func(target *core.Unit) *core.Aura { return target.GetAura("Demoralizing Screech") }
+	for i := 0; i < 100 && !aura(targets[0]).IsActive(); i++ {
+		screech.ApplyEffects(sim, targets[0], screech)
+	}
+	for i, target := range targets {
+		if !aura(target).IsActive() {
+			t.Errorf("enemy %d has no Demoralizing Screech once it lands", i+1)
+		}
+	}
+}
+
+// Under Forever the pet starts at the hunter's distance and runs in at 7 yd a sec before it swings
+// (wowsims/forever's StartsAtOwnerDistance): 20 yd from 25 yd. Classic's pet starts in melee range.
+func TestForeverPetRunsIn(t *testing.T) {
+	for _, c := range []struct {
+		ruleset proto.Ruleset
+		start   float64
+	}{
+		{proto.Ruleset_RulesetForever, 25},
+		{proto.Ruleset_RulesetClassic, 0},
+	} {
+		sim, hunter := newHunterPetSimOpts(t, &proto.Hunter_Options{
+			PetType: proto.Hunter_Options_Cat, PetUptime: 1, PetAttackSpeed: proto.Hunter_Options_Two,
+		}, c.ruleset, nil, 25, 1)
+		pet := hunter.pet
+		if pet.DistanceFromTarget != c.start {
+			t.Errorf("ruleset %v: the pet starts %.0f yd away, want %.0f", c.ruleset, pet.DistanceFromTarget, c.start)
+		}
+		for sim.CurrentTime < 5*time.Second && !sim.Step() {
+		}
+		if pet.DistanceFromTarget > core.MaxMeleeAttackDistance || pet.IsMoving() {
+			t.Errorf("ruleset %v: the pet is %.0f yd away at 5 sec, want in melee range", c.ruleset, pet.DistanceFromTarget)
+		}
+		melee := pet.AutoAttacks.MHAuto()
+		if c.ruleset == proto.Ruleset_RulesetForever && melee.SpellMetrics[0].Casts != 2 {
+			t.Errorf("ruleset %v: the pet swung %d times in 5 sec, want 2 after running in for 2.8 sec", c.ruleset, melee.SpellMetrics[0].Casts)
 		}
 	}
 }
@@ -284,5 +402,23 @@ func TestSummonHawkHawks(t *testing.T) {
 		if got := hawk.PseudoStats.DamageDealtMultiplier; math.Abs(got-1.15) > 1e-9 {
 			t.Errorf("hawk %d keeps damage multiplier %.4f once gone, want Unleashed Fury's 1.15", i+1, got)
 		}
+	}
+}
+
+// Under Forever Explosive Trap's ten ticks take 1% of ranged attack power each on top of rank 3's
+// 33, read when the trap goes off (wowsims/forever 3993d79540, the same share as Immolation Trap's).
+func TestForeverExplosiveTrapScalesWithRangedAttackPower(t *testing.T) {
+	sim, hunter := newHunterSim(t, "502-005005-500230230250122151", &proto.Debuffs{})
+	hunter.DistanceFromTarget = 0
+	trap := hunter.ExplosiveTrap
+	trap.ApplyEffects(sim, hunter.CurrentTarget, trap)
+	for sim.CurrentTime < time.Second && !trap.AOEDot().IsActive() && !sim.Step() {
+	}
+	dot := trap.AOEDot()
+	if !dot.IsActive() {
+		t.Fatal("Explosive Trap's ticks never started")
+	}
+	if got, want := dot.SnapshotBaseDamage, 33+0.01*hunter.GetStat(stats.RangedAttackPower); math.Abs(got-want) > 1e-6 {
+		t.Errorf("Explosive Trap ticks for %.2f before modifiers, want %.2f", got, want)
 	}
 }

@@ -1112,8 +1112,9 @@ var foreverDemoralizingRoar = foreverDemoralizingRanks{
 	perLevel: [6]float64{0, 1, 1.4, 1, 1.4, 1.4},
 }
 
-// ForeverDemoralizingScreechAura is a bat's Demoralizing Screech rank 4 (client 24579) on the target
-// for 30 sec, in the same attack power reduction slot as Demoralizing Shout and Roar.
+// ForeverDemoralizingScreechAura is a Carrion Bird's Demoralizing Screech rank 4 (client 24579; skill
+// line 213, the one family that learns it under Forever) on an enemy for 30 sec, in the same attack
+// power reduction slot as Demoralizing Shout and Roar.
 func ForeverDemoralizingScreechAura(target *Unit, apReduction float64) *Aura {
 	return foreverDemoralizingAura(target, "Demoralizing Screech", 24579, time.Second*30, apReduction)
 }

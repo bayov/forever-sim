@@ -309,6 +309,7 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 - **Source:** beta players, gathered on ForeverChanges' hunter pets page and the forever-hunter wiki. The code comment says "nobody knows yet whether that is intended".
 - **Why uncertain:** it could be a beta bug that Blizzard fixes, which would bring back Classic's hit size scaling with the swing.
 - **Reconfirmed 2026-10-16:** the assumptions audit found the beta behaviour still standing: EU forum thread 632244 (level 16 Tallstriders, a 1.3 sec pet hitting 27 to 38 against 31 to 42 for a 2.0 sec pet), forever-bugs #31 still open, and no fix in any note through 15 October. Asked again, the user ruled "Keep treating it as a bug", so Classic's speed scaling stays the default.
+- **Extended 2026-10-23 (user ruling):** Cobra Reflexes (25076, 30% attack speed "but reduces damage", no number; the presets have it on since 2026-10-23) takes the same reading: the pet's hits shrink with the speed, so it adds only Pet Aggression's 8 a hit on the extra swings and the procs (+6 Beast Mastery). The swing is the passive's client row since then (Faster Attack I 17%, 1.71 sec; Slower Attack III -26%, 2.7 sec). Under High a Cobra Reflexes pet's hits stay a 2.0 sec pet's too (wowsims/forever keeps TBC's 15% cut instead).
 - **Settings:**
   - **Expected, Classic (Sim now).** The hit scales with attack speed, treating the beta's behaviour as a bug (user ruling 2026-10-15).
   - **High, as on the beta.** The only observed behaviour: every pet hits like a 2.0 sec pet.

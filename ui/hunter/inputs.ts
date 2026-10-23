@@ -33,6 +33,8 @@ export const WeaponAmmo = InputHelpers.makeSpecOptionsEnumIconInput<Spec.SpecHun
 		{ actionId: () => ActionId.fromItemId(11630), value: Ammo.RockshardPellets },
 		{ actionId: () => ActionId.fromItemId(15997), value: Ammo.ThoriumShells },
 		{ actionId: () => ActionId.fromItemId(13377), value: Ammo.MiniatureCannonBalls },
+		{ actionId: () => ActionId.fromItemId(274387), value: Ammo.SwiftfeatherArrow },
+		{ actionId: () => ActionId.fromItemId(274388), value: Ammo.SwiftstrikeShot },
 	],
 });
 
@@ -63,7 +65,7 @@ export const PetUptime = InputHelpers.makeSpecOptionsNumberInput<Spec.SpecHunter
 export const PetAttackSpeedInput = InputHelpers.makeSpecOptionsEnumInput<Spec.SpecHunter>({
 	fieldName: 'petAttackSpeed',
 	label: 'Pet Attack Speed',
-	labelTooltip: 'The pets auto attacks speed.',
+	labelTooltip: "The pet's swing: the beast's Faster Attack (1.0 to 1.7) or Slower Attack (2.5, 2.7) passive.",
 	values: [
 		{ name: '1.0', value: PetAttackSpeed.One },
 		{ name: '1.2', value: PetAttackSpeed.OneTwo },
@@ -73,9 +75,17 @@ export const PetAttackSpeedInput = InputHelpers.makeSpecOptionsEnumInput<Spec.Sp
 		{ name: '1.6', value: PetAttackSpeed.OneSix },
 		{ name: '1.7', value: PetAttackSpeed.OneSeven },
 		{ name: '2.0', value: PetAttackSpeed.Two },
-		{ name: '2.4', value: PetAttackSpeed.TwoFour },
 		{ name: '2.5', value: PetAttackSpeed.TwoFive },
+		{ name: '2.7', value: PetAttackSpeed.TwoSeven },
 	],
+	showWhen: player => player.getSpecOptions().petType != Hunter_Options_PetType.PetNone,
+	changeEmitter: (player: Player<Spec.SpecHunter>) => TypedEvent.onAny([player.specOptionsChangeEmitter]),
+});
+
+export const PetCobraReflexesInput = InputHelpers.makeSpecOptionsBooleanInput<Spec.SpecHunter>({
+	fieldName: 'cobraReflexes',
+	label: 'Cobra Reflexes',
+	labelTooltip: 'Beast Training: the pet attacks 30% faster, each hit smaller by as much.',
 	showWhen: player => player.getSpecOptions().petType != Hunter_Options_PetType.PetNone,
 	changeEmitter: (player: Player<Spec.SpecHunter>) => TypedEvent.onAny([player.specOptionsChangeEmitter]),
 });

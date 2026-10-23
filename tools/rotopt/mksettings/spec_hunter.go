@@ -79,11 +79,12 @@ func hunterSpec(distance float64, melee bool, raid func(*proto.RaidBuffs, *proto
 			player.DistanceFromTarget = distance
 			player.Spec = &proto.Player_Hunter{Hunter: &proto.Hunter{
 				Options: &proto.Hunter_Options{
-					Ammo:           proto.Hunter_Options_ThoriumHeadedArrow,
+					Ammo:           proto.Hunter_Options_SwiftfeatherArrow,
 					QuiverBonus:    proto.Hunter_Options_Speed15,
 					PetType:        proto.Hunter_Options_Cat,
 					PetAttackSpeed: proto.Hunter_Options_One,
 					PetUptime:      1,
+					CobraReflexes:  true,
 				},
 			}}
 		},

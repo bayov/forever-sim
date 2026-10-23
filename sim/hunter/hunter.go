@@ -272,6 +272,11 @@ func NewHunter(character *core.Character, options *proto.Player) *Hunter {
 			hunter.AmmoDPS = 20
 		case proto.Hunter_Options_MiniatureCannonBalls:
 			hunter.AmmoDPS = 20.5
+		case proto.Hunter_Options_SwiftfeatherArrow, proto.Hunter_Options_SwiftstrikeShot:
+			// Forever's Engineering 300 ammo, items 274387 and 274388 (client 1.60.1.70532: item level
+			// 65, epic; ItemDamageAmmo 24.62, which the tooltip and wowsims/forever's generated table
+			// round down to 24.5).
+			hunter.AmmoDPS = 24.5
 		}
 		hunter.AmmoDamageBonus = hunter.AmmoDPS * rangedWeapon.SwingSpeed
 		hunter.NormalizedAmmoDamageBonus = hunter.AmmoDPS * 2.8
