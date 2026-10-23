@@ -45,13 +45,20 @@ func (mage *Mage) newIceLanceSpellConfig(rank int) core.SpellConfig {
 	baseDamageLow := IceLanceScaling[rank].At(IceLanceBaseDamage[rank][0], mage.Level)
 	baseDamageHigh := IceLanceScaling[rank].At(IceLanceBaseDamage[rank][1], mage.Level)
 
+	// Under Forever it is not binary: the 1240047 row has no slow or other non-damage effect, and
+	// wowsims/forever's Ice Lance rolls partial resists.
+	flags := SpellFlagMage | core.SpellFlagAPL
+	if !mage.Env.IsForever() {
+		flags |= core.SpellFlagBinary
+	}
+
 	return core.SpellConfig{
 		ActionID:     core.ActionID{SpellID: IceLanceSpellId[rank]},
 		SpellCode:    SpellCode_MageIceLance,
 		SpellSchool:  core.SpellSchoolFrost,
 		DefenseType:  core.DefenseTypeMagic,
 		ProcMask:     core.ProcMaskSpellDamage,
-		Flags:        SpellFlagMage | core.SpellFlagBinary | core.SpellFlagAPL,
+		Flags:        flags,
 		MissileSpeed: 38,
 
 		RequiredLevel: IceLanceLevel[rank],
@@ -81,6 +88,7 @@ func (mage *Mage) newIceLanceSpellConfig(rank int) core.SpellConfig {
 			if frozen {
 				spell.DamageMultiplier /= IceLanceFrozenMultiplier
 			}
+			mage.procWintersChillOnIceLance(sim, result, frozen)
 
 			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
 				spell.DealDamage(sim, result)

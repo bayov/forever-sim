@@ -27,7 +27,7 @@ var (
 
 type mageSpells struct {
 	fireball, frostbolt, frostfireBolt, scorch, fireBlast, pyroblast *proto.ActionID
-	arcaneMissiles, arcaneBlast, iceLance, arcaneWrath               *proto.ActionID
+	arcaneMissiles, arcaneBlast, iceLance, arcaneWrath, coneOfCold   *proto.ActionID
 }
 
 // mageRanks leaves out the ranks only the Ahn'Qiraj books teach (Fireball XII, Frostbolt XI,
@@ -45,6 +45,7 @@ func mageRanks() mageSpells {
 		arcaneBlast:    rankID(mage.ArcaneBlastLevel[:], mage.ArcaneBlastSpellId[:]),
 		iceLance:       rankID(mage.IceLanceLevel[:], mage.IceLanceSpellId[:]),
 		arcaneWrath:    rankID(mage.ArcaneWrathLevel[:], mage.ArcaneWrathSpellId[:]),
+		coneOfCold:     rankID(mage.ConeOfColdLevel[:], mage.ConeOfColdSpellId[:]),
 	}
 }
 

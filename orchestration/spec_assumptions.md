@@ -34,7 +34,7 @@ Sources, all read-only:
 | Paladin | 4 | `pal_2h_spec_holy`, `pal_31plus_ranks`, `pal_soc_wf`, `pal_soc_ppm` (pending) |
 | Warrior | 3 (+1 shared) | `warr_rage_k`, `warr_rage_oh` (one value, 0.5: user ruling 2026-10-16), `warr_rend_ap` (+ `wf_totem_offhand`); `warr_crit_rage` settled 2026-10-16 |
 | Hunter | 5 (+1 shared) | `hunter_pet_scaling`, `hunter_pet_speed`, `hunter_tsa_hm_rank`, `hunter_crit_per_agi`, `hunter_raptor_31plus` (+ `wf_totem_offhand` for Survival) |
-| Mage | 3 | `mage_ice_lance_coef`, `mage_frostbolt10`, `mage_imbue_scrolls` |
+| Mage | 3 (+1 pending) | `mage_ice_lance_coef`, `mage_frostbolt10`, `mage_imbue_scrolls` (+ `mage_cone_of_cold`, pending since 2026-10-23) |
 | Shaman | 3 | `sham_mw_ppm`, `sham_lb_31plus`, `sham_es7_tuning` |
 | Druid | 3 | `druid_ooc_rate` (one value, kept for reference), `druid_rip_31plus`, `druid_wrath8_tuning` |
 | Rogue | 0 (+1 shared) | `wf_totem_offhand` |
@@ -367,6 +367,7 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 | `mage_ice_lance_coef` | Ice Lance spell power coefficient | Frostfire, Frost | 0.429, cast on every Fingers of Frost charge | 0 (client, never casting Ice Lance); Mid 0.2145 (half of SoD) | 0.429 | = Expected | Low Frost −19.1%, Frostfire −9.4%; Mid −10.9% / −7.3% (assumption sims, 180 s) |
 | `mage_frostbolt10` | Frostbolt X gets 70291's raise | Frost | ×1.04 | ×1.00 | ×1.04 | ×1.08 | −1.0% Low, +1.0% High (assumption sims, 180 s) |
 | `mage_imbue_scrolls` | Mage staff imbue scrolls | all four mages | used | not available | used | = Expected | −0.8 to −1.5% at Low (assumption sims, 180 s) |
+| `mage_cone_of_cold` (pending, no report row yet) | Frost at melee range with Cone of Cold | Frost | 25 yards, no Cone of Cold | = Sim now | = Sim now | 10 yards, Cone of Cold on cooldown with Winter's Chill 5 and Improved Cone of Cold 3 | +10.9% at High (910.5 against 820.7, 180 s, 20k iterations) |
 
 ### `mage_ice_lance_coef`: Ice Lance's spell power coefficient
 
@@ -410,6 +411,18 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
   - **High:** = Expected.
 - **Sensitivity (assumption sims, 180 s):** Low Frost −1.48%, Fire −1.23%, Frostfire −1.03%, Arcane −0.75%.
 - **Knob:** a request edit (`no_staff_imbue` in `run_assumptions.py`) that takes the option off.
+
+### `mage_cone_of_cold`: a Frost mage standing in Cone of Cold range (pending, added 2026-10-23)
+
+- **Builds:** Frost.
+- **Sim now:** the preset stands at 25 yards like every caster and never casts Cone of Cold (user decision 2026-10-23: keep the Frost preset at range).
+- **Source:** Cone of Cold and Winter's Chill are simulated since 2026-10-23 (`sim/mage/cone_of_cold.go`, the 2026-10-20 hotfix push 112694: 5% damage taken and 7% of spell power on the cone per Winter's Chill stack, up to 5). Cone of Cold only reaches 10 yards, so the mage has to stand that close. wowsims/forever's Frost preset does (41214cc8d0: 10 yards, Cone of Cold on cooldown, Cold Snap when it has 5 sec or more left, talents `05022050011003--053500030100331251`).
+- **Why uncertain:** whether a raid Frost mage can stand within 10 yards of the boss: melee cleaves, frontal and point-blank boss abilities, and the cone has to face the boss.
+- **Settings:**
+  - **Expected (Sim now):** at range, no Cone of Cold.
+  - **High, at 10 yards:** three request edits. Rotation `tools/dps_report/asm_apls/mage__frost.cone_of_cold.apl.json` (the mage_frost template with the preset's knobs plus `coneOfCold=1,coldSnapCone=5`: Cold Snap, then Cone of Cold, right after the Ice Lance line), talents `05022050011003--053500030100331251` (wowsims/forever's, which parse on our tree as they are: Winter's Chill 5 and Improved Cone of Cold 3 in place of Frost Warding 2, Improved Blizzard 3, Permafrost and Ice Block, and Arcane Subtlety 2 and two more Arcane Meditation points in place of two Arcane Impact points and Incineration 3), and `distanceFromTarget` 10.
+- **Sensitivity (180 s, 20k iterations, seed 1, on the Frost request):** 910.5 against the preset's 820.7 (+89.8, +10.9%). The preset at 10 yards without Cone of Cold is 824.8 (the bolts land sooner). Our preset's points with the cone (`05020050031001-02-053500030100331251`, Incineration 2) are 896.2, and the High talents at 25 yards, where the cone can't be cast, are 832.3. About 17 Cone of Cold casts a fight.
+- **Knob:** none in `run_assumptions.py` yet; the pipeline needs an edit that sets the rotation, talents and distance together.
 
 ---
 

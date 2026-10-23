@@ -673,3 +673,125 @@ func TestMageMasterOfElements(t *testing.T) {
 		t.Errorf("a free Fire Blast crit gave back %.1f mana, want %.1f (30%% of its base cost)", got, want)
 	}
 }
+
+// Cone of Cold under Forever: rank 5 is 328 to 358 at 60 with a 12.9% coefficient for 555 mana,
+// on a 10 sec cooldown that Cold Snap finishes, castable only within its 10 yards. Improved Cone
+// of Cold is 12 / 23 / 35%. Winter's Chill stacks on the target from landed Frostbolts and from
+// Ice Lances cast at a Frozen target, and each is 5% more damage and 7% of spell power on the
+// mage's next Cone of Cold, which spends them all (the 2026-10-20 hotfix, push 112694).
+func TestMageConeOfColdAndWintersChill(t *testing.T) {
+	// wowsims/forever's Frost build (41214cc8d0): Frost Channeling 3, Improved Cone of Cold 3,
+	// Cold Snap, Fingers of Frost 2 and Winter's Chill 5.
+	sim, mage := newMageSim(t, "05022050011003--053500030100331251")
+	target := mage.CurrentTarget
+	cone := topRank(t, "Cone of Cold", mage.ConeOfCold)
+	frostbolt := topRank(t, "Frostbolt", mage.Frostbolt)
+	iceLance := topRank(t, "Ice Lance", mage.IceLance)
+	if cone.SpellID != 10161 {
+		t.Fatalf("top Cone of Cold rank is %d, want 10161", cone.SpellID)
+	}
+	if got, want := cone.Cost.GetCurrentCost(), 555*0.85; math.Abs(got-want) > 1e-6 {
+		t.Errorf("Cone of Cold costs %.1f with Frost Channeling 3, want %.1f", got, want)
+	}
+	if !cone.Flags.Matches(core.SpellFlagBinary) || iceLance.Flags.Matches(core.SpellFlagBinary) {
+		t.Errorf("Cone of Cold binary %v, Ice Lance binary %v, want true and false",
+			cone.Flags.Matches(core.SpellFlagBinary), iceLance.Flags.Matches(core.SpellFlagBinary))
+	}
+	if low, high := ConeOfColdScaling[5].At(ConeOfColdBaseDamage[5][0], 60), ConeOfColdScaling[5].At(ConeOfColdBaseDamage[5][1], 60); low != 328 || high != 358 {
+		t.Errorf("rank 5 is %.0f to %.0f at 60, want 328 to 358", low, high)
+	}
+
+	for _, spell := range []*core.Spell{cone, frostbolt, iceLance} {
+		spell.BonusHitRating += 100 * core.SpellHitRatingPerHitChance
+		spell.Cost.Multiplier = 0
+	}
+	advance := func(by time.Duration) {
+		until := sim.CurrentTime + by
+		sim.AddPendingAction(&core.PendingAction{NextActionAt: until, OnAction: func(*core.Simulation) {}})
+		for sim.CurrentTime < until && !sim.Step() {
+		}
+	}
+	castNow := func(spell *core.Spell) {
+		t.Helper()
+		mage.SetGCDTimer(sim, sim.CurrentTime)
+		if !spell.Cast(sim, target) {
+			t.Fatalf("%s didn't cast", spell.ActionID)
+		}
+	}
+
+	// Out of its radius it can't be cast.
+	mage.DistanceFromTarget = 25
+	if cone.CanCast(sim, target) {
+		t.Errorf("Cone of Cold can be cast at 25 yards")
+	}
+	mage.DistanceFromTarget = 10
+
+	// Winter's Chill 5 is a sure stack on every landed Frostbolt.
+	for i := 0; i < 2; i++ {
+		castNow(frostbolt)
+		advance(4 * time.Second)
+	}
+	if got := mage.wintersChillStacks(target); got != 2 {
+		t.Fatalf("%d Winter's Chill stacks after two Frostbolts, want 2", got)
+	}
+
+	// An Ice Lance adds one only when the target counts as Frozen.
+	castNow(iceLance)
+	advance(2 * time.Second)
+	if got := mage.wintersChillStacks(target); got != 2 {
+		t.Errorf("%d Winter's Chill stacks after an Ice Lance at a target not Frozen, want 2", got)
+	}
+	mage.FingersOfFrostAura.Activate(sim)
+	mage.FingersOfFrostAura.SetStacks(sim, 2)
+	castNow(iceLance)
+	advance(2 * time.Second)
+	if got := mage.wintersChillStacks(target); got != 3 {
+		t.Errorf("%d Winter's Chill stacks after an Ice Lance at a Frozen target, want 3", got)
+	}
+	mage.FingersOfFrostAura.Deactivate(sim)
+
+	// The cone reads the stacks as it hits, and spends them.
+	baseMultiplier, baseCoefficient := cone.DamageMultiplier, cone.BonusCoefficient
+	if math.Abs(baseMultiplier-1.35) > 1e-9 || math.Abs(baseCoefficient-ConeOfColdSpellCoeff) > 1e-9 {
+		t.Errorf("Cone of Cold has %.4f damage and %.3f coefficient, want 1.35 (Improved Cone of Cold 3) and 0.129", baseMultiplier, baseCoefficient)
+	}
+	if multiplier, coefficient := mage.wintersChillBonus(target); math.Abs(multiplier-1.15) > 1e-9 || math.Abs(coefficient-0.21) > 1e-9 {
+		t.Errorf("3 Winter's Chill stacks give Cone of Cold %.4f times the damage and %.3f more coefficient, want 1.15 and 0.21", multiplier, coefficient)
+	}
+	mage.fingersOfFrostChance = 0
+	castNow(cone)
+	if got := mage.wintersChillStacks(target); got != 0 {
+		t.Errorf("%d Winter's Chill stacks after Cone of Cold, want 0", got)
+	}
+	if cone.DamageMultiplier != baseMultiplier || cone.BonusCoefficient != baseCoefficient {
+		t.Errorf("Cone of Cold kept the stacks' bonus after the hit")
+	}
+
+	// Cold Snap finishes the cooldown.
+	if cone.CD.IsReady(sim) {
+		t.Fatalf("Cone of Cold is ready right after its cast")
+	}
+	coldSnap := mage.GetSpell(core.ActionID{SpellID: 12472})
+	coldSnap.Cast(sim, &mage.Unit)
+	if !cone.CD.IsReady(sim) {
+		t.Errorf("Cone of Cold still on cooldown after Cold Snap")
+	}
+
+	// A Cone of Cold that grants Fingers of Frost spends none of the charges it granted, and one
+	// cast with charges up spends one.
+	mage.fingersOfFrostChance = 1
+	advance(2 * time.Second)
+	castNow(cone)
+	advance(core.SpellBatchWindow)
+	if got := mage.FingersOfFrostAura.GetStacks(); got != 2 {
+		t.Errorf("%d Fingers of Frost charges after the Cone of Cold that granted them, want 2", got)
+	}
+	mage.fingersOfFrostChance = 0
+	cone.CD.Reset()
+	advance(2 * time.Second)
+	castNow(cone)
+	advance(core.SpellBatchWindow)
+	if got := mage.FingersOfFrostAura.GetStacks(); got != 1 {
+		t.Errorf("%d Fingers of Frost charges after a Cone of Cold cast with 2 up, want 1", got)
+	}
+}

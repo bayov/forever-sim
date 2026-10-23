@@ -31,6 +31,7 @@ const (
 	SpellCode_MageFrostfireBolt
 	SpellCode_MagePyroblast
 	SpellCode_MageArcaneWrath
+	SpellCode_MageConeOfCold
 )
 
 var TalentTreeSizes = [3]int{19, 17, 18}
@@ -67,6 +68,7 @@ type Mage struct {
 	ArcaneWrath             []*core.Spell
 	BlastWave               []*core.Spell
 	Blizzard                []*core.Spell
+	ConeOfCold              []*core.Spell
 	Counterspell            *core.Spell
 	Evocation               *core.Spell
 	Fireball                []*core.Spell
@@ -95,9 +97,11 @@ type Mage struct {
 	MageArmorAura       *core.Aura
 	MissileBarrageAura  *core.Aura
 	PresenceOfMindAura  *core.Aura
+	WintersChillAuras   core.AuraArray
 
 	// Chances added up by the talents and the Manaflare set, read when the proc rolls.
 	fingersOfFrostChance         float64
+	wintersChillChance           float64
 	frostfireMissileBarrageBonus float64
 	frostfireFingersOfFrostBonus float64
 	frostfireCombustionCrit      float64
@@ -107,6 +111,9 @@ type Mage struct {
 
 	// Counts the Fingers of Frost grants, so a deferred spend can tell charges came after its cast.
 	fingersOfFrostGrants int
+	// A cast that granted the Fingers of Frost charges from inside its own effects, which spends
+	// none of them.
+	fingersOfFrostGrantedBy *core.Spell
 }
 
 // Agent is a generic way to access underlying mage on any of the agents.
@@ -143,6 +150,7 @@ func (mage *Mage) Initialize() {
 	mage.registerArcaneExplosionSpell()
 	mage.registerBlastWaveSpell()
 	mage.registerBlizzardSpell()
+	mage.registerConeOfColdSpell()
 	mage.registerFlamestrikeSpell()
 
 	mage.registerEvocationCD()
@@ -152,6 +160,7 @@ func (mage *Mage) Initialize() {
 
 func (mage *Mage) Reset(sim *core.Simulation) {
 	mage.presenceOfMindSpentAt = -1
+	mage.fingersOfFrostGrantedBy = nil
 }
 
 func NewMage(character *core.Character, options *proto.Player) *Mage {

@@ -232,15 +232,15 @@ dps_results: {
 dps_results: {
  key: "TestP1Mage-Phase1-Settings-Human-level60_phase1_synthetic-DPS-level60_frostfire-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 610.43733
-  tps: 607.45413
+  dps: 610.38017
+  tps: 607.46622
  }
 }
 dps_results: {
  key: "TestP1Mage-Phase1-Settings-Human-level60_phase1_synthetic-DPS-level60_frostfire-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 610.43733
-  tps: 374.88448
+  dps: 610.38017
+  tps: 374.7984
  }
 }
 dps_results: {

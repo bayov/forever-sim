@@ -201,6 +201,7 @@ func (mage *Mage) applyFrostTalents() {
 	mage.registerIceBarrierSpell()
 	mage.applyFingersOfFrost()
 	mage.applyShatter()
+	mage.applyWintersChill()
 
 	// Elemental Precision: 2% hit with Fire and Frost spells per point, 3 points since the
 	// 2026-10-20 hotfix to 70450 (5 points of 1% before; Classic took 2% off the resist chance).
@@ -787,8 +788,10 @@ func (mage *Mage) registerColdSnapCD() {
 // rotation casts spends a charge a spell batch (10 ms) after it finishes, so a spell cast in the
 // same batch still reads the target as Frozen, and charges granted inside that batch stay full.
 // A channel spends none at its cast (Blizzard casts with charges up spent none); each Arcane
-// Missiles missile that lands spends one as it rolls its damage. The cast that granted the charges
-// spends none of them.
+// Missiles missile that lands spends one as it rolls its damage. A cast that granted the charges
+// from inside its own effects, the hit of a rotation spell without travel time such as Cone of
+// Cold, spends none of them; a missile's impact exempts nothing (wowsims/forever e875ae5bd3: by
+// timestamp, a Frostbolt finishing its cast as another landed and procced skipped its spend).
 func (mage *Mage) applyFingersOfFrost() {
 	if mage.Talents.FingersOfFrost == 0 {
 		return
@@ -802,8 +805,8 @@ func (mage *Mage) applyFingersOfFrost() {
 		Duration:  time.Second * 15,
 		MaxStacks: mage.Talents.FingersOfFrost,
 		OnCastComplete: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell) {
-			// OnCastComplete is called after OnSpellHitDealt / etc, so don't take a charge for the proc itself.
-			if aura.RemainingDuration(sim) == aura.Duration {
+			if spell == mage.fingersOfFrostGrantedBy {
+				mage.fingersOfFrostGrantedBy = nil
 				return
 			}
 			if !spell.Flags.Matches(SpellFlagMage) || !spell.Flags.Matches(core.SpellFlagAPL) || spell.Flags.Matches(core.SpellFlagChanneled) {
@@ -856,6 +859,9 @@ func (mage *Mage) procFingersOfFrost(sim *core.Simulation, spell *core.Spell) {
 		chance += mage.frostfireFingersOfFrostBonus
 	}
 	if sim.Proc(chance, "Fingers of Frost") {
+		if spell.MissileSpeed == 0 && spell.Flags.Matches(core.SpellFlagAPL) {
+			mage.fingersOfFrostGrantedBy = spell
+		}
 		mage.FingersOfFrostAura.Activate(sim)
 		mage.FingersOfFrostAura.SetStacks(sim, mage.FingersOfFrostAura.MaxStacks)
 		mage.fingersOfFrostGrants++
@@ -870,7 +876,7 @@ func (mage *Mage) isTargetFrozen(_ *core.Unit) bool {
 
 // personalCritRating is the crit the mage's own effects on the target add to spell: Shatter
 // (17 / 33 / 50%) while the target counts as Frozen. Winter's Chill gave Frostbolt and Ice Lance
-// crit until 1.60.1.70425, which made it a Cone of Cold damage debuff instead.
+// crit until 1.60.1.70425, which made it a Cone of Cold debuff instead (cone_of_cold.go).
 func (mage *Mage) personalCritRating(spell *core.Spell, target *core.Unit) float64 {
 	bonus := 0.0
 	if mage.Talents.Shatter > 0 && mage.isTargetFrozen(target) {
