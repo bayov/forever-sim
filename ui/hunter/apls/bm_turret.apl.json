@@ -1,0 +1,19 @@
+{
+    "type": "TypeAPL",
+    "prepullActions": [
+        {"action":{"castSpell":{"spellId":{"spellId":14321}}},"doAtValue":{"const":{"val":"-3s"}}},
+        {"action":{"castSpell":{"spellId":{"spellId":3045}}},"doAtValue":{"const":{"val":"-0.1s"}}}
+    ],
+    "priorityList": [
+        {"action":{"condition":{"inMeleeRange":{}},"move":{"rangeFromTarget":{"const":{"val":"25"}}}},"notes":"Steps out past the 8 yard minimum."},
+        {"action":{"castSpell":{"spellId":{"spellId":14321}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":14321}}}}}}},
+        {"action":{"castSpell":{"spellId":{"spellId":1259799}},"condition":{"or":{"vals":[{"auraIsActive":{"auraId":{"itemId":993016}}},{"cmp":{"lhs":{"spellUsesRemaining":{"minTimeLeft":{"const":{"val":"15s"}},"spellId":{"itemId":993016}}},"op":"OpEq","rhs":{"const":{"val":"0"}}}},{"cmp":{"lhs":{"spellUsesLostByDelay":{"delay":{"spellTimeToReady":{"spellId":{"itemId":993016}}},"minTimeLeft":{"const":{"val":"15s"}},"spellId":{"spellId":1259799}}},"op":"OpGt","rhs":{"const":{"val":"0"}}}}]}}}},
+        {"action":{"autocastOtherCooldowns":{}},"notes":"Rapid Fire, Bestial Wrath, racials, trinkets and potions."},
+        {"action":{"castSpell":{"spellId":{"spellId":20904}}},"notes":"Shares its cooldown with Multi-Shot."},
+        {"action":{"castSpell":{"spellId":{"spellId":2643}}},"notes":"When Aimed Shot is not talented."},
+        {"action":{"castSpell":{"spellId":{"spellId":1310786}}},"notes":"With the talent."},
+        {"action":{"castSpell":{"spellId":{"spellId":1293527}},"condition":{"and":{"vals":[{"not":{"val":{"and":{"vals":[{"dotIsActive":{"spellId":{"spellId":1293527,"tag":1}}},{"dotIsActive":{"spellId":{"spellId":1293527,"tag":2}}}]}}}},{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.2"}}}}]}}},"notes":"With the talent."},
+        {"action":{"castSpell":{"spellId":{"spellId":14287}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.2"}}}}}},
+        {"action":{"castSpell":{"spellId":{"spellId":13555}},"condition":{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"spellId":13555}}}}},{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.3"}}}}]}}}}
+    ]
+}

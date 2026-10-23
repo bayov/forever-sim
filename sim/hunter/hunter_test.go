@@ -19,10 +19,11 @@ func TestBeastMastery(t *testing.T) {
 }
 
 // Beast Mastery with Summon Hawk for a point of Spirit Bond, which no Level 60 preset takes: the
-// rotation sends a hawk on the cooldown it shares with Arcane Shot while fewer than 2 are out.
+// rotation sends a hawk on the cooldown it shares with Arcane Shot while fewer than 2 are out. It
+// runs the turret rotation, which stands at range, so the goldens keep one that doesn't weave.
 func TestBeastMasteryHawk(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
-		hunterSuite(BeastMasteryHawkTalents, "level60_phase1_synthetic_ranged", "bm", RangedConsumes, PlayerOptionsCat),
+		hunterSuite(BeastMasteryHawkTalents, "level60_phase1_synthetic_ranged", "bm_turret", RangedConsumes, PlayerOptionsCat),
 	}))
 }
 
@@ -39,8 +40,9 @@ func TestLoneWolf(t *testing.T) {
 	}))
 }
 
-// The test suite puts every player 5 yards from the target. The ranged rotations step back to 25
-// yards first (8 yards is the minimum range), Survival melees from there.
+// The test suite puts every player 5 yards from the target. The ranged rotations walk to 12 yards
+// before the pull and melee weave from there (the turret rotation steps back to 25 yards at the
+// pull), Survival melees.
 func TestSurvival(t *testing.T) {
 	core.RunTestSuite(t, t.Name(), core.FullCharacterTestSuiteGenerator([]core.CharacterSuiteConfig{
 		hunterSuite(SurvivalTalents, "level60_phase1_synthetic_survival", "sv", SurvivalConsumes, PlayerOptionsCat),

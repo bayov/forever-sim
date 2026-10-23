@@ -38,7 +38,10 @@ Nothing was in flight. These are parked items with no owner now:
    parked unless the user asks. The Mutilate window tweak (+0.8) is parked the same way.
 3. **Hunter Auto Shot sim bug (shared code, left alone).** If a hunter ends its pre-pull walk at range, Auto Shot keeps
    firing after it walks into melee, and melee swings never come back. The Survival Scorpid duty avoids it by walking
-   into melee before the pull. The 12 yd vs 8 yd ranged minimum check is unresolved too.
+   into melee before the pull. The 12 yd vs 8 yd ranged minimum check is unresolved too. Update 2026-10-23: the
+   minimum is 11.67 yd under Forever (the 8 yd row from both combat reaches, wowsims/forever 8a192337d8), and the
+   weaving presets walk out of melee and back many times a fight with Auto Shot and the swings coming back each
+   time (sim/hunter/forever_weave_test.go); the bug as described didn't reproduce.
 4. **`state.json` openItems** are still current: Gnome Eureka! spell mask, APL duration × fractional constant
    truncation, beta Rage and Shadow Oil measurements, and Smite's consumes from mksettings.
 5. **Rank tuning effects after the Enhancement rise.** Recorded only in the auditor's last message, so here:

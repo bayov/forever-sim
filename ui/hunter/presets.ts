@@ -38,12 +38,15 @@ import { Stats } from '../core/proto_utils/stats.js';
 import BeastMasteryAPL from './apls/bm.apl.json';
 import BeastMasteryMarkAPL from './apls/bm_mark.apl.json';
 import BeastMasteryScorpidAPL from './apls/bm_scorpid.apl.json';
+import BeastMasteryTurretAPL from './apls/bm_turret.apl.json';
 import LoneWolfAPL from './apls/lw.apl.json';
 import LoneWolfMarkAPL from './apls/lw_mark.apl.json';
 import LoneWolfScorpidAPL from './apls/lw_scorpid.apl.json';
+import LoneWolfTurretAPL from './apls/lw_turret.apl.json';
 import MarksmanshipAPL from './apls/mm.apl.json';
 import MarksmanshipMarkAPL from './apls/mm_mark.apl.json';
 import MarksmanshipScorpidAPL from './apls/mm_scorpid.apl.json';
+import MarksmanshipTurretAPL from './apls/mm_turret.apl.json';
 import SurvivalAPL from './apls/sv.apl.json';
 import SurvivalMarkAPL from './apls/sv_mark.apl.json';
 import Level60RangedGear from './gear_sets/level60_phase1_synthetic_ranged.gear.json';
@@ -123,16 +126,33 @@ export const DefaultGear = GearLevel60Ranged;
 // and Lone Wolf put Arcane Shot above Aimed Shot and spend their mana with no floors (+15 with
 // Improved Arcane Shot 5), and both cast Serpent Sting after Aimed Shot (+1.7 and +2.1). Beast Mastery
 // keeps Aimed Shot first and its floors.
+// Since 2026-10-23 the ranged rotations melee weave from 12 yd: between Auto Shots the hunter walks in
+// for a main hand swing with Raptor Strike queued, when that holds the next Auto Shot back 1.2 sec or
+// less and the shot cooldowns stay down meanwhile (Beast Mastery +9.8, Marksmanship +2.7 at 180 sec).
+// The turret rotations stand at range.
+const weaveTooltip = ' Melee weaves from 12 yd: walks in for a main hand swing with Raptor Strike queued when the next Auto Shot waits 1.2 sec or less.';
 export const APLBeastMastery = PresetUtils.makePresetAPLRotation('Beast Mastery', BeastMasteryAPL, {
-	tooltip: 'Aimed Shot, Sniper Shot and Arcane Shot on cooldown, then Serpent Sting when down, Bestial Wrath and Rapid Fire on cooldown.',
+	tooltip: 'Aimed Shot, Sniper Shot and Arcane Shot on cooldown, then Serpent Sting when down, Bestial Wrath and Rapid Fire on cooldown.' + weaveTooltip,
 	group: 'Level 60',
 });
 export const APLMarksmanship = PresetUtils.makePresetAPLRotation('Marksmanship', MarksmanshipAPL, {
-	tooltip: 'Arcane Shot, Aimed Shot, Serpent Sting when down and Sniper Shot on cooldown, Rapid Fire on cooldown, no mana floors.',
+	tooltip: 'Arcane Shot, Aimed Shot, Serpent Sting when down and Sniper Shot on cooldown, Rapid Fire on cooldown, no mana floors.' + weaveTooltip,
 	group: 'Level 60',
 });
 export const APLLoneWolf = PresetUtils.makePresetAPLRotation('Lone Wolf', LoneWolfAPL, {
-	tooltip: 'The Marksmanship rotation, for no pet.',
+	tooltip: 'The Marksmanship rotation, for no pet.' + weaveTooltip,
+	group: 'Level 60',
+});
+export const APLBeastMasteryTurret = PresetUtils.makePresetAPLRotation('Beast Mastery (turret)', BeastMasteryTurretAPL, {
+	tooltip: 'The Beast Mastery rotation, standing at 25 yd.',
+	group: 'Level 60',
+});
+export const APLMarksmanshipTurret = PresetUtils.makePresetAPLRotation('Marksmanship (turret)', MarksmanshipTurretAPL, {
+	tooltip: 'The Marksmanship rotation, standing at 25 yd.',
+	group: 'Level 60',
+});
+export const APLLoneWolfTurret = PresetUtils.makePresetAPLRotation('Lone Wolf (turret)', LoneWolfTurretAPL, {
+	tooltip: 'The Lone Wolf rotation, standing at 25 yd.',
 	group: 'Level 60',
 });
 // Melee: Mongoose Bite whenever Expose Prey opens it, Strider Kick and Immolation Trap on
@@ -201,6 +221,9 @@ export const APLPresets = {
 		APLBeastMasteryScorpid,
 		APLMarksmanshipScorpid,
 		APLLoneWolfScorpid,
+		APLBeastMasteryTurret,
+		APLMarksmanshipTurret,
+		APLLoneWolfTurret,
 	],
 };
 

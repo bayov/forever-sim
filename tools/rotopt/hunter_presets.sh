@@ -32,12 +32,32 @@ mm="$ranged,arcaneFirst=1,arcaneMana=0,serpentLate=1,serpentMana=0,sniperManaPer
 # Beast Mastery casts Serpent Sting last, after the Arcane Shot cooldown (rotation audit pass 24,
 # 2026-10-16: +2.8 / +1.5 / +1.2 at 120 / 180 / 300 sec). Its Hunter's Mark duty keeps it first (the
 # move costs 0.1 to 0.4 there), and the Scorpid Sting duty has no Serpent Sting.
-gen hunter_ranged bm "$bm,serpentLate=2"
-gen hunter_ranged mm "$mm"
-gen hunter_ranged lw "$mm"
+# The ranged presets melee weave (2026-10-23, after the weave mechanics of wowsims/forever): between
+# Auto Shots the hunter walks from 12 yd into melee for a main hand swing Raptor Strike is ready for,
+# when that holds the next Auto Shot back 1.2 sec or less and Arcane Shot and the Aimed Shot cooldown
+# stay down until it is back but 0.75 sec. At 180 sec, 20000 iterations, on the Level 60 requests,
+# against the turret rotation: Beast Mastery 1099.9 -> 1109.7, Marksmanship 1128.1 -> 1130.8, Lone
+# Wolf 1116.4 -> 1118.7, the Hunter's Mark duties +7.5 / +3.5 / +3.7, the Scorpid Sting duties
+# +10.6 / +0.9 / +1.7. Against the old engine, before the first Auto Shot wound up for 0.5 sec:
+# +9.4 / +1.9 / +1.5, +6.7 / +2.8 / +2.7 and +9.8 / +0.5 / 0.0. The knob
+# sweeps on Beast Mastery (3000 iterations): weaving for white swings too -2.7, no cooldown check
+# -2.4, a 1.0 sec delay (no weaves) -12, and 1.6 sec with white swings -24. Leaving melee at once
+# after the swing (weaveMeleeWait=0) is +5.5 Beast Mastery and +4.6 Marksmanship more, but the
+# rotation keeps the player's 0.2 sec reaction there as for the walk in. The _turret rotations
+# stand at range, as the presets did before.
+weave="weave=1,weaveRaptor=1,weaveDelay=1.2,weaveShotSlack=0.75"
+gen hunter_ranged bm "$bm,serpentLate=2,$weave"
+gen hunter_ranged mm "$mm,$weave"
+gen hunter_ranged lw "$mm,$weave"
+gen hunter_ranged bm_turret "$bm,serpentLate=2"
+gen hunter_ranged mm_turret "$mm"
+gen hunter_ranged lw_turret "$mm"
 # Marksmanship and Lone Wolf hold Rapid Fire and Elune's Light for the on-use trinket when the wait
 # costs no use, Beast Mastery only Elune's Light (rotation auditor, 2026-10-13: +2.3 / +1.7 / +0.5
 # at 300 sec, nothing at 120 and 180).
+# Survival melees and doesn't weave (2026-10-23, 180 sec, 20000 iterations): stepping out to 12 yd for
+# each Auto Shot after a main hand swing is 874.0 against its 997.2, and the ranged weave rotation on
+# its build and gear 850.1.
 # Survival: Wing Clip in every free global cooldown (+31 at 180 sec), held when Mongoose Bite or
 # Strider Kick is about ready (+0.4).
 # Since the trap scales with ranged attack power (hunter_trap_ap) it goes right after Strider Kick,
@@ -51,9 +71,9 @@ gen hunter_sv sv "$sv"
 # pre-pull Aspect's global cooldown, so the boss has it from the first shot (rotation audit pass 20:
 # +4.7 / +3.3 / +3.4 / +1.4 at 180 sec on Beast Mastery / Marksmanship / Lone Wolf / Survival, 20000
 # iterations). It is not held back for the hunter's own DPS (user ruling).
-gen hunter_ranged bm_mark "$bm,mark=1,markPrepull=1.5"
-gen hunter_ranged mm_mark "$mm,mark=1,markPrepull=1.5"
-gen hunter_ranged lw_mark "$mm,mark=1,markPrepull=1.5"
+gen hunter_ranged bm_mark "$bm,mark=1,markPrepull=1.5,$weave"
+gen hunter_ranged mm_mark "$mm,mark=1,markPrepull=1.5,$weave"
+gen hunter_ranged lw_mark "$mm,mark=1,markPrepull=1.5,$weave"
 gen hunter_sv sv_mark "$sv,mark=1,markPrepull=1.5"
 # Scorpid Sting duty (standards 23), for the ranged hunters only (user ruling 2026-10-15, not melee
 # Survival): Scorpid Sting kept up in place of Serpent Sting, for the presets with the raid's Scorpid
@@ -63,6 +83,6 @@ gen hunter_sv sv_mark "$sv,mark=1,markPrepull=1.5"
 # Beast Mastery refreshes the sting 4 sec before it drops, not 2: with its busier global cooldowns
 # the 2 sec refresh let it lapse (rotation audit pass 20; +2.6 / +2.7 / +3.0 at 120 / 180 / 300 sec).
 # Marksmanship and Lone Wolf lose 1.0 to 1.4 at 180 and 300 sec with 4, so they keep 2.
-gen hunter_ranged bm_scorpid "$bm,scorpid=1,scorpidLead=4"
-gen hunter_ranged mm_scorpid "$mm,scorpid=1,sniperManaPerSec=15"
-gen hunter_ranged lw_scorpid "$mm,scorpid=1,sniperManaPerSec=15"
+gen hunter_ranged bm_scorpid "$bm,scorpid=1,scorpidLead=4,$weave"
+gen hunter_ranged mm_scorpid "$mm,scorpid=1,sniperManaPerSec=15,$weave"
+gen hunter_ranged lw_scorpid "$mm,scorpid=1,sniperManaPerSec=15,$weave"
