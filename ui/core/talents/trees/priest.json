@@ -62,8 +62,7 @@
             25
           ]
         ],
-        "icon": "inv_wand_01",
-        "notSimulated": true
+        "icon": "inv_wand_01"
       },
       {
         "fieldName": "twinDisciplines",

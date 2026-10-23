@@ -155,6 +155,11 @@ export const APLP1Shadow = PresetUtils.makePresetAPLRotation('Shadow', P1APL);
 // Shadow Weaving reaches 5 stacks 6 sec in and stays there, Inner Focus goes on the first Mind
 // Blast and again after its 3 min, Shadow Word: Pain and Devouring Plague go back up within a GCD
 // of falling off, no GCD is idle, and mana stays above 6000.
+//
+// Wand Shoot (2026-10-23, forever-wiki/sim-status.md): from 10% mana to 20% with a minute or
+// more to go, and when nothing else can be cast. The Shadow build never runs that low; Shadow +
+// Holy goes from 916.0 / 918.9 / 829.7 / 711.6 to 916.0 / 918.9 / 859.3 / 786.4 at 120 / 180 /
+// 300 / 480 sec.
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APL, {
 	tooltip: "The optimizer's best level 60 rotation: both damage over time spells up, Mind Blast and Shadow Word: Death on cooldown, Mind Flay to fill.",
 	group: 'Level 60',
@@ -187,6 +192,10 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // Holy Fire's damage over time is no longer needed for it, and its mana goes to Smite:
 // 744.0 / 724.6 / 639.7 at 120 / 180 / 300 sec against 729.3 / 716.8 / 646.6 with it, with
 // Devouring Plague now above 80% mana (2026-10-16). The notes above are from before.
+//
+// Wand Shoot (2026-10-23, forever-wiki/sim-status.md): from 10% mana to 20% with a minute or
+// more to go, and when nothing else can be cast: 785.6 / 765.4 / 675.3 / 580.4 to 785.7 /
+// 765.7 / 689.6 / 619.4 at 120 / 180 / 300 / 480 sec.
 export const APLLevel60Smite = PresetUtils.makePresetAPLRotation('Level 60 Smite', Level60SmiteAPL, {
 	tooltip: "The optimizer's best rotation for the Smite talents: Shadow Word: Pain up for Power in Light, Smite to fill, a lower rank once mana runs short.",
 	group: 'Level 60',

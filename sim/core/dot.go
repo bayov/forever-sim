@@ -286,6 +286,7 @@ func newDot(config Dot) *Dot {
 			dot.Spell.Unit.ChanneledDot = nil
 			dot.Spell.Unit.Rotation.interruptChannelIf = nil
 			dot.Spell.Unit.Rotation.allowChannelRecastOnInterrupt = false
+			dot.Spell.Unit.wand.channelEnded(sim, dot)
 			// track time metrics for channels
 			dot.Spell.SpellMetrics[aura.Unit.UnitIndex].TotalCastTime += dot.fadeTime - dot.StartedAt()
 		}

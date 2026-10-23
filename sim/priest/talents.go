@@ -20,6 +20,10 @@ func (priest *Priest) ApplyTalents() {
 	priest.applyMentalAgility()
 	priest.registerInnerFocus()
 	priest.applyHolyPrecision()
+	// 13% and 25% under Forever (the talent's TraitDefinitionEffectPoints curve, 14524).
+	if priest.Env != nil && priest.Env.IsForever() {
+		priest.ApplyWandSpecialization([]float64{0, 0.13, 0.25}[min(priest.Talents.WandSpecialization, 2)])
+	}
 
 	if priest.Talents.SilentResolve > 0 {
 		threat := 1 - 0.1*float64(priest.Talents.SilentResolve)

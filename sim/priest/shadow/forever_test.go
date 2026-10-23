@@ -452,3 +452,198 @@ func TestShadowguard(t *testing.T) {
 		t.Errorf("%d strikes crit", metrics.Crits)
 	}
 }
+
+// newWandPriestSim is a level 60 priest holding the given wand with an empty rotation, for a
+// fight of the given length under Forever.
+func newWandPriestSim(t *testing.T, talents string, wandID int32, seconds int32) (*core.Simulation, *ShadowPriest) {
+	return newWandPriestSimAPL(t, talents, wandID, seconds, &proto.APLRotation{})
+}
+
+func newWandPriestSimAPL(t *testing.T, talents string, wandID int32, seconds int32, rotation *proto.APLRotation) (*core.Simulation, *ShadowPriest) {
+	items := make([]*proto.ItemSpec, proto.ItemSlot_ItemSlotRanged+1)
+	for i := range items {
+		items[i] = &proto.ItemSpec{}
+	}
+	items[proto.ItemSlot_ItemSlotRanged] = &proto.ItemSpec{Id: wandID}
+	sim := core.NewSim(&proto.RaidSimRequest{
+		Raid: core.SinglePlayerRaidProto(&proto.Player{
+			Race:          proto.Race_RaceHuman,
+			Class:         proto.Class_ClassPriest,
+			Level:         60,
+			Equipment:     &proto.EquipmentSpec{Items: items},
+			TalentsString: talents,
+			Rotation:      rotation,
+			Spec:          PlayerOptionsBasic,
+		}, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+		Encounter:  &proto.Encounter{Duration: float64(seconds), Targets: []*proto.Target{core.NewDefaultTarget()}},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+	}, simsignals.CreateSignals())
+	sim.Reset()
+	sim.PrePull()
+	return sim, sim.Raid.Parties[0].Players[0].(*ShadowPriest)
+}
+
+func wandShoot(t *testing.T, sp *ShadowPriest) *core.Spell {
+	shoot := sp.GetSpell(core.ActionID{SpellID: core.WandShootSpellID})
+	if shoot == nil {
+		t.Fatal("no Shoot")
+	}
+	return shoot
+}
+
+// TestWandShoot checks Forever's wand Shoot (wowsims/forever 7ddd02e9e2, dcc2aaf371 and
+// 924140e5b2): it shoots the wand's school, the first shot comes 0.5 sec after Shoot starts
+// and no sooner than a wand speed after the last cast, then one shot every wand speed; a shot
+// misses on the ranged weapon table (8% against a level 63 boss, which physical hit lowers and
+// spell hit doesn't) and crits on spell crit for 1.5 times.
+func TestWandShoot(t *testing.T) {
+	const smiteTalents = "525035231030001001-30505110002-3"
+	// Bonecreeper Stylus: 83 - 155 Arcane, speed 1.9.
+	const bonecreeper = 13938
+
+	t.Run("school and Wand Specialization", func(t *testing.T) {
+		_, sp := newWandPriestSim(t, smiteTalents, bonecreeper, 10)
+		shoot := wandShoot(t, sp)
+		if shoot.SpellSchool != core.SpellSchoolArcane {
+			t.Errorf("Shoot with Bonecreeper Stylus deals school %v, want Arcane", shoot.SpellSchool)
+		}
+		if math.Abs(shoot.DamageMultiplier-1.25) > 1e-9 {
+			t.Errorf("Wand Specialization 2/2 gives Shoot %.3f, want 1.25", shoot.DamageMultiplier)
+		}
+		// Wicked Lich's Finger is a physical wand, which the talent's school mask leaves out.
+		_, sp = newWandPriestSim(t, smiteTalents, 281263, 10)
+		if shoot := wandShoot(t, sp); shoot.SpellSchool != core.SpellSchoolPhysical || shoot.DamageMultiplier != 1 {
+			t.Errorf("Shoot with a physical wand deals school %v at %.3f, want physical at 1", shoot.SpellSchool, shoot.DamageMultiplier)
+		}
+	})
+
+	// The times Shoot lands, from a cast at castAt, after Smite cast at 0 when smiteFirst.
+	shotTimes := func(t *testing.T, castAt float64, smiteFirst bool) []float64 {
+		sim, sp := newWandPriestSim(t, smiteTalents, bonecreeper, 12)
+		shoot := wandShoot(t, sp)
+		target := sim.GetTargetUnit(0)
+		var times []float64
+		if smiteFirst {
+			sim.AddPendingAction(&core.PendingAction{NextActionAt: 0, OnAction: func(sim *core.Simulation) {
+				if !topRank(t, "Smite", sp.Smite).Cast(sim, target) {
+					t.Fatal("Smite didn't cast")
+				}
+			}})
+		}
+		sim.AddPendingAction(&core.PendingAction{NextActionAt: core.DurationFromSeconds(castAt), OnAction: func(sim *core.Simulation) {
+			if !shoot.Cast(sim, target) {
+				t.Fatal("Shoot didn't cast")
+			}
+		}})
+		// A shot counts its outcome when it fires.
+		metrics := &shoot.SpellMetrics[target.UnitIndex]
+		shots := int32(0)
+		for !sim.Step() {
+			if n := metrics.Hits + metrics.Crits + metrics.Misses; n > shots {
+				shots = n
+				times = append(times, sim.CurrentTime.Seconds())
+			}
+		}
+		return times
+	}
+	check := func(t *testing.T, got, want []float64) {
+		t.Helper()
+		if len(got) < len(want) {
+			t.Fatalf("Shoot landed at %v, want %v first", got, want)
+		}
+		for i := range want {
+			if math.Abs(got[i]-want[i]) > 1e-6 {
+				t.Fatalf("Shoot landed at %v, want %v first", got, want)
+			}
+		}
+	}
+
+	t.Run("the first shot after the wind-up, then one each wand speed", func(t *testing.T) {
+		check(t, shotTimes(t, 1, false), []float64{1.5, 3.4, 5.3, 7.2})
+	})
+
+	t.Run("the first shot a wand speed after the last cast", func(t *testing.T) {
+		// Smite's 2 sec cast (Divine Fury 5/5) ends at 2; the wand timer restarts there.
+		check(t, shotTimes(t, 2.1, true), []float64{3.9, 5.8})
+	})
+
+	t.Run("the ranged table: physical hit lowers the miss, spell hit doesn't; spell crit for 1.5 times", func(t *testing.T) {
+		shoot300 := func(bonus stats.Stats) core.SpellMetrics {
+			sim, sp := newWandPriestSim(t, smiteTalents, bonecreeper, 600)
+			shoot := wandShoot(t, sp)
+			target := sim.GetTargetUnit(0)
+			sim.AddPendingAction(&core.PendingAction{NextActionAt: 0, OnAction: func(sim *core.Simulation) {
+				sp.AddStatsDynamic(sim, bonus)
+				shoot.Cast(sim, target)
+			}})
+			for !sim.Step() {
+			}
+			return shoot.SpellMetrics[target.UnitIndex]
+		}
+
+		at := shotTablesFor(t)
+		if math.Abs(at-0.08) > 1e-9 {
+			t.Errorf("the wand's miss against a level 63 boss is %.4f, want 0.08", at)
+		}
+		spellHit := shoot300(stats.Stats{stats.SpellHit: 20})
+		if shots := spellHit.Hits + spellHit.Crits + spellHit.Misses; shots < 300 || spellHit.Misses < 12 || spellHit.Misses > 40 {
+			t.Errorf("with 20%% spell hit Shoot missed %d of %d shots, want about 8%%", spellHit.Misses, shots)
+		}
+		if physicalHit := shoot300(stats.Stats{stats.MeleeHit: 8}); physicalHit.Misses != 0 {
+			t.Errorf("with 8%% physical hit Shoot missed %d shots, want none", physicalHit.Misses)
+		}
+		crit := shoot300(stats.Stats{stats.MeleeHit: 8, stats.SpellCrit: 100})
+		if crit.Hits != 0 || crit.Crits == 0 {
+			t.Errorf("with 100%% spell crit Shoot landed %d hits and %d crits, want only crits", crit.Hits, crit.Crits)
+		}
+		noCrit := shoot300(stats.Stats{stats.MeleeHit: 8, stats.MeleeCrit: 100, stats.SpellCrit: -100})
+		if noCrit.Crits != 0 {
+			t.Errorf("with 100%% physical crit and no spell crit Shoot crit %d times, want none", noCrit.Crits)
+		}
+		if ratio := (crit.TotalDamage / float64(crit.Crits)) / (noCrit.TotalDamage / float64(noCrit.Hits)); math.Abs(ratio-1.5) > 0.05 {
+			t.Errorf("a crit deals %.3f times a hit, want 1.5", ratio)
+		}
+	})
+}
+
+// TestWandShootGivesWay checks that Shoot from the rotation ends when the rotation can cast
+// something else: with Smite above it, the priest wands while out of mana and starts Smite
+// within the rotation's 50 ms look once the mana is back, without waiting for the next shot.
+func TestWandShootGivesWay(t *testing.T) {
+	rotation := core.APLRotationFromJsonString(`{"type":"TypeAPL","priorityList":[
+		{"action":{"castSpell":{"spellId":{"spellId":10933}}}},
+		{"action":{"castSpell":{"spellId":{"spellId":5019}}}}
+	]}`)
+	sim, sp := newWandPriestSimAPL(t, "525035231030001001-30505110002-3", 13938, 20, rotation)
+	shoot := wandShoot(t, sp)
+	smite := sp.GetSpell(core.ActionID{SpellID: 10933})
+	manaMetrics := sp.NewManaMetrics(core.ActionID{OtherID: proto.OtherAction_OtherActionManaRegen})
+	sim.AddPendingAction(&core.PendingAction{NextActionAt: -time.Second, OnAction: func(sim *core.Simulation) {
+		sp.SpendMana(sim, sp.CurrentMana(), manaMetrics)
+	}})
+	sim.AddPendingAction(&core.PendingAction{NextActionAt: core.DurationFromSeconds(4), OnAction: func(sim *core.Simulation) {
+		if !sp.IsChanneling(sim) || sp.ChanneledDot.Spell != shoot {
+			t.Error("the priest isn't wanding while out of mana")
+		}
+		sp.AddMana(sim, 1000, manaMetrics)
+	}})
+	smiteStart := time.Duration(-1)
+	for !sim.Step() {
+		if smiteStart < 0 && sp.IsCasting(sim) && sp.Hardcast.ActionID == smite.ActionID {
+			smiteStart = sim.CurrentTime
+		}
+	}
+	if smiteStart < core.DurationFromSeconds(4) || smiteStart > core.DurationFromSeconds(4.05) {
+		t.Errorf("Smite started at %v once the mana came back at 4s, want by 4.05s", smiteStart)
+	}
+}
+
+// The miss chance of the wand's ranged attack table against the default level 63 target.
+func shotTablesFor(t *testing.T) float64 {
+	sim, sp := newWandPriestSim(t, "", 13938, 10)
+	table := sp.AttackTables[sim.GetTargetUnit(0).UnitIndex][proto.CastType_CastTypeRanged]
+	if table == nil {
+		t.Fatal("no ranged attack table for the wand")
+	}
+	return table.BaseMissChance
+}

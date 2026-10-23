@@ -221,6 +221,11 @@ func (apl *APLRotation) DoNextAction(sim *Simulation) {
 	}
 
 	if apl.unit.IsChanneling(sim) {
+		// While Shoot runs the rotation keeps looking as it does with nothing to do, so the
+		// next cast it can make ends Shoot when it can be made.
+		if wand := apl.unit.wand; wand != nil && wand.wanding() && apl.unit.GCD.IsReady(sim) {
+			apl.unit.WaitUntil(sim, sim.CurrentTime+time.Millisecond*50)
+		}
 		return
 	}
 
@@ -302,6 +307,11 @@ func (apl *APLRotation) shouldInterruptChannel(sim *Simulation) bool {
 		return false
 	}
 
+	// Shoot gives way to the next cast whenever the rotation looks, as at each shot.
+	if apl.unit.wand != nil && channeledDot.Spell == apl.unit.wand.Shoot {
+		return apl.unit.wand.givesWay(sim)
+	}
+
 	if channeledDot.MaxTicksRemaining() == 0 {
 		// Channel has ended, but apl.unit.ChanneledDot hasn't been cleared yet meaning the aura is still active.
 		return false
@@ -319,6 +329,11 @@ func (apl *APLRotation) shouldInterruptChannel(sim *Simulation) bool {
 	nextAction := apl.getNextAction(sim)
 	apl.unit.ChanneledDot = channeledDot
 	if nextAction == nil {
+		return false
+	}
+
+	// Wanding is what the rotation does with nothing else to do, so it doesn't cut a channel short.
+	if apl.unit.wand.isShootAction(nextAction) {
 		return false
 	}
 

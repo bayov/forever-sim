@@ -146,6 +146,7 @@ func (mage *Mage) Initialize() {
 	mage.registerArcaneWrathSpell()
 	mage.registerIceLanceSpell()
 	mage.registerFrostfireBoltSpell()
+	mage.RegisterWandShoot()
 
 	mage.registerArcaneExplosionSpell()
 	mage.registerBlastWaveSpell()

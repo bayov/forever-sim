@@ -620,6 +620,19 @@ func (spell *Spell) outcomeRangedHitAndCritNoBlock(sim *Simulation, result *Spel
 	}
 }
 
+// A wand shot under Forever: the ranged weapon table's miss, which physical hit lowers and spell
+// hit doesn't, then the caster's spell crit for the spell's 1.5 times. It has no dodge, parry or
+// block (wowsims/forever 924140e5b2 and 365538219f: the logs show MISS as Shoot's only avoidance,
+// 6 of 244 shots where the shooter's spells missed 0 of 2,166).
+func (spell *Spell) OutcomeRangedHitAndMagicCrit(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
+	roll := sim.RandomFloat("White Hit Table")
+	chance := 0.0
+
+	if !result.applyAttackTableMissNoDWPenalty(spell, attackTable, roll, &chance, true) {
+		spell.outcomeMagicCrit(sim, result, attackTable, true)
+	}
+}
+
 func (spell *Spell) OutcomeRangedCritOnly(sim *Simulation, result *SpellResult, attackTable *AttackTable) {
 	spell.outcomeRangedCritOnly(sim, result, attackTable, true)
 }

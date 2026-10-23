@@ -55,7 +55,7 @@ Lesser Heal, Smite, Renew, Desperate Prayer, Resurrection, Cure Disease, Heal, F
   - Rank 3: Your Smite and Penance spells deal 6% increased damage to targets afflicted with your Holy Fire or Shadow Word: Pain.
   - Rank 4: Your Smite and Penance spells deal 8% increased damage to targets afflicted with your Holy Fire or Shadow Word: Pain.
   - Rank 5: Your Smite and Penance spells deal 10% increased damage to targets afflicted with your Holy Fire or Shadow Word: Pain.
-- **Wand Specialization** (2 ranks, column 2) [CHANGED] [ranks settled by client trait curves]
+- **Wand Specialization** (2 ranks, column 2) [CHANGED] [ranks settled by client trait curves] (in the sim since 2026-10-23: magic wands only, the row's school mask 126; see sim-status.md, Wand Shoot)
   - Rank 1: Increases your damage with Wands by 13%.
   - Rank 2: Increases your damage with Wands by 25%.
   - Classic (5 ranks):

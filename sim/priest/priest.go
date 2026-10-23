@@ -108,6 +108,7 @@ func (priest *Priest) Initialize() {
 	priest.registerSmiteSpell()
 	priest.registerHolyFire()
 	priest.registerPenanceSpell()
+	priest.RegisterWandShoot()
 
 	priest.registerPowerInfusionCD()
 }

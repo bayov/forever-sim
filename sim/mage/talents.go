@@ -64,6 +64,10 @@ func (mage *Mage) changeDamagePercent(spell *core.Spell, bonus float64, gain boo
 }
 
 func (mage *Mage) applyArcaneTalents() {
+	// 13% and 25% under Forever (the talent's TraitDefinitionEffectPoints curve, 6057).
+	if mage.Env != nil && mage.Env.IsForever() {
+		mage.ApplyWandSpecialization([]float64{0, 0.13, 0.25}[min(mage.Talents.WandSpecialization, 2)])
+	}
 	mage.applyArcaneConcentration()
 	mage.applyMissileBarrage()
 	mage.registerPresenceOfMindCD()

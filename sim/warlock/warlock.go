@@ -131,6 +131,7 @@ func (warlock *Warlock) Initialize() {
 	warlock.registerDrainSoulSpell()
 	warlock.registerConflagrateSpell()
 	warlock.registerIncinerateSpell()
+	warlock.RegisterWandShoot()
 	warlock.registerSiphonLifeSpell()
 	warlock.registerWrackSpell()
 	warlock.registerSearingPainSpell()

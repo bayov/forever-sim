@@ -19,6 +19,7 @@
         {"action":{"castSpell":{"spellId":{"spellId":10199}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"currentMana":{}},"op":"OpGt","rhs":{"math":{"lhs":{"remainingTime":{}},"op":"OpMul","rhs":{"const":{"val":"70"}}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"const":{"val":"1s"}}}}]}}},"notes":"With mana the fight can't use."},
         {"action":{"castSpell":{"spellId":{"spellId":1237312}},"condition":{"and":{"vals":[{"or":{"vals":[{"not":{"val":{"spellIsReady":{"spellId":{"spellId":12051}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpLt","rhs":{"const":{"val":"60s"}}}}]}},{"cmp":{"lhs":{"currentMana":{}},"op":"OpLt","rhs":{"math":{"lhs":{"remainingTime":{}},"op":"OpMul","rhs":{"const":{"val":"60"}}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"const":{"val":"10s"}}}}]}}},"notes":"Rank 2."},
         {"action":{"castSpell":{"spellId":{"spellId":1240047}},"condition":{"cmp":{"lhs":{"remainingTime":{}},"op":"OpLt","rhs":{"math":{"lhs":{"spellCastTime":{"spellId":{"spellId":1237313}}},"op":"OpAdd","rhs":{"const":{"val":"1.5s"}}}}}}}},
-        {"action":{"castSpell":{"spellId":{"spellId":1237313}}}}
+        {"action":{"castSpell":{"spellId":{"spellId":1237313}}}},
+        {"action":{"castSpell":{"spellId":{"spellId":5019}}},"notes":"Shoot the wand when nothing else can be cast (out of mana)."}
     ]
 }

@@ -267,6 +267,10 @@ func (env *Environment) setupAttackTables() {
 				if character.Class == proto.Class_ClassMage || character.Class == proto.Class_ClassPriest || character.Class == proto.Class_ClassWarlock {
 					attacker.AttackTables[idx][proto.CastType_CastTypeMainHand] = NewAttackTable(attacker, defender, weapons[0])
 					ModNonMeleeAttackTable(attacker.AttackTables[idx][proto.CastType_CastTypeMainHand], attacker, defender, weapons[0])
+					// Forever's wand shots roll the ranged weapon table at wand skill (Shoot, wand.go).
+					if env.IsForever() && weapons[2] != nil {
+						attacker.AttackTables[idx][proto.CastType_CastTypeRanged] = NewAttackTable(attacker, defender, weapons[2])
+					}
 				} else {
 					for i, weapon := range weapons {
 						var weaponSlot proto.CastType

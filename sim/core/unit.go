@@ -165,6 +165,9 @@ type Unit struct {
 
 	// The currently-channeled DOT spell, otherwise nil.
 	ChanneledDot *Dot
+
+	// Forever's wand Shoot, nil without one (wand.go).
+	wand *Wand
 }
 
 // Units can be disabled for several reasons:

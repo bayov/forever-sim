@@ -283,17 +283,17 @@ dps_results: {
 dps_results: {
  key: "TestP1Shadow-Phase1-Settings-Dwarf-level60_phase1_synthetic-Basic-level60-NoBuffs-Level60-Consumes-LongMultiTarget"
  value: {
-  dps: 683.985
-  tps: 804.47905
-  dtps: 2.811
+  dps: 692.35633
+  tps: 812.84871
+  dtps: 2.34933
  }
 }
 dps_results: {
  key: "TestP1Shadow-Phase1-Settings-Dwarf-level60_phase1_synthetic-Basic-level60-NoBuffs-Level60-Consumes-LongSingleTarget"
  value: {
-  dps: 653.99583
-  tps: 660.02203
-  dtps: 2.45367
+  dps: 674.20283
+  tps: 680.2203
+  dtps: 2.26183
  }
 }
 dps_results: {
@@ -331,17 +331,17 @@ dps_results: {
 dps_results: {
  key: "TestP1Shadow-Phase1-Settings-Human-level60_phase1_synthetic-Basic-level60-NoBuffs-Level60-Consumes-LongMultiTarget"
  value: {
-  dps: 696.10133
-  tps: 816.5914
-  dtps: 2.61817
+  dps: 709.41967
+  tps: 829.91349
+  dtps: 2.528
  }
 }
 dps_results: {
  key: "TestP1Shadow-Phase1-Settings-Human-level60_phase1_synthetic-Basic-level60-NoBuffs-Level60-Consumes-LongSingleTarget"
  value: {
-  dps: 670.454
-  tps: 676.47122
-  dtps: 2.06833
+  dps: 686.72117
+  tps: 692.74244
+  dtps: 2.03733
  }
 }
 dps_results: {
@@ -379,17 +379,17 @@ dps_results: {
 dps_results: {
  key: "TestP1Shadow-Phase1-Settings-NightElf-level60_phase1_synthetic-Basic-level60-NoBuffs-Level60-Consumes-LongMultiTarget"
  value: {
-  dps: 678.85
-  tps: 799.34439
-  dtps: 2.37267
+  dps: 699.91717
+  tps: 820.41565
+  dtps: 2.8415
  }
 }
 dps_results: {
  key: "TestP1Shadow-Phase1-Settings-NightElf-level60_phase1_synthetic-Basic-level60-NoBuffs-Level60-Consumes-LongSingleTarget"
  value: {
-  dps: 654.27967
-  tps: 660.29796
-  dtps: 2.5275
+  dps: 673.74717
+  tps: 679.76065
+  dtps: 2.013
  }
 }
 dps_results: {
@@ -427,17 +427,17 @@ dps_results: {
 dps_results: {
  key: "TestP1Shadow-Phase1-Settings-Undead-level60_phase1_synthetic-Basic-level60-NoBuffs-Level60-Consumes-LongMultiTarget"
  value: {
-  dps: 744.7695
-  tps: 927.96087
-  dtps: 2.733
+  dps: 758.256
+  tps: 941.44919
+  dtps: 2.622
  }
 }
 dps_results: {
  key: "TestP1Shadow-Phase1-Settings-Undead-level60_phase1_synthetic-Basic-level60-NoBuffs-Level60-Consumes-LongSingleTarget"
  value: {
-  dps: 717.06567
-  tps: 726.22463
-  dtps: 2.458
+  dps: 731.44867
+  tps: 740.60791
+  dtps: 2.519
  }
 }
 dps_results: {

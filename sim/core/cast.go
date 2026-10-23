@@ -176,9 +176,10 @@ func (unit *Unit) applySpellPushback() {
 				return
 			}
 
-			// Our own damage doesn't shorten our channel (Hellfire burns us while we channel it).
+			// Our own damage doesn't shorten our channel (Hellfire burns us while we channel it),
+			// and wand Shoot has no channel time to lose.
 			dot := aura.Unit.ChanneledDot
-			if dot == nil || !dot.IsActive() || spell.Unit == aura.Unit {
+			if dot == nil || !dot.IsActive() || spell.Unit == aura.Unit || (aura.Unit.wand != nil && dot.Spell == aura.Unit.wand.Shoot) {
 				return
 			}
 			if sim.Roll(0, 1.0) <= dot.Spell.PushbackReduction {

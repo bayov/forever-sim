@@ -114,7 +114,8 @@ export const APLP1DPS = PresetUtils.makePresetAPLRotation('DPS', P1APL);
 // for the 5th Fire Vulnerability stack. When a Frostfire Bolt would not land before the end (its
 // cast plus 1.5 sec) Ice Lance goes instead. The knobs were searched over 120, 180 and 300 sec
 // together, with the raid's hits (pushback); the rotation auditor's pass 23 moved the Scorch
-// refresh, Evocation and spare-mana Fire Blast thresholds (+6.0 at 180 sec).
+// refresh, Evocation and spare-mana Fire Blast thresholds (+6.0 at 180 sec). It wands when
+// nothing else can be cast (2026-10-23): +2.2 at 480 sec, nothing at 120 to 300 sec.
 export const APLLevel60Frostfire = PresetUtils.makePresetAPLRotation('Level 60 Frostfire', Level60FrostfireAPL, {
 	tooltip: 'Frostfire Bolt, Pyroblast on 3 Heating Up stacks, Ice Lance on Fingers of Frost, Scorch for Fire Vulnerability, Fire Blast.',
 	group: 'Level 60',
