@@ -111,7 +111,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecMage, {
 	},
 
 	presets: {
-		builds: [Presets.PresetBuildLevel60Frostfire, Presets.PresetBuildLevel60Frost, Presets.PresetBuildLevel60Fire, Presets.PresetBuildLevel60Arcane],
+		builds: [Presets.PresetBuildLevel60Fire, Presets.PresetBuildLevel60Frostfire, Presets.PresetBuildLevel60Frost, Presets.PresetBuildLevel60Arcane],
 		rotations: [...Presets.APLPresets[Phase.Phase1]],
 		talents: [...Presets.TalentPresets[Phase.Phase1]],
 		gear: [...Presets.GearPresets[Phase.Phase1]],

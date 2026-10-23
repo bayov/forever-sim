@@ -8,6 +8,16 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ settled by the 70338 trait curves] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Regear and rotation round (2026-10-23)
+
+After the wowsims/forever alignment round (orchestration/alignment_round_2026-10-23.md). Numbers at 180 sec, 20,000 iterations, seed 1 (seed 1000003 within 1.1); the full tables are in [../sim-status.md](../sim-status.md#mage).
+
+- Spell hit: the 16% cap against a level 63 boss is unchanged (the 1% spell miss floor). The main set (Fire, Frostfire, Frost) sat a point over it since the hotfix made Elemental Precision 6%; its head gave 10 hit rating to 3 Intellect and 8 spell power (Fire +5.3, Frostfire +7.3, Frost +2.1). The Arcane set keeps 10% for Arcane Focus.
+- Frost talents: `055220200310000153--0535000301003002`, Frost to Fingers of Frost (22) and 29 Arcane with Arcane Mind and Arcane Instability, two Arcane Blast stacks in the rotation: 946.6, against 822.8 for the old deep-Frost preset on the same gear. Every seed that kept Ice Barrier stopped near 845, wowsims/forever's string at range included.
+- Ice Lance with the charge spent a spell batch late: a bolt that completes with a Fingers of Frost charge up and the Ice Lance right after it both read Frozen. Frost's Ice Lance on every charge already does that when the charge comes during a Frostbolt's cast; waiting for a bolt before every Ice Lance lost 11 to 23. Frostfire's knob search put Ice Lance on the last charge only, Evocation below 10% with 90 sec left and rank 2 below 30 mana a second: 1052.2 to 1096.4.
+- Every rotation ends with the wand when out of mana. Fire (1101.0) is the mage's default build, 3.4 to 4.6 ahead of Frostfire on both seed sets.
+- Races and consumables are unchanged: Human (High Order on Frost), Orc the best Horde race; Flask of Supreme Power beats every natural flask.
+
 ## Server hotfix to 1.60.1.70450 (2026-10-20)
 
 A Frost hotfix the client tables don't carry (70532 still has the old tree). It is in wago.tools' hotfix table (push of 2026-10-20 09:51, build 70450) and on foreverchanges.pro's 2026-10-20 hotfix list, and wowsims/forever applied it in 983ea6fcc1 ("mage hotfix and talent shift"). `tools/forever_talents/client/mage.json` carries it by hand until a client build does. It supersedes the notes below wherever they disagree.

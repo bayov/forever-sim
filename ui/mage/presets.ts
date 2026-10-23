@@ -165,7 +165,7 @@ export const APLPresets = {
 	[Phase.Phase1]: [APLLevel60Frostfire, APLLevel60Frost, APLLevel60Fire, APLLevel60Arcane, APLP1DPS],
 };
 
-export const DefaultAPL = APLLevel60Frostfire;
+export const DefaultAPL = APLLevel60Fire;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Talent Presets
@@ -187,8 +187,10 @@ export const DefaultAPL = APLLevel60Frostfire;
 // Fire, Elemental Precision, Ice Shards, Frost Channeling, Ice Lance, Shatter and Fingers of Frost
 // in Frost. Frostfire Bolt is Fire and Frost at once, so it gets Fire Power, Ignite and Critical
 // Mass and also Ice Shards and Shatter. A second seed with Arcane Blast (10 Arcane points, without
-// Fingers of Frost) ended 65 behind on a Combustion build. It is 1047.6 / 1041.5 / 997.8 at 120 /
-// 180 / 300 sec (Human; 1081.9 at 180 before the hotfix). Frost Channeling 3 does nothing for this
+// Fingers of Frost) ended 65 behind on a Combustion build. It is 1112.7 / 1096.4 / 1078.6 at 120 /
+// 180 / 300 sec (Human; 1081.9 at 180 before the hotfix, 1041.5 after it, then +7.3 for the hit
+// over the cap going to Intellect and spell power and +44 for the 2026-10-23 rotation). The talent
+// search on the new gear and rotation (2026-10-23) kept every point. Frost Channeling 3 does nothing for this
 // build (the client leaves Frostfire Bolt out of it): the points are the 20 in Frost that Fingers
 // of Frost needs, and since the hotfix so are Improved Frostbolt 2, Improved Blizzard 1 and Arctic
 // Reach 2, the five Piercing Ice and Elemental Precision gave back. Leaving Fingers of Frost for 12
@@ -198,24 +200,26 @@ export const TalentsLevel60Frostfire = PresetUtils.makePresetTalents(
 	SavedTalents.create({ talentsString: '-0155003013012503-0235000311203002' }),
 	{ tooltip: 'Fire and Frost for Frostfire Bolt: Heating Up, Fingers of Frost, Shatter.', group: 'Level 60' },
 );
-// Frost (17/3/31): every Frost damage talent to Ice Barrier but Winter's Chill (a Cone of Cold
-// debuff since 70425), with Arcane Concentration, Missile Barrage 2, Arcane Impact and Arcane
-// Blast from Arcane: one Arcane Blast every 15 sec is 15% of Intellect as spell damage. Incineration
-// 3 is for Ice Lance. The old Winter's Chill points went to Frost Channeling, Arcane Meditation and
-// Permafrost (a point the 30 for Ice Barrier needs). Ice Barrier gives 3% Frost damage for a minute
-// and 3% more while the shield holds since the hotfix, and the five points Piercing Ice and
-// Elemental Precision gave back are Frost Warding 2 (a fifth more absorb) and Improved Blizzard 3,
-// which do nothing for the damage but are what the 30 for Ice Barrier needs. It is 823.8 / 820.8 /
-// 814.3, 21% behind Frostfire (High Order, with the Major Spellblasting Potion and the Greater Frost
-// scroll; 843.9 at 180 before the hotfix). Stopping at Fingers of Frost (22 Frost) for Arcane
-// Subtlety, Arcane Mind and Arcane Instability is 885.1 at 180 sec, and Arcane Subtlety in place
-// of two Incineration points 839.2. 70425 cost it Winter's Chill's crit and Ice Lance's fourth
-// times on a Frozen target.
+// Frost (29/0/22, 2026-10-23): Frost to Fingers of Frost (Improved Frostbolt, Elemental Precision,
+// Ice Shards, Frost Channeling, Ice Lance, Shatter) and 29 points of Arcane: Arcane Focus,
+// Improved Channeling 5 (pushback), Missile Barrage 2, Arcane Subtlety 2, Arcane Concentration 2,
+// Arcane Impact, Arcane Blast, Presence of Mind, Arcane Mind 5 and Arcane Instability 3. Arcane
+// Mind's 15% Intellect also grows the Arcane Blast stacks' spell damage, so the rotation keeps two.
+// The talent search (180 sec, 3000 iterations, the search's best confirmed at 20,000) was seeded
+// from the old deep-Frost preset, wowsims/forever's string, a 22 Frost / 26 Arcane / 3 Fire split,
+// a 29 Arcane split, a 31 Frost / 20 Arcane split and a Frost / Fire / Arcane hybrid. The two
+// Arcane Mind seeds ended here (946.6 at 180 sec; Arcane Concentration 3 with Improved Channeling
+// 4 is 1 behind on both seed sets); every seed that kept Ice Barrier stopped near 845 (the old
+// preset's points with Arcane Subtlety, 844.3; wowsims/forever's points without Winter's Chill,
+// 845.8), and Fire points 838. It is 945.5 / 946.6 / 942.3 (High Order, with the Major
+// Spellblasting Potion and the Greater Frost scroll), against 825.4 / 822.8 / 816.3 for the old
+// preset `05020050031001-03-253500133101301201` on the same gear: +121 / +124 / +126. 70425 cost
+// it Winter's Chill's crit and Ice Lance's fourth times on a Frozen target.
 export const TalentsLevel60Frost = PresetUtils.makePresetTalents(
 	'Level 60 Frost',
-	SavedTalents.create({ talentsString: '05020050031001-03-253500133101301201' }),
+	SavedTalents.create({ talentsString: '055220200310000153--0535000301003002' }),
 	{
-		tooltip: 'Deep Frost: Frostbolt, Fingers of Frost, Shatter, with Arcane Blast for spell damage.',
+		tooltip: 'Frost to Fingers of Frost with 29 Arcane: Frostbolt, Shatter, Ice Lance, Arcane Mind and Arcane Blast for spell damage.',
 		group: 'Level 60',
 	},
 );
@@ -224,8 +228,10 @@ export const TalentsLevel60Frost = PresetUtils.makePresetTalents(
 // has 20% to make Arcane Missiles free and fast) and Elemental Precision 3. The two points the
 // hotfix took off Elemental Precision are Arcane Subtlety 2 (30 less resistance on the boss), worth
 // more than Improved Flamestrike and Blast Wave (1067.2) or Improved Channeling 2 (1067.1). It is
-// 1100.8 / 1094.3 / 1080.9 (Human, with the Greater Flame scroll; 1067.6 at 180 before the
-// hotfix). Every Fire Blast adds a Heating Up stack since 70425, which puts Fire ahead of Frostfire.
+// 1106.4 / 1101.0 / 1088.3 (Human, with the Greater Flame scroll; 1067.6 at 180 before the
+// hotfix, 1094.3 before the main set's hit went to the cap). Every Fire Blast adds a Heating Up
+// stack since 70425. Fire is the mage's default build since 2026-10-23: 3.4 to 4.6 ahead of
+// Frostfire at 180 sec on both seed sets. The talent search on the new gear kept every point.
 export const TalentsLevel60Fire = PresetUtils.makePresetTalents('Level 60 Fire', SavedTalents.create({ talentsString: '0402205-23550030130135031-003' }), {
 	tooltip: 'Deep Fire to Combustion, with Missile Barrage from Arcane.',
 	group: 'Level 60',
@@ -237,22 +243,18 @@ export const TalentsLevel60Fire = PresetUtils.makePresetTalents('Level 60 Fire',
 // worth more than the 3.5 sec cast. The five points Piercing Ice and Elemental Precision gave back
 // are Arcane Subtlety 2 and Improved Channeling 3 (982.0 at 180 sec, 40,000 iterations), ahead of
 // Arcane Subtlety with Frost Channeling 3 (977.3) and of Frost Channeling and Ice Lance (951.1). It
-// is 989.5 / 981.9 / 971.4, 6% behind Frostfire (Human, on the Arcane gear, with the Precision
-// scroll; 964.7 at 180 before the hotfix).
-export const TalentsLevel60Arcane = PresetUtils.makePresetTalents(
-	'Level 60 Arcane',
-	SavedTalents.create({ talentsString: '0552205003100301531-02-0535' }),
-	{
-		tooltip: 'Arcane to Arcane Power: four Arcane Blast stacks for spell damage, Missile Barrage, Frostbolt.',
-		group: 'Level 60',
-	},
-);
+// is 990.6 / 982.5 / 971.9, 11% behind Fire (Human, on the Arcane gear, with the Precision
+// scroll; 964.7 at 180 before the hotfix). The 2026-10-23 talent and knob searches kept it.
+export const TalentsLevel60Arcane = PresetUtils.makePresetTalents('Level 60 Arcane', SavedTalents.create({ talentsString: '0552205003100301531-02-0535' }), {
+	tooltip: 'Arcane to Arcane Power: four Arcane Blast stacks for spell damage, Missile Barrage, Frostbolt.',
+	group: 'Level 60',
+});
 
 export const TalentPresets = {
 	[Phase.Phase1]: [TalentsLevel60Frostfire, TalentsLevel60Frost, TalentsLevel60Fire, TalentsLevel60Arcane],
 };
 
-export const DefaultTalents = TalentsLevel60Frostfire;
+export const DefaultTalents = TalentsLevel60Fire;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Options
@@ -419,15 +421,15 @@ export const EncounterLevel60Frost = PresetUtils.makePresetEncounter('Level 60 (
 	consumes: Consumes.create({ ...DefaultConsumes, defaultPotion: Potions.MajorSpellblastingPotion }),
 });
 
-// Races, on each build with its rotation, 20000 iterations, 180 sec, with the 70425 racials (no
-// racial depends on the weapon any more), before the rotation auditor's pass 23. Human (Ruthless, 2% crit) is best on Frostfire, Fire and
-// Arcane, with Orc (Savage, 1% crit, and Blood Fury) 0.3 behind on Arcane, within the noise. On
-// Frost, High Order's 3% haste is ahead. The best Horde race is Orc on Arcane, Fire and Frost and
-// Orc on Frostfire too (High Order, 3.7 behind Human there, is Alliance). Windshaper can't be a mage.
-//   Frostfire: Human 1010.8, High Order 1007.1, Orc 1004.8, Gnome 996.2, Undead 995.5, Troll 989.1.
-//   Fire:      Human 993.2, Orc 989.0, Gnome 985.8, Undead 982.7, Troll 974.9, High Order 970.9.
-//   Arcane:    Human 884.9, Orc 884.6, Gnome 880.5, High Order 877.6, Undead 877.6, Troll 872.7.
-//   Frost:     High Order 827.3, Human 820.2, Orc 819.8, Gnome 817.0, Undead 816.9, Troll 814.2.
+// Races (2026-10-23), on each build with its rotation, 20000 iterations, 180 sec, seeds 1 and
+// 1000003 (each within 1.1 of the other), with the 70425 racials (no racial depends on the weapon
+// any more). Human (Ruthless, 2% crit) is best on Frostfire, Fire and Arcane, with Orc (Savage,
+// 1% crit, and Blood Fury) 0.3 behind on Arcane, within the noise. On Frost, High Order's 3% haste
+// is 1.5 ahead of Human. The best Horde race is Orc on all four. Windshaper can't be a mage.
+//   Frostfire: Human 1096.4, Gnome 1088.8, Orc 1085.2, Undead 1073.7, Troll 1066.0, High Order 1059.3.
+//   Fire:      Human 1101.0, Orc 1095.8, Gnome 1091.5, Undead 1087.8, Troll 1081.0, High Order 1074.5.
+//   Arcane:    Human 982.5, Orc 982.1, Gnome 978.4, Undead 974.4, High Order 971.9, Troll 969.0.
+//   Frost:     High Order 946.6, Human 945.1, Orc 944.1, Gnome 939.9, Undead 938.4, Troll 933.8.
 const buildCommon = {
 	group: 'Level 60',
 	gear: GearLevel60Phase1Synthetic,

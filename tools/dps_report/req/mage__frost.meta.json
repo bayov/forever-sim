@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 89,
   "race": "SkyborneHighOrder",
-  "talents": "05020050031001-03-253500133101301201",
+  "talents": "055220200310000153--0535000301003002",
   "treeNames": [
     "Arcane",
     "Fire",
@@ -15,37 +15,38 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_frost",
   "published": {
-    "dps": 843.3,
-    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 826.0)"
+    "dps": 946.6,
+    "source": "Class worker round 2026-10-23 on claude/keen-brown-o2g32n-mage: main set's hit to the 16% cap, the regenerated rotations and Frost's 29/0/22 build (was 843.3)"
   },
   "verify": {
-    "dps": 843.32,
-    "stderr": 0.34,
+    "dps": 946.6,
+    "stderr": 0.37,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "sim of the regenerated request, 180s, seed 1 (seed 1000003 within 1.1)"
   },
-  "summary": "Deep Frost Frostbolt with Fingers of Frost and Shatter.",
+  "summary": "Frostbolt to Fingers of Frost and Shatter, with 29 Arcane points (Arcane Mind, Arcane Instability, Arcane Blast for spell damage).",
   "keyTalents": [
-    "Arcane Concentration",
-    "Missile Barrage",
+    "Arcane Mind",
+    "Arcane Instability",
     "Arcane Blast",
+    "Missile Barrage",
+    "Presence of Mind",
     "Improved Frostbolt",
     "Ice Shards",
-    "Ice Barrier",
     "Shatter",
     "Fingers of Frost"
   ],
   "rotation": [
-    "Pre-pull: Ice Barrier at -4s, and again when Frigid Power has under 2s left (3% Frost damage for 1 min, 3% more while the shield holds)",
     "Pre-pull: Frostbolt at -2.5s",
     "Cooldowns (Demonic Rune, racial) on a free GCD",
     "Evocation below 20% mana with more than 90s left (almost never fires)",
     "Ice Lance on every Fingers of Frost charge: the boss counts as Frozen, so 3 times the damage and Shatter crit",
-    "Arcane Blast once every 15s for 15% of Intellect as spell damage",
+    "Arcane Blast to 2 stacks every 15s for 30% of Intellect as spell damage",
     "Arcane Missiles on a Missile Barrage proc",
     "Ice Lance instead when a Frostbolt would not land before the end (its cast plus 1s)",
-    "Filler: Frostbolt (2.5s)"
+    "Filler: Frostbolt (2.5s)",
+    "Shoot the wand when nothing else can be cast (out of mana)"
   ],
   "consumes": [
     "Flask of Supreme Power",
