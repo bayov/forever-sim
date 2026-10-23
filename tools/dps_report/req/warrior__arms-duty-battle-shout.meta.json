@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_arms_battle_shout",
   "published": {
-    "dps": 975.3,
-    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 974.6)"
+    "dps": 955.3,
+    "source": "Warrior regear and rotation round, 2026-10-23: hit 9% to 8% (the 10 rating into Strength), the natural flask zone with the Flask of Natural Aggression; talents, rotation and race re-searched and kept. 20k iterations, 180s, seed 1 (was 975.3)"
   },
   "verify": {
-    "dps": 975.34,
-    "stderr": 0.35,
+    "dps": 955.3,
+    "stderr": 0.38,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "wowsimcli on the request, 180s, seed 1"
   },
   "summary": "Keeps Battle Shout up for its party, with the raid's Battle Shout off.",
   "keyTalents": [
@@ -51,7 +51,7 @@
     "Heroic Strike from 70 Rage, Hamstring filler from 20 Rage (outside execute)"
   ],
   "consumes": [
-    "Flask of the Titans",
+    "Flask of Natural Aggression",
     "Elixir of the Mongoose",
     "Elixir of Ferocity",
     "Juju Might",
@@ -72,7 +72,7 @@
     "Battlegear of Glory 4-piece not counted. It would add 8.4 vs Humanoids.",
     "Booming Voice (5/5) does nothing because the raid has Battle Shout",
     "Arms in Berserker Stance with Whirlwind is 10% behind.",
-    "Raid damage hits (2 a minute, about 15 Rage each) are an estimate."
+    "Raid damage hits (2 a minute, about 9 Rage each) are an estimate."
   ],
   "notes": "Request from mksettings -spec arms -gear level60_phase1_synthetic_arms -apl level60_arms_battle_shout -talents 20305213032515201-55050000001 -race Orc -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Not the class default: the warrior UI has one spec page and its default Level 60 build is Fury Dual Wield; this is the only Arms preset. Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts.",
   "duty": "Battle Shout",

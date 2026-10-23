@@ -11,6 +11,7 @@ import (
 var (
 	battleShout      = spellIDRank(11551, 6)
 	sunderArmor      = spellID(11597)
+	charge           = spellIDRank(11578, 3)
 	battleStance     = spellID(2457)
 	berserkerStance  = spellID(2458)
 	bloodrage        = spellID(2687)
@@ -252,6 +253,16 @@ func warriorShoutPrepull(k Knobs) []*proto.APLPrepullAction {
 		return nil
 	}
 	return []*proto.APLPrepullAction{prepull(bloodrage, 3), prepull(battleShout, 3)}
+}
+
+// warriorChargePrepull opens with Charge from Battle Stance (15 Rage, out of combat only, so before
+// the pull; standards 13). Fury goes back to Berserker Stance after it, and Improved Tactical Mastery
+// keeps the Rage.
+func warriorChargePrepull(stance *proto.ActionID) []*proto.APLPrepullAction {
+	if stance == battleStance {
+		return []*proto.APLPrepullAction{prepull(battleStance, 1), prepull(charge, 0.5)}
+	}
+	return []*proto.APLPrepullAction{prepull(battleStance, 2.5), prepull(charge, 1.5), prepull(stance, 0.5)}
 }
 
 // potionLine is the Mighty Rage Potion: on cooldown, held for Death Wish, or held for the last

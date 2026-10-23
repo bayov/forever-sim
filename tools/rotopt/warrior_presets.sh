@@ -1,6 +1,7 @@
 #!/bin/sh
 # Regenerates the Level 60 warrior rotations in ui/warrior/apls from the warrior_fury and
 # warrior_arms templates, with the knobs the searches settled on (2026-10-13 with Forever's normalized Rage at s = 0.5, 180 sec,
+# re-searched and kept on 2026-10-23 with the 8% hit sets, the natural flasks and the Charge opener;
 # the synthetic Phase 1 sets and the Level 60 talents, see ui/warrior/presets.ts). The settings
 # come from tools/rotopt/mksettings (spec fury or arms). The rotation itself does not depend on
 # them, only the one sanity sim does.

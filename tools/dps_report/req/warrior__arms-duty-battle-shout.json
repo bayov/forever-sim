@@ -69,7 +69,7 @@
               ]
             },
             "consumes": {
-              "flask": "FlaskOfTheTitans",
+              "flask": "FlaskOfNaturalAggression",
               "food": "FoodSmokedDesertDumpling",
               "agilityElixir": "ElixirOfTheMongoose",
               "strengthBuff": "ElixirOfFerocity",
@@ -148,8 +148,7 @@
                     "const": {
                       "val": "-0.5s"
                     }
-                  },
-                  "notes": "15 Rage to open."
+                  }
                 }
               ],
               "priorityList": [
@@ -1020,7 +1019,8 @@
       }
     ],
     "raidDamageHitsPerMinute": 2,
-    "raidDamagePerHit": 1500
+    "raidDamagePerHit": 1500,
+    "naturalFlaskZone": true
   },
   "simOptions": {
     "iterations": 1000,

@@ -70,8 +70,9 @@ export const GearPhase6 = PresetUtils.makePresetGear('P6 BiS', Phase6Gear);
 // neck, back, wrist, waist, rings, one-handers, bow and trinkets, 76 for a two-hander), priced on
 // Forever's physical melee budget (standards 1b: L = 1.125 ilvl + 2, armor slot mod x L x 0.950 /
 // 0.959 / 0.911, three stat lines a piece) in the fair stat mix (SoD level 60 BiS warrior shares,
-// Stamina at about 19.7%): Strength first, then Stamina, Agility, crit and attack power, 9% hit (the
-// special attack cap), no Spirit. Totals: armor 650.5, bow 19.5, swords 64.0, two-hander 79.0; the
+// Stamina at about 19.7%): Strength first, then Stamina, Agility, crit and attack power, 8% hit (the
+// special attack cap with no hit suppression under Forever; 9% until 2026-10-23, when the head and
+// feet each traded 5 hit for 5 Strength), no Spirit. Totals: armor 650.5, bow 19.5, swords 64.0, two-hander 79.0; the
 // Fury set 733.5, the Arms / Fury 2H set 748.5. Only the head and legs carry Battlegear of Glory,
 // Forever's Arms and Fury tier set, so only its 2-piece is live. The 4-piece (+36 attack
 // power against Humanoids) would add 10.8 on Fury, 8.8 on two-hand Fury and 8.4 on Arms against a
@@ -307,8 +308,11 @@ export const DefaultConsumes = Consumes.create({
 	dragonBreathChili: true,
 	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
 	// The natural flask (standards 11, 2026-10-23): Precision, +66.4 / +68.1 over the Flask of the Titans
-	// on Fury / Fury two-hand at 180 sec. Arms takes Aggression (ArmsConsumes). Accuracy is +34.3 on dual
-	// wield Fury and nothing with a two-hander (the yellow hit is capped).
+	// on Fury / Fury two-hand at 180 sec. Arms takes Aggression (ArmsConsumes). On the 8% hit sets
+	// (2026-10-23, 180 sec, seeds 1 and 1000003) Precision still leads: Fury 1060.1, Accuracy 1027.4,
+	// Aggression 1020.6, Swiftness 1019.2; two-hand Fury 1029.6, Aggression 997.2, Swiftness 978.7,
+	// Accuracy 961.5. The Mighty Rage Potion stays ahead of the Major Frenzy Potion (1042.6, 1012.6)
+	// and the Dragonfire Potion (1039.5, 1011.5).
 	flask: Flask.FlaskOfNaturalPrecision,
 	food: Food.FoodSmokedDesertDumpling,
 	mainHandImbue: WeaponImbue.DenseSharpeningStone,
@@ -320,7 +324,9 @@ export const DefaultConsumes = Consumes.create({
 
 // Arms takes the Flask of Natural Aggression, +31.8 over the Flask of the Titans at 180 sec (+33.1 vs
 // Dragonkin) where Precision is +10.0 (+12.8) and Swiftness +27.6: its talents already take most of
-// the dodge off.
+// the dodge off. On the 8% hit set (2026-10-23): Aggression 957.0, Swiftness 952.6, Precision 934.9,
+// Accuracy 924.9; Dragonfire Potion 943.0 and Major Frenzy Potion 941.3 against the Mighty Rage
+// Potion.
 export const ArmsConsumes = Consumes.create({
 	...DefaultConsumes,
 	flask: Flask.FlaskOfNaturalAggression,
@@ -532,6 +538,19 @@ export const EncounterLevel60ArmsBattleShoutDuty = PresetUtils.makePresetEncount
 // 300 sec, on two seed sets). With it, Heroic Strike from 55 Rage beats 50 on both seed sets at
 // every length (+1.4 to +2.1 on Fury; the duty +0.7 / +1.1 at 180 sec). Fury 1018.1 / 986.5 /
 // 967.4 to 1020.8 / 989.0 / 970.0, the duty 1015.5 / 983.5 / 964.6 to 1018.1 / 985.2 / 967.3.
+// The regear and rotation round (2026-10-23): the sets drop to Forever's 8% yellow hit cap (the 10
+// rating into Strength), every build fights in a natural flask zone with its natural flask, and the
+// rotations open with Charge. The knob and talent searches (180 sec, 10,000 iterations) kept every
+// knob and talent string, and Orc stays the best race for every build (Human the best Alliance race,
+// 0.2 to 4.1 behind at 180 sec). 20,000 iterations, 120 / 180 / 300 sec, seed 1 (seed 1000003 within
+// 1.0), before the regear -> after: Fury 1102.0 / 1060.3 / 1034.0 -> 1102.3 / 1060.1 / 1033.6 (the
+// off hand's white hits miss 1% more), its duty 1097.5 / 1055.8 / 1029.9 -> 1097.4 / 1056.4 / 1030.6,
+// two-hand Fury 1072.1 / 1023.7 / 991.4 -> 1078.2 / 1029.6 / 997.3, its duty 1071.1 / 1021.4 /
+// 990.0 -> 1077.4 / 1027.4 / 995.7, Arms 971.0 / 952.1 / 928.4 -> 975.8 / 957.0 / 933.1, its duty
+// 970.5 / 950.5 / 926.8 -> 975.1 / 955.3 / 931.5, Arms vs Dragonkin 1014.1 / 994.2 / 969.3 ->
+// 1019.3 / 999.3 / 974.3. The Hamstring filler stays (Arms without it is 44.4 lower at 180 sec, though
+// Bloodthrill no longer procs from it), and so do Slam and Hamstring from 20 Rage and Heroic Strike
+// from 90.
 export const PresetBuildLevel60Fury = PresetUtils.makePresetBuild('Level 60 Fury', {
 	group: 'Level 60',
 	tooltip: 'Level 60 dual wield Fury on the synthetic Phase 1 gear, in a 3 minute raid fight.',

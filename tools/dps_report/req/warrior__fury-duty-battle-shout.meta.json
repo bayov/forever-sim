@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_fury",
   "apl": "level60_fury_battle_shout",
   "published": {
-    "dps": 986.1,
-    "source": "Report re-sim on master abd7cd3, 2026-10-16: no level-based partial resist (#102) and the pass 23 rotations (#98 to #105) (was 985.2)"
+    "dps": 1056.4,
+    "source": "Warrior regear and rotation round, 2026-10-23: hit 9% to 8% (the 10 rating into Strength), the natural flask zone with the Flask of Natural Precision; talents, rotation and race re-searched and kept. 20k iterations, 180s, seed 1 (was 986.1)"
   },
   "verify": {
-    "dps": 986.06,
-    "stderr": 0.37,
+    "dps": 1056.4,
+    "stderr": 0.39,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "wowsimcli on the request, 180s, seed 1"
   },
   "summary": "Keeps Battle Shout up for its party, with the raid's Battle Shout off.",
   "keyTalents": [
@@ -50,7 +50,7 @@
     "Hamstring filler from 10 Rage (procs Windfury Totem and Flurry)"
   ],
   "consumes": [
-    "Flask of the Titans",
+    "Flask of Natural Precision",
     "Elixir of the Mongoose",
     "Elixir of Ferocity",
     "Juju Might",
@@ -70,7 +70,7 @@
     "One +2% crit elixir. A second (Grizzly) would add 15.1.",
     "Battlegear of Glory 4-piece not counted. It would add 10.8 vs Humanoids.",
     "Second Mighty Rage Potion held for the last 20s: +6.4 at 180s, -3.0 at 120s.",
-    "Raid damage hits (2 a minute, about 15 Rage each) are an estimate."
+    "Raid damage hits (2 a minute, about 9 Rage each) are an estimate."
   ],
   "notes": "Request from mksettings -spec fury -gear level60_phase1_synthetic_fury -apl level60_fury_battle_shout -talents 30305013002-25053005122010501-2 -race Orc -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts.",
   "duty": "Battle Shout",

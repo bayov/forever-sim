@@ -100,5 +100,6 @@ func (warriorFury) Build(k Knobs) *proto.APLRotation {
 	items = append(items, cast(berserkerStance, not(auraIsActive(berserkerStance)), ""))
 	rot := warriorOpener(rotation(items...))
 	rot.PrepullActions = append(rot.PrepullActions, warriorShoutPrepull(k)...)
+	rot.PrepullActions = append(rot.PrepullActions, warriorChargePrepull(berserkerStance)...)
 	return rot
 }
