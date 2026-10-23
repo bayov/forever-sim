@@ -288,37 +288,40 @@ index df2572b8c..c569a9628 100644
  				dot.Snapshot(target, tickDamage, isRollover)
  			},
 diff --git a/sim/hunter/pet.go b/sim/hunter/pet.go
-index 1863f08f6..22f5fd40f 100644
+index fa7183a891..53bdb288d2 100644
 --- a/sim/hunter/pet.go
 +++ b/sim/hunter/pet.go
-@@ -152,7 +152,11 @@ func (hp *HunterPet) applyForeverRules() {
+@@ -166,8 +166,12 @@ func (hp *HunterPet) applyForeverRules() {
  	// Report assumption hunter_pet_speed, user ruling 2026-10-15: the beta's behaviour is treated as
  	// a bug, so the hit scales with the swing as in Classic (a 1.0 sec pet's hit is half a 2.0 sec
- 	// pet's, NewHunterPet), and every pet's white damage a second is the same.
--	if !ForeverPetHitScalesWithSpeed {
+ 	// pet's), and every pet's white damage a second is the same.
 +	scales := ForeverPetHitScalesWithSpeed
 +	if v, ok := core.AssumeOk("hunter_pet_same_hit"); ok {
 +		scales = v == 0 // dashboard assumption: 1 = the beta's rule, every pet hits like a 2.0 sec pet
 +	}
+ 	hitSeconds := hp.AutoAttacks.MH().SwingSpeed
+-	if !ForeverPetHitScalesWithSpeed {
 +	if !scales {
- 		mh := hp.AutoAttacks.MH()
- 		mh.BaseDamageMin = 18.17 * 2
- 		mh.BaseDamageMax = 27.66 * 2
-@@ -238,6 +242,14 @@ func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
+ 		hitSeconds = 2
+ 	}
+ 	mh := hp.AutoAttacks.MH()
+@@ -266,6 +270,16 @@ func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
  		if !hunter.Env.IsForever() {
  			return stats.Stats{}
  		}
 +		if _, ok := core.AssumeOk("hunter_pet_ap"); ok {
 +			// dashboard assumption: the attack power share and the hit share
++			hit := core.Assume("hunter_pet_hit", 1) * ownerStats[stats.MeleeHit]
 +			return stats.Stats{
 +				stats.AttackPower: core.Assume("hunter_pet_ap", 0.1) * ownerStats[stats.RangedAttackPower],
 +				stats.MeleeCrit:   ownerStats[stats.MeleeCrit],
-+				stats.MeleeHit:    core.Assume("hunter_pet_hit", 1) * ownerStats[stats.MeleeHit],
++				stats.MeleeHit:    hit,
++				stats.SpellHit:    hit / core.MeleeHitRatingPerHitChance * 17 / 8 * core.SpellHitRatingPerHitChance,
 +			}
 +		}
+ 		hitPercent := ownerStats[stats.MeleeHit] / core.MeleeHitRatingPerHitChance
  		return stats.Stats{
  			stats.AttackPower: 0.1 * ownerStats[stats.RangedAttackPower],
- 			stats.MeleeCrit:   ownerStats[stats.MeleeCrit],
 diff --git a/sim/hunter/raptor_strike.go b/sim/hunter/raptor_strike.go
 index ce96f63f1..8d959ade0 100644
 --- a/sim/hunter/raptor_strike.go
