@@ -71,7 +71,11 @@ gen() {
 # seed sets. A knob search that could drop Windfury Totem dropped it; the builds keep it for the party.
 # Lightning Bolt at 5 Maelstrom Weapon stacks after the shocks (earthShockBeforeBolt=1, rotation pass
 # 2026-10-16): +0.2 to +1.2 on Level 60 and +0.1 to +1.0 on Imp GW at every length, two seed sets.
-gen optimized "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,earthShockHold=1,fireNova=2,fireNovaMana=20,waterTotem=1,flameShockFirst=1,fireNovaClearcast=2,prepullTotems=1,rageHoldForTrinket=1,fireNovaManaPerSec=12,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1.5,earthShockBeforeBolt=1" -level 60
+# Regear round (2026-10-23, the 8% melee cap, Totem of the Storm, Fire Nova's hits a proc): Earth Shock no
+# longer waits for the Stormstrike mark (earthShockHold=0), paired at 20000 iterations on seeds 1 and 1000003:
+# Level 60 +1.5 / +0.3 / +0.9 and +2.1 / +0.9 / +0.8 at 120 / 180 / 300 sec, Imp GW +1.6 / +0.6 / +0.4 and
+# +2.1 / +0.9 / +1.0, both on their new talents (Improved Stormstrike 2 for Tidal Focus 1).
+gen optimized "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,earthShockHold=0,fireNova=2,fireNovaMana=20,waterTotem=1,flameShockFirst=1,fireNovaClearcast=2,prepullTotems=1,rageHoldForTrinket=1,fireNovaManaPerSec=12,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1.5,earthShockBeforeBolt=1" -level 60
 # The Water Shield and Mana Tide talent builds have no Improved Fire Nova, so Magma Totem
 # beats Searing Totem there (899.7 against 879.5 at 180 sec on the Water Shield build). A
 # new Magma Totem goes down with as little as 10 sec left.

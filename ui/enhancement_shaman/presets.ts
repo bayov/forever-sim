@@ -65,6 +65,7 @@ import Level30p5GearJSON from './gear_sets/level30p5.gear.json';
 import Level30PvPGearJSON from './gear_sets/level30_pvp.gear.json';
 import Level30PvPHighHPGearJSON from './gear_sets/level30_pvp_high_hp.gear.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
+import Level60Phase1SyntheticBurningTotemGearJSON from './gear_sets/level60_phase1_synthetic_burning_totem.gear.json';
 import Phase1GearJSON from './gear_sets/phase_1.gear.json';
 import Phase2GearJSON from './gear_sets/phase_2.gear.json';
 import Phase3GearJSON from './gear_sets/phase_3.gear.json';
@@ -267,13 +268,31 @@ export const GearLevel30PvPHighHP = PresetUtils.makePresetGear('Level 30 PvP (Hi
 // model its launch ones): a stat trinket (32 Strength, 14 crit rating) and an on-use one (335 attack
 // power for 20 sec every 2 min, the weight of Earthstrike). A spell power on-use (140) sims 3.6
 // behind at 180 sec. Both trinkets are synthetic, not in the game.
+//
+// On 2026-10-23 the melee hit cap fell to 8% (standards 4: Forever has no hit suppression), so the
+// neck's 10 hit rating became 10 crit rating: 80 hit rating, crit 5.6% of the set. Above 8% only the
+// spells gain from hit (about 4 DPS a 1% at 180 sec), and 10 crit rating is worth about 5.5. Level 60
+// went from 893.4 / 875.5 / 854.7 to 894.7 / 877.0 / 856.1 at 120 / 180 / 300 sec. The relic is now
+// Forever's Totem of the Storm (Lightning Bolt can trigger Maelstrom Weapon at half the chance): with
+// Fire Nova's hits a proc it is +0.9 to +2.1 over Burning Totem on Level 60 and Imp GW at every length
+// on two seed sets, and within 0.4 on Water Shield. Mana Tide keeps Burning Totem (the Burning Totem
+// set below), where Totem of the Storm is 0.1 to 1.5 behind.
 export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGearJSON, {
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game.',
 	group: 'Level 60',
 });
+// The same set with Burning Totem, for the Mana Tide build.
+export const GearLevel60Phase1SyntheticBurningTotem = PresetUtils.makePresetGear(
+	'Level 60 Phase 1 Synthetic (Burning Totem)',
+	Level60Phase1SyntheticBurningTotemGearJSON,
+	{
+		tooltip: 'The synthetic Phase 1 set with Burning Totem in place of Totem of the Storm, for the Mana Tide build.',
+		group: 'Level 60',
+	},
+);
 
 export const GearPresets = {
-	[Phase.Phase1]: [GearPhase1, GearLevel60Phase1Synthetic, GearLevel30p5, GearLevel30PvP, GearLevel30PvPHighHP],
+	[Phase.Phase1]: [GearPhase1, GearLevel60Phase1Synthetic, GearLevel60Phase1SyntheticBurningTotem, GearLevel30p5, GearLevel30PvP, GearLevel30PvPHighHP],
 	[Phase.Phase2]: [GearPhase2],
 	[Phase.Phase3]: [GearPhase3],
 	[Phase.Phase4]: [],
@@ -522,7 +541,15 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 // (-2.2 / +5.2 / +8.6, and -3.4 / +4.5 / +7.9 on the second seed set), paired at 20000 iterations.
 // Improved Stormstrike 2 as well was further ahead at 300 sec but behind at 180. The knob search on
 // the new talents kept the Optimized rotation.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '053503102-055030011005112151-01' }), {
+//
+// The regear round (2026-10-23: the 8% melee cap and the neck's crit, Totem of the Storm, Fire Nova's
+// hits a proc, Earth Shock without the Stormstrike hold) moved the Tidal Focus point to Improved
+// Stormstrike 2 (Spirit Weapons pinned). Judged at 180 sec, paired at 20000 iterations on seeds 1 and
+// 1000003: +1.2 / +1.8 at 180 sec and +5.0 / +4.7 at 300, -3.2 / -2.3 at 120 (the mana from Improved
+// Stormstrike pays off in longer fights). The knob search on the new talents kept the rotation. Level
+// 60 is 894.1 / 880.1 / 863.1 at 120 / 180 / 300 sec. Unpinned, the search drops Spirit Weapons (a
+// threat talent the sim doesn't score) for that second Improved Stormstrike point instead: +5.3 at 180.
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '053503102-055030011005112251' }), {
 	tooltip: 'Level 60 talents from the talent search, with Spirit Weapons and Concussion.',
 	group: 'Level 60',
 });
@@ -543,14 +570,15 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // Under client 1.60.1.70425 the search with Improved Ghost Wolf and Spirit Weapons pinned (from the
 // Level 60 changes above) kept Elemental Focus and Ancestral Knowledge 4: 827.4 / 818.4 / 811.5 at
 // 120 / 180 / 300 sec (862.0 / 848.7 / 830.7 before), 6.9 behind Level 60 at 180.
-export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents(
-	'Level 60 + Imp GW',
-	SavedTalents.create({ talentsString: '053503102-054032001005112151-01' }),
-	{
-		tooltip: 'The Level 60 talents with Improved Ghost Wolf 2, taken out of Ancestral Knowledge.',
-		group: 'Level 60',
-	},
-);
+//
+// In the regear round (2026-10-23) the search with both pinned made the same move as Level 60, Tidal
+// Focus 1 to Improved Stormstrike 2: +1.0 / +1.9 at 180 sec, +4.9 / +3.9 at 300 and -2.8 / -2.9 at 120 on
+// two seed sets. 890.4 / 876.2 / 858.6 at 120 / 180 / 300 sec with the Optimized rotation, 3.9 behind
+// Level 60 at 180.
+export const TalentsLevel60ImpGW = PresetUtils.makePresetTalents('Level 60 + Imp GW', SavedTalents.create({ talentsString: '053503102-054032001005112251' }), {
+	tooltip: 'The Level 60 talents with Improved Ghost Wolf 2, taken out of Ancestral Knowledge.',
+	group: 'Level 60',
+});
 // The best build that takes Water Shield (-require spiritWeapons,waterShield), with the
 // Magma Totem rotation. Water Shield needs 10 Restoration points above it, and those go
 // to Tidal Focus 5 (+5% hit) and Totemic Focus 5 (cheaper totems). That leaves 9 points
@@ -732,10 +760,11 @@ export const DefaultConsumes = Consumes.create({
 	dragonBreathChili: true,
 	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
 	firePowerBuff: FirePowerBuff.ElixirOfFirepower,
-	// The fight is in a natural flask zone (standards 11), but the best natural flask, Precision, is 7
-	// behind the Flask of Supreme Power at 180 sec (2 to 5 with Mana Tide or Water Shield; Aggression 13
-	// to 16, Accuracy and Swiftness 20 to 36 behind). The Dragonfire Potion is 17 behind the Major Mana
-	// Potion, 4 to 5 ahead with Mana Tide or Water Shield.
+	// The fight is in a natural flask zone (standards 11), but the best natural flask, Precision, is 6
+	// behind the Flask of Supreme Power at 180 sec (2 to 6 with Mana Tide or Water Shield; Aggression 13
+	// to 16, Accuracy and Swiftness 20 to 36 behind; rechecked 2026-10-23). The Dragonfire Potion is 20
+	// behind the Major Mana Potion, 3 to 4 ahead at 180 sec with Mana Tide or Water Shield but 6 to 8
+	// behind at 300.
 	flask: Flask.FlaskOfSupremePower,
 	food: Food.FoodGrilledSquid,
 	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
@@ -919,6 +948,23 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // best Horde: Orc. Best Alliance: Dwarf. The Orc's lead is Axe Specialization. A 3.7 sec mace of the
 // same damage per second would give the Dwarf its 1% instead (812.5). Orc wins the Imp GW, Water
 // Shield and Mana Tide builds too (sim-status.md has the older tables).
+//
+// The regear round (2026-10-23, 20000 iterations, seeds 1 and 1000003, the natural flask zone on): the
+// neck's 10 hit rating over the new 8% cap went to crit, Totem of the Storm took the relic slot (Mana Tide
+// keeps Burning Totem), Earth Shock no longer waits for the Stormstrike mark, and Level 60 and Imp GW took
+// Improved Stormstrike 2 for Tidal Focus 1. The Water Shield and Mana Tide searches kept their talents and
+// rotations. At 120 / 180 / 300 sec, from the old presets under the new sim: Level 60 893.4 / 875.5 / 854.7
+// to 894.1 / 880.1 / 863.1, Imp GW 889.4 / 871.2 / 850.8 to 890.4 / 876.2 / 858.6, Water Shield 841.2 /
+// 829.9 / 824.9 to 843.3 / 831.6 / 826.7, Mana Tide 802.4 / 790.5 / 784.4 to 803.6 / 792.2 / 785.6. The
+// Major Mana Potion stays: the Dragonfire and Caustic Smog Potions are +3 to +6 at 120 and 180 sec on Water
+// Shield and Mana Tide but 6 to 8 behind at 300, and 20 behind on Level 60. The best natural flask,
+// Precision, is 2 to 6 behind the Flask of Supreme Power.
+//
+// The races at 180 sec (seed 1; seed 1000003 agrees within 0.8): Level 60 Orc 880.1, Windshaper Skyborne
+// 878.1, Tauren 872.0, Dwarf 871.6, Troll 868.7; Imp GW 876.2, 874.1, 867.7, 867.6, 864.6; Water Shield
+// 831.6, 828.0, 823.1, 823.0, 820.3; Mana Tide 792.2, 790.8, 784.1, 783.7, 782.2. Best overall and best
+// Horde: Orc on every build (1.3 to 3.5 ahead of Windshaper Skyborne on both seed sets). Best Alliance:
+// Dwarf, the only Alliance shaman.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Orc on the synthetic Phase 1 gear with the Optimized rotation, in a 3 minute raid fight.',
@@ -948,7 +994,7 @@ export const PresetBuildLevel60WaterShield = PresetUtils.makePresetBuild('Level 
 export const PresetBuildLevel60ManaTide = PresetUtils.makePresetBuild('Level 60 + Mana Tide', {
 	group: 'Level 60',
 	tooltip: 'Level 60 with the Water Shield and Mana Tide talents and the Mana Tide rotation.',
-	gear: GearLevel60Phase1Synthetic,
+	gear: GearLevel60Phase1SyntheticBurningTotem,
 	talents: TalentsLevel60ManaTide,
 	rotation: APLManaTide,
 	encounter: EncounterLevel60,
