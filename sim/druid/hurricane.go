@@ -24,6 +24,15 @@ func (druid *Druid) registerHurricaneSpell() {
 		{level: 60, spellID: 17402, manaCost: 1495, scaleLevel: 66, damage: 132, scale: 0.3},
 	}
 
+	// Under Forever each tick is a hit of its own that can miss but not crit: the tick rows
+	// carry no SPELL_ATTR8_PERIODIC_CAN_CRIT (0x200; 17402 and 1278759 have Attr8 0x1000), and
+	// wowsims/forever casts every tick with OutcomeMagicHit.
+	flags := SpellFlagOmen | core.SpellFlagChanneled | core.SpellFlagBinary | core.SpellFlagAPL
+	tickRollsHit := druid.Env.IsForever()
+	if tickRollsHit {
+		flags |= core.SpellFlagNoPeriodicCrit
+	}
+
 	for i, rank := range ranks {
 		if druid.Level < rank.level {
 			break
@@ -35,7 +44,7 @@ func (druid *Druid) registerHurricaneSpell() {
 			SpellSchool: core.SpellSchoolNature,
 			DefenseType: core.DefenseTypeMagic,
 			ProcMask:    core.ProcMaskSpellDamage,
-			Flags:       SpellFlagOmen | core.SpellFlagChanneled | core.SpellFlagBinary | core.SpellFlagAPL,
+			Flags:       flags,
 
 			PushbackReduction: druid.naturesFocusChance(),
 
@@ -68,8 +77,9 @@ func (druid *Druid) registerHurricaneSpell() {
 					dot.Snapshot(target, damage, isRollover)
 				},
 				OnTick: func(sim *core.Simulation, target *core.Unit, dot *core.Dot) {
+					outcome := core.Ternary(tickRollsHit, dot.OutcomeMagicHitAndTick, dot.OutcomeTick)
 					for _, aoeTarget := range sim.Encounter.ActiveTargetUnits {
-						dot.CalcAndDealPeriodicSnapshotDamage(sim, aoeTarget, dot.OutcomeTick)
+						dot.CalcAndDealPeriodicSnapshotDamage(sim, aoeTarget, outcome)
 					}
 				},
 			},

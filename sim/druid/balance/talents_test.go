@@ -275,7 +275,7 @@ func TestOmenFromFaerieFire(t *testing.T) {
 		if !faerieFire.Cast(sim, target) {
 			t.Fatalf("Faerie Fire not cast at %s", sim.CurrentTime)
 		}
-		// No auto attacks, which roll Omen of Clarity too. Faerie Fire restarts them.
+		// No auto attacks, which roll Omen of Clarity too.
 		moonkin.AutoAttacks.CancelAutoSwing(sim)
 		if moonkin.ClearcastingAura.IsActive() {
 			procs++
@@ -287,5 +287,42 @@ func TestOmenFromFaerieFire(t *testing.T) {
 	}
 	if rate := float64(procs) / casts; rate < 0.08 || rate > 0.125 {
 		t.Errorf("Faerie Fire gave Clearcasting on %.1f%% of casts, want 10%%", 100*rate)
+	}
+}
+
+// TestForeverMoonkinSwingAndHurricane checks that under Forever caster Faerie Fire leaves the
+// swing timer alone (770 and 9907 have no InterruptFlags 8) and that Hurricane's ticks can't
+// crit (17402 and its tick row 1278759 lack SPELL_ATTR8_PERIODIC_CAN_CRIT) but roll hit each.
+func TestForeverMoonkinSwingAndHurricane(t *testing.T) {
+	sim, moonkin := newMoonkinSim(t, P1Talents)
+	target := sim.GetTargetUnit(0)
+	swingAt := moonkin.AutoAttacks.MainhandSwingAt()
+	moonkin.SetGCDTimer(sim, sim.CurrentTime)
+	if !moonkin.FaerieFire.Cast(sim, target) {
+		t.Fatalf("Faerie Fire not cast")
+	}
+	if got := moonkin.AutoAttacks.MainhandSwingAt(); got != swingAt {
+		t.Errorf("Faerie Fire in Moonkin Form moved the swing from %s to %s", swingAt, got)
+	}
+
+	hurricane := topRank(moonkin.Hurricane)
+	if !hurricane.Flags.Matches(core.SpellFlagNoPeriodicCrit) {
+		t.Error("Hurricane ticks should not crit under Forever")
+	}
+	hurricane.Cost.Multiplier = 0
+	moonkin.SetGCDTimer(sim, sim.CurrentTime)
+	if !hurricane.Cast(sim, target) {
+		t.Fatalf("Hurricane not cast")
+	}
+	until := sim.CurrentTime + 11*time.Second
+	sim.AddPendingAction(&core.PendingAction{NextActionAt: until, OnAction: func(*core.Simulation) {}})
+	for sim.CurrentTime < until && !sim.Step() {
+	}
+	metrics := hurricane.SpellMetrics[target.UnitIndex]
+	if metrics.CritTicks != 0 {
+		t.Errorf("Hurricane critted %d ticks", metrics.CritTicks)
+	}
+	if metrics.Ticks+metrics.Misses != 10 {
+		t.Errorf("Hurricane rolled %d ticks and %d misses, want 10 rolls", metrics.Ticks, metrics.Misses)
 	}
 }
