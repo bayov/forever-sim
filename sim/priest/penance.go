@@ -12,7 +12,12 @@ const PenanceRanks = 4
 // Penance is Discipline's new 21 point talent. It fires a Holy bolt at once and one a
 // second for 2 sec, 3 bolts with a hit roll each, on a 12 sec cooldown. The bolt damage at
 // each rank's cap, growth per level and the 19% coefficient are from the client
-// (1.60.1.70338, wago.tools: 402284, 1240727, 1240730 and 1316993).
+// (1.60.1.70338, wago.tools: 402284, 1240727, 1240730 and 1316993). Each bolt flies at the
+// rows' speed 40 (wowsims/forever fe7af8b9b9).
+//
+// The channel is the cast, so it is what rolls on-cast procs such as Vestments of the Devout's
+// 5 pieces; the bolts don't, or one Penance would roll three times (wowsims/forever gives the
+// channel the spell damage proc mask, penance.go).
 var PenanceSpellId = [PenanceRanks + 1]int32{0, 402174, 1240720, 1240721, 1316995}
 var PenanceBoltSpellId = [PenanceRanks + 1]int32{0, 402284, 1240727, 1240730, 1316993}
 var PenanceBoltDamage = [PenanceRanks + 1]float64{0, 44.61, 52.97, 71.87, 92}
@@ -39,12 +44,13 @@ func (priest *Priest) registerPenanceRank(rank int, cdTimer *core.Timer) *core.S
 	boltDamage := PenanceScaling[rank].At(PenanceBoltDamage[rank], priest.Level)
 
 	bolt := priest.RegisterSpell(core.SpellConfig{
-		SpellCode:   SpellCode_PriestPenance,
-		ActionID:    core.ActionID{SpellID: PenanceBoltSpellId[rank]},
-		SpellSchool: core.SpellSchoolHoly,
-		DefenseType: core.DefenseTypeMagic,
-		ProcMask:    core.ProcMaskSpellDamage,
-		Flags:       SpellFlagPriest | core.SpellFlagNoOnCastComplete,
+		SpellCode:    SpellCode_PriestPenance,
+		ActionID:     core.ActionID{SpellID: PenanceBoltSpellId[rank]},
+		SpellSchool:  core.SpellSchoolHoly,
+		DefenseType:  core.DefenseTypeMagic,
+		ProcMask:     core.ProcMaskSpellDamage,
+		Flags:        SpellFlagPriest | core.SpellFlagNoOnCastComplete,
+		MissileSpeed: 40,
 
 		DamageMultiplier: 1,
 		ThreatMultiplier: 1,
@@ -53,15 +59,18 @@ func (priest *Priest) registerPenanceRank(rank int, cdTimer *core.Timer) *core.S
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			multiplier := priest.PowerInLightMultiplier(target)
 			spell.DamageMultiplier *= multiplier
-			spell.CalcAndDealDamage(sim, target, boltDamage, spell.OutcomeMagicHitAndCrit)
+			result := spell.CalcDamage(sim, target, boltDamage, spell.OutcomeMagicHitAndCrit)
 			spell.DamageMultiplier /= multiplier
+			spell.WaitTravelTime(sim, func(sim *core.Simulation) {
+				spell.DealDamage(sim, result)
+			})
 		},
 	})
 
 	return priest.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: PenanceSpellId[rank]},
 		SpellSchool: core.SpellSchoolHoly,
-		ProcMask:    core.ProcMaskEmpty,
+		ProcMask:    core.ProcMaskSpellDamage,
 		Flags:       SpellFlagPriest | core.SpellFlagChanneled | core.SpellFlagAPL,
 
 		RequiredLevel: PenanceLevel[rank],

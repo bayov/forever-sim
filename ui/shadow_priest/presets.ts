@@ -138,6 +138,10 @@ export const APLP1Shadow = PresetUtils.makePresetAPLRotation('Shadow', P1APL);
 // - Dark Sacrifice (Undead) under 10% mana. Level 60 never gets that low (about 13 min to
 //   empty); Shadow + Holy does since 70425, and casts it only when it must (+2.9 / +5.8 / +2.1
 //   against 40%).
+// - Troll: Shadowguard 3 sec before the pull, with Shadowform at -4.5 sec for it, and again
+//   before Mind Flay once its 3 charges are spent with 60 sec or more left and above 40% mana.
+//   The raid's 2 hits a minute fire its strikes at the boss: +10.6 / +8.9 / +7.2 at 120 / 180
+//   / 300 sec for a Troll (2026-10-23). The other races only warn on its lines.
 // - The on-use trinket and the Major Spellblasting Potion go at -0.1 sec so the pre-cast Mind
 //   Blast landing at 0 gets them (rotation auditor, 2026-10-13): +1.0 / +0.7 / +0.4 at 120 / 180
 //   / 300 sec, the same for Shadow + Holy.

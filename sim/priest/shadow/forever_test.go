@@ -350,3 +350,105 @@ func TestChastiseShadowform(t *testing.T) {
 		t.Error("Chastise cannot be cast after Shadowform")
 	}
 }
+
+// TestPenanceCastProcs checks that a Penance rolls on-cast procs (Vestments of the Devout's 5
+// pieces listen for spell damage casts) through its channel, and its three bolts don't, so a
+// Penance rolls once. The bolts fly at speed 40 (wowsims/forever fe7af8b9b9).
+func TestPenanceCastProcs(t *testing.T) {
+	_, sp := newShadowPriestSim(t, "525035231030001001-30505110002-3")
+	channel := topRank(t, "Penance", sp.Penance)
+	if !channel.ProcMask.Matches(core.ProcMaskSpellDamage) || channel.Flags.Matches(core.SpellFlagNoOnCastComplete) {
+		t.Errorf("the Penance channel has proc mask %v and flags %v, want spell damage and on-cast procs", channel.ProcMask, channel.Flags)
+	}
+	bolt := sp.GetSpell(core.ActionID{SpellID: priest.PenanceBoltSpellId[priest.PenanceRanks]})
+	if bolt == nil {
+		t.Fatal("no Penance bolt")
+	}
+	if !bolt.Flags.Matches(core.SpellFlagNoOnCastComplete) {
+		t.Error("a Penance bolt rolls on-cast procs")
+	}
+	if bolt.MissileSpeed != 40 {
+		t.Errorf("a Penance bolt flies at %.0f, want 40", bolt.MissileSpeed)
+	}
+}
+
+// TestVampiricEmbraceCastProcs checks that Vampiric Embrace is a spell damage cast under
+// Forever, so it rolls on-cast procs.
+func TestVampiricEmbraceCastProcs(t *testing.T) {
+	_, sp := newShadowPriestSim(t, "00500501103-3-50052101231302251")
+	if sp.VampiricEmbrace == nil {
+		t.Fatal("no Vampiric Embrace")
+	}
+	if !sp.VampiricEmbrace.ProcMask.Matches(core.ProcMaskSpellDamage) || sp.VampiricEmbrace.Flags.Matches(core.SpellFlagNoOnCastComplete) {
+		t.Errorf("Vampiric Embrace has proc mask %v and flags %v, want spell damage and on-cast procs", sp.VampiricEmbrace.ProcMask, sp.VampiricEmbrace.Flags)
+	}
+}
+
+// TestShadowguard checks the Troll's Shadowguard: castable only in Shadowform, 3 charges,
+// and a raid hit (sim/core/raid_hits.go, a spell from the boss) strikes the boss for 96 plus
+// 26.7% of spell power, at most once every 3.5 sec. With 10 hits a minute and the charges
+// kept at 3, a 9 min fight fires about one strike every 3.5 + 6 sec.
+func TestShadowguard(t *testing.T) {
+	const minutes = 9
+	const hitsPerMinute = 10.0
+	sim := core.NewSim(&proto.RaidSimRequest{
+		Raid: core.SinglePlayerRaidProto(&proto.Player{
+			Race:          proto.Race_RaceTroll,
+			Class:         proto.Class_ClassPriest,
+			Level:         60,
+			Equipment:     &proto.EquipmentSpec{},
+			TalentsString: "00500501103-3-50052101231302251",
+			Rotation:      &proto.APLRotation{},
+			Spec:          PlayerOptionsBasic,
+		}, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
+		Encounter: &proto.Encounter{Duration: minutes * 60, Targets: []*proto.Target{core.NewDefaultTarget()},
+			RaidDamageHitsPerMinute: hitsPerMinute, RaidDamagePerHit: 1500},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1, ExactDamage: true},
+	}, simsignals.CreateSignals())
+	sim.Reset()
+	sim.PrePull()
+	sp := sim.Raid.Parties[0].Players[0].(*ShadowPriest)
+	target := sim.GetTargetUnit(0)
+	guard := topRank(t, "Shadowguard", sp.Shadowguard)
+	aura := sp.ShadowguardAuras[priest.ShadowguardRanks]
+	strike := sp.GetSpell(core.ActionID{SpellID: priest.ShadowguardStrikeSpellId[priest.ShadowguardRanks]})
+
+	var perHit float64
+	sim.AddPendingAction(&core.PendingAction{NextActionAt: core.DurationFromSeconds(0.5), OnAction: func(sim *core.Simulation) {
+		sp.SetGCDTimer(sim, sim.CurrentTime)
+		if guard.CanCast(sim, target) {
+			t.Error("Shadowguard can be cast outside Shadowform")
+		}
+		sp.ShadowformAura.Activate(sim)
+		if !guard.Cast(sim, target) {
+			t.Fatal("Shadowguard didn't cast in Shadowform")
+		}
+		if aura.GetStacks() != 3 {
+			t.Errorf("Shadowguard has %d charges, want 3", aura.GetStacks())
+		}
+		sp.AddStatDynamic(sim, stats.SpellPower, 1000)
+		at := sp.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand]
+		perHit = (96 + 0.267*1000) * strike.AttackerDamageMultiplier(at, false) * strike.TargetDamageMultiplier(at, false)
+		core.StartPeriodicAction(sim, core.PeriodicActionOptions{
+			Period:   time.Second,
+			OnAction: func(sim *core.Simulation) { aura.SetStacks(sim, 3) },
+		})
+	}})
+	for !sim.Step() {
+	}
+
+	metrics := strike.SpellMetrics[target.UnitIndex]
+	fired := float64(metrics.Hits + metrics.Misses)
+	if want := minutes * 60 / (3.5 + 60/hitsPerMinute); math.Abs(fired-want) > 10 {
+		t.Errorf("%.0f strikes fired at the boss, want about %.0f", fired, want)
+	}
+	if metrics.Hits == 0 {
+		t.Fatal("no strike landed")
+	}
+	if got := metrics.TotalDamage / float64(metrics.Hits); math.Abs(got-perHit) > 0.01*perHit {
+		t.Errorf("a strike deals %.1f, want %.1f", got, perHit)
+	}
+	if metrics.Crits > 0 {
+		t.Errorf("%d strikes crit", metrics.Crits)
+	}
+}

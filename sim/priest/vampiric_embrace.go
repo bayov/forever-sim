@@ -38,11 +38,19 @@ func (priest *Priest) registerVampiricEmbraceSpell() {
 		})
 	})
 
+	// Under Forever it is a harmful spell cast like any other, so it rolls on-cast procs such as
+	// Vestments of the Devout's 5 pieces (wowsims/forever casts it with the spell damage proc
+	// mask, vampiric_embrace.go).
+	procMask := core.ProcMaskEmpty
+	if priest.Env.IsForever() {
+		procMask = core.ProcMaskSpellDamage
+	}
+
 	priest.VampiricEmbrace = priest.RegisterSpell(core.SpellConfig{
 		ActionID:    actionID,
 		SpellSchool: core.SpellSchoolShadow,
 		DefenseType: core.DefenseTypeMagic,
-		ProcMask:    core.ProcMaskEmpty,
+		ProcMask:    procMask,
 		Flags:       SpellFlagPriest | core.SpellFlagAPL,
 
 		ManaCost: core.ManaCostOptions{

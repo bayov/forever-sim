@@ -29,6 +29,7 @@ const (
 	SpellCode_PriestShadowWordDeath
 	SpellCode_PriestChastise
 	SpellCode_PriestPenance
+	SpellCode_PriestShadowguard
 )
 
 type Priest struct {
@@ -56,6 +57,7 @@ type Priest struct {
 	Renew             []*core.Spell
 	Shadowform        *core.Spell
 	ShadowWeavingProc *core.Spell
+	Shadowguard       []*core.Spell
 	ShadowWordDeath   []*core.Spell
 	ShadowWordPain    []*core.Spell
 	Smite             []*core.Spell
@@ -65,6 +67,7 @@ type Priest struct {
 	InnerFocusAura      *core.Aura
 	ShadowformAura      *core.Aura
 	DarkInspirationAura *core.Aura
+	ShadowguardAuras    []*core.Aura
 
 	ShadowWeavingAuras   core.AuraArray
 	VampiricEmbraceAuras core.AuraArray
@@ -95,10 +98,12 @@ func (priest *Priest) Initialize() {
 	priest.registerShadowWordDeathSpell()
 	// Forever lets every race learn Devouring Plague (SkillLineAbility race mask -1 in the
 	// client, 1.60.1.70338). The racial priest spells that can deal damage to a boss are
-	// Starshards (Night Elf) and Chastise (Dwarf). Dark Sacrifice (Undead) gives mana.
+	// Starshards (Night Elf), Chastise (Dwarf) and Shadowguard's strikes (Troll). Dark
+	// Sacrifice (Undead) gives mana.
 	priest.registerDevouringPlagueSpell()
 	priest.registerStarshardsSpell()
 	priest.registerChastiseSpell()
+	priest.registerShadowguardSpell()
 	priest.registerDarkSacrificeSpell()
 	priest.registerSmiteSpell()
 	priest.registerHolyFire()

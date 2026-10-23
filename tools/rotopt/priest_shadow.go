@@ -9,9 +9,9 @@ import (
 
 // Shadow under Forever rules. Shadowform goes up before the pull (40% of base mana). The
 // damage over time spells come first, then the cooldown spells (Mind Blast, Shadow Word:
-// Death, Starshards for a Night Elf, Chastise for a Dwarf), and Mind Flay fills. Every line
-// names the highest rank the player's level knows. Lines for spells the build or race
-// cannot have only warn, and a knob at 0 drops its line.
+// Death, Starshards for a Night Elf, Chastise for a Dwarf), then a Troll's Shadowguard, and
+// Mind Flay fills. Every line names the highest rank the player's level knows. Lines for
+// spells the build or race cannot have only warn, and a knob at 0 drops its line.
 //
 // The real decisions are knobs: whether Devouring Plague and Shadow Word: Death are worth
 // their mana, whether Mind Flay is clipped for a Mind Blast that comes off cooldown, where
@@ -75,6 +75,16 @@ func (priestShadow) Knobs() []Knob {
 		// Power Infusion on cooldown (needs the 31 point Discipline talent, which no level 60
 		// build takes).
 		{Name: "powerInfusion", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Troll: Shadowguard (3 charges, castable in Shadowform) before the pull, with Shadowform
+		// a GCD earlier for it, and again before Mind Flay once it is down with at least
+		// shadowguardRecast seconds left (0 never) and above shadowguardMana percent mana. The
+		// raid's 2 hits a minute spend it. On the Level 60 build the pre-pull cast is +10.6 /
+		// +7.9 / +4.9 at 120 / 180 / 300 sec and the recast +0.0 / +1.1 / +2.3 more. Shadow +
+		// Holy runs short of mana at 300 sec, where the recast without the floor cost 3.6 (1.4
+		// with it) for +1.0 at 180 sec (2026-10-23).
+		{Name: "shadowguard", Default: 1, Min: 0, Max: 1, Step: 1},
+		{Name: "shadowguardRecast", Default: 60, Min: 0, Max: 100, Step: 20},
+		{Name: "shadowguardMana", Default: 40, Min: 0, Max: 80, Step: 20},
 		// Before the pull: 0 Shadowform only (1.5 sec out), 1 Shadowform 3 sec out and a Mind
 		// Blast 1.5 sec out that lands at 0, 2 the same with Inner Focus on that Mind Blast.
 		{Name: "prepull", Default: 1, Min: 0, Max: 2, Step: 1},
@@ -113,6 +123,7 @@ func (priestShadow) Build(k Knobs) *proto.APLRotation {
 	starshards := rankID(priest.StarshardsLevel[:], priest.StarshardsSpellId[:])
 	chastise := rankID(priest.ChastiseLevel[:], priest.ChastiseSpellId[:])
 	darkSacrifice := rankID(priest.DarkSacrificeLevel[:], priest.DarkSacrificeSpellId[:])
+	shadowguard := rankID(priest.ShadowguardLevel[:], priest.ShadowguardSpellId[:])
 
 	var items []*proto.APLListItem
 	if k["darkSacrifice"] > 0 {
@@ -189,6 +200,11 @@ func (priestShadow) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(chastise, nil, "Dwarf. Chastise on cooldown against a Humanoid. Other races can ignore the warning on this line."))
 	}
 
+	if k["shadowguard"] == 1 && k["shadowguardRecast"] > 0 {
+		items = append(items, cast(shadowguard, and(not(auraIsActive(shadowguard)), ge(remainingTime(), seconds(k["shadowguardRecast"])), priestManaAbove(k["shadowguardMana"])),
+			"Troll. Shadowguard again once its charges are spent. Other races can ignore the warning on this line."))
+	}
+
 	var clip value
 	mfNotes := "Mind Flay fills."
 	if k["mfClip"] > 0 {
@@ -206,10 +222,21 @@ func (priestShadow) Build(k Knobs) *proto.APLRotation {
 	items = append(items, channel(mindFlay, nil, clip, mfNotes))
 
 	rot := rotation(items...)
+	// Shadowguard needs Shadowform, so Shadowform goes a GCD earlier for it.
+	var guard float64
+	if k["shadowguard"] == 1 {
+		guard = 1.5
+	}
 	if k["prepull"] == 0 {
-		rot.PrepullActions = append(rot.PrepullActions, prepull(shadowform, 1.5))
+		rot.PrepullActions = append(rot.PrepullActions, prepull(shadowform, 1.5+guard))
+		if guard > 0 {
+			rot.PrepullActions = append(rot.PrepullActions, prepull(shadowguard, 1.5))
+		}
 	} else {
-		rot.PrepullActions = append(rot.PrepullActions, prepull(shadowform, 3))
+		rot.PrepullActions = append(rot.PrepullActions, prepull(shadowform, 3+guard))
+		if guard > 0 {
+			rot.PrepullActions = append(rot.PrepullActions, prepull(shadowguard, 3))
+		}
 		if k["prepull"] == 2 {
 			rot.PrepullActions = append(rot.PrepullActions, prepull(innerFocus, 1.5))
 		}

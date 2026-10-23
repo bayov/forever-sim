@@ -68,7 +68,8 @@ func spellIn(spell *core.Spell, codes ...int32) bool {
 // 1225132). 70425 widened both: the direct mask now has Shadow Word: Death, Chastise and
 // Penance's bolts, the periodic mask Shadow Word: Pain, Mind Flay, Starshards and Devouring
 // Plague (70338: Chastise, and Shadow Word: Pain and Devouring Plague). Devouring Plague is
-// in through the fourth mask word (0x10), the bit Devouring Contagion uses.
+// in through the fourth mask word (0x10), the bit Devouring Contagion uses. Shadowguard's
+// strike is in the direct mask (0x10000000 of its 0x92000000).
 func (priest *Priest) applyTwinDisciplines() {
 	if priest.Talents.TwinDisciplines == 0 {
 		return
@@ -76,7 +77,7 @@ func (priest *Priest) applyTwinDisciplines() {
 
 	bonus := 0.01 * float64(priest.Talents.TwinDisciplines)
 	priest.OnSpellRegistered(func(spell *core.Spell) {
-		if spellIn(spell, SpellCode_PriestShadowWordDeath, SpellCode_PriestChastise, SpellCode_PriestPenance,
+		if spellIn(spell, SpellCode_PriestShadowWordDeath, SpellCode_PriestChastise, SpellCode_PriestPenance, SpellCode_PriestShadowguard,
 			SpellCode_PriestShadowWordPain, SpellCode_PriestMindFlay, SpellCode_PriestStarshards, SpellCode_PriestDevouringPlague) {
 			spell.DamageMultiplierAdditive += bonus
 		}
@@ -97,8 +98,8 @@ func (priest *Priest) reduceCost(spell *core.Spell, percent int32) {
 
 // Mental Agility: 3, 7 and 10% off the mana cost of Smite, Holy Fire and the instant
 // spells in its mask (Shadow Word: Pain, Devouring Plague, Vampiric Embrace, Shadowform,
-// Power Infusion, Chastise and others). Mind Blast, Mind Flay and Shadow Word: Death
-// are not in it.
+// Power Infusion, Chastise, Shadowguard and others). Mind Blast, Mind Flay and Shadow Word:
+// Death are not in it.
 func (priest *Priest) applyMentalAgility() {
 	if priest.Talents.MentalAgility == 0 {
 		return
@@ -109,7 +110,8 @@ func (priest *Priest) applyMentalAgility() {
 		if spell.Cost == nil || !spell.Flags.Matches(SpellFlagPriest) {
 			return
 		}
-		if spellIn(spell, SpellCode_PriestShadowWordPain, SpellCode_PriestDevouringPlague, SpellCode_PriestSmite, SpellCode_PriestHolyFire, SpellCode_PriestChastise) ||
+		if spellIn(spell, SpellCode_PriestShadowWordPain, SpellCode_PriestDevouringPlague, SpellCode_PriestSmite, SpellCode_PriestHolyFire, SpellCode_PriestChastise,
+			SpellCode_PriestShadowguard) ||
 			slices.Contains([]int32{15286, 15473, 10060}, spell.SpellID) {
 			priest.reduceCost(spell, discount)
 		}
