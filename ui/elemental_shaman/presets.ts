@@ -238,8 +238,8 @@ export const DefaultOptions = ElementalShamanOptions.create({});
 // Sages would add about 10. Brilliant Wizard Oil would add 10.8, but its recipe is from Zul'Gurub.
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
-	// The Caustic Smog Potion (range 20) is +4.4 over the Major Mana Potion at 180 sec, and 1.7
-	// behind with Mana Tide (1.8 with the Flask of Supreme Power).
+	// The Caustic Smog Potion (range 20) is +4.4 over the Major Mana Potion at 180 sec. Mana Tide
+	// takes the Major Mana Potion (ManaTideConsumes).
 	defaultPotion: Potions.CausticSmogPotion,
 	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
 	firePowerBuff: FirePowerBuff.ElixirOfFirepower,
@@ -256,6 +256,13 @@ export const DefaultConsumes = Consumes.create({
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	spiritElixir: SpiritElixir.ElixirOfSages,
 	zanzaBuff: ZanzaBuff.CerebralCortexCompound,
+});
+
+// Mana Tide runs shorter on mana, so it drinks the Major Mana Potion: -4.3 / +1.8 / +27.2 at 120 /
+// 180 / 300 sec over the Caustic Smog Potion (20000 iterations, two seed sets, 2026-10-23).
+export const ManaTideConsumes = Consumes.create({
+	...DefaultConsumes,
+	defaultPotion: Potions.MajorManaPotion,
 });
 
 // The level 60 raid (tools/rotopt/mksettings -spec ele): the shared level 60 raid buffs, Kings
@@ -361,6 +368,13 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
+export const EncounterLevel60ManaTide = PresetUtils.makePresetEncounter('Level 60 (Mana Tide)', EncounterLevel60.encounter, {
+	tanks: [],
+	raidBuffs: DefaultRaidBuffs,
+	debuffs: DefaultDebuffs,
+	buffs: DefaultIndividualBuffs,
+	consumes: ManaTideConsumes,
+});
 
 // On 2026-10-13, on the gear round's set (standards 1b, with the two synthetic trinkets) and the
 // standard consumes (20000 iterations), Level 60 is 674.3 / 673.9 / 663.3 at 120 / 180 / 300 sec and
@@ -379,6 +393,13 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // counts with the staff now), Dwarf 719.3 and Tauren 719.1 (2% crit damage each), Troll 710.1.
 // Best overall and best Horde: Windshaper Skyborne. Best Alliance: Dwarf. On Mana Tide:
 // Windshaper Skyborne 714.6, Orc 711.2, Dwarf 708.7, Tauren 708.6, Troll 700.1.
+//
+// The regear round (2026-10-23, 20000 iterations, seeds 1 and 1000003, the natural flask zone on): the
+// set stays at the spell cap, and the knob and talent searches kept both builds. Level 60 is 786.1 / 776.4
+// / 740.5 at 120 / 180 / 300 sec; Mana Tide 770.9 / 761.4 / 744.3 with its Major Mana Potion (775.2 /
+// 759.6 / 717.0 with the Caustic Smog Potion). Races at 180 sec (seed 1; seed 1000003 agrees within 0.8):
+// Windshaper Skyborne 776.4, Orc 773.2, Dwarf 771.0, Tauren 770.8, Troll 761.4; on Mana Tide 761.4,
+// 757.4, 754.6, 754.5, 745.8. Best overall and best Horde: Windshaper Skyborne. Best Alliance: Dwarf.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Windshaper Skyborne on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
@@ -397,7 +418,7 @@ export const PresetBuildLevel60ManaTide = PresetUtils.makePresetBuild('Level 60 
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60ManaTide,
 	rotation: APLLevel60ManaTide,
-	encounter: EncounterLevel60,
+	encounter: EncounterLevel60ManaTide,
 	race: Race.RaceSkyborneWindshaper,
 	level: 60,
 	bonusTalentPoints: 0,

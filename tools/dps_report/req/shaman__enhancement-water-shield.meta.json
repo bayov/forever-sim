@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "magma",
   "published": {
-    "dps": 842.2,
-    "source": "Shaman PR (the raid's Flametongue Totem on the Enhancement weapon, user ruling 2026-10-16; rotation pass 24, Lightning Bolt after the shocks, 2026-10-16)"
+    "dps": 831.5,
+    "source": "Shaman regear round (2026-10-23): the 8% melee cap (neck hit to crit), Totem of the Storm; requests rebuilt from the presets with the natural flask zone"
   },
   "verify": {
-    "dps": 842.2,
+    "dps": 831.55,
     "stderr": 0.37,
     "iters": 20000,
     "ok": true,
-    "note": "run_build.py main run, 180s, seed 1"
+    "note": "sim.py, 180s, seed 1"
   },
   "summary": "Enhancement with Restoration points for Water Shield. It has no Improved Fire Nova, so it uses Magma Totem. Lightning Shield still beat Water Shield at every raid hit rate tried.",
   "keyTalents": [
@@ -51,8 +51,8 @@
   "consumes": [
     "Windfury Weapon (shaman imbue) + Shadow Oil (main hand)",
     "Flask of Supreme Power",
-    "Elixir of Greater Agility",
-    "Juju Power",
+    "Elixir of Cunning",
+    "Elixir of Ferocity",
     "Juju Might",
     "R.O.I.D.S.",
     "Elixir of the Sages",
@@ -75,7 +75,8 @@
     "Elemental Focus triggers: if Stormstrike can trigger it, Enhancement gets too few Clearcasting procs.",
     "Raid damage hits (2 a minute, each fires Lightning Shield) are an estimate.",
     "Fire Nova uses the 70425 values: coefficient 0.143, rank 5 base 232 to 259.",
-    "The raid's second shaman's Flametongue Totem holds the weapon's totem slot next to our Windfury Weapon (user ruling 2026-10-16, assumed; to verify in game): +18 to +19 at 180 s"
+    "The raid's second shaman's Flametongue Totem holds the weapon's totem slot next to our Windfury Weapon (user ruling 2026-10-16, assumed; to verify in game): +18 to +19 at 180 s",
+    "Relic: Totem of the Storm (Lightning Bolt can trigger Maelstrom Weapon at half the chance), within 0.4 of Burning Totem here."
   ],
   "notes": "mksettings -spec enh -apl magma -talents 051003-054030021005112151-053020001 -race Orc -gear level60_phase1_synthetic -duration 180 -level 60 (standards 25: the raid's Grace of Air and Flametongue Totem; the shaman drops Strength of Earth, Windfury Totem, Mana Spring Totem and Magma Totem itself)."
 }

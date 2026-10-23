@@ -30,26 +30,32 @@ import (
 // The mix follows standards 5a and 5b, the Enhancement row of orchestration/gear_targets.md (1a6968081):
 // Season of Discovery's melee stats with this sim's Intellect and spell power kept (the hybrid ruling).
 // Stamina (19.4%), Spirit (10%), Intellect (10.4%) and spell power (30.7%) hold their shares, the hit goes
-// to the cap (90 rating, the 9% melee cap against a level 63 boss), and Strength, Agility, attack power and
-// crit fill the rest in the table's proportions (13.0 / 2.9 / 3.9 / 6.0). A stat's share is its weight
-// times its amount over the set's weighted total (839.3, the trinkets left out):
+// to the cap (80 rating, the 8% melee cap against a level 63 boss, standards 4 since 2026-10-23: Forever
+// has no hit suppression), and Strength, Agility, attack power and crit fill the rest in the table's
+// proportions (13.0 / 2.9 / 3.9 / 6.0). A stat's share is its weight times its amount over the set's
+// weighted total (839.3, the trinkets left out):
 //
 //	stat      amount   share   hit-adjusted target
 //	Stamina      164   19.5%   19.4 +- 1.5
-//	Strength      81    9.7%    9.5 +- 3
-//	Agility       18    2.1%    2.1
+//	Strength      81    9.7%   10.1 +- 3
+//	Agility       18    2.1%    2.2
 //	Intellect     86   10.2%   10.4 (held)
 //	Spirit        83    9.9%   10
-//	AP            48    2.9%    2.8
+//	AP            48    2.9%    3.0
 //	SP           298   30.5%   30.7 (held)
-//	Crit          37    4.4%    4.4
-//	Hit           90   10.7%   at the cap
+//	Crit          47    5.6%    4.7
+//	Hit           80    9.5%   at the cap
+//
+// Until 2026-10-23 the set carried 90 hit rating for Classic's 9% cap. The 10 hit over the new cap went to
+// the neck as 10 crit rating, which keeps its weighted total and its 1.7-norm value. Above 8% hit only the
+// spells gain (about 4 DPS a 1% at 180 sec on Level 60), and 10 crit rating is worth about 5.5, more than
+// 10 points of Strength (3.5), spell power (3.4), attack power (3.2) or Agility (3.0).
 //
 // Per piece (target, weighted linear total, 1.7-norm value / shape target, stats). The armor comes to 748.5
 // and the two-hander to 90.8:
 //
 //	Head         83.3    83.7 (+0.4%)   45.2 /  46.5 (-2.9%)  11 Str, 15 Sta, 10 Int, 21 Crit, 31 SP
-//	Neck         48.3    48.1 (-0.4%)   27.0 /  28.0 (-3.8%)  10 Sta, 3 Agi, 7 Int, 10 Hit, 21 SP
+//	Neck         48.3    48.1 (-0.4%)   27.0 /  28.0 (-3.8%)  10 Sta, 3 Agi, 7 Int, 10 Crit, 21 SP
 //	Shoulder     63.1    62.8 (-0.5%)   33.9 /  34.9 (-3.0%)  8 Str, 11 Sta, 8 Int, 16 Crit, 23 SP
 //	Back         48.3    47.9 (-0.7%)   28.3 /  28.0 (+0.8%)  11 Sta, 7 Int, 11 Spi, 22 SP
 //	Chest        83.3    83.5 (+0.2%)   44.8 /  46.5 (-3.7%)  12 Str, 16 Sta, 11 Int, 17 Spi, 32 SP
@@ -93,10 +99,10 @@ var ForeverSyntheticItems = []*proto.UIItem{
 	// Neck, item level 71.
 	{
 		Id: 990002, Name: "Enhancement Synthetic Neck (Phase 1)", Icon: "inv_jewelry_necklace_09",
-		Type:      proto.ItemType_ItemTypeNeck,
-		Stats:     stats.Stats{stats.Agility: 3, stats.Stamina: 10, stats.Intellect: 7, stats.SpellPower: 21}.ToFloatArray(),
-		HitRating: 10,
-		Ilvl:      71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		Type:       proto.ItemType_ItemTypeNeck,
+		Stats:      stats.Stats{stats.Agility: 3, stats.Stamina: 10, stats.Intellect: 7, stats.SpellPower: 21}.ToFloatArray(),
+		CritRating: 10,
+		Ilvl:       71, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassShaman},
 	},
 	// Shoulder, item level 66, in place of Death's Clutch (62, 14503).
