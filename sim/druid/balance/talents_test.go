@@ -12,6 +12,10 @@ import (
 )
 
 func newMoonkinSim(t *testing.T, talents string) (*core.Simulation, *BalanceDruid) {
+	return newMoonkinSimFor(t, talents, 60)
+}
+
+func newMoonkinSimFor(t *testing.T, talents string, duration float64) (*core.Simulation, *BalanceDruid) {
 	player := &proto.Player{
 		Race:          proto.Race_RaceTauren,
 		Class:         proto.Class_ClassDruid,
@@ -23,7 +27,7 @@ func newMoonkinSim(t *testing.T, talents string) (*core.Simulation, *BalanceDrui
 	}
 	sim := core.NewSim(&proto.RaidSimRequest{
 		Raid:       core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{}),
-		Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{core.NewDefaultTarget()}},
+		Encounter:  &proto.Encounter{Duration: duration, Targets: []*proto.Target{core.NewDefaultTarget()}},
 		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
 	}, simsignals.CreateSignals())
 	sim.Reset()
@@ -192,5 +196,96 @@ func TestNaturesFocus(t *testing.T) {
 	_, none := newMoonkinSim(t, "")
 	if got := topRank(none.Wrath).PushbackReduction; got != 0 {
 		t.Errorf("Wrath pushback reduction without the talent %.2f, want 0", got)
+	}
+}
+
+// TestNaturesGraceTiming checks that under Forever Nature's Grace comes a spell batch after the
+// crit's damage: a Wrath's when the bolt lands, a Moonfire's 10 ms after the cast, so the cast
+// queued at the crit's instant is not hasted (wowsims/forever e003c2dca9).
+func TestNaturesGraceTiming(t *testing.T) {
+	sim, moonkin := newMoonkinSim(t, P1Talents)
+	moonkin.DistanceFromTarget = 20
+	target := sim.GetTargetUnit(0)
+	naturesGrace := moonkin.NaturesGraceProcAura
+	advance := func(until time.Duration) {
+		sim.AddPendingAction(&core.PendingAction{NextActionAt: until, OnAction: func(*core.Simulation) {}})
+		for sim.CurrentTime < until && !sim.Step() {
+		}
+	}
+	for _, spells := range [][]*druid.DruidSpell{moonkin.Wrath, moonkin.Moonfire} {
+		spell := topRank(spells)
+		spell.BonusHitRating += 100 * core.SpellHitRatingPerHitChance
+		spell.BonusCritRating += 200 * core.SpellCritRatingPerCritChance
+	}
+
+	wrath := topRank(moonkin.Wrath)
+	start := sim.CurrentTime
+	wrath.Cast(sim, target)
+	castEnd := start + wrath.CurCast.CastTime
+	impact := castEnd + wrath.TravelTime()
+	if wrath.TravelTime() < time.Second/2 {
+		t.Fatalf("Wrath travels %s, want a travel time to test", wrath.TravelTime())
+	}
+	advance(castEnd + time.Millisecond)
+	if naturesGrace.IsActive() {
+		t.Errorf("Nature's Grace up when the Wrath cast finished, want it after the bolt lands")
+	}
+	advance(impact + core.SpellBatchWindow - time.Millisecond)
+	if naturesGrace.IsActive() {
+		t.Errorf("Nature's Grace up within a spell batch of the Wrath landing")
+	}
+	advance(impact + core.SpellBatchWindow)
+	if !naturesGrace.IsActive() {
+		t.Errorf("Nature's Grace not up a spell batch after the Wrath crit landed")
+	}
+
+	naturesGrace.Deactivate(sim)
+	advance(sim.CurrentTime + 2*time.Second)
+	moonfire := topRank(moonkin.Moonfire)
+	moonkin.SetGCDTimer(sim, sim.CurrentTime)
+	if !moonfire.Cast(sim, target) {
+		t.Fatalf("Moonfire not cast at %s", sim.CurrentTime)
+	}
+	if naturesGrace.IsActive() {
+		t.Errorf("Nature's Grace up at the Moonfire crit's instant")
+	}
+	advance(sim.CurrentTime + core.SpellBatchWindow)
+	if !naturesGrace.IsActive() {
+		t.Errorf("Nature's Grace not up a spell batch after the Moonfire crit")
+	}
+}
+
+// TestOmenFromFaerieFire checks that under Forever caster Faerie Fire rolls Omen of Clarity as an
+// instant, 2 * 1.5 / 60 a cast that lands, doubled in Moonkin Form to 10% (wowsims/forever
+// 1a2f22fe3f).
+func TestOmenFromFaerieFire(t *testing.T) {
+	const casts = 2000
+	sim, moonkin := newMoonkinSimFor(t, P1Talents, 11*casts)
+	target := sim.GetTargetUnit(0)
+	faerieFire := moonkin.FaerieFire
+	faerieFire.BonusHitRating += 100 * core.SpellHitRatingPerHitChance
+	faerieFire.Cost.Multiplier = 0
+	if !moonkin.MoonkinFormAura.IsActive() {
+		t.Fatalf("not in Moonkin Form")
+	}
+	procs := 0
+	for i := 0; i < casts; i++ {
+		moonkin.SetGCDTimer(sim, sim.CurrentTime)
+		moonkin.ClearcastingAura.Deactivate(sim)
+		if !faerieFire.Cast(sim, target) {
+			t.Fatalf("Faerie Fire not cast at %s", sim.CurrentTime)
+		}
+		// No auto attacks, which roll Omen of Clarity too. Faerie Fire restarts them.
+		moonkin.AutoAttacks.CancelAutoSwing(sim)
+		if moonkin.ClearcastingAura.IsActive() {
+			procs++
+		}
+		until := sim.CurrentTime + 11*time.Second
+		sim.AddPendingAction(&core.PendingAction{NextActionAt: until, OnAction: func(*core.Simulation) {}})
+		for sim.CurrentTime < until && !sim.Step() {
+		}
+	}
+	if rate := float64(procs) / casts; rate < 0.08 || rate > 0.125 {
+		t.Errorf("Faerie Fire gave Clearcasting on %.1f%% of casts, want 10%%", 100*rate)
 	}
 }

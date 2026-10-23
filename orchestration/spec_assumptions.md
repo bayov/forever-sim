@@ -477,12 +477,12 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 
 - **Builds:** Feral (each Clearcasting is a free Shred), Balance and Balance Wrath (free Starfires; the Wrath build casts Starfire only on Clearcasting).
 - **Sim now:**
-  - Melee: 2 PPM (`sim/druid/talents.go:430`). Under Forever specials roll at the swing speed like white hits, 1.0 sec in Cat Form (`:449-450`); until 2026-10-23 they rolled at the equipped weapon's speed, 11.7% a special on a 3.5 sec weapon. Changed on wowsims/forever ca7b3ab462 and af6df6c0e4 (their issue #225: the weapon speed "is a game bug fixed in the next beta build"): Feral 8.49 to 6.16 Clearcasts a 180 sec fight, -10.4 DPS.
-  - Spells: 2 × max(cast time, 1.5 sec) / 60 a cast (`:455`).
-  - Moonkin Form doubles the chance and halves the 10 sec cooldown (`:456-458`, `:463-465`).
+  - Melee: 2 PPM (`sim/druid/talents.go:449`). Under Forever specials roll at the swing speed like white hits, 1.0 sec in Cat Form (`:468-469`); until 2026-10-23 they rolled at the equipped weapon's speed, 11.7% a special on a 3.5 sec weapon. Changed on wowsims/forever ca7b3ab462 and af6df6c0e4 (their issue #225: the weapon speed "is a game bug fixed in the next beta build"): Feral 8.49 to 6.16 Clearcasts a 180 sec fight, -10.4 DPS.
+  - Spells: 2 × max(cast time, 1.5 sec) / 60 a cast (`:474`), an instant at 1.5 sec, as in wowsims/forever. Under Forever caster Faerie Fire rolls it too, though it deals no damage, and Faerie Fire (Feral) does not (`:496`, since 2026-10-23 on wowsims/forever 1a2f22fe3f and a51a807bf4: their logs list Faerie Fire in 23 of 365 procs).
+  - Moonkin Form doubles the chance and halves the 10 sec cooldown (`:475-477`, `:482-484`).
 - **Source:**
   - Melee: 1.12's rate, with Forever's specials at the swing speed (above).
-  - Spells: our own guess (`:371-373`).
+  - Spells: our own guess (`:390-392`); wowsims/forever uses the same rate.
   - The Moonkin modifiers and the cooldown are the client's (16864).
 - **Why uncertain:** the client leaves the chance to the server (notes.md, Druid).
 - **Settings:**

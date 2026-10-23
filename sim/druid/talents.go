@@ -181,6 +181,12 @@ func (druid *Druid) applyImprovedStarfire() {
 // Nature's Grace under Forever (16880, 16886): a spell crit that is not periodic gives 10%
 // cast speed and 10% off the global cooldown of the Balance spells for 3 sec. 1.12 took 0.5
 // sec off the next cast instead.
+//
+// Under Forever the crit's damage grants it, so a Wrath's at impact, and the buff comes a spell
+// batch later. A cast's time is fixed when it starts, so the cast queued at the crit's instant,
+// as the one behind a Starfire is, is not hasted (wowsims/forever e003c2dca9: a Forever combat log
+// of 409 Wrath and 123 Starfire casts shows the buff 0-33 ms after the crit's damage). Outside
+// Forever a Wrath crit grants it at once when the cast finishes.
 func (druid *Druid) applyNaturesGrace() {
 	if !druid.Talents.NaturesGrace {
 		return
@@ -212,10 +218,23 @@ func (druid *Druid) applyNaturesGrace() {
 	core.MakePermanent(druid.RegisterAura(core.Aura{
 		Label: "Natures Grace",
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			// Spells with travel times have their own implementation because the proc occurs as the cast finishes
-			if spell.MissileSpeed == 0 && spell.ProcMask.Matches(core.ProcMaskSpellDamage) && result.DidCrit() {
-				druid.NaturesGraceProcAura.Activate(sim)
+			if !spell.ProcMask.Matches(core.ProcMaskSpellDamage) || !result.DidCrit() {
+				return
 			}
+			if !sim.IsForever() {
+				// Spells with travel times have their own implementation because the proc occurs as the cast finishes
+				if spell.MissileSpeed == 0 {
+					druid.NaturesGraceProcAura.Activate(sim)
+				}
+				return
+			}
+			core.StartDelayedAction(sim, core.DelayedActionOptions{
+				DoAt:     sim.CurrentTime + core.SpellBatchWindow,
+				Priority: core.ActionPriorityDOT,
+				OnAction: func(sim *core.Simulation) {
+					druid.NaturesGraceProcAura.Activate(sim)
+				},
+			})
 		},
 	}))
 }
@@ -369,12 +388,12 @@ func (druid *Druid) applyFuror() {
 // halves the cooldown (its spell modifiers on Omen of Clarity, +100% chance and -50%).
 //
 // The client leaves the chance to the server. The sim keeps 1.12's 2 procs a minute on
-// melee hits, and gives a damage spell that lands the same rate over its cast time,
-// 2 * max(cast time, 1.5 sec) / 60 a cast, which is our own guess. Under Forever white hits and
-// specials both roll at the swing speed, 1.0 sec in Cat Form: wowsims/forever (ca7b3ab462,
-// af6df6c0e4, their issue #225) has rolling specials at the equipped weapon's speed, as 1.12
-// did, as "a game bug fixed in the next beta build". Outside Forever specials keep the
-// weapon's speed.
+// melee hits, and gives a spell that lands the same rate over its cast time,
+// 2 * max(cast time, 1.5 sec) / 60 a cast, an instant at 1.5 sec as in wowsims/forever. Under
+// Forever white hits and specials both roll at the swing speed, 1.0 sec in Cat Form:
+// wowsims/forever (ca7b3ab462, af6df6c0e4, their issue #225) has rolling specials at the
+// equipped weapon's speed, as 1.12 did, as "a game bug fixed in the next beta build". Outside
+// Forever specials keep the weapon's speed.
 func (druid *Druid) applyOmenOfClarity() {
 	if druid.Level < 20 {
 		return
@@ -451,7 +470,7 @@ func (druid *Druid) applyOmenOfClarity() {
 				} else {
 					procced = ppmm.ProcWithWeaponSpecials(sim, spell.ProcMask, "Omen of Clarity")
 				}
-			} else if spell.ProcMask.Matches(core.ProcMaskSpellDamage) && spell.Flags.Matches(SpellFlagOmen) {
+			} else if spell.ProcMask.Matches(core.ProcMaskSpellDamage) && druid.rollsOmenOnSpell(sim, spell) {
 				chance := 2 * max(spell.DefaultCast.CastTime, core.GCDDefault).Seconds() / 60
 				if inMoonkin() {
 					chance *= 2
@@ -467,6 +486,18 @@ func (druid *Druid) applyOmenOfClarity() {
 			}
 		},
 	})
+}
+
+// rollsOmenOnSpell is whether a druid spell that lands rolls Omen of Clarity. Under Forever any
+// landed druid spell does, caster Faerie Fire too though it deals no damage (wowsims/forever
+// 1a2f22fe3f, their issue #225: logs list Faerie Fire in 23 of 365 procs), but not Faerie Fire
+// cast in Cat, Bear or Dire Bear Form (a51a807bf4, the development notes of 15 October). Caster
+// Faerie Fire is still not one Clearcasting makes free: 16870's mask leaves it out.
+func (druid *Druid) rollsOmenOnSpell(sim *core.Simulation, spell *core.Spell) bool {
+	if spell.Flags.Matches(SpellFlagOmen) {
+		return true
+	}
+	return sim.IsForever() && spell.SpellCode == SpellCode_DruidFaerieFire && !druid.InForm(Cat|Bear)
 }
 
 // Nature's Focus (client 1.60.1.70425, spell 17063): aura 108 (a percent spell modifier) with misc

@@ -89,8 +89,8 @@ func (druid *Druid) newWrathSpellConfig(rank int) core.SpellConfig {
 			baseDamage := sim.Roll(baseDamageLow, baseDamageHigh)
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 
-			// Nature's Grace procs when the cast finishes, not when the bolt lands.
-			if result.DidCrit() && druid.NaturesGraceProcAura != nil {
+			// Outside Forever Nature's Grace procs when the cast finishes, not when the bolt lands.
+			if !sim.IsForever() && result.DidCrit() && druid.NaturesGraceProcAura != nil {
 				druid.NaturesGraceProcAura.Activate(sim)
 			}
 

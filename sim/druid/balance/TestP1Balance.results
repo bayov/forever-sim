@@ -53,18 +53,18 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 0.40394
+  weights: 0.2179
   weights: 0
-  weights: 0.95568
-  weights: 0
-  weights: 0
+  weights: 0.9392
   weights: 0
   weights: 0
   weights: 0
   weights: 0
   weights: 0
   weights: 0
-  weights: 9.22283
+  weights: 0
+  weights: 0
+  weights: 8.27705
   weights: 0
   weights: 0
   weights: 0
@@ -99,259 +99,259 @@ stat_weights_results: {
 dps_results: {
  key: "TestP1Balance-Phase1-AllItems-BalanceSynthetic(Phase1)"
  value: {
-  dps: 1056.78667
-  tps: 1073.03694
+  dps: 1038.21467
+  tps: 1054.30866
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-AllItems-CenarionRaiment"
  value: {
-  dps: 766.61433
-  tps: 782.2704
+  dps: 752.03483
+  tps: 767.38283
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-AllItems-Champion'sRefuge"
  value: {
-  dps: 871.6045
-  tps: 887.67857
+  dps: 864.68367
+  tps: 880.5084
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-AllItems-FeralSynthetic(Phase1)"
  value: {
-  dps: 959.9405
-  tps: 975.93736
+  dps: 940.93333
+  tps: 956.73083
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-AllItems-FeralSyntheticStrengthTrinket(Phase1)-998115"
  value: {
-  dps: 1037.32417
-  tps: 1053.74976
+  dps: 1017.46967
+  tps: 1033.3723
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-AllItems-FeralheartRaiment"
  value: {
-  dps: 799.1625
-  tps: 816.92544
+  dps: 782.473
+  tps: 799.71665
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-AllItems-FieldMarshal'sSanctuary"
  value: {
-  dps: 887.83333
-  tps: 903.79267
+  dps: 878.47667
+  tps: 894.12711
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-AllItems-LieutenantCommander'sRefuge"
  value: {
-  dps: 871.6045
-  tps: 887.67857
+  dps: 864.68367
+  tps: 880.5084
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-AllItems-StormrageRaiment"
  value: {
-  dps: 739.50233
-  tps: 753.91383
+  dps: 728.40633
+  tps: 742.56426
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-AllItems-SymbolsofUnendingLife"
  value: {
-  dps: 969.5895
-  tps: 985.78987
+  dps: 953.61567
+  tps: 969.46783
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-AllItems-Warlord'sSanctuary"
  value: {
-  dps: 887.83333
-  tps: 903.79267
+  dps: 878.47667
+  tps: 894.12711
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Average-Default"
  value: {
-  dps: 1077.06478
-  tps: 1093.63474
+  dps: 1058.31159
+  tps: 1074.65562
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-NightElf-level60_phase1_synthetic-Default-level60-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 1066.82617
-  tps: 1397.58638
+  dps: 1047.45217
+  tps: 1372.44855
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-NightElf-level60_phase1_synthetic-Default-level60-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 1066.82617
-  tps: 1083.35989
+  dps: 1047.45217
+  tps: 1063.69639
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-NightElf-level60_phase1_synthetic-Default-level60-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 1075.48583
-  tps: 1097.58673
+  dps: 1064.52083
+  tps: 1086.47457
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-NightElf-level60_phase1_synthetic-Default-level60-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 499.465
-  tps: 680.21485
+  dps: 502.24567
+  tps: 682.99189
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-NightElf-level60_phase1_synthetic-Default-level60-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 499.465
-  tps: 508.50537
+  dps: 502.24567
+  tps: 511.28241
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-NightElf-level60_phase1_synthetic-Default-level60-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 757.4325
-  tps: 772.61588
+  dps: 752.57833
+  tps: 767.75459
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-NightElf-level60_phase1_synthetic-Default-level60_wrath-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 979.627
-  tps: 1246.43447
+  dps: 964.5465
+  tps: 1208.41273
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-NightElf-level60_phase1_synthetic-Default-level60_wrath-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 979.627
-  tps: 992.96537
+  dps: 964.5465
+  tps: 976.73579
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-NightElf-level60_phase1_synthetic-Default-level60_wrath-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 990.35083
-  tps: 1000.74257
+  dps: 981.47
+  tps: 991.64482
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-NightElf-level60_phase1_synthetic-Default-level60_wrath-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 631.27183
-  tps: 806.37803
+  dps: 633.74017
+  tps: 808.84382
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-NightElf-level60_phase1_synthetic-Default-level60_wrath-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 631.27183
-  tps: 640.03012
+  dps: 633.74017
+  tps: 642.49591
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-NightElf-level60_phase1_synthetic-Default-level60_wrath-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 693.1425
-  tps: 706.7038
+  dps: 688.58583
+  tps: 701.36686
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-Tauren-level60_phase1_synthetic-Default-level60-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 1075.352
-  tps: 1403.4939
+  dps: 1059.24483
+  tps: 1380.97294
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-Tauren-level60_phase1_synthetic-Default-level60-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 1075.352
-  tps: 1091.7524
+  dps: 1059.24483
+  tps: 1075.32323
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-Tauren-level60_phase1_synthetic-Default-level60-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 1071.49417
-  tps: 1093.54623
+  dps: 1070.92
+  tps: 1092.04116
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-Tauren-level60_phase1_synthetic-Default-level60-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 501.83183
-  tps: 682.58003
+  dps: 501.5605
+  tps: 682.31168
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-Tauren-level60_phase1_synthetic-Default-level60-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 501.83183
-  tps: 510.87055
+  dps: 501.5605
+  tps: 510.60219
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-Tauren-level60_phase1_synthetic-Default-level60-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 749.82083
-  tps: 765.00578
+  dps: 748.69833
+  tps: 763.87656
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-Tauren-level60_phase1_synthetic-Default-level60_wrath-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 986.41233
-  tps: 1244.12834
+  dps: 971.78117
+  tps: 1218.03752
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-Tauren-level60_phase1_synthetic-Default-level60_wrath-FullBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 986.41233
-  tps: 999.29899
+  dps: 971.78117
+  tps: 984.09075
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-Tauren-level60_phase1_synthetic-Default-level60_wrath-FullBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 989.3725
-  tps: 999.75251
+  dps: 975.16833
+  tps: 985.25011
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-Tauren-level60_phase1_synthetic-Default-level60_wrath-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
-  dps: 629.92617
-  tps: 801.46196
+  dps: 634.7555
+  tps: 809.86005
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-Tauren-level60_phase1_synthetic-Default-level60_wrath-NoBuffs-P1-Consumes-LongSingleTarget"
  value: {
-  dps: 629.92617
-  tps: 638.50646
+  dps: 634.7555
+  tps: 643.51214
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-Settings-Tauren-level60_phase1_synthetic-Default-level60_wrath-NoBuffs-P1-Consumes-ShortSingleTarget"
  value: {
-  dps: 689.16917
-  tps: 701.94811
+  dps: 681.19
+  tps: 693.96132
  }
 }
 dps_results: {
  key: "TestP1Balance-Phase1-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1065.40133
-  tps: 1081.83261
+  dps: 1047.07433
+  tps: 1062.98922
  }
 }
