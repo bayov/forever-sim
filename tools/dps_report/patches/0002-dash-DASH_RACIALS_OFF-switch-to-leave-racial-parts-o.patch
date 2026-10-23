@@ -5,14 +5,14 @@ Subject: [PATCH 2/3] dash: DASH_RACIALS_OFF switch to leave racial parts out
  (dashboard race breakdown only)
 
 ---
- sim/core/racials_forever.go  | 108 ++++++++++++++++++++++++++---------
+ sim/core/racials_forever.go  | 115 ++++++++++++++++++++++++++---------
  sim/priest/chastise.go       |   2 +-
  sim/priest/dark_sacrifice.go |   2 +-
  sim/priest/starshards.go     |   2 +-
- 4 files changed, 84 insertions(+), 30 deletions(-)
+ 4 files changed, 89 insertions(+), 32 deletions(-)
 
 diff --git a/sim/core/racials_forever.go b/sim/core/racials_forever.go
-index f05bbd0f9..53fb7a109 100644
+index 4d27467..3686238 100644
 --- a/sim/core/racials_forever.go
 +++ b/sim/core/racials_forever.go
 @@ -1,6 +1,8 @@
@@ -24,14 +24,15 @@ index f05bbd0f9..53fb7a109 100644
  	"time"
  
  	"github.com/wowsims/classic/sim/core/proto"
-@@ -16,76 +18,128 @@ import (
+@@ -16,78 +18,133 @@ import (
  // Cooldowns per the client: Eureka! and the Undead and Gnome utilities 2 min, Blood Fury
  // (since client 70425), Berserking, Elune's Light and the Human, Dwarf and Orc utilities 3 min.
  
 +// DASH_RACIALS_OFF (dashboard builds only) lists racial parts to leave out, comma separated,
-+// or "all": spirit, ruthless, earthfury, beast, dodge, elune, mind, eureka, savage, bloodfury,
-+// touch, endurance, berserking, windblessed, insight, and the priest racial spells darksacrifice,
-+// starshards and chastise. It splits a race's edge into its base stats and each racial.
++// or "all": spirit, ruthless, earthfury, beast, dodge, elune, shadowmeld, mind, eureka, savage,
++// bloodfury, touch, endurance, berserking, windblessed, insight, leyline, and the priest racial
++// spells darksacrifice, starshards and chastise. It splits a race's edge into its base stats and
++// each racial.
 +var dashRacialsOff = func() map[string]bool {
 +	off := map[string]bool{}
 +	for _, part := range strings.Split(os.Getenv("DASH_RACIALS_OFF"), ",") {
@@ -85,11 +86,15 @@ index f05bbd0f9..53fb7a109 100644
  		// Quickness keeps its dodge. Elune's Light is the new offensive cooldown.
 -		character.AddStat(stats.Dodge, 1)
 -		character.registerElunesLight()
+-		character.registerShadowmeld()
 +		if on("dodge") {
 +			character.AddStat(stats.Dodge, 1)
 +		}
 +		if on("elune") {
 +			character.registerElunesLight()
++		}
++		if on("shadowmeld") {
++			character.registerShadowmeld()
 +		}
  
  	case proto.Race_RaceGnome:
@@ -163,12 +168,13 @@ index f05bbd0f9..53fb7a109 100644
  
  	case proto.Race_RaceSkyborneHighOrder, proto.Race_RaceSkyborneWindshaper:
  		// Wind Blessed (1259710: 3% spellcasting, melee and ranged haste since client 70425, 1% in
- 		// 70338) and Elemental Insight. The actives (Walk on Air, Read Leyline, Skysight) are
- 		// movement and regeneration, so the two halves sim the same.
+ 		// 70338) and Elemental Insight. Walk on Air and Skysight are movement; the High Order's
+ 		// Read Leyline is regeneration, the one active the sim models.
 -		character.PseudoStats.MeleeSpeedMultiplier *= 1.03
 -		character.PseudoStats.RangedSpeedMultiplier *= 1.03
 -		character.PseudoStats.CastSpeedMultiplier *= 1.03
 -		character.mobTypeDamageAura(proto.MobType_MobTypeElemental, 1.05)
+-		if character.Race == proto.Race_RaceSkyborneHighOrder {
 +		if on("windblessed") {
 +			character.PseudoStats.MeleeSpeedMultiplier *= 1.03
 +			character.PseudoStats.RangedSpeedMultiplier *= 1.03
@@ -177,11 +183,12 @@ index f05bbd0f9..53fb7a109 100644
 +		if on("insight") {
 +			character.mobTypeDamageAura(proto.MobType_MobTypeElemental, 1.05)
 +		}
++		if character.Race == proto.Race_RaceSkyborneHighOrder && on("leyline") {
+ 			character.registerReadLeyline()
+ 		}
  	}
- }
- 
 diff --git a/sim/priest/chastise.go b/sim/priest/chastise.go
-index 631b7bda0..656c06e34 100644
+index 6eae218..4a30ddd 100644
 --- a/sim/priest/chastise.go
 +++ b/sim/priest/chastise.go
 @@ -19,7 +19,7 @@ var ChastiseManaCost = [ChastiseRanks + 1]float64{0, 50, 100, 135, 180, 225}
@@ -194,7 +201,7 @@ index 631b7bda0..656c06e34 100644
  	}
  
 diff --git a/sim/priest/dark_sacrifice.go b/sim/priest/dark_sacrifice.go
-index c362a30ee..c80862c48 100644
+index c362a30..c80862c 100644
 --- a/sim/priest/dark_sacrifice.go
 +++ b/sim/priest/dark_sacrifice.go
 @@ -21,7 +21,7 @@ var DarkSacrificeTickMana = [DarkSacrificeRanks + 1]float64{0, 88, 144, 204, 266
@@ -207,7 +214,7 @@ index c362a30ee..c80862c48 100644
  	}
  
 diff --git a/sim/priest/starshards.go b/sim/priest/starshards.go
-index 12f6d11d0..9394e8617 100644
+index 12f6d11..9394e86 100644
 --- a/sim/priest/starshards.go
 +++ b/sim/priest/starshards.go
 @@ -23,7 +23,7 @@ var StarshardsLevel = [StarshardsRanks + 1]int{0, 10, 18, 26, 34, 42, 50, 58}

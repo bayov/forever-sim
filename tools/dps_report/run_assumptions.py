@@ -14,7 +14,12 @@ the better (no setting uses it now: the Frost and Frostfire presets cast Ice Lan
 no_ice_lance edit (Ice Lance at the client's coefficient, 0) runs the preset rotation and the build's rotation that never
 casts Ice Lance (asm_apls/<id>.no_ice_lance.apl.json, the Level 60 APL before the presets took Ice Lance up), and keeps
 the better. A setting with the raid_hits=N edit sets the encounter's raid damage hits a minute (raidDamageHitsPerMinute) to N.
-A setting with the no_weapon_oil edit takes the Wizard Oil off the warlock's weapon (the stone stays).
+A setting with the no_weapon_oil edit takes the Wizard Oil off the warlock's weapon (the stone stays). A setting with
+the no_flask_zone edit fights out of a natural flask zone (encounter naturalFlaskZone off): a hunter or cat with a natural
+flask takes the Flask of Distilled Wisdom back (NO_ZONE_FLASK, their flask before the zone), and the others keep theirs
+for its Stamina. An edit can set several request fields at once, ';'-separated: apl=<name> runs
+asm_apls/<id>.<name>.apl.json, talents=<string> sets the talents and distance=<yards> the distance from the target
+(mage_cone_of_cold sets all three).
 Results append to asm/results.jsonl keyed (build, combo, secs, rot), so a rerun only does what is missing.
 The base rows are the same sims run_build.py ran (seed 1: the main 180 s run at 20k, the 120 and 300 s lengths at 5k,
 and with no DASH_ASSUME this binary is bit-identical to the plain one), so they are copied from out/<id>.json when it
@@ -36,6 +41,10 @@ RES = os.path.join(OUT, 'results.jsonl')
 LIVE = [a for a in A if a.get('status') not in ('pending', 'inert')]
 BY_KEY = {a['key']: a for a in A}
 STAFF_IMBUE = {'mage__frostfire': 'ImbueGreaterFlame', 'mage__fire': 'ImbueGreaterFlame', 'mage__frost': 'ImbueGreaterFrost', 'mage__arcane': 'ImbuePrecision'}
+# The flask a build takes out of a natural flask zone, where a natural flask gives only its Stamina: the hunters' and the
+# cat's flask before the zone (the warriors' Flask of the Titans and the rogues' and Survival's none add no DPS either, so
+# they keep the natural flask).
+NO_ZONE_FLASK = {b: 'FlaskOfDistilledWisdom' for b in ('hunter__beast-mastery', 'hunter__marksmanship', 'hunter__lone-wolf', 'druid__feral-cat')}
 ICE_LANCE = {'action': {'castSpell': {'spellId': {'spellId': 1240047}}, 'condition': {'auraIsActive': {'auraId': {'spellId': 400670}}}},
              'notes': 'Ice Lance on a Fingers of Frost charge (assumption scenario).'}
 
@@ -48,26 +57,43 @@ def combo_str(combo):
     return '|'.join(f'{k}={v}' for k, v in sorted(combo))
 
 
+def edits(st):
+    return [e for e in (st['edit'] or '').split(';') if e]
+
+
 def request(bid, combo, rot):
     req = json.load(open(os.path.join(D, 'req', bid + '.json')))
     pl = req['raid']['parties'][0]['players'][0]
     env = {}
+    apls = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'asm_apls')
     for k, sid in combo:
         st = setting(k, sid)
         env.update(st['env'])
-        if st['edit'] == 'staff_imbue':
-            pl.setdefault('mage', {}).setdefault('options', {})['staffImbue'] = STAFF_IMBUE[bid]
-        if st['edit'] == 'no_staff_imbue':  # the presets carry the scroll; this setting takes it off
-            pl.get('mage', {}).get('options', {}).pop('staffImbue', None)
-        if st['edit'] == 'no_weapon_oil':  # the stone alone: no oil on the warlock's weapon
-            pl.get('consumes', {}).pop('mainHandImbue', None)
-        if (st['edit'] or '').startswith('raid_hits='):  # the encounter's raid damage hits a minute
-            req['encounter']['raidDamageHitsPerMinute'] = float(st['edit'].split('=')[1])
-        if st['edit'] == 'no_ice_lance' and rot == 'noil':
-            pl['rotation'] = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'asm_apls', bid + '.no_ice_lance.apl.json')))
-        if st['edit'] == 'ice_lance' and rot == 'il':
-            pr = pl['rotation']['priorityList']
-            pr.insert(len(pr) - 1, copy.deepcopy(ICE_LANCE))  # just ahead of the filler
+        for ed in edits(st):
+            if ed == 'staff_imbue':
+                pl.setdefault('mage', {}).setdefault('options', {})['staffImbue'] = STAFF_IMBUE[bid]
+            if ed == 'no_staff_imbue':  # the presets carry the scroll; this setting takes it off
+                pl.get('mage', {}).get('options', {}).pop('staffImbue', None)
+            if ed == 'no_weapon_oil':  # the stone alone: no oil on the warlock's weapon
+                pl.get('consumes', {}).pop('mainHandImbue', None)
+            if ed == 'no_flask_zone':  # out of a natural flask zone
+                req['encounter']['naturalFlaskZone'] = False
+                cons = pl.setdefault('consumes', {})
+                if str(cons.get('flask', '')).startswith('FlaskOfNatural') and bid in NO_ZONE_FLASK:
+                    cons['flask'] = NO_ZONE_FLASK[bid]
+            if ed.startswith('raid_hits='):  # the encounter's raid damage hits a minute
+                req['encounter']['raidDamageHitsPerMinute'] = float(ed.split('=', 1)[1])
+            if ed.startswith('apl='):  # a rotation of the scenario's own
+                pl['rotation'] = json.load(open(os.path.join(apls, f"{bid}.{ed.split('=', 1)[1]}.apl.json")))
+            if ed.startswith('talents='):
+                pl['talentsString'] = ed.split('=', 1)[1]
+            if ed.startswith('distance='):
+                pl['distanceFromTarget'] = float(ed.split('=', 1)[1])
+            if ed == 'no_ice_lance' and rot == 'noil':
+                pl['rotation'] = json.load(open(os.path.join(apls, bid + '.no_ice_lance.apl.json')))
+            if ed == 'ice_lance' and rot == 'il':
+                pr = pl['rotation']['priorityList']
+                pr.insert(len(pr) - 1, copy.deepcopy(ICE_LANCE))  # just ahead of the filler
     return req, env
 
 
@@ -103,8 +129,8 @@ def nondefault(key):
 
 
 def rots(combo):
-    edits = {setting(k, s)['edit'] for k, s in combo}
-    return ['preset'] + (['il'] if 'ice_lance' in edits else []) + (['noil'] if 'no_ice_lance' in edits else [])
+    eds = {e for k, s in combo for e in edits(setting(k, s))}
+    return ['preset'] + (['il'] if 'ice_lance' in eds else []) + (['noil'] if 'no_ice_lance' in eds else [])
 
 
 def tasks(bid):

@@ -57,6 +57,9 @@ These were working rules. They are not user rulings, but every merged class PR f
 
 - **A rotation change** ships only if it's positive at 120, 180 and 300 s on two seed sets: seed 1 and seed 1000003.
   Iteration i uses seed + i, paired at 20,000 iterations.
+  So a second seed set must start more than the iteration count away: seeds 1 and 2 share all but one iteration and
+  give nearly the same average by construction (checked 2026-10-23: the CLI honours the seed; twist paladin at 2,000
+  iterations reads 935.18, 935.14 and 935.19 on seeds 1, 2 and 3, and 935.01 on 1000003).
 - **Talents** are judged at 180 s. A build that loses at 120 but wins at 180 and 300 ships, as in Enhancement #114.
 - **The class default preset** is the one highest at 180 s.
 - **A race switch** needs a lead of more than 0.5 DPS on both seed sets.

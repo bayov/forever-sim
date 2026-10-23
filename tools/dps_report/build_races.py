@@ -27,6 +27,8 @@ PART_INFO = {
     'earthfury': ('Earth Fury', 'Critical strike bonus to damage and healing increased by 2% (+1% crit with a mace before client 70425).'),
     'savage': ('Savage', '+1% critical strike chance with all spells and abilities, with any weapon (axes only before client 70425).'),
     'elune': ("Elune's Light", '+10% critical strike chance for 15s, 3 min cooldown.'),
+    'shadowmeld': ('Shadowmeld', 'Slip into the shadows, 2 min cooldown in combat. The next stealth ability (Ravage, Ambush, Garrote) can follow it.'),
+    'leyline': ('Read Leyline', 'A 2s cast that doubles health and mana regeneration for 30s away from a leyline, 2 min cooldown.'),
     'mind': ('Expansive Mind', 'Maximum Mana, Rage or Energy increased by 5%.'),
     'eureka': ('Eureka!', 'For 8s, direct damage abilities cost 10% less and deal 10% more damage (DoTs too for Warlocks, heals too for Priests), 2 min cooldown.'),
     'bloodfury': ('Blood Fury', 'Attack power and spell power increased by 10% for 15s, 3 min cooldown.'),
@@ -53,15 +55,15 @@ PART_SHORT = {
 # has no known icon.
 PART_ICON = {
     'spirit': 'inv_enchant_shardbrilliantsmall', 'ruthless': 'ability_meleedamage', 'earthfury': 'inv_hammer_05', 'beast_dwarf': 'inv_weapon_rifle_05',
-    'elune': 'spell_nature_moonglow', 'mind': 'inv_enchant_essenceeternallarge', 'eureka': 'inv_gnometoy', 'savage': 'inv_axe_02',
+    'elune': 'spell_nature_moonglow', 'shadowmeld': 'ability_ambush', 'leyline': 'ability_mage_incantersabsorbtion', 'mind': 'inv_enchant_essenceeternallarge', 'eureka': 'inv_gnometoy', 'savage': 'inv_axe_02',
     'bloodfury': 'racial_orc_berserkerstrength', 'touch': 'spell_shadow_fingerofdeath', 'endurance': 'spell_nature_unyeildingstamina',
     'berserking': 'racial_troll_berserk', 'beast_troll': 'inv_misc_pelt_bear_ruin_02', 'windblessed': 'inv_misc_volatileair',
     'insight': 'achievement_raidprimalist_windelemental', 'starshards': 'spell_arcane_starfire', 'chastise': 'spell_holy_chastise',
 }
 
-RACE_PARTS = {'Human': ['spirit', 'ruthless'], 'Dwarf': ['earthfury', 'beast_dwarf', 'chastise'], 'Night Elf': ['elune', 'starshards'],
+RACE_PARTS = {'Human': ['spirit', 'ruthless'], 'Dwarf': ['earthfury', 'beast_dwarf', 'chastise'], 'Night Elf': ['elune', 'shadowmeld', 'starshards'],
               'Gnome': ['mind', 'eureka'], 'Orc': ['savage', 'bloodfury'], 'Undead': ['touch', 'darksacrifice'], 'Tauren': ['endurance'],
-              'Troll': ['berserking', 'beast_troll'], 'High Order': ['windblessed', 'insight'], 'Windshaper': ['windblessed', 'insight']}
+              'Troll': ['berserking', 'beast_troll'], 'High Order': ['windblessed', 'insight', 'leyline'], 'Windshaper': ['windblessed', 'insight']}
 SCENARIOS = [
     ('baseline', 'Generic boss', 'Each preset against a level 63 boss with no creature type. Since client 70425, no racial depends on the weapon.'),
     ('beast', 'Beast target', 'A Beast boss turns on Troll Beast Slaying and Dwarf Big Game Hunter (5% more damage).'),
@@ -274,7 +276,7 @@ def finding(cls, bmap, variants, breakdown):
         out.append(f"{top_part['race']} {top_part['label']} is the biggest racial on {b0['build']}, +{top_part['dps']:.1f} DPS ({100 * top_part['dps'] / dps:.1f}%).")
     worst = min(mine, key=lambda x: x['dps'] / max(x['se'], 0.01), default=None)
     if worst and worst['dps'] < -2 * worst['se'] and worst['dps'] < -1:
-        why = ', for the time spent casting it' if worst['part'] in ('chastise', 'starshards', 'darksacrifice', 'eureka', 'elune', 'bloodfury', 'berserking') else ''
+        why = ', for the time spent casting it' if worst['part'] in ('chastise', 'starshards', 'darksacrifice', 'eureka', 'elune', 'shadowmeld', 'leyline', 'bloodfury', 'berserking') else ''
         out.append(f"{worst['race']} {worst['label']} costs {abs(worst['dps']):.1f} DPS on {bmap[worst['build']]['build']}{why}.")
     # target types that change the leader
     for t, word in (('beast', 'Beasts'), ('elemental', 'Elementals')):

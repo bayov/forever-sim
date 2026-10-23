@@ -29,9 +29,9 @@ from run_build import CLASS_RACES  # noqa: E402
 
 # Racial parts that can change DPS, by race.
 PARTS = {
-    'Human': ['spirit', 'ruthless'], 'Dwarf': ['earthfury', 'chastise'], 'NightElf': ['elune', 'starshards'],
+    'Human': ['spirit', 'ruthless'], 'Dwarf': ['earthfury', 'chastise'], 'NightElf': ['elune', 'shadowmeld', 'starshards'],
     'Gnome': ['mind', 'eureka'], 'Orc': ['savage', 'bloodfury'], 'Undead': ['touch', 'darksacrifice'],
-    'Tauren': ['endurance'], 'Troll': ['berserking'], 'SkyborneHighOrder': ['windblessed'], 'SkyborneWindshaper': ['windblessed'],
+    'Tauren': ['endurance'], 'Troll': ['berserking'], 'SkyborneHighOrder': ['windblessed', 'leyline'], 'SkyborneWindshaper': ['windblessed'],
 }
 PRIEST_ONLY = {'chastise', 'starshards', 'darksacrifice'}
 TARGETS = {'beast': 'MobTypeBeast', 'elemental': 'MobTypeElemental'}
