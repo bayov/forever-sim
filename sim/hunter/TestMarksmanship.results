@@ -291,104 +291,104 @@ dps_results: {
 dps_results: {
  key: "TestMarksmanship-Phase1-Average-Default"
  value: {
-  dps: 1700.03993
-  tps: 1480.27715
+  dps: 1700.03973
+  tps: 1480.27694
   dtps: 2.09009
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-mm-FullBuffs-Ranged-LongMultiTarget"
  value: {
-  dps: 1824.27583
-  tps: 2107.03237
+  dps: 1833.01083
+  tps: 2113.60195
   dtps: 1.90467
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-mm-FullBuffs-Ranged-LongSingleTarget"
  value: {
-  dps: 1708.9775
-  tps: 1492.43649
+  dps: 1717.64533
+  tps: 1498.93467
   dtps: 2.03067
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-mm-FullBuffs-Ranged-ShortSingleTarget"
  value: {
-  dps: 1797.00417
-  tps: 1586.74543
+  dps: 1791.22167
+  tps: 1572.84454
   dtps: 10.15333
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-mm-NoBuffs-Ranged-LongMultiTarget"
  value: {
-  dps: 845.069
-  tps: 977.66791
+  dps: 847.35533
+  tps: 979.227
   dtps: 1.657
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-mm-NoBuffs-Ranged-LongSingleTarget"
  value: {
-  dps: 755.018
-  tps: 606.94034
+  dps: 757.57683
+  tps: 608.20168
   dtps: 2.00667
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-mm-NoBuffs-Ranged-ShortSingleTarget"
  value: {
-  dps: 935.78333
-  tps: 800.9754
+  dps: 943.45333
+  tps: 805.07536
   dtps: 10.03333
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Options-mm-FullBuffs-Ranged-LongMultiTarget"
  value: {
-  dps: 1822.37333
-  tps: 2105.66736
+  dps: 1831.55483
+  tps: 2112.25051
   dtps: 1.745
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Options-mm-FullBuffs-Ranged-LongSingleTarget"
  value: {
-  dps: 1708.95617
-  tps: 1492.75992
+  dps: 1718.03533
+  tps: 1499.24452
   dtps: 2.03067
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Options-mm-FullBuffs-Ranged-ShortSingleTarget"
  value: {
-  dps: 1801.79833
-  tps: 1591.72122
+  dps: 1796.2275
+  tps: 1578.8326
   dtps: 10.15333
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Options-mm-NoBuffs-Ranged-LongMultiTarget"
  value: {
-  dps: 843.681
-  tps: 976.19874
+  dps: 846.97883
+  tps: 978.79581
   dtps: 1.657
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Options-mm-NoBuffs-Ranged-LongSingleTarget"
  value: {
-  dps: 753.2555
-  tps: 604.75563
+  dps: 757.8475
+  tps: 608.25089
   dtps: 1.87983
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Options-mm-NoBuffs-Ranged-ShortSingleTarget"
  value: {
-  dps: 936.2325
-  tps: 803.09133
+  dps: 939.22083
+  tps: 802.84752
   dtps: 9.39917
  }
 }

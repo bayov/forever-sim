@@ -30,6 +30,21 @@ const (
 	FuriousHowl
 	LightningBreath
 	ScorpidPoison
+
+	// Under Forever (pet_forever.go).
+	SavageRend
+	Thunderstomp
+	Swipe
+	Pinch
+	Dismember
+	Mine
+	TendonRip
+	Web
+	DustCloud
+	TrickstersDance
+	Charge
+	Dash
+	Dive
 )
 
 func (hp *HunterPet) NewPetAbility(abilityType PetAbilityType, isPrimary bool) *core.Spell {

@@ -930,6 +930,27 @@ func faerieFireAuraInternal(target *Unit, label string, spellID int32, arPen flo
 	return aura
 }
 
+// ForeverDustCloudAura is a Tallstrider's Dust Cloud on an enemy for 30 sec (client 70532, rank 5
+// 1265904: 505 armor at 60), in the minor armor slot with Faerie Fire and Curse of Recklessness, so
+// only the strongest of them counts.
+func ForeverDustCloudAura(target *Unit, spellID int32, armor float64) *Aura {
+	aura := target.GetOrRegisterAura(Aura{
+		Label:    "Dust Cloud",
+		ActionID: ActionID{SpellID: spellID},
+		Duration: time.Second * 30,
+	})
+	aura.NewExclusiveEffect(minorArmorReductionEffectCategory, true, ExclusiveEffect{
+		Priority: armor,
+		OnGain: func(ee *ExclusiveEffect, sim *Simulation) {
+			ee.Aura.Unit.AddStatDynamic(sim, stats.Armor, -armor)
+		},
+		OnExpire: func(ee *ExclusiveEffect, sim *Simulation) {
+			ee.Aura.Unit.AddStatDynamic(sim, stats.Armor, armor)
+		},
+	})
+	return aura
+}
+
 func CurseOfWeaknessAura(target *Unit, points int32) *Aura {
 	modDmgReduction := -31.0
 

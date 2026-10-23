@@ -136,6 +136,8 @@ message Hunter {
 			Spider = 15;
 			Tallstrider = 16;
 			Turtle = 17;
+			// Forever's new family (client skill line 3016, "Pet - Fox").
+			Fox = 18;
 		}
 
 		// Under Forever, the beast's Faster Attack or Slower Attack passive, by the swing it gives a

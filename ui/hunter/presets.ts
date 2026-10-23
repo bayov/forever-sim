@@ -256,7 +256,11 @@ export const DefaultTalents = TalentsLoneWolf;
 //                                 Options
 ///////////////////////////////////////////////////////////////////////////
 
-// A cat at 1.0 sec (Broken Tooth, Badlands). A pet's hit scales with its attack speed, as in
+// A cat at 1.0 sec (Broken Tooth, Badlands). With the family abilities from the client (2026-10-23,
+// 180 sec, 20000 iterations) the raptor's Savage Rend puts it 1.8 Beast Mastery, 1.5 Marksmanship and
+// 0.7 Survival over a cat of the same speed, but each slower step costs about 4 (Pet Aggression's 8 a
+// hit), and no source shows a raptor as fast as Broken Tooth, so the preset keeps the cat. The
+// numbers below are from before the family abilities. A pet's hit scales with its attack speed, as in
 // Classic (report assumption hunter_pet_speed, user ruling 2026-10-15: the beta's "every pet hits
 // like a 2.0 sec pet" is treated as a bug), so its white damage a second is the same at any speed.
 // Every pet family at 1.0, 1.2, 1.5 and 2.0 sec was simmed on Beast Mastery, Marksmanship and

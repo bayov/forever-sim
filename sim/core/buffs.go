@@ -1683,22 +1683,59 @@ func BattleShoutAura(unit *Unit, impBattleShout int32, boomingVoicePts int32, ha
 		duration = time.Minute * 3
 	}
 
+	ap := math.Floor(baseAP*(1+0.05*float64(impBattleShout)) + TernaryFloat64(has3pcWrath, 30, 0))
+	if unit.Env.IsForever() {
+		aura := unit.GetOrRegisterAura(Aura{
+			Label:      "Battle Shout",
+			ActionID:   ActionID{SpellID: spellId},
+			Duration:   duration,
+			BuildPhase: CharacterBuildPhaseBuffs,
+		})
+		battleShoutEffect(aura, ap)
+		return aura
+	}
+
 	return unit.GetOrRegisterAura(Aura{
 		Label:      "Battle Shout",
 		ActionID:   ActionID{SpellID: spellId},
 		Duration:   duration,
 		BuildPhase: CharacterBuildPhaseBuffs,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.AddStatsDynamic(sim, stats.Stats{
-				stats.AttackPower: math.Floor(baseAP*(1+0.05*float64(impBattleShout)) + TernaryFloat64(has3pcWrath, 30, 0)),
-			})
+			aura.Unit.AddStatsDynamic(sim, stats.Stats{stats.AttackPower: ap})
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.AddStatsDynamic(sim, stats.Stats{
-				stats.AttackPower: -1 * math.Floor(baseAP*(1+0.05*float64(impBattleShout))+TernaryFloat64(has3pcWrath, 30, 0)),
-			})
+			aura.Unit.AddStatsDynamic(sim, stats.Stats{stats.AttackPower: -ap})
 		},
 	})
+}
+
+// Under Forever a hunter pet's Furious Howl doesn't stack with Battle Shout: the two share one
+// slot and only the stronger counts (wowsims/forever b1c943e9ac puts the howl in Battle Shout's
+// category). Classic's shouts stack.
+const battleShoutCategory = "BattleShout"
+
+func battleShoutEffect(aura *Aura, ap float64) {
+	aura.NewExclusiveEffect(battleShoutCategory, false, ExclusiveEffect{
+		Priority: ap,
+		OnGain: func(ee *ExclusiveEffect, sim *Simulation) {
+			ee.Aura.Unit.AddStatsDynamic(sim, stats.Stats{stats.AttackPower: ap})
+		},
+		OnExpire: func(ee *ExclusiveEffect, sim *Simulation) {
+			ee.Aura.Unit.AddStatsDynamic(sim, stats.Stats{stats.AttackPower: -ap})
+		},
+	})
+}
+
+// ForeverFuriousHowlAura is a hunter pet's Furious Howl on one ally: melee attack power for 60 sec,
+// in Battle Shout's slot.
+func ForeverFuriousHowlAura(unit *Unit, spellID int32, ap float64) *Aura {
+	aura := unit.GetOrRegisterAura(Aura{
+		Label:    "Furious Howl",
+		ActionID: ActionID{SpellID: spellID},
+		Duration: time.Minute,
+	})
+	battleShoutEffect(aura, ap)
+	return aura
 }
 
 // Forever's Trueshot Aura is a Marksmanship talent with five ranks from level 25. It only

@@ -18,8 +18,14 @@ type HunterPet struct {
 	hunterOwner *Hunter
 
 	specialAbility *core.Spell
-	secondSpecial  *core.Spell
 	focusDump      *core.Spell
+
+	// Under Forever: what the pet casts in melee range, longest cooldown first, and what it casts
+	// to close in (pet_forever.go).
+	foreverActions []foreverPetAction
+	closers        []*core.Spell
+	charge         *core.Spell
+	closerCD       *core.Timer
 
 	uptimePercent    float64
 	hasOwnerCooldown bool
@@ -122,13 +128,12 @@ func (hp *HunterPet) Initialize() {
 	// Here rather than at construction, which doesn't know the ruleset yet.
 	core.ApplyPetConsumeEffects(&hp.Character, hp.hunterOwner.Consumes)
 
-	abilities := PetAbilities{SpecialAbility: hp.config.SpecialAbility, FocusDump: hp.config.FocusDump}
-	if hp.Env.IsForever() && hp.config.Forever != nil {
-		abilities = *hp.config.Forever
+	if hp.Env.IsForever() {
+		hp.initForeverAbilities()
+	} else {
+		hp.specialAbility = hp.NewPetAbility(hp.config.SpecialAbility, true)
+		hp.focusDump = hp.NewPetAbility(hp.config.FocusDump, false)
 	}
-	hp.specialAbility = hp.NewPetAbility(abilities.SpecialAbility, true)
-	hp.secondSpecial = hp.NewPetAbility(abilities.SecondSpecial, false)
-	hp.focusDump = hp.NewPetAbility(abilities.FocusDump, false)
 
 	// Bestial Discipline: 10% focus regen a rank.
 	hp.EnableFocusBar(1+0.1*float64(hp.hunterOwner.Talents.BestialDiscipline), func(sim *core.Simulation) {
@@ -254,6 +259,11 @@ func (hp *HunterPet) ExecuteCustomRotation(sim *core.Simulation) {
 		return
 	}
 
+	if sim.IsForever() {
+		hp.foreverRotation(sim)
+		return
+	}
+
 	if hp.hasOwnerCooldown && hp.CurrentFocus() < 50 {
 		// When a major ability (Furious Howl or Savage Rend) is ready, pool enough
 		// energy to use on-demand.
@@ -298,10 +308,6 @@ func (hp *HunterPet) ExecuteCustomRotation(sim *core.Simulation) {
 			if !tryCast(hp.specialAbility) && hp.GCD.IsReady(sim) {
 				hp.WaitUntil(sim, sim.CurrentTime+time.Millisecond*500)
 			}
-		} else if hp.secondSpecial != nil && hp.secondSpecial.IsReady(sim) {
-			if !tryCast(hp.secondSpecial) && hp.GCD.IsReady(sim) {
-				hp.WaitUntil(sim, sim.CurrentTime+time.Millisecond*500)
-			}
 		} else if hp.focusDump.IsReady(sim) {
 			if !tryCast(hp.focusDump) && hp.GCD.IsReady(sim) {
 				hp.WaitUntil(sim, sim.CurrentTime+time.Millisecond*500)
@@ -310,15 +316,21 @@ func (hp *HunterPet) ExecuteCustomRotation(sim *core.Simulation) {
 	}
 }
 
-// Runs the pet into melee range in whole yards, the steps MoveTo takes, and has it act again when it
-// gets there.
+// Runs the pet into melee range.
 func (hp *HunterPet) runIn(sim *core.Simulation) {
 	if hp.IsMoving() {
 		return
 	}
-	yards := math.Ceil(hp.DistanceFromTarget - core.MaxMeleeAttackDistance)
+	hp.moveToward(sim, core.MaxMeleeAttackDistance)
+}
+
+// Moves the pet to within distance yd of the target in whole yards, the steps MoveTo takes, and has
+// it act again when it gets there, or when its global cooldown ends if that is later.
+func (hp *HunterPet) moveToward(sim *core.Simulation, distance float64) {
+	yards := math.Ceil(hp.DistanceFromTarget - distance)
 	hp.MoveTo(hp.DistanceFromTarget-yards, sim)
-	hp.WaitUntil(sim, sim.CurrentTime+time.Duration(yards)*time.Millisecond*time.Duration(1000/hp.MovementHandler.MoveSpeed))
+	arrival := sim.CurrentTime + time.Duration(yards)*time.Millisecond*time.Duration(1000/hp.MovementHandler.MoveSpeed)
+	hp.WaitUntil(sim, max(arrival, hp.GCD.ReadyAt()))
 }
 
 // Forever's pets scale with the hunter's gear (Blizzard's hunter deep dive). The numbers are beta
@@ -355,14 +367,6 @@ func (hunter *Hunter) makeStatInheritance() core.PetStatInheritance {
 	}
 }
 
-// The damage abilities a pet casts: SpecialAbility and SecondSpecial on their cooldowns, in that
-// order, and FocusDump with the focus left.
-type PetAbilities struct {
-	SpecialAbility PetAbilityType
-	SecondSpecial  PetAbilityType
-	FocusDump      PetAbilityType
-}
-
 type PetConfig struct {
 	Name    string
 	MobType proto.MobType
@@ -371,9 +375,9 @@ type PetConfig struct {
 	FocusDump      PetAbilityType
 
 	// Under Forever, the abilities the family's skill line teaches (client 1.60.1.70532
-	// SkillLineAbility, "Pet - <family>"), where they differ from Classic's. Of a family's abilities
-	// the sim has Bite, Claw, Demoralizing Screech, Lightning Breath and Scorpid Poison.
-	Forever *PetAbilities
+	// SkillLineAbility, "Pet - <family>"), in its order. Prowl and Shell Shield change nothing
+	// the sim measures and are left out.
+	ForeverAbilities []PetAbilityType
 
 	Health float64
 	Armor  float64
@@ -388,6 +392,9 @@ var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 	proto.Hunter_Options_Cat: {
 		Name:    "Cat",
 		MobType: proto.MobType_MobTypeBeast,
+
+		// Skill line 209.
+		ForeverAbilities: []PetAbilityType{Bite, Claw, Dash},
 
 		SpecialAbility: Bite,
 		FocusDump:      Claw,
@@ -413,6 +420,9 @@ var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 		Name:    "Wind Serpent",
 		MobType: proto.MobType_MobTypeBeast,
 
+		// Skill line 656.
+		ForeverAbilities: []PetAbilityType{Bite, Dive, LightningBreath},
+
 		SpecialAbility: Bite,
 		FocusDump:      LightningBreath,
 
@@ -424,11 +434,11 @@ var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 		Name:    "Bat",
 		MobType: proto.MobType_MobTypeBeast,
 
+		// Skill line 653 and 3015. Sonic Blast, on 653, is taught by no hunter family.
+		ForeverAbilities: []PetAbilityType{Bite, Dive},
+
 		SpecialAbility: Bite,
 		FocusDump:      Screech,
-		// Forever's Bat (skill line 653 and 3015) learns Bite and Dive; Sonic Blast, on 653, is
-		// taught by no hunter family.
-		Forever: &PetAbilities{SpecialAbility: Bite},
 
 		Health: 1.00,
 		Armor:  1.00,
@@ -450,6 +460,9 @@ var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 		Name:    "Bear",
 		MobType: proto.MobType_MobTypeBeast,
 
+		// Skill line 210.
+		ForeverAbilities: []PetAbilityType{Bite, Claw, Dash, Swipe},
+
 		SpecialAbility: Bite,
 		FocusDump:      Claw,
 
@@ -461,7 +474,9 @@ var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 		Name:    "Boar",
 		MobType: proto.MobType_MobTypeBeast,
 
-		// Forever's Boar (skill line 211): Bite, Charge and Dash.
+		// Skill line 211.
+		ForeverAbilities: []PetAbilityType{Bite, Charge, Dash},
+
 		FocusDump: Bite,
 
 		Health: 1.04,
@@ -472,10 +487,11 @@ var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 		Name:    "Carrion Bird",
 		MobType: proto.MobType_MobTypeBeast,
 
+		// Skill line 213.
+		ForeverAbilities: []PetAbilityType{Bite, Claw, Screech, Dive},
+
 		SpecialAbility: Bite,
 		FocusDump:      Claw,
-		// Forever's Carrion Bird (skill line 213): Bite, Claw, Demoralizing Screech and Dive.
-		Forever: &PetAbilities{SpecialAbility: Bite, SecondSpecial: Screech, FocusDump: Claw},
 
 		Health: 1.00,
 		Armor:  1.05,
@@ -485,7 +501,9 @@ var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 		Name:    "Owl",
 		MobType: proto.MobType_MobTypeBeast,
 
-		// Forever's Bird of Prey (skill line 655): Claw, Dive and Mine!.
+		// Skill line 655, Bird of Prey.
+		ForeverAbilities: []PetAbilityType{Claw, Dive, Mine},
+
 		FocusDump: Claw,
 
 		Health: 1.00,
@@ -495,6 +513,9 @@ var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 	proto.Hunter_Options_Crab: {
 		Name:    "Crab",
 		MobType: proto.MobType_MobTypeBeast,
+
+		// Skill line 214.
+		ForeverAbilities: []PetAbilityType{Claw, Dash, Pinch},
 
 		FocusDump: Claw,
 
@@ -506,6 +527,9 @@ var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 		Name:    "Crocolisk",
 		MobType: proto.MobType_MobTypeBeast,
 
+		// Skill line 212.
+		ForeverAbilities: []PetAbilityType{Bite, Dash, Dismember},
+
 		FocusDump: Bite,
 
 		Health: 0.95,
@@ -516,7 +540,9 @@ var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 		Name:    "Gorilla",
 		MobType: proto.MobType_MobTypeBeast,
 
-		// SpecialAbility: Thunderstomp,
+		// Skill line 215.
+		ForeverAbilities: []PetAbilityType{Bite, Dash, Thunderstomp},
+
 		FocusDump: Bite,
 
 		Health: 1.04,
@@ -526,6 +552,9 @@ var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 	proto.Hunter_Options_Hyena: {
 		Name:    "Hyena",
 		MobType: proto.MobType_MobTypeBeast,
+
+		// Skill line 654.
+		ForeverAbilities: []PetAbilityType{Bite, Dash, TendonRip},
 
 		FocusDump: Bite,
 
@@ -537,6 +566,9 @@ var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 		Name:    "Raptor",
 		MobType: proto.MobType_MobTypeBeast,
 
+		// Skill line 217.
+		ForeverAbilities: []PetAbilityType{Bite, Claw, Dash, SavageRend},
+
 		SpecialAbility: Bite,
 		FocusDump:      Claw,
 
@@ -547,6 +579,9 @@ var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 	proto.Hunter_Options_Scorpid: {
 		Name:    "Scorpid",
 		MobType: proto.MobType_MobTypeBeast,
+
+		// Skill line 236.
+		ForeverAbilities: []PetAbilityType{Claw, Dash, ScorpidPoison},
 
 		SpecialAbility: ScorpidPoison,
 		FocusDump:      Claw,
@@ -573,6 +608,9 @@ var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 		Name:    "Spider",
 		MobType: proto.MobType_MobTypeBeast,
 
+		// Skill line 203.
+		ForeverAbilities: []PetAbilityType{Bite, Dash, Web},
+
 		FocusDump: Bite,
 
 		Health: 1.00,
@@ -582,6 +620,9 @@ var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 	proto.Hunter_Options_Tallstrider: {
 		Name:    "Tallstrider",
 		MobType: proto.MobType_MobTypeBeast,
+
+		// Skill line 218.
+		ForeverAbilities: []PetAbilityType{Bite, Dash, DustCloud},
 
 		FocusDump: Bite,
 
@@ -593,7 +634,9 @@ var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 		Name:    "Turtle",
 		MobType: proto.MobType_MobTypeBeast,
 
-		// SpecialAbility: ShellShield,
+		// Skill line 251.
+		ForeverAbilities: []PetAbilityType{Bite, Dash},
+
 		FocusDump: Bite,
 
 		Health: 1.00,
@@ -604,7 +647,22 @@ var PetConfigs = map[proto.Hunter_Options_PetType]PetConfig{
 		Name:    "Wolf",
 		MobType: proto.MobType_MobTypeBeast,
 
-		// SpecialAbility: FuriousHowl,
+		// Skill line 208.
+		ForeverAbilities: []PetAbilityType{Bite, Dash, FuriousHowl},
+
+		FocusDump: Bite,
+
+		Health: 1.00,
+		Armor:  1.05,
+		Damage: 1.00,
+	},
+	proto.Hunter_Options_Fox: {
+		Name:    "Fox",
+		MobType: proto.MobType_MobTypeBeast,
+
+		// Forever's new family, on skill line 3016, with the Wolf's Tamed Pet Passive (17223).
+		ForeverAbilities: []PetAbilityType{Bite, Dash, TrickstersDance},
+
 		FocusDump: Bite,
 
 		Health: 1.00,

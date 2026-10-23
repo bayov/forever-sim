@@ -2,6 +2,7 @@ package hunter
 
 import (
 	"math"
+	"slices"
 	"testing"
 	"time"
 
@@ -147,39 +148,64 @@ func TestForeverCobraReflexesAndPetAggression(t *testing.T) {
 	}
 }
 
-// Under Forever the Bat learns Bite and Dive, and the Carrion Bird Bite, Claw, Demoralizing Screech
-// and Dive (client 70532 skill lines 653 and 213). Classic's Bat keeps its Screech.
+// Under Forever a pet casts its family's abilities from client 70532's skill lines, longest cooldown
+// first, and closes in with Charge, Dash or Dive. The Bat learns Bite and Dive and the Carrion Bird
+// Bite, Claw, Demoralizing Screech and Dive (skill lines 653 and 213). Classic's Bat keeps its Screech.
 func TestForeverPetFamilyAbilities(t *testing.T) {
-	code := func(spell *core.Spell) int32 {
-		if spell == nil {
-			return 0
+	ids := func(spells []*core.Spell) []int32 {
+		var got []int32
+		for _, spell := range spells {
+			got = append(got, spell.ActionID.SpellID)
 		}
-		return spell.SpellCode
+		return got
 	}
 	for _, c := range []struct {
-		pet                   proto.Hunter_Options_PetType
-		ruleset               proto.Ruleset
-		special, second, dump int32
+		pet              proto.Hunter_Options_PetType
+		actions, closers []int32
 	}{
-		{proto.Hunter_Options_Bat, proto.Ruleset_RulesetForever, SpellCode_HunterPetBite, 0, 0},
-		{proto.Hunter_Options_Bat, proto.Ruleset_RulesetClassic, SpellCode_HunterPetBite, 0, SpellCode_HunterPetScreech},
-		{proto.Hunter_Options_CarrionBird, proto.Ruleset_RulesetForever, SpellCode_HunterPetBite, SpellCode_HunterPetScreech, SpellCode_HunterPetClaw},
-		{proto.Hunter_Options_CarrionBird, proto.Ruleset_RulesetClassic, SpellCode_HunterPetBite, 0, SpellCode_HunterPetClaw},
-		{proto.Hunter_Options_Owl, proto.Ruleset_RulesetForever, 0, 0, SpellCode_HunterPetClaw},
+		{proto.Hunter_Options_Bat, []int32{17261}, []int32{23148}},
+		{proto.Hunter_Options_CarrionBird, []int32{17261, 24579, 3009}, []int32{23148}},
+		{proto.Hunter_Options_Owl, []int32{1265058, 3009}, []int32{23148}},
+		{proto.Hunter_Options_Raptor, []int32{1265069, 17261, 3009}, []int32{23110}},
+		{proto.Hunter_Options_Boar, []int32{17261}, []int32{27685, 23110}},
+		{proto.Hunter_Options_Wolf, []int32{24597, 17261}, []int32{23110}},
+		{proto.Hunter_Options_Fox, []int32{1310612, 17261}, []int32{23110}},
+		{proto.Hunter_Options_Gorilla, []int32{1264455, 17261}, []int32{23110}},
+		{proto.Hunter_Options_Tallstrider, []int32{17261, 1265904}, []int32{23110}},
 	} {
-		_, hunter := newHunterPetSimOpts(t, &proto.Hunter_Options{PetType: c.pet, PetUptime: 1}, c.ruleset, nil, 0, 1)
-		pet := hunter.pet
-		if got := [3]int32{code(pet.specialAbility), code(pet.secondSpecial), code(pet.focusDump)}; got != [3]int32{c.special, c.second, c.dump} {
-			t.Errorf("%v %v: abilities %v, want %v", c.ruleset, c.pet, got, [3]int32{c.special, c.second, c.dump})
+		_, hunter := newHunterPetSimOpts(t, &proto.Hunter_Options{PetType: c.pet, PetUptime: 1}, proto.Ruleset_RulesetForever, nil, 0, 1)
+		var actions []*core.Spell
+		for _, action := range hunter.pet.foreverActions {
+			actions = append(actions, action.spell)
+		}
+		if got := ids(actions); !slices.Equal(got, c.actions) {
+			t.Errorf("%v: abilities %v, want %v", c.pet, got, c.actions)
+		}
+		if got := ids(hunter.pet.closers); !slices.Equal(got, c.closers) {
+			t.Errorf("%v: closers %v, want %v", c.pet, got, c.closers)
 		}
 	}
+
+	_, hunter := newHunterPetSimOpts(t, &proto.Hunter_Options{PetType: proto.Hunter_Options_Bat, PetUptime: 1}, proto.Ruleset_RulesetClassic, nil, 0, 1)
+	if pet := hunter.pet; pet.specialAbility.SpellCode != SpellCode_HunterPetBite || pet.focusDump.SpellCode != SpellCode_HunterPetScreech {
+		t.Errorf("Classic's Bat: abilities %d and %d, want Bite and Screech", pet.specialAbility.SpellCode, pet.focusDump.SpellCode)
+	}
+}
+
+func foreverPetSpell(hunter *Hunter, spellID int32) *core.Spell {
+	for _, action := range hunter.pet.foreverActions {
+		if action.spell.ActionID.SpellID == spellID {
+			return action.spell
+		}
+	}
+	return nil
 }
 
 // Demoralizing Screech's attack power reduction reaches every enemy within 5 yd of the pet (24579
 // effect 2, radius 5), which is every enemy the sim has.
 func TestForeverScreechHitsEveryEnemy(t *testing.T) {
 	sim, hunter := newHunterPetSimOpts(t, &proto.Hunter_Options{PetType: proto.Hunter_Options_CarrionBird, PetUptime: 1}, proto.Ruleset_RulesetForever, nil, 0, 2)
-	screech := hunter.pet.secondSpecial
+	screech := foreverPetSpell(hunter, 24579)
 	targets := sim.Encounter.TargetUnits
 	aura := func(target *core.Unit) *core.Aura { return target.GetAura("Demoralizing Screech") }
 	for i := 0; i < 100 && !aura(targets[0]).IsActive(); i++ {
@@ -188,6 +214,129 @@ func TestForeverScreechHitsEveryEnemy(t *testing.T) {
 	for i, target := range targets {
 		if !aura(target).IsActive() {
 			t.Errorf("enemy %d has no Demoralizing Screech once it lands", i+1)
+		}
+	}
+}
+
+// Furious Howl rank 4 (24597: 82 and 0.4 a level from 56) gives the wolf and the hunter 83 melee
+// attack power, and under Forever it doesn't stack with Battle Shout (wowsims/forever b1c943e9ac):
+// the stronger counts.
+func TestForeverFuriousHowl(t *testing.T) {
+	sim, hunter := newHunterPetSimOpts(t, &proto.Hunter_Options{PetType: proto.Hunter_Options_Wolf, PetUptime: 1}, proto.Ruleset_RulesetForever, nil, 0, 1)
+	howl := foreverPetSpell(hunter, 24597)
+	hunterAP, petAP := hunter.GetStat(stats.AttackPower), hunter.pet.GetStat(stats.AttackPower)
+	howl.ApplyEffects(sim, sim.Encounter.TargetUnits[0], howl)
+	if got := hunter.GetStat(stats.AttackPower) - hunterAP; got != 83 {
+		t.Errorf("Furious Howl gives the hunter %.1f attack power, want 83", got)
+	}
+	if got := hunter.pet.GetStat(stats.AttackPower) - petAP; got != 83 {
+		t.Errorf("Furious Howl gives the wolf %.1f attack power, want 83", got)
+	}
+
+	player := &proto.Player{
+		Class:     proto.Class_ClassHunter,
+		Race:      proto.Race_RaceHuman,
+		Level:     60,
+		Equipment: &proto.EquipmentSpec{},
+		Spec: &proto.Player_Hunter{Hunter: &proto.Hunter{Options: &proto.Hunter_Options{
+			PetType: proto.Hunter_Options_Wolf, PetUptime: 1,
+		}}},
+	}
+	sim = core.NewSim(&proto.RaidSimRequest{
+		Raid: core.SinglePlayerRaidProto(player, &proto.PartyBuffs{},
+			&proto.RaidBuffs{BattleShout: proto.TristateEffect_TristateEffectRegular}, &proto.Debuffs{}),
+		Encounter:  &proto.Encounter{Duration: 60, Targets: []*proto.Target{core.NewDefaultTarget()}},
+		SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1},
+	}, simsignals.CreateSignals())
+	sim.Reset()
+	hunter = sim.Raid.Parties[0].Players[0].(HunterAgent).GetHunter()
+	howl = foreverPetSpell(hunter, 24597)
+	shoutAP := hunter.GetStat(stats.AttackPower)
+	howl.ApplyEffects(sim, sim.Encounter.TargetUnits[0], howl)
+	if got := hunter.GetStat(stats.AttackPower) - shoutAP; got != 0 {
+		t.Errorf("Furious Howl adds %.1f attack power over Battle Shout, want none", got)
+	}
+	hunter.GetAura("Battle Shout").Deactivate(sim)
+	if got := shoutAP - hunter.GetStat(stats.AttackPower); got != 115-83 {
+		t.Errorf("Battle Shout's end takes %.1f attack power, want its 115 (rank 6 at 60) less the howl's 83", got)
+	}
+}
+
+// Savage Rend rank 5 (1265069) is a bleed of 26 a tick every 3 sec for 18 sec, and Dust Cloud rank 5
+// (1265904) takes 505 armor in the minor armor slot.
+func TestForeverSavageRendAndDustCloud(t *testing.T) {
+	sim, hunter := newHunterPetSimOpts(t, &proto.Hunter_Options{PetType: proto.Hunter_Options_Raptor, PetUptime: 1}, proto.Ruleset_RulesetForever, nil, 0, 1)
+	target := sim.Encounter.TargetUnits[0]
+	rend := foreverPetSpell(hunter, 1265069)
+	for i := 0; i < 100 && !rend.Dot(target).IsActive(); i++ {
+		rend.ApplyEffects(sim, target, rend)
+	}
+	dot := rend.Dot(target)
+	if dot.NumberOfTicks != 6 || dot.TickLength != 3*time.Second {
+		t.Errorf("Savage Rend ticks %d times every %v, want 6 every 3s", dot.NumberOfTicks, dot.TickLength)
+	}
+	if dot.SnapshotBaseDamage != 26 {
+		t.Errorf("Savage Rend ticks for %.1f before modifiers, want 26", dot.SnapshotBaseDamage)
+	}
+
+	sim, hunter = newHunterPetSimOpts(t, &proto.Hunter_Options{PetType: proto.Hunter_Options_Tallstrider, PetUptime: 1}, proto.Ruleset_RulesetForever, nil, 0, 1)
+	target = sim.Encounter.TargetUnits[0]
+	cloud := foreverPetSpell(hunter, 1265904)
+	armor := target.GetStat(stats.Armor)
+	for i := 0; i < 100 && target.GetAura("Dust Cloud") == nil || !target.GetAura("Dust Cloud").IsActive(); i++ {
+		cloud.ApplyEffects(sim, target, cloud)
+	}
+	if got := armor - target.GetStat(stats.Armor); got != 505 {
+		t.Errorf("Dust Cloud takes %.0f armor, want 505", got)
+	}
+}
+
+// Thunderstomp reaches 4 enemies around the pet (1264455: MaxTargets 4) and Swipe chains to 3
+// (1264502: ChainTargets 3).
+func TestForeverPetAreaStrikes(t *testing.T) {
+	for _, c := range []struct {
+		pet     proto.Hunter_Options_PetType
+		spellID int32
+		targets int
+	}{
+		{proto.Hunter_Options_Gorilla, 1264455, 4},
+		{proto.Hunter_Options_Bear, 1264502, 3},
+	} {
+		sim, hunter := newHunterPetSimOpts(t, &proto.Hunter_Options{PetType: c.pet, PetUptime: 1}, proto.Ruleset_RulesetForever, nil, 0, 5)
+		spell := foreverPetSpell(hunter, c.spellID)
+		spell.ApplyEffects(sim, sim.Encounter.TargetUnits[0], spell)
+		reached := 0
+		for _, target := range sim.Encounter.TargetUnits {
+			m := spell.SpellMetrics[target.UnitIndex]
+			if m.Hits+m.Crits+m.Misses+m.Dodges+m.Parries+m.Blocks > 0 {
+				reached++
+			}
+		}
+		if reached != c.targets {
+			t.Errorf("%v: %d reaches %d of 5 enemies, want %d", c.pet, c.spellID, reached, c.targets)
+		}
+	}
+}
+
+// The boar charges from 25 yd (27685: 8 to 25 yd) and is in melee range at once, and the other
+// families Dash in (23110: 80% movement speed), 20 yd in about 1.6 sec rather than 2.8.
+func TestForeverPetClosers(t *testing.T) {
+	for _, c := range []struct {
+		pet    proto.Hunter_Options_PetType
+		at     time.Duration
+		closer int32
+	}{
+		{proto.Hunter_Options_Boar, time.Millisecond * 600, 27685},
+		{proto.Hunter_Options_Cat, time.Millisecond * 1700, 23110},
+	} {
+		sim, hunter := newHunterPetSimOpts(t, &proto.Hunter_Options{PetType: c.pet, PetUptime: 1}, proto.Ruleset_RulesetForever, nil, 25, 1)
+		for sim.CurrentTime < c.at && !sim.Step() {
+		}
+		if pet := hunter.pet; pet.DistanceFromTarget > core.MaxMeleeAttackDistance || pet.IsMoving() {
+			t.Errorf("%v: the pet is %.0f yd away at %v, want in melee range", c.pet, pet.DistanceFromTarget, c.at)
+		}
+		if casts := hunter.pet.closers[0].SpellMetrics[0].Casts; casts != 1 || hunter.pet.closers[0].ActionID.SpellID != c.closer {
+			t.Errorf("%v: closer %d cast %d times, want %d once", c.pet, hunter.pet.closers[0].ActionID.SpellID, casts, c.closer)
 		}
 	}
 }

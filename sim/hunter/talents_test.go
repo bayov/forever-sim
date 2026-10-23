@@ -202,7 +202,11 @@ func TestForeverPetAbilityRows(t *testing.T) {
 	}
 
 	_, hunter := newHunterSim(t, "", &proto.Debuffs{})
-	for _, spell := range []*core.Spell{hunter.pet.specialAbility, hunter.pet.focusDump} {
+	spells := hunter.pet.closers
+	for _, action := range hunter.pet.foreverActions {
+		spells = append(spells, action.spell)
+	}
+	for _, spell := range spells {
 		if got := spell.DefaultCast.GCD; got != 1500*time.Millisecond {
 			t.Errorf("%v: the pet's global cooldown is %v, want 1.5s", spell.ActionID, got)
 		}
