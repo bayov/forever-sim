@@ -25,7 +25,7 @@ gen() {
 # Rune takes their cooldown). An Arcane Blast precast lands at the pull. Arcane Power and Presence
 # of Mind wait for the on-use trinket unless it won't be back in time. When a Frostbolt would not
 # land before the end (its cast plus 0.75 sec), Fire Blast and Arcane Explosion instead.
-gen mage_arcane level60_arcane "blastBuff=4,blastRefresh=0,barrageBeforeBlast=1,arcaneWrath=0,conserveMana=20,filler=2,missileBarrage=1,barrageFirst=0,evocationMana=0,gems=0,prepull=1,powerWithTrinket=1,pomWrath=0,finisher=1,finishPad=0.75"
+gen mage_arcane level60_arcane "blastBuff=4,blastRefresh=0,barrageBeforeBlast=1,arcaneWrath=0,conserveMana=20,filler=2,missileBarrage=1,barrageFirst=0,evocationMana=0,gems=0,prepull=1,powerWithTrinket=1,pomWrath=0,finisher=1,finishPad=0.75,wand=1"
 # Scorch to 5 Fire Vulnerability stacks and before they run out (5 sec), Pyroblast at 3 Heating
 # Up stacks (a 1.5 sec cast), Arcane Missiles on Missile Barrage, Fire Blast above 10% mana (since
 # 70425 every Fire Blast adds a Heating Up stack, two on a crit), Fireball. Evocation below 20%
@@ -33,24 +33,28 @@ gen mage_arcane level60_arcane "blastBuff=4,blastRefresh=0,barrageBeforeBlast=1,
 # its crits go on spells that take all 15%. No mana gems: they share the Demonic Rune's 2 min
 # cooldown, and the rune gives more. When a Fireball would not land before the end (its cast plus
 # 1.04 sec), Fire Blast and Scorch instead.
-gen mage_fire level60_fire "scorchRefresh=5,pyroStacks=3,fireBlastMana=10,fireBlastHeating=0,missileBarrage=1,filler=1,evocationMana=20,evocationMinTime=90,cooldownsAfterScorch=1,trinketAfterScorch=1,gems=0,blastBuff=0,arcaneWrath=0,finisher=1,finishPad=1.04"
+gen mage_fire level60_fire "scorchRefresh=5,pyroStacks=3,fireBlastMana=10,fireBlastHeating=0,missileBarrage=1,filler=1,evocationMana=20,evocationMinTime=90,cooldownsAfterScorch=1,trinketAfterScorch=1,gems=0,blastBuff=0,arcaneWrath=0,finisher=1,finishPad=1.04,wand=1"
 # Frostbolt, with Ice Lance on every Fingers of Frost charge (3 times the damage on a Frozen
-# target since 70425, with SoD's 42.9% spell power coefficient), and one Arcane Blast every 15 sec
-# for 15% of Intellect as spell damage. Frost rarely runs low on mana, so Evocation (below 20%
-# with 90 sec left) almost never goes. When a Frostbolt would not land before the end (its cast
-# plus 1 sec), Ice Lance instead. Since the 2026-10-20 hotfix Ice Barrier goes before the pull and
-# again when Frigid Power has under 2 sec left: its 3% Frost damage for a minute, and 3% more while
-# the shield holds (a raid hit breaks it). Recasting it whenever the shield is down costs more
-# GCDs than the 3% gives back (+8.4 at 180 sec over the shield-down rule, +8.4 over no Ice Barrier).
-gen mage_frost level60_frost "iceLance=1,missileBarrage=1,fireBlastMana=0,evocationMana=20,evocationMinTime=90,blastBuff=1,blastRefresh=9,arcaneWrath=0,finisher=1,finishPad=1,iceBarrier=2,iceBarrierRefresh=2,iceBarrierPrepull=1"
+# target since 70425, with SoD's 42.9% spell power coefficient), and two Arcane Blasts every 15 sec
+# for 30% of Intellect as spell damage (the 2026-10-23 build has Arcane Mind; one stack lost 16 at
+# 120 / 180 / 300 sec together). A charge granted during a Frostbolt's cast is spent a spell batch
+# after it completes, so that Frostbolt and the Ice Lance right after it both read Frozen; waiting
+# for a Frostbolt before every Ice Lance (iceLance 3 or 4) lost 11 to 23 at 180 sec. Evocation
+# below 20% with 90 sec left almost never goes. When a Frostbolt would not land before the end (its
+# cast plus 1 sec), Ice Lance instead. The build stops at Fingers of Frost, so no Ice Barrier, and
+# the wand only when out of mana.
+gen mage_frost level60_frost "iceLance=1,missileBarrage=1,fireBlastMana=0,evocationMana=20,evocationMinTime=90,blastBuff=2,blastRefresh=9,arcaneWrath=0,finisher=1,finishPad=1,iceBarrier=0,wand=1"
 # Scorch to 5 Fire Vulnerability stacks and again with under 7 sec left on it, Pyroblast at 3
-# Heating Up stacks, Ice Lance on every Fingers of Frost charge (ahead of Scorch and Pyroblast),
-# Frostfire Bolt. Since 70425 every Fire Blast adds a Heating Up stack, so Fire Blast goes on
-# cooldown above 80% mana, and below that with the mana the fight can't use (above 70 a second of
-# the fight left). Evocation below 20% with 45 sec of the fight left (the last three from the
-# rotation auditor's pass 23). Once Evocation is spent (or
-# under 60 sec are left) and the mana is under 60 a second of the fight left, rank 2 Frostfire
-# Bolt (285 mana for 9% less damage). No mana gems, for the Demonic Rune. The on-use trinket waits
-# for the 5th Fire Vulnerability stack. When a Frostfire Bolt would not land before the end (its
-# cast plus 1.5 sec), Ice Lance instead.
-gen mage_frostfire level60_frostfire "scorchRefresh=7,pyroStacks=3,pyroMana=0,iceLance=1,missileBarrage=1,fireBlastMana=80,evocationMana=20,evocationMinTime=45,gems=0,lowManaRank=60,fireBlastSurplus=70,trinketAfterScorch=1,iceLanceFirst=1,blastBuff=0,arcaneWrath=0,finisher=1,finishPad=1.5"
+# Heating Up stacks, Ice Lance on the last Fingers of Frost charge (ahead of Scorch and Pyroblast;
+# the first charge goes on a Frostfire Bolt, which the charge makes a Shatter crit), Frostfire Bolt.
+# Since 70425 every Fire Blast adds a Heating Up stack, so Fire Blast goes on cooldown above 80%
+# mana, and below that with the mana the fight can't use (above 70 a second of the fight left).
+# Evocation below 10% with 90 sec of the fight left. Once Evocation is spent (or under 60 sec are
+# left) and the mana is under 30 a second of the fight left, rank 2 Frostfire Bolt (285 mana for 9%
+# less damage). The 2026-10-23 knob search (120, 180 and 300 sec together, after the Fingers of
+# Frost batch timing) moved Ice Lance to the last charge, Evocation from 20% and 45 sec, and the
+# rank 2 line from 60 a second: +15 / +44 / +39 at 120 / 180 / 300 sec on both seed sets. No mana
+# gems, for the Demonic Rune. The on-use trinket waits for the 5th Fire Vulnerability stack. When a
+# Frostfire Bolt would not land before the end (its cast plus 1.5 sec), Ice Lance instead, and the
+# wand when out of mana.
+gen mage_frostfire level60_frostfire "scorchRefresh=7,pyroStacks=3,pyroMana=0,iceLance=2,missileBarrage=1,fireBlastMana=80,evocationMana=10,evocationMinTime=90,gems=0,lowManaRank=30,fireBlastSurplus=70,trinketAfterScorch=1,iceLanceFirst=1,blastBuff=0,arcaneWrath=0,finisher=1,finishPad=1.5,wand=1"

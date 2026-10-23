@@ -63,11 +63,13 @@ export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
 // feet, 71 for the rest), and Forever's caster weapon rate for the staff (193.4) and wand (21.3).
 // Armor totals 708, weapons 215. The stats are a fair mix in the proportions of Season of
 // Discovery's level 60 BiS mage sets (standards 5a), with hit at the cap. Frostfire, Fire and
-// Frost share one set: 421 spell power, 151 Intellect, 119 Stamina, 88 Spirit, 10% hit and 103
+// Frost share one set: 429 spell power, 154 Intellect, 119 Stamina, 88 Spirit, 9% hit and 103
 // crit rating (7.4%). Arcane has its own set with more spell power and less crit: 460 spell
-// power, 147 Intellect, 70 crit rating (5%), the rest about the same. With Elemental Precision or
-// Arcane Focus and Manaflare Regalia's 2 piece bonus (1% hit, on the head and chest only) the hit
-// is the 16% cap against a level 63 boss; 2% less hit for the other stats loses 7 to 11. The 4
+// power, 147 Intellect, 10% hit, 70 crit rating (5%), the rest about the same. With Elemental
+// Precision 3 (6% since the 2026-10-20 hotfix) or Arcane Focus 5 and Manaflare Regalia's 2 piece
+// bonus (1% hit, on the head and chest only) the hit is the 16% cap against a level 63 boss. The
+// main set had 10% until 2026-10-23, one over the cap with the hotfix; its head moved those 10 hit
+// rating to 3 Intellect and 8 spell power (+5.3 Fire, +7.3 Frostfire, +2.1 Frost at 180 sec). The 4
 // and 5 piece bonuses would add 56.8 (6%) to Frostfire at 180 sec and nothing to the others (the
 // 5 piece is all Frostfire Bolt, the 4 piece only against Elementals).
 //
@@ -115,18 +117,24 @@ export const APLP1DPS = PresetUtils.makePresetAPLRotation('DPS', P1APL);
 // cast plus 1.5 sec) Ice Lance goes instead. The knobs were searched over 120, 180 and 300 sec
 // together, with the raid's hits (pushback); the rotation auditor's pass 23 moved the Scorch
 // refresh, Evocation and spare-mana Fire Blast thresholds (+6.0 at 180 sec). It wands when
-// nothing else can be cast (2026-10-23): +2.2 at 480 sec, nothing at 120 to 300 sec.
+// nothing else can be cast (2026-10-23): +2.2 at 480 sec, nothing at 120 to 300 sec. The
+// 2026-10-23 search, after Fingers of Frost's charges came to be spent a spell batch after each
+// cast, put Ice Lance on the last charge only (the first goes on a Frostfire Bolt, which reads the
+// target as Frozen for Shatter), Evocation below 10% with 90 sec left and rank 2 below 30 mana a
+// second of the fight left: +15 / +44 / +39 at 120 / 180 / 300 sec on both seed sets.
 export const APLLevel60Frostfire = PresetUtils.makePresetAPLRotation('Level 60 Frostfire', Level60FrostfireAPL, {
-	tooltip: 'Frostfire Bolt, Pyroblast on 3 Heating Up stacks, Ice Lance on Fingers of Frost, Scorch for Fire Vulnerability, Fire Blast.',
+	tooltip: 'Frostfire Bolt, Pyroblast on 3 Heating Up stacks, Ice Lance on the last Fingers of Frost charge, Scorch for Fire Vulnerability, Fire Blast.',
 	group: 'Level 60',
 });
 // Frostbolt, with Ice Lance on every Fingers of Frost charge (3 times the damage on a Frozen
-// target and Shatter's crit), and one Arcane Blast every 15 sec for 15% of Intellect as spell
-// damage (more stacks cost more than they give). Frost rarely runs low on mana, so Evocation
-// almost never goes. When a Frostbolt would not land before the end (its cast plus 1 sec), Ice
-// Lance instead.
+// target and Shatter's crit), and two Arcane Blasts every 15 sec for 30% of Intellect as spell
+// damage (with Arcane Mind on the 2026-10-23 build; one stack is 16 behind). A charge granted
+// during a Frostbolt's cast is spent a spell batch after that Frostbolt completes, so it and the
+// Ice Lance cast right after both read Frozen; holding Ice Lance for a Frostbolt every time lost
+// 11 to 23 at 180 sec. Frost rarely runs low on mana, so Evocation almost never goes. When a
+// Frostbolt would not land before the end (its cast plus 1 sec), Ice Lance instead.
 export const APLLevel60Frost = PresetUtils.makePresetAPLRotation('Level 60 Frost', Level60FrostAPL, {
-	tooltip: 'Frostbolt, with Ice Lance on Fingers of Frost and an Arcane Blast for spell damage.',
+	tooltip: 'Frostbolt, with Ice Lance on Fingers of Frost and two Arcane Blasts for spell damage.',
 	group: 'Level 60',
 });
 // Scorch to 5 Fire Vulnerability stacks and before they run out, Pyroblast at 3 Heating Up
