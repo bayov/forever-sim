@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "optimized",
   "published": {
-    "dps": 876.2,
-    "source": "Shaman regear round (2026-10-23): the 8% melee cap (neck hit to crit), Totem of the Storm, Earth Shock without the Stormstrike hold, Improved Stormstrike 2 for Tidal Focus 1; requests rebuilt from the presets with the natural flask zone"
+    "dps": 884.3,
+    "source": "Standards 11 explosives update (2026-10-23, explosives only when they gain): Goblin Land Mine dropped, Goblin Sapper Charge kept (was 876.2)"
   },
   "verify": {
-    "dps": 876.21,
+    "dps": 884.27,
     "stderr": 0.38,
     "iters": 20000,
     "ok": true,
-    "note": "sim.py, 180s, seed 1"
+    "note": "180s, seed 1; seed 1000003 gives 885.0"
   },
   "summary": "The default Enhancement build with Improved Ghost Wolf for utility, with Magma Totem and the raid's Flametongue Totem on its weapon.",
   "keyTalents": [
@@ -41,7 +41,7 @@
     "Recast Strength of Earth, Windfury Totem and Mana Spring when down, with at least 20s left",
     "Magma Totem when it is down and at least 2s remain (after the pre-pull one)",
     "Rage of the Farseer on cooldown, waiting for the on-use trinket; Blood Fury lined up with it",
-    "Other cooldowns (Sapper, Demonic Rune, Major Mana Potion, Land Mine)",
+    "Other cooldowns (Sapper, Demonic Rune, Major Mana Potion)",
     "Stormstrike on cooldown",
     "Fire Nova while Clearcasting is up",
     "Flame Shock when its DoT is down",
@@ -68,8 +68,7 @@
     "Dragonbreath Chili",
     "Major Mana Potion",
     "Demonic Rune",
-    "Goblin Sapper Charge",
-    "Goblin Land Mine"
+    "Goblin Sapper Charge"
   ],
   "caveats": [
     "Assumed: Maelstrom Weapon procs at 2 PPM per point, until the beta reaches level 34.",

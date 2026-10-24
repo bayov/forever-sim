@@ -5,7 +5,6 @@ import {
 	Consumes,
 	Debuffs,
 	Encounter,
-	Explosive,
 	FirePowerBuff,
 	Flask,
 	Food,
@@ -241,7 +240,11 @@ export const DefaultConsumes = Consumes.create({
 	// The Caustic Smog Potion (range 20) is +4.4 over the Major Mana Potion at 180 sec. Mana Tide
 	// takes the Major Mana Potion (ManaTideConsumes).
 	defaultPotion: Potions.CausticSmogPotion,
-	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
+	// No filler explosive (standards 11, 2026-10-23: explosives only when they gain). The Goblin Land
+	// Mine's 1 sec cast takes a second of casting: dropping it is +1.0 / +0.7 at 180 sec on seeds 1 and
+	// 1000003 (+0.6 at 120 sec, -3.0 at 300 sec; Mana Tide +0.8 / +0.5, ahead at every length). The
+	// EZ-Thro Dark Bomb ties the Land Mine (the same 450 average) and the EZ-Thro Thorium Grenade is
+	// 0.8 behind it. The Goblin Sapper Charge, which needs no cast, stays (+4.2 at 180 sec).
 	firePowerBuff: FirePowerBuff.ElixirOfFirepower,
 	// The fight is in a natural flask zone (standards 11), but the best natural flask, Aggression, is 74
 	// behind the Flask of Supreme Power at 180 sec (Swiftness 78, Accuracy and Precision 95, the hit is
@@ -318,10 +321,9 @@ export const DefaultDebuffs = Debuffs.create({
 	thunderClap: TristateEffect.TristateEffectImproved,
 });
 
-// The shaman is an engineer for the Goblin Sapper Charge and Goblin Land Mine (4.3 and 1.2)
-// and an alchemist. The race is Windshaper Skyborne, the best race since client 1.60.1.70425
-// gave Wind Blessed 3% haste (721.4 for the Orc at 180 sec before), see the races under the
-// builds.
+// The shaman is an engineer for the Goblin Sapper Charge (+4.2 at 180 sec) and an alchemist. The
+// race is Windshaper Skyborne, the best race since client 1.60.1.70425 gave Wind Blessed 3% haste
+// (721.4 for the Orc at 180 sec before), see the races under the builds.
 export const OtherDefaults = {
 	distanceFromTarget: 20,
 	profession1: Profession.Engineering,

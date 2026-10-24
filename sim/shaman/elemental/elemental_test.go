@@ -168,7 +168,6 @@ var Level60Consumes = core.ConsumesCombo{
 	Consumes: &proto.Consumes{
 		DefaultConjured: proto.Conjured_ConjuredDemonicRune,
 		DefaultPotion:   proto.Potions_MajorManaPotion,
-		FillerExplosive: proto.Explosive_ExplosiveGoblinLandMine,
 		FirePowerBuff:   proto.FirePowerBuff_ElixirOfFirepower,
 		Flask:           proto.Flask_FlaskOfSupremePower,
 		Food:            proto.Food_FoodLobsterStew,

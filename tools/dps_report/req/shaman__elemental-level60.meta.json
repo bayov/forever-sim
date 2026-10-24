@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 776.4,
-    "source": "Shaman regear round (2026-10-23): requests rebuilt from the presets with the natural flask zone"
+    "dps": 777.4,
+    "source": "Standards 11 explosives update (2026-10-23, explosives only when they gain): Goblin Land Mine dropped, Goblin Sapper Charge kept (was 776.4)"
   },
   "verify": {
-    "dps": 776.41,
+    "dps": 777.41,
     "stderr": 0.19,
     "iters": 20000,
     "ok": true,
-    "note": "sim.py, 180s, seed 1"
+    "note": "180s, seed 1; seed 1000003 gives 777.3"
   },
   "summary": "Deep Elemental caster with a staff, built on Lava Burst and Elemental Mastery.",
   "keyTalents": [
@@ -40,7 +40,7 @@
   ],
   "rotation": [
     "Pre-pull: Lightning Shield at -5.4s, Mana Spring Totem at -3.9s, Lightning Bolt at -2.9s (lands 0.1s after the pull), Searing Totem at -0.9s",
-    "Elemental Mastery and the other cooldowns (Sapper, Demonic Rune, Caustic Smog Potion, Land Mine) as they come up",
+    "Elemental Mastery and the other cooldowns (Sapper, Demonic Rune, Caustic Smog Potion) as they come up",
     "Mana Spring Totem when it is down and at least 20s remain",
     "Searing Totem when it is down and at least 20s remain",
     "Flame Shock whenever its DoT is down and at least 9s remain",
@@ -63,8 +63,7 @@
     "Wizard Oil",
     "Caustic Smog Potion",
     "Demonic Rune",
-    "Goblin Sapper Charge",
-    "Goblin Land Mine"
+    "Goblin Sapper Charge"
   ],
   "caveats": [
     "Lightning Bolt X's base damage is ×1.12, the beta's raise for the top playable rank.",

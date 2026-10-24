@@ -326,8 +326,9 @@ export const LoneWolfOptions = HunterOptions.create({
 // The level 60 consumables, tried one at a time on the Beast Mastery, Lone Wolf and Survival builds
 // at 180 sec, last after the shared consumables merge (the list and the numbers are in
 // tools/rotopt/mksettings/spec_hunter.go). Every build keeps Elixir of the Mongoose as its one +2%
-// crit elixir, Ground Scorpok Assay, Juju Might and the Engineering explosives, and takes Elixir
-// of Ferocity (+11 to +13 for the ranged specs), Flank au Poivre and Elixir of Greater Intellect.
+// crit elixir, Ground Scorpok Assay, Juju Might and the Goblin Sapper (the ranged specs also the
+// Land Mine, see SurvivalConsumes), and takes Elixir of Ferocity (+11 to +13 for the ranged specs),
+// Flank au Poivre and Elixir of Greater Intellect.
 // The ranged specs take Major Mana Potion (Major Frenzy Potion falls behind once the mana runs
 // out), Demonic Rune, Greater Mageblood Elixir (Mageblood Potion's recipe only comes from
 // Zandalar) and Flask of Distilled Wisdom. No pet consumables: Forever pets take no player buffs,
@@ -362,7 +363,12 @@ export const SurvivalConsumes = Consumes.create({
 	attackPowerBuff: AttackPowerBuff.JujuMight,
 	defaultPotion: Potions.MajorFrenzyPotion,
 	dragonBreathChili: true,
-	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
+	// No filler explosive (standards 11, 2026-10-23: explosives only when they gain). The Goblin Land
+	// Mine's 1 sec cast resets the swing timer, so dropping it is +7.2 / +7.0 at 180 sec on seeds 1 and
+	// 1000003 (+6.2 / +6.0 at 120, +7.8 / +7.7 at 300). The EZ-Thro Dark Bomb ties the Land Mine (the
+	// same 450 average and the same cast) and the EZ-Thro Thorium Grenade is 0.9 behind it. The Goblin
+	// Sapper Charge needs no cast and stays (+4.7 at 180 sec). The ranged specs keep the Land Mine:
+	// it is +5.7 to +7.1 for them at 180 sec, and both EZ-Thro explosives tie or lose to it.
 	// The natural flask (standards 11, 2026-10-23): Precision, +50.7 over none at 180 sec; on the gear
 	// for the 8% hit cap +30.0 over Accuracy, +31.3 over Swiftness and +32.8 over Aggression. Major
 	// Frenzy Potion stays 1.0 ahead of the Dragonfire Potion and 1.4 of Caustic Smog.
@@ -433,7 +439,8 @@ export const DefaultDebuffs = Debuffs.create({
 	thunderClap: TristateEffect.TristateEffectImproved,
 });
 
-// The hunter is an engineer for the Goblin Sapper and Land Mine (+12 together) and an alchemist.
+// The hunter is an engineer for the Goblin Sapper and, on the ranged specs, the Land Mine (+10 to
+// +13 together at 180 sec; Survival takes only the Sapper) and an alchemist.
 // The synthetic gear is fixed, so no gear needs a profession.
 export const OtherDefaults = {
 	distanceFromTarget: 25,

@@ -106,7 +106,6 @@ var SurvivalConsumes = core.ConsumesCombo{
 		MainHandImbue:     proto.WeaponImbue_DenseSharpeningStone,
 		OffHandImbue:      proto.WeaponImbue_DenseSharpeningStone,
 		DefaultPotion:     proto.Potions_MajorFrenzyPotion,
-		FillerExplosive:   proto.Explosive_ExplosiveGoblinLandMine,
 		Food:              proto.Food_FoodFlankAuPoivre,
 		IntellectElixir:   proto.IntellectElixir_ElixirOfGreaterIntellect,
 		SapperExplosive:   proto.SapperExplosive_SapperGoblinSapper,

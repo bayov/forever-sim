@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_survival",
   "apl": "sv_mark",
   "published": {
-    "dps": 1047.9,
-    "source": "Regear and rotation round (branch claude/keen-brown-o2g32n-hunter, 2026-10-23): the 8% hit cap gear, re-searched talents and rotations, race sweep (was 934.1)"
+    "dps": 1055.0,
+    "source": "Standards 11 explosives update (2026-10-23, explosives only when they gain): Goblin Land Mine dropped, Goblin Sapper kept (was 1047.9)"
   },
   "verify": {
-    "dps": 1047.89,
+    "dps": 1055.04,
     "stderr": 0.27,
     "iters": 20000,
     "ok": true,
-    "note": "180s, seed 1; seed 1000003 gives 1047.5"
+    "note": "180s, seed 1; seed 1000003 gives 1054.8"
   },
   "summary": "Forever's melee hunter: Survival with a cat, built on Expose Prey into Mongoose Bite.",
   "keyTalents": [
@@ -58,8 +58,7 @@
     "Dragonbreath Chili",
     "Major Frenzy Potion",
     "Dense Sharpening Stone (main hand and off hand)",
-    "Goblin Sapper",
-    "Goblin Land Mine"
+    "Goblin Sapper"
   ],
   "caveats": [
     "The pet takes 10% of the hunter's ranged attack power, its crit and its hit, on its own 254 attack power (beta pet sheets).",

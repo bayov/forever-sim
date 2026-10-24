@@ -737,7 +737,8 @@ const PresetBuildOptions = { shamanImbue: WeaponImbue.WindfuryWeapon };
 // The level 60 consumables. On 2026-10-08 we tried every consumable the sim applies in each
 // slot on the Level 60 build at 180 sec. Under Forever the shaman imbue stacks with an oil or a
 // stone, and Shadow Oil was best there (+19.6, Elemental Sharpening Stone was +10). Goblin Land
-// Mine (+4.1) and Elixir of Shadow Power (+1.2, for Shadow Oil) were also worth it. Grilled Squid
+// Mine (+4.1, dropped 2026-10-23, below) and Elixir of Shadow Power (+1.2, for Shadow Oil) were
+// also worth it. Grilled Squid
 // (1% crit under Forever) is +3.4 over Blessed Sunfruit.
 //
 // On 2026-10-12 Forever's Phase 1 consumables came in (the shared consumables branch), tried the
@@ -758,7 +759,12 @@ export const DefaultConsumes = Consumes.create({
 	defaultPotion: Potions.MajorManaPotion,
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	dragonBreathChili: true,
-	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
+	// No filler explosive (standards 11, 2026-10-23: explosives only when they gain). The Goblin Land
+	// Mine's 1 sec cast resets the swing timer, so dropping it is +8.0 / +8.7 at 180 sec on seeds 1 and
+	// 1000003 for Level 60 (Imp GW +8.1 / +8.7, Mana Tide +7.9 / +7.6, Water Shield +8.4 / +8.8, and
+	// +6 to +10 at 120 and 300 sec on all four). The EZ-Thro Dark Bomb ties the Land Mine (the same 450
+	// average and the same cast) and the EZ-Thro Thorium Grenade is 0.8 behind it. The Goblin Sapper
+	// Charge needs no cast and stays (+3.6 at 180 sec on Level 60).
 	firePowerBuff: FirePowerBuff.ElixirOfFirepower,
 	// The fight is in a natural flask zone (standards 11), but the best natural flask, Precision, is 6
 	// behind the Flask of Supreme Power at 180 sec (2 to 6 with Mana Tide or Water Shield; Aggression 13
@@ -843,9 +849,9 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 // The shaman is an engineer and a leatherworker (an alchemist until 2026-10-06). Engineering
-// is for the Goblin Sapper in the consumes (worth about 1 DPS) and the goggles. Gear another
-// profession makes is only in the presets when it binds on equip, so it can be bought. The
-// gear searches before that date ran without the leatherworking gear that binds on pickup.
+// is for the Goblin Sapper in the consumes (+3.6 at 180 sec on Level 60) and the goggles. Gear
+// another profession makes is only in the presets when it binds on equip, so it can be bought.
+// The gear searches before that date ran without the leatherworking gear that binds on pickup.
 export const OtherDefaults = {
 	profession1: Profession.Engineering,
 	profession2: Profession.Leatherworking,

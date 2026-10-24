@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_burning_totem",
   "apl": "mana_tide",
   "published": {
-    "dps": 792.1,
-    "source": "Shaman regear round (2026-10-23): the 8% melee cap (neck hit to crit); requests rebuilt from the presets with the natural flask zone"
+    "dps": 800.0,
+    "source": "Standards 11 explosives update (2026-10-23, explosives only when they gain): Goblin Land Mine dropped, Goblin Sapper Charge kept (was 792.1)"
   },
   "verify": {
-    "dps": 792.15,
+    "dps": 800.01,
     "stderr": 0.36,
     "iters": 20000,
     "ok": true,
-    "note": "sim.py, 180s, seed 1"
+    "note": "180s, seed 1; seed 1000003 gives 800.2"
   },
   "summary": "Enhancement with Mana Tide Totem for the group, cast at 20% mana. Magma Totem rotation, with Lightning Shield kept up.",
   "keyTalents": [
@@ -67,8 +67,7 @@
     "Dragonbreath Chili",
     "Major Mana Potion",
     "Demonic Rune",
-    "Goblin Sapper Charge",
-    "Goblin Land Mine"
+    "Goblin Sapper Charge"
   ],
   "caveats": [
     "Mana Tide Totem is worth about 0.1 for the shaman itself.",

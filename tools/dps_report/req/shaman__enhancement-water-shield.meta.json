@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "magma",
   "published": {
-    "dps": 831.5,
-    "source": "Shaman regear round (2026-10-23): the 8% melee cap (neck hit to crit), Totem of the Storm; requests rebuilt from the presets with the natural flask zone"
+    "dps": 839.9,
+    "source": "Standards 11 explosives update (2026-10-23, explosives only when they gain): Goblin Land Mine dropped, Goblin Sapper Charge kept (was 831.5)"
   },
   "verify": {
-    "dps": 831.55,
+    "dps": 839.94,
     "stderr": 0.37,
     "iters": 20000,
     "ok": true,
-    "note": "sim.py, 180s, seed 1"
+    "note": "180s, seed 1; seed 1000003 gives 839.7"
   },
   "summary": "Enhancement with Restoration points for Water Shield. It has no Improved Fire Nova, so it uses Magma Totem. Lightning Shield still beat Water Shield at every raid hit rate tried.",
   "keyTalents": [
@@ -66,8 +66,7 @@
     "Dragonbreath Chili",
     "Major Mana Potion",
     "Demonic Rune",
-    "Goblin Sapper Charge",
-    "Goblin Land Mine"
+    "Goblin Sapper Charge"
   ],
   "caveats": [
     "Water Shield does nothing: Lightning Shield stays ahead.",

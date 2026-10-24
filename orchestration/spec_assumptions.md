@@ -62,7 +62,7 @@ Close behind: `sham_lb_31plus` (−1.9% / +4.1% Elemental around the presets' ×
 | Key | Label | Builds | Sim now | Low | Expected | High | Sensitivity |
 |---|---|---|---|---|---|---|---|
 | `wf_totem_offhand` | Windfury Totem procs from off-hand hits | Fury (dual wield), all six rogue builds, Survival | no, main hand only (one value, user ruling 2026-10-16) | = Expected | main hand only | = Expected | none left (one value) |
-| `land_mine_swing` | The Goblin Land Mine's cast resets the swing | every warrior, rogue, paladin, Enhancement and hunter build | yes (one value, user ruling 2026-10-23) | = Expected | yes | = Expected | none left (one value) |
+| `land_mine_swing` | The Goblin Land Mine's cast resets the swing | every warrior, rogue, paladin and ranged hunter build (Enhancement and Survival dropped the Land Mine on 2026-10-23, standards 11: its reset cost them 7 to 9 DPS at 180 sec) | yes (one value, user ruling 2026-10-23) | = Expected | yes | = Expected | none left (one value) |
 | `natural_flask_zone` | The fight is in a natural flask zone | every warrior, rogue and hunter build, Feral | yes (user decision 2026-10-23) | outside the zone | in the zone | = Expected | Low −3 to −6% (5k iterations, 180 s, old requests with the flask swapped in) |
 
 ### `land_mine_swing`: the Goblin Land Mine resets the swing (one value, added 2026-10-23)

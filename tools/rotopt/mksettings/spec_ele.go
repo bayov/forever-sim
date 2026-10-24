@@ -14,11 +14,11 @@ func init() {
 			buffs.BlessingOfMight = proto.TristateEffect_TristateEffectMissing
 		},
 		// The Level 60 preset's consumes (ui/elemental_shaman/presets.ts has what each is worth).
+		// No filler explosive: the Goblin Land Mine's cast loses (standards 11, 2026-10-23).
 		consumes: func() *proto.Consumes {
 			return &proto.Consumes{
 				DefaultPotion:   proto.Potions_CausticSmogPotion,
 				DefaultConjured: proto.Conjured_ConjuredDemonicRune,
-				FillerExplosive: proto.Explosive_ExplosiveGoblinLandMine,
 				FirePowerBuff:   proto.FirePowerBuff_ElixirOfFirepower,
 				Flask:           proto.Flask_FlaskOfSupremePower,
 				Food:            proto.Food_FoodLobsterStew,
