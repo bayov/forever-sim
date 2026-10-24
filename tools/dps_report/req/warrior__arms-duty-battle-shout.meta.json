@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_arms_battle_shout",
   "published": {
-    "dps": 955.3,
-    "source": "Warrior regear and rotation round, 2026-10-23: hit 9% to 8% (the 10 rating into Strength), the natural flask zone with the Flask of Natural Aggression; talents, rotation and race re-searched and kept. 20k iterations, 180s, seed 1 (was 975.3)"
+    "dps": 956.0,
+    "source": "Warrior follow-up, 2026-10-24: no Goblin Land Mine (standards 11, explosives only when they gain; the Sapper stays). 20k iterations, 180s, seed 1 (was 955.3)"
   },
   "verify": {
-    "dps": 955.3,
+    "dps": 956.0,
     "stderr": 0.38,
     "iters": 20000,
     "ok": true,
@@ -60,7 +60,6 @@
     "Dragonbreath Chili",
     "Mighty Rage Potion",
     "Goblin Sapper Charge",
-    "Goblin Land Mine",
     "Dense Sharpening Stone (main hand)"
   ],
   "caveats": [

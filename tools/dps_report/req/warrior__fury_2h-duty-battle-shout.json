@@ -74,7 +74,6 @@
               "agilityElixir": "ElixirOfTheMongoose",
               "strengthBuff": "ElixirOfFerocity",
               "attackPowerBuff": "JujuMight",
-              "fillerExplosive": "ExplosiveGoblinLandMine",
               "mainHandImbue": "DenseSharpeningStone",
               "offHandImbue": "DenseSharpeningStone",
               "defaultPotion": "MightyRagePotion",
@@ -111,8 +110,8 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "rank": 6,
-                        "spellId": 11551
+                        "spellId": 11551,
+                        "rank": 6
                       }
                     }
                   },
@@ -140,8 +139,8 @@
                   "action": {
                     "castSpell": {
                       "spellId": {
-                        "rank": 3,
-                        "spellId": 11578
+                        "spellId": 11578,
+                        "rank": 3
                       }
                     }
                   },
@@ -322,7 +321,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "and": {
@@ -579,7 +577,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "or": {
@@ -643,7 +640,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "or": {
@@ -707,7 +703,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "cmp": {
@@ -725,61 +720,6 @@
                     "castSpell": {
                       "spellId": {
                         "spellId": 2687
-                      }
-                    }
-                  }
-                },
-                {
-                  "action": {
-                    "castSpell": {
-                      "spellId": {
-                        "itemId": 10646
-                      }
-                    }
-                  }
-                },
-                {
-                  "notes": "Its 1s cast then loses no swing time.",
-                  "action": {
-                    "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "cmp": {
-                              "op": "OpGe",
-                              "lhs": {
-                                "autoTimeToNext": {
-                                  "autoType": "MainHand"
-                                }
-                              },
-                              "rhs": {
-                                "math": {
-                                  "op": "OpSub",
-                                  "lhs": {
-                                    "autoSwingTime": {
-                                      "autoType": "MainHand"
-                                    }
-                                  },
-                                  "rhs": {
-                                    "const": {
-                                      "val": "0.4s"
-                                    }
-                                  }
-                                }
-                              }
-                            }
-                          },
-                          {
-                            "sequenceIsComplete": {
-                              "sequenceName": "sunder"
-                            }
-                          }
-                        ]
-                      }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "itemId": 4395
                       }
                     }
                   }
@@ -941,7 +881,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "and": {
@@ -1031,7 +970,6 @@
                   }
                 },
                 {
-                  
                   "action": {
                     "condition": {
                       "not": {

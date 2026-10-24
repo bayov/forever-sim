@@ -34,6 +34,8 @@ import (
 //	Waist      71  T2        59.0  58.9   38.7  37.4  str 21 sta 12 hit 26
 //	Legs       66  T1        72.0  72.4   48.1  46.5  str 22 sta 14 agi 36
 //	Feet       66  T2        55.0  54.8   35.9  34.9  str 24 sta 12 hit 19
+//	Fury Head  66  T1        72.0  72.4   48.1  46.5  str 19 sta 16 hit 37
+//	Fury Feet  66  T2        55.0  54.8   36.4  34.9  str 16 sta 12 hit 27
 //	Finger     71  T3        42.0  42.0   27.1  28.0  str 16 sta 10 ap 32
 //	Finger II  71  T3        42.0  42.0   27.1  28.0  str 16 sta 10 ap 32
 //	Ranged     71  ranged    19.5  19.6      -     -  agi 9 ap 1 hit 10
@@ -51,22 +53,30 @@ import (
 // stats keep the table's proportions. The sets were built to Classic's 9% (90 rating) until
 // 2026-10-23, when the head and feet each traded 5 hit for 5 Strength, the stat furthest under its
 // hit-adjusted target and the best one per point (orchestration/stat_weights.md).
+//
+// Dual wield Fury wears its own head and feet with 20 more hit and 20 less Strength, 100 rating (10%),
+// since standards 4 lets dual wielders take hit past the yellow cap when the sim says the white swings'
+// misses are worth more than the stat it replaces (2026-10-24). At 180 sec, 100k iterations, seeds 7
+// and 2000003, against the 8% set: Fury +0.5 at 9% and +0.6 at 10%, Fury on Battle Shout duty +0.4
+// at 9% and +0.9 at 10% (at 120 / 180 / 300 sec, 20k iterations, seeds 1 and 1000003, both 9% and
+// 10% were ahead in 10 of 12 runs, all within 1.4).
 // Linear shares, enchants and trinkets left out:
 //
 //	Set                     Sta   Str   Agi   AP    Crit  Hit
 //	Fury target             19.6  36.0  17.0  6.8   13.2  7.4 (SoD; the cap here)
-//	Fury (these items)      19.8  34.6  15.8  6.6   12.3  10.9
+//	Fury (8% hit, as Arms)  19.8  34.6  15.8  6.6   12.3  10.9
+//	Fury (these items)      19.8  31.9  15.8  6.6   12.3  13.6 (10% hit, by sim)
 //	Arms / Fury 2H target   19.7  36.6  18.0  7.7   10.4  7.7 (SoD; the cap here)
 //	Arms / Fury 2H (items)  19.9  35.3  16.8  7.5   9.8   10.7
 //
 // Every armor piece carries Strength and Stamina and one more stat: hit on the head, waist and feet,
 // Agility on the chest, legs and hands, crit on the shoulders, neck and back, attack power on the
-// wrist and rings. Arms and Fury share the armor, rings and bow, and the swords and the two-hander
-// carry the difference between the two targets. The plate has Battlegear of Might's armor at item
+// wrist and rings. Arms and Fury share the armor (but Fury's head and feet, below), rings and bow, and
+// the swords and the two-hander carry the difference between the two targets. The plate has Battlegear of Might's armor at item
 // level 66, the waist Onslaught Girdle's.
 //
-// Arms and Fury share the armor, the rings, the bow and the trinkets, because their Era Phase 1 BiS
-// lists are the same outside the weapons. Fury dual wields a main hand and an off hand in place of
+// Arms and Fury share the armor (Fury's head and feet aside), the rings, the bow and the trinkets,
+// because their Era Phase 1 BiS lists are the same outside the weapons. Fury dual wields a main hand and an off hand in place of
 // Vis'kag the Bloodletter and Brutality Blade, Arms and two-hand Fury a two-hander in place of
 // Bonereaver's Edge.
 //
@@ -175,6 +185,25 @@ var foreverSyntheticWarriorItems = []*proto.UIItem{
 		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypePlate,
 		Stats:     stats.Stats{stats.Strength: 24, stats.Stamina: 12, stats.Armor: 515}.ToFloatArray(),
 		HitRating: 19,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
+	},
+	// Fury Head and Feet, item level 66: the Head's and Feet's budget with 10 more hit each, for the
+	// dual wield sets (standards 4, hit by sim; see the comment at the top).
+	{
+		Id: 991019, Name: "Fury Synthetic Head (Phase 1)", Icon: "inv_helm_plate_raidwarriorhyjalc60_d_01",
+		Type: proto.ItemType_ItemTypeHead, ArmorType: proto.ArmorType_ArmorTypePlate,
+		Stats:     stats.Stats{stats.Strength: 19, stats.Stamina: 16, stats.Armor: 608}.ToFloatArray(),
+		HitRating: 37,
+		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
+		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
+		SetName:        "Warrior Synthetic (Phase 1)",
+	},
+	{
+		Id: 991020, Name: "Fury Synthetic Feet (Phase 1)", Icon: "inv_boot_plate_raidwarriorhyjalc60_d_01",
+		Type: proto.ItemType_ItemTypeFeet, ArmorType: proto.ArmorType_ArmorTypePlate,
+		Stats:     stats.Stats{stats.Strength: 16, stats.Stamina: 12, stats.Armor: 515}.ToFloatArray(),
+		HitRating: 27,
 		Ilvl:      66, RequiredLevel: 60, Phase: 1, Quality: proto.ItemQuality_ItemQualityEpic, Expansion: proto.Expansion_ExpansionVanilla,
 		ClassAllowlist: []proto.Class{proto.Class_ClassWarrior},
 	},
