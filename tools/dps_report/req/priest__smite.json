@@ -80,7 +80,8 @@
               "intellectElixir": "ElixirOfTheOwl",
               "firePowerBuff": "ElixirOfGreaterFirepower",
               "manaRegenElixir": "GreaterMagebloodElixir",
-              "spiritElixir": "ElixirOfGreaterSpirit"
+              "spiritElixir": "ElixirOfGreaterSpirit",
+              "fillerExplosive": "ExplosiveGoblinLandMine"
             },
             "buffs": {
               "blessingOfKings": true,

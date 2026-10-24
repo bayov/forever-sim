@@ -6,7 +6,7 @@
   "isDefault": true,
   "pr": 1,
   "race": "Human",
-  "talents": "00500501103-3-50052101231302251",
+  "talents": "00530400102-3-50052101231302251",
   "treeNames": [
     "Discipline",
     "Holy",
@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 962.7,
-    "source": "Class worker round on claude/keen-brown-o2g32n 0569745, 2026-10-23: the wowsims/forever alignment round (natural flask zone, wand Shoot, Troll Shadowguard), 20000 iterations, seeds 1 and 1000003 agree within 0.2 (was 960.7)"
+    "dps": 961.8,
+    "source": "Silent Resolve round on claude/keen-brown-o2g32n f886fbb, 2026-10-23 (standards 11 and 26), 20000 iterations, seeds 1 and 1000003 agree within 0.2 (was 962.7; Silent Resolve 3, a must-take, costs 0.9)"
   },
   "verify": {
-    "dps": 962.7,
+    "dps": 961.8,
     "stderr": 0.18,
     "iters": 20000,
     "ok": true,
     "note": "class worker finals, 180s, seed 1 (seed 1000003 within 0.2)"
   },
-  "summary": "Deep Shadow with Discipline points for Twin Disciplines, Mental Strength and Inner Focus, and 3 Holy points for Twilight Focus's pushback protection.",
+  "summary": "Deep Shadow with Discipline points for Twin Disciplines, Silent Resolve (threat), Mental Strength and Inner Focus, and 3 Holy points for Twilight Focus's pushback protection.",
   "keyTalents": [
     "Shadowform",
     "Shadow Weaving",
@@ -34,6 +34,7 @@
     "Shadow Focus",
     "Improved Mind Blast",
     "Twin Disciplines",
+    "Silent Resolve",
     "Twilight Focus"
   ],
   "rotation": [
@@ -66,5 +67,5 @@
     "Improved Mind Flay compounds: each tick does 20% more than the last. Dark Inspiration's Spirit applies to the priest only.",
     "Mana barely matters (about 13 min to empty)."
   ],
-  "notes": "Request from mksettings unchanged (spec shadow, 180s, durationVariation 20); it matches the shipped encounter and DefaultConsumes. Regenerated 2026-10-23 from mksettings (natural flask zone on) and the ui APLs, which tools/rotopt/priest_presets.sh writes from the templates."
+  "notes": "Request from mksettings unchanged (spec shadow, 180s, durationVariation 20); it matches the shipped encounter and DefaultConsumes. Regenerated 2026-10-23 from mksettings (natural flask zone on) and the ui APLs, which tools/rotopt/priest_presets.sh writes from the templates. Talents regenerated 2026-10-23 with Silent Resolve 3 pinned (standards 26): mksettings -talents 00530400102-3-50052101231302251, otherwise unchanged; the sapper alone stays (every filler explosive loses, standards 11)."
 }
