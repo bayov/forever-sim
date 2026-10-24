@@ -118,8 +118,8 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // and again once it has under 7 sec left, so a miss gets a second try before it drops (99.7% uptime,
 // rotation auditor). Forever's Faerie Fire and Curse of Recklessness share the
 // minor armor slot (standards 20), so the line waits while the raid's Faerie Fire or a curse holds
-// it, and the duty's cost shows with both off: 7.1 / 5.2 / 3.4 DPS at 120 / 180 / 300 sec (874.0 /
-// 863.0 / 854.3, Night Elf, 20,000 iterations, seed 1; Faerie Fire no longer resets the swing), the
+// it, and the duty's cost shows with both off: 5.5 / 4.5 / 1.7 DPS at 120 / 180 / 300 sec (875.6 /
+// 863.6 / 850.8, Night Elf, 20,000 iterations, seed 1, no bomb; Faerie Fire no longer resets the swing), the
 // GCDs and the moment before it lands, since the cat's own hits get the armor. Refreshing at 3 sec,
 // or casting it after Rip, is within the noise.
 export const APLLevel60FaerieFire = PresetUtils.makePresetAPLRotation('Level 60 (Faerie Fire duty)', Level60FaerieFireAPLJSON, {
@@ -151,15 +151,18 @@ export const SIMPLE_ROTATION_DEFAULT = PresetUtils.makePresetSimpleRotation('Sim
 
 // The talent search's best (tools/rotopt -talent-search) on the synthetic set with the Level 60
 // rotation at 180 sec: Genesis 5 (Rip's ticks) and Nature's Majesty 2 (crit) from Balance, 34
-// Feral with Ferocity 5, Feral Swiftness 1, Shredding Attacks, Savage Fury, Sharpened Claws,
+// Feral with Ferocity 5, Feral Swiftness 2, Shredding Attacks, Savage Fury, Sharpened Claws,
 // Shifting Power and Improved Shifting Power, Predatory Strikes, Leader of the Pack, Natural
-// Instinct, Rend and Tear 5 and Berserk, and Furor 5, Naturalist 5 and Natural Shapeshifter 1 in
-// Restoration. With Rake back in the rotation (2026-10-23), the search moved Blood Frenzy 1, Thick
-// Hide 3 and a point of Feral Swiftness into Ferocity 5 (Rake and Shred 5 Energy cheaper): 852.7
-// to 864.4 at 180 sec. Earlier searches started from pure Feral builds (0 / 35 / 16 with Ferocity
+// Instinct, Rend and Tear 5 and Berserk, and Furor 5 and Naturalist 5 in Restoration. With Rake
+// back in the rotation (2026-10-23), the search moved Blood Frenzy 1, Thick Hide 3 and a point of
+// Feral Swiftness into Ferocity 5 (Rake and Shred 5 Energy cheaper): 852.7 to 864.4 at 180 sec.
+// Feral Swiftness 2 (movement speed) is a must-take (standards 26), so its second point comes back
+// from Natural Shapeshifter, and the search pins it (-require feralSwiftness) and keeps the rest:
+// 881.1 / 868.1 / 852.5 at 120 / 180 / 300 sec against 881.1 / 868.2 / 857.7 (Night Elf,
+// 20,000 iterations, seed 1), the long fight losing Natural Shapeshifter's cheaper shifts. Earlier searches started from pure Feral builds (0 / 35 / 16 with Ferocity
 // and Reflection, 0 / 33 / 18 with Heart of the Wild and Thick Hide) and from the Balance split, and
 // all of them moved their spare points into Genesis and Nature's Majesty.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '05002-55100032021030212051-05501' }), {
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '05002-55200032021030212051-055' }), {
 	tooltip: 'The talent search best on the synthetic Phase 1 set.',
 	group: 'Level 60',
 });
@@ -200,8 +203,9 @@ export const DefaultOptions = FeralDruidOptions.create({
 // 9.5, but its plans only drop in Molten Core), Thistle Tea 8.0 ahead of the
 // Demonic Rune (12.2 drunk at 25 Energy or less, sim/druid/thistle_tea.go), and the Mighty Rage
 // Potion's 60 Strength 6.3 ahead of the Major Mana Potion (Major Frenzy Potion 5.0), also at 300
-// sec. The Engineering explosives can't be used in form, but EZ-Thro Dark Bomb can (+1.5 at 180
-// sec). The natural flask (standards 11, the user's decision 2026-10-23: the fight is in Hyjal
+// sec. The Engineering explosives can't be used in form, but EZ-Thro Dark Bomb can: 4.1 / 3.2 / 1.9
+// ahead of none at 120 / 180 / 300 sec (standards 11 takes an explosive only when it gains; the Faerie
+// Fire duty build goes without, below). The natural flask (standards 11, the user's decision 2026-10-23: the fight is in Hyjal
 // Summit or the Barrow Deeps) is Aggression, +23.6 over the Flask of Distilled Wisdom (Precision
 // +22.2, Swiftness +13.8, Accuracy +0.2 with the hit capped). Rechecked on the 2026-10-23 rotation:
 // Precision 2.9 and Swiftness 10.7 behind Aggression at 180 sec.
@@ -218,6 +222,10 @@ export const DefaultConsumes = Consumes.create({
 	strengthBuff: StrengthBuff.ElixirOfFerocity,
 	zanzaBuff: ZanzaBuff.GroundScorpokAssay,
 });
+
+// The Faerie Fire duty build throws no bomb: its GCDs lose to the Faerie Fire casts, none is 1.6 /
+// 0.6 / 0.0 ahead at 120 / 180 / 300 sec (seed 1; 1.9 / 1.2 / 0.4 on seed 1000003).
+export const DefaultConsumesFaerieFireDuty = Consumes.create({ ...DefaultConsumes, fillerExplosive: Explosive.ExplosiveUnknown });
 
 // The raid the Level 60 numbers were measured under (tools/rotopt/mksettings -spec feral): the
 // shared level 60 raid with the cat in a melee group, so a shaman's Strength of Earth and
@@ -326,11 +334,13 @@ export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('L
 	raidBuffs: DefaultRaidBuffs,
 	debuffs: Debuffs.create({ ...DefaultDebuffs, faerieFire: false, curseOfRecklessness: false }),
 	buffs: DefaultIndividualBuffs,
-	consumes: DefaultConsumes,
+	consumes: DefaultConsumesFaerieFireDuty,
 });
-// The Level 60 build, Night Elf: 881.1 / 868.2 / 857.7 at 120 / 180 / 300 sec (seed 1, 20,000
-// iterations; 881.0 / 868.0 / 857.5 on seed 1000003). Every race a druid can be under Forever on it,
-// seed 1 (seed 1000003 within 0.3):
+// The Level 60 build, Night Elf: 881.1 / 868.1 / 852.5 at 120 / 180 / 300 sec (seed 1, 20,000
+// iterations; 881.0 / 867.9 / 852.6 on seed 1000003) with Feral Swiftness 2 (2026-10-24); the duty
+// build 875.6 / 863.6 / 850.8 (875.6 / 863.7 / 850.9). Every race a druid can be under Forever on the
+// build before that (Natural Shapeshifter 1 for the second Feral Swiftness point), seed 1 (seed
+// 1000003 within 0.3):
 //
 //	                     120 sec  180 sec  300 sec
 //	Night Elf             881.1    868.2    857.7   best overall and Alliance

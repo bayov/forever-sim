@@ -6,7 +6,7 @@
   "isDefault": true,
   "pr": 8,
   "race": "Tauren",
-  "talents": "5532220115501351--505",
+  "talents": "5232220115501351--5053",
   "treeNames": [
     "Balance",
     "Feral Combat",
@@ -15,12 +15,12 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 862.4,
-    "source": "Druid class worker finals, 2026-10-23 regear and rotation round (Nature's Grace a batch late, the natural flask zone; talents and rotation kept): 120/180/300s 864.0/862.4/853.1 (seed 1), 864.5/862.8/853.6 (seed 1000003)"
+    "dps": 856.3,
+    "source": "Druid class worker finals, 2026-10-24 must-take round (standards 26 and 11): 120/180/300s 857.9/856.3/846.9 (seed 1), 858.4/856.6/847.4 (seed 1000003)"
   },
   "verify": {
-    "dps": 862.43,
-    "stderr": 0.23,
+    "dps": 856.3,
+    "stderr": 0.2,
     "iters": 20000,
     "ok": true,
     "note": "class worker sim of this request, 180s, seed 1"
@@ -34,7 +34,8 @@
     "Improved Starfire",
     "Improved Wrath",
     "Insect Swarm",
-    "Naturalist"
+    "Naturalist",
+    "Subtlety"
   ],
   "rotation": [
     "Pre-pull: Starfire (rank 6) cast 3s before the pull so it lands at 0",
@@ -66,7 +67,8 @@
     "At 300s mana runs out, and the plain weave is 2 ahead.",
     "Wrath VIII's base damage is ×1.085 (client ×1.00).",
     "Unverified: Omen of Clarity's proc chance on spells, and Eclipse charges on Wrath landing.",
-    "One +2% crit elixir. A second (Owl) would add 15.1."
+    "One +2% crit elixir. A second (Owl) would add 15.1.",
+    "Subtlety 3 (Restoration, threat) is a must-take (standards 26): costs 6.1 / 6.1 / 6.2 DPS at 120s / 180s / 300s."
   ],
   "notes": "Request from mksettings -spec balance (caster group: Mana Spring, Kings + Wisdom, no Might, own Moonkin Form crit; 30 yd range; Innervate on self). Duration set to 180s, durationVariation 20 as in EncounterLevel60. No edits needed."
 }

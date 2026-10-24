@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 31,
   "race": "Tauren",
-  "talents": "5502220115501351-03-505",
+  "talents": "5502220115501351--5053",
   "treeNames": [
     "Balance",
     "Feral Combat",
@@ -15,12 +15,12 @@
   "gearSet": "level60_phase1_synthetic_wrath",
   "apl": "level60_wrath_ff",
   "published": {
-    "dps": 786.8,
-    "source": "Druid class worker finals, 2026-10-23 regear and rotation round (Nature's Grace a batch late, the natural flask zone; talents and rotation kept): 120/180/300s 782.7/786.8/784.3 (seed 1), 782.6/786.7/784.3 (seed 1000003)"
+    "dps": 784.0,
+    "source": "Druid class worker finals, 2026-10-24 must-take round (standards 26 and 11): 120/180/300s 779.9/784.0/781.4 (seed 1), 779.9/783.9/781.4 (seed 1000003)"
   },
   "verify": {
-    "dps": 786.79,
-    "stderr": 0.19,
+    "dps": 784.0,
+    "stderr": 0.2,
     "iters": 20000,
     "ok": true,
     "note": "class worker sim of this request, 180s, seed 1"
@@ -32,8 +32,8 @@
     "Moonfury",
     "Vengeance",
     "Insect Swarm",
-    "Heart of the Wild",
-    "Naturalist"
+    "Naturalist",
+    "Subtlety"
   ],
   "rotation": [
     "Pre-pull: Wrath cast 1.5s before the pull",
@@ -60,10 +60,10 @@
     "Cerebral Cortex Compound"
   ],
   "caveats": [
-    "Costs 31.8 / 29.4 / 27.7 DPS vs the base build at 120s / 180s / 300s.",
+    "Costs 31.7 / 29.3 / 27.6 DPS vs the base build at 120s / 180s / 300s.",
     "Wrath VIII's base damage is ×1.085 (client ×1.00).",
     "Natural Power gloves are +8.1 over Arcane Power.",
-    "Heart of the Wild 3 over Moonglow 3 is +2.6."
+    "Subtlety 3 (Restoration, threat) is a must-take (standards 26): costs 2.8 / 2.8 / 2.9 DPS at 120s / 180s / 300s."
   ],
   "notes": "druid__balance-wrath.json with the raid's Faerie Fire and Curse of Recklessness off (Forever's two share the minor armor slot, standards 20, so with the curse on the druid's own Faerie Fire adds nothing) and the level60_wrath_ff rotation. Everything else is the base request.",
   "duty": "Faerie Fire",

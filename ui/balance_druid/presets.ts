@@ -141,7 +141,8 @@ export const APLLevel60Wrath = PresetUtils.makePresetAPLRotation('Level 60 Wrath
 // shows with the raid's Faerie Fire and Curse of Recklessness both off. The moonkin gets nothing
 // from the armor itself, so the duty costs its GCDs: 32.4 / 30.7 / 28.7 DPS at 120 / 180 / 300
 // sec for Level 60 (797.6 / 797.5 / 789.9), 30.5 / 28.6 / 27.1 for Level 60 Wrath (752.1 /
-// 755.8 / 753.4), Tauren, 20,000 iterations. The knob search kept the rest of both rotations.
+// 755.8 / 753.4), Tauren, 20,000 iterations. With Subtlety (2026-10-24): 33.5 / 31.5 / 29.1 (824.4 /
+// 824.8 / 817.8) and 31.7 / 29.3 / 27.6 (779.9 / 784.0 / 781.4), seed 1. The knob search kept the rest of both rotations.
 export const APLLevel60FaerieFire = PresetUtils.makePresetAPLRotation('Level 60 (Faerie Fire duty)', Level60FaerieFireAPLJSON, {
 	tooltip:
 		"The Level 60 rotation, keeping Faerie Fire on the target for the raid. Pick the duty build to switch off the raid's Faerie Fire and Curse of Recklessness.",
@@ -163,20 +164,28 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 ///////////////////////////////////////////////////////////////////////////
 
 // The talent search's best (tools/rotopt -talent-search) on the synthetic set with the Level 60
-// rotation at 180 sec: 41 Balance (everything that does damage, Genesis 5 and Moonglow 3) and
-// Naturalist 5 (1% damage a point) from Restoration. A search on the final set only traded
-// Genesis, Moonglow and Reflection points within the noise. The other archetypes were well
-// behind on the first set at 180 sec: 31 / 0 / 20 (Reflection and Tranquil Spirit, no Moonfury)
-// 10% and 41 / 10 / 0 4%.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '5532220115501351--505' }), {
-	tooltip: 'The talent search best on the synthetic Phase 1 set: 41 Balance, Naturalist from Restoration.',
+// rotation at 180 sec: 38 Balance (everything that does damage, Genesis 2 and Moonglow 3), and
+// Nature's Focus 5 (pushback from the raid's hits), Naturalist 5 (1% damage a point) and Subtlety 3
+// from Restoration. Subtlety 3 (Forever's version cuts Nature and Arcane threat) is a must-take
+// (standards 26), so the search pins it (-require subtlety) from 5532220115501351--5023, and it
+// moved Genesis 3 into Naturalist: 857.9 / 856.3 / 846.9 at 120 / 180 / 300 sec against 864.0 /
+// 862.4 / 853.1 for the old 41 Balance build (5532220115501351--505), 6.1 / 6.1 / 6.2 for the
+// threat cut (Tauren, 20,000 iterations, seed 1; the same on seed 1000003). Before that, a search
+// on the final set only traded Genesis, Moonglow and Reflection points within the noise. The other
+// archetypes were well behind on the first set at 180 sec: 31 / 0 / 20 (Reflection and Tranquil
+// Spirit, no Moonfury) 10% and 41 / 10 / 0 4%.
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '5232220115501351--5053' }), {
+	tooltip: "The talent search best on the synthetic Phase 1 set with Subtlety: 38 Balance, Nature's Focus, Naturalist and Subtlety from Restoration.",
 	group: 'Level 60',
 });
-// The Wrath rotation's own search: Heart of the Wild 3 (Intellect) in place of Moonglow 3, 2.6
-// ahead with Wrath as the filler (754.1 against 751.5 at 180 sec), because Wrath's mana cost is
-// already low.
-export const TalentsLevel60Wrath = PresetUtils.makePresetTalents('Level 60 Wrath', SavedTalents.create({ talentsString: '5502220115501351-03-505' }), {
-	tooltip: 'The Wrath rotation talent search best: Heart of the Wild in place of Moonglow.',
+// The Wrath rotation's own search: Genesis 5 in place of Moonglow 3 (Wrath's mana cost is already
+// low). It took Heart of the Wild 3 (Intellect) for Moonglow before Subtlety 3 became a must-take
+// (standards 26); pinned (-require subtlety), the search gives Heart of the Wild's 3 points to
+// Naturalist and Subtlety: 811.6 / 813.3 / 809.0 at 120 / 180 / 300 sec against 814.5 / 816.2 /
+// 812.0 (5502220115501351-03-505), 2.9 / 2.9 / 3.0 for the threat cut (Tauren, 20,000 iterations,
+// seed 1; the same on seed 1000003).
+export const TalentsLevel60Wrath = PresetUtils.makePresetTalents('Level 60 Wrath', SavedTalents.create({ talentsString: '5502220115501351--5053' }), {
+	tooltip: 'The Wrath rotation talent search best: Genesis in place of Moonglow, Subtlety from Restoration.',
 	group: 'Level 60',
 });
 
@@ -203,7 +212,8 @@ export const DefaultOptions = BalanceDruidOptions.create({
 // each one out costs, at 180 sec on the first set: Flask of Supreme Power the most (Distilled
 // Wisdom is 6 behind, the moonkin does not run dry in a raid fight), Elixir of Sages 14, Elixir
 // of Nature Power 9, Major Spellblasting Potion 9 (over a Major Mana Potion), Lobster Stew 4,
-// Goblin Sapper Charge 3.9, Cerebral Cortex Compound 3.5 and Demonic Rune 1.4. Greater
+// Goblin Sapper Charge 4.3 (6.5 / 4.3 / 3.6 at 120 / 180 / 300 sec, 3.9 to 7.1 on the other three
+// builds, so all four take it, standards 11), Cerebral Cortex Compound 3.5 and Demonic Rune 1.4. Greater
 // Mageblood Elixir and Greater Intellect are within the noise and stay for longer fights.
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
@@ -274,7 +284,7 @@ export const DefaultDebuffs = Debuffs.create({
 	thunderClap: TristateEffect.TristateEffectImproved,
 });
 
-// An engineer for the Goblin Sapper Charge (+3.9 at 180 sec) and an alchemist, like the other
+// An engineer for the Goblin Sapper Charge (+4.3 at 180 sec) and an alchemist, like the other
 // level 60 presets. The moonkin casts from range, so it does not melee between casts.
 export const OtherDefaults = {
 	distanceFromTarget: 30,
@@ -331,10 +341,11 @@ export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('L
 	buffs: DefaultIndividualBuffs,
 	consumes: DefaultConsumes,
 });
-// The Level 60 build, Tauren: 864.0 / 862.4 / 853.1 at 120 / 180 / 300 sec (seed 1, 20,000
-// iterations; 864.5 / 862.8 / 853.6 on seed 1000003), on the 2026-10-23 sim (Nature's Grace a
-// batch late, the natural flask zone). The talent and knob searches kept both builds. Every race a
-// druid can be under Forever on it, seed 1 (the Night Elf with its Elune's Light lines):
+// The Level 60 build, Tauren: 857.9 / 856.3 / 846.9 at 120 / 180 / 300 sec (seed 1, 20,000
+// iterations; 858.4 / 856.6 / 847.4 on seed 1000003) with Subtlety 3 (2026-10-24); the Wrath build
+// 811.6 / 813.3 / 809.0 (811.6 / 813.3 / 809.1). Every race a druid can be under Forever on the
+// builds before Subtlety (864.0 / 862.4 / 853.1 for the Tauren on the 2026-10-23 sim), seed 1 (the
+// Night Elf with its Elune's Light lines):
 //
 //	                     120 sec  180 sec  300 sec
 //	Tauren                864.0    862.4    853.1   best overall and Horde
