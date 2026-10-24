@@ -178,7 +178,7 @@ func TestClearcastingMidCast(t *testing.T) {
 // TestNaturesFocus checks Nature's Focus 5 (spell 17063): a 70% chance for Wrath, Starfire and
 // Hurricane to keep their cast time on a hit taken, and none without the talent or for Moonfire.
 func TestNaturesFocus(t *testing.T) {
-	_, moonkin := newMoonkinSim(t, "5532220115501351--505")
+	_, moonkin := newMoonkinSim(t, "5232220115501351--5053")
 	for name, spell := range map[string]*druid.DruidSpell{
 		"Wrath":     topRank(moonkin.Wrath),
 		"Starfire":  topRank(moonkin.Starfire),

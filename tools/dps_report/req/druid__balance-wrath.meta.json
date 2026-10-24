@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 8,
   "race": "Tauren",
-  "talents": "5502220115501351-03-505",
+  "talents": "5502220115501351--5053",
   "treeNames": [
     "Balance",
     "Feral Combat",
@@ -15,12 +15,12 @@
   "gearSet": "level60_phase1_synthetic_wrath",
   "apl": "level60_wrath",
   "published": {
-    "dps": 816.2,
-    "source": "Druid class worker finals, 2026-10-23 regear and rotation round (Nature's Grace a batch late, the natural flask zone; talents and rotation kept): 120/180/300s 814.5/816.2/812.0 (seed 1), 814.4/816.1/812.0 (seed 1000003)"
+    "dps": 813.3,
+    "source": "Druid class worker finals, 2026-10-24 must-take round (standards 26 and 11): 120/180/300s 811.6/813.3/809.0 (seed 1), 811.6/813.3/809.1 (seed 1000003)"
   },
   "verify": {
-    "dps": 816.16,
-    "stderr": 0.19,
+    "dps": 813.3,
+    "stderr": 0.2,
     "iters": 20000,
     "ok": true,
     "note": "class worker sim of this request, 180s, seed 1"
@@ -32,8 +32,8 @@
     "Moonfury",
     "Vengeance",
     "Insect Swarm",
-    "Heart of the Wild",
-    "Naturalist"
+    "Naturalist",
+    "Subtlety"
   ],
   "rotation": [
     "Pre-pull: Wrath cast 1.5s before the pull",
@@ -61,7 +61,7 @@
   "caveats": [
     "Wrath VIII's base damage is ×1.085 (client ×1.00).",
     "Natural Power gloves are +8.1 over Arcane Power.",
-    "Heart of the Wild 3 over Moonglow 3 is +2.6."
+    "Subtlety 3 (Restoration, threat) is a must-take (standards 26): costs 2.9 / 2.9 / 3.0 DPS at 120s / 180s / 300s."
   ],
   "notes": "Request from mksettings -spec balance with the Wrath gear variant, apl and talents; same consumes, buffs and encounter as the Balance build (shared EncounterLevel60). Duration 180s, durationVariation 20. No edits needed."
 }

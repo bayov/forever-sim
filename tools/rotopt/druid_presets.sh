@@ -21,7 +21,7 @@ gen() {
 	mv "$dir/${name}_180s.apl.json" "$dir/$name.apl.json"
 	echo "wrote $dir/$name.apl.json ($knobs)"
 }
-# Balance on the Level 60 talents (5532220115501351--505): a Starfire cast 3 sec before the pull
+# Balance on the Level 60 talents (5232220115501351--5053, Subtlety 3 a must-take): a Starfire cast 3 sec before the pull
 # (it lands at 0), Insect Swarm and Moonfire whenever they are down, a free Starfire on
 # Clearcasting, Wrath once Eclipse is down to 2 charges or fewer with no Wrath flying, Starfire
 # otherwise. Innervate is left to its own trigger. The search kept that at 120, 180 and 300 sec.
@@ -38,12 +38,12 @@ gen druid_balance "$balance" ui/balance_druid/apls level60 "innervateMana=0,fill
 # first after the pull and again once it has under 1.5 sec left. The knob search kept the rest.
 gen druid_balance "$balance" ui/balance_druid/apls level60_ff "innervateMana=0,filler=3,eclipseStacks=2,prepull=1,prepullTime=3,prepullTrinket=1,cdStack=1,endMoonfire=1,faerieFire=1,elune=0"
 # The same with Wrath as the only filler and a Wrath 1.5 sec before the pull, 6.1% behind (776.5
-# against 827.0 at 180 sec), on its own talents (5502220115501351-03-505) and gear (Natural Power
+# against 827.0 at 180 sec), on its own talents (5502220115501351--5053) and gear (Natural Power
 # gloves).
 gen druid_balance "$balance" ui/balance_druid/apls level60_wrath "innervateMana=0,filler=1,prepull=2,prepullTime=1.5,prepullTrinket=1,cdStack=1,endMoonfire=2,endMoonfireSlack=1.5,elune=0"
 # The Wrath build's Faerie Fire duty, the same way.
 gen druid_balance "$balance" ui/balance_druid/apls level60_wrath_ff "innervateMana=0,filler=1,prepull=2,prepullTime=1.5,prepullTrinket=1,cdStack=1,endMoonfire=2,endMoonfireSlack=1.5,faerieFire=1,elune=0"
-# Feral cat on the Level 60 talents (05002-55100032021030212051-05501), Night Elf: Rip at 5 combo
+# Feral cat on the Level 60 talents (05002-55200032021030212051-055, Feral Swiftness 2 a must-take), Night Elf: Rip at 5 combo
 # points whenever it is down (2.0 to 5.6 ahead of 4 with Idol of the Dream's longer Rip), Ferocious
 # Bite at 5 while Rip has 6 sec left, Shadowmeld into Ravage on Clearcasting or in the last 10 sec,
 # Rake whenever it is down with more than 6 sec left (with Ferocity 5; 38 to 42 ahead of no Rake

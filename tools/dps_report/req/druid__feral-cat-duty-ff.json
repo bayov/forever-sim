@@ -74,7 +74,6 @@
               "agilityElixir": "ElixirOfTheMongoose",
               "strengthBuff": "ElixirOfFerocity",
               "attackPowerBuff": "JujuMight",
-              "fillerExplosive": "ExplosiveEZThroDarkBomb",
               "mainHandImbue": "DenseWeightstone",
               "defaultPotion": "MightyRagePotion",
               "defaultConjured": "ConjuredRogueThistleTea",
@@ -86,7 +85,7 @@
               "blessingOfWisdom": "TristateEffectImproved",
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "05002-55100032021030212051-05501",
+            "talentsString": "05002-55200032021030212051-055",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Alchemy",
