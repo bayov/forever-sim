@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 100,
   "race": "Human",
-  "talents": "55003003201121251--05225230001",
+  "talents": "55003003201121251--05225030201",
   "treeNames": [
     "Holy",
     "Protection",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_shock",
   "published": {
-    "dps": 865.5,
-    "source": "Class worker regear and rotation round, 2026-10-23: 8% hit cap regear, talents and rotations re-searched (seeds 1 and 1000003, 20000 iterations, 120 / 180 / 300 s)"
+    "dps": 869.0,
+    "source": "Class worker follow-up, 2026-10-24: Pursuit of Justice 2 pinned (standards 26), talents re-searched, no filler explosive (standards 11); seeds 1 and 1000003, 20000 iterations, 120 / 180 / 300 s"
   },
   "verify": {
-    "dps": 865.46,
+    "dps": 869.04,
     "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 180 s, seed 1 (seed 1000003: 865.17)"
+    "note": "180 s, seed 1 (seed 1000003: 869.08)"
   },
   "summary": "Deep Holy to Light's Vigil with Holy Shock and Seal of Righteousness, no twisting.",
   "keyTalents": [
@@ -62,11 +62,11 @@
     "Dragonbreath Chili",
     "Shadow Oil",
     "Goblin Sapper",
-    "Goblin Land Mine",
     "Major Mana Potion",
     "Demonic Rune"
   ],
   "caveats": [
+    "Pursuit of Justice 2 (movement speed) is taken by rule (standards 26). It costs 2.3 / 2.3 / 2.1 at 120 / 180 / 300s.",
     "Runs short of mana: 7.4% behind twist at 120s, 8.2% at 180s, 9.8% at 300s.",
     "Divine Precision's hit doesn't cover Judgement of Righteousness.",
     "Holy Shock is worth 148 DPS and Light's Vigil about 91 (before client 70425).",
@@ -74,7 +74,7 @@
     "Holy Strike's flat bonus is inside the weapon percent (client data). Unconfirmed on the beta.",
     "High Holy Strike and Consecration ranks may be out of date (about 1.2% at stake).",
     "Seal of Righteousness adds 12% of spell power a hit with a two-hander, once (70425 tooltip). Counted twice it would be 46-51 DPS higher. At the proc spell's 0 it would be 53-59 lower.",
-    "The Goblin Land Mine (autocast, about 2.3 a fight) costs 1 to 6 DPS here; kept because every preset carries explosives (standards 11)."
+    "No filler explosive (standards 11): the Goblin Land Mine and EZ-Thro Dark Bomb cost 6.1 at 180s, the EZ-Thro Thorium Grenade 6.8 (each 1s cast resets the swing)."
   ],
   "notes": "Preset options are primarySeal Righteousness, as mksettings writes."
 }

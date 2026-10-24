@@ -139,7 +139,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 			Presets.PresetBuildLevel60SubHolyCrusaderDuty,
 			Presets.PresetBuildLevel60Shock,
 			Presets.PresetBuildLevel60ShockCrusaderDuty,
-			Presets.PresetBuildLevel60Undead,
 			Presets.PresetBuildLevel60SubHolyUndead,
 			Presets.PresetBuildLevel60ShockUndead,
 			Presets.PresetBuildLevel30p5,

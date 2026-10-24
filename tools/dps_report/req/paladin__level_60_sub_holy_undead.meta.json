@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 111,
   "race": "Human",
-  "talents": "550030022--05225331001330321",
+  "talents": "550030022--05225131201330321",
   "treeNames": [
     "Holy",
     "Protection",
@@ -15,17 +15,17 @@
   "gearSet": "level60_phase1_synthetic_undead",
   "apl": "level60_undead",
   "published": {
-    "dps": 1047.8,
-    "source": "Class worker regear and rotation round, 2026-10-23: 8% hit cap regear, talents and rotations re-searched (seeds 1 and 1000003, 20000 iterations, 120 / 180 / 300 s)"
+    "dps": 1050.8,
+    "source": "Class worker follow-up, 2026-10-24: Pursuit of Justice 2 pinned (standards 26), talents re-searched, no filler explosive (standards 11); seeds 1 and 1000003, 20000 iterations, 120 / 180 / 300 s"
   },
   "verify": {
-    "dps": 1047.79,
+    "dps": 1050.84,
     "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py, 180 s, seed 1 (seed 1000003: 1048.17)"
+    "note": "180 s, seed 1 (seed 1000003: 1051.00)"
   },
-  "summary": "The sub Holy twist build with Exorcism, for an Undead or Demon boss. Since the 2026-10-23 regear it has the same talents, gear and rotation as Level 60 (vs Undead).",
+  "summary": "The sub Holy twist build with Exorcism, for an Undead or Demon boss. The only twist vs Undead preset since 2026-10-24: Level 60 (vs Undead) had the same talents, gear and rotation, so it was dropped.",
   "advantage": "Exorcism only works on Undead and Demons. Purifying Power 2 makes its cooldown a third shorter.",
   "advantageRefs": [
     "k:s10314",
@@ -69,17 +69,17 @@
     "Dragonbreath Chili",
     "Shadow Oil",
     "Goblin Sapper",
-    "Goblin Land Mine",
     "Dragonfire Potion",
     "Demonic Rune"
   ],
   "caveats": [
+    "Pursuit of Justice 2 (movement speed) is taken by rule (standards 26). It costs 4.1 / 4.1 / 4.1 at 120 / 180 / 300s.",
     "Holy Wrath is left out: its 2s cast resets the swing and cost 6.8 at 180s.",
     "Holy Strike's flat bonus is inside the weapon percent (client data). Unconfirmed on the beta.",
     "High Holy Strike and Consecration ranks may be out of date (about 1.2% at stake).",
     "Seal of Righteousness adds 12% of spell power a hit with a two-hander, once (70425 tooltip). Counted twice it would be 46-51 DPS higher. At the proc spell's 0 it would be 53-59 lower.",
     "Two-Handed Weapon Specialization boosts Holy seal damage (Era sim choice, the client says Physical only). Without it: -11.",
-    "The Goblin Land Mine (autocast, about 2.3 a fight) costs 1 to 6 DPS here; kept because every preset carries explosives (standards 11)."
+    "No filler explosive (standards 11): the Goblin Land Mine and EZ-Thro Dark Bomb cost 7.0 at 180s, the EZ-Thro Thorium Grenade 7.7 (each 1s cast resets the swing)."
   ],
   "notes": "Request from mksettings with the same arguments as paladin__level_60_sub_holy except talents and APL, then the target's mobType set to MobTypeUndead, as the class preset's encounter does.",
   "encounter": "Undead",

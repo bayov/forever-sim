@@ -18,8 +18,8 @@ import os
 ROGUE = ['combat-daggers', 'seal-fate-daggers', 'combat-swords', 'seal-fate-swords', 'mutilate', 'subtlety']
 R = lambda xs: [f'rogue__{x}' for x in xs] + [f'rogue__{x}-humanoid' for x in xs]
 PAL_ALL = ['paladin__level_60', 'paladin__level_60_sub_holy', 'paladin__level_60_shock',
-           'paladin__level_60_undead', 'paladin__level_60_sub_holy_undead', 'paladin__level_60_shock_undead']
-PAL_TWIST = ['paladin__level_60', 'paladin__level_60_sub_holy', 'paladin__level_60_undead', 'paladin__level_60_sub_holy_undead']
+           'paladin__level_60_sub_holy_undead', 'paladin__level_60_shock_undead']
+PAL_TWIST = ['paladin__level_60', 'paladin__level_60_sub_holy', 'paladin__level_60_sub_holy_undead']
 LOCK = ['warlock__demonology', 'warlock__destruction', 'warlock__affliction', 'warlock__destruction_fire']
 ENH = ['shaman__enhancement-level60', 'shaman__enhancement-imp-gw', 'shaman__enhancement-water-shield', 'shaman__enhancement-mana-tide']
 ELE = ['shaman__elemental-level60', 'shaman__elemental-level60-mana-tide']

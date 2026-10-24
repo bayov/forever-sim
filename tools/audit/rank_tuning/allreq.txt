@@ -27,7 +27,6 @@ paladin__level_60_shock_undead
 paladin__level_60_sub_holy-duty-crusader
 paladin__level_60_sub_holy
 paladin__level_60_sub_holy_undead
-paladin__level_60_undead
 priest__shadow-holy
 priest__shadow
 priest__smite

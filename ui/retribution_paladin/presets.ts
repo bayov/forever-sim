@@ -7,7 +7,6 @@ import {
 	Consumes,
 	Debuffs,
 	Encounter,
-	Explosive,
 	FirePowerBuff,
 	Flask,
 	Food,
@@ -346,7 +345,36 @@ export const DefaultAPL = APLLevel60SubHoly;
 //   / 843.7 (ahead of its base from 180 sec: Libram of Fervor's +33 Holy damage taken).
 // - Against an Undead boss: vs Undead and sub Holy vs Undead 1053.2 / 1047.8 / 1029.3 (the same
 //   build now), Shock vs Undead 982.3 / 965.2 / 934.4.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '51003-503-05225331001330321' }), {
+//
+// Must-take talents (standards 26, 2026-10-23): every Level 60 build takes Pursuit of Justice 2
+// (movement speed) whatever it costs. We put it in each string by hand and re-ran the talent
+// searches at 180 sec with it pinned (tools/rotopt -require pursuitOfJustice), then paired the
+// results at 120 / 180 / 300 sec (20000 iterations, seeds 1 and 1000003). What it costs, against
+// the old builds with the Goblin Land Mine:
+// - Level 60 (twist): Precision 3 to 2 and Vindication 3 to 2 (`51003-502-05225231201330321`),
+//   -3.7 / -3.4 / -3.5.
+// - Level 60 (sub Holy): Purifying Power 2, which does nothing on the generic boss
+//   (`55003002--05225331201330321`), 0.0 at every length.
+// - Level 60 Shock (and its vs Undead and duty copies): Vindication 2 to 0
+//   (`55003003201121251--05225030201`, no search move beat it), -2.3 / -2.3 / -2.1 (vs Undead
+//   -2.2 / -2.8 / -2.5).
+// - Level 60 (sub Holy, vs Undead): Vindication 3 to 1 (`550030022--05225131201330321`), -4.1 /
+//   -4.1 / -4.1. The search moved Reverence and Vindication a point each instead, 2.4 / 1.9 ahead
+//   at 120 / 180 sec but 8.8 behind at 300, so the hand build stays. The search from the twist
+//   talents ended 8 behind on the Prot side, so the vs Undead builds stay one preset.
+// - Crusader duty: each keeps its base build's talents (twist -3.8 / -4.1 / -3.9, sub Holy 0.0,
+//   Shock -1.6 / -1.9 / -2.1). The twist duty search moved to the sub Holy side
+//   (`55003001-1-05225331201330321`, 4.0 / 4.6 / 7.9 over the twist talents), the same DPS as the
+//   sub Holy duty build.
+// Finals with Pursuit of Justice and no filler explosive, Human, 120 / 180 / 300 sec, seed 1 (seed
+// 1000003 within 0.7):
+// - Level 60: 951.5 / 945.1 / 932.7. Level 60 (sub Holy): 956.4 / 949.1 / 941.0, the class default.
+// - Level 60 Shock: 881.5 / 869.0 / 843.0.
+// - Crusader duty: twist 939.2 / 938.6 / 930.8, sub Holy 942.9 / 942.8 / 939.5, Shock 877.9 / 871.5
+//   / 847.8.
+// - Against an Undead boss: sub Holy vs Undead 1055.6 / 1050.8 / 1032.8, Shock vs Undead 985.0 /
+//   968.4 / 938.0.
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '51003-502-05225231201330321' }), {
 	tooltip: 'Level 60 talents from the talent search: Retribution to Twist of Light, Precision, Divine Strength and Improved Seals.',
 	group: 'Level 60',
 });
@@ -356,7 +384,7 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // 180 / 300 sec, 0.5% behind Level 60 at 120 sec and 0.8% at 300 because it has no Precision.
 export const TalentsLevel60SubHoly = PresetUtils.makePresetTalents(
 	'Level 60 (sub Holy)',
-	SavedTalents.create({ talentsString: '550030022--05225331001330321' }),
+	SavedTalents.create({ talentsString: '55003002--05225331201330321' }),
 	{ tooltip: 'Level 60 talents with the side points in Holy instead of Protection.', group: 'Level 60' },
 );
 // Level 60 Shock: the Holy Shock playstyle, its own talent and rotation search from a 31 Holy
@@ -368,21 +396,10 @@ export const TalentsLevel60SubHoly = PresetUtils.makePresetTalents(
 // at 120 / 180 / 300 sec on the final set (Spellblasting and Holy Power favour it), 1.2% behind
 // Level 60 at 180 sec and 4.4% at 300 (Divine Precision does not cover its judgements): without Twist of Light it has nothing for the free GCDs
 // between its cooldowns, and it runs out of mana in long fights. Light's Vigil is worth 64 and Holy Shock 148.
-export const TalentsLevel60Shock = PresetUtils.makePresetTalents('Level 60 Shock', SavedTalents.create({ talentsString: '55003003201121251--05225230001' }), {
+export const TalentsLevel60Shock = PresetUtils.makePresetTalents('Level 60 Shock', SavedTalents.create({ talentsString: '55003003201121251--05225030201' }), {
 	tooltip: "Level 60 Holy Shock talents: deep Holy to Light's Vigil with Holy Power, and Retribution to Sacred Arbiter.",
 	group: 'Level 60',
 });
-// Level 60 (vs Undead): the talent search from Level 60 on an Undead boss with the vs Undead
-// rotation. Purifying Power 2 (Exorcism every 10 sec, Holy Wrath every 40) for two Vindication
-// points (+24), Divine Strength 2 and Divine Intellect 5 (Divine Strength 3 into Divine Intellect,
-// +1.5), Reverence 1 for a Precision point and Instrument of Law back into Vindication (mana
-// tie-breaks). 1074.2 / 1069.7 / 1045.9 at 120 / 180 / 300 sec against an Undead boss, 8.9% over
-// Level 60 on its own boss at 180 sec. The sub Holy one below is ahead at every length.
-export const TalentsLevel60Undead = PresetUtils.makePresetTalents(
-	'Level 60 (vs Undead)',
-	SavedTalents.create({ talentsString: '550030022--05225331001330321' }),
-	{ tooltip: 'Level 60 talents for an Undead or Demon boss: Purifying Power for Exorcism and Holy Wrath.', group: 'Level 60' },
-);
 // Level 60 (sub Holy, vs Undead): the talent search from Level 60 (sub Holy) on an Undead boss
 // moved Instrument of Law 2 to 1 for Holy Conduit 2 (Exorcism and Holy Wrath cost 40% less). It
 // already has Purifying Power 2. 1074.6 / 1071.5 / 1061.7 at 120 / 180 / 300 sec against an
@@ -390,7 +407,7 @@ export const TalentsLevel60Undead = PresetUtils.makePresetTalents(
 // boss at 180 sec): its Divine Intellect 5 and Reverence 3 pay for the extra spells.
 export const TalentsLevel60SubHolyUndead = PresetUtils.makePresetTalents(
 	'Level 60 (sub Holy, vs Undead)',
-	SavedTalents.create({ talentsString: '550030022--05225331001330321' }),
+	SavedTalents.create({ talentsString: '550030022--05225131201330321' }),
 	{ tooltip: 'Level 60 sub Holy talents for an Undead or Demon boss, with Holy Conduit 2.', group: 'Level 60' },
 );
 // Level 30 with 5 extra talent points (26 in all), Pursuit of Justice 2 pinned. Holy
@@ -415,7 +432,7 @@ export const TalentPresets = {
 	[Phase.Phase1]: [],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
-	[Phase.Phase4]: [TalentsLevel60, TalentsLevel60SubHoly, TalentsLevel60Shock, TalentsLevel60Undead, TalentsLevel60SubHolyUndead, TalentsLevel30p5],
+	[Phase.Phase4]: [TalentsLevel60, TalentsLevel60SubHoly, TalentsLevel60Shock, TalentsLevel60SubHolyUndead, TalentsLevel30p5],
 };
 
 export const DefaultTalents = TalentsLevel60SubHoly;
@@ -470,7 +487,11 @@ export const DefaultConsumes = Consumes.create({
 	// mana and take the Major Mana Potion (ShockConsumes).
 	defaultPotion: Potions.DragonfirePotion,
 	dragonBreathChili: true,
-	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
+	// No filler explosive (standards 11, 2026-10-23: only when it gains). At 180 sec, 20000
+	// iterations, seeds 1 and 1000003, no explosive is ahead of the Goblin Land Mine and the EZ-Thro
+	// Dark Bomb (the same 450 average Fire damage) by 4.9 to 7.0 on every Level 60 build, and of the
+	// EZ-Thro Thorium Grenade by 5.7 to 7.7: each throw's 1 sec cast resets the swing. The Goblin
+	// Sapper Charge (no cast) stays, +4.4 to 5.1.
 	firePowerBuff: FirePowerBuff.ElixirOfGreaterFirepower,
 	// The fight is in a natural flask zone (standards 11), but the best natural flask, Precision, is 19
 	// to 26 behind the Flask of Supreme Power at 180 sec (Aggression 48 to 52 behind on Shock).
@@ -774,21 +795,8 @@ const OptionsRighteousness = RetributionPaladinOptions.create({
 // Human 923.1 / 918.2 / 901.1 against Undead 920.0 / 915.2 / 897.6, sub Holy vs Undead
 // 925.9 / 922.0 / 913.4 against 923.5 / 919.0 / 910.0, Shock vs Undead 952.3 / 924.1 / 880.9
 // against 950.7 / 921.5 / 878.8. The older numbers:
-// Level 60 (vs Undead): Undead 1074.2 / 1069.7 / 1045.9, Human 1057.9 / 1053.9 / 1030.9, Dwarf
-// 1057.2 / 1053.2 / 1029.7.
-export const PresetBuildLevel60Undead = PresetUtils.makePresetBuild('Level 60 (vs Undead)', {
-	group: 'Level 60',
-	tooltip: 'Level 60 Human against an Undead or Demon boss, with Exorcism and Holy Wrath.',
-	gear: GearLevel60Phase1SyntheticUndead,
-	talents: TalentsLevel60Undead,
-	rotation: APLLevel60Undead,
-	encounter: EncounterLevel60Undead,
-	race: Race.RaceHuman,
-	level: 60,
-	bonusTalentPoints: 0,
-	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: OptionsRighteousness,
-});
+// Level 60 (vs Undead) was its own build until 2026-10-24. It had the same talents, gear and
+// rotation as the sub Holy one below since the regear round, so it went.
 // Level 60 (sub Holy, vs Undead): Undead 1074.6 / 1071.5 / 1061.7, Human 1058.5 / 1055.7 /
 // 1046.3, Dwarf 1058.1 / 1055.2 / 1045.2. The best build against an Undead boss.
 export const PresetBuildLevel60SubHolyUndead = PresetUtils.makePresetBuild('Level 60 (sub Holy, vs Undead)', {

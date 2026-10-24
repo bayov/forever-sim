@@ -267,6 +267,18 @@ Retribution, the "Level 60" build (2026-10-12): Undead, the synthetic Phase 1 se
   | Level 60 Shock (vs Undead) | 982.3 / 965.2 / 934.4 | 961.5 | 959.6 |
 
   Human is the best race and the best Alliance one on every build, Undead the best Horde paladin. The numbers in the bullets above are from before this round.
+- Must-take talent and explosives (2026-10-24, see classes/paladin.md): every build takes Pursuit of Justice 2 (standards 26; the searches re-run with it pinned), none takes a filler explosive (every one loses 4.9 to 7.7 at 180 sec, standards 11), and Level 60 (vs Undead), a copy of sub Holy vs Undead, is gone. Human, seed 1, 120 / 180 / 300 sec:
+
+  | Build | DPS | Pursuit of Justice costs |
+  | --- | --- | --- |
+  | Level 60 (sub Holy), the class default | 956.4 / 949.1 / 941.0 | 0 |
+  | Level 60 | 951.5 / 945.1 / 932.7 | 3.4 to 3.7 |
+  | Level 60 Shock | 881.5 / 869.0 / 843.0 | 2.1 to 2.3 |
+  | Level 60 (Crusader duty) | 939.2 / 938.6 / 930.8 | 3.8 to 4.1 |
+  | Level 60 (sub Holy, Crusader duty) | 942.9 / 942.8 / 939.5 | 0 |
+  | Level 60 Shock (Crusader duty) | 877.9 / 871.5 / 847.8 | 1.6 to 2.1 |
+  | Level 60 (sub Holy, vs Undead) | 1055.6 / 1050.8 / 1032.8 | 4.1 |
+  | Level 60 Shock (vs Undead) | 985.0 / 968.4 / 938.0 | 2.2 to 2.8 |
 - Open: Holy Strike's formula, Seal of Righteousness's spell power (once per the tooltip since 2026-10-16; it decides Righteousness against Command), one Echo at a time (since 2026-10-23, wowsims/forever's reading) and how Light's Vigil treats a Holy Shock that misses (see notes.md).
 
 ### Hunter
