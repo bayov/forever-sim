@@ -6,7 +6,6 @@ import {
 	Consumes,
 	Debuffs,
 	Encounter,
-	Explosive,
 	Flask,
 	Food,
 	IndividualBuffs,
@@ -72,7 +71,8 @@ export const GearPhase6 = PresetUtils.makePresetGear('P6 BiS', Phase6Gear);
 // 0.959 / 0.911, three stat lines a piece) in the fair stat mix (SoD level 60 BiS warrior shares,
 // Stamina at about 19.7%): Strength first, then Stamina, Agility, crit and attack power, 8% hit (the
 // special attack cap with no hit suppression under Forever; 9% until 2026-10-23, when the head and
-// feet each traded 5 hit for 5 Strength), no Spirit. Totals: armor 650.5, bow 19.5, swords 64.0, two-hander 79.0; the
+// feet each traded 5 hit for 5 Strength; the dual wield set's own head and feet carry 10%, by sim,
+// since 2026-10-24), no Spirit. Totals: armor 650.5, bow 19.5, swords 64.0, two-hander 79.0; the
 // Fury set 733.5, the Arms / Fury 2H set 748.5. Only the head and legs carry Battlegear of Glory,
 // Forever's Arms and Fury tier set, so only its 2-piece is live. The 4-piece (+36 attack
 // power against Humanoids) would add 10.8 on Fury, 8.8 on two-hand Fury and 8.4 on Arms against a
@@ -131,9 +131,8 @@ export const APLNoReck = PresetUtils.makePresetAPLRotation('DPS (No Reck)', APLN
 // for the execute phase, where Execute spends all the Rage, lost 14 at 180 sec with flat Rage. Bloodrage under 40
 // Rage, no Berserker Rage. The Mighty Rage Potion goes at the pull and the second is held for the
 // last 20 sec when that costs no use, and the on-use trinket goes on cooldown (+20.7 at 120 sec,
-// where the hold alone skipped the pull potion; the rotation auditor's pass 14). The Goblin Land Mine waits for the moment after
-// a main hand swing, since a swing that comes due during its 1 sec cast waits for the cast to end,
-// and the Sapper goes on cooldown ahead of it. Blood Fury, Berserking and Elune's Light wait for Death Wish when that costs
+// where the hold alone skipped the pull potion; the rotation auditor's pass 14). The Sapper goes on cooldown with the other
+// cooldowns (no Goblin Land Mine since 2026-10-24, see the consumables below). Blood Fury, Berserking and Elune's Light wait for Death Wish when that costs
 // no use. It is 1031.1 (Human) where the old DPS (With Reck) rotation is 981.2. Slam on its 18 sec
 // cooldown and holding the fillers for Bloodthirst and Whirlwind both lose.
 export const APLLevel60Fury = PresetUtils.makePresetAPLRotation('Level 60 Fury', Level60FuryAPLJSON, { group: 'Level 60' });
@@ -291,9 +290,12 @@ const PresetBuildOptionsArms = { ...PresetBuildOptionsFury, stance: WarriorStanc
 // were +73.2 over neither). The rest of the set we started from won its slot: Juju Might
 // (+13.9 over none), Smoked Desert Dumplings (+0.8 over Mightfish Steak, +7.2 over Flank au Poivre),
 // the Mighty Rage Potion (+9.5 over the Major Frenzy Potion), R.O.I.D.S. and Dragonbreath Chili.
-// Goblin Land Mine between Sappers is +1.2 on Fury, +3.4 on Fury two-hand and +0.9 on Arms, a little
-// ahead of Thorium Grenades and Dense Dynamite (EZ-Thro Dark Bomb in its place is 6 to 15 behind:
-// the rotations time the Land Mine). The flask was Flask of the Titans, which does nothing for the
+// Explosives only when they gain (standards 11, 2026-10-23): the Goblin Sapper Charge alone is 3.5 to
+// 6.1 ahead of no explosive at 180 sec (seeds 1 and 1000003), and the Goblin Land Mine between
+// Sappers loses on every build (its 1 sec cast resets the swing): without it Fury is +7.6, Fury on
+// Battle Shout duty +7.2, Fury two-hand +3.8 and +3.4, Arms +0.2, +0.6 and +1.2 vs Dragonkin. Thorium
+// Grenades and Dense Dynamite in its place lose 7 to 17, so the presets take the Sapper only.
+// The flask was Flask of the Titans, which does nothing for the
 // DPS, until the natural flasks (2026-10-23, below).
 //
 // The presets only take what Phase 1 can get without a raid that is not open yet. Elemental
@@ -306,7 +308,6 @@ export const DefaultConsumes = Consumes.create({
 	attackPowerBuff: AttackPowerBuff.JujuMight,
 	defaultPotion: Potions.MightyRagePotion,
 	dragonBreathChili: true,
-	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
 	// The natural flask (standards 11, 2026-10-23): Precision, +66.4 / +68.1 over the Flask of the Titans
 	// on Fury / Fury two-hand at 180 sec. Arms takes Aggression (ArmsConsumes). On the 8% hit sets
 	// (2026-10-23, 180 sec, seeds 1 and 1000003) Precision still leads: Fury 1060.1, Accuracy 1027.4,
@@ -551,6 +552,13 @@ export const EncounterLevel60ArmsBattleShoutDuty = PresetUtils.makePresetEncount
 // 1019.3 / 999.3 / 974.3. The Hamstring filler stays (Arms without it is 44.4 lower at 180 sec, though
 // Bloodthrill no longer procs from it), and so do Slam and Hamstring from 20 Rage and Heroic Strike
 // from 90.
+// The follow-up (2026-10-24): dual wield Fury's head and feet trade 20 Strength for 20 hit, 10%
+// (standards 4, hit by sim: +0.6 on Fury and +0.9 on its duty at 180 sec, 100,000 iterations, over
+// 8%), and no build takes the Goblin Land Mine (standards 11, see the consumables). Seed 1 (seed
+// 1000003 within 1.3), 120 / 180 / 300 sec: Fury 1109.5 / 1068.7 / 1042.8, its duty 1105.4 / 1064.9 /
+// 1039.8, two-hand Fury 1081.5 / 1033.7 / 1001.7, its duty 1080.3 / 1030.3 / 999.3, Arms 978.2 /
+// 957.4 / 934.3, its duty 976.3 / 956.0 / 933.0, Arms vs Dragonkin 1020.9 / 1000.1 / 975.7. Orc stays
+// 1.1 to 4.0 ahead of Human at 180 sec on both seed sets.
 export const PresetBuildLevel60Fury = PresetUtils.makePresetBuild('Level 60 Fury', {
 	group: 'Level 60',
 	tooltip: 'Level 60 dual wield Fury on the synthetic Phase 1 gear, in a 3 minute raid fight.',
