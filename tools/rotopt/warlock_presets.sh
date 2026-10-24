@@ -5,13 +5,14 @@
 # on the settings, only the one sanity sim does, so any level 60 warlock settings will do:
 #
 #   go run --tags=with_db ./tools/rotopt/mksettings -spec demonology -gear level60_phase1_synthetic \
-#       -apl level60_demonology -talents 011-0305003131221001351-0550005003 -race Human -duration 180 -out lock60.json
+#       -apl level60_demonology -talents 051-0305003131221001351-0550004 -race Human -duration 180 -out lock60.json
 #   tools/rotopt/warlock_presets.sh lock60.json
 #
 # The searches behind them (one talent search per starting build, then a knob search, then the
 # talent search again on the searched knobs):
 #
 #   go run --tags=with_db ./tools/rotopt -template warlock -settings lock60.json -durs 180 -talent-search \
+#       -require suppression \
 #       -iters 2000 -knobs bane=2,corruption=1,immolate=1,siphonLife=1,conflagrate=1,shadowburn=2,soulFire=0,filler=2,soulLink=1,lifeTapMana=5
 #   go run --tags=with_db ./tools/rotopt -template warlock -settings lock60.json -durs 180 -iters 3000 -knobs ...
 set -e
