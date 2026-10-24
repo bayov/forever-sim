@@ -673,11 +673,22 @@ export const DefaultConsumes = {
 	[Phase.Phase1]: P1Consumes,
 };
 
-// Combat Daggers drinks the Flask of Natural Accuracy: on the 8% sets its 5% hit does more for the
-// white hits (the dual wield cap is 27%) than Precision's expertise, +1.2 to +2.1 at 120 / 180 / 300
-// sec on both seed sets (767.8 against 765.9 at 180 sec).
-export const P1CombatDaggersConsumes = Consumes.create({
+// Explosives are taken only when they gain (standards 11, the user's ruling 2026-10-23). The Goblin
+// Sapper Charge gains for every build (+3.7 to +4.1 at 180 sec with the Land Mine out). The Land Mine's
+// 1 sec cast resets the swing, and it loses for Combat Swords (1.3 to 2.9 at 120 / 180 / 300 sec on both
+// seed sets), Combat Daggers (0.3 to 1.8) and Seal Fate Swords (-0.1 to 1.3); for Mutilate it is a tie
+// (-0.3 to +0.3), so it stays out. Seal Fate Daggers (+0.1 to +0.7 at 120 and 180 sec, 0.3 to 0.4 behind
+// at 300) and Subtlety (+0.6 to +1.1) keep it, with P1Consumes.
+export const P1SapperOnlyConsumes = Consumes.create({
 	...P1Consumes,
+	fillerExplosive: Explosive.ExplosiveUnknown,
+});
+
+// Combat Daggers drinks the Flask of Natural Accuracy: its 5% hit does more for the white hits (the
+// dual wield cap is 27%) than Precision's expertise, on the 9% set too (+0.1 to +0.6 at 120 / 180 / 300
+// sec on five of the six seed set and length pairs, 0.4 behind on the sixth; 770.3 against 769.7 at 180 sec).
+export const P1CombatDaggersConsumes = Consumes.create({
+	...P1SapperOnlyConsumes,
 	flask: Flask.FlaskOfNaturalAccuracy,
 });
 
@@ -797,6 +808,12 @@ const level60Encounter = (name: string, mobType: MobType, consumes = P1Consumes)
 	);
 export const EncounterLevel60 = level60Encounter('Level 60', MobType.MobTypeUnknown);
 export const EncounterLevel60Humanoid = level60Encounter('Level 60 (vs Humanoid)', MobType.MobTypeHumanoid);
+export const EncounterLevel60SapperOnly = level60Encounter('Level 60 (no Land Mine)', MobType.MobTypeUnknown, P1SapperOnlyConsumes);
+export const EncounterLevel60SapperOnlyHumanoid = level60Encounter(
+	'Level 60 (no Land Mine, vs Humanoid)',
+	MobType.MobTypeHumanoid,
+	P1SapperOnlyConsumes,
+);
 export const EncounterLevel60CombatDaggers = level60Encounter('Level 60 (Combat Daggers)', MobType.MobTypeUnknown, P1CombatDaggersConsumes);
 export const EncounterLevel60CombatDaggersHumanoid = level60Encounter(
 	'Level 60 (Combat Daggers, vs Humanoid)',
@@ -806,18 +823,22 @@ export const EncounterLevel60CombatDaggersHumanoid = level60Encounter(
 
 // The Level 60 builds: the synthetic Phase 1 gear, the searched talents and rotation, the Level 60
 // encounter and the best race at 180 sec. A build changes race only when the new one leads by more
-// than 0.5 DPS on two seed sets (standards 16). On 2026-10-23 (the 8% hit cap and the sets regeared to
-// it, the natural flasks, the wowsims/forever alignment round, Shadowmeld), 20000 iterations, seed 1
+// than 0.5 DPS on two seed sets (standards 16). On 2026-10-24 (the hit each set sims best with, 8% to
+// 10%, and explosives only where they gain, standards 4 and 11; the natural flasks, the wowsims/forever
+// alignment round and Shadowmeld since 2026-10-23), 20000 iterations, seed 1
 // (seed 1000003 within 0.7), at 120 / 180 / 300 sec, against the generic boss (no creature type), on the
 // synthetic sets built to the Forever budget (standards 1b: armor 650.5, weapons 63.9, bow 19.5
 // weighted linear points a set, plus two synthetic ilvl 71 trinkets, 31 Agility and 15 crit rating, and
 // +335 attack power for 20 sec every 2 min), with a Dense Sharpening Stone beside the poison on each blade:
-//   Combat Daggers      791.9 / 767.8 / 747.4 Skyborne (Windshaper) (the default)
-//   Combat Swords       787.7 / 761.3 / 740.0 Skyborne (Windshaper)
-//   Seal Fate Daggers   745.1 / 730.6 / 720.0 Orc, 4.8% behind Combat Daggers
-//   Seal Fate Swords    740.7 / 726.9 / 714.4 Orc, 4.5% behind Combat Swords
-//   Mutilate            729.2 / 717.3 / 708.7 Skyborne (Windshaper), 13.3 behind Seal Fate Daggers
-//   Subtlety            734.0 / 714.5 / 701.4 Night Elf
+//   Combat Daggers      793.8 / 770.3 / 750.5 Skyborne (Windshaper) (the default), 9% hit
+//   Combat Swords       789.9 / 764.0 / 743.8 Skyborne (Windshaper), 10% hit
+//   Seal Fate Daggers   746.3 / 731.5 / 720.9 Orc, 5.0% behind Combat Daggers, 10% hit
+//   Seal Fate Swords    742.1 / 728.9 / 717.0 Orc, 4.6% behind Combat Swords, 10% hit
+//   Mutilate            730.4 / 718.9 / 710.4 Skyborne (Windshaper), 12.6 behind Seal Fate Daggers, 10% hit
+//   Subtlety            735.8 / 715.9 / 702.6 Night Elf, 8% hit
+// Before (2026-10-23, every set at 8% and every build with the Land Mine), at 180 sec: Combat Daggers
+// 767.8, Combat Swords 761.3, Seal Fate Daggers 730.6, Seal Fate Swords 726.9, Mutilate 717.3, Subtlety
+// 714.5. The races were swept on the 8% sets.
 // The Windshaper's Wind Blessed haste leads the Combat builds (0.5 ahead of the High Order on Combat
 // Daggers, 0.1 ahead of the Orc on Combat Swords) and stays on Mutilate (the Orc is 0.3 ahead on one seed
 // set, 0.2 behind on the other). The Orc's Savage takes both Seal Fate builds (0.6 to 1.4 ahead of the
@@ -833,10 +854,12 @@ export const EncounterLevel60CombatDaggersHumanoid = level60Encounter(
 // dagger, and Mutilate a 1.7 sec dagger and a 1.6 sec dagger. Seal Fate Daggers and Subtlety keep
 // Perdition's Blade and Core Hound Tooth.
 // The "(vs Humanoid)" builds (Murder 2/2, Humanoid boss, the same race as their build) at 180 sec:
-// Combat Daggers 791.4, Combat Swords 787.5, Seal Fate Daggers 754.9, Seal Fate Swords 752.4, Mutilate
-// 742.2, Subtlety 739.8.
-// Hit over the 8% yellow cap still helps the white hits (the dual wield cap is 27%): the 9% sets did
-// 0.4 to 2.8 more at 180 sec, which standards 4 rules out.
+// Combat Daggers 794.0, Combat Swords 790.4, Seal Fate Daggers 755.8, Seal Fate Swords 754.6, Mutilate
+// 743.8, Subtlety 741.4.
+// Hit over the 8% yellow cap still helps the white hits (the dual wield cap is 27%), and dual wielders
+// take the hit that sims best (standards 4, 2026-10-23): tools/database/forever_synthetic_items_rogue.go
+// has the 8% / 9% / 10% sims. The Land Mine is out of Combat Swords, Combat Daggers, Seal Fate Swords and
+// Mutilate, where it doesn't gain (P1SapperOnlyConsumes).
 // Venom (25 Energy) loses DPS at every point count as modelled, about 30 at every length, so there is
 // no Venom build. Grimstitch Armor's 4 and 5 piece bonuses would add about 8 and 6 to Combat Daggers.
 // The trinkets are synthetic (Forever's real Phase 1 trinkets are removed or not simulated), and the
@@ -887,7 +910,7 @@ export const PresetBuildLevel60CombatSwords = level60Build(
 	GearLevel60SyntheticSwords,
 	TalentsLevel60CombatSwords,
 	ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
-	EncounterLevel60,
+	EncounterLevel60SapperOnly,
 	Race.RaceSkyborneWindshaper,
 );
 export const PresetBuildLevel60SealFateSwords = level60Build(
@@ -896,7 +919,7 @@ export const PresetBuildLevel60SealFateSwords = level60Build(
 	GearLevel60SyntheticSealFateSwords,
 	TalentsLevel60SealFateSwords,
 	ROTATION_PRESET_LEVEL60_SEAL_FATE_SWORDS,
-	EncounterLevel60,
+	EncounterLevel60SapperOnly,
 	Race.RaceOrc,
 );
 export const PresetBuildLevel60Mutilate = level60Build(
@@ -905,6 +928,7 @@ export const PresetBuildLevel60Mutilate = level60Build(
 	GearLevel60SyntheticMutilate,
 	TalentsLevel60Mutilate,
 	ROTATION_PRESET_LEVEL60_MUTILATE,
+	EncounterLevel60SapperOnly,
 );
 export const PresetBuildLevel60Subtlety = level60Build(
 	'Level 60 Subtlety',
@@ -956,6 +980,7 @@ export const PresetBuildLevel60CombatSwordsHumanoid = humanoidBuild(
 	TalentsLevel60CombatSwordsHumanoid,
 	ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
 	Race.RaceSkyborneWindshaper,
+	EncounterLevel60SapperOnlyHumanoid,
 );
 export const PresetBuildLevel60SealFateSwordsHumanoid = humanoidBuild(
 	'Level 60 Seal Fate Swords',
@@ -963,12 +988,15 @@ export const PresetBuildLevel60SealFateSwordsHumanoid = humanoidBuild(
 	TalentsLevel60SealFateSwordsHumanoid,
 	ROTATION_PRESET_LEVEL60_SEAL_FATE_SWORDS,
 	Race.RaceOrc,
+	EncounterLevel60SapperOnlyHumanoid,
 );
 export const PresetBuildLevel60MutilateHumanoid = humanoidBuild(
 	'Level 60 Mutilate',
 	GearLevel60SyntheticMutilate,
 	TalentsLevel60MutilateHumanoid,
 	ROTATION_PRESET_LEVEL60_MUTILATE,
+	Race.RaceSkyborneWindshaper,
+	EncounterLevel60SapperOnlyHumanoid,
 );
 export const PresetBuildLevel60SubtletyHumanoid = humanoidBuild(
 	'Level 60 Subtlety',

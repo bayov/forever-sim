@@ -50,7 +50,7 @@
                   "id": 994111
                 },
                 {
-                  "id": 994112
+                  "id": 994120
                 },
                 {
                   "id": 994201
@@ -77,7 +77,6 @@
               "agilityElixir": "ElixirOfTheMongoose",
               "strengthBuff": "ElixirOfFerocity",
               "attackPowerBuff": "JujuMight",
-              "fillerExplosive": "ExplosiveGoblinLandMine",
               "mainHandImbue": "DenseSharpeningStone",
               "offHandImbue": "DenseSharpeningStone",
               "defaultPotion": "MajorFrenzyPotion",
