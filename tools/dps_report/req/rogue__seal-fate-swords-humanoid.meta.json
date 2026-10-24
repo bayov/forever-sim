@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_seal_fate_swords",
   "apl": "level60_seal_fate_swords",
   "published": {
-    "dps": 752.4,
-    "source": "Rogue regear round 2026-10-23: the 8% hit cap (the sets' wrists trade 10 hit rating for 20 attack power, Subtlety keeps its hit), the natural flasks, the wowsims/forever alignment round; 180 s, 20,000 iterations, seed 1 (was 701.7)"
+    "dps": 754.6,
+    "source": "Rogue hit and explosives round 2026-10-24: hit by sim for dual wielders (10% in all), explosives only when they gain (standards 4 and 11, 2026-10-23); 180 s, 20,000 iterations, seed 1 (was 752.4)"
   },
   "verify": {
-    "dps": 752.44,
+    "dps": 754.58,
     "stderr": 0.25,
     "iters": 20000,
     "ok": true,
-    "note": "sim of the request, 180s, seed 1 (rogue worker, 2026-10-23)"
+    "note": "sim of the request, 180s, seed 1 (rogue worker, 2026-10-24)"
   },
   "summary": "Seal Fate Swords with Murder 2/2, for a Humanoid or Giant boss.",
   "advantage": "Murder 2/2 adds 4% damage against Humanoids and Giants. It does nothing against other bosses.",
@@ -48,7 +48,7 @@
     "Slice and Dice at 1+ combo points when down; refresh at 5 when about to drop",
     "Blade Flurry on cooldown while Slice and Dice is up",
     "Cold Blood right before a 5-point Eviscerate",
-    "Thistle Tea at 10 energy or less; Sapper, Land Mine and potion while Slice and Dice is up",
+    "Thistle Tea at 10 energy or less; Sapper and potion while Slice and Dice is up",
     "Eviscerate at 4+ combo points (with Slice and Dice up, 79+ energy, or under 6s left); spend leftover points in the last 3s",
     "Sinister Strike right after a main-hand swing (0.5s), or at 79+ energy"
   ],
@@ -63,7 +63,6 @@
     "Major Frenzy Potion",
     "Thistle Tea",
     "Goblin Sapper Charge",
-    "Goblin Land Mine",
     "Deadly Poison (main hand) and Instant Poison (off hand), each beside a Dense Sharpening Stone"
   ],
   "caveats": [
@@ -71,7 +70,8 @@
     "No Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV). They would add 13 to 18.",
     "Grimstitch 4-piece and 5-piece aren't active (about +8 and +6).",
     "Natural flasks on (standards 11: Hyjal Summit or the Barrow Deeps).",
-    "Hit held at the 8% yellow cap (standards 4); the old 9% sets did 0.4 to 2.8 more through the white hits."
+    "10% hit (the wrist and the second ring carry 10 hit rating each): dual wielders take hit by sim (standards 4), and past the 8% yellow cap it still helps the white hits (+0.4 to +1.9 over 8%).",
+    "No Goblin Land Mine: its 1 sec cast resets the swing, and it doesn't gain here (standards 11, explosives only when they gain). The Sapper stays."
   ],
   "notes": "Request from mksettings with the same arguments as rogue__seal-fate-swords except talents, then the target's mobType set to MobTypeHumanoid, as the class preset's encounter does.",
   "encounter": "Humanoid",
