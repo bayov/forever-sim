@@ -27,6 +27,7 @@ func retSpec(shock bool) *specSetup {
 		},
 		// The consumes the level 60 search kept, each tried slot by slot on the synthetic Phase 1
 		// set at 180 and 300 sec (see the Level 60 consumes in ui/retribution_paladin/presets.ts).
+		// No filler explosive (standards 11): every one loses on every Ret build.
 		consumes: func() *proto.Consumes {
 			consumes := &proto.Consumes{
 				AgilityElixir:     proto.AgilityElixir_ElixirOfCunning,
@@ -34,7 +35,6 @@ func retSpec(shock bool) *specSetup {
 				DefaultPotion:     proto.Potions_DragonfirePotion,
 				DefaultConjured:   proto.Conjured_ConjuredDemonicRune,
 				DragonBreathChili: true,
-				FillerExplosive:   proto.Explosive_ExplosiveGoblinLandMine,
 				FirePowerBuff:     proto.FirePowerBuff_ElixirOfGreaterFirepower,
 				Flask:             proto.Flask_FlaskOfSupremePower,
 				Food:              proto.Food_FoodLobsterStew,

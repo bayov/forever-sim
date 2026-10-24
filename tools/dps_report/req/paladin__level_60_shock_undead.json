@@ -78,7 +78,6 @@
               "spellPowerBuff": "GreaterArcaneElixir",
               "shadowPowerBuff": "ElixirOfShadowPower",
               "firePowerBuff": "ElixirOfGreaterFirepower",
-              "fillerExplosive": "ExplosiveGoblinLandMine",
               "mainHandImbue": "ShadowOil",
               "defaultPotion": "MajorManaPotion",
               "defaultConjured": "ConjuredDemonicRune",
@@ -93,7 +92,7 @@
               "blessingOfWisdom": "TristateEffectImproved",
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "55003003201121251--05225230001",
+            "talentsString": "55003003201121251--05225030201",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Blacksmithing",
