@@ -34,7 +34,7 @@ func TestP1Shadow(t *testing.T) {
 	}))
 }
 
-var P1Talents = "00500501103-3-50052101231302251"
+var P1Talents = "00530400102-3-50052101231302251"
 
 var P1Consumes = core.ConsumesCombo{
 	Label: "Level60-Consumes",

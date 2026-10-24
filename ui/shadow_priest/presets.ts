@@ -5,6 +5,7 @@ import {
 	Consumes,
 	Debuffs,
 	Encounter,
+	Explosive,
 	FirePowerBuff,
 	Flask,
 	Food,
@@ -235,14 +236,21 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 // - Shadow 31: Shadow Focus 5, Improved Shadow Word: Pain, Improved Mind Blast 5, Mind Flay
 //   and Improved Mind Flay 2, Shadow Weaving 3, Devouring Contagion 2, Darkness 5, Shadowform.
 //   Shadow Affinity and a point of Shadow Reach only fill the rows (threat and range).
-// - Discipline 20: Twin Disciplines 5 (13 DPS), Mental Strength 5, Inner Focus (about 1).
-//   These were measured on the first synthetic set (more spell power), the searches on the
-//   final set end on the same build.
-//   Mental Agility, Meditation and the row 2 points fill the rows: mana never runs out.
+// - Discipline 15: Twin Disciplines 5 (13 DPS), Mental Strength (5 before Silent Resolve, now 4),
+//   Inner Focus (about 1). These were measured on the first synthetic set (more spell power),
+//   the searches on the final set end on the same build.
+//   Meditation and the row 2 points fill the rows (Mental Agility went for Silent Resolve).
 // - Early Demise 2 in place of 2 Mental Strength is 0.7 behind.
 // - The Power Infusion build loses Shadowform and is out of mana 107 sec in: 601 at 180 sec.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '00500501103-3-50052101231302251' }), {
-	tooltip: 'Level 60 talents from the talent search: deep Shadow with Twin Disciplines, Mental Strength, Inner Focus and Twilight Focus.',
+// - Silent Resolve 3 is a must-take (standards 26, 2026-10-23: threat, since Forever removed Shadow
+//   Affinity). The talent search with it pinned (`tools/rotopt -require silentResolve`, scored at
+//   120, 180 and 300 sec from two starts) pays for it with Mental Agility, a point of Mental
+//   Strength and a point of Meditation: 959.8 / 962.7 / 959.0 to 958.7 / 961.8 / 958.0 at 120 /
+//   180 / 300 sec (20000 iterations, seeds 1 and 1000003 within 0.4), a cost of 1.1 / 0.9 / 1.0.
+//   Taking all 3 points from Meditation instead costs 61 at 300 sec (mana), and the 180 sec search's
+//   Meditation 1 build costs 9.
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '00530400102-3-50052101231302251' }), {
+	tooltip: 'Level 60 talents from the talent search: deep Shadow with Twin Disciplines, Silent Resolve (threat), Mental Strength, Inner Focus and Twilight Focus.',
 	group: 'Level 60',
 });
 
@@ -304,7 +312,9 @@ export const DefaultOptions = Options.create({
 // iterations, 2026-10-12, before Inner Focus joined the build):
 // - Lobster Stew (28 spell damage under Forever) is 2.8 ahead of Nightfin Soup (22), which is
 //   7.9 ahead of Runn Tum Tuber Surprise and 3.1 ahead of Grilled Squid.
-// - Goblin Sapper Charge +3.7. A filler explosive takes a GCD and costs 4.
+// - Goblin Sapper Charge +3.7. A filler explosive takes a GCD and costs 4. Rechecked 2026-10-23
+//   (standards 11, 5000 iterations at 180 sec): the sapper is +4.6 on Shadow and +4.1 on Shadow +
+//   Holy, and every filler explosive costs them 5 to 8, so both take the sapper alone.
 // - Elixir of the Owl (25 Intellect, 2% crit) +16.4 over the Elixir of Wisdom, the Elixir of
 //   Greater Intellect only +2.8 (Arcane Brilliance is on). A character takes one of the five 2%
 //   crit elixirs (Mongoose, Grizzly, Owl, Sages, Whale); the Elixir of Sages on top of the Owl
@@ -442,6 +452,8 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 //   Night Elf 953.2 / 954.6 / 950.8
 //   Undead    951.8 / 954.6 / 950.9
 //   Gnome     949.4 / 952.4 / 948.4
+// The table is from before Silent Resolve (below), which costs every race about 1 DPS (Human
+// 958.7 / 961.8 / 958.0), so the order holds.
 // The talent and knob searches on this round's sim keep the build and the rotation. Client 70425 made Human's Ruthless 2% crit with any weapon (and spell), which puts Human ahead
 // of Undead's Touch of the Grave. Troll's Berserking only speeds up Mind Blast's cast, channels
 // and the GCD do not speed up, so it is worth nothing. Starshards and Chastise lose DPS (see the
@@ -506,10 +518,13 @@ export const PresetBuildLevel60Holy = PresetUtils.makePresetBuild('Level 60 + Ho
 // Elixir of Sages would add 6.4 but is a second crit elixir. Kreeg's Stout Beatdown is a Dire
 // Maul item, which the presets leave out like the full Arcanums; it would add -0.2 / +0.2 /
 // +0.9 at 120 / 180 / 300 sec. The Flask of Distilled Wisdom is 71 behind the Flask of Supreme
-// Power even here.
+// Power even here. The Goblin Sapper Charge is +5.0. A Goblin Land Mine on top (the Engineering
+// filler; the EZ-Thro Dark Bomb sims the same) is -1.6 / +0.4 / +2.7 at 120 / 180 / 300 sec
+// (20000 iterations, seeds 1 and 1000003 within 0.2, 2026-10-23), so it follows the 180 sec fight.
 export const ConsumesSmite = Consumes.create({
 	...DefaultConsumes,
 	defaultPotion: Potions.MajorManaPotion,
+	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
 	firePowerBuff: FirePowerBuff.ElixirOfGreaterFirepower,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
 	spiritElixir: SpiritElixir.ElixirOfGreaterSpirit,
