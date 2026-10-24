@@ -6,24 +6,24 @@
   "isDefault": false,
   "pr": 103,
   "race": "Human",
-  "talents": "011-0305003131221001351-0550005003",
+  "talents": "051-0305003131221001351-0550004",
   "treeNames": [
     "Affliction",
     "Demonology",
     "Destruction"
   ],
-  "gearSet": "level60_phase1_synthetic_demonology",
+  "gearSet": "level60_phase1_synthetic",
   "apl": "level60_demonology_duty_curse",
   "published": {
-    "dps": 1120.5,
-    "source": "warlock round 2026-10-23"
+    "dps": 1053.7,
+    "source": "warlock round 2026-10-24 (Suppression 5/5)"
   },
   "verify": {
-    "dps": 1120.53,
-    "stderr": 0.39,
+    "dps": 1053.71,
+    "stderr": 0.35,
     "iters": 20000,
     "ok": true,
-    "note": "+0.03 vs published"
+    "note": "+0.0 vs published"
   },
   "summary": "Keeps its own Curse of the Elements up for the raid, with the raid's copy off. Under Forever the curse has its own slot, so the bane stays.",
   "keyTalents": [
@@ -31,10 +31,10 @@
     "Demonic Sacrifice",
     "Master Demonologist",
     "Soul Link",
+    "Suppression",
     "Demonic Knowledge",
     "Improved Shadow Bolt",
-    "Ruin",
-    "Agonizing Flames"
+    "Ruin"
   ],
   "rotation": [
     "Pre-pull: Soul Link at -6s, Life Tap at -4.5s, Shadow Bolt at -2.5s (lands just after the pull)",
@@ -65,8 +65,8 @@
     "Major Spellstone (weapon imbue)"
   ],
   "caveats": [
+    "Takes Suppression 5/5 for its threat (standards 26), on the shared set at the 16% hit cap: 66.8 behind the old one point build on the hit set at 180 s.",
     "A bane and a curse use separate slots, so the duty curse costs only GCDs and mana.",
-    "Uses the Demonology hit gear (14% hit). Suppression 5/5 is 72 behind.",
     "Decimation's 3% is from the tooltip only.",
     "Demon shares and Succubus melee are wowsims/forever's, read on pet sheets at levels 20 and 30, not 60.",
     "Bane of Doom's coefficient is 4.0 (Era 1.0). At 2.0 Shadow Bolt builds lose about 4%, at 1.0 about 6%.",

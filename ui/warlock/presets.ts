@@ -83,22 +83,24 @@ export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 P
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game. Hit capped with Suppression 5/5.',
 	group: 'Level 60',
 });
-// Demonology keeps one point of Suppression, so it swaps four pieces (the chest, legs, waist and
-// staff) for hit variants (14% hit from gear) at the same budget, in Demonology's own stat mix:
-// Stamina 13.5%, Intellect 12.9%, Spirit 9.9%, spell power 36.4%, crit 12.1%, hit 15.1%. Suppression
-// 5/5 on the shared set is 72 behind (1038.0 against 1110.1 at 180 sec).
+// The old Demonology set, for the build with one point of Suppression: four pieces (the chest, legs, waist
+// and staff) swapped for hit variants (14% hit from gear) at the same budget, in Demonology's own stat
+// mix: Stamina 13.5%, Intellect 12.9%, Spirit 9.9%, spell power 36.4%, crit 12.1%, hit 15.1%. Since
+// 2026-10-24 Demonology takes Suppression 5/5 (standards 26, a threat talent it must take), which caps
+// it on the shared set; this set would put it 4% over the cap (1052.0 against 1065.1 at 180 sec).
+// No Level 60 preset wears it.
 export const GearLevel60Phase1SyntheticDemonology = PresetUtils.makePresetGear(
 	'Level 60 Phase 1 Synthetic Demonology',
 	Level60Phase1SyntheticDemonologyGearJSON,
 	{
-		tooltip: 'The synthetic Phase 1 set with four hit pieces, hit capped for Demonology (one point of Suppression).',
+		tooltip: 'The synthetic Phase 1 set with four hit pieces, hit capped for a Demonology build with one point of Suppression.',
 		group: 'Level 60',
 	},
 );
 
-export const GearPresets = [GearLevel60Phase1SyntheticDemonology, GearLevel60Phase1Synthetic, GearBlank, GearPreBis, GearMC];
+export const GearPresets = [GearLevel60Phase1Synthetic, GearLevel60Phase1SyntheticDemonology, GearBlank, GearPreBis, GearMC];
 
-export const DefaultGear = GearLevel60Phase1SyntheticDemonology;
+export const DefaultGear = GearLevel60Phase1Synthetic;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets
@@ -199,10 +201,16 @@ export const DefaultAPL = RotationLevel60Demonology;
 // moved to its Demonic Sacrifice build. A Demonic Sacrifice of the Imp with no demon out (the search
 // from 252-0050003201-055030500310035 and 2550102003520005-0050003201-055) is 31 behind on
 // Destruction and 84 on Affliction.
+// Since 2026-10-24 Demonology takes Suppression 5/5 (standards 26: its 20% less threat is a must, whatever
+// the sim says). The talent search with Suppression pinned (tools/rotopt -require suppression, on the
+// shared set, which it caps) took the three points from Agonizing Flames and one from Ruin, and put one
+// in Improved Corruption; the same for the curse duty build. Dropping Demonic Pact to keep Agonizing
+// Flames is 90 behind. Against the old one point build on its hit set (011-0305003131221001351-0550005003)
+// Suppression costs 67.1 / 68.1 / 66.2 at 120 / 180 / 300 sec (66.8 on curse duty at 180 sec).
 export const TalentsLevel60Demonology = PresetUtils.makePresetTalents(
 	'Level 60 Demonology',
-	SavedTalents.create({ talentsString: '011-0305003131221001351-0550005003' }),
-	{ group: 'Level 60', tooltip: 'Demonic Pact with Improved Shadow Bolt and Ruin.' },
+	SavedTalents.create({ talentsString: '051-0305003131221001351-0550004' }),
+	{ group: 'Level 60', tooltip: 'Demonic Pact with Suppression 5/5, Improved Shadow Bolt and Ruin.' },
 );
 // The best build with 30 points in Destruction: Conflagrate, Fire and Brimstone and Shadow and
 // Flame, with Pandemic and Malevolence from Affliction. Incinerate and Bane of Havoc lost to two
@@ -290,8 +298,11 @@ const PresetBuildOptionsSuccubus = {
 // behind Major Mana Potion. Under Forever the Spellstone is an imbue that stacks with an oil. The presets model
 // Forever's launch Phase 1, when no vanilla raid is open, so Brilliant Wizard Oil (a Zandalar
 // recipe) is out. Elixir of Greater Firepower is Forever's Elixir of Holy Power, so the plain
-// Elixir of Firepower takes the slot, for Immolate and Conflagrate. Goblin Land Mine (-7) and
-// Flask of Distilled Wisdom (-88) lost.
+// Elixir of Firepower takes the slot, for Immolate and Conflagrate. Flask of Distilled Wisdom (-88)
+// lost. Explosives are taken only when they gain (standards 11): on every preset (2026-10-24, 120 / 180
+// / 300 sec, both seed sets) the Goblin Sapper alone is ahead of none by 2.7 to 7.6, and adding any other
+// explosive (Dense Dynamite, Thorium Grenade, EZ-Thro Dark Bomb, Goblin Land Mine, their 1 sec cast in
+// place of a Shadow Bolt) costs 1.2 to 6.7; without the Sapper they lose 3.4 to 10.8 to none.
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorManaPotion,
@@ -419,7 +430,8 @@ export const EncounterLevel60 = level60Encounter('Level 60', DefaultDebuffs);
 export const EncounterLevel60CurseDuty = level60Encounter('Level 60 (Curse duty)', Debuffs.create({ ...DefaultDebuffs, curseOfElements: false }));
 
 // The Level 60 builds at 120 / 180 / 300 sec (20000 iterations, seed 1, 2026-10-23, the natural flask
-// zone, wowsims/forever's measured demon shares and melee): Demonology 1148.4 / 1133.2 / 1101.6,
+// zone, wowsims/forever's measured demon shares and melee): Demonology 1081.4 / 1065.1 / 1035.4 (with
+// Suppression 5/5 since 2026-10-24, was 1148.4 / 1133.2 / 1101.6),
 // Destruction 1018.8 / 1011.8 / 992.4, Affliction 1044.9 / 1035.3 / 1013.3, Destruction fire
 // 998.7 / 987.4 / 964.5, all Human (seed 1000003 within 0.9). Forever teaches no Ahn'Qiraj book ranks,
 // so Shadow Bolt is rank IX, Immolate VII and Corruption VI. The demons take no player buffs and scale
@@ -429,14 +441,14 @@ export const EncounterLevel60CurseDuty = level60Encounter('Level 60 (Curse duty)
 //
 // Races at 180 sec, both seed sets (standards 16: a switch needs a lead over 0.5 on both): the Human is
 // first on every build. Human Ruthless is 2% crit with every spell, and the demons take it from the
-// warlock. Demonology 15.9 / 15.7 ahead of the Gnome and 4.3 / 3.8 of the Orc, Destruction 3.2 / 3.1 of
+// warlock. Demonology 13.3 / 13.5 ahead of the Gnome and 3.1 / 2.6 of the Orc (with Suppression 5/5), Destruction 3.2 / 3.1 of
 // the Orc, Affliction 3.2 / 3.2 of the Orc. Destruction fire is a tie with the Orc (0.1 / 0.0), so it
 // stays Human. The best Horde race is the Orc on every build. The full table is in
 // forever-wiki/sim-status.md.
 export const PresetBuildLevel60Demonology = PresetUtils.makePresetBuild('Level 60 Demonology', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Human Demonology warlock on the synthetic Phase 1 gear, the Imp sacrificed and the Succubus out, in a 3 minute raid fight.',
-	gear: GearLevel60Phase1SyntheticDemonology,
+	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60Demonology,
 	rotation: RotationLevel60Demonology,
 	encounter: EncounterLevel60,

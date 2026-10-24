@@ -72,7 +72,8 @@ import (
 //	Hit        100    10.8      at the cap (SoD 6.4)
 //	Crit        96    10.4      11.2 (table 12.0)
 //
-// Demonology's set (level60_phase1_synthetic_demonology, the four hit pieces at the end of the list in
+// Demonology's old set (level60_phase1_synthetic_demonology, for its one point of Suppression; no Level 60 preset
+// wears it since Demonology took Suppression 5/5 on 2026-10-24 (standards 26); the four hit pieces at the end of the list in
 // place of the chest, legs, waist and staff): armor 710.2, staff 193.6, wand 21.3, 392 spell power, 119
 // Intellect, 125 Stamina, 92 Spirit, 112 crit rating (8.0%) and 140 hit rating (14%):
 //

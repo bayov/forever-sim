@@ -23,7 +23,7 @@
                   "id": 997004
                 },
                 {
-                  "id": 997016,
+                  "id": 997005,
                   "enchant": 1254966
                 },
                 {
@@ -35,10 +35,10 @@
                   "enchant": 1254966
                 },
                 {
-                  "id": 997018
+                  "id": 997008
                 },
                 {
-                  "id": 997017,
+                  "id": 997009,
                   "enchant": 1254966
                 },
                 {
@@ -58,7 +58,7 @@
                   "id": 997022
                 },
                 {
-                  "id": 997019,
+                  "id": 997020,
                   "enchant": 1219580
                 },
                 {},
@@ -86,7 +86,7 @@
               "blessingOfKings": true,
               "blessingOfWisdom": "TristateEffectImproved"
             },
-            "talentsString": "011-0305003131221001351-0550005003",
+            "talentsString": "051-0305003131221001351-0550004",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Tailoring",

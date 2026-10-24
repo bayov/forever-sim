@@ -36,7 +36,7 @@ func warlockSuite(t *testing.T, talents string, gear string, apl string, label s
 }
 
 func TestWarlockDemonology(t *testing.T) {
-	warlockSuite(t, TalentsDemonology, "level60_phase1_synthetic_demonology", "level60_demonology", "Demonology Warlock", DemonologyWarlock)
+	warlockSuite(t, TalentsDemonology, "level60_phase1_synthetic", "level60_demonology", "Demonology Warlock", DemonologyWarlock)
 }
 
 func TestWarlockDestruction(t *testing.T) {
@@ -52,7 +52,7 @@ func TestWarlockDestructionFire(t *testing.T) {
 }
 
 // Forever tree (tools/forever_talents/client/warlock.json).
-var TalentsDemonology = "011-0305003131221001351-0550005003"
+var TalentsDemonology = "051-0305003131221001351-0550004"
 var TalentsDestruction = "255000000351--055030500310035"
 var TalentsAffliction = "2550102003520005--0550305003"
 var TalentsDestructionFire = "252-0050003201-0050345003101351"

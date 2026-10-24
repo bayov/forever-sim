@@ -8,6 +8,11 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks settled: 70338 trait curves] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Level 60 presets: Suppression on Demonology and the explosives (2026-10-24)
+
+- Demonology takes Suppression 5/5 (standards 26: a threat talent every warlock build must take, the other builds already did). The talent search with it pinned (`tools/rotopt -require suppression`) on the shared set, which it caps at 16% spell hit, gives `051-0305003131221001351-0550004` for Demonology and its curse duty build: Agonizing Flames' three points and one of Ruin went to Suppression, and one to Improved Corruption. Keeping Agonizing Flames by dropping Demonic Pact is 90 behind, and the old Demonology hit set would put it 4% over the cap (13 behind). Suppression costs 67.1 / 68.1 / 66.2 at 120 / 180 / 300 sec (Demonology 1081.4 / 1065.1 / 1035.4, curse duty 1063.8 / 1053.7 / 1026.5); Demonology is still the best warlock build.
+- Explosives only when they gain (standards 11): the Goblin Sapper alone stays on every build (2.7 to 7.6 ahead of none at 120 / 180 / 300 sec on both seed sets); every other explosive costs 1.2 to 6.7 on top of it, its 1 sec cast taking a Shadow Bolt's place.
+
 ## Level 60 presets after the wowsims/forever alignment (2026-10-23)
 
 The demons now take wowsims/forever's measured stat shares and melee (about 4% less on every build), so the sim's Level 60 presets were searched again (talents, rotation knobs, demon and sacrifice choices, races, consumes); [sim-status.md](../sim-status.md) has the numbers.
