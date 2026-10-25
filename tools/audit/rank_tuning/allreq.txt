@@ -19,7 +19,6 @@ mage__arcane
 mage__fire
 mage__frost
 mage__frostfire
-paladin__level_60-duty-crusader
 paladin__level_60
 paladin__level_60_shock-duty-crusader
 paladin__level_60_shock

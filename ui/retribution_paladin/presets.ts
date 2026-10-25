@@ -720,19 +720,9 @@ export const EncounterLevel60ShockCrusaderDuty = PresetUtils.makePresetEncounter
 // 969.4 / 969.0 / 959.9 (-12.8 / -8.6 / -5.5), Shock 974.4 / 960.9 / 923.5 (-13.7 / -10.5 /
 // -7.0). Shock pays more: its pull Judgement goes on the Crusader instead of Righteousness and it
 // has to put Seal of Righteousness back up.
-export const PresetBuildLevel60CrusaderDuty = PresetUtils.makePresetBuild('Level 60 (Crusader duty)', {
-	group: 'Level 60',
-	tooltip: 'Level 60 Human that keeps Judgement of the Crusader on the boss for the raid.',
-	gear: GearLevel60Phase1SyntheticCrusaderDuty,
-	talents: TalentsLevel60,
-	rotation: APLLevel60CrusaderDuty,
-	encounter: EncounterLevel60CrusaderDuty,
-	race: Race.RaceHuman,
-	level: 60,
-	bonusTalentPoints: 0,
-	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
-	options: DefaultOptions,
-});
+// Level 60 (Crusader duty), the twist build's duty copy, was its own build until 2026-10-24 (user
+// ruling): its talent search with Pursuit of Justice pinned moved to the sub Holy side and tied the
+// sub Holy duty build below, so it went. The sub Holy duty build keeps the twist duty rotation.
 export const PresetBuildLevel60SubHolyCrusaderDuty = PresetUtils.makePresetBuild('Level 60 (sub Holy, Crusader duty)', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Human with the sub Holy talents that keeps Judgement of the Crusader on the boss for the raid.',

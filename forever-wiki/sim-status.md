@@ -280,6 +280,7 @@ Retribution, the "Level 60" build (2026-10-12): Undead, the synthetic Phase 1 se
   | Level 60 Shock (Crusader duty) | 877.9 / 871.5 / 847.8 | 1.6 to 2.1 |
   | Level 60 (sub Holy, vs Undead) | 1055.6 / 1050.8 / 1032.8 | 4.1 |
   | Level 60 Shock (vs Undead) | 985.0 / 968.4 / 938.0 | 2.2 to 2.8 |
+- Level 60 (Crusader duty), the twist build's duty copy, is gone (user ruling 2026-10-24): with Pursuit of Justice pinned its talent search moved to the sub Holy side and tied Level 60 (sub Holy, Crusader duty), 942.8 at 180 sec (the twist duty talents were 938.6). One Ret build per playstyle keeps the duty: sub Holy (on the twist duty rotation) and Shock. Its request (`paladin__level_60-duty-crusader`) is gone too.
 - Open: Holy Strike's formula, Seal of Righteousness's spell power (once per the tooltip since 2026-10-16; it decides Righteousness against Command), one Echo at a time (since 2026-10-23, wowsims/forever's reading) and how Light's Vigil treats a Holy Shock that misses (see notes.md).
 
 ### Hunter

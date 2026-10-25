@@ -617,7 +617,7 @@ These were pending when added; c3c8167f20 (2026-10-16) gave them their knobs. `l
 
 ### `pal_soc_ppm` (added 2026-10-16 by the assumptions audit)
 
-- **Builds:** the twisting presets (Level 60, sub Holy, their Crusader duty copies, vs Undead and sub Holy vs Undead). The Shock builds never use Seal of Command.
+- **Builds:** the twisting presets (Level 60, sub Holy, the sub Holy Crusader duty copy and sub Holy vs Undead; the vs Undead twist build and the twist Crusader duty copy went on 2026-10-24). The Shock builds never use Seal of Command.
 - **Sim now:** 7 procs a minute with a 1 sec cooldown (`SealOfCommandPPM`, `sim/paladin/soc.go`).
 - **Source:** the client (1.60.1.70425, the aura options of 20375 and 20915 to 20920) gives the aura a 100% chance on melee hits, a 1 sec recovery and no procs-per-minute entry, so the server's script sets the rate, as in Classic. Classic and Season of Discovery use 7 a minute. No Forever beta log has counted the procs.
 - **Settings:** Low 5 a minute, Expected 7 (Classic), High 9. Low and High are a symmetric bracket two procs either side, not measurements.
