@@ -31,3 +31,6 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-10-21 18:48 | consumables | pass 39 | master 599f9de74 | quiet | Client 70450 -> 70532: 0 consumable changes; scan clean
 2026-10-21 18:48 | mechanics | pass 35 | master 599f9de74 | quiet | 70532 tables byte-identical to 70450; verdicts hold
 2026-10-21 18:48 | client_update | pass 1 | master 599f9de74 | 2 new findings | 70532 identical to 70450; Champion of the Light and mage Frost hotfixes unconfirmed
+2026-10-25 00:49 | rotations | pass 29 | master 15f953ddef | quiet | no new findings
+2026-10-25 00:49 | mechanics | pass 36 | master 15f953ddef | quiet | no new findings
+2026-10-25 00:49 | fairness | pass 3 | master 15f953ddef | quiet | no new findings
