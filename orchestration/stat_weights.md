@@ -7,10 +7,10 @@ Measured on the merged build of all nine class branches (heads as of 2026-10-13 
 | Druid · Balance Wrath | Spell power |  |  | 0.20 | -0.00 | 0.00 |  | 0.00 | 0.95 | 0.74 |
 | Druid · Balance | Spell power |  |  | 0.27 | 0.00 | 0.14 |  | 0.00 | 1.05 | 0.77 |
 | Druid · Feral cat | Attack power | 2.47 | 2.51 |  |  |  |  | 0.03 | 2.01 | 1.85 |
-| Hunter · Beast Mastery | Ranged attack power |  | 3.07 | 1.10 |  |  |  | 0.00 | 4.05 | 2.99 |
-| Hunter · Lone Wolf | Ranged attack power |  | 2.94 | 1.10 |  |  |  | 0.00 | 3.15 | 2.50 |
-| Hunter · Marksmanship | Ranged attack power |  | 3.01 | 1.11 |  |  |  | 0.00 | 3.57 | 2.77 |
-| Hunter · Survival (melee) | Attack power | 1.10 | 2.20 |  |  |  |  | 2.09 | 4.38 | 2.74 |
+| Hunter · Beast Mastery (2026-10-25) | Ranged attack power |  | 3.19 | 1.19 |  |  |  | 0.00 | 4.77 | 3.08 |
+| Hunter · Lone Wolf (2026-10-25) | Ranged attack power |  | 2.95 | 1.77 |  |  |  | 0.00 | 3.88 | 2.47 |
+| Hunter · Marksmanship (2026-10-25) | Ranged attack power |  | 3.06 | 1.71 |  |  |  | 0.00 | 4.45 | 2.84 |
+| Hunter · Survival (melee) (2026-10-25) | Attack power | 1.10 | 2.31 |  |  |  |  | 1.92 | 4.48 | 2.80 |
 | Mage · Arcane | Spell power |  |  | 0.29 | 0.08 | 0.11 |  | 0.03 | 1.55 | 0.81 |
 | Mage · Fire | Spell power |  |  | 0.54 | 0.17 | 0.44 |  | 1.51 | 1.67 | 1.03 |
 | Mage · Frost | Spell power |  |  | 0.18 | -0.00 | 0.00 |  | 0.02 | 1.55 | 0.70 |
@@ -40,5 +40,7 @@ Measured on the merged build of all nine class branches (heads as of 2026-10-13 
 | Warrior · Arms | Attack power | 2.17 | 1.38 |  |  |  |  | 0.07 | 4.66 | 1.87 |
 | Warrior · Fury Dual Wield | Attack power | 2.21 | 1.58 |  |  |  |  | 2.20 | 4.08 | 2.17 |
 | Warrior · Fury Two-Hand | Attack power | 2.20 | 1.50 |  |  |  |  | 0.08 | 4.91 | 1.95 |
+
+The four hunter rows were measured again on 2026-10-25 with `tools/dps_report/weights.py` (180 s, seed 1, paired, 5,000 to 40,000 iterations) on that day's presets, after the hunter's crit per Agility became Classic's at 60 (Forever's PlayerExpectedStat; it was 22% more). In DPS a point: Beast Mastery ranged attack power 0.216, Agility 0.689, Intellect 0.257, crit 9.30 a 1% (0.664 a rating point), losing 1% hit 10.30; Marksmanship 0.249, 0.763, 0.425, 9.91 (0.708), 11.08; Lone Wolf 0.283, 0.835, 0.502, 9.80 (0.700), 10.97; Survival attack power 0.236, Strength 0.259, Agility 0.546, crit 9.24 (0.660), hit +1% 4.54 (its dual wield white hits), losing 1% 10.57. At the standards 1b prices Agility is still the ranged specs' best stat a budget point (Beast Mastery 0.689 against crit 0.664 and ranged attack power 0.54); Survival's best is crit (0.660 against Agility's 0.546), but moving the 3 share points the 5a tolerance allows from Agility to crit gains only +3.0 / +2.8 (0.3%) at 180 s on seeds 1 and 1000003, so the sets stay as they are.
 
 Raw per-point DPS, standard errors and the per-1% values are in the dashboard (Spec detail, Stat weights).

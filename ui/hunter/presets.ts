@@ -118,8 +118,11 @@ export const DefaultGear = GearLevel60Ranged;
 // on cooldown. The knob searches (last 2026-10-23, at 120 / 180 / 300 sec on the gear for the 8% hit
 // cap): all three put Arcane Shot above Aimed Shot with no mana floor on it or on Serpent Sting
 // (Beast Mastery +4.4, Serpent Sting last). Marksmanship and Lone Wolf cast Serpent Sting after
-// Aimed Shot, Aimed Shot only above 40% mana, and Sniper Shot while the mana covers 10 a second of the
-// fight left.
+// the shared cooldown's shot and Sniper Shot while the mana covers 10 a second of the fight left.
+// Since the hunter's crit per Agility became Classic's at 60 (2026-10-25) they put Multi-Shot on the
+// cooldown it shares with Aimed Shot: Marksmanship +2.9 / +1.8 / +1.2 at 120 / 180 / 300 sec, Lone
+// Wolf +1.7 / +1.6 / +1.2 (20000 iterations, seed 1; seed 1000003 +3.3 / +2.2 / +0.8 and +0.5 / +2.6
+// / +1.5). Beast Mastery keeps Aimed Shot; the other knobs held.
 // The ranged rotations melee weave from 12 yd: between Auto Shots the hunter walks in for a main hand
 // swing with Raptor Strike queued, when that holds the next Auto Shot back 1.2 sec or less and the
 // shot cooldowns stay down meanwhile (Beast Mastery +9.5 over standing at range). Marksmanship and
@@ -143,7 +146,7 @@ export const APLBeastMastery = PresetUtils.makePresetAPLRotation('Beast Mastery'
 });
 export const APLMarksmanship = PresetUtils.makePresetAPLRotation('Marksmanship', MarksmanshipAPL, {
 	tooltip:
-		'Arcane Shot, Aimed Shot above 40% mana, Serpent Sting when down, and Sniper Shot while the mana lasts the fight, Rapid Fire on cooldown.' +
+		'Arcane Shot, Multi-Shot, Serpent Sting when down, and Sniper Shot while the mana lasts the fight, Rapid Fire on cooldown.' +
 		manaWeaveTooltip +
 		markTooltip,
 	group: 'Level 60',
@@ -189,7 +192,10 @@ export const DefaultAPL = APLBeastMastery;
 // The talent searches (tools/rotopt -talent-search, a hill climb) ran on the synthetic sets in
 // the mksettings raid at 180 sec, from several starting builds per spec, on 2026-10-12, and last
 // on the standards 1b gear with its trinkets (2026-10-13), where every build held, and again on
-// 2026-10-23 on the gear for the 8% hit cap, where Lone Wolf and Survival held.
+// 2026-10-23 on the gear for the 8% hit cap, where Lone Wolf and Survival held. On 2026-10-25, after
+// the hunter's crit per Agility became Classic's at 60 (Agility-scaling talents like Lightning
+// Reflexes worth less), every build held at 180 sec (Survival's one move, a Resourcefulness point to
+// Efficiency, was a mana tie-break at the same DPS, and Survival never runs low on mana).
 //
 // Beast Mastery 31/20: Bestial Wrath, Frenzy 4, Ferocity, Unleashed Fury, Focused Fire and
 // Deadly Aspects, and Careful Aim, Lethal Attacks, Improved Arcane Shot 3, Improved Stings 2 and
@@ -442,23 +448,28 @@ export const EncounterLevel60Melee = PresetUtils.makePresetEncounter('Level 60 M
 
 // The numbers are without the Ahn'Qiraj book ranks (Aspect of the Hawk 5, Serpent Sting 8) and
 // with the shared raid buff caps (Grace of Air 77, Strength of Earth 42, Battle Shout 115).
-// Races (2026-10-23, the gear for the 8% hit cap and the talents and rotations above, 20000
-// iterations at 120 / 180 / 300 sec on seeds 1 and 1000003, forever-wiki/sim-status.md has the
-// table): no racial depends on the weapon. Beast Mastery is best as a Human (Ruthless's 2% crit
-// reaches its weave swings and, through the hunter's melee crit, the pet), 3.7 ahead of the Orc and 5.0
-// of the Windshaper at 180 sec. The Windshaper is best for Marksmanship and Lone Wolf (Wind Blessed's
-// 3% haste), 1.6 and 1.7 ahead of the High Order. For Survival the Human is best at 180 and 300 sec,
-// 0.8 and 2.2 ahead of the Orc, which leads by 1.9 at 120 sec. With the Wildstalker Armor 4
+// Races (2026-10-25, at Classic's crit per Agility and Forever's race base stats of that day, the
+// talents and rotations above, 20000 iterations at 120 / 180 / 300 sec on seeds 1 and 1000003,
+// forever-wiki/sim-status.md has the table): no racial depends on the weapon. Beast Mastery is best as
+// a Human (Ruthless's 2% crit reaches its weave swings and, through the hunter's melee crit, the pet),
+// 4.2 / 3.7 ahead of the Orc, the best Horde race, at 180 sec. Marksmanship moves from the Windshaper
+// to the Human, 3.0 / 2.9 ahead at 180 sec (5.3 / 1.0 at 120 / 300 sec); the Windshaper and the Orc
+// tie for the best Horde race. Lone Wolf keeps the Windshaper: the Human and the High Order tie it
+// (the Human +0.1 / -0.6 at 180 sec), and the Orc is 1.8 / 2.2 behind. For Survival the Human is best
+// at 180 and 300 sec, 0.5 / 0.9 and 2.2 / 2.2 ahead of the Orc, which leads by 1.9 / 1.3 at 120 sec.
+// With the Wildstalker Armor 4
 // and 5 piece bonuses on top of the 2 piece (the presets carry the 2 piece only, as every class
 // does), Lone Wolf would gain 17, Marksmanship 13, Beast Mastery 1 and Survival nothing, with the
 // rotations re-tuned for the shorter Aimed Shot cooldown (measured on the 2026-10-12 gear, before
 // standards 1b and its trinkets).
 const professions: [Profession, Profession] = [OtherDefaults.profession1, OtherDefaults.profession2];
 
-// 1176.5 / 1171.5 / 1157.9 at 120 / 180 / 300 sec (20000 iterations, seed 1, 2026-10-25), the class's
-// best at 180 sec: a Human, Mortal Shots 5 for Trueshot Aura, and Arcane Shot first with no mana
-// floors. Its own Hunter's Mark (standards 23) costs 0.4 / 0.5 / 1.4 against the raid's mark. It was
-// 1151.4 / 1145.6 / 1124.3 on the Windshaper before the 2026-10-23 round.
+// 1146.5 / 1141.6 / 1128.3 at 120 / 180 / 300 sec (20000 iterations, seed 1; seed 1000003 1146.0 /
+// 1141.3 / 1128.2; 2026-10-25, Classic's crit per Agility at 60), the class's best at 180 sec, 2.2
+// ahead of Marksmanship: a Human, Mortal Shots 5 for Trueshot Aura, and Arcane Shot first with no mana
+// floors. Its own Hunter's Mark (standards 23) cost 0.4 / 0.5 / 1.4 against the raid's mark. It was
+// 1176.5 / 1171.5 / 1157.9 with 22% more crit per Agility than Classic, and 1151.4 / 1145.6 / 1124.3
+// on the Windshaper before the 2026-10-23 round.
 export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Beast Mastery', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Beast Mastery on the synthetic Phase 1 ranged gear with a 1.0 sec cat, in a 3 minute raid fight.',
@@ -470,9 +481,12 @@ export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Bea
 	professions,
 	options: DefaultOptions,
 });
-// 1183.5 / 1166.1 / 1137.3 at 120 / 180 / 300 sec (20000 iterations, 2026-10-25), 5.4 behind
-// Beast Mastery at 180 sec; its own Hunter's Mark costs 1.3 / 1.4 / 2.9 against the raid's (1176.2 /
-// 1145.7 / 1108.4 before the 8% hit cap gear, Efficiency 5 and the mana-gated weave).
+// 1157.9 / 1139.4 / 1109.0 at 120 / 180 / 300 sec (20000 iterations, seed 1; seed 1000003 1157.6 /
+// 1139.2 / 1109.0; 2026-10-25), 2.2 behind Beast Mastery at 180 sec, on a Human with Multi-Shot on the
+// shared cooldown. At Classic's crit per Agility the Windshaper with Aimed Shot read 1151.5 / 1134.6 /
+// 1106.5 (1183.5 / 1166.1 / 1137.3 with 22% more crit per Agility). Its own Hunter's Mark cost 1.3 /
+// 1.4 / 2.9 against the raid's (1176.2 / 1145.7 / 1108.4 before the 8% hit cap gear, Efficiency 5 and
+// the mana-gated weave).
 export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Marksmanship', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Marksmanship on the synthetic Phase 1 ranged gear with a 1.0 sec cat, in a 3 minute raid fight.',
@@ -480,13 +494,15 @@ export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Mar
 	talents: TalentsMarksmanship,
 	rotation: APLMarksmanship,
 	encounter: EncounterLevel60,
-	race: Race.RaceSkyborneWindshaper,
+	race: Race.RaceHuman,
 	professions,
 	options: DefaultOptions,
 });
-// 1172.9 / 1156.8 / 1119.3 at 120 / 180 / 300 sec (20000 iterations, 2026-10-25): Lone Wolf's 20% is
-// 9.3 behind a cat at 180 sec (it was 1166.0 / 1139.5 / 1101.8 before the 2026-10-23 round). Its own
-// Hunter's Mark costs 1.3 / 2.5 / 3.5 against the raid's. Holds up in a 5 minute fight with Sniper Shot
+// 1142.8 / 1127.0 / 1089.9 at 120 / 180 / 300 sec (20000 iterations, seed 1; seed 1000003 1141.6 /
+// 1127.6 / 1090.1; 2026-10-25), with Multi-Shot on the shared cooldown (1141.1 / 1125.3 / 1088.7 with
+// Aimed Shot at Classic's crit per Agility, 1172.9 / 1156.8 / 1119.3 with 22% more): Lone Wolf's 20% is
+// 12.4 behind a cat at 180 sec (it was 1166.0 / 1139.5 / 1101.8 before the 2026-10-23 round). Its own
+// Hunter's Mark cost 1.3 / 2.5 / 3.5 against the raid's. Holds up in a 5 minute fight with Sniper Shot
 // and the weave held back for mana.
 export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wolf', {
 	group: 'Level 60',
@@ -499,9 +515,10 @@ export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wo
 	professions,
 	options: LoneWolfOptions,
 });
-// 1063.0 / 1055.0 / 1047.8 at 120 / 180 / 300 sec in the mksettings raid (Human, 20000 iterations,
-// 2026-10-25); its own Hunter's Mark costs 1.2 / 1.5 / 1.6 against the raid's. The rotation walks in
-// before the pull, so starting at 25 yards in the UI costs nothing.
+// 1033.1 / 1025.2 / 1018.6 at 120 / 180 / 300 sec in the mksettings raid (Human, 20000 iterations,
+// seed 1; seed 1000003 1032.8 / 1025.2 / 1018.3; 2026-10-25, Classic's crit per Agility at 60; 1063.0 /
+// 1055.0 / 1047.8 with 22% more); its own Hunter's Mark cost 1.2 / 1.5 / 1.6 against the raid's. The
+// rotation walks in before the pull, so starting at 25 yards in the UI costs nothing.
 export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Survival', {
 	group: 'Level 60',
 	tooltip: 'Level 60 melee Survival on the synthetic Phase 1 Survival gear, in a 3 minute raid fight with a melee group.',
