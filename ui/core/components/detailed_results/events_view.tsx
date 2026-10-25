@@ -18,7 +18,7 @@ import { SessionStrip } from './session_strip.js';
 import { levelingZoomPresets, Timeline, zoomPresets, ZoomSpan } from './timeline.js';
 
 // Pulls is a leveling session's table of pulls, and only shows in a leveling run.
-type EventsFormat = 'timeline' | 'chart' | 'log' | 'pulls' | 'replay';
+export type EventsFormat = 'timeline' | 'chart' | 'log' | 'pulls' | 'replay';
 // 'new' is the iteration we ran with Sim 1 iteration, after the run. 'died' is a leveling
 // run's session with the most deaths.
 export type IterationKind = 'typical' | 'lucky' | 'unlucky' | 'died' | 'new';
@@ -65,6 +65,12 @@ export interface EventsViewConfig extends ResultComponentConfig {
 	iterationTooltips?: Partial<Record<IterationKind, string>>;
 	// Called when we pick another iteration, like the DPS Report's aura bars that follow it.
 	onIterationChange?: (kind: IterationKind) => void;
+	// The format to open on until we pick one (the pick is remembered). The timeline by default;
+	// the DPS Report opens on the replay.
+	defaultFormat?: EventsFormat;
+	// Where the pick is remembered, so a page with its own default keeps its own pick. The sim
+	// UI's key by default.
+	formatStorageKey?: string;
 }
 
 // One iteration of the run, event by event. We can look at it as a timeline, a chart or a log,
@@ -83,6 +89,7 @@ export class EventsView extends ResultComponent {
 	private leveling = false;
 
 	private format: EventsFormat = 'timeline';
+	private readonly formatStorageKey: string;
 	private iteration: IterationKind = 'typical';
 	// The SimResult of each iteration of the latest run. The typical one is the run's own result.
 	private iterationResults = new Map<IterationKind, Promise<SimResult>>();
@@ -125,8 +132,10 @@ export class EventsView extends ResultComponent {
 		config.rootCssClass = 'events-view-root';
 		super(config);
 
+		if (config.defaultFormat) this.format = config.defaultFormat;
+		this.formatStorageKey = config.formatStorageKey ?? FORMAT_STORAGE_KEY;
 		try {
-			const stored = window.localStorage.getItem(FORMAT_STORAGE_KEY) as EventsFormat | null;
+			const stored = window.localStorage.getItem(this.formatStorageKey) as EventsFormat | null;
 			if (stored && formats.some(f => f.format == stored)) this.format = stored;
 		} catch {
 			// The format is a convenience, the view works without it.
@@ -390,7 +399,7 @@ export class EventsView extends ResultComponent {
 	private setFormat(format: EventsFormat) {
 		this.format = format;
 		try {
-			window.localStorage.setItem(FORMAT_STORAGE_KEY, format);
+			window.localStorage.setItem(this.formatStorageKey, format);
 		} catch {
 			// See the constructor.
 		}
