@@ -1,60 +1,59 @@
 {
-  "updated": "2026-10-17",
-  "note": "Every class PR through #114 is merged into master. The report data in ui/dps_report was re-simmed in full on 2026-10-17 (sims on 787da848, provenance recorded at 1735382c for all 66 builds) after Salvation in every request (#108), the raid's Flametongue Totem and the Enhancement rotation and talents (#109 to #112, #114), BM (#110) and Ret vs Undead (#111). Use `node tools/dps_report/stale.mjs` to see what's stale. On 2026-10-17 the long-running orchestrator, class workers and auditor sessions were retired; read orchestration/handoff_orchestrator.md for open threads and working rules.",
-  "foreverClientBuild": "1.60.1.70450 (spells, talents, racials and enchants identical to 70425)",
-  "coordinationBranch": {
-    "name": "claude/wow-forever-dps-presets-m9u15h",
-    "head": "1e1d201af"
-  },
-  "classBranches": {
-    "warrior": "521f02e4a",
-    "paladin": "958bb4828",
-    "hunter": "18665d787",
-    "rogue": "f8696df90",
-    "priest": "d9485d107",
-    "shaman": "787da848b",
-    "mage": "5029a15b1",
-    "warlock": "dbaddacc2",
-    "druid": "7b56acd5a"
-  },
-  "consumesBranch": {
-    "name": "claude/wow-forever-dps-presets-m9u15h-consumes",
-    "head": "c613ab10f"
-  },
-  "openItems": [
-    "Gnome Eureka! spell mask (forever_class_changes G1, minor, shared racials_forever.go)",
-    "APL duration x fractional constant truncates to 0 (sim/core/apl_values_operators.go)",
-    "Beta measurements wanted: Rage (orchestration/followups.md 'Rage needs a beta test'), Shadow Oil proc damage above 61",
-    "mksettings gives the Smite build the generic shadow consumes, not ConsumesSmite (rotation auditor note; only matters when reproducing Smite from mksettings)",
-    "orchestration/rank_tuning.md: 9 doc-only commits on the coordination branch (head 1e1d201af) not yet on master",
-    "Fairness auditor: the user's call on the mage_ice_lance_coef Low range (never asked); parked: hunter end-of-fight gate (+0.7), Mutilate window (+0.8), hunter pre-pull Auto Shot bug (shared code)"
-  ],
-  "merged": {
-    "date": "2026-10-13",
-    "prs": {
-      "#10": "shared sim changes (consumes branch, head c613ab10f)",
-      "#11": "coordination docs, tools/dps_report, this skill (head 877c3fc45)",
-      "#7": "shaman",
-      "#13": "skill merge steps, Wowhead dataEnv 16, standards 21",
-      "#15": "integration of priest, warlock, paladin, hunter, mage, druid, rogue (#1 #2 #3 #5 #6 #8 #9)",
-      "#4": "warrior",
-      "#16": "in-repo DPS report: final data, special encounters, generic-boss races",
-      "#17": "assumption picker, oil_proc_damage, skill for the in-repo report",
-      "#18": "warrior rotation audit pass 14",
-      "#19": "warrior report data after #18, warrior potion-notes fix"
-    }
-  },
-  "report": {
-    "source": "ui/dps_report/",
-    "artifact": "https://claude.ai/artifact/RUzPysb5dSk2RAXzXij4oR",
-    "artifactVersion": 6,
-    "publishedFrom": "master 776726e76 (concise tooltips)",
-    "legacyDashboard": "deleted 2026-10-13"
-  },
-  "reportArtifact": {
-    "url": "https://claude.ai/artifact/RUzPysb5dSk2RAXzXij4oR",
-    "version": 35,
-    "publishedFrom": "437b92161",
-    "date": "2026-10-17"
+ "updated": "2026-10-25",
+ "note": "Alignment round with wowsims/forever (orchestration/alignment_round_2026-10-23.md) plus the per-class regear and rotation round (class_worker_round_2026-10-23.md) are on master at 22fca46e70 (via claude/keen-brown-o2g32n). The report was re-simmed in full for all 64 builds at e8a8b50d55 (data 23b89b17a2, 0 stale at master) and published as artifact version 36 on 2026-10-25. Two Ret builds were removed (level_60_undead, level_60-duty-crusader). Standards 4, 11 and 26 were updated on 2026-10-23..25 (dual-wield hit by sim, explosives only when they gain, must-take talents).",
+ "foreverClientBuild": "1.60.1.70450 (spells, talents, racials and enchants identical to 70425)",
+ "coordinationBranch": {
+  "name": "claude/wow-forever-dps-presets-m9u15h",
+  "head": "1e1d201af"
+ },
+ "classBranches": {
+  "warrior": "521f02e4a",
+  "paladin": "958bb4828",
+  "hunter": "18665d787",
+  "rogue": "f8696df90",
+  "priest": "d9485d107",
+  "shaman": "787da848b",
+  "mage": "5029a15b1",
+  "warlock": "dbaddacc2",
+  "druid": "7b56acd5a"
+ },
+ "consumesBranch": {
+  "name": "claude/wow-forever-dps-presets-m9u15h-consumes",
+  "head": "c613ab10f"
+ },
+ "openItems": [
+  "Forever pets should take unflagged party totems (Mana Spring; wowsims/forever b4e9d673bd, d065ccb94c), about 0 DPS",
+  "Intermittent 'send on closed channel' panic in sim/core/simsignals (bulksim.go getRankedResults ~280-290)",
+  "DPS report events view at phone width clips the Typical/Lucky/Unlucky row",
+  "Still open, need a log: rage k at level 60, 1% spell miss floor, extra attacks vs swing timer, Eviscerate AP share, Maelstrom Weapon rate (two weak data points), race stat offsets, and the rest in alignment_round_2026-10-23.md 'Still open'",
+  "APL duration x fractional constant truncates to 0 (sim/core/apl_values_operators.go)"
+ ],
+ "merged": {
+  "date": "2026-10-13",
+  "prs": {
+   "#10": "shared sim changes (consumes branch, head c613ab10f)",
+   "#11": "coordination docs, tools/dps_report, this skill (head 877c3fc45)",
+   "#7": "shaman",
+   "#13": "skill merge steps, Wowhead dataEnv 16, standards 21",
+   "#15": "integration of priest, warlock, paladin, hunter, mage, druid, rogue (#1 #2 #3 #5 #6 #8 #9)",
+   "#4": "warrior",
+   "#16": "in-repo DPS report: final data, special encounters, generic-boss races",
+   "#17": "assumption picker, oil_proc_damage, skill for the in-repo report",
+   "#18": "warrior rotation audit pass 14",
+   "#19": "warrior report data after #18, warrior potion-notes fix"
   }
+ },
+ "report": {
+  "source": "ui/dps_report/",
+  "artifact": "https://claude.ai/artifact/RUzPysb5dSk2RAXzXij4oR",
+  "artifactVersion": 6,
+  "publishedFrom": "master 776726e76 (concise tooltips)",
+  "legacyDashboard": "deleted 2026-10-13"
+ },
+ "reportArtifact": {
+  "url": "https://claude.ai/artifact/RUzPysb5dSk2RAXzXij4oR",
+  "version": 36,
+  "publishedFrom": "22fca46e70",
+  "date": "2026-10-25"
+ }
 }
