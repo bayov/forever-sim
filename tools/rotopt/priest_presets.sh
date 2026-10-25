@@ -7,12 +7,9 @@
 # The settings, talent and knob searches behind the Level 60 presets:
 #
 #   go run --tags=with_db ./tools/rotopt/mksettings -spec shadow -gear level60_phase1_synthetic \
-#       -apl level60 -talents 00530400102-3-50052101231302251 -race Human -duration 180 -out sp.json
-#   go run --tags=with_db ./tools/rotopt -template priest_shadow -settings sp.json -durs 120,180,300 \
-#       -talent-search -require silentResolve -iters 3000 -confirm-iters 20000
-#
-# (Silent Resolve is a must-take, standards 26. The talent search scores all three lengths since
-# 2026-10-23: at 180 sec alone it takes Meditation down to 1, which costs 9 DPS at 300 sec.)
+#       -apl level60 -talents 00500501103-3-50052101231302251 -race Human -duration 180 -out sp.json
+#   go run --tags=with_db ./tools/rotopt -template priest_shadow -settings sp.json -durs 180 \
+#       -talent-search -iters 3000 -confirm-iters 20000
 #   go run --tags=with_db ./tools/rotopt -template priest_shadow -settings sp.json -durs 120,180,300 \
 #       -iters 3000 -confirm-iters 20000
 #

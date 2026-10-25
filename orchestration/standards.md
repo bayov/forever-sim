@@ -155,8 +155,7 @@ The rules every class follows so the specs' Level 60 numbers compare fairly. New
    - Retribution paladin: Pursuit of Justice 2 (movement speed).
    - Feral druid: Feral Swiftness 2 (movement speed).
    - Balance druid: Subtlety 3 (Forever's version cuts Nature and Arcane threat).
-   - Shadow priest (the pure Shadow build): Silent Resolve 3 (threat; Forever removed Shadow Affinity). Not required on Shadow + Holy, which has no Discipline points (user ruling the same day).
    - Enhancement shaman: Spirit Weapons (threat), kept pinned.
    - Warlock Demonology: Suppression 5 (the other warlock builds already take it).
    - Mage: the school threat talents its builds already take (Arcane Subtlety, Burning Soul, Frost Channeling).
-   Not required (considered the same day): Elemental Natural Grace, Smite Silent Resolve, Ret Shock Instrument of Law, rogue Improved Sprint / Endurance / Elusiveness, mage Ice Block, Enhancement Improved Ghost Wolf.
+   Not required (considered the same day): Elemental Natural Grace, Smite Silent Resolve, Ret Shock Instrument of Law, rogue Improved Sprint / Endurance / Elusiveness, mage Ice Block, Enhancement Improved Ghost Wolf. Shadow priest Silent Resolve (user ruling 2026-10-24, reversing the 2026-10-23 must-take): Forever's Silent Resolve cuts only Holy spell threat, so on the pure Shadow build it lowers no threat and costs about 1 DPS. Shadow + Holy and Smite never took it.

@@ -236,21 +236,17 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 // - Shadow 31: Shadow Focus 5, Improved Shadow Word: Pain, Improved Mind Blast 5, Mind Flay
 //   and Improved Mind Flay 2, Shadow Weaving 3, Devouring Contagion 2, Darkness 5, Shadowform.
 //   Shadow Affinity and a point of Shadow Reach only fill the rows (threat and range).
-// - Discipline 15: Twin Disciplines 5 (13 DPS), Mental Strength (5 before Silent Resolve, now 4),
-//   Inner Focus (about 1). These were measured on the first synthetic set (more spell power),
-//   the searches on the final set end on the same build.
-//   Meditation and the row 2 points fill the rows (Mental Agility went for Silent Resolve).
+// - Discipline 20: Twin Disciplines 5 (13 DPS), Mental Strength 5, Inner Focus (about 1).
+//   These were measured on the first synthetic set (more spell power), the searches on the
+//   final set end on the same build.
+//   Mental Agility, Meditation and the row 2 points fill the rows: mana never runs out.
 // - Early Demise 2 in place of 2 Mental Strength is 0.7 behind.
 // - The Power Infusion build loses Shadowform and is out of mana 107 sec in: 601 at 180 sec.
-// - Silent Resolve 3 is a must-take (standards 26, 2026-10-23: threat, since Forever removed Shadow
-//   Affinity). The talent search with it pinned (`tools/rotopt -require silentResolve`, scored at
-//   120, 180 and 300 sec from two starts) pays for it with Mental Agility, a point of Mental
-//   Strength and a point of Meditation: 959.8 / 962.7 / 959.0 to 958.7 / 961.8 / 958.0 at 120 /
-//   180 / 300 sec (20000 iterations, seeds 1 and 1000003 within 0.4), a cost of 1.1 / 0.9 / 1.0.
-//   Taking all 3 points from Meditation instead costs 61 at 300 sec (mana), and the 180 sec search's
-//   Meditation 1 build costs 9.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '00530400102-3-50052101231302251' }), {
-	tooltip: 'Level 60 talents from the talent search: deep Shadow with Twin Disciplines, Silent Resolve (threat), Mental Strength, Inner Focus and Twilight Focus.',
+// - Silent Resolve is not taken (user ruling 2026-10-24, standards 26): Forever's version cuts
+//   only Holy spell threat, so on this build it lowers no threat, and Silent Resolve 3 costs
+//   about 1 DPS (the 2026-10-23 must-take build 00530400102 was 958.7 / 961.8 / 958.0).
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '00500501103-3-50052101231302251' }), {
+	tooltip: 'Level 60 talents from the talent search: deep Shadow with Twin Disciplines, Mental Strength, Inner Focus and Twilight Focus.',
 	group: 'Level 60',
 });
 
@@ -452,8 +448,6 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 //   Night Elf 953.2 / 954.6 / 950.8
 //   Undead    951.8 / 954.6 / 950.9
 //   Gnome     949.4 / 952.4 / 948.4
-// The table is from before Silent Resolve (below), which costs every race about 1 DPS (Human
-// 958.7 / 961.8 / 958.0), so the order holds.
 // The talent and knob searches on this round's sim keep the build and the rotation. Client 70425 made Human's Ruthless 2% crit with any weapon (and spell), which puts Human ahead
 // of Undead's Touch of the Grave. Troll's Berserking only speeds up Mind Blast's cast, channels
 // and the GCD do not speed up, so it is worth nothing. Starshards and Chastise lose DPS (see the
