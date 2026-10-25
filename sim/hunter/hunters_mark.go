@@ -4,10 +4,9 @@ import (
 	"github.com/wowsims/classic/sim/core"
 )
 
-// Hunter's Mark as the hunter's own cast, for the presets on Hunter's Mark duty (standards 23):
-// they switch the raid's Hunter's Mark debuff off and keep the mark up themselves, a global
-// cooldown and the mana each time. The base presets take the mark from the raid's debuff and
-// never cast it. Under Forever the mark is the same one the debuff gives (core.ForeverHuntersMarkAura),
+// Hunter's Mark as the hunter's own cast. Every level 60 preset keeps up its own (standards 23,
+// user ruling 2026-10-25: Mark duty is assumed): it switches the raid's Hunter's Mark debuff off and
+// keeps the mark up itself, a global cooldown and the mana each time. Under Forever the mark is the same one the debuff gives (core.ForeverHuntersMarkAura),
 // 2 min long; rank 4 is 60 mana (client 14325, wowhead's Forever data).
 func (hunter *Hunter) registerHuntersMarkSpell() {
 	levels := [5]int32{0, 6, 22, 40, 58}

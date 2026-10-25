@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_ranged",
   "apl": "mm",
   "published": {
-    "dps": 1167.6,
-    "source": "Regear and rotation round (branch claude/keen-brown-o2g32n-hunter, 2026-10-23): the 8% hit cap gear, re-searched talents and rotations, race sweep (was 1045.3)"
+    "dps": 1166.2,
+    "source": "Hunter ruling 2026-10-25 (standards 23: Mark duty assumed, every hunter keeps up its own Hunter's Mark and the raid's is off; was 1167.6)"
   },
   "verify": {
-    "dps": 1167.59,
+    "dps": 1166.15,
     "stderr": 0.26,
     "iters": 20000,
     "ok": true,
-    "note": "180s, seed 1; seed 1000003 gives 1167.7"
+    "note": "180s, seed 1; seed 1000003 gives 1165.6"
   },
   "summary": "Marksmanship with a cat instead of Lone Wolf. The pet deals about 16% of the damage.",
   "keyTalents": [
@@ -37,8 +37,9 @@
     "Focused Fire"
   ],
   "rotation": [
-    "Pre-pull: Aspect of the Hawk at -3s, walk to 12 yd, Rapid Fire at -0.1s",
+    "Pre-pull: Aspect of the Hawk at -3s, walk to 12 yd, Hunter's Mark at -1.5s, Rapid Fire at -0.1s",
     "Rapid Fire, racials, potions and Demonic Rune on cooldown",
+    "Hunter's Mark (rank 4, +143 ranged attack power) 1.5s before the pull and again in its last 3s; the raid's mark is off",
     "Arcane Shot on cooldown (above Aimed Shot, no mana floor)",
     "Aimed Shot on the cooldown it shares with Multi-Shot (mana >= 40%)",
     "Serpent Sting when it is down (after Aimed Shot)",
@@ -67,10 +68,11 @@
     "Arcane Shot takes 10% of ranged attack power and Serpent Sting 3% a tick (beta log fit: 11% and 3.5%).",
     "Auto Shot fires through casts and winds up 0.5s, which moving cancels.",
     "Wildstalker Armor 4-piece and 5-piece aren't active. They would add 13.",
-    "Holds Sniper Shot and the weave back for mana; 1140.2 DPS at 300s.",
+    "Holds Sniper Shot and the weave back for mana; 1137.3 DPS at 300s.",
     "Assumed: 22% more crit per Agility than Classic.",
     "Pet hits scale with attack speed, as a level 17 pet sheet shows. A 1.0s raptor would add about 2 (Savage Rend), but none that fast is known.",
-    "A 2.5s bow at Rhok'delar's 44.0 DPS. A 2.6s gun sims 0.3 to 1.0 higher with a 15% ammo pouch, 3.4 to 5.2 lower with Era's 14% pouch."
+    "A 2.5s bow at Rhok'delar's 44.0 DPS. A 2.6s gun sims 0.3 to 1.0 higher with a 15% ammo pouch, 3.4 to 5.2 lower with Era's 14% pouch.",
+    "Mark duty is assumed: the hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs about 0.5 to 2.5 DPS at 180s (1.4 here)."
   ],
-  "notes": "Request written by mksettings (spec hunter_mm, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions."
+  "notes": "Request written by mksettings (spec hunter_mm, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Every hunter keeps up its own Hunter's Mark (standards 23, Mark duty assumed), so the raid's debuffs.huntersMark is off."
 }

@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_ranged",
   "apl": "lw_scorpid",
   "published": {
-    "dps": 1059.3,
-    "source": "Regear and rotation round (branch claude/keen-brown-o2g32n-hunter, 2026-10-23): the 8% hit cap gear, re-searched talents and rotations, race sweep (was 992.5)"
+    "dps": 1057.9,
+    "source": "Hunter ruling 2026-10-25 (standards 23: Mark duty assumed, every hunter keeps up its own Hunter's Mark and the raid's is off; was 1059.3)"
   },
   "verify": {
-    "dps": 1059.34,
+    "dps": 1057.86,
     "stderr": 0.29,
     "iters": 20000,
     "ok": true,
-    "note": "180s, seed 1; seed 1000003 gives 1059.0"
+    "note": "180s, seed 1; seed 1000003 gives 1057.5"
   },
   "summary": "Marksmanship with Lone Wolf (+20% damage with no pet out). It beats a cat because a Forever pet takes no player buffs.",
   "keyTalents": [
@@ -37,12 +37,14 @@
     "Ranged Weapon Specialization"
   ],
   "rotation": [
-    "Pre-pull: Aspect of the Hawk at -3s, Rapid Fire at -0.1s",
+    "Pre-pull: Aspect of the Hawk at -3s, walk to 12 yd, Hunter's Mark at -1.5s, Rapid Fire at -0.1s",
     "Rapid Fire, racials, potions and Demonic Rune on cooldown",
-    "Arcane Shot on cooldown (above Aimed Shot, no mana floor)",
-    "Aimed Shot on the cooldown it shares with Multi-Shot",
+    "Hunter's Mark (rank 4, +143 ranged attack power) 1.5s before the pull and again in its last 3s; the raid's mark is off",
     "Scorpid Sting (2% off the boss's hit, 9% of base mana) at the pull and again in its last 2s, in place of Serpent Sting; the raid's Scorpid Sting is off",
-    "Sniper Shot on cooldown while mana >= 15 x seconds left",
+    "Arcane Shot on cooldown (above Aimed Shot, no mana floor)",
+    "Aimed Shot on the cooldown it shares with Multi-Shot (mana >= 40%)",
+    "Sniper Shot on cooldown while mana >= 10 x seconds left",
+    "Melee weave: between Auto Shots, walk in for a main hand swing with Raptor Strike queued when the next Auto Shot waits 1.2s or less and the shot cooldowns stay down, while mana >= 25 x seconds left",
     "Auto Shot throughout; no pet"
   ],
   "consumes": [
@@ -68,10 +70,11 @@
     "Rapid Killing never triggers on a single boss.",
     "Assumed: 22% more crit per Agility than Classic.",
     "A 2.5s bow at Rhok'delar's 44.0 DPS. A 2.6s gun sims 0.3 to 1.0 higher with a 15% ammo pouch, 3.4 to 5.2 lower with Era's 14% pouch.",
-    "Costs 96.9 / 95.5 / 77.1 DPS vs Lone Wolf at 120s / 180s / 300s, mostly Serpent Sting's damage.",
-    "The sting only lowers the boss's hit by 2%. It adds no raid damage."
+    "Costs 109.3 / 98.9 / 71.4 DPS vs Lone Wolf at 120s / 180s / 300s, mostly Serpent Sting's damage.",
+    "The sting only lowers the boss's hit by 2%. It adds no raid damage.",
+    "Mark duty is assumed: the hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs about 0.5 to 2.5 DPS at 180s."
   ],
-  "notes": "Request is hunter__lone-wolf's with the rotation swapped for ui/hunter/apls/lw_scorpid.apl.json (tools/rotopt/hunter_presets.sh) and debuffs.scorpidSting removed; mksettings writes the same raid as spec hunter_lw_scorpid. Request written by mksettings (spec hunter_lw, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Pet set to none (petType omitted = PetNone).",
+  "notes": "Request is hunter__lone-wolf's with the rotation swapped for ui/hunter/apls/lw_scorpid.apl.json (tools/rotopt/hunter_presets.sh) and debuffs.scorpidSting and debuffs.huntersMark removed (it keeps up its own Hunter's Mark, standards 23); mksettings writes the same raid as spec hunter_lw_scorpid. Request written by mksettings (spec hunter_lw, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Pet set to none (petType omitted = PetNone).",
   "duty": "Scorpid Sting",
   "baseBuild": "hunter__lone-wolf"
 }

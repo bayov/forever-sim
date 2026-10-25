@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_ranged",
   "apl": "bm",
   "published": {
-    "dps": 1172.0,
-    "source": "Regear and rotation round (branch claude/keen-brown-o2g32n-hunter, 2026-10-23): the 8% hit cap gear, re-searched talents and rotations, race sweep (was 970.7)"
+    "dps": 1171.5,
+    "source": "Hunter ruling 2026-10-25 (standards 23: Mark duty assumed, every hunter keeps up its own Hunter's Mark and the raid's is off; was 1172.0)"
   },
   "verify": {
-    "dps": 1172.0,
-    "stderr": 0.21,
+    "dps": 1171.48,
+    "stderr": 0.22,
     "iters": 20000,
     "ok": true,
-    "note": "180s, seed 1; seed 1000003 gives 1172.4"
+    "note": "180s, seed 1; seed 1000003 gives 1171.9"
   },
   "summary": "Beast Mastery with a cat: Bestial Wrath, Frenzy and Unleashed Fury, melee weaving between Auto Shots. The pet deals about 28% of the damage.",
   "keyTalents": [
@@ -37,8 +37,9 @@
     "Mortal Shots"
   ],
   "rotation": [
-    "Pre-pull: Aspect of the Hawk at -3s, walk to 12 yd, Rapid Fire at -0.1s",
+    "Pre-pull: Aspect of the Hawk at -3s, walk to 12 yd, Hunter's Mark at -1.5s, Rapid Fire at -0.1s",
     "Bestial Wrath (0s and 120s), Rapid Fire, racials, Sapper and potions on cooldown",
+    "Hunter's Mark (rank 4, +143 ranged attack power) 1.5s before the pull and again in its last 3s; the raid's mark is off",
     "Arcane Shot on cooldown, above Aimed Shot (no mana floor)",
     "Aimed Shot on the cooldown it shares with Multi-Shot",
     "Sniper Shot on cooldown",
@@ -71,7 +72,8 @@
     "Major Frenzy Potion is 25.7 behind Major Mana Potion at 180s.",
     "Assumed: 22% more crit per Agility than Classic.",
     "A 2.5s bow at Rhok'delar's 44.0 DPS. A 2.6s gun sims 0.3 to 1.0 higher with a 15% ammo pouch, 3.4 to 5.2 lower with Era's 14% pouch.",
-    "Pet hits scale with attack speed, as a level 17 pet sheet shows. A 1.0s raptor would add about 2.5 (Savage Rend), but none that fast is known."
+    "Pet hits scale with attack speed, as a level 17 pet sheet shows. A 1.0s raptor would add about 2.5 (Savage Rend), but none that fast is known.",
+    "Mark duty is assumed: the hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs about 0.5 to 2.5 DPS at 180s (0.5 here)."
   ],
-  "notes": "Request written by mksettings (spec hunter_bm, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions."
+  "notes": "Request written by mksettings (spec hunter_bm, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Every hunter keeps up its own Hunter's Mark (standards 23, Mark duty assumed), so the raid's debuffs.huntersMark is off."
 }

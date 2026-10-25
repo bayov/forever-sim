@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic_ranged",
   "apl": "bm_scorpid",
   "published": {
-    "dps": 1076.5,
-    "source": "Regear and rotation round (branch claude/keen-brown-o2g32n-hunter, 2026-10-23): the 8% hit cap gear, re-searched talents and rotations, race sweep (was 881.8)"
+    "dps": 1076.4,
+    "source": "Hunter ruling 2026-10-25 (standards 23: Mark duty assumed, every hunter keeps up its own Hunter's Mark and the raid's is off; was 1076.5)"
   },
   "verify": {
-    "dps": 1076.49,
+    "dps": 1076.43,
     "stderr": 0.21,
     "iters": 20000,
     "ok": true,
@@ -37,13 +37,15 @@
     "Mortal Shots"
   ],
   "rotation": [
-    "Pre-pull: Aspect of the Hawk at -3s, Rapid Fire at -0.1s",
+    "Pre-pull: Aspect of the Hawk at -3s, walk to 12 yd, Hunter's Mark at -1.5s, Rapid Fire at -0.1s",
     "Bestial Wrath (0s and 120s), Rapid Fire, racials, Sapper and potions on cooldown",
+    "Hunter's Mark (rank 4, +143 ranged attack power) 1.5s before the pull and again in its last 3s; the raid's mark is off",
     "Scorpid Sting (2% off the boss's hit, 9% of base mana) at the pull and again in its last 4s, in place of Serpent Sting; the raid's Scorpid Sting is off",
     "Aimed Shot on the cooldown it shares with Multi-Shot",
     "Sniper Shot on cooldown",
     "Arcane Shot on cooldown (mana >= 20%)",
-    "Cat (1.0s) bites and claws on cooldown, Frenzy up about 178 of 180s; Auto Shot throughout"
+    "Melee weave: between Auto Shots, walk in for a main hand swing with Raptor Strike queued when the next Auto Shot waits 1.2s or less and the shot cooldowns stay down",
+    "Cat (1.0s) bites and claws on cooldown; Auto Shot throughout"
   ],
   "consumes": [
     "Flask of Natural Aggression",
@@ -70,11 +72,12 @@
     "Major Frenzy Potion is 25.7 behind Major Mana Potion at 180s.",
     "Assumed: 22% more crit per Agility than Classic.",
     "A 2.5s bow at Rhok'delar's 44.0 DPS. A 2.6s gun sims 0.3 to 1.0 higher with a 15% ammo pouch, 3.4 to 5.2 lower with Era's 14% pouch.",
-    "Costs 81.4 / 82.2 / 82.3 DPS vs Beast Mastery at 120s / 180s / 300s, mostly Serpent Sting's damage.",
+    "Costs 95.6 / 95.1 / 91.5 DPS vs Beast Mastery at 120s / 180s / 300s, mostly Serpent Sting's damage.",
     "The sting only lowers the boss's hit by 2%. It adds no raid damage.",
-    "Pet hits scale with attack speed, as a level 17 pet sheet shows. A 1.0s raptor would add about 2.5 (Savage Rend), but none that fast is known."
+    "Pet hits scale with attack speed, as a level 17 pet sheet shows. A 1.0s raptor would add about 2.5 (Savage Rend), but none that fast is known.",
+    "Mark duty is assumed: the hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs about 0.5 to 2.5 DPS at 180s."
   ],
-  "notes": "Request is hunter__beast-mastery's with the rotation swapped for ui/hunter/apls/bm_scorpid.apl.json (tools/rotopt/hunter_presets.sh) and debuffs.scorpidSting removed; mksettings writes the same raid as spec hunter_bm_scorpid. Request written by mksettings (spec hunter_bm, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions.",
+  "notes": "Request is hunter__beast-mastery's with the rotation swapped for ui/hunter/apls/bm_scorpid.apl.json (tools/rotopt/hunter_presets.sh) and debuffs.scorpidSting and debuffs.huntersMark removed (it keeps up its own Hunter's Mark, standards 23); mksettings writes the same raid as spec hunter_bm_scorpid. Request written by mksettings (spec hunter_bm, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions.",
   "duty": "Scorpid Sting",
   "baseBuild": "hunter__beast-mastery"
 }

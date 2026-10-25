@@ -72,12 +72,11 @@ func (hunterRanged) Knobs() []Knob {
 		// costs no use. Only a fight long enough for a third trinket use sees a difference.
 		{Name: "holdRapid", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "holdElune", Default: 0, Min: 0, Max: 1, Step: 1},
-		// Hunter's Mark duty (standards 23): the hunter keeps the mark up itself, with the raid's
-		// Hunter's Mark debuff off in the request. The base presets leave it to the raid.
-		{Name: "mark", Default: 0, Min: 0, Max: 1, Step: 1},
-		// Seconds before the pull the duty casts the mark, 0 not before the pull. Hunter's Mark doesn't
-		// pull, so it may go up before it (standards 23, user ruling 2026-10-15).
-		{Name: "markPrepull", Default: 0, Min: 0, Max: 3, Step: 0.5},
+		// Every hunter keeps its own Hunter's Mark up (standards 23, user ruling 2026-10-25: Mark duty
+		// is assumed), with the raid's Hunter's Mark debuff off in the request. Seconds before the
+		// pull it casts the mark, 0 not before the pull. Hunter's Mark doesn't pull, so it may go up
+		// before it (user ruling 2026-10-15); 1.5 sec is after the pre-pull Aspect's global cooldown.
+		{Name: "markPrepull", Default: 1.5, Min: 0, Max: 3, Step: 0.5},
 		// Scorpid Sting duty (standards 23): Scorpid Sting kept up in the sting slot in place of
 		// Serpent Sting, with the raid's Scorpid Sting off.
 		{Name: "scorpid", Default: 0, Min: 0, Max: 1, Step: 1},
@@ -138,9 +137,7 @@ func (hunterRanged) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(nightElfElunesLight, alignedWith(nightElfElunesLight, hunterRangedOnUse), "Elune's Light with the on-use trinket, unless waiting would cost a use."))
 	}
 	items = append(items, autocastOtherCooldowns(nil, "Rapid Fire, Bestial Wrath, racials, trinkets and potions on cooldown."))
-	if k["mark"] == 1 {
-		items = append(items, hunterMarkDuty())
-	}
+	items = append(items, hunterMark())
 	// One sting a hunter: on Scorpid Sting duty it takes Serpent Sting's place.
 	serpentOn := k["serpent"] == 1 && k["scorpid"] == 0
 	if k["scorpid"] == 1 {
@@ -205,7 +202,7 @@ func (hunterRanged) Build(k Knobs) *proto.APLRotation {
 		})
 	}
 	rot.PrepullActions = append(rot.PrepullActions, prepull(hunterAspectOfTheHawk, 3))
-	if k["mark"] == 1 && k["markPrepull"] > 0 {
+	if k["markPrepull"] > 0 {
 		rot.PrepullActions = append(rot.PrepullActions, prepull(hunterHuntersMark, k["markPrepull"]))
 	}
 	if k["rapidPrepull"] == 1 {
@@ -222,12 +219,12 @@ func hunterMul(lhs, rhs value) value {
 	return &proto.APLValue{Value: &proto.APLValue_Math{Math: &proto.APLValueMath{Op: proto.APLValueMath_OpMul, Lhs: lhs, Rhs: rhs}}}
 }
 
-// hunterMarkDuty keeps the hunter's own Hunter's Mark on the target: the first global cooldown
-// after the pull when it didn't go up before it (markPrepull), then again in the last 3 sec of its
-// 2 min.
-func hunterMarkDuty() *proto.APLListItem {
+// hunterMark keeps the hunter's own Hunter's Mark on the target (standards 23: every hunter keeps
+// up its own mark, the raid's is off): the first global cooldown after the pull when it didn't go up
+// before it (markPrepull), then again in the last 3 sec of its 2 min.
+func hunterMark() *proto.APLListItem {
 	return cast(hunterHuntersMark, lt(targetAuraRemainingTime(hunterHuntersMark), seconds(3)),
-		"Hunter's Mark duty: the mark at the pull and again before it drops (the raid's mark is off).")
+		"Hunter's Mark at the pull and again before it drops (every hunter keeps up its own; the raid's is off).")
 }
 
 // hunterScorpidDuty keeps the hunter's own Scorpid Sting on the target: the first global cooldown

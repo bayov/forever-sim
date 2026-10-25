@@ -2,12 +2,14 @@
     "type": "TypeAPL",
     "prepullActions": [
         {"action":{"move":{"rangeFromTarget":{"const":{"val":"0"}}}},"doAtValue":{"const":{"val":"-6s"}}},
-        {"action":{"castSpell":{"spellId":{"spellId":1299447}}},"doAtValue":{"const":{"val":"-3s"}}}
+        {"action":{"castSpell":{"spellId":{"spellId":1299447}}},"doAtValue":{"const":{"val":"-3s"}}},
+        {"action":{"castSpell":{"spellId":{"spellId":14325}}},"doAtValue":{"const":{"val":"-1.5s"}}}
     ],
     "priorityList": [
         {"action":{"condition":{"not":{"val":{"inMeleeRange":{}}}},"move":{"rangeFromTarget":{"const":{"val":"0"}}}},"notes":"Walk into melee range when the fight starts at range."},
         {"action":{"castSpell":{"spellId":{"spellId":1299447}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":1299447}}}}}},"notes":"Aspect of the Beast if it ever drops."},
         {"action":{"autocastOtherCooldowns":{}},"notes":"Rapid Fire, racials, trinkets and potions on cooldown."},
+        {"action":{"castSpell":{"spellId":{"spellId":14325}},"condition":{"cmp":{"lhs":{"auraRemainingTime":{"auraId":{"spellId":14325},"sourceUnit":{"type":"CurrentTarget"}}},"op":"OpLt","rhs":{"const":{"val":"3s"}}}}},"notes":"Hunter's Mark at the pull and again before it drops (every hunter keeps up its own; the raid's is off)."},
         {"action":{"castSpell":{"spellId":{"spellId":14271}}},"notes":"Mongoose Bite whenever Expose Prey or a dodge opens it."},
         {"action":{"castSpell":{"spellId":{"spellId":1317257}}},"notes":"Strider Kick on cooldown, with the talent."},
         {"action":{"castSpell":{"spellId":{"spellId":14305}},"condition":{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGe","rhs":{"const":{"val":"0.3"}}}}},"notes":"Immolation Trap at the hunter's feet on cooldown."},

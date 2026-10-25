@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_ranged",
   "apl": "lw",
   "published": {
-    "dps": 1159.3,
-    "source": "Regear and rotation round (branch claude/keen-brown-o2g32n-hunter, 2026-10-23): the 8% hit cap gear, re-searched talents and rotations, race sweep (was 1094.1)"
+    "dps": 1156.8,
+    "source": "Hunter ruling 2026-10-25 (standards 23: Mark duty assumed, every hunter keeps up its own Hunter's Mark and the raid's is off; was 1159.3)"
   },
   "verify": {
-    "dps": 1159.29,
+    "dps": 1156.78,
     "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "180s, seed 1; seed 1000003 gives 1158.8"
+    "note": "180s, seed 1; seed 1000003 gives 1156.6"
   },
   "summary": "Marksmanship with Lone Wolf (+20% damage with no pet out). It beats a cat because a Forever pet takes no player buffs.",
   "keyTalents": [
@@ -37,8 +37,9 @@
     "Ranged Weapon Specialization"
   ],
   "rotation": [
-    "Pre-pull: Aspect of the Hawk at -3s, walk to 12 yd, Rapid Fire at -0.1s",
+    "Pre-pull: Aspect of the Hawk at -3s, walk to 12 yd, Hunter's Mark at -1.5s, Rapid Fire at -0.1s",
     "Rapid Fire, racials, potions and Demonic Rune on cooldown",
+    "Hunter's Mark (rank 4, +143 ranged attack power) 1.5s before the pull and again in its last 3s; the raid's mark is off",
     "Arcane Shot on cooldown (above Aimed Shot, no mana floor)",
     "Aimed Shot on the cooldown it shares with Multi-Shot (mana >= 40%)",
     "Serpent Sting when it is down (after Aimed Shot)",
@@ -68,7 +69,8 @@
     "Wildstalker Armor 4-piece and 5-piece aren't active. They would add 17.",
     "Rapid Killing never triggers on a single boss.",
     "Assumed: 22% more crit per Agility than Classic.",
-    "A 2.5s bow at Rhok'delar's 44.0 DPS. A 2.6s gun sims 0.3 to 1.0 higher with a 15% ammo pouch, 3.4 to 5.2 lower with Era's 14% pouch."
+    "A 2.5s bow at Rhok'delar's 44.0 DPS. A 2.6s gun sims 0.3 to 1.0 higher with a 15% ammo pouch, 3.4 to 5.2 lower with Era's 14% pouch.",
+    "Mark duty is assumed: the hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs about 0.5 to 2.5 DPS at 180s (2.5 here)."
   ],
-  "notes": "Request written by mksettings (spec hunter_lw, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Pet set to none (petType omitted = PetNone)."
+  "notes": "Request written by mksettings (spec hunter_lw, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Every hunter keeps up its own Hunter's Mark (standards 23, Mark duty assumed), so the raid's debuffs.huntersMark is off. Pet set to none (petType omitted = PetNone)."
 }

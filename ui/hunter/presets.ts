@@ -36,19 +36,15 @@ import {
 import { SavedTalents } from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import BeastMasteryAPL from './apls/bm.apl.json';
-import BeastMasteryMarkAPL from './apls/bm_mark.apl.json';
 import BeastMasteryScorpidAPL from './apls/bm_scorpid.apl.json';
 import BeastMasteryTurretAPL from './apls/bm_turret.apl.json';
 import LoneWolfAPL from './apls/lw.apl.json';
-import LoneWolfMarkAPL from './apls/lw_mark.apl.json';
 import LoneWolfScorpidAPL from './apls/lw_scorpid.apl.json';
 import LoneWolfTurretAPL from './apls/lw_turret.apl.json';
 import MarksmanshipAPL from './apls/mm.apl.json';
-import MarksmanshipMarkAPL from './apls/mm_mark.apl.json';
 import MarksmanshipScorpidAPL from './apls/mm_scorpid.apl.json';
 import MarksmanshipTurretAPL from './apls/mm_turret.apl.json';
 import SurvivalAPL from './apls/sv.apl.json';
-import SurvivalMarkAPL from './apls/sv_mark.apl.json';
 import Level60RangedGear from './gear_sets/level60_phase1_synthetic_ranged.gear.json';
 import Level60SurvivalGear from './gear_sets/level60_phase1_synthetic_survival.gear.json';
 import P0BISGear from './gear_sets/p0.bis.gear.json';
@@ -133,35 +129,42 @@ export const DefaultGear = GearLevel60Ranged;
 // Lone Wolf weave only while the mana covers 25 a second of the fight left: weaving wins a short
 // fight and costs a long one its mana (2026-10-23; at range Marksmanship is 4.7 behind at 120 sec,
 // 1.3 and 1.8 ahead at 180 and 300). The turret rotations stand at range.
+// Every rotation keeps up the hunter's own Hunter's Mark (standards 23, user ruling 2026-10-25: Mark
+// duty is assumed, the raid's mark is off): 1.5 sec before the pull (it doesn't pull; user ruling
+// 2026-10-15) and again before its 2 min run out, never held back for the hunter's own damage. Against
+// the raid's mark it costs 0.5 to 2.5 DPS at 180 sec.
+const markTooltip = " Keeps up its own Hunter's Mark, cast 1.5 sec before the pull and again before it drops.";
 const weaveTooltip = ' Melee weaves from 12 yd: walks in for a main hand swing with Raptor Strike queued when the next Auto Shot waits 1.2 sec or less.';
 const manaWeaveTooltip =
 	' Melee weaves from 12 yd while the mana covers 25 a second of the fight left: walks in for a main hand swing with Raptor Strike queued when the next Auto Shot waits 1.2 sec or less.';
 export const APLBeastMastery = PresetUtils.makePresetAPLRotation('Beast Mastery', BeastMasteryAPL, {
 	tooltip:
 		'Arcane Shot, Aimed Shot and Sniper Shot on cooldown, then Serpent Sting when down, Bestial Wrath and Rapid Fire on cooldown, no mana floors.' +
-		weaveTooltip,
+		weaveTooltip +
+		markTooltip,
 	group: 'Level 60',
 });
 export const APLMarksmanship = PresetUtils.makePresetAPLRotation('Marksmanship', MarksmanshipAPL, {
 	tooltip:
 		'Arcane Shot, Aimed Shot above 40% mana, Serpent Sting when down, and Sniper Shot while the mana lasts the fight, Rapid Fire on cooldown.' +
-		manaWeaveTooltip,
+		manaWeaveTooltip +
+		markTooltip,
 	group: 'Level 60',
 });
 export const APLLoneWolf = PresetUtils.makePresetAPLRotation('Lone Wolf', LoneWolfAPL, {
-	tooltip: 'The Marksmanship rotation, for no pet.' + manaWeaveTooltip,
+	tooltip: 'The Marksmanship rotation, for no pet.' + manaWeaveTooltip + markTooltip,
 	group: 'Level 60',
 });
 export const APLBeastMasteryTurret = PresetUtils.makePresetAPLRotation('Beast Mastery (turret)', BeastMasteryTurretAPL, {
-	tooltip: 'The Beast Mastery rotation, standing at 25 yd.',
+	tooltip: 'The Beast Mastery rotation, standing at 25 yd.' + markTooltip,
 	group: 'Level 60',
 });
 export const APLMarksmanshipTurret = PresetUtils.makePresetAPLRotation('Marksmanship (turret)', MarksmanshipTurretAPL, {
-	tooltip: 'The Marksmanship rotation, standing at 25 yd.',
+	tooltip: 'The Marksmanship rotation, standing at 25 yd.' + markTooltip,
 	group: 'Level 60',
 });
 export const APLLoneWolfTurret = PresetUtils.makePresetAPLRotation('Lone Wolf (turret)', LoneWolfTurretAPL, {
-	tooltip: 'The Lone Wolf rotation, standing at 25 yd.',
+	tooltip: 'The Lone Wolf rotation, standing at 25 yd.' + markTooltip,
 	group: 'Level 60',
 });
 // Melee: Mongoose Bite whenever Expose Prey opens it, Strider Kick and Immolation Trap on
@@ -172,38 +175,16 @@ export const APLLoneWolfTurret = PresetUtils.makePresetAPLRotation('Lone Wolf (t
 // sec): Survival runs out of global cooldowns long before it runs out of mana. It walks in 6 sec before the
 // pull, since the fight starts at 25 yards.
 export const APLSurvival = PresetUtils.makePresetAPLRotation('Survival', SurvivalAPL, {
-	tooltip: 'Melee: Mongoose Bite, Strider Kick, Immolation Trap, Raptor Strike, Lacerate, Wing Clip filler.',
+	tooltip: 'Melee: Mongoose Bite, Strider Kick, Immolation Trap, Raptor Strike, Lacerate, Wing Clip filler.' + markTooltip,
 	group: 'Level 60',
 });
 
-// Hunter's Mark duty (standards 23): the base rotation plus the hunter's own Hunter's Mark, cast 1.5
-// sec before the pull (it doesn't pull; user ruling 2026-10-15) and again before its 2 min run out,
-// never held back for the hunter's own damage. The duty presets
-// switch the raid's Hunter's Mark off; the base presets take the mark from the raid and never cast
-// it.
-const markDutyTooltip = " Plus Hunter's Mark 1.5 sec before the pull and before it drops, for the hunter on Hunter's Mark duty.";
-export const APLBeastMasteryMark = PresetUtils.makePresetAPLRotation("Beast Mastery (Hunter's Mark duty)", BeastMasteryMarkAPL, {
-	tooltip: 'The Beast Mastery rotation.' + markDutyTooltip,
-	group: 'Level 60',
-});
-export const APLMarksmanshipMark = PresetUtils.makePresetAPLRotation("Marksmanship (Hunter's Mark duty)", MarksmanshipMarkAPL, {
-	tooltip: 'The Marksmanship rotation.' + markDutyTooltip,
-	group: 'Level 60',
-});
-export const APLLoneWolfMark = PresetUtils.makePresetAPLRotation("Lone Wolf (Hunter's Mark duty)", LoneWolfMarkAPL, {
-	tooltip: 'The Lone Wolf rotation.' + markDutyTooltip,
-	group: 'Level 60',
-});
-export const APLSurvivalMark = PresetUtils.makePresetAPLRotation("Survival (Hunter's Mark duty)", SurvivalMarkAPL, {
-	tooltip: 'The Survival rotation.' + markDutyTooltip,
-	group: 'Level 60',
-});
 // Scorpid Sting duty (standards 23), for the ranged hunters only (user ruling 2026-10-15: not melee
 // Survival): Scorpid Sting kept up in the sting slot in place of Serpent Sting (a hunter has one
 // sting on a target), refreshed in its last 2 sec (Beast Mastery: 4 sec, its busier global cooldowns
 // let a 2 sec refresh lapse). The duty presets switch the raid's Scorpid Sting
 // off; the base presets take it from the raid and never cast it.
-const scorpidDutyTooltip = ' With Scorpid Sting kept up in place of Serpent Sting, for the hunter on Scorpid Sting duty.';
+const scorpidDutyTooltip = ' With Scorpid Sting kept up in place of Serpent Sting, for the hunter on Scorpid Sting duty.' + markTooltip;
 export const APLBeastMasteryScorpid = PresetUtils.makePresetAPLRotation('Beast Mastery (Scorpid Sting duty)', BeastMasteryScorpidAPL, {
 	tooltip: 'The Beast Mastery rotation.' + scorpidDutyTooltip,
 	group: 'Level 60',
@@ -220,13 +201,9 @@ export const APLLoneWolfScorpid = PresetUtils.makePresetAPLRotation('Lone Wolf (
 export const APLPresets = {
 	[Phase.Phase1]: [
 		APLBeastMastery,
-		APLBeastMasteryMark,
 		APLMarksmanship,
-		APLMarksmanshipMark,
 		APLLoneWolf,
-		APLLoneWolfMark,
 		APLSurvival,
-		APLSurvivalMark,
 		APLBeastMasteryScorpid,
 		APLMarksmanshipScorpid,
 		APLLoneWolfScorpid,
@@ -383,7 +360,7 @@ export const SurvivalConsumes = Consumes.create({
 });
 
 // The raid the level 60 numbers were measured under (tools/rotopt/mksettings): both paladin
-// blessings, Arcane Brilliance and every debuff, the hunter's own Hunter's Mark, and a shaman
+// blessings, Arcane Brilliance and every debuff but Hunter's Mark (the hunter keeps up its own), and a shaman
 // in the hunter's group for Grace of Air and Mana Spring, and the raid's Trueshot Aura (a raid aura
 // since client 1.60.1.70425, so a Marksmanship hunter in the raid covers every hunter).
 export const DefaultRaidBuffs = RaidBuffs.create({
@@ -429,7 +406,8 @@ export const DefaultDebuffs = Debuffs.create({
 	demoralizingRoar: TristateEffect.TristateEffectImproved,
 	demoralizingShout: TristateEffect.TristateEffectImproved,
 	faerieFire: true,
-	huntersMark: TristateEffect.TristateEffectImproved,
+	// No Hunter's Mark of the raid's: every hunter keeps up its own (standards 23, user ruling 2026-10-25).
+	huntersMark: TristateEffect.TristateEffectMissing,
 	insectSwarm: true,
 	judgementOfLight: true,
 	judgementOfTheCrusader: TristateEffect.TristateEffectImproved,
@@ -492,23 +470,7 @@ export const EncounterLevel60Melee = PresetUtils.makePresetEncounter('Level 60 M
 	buffs: DefaultIndividualBuffs,
 	consumes: SurvivalConsumes,
 });
-// The same raids with the raid's Hunter's Mark off, for the hunter on Hunter's Mark duty.
-export const MarkDutyDebuffs = Debuffs.create({ ...DefaultDebuffs, huntersMark: TristateEffect.TristateEffectMissing });
-export const EncounterLevel60MarkDuty = PresetUtils.makePresetEncounter("Level 60 (Hunter's Mark duty)", level60Boss, {
-	tanks: [],
-	raidBuffs: DefaultRaidBuffs,
-	debuffs: MarkDutyDebuffs,
-	buffs: DefaultIndividualBuffs,
-	consumes: DefaultConsumes,
-});
-export const EncounterLevel60MeleeMarkDuty = PresetUtils.makePresetEncounter("Level 60 Melee (Hunter's Mark duty)", level60Boss, {
-	tanks: [],
-	raidBuffs: SurvivalRaidBuffs,
-	debuffs: MarkDutyDebuffs,
-	buffs: DefaultIndividualBuffs,
-	consumes: SurvivalConsumes,
-});
-// And with the raid's Scorpid Sting off, for the hunter on Scorpid Sting duty.
+// The same raid with the raid's Scorpid Sting off, for the hunter on Scorpid Sting duty.
 export const ScorpidDutyDebuffs = Debuffs.create({ ...DefaultDebuffs, scorpidSting: false });
 export const EncounterLevel60ScorpidDuty = PresetUtils.makePresetEncounter('Level 60 (Scorpid Sting duty)', level60Boss, {
 	tanks: [],
@@ -533,9 +495,10 @@ export const EncounterLevel60ScorpidDuty = PresetUtils.makePresetEncounter('Leve
 // standards 1b and its trinkets).
 const professions: [Profession, Profession] = [OtherDefaults.profession1, OtherDefaults.profession2];
 
-// 1176.9 / 1172.0 / 1159.3 at 120 / 180 / 300 sec (20000 iterations, 2026-10-23, on seeds 1 and
-// 1000003 within 0.5), the class's best at 180 sec: a Human, Mortal Shots 5 for Trueshot Aura, and
-// Arcane Shot first with no mana floors. It was 1151.4 / 1145.6 / 1124.3 on the Windshaper before.
+// 1176.5 / 1171.5 / 1157.9 at 120 / 180 / 300 sec (20000 iterations, seed 1, 2026-10-25), the class's
+// best at 180 sec: a Human, Mortal Shots 5 for Trueshot Aura, and Arcane Shot first with no mana
+// floors. Its own Hunter's Mark (standards 23) costs 0.4 / 0.5 / 1.4 against the raid's mark. It was
+// 1151.4 / 1145.6 / 1124.3 on the Windshaper before the 2026-10-23 round.
 export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Beast Mastery', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Beast Mastery on the synthetic Phase 1 ranged gear with a 1.0 sec cat, in a 3 minute raid fight.',
@@ -547,22 +510,7 @@ export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Bea
 	professions,
 	options: DefaultOptions,
 });
-// 1176.5 / 1171.5 / 1157.9 at 120 / 180 / 300 sec (20000 iterations, 2026-10-23), 0.4 / 0.5 / 1.4
-// behind the base preset: the raid's Hunter's Mark is off and the hunter casts its own 1.5 sec before
-// the pull and before it drops (standards 23).
-export const PresetBuildBeastMasteryMark = PresetUtils.makePresetBuild("Level 60 Beast Mastery (Hunter's Mark duty)", {
-	group: 'Level 60',
-	tooltip:
-		"Level 60 Beast Mastery on the synthetic Phase 1 ranged gear with a 1.0 sec cat, in a 3 minute raid fight, keeping Hunter's Mark up itself (the raid's mark off).",
-	gear: GearLevel60Ranged,
-	talents: TalentsBeastMastery,
-	rotation: APLBeastMasteryMark,
-	encounter: EncounterLevel60MarkDuty,
-	race: Race.RaceHuman,
-	professions,
-	options: DefaultOptions,
-});
-// 1081.0 / 1076.5 / 1067.2 at 120 / 180 / 300 sec (20000 iterations, 2026-10-23), 95.9 / 95.5 / 92.1
+// 1080.9 / 1076.4 / 1066.4 at 120 / 180 / 300 sec (20000 iterations, 2026-10-25), 95.6 / 95.1 / 91.5
 // behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in place of
 // Serpent Sting, refreshed 4 sec before it drops (standards 23), on Beast Mastery's earlier knobs.
 export const PresetBuildBeastMasteryScorpid = PresetUtils.makePresetBuild('Level 60 Beast Mastery (Scorpid Sting duty)', {
@@ -577,9 +525,9 @@ export const PresetBuildBeastMasteryScorpid = PresetUtils.makePresetBuild('Level
 	professions,
 	options: DefaultOptions,
 });
-// 1184.8 / 1167.6 / 1140.2 at 120 / 180 / 300 sec (20000 iterations, 2026-10-23), 4.4 behind
-// Beast Mastery at 180 sec (1176.2 / 1145.7 / 1108.4 before the 8% hit cap gear, Efficiency 5 and the
-// mana-gated weave).
+// 1183.5 / 1166.1 / 1137.3 at 120 / 180 / 300 sec (20000 iterations, 2026-10-25), 5.4 behind
+// Beast Mastery at 180 sec; its own Hunter's Mark costs 1.3 / 1.4 / 2.9 against the raid's (1176.2 /
+// 1145.7 / 1108.4 before the 8% hit cap gear, Efficiency 5 and the mana-gated weave).
 export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Marksmanship', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Marksmanship on the synthetic Phase 1 ranged gear with a 1.0 sec cat, in a 3 minute raid fight.',
@@ -591,22 +539,7 @@ export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Mar
 	professions,
 	options: DefaultOptions,
 });
-// 1183.5 / 1166.1 / 1137.3 at 120 / 180 / 300 sec (20000 iterations, 2026-10-23), 1.3 / 1.5 / 2.9
-// behind the base preset: the raid's Hunter's Mark is off and the hunter casts its own 1.5 sec before
-// the pull and before it drops (standards 23).
-export const PresetBuildMarksmanshipMark = PresetUtils.makePresetBuild("Level 60 Marksmanship (Hunter's Mark duty)", {
-	group: 'Level 60',
-	tooltip:
-		"Level 60 Marksmanship on the synthetic Phase 1 ranged gear with a 1.0 sec cat, in a 3 minute raid fight, keeping Hunter's Mark up itself (the raid's mark off).",
-	gear: GearLevel60Ranged,
-	talents: TalentsMarksmanship,
-	rotation: APLMarksmanshipMark,
-	encounter: EncounterLevel60MarkDuty,
-	race: Race.RaceSkyborneWindshaper,
-	professions,
-	options: DefaultOptions,
-});
-// 1091.3 / 1083.0 / 1079.4 at 120 / 180 / 300 sec (20000 iterations, 2026-10-23), 93.5 / 84.6 / 60.8
+// 1090.6 / 1081.4 / 1077.3 at 120 / 180 / 300 sec (20000 iterations, 2026-10-25), 92.9 / 84.8 / 60.0
 // behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in place of
 // Serpent Sting (standards 23).
 export const PresetBuildMarksmanshipScorpid = PresetUtils.makePresetBuild('Level 60 Marksmanship (Scorpid Sting duty)', {
@@ -621,9 +554,10 @@ export const PresetBuildMarksmanshipScorpid = PresetUtils.makePresetBuild('Level
 	professions,
 	options: DefaultOptions,
 });
-// 1174.2 / 1159.3 / 1122.8 at 120 / 180 / 300 sec (20000 iterations, 2026-10-23): Lone Wolf's 20% is
-// now 8.3 behind a cat at 180 sec (it was 1166.0 / 1139.5 / 1101.8). Holds up in a 5 minute fight with
-// Sniper Shot and the weave held back for mana.
+// 1172.9 / 1156.8 / 1119.3 at 120 / 180 / 300 sec (20000 iterations, 2026-10-25): Lone Wolf's 20% is
+// 9.3 behind a cat at 180 sec (it was 1166.0 / 1139.5 / 1101.8 before the 2026-10-23 round). Its own
+// Hunter's Mark costs 1.3 / 2.5 / 3.5 against the raid's. Holds up in a 5 minute fight with Sniper Shot
+// and the weave held back for mana.
 export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wolf', {
 	group: 'Level 60',
 	tooltip: 'Level 60 Marksmanship with Lone Wolf and no pet, on the synthetic Phase 1 ranged gear, in a 3 minute raid fight.',
@@ -635,23 +569,8 @@ export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wo
 	professions,
 	options: LoneWolfOptions,
 });
-// 1172.9 / 1156.8 / 1119.3 at 120 / 180 / 300 sec (20000 iterations, 2026-10-23), 1.3 / 2.5 / 3.5
-// behind the base preset: the raid's Hunter's Mark is off and the hunter casts its own 1.5 sec before
-// the pull and before it drops (standards 23).
-export const PresetBuildLoneWolfMark = PresetUtils.makePresetBuild("Level 60 Lone Wolf (Hunter's Mark duty)", {
-	group: 'Level 60',
-	tooltip:
-		"Level 60 Marksmanship with Lone Wolf and no pet, on the synthetic Phase 1 ranged gear, in a 3 minute raid fight, keeping Hunter's Mark up itself (the raid's mark off).",
-	gear: GearLevel60Ranged,
-	talents: TalentsLoneWolf,
-	rotation: APLLoneWolfMark,
-	encounter: EncounterLevel60MarkDuty,
-	race: Race.RaceSkyborneWindshaper,
-	professions,
-	options: LoneWolfOptions,
-});
-// 1064.7 / 1059.3 / 1050.3 at 120 / 180 / 300 sec (20000 iterations, 2026-10-23), 109.5 / 100.0 /
-// 72.5 behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in
+// 1063.6 / 1057.9 / 1047.9 at 120 / 180 / 300 sec (20000 iterations, 2026-10-25), 109.3 / 98.9 /
+// 71.4 behind the base preset: the raid's Scorpid Sting is off and the hunter keeps its own up in
 // place of Serpent Sting (standards 23).
 export const PresetBuildLoneWolfScorpid = PresetUtils.makePresetBuild('Level 60 Lone Wolf (Scorpid Sting duty)', {
 	group: 'Level 60',
@@ -665,9 +584,9 @@ export const PresetBuildLoneWolfScorpid = PresetUtils.makePresetBuild('Level 60 
 	professions,
 	options: LoneWolfOptions,
 });
-// 1058.0 / 1049.3 / 1041.6 at 120 / 180 / 300 sec in the mksettings raid (Human, 20000 iterations,
-// 2026-10-23; 1056.7 / 1047.8 / 1040.0 at 9% hit). The rotation walks in before the pull, so starting
-// at 25 yards in the UI costs nothing.
+// 1063.0 / 1055.0 / 1047.8 at 120 / 180 / 300 sec in the mksettings raid (Human, 20000 iterations,
+// 2026-10-25); its own Hunter's Mark costs 1.2 / 1.5 / 1.6 against the raid's. The rotation walks in
+// before the pull, so starting at 25 yards in the UI costs nothing.
 export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Survival', {
 	group: 'Level 60',
 	tooltip: 'Level 60 melee Survival on the synthetic Phase 1 Survival gear, in a 3 minute raid fight with a melee group.',
@@ -675,21 +594,6 @@ export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Surviva
 	talents: TalentsSurvival,
 	rotation: APLSurvival,
 	encounter: EncounterLevel60Melee,
-	race: Race.RaceHuman,
-	professions,
-	options: DefaultOptions,
-});
-// 1056.9 / 1047.9 / 1039.9 at 120 / 180 / 300 sec (20000 iterations, 2026-10-23), 1.1 / 1.4 / 1.7
-// behind the base preset: the raid's Hunter's Mark is off and the hunter casts its own 1.5 sec before
-// the pull and before it drops (standards 23).
-export const PresetBuildSurvivalMark = PresetUtils.makePresetBuild("Level 60 Survival (Hunter's Mark duty)", {
-	group: 'Level 60',
-	tooltip:
-		"Level 60 melee Survival on the synthetic Phase 1 Survival gear, in a 3 minute raid fight with a melee group, keeping Hunter's Mark up itself (the raid's mark off).",
-	gear: GearLevel60Survival,
-	talents: TalentsSurvival,
-	rotation: APLSurvivalMark,
-	encounter: EncounterLevel60MeleeMarkDuty,
 	race: Race.RaceHuman,
 	professions,
 	options: DefaultOptions,

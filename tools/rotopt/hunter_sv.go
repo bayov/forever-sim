@@ -28,9 +28,8 @@ func (hunterSV) Knobs() []Knob {
 		// Immolation Trap right after Strider Kick, ahead of Raptor Strike and Lacerate (1).
 		{Name: "trapFirst", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "strikerMana", Default: 0, Min: 0, Max: 40, Step: 10},
-		// Hunter's Mark duty (standards 23), as in hunter_ranged.
-		{Name: "mark", Default: 0, Min: 0, Max: 1, Step: 1},
-		{Name: "markPrepull", Default: 0, Min: 0, Max: 3, Step: 0.5},
+		// The hunter's own Hunter's Mark before the pull (standards 23), as in hunter_ranged.
+		{Name: "markPrepull", Default: 1.5, Min: 0, Max: 3, Step: 0.5},
 	}
 }
 
@@ -53,9 +52,7 @@ func (hunterSV) Build(k Knobs) *proto.APLRotation {
 		cast(hunterAspectOfTheBeast, not(auraIsActive(hunterAspectOfTheBeast)), "Aspect of the Beast if it ever drops."),
 		autocastOtherCooldowns(nil, "Rapid Fire, racials, trinkets and potions on cooldown."),
 	}
-	if k["mark"] == 1 {
-		items = append(items, hunterMarkDuty())
-	}
+	items = append(items, hunterMark())
 	trap := cast(hunterImmolationTrap, floor("trapMana"), "Immolation Trap at the hunter's feet on cooldown.")
 	items = append(items,
 		cast(hunterMongooseBite, nil, "Mongoose Bite whenever Expose Prey or a dodge opens it."),
@@ -92,7 +89,7 @@ func (hunterSV) Build(k Knobs) *proto.APLRotation {
 		Action:    &proto.APLAction{Action: &proto.APLAction_Move{Move: &proto.APLActionMove{RangeFromTarget: num(0)}}},
 		DoAtValue: seconds(-6),
 	}, prepull(hunterAspectOfTheBeast, 3))
-	if k["mark"] == 1 && k["markPrepull"] > 0 {
+	if k["markPrepull"] > 0 {
 		// In melee by then: the walk ends before it.
 		rot.PrepullActions = append(rot.PrepullActions, prepull(hunterHuntersMark, k["markPrepull"]))
 	}

@@ -11,6 +11,14 @@
 #   tools/rotopt/hunter_presets.sh bm.json
 set -e
 settings=$1
+# Hunter's Mark (standards 23, user ruling 2026-10-25): there is no Hunter's Mark duty preset. Every
+# hunter keeps up its own mark, with the raid's off in the request (mksettings' hunter specs), so
+# every rotation here casts it (the templates' markPrepull, 1.5 by default). It goes up 1.5 sec before
+# the pull (it doesn't pull; user ruling 2026-10-15), after the pre-pull Aspect's global cooldown, so
+# the boss has it from the first shot (rotation audit pass 20: +4.7 / +3.3 / +3.4 / +1.4 at 180 sec on
+# Beast Mastery / Marksmanship / Lone Wolf / Survival over the first global cooldown after the pull,
+# 20000 iterations), and again in its last 3 sec. It is not held back for the hunter's own DPS (user
+# ruling). Against the raid's mark it costs 0.5 to 2.5 DPS at 180 sec.
 gen() {
 	template=$1
 	name=$2
@@ -30,8 +38,8 @@ ranged="aimed=1,aimedMana=0,hawk=2,intimidation=0,serpent=1,sniper=1,sniperFirst
 # The regear and rotation round (2026-10-23: no hit suppression, the 8% cap, the Level 60 talents of
 # that day), knob searches at 120, 180 and 300 sec combined, 3000 iterations, confirmed at 20000.
 # Beast Mastery now puts the Arcane Shot cooldown above Aimed Shot and drops the Serpent Sting and
-# Arcane Shot mana floors (+4.4 combined); it keeps Serpent Sting last (serpentLate=2: +2.2 on its
-# Hunter's Mark duty over first). Marksmanship and Lone Wolf cast Aimed Shot only above 40% mana
+# Arcane Shot mana floors (+4.4 combined); it keeps Serpent Sting last (serpentLate=2: +2.2 with its
+# own Hunter's Mark over first). Marksmanship and Lone Wolf cast Aimed Shot only above 40% mana
 # (+1.4, +1.5) and hold Sniper Shot back sooner, while the mana covers 10 a second of the fight left
 # (+2.5 and +1.9 over 25; Lone Wolf at range +1.3 and +1.0 over 20 on the two seed sets). All three cast Rapid Fire 0.1 sec before
 # the pull (+2 at 120 sec), and Summon Hawk while fewer than 2 hawks are out (hawk=2) only matters
@@ -71,16 +79,6 @@ gen hunter_ranged lw_turret "$mm"
 # 2026-10-16: +2.8 / +3.0 / +3.1 at 120 / 180 / 300 sec; dropping the Mongoose Bite hold too loses 0.55).
 sv="lacerate=1,lacerateMana=20,strikerMana=0,trap=1,trapMana=30,wingClip=1,wingClipMana=50,wingClipHold=2,trapFirst=1"
 gen hunter_sv sv "$sv"
-# Hunter's Mark duty (standards 23): the base rotation plus the mark before the pull and before it drops,
-# for the presets with the raid's mark off (mksettings specs hunter_*_mark).
-# The mark goes up 1.5 sec before the pull (it doesn't pull; user ruling 2026-10-15), after the
-# pre-pull Aspect's global cooldown, so the boss has it from the first shot (rotation audit pass 20:
-# +4.7 / +3.3 / +3.4 / +1.4 at 180 sec on Beast Mastery / Marksmanship / Lone Wolf / Survival, 20000
-# iterations). It is not held back for the hunter's own DPS (user ruling).
-gen hunter_ranged bm_mark "$bm,mark=1,markPrepull=1.5,$weave"
-gen hunter_ranged mm_mark "$mm,mark=1,markPrepull=1.5,$mmWeave"
-gen hunter_ranged lw_mark "$mm,mark=1,markPrepull=1.5,$mmWeave"
-gen hunter_sv sv_mark "$sv,mark=1,markPrepull=1.5"
 # Scorpid Sting duty (standards 23), for the ranged hunters only (user ruling 2026-10-15, not melee
 # Survival): Scorpid Sting kept up in place of Serpent Sting, for the presets with the raid's Scorpid
 # Sting off (mksettings specs hunter_{bm,mm,lw}_scorpid). Without Serpent Sting Marksmanship and Lone

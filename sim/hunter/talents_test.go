@@ -213,8 +213,8 @@ func TestForeverPetAbilityRows(t *testing.T) {
 	}
 }
 
-// TestHuntersMarkDuty checks the hunter's own Hunter's Mark, cast by the presets on Hunter's Mark
-// duty (standards 23) with the raid's debuff off: it puts the same mark on the target as the
+// TestHuntersMarkDuty checks the hunter's own Hunter's Mark, which every preset casts with the raid's
+// debuff off (standards 23, Mark duty assumed): it puts the same mark on the target as the
 // debuff (143 ranged attack power at level 60, core.ForeverHuntersMarkRank4), for 2 min, at 60 mana.
 func TestHuntersMarkDuty(t *testing.T) {
 	sim, hunter := newHunterSim(t, "", &proto.Debuffs{})

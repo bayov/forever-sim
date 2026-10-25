@@ -17,7 +17,6 @@ def spec_for(m):
     if c=='druid': return 'feral' if 'feral' in rest else 'balance'
     if c=='hunter':
         base={'beast-mastery':'hunter_bm','lone-wolf':'hunter_lw','marksmanship':'hunter_mm','survival':'hunter_sv'}[rest.split('-duty')[0]]
-        if 'duty-mark' in rest: return base+'_mark'
         if 'duty-scorpid' in rest: return base+'_scorpid'
         return base
     if c=='mage': return 'mage_'+rest

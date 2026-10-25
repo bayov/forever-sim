@@ -127,6 +127,20 @@
                       "val":  "-3s"
                     }
                   }
+                },
+                {
+                  "action":  {
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  14325
+                      }
+                    }
+                  },
+                  "doAtValue":  {
+                    "const":  {
+                      "val":  "-1.5s"
+                    }
+                  }
                 }
               ],
               "priorityList":  [
@@ -174,6 +188,36 @@
                   "notes":  "Rapid Fire, racials, trinkets and potions on cooldown.",
                   "action":  {
                     "autocastOtherCooldowns":  {}
+                  }
+                },
+                {
+                  "notes":  "Hunter's Mark at the pull and again before it drops (every hunter keeps up its own; the raid's is off).",
+                  "action":  {
+                    "condition":  {
+                      "cmp":  {
+                        "op":  "OpLt",
+                        "lhs":  {
+                          "auraRemainingTime":  {
+                            "sourceUnit":  {
+                              "type":  "CurrentTarget"
+                            },
+                            "auraId":  {
+                              "spellId":  14325
+                            }
+                          }
+                        },
+                        "rhs":  {
+                          "const":  {
+                            "val":  "3s"
+                          }
+                        }
+                      }
+                    },
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  14325
+                      }
+                    }
                   }
                 },
                 {
@@ -393,8 +437,7 @@
       "demoralizingShout":  "TristateEffectImproved",
       "thunderClap":  "TristateEffectImproved",
       "insectSwarm":  true,
-      "scorpidSting":  true,
-      "huntersMark":  "TristateEffectImproved"
+      "scorpidSting":  true
     }
   },
   "encounter":  {

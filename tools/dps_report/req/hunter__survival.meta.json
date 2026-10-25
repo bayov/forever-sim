@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_survival",
   "apl": "sv",
   "published": {
-    "dps": 1056.6,
-    "source": "Standards 11 explosives update (2026-10-23, explosives only when they gain): Goblin Land Mine dropped, Goblin Sapper kept (was 1049.3)"
+    "dps": 1055.0,
+    "source": "Hunter ruling 2026-10-25 (standards 23: Mark duty assumed, every hunter keeps up its own Hunter's Mark and the raid's is off; was 1056.6)"
   },
   "verify": {
-    "dps": 1056.56,
+    "dps": 1055.04,
     "stderr": 0.27,
     "iters": 20000,
     "ok": true,
-    "note": "180s, seed 1; seed 1000003 gives 1056.0"
+    "note": "180s, seed 1; seed 1000003 gives 1054.8"
   },
   "summary": "Forever's melee hunter: Survival with a cat, built on Expose Prey into Mongoose Bite. The pet deals about 18% of the damage.",
   "keyTalents": [
@@ -37,8 +37,9 @@
     "Clever Traps"
   ],
   "rotation": [
-    "Pre-pull: walk into melee at -6s, Aspect of the Beast at -3s",
+    "Pre-pull: walk into melee at -6s, Aspect of the Beast at -3s, Hunter's Mark at -1.5s",
     "Racials, potions and other cooldowns on cooldown",
+    "Hunter's Mark (rank 4, +143 ranged attack power) 1.5s before the pull and again in its last 3s; the raid's mark is off",
     "Mongoose Bite whenever Expose Prey (or a dodge) opens it",
     "Strider Kick on cooldown",
     "Immolation Trap on cooldown (mana >= 30%)",
@@ -66,7 +67,8 @@
     "Assumed: 22% more crit per Agility than Classic.",
     "Pet hits scale with attack speed, as a level 17 pet sheet shows. A 1.0s raptor would add about 2 (Savage Rend), but none that fast is known.",
     "Survival never shoots, so the ranged weapon doesn't matter.",
-    "Immolation Trap adds 10% of ranged attack power over the trap (Blizzard's notes, no log)."
+    "Immolation Trap adds 10% of ranged attack power over the trap (Blizzard's notes, no log).",
+    "Mark duty is assumed: the hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs about 0.5 to 2.5 DPS at 180s (1.5 here)."
   ],
-  "notes": "Request written by mksettings (spec hunter_sv, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Distance is 5 yd as in the mksettings raid the number was measured in (the UI preset starts at 25 yd; the APL walks in 6s before the pull, which the preset says costs nothing). Survival keeps a 1.0s cat out (DefaultOptions)."
+  "notes": "Request written by mksettings (spec hunter_sv, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Every hunter keeps up its own Hunter's Mark (standards 23, Mark duty assumed), so the raid's debuffs.huntersMark is off. Distance is 5 yd as in the mksettings raid the number was measured in (the UI preset starts at 25 yd; the APL walks in 6s before the pull, which the preset says costs nothing). Survival keeps a 1.0s cat out (DefaultOptions)."
 }
