@@ -1,8 +1,8 @@
 character_stats_results: {
  key: "TestWarlockAffliction-Phase1-CharacterStats-Default"
  value: {
-  final_stats: 142
-  final_stats: 203
+  final_stats: 145
+  final_stats: 201
   final_stats: 512
   final_stats: 481
   final_stats: 384
@@ -18,21 +18,21 @@ character_stats_results: {
   final_stats: 40.42221
   final_stats: 0
   final_stats: 0
-  final_stats: 605
+  final_stats: 608
   final_stats: 16
-  final_stats: 31.93571
+  final_stats: 31.83571
   final_stats: 0
   final_stats: 0
   final_stats: 0
   final_stats: 8723.4
   final_stats: 0
   final_stats: 0
-  final_stats: 2176
+  final_stats: 2172
   final_stats: 340
   final_stats: 0
   final_stats: 5
   final_stats: 0
-  final_stats: 12.15
+  final_stats: 12.05
   final_stats: 5
   final_stats: 0
   final_stats: 6654

@@ -10,6 +10,25 @@ Legend: NEW = new in Forever, CHANGED = changed from Classic, same = same as Cla
 
 Six at launch: Gnome Priest, Human Hunter, Dwarf Shaman, Orc Mage, Troll Warlock, Undead Paladin. More are planned. Undead Paladins get their own class quest line starting around level 10 at Banderian Keep in Tirisfal and a unique steed at 60.
 
+## Base attributes
+
+Forever redesigned the races' attributes (user ruling 2026-10-25). At level 1 every race is the class baseline plus a race offset that adds up to 0 over Strength, Agility, Stamina and Intellect and leaves Spirit alone. The sim (sim/core/base_stats.go RaceOffsets at 60, tools/gen_level_base_stats.py below 60) takes, relative to the Human:
+
+| Race | Str | Agi | Sta | Int | Spi | Classic 1.12 (Str, Agi, Sta, Int, Spi) |
+| --- | --- | --- | --- | --- | --- | --- |
+| Human | 0 | 0 | 0 | 0 | 0 | 0, 0, 0, 0, 0 |
+| Dwarf | +2 | -2 | +1 | -1 | 0 | +2, -4, +3, -1, -1 |
+| Night Elf | -2 | +2 | 0 | 0 | 0 | -3, +5, -1, 0, 0 |
+| Gnome | -3 | +1 | -1 | +3 | 0 | -5, +3, -1, +3, 0 |
+| High Order Skyborne | -1 | +1 | -1 | +1 | 0 | (new race) |
+| Orc | +3 | -3 | +1 | -1 | 0 | +3, -3, +2, -3, +3 |
+| Undead | +2 | -1 | +1 | -2 | 0 | -1, -2, +1, -2, +5 |
+| Tauren | +2 | -2 | +2 | -2 | 0 | +5, -5, +2, -5, +2 |
+| Troll | +1 | +2 | 0 | -3 | 0 | +1, +2, +1, -4, +1 |
+| Windshaper Skyborne | -1 | +1 | -1 | +1 | 0 | (new race) |
+
+Sources: our naked level 1 beta sheets (2026-10-10, Horde, several classes each, the same shift on every class), wowsims/forever 6296e8546d (#597, 2026-10-20: naked level 1 warrior sheets of every race against a Human, this exact table with Spirit 0 everywhere), and their Skyborne sheets (2026-09-22: four Human/High Order class pairs and a Windshaper warrior, the same delta). The Human keeps its 5% Spirit racial on top. We assume the offsets hold at every level, 60 included. Open: wowsims/forever 6fc22306b1 (#619, 2026-10-21) put the seven original races back on Classic's offsets, saying Forever restored them, with no sheet or source; a naked level 1 sheet taken after 2026-10-21 settles it (notes.md).
+
 ## Alliance
 
 ### Human

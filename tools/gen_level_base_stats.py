@@ -49,12 +49,17 @@ levelstats[(5, 8)][1] = (s, a, st, sp, i)
 # saw got the same shift: the Undead on seven classes (and a level 20 paladin), the Orc on the
 # shaman and warlock, the Tauren on the hunter and druid, the Troll on the priest. With the class
 # bonus taken off, each Forever race is 20 in every attribute plus a small offset that adds up
-# to 0 and leaves Spirit at 20. We assume the shift holds at every level, 60 included
-# (RaceOffsets in base_stats.go). The Alliance races keep 1.12's rows.
+# to 0 and leaves Spirit at 20. The Alliance shifts come from wowsims/forever's level 1 naked
+# warrior sheets of every race against a Human (6296e8546d, 2026-10-20), which give the Horde
+# offsets above too. We assume the shift holds at every level, 60 included (RaceOffsets in
+# base_stats.go). Human is unchanged.
 FOREVER_RACE_SHIFT = {
     2: (0, 0, -1, 2, -3),  # Orc
+    3: (0, 2, -2, 0, 1),  # Dwarf
+    4: (1, -3, 1, 0, 0),  # Night Elf
     5: (3, 1, 0, 0, -5),  # Undead
     6: (-3, 3, 0, 3, -2),  # Tauren
+    7: (2, -2, 0, 0, 0),  # Gnome
     8: (0, 0, -1, 1, -1),  # Troll
 }
 for (race, cls), levels in levelstats.items():

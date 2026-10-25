@@ -299,48 +299,48 @@ dps_results: {
 dps_results: {
  key: "TestLoneWolf-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-lw-FullBuffs-Ranged-LongMultiTarget"
  value: {
-  dps: 2014.54717
-  tps: 2545.79696
+  dps: 2009.88233
+  tps: 2541.14005
   dtps: 2.29783
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-lw-FullBuffs-Ranged-LongSingleTarget"
  value: {
-  dps: 1777.6095
-  tps: 1804.15329
+  dps: 1773.388
+  tps: 1799.93393
   dtps: 2.38883
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-lw-FullBuffs-Ranged-ShortSingleTarget"
  value: {
-  dps: 1872.89083
-  tps: 1898.66311
+  dps: 1869.345
+  tps: 1895.13982
   dtps: 11.94417
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-lw-NoBuffs-Ranged-LongMultiTarget"
  value: {
-  dps: 907.22633
-  tps: 1203.10245
+  dps: 905.3655
+  tps: 1201.24614
   dtps: 1.94933
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-lw-NoBuffs-Ranged-LongSingleTarget"
  value: {
-  dps: 722.4845
-  tps: 737.27781
+  dps: 720.92133
+  tps: 735.71477
   dtps: 2.36133
  }
 }
 dps_results: {
  key: "TestLoneWolf-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-lw-NoBuffs-Ranged-ShortSingleTarget"
  value: {
-  dps: 949.77167
-  tps: 974.91523
+  dps: 946.8425
+  tps: 971.97588
   dtps: 11.80667
  }
 }

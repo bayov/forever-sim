@@ -283,17 +283,17 @@ dps_results: {
 dps_results: {
  key: "TestP1Shadow-Phase1-Settings-Dwarf-level60_phase1_synthetic-Basic-level60-NoBuffs-Level60-Consumes-LongMultiTarget"
  value: {
-  dps: 649.03783
-  tps: 589.92367
-  dtps: 2.563
+  dps: 649.4595
+  tps: 589.91889
+  dtps: 2.46533
  }
 }
 dps_results: {
  key: "TestP1Shadow-Phase1-Settings-Dwarf-level60_phase1_synthetic-Basic-level60-NoBuffs-Level60-Consumes-LongSingleTarget"
  value: {
-  dps: 623.39367
-  tps: 449.75901
-  dtps: 2.61583
+  dps: 623.322
+  tps: 449.64369
+  dtps: 2.47967
  }
 }
 dps_results: {

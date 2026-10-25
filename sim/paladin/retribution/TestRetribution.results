@@ -288,15 +288,15 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Phase5-Settings-Dwarf-blank-P5 Seal of Righteousness Ret-basic_ret-FullBuffs-P5-Consumes-LongMultiTarget"
  value: {
-  dps: 84.30383
-  tps: 198.51111
+  dps: 84.36833
+  tps: 198.5758
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-Settings-Dwarf-blank-P5 Seal of Righteousness Ret-basic_ret-FullBuffs-P5-Consumes-LongSingleTarget"
  value: {
-  dps: 50.53217
-  tps: 56.24268
+  dps: 50.59667
+  tps: 56.30737
  }
 }
 dps_results: {
@@ -309,15 +309,15 @@ dps_results: {
 dps_results: {
  key: "TestRetribution-Phase5-Settings-Dwarf-blank-P5 Seal of Righteousness Ret-basic_ret-NoBuffs-P5-Consumes-LongMultiTarget"
  value: {
-  dps: 33.2185
-  tps: 88.77036
+  dps: 33.25317
+  tps: 88.80503
  }
 }
 dps_results: {
  key: "TestRetribution-Phase5-Settings-Dwarf-blank-P5 Seal of Righteousness Ret-basic_ret-NoBuffs-P5-Consumes-LongSingleTarget"
  value: {
-  dps: 18.22367
-  tps: 21.00156
+  dps: 18.25833
+  tps: 21.03623
  }
 }
 dps_results: {

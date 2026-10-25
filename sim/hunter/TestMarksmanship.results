@@ -299,48 +299,48 @@ dps_results: {
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-mm-FullBuffs-Ranged-LongMultiTarget"
  value: {
-  dps: 1937.96733
-  tps: 2230.4865
+  dps: 1934.09167
+  tps: 2226.81887
   dtps: 1.95317
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-mm-FullBuffs-Ranged-LongSingleTarget"
  value: {
-  dps: 1736.42583
-  tps: 1523.59566
+  dps: 1732.61267
+  tps: 1519.96737
   dtps: 2.03067
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-mm-FullBuffs-Ranged-ShortSingleTarget"
  value: {
-  dps: 1836.3425
-  tps: 1619.34577
+  dps: 1832.5025
+  tps: 1615.71968
   dtps: 10.15333
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-mm-NoBuffs-Ranged-LongMultiTarget"
  value: {
-  dps: 933.84267
-  tps: 1069.51479
+  dps: 932.13317
+  tps: 1067.90677
   dtps: 1.657
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-mm-NoBuffs-Ranged-LongSingleTarget"
  value: {
-  dps: 770.97017
-  tps: 625.05198
+  dps: 769.4315
+  tps: 623.64849
   dtps: 2.00667
  }
 }
 dps_results: {
  key: "TestMarksmanship-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-mm-NoBuffs-Ranged-ShortSingleTarget"
  value: {
-  dps: 974.18667
-  tps: 836.56366
+  dps: 971.6075
+  tps: 834.03368
   dtps: 10.03333
  }
 }

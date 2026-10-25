@@ -7,10 +7,11 @@ import (
 	"github.com/wowsims/classic/sim/core/stats"
 )
 
-// Naked characters with no talents on the Forever beta (2026-10-10, /bayov export). Forever
-// reworked the Horde races, so these rows check each race's shift against 1.12, the rows the
-// sim builds for pairs 1.12 doesn't have (Undead paladin, Windshaper hunter), and the Orc
-// shaman's level 30 row.
+// Naked characters with no talents on the Forever beta (2026-10-10, /bayov export), and the
+// level 1 naked warriors of the other races on wowsims/forever's sheets (6296e8546d,
+// 2026-10-20: the class baseline 23, 20, 22, 20, 20 plus the race offset). Forever reworked the
+// races, so these rows check each race's shift against 1.12, the rows the sim builds for pairs
+// 1.12 doesn't have (Undead paladin, Skyborne), and the Orc shaman's level 30 row.
 func TestForeverRaceBaseAttributes(t *testing.T) {
 	cases := []struct {
 		race  proto.Race
@@ -32,6 +33,11 @@ func TestForeverRaceBaseAttributes(t *testing.T) {
 		{proto.Race_RaceTauren, proto.Class_ClassDruid, 1, [5]float64{23, 18, 22, 20, 22}},
 		{proto.Race_RaceTroll, proto.Class_ClassPriest, 1, [5]float64{21, 22, 20, 19, 23}},
 		{proto.Race_RaceSkyborneWindshaper, proto.Class_ClassHunter, 1, [5]float64{19, 24, 20, 21, 21}},
+		{proto.Race_RaceSkyborneHighOrder, proto.Class_ClassHunter, 1, [5]float64{19, 24, 20, 21, 21}},
+		{proto.Race_RaceSkyborneHighOrder, proto.Class_ClassWarrior, 1, [5]float64{22, 21, 21, 21, 20}},
+		{proto.Race_RaceDwarf, proto.Class_ClassWarrior, 1, [5]float64{25, 18, 23, 19, 20}},
+		{proto.Race_RaceNightElf, proto.Class_ClassWarrior, 1, [5]float64{21, 22, 22, 20, 20}},
+		{proto.Race_RaceGnome, proto.Class_ClassWarrior, 1, [5]float64{20, 21, 21, 23, 20}},
 	}
 	for _, c := range cases {
 		base := getBaseStatsCombo(c.race, c.class, c.level)

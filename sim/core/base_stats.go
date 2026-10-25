@@ -27,10 +27,13 @@ var BaseStats = map[BaseStatsKey]stats.Stats{}
 // These are also scattered in various dbc/casc files,
 // `octbasempbyclass.txt`, `combatratings.txt`, `chancetospellcritbase.txt`, etc.
 
-// Forever reworked the Horde races. On the beta (2026-10-10) each of them is 20 in every
-// attribute at level 1, plus an offset that adds up to 0 and leaves Spirit alone. We assume the
-// offsets hold at 60, and the lower levels have them too (tools/gen_level_base_stats.py). The
-// Alliance races keep 1.12's offsets.
+// Forever reworked the races. At level 1 each of them is the class baseline plus an offset that
+// adds up to 0 over Strength, Agility, Stamina and Intellect and leaves Spirit alone. Our beta
+// sheets (2026-10-10) show the Horde ones, wowsims/forever's level 1 naked warrior sheets of
+// every race against a Human (6296e8546d, 2026-10-20) give the same table with the Alliance
+// races, and their Skyborne sheets (2026-09-22: four Human/High Order class pairs and a
+// Windshaper warrior) the Skyborne line. We assume the offsets hold at 60, and the lower levels
+// have them too (tools/gen_level_base_stats.py).
 var RaceOffsets = map[proto.Race]stats.Stats{
 	proto.Race_RaceUnknown: {},
 	proto.Race_RaceHuman:   {},
@@ -42,22 +45,26 @@ var RaceOffsets = map[proto.Race]stats.Stats{
 		stats.Stamina:   1,
 	},
 	proto.Race_RaceDwarf: {
-		stats.Agility:   -4,
+		stats.Agility:   -2,
 		stats.Strength:  2,
 		stats.Intellect: -1,
-		stats.Spirit:    -1,
-		stats.Stamina:   3,
+		stats.Spirit:    0,
+		stats.Stamina:   1,
 	},
 	proto.Race_RaceNightElf: {
-		stats.Agility:   5,
-		stats.Strength:  -3,
+		stats.Agility:   2,
+		stats.Strength:  -2,
 		stats.Intellect: 0,
+		stats.Spirit:    0,
+		stats.Stamina:   0,
+	},
+	proto.Race_RaceSkyborneHighOrder: {
+		stats.Agility:   1,
+		stats.Strength:  -1,
+		stats.Intellect: 1,
 		stats.Spirit:    0,
 		stats.Stamina:   -1,
 	},
-	// The High Order's stat offsets have not been published. It sits at the class baseline
-	// until they are, rather than carrying an invented stat line.
-	proto.Race_RaceSkyborneHighOrder: {},
 	proto.Race_RaceSkyborneWindshaper: {
 		stats.Agility:   1,
 		stats.Strength:  -1,
@@ -80,8 +87,8 @@ var RaceOffsets = map[proto.Race]stats.Stats{
 		stats.Stamina:   2,
 	},
 	proto.Race_RaceGnome: {
-		stats.Agility:   3,
-		stats.Strength:  -5,
+		stats.Agility:   1,
+		stats.Strength:  -3,
 		stats.Intellect: 3,
 		stats.Spirit:    0,
 		stats.Stamina:   -1,
@@ -327,15 +334,12 @@ func getBaseStatsCombo(r proto.Race, c proto.Class, level int32) stats.Stats {
 	if level >= CharacterMaxLevel {
 		return ClassBaseStats[c].Add(RaceOffsets[r]).Add(ClassBaseCrit[c])
 	}
-	// 1.12 has no Skyborne rows. The High Order's offsets are not published, so it uses the
-	// Human rows like RaceOffsets does. The Windshaper's we saw on the beta, so we build its
-	// rows from the Undead ones and the gap between the two races in RaceOffsets. The Undead
-	// rows don't have the Human's Spirit racial baked in like 1.12's Human rows do.
+	// 1.12 has no Skyborne rows, so we build both Skyborne's rows from the Undead ones and the
+	// gap between the two races in RaceOffsets. The Undead rows don't have the Human's Spirit
+	// racial baked in like 1.12's Human rows do.
 	var raceShift stats.Stats
 	switch r {
-	case proto.Race_RaceSkyborneHighOrder:
-		r = proto.Race_RaceHuman
-	case proto.Race_RaceSkyborneWindshaper:
+	case proto.Race_RaceSkyborneHighOrder, proto.Race_RaceSkyborneWindshaper:
 		raceShift = RaceOffsets[r].Subtract(RaceOffsets[proto.Race_RaceUndead])
 		r = proto.Race_RaceUndead
 	}

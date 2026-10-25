@@ -299,48 +299,48 @@ dps_results: {
 dps_results: {
  key: "TestSurvival-Phase1-Settings-NightElf-level60_phase1_synthetic_survival-Options-sv-FullBuffs-Survival-LongMultiTarget"
  value: {
-  dps: 1607.0735
-  tps: 1812.78012
+  dps: 1604.32417
+  tps: 1810.36439
   dtps: 2.4155
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-Settings-NightElf-level60_phase1_synthetic_survival-Options-sv-FullBuffs-Survival-LongSingleTarget"
  value: {
-  dps: 1489.52983
-  tps: 1276.03264
+  dps: 1486.795
+  tps: 1273.61847
   dtps: 2.63033
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-Settings-NightElf-level60_phase1_synthetic_survival-Options-sv-FullBuffs-Survival-ShortSingleTarget"
  value: {
-  dps: 1595.87083
-  tps: 1375.41292
+  dps: 1593.1825
+  tps: 1373.02334
   dtps: 10.15333
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-Settings-NightElf-level60_phase1_synthetic_survival-Options-sv-NoBuffs-Survival-LongMultiTarget"
  value: {
-  dps: 658.7655
-  tps: 502.5364
+  dps: 658.01683
+  tps: 501.92689
   dtps: 2.89233
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-Settings-NightElf-level60_phase1_synthetic_survival-Options-sv-NoBuffs-Survival-LongSingleTarget"
  value: {
-  dps: 570.96367
-  tps: 414.80867
+  dps: 570.20283
+  tps: 414.20004
   dtps: 3.17867
  }
 }
 dps_results: {
  key: "TestSurvival-Phase1-Settings-NightElf-level60_phase1_synthetic_survival-Options-sv-NoBuffs-Survival-ShortSingleTarget"
  value: {
-  dps: 743.39333
-  tps: 585.91532
+  dps: 742.89
+  tps: 585.47809
   dtps: 9.56833
  }
 }

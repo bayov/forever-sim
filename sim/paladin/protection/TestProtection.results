@@ -288,15 +288,15 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Phase4-Settings-Dwarf-blank-Basic Prot Rotation-basic_prot-FullBuffs-P4-Consumes-LongMultiTarget"
  value: {
-  dps: 264.24733
-  tps: 501.87807
+  dps: 263.16733
+  tps: 499.99517
  }
 }
 dps_results: {
  key: "TestProtection-Phase4-Settings-Dwarf-blank-Basic Prot Rotation-basic_prot-FullBuffs-P4-Consumes-LongSingleTarget"
  value: {
-  dps: 47.47033
-  tps: 90.1356
+  dps: 47.84617
+  tps: 90.84476
  }
 }
 dps_results: {
