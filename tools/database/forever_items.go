@@ -868,4 +868,14 @@ var ForeverItems = []*proto.UIItem{
 		Stats: stats.Stats{stats.Armor: 42, stats.Stamina: 8, stats.Spirit: 6, stats.SpellPenetration: 4}.ToFloatArray(),
 		Ilvl:  31, RequiredLevel: 26, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
 	},
+	// Revealed October 19 to 20. Bind on pickup, no source known yet; its use combines it with
+	// Axe of Lingering Dread into Pendulum of Doom 9425. Stats from the ForeverChanges item
+	// page, and the wowhead Forever tooltip agrees. Its chance on hit (140 to 196 damage) is
+	// not implemented in the sim.
+	{
+		Id: 274484, Name: "Axe of Inevitable Ruin", Icon: "inv_axe_01",
+		Type: proto.ItemType_ItemTypeWeapon, WeaponType: proto.WeaponType_WeaponTypeAxe, HandType: proto.HandType_HandTypeTwoHand,
+		WeaponDamageMin: 89, WeaponDamageMax: 134, WeaponSpeed: 3.00,
+		Ilvl: 42, RequiredLevel: 37, Quality: proto.ItemQuality_ItemQualityRare, Phase: 1, Expansion: proto.Expansion_ExpansionVanilla,
+	},
 }
