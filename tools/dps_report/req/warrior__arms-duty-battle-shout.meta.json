@@ -15,12 +15,12 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_arms_battle_shout",
   "published": {
-    "dps": 956.0,
-    "source": "Warrior follow-up, 2026-10-24: no Goblin Land Mine (standards 11, explosives only when they gain; the Sapper stays). 20k iterations, 180s, seed 1 (was 955.3)"
+    "dps": 902.3,
+    "source": "Warrior re-optimization at flat Rage, 2026-10-25 (standards 21, k flat at the level 30 value): the rotation and talent searches moved Bloodrage under 20 Rage (10), Hamstring from 30 (20). Orc stays (race sweep on both seed sets). 20k iterations, 180s, seed 1 (was 956.0 at ×1.5 Rage, 900.4 at flat Rage before the re-search)"
   },
   "verify": {
-    "dps": 956.0,
-    "stderr": 0.38,
+    "dps": 902.3,
+    "stderr": 0.39,
     "iters": 20000,
     "ok": true,
     "note": "wowsimcli on the request, 180s, seed 1"
@@ -37,18 +37,17 @@
     "Cruelty"
   ],
   "rotation": [
-    "Pre-pull: Bloodrage and Battle Shout 3s before the pull, then Charge for 15 Rage",
-    "Pre-pull: Battle Stance, then Charge for 15 Rage",
+    "Pre-pull: Bloodrage and Battle Shout 3s before the pull, then Battle Stance and Charge for 15 Rage",
     "Battle Shout again with 35s of it left (about 142s in, before the execute phase), unless it lasts the fight (Forever's lasts 3 min)",
     "Sunder Armor as the first GCD after the pull (every warrior; the tanks keep it up after)",
     "With 25s left, Recklessness ready and under 25 Rage: swap to Berserker Stance, and back to Battle Stance once Recklessness is out",
-    "Death Wish held for the last 36s, Recklessness in the last 25s; racials with Death Wish (Blood Fury and Berserking also at the end of the fight)",
-    "Mighty Rage Potion at the pull, second held for the last 20s; Bloodrage under 10 Rage",
+    "Recklessness in the last 25s; racials on cooldown",
+    "Mighty Rage Potion at the pull, second held for the last 15s; Bloodrage under 20 Rage",
     "Mortal Strike on cooldown",
     "Slam from 20 Rage (15s cooldown with Improved Slam), outside execute",
     "Overpower from 5 Rage (dodges and Bloodthrill)",
     "Rend kept up outside execute; then Execute",
-    "Heroic Strike from 70 Rage, Hamstring filler from 20 Rage (outside execute)"
+    "Heroic Strike from 90 Rage, Hamstring filler from 30 Rage (outside execute)"
   ],
   "consumes": [
     "Flask of Natural Aggression",
@@ -63,7 +62,7 @@
     "Dense Sharpening Stone (main hand)"
   ],
   "caveats": [
-    "White hit Rage scales with weapon speed (measured at level 30, assumed ×1.5 at 60).",
+    "White hit Rage scales with weapon speed, the level 30 rate at every level (user ruling 2026-10-25; it was ×1.5 at 60).",
     "No Ahn'Qiraj book ranks (Heroic Strike VIII, raid Battle Shout VI, Strength of Earth, Grace of Air)",
     "Deep Wounds ticks can't crit.",
     "Assumed: the crit Rage bonus is white hits only, and Heroic Strike counts for Unbridled Wrath.",

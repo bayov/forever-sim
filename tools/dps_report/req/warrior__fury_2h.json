@@ -85,7 +85,7 @@
               "blessingOfKings":  true,
               "blessingOfMight":  "TristateEffectImproved"
             },
-            "talentsString":  "30305013032-25053000152110501",
+            "talentsString":  "30305013032-25053000142210501",
             "level":  60,
             "profession1":  "Engineering",
             "profession2":  "Alchemy",
@@ -634,6 +634,40 @@
                   }
                 },
                 {
+                  "notes":  "Berserker Rage for its Rage (Improved Berserker Rage). It needs Berserker Stance.",
+                  "action":  {
+                    "condition":  {
+                      "and":  {
+                        "vals":  [
+                          {
+                            "cmp":  {
+                              "op":  "OpLt",
+                              "lhs":  {
+                                "currentRage":  {}
+                              },
+                              "rhs":  {
+                                "const":  {
+                                  "val":  "30"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "sequenceIsComplete":  {
+                              "sequenceName":  "sunder"
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell":  {
+                      "spellId":  {
+                        "spellId":  18499
+                      }
+                    }
+                  }
+                },
+                {
                   "notes":  "Sapper and trinkets.",
                   "action":  {
                     "autocastOtherCooldowns":  {}
@@ -677,7 +711,7 @@
                                     },
                                     "rhs":  {
                                       "const":  {
-                                        "val":  "30"
+                                        "val":  "45"
                                       }
                                     }
                                   }
@@ -802,7 +836,7 @@
                               },
                               "rhs":  {
                                 "const":  {
-                                  "val":  "85"
+                                  "val":  "90"
                                 }
                               }
                             }

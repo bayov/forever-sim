@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 4,
   "race": "Orc",
-  "talents": "30305013002-25053005122010501-2",
+  "talents": "30305013002-25053005142010501",
   "treeNames": [
     "Arms",
     "Fury",
@@ -15,12 +15,12 @@
   "gearSet": "level60_phase1_synthetic_fury",
   "apl": "level60_fury_battle_shout",
   "published": {
-    "dps": 1064.9,
-    "source": "Warrior follow-up, 2026-10-24: dual wield hit 8% to 10% (standards 4, hit by sim: the head and feet trade 20 Strength for 20 hit) and no Goblin Land Mine (standards 11, explosives only when they gain; the Sapper stays). 20k iterations, 180s, seed 1 (was 1056.4)"
+    "dps": 984.0,
+    "source": "Warrior re-optimization at flat Rage, 2026-10-25 (standards 21, k flat at the level 30 value): the rotation and talent searches moved Heroic Strike from 80 Rage and in the execute phase (55), Bloodrage under 20 (40), Death Wish held for the last 33s and the trinket for the last 30s (on cooldown), Enrage 4/5 for Improved Bloodrage 2/2. Orc stays (race sweep on both seed sets). 20k iterations, 180s, seed 1 (was 1064.9 at ×1.5 Rage, 968.1 at flat Rage before the re-search)"
   },
   "verify": {
-    "dps": 1064.9,
-    "stderr": 0.38,
+    "dps": 984.0,
+    "stderr": 0.4,
     "iters": 20000,
     "ok": true,
     "note": "wowsimcli on the request, 180s, seed 1"
@@ -41,12 +41,12 @@
     "Start with no Rage; Bloodrage and Battle Shout 3s before the pull, then Battle Stance, Charge for 15 Rage and back to Berserker Stance",
     "Sunder Armor as the first GCD after the pull (every warrior; the tanks keep it up after)",
     "Battle Shout again with 35s of it left (about 142s in, before the execute phase), unless it lasts the fight (Forever's lasts 3 min)",
-    "Death Wish right after the Sunder, then Recklessness while Death Wish is up, ahead of the trinket (which goes one GCD later)",
-    "Racial cooldowns with Death Wish (Blood Fury and Berserking also at the end of the fight); trinket on cooldown; Mighty Rage Potion at the pull, second held for the last 20s",
-    "Bloodrage under 40 Rage",
+    "Death Wish held for the last 33s when that costs no use, then Recklessness while Death Wish is up, ahead of the trinket (which goes one GCD later)",
+    "Racial cooldowns with Death Wish (Blood Fury and Berserking also at the end of the fight); trinket on cooldown, its last use held for the last 30s; Mighty Rage Potion at the pull, second held for the last 20s",
+    "Bloodrage under 20 Rage",
     "Whirlwind at 25+ Rage, then Bloodthirst",
     "Execute in the execute phase, after Bloodthirst and Whirlwind (Execute first loses 4.7 on Fury and 22.7 on two-hand Fury)",
-    "Heroic Strike queued from 55 Rage (outside execute)",
+    "Heroic Strike queued from 80 Rage (in the execute phase too)",
     "Hamstring filler from 10 Rage (procs Windfury Totem and Flurry)"
   ],
   "consumes": [
@@ -62,16 +62,17 @@
     "Dense Sharpening Stone"
   ],
   "caveats": [
-    "White hit Rage scales with weapon speed (measured at level 30, assumed ×1.5 at 60).",
+    "White hit Rage scales with weapon speed, the level 30 rate at every level (user ruling 2026-10-25; it was ×1.5 at 60).",
     "No Ahn'Qiraj book ranks (Heroic Strike VIII, raid Battle Shout VI, Strength of Earth, Grace of Air)",
     "Deep Wounds ticks can't crit.",
     "Assumed: the crit Rage bonus is white hits only, and Heroic Strike counts for Unbridled Wrath.",
     "One +2% crit elixir. A second (Grizzly) would add 15.1.",
     "Battlegear of Glory 4-piece not counted. It would add 10.8 vs Humanoids.",
-    "Second Mighty Rage Potion held for the last 20s: +6.4 at 180s, -3.0 at 120s.",
+    "Holding Death Wish for 33s: +13.3 at 180s, +26.2 at 120s; the trinket for 30s: +2.2 at 180s.",
+    "Second Mighty Rage Potion held for the last 20s: +10.4 at 180s, 0.0 at 120s.",
     "Raid damage hits (2 a minute, about 9 Rage each) are an estimate."
   ],
-  "notes": "Request from mksettings -spec fury -gear level60_phase1_synthetic_fury -apl level60_fury_battle_shout -talents 30305013002-25053005122010501-2 -race Orc -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts.",
+  "notes": "Request from mksettings -spec fury -gear level60_phase1_synthetic_fury -apl level60_fury_battle_shout -talents 30305013002-25053005142010501 -race Orc -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts.",
   "duty": "Battle Shout",
   "baseBuild": "warrior__fury"
 }

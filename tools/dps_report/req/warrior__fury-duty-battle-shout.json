@@ -88,7 +88,7 @@
               "blessingOfKings": true,
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "30305013002-25053005122010501-2",
+            "talentsString": "30305013002-25053005142010501",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Alchemy",
@@ -255,6 +255,60 @@
                       "and": {
                         "vals": [
                           {
+                            "or": {
+                              "vals": [
+                                {
+                                  "cmp": {
+                                    "op": "OpLe",
+                                    "lhs": {
+                                      "remainingTime": {}
+                                    },
+                                    "rhs": {
+                                      "const": {
+                                        "val": "33s"
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "cmp": {
+                                    "op": "OpGt",
+                                    "lhs": {
+                                      "spellUsesLostByDelay": {
+                                        "spellId": {
+                                          "spellId": 12328
+                                        },
+                                        "delay": {
+                                          "math": {
+                                            "op": "OpSub",
+                                            "lhs": {
+                                              "remainingTime": {}
+                                            },
+                                            "rhs": {
+                                              "const": {
+                                                "val": "33s"
+                                              }
+                                            }
+                                          }
+                                        },
+                                        "minTimeLeft": {
+                                          "const": {
+                                            "val": "30s"
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "rhs": {
+                                      "const": {
+                                        "val": "0"
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
                             "sequenceIsComplete": {
                               "sequenceName": "sunder"
                             }
@@ -313,10 +367,29 @@
                                     "spellId": 20572
                                   },
                                   "delay": {
-                                    "spellTimeToReady": {
-                                      "spellId": {
-                                        "spellId": 12328
-                                      }
+                                    "max": {
+                                      "vals": [
+                                        {
+                                          "spellTimeToReady": {
+                                            "spellId": {
+                                              "spellId": 12328
+                                            }
+                                          }
+                                        },
+                                        {
+                                          "math": {
+                                            "op": "OpSub",
+                                            "lhs": {
+                                              "remainingTime": {}
+                                            },
+                                            "rhs": {
+                                              "const": {
+                                                "val": "33s"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      ]
                                     }
                                   },
                                   "minTimeLeft": {
@@ -388,10 +461,29 @@
                                     "tag": 2
                                   },
                                   "delay": {
-                                    "spellTimeToReady": {
-                                      "spellId": {
-                                        "spellId": 12328
-                                      }
+                                    "max": {
+                                      "vals": [
+                                        {
+                                          "spellTimeToReady": {
+                                            "spellId": {
+                                              "spellId": 12328
+                                            }
+                                          }
+                                        },
+                                        {
+                                          "math": {
+                                            "op": "OpSub",
+                                            "lhs": {
+                                              "remainingTime": {}
+                                            },
+                                            "rhs": {
+                                              "const": {
+                                                "val": "33s"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      ]
                                     }
                                   },
                                   "minTimeLeft": {
@@ -463,10 +555,29 @@
                                     "spellId": 1259799
                                   },
                                   "delay": {
-                                    "spellTimeToReady": {
-                                      "spellId": {
-                                        "spellId": 12328
-                                      }
+                                    "max": {
+                                      "vals": [
+                                        {
+                                          "spellTimeToReady": {
+                                            "spellId": {
+                                              "spellId": 12328
+                                            }
+                                          }
+                                        },
+                                        {
+                                          "math": {
+                                            "op": "OpSub",
+                                            "lhs": {
+                                              "remainingTime": {}
+                                            },
+                                            "rhs": {
+                                              "const": {
+                                                "val": "33s"
+                                              }
+                                            }
+                                          }
+                                        }
+                                      ]
                                     }
                                   },
                                   "minTimeLeft": {
@@ -578,6 +689,69 @@
                 {
                   "action": {
                     "condition": {
+                      "or": {
+                        "vals": [
+                          {
+                            "cmp": {
+                              "op": "OpLe",
+                              "lhs": {
+                                "remainingTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "30s"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "spellUsesLostByDelay": {
+                                  "spellId": {
+                                    "itemId": 991018
+                                  },
+                                  "delay": {
+                                    "math": {
+                                      "op": "OpSub",
+                                      "lhs": {
+                                        "remainingTime": {}
+                                      },
+                                      "rhs": {
+                                        "const": {
+                                          "val": "30s"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "minTimeLeft": {
+                                    "const": {
+                                      "val": "15s"
+                                    }
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 991018
+                      }
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "condition": {
                       "cmp": {
                         "op": "OpLt",
                         "lhs": {
@@ -585,7 +759,7 @@
                         },
                         "rhs": {
                           "const": {
-                            "val": "40"
+                            "val": "20"
                           }
                         }
                       }
@@ -708,31 +882,16 @@
                 {
                   "action": {
                     "condition": {
-                      "and": {
-                        "vals": [
-                          {
-                            "cmp": {
-                              "op": "OpGe",
-                              "lhs": {
-                                "currentRage": {}
-                              },
-                              "rhs": {
-                                "const": {
-                                  "val": "55"
-                                }
-                              }
-                            }
-                          },
-                          {
-                            "not": {
-                              "val": {
-                                "isExecutePhase": {
-                                  "threshold": "E20"
-                                }
-                              }
-                            }
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "currentRage": {}
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "80"
                           }
-                        ]
+                        }
                       }
                     },
                     "castSpell": {
