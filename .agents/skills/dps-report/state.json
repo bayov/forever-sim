@@ -1,6 +1,6 @@
 {
  "updated": "2026-10-25",
- "note": "Alignment round with wowsims/forever (orchestration/alignment_round_2026-10-23.md) plus the per-class regear and rotation round (class_worker_round_2026-10-23.md) are on master at 22fca46e70 (via claude/keen-brown-o2g32n). The report was re-simmed in full for all 64 builds at e8a8b50d55 (data 23b89b17a2, 0 stale at master) and published as artifact version 36 on 2026-10-25. Two Ret builds were removed (level_60_undead, level_60-duty-crusader). Standards 4, 11 and 26 were updated on 2026-10-23..25 (dual-wield hit by sim, explosives only when they gain, must-take talents).",
+ "note": "Alignment round with wowsims/forever (orchestration/alignment_round_2026-10-23.md) plus the per-class regear and rotation round (class_worker_round_2026-10-23.md) are on master. The report was re-simmed in full for all 57 builds at 8e0d6f681e (data 117d18af45, 0 stale), after flat warrior white-hit Rage and the warrior re-search, Classic's hunter crit per Agility and the hunter recheck, Forever's zero-sum race base stats and the 2026-10-25 assumption rulings. Standards 4, 11, 21 and 26 were updated on 2026-10-23..25.",
  "foreverClientBuild": "1.60.1.70450 (spells, talents, racials and enchants identical to 70425)",
  "coordinationBranch": {
   "name": "claude/wow-forever-dps-presets-m9u15h",
@@ -56,6 +56,13 @@
   "publishedFrom": "22fca46e70",
   "date": "2026-10-25",
   "note": "the last artifact publish; retired 2026-10-25, see reportSite"
+ },
+ "reportData": {
+  "commit": "117d18af45",
+  "simmedAt": "8e0d6f681e",
+  "date": "2026-10-25",
+  "builds": 57,
+  "note": "full re-sim (all 57 builds, every step, 20,000 iterations); not yet deployed when recorded, see reportSite"
  },
  "reportSite": {
   "url": "https://forever-dps.pages.dev",
