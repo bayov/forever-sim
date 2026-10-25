@@ -11,7 +11,7 @@ Per build an assumption touches, seed 1, the build's request (req/<id>.json) oth
   check     builds with more: 12 random combinations, 180 s at 20k, to measure the multiplicative combination's error
 A setting with the ice_lance edit runs the preset rotation and one with Ice Lance on every Fingers of Frost charge, and keeps
 the better (no setting uses it now: the Frost and Frostfire presets cast Ice Lance themselves). A setting with the
-no_ice_lance edit (Ice Lance at the client's coefficient, 0) runs the preset rotation and the build's rotation that never
+no_ice_lance edit (Ice Lance at The Burning Crusade's 1/7, where it may not pay) runs the preset rotation and the build's rotation that never
 casts Ice Lance (asm_apls/<id>.no_ice_lance.apl.json, the build's rotopt template with the preset's knobs and iceLance=0,
 less the finisher's Ice Lance), and keeps the better. A setting with the raid_hits=N edit sets the encounter's raid damage hits a minute (raidDamageHitsPerMinute) to N.
 A setting with the no_weapon_oil edit takes the Wizard Oil off the warlock's weapon (the stone stays). A setting with

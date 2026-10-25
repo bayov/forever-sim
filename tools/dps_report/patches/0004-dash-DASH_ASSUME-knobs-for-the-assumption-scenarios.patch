@@ -15,6 +15,12 @@ did nothing). 2026-10-25: mage_am_mb is new (0: Arcane Missiles' missiles don't 
 hunter_pet_same_hit is dropped (wowsims/forever's level 17 pet sheet settled it). hunter_hm60 also sets the
 hunter's own Hunter's Mark (ForeverHuntersMarkAura): since the 2026-10-25 ruling every hunter preset casts
 its own with the raid's off, so the knob on the raid debuff alone no longer reached them.
+2026-10-25 (user rulings): hunter_crit_per_agi now replaces the hunter's level's scale over Classic
+(ForeverCritPerAgiScale(level), Forever's PlayerExpectedStat table, 1 at 60), the rows collapsed to one
+value keep their knobs (warr_rage_s at master's flat 0, hunter_crit_per_agi, hunter_raptor8, the rank
+scales, priest_sf_tick_crit, lock_bod_coef, pal_hs_flat31 / pal_cons31, warr_rend_ap, hunter_cobra_damage,
+bleed_tick_crit, warr_dt_rage_k) so a setting can come back without a rebase, and hunter_hm60 is set by
+no setting now that Hunter's Mark is settled at 143.
 
 diff --git a/sim/core/assumptions.go b/sim/core/assumptions.go
 new file mode 100644
@@ -140,10 +146,10 @@ index b5c80bb5c1..2e11aa9233 100644
  
  // bonus is the ranged attack power every attacker gains against the target.
 diff --git a/sim/core/rage.go b/sim/core/rage.go
-index d275f4c9af..935c47e09b 100644
+index a57b81840c..af7b1f5992 100644
 --- a/sim/core/rage.go
 +++ b/sim/core/rage.go
-@@ -70,7 +70,7 @@ func ForeverNormalizedRageLevelFactor(level int32) float64 {
+@@ -73,7 +73,7 @@ func ForeverNormalizedRageLevelFactor(level int32) float64 {
  	if level <= 30 {
  		return 1
  	}
@@ -152,7 +158,7 @@ index d275f4c9af..935c47e09b 100644
  }
  
  // ForeverNormalizedRage is the Rage a landed white hit with this weapon gives a character of this
-@@ -146,7 +146,8 @@ func ForeverDamageTakenRage(spell *Spell, result *SpellResult) float64 {
+@@ -149,7 +149,8 @@ func ForeverDamageTakenRage(spell *Spell, result *SpellResult) float64 {
  		return 0
  	}
  	attackerLevel := spell.Unit.Level
@@ -258,18 +264,18 @@ index ff053ca26b..b96bb9e9eb 100644
  	return low, high
  }
 diff --git a/sim/hunter/hunter.go b/sim/hunter/hunter.go
-index 60d270e483..eab6bb1ea8 100644
+index bd194e993c..acbc703cee 100644
 --- a/sim/hunter/hunter.go
 +++ b/sim/hunter/hunter.go
-@@ -163,7 +163,7 @@ func (hunter *Hunter) Initialize() {
+@@ -183,7 +183,7 @@ func (hunter *Hunter) Initialize() {
  	if hunter.Env.IsForever() {
  		// The stat dependencies add up, so this tops Classic's crit per Agility (NewHunter) up to
- 		// Forever's.
--		hunter.AddStatDependency(stats.Agility, stats.MeleeCrit, (ForeverCritPerAgiScale-1)*core.CritPerAgi(hunter.Class, hunter.Level)*core.CritRatingPerCritChance)
-+		hunter.AddStatDependency(stats.Agility, stats.MeleeCrit, (core.Assume("hunter_crit_per_agi", ForeverCritPerAgiScale)-1)*core.CritPerAgi(hunter.Class, hunter.Level)*core.CritRatingPerCritChance)
+ 		// Forever's. At 60 the two are the same.
+-		if scale := ForeverCritPerAgiScale(hunter.Level); scale != 1 {
++		if scale := core.Assume("hunter_crit_per_agi", ForeverCritPerAgiScale(hunter.Level)); scale != 1 { // dashboard assumption
+ 			hunter.AddStatDependency(stats.Agility, stats.MeleeCrit, (scale-1)*core.CritPerAgi(hunter.Class, hunter.Level)*core.CritRatingPerCritChance)
+ 		}
  		// Forever's Auto Shot keeps firing while the hunter casts Aimed Shot, Multi-Shot or Sniper Shot
- 		// (the forever-hunter wiki's beta testing, "Auto Shot can fire while the Hunter is casting
- 		// another spell with a cast time"). So it takes no aiming time of its own that a cast could
 diff --git a/sim/hunter/immolation_trap.go b/sim/hunter/immolation_trap.go
 index df2572b8c9..c569a9628f 100644
 --- a/sim/hunter/immolation_trap.go
