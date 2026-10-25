@@ -805,7 +805,7 @@ P6 = .../2360696/6 (2026-10-15, 70425), DD = https://worldofwarcraft.blizzard.co
 | PRI-70425-13 | P6 | Holy Fire rank 5 ticks no harder than rank 6 | n/a (rank 8 used) | SpellEffect 15265 eff1 bp 13 -> 9 | in flight (worker PR) | master holy_fire.go:19 `13`; PB `9` |
 | PRI-70425-14 | P6 | Inner Focus used up by one spell even when a spell is queued into Penance | n/a (sim has no spell queue; no preset casts Penance) | server side | n/a | |
 | PRI-70425-15 | P6 | Devouring Contagion spreads to 2 targets; the bounced DP costs no mana, no cast, no CD reset | n/a (one boss) | 1309950 eff2 added (dummy bp 2) | not simulated on purpose | talents.go `applyDevouringContagion` comment: jump does nothing vs one boss |
-| PRI-70425-16 | P6 | Silent Resolve threat cut applies to all spells | n/a (threat) | 14523 eff0 misc 2 -> 34 (Holy -> Holy+Shadow school mask) | n/a | master talents.go:24-31 Holy only |
+| PRI-70425-16 | P6 | Silent Resolve threat cut applies to all spells | n/a (threat) | 14523 eff0 misc 2 -> 34 (Holy -> Holy+Shadow school mask) | n/a | fixed 2026-10-25: Holy and Shadow under Forever (sim/priest/talents.go) |
 | PRI-70425-17 | P6 | Improved PW:Shield moved to row 3 | n/a | tree layout | in flight (worker PR) | PB proto reorder |
 | PRI-70425-18 | P6 | Renew from several priests, PW:S messages, SHIELDED text, Mind Vision, Divine Aegis tooltips, Shadow Weaving tooltip | n/a | 431622 eff1 added bp 20 (shield cap); 15257 tooltip now "damage the target takes from you" | n/a | Shadow Weaving tooltip matches how the sim already models it (caster-only, talents.go:207-252) |
 | PRI-70425-19 | P6 Legacy | The Quick and the Dead affects more Priest spells | n/a (out of combat) | 1262312 mask now hits Penance, Holy Nova | n/a | |
