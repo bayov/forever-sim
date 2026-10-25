@@ -153,17 +153,39 @@ func (hunter *Hunter) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
 func (hunter *Hunter) AddPartyBuffs(_ *proto.PartyBuffs) {
 }
 
-// Report assumption hunter_crit_per_agi, user ruling 2026-10-15: under Forever the hunter gets
-// 22% more crit per Agility than Classic at every level. The beta's level 1 character sheets give
-// 0.2174% a point against Classic's 0.1783 (notes.md, 10 October), while the other classes match
-// Classic, so the level 1 ratio is carried to 60 (Classic's 53 Agility a 1% becomes about 43).
-const ForeverCritPerAgiScale = 1.22
+// foreverHunterCritPerAgi is the hunter's crit chance in percent a point of Agility at levels 1 to
+// 60 in Forever's game files (PlayerExpectedStat CritPerAgility, client 1.60.1.70532 on wago.tools,
+// the table wowsims/forever generates its level 60 CritPerAgiMaxLevel from). Level 1's 0.2174 is
+// what the beta's level 1 character sheets showed (notes.md, 10 October); the table falls to
+// Classic's curve by level 40 and is Classic's 0.0189 (53 Agility a 1%) at 60, as are the other
+// classes' level 60 values.
+var foreverHunterCritPerAgi = [60]float64{
+	0.2174, 0.2083, 0.2, 0.1852, 0.1786, 0.1724, 0.1667, 0.1613, 0.1515, 0.1471,
+	0.1351, 0.119, 0.1087, 0.1, 0.0909, 0.0862, 0.0806, 0.0746, 0.0704, 0.0658,
+	0.0633, 0.0595, 0.0568, 0.0538, 0.0515, 0.0495, 0.0472, 0.0455, 0.0435, 0.0417,
+	0.0407, 0.0391, 0.0376, 0.0365, 0.0352, 0.0342, 0.0331, 0.0321, 0.0311, 0.0303,
+	0.0296, 0.0287, 0.0279, 0.0272, 0.0265, 0.0259, 0.0253, 0.0245, 0.0239, 0.0234,
+	0.0229, 0.0224, 0.0219, 0.0214, 0.0209, 0.0206, 0.0201, 0.0197, 0.0192, 0.0189,
+}
+
+// ForeverCritPerAgiScale is Forever's hunter crit per Agility over Classic's at this level: 1.22 at
+// level 1, 1.18 at 10, 1.05 at 20, 1.015 at 30, within half a percent of 1 from 40 and 1 at 60
+// (report row hunter_crit_per_agi, user ruling 2026-10-25; until then the level 1 ratio, 1.22, was
+// carried to every level).
+func ForeverCritPerAgiScale(level int32) float64 {
+	if level < 1 || level >= core.CharacterMaxLevel {
+		return 1
+	}
+	return foreverHunterCritPerAgi[level-1] / core.CritPerAgi(proto.Class_ClassHunter, level)
+}
 
 func (hunter *Hunter) Initialize() {
 	if hunter.Env.IsForever() {
 		// The stat dependencies add up, so this tops Classic's crit per Agility (NewHunter) up to
-		// Forever's.
-		hunter.AddStatDependency(stats.Agility, stats.MeleeCrit, (ForeverCritPerAgiScale-1)*core.CritPerAgi(hunter.Class, hunter.Level)*core.CritRatingPerCritChance)
+		// Forever's. At 60 the two are the same.
+		if scale := ForeverCritPerAgiScale(hunter.Level); scale != 1 {
+			hunter.AddStatDependency(stats.Agility, stats.MeleeCrit, (scale-1)*core.CritPerAgi(hunter.Class, hunter.Level)*core.CritRatingPerCritChance)
+		}
 		// Forever's Auto Shot keeps firing while the hunter casts Aimed Shot, Multi-Shot or Sniper Shot
 		// (the forever-hunter wiki's beta testing, "Auto Shot can fire while the Hunter is casting
 		// another spell with a cast time"). So it takes no aiming time of its own that a cast could

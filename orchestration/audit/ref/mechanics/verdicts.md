@@ -53,7 +53,7 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 
 - Windfury Totem cooldown 1.5 sec (standards 17, user ruling). Windfury Totem procs from the main hand only (user ruling).
 - Bane of Doom: with the user.
-- Report assumptions decided by user rulings 2026-10-15 / 16: Trueshot Aura rank 5 100; Hunter's Mark rank 4 143 (2026-10-21 hotfix, user 2026-10-23; the hotfix table has 14325 effect 1 at 143); Arcane Shot 0.10 / Serpent Sting 0.03; hunter crit per Agility ×1.22; pet hits scale with speed; Raptor Strike rank 8 96; Rend 2% AP a tick; Frostbolt rank 10 ×1.04; Ice Lance 0.429; Lightning Bolt rank 10 ×1.12; warr_crit_rage +100%; warr_rage_oh 0.5; level_partial_resist none; sham_ftt_stack (raid Flametongue Totem with Windfury Weapon).
+- Report assumptions decided by user rulings 2026-10-15 / 16: Trueshot Aura rank 5 100; Hunter's Mark rank 4 143 (2026-10-21 hotfix, user 2026-10-23; the hotfix table has 14325 effect 1 at 143); Arcane Shot 0.10 / Serpent Sting 0.03; hunter crit per Agility Classic's at 60 (Forever's PlayerExpectedStat by level, user ruling 2026-10-25; ×1.22 before); pet hits scale with speed; Raptor Strike rank 8 96; Rend 2% AP a tick; Frostbolt rank 10 ×1.04; Ice Lance 0.429; Lightning Bolt rank 10 ×1.12; warr_crit_rage +100%; warr_rage_oh 0.5; level_partial_resist none; sham_ftt_stack (raid Flametongue Totem with Windfury Weapon).
 
 ## Open items (not blocking)
 

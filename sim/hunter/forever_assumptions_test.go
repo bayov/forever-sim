@@ -427,14 +427,23 @@ func TestLoneWolfWithAPet(t *testing.T) {
 	}
 }
 
-// Report assumption hunter_crit_per_agi (user ruling 2026-10-15): under Forever the hunter gets 22%
-// more crit per Agility than Classic, and Classic's table is unchanged.
+// Report row hunter_crit_per_agi (user ruling 2026-10-25): Forever's game files (PlayerExpectedStat)
+// give the hunter Classic's crit per Agility at 60, and more at low levels: 0.2174% a point at level
+// 1, what the beta's level 1 character sheets showed.
 func TestForeverHunterCritPerAgility(t *testing.T) {
+	if got := ForeverCritPerAgiScale(1) * core.CritPerAgi(proto.Class_ClassHunter, 1); math.Abs(got-0.2174) > 1e-9 {
+		t.Errorf("level 1 crit per Agility %.4f%%, want 0.2174%%", got)
+	}
+	for _, level := range []int32{20, 30, 40} {
+		if got := ForeverCritPerAgiScale(level); got < 1 || got > 1.06 {
+			t.Errorf("level %d scale %.4f, want 1 to 1.06", level, got)
+		}
+	}
 	for _, c := range []struct {
 		ruleset proto.Ruleset
 		scale   float64
 	}{
-		{proto.Ruleset_RulesetForever, 1.22},
+		{proto.Ruleset_RulesetForever, 1},
 		{proto.Ruleset_RulesetClassic, 1},
 	} {
 		sim, hunter := newHunterPetSim(t, proto.Hunter_Options_Two, c.ruleset)
