@@ -3427,27 +3427,48 @@ div.tt-embed:not(.fv-tt) {
 	}
 }
 
-// A Specs card's fold under its title: how the section was made, why we trust it, and what it misses. Small and
-// muted like an assumption's fold, so it doesn't compete with the card's content.
-.fv-about {
-	font-size: var(--cds-font-size-caption);
-	line-height: 1.45;
-	color: var(--color-fg-muted);
-	max-width: 75ch;
+// A Specs card's "How ...?" button, at the right of its title, and the note it opens in a modal: how the section was
+// made, why we trust it, and what it misses.
+.fv-about-btn.btn-link {
+	margin-left: auto;
+	align-self: center;
+	padding-left: var(--cds-gap-sm);
+	color: var(--fv-gold);
+	white-space: normal;
+	text-align: right;
+}
 
-	.fv & > details > summary {
-		width: fit-content;
-		justify-content: flex-start;
-		font-size: var(--cds-font-size-caption);
-		color: var(--fv-gold);
+// The modal is a native <dialog> dressed as the sim UI's Bootstrap modal (.modal > .modal-dialog > .modal-content),
+// so it gets the browser's focus trap, Escape and top layer without Bootstrap's script. Like the sim UI's long
+// modals (.modal-overflow-scroll), it fits the screen and its body scrolls.
+dialog.fv-about-modal {
+	max-width: none;
+	max-height: none;
+	padding: 0;
+	border: 0;
+	background: transparent;
+
+	&[open] {
+		display: block;
 	}
 
-	.fv & > details[open] > summary {
-		margin-bottom: 0.35rem;
+	&::backdrop {
+		background: rgba(5, 8, 12, 0.6);
+		backdrop-filter: blur(3px);
+	}
+}
+
+.fv-about {
+	font-size: var(--cds-font-size-body);
+	line-height: 1.55;
+	color: var(--color-fg-muted);
+
+	&.modal-body {
+		gap: 0.6rem;
 	}
 
 	p {
-		margin: 0 0 0.35rem;
+		margin: 0;
 	}
 
 	b {

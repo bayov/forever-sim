@@ -691,6 +691,22 @@ export function startReport(dash, events) {
     scroller.addEventListener('scroll', spy, { passive: true });
     new ResizeObserver(spy).observe(bar);
   }
+  // A Specs card's "How ...?" button opens its note (.fv-about-body, hidden in the card) in the page's one modal.
+  // The note is copied when it opens, so its figures are the ones fillStatic has filled in by then.
+  {
+    const modal = $('#about-modal');
+    document.querySelectorAll('.fv-about-btn').forEach((bt) => bt.addEventListener('click', (e) => {
+      e.stopPropagation(); hideTip();
+      const note = document.getElementById(bt.dataset.about);
+      modal.querySelector('.modal-title').textContent = note.dataset.title;
+      modal.querySelector('.modal-body').replaceChildren(...[...note.children].map((n) => n.cloneNode(true)));
+      modal.showModal();
+      modal.scrollTop = 0;
+    }));
+    modal.querySelector('.btn-close').addEventListener('click', () => modal.close());
+    // A click outside the panel (on the dimmed page) closes it, as in the sim UI's modals.
+    modal.addEventListener('click', (e) => { if (e.target === modal || e.target.classList.contains('modal-dialog')) modal.close(); });
+  }
 
   // ---------- shared pieces ----------
   // The class filter looks like the sim UI's race picker: a label that says what we picked, then a row of class icons.
