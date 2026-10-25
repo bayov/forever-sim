@@ -3427,6 +3427,67 @@ div.tt-embed:not(.fv-tt) {
 	}
 }
 
+// A Specs card's "How ...?" button, at the right of its title, and the note it opens in a modal: how the section was
+// made, why we trust it, and what it misses.
+.fv-about-btn.btn-link {
+	margin-left: auto;
+	align-self: center;
+	padding-left: var(--cds-gap-sm);
+	color: var(--fv-gold);
+	white-space: normal;
+	text-align: right;
+}
+
+// The modal is a native <dialog> dressed as the sim UI's Bootstrap modal (.modal > .modal-dialog > .modal-content),
+// so it gets the browser's focus trap, Escape and top layer without Bootstrap's script. Like the sim UI's long
+// modals (.modal-overflow-scroll), it fits the screen and its body scrolls.
+dialog.fv-about-modal {
+	max-width: none;
+	max-height: none;
+	padding: 0;
+	border: 0;
+	background: transparent;
+
+	&[open] {
+		display: block;
+	}
+
+	&::backdrop {
+		background: rgba(5, 8, 12, 0.6);
+		backdrop-filter: blur(3px);
+	}
+}
+
+.fv-about {
+	font-size: var(--cds-font-size-body);
+	line-height: 1.55;
+	color: var(--color-fg-muted);
+
+	&.modal-body {
+		gap: 0.6rem;
+	}
+
+	p {
+		margin: 0;
+	}
+
+	b {
+		color: var(--color-fg);
+		font-weight: 600;
+	}
+
+	ul {
+		margin: 0;
+		padding-left: 1.1rem;
+		display: grid;
+		gap: 0.2rem;
+	}
+
+	li::marker {
+		color: var(--fv-gold);
+	}
+}
+
 .fv-asm-msets {
 	display: grid;
 	gap: 0.15rem;

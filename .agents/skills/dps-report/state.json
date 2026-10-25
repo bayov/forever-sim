@@ -61,7 +61,8 @@
   "url": "https://forever-dps.pages.dev",
   "cloudflareProject": "forever-dps",
   "deploy": "make dps-report-deploy (tools/dps_report/deploy_pages.py)",
-  "publishedFrom": "2a2ff21d23 (hunter builds re-simmed with Mark duty assumed; the other 53 as of 23b89b17a2)",
-  "date": "2026-10-25"
+  "publishedFrom": "5d47088 (events view opens on Replay; the Specs cards' \"How ...?\" notes from 0a0f4ce; numbers unchanged since 88ecc47, provenance re-recorded at bb038c2e4e because the 2026-10-20/21 item changes reach no build)",
+  "date": "2026-10-25",
+  "deployId": "e376d4e2"
  }
 }

@@ -1,17 +1,12 @@
-# Consumables pass 40 (master 54878fa3d, client 1.60.1.70532)
+# Consumables pass 41 (master 016daa654, client 1.60.1.70532)
 
 Result: quiet. No new findings, nothing open.
 
 ## Checked
-- scan.sh on master: banned items, Revelation, non-synthetic trinkets, two-crit-elixir presets all empty. Elemental Sharpening Stone appears only in tank_warrior (out of scope).
-- Minor-armor exclusive effects in debuffs.go: 3, not the 2 the pass doc expects. The third is the new ForeverDustCloudAura (hunter pet Dust Cloud, rank 5 1265904 = -505 armor, matches client 70532). Expected; the pass doc's count should become 3.
-- New consumables on master (user ruling 2026-10-23, standards 10/11): Flasks of Natural Accuracy/Aggression/Precision (zone bonus on via LEVEL_60_ZONE and mksettings NaturalFlaskZone), Dragonfire and Caustic Smog Potions, EZ-Thro Dark Bomb. presets.ts and mksettings agree for every spec (flask, potion, explosive, imbue). Tooltips (tt cache) match the sim comments.
-- Hunter's Mark rank 4 is 143 (user took the 2026-10-21 hotfix on 2026-10-23); debuffs.go, assumptions_def.py and the pass doc's settled list (+140) now differ only in the doc.
-- New gear sets (enh burning totem, ret crusader duty/undead, rogue subtlety) carry the same enchants as their base sets; trinkets synthetic.
-- Duty presets: Ret crusader duty switches off only Judgement of the Crusader; warrior duty only Battle Shout.
-
-## Could not check
-- Sources of the Natural flasks, Dragonfire, Caustic Smog and EZ-Thro Dark Bomb: wowhead returned nothing from this sandbox (empty body). Not verified as launch-obtainable; user rulings cover their use.
+- Moved watched files since 54878fa3d: ui/hunter/presets.ts, tools/rotopt/mksettings/spec_hunter.go, orchestration/standards.md (standards 23 hunter line). Nothing else under the watch list moved; the class branches show only stale copies of other classes' files (gotcha 1).
+- Hunter duty change (user ruling 2026-10-25): the Hunter's Mark and Scorpid Sting duty presets, their encounters and builds are removed. Every hunter now keeps up its own mark (raid Hunter's Mark Missing in presets.ts, hunterRangedRaid and hunterMeleeRaid, and the four tools/dps_report/req/hunter__*.json requests) and the raid keeps Scorpid Sting on (true everywhere). All seven hunter APLs still cast Hunter's Mark. presets.ts and mksettings agree. Matches the pass doc's standards 23 line.
+- No consumes, enchant, gear or trinket change in the hunter diff. scan.sh: banned items, Revelation, trinkets, double crit elixir all empty. Minor-armor exclusive effects: 3 (Dust Cloud, expected since pass 40).
+- Client: no newer build probed this pass beyond 1.60.1.70532 in state.
 
 ## Open items
-None. Pass doc housekeeping for the next editor: Hunter's Mark +143, minor-armor count 3.
+None. Housekeeping: pass doc Hunter's Mark +143 and minor-armor count 3 (from pass 40); stale drift/rank_tuning refs still name hunter *_mark/_scorpid specs (other auditors' refs).

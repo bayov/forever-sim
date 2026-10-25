@@ -93,6 +93,10 @@ export class ReportEvents {
 				simUI: null,
 				iterationTooltips: ITERATION_TOOLTIPS,
 				onIterationChange: kind => this.sampleListener?.(Math.max(0, SAMPLE_KINDS.indexOf(kind))),
+				// The replay shows a fight best to someone who hasn't seen the sim UI. A format picked
+				// here is remembered under the report's own key, so a pick in the sim UI doesn't carry over.
+				defaultFormat: 'replay',
+				formatStorageKey: '__dps_report_events_format__',
 			});
 			const eventID = TypedEvent.nextEventID();
 			this.emitter.emit(eventID, { eventID, result: simResult, filter: { player: 0, target: null } });

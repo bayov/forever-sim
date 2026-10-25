@@ -4,7 +4,63 @@ From the fairness auditor. The question this answers: is every DPS spec simmed u
 
 Method: each class's shipped Level 60 build (gear, talents, APL), built with mksettings and run with wowsimcli. I read code and logs and did not use rotopt. Measurements change one input at a time against the same seed. Two switches existed only in my local worktrees and were never pushed: one turns weapon racials off, one skips set-bonus tiers.
 
-## 1. Cross-spec table (master 54878fa: the 2026-10-23 alignment round with wowsims/forever, every class's regear and rotation round on the 8% physical hit cap, the must-take talents (standards 26) and report version 36; full re-sweep 2026-10-25)
+## 1. Cross-spec table (master 016daa6: every hunter keeps up its own Hunter's Mark and the hunter duty presets are gone (standards 23, ruling 2026-10-25), two item database fixes; full re-sweep 2026-10-25)
+
+Same method: the report's base requests, every race, 5000 iterations, seed 1. All 19 Level 60 gear sets pass 1b and 5a.
+
+| # | Spec | Best race | DPS | Best Horde / Alliance | Report race (DPS here) | Report's published | Gap | Before (54878fa) |
+|---|---|---|---|---|---|---|---|---|
+| 1 | Beast Mastery | Human | 1171.9 | Orc 1167.8 / Human | Human (1171.9) | 1171.5 | +0.4 | 1172.1 (-0.0%) |
+| 2 | Marksmanship | Human | 1168.4 | Windshaper 1166.7 / Human | Windshaper (1166.7) | 1166.1 | +0.6 | 1169.4 (-0.1%) |
+| 3 | Lone Wolf (hunter) | Windshaper | 1156.6 | Windshaper / Human 1156.1 | Windshaper (1156.6) | 1156.8 | -0.2 | 1159.7 (-0.3%) |
+| 4 | Fire | Human | 1100.8 | Orc 1096.2 / Human | Human (1100.8) | 1101.0 | -0.2 | 1100.8 (+0.0%) |
+| 5 | Frostfire | Human | 1098.0 | Orc 1085.8 / Human | Human (1098.0) | 1096.4 | +1.6 | 1098.0 (+0.0%) |
+| 6 | Fury (dual wield) | Orc | 1069.1 | Orc / Human 1064.9 | Orc (1069.1) | 1068.7 | +0.4 | 1069.1 (+0.0%) |
+| 7 | Demonology | Human | 1064.9 | Orc 1062.1 / Human | Human (1064.9) | 1065.1 | -0.2 | 1064.9 (+0.0%) |
+| 8 | Survival | Human | 1055.7 | Orc 1054.7 / Human | Human (1055.7) | 1055.0 | +0.7 | 1057.1 (-0.1%) |
+| 9 | Affliction | Human | 1036.4 | Orc 1033.4 / Human | Human (1036.4) | 1035.3 | +1.1 | 1036.4 (+0.0%) |
+| 10 | Fury (two-hand) | Orc | 1034.5 | Orc / Human 1030.9 | Orc (1034.5) | 1033.7 | +0.8 | 1034.5 (+0.0%) |
+| 11 | Destruction | Human | 1012.2 | Orc 1008.9 / Human | Human (1012.2) | 1011.8 | +0.4 | 1012.2 (+0.0%) |
+| 12 | Destruction Fire | Human | 987.5 | Orc 987.1 / Human | Human (987.5) | 987.4 | +0.1 | 987.5 (+0.0%) |
+| 13 | Arcane | Human | 983.2 | Orc 983.0 / Human | Human (983.2) | 982.5 | +0.7 | 983.2 (+0.0%) |
+| 14 | Shadow | Human | 961.7 | Troll 954.5 / Human | Human (961.7) | 961.8 | -0.1 | 961.7 (+0.0%) |
+| 15 | Arms | Orc | 956.5 | Orc / Human 955.4 | Orc (956.5) | 957.4 | -0.9 | 956.5 (+0.0%) |
+| 16 | Retribution | Human | 947.0 | Undead 940.1 / Human | Human (947.0) | 945.1 | +1.9 | 947.0 (+0.0%) |
+| 17 | Frost | High Order | 946.8 | Orc 944.8 / High Order | High Order (946.8) | 946.6 | +0.2 | 946.8 (+0.0%) |
+| 18 | Enhancement | Orc | 887.7 | Orc / Dwarf 878.9 | Orc (887.7) | 888.1 | -0.4 | 887.7 (+0.0%) |
+| 19 | Feral | Night Elf | 868.5 | Tauren 862.7 / Night Elf | Night Elf (868.5) | 868.1 | +0.4 | 868.5 (+0.0%) |
+| 20 | Balance | Tauren | 856.7 | Tauren / Night Elf 854.1 | Tauren (856.7) | 856.3 | +0.4 | 856.7 (+0.0%) |
+| 21 | Elemental | Windshaper | 777.1 | Windshaper / Dwarf 773.0 | Windshaper (777.1) | 777.4 | -0.3 | 777.1 (+0.0%) |
+| 22 | Rogue Combat Daggers | Windshaper | 770.5 | Windshaper / High Order 769.9 | Windshaper (770.5) | 770.3 | +0.2 | 770.5 (+0.0%) |
+| 23 | Smite | Undead | 765.5 | Undead / Gnome 745.6 | Undead (765.5) | 766.1 | -0.6 | 765.5 (+0.0%) |
+| 24 | Rogue Combat Swords | Orc | 764.4 | Orc / High Order 763.7 | Windshaper (763.9) | 764.0 | -0.1 | 764.4 (+0.0%) |
+| 25 | Rogue Seal Fate Daggers | Orc | 732.1 | Orc / Human 731.7 | Orc (732.1) | 731.5 | +0.6 | 732.1 (+0.0%) |
+| 26 | Rogue Seal Fate Swords | Human | 729.4 | Orc 729.4 / Human | Orc (729.4) | 728.9 | +0.5 | 729.4 (+0.0%) |
+| 27 | Rogue Mutilate | Orc | 719.4 | Orc / Human 718.7 | Windshaper (719.1) | 718.9 | +0.2 | 719.4 (+0.0%) |
+| 28 | Rogue Subtlety | Orc | 715.8 | Orc / Night Elf 715.7 | Night Elf (715.7) | 715.9 | -0.2 | 715.8 (+0.0%) |
+
+| Variant | Best race | DPS | Report's published (at its race) | Before |
+|---|---|---|---|---|
+| druid__balance-wrath | Windshaper | 814.0 | 813.3 (at Tauren 813.7) | 814.0 |
+| paladin__level_60_shock | Human | 869.4 | 869.0 (at Human 869.4) | 869.4 |
+| paladin__level_60_sub_holy | Human | 949.8 | 949.1 (at Human 949.8) | 949.8 |
+| priest__shadow-holy | Human | 918.9 | 918.9 (at Human 918.9) | 918.9 |
+| shaman__elemental-level60-mana-tide | Windshaper | 762.2 | 762.1 (at Windshaper 762.2) | 762.2 |
+| shaman__enhancement-imp-gw | Orc | 883.8 | 884.3 (at Orc 883.8) | 883.8 |
+| shaman__enhancement-mana-tide | Orc | 798.9 | 800.0 (at Orc 798.9) | 798.9 |
+| shaman__enhancement-water-shield | Windshaper | 839.7 | 839.9 (at Orc 839.7) | 839.7 |
+
+Top over bottom: 1.64x
+
+What moved / findings:
+
+- Only the hunters moved: Beast Mastery -0.2, Marksmanship -1.0, Survival -1.4, Lone Wolf -3.1 (best race against 54878fa). That is e71b90f5: the base presets are now the old Mark duty presets (own Hunter's Mark, one GCD and 60 mana each cast, the raid's mark off), which the ruling put at 0.5 to 2.5 DPS. Every other build and variant is identical to the 54878fa sweep, so the database changes (Wall of the Dead, Changuk Smasher, Axe of Inevitable Ruin) did not reach any preset.
+- Hunter's Mark is ranged attack power only (core huntersMarkAura), and no request carries the raid's mark, so dropping it from the raid changes no non-hunter. The raid's Sunder stays on for all 57 requests; the hunter/warrior asymmetry is the user's ruling (standards 23), not re-flagged.
+- Published against current: every build within 1.9 at 5000 iterations; the shared 20k run (vs_published) has 0 of 57 off by more than 0.5. Ret +1.9 and Frostfire +1.6 are seed noise, as last pass.
+- Best race: fairness-20261025-1 still open. On the new Marksmanship request Human beats its Windshaper by 2.6 / 2.3 (20k, seeds 1 / 1000003: 1168.8 / 1168.0 vs 1166.1 / 1165.6). Lone Wolf stays Windshaper (+0.5 here). Other near-ties are noise.
+- Top over bottom: 1.64x (unchanged).
+
+<details><summary>Previous §1 (54878fa, 2026-10-25 13:18)</summary>
 
 Same method: the report's base requests, every race, 5000 iterations, seed 1. All 19 Level 60 gear sets pass 1b and 5a.
 
@@ -59,6 +115,8 @@ What moved / findings:
 - Best race: Marksmanship loses 2.5 on its Windshaper to the Human (20k, seeds 1 and 1000003; the duty mark build 2.6). Finding fairness-20261025-1. Lone Wolf stays Windshaper (+1.0 at 20k). Rogue Combat Swords and Mutilate (Orc +0.5 / +0.3), Seal Fate Swords (Human = Orc), Subtlety (+0.1), Balance Wrath (+0.3) and Enhancement Water Shield (tie) are within noise.
 - Feral has Engineering but no Goblin Sapper: correct, the sapper's spell row is not usable shapeshifted (consumes.go, measured 0.0 with it added).
 - Top over bottom: 1.64x (was 1.79x).
+
+</details>
 
 <details><summary>Previous §1 (1e2f7ec, 2026-10-17 18:55)</summary>
 

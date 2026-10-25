@@ -1,10 +1,10 @@
 # Rotation audit: reference files
 
-- `baseline_54878fa_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
-  54878fa3d (pass 30, after the regear and rotation round).
+- `baseline_016daa6_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
+  016daa654 (pass 31, after the hunter Mark-duty merge dropped the `-duty-mark`/`-duty-scorpid` presets).
   - It was made with `tools/audit/rotations/baseline.py`: 3,000 iterations, seed 424242, each req's own
     encounter.
-  - The CLI was the audit loop's shared build at 54878fa3d (`/tmp/audit-cache/cli/54878fa3d04f/wowsimcli`).
+  - The CLI was the audit loop's shared build at 54878fa3d (`/tmp/audit-cache/cli/016daa654fd5/wowsimcli`).
   - Next pass: build the CLI on the new master and run `baseline.py` with the same arguments. Diff the
     output against this file. If no req file changed, any row that moved more than about 1 DPS is a sim
     change.
