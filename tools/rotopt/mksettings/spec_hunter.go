@@ -17,19 +17,6 @@ func init() {
 	}
 	specs["hunter_lw"] = lw
 	specs["hunter_sv"] = hunterSpec(5, true, hunterMeleeRaid)
-
-	// The Scorpid Sting duty (standards 23): the same raid with the raid's Scorpid Sting off, so it
-	// comes only from the hunter's own casts (the rotation's scorpid knob). It is a duty of the ranged
-	// hunters only (user ruling 2026-10-15), not of melee Survival.
-	for _, name := range []string{"hunter_bm", "hunter_mm", "hunter_lw"} {
-		scorpid := *specs[name]
-		scorpidRaid := scorpid.raid
-		scorpid.raid = func(raidBuffs *proto.RaidBuffs, buffs *proto.IndividualBuffs, debuffs *proto.Debuffs) {
-			scorpidRaid(raidBuffs, buffs, debuffs)
-			debuffs.ScorpidSting = false
-		}
-		specs[name+"_scorpid"] = &scorpid
-	}
 }
 
 // A ranged hunter's raid: no Hunter's Mark of the raid's (standards 23, user ruling 2026-10-25: every

@@ -244,10 +244,10 @@ func TestHuntersMarkDuty(t *testing.T) {
 	}
 }
 
-// TestScorpidStingDuty checks the hunter's own Scorpid Sting (standards 23 duty): 9% of base mana,
-// 2% off the target's chance to hit for 20 sec, 65 with Improved Stings 3, and it takes the place of
-// the hunter's Serpent Sting.
-func TestScorpidStingDuty(t *testing.T) {
+// TestScorpidSting checks the hunter's own Scorpid Sting (no preset casts it since it is no duty,
+// standards 23): 9% of base mana, 2% off the target's chance to hit for 20 sec, 65 with Improved
+// Stings 3, and it takes the place of the hunter's Serpent Sting.
+func TestScorpidSting(t *testing.T) {
 	for _, c := range []struct {
 		talents  string
 		duration time.Duration

@@ -4,11 +4,8 @@ druid__balance-wrath
 druid__balance
 druid__feral-cat-duty-ff
 druid__feral-cat
-hunter__beast-mastery-duty-scorpid
 hunter__beast-mastery
-hunter__lone-wolf-duty-scorpid
 hunter__lone-wolf
-hunter__marksmanship-duty-scorpid
 hunter__marksmanship
 hunter__survival
 mage__arcane

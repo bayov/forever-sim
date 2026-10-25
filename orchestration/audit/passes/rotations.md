@@ -17,7 +17,7 @@ Follow `orchestration/audit/PASS.md` around this doc. It started as the long-run
 
 1. **Master and class-branch commits** (`git fetch origin`):
    - `ui/**/apls/**`: the Level 60 files. Note that several aren't named `level60*`:
-     - hunter `bm/mm/lw/sv(_mark/_scorpid)`
+     - hunter `bm/mm/lw/sv` (and the `_turret` rotations)
      - enhancement `optimized/magma/mana_tide`
      - the `*_duty*` and `*_battle_shout` duty variants
    - `sim/**/*.go`, excluding `_test`: rage, cast and pushback, racials, buffs and debuffs, spell

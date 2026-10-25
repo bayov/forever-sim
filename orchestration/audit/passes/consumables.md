@@ -127,7 +127,8 @@ Then make variants with `python3 -I tools/audit/consumables/var.py base.json out
 - **Standards 20:** Faerie Fire and Curse of Recklessness share the MinorArmorReduction exclusive effect in
   debuffs.go (count 2). Both may be on in a preset; only one counts.
 - **Standards 23 (duty presets):** a duty preset switches off exactly its own raid effect:
-  - Hunter's Mark / Scorpid Sting: hunter mksettings `_mark` / `_scorpid`.
+  - Hunter: no duty preset; every hunter request has the raid's Hunter's Mark off (its own mark) and the raid's
+    Scorpid Sting on (no duty, user ruling 2026-10-25).
   - Faerie Fire: Balance switches off FF **and** CoR, which share the slot.
   - Warlock: Curse of the Elements.
   - Warriors: one Sunder at the pull.

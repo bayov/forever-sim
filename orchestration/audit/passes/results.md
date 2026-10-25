@@ -113,8 +113,8 @@ All of these are in the reference `drift_report.txt` and in the metas' notes:
 - **Warlock leftovers:** all 8 requests carry `sanctityAura: false` and `curseOfShadow: false`, which mksettings no longer writes. Both are false, so they have no effect. They can go at the next regeneration.
 
 `regen.py` maps each id to a mksettings spec. All paladins are `ret`, all priests `shadow` (Smite too), and rogue Mutilate
-and Subtlety are `rogue_assassination` and `rogue_subtlety`, with every other rogue `rogue_combat`. Hunter duties get
-`_mark` or `_scorpid`. A new request id may need a new mapping; an unmapped id fails with MKSETTINGS FAIL or a KeyError.
+and Subtlety are `rogue_assassination` and `rogue_subtlety`, with every other rogue `rogue_combat`. Hunters have no duty
+presets left (standards 23). A new request id may need a new mapping; an unmapped id fails with MKSETTINGS FAIL or a KeyError.
 
 ## Findings: where they go
 

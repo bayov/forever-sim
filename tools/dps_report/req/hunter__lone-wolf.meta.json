@@ -70,7 +70,8 @@
     "Rapid Killing never triggers on a single boss.",
     "Assumed: 22% more crit per Agility than Classic.",
     "A 2.5s bow at Rhok'delar's 44.0 DPS. A 2.6s gun sims 0.3 to 1.0 higher with a 15% ammo pouch, 3.4 to 5.2 lower with Era's 14% pouch.",
-    "Mark duty is assumed: the hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs about 0.5 to 2.5 DPS at 180s (2.5 here)."
+    "Mark duty is assumed: the hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs about 0.5 to 2.5 DPS at 180s (2.5 here).",
+    "Scorpid Sting isn't a duty: it shares Insect Swarm's 2% hit-reduction slot, which Balance druids keep up for its own damage, so a hunter on it would pay about 85 to 100 DPS (Serpent Sting's slot) for nothing."
   ],
   "notes": "Request written by mksettings (spec hunter_lw, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Every hunter keeps up its own Hunter's Mark (standards 23, Mark duty assumed), so the raid's debuffs.huntersMark is off. Pet set to none (petType omitted = PetNone)."
 }

@@ -30,7 +30,6 @@ var (
 	hunterImmolationTrap   = spellID(14305)
 	nightElfElunesLight    = spellID(1259799)
 	hunterHuntersMark      = spellID(14325) // rank 4, sim/hunter/hunters_mark.go
-	hunterScorpidSting     = spellID(3043)  // Forever's one rank, sim/hunter/scorpid_sting.go
 	// The ranged sets' synthetic on-use trinket (sim/hunter/forever_synthetic_trinkets.go).
 	hunterRangedOnUse = itemID(993016)
 )
@@ -77,11 +76,6 @@ func (hunterRanged) Knobs() []Knob {
 		// pull it casts the mark, 0 not before the pull. Hunter's Mark doesn't pull, so it may go up
 		// before it (user ruling 2026-10-15); 1.5 sec is after the pre-pull Aspect's global cooldown.
 		{Name: "markPrepull", Default: 1.5, Min: 0, Max: 3, Step: 0.5},
-		// Scorpid Sting duty (standards 23): Scorpid Sting kept up in the sting slot in place of
-		// Serpent Sting, with the raid's Scorpid Sting off.
-		{Name: "scorpid", Default: 0, Min: 0, Max: 1, Step: 1},
-		// Seconds left on the sting when the duty refreshes it.
-		{Name: "scorpidLead", Default: 2, Min: 1, Max: 6, Step: 1},
 		// Melee weaving (hunterWeave): between Auto Shots the hunter walks into melee for a main hand
 		// swing, with Raptor Strike queued on it, and back out past the deadzone. 0 stands at range.
 		{Name: "weave", Default: 0, Min: 0, Max: 1, Step: 1},
@@ -138,11 +132,7 @@ func (hunterRanged) Build(k Knobs) *proto.APLRotation {
 	}
 	items = append(items, autocastOtherCooldowns(nil, "Rapid Fire, Bestial Wrath, racials, trinkets and potions on cooldown."))
 	items = append(items, hunterMark())
-	// One sting a hunter: on Scorpid Sting duty it takes Serpent Sting's place.
-	serpentOn := k["serpent"] == 1 && k["scorpid"] == 0
-	if k["scorpid"] == 1 {
-		items = append(items, hunterScorpidDuty(k))
-	}
+	serpentOn := k["serpent"] == 1
 	if k["intimidation"] == 1 {
 		items = append(items, cast(hunterIntimidation, nil, "Intimidation on cooldown for the pet's crit, with the talent."))
 	}
@@ -225,17 +215,6 @@ func hunterMul(lhs, rhs value) value {
 func hunterMark() *proto.APLListItem {
 	return cast(hunterHuntersMark, lt(targetAuraRemainingTime(hunterHuntersMark), seconds(3)),
 		"Hunter's Mark at the pull and again before it drops (every hunter keeps up its own; the raid's is off).")
-}
-
-// hunterScorpidDuty keeps the hunter's own Scorpid Sting on the target: the first global cooldown
-// after the pull, then again in its last scorpidLead sec, unless one is already on its way.
-func hunterScorpidDuty(k Knobs) *proto.APLListItem {
-	return cast(hunterScorpidSting, and(hunterScorpidDue(k), not(spellInFlight(hunterScorpidSting))),
-		"Scorpid Sting duty: the sting at the pull and again before it drops, in place of Serpent Sting (the raid's Scorpid Sting is off).")
-}
-
-func hunterScorpidDue(k Knobs) value {
-	return lt(targetAuraRemainingTime(hunterScorpidSting), seconds(k["scorpidLead"]))
 }
 
 func hunterMax(vals ...value) value {

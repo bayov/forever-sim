@@ -79,16 +79,6 @@ gen hunter_ranged lw_turret "$mm"
 # 2026-10-16: +2.8 / +3.0 / +3.1 at 120 / 180 / 300 sec; dropping the Mongoose Bite hold too loses 0.55).
 sv="lacerate=1,lacerateMana=20,strikerMana=0,trap=1,trapMana=30,wingClip=1,wingClipMana=50,wingClipHold=2,trapFirst=1"
 gen hunter_sv sv "$sv"
-# Scorpid Sting duty (standards 23), for the ranged hunters only (user ruling 2026-10-15, not melee
-# Survival): Scorpid Sting kept up in place of Serpent Sting, for the presets with the raid's Scorpid
-# Sting off (mksettings specs hunter_{bm,mm,lw}_scorpid). Without Serpent Sting Marksmanship and Lone
-# Wolf have the mana for Sniper Shot at 5 and 10 a second of the fight left (2026-10-23 knob search,
-# 120 / 180 / 300 sec combined, 20000 iterations: +5.5 and +6.5 over 15), and weave as their bases do.
-# Beast Mastery refreshes the sting 4 sec before it drops, not 2: with its
-# busier global cooldowns the 2 sec refresh lets it lapse (+3.6 over 2, +1.6 over 3). It keeps Beast
-# Mastery's rotation from before 2026-10-23 (Aimed Shot first, the 30% and 20% mana floors on Serpent
-# Sting and Arcane Shot): the new one is +0.3 to +0.6 at 120 sec but 0.3 to 0.4 behind at 180 and 300.
-bmOld="$ranged,arcaneFirst=0,arcaneMana=20,serpentLate=0,serpentMana=30,holdElune=1"
-gen hunter_ranged bm_scorpid "$bmOld,scorpid=1,scorpidLead=4,$weave"
-gen hunter_ranged mm_scorpid "$mmBase,scorpid=1,sniperManaPerSec=5,$mmWeave"
-gen hunter_ranged lw_scorpid "$mmBase,scorpid=1,sniperManaPerSec=10,$mmWeave"
+# No Scorpid Sting duty (standards 23, user ruling 2026-10-25): Scorpid Sting shares Insect Swarm's
+# 2% hit reduction slot, which Balance druids keep up for its own damage, so a hunter on it would give
+# up Serpent Sting's slot (about 85 to 100 DPS) for nothing.
