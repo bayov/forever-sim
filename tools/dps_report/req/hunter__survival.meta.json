@@ -64,7 +64,7 @@
     "Assumed: Raptor Strike rank 8 adds 96, halfway between the client and Era.",
     "Left out: Fire-toasted Bun (+9, seasonal) and Elemental Sharpening Stone (Molten Core plans).",
     "Assumed: 22% more crit per Agility than Classic.",
-    "Assumed: pet hits scale with attack speed as in Classic. A 1.0s raptor would add about 2 (Savage Rend), but none that fast is known.",
+    "Pet hits scale with attack speed, as a level 17 pet sheet shows. A 1.0s raptor would add about 2 (Savage Rend), but none that fast is known.",
     "Survival never shoots, so the ranged weapon doesn't matter.",
     "Immolation Trap adds 10% of ranged attack power over the trap (Blizzard's notes, no log)."
   ],

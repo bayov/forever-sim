@@ -67,7 +67,7 @@
   "caveats": [
     "Ice Lance's spell power coefficient is 0.429 (SoD server value, the client has 0).",
     "Frostbolt X's base damage is ×1.04 (client ×1.00).",
-    "Winter's Chill is a Cone of Cold debuff now, so the build takes none.",
+    "Winter's Chill is a Cone of Cold debuff, so the build takes none.",
     "Assumed: raid bosses can't be frozen. Fingers of Frost charge timing is open.",
     "No Ahn'Qiraj book ranks (Fireball XI, Frostbolt X, Arcane Missiles VII). With the books: Frost +50, Arcane +30, Fire +17, Frostfire 0."
   ],

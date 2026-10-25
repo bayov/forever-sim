@@ -72,7 +72,7 @@
     "A 2.5s bow at Rhok'delar's 44.0 DPS. A 2.6s gun sims 0.3 to 1.0 higher with a 15% ammo pouch, 3.4 to 5.2 lower with Era's 14% pouch.",
     "Costs 81.4 / 82.2 / 82.3 DPS vs Beast Mastery at 120s / 180s / 300s, mostly Serpent Sting's damage.",
     "The sting only lowers the boss's hit by 2%. It adds no raid damage.",
-    "Assumed: pet hits scale with attack speed as in Classic. A 1.0s raptor would add about 2.5 (Savage Rend), but none that fast is known."
+    "Pet hits scale with attack speed, as a level 17 pet sheet shows. A 1.0s raptor would add about 2.5 (Savage Rend), but none that fast is known."
   ],
   "notes": "Request is hunter__beast-mastery's with the rotation swapped for ui/hunter/apls/bm_scorpid.apl.json (tools/rotopt/hunter_presets.sh) and debuffs.scorpidSting removed; mksettings writes the same raid as spec hunter_bm_scorpid. Request written by mksettings (spec hunter_bm, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions.",
   "duty": "Scorpid Sting",

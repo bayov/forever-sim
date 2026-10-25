@@ -71,7 +71,7 @@
     "Major Frenzy Potion is 25.7 behind Major Mana Potion at 180s.",
     "Assumed: 22% more crit per Agility than Classic.",
     "A 2.5s bow at Rhok'delar's 44.0 DPS. A 2.6s gun sims 0.3 to 1.0 higher with a 15% ammo pouch, 3.4 to 5.2 lower with Era's 14% pouch.",
-    "Assumed: pet hits scale with attack speed as in Classic. A 1.0s raptor would add about 2.5 (Savage Rend), but none that fast is known."
+    "Pet hits scale with attack speed, as a level 17 pet sheet shows. A 1.0s raptor would add about 2.5 (Savage Rend), but none that fast is known."
   ],
   "notes": "Request written by mksettings (spec hunter_bm, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions."
 }

@@ -23,9 +23,9 @@ RACE_ORDER = ['Human', 'Dwarf', 'Night Elf', 'Gnome', 'High Order', 'Orc', 'Unde
 # Racial parts the sim models, by race: (part key, racial name, what it does). The text follows client 1.60.1.70425.
 PART_INFO = {
     'spirit': ('The Human Spirit', 'Spirit increased by 5%.'),
-    'ruthless': ('Ruthless', '+2% critical strike chance with all spells and attacks, with any weapon (swords only before client 70425).'),
-    'earthfury': ('Earth Fury', 'Critical strike bonus to damage and healing increased by 2% (+1% crit with a mace before client 70425).'),
-    'savage': ('Savage', '+1% critical strike chance with all spells and abilities, with any weapon (axes only before client 70425).'),
+    'ruthless': ('Ruthless', '+2% critical strike chance with all spells and attacks, with any weapon.'),
+    'earthfury': ('Earth Fury', 'Critical strike bonus to damage and healing increased by 2%.'),
+    'savage': ('Savage', '+1% critical strike chance with all spells and abilities, with any weapon.'),
     'elune': ("Elune's Light", '+10% critical strike chance for 15s, 3 min cooldown.'),
     'shadowmeld': ('Shadowmeld', 'Slip into the shadows, 2 min cooldown in combat. The next stealth ability (Ravage, Ambush, Garrote) can follow it.'),
     'leyline': ('Read Leyline', 'A 2s cast that doubles health and mana regeneration for 30s away from a leyline, 2 min cooldown.'),
@@ -33,9 +33,9 @@ PART_INFO = {
     'eureka': ('Eureka!', 'For 8s, direct damage abilities cost 10% less and deal 10% more damage (DoTs too for Warlocks, heals too for Priests), 2 min cooldown.'),
     'bloodfury': ('Blood Fury', 'Attack power and spell power increased by 10% for 15s, 3 min cooldown.'),
     'touch': ('Touch of the Grave', 'Spells and attacks have a 20% chance (30% for Mages, Priests and Warlocks) to deal Shadow damage equal to 5% of your maximum health and heal you for it. At most once every 25s, and it cannot crit.'),
-    'endurance': ('Endurance', 'Health increased by 5% and critical strike bonus to damage and healing increased by 2% (+1% hit before client 70425).'),
+    'endurance': ('Endurance', 'Health increased by 5% and critical strike bonus to damage and healing increased by 2%.'),
     'berserking': ('Berserking', 'Attack and casting speed increased by 10% for 10s, 3 min cooldown.'),
-    'windblessed': ('Wind Blessed', 'Spellcasting, melee and ranged haste increased by 3% (1% before client 70425).'),
+    'windblessed': ('Wind Blessed', 'Spellcasting, melee and ranged haste increased by 3%.'),
     'beast_dwarf': ('Big Game Hunter', 'Damage dealt versus Beasts increased by 5%.'),
     'beast_troll': ('Beast Slaying', 'Damage dealt versus Beasts increased by 5%.'),
     'insight': ('Elemental Insight', 'Damage dealt versus Elementals increased by 5%.'),
@@ -65,7 +65,7 @@ RACE_PARTS = {'Human': ['spirit', 'ruthless'], 'Dwarf': ['earthfury', 'beast_dwa
               'Gnome': ['mind', 'eureka'], 'Orc': ['savage', 'bloodfury'], 'Undead': ['touch', 'darksacrifice'], 'Tauren': ['endurance'],
               'Troll': ['berserking', 'beast_troll'], 'High Order': ['windblessed', 'insight', 'leyline'], 'Windshaper': ['windblessed', 'insight']}
 SCENARIOS = [
-    ('baseline', 'Generic boss', 'Each preset against a level 63 boss with no creature type. Since client 70425, no racial depends on the weapon.'),
+    ('baseline', 'Generic boss', 'Each preset against a level 63 boss with no creature type. In client 70425 no racial depends on the weapon.'),
     ('beast', 'Beast target', 'A Beast boss turns on Troll Beast Slaying and Dwarf Big Game Hunter (5% more damage).'),
     ('elemental', 'Elemental target', 'An Elemental boss turns on High Order and Windshaper Elemental Insight (5% more damage).'),
     ('humanoid', 'Humanoid target', 'Priests only. Dwarf Priests cast Chastise, which works only on Humanoids. No other racial cares about Humanoids.'),
@@ -130,6 +130,8 @@ def build(builds, races_rows, stats_rows, dump):
             # breakdown: base stats, then each racial part (Shapley split when two parts count, so the parts add up exactly)
             off = v['off']
             ps = [p for p in RR.parts_for(cls, rc, req)]
+            if len(ps) > 2:  # a part whose own sim matches the baseline exactly (same seed) does nothing on this preset
+                ps = [p for p in ps if v['off:' + p][0] != base[0]]
             contrib = {}
             if len(ps) == 1:
                 contrib[ps[0]] = (base[0] - off[0], math.hypot(base[1], off[1]))
@@ -139,7 +141,11 @@ def build(builds, races_rows, stats_rows, dump):
                 contrib[a] = (0.5 * ((base[0] - oa[0]) + (oc[0] - off[0])), math.hypot(base[1], off[1]))
                 contrib[c] = (0.5 * ((base[0] - oc[0]) + (oa[0] - off[0])), math.hypot(base[1], off[1]))
             elif len(ps) > 2:
-                raise SystemExit(f'three parts {bid} {race}')
+                # three or more live parts: each part's leave-one-out loss, scaled so the parts add up to all of them
+                loo = {p: base[0] - v['off:' + p][0] for p in ps}
+                scale = (base[0] - off[0]) / sum(loo.values()) if sum(loo.values()) else 0
+                for p in ps:
+                    contrib[p] = (loo[p] * scale, math.hypot(base[1], off[1]))
             breakdown.append({'build': bid, 'race': race, 'scenario': 'all', 'part': 'base', 'label': PART_INFO['base'][0], 'dps': round(off[0], 2),
                               'se': round(off[1], 2), 'active': True, 'note': ''})
             for p in RACE_PARTS[race]:

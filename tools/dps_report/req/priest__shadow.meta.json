@@ -60,7 +60,7 @@
     "Demonic Rune"
   ],
   "caveats": [
-    "Only the 2-piece set bonus is active. Raiments 4-piece and 5-piece not measured since Devouring Plague's 24s cooldown.",
+    "Only the 2-piece set bonus is active. Raiments 4-piece and 5-piece are not measured with Devouring Plague's 24s cooldown.",
     "Periodic spells crit per tick (Forever rule). Assumed: Shadow Weaving applies to the priest's own Shadow damage.",
     "Mind Flay rolls hit once and isn't hasted. SW:Death backlash is ignored.",
     "Left out: Brilliant Wizard Oil (+12.5) and Elixir of Sages (+13.9).",

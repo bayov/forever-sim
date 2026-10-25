@@ -64,7 +64,7 @@ EOF
 	echo "== assumptions $(date -u +%H:%M:%S)"
 	PAR=$P python3 $T/run_assumptions.py $BASE | tail -2
 	echo "== done $(date -u +%H:%M:%S)"
-	echo "next: python3 $T/build_data.py, then python3 $T/events.py --data \"$DASH_DIR/data\" <these ids> (the events view), then merge.mjs"
+	echo "next: python3 $T/build_data.py, then python3 $T/events.py --data \"${DASH_DIR:-$T}/data\" <these ids> (the events view), then merge.mjs"
 	;;
 shard)
 	k=$1 n=$2; shift 2

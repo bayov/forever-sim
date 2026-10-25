@@ -25,7 +25,7 @@
     "ok": true,
     "note": "180 s, seed 1 (seed 1000003: 1051.00)"
   },
-  "summary": "The sub Holy twist build with Exorcism, for an Undead or Demon boss. The only twist vs Undead preset since 2026-10-24: Level 60 (vs Undead) had the same talents, gear and rotation, so it was dropped.",
+  "summary": "The sub Holy twist build with Exorcism, for an Undead or Demon boss.",
   "advantage": "Exorcism only works on Undead and Demons. Purifying Power 2 makes its cooldown a third shorter.",
   "advantageRefs": [
     "k:s10314",

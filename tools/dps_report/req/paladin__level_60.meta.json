@@ -67,8 +67,7 @@
   ],
   "caveats": [
     "Pursuit of Justice 2 (movement speed) is taken by rule (standards 26). It costs 3.7 / 3.4 / 3.5 at 120 / 180 / 300s.",
-    "Precision 3 puts melee hit 3% over the 8% cap (it still gives spell hit); the sub Holy build is 1.2 ahead at 180s and 5 at 300s.",
-    "At 180s (before client 70425): twisting is worth 126 DPS, Consecration 109, Holy Strike 99, Hammer of Wrath 29.",
+    "Precision 3 puts melee hit 3% over the 8% cap (it still gives spell hit); the sub Holy build is 5 ahead at 120s, 4.0 at 180s and 8 at 300s.",
     "One 2% crit elixir. A second (Mongoose) would add 14.9.",
     "Holy Strike's flat bonus is inside the weapon percent (client data). Unconfirmed on the beta.",
     "High Holy Strike and Consecration ranks may be out of date (about 1.2% at stake).",

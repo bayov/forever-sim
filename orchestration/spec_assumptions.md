@@ -339,12 +339,11 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 - **Why uncertain:** it could be a beta bug that Blizzard fixes, which would bring back Classic's hit size scaling with the swing.
 - **Reconfirmed 2026-10-16:** the assumptions audit found the beta behaviour still standing: EU forum thread 632244 (level 16 Tallstriders, a 1.3 sec pet hitting 27 to 38 against 31 to 42 for a 2.0 sec pet), forever-bugs #31 still open, and no fix in any note through 15 October. Asked again, the user ruled "Keep treating it as a bug", so Classic's speed scaling stays the default.
 - **Extended 2026-10-23 (user ruling):** Cobra Reflexes (25076, 30% attack speed "but reduces damage", no number; the presets have it on since 2026-10-23) takes the same reading: the pet's hits shrink with the speed, so it adds only Pet Aggression's 8 a hit on the extra swings and the procs (+6 Beast Mastery). The swing is the passive's client row since then (Faster Attack I 17%, 1.71 sec; Slower Attack III -26%, 2.7 sec). Under High a Cobra Reflexes pet's hits stay a 2.0 sec pet's too (wowsims/forever keeps TBC's 15% cut instead).
+- **Settled 2026-10-25 (user decision, assumption audit against wowsims/forever):** their 643d636345 level 17 Cat sheet at 1.5 sec fits (creature dps + attack power / 14) × 1.5 × 1.1, so a faster pet's hits are smaller, as ours are. The "Same hit (beta)" High is retired and the row is one value.
 - **Settings:**
-  - **Expected, Classic (Sim now).** The hit scales with attack speed, treating the beta's behaviour as a bug (user ruling 2026-10-15).
-  - **High, as on the beta.** The only observed behaviour: every pet hits like a 2.0 sec pet.
-  - **Low:** = Expected.
-- **Sensitivity (assumption sims, 180 s, at High):** +6.1% Beast Mastery, +3.2% Marksmanship.
-- **Knob:** `core.AssumeOk("hunter_pet_same_hit")` = 1 restores the beta's 2.0 sec hit in `applyForeverRules` (patch 0004).
+  - **Expected, Classic (Sim now).** The hit scales with attack speed (the level 17 pet sheet).
+- **Sensitivity (assumption sims, 180 s, the retired High):** it was +6.1% Beast Mastery, +3.2% Marksmanship.
+- **Knob:** none. `hunter_pet_same_hit` is out of patch 0004 since 2026-10-25.
 
 ### `hunter_cobra_damage`: how much Cobra Reflexes cuts a pet's hits (added 2026-10-23)
 
@@ -424,7 +423,7 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
   - Forever also lowered the Frozen bonus (client 300 where Season of Discovery's was 400), so Blizzard did touch the spell.
   - The talent is reachable on the beta (20 Frost points), but no test has been posted.
 - **Settings:**
-  - **Low, 0 (the client).** The client's value, which means never casting Ice Lance: each build takes the better of its Level 60 rotation and the one before Ice Lance was added (`tools/dps_report/asm_apls/`, the APLs at 27ffd2063^1), and both builds keep the no-Ice-Lance rotation (user ruling 2026-10-15).
+  - **Low, 0 (the client).** The client's value, which means never casting Ice Lance: each build takes the better of its Level 60 rotation and one that never casts Ice Lance (`tools/dps_report/asm_apls/`: the build's rotopt template with the preset's knobs and `iceLance=0`, less the finisher's Ice Lance; regenerated 2026-10-25 for the current presets), and both builds keep the no-Ice-Lance rotation (user ruling 2026-10-15).
   - **Mid, 0.2145 (half of SoD).** If the server adds less than Season of Discovery's. It uses the Ice Lance rotation.
   - **Expected, 0.429 (Sim now).** Season of Discovery's server value for the same client data.
   - **High:** = Expected. WotLK's 0.143 was dropped (user ruling 2026-10-15).
@@ -465,9 +464,21 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 - **Why uncertain:** whether a raid Frost mage can stand within 10 yards of the boss: melee cleaves, frontal and point-blank boss abilities, and the cone has to face the boss.
 - **Settings:**
   - **Expected (Sim now):** at range, no Cone of Cold.
-  - **High, at 10 yards:** three request edits. Rotation `tools/dps_report/asm_apls/mage__frost.cone_of_cold.apl.json` (the mage_frost template with the preset's knobs plus `coneOfCold=1,coldSnapCone=5`: Cold Snap, then Cone of Cold, right after the Ice Lance line), talents `05022050011003--053500030100331251` (wowsims/forever's, which parse on our tree as they are: Winter's Chill 5 and Improved Cone of Cold 3 in place of Frost Warding 2, Improved Blizzard 3, Permafrost and Ice Block, and Arcane Subtlety 2 and two more Arcane Meditation points in place of two Arcane Impact points and Incineration 3), and `distanceFromTarget` 10.
-- **Sensitivity (180 s, 20k iterations, seed 1, on the Frost request):** 910.5 against the preset's 820.7 (+89.8, +10.9%). The preset at 10 yards without Cone of Cold is 824.8 (the bolts land sooner). Our preset's points with the cone (`05020050031001-02-053500030100331251`, Incineration 2) are 896.2, and the High talents at 25 yards, where the cone can't be cast, are 832.3. About 17 Cone of Cold casts a fight.
-- **Knob:** the request edit `apl=cone_of_cold;talents=05022050011003--053500030100331251;distance=10` (`run_assumptions.py` since 2026-10-23: an edit can set several request fields, `;`-separated). On the old Frost request it ran 813.9 → 911.3 (3,000 iterations, seed 1, 180 s).
+  - **High, at 10 yards:** two request edits. Rotation `tools/dps_report/asm_apls/mage__frost.cone_of_cold.apl.json` (the preset's rotation, the mage_frost template with its knobs, plus one Cone of Cold line right after the Missile Barrage line, ahead of the finisher and Frostbolt) and `distanceFromTarget` 10, on the preset's own talents (29 Arcane / 22 Frost, no Winter's Chill, Improved Cone of Cold or Cold Snap), so the row compares the preset with itself.
+- **Sensitivity (180 s, 20k iterations, seeds 1 / 1000003, on the 2026-10-23 Frost request, 946.6 / 947.1):** High 947.9 / 947.6 (+1.3, +0.1%), about 12.6 Cone of Cold casts a fight. The preset at 10 yards without the cone is 950.7 / 950.9 (the bolts land sooner), so the cone itself costs about 3. The template's own placement (`coneOfCold=1,coldSnapCone=5`: Cold Snap, then Cone of Cold, right after the Ice Lance line) is 934.6 on the preset's talents. wowsims/forever's talents `05022050011003--053500030100331251` (Winter's Chill 5, Improved Cone of Cold 3, Cold Snap) with the cone are 898.7 on the preset's knobs and 913.4 on the row's earlier rotation; the preset's Frost points plus the three cone talents in place of Presence of Mind, Arcane Mind and Arcane Instability (`05522020031--053500030100331250`) are 887.4. Against the earlier deep Frost preset (820.7) wowsims/forever's build with the cone was +10.9%; the hybrid preset passes it at range.
+- **Knob:** the request edit `apl=cone_of_cold;distance=10` (`run_assumptions.py`: an edit can set several request fields, `;`-separated).
+
+### `mage_am_missile_barrage`: Arcane Missiles' missiles procing Missile Barrage (added 2026-10-25)
+
+- **Builds:** Arcane, Frost and Fire (Missile Barrage 2/2; Frostfire has none).
+- **Sim now:** each landed Arcane Missiles missile procs Missile Barrage at 5% a point (`sim/mage/talents.go`, the "Missile Barrage Talent" aura's OnSpellHitDealt), as client 70450's tooltip has it.
+- **Source:** the client tooltip. wowsims/forever 58fb6c0273 turned the missile proc off, citing "developer confirmed it does not proc" with no link.
+- **Why uncertain:** a developer's reported word against the tooltip; nobody has posted a log.
+- **Settings:**
+  - **Low, no proc (wowsims/forever).** Missiles never proc it.
+  - **Expected, 5% a missile a point (Sim now).** The tooltip.
+- **Sensitivity (180 s, 3,000 iterations, seed 1):** Low Arcane −7.9% (982.3 → 904.4), Frost −3.0%, Fire −0.2%.
+- **Knob:** `core.Assume("mage_am_mb", 1)`; 0 turns the missile proc off (patch 0004).
 
 ---
 
@@ -485,6 +496,7 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 - **Sim now:** 2 procs a minute a point, 10 PPM at 5/5, on any landed melee hit. `sim/shaman/talents.go:497-499` (TODO: "The tooltip has no proc rate, beta testing will have to measure it").
 - **Source:** our guess (shaman_audit.md 2.7: "2 a minute a point, a guess"). The client leaves the rate to the server.
 - **Why uncertain:** the talent needs level 34+, and no beta character can test it.
+- **Weak evidence (2026-10-25, assumption audit):** wowsims/forever's efff659194 gives two proc-per-hit rates, 0.61 on a 3.6 sec weapon (about 10 PPM) and 0.27 on a 2.4 sec one (about 6.75 PPM), with no sample sizes or log. A plain PPM doesn't fit both points, so they don't settle the rate, and the row stays open (user decision 2026-10-25).
 - **Settings:**
   - **Low, 5 PPM.** Half the analogues, for a Forever that spreads a weaker proc over its five ranks (1 a point). This is the weakest-grounded value in the inventory.
   - **Expected, 10 PPM (Sim now).** Season of Discovery's rune base rate (wowsims/sod `sim/shaman/runes.go`: "Base PPM is 10") and the 2-a-rank rate of the talent this one copies.

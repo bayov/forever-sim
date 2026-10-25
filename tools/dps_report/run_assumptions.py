@@ -12,14 +12,14 @@ Per build an assumption touches, seed 1, the build's request (req/<id>.json) oth
 A setting with the ice_lance edit runs the preset rotation and one with Ice Lance on every Fingers of Frost charge, and keeps
 the better (no setting uses it now: the Frost and Frostfire presets cast Ice Lance themselves). A setting with the
 no_ice_lance edit (Ice Lance at the client's coefficient, 0) runs the preset rotation and the build's rotation that never
-casts Ice Lance (asm_apls/<id>.no_ice_lance.apl.json, the Level 60 APL before the presets took Ice Lance up), and keeps
-the better. A setting with the raid_hits=N edit sets the encounter's raid damage hits a minute (raidDamageHitsPerMinute) to N.
+casts Ice Lance (asm_apls/<id>.no_ice_lance.apl.json, the build's rotopt template with the preset's knobs and iceLance=0,
+less the finisher's Ice Lance), and keeps the better. A setting with the raid_hits=N edit sets the encounter's raid damage hits a minute (raidDamageHitsPerMinute) to N.
 A setting with the no_weapon_oil edit takes the Wizard Oil off the warlock's weapon (the stone stays). A setting with
 the no_flask_zone edit fights out of a natural flask zone (encounter naturalFlaskZone off): a hunter or cat with a natural
 flask takes the Flask of Distilled Wisdom back (NO_ZONE_FLASK, their flask before the zone), and the others keep theirs
 for its Stamina. An edit can set several request fields at once, ';'-separated: apl=<name> runs
 asm_apls/<id>.<name>.apl.json, talents=<string> sets the talents and distance=<yards> the distance from the target
-(mage_cone_of_cold sets all three).
+(mage_cone_of_cold sets the APL, the preset's rotation with a Cone of Cold line after Missile Barrage, and the distance).
 Results append to asm/results.jsonl keyed (build, combo, secs, rot), so a rerun only does what is missing.
 The base rows are the same sims run_build.py ran (seed 1: the main 180 s run at 20k, the 120 and 300 s lengths at 5k,
 and with no DASH_ASSUME this binary is bit-identical to the plain one), so they are copied from out/<id>.json when it

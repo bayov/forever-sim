@@ -73,7 +73,6 @@
   "caveats": [
     "Pursuit of Justice 2 (movement speed) is taken by rule (standards 26). It costs 2.2 / 2.8 / 2.5 at 120 / 180 / 300s.",
     "Divine Precision's hit doesn't cover Judgement of Righteousness.",
-    "Holy Shock is worth 148 DPS and Light's Vigil about 91 (before client 70425).",
     "A missed Holy Shock wastes the Vigil (about 1% Holy miss).",
     "Holy Strike's flat bonus is inside the weapon percent (client data). Unconfirmed on the beta.",
     "High Holy Strike and Consecration ranks may be out of date (about 1.2% at stake).",

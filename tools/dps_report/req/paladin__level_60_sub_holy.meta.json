@@ -25,7 +25,7 @@
     "ok": true,
     "note": "180 s, seed 1 (seed 1000003: 949.36)"
   },
-  "summary": "The twist build with its side points in Holy instead of Protection, on Seal of Righteousness twisted to Seal of Command. The class default since the 2026-10-23 regear (4.0 ahead of twist at 180s since Pursuit of Justice became a must-take talent).",
+  "summary": "The twist build with its side points in Holy instead of Protection, on Seal of Righteousness twisted to Seal of Command. The class default: 4.0 ahead of twist at 180s.",
   "keyTalents": [
     "Twist of Light",
     "Seal of Command",
@@ -67,7 +67,7 @@
   ],
   "caveats": [
     "Pursuit of Justice 2 (movement speed) is taken by rule (standards 26). It costs nothing: it replaced Purifying Power, which does nothing on this boss.",
-    "Within 1 DPS of the twist build up to 180s and 5 ahead at 300s: Precision's hit is over the 8% cap since 2026-10-23.",
+    "5 ahead of the twist build at 120s, 4.0 at 180s and 8 at 300s: the twist build's Precision puts its hit over the 8% cap.",
     "Purifying Power does nothing on the generic boss.",
     "Holy Strike's flat bonus is inside the weapon percent (client data). Unconfirmed on the beta.",
     "High Holy Strike and Consecration ranks may be out of date (about 1.2% at stake).",
