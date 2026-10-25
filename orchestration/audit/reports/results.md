@@ -1,17 +1,13 @@
-# Results audit, pass 50 (master 54878fa3d, client build 1.60.1.70532)
+# Results pass 51, master 016daa654 (client 1.60.1.70532)
 
-Due: 402 watched files changed since daba9d1a5 (alignment round, class rounds, report v36).
+Trigger: 43 watched files (hunter Mark duty presets removed, Scorpid duties removed, hunter builds regenerated, db, builds.json).
+Used the shared 20k seed 1 run (/tmp/audit-work/runs/master); 57 requests.
 
-## Checked
-- Shared run (all 64 requests, 20k, seed 1): 0 of 64 differ from published by more than 0.15 (max 0.0). Requests went 66 to 64: Ret `level_60_undead` and `level_60-duty-crusader` removed (state.json, report v36).
-- builds.json vs the new run: 64 of 64 match. This run is now the reference (`ref/results/req_summary.txt`).
-- Unread fields: only `notes`.
-- Client build now 70532 in gate; the tables were not re-diffed this pass (no sim port cites a new build).
-- Drift: regen.py failed on "Night Elf" (race with a space); fixed in the helper. New drift vs the old reference, measured in finding results-20261025-1: consumes (potion, flask, filler explosive) that mksettings writes and the requests do not. Old standing items gone: warlock sanctityAura/curseOfShadow leftovers, Ret undead and crusader seal differences, rogue/feral/priest duty items partly changed. Reference drift_report.txt replaced.
-
-## Ranking (top and bottom, new base)
-Hunters now lead (BM 1172, MM 1168, Lone Wolf 1159), then Mage Fire 1101 and Frostfire 1096; rogues are lowest (Subtlety 716, Mutilate 719, Seal Fate 729-732). The whole table rose against v35 from the regear and rotation round; the ranking order changed (hunters above warlocks). Not re-explained per spec this pass; no paired before/after sims beyond the vs-published comparison.
-
-## Open
-- results-20261025-1 (consumes drift).
-- Per-spec ranking explanation for the v36 order is not done.
+- Published vs mine: 57 of 57 within 0.15.
+- builds.json vs summary: 4 hunter rows differ by 0.0 to 0.5 (builds rounding of re-sim; BM 1171.5, LW 1156.8, MM 1166.1, SV 1055.0). 7 duty builds removed.
+- Moves against the reference (explained by e71b90f51, 5429f4185, c20bbc3df: every hunter keeps up its own Hunter's Mark):
+  BM 1172.0 -> 1171.5, Lone Wolf 1159.3 -> 1156.8, MM 1167.6 -> 1166.2, SV 1056.6 -> 1055.0. Removed: 7 hunter duty-mark/duty-scorpid requests (214bc117b).
+- Drift: identical to the reference except the removed hunter duty entries. regen.py fixed for races with a space ("Night Elf" -> NightElf), which broke the feral entries.
+- Open finding results-20261025-1 (consumes drift) still reproduces: Ret Shock potion, Elemental mana-tide potion, rogue flask/filler.
+- Unread fields: only notes.
+- Ranking order of the top is unchanged: Demonology and the hunters lead; no new outliers.
