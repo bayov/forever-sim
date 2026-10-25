@@ -45,7 +45,7 @@
  },
  "report": {
   "source": "ui/dps_report/",
-  "artifact": "https://claude.ai/artifact/RUzPysb5dSk2RAXzXij4oR",
+  "artifact": "retired 2026-10-25 (was https://claude.ai/artifact/RUzPysb5dSk2RAXzXij4oR); the report is deployed to https://forever-dps.pages.dev",
   "artifactVersion": 6,
   "publishedFrom": "master 776726e76 (concise tooltips)",
   "legacyDashboard": "deleted 2026-10-13"
@@ -54,6 +54,14 @@
   "url": "https://claude.ai/artifact/RUzPysb5dSk2RAXzXij4oR",
   "version": 36,
   "publishedFrom": "22fca46e70",
+  "date": "2026-10-25",
+  "note": "the last artifact publish; retired 2026-10-25, see reportSite"
+ },
+ "reportSite": {
+  "url": "https://forever-dps.pages.dev",
+  "cloudflareProject": "forever-dps",
+  "deploy": "make dps-report-deploy (tools/dps_report/deploy_pages.py)",
+  "publishedFrom": "22fca46e70 (data 23b89b17a2, built 2026-10-25T07:58)",
   "date": "2026-10-25"
  }
 }

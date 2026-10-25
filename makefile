@@ -58,10 +58,15 @@ ui/core/index.ts: $(TS_CORE_SRC)
 	  sed 's/\.ts";$$/";/' | \
 	  grep -v 'import "./index";' > $@
 
-# The DPS Report as one self-contained HTML file, for a Claude artifact: dist/dps_report.html.
+# The DPS Report as one self-contained HTML file: dist/dps_report.html.
 .PHONY: dps-report-artifact
 dps-report-artifact: node_modules
 	node tools/dps_report/build_artifact.mjs
+
+# Build it and deploy it to Cloudflare Pages: https://forever-dps.pages.dev.
+.PHONY: dps-report-deploy
+dps-report-deploy: dps-report-artifact
+	python3 tools/dps_report/deploy_pages.py
 
 .PHONY: clean
 clean:

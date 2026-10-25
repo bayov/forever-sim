@@ -1,6 +1,6 @@
 /// <reference types="vite/client" />
 // The DPS Report page. The same source builds into the sim UI page (/forever/dps_report/) and into a single
-// self-contained HTML file for a Claude artifact (make dps-report-artifact).
+// self-contained HTML file deployed to https://forever-dps.pages.dev (make dps-report-artifact).
 import tippy from 'tippy.js';
 
 import { installStickyTooltips } from '../core/components/sticky_tooltips';

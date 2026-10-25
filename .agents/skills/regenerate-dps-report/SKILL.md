@@ -1,6 +1,6 @@
 ---
 name: regenerate-dps-report
-description: Regenerate the level 60 DPS Report (ui/dps_report) from fresh sims, re-running only the builds whose inputs changed unless asked for more, then republish its phone artifact. Use when the user asks to regenerate, refresh or update the DPS report or its numbers.
+description: Regenerate the level 60 DPS Report (ui/dps_report) from fresh sims, re-running only the builds whose inputs changed unless asked for more, then deploy it to https://forever-dps.pages.dev. Use when the user asks to regenerate, refresh or update the DPS report or its numbers.
 ---
 
 # Regenerate the DPS Report
@@ -14,8 +14,10 @@ gear, rotation, consumes, timelines). It has one source and two outputs:
   `ui/dps_report/datasets.json`. Rows of per-build datasets carry `build` (the preset
   id, `<class>__<preset>`; `builds.json` calls it `id`).
 - Output 1, sim UI: `/classic/dps_report/` (vite builds `ui/dps_report/index.html`).
-- Output 2, artifact: `make dps-report-artifact` writes `dist/dps_report.html` (everything
-  inlined), published to https://claude.ai/artifact/RUzPysb5dSk2RAXzXij4oR.
+- Output 2, the site: `make dps-report-artifact` writes `dist/dps_report.html` (everything
+  inlined), deployed to Cloudflare Pages at https://forever-dps.pages.dev (project
+  `forever-dps`). The old Claude artifact (RUzPysb5dSk2RAXzXij4oR) is retired: don't
+  publish the report as an artifact (user ruling, 2026-10-25).
 
 This normally runs in a Claude Code web session, because a full refresh spins up a dozen
 or more subagents for hours. Work on a branch, never directly on `master`.
@@ -103,21 +105,25 @@ ran on (`--commit <rev>` if it isn't `HEAD`).
   console errors.
 - If you changed the page itself, also check `npx vite serve` at `/classic/dps_report/`.
 
-## 5. Publish and commit
+## 5. Deploy and commit
 
-- Publish `dist/dps_report.html` with the Artifact tool, passing
-  `url: https://claude.ai/artifact/RUzPysb5dSk2RAXzXij4oR` so the user's phone link
-  keeps working. From a new session the tool first needs a `read` of that URL. Never
-  create a second artifact for the report.
+- Deploy with `make dps-report-deploy` (or `python3 tools/dps_report/deploy_pages.py`
+  after building). It needs `CLOUDFLARE_ACCOUNT_ID` and a Pages Edit token, which the
+  cloud environment provides (the `CLOUDFLARE_API_TOKEN` variable, or a network secret
+  the proxy adds). Plain `wrangler pages deploy` fails in cloud sessions, because the
+  proxy breaks its asset upload; the script uploads those directly. It checks the live
+  site serves the new file byte for byte and rolls production back if not. To try a page
+  change first, pass `--branch <name>` for a preview URL. Never publish the report as a
+  Claude artifact.
 - Commit `ui/dps_report/data/`, `datasets.json`, `provenance.json` and any pipeline
   changes on a local branch, merge origin/master in, then push straight to `master`
   with no PR (user ruling, 2026-10-14).
-- Reply with the artifact link, which builds were re-simmed and why, and the biggest
+- Reply with the link https://forever-dps.pages.dev, which builds were re-simmed and why, and the biggest
   ranking changes.
 
 ## Editing the page itself
 
-Change `ui/dps_report/` and `ui/scss/dps_report/`, never the published artifact. Keep the
+Change `ui/dps_report/` and `ui/scss/dps_report/`, never the deployed file. Keep the
 sim UI's look: use its classes and scss variables rather than new colours or fonts. The
 page reads data only through `dash.data(id)` inside `dash.onData`. A new dataset needs an
 entry in `datasets.json` and a file in `data/`.

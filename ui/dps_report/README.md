@@ -9,7 +9,7 @@ One source, two outputs:
 | Output | How |
 |---|---|
 | Sim UI page, `/forever/dps_report/` | Built by vite with the rest of the UI (`make rundevserver`, `npx vite serve`, `make dist`). Linked from the homepage. |
-| Single-file HTML for a Claude artifact | `make dps-report-artifact` writes `dist/dps_report.html` (about 14 MB) with the script, styles, images, fonts and every dataset inside. Published at https://claude.ai/artifact/RUzPysb5dSk2RAXzXij4oR. |
+| Single-file HTML for the site | `make dps-report-artifact` writes `dist/dps_report.html` (about 15 MB) with the script, styles, images, fonts and every dataset inside. `make dps-report-deploy` builds it and deploys it to Cloudflare Pages at https://forever-dps.pages.dev (`tools/dps_report/deploy_pages.py`). |
 
 The single file is built by `tools/dps_report/build_artifact.mjs` with `vite.dps_report.config.mts`. It differs from the
 sim UI build only in where the datasets come from (`data_source.inline.ts` bundles them instead of fetching them) and in

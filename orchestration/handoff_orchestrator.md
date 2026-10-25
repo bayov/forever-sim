@@ -7,7 +7,7 @@ knew that wasn't already in the repo. Read it after `.agents/skills/dps-report/S
 ## State at handoff
 
 - **Master:** d2633f4a4. b389688f7 came after it, and it only touches the Wowhead scraper.
-- **Report:** artifact version 35, https://claude.ai/artifact/RUzPysb5dSk2RAXzXij4oR. Published from 437b92161.
+- **Report:** artifact version 35, https://claude.ai/artifact/RUzPysb5dSk2RAXzXij4oR. Published from 437b92161. (Since 2026-10-25 the report is deployed to https://forever-dps.pages.dev instead; the artifact is retired.)
   - All 66 builds were re-simmed on 787da848b. Provenance is recorded at 1735382cd, because the only commits in between
     are the Leveling Plan page and its `ui.proto` message, which no sim reads.
   - `node tools/dps_report/stale.mjs` showed 0 of 66 builds stale at handoff.

@@ -32,7 +32,7 @@ All paths are on `master`: the orchestration docs, the pipeline and this skill w
 5. `orchestration/followups.md`: known open items.
 6. `orchestration/audit/findings/*.md` (the `## Open` sections) and the newest lines of `orchestration/audit/log.md`: what the auditors found since the last report (B13).
 7. `orchestration/handoff_orchestrator.md`: what the last long-running orchestrator knew that wasn't written elsewhere (2026-10-17): parked threads, working rules for rotation, talent and race changes, PR verification and pipeline lessons.
-8. `.agents/skills/dps-report/state.json`: what the last report was built from (branch heads, client build, report artifact). Compare it with now to find what's stale.
+8. `.agents/skills/dps-report/state.json`: what the last report was built from (branch heads, client build, the deployed report). Compare it with now to find what's stale.
 9. `tools/dps_report/README.md`: the dataset pipeline (scripts, inputs, runtimes, per-dataset dependencies).
 10. The class briefs `orchestration/brief_<class>.md` and auditor briefs `orchestration/auditor_*.md` + `auditors_common.md`. They're historical and still useful for roles and method, but their gear numbers are superseded by standards 1b.
 
@@ -102,8 +102,8 @@ Template for a delegated job: `prompts/dashboard/HANDOFF_dash_refresh.md`. Its p
   - The sim UI page at `/forever/dps_report/` (`npx vite serve`).
   - The single-file `make dps-report-artifact` → `dist/dps_report.html`, which must stay under 16 MB.
 - **Checks:** Playwright with `/opt/pw-browsers/chromium` on the wrapped dist file, with the session's proxy for d3. Check every tab at phone and desktop width, in both themes, with no console errors. Also run `npx tsc --noEmit` (generate `ui/core/proto` first) and prettier on the files you touch.
-- **Publish:** on request, publish `dist/dps_report.html` to https://claude.ai/artifact/RUzPysb5dSk2RAXzXij4oR. `read` it first, then publish with that `url`. Never create a second report artifact.
-- **Landing it:** push report changes straight to `master`, with no PR (user ruling, 2026-10-14: "push straight next time"). Work on a local branch from origin/master, merge master in last (the user and other sessions commit report UI changes often), and run every check above. Then push it to `master` as a fast-forward, or merge master again first if it moved. Republish the artifact from that master build.
+- **Publish:** deploy every new report to https://forever-dps.pages.dev with `make dps-report-deploy` (regenerate-dps-report step 5 has the details), and reply with that link. Don't publish it as a Claude artifact; the old one (RUzPysb5dSk2RAXzXij4oR) is retired (user ruling, 2026-10-25).
+- **Landing it:** push report changes straight to `master`, with no PR (user ruling, 2026-10-14: "push straight next time"). Work on a local branch from origin/master, merge master in last (the user and other sessions commit report UI changes often), and run every check above. Then push it to `master` as a fast-forward, or merge master again first if it moved. Deploy the site from that master build.
 
 **B9. Assumption scenarios.**
 1. Dashboard-only knobs in the merged tree: the DASH_ASSUME env var, with defaults bit-identical.
@@ -115,7 +115,7 @@ Template: `prompts/dashboard/HANDOFF_assumptions.md`. Re-run it whenever presets
 **B10. Analysis / research question.** For a new rules question (e.g. item budgets, per-archetype pricing), start a local subagent with a self-contained handoff. Its deliverable is an `orchestration/*.md` with tables. Bring its recommendation to the user before changing standards.
 
 **B11. Publish / wrap-up.**
-- Update state.json (heads, client build, report artifact version, date).
+- Update state.json (heads, client build, the report's deploy, date).
 - Update PR bodies (class workers do their own).
 - Tell the user what changed, with the ranking.
 
@@ -174,7 +174,7 @@ For anything else, map the request to blocks. When it's ambiguous whether the us
 `state.json` records:
 - the coordination, class and consumes branch heads used for the last published report;
 - the Forever client build;
-- the report artifact and its version;
+- the report's last deploy to https://forever-dps.pages.dev;
 - open items.
 
 Update it at B11. A new session compares it with `git rev-parse origin/<branch>` and wago.tools' newest build to decide what's stale.
