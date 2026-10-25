@@ -1,7 +1,8 @@
 #!/bin/sh
 # Regenerates the hunter rotations in ui/hunter/apls from the hunter_ranged and hunter_sv
-# templates, with the knobs the searches settled on (last on 2026-10-23, at 120 / 180 / 300 sec on
-# the synthetic Phase 1 sets with the 8% hit cap and the Level 60 talents).
+# templates, with the knobs the searches settled on (last on 2026-10-25, at 120 / 180 / 300 sec on
+# the synthetic Phase 1 sets with the 8% hit cap, the Level 60 talents and Classic's crit per
+# Agility at 60).
 # Run from the repo root with a settings file the optimizer should sim against, made with
 # mksettings for the spec. The rotation itself does not depend on the settings, only the one
 # sanity sim does.
@@ -47,6 +48,13 @@ ranged="aimed=1,aimedMana=0,hawk=2,intimidation=0,serpent=1,sniper=1,sniperFirst
 bm="$ranged,arcaneFirst=1,arcaneMana=0,serpentLate=2,serpentMana=0,holdElune=1"
 mmBase="$ranged,arcaneFirst=1,arcaneMana=0,serpentLate=1,serpentMana=0,aimedMana=40,holdRapid=1,holdElune=1"
 mm="$mmBase,sniperManaPerSec=10"
+# The recheck after the hunter's crit per Agility became Classic's at 60 (2026-10-25, knob searches
+# at 120, 180 and 300 sec combined, confirmed at 20000 iterations on seeds 1 and 1000003): the talents
+# and the other knobs hold (the searches' one other move, weaveReact 0.1, is faster than a player),
+# and Marksmanship and Lone Wolf now put Multi-Shot on the cooldown it shares with Aimed Shot
+# (aimed=0). Marksmanship on its Human +2.9 / +1.8 / +1.2 at 120 / 180 / 300 sec (seed 1000003 +3.3 /
+# +2.2 / +0.8), Lone Wolf +1.7 / +1.6 / +1.2 (+0.5 / +2.6 / +1.5). Beast Mastery keeps Aimed Shot.
+mmMulti="$mm,aimed=0"
 # The melee weave (2026-10-23, after the weave mechanics of wowsims/forever): between Auto Shots the
 # hunter walks from 12 yd into melee for a main hand swing Raptor Strike is ready for, when that holds
 # the next Auto Shot back 1.2 sec or less and Arcane Shot and the Aimed Shot cooldown stay down until
@@ -61,10 +69,12 @@ mm="$mmBase,sniperManaPerSec=10"
 weave="weave=1,weaveRaptor=1,weaveDelay=1.2,weaveShotSlack=0.75"
 mmWeave="$weave,weaveManaPerSec=25"
 gen hunter_ranged bm "$bm,$weave"
-gen hunter_ranged mm "$mm,$mmWeave"
-gen hunter_ranged lw "$mm,$mmWeave"
+gen hunter_ranged mm "$mmMulti,$mmWeave"
+gen hunter_ranged lw "$mmMulti,$mmWeave"
 gen hunter_ranged bm_turret "$bm"
-gen hunter_ranged mm_turret "$mm"
+# At range Multi-Shot wins for Marksmanship too (+3.1 / +1.0 / +1.2, seed 1000003 +3.0 / +0.8 / +1.6),
+# but not for Lone Wolf at 180 sec (-0.1 / +0.5), which keeps Aimed Shot there.
+gen hunter_ranged mm_turret "$mmMulti"
 gen hunter_ranged lw_turret "$mm"
 # Marksmanship and Lone Wolf hold Rapid Fire and Elune's Light for the on-use trinket when the wait
 # costs no use, Beast Mastery only Elune's Light (rotation auditor, 2026-10-13: +2.3 / +1.7 / +0.5
