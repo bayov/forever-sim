@@ -1,10 +1,11 @@
-# Mechanics audit: verdicts and settled items (as of 2026-10-21 18:50 UTC, master 599f9de74)
+# Mechanics audit: verdicts and settled items (as of 2026-10-25 13:08 UTC, master 54878fa3d)
 
 Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 = Era / Classic. Never cite vmangos.
 
 ## Baseline
 
 - Client: 1.60.1.70532, current (no build answered 70533-70832). All 43 mechanics-set tables are byte-identical to 70450's, so every verdict below holds on 70532. Before that, 1.60.1.70450: Its spell data equals 70425's, apart from 22 cosmetic rows (pets, mounts, Adventurer's Tent, ensembles). TraitDefinitionEffectPoints, TraitNodeEntry and SpellItemEnchantment are identical to 70425's. 17 CurvePoint rows changed, none on a talent curve.
+- Server hotfixes (wago.tools/hotfixes, pulled by tools/audit/mechanics/hotfixes.py) change rows with no new build. Pass 37 read every spell-table hotfix on 70425 / 70450 / 70532 up to push 113205 (2026-10-23): the only shared or class rows that move a Level 60 preset are Spellstone's school (mechanics-20261025-1) and the ones the ledger already tracks (Hunter's Mark 143, Champion of the Light, the mage Frost hotfixes, Bloodthrill 5 sec). Touch of the Grave's drain (1260198) lost Attributes_3 0x20000000, 9, 10 and 13 bits in push 112840 (10-20) but keeps Attributes_6 0x20000000 (no caster damage mods), so the dev notes' "no longer scales with Shadow increases" still stands.
 - The last balance build is 70425: 575 SpellEffect rows changed against 70338. The orchestration/rank_tuning.md table (8e30e52) lists the class deltas.
 - The wago.tools builds API lists only 70374 / 70338 / 70334 under wow_cn_beta. 70425 and 70450 were found by probing the db2 CSV URLs.
 
@@ -29,11 +30,17 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 | Debuff ranks (Curse of Weakness, Demoralizing Shout / Roar, Thunder Clap −20%, Scorpid Sting −2% hit, Curse of the Elements 30–75 / 4–10% on all magic schools) | Client values | 70338; shaman audit 10.4 |
 | Curse of Recklessness | Armor only; 70425 dropped the target AP part | 70425 |
 | Salvation | −30% threat, raid buff, no DPS effect | 70425 1038 aura 10 bp −30 misc 127 |
-| Normalised Rage | k 3.46 one-hand / 4.5 two-hand × swing speed, level factor s = 0.5; off hand 0.5 | user rulings, standards 21 |
-| Rage from damage taken | 20 × (1 − a(L)) × D / H(L); a = 20% → 40%; H = Forever normal-mob health (5356 at 60); D = the attacker's hit × crit/crush multiplier, before any of our mitigation | 8 Oct notes post 5; warrior article 24301514; magey issue 3; #57; standards 21 |
+| Normalised Rage | k 3.46 one-hand / 4.5 two-hand × swing speed, level factor s = 0.5; off hand 0.5; a crit adds 100% of the one-hand-rate Rage before the two-hand factor; misses, dodges and parries give none | user rulings, standards 21 (crit and miss rules 2026-10-23, logs via wowsims/forever 5ac4ffbcb6, f9f9f21883; Rule of Rage row 1322574) |
+| Rage from damage taken | 2.5 × (1 − A(attacker level)) × D / c(attacker level); A 20% to 42, 30% at 44, 36% at 46, 38% at 50, 40% at 63; c = Classic's level 45+ conversion (243.6 at 63); D = the attacker's hit × crit/crush multiplier, before any of our mitigation; periodic ticks count; 9.2 Rage for a 1500 boss hit | beta logs via wowsims/forever (ee2d69b16a, 73b317c7cf, de550b7df9), user-approved 2026-10-23, standards 21 (tier 1 logs; the 2.5 is report assumption warr_dt_rage_k) |
 | Nature's Swiftness | CD starts when the buff is used (COOLDOWN_ON_EVENT 0x02000000) | c44c2502a |
 | Pushback | Can't push a cast back past its start | 9f8d7ece5 |
-| Partial resists | No level-based partial resist under Forever | user ruling, 172ad4632 |
+| Partial resists | No level-based partial resist; school resists roll in 10% steps around R / (|R| + 9L), Spell Penetration past 0 adds 10-20%; DoT ticks meet a tenth of R; damage shields never partially resist | user ruling, 172ad4632; e04953fb98 (beta logs via wowsims/forever 679ca6f875, 8249a6d0e3), standards / alignment round 2026-10-23 |
+| Hit suppression | None under Forever: 8% yellow cap, 27% dual-wield white vs a level 63 boss | beta logs via wowsims/forever 3af105fe16, standards (2026-10-23) |
+| Natural flasks | 60 Stamina; in the zone Accuracy 5% melee/ranged/spell hit, Aggression 4% crit, Precision 5% expertise, Swiftness 5% melee/ranged/cast speed | 70532 1293740-1293743 (A_DUMMY bp 5/4/5/5, then auras 54+55, 290, 240, 342+65) |
+| Explosives and damage potions | EZ-Thro Dark Bomb 450 ±50%, EZ-Thro Thorium Grenade 400 ±25%, Holy Hand Grenade 400 ±25%, Dragonfire 280 + 35 / 2 sec for 8 sec, Caustic Smog 33 / sec (±5%) for 12 sec, 2 min potion CD | 70532 1269334, 1269330, 1317268, 1252554, 1252525/6/43 |
+| Item procs (alignment round) | 22 proc rows checked (Firebolt 13442 90, Shadow Bolt 18211 231 ±30%, Fatal Wound 10373 311, Wound 18107 105, Armor Shatter 16928 165, Phantom Strike 100 armor, Brain Damage 1290950 250, Everlook bot 1295633 467, ...); Nightfall 23605 15% magic damage taken (misc 126) | 70532 SpellEffect, pass 37 |
+| Shadowmeld | Castable in combat (no not-in-combat bit), 2 min in combat per tooltip, A_MOD_STEALTH, cancels auto attack, breaks on the next cast | 70532 20580 (Attributes_0 0xA140010, aura 16 / 103), tooltip; the 2 min is the tooltip's |
+| Pet consumables | None under Forever | 70532 scroll rows carry Attributes_3 0x100 (only target players) |
 | Mob crit vs us (leveling) | No base 5%, 0.2% per level over | logs, a950d79d7 |
 | Continuous energy | Confirmed by the user | |
 | Periodic crits | Attributes_8 0x200 marks the DoTs that can crit; SpellFlagNoPeriodicCrit opts out | pass 1 |
@@ -46,11 +53,13 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 
 - Windfury Totem cooldown 1.5 sec (standards 17, user ruling). Windfury Totem procs from the main hand only (user ruling).
 - Bane of Doom: with the user.
-- Report assumptions decided by user rulings 2026-10-15 / 16: Trueshot Aura rank 5 100; Hunter's Mark rank 4 140; Arcane Shot 0.10 / Serpent Sting 0.03; hunter crit per Agility ×1.22; pet hits scale with speed; Raptor Strike rank 8 96; Rend 2% AP a tick; Frostbolt rank 10 ×1.04; Ice Lance 0.429; Lightning Bolt rank 10 ×1.12; warr_crit_rage +100%; warr_rage_oh 0.5; level_partial_resist none; sham_ftt_stack (raid Flametongue Totem with Windfury Weapon).
+- Report assumptions decided by user rulings 2026-10-15 / 16: Trueshot Aura rank 5 100; Hunter's Mark rank 4 143 (2026-10-21 hotfix, user 2026-10-23; the hotfix table has 14325 effect 1 at 143); Arcane Shot 0.10 / Serpent Sting 0.03; hunter crit per Agility ×1.22; pet hits scale with speed; Raptor Strike rank 8 96; Rend 2% AP a tick; Frostbolt rank 10 ×1.04; Ice Lance 0.429; Lightning Bolt rank 10 ×1.12; warr_crit_rage +100%; warr_rage_oh 0.5; level_partial_resist none; sham_ftt_stack (raid Flametongue Totem with Windfury Weapon).
 
 ## Open items (not blocking)
 
-- warr_dt_rage_mods / warr_dt_rage_k report assumptions: pending, waiting on the report re-sim. warr_dt_rage_k High must be about 48, not 36, now that H(60) = 5356.
+- warr_dt_rage_mods resolved 2026-10-23 (none of our modifiers); warr_dt_rage_k now holds the 2.5 of the new damage-taken formula.
+- Furious Howl shares Battle Shout's exclusive slot under Forever (1ca4850e1, wowsims/forever b1c943e9ac); no client or Blizzard source says so, and Era stacks them (tier 3). No preset uses a Wolf (the hunter presets take the Cat), so it moves nothing today.
+- Troll Shadowguard deals the triggered row's 96 (28382); the buff row 19312 states 116 and triggers the dummy 28376. Up to about 0.7 DPS on Troll Shadow; priest docs list it as unknown.
 - Berserker Rage's extra Rage from spell hits (sim/warrior/berserker_rage.go) still uses Classic's attacker-level conversion under Forever. No Level 60 preset casts it.
-- Normal mob health above level 35 is extrapolated (+30% from level 20 on), and it feeds damage-taken Rage at 60.
+- Normal mob health above level 35 is extrapolated; since 2026-10-23 it no longer feeds damage-taken Rage (the formula uses the attacker's level only), only leveling.
 - Class-side open assumptions (owned by the class workers): Paladin 2H Weapon Specialization on seal procs, Seal of Righteousness stored base points, Maelstrom Weapon proc rate, Omen of Clarity chance, Arcane Blast's bonus on Arcane Missiles.
