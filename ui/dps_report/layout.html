@@ -44,7 +44,7 @@
     <div class="content-block fv-card" id="asm-card">
       <div class="content-block-header fv-asm-head"><h6 class="content-block-title">Assumptions</h6><span class="fv-asm-badge" id="asm-badge" hidden>Custom assumptions</span>
         <span class="fv-asm-tools"><button class="fv-chip fv-chip-action" id="asm-reset" hidden>Reset</button></span></div>
-      <p class="fv-note">Mechanics Forever hasn't confirmed yet, biggest first. Tap another column to apply it to the whole report.</p>
+      <p class="fv-note">Numbers Forever hasn't confirmed yet, biggest effect first. Click a column to use that value across the report.</p>
       <div id="asm-list" data-source="assumptions assumption_dps"></div>
     </div>
 
@@ -61,8 +61,8 @@
           <span class="fv-label fv-rowlabel">Filter</span>
           <div class="fv-seg" id="rank-role" role="group" aria-label="Role"></div>
           <button class="fv-chip" id="rank-best" aria-pressed="false">Best per class</button>
-          <button class="fv-chip" id="rank-enc" aria-pressed="false" title="Presets built for one boss type">Advantaged</button>
-          <button class="fv-chip" id="rank-duty" aria-pressed="true" title="Presets that keep a raid buff or debuff up themselves">Duty</button>
+          <button class="fv-chip" id="rank-enc" aria-pressed="false" title="Show presets made for one boss type, like Undead">Advantaged</button>
+          <button class="fv-chip" id="rank-duty" aria-pressed="true" title="Show presets that keep up a raid buff or debuff themselves">Duty</button>
           <button class="btn btn-link fv-reset" type="button" id="rank-reset" hidden>Clear filters</button>
         </div>
       </div>
@@ -71,13 +71,13 @@
 
     <div class="content-block fv-card" id="len-card">
       <div class="content-block-header"><h6 class="content-block-title">DPS by fight length</h6></div>
-      <p class="fv-note">As a share of 180s DPS.</p>
+      <p class="fv-note">100% is the DPS in a 180s fight.</p>
       <div class="fv-chart" id="lenchart" data-source="lengths builds"></div>
     </div>
 
     <div class="content-block fv-card" id="mana-card">
       <div class="content-block-header"><h6 class="content-block-title">Mana over time</h6></div>
-      <p class="fv-note">Time to 10% mana, in 8 minute fights.</p>
+      <p class="fv-note">Time until below 10% mana, in 8 minute fights.</p>
       <p class="fv-note" id="mana-sum"></p>
       <div class="fv-mana">
         <div class="fv-chart" id="manachart" data-source="mana mana_summary builds"></div>
@@ -102,7 +102,7 @@
 
     <div class="content-block fv-card" id="racial-rank-card">
       <div class="content-block-header"><h6 class="content-block-title">Strongest racials</h6></div>
-      <p class="fv-note">Averaged over the presets the race can play. No effect counts as zero.</p>
+      <p class="fv-note">Averaged over the presets each race can play. A racial that does nothing there counts as 0.</p>
       <div class="fv-toolbar">
         <div class="fv-controls"><span class="fv-label fv-rowlabel">Filter</span><div class="fv-seg" id="rl-fac" role="group" aria-label="Faction"></div><div class="fv-seg" id="rl-role" role="group" aria-label="Role"></div><div class="fv-rs-opts" id="rl-opts"></div></div>
         <div class="fv-controls" id="rl-cls" role="group" aria-label="Class filter"><div class="fv-scope-spec" id="rl-spec" hidden></div></div>
@@ -135,7 +135,7 @@
       <p class="fv-swipe">Swipe for the next preset</p>
     </div>
     <div class="fv-tiles" id="sp-tiles"></div>
-    <p class="fv-note" id="sp-asm" hidden>Mean DPS and rank use your assumptions. The rest is as simmed.</p>
+    <p class="fv-note" id="sp-asm" hidden>Mean DPS and rank use your changed assumptions. The rest uses the defaults.</p>
     <nav class="fv-jump" id="sp-jump-bar" aria-label="Jump to a section">
       <span class="fv-jump-title">Sections <span class="fv-jump-chev">›</span></span>
       <ul class="nav fv-jump-tabs" id="sp-jump"></ul>
@@ -144,16 +144,16 @@
     <div class="content-block fv-card" id="sp-tal-card" data-jump="Talents">
       <div class="content-block-header"><h6 class="content-block-title">Talents</h6><button type="button" class="btn btn-link fv-linkbtn fv-about-btn" data-about="about-talents">How were the talents picked?</button></div>
       <div class="fv-about-body" id="about-talents" data-title="How the talents were picked" hidden>
-        <p><b>How.</b> The trees are Forever's, read from the beta client's own talent tables. A talent search moves one point at a time to wherever the sim gains most against the report's level 63 boss. It keeps a move only when the gain beats the sim's noise. When two builds tie on damage, it keeps the one that ends the fight with more mana. The rotation is then tuned on the build it finds.</p>
-        <p>On top of that search, AI agents worked each class by hand. They read Forever's changes to the class, tried the builds a player would consider and the ones the search can't reach, and kept a change only when it won in paired sims.</p>
-        <p>A few talents are taken at full rank whatever the sim says, for movement speed or threat: Pursuit of Justice, Feral Swiftness, Subtlety (Balance), Silent Resolve (Shadow), Spirit Weapons, Suppression and the mage's school threat talents.</p>
-        <p><b>Why it holds up.</b> Both searches run on the same sim, gear and fight as the ranking, so the build is the best one found for this preset, not a guess. Auditor agents then went over the talents in many rounds, checking the sim's talents against Forever's client data and every preset against the others for fairness. Each new client build is checked for talent changes.</p>
+        <p><b>How.</b> The talent trees come from Forever's client. A search moves one point at a time to wherever the sim gains most. It keeps a move only if the gain is bigger than the sim's noise. On a tie, it keeps the build with more mana left. The rotation is then tuned for that build.</p>
+        <p>AI agents then tried other builds by hand, including ones the search can't reach. A change stayed only if it won head to head in the sim.</p>
+        <p>Some talents are always taken in full, for speed or threat: Pursuit of Justice, Feral Swiftness, Subtlety (Balance), Silent Resolve (Shadow), Spirit Weapons, Suppression and the mage's threat talents.</p>
+        <p><b>Why trust it.</b> The search uses the same sim, gear and fight as the ranking. Auditor agents checked the talents against Forever's client data, and every preset against the others for fairness. Each new client build is checked for talent changes.</p>
         <p><b>Gaps.</b></p>
         <ul>
-          <li>Neither search tries every build. One that only pays off once several points move together can still be missed.</li>
-          <li>Talents the sim gives no value (threat, survival, utility) count as nothing unless they're on the must-take list above.</li>
-          <li>The beta stopped at level 30, so some of Forever's talent numbers at 60 aren't confirmed yet. The biggest open ones are under Assumptions on the Ranking page.</li>
-          <li>On the generic boss, talents that only work on some creature types (Murder, for example) stay out. The presets labelled with a creature type take them.</li>
+          <li>The search doesn't try every build. One that only pays off when several points move together can be missed.</li>
+          <li>Talents with no damage value (threat, survival, utility) count as nothing, unless they're on the list above.</li>
+          <li>The beta stopped at level 30, so some talent numbers at 60 aren't confirmed. The biggest are under Assumptions on the Ranking page.</li>
+          <li>Talents that only work on one creature type, like Murder, are left out on the generic boss. Presets made for that creature type take them.</li>
         </ul>
       </div>
       <div class="fv-toolbar"><div class="fv-seg" id="sp-tal-seg" role="group" aria-label="Talent tree"></div></div>
@@ -163,13 +163,13 @@
     <div class="content-block fv-card" id="sp-races-card" data-jump="Races">
       <div class="content-block-header"><h6 class="content-block-title">Best races</h6><button type="button" class="btn btn-link fv-linkbtn fv-about-btn" data-about="about-races">How are races compared?</button></div>
       <div class="fv-about-body" id="about-races" data-title="How races are compared" hidden>
-        <p><b>How.</b> The preset is simmed on every race its class can be, <span data-source="builds" data-field="raceIters" data-row="0">—</span> fights each at 180s, with the same gear, talents, rotation, consumes and random seed. The racials are Forever's, as the beta client has them. The preset itself uses the best race.</p>
-        <p><b>Why it holds up.</b> Only the race changes from bar to bar, and every race sees the same random fights, so the differences come from the race and not from luck.</p>
+        <p><b>How.</b> The preset is simmed as every race its class can be: <span data-source="builds" data-field="raceIters" data-row="0">—</span> fights each at 180s, with the same gear, talents, rotation, consumes and random rolls. The racials are Forever's, from its client. The preset uses the best race.</p>
+        <p><b>Why trust it.</b> Only the race changes, and every race gets the same random fights. So the gaps come from the race, not from luck.</p>
         <p><b>Gaps.</b></p>
         <ul>
-          <li>Talents and rotation stay the preset's own, tuned for its race. A race that would play a little differently may come out slightly low.</li>
-          <li>Racials only count for damage on a boss that stands still. Utility racials (Stoneform, Will of the Forsaken, Escape Artist, threat drops) count as nothing.</li>
-          <li>Races within a DPS or two of each other are effectively tied.</li>
+          <li>Talents and rotation stay tuned for the preset's own race. A race that would play a bit differently may come out a little low.</li>
+          <li>Only damage on a boss that stands still counts. Utility racials (Stoneform, Will of the Forsaken, Escape Artist, threat drops) count as nothing.</li>
+          <li>Races within 1 or 2 DPS of each other are tied.</li>
         </ul>
       </div>
       <div class="fv-toolbar">
@@ -178,14 +178,14 @@
       <div class="fv-legend" id="sr-legend"></div>
       <p class="fv-axiswarn" id="sr-axis" hidden></p>
       <div id="sp-races" data-source="race_variants race_breakdown race_notes"></div>
-      <button class="btn btn-link fv-linkbtn" type="button" id="sp-races-link">Racials, weapons and target types ›</button>
+      <button class="btn btn-link fv-linkbtn" type="button" id="sp-races-link">Open in Races ›</button>
     </div>
 
     <div class="content-block fv-card" id="sp-racials-card" data-jump="Racials">
       <div class="content-block-header"><h6 class="content-block-title">Strongest racials</h6><button type="button" class="btn btn-link fv-linkbtn fv-about-btn" data-about="about-racials">How are racials measured?</button></div>
       <div class="fv-about-body" id="about-racials" data-title="How racials are measured" hidden>
-        <p><b>How.</b> The preset is simmed with every racial off, so a race gives only its base stats, and then with one racial off at a time. A racial's bar is what turning it back on is worth. When two racials overlap, they split the difference, so the parts add up to the race's total.</p>
-        <p><b>Gaps.</b> The same as Best races: damage only, on a boss that stands still. Racials that only work on some creature types count only with Racial enemy types on.</p>
+        <p><b>How.</b> The preset is simmed with all racials off, which leaves the race's base stats. Then it's simmed with each racial off in turn. A racial's bar is what it adds back. Two racials that overlap split the shared part, so the parts add up to the race's total.</p>
+        <p><b>Gaps.</b> The same as Best races: damage only, on a boss that stands still. Racials for one boss type count only with "Boss type racials" on.</p>
       </div>
       <div class="fv-toolbar">
         <div class="fv-controls"><div class="fv-seg" id="sl-fac" role="group" aria-label="Faction"></div><div class="fv-rs-opts" id="sl-opts"></div></div>
@@ -199,11 +199,11 @@
       <div class="content-block fv-card" id="sp-dist-card" data-jump="Distribution">
         <div class="content-block-header"><h6 class="content-block-title">DPS distribution</h6><button type="button" class="btn btn-link fv-linkbtn fv-about-btn" data-about="about-fights">How are the fights simmed?</button></div>
         <div class="fv-about-body" id="about-fights" data-title="How the fights are simmed" hidden>
-          <p><b>How.</b> <span data-source="builds" data-field="iters" data-row="0">—</span> fights of <span data-source="builds" data-field="fightSecs" data-row="0">—</span>s (± <span data-source="builds" data-field="fightVar" data-row="0">—</span>s) against a level <span data-source="builds" data-field="targetLevel" data-row="0">—</span> boss with <span data-source="builds" data-field="targetArmor" data-row="0">—</span> armor and no creature type, with a full raid's buffs and debuffs. Every preset uses the same seed. The spread comes from hits, crits, procs and how long the fight runs. Each player also takes two 1,500 damage hits a minute from the boss, which push back casts and give Rage.</p>
-          <p><b>Why it holds up.</b> At this many fights the mean is good to about half a DPS, so the ranking's order isn't luck. A results auditor agent checked in many rounds that every preset is simmed the same way and flagged numbers that looked like modelling errors rather than balance. A mechanics auditor checked the sim's spells against Forever's client data.</p>
-          <p><b>Gaps.</b> The boss stands still for the whole fight: no movement, adds, target switching, phases or deaths. Real fights land lower and vary more.</p>
+          <p><b>How.</b> <span data-source="builds" data-field="iters" data-row="0">—</span> fights of <span data-source="builds" data-field="fightSecs" data-row="0">—</span>s (± <span data-source="builds" data-field="fightVar" data-row="0">—</span>s) against a level <span data-source="builds" data-field="targetLevel" data-row="0">—</span> boss with <span data-source="builds" data-field="targetArmor" data-row="0">—</span> armor and no creature type. A full raid's buffs and debuffs are up. Every preset gets the same random rolls. The boss hits each player for 1,500 twice a minute, which pushes back casts and gives Rage.</p>
+          <p><b>Why trust it.</b> With this many fights, the mean is good to about half a DPS, so the ranking order isn't luck. Auditor agents checked that every preset is simmed the same way, and checked the sim's spells against Forever's client data.</p>
+          <p><b>Gaps.</b> The boss stands still all fight. There's no movement, adds, target switching or phases. Real fights come out lower and vary more.</p>
         </div>
-        <p class="fv-note" id="sp-dist-note">DPS of every simulated fight, in 5 DPS bins.</p>
+        <p class="fv-note" id="sp-dist-note">Every fight, in 5 DPS bins.</p>
         <div class="fv-toolbar"><div class="fv-controls"><div class="fv-seg" id="sp-dist-mode" role="group" aria-label="Show"></div></div></div>
         <div class="fv-chart" id="sp-dist"></div>
         <div class="fv-scroll"><table id="sp-pct"><thead><tr></tr></thead><tbody><tr></tr></tbody></table></div>
@@ -224,7 +224,7 @@
 
     <div class="content-block fv-card" id="sp-auras-card" data-jump="Auras">
       <div class="content-block-header"><h6 class="content-block-title">Aura uptime</h6></div>
-      <p class="fv-note" id="sp-auras-note">Number: average uptime. Bar: the fight picked above.</p>
+      <p class="fv-note" id="sp-auras-note">The number is the average uptime. The bar is the fight picked above.</p>
       <div class="fv-toolbar"><div class="fv-controls"><div class="fv-seg" id="sp-aura-owner" role="group" aria-label="Whose auras"></div><button class="fv-chip" id="sp-alwayson" aria-pressed="true">Hide always-on</button></div></div>
       <div class="fv-sbar" id="sp-auras"></div>
     </div>
@@ -237,18 +237,18 @@
     <div class="content-block fv-card" id="sp-rot-card" data-jump="Rotation">
       <div class="content-block-header"><h6 class="content-block-title">Rotation</h6><button type="button" class="btn btn-link fv-linkbtn fv-about-btn" data-about="about-rotation">How was the rotation built?</button></div>
       <div class="fv-about-body" id="about-rotation" data-title="How the rotation was built" hidden>
-        <p><b>How.</b> Each class has a rotation template. The order of its abilities is fixed, and its thresholds are knobs: the Rage a Heroic Strike waits for, when a cooldown is used, when Execute takes over. An optimizer sims each knob's values in turn and keeps a change only when it gains more than twice the sim's standard error. It repeats until nothing helps.</p>
-        <p>AI agents also worked each class's rotation by hand: new priorities, openers and cooldown timings the template didn't have, each kept only when it won in paired sims. A rotation auditor agent then went over every rotation in many rounds, trying hand-written alternatives in paired sims and reading the debug logs for wasted mana, Rage or Energy.</p>
-        <p>Before the pull, buffs, totems, potions and pre-casts go up so they land at 0s, when damage starts to count. Nobody opens from Stealth or Prowl. Raid buffs and debuffs that cost a global cooldown are left to the Duty presets, except Sunder Armor, which every warrior casts once after the pull, and Hunter's Mark, which every hunter keeps up itself.</p>
-        <p><b>Why it holds up.</b> The rotation is tuned on the exact preset and fight it's ranked on, every change has to beat the noise, and the audit rounds keep checking it as the sim and Forever change.</p>
+        <p><b>How.</b> Each class has a rotation template. The order of its abilities is fixed, but its thresholds can be tuned, like how much Rage Heroic Strike waits for, or when Execute takes over. An optimizer tries each threshold's values in turn. It keeps a change only if it clearly beats the sim's noise, and repeats until nothing helps.</p>
+        <p>AI agents also tried new priorities, openers and cooldown timings by hand. Each stayed only if it won head to head in the sim. An auditor agent then went over every rotation, trying other versions and reading the fight logs for wasted mana, Rage or Energy.</p>
+        <p>Buffs, totems, potions and pre-casts go up before the pull, so they land at 0s, when damage starts to count. Nobody opens from Stealth or Prowl. Raid buffs and debuffs that cost a global cooldown are left to the Duty presets. Two exceptions: every warrior casts Sunder Armor once after the pull, and every hunter keeps up Hunter's Mark.</p>
+        <p><b>Why trust it.</b> The rotation is tuned on the same preset and fight it's ranked on. Every change has to beat the noise. Audits keep checking it as the sim and Forever change.</p>
         <p><b>Gaps.</b></p>
         <ul>
-          <li>The sim plays perfectly: no reaction time, movement or mistakes.</li>
-          <li>The optimizer only tunes the template's knobs, and the agents only try what they think of. A better priority neither found can still exist.</li>
-          <li>Where Forever changed an ability without saying by how much, the sim follows the client's data and beta measurements up to level 30. The open ones are under Assumptions on the Ranking page.</li>
+          <li>The sim plays perfectly, with no reaction time, movement or mistakes.</li>
+          <li>A better priority may exist that neither the optimizer nor the agents tried.</li>
+          <li>Where Forever changed an ability without saying by how much, the sim uses the client data and beta tests up to level 30. The open ones are under Assumptions on the Ranking page.</li>
         </ul>
       </div>
-      <p class="fv-note" id="sp-rot-note">The sim casts the first line whose condition holds.</p>
+      <p class="fv-note" id="sp-rot-note">The sim uses the first line it can, from the top.</p>
       <div class="fv-prepull" id="sp-prepull" data-source="rotation names icons"></div>
       <ol class="fv-prio" id="sp-rotation" data-source="rotation abilities names icons tooltips"></ol>
     </div>
@@ -256,7 +256,7 @@
     <div class="content-block fv-card" id="sp-abiltab-card" data-jump="Ability table">
       <details>
         <summary>Ability table</summary>
-        <p class="fv-note">Per fight. Crit % is of landed hits.</p>
+        <p class="fv-note">Per fight. Crit % counts landed hits only.</p>
         <div class="fv-scroll tall">
           <table id="sp-abiltab" data-source="abilities" data-row-key="build,key">
             <thead><tr><th class="first" data-field="ability">Ability</th><th class="n" data-field="dps">DPS</th><th class="n" data-field="share">Share %</th><th class="n" data-field="casts">Casts</th><th class="n" data-field="hits">Hits</th><th class="n" data-field="crits">Crits</th><th class="n" data-field="critPct">Crit %</th><th class="n" data-field="ticks">Ticks</th><th class="n" data-field="avgHit">Avg hit</th><th class="n" data-field="avgCrit">Avg crit</th><th class="n" data-field="avgTick">Avg tick</th><th class="n" data-field="misses">Misses</th><th class="n" data-field="dodges">Dodges</th><th class="n" data-field="glances">Glances</th></tr></thead>
@@ -267,18 +267,19 @@
     </div>
 
     <div class="content-block fv-card" id="sp-gear-card" data-jump="Gear">
-      <div class="content-block-header"><h6 class="content-block-title">Gear</h6><button type="button" class="btn btn-link fv-linkbtn fv-about-btn" data-about="about-gear">How was the gear synthesized?</button></div>
-      <p class="fv-note">Synthetic Phase 1 gear.</p>
-      <div class="fv-about-body" id="about-gear" data-title="How the gear was synthesized" hidden>
-        <p><b>How.</b> Forever hasn't revealed its level 60 raid loot, so every piece here is made up and priced like a real one. Its stats add up to Forever's budget for its slot and item level. The item levels are those of Era's Phase 1 best in slot: 66 for head, shoulders, chest, hands, legs and feet, 71 for neck, back, wrist, waist, rings, one-handers and ranged, and 76 for two-handers. The mix follows the spec's real level 60 best-in-slot sets from Season of Discovery, with Stamina at that spec's share, about 10% Spirit for mana users, and hit up to the cap. Weapons keep the damage per second of the Era Phase 1 weapon they stand in for, at the type and speed the spec sims best with. Two pieces carry the class's Forever tier set, so its 2-piece bonus is active. The two trinkets are synthetic too.</p>
-        <p><b>Why it holds up.</b> The budget is fitted on Era's level 60 epics. Forever kept Era's budget on the low-level gear its beta tuned, to within about 3%. The level 60 epics Forever has already revealed land on the same budget line as these pieces, to within about 2%. That's over 300 crafted, reputation and PvP pieces at item levels 60 and 65. Caster weapons get the double budget that Forever's real caster weapons have. A gear auditor agent checked every piece against the budget, and a fairness auditor checked the sets against each other, over many rounds.</p>
+      <div class="content-block-header"><h6 class="content-block-title">Gear</h6><button type="button" class="btn btn-link fv-linkbtn fv-about-btn" data-about="about-gear">How was the gear made?</button></div>
+      <p class="fv-note">Made-up gear at Phase 1 item levels.</p>
+      <div class="fv-about-body" id="about-gear" data-title="How the gear was made" hidden>
+        <p><b>How.</b> Forever hasn't shown its level 60 raid loot yet, so every piece here is made up. Its stats fit Forever's budget for its slot and item level. The item levels match Era's Phase 1 best in slot: 66 for head, shoulders, chest, hands, legs and feet, 71 for neck, back, wrists, waist, rings, one-handers and ranged, and 76 for two-handers.</p>
+        <p>The stats follow each spec's level 60 best in slot from Season of Discovery, with about 10% Spirit for mana users and hit up to the cap. Weapons keep the DPS of the Era Phase 1 weapon they replace, at the type and speed the spec does best with. Two pieces are from the class's Forever tier set, for its 2-piece bonus. Both trinkets are made up too.</p>
+        <p><b>Why trust it.</b> The budget is fitted to Era's level 60 epics. Forever's beta gear matches Era's budget within about 3%. Over 300 level 60 epics Forever has shown (crafted, reputation and PvP, item level 60 and 65) match these pieces within about 2%. Caster weapons get the double budget Forever's real caster weapons have. Auditor agents checked every piece against the budget, and the sets against each other.</p>
         <p><b>Gaps.</b></p>
         <ul>
-          <li>Item level. The best real Forever gear with known stats is item level 65, plus one ring at 70. Forever's Hyjal tier sets come at 61, with no stats yet, and at 65, still hidden. If Phase 1 stops at 65, these sets carry about 5 to 6% more stats than real gear would.</li>
-          <li>Stamina and hit. Forever's revealed level 60 epics spend about 28% of their budget on Stamina, against about 18% here. Only about 1 piece in 20 has hit, against 4 in 10 here. So these numbers are likely a little high, most of all for specs that reach their hit cap from gear.</li>
-          <li>Some revealed Forever pieces carry expertise rating. These sets carry none.</li>
-          <li>Raid drops, the tier sets' real stats, procs and on-use effects, and Forever's launch trinkets are unknown. The synthetic trinkets stand in for them.</li>
-          <li>Only the 2-piece set bonus counts, not the 4- or 5-piece ones.</li>
+          <li>The best real Forever gear with known stats is item level 65, plus one ring at 70. If Phase 1 tops out at 65, these sets have about 5 to 6% more stats than real gear.</li>
+          <li>Forever's real epics put about 28% of their budget into Stamina, against 18% here. Only 1 piece in 20 has hit, against 4 in 10 here. So these numbers are likely a bit high, most of all for specs that reach the hit cap from gear.</li>
+          <li>Some real Forever pieces have expertise. These sets have none.</li>
+          <li>Raid drops, the tier sets' real stats, procs, on-use effects and Forever's launch trinkets are unknown. The made-up trinkets stand in for them.</li>
+          <li>Only the 2-piece set bonus counts.</li>
         </ul>
       </div>
       <div class="fv-gearwrap">
@@ -290,11 +291,11 @@
           </div>
           <div class="fv-cstats" id="sp-weights-card" data-jump="Stat weights">
             <h6 class="character-stats-label">Stat weights</h6>
-            <p class="fv-note" id="sp-weights-note">In points of the main stat. Hit and crit per rating point (10 hit or 14 crit rating = 1%).</p>
+            <p class="fv-note" id="sp-weights-note">What 1 point is worth, in the main stat. Hit and crit are per rating point (1% is 10 hit or 14 crit rating).</p>
             <button type="button" class="btn btn-link fv-linkbtn fv-about-btn" data-about="about-weights">How are the weights measured?</button>
             <div class="fv-about-body" id="about-weights" data-title="How the weights are measured" hidden>
-              <p><b>How.</b> Each stat is added on top of the preset's gear and simmed at 180s on the same random fights as the preset itself, 5,000 of them, or 40,000 where that is still noisy. A weight is the gain over the preset. Hit is also measured by taking 1% away, since a preset at its cap gains nothing from more.</p>
-              <p><b>Gaps.</b> The weights hold close to this gear. A big change in gear moves them, and hit loses its value at the cap. Stats the presets don't use, like expertise, aren't measured.</p>
+              <p><b>How.</b> Each stat is added to the preset's gear and simmed at 180s on the same random fights, 5,000 of them (40,000 where that's still noisy). The weight is the DPS gained. Hit is also measured by taking 1% away, since a preset at the hit cap gains nothing from more.</p>
+              <p><b>Gaps.</b> The weights only hold for gear close to this. Hit is worth nothing past the cap. Stats the presets don't use, like expertise, aren't measured.</p>
             </div>
             <div class="fv-sbar" id="sp-weights"></div>
             <details>
@@ -315,13 +316,14 @@
     <div class="content-block fv-card" id="sp-setup-card" data-jump="Consumes">
       <div class="content-block-header"><h6 class="content-block-title">Consumes and buffs</h6><button type="button" class="btn btn-link fv-linkbtn fv-about-btn" data-about="about-setup">How were consumes and buffs chosen?</button></div>
       <div class="fv-about-body" id="about-setup" data-title="How consumes and buffs were chosen" hidden>
-        <p><b>How.</b> Every preset gets the full raid treatment, each the best for that preset: a flask, an elixir in each slot, food, a weapon oil, stone or imbue, potions, a rune, and explosives when they gain. Only what can be had at Forever's launch counts, so nothing whose only source is a raid that isn't open yet. Only one elixir's 2% crit counts. The fight is taken to be in Hyjal Summit or the Barrow Deeps, so Forever's natural flasks work. Buffs and debuffs are a full raid's, with each spec in the party it would really be in. Each entry was also simmed with it left out, and Hide inactive hides the ones that change nothing.</p>
-        <p><b>Why it holds up.</b> Every preset gets the same treatment, so the ranking compares specs, not how much each one spends. A consumables auditor agent checked every preset's consumes, buffs, debuffs and enchants against Forever's client and launch availability, over many rounds.</p>
+        <p><b>How.</b> Every preset gets the best of everything for it: a flask, an elixir in each slot, food, a weapon oil, stone or imbue, potions, a rune, and explosives when they help. Only what you can get at Forever's launch counts. Only one elixir's 2% crit counts. The fight is taken to be in Hyjal Summit or the Barrow Deeps, so Forever's natural flasks work.</p>
+        <p>Buffs and debuffs are a full raid's, with each spec in the party it would really be in. Each one was also simmed without it, and "Hide inactive" hides the ones that change nothing.</p>
+        <p><b>Why trust it.</b> Every preset gets the same treatment, so the ranking compares specs, not spending. An auditor agent checked every consume, buff, debuff and enchant against Forever's client and what's out at launch.</p>
         <p><b>Gaps.</b></p>
         <ul>
-          <li>A full raid with every class and every consume is a ceiling. A smaller or less prepared raid does less.</li>
+          <li>A full raid with every class and consume is a best case. A smaller or less prepared raid does less.</li>
           <li>No world buffs.</li>
-          <li>Pets take no player buffs or consumes in Forever, so pet specs gain less from the raid than in Classic.</li>
+          <li>In Forever, pets get no player buffs or consumes, so pet specs gain less from the raid than in Classic.</li>
         </ul>
       </div>
       <p class="fv-boss" id="sp-boss"></p>
@@ -339,7 +341,7 @@
   <section class="tab-pane fv-page" id="compare" data-page="compare" hidden>
     <div class="content-block fv-card" id="cmp-pick-card">
       <div class="content-block-header"><h6 class="content-block-title">Compare two presets</h6></div>
-      <p class="fv-note">Pick one preset twice to compare its races or setups.</p>
+      <p class="fv-note">Pick the same preset twice to compare its races or setups.</p>
       <div class="fv-toolbar">
       <div class="fv-controls">
         <span class="fv-ab" id="cmp-dot-a">A</span><div id="cmp-a" data-label="Preset A"></div>
@@ -370,7 +372,7 @@
     </div>
     <div class="content-block fv-card" id="cmp-w-card">
       <div class="content-block-header"><h6 class="content-block-title">Stat weights</h6></div>
-      <p class="fv-note">In each preset's main stat. Hit and crit per rating point.</p>
+      <p class="fv-note">What 1 point is worth, in each preset's main stat. Hit and crit are per rating point.</p>
       <div class="fv-grid" id="cmp-w" data-source="weights"></div>
     </div>
     <div class="content-block fv-card" id="cmp-abil-card">
@@ -384,15 +386,15 @@
     <div class="content-block fv-card" id="method-card">
       <div class="content-block-header"><h6 class="content-block-title">Sim setup</h6></div>
       <div class="fv-prose" id="method-prose">
-        <p>Every preset uses its own talents, rotation, race, consumes and synthetic Phase 1 gear, plus shared raid buffs.</p>
+        <p>Each preset has its own talents, rotation, race, consumes and made-up Phase 1 gear. All get the same raid buffs.</p>
         <ul class="fv-list">
-          <li><b>Main number:</b> mean of <b data-source="builds" data-field="iters" data-row="0">—</b> fights, same seed for every preset.</li>
+          <li><b>Main number:</b> mean of <b data-source="builds" data-field="iters" data-row="0">—</b> fights, with the same random rolls for every preset.</li>
           <li><b>Fight:</b> <span data-source="builds" data-field="fightSecs" data-row="0">—</span>s (± <span data-source="builds" data-field="fightVar" data-row="0">—</span>s) vs a level <span data-source="builds" data-field="targetLevel" data-row="0">—</span> boss with no creature type and <span data-source="builds" data-field="targetArmor" data-row="0">—</span> armor before debuffs.</li>
           <li><b>Races:</b> <span data-source="builds" data-field="raceIters" data-row="0">—</span> fights on every race the class can be.</li>
           <li><b>Fight lengths:</b> <span data-source="builds" data-field="lengthIters" data-row="0">—</span> fights each.</li>
-          <li><b>Sample fights:</b> the fights closest to the 10th, 50th and 90th percentile, out of the first <span data-source="builds" data-field="sampleSeeds" data-row="0">—</span> seeds.</li>
-          <li><b>Racial bars:</b> all racials off (base stats), then one racial off at a time. Overlapping racials split the difference, so the parts add up.</li>
-          <li><b>Target types:</b> only the boss's creature type changes.</li>
+          <li><b>Sample fights:</b> the fights nearest the 10th, 50th and 90th percentile, from the first <span data-source="builds" data-field="sampleSeeds" data-row="0">—</span> fights.</li>
+          <li><b>Racial bars:</b> all racials off (base stats), then one off at a time. Racials that overlap split the shared part, so the parts add up.</li>
+          <li><b>Boss type racials:</b> only the boss's creature type changes.</li>
         </ul>
       </div>
     </div>

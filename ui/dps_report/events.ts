@@ -16,9 +16,9 @@ import { loadEvents, standalone } from './data_source';
 const SAMPLE_KINDS: Array<IterationKind> = ['typical', 'unlucky', 'lucky'];
 
 const ITERATION_TOOLTIPS: Partial<Record<IterationKind, string>> = {
-	typical: 'A fight with about the median DPS, the 50th percentile.',
-	unlucky: 'A fight at about the 10th percentile of DPS.',
-	lucky: 'A fight at about the 90th percentile of DPS.',
+	typical: 'A fight near the median DPS.',
+	unlucky: 'A fight near the 10th percentile of DPS.',
+	lucky: 'A fight near the 90th percentile of DPS.',
 };
 
 const ICON_URL = /\/icons\/(?:large|medium|small)\/([\w-]+)\.jpg$/i;
@@ -66,7 +66,7 @@ export class ReportEvents {
 		}
 		this.build = build;
 		const token = ++this.token;
-		this.setStatus('Loading the fight');
+		this.setStatus('Loading the fight…');
 
 		try {
 			await (this.lookups ??= this.loadLookups());
