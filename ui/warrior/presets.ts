@@ -123,35 +123,43 @@ export const APLNoReck = PresetUtils.makePresetAPLRotation('DPS (No Reck)', APLN
 
 // The tools/rotopt search (template warrior_fury, see warrior_presets.sh) on the Level 60 Fury
 // talents and set, 180 sec, with Forever's normalized Rage (standards 21: a white hit gives 3.46 Rage
-// a second of weapon speed at level 30, ×1.5 at 60 with s = 0.5): Whirlwind with 25 Rage, then
-// Bloodthirst, Execute after them in the execute phase, Heroic Strike queued from 55 Rage (40 before
-// the off hand's Rage was halved, 50 before pass 23, 2026-10-16), and Hamstring as a filler from 10 Rage (its hits proc
-// Windfury Totem's extra attacks and Flurry).
-// Death Wish goes on cooldown and Recklessness at the pull with the other cooldowns: holding them
-// for the execute phase, where Execute spends all the Rage, lost 14 at 180 sec with flat Rage. Bloodrage under 40
-// Rage, no Berserker Rage. The Mighty Rage Potion goes at the pull and the second is held for the
-// last 20 sec when that costs no use, and the on-use trinket goes on cooldown (+20.7 at 120 sec,
-// where the hold alone skipped the pull potion; the rotation auditor's pass 14). The Sapper goes on cooldown with the other
+// a second of weapon speed, the level 30 value at every level since the user's ruling of 2026-10-25):
+// Whirlwind with 25 Rage, then Bloodthirst, Execute after them in the execute phase, Heroic Strike
+// queued from 80 Rage, in the execute phase too (55 outside it at the old ×1.5 Rage at 60), and
+// Hamstring as a filler from 10 Rage (its hits proc Windfury Totem's extra attacks and Flurry).
+// Death Wish is held for the last 33 sec when that costs no use, with Recklessness while it is up,
+// and the on-use trinket's last use for the last 30; Bloodrage under 20 Rage, no Berserker Rage. The
+// 2026-10-25 re-search at flat Rage moved Heroic Strike, Bloodrage and the two holds: 972.5 to 986.6
+// at 180 sec (Orc, seed 1; +14.5 / +14.0 / +7.9 at 120 / 180 / 300 sec, seed 1000003 within 1.8).
+// The Mighty Rage Potion goes at the pull and the second is held for the
+// last 20 sec when that costs no use (with the trinket then on cooldown, +20.7 at 120 sec, where the
+// hold alone skipped the pull potion; the rotation auditor's pass 14). The Sapper goes on cooldown with the other
 // cooldowns (no Goblin Land Mine since 2026-10-24, see the consumables below). Blood Fury, Berserking and Elune's Light wait for Death Wish when that costs
 // no use. It is 1031.1 (Human) where the old DPS (With Reck) rotation is 981.2. Slam on its 18 sec
 // cooldown and holding the fillers for Bloodthirst and Whirlwind both lose.
 export const APLLevel60Fury = PresetUtils.makePresetAPLRotation('Level 60 Fury', Level60FuryAPLJSON, { group: 'Level 60' });
 // The same template on the two-hand Fury talents and the two-hand set: the Fury rotation with
-// Heroic Strike from 85 Rage instead of 40, Hamstring from 20, Bloodrage under 20, Slam from 30 Rage
-// right after a main hand swing, ahead of Whirlwind (+8.4 at 180 sec; Slam at any time loses), and
+// Heroic Strike from 90 Rage, Hamstring from 20, Bloodrage under 20, Berserker Rage under 30 for its
+// Rage (Improved Berserker Rage 2/2), Slam from 45 Rage right after a main hand swing, ahead of
+// Whirlwind (+8.4 at 180 sec from 30 Rage on the old ×1.5 Rage; Slam at any time loses), and
 // Death Wish held for the last 36 sec with Recklessness for the last 30. The second potion and the
 // trinket's last use are held for the last 20 and 34 sec, and Blood Fury and Berserking for the last
 // 30 (Elune's Light keeps waiting for Death Wish, held it lost 7). The 34 and 30 sec holds, from 25,
 // are +4.4 / +2.1 / +1.2 on the Orc at 120 / 180 / 300 sec (trinket +1.1 and Blood Fury +0.5 of it
 // at 180 sec), Troll +0.9 and Undead +1.3 at 180 sec. With the raid damage hits' Rage (the
 // rotation auditor's pass 21, 2026-10-16), Bloodrage moved from under 70 Rage to under 20 and
-// Heroic Strike from 90 to 85: +0.7 / +2.5 / +1.9 at 120 / 180 / 300 sec (944.5 at 180).
+// Heroic Strike from 90 to 85: +0.7 / +2.5 / +1.9 at 120 / 180 / 300 sec (944.5 at 180). The
+// 2026-10-25 re-search at flat Rage (Berserker Rage under 30, Heroic Strike from 90, Slam from 45,
+// with Improved Berserker Rage 2 for a point of Enrage): 958.4 to 965.6 at 180 sec (Orc, seed 1;
+// +5.8 / +7.3 / +4.4 at 120 / 180 / 300 sec, seed 1000003 within 1.1).
 export const APLLevel60Fury2H = PresetUtils.makePresetAPLRotation('Level 60 Fury (Two-Hand)', Level60Fury2HAPLJSON, { group: 'Level 60' });
 // The tools/rotopt search (template warrior_arms) on the Level 60 Arms talents and the two-hand
 // set, Human, 180 sec: Battle Stance, Mortal Strike, Slam above 20 Rage (15 sec cooldown with
 // Improved Slam), Overpower on dodges and Bloodthrill procs, Rend kept up for Bloodthrill, Execute
 // after them in the execute phase, Heroic Strike from 90 Rage (70 before Forever's normalized Rage)
-// and Hamstring from 20 Rage as a filler.
+// and Hamstring from 30 Rage as a filler (20 until the 2026-10-25 re-search at flat Rage, which also
+// moved Bloodrage from under 10 Rage to under 20: 903.3 to 906.6 at 180 sec, Orc, seed 1; +2.9 / +3.3
+// / +2.4 at 120 / 180 / 300 sec, seed 1000003 within 0.3).
 // With 25 sec left and Recklessness ready it moves to Berserker Stance for Recklessness (no more
 // Rage than Tactical Mastery keeps), then back to Battle Stance once it is out, since Recklessness
 // stays up (+6.1 at 180 sec; the rotation auditor's pass 14). The second potion is held for the last 15 sec
@@ -163,7 +171,7 @@ export const APLLevel60Fury2H = PresetUtils.makePresetAPLRotation('Level 60 Fury
 export const APLLevel60Arms = PresetUtils.makePresetAPLRotation('Level 60 Arms', Level60ArmsAPLJSON, { group: 'Level 60' });
 // Arms against a Giant or Dragonkin boss (Onyxia is Dragonkin in Phase 1), where Spearing Strike does
 // 120% of normalized weapon damage instead of 40%: the Arms rotation with Spearing Strike on cooldown
-// from 15 Rage.
+// from 15 Rage (946.1 to 948.4 at 180 sec with the Arms re-search's Hamstring and Bloodrage, 2026-10-25).
 export const APLLevel60ArmsDragonkin = PresetUtils.makePresetAPLRotation('Level 60 Arms (vs Dragonkin)', Level60ArmsDragonkinAPLJSON, {
 	group: 'Level 60',
 });
@@ -200,21 +208,23 @@ export const DefaultAPLs = [APLLevel60Fury];
 
 // Dual wield Fury, from the tools/rotopt talent search (alternated with the rotation search until
 // neither moved) on the synthetic Fury set, Human, 180 sec: 32 Fury to Bloodthirst with Furious
-// Precision, Dual Wield Specialization and Flurry, 17 Arms to Impale, and Improved Bloodrage. Enrage
+// Precision, Dual Wield Specialization and Flurry, and 17 Arms to Impale. Enrage
 // took a second point from Improved Berserker Rage in the 2026-10-16 search (+2.8 at 180 sec), now
-// that the raid damage hits trigger it. Weaponmaster
+// that the raid damage hits trigger it, and two more from Improved Bloodrage in the 2026-10-25
+// search at flat Rage (+1.6 at 180 sec, 20,000 iterations). Weaponmaster
 // hybrids (25 Arms for the swords' extra attacks, no Bloodthirst) were 823.5 on the earlier gear,
 // 17% behind.
-export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Level 60 Fury', SavedTalents.create({ talentsString: '30305013002-25053005122010501-2' }), {
+export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Level 60 Fury', SavedTalents.create({ talentsString: '30305013002-25053005142010501' }), {
 	tooltip: 'Level 60 dual wield Fury talents from the talent search.',
 	group: 'Level 60',
 });
 // Two-hand Fury from the same search on the two-hand set: Two-Handed Weapon Specialization in place
 // of Dual Wield Specialization and Furious Precision. 899.4 at 180 sec (Human), 13% behind dual wield
-// Fury but its own way to play, so it gets its own preset.
+// Fury but its own way to play, so it gets its own preset. At flat Rage (2026-10-25) a point of
+// Enrage moves to Improved Berserker Rage (2/2, 10 Rage a Berserker Rage): +0.8 at 180 sec.
 export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents(
 	'Level 60 Fury (Two-Hand)',
-	SavedTalents.create({ talentsString: '30305013032-25053000152110501' }),
+	SavedTalents.create({ talentsString: '30305013032-25053000142210501' }),
 	{ tooltip: 'Level 60 two-hand Fury talents from the talent search.', group: 'Level 60' },
 );
 // Arms from the same search on the two-hand set: 35 Arms to Mortal Strike with Bloodthrill,
@@ -222,7 +232,9 @@ export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents(
 // Unbridled Wrath and Booming Voice in Fury. Arms cannot reach Death Wish. Booming Voice does
 // nothing here, since the raid has Battle Shout, but no other talent in reach does better with those
 // points. 912.5 at 180 sec (Human), 12% behind dual wield Fury and just ahead of two-hand Fury, its
-// own preset as the Mortal Strike spec.
+// own preset as the Mortal Strike spec. The 2026-10-25 search at flat Rage kept it: Improved Bloodrage
+// 2/2 for Booming Voice and Improved Execute (which needs the Booming Voice points to open its row)
+// loses 1.5 at 180 sec.
 export const TalentsLevel60Arms = PresetUtils.makePresetTalents('Level 60 Arms', SavedTalents.create({ talentsString: '20305213032515201-55050000001' }), {
 	tooltip: 'Level 60 Arms talents from the talent search.',
 	group: 'Level 60',
@@ -390,7 +402,9 @@ export const DefaultDebuffs = Debuffs.create({
 // Orc is the best race for every warrior build since client 70425, whose Savage gives 1% crit with
 // any weapon (it was Axe Specialization), and Human, whose Ruthless gives 2% crit with any weapon,
 // is the best Alliance race. No racial depends on the weapon any more. See sim-status.md for the
-// race table. Engineering is for the Goblin Sapper Charge.
+// race table. At flat Rage (2026-10-25) Human ties Orc on dual wield Fury at 180 sec (986.5 against
+// 986.6 on seed 1, 985.3 against 984.7 on seed 1000003), short of the 0.5 lead on both seed sets a
+// switch needs, so Orc stays. Engineering is for the Goblin Sapper Charge.
 export const OtherDefaults = {
 	profession1: Profession.Engineering,
 	profession2: Profession.Alchemy,

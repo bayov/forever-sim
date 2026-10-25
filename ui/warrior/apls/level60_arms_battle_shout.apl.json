@@ -16,7 +16,7 @@
         {"action":{"castSpell":{"spellId":{"spellId":26297,"tag":2}}},"notes":"Other races can ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":1259799}}},"notes":"Other races can ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"otherId":"OtherActionPotion"}},"condition":{"or":{"vals":[{"cmp":{"lhs":{"remainingTime":{}},"op":"OpLe","rhs":{"const":{"val":"15s"}}}},{"cmp":{"lhs":{"spellUsesLostByDelay":{"delay":{"math":{"lhs":{"remainingTime":{}},"op":"OpSub","rhs":{"const":{"val":"15s"}}}},"minTimeLeft":{"const":{"val":"15s"}},"spellId":{"otherId":"OtherActionPotion"}}},"op":"OpGt","rhs":{"const":{"val":"0"}}}}]}}}},
-        {"action":{"castSpell":{"spellId":{"spellId":2687}},"condition":{"cmp":{"lhs":{"currentRage":{}},"op":"OpLt","rhs":{"const":{"val":"10"}}}}}},
+        {"action":{"castSpell":{"spellId":{"spellId":2687}},"condition":{"cmp":{"lhs":{"currentRage":{}},"op":"OpLt","rhs":{"const":{"val":"20"}}}}}},
         {"action":{"autocastOtherCooldowns":{}},"notes":"Sapper and trinkets."},
         {"action":{"castSpell":{"spellId":{"rank":4,"spellId":21553}},"condition":{"and":{"vals":[{"sequenceIsComplete":{"sequenceName":"sunder"}}]}}}},
         {"action":{"castSpell":{"spellId":{"rank":5,"spellId":11605}},"condition":{"and":{"vals":[{"and":{"vals":[{"cmp":{"lhs":{"currentRage":{}},"op":"OpGe","rhs":{"const":{"val":"20"}}}},{"not":{"val":{"isExecutePhase":{"threshold":"E20"}}}}]}},{"sequenceIsComplete":{"sequenceName":"sunder"}}]}}}},
@@ -24,7 +24,7 @@
         {"action":{"castSpell":{"spellId":{"rank":7,"spellId":11574}},"condition":{"and":{"vals":[{"and":{"vals":[{"not":{"val":{"dotIsActive":{"spellId":{"rank":7,"spellId":11574}}}}},{"not":{"val":{"isExecutePhase":{"threshold":"E20"}}}}]}},{"sequenceIsComplete":{"sequenceName":"sunder"}}]}}},"notes":"Kept up for Bloodthrill."},
         {"action":{"castSpell":{"spellId":{"rank":5,"spellId":20662}},"condition":{"and":{"vals":[{"sequenceIsComplete":{"sequenceName":"sunder"}}]}}}},
         {"action":{"castSpell":{"spellId":{"rank":8,"spellId":11567,"tag":1}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"currentRage":{}},"op":"OpGe","rhs":{"const":{"val":"90"}}}},{"not":{"val":{"isExecutePhase":{"threshold":"E20"}}}}]}}}},
-        {"action":{"castSpell":{"spellId":{"rank":3,"spellId":7373}},"condition":{"and":{"vals":[{"and":{"vals":[{"cmp":{"lhs":{"currentRage":{}},"op":"OpGe","rhs":{"const":{"val":"20"}}}},{"not":{"val":{"isExecutePhase":{"threshold":"E20"}}}}]}},{"sequenceIsComplete":{"sequenceName":"sunder"}}]}}},"notes":"For the procs."},
+        {"action":{"castSpell":{"spellId":{"rank":3,"spellId":7373}},"condition":{"and":{"vals":[{"and":{"vals":[{"cmp":{"lhs":{"currentRage":{}},"op":"OpGe","rhs":{"const":{"val":"30"}}}},{"not":{"val":{"isExecutePhase":{"threshold":"E20"}}}}]}},{"sequenceIsComplete":{"sequenceName":"sunder"}}]}}},"notes":"For the procs."},
         {"action":{"castSpell":{"spellId":{"spellId":2457}},"condition":{"and":{"vals":[{"not":{"val":{"auraIsActive":{"auraId":{"spellId":2457}}}}},{"or":{"vals":[{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"const":{"val":"25s"}}}},{"not":{"val":{"spellIsReady":{"spellId":{"spellId":1719}}}}}]}}]}}}}
     ]
 }
