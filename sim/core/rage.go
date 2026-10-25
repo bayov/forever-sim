@@ -51,16 +51,19 @@ type RageBarOptions struct {
 // swings (assumptions audit, 2026-10-16). Talent multipliers (Dual Wield Specialization's 10% off
 // hand Rage a point, client 1.60.1.70425 curve 111755) stay on top, and a crit adds its bonus at
 // the one-hand rate (foreverWhiteHitRage). Misses, dodges and parries give nothing. The rest is
-// an assumption until the beta test in orchestration/followups.md ("Rage needs a beta test"). k is a level 30 number, and flat at 60 it gives about half of Classic's Rage a swing, so
-// how it grows past 30 is an assumption too (standards 21): k(L) = k30 × (1 + s × (L − 30) / 30),
-// with s = 0 flat, 0.5 the midpoint (×1.5 at 60, the default) and 1 Classic-like (×2 at 60). The
-// variables are for the dashboard's assumption runs (spec_assumptions.md, warr_rage_k).
+// an assumption until the beta test in orchestration/followups.md ("Rage needs a beta test"). k does
+// not grow with level (standards 21; user ruling 2026-10-25, report row warr_rage_k): the same
+// level 13 log gives 3.46 × speed, the k testers measured at level 30, so k didn't move from 13
+// to 30, and wowsims/forever uses the flat constants too (their sim/core/rage.go
+// BaseRageHitFactor 3.46 / 4.5). Flat at 60 it gives about half of Classic's Rage a swing. The
+// level slope s stays as a variable, k(L) = k30 × (1 + s × (L − 30) / 30), at s = 0. The variables
+// are for the dashboard's assumption runs (spec_assumptions.md, warr_rage_k).
 var (
 	ForeverNormalizedRageOneHand  = 3.46
 	ForeverNormalizedRageTwoHand  = 4.5
 	ForeverNormalizedRageK        = 1.0 // Multiplies both constants
 	ForeverNormalizedRageOffHand  = 0.5 // Off hand factor (measured)
-	ForeverNormalizedRageScaling  = 0.5 // s, how k grows from level 30 to 60
+	ForeverNormalizedRageScaling  = 0.0 // s, how k grows from level 30 to 60: flat (user ruling 2026-10-25)
 	foreverTwoHandNormalizedSpeed = 3.3
 )
 

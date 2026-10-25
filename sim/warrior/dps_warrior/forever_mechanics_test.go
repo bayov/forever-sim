@@ -101,8 +101,8 @@ func TestForeverWarriorNormalizedRage(t *testing.T) {
 		}
 	}
 
-	// At level 60 with the default s = 0.5, k is 1.5 times its level 30 value.
-	const l60 = 1.5
+	// k is flat (s = 0, user ruling 2026-10-25): at level 60 it is its level 30 value.
+	const l60 = 1.0
 	sim, war := newForeverWarriorArmed(t, "", 991014, 991015)
 	mh, oh := war.AutoAttacks.MHAuto(), war.AutoAttacks.OHAuto()
 	near("a 300 damage main hand hit", whiteRage(sim, war, mh, core.OutcomeHit, 300), l60*3.46*2.8)
@@ -130,18 +130,18 @@ func TestForeverWarriorNormalizedRage(t *testing.T) {
 }
 
 // TestForeverWarriorNormalizedRageLevels checks standards 21's level scaling: k(L) = k30 × (1 + s ×
-// (L − 30) / 30) above level 30, with the default s = 0.5: ×1 at 30 and below, ×1.25 at 45 and ×1.5
-// at 60.
+// (L − 30) / 30) above level 30, with the default s = 0 (flat, user ruling 2026-10-25: a level 13
+// log gives the level 30 k), so ×1 at every level.
 func TestForeverWarriorNormalizedRageLevels(t *testing.T) {
-	if core.ForeverNormalizedRageScaling != 0.5 {
-		t.Fatalf("the default s is %g, want 0.5", core.ForeverNormalizedRageScaling)
+	if core.ForeverNormalizedRageScaling != 0 {
+		t.Fatalf("the default s is %g, want 0", core.ForeverNormalizedRageScaling)
 	}
 	sword := &core.Weapon{SwingSpeed: 2.6, NormalizedSwingSpeed: 2.4}
 	twoHander := &core.Weapon{SwingSpeed: 3.4, NormalizedSwingSpeed: 3.3}
 	for _, c := range []struct {
 		level  int32
 		factor float64
-	}{{20, 1}, {30, 1}, {45, 1.25}, {60, 1.5}} {
+	}{{13, 1}, {20, 1}, {30, 1}, {45, 1}, {60, 1}} {
 		if got, want := core.ForeverNormalizedRage(sword, c.level), c.factor*3.46*2.6; math.Abs(got-want) > 1e-9 {
 			t.Errorf("a 2.6 sec one-hander at level %d gives %.4f Rage, want %.4f", c.level, got, want)
 		}
