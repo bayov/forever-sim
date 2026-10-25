@@ -12,7 +12,9 @@ hunter_pet_ap / hunter_pet_hit, lock_pet_scaling, lock_demon_melee, pal_2h_spec_
 druid_rip_scale and pal_cons31 follow the new Rip and Consecration code, hunter_cobra_damage is new, and
 pal_soc_wf's Windfury Totem check is back in CreateExtraAttackAuraCommon (it had been lost, so the knob
 did nothing). 2026-10-25: mage_am_mb is new (0: Arcane Missiles' missiles don't proc Missile Barrage), and
-hunter_pet_same_hit is dropped (wowsims/forever's level 17 pet sheet settled it).
+hunter_pet_same_hit is dropped (wowsims/forever's level 17 pet sheet settled it). hunter_hm60 also sets the
+hunter's own Hunter's Mark (ForeverHuntersMarkAura): since the 2026-10-25 ruling every hunter preset casts
+its own with the raid's off, so the knob on the raid debuff alone no longer reached them.
 
 diff --git a/sim/core/assumptions.go b/sim/core/assumptions.go
 new file mode 100644
@@ -111,7 +113,7 @@ index 282ba6c461..7d6b3e7f4a 100644
  				return
  			}
 diff --git a/sim/core/debuffs.go b/sim/core/debuffs.go
-index b5c80bb5c1..dbaa1b7c17 100644
+index b5c80bb5c1..2e11aa9233 100644
 --- a/sim/core/debuffs.go
 +++ b/sim/core/debuffs.go
 @@ -215,6 +215,9 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
@@ -124,6 +126,19 @@ index b5c80bb5c1..dbaa1b7c17 100644
  			MakePermanent(huntersMarkAura(target, bonus))
  		}
  	}
+@@ -995,7 +998,11 @@ func HuntersMarkAura(target *Unit, points int32) *Aura {
+ // ForeverHuntersMarkAura is the mark a level's hunter casts under Forever, the same one the raid
+ // debuff gives (standards 23: a hunter on Hunter's Mark duty casts it with the debuff off).
+ func ForeverHuntersMarkAura(target *Unit, level int32) *Aura {
+-	return huntersMarkAura(target, bestLearnedRank(level, foreverHuntersMarkLevel[:], foreverHuntersMark[:]))
++	bonus := bestLearnedRank(level, foreverHuntersMarkLevel[:], foreverHuntersMark[:])
++	if level >= 60 {
++		bonus = Assume("hunter_hm60", bonus)
++	}
++	return huntersMarkAura(target, bonus)
+ }
+ 
+ // bonus is the ranged attack power every attacker gains against the target.
 diff --git a/sim/core/rage.go b/sim/core/rage.go
 index d275f4c9af..935c47e09b 100644
 --- a/sim/core/rage.go
