@@ -307,7 +307,7 @@ Dual-wield Fury is also affected by `wf_totem_offhand` (est. −2 to −3% at it
 | `hunter_pet_scaling` | Pet scaling from the hunter | BM, MM, SV | 10% RAP + 1:1 hit (17/8 as spell hit) (one value, resolved 2026-10-23) | = Expected | 10% RAP + hit | = Expected | none left (one value) |
 | `hunter_pet_speed` | Pet hits normalized to a 2.0 sec pet | BM, MM | no: Classic, the hit scales with speed | = Expected | Classic | the beta's same hit | High +6.1% BM, +3.2% MM (assumption sims, 180 s, before the 2026-10-23 pet changes) |
 | `hunter_cobra_damage` | Cobra Reflexes' damage cut | BM, MM, SV | hits shrink with the 30% faster swing (user ruling 2026-10-23) | = Expected | shrink with speed | TBC's 15% cut (wowsims/forever) | High +15.2 BM (+1.4%) (3,000 iterations, seed 1, 180 s) |
-| `hunter_tsa_hm_rank` | Trueshot Aura and Hunter's Mark at 60 | LW, MM, BM | 100 / 143 (Trueshot Aura fixed, Hunter's Mark hotfixed) | 50 / 71 (top ranks as written); Mid 75 / 98 (best older rank) | 100 / 143 | = Expected | Low −2.6 to −3.1%, Mid −1.4 to −1.7% (assumption sims, 180 s) |
+| `hunter_tsa_hm_rank` | Trueshot Aura and Hunter's Mark at 60 | LW, MM, BM | 100 / 143 (Trueshot Aura fixed, Hunter's Mark hotfixed) | 50 / 71 (top ranks as written); Mid 75 / 98 (best older rank) | 100 / 143 | = Expected | Low −2.2 to −3.1%, Mid −1.3 to −1.8% (assumption sims, 180 s, 2026-10-25, own Hunter's Mark) |
 | `hunter_crit_per_agi` | Crit per Agility at 60 | all four | ×1.22 | Classic (53 Agi a 1%) | ×1.22 | = Expected | Low −2.6 to −2.8% (assumption sims, 180 s) |
 | `hunter_raptor_31plus` | Raptor Strike 31+ flat bonuses | Survival | 96 at rank 8 | 70 | 96 | 123 | Low −0.5%, High +0.5% (assumption sims, 180 s) |
 | `hunter_trap_ap` | Fire traps' attack power share | Survival | 10% of ranged attack power over a trap (one value, resolved 2026-10-23) | = Expected | 10% over the trap | = Expected | none left (one value) |
@@ -362,7 +362,7 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
 
 ### `hunter_tsa_hm_rank`: Trueshot Aura and Hunter's Mark at level 60
 
-- **Builds:** Lone Wolf, Marksmanship, Beast Mastery. Both are ranged attack power only, so Survival is unaffected.
+- **Builds:** Lone Wolf, Marksmanship, Beast Mastery, each casting its own Hunter's Mark (standards 23). Both are ranged attack power only, so Survival is unaffected.
 - **Sim now:** the top ranks cast directly, Trueshot Aura rank 5 +100 RAP (fixed onto the curve, user ruling 2026-10-15, PR #22) and Hunter's Mark rank 4 +143 RAP (`ForeverTrueshotAuraRank5RAP`, `ForeverHuntersMarkRank4` in sim/core; standards 8a). Hunter's Mark was +140 by the 2026-10-15 ruling; on 2026-10-23 the user took the +143 of the server hotfix foreverchanges.pro saw on 2026-10-21 (client 70532 still reads 71), so only Trueshot Aura's rank is still assumed.
 - **Source:**
   - Client 70338: Trueshot Aura ranks 30 / 40 / 50 / 75 / 50, Hunter's Mark 26 / 59 / 98 / 71. Both top ranks sit below the rank before them.
@@ -373,8 +373,8 @@ Survival is also affected by `wf_totem_offhand` (est. about −1.5% at its Low).
   - **Mid, 75 / 98, best older rank.** A player casts the stronger lower rank (the presets' setting before PR #22).
   - **Expected, 100 / 143 (Sim now).** Blizzard fixes the top ranks onto the curve of the ranks before them: Trueshot Aura +25 a rank (user ruling 2026-10-15). Hunter's Mark was taken at about +40 a rank (140, Forever's ranks 1 to 3 running about 1.3× Classic's 20 / 45 / 75 / 110); the 2026-10-21 server hotfix put it at 143 (user, 2026-10-23).
   - **High:** = Expected.
-- **Sensitivity (assumption sims, 180 s):** Low −2.6% BM, −3.1% LW, −2.8% MM; Mid −1.4% BM, −1.7% LW, −1.6% MM. Trueshot Aura is a raid buff in 38 of the 46 report requests (and in every hunter request since client 70425 made it a raid aura, 2026-10-16: the sensitivity above predates that and now covers Survival too), but it gives ranged attack power only, so only the hunters move.
-- **Knob:** `Assume("hunter_tsa60", …)` and `Assume("hunter_hm60", …)` override the level 60 values `bestLearnedRank` returns (patch 0004); the settings set 75 / 98 and 50 / 71.
+- **Sensitivity (assumption sims, 180 s, 2026-10-25, with the hunter's own Hunter's Mark):** Low −2.2% BM, −3.1% LW, −2.6% MM; Mid −1.3% BM, −1.8% LW, −1.5% MM. Trueshot Aura is a raid buff in 38 of the 46 report requests (and in every hunter request since client 70425 made it a raid aura, 2026-10-16: the sensitivity above predates that and now covers Survival too), but it gives ranged attack power only, so only the hunters move.
+- **Knob:** `Assume("hunter_tsa60", …)` and `Assume("hunter_hm60", …)` override the level 60 values `bestLearnedRank` returns (patch 0004); the settings set 75 / 98 and 50 / 71. Since 2026-10-25 every hunter preset casts its own Hunter's Mark with the raid's off (standards 23, Mark duty assumed), so `hunter_hm60` sets the hunter's own mark (`ForeverHuntersMarkAura`) as well as the raid debuff.
 
 ### `hunter_crit_per_agi`: the hunter's crit per point of Agility
 

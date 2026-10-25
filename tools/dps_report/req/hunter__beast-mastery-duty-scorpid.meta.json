@@ -25,7 +25,7 @@
     "ok": true,
     "note": "180s, seed 1; seed 1000003 gives 1076.6"
   },
-  "summary": "Beast Mastery with a cat: Bestial Wrath, Frenzy and Unleashed Fury. The pet deals about 21% of the damage.",
+  "summary": "Beast Mastery with a cat: Bestial Wrath, Frenzy and Unleashed Fury, melee weaving between Auto Shots. The pet deals about 31% of the damage.",
   "keyTalents": [
     "Bestial Wrath",
     "Frenzy",
