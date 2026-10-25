@@ -61,7 +61,7 @@
   "url": "https://forever-dps.pages.dev",
   "cloudflareProject": "forever-dps",
   "deploy": "make dps-report-deploy (tools/dps_report/deploy_pages.py)",
-  "publishedFrom": "22fca46e70 (data 23b89b17a2, built 2026-10-25T07:58)",
+  "publishedFrom": "2a2ff21d23 (hunter builds re-simmed with Mark duty assumed; the other 53 as of 23b89b17a2)",
   "date": "2026-10-25"
  }
 }
