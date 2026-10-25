@@ -155,7 +155,8 @@ The rules every class follows so the specs' Level 60 numbers compare fairly. New
    - Retribution paladin: Pursuit of Justice 2 (movement speed).
    - Feral druid: Feral Swiftness 2 (movement speed).
    - Balance druid: Subtlety 3 (Forever's version cuts Nature and Arcane threat).
+   - Shadow priest (the pure Shadow build): Silent Resolve 3 (Forever's version cuts Holy and Shadow threat by 30%, client 70425's school mask; Forever removed Shadow Affinity). Not required on Shadow + Holy, which has no Discipline points. Dropped on 2026-10-24 on the wrong premise that it cut only Holy threat (the sim's bug, fixed 2026-10-25), and reinstated by the user on 2026-10-25.
    - Enhancement shaman: Spirit Weapons (threat), kept pinned.
    - Warlock Demonology: Suppression 5 (the other warlock builds already take it).
    - Mage: the school threat talents its builds already take (Arcane Subtlety, Burning Soul, Frost Channeling).
-   Not required (considered the same day): Elemental Natural Grace, Smite Silent Resolve, Ret Shock Instrument of Law, rogue Improved Sprint / Endurance / Elusiveness, mage Ice Block, Enhancement Improved Ghost Wolf. Shadow priest Silent Resolve (user ruling 2026-10-24, reversing the 2026-10-23 must-take): The ruling was asked on a wrong premise (that Forever's Silent Resolve cuts only Holy threat, which was our sim's bug): client 70425 makes it cut Holy and Shadow threat (PRI-70425-16), fixed in the sim 2026-10-25; the user is re-asked. Shadow + Holy and Smite never took it.
+   Not required (considered the same day): Elemental Natural Grace, Smite Silent Resolve, Ret Shock Instrument of Law, rogue Improved Sprint / Endurance / Elusiveness, mage Ice Block, Enhancement Improved Ghost Wolf.
