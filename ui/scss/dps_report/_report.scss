@@ -3427,6 +3427,46 @@ div.tt-embed:not(.fv-tt) {
 	}
 }
 
+// A Specs card's fold under its title: how the section was made, why we trust it, and what it misses. Small and
+// muted like an assumption's fold, so it doesn't compete with the card's content.
+.fv-about {
+	font-size: var(--cds-font-size-caption);
+	line-height: 1.45;
+	color: var(--color-fg-muted);
+	max-width: 75ch;
+
+	.fv & > details > summary {
+		width: fit-content;
+		justify-content: flex-start;
+		font-size: var(--cds-font-size-caption);
+		color: var(--fv-gold);
+	}
+
+	.fv & > details[open] > summary {
+		margin-bottom: 0.35rem;
+	}
+
+	p {
+		margin: 0 0 0.35rem;
+	}
+
+	b {
+		color: var(--color-fg);
+		font-weight: 600;
+	}
+
+	ul {
+		margin: 0;
+		padding-left: 1.1rem;
+		display: grid;
+		gap: 0.2rem;
+	}
+
+	li::marker {
+		color: var(--fv-gold);
+	}
+}
+
 .fv-asm-msets {
 	display: grid;
 	gap: 0.15rem;
