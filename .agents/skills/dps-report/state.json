@@ -61,8 +61,8 @@
   "url": "https://forever-dps.pages.dev",
   "cloudflareProject": "forever-dps",
   "deploy": "make dps-report-deploy (tools/dps_report/deploy_pages.py)",
-  "publishedFrom": "0a0f4ce (the Specs cards' \"How ...?\" notes; numbers unchanged since 88ecc47, provenance re-recorded at bb038c2e4e because the 2026-10-20/21 item changes reach no build)",
+  "publishedFrom": "5d47088 (events view opens on Replay; the Specs cards' \"How ...?\" notes from 0a0f4ce; numbers unchanged since 88ecc47, provenance re-recorded at bb038c2e4e because the 2026-10-20/21 item changes reach no build)",
   "date": "2026-10-25",
-  "deployId": "7b5a58c7"
+  "deployId": "e376d4e2"
  }
 }
