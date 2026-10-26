@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "74b3a5f7c365aaeae5b3f7fa7068ad7f6cd06d77"
+  "master": "e2316bebeee6591d822a6f7aae849abb53ed4ccf"
  },
  "last_pass_at": "2026-10-26T00:51:53Z",
  "pass": 39,
  "result": "quiet",
  "note": "Pass 39: audited 016daa654..74b3a5f7c (3 user-ruling commits: flat warrior Rage k, hunter crit per Agility from PlayerExpectedStat (verified against 70532), Alliance/High Order race offsets). No build past 70532 (probe 300); dev notes thread unchanged (post 6); hotfixes not re-read (hotfixes.py missing).",
  "client_build": "1.60.1.70532",
- "checked_at": "2026-10-26T01:06:50Z",
+ "checked_at": "2026-10-26T06:45:39Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/6",
   "date": "2026-10-16T00:15:23Z",
