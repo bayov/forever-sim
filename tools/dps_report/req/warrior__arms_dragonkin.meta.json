@@ -66,7 +66,7 @@
   ],
   "caveats": [
     "Spearing Strike only works against Giants and Dragonkin",
-    "White hit Rage scales with weapon speed, the level 30 rate at every level (user ruling 2026-10-25; it was ×1.5 at 60).",
+    "Assumed: white hits give Rage by weapon speed, at the level 30 rate at every level.",
     "No Fury Dragonkin build: Spearing Strike adds only 0.4% (dual wield) and 0.8% (two-hand).",
     "No Ahn'Qiraj book ranks (Heroic Strike VIII, raid Battle Shout VI, Strength of Earth, Grace of Air)",
     "Deep Wounds ticks can't crit.",

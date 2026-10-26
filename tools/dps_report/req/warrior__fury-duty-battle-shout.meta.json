@@ -62,7 +62,7 @@
     "Dense Sharpening Stone"
   ],
   "caveats": [
-    "White hit Rage scales with weapon speed, the level 30 rate at every level (user ruling 2026-10-25; it was ×1.5 at 60).",
+    "Assumed: white hits give Rage by weapon speed, at the level 30 rate at every level.",
     "No Ahn'Qiraj book ranks (Heroic Strike VIII, raid Battle Shout VI, Strength of Earth, Grace of Air)",
     "Deep Wounds ticks can't crit.",
     "Assumed: the crit Rage bonus is white hits only, and Heroic Strike counts for Unbridled Wrath.",

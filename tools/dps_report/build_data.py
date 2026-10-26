@@ -539,10 +539,29 @@ for b in builds:
     b['rankAll'] = 1 + sum(1 for x in builds if x['dps'] > b['dps'])
 
 
+# The report is shared with people outside the project, so its text must not name our own process: the user's
+# rulings, the standards' numbers, notes.md. dump warns about any such text, to fix at its source.
+_LEAK = re.compile(r"\buser (?:ruling|rulings|decision)|\bthe user\b|\bruled\b|\bstandards \d|notes\.md", re.I)
+
+
+def _texts(x):
+    if isinstance(x, str):
+        yield x
+    elif isinstance(x, dict):
+        for v in x.values():
+            yield from _texts(v)
+    elif isinstance(x, list):
+        for v in x:
+            yield from _texts(v)
+
+
 def dump(name, rows):
     p = os.path.join(OUT, name + '.json')
     json.dump(rows, open(p, 'w'), separators=(',', ':'))
     print(f'{name}: {len(rows)} rows, {os.path.getsize(p) / 1024:.0f} KB')
+    leaks = sorted({t for t in _texts(rows) if _LEAK.search(t)})
+    if leaks:
+        print(f'WARNING {name}: {len(leaks)} texts name the project\'s process, e.g. {leaks[0][:150]!r}')
 
 
 dump('builds', builds)

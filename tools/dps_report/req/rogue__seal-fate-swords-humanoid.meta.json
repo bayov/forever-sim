@@ -71,7 +71,7 @@
     "Grimstitch 4-piece and 5-piece aren't active (about +8 and +6).",
     "Assumed: the fight is in Hyjal or the Barrow Deeps. Its flask gives its full bonus only there.",
     "10% hit (the wrist and the second ring carry 10 hit rating each): dual wielders take hit by sim (standards 4), and past the 8% yellow cap it still helps the white hits (+0.4 to +1.9 over 8%).",
-    "No Goblin Land Mine: its 1 sec cast resets the swing, and it doesn't gain here (standards 11, explosives only when they gain). The Sapper stays."
+    "No Goblin Land Mine: its 1 sec cast resets the swing, so it loses DPS here. The Sapper stays."
   ],
   "notes": "Request from mksettings with the same arguments as rogue__seal-fate-swords except talents, then the target's mobType set to MobTypeHumanoid, as the class preset's encounter does.",
   "encounter": "Humanoid",

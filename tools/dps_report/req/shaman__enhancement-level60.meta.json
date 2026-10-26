@@ -79,7 +79,7 @@
     "Earth Shock VII's base damage is ×1.08 (client ×1.00).",
     "Raid damage hits (2 a minute, each fires Lightning Shield) are an estimate.",
     "Fire Nova uses the 70425 values: coefficient 0.143, rank 5 base 232 to 259.",
-    "The raid's second shaman's Flametongue Totem holds the weapon's totem slot next to our Windfury Weapon (user ruling 2026-10-16, assumed; to verify in game): +18 to +19 at 180 s",
+    "Assumed: another shaman's Flametongue Totem works alongside the preset's own Windfury Weapon, for +18 to +19 DPS at 180s. Not yet tested in game.",
     "Improved Stormstrike 2 in place of Tidal Focus 1 is tuned at 180 s: about -3 at 120 s for +1 to +2 at 180 s and +4 to +5 at 300 s, paired at 20000 iterations on two seed sets.",
     "Relic: Totem of the Storm (Lightning Bolt can trigger Maelstrom Weapon at half the chance), +0.9 to +2.1 over Burning Totem at every length."
   ],

@@ -76,7 +76,7 @@
     "Elemental Focus triggers: if Stormstrike can trigger it, Enhancement gets too few Clearcasting procs.",
     "Raid damage hits (2 a minute, each fires Lightning Shield) are an estimate.",
     "Fire Nova uses the 70425 values: coefficient 0.143, rank 5 base 232 to 259.",
-    "The raid's second shaman's Flametongue Totem holds the weapon's totem slot next to our Windfury Weapon (user ruling 2026-10-16, assumed; to verify in game): +18 to +19 at 180 s",
+    "Assumed: another shaman's Flametongue Totem works alongside the preset's own Windfury Weapon, for +18 to +19 DPS at 180s. Not yet tested in game.",
     "Relic: Burning Totem, its own gear set: Totem of the Storm is 0.1 to 1.5 behind here."
   ],
   "notes": "mksettings -spec enh -gear level60_phase1_synthetic_burning_totem -apl mana_tide -talents 03-055030031005112051-053051001001 -race Orc -duration 180 -level 60 (standards 23: every shaman drops its own party totems; the raid's only totems are a second shaman's Grace of Air and Flametongue Totem, standards 25, the shaman drops Strength of Earth, Windfury Totem, Mana Spring Totem and Magma Totem itself)."
