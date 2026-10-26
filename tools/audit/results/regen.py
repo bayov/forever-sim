@@ -40,7 +40,7 @@ IGN=re.compile(r'(simOptions|duration|durationVariation)')
 for f in sorted(glob.glob('tools/dps_report/req/*.meta.json')):
     m=json.load(open(f)); i=m['id']; sp=spec_for(m)
     out=os.path.join(WORK,'drift',i+'.regen.json')
-    r=subprocess.run([os.path.join(BIN,'mksettings'),'-spec',sp,'-gear',m['gearSet'],'-apl',m['apl'],'-talents',m['talents'],'-race',m['race'],'-duration','180','-out',out],capture_output=True,text=True)
+    r=subprocess.run([os.path.join(BIN,'mksettings'),'-spec',sp,'-gear',m['gearSet'],'-apl',m['apl'],'-talents',m['talents'],'-race',m['race'].replace(' ',''),'-duration','180','-out',out],capture_output=True,text=True)
     if r.returncode: print(f'## {i} spec={sp} MKSETTINGS FAIL: {r.stderr.strip()[:200]}'); continue
     a=flat(json.load(open(f.replace('.meta.json','.json')))); b=flat(json.load(open(out)))
     diffs=[]

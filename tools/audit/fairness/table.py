@@ -15,13 +15,19 @@ def load(f):
         p = l.split()
         if len(p) >= 3: D[p[0]] = {p[k]: float(p[k + 1]) for k in range(1, len(p) - 1, 2)}
     return D
+try:
+    BUILDS = {b["id"]: b["dps"] for b in json.load(open(os.path.join(os.environ["AUDIT_TREE"], "ui/dps_report/data/builds.json")))}
+except (OSError, ValueError, KeyError):
+    BUILDS = {}
 D = load(sys.argv[1]); P = load(sys.argv[2]); lab = sys.argv[3] if len(sys.argv) > 3 else "before"
 def row(i):
     d = D[i]; best = max(d, key=d.get)
     H = [r for r in d if r not in ALLIANCE]; A = [r for r in d if r in ALLIANCE]
     h = max(H, key=d.get) if H else None; a = max(A, key=d.get) if A else None
     ha = ((f"{rn(h)} {d[h]:.1f}" if h else "none") + f" / {rn(a)}") if best in ALLIANCE else (f"{rn(h)} / " + (f"{rn(a)} {d[a]:.1f}" if a else "none"))
-    m = json.load(open(f"{REQ}/{i}.meta.json")); pub = m["published"]["dps"]; pr = m["race"]
+    # The gap is against the deployed dashboard (builds.json), which the regeneration updates; the req
+    # metas' published.dps is only refreshed by hand and goes stale. meta races may carry a space ("Night Elf").
+    m = json.load(open(f"{REQ}/{i}.meta.json")); pub = BUILDS.get(i, m["published"]["dps"]); pr = m["race"].replace(" ", "")
     return best, d[best], ha, pub, pr, d.get(pr), max(P[i].values()) if i in P else float("nan")
 rows = sorted([(NAME[i],) + row(i) for i in NAME if i in D], key=lambda r: -r[2])
 print(f"| # | Spec | Best race | DPS | Best Horde / Alliance | Report race (DPS here) | Report's published | Gap | Before ({lab}) |\n|---|---|---|---|---|---|---|---|---|")
