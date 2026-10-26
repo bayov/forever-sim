@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "f796d99536dd41e58a3e785309f76296ba607a83"
+  "master": "f62cb797114ef605c84722f98542c85928d75678"
  },
- "last_pass_at": "2026-10-26T00:51:53Z",
- "pass": 39,
+ "last_pass_at": "2026-10-26T13:30:00Z",
+ "pass": 40,
  "result": "quiet",
- "note": "Pass 39: audited 016daa654..74b3a5f7c (3 user-ruling commits: flat warrior Rage k, hunter crit per Agility from PlayerExpectedStat (verified against 70532), Alliance/High Order race offsets). No build past 70532 (probe 300); dev notes thread unchanged (post 6); hotfixes not re-read (hotfixes.py missing).",
+ "note": "Pass 40: audited f796d9953..f62cb7971 (32a6848f9 wowsims/forever assumptions per standards 28, plus 2 Replay logging commits). Code checked: liveTick ratio math, FSR hold/release ordering (IsChanneling clears before next cost), Multi-Shot attrs on 70532. No build past 70532 (probe 300); dev notes thread unchanged (post 6).",
  "client_build": "1.60.1.70532",
- "checked_at": "2026-10-26T12:56:35Z",
+ "checked_at": "2026-10-26T19:06:02Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/6",
   "date": "2026-10-16T00:15:23Z",

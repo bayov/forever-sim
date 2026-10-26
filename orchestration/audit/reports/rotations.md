@@ -1,43 +1,73 @@
-# Rotations and resources: pass 32 (2026-10-26T00:58:23Z)
+# Rotations pass 33 (2026-10-26)
 
-Master 74b3a5f7c (last audited 016daa654). Result: quiet, 0 new findings.
+- **Master:** f62cb7971 (last audited f796d9953). Client 1.60.1.70532 (unchanged).
+- **Result:** quiet, 0 new findings. No open findings carried.
 
 ## What changed
 
-- 107874b75: white-hit Rage is flat with level (`ForeverNormalizedRageScaling` 0.5 -> 0, user ruling 2026-10-25).
-- 44fdd8599: warrior Level 60 rotations and talents re-searched at flat Rage (Fury DW: HS from 80 and in execute,
-  Bloodrage <20, Death Wish / trinket end holds; 2H: Berserker Rage <30, HS 90, Slam 45; Arms: Bloodrage <20,
-  Hamstring 30). Duty variants carry the same knobs.
-- 01afcb1d3: hunter crit per Agility is Classic's at 60 (scale 1.22 -> per-level table, 1 at 60).
-- 92484f3c8: Forever base stats for Dwarf, Night Elf, Gnome, High Order.
-- cdceb56c4: MM, LW and mm_turret drop the Aimed Shot line (Multi-Shot takes the shared cooldown); MM plays a Human.
-  This supersedes the pass doc's settled note "Multi-Shot never fires in BM, MM or LW" for MM/LW (BM unchanged).
+- No Level 60 APL or req file changed (`apl_logic_diff.py f796d9953 f62cb7971`: 0 apl files).
+- Sim: 32a6848f9, the wowsims/forever assumptions of standard 28: Multi-Shot 0.5 s cast hasted by
+  ranged speed and keeping the Auto Shot timer, live DoT/channel ticks, hunter base RAP 110,
+  failed Ferocious Bite keeps energy and combo points, regen held at the casting rate through a
+  mana-paid channel. The rest of the range is Replay/DPS Report UI.
 
-## Checks
+## Regression baseline (3000 it, seed 424242, shared CLI at f62cb7971)
 
-| Check | Result |
-|---|---|
-| `apl_logic_diff.py 016daa654 74b3a5f7c` | 10 files: 7 warrior (knob values as in the commit), 3 hunter (Aimed Shot line removed). |
-| Embedded req rotations vs APL files (7 warrior, MM, LW) | All identical. |
-| `baseline.py` vs `baseline_016daa6` | Warrior -51 to -85, hunter -27 to -30 (the two rulings); feral -1.5, Subtlety -1.1/-1.2 (Night Elf base stats); frost mage +0.2. Nothing unexplained. New baseline `baseline_74b3a5f_3000it_seed424242.tsv`. |
-| Shared run vs published | Warrior and hunter rows match published; only feral/Subtlety moved (-1.0 to -1.5, base stats). |
-| Open findings to verify | None open. |
+New file `ref/rotations/baseline_f62cb79_3000it_seed424242.tsv` (replaces `baseline_74b3a5f`).
+Rows that moved more than 0.5 DPS, all explained by the mechanics above:
 
-## Verification A/B (paired, 20k it, 8 blocks; B-A at 120 / 180 / 300 s)
+| preset | old | new | Δ |
+|---|---:|---:|---:|
+| warlock affliction | 1034.9 | 1029.0 | −6.0 |
+| hunter lone-wolf | 1126.9 | 1121.6 | −5.2 |
+| priest shadow | 961.8 | 956.9 | −5.0 |
+| priest shadow-holy | 919.1 | 914.4 | −4.7 |
+| warlock demonology | 1064.8 | 1060.1 | −4.7 |
+| druid balance | 856.7 | 852.5 | −4.2 |
+| balance wrath duty-ff | 784.8 | 780.9 | −3.8 |
+| affliction duty-curse | 1024.4 | 1020.7 | −3.7 |
+| balance duty-ff | 825.1 | 821.5 | −3.6 |
+| demonology duty-curse | 1051.6 | 1048.2 | −3.4 |
+| hunter marksmanship | 1138.7 | 1135.7 | −3.0 |
+| priest smite | 766.5 | 763.9 | −2.6 |
+| balance wrath | 813.1 | 810.7 | −2.4 |
+| destruction duty-curse | 999.4 | 1002.3 | +2.9 |
+| hunter beast-mastery | 1141.2 | 1143.5 | +2.3 |
+| destruction fire duty-curse | 976.5 | 978.6 | +2.1 |
 
-| Preset | B variant | s0=1e6 | s0=2e8 | Verdict |
-|---|---|---|---|---|
-| hunter__marksmanship (A 1139.3 @180) | Aimed Shot line restored above Multi-Shot | -3.40 / -1.68 / -1.01 | -2.63 / -1.94 / -0.61 | master's Multi-Shot holds |
-| warrior__fury (A 984.8 @180) | HS ≥80 gated off in execute (old form) | -0.24 / -1.10 / +0.04 | -0.20 / -1.03 / +0.04 | master's HS-in-execute holds |
+Matches the loop's `vs_published.txt` (23 of 57 moved > 0.5).
 
-Knob-level moves (thresholds, holds) were searched by the worker with tools/rotopt on paired seeds and are
-not re-searched here.
+## Rotation checks against the new mechanics
 
-## Optional (under the bar)
+Paired A/B, 20k it in 8 blocks, B−A ± SE (`ab.py`, shared CLI at f62cb7971).
 
-None new.
+**Multi-Shot cast (MM, LW).** It fires about 24 times a fight in MM and LW (not "never", as the
+settled list in `passes/rotations.md` still says; that line is stale, BM fires it ~0 times).
 
-## Open items
+| variant | preset | s0 | 120 s | 180 s | 300 s |
+|---|---|---|---:|---:|---:|
+| drop Multi-Shot | MM | 1e6 / 2e8 | −130.7 / −130.9 | −123.4 / −123.0 | −96.4 / −95.9 |
+| drop Multi-Shot | LW | 1e6 / 2e8 | −144.9 / −145.1 | −139.0 / −139.1 | −111.7 / −111.8 |
+| only if `autoTimeToNext(Ranged) ≥ castTime` | MM | 1e6 / 2e8 | −2.2 / −2.7 | −2.6 / −2.2 | −0.3 / −0.1 |
+| only if `autoTimeToNext(Ranged) ≥ castTime` | LW | 1e6 / 2e8 | −1.9 / −1.7 | −2.2 / −2.1 | −0.5 / −0.4 |
 
-- Pass doc "Settled" note on Multi-Shot is stale for MM/LW (orchestrator to update passes/rotations.md).
-- Carried from earlier passes: Balance Night Elf + Elune's Light, Elemental Mastery hold, warlock duty-curse screens.
+The current Multi-Shot-on-cooldown line holds. Avoiding the auto clip loses.
+
+**Channel five-second rule (Shadow).** Wand window 10→20% varied to 10→30%, 15→30%, 5→15% and
+removed: all exactly +0.00 at 120/180/300 s (s0 1e6). Shadow never reaches 10% mana in these
+fights, so the line stays inert and the channel rule costs no rotation change.
+
+**Live DoT ticks.** No APL line times a spell DoT to a buff or trinket (notes grep for snapshot,
+refresh-on-buff; only the Subtlety Rupture note, a bleed, which already ticked live). Nothing to test.
+
+**Bite miss refund.** Feral −1.3 at 3000 it; not screened (mechanic is small and the Bite gates are
+energy thresholds the refund barely touches). Open item for a later pass if Feral moves again.
+
+## Optional
+
+None new. The pass-doc Optional list carries over.
+
+## Note for the pass doc
+
+`passes/rotations.md` "Settled: Multi-Shot never fires in BM, MM or LW" is out of date for MM and LW
+(it fires ~24 times a fight and is worth 96–145 DPS). Suggest the orchestrator reword it.
