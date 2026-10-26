@@ -68,8 +68,8 @@
   "url": "https://forever-dps.pages.dev",
   "cloudflareProject": "forever-dps",
   "deploy": "make dps-report-deploy (tools/dps_report/deploy_pages.py)",
-  "publishedFrom": "5a452c1 (page text rewrites; new haste_gcd assumption simmed here, its 17 single rows only, no grid combos yet, with a rotation warning on Retribution and Enhancement; other data unchanged since the full re-sim at 8e0d6f681e)",
+  "publishedFrom": "b9fed7d (full re-sim of all 57 builds on 32a6848: Multi-Shot cast, live DoT ticks, hunter RAP 110, Bite energy, channel regen; replays from 3a6cd05 with channel bars; provenance at 3a6cd05)",
   "date": "2026-10-26",
-  "deployId": "c96b688c"
+  "deployId": "ca665680"
  }
 }
