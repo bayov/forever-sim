@@ -1,42 +1,43 @@
-# Rotations and resources: pass 31 (2026-10-25T18:55:28Z)
+# Rotations and resources: pass 32 (2026-10-26T00:58:23Z)
 
-Master 016daa654 (last audited 54878fa3d). Result: quiet, 0 new findings.
+Master 74b3a5f7c (last audited 016daa654). Result: quiet, 0 new findings.
 
 ## What changed
 
-- Hunter Mark duty is now assumed for every hunter (user ruling 2026-10-25, standards 23). The
-  `*_mark` and `*_scorpid` APLs and their `-duty-mark` / `-duty-scorpid` presets were removed. The base
-  `bm`, `mm`, `lw`, `sv` APLs and the `_turret` rotations gained the two Hunter's Mark lines that the
-  `_mark` files had: a pre-pull cast of 14325 at −1.5 s, and a refresh when `auraRemainingTime` on the target is under 3 s,
-  placed right after `autocastOtherCooldowns`.
-- `sim/hunter/hunters_mark.go`: the change is to the comment only. Apart from that, only `_test` files changed. The `tools/rotopt` hunter files are search tooling, and the presets don't reach them.
-- Client 1.60.1.70532 is client-identical to 70450 (ledger, build 70532).
+- 107874b75: white-hit Rage is flat with level (`ForeverNormalizedRageScaling` 0.5 -> 0, user ruling 2026-10-25).
+- 44fdd8599: warrior Level 60 rotations and talents re-searched at flat Rage (Fury DW: HS from 80 and in execute,
+  Bloodrage <20, Death Wish / trinket end holds; 2H: Berserker Rage <30, HS 90, Slam 45; Arms: Bloodrage <20,
+  Hamstring 30). Duty variants carry the same knobs.
+- 01afcb1d3: hunter crit per Agility is Classic's at 60 (scale 1.22 -> per-level table, 1 at 60).
+- 92484f3c8: Forever base stats for Dwarf, Night Elf, Gnome, High Order.
+- cdceb56c4: MM, LW and mm_turret drop the Aimed Shot line (Multi-Shot takes the shared cooldown); MM plays a Human.
+  This supersedes the pass doc's settled note "Multi-Shot never fires in BM, MM or LW" for MM/LW (BM unchanged).
 
 ## Checks
 
 | Check | Result |
 |---|---|
-| `apl_logic_diff.py 54878fa3d 016daa654` | 14 files changed. The only lines added are the two Mark lines in 7 base and turret APLs. The 7 `_mark` and `_scorpid` files were deleted. |
-| Embedded req rotation vs `ui/hunter/apls/*.apl.json` (bm, lw, mm, sv) | All 4 are identical. |
-| Req raid `huntersMark` debuff | Off in all 4 hunter reqs, so the mark isn't counted twice. |
-| `baseline.py` (3k iterations, seed 424242) vs `baseline_54878fa` | The new hunter base rows equal the old `-duty-mark` rows exactly (BM 1171.20, LW 1156.89, MM 1165.69, SV 1055.72). The 7 removed rows are gone, and every other preset is unchanged. |
-| Shared run vs published | The hunter rows match the published numbers. |
+| `apl_logic_diff.py 016daa654 74b3a5f7c` | 10 files: 7 warrior (knob values as in the commit), 3 hunter (Aimed Shot line removed). |
+| Embedded req rotations vs APL files (7 warrior, MM, LW) | All identical. |
+| `baseline.py` vs `baseline_016daa6` | Warrior -51 to -85, hunter -27 to -30 (the two rulings); feral -1.5, Subtlety -1.1/-1.2 (Night Elf base stats); frost mage +0.2. Nothing unexplained. New baseline `baseline_74b3a5f_3000it_seed424242.tsv`. |
+| Shared run vs published | Warrior and hunter rows match published; only feral/Subtlety moved (-1.0 to -1.5, base stats). |
 | Open findings to verify | None open. |
+
+## Verification A/B (paired, 20k it, 8 blocks; B-A at 120 / 180 / 300 s)
+
+| Preset | B variant | s0=1e6 | s0=2e8 | Verdict |
+|---|---|---|---|---|
+| hunter__marksmanship (A 1139.3 @180) | Aimed Shot line restored above Multi-Shot | -3.40 / -1.68 / -1.01 | -2.63 / -1.94 / -0.61 | master's Multi-Shot holds |
+| warrior__fury (A 984.8 @180) | HS ≥80 gated off in execute (old form) | -0.24 / -1.10 / +0.04 | -0.20 / -1.03 / +0.04 | master's HS-in-execute holds |
+
+Knob-level moves (thresholds, holds) were searched by the worker with tools/rotopt on paired seeds and are
+not re-searched here.
 
 ## Optional (under the bar)
 
-- Hunter's Mark end-of-fight gate: adding `remainingTime > 6s` to the refresh line, on MM, 20k iterations.
-  The gain shows only at 120 s, so it is a fight-length edge.
+None new.
 
-| s0 | 120 s | 180 s | 300 s |
-|---|---|---|---|
-| 1e6 | +0.23 ±0.02 | +0.00 | +0.00 |
-| 2e8 | +0.21 ±0.02 | +0.00 | +0.00 |
+## Open items
 
-## Baseline
-
-The baseline is now `ref/rotations/baseline_016daa6_3000it_seed424242.tsv`. It replaces `baseline_54878fa`, because the presets changed. The sim did not change.
-
-## Still open (carried over)
-
-These are the open items in `passes/rotations.md`: Balance Night Elf with Elune's Light, holding Elemental Mastery, and screening the Warlock duty-curse variants.
+- Pass doc "Settled" note on Multi-Shot is stale for MM/LW (orchestrator to update passes/rotations.md).
+- Carried from earlier passes: Balance Night Elf + Elune's Light, Elemental Mastery hold, warlock duty-curse screens.

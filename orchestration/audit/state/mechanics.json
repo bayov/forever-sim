@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "016daa654fd5dd54cfaf79936bde956f83de853b"
+  "master": "74b3a5f7c365aaeae5b3f7fa7068ad7f6cd06d77"
  },
- "last_pass_at": "2026-10-25T18:50:50Z",
- "pass": 38,
+ "last_pass_at": "2026-10-26T00:51:53Z",
+ "pass": 39,
  "result": "quiet",
- "note": "Pass 38: audited 54878fa3d..016daa654 (2 hunter commits: Hunter's Mark and Scorpid Sting duty presets dropped per user ruling, standards 23; hunter raids now HuntersMark Missing and cast their own Forever mark, a comment change in hunters_mark.go, no shared mechanic or client value moved). No build past 70532 (probe 300); dev notes thread unchanged (post 6). tools/audit/mechanics/hotfixes.py named in hotfixes_seen is not in the repo, so hotfix tables were not re-read.",
+ "note": "Pass 39: audited 016daa654..74b3a5f7c (3 user-ruling commits: flat warrior Rage k, hunter crit per Agility from PlayerExpectedStat (verified against 70532), Alliance/High Order race offsets). No build past 70532 (probe 300); dev notes thread unchanged (post 6); hotfixes not re-read (hotfixes.py missing).",
  "client_build": "1.60.1.70532",
- "checked_at": "2026-10-25T19:03:27Z",
+ "checked_at": "2026-10-26T01:06:50Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/6",
   "date": "2026-10-16T00:15:23Z",

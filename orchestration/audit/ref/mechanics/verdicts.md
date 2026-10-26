@@ -1,4 +1,4 @@
-# Mechanics audit: verdicts and settled items (as of 2026-10-25 13:08 UTC, master 54878fa3d)
+# Mechanics audit: verdicts and settled items (as of 2026-10-26 UTC, master 74b3a5f7c)
 
 Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 = Era / Classic. Never cite vmangos.
 
@@ -31,6 +31,7 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 | Curse of Recklessness | Armor only; 70425 dropped the target AP part | 70425 |
 | Salvation | −30% threat, raid buff, no DPS effect | 70425 1038 aura 10 bp −30 misc 127 |
 | Normalised Rage | k 3.46 one-hand / 4.5 two-hand × swing speed, level factor s = 0 (flat, user ruling 2026-10-25; 0.5 before); off hand 0.5; a crit adds 100% of the one-hand-rate Rage before the two-hand factor; misses, dodges and parries give none | user rulings, standards 21 (crit and miss rules 2026-10-23, logs via wowsims/forever 5ac4ffbcb6, f9f9f21883; Rule of Rage row 1322574) |
+| Race base stat offsets | Class baseline + offset (Str / Agi / Sta / Int, sums to 0, Spirit 0): Dwarf +2 −2 +1 −1, Night Elf −2 +2 0 0, Gnome −3 +1 −1 +3, High Order −1 +1 −1 +1 (as Windshaper); Horde rows from our 2026-10-10 sheets; carried to every level; not ruleset-gated | user ruling 2026-10-25 (92484f3c8), beta level 1 sheets via wowsims/forever 6296e8546d and Skyborne sheets 2026-09-22 (tier 1 logs at level 1; level 60 is an assumption). wowsims/forever 6fc22306b1 reverted to Classic offsets with no sheet; open in notes.md |
 | Rage from damage taken | 2.5 × (1 − A(attacker level)) × D / c(attacker level); A 20% to 42, 30% at 44, 36% at 46, 38% at 50, 40% at 63; c = Classic's level 45+ conversion (243.6 at 63); D = the attacker's hit × crit/crush multiplier, before any of our mitigation; periodic ticks count; 9.2 Rage for a 1500 boss hit | beta logs via wowsims/forever (ee2d69b16a, 73b317c7cf, de550b7df9), user-approved 2026-10-23, standards 21 (tier 1 logs; the 2.5 is report assumption warr_dt_rage_k) |
 | Nature's Swiftness | CD starts when the buff is used (COOLDOWN_ON_EVENT 0x02000000) | c44c2502a |
 | Pushback | Can't push a cast back past its start | 9f8d7ece5 |
@@ -53,7 +54,7 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 
 - Windfury Totem cooldown 1.5 sec (standards 17, user ruling). Windfury Totem procs from the main hand only (user ruling).
 - Bane of Doom: with the user.
-- Report assumptions decided by user rulings 2026-10-15 / 16: Trueshot Aura rank 5 100; Hunter's Mark rank 4 143 (2026-10-21 hotfix, user 2026-10-23; the hotfix table has 14325 effect 1 at 143); Arcane Shot 0.10 / Serpent Sting 0.03; hunter crit per Agility Classic's at 60 (Forever's PlayerExpectedStat by level, user ruling 2026-10-25; ×1.22 before); pet hits scale with speed; Raptor Strike rank 8 96; Rend 2% AP a tick; Frostbolt rank 10 ×1.04; Ice Lance 0.429; Lightning Bolt rank 10 ×1.12; warr_crit_rage +100%; warr_rage_oh 0.5; level_partial_resist none; sham_ftt_stack (raid Flametongue Totem with Windfury Weapon).
+- Report assumptions decided by user rulings 2026-10-15 / 16: Trueshot Aura rank 5 100; Hunter's Mark rank 4 143 (2026-10-21 hotfix, user 2026-10-23; the hotfix table has 14325 effect 1 at 143); Arcane Shot 0.10 / Serpent Sting 0.03; hunter crit per Agility Classic's at 60 (Forever's PlayerExpectedStat by level, user ruling 2026-10-25; ×1.22 before; all 60 sim values match 70532 PlayerExpectedStat ClassID 3, pass 39); pet hits scale with speed; Raptor Strike rank 8 96; Rend 2% AP a tick; Frostbolt rank 10 ×1.04; Ice Lance 0.429; Lightning Bolt rank 10 ×1.12; warr_crit_rage +100%; warr_rage_oh 0.5; level_partial_resist none; sham_ftt_stack (raid Flametongue Totem with Windfury Weapon).
 
 ## Open items (not blocking)
 

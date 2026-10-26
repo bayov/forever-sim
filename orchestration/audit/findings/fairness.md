@@ -4,6 +4,8 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+## Resolved
+
 ### fairness-20261025-1: Marksmanship's report race (Skyborne Windshaper) loses 2.5 DPS to the Human
 - severity: low (0.2%; Marksmanship stays #2 either way, 1170.2 Human vs 1167.6 Windshaper, Lone Wolf 1159)
 - affects: hunter Marksmanship (base and duty-mark builds); Lone Wolf checked and stays Windshaper
@@ -12,5 +14,5 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - update 2026-10-25, master 016daa654fd5 (pass 5): still open. The duty-mark builds are gone and the base request now casts its own mark (e71b90f5), still Windshaper. 20000 iterations on the new request: Human 1168.8 / 1168.0, Windshaper 1166.1 / 1165.6 (seeds 1 / 1000003), +2.6 / +2.3. The 5000-iteration sweep: Human 1168.4, Windshaper 1166.7.
 - proposed fix: re-run the hunter race sweep at 120/180/300 sec on the current Marksmanship presets; if Human still leads, switch the Marksmanship presets (and their duty builds) to Human, regenerate the requests and re-publish (+2.5 DPS).
 - needs: orchestrator fix
+- resolved: 2026-10-26, cdceb56c4 (Marksmanship plays a Human; report at 74b3a5f: Human 1139.6, best race, published 1139.4)
 
-## Resolved
