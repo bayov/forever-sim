@@ -68,8 +68,8 @@
   "url": "https://forever-dps.pages.dev",
   "cloudflareProject": "forever-dps",
   "deploy": "make dps-report-deploy (tools/dps_report/deploy_pages.py)",
-  "publishedFrom": "f7e99e1 (the full re-sim of ac7d27d, plus the Replay instants' new fade and zoom)",
+  "publishedFrom": "475ef4a (the full re-sim of ac7d27d, the Replay instants' new animation, and each spell shown once in the Replay and the ability and aura rows)",
   "date": "2026-10-26",
-  "deployId": "f2152dff"
+  "deployId": "f7c808b8"
  }
 }
