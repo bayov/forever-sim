@@ -2,6 +2,7 @@
 """build_data.py: turns out/*.json into the dashboard's dataset files in data/."""
 import csv, glob, json, os, re, sys
 from collections import defaultdict
+from itertools import groupby
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from dashpaths import D, TREE  # base dir and merged tree (env DASH_DIR / DASH_TREE)
@@ -13,6 +14,8 @@ csv.field_size_limit(10**9)
 RACE_NAMES = {'NightElf': 'Night Elf', 'SkyborneHighOrder': 'High Order', 'SkyborneWindshaper': 'Windshaper'}
 CLASS_ORDER = ['Warrior', 'Rogue', 'Hunter', 'Paladin', 'Shaman', 'Druid', 'Mage', 'Warlock', 'Priest']
 SLOTS = ['Head', 'Neck', 'Shoulders', 'Back', 'Chest', 'Wrist', 'Hands', 'Waist', 'Legs', 'Feet', 'Ring 1', 'Ring 2', 'Trinket 1', 'Trinket 2', 'Main hand', 'Off hand', 'Ranged']
+# What a tagged copy of a spell is, where it deals damage of its own next to the spell (build_data's ability rows).
+TAG_LABEL = {('Lightning Bolt', 1): 'Overload', ('Chain Lightning', 1): 'Overload', ('Whirlwind', 2): 'off hand'}
 OTHER = {'oOtherActionAttack': 'Melee', 'oOtherActionAttackt1': 'Melee (main hand)', 'oOtherActionAttackt2': 'Melee (off hand)',
          'oOtherActionShoot': 'Auto Shot', 'oOtherActionManaRegen': 'Mana regen', 'oOtherActionEnergyRegen': 'Energy regen',
          'oOtherActionFocusRegen': 'Focus regen', 'oOtherActionRefund': 'Refund', 'oOtherActionPotion': 'Potion', 'oOtherActionMove': 'Movement',
@@ -114,6 +117,7 @@ MANUAL = {'i10646': 'Goblin Sapper Charge', 'i12662': 'Demonic Rune', 'i13444': 
           's1311598': "Light's Vigil", 's1310707': 'Mutilate', 's1310707t1': 'Mutilate (main hand)', 's1310707t2': 'Mutilate (off hand)', 's1382': 'Shadow Oil',
           's17261': 'Bite', 's20947': 'Seal of Command', 's20966': 'Judgement of Command', 's3009': 'Claw', 'i4395': 'Goblin Land Mine', 'i7676': 'Thistle Tea',
           **{f's11300t{i}': f'Eviscerate ({i} CP)' for i in range(1, 6)}, 's11300': 'Eviscerate',
+          **{f's6774t{i}': f'Slice and Dice ({i} CP)' for i in range(1, 6)}, **{f's11275t{i}': f'Rupture ({i} CP)' for i in range(1, 6)},
           's1293527': 'Summon Hawk', 's1293527t1': 'Hawk 1', 's1293527t2': 'Hawk 2', 's460534': 'Cutthroat',
           's1310222': 'Spearing Strike'}
 MANUAL_ICON = {'s1293527': 'ability_hunter_pet_owl', 's460534': 'ability_rogue_ambush', 's1310222': 'inv_spear_01'}
@@ -430,6 +434,44 @@ for o in outs:
                           'glances': round(a['glances'], 1), 'avgHit': round(a['avgHit']), 'avgCrit': round(a['avgCrit']), 'avgTick': round(a['avgTick']),
                           'damage': round(a['damage'])})
     mine = [r for r in abilities if r['build'] == bid]
+    # A spell can show up as two or three rows of one name: its tagged copies (Fire Nova's cast and its
+    # hits, Raptor Strike's swing, its hit and its queueing, Heroic Strike's queueing) or the spell that
+    # deals its damage (Lightning Shield's orbs, Magma Totem's pulses, Seal of Righteousness's hits). A row
+    # that deals no damage and lands nothing only counts the press, so it folds into the spell's one damage
+    # row, which takes the presses as its casts. The row kept is the one the rotation and tooltips use: the
+    # press (a totem's drop, a seal's cast), or the damage row when the press is a tagged copy (a queued
+    # swing). A second damage row stays, named for what it is (TAG_LABEL).
+    def untagged(r):
+        return not re.search(r't\d+$', r['key'])
+
+    for _, group in groupby(sorted(mine, key=lambda r: (r['owner'], nm(r['key']))), key=lambda r: (r['owner'], nm(r['key']))):
+        group = list(group)
+        if len(group) < 2:
+            continue
+        idle = [r for r in group if not r['damage'] and not any(r[k] for k in ('hits', 'crits', 'ticks', 'misses', 'dodges', 'parries', 'glances'))]
+        hits = [r for r in group if r not in idle]
+        if not hits:
+            continue
+        if len(hits) == 1:
+            presses = sorted(idle, key=lambda r: (not untagged(r), -r['casts']))
+            keep = presses[0] if presses and untagged(presses[0]) else hits[0] if untagged(hits[0]) or not presses else presses[0]
+            casts = presses[0]['casts'] if presses else hits[0]['casts']  # the presses, not a totem's pulses
+            if keep is not hits[0]:
+                keep.update({k: v for k, v in hits[0].items() if k not in ('key', 'ability')})
+            keep['casts'] = casts
+            drop = [r for r in group if r is not keep]
+        else:
+            drop = idle
+        for r in drop:
+            abilities.remove(r)
+            mine.remove(r)
+    for r in mine:  # the label again, with a rank only where two ranks of the spell remain
+        name = nm(r['key'])
+        ranks = {names[x['key']]['rank'] for x in mine if nm(x['key']) == name and x['owner'] == r['owner']}
+        rank = names[r['key']]['rank']
+        tm = re.search(r't(\d+)$', r['key'])
+        tag = TAG_LABEL.get((name, int(tm.group(1)))) if tm else None
+        r['ability'] = name + (f' r{rank}' if rank and len(ranks) > 1 else '') + (f' ({tag})' if tag else '') + ('' if r['owner'] == 'Player' else f" ({r['owner']})")
     cnt = defaultdict(int)
     for r in mine:
         cnt[r['ability']] += 1
@@ -448,6 +490,17 @@ for o in outs:
         nm(a['key'])
         auras.append({'build': bid, 'key': a['key'], 'aura': nm(a['key']), 'icon': names[a['key']].get('icon'), 'owner': 'Self' if a['owner'] == 'player' else 'Target',
                       'uptime': round(min(100, a['uptime']), 1), 'procs': round(a['procs'], 2)})
+    # Two auras of one name on the same unit: two ranks (Frostfire Bolt's DoTs) get their rank, and the raid's
+    # copy of our own debuff (the raid's Insect Swarm next to the druid's), up all fight, is the raid's.
+    mine_auras = [r for r in auras if r['build'] == bid]
+    for r in mine_auras:
+        twins = [x for x in mine_auras if x['aura'] == nm(r['key']) and x['owner'] == r['owner']]
+        if len(twins) < 2:
+            continue
+        if len({x['key'] for x in twins}) > 1 and names[r['key']]['rank']:
+            r['aura'] = f"{nm(r['key'])} r{names[r['key']]['rank']}"
+        elif r['uptime'] >= 99.9 and any(x['uptime'] < 99.9 for x in twins):
+            r['aura'] = f"{nm(r['key'])} (raid)"
     for lo, cnt in mn['hist']:
         hist.append({'build': bid, 'lo': lo, 'count': cnt})
     fin = (o.get('stats') or {}).get('final', {})

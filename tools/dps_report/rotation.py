@@ -383,7 +383,9 @@ def build(req_dir, outs, nm, names, abilities, racial_race):
                 'key': key, 'name': name, 'icon': names[key]['icon'] if key and key in names else None,
                 'at': at, 'when': when[:1].upper() + when[1:] if when else '', 'extra': extra, 'notes': clean_note(notes),
                 'race': rr, 'otherRace': bool(rr and race and rr != race and not (isinstance(rr, list))),
-                'casts': round(casts.get((bid, key), 0), 1) if key else None,
+                # A tagged press (a queued Heroic Strike or Raptor Strike) counts on its spell's row, where
+                # build_data folds it.
+                'casts': round(casts.get((bid, key), casts.get((bid, re.sub(r't\d+$', '', key)), 0)), 1) if key else None,
                 'cond': json.dumps(cond, separators=(',', ':')) if cond else None,
             })
 

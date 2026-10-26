@@ -439,17 +439,20 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 		  }
 		: null;
 
-	const trackedKeys = new Set(cooldowns.map(cooldown => cooldown.key));
 	const actions = casts.filter(cast => {
 		const actionId = cast.log.actionId!;
 		if (autoAttacks.includes(actionId.otherId)) return false;
 		// Procs, like a Windfury attack, are casts too. Only what we pressed takes the GCD or has
 		// a cooldown of its own. An item we use is pressed too, like the food, drink and bandages of
 		// a leveling session, which take no GCD.
+		//
+		// A spell with a cooldown counts under the id that carries it, tag and all: its tagged
+		// copies are part of the same press, like Fire Nova's hits or Raptor Strike's queueing and
+		// its hit, so they would pop up a second and third time.
 		return (
 			cast.log.effectiveTime > 0 ||
 			actionId.itemId > 0 ||
-			trackedKeys.has(actionId.toStringIgnoringTag()) ||
+			cooldowns.some(cooldown => cooldown.actionId.equals(actionId)) ||
 			majorCooldownIds.some(id => id.equalsIgnoringTag(actionId))
 		);
 	});
