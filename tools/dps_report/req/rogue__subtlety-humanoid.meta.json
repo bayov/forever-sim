@@ -74,7 +74,7 @@
     "Elusiveness: 0 at 180s, -2.9 at 300s.",
     "No Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV). They would add 13 to 18.",
     "Grimstitch 4-piece and 5-piece aren't active (about +8 and +6).",
-    "Natural flasks on (standards 11: Hyjal Summit or the Barrow Deeps).",
+    "Assumed: the fight is in Hyjal or the Barrow Deeps. Its flask gives its full bonus only there.",
     "No Precision, so its 8% hit is 7% on the gear (wrist, second ring and back) and the 2-piece; 1.2 to 1.9 over 6% (standards 4, hit by sim)."
   ],
   "notes": "Request from mksettings with the same arguments as rogue__subtlety except talents, then the target's mobType set to MobTypeHumanoid, as the class preset's encounter does.",

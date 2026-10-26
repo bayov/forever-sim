@@ -67,7 +67,7 @@
     "Murder (+4% damage) only works against Humanoids and Giants.",
     "No Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV). They would add 13 to 18.",
     "Grimstitch 4-piece and 5-piece aren't active (about +8 and +6).",
-    "Natural flasks on (standards 11). Accuracy, not Precision: its 5% hit still helps the white hits (+0.1 to +0.6 on five of six seed and length pairs).",
+    "Assumed: the fight is in Hyjal or the Barrow Deeps. Its flask gives its full bonus only there.", "Takes the Flask of Natural Accuracy over Natural Precision, since its 5% hit still helps white hits (0.1 to 0.6 DPS).",
     "9% hit (the wrist carries 10 hit rating): dual wielders take hit by sim (standards 4); 9% beats 8% by 1.1 to 1.8, and 10% is 0.6 behind to 0.1 ahead.",
     "No Goblin Land Mine: its 1 sec cast resets the swing, and it doesn't gain here (standards 11, explosives only when they gain). The Sapper stays."
   ],

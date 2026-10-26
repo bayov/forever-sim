@@ -62,7 +62,7 @@
     "Murder does nothing on the generic boss, so its points go to Lethality (Vile Poisons for Seal Fate Daggers).",
     "No Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV). They would add 13 to 18.",
     "Grimstitch 4-piece and 5-piece aren't active (about +8 and +6).",
-    "Natural flasks on (standards 11: Hyjal Summit or the Barrow Deeps).",
+    "Assumed: the fight is in Hyjal or the Barrow Deeps. Its flask gives its full bonus only there.",
     "10% hit (the wrist and the second ring carry 10 hit rating each): dual wielders take hit by sim (standards 4), and past the 8% yellow cap it still helps the white hits (+0.4 to +1.9 over 8%)."
   ],
   "notes": "Spec family set to Assassination (30 Assassination points); the PR frames it as a variant of Combat Daggers and it uses the rogue_combat mksettings setup and the Combat Daggers APL."
