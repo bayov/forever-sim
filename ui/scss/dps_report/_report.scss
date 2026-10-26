@@ -3167,10 +3167,6 @@ div.tt-embed:not(.fv-tt) {
 	&.med {
 		color: var(--color-fg);
 	}
-
-	&.ref {
-		border-style: dashed;
-	}
 }
 
 // A reference row's one setting, in place of the table: its label, the marks and its value.

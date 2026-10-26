@@ -2655,10 +2655,10 @@ export function startReport(dash, events) {
         el('small', { text: `${as.length} assumption${as.length === 1 ? '' : 's'}${top > 0 ? ` · up to ${f1(top)}%` : ''}` }), changed ? el('span', { class: 'fv-asm-badge', text: `${changed} changed` }) : null));
       for (const a of asmSort(as)) {
         const cur = st.asm?.[a.key] || a.defaultSetting, ref = asmRef(a), live = a.status === 'live' && !ref, imp = asmImpact(a);
-        const [sz, szText] = ref ? ['ref', 'Reference'] : asmSize(imp);
+        const [sz, szText] = ref ? ['ref', ''] : asmSize(imp);
         const picked = cur !== a.defaultSetting;
         const hd = el('div', { class: 'fv-asm-hd' },
-          el('div', { class: 'fv-asm-lbl' }, el('b', { text: a.label }), live || ref ? el('span', { class: `fv-asm-size ${sz}`, title: ref ? 'Only one value, shown for reference' : `Changes a preset's DPS by up to ${f1(imp)}% at 180s`, text: szText }) : null),
+          el('div', { class: 'fv-asm-lbl' }, el('b', { text: a.label }), live ? el('span', { class: `fv-asm-size ${sz}`, title: `Changes a preset's DPS by up to ${f1(imp)}% at 180s`, text: szText }) : null),
           el('p', { class: 'fv-asm-short', text: a.short || a.description }));
         asmHover(hd, a.label, () => asmTip(a));
         d.append(el('div', { class: 'fv-asm-row', 'data-key': a.key, 'data-size': sz },
