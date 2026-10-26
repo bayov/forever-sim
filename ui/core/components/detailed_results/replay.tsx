@@ -28,6 +28,7 @@ import {
 	ReplayModel,
 	SCROLL_LIFE,
 	SctEvent,
+	Steps,
 	totemAt,
 	TotemSlot,
 	TrackedCooldown,
@@ -282,10 +283,11 @@ const castAt = (casts: Array<CastLog>, starts: Array<number>, time: number): Cas
 	return null;
 };
 
-// A cast fills the bar as it goes. A channel empties it, with a marker where each tick lands,
+// A cast fills the bar as it goes, and a hit that pushes it back takes the bar back by as much,
+// out of its full cast time, like in the game. A channel empties it, with a marker where each tick lands,
 // like EllesmereUI's: tick k lands when the bar is down to 1 - k / ticks. The last one lands as it
 // empties, so it has no marker. A pushback empties the bar some at once, past the ticks it cut.
-const updateCastBar = (bar: CastBarRefs, shown: CastLog | ReplayChannel | null, time: number) => {
+const updateCastBar = (bar: CastBarRefs, shown: CastLog | ReplayChannel | null, time: number, pushbacks?: Map<CastLog, Steps>) => {
 	bar.root.classList.toggle('active', !!shown);
 	if (!shown) return;
 	const channel = shown instanceof CastLog ? null : shown;
@@ -314,6 +316,14 @@ const updateCastBar = (bar: CastBarRefs, shown: CastLog | ReplayChannel | null, 
 		return;
 	}
 	const cast = shown as CastLog;
+	const completesAt = pushbacks?.get(cast);
+	if (completesAt) {
+		const fullTime = cast.castBeganLog.castTime;
+		const done = Math.max(0, fullTime - (completesAt.at(time) - time));
+		setWidth(bar.fill, done / fullTime);
+		setText(bar.time, `${done.toFixed(1)} / ${fullTime.toFixed(1)}`);
+		return;
+	}
 	const elapsed = time - cast.timestamp;
 	setWidth(bar.fill, elapsed / cast.castTime);
 	setText(bar.time, `${elapsed.toFixed(1)} / ${cast.castTime.toFixed(1)}`);
@@ -1767,7 +1777,12 @@ export class Replay extends ResultComponent {
 		// The cast we started when we died in a leveling session never ends in the log, so the
 		// corpse run has no cast bar.
 		const dead = model.leveling?.stateAt(time) == 'dead';
-		updateCastBar(this.playerCastBar, dead ? null : castAt(this.playerCasts, model.castStarts, time) ?? channelAt(model.channels, time), time);
+		updateCastBar(
+			this.playerCastBar,
+			dead ? null : castAt(this.playerCasts, model.castStarts, time) ?? channelAt(model.channels, time),
+			time,
+			model.castPushbacks,
+		);
 		this.drawInstants(model, time);
 	}
 

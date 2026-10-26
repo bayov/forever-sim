@@ -83,7 +83,7 @@ func TestLevelingHealPushback(t *testing.T) {
 			casting = false
 		case casting && mobHit.MatchString(event):
 			hits++
-		case casting && strings.HasPrefix(event, "[ (#1)] Unit Hardcast extended"):
+		case casting && strings.HasPrefix(event, "[ (#1)] Cast {SpellID: 939} pushed back"):
 			pushbacks++
 		}
 	}

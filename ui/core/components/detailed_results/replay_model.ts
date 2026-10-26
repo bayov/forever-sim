@@ -231,6 +231,9 @@ export interface ReplayModel {
 	timerUses: Map<string, TimerUses>;
 	casts: Array<ReplayCast>;
 	castStarts: Array<number>;
+	// When each cast we pushed back completes, by time: at its full cast time from its start, then
+	// later at each hit that pushes it back.
+	castPushbacks: Map<CastLog, Steps>;
 	// The casts of the action history strip, without the auto attacks and procs.
 	actions: Array<ReplayCast>;
 	actionStarts: Array<number>;
@@ -452,6 +455,7 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 	});
 
 	const channels = buildChannels(player.logs, castLogs);
+	const castPushbacks = buildCastPushbacks(player.logs, castLogs);
 	const channelKeys = new Set(channels.channels.map(channel => `${channel.start.toFixed(3)} ${channel.actionId}`));
 	const instants = actions.filter(cast => cast.log.castTime == 0 && !channelKeys.has(`${cast.log.timestamp.toFixed(3)} ${cast.log.actionId}`));
 
@@ -536,6 +540,7 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 		timerUses,
 		casts,
 		castStarts: casts.map(cast => cast.log.timestamp),
+		castPushbacks,
 		actions,
 		actionStarts: actions.map(cast => cast.log.timestamp),
 		channels,
@@ -735,6 +740,24 @@ const buildChannels = (logs: Array<SimLog>, casts: Array<CastLog>): ReplayChanne
 	});
 	channels.sort((a, b) => a.start - b.start);
 	return { channels, starts: channels.map(channel => channel.start) };
+};
+
+const buildCastPushbacks = (logs: Array<SimLog>, casts: Array<CastLog>): Map<CastLog, Steps> => {
+	const starts = casts.map(cast => cast.timestamp);
+	const pushbacks = new Map<CastLog, Steps>();
+	logs.forEach(log => {
+		if (!log.isCastPushback()) return;
+		const last = lastIndexAtOrBefore(starts, log.timestamp);
+		for (let i = last; i >= 0 && i > last - 8; i--) {
+			const cast = casts[i];
+			const fullTime = cast.castBeganLog.castTime;
+			if (fullTime <= 0 || !cast.actionId!.equalsIgnoringTag(log.actionId!) || log.timestamp > cast.timestamp + cast.castTime + EPSILON) continue;
+			if (!pushbacks.has(cast)) pushbacks.set(cast, new Steps(cast.timestamp + fullTime));
+			pushbacks.get(cast)!.push(log.timestamp, log.completesAt);
+			break;
+		}
+	});
+	return pushbacks;
 };
 
 // The channel going on at this time.

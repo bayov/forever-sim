@@ -157,7 +157,7 @@ func (unit *Unit) applySpellPushback() {
 					pushback = min(pushback, max(0, sim.CurrentTime+hc.CastTime-hc.Expires))
 				}
 				if sim.Log != nil {
-					aura.Unit.Log(sim, "Unit Hardcast extended by %s due to spell hit taken, will now occur at %s", pushback, hc.Expires+pushback)
+					aura.Unit.Log(sim, "Cast %s pushed back to complete at %0.3f", hc.ActionID, (hc.Expires + pushback).Seconds())
 				}
 
 				aura.Unit.Hardcast.Expires += pushback
@@ -193,7 +193,6 @@ func (unit *Unit) applySpellPushback() {
 
 			newExpires := max(sim.CurrentTime, dot.ExpiresAt()-pushback)
 			if sim.Log != nil {
-				aura.Unit.Log(sim, "Unit channel shortened by %s due to spell hit taken, will now end at %s", dot.ExpiresAt()-newExpires, newExpires)
 				aura.Unit.Log(sim, "Channel %s pushed back to end at %0.3f", dot.Spell.ActionID, newExpires.Seconds())
 			}
 			dot.UpdateExpires(sim, newExpires)
