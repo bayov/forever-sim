@@ -57,10 +57,10 @@ clean)
 	;;
 publish)
 	if [ $# -gt 0 ]; then set -- $(python3 $T/rawstore.py variants "$@"); fi  # what run <ids> re-simmed
+	python3 $T/rawstore.py prune  # removed presets: their outputs, packs and sample fights
 	rm -rf data
 	python3 $T/build_data.py >build_data.log || { tail -20 build_data.log; exit 1; }
 	# the sample fights of the re-simmed builds; the event lookups always cover every build's fights
-	python3 $T/rawstore.py prune-events
 	if [ $# -gt 0 ]; then
 		python3 $T/events.py --data "$DASH_DIR/data" --out "$R/ui/dps_report/data/events" "$@"
 	else

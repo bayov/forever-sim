@@ -13,7 +13,8 @@ orchestration/dash_raw_store.md has the design; pipeline.sh wires these commands
   rawstore.py variants <ids...>   the ids plus every preset whose baseBuild is one of them (duty and encounter copies)
   rawstore.py check [ids...]      rebuild nothing: compare $DASH_DIR/data (a fresh build_data.py) with the published
                                   datasets. A build outside [ids] whose sim numbers differ is drift: exit 1.
-  rawstore.py prune-events        delete the sample fights and raw packs of builds that have no request any more
+  rawstore.py prune               drop the builds that have no request any more (a removed preset): their sample
+                                  fights, raw packs, and raw outputs in $DASH_DIR
   rawstore.py copy                copy $DASH_DIR/data into ui/dps_report/data, stamping `updated` in datasets.json only
                                   for files that changed, and drop the events, raw packs and provenance records of
                                   builds that have no request any more
@@ -178,8 +179,12 @@ def unpack():
         if glob.glob(os.path.join(D, d, '*')):
             sys.exit(f'unpack: {D}/{d} is not empty; hydrate starts from an empty $DASH_DIR')
     rv, asm, abl = {}, {}, {'builds': {}}
+    live = set(all_ids())
     for path in sorted(glob.glob(os.path.join(RAW, '*.tgz'))):
         bid = os.path.basename(path)[:-4]
+        if bid not in live:
+            print(f'skipping {bid}: no request (a removed preset; publish deletes its pack)')
+            continue
         with tarfile.open(path) as tar:
             for ti in tar.getmembers():
                 data = tar.extractfile(ti).read()
@@ -207,7 +212,7 @@ def unpack():
     if abl['builds']:
         os.makedirs(os.path.dirname(ABL), exist_ok=True)
         json.dump(abl, open(ABL, 'w'), indent=1)
-    print(f'unpacked {len(glob.glob(os.path.join(RAW, "*.tgz")))} builds into {D}')
+    print(f'unpacked {len(glob.glob(os.path.join(D, "out", "*.json")))} builds into {D}')
 
 
 def clean(ids):
@@ -273,15 +278,19 @@ def check(scope):
     print('sim numbers match the published report for every build outside the scope')
 
 
-def prune_events():
-    """Delete the sample fights and raw packs of builds with no request (a removed preset)."""
-    live, gone = set(all_ids()), []
+def prune():
+    """Drop the builds with no request (a removed preset): their sample fights, raw packs and raw outputs."""
+    live, gone = set(all_ids()), set()
     for p in glob.glob(os.path.join(REPORT, 'data', 'events', '*.json.gz')) + glob.glob(os.path.join(RAW, '*.tgz')):
         bid = os.path.basename(p).split('.')[0]
         if bid not in live:
             os.remove(p)
-            gone.append(bid)
-    return gone
+            gone.add(bid)
+    gone |= {os.path.basename(p)[:-5] for p in glob.glob(os.path.join(D, 'out', '*.json'))} - live
+    if gone:
+        clean(sorted(gone))
+        print('removed builds (no request):', ' '.join(sorted(gone)))
+    return sorted(gone)
 
 
 def copy():
@@ -302,7 +311,7 @@ def copy():
             changed.append(ds)
     open(manifest_p, 'w').write(json.dumps(manifest, indent=1, ensure_ascii=False) + '\n')  # as merge.mjs writes it
     live = set(all_ids())
-    gone = prune_events()
+    gone = prune()
     prov_p = os.path.join(REPORT, 'provenance.json')
     prov = json.load(open(prov_p))
     stale = [b for b in prov['builds'] if b not in live]
@@ -329,8 +338,8 @@ if __name__ == '__main__':
         check(args)
     elif cmd == 'copy':
         copy()
-    elif cmd == 'prune-events':
-        prune_events()
+    elif cmd == 'prune':
+        prune()
     else:
         print(__doc__)
         sys.exit(1)
