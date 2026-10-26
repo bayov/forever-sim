@@ -52,3 +52,6 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-10-26 01:06 | results | pass 52 | master 74b3a5f7c | quiet | no new findings; results-20261025-1 still open; moves explained by commits
 2026-10-26 01:06 | rotations | pass 32 | master 74b3a5f7c | quiet | warrior/hunter moves explained by rulings; paired A/B holds
 2026-10-26 01:06 | fairness | pass 6 | master 74b3a5f7c | quiet | fairness-20261025-1 resolved (MM Human best race)
+2026-10-26 12:56 | consumables | pass 43 | master f796d9953 | quiet | assumptions_def.py wording-only change; no consumes values moved
+2026-10-26 12:56 | results | pass 53 | master f796d9953 | quiet | no new findings; 23 meta.json notes-wording only; 0 movement
+2026-10-26 12:56 | fairness | pass 7 | master f796d9953 | quiet | caveats text only; no sweep needed
