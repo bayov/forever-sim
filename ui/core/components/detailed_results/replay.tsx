@@ -357,9 +357,9 @@ const syncAuras = (
 	});
 };
 
-const activeAuras = (tracks: Array<AuraTrack>, time: number, end: number): Array<ActiveAura> =>
+const activeAuras = (tracks: Array<AuraTrack>, time: number): Array<ActiveAura> =>
 	tracks
-		.map(track => activeAuraAt(track, time, end))
+		.map(track => activeAuraAt(track, time))
 		.filter((aura): aura is ActiveAura => !!aura)
 		.sort((a, b) => a.span.chainStart - b.span.chainStart);
 
@@ -1248,7 +1248,7 @@ export class Replay extends ResultComponent {
 			(model.end - fightStart);
 		const gains = track.spans.filter(span => span.start == span.chainStart).length;
 		return () => {
-			const aura = activeAuraAt(track, this.time, model.end);
+			const aura = activeAuraAt(track, this.time);
 			const meta = track.alwaysUp
 				? `On ${where} the whole fight`
 				: aura
@@ -1275,7 +1275,7 @@ export class Replay extends ResultComponent {
 	private cooldownTip(cooldown: TrackedCooldown): () => Element {
 		return () => {
 			const model = this.model!;
-			const aura = cooldown.aura ? activeAuraAt(cooldown.aura, this.time, model.end) : null;
+			const aura = cooldown.aura ? activeAuraAt(cooldown.aura, this.time) : null;
 			const cd = cooldownAt(model, cooldown, this.time);
 			const used = lastIndexAtOrBefore(cooldown.castTimes, this.time) + 1;
 			const status = aura
@@ -1562,13 +1562,13 @@ export class Replay extends ResultComponent {
 	private pipsAt(model: ReplayModel, time: number): number {
 		if (model.comboPoints) return model.comboPoints.at(time);
 		if (!model.maelstrom) return 0;
-		const aura = activeAuraAt(model.maelstrom, time, model.end);
+		const aura = activeAuraAt(model.maelstrom, time);
 		return aura ? Math.max(1, aura.stacks) : 0;
 	}
 
 	// The Heroic Strike (or Cleave, Maul, Raptor Strike) waiting for the next main hand swing.
 	private swingQueuedAt(model: ReplayModel, time: number): ActionId | null {
-		return model.swingQueue.find(track => activeAuraAt(track, time, model.end))?.actionId ?? null;
+		return model.swingQueue.find(track => activeAuraAt(track, time))?.actionId ?? null;
 	}
 
 	// The seal up at this time, the newest when two overlap for a twist: the one the next swing procs.
@@ -1576,7 +1576,7 @@ export class Replay extends ResultComponent {
 		let newest: ActionId | null = null;
 		let newestStart = -Infinity;
 		for (const track of model.seals) {
-			if (!activeAuraAt(track, time, model.end)) continue;
+			if (!activeAuraAt(track, time)) continue;
 			const start = track.spans[lastIndexAtOrBefore(track.spanStarts, time)].start;
 			if (start > newestStart) {
 				newest = track.actionId;
@@ -1791,7 +1791,7 @@ export class Replay extends ResultComponent {
 		this.ui.alert.classList.toggle('on', !!model.maelstrom && pips >= 5);
 
 		// The procs and other buffs that come and go, in the middle above the cooldowns.
-		syncAuras(this.ui.procs, this.procElems, activeAuras(this.procTracks, time, model.end), 'proc', (elem, track) => {
+		syncAuras(this.ui.procs, this.procElems, activeAuras(this.procTracks, time), 'proc', (elem, track) => {
 			this.tip(elem, this.auraTip(track, 'us'));
 			this.searchable(elem, track.actionId.name);
 		});
@@ -1851,7 +1851,7 @@ export class Replay extends ResultComponent {
 			setWidth(frame.health, fraction);
 			setText(frame.leftText, `${(fraction * 100).toFixed(fraction < 0.1 ? 1 : 0)}%`);
 			frame.root.classList.toggle('focus', enemy.unit.index == focus && (pulled ? pulled.size : this.enemyFrames.length) > 1);
-			syncAuras(frame.auras, frame.auraElems, activeAuras(enemy.debuffs, time, model.end), 'debuff', (elem, track) => {
+			syncAuras(frame.auras, frame.auraElems, activeAuras(enemy.debuffs, time), 'debuff', (elem, track) => {
 				this.tip(elem, this.auraTip(track, enemy.name));
 				this.searchable(elem, track.actionId.name);
 			});
@@ -1861,7 +1861,7 @@ export class Replay extends ResultComponent {
 
 	private drawCooldowns(model: ReplayModel, time: number) {
 		this.cooldownViews.forEach(({ cooldown, elem }) => {
-			const aura = cooldown.aura ? activeAuraAt(cooldown.aura, time, model.end) : null;
+			const aura = cooldown.aura ? activeAuraAt(cooldown.aura, time) : null;
 			const cd = cooldownAt(model, cooldown, time);
 			const pressIndex = lastIndexAtOrBefore(cooldown.castTimes, time);
 			const pressed = pressIndex >= 0 && time - cooldown.castTimes[pressIndex] < PRESS_TIME;
@@ -1923,14 +1923,14 @@ export class Replay extends ResultComponent {
 
 		// The shield. While it's down it stays in its cell, grey with a red glow.
 		if (views.shield) {
-			const up = pack.shields.map(track => activeAuraAt(track, time, model.end)).find(aura => !!aura) ?? null;
+			const up = pack.shields.map(track => activeAuraAt(track, time)).find(aura => !!aura) ?? null;
 			const track = up?.track ?? pack.shields.find(track => track.spanStarts[0] <= time) ?? pack.shields[0];
 			views.shieldShown = show(views.shield, track.actionId, views.shieldShown);
 			views.shield.classList.toggle('missing', !up);
 			setGlow(views.shield, up ? null : MISSING_GLOW);
 			updateIcon(views.shield, null, '', up?.stacks ?? 0);
 			if (!this.tips.has(views.shield)) {
-				this.tip(views.shield, () => this.auraTip(pack.shields.find(track => activeAuraAt(track, this.time, model.end)) ?? pack.shields[0], 'us')());
+				this.tip(views.shield, () => this.auraTip(pack.shields.find(track => activeAuraAt(track, this.time)) ?? pack.shields[0], 'us')());
 			}
 		}
 
@@ -1959,7 +1959,7 @@ export class Replay extends ResultComponent {
 		if (views.flameShock) {
 			const enemy = model.enemies.find(enemy => enemy.unit.index == model.focus.at(time)) ?? model.enemies[0];
 			const track = enemy.debuffs.find(track => track.actionId.name.startsWith(pack.flameShock));
-			const aura = track ? activeAuraAt(track, time, model.end) : null;
+			const aura = track ? activeAuraAt(track, time) : null;
 			const applied = !!track && track.spanStarts[0] <= time;
 			views.flameShock.classList.toggle('hide', !applied);
 			if (track && applied) {

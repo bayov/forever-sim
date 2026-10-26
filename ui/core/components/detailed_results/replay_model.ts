@@ -80,8 +80,8 @@ export interface AuraTrack {
 	actionId: ActionId;
 	spans: Array<AuraSpan>;
 	spanStarts: Array<number>;
-	// The longest the aura lasted when nothing cut it short, our best guess for its full
-	// duration. Null when it never faded on its own.
+	// Its full duration, from the expiry the sim logs when it goes up. Null for an aura that lasts
+	// until something uses it up, like Echo of Command or Cold Blood, which has no timer in game.
 	duration: number | null;
 	// Up from the pull to the end of the iteration, like Blessing of Kings.
 	alwaysUp: boolean;
@@ -90,7 +90,7 @@ export interface AuraTrack {
 export interface ActiveAura {
 	track: AuraTrack;
 	span: AuraSpan;
-	// Seconds until it fades, or null when we can't tell.
+	// Seconds until it would run out, or null when it has no timer.
 	remaining: number | null;
 	// How much of the aura's duration is left, from 1 to 0.
 	fraction: number | null;
@@ -816,7 +816,7 @@ const buildAuraTracks = (uptimeLogs: Array<AuraUptimeLog>, start: number, end: n
 
 		let duration: number | null = null;
 		spans.forEach(span => {
-			if (!span.refreshed && span.end < end - EPSILON) duration = Math.max(duration ?? 0, span.end - span.start);
+			if (span.expiresAt != null) duration = Math.max(duration ?? 0, span.expiresAt - span.start);
 		});
 
 		const alwaysUp = spans.some(span => span.chainStart <= Math.max(0, start) + 0.01 && span.chainEnd >= end - 0.01);
@@ -825,23 +825,20 @@ const buildAuraTracks = (uptimeLogs: Array<AuraUptimeLog>, start: number, end: n
 };
 
 // The aura's state at this time, or null when it's down.
-export const activeAuraAt = (track: AuraTrack, time: number, end: number): ActiveAura | null => {
+export const activeAuraAt = (track: AuraTrack, time: number): ActiveAura | null => {
 	const i = lastIndexAtOrBefore(track.spanStarts, time);
 	if (i < 0) return null;
 	const span = track.spans[i];
 	if (time >= span.end) return null;
 
+	// The timer is the one we'd see in game: the time to the expiry the sim logged when the aura went
+	// up. An aura used up early (a Clearcasting, a seal's Echo) just goes away then, and one with no
+	// expiry has no timer: when it would end is something only the log's future knows.
 	let remaining: number | null = null;
-	let full = track.duration ?? span.end - span.start;
-	if (!track.alwaysUp) {
-		if (span.expiresAt != null) {
-			remaining = Math.max(0, span.expiresAt - time);
-			full = span.expiresAt - span.start;
-		} else if (!span.refreshed && span.end < end - EPSILON) {
-			remaining = span.end - time;
-		} else if (track.duration != null) {
-			remaining = Math.max(0, span.start + track.duration - time);
-		}
+	let full = span.end - span.start;
+	if (!track.alwaysUp && span.expiresAt != null) {
+		remaining = Math.max(0, span.expiresAt - time);
+		full = span.expiresAt - span.start;
 	}
 	const stackIndex = lastIndexAtOrBefore(span.stackTimes, time);
 	return {
