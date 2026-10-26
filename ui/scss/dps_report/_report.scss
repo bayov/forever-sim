@@ -3328,6 +3328,14 @@ div.tt-embed:not(.fv-tt) {
 		font-size: 0.7rem;
 	}
 
+	// A caveat on this cell's number (asmWarn), in the warning gold of the page's other warnings.
+	.fv-asm-warn {
+		margin-left: 0.3rem;
+		font-size: 0.75rem;
+		color: var(--fv-gold);
+		cursor: help;
+	}
+
 	small .fv-asm-to {
 		font-size: inherit;
 	}

@@ -2584,6 +2584,15 @@ export function startReport(dash, events) {
   // and the DPS under it. The presets' column is the zero point ("–") whichever column is picked, so the numbers never
   // shift. The column heads are the buttons that apply a setting.
   const ASM_CAP = 'DPS change at 180s';
+  // A warning icon on a spec's changed cells when the assumption carries a note for its presets (warn), like a
+  // rotation that wasn't retuned for the setting. The note shows on hover, or on a tap on a phone.
+  const asmWarn = (a, ids) => {
+    const t = ids.map((id) => a.warn?.[id]).find(Boolean);
+    if (!t) return null;
+    const ic = el('i', { class: 'fas fa-triangle-exclamation fv-asm-warn', role: 'img', 'aria-label': t });
+    asmHover(ic, 'Read with care', () => [tipText(t)]);
+    return ic;
+  };
   const asmHead = (a, x, cur) => [
     el('b', { text: x.label }),
     x.id === a.defaultSetting ? el('small', { class: 'fv-asm-tag def', text: 'Default' }) : el('small', { class: 'fv-asm-tag', text: SEG_NAME[x.id] || x.id }),
@@ -2606,7 +2615,7 @@ export function startReport(dash, events) {
     const body = live ? el('tbody', {}, ...asmSpecs(a).map((g) => el('tr', {},
       el('th', { scope: 'row', title: `${g.cls} · ${g.spec}` }, el('span', { class: 'fv-asm-tspec' }, ringed(g.icon, 'fv-ico ring', ccol(g.cls)), el('span', { text: g.short }))),
       ...sets.map((x) => (x.id === a.defaultSetting ? el('td', { class: col(x) }, zero())
-        : el('td', { class: col(x) }, asmRange(asmPcts(a, x.id, g.ids)) || zero(), el('small', {}, asmRange(dpsOf(x.id, g.ids), f0, ' DPS', 0.5)))))))) : null;
+        : el('td', { class: col(x) }, asmRange(asmPcts(a, x.id, g.ids)) || zero(), asmWarn(a, g.ids), el('small', {}, asmRange(dpsOf(x.id, g.ids), f0, ' DPS', 0.5)))))))) : null;
     return el('div', { class: 'fv-asm-mx' }, el('table', { class: 'fv-asm-tbl' }, el('thead', {}, head), body));
   };
   // Pointing at an assumption shows where it comes from, and its full description when the panel shows a short one.

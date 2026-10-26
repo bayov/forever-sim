@@ -10,6 +10,7 @@ Each assumption is written for a player who hasn't read our notes:
   the value gives the numbers, the rationale (a few words) why it's a candidate. env is the DASH_ASSUME pairs the
   knob reads, edit names a request edit run_assumptions.py applies. The page tags each setting Low / Expected / High
   from its id.
+- warn (optional): {build: note}, a warning icon with that note on the build's non-default cells.
 status 'pending' = listed but not simulated yet; 'inert' = no longer applies.
 """
 import os
@@ -28,6 +29,10 @@ MAGE = ['mage__frostfire', 'mage__fire', 'mage__frost', 'mage__arcane']
 # Every build that isn't a duty preset, from the req files.
 ALL_BASE = sorted(f[:-5] for f in os.listdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'req'))
                   if f.endswith('.json') and not f.endswith('.meta.json') and '-duty-' not in f)
+
+
+# warn: a note the page shows as a warning icon on those builds' non-default cells, where a number needs a caveat.
+GCD_ROT_WARN = "Its rotation is timed for a 1.5s GCD and wasn't retuned for a shorter one. Retuned, it would likely lose less, or nothing."
 
 
 def S(id_, label, value, why, env=None, edit=None):
@@ -287,11 +292,12 @@ A = [
       default='expected', expected='expected'),
  dict(key='haste_gcd', cls='All', label='Does haste shorten the GCD?',
       short="Classic keeps the GCD at 1.5s. Later expansions let spell haste shorten it.",
-      desc="Classic keeps the GCD at 1.5s whatever your haste, and the presets do too. wowsims/forever shortens a spell's GCD by haste, down to 1s, as The Burning Crusade did, while physical abilities keep 1.5s. That rule came with its Burning Crusade code, not from a Forever test. Forever's Nature's Grace takes 10% off Balance spells' GCD as an effect of its own, which hints that haste alone doesn't. Paladins and Enhancement lose a little with the shorter GCD, because their rotations are timed for 1.5s.",
+      desc="Classic keeps the GCD at 1.5s whatever your haste, and the presets do too. wowsims/forever shortens a spell's GCD by haste, down to 1s, as The Burning Crusade did, while physical abilities keep 1.5s. That rule came with its Burning Crusade code, not from a Forever test. Forever's Nature's Grace takes 10% off Balance spells' GCD as an effect of its own, which hints that haste alone doesn't.",
       src="wowsims/forever sim/core/cast.go (hastedGCD) and spelldata/resolve_spell.go (physical abilities ignore haste), from its 2022 Burning Crusade code. Forever client (Nature's Grace, spell 16886).",
       builds=['druid__balance', 'druid__balance-wrath', 'mage__frost', 'paladin__level_60', 'paladin__level_60_shock', 'paladin__level_60_shock_undead', 'paladin__level_60_sub_holy', 'paladin__level_60_sub_holy_undead', 'shaman__elemental-level60', 'shaman__elemental-level60-mana-tide', 'shaman__enhancement-imp-gw', 'shaman__enhancement-level60', 'shaman__enhancement-mana-tide', 'shaman__enhancement-water-shield', 'warlock__affliction', 'warlock__demonology', 'warlock__destruction'],
       settings=[S('expected', 'No (Classic)', 'the GCD stays 1.5s', "Classic's rule. Forever gives Nature's Grace a GCD cut of its own."),
                 S('high', 'Yes, for spells', "haste shortens a spell's GCD, down to 1s", "wowsims/forever's rule, from its Burning Crusade code.", {'haste_gcd': 1})],
+      warn={b: GCD_ROT_WARN for b in PAL_ALL + ENH},
       default='expected', expected='expected'),
  dict(key='lock_pet_crit', cls='Warlock', label="Do demons inherit the warlock's spell crit?",
       short="Blizzard says demons take the warlock's spell crit as their own.",
