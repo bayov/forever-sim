@@ -2,7 +2,7 @@
 
 | File | What it is |
 |---|---|
-| `sweep_baseline.log` | `tools/audit/fairness/sweep.py` output on master 1735382 (2026-10-17 00:50 UTC): every base report request at every race, 5000 iterations, seed 1. The next pass compares against it. |
+| `sweep_baseline.log` | `tools/audit/fairness/sweep.py` output on master f62cb79 (2026-10-26, pass 8): every base report request at every race, 5000 iterations, seed 1. The next pass compares against it. |
 | `table_baseline.md` | `table.py` output built from that log: the cross-spec ranking. |
 | `fairness_report.md` | The full fairness report: section 1 is the current table, with every earlier table kept in `<details>` blocks. It also holds the sensitivities (§3), the asymmetries (§4), the stat-mix work (§7) and the history (§6). |
 

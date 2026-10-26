@@ -55,3 +55,9 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-10-26 12:56 | consumables | pass 43 | master f796d9953 | quiet | assumptions_def.py wording-only change; no consumes values moved
 2026-10-26 12:56 | results | pass 53 | master f796d9953 | quiet | no new findings; 23 meta.json notes-wording only; 0 movement
 2026-10-26 12:56 | fairness | pass 7 | master f796d9953 | quiet | caveats text only; no sweep needed
+2026-10-26 19:20 | gear | pass 42 | master f62cb7971 | quiet | only standards.md changed (no gear rules)
+2026-10-26 19:20 | consumables | pass 44 | master f62cb7971 | quiet | 7 new single-value assumptions; no consumable values moved
+2026-10-26 19:20 | mechanics | pass 40 | master f62cb7971 | quiet | 5 mechanics (standard 28) read, code correct; mechanics-20261025-1 still open
+2026-10-26 19:20 | results | pass 54 | master f62cb7971 | quiet | builds.json matches 20k run within 0.15; baseline moved
+2026-10-26 19:20 | rotations | pass 33 | master f62cb7971 | quiet | moves explained by 32a6848f9; baseline refreshed
+2026-10-26 19:20 | fairness | pass 8 | master f62cb7971 | quiet | all moves from 32a6848f9; baseline moved

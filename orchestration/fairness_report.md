@@ -4,7 +4,64 @@ From the fairness auditor. The question this answers: is every DPS spec simmed u
 
 Method: each class's shipped Level 60 build (gear, talents, APL), built with mksettings and run with wowsimcli. I read code and logs and did not use rotopt. Measurements change one input at a time against the same seed. Two switches existed only in my local worktrees and were never pushed: one turns weapon racials off, one skips set-bonus tiers.
 
-## 1. Cross-spec table (master 74b3a5f: flat warrior Rage k (standards 21, ruling 2026-10-25) and re-searched warrior presets, Classic's hunter crit per Agility with Multi-Shot in Marksmanship / Lone Wolf and a Human Marksmanship, Forever's race base stats for Dwarf, Night Elf, Gnome and High Order; full re-sweep 2026-10-26)
+## 1. Cross-spec table (master f62cb79: the seven wowsims/forever mechanics as one-value assumptions, standards 27 and 28 (Multi-Shot 0.5 sec cast, live spell DoT and channel ticks, hunter base RAP 110, failed Bite keeps its energy, casting regen to a paid channel's end); full re-sweep 2026-10-26)
+
+Same method: the report's base requests, every race, 5000 iterations, seed 1. All 19 Level 60 gear sets pass 1b and 5a. "Report's published" is now the deployed `ui/dps_report/data/builds.json`, not the req metas' `published.dps`, which the regeneration doesn't refresh.
+
+| # | Spec | Best race | DPS | Best Horde / Alliance | Report race (DPS here) | Report's published | Gap | Before (74b3a5f) |
+|---|---|---|---|---|---|---|---|---|
+| 1 | Beast Mastery | Human | 1143.6 | Orc 1139.7 / Human | Human (1143.6) | 1143.7 | -0.1 | 1141.4 (+0.2%) |
+| 2 | Marksmanship | Human | 1136.3 | Orc 1133.4 / Human | Human (1136.3) | 1136.1 | +0.2 | 1139.6 (-0.3%) |
+| 3 | Lone Wolf (hunter) | High Order | 1123.9 | Windshaper 1123.9 / High Order | Windshaper (1123.9) | 1122.9 | +1.0 | 1127.9 (-0.4%) |
+| 4 | Fire | Human | 1100.4 | Orc 1095.6 / Human | Human (1100.4) | 1100.6 | -0.2 | 1100.8 (-0.0%) |
+| 5 | Frostfire | Human | 1097.6 | Orc 1085.3 / Human | Human (1097.6) | 1096.1 | +1.5 | 1098.0 (-0.0%) |
+| 6 | Demonology | Human | 1060.1 | Orc 1054.4 / Human | Human (1060.1) | 1060.4 | -0.3 | 1064.9 (-0.5%) |
+| 7 | Affliction | Human | 1030.4 | Orc 1024.5 / Human | Human (1030.4) | 1029.4 | +1.0 | 1036.4 (-0.6%) |
+| 8 | Survival | Human | 1025.7 | Orc 1025.0 / Human | Human (1025.7) | 1025.4 | +0.3 | 1025.5 (+0.0%) |
+| 9 | Destruction | Human | 1012.3 | Orc 1006.7 / Human | Human (1012.3) | 1011.9 | +0.4 | 1012.2 (+0.0%) |
+| 10 | Destruction Fire | Human | 988.1 | Orc 986.6 / Human | Human (988.1) | 988.1 | +0.0 | 987.5 (+0.1%) |
+| 11 | Fury (dual wield) | Orc | 987.3 | Orc / Human 987.1 | Orc (987.3) | 986.5 | +0.8 | 987.3 (+0.0%) |
+| 12 | Arcane | Human | 983.2 | Orc 983.0 / Human | Human (983.2) | 982.5 | +0.7 | 983.2 (+0.0%) |
+| 13 | Fury (two-hand) | Orc | 965.1 | Orc / Human 962.6 | Orc (965.1) | 965.6 | -0.5 | 965.1 (+0.0%) |
+| 14 | Shadow | Human | 956.8 | Troll 949.6 / Human | Human (956.8) | 956.8 | +0.0 | 961.7 (-0.5%) |
+| 15 | Frost | High Order | 947.1 | Orc 944.8 / High Order | High Order (947.1) | 946.9 | +0.2 | 947.1 (+0.0%) |
+| 16 | Retribution | Human | 947.0 | Undead 940.1 / Human | Human (947.0) | 945.1 | +1.9 | 947.0 (+0.0%) |
+| 17 | Arms | Orc | 906.7 | Orc / Human 904.4 | Orc (906.7) | 906.6 | +0.1 | 906.7 (+0.0%) |
+| 18 | Enhancement | Orc | 887.6 | Orc / Dwarf 879.4 | Orc (887.6) | 888.0 | -0.4 | 887.7 (-0.0%) |
+| 19 | Feral | Night Elf | 867.2 | Tauren 862.8 / Night Elf | Night Elf (867.2) | 866.8 | +0.4 | 867.1 (+0.0%) |
+| 20 | Balance | Tauren | 852.5 | Tauren / Night Elf 850.0 | Tauren (852.5) | 852.1 | +0.4 | 856.7 (-0.5%) |
+| 21 | Elemental | Windshaper | 776.6 | Windshaper / Dwarf 772.6 | Windshaper (776.6) | 776.9 | -0.3 | 777.1 (-0.1%) |
+| 22 | Rogue Combat Daggers | High Order | 770.5 | Windshaper 770.5 / High Order | Windshaper (770.5) | 770.3 | +0.2 | 770.5 (+0.0%) |
+| 23 | Rogue Combat Swords | Orc | 764.4 | Orc / High Order 763.9 | Windshaper (763.9) | 764.0 | -0.1 | 764.4 (+0.0%) |
+| 24 | Smite | Undead | 762.9 | Undead / Gnome 742.8 | Undead (762.9) | 763.5 | -0.6 | 765.5 (-0.3%) |
+| 25 | Rogue Seal Fate Daggers | Orc | 732.1 | Orc / Human 731.7 | Orc (732.1) | 731.5 | +0.6 | 732.1 (+0.0%) |
+| 26 | Rogue Seal Fate Swords | Human | 729.4 | Orc 729.4 / Human | Orc (729.4) | 728.9 | +0.5 | 729.4 (+0.0%) |
+| 27 | Rogue Mutilate | Orc | 719.4 | Orc / High Order 719.1 | Windshaper (719.1) | 718.9 | +0.2 | 719.4 (+0.0%) |
+| 28 | Rogue Subtlety | Orc | 715.8 | Orc / Night Elf 714.6 | Night Elf (714.6) | 714.9 | -0.3 | 715.8 (+0.0%) |
+
+| Variant | Best race | DPS | Report's published (at its race) | Before |
+|---|---|---|---|---|
+| druid__balance-wrath | High Order | 811.9 | 810.9 (at Tauren 811.3) | 814.0 |
+| paladin__level_60_shock | Human | 869.2 | 868.8 (at Human 869.2) | 869.4 |
+| paladin__level_60_sub_holy | Human | 949.8 | 949.1 (at Human 949.8) | 949.8 |
+| priest__shadow-holy | Human | 914.2 | 914.2 (at Human 914.2) | 918.9 |
+| shaman__elemental-level60-mana-tide | Windshaper | 761.8 | 761.6 (at Windshaper 761.8) | 762.2 |
+| shaman__enhancement-imp-gw | Orc | 883.7 | 884.2 (at Orc 883.7) | 883.8 |
+| shaman__enhancement-mana-tide | Orc | 798.8 | 800.0 (at Orc 798.8) | 798.9 |
+| shaman__enhancement-water-shield | Windshaper | 839.7 | 839.8 (at Orc 839.6) | 839.7 |
+
+Top over bottom: 1.60x
+
+What moved / findings:
+
+- DoT and channel specs, from live ticks (32a6848f9, `dot_live_ticks`): Affliction -6.0, Demonology -4.8, Shadow -4.9, Shadow + Holy -4.7, Balance -4.2, Balance Wrath -2.1, Smite -2.6 (#23 to #24, below Combat Swords), Elemental -0.5, Fire / Frostfire -0.4. Ranks otherwise unchanged.
+- Hunters, from the Multi-Shot cast and base RAP 110: BM +2.2, Marksmanship -3.3, Lone Wolf -4.0, Survival +0.2. They stay #1 to #3 and #8.
+- Feral +0.1 with the Bite change. Warriors, rogues, Arcane, Frost, Ret and Enhancement unchanged to the decimal, so no shared change leaked. The new core mechanics are gated only by spell school and Forever mode, never by class.
+- Published against current: all within 1.9 of builds.json (0 of 57 over 0.5 in the shared 20k run). The req metas are 3 to 6 stale for the moved builds; the dashboard is current.
+- Best race: report race everywhere, Lone Wolf High Order ties Windshaper (1123.9).
+- No new findings. Top over bottom: 1.60x (was 1.59x).
+
+<details><summary>Previous §1 (74b3a5f, 2026-10-26)</summary>
 
 Same method: the report's base requests, every race, 5000 iterations, seed 1. All 19 Level 60 gear sets pass 1b and 5a.
 
@@ -60,6 +117,8 @@ What moved / findings:
 - Published against current: every build within 1.9 at 5000 iterations (Ret +1.9 and Frostfire +1.6 are the usual seed noise). The req metas of Feral and Subtlety are 1.0 to 1.5 stale (868.1 / 715.9 against 866.7 / 714.9), but the dashboard's builds.json carries the re-simmed numbers (117d18af), so the published ranking is current.
 - Best race: fairness-20261025-1 resolved (Marksmanship now Human, the best race). Subtlety: Orc and Night Elf tie at 20k (715.2 / 714.7 vs 714.9 / 714.7, seeds 1 / 1000003), keep. Lone Wolf: Human and Windshaper tie at 20k (1127.1 / 1127.0 vs 1127.0 / 1127.6), keep.
 - No new findings. Top over bottom: 1.59x (was 1.64x).
+
+</details>
 
 <details><summary>Previous §1 (016daa6, 2026-10-25 19:03)</summary>
 

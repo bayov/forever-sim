@@ -1,10 +1,11 @@
 # Rotation audit: reference files
 
-- `baseline_74b3a5f_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
-  74b3a5f7c (pass 32, after flat warrior Rage, Classic hunter crit per Agility at 60 and the warrior/hunter re-searches).
+- `baseline_f62cb79_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
+  f62cb7971 (pass 33, after the seven wowsims/forever assumptions of standard 28: Multi-Shot cast, live DoT ticks,
+  hunter base RAP, Bite miss refund, channel five-second rule).
   - It was made with `tools/audit/rotations/baseline.py`: 3,000 iterations, seed 424242, each req's own
     encounter.
-  - The CLI was the audit loop's shared build at 74b3a5f7c (`/tmp/audit-cache/cli/74b3a5f7c365/wowsimcli`).
+  - The CLI was the audit loop's shared build at f62cb7971 (`/tmp/audit-cache/cli/f62cb797114e/wowsimcli`).
   - Next pass: build the CLI on the new master and run `baseline.py` with the same arguments. Diff the
     output against this file. If no req file changed, any row that moved more than about 1 DPS is a sim
     change.

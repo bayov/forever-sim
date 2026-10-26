@@ -1,6 +1,6 @@
-# Mechanics pass 39 (2026-10-26T00:51:53Z, master 74b3a5f7c)
+# Mechanics pass 40 (2026-10-26T13:30:00Z, master f62cb7971)
 
-Range audited: 016daa654..74b3a5f7c (3 non-merge sim commits, all user rulings of 2026-10-25). Result: quiet.
+Range audited: f796d9953..f62cb7971 (3 non-merge sim commits). Result: quiet, no new findings.
 
 ## Get current
 
@@ -8,19 +8,24 @@ Range audited: 016daa654..74b3a5f7c (3 non-merge sim commits, all user rulings o
 |---|---|
 | Client build | 1.60.1.70532, no build answered up to +300 |
 | Dev notes thread t/2360696 | newest post /6 (10-16 00:15, edited 10-16 20:50), unchanged |
-| Blue tracker | nothing newer than 10-23 (beta ended; Linxy posts are retail Midnight) |
 | Daily update | no forever-update merges, no TASKS.md / ledger changes in range |
-| Server hotfixes | not re-read (tools/audit/mechanics/hotfixes.py is not in the repo) |
+| Server hotfixes | not re-read (hotfixes.py still not in the repo) |
 
 ## Commits
 
 | Commit | Change | Check |
 |---|---|---|
-| 107874b75 | Warrior white-hit Rage level slope s 0.5 -> 0 (flat k) | user ruling, standards 21; only user is rage.go:76; verdicts row already updated |
-| 01afcb1d3 | Hunter crit per Agility from Forever's PlayerExpectedStat by level (Classic's 0.0189 at 60) | all 60 table values match 70532 PlayerExpectedStat ClassID 3 CritPerAgility x100; at 60 no stat dependency is added; no other users |
-| 92484f3c8 | Dwarf / Night Elf / Gnome / High Order base stat offsets to Forever's level 1 sheets | user ruling; each offset sums to 0 with Spirit 0; Skyborne lower levels built from Undead rows like Windshaper; verdicts row added |
+| 32a6848f9 | Five wowsims/forever mechanics as report assumptions | all ruled in standards 28 (user, 2026-10-26); not findings. Code reviewed below |
+| ded834911 | Replay: channel log lines | log-only (dot.go, cast.go messages); wand Shoot excluded |
+| 76db8c9c7 | Replay: pushback log lines | log-only |
 
-## Conclusions
+## Code review of 32a6848f9
 
-No shared mechanic moved away from tier 1 data. Open: mechanics-20261025-1 (Spellstone school), unchanged on master.
-The race offsets at 60 and the reverted wowsims/forever offsets (6fc22306b1) stay open in notes.md.
+- **Live DoT ticks** (`spell_result.go` liveTick): Forever only, non-physical, non-helpful dots that went through Snapshot. Base moves by coef x (bonus now - bonus at snapshot), multiplier by (attacker mult x dot mult now) / at snapshot, crit by the difference, so post-Snapshot spell-specific edits to the snapshot survive. Target-side multipliers already apply at tick. Rollovers keep the old snap values. Correct.
+- **Channel FSR** (`mana.go`): hold in channel OnGain only for mana-paid channels; release in OnExpire uses min(now, ExpiresAt) for lazy expiry. Since IsChanneling is ChanneledDot != nil, the next spell cannot spend its cost before release, so release can't roll back a newer FSR refresh. Correct.
+- **Multi-Shot**: client 70532 SpellMisc 2643 CastingTimeIndex 1 (instant) and Attributes_2 0x20000 (Do Not Reset Combat Timers) confirmed; the 0.5 s cast is the ruled `hunter_multishot_cast` assumption; KeepsSwingTimer matches Aimed / Sniper Shot.
+- **Hunter base RAP** 2L - 10 (110 at 60), `hunter_base_rap`; Bite miss keeps extra energy and CP, base 35 not refunded (no Refund on the cost), `druid_bite_miss`.
+
+## Open findings
+
+- mechanics-20261025-1 (Spellstone Fire power, low): still open, `sim/warlock/talents.go:139,147` unchanged.
