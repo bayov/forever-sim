@@ -68,8 +68,8 @@
   "url": "https://forever-dps.pages.dev",
   "cloudflareProject": "forever-dps",
   "deploy": "make dps-report-deploy (tools/dps_report/deploy_pages.py)",
-  "publishedFrom": "d58c83b (page text rewritten short and plain; data unchanged since the full re-sim at 8e0d6f681e)",
+  "publishedFrom": "367f514 (page text rewritten short and plain, flask assumption says Hyjal or the Barrow Deeps; data unchanged since the full re-sim at 8e0d6f681e)",
   "date": "2026-10-26",
-  "deployId": "60ce6c13"
+  "deployId": "e3f130a5"
  }
 }
