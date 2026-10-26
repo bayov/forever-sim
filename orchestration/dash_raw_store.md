@@ -1,6 +1,11 @@
 # DPS Report: keep the raw sim outputs, so a partial regeneration is cheap (design, 2026-10-26)
 
-Status: revised after three audits (data correctness against the code, operations and git, workflow and simplicity). Not built yet, except the bootstrap pack (section G).
+Status: built on 2026-10-26, after three audits (data correctness against the code, operations and git, workflow and simplicity). The commands are in `tools/dps_report/pipeline.sh` and `tools/dps_report/rawstore.py`, the steps in `tools/dps_report/README.md` ("Partial regenerations"). What the build changed from the plan below:
+
+- `publish <ids>` packs only the re-simmed builds (and adds their variants, as `run` does). A pack records the commit it was simmed at, so repacking an unchanged build would rewrite it for nothing.
+- `resume <ids>` finishes a stopped run without cleaning: it skips the builds `run_build.py`, `mana_curves.py` and `ablate.py` already finished (they redo work otherwise), and the other steps skip done work themselves.
+- The shard branches keep their `dash-raw/<run>/<k>` names: there is no `dash-raw` branch to collide with.
+- Bootstrap: the full run of 2026-10-26 (58 builds, every step) published through `publish`. The other 57 builds' values matched the published ones exactly; their ranks moved for the new build, numbers `merge.mjs` wrote as `1` are now `1.0`, and the sample fights differ only in the sim's action order.
 
 ## The problem
 

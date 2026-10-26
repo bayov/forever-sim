@@ -9,8 +9,8 @@
 #                                       steps; prints a timestamp per step
 #   pipeline.sh resume <ids...>         run without the clean, to finish a run that stopped (every step skips done work)
 #   pipeline.sh clean <ids...>          drop these builds from every raw output, so every step re-sims them
-#   pipeline.sh publish [ids...]        build_data.py, the sample fights of [ids] (events.py), every dataset into
-#                                       ui/dps_report/data, provenance for [ids], and every build's raw pack
+#   pipeline.sh publish [ids...]        build_data.py, the sample fights of [ids] and their variants (events.py),
+#                                       every dataset into ui/dps_report/data, and provenance and raw packs for them
 #   pipeline.sh shard <k> <n> <ids...>  the ids of shard k of n (0-based), balanced by estimated cost
 #   pipeline.sh pack  <tgz> <ids...>    these builds' raw outputs, to merge on another machine (a shard's hand-back)
 #   pipeline.sh unpack <tgz>            merge a pack into $DASH_DIR (replaces those builds' files and result lines)
@@ -56,6 +56,7 @@ clean)
 	python3 $T/rawstore.py clean "$@"
 	;;
 publish)
+	if [ $# -gt 0 ]; then set -- $(python3 $T/rawstore.py variants "$@"); fi  # what run <ids> re-simmed
 	rm -rf data
 	python3 $T/build_data.py >build_data.log || { tail -20 build_data.log; exit 1; }
 	# the sample fights of the re-simmed builds; the event lookups always cover every build's fights
@@ -67,7 +68,8 @@ publish)
 	fi
 	python3 $T/rawstore.py copy
 	if [ $# -gt 0 ]; then (cd "$R" && node tools/dps_report/stale.mjs --record "$@" --iterations 20000 ${SIM_COMMIT:+--commit $SIM_COMMIT}); fi
-	python3 $T/rawstore.py pack
+	# only the re-simmed builds' packs: the others are already the outputs they were made from
+	if [ $# -gt 0 ]; then python3 $T/rawstore.py pack "$@"; fi
 	echo "next: check the report (make dps-report-artifact), commit ui/dps_report and tools/dps_report/raw together, push, then deploy"
 	;;
 plan | run | resume)

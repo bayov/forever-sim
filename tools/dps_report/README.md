@@ -21,7 +21,7 @@ only the builds that changed and still rebuilds every dataset, the cross-build o
    After `build_data.py`, `events.py` sims the sample fights once more with their debug logs (see the datasets table).
 4. **Datasets.** `build_data.py` (with `build_races.py`, `setup_active.py`, `rotation.py` and `tooltips.py`) writes `data/*.json`.
 5. **Raw packs and publish.** `pipeline.sh publish` copies the datasets into `ui/dps_report/data/`, records provenance and
-   writes every build's raw pack to `raw/`.
+   writes the re-simmed builds' raw packs to `raw/`.
 
 ## Layout and configuration
 
@@ -237,10 +237,10 @@ refuses a build with a step missing or a failed sim.
 - `run <ids>` adds each id's duty and encounter variants (a preset whose `baseBuild` is in the list), cleans them from every
   raw output so every step re-sims them whatever its skip rule, then runs the sim steps. `resume <ids>` finishes a stopped
   run without cleaning.
-- `publish [ids]` runs `build_data.py`, re-sims the sample fights of `[ids]` into `ui/dps_report/data/events/` (the event
+- `publish [ids]` adds the ids' variants as `run` does, runs `build_data.py`, re-sims the sample fights of `[ids]` into `ui/dps_report/data/events/` (the event
   lookups always cover every build's fights), copies every dataset into `ui/dps_report/data/` (stamping `updated` in
   `datasets.json` only for changed files), drops removed presets' events, packs and provenance, records provenance for
-  `[ids]` (`SIM_COMMIT=<rev>` if the sims didn't run at HEAD) and writes every pack.
+  `[ids]` (`SIM_COMMIT=<rev>` if the sims didn't run at HEAD) and writes their packs (the others don't change).
 - Commit `ui/dps_report/data`, `ui/dps_report/datasets.json`, `ui/dps_report/provenance.json` and `tools/dps_report/raw`
   together. If origin/master changed any of them meanwhile, don't hand-merge: take master's, hydrate again, re-check
   `stale.mjs`, re-sim what that adds and publish again (as with `db.json`). Deploy after the push, from the pushed commit:
