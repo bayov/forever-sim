@@ -85,10 +85,10 @@ const HISTORY_LABEL_EVERY = 5;
 const HISTORY_SHIFT = 0.15;
 // A cooldown icon lights up like a pressed button for this long after we use it.
 const PRESS_TIME = 0.25;
-// An instant pops up where the cast bar is, a bit larger than the buttons, settles a moment, then
-// grows and fades over this many seconds, like a cast bar that filled in no time. A few in a row
+// An instant appears where the cast bar is, a bit larger than the buttons, with a quick fade in and a
+// brief flash, holds a moment, then zooms out and fades, all in this many seconds. A few in a row
 // ripple out one after another.
-const INSTANT_LIFE = 0.9;
+const INSTANT_LIFE = 1;
 const INSTANT_POPS = 4;
 // Instants pressed at the same moment, like a trinket and a racial, sit side by side this far
 // apart, in pixels.
@@ -209,16 +209,15 @@ const updateIcon = (elem: HTMLElement, elapsed: number | null, time: string, sta
 	setText(elem.querySelector('.replay-icon-stacks')!, stacks > 1 ? String(stacks) : '');
 };
 
-// The size and opacity of an instant's pop, this many seconds after we pressed it.
-const instantPop = (age: number): { scale: number; opacity: number } => {
+// The size, opacity and flash (extra brightness) of an instant's pop, this many seconds after we
+// pressed it: it fades in at its size with a flash that dies away, holds, then zooms out as it fades.
+const instantPop = (age: number): { scale: number; opacity: number; flash: number } => {
 	const p = age / INSTANT_LIFE;
-	if (p < 0.12) {
-		const k = p / 0.12;
-		return { scale: 0.6 + 0.75 * (1 - (1 - k) * (1 - k)), opacity: k };
-	}
-	if (p < 0.45) return { scale: 1.35 - 0.1 * ((p - 0.12) / 0.33), opacity: 1 };
-	const k = (p - 0.45) / 0.55;
-	return { scale: 1.25 + 0.6 * k, opacity: 1 - k };
+	const flash = p < 0.25 ? 1.2 * (1 - p / 0.25) ** 2 : 0;
+	if (p < 0.06) return { scale: 1.3, opacity: p / 0.06, flash };
+	if (p < 0.4) return { scale: 1.3, opacity: 1, flash };
+	const k = (p - 0.4) / 0.6;
+	return { scale: 1.3 + 1.1 * k * (2 - k), opacity: (1 - k) ** 1.5, flash };
 };
 
 const setText = (elem: Element, text: string) => {
@@ -1806,9 +1805,10 @@ export class Replay extends ResultComponent {
 			}
 			const together = shown.filter(other => Math.abs(other.log.timestamp - cast.log.timestamp) < 0.001);
 			const offset = (together.indexOf(cast) - (together.length - 1) / 2) * INSTANT_SPACING;
-			const { scale, opacity } = instantPop(time - cast.log.timestamp);
+			const { scale, opacity, flash } = instantPop(time - cast.log.timestamp);
 			pop.elem.style.opacity = opacity.toFixed(3);
 			pop.elem.style.transform = `translateX(${offset}px) scale(${scale.toFixed(3)})`;
+			pop.img.style.filter = flash > 0.005 ? `brightness(${(1 + flash).toFixed(3)})` : '';
 		});
 	}
 
