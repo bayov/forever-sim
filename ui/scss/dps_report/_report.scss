@@ -3127,10 +3127,6 @@ div.tt-embed:not(.fv-tt) {
 		align-items: start;
 	}
 
-	// A one-value row is only its question and answer, kept to a readable width.
-	&.one {
-		grid-template-columns: minmax(0, 48rem);
-	}
 }
 
 .fv-asm-txt {
@@ -3172,6 +3168,41 @@ div.tt-embed:not(.fv-tt) {
 	&.med {
 		color: var(--color-fg);
 	}
+}
+
+// A one-value row: the question and More details on the left, the answer on the right. On a phone, the answer goes
+// between the question and More details.
+.fv-asm-row.one {
+	grid-template-areas: 'hd' 'ans' 'more';
+	row-gap: 0.25rem;
+
+	@media (min-width: 900px) {
+		grid-template-areas: 'hd ans' 'more ans';
+	}
+
+	.fv-asm-txt {
+		display: contents;
+	}
+
+	.fv-asm-hd {
+		grid-area: hd;
+	}
+
+	.fv-asm-more {
+		grid-area: more;
+	}
+
+	.fv-asm-body {
+		grid-area: ans;
+	}
+}
+
+// A one-value row's answer, in the right column: the row's main point, so in the page's own text colour.
+.fv-asm-answer {
+	margin: 0;
+	font-size: var(--cds-font-size-body);
+	line-height: 1.45;
+	color: var(--color-fg);
 }
 
 .fv-asm-short {

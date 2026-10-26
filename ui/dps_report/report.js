@@ -2574,7 +2574,7 @@ export function startReport(dash, events) {
     return [...groups.values()].map((g) => ({ ...g, n: g.names.length || g.ids.length, short: SPEC_SHORT[g.spec] || g.spec }));
   };
   // A one-value row: the only value considered, which the presets use, so there is nothing to compare or pick. Its
-  // short line is the answer, so the row is only the question, the answer and More details.
+  // short line is the answer, so the row is only the question and More details on the left, and the answer on the right.
   const asmRef = (a) => arr(a.settings).length === 1;
   // The presets' setting is the default: what the ranking uses, and the expected value since the 2026-10-15 rulings.
   const asmMarks = (a, x) => [x.id === a.defaultSetting ? el('span', { class: 'def', text: ' · default' }) : null];
@@ -2653,11 +2653,13 @@ export function startReport(dash, events) {
         const picked = cur !== a.defaultSetting;
         const hd = el('div', { class: 'fv-asm-hd' },
           el('div', { class: 'fv-asm-lbl' }, el('b', { text: a.label }), live ? el('span', { class: `fv-asm-size ${sz}`, title: `Changes a preset's DPS by up to ${f1(imp)}% at 180s`, text: szText }) : null),
-          el('p', { class: 'fv-asm-short', text: a.short || a.description }));
+          ref ? null : el('p', { class: 'fv-asm-short', text: a.short || a.description }));
         asmHover(hd, a.label, () => asmTip(a));
         d.append(el('div', { class: 'fv-asm-row' + (ref ? ' one' : ''), 'data-key': a.key, 'data-size': sz },
           el('div', { class: 'fv-asm-txt' }, hd, asmMore(a)),
-          ref ? null : el('div', { class: 'fv-asm-body' },
+          // A one-value row's answer is its short line, in the right column where the other rows show their table.
+          ref ? el('div', { class: 'fv-asm-body' }, el('p', { class: 'fv-asm-answer', text: a.short || a.description }))
+            : el('div', { class: 'fv-asm-body' },
             live ? el('p', { class: 'fv-asm-cap', text: picked ? 'DPS change at 180s, against the default' : ASM_CAP }) : null,
             asmMatrix(a, cur, (id) => asmPick(a, id)),
             !live ? el('p', { class: 'fv-asm-cap', text: a.status === 'pending' ? 'Not simulated yet.' : 'No longer applies.' }) : null)));
