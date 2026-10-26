@@ -122,7 +122,7 @@ func TestWarlockChannelPushbackRotation(t *testing.T) {
 	}
 
 	logTime := regexp.MustCompile(`^\[(-?[0-9.]+)\] `)
-	shortened := regexp.MustCompile(`channel shortened by .* will now end at ([0-9.]+)(ms|s)$`)
+	shortened := regexp.MustCompile(`Channel {.*?} pushed back to end at ([0-9.]+)$`)
 	var ends []float64
 	// When the rotation picked its next action.
 	var casts []float64
@@ -134,9 +134,6 @@ func TestWarlockChannelPushbackRotation(t *testing.T) {
 		now, _ := strconv.ParseFloat(m[1], 64)
 		if s := shortened.FindStringSubmatch(line); s != nil {
 			end, _ := strconv.ParseFloat(s[1], 64)
-			if s[2] == "ms" {
-				end /= 1000
-			}
 			if len(ends) > 0 && ends[len(ends)-1] > now {
 				ends[len(ends)-1] = end
 			} else {

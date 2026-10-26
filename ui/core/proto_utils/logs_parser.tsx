@@ -244,6 +244,7 @@ export class SimLog {
 					ExtraAttackLog.parse(params) ||
 					CooldownLog.parse(params) ||
 					ChannelLog.parse(params) ||
+					CastPushbackLog.parse(params) ||
 					MaxResourcesLog.parse(params) ||
 					TotemLog.parse(params) ||
 					Promise.resolve(new SimLog(params))
@@ -290,6 +291,10 @@ export class SimLog {
 
 	isExtraAttack(): this is ExtraAttackLog {
 		return this instanceof ExtraAttackLog;
+	}
+
+	isCastPushback(): this is CastPushbackLog {
+		return this instanceof CastPushbackLog;
 	}
 
 	isChannel(): this is ChannelLog {
@@ -1102,6 +1107,37 @@ export class ChannelLog extends SimLog {
 					return new ChannelLog(params, 'pushback', parseFloat(match[5]), 0, 0);
 				}
 				return new ChannelLog(params, 'end', params.timestamp, 0, 0);
+			});
+	}
+}
+
+// A hit taken that pushes back the cast we're making, like "Cast {SpellID: 10947} pushed back to
+// complete at 43.950", for the cast bar of the Replay view.
+export class CastPushbackLog extends SimLog {
+	// When the cast completes, as of this line.
+	readonly completesAt: number;
+
+	constructor(params: SimLogParams, completesAt: number) {
+		super(params);
+		this.completesAt = completesAt;
+	}
+
+	toHTML(includeTimestamp = true) {
+		return this.cacheOutput(includeTimestamp, () => (
+			<>
+				{this.toPrefix(includeTimestamp)} Cast of {this.newActionIdLink(this.actionId!)} pushed back to complete at {this.completesAt.toFixed(2)}s.
+			</>
+		));
+	}
+
+	static parse(params: SimLogParams): Promise<CastPushbackLog> | null {
+		const match = params.raw.match(/] Cast ({.*?}) pushed back to complete at (-?\d+\.?\d*)/);
+		if (!match) return null;
+		return ActionId.fromLogString(match[1])
+			.fill(params.source?.index, params.source?.isPlayer)
+			.then(actionId => {
+				params.actionId = actionId;
+				return new CastPushbackLog(params, parseFloat(match[2]));
 			});
 	}
 }
