@@ -194,6 +194,7 @@ func (unit *Unit) applySpellPushback() {
 			newExpires := max(sim.CurrentTime, dot.ExpiresAt()-pushback)
 			if sim.Log != nil {
 				aura.Unit.Log(sim, "Unit channel shortened by %s due to spell hit taken, will now end at %s", dot.ExpiresAt()-newExpires, newExpires)
+				aura.Unit.Log(sim, "Channel %s pushed back to end at %0.3f", dot.Spell.ActionID, newExpires.Seconds())
 			}
 			dot.UpdateExpires(sim, newExpires)
 

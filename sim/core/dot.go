@@ -275,6 +275,11 @@ func newDot(config Dot) *Dot {
 		sim.AddPendingAction(dot.tickAction)
 		if dot.isChanneled {
 			dot.Spell.Unit.ChanneledDot = dot
+			// The channel's start, its pushbacks (cast.go) and its end, for the channel bar with
+			// tick markers in the Replay view of the Events tab.
+			if sim.Log != nil && !dot.isWandShoot() {
+				dot.Spell.Unit.Log(sim, "Channeling %s until %0.3f (%d ticks every %0.3f)", dot.Spell.ActionID, aura.ExpiresAt().Seconds(), dot.NumberOfTicks, dot.tickPeriod.Seconds())
+			}
 		}
 	})
 	dot.Aura.ApplyOnExpire(func(aura *Aura, sim *Simulation) {
@@ -287,12 +292,20 @@ func newDot(config Dot) *Dot {
 			dot.Spell.Unit.Rotation.interruptChannelIf = nil
 			dot.Spell.Unit.Rotation.allowChannelRecastOnInterrupt = false
 			dot.Spell.Unit.wand.channelEnded(sim, dot)
+			if sim.Log != nil && !dot.isWandShoot() {
+				dot.Spell.Unit.Log(sim, "Channel %s ended", dot.Spell.ActionID)
+			}
 			// track time metrics for channels
 			dot.Spell.SpellMetrics[aura.Unit.UnitIndex].TotalCastTime += dot.fadeTime - dot.StartedAt()
 		}
 	})
 
 	return dot
+}
+
+// Wand Shoot is a channel in the sim, but in game it's an auto attack with no channel bar.
+func (dot *Dot) isWandShoot() bool {
+	return dot.Spell.Unit.wand != nil && dot.Spell == dot.Spell.Unit.wand.Shoot
 }
 
 type DotArray []*Dot
