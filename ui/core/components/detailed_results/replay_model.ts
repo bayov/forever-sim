@@ -251,6 +251,8 @@ export interface ReplayModel {
 	// The auras of a queued Heroic Strike, Cleave, Maul or Raptor Strike, while it waits for the
 	// next main hand swing.
 	swingQueue: Array<AuraTrack>;
+	// A paladin's seals, which decide what the next main hand swing procs.
+	seals: Array<AuraTrack>;
 	// The Maelstrom Weapon buff, which the shaman pack shows as five pips like combo points.
 	maelstrom: AuraTrack | null;
 	damageDone: Steps;
@@ -554,6 +556,7 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 		mainHandSwings: castLogs.filter(log => isAutoAttack(log.actionId!, 1) || isNextSwingHit(log.actionId!)).map(log => log.timestamp),
 		offHandSwings: castLogs.filter(log => isAutoAttack(log.actionId!, 2)).map(log => log.timestamp),
 		swingQueue: playerAuras.filter(track => isSwingQueue(track.actionId)),
+		seals: playerAuras.filter(track => SEALS.some(name => named(track.actionId, name))),
 		maelstrom: playerAuras.find(track => track.actionId.name.startsWith('Maelstrom Weapon')) ?? null,
 		damageDone,
 		sct,
@@ -587,12 +590,15 @@ const baseName = (actionId: ActionId) => actionId.name.replace(/ \(.*$/, '');
 
 const isAutoAttack = (actionId: ActionId, tag: number) => actionId.otherId == OtherAction.OtherActionAttack && actionId.tag == tag;
 // The abilities that take the next main hand swing. The sim tags the queue spell and its aura
-// 1, and the hit 0. Raptor Strike's hit is tagged 1 and its queue 3.
+// 1, and the hit 0. Raptor Strike's hit is tagged 1 and its queue spell 3, and its queue aura
+// carries the spell's own id, so only an aura of it is the queue (isSwingQueue reads auras only).
 const NEXT_SWING = ['Heroic Strike', 'Cleave', 'Maul'];
 const isNextSwingHit = (actionId: ActionId) =>
 	(actionId.tag == 0 && NEXT_SWING.some(name => named(actionId, name))) || (actionId.tag == 1 && named(actionId, 'Raptor Strike'));
 const isSwingQueue = (actionId: ActionId) =>
-	(actionId.tag == 1 && NEXT_SWING.some(name => named(actionId, name))) || (actionId.tag == 3 && named(actionId, 'Raptor Strike'));
+	(actionId.tag == 1 && NEXT_SWING.some(name => named(actionId, name))) || ((actionId.tag == 0 || actionId.tag == 3) && named(actionId, 'Raptor Strike'));
+// The seals a paladin keeps up for their main hand procs, and twists between before a swing.
+const SEALS = ['Seal of Command', 'Seal of Righteousness', 'Seal of the Crusader', 'Seal of Light', 'Seal of Wisdom', 'Seal of Justice'];
 
 const shamanBars = (cooldowns: Array<TrackedCooldown>) => {
 	const indexIn = (list: Array<string>, cooldown: TrackedCooldown) => list.findIndex(name => named(cooldown.actionId, name));

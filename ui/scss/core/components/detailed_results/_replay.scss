@@ -556,6 +556,26 @@
 	height: 100%;
 	background: #e8e8e8;
 
+	// A paladin's seal: Command orange like its icon, Righteousness the paladin's pink, so neither
+	// reads as the mana bar under it.
+	&[data-seal='command'] {
+		background: #ff9a3c;
+	}
+
+	&[data-seal='righteousness'] {
+		background: #f58cba;
+	}
+
+	&[data-seal='crusader'] {
+		background: #f2df7a;
+	}
+
+	&[data-seal='light'],
+	&[data-seal='wisdom'],
+	&[data-seal='justice'] {
+		background: #c9b8ff;
+	}
+
 	&.queued {
 		background: #ffd100;
 	}

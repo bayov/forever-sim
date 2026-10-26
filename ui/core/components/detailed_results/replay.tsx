@@ -1527,9 +1527,11 @@ export class Replay extends ResultComponent {
 				rowsTip(() => {
 					const next = this.swingAt(times, this.time);
 					const queued = mainHand ? this.swingQueuedAt(model, this.time) : null;
+					const seal = mainHand ? this.sealAt(model, this.time) : null;
 					return [
 						tooltipRow(`Next ${mainHand ? 'main' : 'off'} hand swing`, next ? formatSeconds(next.next - this.time) : 'None'),
 						queued && tooltipRow('Queued', queued.name.replace(/ \(Queue\)/, '')),
+						seal && tooltipRow('Seal', seal.name.replace(/ \(.*$/, '')),
 					];
 				}),
 			),
@@ -1567,6 +1569,21 @@ export class Replay extends ResultComponent {
 	// The Heroic Strike (or Cleave, Maul, Raptor Strike) waiting for the next main hand swing.
 	private swingQueuedAt(model: ReplayModel, time: number): ActionId | null {
 		return model.swingQueue.find(track => activeAuraAt(track, time, model.end))?.actionId ?? null;
+	}
+
+	// The seal up at this time, the newest when two overlap for a twist: the one the next swing procs.
+	private sealAt(model: ReplayModel, time: number): ActionId | null {
+		let newest: ActionId | null = null;
+		let newestStart = -Infinity;
+		for (const track of model.seals) {
+			if (!activeAuraAt(track, time, model.end)) continue;
+			const start = track.spans[lastIndexAtOrBefore(track.spanStarts, time)].start;
+			if (start > newestStart) {
+				newest = track.actionId;
+				newestStart = start;
+			}
+		}
+		return newest;
 	}
 
 	// The last and the next swing of a hand around this time. A long gap, like while we were out
@@ -1758,8 +1775,14 @@ export class Replay extends ResultComponent {
 		resources.swings.forEach(({ fill, times, mainHand }) => {
 			const swing = this.swingAt(times, time);
 			setWidth(fill, swing ? (time - swing.last) / (swing.next - swing.last) : 0);
-			// The main hand's timer turns yellow while a Heroic Strike waits for its swing.
-			if (mainHand) fill.classList.toggle('queued', !!this.swingQueuedAt(model, time));
+			// The main hand's timer turns yellow while a Heroic Strike waits for its swing, and takes the
+			// colour of a paladin's seal, so a twist shows as the colour changing just before the swing.
+			if (mainHand) {
+				fill.classList.toggle('queued', !!this.swingQueuedAt(model, time));
+				const seal = this.sealAt(model, time);
+				const key = seal ? seal.name.replace(/^Seal of (the )?/, '').replace(/ \(.*$/, '').toLowerCase() : '';
+				if (fill.dataset.seal != key) fill.dataset.seal = key;
+			}
 		});
 		const pips = this.pipsAt(model, time);
 		resources.pips.forEach((pip, i) => pip.classList.toggle('on', i < pips));
