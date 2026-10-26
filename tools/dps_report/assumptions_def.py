@@ -329,7 +329,7 @@ A = [
       settings=[S('expected', '2 a minute (1.12)', '2 procs a minute', "1.12, the passive's origin.")],
       default='expected', expected='expected'),
  dict(key='druid_rip_31plus', cls='Druid', label="Will Rip's top ranks get a raise?",
-      short="Ranks to level 30 beat Era's. Ranks past 30 are 6 to 9% below.",
+      short="Ranks to level 30 beat Era's. Ranks past 30 are 6% to 9% below.",
       desc="Ranks past level 30 deal 6 to 9% less than Era's, while lower ranks beat it. The settings change rank 6, the one the preset casts.",
       src='Forever client 70338.',
       builds=['druid__feral-cat'],

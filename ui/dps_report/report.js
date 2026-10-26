@@ -2543,7 +2543,8 @@ export function startReport(dash, events) {
   $('#asm-reset').addEventListener('click', (e) => { e.stopPropagation(); st.asm = {}; persist(); hideTip(); render(); });
   const bName = (id) => (rowsOf('builds') || []).find((b) => b.id === id)?.build || id;
   // Effects are each setting's change against the presets' own setting at 180s, from `sens`. A signed number takes
-  // the ok or bad colour; a range over several presets runs from the smaller change to the larger.
+  // the ok or bad colour; a range over several presets runs from the smaller change to the larger, with a % on both ends
+  // ("+3.9% to +4.2%") and a word unit only at the end ("+19 to +26 DPS").
   const SPEC_SHORT = { Retribution: 'Ret', Enhancement: 'Enh', Elemental: 'Ele', 'Beast Mastery': 'BM', Marksmanship: 'MM', Assassination: 'Assassin', Destruction: 'Destro', Demonology: 'Demo' };
   const asmSigned = (v, f, unit, eps) => el('span', { class: 'fv-asm-d' + (Math.abs(v) < eps ? '' : v > 0 ? ' pos' : ' neg'), text: (Math.abs(v) < eps ? '' : v > 0 ? '+' : '−') + f(Math.abs(v)) + unit });
   const asmRange = (xs, f = f1, unit = '%', eps = 0.05) => {
@@ -2551,7 +2552,7 @@ export function startReport(dash, events) {
     const lo = d3.min(xs), hi = d3.max(xs);
     if (hi - lo < eps || (Math.sign(lo) === Math.sign(hi) && f(Math.abs(lo)) === f(Math.abs(hi)))) return el('span', { class: 'fv-asm-eff' }, asmSigned((lo + hi) / 2, f, unit, eps));
     const [p, q] = lo >= 0 ? [lo, hi] : hi <= 0 ? [hi, lo] : [lo, hi];
-    return el('span', { class: 'fv-asm-eff' }, asmSigned(p, f, '', eps), el('span', { class: 'fv-asm-to', text: ' to ' }), asmSigned(q, f, unit, eps));
+    return el('span', { class: 'fv-asm-eff' }, asmSigned(p, f, unit.startsWith(' ') ? '' : unit, eps), el('span', { class: 'fv-asm-to', text: ' to ' }), asmSigned(q, f, unit, eps));
   };
   const asmPcts = (a, sid, ids) => arr(a.sens).filter((x) => x.setting === sid && (!ids || ids.includes(x.build))).map((x) => +x.pct);
   // how much an assumption can move a preset at 180s, for the order within a class and the size badge
