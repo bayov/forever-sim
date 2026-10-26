@@ -209,16 +209,15 @@ func TestCatRendAndTearBleeds(t *testing.T) {
 }
 
 // TestCatFinisherMissRefunds checks that a dodged Rip gives back 80% of its cost
-// (ATTR_EX_1_DISCOUNT_POWER_ON_MISS), that a dodged Ferocious Bite spends its cost and all the
-// extra Energy (wowsims/forever c742250b22, a beta report on their PR #149), and that both keep
-// the combo points.
+// (ATTR_EX_1_DISCOUNT_POWER_ON_MISS), that a dodged Ferocious Bite spends its cost and keeps the
+// extra Energy (wowsims/forever c91498c01), and that both keep the combo points.
 func TestCatFinisherMissRefunds(t *testing.T) {
 	for _, tc := range []struct {
 		spell      func(*FeralDruid) *druid.DruidSpell
 		energyLeft func(cost float64) float64
 	}{
 		{func(cat *FeralDruid) *druid.DruidSpell { return cat.Rip }, func(cost float64) float64 { return 100 - 0.2*cost }},
-		{func(cat *FeralDruid) *druid.DruidSpell { return cat.FerociousBite }, func(float64) float64 { return 0 }},
+		{func(cat *FeralDruid) *druid.DruidSpell { return cat.FerociousBite }, func(cost float64) float64 { return 100 - cost }},
 	} {
 		sim, cat := newCatSim(t, "")
 		target := cat.CurrentTarget

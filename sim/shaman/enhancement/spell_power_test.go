@@ -140,8 +140,10 @@ func TestOrcShamanSpellPowerBeta(t *testing.T) {
 		for _, c := range cases {
 			check(sim, c)
 		}
-		// The Flame Shock DoTs took their spell power when they went up, so this leaves them
-		// alone.
+	})
+	// Forever's ticks read spell power when they land, so the drop to 49 waits until the last Flame
+	// Shocks (out at 1 sec, 12 sec long) are done.
+	at(sim, 14, func(sim *core.Simulation) {
 		enh.AddStatDynamic(sim, stats.SpellPower, 49-91)
 		check(sim, frostShock)
 	})

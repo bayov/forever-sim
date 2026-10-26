@@ -165,6 +165,10 @@ type Unit struct {
 
 	// The currently-channeled DOT spell, otherwise nil.
 	ChanneledDot *Dot
+	// Whether a paid channel holds the five second rule to its end, and the rule's end its cost set
+	// (mana.go holdFiveSecondRule).
+	channelHoldsFSR  bool
+	fsrBeforeChannel time.Duration
 
 	// Forever's wand Shoot, nil without one (wand.go).
 	wand *Wand
@@ -535,6 +539,7 @@ func (unit *Unit) reset(sim *Simulation, _ Agent) {
 	unit.resetCDs(sim)
 	unit.Hardcast.Expires = startingCDTime
 	unit.ChanneledDot = nil
+	unit.channelHoldsFSR = false
 	unit.Metrics.reset()
 	unit.ResetStatDeps()
 	unit.statsWithoutDeps = unit.initialStatsWithoutDeps

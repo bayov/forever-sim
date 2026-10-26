@@ -421,3 +421,27 @@ func (mc *ManaCost) SpendCost(sim *Simulation, spell *Spell) {
 	}
 }
 func (mc *ManaCost) IssueRefund(_ *Simulation, _ *Spell) {}
+
+// Under Forever, regen stays at the casting rate until a channel the unit paid mana for ends, however it
+// ends, as wowsims/forever has it (PR #249). The cost started the five second rule at the channel's start.
+// The channel holds it to its end, and a channel that ends early leaves the rule at the later of the two.
+func (unit *Unit) holdFiveSecondRule(sim *Simulation, dot *Dot) {
+	if !sim.IsForever() || dot.Spell.CurCast.Cost <= 0 || dot.Spell.Cost == nil {
+		return
+	}
+	if _, ok := dot.Spell.Cost.SpellCostFunctions.(*ManaCost); !ok {
+		return
+	}
+	unit.channelHoldsFSR = true
+	unit.fsrBeforeChannel = unit.PseudoStats.FiveSecondRuleRefreshTime
+	unit.PseudoStats.FiveSecondRuleRefreshTime = max(unit.fsrBeforeChannel, dot.ExpiresAt())
+}
+
+func (unit *Unit) releaseFiveSecondRule(sim *Simulation, dot *Dot) {
+	if !unit.channelHoldsFSR {
+		return
+	}
+	// An aura can expire lazily, after its end, so the channel ended at the earlier of the two.
+	unit.PseudoStats.FiveSecondRuleRefreshTime = max(unit.fsrBeforeChannel, min(sim.CurrentTime, dot.ExpiresAt()))
+	unit.channelHoldsFSR = false
+}

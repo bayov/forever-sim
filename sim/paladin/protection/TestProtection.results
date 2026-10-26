@@ -253,8 +253,8 @@ dps_results: {
 dps_results: {
  key: "TestProtection-Phase4-AllItems-SoulforgeArmor"
  value: {
-  dps: 338.404
-  tps: 510.94327
+  dps: 338.394
+  tps: 510.92235
  }
 }
 dps_results: {

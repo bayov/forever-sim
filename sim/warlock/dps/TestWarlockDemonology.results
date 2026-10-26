@@ -53,7 +53,7 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: -0.04481
+  weights: -0.09068
   weights: 0
   weights: 1.00186
   weights: 0
@@ -63,8 +63,8 @@ stat_weights_results: {
   weights: 0
   weights: 0
   weights: 0
-  weights: 6.45228
-  weights: 10.05083
+  weights: 6.525
+  weights: 10.03921
   weights: 0
   weights: 0
   weights: 0
@@ -99,24 +99,24 @@ stat_weights_results: {
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-Champion'sDreadgear"
  value: {
-  dps: 1202.914
-  tps: 924.37912
+  dps: 1198.84933
+  tps: 921.12615
   hps: 3.34533
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-Champion'sThreads"
  value: {
-  dps: 1133.07517
-  tps: 871.09269
+  dps: 1129.60233
+  tps: 868.31327
   hps: 3.35167
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-DeathmistRaiment"
  value: {
-  dps: 1119.52433
-  tps: 858.08358
+  dps: 1115.547
+  tps: 854.90159
   hps: 1.96567
  }
 }
@@ -131,24 +131,24 @@ dps_results: {
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-Doomcaller'sAttire"
  value: {
-  dps: 1338.88583
-  tps: 1023.43424
+  dps: 1335.5025
+  tps: 1020.72799
   hps: 4.444
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-FelheartRaiment"
  value: {
-  dps: 1125.06167
-  tps: 856.84653
+  dps: 1121.33817
+  tps: 853.86684
   hps: 2.76017
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-FieldMarshal'sThreads"
  value: {
-  dps: 1167.57533
-  tps: 896.21687
+  dps: 1163.0725
+  tps: 892.61565
   hps: 2.41333
  }
 }
@@ -163,40 +163,40 @@ dps_results: {
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-IronweaveBattlesuit"
  value: {
-  dps: 960.3825
-  tps: 735.21279
+  dps: 958.0075
+  tps: 733.31436
   hps: 2.039
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-LieutenantCommander'sDreadgear"
  value: {
-  dps: 1202.914
-  tps: 924.37912
+  dps: 1198.84933
+  tps: 921.12615
   hps: 3.34533
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-LieutenantCommander'sThreads"
  value: {
-  dps: 1133.07517
-  tps: 871.09269
+  dps: 1129.60233
+  tps: 868.31327
   hps: 3.35167
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-NemesisRaiment"
  value: {
-  dps: 1184.273
-  tps: 790.29414
+  dps: 1181.23017
+  tps: 787.869
   hps: 3.12083
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-PlagueheartRaiment"
  value: {
-  dps: 1354.0515
-  tps: 971.14321
+  dps: 1350.9555
+  tps: 968.89143
   hps: 3.69217
  }
 }
@@ -211,79 +211,79 @@ dps_results: {
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-WarlockSynthetic(Phase1)"
  value: {
-  dps: 1336.49467
-  tps: 1025.95106
+  dps: 1335.01017
+  tps: 1024.76098
   hps: 3.60117
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-AllItems-Warlord'sThreads"
  value: {
-  dps: 1167.57533
-  tps: 896.21687
+  dps: 1163.0725
+  tps: 892.61565
   hps: 2.41333
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-Average-Default"
  value: {
-  dps: 1360.98928
-  tps: 1045.1374
+  dps: 1359.4117
+  tps: 1043.87521
   hps: 3.51142
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-Settings-Gnome-level60_phase1_synthetic-Demonology Warlock-level60_demonology-FullBuffs-Consumes-LongMultiTarget"
  value: {
-  dps: 1351.43967
-  tps: 1787.21391
+  dps: 1349.75067
+  tps: 1785.86258
   hps: 1.9495
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-Settings-Gnome-level60_phase1_synthetic-Demonology Warlock-level60_demonology-FullBuffs-Consumes-LongSingleTarget"
  value: {
-  dps: 1351.43967
-  tps: 1037.70336
+  dps: 1349.75067
+  tps: 1036.35204
   hps: 1.9495
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-Settings-Gnome-level60_phase1_synthetic-Demonology Warlock-level60_demonology-FullBuffs-Consumes-ShortSingleTarget"
  value: {
-  dps: 1390.65083
-  tps: 1049.95365
+  dps: 1387.5625
+  tps: 1047.48581
   hps: 1.035
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-Settings-Gnome-level60_phase1_synthetic-Demonology Warlock-level60_demonology-NoBuffs-Consumes-LongMultiTarget"
  value: {
-  dps: 845.67833
-  tps: 1515.07684
+  dps: 842.92983
+  tps: 1512.88087
   hps: 1.75417
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-Settings-Gnome-level60_phase1_synthetic-Demonology Warlock-level60_demonology-NoBuffs-Consumes-LongSingleTarget"
  value: {
-  dps: 845.67833
-  tps: 665.07846
+  dps: 842.92983
+  tps: 662.88249
   hps: 1.75417
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-Settings-Gnome-level60_phase1_synthetic-Demonology Warlock-level60_demonology-NoBuffs-Consumes-ShortSingleTarget"
  value: {
-  dps: 930.2
-  tps: 704.27059
+  dps: 928.08167
+  tps: 702.57635
  }
 }
 dps_results: {
  key: "TestWarlockDemonology-Phase1-SwitchInFrontOfTarget-Default"
  value: {
-  dps: 1341.70917
-  tps: 1030.15571
+  dps: 1339.61467
+  tps: 1028.48013
   hps: 3.17467
  }
 }

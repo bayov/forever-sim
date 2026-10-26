@@ -248,7 +248,7 @@ var ClassBaseStats = map[proto.Class]stats.Stats{
 		stats.Spirit:            70,
 		stats.Stamina:           90,
 		stats.AttackPower:       60*2 - 20,
-		stats.RangedAttackPower: 60*2 - 20,
+		stats.RangedAttackPower: 60*2 - 10, // ForeverHunterBaseRAP
 	},
 	proto.Class_ClassRogue: {
 		stats.Health:      1523,
@@ -382,9 +382,16 @@ func getBaseStatsCombo(r proto.Race, c proto.Class, level int32) stats.Stats {
 		base[stats.AttackPower] = ClassBaseStats[c][stats.AttackPower]
 	}
 	if c == proto.Class_ClassHunter {
-		base[stats.RangedAttackPower] = base[stats.AttackPower]
+		base[stats.RangedAttackPower] = ForeverHunterBaseRAP(level)
 	}
 	return base.Add(ClassBaseCrit[c])
+}
+
+// The hunter's base ranged attack power, level × 2 − 10 before 2 a point of Agility: 10 above its melee
+// attack power. The report assumes wowsims/forever's value (82f5319ca), which cites no sheet; Classic's
+// was level × 2 − 20, like the melee.
+func ForeverHunterBaseRAP(level int32) float64 {
+	return 2*float64(level) - 10
 }
 
 // The level 60 tables above are the ones the sim was checked against, so a lower level

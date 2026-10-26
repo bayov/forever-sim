@@ -321,11 +321,14 @@ func TestSniperShotMarksmanshipTalents(t *testing.T) {
 	}
 }
 
-// TestMultiShotInstant checks that Multi-Shot has no cast since client 1.60.1.70425 (SpellMisc
-// casting time index 3, 500 ms, became 1, none).
-func TestMultiShotInstant(t *testing.T) {
+// TestMultiShotCast checks that Multi-Shot has the 0.5 sec cast the report assumes (wowsims/forever
+// 3fe8cfe64; client 1.60.1.70425's casting time index says none) and keeps the Auto Shot timer.
+func TestMultiShotCast(t *testing.T) {
 	_, hunter := newHunterSim(t, "", &proto.Debuffs{})
-	if got := hunter.MultiShot.DefaultCast.CastTime; got != 0 {
-		t.Errorf("Multi-Shot cast time %v, want 0", got)
+	if got := hunter.MultiShot.DefaultCast.CastTime; got != 500*time.Millisecond {
+		t.Errorf("Multi-Shot cast time %v, want 500ms", got)
+	}
+	if !hunter.MultiShot.Flags.Matches(core.SpellFlagKeepsSwingTimer) {
+		t.Errorf("Multi-Shot resets the Auto Shot timer, want it kept")
 	}
 }

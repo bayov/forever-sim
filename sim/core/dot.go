@@ -49,6 +49,12 @@ type Dot struct {
 	SnapshotCritChance         float64
 	SnapshotAttackerMultiplier float64
 
+	// What Snapshot read: the bonus damage, the attacker and dot multiplier, and the crit chance. Under
+	// Forever a spell dot's ticks move from these to the values at the tick (liveTick).
+	snapBonus float64
+	snapMult  float64
+	snapCrit  float64
+
 	tickAction *PendingAction
 	tickPeriod time.Duration
 
@@ -275,6 +281,7 @@ func newDot(config Dot) *Dot {
 		sim.AddPendingAction(dot.tickAction)
 		if dot.isChanneled {
 			dot.Spell.Unit.ChanneledDot = dot
+			dot.Spell.Unit.holdFiveSecondRule(sim, dot)
 		}
 	})
 	dot.Aura.ApplyOnExpire(func(aura *Aura, sim *Simulation) {
@@ -284,6 +291,7 @@ func newDot(config Dot) *Dot {
 		}
 		if dot.isChanneled {
 			dot.Spell.Unit.ChanneledDot = nil
+			dot.Spell.Unit.releaseFiveSecondRule(sim, dot)
 			dot.Spell.Unit.Rotation.interruptChannelIf = nil
 			dot.Spell.Unit.Rotation.allowChannelRecastOnInterrupt = false
 			dot.Spell.Unit.wand.channelEnded(sim, dot)

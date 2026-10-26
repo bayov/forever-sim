@@ -76,12 +76,12 @@ func (druid *Druid) registerFerociousBiteSpell() {
 }
 
 func (druid *Druid) newFerociousBiteSpellConfig(rank FerociousBiteRankInfo) core.SpellConfig {
-	// Under Forever a Bite that misses spends its 35 Energy and all the extra Energy and gives
-	// nothing back, and the combo points stay (wowsims/forever c742250b22, on a beta report in
-	// their PR #149 that "a failed Bite leaves zero energy"). The rows carry
-	// ATTR_EX_1_DISCOUNT_POWER_ON_MISS (0x8000000, 22568 to 31018), as Rip's do, but the game
-	// gives no refund for it on Bite.
-	spendExtraOnMiss := druid.Env.IsForever()
+	// A Bite that misses, is dodged or parried spends its 35 Energy and keeps the extra Energy and the
+	// combo points, as wowsims/forever has it since c91498c01 ("in game, a missed... Ferocious Bite costs
+	// its base energy and keeps its extra energy"). That reverses their earlier c742250b22, on a beta
+	// report in their PR #149 that "a failed Bite leaves zero energy", which the report no longer assumes.
+	// The rows carry ATTR_EX_1_DISCOUNT_POWER_ON_MISS (0x8000000, 22568 to 31018), as Rip's do, but the
+	// game gives no refund of the 35 for it on Bite.
 
 	return core.SpellConfig{
 		SpellCode:   SpellCode_DruidFerociousBite,
@@ -123,10 +123,8 @@ func (druid *Druid) newFerociousBiteSpellConfig(rank FerociousBiteRankInfo) core
 			result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 			spell.DamageMultiplier /= rendAndTear
 
-			if result.Landed() || spendExtraOnMiss {
-				druid.SpendEnergy(sim, excessEnergy, spell.EnergyMetrics())
-			}
 			if result.Landed() {
+				druid.SpendEnergy(sim, excessEnergy, spell.EnergyMetrics())
 				druid.SpendComboPoints(sim, spell)
 			}
 		},

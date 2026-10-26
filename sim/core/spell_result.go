@@ -390,7 +390,34 @@ func (spell *Spell) CalcPeriodicDamage(sim *Simulation, target *Unit, baseDamage
 	return spell.calcDamageInternal(sim, target, baseDamage, attackerMultiplier, true, outcomeApplier)
 }
 func (dot *Dot) CalcSnapshotDamage(sim *Simulation, target *Unit, outcomeApplier OutcomeApplier) *SpellResult {
+	if base, mult, crit, ok := dot.liveTick(sim, target); ok {
+		snapCrit := dot.SnapshotCritChance
+		dot.SnapshotCritChance = crit
+		result := dot.Spell.calcDamageInternal(sim, target, base, mult, true, outcomeApplier)
+		dot.SnapshotCritChance = snapCrit
+		return result
+	}
 	return dot.Spell.calcDamageInternal(sim, target, dot.SnapshotBaseDamage, dot.SnapshotAttackerMultiplier, true, outcomeApplier)
+}
+
+// Under Forever periodic damage doesn't snapshot: a spell dot's tick reads spell power, the damage
+// multipliers and crit chance when it lands, as wowsims/forever's dots do (36cfc5832, from a Rend log; the
+// bleeds tick live in their own code). The tick keeps what its spell set in the snapshot and moves it by
+// what changed since Snapshot read those values, so a spell that sets its own snapshot base each tick
+// (Consecration, Serpent Sting) keeps working. A dot whose snapshot Snapshot didn't take (Bane of Agony,
+// Ignite) stays as it is.
+func (dot *Dot) liveTick(sim *Simulation, target *Unit) (base, mult, crit float64, ok bool) {
+	if !sim.IsForever() || dot.snapMult == 0 || dot.Spell.SchoolIndex == stats.SchoolIndexPhysical || dot.Spell.Flags.Matches(SpellFlagHelpful) {
+		return 0, 0, 0, false
+	}
+	base = dot.SnapshotBaseDamage
+	if dot.BonusCoefficient > 0 {
+		base += dot.BonusCoefficient * (dot.Spell.GetBonusDamage(target) - dot.snapBonus)
+	}
+	attackTable := dot.Spell.Unit.AttackTables[target.UnitIndex][dot.Spell.CastType]
+	mult = dot.SnapshotAttackerMultiplier * dot.Spell.AttackerDamageMultiplier(attackTable, true) * dot.DamageMultiplier / dot.snapMult
+	crit = dot.SnapshotCritChance + dot.Spell.SpellCritChance(target) - dot.snapCrit
+	return base, mult, crit, true
 }
 
 func (dot *Dot) Snapshot(target *Unit, baseDamage float64, isRollover bool) {
@@ -414,6 +441,15 @@ func (dot *Dot) Snapshot(target *Unit, baseDamage float64, isRollover bool) {
 			dot.SnapshotCritChance = dot.Spell.PhysicalCritChance(attackTable)
 		} else {
 			dot.SnapshotCritChance = dot.Spell.SpellCritChance(target)
+		}
+
+		// What the ticks move from under Forever (liveTick).
+		dot.snapBonus, dot.snapMult, dot.snapCrit = 0, 0, dot.SnapshotCritChance
+		if !dot.Spell.Flags.Matches(SpellFlagHelpful) {
+			if dot.BonusCoefficient > 0 {
+				dot.snapBonus = dot.Spell.GetBonusDamage(target)
+			}
+			dot.snapMult = dot.SnapshotAttackerMultiplier
 		}
 	}
 }
