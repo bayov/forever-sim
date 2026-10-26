@@ -68,8 +68,8 @@
   "url": "https://forever-dps.pages.dev",
   "cloudflareProject": "forever-dps",
   "deploy": "make dps-report-deploy (tools/dps_report/deploy_pages.py)",
-  "publishedFrom": "78f528e (the full re-sim of ac7d27d, the Replay instants' animation, each spell shown once, and swing timers coloured by seal and queued Raptor Strike)",
+  "publishedFrom": "9db28b5 (the full re-sim of ac7d27d, plus Replay fixes: instants' animation, each spell once, seal-coloured swing timers, buff timers from their real expiry)",
   "date": "2026-10-26",
-  "deployId": "0230cc7d"
+  "deployId": "3f8215bc"
  }
 }
