@@ -243,6 +243,7 @@ export class SimLog {
 					StatChangeLog.parse(params) ||
 					ExtraAttackLog.parse(params) ||
 					CooldownLog.parse(params) ||
+					ChannelLog.parse(params) ||
 					MaxResourcesLog.parse(params) ||
 					TotemLog.parse(params) ||
 					Promise.resolve(new SimLog(params))
@@ -289,6 +290,10 @@ export class SimLog {
 
 	isExtraAttack(): this is ExtraAttackLog {
 		return this instanceof ExtraAttackLog;
+	}
+
+	isChannel(): this is ChannelLog {
+		return this instanceof ChannelLog;
 	}
 
 	isCooldown(): this is CooldownLog {
@@ -1040,6 +1045,64 @@ export class CastCompletedLog extends SimLog {
 		} else {
 			return null;
 		}
+	}
+}
+
+// A channel starting, pushed back or ending, like "Channeling {SpellID: 18807} until 7.500 (3
+// ticks every 1.000)", "Channel {SpellID: 18807} pushed back to end at 6.300" and "Channel
+// {SpellID: 18807} ended", for the channel bar of the Replay view.
+export class ChannelLog extends SimLog {
+	readonly event: 'start' | 'pushback' | 'end';
+	// When the channel ends, as of this line.
+	readonly endsAt: number;
+	// The ticks it would have with no pushback, and the time between them. Only a start has them.
+	readonly ticks: number;
+	readonly tickLength: number;
+
+	constructor(params: SimLogParams, event: 'start' | 'pushback' | 'end', endsAt: number, ticks: number, tickLength: number) {
+		super(params);
+		this.event = event;
+		this.endsAt = endsAt;
+		this.ticks = ticks;
+		this.tickLength = tickLength;
+	}
+
+	toHTML(includeTimestamp = true) {
+		return this.cacheOutput(includeTimestamp, () => (
+			<>
+				{this.toPrefix(includeTimestamp)}{' '}
+				{this.event == 'start' ? (
+					<>
+						Channeling {this.newActionIdLink(this.actionId!)} until {this.endsAt.toFixed(2)}s
+						{` (${this.ticks} ticks every ${this.tickLength.toFixed(2)}s).`}
+					</>
+				) : this.event == 'pushback' ? (
+					<>
+						Channel of {this.newActionIdLink(this.actionId!)} pushed back to end at {this.endsAt.toFixed(2)}s.
+					</>
+				) : (
+					<>Channel of {this.newActionIdLink(this.actionId!)} ended.</>
+				)}
+			</>
+		));
+	}
+
+	static parse(params: SimLogParams): Promise<ChannelLog> | null {
+		const match = params.raw.match(
+			/] Channel(?:ing)? ({.*?}) (?:until (-?\d+\.?\d*) \((\d+) ticks every (\d+\.?\d*)\)|pushed back to end at (-?\d+\.?\d*)|ended)/,
+		);
+		if (!match) return null;
+		return ActionId.fromLogString(match[1])
+			.fill(params.source?.index, params.source?.isPlayer)
+			.then(actionId => {
+				params.actionId = actionId;
+				if (match[2] !== undefined) {
+					return new ChannelLog(params, 'start', parseFloat(match[2]), parseInt(match[3]), parseFloat(match[4]));
+				} else if (match[5] !== undefined) {
+					return new ChannelLog(params, 'pushback', parseFloat(match[5]), 0, 0);
+				}
+				return new ChannelLog(params, 'end', params.timestamp, 0, 0);
+			});
 	}
 }
 

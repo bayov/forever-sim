@@ -17,11 +17,13 @@ import {
 	activeAuraAt,
 	AuraTrack,
 	buildReplayModel,
+	channelAt,
 	cooldownAt,
 	lastIndexAtOrBefore,
 	placeCrits,
 	ReplayBar,
 	ReplayCast,
+	ReplayChannel,
 	ReplayEnemy,
 	ReplayModel,
 	SCROLL_LIFE,
@@ -220,10 +222,11 @@ interface UnitFrameRefs {
 interface CastBarRefs {
 	root: HTMLElement;
 	fill: HTMLElement;
+	ticks: HTMLElement;
 	icon: HTMLElement;
 	name: HTMLElement;
 	time: HTMLElement;
-	shown: CastLog | null;
+	shown: CastLog | ReplayChannel | null;
 }
 
 const makeCastBar = (className: string): CastBarRefs => {
@@ -232,6 +235,7 @@ const makeCastBar = (className: string): CastBarRefs => {
 			<div className="replay-castbar-icon" />
 			<div className="replay-castbar-bar">
 				<div className="replay-castbar-fill" />
+				<div className="replay-castbar-ticks" />
 				<span className="replay-castbar-name" />
 				<span className="replay-castbar-time" />
 			</div>
@@ -240,6 +244,7 @@ const makeCastBar = (className: string): CastBarRefs => {
 	return {
 		root,
 		fill: root.querySelector('.replay-castbar-fill')!,
+		ticks: root.querySelector('.replay-castbar-ticks')!,
 		icon: root.querySelector('.replay-castbar-icon')!,
 		name: root.querySelector('.replay-castbar-name')!,
 		time: root.querySelector('.replay-castbar-time')!,
@@ -257,14 +262,38 @@ const castAt = (casts: Array<CastLog>, starts: Array<number>, time: number): Cas
 	return null;
 };
 
-const updateCastBar = (bar: CastBarRefs, cast: CastLog | null, time: number) => {
-	bar.root.classList.toggle('active', !!cast);
-	if (!cast) return;
-	if (bar.shown != cast) {
-		bar.shown = cast;
-		setIcon(bar.icon, cast.actionId!);
-		setText(bar.name, cast.actionId!.name);
+// A cast fills the bar as it goes. A channel empties it, with a marker where each tick lands,
+// like EllesmereUI's: tick k lands when the bar is down to 1 - k / ticks. The last one lands as it
+// empties, so it has no marker. A pushback empties the bar some at once, past the ticks it cut.
+const updateCastBar = (bar: CastBarRefs, shown: CastLog | ReplayChannel | null, time: number) => {
+	bar.root.classList.toggle('active', !!shown);
+	if (!shown) return;
+	const channel = shown instanceof CastLog ? null : shown;
+	if (bar.shown != shown) {
+		bar.shown = shown;
+		const actionId = channel ? channel.actionId : (shown as CastLog).actionId!;
+		setIcon(bar.icon, actionId);
+		setText(bar.name, actionId.name);
+		const duration = channel ? channel.fullEnd - channel.start : 0;
+		const ticks = channel ? Array.from({ length: Math.max(0, channel.ticks - 1) }, (_, i) => 1 - ((i + 1) * channel.tickLength) / duration) : [];
+		bar.ticks.replaceChildren(
+			...ticks
+				.filter(at => at > 0.001 && at < 0.999)
+				.map(at => {
+					const tick = (<div className="replay-castbar-tick" />) as HTMLElement;
+					tick.style.left = `${(at * 100).toFixed(3)}%`;
+					return tick;
+				}),
+		);
 	}
+	if (channel) {
+		const duration = channel.fullEnd - channel.start;
+		const remaining = Math.max(0, channel.endsAt.at(time) - time);
+		setWidth(bar.fill, remaining / duration);
+		setText(bar.time, `${remaining.toFixed(1)} / ${duration.toFixed(1)}`);
+		return;
+	}
+	const cast = shown as CastLog;
 	const elapsed = time - cast.timestamp;
 	setWidth(bar.fill, elapsed / cast.castTime);
 	setText(bar.time, `${elapsed.toFixed(1)} / ${cast.castTime.toFixed(1)}`);
@@ -1508,9 +1537,14 @@ export class Replay extends ResultComponent {
 		return { last: swings[i], next: swings[i + 1] };
 	}
 
-	// A cast bar's tooltip is the cast's, while the bar shows one.
+	// A cast bar's tooltip is the cast's, while the bar shows one. A channel's is the cast that
+	// started it.
 	private tipCastBar(bar: CastBarRefs) {
-		this.tip(bar.root, () => (bar.root.classList.contains('active') && bar.shown ? this.castTip(bar.shown) : null));
+		this.tip(bar.root, () => {
+			if (!bar.root.classList.contains('active') || !bar.shown) return null;
+			const cast = bar.shown instanceof CastLog ? bar.shown : bar.shown.cast;
+			return cast ? this.castTip(cast) : null;
+		});
 	}
 
 	private buildPlayerFrame(model: ReplayModel) {
@@ -1702,7 +1736,7 @@ export class Replay extends ResultComponent {
 		// The cast we started when we died in a leveling session never ends in the log, so the
 		// corpse run has no cast bar.
 		const dead = model.leveling?.stateAt(time) == 'dead';
-		updateCastBar(this.playerCastBar, dead ? null : castAt(this.playerCasts, model.castStarts, time), time);
+		updateCastBar(this.playerCastBar, dead ? null : castAt(this.playerCasts, model.castStarts, time) ?? channelAt(model.channels, time), time);
 	}
 
 	private drawEnemies(model: ReplayModel, time: number) {
@@ -1725,7 +1759,7 @@ export class Replay extends ResultComponent {
 				this.tip(elem, this.auraTip(track, enemy.name));
 				this.searchable(elem, track.actionId.name);
 			});
-			updateCastBar(frame.castBar, castAt(enemy.casts, frame.starts, time), time);
+			updateCastBar(frame.castBar, castAt(enemy.casts, frame.starts, time) ?? channelAt(enemy.channels, time), time);
 		});
 	}
 

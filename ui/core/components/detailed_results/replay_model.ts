@@ -157,6 +157,27 @@ export interface ReplayCast {
 	searchText: string;
 }
 
+// A channel, like Mind Flay, from the lines the sim writes when it starts, is pushed back and
+// ends. Its bar empties as it goes, with a marker at each tick, like EllesmereUI's.
+export interface ReplayChannel {
+	actionId: ActionId;
+	start: number;
+	// When it would end with no pushback, which sets the bar's scale, and when it did end.
+	fullEnd: number;
+	end: number;
+	ticks: number;
+	tickLength: number;
+	// When it would end, by time, as pushbacks bring its end closer.
+	endsAt: Steps;
+	// The cast that started it, for the tooltip.
+	cast: CastLog | null;
+}
+
+export interface ReplayChannels {
+	channels: Array<ReplayChannel>;
+	starts: Array<number>;
+}
+
 export interface ReplayEnemy {
 	unit: UnitMetrics;
 	name: string;
@@ -166,6 +187,7 @@ export interface ReplayEnemy {
 	damageTaken: Steps;
 	debuffs: Array<AuraTrack>;
 	casts: Array<CastLog>;
+	channels: ReplayChannels;
 }
 
 // A totem in one of the shaman's four slots, from when it went down until it runs out or the
@@ -212,6 +234,7 @@ export interface ReplayModel {
 	// The casts of the action history strip, without the auto attacks and procs.
 	actions: Array<ReplayCast>;
 	actionStarts: Array<number>;
+	channels: ReplayChannels;
 	enemies: Array<ReplayEnemy>;
 	// The enemy the player hit last with a single target ability, by time.
 	focus: Steps;
@@ -464,6 +487,7 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 				end,
 			),
 			casts: target.castLogs.filter(log => log.castTime > 0).sort((a, b) => a.timestamp - b.timestamp),
+			channels: buildChannels(target.logs, target.castLogs),
 		};
 	});
 
@@ -507,6 +531,7 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 		castStarts: casts.map(cast => cast.log.timestamp),
 		actions,
 		actionStarts: actions.map(cast => cast.log.timestamp),
+		channels: buildChannels(player.logs, castLogs),
 		enemies,
 		focus,
 		mainHandSwings: castLogs.filter(log => isAutoAttack(log.actionId!, 1) || isNextSwingHit(log.actionId!)).map(log => log.timestamp),
@@ -673,6 +698,40 @@ const distinctTargets = (logs: Array<SimLog>): Array<Entity> => {
 		if (log.target?.isTarget && !found.some(target => target.equals(log.target!))) found.push(log.target);
 	});
 	return found;
+};
+
+const buildChannels = (logs: Array<SimLog>, casts: Array<CastLog>): ReplayChannels => {
+	const channels: Array<ReplayChannel> = [];
+	let open: ReplayChannel | null = null;
+	logs.forEach(log => {
+		if (!log.isChannel()) return;
+		if (log.event == 'start') {
+			const cast = casts.find(cast => Math.abs(cast.timestamp - log.timestamp) < EPSILON && cast.actionId!.equals(log.actionId!)) ?? null;
+			open = {
+				actionId: log.actionId!,
+				start: log.timestamp,
+				fullEnd: log.endsAt,
+				end: log.endsAt,
+				ticks: log.ticks,
+				tickLength: log.tickLength,
+				endsAt: new Steps(log.endsAt),
+				cast,
+			};
+			channels.push(open);
+		} else if (open && open.actionId.equals(log.actionId!)) {
+			open.end = Math.min(open.end, log.endsAt);
+			open.endsAt.push(log.timestamp, log.endsAt);
+			if (log.event == 'end') open = null;
+		}
+	});
+	channels.sort((a, b) => a.start - b.start);
+	return { channels, starts: channels.map(channel => channel.start) };
+};
+
+// The channel going on at this time.
+export const channelAt = ({ channels, starts }: ReplayChannels, time: number): ReplayChannel | null => {
+	const i = lastIndexAtOrBefore(starts, time);
+	return i >= 0 && time < channels[i].end ? channels[i] : null;
 };
 
 const toReplayCast = (log: CastLog): ReplayCast => {
