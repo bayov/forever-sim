@@ -21,6 +21,8 @@ value keep their knobs (warr_rage_s at master's flat 0, hunter_crit_per_agi, hun
 scales, priest_sf_tick_crit, lock_bod_coef, pal_hs_flat31 / pal_cons31, warr_rend_ap, hunter_cobra_damage,
 bleed_tick_crit, warr_dt_rage_k) so a setting can come back without a rebase, and hunter_hm60 is set by
 no setting now that Hunter's Mark is settled at 143.
+2026-10-26: haste_gcd is new (1: cast speed shortens a spell's GCD, down to 1s, as in wowsims/forever's
+hastedGCD; physical abilities keep theirs, as there).
 
 diff --git a/sim/core/assumptions.go b/sim/core/assumptions.go
 new file mode 100644
@@ -118,6 +120,22 @@ index 282ba6c461..7d6b3e7f4a 100644
  			if blocked != nil && blocked() {
  				return
  			}
+diff --git a/sim/core/cast.go b/sim/core/cast.go
+index 1b1f185002..789afe327c 100644
+--- a/sim/core/cast.go
++++ b/sim/core/cast.go
+@@ -262,6 +262,11 @@ func (spell *Spell) makeCastFunc(config CastConfig) CastSuccessFunc {
+ 			// Vanilla has no natural GCD reduction besides abilities with 1s GCDs
+ 			// spell.CurCast.GCD = spell.Unit.ApplyFlatCastSpeed(spell.CurCast.GCD)
+ 			spell.CurCast.CastTime = config.CastTime(spell)
++			// haste_gcd=1: cast speed shortens a spell's GCD too, as in wowsims/forever (cast.go hastedGCD), down to the
++			// 1s minimum EffectiveTime keeps. Physical abilities keep theirs, as there (spelldata/resolve_spell.go Cast).
++			if v, ok := AssumeOk("haste_gcd"); ok && v > 0 && spell.CurCast.GCD > 0 && spell.SpellSchool != SpellSchoolPhysical {
++				spell.CurCast.GCD = spell.Unit.ApplyCastSpeed(spell.CurCast.GCD).Round(time.Millisecond)
++			}
+ 		}
+ 
+ 		if config.CD.Timer != nil {
 diff --git a/sim/core/debuffs.go b/sim/core/debuffs.go
 index b5c80bb5c1..2e11aa9233 100644
 --- a/sim/core/debuffs.go
