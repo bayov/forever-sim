@@ -68,8 +68,8 @@
   "url": "https://forever-dps.pages.dev",
   "cloudflareProject": "forever-dps",
   "deploy": "make dps-report-deploy (tools/dps_report/deploy_pages.py)",
-  "publishedFrom": "b9fed7d (full re-sim of all 57 builds on 32a6848: Multi-Shot cast, live DoT ticks, hunter RAP 110, Bite energy, channel regen; replays from 3a6cd05 with channel bars; provenance at 3a6cd05)",
+  "publishedFrom": "f7e99e1 (the full re-sim of ac7d27d, plus the Replay instants' new fade and zoom)",
   "date": "2026-10-26",
-  "deployId": "ca665680"
+  "deployId": "f2152dff"
  }
 }
