@@ -84,6 +84,14 @@ const HISTORY_LABEL_EVERY = 5;
 const HISTORY_SHIFT = 0.15;
 // A cooldown icon lights up like a pressed button for this long after we use it.
 const PRESS_TIME = 0.25;
+// An instant pops up where the cast bar is, a bit larger than the buttons, settles a moment, then
+// grows and fades over this many seconds, like a cast bar that filled in no time. A few in a row
+// ripple out one after another.
+const INSTANT_LIFE = 0.9;
+const INSTANT_POPS = 4;
+// Instants pressed at the same moment, like a trinket and a racial, sit side by side this far
+// apart, in pixels.
+const INSTANT_SPACING = 64;
 // A buff's countdown turns orange in its last seconds, like the Bayov pack's expiring alert.
 const EXPIRING = 3;
 
@@ -198,6 +206,18 @@ const updateIcon = (elem: HTMLElement, elapsed: number | null, time: string, sta
 	elem.classList.toggle('swiping', elapsed != null);
 	setText(elem.querySelector('.replay-icon-time')!, time);
 	setText(elem.querySelector('.replay-icon-stacks')!, stacks > 1 ? String(stacks) : '');
+};
+
+// The size and opacity of an instant's pop, this many seconds after we pressed it.
+const instantPop = (age: number): { scale: number; opacity: number } => {
+	const p = age / INSTANT_LIFE;
+	if (p < 0.12) {
+		const k = p / 0.12;
+		return { scale: 0.6 + 0.75 * (1 - (1 - k) * (1 - k)), opacity: k };
+	}
+	if (p < 0.45) return { scale: 1.35 - 0.1 * ((p - 0.12) / 0.33), opacity: 1 };
+	const k = (p - 0.45) / 0.55;
+	return { scale: 1.25 + 0.6 * k, opacity: 1 - k };
 };
 
 const setText = (elem: Element, text: string) => {
@@ -412,6 +432,14 @@ export class Replay extends ResultComponent {
 		pips: Array<HTMLElement>;
 	} | null = null;
 	private playerCastBar = makeCastBar('player');
+	private instantPops = Array.from({ length: INSTANT_POPS }, () => {
+		const elem = (
+			<div className="replay-instant">
+				<div className="replay-icon-img" />
+			</div>
+		) as HTMLElement;
+		return { elem, img: elem.firstElementChild as HTMLElement, shown: null as ReplayCast | null };
+	});
 	private playerCasts: Array<CastLog> = [];
 	private enemyFrames: Array<UnitFrameRefs & { enemy: ReplayEnemy; starts: Array<number> }> = [];
 	private cooldownViews: Array<{ cooldown: TrackedCooldown; elem: HTMLElement }> = [];
@@ -546,7 +574,10 @@ export class Replay extends ResultComponent {
 							<div ref={refs.resources} className="replay-resources" />
 							<div ref={refs.coreCooldowns} className="replay-cooldowns core" />
 							<div ref={refs.majorCooldowns} className="replay-cooldowns major" />
-							{this.playerCastBar.root}
+							<div className="replay-cast-slot">
+								{this.playerCastBar.root}
+								<div className="replay-instants">{this.instantPops.map(pop => pop.elem)}</div>
+							</div>
 						</div>
 						<div ref={refs.enemyCol} className="replay-col replay-col-enemies" />
 					</div>
@@ -1737,6 +1768,33 @@ export class Replay extends ResultComponent {
 		// corpse run has no cast bar.
 		const dead = model.leveling?.stateAt(time) == 'dead';
 		updateCastBar(this.playerCastBar, dead ? null : castAt(this.playerCasts, model.castStarts, time) ?? channelAt(model.channels, time), time);
+		this.drawInstants(model, time);
+	}
+
+	// The instants pressed in the last moment, oldest first so the newest pops up on top.
+	private drawInstants(model: ReplayModel, time: number) {
+		const shown: Array<ReplayCast> = [];
+		const last = lastIndexAtOrBefore(model.instantStarts, time);
+		for (let i = last; i >= 0 && shown.length < INSTANT_POPS && time - model.instantStarts[i] < INSTANT_LIFE; i--) {
+			shown.unshift(model.instants[i]);
+		}
+		this.instantPops.forEach((pop, i) => {
+			const cast = shown[i];
+			if (!cast) {
+				pop.elem.style.opacity = '0';
+				pop.shown = null;
+				return;
+			}
+			if (pop.shown != cast) {
+				pop.shown = cast;
+				setIcon(pop.img, cast.log.actionId!);
+			}
+			const together = shown.filter(other => Math.abs(other.log.timestamp - cast.log.timestamp) < 0.001);
+			const offset = (together.indexOf(cast) - (together.length - 1) / 2) * INSTANT_SPACING;
+			const { scale, opacity } = instantPop(time - cast.log.timestamp);
+			pop.elem.style.opacity = opacity.toFixed(3);
+			pop.elem.style.transform = `translateX(${offset}px) scale(${scale.toFixed(3)})`;
+		});
 	}
 
 	private drawEnemies(model: ReplayModel, time: number) {

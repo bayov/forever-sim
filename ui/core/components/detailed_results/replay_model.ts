@@ -235,6 +235,9 @@ export interface ReplayModel {
 	actions: Array<ReplayCast>;
 	actionStarts: Array<number>;
 	channels: ReplayChannels;
+	// The abilities we pressed that have no cast bar: no cast time and no channel.
+	instants: Array<ReplayCast>;
+	instantStarts: Array<number>;
 	enemies: Array<ReplayEnemy>;
 	// The enemy the player hit last with a single target ability, by time.
 	focus: Steps;
@@ -448,6 +451,10 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 		);
 	});
 
+	const channels = buildChannels(player.logs, castLogs);
+	const channelKeys = new Set(channels.channels.map(channel => `${channel.start.toFixed(3)} ${channel.actionId}`));
+	const instants = actions.filter(cast => cast.log.castTime == 0 && !channelKeys.has(`${cast.log.timestamp.toFixed(3)} ${cast.log.actionId}`));
+
 	// The enemies. The sim ends the fight at a set time unless the encounter uses health, and
 	// then the execute phases follow the time left. So the health bars follow it too.
 	// A leveling session is a timed fight too, but its mobs have health of their own.
@@ -531,7 +538,9 @@ export const buildReplayModel = (result: SimResult, filter: SimResultFilter): Re
 		castStarts: casts.map(cast => cast.log.timestamp),
 		actions,
 		actionStarts: actions.map(cast => cast.log.timestamp),
-		channels: buildChannels(player.logs, castLogs),
+		channels,
+		instants,
+		instantStarts: instants.map(cast => cast.log.timestamp),
 		enemies,
 		focus,
 		mainHandSwings: castLogs.filter(log => isAutoAttack(log.actionId!, 1) || isNextSwingHit(log.actionId!)).map(log => log.timestamp),
