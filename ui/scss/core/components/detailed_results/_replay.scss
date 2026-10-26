@@ -899,8 +899,8 @@
 	opacity: 0;
 }
 
-// A channel's tick markers, over the fill and under the texts. They're dark like EllesmereUI's, so
-// they show on the fill where the ticks are still to come.
+// A channel's tick markers, over the fill and under the texts. They're light, so they show on the
+// fill where the ticks are still to come and on the empty bar where they're done.
 .replay-castbar-ticks {
 	position: absolute;
 	inset: 0;
@@ -912,7 +912,7 @@
 	bottom: 0;
 	width: 2px;
 	margin-left: -1px;
-	background: rgba(0, 0, 0, 0.85);
+	background: rgba(255, 255, 255, 0.75);
 }
 
 .replay-castbar-name,
