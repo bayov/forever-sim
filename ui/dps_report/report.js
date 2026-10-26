@@ -2573,15 +2573,9 @@ export function startReport(dash, events) {
     }
     return [...groups.values()].map((g) => ({ ...g, n: g.names.length || g.ids.length, short: SPEC_SHORT[g.spec] || g.spec }));
   };
-  // A reference row: the only value considered, which the presets use, so there is nothing to compare or pick.
+  // A one-value row: the only value considered, which the presets use, so there is nothing to compare or pick. Its
+  // short line is the answer, so the row is only the question, the answer and More details.
   const asmRef = (a) => arr(a.settings).length === 1;
-  const REF_CAP = 'No other value to try.';
-  const asmRefLine = (a) => arr(a.settings).map((x) => {
-    const p = el('p', { class: 'fv-asm-ref' }, el('b', { text: x.label }), ...asmMarks(a, x),
-      x.value && x.value !== x.label ? el('span', { text: ` · ${x.value}` }) : null);
-    if (x.rationale) asmHover(p, x.label, () => asmSetTip(a, x));
-    return p;
-  });
   // The presets' setting is the default: what the ranking uses, and the expected value since the 2026-10-15 rulings.
   const asmMarks = (a, x) => [x.id === a.defaultSetting ? el('span', { class: 'def', text: ' · default' }) : null];
   // One table per assumption. Each cell answers "if the truth is this column, this row's spec changes by this much at
@@ -2615,7 +2609,7 @@ export function startReport(dash, events) {
     return el('div', { class: 'fv-asm-mx' }, el('table', { class: 'fv-asm-tbl' }, el('thead', {}, head), body));
   };
   // Pointing at an assumption shows where it comes from, and its full description when the panel shows a short one.
-  // Each setting explains itself on its column head (or its line in a reference row), see asmSetTip.
+  // Each setting explains itself on its column head, see asmSetTip.
   const asmTip = (a) => [
     a.short && a.description && a.description !== a.short ? tipText(a.description) : null,
     a.source ? tipNote(`Source: ${a.source}`) : null,
@@ -2635,10 +2629,10 @@ export function startReport(dash, events) {
     }, { tap: opts.tap !== false });
   };
   // Everything about an assumption the row leaves out, behind "More details": the full description, each setting's
-  // value and reason, and the source.
+  // value and reason (a one-value row's one setting only repeats its answer, so it has none), and the source.
   const asmMore = (a) => el('details', { class: 'fv-asm-more' }, el('summary', { text: 'More details' }),
     a.description && a.description !== (a.short || a.description) ? el('p', { text: a.description }) : null,
-    el('div', { class: 'fv-asm-msets' }, ...arr(a.settings).map((x) => el('small', {}, el('b', { text: x.label }),
+    asmRef(a) ? null : el('div', { class: 'fv-asm-msets' }, ...arr(a.settings).map((x) => el('small', {}, el('b', { text: x.label }),
       ` (${x.id === a.defaultSetting ? 'default' : SEG_NAME[x.id] || x.id}): ${x.value && x.value !== x.label ? x.value + '. ' : ''}${x.rationale || ''}`))),
     a.source ? el('small', { class: 'fv-asm-src', text: `Source: ${a.source}` }) : null);
   const drawAsm = () => {
@@ -2661,12 +2655,12 @@ export function startReport(dash, events) {
           el('div', { class: 'fv-asm-lbl' }, el('b', { text: a.label }), live ? el('span', { class: `fv-asm-size ${sz}`, title: `Changes a preset's DPS by up to ${f1(imp)}% at 180s`, text: szText }) : null),
           el('p', { class: 'fv-asm-short', text: a.short || a.description }));
         asmHover(hd, a.label, () => asmTip(a));
-        d.append(el('div', { class: 'fv-asm-row', 'data-key': a.key, 'data-size': sz },
+        d.append(el('div', { class: 'fv-asm-row' + (ref ? ' one' : ''), 'data-key': a.key, 'data-size': sz },
           el('div', { class: 'fv-asm-txt' }, hd, asmMore(a)),
-          el('div', { class: 'fv-asm-body' }, ...(ref ? [...asmRefLine(a), el('p', { class: 'fv-asm-cap', text: REF_CAP })] : [
+          ref ? null : el('div', { class: 'fv-asm-body' },
             live ? el('p', { class: 'fv-asm-cap', text: picked ? 'DPS change at 180s, against the default' : ASM_CAP }) : null,
             asmMatrix(a, cur, (id) => asmPick(a, id)),
-            !live ? el('p', { class: 'fv-asm-cap', text: a.status === 'pending' ? 'Not simulated yet.' : 'No longer applies.' }) : null]))));
+            !live ? el('p', { class: 'fv-asm-cap', text: a.status === 'pending' ? 'Not simulated yet.' : 'No longer applies.' }) : null)));
       }
       return d;
     }));

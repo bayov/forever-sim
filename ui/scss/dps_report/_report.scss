@@ -3126,6 +3126,11 @@ div.tt-embed:not(.fv-tt) {
 		column-gap: var(--spacer-4);
 		align-items: start;
 	}
+
+	// A one-value row is only its question and answer, kept to a readable width.
+	&.one {
+		grid-template-columns: minmax(0, 48rem);
+	}
 }
 
 .fv-asm-txt {
@@ -3166,17 +3171,6 @@ div.tt-embed:not(.fv-tt) {
 
 	&.med {
 		color: var(--color-fg);
-	}
-}
-
-// A reference row's one setting, in place of the table: its label, the marks and its value.
-.fv-asm-ref {
-	margin: 0;
-	font-size: var(--cds-font-size-caption);
-	line-height: 1.4;
-
-	.def {
-		color: var(--color-ok);
 	}
 }
 
