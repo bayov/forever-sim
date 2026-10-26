@@ -412,7 +412,7 @@ for o in outs:
     seen = defaultdict(int)
     for a in mn['actions']:
         seen[nm(a['key'])] += 1
-    for a in sorted(mn['actions'], key=lambda a: -a['dps']):
+    for a in sorted(mn['actions'], key=lambda a: (-a['dps'], a['key'])):  # key breaks ties: the sim's action order varies
         if a['key'].startswith('oOtherAction') and a['dps'] == 0 and a['key'] not in ('oOtherActionAttack', 'oOtherActionShoot'):
             continue
         name = nm(a['key'])
@@ -476,7 +476,7 @@ for o in outs:
         seen2[r['ability']] += 1
         if seen2[r['ability']] > 1:
             r['ability'] += f" ({seen2[r['ability']]})"
-    for a in mn['auras']:
+    for a in sorted(mn['auras'], key=lambda a: (a['owner'], a['key'])):  # the sim's aura order varies run to run
         if a['uptime'] <= 0.05:
             continue
         nm(a['key'])

@@ -3,7 +3,7 @@
   "title": "Damage by ability",
   "description": "Per preset and ability (pets included): DPS, share of damage, casts, hits, crits, ticks, average hit and crit, misses, dodges and glances per fight.",
   "updated": {
-   "at": "2026-10-26T17:27:22.925Z",
+   "at": "2026-10-26T17:36:26.325Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -11,7 +11,7 @@
   "title": "Buff and debuff uptime",
   "description": "Per preset, the average share of the fight each aura is up on the player or the boss, and how often it is applied.",
   "updated": {
-   "at": "2026-10-26T17:27:22.925Z",
+   "at": "2026-10-26T17:36:26.325Z",
    "by": "Claude (forever-sim)"
   }
  },

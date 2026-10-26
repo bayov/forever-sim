@@ -94,6 +94,18 @@ def expected(bid):
     return want, rv, asm
 
 
+def canon(x):
+    """The sim lists actions (and their targets) in an order that varies run to run: sort every list of keyed rows."""
+    if isinstance(x, dict):
+        return {k: canon(v) for k, v in x.items()}
+    if isinstance(x, list):
+        x = [canon(v) for v in x]
+        if x and all(isinstance(v, dict) and 'key' in v for v in x):
+            x.sort(key=lambda v: json.dumps(v['key'], sort_keys=True))
+        return x
+    return x
+
+
 def pack(ids, commit):
     rv, asm = lines_by_build(RV, RV_KEY), lines_by_build(ASM, ASM_KEY)
     abl = json.load(open(ABL)) if os.path.exists(ABL) else {'builds': {}}
@@ -111,6 +123,8 @@ def pack(ids, commit):
                 data = open(p, 'rb').read()
                 if d == 'names':  # patch 0001 appends one copy per sim split, in the order the splits finish
                     data = ''.join(sorted(set(data.decode().splitlines(keepends=True)))).encode()
+                elif d == 'out':
+                    data = json.dumps(canon(json.loads(data)), separators=(',', ':')).encode()
                 members[f'{d}/{bid}{ext}'] = data
             elif want[d]:
                 problems.append(f'{bid}: no {d}/{bid}{ext}')
@@ -303,7 +317,7 @@ def copy():
 if __name__ == '__main__':
     cmd, args = (sys.argv[1], sys.argv[2:]) if len(sys.argv) > 1 else ('', [])
     if cmd == 'pack':
-        commit = os.environ.get('SIM_COMMIT') or subprocess.run(['git', 'rev-parse', 'HEAD'], cwd=ROOT, capture_output=True, text=True).stdout.strip()
+        commit = subprocess.run(['git', 'rev-parse', os.environ.get('SIM_COMMIT') or 'HEAD'], cwd=ROOT, capture_output=True, text=True, check=True).stdout.strip()
         pack(args or sorted(os.path.basename(p)[:-5] for p in glob.glob(os.path.join(D, 'out', '*.json'))), commit)
     elif cmd == 'unpack':
         unpack()
