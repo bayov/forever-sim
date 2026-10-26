@@ -18,9 +18,10 @@ import os
 
 ROGUE = ['combat-daggers', 'seal-fate-daggers', 'combat-swords', 'seal-fate-swords', 'mutilate', 'subtlety']
 R = lambda xs: [f'rogue__{x}' for x in xs] + [f'rogue__{x}-humanoid' for x in xs]
-PAL_ALL = ['paladin__level_60', 'paladin__level_60_sub_holy', 'paladin__level_60_shock',
+PAL_ALL = ['paladin__level_60', 'paladin__level_60_sub_holy', 'paladin__level_60_shock', 'paladin__level_60_shock_ret',
            'paladin__level_60_sub_holy_undead', 'paladin__level_60_shock_undead']
 PAL_TWIST = ['paladin__level_60', 'paladin__level_60_sub_holy', 'paladin__level_60_sub_holy_undead']
+PAL_SOC = PAL_TWIST + ['paladin__level_60_shock_ret']  # every preset that keeps Seal of Command up or twists to it
 LOCK = ['warlock__demonology', 'warlock__destruction', 'warlock__affliction', 'warlock__destruction_fire']
 ENH = ['shaman__enhancement-level60', 'shaman__enhancement-imp-gw', 'shaman__enhancement-water-shield', 'shaman__enhancement-mana-tide']
 ELE = ['shaman__elemental-level60', 'shaman__elemental-level60-mana-tide']
@@ -105,9 +106,9 @@ A = [
       default='expected', expected='expected'),
  dict(key='pal_soc_wf', cls='Paladin', label='Can Seal of Command hits proc Windfury?',
       short="Also Twist of Light's Echo of Command. Untested, the totem is past the beta cap.",
-      desc="Also Twist of Light's Echo of Command. Proc rules live on the server, and only the twisting presets use Seal of Command.",
+      desc="Also Twist of Light's Echo of Command. Proc rules live on the server, and only the twisting presets and Shock (Ret side) use Seal of Command.",
       src="The sim's melee proc rules. No beta log.",
-      builds=PAL_TWIST,
+      builds=PAL_SOC,
       settings=[S('low', 'No', "seal hits never proc the totem", 'If the server treats seal hits as procs.', {'pal_soc_wf': 0}),
                 S('expected', 'Yes', 'seal hits can proc the totem', "The sim's melee proc rules.")],
       default='expected', expected='expected'),
@@ -115,7 +116,7 @@ A = [
       short='The server sets it. The client gives only a 1s cooldown.',
       desc="The client gives the aura a 100% chance and no procs per minute, so the server decides, as in Classic. The presets use Classic's 7 a minute.",
       src="Forever client 70425 (auras 20375, 20915 to 20920). Classic's 7 a minute.",
-      builds=PAL_TWIST,
+      builds=PAL_SOC,
       settings=[S('low', '5 a minute', 'Seal of Command procs 5 times a minute', 'Two below Classic.', {'pal_soc_ppm': 5}),
                 S('expected', '7 a minute (Classic)', 'Seal of Command procs 7 times a minute', 'Classic and SoD.'),
                 S('high', '9 a minute', 'Seal of Command procs 9 times a minute', 'Two above Classic.', {'pal_soc_ppm': 9})],
@@ -294,7 +295,7 @@ A = [
       short="Classic keeps the GCD at 1.5s. Later expansions let spell haste shorten it.",
       desc="Classic keeps the GCD at 1.5s whatever your haste, and the presets do too. wowsims/forever shortens a spell's GCD by haste, down to 1s, as The Burning Crusade did, while physical abilities keep 1.5s. That rule came with its Burning Crusade code, not from a Forever test. Forever's Nature's Grace takes 10% off Balance spells' GCD as an effect of its own, which hints that haste alone doesn't.",
       src="wowsims/forever sim/core/cast.go (hastedGCD) and spelldata/resolve_spell.go (physical abilities ignore haste), from its 2022 Burning Crusade code. Forever client (Nature's Grace, spell 16886).",
-      builds=['druid__balance', 'druid__balance-wrath', 'mage__frost', 'paladin__level_60', 'paladin__level_60_shock', 'paladin__level_60_shock_undead', 'paladin__level_60_sub_holy', 'paladin__level_60_sub_holy_undead', 'shaman__elemental-level60', 'shaman__elemental-level60-mana-tide', 'shaman__enhancement-imp-gw', 'shaman__enhancement-level60', 'shaman__enhancement-mana-tide', 'shaman__enhancement-water-shield', 'warlock__affliction', 'warlock__demonology', 'warlock__destruction'],
+      builds=['druid__balance', 'druid__balance-wrath', 'mage__frost', 'paladin__level_60', 'paladin__level_60_shock', 'paladin__level_60_shock_ret', 'paladin__level_60_shock_undead', 'paladin__level_60_sub_holy', 'paladin__level_60_sub_holy_undead', 'shaman__elemental-level60', 'shaman__elemental-level60-mana-tide', 'shaman__enhancement-imp-gw', 'shaman__enhancement-level60', 'shaman__enhancement-mana-tide', 'shaman__enhancement-water-shield', 'warlock__affliction', 'warlock__demonology', 'warlock__destruction'],
       settings=[S('expected', 'No (Classic)', 'the GCD stays 1.5s', "Classic's rule. Forever gives Nature's Grace a GCD cut of its own."),
                 S('high', 'Yes, for spells', "haste shortens a spell's GCD, down to 1s", "wowsims/forever's rule, from its Burning Crusade code.", {'haste_gcd': 1})],
       warn={b: GCD_ROT_WARN for b in PAL_ALL + ENH},

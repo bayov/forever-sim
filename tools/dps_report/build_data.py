@@ -28,6 +28,7 @@ def norm_key(k):
 
 
 DISPLAY = {'paladin__level_60': 'Ret twist', 'paladin__level_60_sub_holy': 'Ret sub-Holy', 'paladin__level_60_shock': 'Ret Shock',
+           'paladin__level_60_shock_ret': 'Ret Shock (Ret side)',
            'priest__shadow': 'Shadow', 'priest__shadow-holy': 'Shadow + Holy', 'priest__smite': 'Smite',
            'shaman__elemental-level60': 'Elemental', 'shaman__elemental-level60-mana-tide': 'Elemental Mana Tide',
            'shaman__enhancement-level60': 'Enhancement', 'shaman__enhancement-imp-gw': 'Enh Imp GW',

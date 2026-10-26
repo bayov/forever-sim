@@ -88,6 +88,15 @@ With no melee hit suppression under Forever the yellow cap against a level 63 bo
 - No filler explosive (standards 11, only when it gains): no explosive is 4.9 to 7.0 ahead of the Goblin Land Mine and the EZ-Thro Dark Bomb (the same 450 average Fire damage) at 180 sec, and 5.7 to 7.7 ahead of the EZ-Thro Thorium Grenade. Each one's 1 sec cast resets the swing. The Goblin Sapper Charge (no cast) stays, +4.4 to 5.1.
 - At 180 sec (seed 1, seed 1000003 within 0.7): sub Holy 949.1 (the class default), twist 945.1, Shock 869.0, sub Holy vs Undead 1050.8, Shock vs Undead 968.4.
 
+### Holy Shock on the Retribution side (2026-10-26)
+
+Blizzard's Paladin Class Deep Dive (15 October 2026, https://worldofwarcraft.blizzard.com/en-us/news/24302099) placed Holy Shock "as an alternative to Twist of Light ... allowing for players to opt out of Seal Twisting gameplay for a hybrid build utilizing Holy talents": Retribution can "seal twist with Twist of Light, or focus on Holy damage by hybridizing into Holy Shock". Holy Shock needs 20 Holy points, so Twist of Light (31 Retribution) is out of reach with it. Level 60 Shock was the deep Holy version (Light's Vigil, 31/0/20); Level 60 Shock (Ret side) is the Retribution one.
+
+- Talents: a search at 180 sec with Holy Shock, Champion of the Light and Pursuit of Justice pinned, from a 21/0/30 seed (872.1 before the search): `550030032011012--052150312012303` (23/0/28). Holy: Divine Strength 5, Divine Intellect 5, Improved Seals 3, Reverence 3, Purifying Power 2, Illumination 1, Divine Favor, Holy Shock, Consecrated Ground 2. Retribution: Benediction 5, Improved Judgement 2, Holy Conduit 1, Conviction 5, Sanctified Judgement 3, Seal of Command, Pursuit of Justice 2, Sacred Arbiter, Two-Handed Weapon Specialization 2, Vengeance 3, Champion of the Light 3.
+- Rotation (`level60_shock_ret`, the paladin_ret template searched over 120, 180 and 300 sec before and after the talent search): Seal of Command up with no twisting (+6 over Seal of Righteousness), Consecration first at any mana, Judgement, Holy Strike and Holy Shock on cooldown, Hammer of Wrath above Holy Strike.
+- Consumes: the twist builds' (Dragonfire Potion): +5.5 / +5.7 / -10.3 against the Major Mana Potion at 120 / 180 / 300 sec.
+- Human, 20000 iterations, seed 1, 120 / 180 / 300 sec: 939.5 / 932.4 / 910.7, against sub Holy 956.5 / 949.1 / 941.0, twist 951.6 / 945.1 / 932.8 and Shock 881.2 / 868.8 / 842.8. It is 1.8% behind sub Holy at 180 sec and 6.7% ahead of the deep Holy Shock build.
+
 ## Trait curves, client 1.60.1.70338 (2026-10-12)
 
 Forever's talents are traits: TraitDefinitionEffectPoints gives every talent effect a per-rank curve, and the curve overrides the base points on the rank 1 spell, which can be a Classic leftover. The paladin tree (TraitTree 1100) per rank:
