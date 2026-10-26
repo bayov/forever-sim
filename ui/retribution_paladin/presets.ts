@@ -40,6 +40,7 @@ import Level60APLJSON from './apls/level60.apl.json';
 import Level60CrusaderDutyAPLJSON from './apls/level60_crusader_duty.apl.json';
 import Level60ShockAPLJSON from './apls/level60_shock.apl.json';
 import Level60ShockCrusaderDutyAPLJSON from './apls/level60_shock_crusader_duty.apl.json';
+import Level60ShockRetAPLJSON from './apls/level60_shock_ret.apl.json';
 import Level60ShockUndeadAPLJSON from './apls/level60_shock_undead.apl.json';
 import Level60SubHolyAPLJSON from './apls/level60_sub_holy.apl.json';
 import Level60UndeadAPLJSON from './apls/level60_undead.apl.json';
@@ -198,6 +199,15 @@ export const APLLevel60Shock = PresetUtils.makePresetAPLRotation('Level 60 Shock
 	tooltip: "Level 60 Holy Shock rotation: Consecration, Light's Vigil and Holy Shock, Judgement and Holy Strike on cooldown.",
 	group: 'Level 60',
 });
+// The rotation for the Level 60 Shock (Ret side) talents (paladin_presets.sh): no Twist of Light and
+// no Light's Vigil. Seal of Command stays up with no twisting (+6 over Seal of Righteousness),
+// Consecration first down to the last point of mana, then Judgement, Holy Strike and Holy Shock on
+// cooldown, and Hammer of Wrath below 20% health above Holy Strike. Searched over 120, 180 and 300 sec
+// together, before and after the talent search.
+export const APLLevel60ShockRet = PresetUtils.makePresetAPLRotation('Level 60 Shock (Ret side)', Level60ShockRetAPLJSON, {
+	tooltip: 'Level 60 Holy Shock rotation for the Retribution side talents: Seal of Command, Consecration, then Judgement, Holy Strike and Holy Shock on cooldown.',
+	group: 'Level 60',
+});
 // Level 60 (sub Holy): the twist rotation with Seal of Righteousness as the seal that stays up,
 // twisting to Seal of Command before each swing (regear and rotation round, 2026-10-23): +1.1 /
 // +0.5 / +0.9 at 120 / 180 / 300 sec on the sub Holy talents (paired, two seed sets). The twist
@@ -275,6 +285,7 @@ export const APLPresets = {
 		APLLevel60CrusaderDuty,
 		APLLevel60Shock,
 		APLLevel60ShockCrusaderDuty,
+		APLLevel60ShockRet,
 		APLLevel60Undead,
 		APLLevel60ShockUndead,
 		APLBasicRet,
@@ -400,6 +411,20 @@ export const TalentsLevel60Shock = PresetUtils.makePresetTalents('Level 60 Shock
 	tooltip: "Level 60 Holy Shock talents: deep Holy to Light's Vigil with Holy Power, and Retribution to Sacred Arbiter.",
 	group: 'Level 60',
 });
+// Level 60 Shock (Ret side): Holy Shock with most points in Retribution. Holy Shock needs 20 Holy
+// points, so Twist of Light (31 Retribution) is out of reach, and so is Light's Vigil. The talent
+// search at 180 sec, with Holy Shock, Champion of the Light and Pursuit of Justice pinned, from a
+// 21/0/30 seed: Divine Strength 5, Divine Intellect 5, Improved Seals 3, Reverence 3, Purifying
+// Power 2, Illumination 1, Divine Favor, Holy Shock and Consecrated Ground 2 in Holy; Benediction 5,
+// Improved Judgement 2, Holy Conduit 1, Conviction 5, Sanctified Judgement 3, Seal of Command,
+// Pursuit of Justice 2, Sacred Arbiter, Two-Handed Weapon Specialization 2, Vengeance 3 and Champion
+// of the Light 3 in Retribution. Human, 20000 iterations, seed 1: 939.5 / 932.4 / 910.7 at 120 / 180
+// / 300 sec, 1.8% behind Level 60 (sub Holy) at 180 sec and 6.7% ahead of Level 60 Shock.
+export const TalentsLevel60ShockRet = PresetUtils.makePresetTalents(
+	'Level 60 Shock (Ret side)',
+	SavedTalents.create({ talentsString: '550030032011012--052150312012303' }),
+	{ tooltip: 'Level 60 Holy Shock talents with most points in Retribution: Holy Shock, Consecrated Ground and Champion of the Light, no Twist of Light.', group: 'Level 60' },
+);
 // Level 60 (sub Holy, vs Undead): the talent search from Level 60 (sub Holy) on an Undead boss
 // moved Instrument of Law 2 to 1 for Holy Conduit 2 (Exorcism and Holy Wrath cost 40% less). It
 // already has Purifying Power 2. 1074.6 / 1071.5 / 1061.7 at 120 / 180 / 300 sec against an
@@ -432,7 +457,7 @@ export const TalentPresets = {
 	[Phase.Phase1]: [],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
-	[Phase.Phase4]: [TalentsLevel60, TalentsLevel60SubHoly, TalentsLevel60Shock, TalentsLevel60SubHolyUndead, TalentsLevel30p5],
+	[Phase.Phase4]: [TalentsLevel60, TalentsLevel60SubHoly, TalentsLevel60Shock, TalentsLevel60ShockRet, TalentsLevel60SubHolyUndead, TalentsLevel30p5],
 };
 
 export const DefaultTalents = TalentsLevel60SubHoly;
@@ -694,6 +719,26 @@ export const PresetBuildLevel60Shock = PresetUtils.makePresetBuild('Level 60 Sho
 	options: RetributionPaladinOptions.create({
 		aura: PaladinAura.ConcentrationAura,
 		primarySeal: PaladinSeal.Righteousness,
+	}),
+});
+
+// Level 60 Shock (Ret side): the Retribution side Holy Shock talents and rotation on Seal of
+// Command, with the twist builds' consumes: the Dragonfire Potion is +5.5 / +5.7 over the Major
+// Mana Potion at 120 / 180 sec and 10.3 behind at 300 (paired, 20000 iterations).
+export const PresetBuildLevel60ShockRet = PresetUtils.makePresetBuild('Level 60 Shock (Ret side)', {
+	group: 'Level 60',
+	tooltip: 'Level 60 Human Holy Shock build with most points in Retribution, on the synthetic Phase 1 gear.',
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60ShockRet,
+	rotation: APLLevel60ShockRet,
+	encounter: EncounterLevel60,
+	race: Race.RaceHuman,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: RetributionPaladinOptions.create({
+		aura: PaladinAura.ConcentrationAura,
+		primarySeal: PaladinSeal.Command,
 	}),
 });
 

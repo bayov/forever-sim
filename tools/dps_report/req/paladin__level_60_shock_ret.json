@@ -1,0 +1,460 @@
+{
+  "raid": {
+    "parties": [
+      {
+        "players": [
+          {
+            "race": "RaceHuman",
+            "class": "ClassPaladin",
+            "equipment": {
+              "items": [
+                {
+                  "id": 992001,
+                  "enchant": 1506
+                },
+                {
+                  "id": 992002,
+                  "enchant": 1249057
+                },
+                {
+                  "id": 992003
+                },
+                {
+                  "id": 992004,
+                  "enchant": 1219587
+                },
+                {
+                  "id": 992005,
+                  "enchant": 1891
+                },
+                {
+                  "id": 992006,
+                  "enchant": 1220624
+                },
+                {
+                  "id": 992007,
+                  "enchant": 1213622
+                },
+                {
+                  "id": 992008
+                },
+                {
+                  "id": 992009,
+                  "enchant": 1506
+                },
+                {
+                  "id": 992010,
+                  "enchant": 1254966
+                },
+                {
+                  "id": 992011
+                },
+                {
+                  "id": 992013
+                },
+                {
+                  "id": 992014
+                },
+                {
+                  "id": 992015
+                },
+                {
+                  "id": 992012,
+                  "enchant": 1219580
+                },
+                {},
+                {
+                  "id": 272435
+                }
+              ]
+            },
+            "consumes": {
+              "flask": "FlaskOfSupremePower",
+              "food": "FoodLobsterStew",
+              "agilityElixir": "ElixirOfCunning",
+              "manaRegenElixir": "GreaterMagebloodElixir",
+              "strengthBuff": "ElixirOfFerocity",
+              "attackPowerBuff": "JujuMight",
+              "spellPowerBuff": "GreaterArcaneElixir",
+              "shadowPowerBuff": "ElixirOfShadowPower",
+              "firePowerBuff": "ElixirOfGreaterFirepower",
+              "mainHandImbue": "ShadowOil",
+              "defaultPotion": "DragonfirePotion",
+              "defaultConjured": "ConjuredDemonicRune",
+              "dragonBreathChili": true,
+              "zanzaBuff": "ROIDS",
+              "sapperExplosive": "SapperGoblinSapper",
+              "intellectElixir": "ElixirOfTheOwl",
+              "spiritElixir": "ElixirOfGreaterSpirit"
+            },
+            "buffs": {
+              "blessingOfKings": true,
+              "blessingOfWisdom": "TristateEffectImproved",
+              "blessingOfMight": "TristateEffectImproved"
+            },
+            "talentsString": "550030032011012--052150312012303",
+            "level": 60,
+            "profession1": "Engineering",
+            "profession2": "Blacksmithing",
+            "rotation": {
+              "type": "TypeAPL",
+              "prepullActions": [
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20293
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-3s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20920
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-1.5s"
+                    }
+                  }
+                }
+              ],
+              "priorityList": [
+                {
+                  "notes": "The spell power on-use trinket at the pull, then held for the execute phase when that loses no use.",
+                  "action": {
+                    "condition": {
+                      "or": {
+                        "vals": [
+                          {
+                            "cmp": {
+                              "op": "OpLt",
+                              "lhs": {
+                                "currentTime": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "1s"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "isExecutePhase": {
+                              "threshold": "E20"
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGt",
+                              "lhs": {
+                                "spellUsesLostByDelay": {
+                                  "spellId": {
+                                    "itemId": 992015
+                                  },
+                                  "delay": {
+                                    "math": {
+                                      "op": "OpDiv",
+                                      "lhs": {
+                                        "math": {
+                                          "op": "OpSub",
+                                          "lhs": {
+                                            "math": {
+                                              "op": "OpMul",
+                                              "lhs": {
+                                                "remainingTime": {}
+                                              },
+                                              "rhs": {
+                                                "const": {
+                                                  "val": "4"
+                                                }
+                                              }
+                                            }
+                                          },
+                                          "rhs": {
+                                            "currentTime": {}
+                                          }
+                                        }
+                                      },
+                                      "rhs": {
+                                        "const": {
+                                          "val": "5"
+                                        }
+                                      }
+                                    }
+                                  },
+                                  "minTimeLeft": {
+                                    "const": {
+                                      "val": "20s"
+                                    }
+                                  }
+                                }
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 992015
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Goblin Sapper Charge on cooldown.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 10646
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Consecration on cooldown, down to the last point of mana.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20924
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Judgement on cooldown.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "auraIsActive": {
+                              "auraId": {
+                                "spellId": 20920
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20271
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Seal of Command whenever it is down. Judgement does not consume it under Forever. Without the talent ignore the warning on this line.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 20920
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20920
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Hammer of Wrath below 20% health.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 24239
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Holy Strike on cooldown.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10333
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Exorcism on cooldown, only against Undead and Demons.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 10314
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Holy Shock on cooldown. Without the talent ignore the warning on this line.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20930
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Racials and trinkets on a free GCD.",
+                  "action": {
+                    "autocastOtherCooldowns": {}
+                  }
+                }
+              ]
+            },
+            "reactionTimeMs": 200,
+            "channelClipDelayMs": 50,
+            "distanceFromTarget": 5,
+            "retributionPaladin": {
+              "options": {
+                "primarySeal": "Command",
+                "aura": "ConcentrationAura"
+              }
+            }
+          }
+        ],
+        "buffs": {}
+      }
+    ],
+    "buffs": {
+      "giftOfTheWild": "TristateEffectImproved",
+      "powerWordFortitude": "TristateEffectImproved",
+      "bloodPact": "TristateEffectImproved",
+      "strengthOfEarthTotem": "TristateEffectRegular",
+      "graceOfAirTotem": "TristateEffectRegular",
+      "arcaneBrilliance": true,
+      "divineSpirit": true,
+      "battleShout": "TristateEffectImproved",
+      "trueshotAura": true,
+      "leaderOfThePack": true,
+      "moonkinAura": true,
+      "manaSpringTotem": "TristateEffectRegular",
+      "shadowProtection": true,
+      "frostResistanceAura": true,
+      "fireResistanceAura": true,
+      "thorns": "TristateEffectImproved",
+      "devotionAura": "TristateEffectImproved",
+      "retributionAura": "TristateEffectImproved",
+      "totemWeaponBuff": "TotemWeaponBuffWindfury",
+      "salvation": true
+    },
+    "debuffs": {
+      "judgementOfWisdom": true,
+      "judgementOfLight": true,
+      "judgementOfTheCrusader": "TristateEffectImproved",
+      "faerieFire": true,
+      "curseOfElements": true,
+      "sunderArmor": true,
+      "curseOfWeakness": "TristateEffectImproved",
+      "curseOfRecklessness": true,
+      "demoralizingRoar": "TristateEffectImproved",
+      "demoralizingShout": "TristateEffectImproved",
+      "thunderClap": "TristateEffectImproved",
+      "insectSwarm": true,
+      "scorpidSting": true
+    }
+  },
+  "encounter": {
+    "duration": 180,
+    "durationVariation": 20,
+    "executeProportion20": 0.2,
+    "executeProportion25": 0.25,
+    "executeProportion35": 0.35,
+    "targets": [
+      {
+        "id": 213336,
+        "name": "Level 60",
+        "level": 63,
+        "stats": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          805,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3731,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          127393,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "minBaseDamage": 3000,
+        "damageSpread": 0.3333,
+        "swingSpeed": 2,
+        "parryHaste": true
+      }
+    ],
+    "raidDamageHitsPerMinute": 2,
+    "raidDamagePerHit": 1500,
+    "naturalFlaskZone": true
+  },
+  "simOptions": {
+    "iterations": 1000,
+    "randomSeed": "1"
+  }
+}

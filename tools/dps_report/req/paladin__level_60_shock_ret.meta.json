@@ -1,0 +1,68 @@
+{
+  "id": "paladin__level_60_shock_ret",
+  "class": "Paladin",
+  "spec": "Retribution",
+  "build": "Level 60 Shock (Ret side)",
+  "isDefault": false,
+  "race": "Human",
+  "talents": "550030032011012--052150312012303",
+  "treeNames": [
+    "Holy",
+    "Protection",
+    "Retribution"
+  ],
+  "gearSet": "level60_phase1_synthetic",
+  "apl": "level60_shock_ret",
+  "published": {
+    "dps": 932.4,
+    "source": "Talent and rotation search, 2026-10-26: Holy Shock, Champion of the Light and Pursuit of Justice pinned; 20000 iterations, seed 1, 120 / 180 / 300 s"
+  },
+  "summary": "Holy Shock with most points in Retribution: Seal of Command, Holy Shock and Consecrated Ground, Champion of the Light, no twisting and no Light's Vigil.",
+  "keyTalents": [
+    "Holy Shock",
+    "Champion of the Light",
+    "Consecrated Ground",
+    "Vengeance",
+    "Conviction",
+    "Sacred Arbiter",
+    "Divine Favor",
+    "Improved Seals"
+  ],
+  "rotation": [
+    "Pre-pull: Seal of Righteousness at -3s, Seal of Command at -1.5s",
+    "Consecration on cooldown, down to the last point of mana",
+    "Judgement on cooldown; re-seal Command whenever it is down (no twisting)",
+    "Hammer of Wrath below 20% health, ahead of Holy Strike",
+    "Holy Strike on cooldown",
+    "Holy Shock on cooldown; Divine Favor goes on a Holy Shock",
+    "Racials, Goblin Sapper, Dragonfire Potion and Demonic Rune on free GCDs"
+  ],
+  "consumes": [
+    "Flask of Supreme Power",
+    "Elixir of Cunning",
+    "Elixir of Ferocity",
+    "Juju Might",
+    "Elixir of Greater Firepower (Forever's Holy Power elixir)",
+    "Greater Arcane Elixir",
+    "Elixir of Shadow Power",
+    "Elixir of the Owl",
+    "Elixir of Greater Spirit",
+    "Greater Mageblood Elixir",
+    "R.O.I.D.S.",
+    "Lobster Stew",
+    "Dragonbreath Chili",
+    "Shadow Oil",
+    "Goblin Sapper",
+    "Dragonfire Potion",
+    "Demonic Rune"
+  ],
+  "caveats": [
+    "Pursuit of Justice 2 (movement speed) is taken by rule (standards 26).",
+    "Holy Shock needs 20 Holy points, so Twist of Light (the 31 point Retribution talent) is out of reach.",
+    "1.8% behind Level 60 (sub Holy) at 180s; 3.2% at 300s, where it runs short of mana (the Major Mana Potion is 10.3 better there, the Dragonfire Potion 5.7 better at 180s).",
+    "Holy Strike's flat bonus is inside the weapon percent (client data). Unconfirmed on the beta.",
+    "High Holy Strike and Consecration ranks may be out of date (about 1.2% at stake).",
+    "No filler explosive (standards 11): each 1s cast resets the swing."
+  ],
+  "notes": "mksettings -spec ret -gear level60_phase1_synthetic -apl level60_shock_ret -talents 550030032011012--052150312012303 -race Human; primarySeal set to Command to match the shipped preset's options."
+}
