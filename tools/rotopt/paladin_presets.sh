@@ -70,8 +70,9 @@ gen level60_shock "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecration
 # 120, 180 and 300 sec together, then a talent search, then the knobs again (no move): Seal of
 # Command up with no twisting (+6 over Seal of Righteousness), Consecration first down to the last
 # point of mana, Judgement, Holy Strike and Holy Shock on cooldown, Hammer of Wrath above Holy
-# Strike (hammerOfWrathFirst=3).
-gen level60_shock_ret "seal=2,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,lightsVigilMana=100,hammerOfWrathMana=0,prepullTwo=1,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=3" -level 60
+# Strike (hammerOfWrathFirst=3). Only Seal of Command before the pull: with no Twist of Light a
+# Seal of Righteousness first (prepullTwo) is twisting for nothing, and the same DPS (-0.3 / 0 / +0.1).
+gen level60_shock_ret "seal=2,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,lightsVigilMana=100,hammerOfWrathMana=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=3" -level 60
 # Level 60 (sub Holy) gets its own rotation since the regear round (2026-10-23): the twist one with
 # Seal of Righteousness as the seal that stays up, twisting to Seal of Command (seal=1): +1.1 /
 # +0.5 / +0.9 at 120 / 180 / 300 sec on its new talents (paired, two seed sets, all positive). The
