@@ -1,18 +1,33 @@
 #!/bin/bash
 # pipeline.sh: every sim step of the DPS report for a set of builds, in one command.
 #
+#   pipeline.sh hydrate [ids...]        empty $DASH_DIR's outputs, load every build's raw pack (raw/<id>.tgz), rebuild
+#                                       the datasets and check their sim numbers against the published report; a
+#                                       build outside [ids] that differs stops it (orchestration/dash_raw_store.md)
 #   pipeline.sh plan  <ids...>          count every step's sims and check each script can enumerate its work (seconds)
-#   pipeline.sh run   <ids...>          plan, then the sim steps; prints a timestamp per step
+#   pipeline.sh run   <ids...>          add the ids' duty and encounter variants, clean them, plan, then the sim
+#                                       steps; prints a timestamp per step
+#   pipeline.sh resume <ids...>         run without the clean, to finish a run that stopped (every step skips done work)
+#   pipeline.sh clean <ids...>          drop these builds from every raw output, so every step re-sims them
+#   pipeline.sh publish [ids...]        build_data.py, the sample fights of [ids] (events.py), every dataset into
+#                                       ui/dps_report/data, provenance for [ids], and every build's raw pack
 #   pipeline.sh shard <k> <n> <ids...>  the ids of shard k of n (0-based), balanced by estimated cost
-#   pipeline.sh pack  <tgz> <ids...>    these builds' raw outputs, to merge on another machine
+#   pipeline.sh pack  <tgz> <ids...>    these builds' raw outputs, to merge on another machine (a shard's hand-back)
 #   pipeline.sh unpack <tgz>            merge a pack into $DASH_DIR (replaces those builds' files and result lines)
 #
+# Re-sim a few builds: hydrate, run <ids>, publish <ids>. Add a preset: write req/<id>.*, then the same. Remove one:
+# delete req/<id>.*, hydrate, publish. A text or page-data change: hydrate, publish. Everything stale (a shared sim
+# input changed): run, publish, with no hydrate. Then commit ui/dps_report/data, provenance.json and raw/ together.
+#
 # Ids default to every request in $DASH_DIR/req. Builds run longest first (rogues, then hunters ...), so the last
-# minutes of each step are not one slow build alone. Every sim splits its iterations over all cores itself
-# (sim/core/sim_concurrent.go), so P=4 processes keep a 4-core machine busy to the end.
+# minutes of each step are not one slow build alone. Every sim splits its iterations into DASH_SPLITS parts (default
+# 4, patch 0005) run in parallel, so the raw outputs don't depend on the machine; P=4 processes keep a 4-core machine
+# busy to the end.
 set -euo pipefail
 T="$(cd "$(dirname "$0")" && pwd)"
-cd "${DASH_DIR:-$T}"
+R="$(cd "$T/../.." && pwd)"
+export DASH_DIR="${DASH_DIR:-$T}" DASH_SPLITS="${DASH_SPLITS:-4}"
+cd "$DASH_DIR"
 P=${P:-4}
 cmd=${1:-}; shift || true
 
@@ -28,8 +43,37 @@ EOF
 }
 
 case "$cmd" in
-plan | run)
+hydrate)
+	if [ "$PWD" != "$T" ]; then  # a separate $DASH_DIR reads the inputs from this checkout
+		for f in req forever_tt_cache fortt_ids.json talent_ids.json asm_apls bin; do [ -e "$f" ] || ln -s "$T/$f" "$f"; done
+	fi
+	rm -rf out names weights mana rv asm abl data
+	python3 $T/rawstore.py unpack
+	python3 $T/build_data.py >build_data.log || { tail -20 build_data.log; exit 1; }
+	python3 $T/rawstore.py check "$@"
+	;;
+clean)
+	python3 $T/rawstore.py clean "$@"
+	;;
+publish)
+	rm -rf data
+	python3 $T/build_data.py >build_data.log || { tail -20 build_data.log; exit 1; }
+	# the sample fights of the re-simmed builds; the event lookups always cover every build's fights
+	python3 $T/rawstore.py prune-events
+	if [ $# -gt 0 ]; then
+		python3 $T/events.py --data "$DASH_DIR/data" --out "$R/ui/dps_report/data/events" "$@"
+	else
+		python3 $T/events.py --data "$DASH_DIR/data" --out "$R/ui/dps_report/data/events" --lookups-only
+	fi
+	python3 $T/rawstore.py copy
+	if [ $# -gt 0 ]; then (cd "$R" && node tools/dps_report/stale.mjs --record "$@" --iterations 20000 ${SIM_COMMIT:+--commit $SIM_COMMIT}); fi
+	python3 $T/rawstore.py pack
+	echo "next: check the report (make dps-report-artifact), commit ui/dps_report and tools/dps_report/raw together, push, then deploy"
+	;;
+plan | run | resume)
+	if [ $# -gt 0 ]; then set -- $(python3 $T/rawstore.py variants "$@"); fi
 	ALL=$(ids "$@")
+	if [ "$cmd" = run ]; then python3 $T/rawstore.py clean $ALL; fi
 	BASE=$(for i in $ALL; do python3 -c "import json,sys; sys.exit(0 if json.load(open('req/$i.meta.json')).get('duty') else 1)" || echo $i; done)
 	MANA=$(for i in $ALL; do case $i in warrior__* | rogue__*) ;; *) echo $i ;; esac; done)
 	python3 - $BASE <<EOF
@@ -51,20 +95,28 @@ print(f'plan: $(echo $ALL | wc -w) builds; weights {w} sims, races {r}, assumpti
       f'about {eta:.0f} min on {os.cpu_count()} cores')
 EOF
 	[ "$cmd" = plan ] && exit 0
+	# resume skips what a stopped run finished: run_build.py and mana_curves.py --force redo a build whatever is there,
+	# and ablate.py redoes every build it is given; the other steps skip done work themselves
+	RB=$ALL MANA_FORCE=--force ABL=$BASE
+	if [ "$cmd" = resume ]; then
+		RB=$(for i in $ALL; do [ -e out/$i.json ] || echo $i; done)
+		MANA_FORCE=
+		ABL=$(python3 -c "import json,os,sys; d=json.load(open('abl/ablate.json'))['builds'] if os.path.exists('abl/ablate.json') else {}; print(' '.join(b for b in sys.argv[1:] if b not in d))" $BASE)
+	fi
 	echo "== run_build $(date -u +%H:%M:%S)"
-	echo $ALL | tr ' ' '\n' | xargs -P$P -n1 python3 $T/run_build.py
+	[ -n "$RB" ] && echo $RB | tr ' ' '\n' | xargs -P$P -n1 python3 $T/run_build.py
 	echo "== weights $(date -u +%H:%M:%S)"
 	echo $BASE | tr ' ' '\n' | xargs -P$P -n1 python3 $T/weights.py
 	echo "== races $(date -u +%H:%M:%S)"
 	python3 $T/run_races.py $BASE | tail -3
 	echo "== mana $(date -u +%H:%M:%S)"
-	[ -n "$MANA" ] && PAR=$P python3 $T/mana_curves.py --force $MANA | tail -3
+	[ -n "$MANA" ] && PAR=$P python3 $T/mana_curves.py $MANA_FORCE $MANA | tail -3
 	echo "== ablate $(date -u +%H:%M:%S)"
-	ABL_MERGE=1 PAR=$P python3 $T/ablate.py $BASE | tail -1
+	[ -n "$ABL" ] && ABL_MERGE=1 PAR=$P python3 $T/ablate.py $ABL | tail -1
 	echo "== assumptions $(date -u +%H:%M:%S)"
 	PAR=$P python3 $T/run_assumptions.py $BASE | tail -2
 	echo "== done $(date -u +%H:%M:%S)"
-	echo "next: python3 $T/build_data.py, then python3 $T/events.py --data \"${DASH_DIR:-$T}/data\" <these ids> (the events view), then merge.mjs"
+	echo "next: pipeline.sh publish $*"
 	;;
 shard)
 	k=$1 n=$2; shift 2
