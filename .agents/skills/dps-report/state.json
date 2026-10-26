@@ -1,6 +1,6 @@
 {
- "updated": "2026-10-25",
- "note": "Alignment round with wowsims/forever (orchestration/alignment_round_2026-10-23.md) plus the per-class regear and rotation round (class_worker_round_2026-10-23.md) are on master. The report was re-simmed in full for all 57 builds at 8e0d6f681e (data 117d18af45, 0 stale), after flat warrior white-hit Rage and the warrior re-search, Classic's hunter crit per Agility and the hunter recheck, Forever's zero-sum race base stats and the 2026-10-25 assumption rulings. Standards 4, 11, 21 and 26 were updated on 2026-10-23..25.",
+ "updated": "2026-10-26",
+ "note": "Level 60 Shock (Ret side) added (23/0/28 Holy Shock without Twist of Light, as Blizzard's Paladin Class Deep Dive of 2026-10-15 pitched): 932.4 at 180 s. Every build's raw sim outputs are now kept in tools/dps_report/raw/<id>.tgz with the datasets (orchestration/dash_raw_store.md), so a regeneration re-sims only what changed: pipeline.sh hydrate, run <ids>, publish <ids>. The 58-build full run of 2026-10-26 is the first set of packs; 0 of 58 stale.",
  "foreverClientBuild": "1.60.1.70450 (spells, talents, racials and enchants identical to 70425)",
  "coordinationBranch": {
   "name": "claude/wow-forever-dps-presets-m9u15h",
@@ -26,7 +26,8 @@
   "Intermittent 'send on closed channel' panic in sim/core/simsignals (bulksim.go getRankedResults ~280-290)",
   "DPS report events view at phone width clips the Typical/Lucky/Unlucky row",
   "Still open, need a log: rage k at level 60, 1% spell miss floor, extra attacks vs swing timer, Eviscerate AP share, Maelstrom Weapon rate (two weak data points), race stat offsets, and the rest in alignment_round_2026-10-23.md 'Still open'",
-  "APL duration x fractional constant truncates to 0 (sim/core/apl_values_operators.go)"
+  "APL duration x fractional constant truncates to 0 (sim/core/apl_values_operators.go)",
+  "The Level 60 Shock (Ret side) preset, its report data and the raw-pack pipeline are on branch ccr-774a8bee-5qnm0f until merged to master"
  ],
  "merged": {
   "date": "2026-10-13",
@@ -58,11 +59,12 @@
   "note": "the last artifact publish; retired 2026-10-25, see reportSite"
  },
  "reportData": {
-  "commit": "117d18af45",
-  "simmedAt": "8e0d6f681e",
-  "date": "2026-10-25",
-  "builds": 57,
-  "note": "full re-sim (all 57 builds, every step, 20,000 iterations); not yet deployed when recorded, see reportSite"
+  "commit": "69e81fa (data), c58583c (pipeline final)",
+  "simmedAt": "5144238 with patches 0001-0004 (4 CPUs, the same as DASH_SPLITS=4); provenance recorded at bfd36569ec",
+  "date": "2026-10-26",
+  "builds": 58,
+  "rawPacks": "tools/dps_report/raw/ (58 packs, 2.7 MB)",
+  "note": "full re-sim, every step, 20,000 iterations; the other 57 builds' values matched the previous report exactly"
  },
  "reportSite": {
   "url": "https://forever-dps.pages.dev",
