@@ -68,8 +68,8 @@
   "url": "https://forever-dps.pages.dev",
   "cloudflareProject": "forever-dps",
   "deploy": "make dps-report-deploy (tools/dps_report/deploy_pages.py)",
-  "publishedFrom": "21b7bc8 (page text short and plain, no project process in its text, one-value assumptions show their answer once; data unchanged since the full re-sim at 8e0d6f681e)",
+  "publishedFrom": "0032d92 (page text short and plain, no project process in its text, one-value assumptions show their answer once, on the right; data unchanged since the full re-sim at 8e0d6f681e)",
   "date": "2026-10-26",
-  "deployId": "d203ea5d"
+  "deployId": "e96487c1"
  }
 }
