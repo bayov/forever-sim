@@ -236,7 +236,7 @@ SET_FILES = 'sim/*/item*sets_pve.go'
 def set_bonuses(tree):
     """Synthetic set name -> [[pieces, text], ...] from the bonus comments in the sim's Go source."""
     out = {}
-    for p in glob.glob(os.path.join(tree, SET_FILES)):
+    for p in sorted(glob.glob(os.path.join(tree, SET_FILES))):
         src = open(p).read()
         bonus_vars = {}
         for m in re.finditer(r'var (\w+) = map\[int32\]core\.ApplyEffect\{(.*?)\n\}', src, re.S):
@@ -349,7 +349,7 @@ USE_STAT = {'SpellPower': 'spell power', 'AttackPower': 'attack power', 'RangedA
 
 def synthetic_use(tree):
     out = {}
-    for p in glob.glob(os.path.join(tree, 'sim', '*', 'forever_synthetic_trinkets.go')):
+    for p in sorted(glob.glob(os.path.join(tree, 'sim', '*', 'forever_synthetic_trinkets.go'))):
         src = open(p).read()
         ids = {k: int(v) for k, v in re.findall(r'(\w+)\s*=\s*(99\d{4})\b', src)}
         for m in re.finditer(r'NewSimpleStatOffensiveTrinketEffect\((\w+),\s*stats\.Stats\{([^}]*)\},\s*time\.Second\s*\*\s*(\d+),\s*time\.Minute\s*\*\s*(\d+)\)', src):

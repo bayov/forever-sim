@@ -4,6 +4,8 @@ The long-running DPS report orchestrator session was retired on 2026-10-17, alon
 auditors moved to scheduled fresh-session runs (`orchestration/audit/`, `tools/audit/`). This file holds what that session
 knew that wasn't already in the repo. Read it after `.agents/skills/dps-report/SKILL.md` and `state.json`.
 
+> 2026-10-26: the pipeline notes below predate the raw packs. A regeneration now re-sims only what changed (`pipeline.sh hydrate`, `run <ids>`, `publish <ids>`, tools/dps_report/README.md), and `publish` runs `events.py` itself.
+
 ## State at handoff
 
 - **Master:** d2633f4a4. b389688f7 came after it, and it only touches the Wowhead scraper.

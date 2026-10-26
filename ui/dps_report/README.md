@@ -38,5 +38,6 @@ Files:
 - `data/mana.json`, `data/mana_summary.json`: mana % of max every 5 s over a 480 s fight per mana-using preset, and when
   it first drops below 15%. Made by `tools/dps_report/mana_curves.py`.
 - `provenance.json`: per build, the inputs its data was made from (written by `tools/dps_report/stale.mjs`).
+- The raw sim outputs these datasets were built from are in `tools/dps_report/raw/<id>.tgz`, one pack per build, committed with them (`tools/dps_report/README.md`, "Partial regenerations").
 
 To regenerate the data, use the `regenerate-dps-report` skill (`.agents/skills/regenerate-dps-report/`).

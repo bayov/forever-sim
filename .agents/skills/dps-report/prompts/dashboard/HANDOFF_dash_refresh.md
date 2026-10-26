@@ -1,5 +1,7 @@
 # Handoff: refresh the Forever DPS dashboard with the bundled-gear-round results
 
+> Since 2026-10-26 a refresh re-sims only what changed: `pipeline.sh hydrate`, `run <ids>`, `publish <ids>` (tools/dps_report/README.md, "Partial regenerations"). Use this template for its context and checks, not its run and publish steps.
+
 ## Context
 - The dashboard artifact is https://claude.ai/artifact/<DASHBOARD_ARTIFACT_ID> (a "Dashboard" type artifact; the user reads it on a phone).
 - It shows numbers from before today's gear changes. All nine class branches have since finished the "bundled gear round":

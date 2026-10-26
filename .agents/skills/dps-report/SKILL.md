@@ -87,13 +87,14 @@ Each block lists its inputs, its outputs and how to run it. Combine them freely.
 3. Let the gear auditor and fairness auditor check.
 
 **B7. Report data refresh.** Follow the repo skill `.agents/skills/regenerate-dps-report` (it owns the steps), with the pipeline in `tools/dps_report/` (README). In short:
-1. Run `node tools/dps_report/stale.mjs` to list stale builds from `ui/dps_report/provenance.json`.
-2. Build the merged tree (master plus any unmerged class heads), regenerate the DB, and build the binaries with `-tags=with_db`.
+1. Run `node tools/dps_report/stale.mjs` to list stale builds from `ui/dps_report/provenance.json` (it also lists new requests and removed presets).
+2. Build the merged tree (master plus any unmerged class heads, plus `patches/`), regenerate the DB, and build the binaries with `-tags=with_db`.
 3. Regenerate the requests from the presets, and check each one against its class's published 180 s number (±2).
-4. Re-sim only the stale builds, plus `mana_curves.py --force <ids>` for the mana users among them. Then run `build_data.py`.
-5. Run `node tools/dps_report/merge.mjs "$DASH_DIR/data"`, then `stale.mjs --record <re-simmed ids> --iterations 20000`.
-- Don't re-sim to fix provenance. `stale.mjs` hashes whole `sim/<class>` folders and the shared inputs. When a change (a test-only commit, or another class's opt-in shared code) can't feed a build, re-record that build and give the reason in the commit message.
-Template for a delegated job: `prompts/dashboard/HANDOFF_dash_refresh.md`. Its publishing steps are for the deleted legacy dashboard, so use step 5 here instead.
+4. `pipeline.sh hydrate <ids>` (every build's raw pack from `tools/dps_report/raw/`, checked against the published numbers), `pipeline.sh run <ids>` (the stale builds and their variants only), `pipeline.sh publish <ids>` (every dataset, the sample fights, provenance and the packs).
+5. Commit `ui/dps_report/data`, `datasets.json`, `provenance.json` and `tools/dps_report/raw` together, push, then deploy from the pushed commit.
+- **Never re-sim every build for a change that touches only some.** The other builds' raw outputs are in their packs, so the cross-build datasets (ranks, race summary, assumptions) still cover every build. A full run is for shared sim inputs only, and skips hydrate. Adding or removing a preset, or a text-only change, is a partial run too (`tools/dps_report/README.md`, "Partial regenerations"; the design and its audits are `orchestration/dash_raw_store.md`).
+- Don't re-sim to fix provenance. `stale.mjs` hashes whole `sim/<class>` folders, the shared inputs and each build's request. When a change (a test-only commit, or another class's opt-in shared code) can't feed a build, re-record that build and give the reason in the commit message.
+Template for a delegated job: `prompts/dashboard/HANDOFF_dash_refresh.md`. Its publishing steps are for the deleted legacy dashboard, so use steps 4 and 5 here instead.
 
 **B8. Report page change.** The report is `ui/dps_report/` (README): `layout.html`, `report.js`, and the styles in `ui/scss/dps_report/_report.scss`. It is the only report; the legacy Dashboard artifact was deleted on 2026-10-13.
 - **Style:** it uses the **sim UI's visual style and shares its components**: tippy tooltips (showTT / showTip, Alt+click pins), the talent picker, gear pane and character-stats markup, and the report tokens (`--color-*`, `--fv-*`, `--cds-*`) mapped to the sim UI palette. Use those rather than new colours. There's no sidebar; the summary is the first card on Ranking.

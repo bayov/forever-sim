@@ -11,6 +11,11 @@ Why not `wrangler pages deploy`: the asset upload calls (/client/v4/pages/assets
 short-lived JWT, and the session proxy breaks them, so they go direct (--noproxy). The
 account calls go through the proxy as usual.
 
+A production deploy (--branch main) must come from what master serves: the report's sources
+(ui/dps_report, ui/scss/dps_report, tools/dps_report) clean, and HEAD pushed to origin/master.
+--unmerged deploys a commit that isn't on master yet, when the user asked for that. The
+deployment records the commit it was built from.
+
 The deploy serves the file as /index.html. After a production deploy the script fetches the
 live site and compares it byte for byte; if it doesn't match, it rolls production back to
 the deployment that was live before.
@@ -61,7 +66,19 @@ def main():
     ap.add_argument("file", nargs="?", default="dist/dps_report.html")
     ap.add_argument("--project", default="forever-dps")
     ap.add_argument("--branch", default="main", help="main is production; anything else is a preview")
+    ap.add_argument("--unmerged", action="store_true", help="allow a production deploy of a commit not on origin/master")
     a = ap.parse_args()
+
+    git = lambda *args: subprocess.run(["git", *args], capture_output=True, text=True).stdout.strip()
+    head = git("rev-parse", "HEAD")
+    dirty = git("status", "--porcelain", "--", "ui/dps_report", "ui/scss/dps_report", "tools/dps_report")
+    if a.branch == "main":
+        if dirty:
+            sys.exit(f"the report's sources have uncommitted changes; commit and push first:\n{dirty}")
+        subprocess.run(["git", "fetch", "-q", "origin", "master"], check=False)
+        on_master = subprocess.run(["git", "merge-base", "--is-ancestor", head, "origin/master"]).returncode == 0
+        if not on_master and not a.unmerged:
+            sys.exit(f"HEAD {head[:10]} is not on origin/master: push it first (or pass --unmerged)")
 
     account = os.environ.get("CLOUDFLARE_ACCOUNT_ID")
     if not account:
@@ -90,6 +107,7 @@ def main():
             sys.exit("the upload didn't stick; not deploying")
 
     dep = curl(["-X", "POST", "-F", "manifest=" + json.dumps({"/index.html": key}), "-F", f"branch={a.branch}",
+                "-F", f"commit_hash={head}", "-F", f"commit_dirty={'true' if dirty else 'false'}",
                 f"{proj}/deployments"], auth=token)
     for _ in range(60):
         stage = curl([f"{proj}/deployments/{dep['id']}"], auth=token)["latest_stage"]

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""events.py [--data DIR] [--out DIR] [-j N] [build ids...] : the sample fights for the Specs page's events view.
+"""events.py [--data DIR] [--out DIR] [-j N] [--lookups-only] [build ids...] : the sample fights for the Specs page's events view.
 
 The Specs page shows each preset's typical, unlucky and lucky fight in the sim UI's own events view (timeline, chart,
 log and replay). That view reads a whole RaidSimResult with the fight's debug log, not the compact timeline that
@@ -160,6 +160,7 @@ def main():
     ap.add_argument('--data', default=REPORT_DATA)
     ap.add_argument('--out')
     ap.add_argument('-j', type=int, default=os.cpu_count() or 4)
+    ap.add_argument('--lookups-only', action='store_true', help="sim no fights, only rewrite event_names and event_icons from the fights in --out")
     ap.add_argument('builds', nargs='*')
     a = ap.parse_args()
     out_dir = a.out or os.path.join(a.data, 'events')
@@ -173,7 +174,7 @@ def main():
     # The typical fight first: its result holds the metrics the others share.
     for rows in samples.values():
         rows.sort(key=lambda s: int(s['pct']) != 50)
-    builds = a.builds or sorted(samples)
+    builds = [] if a.lookups_only else a.builds or sorted(samples)
 
     total, warnings = 0, []
     with ThreadPoolExecutor(a.j) as ex:

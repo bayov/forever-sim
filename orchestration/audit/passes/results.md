@@ -43,7 +43,7 @@ cites the client, check the cited values against the db2 tables (see `orchestrat
     git diff --stat <last audited sha> origin/master -- <the paths above>
 
 - Nothing in the watched paths changed: quiet. Say so in one line, with the new master sha.
-- Only `ui/dps_report/` changed (a report republish): check the dashboard against the reference, with no sims needed:
+- Only `ui/dps_report/` changed (a report republish; `tools/dps_report/raw/`, the builds' raw sim outputs, changes with it): check the dashboard against the reference, with no sims needed:
   `python3 tools/audit/results/compare.py builds ui/dps_report/data/builds.json orchestration/audit/ref/results/req_summary.txt`.
   Rows that differ from the previous builds.json should be moves you already verified. Pass 41 is an example: report v35 moved 7
   rows, all verified in pass 40.

@@ -2,7 +2,9 @@
 //
 // Each build (a level 60 preset, id "<class>__<preset>") depends on:
 //   - shared inputs: the sim core, encounters, item database, proto and the settings tooling, which every build uses;
-//   - its class's inputs: sim/<class>/ and the class's ui/<spec>/ folders (presets, gear sets, rotations).
+//   - its class's inputs: sim/<class>/ and the class's ui/<spec>/ folders (presets, gear sets, rotations);
+//   - its own inputs: its request tools/dps_report/req/<id>.json (what is simmed) and its assumption scenario rotations
+//     tools/dps_report/asm_apls/<id>.* (run_assumptions.py).
 // ui/dps_report/provenance.json records, per build, the git tree hash of each input when its data was made.
 // A build is stale when any of those hashes differs from the commit being checked, or when it has no record.
 //
@@ -19,7 +21,7 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../..')
 const dataDir = path.join(root, 'ui/dps_report/data');
 const provPath = path.join(root, 'ui/dps_report/provenance.json');
 
-export const SHARED_INPUTS = ['sim/core', 'sim/common', 'sim/encounters', 'sim/lib', 'proto', 'assets/database', 'tools/rotopt'];
+export const SHARED_INPUTS = ['sim/core', 'sim/common', 'sim/encounters', 'sim/lib', 'proto', 'assets/database', 'tools/rotopt', 'tools/dps_report/patches'];
 
 const args = process.argv.slice(2);
 const opt = name => {
@@ -46,12 +48,26 @@ const classInputs = cls => {
 	return [`sim/${cls}`, ...dirs];
 };
 
-const fingerprint = id => {
-	const cls = id.split('__')[0];
-	return Object.fromEntries([...SHARED_INPUTS, ...classInputs(cls)].map(p => [p, treeHash(p)]));
+// a build's own files at this revision: its request and its assumption scenario rotations
+let asmApls;
+const ownInputs = id => {
+	asmApls ??= git('ls-tree', '-r', '--name-only', rev, 'tools/dps_report/asm_apls/').split('\n').filter(Boolean);
+	return [`tools/dps_report/req/${id}.json`, ...asmApls.filter(p => path.basename(p).startsWith(id + '.'))];
 };
 
-const builds = JSON.parse(fs.readFileSync(path.join(dataDir, 'builds.json'), 'utf8')).map(b => b.id);
+const fingerprint = id => {
+	const cls = id.split('__')[0];
+	return Object.fromEntries([...SHARED_INPUTS, ...classInputs(cls), ...ownInputs(id)].map(p => [p, treeHash(p)]));
+};
+
+// every build in the report, and every request not in it yet (a new preset)
+const published = JSON.parse(fs.readFileSync(path.join(dataDir, 'builds.json'), 'utf8')).map(b => b.id);
+const requested = fs
+	.readdirSync(path.join(root, 'tools/dps_report/req'))
+	.filter(f => f.endsWith('.meta.json'))
+	.map(f => f.slice(0, -'.meta.json'.length));
+const builds = [...new Set([...published, ...requested])].filter(id => requested.includes(id)).sort();
+const removed = published.filter(id => !requested.includes(id));
 const prov = fs.existsSync(provPath) ? JSON.parse(fs.readFileSync(provPath, 'utf8')) : { builds: {} };
 
 if (args.includes('--record')) {
@@ -86,8 +102,9 @@ for (const id of builds) {
 }
 
 if (args.includes('--json')) {
-	console.log(JSON.stringify({ rev, total: builds.length, stale }, null, 2));
+	console.log(JSON.stringify({ rev, total: builds.length, stale, removed }, null, 2));
 } else {
 	console.log(`${stale.length} of ${builds.length} builds are stale at ${rev}.`);
 	for (const s of stale) console.log(`  ${s.id}: ${s.reasons.join(', ')}`);
+	if (removed.length) console.log(`In the report with no request (removed presets; pipeline.sh publish drops them): ${removed.join(' ')}`);
 }

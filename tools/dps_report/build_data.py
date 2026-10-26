@@ -89,7 +89,7 @@ for _cls, _lst in json.load(open(os.path.join(TREE, 'forever-wiki/data/abilities
         if _a.get('icon') and _a.get('name'):
             wiki_icon.setdefault(_a['name'].lower(), _a['icon'])
 talent_names = {}
-for p in glob.glob(os.path.join(TREE, 'ui/core/talents/trees/*.json')):
+for p in sorted(glob.glob(os.path.join(TREE, 'ui/core/talents/trees/*.json'))):
     t = json.load(open(p))
     trees = t if isinstance(t, list) else t.get('trees', [])
     for tree in trees:
@@ -130,7 +130,7 @@ for race, lst in json.load(open(os.path.join(TREE, 'ui/core/forever/racials.json
                 MANUAL_ICON.setdefault('s%d' % v['spellId'], v['icon'])
 # Rank arrays in the sim's Go code: var ArcaneBlastSpellId = [N]int32{0, 400574, ...}
 go_ranks = {}
-for gp in glob.glob(os.path.join(TREE, 'sim/**/*.go'), recursive=True):
+for gp in sorted(glob.glob(os.path.join(TREE, 'sim/**/*.go'), recursive=True)):
     for mm in re.finditer(r'(\w+?)SpellIds?\s*=\s*\[[^\]]*\]int32\{([^}]*)\}', open(gp).read()):
         base = re.sub(r'(?<=[a-z])(?=[A-Z])', ' ', mm.group(1)[0].upper() + mm.group(1)[1:])
         ids = [int(x) for x in re.findall(r'\d+', mm.group(2))]
@@ -138,7 +138,7 @@ for gp in glob.glob(os.path.join(TREE, 'sim/**/*.go'), recursive=True):
             if sid:
                 go_ranks.setdefault(sid, (base, rank))
 aura_labels = {}
-for p in glob.glob(os.path.join(D, 'names', '*.tsv')):
+for p in sorted(glob.glob(os.path.join(D, 'names', '*.tsv'))):
     for line in open(p):
         parts = line.rstrip('\n').split('\t')
         if len(parts) < 5:
@@ -305,14 +305,6 @@ for _o in outs:  # the request's meta file is the source of truth for text (it c
 outs.sort(key=lambda o: (CLASS_ORDER.index(o['meta']['class']), -o['main']['dps']))
 
 builds, races, lengths, abilities, auras, hist, stats, gear, setup, notes = [], [], [], [], [], [], [], [], [], []
-# the previous round's main numbers (out_pre1b), for the before -> after note
-PREV = {}
-for _p in glob.glob(os.path.join(D, 'out_pre1b', '*.json')):
-    try:
-        _x = json.load(open(_p))
-        PREV[_x['id']] = _x['main']['dps']
-    except Exception:
-        pass
 # The gear rules of the bundled gear round (orchestration/standards.md 1b, 5a, 8a), shown on the Method tab.
 GEAR_RULES = [
     "Each piece matches Forever's stat budget for its slot, item level and archetype, within 1%.",
@@ -367,7 +359,6 @@ for o in outs:
     horde = max((r for r in rs if r['faction'] == 'Horde'), key=lambda r: r['dps'], default=None)
     alli = max((r for r in rs if r['faction'] == 'Alliance'), key=lambda r: r['dps'], default=None)
     pub = m.get('published') or {}
-    _prev = PREV.get(bid)
     encn = m.get('encounter')  # an encounter preset: the same boss as a creature type (shown only with "Special encounters" on)
     base_id = m.get('baseBuild')
     duty = m.get('duty')  # a duty preset (standards 23): it keeps this raid buff or debuff up itself (shown only with "Duty" on)
@@ -766,7 +757,27 @@ for cls in CLASS_ORDER:
         art.append({'class': cls, 'tree': ti, 'treeName': tr['name'], 'icon': CLIENT_TREES[cls][ti]['icon'], 'bgUrl': tr.get('backgroundUrl')})
 
 # icons as data URLs (36 px, from Wowhead's icon CDN, cached locally)
-import base64, urllib.request
+import base64, time, urllib.error, urllib.request
+
+
+def fetch_url(url, path):
+    # Writes url to path and returns True, or False when the server says it doesn't exist (404). A network
+    # failure retries and then stops the run: a silently missing icon would change names, colours and icons.
+    for attempt in range(4):
+        try:
+            with urllib.request.urlopen(url, timeout=20) as r:
+                open(path, 'wb').write(r.read())
+            return True
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                return False
+            err = e
+        except Exception as e:
+            err = e
+        time.sleep(2 ** attempt)
+    sys.exit(f'build_data.py: could not fetch {url}: {err}')
+
+
 from concurrent.futures import ThreadPoolExecutor
 os.makedirs(os.path.join(D, 'icons'), exist_ok=True)
 extra = set(RACE_ICON.values()) | set(FACTION_ICON.values()) | {'classicon_' + c.lower() for c in CLASS_ORDER} | {a['icon'] for a in art}
@@ -778,10 +789,7 @@ want = sorted({t['icon'] for t in trees} | {n['icon'] for n in names.values() if
 def fetch(ic):
     path = os.path.join(D, 'icons', ic + '.jpg')
     if not os.path.exists(path):
-        try:
-            with urllib.request.urlopen(f'https://wow.zamimg.com/images/wow/icons/medium/{ic}.jpg', timeout=20) as r:
-                open(path, 'wb').write(r.read())
-        except Exception as e:
+        if not fetch_url(f'https://wow.zamimg.com/images/wow/icons/medium/{ic}.jpg', path):
             return ic, None
     return ic, base64.b64encode(open(path, 'rb').read()).decode()
 with ThreadPoolExecutor(16) as ex:
@@ -790,10 +798,7 @@ with ThreadPoolExecutor(16) as ex:
 def fetch_large(ic):
     path = os.path.join(D, 'icons', ic + '.large.jpg')
     if not os.path.exists(path):
-        try:
-            with urllib.request.urlopen(f'https://wow.zamimg.com/images/wow/icons/large/{ic}.jpg', timeout=20) as r:
-                open(path, 'wb').write(r.read())
-        except Exception:
+        if not fetch_url(f'https://wow.zamimg.com/images/wow/icons/large/{ic}.jpg', path):
             return ic, None
     return ic, base64.b64encode(open(path, 'rb').read()).decode()
 large_want = sorted({b['specIcon'] for b in builds} | {'classicon_' + c.lower() for c in CLASS_ORDER} | set(RACE_ICON.values()))
@@ -861,10 +866,7 @@ def fetch_bg(a):
         return a, None
     path = os.path.join(D, 'icons', f"bg_{a['class']}_{a['tree']}.jpg")
     if not os.path.exists(path):
-        try:
-            with urllib.request.urlopen(a['bgUrl'], timeout=20) as r:
-                open(path, 'wb').write(r.read())
-        except Exception:
+        if not fetch_url(a['bgUrl'], path):
             return a, None
     return a, base64.b64encode(open(path, 'rb').read()).decode()
 with ThreadPoolExecutor(9) as ex:

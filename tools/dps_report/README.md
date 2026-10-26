@@ -1,13 +1,16 @@
 # DPS report: dashboard data pipeline
 
-These scripts produce every dataset behind the Forever level 60 DPS dashboard. The dashboard is the "Dashboard" type artifact at
-https://claude.ai/artifact/6Woe5kZDS9RBcvDodYDmdQ. Its page and the published datasets live in that artifact, not in this directory.
+These scripts produce every dataset behind the Forever level 60 DPS Report: the page in `ui/dps_report/`, its datasets in
+`ui/dps_report/data/`, deployed to https://forever-dps.pages.dev (`make dps-report-deploy`).
 
 ```
-merged tree ──► requests ──► sims ──► datasets ──► artifact
- (w-dash)        req/        out/ rv/       data/       assets + datasets/<id> docs
-                             abl/ weights/
+merged tree ──► requests ──► sims ──────────► raw packs ◄──► datasets ──► report
+ (w-dash)        req/        out/ rv/ asm/     raw/<id>.tgz    ui/dps_report/data/   forever-dps.pages.dev
+                             abl/ weights/ mana/
 ```
+
+Each build's raw sim outputs are kept in `raw/<id>.tgz`, committed with the datasets they made, so a regeneration re-sims
+only the builds that changed and still rebuilds every dataset, the cross-build ones included (see "Partial regenerations").
 
 1. **Merged tree.** One local checkout with every class branch and the consumes branch merged in, the item DB regenerated, and
    the local dashboard patches (`patches/`) applied. The binaries are built from it.
@@ -17,7 +20,8 @@ merged tree ──► requests ──► sims ──► datasets ──► artif
 3. **Sims.** `run_build.py`, `weights.py`, `run_races.py`, `ablate.py` and `mana_curves.py` run the binaries on the requests.
    After `build_data.py`, `events.py` sims the sample fights once more with their debug logs (see the datasets table).
 4. **Datasets.** `build_data.py` (with `build_races.py`, `setup_active.py`, `rotation.py` and `tooltips.py`) writes `data/*.json`.
-5. **Artifact.** Each changed data file is uploaded as an asset, and its `datasets/<id>` doc is repointed at it.
+5. **Raw packs and publish.** `pipeline.sh publish` copies the datasets into `ui/dps_report/data/`, records provenance and
+   writes every build's raw pack to `raw/`.
 
 ## Layout and configuration
 
@@ -29,6 +33,8 @@ merged tree ──► requests ──► sims ──► datasets ──► artif
 | `fortt_ids.json` | Every spell and item id the dashboard shows a tooltip for. Written by `whids.py`, read by `whcache.py`. | yes |
 | `talent_ids.json` | Every spell a talent rank may link to (the Forever client's rank 1 spells and the trees' per rank spells). Written by `talent_links.py ids`, read by `whcache.py`. | yes |
 | `patches/` | Local-only sim patches for the merged tree (see below) | yes |
+| `raw/<id>.tgz` | Each build's raw sim outputs (about 2 MB for all), written by `rawstore.py pack` (see "Partial regenerations") | yes |
+| `rawstore.py` | Packs, unpacks, cleans and checks the raw outputs, and copies the datasets into the report | yes |
 | `dashstats/main.go` | The `dashstats` helper. Copy it to `tools/dashstats/` in the merged tree, or let patch 0001 add it. | yes |
 | `rd/` | Headless check harness (Playwright) | scripts only |
 | `bin/` | `wowsimcli`, `dashstats` and optionally `wowsimcli_r`, built from the merged tree | no |
@@ -82,6 +88,7 @@ go run tools/database/gen_db/*.go -outDir=./assets -gen=db      # every class's 
 git commit -am "dash: regenerate db"                               # local only
 git am -3 ../forever-sim/tools/dps_report/patches/000[1-3]-*.patch  # `git am --skip` a patch the merged heads already contain
 git apply ../forever-sim/tools/dps_report/patches/0004-*.patch    # a plain diff, not a mail
+git apply ../forever-sim/tools/dps_report/patches/0005-*.patch    # DASH_SPLITS, a plain diff too
 protoc -I=./proto --go_out=./sim/core ./proto/*.proto              # only if sim/core/proto/*.pb.go are missing (protoc-gen-go in ~/go/bin on PATH)
 B=../forever-sim/tools/dps_report/bin; mkdir -p $B
 go build -tags=with_db -o $B/wowsimcli ./cmd/wowsimcli
@@ -105,6 +112,7 @@ dashboard-only and never go to a class branch.
 | `0002` DASH_RACIALS_OFF | In `sim/core/racials_forever.go` and the priest racials (Chastise, Dark Sacrifice, Starshards): `DASH_RACIALS_OFF=all` or `=<part>[,<part>]` leaves those racial parts out. Parts: spirit, ruthless, earthfury, savage, beast, dodge, elune, shadowmeld, mind, eureka, bloodfury, touch, endurance, berserking, windblessed, insight, leyline, chastise, starshards, darksacrifice. | `run_races.py` (`off`, `off:<part>` and `weaponNoRacial` variants) |
 | `0003` target racials damage only | Beast Slaying, Big Game Hunter and Elemental Insight no longer also raise CritMultiplier. Client 70338 gives them aura 168 at 5%. | nothing in the report: master has the Forever half since PR #94, and the patch keeps only the Classic `racials.go` line. |
 | `0004` DASH_ASSUME knobs | `sim/core/assumptions.go`: `DASH_ASSUME="key=value,..."` overrides the constants the assumption scenarios vary (`assumptions_def.py` lists the keys). A plain diff against master with 0001 to 0003 applied; apply with `git apply`. A knob on a constant master already sets (the caster rank scales, Ice Lance's coefficient, Rend's attack power share, the hunter's crit per Agility, Raptor Strike rank 8, the pet hit rule, the top Trueshot Aura and Hunter's Mark ranks) defaults to that constant, so a run with no knob reproduces master. Rebased 2026-10-23 onto the wowsims/forever alignment round: the knobs of the assumptions it settled are gone (orchestration/alignment_round_2026-10-23.md). Build it as `$DASH_BIN/wowsimcli_assume`. | `run_assumptions.py` |
+| `0005` DASH_SPLITS | `sim/core/sim_concurrent.go`: `DASH_SPLITS=<n>` sets how many parts a sim's iterations are split into (default one per CPU). `pipeline.sh` sets 4, so the raw outputs are the same on every machine: the splits' seeds already continue each other, but averaging the parts moves the last bits. A plain diff; apply with `git apply`. | `pipeline.sh` (every step), `rawstore.py` (refuses packs made with another count) |
 
 The db regeneration commit isn't exported because it's binary; rerun gen_db instead. Merge commits aren't exported either:
 their conflict resolutions follow the rules above. With no env var set, the patches leave the Forever sim's behaviour
@@ -197,44 +205,58 @@ All are written by `build_data.py`. "out" means `out/<id>.json` from `run_build.
 Side outputs: `fortt_coverage.json`, the count of tooltips by text source, for reporting. The page also expects every dataset
 under 8 MB; the largest are icons and treeart at about 1 MB.
 
-## Rerunning only the stale parts
+## Partial regenerations
 
-- **What a class head touches.** It changes only that class's builds. For each of the class's ids, delete `out/<id>.json`,
-  `weights/<id>.json`, and its lines in `rv/results.jsonl`:
-  `python3 -c "import json,sys;ids=set(sys.argv[1:]);L=[l for l in open('rv/results.jsonl') if json.loads(l)['build'] not in ids];open('rv/results.jsonl','w').writelines(L)" <ids>`.
-  Then rerun `runner.sh`, `weights.py`, `run_races.py`, `mana_curves.py --force <ids>` and `ablate.py <ids>`. Note that ablate rewrites `abl/ablate.json`
-  with only the ids it was given, so for a partial rerun, rerun all of it (5 min). Then rebuild the class's requests first if
-  its presets, gear or APL changed.
-- **Shared code.** `sim/core`, the consumes branch, a DB change that affects every class, or a change to the local patches:
-  rerun everything.
-- **Request text only** (meta summary, caveats, rotation bullets): just rerun `build_data.py`. It reads the meta files fresh.
-- **New ids to show** (new items, spells or talents): `whids.py`, then `whcache.py fortt_ids.json`, then `build_data.py`.
+Every build's raw sim outputs live in `raw/<id>.tgz`, committed on master with the datasets and `provenance.json` they
+made (design and audits: `orchestration/dash_raw_store.md`). `build_data.py` always rebuilds every dataset from every
+build's raw outputs, so loading the packs first makes a partial run publish the same datasets as a full one, the
+cross-build ones (ranks, `race_summary`, `race_notes`, `assumptions`) included.
+
+A pack holds one build's `out/`, `names/` (sorted, deduped), `weights/` and `mana/` files, its lines of `rv/results.jsonl`
+and `asm/results.jsonl` (sorted, each key once, only the keys the scripts still ask for), its `abl/ablate.json` entry with
+that file's iterations and seed, and `fingerprint.json` (the sha256 of its request and assumption rotations, the sim split
+count, the commit simmed at). Packs are deterministic, so an unchanged build's pack doesn't change. `rawstore.py pack`
+refuses a build with a step missing or a failed sim.
+
+| Change | Commands (`$DASH_DIR` set, binaries built from the tree, run from the repo root) |
+|---|---|
+| A few builds changed (a class's code, presets, gear or rotation) | regenerate their requests, `pipeline.sh hydrate <ids>`, `pipeline.sh run <ids>`, `pipeline.sh publish <ids>` |
+| Add a preset | write `req/<id>.json` and `.meta.json` (`verify.py`), then as above with its id |
+| Remove a preset | delete `req/<id>.*` (and its duty and encounter variants), `pipeline.sh hydrate`, `pipeline.sh publish` |
+| Text, tooltips, `build_data.py` or page data only | `pipeline.sh hydrate`, `pipeline.sh publish` (no sims) |
+| New assumption combos | `pipeline.sh hydrate`, `python3 tools/dps_report/run_assumptions.py <ids>` (skips combos done), `pipeline.sh publish` |
+| A shared sim input changed (`sim/core`, the DB, the patches): every build stale | `pipeline.sh run`, `pipeline.sh publish` (no hydrate) |
+
+- `node tools/dps_report/stale.mjs` gives the scope. It hashes the shared inputs, the class's `sim/` and `ui/` folders, and
+  each build's request and assumption rotations, and lists new requests and removed presets.
+- `hydrate [ids]` empties `$DASH_DIR`'s outputs, unpacks every pack, runs `build_data.py` and compares the sim numbers
+  (`builds`, `races`, `lengths`, `hist`, `weights`, `mana`, `mana_summary`, `race_variants`, `assumption_dps`) with the
+  published datasets. A build outside `[ids]` whose numbers differ stops it: re-sim it too, or find why the pack and the
+  report disagree. Text, names, tooltips and icons may differ (a `build_data.py`, meta or tree change since the last
+  publish); they go out with the next publish.
+- `run <ids>` adds each id's duty and encounter variants (a preset whose `baseBuild` is in the list), cleans them from every
+  raw output so every step re-sims them whatever its skip rule, then runs the sim steps. `resume <ids>` finishes a stopped
+  run without cleaning.
+- `publish [ids]` runs `build_data.py`, re-sims the sample fights of `[ids]` into `ui/dps_report/data/events/` (the event
+  lookups always cover every build's fights), copies every dataset into `ui/dps_report/data/` (stamping `updated` in
+  `datasets.json` only for changed files), drops removed presets' events, packs and provenance, records provenance for
+  `[ids]` (`SIM_COMMIT=<rev>` if the sims didn't run at HEAD) and writes every pack.
+- Commit `ui/dps_report/data`, `ui/dps_report/datasets.json`, `ui/dps_report/provenance.json` and `tools/dps_report/raw`
+  together. If origin/master changed any of them meanwhile, don't hand-merge: take master's, hydrate again, re-check
+  `stale.mjs`, re-sim what that adds and publish again (as with `db.json`). Deploy after the push, from the pushed commit:
+  `deploy_pages.py` refuses a dirty report tree or a HEAD not on origin/master (`--unmerged` when the user asks for it).
+- Shards don't hydrate: each runs `pipeline.sh run <its ids>` in an empty `$DASH_DIR` and hands back `pipeline.sh pack
+  shard<k>.tgz <its ids>`. The orchestrator hydrates, `pipeline.sh unpack`s every shard and publishes.
+- **New ids to show** (new items, spells or talents): `whids.py`, then `whcache.py fortt_ids.json`, then publish.
 - **Talent links**: each rank links to the Forever client's rank 1 spell on Forever's wowhead, because Forever keeps only that one (`talent_links.py`). Forever's wowhead adds spells over time, so `python3 talent_links.py ids`, then `python3 whcache.py --retry talent_ids.json` asks it again for what it didn't know. `python3 talent_links.py refresh` then rewrites the links in the shipped `talenttrees.json` without a full `build_data.py` run.
-- **Racial or target changes:** rerun only `run_races.py` for the affected variants (delete those lines), then `build_data.py`.
-- **`build_data.py` always rebuilds every dataset.** It takes seconds. Compare `data/*.json` with the published copies
-  (`md5sum`) and upload only the files that changed.
-- **The datasets now published** were simmed on these merged heads: warrior 7348a81, paladin 6bf522f, hunter 23a266f,
-  rogue d880922, priest 10bae4e, shaman 148542d, mage 4230073, warlock 1750d98, druid 79fac92, consumes cfb2dac. The race
-  scenarios used rogue a8d7a69 and shaman 0024236, and the target racials were rerun after patch 0003. Any class whose head is
-  newer is stale.
+- `merge.mjs` (merge a partial `data/` folder into the report) is for hand repairs only now.
 
 ## Publishing
 
-Read the dashboard type's rules once: Artifact tool, `action: read`, the artifact url,
-`paths: ["SKILL.md", "artifact-type/reference/design-defaults.md"]`. Don't render or screenshot the published dashboard;
-test locally with `rd/` instead.
-
-1. **Upload each changed file.** Use the Artifact tool with `action: publish`, `url` set to the artifact, `asset: true`, and
-   `file_path` set to `data/<id>.json`, one JSON file per call. The result gives `/_blob/<hash>`.
-2. **Update the dataset docs.** With ArtifactData (load it via ToolSearch `select:ArtifactData`), `get` each
-   `datasets/<id>` doc to learn its version. Then in one `batch`, `set` or `update` each with `if_version`:
-   `{title, description, source: {kind: "file", url: "/_blob/<hash>", name: "<id>.json", format: "json"}, updated: {at: <ISO time>, by: "Claude (forever-sim)"}}`.
-   New datasets need a title and description too.
-3. **Update the page.** It is the `files/index.html` doc, `{text: <page>}`, under 256 KB. Other sessions edit it too, so
-   always `get` the live doc first, merge your change into it, and `set` it with `if_version` set to the version you read.
-   Data-only refreshes don't touch it.
-4. **Follow the snapshot rule.** The page and datasets show only final data. No session history, "round", "before/after",
-   PR numbers, process words, or "shipped". `build_data.py` cleans notes accordingly. No model names in any file.
+`pipeline.sh publish`, then `make dps-report-artifact`, the browser checks of the `regenerate-dps-report` skill, the
+commit and push above, and `make dps-report-deploy`. The snapshot rule holds: the page and datasets show only final data,
+with no session history, "round", "before/after", PR numbers, process words, or "shipped". `build_data.py` cleans notes
+accordingly. No model names in any file.
 
 ## Checks harness (`rd/`)
 
