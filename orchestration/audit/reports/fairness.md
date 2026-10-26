@@ -1,4 +1,21 @@
-# Fairness pass 6 (2026-10-26, master 74b3a5f)
+# Fairness pass 7 (2026-10-26, master f796d99)
+
+Result: quiet (no new findings). No sweep: nothing that feeds a sim changed.
+
+## Why it ran
+
+23 watched files changed since e2316be, all `tools/dps_report/req/*.meta.json` (rogue x12, Enhancement x4, warrior x7).
+
+## What I checked
+
+- Every changed meta file differs only in `caveats` text (shorter wording, standards numbers and ruling dates dropped; the rogue flask caveat split in two). The `.json` requests, sim, proto, presets, APLs, item database and standards.md are untouched, so no build can move.
+- The caveats still say the same thing as before for the shared assumptions (natural flask zone, Goblin Land Mine off, level 30 Rage rate, Flametongue Totem next to Windfury Weapon), applied to the same specs as before.
+- Shared 20k run against published (`runs/vs_published.txt`): the same 4 of 57 over 0.5 as pass 6 (Night Elf Feral -1.4/-1.5, Subtlety -1.0/-1.1), within noise; the results auditor owns it.
+- The pass 6 ranking and baseline (74b3a5f) below still stand.
+
+---
+
+# Last full pass: Fairness pass 6 (2026-10-26, master 74b3a5f)
 
 Result: quiet (no new findings). fairness-20261025-1 resolved (cdceb56c4: Marksmanship plays a Human). Full pass.
 
