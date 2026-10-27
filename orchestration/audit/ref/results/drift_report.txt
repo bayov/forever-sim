@@ -26,6 +26,8 @@
    .raid.parties[0].players[0].consumes.defaultPotion: committed=MajorManaPotion regen=DragonfirePotion
 ## paladin__level_60_shock spec=ret diffs=1 (apl/prepull 0)
    .raid.parties[0].players[0].consumes.defaultPotion: committed=MajorManaPotion regen=DragonfirePotion
+## paladin__level_60_shock_ret spec=ret diffs=1 (apl/prepull 0)
+   .raid.parties[0].players[0].retributionPaladin.options.primarySeal: committed=Command regen=Righteousness
 ## paladin__level_60_shock_undead spec=ret diffs=2 (apl/prepull 0)
    .encounter.targets[0].mobType: committed=MobTypeUndead regen=<absent>
    .raid.parties[0].players[0].consumes.defaultPotion: committed=MajorManaPotion regen=DragonfirePotion

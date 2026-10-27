@@ -1,14 +1,16 @@
-# Results audit, pass 55 (master 99bd53ada)
+# Results audit, pass 56 (master 06a898751, 2026-10-27)
 
-Trigger: new request paladin__level_60_shock_ret (Level 60 Shock, Ret side) plus its APL, presets and builds.json row.
+Full pass on the shared run (58 requests, 20k, seed 1) and the drift check.
 
-| Check | Result |
-|---|---|
-| Shared run (20k, seed 1) vs reference | 57 existing requests: 0 moved (>0.06); 1 new |
-| paladin__level_60_shock_ret | mine 932.38, published 932.4 (exact); builds.json 932.4 |
-| Request vs level_60_shock | differs only in talents, APL and the raid party block; same gear, consumes, 180 s |
-| builds.json | 58 builds; diff vs previous is the id/format rewrite plus the new row |
-| Standing gaps vs published (druid/warlock/priest/hunter, -1 to -6) | identical to the reference, not new |
-| Drift (regen.py) | not run: no mksettings binary in the shared cache; new id maps to ret |
+- Dashboard vs run: builds.json matches the run on all 58 within 0.1 (report re-sim 4273ee51d: racial pass 10-26, Spellstone Shadow-only,
+  Arcane Missiles no longer proc Missile Barrage, Ignite ticks without Arcane Instability/Arcane Power).
+- Metas vs run: all 58 metas still carry the old published.dps (finding results-20261027-1, low).
+- Moves vs the previous reference: all 58 moved, explained by 500e3a147 / d6fcdd3ef / a52cdcf53 / db6e43f98. Largest: Arcane -83.5 (-8.5%,
+  Missile Barrage and Ignite), Frost -35.5 (-3.8%), warlock/balance/hunter about -1 to -1.7%, rogues and Ret about -0.5 to -1%.
+- Drift: same as the reference, plus `paladin__level_60_shock_ret` primarySeal Command vs Righteousness (standing paladin drift, now on the
+  renamed Shock build); regen sim 925.49 = committed 925.49, no effect. regen.py now strips spaces from the race ("Night Elf").
+- Unread fields: only notes.
+- Open finding results-20261025-1 (consumes drift) unchanged: Ret Shock regen drift no longer shows potion/flask lines for the shock builds in the drift report; not re-measured.
 
-Ranking: Ret Shock (Ret side) 932.4 sits above Ret Shock 868.8 and below sub Holy per the preset comment (1.8% behind at 180 s); it avoids Light's Vigil and Twist of Light, so the gain over Shock comes from Seal of Command, Vengeance, Conviction and Champion of the Light. Not re-measured.
+Top defaults (DPS): Beast Mastery 1133.7, Fire 1089.0, Demonology 1050.2, Fury 975.2, Shadow 949.2, Ret sub Holy 941.8, Ret Shock 925.5,
+Enhancement 880.5, Feral 866.8, Shock (deep Holy) 863.6, Balance 841.5, Elemental 772.2, Combat 765.6, Subtlety/Mutilate 714.9.

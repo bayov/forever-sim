@@ -1,35 +1,41 @@
-# Fairness pass 9 (2026-10-27, master 99bd53a)
+# Fairness pass 10 (2026-10-27, master 06a8987)
 
-Result: quiet (no new findings). Targeted pass: one new variant, no sim code changed.
+Result: findings (1 new, high). Full pass: sim/core racials, mage and warlock code, presets and requests changed.
 
 ## Why it ran
 
-Watched files changed since f62cb79: the new preset Level 60 Shock (Ret side) (51442388b, 878000154):
-`tools/dps_report/req/paladin__level_60_shock_ret{,.meta}.json`, `ui/retribution_paladin/presets.ts`,
-`ui/retribution_paladin/apls/level60_shock_ret.apl.json`. Nothing under sim/, proto/, assets/database or
-standards.md changed, so the other builds can't have moved; only the paladin requests were re-swept.
+Since d3df924: the 2026-10-26 racial pass (500e3a147, sim/core/racials_forever.go), Missile Barrage off
+Arcane Missiles' missiles (a52cdcf53), Ignite off Arcane Instability / Arcane Power (db6e43f98), Shadow-only
+Spellstone (d6fcdd3ef), the Ret Shock preset names (723f57838), and 4273ee51d's re-sim of every build.
 
 ## What I checked
 
-- Gear: `audit1b.py`, all 19 sets "5a PASS | 1b PASS". The new build uses the shared `level60_phase1_synthetic` Ret set.
-- Shared assumptions: the new request, normalised without talents and rotation, is byte-identical to
-  `paladin__level_60.json` (buffs, debuffs, raid hits, consumes, gear, Dragonfire Potion, Seal of Command).
-  Against `paladin__level_60_shock` it differs only in defaultPotion (Dragonfire vs Major Mana; the meta notes
-  Dragonfire is 5.7 better at 180 s, so each build takes its own best potion) and primarySeal.
-- Race sweep (5000 it, seed 1): Shock (Ret side) Human 932.3, Undead 928.5, Dwarf 925.3. Report race Human is best.
-- Published against current: builds.json 932.4, meta 932.4, shared run 932.4, sweep 932.3. Current.
-- Other paladin builds re-swept: level_60 947.0, sub_holy 949.8, shock 869.2, identical to the f62cb79 baseline.
-- The shared run's `vs_published.txt` gaps (Affliction -5.9 etc.) are the stale req metas noted in pass 8; builds.json is current.
+- Gear: `audit1b.py`, all 19 sets "5a PASS | 1b PASS".
+- Published against current: the shared 20k run (`$AUDIT_WORK/runs/master`) matches the deployed builds.json within
+  0.05 on all 58 builds. The metas' published.dps are stale on all 58 (results-20261027-1, confirmed here; not
+  re-filed). `table.py` now compares against builds.json and accepts "Night Elf" with a space in a meta.
+- Race sweep (5000 it, seed 1), table in `ref/fairness/table_baseline.md`; 20k paired seeds on the 14 largest gaps.
+- Shared code: the racial changes are race-gated only. Orc Command reaches hunter and warlock pets
+  (BM pet 333 vs 317 as Undead, Demonology 85 vs 81). Ignite / Spellstone changes are class-local.
 
-| Variant | Best race | DPS | Published | Report race |
-|---|---|---|---|---|
-| paladin__level_60_shock_ret | Human | 932.3 | 932.4 | Human |
+## Movement (vs baseline 99bd53a, best race)
 
-## Conclusions
+| Build | Before | Now | Cause |
+|---|---|---|---|
+| Arcane | 983.2 | 902.0 | Missile Barrage ruling a52cdcf53 |
+| Frost | 947.1 | 912.1 | same (Frost's APL casts Arcane Missiles) |
+| Warlocks | | -0.6% to -1.2% | racials; Spellstone Fire half for Destruction Fire |
+| everything else | | -0.1% to -1.0% | racial pass 500e3a147 |
 
-- The new variant is simmed under the same conditions as every other Ret build; it sits 1.6% under Level 60 Ret
-  (947.0), below the base build, so the cross-spec ranking (Ret #16) is unchanged.
-- Baselines: added the Shock (Ret side) line to `ref/fairness/sweep_baseline.log` and `table_baseline.md`; every
-  other line stays valid (same sim code). `orchestration/fairness_report.md` §1 got an addendum and the variant row.
-- results-20261025-1 (mksettings vs request consumes) is the results auditor's; the new meta's notes already say
-  primarySeal was set by hand to match the shipped preset, consistent with that finding. Nothing to add.
+No unexplained move.
+
+## Finding
+
+fairness-20261027-1 (high): report races were kept through the racial pass. Best race vs report race, 20k
+paired seeds: BM Orc +12.2, Balance Wrath High Order +10.2, Balance Night Elf +8.5, Survival Orc +8.4 (passes
+Affliction, #8 to #7), MM Orc +6.1, Seal Fate Daggers / Swords Undead +4.2 / +4.0, Mutilate +2.5, Arcane Gnome
++2.4, Arms Undead +2.3, Combat Daggers +2.1, Ret Shock (Ret side) Undead +2.1, Enhancement Windshaper +1.3.
+
+## Open items (unchanged)
+
+Hunter end-of-fight test, Ice Lance Low range, FTT + Windfury, boss partial resist, Rage k and pet scaling.

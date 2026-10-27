@@ -1,30 +1,29 @@
-# Mechanics pass 41 (2026-10-27, master d3df9247f)
+# Mechanics pass 43 (2026-10-27, master 37a8a8ccd)
 
-Range audited: 99bd53ada..d3df9247f. No commit touched `sim/**/*.go`, mksettings, TASKS.md or the update ledger, and no `forever-update/*` merge landed.
+Range audited: 06a898751..37a8a8ccd. No sim or mksettings commit. One TASKS.md commit (37a8a8ccd): client 70634 and the post 8 racial additions. No `forever-update/*` merge; PR #117 (forever-update/2026-10-27-70634) is open.
 
-## New client build 1.60.1.70630
+## Get current
 
-Fetched the mechanics set and diffed it against 70532 (`wago.py diff --by-spell`, 111 spell rows). 20 of 25 tables moved; SpellItemEnchantment, SpellCastTimes, ChrRaces, CharBaseInfo and TraitDefinition are identical.
+- Client: 1.60.1.70630 -> 1.60.1.70634. `wago.py diff 70630 70634 --by-spell` is empty and all 25 mechanics-set tables are byte-identical (both fetched fresh; 70634 shows 70630's Amplify Curse mask 32768, so it is a real fetch). No verdict moves.
+- Dev notes thread: post 8 (Kaivax, 2026-10-27 15:37, edited 16:46) is new, and post 7 was edited 2026-10-27 16:47 to add the same three lines. Quoted:
+  - "Blood Fury's cooldown reduced to 2 minutes (was 3 minutes)."
+  - "Berserking duration increased to 15 seconds (was 10 seconds)."
+  - "Touch of the Grave internal cooldown reduced to 15 seconds (was 25 seconds)."
+  - Skyborne clarification: Charged and Attuned persist through death and are removed upon entering a raid (the sim's 50% Read Leyline stays right for raid presets).
+- Server hotfix tool `tools/audit/mechanics/hotfixes.py` named in state does not exist in the tree; hotfixes not re-read this pass.
 
-| Area | Change in 70630 | Sim | Verdict |
+## Checks
+
+| Item | Master | Tier 1 now | Verdict |
 |---|---|---|---|
-| Spellstone (1237162/4/5) | Misc 36 -> 32, Shadow only (was a hotfix) | Fire + Shadow | open, mechanics-20261025-1 |
-| Touch of the Grave drain | hotfix attributes baked in; Attributes_6 0x20000000 kept | no caster mods | holds |
-| Racials, raid buffs, debuffs, consumes, enchants | no row changed | - | hold |
-| Revelation buff 1248808 | mask + Arcane Wrath, Arcane Barrage | all direct casts | holds |
-| Amplify Curse 18288 | e0 mask drops Bane of Agony; e1 -20 on Curse of Exhaustion | Bane x1.5 | finding mechanics-20261027-2 (low) |
-| Elemental Mastery 16166 | COOLDOWN_ON_EVENT bit removed | 3 min from cast | now matches |
-| Elemental Focus 16164 | ProcChance 10 -> 100, base points 10 | 10% | assumed same, unverified |
-| Lava Burst rank 3 dummy | per-level 4.2 -> 0 | flat 20% Flame Shock bonus | holds |
-| Hunter's Mark, Bloodthrill, mage Frost rows | hotfixes baked in | ported earlier | hold |
-| Talent tables | Frost Warding node 3 ranks, 5 curve rows (the 10-20 mage hotfix) | ported (TASKS 119) | hold |
-| Others | Holy Fire R1, Frost Blast coef, Dark Inspiration aura, Feral Swiftness, CC and attribute-only rows | not used at 60 or not simulated | no action |
+| Blood Fury CD | 3 min (racials_forever.go) | 2 min (post 8) | Finding mechanics-20261027-3 |
+| Berserking duration | 10 sec (racials.go) | 15 sec (post 8) | Same finding |
+| Touch of the Grave ICD | 25 sec (racials_forever.go:546) | 15 sec (post 8) | Same finding |
 
-## Blizzard
+PR #117's sim diff makes exactly these three changes (Berserking 15 sec only under Forever, comments cite post 8 and client 70634). Reviewed: matches the notes.
 
-Dev notes thread has a new post 7 (Kaivax, 2026-10-26 20:35, edited 21:09): a racial pass before launch. Human Ruthless 1%, Human Spirit 10%; Dwarf Earth Fury removed, Artisan's Precision +1% hit; Tauren Endurance only 5% health; Orc Savage removed, Command +5% pet damage back; Skyborne haste 2%, plus Read Leyline / Skysight utility changes. Client 70630 doesn't have these rows yet and master doesn't model them: finding mechanics-20261027-1 (high, orchestrator fix). The DPS sizes are estimates because measuring needs a code change.
+## Open
 
-## Notes for the next pass
-
-- `tools/audit/mechanics/hotfixes.py` (named in state and in mechanics-20261025-1) is not in the repo. wago.tools/hotfixes pages parse (Inertia `data-page` JSON), but the `build` filter is ignored and `search=` matches substrings, so filtering by build needs a real tool. No hotfix rows for 70630 were listed yet.
-- Re-check post 7's racials against the next client build (new spells for Artisan's Precision and Command).
+- mechanics-20261027-3 (new, medium): fixed by PR #117 once merged; re-sim Orc, Troll, Undead builds.
+- mechanics-20261027-2 (Amplify Curse x1.5 still on Bane of Agony): still open.
+- Recheck the post 7 / 8 racials when a client build ships the rows.
