@@ -30,6 +30,8 @@ func (hunterSV) Knobs() []Knob {
 		{Name: "strikerMana", Default: 0, Min: 0, Max: 40, Step: 10},
 		// The hunter's own Hunter's Mark before the pull (standards 23), as in hunter_ranged.
 		{Name: "markPrepull", Default: 1.5, Min: 0, Max: 3, Step: 0.5},
+		// The High Order's Read Leyline below this mana percent (0 never), as in hunter_ranged.
+		{Name: "leylineMana", Default: 0, Min: 0, Max: 100, Step: 10},
 	}
 }
 
@@ -51,6 +53,9 @@ func (hunterSV) Build(k Knobs) *proto.APLRotation {
 		},
 		cast(hunterAspectOfTheBeast, not(auraIsActive(hunterAspectOfTheBeast)), "Aspect of the Beast if it ever drops."),
 		autocastOtherCooldowns(nil, "Rapid Fire, racials, trinkets and potions on cooldown."),
+	}
+	if leyline := hunterLeyline(k, nil); leyline != nil {
+		items = append(items, leyline)
 	}
 	items = append(items, hunterMark())
 	trap := cast(hunterImmolationTrap, floor("trapMana"), "Immolation Trap at the hunter's feet on cooldown.")

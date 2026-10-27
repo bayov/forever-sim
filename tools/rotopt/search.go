@@ -178,6 +178,9 @@ func (s *searcher) objective(r result) float64 {
 		s.survivalPenalty*(max(s.minHealth-r.health, 0)+0.2*max(s.minArmor-r.armor, 0))
 }
 
+// frozenKnobs are the knobs the search leaves at their starting values (-freeze).
+var frozenKnobs = map[string]bool{}
+
 func (s *searcher) search(start Knobs) (Knobs, result) {
 	best := Knobs{}
 	for name, v := range start {
@@ -189,6 +192,9 @@ func (s *searcher) search(start Knobs) (Knobs, result) {
 	for round := 1; ; round++ {
 		improved := false
 		for _, knob := range s.template.Knobs() {
+			if frozenKnobs[knob.Name] {
+				continue
+			}
 			current := best[knob.Name]
 			var values []float64
 			var pending []*pendingScore

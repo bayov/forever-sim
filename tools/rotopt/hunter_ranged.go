@@ -30,6 +30,9 @@ var (
 	hunterImmolationTrap   = spellID(14305)
 	nightElfElunesLight    = spellID(1259799)
 	hunterHuntersMark      = spellID(14325) // rank 4, sim/hunter/hunters_mark.go
+	// The High Order's Read Leyline (sim/core/racials_forever.go): a 2 sec cast on the GCD, 2 min
+	// cooldown, half again the Spirit part of the mana regen for 15 sec.
+	hunterReadLeyline = spellID(1259705)
 	// The ranged sets' synthetic on-use trinket (sim/hunter/forever_synthetic_trinkets.go).
 	hunterRangedOnUse = itemID(993016)
 )
@@ -99,7 +102,24 @@ func (hunterRanged) Knobs() []Knob {
 		// Strike costs mana and a weave can push a shot back, so a long fight stops weaving when the
 		// mana runs short.
 		{Name: "weaveManaPerSec", Default: 0, Min: 0, Max: 60, Step: 5},
+		// The High Order's Read Leyline when the mana is below this percent (0 never). Other races
+		// don't have the spell, so the line does nothing for them (ignore its warning).
+		{Name: "leylineMana", Default: 0, Min: 0, Max: 100, Step: 10},
 	}
+}
+
+// hunterLeyline is the Read Leyline line of the hunter templates (knob leylineMana), or nil when
+// the knob is 0, so a rotation without it is unchanged.
+func hunterLeyline(k Knobs, wrap func(value) value) *proto.APLListItem {
+	if k["leylineMana"] <= 0 {
+		return nil
+	}
+	condition := lt(currentManaPercent(), num(k["leylineMana"]/100))
+	if wrap != nil {
+		condition = wrap(condition)
+	}
+	return cast(hunterReadLeyline, condition,
+		"High Order: Read Leyline when the mana runs low. Other races can ignore the warning on this line.")
 }
 
 func (hunterRanged) Build(k Knobs) *proto.APLRotation {
@@ -131,6 +151,9 @@ func (hunterRanged) Build(k Knobs) *proto.APLRotation {
 		items = append(items, cast(nightElfElunesLight, alignedWith(nightElfElunesLight, hunterRangedOnUse), "Elune's Light with the on-use trinket, unless waiting would cost a use."))
 	}
 	items = append(items, autocastOtherCooldowns(nil, "Rapid Fire, Bestial Wrath, racials, trinkets and potions on cooldown."))
+	if leyline := hunterLeyline(k, func(c value) value { return weave.castFits(hunterReadLeyline, c) }); leyline != nil {
+		items = append(items, leyline)
+	}
 	items = append(items, hunterMark())
 	serpentOn := k["serpent"] == 1
 	if k["intimidation"] == 1 {
