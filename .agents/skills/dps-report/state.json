@@ -1,7 +1,7 @@
 {
  "updated": "2026-10-27",
- "note": "2026-10-27: dev notes post 1's '2026-10-26' is an edit stamp (09-24 text, all in the sim); the new content was post 7's racial pass, applied from the notes (Human 1% crit / 10% Spirit, Dwarf Artisan's Precision +1% hit, Orc Command +5% pet damage, Tauren Endurance health only, Skyborne 2% haste, Read Leyline 50%/15 s), client 70630's Spellstone Shadow-only school, and the user's ruling that Arcane Missiles don't proc Missile Barrage (mage_am_missile_barrage one value). Full re-sim of all 58 builds. Undead is now best on 12 of 24 specs. Open: Amplify Curse on Bane of Agony needs an in-game test before any preset takes it (TASKS.md); Arcane mage talents still take Missile Barrage 2/2, worth a re-optimize; preset races were left as they were.",
- "foreverClientBuild": "1.60.1.70630 (sources pulled 2026-10-27; plus dev notes post 7, the 10-26 racial pass, applied from the notes)",
+ "note": "2026-10-27: dev notes post 7 and 8 racial passes in the sim (post 1's 10-26 date is an edit stamp); client 70630 Spellstone Shadow only; Missile Barrage no missile proc (user ruling). Standards 29: race sweeps use each race's own rotation and gear (tools/dps_report/req/races/, 34 files: 14 Dwarf hit re-spends, caster and rogue race rotations); presets re-picked their race twice (after post 7 and after post 8). Ret Shock rotation re-tuned (883.2 at 180 s). Open: Amplify Curse needs an in-game test (TASKS.md); Arcane may not want Missile Barrage 2/2 any more; ties within noise kept their race (Fire, Frostfire, Affliction, Balance Wrath).",
+ "foreverClientBuild": "1.60.1.70630 tables (70634 identical for spells); dev notes posts 7 and 8 (10-26/10-27 racial passes) applied from the notes",
  "coordinationBranch": {
   "name": "claude/wow-forever-dps-presets-m9u15h",
   "head": "1e1d201af"
@@ -58,19 +58,19 @@
   "note": "the last artifact publish; retired 2026-10-25, see reportSite"
  },
  "reportData": {
-  "commit": "4273ee5 on master",
-  "simmedAt": "9e8e79d (mage builds at 7166da4) with patches 0001-0005",
+  "commit": "9857d17 on master",
+  "simmedAt": "2bd9a60+ (post 8) full run; 11 re-picked builds and variants at b57bd20",
   "date": "2026-10-27",
   "builds": 58,
   "rawPacks": "tools/dps_report/raw/ (58 packs)",
-  "note": "full re-sim, every step, 20,000 iterations; mage builds re-simmed after the Missile Barrage ruling"
+  "note": "full re-sim after post 8, then the 11 re-picked builds; 11 builds re-recorded (UI-preset-only changes)"
  },
  "reportSite": {
   "url": "https://forever-dps.pages.dev",
   "cloudflareProject": "forever-dps",
   "deploy": "make dps-report-deploy (tools/dps_report/deploy_pages.py)",
-  "publishedFrom": "master 4273ee5 (10-26 racial pass, Spellstone, Missile Barrage)",
+  "publishedFrom": "master 9857d17 (posts 7 and 8, race-tuned rotations and gear, two race re-picks)",
   "date": "2026-10-27",
-  "deployId": "3f281998"
+  "deployId": "ba2cb2dc"
  }
 }
