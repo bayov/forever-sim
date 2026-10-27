@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### fairness-20261027-1: report races are stale after the 2026-10-26 racial pass (13 builds lose 1 to 12 DPS; Survival should pass Affliction)
+- severity: high (BM +12.4 DPS, 1.1%; Survival's Orc moves it from #8 to #7, above Affliction)
+- affects: hunters (BM, MM, Survival), Balance (both builds), Arcane, Enhancement, Arms, all rogue builds but Subtlety, the Ret Shock variants
+- found: 2026-10-27, master 06a8987
+- evidence: 500e3a147 applied the racial pass (Human 1% crit and Spirit x1.10, Orc Savage out and Command in, Dwarf 1% hit, Tauren crit damage out, Skyborne haste 2%); 4273ee51d re-simmed every build at its old race, but standards 16 says presets use the best race. Paired seeds 1 / 1000003, 20000 iterations each, only the race changed in the report request (best vs report race): BM Orc 1146.0 vs Human 1133.8 (+12.2); Survival Orc 1024.6 vs Human 1016.2 (+8.4, above Affliction Human 1018.3); MM Orc 1132.3 vs Human 1126.2 (+6.1); Balance Night Elf 850.2 vs Tauren 841.7 (+8.5); Balance Wrath High Order 810.9 vs Tauren 800.7 (+10.2); Seal Fate Swords Undead 726.0 vs Orc 722.0 (+4.0); Seal Fate Daggers Undead 729.4 vs Orc 725.2 (+4.2); Mutilate Undead 717.6 vs Windshaper 715.1 (+2.5); Combat Daggers Undead 767.5 vs Windshaper 765.4 (+2.1); Arcane Gnome 901.6 vs Human 899.2 (+2.4); Arms Undead 901.0 vs Orc 898.7 (+2.3); Ret Shock (Ret side) Undead 927.7 vs Human 925.6 (+2.1); Enhancement Windshaper 882.2 vs Orc 880.9 (+1.3). The 5000-iteration sweep (orchestration/audit/ref/fairness/sweep_baseline.log) adds, unconfirmed: Combat Swords Undead +1.2, Fire Gnome +1.1, Fury DW Human +1.0, Shock / Sub Holy Undead +1.3 to +2.3, Enhancement variants Windshaper +1.2 to +2.7. Orc Command reaches the pets (BM pet 333 vs 317 Undead, Demonology imp 85 vs 81). Reproduce: `tools/audit/fairness/sweep.py <id>`, or edit the race in a scratch copy of the request.
+- proposed fix: rerun each class's race table at 120/180/300 sec (the racial pass changed every row), switch the presets above to their best race, regenerate the requests and re-publish. Read the rogue picks and the hunters' Night Elf / Orc split should be re-read from the new table, not from this list.
+- needs: orchestrator fix
+
 ## Resolved
 
 ### fairness-20261025-1: Marksmanship's report race (Skyborne Windshaper) loses 2.5 DPS to the Human

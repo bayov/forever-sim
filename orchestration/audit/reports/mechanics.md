@@ -1,30 +1,24 @@
-# Mechanics pass 41 (2026-10-27, master d3df9247f)
+# Mechanics pass 42 (2026-10-27, master 06a898751)
 
-Range audited: 99bd53ada..d3df9247f. No commit touched `sim/**/*.go`, mksettings, TASKS.md or the update ledger, and no `forever-update/*` merge landed.
+Range audited: d3df9247f..06a898751. Four sim commits; TASKS.md gained an item for testing Amplify Curse on Bane of Agony (7166da482). No `forever-update/*` merge.
 
-## New client build 1.60.1.70630
+## Commits
 
-Fetched the mechanics set and diffed it against 70532 (`wago.py diff --by-spell`, 111 spell rows). 20 of 25 tables moved; SpellItemEnchantment, SpellCastTimes, ChrRaces, CharBaseInfo and TraitDefinition are identical.
-
-| Area | Change in 70630 | Sim | Verdict |
+| Commit | Area | Check | Verdict |
 |---|---|---|---|
-| Spellstone (1237162/4/5) | Misc 36 -> 32, Shadow only (was a hotfix) | Fire + Shadow | open, mechanics-20261025-1 |
-| Touch of the Grave drain | hotfix attributes baked in; Attributes_6 0x20000000 kept | no caster mods | holds |
-| Racials, raid buffs, debuffs, consumes, enchants | no row changed | - | hold |
-| Revelation buff 1248808 | mask + Arcane Wrath, Arcane Barrage | all direct casts | holds |
-| Amplify Curse 18288 | e0 mask drops Bane of Agony; e1 -20 on Curse of Exhaustion | Bane x1.5 | finding mechanics-20261027-2 (low) |
-| Elemental Mastery 16166 | COOLDOWN_ON_EVENT bit removed | 3 min from cast | now matches |
-| Elemental Focus 16164 | ProcChance 10 -> 100, base points 10 | 10% | assumed same, unverified |
-| Lava Burst rank 3 dummy | per-level 4.2 -> 0 | flat 20% Flame Shock bonus | holds |
-| Hunter's Mark, Bloodthrill, mage Frost rows | hotfixes baked in | ported earlier | hold |
-| Talent tables | Frost Warding node 3 ranks, 5 curve rows (the 10-20 mage hotfix) | ported (TASKS 119) | hold |
-| Others | Holy Fire R1, Frost Blast coef, Dark Inspiration aura, Feral Swiftness, CC and attribute-only rows | not used at 60 or not simulated | no action |
+| 500e3a1 | Racials (shared) | Every value against dev notes post 7 (tier 1): Human 1% crit, Spirit x1.10; Dwarf Earth Fury gone, +1% melee/spell hit; Tauren 5% health only; Orc Savage gone, Command x1.05 on non-guardian hunter/warlock pets (same code as Classic racials.go, pets exist before applyRaceEffects, no later overwrite of pet DamageDealtMultiplier); Skyborne 2% haste, Energized +50% for 15 sec. critDamageBonus removed with no users left. | Matches; resolves mechanics-20261027-1 |
+| d6fcdd3 | Warlock Spellstone | Shadow only under Forever, as client 70630 1237162/4/5 Misc 32 | Matches; resolves mechanics-20261025-1 |
+| db6e43f | Mage Ignite | Arcane Instability and Arcane Power kept off Ignite's DamageMultiplier under Forever, per dev notes 2026-09-24 "no longer double dips" | Consistent with tier 1 |
+| a52cdcf | Mage Missile Barrage | User ruling | Not reviewed (ruling) |
 
-## Blizzard
+Shared run vs published: Human/crit builds fall 0.7-1.7% as the racial pass predicts; arcane mage -8.5% is the Missile Barrage ruling.
 
-Dev notes thread has a new post 7 (Kaivax, 2026-10-26 20:35, edited 21:09): a racial pass before launch. Human Ruthless 1%, Human Spirit 10%; Dwarf Earth Fury removed, Artisan's Precision +1% hit; Tauren Endurance only 5% health; Orc Savage removed, Command +5% pet damage back; Skyborne haste 2%, plus Read Leyline / Skysight utility changes. Client 70630 doesn't have these rows yet and master doesn't model them: finding mechanics-20261027-1 (high, orchestrator fix). The DPS sizes are estimates because measuring needs a code change.
+## Get current
 
-## Notes for the next pass
+- Client: newest 1.60 build is still 1.60.1.70630 (probe 300).
+- Dev notes thread: 7 posts, newest post 7 (2026-10-26 20:35, edited 21:09), already read. Blue tracker: nothing newer on Forever mechanics (end-of-beta, RP-PvP, podcast posts).
 
-- `tools/audit/mechanics/hotfixes.py` (named in state and in mechanics-20261025-1) is not in the repo. wago.tools/hotfixes pages parse (Inertia `data-page` JSON), but the `build` filter is ignored and `search=` matches substrings, so filtering by build needs a real tool. No hotfix rows for 70630 were listed yet.
-- Re-check post 7's racials against the next client build (new spells for Artisan's Precision and Command).
+## Open
+
+- mechanics-20261027-2 (Amplify Curse x1.5 still on Bane of Agony, curses.go:74): still open; TASKS.md now gates presets on it.
+- Recheck the post 7 racials when a client build ships rows for Artisan's Precision and Command.

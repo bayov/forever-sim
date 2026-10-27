@@ -68,3 +68,9 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-10-27 06:57 | consumables | pass 46 | master d3df9247f | quiet | client 70630: 0 consumable spell or enchant changes; scan clean
 2026-10-27 06:57 | mechanics | pass 41 | master d3df9247f | 2 new findings | racial rework (dev notes post 7) not in sim; Amplify Curse no longer boosts Bane of Agony
 2026-10-27 06:57 | client_update | pass 2 | master d3df9247f | 5 new findings | 70630 diff: Missile Barrage tooltip, Spellstone Shadow-only, Amplify Curse, Touch of the Grave, racial pass
+2026-10-27 13:21 | results | pass 56 | master 06a898751 | 1 new finding | shared run matches builds.json; metas' published.dps stale (low)
+2026-10-27 13:21 | rotations | pass 35 | master 06a898751 | quiet | no APL changes; Frost/Arcane A/B tests hold
+2026-10-27 13:21 | gear | pass 43 | master 06a898751 | quiet | enchants JSON meta-only change
+2026-10-27 13:21 | consumables | pass 47 | master 06a898751 | quiet | scan clean; no consumable changes
+2026-10-27 13:21 | mechanics | pass 42 | master 06a898751 | quiet | racials, Spellstone, Ignite verified; Amplify Curse still open
+2026-10-27 13:21 | fairness | pass 10 | master 06a898751 | 1 new finding | report races stale after racial pass: 13 builds off best race (high)

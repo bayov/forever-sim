@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "d3df9247f7dc9317eceabda2f4b9b649d92178f4"
+  "master": "06a8987517297bcebc739a0b451851e9d2042882"
  },
- "last_pass_at": "2026-10-27T06:52:41Z",
- "pass": 41,
- "result": "findings",
- "note": "Pass 41: no sim commits since 99bd53ada. New client 70630 diffed vs 70532 (bakes in the 10-20/10-23 hotfixes; Amplify Curse drops Bane of Agony). Dev notes post 7 (racial pass) not in sim or client.",
+ "last_pass_at": "2026-10-27T12:55:05Z",
+ "pass": 42,
+ "result": "quiet",
+ "note": "Pass 42: verified racial pass 500e3a1 against dev notes post 7, Spellstone d6fcdd3, Ignite db6e43f. No new client build or dev notes. Amplify Curse finding still open.",
  "client_build": "1.60.1.70630",
- "checked_at": "2026-10-27T06:57:56Z",
+ "checked_at": "2026-10-27T13:21:01Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/7",
   "date": "2026-10-26T20:35:27Z",
