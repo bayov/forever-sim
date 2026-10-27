@@ -20,6 +20,7 @@ The demons now take wowsims/forever's measured stat shares and melee (about 4% l
 - Destruction fire sacrifices the Succubus before the pull (Demonic Sacrifice, 15% Fire damage) and keeps no demon out: `252-0050003201-0050345003101351`, 986.1 against 981.0 for the best build with the Succubus out at 180 sec. The three Shadow builds keep their talents and the Succubus out; sacrificing the Imp with no demon out loses 31 on Destruction and 84 on Affliction.
 - Every build casts a new Immolate only with more than 15 sec of the fight left, Demonology and the fire build a new Corruption too, and the fire build recasts both 1.5 sec early (was 2): +0.3 to +2.2 at 120 / 180 / 300 sec on both seed sets.
 - The Human stays first on every build (the fire build ties the Orc). The spell hit cap is unchanged at 16%, and the consumes are unchanged (Major Spellblasting Potion, Caustic Smog Potion and the Flask of Natural Aggression all lose).
+- Race re-pick (2026-10-27, orchestration/standards.md items 29 and 16, after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 sec, Undead Touch of the Grave 15 sec): Demonology and Destruction are Orc (1051.8 and 1001.5 at 180 sec, 1.6 and 1.4 ahead of the Human), Destruction fire is Undead (986.4, 4.5 ahead of the Human); Affliction stays Human (a tie with the Orc). The curse duty builds follow their base.
 
 ## Beta client 1.60.1.70425 (2026-10-16)
 

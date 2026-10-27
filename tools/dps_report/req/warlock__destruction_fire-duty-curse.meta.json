@@ -5,7 +5,7 @@
   "build": "Destruction Fire (Curse duty)",
   "isDefault": false,
   "pr": 104,
-  "race": "Human",
+  "race": "Undead",
   "talents": "252-0050003201-0050345003101351",
   "treeNames": [
     "Affliction",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_destruction_fire_duty_curse",
   "published": {
-    "dps": 976.2,
-    "source": "warlock round 2026-10-23"
+    "dps": 977.0,
+    "source": "Second race re-pick 2026-10-27 (standards 29 and 16, after dev notes post 8): Undead (follows its base build, warlock__destruction_fire); verify.py, 20000 iterations, seed 1 (was 972.5 as Human on the same sim)"
   },
   "verify": {
-    "dps": 976.16,
-    "stderr": 0.23,
+    "dps": 977.0,
+    "stderr": 0.2,
     "iters": 20000,
     "ok": true,
-    "note": "-0.04 vs published"
+    "note": "verify.py of this request, 180s, seed 1"
   },
   "summary": "Keeps its own Curse of the Elements up for the raid, with the raid's copy off. Under Forever the curse has its own slot, so the bane stays.",
   "keyTalents": [
@@ -77,7 +77,7 @@
     "Soul shards and Life Tap's health cost aren't tracked.",
     "Demons use the warlock's spell crit (forever-bugs #331). Worth 15 to 17 DPS."
   ],
-  "notes": "Request from mksettings with the same arguments as warlock__destruction_fire except -apl level60_destruction_fire_duty_curse, then raid.debuffs.curseOfElements set to false. Demon Armor; no demon out (Summon NoSummon), sacrificed Succubus, imbue Firestone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly.",
+  "notes": "Request from mksettings with the same arguments as warlock__destruction_fire except -apl level60_destruction_fire_duty_curse, then raid.debuffs.curseOfElements set to false. Demon Armor; no demon out (Summon NoSummon), sacrificed Succubus, imbue Firestone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly. Undead since the second 2026-10-27 race re-pick (follows its base build, warlock__destruction_fire) (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Human.",
   "duty": "Curse of the Elements",
   "baseBuild": "warlock__destruction_fire"
 }

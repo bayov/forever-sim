@@ -5,7 +5,7 @@
   "build": "Destruction",
   "isDefault": false,
   "pr": 103,
-  "race": "Human",
+  "race": "Orc",
   "talents": "255000000351--055030500310035",
   "treeNames": [
     "Affliction",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_destruction",
   "published": {
-    "dps": 1011.8,
-    "source": "warlock round 2026-10-23"
+    "dps": 1001.5,
+    "source": "Second race re-pick 2026-10-27 (standards 29 and 16, after dev notes post 8): Orc; verify.py, 20000 iterations, seed 1 (was 1000.1 as Human on the same sim)"
   },
   "verify": {
-    "dps": 1011.77,
-    "stderr": 0.36,
+    "dps": 1001.5,
+    "stderr": 0.4,
     "iters": 20000,
     "ok": true,
-    "note": "-0.03 vs published"
+    "note": "verify.py of this request, 180s, seed 1"
   },
   "summary": "Shadow Bolt Destruction with Conflagrate, plus Pandemic and Malevolence from Affliction.",
   "keyTalents": [
@@ -73,5 +73,5 @@
     "Soul shards and Life Tap's health cost aren't tracked.",
     "Demons use the warlock's spell crit (forever-bugs #331). Worth 15 to 17 DPS."
   ],
-  "notes": "Request straight from mksettings -spec destruction -gear level60_phase1_synthetic -apl level60_destruction -race Human -duration 180, no edits. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Spellstone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly."
+  "notes": "Request straight from mksettings -spec destruction -gear level60_phase1_synthetic -apl level60_destruction -race Orc -duration 180, no edits. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Spellstone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly. Orc since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Human."
 }

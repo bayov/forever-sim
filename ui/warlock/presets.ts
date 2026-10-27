@@ -384,7 +384,7 @@ export const OtherDefaults = {
 	profession1: Profession.Engineering,
 	profession2: Profession.Tailoring,
 	channelClipDelay: 150,
-	race: Race.RaceHuman,
+	race: Race.RaceOrc,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -447,14 +447,21 @@ export const EncounterLevel60CurseDuty = level60Encounter('Level 60 (Curse duty)
 // the Orc, Affliction 3.2 / 3.2 of the Orc. Destruction fire is a tie with the Orc (0.1 / 0.0), so it
 // stays Human. The best Horde race is the Orc on every build. The full table is in
 // forever-wiki/sim-status.md.
+// Race re-pick (2026-10-27, standards 29 and 16, after dev notes post 8: Orc Blood Fury 2 min, Troll
+// Berserking 15 sec, Undead Touch of the Grave 15 sec): Demonology and Destruction move to the Orc,
+// Destruction fire to the Undead. At 180 sec (verify.py, 20000 iterations, seed 1): Demonology 1051.8
+// against the Human's 1050.2, Destruction 1001.5 against 1000.1, Destruction fire 986.4 against 981.9.
+// Affliction stays Human (the Orc's 0.4 lead in the race sweep is a tie). The curse duty builds follow
+// their base. The UI's default race is the Orc, the race of the default build (Demonology) and of
+// Destruction.
 export const PresetBuildLevel60Demonology = PresetUtils.makePresetBuild('Level 60 Demonology', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Human Demonology warlock on the synthetic Phase 1 gear, the Imp sacrificed and the Succubus out, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Orc Demonology warlock on the synthetic Phase 1 gear, the Imp sacrificed and the Succubus out, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60Demonology,
 	rotation: RotationLevel60Demonology,
 	encounter: EncounterLevel60,
-	race: Race.RaceHuman,
+	race: Race.RaceOrc,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -462,12 +469,12 @@ export const PresetBuildLevel60Demonology = PresetUtils.makePresetBuild('Level 6
 });
 export const PresetBuildLevel60Destruction = PresetUtils.makePresetBuild('Level 60 Destruction', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Human Destruction warlock on the synthetic Phase 1 gear with the Succubus out, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Orc Destruction warlock on the synthetic Phase 1 gear with the Succubus out, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60Destruction,
 	rotation: RotationLevel60Destruction,
 	encounter: EncounterLevel60,
-	race: Race.RaceHuman,
+	race: Race.RaceOrc,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -489,12 +496,12 @@ export const PresetBuildLevel60Affliction = PresetUtils.makePresetBuild('Level 6
 
 export const PresetBuildLevel60DestructionFire = PresetUtils.makePresetBuild('Level 60 Destruction Fire', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Human Destruction fire warlock on the synthetic Phase 1 gear, the Succubus sacrificed, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Undead Destruction fire warlock on the synthetic Phase 1 gear, the Succubus sacrificed, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60DestructionFire,
 	rotation: RotationLevel60DestructionFire,
 	encounter: EncounterLevel60,
-	race: Race.RaceHuman,
+	race: Race.RaceUndead,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
