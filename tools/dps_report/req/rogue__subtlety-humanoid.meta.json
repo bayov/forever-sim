@@ -5,7 +5,7 @@
   "build": "Subtlety (vs Humanoid)",
   "isDefault": false,
   "pr": 9,
-  "race": "NightElf",
+  "race": "Undead",
   "talents": "0053231015140004--3021203310113011",
   "treeNames": [
     "Assassination",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_subtlety",
   "apl": "level60_subtlety",
   "published": {
-    "dps": 741.4,
-    "source": "Rogue hit and explosives round 2026-10-24: hit by sim for dual wielders (8% in all), explosives only when they gain (standards 4 and 11, 2026-10-23); 180 s, 20,000 iterations, seed 1 (was 739.8)"
+    "dps": 742.1,
+    "source": "Second race re-pick 2026-10-27 (standards 29 and 16, after dev notes post 8): Undead (follows its base build, rogue__subtlety); verify.py, 20000 iterations, seed 1 (was 740.3 as Night Elf on the same sim)"
   },
   "verify": {
-    "dps": 741.4,
-    "stderr": 0.19,
+    "dps": 742.1,
+    "stderr": 0.2,
     "iters": 20000,
     "ok": true,
-    "note": "sim of the request, 180s, seed 1 (rogue worker, 2026-10-24)"
+    "note": "verify.py of this request, 180s, seed 1"
   },
   "summary": "Subtlety with Murder 2/2, for a Humanoid or Giant boss.",
   "advantage": "Murder 2/2 adds 4% damage against Humanoids and Giants. It does nothing against other bosses.",
@@ -68,7 +68,7 @@
   ],
   "caveats": [
     "Murder (+4% damage) only works against Humanoids and Giants.",
-    "The fight doesn't open from Stealth. Only Vanish and the Night Elf's Shadowmeld give Stealth.",
+    "The fight doesn't open from Stealth. Only Vanish gives Stealth (and a Night Elf's Shadowmeld).",
     "Ghostly Strike adds nothing over Hemorrhage (0.5), but the build requires it.",
     "Open: Premeditation out of Stealth and Preparation's reset list.",
     "Elusiveness: 0 at 180s, -2.9 at 300s.",
@@ -77,7 +77,7 @@
     "Assumed: the fight is in Hyjal or the Barrow Deeps. Its flask gives its full bonus only there.",
     "No Flask of Natural Precision, so its 8% hit comes from the gear (7%, on the wrist, second ring and back) and the 2-piece bonus. That beats 6% hit by 1.2 to 1.9 DPS."
   ],
-  "notes": "Request from mksettings with the same arguments as rogue__subtlety except talents, then the target's mobType set to MobTypeHumanoid, as the class preset's encounter does.",
+  "notes": "Request from mksettings with the same arguments as rogue__subtlety except talents, then the target's mobType set to MobTypeHumanoid, as the class preset's encounter does. Undead since the second 2026-10-27 race re-pick (follows its base build, rogue__subtlety) (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Night Elf.",
   "encounter": "Humanoid",
   "baseBuild": "rogue__subtlety"
 }

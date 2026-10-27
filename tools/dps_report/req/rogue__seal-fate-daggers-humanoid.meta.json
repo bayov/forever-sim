@@ -5,7 +5,7 @@
   "build": "Seal Fate Daggers (vs Humanoid)",
   "isDefault": false,
   "pr": 9,
-  "race": "Gnome",
+  "race": "Undead",
   "talents": "0053231053120005-322303200013-002",
   "treeNames": [
     "Assassination",
@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic_daggers",
   "apl": "level60_combat_daggers",
   "published": {
-    "dps": 754.9,
-    "source": "Race re-pick 2026-10-27 (standards 29 and 16): Gnome (follows its base build, rogue__seal-fate-daggers), with the Gnome rotation (Eureka! on cooldown, eurekaCp 0; it was the race override); verify.py, 20000 iterations, seed 1 (was 749.4 as Orc on the same sim)"
+    "dps": 759.3,
+    "source": "Second race re-pick 2026-10-27 (standards 29 and 16, after dev notes post 8): Undead (follows its base build, rogue__seal-fate-daggers), keeping the eurekaCp 0 rotation (Eureka! on cooldown, tuned for the Gnome; a no-op for other races); verify.py, 20000 iterations, seed 1 (was 754.9 as Gnome on the same sim)"
   },
   "verify": {
-    "dps": 754.9,
+    "dps": 759.3,
     "stderr": 0.2,
     "iters": 20000,
     "ok": true,
@@ -72,7 +72,7 @@
     "Assumed: the fight is in Hyjal or the Barrow Deeps. Its flask gives its full bonus only there.",
     "10% hit (the wrist and the second ring carry 10 hit rating each): dual wielders take hit by sim (standards 4), and past the 8% yellow cap it still helps the white hits (+0.4 to +1.9 over 8%)."
   ],
-  "notes": "Request from mksettings with the same arguments as rogue__seal-fate-daggers except talents, then the target's mobType set to MobTypeHumanoid, as the class preset's encounter does. Gnome since the 2026-10-27 race re-pick (follows its base build, rogue__seal-fate-daggers), with its base's rotation regenerated with eurekaCp=0 (Eureka! on cooldown). Was Orc.",
+  "notes": "Request from mksettings with the same arguments as rogue__seal-fate-daggers except talents, then the target's mobType set to MobTypeHumanoid, as the class preset's encounter does. Gnome since the 2026-10-27 race re-pick (follows its base build, rogue__seal-fate-daggers), with its base's rotation regenerated with eurekaCp=0 (Eureka! on cooldown). Was Orc. Undead since the second 2026-10-27 race re-pick (follows its base build, rogue__seal-fate-daggers) (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Gnome.",
   "encounter": "Humanoid",
   "baseBuild": "rogue__seal-fate-daggers"
 }

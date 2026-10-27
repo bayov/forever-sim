@@ -5,7 +5,7 @@
   "build": "Combat Daggers (vs Humanoid)",
   "isDefault": false,
   "pr": 9,
-  "race": "Gnome",
+  "race": "Undead",
   "talents": "005323102-30230320201515231-002",
   "treeNames": [
     "Assassination",
@@ -15,11 +15,11 @@
   "gearSet": "level60_phase1_synthetic_combat_daggers",
   "apl": "level60_combat_daggers",
   "published": {
-    "dps": 793.9,
-    "source": "Race re-pick 2026-10-27 (standards 29 and 16): Gnome (follows its base build, rogue__combat-daggers), with the Gnome rotation (Eureka! on cooldown, eurekaCp 0; it was the race override); verify.py, 20000 iterations, seed 1 (was 789.2 as Windshaper Skyborne on the same sim)"
+    "dps": 796.5,
+    "source": "Second race re-pick 2026-10-27 (standards 29 and 16, after dev notes post 8): Undead (follows its base build, rogue__combat-daggers), keeping the eurekaCp 0 rotation (Eureka! on cooldown, tuned for the Gnome; a no-op for other races); verify.py, 20000 iterations, seed 1 (was 793.9 as Gnome on the same sim)"
   },
   "verify": {
-    "dps": 793.9,
+    "dps": 796.5,
     "stderr": 0.2,
     "iters": 20000,
     "ok": true,
@@ -73,7 +73,7 @@
     "9% hit (the wrist carries 10 hit rating): dual wielders take hit by sim (standards 4); 9% beats 8% by 1.1 to 1.8, and 10% is 0.6 behind to 0.1 ahead.",
     "No Goblin Land Mine: its 1 sec cast resets the swing, so it loses DPS here. The Sapper stays."
   ],
-  "notes": "Request from mksettings with the same arguments as rogue__combat-daggers except talents, then the target's mobType set to MobTypeHumanoid, as the class preset's encounter does. Request from mksettings -spec rogue_combat_daggers (the rogue_combat setup with the Flask of Natural Accuracy). Gnome since the 2026-10-27 race re-pick (follows its base build, rogue__combat-daggers), with its base's rotation regenerated with eurekaCp=0 (Eureka! on cooldown). Was Windshaper Skyborne.",
+  "notes": "Request from mksettings with the same arguments as rogue__combat-daggers except talents, then the target's mobType set to MobTypeHumanoid, as the class preset's encounter does. Request from mksettings -spec rogue_combat_daggers (the rogue_combat setup with the Flask of Natural Accuracy). Gnome since the 2026-10-27 race re-pick (follows its base build, rogue__combat-daggers), with its base's rotation regenerated with eurekaCp=0 (Eureka! on cooldown). Was Windshaper Skyborne. Undead since the second 2026-10-27 race re-pick (follows its base build, rogue__combat-daggers) (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Gnome.",
   "encounter": "Humanoid",
   "baseBuild": "rogue__combat-daggers"
 }
