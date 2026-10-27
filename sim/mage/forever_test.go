@@ -901,3 +901,20 @@ func newMageWithRace(race proto.Race) (*core.Simulation, *Mage) {
 	sim.Reset()
 	return sim, sim.Raid.Parties[0].Players[0].(*Mage)
 }
+
+// Ignite takes no percent damage modifier of its own under Forever: the crit it comes from
+// already has them (development notes 2026-09-24, "no longer double dips on % damage increase
+// modifiers"). Arcane Instability and Arcane Power raise Fireball but not the Ignite ticks.
+func TestMageIgniteTakesNoDamagePercent(t *testing.T) {
+	// The Arcane preset's tree (Arcane Instability 3, Arcane Power) and Ignite 5.
+	sim, mage := newMageSim(t, "0552205003100301531-0005")
+	fireball := topRank(t, "Fireball", mage.Fireball)
+	at := mage.AttackTables[mage.CurrentTarget.UnitIndex][mage.Ignite.CastType]
+	mage.ArcanePowerAura.Activate(sim)
+	if got := fireball.DamageMultiplier; math.Abs(got-1.339) > 1e-9 {
+		t.Errorf("Fireball does %.4f times the damage with Arcane Power and Arcane Instability 3, want 1.339", got)
+	}
+	if got := mage.Ignite.AttackerDamageMultiplier(at, true); got != 1 {
+		t.Errorf("Ignite ticks for %.4f times their share with Arcane Power and Arcane Instability 3, want 1", got)
+	}
+}

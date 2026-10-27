@@ -19,6 +19,12 @@ const IgniteTicks = 2
 // from already has every damage bonus, on the mage and on the target, so the ticks take none of
 // them again. The SoD sim still multiplied the mage's bonuses in, and the fork both sides. For the
 // same reason its ticks never crit, though Forever lets other periodic damage crit.
+//
+// SpellFlagIgnoreModifiers leaves out the mage's and the target's multipliers, but not the spell's
+// own DamageMultiplier, where the mage's percent damage rows go under Forever (changeDamagePercent).
+// So Arcane Instability and Arcane Power stay off Ignite (ignoresDamagePercent) as well: the
+// development notes of 2026-09-24 (build 70009): "Ignite no longer double dips on % damage
+// increase modifiers". No later post or client build changes that.
 func (mage *Mage) applyIgnite() {
 	if mage.Talents.Ignite == 0 {
 		return
@@ -74,4 +80,11 @@ func (mage *Mage) applyIgnite() {
 			mage.Ignite.Cast(sim, result.Target)
 		},
 	}))
+}
+
+// ignoresDamagePercent is whether the mage's percent damage modifiers (Arcane Instability, Arcane
+// Power) leave spell alone: under Forever Ignite takes none, because the crit it comes from already
+// has them (development notes 2026-09-24).
+func (mage *Mage) ignoresDamagePercent(spell *core.Spell) bool {
+	return spell.SpellCode == SpellCode_MageIgnite && mage.Env.IsForever()
 }
