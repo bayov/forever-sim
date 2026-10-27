@@ -43,6 +43,7 @@ Same method: the report's base requests, every race, 5000 iterations, seed 1. Al
 |---|---|---|---|---|
 | druid__balance-wrath | High Order | 811.9 | 810.9 (at Tauren 811.3) | 814.0 |
 | paladin__level_60_shock | Human | 869.2 | 868.8 (at Human 869.2) | 869.4 |
+| paladin__level_60_shock_ret | Human | 932.3 | 932.4 (at Human 932.3) | new |
 | paladin__level_60_sub_holy | Human | 949.8 | 949.1 (at Human 949.8) | 949.8 |
 | priest__shadow-holy | Human | 914.2 | 914.2 (at Human 914.2) | 918.9 |
 | shaman__elemental-level60-mana-tide | Windshaper | 761.8 | 761.6 (at Windshaper 761.8) | 762.2 |
@@ -60,6 +61,7 @@ What moved / findings:
 - Published against current: all within 1.9 of builds.json (0 of 57 over 0.5 in the shared 20k run). The req metas are 3 to 6 stale for the moved builds; the dashboard is current.
 - Best race: report race everywhere, Lone Wolf High Order ties Windshaper (1123.9).
 - No new findings. Top over bottom: 1.60x (was 1.59x).
+- Addendum, pass 9 (master 99bd53a, 2026-10-27): new variant Level 60 Shock (Ret side) (51442388b, 878000154), Human 932.3, published 932.4; Human is its best race (Undead 928.5, Dwarf 925.3). Its request matches Level 60 Ret in gear, buffs, debuffs, consumes and raid hits except talents and rotation. No sim code changed; the other paladin builds re-swept unchanged to the decimal.
 
 <details><summary>Previous §1 (74b3a5f, 2026-10-26)</summary>
 

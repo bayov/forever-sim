@@ -33,6 +33,7 @@
 |---|---|---|---|---|
 | druid__balance-wrath | High Order | 811.9 | 810.9 (at Tauren 811.3) | 814.0 |
 | paladin__level_60_shock | Human | 869.2 | 868.8 (at Human 869.2) | 869.4 |
+| paladin__level_60_shock_ret | Human | 932.3 | 932.4 (at Human 932.3) | new |
 | paladin__level_60_sub_holy | Human | 949.8 | 949.1 (at Human 949.8) | 949.8 |
 | priest__shadow-holy | Human | 914.2 | 914.2 (at Human 914.2) | 918.9 |
 | shaman__elemental-level60-mana-tide | Windshaper | 761.8 | 761.6 (at Windshaper 761.8) | 762.2 |

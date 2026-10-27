@@ -55,3 +55,4 @@ warrior__fury                                mine   986.5  pub   986.6  diff -0.
 warrior__fury-duty-battle-shout              mine   984.0  pub   984.0  diff +0.0
 warrior__fury_2h                             mine   965.6  pub   965.6  diff +0.0
 warrior__fury_2h-duty-battle-shout           mine   961.6  pub   961.6  diff +0.0
+paladin__level_60_shock_ret                  mine  932.4  pub   932.4  diff +0.0

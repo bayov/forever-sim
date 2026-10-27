@@ -61,3 +61,7 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-10-26 19:20 | results | pass 54 | master f62cb7971 | quiet | builds.json matches 20k run within 0.15; baseline moved
 2026-10-26 19:20 | rotations | pass 33 | master f62cb7971 | quiet | moves explained by 32a6848f9; baseline refreshed
 2026-10-26 19:20 | fairness | pass 8 | master f62cb7971 | quiet | all moves from 32a6848f9; baseline moved
+2026-10-27 00:55 | consumables | pass 45 | master 99bd53ada | quiet | new Ret Shock build adds no consumables; scan clean
+2026-10-27 00:55 | results | pass 55 | master 99bd53ada | quiet | new paladin__level_60_shock_ret 932.38 matches published 932.4
+2026-10-27 00:55 | rotations | pass 34 | master 99bd53ada | quiet | 4 reorderings of the new Shock (Ret side) APL all lost
+2026-10-27 00:55 | fairness | pass 9 | master 99bd53ada | quiet | Shock (Ret side) Human best race; paladin builds unchanged
