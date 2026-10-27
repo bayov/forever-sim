@@ -250,7 +250,8 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 //   Taking all 3 points from Meditation instead costs 61 at 300 sec (mana), and the 180 sec search's
 //   Meditation 1 build costs 9.
 export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '00530400102-3-50052101231302251' }), {
-	tooltip: 'Level 60 talents from the talent search: deep Shadow with Twin Disciplines, Silent Resolve (threat), Mental Strength, Inner Focus and Twilight Focus.',
+	tooltip:
+		'Level 60 talents from the talent search: deep Shadow with Twin Disciplines, Silent Resolve (threat), Mental Strength, Inner Focus and Twilight Focus.',
 	group: 'Level 60',
 });
 
@@ -458,14 +459,18 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // of Undead's Touch of the Grave. Troll's Berserking only speeds up Mind Blast's cast, channels
 // and the GCD do not speed up, so it is worth nothing. Starshards and Chastise lose DPS (see the
 // rotation).
+// Race re-pick (2026-10-27, standards 29 and 16, after dev notes post 8: Orc Blood Fury 2 min, Troll
+// Berserking 15 sec, Undead Touch of the Grave 15 sec): Level 60 and Level 60 + Holy move to the Undead.
+// At 180 sec (verify.py, 20000 iterations, seed 1): Level 60 952.8 against the Human's 949.2, Level 60 +
+// Holy 910.5 against 906.8.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Human on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Undead on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60,
 	encounter: EncounterLevel60,
-	race: Race.RaceHuman,
+	race: Race.RaceUndead,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -500,12 +505,12 @@ export const EncounterLevel60Holy = PresetUtils.makePresetEncounter('Level 60 + 
 export const PresetBuildLevel60Holy = PresetUtils.makePresetBuild('Level 60 + Holy', {
 	group: 'Level 60',
 	tooltip:
-		'Level 60 with the Holy sub tree talents and Greater Mageblood, 42 DPS behind Level 60. As a Human it runs out of mana by 300 sec (802.9; an Undead holds 865.1 with Dark Sacrifice).',
+		'Level 60 Undead with the Holy sub tree talents and Greater Mageblood, 42 DPS behind Level 60. Dark Sacrifice holds it at 865.1 at 300 sec, where a Human runs out of mana (802.9).',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60Holy,
 	rotation: APLLevel60,
 	encounter: EncounterLevel60Holy,
-	race: Race.RaceHuman,
+	race: Race.RaceUndead,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],

@@ -5,7 +5,7 @@
   "build": "Level 60 + Holy",
   "isDefault": false,
   "pr": 1,
-  "race": "Human",
+  "race": "Undead",
   "talents": "-3025011303-50052101231302251",
   "treeNames": [
     "Discipline",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 918.9,
-    "source": "Class worker round on claude/keen-brown-o2g32n 0569745, 2026-10-23: the wowsims/forever alignment round (natural flask zone, wand Shoot, Troll Shadowguard), 20000 iterations, seeds 1 and 1000003 agree within 0.2 (was 917.1)"
+    "dps": 910.5,
+    "source": "Second race re-pick 2026-10-27 (standards 29 and 16, after dev notes post 8): Undead; verify.py, 20000 iterations, seed 1 (was 906.8 as Human on the same sim)"
   },
   "verify": {
-    "dps": 918.9,
-    "stderr": 0.17,
+    "dps": 910.5,
+    "stderr": 0.2,
     "iters": 20000,
     "ok": true,
-    "note": "class worker finals, 180s, seed 1 (seed 1000003 within 0.2)"
+    "note": "verify.py of this request, 180s, seed 1"
   },
   "summary": "Shadow with Holy points of healing utility instead of Discipline.",
   "keyTalents": [
@@ -60,11 +60,11 @@
   ],
   "caveats": [
     "The Holy points add no DPS except Twilight Focus (pushback protection).",
-    "Runs out of mana on long fights. Undead's Dark Sacrifice wins at 300s (876.9 vs 858.8 with the wand).",
+    "Runs out of mana on long fights. The Undead's Dark Sacrifice helps there (876.9 vs 858.8 with the wand at 300s, measured before the race re-pick).",
     "Only the 2-piece set bonus is active. Raiments 4-piece and 5-piece are not measured with Devouring Plague's 24s cooldown.",
     "Periodic spells crit per tick (Forever rule). Assumed: Shadow Weaving applies to the priest's own Shadow damage.",
     "Mind Flay rolls hit once and isn't hasted. SW:Death backlash is ignored.",
     "Left out: Brilliant Wizard Oil (+12.5) and Elixir of Sages (+13.9)."
   ],
-  "notes": "mksettings request plus manaRegenElixir GreaterMagebloodElixir (ConsumesHoly in presets.ts). Only the Undead number is published for this build; no per-faction race table. Regenerated 2026-10-23 from mksettings (natural flask zone on) and the ui APLs, which tools/rotopt/priest_presets.sh writes from the templates."
+  "notes": "mksettings request plus manaRegenElixir GreaterMagebloodElixir (ConsumesHoly in presets.ts). Only the Undead number is published for this build; no per-faction race table. Regenerated 2026-10-23 from mksettings (natural flask zone on) and the ui APLs, which tools/rotopt/priest_presets.sh writes from the templates. Undead since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Human."
 }
