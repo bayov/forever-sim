@@ -33,16 +33,6 @@
       "at": "2026-09-13T00:00:00Z"
     },
     {
-      "talent": "ferocity",
-      "tree": "feral-combat",
-      "set": {
-        "description": "Reduces the cost of your Maul, Mangle, Swipe, Claw, and Rake abilities by {0} Rage or Energy."
-      },
-      "reason": "audit 2026-09-13: reader error (PUNCT); corrected against data/review/druid/feral-combat/ferocity.png",
-      "by": "data-audit",
-      "at": "2026-09-13T00:00:00Z"
-    },
-    {
       "talent": "leader-of-the-pack",
       "tree": "feral-combat",
       "set": {
