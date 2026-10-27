@@ -74,6 +74,8 @@ func (druidBalance) Knobs() []Knob {
 		{Name: "faerieFire", Default: 0, Min: 0, Max: 1, Step: 1},
 		{Name: "ffRefresh", Default: 1.5, Min: 0, Max: 4, Step: 0.5},
 		{Name: "ffPos", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Skyborne High Order: Read Leyline below this much mana (racials.go), 0 never.
+		readLeylineKnob(),
 	}
 }
 
@@ -95,6 +97,7 @@ func (druidBalance) Build(k Knobs) *proto.APLRotation {
 			"Innervate on ourself once the mana runs low."))
 	}
 	items = append(items, autocastOtherCooldowns(nil, "Racials, trinkets, potions and runes."))
+	items = append(items, readLeylineLines(k, nil)...)
 	if k["cdStack"] == 1 && k["elune"] == 1 {
 		items = append(items, cast(elunesLight, holdFor(elunesLight, itemID(druid.BalanceSyntheticSpellPowerTrinket)),
 			"Elune's Light with the trinket, unless waiting for it would lose a use."))

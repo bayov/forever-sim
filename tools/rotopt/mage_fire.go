@@ -37,6 +37,8 @@ func (mageFire) Knobs() []Knob {
 		Knob{Name: "prepull", Default: 1, Min: 0, Max: 1, Step: 1},
 		scorchFirstKnob(),
 		trinketAfterScorchKnob(),
+		racialAfterScorchKnob(),
+		cooldownWaitKnob(),
 	)
 }
 
@@ -75,6 +77,9 @@ func (mageFire) Build(k Knobs) *proto.APLRotation {
 		filler = s.scorch
 	}
 	items = append(items, finisherLines(k, filler, s.fireBlast, s.scorch)...)
+	if k["fireBlastMana"] > 0 {
+		items = append(items, cooldownWaitLines(k, s.fireBlast, ge(currentManaPercent(), num(k["fireBlastMana"]/100)))...)
+	}
 	items = append(items, cast(filler, nil, "The filler."))
 	items = append(items, wandLines(k)...)
 	rot := rotation(items...)
