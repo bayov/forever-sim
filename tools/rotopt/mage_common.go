@@ -158,6 +158,7 @@ func mageCommonKnobs() []Knob {
 		{Name: "gems", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Shoot the wand when nothing else can be cast (out of mana), 0 never.
 		{Name: "wand", Default: 1, Min: 0, Max: 1, Step: 1},
+		readLeylineKnob(),
 	}
 }
 
@@ -179,6 +180,13 @@ func scorchFirstKnob() Knob {
 // the Fire spells that take Fire Vulnerability's 15%. Without Improved Scorch it goes on cooldown.
 func trinketAfterScorchKnob() Knob {
 	return Knob{Name: "trinketAfterScorch", Default: 0, Min: 0, Max: 1, Step: 1}
+}
+
+// racialAfterScorchKnob holds the Troll's Berserking and the Orc's Blood Fury the same way (1),
+// where the autocast line (0, the default, which adds no line) uses them at the pull, while
+// Scorch's 1.5 sec casts take nothing from haste (the GCD holds them).
+func racialAfterScorchKnob() Knob {
+	return Knob{Name: "racialAfterScorch", Default: 0, Min: 0, Max: 1, Step: 1}
 }
 
 // mageCooldowns is the cooldown line, ahead of the spells.
@@ -213,6 +221,13 @@ func mageCooldowns(k Knobs, s mageSpells) []*proto.APLListItem {
 			cast(mageSyntheticTalisman, fullStacks, "The on-use trinket once Fire Vulnerability has 5 stacks (or on cooldown without Improved Scorch). Without the trinket ignore the warning on this line."),
 		)
 	}
+	if k["racialAfterScorch"] == 1 {
+		fullStacks := or(and(targetAuraIsKnown(fireVulnerability), ge(targetAuraNumStacks(fireVulnerability), num(5))), not(targetAuraIsKnown(fireVulnerability)))
+		items = append(items,
+			cast(berserking, fullStacks, "Troll. Berserking once Fire Vulnerability has 5 stacks. Other races ignore the warning on this line."),
+			cast(bloodFury, fullStacks, "Orc. Blood Fury once Fire Vulnerability has 5 stacks. Other races ignore the warning on this line."),
+		)
+	}
 	items = append(items, autocastOtherCooldowns(nil, "Arcane Power, Presence of Mind, Combustion, trinkets, racials and the mana gems on a free GCD."))
 	if k["evocationMana"] > 0 {
 		var timeLeft value
@@ -221,12 +236,33 @@ func mageCooldowns(k Knobs, s mageSpells) []*proto.APLListItem {
 		}
 		items = append(items, cast(evocation, and(lt(currentManaPercent(), num(k["evocationMana"]/100)), timeLeft), "Evocation once the mana runs low, with enough of the fight left to spend it."))
 	}
+	items = append(items, readLeylineLines(k, nil)...)
 	if k["gems"] == 0 {
 		for _, gem := range manaGems {
 			items = append(items, cast(gem, gt(num(0), num(1)), "Never: the mana gems share the Demonic Rune's cooldown, and the rune gives more."))
 		}
 	}
 	return items
+}
+
+// cooldownWaitKnob waits for a cooldown spell (Fire Blast) that is this close to ready instead of
+// starting a filler, 0 never. Without haste a Fireball (3 sec), a Fire Blast and a 1.5 sec
+// Pyroblast or Scorch make 6 sec, Fire Blast's cooldown, so Fire Blast is ready as each Fireball
+// ends; 2% haste (Skyborne Wind Blessed) cuts the Fireball to 2.94 sec, Fire Blast comes up 60 ms
+// after it and waits a whole Fireball. The default (0) adds no line.
+func cooldownWaitKnob() Knob {
+	return Knob{Name: "fireBlastWait", Default: 0, Min: 0, Max: 0.3, Step: 0.1}
+}
+
+// cooldownWaitLines wait for spell when it is ready within the fireBlastWait knob and cond (its
+// own line's condition, nil for none) holds, ahead of the filler.
+func cooldownWaitLines(k Knobs, spell *proto.ActionID, cond value) []*proto.APLListItem {
+	if k["fireBlastWait"] <= 0 {
+		return nil
+	}
+	soon := and(gt(spellTimeToReady(spell), seconds(0)), le(spellTimeToReady(spell), seconds(k["fireBlastWait"])), cond)
+	return []*proto.APLListItem{action(soon, "Wait for a cooldown that is about to be ready instead of starting the filler.",
+		&proto.APLAction{Action: &proto.APLAction_Wait{Wait: &proto.APLActionWait{Duration: spellTimeToReady(spell)}}})}
 }
 
 // finisherKnobs: in the last moments of the fight, when the filler's cast would not land before

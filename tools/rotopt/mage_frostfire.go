@@ -39,6 +39,7 @@ func (mageFrostfire) Knobs() []Knob {
 		Knob{Name: "prepull", Default: 1, Min: 0, Max: 1, Step: 1},
 		scorchFirstKnob(),
 		trinketAfterScorchKnob(),
+		racialAfterScorchKnob(),
 		// Rank 2 Frostfire Bolt (285 mana instead of 370, about 9% less damage) once Evocation is
 		// spent or less than 60 sec are left, and the mana is under this many per second of the
 		// fight left. 0 never.
@@ -46,6 +47,7 @@ func (mageFrostfire) Knobs() []Knob {
 		// Fire Blast with the mana the fight can't use: above this many per second of the fight
 		// left. 0 never.
 		Knob{Name: "fireBlastSurplus", Default: 0, Min: 0, Max: 200, Step: 50},
+		cooldownWaitKnob(),
 	)
 }
 
@@ -99,6 +101,16 @@ func (mageFrostfire) Build(k Knobs) *proto.APLRotation {
 		), "Rank 2 Frostfire Bolt when the mana will not last the fight."))
 	}
 	items = append(items, finisherLines(k, s.frostfireBolt, s.iceLance)...)
+	var blastConds []value
+	if k["fireBlastMana"] > 0 {
+		blastConds = append(blastConds, ge(currentManaPercent(), num(k["fireBlastMana"]/100)))
+	}
+	if k["fireBlastSurplus"] > 0 {
+		blastConds = append(blastConds, gt(currentMana(), mul(remainingTime(), num(k["fireBlastSurplus"]))))
+	}
+	if len(blastConds) > 0 {
+		items = append(items, cooldownWaitLines(k, s.fireBlast, or(blastConds...))...)
+	}
 	items = append(items, cast(s.frostfireBolt, nil, "Frostfire Bolt."))
 	items = append(items, wandLines(k)...)
 	rot := rotation(items...)

@@ -1,0 +1,292 @@
+{
+  "rotation": {
+    "type": "TypeAPL",
+    "prepullActions": [
+      {
+        "action": {
+          "castSpell": {
+            "spellId": {
+              "spellId": 9876
+            }
+          }
+        },
+        "doAtValue": {
+          "const": {
+            "val": "-2.5s"
+          }
+        }
+      },
+      {
+        "action": {
+          "castSpell": {
+            "spellId": {
+              "itemId": 998015
+            }
+          }
+        },
+        "doAtValue": {
+          "const": {
+            "val": "-0.1s"
+          }
+        }
+      },
+      {
+        "action": {
+          "castSpell": {
+            "spellId": {
+              "itemId": 250937
+            }
+          }
+        },
+        "doAtValue": {
+          "const": {
+            "val": "-0.1s"
+          }
+        }
+      }
+    ],
+    "priorityList": [
+      {
+        "action": {
+          "autocastOtherCooldowns": {}
+        },
+        "notes": "Racials, trinkets, potions and runes."
+      },
+      {
+        "action": {
+          "castSpell": {
+            "spellId": {
+              "spellId": 9907
+            }
+          },
+          "condition": {
+            "and": {
+              "vals": [
+                {
+                  "not": {
+                    "val": {
+                      "auraIsActive": {
+                        "auraId": {
+                          "spellId": 11717
+                        },
+                        "sourceUnit": {
+                          "type": "CurrentTarget"
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "cmp": {
+                    "lhs": {
+                      "auraRemainingTime": {
+                        "auraId": {
+                          "spellId": 9907
+                        },
+                        "sourceUnit": {
+                          "type": "CurrentTarget"
+                        }
+                      }
+                    },
+                    "op": "OpLt",
+                    "rhs": {
+                      "const": {
+                        "val": "1.5s"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "notes": "Faerie Fire on the target, refreshed before it drops, unless a Curse of Recklessness holds the slot (Faerie Fire duty)."
+      },
+      {
+        "action": {
+          "castSpell": {
+            "spellId": {
+              "spellId": 24977
+            }
+          },
+          "condition": {
+            "and": {
+              "vals": [
+                {
+                  "not": {
+                    "val": {
+                      "dotIsActive": {
+                        "spellId": {
+                          "spellId": 24977
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "cmp": {
+                    "lhs": {
+                      "remainingTime": {}
+                    },
+                    "op": "OpGt",
+                    "rhs": {
+                      "const": {
+                        "val": "8s"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "notes": "Insect Swarm whenever it is down. Without the talent ignore the warning on this line."
+      },
+      {
+        "action": {
+          "castSpell": {
+            "spellId": {
+              "spellId": 9835
+            }
+          },
+          "condition": {
+            "and": {
+              "vals": [
+                {
+                  "not": {
+                    "val": {
+                      "dotIsActive": {
+                        "spellId": {
+                          "spellId": 9835
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "cmp": {
+                    "lhs": {
+                      "remainingTime": {}
+                    },
+                    "op": "OpGt",
+                    "rhs": {
+                      "const": {
+                        "val": "8s"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "notes": "Moonfire whenever its dot is down."
+      },
+      {
+        "action": {
+          "castSpell": {
+            "spellId": {
+              "spellId": 9876
+            }
+          },
+          "condition": {
+            "auraIsActive": {
+              "auraId": {
+                "spellId": 16870
+              }
+            }
+          }
+        },
+        "notes": "A free Starfire on Clearcasting, which Wrath does not use up."
+      },
+      {
+        "action": {
+          "castSpell": {
+            "spellId": {
+              "spellId": 9835
+            }
+          },
+          "condition": {
+            "cmp": {
+              "lhs": {
+                "remainingTime": {}
+              },
+              "op": "OpLt",
+              "rhs": {
+                "spellCastTime": {
+                  "spellId": {
+                    "spellId": 9876
+                  }
+                }
+              }
+            }
+          }
+        },
+        "notes": "Moonfire when a Starfire would not land before the end."
+      },
+      {
+        "action": {
+          "castSpell": {
+            "spellId": {
+              "spellId": 9912
+            }
+          },
+          "condition": {
+            "and": {
+              "vals": [
+                {
+                  "cmp": {
+                    "lhs": {
+                      "auraNumStacks": {
+                        "auraId": {
+                          "spellId": 408255
+                        }
+                      }
+                    },
+                    "op": "OpLe",
+                    "rhs": {
+                      "const": {
+                        "val": "2"
+                      }
+                    }
+                  }
+                },
+                {
+                  "not": {
+                    "val": {
+                      "spellInFlight": {
+                        "spellId": {
+                          "spellId": 9912
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "notes": "Wrath once Eclipse is down to its last charge and no Wrath is on its way."
+      },
+      {
+        "action": {
+          "castSpell": {
+            "spellId": {
+              "spellId": 9876
+            }
+          }
+        },
+        "notes": "Starfire."
+      }
+    ]
+  },
+  "note": "Rotation tuned for 2% haste: the pre-pull Starfire goes 2.5 s out (was 3), since a hasted 2.94 s Starfire from 3 s lands before the pull and its damage isn't counted",
+  "gain": {
+    "dps": 9.3,
+    "se": 0.31,
+    "iterations": 20000,
+    "seed": 1,
+    "duration": 180
+  },
+  "how": "The base build's High Order change (prepullTime 3 -> 2.5) on this variant's knobs (innervateMana=0,filler=3,eclipseStacks=2,prepull=1,prepullTime=3,prepullTrinket=1,cdStack=1,endMoonfire=1,elune=0,faerieFire=1), keeping its Faerie Fire duty. Same rotation at the preset race (Tauren): -2.4 +- 0.3."
+}
