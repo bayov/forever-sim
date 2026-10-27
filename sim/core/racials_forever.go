@@ -18,8 +18,9 @@ import (
 // Endurance's crit damage, Wind Blessed 3%, Read Leyline 100%) and no Artisan's Precision or
 // Command. The sim takes the notes' values.
 //
-// Cooldowns per the client: Eureka! and the Undead and Gnome utilities 2 min, Blood Fury
-// (since client 70425), Berserking, Elune's Light and the Human, Dwarf and Orc utilities 3 min.
+// Cooldowns per the client: Eureka! and the Undead and Gnome utilities 2 min, Berserking,
+// Elune's Light and the Human, Dwarf and Orc utilities 3 min. Blood Fury is 3 min in the client
+// since 70425, and 2 min again per the development notes of 2026-10-27 (post 8).
 
 func applyForeverRaceEffects(agent Agent) {
 	character := agent.GetCharacter()
@@ -187,7 +188,9 @@ func (character *Character) mobTypeDamageAura(mobType proto.MobType, multiplier 
 // to each weapon's damage range, after the weapon enchants and stones.
 //
 // Client 70425 lengthens its cooldown from 2 min to 3 min (SpellCooldowns 120000 to 180000);
-// the effects are unchanged.
+// the effects are unchanged. The development notes of 2026-10-27 (post 8) take it back to 2 min
+// ("Blood Fury's cooldown reduced to 2 minutes (was 3 minutes)"); client 70634 still reads
+// 180000, so it's server side.
 func (character *Character) registerForeverBloodFury() {
 	actionID := ActionID{SpellID: 20572}
 
@@ -232,7 +235,7 @@ func (character *Character) registerForeverBloodFury() {
 		Cast: CastConfig{
 			CD: Cooldown{
 				Timer:    character.NewTimer(),
-				Duration: time.Minute * 3,
+				Duration: time.Minute * 2,
 			},
 		},
 		ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
@@ -475,9 +478,11 @@ func applyEureka(spell *Spell, scope uint8, sign float64) {
 
 // Touch of the Grave: spells and attacks have a 20% chance (30% for Mages, Priests and
 // Warlocks) to drain health from the target, up to 5% of the caster's maximum health, at
-// most once every 25 sec. Client 70425 raised the chances from 5% and 10% and the
+// most once every 15 sec. Client 70425 raised the chances from 5% and 10% and the
 // ProcCategoryRecovery from 1000 to 25000 ms on both procs (1260189 and 1260201); the
-// drain itself (1260198) is unchanged.
+// drain itself (1260198) is unchanged. The development notes of 2026-10-27 (post 8) cut the
+// internal cooldown to 15 sec ("reduced to 15 seconds (was 25 seconds)"), server side: client
+// 70634 still reads 25000.
 //
 // "Up to" reads as a cap, and the amount under it is not published. The drain is modelled
 // at the cap, so this is the upper bound of what the racial can be worth. It is Shadow
@@ -543,7 +548,7 @@ func (character *Character) registerTouchOfTheGrave() {
 
 	icd := Cooldown{
 		Timer:    character.NewTimer(),
-		Duration: time.Second * 25, // ProcCategoryRecovery 25000 in client 70425 (1000 in 70338)
+		Duration: time.Second * 15, // development notes 2026-10-27; ProcCategoryRecovery 25000 in clients 70425-70634 (1000 in 70338)
 	}
 
 	proc := func(sim *Simulation, spell *Spell, result *SpellResult) {
