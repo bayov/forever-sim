@@ -3,8 +3,9 @@
 // Each build (a level 60 preset, id "<class>__<preset>") depends on:
 //   - shared inputs: the sim core, encounters, item database, proto and the settings tooling, which every build uses;
 //   - its class's inputs: sim/<class>/ and the class's ui/<spec>/ folders (presets, gear sets, rotations);
-//   - its own inputs: its request tools/dps_report/req/<id>.json (what is simmed) and its assumption scenario rotations
-//     tools/dps_report/asm_apls/<id>.* (run_assumptions.py).
+//   - its own inputs: its request tools/dps_report/req/<id>.json (what is simmed), its races' own rotations and gear
+//     tools/dps_report/req/races/<id>.<Race>.json (and its base build's, for a duty or encounter variant;
+//     race_override.py), and its assumption scenario rotations tools/dps_report/asm_apls/<id>.* (run_assumptions.py).
 // ui/dps_report/provenance.json records, per build, the git tree hash of each input when its data was made.
 // A build is stale when any of those hashes differs from the commit being checked, or when it has no record.
 //
@@ -48,11 +49,23 @@ const classInputs = cls => {
 	return [`sim/${cls}`, ...dirs];
 };
 
-// a build's own files at this revision: its request and its assumption scenario rotations
-let asmApls;
+// a build's own files at this revision: its request, its race overrides (its base build's too) and its assumption
+// scenario rotations
+let asmApls, raceOverrides;
+const lsTree = dir => git('ls-tree', '-r', '--name-only', rev, dir).split('\n').filter(Boolean);
+const baseOf = id => {
+	const p = path.join(root, 'tools/dps_report/req', id + '.meta.json');
+	return fs.existsSync(p) ? JSON.parse(fs.readFileSync(p, 'utf8')).baseBuild : undefined;
+};
 const ownInputs = id => {
-	asmApls ??= git('ls-tree', '-r', '--name-only', rev, 'tools/dps_report/asm_apls/').split('\n').filter(Boolean);
-	return [`tools/dps_report/req/${id}.json`, ...asmApls.filter(p => path.basename(p).startsWith(id + '.'))];
+	asmApls ??= lsTree('tools/dps_report/asm_apls/');
+	raceOverrides ??= lsTree('tools/dps_report/req/races/');
+	const ids = [id, baseOf(id)].filter(Boolean);
+	return [
+		`tools/dps_report/req/${id}.json`,
+		...raceOverrides.filter(p => ids.some(i => path.basename(p).startsWith(i + '.'))),
+		...asmApls.filter(p => path.basename(p).startsWith(id + '.')),
+	];
 };
 
 const fingerprint = id => {
@@ -98,6 +111,8 @@ for (const id of builds) {
 	}
 	const now = fingerprint(id);
 	const changed = Object.keys(now).filter(p => now[p] !== rec.inputs[p]);
+	// an own input that is gone (a deleted race override) changes the sims too
+	changed.push(...Object.keys(rec.inputs).filter(p => !(p in now) && p.startsWith('tools/dps_report/') && rec.inputs[p] !== null));
 	if (changed.length) stale.push({ id, reasons: changed.map(p => `${p} changed`) });
 }
 

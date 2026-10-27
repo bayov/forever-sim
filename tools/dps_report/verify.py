@@ -1,13 +1,20 @@
 #!/usr/bin/env python3
-"""verify.py REQ.json [iters] [seed] [race] -> prints avg dps, stdev, stderr for the request (180 s as in the file)."""
+"""verify.py REQ.json [iters] [seed] [race] -> prints avg dps, stdev, stderr for the request (180 s as in the file).
+For req/<id>.json at another race, that race's own rotation and gear (req/races/<id>.<Race>.json) apply, as in the race sweep."""
 import json, subprocess, sys, tempfile, os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from dashpaths import BIN, TREE  # env DASH_BIN / DASH_TREE
+from dashpaths import D, BIN, TREE  # env DASH_DIR / DASH_BIN / DASH_TREE
 req = json.load(open(sys.argv[1]))
 iters = int(sys.argv[2]) if len(sys.argv) > 2 else 20000
 seed = sys.argv[3] if len(sys.argv) > 3 else "1"
 if len(sys.argv) > 4:
     req['raid']['parties'][0]['players'][0]['race'] = 'Race' + sys.argv[4]
+    bid = os.path.basename(sys.argv[1])[:-5]
+    if os.path.exists(os.path.join(D, 'req', bid + '.meta.json')):
+        import race_override
+        req, ov = race_override.apply(req, bid, sys.argv[4])
+        if ov:
+            print('race override:', ov['file'], '-', ov.get('note', ''))
 req['simOptions'] = {'iterations': iters, 'randomSeed': seed}
 with tempfile.TemporaryDirectory() as d:
     i, o = os.path.join(d, 'i.json'), os.path.join(d, 'o.json')

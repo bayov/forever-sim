@@ -28,7 +28,7 @@ only the builds that changed and still rebuilds every dataset, the cross-build o
 | Path | What it is | In git |
 |---|---|---|
 | `dashpaths.py` | Where every script reads and writes. Uses the env vars below. | yes |
-| `req/` | The 36 requests and their meta files (largest is 64 KB) | yes |
+| `req/` | The 36 requests and their meta files (largest is 64 KB); `req/races/`, the races' own rotations and gear (see "Race overrides") | yes |
 | `forever_tt_cache/` | Wowhead tooltip JSON cache, `forever/` and `classic/`, `item/` and `spell/` (2,126 files, 8.4 MB) | yes |
 | `fortt_ids.json` | Every spell and item id the dashboard shows a tooltip for. Written by `whids.py`, read by `whcache.py`. | yes |
 | `talent_ids.json` | Every spell a talent rank may link to (the Forever client's rank 1 spells and the trees' per rank spells). Written by `talent_links.py ids`, read by `whcache.py`. | yes |
@@ -150,15 +150,41 @@ Each assumption in `assumptions_def.py` is written for a player who hasn't read 
 choice means with a `rationale` of 15 words at most, and a `desc` of 2 to 4 sentences plus its `src` (written to the
 data as `source`) for the Method tab.
 
+### Race overrides (`req/races/`)
+
+A build's race sweep sims every race with the preset's rotation and gear, except where a race has its own (standards 29):
+`req/races/<id>.<Race>.json`, with `<Race>` the proto race name without `Race` (`Dwarf`, `NightElf`, `SkyborneHighOrder`).
+It holds an APL `rotation` (the request's `player.rotation` shape), `bonusStats` (`proto.Stat` names, the sim's units,
+added on top of the gear), a `note` for the Races tab, the `gain` over the preset's setup at that race (180 s, seed 1,
+20,000 iterations, paired seeds; a file exists only for a gain of 2 standard errors or more) and `how` it was made. A
+file has a rotation, bonus stats or both. Gear hit and crit are one pool under Forever (`unifyEquipHitAndCrit` adds the
+melee and spell values, bonus stats included), so a file lowers or raises each once, as `MeleeHit` or `SpellHit`, never both.
+
+`race_override.py` applies them, for every sim of a race other than the preset's (the preset race's request is the
+preset): `run_build.py`'s race sweep, every `run_races.py` scenario (`off` and `off:<part>` too, so the breakdown measures
+only the racials), and `verify.py <req> <iters> <seed> <Race>`. The other steps sim the preset race only. A duty or
+encounter variant without a file of its own takes its base build's, but only what fits it: the rotation when the
+variant's rotation is the base's (a duty preset's rotation keeps its duty up), the bonus stats when its gear is the
+base's. `python3 race_override.py [ids]` lists what every build sims at each race. The race sweep records each override
+it used in `out/<id>.json` (`races[].override`); `build_data.py` puts its note in `races` and `race_variants` as `tuned`,
+and the Races tab shows it after the race's name and in the row's tooltip. `stale.mjs` and the packs' fingerprints
+hash a build's override files (its base build's too), so adding, changing or deleting one makes the build stale.
+
+`race_gear.py [ids] [--write]` makes the Dwarf's gear files: for every build a Dwarf can be, the Dwarf's hit (dashstats'
+final sheet, plus a priest's school talent) against its standards 4 cap (16% spell for casters, 8% yellow for melee and
+hunters), the excess (at most 1%, at most the gear's own hit) re-spent over the set's other non-Stamina, non-Spirit stats
+in its own shares at the 1b prices, then a paired 20k sim with and without. `--write` writes the files that gain 2 SE;
+every build's numbers go to `$DASH_DIR/race_gear.json`.
+
 ## Sim steps
 
 Each step is restartable: it skips work whose output already exists. To redo a build, delete its output first.
 
 | Step | Command | Sims | Writes | Runtime, 4 CPUs |
 |---|---|---|---|---|
-| main + races + lengths + samples | `runner.sh` (start up to 4) or `python3 run_build.py <id>...`; `--resample <id>` redoes only the sample fights | Per build: main 180 s, 20k iterations, seed 1, all values saved. Race sweep: every race the class can be, 10k. Lengths 60/120/180/300/480 s, 5k. 30 one-iteration rolls, then 3 logged sample fights at the 10th, 50th and 90th percentile. dashstats stat sheet. | `out/<id>.json`, `names/<id>.tsv` | about 22 min for all 36 (2 to 5 min per class) |
+| main + races + lengths + samples | `runner.sh` (start up to 4) or `python3 run_build.py <id>...`; `--resample <id>` redoes only the sample fights | Per build: main 180 s, 20k iterations, seed 1, all values saved. Race sweep: every race the class can be, 10k, each with its race override if any. Lengths 60/120/180/300/480 s, 5k. 30 one-iteration rolls, then 3 logged sample fights at the 10th, 50th and 90th percentile. dashstats stat sheet. | `out/<id>.json`, `names/<id>.tsv` | about 22 min for all 36 (2 to 5 min per class) |
 | stat weights | `ls req/*.meta.json \| xargs -n1 basename \| sed 's/.meta.json//' \| xargs -P4 -n1 python3 weights.py` | Per build: the baseline plus 6 to 8 bonus-stat runs (hit also measured downward), 180 s, 40k iterations, seed 1 | `weights/<id>.json` | about 30 min |
-| race scenarios | `python3 run_races.py [ids]` (4 threads) | Per default build × race (encounter presets get only the race sweep): `off`, `off:<part>`, `beast`, `elemental`, `humanoid` (Priests only: Dwarf Chastise), and `weapon` / `weaponNoRacial` where the racial weapon is legal and neither hand holds it. The swap changes one weapon (the one whose speed changes least, the off hand on a tie) to the racial's type, at the nearest Phase 1 BiS speed of that type. 10k iterations, seed 1. The last full run was 1,084 sims. | appends to `rv/results.jsonl` (keyed build, race, variant) | about 35 min for all; the 458 beast and elemental reruns took about 16 min |
+| race scenarios | `python3 run_races.py [ids]` (`PAR=4` threads) | Per default build × race (encounter presets get only the race sweep): `off`, `off:<part>`, `beast`, `elemental`, `humanoid` (Priests only: Dwarf Chastise), and `weapon` / `weaponNoRacial` where the racial weapon is legal and neither hand holds it. The swap changes one weapon (the one whose speed changes least, the off hand on a tie) to the racial's type, at the nearest Phase 1 BiS speed of that type. Each race with its race override if any. 10k iterations, seed 1. The last full run was 1,084 sims. | appends to `rv/results.jsonl` (keyed build, race, variant) | about 35 min for all; the 458 beast and elemental reruns took about 16 min |
 | mana curves | `python3 mana_curves.py [ids]` (`FIGHTS=100 PAR=8`, `--force` redoes builds that already have an output) | Per mana-using build (every class but warrior and rogue): 100 logged one-fight runs at a fixed 480 s with no duration variation, seeds 1001 and up, the player's mana read from the log every 5 s. Plus one 5k run for the sim's seconds out of mana, time to OOM and mana left at the end. | `mana/<id>.json` | about 17 s for the 6 shaman builds |
 | setup ablation | `python3 ablate.py [ids]` (`ITERS=300 SEED=11 PAR=4`; `ABL_MERGE=1` keeps the other builds' entries) | Each preset with one consume, buff, debuff or profession left out, plus the non-stacking pairs. 1,957 sims. | `abl/ablate.json` | about 5 min |
 | assumption scenarios | `python3 run_assumptions.py [ids]` (`PAR=4`) | Per build an assumption touches (`assumptions_def.py`): the base, every non-default setting alone at 180 s (20k) and 120 / 300 s (5k), every combination at 180 s where a build has 3 or fewer assumptions, and 12 random combinations otherwise (the multiplicative estimate's check). About 1,100 sims. | appends to `asm/results.jsonl`; `build_data.py` (via `asm_data.py`) writes `assumptions` and `assumption_dps` | about 1.5 h for all |
@@ -190,7 +216,7 @@ All are written by `build_data.py`. "out" means `out/<id>.json` from `run_build.
 | notes | build_data.py | req meta keyTalents, rotation, consumes and caveats, plus the gear rules text in build_data.py (snapshot-cleaned) | none |
 | names | build_data.py | every key seen; `names/*.tsv` (DASH_NAMES), `db.json`, `assets/db_inputs/wowhead_*_tooltips.csv`, `forever-wiki/data/abilities.json`, talent trees, racials, the sim's rank arrays; colour from the icon (PIL) | run_build |
 | rotation | build_data.py + rotation.py | the request's APL (prepull and priority), cast counts from abilities, names, `racials.json` | none |
-| race_variants | build_races.py | `rv/results.jsonl` plus the out race sweep (baseline) | run_races |
+| race_variants | build_races.py | `rv/results.jsonl` plus the out race sweep (baseline); `tuned`, the note of the race's override | run_races |
 | race_breakdown | build_races.py | `rv/results.jsonl` (`off`, `off:<part>`, weapon and target deltas) | run_races |
 | race_summary | build_races.py | race_variants by scenario, scope (overall or faction) and role | run_races |
 | race_notes | build_races.py | scenario and part texts, a finding per class from race_variants | run_races |
@@ -214,9 +240,10 @@ cross-build ones (ranks, `race_summary`, `race_notes`, `assumptions`) included.
 
 A pack holds one build's `out/`, `names/` (sorted, deduped), `weights/` and `mana/` files, its lines of `rv/results.jsonl`
 and `asm/results.jsonl` (sorted, each key once, only the keys the scripts still ask for), its `abl/ablate.json` entry with
-that file's iterations and seed, and `fingerprint.json` (the sha256 of its request and assumption rotations, the sim split
-count, the commit simmed at). Packs are deterministic, so an unchanged build's pack doesn't change. `rawstore.py pack`
-refuses a build with a step missing or a failed sim.
+that file's iterations and seed, and `fingerprint.json` (the sha256 of its request, its race overrides and assumption
+rotations, the sim split count, the commit simmed at). Packs are deterministic, so an unchanged build's pack doesn't
+change. `rawstore.py pack` refuses a build with a step missing or a failed sim, and `unpack` lists the packs simmed from
+another request, race override or assumption rotation than the current one.
 
 | Change | Commands (`$DASH_DIR` set, binaries built from the tree, run from the repo root) |
 |---|---|
@@ -228,7 +255,8 @@ refuses a build with a step missing or a failed sim.
 | A shared sim input changed (`sim/core`, the DB, the patches): every build stale | `pipeline.sh run`, `pipeline.sh publish` (no hydrate) |
 
 - `node tools/dps_report/stale.mjs` gives the scope. It hashes the shared inputs, the class's `sim/` and `ui/` folders, and
-  each build's request and assumption rotations, and lists new requests and removed presets.
+  each build's request, race overrides (`req/races/`, its base build's too) and assumption rotations, and lists new
+  requests and removed presets.
 - `hydrate [ids]` empties `$DASH_DIR`'s outputs, unpacks every pack, runs `build_data.py` and compares the sim numbers
   (`builds`, `races`, `lengths`, `hist`, `weights`, `mana`, `mana_summary`, `race_variants`, `assumption_dps`) with the
   published datasets. A build outside `[ids]` whose numbers differ stops it: re-sim it too, or find why the pack and the

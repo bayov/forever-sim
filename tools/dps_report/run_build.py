@@ -2,7 +2,8 @@
 """run_build.py <id> : sims one build's request ($DASH_DIR/req/<id>.json) and writes $DASH_DIR/out/<id>.json.
 
 Main run: 180 s, 20k iterations, seed 1, all values saved (distribution), first iteration logged.
-Race sweep: every race the class can be, 10k iterations, seed 1.
+Race sweep: every race the class can be, 10k iterations, seed 1, each other race with its own rotation and gear where
+req/races/<id>.<Race>.json gives them (race_override.py, standards 29).
 Fight lengths: 60/120/180/300/480 s, 5k iterations, preset race.
 Sample fights: of seeds 1..30, the ones nearest the 10th, 50th and 90th percentile, logged and parsed into a compact timeline.
 
@@ -13,6 +14,7 @@ iteration), so the main run's saved values already hold the 30 seeds' DPS and th
 import json, os, re, subprocess, sys, tempfile, copy, math
 
 from dashpaths import D, BIN, TREE  # base dir, binaries, merged tree (env DASH_DIR / DASH_BIN / DASH_TREE)
+import race_override
 CLI = os.path.join(BIN, 'wowsimcli')
 STATS = os.path.join(BIN, 'dashstats')
 
@@ -273,10 +275,15 @@ def main(bid):
             v = allv[:10000]  # the same 10k fights a seed 1 run of the preset race sims
             m = sum(v) / len(v)
             dps_r, sd = m, math.sqrt(max(0.0, sum(x * x for x in v) / len(v) - m * m))
+            ov = None
         else:
-            pp = run(req, 10000, 1, race=rc)['raidMetrics']['parties'][0]['players'][0]
+            req_r, ov = race_override.apply(req, bid, rc, meta)
+            pp = run(req_r, 10000, 1)['raidMetrics']['parties'][0]['players'][0]
             dps_r, sd = pp['dps']['avg'], pp['dps']['stdev']
-        races.append({'race': rc, 'faction': 'Horde' if rc in HORDE else 'Alliance', 'dps': dps_r, 'se': sd / 100})
+        row = {'race': rc, 'faction': 'Horde' if rc in HORDE else 'Alliance', 'dps': dps_r, 'se': sd / 100}
+        if ov:
+            row['override'] = race_override.summary(ov)
+        races.append(row)
     out['races'] = races
 
     lengths = []

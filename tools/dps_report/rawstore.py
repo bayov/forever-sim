@@ -22,7 +22,8 @@ orchestration/dash_raw_store.md has the design; pipeline.sh wires these commands
 A pack holds one build's out/<id>.json, names/<id>.tsv, weights/<id>.json and mana/<id>.json where it has them, its
 lines of rv/results.jsonl and asm/results.jsonl (rv.jsonl, asm.jsonl: sorted by key, each key once, the last line
 winning as in build_races.py and asm_data.py), its abl/ablate.json entry with that file's iters and seed (abl.json),
-and fingerprint.json: the sha256 of its request and assumption rotations, the sim split count and the commit simmed at.
+and fingerprint.json: the sha256 of its request, its races' override files (req/races/, race_override.py) and its
+assumption rotations, the sim split count and the commit simmed at.
 Packs are deterministic (sorted members, zero mtimes and owners, gzip without a name or time), so an unchanged
 build's pack is byte-identical and git stores it once.
 """
@@ -31,6 +32,7 @@ from datetime import datetime, timezone
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from dashpaths import D  # noqa: E402
+import race_override  # noqa: E402
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 ROOT = os.path.abspath(os.path.join(HERE, '..', '..'))
@@ -107,6 +109,16 @@ def canon(x):
     return x
 
 
+def inputs(bid):
+    """The sha256 of a build's own sim inputs, as its pack's fingerprint.json records them."""
+    apls = sorted(glob.glob(os.path.join(HERE, 'asm_apls', bid + '.*')))
+    fp = {'request': sha(os.path.join(D, 'req', bid + '.json')), 'asmApls': {os.path.basename(p): sha(p) for p in apls}}
+    ovs = race_override.files(bid)  # the races' own rotations and gear (its base build's too, for a variant)
+    if ovs:  # only when there are any, so the packs of builds without one stay as they were
+        fp['raceOverrides'] = {os.path.basename(p): sha(p) for p in ovs}
+    return fp
+
+
 def pack(ids, commit):
     rv, asm = lines_by_build(RV, RV_KEY), lines_by_build(ASM, ASM_KEY)
     abl = json.load(open(ABL)) if os.path.exists(ABL) else {'builds': {}}
@@ -148,13 +160,7 @@ def pack(ids, commit):
             members['abl.json'] = json.dumps({'iters': abl['iters'], 'seed': abl['seed'], 'entry': entry}, sort_keys=True).encode()
         elif want['abl']:
             problems.append(f'{bid}: no setup ablation entry')
-        apls = sorted(glob.glob(os.path.join(HERE, 'asm_apls', bid + '.*')))
-        members['fingerprint.json'] = json.dumps({
-            'request': sha(os.path.join(D, 'req', bid + '.json')),
-            'asmApls': {os.path.basename(p): sha(p) for p in apls},
-            'splits': SPLITS,
-            'commit': commit,
-        }, indent=1, sort_keys=True).encode()
+        members['fingerprint.json'] = json.dumps(inputs(bid) | {'splits': SPLITS, 'commit': commit}, indent=1, sort_keys=True).encode()
         buf = io.BytesIO()
         with tarfile.open(fileobj=buf, mode='w', format=tarfile.PAX_FORMAT) as tar:
             for name in sorted(members):
@@ -180,6 +186,7 @@ def unpack():
             sys.exit(f'unpack: {D}/{d} is not empty; hydrate starts from an empty $DASH_DIR')
     rv, asm, abl = {}, {}, {'builds': {}}
     live = set(all_ids())
+    older = []
     for path in sorted(glob.glob(os.path.join(RAW, '*.tgz'))):
         bid = os.path.basename(path)[:-4]
         if bid not in live:
@@ -192,6 +199,9 @@ def unpack():
                     fp = json.loads(data)
                     if fp['splits'] != SPLITS:
                         sys.exit(f'{bid}: simmed with {fp["splits"]} splits, this run uses DASH_SPLITS={SPLITS}')
+                    now = inputs(bid)
+                    if any(fp.get(k, {}) != now.get(k, {}) for k in ('request', 'asmApls', 'raceOverrides')):
+                        older.append(bid)
                 elif ti.name == 'rv.jsonl':
                     rv[bid] = data.decode()
                 elif ti.name == 'asm.jsonl':
@@ -213,6 +223,9 @@ def unpack():
         os.makedirs(os.path.dirname(ABL), exist_ok=True)
         json.dump(abl, open(ABL, 'w'), indent=1)
     print(f'unpacked {len(glob.glob(os.path.join(D, "out", "*.json")))} builds into {D}')
+    if older:
+        print(f'{len(older)} packs were simmed from another request, assumption rotation or race override than the current '
+              f'one (re-sim them): {" ".join(older)}')
 
 
 def clean(ids):
