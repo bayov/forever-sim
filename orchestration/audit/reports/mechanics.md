@@ -1,24 +1,29 @@
-# Mechanics pass 42 (2026-10-27, master 06a898751)
+# Mechanics pass 43 (2026-10-27, master 37a8a8ccd)
 
-Range audited: d3df9247f..06a898751. Four sim commits; TASKS.md gained an item for testing Amplify Curse on Bane of Agony (7166da482). No `forever-update/*` merge.
-
-## Commits
-
-| Commit | Area | Check | Verdict |
-|---|---|---|---|
-| 500e3a1 | Racials (shared) | Every value against dev notes post 7 (tier 1): Human 1% crit, Spirit x1.10; Dwarf Earth Fury gone, +1% melee/spell hit; Tauren 5% health only; Orc Savage gone, Command x1.05 on non-guardian hunter/warlock pets (same code as Classic racials.go, pets exist before applyRaceEffects, no later overwrite of pet DamageDealtMultiplier); Skyborne 2% haste, Energized +50% for 15 sec. critDamageBonus removed with no users left. | Matches; resolves mechanics-20261027-1 |
-| d6fcdd3 | Warlock Spellstone | Shadow only under Forever, as client 70630 1237162/4/5 Misc 32 | Matches; resolves mechanics-20261025-1 |
-| db6e43f | Mage Ignite | Arcane Instability and Arcane Power kept off Ignite's DamageMultiplier under Forever, per dev notes 2026-09-24 "no longer double dips" | Consistent with tier 1 |
-| a52cdcf | Mage Missile Barrage | User ruling | Not reviewed (ruling) |
-
-Shared run vs published: Human/crit builds fall 0.7-1.7% as the racial pass predicts; arcane mage -8.5% is the Missile Barrage ruling.
+Range audited: 06a898751..37a8a8ccd. No sim or mksettings commit. One TASKS.md commit (37a8a8ccd): client 70634 and the post 8 racial additions. No `forever-update/*` merge; PR #117 (forever-update/2026-10-27-70634) is open.
 
 ## Get current
 
-- Client: newest 1.60 build is still 1.60.1.70630 (probe 300).
-- Dev notes thread: 7 posts, newest post 7 (2026-10-26 20:35, edited 21:09), already read. Blue tracker: nothing newer on Forever mechanics (end-of-beta, RP-PvP, podcast posts).
+- Client: 1.60.1.70630 -> 1.60.1.70634. `wago.py diff 70630 70634 --by-spell` is empty and all 25 mechanics-set tables are byte-identical (both fetched fresh; 70634 shows 70630's Amplify Curse mask 32768, so it is a real fetch). No verdict moves.
+- Dev notes thread: post 8 (Kaivax, 2026-10-27 15:37, edited 16:46) is new, and post 7 was edited 2026-10-27 16:47 to add the same three lines. Quoted:
+  - "Blood Fury's cooldown reduced to 2 minutes (was 3 minutes)."
+  - "Berserking duration increased to 15 seconds (was 10 seconds)."
+  - "Touch of the Grave internal cooldown reduced to 15 seconds (was 25 seconds)."
+  - Skyborne clarification: Charged and Attuned persist through death and are removed upon entering a raid (the sim's 50% Read Leyline stays right for raid presets).
+- Server hotfix tool `tools/audit/mechanics/hotfixes.py` named in state does not exist in the tree; hotfixes not re-read this pass.
+
+## Checks
+
+| Item | Master | Tier 1 now | Verdict |
+|---|---|---|---|
+| Blood Fury CD | 3 min (racials_forever.go) | 2 min (post 8) | Finding mechanics-20261027-3 |
+| Berserking duration | 10 sec (racials.go) | 15 sec (post 8) | Same finding |
+| Touch of the Grave ICD | 25 sec (racials_forever.go:546) | 15 sec (post 8) | Same finding |
+
+PR #117's sim diff makes exactly these three changes (Berserking 15 sec only under Forever, comments cite post 8 and client 70634). Reviewed: matches the notes.
 
 ## Open
 
-- mechanics-20261027-2 (Amplify Curse x1.5 still on Bane of Agony, curses.go:74): still open; TASKS.md now gates presets on it.
-- Recheck the post 7 racials when a client build ships rows for Artisan's Precision and Command.
+- mechanics-20261027-3 (new, medium): fixed by PR #117 once merged; re-sim Orc, Troll, Undead builds.
+- mechanics-20261027-2 (Amplify Curse x1.5 still on Bane of Agony): still open.
+- Recheck the post 7 / 8 racials when a client build ships the rows.

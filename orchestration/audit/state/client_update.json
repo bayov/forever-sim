@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "06a8987517297bcebc739a0b451851e9d2042882"
+  "master": "37a8a8ccd9cf727bcb8a5624a858276cfd3ebb27"
  },
- "last_pass_at": "2026-10-27T06:57:38Z",
- "client_build": "1.60.1.70630",
- "result": "findings",
- "note": "70630: 10-16..10-21 hotfixes now in client (all landed); new: Missile Barrage AM-hit proc dropped (tooltip), Spellstone shadow-only, Amplify Curse/Agony, ToTG attrs; dev notes post 7 racials not in client.",
- "checked_at": "2026-10-27T13:21:01Z",
- "pass": 2
+ "last_pass_at": "2026-10-27T18:47:38Z",
+ "client_build": "1.60.1.70634",
+ "result": "quiet",
+ "note": "70634: client-identical to 70630 (all 39 tables, no added rows). Dev notes not read (forum rate limit); FC says no Blizzard notes for 70634.",
+ "checked_at": "2026-10-27T18:48:17Z",
+ "pass": 3
 }

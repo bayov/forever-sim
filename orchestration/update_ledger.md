@@ -184,6 +184,10 @@ Dev notes: **new post /7** (2026-10-26 20:35, edited 21:09), the pre-launch raci
 
 **Post /1's "2026-10-26" stamp is an edit, not a new change log.** The forum's post history: post 1 created 2026-09-24 22:23, last edited 2026-10-26 20:35 (version 5); its body is identical to the 10-16 copy in `audit/ref/client_update/sources/devnotes.txt` apart from typographic quotes. Every class line in it is a 70009 row above. A 2026-10-27 pass re-checked them all against 70630 and the later posts: already in the sim, or superseded (post /6: Grace of Air stacks with Windfury, Righteous Fury 90%, Wake of Fire reverted, Elemental Alacrity moved; post /5: Lightning Bolt and Lava Burst rank reflows), apart from MAGE-70009-04a and DRU-1026-01.
 
+## Build 1.60.1.70634 (first seen 2026-10-27)
+
+70634: client-identical to 70630. All 39 tables in wago.py's `client_update` set are byte-identical (`table_summary.py 70630 70634`), including Spell, SpellEffect, SpellMisc, the Trait* tables, ItemSparse, ItemEffect, SpellItemEnchantment and ChrRaces. There are no added rows, not even cosmetic ones. So there is no class, racial, talent, enchant or item change, and the post /7 racial pass is still not in the client (still landed in the sim from the notes, SHR-P7-01..05). Dev notes: not re-read this pass (the forum returned "performed this action too many times"); foreverchanges.pro lists 70634 as current, says Blizzard posted no notes for it, and finds nothing new beyond 70630's contents (0 new, 0 changed items). No rows added.
+
 ## Per-class ledgers
 
 Each section below has five parts:
