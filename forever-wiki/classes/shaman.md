@@ -17,7 +17,7 @@ The alignment round's sim (no melee hit suppression, Fire Nova's hits a proc tha
 - Optimized drops the Earth Shock hold for the Stormstrike mark. Level 60 and Imp GW take Improved Stormstrike 2 for their Tidal Focus point (tuned at 180 sec). Elemental, Water Shield and Mana Tide keep their talents and rotations.
 - Elemental Mana Tide drinks the Major Mana Potion, Level 60 the Caustic Smog Potion.
 - 180 sec: Elemental 776.4 (Windshaper Skyborne), Elemental + Mana Tide 761.4, Enhancement 880.1 (Orc), Imp GW 876.2, Water Shield 831.6, Enhancement + Mana Tide 792.2. Details and race tables in sim-status.md.
-- Race re-pick (2026-10-27, orchestration/standards.md items 29 and 16): Enhancement Level 60 and Imp GW are Windshaper Skyborne (882.0 and 878.0 at 180 sec, 1.6 and 1.7 ahead of the Orc); Water Shield and Mana Tide stay Orc.
+- Race re-pick (2026-10-27, orchestration/standards.md items 29 and 16): Enhancement Level 60 and Imp GW are Windshaper Skyborne (882.0 and 878.0 at 180 sec, 1.6 and 1.7 ahead of the Orc); Water Shield and Mana Tide stay Orc. Since the second re-pick that day (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 sec, Undead Touch of the Grave 15 sec) every Enhancement preset is Orc again: Level 60 884.2 and Imp GW 880.1 at 180 sec, 2.2 and 2.1 ahead of the Windshaper.
 
 ## Client 1.60.1.70425 (2026-10-16)
 

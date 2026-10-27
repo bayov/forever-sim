@@ -855,7 +855,7 @@ export const DefaultDebuffs = Debuffs.create({
 export const OtherDefaults = {
 	profession1: Profession.Engineering,
 	profession2: Profession.Leatherworking,
-	race: Race.RaceSkyborneWindshaper,
+	race: Race.RaceOrc,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -975,14 +975,18 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // and gear): Level 60 and Level 60 + Imp GW move to the Windshaper Skyborne, 882.0 and 878.0 at 180 sec
 // against the Orc's 880.5 and 876.4 (verify.py, 20000 iterations, seed 1). Water Shield and Mana Tide stay
 // Orc.
+// Second race re-pick (2026-10-27, standards 29 and 16, after dev notes post 8: Orc Blood Fury 2 min, Troll
+// Berserking 15 sec, Undead Touch of the Grave 15 sec): Level 60 and Level 60 + Imp GW move back to the Orc,
+// 884.2 and 880.1 at 180 sec against the Windshaper's 882.0 and 878.0 (verify.py, 20000 iterations, seed 1).
+// Every Enhancement preset is Orc again.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Windshaper Skyborne on the synthetic Phase 1 gear with the Optimized rotation, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Orc on the synthetic Phase 1 gear with the Optimized rotation, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLOptimized,
 	encounter: EncounterLevel60,
-	race: Race.RaceSkyborneWindshaper,
+	race: Race.RaceOrc,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
