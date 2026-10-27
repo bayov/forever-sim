@@ -225,7 +225,7 @@ A = [
  dict(key='mage_am_missile_barrage', cls='Mage', label='Do Arcane Missiles proc Missile Barrage?',
       short="No. Client 70630's tooltip dropped the missiles' 5% a point, and the presets follow it.",
       desc="Client 70450's Missile Barrage tooltip let each Arcane Missiles missile proc it at 5% a point. Client 70630's rewrite of the same tooltip drops that clause (and adds Frost Blast to the casts that can proc it), and wowsims/forever had already turned the proc off on a developer's word. The presets give the missiles no proc; Arcane casts the most missiles, so it moved the most.",
-      src='Forever client 70630 (Missile Barrage 400588 tooltip). wowsims/forever 58fb6c0273 ("developer confirmed it does not proc", unlinked). User ruling 2026-10-27.',
+      src='Forever client 70630 (Missile Barrage 400588 tooltip). wowsims/forever 58fb6c0273 ("developer confirmed it does not proc", unlinked).',
       builds=['mage__arcane', 'mage__frost', 'mage__fire'],
       settings=[S('expected', 'No proc', 'missiles never proc Missile Barrage', "Client 70630's tooltip.")],
       default='expected', expected='expected'),

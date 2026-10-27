@@ -767,9 +767,10 @@ def build(tree, names, gear, setup, outs, abilities, auras, timelines, builds, i
                 v = next((v for _, v in rvs if 'Class' + cls in v.get('classes', [])), None)
                 if v:
                     vl = racial_wowhead_lines(v)
+                    vsrc = 'forever' if has_text(vl) else 'client'
                     if not has_text(vl):
                         vl = ([['t', v['cost'].replace('; ', ', ')]] if v.get('cost') else []) + [['y', v['description']]]
-                    xr = {**row, 'key': f'{key}:{cls}', 'lines': [['m', 'Racial']] + vl, 'src': 'forever' if vj and has_text(wowhead_spell_lines(vj, vj.get('name'))) else 'client'}
+                    xr = {**row, 'key': f'{key}:{cls}', 'lines': [['m', 'Racial']] + vl, 'src': vsrc}
                     xr.pop('wh', None), xr.pop('whd', None)
                     set_link(xr, 'spell', v['spellId'])
                     extra.append(xr)
