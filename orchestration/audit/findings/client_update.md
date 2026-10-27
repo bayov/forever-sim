@@ -12,6 +12,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - proposed fix: under Forever, don't let Amplify Curse touch Bane of Agony (or drop the option from the warlock APL actions).
 - needs: orchestrator fix
 - 2026-10-27: the 70630 mask reading holds, but 18288's 70630 description and Wowhead's Forever tooltip still name Bane of Agony, and every Agony rank gains a base-0 aura 271 effect (w2) that its new debuff text multiplies by, so the +50% looks moved onto Agony as a server-filled value, not removed. The sim keeps +50% (no preset casts Amplify Curse). needs: user ruling.
+- 2026-10-27 (user): park it until a build takes Amplify Curse, then test in game (TASKS.md item of 2026-10-27). The sim keeps +50% of base meanwhile. needs: in-game test
 
 ## Resolved
 

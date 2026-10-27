@@ -132,3 +132,7 @@ wording instead.
   - Everything else matches Classic (126–190 / 3.70, +5 Str, ilvl 49, req 44, Archaedas, Uldaman). The DB has Classic's 2% melee crit (`StatMeleeCrit` 2, hiddenStats).
   - If Forever converts 14 rating to 1% at level 60, 28 is the same 2% and nothing changes; at lower levels a rating would be worth more. Like Abomination Chain 274385's "+3 Defense Rating" (2026-10-13 item), the conversion is unknown, so it waits on one.
   - Wowhead has no Forever tooltip for it yet. https://foreverchanges.pro/item/9413
+- [ ] 2026-10-27 — Test Amplify Curse on Bane of Agony in game before any preset or rotation takes it (client 70630 is contradictory; user: "something we need to test eventually") [source: wago build 70630]
+  - 70630: 18288 effect 0 (+50%) mask 33792 → 32768 drops Agony (Curse of Weakness only), but 18288's own text and Wowhead's Forever tooltip still say "Curse of Weakness or Bane of Agony by 50%", and every Agony rank (980, 1014, 6217, 11711, 11712, 11713) gains a base-0 effect 1, aura 271 (damage taken from the caster), which Agony's new debuff text multiplies by (`$o1*($w2/100+1)`). So the +50% likely moved onto Agony as a server-filled value.
+  - Test: an Amplify Curse'd Bane of Agony vs a plain one, at two spell power values. Is it +50%, of base only or of the whole tick (spell power included), or nothing?
+  - Sim keeps +50% of base damage (`sim/warlock/curses.go:74`). No preset or APL casts Amplify Curse, so the report doesn't move. Open findings client_update-20261027-3 / mechanics-20261027-2; ledger WL-U-17.
