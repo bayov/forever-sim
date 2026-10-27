@@ -33,7 +33,8 @@ for s in json.load(open(os.path.join(D, 'data/setup.json'))):
 for race, lst in json.load(open(os.path.join(TREE, 'ui/core/forever/racials.json'))).items():
     for r in lst:
         for v in r.get('variants', []):
-            ids.add(('spell', v['spellId']))
+            if v.get('spellId'):
+                ids.add(('spell', v['spellId']))
 for p in glob.glob(os.path.join(TREE, 'ui/core/talents/trees/*.json')):
     for tr in json.load(open(p)):
         for t in tr['talents']:

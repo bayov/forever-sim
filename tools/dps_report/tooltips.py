@@ -556,6 +556,15 @@ def build(tree, names, gear, setup, outs, abilities, auras, timelines, builds, i
     item_diffs = []
     ench_diffs = []
 
+    def racial_wowhead_lines(v):
+        # a racial carried by hand from the development notes (tools/sources/racials_hotfix.json) is
+        # newer than Wowhead's tooltip, which still has the client's old text; one with no client spell
+        # (spellId 0) has none at all
+        if v.get('source') == 'hotfix' or not v.get('spellId'):
+            return []
+        vj = fwh('spell', v['spellId'])
+        return wowhead_spell_lines(vj, vj.get('name')) if vj else []
+
     def pick(cands, classes):
         for c, e in cands:
             if c in classes:
@@ -654,8 +663,7 @@ def build(tree, names, gear, setup, outs, abilities, auras, timelines, builds, i
                 # the sim can use one variant's spell id for every class (Eureka!), so match the racial by name and class
                 vs = racial_by_name[racial_by_spell[sid][0][0]]
                 rn, v = next(((n_, v_) for n_, v_ in vs if any('Class' + c in v_.get('classes', []) for c in classes)), vs[0])
-                vj = fwh('spell', v['spellId'])
-                vl = wowhead_spell_lines(vj, vj.get('name')) if vj else []
+                vl = racial_wowhead_lines(v)
                 if has_text(vl):
                     lines, src = vl, 'forever'
                 else:
@@ -710,8 +718,7 @@ def build(tree, names, gear, setup, outs, abilities, auras, timelines, builds, i
             if not lines and title in racial_by_name:
                 vs = racial_by_name[title]
                 rn, v = next(((n_, v_) for n_, v_ in vs if any('Class' + c in v_.get('classes', []) for c in classes)), vs[0])
-                vj = fwh('spell', v['spellId'])
-                vl = wowhead_spell_lines(vj, vj.get('name')) if vj else []
+                vl = racial_wowhead_lines(v)
                 lines, src = (vl, 'forever') if has_text(vl) else (([['t', v['cost'].replace('; ', ', ')]] if v.get('cost') else []) + [['y', v['description']]], 'client')
                 note = 'Racial'
                 row.pop('wh', None), row.pop('whd', None)
@@ -759,8 +766,7 @@ def build(tree, names, gear, setup, outs, abilities, auras, timelines, builds, i
             for cls in sorted(classes):
                 v = next((v for _, v in rvs if 'Class' + cls in v.get('classes', [])), None)
                 if v:
-                    vj = fwh('spell', v['spellId'])
-                    vl = wowhead_spell_lines(vj, vj.get('name')) if vj else []
+                    vl = racial_wowhead_lines(v)
                     if not has_text(vl):
                         vl = ([['t', v['cost'].replace('; ', ', ')]] if v.get('cost') else []) + [['y', v['description']]]
                     xr = {**row, 'key': f'{key}:{cls}', 'lines': [['m', 'Racial']] + vl, 'src': 'forever' if vj and has_text(wowhead_spell_lines(vj, vj.get('name'))) else 'client'}
