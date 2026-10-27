@@ -181,6 +181,13 @@ func makeBerserkingCooldown(character *Character, customPercentage float64, time
 
 	forever := character.Env.IsForever()
 
+	// Forever's Berserking lasts 15 sec ("Berserking duration increased to 15 seconds (was 10
+	// seconds)", development notes 2026-10-27, post 8; server side, not in client 70634).
+	duration := time.Second * 10
+	if forever {
+		duration = time.Second * 15
+	}
+
 	var berserkingAura *Aura
 	var berserkingHaste float64
 	if character.HasManaBar() {
@@ -188,7 +195,7 @@ func makeBerserkingCooldown(character *Character, customPercentage float64, time
 		berserkingAura = character.RegisterAura(Aura{
 			Label:    label,
 			ActionID: actionID,
-			Duration: time.Second * 10,
+			Duration: duration,
 			OnGain: func(aura *Aura, sim *Simulation) {
 				berserkingHaste = 1 / (1 - calcBerserkingPct())
 				if forever {
@@ -214,7 +221,7 @@ func makeBerserkingCooldown(character *Character, customPercentage float64, time
 		berserkingAura = character.RegisterAura(Aura{
 			Label:    label,
 			ActionID: actionID,
-			Duration: time.Second * 10,
+			Duration: duration,
 			OnGain: func(aura *Aura, sim *Simulation) {
 				berserkingHaste = 1 + calcBerserkingPct()
 
