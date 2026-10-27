@@ -1,0 +1,17 @@
+{
+ "bonusStats": {
+  "SpellHit": -1.0,
+  "Intellect": 2.46,
+  "SpellPower": 6.847,
+  "SpellCrit": 0.118
+ },
+ "note": "1% hit over the cap re-spent as 6.8 spell power, 2.5 Intellect and 0.12% crit",
+ "gain": {
+  "dps": 4.81,
+  "se": 0.02,
+  "iterations": 20000,
+  "seed": 1,
+  "duration": 180
+ },
+ "how": "race_gear.py: Dwarf hit 17% (with Shadow Focus 5/5) against the 16% spell cap, the set's own hit 10%: 1% (10 budget points) re-spent over the set's shares at the 1b prices (SpellPower 58.9%, Intellect 24.6%, CritRating 16.5%). Hit and crit are one pool for the gear, so each is written once. Dwarf 899.2 with the preset's gear, 904.0 with the swap; gain.se is the paired error (the same seeded fights), 0.24 unpaired."
+}

@@ -2,7 +2,8 @@
 """build_races.py: the Races tab's datasets, from the race sweep (out/*.json) and the race
 scenario sims (rv/results.jsonl, run_races.py). build_data.py calls build(); it can also run alone.
 
-race_variants   build × race × scenario: DPS, error, gap to the preset's best race in that scenario
+race_variants   build × race × scenario: DPS, error, gap to the preset's best race in that scenario, and `tuned`: the
+                note of the race's own rotation or gear where it has one (req/races/<id>.<Race>.json, race_override.py)
 race_breakdown  build × race × part: base stats, each racial, and the target change
 race_summary    scenario × scope × role × race: how often a race is best and how far behind it is
 race_notes      what each scenario switches on, what each racial part is, a finding per class
@@ -66,7 +67,8 @@ RACE_PARTS = {'Human': ['spirit', 'ruthless'], 'Dwarf': ['precision', 'beast_dwa
               'Gnome': ['mind', 'eureka'], 'Orc': ['command', 'bloodfury'], 'Undead': ['touch', 'darksacrifice'], 'Tauren': ['endurance'],
               'Troll': ['berserking', 'beast_troll'], 'High Order': ['windblessed', 'insight', 'leyline'], 'Windshaper': ['windblessed', 'insight']}
 SCENARIOS = [
-    ('baseline', 'Generic boss', 'Each preset against a level 63 boss with no creature type. In client 70425 no racial depends on the weapon.'),
+    ('baseline', 'Generic boss', 'Each preset against a level 63 boss with no creature type. In client 70425 no racial depends on the weapon. '
+     "A race plays its own rotation or gear where that beats the preset's by 2 standard errors, in every scenario; its row says what changed."),
     ('beast', 'Beast target', 'A Beast boss turns on Troll Beast Slaying and Dwarf Big Game Hunter (5% more damage).'),
     ('elemental', 'Elemental target', 'An Elemental boss turns on High Order and Windshaper Elemental Insight (5% more damage).'),
     ('humanoid', 'Humanoid target', 'Priests only. Dwarf Priests cast Chastise, which works only on Humanoids. No other racial cares about Humanoids.'),
@@ -93,12 +95,15 @@ def build(builds, races_rows, stats_rows, dump):
     for line in open(os.path.join(D, 'rv', 'results.jsonl')):
         x = json.loads(line)
         res[(x['build'], rn(x['race']))][x['variant']] = (x['dps'], x['se'])
+    tuned = {}  # (build, race display) -> the note of the race's own rotation or gear (req/races/, race_override.py)
     for o in sorted(os.listdir(os.path.join(D, 'out'))):
         if not o.endswith('.json'):
             continue
         out = json.load(open(os.path.join(D, 'out', o)))
         for r in out['races']:
             res[(out['id'], rn(r['race']))]['baseline'] = (r['dps'], r['se'])
+            if r.get('override'):
+                tuned[(out['id'], rn(r['race']))] = r['override'].get('note', '')
 
     variants, breakdown, notes = [], [], []
     for bid, b in list(bmap.items()):
@@ -127,7 +132,7 @@ def build(builds, races_rows, stats_rows, dump):
                     raise SystemExit(f'missing {bid} {race} {var}')
                 rows.append({'build': bid, 'class': cls, 'race': race, 'faction': 'Horde' if race in HORDE else 'Alliance', 'variant': var,
                              'dps': round(val[0], 1), 'se': round(val[1], 2), 'isPreset': race == b['race'], 'simmed': sim, 'note': note,
-                             'raceIcon': RACE_ICON.get(race)})
+                             'tuned': tuned.get((bid, race), ''), 'raceIcon': RACE_ICON.get(race)})
             # breakdown: base stats, then each racial part (Shapley split when two parts count, so the parts add up exactly)
             off = v['off']
             ps = [p for p in RR.parts_for(cls, rc, req)]

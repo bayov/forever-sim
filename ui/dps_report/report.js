@@ -1425,9 +1425,10 @@ export function startReport(dash, events) {
       const best = rs[0].dps, u = one ? 1 : 100 / best;
       rs.forEach((r, i) => {
         const { segs, idle } = segsOf(r, bd.get(build + '|' + r.race) || []);
-        if (!acc.has(r.key)) acc.set(r.key, { ...r, parts: new Map(), shares: [], ranks: [], idle });
+        if (!acc.has(r.key)) acc.set(r.key, { ...r, parts: new Map(), shares: [], ranks: [], idle, tunedOn: [] });
         const a = acc.get(r.key);
         a.shares.push({ build, share: (100 * r.dps) / best });
+        if (r.tuned) a.tunedOn.push(build);
         a.ranks.push(i + 1);
         for (const sg of segs) {
           if (!a.parts.has(sg.part)) a.parts.set(sg.part, { part: sg.part, label: sg.r.label, sum: 0 });
@@ -1549,7 +1550,8 @@ export function startReport(dash, events) {
       const idle = one ? r.idle.slice(0, 3).map((q) => el('small', { 'data-zone': 'idle:' + q.part, text: `${shortLabel(q.label)}: ${q.note}` })) : [];
       const row = el('div', { class: 'fv-rrow' + (i === 0 ? ' top' : ''), 'data-tip': '1' },
         raceTT(r, raceIco(r.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(r.race)}` })),
-        el('span', { class: 'nm' }, tagZone(r, raceNameTT(r)), one && r.isPreset ? head(el('i', { text: 'preset race' })) : null, ...idle),
+        el('span', { class: 'nm' }, tagZone(r, raceNameTT(r)), one && r.isPreset ? head(el('i', { text: 'preset race' })) : null,
+          one && r.tuned ? head(el('small', { text: String(r.tuned) })) : null, ...idle),
         el('span', { class: 'end', 'data-zone': '' }, el('small', { text: one ? (i === 0 ? '★ best' : `−${f2(100 * (1 - r.dps / rows[0].dps))}%`) : r.timesBest ? `best on ${r.timesBest} of ${r.n}` : 'never best' }),
           el('b', { text: one ? f1(r.dps) : pct(r.avg) })),
         track, cap);
@@ -1597,7 +1599,8 @@ export function startReport(dash, events) {
             { ...opts, hl: [row, segEl, capEl] });
           return;
         }
-        let head = [tipKey(f1(r.dps), 'DPS', `± ${f2(r.se)}`)];
+        // A race with its own rotation or gear (standards 29) says what it changed.
+        let head = [tipKey(f1(r.dps), 'DPS', `± ${f2(r.se)}`), r.tuned ? el('span', { class: 'fv-tip-m', text: `Its own setup: ${String(r.tuned).replace(/\.$/, '')}.` }) : null];
         if (!one) {
           const order = new Map(sc.builds.map((b, k) => [b.id, k]));
           const best = r.shares.filter((g) => g.share > 99.995).sort((p, q) => order.get(p.build) - order.get(q.build));
@@ -1606,7 +1609,8 @@ export function startReport(dash, events) {
             ringed('classicon_' + cls.toLowerCase(), 'fv-ico ring', ccol(cls)), el('span', {}, el('b', { text: `${cls}: `, style: `color:${ccol(cls)}` }),
               os.map((o) => o.b.build + (best.length ? '' : ` (${pct(o.g.share)})`)).join(', '))));
           head = [tipKey(best.length ? `Best race on ${best.length}` : 'Never the best race', `of ${r.n} presets`),
-            best.length ? null : el('span', { class: 'fv-tip-m', text: 'Closest on:' }), el('div', { class: 'fv-tip-specs' }, ...list)];
+            best.length ? null : el('span', { class: 'fv-tip-m', text: 'Closest on:' }), el('div', { class: 'fv-tip-specs' }, ...list),
+            r.tunedOn.length ? el('span', { class: 'fv-tip-m', text: `Its own rotation or gear on ${r.tunedOn.map((id) => bmap.get(id)?.label || id).join(', ')}.` }) : null];
         }
         // The tooltip goes under the part the pointer is on. Under the numbers on the right it ends where they end.
         const at = node.getBoundingClientRect(), end = node.classList.contains('end');

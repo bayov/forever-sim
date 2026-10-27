@@ -407,7 +407,8 @@ for o in outs:
     for r in o['races']:
         races.append({'build': bid, 'class': m['class'], 'race': race_name(r['race']), 'faction': r['faction'],
                       'dps': round(r['dps'], 1), 'se': round(r['se'], 2), 'vsBest': round(100 * (r['dps'] / best['dps'] - 1), 2),
-                      'isPreset': r['race'] == m['race'], 'raceIcon': RACE_ICON.get(race_name(r['race']))})
+                      'isPreset': r['race'] == m['race'], 'raceIcon': RACE_ICON.get(race_name(r['race'])),
+                      'tuned': (r.get('override') or {}).get('note', '')})  # the race's own rotation or gear (race_override.py)
     total = sum(a['dps'] for a in mn['actions'])
     seen = defaultdict(int)
     for a in mn['actions']:
