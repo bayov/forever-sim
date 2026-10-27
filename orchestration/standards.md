@@ -106,6 +106,10 @@ The rules every class follows so the specs' Level 60 numbers compare fairly. New
 
 ## Races
 
+29. Race-tuned rotations and gear (user ruling 2026-10-27: "Can we optimize rotations for specific races where appropriate? Also make sure races that get hit chance use alternative gear to avoid wasting 1% hit above cap"; scope "targeted"). A build's race sweep and race table sim each race with that race's own rotation and gear where they differ from the preset's:
+   - Gear: a race with a hit racial (Dwarf Artisan's Precision, +1% hit with spells and attacks since the 10-26 racial pass) whose set sits at the item-4 cap re-spends the hit that would go over the cap: the set's hit drops by the excess (at most 1%, 10 points) and the freed budget points go to the set's other non-Stamina, non-Spirit stats in its own proportions at the 1b prices (the gear_targets.md hit-adjusted rule). Kept only where it sims better than the preset's set (item 4: the mix that sims best). Modelled as bonus stats on the preset's gear, not new items.
+   - Rotation: the rotation optimizer (tools/rotopt) re-tunes the preset's template for a race only where a racial interacts with the rotation: haste (Skyborne Wind Blessed), Read Leyline on mana users, racial actives that score about 0 in the race breakdown, the priest racial spells. A race-tuned rotation is kept only when it beats the preset's rotation at that race by 2 standard errors.
+   - Presets then re-pick their race by item 16 on these numbers (user ruling 2026-10-27: re-pick yes; a tie within noise keeps the current race).
 16. Presets use the best race (22 for the weapons). Race tables give best overall, Horde and Alliance. Since client 70425 no racial depends on the weapon (Human Ruthless and Orc Savage give crit with any weapon, the Dwarf's mace racial became Earth Fury, 2% crit damage), so the weapon-type racials column (fairness P6) and the Races tab's racial weapon entries are gone (user ruling 2026-10-16: "We need to remove the 'with weapon' variants of races as well now").
 
 ## Weapons
