@@ -15,12 +15,12 @@
   "gearSet": "level60_phase1_synthetic_undead",
   "apl": "level60_shock_undead",
   "published": {
-    "dps": 965.2,
-    "source": "Race re-pick 2026-10-27 (standards 29 and 16): Undead (follows its base build, paladin__level_60_shock); verify.py, 20000 iterations, seed 1 (was 963.8 as a Human on the same sim)"
+    "dps": 968.7,
+    "source": "Race re-pick 2026-10-27 (standards 29 and 16): Undead (follows its base build, paladin__level_60_shock); verify.py, 20000 iterations, seed 1 (was 963.8 as a Human on the same sim); rotation 2026-10-27: vigilSwing 25 (was 965.2), verify.py 20000 iterations, seed 1"
   },
   "verify": {
-    "dps": 965.2,
-    "stderr": 0.2,
+    "dps": 968.7,
+    "stderr": 0.24,
     "iters": 20000,
     "ok": true,
     "note": "verify.py of this request, 180s, seed 1"
