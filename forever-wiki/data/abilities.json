@@ -7019,7 +7019,7 @@
     {
      "t": "Rank 3",
      "l": 50,
-     "d": "You hurl molten lava at the target, dealing 180 to 230 Fire damage. If your Flame Shock is on the target, Lava Burst deals 54% increased damage.",
+     "d": "You hurl molten lava at the target, dealing 180 to 230 Fire damage. If your Flame Shock is on the target, Lava Burst deals 20% increased damage.",
      "m": [
       "230 Mana",
       "30 yd range",
@@ -11102,7 +11102,7 @@
    "icon": "ability_hunter_snipershot",
    "status": "unchanged",
    "fromTalent": false,
-   "desc": "Places the Hunter's Mark on the target, increasing the Ranged Attack Power of all attackers against that target by 71. In addition, the target of this ability can always be seen by the hunter whether it stealths or turns invisible. The target also appears on the mini-map. Lasts for 2 min.",
+   "desc": "Places the Hunter's Mark on the target, increasing the Ranged Attack Power of all attackers against that target by 143. In addition, the target of this ability can always be seen by the hunter whether it stealths or turns invisible. The target also appears on the mini-map. Lasts for 2 min.",
    "meta": [
     "Level 6",
     "60 Mana",
@@ -11143,7 +11143,7 @@
     {
      "t": "Rank 4",
      "l": 58,
-     "d": "Places the Hunter's Mark on the target, increasing the Ranged Attack Power of all attackers against that target by 71. In addition, the target of this ability can always be seen by the hunter whether it stealths or turns invisible. The target also appears on the mini-map. Lasts for 2 min.",
+     "d": "Places the Hunter's Mark on the target, increasing the Ranged Attack Power of all attackers against that target by 143. In addition, the target of this ability can always be seen by the hunter whether it stealths or turns invisible. The target also appears on the mini-map. Lasts for 2 min.",
      "m": [
       "60 Mana",
       "100 yd range",
@@ -15133,7 +15133,7 @@
     {
      "t": "Rank 1",
      "l": 20,
-     "d": "Consumes the enemy in holy flames that cause 57 to 70 Holy damage and an additional 20 Holy damage over 10 sec.",
+     "d": "Consumes the enemy in holy flames that cause 53 to 65 Holy damage and an additional 20 Holy damage over 10 sec.",
      "m": [
       "85 Mana",
       "30 yd range",
@@ -18984,7 +18984,7 @@
    "icon": "spell_ice_lament",
    "status": "changed",
    "fromTalent": true,
-   "desc": "Instantly shields you, absorbing 819 damage. Lasts 1 min. While the shield holds, your spellcasts will not be interrupted or delayed from taking damage.",
+   "desc": "Shield yourself, absorbing 819 damage and increasing your Frost damage by 3% for 1 min. While shielded, your Frost damage is increased by an additional 3% and you do not lose casting time when you take damage.",
    "meta": [
     "Level 40",
     "480 Mana",
@@ -18995,7 +18995,7 @@
     {
      "t": "Rank 1",
      "l": 40,
-     "d": "Instantly shields you, absorbing 448 damage. Lasts 1 min. While the shield holds, your spellcasts will not be interrupted or delayed from taking damage.",
+     "d": "Shield yourself, absorbing 448 damage and increasing your Frost damage by 3% for 1 min. While shielded, your Frost damage is increased by an additional 3% and you do not lose casting time when you take damage.",
      "m": [
       "305 Mana",
       "Instant",
@@ -19005,7 +19005,7 @@
     {
      "t": "Rank 2",
      "l": 46,
-     "d": "Instantly shields you, absorbing 561 damage. Lasts 1 min. While the shield holds, your spellcasts will not be interrupted or delayed from taking damage.",
+     "d": "Shield yourself, absorbing 561 damage and increasing your Frost damage by 3% for 1 min. While shielded, your Frost damage is increased by an additional 3% and you do not lose casting time when you take damage.",
      "m": [
       "360 Mana",
       "Instant",
@@ -19015,7 +19015,7 @@
     {
      "t": "Rank 3",
      "l": 52,
-     "d": "Instantly shields you, absorbing 693 damage. Lasts 1 min. While the shield holds, your spellcasts will not be interrupted or delayed from taking damage.",
+     "d": "Shield yourself, absorbing 693 damage and increasing your Frost damage by 3% for 1 min. While shielded, your Frost damage is increased by an additional 3% and you do not lose casting time when you take damage.",
      "m": [
       "420 Mana",
       "Instant",
@@ -19025,7 +19025,7 @@
     {
      "t": "Rank 4",
      "l": 58,
-     "d": "Instantly shields you, absorbing 819 damage. Lasts 1 min. While the shield holds, your spellcasts will not be interrupted or delayed from taking damage.",
+     "d": "Shield yourself, absorbing 819 damage and increasing your Frost damage by 3% for 1 min. While shielded, your Frost damage is increased by an additional 3% and you do not lose casting time when you take damage.",
      "m": [
       "480 Mana",
       "Instant",
@@ -20092,7 +20092,7 @@
    "key": "frost__frost-blast",
    "tab": "frost",
    "name": "Frost Blast",
-   "icon": "spell_frost_frostbolt",
+   "icon": "spell_ice_magicdamage",
    "status": "new",
    "fromTalent": false,
    "desc": "Quickly launch a weak blast of frost at the enemy, causing 80 to 88 Frost damage and slowing movement speed by 40% for 9 sec.",
@@ -22428,7 +22428,7 @@
    "icon": "spell_shadow_contagion",
    "status": "changed",
    "fromTalent": true,
-   "desc": "Increases the effect of your next Curse of Weakness or Bane of Agony by 50%, or your next Curse of Exhaustion by ?%. Lasts 30 sec.",
+   "desc": "Increases the effect of your next Curse of Weakness or Bane of Agony by 50%, or your next Curse of Exhaustion by 20%. Lasts 30 sec.",
    "meta": [
     "Instant",
     "3 min cooldown"
@@ -22437,7 +22437,7 @@
     {
      "t": "",
      "l": 0,
-     "d": "Increases the effect of your next Curse of Weakness or Bane of Agony by 50%, or your next Curse of Exhaustion by ?%. Lasts 30 sec.",
+     "d": "Increases the effect of your next Curse of Weakness or Bane of Agony by 50%, or your next Curse of Exhaustion by 20%. Lasts 30 sec.",
      "m": [
       "Instant",
       "3 min cooldown"

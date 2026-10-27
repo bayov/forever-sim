@@ -18539,13 +18539,13 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 269682,Regal Galestrider,40,24576,0,0,0
 269683,Stormy Galestrider,40,24576,0,0,0
 269715,Savannah Lion Hide,1,24580,0,0,0
-269716,Keen Skinning Knife,19,24580,0,0,0
-269717,Wildgore Greatsword,19,8196,0,0,0
+269716,Keen Skinning Knife,18,24580,0,0,0
+269717,Wildgore Greatsword,18,8196,0,0,0
 269718,Bundle of Hides,1,24580,0,0,0
 269719,Trapped Game,1,24580,0,0,0
 269739,Bloody Tuft of Fur,1,8196,0,0,0
 269741,Scented Runewood Brooch,58,8196,0,0,0
-269742,Walton's Second-Favorite Gun,20,24580,0,0,0
+269742,Walton's Second-Favorite Gun,18,24580,0,0,0
 269749,Headhunter's Head,1,24580,0,0,0
 269757,Battered Zeppelin Parcel,60,24580,0,0,0
 269758,Quest Reward Placeholder,60,24580,0,0,0
@@ -19662,9 +19662,9 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 273635,Enchant Chest - Absorption,1,8192,0,0,0
 273636,Chef's Knife,45,8196,0,0,0
 273642,Ring of the Fallen Soldier,1,24580,0,0,0
-273654,Crystal Thread Cloak,30,8196,0,0,0
+273654,Crystal Thread Cloak,29,8196,0,0,0
 273658,Bloody Parchment,23,24580,0,0,0
-273659,Bloody Parchment,30,24580,0,0,0
+273659,Bloody Parchment,1,24580,0,0,0
 273771,Sentinel's Sight,55,24580,0,0,0
 273772,Blackthorne Intelligence,1,24580,0,0,0
 273798,Ring of the Fallen Soldier,1,24580,0,0,0
@@ -20298,8 +20298,8 @@ ID,Name,ItemLevel,Flags_1,RequiredPVPRank,ItemSet,DamageType
 276888,Quilboar Toothpick,24,8192,0,0,0
 276889,Thornwoven Shield,24,8192,0,0,0
 276890,Zarla's Journal,1,24580,0,0,0
-276891,Spidersilk Pouch,30,24576,0,0,0
-276892,Spidersilk Sack,30,24576,0,0,0
+276891,Spidersilk Pouch,29,24576,0,0,0
+276892,Spidersilk Sack,29,24576,0,0,0
 276893,Blackmaw Ritual Totem,1,24580,0,0,0
 276894,Ancient Gurubashi Idol,1,24576,0,0,0
 276895,Transformative Cocoon,30,8192,0,0,0
