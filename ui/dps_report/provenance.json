@@ -2,8 +2,8 @@
 	"note": "2026-10-25 regeneration: all 64 builds re-simmed locally on claude/keen-brown-o2g32n at e8a8b50d55 (the wowsims/forever alignment round and the class workers' regenerated presets), in a scratch tree with tools/dps_report/patches 0001 to 0004 applied and the binaries built with -tags=with_db; 20,000 iterations for the main runs. Then the Mark duty ruling (2026-10-25): the 7 hunter builds were re-simmed at 5429f41856 (every hunter keeps up its own Hunter's Mark, the four -duty-mark builds are gone); the other 53 are re-recorded there unchanged, since that commit's tools/rotopt changes touch only the hunter templates and specs (mksettings writes their requests byte for byte as before) and their data came out identical.",
 	"builds": {
 		"rogue__combat-daggers-humanoid": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:14.699Z",
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:54:49.854Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
@@ -15,13 +15,13 @@
 				"tools/rotopt": "f57488cdbf469b7a52a0c0d883be1b6c17e48a05",
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/rogue": "f35b95e40cbe66a5cfc1a9413b91dd4b56245465",
-				"ui/rogue": "c7bd636b1d5c41f0684bd92b2388489328c45748",
-				"tools/dps_report/req/rogue__combat-daggers-humanoid.json": "0e63243793678565db8dfb275382cbae2a402b5b"
+				"ui/rogue": "b5731319e1b6367a2b34fb6e218c2cea7f9137bb",
+				"tools/dps_report/req/rogue__combat-daggers-humanoid.json": "32f65077c97e9c8b2c46b5c61509f0b5961ecb1b"
 			}
 		},
 		"rogue__combat-daggers": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:14.739Z",
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:54:49.529Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
@@ -33,13 +33,13 @@
 				"tools/rotopt": "f57488cdbf469b7a52a0c0d883be1b6c17e48a05",
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/rogue": "f35b95e40cbe66a5cfc1a9413b91dd4b56245465",
-				"ui/rogue": "c7bd636b1d5c41f0684bd92b2388489328c45748",
-				"tools/dps_report/req/rogue__combat-daggers.json": "0cabec64f33e5f7a7d93e8cec24ad9f85665b808"
+				"ui/rogue": "b5731319e1b6367a2b34fb6e218c2cea7f9137bb",
+				"tools/dps_report/req/rogue__combat-daggers.json": "67e8e8338543c60f519d88df3966e1a8d6cea91e"
 			}
 		},
 		"rogue__combat-swords-humanoid": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:14.776Z",
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:54:49.890Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
@@ -51,14 +51,14 @@
 				"tools/rotopt": "f57488cdbf469b7a52a0c0d883be1b6c17e48a05",
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/rogue": "f35b95e40cbe66a5cfc1a9413b91dd4b56245465",
-				"ui/rogue": "c7bd636b1d5c41f0684bd92b2388489328c45748",
-				"tools/dps_report/req/rogue__combat-swords-humanoid.json": "0e6c8e1903b4b3747401378d95b4f06f135da203",
+				"ui/rogue": "b5731319e1b6367a2b34fb6e218c2cea7f9137bb",
+				"tools/dps_report/req/rogue__combat-swords-humanoid.json": "a532bef2ea6ccae560e02e361d339be77510db2e",
 				"tools/dps_report/req/races/rogue__combat-swords.Gnome.json": "dc77e5e2828f2c33ec62651bfa5f2cbedc44e7a7"
 			}
 		},
 		"rogue__seal-fate-daggers-humanoid": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:14.937Z",
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:54:49.926Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
@@ -70,14 +70,13 @@
 				"tools/rotopt": "f57488cdbf469b7a52a0c0d883be1b6c17e48a05",
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/rogue": "f35b95e40cbe66a5cfc1a9413b91dd4b56245465",
-				"ui/rogue": "c7bd636b1d5c41f0684bd92b2388489328c45748",
-				"tools/dps_report/req/rogue__seal-fate-daggers-humanoid.json": "233eacd882463061654017aa75de3dd73d71714d"
+				"ui/rogue": "b5731319e1b6367a2b34fb6e218c2cea7f9137bb",
+				"tools/dps_report/req/rogue__seal-fate-daggers-humanoid.json": "9a5c460d8efb616f6c9b5f21bcc943be50368e6d"
 			}
 		},
 		"rogue__mutilate-humanoid": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:14.853Z",
-			"iterations": 20000,
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:55:03.932Z",
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
 				"sim/common": "0d569c6d77b089a30d28fc9ba48a3c6132eb07fd",
@@ -88,14 +87,14 @@
 				"tools/rotopt": "f57488cdbf469b7a52a0c0d883be1b6c17e48a05",
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/rogue": "f35b95e40cbe66a5cfc1a9413b91dd4b56245465",
-				"ui/rogue": "c7bd636b1d5c41f0684bd92b2388489328c45748",
+				"ui/rogue": "b5731319e1b6367a2b34fb6e218c2cea7f9137bb",
 				"tools/dps_report/req/rogue__mutilate-humanoid.json": "d690c6dd903d590ac504cde904e2a637dc3f5bf6",
 				"tools/dps_report/req/races/rogue__mutilate.Gnome.json": "d88b974fe0d070485346a676e61bd889ff7822b7"
 			}
 		},
 		"rogue__combat-swords": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:14.810Z",
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:54:49.595Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
@@ -107,14 +106,14 @@
 				"tools/rotopt": "f57488cdbf469b7a52a0c0d883be1b6c17e48a05",
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/rogue": "f35b95e40cbe66a5cfc1a9413b91dd4b56245465",
-				"ui/rogue": "c7bd636b1d5c41f0684bd92b2388489328c45748",
-				"tools/dps_report/req/rogue__combat-swords.json": "e75d10d7eb79f9062451594893198e85dd2e1a4b",
+				"ui/rogue": "b5731319e1b6367a2b34fb6e218c2cea7f9137bb",
+				"tools/dps_report/req/rogue__combat-swords.json": "4edda55b41254c1c109fd1f251934f39c77b21c1",
 				"tools/dps_report/req/races/rogue__combat-swords.Gnome.json": "dc77e5e2828f2c33ec62651bfa5f2cbedc44e7a7"
 			}
 		},
 		"rogue__seal-fate-daggers": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:14.974Z",
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:54:49.562Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
@@ -126,14 +125,13 @@
 				"tools/rotopt": "f57488cdbf469b7a52a0c0d883be1b6c17e48a05",
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/rogue": "f35b95e40cbe66a5cfc1a9413b91dd4b56245465",
-				"ui/rogue": "c7bd636b1d5c41f0684bd92b2388489328c45748",
-				"tools/dps_report/req/rogue__seal-fate-daggers.json": "d19a52795c685b98aee351676635253a4d022e3e"
+				"ui/rogue": "b5731319e1b6367a2b34fb6e218c2cea7f9137bb",
+				"tools/dps_report/req/rogue__seal-fate-daggers.json": "30c492bf237e17741d4b3a0799560e6d2a6570be"
 			}
 		},
 		"rogue__mutilate": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:14.898Z",
-			"iterations": 20000,
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:55:03.891Z",
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
 				"sim/common": "0d569c6d77b089a30d28fc9ba48a3c6132eb07fd",
@@ -144,15 +142,14 @@
 				"tools/rotopt": "f57488cdbf469b7a52a0c0d883be1b6c17e48a05",
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/rogue": "f35b95e40cbe66a5cfc1a9413b91dd4b56245465",
-				"ui/rogue": "c7bd636b1d5c41f0684bd92b2388489328c45748",
+				"ui/rogue": "b5731319e1b6367a2b34fb6e218c2cea7f9137bb",
 				"tools/dps_report/req/rogue__mutilate.json": "c4bb2d4c262f42381b871b5b5f41ddda3ba16eb3",
 				"tools/dps_report/req/races/rogue__mutilate.Gnome.json": "d88b974fe0d070485346a676e61bd889ff7822b7"
 			}
 		},
 		"rogue__seal-fate-swords-humanoid": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:15.011Z",
-			"iterations": 20000,
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:55:04.011Z",
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
 				"sim/common": "0d569c6d77b089a30d28fc9ba48a3c6132eb07fd",
@@ -163,14 +160,14 @@
 				"tools/rotopt": "f57488cdbf469b7a52a0c0d883be1b6c17e48a05",
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/rogue": "f35b95e40cbe66a5cfc1a9413b91dd4b56245465",
-				"ui/rogue": "c7bd636b1d5c41f0684bd92b2388489328c45748",
+				"ui/rogue": "b5731319e1b6367a2b34fb6e218c2cea7f9137bb",
 				"tools/dps_report/req/rogue__seal-fate-swords-humanoid.json": "f99c63624f4b8a8324becc6e6d16bf38d75dca7b",
 				"tools/dps_report/req/races/rogue__seal-fate-swords.Gnome.json": "1c4b3110e913ba097c09859417352c7abe8d7383"
 			}
 		},
 		"rogue__subtlety-humanoid": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:15.090Z",
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:54:49.961Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
@@ -182,15 +179,14 @@
 				"tools/rotopt": "f57488cdbf469b7a52a0c0d883be1b6c17e48a05",
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/rogue": "f35b95e40cbe66a5cfc1a9413b91dd4b56245465",
-				"ui/rogue": "c7bd636b1d5c41f0684bd92b2388489328c45748",
-				"tools/dps_report/req/rogue__subtlety-humanoid.json": "58488ba9b410d0d1a49a6000ea4563b189610489",
+				"ui/rogue": "b5731319e1b6367a2b34fb6e218c2cea7f9137bb",
+				"tools/dps_report/req/rogue__subtlety-humanoid.json": "4df94e9aec98be75f00520b344cf468474ba53f6",
 				"tools/dps_report/req/races/rogue__subtlety.Gnome.json": "b6a6a0153493cc65bc5993d4aa1c8c7cfa0ea19d"
 			}
 		},
 		"rogue__seal-fate-swords": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:15.048Z",
-			"iterations": 20000,
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:55:03.971Z",
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
 				"sim/common": "0d569c6d77b089a30d28fc9ba48a3c6132eb07fd",
@@ -201,14 +197,14 @@
 				"tools/rotopt": "f57488cdbf469b7a52a0c0d883be1b6c17e48a05",
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/rogue": "f35b95e40cbe66a5cfc1a9413b91dd4b56245465",
-				"ui/rogue": "c7bd636b1d5c41f0684bd92b2388489328c45748",
+				"ui/rogue": "b5731319e1b6367a2b34fb6e218c2cea7f9137bb",
 				"tools/dps_report/req/rogue__seal-fate-swords.json": "afecc69e7c881e6ed426f8abddbf5b541fb718a2",
 				"tools/dps_report/req/races/rogue__seal-fate-swords.Gnome.json": "1c4b3110e913ba097c09859417352c7abe8d7383"
 			}
 		},
 		"rogue__subtlety": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:15.137Z",
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:54:49.631Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
@@ -220,8 +216,8 @@
 				"tools/rotopt": "f57488cdbf469b7a52a0c0d883be1b6c17e48a05",
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/rogue": "f35b95e40cbe66a5cfc1a9413b91dd4b56245465",
-				"ui/rogue": "c7bd636b1d5c41f0684bd92b2388489328c45748",
-				"tools/dps_report/req/rogue__subtlety.json": "e1a2a30a83cb6853e0e503384c35b827d1f716a7",
+				"ui/rogue": "b5731319e1b6367a2b34fb6e218c2cea7f9137bb",
+				"tools/dps_report/req/rogue__subtlety.json": "8440dfa069c5ac0dc65452e1f119067d74d58a2a",
 				"tools/dps_report/req/races/rogue__subtlety.Gnome.json": "b6a6a0153493cc65bc5993d4aa1c8c7cfa0ea19d"
 			}
 		},
@@ -407,8 +403,8 @@
 			}
 		},
 		"shaman__enhancement-level60": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:15.317Z",
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:54:49.667Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
@@ -421,15 +417,15 @@
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/shaman": "6ac4beaccbb1910cbd3a96c122e28c97485ca65f",
 				"ui/elemental_shaman": "301a77b57463c613ed473b6bc797f41ba7bad0a3",
-				"ui/enhancement_shaman": "e6cbf6470bcd55edd70af360b124e12ac6327f04",
+				"ui/enhancement_shaman": "85a0071ab82ecdc1804c62f66f6378a827dfbef7",
 				"ui/restoration_shaman": "d5846ddbbcd819452e30626ec8cfba1177e5f328",
 				"ui/warden_shaman": "5b18d42f978aed8d12aa1e79f6c0a36b94ffd160",
-				"tools/dps_report/req/shaman__enhancement-level60.json": "c34ee34b96fbbfd07daf9e05cf8eac39c23391d7"
+				"tools/dps_report/req/shaman__enhancement-level60.json": "22d2a089d6c7d8cc8de0dc8a7229c6e1f8e9271e"
 			}
 		},
 		"shaman__enhancement-imp-gw": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:15.274Z",
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:54:49.709Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
@@ -442,16 +438,15 @@
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/shaman": "6ac4beaccbb1910cbd3a96c122e28c97485ca65f",
 				"ui/elemental_shaman": "301a77b57463c613ed473b6bc797f41ba7bad0a3",
-				"ui/enhancement_shaman": "e6cbf6470bcd55edd70af360b124e12ac6327f04",
+				"ui/enhancement_shaman": "85a0071ab82ecdc1804c62f66f6378a827dfbef7",
 				"ui/restoration_shaman": "d5846ddbbcd819452e30626ec8cfba1177e5f328",
 				"ui/warden_shaman": "5b18d42f978aed8d12aa1e79f6c0a36b94ffd160",
-				"tools/dps_report/req/shaman__enhancement-imp-gw.json": "2cadaf659ad2189908df129836683349f19f037e"
+				"tools/dps_report/req/shaman__enhancement-imp-gw.json": "6f4dfebdb3ae33aa65bae9a47e679e16fd7930b5"
 			}
 		},
 		"shaman__enhancement-water-shield": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:15.409Z",
-			"iterations": 20000,
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:55:04.203Z",
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
 				"sim/common": "0d569c6d77b089a30d28fc9ba48a3c6132eb07fd",
@@ -463,16 +458,15 @@
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/shaman": "6ac4beaccbb1910cbd3a96c122e28c97485ca65f",
 				"ui/elemental_shaman": "301a77b57463c613ed473b6bc797f41ba7bad0a3",
-				"ui/enhancement_shaman": "e6cbf6470bcd55edd70af360b124e12ac6327f04",
+				"ui/enhancement_shaman": "85a0071ab82ecdc1804c62f66f6378a827dfbef7",
 				"ui/restoration_shaman": "d5846ddbbcd819452e30626ec8cfba1177e5f328",
 				"ui/warden_shaman": "5b18d42f978aed8d12aa1e79f6c0a36b94ffd160",
 				"tools/dps_report/req/shaman__enhancement-water-shield.json": "d84fb59c427bc4e5111e593c75fae6eff7e2a62b"
 			}
 		},
 		"shaman__enhancement-mana-tide": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:15.368Z",
-			"iterations": 20000,
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:55:04.157Z",
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
 				"sim/common": "0d569c6d77b089a30d28fc9ba48a3c6132eb07fd",
@@ -484,16 +478,15 @@
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/shaman": "6ac4beaccbb1910cbd3a96c122e28c97485ca65f",
 				"ui/elemental_shaman": "301a77b57463c613ed473b6bc797f41ba7bad0a3",
-				"ui/enhancement_shaman": "e6cbf6470bcd55edd70af360b124e12ac6327f04",
+				"ui/enhancement_shaman": "85a0071ab82ecdc1804c62f66f6378a827dfbef7",
 				"ui/restoration_shaman": "d5846ddbbcd819452e30626ec8cfba1177e5f328",
 				"ui/warden_shaman": "5b18d42f978aed8d12aa1e79f6c0a36b94ffd160",
 				"tools/dps_report/req/shaman__enhancement-mana-tide.json": "5e860b23f5abc7fc3f9faa1b8a744c142a774e67"
 			}
 		},
 		"shaman__elemental-level60": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:15.227Z",
-			"iterations": 20000,
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:55:04.049Z",
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
 				"sim/common": "0d569c6d77b089a30d28fc9ba48a3c6132eb07fd",
@@ -505,7 +498,7 @@
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/shaman": "6ac4beaccbb1910cbd3a96c122e28c97485ca65f",
 				"ui/elemental_shaman": "301a77b57463c613ed473b6bc797f41ba7bad0a3",
-				"ui/enhancement_shaman": "e6cbf6470bcd55edd70af360b124e12ac6327f04",
+				"ui/enhancement_shaman": "85a0071ab82ecdc1804c62f66f6378a827dfbef7",
 				"ui/restoration_shaman": "d5846ddbbcd819452e30626ec8cfba1177e5f328",
 				"ui/warden_shaman": "5b18d42f978aed8d12aa1e79f6c0a36b94ffd160",
 				"tools/dps_report/req/shaman__elemental-level60.json": "a86a70eb1a93cd109f4d49e929f5d19101b4ab48",
@@ -513,9 +506,8 @@
 			}
 		},
 		"shaman__elemental-level60-mana-tide": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:15.180Z",
-			"iterations": 20000,
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:55:04.105Z",
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
 				"sim/common": "0d569c6d77b089a30d28fc9ba48a3c6132eb07fd",
@@ -527,7 +519,7 @@
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/shaman": "6ac4beaccbb1910cbd3a96c122e28c97485ca65f",
 				"ui/elemental_shaman": "301a77b57463c613ed473b6bc797f41ba7bad0a3",
-				"ui/enhancement_shaman": "e6cbf6470bcd55edd70af360b124e12ac6327f04",
+				"ui/enhancement_shaman": "85a0071ab82ecdc1804c62f66f6378a827dfbef7",
 				"ui/restoration_shaman": "d5846ddbbcd819452e30626ec8cfba1177e5f328",
 				"ui/warden_shaman": "5b18d42f978aed8d12aa1e79f6c0a36b94ffd160",
 				"tools/dps_report/req/shaman__elemental-level60-mana-tide.json": "0b4ba2590dee1e229fd33e8866b271911fc75bfb",
@@ -680,8 +672,8 @@
 			}
 		},
 		"warlock__demonology": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:15.556Z",
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:54:49.753Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
@@ -693,13 +685,13 @@
 				"tools/rotopt": "f57488cdbf469b7a52a0c0d883be1b6c17e48a05",
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/warlock": "274f8f53d95c41915434768873b828edb46b25b3",
-				"ui/warlock": "2636dfaa8c65b251c1552c7f82fc3cb8f1f23643",
-				"tools/dps_report/req/warlock__demonology.json": "c982497d143cc7265597c43b7e4ef1f228d05b74"
+				"ui/warlock": "81e2eb5edd9a4d8a3404b0597d8fe7f549fc9cc2",
+				"tools/dps_report/req/warlock__demonology.json": "0b89d42d1bc06e4eb72c9873477dc466932183e9"
 			}
 		},
 		"warlock__destruction": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:15.621Z",
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:54:49.787Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
@@ -711,14 +703,13 @@
 				"tools/rotopt": "f57488cdbf469b7a52a0c0d883be1b6c17e48a05",
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/warlock": "274f8f53d95c41915434768873b828edb46b25b3",
-				"ui/warlock": "2636dfaa8c65b251c1552c7f82fc3cb8f1f23643",
-				"tools/dps_report/req/warlock__destruction.json": "2892e9f79c1356e633ef96b0ddf5dca151b665e4"
+				"ui/warlock": "81e2eb5edd9a4d8a3404b0597d8fe7f549fc9cc2",
+				"tools/dps_report/req/warlock__destruction.json": "b4cde411b35e90a0579246736ae22fcc7b18bb25"
 			}
 		},
 		"warlock__affliction": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:15.489Z",
-			"iterations": 20000,
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:55:04.247Z",
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
 				"sim/common": "0d569c6d77b089a30d28fc9ba48a3c6132eb07fd",
@@ -729,13 +720,13 @@
 				"tools/rotopt": "f57488cdbf469b7a52a0c0d883be1b6c17e48a05",
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/warlock": "274f8f53d95c41915434768873b828edb46b25b3",
-				"ui/warlock": "2636dfaa8c65b251c1552c7f82fc3cb8f1f23643",
+				"ui/warlock": "81e2eb5edd9a4d8a3404b0597d8fe7f549fc9cc2",
 				"tools/dps_report/req/warlock__affliction.json": "b97cc01c3250ff91dba6a6807d29f9339ec05f1a"
 			}
 		},
 		"warlock__destruction_fire": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:15.692Z",
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:54:49.821Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
@@ -747,13 +738,13 @@
 				"tools/rotopt": "f57488cdbf469b7a52a0c0d883be1b6c17e48a05",
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/warlock": "274f8f53d95c41915434768873b828edb46b25b3",
-				"ui/warlock": "2636dfaa8c65b251c1552c7f82fc3cb8f1f23643",
-				"tools/dps_report/req/warlock__destruction_fire.json": "d3ab28907fbb0769534edb841b7e59a816c05375"
+				"ui/warlock": "81e2eb5edd9a4d8a3404b0597d8fe7f549fc9cc2",
+				"tools/dps_report/req/warlock__destruction_fire.json": "3dab28d18b489ad9112a10be8244245480a0e94a"
 			}
 		},
 		"priest__shadow": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:14.588Z",
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:54:49.437Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
@@ -766,14 +757,14 @@
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/priest": "62948a1e7c65043964ea97e9b80b5eedbfc15176",
 				"ui/healing_priest": "27b28311e4535c904a9c71f039fd93d272356aea",
-				"ui/shadow_priest": "536fa86d1d63a98d5be3866de7397b92d88e19b0",
-				"tools/dps_report/req/priest__shadow.json": "9db4f16455f653fc3fed9a0d4c53a7702c804d70",
+				"ui/shadow_priest": "33988ead85778fb9482dc3251139bbf5d21ae278",
+				"tools/dps_report/req/priest__shadow.json": "714c8e5e2896f953f5301bf27afd760cca614d3b",
 				"tools/dps_report/req/races/priest__shadow.Dwarf.json": "ace0f78eaadbcbdae918c911d97f2c9cce620739"
 			}
 		},
 		"priest__shadow-holy": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:14.545Z",
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:54:49.487Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
@@ -786,15 +777,14 @@
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/priest": "62948a1e7c65043964ea97e9b80b5eedbfc15176",
 				"ui/healing_priest": "27b28311e4535c904a9c71f039fd93d272356aea",
-				"ui/shadow_priest": "536fa86d1d63a98d5be3866de7397b92d88e19b0",
-				"tools/dps_report/req/priest__shadow-holy.json": "b38fcd76cfec45611774f594fc2622ace9d05519",
+				"ui/shadow_priest": "33988ead85778fb9482dc3251139bbf5d21ae278",
+				"tools/dps_report/req/priest__shadow-holy.json": "a8820b035287d5541a954a0784baa5c707fb2783",
 				"tools/dps_report/req/races/priest__shadow-holy.Dwarf.json": "60f36a4dfe0bc1b242835c590036ddc256f715b4"
 			}
 		},
 		"priest__smite": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:14.636Z",
-			"iterations": 20000,
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:55:03.824Z",
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
 				"sim/common": "0d569c6d77b089a30d28fc9ba48a3c6132eb07fd",
@@ -806,7 +796,7 @@
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/priest": "62948a1e7c65043964ea97e9b80b5eedbfc15176",
 				"ui/healing_priest": "27b28311e4535c904a9c71f039fd93d272356aea",
-				"ui/shadow_priest": "536fa86d1d63a98d5be3866de7397b92d88e19b0",
+				"ui/shadow_priest": "33988ead85778fb9482dc3251139bbf5d21ae278",
 				"tools/dps_report/req/priest__smite.json": "49042df97867dee47298eb9fd55f609baa88def1",
 				"tools/dps_report/req/races/priest__smite.Dwarf.json": "2b9c53c32a828d93505ea5c11055e1d009d8f7e5",
 				"tools/dps_report/req/races/priest__smite.Gnome.json": "5609652b341427593fee6a36c2408c541e893e5f",
@@ -1063,8 +1053,8 @@
 			}
 		},
 		"warlock__demonology-duty-curse": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:15.523Z",
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:54:49.996Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
@@ -1076,13 +1066,13 @@
 				"tools/rotopt": "f57488cdbf469b7a52a0c0d883be1b6c17e48a05",
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/warlock": "274f8f53d95c41915434768873b828edb46b25b3",
-				"ui/warlock": "2636dfaa8c65b251c1552c7f82fc3cb8f1f23643",
-				"tools/dps_report/req/warlock__demonology-duty-curse.json": "407e2a427a7ab9e677b560e656c6ffec0895b40e"
+				"ui/warlock": "81e2eb5edd9a4d8a3404b0597d8fe7f549fc9cc2",
+				"tools/dps_report/req/warlock__demonology-duty-curse.json": "4fc7f1bddf4716fda2d13a09be3d3860dd4a5835"
 			}
 		},
 		"warlock__destruction-duty-curse": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:15.589Z",
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:54:50.033Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
@@ -1094,14 +1084,13 @@
 				"tools/rotopt": "f57488cdbf469b7a52a0c0d883be1b6c17e48a05",
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/warlock": "274f8f53d95c41915434768873b828edb46b25b3",
-				"ui/warlock": "2636dfaa8c65b251c1552c7f82fc3cb8f1f23643",
-				"tools/dps_report/req/warlock__destruction-duty-curse.json": "5af50180a5ef274cfd17d46f6ac938a5b1446e15"
+				"ui/warlock": "81e2eb5edd9a4d8a3404b0597d8fe7f549fc9cc2",
+				"tools/dps_report/req/warlock__destruction-duty-curse.json": "a447658f868eadfb703673612fa19088112ea782"
 			}
 		},
 		"warlock__affliction-duty-curse": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:15.453Z",
-			"iterations": 20000,
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:55:04.281Z",
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
 				"sim/common": "0d569c6d77b089a30d28fc9ba48a3c6132eb07fd",
@@ -1112,13 +1101,13 @@
 				"tools/rotopt": "f57488cdbf469b7a52a0c0d883be1b6c17e48a05",
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/warlock": "274f8f53d95c41915434768873b828edb46b25b3",
-				"ui/warlock": "2636dfaa8c65b251c1552c7f82fc3cb8f1f23643",
+				"ui/warlock": "81e2eb5edd9a4d8a3404b0597d8fe7f549fc9cc2",
 				"tools/dps_report/req/warlock__affliction-duty-curse.json": "48bd03ee22fe99ab0699272ca70dcf1606830778"
 			}
 		},
 		"warlock__destruction_fire-duty-curse": {
-			"commit": "a5d79a78fc501eb5a4ec6a1c023834f9497a5f7b",
-			"recordedAt": "2026-10-27T22:15:15.656Z",
+			"commit": "b57bd205cf781ec8228f415440a2c36edf3fe808",
+			"recordedAt": "2026-10-27T22:54:50.070Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "05c67870eb817b13ddee9420e29032fc53644dc8",
@@ -1130,8 +1119,8 @@
 				"tools/rotopt": "f57488cdbf469b7a52a0c0d883be1b6c17e48a05",
 				"tools/dps_report/patches": "7c5a9a77e5a9be718416fca0f8bd82d8059f908a",
 				"sim/warlock": "274f8f53d95c41915434768873b828edb46b25b3",
-				"ui/warlock": "2636dfaa8c65b251c1552c7f82fc3cb8f1f23643",
-				"tools/dps_report/req/warlock__destruction_fire-duty-curse.json": "4e20387f59086f3a2d668479dbbb149eeb5a5b2e"
+				"ui/warlock": "81e2eb5edd9a4d8a3404b0597d8fe7f549fc9cc2",
+				"tools/dps_report/req/warlock__destruction_fire-duty-curse.json": "d863b270e2186a910811d61ce1143a213a600f3f"
 			}
 		},
 		"paladin__level_60_shock_ret": {

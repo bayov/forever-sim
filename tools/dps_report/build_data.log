@@ -1,12 +1,12 @@
 builds: 58 rows, 85 KB
 races: 302 rows, 57 KB
 lengths: 290 rows, 23 KB
-abilities: 883 rows, 248 KB
-auras: 1459 rows, 213 KB
-hist: 2801 rows, 150 KB
+abilities: 891 rows, 250 KB
+auras: 1458 rows, 213 KB
+hist: 2775 rows, 149 KB
 stats: 781 rows, 65 KB
 gear: 750 rows, 142 KB
-setup: 2273 rows, 566 KB
+setup: 2273 rows, 567 KB
 notes: 1743 rows, 202 KB
 race_variants: 946 rows, 268 KB
 race_breakdown: 1167 rows, 175 KB
@@ -22,7 +22,7 @@ rotation conditions shown in compact form: ['frontOfTarget', 'max', 'moveTime']
 tooltips: 1126 rows, 445 KB
 tooltips without text: ['i990015 Enhancement Synthetic On-Use Trinket (Phase 1)', 'i990115 Elemental Synthetic On-Use Trinket (Phase 1)', 'i991018 Warrior Synthetic Battle Trinket (Phase 1)', 'i992015 Retribution Synthetic Spell Power On-Use Trinket (Phase 1)', 'i993016 Ranged Hunter Synthetic On-Use Trinket (Phase 1)', 'i993117 Survival Synthetic On-Use Trinket (Phase 1)', 'i994202 Rogue Synthetic On-Use Trinket (Phase 1)', 'i995034 Priest Synthetic On-Use Trinket (Phase 1)', 'i996032 Mage Synthetic Talisman (Phase 1)', 'i997022 Warlock Synthetic Talisman (Phase 1)', 'i998015 Balance Synthetic Spell Power Trinket (Phase 1)', 'i998115 Feral Synthetic Strength Trinket (Phase 1)', 'o11 Raid damage hit']
 talenttrees: 465 rows, 178 KB
-wowhead coverage: {'item:forever': 70, 'spell:none': 1, 'spell:sim': 8, 'spell:forever': 244, 'spell:wiki': 7, 'spell:client': 17, 'item:db': 241, 'enchant:forever': 359, 'enchant:db': 60, 'setup:sim': 5, 'setup:forever': 36, 'setup:wiki': 1} {'forever': 305, 'other': 21} {'forever': 1375}
+wowhead coverage: {'item:forever': 70, 'spell:none': 1, 'spell:sim': 8, 'spell:forever': 243, 'spell:wiki': 7, 'spell:client': 18, 'item:db': 241, 'enchant:forever': 359, 'enchant:db': 60, 'setup:sim': 5, 'setup:forever': 36, 'setup:wiki': 1} {'forever': 304, 'other': 21} {'forever': 1375}
 icons: 79 rows, 159 KB
 icons_more: 609 rows, 925 KB
 names: 299 rows, 29 KB
@@ -30,10 +30,10 @@ names without an icon: ['Bloodthrill', 'Caustic Smog Potion', 'Consecration Mark
 treeart: 27 rows, 1063 KB
 missing icons: ['client_252996']
 timeline_warrior: 12 rows, 34 KB
-timeline_rogue: 36 rows, 83 KB
+timeline_rogue: 36 rows, 80 KB
 timeline_hunter: 12 rows, 38 KB
 timeline_paladin: 18 rows, 72 KB
-timeline_shaman: 18 rows, 47 KB
+timeline_shaman: 18 rows, 49 KB
 timeline_druid: 9 rows, 24 KB
 timeline_mage: 12 rows, 43 KB
 timeline_warlock: 12 rows, 21 KB
