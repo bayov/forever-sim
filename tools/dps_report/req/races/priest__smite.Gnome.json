@@ -1,0 +1,369 @@
+{
+  "rotation": {
+    "type": "TypeAPL",
+    "prepullActions": [
+      {
+        "action": {
+          "castSpell": {
+            "spellId": {
+              "spellId": 10934
+            }
+          }
+        },
+        "doAtValue": {
+          "const": {
+            "val": "-2s"
+          }
+        }
+      },
+      {
+        "action": {
+          "castSpell": {
+            "spellId": {
+              "itemId": 995034
+            }
+          }
+        },
+        "doAtValue": {
+          "const": {
+            "val": "-0.1s"
+          }
+        }
+      }
+    ],
+    "priorityList": [
+      {
+        "action": {
+          "castSpell": {
+            "spellId": {
+              "spellId": 1277328
+            }
+          },
+          "condition": {
+            "cmp": {
+              "lhs": {
+                "currentManaPercent": {}
+              },
+              "op": "OpLt",
+              "rhs": {
+                "const": {
+                  "val": "0.4"
+                }
+              }
+            }
+          }
+        },
+        "notes": "Undead. Dark Sacrifice when mana runs low. Other races can ignore the warning on this line."
+      },
+      {
+        "action": {
+          "castSpell": {
+            "spellId": {
+              "spellId": 10060
+            }
+          }
+        },
+        "notes": "Power Infusion on cooldown. Without the talent ignore the warning on this line."
+      },
+      {
+        "action": {
+          "autocastOtherCooldowns": {}
+        },
+        "notes": "Racials and trinkets on cooldown."
+      },
+      {
+        "action": {
+          "channelSpell": {
+            "interruptIf": {
+              "cmp": {
+                "lhs": {
+                  "currentManaPercent": {}
+                },
+                "op": "OpGe",
+                "rhs": {
+                  "const": {
+                    "val": "0.2"
+                  }
+                }
+              }
+            },
+            "spellId": {
+              "spellId": 5019
+            }
+          },
+          "condition": {
+            "and": {
+              "vals": [
+                {
+                  "cmp": {
+                    "lhs": {
+                      "currentManaPercent": {}
+                    },
+                    "op": "OpLe",
+                    "rhs": {
+                      "const": {
+                        "val": "0.1"
+                      }
+                    }
+                  }
+                },
+                {
+                  "cmp": {
+                    "lhs": {
+                      "remainingTime": {}
+                    },
+                    "op": "OpGe",
+                    "rhs": {
+                      "const": {
+                        "val": "60s"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "notes": "Shoot the wand from 10% mana to 20% with 60 sec or more to go, to regenerate outside the five second rule."
+      },
+      {
+        "action": {
+          "castSpell": {
+            "spellId": {
+              "spellId": 15261
+            }
+          },
+          "condition": {
+            "and": {
+              "vals": [
+                {
+                  "not": {
+                    "val": {
+                      "dotIsActive": {
+                        "spellId": {
+                          "spellId": 15261
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "cmp": {
+                    "lhs": {
+                      "currentManaPercent": {}
+                    },
+                    "op": "OpGe",
+                    "rhs": {
+                      "const": {
+                        "val": "0.3"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "notes": "Holy Fire whenever its damage over time is down, for Power in Light."
+      },
+      {
+        "action": {
+          "castSpell": {
+            "spellId": {
+              "spellId": 10894
+            }
+          },
+          "condition": {
+            "and": {
+              "vals": [
+                {
+                  "not": {
+                    "val": {
+                      "dotIsActive": {
+                        "spellId": {
+                          "spellId": 10894
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "cmp": {
+                    "lhs": {
+                      "remainingTime": {}
+                    },
+                    "op": "OpGe",
+                    "rhs": {
+                      "const": {
+                        "val": "9s"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "notes": "Shadow Word: Pain whenever it is down."
+      },
+      {
+        "action": {
+          "castSpell": {
+            "spellId": {
+              "spellId": 19280
+            }
+          },
+          "condition": {
+            "and": {
+              "vals": [
+                {
+                  "not": {
+                    "val": {
+                      "dotIsActive": {
+                        "spellId": {
+                          "spellId": 19280
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "cmp": {
+                    "lhs": {
+                      "remainingTime": {}
+                    },
+                    "op": "OpGe",
+                    "rhs": {
+                      "const": {
+                        "val": "12s"
+                      }
+                    }
+                  }
+                },
+                {
+                  "cmp": {
+                    "lhs": {
+                      "currentManaPercent": {}
+                    },
+                    "op": "OpGe",
+                    "rhs": {
+                      "const": {
+                        "val": "0.8"
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "notes": "Devouring Plague whenever it is down and off cooldown."
+      },
+      {
+        "action": {
+          "castSpell": {
+            "spellId": {
+              "spellId": 1277335
+            }
+          }
+        },
+        "notes": "Dwarf. Chastise on cooldown against a Humanoid. Other races can ignore the warning on this line."
+      },
+      {
+        "action": {
+          "castSpell": {
+            "spellId": {
+              "spellId": 1309636
+            }
+          },
+          "condition": {
+            "cmp": {
+              "lhs": {
+                "remainingTime": {}
+              },
+              "op": "OpLt",
+              "rhs": {
+                "spellCastTime": {
+                  "spellId": {
+                    "spellId": 10934
+                  }
+                }
+              }
+            }
+          }
+        },
+        "notes": "Shadow Word: Death when Smite would not land before the fight ends."
+      },
+      {
+        "action": {
+          "castSpell": {
+            "spellId": {
+              "spellId": 14751
+            }
+          }
+        },
+        "notes": "Inner Focus on cooldown, for the next Smite. Without the talent ignore the warning on this line."
+      },
+      {
+        "action": {
+          "castSpell": {
+            "spellId": {
+              "spellId": 10934
+            }
+          },
+          "condition": {
+            "cmp": {
+              "lhs": {
+                "math": {
+                  "lhs": {
+                    "currentMana": {}
+                  },
+                  "op": "OpDiv",
+                  "rhs": {
+                    "const": {
+                      "val": "35"
+                    }
+                  }
+                }
+              },
+              "op": "OpGe",
+              "rhs": {
+                "remainingTime": {}
+              }
+            }
+          }
+        },
+        "notes": "Smite while the mana lasts the fight at 35 mana a second."
+      },
+      {
+        "action": {
+          "castSpell": {
+            "spellId": {
+              "spellId": 10933
+            }
+          }
+        },
+        "notes": "Rank 7 Smite once it would not: most of the damage for far less mana."
+      },
+      {
+        "action": {
+          "castSpell": {
+            "spellId": {
+              "spellId": 5019
+            }
+          }
+        },
+        "notes": "Shoot the wand when nothing else can be cast (out of mana)."
+      }
+    ]
+  },
+  "note": "Holy Fire above 30% mana: without the Undead's Dark Sacrifice the mana goes further on Holy Fire than on the preset's Smite-only line",
+  "gain": {
+    "dps": 4.5,
+    "se": 0.27,
+    "iterations": 20000,
+    "seed": 1,
+    "duration": 180
+  },
+  "how": "rotopt -template priest_smite -race Gnome -durs 180 from the template defaults (the preset's knobs): holyFire 0 -> 1, holyFireMana 0 -> 30. Same rotation at the preset race (Undead): -12.1 +- 0.2."
+}
