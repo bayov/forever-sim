@@ -1,7 +1,7 @@
 {
- "updated": "2026-10-26",
- "note": "Level 60 Shock (Ret Shock in the report; the deep Holy build is now Level 60 Shock (deep Holy), Ret Shock (deep Holy)) added (23/0/28 Holy Shock without Twist of Light, as Blizzard's Paladin Class Deep Dive of 2026-10-15 pitched): 932.4 at 180 s. Every build's raw sim outputs are now kept in tools/dps_report/raw/<id>.tgz with the datasets (orchestration/dash_raw_store.md), so a regeneration re-sims only what changed: pipeline.sh hydrate, run <ids>, publish <ids>. The 58-build full run of 2026-10-26 is the first set of packs; 0 of 58 stale.",
- "foreverClientBuild": "1.60.1.70450 (spells, talents, racials and enchants identical to 70425)",
+ "updated": "2026-10-27",
+ "note": "2026-10-27: dev notes post 1's '2026-10-26' is an edit stamp (09-24 text, all in the sim); the new content was post 7's racial pass, applied from the notes (Human 1% crit / 10% Spirit, Dwarf Artisan's Precision +1% hit, Orc Command +5% pet damage, Tauren Endurance health only, Skyborne 2% haste, Read Leyline 50%/15 s), client 70630's Spellstone Shadow-only school, and the user's ruling that Arcane Missiles don't proc Missile Barrage (mage_am_missile_barrage one value). Full re-sim of all 58 builds. Undead is now best on 12 of 24 specs. Open: Amplify Curse on Bane of Agony needs an in-game test before any preset takes it (TASKS.md); Arcane mage talents still take Missile Barrage 2/2, worth a re-optimize; preset races were left as they were.",
+ "foreverClientBuild": "1.60.1.70630 (sources pulled 2026-10-27; plus dev notes post 7, the 10-26 racial pass, applied from the notes)",
  "coordinationBranch": {
   "name": "claude/wow-forever-dps-presets-m9u15h",
   "head": "1e1d201af"
@@ -58,19 +58,19 @@
   "note": "the last artifact publish; retired 2026-10-25, see reportSite"
  },
  "reportData": {
-  "commit": "69e81fa (data), merged to master at dc8d7f9",
-  "simmedAt": "5144238 with patches 0001-0004 (4 CPUs, the same as DASH_SPLITS=4); provenance recorded at bfd36569ec",
-  "date": "2026-10-26",
+  "commit": "4273ee5 on master",
+  "simmedAt": "9e8e79d (mage builds at 7166da4) with patches 0001-0005",
+  "date": "2026-10-27",
   "builds": 58,
-  "rawPacks": "tools/dps_report/raw/ (58 packs, 2.7 MB)",
-  "note": "full re-sim, every step, 20,000 iterations; the other 57 builds' values matched the previous report exactly"
+  "rawPacks": "tools/dps_report/raw/ (58 packs)",
+  "note": "full re-sim, every step, 20,000 iterations; mage builds re-simmed after the Missile Barrage ruling"
  },
  "reportSite": {
   "url": "https://forever-dps.pages.dev",
   "cloudflareProject": "forever-dps",
   "deploy": "make dps-report-deploy (tools/dps_report/deploy_pages.py)",
-  "publishedFrom": "master 3d9aa585b (Ret Shock (deep Holy) and Ret Shock names)",
+  "publishedFrom": "master 4273ee5 (10-26 racial pass, Spellstone, Missile Barrage)",
   "date": "2026-10-27",
-  "deployId": "d672bb46"
+  "deployId": "3f281998"
  }
 }
