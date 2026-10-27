@@ -65,7 +65,8 @@ gen level60 "seal=2,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=2
 # is 8 to 14 behind 30% at 180 sec). Shock vs Undead +52.8 / +40.4 / +17.5 and the Shock duty
 # +37.0 / +32.2 / +24.3 with it (paired, seeds 1 and 1000003).
 gen level60_shock "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,lightsVigilMana=30,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1,vigilSwing=20" -level 60
-# Level 60 Shock (Ret side), for the mostly Retribution Holy Shock talents (23/0/28: Holy Shock and
+# Level 60 Shock (called Shock (Ret side) on 2026-10-26; the deep Holy build is Level 60 Shock (deep Holy)
+# since 2026-10-27), for the mostly Retribution Holy Shock talents (23/0/28: Holy Shock and
 # Consecrated Ground, Champion of the Light, no Light's Vigil and no Twist of Light). Searched over
 # 120, 180 and 300 sec together, then a talent search, then the knobs again (no move): Seal of
 # Command up with no twisting (+6 over Seal of Righteousness), Consecration first down to the last

@@ -106,7 +106,7 @@ A = [
       default='expected', expected='expected'),
  dict(key='pal_soc_wf', cls='Paladin', label='Can Seal of Command hits proc Windfury?',
       short="Also Twist of Light's Echo of Command. Untested, the totem is past the beta cap.",
-      desc="Also Twist of Light's Echo of Command. Proc rules live on the server, and only the twisting presets and Shock (Ret side) use Seal of Command.",
+      desc="Also Twist of Light's Echo of Command. Proc rules live on the server, and only the twisting presets and Ret Shock use Seal of Command.",
       src="The sim's melee proc rules. No beta log.",
       builds=PAL_SOC,
       settings=[S('low', 'No', "seal hits never proc the totem", 'If the server treats seal hits as procs.', {'pal_soc_wf': 0}),

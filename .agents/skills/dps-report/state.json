@@ -1,6 +1,6 @@
 {
  "updated": "2026-10-26",
- "note": "Level 60 Shock (Ret side) added (23/0/28 Holy Shock without Twist of Light, as Blizzard's Paladin Class Deep Dive of 2026-10-15 pitched): 932.4 at 180 s. Every build's raw sim outputs are now kept in tools/dps_report/raw/<id>.tgz with the datasets (orchestration/dash_raw_store.md), so a regeneration re-sims only what changed: pipeline.sh hydrate, run <ids>, publish <ids>. The 58-build full run of 2026-10-26 is the first set of packs; 0 of 58 stale.",
+ "note": "Level 60 Shock (Ret Shock in the report; the deep Holy build is now Level 60 Shock (deep Holy), Ret Shock (deep Holy)) added (23/0/28 Holy Shock without Twist of Light, as Blizzard's Paladin Class Deep Dive of 2026-10-15 pitched): 932.4 at 180 s. Every build's raw sim outputs are now kept in tools/dps_report/raw/<id>.tgz with the datasets (orchestration/dash_raw_store.md), so a regeneration re-sims only what changed: pipeline.sh hydrate, run <ids>, publish <ids>. The 58-build full run of 2026-10-26 is the first set of packs; 0 of 58 stale.",
  "foreverClientBuild": "1.60.1.70450 (spells, talents, racials and enchants identical to 70425)",
  "coordinationBranch": {
   "name": "claude/wow-forever-dps-presets-m9u15h",

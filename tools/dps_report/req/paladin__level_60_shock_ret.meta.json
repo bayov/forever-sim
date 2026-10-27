@@ -2,7 +2,7 @@
   "id": "paladin__level_60_shock_ret",
   "class": "Paladin",
   "spec": "Retribution",
-  "build": "Level 60 Shock (Ret side)",
+  "build": "Level 60 Shock",
   "isDefault": false,
   "race": "Human",
   "talents": "550030032011012--052150312012303",

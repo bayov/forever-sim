@@ -2,7 +2,7 @@
   "id": "paladin__level_60_shock_undead",
   "class": "Paladin",
   "spec": "Retribution",
-  "build": "Level 60 Shock (vs Undead)",
+  "build": "Level 60 Shock (deep Holy, vs Undead)",
   "isDefault": false,
   "pr": 54,
   "race": "Human",
