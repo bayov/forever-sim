@@ -46,12 +46,12 @@ Every change announced for the WoW Forever beta, from build 1.60.1.70009 (the fi
 | Hunter | 82 | 44 | 2 | 7 | 1 | 1 | 3 | 1 | 22 | 1 info |
 | Rogue | 68 | 38 | 0 | 0 | 2 | 2 | 1 | 3 | 22 | 0 |
 | Priest | 55 | 20 | 14 | 2 | 0 | 2 | 1 | 1 | 15 | 0 |
-| Shaman | 102 | 57 | 12 | 4 | 0 | 2 | 2 | 2 | 23 | 0 |
-| Mage | 53 | 15 | 9 | 3 | 0 | 1 | 4 | 4 | 17 | 0 |
-| Warlock | 87 | 47 | 4 | 0 | 0 | 1 | 3 | 1 | 30 | 1 covered by another row |
+| Shaman | 103 | 58 | 12 | 4 | 0 | 2 | 2 | 2 | 23 | 0 |
+| Mage | 58 | 17 | 9 | 3 | 0 | 1 | 5 | 5 | 18 | 0 |
+| Warlock | 89 | 47 | 4 | 0 | 0 | 3 | 3 | 1 | 30 | 1 covered by another row |
 | Druid | 69 | 31 | 0 | 2 | 2 | 2 | 2 | 0 | 30 | 0 |
-| Shared (races, mechanics, items) | 61 | 25 | 1 | 2 | 3 | 2 | 2 | 2 | 24 | 0 |
-| **Total** | **726** | **366** | **47** | **24** | **8** | **17** | **19** | **21** | **220** | **4** |
+| Shared (races, mechanics, items) | 67 | 25 | 1 | 2 | 3 | 2 | 2 | 8 | 24 | 0 |
+| **Total** | **740** | **369** | **47** | **24** | **8** | **19** | **20** | **28** | **221** | **4** |
 
 The counts are as audited, before this audit's own PRs. A row that touches two scopes, such as Eureka!, Touch of the Grave or Grace of Air, appears under each class it affects.
 
@@ -105,6 +105,8 @@ The counts are as audited, before this audit's own PRs. A row that touches two s
 2. **Trueshot Aura** is raid-wide in 70425, but the BM, Lone Wolf and Survival presets don't get it. Is there a Marksmanship hunter in the reference raid? About +2–3% for those hunters.
 3. **Paladin Seal of Righteousness.** PR #54 keeps the double spell power behind a `pal_sor_sp_double` assumption, but the 70425 notes and client say it's fixed. Make "Once" the expected setting?
 4. **Warlock races.** After #69, Gnome may no longer be the best warlock race. Rerun the race tables.
+5. **The 10-26 racial pass (dev notes post /7, rows SHR-P7-01..05).** Not in client 70630. Apply it from the notes now, or wait for a client or hotfix that carries it? (client_update-20261027-5)
+6. **Missile Barrage from Arcane Missiles hits (MAGE-U-15).** The 70630 tooltip drops it; the proc data can't show it. Take the tooltip, or check in game first? −7.9% on mage__arcane. (client_update-20261027-1)
 
 ### Report assumptions and Need to Verify items this ledger settles
 
@@ -152,6 +154,29 @@ For the assumptions audit (orchestration/assumptions_audit.md). Keys are from to
 | PAL-U-HF1 | FC, hotfix 10-16 (70425) | Champion of the Light back to 20/40/60% of Intellect as spell damage (was 10/20/30% since 70425) | **yes** (sub Holy, undead, twist presets) | spell 1311084 values come from a trait curve that isn't downloaded; TraitDefinitionEffectPoints identical. 2026-10-23: wago.tools hotfix push 112842 (2026-10-20 09:51, build 70450) sets CurvePoint 331369-331371 of curve 110350 to 20/40/60, and 110350 is Champion of the Light's (TraitDefinition 142634 = spell 1311084, TraitDefinitionEffectPoints 24621) | done 2026-10-23 | `sim/paladin/talents.go` uses `.2,.4,.6`; reverses PAL-70425-05 / NtV-3 |
 | WL-U-HF1 | FC, hotfix 10-16 | Amplify Curse: Curse of Exhaustion +20% instead of +50% | n/a | not in client | n/a | no preset uses CoEx (see WL-U-06) |
 | PRI-U-HF1 | FC, hotfix 10-18 | Holy Fire rank 1: 57-70 → 53-65 | n/a (rank 8 used) | not in client | n/a | |
+
+## Build 1.60.1.70630 (first seen 2026-10-27)
+
+70630 against 70532: 132 spells changed, 28 items (all cosmetic or low level), SpellItemEnchantment and ChrRaces identical. Most of it is the server-side hotfixes of 10-16 to 10-21 now baked into the client, and those rows now pass their client check: MAGE-U-HF1..HF4 (TraitNode 105773 removed, 105771/105772/105774/105776 moved, TraitNodeEntry 130507 MaxRanks 3, Ice Barrier 11426-13033 effects 1-2 at 3%, Frigid Power 1326891 added, Frost Ward reflect → aura 4, Frost Warding effect 2 + TraitDefinitionEffectPoints 25206), Winter's Chill 11180/12579 (5% and 7% a stack, one charge), Hunter's Mark 14325 effect 1 71 → 143, Lava Burst 1238300 effect 1 EffectRealPointsPerLevel 4.2 → 0 (rank 3's Flame Shock bonus back to 20%), Holy Fire 14914 r1 58 → 54 (PRI-U-HF1), Amplify Curse's Curse of Exhaustion -20 (WL-U-HF1). Champion of the Light (PAL-U-HF1) still can't be read from the client (the curve tables aren't downloaded). Cosmetic, n/a or NPC, no rows: Feral Swiftness, Nature's Focus and every "chance to not lose casting time" tooltip rewrite (Improved Channeling, Twilight Focus, Eye of the Storm, Healing Focus, Fel Concentration, Intensity), Scare Beast costs and cooldowns, Freezing Trap texts, Survivalist's Discipline proc options, Sap mechanic 14 → 30, Power Word: Shield / Curse of Weakness / Curse of Exhaustion / Fire Nova / Windfury Weapon / Silenced - Kick / Faster Attack attribute bits, SnD / Venom / Premeditation / Ruthlessness Attributes_3 0x400000 (cancels auto-repeat), Blood Craze and Gore Drinker Attributes_1 no-threat, Bloodthrill 1289681 6 → 5 sec (the old talent spell; the sim uses 1282733, already 5 sec), Eureka! texts ("for $d", no duration change), Dark Inspiration 1326168 aura 80 → 137 (same 15% Spirit), new NPC spells (Mind Blast 1326990, Fixate, Victory, Wind Bridge, Dreamfall, Immol'thar), Night Watchman's Torch, Resurrection Sickness 1 → 10 min, Insight recipe text 5% → 100% Spirit (SpellItemEnchantment unchanged), Multi-Shot 1289053 (an NPC periodic shot, 35 → 40).
+
+Dev notes: **new post /7** (2026-10-26 20:35, edited 21:09), the pre-launch racial pass. None of it is in 70630 (no Artisan's Precision spell, Ruthless / Savage / Endurance / Earth Fury rows unchanged), so it is server side or a later client. foreverchanges.pro still lists 70532 as current and says the beta closed on 2026-10-23.
+
+| ID | Source | Change | L60 DPS? | Client check | Sim status | Code location / note |
+|---|---|---|---|---|---|---|
+| MAGE-U-15 | DB2 70532→70630 (tooltip) | Missile Barrage 400588: "your Arcane Missile hits a ${$m1/4}% chance" dropped from the tooltip; Frost Blast added to the 10%-a-point list (the 10-16 FC hotfix, MAGE-U-HF5) | **yes** (Arcane) | Spell 400588 Description_lang only; its effects, aura options and class mask are identical (the proc is scripted, so the tooltip is the only client evidence) | ambiguous (needs verify); finding client_update-20261027-1 | `sim/mage/talents.go` applyMissileBarrage `OnSpellHitDealt` (5% a point on each missile that lands). Removing it: mage__arcane 982.5 → 904.9 (−7.9%) |
+| MAGE-U-16 | DB2 70532→70630 | Arcane Wrath 1326079-82: SpellCategory 2601 with CategoryRecoveryTime 6000 (the ranks share the 6 sec cooldown) | yes | SpellCooldowns 102218-21, SpellCategories 190242-45 | landed | `sim/mage/arcane_wrath.go` shared `cdTimer`, 6 sec |
+| MAGE-U-17 | DB2 70532→70630 | Revelation 1248808 (the enchant's buff) mask gains SpellClassMask_1 32768: Arcane Wrath and Arcane Barrage | yes | SpellEffect 1251976 | landed | `sim/common/enchant_effects.go` Revelation takes every direct APL spell already |
+| MAGE-U-18 | DB2 70532→70630 | Frost Blast 1326053-55 effect 1 coefficient 0.343 → 0.271 | n/a | SpellEffect 1363753/55/57 | not simulated on purpose | the sim has no Frost Blast (cone_of_cold.go:116) |
+| MAGE-U-19 | DB2 70532→70630 | Flamestrike 1279983-90 Attributes_3 +0x200 (not a proc) | n/a | SpellMisc | n/a | AoE ranks |
+| WL-U-16 | DB2 70532→70630 | Spellstone's "Increase Shadow Dam" 1237162/1237164/1237165: spell damage school mask 36 (Fire + Shadow) → 32 (Shadow only) | yes (every Spellstone preset) | SpellEffect 1233765/68/70 EffectMiscValue_0 36 → 32; bp 14/17/21 and the haste effect unchanged | wrong; finding client_update-20261027-2 | `sim/warlock/talents.go` applyWeaponImbue adds FirePower too. Shadow only: affliction −1.5 (−0.15%), demonology −1.4 (−0.13%), destruction −2.8 (−0.28%), duty-curse variants the same; destruction_fire (Firestone) 0 |
+| WL-U-17 | DB2 70532→70630 | Amplify Curse 18288 effect 0 mask 33792 → 32768: Bane of Agony no longer gets the +50% (Curse of Weakness only); new effect 1 −20 on Curse of Exhaustion; Bane of Agony 980-11713 gain a base-0 effect 1 (aura 271) | minor (no APL casts Amplify Curse) | SpellEffect 695823, 1365363, 1365365-70 | wrong; finding client_update-20261027-3 | `sim/warlock/curses.go:74` `baseDmg *= 1.5` |
+| SHR-U-15 | DB2 70532→70630 | Touch of the Grave drain 1260198 loses Attributes_3 0x20000000 (ignore caster modifiers) and the Attributes_9/10/13 bits 70425 added; keeps Attributes_4 0x100 and Attributes_6 0x28000000 | minor | SpellMisc 813545 | ambiguous (needs verify); finding client_update-20261027-4 | `sim/core/racials_forever.go` drain `SpellFlagIgnoreModifiers` (the 70425 notes: no Shadow modifiers) |
+| SHA-U-20 | DB2 70532→70630 | Elemental Mastery 16166 Attributes_0 loses 0x2000000 (cooldown starts on cast, not when used up); Elemental Focus 16164 chance moved into bp 10 at ProcChance 100 (still 10%) | minor | SpellMisc 327042, SpellEffect 694887 | landed | `sim/shaman/talents.go` EM's 3 min cooldown starts on cast |
+| SHR-P7-01 | P7 2026-10-26 | Human: Ruthless 2% → 1% crit; Human Spirit 5% → 10% | **yes** | not in 70630 (Ruthless 20597 unchanged) | ambiguous (needs verify); finding client_update-20261027-5 | racials_forever.go Human |
+| SHR-P7-02 | P7 | Dwarf: Earth Fury (2% crit damage) removed; Artisan's Precision added, +1% spell and attack hit | **yes** | no Artisan's Precision spell in 70630 | ambiguous (needs verify); finding -5 | racials_forever.go Dwarf |
+| SHR-P7-03 | P7 | Tauren: Endurance only 5% health (no hit or crit damage); Plainsrunning 2% a stack, not mounted | **yes** | Endurance 20550 unchanged | ambiguous (needs verify); finding -5 | racials_forever.go Tauren `critDamageBonus(1.02)` |
+| SHR-P7-04 | P7 | Orc: Savage (1% crit) removed; Command re-added, +5% warlock and hunter pet damage | **yes** | Savage 20574 still present | ambiguous (needs verify); finding -5 | racials_forever.go Orc |
+| SHR-P7-05 | P7 | Skyborne: Wind-Blessed Haste 3% → 2%; Read Leyline 50% regen for 15 sec (100% while Attuned, 1 h); Skysight 15% speed | **yes** (haste), minor (Leyline) | not in 70630 | ambiguous (needs verify); finding -5 | racials_forever.go Skyborne `*= 1.03`, registerReadLeyline |
 
 ## Per-class ledgers
 

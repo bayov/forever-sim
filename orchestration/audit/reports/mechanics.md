@@ -1,31 +1,30 @@
-# Mechanics pass 40 (2026-10-26T13:30:00Z, master f62cb7971)
+# Mechanics pass 41 (2026-10-27, master d3df9247f)
 
-Range audited: f796d9953..f62cb7971 (3 non-merge sim commits). Result: quiet, no new findings.
+Range audited: 99bd53ada..d3df9247f. No commit touched `sim/**/*.go`, mksettings, TASKS.md or the update ledger, and no `forever-update/*` merge landed.
 
-## Get current
+## New client build 1.60.1.70630
 
-| Source | State |
-|---|---|
-| Client build | 1.60.1.70532, no build answered up to +300 |
-| Dev notes thread t/2360696 | newest post /6 (10-16 00:15, edited 10-16 20:50), unchanged |
-| Daily update | no forever-update merges, no TASKS.md / ledger changes in range |
-| Server hotfixes | not re-read (hotfixes.py still not in the repo) |
+Fetched the mechanics set and diffed it against 70532 (`wago.py diff --by-spell`, 111 spell rows). 20 of 25 tables moved; SpellItemEnchantment, SpellCastTimes, ChrRaces, CharBaseInfo and TraitDefinition are identical.
 
-## Commits
+| Area | Change in 70630 | Sim | Verdict |
+|---|---|---|---|
+| Spellstone (1237162/4/5) | Misc 36 -> 32, Shadow only (was a hotfix) | Fire + Shadow | open, mechanics-20261025-1 |
+| Touch of the Grave drain | hotfix attributes baked in; Attributes_6 0x20000000 kept | no caster mods | holds |
+| Racials, raid buffs, debuffs, consumes, enchants | no row changed | - | hold |
+| Revelation buff 1248808 | mask + Arcane Wrath, Arcane Barrage | all direct casts | holds |
+| Amplify Curse 18288 | e0 mask drops Bane of Agony; e1 -20 on Curse of Exhaustion | Bane x1.5 | finding mechanics-20261027-2 (low) |
+| Elemental Mastery 16166 | COOLDOWN_ON_EVENT bit removed | 3 min from cast | now matches |
+| Elemental Focus 16164 | ProcChance 10 -> 100, base points 10 | 10% | assumed same, unverified |
+| Lava Burst rank 3 dummy | per-level 4.2 -> 0 | flat 20% Flame Shock bonus | holds |
+| Hunter's Mark, Bloodthrill, mage Frost rows | hotfixes baked in | ported earlier | hold |
+| Talent tables | Frost Warding node 3 ranks, 5 curve rows (the 10-20 mage hotfix) | ported (TASKS 119) | hold |
+| Others | Holy Fire R1, Frost Blast coef, Dark Inspiration aura, Feral Swiftness, CC and attribute-only rows | not used at 60 or not simulated | no action |
 
-| Commit | Change | Check |
-|---|---|---|
-| 32a6848f9 | Five wowsims/forever mechanics as report assumptions | all ruled in standards 28 (user, 2026-10-26); not findings. Code reviewed below |
-| ded834911 | Replay: channel log lines | log-only (dot.go, cast.go messages); wand Shoot excluded |
-| 76db8c9c7 | Replay: pushback log lines | log-only |
+## Blizzard
 
-## Code review of 32a6848f9
+Dev notes thread has a new post 7 (Kaivax, 2026-10-26 20:35, edited 21:09): a racial pass before launch. Human Ruthless 1%, Human Spirit 10%; Dwarf Earth Fury removed, Artisan's Precision +1% hit; Tauren Endurance only 5% health; Orc Savage removed, Command +5% pet damage back; Skyborne haste 2%, plus Read Leyline / Skysight utility changes. Client 70630 doesn't have these rows yet and master doesn't model them: finding mechanics-20261027-1 (high, orchestrator fix). The DPS sizes are estimates because measuring needs a code change.
 
-- **Live DoT ticks** (`spell_result.go` liveTick): Forever only, non-physical, non-helpful dots that went through Snapshot. Base moves by coef x (bonus now - bonus at snapshot), multiplier by (attacker mult x dot mult now) / at snapshot, crit by the difference, so post-Snapshot spell-specific edits to the snapshot survive. Target-side multipliers already apply at tick. Rollovers keep the old snap values. Correct.
-- **Channel FSR** (`mana.go`): hold in channel OnGain only for mana-paid channels; release in OnExpire uses min(now, ExpiresAt) for lazy expiry. Since IsChanneling is ChanneledDot != nil, the next spell cannot spend its cost before release, so release can't roll back a newer FSR refresh. Correct.
-- **Multi-Shot**: client 70532 SpellMisc 2643 CastingTimeIndex 1 (instant) and Attributes_2 0x20000 (Do Not Reset Combat Timers) confirmed; the 0.5 s cast is the ruled `hunter_multishot_cast` assumption; KeepsSwingTimer matches Aimed / Sniper Shot.
-- **Hunter base RAP** 2L - 10 (110 at 60), `hunter_base_rap`; Bite miss keeps extra energy and CP, base 35 not refunded (no Refund on the cost), `druid_bite_miss`.
+## Notes for the next pass
 
-## Open findings
-
-- mechanics-20261025-1 (Spellstone Fire power, low): still open, `sim/warlock/talents.go:139,147` unchanged.
+- `tools/audit/mechanics/hotfixes.py` (named in state and in mechanics-20261025-1) is not in the repo. wago.tools/hotfixes pages parse (Inertia `data-page` JSON), but the `build` filter is ignored and `search=` matches substrings, so filtering by build needs a real tool. No hotfix rows for 70630 were listed yet.
+- Re-check post 7's racials against the next client build (new spells for Artisan's Precision and Command).

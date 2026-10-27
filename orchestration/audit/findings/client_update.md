@@ -4,6 +4,48 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### client_update-20261027-1: Missile Barrage no longer procs from Arcane Missiles hits (70630 tooltip)
+- severity: high (−7.9% on mage__arcane if real)
+- affects: mage Arcane (any build with Missile Barrage that casts Arcane Missiles)
+- found: 2026-10-27, master d3df924
+- evidence: client 70630 Spell 400588 Description_lang drops "your Arcane Missile hits a ${$m1/4}% chance" and adds Frost Blast to the ${$m1/2}% list. Its SpellEffect, SpellAuraOptions and SpellClassOptions rows are identical in 70532 and 70630 (the proc is scripted), so the tooltip is the only client evidence; not in Blizzard's notes or on foreverchanges yet. Sim: `sim/mage/talents.go` applyMissileBarrage `OnSpellHitDealt` rolls 5% a point on every missile that lands. Measured with that handler removed (180 s, 20k iterations, paired seeds 1 and 1000003): mage__arcane 982.50 → 904.74 and 982.47 → 905.06 (−77.6, −7.9%); mage__frostfire 0. Ledger MAGE-U-15. Fairly sure the tooltip reflects a server change (the same rewrite brings in the 10-16 Frost Blast hotfix), but unconfirmed.
+- proposed fix: confirm in game (Missile Barrage procs during a channel) or in a combat log, then drop the `OnSpellHitDealt` roll under Forever, re-optimize the Arcane talents and rotation (Missile Barrage may no longer be worth its points), and rerun the Arcane presets.
+- needs: user ruling (take the tooltip or verify first), then orchestrator fix
+
+### client_update-20261027-2: Spellstone gives Shadow damage only since 70630, the sim adds Fire too
+- severity: low (−0.13% to −0.28%)
+- affects: warlock affliction, demonology and destruction presets and their duty-curse variants (all on Spellstone)
+- found: 2026-10-27, master d3df924
+- evidence: client 70630 SpellEffect 1233765/1233768/1233770 (spells 1237162/1237164/1237165, "Increase Shadow Dam", the Spellstone ranks) EffectMiscValue_0 36 (Fire | Shadow) → 32 (Shadow); bp 14/17/21 and the 1/2/2% haste effect unchanged. Sim: `sim/warlock/talents.go` applyWeaponImbue adds `stats.FirePower` and `stats.ShadowPower`. Measured without the FirePower (paired seeds, 20k): affliction 1029.38 → 1027.87 (−1.51), demonology 1060.35 → 1058.98 (−1.37), destruction 1011.91 → 1009.12 (−2.79), the duty-curse variants the same, destruction_fire (Firestone) 0. Ledger WL-U-16.
+- proposed fix: drop the FirePower line from the Spellstone case under Forever, fix the comment above `firestoneRanks`, update the goldens and the warlock presets' published DPS.
+- needs: orchestrator fix
+
+### client_update-20261027-3: Amplify Curse no longer amplifies Bane of Agony in 70630
+- severity: low (no preset or APL casts Amplify Curse)
+- affects: warlock (Amplify Curse users only)
+- found: 2026-10-27, master d3df924
+- evidence: 70630 SpellEffect 695823 (18288 effect 0, aura 108 +50% all effects) EffectSpellClassMask_0 33792 → 32768: Bane of Agony (mask 1024) dropped, Curse of Weakness (32768) kept; new effect 1365363 −20 on Curse of Exhaustion (the 10-16 FC hotfix, WL-U-HF1). Bane of Agony 980-11713 gain an effect 1 aura 271 with base 0 and its own mask, nothing fills it in the client. Sim: `sim/warlock/curses.go:74` still multiplies Bane of Agony's base damage by 1.5 under Amplify Curse. Ledger WL-U-17.
+- proposed fix: under Forever, don't let Amplify Curse touch Bane of Agony (or drop the option from the warlock APL actions).
+- needs: orchestrator fix
+
+### client_update-20261027-4: Touch of the Grave's drain loses its "ignore caster modifiers" attribute in 70630
+- severity: low (Undead presets; the drain is modelled at its 5% max-health cap, a few DPS at most; not measured)
+- affects: every Undead preset
+- found: 2026-10-27, master d3df924
+- evidence: 70630 SpellMisc 813545 (spell 1260198): Attributes_3 0x20000000 → 0, Attributes_9 0x1000000 → 0, Attributes_10 0x2 → 0, Attributes_13 0x4000000 → 0; Attributes_4 0x100 and Attributes_6 0x28000000 (added with them in 70425) stay. 70425's notes said the drain no longer scales with Shadow increases on target or caster, which the sim models with `SpellFlagIgnoreModifiers` (`sim/core/racials_forever.go` registerTouchOfTheGrave). Which half of the 70425 attributes carried that rule is not known, so this may change nothing. Ledger SHR-U-15.
+- proposed fix: check in a combat log whether the drain on a Shadowform priest or a Shadow Mastery warlock still equals 5% of max health; if it grows, drop the caster-side ignore under Forever.
+- needs: user ruling (log check)
+
+### client_update-20261027-5: Dev notes post /7 (2026-10-26) racial pass, not in client 70630
+- severity: medium (high once it lands: it moves the race tables and the Human, Orc, Dwarf, Tauren and Skyborne presets; estimated, not measured)
+- affects: every preset of those races, the race tables, warlock and hunter pets (Orc Command)
+- found: 2026-10-27, master d3df924
+- evidence: Blizzard development notes topic 2360696 post /7 (Kaivax, 2026-10-26 20:35, edited 21:09; tier: official). Human Ruthless 2% → 1% crit, Human Spirit 5% → 10%; Dwarf Earth Fury (2% crit damage) removed, Artisan's Precision +1% hit added; Tauren Endurance only 5% health (no hit or crit damage); Orc Savage (1% crit) removed, Command +5% warlock and hunter pet damage; Skyborne Wind-Blessed Haste 3% → 2%, Read Leyline 50% for 15 sec (100% while Attuned). Client 70630 has none of it (no Artisan's Precision spell; Ruthless 20597, Savage 20574, Endurance 20550 rows unchanged). Sim: `sim/core/racials_forever.go` Human 2% crit and Spirit ×1.05, Dwarf and Tauren `critDamageBonus(1.02)`, Orc 1% crit, Skyborne ×1.03 haste. Rough size: −1% crit is about −0.7 to −1% DPS, +1% hit for a Dwarf below the cap about +1%. Ledger SHR-P7-01..05.
+- proposed fix: wait for the client build or hotfix that carries it and read the values there, or apply it from the notes now if the user prefers; then rerun the race tables and the affected presets.
+- needs: user ruling (apply from the notes or wait for the client)
+
+## Resolved
+
 ### client_update-20261021-1: Champion of the Light may be back to 20/40/60% of Intellect (unannounced 10-16 hotfix)
 - severity: medium (high if confirmed: it is spell power for every paladin preset that takes the talent; not measured)
 - affects: paladin sub Holy, undead and twist presets (any build with Champion of the Light)
@@ -11,7 +53,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - evidence: foreverchanges.pro/patch-notes "Hotfix-2026-10-16" (third party, tier: unconfirmed): "Champion of the Light gives spell damage equal to 20/40/60% of your Intellect again, as before October 15 (10/20/30%)". Not in Blizzard's notes. Client 70532 (identical to 70450) can't confirm: the ranks come from trait curve 110350, and the Curve tables aren't downloaded. Sim: `sim/paladin/talents.go:49` uses `{0, .1, .2, .3}` (PAL-70425-05). Ledger row PAL-U-HF1.
 - proposed fix: verify in game (the character sheet's spell power with 3/3 vs 0/3) or with the client's Curve/CurvePoint rows for curve 110350 in a hotfixed export. If confirmed, change the multipliers to `.2,.4,.6` (Forever-gated) and rerun the paladin presets.
 - needs: user ruling (in-game check) then orchestrator fix
-- resolved 2026-10-23: confirmed in wago.tools' hotfix table. Push 112842 (2026-10-20 09:51 on 70450) sets CurvePoint 331369-331371 of curve 110350 to 20 / 40 / 60, and curve 110350 is Champion of the Light's (TraitDefinition 142634 for spell 1311084, TraitDefinitionEffectPoints 24621). No later push touches it. Applied (Forever's curve only, `sim/paladin/talents.go`): +34 to +39 at 180 sec on the twist, sub Holy and undead presets; Shock doesn't take the talent.
+- resolved: 2026-10-23 (on master by 99bd53a; client 70630 now carries the values). confirmed in wago.tools' hotfix table. Push 112842 (2026-10-20 09:51 on 70450) sets CurvePoint 331369-331371 of curve 110350 to 20 / 40 / 60, and curve 110350 is Champion of the Light's (TraitDefinition 142634 for spell 1311084, TraitDefinitionEffectPoints 24621). No later push touches it. Applied (Forever's curve only, `sim/paladin/talents.go`): +34 to +39 at 180 sec on the twist, sub Holy and undead presets; Shock doesn't take the talent.
 
 ### client_update-20261021-2: Oct 20 mage Frost hotfix (Piercing Ice removed, Elemental Precision 3x2%), not in the client
 - severity: low (needs verify; if real it moves Frost DPS by several percent, since Piercing Ice is +6% Frost damage at 3/3)
@@ -20,6 +62,4 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - evidence: foreverchanges.pro "Hotfix-2026-10-20" (Piercing Ice removed; Elemental Precision 5x1% -> 3x2%; Ice Barrier +10% absorb and, by FC's wording only, +3% Frost damage) and "Hotfix-2026-10-16" (Frost Blast can trigger Missile Barrage). Not in Blizzard's notes. Client 70532 still has Piercing Ice node 130502 (def 135303, 3 ranks) and Elemental Precision entry 130507 MaxRanks 5, so it is server side or not real. Sim: `sim/mage/talents.go:170-191`. Already a master task (TASKS.md, commit 599f9de). Ledger rows MAGE-U-HF1..HF5.
 - proposed fix: as in TASKS.md. Confirm through the wago hotfix table or in game, re-import the mage tree, drop Piercing Ice, make Elemental Precision 2%/rank over 3 ranks, re-optimize the Frost talents, and size it with dps_beforeafter.sh on mage__frost and mage__frostfire.
 - needs: orchestrator fix (after verify)
-- resolved 2026-10-23: confirmed in wago.tools' hotfix table (push of 2026-10-20 09:51 on 70450; the trait, curve, Spell and SpellEffect rows are in update_ledger.md MAGE-U-HF1..4) and wowsims/forever 983ea6fcc1. Frostbite and Permafrost also swapped columns. Applied: tree, proto, client/mage.json, Elemental Precision 2%/rank, Ice Barrier with the 3% while shielded and Frigid Power, the presets and the Frost rotation. At 180 sec Frostfire 1081.9 → 1041.5, Frost 843.9 → 820.8, Fire 1067.6 → 1094.3 and Arcane 964.7 → 981.9 (the last two put the freed points in Arcane Subtlety). HF5 (Frost Blast and Missile Barrage) is untouched. The same hotfix push also has curve 110350 at 20/40/60 (CurvePoint 331369-331371), which looks like client_update-20261021-1's Champion of the Light.
-
-## Resolved
+- resolved: 2026-10-23 (on master by 99bd53a; client 70630 now carries the values). confirmed in wago.tools' hotfix table (push of 2026-10-20 09:51 on 70450; the trait, curve, Spell and SpellEffect rows are in update_ledger.md MAGE-U-HF1..4) and wowsims/forever 983ea6fcc1. Frostbite and Permafrost also swapped columns. Applied: tree, proto, client/mage.json, Elemental Precision 2%/rank, Ice Barrier with the 3% while shielded and Frigid Power, the presets and the Frost rotation. At 180 sec Frostfire 1081.9 → 1041.5, Frost 843.9 → 820.8, Fire 1067.6 → 1094.3 and Arcane 964.7 → 981.9 (the last two put the freed points in Arcane Subtlety). HF5 (Frost Blast and Missile Barrage) is untouched. The same hotfix push also has curve 110350 at 20/40/60 (CurvePoint 331369-331371), which looks like client_update-20261021-1's Champion of the Light.

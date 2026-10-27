@@ -1,35 +1,38 @@
-# Client update pass: 1.60.1.70450 -> 1.60.1.70532
+# Client update pass: 1.60.1.70532 -> 1.60.1.70630
 
-- Pass 2026-10-21, master 599f9de74ba71d4ba48ace70af3e118841c88f9e.
-- `wago.py latest --probe 300` returns 1.60.1.70532.
+- Pass 2026-10-27, master d3df9247f7dc9317eceabda2f4b9b649d92178f4. `wago.py latest --probe 300` returns 1.60.1.70630.
+- For `.agents/skills/dps-report/state.json`: `foreverClientBuild` → 1.60.1.70630 (the orchestrator updates it).
 
 ## Client diff
 
-`table_summary.py 70450 70532`: all 39 tables in the `client_update` set are **identical**, with no added rows. That includes SpellEffect, Spell, SpellMisc, SpellPower, the cooldown and aura tables, all Trait* tables, ItemSparse, ItemEffect, ItemXItemEffect, SpellItemEnchantment and ChrRaces. Both downloads are 22 MB and SpellEffect.csv is byte-equal (`cmp`). There is no class, racial, talent, item or enchant change in the client.
+`table_summary.py 70532 70630`: real changes. Spell 55 changed / 9 added, SpellEffect 27 changed / 30 added / 2 removed, SpellMisc 67 changed, Trait* (the mage tree), SpellCooldowns, SpellCategories, ItemSparse 28 changed. Identical: SpellItemEnchantment, ChrRaces, SpellCastTimes, TraitDefinition, TraitTree, SpellRange, SpellReagents. `db2diff.py`: 132 spells (`ref/client_update/diffs/70532-70630.md`). `items_diff.py`: no added or removed items; the 28 changes are flags, sheathe types and low-level item levels (Dark Iron Boots only gains a flag). `enchant_diff`: no SpellItemEnchantment change.
+
+Most of the build is the 10-16 to 10-21 server hotfixes now in the client: the mage Frost tree, Elemental Precision, Ice Barrier / Frigid Power / Frost Ward / Frost Warding, Winter's Chill, Hunter's Mark rank 4 143, Lava Burst rank 3's Flame Shock bonus, Holy Fire rank 1, Amplify Curse on Curse of Exhaustion. The sim already had all of them (landed 2026-10-23).
 
 ## Sources
 
 | Source | State |
 |---|---|
-| Blizzard dev notes (topic 2360696) | No new post, no edit since the post /6 edit of 2026-10-16 (diff empty) |
-| foreverchanges.pro | Lists 70450 as the current build, not 70532 yet. It adds three unannounced hotfixes (10-16, 10-18, 10-20) |
+| Blizzard dev notes (topic 2360696) | **New post /7**, 2026-10-26 20:35 (edited 21:09): racial pass. Not in 70630. Baseline saved as `sources/devnotes_post7_2026-10-26.txt` |
+| foreverchanges.pro | Still lists 70532 as current; says the beta closed 2026-10-23. No new hotfix since the 10-23 Righteous Fury one |
 | Wowhead | Not checked (blocked) |
 
-## Server-side hotfixes (from foreverchanges, not in the client)
+## DPS-relevant changes
 
-| Ledger row | Change | L60 DPS? | Sim status |
+| Ledger row | Change | Sim status | Sized (180 s, 20k, paired seeds) |
 |---|---|---|---|
-| PAL-U-HF1 | Champion of the Light back to 20/40/60% Int (sim 10/20/30) | yes | ambiguous (needs verify), finding -1 |
-| MAGE-U-HF1 | Piercing Ice removed | yes | ambiguous (needs verify), finding -2; already in TASKS.md |
-| MAGE-U-HF2 | Elemental Precision 3 ranks x 2% | yes | ambiguous (needs verify), finding -2 |
-| MAGE-U-HF3 | Ice Barrier +10% absorb (+3% Frost damage per FC) | minor | ambiguous, in finding -2 |
-| MAGE-U-HF5 | Frost Blast triggers Missile Barrage | minor | ambiguous, in finding -2 |
-| MAGE-U-HF4, WL-U-HF1, PRI-U-HF1 | Frost Ward/Warding, Amplify Curse CoEx 20%, Holy Fire r1 53-65 | n/a | n/a |
+| MAGE-U-15 | Missile Barrage tooltip drops the Arcane Missiles hit proc (adds Frost Blast) | ambiguous, finding -1 (high) | mage__arcane −77.6 (−7.9%); frostfire 0 |
+| WL-U-16 | Spellstone is Shadow only (was Fire + Shadow) | wrong, finding -2 (low) | affliction −1.5, demonology −1.4, destruction −2.8 (−0.13 to −0.28%) |
+| WL-U-17 | Amplify Curse no longer touches Bane of Agony | wrong, finding -3 (low) | not sized: no preset casts it |
+| SHR-U-15 | Touch of the Grave drain loses "ignore caster modifiers" | ambiguous, finding -4 (low) | not sized |
+| SHR-P7-01..05 | Post /7 racials: Human 1% crit and 10% Spirit, Dwarf 1% hit instead of crit damage, Tauren and Orc lose their crit, Orc Command, Skyborne 2% haste | ambiguous (not in the client), finding -5 (medium) | estimated: about ±1% for each race |
+| MAGE-U-16, -17, SHA-U-20 | Arcane Wrath category cooldown, Revelation mask, Elemental Mastery cooldown on cast | landed | — |
+| MAGE-U-18, -19 | Frost Blast coefficient 0.343 → 0.271, Flamestrike attribute | not simulated / n/a | — |
 
-The 70532 client still has the old values: Piercing Ice node 130502 is in the tree, and Elemental Precision entry 130507 has MaxRanks 5. The client doesn't back these, so per the rules no sim change goes in without verification. Nothing was sized, because the changes are unconfirmed.
+Ledger: new section "Build 1.60.1.70630" (14 rows), Summary counts updated, Rulings needed items 5 and 6 added.
 
-## Ledger
+## Open items
 
-Added a `## Build 1.60.1.70532 (2026-10-21)` section with 8 hotfix rows, and updated the Summary counts (726 rows; ambiguous 16 -> 21, n/a 217 -> 220).
-
-For the orchestrator: set `.agents/skills/dps-report/state.json` `foreverClientBuild` to 1.60.1.70532.
+- Champion of the Light (PAL-U-HF1) still can't be checked in the client: its curve tables aren't downloaded.
+- Post /7 will need a new pass when a build or hotfix carries it. Post /7 might also be cut short: it covers only Human, Dwarf, Tauren, Orc and Skyborne.
+- `dps_beforeafter.sh` takes a directory holding `wowsimcli`, not the binary itself, and prints empty rows when given the binary. MANIFEST's `-o $AUDIT_WORK/bin/after` goes with that only when `after` is a folder.
