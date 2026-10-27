@@ -1,0 +1,29 @@
+{
+  "note": "Racial changes the server has and the client tables don't, carried into ui/core/forever/racials.json by tools/sources/racials.py after it reads the client. Each entry names a race and a client spell id. 'description' (and 'name') replace that racial's text; 'replace' swaps the racial for a new one in its place; 'remove' drops it. Every variant it touches gets source 'hotfix' and the note. Drop an entry once a client build carries it (racials.py says when the client text already matches).",
+  "entries": [
+    {"race": "RaceHuman", "spellId": 20597, "description": "Increases your critical strike chance with all spells and attacks by 1%.",
+     "note": "development notes 2026-10-26 (post 7): Ruthless 1% (was 2%); client 70630 reads 2%"},
+    {"race": "RaceHuman", "spellId": 20598, "description": "Spirit increased by 10%.",
+     "note": "development notes 2026-10-26 (post 7): Human Spirit 10% (was 5%); client 70630 reads 5%"},
+    {"race": "RaceDwarf", "spellId": 1259719,
+     "replace": {"name": "Artisan's Precision", "spellId": 0, "icon": "ability_marksmanship",
+                 "description": "Increases your hit chance with spells and attacks by 1%."},
+     "note": "development notes 2026-10-26 (post 7): Earth Fury removed, Artisan's Precision added; no client spell yet (spellId 0), the icon is a stand-in"},
+    {"race": "RaceTauren", "spellId": 20550, "description": "Total Health increased by 5%.",
+     "note": "development notes 2026-10-26 (post 7): Endurance has no modifiers beyond 5% Health; client 70630 still adds 2% critical strike bonus"},
+    {"race": "RaceTauren", "spellId": 1259918, "description": "Gain 2% increased movement speed every 5 sec spent moving, up to a maximum of 60% increase. Taking damage or standing still will reduce this effect.",
+     "note": "development notes 2026-10-26 (post 7): 2% a stack to 60% (was 1% to 30%), no mounted speed; client 70630 reads 1% to 30% and 3% mounted"},
+    {"race": "RaceOrc", "spellId": 20574,
+     "replace": {"name": "Command", "spellId": 21563, "icon": "ability_warrior_warcry",
+                 "description": "Damage dealt by Hunter and Warlock pets increased by 5%."},
+     "note": "development notes 2026-10-26 (post 7): Savage removed, Command re-added; no Forever client row, 21563 is Classic's Command"},
+    {"race": "RaceSkyborneHighOrder", "spellId": 1259710, "description": "Increases your spellcasting, melee, and ranged Haste by 2%.",
+     "note": "development notes 2026-10-26 (post 7): Wind-Blessed Haste 2% (was 3%); client 70630 reads 3%"},
+    {"race": "RaceSkyborneWindshaper", "spellId": 1259710, "description": "Increases your spellcasting, melee, and ranged Haste by 2%.",
+     "note": "development notes 2026-10-26 (post 7): Wind-Blessed Haste 2% (was 3%); client 70630 reads 3%"},
+    {"race": "RaceSkyborneHighOrder", "spellId": 1259705, "description": "Attempt to tap into the power of a nearby leyline, increasing your Health and Mana regeneration by 50% for 15 sec. Used at a Ley Line, it also grants Attuned for 1 hour, which raises the bonus to 100%. Cannot be used while Innervate is active.",
+     "note": "development notes 2026-10-26 (post 7): 50% (was 100%) for 15 sec, Attuned 100% for 1 hour at a Ley Line; client 70630 reads 100% for 30 sec or 15 min"},
+    {"race": "RaceSkyborneWindshaper", "spellId": 1259686, "description": "Attempt to draw power from a convergence of elements and receive its blessing, increasing your movement speed by 15% for 15 sec. Used at an elemental convergence, it also grants Charged for 1 hour, which raises the bonus to 30%.",
+     "note": "development notes 2026-10-26 (post 7): 15% (was 10%) for 15 sec, Charged 30% for 1 hour at a convergence; client 70630 reads 10% for 30 sec or 15 min"}
+  ]
+}

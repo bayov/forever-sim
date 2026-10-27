@@ -41,10 +41,10 @@
       ]
     },
     {
-      "name": "Savage",
+      "name": "Command",
       "variants": [
         {
-          "spellId": 20574,
+          "spellId": 21563,
           "classes": [
             "ClassWarrior",
             "ClassHunter",
@@ -53,10 +53,13 @@
             "ClassWarlock",
             "ClassShaman"
           ],
-          "description": "Increases your critical strike chance with all spells and abilities by 1%.",
-          "icon": "inv_axe_02",
+          "description": "Damage dealt by Hunter and Warlock pets increased by 5%.",
+          "icon": "ability_warrior_warcry",
           "passive": true,
-          "cost": null
+          "cost": null,
+          "source": "hotfix",
+          "replaces": 20574,
+          "note": "development notes 2026-10-26 (post 7): Savage removed, Command re-added; no Forever client row, 21563 is Classic's Command"
         }
       ]
     },
@@ -220,10 +223,12 @@
             "ClassDruid",
             "ClassShaman"
           ],
-          "description": "Gain 1% increased movement speed every 5 sec spent moving, up to a maximum of 30% increase. Taking damage or standing still will reduce this effect. In addition, you move 3% faster while mounted.",
+          "description": "Gain 2% increased movement speed every 5 sec spent moving, up to a maximum of 60% increase. Taking damage or standing still will reduce this effect.",
           "icon": "achievement_zone_barrens_01",
           "passive": true,
-          "cost": null
+          "cost": null,
+          "source": "hotfix",
+          "note": "development notes 2026-10-26 (post 7): 2% a stack to 60% (was 1% to 30%), no mounted speed; client 70630 reads 1% to 30% and 3% mounted"
         }
       ]
     },
@@ -238,10 +243,12 @@
             "ClassDruid",
             "ClassShaman"
           ],
-          "description": "Total Health increased by 5% and critical strike bonus to damage and healing increased by 2%.",
+          "description": "Total Health increased by 5%.",
           "icon": "spell_nature_unyeildingstamina",
           "passive": true,
-          "cost": null
+          "cost": null,
+          "source": "hotfix",
+          "note": "development notes 2026-10-26 (post 7): Endurance has no modifiers beyond 5% Health; client 70630 still adds 2% critical strike bonus"
         }
       ]
     }
@@ -364,10 +371,12 @@
             "ClassDruid",
             "ClassShaman"
           ],
-          "description": "Attempt to draw power from a convergence of elements and receive its blessing, increasing your movement and mounted movement speeds by 10%. Lasts 30 sec if no elemental convergence is nearby, and 15 min if one is found.",
+          "description": "Attempt to draw power from a convergence of elements and receive its blessing, increasing your movement speed by 15% for 15 sec. Used at an elemental convergence, it also grants Charged for 1 hour, which raises the bonus to 30%.",
           "icon": "ability_skyreach_lens_flare",
           "passive": false,
-          "cost": "0.5 sec cast; 2 min cooldown"
+          "cost": "0.5 sec cast; 2 min cooldown",
+          "source": "hotfix",
+          "note": "development notes 2026-10-26 (post 7): 15% (was 10%) for 15 sec, Charged 30% for 1 hour at a convergence; client 70630 reads 10% for 30 sec or 15 min"
         }
       ]
     },
@@ -383,10 +392,12 @@
             "ClassDruid",
             "ClassShaman"
           ],
-          "description": "Increases your spellcasting, melee, and ranged Haste by 3%.",
+          "description": "Increases your spellcasting, melee, and ranged Haste by 2%.",
           "icon": "inv_misc_volatileair",
           "passive": true,
-          "cost": null
+          "cost": null,
+          "source": "hotfix",
+          "note": "development notes 2026-10-26 (post 7): Wind-Blessed Haste 2% (was 3%); client 70630 reads 3%"
         }
       ]
     },
@@ -467,10 +478,12 @@
             "ClassWarlock",
             "ClassPaladin"
           ],
-          "description": "Increases your critical strike chance with all spells and attacks by 2%.",
+          "description": "Increases your critical strike chance with all spells and attacks by 1%.",
           "icon": "ability_rogue_eviscerate",
           "passive": true,
-          "cost": null
+          "cost": null,
+          "source": "hotfix",
+          "note": "development notes 2026-10-26 (post 7): Ruthless 1% (was 2%); client 70630 reads 2%"
         }
       ]
     },
@@ -488,10 +501,12 @@
             "ClassWarlock",
             "ClassPaladin"
           ],
-          "description": "Spirit increased by 5%.",
+          "description": "Spirit increased by 10%.",
           "icon": "inv_enchant_shardbrilliantsmall",
           "passive": true,
-          "cost": null
+          "cost": null,
+          "source": "hotfix",
+          "note": "development notes 2026-10-26 (post 7): Human Spirit 10% (was 5%); client 70630 reads 5%"
         }
       ]
     }
@@ -538,10 +553,10 @@
       ]
     },
     {
-      "name": "Earth Fury",
+      "name": "Artisan's Precision",
       "variants": [
         {
-          "spellId": 1259719,
+          "spellId": 0,
           "classes": [
             "ClassWarrior",
             "ClassHunter",
@@ -550,10 +565,13 @@
             "ClassPaladin",
             "ClassShaman"
           ],
-          "description": "Increases your critical strike bonus to damage and healing by 2%.",
-          "icon": "spell_shaman_unleashweapon_earth",
+          "description": "Increases your hit chance with spells and attacks by 1%.",
+          "icon": "ability_marksmanship",
           "passive": true,
-          "cost": null
+          "cost": null,
+          "source": "hotfix",
+          "replaces": 1259719,
+          "note": "development notes 2026-10-26 (post 7): Earth Fury removed, Artisan's Precision added; no client spell yet (spellId 0), the icon is a stand-in"
         }
       ]
     },
@@ -684,7 +702,7 @@
           "classes": [
             "ClassRogue"
           ],
-          "description": "Your non-periodic damaging abilities have their Energy cost reduced by 10% and deal 10% more damage.",
+          "description": "Your non-periodic damaging abilities have their Energy cost reduced by 10% and deal 10% more damage for 8 sec.",
           "icon": "inv_gnometoy",
           "passive": false,
           "cost": "Instant; 2 min cooldown"
@@ -694,7 +712,7 @@
           "classes": [
             "ClassWarlock"
           ],
-          "description": "Your non-periodic damaging abilities have their Mana cost reduced by 10% and deal 10% more damage.",
+          "description": "Your non-periodic damaging abilities have their Mana cost reduced by 10% and deal 10% more damage for 8 sec.",
           "icon": "inv_gnometoy",
           "passive": false,
           "cost": "Instant; 2 min cooldown"
@@ -704,7 +722,7 @@
           "classes": [
             "ClassPriest"
           ],
-          "description": "Your non-periodic damaging or healing abilities have their Mana cost reduced by 10% and deal 10% more damage or healing.",
+          "description": "Your non-periodic damaging or healing abilities have their Mana cost reduced by 10% and deal 10% more damage or healing for 8 sec.",
           "icon": "inv_gnometoy",
           "passive": false,
           "cost": "Instant; 2 min cooldown"
@@ -714,7 +732,7 @@
           "classes": [
             "ClassMage"
           ],
-          "description": "Your damaging abilities have their Mana cost reduced by 10% and deal 10% more damage.",
+          "description": "Your damaging abilities have their Mana cost reduced by 10% and deal 10% more damage for 8 sec.",
           "icon": "inv_gnometoy",
           "passive": false,
           "cost": "Instant; 2 min cooldown"
@@ -724,7 +742,7 @@
           "classes": [
             "ClassWarrior"
           ],
-          "description": "Your non-periodic damaging abilities have their Rage cost reduced by 10% and deal 10% more damage.",
+          "description": "Your non-periodic damaging abilities have their Rage cost reduced by 10% and deal 10% more damage for 8 sec.",
           "icon": "inv_gnometoy",
           "passive": false,
           "cost": "Instant; 2 min cooldown"
@@ -820,10 +838,12 @@
             "ClassRogue",
             "ClassDruid"
           ],
-          "description": "Attempt to tap into the power of a nearby leyline, increasing your Health and Mana regeneration by 100%. Lasts 30 sec if no leyline is nearby, and 15 min if one is found.",
+          "description": "Attempt to tap into the power of a nearby leyline, increasing your Health and Mana regeneration by 50% for 15 sec. Used at a Ley Line, it also grants Attuned for 1 hour, which raises the bonus to 100%. Cannot be used while Innervate is active.",
           "icon": "ability_mage_incantersabsorbtion",
           "passive": false,
-          "cost": "2 sec cast; 2 min cooldown"
+          "cost": "2 sec cast; 2 min cooldown",
+          "source": "hotfix",
+          "note": "development notes 2026-10-26 (post 7): 50% (was 100%) for 15 sec, Attuned 100% for 1 hour at a Ley Line; client 70630 reads 100% for 30 sec or 15 min"
         }
       ]
     },
@@ -839,10 +859,12 @@
             "ClassRogue",
             "ClassDruid"
           ],
-          "description": "Increases your spellcasting, melee, and ranged Haste by 3%.",
+          "description": "Increases your spellcasting, melee, and ranged Haste by 2%.",
           "icon": "inv_misc_volatileair",
           "passive": true,
-          "cost": null
+          "cost": null,
+          "source": "hotfix",
+          "note": "development notes 2026-10-26 (post 7): Wind-Blessed Haste 2% (was 3%); client 70630 reads 3%"
         }
       ]
     },

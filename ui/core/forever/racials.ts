@@ -6,7 +6,10 @@ import RacialsJson from './racials.json';
 // them. racials.json is generated from the client's tables by tools/sources/racials.py,
 // and racials.meta.json says which build. A racial with class variants, like Eureka! or
 // Touch of the Grave, lists one entry per variant with the classes it applies to.
-// Berserking's duration is not in the client data, the 10 sec is Classic's.
+// Berserking's duration is not in the client data, the 10 sec is Classic's. A server change
+// the client doesn't have yet (the 2026-10-26 racial pass) comes from
+// tools/sources/racials_hotfix.json: its variants have source 'hotfix' and a note, and a
+// racial with no client spell yet (Artisan's Precision) has spellId 0.
 
 export interface RacialVariant {
 	spellId: number;
@@ -15,6 +18,9 @@ export interface RacialVariant {
 	icon: string;
 	passive: boolean;
 	cost: string | null;
+	source?: string;
+	replaces?: number;
+	note?: string;
 }
 
 export interface RacialData {
@@ -63,12 +69,14 @@ export function racialIconUrl(icon: string): string {
 export const foreverSpellIcons: Array<IconData> = Object.values(racialsByRace)
 	.flat()
 	.flatMap(racial =>
-		racial.variants.map(variant =>
-			IconData.create({
-				id: variant.spellId,
-				name: racial.name,
-				icon: variant.icon,
-				hasBuff: !variant.passive,
-			}),
-		),
+		racial.variants
+			.filter(variant => variant.spellId > 0)
+			.map(variant =>
+				IconData.create({
+					id: variant.spellId,
+					name: racial.name,
+					icon: variant.icon,
+					hasBuff: !variant.passive,
+				}),
+			),
 	);
