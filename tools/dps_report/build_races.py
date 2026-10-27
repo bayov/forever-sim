@@ -33,10 +33,10 @@ PART_INFO = {
     'leyline': ('Read Leyline', 'A 2s cast that raises health and mana regeneration by 50% for 15s away from a Ley Line, 2 min cooldown.'),
     'mind': ('Expansive Mind', 'Maximum Mana, Rage or Energy increased by 5%.'),
     'eureka': ('Eureka!', 'For 8s, direct damage abilities cost 10% less and deal 10% more damage (DoTs too for Warlocks, heals too for Priests), 2 min cooldown.'),
-    'bloodfury': ('Blood Fury', 'Attack power and spell power increased by 10% for 15s, 3 min cooldown.'),
-    'touch': ('Touch of the Grave', 'Spells and attacks have a 20% chance (30% for Mages, Priests and Warlocks) to deal Shadow damage equal to 5% of your maximum health and heal you for it. At most once every 25s, and it cannot crit.'),
+    'bloodfury': ('Blood Fury', 'Attack power and spell power increased by 10% for 15s, 2 min cooldown.'),
+    'touch': ('Touch of the Grave', 'Spells and attacks have a 20% chance (30% for Mages, Priests and Warlocks) to deal Shadow damage equal to 5% of your maximum health and heal you for it. At most once every 15s, and it cannot crit.'),
     'endurance': ('Endurance', 'Health increased by 5%.'),
-    'berserking': ('Berserking', 'Attack and casting speed increased by 10% for 10s, 3 min cooldown.'),
+    'berserking': ('Berserking', 'Attack and casting speed increased by 10% for 15s, 3 min cooldown.'),
     'windblessed': ('Wind Blessed', 'Spellcasting, melee and ranged haste increased by 2%.'),
     'beast_dwarf': ('Big Game Hunter', 'Damage dealt versus Beasts increased by 5%.'),
     'beast_troll': ('Beast Slaying', 'Damage dealt versus Beasts increased by 5%.'),
@@ -50,7 +50,7 @@ PART_INFO = {
 
 # The tooltip's one line for the parts whose text above runs long; the others show their text as it is.
 PART_SHORT = {
-    'touch': '20% chance a hit (30% for Mages, Priests and Warlocks) to deal Shadow damage equal to 5% of max health. At most once every 25s.',
+    'touch': '20% chance a hit (30% for Mages, Priests and Warlocks) to deal Shadow damage equal to 5% of max health. At most once every 15s.',
 }
 
 # Each racial's game icon, from ui/core/forever/racials.json. The priest racials are from wowhead, and Dark Sacrifice
