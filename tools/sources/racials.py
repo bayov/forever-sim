@@ -178,11 +178,13 @@ def hotfix(new):
                 'icon': r['icon'], 'passive': v['passive'], 'cost': v['cost'],
                 'source': 'hotfix', 'replaces': e['spellId'], 'note': e['note']}]}
             continue
-        if v['description'] == e['description']:
+        cost = e.get('cost', v['cost'])
+        if v['description'] == e.get('description', v['description']) and v['cost'] == cost:
             print('hotfix: %s %s (%d) already reads so in the client, the entry can go' % (
                 e['race'], racials[i]['name'], e['spellId']))
             continue
-        v['description'] = e['description']
+        v['description'] = e.get('description', v['description'])
+        v['cost'] = cost
         v['source'] = 'hotfix'
         v['note'] = e['note']
 

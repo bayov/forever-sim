@@ -1,7 +1,7 @@
 {
   "meta": {
     "build": "1.60.1.70630",
-    "fetched": "2026-10-27T08:15Z",
+    "fetched": "2026-10-27T20:45Z",
     "source": "client beta 1.60.1.70630 (wago.tools), with tools/sources/racials_hotfix.json",
     "tool": "tools/sources/racials.py"
   }

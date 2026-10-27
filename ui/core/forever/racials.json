@@ -16,7 +16,9 @@
           "description": "Increases Attack Power and Spell Power by 10% for 15 sec.",
           "icon": "racial_orc_berserkerstrength",
           "passive": false,
-          "cost": "Instant; 3 min cooldown"
+          "cost": "Instant; 2 min cooldown",
+          "source": "hotfix",
+          "note": "development notes 2026-10-27 (post 8): Blood Fury cooldown 2 min (was 3 min); client 70634 reads 180000 ms"
         }
       ]
     },
@@ -155,10 +157,12 @@
             "ClassRogue",
             "ClassPaladin"
           ],
-          "description": "Your spells and attacks have a 20% chance to drain Health from the target, up to 5% of your maximum Health.",
+          "description": "Your spells and attacks have a 20% chance to drain Health from the target, up to 5% of your maximum Health. Can only occur once every 15 sec.",
           "icon": "spell_shadow_fingerofdeath",
           "passive": true,
-          "cost": null
+          "cost": null,
+          "source": "hotfix",
+          "note": "development notes 2026-10-27 (post 8): internal cooldown 15 sec (was 25 sec); client 70634 reads ProcCategoryRecovery 25000"
         },
         {
           "spellId": 1260201,
@@ -167,10 +171,12 @@
             "ClassPriest",
             "ClassWarlock"
           ],
-          "description": "Your spells and attacks have a 30% chance to drain Health from the target, up to 5% of your maximum Health.",
+          "description": "Your spells and attacks have a 30% chance to drain Health from the target, up to 5% of your maximum Health. Can only occur once every 15 sec.",
           "icon": "spell_shadow_fingerofdeath",
           "passive": true,
-          "cost": null
+          "cost": null,
+          "source": "hotfix",
+          "note": "development notes 2026-10-27 (post 8): internal cooldown 15 sec (was 25 sec); client 70634 reads ProcCategoryRecovery 25000"
         }
       ]
     }
@@ -268,10 +274,12 @@
             "ClassWarlock",
             "ClassShaman"
           ],
-          "description": "Increases your spellcasting and attack speed by 10% for 10 sec.",
+          "description": "Increases your spellcasting and attack speed by 10% for 15 sec.",
           "icon": "racial_troll_berserk",
           "passive": false,
-          "cost": "Instant; 3 min cooldown"
+          "cost": "Instant; 3 min cooldown",
+          "source": "hotfix",
+          "note": "development notes 2026-10-27 (post 8): Berserking lasts 15 sec (was 10 sec); client 70634 reads 10 sec"
         }
       ]
     },

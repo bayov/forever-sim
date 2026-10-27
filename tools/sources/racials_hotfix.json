@@ -1,6 +1,14 @@
 {
-  "note": "Racial changes the server has and the client tables don't, carried into ui/core/forever/racials.json by tools/sources/racials.py after it reads the client. Each entry names a race and a client spell id. 'description' (and 'name') replace that racial's text; 'replace' swaps the racial for a new one in its place; 'remove' drops it. Every variant it touches gets source 'hotfix' and the note. Drop an entry once a client build carries it (racials.py says when the client text already matches).",
+  "note": "Racial changes the server has and the client tables don't, carried into ui/core/forever/racials.json by tools/sources/racials.py after it reads the client. Each entry names a race and a client spell id. 'description' and 'cost' replace that racial's text and cost line; 'replace' swaps the racial for a new one in its place; 'remove' drops it. Every variant it touches gets source 'hotfix' and the note. Drop an entry once a client build carries it (racials.py says when the client text already matches).",
   "entries": [
+    {"race": "RaceOrc", "spellId": 20572, "cost": "Instant; 2 min cooldown",
+     "note": "development notes 2026-10-27 (post 8): Blood Fury cooldown 2 min (was 3 min); client 70634 reads 180000 ms"},
+    {"race": "RaceTroll", "spellId": 20554, "description": "Increases your spellcasting and attack speed by 10% for 15 sec.",
+     "note": "development notes 2026-10-27 (post 8): Berserking lasts 15 sec (was 10 sec); client 70634 reads 10 sec"},
+    {"race": "RaceUndead", "spellId": 1260189, "description": "Your spells and attacks have a 20% chance to drain Health from the target, up to 5% of your maximum Health. Can only occur once every 15 sec.",
+     "note": "development notes 2026-10-27 (post 8): internal cooldown 15 sec (was 25 sec); client 70634 reads ProcCategoryRecovery 25000"},
+    {"race": "RaceUndead", "spellId": 1260201, "description": "Your spells and attacks have a 30% chance to drain Health from the target, up to 5% of your maximum Health. Can only occur once every 15 sec.",
+     "note": "development notes 2026-10-27 (post 8): internal cooldown 15 sec (was 25 sec); client 70634 reads ProcCategoryRecovery 25000"},
     {"race": "RaceHuman", "spellId": 20597, "description": "Increases your critical strike chance with all spells and attacks by 1%.",
      "note": "development notes 2026-10-26 (post 7): Ruthless 1% (was 2%); client 70630 reads 2%"},
     {"race": "RaceHuman", "spellId": 20598, "description": "Spirit increased by 10%.",
