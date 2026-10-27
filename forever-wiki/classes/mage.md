@@ -16,7 +16,7 @@ After the wowsims/forever alignment round (orchestration/alignment_round_2026-10
 - Frost talents: `055220200310000153--0535000301003002`, Frost to Fingers of Frost (22) and 29 Arcane with Arcane Mind and Arcane Instability, two Arcane Blast stacks in the rotation: 946.6, against 822.8 for the old deep-Frost preset on the same gear. Every seed that kept Ice Barrier stopped near 845, wowsims/forever's string at range included.
 - Ice Lance with the charge spent a spell batch late: a bolt that completes with a Fingers of Frost charge up and the Ice Lance right after it both read Frozen. Frost's Ice Lance on every charge already does that when the charge comes during a Frostbolt's cast; waiting for a bolt before every Ice Lance lost 11 to 23. Frostfire's knob search put Ice Lance on the last charge only, Evocation below 10% with 90 sec left and rank 2 below 30 mana a second: 1052.2 to 1096.4.
 - Every rotation ends with the wand when out of mana. Fire (1101.0) is the mage's default build, 3.4 to 4.6 ahead of Frostfire on both seed sets.
-- Races and consumables are unchanged: Human (High Order on Frost), Orc the best Horde race; Flask of Supreme Power beats every natural flask.
+- Races and consumables are unchanged: Human (High Order on Frost), Orc the best Horde race; Flask of Supreme Power beats every natural flask. Since the 2026-10-27 race re-pick (orchestration/standards.md items 29 and 16) the Arcane preset is Gnome (2.6 ahead of the Human at 180 sec).
 
 ## Server hotfix to 1.60.1.70450 (2026-10-20)
 

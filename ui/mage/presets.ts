@@ -430,6 +430,9 @@ export const EncounterLevel60Frost = PresetUtils.makePresetEncounter('Level 60 (
 //   Fire:      Human 1101.0, Orc 1095.8, Gnome 1091.5, Undead 1087.8, Troll 1081.0, High Order 1074.5.
 //   Arcane:    Human 982.5, Orc 982.1, Gnome 978.4, Undead 974.4, High Order 971.9, Troll 969.0.
 //   Frost:     High Order 946.6, Human 945.1, Orc 944.1, Gnome 939.9, Undead 938.4, Troll 933.8.
+// Race re-pick (2026-10-27, standards 29 and 16, on the 10-26 racial pass with each race's own rotation
+// and gear): Arcane moves to the Gnome, 901.6 at 180 sec against the Human's 899.1 (verify.py, 20000
+// iterations, seed 1). Frostfire and Fire stay Human, Frost High Order.
 const buildCommon = {
 	group: 'Level 60',
 	gear: GearLevel60Phase1Synthetic,
@@ -465,10 +468,10 @@ export const PresetBuildLevel60Fire = PresetUtils.makePresetBuild('Level 60 Fire
 });
 export const PresetBuildLevel60Arcane = PresetUtils.makePresetBuild('Level 60 Arcane', {
 	...buildCommon,
-	tooltip: 'Level 60 Human Arcane on the synthetic Phase 1 gear, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Gnome Arcane on the synthetic Phase 1 gear, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1SyntheticArcane,
 	talents: TalentsLevel60Arcane,
 	rotation: APLLevel60Arcane,
-	race: Race.RaceHuman,
+	race: Race.RaceGnome,
 	options: ArcaneOptions,
 });
