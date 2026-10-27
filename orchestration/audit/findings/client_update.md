@@ -11,14 +11,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - evidence: client 70630 Spell 400588 Description_lang drops "your Arcane Missile hits a ${$m1/4}% chance" and adds Frost Blast to the ${$m1/2}% list. Its SpellEffect, SpellAuraOptions and SpellClassOptions rows are identical in 70532 and 70630 (the proc is scripted), so the tooltip is the only client evidence; not in Blizzard's notes or on foreverchanges yet. Sim: `sim/mage/talents.go` applyMissileBarrage `OnSpellHitDealt` rolls 5% a point on every missile that lands. Measured with that handler removed (180 s, 20k iterations, paired seeds 1 and 1000003): mage__arcane 982.50 → 904.74 and 982.47 → 905.06 (−77.6, −7.9%); mage__frostfire 0. Ledger MAGE-U-15. Fairly sure the tooltip reflects a server change (the same rewrite brings in the 10-16 Frost Blast hotfix), but unconfirmed.
 - proposed fix: confirm in game (Missile Barrage procs during a channel) or in a combat log, then drop the `OnSpellHitDealt` roll under Forever, re-optimize the Arcane talents and rotation (Missile Barrage may no longer be worth its points), and rerun the Arcane presets.
 - needs: user ruling (take the tooltip or verify first), then orchestrator fix
-
-### client_update-20261027-2: Spellstone gives Shadow damage only since 70630, the sim adds Fire too
-- severity: low (−0.13% to −0.28%)
-- affects: warlock affliction, demonology and destruction presets and their duty-curse variants (all on Spellstone)
-- found: 2026-10-27, master d3df924
-- evidence: client 70630 SpellEffect 1233765/1233768/1233770 (spells 1237162/1237164/1237165, "Increase Shadow Dam", the Spellstone ranks) EffectMiscValue_0 36 (Fire | Shadow) → 32 (Shadow); bp 14/17/21 and the 1/2/2% haste effect unchanged. Sim: `sim/warlock/talents.go` applyWeaponImbue adds `stats.FirePower` and `stats.ShadowPower`. Measured without the FirePower (paired seeds, 20k): affliction 1029.38 → 1027.87 (−1.51), demonology 1060.35 → 1058.98 (−1.37), destruction 1011.91 → 1009.12 (−2.79), the duty-curse variants the same, destruction_fire (Firestone) 0. Ledger WL-U-16.
-- proposed fix: drop the FirePower line from the Spellstone case under Forever, fix the comment above `firestoneRanks`, update the goldens and the warlock presets' published DPS.
-- needs: orchestrator fix
+- 2026-10-27: still open; the mage re-check found no dev note withdrawing it and post /6 (10-16) explicitly added it. Recommendation stays: verify in game before changing.
 
 ### client_update-20261027-3: Amplify Curse no longer amplifies Bane of Agony in 70630
 - severity: low (no preset or APL casts Amplify Curse)
@@ -27,6 +20,18 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - evidence: 70630 SpellEffect 695823 (18288 effect 0, aura 108 +50% all effects) EffectSpellClassMask_0 33792 → 32768: Bane of Agony (mask 1024) dropped, Curse of Weakness (32768) kept; new effect 1365363 −20 on Curse of Exhaustion (the 10-16 FC hotfix, WL-U-HF1). Bane of Agony 980-11713 gain an effect 1 aura 271 with base 0 and its own mask, nothing fills it in the client. Sim: `sim/warlock/curses.go:74` still multiplies Bane of Agony's base damage by 1.5 under Amplify Curse. Ledger WL-U-17.
 - proposed fix: under Forever, don't let Amplify Curse touch Bane of Agony (or drop the option from the warlock APL actions).
 - needs: orchestrator fix
+- 2026-10-27: the 70630 mask reading holds, but 18288's 70630 description and Wowhead's Forever tooltip still name Bane of Agony, and every Agony rank gains a base-0 aura 271 effect (w2) that its new debuff text multiplies by, so the +50% looks moved onto Agony as a server-filled value, not removed. The sim keeps +50% (no preset casts Amplify Curse). needs: user ruling.
+
+## Resolved
+
+### client_update-20261027-2: Spellstone gives Shadow damage only since 70630, the sim adds Fire too
+- severity: low (−0.13% to −0.28%)
+- affects: warlock affliction, demonology and destruction presets and their duty-curse variants (all on Spellstone)
+- found: 2026-10-27, master d3df924
+- evidence: client 70630 SpellEffect 1233765/1233768/1233770 (spells 1237162/1237164/1237165, "Increase Shadow Dam", the Spellstone ranks) EffectMiscValue_0 36 (Fire | Shadow) → 32 (Shadow); bp 14/17/21 and the 1/2/2% haste effect unchanged. Sim: `sim/warlock/talents.go` applyWeaponImbue adds `stats.FirePower` and `stats.ShadowPower`. Measured without the FirePower (paired seeds, 20k): affliction 1029.38 → 1027.87 (−1.51), demonology 1060.35 → 1058.98 (−1.37), destruction 1011.91 → 1009.12 (−2.79), the duty-curse variants the same, destruction_fire (Firestone) 0. Ledger WL-U-16.
+- proposed fix: drop the FirePower line from the Spellstone case under Forever, fix the comment above `firestoneRanks`, update the goldens and the warlock presets' published DPS.
+- needs: orchestrator fix
+- resolved: 2026-10-27, d6fcdd3 (Spellstone Shadow only under Forever; goldens and wiki updated).
 
 ### client_update-20261027-4: Touch of the Grave's drain loses its "ignore caster modifiers" attribute in 70630
 - severity: low (Undead presets; the drain is modelled at its 5% max-health cap, a few DPS at most; not measured)
@@ -35,6 +40,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - evidence: 70630 SpellMisc 813545 (spell 1260198): Attributes_3 0x20000000 → 0, Attributes_9 0x1000000 → 0, Attributes_10 0x2 → 0, Attributes_13 0x4000000 → 0; Attributes_4 0x100 and Attributes_6 0x28000000 (added with them in 70425) stay. 70425's notes said the drain no longer scales with Shadow increases on target or caster, which the sim models with `SpellFlagIgnoreModifiers` (`sim/core/racials_forever.go` registerTouchOfTheGrave). Which half of the 70425 attributes carried that rule is not known, so this may change nothing. Ledger SHR-U-15.
 - proposed fix: check in a combat log whether the drain on a Shadowform priest or a Shadow Mastery warlock still equals 5% of max health; if it grows, drop the caster-side ignore under Forever.
 - needs: user ruling (log check)
+- resolved: 2026-10-27, no sim change needed: the drain keeps Attributes_6 0x28000000 (ignore caster damage and damage-taken modifiers) and has no spell power coefficient, so it still takes no modifier; comment added in 500e3a1.
 
 ### client_update-20261027-5: Dev notes post /7 (2026-10-26) racial pass, not in client 70630
 - severity: medium (high once it lands: it moves the race tables and the Human, Orc, Dwarf, Tauren and Skyborne presets; estimated, not measured)
@@ -43,8 +49,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - evidence: Blizzard development notes topic 2360696 post /7 (Kaivax, 2026-10-26 20:35, edited 21:09; tier: official). Human Ruthless 2% → 1% crit, Human Spirit 5% → 10%; Dwarf Earth Fury (2% crit damage) removed, Artisan's Precision +1% hit added; Tauren Endurance only 5% health (no hit or crit damage); Orc Savage (1% crit) removed, Command +5% warlock and hunter pet damage; Skyborne Wind-Blessed Haste 3% → 2%, Read Leyline 50% for 15 sec (100% while Attuned). Client 70630 has none of it (no Artisan's Precision spell; Ruthless 20597, Savage 20574, Endurance 20550 rows unchanged). Sim: `sim/core/racials_forever.go` Human 2% crit and Spirit ×1.05, Dwarf and Tauren `critDamageBonus(1.02)`, Orc 1% crit, Skyborne ×1.03 haste. Rough size: −1% crit is about −0.7 to −1% DPS, +1% hit for a Dwarf below the cap about +1%. Ledger SHR-P7-01..05.
 - proposed fix: wait for the client build or hotfix that carries it and read the values there, or apply it from the notes now if the user prefers; then rerun the race tables and the affected presets.
 - needs: user ruling (apply from the notes or wait for the client)
-
-## Resolved
+- resolved: 2026-10-27, 500e3a1, the post /7 racial pass applied from the notes (user asked for the sim to follow them); UI text in tools/sources/racials_hotfix.json.
 
 ### client_update-20261021-1: Champion of the Light may be back to 20/40/60% of Intellect (unannounced 10-16 hotfix)
 - severity: medium (high if confirmed: it is spell power for every paladin preset that takes the talent; not measured)
