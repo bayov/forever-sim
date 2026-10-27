@@ -5,7 +5,7 @@
   "build": "Arms (Battle Shout duty)",
   "isDefault": false,
   "pr": 4,
-  "race": "Orc",
+  "race": "Undead",
   "talents": "20305213032515201-55050000001",
   "treeNames": [
     "Arms",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_arms_battle_shout",
   "published": {
-    "dps": 902.3,
-    "source": "Warrior re-optimization at flat Rage, 2026-10-25 (standards 21, k flat at the level 30 value): the rotation and talent searches moved Bloodrage under 20 Rage (10), Hamstring from 30 (20). Orc stays (race sweep on both seed sets). 20k iterations, 180s, seed 1 (was 956.0 at ×1.5 Rage, 900.4 at flat Rage before the re-search)"
+    "dps": 898.2,
+    "source": "Race re-pick 2026-10-27 (standards 29 and 16): Undead (follows its base build, warrior__arms); verify.py, 20000 iterations, seed 1 (was 895.1 as Orc on the same sim)"
   },
   "verify": {
-    "dps": 902.3,
-    "stderr": 0.39,
+    "dps": 898.2,
+    "stderr": 0.4,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on the request, 180s, seed 1"
+    "note": "verify.py of this request, 180s, seed 1"
   },
   "summary": "Keeps Battle Shout up for its party, with the raid's Battle Shout off.",
   "keyTalents": [
@@ -72,7 +72,7 @@
     "Arms in Berserker Stance with Whirlwind is 10% behind.",
     "Raid damage hits (2 a minute, about 9 Rage each) are an estimate."
   ],
-  "notes": "Request from mksettings -spec arms -gear level60_phase1_synthetic_arms -apl level60_arms_battle_shout -talents 20305213032515201-55050000001 -race Orc -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Not the class default: the warrior UI has one spec page and its default Level 60 build is Fury Dual Wield; this is the only Arms preset. Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts.",
+  "notes": "Request from mksettings -spec arms -gear level60_phase1_synthetic_arms -apl level60_arms_battle_shout -talents 20305213032515201-55050000001 -race Undead -duration 180, then the raid's battleShout removed (standards 23: the duty preset's own shout is the only one). Not the class default: the warrior UI has one spec page and its default Level 60 build is Fury Dual Wield; this is the only Arms preset. Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29) (follows its base build, warrior__arms), was Orc.",
   "duty": "Battle Shout",
   "baseBuild": "warrior__arms"
 }

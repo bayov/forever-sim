@@ -405,6 +405,9 @@ export const DefaultDebuffs = Debuffs.create({
 // race table. At flat Rage (2026-10-25) Human ties Orc on dual wield Fury at 180 sec (986.5 against
 // 986.6 on seed 1, 985.3 against 984.7 on seed 1000003), short of the 0.5 lead on both seed sets a
 // switch needs, so Orc stays. Engineering is for the Goblin Sapper Charge.
+// Race re-pick (2026-10-27, standards 29 and 16, on the 10-26 racial pass with each race's own rotation
+// and gear): Arms, its Battle Shout duty and Arms (vs Dragonkin) are Undead, 900.9 at 180 sec against the
+// Orc's 898.7 on Arms (verify.py, 20000 iterations, seed 1); the Fury builds stay Orc.
 export const OtherDefaults = {
 	profession1: Profession.Engineering,
 	profession2: Profession.Alchemy,
@@ -632,7 +635,7 @@ export const PresetBuildLevel60Arms = PresetUtils.makePresetBuild('Level 60 Arms
 	talents: TalentsLevel60Arms,
 	rotation: APLLevel60Arms,
 	encounter: EncounterLevel60Arms,
-	race: Race.RaceOrc,
+	race: Race.RaceUndead,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -645,7 +648,7 @@ export const PresetBuildLevel60ArmsShout = PresetUtils.makePresetBuild('Level 60
 	talents: TalentsLevel60Arms,
 	rotation: APLLevel60ArmsShout,
 	encounter: EncounterLevel60ArmsBattleShoutDuty,
-	race: Race.RaceOrc,
+	race: Race.RaceUndead,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -663,7 +666,7 @@ export const PresetBuildLevel60ArmsDragonkin = PresetUtils.makePresetBuild('Leve
 	talents: TalentsLevel60ArmsDragonkin,
 	rotation: APLLevel60ArmsDragonkin,
 	encounter: EncounterLevel60Dragonkin,
-	race: Race.RaceOrc,
+	race: Race.RaceUndead,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
