@@ -20,22 +20,23 @@ VARIANTS = ['baseline', 'beast', 'elemental', 'humanoid', 'off']
 TARGET_VARIANTS = ('beast', 'elemental', 'humanoid')
 RACE_ORDER = ['Human', 'Dwarf', 'Night Elf', 'Gnome', 'High Order', 'Orc', 'Undead', 'Tauren', 'Troll', 'Windshaper']
 
-# Racial parts the sim models, by race: (part key, racial name, what it does). The text follows client 1.60.1.70425.
+# Racial parts the sim models, by race: (part key, racial name, what it does). The text follows client 1.60.1.70425,
+# and the development notes of 2026-10-26 for the racial pass (Human, Dwarf, Orc, Tauren, Skyborne).
 PART_INFO = {
-    'spirit': ('The Human Spirit', 'Spirit increased by 5%.'),
-    'ruthless': ('Ruthless', '+2% critical strike chance with all spells and attacks, with any weapon.'),
-    'earthfury': ('Earth Fury', 'Critical strike bonus to damage and healing increased by 2%.'),
-    'savage': ('Savage', '+1% critical strike chance with all spells and abilities, with any weapon.'),
+    'spirit': ('The Human Spirit', 'Spirit increased by 10%.'),
+    'ruthless': ('Ruthless', '+1% critical strike chance with all spells and attacks, with any weapon.'),
+    'precision': ("Artisan's Precision", '+1% hit chance with spells and attacks.'),
+    'command': ('Command', 'Damage dealt by Hunter and Warlock pets increased by 5%.'),
     'elune': ("Elune's Light", '+10% critical strike chance for 15s, 3 min cooldown.'),
     'shadowmeld': ('Shadowmeld', 'Slip into the shadows, 2 min cooldown in combat. The next stealth ability (Ravage, Ambush, Garrote) can follow it.'),
-    'leyline': ('Read Leyline', 'A 2s cast that doubles health and mana regeneration for 30s away from a leyline, 2 min cooldown.'),
+    'leyline': ('Read Leyline', 'A 2s cast that raises health and mana regeneration by 50% for 15s away from a Ley Line, 2 min cooldown.'),
     'mind': ('Expansive Mind', 'Maximum Mana, Rage or Energy increased by 5%.'),
     'eureka': ('Eureka!', 'For 8s, direct damage abilities cost 10% less and deal 10% more damage (DoTs too for Warlocks, heals too for Priests), 2 min cooldown.'),
     'bloodfury': ('Blood Fury', 'Attack power and spell power increased by 10% for 15s, 3 min cooldown.'),
     'touch': ('Touch of the Grave', 'Spells and attacks have a 20% chance (30% for Mages, Priests and Warlocks) to deal Shadow damage equal to 5% of your maximum health and heal you for it. At most once every 25s, and it cannot crit.'),
-    'endurance': ('Endurance', 'Health increased by 5% and critical strike bonus to damage and healing increased by 2%.'),
+    'endurance': ('Endurance', 'Health increased by 5%.'),
     'berserking': ('Berserking', 'Attack and casting speed increased by 10% for 10s, 3 min cooldown.'),
-    'windblessed': ('Wind Blessed', 'Spellcasting, melee and ranged haste increased by 3%.'),
+    'windblessed': ('Wind Blessed', 'Spellcasting, melee and ranged haste increased by 2%.'),
     'beast_dwarf': ('Big Game Hunter', 'Damage dealt versus Beasts increased by 5%.'),
     'beast_troll': ('Beast Slaying', 'Damage dealt versus Beasts increased by 5%.'),
     'insight': ('Elemental Insight', 'Damage dealt versus Elementals increased by 5%.'),
@@ -54,15 +55,15 @@ PART_SHORT = {
 # Each racial's game icon, from ui/core/forever/racials.json. The priest racials are from wowhead, and Dark Sacrifice
 # has no known icon.
 PART_ICON = {
-    'spirit': 'inv_enchant_shardbrilliantsmall', 'ruthless': 'ability_meleedamage', 'earthfury': 'inv_hammer_05', 'beast_dwarf': 'inv_weapon_rifle_05',
-    'elune': 'spell_nature_moonglow', 'shadowmeld': 'ability_ambush', 'leyline': 'ability_mage_incantersabsorbtion', 'mind': 'inv_enchant_essenceeternallarge', 'eureka': 'inv_gnometoy', 'savage': 'inv_axe_02',
+    'spirit': 'inv_enchant_shardbrilliantsmall', 'ruthless': 'ability_meleedamage', 'precision': 'ability_marksmanship', 'beast_dwarf': 'inv_weapon_rifle_05',
+    'elune': 'spell_nature_moonglow', 'shadowmeld': 'ability_ambush', 'leyline': 'ability_mage_incantersabsorbtion', 'mind': 'inv_enchant_essenceeternallarge', 'eureka': 'inv_gnometoy', 'command': 'ability_warrior_warcry',
     'bloodfury': 'racial_orc_berserkerstrength', 'touch': 'spell_shadow_fingerofdeath', 'endurance': 'spell_nature_unyeildingstamina',
     'berserking': 'racial_troll_berserk', 'beast_troll': 'inv_misc_pelt_bear_ruin_02', 'windblessed': 'inv_misc_volatileair',
     'insight': 'achievement_raidprimalist_windelemental', 'starshards': 'spell_arcane_starfire', 'chastise': 'spell_holy_chastise',
 }
 
-RACE_PARTS = {'Human': ['spirit', 'ruthless'], 'Dwarf': ['earthfury', 'beast_dwarf', 'chastise'], 'Night Elf': ['elune', 'shadowmeld', 'starshards'],
-              'Gnome': ['mind', 'eureka'], 'Orc': ['savage', 'bloodfury'], 'Undead': ['touch', 'darksacrifice'], 'Tauren': ['endurance'],
+RACE_PARTS = {'Human': ['spirit', 'ruthless'], 'Dwarf': ['precision', 'beast_dwarf', 'chastise'], 'Night Elf': ['elune', 'shadowmeld', 'starshards'],
+              'Gnome': ['mind', 'eureka'], 'Orc': ['command', 'bloodfury'], 'Undead': ['touch', 'darksacrifice'], 'Tauren': ['endurance'],
               'Troll': ['berserking', 'beast_troll'], 'High Order': ['windblessed', 'insight', 'leyline'], 'Windshaper': ['windblessed', 'insight']}
 SCENARIOS = [
     ('baseline', 'Generic boss', 'Each preset against a level 63 boss with no creature type. In client 70425 no racial depends on the weapon.'),

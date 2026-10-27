@@ -7,8 +7,9 @@ settings otherwise), on top of the race sweep run_build.py already did:
   off:<part>     one racial part left out, for races with more than one part that can count
   beast / elemental   the same fight against that creature type (presets fight the generic boss)
   humanoid       priests only: Chastise (Dwarf priests) works on Humanoids only
-No racial depends on the weapon since client 70425 (Human Ruthless and Orc Savage work with any weapon, the Dwarf's
-mace racial became Earth Fury), so there is no weapon swap variant any more.
+No racial depends on the weapon since client 70425 (Human Ruthless works with any weapon), so there is no weapon
+swap variant any more. The 2026-10-26 racial pass replaced Dwarf Earth Fury with Artisan's Precision (precision, 1% hit)
+and Orc Savage with Command (command, 5% pet damage, Hunters and Warlocks only).
 Results append to rv/results.jsonl, one line per sim, so a rerun only does what is missing.
 Needs wowsimcli_r: wowsimcli built from the local dashdata tree with the DASH_RACIALS_OFF switch.
 """
@@ -29,11 +30,12 @@ from run_build import CLASS_RACES  # noqa: E402
 
 # Racial parts that can change DPS, by race.
 PARTS = {
-    'Human': ['spirit', 'ruthless'], 'Dwarf': ['earthfury', 'chastise'], 'NightElf': ['elune', 'shadowmeld', 'starshards'],
-    'Gnome': ['mind', 'eureka'], 'Orc': ['savage', 'bloodfury'], 'Undead': ['touch', 'darksacrifice'],
+    'Human': ['spirit', 'ruthless'], 'Dwarf': ['precision', 'chastise'], 'NightElf': ['elune', 'shadowmeld', 'starshards'],
+    'Gnome': ['mind', 'eureka'], 'Orc': ['command', 'bloodfury'], 'Undead': ['touch', 'darksacrifice'],
     'Tauren': ['endurance'], 'Troll': ['berserking'], 'SkyborneHighOrder': ['windblessed', 'leyline'], 'SkyborneWindshaper': ['windblessed'],
 }
 PRIEST_ONLY = {'chastise', 'starshards', 'darksacrifice'}
+PET_ONLY = {'command'}  # Orc Command: Hunter and Warlock pets only
 TARGETS = {'beast': 'MobTypeBeast', 'elemental': 'MobTypeElemental'}
 CLASS_TARGETS = {'Priest': {'humanoid': 'MobTypeHumanoid'}}  # a racial that cares about Humanoids (Chastise)
 # The races with a racial that depends on the target's creature type. Every other race fights a beast, elemental or
@@ -48,7 +50,8 @@ def player(req):
 
 
 def parts_for(cls, race, req):
-    return [p for p in PARTS.get(race, []) if p not in PRIEST_ONLY or cls == 'Priest']
+    return [p for p in PARTS.get(race, []) if (p not in PRIEST_ONLY or cls == 'Priest')
+            and (p not in PET_ONLY or cls in ('Hunter', 'Warlock'))]
 
 
 def sim(req, race, off=None, mob=None):
