@@ -5,7 +5,7 @@
   "build": "Marksmanship",
   "isDefault": false,
   "pr": 5,
-  "race": "Human",
+  "race": "Orc",
   "talents": "502-0053551501503051-5",
   "treeNames": [
     "Beast Mastery",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_ranged",
   "apl": "mm",
   "published": {
-    "dps": 1139.4,
-    "source": "Hunter recheck 2026-10-25 after the crit per Agility ruling (Classic's at 60; Multi-Shot on the shared cooldown in place of Aimed Shot and the Human in place of the Windshaper); was 1166.1"
+    "dps": 1132.4,
+    "source": "Race re-pick 2026-10-27 (standards 29 and 16): Orc; verify.py, 20000 iterations, seed 1 (was 1126.3 as a Human on the same sim)"
   },
   "verify": {
-    "dps": 1139.39,
-    "stderr": 0.25,
+    "dps": 1132.4,
+    "stderr": 0.2,
     "iters": 20000,
     "ok": true,
-    "note": "180s, seed 1; seed 1000003 gives 1139.2"
+    "note": "verify.py of this request, 180s, seed 1"
   },
   "summary": "Marksmanship with a cat instead of Lone Wolf. The pet deals about 16% of the damage.",
   "keyTalents": [
@@ -75,5 +75,5 @@
     "Mark duty is assumed: the hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs about 0.5 to 2.5 DPS at 180s (1.4 here).",
     "Scorpid Sting isn't a duty: it shares Insect Swarm's 2% hit-reduction slot, which Balance druids keep up for its own damage, so a hunter on it would pay about 85 to 100 DPS (Serpent Sting's slot) for nothing."
   ],
-  "notes": "Request written by mksettings (spec hunter_mm, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Every hunter keeps up its own Hunter's Mark (standards 23, Mark duty assumed), so the raid's debuffs.huntersMark is off."
+  "notes": "Request written by mksettings (spec hunter_mm, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Every hunter keeps up its own Hunter's Mark (standards 23, Mark duty assumed), so the raid's debuffs.huntersMark is off. Orc since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human."
 }

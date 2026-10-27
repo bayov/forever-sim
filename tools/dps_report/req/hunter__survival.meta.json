@@ -5,7 +5,7 @@
   "build": "Survival (melee)",
   "isDefault": false,
   "pr": 5,
-  "race": "Human",
+  "race": "Orc",
   "talents": "502-005005-500230230250122151",
   "treeNames": [
     "Beast Mastery",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_survival",
   "apl": "sv",
   "published": {
-    "dps": 1025.2,
-    "source": "Hunter recheck 2026-10-25 after the crit per Agility ruling (Classic's at 60; the gear, talents, rotation and race hold); was 1055.0"
+    "dps": 1024.9,
+    "source": "Race re-pick 2026-10-27 (standards 29 and 16): Orc; verify.py, 20000 iterations, seed 1 (was 1016.3 as a Human on the same sim)"
   },
   "verify": {
-    "dps": 1025.19,
-    "stderr": 0.26,
+    "dps": 1024.9,
+    "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "180s, seed 1; seed 1000003 gives 1025.2"
+    "note": "verify.py of this request, 180s, seed 1"
   },
   "summary": "Forever's melee hunter: Survival with a cat, built on Expose Prey into Mongoose Bite. The pet deals about 18% of the damage.",
   "keyTalents": [
@@ -71,5 +71,5 @@
     "Mark duty is assumed: the hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs about 0.5 to 2.5 DPS at 180s (1.5 here).",
     "Scorpid Sting isn't a duty: it shares Insect Swarm's 2% hit-reduction slot, which Balance druids keep up for its own damage, so a hunter on it would pay for nothing (a ranged hunter about 85 to 100 DPS, Serpent Sting's slot)."
   ],
-  "notes": "Request written by mksettings (spec hunter_sv, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Every hunter keeps up its own Hunter's Mark (standards 23, Mark duty assumed), so the raid's debuffs.huntersMark is off. Distance is 5 yd as in the mksettings raid the number was measured in (the UI preset starts at 25 yd; the APL walks in 6s before the pull, which the preset says costs nothing). Survival keeps a 1.0s cat out (DefaultOptions)."
+  "notes": "Request written by mksettings (spec hunter_sv, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Every hunter keeps up its own Hunter's Mark (standards 23, Mark duty assumed), so the raid's debuffs.huntersMark is off. Distance is 5 yd as in the mksettings raid the number was measured in (the UI preset starts at 25 yd; the APL walks in 6s before the pull, which the preset says costs nothing). Survival keeps a 1.0s cat out (DefaultOptions). Orc since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human."
 }

@@ -5,7 +5,7 @@
   "build": "Lone Wolf",
   "isDefault": false,
   "pr": 5,
-  "race": "SkyborneWindshaper",
+  "race": "NightElf",
   "talents": "5-0053552511503051-5",
   "treeNames": [
     "Beast Mastery",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_ranged",
   "apl": "lw",
   "published": {
-    "dps": 1127.0,
-    "source": "Hunter recheck 2026-10-25 after the crit per Agility ruling (Classic's at 60; Multi-Shot on the shared cooldown in place of Aimed Shot); was 1156.8"
+    "dps": 1118.9,
+    "source": "Race re-pick 2026-10-27 (standards 29 and 16): Night Elf; verify.py, 20000 iterations, seed 1 (was 1116.9 as Windshaper Skyborne on the same sim)"
   },
   "verify": {
-    "dps": 1126.98,
-    "stderr": 0.29,
+    "dps": 1118.9,
+    "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "180s, seed 1; seed 1000003 gives 1127.6"
+    "note": "verify.py of this request, 180s, seed 1"
   },
   "summary": "Marksmanship with Lone Wolf (+20% damage with no pet out). It is behind the Marksmanship cat build, even though a Forever pet takes no player buffs.",
   "keyTalents": [
@@ -73,5 +73,5 @@
     "Mark duty is assumed: the hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs about 0.5 to 2.5 DPS at 180s (2.5 here).",
     "Scorpid Sting isn't a duty: it shares Insect Swarm's 2% hit-reduction slot, which Balance druids keep up for its own damage, so a hunter on it would pay about 85 to 100 DPS (Serpent Sting's slot) for nothing."
   ],
-  "notes": "Request written by mksettings (spec hunter_lw, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Every hunter keeps up its own Hunter's Mark (standards 23, Mark duty assumed), so the raid's debuffs.huntersMark is off. Pet set to none (petType omitted = PetNone)."
+  "notes": "Request written by mksettings (spec hunter_lw, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Every hunter keeps up its own Hunter's Mark (standards 23, Mark duty assumed), so the raid's debuffs.huntersMark is off. Pet set to none (petType omitted = PetNone). Night Elf since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Windshaper Skyborne."
 }

@@ -399,7 +399,7 @@ export const OtherDefaults = {
 	distanceFromTarget: 25,
 	profession1: Profession.Engineering,
 	profession2: Profession.Alchemy,
-	race: Race.RaceHuman,
+	race: Race.RaceOrc,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -457,6 +457,11 @@ export const EncounterLevel60Melee = PresetUtils.makePresetEncounter('Level 60 M
 // tie for the best Horde race. Lone Wolf keeps the Windshaper: the Human and the High Order tie it
 // (the Human +0.1 / -0.6 at 180 sec), and the Orc is 1.8 / 2.2 behind. For Survival the Human is best
 // at 180 and 300 sec, 0.5 / 0.9 and 2.2 / 2.2 ahead of the Orc, which leads by 1.9 / 1.3 at 120 sec.
+// Race re-pick (2026-10-27, standards 29 and 16, on the 10-26 racial pass with each race's own rotation
+// and gear): Beast Mastery, Marksmanship and Survival move to the Orc, Lone Wolf to the Night Elf. At
+// 180 sec (verify.py, 20000 iterations, seed 1): Beast Mastery 1146.1 against the Human's 1133.7,
+// Marksmanship 1132.4 against 1126.3, Survival 1024.9 against 1016.3, Lone Wolf 1118.9 against the
+// Windshaper's 1116.9.
 // With the Wildstalker Armor 4
 // and 5 piece bonuses on top of the 2 piece (the presets carry the 2 piece only, as every class
 // does), Lone Wolf would gain 17, Marksmanship 13, Beast Mastery 1 and Survival nothing, with the
@@ -477,7 +482,7 @@ export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Bea
 	talents: TalentsBeastMastery,
 	rotation: APLBeastMastery,
 	encounter: EncounterLevel60,
-	race: Race.RaceHuman,
+	race: Race.RaceOrc,
 	professions,
 	options: DefaultOptions,
 });
@@ -494,7 +499,7 @@ export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Mar
 	talents: TalentsMarksmanship,
 	rotation: APLMarksmanship,
 	encounter: EncounterLevel60,
-	race: Race.RaceHuman,
+	race: Race.RaceOrc,
 	professions,
 	options: DefaultOptions,
 });
@@ -511,7 +516,7 @@ export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wo
 	talents: TalentsLoneWolf,
 	rotation: APLLoneWolf,
 	encounter: EncounterLevel60,
-	race: Race.RaceSkyborneWindshaper,
+	race: Race.RaceNightElf,
 	professions,
 	options: LoneWolfOptions,
 });
@@ -526,7 +531,7 @@ export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Surviva
 	talents: TalentsSurvival,
 	rotation: APLSurvival,
 	encounter: EncounterLevel60Melee,
-	race: Race.RaceHuman,
+	race: Race.RaceOrc,
 	professions,
 	options: DefaultOptions,
 });
