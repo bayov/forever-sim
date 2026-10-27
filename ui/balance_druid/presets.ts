@@ -115,9 +115,11 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // once a Starfire would no longer land before the end, it casts Moonfire instead: 4.4 / 2.9 / 1.4
 // ahead (rotation auditor), 835.9 / 831.6 / 820.7 with Wrath rank 8 at x1.085 (Night Elf, before
 // the raid's damage hits and Nature's Focus).
-// The presets are Tauren since client 1.60.1.70425's racials, so the Elune's Light lines are out (a
-// Night Elf still uses it on cooldown through the autocast line); the potion still goes before
-// the pull.
+// The presets were Tauren from client 1.60.1.70425's racials to 2026-10-27, with the Elune's Light
+// lines out. The Level 60 preset is Night Elf again since the race-tuning round (2026-10-27, standards
+// 29 and 16), and its rotation has them back (elune=1): +1.1 at 180 sec on seed 1 (+1.0 on seed
+// 1000003) over leaving Elune's Light to the autocast line, 0.0 for a Tauren. The Wrath build is
+// Windshaper Skyborne and leaves them out.
 export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
 	tooltip: "The optimizer's best level 60 rotation: both dots up, then Wrath and Starfire in turn for Eclipse.",
 	group: 'Level 60',
@@ -290,7 +292,7 @@ export const OtherDefaults = {
 	distanceFromTarget: 30,
 	profession1: Profession.Engineering,
 	profession2: Profession.Alchemy,
-	race: Race.RaceTauren,
+	race: Race.RaceNightElf,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -358,14 +360,18 @@ export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('L
 // switch needs), High Order Skyborne 815.0 / 816.5 / 812.4, Night Elf 815.1 / 814.4 / 810.1. Its
 // knob search would weave Starfire (filler 3, +32), which is the Level 60 build, so the Wrath
 // build keeps Wrath as its filler. No racial goes by weapon type.
+// Race re-pick (2026-10-27, standards 29 and 16: each race with its own rotation and gear, a tie
+// within noise keeps the race): the Level 60 build is Night Elf with Elune's Light held for the
+// trinket, 851.2 at 180 sec against the Tauren's 841.5 (20,000 iterations, seed 1); the Wrath build
+// is Windshaper Skyborne, 811.1 against the Tauren's 800.7. The Faerie Fire duty builds follow them.
 export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	group: 'Level 60',
-	tooltip: 'Level 60 Tauren on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
+	tooltip: 'Level 60 Night Elf on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60,
 	encounter: EncounterLevel60,
-	race: Race.RaceTauren,
+	race: Race.RaceNightElf,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -378,7 +384,7 @@ export const PresetBuildLevel60FaerieFire = PresetUtils.makePresetBuild('Level 6
 	talents: TalentsLevel60,
 	rotation: APLLevel60FaerieFire,
 	encounter: EncounterLevel60FaerieFireDuty,
-	race: Race.RaceTauren,
+	race: Race.RaceNightElf,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -390,7 +396,7 @@ export const PresetBuildLevel60Wrath = PresetUtils.makePresetBuild('Level 60 Wra
 	talents: TalentsLevel60Wrath,
 	rotation: APLLevel60Wrath,
 	encounter: EncounterLevel60,
-	race: Race.RaceTauren,
+	race: Race.RaceSkyborneWindshaper,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
@@ -403,7 +409,7 @@ export const PresetBuildLevel60WrathFaerieFire = PresetUtils.makePresetBuild('Le
 	talents: TalentsLevel60Wrath,
 	rotation: APLLevel60WrathFaerieFire,
 	encounter: EncounterLevel60FaerieFireDuty,
-	race: Race.RaceTauren,
+	race: Race.RaceSkyborneWindshaper,
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],

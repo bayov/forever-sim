@@ -5,8 +5,10 @@
 # The rotations do not depend on the settings, only the sanity sim does.
 #
 #   tools/rotopt/druid_presets.sh balance.json feral.json
-# The Balance rotations leave Elune's Light out (elune=0): those presets are Tauren, and a Night Elf
-# still uses it through the autocast line. The Feral presets are Night Elf and keep it in.
+# Balance is Night Elf since the race-tuning round (2026-10-27, standards 29 and 16), with Elune's
+# Light held for the spell power trinket (elune=1): 1.1 ahead at 180 sec of leaving it to the autocast
+# line (+1.0 on seed 1000003), 0.0 for a Tauren. The Wrath build is Windshaper Skyborne and leaves
+# it out (elune=0). The Feral presets are Night Elf and keep it in.
 set -e
 balance=$1
 feral=$2
@@ -33,10 +35,10 @@ gen() {
 # endMoonfire (rotation auditor): Moonfire once the filler would not land before the fight ends,
 # 4.4 / 2.9 / 1.4 ahead for Balance (when a Starfire would not land), 5.9 / 3.8 / 2.2 for the
 # Wrath build (when a Wrath plus 1.5 sec would not).
-gen druid_balance "$balance" ui/balance_druid/apls level60 "innervateMana=0,filler=3,eclipseStacks=2,prepull=1,prepullTime=3,prepullTrinket=1,cdStack=1,endMoonfire=1,elune=0"
+gen druid_balance "$balance" ui/balance_druid/apls level60 "innervateMana=0,filler=3,eclipseStacks=2,prepull=1,prepullTime=3,prepullTrinket=1,cdStack=1,endMoonfire=1,elune=1"
 # The Faerie Fire duty (standards 23): the same rotation keeping Faerie Fire on the target, cast
 # first after the pull and again once it has under 1.5 sec left. The knob search kept the rest.
-gen druid_balance "$balance" ui/balance_druid/apls level60_ff "innervateMana=0,filler=3,eclipseStacks=2,prepull=1,prepullTime=3,prepullTrinket=1,cdStack=1,endMoonfire=1,faerieFire=1,elune=0"
+gen druid_balance "$balance" ui/balance_druid/apls level60_ff "innervateMana=0,filler=3,eclipseStacks=2,prepull=1,prepullTime=3,prepullTrinket=1,cdStack=1,endMoonfire=1,faerieFire=1,elune=1"
 # The same with Wrath as the only filler and a Wrath 1.5 sec before the pull, 6.1% behind (776.5
 # against 827.0 at 180 sec), on its own talents (5502220115501351--5053) and gear (Natural Power
 # gloves).

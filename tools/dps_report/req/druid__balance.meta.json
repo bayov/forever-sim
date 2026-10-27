@@ -5,7 +5,7 @@
   "build": "Balance",
   "isDefault": true,
   "pr": 8,
-  "race": "Tauren",
+  "race": "NightElf",
   "talents": "5232220115501351--5053",
   "treeNames": [
     "Balance",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 856.3,
-    "source": "Druid class worker finals, 2026-10-24 must-take round (standards 26 and 11): 120/180/300s 857.9/856.3/846.9 (seed 1), 858.4/856.6/847.4 (seed 1000003)"
+    "dps": 851.2,
+    "source": "Race re-pick 2026-10-27 (standards 29 and 16): Night Elf, with the Night Elf rotation (Elune's Light held for the trinket, elune=1; it was the race override); verify.py, 20000 iterations, seed 1 (was 841.5 as Tauren on the same sim)"
   },
   "verify": {
-    "dps": 856.3,
+    "dps": 851.2,
     "stderr": 0.2,
     "iters": 20000,
     "ok": true,
-    "note": "class worker sim of this request, 180s, seed 1"
+    "note": "verify.py of this request, 180s, seed 1"
   },
   "summary": "Moonkin keeping Insect Swarm and Moonfire up, weaving Wrath and Starfire to spend every Eclipse charge.",
   "keyTalents": [
@@ -40,6 +40,7 @@
   "rotation": [
     "Pre-pull: Starfire (rank 6) cast 3s before the pull so it lands at 0",
     "Racials, potions and runes on cooldown (Innervate on its own trigger)",
+    "Elune's Light held for the spell power trinket, and 0.1s before the pull with it and the potion (Night Elf)",
     "Insect Swarm whenever it is down (more than 8s of fight left)",
     "Moonfire whenever its dot is down (more than 8s of fight left)",
     "Starfire when Clearcasting is up (Wrath does not use it up)",
@@ -70,5 +71,5 @@
     "One +2% crit elixir. A second (Owl) would add 15.1.",
     "Subtlety 3 (Restoration, threat) is a must-take (standards 26): costs 6.1 / 6.1 / 6.2 DPS at 120s / 180s / 300s."
   ],
-  "notes": "Request from mksettings -spec balance (caster group: Mana Spring, Kings + Wisdom, no Might, own Moonkin Form crit; 30 yd range; Innervate on self). Duration set to 180s, durationVariation 20 as in EncounterLevel60. No edits needed."
+  "notes": "Request from mksettings -spec balance (caster group: Mana Spring, Kings + Wisdom, no Might, own Moonkin Form crit; 30 yd range; Innervate on self). Duration set to 180s, durationVariation 20 as in EncounterLevel60. No edits needed. Night Elf since the 2026-10-27 race re-pick, with the level60 rotation regenerated with elune=1 (tools/rotopt/druid_presets.sh), which was req/races/druid__balance.NightElf.json; the same rotation is 0.0 for a Tauren (Elune's Light is the Night Elf's)."
 }

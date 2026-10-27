@@ -5,7 +5,7 @@
   "build": "Balance Wrath",
   "isDefault": false,
   "pr": 8,
-  "race": "Tauren",
+  "race": "SkyborneWindshaper",
   "talents": "5502220115501351--5053",
   "treeNames": [
     "Balance",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_wrath",
   "apl": "level60_wrath",
   "published": {
-    "dps": 813.3,
-    "source": "Druid class worker finals, 2026-10-24 must-take round (standards 26 and 11): 120/180/300s 811.6/813.3/809.0 (seed 1), 811.6/813.3/809.1 (seed 1000003)"
+    "dps": 811.1,
+    "source": "Race re-pick 2026-10-27 (standards 29 and 16): Windshaper Skyborne; verify.py, 20000 iterations, seed 1 (was 800.7 as Tauren on the same sim)"
   },
   "verify": {
-    "dps": 813.3,
+    "dps": 811.1,
     "stderr": 0.2,
     "iters": 20000,
     "ok": true,
-    "note": "class worker sim of this request, 180s, seed 1"
+    "note": "verify.py of this request, 180s, seed 1"
   },
   "summary": "Balance with Wrath as the only filler, for a moonkin that would rather not weave.",
   "keyTalents": [
@@ -63,5 +63,5 @@
     "Natural Power gloves are +8.1 over Arcane Power.",
     "Subtlety 3 (Restoration, threat) is a must-take (standards 26): costs 2.9 / 2.9 / 3.0 DPS at 120s / 180s / 300s."
   ],
-  "notes": "Request from mksettings -spec balance with the Wrath gear variant, apl and talents; same consumes, buffs and encounter as the Balance build (shared EncounterLevel60). Duration 180s, durationVariation 20. No edits needed."
+  "notes": "Request from mksettings -spec balance with the Wrath gear variant, apl and talents; same consumes, buffs and encounter as the Balance build (shared EncounterLevel60). Duration 180s, durationVariation 20. No edits needed. Windshaper Skyborne since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29); rotation unchanged."
 }
