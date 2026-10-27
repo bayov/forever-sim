@@ -260,7 +260,9 @@ export const DefaultTalents = TalentsLevel60Demonology;
 // The Succubus is out for the Shadow builds, the fire build sacrifices it. Forever's demons take no
 // player buffs and scale from the warlock's stats (wowsims/forever's measured shares, notes.md). At
 // 180 sec (2026-10-23): on Destruction the Succubus is 17.7 ahead of the Felhunter and 24.9 of the
-// Imp, Spellstone 3.6 ahead of Firestone; on Affliction 16.2 and 24.6.
+// Imp; on Affliction 16.2 and 24.6. Since client 1.60.1.70630 Spellstone gives Shadow damage only:
+// on Destruction it and Firestone are even (1009.1 and 1009.5 at 180 sec, 20000 iterations,
+// 2026-10-27), on Affliction Spellstone is 4.3 ahead and on Demonology 6.9 (5000 iterations).
 export const DefaultOptions = WarlockOptions.create({
 	armor: Armor.DemonArmor,
 	summon: Summon.Succubus,
