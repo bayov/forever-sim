@@ -5,7 +5,7 @@
   "build": "Seal Fate Daggers",
   "isDefault": false,
   "pr": 9,
-  "race": "Orc",
+  "race": "Gnome",
   "talents": "0053031052150005-322303200013-002",
   "treeNames": [
     "Assassination",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_daggers",
   "apl": "level60_combat_daggers",
   "published": {
-    "dps": 731.5,
-    "source": "Rogue hit and explosives round 2026-10-24: hit by sim for dual wielders (10% in all), explosives only when they gain (standards 4 and 11, 2026-10-23); 180 s, 20,000 iterations, seed 1 (was 730.6)"
+    "dps": 730.6,
+    "source": "Race re-pick 2026-10-27 (standards 29 and 16): Gnome, with the Gnome rotation (Eureka! on cooldown, eurekaCp 0; it was the race override); verify.py, 20000 iterations, seed 1 (was 725.3 as Orc on the same sim)"
   },
   "verify": {
-    "dps": 731.46,
+    "dps": 730.6,
     "stderr": 0.2,
     "iters": 20000,
     "ok": true,
-    "note": "sim of the request, 180s, seed 1 (rogue worker, 2026-10-24)"
+    "note": "verify.py of this request, 180s, seed 1"
   },
   "summary": "Backstab on daggers with Seal Fate from Assassination.",
   "keyTalents": [
@@ -39,6 +39,7 @@
     "Uses the Combat Daggers rotation (no Adrenaline Rush or Blade Flurry talents, so those lines are skipped)",
     "Slice and Dice at 1+ combo points when down; refresh at 5 when about to drop",
     "Cold Blood right before a 5-point Eviscerate",
+    "Eureka! (Gnome) on cooldown while Slice and Dice has 8s or more left",
     "Thistle Tea at 10 energy or less; Sapper, Land Mine and potion while Slice and Dice is up",
     "Eviscerate at 4+ combo points (with Slice and Dice up, 79+ energy, or under 6s left); spend leftover points in the last 3s",
     "Backstab right after a main-hand swing (0.25s), or at 100 energy"
@@ -65,5 +66,5 @@
     "Assumed: the fight is in Hyjal or the Barrow Deeps. Its flask gives its full bonus only there.",
     "10% hit (the wrist and the second ring carry 10 hit rating each): dual wielders take hit by sim (standards 4), and past the 8% yellow cap it still helps the white hits (+0.4 to +1.9 over 8%)."
   ],
-  "notes": "Spec family set to Assassination (30 Assassination points); the PR frames it as a variant of Combat Daggers and it uses the rogue_combat mksettings setup and the Combat Daggers APL."
+  "notes": "Spec family set to Assassination (30 Assassination points); the PR frames it as a variant of Combat Daggers and it uses the rogue_combat mksettings setup and the Combat Daggers APL. Gnome since the 2026-10-27 race re-pick, with the level60_combat_daggers rotation regenerated with eurekaCp=0 (tools/rotopt/rogue_presets.sh), which was the Gnome race override; the same rotation is 0.0 for any other race (725.3 as Orc, unchanged). Was Orc."
 }

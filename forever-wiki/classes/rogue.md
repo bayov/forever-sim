@@ -48,7 +48,7 @@ What the client data says where the tooltips are vague, and what the sim does wi
 
 Grimstitch Armor (item set 2099) is Forever's crafted level 60 rogue set (Leatherworking, Grimstitch Mask, Spaulders, Chestpiece, Gloves, Pants and Boots, item level 65, named "Tier 1" in the client): 2 pieces 1% hit, 3 Kidney Shot 3 sec shorter, 4 +36 attack power against Humanoids, 5 Eviscerate (and Envenom) 5 Energy cheaper. The pieces carry only armor so far. They carry the set ID and no set name, so since 2026-10-23 the sim counts them toward set 2099 by ID (Grimstitch Armor, `items_sets_pve.go`) with the same bonuses as the synthetic Phase 1 sets.
 
-The Level 60 builds (Combat Daggers, Combat Swords, Mutilate, Subtlety and two variants, each also as a "(vs Humanoid)" build with Murder), their gear, rotations and races are in [../sim-status.md](../sim-status.md#rogue).
+The Level 60 builds (Combat Daggers, Combat Swords, Mutilate, Subtlety and two variants, each also as a "(vs Humanoid)" build with Murder), their gear, rotations and races are in [../sim-status.md](../sim-status.md#rogue). Since the 2026-10-27 race re-pick (orchestration/standards.md items 29 and 16) Combat Daggers and Seal Fate Daggers are Gnome, with Eureka! on cooldown in their rotation (770.5 and 730.6 at 180 sec, 4.9 and 5.3 ahead of the Windshaper and the Orc), and Mutilate and Seal Fate Swords are Undead (717.3 and 726.1, 2.5 and 4.2 ahead); Combat Swords stays Windshaper and Subtlety Night Elf.
 
 ## Spellbook changes (trainer abilities)
 

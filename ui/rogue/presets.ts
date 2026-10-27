@@ -293,6 +293,9 @@ export const ROTATION_PRESET_LEVEL30P5_SINISTER_STRIKE = PresetUtils.makePresetA
 // points make the fifth come too late, +0.1 to +1.0 at 120 / 180 / 300 sec on both seed sets, +0.7 to
 // +2.0 with its new talents). Mutilate Vanishes into an Ambush at 3 points or fewer since the same day
 // (+0.7 to +1.8).
+// Combat Daggers and Seal Fate Daggers are Gnome since 2026-10-27, so their rotation puts Eureka! on
+// cooldown (eurekaCp 0) instead of holding it for a 5 point Eviscerate these 4 point Eviscerate builds
+// seldom reach: +8.9 / +5.4 at 180 sec for the Gnome (20000 iterations, seed 1), 0.0 for other races.
 export const ROTATION_PRESET_LEVEL60_COMBAT_SWORDS = PresetUtils.makePresetAPLRotation('Level 60 Combat Swords', Level60CombatSwordsAPL, {
 	tooltip: 'Sinister Strike, Slice and Dice and 5 point Eviscerates, Blade Flurry before the pull.',
 	group: 'Level 60',
@@ -302,7 +305,8 @@ export const ROTATION_PRESET_LEVEL60_SEAL_FATE_SWORDS = PresetUtils.makePresetAP
 	group: 'Level 60',
 });
 export const ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS = PresetUtils.makePresetAPLRotation('Level 60 Combat Daggers', Level60CombatDaggersAPL, {
-	tooltip: 'Backstab, Slice and Dice and 4 point Eviscerates, Vanish into Ambush, Blade Flurry before the pull. Also the Seal Fate Daggers rotation.',
+	tooltip:
+		'Backstab, Slice and Dice and 4 point Eviscerates, Vanish into Ambush, Blade Flurry before the pull, Eureka! on cooldown. Also the Seal Fate Daggers rotation.',
 	group: 'Level 60',
 });
 export const ROTATION_PRESET_LEVEL60_MUTILATE = PresetUtils.makePresetAPLRotation('Level 60 Mutilate', Level60MutilateAPL, {
@@ -759,7 +763,7 @@ export const DefaultDebuffs = {
 export const P1OtherDefaults = {
 	profession1: Profession.Engineering,
 	profession2: Profession.Leatherworking,
-	race: Race.RaceSkyborneWindshaper,
+	race: Race.RaceGnome,
 };
 
 export const OtherDefaults = {
@@ -809,11 +813,7 @@ const level60Encounter = (name: string, mobType: MobType, consumes = P1Consumes)
 export const EncounterLevel60 = level60Encounter('Level 60', MobType.MobTypeUnknown);
 export const EncounterLevel60Humanoid = level60Encounter('Level 60 (vs Humanoid)', MobType.MobTypeHumanoid);
 export const EncounterLevel60SapperOnly = level60Encounter('Level 60 (no Land Mine)', MobType.MobTypeUnknown, P1SapperOnlyConsumes);
-export const EncounterLevel60SapperOnlyHumanoid = level60Encounter(
-	'Level 60 (no Land Mine, vs Humanoid)',
-	MobType.MobTypeHumanoid,
-	P1SapperOnlyConsumes,
-);
+export const EncounterLevel60SapperOnlyHumanoid = level60Encounter('Level 60 (no Land Mine, vs Humanoid)', MobType.MobTypeHumanoid, P1SapperOnlyConsumes);
 export const EncounterLevel60CombatDaggers = level60Encounter('Level 60 (Combat Daggers)', MobType.MobTypeUnknown, P1CombatDaggersConsumes);
 export const EncounterLevel60CombatDaggersHumanoid = level60Encounter(
 	'Level 60 (Combat Daggers, vs Humanoid)',
@@ -846,6 +846,12 @@ export const EncounterLevel60CombatDaggersHumanoid = level60Encounter(
 // The best Alliance race is the High Order on the Combat builds (0.2 to 0.5 behind the Windshaper), the
 // Human on Mutilate and both Seal Fate builds (0.1 to 0.4 behind) and the Night Elf on Subtlety. No
 // racial depends on the weapon since client 70425.
+// Race re-pick (2026-10-27, standards 29 and 16, on the 10-26 racial pass with each race's own rotation
+// and gear): Combat Daggers and Seal Fate Daggers move to the Gnome with Eureka! on cooldown, Mutilate and
+// Seal Fate Swords to the Undead. At 180 sec (verify.py, 20000 iterations, seed 1): Combat Daggers 770.5
+// against the Windshaper's 765.6, Seal Fate Daggers 730.6 against the Orc's 725.3, Mutilate 717.3 against
+// the Windshaper's 714.9, Seal Fate Swords 726.1 against the Orc's 721.9. Their vs Humanoid builds follow.
+// Combat Swords stays Windshaper and Subtlety Night Elf.
 // The weapons have the type and speed each build sims best with among Era Phase 1 BiS speeds
 // (standards 22), at the Era BiS weapons' damage per second. A slow main hand and a fast off hand win:
 // Combat Swords holds a 2.9 sec axe and a 2.5 sec mace, Combat Daggers a 1.8 sec dagger and the same
@@ -889,20 +895,21 @@ const level60Build = (
 	});
 export const PresetBuildLevel60CombatDaggers = level60Build(
 	'Level 60 Combat Daggers',
-	'Level 60 Windshaper Combat Backstab on the synthetic Phase 1 dagger and a slow mace off hand.',
+	'Level 60 Gnome Combat Backstab on the synthetic Phase 1 dagger and a slow mace off hand.',
 	GearLevel60SyntheticCombatDaggers,
 	TalentsLevel60CombatDaggers,
 	ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
 	EncounterLevel60CombatDaggers,
+	Race.RaceGnome,
 );
 export const PresetBuildLevel60SealFateDaggers = level60Build(
 	'Level 60 Seal Fate Daggers',
-	'Level 60 Orc Seal Fate Backstab on the synthetic Phase 1 daggers.',
+	'Level 60 Gnome Seal Fate Backstab on the synthetic Phase 1 daggers.',
 	GearLevel60SyntheticDaggers,
 	TalentsLevel60SealFateDaggers,
 	ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
 	EncounterLevel60,
-	Race.RaceOrc,
+	Race.RaceGnome,
 );
 export const PresetBuildLevel60CombatSwords = level60Build(
 	'Level 60 Combat Swords',
@@ -915,20 +922,21 @@ export const PresetBuildLevel60CombatSwords = level60Build(
 );
 export const PresetBuildLevel60SealFateSwords = level60Build(
 	'Level 60 Seal Fate Swords',
-	'Level 60 Orc Seal Fate Sinister Strike on the synthetic Phase 1 axe and a fast dagger off hand.',
+	'Level 60 Undead Seal Fate Sinister Strike on the synthetic Phase 1 axe and a fast dagger off hand.',
 	GearLevel60SyntheticSealFateSwords,
 	TalentsLevel60SealFateSwords,
 	ROTATION_PRESET_LEVEL60_SEAL_FATE_SWORDS,
 	EncounterLevel60SapperOnly,
-	Race.RaceOrc,
+	Race.RaceUndead,
 );
 export const PresetBuildLevel60Mutilate = level60Build(
 	'Level 60 Mutilate',
-	'Level 60 Windshaper Assassination Mutilate on two synthetic Phase 1 daggers.',
+	'Level 60 Undead Assassination Mutilate on two synthetic Phase 1 daggers.',
 	GearLevel60SyntheticMutilate,
 	TalentsLevel60Mutilate,
 	ROTATION_PRESET_LEVEL60_MUTILATE,
 	EncounterLevel60SapperOnly,
+	Race.RaceUndead,
 );
 export const PresetBuildLevel60Subtlety = level60Build(
 	'Level 60 Subtlety',
@@ -949,22 +957,13 @@ const humanoidBuild = (
 	rotation: PresetUtils.PresetRotation,
 	race = Race.RaceSkyborneWindshaper,
 	encounter = EncounterLevel60Humanoid,
-) =>
-	level60Build(
-		`${name} (vs Humanoid)`,
-		`${name} against a Humanoid or Giant boss, with Murder 2/2.`,
-		gear,
-		talents,
-		rotation,
-		encounter,
-		race,
-	);
+) => level60Build(`${name} (vs Humanoid)`, `${name} against a Humanoid or Giant boss, with Murder 2/2.`, gear, talents, rotation, encounter, race);
 export const PresetBuildLevel60CombatDaggersHumanoid = humanoidBuild(
 	'Level 60 Combat Daggers',
 	GearLevel60SyntheticCombatDaggers,
 	TalentsLevel60CombatDaggersHumanoid,
 	ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
-	Race.RaceSkyborneWindshaper,
+	Race.RaceGnome,
 	EncounterLevel60CombatDaggersHumanoid,
 );
 export const PresetBuildLevel60SealFateDaggersHumanoid = humanoidBuild(
@@ -972,7 +971,7 @@ export const PresetBuildLevel60SealFateDaggersHumanoid = humanoidBuild(
 	GearLevel60SyntheticDaggers,
 	TalentsLevel60SealFateDaggersHumanoid,
 	ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
-	Race.RaceOrc,
+	Race.RaceGnome,
 );
 export const PresetBuildLevel60CombatSwordsHumanoid = humanoidBuild(
 	'Level 60 Combat Swords',
@@ -987,7 +986,7 @@ export const PresetBuildLevel60SealFateSwordsHumanoid = humanoidBuild(
 	GearLevel60SyntheticSealFateSwords,
 	TalentsLevel60SealFateSwordsHumanoid,
 	ROTATION_PRESET_LEVEL60_SEAL_FATE_SWORDS,
-	Race.RaceOrc,
+	Race.RaceUndead,
 	EncounterLevel60SapperOnlyHumanoid,
 );
 export const PresetBuildLevel60MutilateHumanoid = humanoidBuild(
@@ -995,7 +994,7 @@ export const PresetBuildLevel60MutilateHumanoid = humanoidBuild(
 	GearLevel60SyntheticMutilate,
 	TalentsLevel60MutilateHumanoid,
 	ROTATION_PRESET_LEVEL60_MUTILATE,
-	Race.RaceSkyborneWindshaper,
+	Race.RaceUndead,
 	EncounterLevel60SapperOnlyHumanoid,
 );
 export const PresetBuildLevel60SubtletyHumanoid = humanoidBuild(

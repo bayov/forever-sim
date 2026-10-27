@@ -5,7 +5,7 @@
   "build": "Combat Daggers",
   "isDefault": true,
   "pr": 9,
-  "race": "SkyborneWindshaper",
+  "race": "Gnome",
   "talents": "005303104-30230320201515231-002",
   "treeNames": [
     "Assassination",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_combat_daggers",
   "apl": "level60_combat_daggers",
   "published": {
-    "dps": 770.3,
-    "source": "Rogue hit and explosives round 2026-10-24: hit by sim for dual wielders (9% in all), explosives only when they gain (standards 4 and 11, 2026-10-23); 180 s, 20,000 iterations, seed 1 (was 767.8)"
+    "dps": 770.5,
+    "source": "Race re-pick 2026-10-27 (standards 29 and 16): Gnome, with the Gnome rotation (Eureka! on cooldown, eurekaCp 0; it was the race override); verify.py, 20000 iterations, seed 1 (was 765.6 as Windshaper Skyborne on the same sim)"
   },
   "verify": {
-    "dps": 770.32,
-    "stderr": 0.21,
+    "dps": 770.5,
+    "stderr": 0.2,
     "iters": 20000,
     "ok": true,
-    "note": "sim of the request, 180s, seed 1 (rogue worker, 2026-10-24)"
+    "note": "verify.py of this request, 180s, seed 1"
   },
   "summary": "Combat Backstab on a dagger, with a slow off hand mace for Hack and Slash.",
   "keyTalents": [
@@ -40,6 +40,7 @@
     "Slice and Dice at 1+ combo points when down; refresh at 5 when about to drop",
     "Adrenaline Rush under 39 energy while Slice and Dice is up",
     "Blade Flurry on cooldown",
+    "Eureka! (Gnome) on cooldown while Slice and Dice has 8s or more left",
     "Thistle Tea at 10 energy or less; Sapper and potion while Slice and Dice is up",
     "Eviscerate at 4+ combo points (with Slice and Dice up, 79+ energy, or under 6s left); spend leftover points in the last 3s",
     "Vanish into Ambush at 3 combo points or fewer (Shadowmeld into Ambush for a Night Elf)",
@@ -62,9 +63,10 @@
     "Murder does nothing on the generic boss, so its points go to Lethality (Vile Poisons for Seal Fate Daggers).",
     "No Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV). They would add 13 to 18.",
     "Grimstitch 4-piece and 5-piece aren't active (about +8 and +6).",
-    "Assumed: the fight is in Hyjal or the Barrow Deeps. Its flask gives its full bonus only there.", "Takes the Flask of Natural Accuracy over Natural Precision, since its 5% hit still helps white hits (0.1 to 0.6 DPS).",
+    "Assumed: the fight is in Hyjal or the Barrow Deeps. Its flask gives its full bonus only there.",
+    "Takes the Flask of Natural Accuracy over Natural Precision, since its 5% hit still helps white hits (0.1 to 0.6 DPS).",
     "9% hit (the wrist carries 10 hit rating): dual wielders take hit by sim (standards 4); 9% beats 8% by 1.1 to 1.8, and 10% is 0.6 behind to 0.1 ahead.",
     "No Goblin Land Mine: its 1 sec cast resets the swing, so it loses DPS here. The Sapper stays."
   ],
-  "notes": "Request from mksettings -spec rogue_combat_daggers (the rogue_combat setup with the Flask of Natural Accuracy)."
+  "notes": "Request from mksettings -spec rogue_combat_daggers (the rogue_combat setup with the Flask of Natural Accuracy). Gnome since the 2026-10-27 race re-pick, with the level60_combat_daggers rotation regenerated with eurekaCp=0 (tools/rotopt/rogue_presets.sh), which was the Gnome race override; the same rotation is 0.0 for any other race (765.6 as Windshaper Skyborne, unchanged). Was Windshaper Skyborne."
 }

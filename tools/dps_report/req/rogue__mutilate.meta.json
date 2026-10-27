@@ -5,7 +5,7 @@
   "build": "Mutilate",
   "isDefault": true,
   "pr": 9,
-  "race": "SkyborneWindshaper",
+  "race": "Undead",
   "talents": "0053031033150103-302303202015-002",
   "treeNames": [
     "Assassination",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_mutilate",
   "apl": "level60_mutilate",
   "published": {
-    "dps": 718.9,
-    "source": "Rogue hit and explosives round 2026-10-24: hit by sim for dual wielders (10% in all), explosives only when they gain (standards 4 and 11, 2026-10-23); 180 s, 20,000 iterations, seed 1 (was 717.3)"
+    "dps": 717.3,
+    "source": "Race re-pick 2026-10-27 (standards 29 and 16): Undead; verify.py, 20000 iterations, seed 1 (was 714.9 as Windshaper Skyborne on the same sim)"
   },
   "verify": {
-    "dps": 718.86,
-    "stderr": 0.18,
+    "dps": 717.3,
+    "stderr": 0.2,
     "iters": 20000,
     "ok": true,
-    "note": "sim of the request, 180s, seed 1 (rogue worker, 2026-10-24)"
+    "note": "verify.py of this request, 180s, seed 1"
   },
   "summary": "Mutilate with Seal Fate and Cold Blood, plus Puncturing Wounds from Combat.",
   "keyTalents": [
@@ -67,5 +67,5 @@
     "10% hit (the wrist and the second ring carry 10 hit rating each): dual wielders take hit by sim (standards 4), and past the 8% yellow cap it still helps the white hits (+0.4 to +1.9 over 8%).",
     "No Goblin Land Mine: its 1 sec cast resets the swing, so it loses DPS here. The Sapper stays."
   ],
-  "notes": "Default for the Assassination raid-sim preset."
+  "notes": "Default for the Assassination raid-sim preset. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Windshaper Skyborne."
 }
