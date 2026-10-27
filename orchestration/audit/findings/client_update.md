@@ -4,15 +4,6 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
-### client_update-20261027-1: Missile Barrage no longer procs from Arcane Missiles hits (70630 tooltip)
-- severity: high (−7.9% on mage__arcane if real)
-- affects: mage Arcane (any build with Missile Barrage that casts Arcane Missiles)
-- found: 2026-10-27, master d3df924
-- evidence: client 70630 Spell 400588 Description_lang drops "your Arcane Missile hits a ${$m1/4}% chance" and adds Frost Blast to the ${$m1/2}% list. Its SpellEffect, SpellAuraOptions and SpellClassOptions rows are identical in 70532 and 70630 (the proc is scripted), so the tooltip is the only client evidence; not in Blizzard's notes or on foreverchanges yet. Sim: `sim/mage/talents.go` applyMissileBarrage `OnSpellHitDealt` rolls 5% a point on every missile that lands. Measured with that handler removed (180 s, 20k iterations, paired seeds 1 and 1000003): mage__arcane 982.50 → 904.74 and 982.47 → 905.06 (−77.6, −7.9%); mage__frostfire 0. Ledger MAGE-U-15. Fairly sure the tooltip reflects a server change (the same rewrite brings in the 10-16 Frost Blast hotfix), but unconfirmed.
-- proposed fix: confirm in game (Missile Barrage procs during a channel) or in a combat log, then drop the `OnSpellHitDealt` roll under Forever, re-optimize the Arcane talents and rotation (Missile Barrage may no longer be worth its points), and rerun the Arcane presets.
-- needs: user ruling (take the tooltip or verify first), then orchestrator fix
-- 2026-10-27: still open; the mage re-check found no dev note withdrawing it and post /6 (10-16) explicitly added it. Recommendation stays: verify in game before changing.
-
 ### client_update-20261027-3: Amplify Curse no longer amplifies Bane of Agony in 70630
 - severity: low (no preset or APL casts Amplify Curse)
 - affects: warlock (Amplify Curse users only)
@@ -23,6 +14,16 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - 2026-10-27: the 70630 mask reading holds, but 18288's 70630 description and Wowhead's Forever tooltip still name Bane of Agony, and every Agony rank gains a base-0 aura 271 effect (w2) that its new debuff text multiplies by, so the +50% looks moved onto Agony as a server-filled value, not removed. The sim keeps +50% (no preset casts Amplify Curse). needs: user ruling.
 
 ## Resolved
+
+### client_update-20261027-1: Missile Barrage no longer procs from Arcane Missiles hits (70630 tooltip)
+- severity: high (−7.9% on mage__arcane if real)
+- affects: mage Arcane (any build with Missile Barrage that casts Arcane Missiles)
+- found: 2026-10-27, master d3df924
+- evidence: client 70630 Spell 400588 Description_lang drops "your Arcane Missile hits a ${$m1/4}% chance" and adds Frost Blast to the ${$m1/2}% list. Its SpellEffect, SpellAuraOptions and SpellClassOptions rows are identical in 70532 and 70630 (the proc is scripted), so the tooltip is the only client evidence; not in Blizzard's notes or on foreverchanges yet. Sim: `sim/mage/talents.go` applyMissileBarrage `OnSpellHitDealt` rolls 5% a point on every missile that lands. Measured with that handler removed (180 s, 20k iterations, paired seeds 1 and 1000003): mage__arcane 982.50 → 904.74 and 982.47 → 905.06 (−77.6, −7.9%); mage__frostfire 0. Ledger MAGE-U-15. Fairly sure the tooltip reflects a server change (the same rewrite brings in the 10-16 Frost Blast hotfix), but unconfirmed.
+- proposed fix: confirm in game (Missile Barrage procs during a channel) or in a combat log, then drop the `OnSpellHitDealt` roll under Forever, re-optimize the Arcane talents and rotation (Missile Barrage may no longer be worth its points), and rerun the Arcane presets.
+- needs: user ruling (take the tooltip or verify first), then orchestrator fix
+- 2026-10-27: still open; the mage re-check found no dev note withdrawing it and post /6 (10-16) explicitly added it. Recommendation stays: verify in game before changing.
+- resolved: 2026-10-27, user ruling ("Missile Barrage should collapse to a single value assumption, doesn't proc"): the missiles never proc it under Forever (sim/mage/talents.go), and mage_am_missile_barrage is a one-value row; patch 0004 drops mage_am_mb.
 
 ### client_update-20261027-2: Spellstone gives Shadow damage only since 70630, the sim adds Fire too
 - severity: low (−0.13% to −0.28%)

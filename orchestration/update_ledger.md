@@ -106,7 +106,7 @@ The counts are as audited, before this audit's own PRs. A row that touches two s
 3. **Paladin Seal of Righteousness.** PR #54 keeps the double spell power behind a `pal_sor_sp_double` assumption, but the 70425 notes and client say it's fixed. Make "Once" the expected setting?
 4. **Warlock races.** After #69, Gnome may no longer be the best warlock race. Rerun the race tables.
 5. ~~**The 10-26 racial pass (dev notes post /7, rows SHR-P7-01..05).**~~ Settled 2026-10-27: the user asked for the sim to follow the notes; landed in 500e3a1.
-6. **Missile Barrage from Arcane Missiles hits (MAGE-U-15).** The 70630 tooltip drops it; the proc data can't show it. Take the tooltip, or check in game first? −7.9% on mage__arcane. (client_update-20261027-1)
+6. ~~**Missile Barrage from Arcane Missiles hits (MAGE-U-15).**~~ Settled 2026-10-27 by the user: no proc; one-value assumption.
 
 ### Report assumptions and Need to Verify items this ledger settles
 
@@ -163,7 +163,7 @@ Dev notes: **new post /7** (2026-10-26 20:35, edited 21:09), the pre-launch raci
 
 | ID | Source | Change | L60 DPS? | Client check | Sim status | Code location / note |
 |---|---|---|---|---|---|---|
-| MAGE-U-15 | DB2 70532→70630 (tooltip) | Missile Barrage 400588: "your Arcane Missile hits a ${$m1/4}% chance" dropped from the tooltip; Frost Blast added to the 10%-a-point list (the 10-16 FC hotfix, MAGE-U-HF5) | **yes** (Arcane) | Spell 400588 Description_lang only; its effects, aura options and class mask are identical (the proc is scripted, so the tooltip is the only client evidence) | ambiguous (needs verify); finding client_update-20261027-1 | `sim/mage/talents.go` applyMissileBarrage `OnSpellHitDealt` (5% a point on each missile that lands). Removing it: mage__arcane 982.5 → 904.9 (−7.9%) |
+| MAGE-U-15 | DB2 70532→70630 (tooltip) | Missile Barrage 400588: "your Arcane Missile hits a ${$m1/4}% chance" dropped from the tooltip; Frost Blast added to the 10%-a-point list (the 10-16 FC hotfix, MAGE-U-HF5) | **yes** (Arcane) | Spell 400588 Description_lang only; its effects, aura options and class mask are identical (the proc is scripted, so the tooltip is the only client evidence) | landed 2026-10-27 by user ruling (no missile proc under Forever); assumption collapsed to one value | `sim/mage/talents.go` applyMissileBarrage `OnSpellHitDealt` (5% a point on each missile that lands). Removing it: mage__arcane 982.5 → 904.9 (−7.9%) |
 | MAGE-U-16 | DB2 70532→70630 | Arcane Wrath 1326079-82: SpellCategory 2601 with CategoryRecoveryTime 6000 (the ranks share the 6 sec cooldown) | yes | SpellCooldowns 102218-21, SpellCategories 190242-45 | landed | `sim/mage/arcane_wrath.go` shared `cdTimer`, 6 sec |
 | MAGE-U-17 | DB2 70532→70630 | Revelation 1248808 (the enchant's buff) mask gains SpellClassMask_1 32768: Arcane Wrath and Arcane Barrage | yes | SpellEffect 1251976 | landed | `sim/common/enchant_effects.go` Revelation takes every direct APL spell already |
 | MAGE-U-18 | DB2 70532→70630 | Frost Blast 1326053-55 effect 1 coefficient 0.343 → 0.271 | n/a | SpellEffect 1363753/55/57 | not simulated on purpose | the sim has no Frost Blast (cone_of_cold.go:116) |

@@ -12,7 +12,8 @@ hunter_pet_ap / hunter_pet_hit, lock_pet_scaling, lock_demon_melee, pal_2h_spec_
 druid_rip_scale and pal_cons31 follow the new Rip and Consecration code, hunter_cobra_damage is new, and
 pal_soc_wf's Windfury Totem check is back in CreateExtraAttackAuraCommon (it had been lost, so the knob
 did nothing). 2026-10-25: mage_am_mb is new (0: Arcane Missiles' missiles don't proc Missile Barrage), and
-hunter_pet_same_hit is dropped (wowsims/forever's level 17 pet sheet settled it). hunter_hm60 also sets the
+hunter_pet_same_hit is dropped (wowsims/forever's level 17 pet sheet settled it). 2026-10-27: mage_am_mb is
+dropped again (user ruling: the missiles don't proc it, now master's Forever rule). hunter_hm60 also sets the
 hunter's own Hunter's Mark (ForeverHuntersMarkAura): since the 2026-10-25 ruling every hunter preset casts
 its own with the raid's off, so the knob on the raid debuff alone no longer reached them.
 2026-10-25 (user rulings): hunter_crit_per_agi now replaces the hunter's level's scale over Classic
@@ -375,21 +376,6 @@ index c15062ee4a..393ca41d1a 100644
  
  		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
  			baseDamage := sim.Roll(baseDamageLow, baseDamageHigh)
-diff --git a/sim/mage/talents.go b/sim/mage/talents.go
-index da759ff5d7..99072283e1 100644
---- a/sim/mage/talents.go
-+++ b/sim/mage/talents.go
-@@ -362,7 +362,9 @@ func (mage *Mage) applyMissileBarrage() {
- 			if spell.SpellCode != SpellCode_MageArcaneMissilesTick || !result.Landed() {
- 				return
- 			}
--			if sim.Proc(0.05*points, "Missile Barrage") {
-+			// dashboard assumption mage_am_mb = 0: Arcane Missiles' missiles don't proc Missile Barrage
-+			// (wowsims/forever 58fb6c0273)
-+			if core.Assume("mage_am_mb", 1) != 0 && sim.Proc(0.05*points, "Missile Barrage") {
- 				mage.MissileBarrageAura.Activate(sim)
- 			}
- 		},
 diff --git a/sim/paladin/assume_init.go b/sim/paladin/assume_init.go
 new file mode 100644
 index 0000000000..2088f47dc2

@@ -360,8 +360,10 @@ func (mage *Mage) applyMissileBarrage() {
 				mage.MissileBarrageAura.Activate(sim)
 			}
 		},
+		// Arcane Missiles' missiles don't proc it under Forever: client 70630's tooltip of 400588
+		// drops "your Arcane Missile hits a ${$m1/4}% chance" (user ruling 2026-10-27).
 		OnSpellHitDealt: func(aura *core.Aura, sim *core.Simulation, spell *core.Spell, result *core.SpellResult) {
-			if spell.SpellCode != SpellCode_MageArcaneMissilesTick || !result.Landed() {
+			if spell.SpellCode != SpellCode_MageArcaneMissilesTick || !result.Landed() || mage.Env.IsForever() {
 				return
 			}
 			if sim.Proc(0.05*points, "Missile Barrage") {
