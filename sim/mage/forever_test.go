@@ -859,8 +859,8 @@ func TestForeverEverlookDeliveryBot(t *testing.T) {
 	}
 }
 
-// The High Order's Read Leyline is a 2 sec cast on a 2 min cooldown, and its Energized doubles
-// the Spirit part of the mana regen for 30 sec (client 70425's DurationIndex 9).
+// The High Order's Read Leyline is a 2 sec cast on a 2 min cooldown, and its Energized raises
+// the Spirit part of the mana regen by 50% for 15 sec (development notes 2026-10-26).
 func TestForeverReadLeyline(t *testing.T) {
 	sim, mage := newMageWithRace(proto.Race_RaceSkyborneHighOrder)
 
@@ -872,14 +872,14 @@ func TestForeverReadLeyline(t *testing.T) {
 		t.Errorf("Read Leyline casts in %v on a %v cooldown, want 2s and 2m", readLeyline.DefaultCast.CastTime, readLeyline.CD.Duration)
 	}
 	energized := mage.GetAura("Energized")
-	if energized.Duration != 30*time.Second {
-		t.Errorf("Energized lasts %v, want 30s", energized.Duration)
+	if energized.Duration != 15*time.Second {
+		t.Errorf("Energized lasts %v, want 15s", energized.Duration)
 	}
 	regen := mage.ManaRegenPerSecondWhileNotCasting()
 	spirit := mage.SpiritManaRegenPerSecondDefault()
 	energized.Activate(sim)
-	if got := mage.ManaRegenPerSecondWhileNotCasting() - regen; math.Abs(got-spirit) > 1e-9 {
-		t.Errorf("Energized added %.3f mana a second, want the Spirit regen %.3f", got, spirit)
+	if got := mage.ManaRegenPerSecondWhileNotCasting() - regen; math.Abs(got-spirit/2) > 1e-9 {
+		t.Errorf("Energized added %.3f mana a second, want half the Spirit regen %.3f", got, spirit/2)
 	}
 
 	if _, gnome := newMageWithRace(proto.Race_RaceGnome); gnome.GetSpell(core.ActionID{SpellID: 1259705}) != nil {

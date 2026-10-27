@@ -73,9 +73,10 @@ func TestOrcShamanBaseStats(t *testing.T) {
 	}
 }
 
-// savageCrit is the Orc's Savage (client 70425): 1% melee and spell crit with any weapon. The beta
-// readings below were taken on client 70338, when it needed an axe and our characters had none.
-const savageCrit = 1.0
+// savageCrit is the Orc's crit racial on top of the beta readings below, taken on client 70338
+// when it needed an axe and our characters had none. Client 70425's Savage gave 1% with any
+// weapon; the development notes of 2026-10-26 remove Savage, so it is 0 again.
+const savageCrit = 0.0
 
 // TestOrcShamanAttributeRates checks what each attribute gives well above the naked values,
 // against a geared level 30 Orc shaman on the Forever beta (2026-10-08). We give a naked

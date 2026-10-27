@@ -28,6 +28,13 @@ The order of the racials in each race is kept from the current file, so a
 regeneration only shows real changes. A racial the file didn't have goes last.
 Where the client has no number for a tooltip (Berserking's duration), the
 current file's text stays (keep_known).
+
+A server change the client doesn't have yet (the 2026-10-26 racial pass) is
+carried by hand in tools/sources/racials_hotfix.json and applied last
+(hotfix): it rewrites a racial's text, or swaps the racial for a new one in
+its place, and marks the variant with source 'hotfix' and a note citing the
+change. Once a client build carries it, the script says so and the entry
+can go.
 """
 import argparse
 import collections
@@ -43,6 +50,7 @@ import wago  # noqa: E402
 ROOT = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
 OUT = os.path.join(ROOT, 'ui', 'core', 'forever', 'racials.json')
 META = os.path.join(ROOT, 'ui', 'core', 'forever', 'racials.meta.json')
+HOTFIX = os.path.join(ROOT, 'tools', 'sources', 'racials_hotfix.json')
 
 # source: ChrRaces and ChrClasses IDs, client beta 1.60.1.70450
 # The sim's names for the client's playable races and classes (proto/common.proto).
@@ -126,7 +134,9 @@ def ordered(new, old):
     races = sorted(new, key=lambda r: rank(list(old), r))
     out = {}
     for race in races:
-        spots = {v['spellId']: i for i, x in enumerate(old.get(race, [])) for v in x['variants']}
+        # A hotfixed racial keeps the place of the client racial it replaces.
+        spots = {k: i for i, x in enumerate(old.get(race, [])) for v in x['variants']
+                 for k in (v['spellId'], v.get('replaces')) if k is not None}
         out[race] = sorted(new[race], key=lambda x: min(
             (spots[v['spellId']] for v in x['variants'] if v['spellId'] in spots), default=len(spots)))
     return out
@@ -150,6 +160,33 @@ def keep_known(new, old):
                     v['description'] = o['description']
 
 
+def hotfix(new):
+    """Apply tools/sources/racials_hotfix.json to new, in place."""
+    with open(HOTFIX, encoding='utf-8') as f:
+        entries = json.load(f)['entries']
+    for e in entries:
+        racials = new.get(e['race'], [])
+        at = next(((i, v) for i, x in enumerate(racials) for v in x['variants'] if v['spellId'] == e['spellId']), None)
+        if at is None:
+            print('hotfix: %s has no racial %d in the client, entry not applied' % (e['race'], e['spellId']))
+            continue
+        i, v = at
+        if 'replace' in e:
+            r = e['replace']
+            racials[i] = {'name': r['name'], 'variants': [{
+                'spellId': r['spellId'], 'classes': v['classes'], 'description': r['description'],
+                'icon': r['icon'], 'passive': v['passive'], 'cost': v['cost'],
+                'source': 'hotfix', 'replaces': e['spellId'], 'note': e['note']}]}
+            continue
+        if v['description'] == e['description']:
+            print('hotfix: %s %s (%d) already reads so in the client, the entry can go' % (
+                e['race'], racials[i]['name'], e['spellId']))
+            continue
+        v['description'] = e['description']
+        v['source'] = 'hotfix'
+        v['note'] = e['note']
+
+
 def changes(old, new):
     lines = []
     for race in sorted(set(old) | set(new)):
@@ -160,10 +197,10 @@ def changes(old, new):
         for k in sorted(set(n) - set(o)):
             lines.append('%s: added %s (%d)' % (race, k[0], k[1]))
         for k in sorted(set(o) & set(n)):
-            for field in ('classes', 'description', 'icon', 'passive', 'cost'):
-                if o[k][field] != n[k][field]:
+            for field in ('classes', 'description', 'icon', 'passive', 'cost', 'source'):
+                if o[k].get(field) != n[k].get(field):
                     lines.append('%s: %s (%d) %s\n    was: %s\n    now: %s' % (
-                        race, k[0], k[1], field, o[k][field], n[k][field]))
+                        race, k[0], k[1], field, o[k].get(field), n[k].get(field)))
     return lines
 
 
@@ -177,13 +214,15 @@ def main():
         old = json.load(f)
     new = ordered(read(build), old)
     keep_known(new, old)
+    hotfix(new)
     for line in changes(old, new):
         print(line)
     if a.write:
         with open(OUT, 'w', encoding='utf-8') as f:
             json.dump(new, f, indent=2, ensure_ascii=False)
             f.write('\n')
-        m = meta.meta('client beta %s (wago.tools)' % build, 'tools/sources/racials.py', build=build)
+        m = meta.meta('client beta %s (wago.tools), with tools/sources/racials_hotfix.json' % build,
+                      'tools/sources/racials.py', build=build)
         with open(META, 'w', encoding='utf-8') as f:
             json.dump({'meta': m}, f, indent=2, sort_keys=True)
             f.write('\n')

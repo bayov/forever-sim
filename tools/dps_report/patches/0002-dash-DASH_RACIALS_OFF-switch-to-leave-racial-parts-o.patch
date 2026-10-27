@@ -5,14 +5,14 @@ Subject: [PATCH 2/3] dash: DASH_RACIALS_OFF switch to leave racial parts out
  (dashboard race breakdown only)
 
 ---
- sim/core/racials_forever.go  | 115 ++++++++++++++++++++++++++---------
+ sim/core/racials_forever.go  | 111 ++++++++++++++++++++++++++++++++++++++++--------------------
  sim/priest/chastise.go       |   2 +-
  sim/priest/dark_sacrifice.go |   2 +-
  sim/priest/starshards.go     |   2 +-
- 4 files changed, 89 insertions(+), 32 deletions(-)
+ 4 files changed, 86 insertions(+), 31 deletions(-)
 
 diff --git a/sim/core/racials_forever.go b/sim/core/racials_forever.go
-index 4d27467..3686238 100644
+index f39a440..e398bc7 100644
 --- a/sim/core/racials_forever.go
 +++ b/sim/core/racials_forever.go
 @@ -1,6 +1,8 @@
@@ -24,12 +24,12 @@ index 4d27467..3686238 100644
  	"time"
  
  	"github.com/wowsims/classic/sim/core/proto"
-@@ -16,78 +18,133 @@ import (
+@@ -21,8 +23,29 @@
  // Cooldowns per the client: Eureka! and the Undead and Gnome utilities 2 min, Blood Fury
  // (since client 70425), Berserking, Elune's Light and the Human, Dwarf and Orc utilities 3 min.
  
 +// DASH_RACIALS_OFF (dashboard builds only) lists racial parts to leave out, comma separated,
-+// or "all": spirit, ruthless, earthfury, beast, dodge, elune, shadowmeld, mind, eureka, savage,
++// or "all": spirit, ruthless, precision, beast, dodge, elune, shadowmeld, mind, eureka, command,
 +// bloodfury, touch, endurance, berserking, windblessed, insight, leyline, and the priest racial
 +// spells darksacrifice, starshards and chastise. It splits a race's edge into its base stats and
 +// each racial.
@@ -54,29 +54,32 @@ index 4d27467..3686238 100644
  
  	switch character.Race {
  	case proto.Race_RaceHuman:
- 		// The Human Spirit, and Ruthless (20597): 2% crit with all spells and attacks. Client 70338
- 		// called it Sword Specialization and gave the 2% only with a sword or two-handed sword
+@@ -31,77 +54,109 @@
  		// (SpellEquippedItems subclass mask 384); 70425 renamed it and dropped the weapon rule.
--		character.MultiplyStat(stats.Spirit, 1.05)
--		character.AddStat(stats.MeleeCrit, 2*CritRatingPerCritChance)
--		character.AddStat(stats.SpellCrit, 2*SpellCritRatingPerCritChance)
+ 		// Development notes 2026-10-26: "Ruthless now increases critical chance by 1% (was 2%)",
+ 		// "Human Spirit now increases Spirit by 10% (was 5%)".
+-		character.MultiplyStat(stats.Spirit, 1.10)
+-		character.AddStat(stats.MeleeCrit, 1*CritRatingPerCritChance)
+-		character.AddStat(stats.SpellCrit, 1*SpellCritRatingPerCritChance)
 +		if on("spirit") {
-+			character.MultiplyStat(stats.Spirit, 1.05)
++			character.MultiplyStat(stats.Spirit, 1.10)
 +		}
 +		if on("ruthless") {
-+			character.AddStat(stats.MeleeCrit, 2*CritRatingPerCritChance)
-+			character.AddStat(stats.SpellCrit, 2*SpellCritRatingPerCritChance)
++			character.AddStat(stats.MeleeCrit, 1*CritRatingPerCritChance)
++			character.AddStat(stats.SpellCrit, 1*SpellCritRatingPerCritChance)
 +		}
  
  	case proto.Race_RaceDwarf:
- 		// Earth Fury (1259719): "Increases your critical strike bonus to damage and healing by
- 		// 2%" (auras 163 and 50, 2 each). Client 70338 called it Mace Specialization, 1% crit with
- 		// all spells and attacks with a mace or two-handed mace; 70425 replaced it. And Big Game
+ 		// Artisan's Precision: "Increases hit chance with spells and attacks by 1%" (development
+ 		// notes 2026-10-26, which remove Earth Fury, 70425's 2% critical strike bonus to damage
+ 		// and healing; 70338 had Mace Specialization, 1% crit with a mace). And Big Game
  		// Hunter. Stoneform is a defensive cooldown the sim does not measure.
--		character.critDamageBonus(1.02)
+-		character.AddStat(stats.MeleeHit, 1*MeleeHitRatingPerHitChance)
+-		character.AddStat(stats.SpellHit, 1*SpellHitRatingPerHitChance)
 -		character.mobTypeDamageAura(proto.MobType_MobTypeBeast, 1.05)
-+		if on("earthfury") {
-+			character.critDamageBonus(1.02)
++		if on("precision") {
++			character.AddStat(stats.MeleeHit, 1*MeleeHitRatingPerHitChance)
++			character.AddStat(stats.SpellHit, 1*SpellHitRatingPerHitChance)
 +		}
 +		if on("beast") {
 +			character.mobTypeDamageAura(proto.MobType_MobTypeBeast, 1.05)
@@ -123,17 +126,19 @@ index 4d27467..3686238 100644
 -		character.registerEureka()
  
  	case proto.Race_RaceOrc:
- 		// Savage: 1% crit with all spells and abilities, whatever the weapon. In client 70338 it was
- 		// Axe Specialization, the same 1% only with an axe or a two-handed axe equipped
- 		// (SpellEquippedItems 255488, axes only); client 70425 renamed spell 20574 and dropped
- 		// the weapon requirement. Command (pet damage) is gone.
--		character.AddStat(stats.MeleeCrit, 1*CritRatingPerCritChance)
--		character.AddStat(stats.SpellCrit, 1*SpellCritRatingPerCritChance)
+ 		// Development notes 2026-10-26: "Savage removed (1% increased critical strike chance)",
+ 		// "Command re-added, increasing Warlock and Hunter pet damage by 5%". Savage was 70425's
+ 		// weaponless Axe Specialization. Command is Classic's: every pet but the guardians
+ 		// (a hunter's hawks, a warlock's Infernal), as racials.go has it.
+-		if character.Class == proto.Class_ClassHunter || character.Class == proto.Class_ClassWarlock {
++		if on("command") && (character.Class == proto.Class_ClassHunter || character.Class == proto.Class_ClassWarlock) {
+ 			for _, pet := range character.Pets {
+ 				if !pet.IsGuardian() {
+ 					pet.PseudoStats.DamageDealtMultiplier *= 1.05
+ 				}
+ 			}
+ 		}
 -		character.registerForeverBloodFury()
-+		if on("savage") {
-+			character.AddStat(stats.MeleeCrit, 1*CritRatingPerCritChance)
-+			character.AddStat(stats.SpellCrit, 1*SpellCritRatingPerCritChance)
-+		}
 +		if on("bloodfury") {
 +			character.registerForeverBloodFury()
 +		}
@@ -145,13 +150,12 @@ index 4d27467..3686238 100644
 +		}
  
  	case proto.Race_RaceTauren:
- 		// Endurance (20550): 5% health and, since client 70425, "critical strike bonus to damage
- 		// and healing increased by 2%" (auras 163 and 50) in place of 70338's 1% hit.
+ 		// Endurance (20550): 5% health. Development notes 2026-10-26: "Endurance no longer
+ 		// provides any modifiers beyond 5% increased Health" (70425 added 2% critical strike
+ 		// bonus to damage and healing, 70338 had 1% hit). Plainsrunning is movement.
 -		character.MultiplyStat(stats.Health, 1.05)
--		character.critDamageBonus(1.02)
 +		if on("endurance") {
 +			character.MultiplyStat(stats.Health, 1.05)
-+			character.critDamageBonus(1.02)
 +		}
  
  	case proto.Race_RaceTroll:
@@ -167,18 +171,19 @@ index 4d27467..3686238 100644
 +		}
  
  	case proto.Race_RaceSkyborneHighOrder, proto.Race_RaceSkyborneWindshaper:
- 		// Wind Blessed (1259710: 3% spellcasting, melee and ranged haste since client 70425, 1% in
- 		// 70338) and Elemental Insight. Walk on Air and Skysight are movement; the High Order's
- 		// Read Leyline is regeneration, the one active the sim models.
--		character.PseudoStats.MeleeSpeedMultiplier *= 1.03
--		character.PseudoStats.RangedSpeedMultiplier *= 1.03
--		character.PseudoStats.CastSpeedMultiplier *= 1.03
+ 		// Wind Blessed (1259710): 2% spellcasting, melee and ranged haste ("Wind-Blessed Haste
+ 		// bonus reduced to 2% (was 3%)", development notes 2026-10-26; 3% in client 70425 to
+ 		// 70630, 1% in 70338) and Elemental Insight. Walk on Air and Skysight are movement; the
+ 		// High Order's Read Leyline is regeneration, the one active the sim models.
+-		character.PseudoStats.MeleeSpeedMultiplier *= 1.02
+-		character.PseudoStats.RangedSpeedMultiplier *= 1.02
+-		character.PseudoStats.CastSpeedMultiplier *= 1.02
 -		character.mobTypeDamageAura(proto.MobType_MobTypeElemental, 1.05)
 -		if character.Race == proto.Race_RaceSkyborneHighOrder {
 +		if on("windblessed") {
-+			character.PseudoStats.MeleeSpeedMultiplier *= 1.03
-+			character.PseudoStats.RangedSpeedMultiplier *= 1.03
-+			character.PseudoStats.CastSpeedMultiplier *= 1.03
++			character.PseudoStats.MeleeSpeedMultiplier *= 1.02
++			character.PseudoStats.RangedSpeedMultiplier *= 1.02
++			character.PseudoStats.CastSpeedMultiplier *= 1.02
 +		}
 +		if on("insight") {
 +			character.mobTypeDamageAura(proto.MobType_MobTypeElemental, 1.05)

@@ -134,12 +134,12 @@ func TestOrcShamanSpellCrit(t *testing.T) {
 	}
 }
 
-// TestOrcShamanSavage checks Forever's Orc Savage (shaman_audit.md 9.1).
+// TestOrcShamanSavage checks that Forever's Orc has no crit racial (shaman_audit.md 9.1).
 //
 // Client 70425 renamed the Orc's Axe Specialization (20574) to Savage and dropped its axe
-// requirement: 1% more crit on every melee attack and spell with any weapon. We compare an Orc
-// and a Tauren holding a two-handed mace that has no stats. The races' base Agility and Intellect
-// differ, so we take those out and the 1% is what is left.
+// requirement, 1% crit with any weapon; the development notes of 2026-10-26 remove Savage. We
+// compare an Orc and a Tauren holding a two-handed mace that has no stats. The races' base
+// Agility and Intellect differ, so we take those out and nothing should be left.
 func TestOrcShamanSavage(t *testing.T) {
 	const batteringHammer = 3198
 	crit := func(race proto.Race) (melee, spell float64) {
@@ -158,11 +158,11 @@ func TestOrcShamanSavage(t *testing.T) {
 	}
 	orcMelee, orcSpell := crit(proto.Race_RaceOrc)
 	taurenMelee, taurenSpell := crit(proto.Race_RaceTauren)
-	if got := orcMelee - taurenMelee; math.Abs(got-1) > 1e-6 {
-		t.Errorf("the Orc has %.4f%% more melee crit than the Tauren with a mace, want 1%%", got)
+	if got := orcMelee - taurenMelee; math.Abs(got) > 1e-6 {
+		t.Errorf("the Orc has %.4f%% more melee crit than the Tauren with a mace, want 0", got)
 	}
-	if got := orcSpell - taurenSpell; math.Abs(got-1) > 1e-6 {
-		t.Errorf("the Orc has %.4f%% more spell crit than the Tauren with a mace, want 1%%", got)
+	if got := orcSpell - taurenSpell; math.Abs(got) > 1e-6 {
+		t.Errorf("the Orc has %.4f%% more spell crit than the Tauren with a mace, want 0", got)
 	}
 }
 

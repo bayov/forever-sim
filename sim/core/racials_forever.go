@@ -10,8 +10,13 @@ import (
 // Forever racials, as read from the beta client tooltips (build 1.60.1.69876, see
 // forever-wiki/racials.md) and checked against client 1.60.1.70425. Every race has two actives
 // and two passives, and the resistance racials are gone. The weapon skill racials paid crit with
-// their weapon type until 70425, which dropped every weapon requirement: Human Ruthless and Orc
-// Savage give crit with any weapon, and Dwarf Earth Fury gives crit damage instead.
+// their weapon type until 70425, which dropped every weapon requirement: Human Ruthless gives
+// crit with any weapon.
+//
+// The racial pass of the development notes of 2026-10-26 (post 7) is server side: client
+// 1.60.1.70630 still has the old rows (Ruthless 2%, The Human Spirit 5%, Earth Fury, Savage,
+// Endurance's crit damage, Wind Blessed 3%, Read Leyline 100%) and no Artisan's Precision or
+// Command. The sim takes the notes' values.
 //
 // Cooldowns per the client: Eureka! and the Undead and Gnome utilities 2 min, Blood Fury
 // (since client 70425), Berserking, Elune's Light and the Human, Dwarf and Orc utilities 3 min.
@@ -21,19 +26,22 @@ func applyForeverRaceEffects(agent Agent) {
 
 	switch character.Race {
 	case proto.Race_RaceHuman:
-		// The Human Spirit, and Ruthless (20597): 2% crit with all spells and attacks. Client 70338
-		// called it Sword Specialization and gave the 2% only with a sword or two-handed sword
+		// The Human Spirit, and Ruthless (20597): crit with all spells and attacks. Client 70338
+		// called it Sword Specialization and gave 2% only with a sword or two-handed sword
 		// (SpellEquippedItems subclass mask 384); 70425 renamed it and dropped the weapon rule.
-		character.MultiplyStat(stats.Spirit, 1.05)
-		character.AddStat(stats.MeleeCrit, 2*CritRatingPerCritChance)
-		character.AddStat(stats.SpellCrit, 2*SpellCritRatingPerCritChance)
+		// Development notes 2026-10-26: "Ruthless now increases critical chance by 1% (was 2%)",
+		// "Human Spirit now increases Spirit by 10% (was 5%)".
+		character.MultiplyStat(stats.Spirit, 1.10)
+		character.AddStat(stats.MeleeCrit, 1*CritRatingPerCritChance)
+		character.AddStat(stats.SpellCrit, 1*SpellCritRatingPerCritChance)
 
 	case proto.Race_RaceDwarf:
-		// Earth Fury (1259719): "Increases your critical strike bonus to damage and healing by
-		// 2%" (auras 163 and 50, 2 each). Client 70338 called it Mace Specialization, 1% crit with
-		// all spells and attacks with a mace or two-handed mace; 70425 replaced it. And Big Game
+		// Artisan's Precision: "Increases hit chance with spells and attacks by 1%" (development
+		// notes 2026-10-26, which remove Earth Fury, 70425's 2% critical strike bonus to damage
+		// and healing; 70338 had Mace Specialization, 1% crit with a mace). And Big Game
 		// Hunter. Stoneform is a defensive cooldown the sim does not measure.
-		character.critDamageBonus(1.02)
+		character.AddStat(stats.MeleeHit, 1*MeleeHitRatingPerHitChance)
+		character.AddStat(stats.SpellHit, 1*SpellHitRatingPerHitChance)
 		character.mobTypeDamageAura(proto.MobType_MobTypeBeast, 1.05)
 
 	case proto.Race_RaceNightElf:
@@ -56,22 +64,27 @@ func applyForeverRaceEffects(agent Agent) {
 		character.registerEureka()
 
 	case proto.Race_RaceOrc:
-		// Savage: 1% crit with all spells and abilities, whatever the weapon. In client 70338 it was
-		// Axe Specialization, the same 1% only with an axe or a two-handed axe equipped
-		// (SpellEquippedItems 255488, axes only); client 70425 renamed spell 20574 and dropped
-		// the weapon requirement. Command (pet damage) is gone.
-		character.AddStat(stats.MeleeCrit, 1*CritRatingPerCritChance)
-		character.AddStat(stats.SpellCrit, 1*SpellCritRatingPerCritChance)
+		// Development notes 2026-10-26: "Savage removed (1% increased critical strike chance)",
+		// "Command re-added, increasing Warlock and Hunter pet damage by 5%". Savage was 70425's
+		// weaponless Axe Specialization. Command is Classic's: every pet but the guardians
+		// (a hunter's hawks, a warlock's Infernal), as racials.go has it.
+		if character.Class == proto.Class_ClassHunter || character.Class == proto.Class_ClassWarlock {
+			for _, pet := range character.Pets {
+				if !pet.IsGuardian() {
+					pet.PseudoStats.DamageDealtMultiplier *= 1.05
+				}
+			}
+		}
 		character.registerForeverBloodFury()
 
 	case proto.Race_RaceUndead:
 		character.registerTouchOfTheGrave()
 
 	case proto.Race_RaceTauren:
-		// Endurance (20550): 5% health and, since client 70425, "critical strike bonus to damage
-		// and healing increased by 2%" (auras 163 and 50) in place of 70338's 1% hit.
+		// Endurance (20550): 5% health. Development notes 2026-10-26: "Endurance no longer
+		// provides any modifiers beyond 5% increased Health" (70425 added 2% critical strike
+		// bonus to damage and healing, 70338 had 1% hit). Plainsrunning is movement.
 		character.MultiplyStat(stats.Health, 1.05)
-		character.critDamageBonus(1.02)
 
 	case proto.Race_RaceTroll:
 		// Beast Slaying stays. Bow and Throwing Specialization are gone, and Berserking
@@ -80,12 +93,13 @@ func applyForeverRaceEffects(agent Agent) {
 		makeBerserkingCooldown(character, .1, character.NewTimer())
 
 	case proto.Race_RaceSkyborneHighOrder, proto.Race_RaceSkyborneWindshaper:
-		// Wind Blessed (1259710: 3% spellcasting, melee and ranged haste since client 70425, 1% in
-		// 70338) and Elemental Insight. Walk on Air and Skysight are movement; the High Order's
-		// Read Leyline is regeneration, the one active the sim models.
-		character.PseudoStats.MeleeSpeedMultiplier *= 1.03
-		character.PseudoStats.RangedSpeedMultiplier *= 1.03
-		character.PseudoStats.CastSpeedMultiplier *= 1.03
+		// Wind Blessed (1259710): 2% spellcasting, melee and ranged haste ("Wind-Blessed Haste
+		// bonus reduced to 2% (was 3%)", development notes 2026-10-26; 3% in client 70425 to
+		// 70630, 1% in 70338) and Elemental Insight. Walk on Air and Skysight are movement; the
+		// High Order's Read Leyline is regeneration, the one active the sim models.
+		character.PseudoStats.MeleeSpeedMultiplier *= 1.02
+		character.PseudoStats.RangedSpeedMultiplier *= 1.02
+		character.PseudoStats.CastSpeedMultiplier *= 1.02
 		character.mobTypeDamageAura(proto.MobType_MobTypeElemental, 1.05)
 		if character.Race == proto.Race_RaceSkyborneHighOrder {
 			character.registerReadLeyline()
@@ -94,23 +108,25 @@ func applyForeverRaceEffects(agent Agent) {
 }
 
 // Read Leyline (1259705): a 2 sec cast on a 2 min cooldown that triggers Energized (1270842),
-// 100% more mana regeneration (aura 110, MOD_POWER_REGEN_PERCENT) and health regeneration (aura
-// 88). With no leyline near it lasts 30 sec, DurationIndex 9 since client 70425 (15 sec, index 8,
-// before; wowsims/forever e307ef4b0a). The sim fights away from leylines, so it never gets the
-// 15 min version. Aura 110 is the one Innervate and Evocation use, so it doubles the Spirit part
-// of the regen and leaves mp5 alone, and it adds nothing inside the five second rule unless some
-// of the Spirit regen goes on while casting. The sim leaves it to the APL.
+// more mana regeneration (aura 110, MOD_POWER_REGEN_PERCENT) and health regeneration (aura 88).
+// Development notes 2026-10-26: "Read Leyline now increases Mana and Health regeneration by 50%
+// (was 100%), with a 15-second duration"; client 70630 still reads 100% for 30 sec
+// (DurationIndex 9 since 70425). Used at a Ley Line it also grants Attuned for an hour, which
+// raises it to 100%; the sim fights away from Ley Lines, so it never gets that. Aura 110 is the
+// one Innervate and Evocation use, so it raises the Spirit part of the regen by half and leaves
+// mp5 alone, and it adds nothing inside the five second rule unless some of the Spirit regen
+// goes on while casting. The sim leaves it to the APL.
 func (character *Character) registerReadLeyline() {
 	energized := character.RegisterAura(Aura{
 		Label:    "Energized",
 		ActionID: ActionID{SpellID: 1270842},
-		Duration: time.Second * 30,
+		Duration: time.Second * 15,
 		OnGain: func(aura *Aura, sim *Simulation) {
-			character.PseudoStats.SpiritRegenMultiplier += 1
+			character.PseudoStats.SpiritRegenMultiplier += 0.5
 			character.UpdateManaRegenRates()
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			character.PseudoStats.SpiritRegenMultiplier -= 1
+			character.PseudoStats.SpiritRegenMultiplier -= 0.5
 			character.UpdateManaRegenRates()
 		},
 	})
@@ -131,20 +147,6 @@ func (character *Character) registerReadLeyline() {
 		ApplyEffects: func(sim *Simulation, _ *Unit, _ *Spell) {
 			energized.Activate(sim)
 		},
-	})
-}
-
-// critDamageBonus multiplies the damage of every critical strike, melee, ranged and spell, like
-// the 2% of Dwarf Earth Fury and Tauren Endurance (aura 163, "critical strike bonus to damage"):
-// a 200% melee crit does 204% and a 150% spell crit 153%. Applied to the attack tables after
-// finalize because the targets are not known before then.
-func (character *Character) critDamageBonus(multiplier float64) {
-	character.Env.RegisterPostFinalizeEffect(func() {
-		for _, t := range character.Env.Encounter.Targets {
-			for _, at := range character.AttackTables[t.UnitIndex] {
-				at.CritMultiplier *= multiplier
-			}
-		}
 	})
 }
 
@@ -520,7 +522,11 @@ func (character *Character) registerTouchOfTheGrave() {
 		ProcMask:    ProcMaskEmpty,
 		// "Touch of the Dead no longer scales with Shadow increases on the target or the
 		// caster" (development notes, 2026-10-15, build 1.60.1.70425): no Shadowform, Shadow
-		// Weaving, Curse of Shadow or Shadow Mastery on the drain.
+		// Weaving, Curse of Shadow or Shadow Mastery on the drain. Client 70630 takes Ignore
+		// Caster Modifiers (Attributes_3 0x20000000) and three healing bits off 1260198 but
+		// keeps Ignore Damage Taken Modifiers (Attributes_4 0x100) and Ignore Caster Damage
+		// Modifiers (Attributes_6 0x20000000), so the damage still ignores both sides; the
+		// drain has no spell power coefficient for the dropped bit to let in.
 		Flags: SpellFlagPassiveSpell | SpellFlagNoOnCastComplete | SpellFlagBinary | SpellFlagIgnoreModifiers,
 
 		DamageMultiplier: 1,
