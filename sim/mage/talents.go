@@ -145,7 +145,9 @@ func (mage *Mage) applyArcaneTalents() {
 
 		mage.OnSpellRegistered(func(spell *core.Spell) {
 			if spell.Flags.Matches(SpellFlagMage) {
-				mage.changeDamagePercent(spell, bonusDamage, true)
+				if !mage.ignoresDamagePercent(spell) {
+					mage.changeDamagePercent(spell, bonusDamage, true)
+				}
 				spell.BonusCritRating += bonusCritRating
 			}
 		})
@@ -445,7 +447,7 @@ func (mage *Mage) registerArcanePowerCD() {
 	affectedSpells := []*core.Spell{}
 
 	mage.OnSpellRegistered(func(spell *core.Spell) {
-		if spell.Flags.Matches(SpellFlagMage) {
+		if spell.Flags.Matches(SpellFlagMage) && !mage.ignoresDamagePercent(spell) {
 			affectedSpells = append(affectedSpells, spell)
 		}
 	})
