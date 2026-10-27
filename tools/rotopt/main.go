@@ -87,8 +87,14 @@ func main() {
 	sessionRaw := flag.Bool("session-raw", false, "leveling settings: with -session, print the session's whole log as the UI gets it instead of the summary")
 	sessionSeed := flag.Int64("session-seed", 1, "leveling settings: the random seed of the -session, for another sample session")
 	seed := flag.Int64("seed", 1, "random seed of the scoring runs, to check a gain holds on other fights or sessions")
+	freeze := flag.String("freeze", "", "knobs the search keeps at their starting values, comma separated (a player's reaction times, say)")
 	flag.Parse()
 	simSeed = *seed
+	for _, name := range strings.Split(*freeze, ",") {
+		if name = strings.TrimSpace(name); name != "" {
+			frozenKnobs[name] = true
+		}
+	}
 	levelingObjective = *objective
 
 	log.SetOutput(io.Discard)
