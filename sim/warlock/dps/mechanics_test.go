@@ -410,14 +410,14 @@ func TestWarlockDecimation(t *testing.T) {
 	}
 }
 
-// TestWarlockSpellstone checks that Major Spellstone gives its 21 damage to Fire and Shadow spells
-// both (1237165 effect 0: Misc 36, Fire | Shadow).
+// TestWarlockSpellstone checks that Major Spellstone gives its 21 damage to Shadow spells only
+// (1237165 effect 0: Misc 32 since client 1.60.1.70630, was 36, Fire | Shadow).
 func TestWarlockSpellstone(t *testing.T) {
 	_, without := newWarlockSim(t, "", &proto.WarlockOptions{})
 	_, with := newWarlockSim(t, "", &proto.WarlockOptions{WeaponImbue: proto.WarlockOptions_Spellstone})
-	for _, stat := range []stats.Stat{stats.FirePower, stats.ShadowPower} {
-		if got := with.GetStat(stat) - without.GetStat(stat); got != 21 {
-			t.Errorf("Major Spellstone: stat %d +%.0f, want +21", stat, got)
+	for stat, want := range map[stats.Stat]float64{stats.FirePower: 0, stats.ShadowPower: 21} {
+		if got := with.GetStat(stat) - without.GetStat(stat); got != want {
+			t.Errorf("Major Spellstone: stat %d +%.0f, want +%.0f", stat, got, want)
 		}
 	}
 }

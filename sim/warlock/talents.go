@@ -116,9 +116,10 @@ func (warlock *Warlock) ApplyTalents() {
 
 // Firestone and Spellstone are weapon imbues under Forever (the same enchant effect as the
 // shaman imbues and rogue poisons, so they stack with an oil). Major Firestone (56): Fire
-// damage up to 21 and 2% spell crit. Major Spellstone (60): Fire and Shadow damage up to 21
-// and 2% spell haste (client 23480 to 23483 and 1237162 to 1237165; every Spellstone row's
-// damage effect has Misc 36, Fire | Shadow, though the spell is named "Increase Shadow Dam").
+// damage up to 21 and 2% spell crit. Major Spellstone (60): Shadow damage up to 21 and 2%
+// spell haste (client 23480 to 23483 and 1237162 to 1237165). The Spellstone rows' damage
+// effect had Misc 36, Fire | Shadow, until client 1.60.1.70630 made it 32, Shadow only (a
+// server hotfix on 70532 first), so under Forever the Fire half is gone.
 var firestoneRanks = []struct {
 	level      int32
 	damage     float64
@@ -144,7 +145,9 @@ func (warlock *Warlock) applyWeaponImbue() {
 	case proto.WarlockOptions_Spellstone:
 		for i := len(spellstoneRanks) - 1; i >= 0; i-- {
 			if r := spellstoneRanks[i]; warlock.Level >= r.level {
-				warlock.AddStat(stats.FirePower, r.damage)
+				if !warlock.Env.IsForever() {
+					warlock.AddStat(stats.FirePower, r.damage)
+				}
 				warlock.AddStat(stats.ShadowPower, r.damage)
 				warlock.MultiplyCastSpeed(1 + r.critOrHast/100)
 				return
