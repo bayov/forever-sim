@@ -130,17 +130,21 @@
               ],
               "priorityList": [
                 {
-                  "notes": "The spell power on-use trinket at the pull, then held for the execute phase when that loses no use.",
                   "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 992015
+                      }
+                    },
                     "condition": {
                       "or": {
                         "vals": [
                           {
                             "cmp": {
-                              "op": "OpLt",
                               "lhs": {
                                 "currentTime": {}
                               },
+                              "op": "OpLt",
                               "rhs": {
                                 "const": {
                                   "val": "1s"
@@ -155,24 +159,18 @@
                           },
                           {
                             "cmp": {
-                              "op": "OpGt",
                               "lhs": {
                                 "spellUsesLostByDelay": {
-                                  "spellId": {
-                                    "itemId": 992015
-                                  },
                                   "delay": {
                                     "math": {
-                                      "op": "OpDiv",
                                       "lhs": {
                                         "math": {
-                                          "op": "OpSub",
                                           "lhs": {
                                             "math": {
-                                              "op": "OpMul",
                                               "lhs": {
                                                 "remainingTime": {}
                                               },
+                                              "op": "OpMul",
                                               "rhs": {
                                                 "const": {
                                                   "val": "4"
@@ -180,11 +178,13 @@
                                               }
                                             }
                                           },
+                                          "op": "OpSub",
                                           "rhs": {
                                             "currentTime": {}
                                           }
                                         }
                                       },
+                                      "op": "OpDiv",
                                       "rhs": {
                                         "const": {
                                           "val": "5"
@@ -196,9 +196,13 @@
                                     "const": {
                                       "val": "20s"
                                     }
+                                  },
+                                  "spellId": {
+                                    "itemId": 992015
                                   }
                                 }
                               },
+                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "0"
@@ -208,37 +212,37 @@
                           }
                         ]
                       }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "itemId": 992015
-                      }
                     }
-                  }
+                  },
+                  "notes": "The spell power on-use trinket at the pull, then held for the execute phase when that loses no use."
                 },
                 {
-                  "notes": "Goblin Sapper Charge on cooldown.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "itemId": 10646
                       }
                     }
-                  }
+                  },
+                  "notes": "Goblin Sapper Charge on cooldown."
                 },
                 {
-                  "notes": "Consecration on cooldown, down to the last point of mana.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "spellId": 20924
                       }
                     }
-                  }
+                  },
+                  "notes": "Consecration on cooldown, down to the last point of mana."
                 },
                 {
-                  "notes": "Judgement on cooldown.",
                   "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20271
+                      }
+                    },
                     "condition": {
                       "and": {
                         "vals": [
@@ -251,17 +255,17 @@
                           }
                         ]
                       }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 20271
-                      }
                     }
-                  }
+                  },
+                  "notes": "Judgement on cooldown."
                 },
                 {
-                  "notes": "Seal of Righteousness whenever it is down. Judgement does not consume it under Forever.",
                   "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20293
+                      }
+                    },
                     "condition": {
                       "and": {
                         "vals": [
@@ -278,47 +282,47 @@
                           }
                         ]
                       }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 20293
-                      }
                     }
-                  }
+                  },
+                  "notes": "Seal of Righteousness whenever it is down. Judgement does not consume it under Forever."
                 },
                 {
-                  "notes": "Holy Strike on cooldown.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "spellId": 10333
                       }
                     }
-                  }
+                  },
+                  "notes": "Holy Strike on cooldown."
                 },
                 {
-                  "notes": "Hammer of Wrath below 20% health.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "spellId": 24239
                       }
                     }
-                  }
+                  },
+                  "notes": "Hammer of Wrath below 20% health."
                 },
                 {
-                  "notes": "Exorcism on cooldown, only against Undead and Demons.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "spellId": 10314
                       }
                     }
-                  }
+                  },
+                  "notes": "Exorcism on cooldown, only against Undead and Demons."
                 },
                 {
-                  "notes": "Light's Vigil whenever it is not on the target, with the mana to spare. Without the talent ignore the warning on this line.",
                   "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1311595
+                      }
+                    },
                     "condition": {
                       "and": {
                         "vals": [
@@ -333,10 +337,10 @@
                                           "vals": [
                                             {
                                               "cmp": {
-                                                "op": "OpGe",
                                                 "lhs": {
                                                   "currentManaPercent": {}
                                                 },
+                                                "op": "OpGe",
                                                 "rhs": {
                                                   "const": {
                                                     "val": "0.3"
@@ -346,15 +350,15 @@
                                             },
                                             {
                                               "cmp": {
-                                                "op": "OpGt",
                                                 "lhs": {
                                                   "autoTimeToNext": {
                                                     "autoType": "MainHand"
                                                   }
                                                 },
+                                                "op": "OpGt",
                                                 "rhs": {
                                                   "const": {
-                                                    "val": "2s"
+                                                    "val": "2.5s"
                                                   }
                                                 }
                                               }
@@ -364,15 +368,15 @@
                                       },
                                       {
                                         "cmp": {
-                                          "op": "OpGt",
                                           "lhs": {
                                             "autoTimeToNext": {
                                               "autoType": "MainHand"
                                             }
                                           },
+                                          "op": "OpGt",
                                           "rhs": {
                                             "const": {
-                                              "val": "2s"
+                                              "val": "2.5s"
                                             }
                                           }
                                         }
@@ -385,18 +389,18 @@
                                     "vals": [
                                       {
                                         "cmp": {
-                                          "op": "OpLt",
                                           "lhs": {
                                             "remainingTime": {}
                                           },
+                                          "op": "OpLt",
                                           "rhs": {
                                             "math": {
-                                              "op": "OpSub",
                                               "lhs": {
                                                 "const": {
                                                   "val": "240s"
                                                 }
                                               },
+                                              "op": "OpSub",
                                               "rhs": {
                                                 "currentTime": {}
                                               }
@@ -406,10 +410,10 @@
                                       },
                                       {
                                         "cmp": {
-                                          "op": "OpGe",
                                           "lhs": {
                                             "currentManaPercent": {}
                                           },
+                                          "op": "OpGe",
                                           "rhs": {
                                             "const": {
                                               "val": "0.6"
@@ -427,11 +431,11 @@
                             "not": {
                               "val": {
                                 "auraIsActive": {
-                                  "sourceUnit": {
-                                    "type": "CurrentTarget"
-                                  },
                                   "auraId": {
                                     "spellId": 1311597
+                                  },
+                                  "sourceUnit": {
+                                    "type": "CurrentTarget"
                                   }
                                 }
                               }
@@ -439,17 +443,17 @@
                           }
                         ]
                       }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 1311595
-                      }
                     }
-                  }
+                  },
+                  "notes": "Light's Vigil whenever it is not on the target, with the mana to spare. Without the talent ignore the warning on this line."
                 },
                 {
-                  "notes": "Holy Shock on the Vigil, so it detonates it and starts no cooldown, or on cooldown once the mana is too low for the Vigil.",
                   "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20930
+                      }
+                    },
                     "condition": {
                       "and": {
                         "vals": [
@@ -458,11 +462,11 @@
                               "vals": [
                                 {
                                   "auraIsActive": {
-                                    "sourceUnit": {
-                                      "type": "CurrentTarget"
-                                    },
                                     "auraId": {
                                       "spellId": 1311597
+                                    },
+                                    "sourceUnit": {
+                                      "type": "CurrentTarget"
                                     }
                                   }
                                 },
@@ -479,10 +483,10 @@
                                                     "vals": [
                                                       {
                                                         "cmp": {
-                                                          "op": "OpGe",
                                                           "lhs": {
                                                             "currentManaPercent": {}
                                                           },
+                                                          "op": "OpGe",
                                                           "rhs": {
                                                             "const": {
                                                               "val": "0.3"
@@ -492,15 +496,15 @@
                                                       },
                                                       {
                                                         "cmp": {
-                                                          "op": "OpGt",
                                                           "lhs": {
                                                             "autoTimeToNext": {
                                                               "autoType": "MainHand"
                                                             }
                                                           },
+                                                          "op": "OpGt",
                                                           "rhs": {
                                                             "const": {
-                                                              "val": "2s"
+                                                              "val": "2.5s"
                                                             }
                                                           }
                                                         }
@@ -510,15 +514,15 @@
                                                 },
                                                 {
                                                   "cmp": {
-                                                    "op": "OpGt",
                                                     "lhs": {
                                                       "autoTimeToNext": {
                                                         "autoType": "MainHand"
                                                       }
                                                     },
+                                                    "op": "OpGt",
                                                     "rhs": {
                                                       "const": {
-                                                        "val": "2s"
+                                                        "val": "2.5s"
                                                       }
                                                     }
                                                   }
@@ -531,18 +535,18 @@
                                               "vals": [
                                                 {
                                                   "cmp": {
-                                                    "op": "OpLt",
                                                     "lhs": {
                                                       "remainingTime": {}
                                                     },
+                                                    "op": "OpLt",
                                                     "rhs": {
                                                       "math": {
-                                                        "op": "OpSub",
                                                         "lhs": {
                                                           "const": {
                                                             "val": "240s"
                                                           }
                                                         },
+                                                        "op": "OpSub",
                                                         "rhs": {
                                                           "currentTime": {}
                                                         }
@@ -552,10 +556,10 @@
                                                 },
                                                 {
                                                   "cmp": {
-                                                    "op": "OpGe",
                                                     "lhs": {
                                                       "currentManaPercent": {}
                                                     },
+                                                    "op": "OpGe",
                                                     "rhs": {
                                                       "const": {
                                                         "val": "0.6"
@@ -576,19 +580,15 @@
                           }
                         ]
                       }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 20930
-                      }
                     }
-                  }
+                  },
+                  "notes": "Holy Shock on the Vigil, so it detonates it and starts no cooldown, or on cooldown once the mana is too low for the Vigil."
                 },
                 {
-                  "notes": "Racials and trinkets on a free GCD.",
                   "action": {
                     "autocastOtherCooldowns": {}
-                  }
+                  },
+                  "notes": "Racials and trinkets on a free GCD."
                 }
               ]
             },

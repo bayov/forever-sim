@@ -105,7 +105,7 @@ gen level60_undead "seal=1,jotc=0,consecration=1,consecrationFirst=0,consecratio
 # 300 sec; any switch point from 210 to 270 sec is the same). On the generic boss the longer
 # floor only loses, so level60_shock keeps a flat 30%. Holy Wrath does not make it: its 2 sec cast is worth less
 # than the Holy Shocks and Holy Strikes it pushes back.
-gen level60_shock_undead "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,lightsVigilMana=30,vigilLongFight=240,vigilLongMana=60,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1,vigilSwing=20" -level 60
+gen level60_shock_undead "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,lightsVigilMana=30,vigilLongFight=240,vigilLongMana=60,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1,vigilSwing=25" -level 60
 # Judgement of the Crusader duty (standards 23): the base rotation plus Seal of the Crusader at
 # -1.5 sec after the base pre-pull and its Judgement at the pull (jotc=1). Under Forever the
 # judgement adds 161 Holy damage taken for 40 sec and the paladin's own melee hits refresh it, so
@@ -117,7 +117,7 @@ gen level60_shock_undead "seal=1,jotc=0,consecration=1,consecrationFirst=1,conse
 # (sealFirst), since the opener's Judgement of the Crusader leaves it down: +6.0 / +3.0 / +0.5 at 120
 # / 180 / 300 sec (base Shock, which never loses its seal early, is 1.6 behind with it at 180 sec).
 gen level60_crusader_duty "seal=2,jotc=1,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistMana=0,twistWindow=15,hammerOfWrathMana=0,prepullTwo=1,judgeRighteousnessWindow=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1" -level 60
-gen level60_shock_crusader_duty "seal=1,jotc=1,sealFirst=1,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,holyStrikeFirst=1,lightsVigilMana=30,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=2,vigilSwing=20" -level 60
+gen level60_shock_crusader_duty "seal=1,jotc=1,sealFirst=1,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,holyStrikeFirst=1,lightsVigilMana=30,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=2,vigilSwing=25,vigilLongFight=210" -level 60
 # Rotation audit pass 23 (2026-10-16): Hammer of Wrath above Consecration, so in the execute phase
 # it isn't held behind a Consecration that ticks for less (hammerOfWrathFirst=1; 2 puts it at the
 # very top, which is where the Shock duty list gains most). Paired over two seed sets at 20k, 120 /
