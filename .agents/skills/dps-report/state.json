@@ -69,8 +69,8 @@
   "url": "https://forever-dps.pages.dev",
   "cloudflareProject": "forever-dps",
   "deploy": "make dps-report-deploy (tools/dps_report/deploy_pages.py)",
-  "publishedFrom": "master dc8d7f9 (Level 60 Shock (Ret side), the raw packs and the pipeline that keeps them)",
-  "date": "2026-10-26",
-  "deployId": "dce756dc"
+  "publishedFrom": "master 3d9aa585b (Ret Shock (deep Holy) and Ret Shock names)",
+  "date": "2026-10-27",
+  "deployId": "d672bb46"
  }
 }
