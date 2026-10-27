@@ -64,7 +64,15 @@ gen level60 "seal=2,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=2
 # sec is +47.6 / +34.4 / +24.3, 2.5 sec +39.8 / +32.8 / +25.3; a 10, 50 or 70% Vigil floor with it
 # is 8 to 14 behind 30% at 180 sec). Shock vs Undead +52.8 / +40.4 / +17.5 and the Shock duty
 # +37.0 / +32.2 / +24.3 with it (paired, seeds 1 and 1000003).
-gen level60_shock "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,lightsVigilMana=30,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1,vigilSwing=20" -level 60
+# User ruling 2026-10-27: Consecration after the seal, Judgement and Holy Strike lines instead of
+# first (consecrationFirst=0), Light's Vigil only when the next swing is more than 2.5 sec off
+# (vigilSwing=25), and in fights longer than 210 sec a 60% Vigil floor (vigilLongFight=210; with it
+# Holy Shock also goes out whenever the Vigil is held, the swing check included). rotopt -eval, 20000
+# iterations, Human: 875.8 / 863.6 / 838.2 / 819.2 -> 894.1 / 881.2 / 840.2 / 827.2 at 120 / 180 / 300
+# / 480 sec; Undead 879.5 / 866.6 / 840.1 / 820.7 -> 897.0 / 883.2 / 841.9 / 828.9. The same three
+# changes lose on Shock vs Undead (-4.7 / -3.7 / -8.4 / -3.0 at Undead) and on the Shock duty at 300
+# sec (+6.4 / +7.4 / -4.7 / +5.1), so those keep their knobs.
+gen level60_shock "seal=1,jotc=0,consecration=1,consecrationFirst=0,consecrationMana=0,holyShock=1,lightsVigilMana=30,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1,vigilSwing=25,vigilLongFight=210" -level 60
 # Level 60 Shock (called Shock (Ret side) on 2026-10-26; the deep Holy build is Level 60 Shock (deep Holy)
 # since 2026-10-27), for the mostly Retribution Holy Shock talents (23/0/28: Holy Shock and
 # Consecrated Ground, Champion of the Light, no Light's Vigil and no Twist of Light). Searched over

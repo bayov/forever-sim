@@ -5,7 +5,7 @@
   "build": "Level 60 (twist)",
   "isDefault": false,
   "pr": 100,
-  "race": "Human",
+  "race": "Undead",
   "talents": "51003-502-05225231201330321",
   "treeNames": [
     "Holy",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 945.1,
-    "source": "Class worker follow-up, 2026-10-24: Pursuit of Justice 2 pinned (standards 26), talents re-searched, no filler explosive (standards 11); seeds 1 and 1000003, 20000 iterations, 120 / 180 / 300 s"
+    "dps": 939.4,
+    "source": "Race re-pick 2026-10-27 (standards 29 and 16): Undead; verify.py, 20000 iterations, seed 1 (was 937.8 as a Human on the same sim)"
   },
   "verify": {
-    "dps": 945.13,
+    "dps": 939.4,
     "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "180 s, seed 1 (seed 1000003: 945.04)"
+    "note": "verify.py of this request, 180s, seed 1"
   },
   "summary": "Retribution twist build: Seal of Command and Seal of Righteousness before every swing.",
   "keyTalents": [
@@ -75,5 +75,5 @@
     "Two-Handed Weapon Specialization boosts Holy seal damage (Era sim choice, the client says Physical only). Without it: -11.",
     "No filler explosive (standards 11): the Goblin Land Mine and EZ-Thro Dark Bomb cost 5.2 at 180s, the EZ-Thro Thorium Grenade 6.0 (each 1s cast resets the swing)."
   ],
-  "notes": "mksettings writes primarySeal Righteousness; set to Command to match the shipped preset's options (the APL never uses Cast Primary Seal, so DPS is unaffected)."
+  "notes": "mksettings writes primarySeal Righteousness; set to Command to match the shipped preset's options (the APL never uses Cast Primary Seal, so DPS is unaffected). Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human."
 }

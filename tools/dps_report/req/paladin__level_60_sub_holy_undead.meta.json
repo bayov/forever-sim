@@ -5,7 +5,7 @@
   "build": "Level 60 (sub Holy, vs Undead)",
   "isDefault": false,
   "pr": 111,
-  "race": "Human",
+  "race": "Undead",
   "talents": "550030022--05225131201330321",
   "treeNames": [
     "Holy",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_undead",
   "apl": "level60_undead",
   "published": {
-    "dps": 1050.8,
-    "source": "Class worker follow-up, 2026-10-24: Pursuit of Justice 2 pinned (standards 26), talents re-searched, no filler explosive (standards 11); seeds 1 and 1000003, 20000 iterations, 120 / 180 / 300 s"
+    "dps": 1045.2,
+    "source": "Race re-pick 2026-10-27 (standards 29 and 16): Undead (follows its base build, paladin__level_60_sub_holy); verify.py, 20000 iterations, seed 1 (was 1043.5 as a Human on the same sim)"
   },
   "verify": {
-    "dps": 1050.84,
+    "dps": 1045.2,
     "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "180 s, seed 1 (seed 1000003: 1051.00)"
+    "note": "verify.py of this request, 180s, seed 1"
   },
   "summary": "The sub Holy twist build with Exorcism, for an Undead or Demon boss.",
   "advantage": "Exorcism only works on Undead and Demons. Purifying Power 2 makes its cooldown a third shorter.",
@@ -81,7 +81,7 @@
     "Two-Handed Weapon Specialization boosts Holy seal damage (Era sim choice, the client says Physical only). Without it: -11.",
     "No filler explosive (standards 11): the Goblin Land Mine and EZ-Thro Dark Bomb cost 7.0 at 180s, the EZ-Thro Thorium Grenade 7.7 (each 1s cast resets the swing)."
   ],
-  "notes": "Request from mksettings with the same arguments as paladin__level_60_sub_holy except talents and APL, then the target's mobType set to MobTypeUndead, as the class preset's encounter does.",
+  "notes": "Request from mksettings with the same arguments as paladin__level_60_sub_holy except talents and APL, then the target's mobType set to MobTypeUndead, as the class preset's encounter does. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human (follows its base build, paladin__level_60_sub_holy).",
   "encounter": "Undead",
   "baseBuild": "paladin__level_60_sub_holy"
 }

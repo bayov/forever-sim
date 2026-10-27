@@ -5,7 +5,7 @@
   "build": "Level 60 (sub Holy, Crusader duty)",
   "isDefault": false,
   "pr": 100,
-  "race": "Human",
+  "race": "Undead",
   "talents": "55003002--05225331201330321",
   "treeNames": [
     "Holy",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_crusader_duty",
   "apl": "level60_crusader_duty",
   "published": {
-    "dps": 942.8,
-    "source": "Class worker follow-up, 2026-10-24: Pursuit of Justice 2 pinned (standards 26), talents re-searched, no filler explosive (standards 11); seeds 1 and 1000003, 20000 iterations, 120 / 180 / 300 s"
+    "dps": 937.0,
+    "source": "Race re-pick 2026-10-27 (standards 29 and 16): Undead (follows its base build, paladin__level_60_sub_holy); verify.py, 20000 iterations, seed 1 (was 935.5 as a Human on the same sim)"
   },
   "verify": {
-    "dps": 942.84,
+    "dps": 937.0,
     "stderr": 0.3,
     "iters": 20000,
     "ok": true,
-    "note": "180 s, seed 1 (seed 1000003: 942.19)"
+    "note": "verify.py of this request, 180s, seed 1"
   },
   "summary": "The Holy side points twist build, keeping Judgement of the Crusader on the boss for the raid.",
   "keyTalents": [
@@ -76,7 +76,7 @@
     "Two-Handed Weapon Specialization boosts Holy seal damage (Era sim choice, the client says Physical only). Without it: -11.",
     "No filler explosive (standards 11): the Goblin Land Mine and EZ-Thro Dark Bomb cost 6.1 at 180s, the EZ-Thro Thorium Grenade 6.9 (each 1s cast resets the swing)."
   ],
-  "notes": "Request: paladin__level_60_sub_holy with raid debuff judgementOfTheCrusader removed and the level60_crusader_duty rotation.",
+  "notes": "Request: paladin__level_60_sub_holy with raid debuff judgementOfTheCrusader removed and the level60_crusader_duty rotation. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human (follows its base build, paladin__level_60_sub_holy).",
   "duty": "Judgement of the Crusader",
   "baseBuild": "paladin__level_60_sub_holy"
 }

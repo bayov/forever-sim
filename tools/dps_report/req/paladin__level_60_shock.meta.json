@@ -5,7 +5,7 @@
   "build": "Level 60 Shock (deep Holy)",
   "isDefault": false,
   "pr": 100,
-  "race": "Human",
+  "race": "Undead",
   "talents": "55003003201121251--05225030201",
   "treeNames": [
     "Holy",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_shock",
   "published": {
-    "dps": 869.0,
-    "source": "Class worker follow-up, 2026-10-24: Pursuit of Justice 2 pinned (standards 26), talents re-searched, no filler explosive (standards 11); seeds 1 and 1000003, 20000 iterations, 120 / 180 / 300 s"
+    "dps": 883.2,
+    "source": "Ret Shock rotation (user ruling 2026-10-27: consecrationFirst 0, vigilSwing 25, vigilLongFight 210) and race re-pick 2026-10-27 (standards 29 and 16): Undead; verify.py, 20000 iterations, seed 1 (was 863.6 as a Human with the old rotation; 881.2 as a Human with the new one)"
   },
   "verify": {
-    "dps": 869.04,
-    "stderr": 0.3,
+    "dps": 883.2,
+    "stderr": 0.2,
     "iters": 20000,
     "ok": true,
-    "note": "180 s, seed 1 (seed 1000003: 869.08)"
+    "note": "verify.py of this request, 180s, seed 1"
   },
   "summary": "Deep Holy to Light's Vigil with Holy Shock and Seal of Righteousness, no twisting.",
   "keyTalents": [
@@ -38,12 +38,12 @@
   ],
   "rotation": [
     "Pre-pull: Seal of Righteousness at -3s, Light's Vigil at -1.5s",
-    "Hammer of Wrath below 20% health, ahead of Consecration",
-    "Consecration on cooldown, down to the last point of mana",
     "Judgement on cooldown on Seal of Righteousness; re-seal Righteousness whenever it is down (no twisting)",
     "Holy Strike on cooldown",
-    "Light's Vigil whenever it is not on the target, mana is at or above 30% and the next swing is more than 2s off (its cast resets the swing)",
-    "Holy Shock on a Vigil-marked target (detonates it, refunds 75% of its mana, starts no cooldown), or on cooldown below 30% mana; Divine Favor goes on a Holy Shock",
+    "Hammer of Wrath below 20% health",
+    "Light's Vigil whenever it is not on the target, mana is at or above 30% (60% in fights over 210s) and the next swing is more than 2.5s off (its cast resets the swing)",
+    "Holy Shock on a Vigil-marked target (detonates it, refunds 75% of its mana, starts no cooldown), or on cooldown whenever the Vigil is held back (mana under its floor, or a swing within 2.5s); Divine Favor goes on a Holy Shock",
+    "Consecration on cooldown, down to the last point of mana, after the lines above",
     "Racials, Goblin Sapper, Major Mana Potion and Demonic Rune on free GCDs"
   ],
   "consumes": [
@@ -75,5 +75,5 @@
     "Seal of Righteousness adds 12% of spell power a hit with a two-hander, once (70425 tooltip). Counted twice it would be 46-51 DPS higher. At the proc spell's 0 it would be 53-59 lower.",
     "No filler explosive (standards 11): the Goblin Land Mine and EZ-Thro Dark Bomb cost 6.1 at 180s, the EZ-Thro Thorium Grenade 6.8 (each 1s cast resets the swing)."
   ],
-  "notes": "Preset options are primarySeal Righteousness, as mksettings writes."
+  "notes": "Preset options are primarySeal Righteousness, as mksettings writes. Rotation regenerated 2026-10-27 from the paladin_presets.sh level60_shock knobs (consecrationFirst=0, vigilSwing=25, vigilLongFight=210; user ruling). Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human."
 }

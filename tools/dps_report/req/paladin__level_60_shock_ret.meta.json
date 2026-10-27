@@ -4,7 +4,7 @@
   "spec": "Retribution",
   "build": "Level 60 Shock",
   "isDefault": false,
-  "race": "Human",
+  "race": "Undead",
   "talents": "550030032011012--052150312012303",
   "treeNames": [
     "Holy",
@@ -14,8 +14,8 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_shock_ret",
   "published": {
-    "dps": 932.4,
-    "source": "Talent and rotation search, 2026-10-26: Holy Shock, Champion of the Light and Pursuit of Justice pinned; 20000 iterations, seed 1, 120 / 180 / 300 s"
+    "dps": 927.9,
+    "source": "Race re-pick 2026-10-27 (standards 29 and 16): Undead; verify.py, 20000 iterations, seed 1 (was 925.5 as a Human on the same sim)"
   },
   "summary": "Holy Shock with most points in Retribution: Seal of Command, Holy Shock and Consecrated Ground, Champion of the Light, no twisting and no Light's Vigil.",
   "keyTalents": [
@@ -64,5 +64,12 @@
     "High Holy Strike and Consecration ranks may be out of date (about 1.2% at stake).",
     "No filler explosive (standards 11): each 1s cast resets the swing."
   ],
-  "notes": "mksettings -spec ret -gear level60_phase1_synthetic -apl level60_shock_ret -talents 550030032011012--052150312012303 -race Human; primarySeal set to Command to match the shipped preset's options."
+  "notes": "mksettings -spec ret -gear level60_phase1_synthetic -apl level60_shock_ret -talents 550030032011012--052150312012303 -race Undead; primarySeal set to Command to match the shipped preset's options. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human.",
+  "verify": {
+    "dps": 927.9,
+    "stderr": 0.3,
+    "iters": 20000,
+    "ok": true,
+    "note": "verify.py of this request, 180s, seed 1"
+  }
 }

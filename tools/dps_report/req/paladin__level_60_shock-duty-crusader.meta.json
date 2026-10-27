@@ -5,7 +5,7 @@
   "build": "Level 60 Shock (deep Holy, Crusader duty)",
   "isDefault": false,
   "pr": 100,
-  "race": "Human",
+  "race": "Undead",
   "talents": "55003003201121251--05225030201",
   "treeNames": [
     "Holy",
@@ -15,15 +15,15 @@
   "gearSet": "level60_phase1_synthetic_crusader_duty",
   "apl": "level60_shock_crusader_duty",
   "published": {
-    "dps": 871.5,
-    "source": "Class worker follow-up, 2026-10-24: Pursuit of Justice 2 pinned (standards 26), talents re-searched, no filler explosive (standards 11); seeds 1 and 1000003, 20000 iterations, 120 / 180 / 300 s"
+    "dps": 869.5,
+    "source": "Race re-pick 2026-10-27 (standards 29 and 16): Undead (follows its base build, paladin__level_60_shock); verify.py, 20000 iterations, seed 1 (was 865.9 as a Human on the same sim)"
   },
   "verify": {
-    "dps": 871.55,
-    "stderr": 0.3,
+    "dps": 869.5,
+    "stderr": 0.2,
     "iters": 20000,
     "ok": true,
-    "note": "180 s, seed 1 (seed 1000003: 871.54)"
+    "note": "verify.py of this request, 180s, seed 1"
   },
   "summary": "The Holy Shock build, keeping Judgement of the Crusader on the boss for the raid.",
   "keyTalents": [
@@ -78,7 +78,7 @@
     "Seal of Righteousness adds 12% of spell power a hit with a two-hander, once (70425 tooltip). Counted twice it would be 46-51 DPS higher. At the proc spell's 0 it would be 53-59 lower.",
     "No filler explosive (standards 11): the Goblin Land Mine and EZ-Thro Dark Bomb cost 5.4 at 180s, the EZ-Thro Thorium Grenade 6.1 (each 1s cast resets the swing)."
   ],
-  "notes": "Request: paladin__level_60_shock with raid debuff judgementOfTheCrusader removed and the level60_shock_crusader_duty rotation.",
+  "notes": "Request: paladin__level_60_shock with raid debuff judgementOfTheCrusader removed and the level60_shock_crusader_duty rotation. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human (follows its base build, paladin__level_60_shock).",
   "duty": "Judgement of the Crusader",
   "baseBuild": "paladin__level_60_shock"
 }

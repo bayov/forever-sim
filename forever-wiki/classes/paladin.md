@@ -97,6 +97,11 @@ Blizzard's Paladin Class Deep Dive (15 October 2026, https://worldofwarcraft.bli
 - Consumes: the twist builds' (Dragonfire Potion): +5.5 / +5.7 / -10.3 against the Major Mana Potion at 120 / 180 / 300 sec.
 - Human, 20000 iterations, seed 1, 120 / 180 / 300 sec: 939.5 / 932.4 / 910.7, against sub Holy 956.5 / 949.1 / 941.0, twist 951.6 / 945.1 / 932.8 and Shock 881.2 / 868.8 / 842.8. It is 1.8% behind sub Holy at 180 sec and 6.7% ahead of the deep Holy Shock build.
 
+### Race re-pick and the Shock rotation (2026-10-27)
+
+- Every Level 60 build is Undead again (orchestration/standards.md items 29 and 16: the race sweep after the 10-26 racial pass, each race with its own rotation and gear). At 180 sec (verify.py, 20,000 iterations, seed 1), Undead against Human: twist 939.4 / 937.8, sub Holy 943.7 / 941.8, Shock (Ret side) 927.9 / 925.5, deep Holy Shock 883.2 / 881.2 (on the new rotation below). The Crusader duty and vs Undead builds follow their base builds: sub Holy duty 937.0, Shock duty 869.5, sub Holy vs Undead 1045.2, Shock vs Undead 965.2.
+- Deep Holy Shock rotation (user ruling 2026-10-27): Consecration after the seal, Judgement, Holy Strike, Light's Vigil and Holy Shock lines instead of first (consecrationFirst 0), Light's Vigil only when the next swing is more than 2.5 sec off (vigilSwing 25, was 2 sec), and above 60% mana in fights over 210 sec (vigilLongFight 210; with it Holy Shock also goes out on cooldown whenever the Vigil is held). rotopt -eval, 20,000 iterations, Human: 875.8 / 863.6 / 838.2 / 819.2 -> 894.1 / 881.2 / 840.2 / 827.2 at 120 / 180 / 300 / 480 sec. The same three changes lose on Shock vs Undead at every length (-4.7 / -3.7 / -8.4 / -3.0, Undead) and on the Shock duty at 300 sec (+6.4 / +7.4 / -4.7 / +5.1), so both keep their rotations.
+
 ## Trait curves, client 1.60.1.70338 (2026-10-12)
 
 Forever's talents are traits: TraitDefinitionEffectPoints gives every talent effect a per-rank curve, and the curve overrides the base points on the rank 1 spell, which can be a Classic leftover. The paladin tree (TraitTree 1100) per rank:
