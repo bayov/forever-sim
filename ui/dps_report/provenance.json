@@ -797,8 +797,8 @@
 			}
 		},
 		"priest__smite": {
-			"commit": "e419e7f50a37a7a96b788897c7d59d332263442a",
-			"recordedAt": "2026-10-28T17:23:10.623Z",
+			"commit": "0cff62017a7267a4d08fcd7f2262b1c1a9550519",
+			"recordedAt": "2026-10-28T17:25:40.897Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "1bd6f51eb9bb94e028b45f8c8132e5830bdc377c",
