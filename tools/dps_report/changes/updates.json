@@ -682,6 +682,47 @@
       "5f96ef4"
      ],
      "moves": false
+    },
+    {
+     "title": "Windfury Totem shown up all fight; its proc is Windfury Attack",
+     "kind": "method",
+     "note": "The aura list showed only each proc's 1 second attack power buff, under the totem's name, at about 9% uptime. The totem is now listed at 100%, and the proc's buff as Windfury Attack. No DPS changes.",
+     "builds": [
+      "druid__feral-cat",
+      "druid__feral-cat-duty-ff",
+      "hunter__survival",
+      "paladin__level_60",
+      "paladin__level_60_shock",
+      "paladin__level_60_shock-duty-crusader",
+      "paladin__level_60_shock_ret",
+      "paladin__level_60_shock_undead",
+      "paladin__level_60_sub_holy",
+      "paladin__level_60_sub_holy-duty-crusader",
+      "paladin__level_60_sub_holy_undead",
+      "rogue__combat-daggers",
+      "rogue__combat-daggers-humanoid",
+      "rogue__combat-swords",
+      "rogue__combat-swords-humanoid",
+      "rogue__mutilate",
+      "rogue__mutilate-humanoid",
+      "rogue__seal-fate-daggers",
+      "rogue__seal-fate-daggers-humanoid",
+      "rogue__seal-fate-swords",
+      "rogue__seal-fate-swords-humanoid",
+      "rogue__subtlety",
+      "rogue__subtlety-humanoid",
+      "warrior__arms",
+      "warrior__arms-duty-battle-shout",
+      "warrior__arms_dragonkin",
+      "warrior__fury",
+      "warrior__fury-duty-battle-shout",
+      "warrior__fury_2h",
+      "warrior__fury_2h-duty-battle-shout"
+     ],
+     "commits": [
+      "b2b384c"
+     ],
+     "moves": false
     }
    ],
    "internal": [

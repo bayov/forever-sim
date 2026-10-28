@@ -2,7 +2,7 @@ builds: 58 rows, 85 KB
 races: 302 rows, 63 KB
 lengths: 290 rows, 23 KB
 abilities: 891 rows, 250 KB
-auras: 1459 rows, 213 KB
+auras: 1483 rows, 216 KB
 hist: 2771 rows, 148 KB
 stats: 781 rows, 65 KB
 gear: 750 rows, 142 KB
@@ -31,9 +31,9 @@ names without an icon: ['Bloodthrill', 'Caustic Smog Potion', 'Consecration Mark
 treeart: 27 rows, 1063 KB
 missing icons: ['client_252996']
 timeline_warrior: 12 rows, 34 KB
-timeline_rogue: 36 rows, 80 KB
+timeline_rogue: 36 rows, 81 KB
 timeline_hunter: 12 rows, 38 KB
-timeline_paladin: 18 rows, 72 KB
+timeline_paladin: 18 rows, 73 KB
 timeline_shaman: 18 rows, 49 KB
 timeline_druid: 9 rows, 24 KB
 timeline_mage: 12 rows, 42 KB

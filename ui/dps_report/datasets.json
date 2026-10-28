@@ -11,7 +11,7 @@
   "title": "Buff and debuff uptime",
   "description": "Per preset, the average share of the fight each aura is up on the player or the boss, and how often it is applied.",
   "updated": {
-   "at": "2026-10-28T13:29:49.924Z",
+   "at": "2026-10-28T21:11:00.786Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -83,7 +83,7 @@
   "title": "Spell and item names",
   "description": "Names, icons and an icon-derived colour for the spell, item and attack ids in the timelines, breakdowns and rotations.",
   "updated": {
-   "at": "2026-10-28T17:23:10.564Z",
+   "at": "2026-10-28T21:11:00.786Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -179,7 +179,7 @@
   "title": "Druid sample fights",
   "description": "Three single fights per druid preset (nearest its 10th, 50th and 90th percentile): the auras and the pre-pull casts, for the aura bars. The whole fights are in events/<build>.json.gz.",
   "updated": {
-   "at": "2026-10-27T20:42:03.433Z",
+   "at": "2026-10-28T21:11:00.786Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -187,7 +187,7 @@
   "title": "Hunter sample fights",
   "description": "Three single fights per hunter preset (nearest its 10th, 50th and 90th percentile): the auras and the pre-pull casts, for the aura bars. The whole fights are in events/<build>.json.gz.",
   "updated": {
-   "at": "2026-10-27T22:15:12.737Z",
+   "at": "2026-10-28T21:11:00.786Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -203,7 +203,7 @@
   "title": "Paladin sample fights",
   "description": "Three single fights per paladin preset (nearest its 10th, 50th and 90th percentile): the auras and the pre-pull casts, for the aura bars. The whole fights are in events/<build>.json.gz.",
   "updated": {
-   "at": "2026-10-28T13:29:49.924Z",
+   "at": "2026-10-28T21:11:00.786Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -219,7 +219,7 @@
   "title": "Rogue sample fights",
   "description": "Three single fights per rogue preset (nearest its 10th, 50th and 90th percentile): the auras and the pre-pull casts, for the aura bars. The whole fights are in events/<build>.json.gz.",
   "updated": {
-   "at": "2026-10-27T22:54:49.376Z",
+   "at": "2026-10-28T21:11:00.786Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -243,7 +243,7 @@
   "title": "Warrior sample fights",
   "description": "Three single fights per warrior preset (nearest its 10th, 50th and 90th percentile): the auras and the pre-pull casts, for the aura bars. The whole fights are in events/<build>.json.gz.",
   "updated": {
-   "at": "2026-10-27T22:15:12.737Z",
+   "at": "2026-10-28T21:11:00.786Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -251,7 +251,7 @@
   "title": "Game tooltip text",
   "description": "Tooltip text for the spells, items, enchants, consumes, races and stat weights on the page: wowhead's WoW Forever database first (with a link to its page), the Forever client's talent text and the Forever wiki where it has nothing, Classic's text only as a marked last resort, the sim's own numbers where they differ, the item database for the synthetic gear, and the Forever racials.",
   "updated": {
-   "at": "2026-10-28T17:23:10.564Z",
+   "at": "2026-10-28T21:11:00.786Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -307,7 +307,7 @@
   "title": "Updates",
   "description": "The report's updates, newest first: game updates (a new client build or development notes) and sim/preset updates (our own changes to the sim, rotations, gear, talents, consumes or races), each with its date, source and public change list. Each line may name the classes, presets, races and racial parts it touches.",
   "updated": {
-   "at": "2026-10-28T18:31:31.679Z",
+   "at": "2026-10-28T21:11:50.308Z",
    "by": "Claude (forever-sim)"
   }
  },
