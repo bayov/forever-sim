@@ -123,8 +123,9 @@ def load(bid, race, meta=None):
     return ov if ('rotation' in ov or 'bonusStats' in ov) else None
 
 
-def apply(req, bid, race, meta=None):
-    """(the request at this race with its override applied, the override or None). Sets the race either way."""
+def apply(req, bid, race, meta=None, gear=True):
+    """(the request at this race with its override applied, the override or None). Sets the race either way. gear=False
+    leaves the bonus stats out (run_races.py's sims without the racial the gear is tuned around)."""
     req = copy.deepcopy(req)
     pl = req['raid']['parties'][0]['players'][0]
     pl['race'] = 'Race' + race
@@ -133,7 +134,7 @@ def apply(req, bid, race, meta=None):
         return req, None
     if 'rotation' in ov:
         pl['rotation'] = copy.deepcopy(ov['rotation'])
-    if ov.get('bonusStats'):
+    if gear and ov.get('bonusStats'):
         bs = pl.setdefault('bonusStats', {})
         for name, v in ov['bonusStats'].items():
             field, i = stat_index(name)

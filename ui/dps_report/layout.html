@@ -187,7 +187,7 @@
     <div class="content-block fv-card" id="sp-racials-card" data-jump="Racials">
       <div class="content-block-header"><h6 class="content-block-title">Strongest racials</h6><button type="button" class="btn btn-link fv-linkbtn fv-about-btn" data-about="about-racials">How are racials measured?</button></div>
       <div class="fv-about-body" id="about-racials" data-title="How racials are measured" hidden>
-        <p><b>How.</b> The preset is simmed with all racials off, which leaves the race's base stats. Then it's simmed with each racial off in turn. A racial's bar is the DPS it adds. Two racials that overlap split the shared part, so the parts add up to the race's total.</p>
+        <p><b>How.</b> The preset is simmed with all racials off, which leaves the race's base stats. Then it's simmed with each racial off in turn. A racial's bar is the DPS it adds. When a race wears its own gear for a racial (a Dwarf drops the hit Artisan's Precision makes spare), the sims without that racial wear the preset's gear, so the gear trade is part of the racial's bar. Two racials that overlap split the shared part, so the parts add up to the race's total.</p>
         <p><b>Limits.</b> The same as for Best races. Only damage on a boss that stands still counts. Racials for one boss type count only with "Boss type racials" on.</p>
       </div>
       <div class="fv-toolbar">
@@ -412,7 +412,7 @@
           <li><b>Races:</b> <span data-source="builds" data-field="raceIters" data-row="0">—</span> fights on every race the class can be.</li>
           <li><b>Fight lengths:</b> <span data-source="builds" data-field="lengthIters" data-row="0">—</span> fights each.</li>
           <li><b>Sample fights:</b> the fights nearest the 10th, 50th and 90th percentile, from the first <span data-source="builds" data-field="sampleSeeds" data-row="0">—</span> fights.</li>
-          <li><b>Racial bars:</b> all racials off (base stats), then one off at a time. Racials that overlap split the shared part, so the parts add up.</li>
+          <li><b>Racial bars:</b> all racials off (base stats, on the preset's gear), then one off at a time. A race's own gear counts with the racial it's tuned for. Racials that overlap split the shared part, so the parts add up.</li>
           <li><b>Boss type racials:</b> the same fights, with only the boss's creature type changed.</li>
         </ul>
       </div>

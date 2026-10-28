@@ -46,7 +46,7 @@ PART_INFO = {
     'starshards': ('Starshards', 'Night Elf Priests: Arcane damage over 6s, 30s cooldown.'),
     'darksacrifice': ('Dark Sacrifice', 'Undead Priests: trade health for mana over 15s, 10 min cooldown.'),
     'shadowguard': ('Shadowguard', 'Troll Priests, in Shadowform: 3 charges, and a hit taken strikes the attacker for Shadow damage, at most once every 3.5s. The raid damage hits set it off.'),
-    'base': ('Base stats', "The race's own stats, with no racials."),
+    'base': ('Base stats', "The race's own stats, with no racials, on the preset's gear."),
     'target': ('Target type', 'Racials, talents and spells that work only on this creature type.'),
 }
 
@@ -75,7 +75,7 @@ SCENARIOS = [
     ('elemental', 'Elemental target', 'On an Elemental boss, High Order and Windshaper Elemental Insight add 5% damage.'),
     ('humanoid', 'Humanoid target', 'Priests only. Dwarf Priests can cast Chastise, which works only on Humanoids. '
      "No rotation casts it: its global cooldown deals more as Smite or Mind Flay, and it can't be cast in Shadowform."),
-    ('off', 'Racials off', 'Every race on its base stats, with all racials left out.'),
+    ('off', 'Racials off', "Every race on its base stats, with all racials left out, on the preset's gear."),
 ]
 
 
