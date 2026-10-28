@@ -421,86 +421,157 @@
                   }
                 },
                 {
-                  "notes":  "Other races can ignore the warning on this line.",
+                  "notes":  "Elune's Light with the cooldowns, never during Recklessness, whose 100% crit makes its 10% worthless. Other races can ignore the warning on this line.",
                   "action":  {
                     "condition":  {
-                      "or":  {
+                      "and":  {
                         "vals":  [
                           {
-                            "auraIsActive":  {
-                              "auraId":  {
-                                "spellId":  12328
-                              }
-                            }
-                          },
-                          {
-                            "cmp":  {
-                              "op":  "OpEq",
-                              "lhs":  {
-                                "spellUsesRemaining":  {
-                                  "spellId":  {
-                                    "spellId":  12328
-                                  },
-                                  "minTimeLeft":  {
-                                    "const":  {
-                                      "val":  "30s"
-                                    }
+                            "not":  {
+                              "val":  {
+                                "auraIsActive":  {
+                                  "auraId":  {
+                                    "spellId":  1719
                                   }
                                 }
-                              },
-                              "rhs":  {
-                                "const":  {
-                                  "val":  "0"
-                                }
                               }
                             }
                           },
                           {
-                            "cmp":  {
-                              "op":  "OpGt",
-                              "lhs":  {
-                                "spellUsesLostByDelay":  {
-                                  "spellId":  {
-                                    "spellId":  1259799
-                                  },
-                                  "delay":  {
-                                    "max":  {
-                                      "vals":  [
-                                        {
-                                          "spellTimeToReady":  {
-                                            "spellId":  {
-                                              "spellId":  12328
-                                            }
-                                          }
+                            "or":  {
+                              "vals":  [
+                                {
+                                  "cmp":  {
+                                    "op":  "OpEq",
+                                    "lhs":  {
+                                      "spellUsesRemaining":  {
+                                        "spellId":  {
+                                          "spellId":  1719
                                         },
-                                        {
-                                          "math":  {
-                                            "op":  "OpSub",
-                                            "lhs":  {
-                                              "remainingTime":  {}
-                                            },
-                                            "rhs":  {
-                                              "const":  {
-                                                "val":  "33s"
-                                              }
-                                            }
+                                        "minTimeLeft":  {
+                                          "const":  {
+                                            "val":  "0s"
                                           }
                                         }
-                                      ]
+                                      }
+                                    },
+                                    "rhs":  {
+                                      "const":  {
+                                        "val":  "0"
+                                      }
                                     }
-                                  },
-                                  "minTimeLeft":  {
-                                    "const":  {
-                                      "val":  "15s"
+                                  }
+                                },
+                                {
+                                  "not":  {
+                                    "val":  {
+                                      "or":  {
+                                        "vals":  [
+                                          {
+                                            "and":  {
+                                              "vals":  [
+                                                {
+                                                  "auraIsActive":  {
+                                                    "auraId":  {
+                                                      "spellId":  12328
+                                                    }
+                                                  }
+                                                },
+                                                {
+                                                  "cmp":  {
+                                                    "op":  "OpEq",
+                                                    "lhs":  {
+                                                      "spellUsesRemaining":  {
+                                                        "spellId":  {
+                                                          "spellId":  12328
+                                                        },
+                                                        "minTimeLeft":  {
+                                                          "const":  {
+                                                            "val":  "30s"
+                                                          }
+                                                        }
+                                                      }
+                                                    },
+                                                    "rhs":  {
+                                                      "const":  {
+                                                        "val":  "0"
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          },
+                                          {
+                                            "and":  {
+                                              "vals":  [
+                                                {
+                                                  "cmp":  {
+                                                    "op":  "OpLe",
+                                                    "lhs":  {
+                                                      "spellUsesRemaining":  {
+                                                        "spellId":  {
+                                                          "spellId":  12328
+                                                        },
+                                                        "minTimeLeft":  {
+                                                          "const":  {
+                                                            "val":  "30s"
+                                                          }
+                                                        }
+                                                      }
+                                                    },
+                                                    "rhs":  {
+                                                      "const":  {
+                                                        "val":  "1"
+                                                      }
+                                                    }
+                                                  }
+                                                },
+                                                {
+                                                  "cmp":  {
+                                                    "op":  "OpLe",
+                                                    "lhs":  {
+                                                      "max":  {
+                                                        "vals":  [
+                                                          {
+                                                            "spellTimeToReady":  {
+                                                              "spellId":  {
+                                                                "spellId":  12328
+                                                              }
+                                                            }
+                                                          },
+                                                          {
+                                                            "math":  {
+                                                              "op":  "OpSub",
+                                                              "lhs":  {
+                                                                "remainingTime":  {}
+                                                              },
+                                                              "rhs":  {
+                                                                "const":  {
+                                                                  "val":  "33s"
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        ]
+                                                      }
+                                                    },
+                                                    "rhs":  {
+                                                      "const":  {
+                                                        "val":  "15s"
+                                                      }
+                                                    }
+                                                  }
+                                                }
+                                              ]
+                                            }
+                                          }
+                                        ]
+                                      }
                                     }
                                   }
                                 }
-                              },
-                              "rhs":  {
-                                "const":  {
-                                  "val":  "0"
-                                }
-                              }
+                              ]
                             }
                           }
                         ]
@@ -681,15 +752,44 @@
                   }
                 },
                 {
+                  "notes":  "Recklessness with the fight's last Death Wish.",
                   "action":  {
                     "condition":  {
                       "and":  {
                         "vals":  [
                           {
-                            "auraIsActive":  {
-                              "auraId":  {
-                                "spellId":  12328
-                              }
+                            "and":  {
+                              "vals":  [
+                                {
+                                  "auraIsActive":  {
+                                    "auraId":  {
+                                      "spellId":  12328
+                                    }
+                                  }
+                                },
+                                {
+                                  "cmp":  {
+                                    "op":  "OpEq",
+                                    "lhs":  {
+                                      "spellUsesRemaining":  {
+                                        "spellId":  {
+                                          "spellId":  12328
+                                        },
+                                        "minTimeLeft":  {
+                                          "const":  {
+                                            "val":  "30s"
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "rhs":  {
+                                      "const":  {
+                                        "val":  "0"
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
                             }
                           },
                           {
