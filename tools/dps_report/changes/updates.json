@@ -620,6 +620,18 @@
     {
      "commit": "c6a5e13",
      "why": "plain-English wording for rotation conditions on the page, no numbers change"
+    },
+    {
+     "commit": "cc83e07",
+     "why": "phrasing pass on the report text, no numbers change"
+    },
+    {
+     "commit": "9009fdd",
+     "why": "phrasing pass on the report text, no numbers change"
+    },
+    {
+     "commit": "ca2d3ba",
+     "why": "phrasing pass on the report text, no numbers change"
     }
    ]
   }
