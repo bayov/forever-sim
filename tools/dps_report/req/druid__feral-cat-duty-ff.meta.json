@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_ff",
   "published": {
-    "dps": 863.6,
-    "source": "Druid class worker finals, 2026-10-24 must-take round (standards 26 and 11): 120/180/300s 875.6/863.6/850.8 (seed 1), 875.6/863.7/850.9 (seed 1000003)"
+    "dps": 862.2,
+    "source": "DPS report 2026-10-28 (full re-sim at 20,000 iterations, 180 s, after the launch-realm hunter hotfix)"
   },
   "verify": {
     "dps": 863.6,

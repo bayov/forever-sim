@@ -14,8 +14,8 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_shock_ret",
   "published": {
-    "dps": 927.9,
-    "source": "Race re-pick 2026-10-27 (standards 29 and 16): Undead; verify.py, 20000 iterations, seed 1 (was 925.5 as a Human on the same sim)"
+    "dps": 931.6,
+    "source": "DPS report 2026-10-28 (full re-sim at 20,000 iterations, 180 s, after the launch-realm hunter hotfix)"
   },
   "summary": "Holy Shock with most points in Retribution: Seal of Command, Holy Shock and Consecrated Ground, Champion of the Light, no twisting and no Light's Vigil.",
   "keyTalents": [

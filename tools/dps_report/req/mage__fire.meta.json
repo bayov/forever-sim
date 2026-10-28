@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_fire",
   "published": {
-    "dps": 1101.0,
-    "source": "Class worker round 2026-10-23 on claude/keen-brown-o2g32n-mage: main set's hit to the 16% cap, the regenerated rotations and Frost's 29/0/22 build (was 1067.0)"
+    "dps": 1089.0,
+    "source": "DPS report 2026-10-28 (full re-sim at 20,000 iterations, 180 s, after the launch-realm hunter hotfix)"
   },
   "verify": {
     "dps": 1101.0,

@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_smite",
   "apl": "level60_smite",
   "published": {
-    "dps": 766.1,
-    "source": "Silent Resolve round on claude/keen-brown-o2g32n f886fbb, 2026-10-23 (standards 11 and 26), 20000 iterations, seeds 1 and 1000003 agree within 0.2 (was 765.7; Goblin Land Mine added, +0.4)"
+    "dps": 766.8,
+    "source": "DPS report 2026-10-28 (full re-sim at 20,000 iterations, 180 s, after the launch-realm hunter hotfix)"
   },
   "verify": {
     "dps": 766.1,
