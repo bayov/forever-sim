@@ -137,7 +137,7 @@ class Humaniser:
     def __init__(self, name, talent=None):
         self.name = name  # key -> display name
         self.talent = talent or (lambda aura: aura)  # an aura's name -> its talent, as talent_token writes it
-        self.cur = None  # the key of the line's own spell: "waiting would cost a use" needs no name for it
+        self.cur = None  # the key of the line's own spell: "holding it would mean one fewer use" needs no name for it
         self.items = set()  # the item names conditions use (tidy)
         self.fallbacks = []
 
@@ -150,11 +150,12 @@ class Humaniser:
 
     def tidy(self, when):
         """A whole condition, once more: a trinket named again and again is "the trinket" after the first time, and
-        "no Hawk 1 ... or no Hawk 2 ..." is a count."""
+        "no Hawk 1 ... or no Hawk 2 ..." is a count, and "X is not up and X is not ready" is "X is neither up nor ready"."""
         for n in sorted(self.items, key=len, reverse=True):
             if re.search(r'Trinket|Talisman', n) and when.count(n) > 1:
                 i = when.index(n) + len(n)
                 when = when[:i] + when[i:].replace(n, 'the trinket').replace('no more the trinket this fight', 'no more trinket uses this fight')
+        when = re.sub(r'\(?\b([A-Z][\w\' ]*?) is not up and \1 is not ready\)?', r'\1 is neither up nor ready', when)
         return re.sub(r'no (\w+) 1 on the boss or no \1 2 on the boss', r'fewer than 2 \1s out', when)
 
     # a value as a noun phrase
@@ -215,7 +216,7 @@ class Humaniser:
             return f"until the last {fmt_const(a['rhs']['const']['val'])} of the fight"
         if t == 'max' and len(a.get('vals', [])) > 1:
             parts = [re.sub(r'^(for|until) ', '', self.delay(x)) for x in a['vals']]
-            return f"for both {' and '.join(parts)}"
+            return f"for {' and '.join(parts)}"
         if t == 'const':
             return fmt_const(a.get('val'))
         return ''  # a delay we can't say plainly is left out (the exact condition is in the tooltip)
@@ -241,9 +242,10 @@ class Humaniser:
                 parts = [p for p in parts if p is not None]
             out = _once(f' {how} '.join(_merge(parts, how)), how)
             m = re.search(r'in the last (\S+(?: \S+)?) of the fight', out)
-            if m:  # "in the last 33s ... or waiting until the last 33s ..." -> "waiting"
+            if m:  # "in the last 33s ... or ... holding it until the last 33s ..." -> "holding it"
                 out = out.replace(f' until the last {m.group(1)} of the fight', '')
-            return re.sub(r'in the first (\S+) of the fight or in the last (\S+) of the fight', r'in the first \1 or the last \2 of the fight', out)
+            out = re.sub(r'in the first (\S+) of the fight or in the last (\S+) of the fight', r'in the first \1 or the last \2 of the fight', out)
+            return re.sub(r',* or as soon as holding', ', or as soon as holding', out)
         if t == 'not':
             return self.neg(a.get('val'))
         if t == 'cmp':
@@ -434,11 +436,12 @@ class Humaniser:
                     'OpLt': f'fewer than {n} combo points', 'OpLe': f'{n} or fewer combo points'}.get(op, f'combo points {w} {n}')
         if lt == 'spellUsesLostByDelay' and c is not None and cv == 0:
             d = self.delay(la.get('delay'))
-            of = '' if key_of(la.get('spellId')) == self.cur else f' of {self.sp(la.get("spellId"))}'
+            it = 'it' if key_of(la.get('spellId')) == self.cur else self.sp(la.get('spellId'))
+            # The line goes out once holding it for the other spell (or the fight's last seconds) would lose a use.
             if op in ('OpGt', 'OpNe'):
-                return f"waiting {d} would cost a use{of}".replace('  ', ' ')
+                return f"as soon as holding {it} {d} would mean one fewer use".replace('  ', ' ')
             if op in ('OpEq', 'OpLe'):
-                return f"waiting {d} costs no use{of}".replace('  ', ' ')
+                return f"holding {it} {d} loses no use".replace('  ', ' ')
         if lt == 'spellUsesRemaining' and c is not None and cv == 0:
             s = self.sp(la.get('spellId'))
             if op in ('OpEq', 'OpLe'):
