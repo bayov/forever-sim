@@ -83,3 +83,8 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-10-28 01:10 | consumables | pass 49 | master 5d27b0015 | quiet | race re-picks/comments only; scan clean
 2026-10-28 01:10 | mechanics | pass 44 | master 5d27b0015 | quiet | Blood Fury/Berserking/Touch of the Grave match dev notes post 8; mechanics-20261027-3 resolved
 2026-10-28 01:10 | fairness | pass 11 | master 5d27b0015 | quiet | all presets on best race; fairness-20261027-1 resolved; sweep.py/table.py helper fixes
+2026-10-28 07:32 | results | pass 58 | master 224b8a4e0 | quiet | shared run matches builds.json; 9 race overrides reproduce their gains; results-20261027-1 still open
+2026-10-28 07:32 | consumables | pass 50 | master 224b8a4e0 | quiet | client 70658 has 0 consumable or enchant changes; scan clean
+2026-10-28 07:32 | mechanics | pass 45 | master 224b8a4e0 | quiet | 25 mechanics tables identical in 70658; mechanics-20261027-2 still open
+2026-10-28 07:32 | fairness | pass 12 | master 224b8a4e0 | quiet | no tuned race beats its preset's race; Frostfire Gnome vs Human is a tie
+2026-10-28 07:32 | client_update | pass 4 | master 224b8a4e0 | 2 new findings | 70658 hotfix: Aspect of the Hawk ranks 1-5 and Trueshot Aura ranks 1-4 lowered (hunter -0.7 to -1.3%)

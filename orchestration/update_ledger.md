@@ -43,7 +43,7 @@ Every change announced for the WoW Forever beta, from build 1.60.1.70009 (the fi
 |---|---|---|---|---|---|---|---|---|---|---|
 | Warrior | 83 | 52 | 0 | 2 | 0 | 2 | 0 | 4 | 23 | 0 |
 | Paladin | 66 | 37 | 5 | 2 | 0 | 2 | 1 | 3 | 14 | 2 superseded |
-| Hunter | 82 | 44 | 2 | 7 | 1 | 1 | 3 | 1 | 22 | 1 info |
+| Hunter | 84 | 44 | 2 | 7 | 1 | 1 | 3 | 3 | 22 | 1 info |
 | Rogue | 68 | 38 | 0 | 0 | 2 | 2 | 1 | 3 | 22 | 0 |
 | Priest | 55 | 20 | 14 | 2 | 0 | 2 | 1 | 1 | 15 | 0 |
 | Shaman | 103 | 58 | 12 | 4 | 0 | 2 | 2 | 2 | 23 | 0 |
@@ -51,7 +51,7 @@ Every change announced for the WoW Forever beta, from build 1.60.1.70009 (the fi
 | Warlock | 89 | 47 | 4 | 0 | 0 | 3 | 3 | 1 | 30 | 1 covered by another row |
 | Druid | 69 | 31 | 0 | 2 | 2 | 2 | 2 | 0 | 30 | 0 |
 | Shared (races, mechanics, items) | 67 | 25 | 1 | 2 | 3 | 2 | 2 | 8 | 24 | 0 |
-| **Total** | **740** | **369** | **47** | **24** | **8** | **19** | **20** | **28** | **221** | **4** |
+| **Total** | **742** | **369** | **47** | **24** | **8** | **19** | **20** | **30** | **221** | **4** |
 
 The counts are as audited, before this audit's own PRs. A row that touches two scopes, such as Eureka!, Touch of the Grave or Grace of Air, appears under each class it affects.
 
@@ -107,6 +107,7 @@ The counts are as audited, before this audit's own PRs. A row that touches two s
 4. **Warlock races.** After #69, Gnome may no longer be the best warlock race. Rerun the race tables.
 5. ~~**The 10-26 racial pass (dev notes post /7, rows SHR-P7-01..05).**~~ Settled 2026-10-27: the user asked for the sim to follow the notes; landed in 500e3a1.
 6. ~~**Missile Barrage from Arcane Missiles hits (MAGE-U-15).**~~ Settled 2026-10-27 by the user: no proc; one-value assumption.
+7. **Trueshot Aura rank 5 (HUN-HF-02).** The 10-28 launch-realm hotfix puts ranks 1-4 at 15/22/30/40, so the client's rank 5 of 50 now sits on the curve. Keep hunter_tsa_hm_rank at 100, or take 50 (−0.94% BM, −1.28% LW, −1.12% MM)?
 
 ### Report assumptions and Need to Verify items this ledger settles
 
@@ -188,6 +189,15 @@ Dev notes: **new post /7** (2026-10-26 20:35, edited 21:09), the pre-launch raci
 ## Build 1.60.1.70634 (first seen 2026-10-27)
 
 70634: client-identical to 70630. All 39 tables in wago.py's `client_update` set are byte-identical (`table_summary.py 70630 70634`), including Spell, SpellEffect, SpellMisc, the Trait* tables, ItemSparse, ItemEffect, SpellItemEnchantment and ChrRaces. There are no added rows, not even cosmetic ones. So there is no class, racial, talent, enchant or item change, and the post /7 racial pass is still not in the client (still landed in the sim from the notes, SHR-P7-01..05). Dev notes: not re-read this pass (the forum returned "performed this action too many times"); foreverchanges.pro lists 70634 as current, says Blizzard posted no notes for it, and finds nothing new beyond 70630's contents (0 new, 0 changed items). No rows added.
+
+## Build 1.60.1.70658 (first seen 2026-10-28)
+
+70658: client-identical to 70634. All 39 tables in wago.py's `client_update` set are byte-identical (`table_summary.py 70634 70658`), with no added rows; foreverchanges.pro says only 2 of 137 tables differ, both creature models. No class, racial, talent, enchant or item change in the client. Dev notes: not re-read (forum rate limit again). foreverchanges.pro also lists an **October 28 hotfix** it read from the launch realms' hotfix cache, not in Blizzard's notes (FC tier; the cloud can't read DBCache.bin, `tools/sources/dbcache.py` needs a local client): Aspect of the Hawk and Trueshot Aura ranks roughly halved (rows below), Blood Fury's 2 min cooldown now in the server data (confirms SHR-P8-01, already landed), the Entrapment / Counterattack / Improved Wing Clip / Improved Hamstring / Frostbite roots share one diminishing-returns group (n/a, PvP), paladins still learn Righteous Fury at 10 (n/a), and the 2008 zombie-plague event spells (n/a).
+
+| ID | Source | Change | L60 DPS? | Client check | Sim status | Code location / note |
+|---|---|---|---|---|---|---|
+| HUN-HF-01 | FC 2026-10-28 hotfix (launch-realm cache) | Aspect of the Hawk ranks 1-5: 15/22/30/38/47 ranged AP (was 20/35/50/70/90); rank 6 (55) not listed | **yes** (BM, LW, MM) | not in 70658 tables; hotfix cache only | ambiguous (needs verify): sim casts rank 5 at 90; with the hotfix the best is rank 6 at 55, −0.66% to −0.90% | `sim/hunter/aspects.go:46`, `getMaxHawkRank`; finding client_update-20261028-1 |
+| HUN-HF-02 | FC 2026-10-28 hotfix (launch-realm cache) | Trueshot Aura ranks 1-4: 15/22/30/40 ranged AP (was 30/40/50/75); rank 5 (50 in the client) not listed | **yes** (BM, LW, MM) | not in 70658 tables; hotfix cache only | ambiguous (needs verify) + ruling: sim keeps rank 5 at 100 (hunter_tsa_hm_rank); at 50 it is −0.94% to −1.28% | `sim/core/buffs.go:1748-1751`; finding client_update-20261028-2 |
 
 ## Per-class ledgers
 

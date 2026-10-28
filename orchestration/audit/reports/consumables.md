@@ -1,16 +1,11 @@
-# Consumables pass 49 (master 5d27b0015, client 1.60.1.70634)
+# Consumables report, pass 50 (master 224b8a4e0)
 
-Result: quiet. No findings.
+Quiet: no findings.
 
-Moved since 37a8a8ccd: orchestration/standards.md and nine ui/<spec>/presets.ts (race re-picks per standards 29 and 16,
-rotation comments and tooltips, one prettier reflow of EncounterLevel60SapperOnlyHumanoid). No Consumes, RaidBuffs,
-Debuffs or IndividualBuffs object, gear set, mksettings or sim file changed.
-
-Checked: scan.sh on master: banned, Revelation, non-synthetic trinkets and multi-crit-elixir sections empty; main.go
-default MobTypeUnknown, Humanoid only as the alternate, Salvation and Sunder on; melee raid totems as ruled (Enhancement
-Flametongue); wago latest is still 70634 (no new build).
-Note: scan counts 3 MinorArmorReduction exclusive effects (ref says 2). The third is the hunter pet Dust Cloud
-(debuffs.go ~942), untouched this period; the scan's expectation is stale, not a sim change.
-Class branches listed "ahead" by changes.sh carry unmerged history (thousands of commits); not audited.
+- Master 5d27b0015 -> 224b8a4e0: no change to presets.ts, level60 gear sets, mksettings, sim/core consumes/buffs/debuffs, sim/common, forever_enchants.go, assumptions_def.py or the mage staff imbue (git diff checked).
+- Client 70634 -> 70658 (consumables set): builddiff.py shows 0 consumable spell changes, 53 Forever enchants checked, 0 changed.
+- scan.sh on master: banned items, Revelation outside shamans, non-synthetic trinkets and multi-crit-elixir lists all empty. Raid totems unchanged (melee: Grace of Air + Windfury; Enhancement: Grace of Air + Flametongue).
+- MinorArmorReduction count is 3 (third is the hunter pet Dust Cloud, as noted last pass); not a finding.
+- Class branches: changes.sh reports them with thousands of commits "ahead" (unrelated history); not audited, same as earlier passes.
 
 No open items.
