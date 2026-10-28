@@ -65,7 +65,7 @@
   ],
   "caveats": [
     "Costs 33.5 / 31.5 / 29.1 DPS at 120s / 180s / 300s, against the same build without the duty.",
-    "No Ahn'Qiraj book ranks. Starfire rank 6 costs 13.3 DPS at 180s.",
+    "No Ahn'Qiraj book ranks, so Starfire stops at rank 6. That costs 13.3 DPS at 180s.",
     "The Grovekeeper 5-piece Eclipse bonus would add 12.6 DPS over the 2-piece. Swarming Idol is worth 3.3. Both were measured on older gear.",
     "Mana runs out in 300s fights, where a plain weave is 2 DPS ahead.",
     "Wrath VIII's base damage is ×1.085 the client's value.",

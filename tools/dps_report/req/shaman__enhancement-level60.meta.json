@@ -74,7 +74,7 @@
   ],
   "caveats": [
     "Assumed: Maelstrom Weapon procs 2 times a minute per point. It can't be tested until the beta reaches level 34.",
-    "No Ahn'Qiraj book ranks (Strength of Earth IV, Battle Shout VI). They would add about 7.7 DPS.",
+    "No Ahn'Qiraj book ranks, so Strength of Earth stops at rank IV and Battle Shout at VI. The books would add about 7.7 DPS.",
     "Only one 2% crit elixir. Stacking Mongoose, Grizzly and Owl would add about 36 DPS.",
     "Earth Shock VII's base damage is ×1.08 the client's value.",
     "Assumed: the shaman takes 2 damage hits a minute. Each one fires Lightning Shield.",

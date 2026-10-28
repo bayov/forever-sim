@@ -66,7 +66,7 @@
   ],
   "caveats": [
     "Murder (+4% damage) only works against Humanoids and Giants.",
-    "No Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV). They would add 13 to 18 DPS.",
+    "No Ahn'Qiraj book ranks, so Backstab and Eviscerate stop at rank VIII and Deadly Poison at IV. The books would add 13 to 18 DPS.",
     "Grimstitch 4-piece and 5-piece bonuses aren't counted. They would add about 8 and 6 DPS.",
     "Assumed: the fight is in Hyjal or the Barrow Deeps. The flask gives its full bonus only there.",
     "Uses Flask of Natural Accuracy over Natural Precision. Its 5% hit still helps white hits (+0.1 to +0.6 DPS).",
