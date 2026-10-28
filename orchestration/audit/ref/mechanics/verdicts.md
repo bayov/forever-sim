@@ -1,4 +1,4 @@
-# Mechanics audit: verdicts and settled items (as of 2026-10-28 UTC, master 224b8a4e0)
+# Mechanics audit: verdicts and settled items (as of 2026-10-28 UTC, master 1274e15b3)
 
 Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 = Era / Classic. Never cite vmangos.
 
@@ -55,7 +55,7 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 - wowsims/forever assumptions in standards 28 (2026-10-26, report knobs, departing from client on purpose): Multi-Shot 0.5 sec cast hasted by ranged speed (70532 still CastingTimeIndex 1, instant; Attributes_2 0x20000 keeps Auto Shot, verified), live spell DoT / channel ticks (`dot_live_ticks`), hunter base RAP level x 2 - 10 (`hunter_base_rap`), failed Ferocious Bite keeps extra energy and combo points (`druid_bite_miss`), channel holds the five second rule to its end (`channel_fsr`).
 - Windfury Totem cooldown 1.5 sec (standards 17, user ruling). Windfury Totem procs from the main hand only (user ruling).
 - Bane of Doom: with the user.
-- Report assumptions decided by user rulings 2026-10-15 / 16: Trueshot Aura rank 5 100; Hunter's Mark rank 4 143 (2026-10-21 hotfix, user 2026-10-23; the hotfix table has 14325 effect 1 at 143); Arcane Shot 0.10 / Serpent Sting 0.03; hunter crit per Agility Classic's at 60 (Forever's PlayerExpectedStat by level, user ruling 2026-10-25; ×1.22 before; all 60 sim values match 70532 PlayerExpectedStat ClassID 3, pass 39); pet hits scale with speed; Raptor Strike rank 8 96; Rend 2% AP a tick; Frostbolt rank 10 ×1.04; Ice Lance 0.429; Lightning Bolt rank 10 ×1.12; warr_crit_rage +100%; warr_rage_oh 0.5; level_partial_resist none; sham_ftt_stack (raid Flametongue Totem with Windfury Weapon).
+- Report assumptions decided by user rulings 2026-10-15 / 16: Trueshot Aura ranks 15 / 22 / 30 / 40 / 50 and Aspect of the Hawk ranks 15 / 22 / 30 / 38 / 47 / 55 (launch-realm server hotfix seen by foreverchanges.pro 2026-10-28, user ruling 2026-10-28 replacing rank 5 at 100; client 70658 still has TSA 30/40/50/75/50 and Hawk 20/35/50/70/90/55, ranks 5 and 6 match the sim; level 60 casts Hawk rank 6 14322, 110 mana; commit 73cedc9a9, pass 46); Hunter's Mark rank 4 143 (2026-10-21 hotfix, user 2026-10-23; the hotfix table has 14325 effect 1 at 143); Arcane Shot 0.10 / Serpent Sting 0.03; hunter crit per Agility Classic's at 60 (Forever's PlayerExpectedStat by level, user ruling 2026-10-25; ×1.22 before; all 60 sim values match 70532 PlayerExpectedStat ClassID 3, pass 39); pet hits scale with speed; Raptor Strike rank 8 96; Rend 2% AP a tick; Frostbolt rank 10 ×1.04; Ice Lance 0.429; Lightning Bolt rank 10 ×1.12; warr_crit_rage +100%; warr_rage_oh 0.5; level_partial_resist none; sham_ftt_stack (raid Flametongue Totem with Windfury Weapon).
 
 ## Open items (not blocking)
 

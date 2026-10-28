@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "224b8a4e00994c8ede45e50bdf5172c98b3a7592"
+  "master": "c9d93dd66d6fd02141a402af9db39c08c3140280"
  },
- "last_pass_at": "2026-10-28T07:23:20Z",
- "pass": 45,
+ "last_pass_at": "2026-10-28T12:57:35Z",
+ "pass": 46,
  "result": "quiet",
- "note": "Pass 45: client 70658, all 25 mechanics tables byte-identical to 70634. No sim commits, no new dev notes or mechanical blue posts. Amplify Curse finding still open.",
+ "note": "Pass 46: 73cedc9a9 (TSA / Hawk launch-realm hotfix, user ruling) checked against client 70658: top ranks match, lower ranks are the ruled hotfix. Client still 70658; no new dev notes or blue posts. Amplify Curse finding still open.",
  "client_build": "1.60.1.70658",
- "checked_at": "2026-10-28T07:32:47Z",
+ "checked_at": "2026-10-28T13:06:25Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/8",
   "date": "2026-10-27T15:37:37Z",
@@ -24,5 +24,5 @@
   "newest_push": 113205,
   "tool": "tools/audit/mechanics/hotfixes.py"
  },
- "blue_tracker_seen": "2026-10-28T01:28:41Z"
+ "blue_tracker_seen": "2026-10-28T12:57:35Z"
 }
