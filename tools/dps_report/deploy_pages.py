@@ -17,11 +17,13 @@ A production deploy (--branch main) must come from what master serves: the repor
 deployment records the commit it was built from.
 
 The deploy serves the file as /index.html. After a production deploy the script fetches the
-live site and compares it byte for byte; if it doesn't match, it rolls production back to
-the deployment that was live before.
+live site and compares it byte for byte, apart from the Cloudflare Web Analytics beacon that
+Pages injects into every page (enabled 2026-10-28); if it doesn't match, it rolls production
+back to the deployment that was live before.
 """
 
 import argparse
+import re
 import base64
 import hashlib
 import json
@@ -33,6 +35,15 @@ import time
 
 API = "https://api.cloudflare.com/client/v4"
 
+
+
+# Cloudflare Pages injects its Web Analytics beacon into every HTML page it serves: a script from
+# static.cloudflareinsights.com, between two "Cloudflare Pages Analytics" comments.
+BEACON = re.compile(rb"(<!-- Cloudflare Pages Analytics -->)?\s*<script[^>]*cloudflareinsights[^>]*>\s*</script>\s*(<!-- Cloudflare Pages Analytics -->)?")
+
+
+def strip_beacon(html):
+    return BEACON.sub(b"", html)
 
 def curl(args, direct=False, auth=None):
     cmd = ["curl", "-sS", "--fail-with-body", "--retry", "3"]
@@ -120,8 +131,9 @@ def main():
     live = f"https://{a.project}.pages.dev/" if dep["environment"] == "production" else dep["url"] + "/"
     for _ in range(12):
         got = subprocess.run(["curl", "-sS", live], capture_output=True).stdout
-        if got == content:
-            print(f"deployed {len(content)} bytes, {dep['environment']}: {live} ({dep['url']})")
+        if strip_beacon(got) == strip_beacon(content):
+            beacon = " with the Web Analytics beacon" if BEACON.search(got) else ""
+            print(f"deployed {len(content)} bytes{beacon}, {dep['environment']}: {live} ({dep['url']})")
             return
         time.sleep(5)
     if dep["environment"] == "production" and prod:
