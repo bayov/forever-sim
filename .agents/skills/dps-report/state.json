@@ -1,6 +1,6 @@
 {
  "updated": "2026-10-28",
- "note": "2026-10-27: dev notes post 7 and 8 racial passes in the sim (post 1's 10-26 date is an edit stamp); client 70630 Spellstone Shadow only; Missile Barrage no missile proc (user ruling). Standards 29: race sweeps use each race's own rotation and gear (tools/dps_report/req/races/, 34 files: 14 Dwarf hit re-spends, caster and rogue race rotations); presets re-picked their race twice (after post 7 and after post 8). Ret Shock rotation re-tuned (883.2 at 180 s). Open: Amplify Curse needs an in-game test (TASKS.md); Arcane may not want Missile Barrage 2/2 any more; ties within noise kept their race (Fire, Frostfire, Affliction, Balance Wrath). 2026-10-28: low-value racial audit: race rotations for High Order Frostfire (lanceHold) and Arcane (prepullAt), Troll Elemental (berserkingAfterMastery), Night Elf Fury (Elune's Light at the pull), Gnome warlocks (eureka); Fire's haste and Shadow's Berserking stay low by mechanics (GCD floor, unhasted channels). No race re-pick.",
+ "note": "2026-10-27: dev notes post 7 and 8 racial passes in the sim (post 1's 10-26 date is an edit stamp); client 70630 Spellstone Shadow only; Missile Barrage no missile proc (user ruling). Standards 29: race sweeps use each race's own rotation and gear (tools/dps_report/req/races/, 34 files: 14 Dwarf hit re-spends, caster and rogue race rotations); presets re-picked their race twice (after post 7 and after post 8). Ret Shock rotation re-tuned (883.2 at 180 s). Open: Amplify Curse needs an in-game test (TASKS.md); Arcane may not want Missile Barrage 2/2 any more; ties within noise kept their race (Fire, Frostfire, Affliction, Balance Wrath). 2026-10-28: low-value racial audit: race rotations for High Order Frostfire (lanceHold) and Arcane (prepullAt), Troll Elemental (berserkingAfterMastery), Night Elf Fury (Elune's Light at the pull), Gnome warlocks (eureka); Fire's haste and Shadow's Berserking stay low by mechanics (GCD floor, unhasted channels). No race re-pick. 2026-10-28: launch-realm hotfix taken (user ruling): Trueshot Aura 15/22/30/40/50, Aspect of the Hawk 15/22/30/38/47/55 (rank 6 cast); hunters -0.1% to -2.2%. Server hotfixes now rank as server data (docs/data_sources.md).",
  "foreverClientBuild": "1.60.1.70630 tables (70634 identical for spells); dev notes posts 7 and 8 (10-26/10-27 racial passes) applied from the notes",
  "coordinationBranch": {
   "name": "claude/wow-forever-dps-presets-m9u15h",
@@ -69,9 +69,9 @@
   "url": "https://forever-dps.pages.dev",
   "cloudflareProject": "forever-dps",
   "deploy": "make dps-report-deploy (tools/dps_report/deploy_pages.py)",
-  "publishedFrom": "master 16b114d (Changes tab as update cards; deploy wraps the page in a doctype/head/body; Web Analytics beacon)",
+  "publishedFrom": "master e7dcc21 (launch-realm hunter hotfix; Changes tab game update 2026-10-28-hunter-hotfix)",
   "date": "2026-10-28",
-  "deployId": "c6c36b09",
+  "deployId": "7d3f49bf",
   "analytics": "Cloudflare Web Analytics enabled by the user 2026-10-28 (dashboard: Analytics & Logs > Web Analytics, site forever-dps.pages.dev); Pages injects the beacon, deploy_pages.py's live check strips it. The session token has no analytics read permission."
  },
  "changesTab": "Changes tab live 2026-10-28 (standards 30): tools/dps_report/changes/, live update 2026-10-28-race-rotations (sim/preset)"
