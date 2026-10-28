@@ -438,7 +438,7 @@
    "title": "Hunter hotfix: Trueshot Aura and Aspect of the Hawk",
    "date": "2026-10-28",
    "baselineData": "41ad908d6b62982004bc6cd09d024506956201d6",
-   "endData": null,
+   "endData": "04422dc6b7b6fb6efb17d44deac37e4a908c8010",
    "lines": [
     {
      "title": "Trueshot Aura and Aspect of the Hawk give about half as much at their lower ranks, so a level 60 hunter's best are Trueshot Aura rank 5 (+50 ranged attack power) and Aspect of the Hawk rank 6 (+55)",
@@ -479,6 +479,16 @@
     "label": "foreverchanges.pro patch notes",
     "url": "https://foreverchanges.pro/patch-notes"
    }
+  },
+  {
+   "id": "2026-10-28-rotation-intent",
+   "type": "sim",
+   "title": "Rotations that hold at any fight length",
+   "date": "2026-10-28",
+   "baselineData": "04422dc6b7b6fb6efb17d44deac37e4a908c8010",
+   "endData": null,
+   "lines": [],
+   "internal": []
   }
  ]
 }
