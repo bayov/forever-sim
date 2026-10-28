@@ -132,6 +132,139 @@
       },
       {
         "action": {
+          "castSpell": {
+            "spellId": {
+              "spellId": 26297,
+              "tag": 2
+            }
+          },
+          "condition": {
+            "or": {
+              "vals": [
+                {
+                  "and": {
+                    "vals": [
+                      {
+                        "auraIsKnown": {
+                          "auraId": {
+                            "spellId": 22959
+                          },
+                          "sourceUnit": {
+                            "type": "CurrentTarget"
+                          }
+                        }
+                      },
+                      {
+                        "cmp": {
+                          "lhs": {
+                            "auraNumStacks": {
+                              "auraId": {
+                                "spellId": 22959
+                              },
+                              "sourceUnit": {
+                                "type": "CurrentTarget"
+                              }
+                            }
+                          },
+                          "op": "OpGe",
+                          "rhs": {
+                            "const": {
+                              "val": "5"
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "not": {
+                    "val": {
+                      "auraIsKnown": {
+                        "auraId": {
+                          "spellId": 22959
+                        },
+                        "sourceUnit": {
+                          "type": "CurrentTarget"
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "notes": "Troll. Berserking once Fire Vulnerability has 5 stacks. Other races ignore the warning on this line."
+      },
+      {
+        "action": {
+          "castSpell": {
+            "spellId": {
+              "spellId": 20572
+            }
+          },
+          "condition": {
+            "or": {
+              "vals": [
+                {
+                  "and": {
+                    "vals": [
+                      {
+                        "auraIsKnown": {
+                          "auraId": {
+                            "spellId": 22959
+                          },
+                          "sourceUnit": {
+                            "type": "CurrentTarget"
+                          }
+                        }
+                      },
+                      {
+                        "cmp": {
+                          "lhs": {
+                            "auraNumStacks": {
+                              "auraId": {
+                                "spellId": 22959
+                              },
+                              "sourceUnit": {
+                                "type": "CurrentTarget"
+                              }
+                            }
+                          },
+                          "op": "OpGe",
+                          "rhs": {
+                            "const": {
+                              "val": "5"
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                },
+                {
+                  "not": {
+                    "val": {
+                      "auraIsKnown": {
+                        "auraId": {
+                          "spellId": 22959
+                        },
+                        "sourceUnit": {
+                          "type": "CurrentTarget"
+                        }
+                      }
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "notes": "Orc. Blood Fury once Fire Vulnerability has 5 stacks. Other races ignore the warning on this line."
+      },
+      {
+        "action": {
           "autocastOtherCooldowns": {}
         },
         "notes": "Arcane Power, Presence of Mind, Combustion, trinkets, racials and the mana gems on a free GCD."
@@ -610,11 +743,11 @@
   },
   "note": "Rotation tuned for 2% haste: waits up to 0.1 s for Fire Blast instead of starting a Fireball (2.94 s Fireballs miss the 6 s Fire Blast cycle by 60 ms)",
   "gain": {
-    "dps": 14.0,
+    "dps": 13.96,
     "se": 0.6,
     "iterations": 20000,
     "seed": 1,
     "duration": 180
   },
-  "how": "rotopt -template mage_fire -race SkyborneHighOrder -durs 180, the preset's knobs (scorchRefresh=5,pyroStacks=3,fireBlastMana=10,fireBlastHeating=0,missileBarrage=1,filler=1,evocationMana=20,evocationMinTime=90,cooldownsAfterScorch=1,trinketAfterScorch=1,gems=0,blastBuff=0,arcaneWrath=0,finisher=1,finishPad=1.04,wand=1) plus fireBlastWait=0.1 (new knob, tools/rotopt/mage_common.go); Read Leyline (leylineMana 20-100) lost 2 to 16. Same rotation at the preset race (Human): -0.0 +- 0.6."
+  "how": "rotopt -template mage_fire -race SkyborneHighOrder -durs 180, the preset's knobs (scorchRefresh=5,pyroStacks=3,fireBlastMana=10,fireBlastHeating=0,missileBarrage=1,filler=1,evocationMana=20,evocationMinTime=90,cooldownsAfterScorch=1,trinketAfterScorch=1,racialAfterScorch=1,gems=0,blastBuff=0,arcaneWrath=0,finisher=1,finishPad=1.04,wand=1) plus fireBlastWait=0.1 (new knob, tools/rotopt/mage_common.go); Read Leyline (leylineMana 20-100) lost 2 to 16. Regenerated 2026-10-28 when the preset took racialAfterScorch=1 (no effect at High Order, which has neither Berserking nor Blood Fury). Same rotation at the preset race (Human): -0.0 +- 0.6."
 }

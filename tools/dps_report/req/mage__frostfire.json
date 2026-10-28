@@ -208,7 +208,7 @@
                               },
                               "rhs": {
                                 "const": {
-                                  "val": "90s"
+                                  "val": "75s"
                                 }
                               }
                             }
@@ -606,13 +606,13 @@
                                 },
                                 {
                                   "cmp": {
-                                    "op": "OpLt",
+                                    "op": "OpLe",
                                     "lhs": {
                                       "remainingTime": {}
                                     },
                                     "rhs": {
                                       "const": {
-                                        "val": "60s"
+                                        "val": "75s"
                                       }
                                     }
                                   }

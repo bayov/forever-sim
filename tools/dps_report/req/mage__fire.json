@@ -222,6 +222,139 @@
                   }
                 },
                 {
+                  "notes": "Troll. Berserking once Fire Vulnerability has 5 stacks. Other races ignore the warning on this line.",
+                  "action": {
+                    "condition": {
+                      "or": {
+                        "vals": [
+                          {
+                            "and": {
+                              "vals": [
+                                {
+                                  "auraIsKnown": {
+                                    "sourceUnit": {
+                                      "type": "CurrentTarget"
+                                    },
+                                    "auraId": {
+                                      "spellId": 22959
+                                    }
+                                  }
+                                },
+                                {
+                                  "cmp": {
+                                    "op": "OpGe",
+                                    "lhs": {
+                                      "auraNumStacks": {
+                                        "sourceUnit": {
+                                          "type": "CurrentTarget"
+                                        },
+                                        "auraId": {
+                                          "spellId": 22959
+                                        }
+                                      }
+                                    },
+                                    "rhs": {
+                                      "const": {
+                                        "val": "5"
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsKnown": {
+                                  "sourceUnit": {
+                                    "type": "CurrentTarget"
+                                  },
+                                  "auraId": {
+                                    "spellId": 22959
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 26297,
+                        "tag": 2
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Orc. Blood Fury once Fire Vulnerability has 5 stacks. Other races ignore the warning on this line.",
+                  "action": {
+                    "condition": {
+                      "or": {
+                        "vals": [
+                          {
+                            "and": {
+                              "vals": [
+                                {
+                                  "auraIsKnown": {
+                                    "sourceUnit": {
+                                      "type": "CurrentTarget"
+                                    },
+                                    "auraId": {
+                                      "spellId": 22959
+                                    }
+                                  }
+                                },
+                                {
+                                  "cmp": {
+                                    "op": "OpGe",
+                                    "lhs": {
+                                      "auraNumStacks": {
+                                        "sourceUnit": {
+                                          "type": "CurrentTarget"
+                                        },
+                                        "auraId": {
+                                          "spellId": 22959
+                                        }
+                                      }
+                                    },
+                                    "rhs": {
+                                      "const": {
+                                        "val": "5"
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsKnown": {
+                                  "sourceUnit": {
+                                    "type": "CurrentTarget"
+                                  },
+                                  "auraId": {
+                                    "spellId": 22959
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20572
+                      }
+                    }
+                  }
+                },
+                {
                   "notes": "Arcane Power, Presence of Mind, Combustion, trinkets, racials and the mana gems on a free GCD.",
                   "action": {
                     "autocastOtherCooldowns": {}
