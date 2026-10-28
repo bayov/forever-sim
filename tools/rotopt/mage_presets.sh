@@ -26,14 +26,16 @@ gen() {
 # of Mind wait for the on-use trinket unless it won't be back in time. When a Frostbolt would not
 # land before the end (its cast plus 0.75 sec), Fire Blast and Arcane Explosion instead.
 gen mage_arcane level60_arcane "blastBuff=4,blastRefresh=0,barrageBeforeBlast=1,arcaneWrath=0,conserveMana=20,filler=2,missileBarrage=1,barrageFirst=0,evocationMana=0,gems=0,prepull=1,powerWithTrinket=1,pomWrath=0,finisher=1,finishPad=0.75,wand=1"
-# Scorch to 5 Fire Vulnerability stacks and before they run out (5 sec), Pyroblast at 3 Heating
-# Up stacks (a 1.5 sec cast), Arcane Missiles on Missile Barrage, Fire Blast above 10% mana (since
-# 70425 every Fire Blast adds a Heating Up stack, two on a crit), Fireball. Evocation below 20%
-# mana with 90 sec of the fight left. Combustion and the on-use trinket wait for the 5th stack, so
-# its crits go on spells that take all 15%. No mana gems: they share the Demonic Rune's 2 min
-# cooldown, and the rune gives more. When a Fireball would not land before the end (its cast plus
-# 1.04 sec), Fire Blast and Scorch instead.
-gen mage_fire level60_fire "scorchRefresh=5,pyroStacks=3,fireBlastMana=10,fireBlastHeating=0,missileBarrage=1,filler=1,evocationMana=20,evocationMinTime=90,cooldownsAfterScorch=1,trinketAfterScorch=1,gems=0,blastBuff=0,arcaneWrath=0,finisher=1,finishPad=1.04,wand=1"
+# Scorch to 5 Fire Vulnerability stacks and before they run out (5 sec), Pyroblast at 3 Heating Up
+# stacks (a 1.5 sec cast), Arcane Missiles on Missile Barrage, Fire Blast above 10% mana (since
+# 70425 every Fire Blast adds a Heating Up stack, two on a crit), Fireball. Evocation below 20% mana
+# with 90 sec of the fight left. Combustion and the on-use trinket wait for the 5th stack, so its
+# crits go on spells that take all 15%, and so do Berserking and Blood Fury (the Scorch ramp's 1.5
+# sec casts are held by the GCD, so haste buys nothing there; Troll +2.5 / +2.5 / +1.4 and Orc +2.8
+# / +2.2 / +1.5 at 120 / 180 / 300 sec, nothing for other races). No mana gems: they share the
+# Demonic Rune's 2 min cooldown, and the rune gives more. When a Fireball would not land before the
+# end (its cast plus 1.04 sec), Fire Blast and Scorch instead.
+gen mage_fire level60_fire "scorchRefresh=5,pyroStacks=3,fireBlastMana=10,fireBlastHeating=0,missileBarrage=1,filler=1,evocationMana=20,evocationMinTime=90,cooldownsAfterScorch=1,trinketAfterScorch=1,racialAfterScorch=1,gems=0,blastBuff=0,arcaneWrath=0,finisher=1,finishPad=1.04,wand=1"
 # Frostbolt, with Ice Lance on every Fingers of Frost charge (3 times the damage on a Frozen
 # target since 70425, with SoD's 42.9% spell power coefficient), and two Arcane Blasts every 15 sec
 # for 30% of Intellect as spell damage (the 2026-10-23 build has Arcane Mind; one stack lost 16 at
@@ -49,12 +51,16 @@ gen mage_frost level60_frost "iceLance=1,missileBarrage=1,fireBlastMana=0,evocat
 # the first charge goes on a Frostfire Bolt, which the charge makes a Shatter crit), Frostfire Bolt.
 # Since 70425 every Fire Blast adds a Heating Up stack, so Fire Blast goes on cooldown above 80%
 # mana, and below that with the mana the fight can't use (above 70 a second of the fight left).
-# Evocation below 10% with 90 sec of the fight left. Once Evocation is spent (or under 60 sec are
-# left) and the mana is under 30 a second of the fight left, rank 2 Frostfire Bolt (285 mana for 9%
-# less damage). The 2026-10-23 knob search (120, 180 and 300 sec together, after the Fingers of
-# Frost batch timing) moved Ice Lance to the last charge, Evocation from 20% and 45 sec, and the
-# rank 2 line from 60 a second: +15 / +44 / +39 at 120 / 180 / 300 sec on both seed sets. No mana
-# gems, for the Demonic Rune. The on-use trinket waits for the 5th Fire Vulnerability stack. When a
-# Frostfire Bolt would not land before the end (its cast plus 1.5 sec), Ice Lance instead, and the
-# wand when out of mana.
-gen mage_frostfire level60_frostfire "scorchRefresh=7,pyroStacks=3,pyroMana=0,iceLance=2,missileBarrage=1,fireBlastMana=80,evocationMana=10,evocationMinTime=90,gems=0,lowManaRank=30,fireBlastSurplus=70,trinketAfterScorch=1,iceLanceFirst=1,blastBuff=0,arcaneWrath=0,finisher=1,finishPad=1.5,wand=1"
+# Evocation below 10% with more than 75 sec of the fight left. Once Evocation is spent or no longer
+# worth it (75 sec or less left, the same cutoff, so the two lines are one decision) and the mana is
+# under 30 a second of the fight left, rank 2 Frostfire Bolt (285 mana for 9% less damage). The
+# 2026-10-23 knob search (120, 180 and 300 sec together, after the Fingers of Frost batch timing)
+# moved Ice Lance to the last charge, Evocation from 20% and 45 sec, and the rank 2 line from 60 a
+# second: +15 / +44 / +39 at 120 / 180 / 300 sec on both seed sets. No mana gems, for the Demonic
+# Rune. The rank 2 line read 60 sec while Evocation read 90 sec, so with 60 to 90 sec left and
+# Evocation ready neither went (full-rank bolts drained the mana, the wand finished); one cutoff
+# searched at 180 +- 20 sec (2026-10-28, 8 seeds x 2500): 70 to 90 tie there (+0.5 to +0.9), 60
+# loses 3.1, and 75 gains most at 210 / 240 sec (+10.2 / +7.4, 0 at 120 / 150 / 300). The on-use
+# trinket waits for the 5th Fire Vulnerability stack. When a Frostfire Bolt would not land before
+# the end (its cast plus 1.5 sec), Ice Lance instead, and the wand when out of mana.
+gen mage_frostfire level60_frostfire "scorchRefresh=7,pyroStacks=3,pyroMana=0,iceLance=2,missileBarrage=1,fireBlastMana=80,evocationMana=10,evocationMinTime=75,gems=0,lowManaRank=30,fireBlastSurplus=70,trinketAfterScorch=1,iceLanceFirst=1,blastBuff=0,arcaneWrath=0,finisher=1,finishPad=1.5,wand=1"

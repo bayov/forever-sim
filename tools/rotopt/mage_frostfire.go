@@ -41,8 +41,9 @@ func (mageFrostfire) Knobs() []Knob {
 		trinketAfterScorchKnob(),
 		racialAfterScorchKnob(),
 		// Rank 2 Frostfire Bolt (285 mana instead of 370, about 9% less damage) once Evocation is
-		// spent or less than 60 sec are left, and the mana is under this many per second of the
-		// fight left. 0 never.
+		// spent or no longer worth it (evocationMinTime sec or less left, the cutoff the
+		// Evocation line uses), and the mana is under this many per second of the fight left.
+		// 0 never.
 		Knob{Name: "lowManaRank", Default: 0, Min: 0, Max: 90, Step: 30},
 		// Fire Blast with the mana the fight can't use: above this many per second of the fight
 		// left. 0 never.
@@ -122,9 +123,13 @@ func (mageFrostfire) Build(k Knobs) *proto.APLRotation {
 		), "Fire Blast with the mana the fight can't use."))
 	}
 	if k["lowManaRank"] > 0 {
+		// Once Evocation won't refill the mana: it is on cooldown, or the fight is past
+		// evocationMinTime, the Evocation line's own cutoff, so the two lines make one decision
+		// and there is no stretch where neither fires (full-rank bolts drain the mana and the
+		// wand finishes).
 		rank2 := spellID(mage.FrostfireBoltSpellId[2])
 		items = append(items, cast(rank2, and(
-			or(not(spellIsReady(evocation)), lt(remainingTime(), seconds(60))),
+			or(not(spellIsReady(evocation)), le(remainingTime(), seconds(k["evocationMinTime"]))),
 			lt(currentMana(), mul(remainingTime(), num(k["lowManaRank"]))),
 			gt(remainingTime(), seconds(10)),
 		), "Rank 2 Frostfire Bolt when the mana will not last the fight."))

@@ -41,13 +41,13 @@
   "rotation": [
     "Pre-pull: Frostfire Bolt at -3s",
     "The on-use trinket once Fire Vulnerability has 5 stacks; other cooldowns on a free GCD; mana gems never (they share the rune's cooldown)",
-    "Evocation below 10% mana with more than 90s left",
+    "Evocation below 10% mana with more than 75s left",
     "Ice Lance on the last Fingers of Frost charge, ahead of Scorch and Pyroblast (3 times the damage, Shatter crit); the first charge goes on a Frostfire Bolt",
     "Scorch to 5 Fire Vulnerability stacks and again with under 7s left",
     "Pyroblast at 3 Heating Up stacks (1.5s cast)",
     "Arcane Missiles on a Missile Barrage proc",
     "Fire Blast on cooldown above 80% mana, and with mana the fight can't use (above 70 per second of fight left); every Fire Blast adds a Heating Up stack",
-    "Rank 2 Frostfire Bolt once Evocation is spent or under 60s left, while mana is under 30 per second of fight left",
+    "Rank 2 Frostfire Bolt once Evocation is spent or no longer worth it (75s or less left, the Evocation line's cutoff), while mana is under 30 per second of fight left",
     "Ice Lance instead when a Frostfire Bolt would not land before the end (its cast plus 1.5s)",
     "Filler: Frostfire Bolt",
     "Shoot the wand when nothing else can be cast (out of mana)"

@@ -144,9 +144,10 @@ func mageCommonKnobs() []Knob {
 	return []Knob{
 		// Evocation below this much mana, 0 never.
 		{Name: "evocationMana", Default: 20, Min: 0, Max: 40, Step: 10},
-		// Evocation only with at least this many seconds of the fight left, so its 8 sec channel
-		// buys mana the fight still needs.
-		{Name: "evocationMinTime", Default: 30, Min: 0, Max: 90, Step: 30},
+		// Evocation only with more than this many seconds of the fight left, so its 8 sec channel
+		// buys mana the fight still needs. Frostfire's rank 2 Frostfire Bolt line reads the same
+		// cutoff (once Evocation is no longer worth it the mana goes into the cheaper rank).
+		{Name: "evocationMinTime", Default: 30, Min: 0, Max: 120, Step: 15},
 		// Arcane Power and Presence of Mind wait for the other cooldowns: 0 on cooldown, 1
 		// Arcane Power waits for the trinket and racial window (they go with it).
 		{Name: "cooldownsTogether", Default: 0, Min: 0, Max: 1, Step: 1},

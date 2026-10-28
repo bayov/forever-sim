@@ -254,7 +254,7 @@
                     "op": "OpGt",
                     "rhs": {
                       "const": {
-                        "val": "90s"
+                        "val": "75s"
                       }
                     }
                   }
@@ -632,10 +632,10 @@
                           "lhs": {
                             "remainingTime": {}
                           },
-                          "op": "OpLt",
+                          "op": "OpLe",
                           "rhs": {
                             "const": {
-                              "val": "60s"
+                              "val": "75s"
                             }
                           }
                         }
@@ -742,11 +742,11 @@
   },
   "note": "Berserking waits for 5 Fire Vulnerability stacks (the Scorch ramp's 1.5 s casts take nothing from haste), and Fire Blast only with the mana the fight can't use",
   "gain": {
-    "dps": 8.4,
-    "se": 0.85,
+    "dps": 4.22,
+    "se": 0.83,
     "iterations": 20000,
     "seed": 1,
     "duration": 180
   },
-  "how": "rotopt -template mage_frostfire -race Troll -durs 180 from the preset's knobs (scorchRefresh=7,pyroStacks=3,pyroMana=0,iceLance=2,missileBarrage=1,fireBlastMana=80,evocationMana=10,evocationMinTime=90,gems=0,lowManaRank=30,fireBlastSurplus=70,trinketAfterScorch=1,iceLanceFirst=1,blastBuff=0,arcaneWrath=0,finisher=1,finishPad=1.5,wand=1): fireBlastMana 80 -> 0, then racialAfterScorch=1 (new knob, tools/rotopt/mage_common.go). Same rotation at the preset race (Human): -1.2 +- 0.8."
+  "how": "Regenerated 2026-10-28 after the preset's Evocation and rank 2 Frostfire Bolt lines took one cutoff (evocationMinTime=75, which the rank 2 line now reads too); the race's own knobs unchanged. rotopt -template mage_frostfire -race Troll -durs 180 from the preset's knobs (scorchRefresh=7,pyroStacks=3,pyroMana=0,iceLance=2,missileBarrage=1,fireBlastMana=80,evocationMana=10,evocationMinTime=75,gems=0,lowManaRank=30,fireBlastSurplus=70,trinketAfterScorch=1,iceLanceFirst=1,blastBuff=0,arcaneWrath=0,finisher=1,finishPad=1.5,wand=1): fireBlastMana 80 -> 0, then racialAfterScorch=1 (tools/rotopt/mage_common.go). Gain over the new preset rotation at Troll; same rotation at the preset race (Human): -2.3 +- 0.8."
 }

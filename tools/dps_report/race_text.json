@@ -35,18 +35,6 @@
    "priority:Wait": "With 2% haste, two Fireballs end 0.06s before Fire Blast is ready. A short wait beats starting another Fireball."
   }
  },
- "mage__frostfire.Orc": {
-  "note": "Fire Blast only with mana the fight won't need, not whenever mana is above 80%.",
-  "why": {
-   "priority:s10199": "Leaves the mana for Frostfire Bolt. Fire Blast still uses mana the fight won't need (the next Fire Blast line)."
-  }
- },
- "mage__frostfire.Undead": {
-  "note": "Fire Blast only with mana the fight won't need, not whenever mana is above 80%.",
-  "why": {
-   "priority:s10199": "Leaves the mana for Frostfire Bolt. Fire Blast still uses mana the fight won't need (the next Fire Blast line)."
-  }
- },
  "mage__frostfire.Troll": {
   "note": "Berserking waits for 5 Fire Vulnerability stacks, since haste can't speed up the Scorch casts before them. Fire Blast only with mana the fight won't need, not whenever mana is above 80%.",
   "why": {
