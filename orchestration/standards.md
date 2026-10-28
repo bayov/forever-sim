@@ -182,6 +182,7 @@ The rules every class follows so the specs' Level 60 numbers compare fairly. New
    - A fixed time is fine only when the fight's own clock is the reason: an end-of-fight dump of cooldowns, mana or a finisher, a DoT that would not finish, the execute phase.
    - Every rotation change is checked at 120, 180 and 300 s and at the fight-length variation the presets use (180 ± 20 s); it may not lose at any of them by more than the sim's noise for a gain at 180 s.
    The rotation template (`tools/rotopt/<class>*.go`) carries the intent, and its notes say what each line waits for.
+   - The Rotation card reads every condition as plain English for someone who doesn't know APLs (user ruling 2026-10-28: "We said to use more readable language throughout rotation card"). `rotation.py` reads conditions out clause by clause; one that still reads like code (arithmetic, cooldown sums, brackets inside brackets) gets its wording in `tools/dps_report/rotation_text.json`, and `build_data.py` warns about any it is missing. The card's tooltip keeps the exact rule.
 
 ## Report
 

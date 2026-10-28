@@ -139,7 +139,7 @@
   "title": "Rotation priority lists",
   "description": "Each preset's APL as simmed: pre-pull casts with their timing, then the priority list in order, each line's spell, a plain-English condition, the APL's own note, its exact condition and the spell's casts per fight.",
   "updated": {
-   "at": "2026-10-28T13:29:49.924Z",
+   "at": "2026-10-28T15:14:27.500Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -147,7 +147,7 @@
   "title": "Race rotations",
   "description": "The races that play their own rotation on a preset: each line lined up with the preset's (the same, changed, added or removed), with why it changed. No cast counts: the race sims record DPS only.",
   "updated": {
-   "at": "2026-10-28T13:29:49.924Z",
+   "at": "2026-10-28T15:14:27.500Z",
    "by": "Claude (forever-sim)"
   }
  },

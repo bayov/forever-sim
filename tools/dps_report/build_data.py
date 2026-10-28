@@ -721,6 +721,10 @@ dump('race_rotation', race_rot_rows)
 _nowhy = sorted({f"{r['build']} {r['forRace']} {r['section']}:{r['key'] or r['name']}" for r in race_rot_rows if r['diff'] != 'same' and not r['otherRace'] and not r['why']})
 if _nowhy:
     print(f'WARNING race_rotation: {len(_nowhy)} changed lines with no why in race_text.json, e.g. {_nowhy[0]}')
+if rotation.PLAIN_MISSING:
+    print(f'WARNING rotation: {len(rotation.PLAIN_MISSING)} conditions read like code, with no wording in rotation_text.json, e.g. {min(rotation.PLAIN_MISSING)}')
+if set(rotation.PLAIN) - rotation.PLAIN_USED:
+    print(f'WARNING rotation: {len(set(rotation.PLAIN) - rotation.PLAIN_USED)} rotation_text.json entries no line uses, e.g. {min(set(rotation.PLAIN) - rotation.PLAIN_USED)}')
 rot_fallback = sorted(set(rot_fallback) | set(_fb))
 print('rotation conditions shown in compact form:', rot_fallback)
 

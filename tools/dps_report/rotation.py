@@ -5,6 +5,28 @@ OPS = {'OpLt': 'under', 'OpLe': 'at most', 'OpGt': 'over', 'OpGe': 'at least', '
 SYM = {'OpLt': '<', 'OpLe': '≤', 'OpGt': '>', 'OpGe': '≥', 'OpEq': '=', 'OpNe': '≠'}
 MATH = {'OpAdd': 'plus', 'OpSub': 'minus', 'OpMul': 'times', 'OpDiv': 'divided by'}
 AUTO = {'MainHand': 'main-hand', 'OffHand': 'off-hand', 'Ranged': 'ranged', 'Any': 'next'}
+# Conditions the humaniser can only read out clause by clause (math, nested brackets) get their wording from
+# rotation_text.json, keyed by that read-out. PLAIN_MISSING and PLAIN_USED are for build_data.py's warnings.
+PLAIN = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'rotation_text.json')))['when']
+PLAIN_MISSING, PLAIN_USED = set(), set()
+
+
+def code_like(when):
+    """A read-out that still reads like code: arithmetic, cooldown sums, or brackets inside brackets."""
+    depth = top = 0
+    for c in when:
+        depth += (c == '(') - (c == ')')
+        top = max(top, depth)
+    return top >= 2 or bool(re.search(r'\b(times|minus|divided by|longer of|shorter of|add up to|uses left|can still be used)\b', when))
+
+
+def plain(when):
+    if when in PLAIN:
+        PLAIN_USED.add(when)
+        return PLAIN[when]
+    if code_like(when):
+        PLAIN_MISSING.add(when)
+    return when
 
 
 def key_of(ref):
@@ -548,7 +570,7 @@ def apl_rows(bid, rot, race, nm, names, casts, racial_race, H):
             'build': bid, 'section': section, 'order': order,
             'kind': {'castSpell': 'cast', 'channelSpell': 'channel', 'move': 'move', 'autocastOtherCooldowns': 'auto', 'strictSequence': 'sequence'}.get(kind, kind),
             'key': key, 'name': name, 'icon': names[key]['icon'] if key and key in names else None,
-            'at': at, 'when': when[:1].upper() + when[1:] if when else '', 'extra': extra, 'notes': clean_note(notes),
+            'at': at, 'when': plain(when[:1].upper() + when[1:]) if when else '', 'extra': extra, 'notes': clean_note(notes),
             'race': rr, 'otherRace': bool(rr and race and rr != race and not (isinstance(rr, list))),
             # A tagged press (a queued Heroic Strike or Raptor Strike) counts on its spell's row, where
             # build_data folds it.
