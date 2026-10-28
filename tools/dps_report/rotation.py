@@ -527,21 +527,26 @@ def apl_rows(bid, rot, race, nm, names, casts, racial_race, H):
         elif kind == 'move':
             r = body.get('rangeFromTarget', {}).get('const', {}).get('val', '0')
             extra = 'Into melee range' if str(r) in ('0', '0s') else f'To {r} yd from the boss'
+        # A sequence (an opener like Sunder Armor, or Shadowmeld into Ambush) is named by its spells, and its first
+        # spell gives the icon, the tooltip and the racial it belongs to.
+        steps = [key_of(a['castSpell'].get('spellId')) for a in (body.get('actions') or []) if 'castSpell' in a] if kind in ('sequence', 'strictSequence') else []
+        if steps:
+            ref = (body['actions'][0].get('castSpell') or {}).get('spellId')
         key = key_of(ref) if ref else None
         H.cur = key
-        name = nm(key) if key else {'move': 'Move', 'autocastOtherCooldowns': 'Other cooldowns', 'wait': 'Wait'}.get(kind, kind)
+        name = ', then '.join(nm(k) for k in steps) if steps else nm(key) if key else {'move': 'Move', 'autocastOtherCooldowns': 'Other cooldowns', 'wait': 'Wait'}.get(kind, kind)
         when = H.tidy(H.pred(cond, top=True)) if cond else ''
         if not cond or when == 'always':  # no condition, or only one we leave out (see Humaniser.const_of)
             when = '' if section == 'prepull' else 'when ready' if kind in ('castSpell', 'channelSpell') else ''
         if kind == 'autocastOtherCooldowns':
             when = 'trinkets, racials and potions not listed here, as soon as they are ready'
         rr = (racial_race.get(int(ref['spellId'])) if ref and ref.get('spellId') else None) or (racial_race.get(name) if key else None)
-        mr = re.match(r'^(Human|Dwarf|Night Elf|Gnome|High Order|Orc|Undead|Tauren|Troll|Windshaper)\. ', notes or '')
+        mr = re.match(r'^(Human|Dwarf|Night Elf|Gnome|High Order|Orc|Undead|Tauren|Troll|Windshaper)[.:] ', notes or '')
         if not rr and mr:  # a racial line the notes name ("Undead. Dark Sacrifice when ...")
             rr = mr.group(1)
         rows.append({
             'build': bid, 'section': section, 'order': order,
-            'kind': {'castSpell': 'cast', 'channelSpell': 'channel', 'move': 'move', 'autocastOtherCooldowns': 'auto'}.get(kind, kind),
+            'kind': {'castSpell': 'cast', 'channelSpell': 'channel', 'move': 'move', 'autocastOtherCooldowns': 'auto', 'strictSequence': 'sequence'}.get(kind, kind),
             'key': key, 'name': name, 'icon': names[key]['icon'] if key and key in names else None,
             'at': at, 'when': when[:1].upper() + when[1:] if when else '', 'extra': extra, 'notes': clean_note(notes),
             'race': rr, 'otherRace': bool(rr and race and rr != race and not (isinstance(rr, list))),

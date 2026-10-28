@@ -2126,7 +2126,7 @@ export function startReport(dash, events) {
     const shown = section === 'priority' && !r.otherRace && !/^Never/.test(r.when || '');
     // a race's changed line names what the preset does there
     const was = r.diff === 'changed' ? rotRows(b).find((x) => x.section === section && x.order === r.base) : null;
-    const tag = r.diff === 'changed' || r.diff === 'added' ? `${RACE_DIFF[r.diff]} for ${race}` : r.race ? `${r.race} only` : String(r.kind);
+    const tag = r.diff === 'changed' || r.diff === 'added' ? `${RACE_DIFF[r.diff]} for ${race}` : r.race ? `${r.race} only` : kindTag(r) || '';
     const lines = [
       ['h', section === 'prepull' ? `Pre-pull · ${fmtT(+r.at)}` : `Priority ${r.order}`, tag],
       !shown && r.when ? ['t', plainWhen(r.when)] : null,
@@ -2138,7 +2138,8 @@ export function startReport(dash, events) {
     ].filter(Boolean);
     return { ...base, icon: base.icon || r.icon, title: String(r.key && !/^oOther/.test(r.key) ? base.title : r.name), lines: [...lines, ...(base.lines && base.lines.length ? [['s'], ...base.lines] : [])] };
   };
-  const KIND_TAG = { cast: 'Cast', channel: 'Channel', move: 'Move', auto: 'Auto' };
+  // A line's kind, where its name doesn't already say it: a channel, and a sequence of more than one spell.
+  const kindTag = (r) => (r.kind === 'channel' ? 'Channel' : r.kind === 'sequence' && /, then /.test(r.name) ? 'In order' : null);
   const RACE_DIFF = { changed: 'Changed', added: 'Added', removed: 'Dropped' };
   // The Rotation card shows the preset's rotation for one race, or for all of them at once. A race plays the preset's
   // rotation unless it has its own (race_rotation); either way only its own racials fire. "All races" is the preset's
@@ -2170,7 +2171,7 @@ export function startReport(dash, events) {
     const W = (r) => (r.forRace ? `build=${enc(b.id)}&forRace=${enc(r.forRace)}&section=${r.section}&order=${r.order ?? ''}&base=${r.base ?? ''}` : `build=${enc(b.id)}&section=${r.section}&order=${r.order}`);
     const SRC = (r) => (r.forRace ? 'race_rotation' : 'rotation');
     const ttKey = (r) => (r.forRace && r.diff !== 'removed' ? `rot:${r.section}:${r.order}:${r.forRace}` : `rot:${r.section}:${r.forRace ? r.base : r.order}`);
-    const ico = (r, cls) => (r.icon ? iconImg(r.icon, cls) : el('span', { class: cls + ' fv-noico', text: r.kind === 'move' ? '➜' : r.kind === 'auto' ? '⟳' : String(r.name).slice(0, 2) }));
+    const ico = (r, cls) => (r.icon ? iconImg(r.icon, cls) : el('span', { class: cls + ' fv-noico', text: { move: '➜', auto: '⟳', wait: '⏸', sequence: '»' }[r.kind] || String(r.name).slice(0, 2) }));
     // races as a tag: their icons and names
     const raceTag = (rs, cls, text) => el('span', { class: 'kd race ' + (cls || '') }, ...rs.map((x) => raceIco(icoOf.get(x))), text ?? rs.join(', '));
     // other races' racials (for the race shown) and lines switched off fold into one row each
@@ -2186,13 +2187,14 @@ export function startReport(dash, events) {
     const whyLine = (r) => (r.why ? el('span', { class: 'fv-why' }, el('b', { text: 'Why: ' }), r.why) : null);
     // one priority line as a card: number, icon, name and tags, condition, note, casts, and any lines under it.
     // sameRace: a tag already names the line's race (a racial a race adds for itself), so it needs no "only" tag.
-    const card = (r, { no = String(r.order), casts = false, tags = [], sub = [], cls = '', sameRace = false } = {}) => tt(el('li', { class: 'fv-pr' + cls, value: r.order != null ? String(r.order) : null },
+    // when: the condition's nodes, in place of r.when's (a race's line with its added clause highlighted).
+    const card = (r, { no = String(r.order), casts = false, tags = [], sub = [], cls = '', sameRace = false, when = null } = {}) => tt(el('li', { class: 'fv-pr' + cls, value: r.order != null ? String(r.order) : null },
       el('span', { class: 'no', text: no }),
       ico(r, 'fv-ico big'),
       el('div', { class: 'tx' },
-        el('div', { class: 'hd' }, mark(el('b', { text: r.name }), SRC(r), 'name', W(r)), r.kind !== 'cast' ? el('span', { class: 'kd', text: KIND_TAG[r.kind] || r.kind }) : null,
+        el('div', { class: 'hd' }, mark(el('b', { text: r.name }), SRC(r), 'name', W(r)), kindTag(r) ? el('span', { class: 'kd', text: kindTag(r) }) : null,
           r.race && !sameRace ? raceTag([r.race], '', `${r.race} only`) : null, ...tags),
-        r.when ? mark(el('span', { class: 'wh' }, ...richWhen(r.when, b.id)), SRC(r), 'when', W(r)) : null,
+        when || r.when ? mark(el('span', { class: 'wh' }, ...(when || richWhen(r.when, b.id))), SRC(r), 'when', W(r)) : null,
         r.extra ? el('span', { class: 'wh', text: r.extra }) : null,
         r.notes ? el('span', { class: 'nt', text: r.notes }) : null,
         ...sub),
@@ -2201,7 +2203,7 @@ export function startReport(dash, events) {
     const dropped = (r, rs) => tt(el('li', { class: 'fv-pr other dropped' },
       el('span', { class: 'no', text: '−' }),
       el('div', { class: 'tx' }, el('div', { class: 'ics' }, ico(r, 'fv-ico'), el('b', { text: r.name }), raceTag(rs, 'diff-removed', `Dropped for ${rs.join(', ')}`)),
-        el('span', { class: 'wh' }, `The preset’s line ${r.base}: `, ...richWhen(r.when || 'when ready', b.id)), whyLine(r))), ttKey(r), true, b.id);
+        el('span', { class: 'wh' }, `Was line ${r.base}: `, ...richWhen(r.when || 'when ready', b.id)), whyLine(r))), ttKey(r), true, b.id);
     const diffTag = (r, rs) => raceTag(rs, 'diff-' + r.diff, `${RACE_DIFF[r.diff]} for ${rs.join(', ')}`);
     // a race's condition against the preset's: often the preset's with one more clause
     const whenDiff = (was, now) => {
@@ -2269,7 +2271,9 @@ export function startReport(dash, events) {
         }
         addCards(r.order);
       }
-      note = `A line tagged with a race is for that race only.${own.size ? ' Races with an orange dot play their own version. Their changes show under the lines they change.' : ''} Casts are for ${b.race}, the preset’s race (gold ring).`;
+      note = [el('span', { class: 'fv-lg' }, raceIco(icoOf.get(b.race)), `${b.race}: the preset’s race. Casts are for it.`),
+        own.size ? el('span', { class: 'fv-lg' }, el('i', { class: 'fv-rot-own fv-lg-dot' }), 'Plays its own version. Its changes sit under the lines they change.') : null,
+        el('span', { class: 'fv-lg' }, el('span', { class: 'kd race' }, 'Race only'), 'A racial: only that race casts it.')];
     } else {
       const mine = own.get(view);
       // the race's own lines (or the preset's), with the preset lines it drops where they were
@@ -2296,18 +2300,22 @@ export function startReport(dash, events) {
         }
         const ch = r.diff === 'changed' || r.diff === 'added';
         const was = r.diff === 'changed' ? rows.find((x) => x.section === 'priority' && x.order === r.base) : null;
+        // A changed line shows the race's condition: the clause it adds to the usual line highlighted in place, or,
+        // where it replaces the condition, the usual one under it.
         const d = was && was.when !== r.when ? whenDiff(was.when, r.when) : null;
+        const extends_ = d && d[0] !== 'Instead: ';
         items.push(card(r, { casts: isPreset, cls: ch ? ' ' + r.diff : '', tags: ch ? [diffTag(r, [view])] : [], sameRace: ch && r.race === view,
-          sub: [d ? el('span', { class: 'fv-was' }, ...(d[0] === 'Instead: ' ? ['Preset: ', ...richWhen(was.when || 'when ready', b.id)] : ['Adds to the preset’s line: ', ...richWhen(d[1], b.id)])) : null, ch ? whyLine(r) : null] }));
+          when: extends_ ? [...richWhen(was.when, b.id), el('mark', { class: 'fv-add', title: `Added for ${view}` }, ' and ', ...richWhen(d[1], b.id))] : null,
+          sub: [d && !extends_ ? el('span', { class: 'fv-was' }, el('b', { text: 'Instead of: ' }), ...richWhen(was.when || 'when ready', b.id)) : null, ch ? whyLine(r) : null] }));
       }
       dropTo(Infinity);
-      note = isPreset ? `As simmed for ${view}, the preset’s race.`
-        : mine ? `${view}’s own version. Each change shows why. The race sims record DPS only, so there are no casts.`
-          : `${view} plays the preset’s rotation with its own racials. The race sims record DPS only, so there are no casts.`;
+      note = [isPreset ? `The rotation as simmed for ${view}, the preset’s race.`
+        : mine ? `${view} plays its own version. Its changes are marked, each with why. The race sims record DPS only, so there are no casts.`
+          : `${view} plays the preset’s rotation, with its own racials. The race sims record DPS only, so there are no casts.`];
     }
     pre.dataset.build = b.id;
     host.replaceChildren(...(items.length ? items : [el('li', { class: 'fv-note', text: 'No rotation recorded.' })]));
-    $('#sp-rot-note').textContent = `The sim plays the first line it can, from the top. ${note}`;
+    $('#sp-rot-note').replaceChildren(el('span', {}, 'The sim casts the first line it can, top to bottom.'), ...note.filter(Boolean));
   };
 
   // ---------- gear (paper doll, as the sim UI's gear picker) ----------
