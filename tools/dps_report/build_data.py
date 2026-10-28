@@ -62,7 +62,8 @@ item_names = {i['id']: i for i in db['items']}
 enchant_names = {e['effectId']: e['name'] for e in db['enchants']}
 spell_icons = {s['id']: s for s in db['spellIcons']}
 # Forever spells the sim keys by a borrowed or renamed Classic/SoD spell id: show Forever's name and icon
-FOREVER_SPELL = {425336: ('Rage of the Farseer', 'spell_nature_bloodlust'), 11713: ('Bane of Agony', None), 603: ('Bane of Doom', None)}
+FOREVER_SPELL = {425336: ('Rage of the Farseer', 'spell_nature_bloodlust'), 11713: ('Bane of Agony', None), 603: ('Bane of Doom', None),
+                 462707: ('Cutthroat', 'classicon_rogue')}  # Cutthroat's proc, which the client names by id only (the talent's icon)
 for _id, (_nm, _ic) in FOREVER_SPELL.items():
     _s = dict(spell_icons.get(_id) or {'id': _id})
     _s['name'] = _nm
