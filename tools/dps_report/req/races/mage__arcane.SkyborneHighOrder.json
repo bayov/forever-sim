@@ -1,0 +1,484 @@
+{
+ "rotation": {
+  "type": "TypeAPL",
+  "prepullActions": [
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 1239700
+      }
+     }
+    },
+    "doAtValue": {
+     "const": {
+      "val": "-1.47s"
+     }
+    }
+   }
+  ],
+  "priorityList": [
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 12042
+      }
+     },
+     "condition": {
+      "or": {
+       "vals": [
+        {
+         "auraIsActive": {
+          "auraId": {
+           "itemId": 996032
+          }
+         }
+        },
+        {
+         "cmp": {
+          "lhs": {
+           "spellTimeToReady": {
+            "spellId": {
+             "itemId": 996032
+            }
+           }
+          },
+          "op": "OpGt",
+          "rhs": {
+           "math": {
+            "lhs": {
+             "remainingTime": {}
+            },
+            "op": "OpSub",
+            "rhs": {
+             "const": {
+              "val": "15s"
+             }
+            }
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    "notes": "Arcane Power with the on-use trinket, unless the trinket won't be back in time. Without the talent ignore the warning on this line."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 12043
+      }
+     },
+     "condition": {
+      "or": {
+       "vals": [
+        {
+         "auraIsActive": {
+          "auraId": {
+           "itemId": 996032
+          }
+         }
+        },
+        {
+         "cmp": {
+          "lhs": {
+           "spellTimeToReady": {
+            "spellId": {
+             "itemId": 996032
+            }
+           }
+          },
+          "op": "OpGt",
+          "rhs": {
+           "math": {
+            "lhs": {
+             "remainingTime": {}
+            },
+            "op": "OpSub",
+            "rhs": {
+             "const": {
+              "val": "15s"
+             }
+            }
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    "notes": "Presence of Mind with Arcane Power and the trinket. Without the talent ignore the warning on this line."
+   },
+   {
+    "action": {
+     "autocastOtherCooldowns": {}
+    },
+    "notes": "Arcane Power, Presence of Mind, Combustion, trinkets, racials and the mana gems on a free GCD."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "itemId": 5514
+      }
+     },
+     "condition": {
+      "cmp": {
+       "lhs": {
+        "const": {
+         "val": "0"
+        }
+       },
+       "op": "OpGt",
+       "rhs": {
+        "const": {
+         "val": "1"
+        }
+       }
+      }
+     }
+    },
+    "notes": "Never: the mana gems share the Demonic Rune's cooldown, and the rune gives more."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "itemId": 5513
+      }
+     },
+     "condition": {
+      "cmp": {
+       "lhs": {
+        "const": {
+         "val": "0"
+        }
+       },
+       "op": "OpGt",
+       "rhs": {
+        "const": {
+         "val": "1"
+        }
+       }
+      }
+     }
+    },
+    "notes": "Never: the mana gems share the Demonic Rune's cooldown, and the rune gives more."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "itemId": 8007
+      }
+     },
+     "condition": {
+      "cmp": {
+       "lhs": {
+        "const": {
+         "val": "0"
+        }
+       },
+       "op": "OpGt",
+       "rhs": {
+        "const": {
+         "val": "1"
+        }
+       }
+      }
+     }
+    },
+    "notes": "Never: the mana gems share the Demonic Rune's cooldown, and the rune gives more."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "itemId": 8008
+      }
+     },
+     "condition": {
+      "cmp": {
+       "lhs": {
+        "const": {
+         "val": "0"
+        }
+       },
+       "op": "OpGt",
+       "rhs": {
+        "const": {
+         "val": "1"
+        }
+       }
+      }
+     }
+    },
+    "notes": "Never: the mana gems share the Demonic Rune's cooldown, and the rune gives more."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 10199
+      }
+     },
+     "condition": {
+      "cmp": {
+       "lhs": {
+        "remainingTime": {}
+       },
+       "op": "OpLt",
+       "rhs": {
+        "math": {
+         "lhs": {
+          "spellCastTime": {
+           "spellId": {
+            "spellId": 10181
+           }
+          }
+         },
+         "op": "OpAdd",
+         "rhs": {
+          "const": {
+           "val": "0.75s"
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    "notes": "An instant when the filler would not land before the end of the fight."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 10202
+      }
+     },
+     "condition": {
+      "cmp": {
+       "lhs": {
+        "remainingTime": {}
+       },
+       "op": "OpLt",
+       "rhs": {
+        "math": {
+         "lhs": {
+          "spellCastTime": {
+           "spellId": {
+            "spellId": 10181
+           }
+          }
+         },
+         "op": "OpAdd",
+         "rhs": {
+          "const": {
+           "val": "0.75s"
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    "notes": "An instant when the filler would not land before the end of the fight."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 10212
+      }
+     },
+     "condition": {
+      "and": {
+       "vals": [
+        {
+         "auraIsKnown": {
+          "auraId": {
+           "spellId": 400589
+          }
+         }
+        },
+        {
+         "auraIsActive": {
+          "auraId": {
+           "spellId": 400589
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    "notes": "Arcane Missiles on a Missile Barrage proc, free and twice as fast."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 1239700
+      }
+     },
+     "condition": {
+      "and": {
+       "vals": [
+        {
+         "auraIsKnown": {
+          "auraId": {
+           "spellId": 400573
+          }
+         }
+        },
+        {
+         "cmp": {
+          "lhs": {
+           "currentManaPercent": {}
+          },
+          "op": "OpLt",
+          "rhs": {
+           "const": {
+            "val": "0.2"
+           }
+          }
+         }
+        },
+        {
+         "not": {
+          "val": {
+           "auraIsActive": {
+            "auraId": {
+             "spellId": 400573
+            }
+           }
+          }
+         }
+        },
+        {
+         "cmp": {
+          "lhs": {
+           "remainingTime": {}
+          },
+          "op": "OpGt",
+          "rhs": {
+           "const": {
+            "val": "4s"
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    "notes": "Low on mana: one Arcane Blast for the spell damage."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 1239700
+      }
+     },
+     "condition": {
+      "and": {
+       "vals": [
+        {
+         "auraIsKnown": {
+          "auraId": {
+           "spellId": 400573
+          }
+         }
+        },
+        {
+         "cmp": {
+          "lhs": {
+           "auraNumStacks": {
+            "auraId": {
+             "spellId": 400573
+            }
+           }
+          },
+          "op": "OpLt",
+          "rhs": {
+           "const": {
+            "val": "4"
+           }
+          }
+         }
+        },
+        {
+         "cmp": {
+          "lhs": {
+           "remainingTime": {}
+          },
+          "op": "OpGt",
+          "rhs": {
+           "const": {
+            "val": "4s"
+           }
+          }
+         }
+        },
+        {
+         "not": {
+          "val": {
+           "cmp": {
+            "lhs": {
+             "currentManaPercent": {}
+            },
+            "op": "OpLt",
+            "rhs": {
+             "const": {
+              "val": "0.2"
+             }
+            }
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    "notes": "Arcane Blast up to the stack target: each stack is 15% of Intellect as spell damage for 15 sec from the first."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 10181
+      }
+     }
+    },
+    "notes": "The filler."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 5019
+      }
+     }
+    },
+    "notes": "Shoot the wand when nothing else can be cast (out of mana)."
+   }
+  ]
+ },
+ "note": "Rotation tuned for 2% haste: the opening Arcane Blast starts 1.47 sec before the pull, so it lands at the pull and not 30 ms before it",
+ "gain": {
+  "dps": 4.93,
+  "se": 0.11,
+  "iterations": 20000,
+  "seed": 1,
+  "duration": 180
+ },
+ "how": "rotopt -template mage_arcane -race SkyborneHighOrder -durs 180 -eval, the preset's knobs (blastBuff=4,blastRefresh=0,barrageBeforeBlast=1,arcaneWrath=0,conserveMana=20,filler=2,missileBarrage=1,barrageFirst=0,evocationMana=0,gems=0,prepull=1,powerWithTrinket=1,pomWrath=0,finisher=1,finishPad=0.75,wand=1) plus prepullAt=1.47 (new knob, tools/rotopt/mage_arcane.go). The preset starts the opener at -1.5 sec; Arcane Blast hits as its cast ends and has no flight time, so at 1.4706 sec it hit at -0.03 sec, before the pull, where its damage doesn't count. A knob search at High Order (3000 iterations) kept every other knob. Wind Blessed is now worth +6.8 (0.76%; was +1.8). Paired over 20000 iterations."
+}

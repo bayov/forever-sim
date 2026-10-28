@@ -32,6 +32,10 @@ func (mageArcane) Knobs() []Knob {
 		Knob{Name: "barrageBeforeBlast", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Precast an Arcane Blast (1.5 sec cast) so it lands at the pull.
 		Knob{Name: "prepull", Default: 1, Min: 0, Max: 1, Step: 1},
+		// How many seconds before the pull that Arcane Blast starts. It hits as its cast ends, and
+		// damage before the pull doesn't count, so with haste it must start later: 1.47 for the
+		// High Order's 2% (a 1.4706 sec cast), where 1.5 lands it 30 ms before the pull.
+		Knob{Name: "prepullAt", Default: 1.5, Min: 1.47, Max: 1.5, Step: 0.03},
 		// Hold Arcane Power and Presence of Mind for the synthetic on-use trinket.
 		Knob{Name: "powerWithTrinket", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Presence of Mind on Arcane Wrath, the longest cast.
@@ -85,7 +89,7 @@ func (mageArcane) Build(k Knobs) *proto.APLRotation {
 	items = append(items, wandLines(k)...)
 	rot := rotation(items...)
 	if k["prepull"] == 1 {
-		rot.PrepullActions = append(rot.PrepullActions, prepull(s.arcaneBlast, 1.5))
+		rot.PrepullActions = append(rot.PrepullActions, prepull(s.arcaneBlast, k["prepullAt"]))
 	}
 	return rot
 }
