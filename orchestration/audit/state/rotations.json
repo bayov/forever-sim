@@ -1,12 +1,12 @@
 {
  "last": {
-  "master": "224b8a4e00994c8ede45e50bdf5172c98b3a7592"
+  "master": "c9d93dd66d6fd02141a402af9db39c08c3140280"
  },
- "last_pass_at": "2026-10-28T01:00:07Z",
- "pass": 36,
- "result": "quiet",
+ "last_pass_at": "2026-10-28T12:58:56Z",
+ "pass": 37,
+ "result": "findings",
  "note": "Seeded from the long-running auditor session at the move to the audit loop.",
  "client_build": "1.60.1.70630",
- "checked_at": "2026-10-28T07:32:47Z",
- "baseline": "baseline_5d27b00_3000it_seed424242.tsv"
+ "checked_at": "2026-10-28T13:06:25Z",
+ "baseline": "baseline_1274e15_3000it_seed424242.tsv"
 }

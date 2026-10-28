@@ -88,3 +88,9 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-10-28 07:32 | mechanics | pass 45 | master 224b8a4e0 | quiet | 25 mechanics tables identical in 70658; mechanics-20261027-2 still open
 2026-10-28 07:32 | fairness | pass 12 | master 224b8a4e0 | quiet | no tuned race beats its preset's race; Frostfire Gnome vs Human is a tie
 2026-10-28 07:32 | client_update | pass 4 | master 224b8a4e0 | 2 new findings | 70658 hotfix: Aspect of the Hawk ranks 1-5 and Trueshot Aura ranks 1-4 lowered (hunter -0.7 to -1.3%)
+2026-10-28 13:06 | results | pass 59 | master 1274e15b3 | quiet | 58 builds within 0.15 of published; hunters -19 to -25 DPS from the 73cedc9a9 Hawk/Trueshot hotfix
+2026-10-28 13:06 | rotations | pass 37 | master 1274e15b3 | 1 new finding | hunter APLs use Hawk rank 6; rotations-20261028-1: BM/MM/LW meta caveats still cite old TSA 100 / Hawk rank 5 (low)
+2026-10-28 13:06 | gear | pass 45 | master 1274e15b3 | quiet | only standards.md changed, no gear impact
+2026-10-28 13:06 | consumables | pass 51 | master 1274e15b3 | quiet | Trueshot Aura ranks match client 70658
+2026-10-28 13:06 | mechanics | pass 46 | master 1274e15b3 | quiet | hunter hotfix matches client 70658; mechanics-20261027-2 still open
+2026-10-28 13:06 | fairness | pass 13 | master 1274e15b3 | quiet | only hunters moved (-0.1 to -2.2%), still rank 1-3; sweep.py race_override fix left uncommitted
