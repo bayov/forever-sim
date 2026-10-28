@@ -1,57 +1,59 @@
-# Rotations pass 35 (2026-10-27)
+# Rotations pass 36 (2026-10-28)
 
-- **Master:** 06a898751 (last audited d3df9247f). Client 1.60.1.70630 (ledger: 92a4d5331).
+- **Master:** 5d27b0015 (last audited 37a8a8ccd). Client 1.60.1.70634 data; post 8 changes are server side.
 - **Result:** quiet, 0 new findings. No open findings carried.
 
 ## What changed
 
-- `apl_logic_diff.py d3df9247 06a8987`: 0 APL files touched. The req changes are the Ret Shock
-  `build` renames in four `.meta.json` files only.
-- Non-test sim `.go` that the presets reach:
-  - `sim/core/racials_forever.go`: the 2026-10-26 racial pass (Ruthless 1%, Human Spirit 10%, Dwarf
-    Artisan's Precision 1% hit in place of Earth Fury, Orc Savage removed and Command +5% pet damage,
-    Tauren Endurance health only, Wind Blessed 2%, Read Leyline +50% for 15 s).
-  - `sim/mage/ignite.go`, `sim/mage/talents.go`: Arcane Instability and Arcane Power no longer raise
-    Ignite ticks; Arcane Missiles' missiles no longer proc Missile Barrage (user ruling 2026-10-27).
-  - `sim/warlock/talents.go`: Spellstone is Shadow damage only (client 70630).
+- Non-test sim `.go` (`sim/core/racials.go`, `racials_forever.go`), from dev notes post 8:
+  Blood Fury 3 → 2 min, Berserking 10 → 15 s (Forever only), Touch of the Grave ICD 25 → 15 s.
+- `apl_logic_diff.py 37a8a8c 5d27b00`: 6 APL files changed, all worker-measured race tuning:
+  - Balance `level60`, `level60_ff`: Elune's Light (1259799) pre-pull at −0.1 s and synced to the trinket (Night Elf).
+  - Ret `level60_shock*` (3 files): Seal/Judgement mana gates rewritten, Hammer of Wrath / Consecration order.
+  - Rogue `level60_combat_daggers`: Eureka! (1259812) gated on Slice and Dice ≥ 8 s left (inert on Undead).
+- Req files: race re-picks (now 28 Undead, 15 Orc, 5 Night Elf, 4 Human, 4 Windshaper, 1 Gnome,
+  1 High Order). The req rotations carry each race's lines.
 
-## Baseline moves (3k it, seed 424242, vs `baseline_f62cb79`)
+## Checks
 
-No req rotation changed, so every move is the sim. All are explained by the commits above:
+- **Blood Fury use on the Orc presets** (shared run, 180 s, 20k): every Orc preset casts it 2 times per
+  fight (hunters BM/MM/SV and warlocks on MCD autocast, Fury and Enhancement through their sync lines).
+- **Fury and Enhancement sync lines still right at 2 min?** Paired A/B, sync line vs Blood Fury on cooldown
+  (condition removed), 20k it, B−A:
 
-| preset | old | new | Δ | cause |
-|---|---:|---:|---:|---|
-| mage__arcane | 983.3 | 898.0 | −85.3 | Missile Barrage chain from AM gone, AP off Ignite |
-| mage__frost | 949.6 | 914.0 | −35.6 | Missile Barrage chain from AM gone, racials |
-| mage__fire / frostfire | 1101.6 / 1096.4 | 1088.5 / 1086.2 | −13.0 / −10.2 | racial, Ignite |
-| warlock (Spellstone presets) | | | −9.5 to −11.7 | Fire half of Spellstone gone, racials |
-| everyone else | | | −3 to −11 | racial pass |
-
-New reference: `ref/rotations/baseline_06a8987_3000it_seed424242.tsv` (f62cb79 file removed).
-
-## Rotation checks after the Missile Barrage change
-
-Missile Barrage now procs only from casts (Arcane Blast 20%/point, Frostbolt/Fireball/Arcane Wrath 10%,
-Frostfire Bolt 10% + bonus). The AM-on-Missile-Barrage lines stay right (the missiles are free).
-Paired A/B, 20k as 8 blocks, S0 = 1e6 (B−A ± SE at 120 / 180 / 300 s). All lose or trade off, so no
-second seed set was needed:
-
-| preset | variant | 120 | 180 | 300 |
+| preset | seed set | 120 s | 180 s | 300 s |
 |---|---|---:|---:|---:|
-| mage__frost (A 911.3 at 180 s) | Arcane Blast stack target 2 → 1 | −16.6 ±0.3 | −16.7 ±0.3 | −14.3 ±0.3 |
-| mage__frost | stack target 2 → 3 | +4.4 ±0.5 | −20.9 ±0.6 | −33.9 ±0.4 |
-| mage__arcane (A 899.5 at 180 s) | Fireball (10151) filler in place of Frostbolt | −103.7 | −107.4 | −119.7 |
+| warrior__fury | 1e6 | −2.61 ± 0.04 | −3.86 ± 0.02 | −1.18 ± 0.01 |
+| warrior__fury | 2e8 | −2.65 ± 0.04 | −3.85 ± 0.02 | −1.20 ± 0.01 |
+| shaman__enhancement-level60 | 1e6 | +0.00 | −0.04 | +0.33 |
+| shaman__enhancement-level60 | 2e8 | +0.00 | −0.04 | +0.33 |
 
-The frost stack target 2 holds (3 is a fight-length trade-off, not a finding).
+  The Death Wish sync keeps its value (+3.9 at 180 s, pooled); Enhancement's line is neutral. No change.
+- **Berserking 15 s:** no preset is Troll; nothing to check.
+- **regress.py** (37a8a8c CLI vs 5d27b00 CLI, master req files, 3k it, seed 424242): every preset moved up,
+  +3.5 to +7.4 (Undead Touch of the Grave, Orc Blood Fury). No row lost, so no rotation is hurt by the change.
 
-Read Leyline (now +50% for 15 s) isn't cast by any preset rotation, so the nerf touches no APL.
+## Baseline moves (vs `baseline_06a8987`)
 
-## Handoffs (not rotation findings)
+Every row moved up or by under 1; the biggest (race re-pick plus post 8):
 
-- Shadow warlock presets (affliction, demonology, destruction and their duty-curse copies) still take
-  Spellstone, which lost its Fire damage. Whether Firestone (2% crit) now beats it is an imbue choice
-  for the consumables pass; not measured here.
+| preset | old | new | Δ |
+|---|---:|---:|---:|
+| paladin__level_60_shock-duty-crusader | 865.4 | 891.7 | +26.2 |
+| paladin__level_60_shock | 863.6 | 887.8 | +24.2 |
+| hunter__beast-mastery | 1134.1 | 1150.4 | +16.3 |
+| hunter__survival | 1016.1 | 1029.2 | +13.0 |
+| druid__balance-wrath | 800.6 | 811.9 | +11.3 |
+| hunter__marksmanship | 1126.0 | 1137.2 | +11.2 |
 
-## Optional
+New reference: `ref/rotations/baseline_5d27b00_3000it_seed424242.tsv` (06a8987 file removed).
 
-None new. The earlier optional list in `passes/rotations.md` stands.
+## Note for the results auditor
+
+`runs/vs_published.txt`: Fury (−4.4), Enhancement Mana Tide/Water Shield (−3.5) and Frost (−35.5) sit below
+their published numbers, but regress.py shows they gained in this window, so their published values are
+stale (set before the 2026-10-26 racial pass), not a rotation regression.
+
+## Optional (under the bar)
+
+None new. Carried: see `passes/rotations.md`.

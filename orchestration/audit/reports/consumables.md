@@ -1,14 +1,16 @@
-# Consumables report, pass 48 (master 37a8a8ccd)
+# Consumables pass 49 (master 5d27b0015, client 1.60.1.70634)
 
-Result: quiet, no findings.
+Result: quiet. No findings.
 
-## Moved since 06a898751
-- changes.sh: nothing moved on master in the audited paths. Class and consumes branches show only the usual stale diverged diffs (gotcha 1).
-- Client build 1.60.1.70630 -> 1.60.1.70634 (wago latest probe: 70634).
+Moved since 37a8a8ccd: orchestration/standards.md and nine ui/<spec>/presets.ts (race re-picks per standards 29 and 16,
+rotation comments and tooltips, one prettier reflow of EncounterLevel60SapperOnlyHumanoid). No Consumes, RaidBuffs,
+Debuffs or IndividualBuffs object, gear set, mksettings or sim file changed.
 
-## Verified
-- builddiff.py 70630 -> 70634 (consumables set): consumable spell changes 0; Forever enchants checked 53, changed 0.
-- scan.sh on master: banned items, Revelation, non-synthetic trinkets, double crit elixirs all empty.
-- Counts unchanged from pass 47: minor-armor count 3 is the known unused Faerie Fire (Feral) / dust cloud effect (scan's expected 2 is stale); totems as before.
+Checked: scan.sh on master: banned, Revelation, non-synthetic trinkets and multi-crit-elixir sections empty; main.go
+default MobTypeUnknown, Humanoid only as the alternate, Salvation and Sunder on; melee raid totems as ruled (Enhancement
+Flametongue); wago latest is still 70634 (no new build).
+Note: scan counts 3 MinorArmorReduction exclusive effects (ref says 2). The third is the hunter pet Dust Cloud
+(debuffs.go ~942), untouched this period; the scan's expectation is stale, not a sim change.
+Class branches listed "ahead" by changes.sh carry unmerged history (thousands of commits); not audited.
 
 No open items.

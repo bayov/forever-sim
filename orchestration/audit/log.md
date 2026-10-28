@@ -77,3 +77,9 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-10-27 18:48 | consumables | pass 48 | master 37a8a8ccd | quiet | build 70634: no consumable or enchant changes; scan clean
 2026-10-27 18:48 | mechanics | pass 43 | master 37a8a8ccd | 1 new finding | Blood Fury/Berserking/Touch of the Grave dev-note changes not on master (PR #117 fixes)
 2026-10-27 18:48 | client_update | pass 3 | master 37a8a8ccd | quiet | 70634 client-identical to 70630; devnotes unreadable (rate limit)
+2026-10-28 01:10 | results | pass 57 | master 5d27b0015 | quiet | 58/58 sims match builds.json; metas' published.dps still stale (results-20261027-1, noted)
+2026-10-28 01:10 | rotations | pass 36 | master 5d27b0015 | quiet | post-8 racial changes + race-tuned APLs: all presets up 3.5-7.4 DPS; Fury Death Wish sync still right; baseline refreshed
+2026-10-28 01:10 | gear | pass 44 | master 5d27b0015 | quiet | only standards.md changed; no gear/item changes
+2026-10-28 01:10 | consumables | pass 49 | master 5d27b0015 | quiet | race re-picks/comments only; scan clean
+2026-10-28 01:10 | mechanics | pass 44 | master 5d27b0015 | quiet | Blood Fury/Berserking/Touch of the Grave match dev notes post 8; mechanics-20261027-3 resolved
+2026-10-28 01:10 | fairness | pass 11 | master 5d27b0015 | quiet | all presets on best race; fairness-20261027-1 resolved; sweep.py/table.py helper fixes

@@ -10,6 +10,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - found: 2026-10-27, master 06a898751
 - evidence: 4273ee51d re-simmed every build into ui/dps_report/data/builds.json but left `published.dps` in the metas at the 10-25 values (warrior__fury meta 986.6, builds.json 975.2, run 975.19; mage__arcane 982.5 vs 899.1, -8.5%; Ret Shock metas were updated only by 3d9aa585b). Every request is "OFF published" by 0.15 to 83 DPS until they are updated.
 - proposed fix: set each meta's `published.dps` (and `source`) from builds.json, as tools/dps_report/README.md "update meta.published" says.
+- update 2026-10-28, master 5d27b0015: still open after post 8's re-sim (73e31ec4c, 9857d17e3). 34 of 58 metas differ from builds.json by more than 0.15 (mage__frost 946.6 vs 911.1, warlock__affliction 1035.3 vs 1018.1); my 20k seed-1 run matches builds.json on all 58 within 0.1.
 - needs: orchestrator fix
 
 ### results-20261025-1: mksettings and the committed requests disagree on consumes (potion, flask, filler explosive)

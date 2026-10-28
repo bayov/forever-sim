@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "37a8a8ccd9cf727bcb8a5624a858276cfd3ebb27"
+  "master": "5d27b00150a26f4da6e98bb01a00e00796597fb9"
  },
- "last_pass_at": "2026-10-27T18:48:03Z",
- "pass": 43,
- "result": "findings",
- "note": "Pass 43: 70634 identical to 70630 on mechanics tables. Dev notes post 8 (Blood Fury 2 min, Berserking 15 sec, ToG 15 sec ICD) not on master; PR #117 fixes it (mechanics-20261027-3). Amplify Curse finding still open.",
+ "last_pass_at": "2026-10-28T00:52:04Z",
+ "pass": 44,
+ "result": "quiet",
+ "note": "Pass 44: ae8522c14 lands post 8 racials (Blood Fury 2 min, Berserking 15 sec Forever-only, ToG 15 sec ICD); mechanics-20261027-3 resolved. No new build past 70634, no new dev notes or Forever blue posts with mechanics. Amplify Curse finding still open.",
  "client_build": "1.60.1.70634",
- "checked_at": "2026-10-27T18:48:17Z",
+ "checked_at": "2026-10-28T00:52:04Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/8",
   "date": "2026-10-27T15:37:37Z",
@@ -23,5 +23,6 @@
   ],
   "newest_push": 113205,
   "tool": "tools/audit/mechanics/hotfixes.py"
- }
+ },
+ "blue_tracker_seen": "2026-10-28T00:44:50Z"
 }

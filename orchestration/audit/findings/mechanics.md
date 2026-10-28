@@ -4,14 +4,6 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
-### mechanics-20261027-3: Blood Fury, Berserking and Touch of the Grave still use the pre-post-8 values
-- severity: medium (estimate, not measured: Blood Fury uptime 15/180 -> 15/120 of +10% AP/SP and Berserking 10 -> 15 sec of 10% haste each look like +0.2-0.4% DPS on Orc / Troll builds; Touch of the Grave is a drain, no DPS)
-- affects: all Orc, Troll and Undead builds (shared racials)
-- found: 2026-10-27, master 37a8a8ccd
-- evidence: development notes post 8 and the edited post 7 (tier 1, us.forums.blizzard.com/en/wow/t/2360696/8, 2026-10-27 15:37, edited 16:46): "Blood Fury's cooldown reduced to 2 minutes (was 3 minutes)", "Berserking duration increased to 15 seconds (was 10 seconds)", "Touch of the Grave internal cooldown reduced to 15 seconds (was 25 seconds)". Server side: client 70634 is byte-identical to 70630 on all 25 mechanics-set tables (20572 RecoveryTime 180000, 1260189/1260201 ProcCategoryRecovery 25000). Master: sim/core/racials_forever.go Blood Fury `time.Minute * 3`, Touch of the Grave ICD `time.Second * 25` (line 546), sim/core/racials.go makeBerserkingCooldown aura `time.Second * 10`.
-- proposed fix: PR #117 (forever-update/2026-10-27-70634) makes exactly these three changes, Berserking 15 sec only under Forever; reviewed, matches the notes. Merge it and re-sim the Orc, Troll and Undead builds.
-- needs: orchestrator fix
-
 ### mechanics-20261027-2: Amplify Curse no longer boosts Bane of Agony on client 70630
 - severity: low (no preset takes Amplify Curse; rotopt's `amplifyCurse` knob defaults to 0)
 - affects: warlock (only builds that take Amplify Curse)
@@ -23,6 +15,15 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - 2026-10-27 (user): park it until a build takes Amplify Curse, then test in game (TASKS.md item of 2026-10-27). The sim keeps +50% of base meanwhile. needs: in-game test
 
 ## Resolved
+
+### mechanics-20261027-3: Blood Fury, Berserking and Touch of the Grave still use the pre-post-8 values
+- severity: medium (estimate, not measured: Blood Fury uptime 15/180 -> 15/120 of +10% AP/SP and Berserking 10 -> 15 sec of 10% haste each look like +0.2-0.4% DPS on Orc / Troll builds; Touch of the Grave is a drain, no DPS)
+- affects: all Orc, Troll and Undead builds (shared racials)
+- found: 2026-10-27, master 37a8a8ccd
+- evidence: development notes post 8 and the edited post 7 (tier 1, us.forums.blizzard.com/en/wow/t/2360696/8, 2026-10-27 15:37, edited 16:46): "Blood Fury's cooldown reduced to 2 minutes (was 3 minutes)", "Berserking duration increased to 15 seconds (was 10 seconds)", "Touch of the Grave internal cooldown reduced to 15 seconds (was 25 seconds)". Server side: client 70634 is byte-identical to 70630 on all 25 mechanics-set tables (20572 RecoveryTime 180000, 1260189/1260201 ProcCategoryRecovery 25000). Master: sim/core/racials_forever.go Blood Fury `time.Minute * 3`, Touch of the Grave ICD `time.Second * 25` (line 546), sim/core/racials.go makeBerserkingCooldown aura `time.Second * 10`.
+- proposed fix: PR #117 (forever-update/2026-10-27-70634) makes exactly these three changes, Berserking 15 sec only under Forever; reviewed, matches the notes. Merge it and re-sim the Orc, Troll and Undead builds.
+- needs: orchestrator fix
+- resolved: 2026-10-28, ae8522c14 (via PR #117 merge 297226d14); verified pass 44: Blood Fury 2 min, Berserking 15 sec under Forever only (3 min CD, flat 10%), Touch of the Grave ICD 15 sec
 
 ### mechanics-20261027-1: Blizzard's 26 Oct racial pass (dev notes post 7) is not in the sim
 - severity: high (moves every class's race table; the Human, Dwarf, Orc, Tauren and Skyborne rows all change)
