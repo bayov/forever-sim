@@ -151,7 +151,7 @@ export function startReport(dash, events) {
   // ---------- state ----------
   const store = (() => { try { return window.localStorage; } catch { return null; } })();
   const saved = (() => { try { return JSON.parse(store?.getItem('fv-state') || '{}'); } catch { return {}; } })();
-  const st = Object.assign({ tab: 'ranking', cls: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', rsOpt: {}, rsFac: 'All', srFac: 'All', slFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', rlFac: 'All', rlRole: 'All', rlCls: 'All', rlSpec: 'All', setupHide: false, enc: false, duty: true, asm: {}, asmOpen: [] }, saved);
+  const st = Object.assign({ tab: 'ranking', cls: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', rsOpt: {}, rsFac: 'All', srFac: 'All', slFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', rlFac: 'All', rlRole: 'All', rlCls: 'All', rlSpec: 'All', setupHide: false, enc: false, duty: true, asm: {}, asmOpen: [], chUp: null, chCls: 'All', chRcls: 'All', chAll: false, chVar: false }, saved);
   st.len = '180'; // a fight length other than 180s is never restored: the page always opens on the main numbers
   const persist = () => { try { store?.setItem('fv-state', JSON.stringify(st)); } catch {} };
 
@@ -627,14 +627,14 @@ export function startReport(dash, events) {
   }
 
   // ---------- tabs ----------
-  const pages = ['ranking', 'spec', 'races', 'compare', 'method'];
+  const pages = ['ranking', 'spec', 'races', 'compare', 'changes', 'method'];
   const showTab = (tab, link = true) => {
     const changed = st.tab !== tab;
     st.tab = tab; persist();
     if (changed) { const pg = document.getElementById(tab); pg.classList.remove('in'); void pg.offsetWidth; pg.classList.add('in'); }
     document.querySelectorAll('.fv-tab').forEach((b) => { b.setAttribute('aria-selected', String(b.dataset.tab === tab)); b.classList.toggle('active', b.dataset.tab === tab); });
     document.querySelectorAll('.fv-page').forEach((p) => { p.hidden = p.dataset.page !== tab; p.classList.toggle('active', p.dataset.page === tab); });
-    if (link) dash.setLink(tab === 'spec' && st.build ? st.build : tab);
+    if (link) dash.setLink(tab === 'spec' && st.build ? st.build : tab === 'changes' && st.chUp ? 'changes/' + st.chUp : tab);
     hideTip(); hideTT();
     render();
   };
@@ -2707,6 +2707,275 @@ export function startReport(dash, events) {
     all.forEach((n) => { for (const a of ['data-source', 'data-field', 'data-row']) n.removeAttribute(a); n.textContent = v[n.dataset.asmF] ?? '—'; n.classList.remove('dash-skeleton'); });
   };
 
+  // ---------- changes ----------
+  // The report's results before and after each update. changes lists the updates, newest first, each with its
+  // change lines; changes_snap holds the results at the first update's start (genesis) and each update's end as only
+  // the rows that changed. An update starts where the previous one ended. Snapshot rows are lists: builds
+  // [dps, se, rank, rankAll, race, best race], meta [class, name, encounter, duty, base build], races [dps, se],
+  // parts [dps, se, active], summary [times best, average gap, presets].
+  const KIND_LABEL = { game: 'Game', sim: 'Sim fix', rotation: 'Rotation', gear: 'Gear', talents: 'Talents', consumes: 'Consumes', race: 'Race', method: 'Method' };
+  const CH_SEC = ['builds', 'meta', 'races', 'parts', 'labels', 'summary'];
+  const chDate = (d) => d3.utcFormat('%b %-d')(new Date(d + 'T00:00:00Z'));
+  // within 0.05 a figure rounded to 0.1 didn't move: builds no change touches keep their numbers exactly
+  const chSame = (d) => Math.abs(d) < 0.05;
+  // the noise on a change between two runs, 2 standard errors of the difference
+  const chNoise = (a, b) => 2 * Math.hypot(a || 0, b || 0);
+  let chCache = null;
+  const chStates = () => {
+    const snap = rowsOf('changes_snap'), ups = rowsOf('changes');
+    if (!snap || !ups) return null;
+    if (chCache && chCache.snap === snap && chCache.ups === ups) return chCache.map;
+    const apply = (s, d) => Object.fromEntries(CH_SEC.map((k) => {
+      const o = { ...s[k], ...(d[k] || {}) };
+      for (const g of d.gone?.[k] || []) delete o[g];
+      return [k, o];
+    }));
+    const map = new Map();
+    let cur = snap.genesis;
+    for (const u of [...ups].reverse()) { const end = apply(cur, snap.ends[u.id] || {}); map.set(u.id, { old: cur, new: end }); cur = end; }
+    chCache = { snap, ups, map };
+    return map;
+  };
+  const chUpdate = () => {
+    const ups = rowsOf('changes') || [];
+    return ups.find((u) => u.id === st.chUp) || ups[0];
+  };
+  const chMeta = (S, id) => S.new.meta[id] || S.old.meta[id] || [];
+  const chIsVar = (m) => !!(m[2] || m[3]);
+  const chCur = (id) => (rowsOf('builds') || []).find((b) => b.id === id);
+  const chIco = (id, cls) => { const b = chCur(id); return (b && specIco(b, '')) || el('span', { class: 'fv-dot', style: `background:${ccol(cls)}` }); };
+  const chName = (S, id) => { const m = chMeta(S, id); return { cls: m[0] || '', name: m[1] || id, label: `${m[0] || ''} · ${m[1] || id}` }; };
+  const raceEl = (r) => el('b', { class: 'fv-ch-race', text: r, style: `color:${fcol(r)}` });
+  // the classes, presets and races a line names; a line that names none touches everything
+  const chTouches = (ln, S, id) => {
+    const m = chMeta(S, id), base = m[4] || id;
+    const byB = arr(ln.builds).length ? arr(ln.builds).includes(id) || arr(ln.builds).includes(base) : null;
+    const byC = arr(ln.classes).length ? arr(ln.classes).includes(m[0]) : null;
+    if (byB != null || byC != null) return !!(byB || byC);
+    if (arr(ln.races).length) return [S.old.builds[id]?.[4], S.new.builds[id]?.[4]].some((r) => arr(ln.races).includes(r));
+    return true;
+  };
+  // ranks among the presets on the generic boss with no duty, in one state
+  const chRanks = (B, M) => {
+    const ids = Object.keys(B).filter((id) => !chIsVar(M[id] || [])).sort((a, b) => B[b][0] - B[a][0]);
+    return new Map(ids.map((id, i) => [id, i + 1]));
+  };
+  // A rank change is "about tied" when every preset it passed, or that passed it, is still within noise of it.
+  const chRankTied = (S, id) => {
+    const o = S.old.builds[id], n = S.new.builds[id];
+    const swaps = Object.keys(S.new.builds).filter((y) => y !== id && S.old.builds[y] && !chIsVar(chMeta(S, y))
+      && Math.sign(o[0] - S.old.builds[y][0]) !== Math.sign(n[0] - S.new.builds[y][0]));
+    return swaps.length > 0 && swaps.every((y) => Math.abs(n[0] - S.new.builds[y][0]) < chNoise(n[1], S.new.builds[y][1]));
+  };
+  // A preset that changed race: what its old race gained, what the switch is worth on the new numbers, and what's
+  // left, which is sampling (the main run has twice the fights of a race row).
+  const chRaceSplit = (S, id) => {
+    const o = S.old.builds[id], n = S.new.builds[id];
+    if (!o || !n || o[4] === n[4]) return null;
+    const a = S.old.races[`${id}|${o[4]}`], b = S.new.races[`${id}|${o[4]}`], c = S.new.races[`${id}|${n[4]}`];
+    if (!a || !b || !c) return null;
+    const d = n[0] - o[0], same = b[0] - a[0];
+    if (chSame(same)) return { same: 0, sw: d, rest: 0 };
+    return { same, sw: c[0] - b[0], rest: d - same - (c[0] - b[0]) };
+  };
+  const chBestTied = (S, id) => {
+    const o = S.old.builds[id], n = S.new.builds[id];
+    if (!o || !n || o[5] === n[5]) return false;
+    const a = S.new.races[`${id}|${n[5]}`], b = S.new.races[`${id}|${o[5]}`];
+    return !!(a && b && a[0] - b[0] < chNoise(a[1], b[1]));
+  };
+  const chDeltaEl = (d, noise, pct) => {
+    if (chSame(d)) return el('span', { class: 'fv-ch-d same', text: 'unchanged' });
+    const quiet = noise != null && Math.abs(d) < noise;
+    return el('span', { class: 'fv-ch-d ' + (d > 0 ? 'pos' : 'neg') + (quiet ? ' quiet' : ''), title: quiet ? 'Within noise: it may be luck' : null },
+      sgn(d), pct != null ? el('small', { text: ` ${sgn(pct, f1)}%` }) : null, noise != null ? el('small', { class: 'pm', text: ` ±${f1(noise)}` }) : null);
+  };
+  // a list of rows: icon and name, then before → after, then the change
+  const chList = (rows, max = 6) => {
+    const wrap = el('div', { class: 'fv-ch-list' });
+    const draw = (all) => {
+      wrap.replaceChildren(...(all ? rows : rows.slice(0, max)).map((r) => el('div', { class: 'fv-ch-row' + (r.open ? ' clk' : ''), ...(r.open ? { role: 'button', tabindex: '0', onclick: () => openSpec(r.open) } : {}) },
+        el('span', { class: 'nm' }, r.icon || null, el('span', {}, r.name), r.tag ? el('em', { text: r.tag }) : null),
+        el('span', { class: 'vl', text: r.vals }), chDeltaEl(r.d, r.noise))));
+      if (!all && rows.length > max) {
+        const more = el('button', { type: 'button', class: 'btn btn-link fv-ch-more', text: `Show all ${rows.length}` });
+        more.addEventListener('click', (e) => { e.stopPropagation(); draw(true); });
+        wrap.append(more);
+      }
+    };
+    draw(false);
+    return wrap;
+  };
+  const chPartRows = (S, keys) => keys.map((k) => {
+    const [bid, race, part] = k.split('|'), o = S.old.parts[k], n = S.new.parts[k];
+    const ov = o && o[2] ? o[0] : null, nv = n && n[2] ? n[0] : null;
+    if (ov == null && nv == null) return null;
+    const d = (nv ?? 0) - (ov ?? 0);
+    const nm = chName(S, bid);
+    return { k, bid, race, part, d, noise: chNoise(o?.[1], n?.[1]), icon: chIco(bid, nm.cls), name: `${nm.name} · ${nm.cls}`, tag: race, open: chCur(bid) ? bid : null,
+      vals: `${ov == null ? 'none' : sgn(ov)} → ${nv == null ? 'gone' : sgn(nv)}` };
+  }).filter((r) => r && !chSame(r.d)).sort((a, b) => b.d - a.d);
+  const chBuildRow = (S, id) => {
+    const o = S.old.builds[id], n = S.new.builds[id], nm = chName(S, id);
+    const d = o && n ? n[0] - o[0] : null;
+    return { id, d: d ?? 0, noise: o && n ? chNoise(o[1], n[1]) : null, icon: chIco(id, nm.cls), name: `${nm.name} · ${nm.cls}`, open: chCur(id) ? id : null,
+      tag: o && n && o[4] !== n[4] ? `${o[4]} → ${n[4]}` : !o ? 'new' : !n ? 'retired' : null, vals: `${o ? f1(o[0]) : '—'} → ${n ? f1(n[0]) : '—'}` };
+  };
+  // what one line did: its racials' worth when it names racials, else the DPS of the presets it touches
+  const chEffect = (S, u, ln) => {
+    const host = el('div', { class: 'fv-ch-eff' });
+    const races = arr(ln.races), parts = arr(ln.parts);
+    const inScope = (bid) => (!arr(ln.builds).length && !arr(ln.classes).length) || chTouches({ builds: ln.builds, classes: ln.classes }, S, bid);
+    if (parts.length) {
+      const keys = [...new Set([...Object.keys(S.old.parts), ...Object.keys(S.new.parts)])]
+        .filter((k) => { const [bid, race, part] = k.split('|'); return parts.includes(part) && (!races.length || races.includes(race)) && inScope(bid) && (st.chVar || !chIsVar(chMeta(S, bid))); });
+      for (const part of parts) {
+        const rows = chPartRows(S, keys.filter((k) => k.endsWith('|' + part)));
+        if (!rows.length) continue;
+        const race = rows[0].race, label = S.new.labels[`${race}|${part}`] || S.old.labels[`${race}|${part}`] || part;
+        host.append(el('div', { class: 'fv-ch-sub' }, el('b', { text: label }), ` · its worth moved on ${rows.length} preset${rows.length > 1 ? 's' : ''}`), chList(rows));
+      }
+      if (!host.childElementCount) host.append(el('p', { class: 'fv-note', text: "No racial's worth moved." }));
+      return host;
+    }
+    let ids = Object.keys({ ...S.old.builds, ...S.new.builds }).filter((id) => (st.chVar || !chIsVar(chMeta(S, id))) && chTouches(ln, S, id));
+    if (races.length && !arr(ln.builds).length && !arr(ln.classes).length) {
+      // a race-wide change that names no preset: each preset on those races
+      const keys = Object.keys(S.new.races).filter((k) => races.includes(k.split('|')[1]) && (st.chVar || !chIsVar(chMeta(S, k.split('|')[0]))));
+      const rows = keys.map((k) => {
+        const [bid, race] = k.split('|'), o = S.old.races[k], n = S.new.races[k];
+        if (!o) return null;
+        const nm = chName(S, bid);
+        return { d: n[0] - o[0], noise: chNoise(o[1], n[1]), icon: chIco(bid, nm.cls), name: `${nm.name} · ${nm.cls}`, tag: race, open: chCur(bid) ? bid : null, vals: `${f1(o[0])} → ${f1(n[0])}` };
+      }).filter((r) => r && !chSame(r.d)).sort((a, b) => b.d - a.d);
+      host.append(rows.length ? chList(rows) : el('p', { class: 'fv-note', text: 'No preset moved on these races.' }));
+      return host;
+    }
+    const rows = ids.map((id) => chBuildRow(S, id)).filter((r) => !chSame(r.d) || r.tag).sort((a, b) => b.d - a.d);
+    const others = (id) => arr(u.lines).filter((l) => l !== ln && chTouches(l, S, id)).length;
+    for (const r of rows) { const n = others(r.id); if (n) r.tag = [r.tag, `+${n} other change${n > 1 ? 's' : ''}`].filter(Boolean).join(' · '); }
+    host.append(rows.length ? chList(rows) : el('p', { class: 'fv-note', text: "No preset's DPS moved." }));
+    return host;
+  };
+  const drawChanges = () => {
+    const linesHost = $('#ch-lines'), tb = $('#ch-table tbody'), racesHost = $('#ch-races');
+    classChips($('#ch-cls'), 'chCls');
+    classChips($('#ch-rcls'), 'chRcls');
+    $('#ch-all').setAttribute('aria-pressed', String(!!st.chAll));
+    $('#ch-var').setAttribute('aria-pressed', String(!!st.chVar));
+    if (!waitOr(linesHost, ['changes', 'changes_snap']) || !waitOr(racesHost, ['changes', 'changes_snap']) || statusOf('builds') !== 'ok') return;
+    const ups = rowsOf('changes'), map = chStates(), u = chUpdate();
+    if (!u) { linesHost.replaceChildren(el('p', { class: 'fv-note', text: 'No updates yet.' })); return; }
+    const S = map.get(u.id);
+    const typeTag = (x) => el('span', { class: 'fv-ch-type ' + x.type, text: x.type === 'game' ? 'Game' : 'Sim' });
+    iconSelect($('#ch-pick'), ups.map((x) => ({ value: x.id, text: x.title, icon: () => typeTag(x), end: chDate(x.date) })), u.id,
+      (v) => { st.chUp = v; persist(); dash.setLink('changes/' + v); hideTip(); render(); });
+    const src = u.source ? (u.source.url ? el('a', { href: u.source.url, target: '_blank', rel: 'noopener', text: u.source.label }) : el('span', { text: u.source.label })) : null;
+    $('#ch-meta').replaceChildren(...[typeTag(u), el('span', { text: u.type === 'game' ? 'Game update' : 'Sim and preset update' }), el('span', { class: 'sep', text: '·' }), el('span', { text: chDate(u.date) }),
+      src ? el('span', { class: 'sep', text: '·' }) : null, src, u.live ? el('span', { class: 'fv-ch-live', text: 'Ongoing: later changes join it' }) : null].filter(Boolean));
+
+    // the change lines
+    linesHost.replaceChildren(...arr(u.lines).map((ln) => {
+      const d = el('details', { class: 'fv-ch-line' });
+      const ls = ln.source ? (ln.source.url ? el('a', { href: ln.source.url, target: '_blank', rel: 'noopener', text: ln.source.label, onclick: (e) => e.stopPropagation() }) : el('span', { text: ln.source.label })) : null;
+      d.append(el('summary', {}, el('span', { class: 'fv-ch-kind k-' + ln.kind, text: KIND_LABEL[ln.kind] || ln.kind }), el('span', { class: 'fv-ch-title', text: ln.title }), ls ? el('span', { class: 'fv-ch-src' }, ls) : null));
+      if (ln.note) d.append(el('p', { class: 'fv-note fv-ch-note', text: ln.note }));
+      d.addEventListener('toggle', () => { if (d.open && !d.querySelector('.fv-ch-eff')) d.append(chEffect(S, u, ln)); });
+      return d;
+    }));
+    if (!arr(u.lines).length) linesHost.append(el('p', { class: 'fv-note', text: 'No changes listed yet.' }));
+
+    // every preset before and after
+    const ids = Object.keys({ ...S.old.builds, ...S.new.builds });
+    const rO = chRanks(S.old.builds, { ...S.new.meta, ...S.old.meta }), rN = chRanks(S.new.builds, { ...S.old.meta, ...S.new.meta });
+    const rows = ids.map((id) => {
+      const o = S.old.builds[id], n = S.new.builds[id], m = chMeta(S, id);
+      return { id, o, n, m, d: o && n ? n[0] - o[0] : null };
+    }).filter((r) => (st.chVar || !chIsVar(r.m)) && (st.chCls === 'All' || r.m[0] === st.chCls)
+      && (st.chAll || r.d == null || !chSame(r.d) || r.o[4] !== r.n[4]))
+      .sort((a, b) => (b.d ?? 1e9) - (a.d ?? 1e9) || CLASSES.indexOf(a.m[0]) - CLASSES.indexOf(b.m[0]));
+    tb.replaceChildren(...rows.map((r) => {
+      const { id, o, n, m } = r, nm = chName(S, id);
+      const pct = o && n ? 100 * r.d / o[0] : null, noise = o && n ? chNoise(o[1], n[1]) : null;
+      const ro = rO.get(id), rn = rN.get(id), tied = ro && rn && ro !== rn && chRankTied(S, id);
+      const rank = !chIsVar(m) && (ro || rn) ? (ro && rn && ro !== rn ? `${ro} → ${rn}${tied ? ' ≈' : ''}` : String(rn || ro)) : '';
+      const race = o && n && o[4] !== n[4] ? el('span', {}, raceEl(o[4]), ' → ', raceEl(n[4])) : raceEl((n || o)[4]);
+      const tr = el('tr', { class: 'clk', 'data-tip': '1' },
+        el('td', { class: 'first' }, chIco(id, nm.cls), ' ', el('b', { text: nm.name }), el('span', { class: 'fv-ch-cls', text: ` · ${nm.cls}` })),
+        el('td', { class: 'n', text: o ? f1(o[0]) : '—' }), el('td', { class: 'n', text: n ? f1(n[0]) : '—' }),
+        el('td', { class: 'n' }, r.d == null ? el('span', { class: 'fv-ch-d', text: o ? 'retired' : 'new' }) : chDeltaEl(r.d, noise, pct)),
+        el('td', { class: 'n' + (tied ? ' quiet' : ''), text: rank, title: tied ? 'About tied: the presets it passed are within noise' : null }), el('td', {}, race));
+      tr.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (tr.classList.contains('is-hl')) { hideTip(); return; }
+        const card = $('#ch-builds-card'), cr = card.getBoundingClientRect(), rr = tr.getBoundingClientRect();
+        const split = chRaceSplit(S, id), by = arr(u.lines).filter((l) => chTouches(l, S, id)).map((l) => l.title);
+        const lines = [
+          r.d == null ? tipText(o ? 'Retired in this update.' : 'New in this update.') : tipKey(sgn(r.d), 'DPS', el('span', {}, tipDelta(pct), chSame(r.d) ? '' : Math.abs(r.d) < noise ? ' · within noise' : '')),
+          tipGrid([o ? ['Before', `${f1(o[0])} ± ${f2(o[1])}`] : null, n ? ['After', `${f1(n[0])} ± ${f2(n[1])}`] : null,
+            noise != null && !chSame(r.d) ? ['Noise', `±${f1(noise)}`] : null,
+            rank && ro !== rn ? ['Rank', `${ro} → ${rn}${tied ? ' (about tied)' : ''}`] : null,
+            o && n && o[4] !== n[4] ? ['Race', `${o[4]} → ${n[4]}`, 'txt'] : null,
+            split && !chSame(split.same) ? [`${o[4]} itself`, tipDelta(split.same, f1, '')] : null,
+            split ? ['Race switch', tipDelta(split.sw, f1, '')] : null,
+            split && !chSame(split.rest) ? ['Sampling', tipDelta(split.rest, f1, '')] : null,
+            o && n && o[5] !== n[5] ? ['Best race', `${o[5]} → ${n[5]}${chBestTied(S, id) ? ' (about tied)' : ''}`, 'txt'] : null]),
+          by.length ? tipNote(`Changed by: ${by.join('; ')}.`) : null,
+          split && !chSame(split.rest) ? tipNote('Sampling: the main number has twice the fights of a race row, so the parts differ a little.') : null];
+        showTip(card, rr.left - cr.left + 30, rr.bottom - cr.top + 6, tipTitle(nm.label, null, chIco(id, nm.cls)), lines, { hl: tr, open: chCur(id) ? id : null, below: true });
+      });
+      return tr;
+    }));
+    if (!rows.length) tb.replaceChildren(el('tr', {}, el('td', { colspan: '6', class: 'fv-note', text: st.chCls === 'All' ? "No preset's DPS moved in this update." : 'No preset of this class moved in this update.' })));
+
+    // races: each race's presets and racials that moved, and how often it is best
+    const inCls = (bid) => st.chRcls === 'All' || chMeta(S, bid)[0] === st.chRcls;
+    const okB = (bid) => inCls(bid) && (st.chVar || !chIsVar(chMeta(S, bid)));
+    const raceList = [...new Set(Object.keys({ ...S.old.races, ...S.new.races }).map((k) => k.split('|')[1]))].sort();
+    const blocks = raceList.map((race) => {
+      const rk = Object.keys(S.new.races).filter((k) => k.endsWith('|' + race) && okB(k.split('|')[0]));
+      const rrows = rk.map((k) => {
+        const bid = k.split('|')[0], o = S.old.races[k], n = S.new.races[k];
+        if (!o) return null;
+        const nm = chName(S, bid);
+        return { d: n[0] - o[0], noise: chNoise(o[1], n[1]), icon: chIco(bid, nm.cls), name: `${nm.name} · ${nm.cls}`, open: chCur(bid) ? bid : null, vals: `${f1(o[0])} → ${f1(n[0])}` };
+      }).filter((x) => x && !chSame(x.d)).sort((a, b) => b.d - a.d);
+      const pkeys = [...new Set([...Object.keys(S.old.parts), ...Object.keys(S.new.parts)])].filter((k) => { const [bid, r, p] = k.split('|'); return r === race && p !== 'base' && okB(bid); });
+      const byPart = d3.group(chPartRows(S, pkeys), (x) => x.part);
+      const so = S.old.summary[`${race}|All`], sn = S.new.summary[`${race}|All`];
+      const sumMoved = so && sn && (so[0] !== sn[0] || Math.abs(so[1] - sn[1]) >= 0.05);
+      if (!rrows.length && !byPart.size && !sumMoved) return null;
+      const head = el('div', { class: 'fv-ch-rhead' }, raceEl(race),
+        sn ? el('span', { class: 'fv-note' }, `best for ${sn[0]} preset${sn[0] === 1 ? '' : 's'}`, so && so[0] !== sn[0] ? ` (was ${so[0]})` : '',
+          ` · ${f1(sn[1])}% behind the best race on average`, so && Math.abs(so[1] - sn[1]) >= 0.05 ? ` (was ${f1(so[1])}%)` : '') : null);
+      const parts = [...byPart].map(([p, xs]) => {
+        const label = S.new.labels[`${race}|${p}`] || S.old.labels[`${race}|${p}`] || p;
+        const gone = xs.every((x) => !S.new.parts[x.k]?.[2]), added = xs.every((x) => !S.old.parts[x.k]?.[2]);
+        const lo = d3.min(xs, (x) => x.d), hi = d3.max(xs, (x) => x.d);
+        const d = el('details', { class: 'fv-ch-line' });
+        d.append(el('summary', {}, el('span', { class: 'fv-ch-title' }, el('b', { text: label }), gone ? ' · removed' : added ? ' · new' : '',
+          ` · ${xs.length} preset${xs.length > 1 ? 's' : ''}, ${lo === hi ? sgn(lo) : `${sgn(lo)} to ${sgn(hi)}`}`)));
+        d.addEventListener('toggle', () => { if (d.open && !d.querySelector('.fv-ch-list')) d.append(chList(xs, 8)); });
+        return d;
+      });
+      return el('div', { class: 'fv-ch-rblock' }, head,
+        rrows.length ? el('div', { class: 'fv-ch-sub' }, `Presets on ${race}: ${rrows.length} moved`) : null, rrows.length ? chList(rrows, 4) : null,
+        parts.length ? el('div', { class: 'fv-ch-sub', text: 'Racials' }) : null, ...parts);
+    }).filter(Boolean);
+    racesHost.replaceChildren(...(blocks.length ? blocks : [el('p', { class: 'fv-note', text: 'No race moved.' })]));
+  };
+  $('#ch-all').addEventListener('click', (e) => { e.stopPropagation(); st.chAll = !st.chAll; persist(); hideTip(); render(); });
+  $('#ch-var').addEventListener('click', (e) => { e.stopPropagation(); st.chVar = !st.chVar; persist(); hideTip(); render(); });
+  // the newest update, on top of the Ranking tab
+  const drawUpdChip = () => {
+    const a = $('#rank-upd'), u = statusOf('changes') === 'ok' ? (rowsOf('changes') || [])[0] : null;
+    a.hidden = !u;
+    if (!u || a.dataset.id === u.id) return;
+    a.dataset.id = u.id;
+    a.replaceChildren(el('span', { class: 'k', text: `Updated ${chDate(u.date)}` }), el('span', { text: u.title }), el('i', { class: 'fas fa-arrow-right', 'aria-hidden': 'true' }));
+  };
+  $('#rank-upd').addEventListener('click', (e) => { e.preventDefault(); st.chUp = null; showTab('changes'); });
+
   // ---------- render ----------
   // What the first view doesn't need waits until it is drawn: tooltips, more icons and the tree art behind the
   // header. Then it loads while the reader looks at the page, so it's there by the first hover or tab change.
@@ -2714,7 +2983,7 @@ export function startReport(dash, events) {
   const loadLater = () => {
     if (later) return;
     later = wantMore = true;
-    for (const id of ['tooltips', 'icons_more', 'treeart']) dash.data(id);
+    for (const id of ['tooltips', 'icons_more', 'treeart', 'changes']) dash.data(id);
   };
   function render() {
     asmOn = asmSel().length > 0 && asmReady();
@@ -2726,10 +2995,11 @@ export function startReport(dash, events) {
     }
     if (ttNode && !ttNode.isConnected) hideTT();
     try {
-      if (st.tab === 'ranking') { safeTop(drawAsm, $('#asm-list')); drawRanking(); drawLenAll(); drawMana(); }
+      if (st.tab === 'ranking') { drawUpdChip(); safeTop(drawAsm, $('#asm-list')); drawRanking(); drawLenAll(); drawMana(); }
       else if (st.tab === 'races') { for (const [fn, h] of [[drawRaceRank, '#race-rank'], [drawRacialRank, '#racial-rank'], [drawRaceSpread, '#racespread']]) safeTop(fn, h && $(h)); }
       else if (st.tab === 'spec') drawSpec();
       else if (st.tab === 'compare') drawCompare();
+      else if (st.tab === 'changes') drawChanges();
       else if (st.tab === 'method') { drawMethod(); }
     } catch (err) { console.error(err); throw err; }
   }
@@ -2737,6 +3007,7 @@ export function startReport(dash, events) {
   // deep links: a tab name or a preset id
   const h = location.hash.slice(1);
   if (pages.includes(h)) st.tab = h;
+  else if (h.startsWith('changes/')) { st.tab = 'changes'; st.chUp = decodeURIComponent(h.slice(8)); }
   else if (/^[a-z]+__[\w-]+$/.test(h)) { st.build = h; st.tab = 'spec'; }
   document.querySelectorAll('.fv-tab').forEach((b) => { b.setAttribute('aria-selected', String(b.dataset.tab === st.tab)); b.classList.toggle('active', b.dataset.tab === st.tab); });
   document.querySelectorAll('.fv-page').forEach((p) => { p.hidden = p.dataset.page !== st.tab; p.classList.toggle('active', p.dataset.page === st.tab); });

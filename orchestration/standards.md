@@ -173,3 +173,7 @@ The rules every class follows so the specs' Level 60 numbers compare fairly. New
    - Regen stays at the casting rate until a channel paid for with mana ends (wowsims/forever PR #249, `channel_fsr`).
    - Windfury Totem keeps its 1.5 sec cooldown between procs (standard 17, `wf_totem_icd`), where Forever's game data and wowsims/forever have 100 ms.
    - Extra attacks reset the main-hand swing timer, as in Classic (`extra_attack_swing`), where wowsims/forever leaves the timer alone.
+
+## Report
+
+30. The Changes tab is the one place the report shows before and after (user ruling 2026-10-28: "Can we also have a \"changes\" tab which last changes that happened by last patch"; one update per game update, small changes in between join the latest, game and sim/preset updates kept apart, every update kept, every change listed, no new sims, no commit info on the page). The rest of the report stays a snapshot. An update's public lines are plain game terms: no commit ids, dates of our work, session, audit or round names, ruling references, PR numbers or file paths, and only public links as sources (Blizzard posts, foreverchanges.pro). `tools/dps_report/changes.py` and its README section have the mechanics.

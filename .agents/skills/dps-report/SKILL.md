@@ -61,7 +61,7 @@ Rules for every role (put them in each prompt):
 
 Each block lists its inputs, its outputs and how to run it. Combine them freely.
 
-**B1. Status check.** Inputs: state.json, `git log` per branch, `python3 tools/sources/stale.py` (new builds, scrape ages, the routine's PRs), Blizzard dev notes. Output: a short "what changed since last report" list (new client build, branch commits, open followups). Always do this first. It's cheap.
+**B1. Status check.** The live update of the Changes tab is the last entry of `tools/dps_report/changes/updates.json`. Inputs: state.json, `git log` per branch, `python3 tools/sources/stale.py` (new builds, scrape ages, the routine's PRs), Blizzard dev notes. Output: a short "what changed since last report" list (new client build, branch commits, open followups). Always do this first. It's cheap.
 
 **B2. Rule change.**
 - When the user rules on something cross-class, record it in `orchestration/standards.md` as a new numbered item, with the user's words and the date.
@@ -116,6 +116,7 @@ Template: `prompts/dashboard/HANDOFF_assumptions.md`. Re-run it whenever presets
 **B10. Analysis / research question.** For a new rules question (e.g. item budgets, per-archetype pricing), start a local subagent with a self-contained handoff. Its deliverable is an `orchestration/*.md` with tables. Bring its recommendation to the user before changing standards.
 
 **B11. Publish / wrap-up.**
+- Changes tab (standards 30): the live update has a public line for everything this pass changed (`python3 tools/dps_report/changes.py check` lists the commits no line covers). After a full pass's final deploy, start the sim/preset update that our later changes join: `changes.py new sim <id> "<title>"`.
 - Update state.json (heads, client build, the report's deploy, date).
 - Update PR bodies (class workers do their own).
 - Tell the user what changed, with the ranking.
@@ -162,7 +163,7 @@ For anything else, map the request to blocks. When it's ambiguous whether the us
 - **Wowhead Forever:** Forever's database is dataEnv **16** (`WH.dataEnv.CLASSICPLUS` in wowhead's tooltips.js, mapped to "forever"); 17 isn't one of wowhead's databases. A `/forever/` path or `domain=forever` picks Forever's data whatever the dataEnv, but use 16 everywhere.
 - **Wowhead pages:** www.wowhead.com (listings, item and NPC pages) sits behind a bot check and a rate limit, so curl gets a 403 and a burst of requests gets the whole address blocked for a while. Fetch them with `tools/database/forever_wowhead/wowhead.py` (the `scrape-wowhead` skill), and only a handful at a time outside its scrapes. The tooltip API (nether.wowhead.com) has neither.
 - **Browser checks:** Playwright is at `/opt/node22/lib/node_modules/playwright`. Import `/opt/node22/lib/node_modules/playwright/index.mjs` from a script outside the repo, and launch with `executablePath: '/opt/pw-browsers/chromium'`.
-- **Snapshot rule for the report:** it shows only the final data. No session history, rounds, before/after, PR numbers, or "shipped" wording. `build_data.py` cleans notes.
+- **Snapshot rule for the report:** it shows only the final data. No session history, rounds, before/after, PR numbers, or "shipped" wording. `build_data.py` cleans notes. The one exception is the Changes tab (standards 30), whose public lines follow the same wording rules.
 - **Neutral defaults:**
   - Generic boss (standards 19).
   - No unconfirmed launch items in presets (standards 8 / 8a). They become assumptions instead (e.g. mage imbue scrolls, two Forever enchants).

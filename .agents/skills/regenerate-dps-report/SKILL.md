@@ -70,12 +70,23 @@ The sims seed every iteration and `pipeline.sh` pins the split count (`DASH_SPLI
 don't depend on the machine. A run that stops can be finished with `pipeline.sh resume <ids>`.
 
 `publish` writes everything: every dataset into `ui/dps_report/data/` (its `build_data.py` reads every build's raw
-outputs, so ranks, the race summary and the assumptions cover every build), the sample fights of the re-simmed builds
+outputs, so ranks, the race summary and the assumptions cover every build), the Changes tab's data (`changes.py build`), the sample fights of the re-simmed builds
 (`events.py`, which needs the binary the numbers came from), provenance for them (`SIM_COMMIT=<rev>` if the sims didn't
 run at HEAD), the raw packs, and drops removed presets everywhere. `merge.mjs` is for hand repairs only.
 
 The standards in `orchestration/standards.md` decide the settings: 20,000+ iterations,
 the generic boss, 120 / 180 / 300 s, binaries rebuilt after the last gear or DB change.
+
+### The Changes tab
+
+The report's Changes tab compares the live update's start with the new data (standards 30; `tools/dps_report/README.md`,
+"Changes tab"). It runs no sims, but it needs a public line for every change: run `python3 tools/dps_report/changes.py
+check`, which lists the commits since the update's start that change build inputs and no line covers, and add lines to
+the live update in `tools/dps_report/changes/updates.json` (or mark a commit `internal` with a reason when no player
+would care, like a refactor that moves no numbers). Write lines in plain game terms, with no commit ids, dates of our
+work, session or audit names, ruling references or file paths: they ship. Then `python3 tools/dps_report/changes.py build`.
+A new game update (a balance build or development notes) starts with `changes.py new game <id> "<title>" --source-label
+<label> --source-url <url>` before its changes land; the sim/preset update after a full pass with `changes.py new sim`.
 
 ## 3. Check both outputs
 
@@ -85,13 +96,13 @@ the generic boss, 120 / 180 / 300 s, binaries rebuilt after the last gear or DB 
   `executablePath: '/opt/pw-browsers/chromium'`; wrap the file in
   `<!doctype html><html><head><meta charset="utf-8"></head><body>...</body></html>`
   for a local look, and pass the session's proxy so d3 loads from cdnjs). Click through
-  Ranking, Races, Specs, Compare and Method at phone and desktop width, and look for
+  Ranking, Races, Specs, Compare, Changes and Method at phone and desktop width, and look for
   console errors.
 - If you changed the page itself, also check `npx vite serve` at `/classic/dps_report/`.
 
 ## 4. Commit
 
-Commit `ui/dps_report/data/`, `datasets.json`, `provenance.json` and `tools/dps_report/raw/` together, with any pipeline
+Commit `ui/dps_report/data/`, `datasets.json`, `provenance.json`, `tools/dps_report/raw/` and `tools/dps_report/changes/` together, with any pipeline
 changes, on a local branch from origin/master. If origin/master changed any of them meanwhile, don't hand-merge them:
 take master's, `hydrate` again, re-check `stale.mjs` (master may have made more builds stale), re-sim what that adds,
 and `publish` again.
@@ -107,8 +118,8 @@ and `publish` again.
   proxy breaks its asset upload; the script uploads those directly. It checks the live site serves the new file byte
   for byte and rolls production back if not. To try a page change first, pass `--branch <name>` for a preview URL.
   Never publish the report as a Claude artifact.
-- Reply with the link https://forever-dps.pages.dev, which builds were re-simmed and why, and the biggest
-  ranking changes.
+- Reply with the link https://forever-dps.pages.dev, which builds were re-simmed and why, the biggest
+  ranking changes, and the live update's public lines.
 
 ## Editing the page itself
 

@@ -67,10 +67,11 @@ publish)
 		python3 $T/events.py --data "$DASH_DIR/data" --out "$R/ui/dps_report/data/events" --lookups-only
 	fi
 	python3 $T/rawstore.py copy
+	python3 $T/changes.py build  # the Changes tab: the live update against the report's new data
 	if [ $# -gt 0 ]; then (cd "$R" && node tools/dps_report/stale.mjs --record "$@" --iterations 20000 ${SIM_COMMIT:+--commit $SIM_COMMIT}); fi
 	# only the re-simmed builds' packs: the others are already the outputs they were made from
 	if [ $# -gt 0 ]; then python3 $T/rawstore.py pack "$@"; fi
-	echo "next: check the report (make dps-report-artifact), commit ui/dps_report and tools/dps_report/raw together, push, then deploy"
+	echo "next: give the live update public lines for what changed (changes.py check), check the report (make dps-report-artifact), commit ui/dps_report, tools/dps_report/raw and tools/dps_report/changes together, push, then deploy"
 	;;
 plan | run | resume)
 	if [ $# -gt 0 ]; then set -- $(python3 $T/rawstore.py variants "$@"); fi
