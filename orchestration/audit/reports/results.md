@@ -1,10 +1,10 @@
-# Results audit, pass 59 (master 1274e15b3)
+# Results audit, pass 60 (master dd663e652)
 
-Checked with the loop's shared run (20k, seed 1, 180 s, all 58 requests) and a fresh mksettings build.
+Checked with the loop's shared run (20k, seed 1, 180 s, all 58 requests) and a fresh mksettings/wowsimcli build at dd663e652.
 
-- Published vs mine: all 58 within 0.15 (the metas' published.dps were refreshed by 5b019f33c; no stale gaps).
-- Moves since the last audited build (224b8a4e0, builds.json): Beast Mastery 1150.4 -> 1131.8 (-18.6), Marksmanship 1137.3 -> 1115.7 (-21.6), Lone Wolf 1118.9 -> 1094.3 (-24.6), Survival 1029.8 -> 1028.9 (-0.9). Every other row is unchanged.
-- Cause: 73cedc9a9, the launch realms' 2026-10-28 hunter hotfix (user ruling). Aspect of the Hawk now casts rank 6 (55 ranged AP) instead of rank 5 (90 AP before the hotfix, 47 after), and the three requests moved from spell 14321 to 14322. A drop of 35 AP on the hunter's ranged and pet-less white and shot damage is the right size for -1.6 to -2.2%. Trueshot Aura changed in the same commit (Survival keeps its rank).
-- Drift: drift_report.txt identical to the reference (open finding results-20261025-1 stays open, no new difference; the hunter requests have 0 drift).
+- Why due: 126 watched files changed since c9d93dd66 (mostly tools/dps_report/req/* re-written by the report's Dwarf gear-trade, Smite Chastise and priest racial re-sims). sim/, proto/, mksettings, tools/database and assets/database are unchanged in the range.
+- Published vs mine: 56 of 58 within 0.15. Two metas lag builds.json (which matches my run): mage__frostfire meta 1087.5 vs run 1088.4 (+0.9), shaman__elemental-level60 meta 772.2 vs run 772.7 (+0.5). Cause: 8624ba126 / 3ad93a86b changed those requests after the meta numbers were written. Tiny and stale-meta only; not filed, will clear on the next re-sim.
+- Moves against the reference req_summary.txt: only those two rows (+0.9, +0.5); every other row identical.
+- builds.json vs the run: all 58 within 0.15 except the same two (builds.json is right).
+- Drift: drift_report.txt identical to the reference (open finding results-20261025-1 stays open, nothing new).
 - Unread fields: only `notes`.
-- Reference req_summary.txt replaced with this run.

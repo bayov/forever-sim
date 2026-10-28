@@ -12,12 +12,12 @@ hunter__survival	1028.89	37.65	1028.9
 mage__arcane	901.62	40.26	901.6
 mage__fire	1089.03	58.87	1089.0
 mage__frost	911.13	51.77	911.1
-mage__frostfire	1087.50	82.83	1087.5
+mage__frostfire	1088.38	81.45	1087.5
 paladin__level_60	943.99	45.63	944.0
 paladin__level_60_shock	887.83	32.11	887.8
 paladin__level_60_shock-duty-crusader	891.91	32.75	891.9
 paladin__level_60_shock_ret	931.61	44.18	931.6
-paladin__level_60_shock_undead	973.11	33.19	973.1
+paladin__level_60_shock_undead	973.17	32.89	973.1
 paladin__level_60_sub_holy	948.79	45.49	948.8
 paladin__level_60_sub_holy-duty-crusader	941.15	45.71	941.2
 paladin__level_60_sub_holy_undead	1048.76	47.24	1048.8
@@ -36,8 +36,8 @@ rogue__seal-fate-swords	731.80	33.37	731.8
 rogue__seal-fate-swords-humanoid	757.06	34.37	757.1
 rogue__subtlety	717.22	26.02	717.2
 rogue__subtlety-humanoid	742.06	26.74	742.1
-shaman__elemental-level60	772.16	26.75	772.2
-shaman__elemental-level60-mana-tide	756.95	26.35	757.0
+shaman__elemental-level60	772.67	26.81	772.2
+shaman__elemental-level60-mana-tide	757.10	26.35	757.0
 shaman__enhancement-imp-gw	880.10	53.36	880.1
 shaman__enhancement-level60	884.25	53.50	884.2
 shaman__enhancement-mana-tide	796.55	51.40	796.6

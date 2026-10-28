@@ -94,3 +94,8 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-10-28 13:06 | consumables | pass 51 | master 1274e15b3 | quiet | Trueshot Aura ranks match client 70658
 2026-10-28 13:06 | mechanics | pass 46 | master 1274e15b3 | quiet | hunter hotfix matches client 70658; mechanics-20261027-2 still open
 2026-10-28 13:06 | fairness | pass 13 | master 1274e15b3 | quiet | only hunters moved (-0.1 to -2.2%), still rank 1-3; sweep.py race_override fix left uncommitted
+2026-10-28 19:14 | results | pass 60 | master dd663e652 | quiet | 56 of 58 requests within 0.15 of published; frostfire and elemental metas slightly stale
+2026-10-28 19:14 | rotations | pass 38 | master dd663e652 | quiet | standards 31 rotation rewrites lose nothing beyond noise; rotations-20261028-1 gets new evidence
+2026-10-28 19:14 | gear | pass 46 | master dd663e652 | quiet | standards.md change is not a gear rule
+2026-10-28 19:14 | consumables | pass 52 | master dd663e652 | quiet | assumptions_def.py wording only; scan.sh minor-armor expectation stale (3, not 2)
+2026-10-28 19:14 | fairness | pass 14 | master dd663e652 | quiet | all race rows +0.0 vs baseline; top/bottom 1.58x; sweep.py race_override fix left uncommitted
