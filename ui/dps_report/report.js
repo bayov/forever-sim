@@ -1917,8 +1917,8 @@ export function startReport(dash, events) {
       const builds = new Map(visB().map((x) => [x.id, x]));
       if (!builds.has(b.id)) builds.set(b.id, b);
       const ns = rowsOf('notes').filter((n) => n.kind === 'caveats' && builds.get(n.build)?.class === b.class);
-      const groups = cavGroups(b.class, ns, builds, b.id);
-      cavHost.replaceChildren(groups.childElementCount ? groups : el('p', { class: 'fv-note', text: 'None.' }));
+      const list = cavFlat(b, ns, builds);
+      cavHost.replaceChildren(list || el('p', { class: 'fv-note', text: 'None.' }));
     }
 
     // a card that throws shows a failure note (never the previous preset's content)
@@ -2682,21 +2682,36 @@ export function startReport(dash, events) {
     const m = t.match(CAV_TAG), rest = m ? t.slice(m[0].length) : t, txt = rest.charAt(0).toUpperCase() + rest.slice(1);
     return el('li', { class: 'fv-cav' }, m ? el('span', { class: 'fv-cav-tag', text: m[1] }) : null, /[.!?)]$/.test(txt) ? txt : txt + '.');
   };
-  // One class's caveats (ns), under the presets they apply to. The ones every preset of the class shares come first,
-  // then each preset's own, in the ranking's order. A caveat a few presets share goes under all their names. Method
-  // shows every class, and a preset's page only the groups with its preset in them (only).
-  const cavGroups = (cls, ns, builds, only) => {
-    const order = new Map([...builds.keys()].map((id, k) => [id, k]));
+  // One class's caveats (ns), grouped by the presets they apply to: a caveat a few presets share is one group with all
+  // their names. Returns the groups and how many presets the class has here.
+  const cavSets = (cls, ns, builds) => {
     const seen = new Map();
     for (const n of ns) { if (!seen.has(n.text)) seen.set(n.text, []); seen.get(n.text).push(n.build); }
     const all = [...builds.values()].filter((b) => b.class === cls).length;
-    const groups = d3.groups([...seen], ([, ids]) => ids.join('|'))
-      .map(([, items]) => ({ ids: items[0][1], texts: items.map(([t]) => t) }))
-      .filter((g) => !only || g.ids.includes(only))
-      .sort((p, q) => (q.ids.length === all) - (p.ids.length === all) || order.get(p.ids[0]) - order.get(q.ids[0]));
+    const groups = d3.groups([...seen], ([, ids]) => ids.join('|')).map(([, items]) => ({ ids: items[0][1], texts: items.map(([t]) => t) }));
+    return { groups, all };
+  };
+  // Method: every class's caveats, each group a small panel under its presets' names. The ones every preset of the class
+  // shares come first, then each preset's own, in the ranking's order.
+  const cavGroups = (cls, ns, builds) => {
+    const order = new Map([...builds.keys()].map((id, k) => [id, k]));
+    const { groups, all } = cavSets(cls, ns, builds);
+    groups.sort((p, q) => (q.ids.length === all) - (p.ids.length === all) || order.get(p.ids[0]) - order.get(q.ids[0]));
     const head = (ids) => el('h4', { class: 'fv-cav-preset' }, ...(ids.length === all && all > 1 ? [`All ${cls} presets`]
       : ids.flatMap((id, k) => [k ? ', ' : null, specIco(builds.get(id), ''), ' ', builds.get(id).build])));
     return el('div', { class: 'fv-cav-groups' }, ...groups.map((g) => el('section', { class: 'fv-cav-group' }, head(g.ids), el('ul', { class: 'fv-cav-list' }, ...g.texts.map(cavItem)))));
+  };
+  // A preset's page: one plain list, the card's own, with no panels and no name of the preset it's already on. Its own
+  // caveats first, then the ones it shares, under a small note naming who else they cover. null when there are none.
+  const cavFlat = (b, ns, builds) => {
+    const { groups, all } = cavSets(b.class, ns, builds);
+    const mine = groups.filter((g) => g.ids.includes(b.id)).sort((p, q) => p.ids.length - q.ids.length);
+    if (!mine.length) return null;
+    const others = (ids) => (ids.length === all ? [`every ${b.class} preset`]
+      : ids.filter((id) => id !== b.id).flatMap((id, k) => [k ? ', ' : null, specIco(builds.get(id), ''), ' ', builds.get(id).build]));
+    return el('div', { class: 'fv-cav-flat' }, ...mine.flatMap((g) => [
+      g.ids.length > 1 ? el('h4', { class: 'fv-cav-shared' }, 'Shared with ', ...others(g.ids)) : null,
+      el('ul', { class: 'fv-cav-list' }, ...g.texts.map(cavItem))]));
   };
 
   // ---------- static placeholders (headline figures, method text) ----------
