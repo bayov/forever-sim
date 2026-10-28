@@ -719,8 +719,10 @@ export function startReport(dash, events) {
   const classChips = (host, key, avail) => {
     const m = iconMap();
     const name = st[key] === 'All' ? 'All classes' : st[key];
-    if (host.childElementCount && (host.dataset.icons === '1' || !m)) {
-      host.querySelector('.fv-pick-value').textContent = name;
+    // Built already, unless the only child is the Races spec selector the layout puts in the row.
+    const value = host.querySelector('.fv-pick-value');
+    if (value && (host.dataset.icons === '1' || !m)) {
+      value.textContent = name;
       host.querySelectorAll('button').forEach((b) => { b.setAttribute('aria-pressed', String(b.dataset.c === st[key])); b.classList.toggle('active', b.dataset.c === st[key]); b.hidden = !!avail && !avail.has(b.dataset.c); });
       return;
     }

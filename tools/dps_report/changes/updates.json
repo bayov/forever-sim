@@ -631,6 +631,25 @@
       "e419e7f"
      ],
      "note": "Its global cooldown deals more as Smite."
+    },
+    {
+     "title": "Troll Shadow Priests: Shadowguard shown as its own racial",
+     "kind": "method",
+     "note": "The raid damage hits set it off, worth 8.7 DPS on Shadow and 8.3 on Shadow + Holy. The race breakdown counted it in the Troll's base stats.",
+     "races": [
+      "Troll"
+     ],
+     "builds": [
+      "priest__shadow",
+      "priest__shadow-holy"
+     ],
+     "parts": [
+      "shadowguard"
+     ],
+     "commits": [
+      "75ae9a1"
+     ],
+     "moves": false
     }
    ],
    "internal": [
@@ -653,6 +672,10 @@
     {
      "commit": "1696488",
      "why": "caveat wording, no numbers change"
+    },
+    {
+     "commit": "9ef5faf",
+     "why": "spec page caveats on the priest race spells, no numbers change"
     }
    ]
   }
