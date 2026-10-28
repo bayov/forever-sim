@@ -614,6 +614,23 @@
      "commits": [
       "d8185e9"
      ]
+    },
+    {
+     "title": "Dwarf Smite Priest: no Chastise against Humanoids",
+     "kind": "rotation",
+     "races": [
+      "Dwarf"
+     ],
+     "builds": [
+      "priest__smite"
+     ],
+     "parts": [
+      "chastise"
+     ],
+     "commits": [
+      "e419e7f"
+     ],
+     "note": "Its global cooldown deals more as Smite."
     }
    ],
    "internal": [

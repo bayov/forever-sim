@@ -6,8 +6,8 @@ auras: 1459 rows, 213 KB
 hist: 2771 rows, 148 KB
 stats: 781 rows, 65 KB
 gear: 750 rows, 142 KB
-setup: 2273 rows, 567 KB
-notes: 1747 rows, 204 KB
+setup: 2273 rows, 565 KB
+notes: 1752 rows, 206 KB
 race_variants: 946 rows, 287 KB
 race_breakdown: 1167 rows, 175 KB
 race_summary: 328 rows, 100 KB
@@ -15,18 +15,18 @@ race_notes: 46 rows, 10 KB
 weights: 311 rows, 63 KB
 mana: 3783 rows, 283 KB
 mana_summary: 39 rows, 12 KB
-assumptions: 50 rows, 63 KB
+assumptions: 50 rows, 57 KB
 assumption_dps: 355 rows, 58 KB
-rotation: 788 rows, 450 KB
-race_rotation: 422 rows, 252 KB
+rotation: 787 rows, 450 KB
+race_rotation: 417 rows, 250 KB
 rotation conditions shown in compact form: []
-tooltips: 1127 rows, 445 KB
+tooltips: 1126 rows, 445 KB
 tooltips without text: ['i990015 Enhancement Synthetic On-Use Trinket (Phase 1)', 'i990115 Elemental Synthetic On-Use Trinket (Phase 1)', 'i991018 Warrior Synthetic Battle Trinket (Phase 1)', 'i992015 Retribution Synthetic Spell Power On-Use Trinket (Phase 1)', 'i993016 Ranged Hunter Synthetic On-Use Trinket (Phase 1)', 'i993117 Survival Synthetic On-Use Trinket (Phase 1)', 'i994202 Rogue Synthetic On-Use Trinket (Phase 1)', 'i995034 Priest Synthetic On-Use Trinket (Phase 1)', 'i996032 Mage Synthetic Talisman (Phase 1)', 'i997022 Warlock Synthetic Talisman (Phase 1)', 'i998015 Balance Synthetic Spell Power Trinket (Phase 1)', 'i998115 Feral Synthetic Strength Trinket (Phase 1)', 'o11 Raid damage hit']
 talenttrees: 465 rows, 178 KB
-wowhead coverage: {'item:forever': 70, 'spell:none': 1, 'spell:sim': 8, 'spell:forever': 243, 'spell:wiki': 8, 'spell:client': 18, 'item:db': 241, 'enchant:forever': 359, 'enchant:db': 60, 'setup:sim': 5, 'setup:forever': 36, 'setup:wiki': 1} {'forever': 304, 'other': 22} {'forever': 1375}
+wowhead coverage: {'item:forever': 70, 'spell:none': 1, 'spell:sim': 8, 'spell:forever': 242, 'spell:wiki': 8, 'spell:client': 18, 'item:db': 241, 'enchant:forever': 359, 'enchant:db': 60, 'setup:sim': 5, 'setup:forever': 36, 'setup:wiki': 1} {'forever': 303, 'other': 22} {'forever': 1375}
 icons: 79 rows, 159 KB
 icons_more: 608 rows, 923 KB
-names: 300 rows, 29 KB
+names: 299 rows, 29 KB
 names without an icon: ['Bloodthrill', 'Caustic Smog Potion', 'Consecration Mark', 'Curse of Elements', 'Dark Inspiration', 'Decimation', 'Decimation - Execute', 'Demonic Knowledge', 'Dragonfire Potion', 'Echo of Command', 'Echo of Righteousness', 'Eclipse', 'Heating Up', 'Improved Stormstrike', 'Item 260817', 'Lacerating Strikes', 'Maelstrom Weapon', 'Major Frenzy Potion', 'Major Spellblasting Potion', 'Mana gain', 'Missile Barrage', 'Movement', 'Potion', 'Quick Strikes', 'Rage gain', 'Raid damage hit', 'Resourcefulness', 'Shadow Word Death', 'Shadow and Flame (Shadow)', 'Tenets of the Silver Hand']
 treeart: 27 rows, 1063 KB
 missing icons: ['client_252996']
