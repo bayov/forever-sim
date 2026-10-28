@@ -67,7 +67,7 @@ Some scripts hold numbers from one character and one day, like the weapon models
 
 ## The scripts
 
-- `cl.py` parses the log into events. `cl.dmg(e)` reads a damage line's tail (amount, raw,
+- `cl.py` parses the log (plain or .xz) into events. `cl.dmg(e)` reads a damage line's tail (amount, raw,
   overkill, school, resisted, blocked, absorbed, crit, glancing, crushing), and `cl.miss(e)`
   reads a miss type. `e.me_src` and `e.me_dst` say a line's source or target is our own
   character. They come from the unit flags the client writes ("mine" is 0x511), never from the
@@ -101,6 +101,15 @@ Some scripts hold numbers from one character and one day, like the weapon models
   after armor, and how much, with our armor fitted from the hits outside the totem.
 - `gear.py` prints our logged max health, spell power, armor, max mana and item level from
   our casts whenever they change, which shows gear swaps and stat buffs or debuffs.
+- `threat.py` reads the threat BayovCore recorded during a log (`<log>.threat.jsonl.xz`, which
+  wow-combat-logs' `archive.py` writes next to the archived log): our threat, our pet's and two
+  group members' on every mob, which the combat log doesn't have. It fits the lag between a
+  hit's line and the threat update after it, then takes each threat change that covers exactly
+  one line of that player and prints, per player and ability, how many such clean samples, the
+  median threat and the threat per point of damage. The game's raw threat is Classic's x 100,
+  and the white hits say so. `--rows` prints every change with the lines it covers, `--who`
+  keeps one player. It takes the log plain or .xz, so it runs on the archive directly:
+  `python3 -I tools/combat_log/threat.py ~/wow-combat-logs/forever/WoWCombatLog-<date>.txt.xz`.
 - `client_spell.py` prints the client's rows for spell IDs from a directory of wago.tools
   CSVs (SpellName, SpellAuraOptions, SpellClassOptions, SpellEffect). Fetch each table from
   `https://wago.tools/db2/<Table>/csv?build=1.60.1.70338` with a desktop user agent.
