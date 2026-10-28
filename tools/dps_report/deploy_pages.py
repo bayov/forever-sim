@@ -50,9 +50,12 @@ def strip_beacon(html):
 # The built file holds only the page's own tags (build_artifact.mjs): the Claude artifact host it was made
 # for added the doctype, <head> with the charset and viewport, and <body>. Pages serves the file as it is,
 # so we add the same wrapper. It keeps phones at device width and the page out of quirks mode, and it
-# gives Pages the </body> it puts the Web Analytics beacon in front of.
+# gives Pages the </body> it puts the Web Analytics beacon in front of. The tab icon is the header's
+# book (assets/img/dps_report_icon.jpg at 32 px), inline so the site stays one file.
+FAVICON = base64.b64encode(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "../../ui/dps_report/favicon.png"), "rb").read())
 HEAD = (b'<!doctype html><html lang="en"><head><meta charset="utf-8">'
-        b'<meta name="viewport" content="width=device-width, initial-scale=1"></head><body>')
+        b'<meta name="viewport" content="width=device-width, initial-scale=1">'
+        b'<link rel="icon" type="image/png" sizes="32x32" href="data:image/png;base64,' + FAVICON + b'"></head><body>')
 
 
 def document(html):
