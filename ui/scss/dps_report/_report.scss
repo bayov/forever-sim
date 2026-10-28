@@ -4128,59 +4128,65 @@ dialog.fv-about-modal {
 	gap: 0;
 }
 
-// The title is the fold: the whole header row opens and closes the update.
-.fv-us-head {
-	flex-direction: column;
-	align-items: stretch;
-}
-
-.fv-us-toggle {
-	display: flex;
-	align-items: baseline;
-	gap: 0.85rem;
-	width: 100%;
-	padding: 0;
-	border: 0;
-	background: none;
-	color: inherit;
-	text-align: left;
+// The header is the fold: a calendar date beside the title and its kind and source, then the chevron. (Over the sim
+// UI's content-block-header, which is a flex row.)
+.content-block.fv-us > .fv-us-head {
+	display: grid;
+	grid-template-columns: auto minmax(0, 1fr) auto;
+	align-items: center;
+	gap: 0.15rem 0.9rem;
 	cursor: pointer;
 
-	&:hover .fv-us-title {
+	&:hover .fv-us-title,
+	&:focus-visible .fv-us-title {
 		color: var(--fv-gold);
 	}
 
-	.fv-us-chev {
-		align-self: center;
+	&:focus-visible {
+		outline: 1px solid var(--fv-gold);
+		outline-offset: 2px;
 	}
 }
 
-// The date leads the title, large, so the updates read as a timeline.
+// The date: the month small over the day, a block as tall as the title and the line under it.
 .fv-us-date {
-	flex: none;
-	min-width: 4.4rem;
-	font-size: 1.35rem;
-	font-weight: 700;
-	line-height: 1.2;
+	grid-row: 1 / span 2;
+	display: grid;
+	justify-items: center;
+	width: 3.1rem;
+	line-height: 1;
 	color: var(--fv-gold);
-	font-variant-numeric: tabular-nums;
-	white-space: nowrap;
+
+	small {
+		font-size: 0.68rem;
+		font-weight: 700;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: var(--gold-soft);
+	}
+
+	b {
+		font-size: 1.65rem;
+		font-weight: 700;
+		font-variant-numeric: tabular-nums;
+	}
 }
 
 // The title in the body font, for reading.
 .fv-us-title {
-	flex: 1 1 auto;
-	min-width: 0;
+	grid-column: 2;
+	align-self: end;
 	margin: 0;
 	font-family: inherit;
 	font-size: 1.05rem;
 	font-weight: 600;
-	line-height: 1.35;
+	line-height: 1.3;
 	color: var(--color-fg);
 }
 
 .fv-us-chev {
-	flex: none;
+	grid-column: 3;
+	grid-row: 1 / span 2;
 	color: var(--color-fg-muted);
 	font-size: 0.8rem;
 	transition: transform var(--cds-dur-slow) var(--cds-ease-out);
@@ -4191,12 +4197,11 @@ dialog.fv-about-modal {
 }
 
 .fv-us-meta {
+	grid-column: 2;
+	align-self: start;
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0.1rem 0.5rem;
-	margin-top: 0.15rem;
-	// under the title, past the date
-	padding-left: calc(4.4rem + 0.85rem);
 	font-size: var(--cds-font-size-caption);
 	color: var(--color-fg-muted);
 
@@ -4205,6 +4210,15 @@ dialog.fv-about-modal {
 		content: '·';
 		margin-right: 0.5rem;
 		opacity: 0.6;
+	}
+
+	// on a phone each item takes its own line, so none starts with a dot
+	@include media-breakpoint-down(sm) {
+		flex-direction: column;
+
+		> * + *::before {
+			display: none;
+		}
 	}
 }
 
@@ -4394,12 +4408,11 @@ dialog.fv-about-modal {
 .fv-dl {
 	display: grid;
 	gap: 0.1rem;
-	max-width: 52rem;
 }
 
 .fv-dl-row {
 	display: grid;
-	grid-template-columns: minmax(10rem, 15rem) minmax(5rem, 1fr) 4rem;
+	grid-template-columns: minmax(10rem, 16rem) 4.5rem minmax(5rem, 1fr);
 	align-items: center;
 	gap: 0.75rem;
 	padding: 0.2rem 0.3rem;
@@ -4489,7 +4502,7 @@ dialog.fv-about-modal {
 	}
 
 	@include media-breakpoint-down(sm) {
-		grid-template-columns: minmax(0, 1fr) 3.5rem;
+		grid-template-columns: minmax(0, 1fr) 4rem;
 
 		.tr {
 			grid-column: 1 / -1;

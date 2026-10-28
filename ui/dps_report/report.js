@@ -151,7 +151,7 @@ export function startReport(dash, events) {
   // ---------- state ----------
   const store = (() => { try { return window.localStorage; } catch { return null; } })();
   const saved = (() => { try { return JSON.parse(store?.getItem('fv-state') || '{}'); } catch { return {}; } })();
-  const st = Object.assign({ tab: 'ranking', cls: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', rotRace: 'All', rsOpt: {}, rsFac: 'All', srFac: 'All', slFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', rlFac: 'All', rlRole: 'All', rlCls: 'All', rlSpec: 'All', setupHide: false, enc: false, duty: true, asm: {}, asmOpen: [], chUp: null, chCls: 'All', chVar: false }, saved);
+  const st = Object.assign({ tab: 'ranking', cls: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', rotRace: 'All', rsOpt: {}, rsFac: 'All', srFac: 'All', slFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', rlFac: 'All', rlRole: 'All', rlCls: 'All', rlSpec: 'All', setupHide: false, enc: false, duty: true, asm: {}, asmOpen: [], chUp: null, chCls: 'All', chVar: false, chSim: false }, saved);
   st.len = '180'; // a fight length other than 180s is never restored: the page always opens on the main numbers
   st.chUp = null; // nor an older update: the Changes tab opens on the newest unless a link names one
   const persist = () => { try { store?.setItem('fv-state', JSON.stringify(st)); } catch {} };
@@ -2952,21 +2952,22 @@ export function startReport(dash, events) {
       sgn(d), pct != null ? el('small', { text: ` ${sgn(pct, f1)}%` }) : null, noise != null ? el('small', { class: 'pm', text: ` ±${f1(noise)}` }) : null);
   };
   // A list of signed changes as bars from one zero line: the icon and name, with what it was and is under the name,
-  // the bar, then the change. Gains and losses share the scale; a change within its noise is muted. A long list shows
+  // the change, then the bar to the right edge. Gains and losses share the scale; a change within its noise is muted. A long list shows
   // its first max rows. A row opens its tooltip (tip) or its preset (open).
   const chList = (rows, max = 6) => {
     const wrap = el('div', { class: 'fv-dl' });
-    const lo = Math.min(0, d3.min(rows, (r) => r.d) ?? 0), hi = Math.max(0, d3.max(rows, (r) => r.d) ?? 0), span = hi - lo || 1;
-    const zero = (100 * -lo) / span;
+    // Gains and losses together hang from a zero line between them; all one way, the bars start at the left edge.
+    const lo = Math.min(0, d3.min(rows, (r) => r.d) ?? 0), hi = Math.max(0, d3.max(rows, (r) => r.d) ?? 0), mixed = lo < 0 && hi > 0;
+    const span = (mixed ? hi - lo : Math.max(hi, -lo)) || 1, zero = mixed ? (100 * -lo) / span : 0;
     const row = (r) => {
       const quiet = r.noise != null && Math.abs(r.d) < r.noise, w = (100 * Math.abs(r.d)) / span;
       const act = r.tip || r.open;
       const n = el('div', { class: 'fv-dl-row' + (act ? ' clk' : ''), ...(act ? { role: 'button', tabindex: '0', 'data-tip': '1' } : {}) },
         el('span', { class: 'nm' }, r.icon || null, el('span', { class: 'tx' }, el('b', { text: r.name }), el('small', { text: [r.vals, r.tag].filter(Boolean).join(' · ') }))),
-        el('span', { class: 'tr', 'aria-hidden': 'true' }, el('i', { class: 'z', style: `left:${zero}%` }),
-          el('span', { class: 'bar ' + (r.d >= 0 ? 'pos' : 'neg') + (quiet ? ' quiet' : ''), style: `left:${r.d >= 0 ? zero : zero - w}%;width:${Math.max(w, 0.8)}%` })),
         el('span', { class: 'vl' }, el('span', { class: 'fv-ch-d ' + (chSame(r.d) ? 'same' : r.d > 0 ? 'pos' : 'neg') + (quiet ? ' quiet' : ''), text: chSame(r.d) ? '±0' : sgn(r.d), title: quiet ? 'Within noise: it may be luck' : null }),
-          r.pct != null ? el('small', { text: chPct(r.pct) }) : null));
+          r.pct != null ? el('small', { text: chPct(r.pct) }) : null),
+        el('span', { class: 'tr', 'aria-hidden': 'true' }, el('i', { class: 'z', style: `left:${zero}%` }),
+          el('span', { class: 'bar ' + (r.d >= 0 ? 'pos' : 'neg') + (quiet ? ' quiet' : ''), style: `left:${r.d >= 0 || !mixed ? zero : zero - w}%;width:${Math.max(w, 0.8)}%` })));
       if (r.tip) n.addEventListener('click', (e) => { e.stopPropagation(); r.tip(n); });
       else if (r.open) n.addEventListener('click', () => openSpec(r.open));
       return n;
@@ -3189,13 +3190,17 @@ export function startReport(dash, events) {
   const chCard = (u, S) => {
     const key = 'u:' + u.id, hl = chHighlights(S, u);
     const sec = el('section', { class: 'content-block fv-card fv-us ' + u.type, 'data-u': u.id });
-    const btn = el('button', { type: 'button', class: 'fv-us-toggle', 'aria-expanded': 'false' },
-      el('span', { class: 'fv-us-date', text: chDate(u.date) }),
-      el('h6', { class: 'fv-us-title', text: u.title }),
-      el('i', { class: 'fas fa-chevron-down fv-us-chev', 'aria-hidden': 'true' }));
+    // The header is the fold: a calendar date (month over day) beside the title and its kind and source, then the
+    // chevron. It is a role=button div rather than a <button>, because the source inside it is a link.
+    const [mon, day] = chDate(u.date).split(' ');
     const meta = el('div', { class: 'fv-us-meta' }, el('span', { class: 'fv-us-type', text: u.type === 'game' ? 'Game update' : 'Sim and preset update' }), chSrc(u.source));
+    const btn = el('div', { class: 'content-block-header fv-us-head', role: 'button', tabindex: '0', 'aria-expanded': 'false' },
+      el('span', { class: 'fv-us-date', 'aria-label': chDate(u.date) }, el('small', { text: mon }), el('b', { text: day })),
+      el('h6', { class: 'fv-us-title', text: u.title }), meta,
+      el('i', { class: 'fas fa-chevron-down fv-us-chev', 'aria-hidden': 'true' }));
+    btn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); } });
     const body = el('div', { class: 'fv-us-body', hidden: '' });
-    sec.append(el('div', { class: 'content-block-header fv-us-head' }, btn, meta), body);
+    sec.append(btn, body);
     const sub = (text) => el('div', { class: 'fv-us-h', text });
     const fill = () => {
       const lines = arr(u.lines);
@@ -3226,14 +3231,22 @@ export function startReport(dash, events) {
     const host = $('#ch-list');
     classChips($('#ch-cls'), 'chCls');
     $('#ch-var').setAttribute('aria-pressed', String(!!st.chVar));
+    $('#ch-sim').setAttribute('aria-pressed', String(!!st.chSim));
     if (!waitOr(host, ['changes', 'changes_snap']) || statusOf('builds') !== 'ok') return;
-    const ups = rowsOf('changes'), map = chStates();
+    const map = chStates();
+    // a link or the Ranking chip names an update: open it and scroll to it (showing sim and preset updates if it is
+    // one); the first view opens the newest shown
+    if (st.chUp != null) {
+      const u = rowsOf('changes').find((x) => String(x.id) === String(st.chUp)); // a link to no update shows the default view
+      st.chUp = null;
+      if (u) { if (u.type !== 'game') st.chSim = true; chJump = u.id; chOpen.add('u:' + u.id); $('#ch-sim').setAttribute('aria-pressed', String(!!st.chSim)); }
+    }
+    // game updates only, unless the reader asks for ours too
+    const ups = rowsOf('changes').filter((u) => st.chSim || u.type === 'game');
     if (!ups.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No updates yet.' })); return; }
-    // a link or the Ranking chip names an update: open it and scroll to it; the first view opens the newest
-    if (st.chUp != null) { const u = chUpdate(); chJump = u.id; chOpen.add('u:' + u.id); st.chUp = null; }
-    else if (!chInit) chOpen.add('u:' + ups[0].id);
+    if (!chInit && !chJump) chOpen.add('u:' + ups[0].id);
     chInit = true;
-    const sig = [st.chCls, st.chVar, iconMap() ? 1 : 0, statusOf('icons_more'), ups.length].join('|');
+    const sig = [st.chCls, st.chVar, st.chSim, iconMap() ? 1 : 0, statusOf('icons_more'), ups.length].join('|');
     if (host.dataset.sig !== sig) {
       host.dataset.sig = sig;
       hideTip();
@@ -3243,16 +3256,18 @@ export function startReport(dash, events) {
       const c = [...host.children].find((n) => n.dataset.u === String(chJump));
       chJump = null;
       if (c) {
-        if (!c.classList.contains('open')) c.querySelector('.fv-us-toggle').click();
+        if (!c.classList.contains('open')) c.querySelector('.fv-us-head').click();
         requestAnimationFrame(() => c.scrollIntoView({ block: 'start' }));
       }
     }
   };
   $('#ch-var').addEventListener('click', (e) => { e.stopPropagation(); st.chVar = !st.chVar; persist(); hideTip(); render(); });
+  $('#ch-sim').addEventListener('click', (e) => { e.stopPropagation(); st.chSim = !st.chSim; persist(); hideTip(); render(); });
   // the newest update, on top of the Ranking tab
   const drawUpdChip = () => {
-    // the newest update with something in it (one just started has no lines yet)
-    const a = $('#rank-upd'), u = statusOf('changes') === 'ok' ? (rowsOf('changes') || []).find((x) => arr(x.lines).length) : null;
+    // the newest update with something in it (one just started has no lines yet), a game update unless the Changes
+    // tab shows ours too
+    const a = $('#rank-upd'), u = statusOf('changes') === 'ok' ? (rowsOf('changes') || []).find((x) => arr(x.lines).length && (st.chSim || x.type === 'game')) : null;
     a.hidden = !u;
     if (!u || a.dataset.id === u.id) return;
     a.dataset.id = u.id;
