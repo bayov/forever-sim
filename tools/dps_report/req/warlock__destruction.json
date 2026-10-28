@@ -510,6 +510,20 @@
                   }
                 },
                 {
+                  "notes": "Troll. Berserking just before a filler, so its 15 sec of cast speed go on the casts it speeds up, not the instants of the opener. Other races ignore the warning on this line.",
+                  "action": {
+                    "condition": {
+                      "gcdIsReady": {}
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 26297,
+                        "tag": 2
+                      }
+                    }
+                  }
+                },
+                {
                   "notes": "Shadow Bolt as the filler.",
                   "action": {
                     "castSpell": {

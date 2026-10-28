@@ -532,6 +532,20 @@
     "action": {
      "castSpell": {
       "spellId": {
+       "spellId": 26297,
+       "tag": 2
+      }
+     },
+     "condition": {
+      "gcdIsReady": {}
+     }
+    },
+    "notes": "Troll. Berserking just before a filler, so its 15 sec of cast speed go on the casts it speeds up, not the instants of the opener. Other races ignore the warning on this line."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
        "spellId": 1293813
       }
      },
@@ -565,5 +579,5 @@
   "seed": 1,
   "duration": 180
  },
- "how": "rotopt -template warlock -race Gnome -durs 180 -eval, the preset's knobs (bane=2,corruption=1,immolate=1,lifeTapMana=5,shadowburn=0,soulFire=0,endInstants=1,filler=2,conflagrate=1,siphonLife=0,soulLink=0,dotLead=1.5,prepullAt=1.5,corruptionMinTime=15,immolateMinTime=4) plus eureka=2 (new knob, tools/rotopt/warlock.go). At the pull and on cooldown its 8 sec went on the bane, Corruption, Life Tap and Incinerate, none of which it covers (the client mask); the second use covered no damage at all. Paired over 20000 iterations."
+ "how": "rotopt -template warlock -race Gnome -durs 180 -eval, the preset's knobs (bane=2,corruption=1,immolate=1,lifeTapMana=5,shadowburn=0,soulFire=0,endInstants=1,berserking=1,filler=2,conflagrate=1,siphonLife=0,soulLink=0,dotLead=1.5,prepullAt=1.5,corruptionMinTime=15,immolateMinTime=4) plus eureka=2 (tools/rotopt/warlock.go). At the pull and on cooldown its 8 sec went on the bane, Corruption, Life Tap and Incinerate, none of which it covers (the client mask); the second use covered no damage at all. Paired over 20000 iterations. Remade 2026-10-28 when the presets took berserking=1 (the Troll Berserking line, which does nothing for a Gnome): the same gain over the new preset."
 }

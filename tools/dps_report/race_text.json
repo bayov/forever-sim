@@ -183,5 +183,29 @@
  },
  "warrior__fury_2h.Dwarf": {
   "note": "Its gear trades 1% hit it doesn't need (over the cap) for 5.1 Strength, 2.4 Agility, 2.2 attack power and 0.10% crit."
+ },
+ "warlock__affliction-duty-curse.Gnome": {
+  "note": "Saves Eureka! for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap.",
+  "why": {
+   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap, which used to take its 8s."
+  }
+ },
+ "warlock__demonology-duty-curse.Gnome": {
+  "note": "Saves Eureka! for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap.",
+  "why": {
+   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap, which used to take its 8s."
+  }
+ },
+ "warlock__destruction-duty-curse.Gnome": {
+  "note": "Saves Eureka! for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap.",
+  "why": {
+   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap, which used to take its 8s."
+  }
+ },
+ "warlock__destruction_fire-duty-curse.Gnome": {
+  "note": "Saves Eureka! for an Immolate with Conflagrate after it. It doesn't help Incinerate or the DoTs.",
+  "why": {
+   "priority:s1259812": "Saved for an Immolate with Conflagrate after it. It doesn't help Incinerate or the DoTs."
+  }
  }
 }

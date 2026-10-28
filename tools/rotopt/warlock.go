@@ -123,6 +123,12 @@ func (warlockRotation) Knobs() []Knob {
 		// within 5 sec, so both hit inside it (the Incinerate build, whose filler it doesn't
 		// cover). Other races ignore the warning on the line.
 		{Name: "eureka", Default: 0, Min: 0, Max: 2, Step: 1},
+		// Troll Berserking (10% cast speed, 15 sec, 3 min): 0 with the other cooldowns, at the pull,
+		// where its 15 sec go on the bane, Corruption, Immolate and Conflagrate opener, mostly
+		// instants held by the GCD that the cast speed does not shorten; 1 just before a filler with
+		// the GCD free, so its 15 sec are Shadow Bolts or Incinerates, the casts it speeds up. Other
+		// races ignore the warning on the line.
+		{Name: "berserking", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -235,6 +241,10 @@ func (warlockRotation) Build(k Knobs) *proto.APLRotation {
 	if k["eureka"] == 1 {
 		items = append(items, cast(lockEureka, gcdIsReady(),
 			"Gnome. Eureka! just before a filler, so its 8 sec are fillers. Other races ignore the warning on this line."))
+	}
+	if k["berserking"] == 1 {
+		items = append(items, cast(berserking, gcdIsReady(),
+			"Troll. Berserking just before a filler, so its 15 sec of cast speed go on the casts it speeds up, not the instants of the opener. Other races ignore the warning on this line."))
 	}
 	switch k["filler"] {
 	case 4:

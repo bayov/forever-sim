@@ -15,6 +15,7 @@
         {"action":{"castSpell":{"spellId":{"spellId":18932}},"condition":{"dotIsActive":{"spellId":{"spellId":11668}}}},"notes":"Conflagrate on cooldown."},
         {"action":{"castSpell":{"spellId":{"spellId":17926}},"condition":{"cmp":{"lhs":{"remainingTime":{}},"op":"OpLt","rhs":{"math":{"lhs":{"spellCastTime":{"spellId":{"spellId":11661}}},"op":"OpAdd","rhs":{"const":{"val":"0.25s"}}}}}}},"notes":"Death Coil when the filler would not land before the end."},
         {"action":{"castSpell":{"spellId":{"spellId":17923}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"remainingTime":{}},"op":"OpLt","rhs":{"math":{"lhs":{"spellCastTime":{"spellId":{"spellId":11661}}},"op":"OpAdd","rhs":{"const":{"val":"0.25s"}}}}}},{"cmp":{"lhs":{"remainingTime":{}},"op":"OpGt","rhs":{"spellCastTime":{"spellId":{"spellId":17923}}}}}]}}},"notes":"Searing Pain when the filler would not land before the end."},
+        {"action":{"castSpell":{"spellId":{"spellId":26297,"tag":2}},"condition":{"gcdIsReady":{}}},"notes":"Troll. Berserking just before a filler, so its 15 sec of cast speed go on the casts it speeds up, not the instants of the opener. Other races ignore the warning on this line."},
         {"action":{"castSpell":{"spellId":{"spellId":11661}}},"notes":"Shadow Bolt as the filler."}
     ]
 }
