@@ -174,6 +174,15 @@ The rules every class follows so the specs' Level 60 numbers compare fairly. New
    - Windfury Totem keeps its 1.5 sec cooldown between procs (standard 17, `wf_totem_icd`), where Forever's game data and wowsims/forever have 100 ms.
    - Extra attacks reset the main-hand swing timer, as in Classic (`extra_attack_swing`), where wowsims/forever leaves the timer alone.
 
+## Rotations
+
+31. Rotation lines state their intent (user ruling 2026-10-28: "fix apl to be less fragile to fight length. If elune's light ideal usage is whenever we have CDs rolling except Recklessness, then APL should be coded as such. Same for every other APL entry"). Each line's condition says why the cast is right now, in game terms, so it stays right when the fight is longer or shorter or the cooldowns land elsewhere. A line must not get its timing from a coincidence of the current fight length or of other lines' timings (Night Elf Fury's Elune's Light went out "when ready", at the pull, which only missed Recklessness because Recklessness waits for the end of a 180 s fight; it now goes out with the cooldowns and never during Recklessness). In practice:
+   - Buffs that pair or clash say so: "with Death Wish", "not during Recklessness", "while the trinket is up".
+   - Saving a cooldown for later is fine when the line says what it waits for and gives up when waiting would cost a use (`spellUsesLostByDelay`), so a longer fight gets its extra use.
+   - A fixed time is fine only when the fight's own clock is the reason: an end-of-fight dump of cooldowns, mana or a finisher, a DoT that would not finish, the execute phase.
+   - Every rotation change is checked at 120, 180 and 300 s and at the fight-length variation the presets use (180 ± 20 s); it may not lose at any of them by more than the sim's noise for a gain at 180 s.
+   The rotation template (`tools/rotopt/<class>*.go`) carries the intent, and its notes say what each line waits for.
+
 ## Report
 
 30. The Changes tab is the one place the report shows before and after (user ruling 2026-10-28: "Can we also have a \"changes\" tab which last changes that happened by last patch"; one update per game update, small changes in between join the latest, game and sim/preset updates kept apart, every update kept, every change listed, no new sims, no commit info on the page). The rest of the report stays a snapshot. An update's public lines are plain game terms: no commit ids, dates of our work, session, audit or round names, ruling references, PR numbers or file paths, and only public links as sources (Blizzard posts, foreverchanges.pro). `tools/dps_report/changes.py` and its README section have the mechanics.
