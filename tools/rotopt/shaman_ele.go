@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 
+	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/shaman"
 )
@@ -52,10 +53,19 @@ func (shamanEle) Knobs() []Knob {
 		{Name: "earthShock", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Shocks only above this much mana.
 		{Name: "shockMana", Default: 0, Min: 0, Max: 80, Step: 10},
-		// Below lightningBoltDownrankMana, Lightning Bolt drops this many ranks to save mana, 0
-		// never. Forever gave the low ranks close to full coefficients.
+		// Once the mana runs low, Lightning Bolt drops this many ranks to save mana, 0 never.
+		// Forever gave the low ranks close to full coefficients.
 		{Name: "lightningBoltDownrank", Default: 0, Min: 0, Max: 4, Step: 1},
+		// "Runs low" is below lightningBoltDownrankMana percent, or, with
+		// lightningBoltDownrankManaPerSec above 0, once the mana would no longer last the rest of
+		// the fight at that many mana a second (as Smite's smiteManaRate). The percent floor only
+		// stands in for that: it comes too late in a long fight (the pool is spent on top-rank
+		// bolts before the floor, then the low rank cannot stretch what is left) and needlessly in
+		// the last seconds of a short one. While Mana Tide Totem (manaTideMana) is still to come,
+		// its mana counts as mana in hand, or the bolts downrank for mana the tide will give. The
+		// per-second rule never downranks under Clearcasting, when the top rank costs nothing.
 		{Name: "lightningBoltDownrankMana", Default: 20, Min: 10, Max: 60, Step: 10},
+		{Name: "lightningBoltDownrankManaPerSec", Default: 0, Min: 0, Max: 40, Step: 2},
 		// 1 puts the totems down in the prepull actions.
 		{Name: "prepullTotems", Default: 1, Min: 0, Max: 1, Step: 1},
 		// 1 starts a Lightning Bolt 2.9 sec before the pull, so it lands just after the fight
@@ -208,8 +218,26 @@ func (shamanEle) Build(k Knobs) *proto.APLRotation {
 			top--
 		}
 		low := spellID(shaman.LightningBoltSpellId[max(1, top-r)])
-		items = append(items, cast(low, lt(currentManaPercent(), num(k["lightningBoltDownrankMana"]/100)),
-			"A lower rank of Lightning Bolt once the mana runs low."))
+		if rate := k["lightningBoltDownrankManaPerSec"]; rate > 0 {
+			need := mul(remainingTime(), num(rate))
+			when := lt(currentMana(), need)
+			notes := fmt.Sprintf("A lower rank of Lightning Bolt once the mana would not last the rest of the fight at %.0f mana a second.", rate)
+			if k["manaTideMana"] > 0 {
+				// Mana Tide Totem's four ticks, counted while the totem is ready.
+				tide := 4 * shaman.ManaTideTotemManaRestore[core.HighestRankAt(playerLevel, shaman.ManaTideTotemLevel[:])]
+				when = or(
+					and(spellIsReady(manaTideTotem), lt(currentMana(), sub(need, num(tide)))),
+					and(not(spellIsReady(manaTideTotem)), when))
+				notes = fmt.Sprintf("A lower rank of Lightning Bolt once the mana, with Mana Tide Totem's %.0f while it is ready, would not last the rest of the fight at %.0f mana a second.", tide, rate)
+			}
+			// Clearcasting makes the next bolt free, and a free bolt saves no mana by being a lower
+			// rank.
+			when = and(when, not(auraIsActive(clearcasting)))
+			items = append(items, cast(low, when, notes+" Not while Clearcasting makes the top rank free."))
+		} else {
+			items = append(items, cast(low, lt(currentManaPercent(), num(k["lightningBoltDownrankMana"]/100)),
+				"A lower rank of Lightning Bolt once the mana runs low."))
+		}
 	}
 	items = append(items, cast(lightningBolt, nil, "Lightning Bolt."))
 

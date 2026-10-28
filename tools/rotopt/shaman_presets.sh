@@ -124,10 +124,11 @@ gen level30_pvp "airTotem=0,strengthOfEarth=1,fireTotemMinTime=10,shield=1,shock
 
 # The elemental presets in ui/elemental_shaman/apls, from the shaman_ele template. Mana Spring and
 # Searing Totem, Flame Shock when its DoT is down, Lava Burst on cooldown unless Flame Shock runs
-# out before the cast ends (lavaBurstFlameShockLeft=2), Lightning Bolt, rank 8 below 20% mana, and
-# no Chain Lightning (it loses on one target even above 80% mana). The fight opens with Mana
-# Spring at -3.9 sec, a Lightning Bolt at -2.9 (it lands 0.1 sec into the fight) and Searing Totem
-# at -0.9 (prepullBolt=1). Mana Tide Totem goes down at 20% mana on the Mana Tide talents. An Earth
+# out before the cast ends (lavaBurstFlameShockLeft=2), Lightning Bolt, rank 8 once the mana would not
+# last the rest of the fight (lightningBoltDownrankManaPerSec, below), and no Chain Lightning (it
+# loses on one target even above 80% mana). The fight opens with Mana Spring at -3.9 sec, a Lightning
+# Bolt at -2.9 (it lands 0.1 sec into the fight) and Searing Totem at -0.9 (prepullBolt=1). Mana Tide
+# Totem goes down at 10% mana on the Mana Tide talents (manaTideMana, below). An Earth
 # Shock ends the fight once a Lightning Bolt (cast plus about 1 sec of flight) would not land in time
 # (earthShockFinish=1, the rotation auditor, 2026-10-15): +5.8 / +3.4 / +1.7 at 120 / 180 / 300 sec
 # on Level 60 and +5.7 / +3.4 / +1.8 on Mana Tide, paired at 20000 iterations.
@@ -145,6 +146,15 @@ gen_ele() {
 # Shock with less than 9 sec left (flameShockMinTime=9), and Mana Tide Totem at 10% mana: +2.43 /
 # +1.06 / +0.30 at 120 / 180 / 300 sec on Mana Tide, and the Flame Shock gate +2.50 / +0.70 / +0.71
 # on Level 60, paired at 20000 iterations on two seed sets.
+# Since the APL intent pass (standards 31, 2026-10-28) rank 8 goes once the mana would not last the rest
+# of the fight at 30 mana a second (20 on Mana Tide, whose talents spend less), in place of below 20%
+# mana, which came too late in a long fight: the pool went on rank 10 until the floor, then rank 8 could
+# not stretch what was left. On Mana Tide the totem's 1160 mana counts while it is ready (with the
+# pure per-second rule the bolts downranked for mana the tide would still give: -0.5 / -5.4 at 300 /
+# 360 sec at 20 mana a second, -6.6 / -8.9 at 28), and neither downranks under Clearcasting (+0.1 to
+# +0.3 at 240 sec and over). Searched over 120, 150 to 300 sec in 30 sec steps, 360 and 180 ± 20 (8 seeds
+# x 2500 iterations, paired): Level 60 needs 28 or more to hold at 210 and 240 (24: -0.5 / -1.2) and
+# loses ground at 300 above 30; Mana Tide needs 22 or less at 300 (24: +1.0, 26: -1.3).
 ele60="chainLightning=0,lightningBoltDownrank=2,lavaBurstFlameShockLeft=2,prepullBolt=1,earthShockFinish=1,waterTotemMinTime=20,shield=1,shieldMinMana=50,shieldMinTime=60,prepullShield=1,flameShockMinTime=9"
-gen_ele level60 "$ele60"
-gen_ele level60_mana_tide "$ele60,manaTideMana=10"
+gen_ele level60 "$ele60,lightningBoltDownrankManaPerSec=30"
+gen_ele level60_mana_tide "$ele60,manaTideMana=10,lightningBoltDownrankManaPerSec=20"
