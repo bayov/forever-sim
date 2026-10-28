@@ -3190,13 +3190,17 @@ export function startReport(dash, events) {
   const chCard = (u, S) => {
     const key = 'u:' + u.id, hl = chHighlights(S, u);
     const sec = el('section', { class: 'content-block fv-card fv-us ' + u.type, 'data-u': u.id });
-    const btn = el('button', { type: 'button', class: 'fv-us-toggle', 'aria-expanded': 'false' },
-      el('span', { class: 'fv-us-date', text: chDate(u.date) }),
-      el('h6', { class: 'fv-us-title', text: u.title }),
-      el('i', { class: 'fas fa-chevron-down fv-us-chev', 'aria-hidden': 'true' }));
+    // The header is the fold: a calendar date (month over day) beside the title and its kind and source, then the
+    // chevron. It is a role=button div rather than a <button>, because the source inside it is a link.
+    const [mon, day] = chDate(u.date).split(' ');
     const meta = el('div', { class: 'fv-us-meta' }, el('span', { class: 'fv-us-type', text: u.type === 'game' ? 'Game update' : 'Sim and preset update' }), chSrc(u.source));
+    const btn = el('div', { class: 'content-block-header fv-us-head', role: 'button', tabindex: '0', 'aria-expanded': 'false' },
+      el('span', { class: 'fv-us-date', 'aria-label': chDate(u.date) }, el('small', { text: mon }), el('b', { text: day })),
+      el('h6', { class: 'fv-us-title', text: u.title }), meta,
+      el('i', { class: 'fas fa-chevron-down fv-us-chev', 'aria-hidden': 'true' }));
+    btn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); } });
     const body = el('div', { class: 'fv-us-body', hidden: '' });
-    sec.append(el('div', { class: 'content-block-header fv-us-head' }, btn, meta), body);
+    sec.append(btn, body);
     const sub = (text) => el('div', { class: 'fv-us-h', text });
     const fill = () => {
       const lines = arr(u.lines);
@@ -3232,7 +3236,11 @@ export function startReport(dash, events) {
     const map = chStates();
     // a link or the Ranking chip names an update: open it and scroll to it (showing sim and preset updates if it is
     // one); the first view opens the newest shown
-    if (st.chUp != null) { const u = chUpdate(); if (u.type !== 'game') st.chSim = true; chJump = u.id; chOpen.add('u:' + u.id); st.chUp = null; $('#ch-sim').setAttribute('aria-pressed', String(!!st.chSim)); }
+    if (st.chUp != null) {
+      const u = rowsOf('changes').find((x) => String(x.id) === String(st.chUp)); // a link to no update shows the default view
+      st.chUp = null;
+      if (u) { if (u.type !== 'game') st.chSim = true; chJump = u.id; chOpen.add('u:' + u.id); $('#ch-sim').setAttribute('aria-pressed', String(!!st.chSim)); }
+    }
     // game updates only, unless the reader asks for ours too
     const ups = rowsOf('changes').filter((u) => st.chSim || u.type === 'game');
     if (!ups.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No updates yet.' })); return; }
@@ -3248,7 +3256,7 @@ export function startReport(dash, events) {
       const c = [...host.children].find((n) => n.dataset.u === String(chJump));
       chJump = null;
       if (c) {
-        if (!c.classList.contains('open')) c.querySelector('.fv-us-toggle').click();
+        if (!c.classList.contains('open')) c.querySelector('.fv-us-head').click();
         requestAnimationFrame(() => c.scrollIntoView({ block: 'start' }));
       }
     }
