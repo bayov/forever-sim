@@ -1,11 +1,11 @@
 # Rotation audit: reference files
 
-- `baseline_06a8987_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
-  06a898751 (pass 35, after the 2026-10-26 racial pass, Ignite without Arcane Instability/Power, Missile
-  Barrage not procced by Arcane Missiles, and Shadow-only Spellstone).
+- `baseline_5d27b00_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
+  5d27b0015 (pass 36, after dev notes post 8: Blood Fury 2 min, Berserking 15 s, Touch of the Grave
+  15 s ICD, and the 2026-10-27 race re-picks with their race-tuned rotations).
   - It was made with `tools/audit/rotations/baseline.py`: 3,000 iterations, seed 424242, each req's own
     encounter.
-  - The CLI was the audit loop's shared build at 06a898751 (`/tmp/audit-cache/cli/06a898751729/wowsimcli`).
+  - The CLI was the audit loop's shared build at 5d27b0015 (`/tmp/audit-cache/cli/5d27b00150a2/wowsimcli`).
   - Next pass: build the CLI on the new master and run `baseline.py` with the same arguments. Diff the
     output against this file. If no req file changed, any row that moved more than about 1 DPS is a sim
     change.

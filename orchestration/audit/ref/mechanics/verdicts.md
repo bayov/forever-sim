@@ -1,4 +1,4 @@
-# Mechanics audit: verdicts and settled items (as of 2026-10-27 UTC, master 37a8a8ccd)
+# Mechanics audit: verdicts and settled items (as of 2026-10-28 UTC, master 5d27b0015)
 
 Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 = Era / Classic. Never cite vmangos.
 
@@ -13,10 +13,10 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 
 | Item | Sim (master) | Source |
 |---|---|---|
-| Touch of the Grave | 20% chance (30% for Mage, Priest and Warlock), 25 sec ICD (dev notes post 8, tier 1: 15 sec, server side; PR #117, mechanics-20261027-3); the drain is 5% of max health, no damage mods | 70425: 1260189 / 1260201 ProcChance 20 / 30, ProcCategoryRecovery 25000; 1260198; 16 Oct notes |
+| Touch of the Grave | 20% chance (30% for Mage, Priest and Warlock), 15 sec ICD (dev notes post 8, tier 1, server side: client 70634 still reads 25000; sim since ae8522c14); the drain is 5% of max health, no damage mods | 70425: 1260189 / 1260201 ProcChance 20 / 30, ProcCategoryRecovery 25000; 1260198; 16 Oct notes |
 | Eureka! | 8 sec, no charge limit, 10% cost / 10% damage, per-class masks (racials_forever_eureka.go), 2 min CD | 70425 duration index 31, no SpellAuraOptions row; CD 120000 on all five variants |
-| Blood Fury | +10% AP and SP, 15 sec, 3 min CD (dev notes post 8, tier 1: 2 min, server side; PR #117, mechanics-20261027-3) | 70425 20572 RecoveryTime 180000 |
-| Berserking | Flat 10%, no cost, 10 sec (dev notes post 8, tier 1: 15 sec, server side; PR #117, mechanics-20261027-3) | pass 1 |
+| Blood Fury | +10% AP and SP, 15 sec, 2 min CD (dev notes post 8, tier 1, server side: client 70634 still reads 180000; sim since ae8522c14) | 70425 20572 RecoveryTime 180000 |
+| Berserking | Flat 10%, no cost, 15 sec, 3 min CD (dev notes post 8, tier 1, server side; sim since ae8522c14, Forever only) | pass 1 |
 | Wind Blessed (Skyborne) | 2% melee, ranged and cast haste; Read Leyline's Energized +50% Spirit regen, 15 sec | Dev notes post 7 (tier 1, server side; client 70630 1259710 still 3), 500e3a1 |
 | Artisan's Precision (Dwarf) | +1% melee (and ranged) and spell hit; Earth Fury gone | Dev notes post 7 (tier 1; no client row in 70630), 500e3a1 |
 | Ruthless and The Human Spirit (Human); Savage and Command (Orc); Endurance (Tauren) | Human 1% crit any weapon, Spirit ×1.10; Orc no crit, non-guardian hunter and warlock pets ×1.05 damage (Classic's Command code); Tauren 5% health only | Dev notes post 7 (tier 1, server side; 70630 rows still old), 500e3a1; verified pass 42 |
