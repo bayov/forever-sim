@@ -3,7 +3,7 @@
   "title": "Damage by ability",
   "description": "Per preset and ability (pets included): DPS, share of damage, casts, hits, crits, ticks, average hit and crit, misses, dodges and glances per fight.",
   "updated": {
-   "at": "2026-10-28T13:29:49.924Z",
+   "at": "2026-10-28T19:34:36.164Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -139,7 +139,7 @@
   "title": "Rotation priority lists",
   "description": "Each preset's APL as simmed: pre-pull casts with their timing, then the priority list in order, each line's spell, a plain-English condition, the APL's own note, its exact condition and the spell's casts per fight.",
   "updated": {
-   "at": "2026-10-28T17:23:10.564Z",
+   "at": "2026-10-28T19:34:36.164Z",
    "by": "Claude (forever-sim)"
   }
  },

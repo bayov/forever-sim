@@ -821,8 +821,8 @@
 			}
 		},
 		"warrior__fury": {
-			"commit": "75ae9a16caf63772ef8ed536abba1e2b0713159a",
-			"recordedAt": "2026-10-28T17:39:39.954Z",
+			"commit": "c42acdd8f3c6567f5af73762f272ce901428ab3b",
+			"recordedAt": "2026-10-28T19:34:36.229Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "1bd6f51eb9bb94e028b45f8c8132e5830bdc377c",
@@ -833,15 +833,15 @@
 				"assets/database": "ecf23244a403625afa4009c77b870d15a5729b89",
 				"tools/rotopt": "b0c411750867db175e3a111f59aa35549de78f7d",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/warrior": "dd48aaa5f5eafb135d719d2e5e1d1f813f8562f3",
+				"sim/warrior": "91f672cca7c7a6469de692faa01b8ce2188ce429",
 				"ui/tank_warrior": "3e3adfd2e1697ca17a60171ed9249b3655794ca0",
 				"ui/warrior": "b71d42c3572c0eec92eeb5a16dafe75999f9a0c3",
 				"tools/dps_report/req/warrior__fury.json": "268ad11f92babb1e9c8616e3d17061f830ad3a2e"
 			}
 		},
 		"warrior__fury_2h": {
-			"commit": "9d25396fb444b12ac86121565cc9761efef5ce9e",
-			"recordedAt": "2026-10-28T18:30:46.923Z",
+			"commit": "c42acdd8f3c6567f5af73762f272ce901428ab3b",
+			"recordedAt": "2026-10-28T19:34:36.327Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "1bd6f51eb9bb94e028b45f8c8132e5830bdc377c",
@@ -852,7 +852,7 @@
 				"assets/database": "ecf23244a403625afa4009c77b870d15a5729b89",
 				"tools/rotopt": "b0c411750867db175e3a111f59aa35549de78f7d",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/warrior": "dd48aaa5f5eafb135d719d2e5e1d1f813f8562f3",
+				"sim/warrior": "91f672cca7c7a6469de692faa01b8ce2188ce429",
 				"ui/tank_warrior": "3e3adfd2e1697ca17a60171ed9249b3655794ca0",
 				"ui/warrior": "b71d42c3572c0eec92eeb5a16dafe75999f9a0c3",
 				"tools/dps_report/req/warrior__fury_2h.json": "b1631b64e21154ad6c7bbb5b45ccbf9b61dd82f0",
@@ -860,8 +860,8 @@
 			}
 		},
 		"warrior__arms": {
-			"commit": "9d25396fb444b12ac86121565cc9761efef5ce9e",
-			"recordedAt": "2026-10-28T18:30:46.849Z",
+			"commit": "c42acdd8f3c6567f5af73762f272ce901428ab3b",
+			"recordedAt": "2026-10-28T19:34:36.283Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "1bd6f51eb9bb94e028b45f8c8132e5830bdc377c",
@@ -872,7 +872,7 @@
 				"assets/database": "ecf23244a403625afa4009c77b870d15a5729b89",
 				"tools/rotopt": "b0c411750867db175e3a111f59aa35549de78f7d",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/warrior": "dd48aaa5f5eafb135d719d2e5e1d1f813f8562f3",
+				"sim/warrior": "91f672cca7c7a6469de692faa01b8ce2188ce429",
 				"ui/tank_warrior": "3e3adfd2e1697ca17a60171ed9249b3655794ca0",
 				"ui/warrior": "b71d42c3572c0eec92eeb5a16dafe75999f9a0c3",
 				"tools/dps_report/req/warrior__arms.json": "7a38f5f981dbceb1df02ffa18f2ba4657a0a099d",
@@ -880,8 +880,8 @@
 			}
 		},
 		"warrior__arms_dragonkin": {
-			"commit": "9d25396fb444b12ac86121565cc9761efef5ce9e",
-			"recordedAt": "2026-10-28T18:30:47.353Z",
+			"commit": "c42acdd8f3c6567f5af73762f272ce901428ab3b",
+			"recordedAt": "2026-10-28T19:34:36.374Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "1bd6f51eb9bb94e028b45f8c8132e5830bdc377c",
@@ -892,7 +892,7 @@
 				"assets/database": "ecf23244a403625afa4009c77b870d15a5729b89",
 				"tools/rotopt": "b0c411750867db175e3a111f59aa35549de78f7d",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/warrior": "dd48aaa5f5eafb135d719d2e5e1d1f813f8562f3",
+				"sim/warrior": "91f672cca7c7a6469de692faa01b8ce2188ce429",
 				"ui/tank_warrior": "3e3adfd2e1697ca17a60171ed9249b3655794ca0",
 				"ui/warrior": "b71d42c3572c0eec92eeb5a16dafe75999f9a0c3",
 				"tools/dps_report/req/warrior__arms_dragonkin.json": "0fe035497ac010995fc743f8b68cd85b67e576ef",
@@ -900,8 +900,8 @@
 			}
 		},
 		"warrior__fury-duty-battle-shout": {
-			"commit": "75ae9a16caf63772ef8ed536abba1e2b0713159a",
-			"recordedAt": "2026-10-28T17:39:39.997Z",
+			"commit": "c42acdd8f3c6567f5af73762f272ce901428ab3b",
+			"recordedAt": "2026-10-28T19:34:36.458Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "1bd6f51eb9bb94e028b45f8c8132e5830bdc377c",
@@ -912,15 +912,15 @@
 				"assets/database": "ecf23244a403625afa4009c77b870d15a5729b89",
 				"tools/rotopt": "b0c411750867db175e3a111f59aa35549de78f7d",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/warrior": "dd48aaa5f5eafb135d719d2e5e1d1f813f8562f3",
+				"sim/warrior": "91f672cca7c7a6469de692faa01b8ce2188ce429",
 				"ui/tank_warrior": "3e3adfd2e1697ca17a60171ed9249b3655794ca0",
 				"ui/warrior": "b71d42c3572c0eec92eeb5a16dafe75999f9a0c3",
 				"tools/dps_report/req/warrior__fury-duty-battle-shout.json": "69d570858bdc5b1111478a1ca5493f2c84941d19"
 			}
 		},
 		"warrior__arms-duty-battle-shout": {
-			"commit": "9d25396fb444b12ac86121565cc9761efef5ce9e",
-			"recordedAt": "2026-10-28T18:30:47.287Z",
+			"commit": "c42acdd8f3c6567f5af73762f272ce901428ab3b",
+			"recordedAt": "2026-10-28T19:34:36.417Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "1bd6f51eb9bb94e028b45f8c8132e5830bdc377c",
@@ -931,7 +931,7 @@
 				"assets/database": "ecf23244a403625afa4009c77b870d15a5729b89",
 				"tools/rotopt": "b0c411750867db175e3a111f59aa35549de78f7d",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/warrior": "dd48aaa5f5eafb135d719d2e5e1d1f813f8562f3",
+				"sim/warrior": "91f672cca7c7a6469de692faa01b8ce2188ce429",
 				"ui/tank_warrior": "3e3adfd2e1697ca17a60171ed9249b3655794ca0",
 				"ui/warrior": "b71d42c3572c0eec92eeb5a16dafe75999f9a0c3",
 				"tools/dps_report/req/warrior__arms-duty-battle-shout.json": "ea75a4bbaaea2f1bb58a607f6e2bc9e9560284fc",
@@ -939,8 +939,8 @@
 			}
 		},
 		"warrior__fury_2h-duty-battle-shout": {
-			"commit": "9d25396fb444b12ac86121565cc9761efef5ce9e",
-			"recordedAt": "2026-10-28T18:30:47.419Z",
+			"commit": "c42acdd8f3c6567f5af73762f272ce901428ab3b",
+			"recordedAt": "2026-10-28T19:34:36.500Z",
 			"iterations": 20000,
 			"inputs": {
 				"sim/core": "1bd6f51eb9bb94e028b45f8c8132e5830bdc377c",
@@ -951,7 +951,7 @@
 				"assets/database": "ecf23244a403625afa4009c77b870d15a5729b89",
 				"tools/rotopt": "b0c411750867db175e3a111f59aa35549de78f7d",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/warrior": "dd48aaa5f5eafb135d719d2e5e1d1f813f8562f3",
+				"sim/warrior": "91f672cca7c7a6469de692faa01b8ce2188ce429",
 				"ui/tank_warrior": "3e3adfd2e1697ca17a60171ed9249b3655794ca0",
 				"ui/warrior": "b71d42c3572c0eec92eeb5a16dafe75999f9a0c3",
 				"tools/dps_report/req/warrior__fury_2h-duty-battle-shout.json": "b1d2005cfb5540fb28b90ac4d9338b407c3da0ba",
