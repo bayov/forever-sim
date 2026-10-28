@@ -25,7 +25,13 @@ gen() {
 	mv "ui/warlock/apls/${name}_180s.apl.json" "ui/warlock/apls/$name.apl.json"
 	echo "wrote ui/warlock/apls/$name.apl.json ($knobs)"
 }
-base="bane=2,corruption=1,immolate=1,lifeTapMana=5,shadowburn=0,soulFire=0,endInstants=1"
+base="bane=2,corruption=1,immolate=1,lifeTapMana=5,shadowburn=0,soulFire=0,endInstants=1,berserking=1"
+# Since 2026-10-28 every build holds Troll Berserking (berserking=1) for the casts its cast speed
+# shortens, the filler with the GCD free, instead of the pull's bane, Corruption, Immolate and
+# Conflagrate opener (standards 31). Troll, paired, 16 x 2500 iterations at 120 / 180 / 300 / 180+-20
+# sec: Demonology +1.7 / +2.0 / +1.5 / +1.1, Fire Destruction +1.1 / +1.3 / +1.7 / +1.1, Affliction
+# +1.8 / +1.7 / +1.0 / +0.3 (+0.6 +- 0.2 over 80000), Destruction +1.1 / +0.8 / +0.8 / -0.2 (+0.2 +- 0.2
+# over 80000), the duty presets +0.2 to +3.8. The line does nothing for the other races.
 # Since 2026-10-23 every build casts a new Immolate only with 15 sec of the fight left (Demonology
 # and the fire build Corruption too): +0.3 to +2.2 at 120 / 180 / 300 sec on both seed sets.
 # Demonology: Soul Link and a Life Tap before the pull, the damage over time spells recast 1.5 sec

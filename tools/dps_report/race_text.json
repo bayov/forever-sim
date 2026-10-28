@@ -136,7 +136,19 @@
    "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap, which used to take its 8s."
   }
  },
+ "warlock__affliction-duty-curse.Gnome": {
+  "note": "Saves Eureka! for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap.",
+  "why": {
+   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap, which used to take its 8s."
+  }
+ },
  "warlock__demonology.Gnome": {
+  "note": "Saves Eureka! for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap.",
+  "why": {
+   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap, which used to take its 8s."
+  }
+ },
+ "warlock__demonology-duty-curse.Gnome": {
   "note": "Saves Eureka! for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap.",
   "why": {
    "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap, which used to take its 8s."
@@ -148,7 +160,19 @@
    "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap, which used to take its 8s."
   }
  },
+ "warlock__destruction-duty-curse.Gnome": {
+  "note": "Saves Eureka! for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap.",
+  "why": {
+   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap, which used to take its 8s."
+  }
+ },
  "warlock__destruction_fire.Gnome": {
+  "note": "Saves Eureka! for an Immolate with Conflagrate after it. It doesn't help Incinerate or the DoTs.",
+  "why": {
+   "priority:s1259812": "Saved for an Immolate with Conflagrate after it. It doesn't help Incinerate or the DoTs."
+  }
+ },
+ "warlock__destruction_fire-duty-curse.Gnome": {
   "note": "Saves Eureka! for an Immolate with Conflagrate after it. It doesn't help Incinerate or the DoTs.",
   "why": {
    "priority:s1259812": "Saved for an Immolate with Conflagrate after it. It doesn't help Incinerate or the DoTs."

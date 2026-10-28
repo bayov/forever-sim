@@ -37,7 +37,7 @@
   ],
   "rotation": [
     "Pre-pull: Shadow Bolt at -2.5s (lands just after the pull)",
-    "Racials on cooldown",
+    "Racials on cooldown, except Troll Berserking",
     "Life Tap below 5% mana or when the filler costs more than the mana left",
     "Curse of the Elements on duty for the raid, right after the opener and recast before it drops",
     "Bane of Doom when it lands before the fight ends (more than 60s left)",
@@ -45,6 +45,7 @@
     "Corruption when it is down (more than 9s left)",
     "Immolate when down or when less than its cast time remains (more than 15s left)",
     "Death Coil, then Searing Pain, when the filler would not land before the fight ends",
+    "Troll Berserking just before a Shadow Bolt with the GCD free, so its cast speed goes on casts, not the instant opener",
     "Shadow Bolt as the filler (instant on Nightfall procs)"
   ],
   "consumes": [
