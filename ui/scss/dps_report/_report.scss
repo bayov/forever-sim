@@ -2602,6 +2602,24 @@ div.tt-embed:not(.fv-tt) {
 	--rv: var(--fv-rot-removed);
 }
 
+// a talent a condition checks: its icon and name, with its tooltip on hover
+.fv-tal {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.2rem;
+	font-weight: 600;
+	color: var(--fv-gold);
+	cursor: help;
+	white-space: nowrap;
+}
+
+.fv-tal .fv-ico {
+	width: 0.95rem;
+	height: 0.95rem;
+	border-radius: 3px;
+	vertical-align: 0;
+}
+
 // why a race changes a line
 .fv-why {
 	font-size: var(--cds-font-size-caption);

@@ -687,7 +687,8 @@ for _race, _lst in json.load(open(os.path.join(TREE, 'ui/core/forever/racials.js
 for _k, _v in list(RACIAL_RACE.items()):
     RACIAL_RACE[_k] = {'SkyborneHighOrder': 'High Order', 'SkyborneWindshaper': 'Windshaper'}.get(_v, _v)
 _outs_r = [dict(o, meta=dict(o['meta'], race=race_name(o['meta']['race']))) for o in outs if not o['meta'].get('duty')]
-rot_rows, rot_fallback = rotation.build(os.path.join(D, 'req'), _outs_r, nm, names, abilities, RACIAL_RACE)
+_talents = rotation.load_talents(TREE)
+rot_rows, rot_fallback = rotation.build(os.path.join(D, 'req'), _outs_r, nm, names, abilities, RACIAL_RACE, _talents)
 
 
 def _rot_finish(r):
@@ -711,7 +712,7 @@ for r in rot_rows:
 dump('rotation', rot_rows)
 # race_rotation: the races that play their own rotation on a preset (race_override.py), lined up with the preset's
 import race_override
-race_rot_rows, _fb = rotation.race_build(os.path.join(D, 'req'), _outs_r, nm, names, RACIAL_RACE, rot_rows, race_name, race_override.load)
+race_rot_rows, _fb = rotation.race_build(os.path.join(D, 'req'), _outs_r, nm, names, RACIAL_RACE, rot_rows, race_name, race_override.load, _talents)
 for r in race_rot_rows:
     if r['diff'] in ('changed', 'added'):  # the others are the preset's rows, already finished
         _rot_finish(r)

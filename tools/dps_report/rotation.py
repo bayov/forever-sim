@@ -43,6 +43,30 @@ def secs(s):
     return v / 1000 if m.group(2) == 'ms' else v * 60 if m.group(2) == 'm' else v
 
 
+# An aura a talent gives under another name, for "<talent> talent taken".
+AURA_TALENT = {'Fire Vulnerability': 'Improved Scorch'}
+
+
+def load_talents(tree_root):
+    """{class: {talent name: (tree, index)}} from the sim UI's talent trees (ui/core/talents/trees/<class>.json)."""
+    out = {}
+    d = os.path.join(tree_root, 'ui/core/talents/trees')
+    for f in sorted(os.listdir(d)):
+        cls = f[:-5].capitalize()
+        for ti, tr in enumerate(json.load(open(os.path.join(d, f)))):
+            for i, tal in enumerate(tr['talents']):
+                out.setdefault(cls, {})[tal['name']] = (ti, i)
+    return out
+
+
+def talent_token(cls, talents, aura):
+    """A talent in a condition's text: [[tal:<class>:<tree>:<index>|<name>]], which the report draws with the talent's
+    icon and tooltip. The aura's own name when no talent of the class has it."""
+    name = AURA_TALENT.get(aura, aura)
+    at = (talents or {}).get(cls, {}).get(name)
+    return f'[[tal:{cls}:{at[0]}:{at[1]}|{name}]]' if at else name
+
+
 def _once(text, how):
     """Two ranks of one spell read the same, so a condition can name the same part twice ("A or A"): keep the first.
     Splits on the connective outside parentheses, where nested parts of the same kind have been joined in."""
@@ -59,8 +83,9 @@ def _once(text, how):
 
 
 class Humaniser:
-    def __init__(self, name):
+    def __init__(self, name, talent=None):
         self.name = name  # key -> display name
+        self.talent = talent or (lambda aura: aura)  # an aura's name -> its talent, as talent_token writes it
         self.fallbacks = []
 
     def sp(self, ref):
@@ -152,7 +177,7 @@ class Humaniser:
             on = (a.get('sourceUnit') or {}).get('type') == 'CurrentTarget'
             return f"{self.sp(a.get('auraId'))} {'on the boss' if on else 'is up'}"
         if t == 'auraIsKnown':
-            return f"{self.sp(a.get('auraId'))} is talented"
+            return f"{self.talent(self.sp(a.get('auraId')))} talent taken"
         if t == 'dotIsActive':
             return f"{self.sp(a.get('spellId'))} on the boss"
         if t == 'spellIsReady':
@@ -237,7 +262,7 @@ class Humaniser:
             on = (a.get('sourceUnit') or {}).get('type') == 'CurrentTarget'
             return f"{'no ' + self.sp(a.get('auraId')) + ' on the boss' if on else self.sp(a.get('auraId')) + ' is not up'}"
         if t == 'auraIsKnown':
-            return f"{self.sp(a.get('auraId'))} is not talented"
+            return f"{self.talent(self.sp(a.get('auraId')))} talent not taken"
         if t == 'dotIsActive':
             return f"no {self.sp(a.get('spellId'))} on the boss"
         if t == 'spellIsReady':
@@ -424,8 +449,8 @@ def prepull_sorted(rot):
     return sorted(rot.get('prepullActions') or [], key=lambda p: secs(p.get('doAtValue', {}).get('const', {}).get('val', '0')) or 0)
 
 
-def _humaniser(nm):
-    return Humaniser(lambda k: 'the potion' if k == 'oOtherActionPotion' else nm(k))
+def _humaniser(nm, cls=None, talents=None):
+    return Humaniser(lambda k: 'the potion' if k == 'oOtherActionPotion' else nm(k), lambda aura: talent_token(cls, talents, aura))
 
 
 def _rotation(req_dir, bid):
@@ -433,12 +458,13 @@ def _rotation(req_dir, bid):
     return rq['raid']['parties'][0]['players'][0].get('rotation') or {}
 
 
-def build(req_dir, outs, nm, names, abilities, racial_race):
+def build(req_dir, outs, nm, names, abilities, racial_race, talents=None):
+    """talents: load_talents(), to name the talents conditions check."""
     rows, fallbacks = [], []
     casts = {(a['build'], a['key']): a['casts'] for a in abilities}
     for o in outs:
         bid = o['id']
-        H = _humaniser(nm)
+        H = _humaniser(nm, o['meta'].get('class'), talents)
         rows += apl_rows(bid, _rotation(req_dir, bid), o['meta'].get('race'), nm, names, casts, racial_race, H)
         fallbacks += H.fallbacks
     return rows, sorted(set(fallbacks))
@@ -484,7 +510,7 @@ def diff_lines(base, mine):
     return out
 
 
-def race_build(req_dir, outs, nm, names, racial_race, preset_rows, race_name, load_override):
+def race_build(req_dir, outs, nm, names, racial_race, preset_rows, race_name, load_override, talents=None):
     """The races that play their own rotation on a preset (race_override.py), as rows of the preset's shape plus
     forRace (the race), diff ('same', 'changed', 'added' or 'removed', against the preset's line) and base (the
     preset line's order, None for an added line) and, on a line that differs, why (race_text.json). A removed row
@@ -505,7 +531,7 @@ def race_build(req_dir, outs, nm, names, racial_race, preset_rows, race_name, lo
             race = race_name(rc['race'])
             mine = ov['rotation']
             whys = text(ov).get('why', {})
-            H = _humaniser(nm)
+            H = _humaniser(nm, o['meta'].get('class'), talents)
             new = {(r['section'], r['order']): r for r in apl_rows(bid, mine, race, nm, names, {}, racial_race, H)}
             fallbacks += H.fallbacks
             old = {(r['section'], r['order']): r for r in pre.get(bid, [])}

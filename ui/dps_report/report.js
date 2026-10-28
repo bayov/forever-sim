@@ -2098,6 +2098,17 @@ export function startReport(dash, events) {
     const args = [ref ? nm(ref) : null, a && a.delay ? 'delay ' + aplText(a.delay) : null, a && a.autoType ? a.autoType : null, a && a.threshold ? a.threshold : null].filter(Boolean);
     return `${t}(${args.join(', ')})`;
   };
+  // A condition names a talent as [[tal:<class>:<tree>:<index>|<name>]] (rotation.py): drawn as the talent's icon and
+  // name with its tooltip, or as the name alone in plain text.
+  const TAL_TOKEN = /(\[\[tal:[^|\]]+\|[^\]]+\]\])/;
+  const plainWhen = (s) => String(s || '').replace(/\[\[tal:[^|\]]+\|([^\]]+)\]\]/g, '$1');
+  const richWhen = (s, b) => String(s || '').split(TAL_TOKEN).filter(Boolean).map((part) => {
+    const m = /^\[\[(tal:[^|\]]+)\|([^\]]+)\]\]$/.exec(part);
+    if (!m) return part;
+    const [, cls, tree, idx] = m[1].split(':');
+    const t = (rowsOf('talenttrees') || []).find((x) => x.class === cls && +x.tree === +tree && +x.idx === +idx);
+    return tt(el('span', { class: 'fv-tal' }, t ? iconImg(t.icon, 'fv-ico') : null, m[2]), m[1], true, b);
+  });
   const rotRows = (bid) => (rowsOf('rotation') || []).filter((r) => r.build === bid);
   // A race that plays its own rotation on a preset (race_override.py): its lines, each lined up with the preset's (diff:
   // same, changed, added or removed; base: the preset line's order).
@@ -2115,10 +2126,10 @@ export function startReport(dash, events) {
     const tag = r.diff === 'changed' || r.diff === 'added' ? `${RACE_DIFF[r.diff]} for ${race}` : r.race ? `${r.race} only` : String(r.kind);
     const lines = [
       ['h', section === 'prepull' ? `Pre-pull · ${fmtT(+r.at)}` : `Priority ${r.order}`, tag],
-      !shown && r.when ? ['t', r.when] : null,
+      !shown && r.when ? ['t', plainWhen(r.when)] : null,
       !shown && r.extra ? ['t', r.extra] : null,
       !shown && r.notes ? ['m', r.notes] : null,
-      was ? ['m', section === 'prepull' ? `The preset casts it at ${fmtT(+was.at)}.` : `The preset’s line: ${was.when || 'when ready'}.`] : null,
+      was ? ['m', section === 'prepull' ? `The preset casts it at ${fmtT(+was.at)}.` : `The preset’s line: ${plainWhen(was.when) || 'when ready'}.`] : null,
       r.why ? ['t', r.why] : null,
       cond ? ['d', 'Exact condition', aplText(cond)] : null,
     ].filter(Boolean);
@@ -2132,7 +2143,7 @@ export function startReport(dash, events) {
   // change.
   const drawRotation = (b) => {
     const host = $('#sp-rotation'), pre = $('#sp-prepull'), pick = $('#sp-rot-race');
-    if (!specWait(host, ['rotation', 'race_rotation', 'races'], b, [pre])) return;
+    if (!specWait(host, ['rotation', 'race_rotation', 'races', 'talenttrees'], b, [pre])) return;
     const rows = rotRows(b.id);
     const races = (rowsOf('races') || []).filter((r) => r.build === b.id);
     const list = [...races.filter((r) => r.race === b.race), ...races.filter((r) => r.race !== b.race)];
@@ -2178,7 +2189,7 @@ export function startReport(dash, events) {
       el('div', { class: 'tx' },
         el('div', { class: 'hd' }, mark(el('b', { text: r.name }), SRC(r), 'name', W(r)), r.kind !== 'cast' ? el('span', { class: 'kd', text: KIND_TAG[r.kind] || r.kind }) : null,
           r.race && !sameRace ? raceTag([r.race], '', `${r.race} only`) : null, ...tags),
-        r.when ? mark(el('span', { class: 'wh', text: r.when }), SRC(r), 'when', W(r)) : null,
+        r.when ? mark(el('span', { class: 'wh' }, ...richWhen(r.when, b.id)), SRC(r), 'when', W(r)) : null,
         r.extra ? el('span', { class: 'wh', text: r.extra }) : null,
         r.notes ? el('span', { class: 'nt', text: r.notes }) : null,
         ...sub),
@@ -2187,7 +2198,7 @@ export function startReport(dash, events) {
     const dropped = (r, rs) => tt(el('li', { class: 'fv-pr other dropped' },
       el('span', { class: 'no', text: '−' }),
       el('div', { class: 'tx' }, el('div', { class: 'ics' }, ico(r, 'fv-ico'), el('b', { text: r.name }), raceTag(rs, 'diff-removed', `Dropped for ${rs.join(', ')}`)),
-        el('span', { class: 'wh', text: `The preset’s line ${r.base}: ${r.when || 'when ready'}` }), whyLine(r))), ttKey(r), true, b.id);
+        el('span', { class: 'wh' }, `The preset’s line ${r.base}: `, ...richWhen(r.when || 'when ready', b.id)), whyLine(r))), ttKey(r), true, b.id);
     const diffTag = (r, rs) => raceTag(rs, 'diff-' + r.diff, `${RACE_DIFF[r.diff]} for ${rs.join(', ')}`);
     // a race's condition against the preset's: often the preset's with one more clause
     const whenDiff = (was, now) => {
@@ -2198,7 +2209,7 @@ export function startReport(dash, events) {
     const change = (g, base) => tt(el('div', { class: 'fv-rv diff-' + g.r.diff }, raceTag(g.races, 'diff-' + g.r.diff),
       el('span', {}, ...(g.r.diff === 'removed' ? [el('em', { text: 'Drops this line.' })]
         : g.r.section === 'prepull' ? [el('em', { text: `${g.r.diff === 'added' ? 'Adds' : ''} ${g.r.name} at ${fmtT(+g.r.at)}.`.trim() })]
-          : ((d) => [el('em', { text: d[0] }), d[1]])(whenDiff(base?.when, g.r.when)))),
+          : ((d) => [el('em', { text: d[0] }), ...richWhen(d[1], b.id)])(whenDiff(base?.when, g.r.when)))),
       whyLine(g.r)), g.r.diff === 'removed' ? ttKey(base) : ttKey(g.r), true, b.id);
     const ppChip = (r, { tags = [], cls = '' } = {}) => tt(el('button', { class: 'fv-ppi' + cls }, ico(r, 'fv-ico'),
       el('span', {}, mark(el('b', { text: r.name }), SRC(r), 'name', W(r)), el('span', { class: 'pt' }, mark(el('em', { text: fmtT(+r.at) }), SRC(r), 'at', W(r)), ...tags))), ttKey(r), true, b.id);
@@ -2284,7 +2295,7 @@ export function startReport(dash, events) {
         const was = r.diff === 'changed' ? rows.find((x) => x.section === 'priority' && x.order === r.base) : null;
         const d = was && was.when !== r.when ? whenDiff(was.when, r.when) : null;
         items.push(card(r, { casts: isPreset, cls: ch ? ' ' + r.diff : '', tags: ch ? [diffTag(r, [view])] : [], sameRace: ch && r.race === view,
-          sub: [d ? el('span', { class: 'fv-was', text: d[0] === 'Instead: ' ? `Preset: ${was.when || 'when ready'}` : `Adds to the preset’s line: ${d[1]}` }) : null, ch ? whyLine(r) : null] }));
+          sub: [d ? el('span', { class: 'fv-was' }, ...(d[0] === 'Instead: ' ? ['Preset: ', ...richWhen(was.when || 'when ready', b.id)] : ['Adds to the preset’s line: ', ...richWhen(d[1], b.id)])) : null, ch ? whyLine(r) : null] }));
       }
       dropTo(Infinity);
       note = isPreset ? `As simmed for ${view}, the preset’s race.`

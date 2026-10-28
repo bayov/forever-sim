@@ -223,7 +223,7 @@ All are written by `build_data.py`. "out" means `out/<id>.json` from `run_build.
 | setup | build_data.py + setup_active.py | the request's consumes, buffs, debuffs and professions; `abl/ablate.json` for `active` / `why` | ablate.py |
 | notes | build_data.py | req meta keyTalents, rotation, consumes and caveats, plus the gear rules text in build_data.py (snapshot-cleaned) | none |
 | names | build_data.py | every key seen; `names/*.tsv` (DASH_NAMES), `db.json`, `assets/db_inputs/wowhead_*_tooltips.csv`, `forever-wiki/data/abilities.json`, talent trees, racials, the sim's rank arrays; colour from the icon (PIL) | run_build |
-| rotation | build_data.py + rotation.py | the request's APL (prepull and priority), cast counts from abilities, names, `racials.json` | none |
+| rotation | build_data.py + rotation.py | the request's APL (prepull and priority), cast counts from abilities, names, `racials.json`; a talent a condition checks is `[[tal:<class>:<tree>:<index>\|<name>]]` in `when`, which the page draws with its icon and tooltip | none |
 | race_rotation | build_data.py + rotation.py (`race_build`) | each race's own APL in `req/races/` (`race_override.load`), lined up with the preset's: `forRace`, `diff` (same, changed, added, removed), `base` (the preset line's order) and `why` (`race_text.json`). No casts | none |
 | race_variants | build_races.py | `rv/results.jsonl` plus the out race sweep (baseline); `tuned`, the note of the race's override | run_races |
 | race_breakdown | build_races.py | `rv/results.jsonl` (`off`, `off:<part>`, weapon and target deltas) | run_races |
