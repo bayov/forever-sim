@@ -386,17 +386,14 @@
   <!-- CHANGES -->
   <section class="tab-pane fv-page" id="changes" data-page="changes" hidden>
     <div class="content-block fv-card" id="ch-card">
-      <div class="content-block-header"><h6 class="content-block-title">Updates</h6></div>
-      <p class="fv-note">Each update compares the report before and after it, newest first. A preset's change is the combined effect of every change in the update that touches it; ± is the noise on a change, within which it may be luck.</p>
-      <div class="fv-toolbar">
+      <div class="content-block-header"><h6 class="content-block-title">Changes</h6></div>
+      <p class="fv-note">What each update changed and what it did to the numbers, newest first. A preset's change is the combined effect of every change in the update that touches it. A racial's worth is the DPS a preset loses with only that racial off.</p>
+      <div class="fv-ch-filters">
         <div class="fv-controls" id="ch-cls" role="group" aria-label="Class filter"></div>
-        <div class="fv-ctl"><span class="fv-label fv-rowlabel">Show</span>
-          <button class="fv-chip" id="ch-all" aria-pressed="false" title="Also list the presets an update didn't move in its table">Unchanged too</button>
-          <button class="fv-chip" id="ch-var" aria-pressed="false" title="Also list the advantaged and duty presets">Variants</button>
-        </div>
+        <button class="fv-chip" id="ch-var" aria-pressed="false" title="Also list the advantaged and duty presets">Variants</button>
       </div>
-      <div class="fv-uc-list" id="ch-list" data-source="changes changes_snap"></div>
     </div>
+    <div class="fv-us-list" id="ch-list" data-source="changes changes_snap"></div>
   </section>
 
   <!-- METHOD -->
