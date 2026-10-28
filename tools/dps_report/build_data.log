@@ -2,13 +2,13 @@ builds: 58 rows, 85 KB
 races: 302 rows, 63 KB
 lengths: 290 rows, 23 KB
 abilities: 891 rows, 250 KB
-auras: 1458 rows, 213 KB
-hist: 2773 rows, 148 KB
+auras: 1459 rows, 213 KB
+hist: 2771 rows, 148 KB
 stats: 781 rows, 65 KB
 gear: 750 rows, 142 KB
 setup: 2273 rows, 567 KB
-notes: 1747 rows, 203 KB
-race_variants: 946 rows, 288 KB
+notes: 1747 rows, 204 KB
+race_variants: 946 rows, 287 KB
 race_breakdown: 1167 rows, 175 KB
 race_summary: 328 rows, 100 KB
 race_notes: 46 rows, 10 KB
@@ -17,7 +17,7 @@ mana: 3783 rows, 283 KB
 mana_summary: 39 rows, 12 KB
 assumptions: 50 rows, 63 KB
 assumption_dps: 355 rows, 58 KB
-rotation: 788 rows, 451 KB
+rotation: 788 rows, 454 KB
 race_rotation: 422 rows, 254 KB
 rotation conditions shown in compact form: []
 tooltips: 1127 rows, 445 KB
@@ -36,6 +36,6 @@ timeline_hunter: 12 rows, 38 KB
 timeline_paladin: 18 rows, 72 KB
 timeline_shaman: 18 rows, 49 KB
 timeline_druid: 9 rows, 24 KB
-timeline_mage: 12 rows, 43 KB
+timeline_mage: 12 rows, 42 KB
 timeline_warlock: 12 rows, 21 KB
 timeline_priest: 9 rows, 23 KB
