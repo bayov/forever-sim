@@ -428,6 +428,22 @@
     {
      "commit": "41ad908",
      "why": "a Races tab badge, no numbers change"
+    },
+    {
+     "commit": "29b688f",
+     "why": "the Rotation card shows each race's own rotation, no numbers change"
+    },
+    {
+     "commit": "b813034",
+     "why": "race changes shown on the Rotation card with why, and reworded race notes, no numbers change"
+    },
+    {
+     "commit": "84fcd07",
+     "why": "talents in rotation conditions get their icon and tooltip, no numbers change"
+    },
+    {
+     "commit": "5ea96e5",
+     "why": "rotation conditions reworded, no numbers change"
     }
    ]
   }
