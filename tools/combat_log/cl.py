@@ -1,5 +1,7 @@
-"""Parse a WoW Forever beta combat log into events. Usage: import cl; cl.load(path)."""
-import csv, datetime
+"""Parse a WoW Forever beta combat log into events. Usage: import cl; cl.load(path).
+
+The path may be a plain log or an .xz one, like wow-combat-logs keeps them."""
+import csv, datetime, lzma
 
 
 def is_me(guid, flags):
@@ -24,7 +26,8 @@ class Ev:
 
 def load(path):
     out = []
-    for line in open(path, encoding='utf-8'):
+    opener = lzma.open if path.endswith('.xz') else open
+    for line in opener(path, 'rt', encoding='utf-8'):
         line = line.rstrip('\n')
         if '  ' not in line:
             continue

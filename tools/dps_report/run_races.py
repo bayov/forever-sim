@@ -11,7 +11,9 @@ No racial depends on the weapon since client 70425 (Human Ruthless works with an
 swap variant any more. The 2026-10-26 racial pass replaced Dwarf Earth Fury with Artisan's Precision (precision, 1% hit)
 and Orc Savage with Command (command, 5% pet damage, Hunters and Warlocks only).
 Every scenario of a race other than the preset's sims that race's own rotation and gear where req/races/<id>.<Race>.json
-gives them (race_override.py, standards 29), the "off" rows included, so the breakdown measures only the racial parts.
+gives them (race_override.py, standards 29), the "off" rows included. A race's own gear is tuned around one of its racials
+(GEAR_PART: the Dwarf's trades the hit Artisan's Precision makes spare), so a sim with that racial off wears the
+preset's gear: the trade counts in the racial, and "base stats" are the race's stats on the preset's gear.
 Results append to rv/results.jsonl, one line per sim, so a rerun only does what is missing.
 Needs wowsimcli_r: wowsimcli built from the local dashdata tree with the DASH_RACIALS_OFF switch.
 """
@@ -35,10 +37,13 @@ import race_override  # noqa: E402
 PARTS = {
     'Human': ['spirit', 'ruthless'], 'Dwarf': ['precision', 'chastise'], 'NightElf': ['elune', 'shadowmeld', 'starshards'],
     'Gnome': ['mind', 'eureka'], 'Orc': ['command', 'bloodfury'], 'Undead': ['touch', 'darksacrifice'],
-    'Tauren': ['endurance'], 'Troll': ['berserking'], 'SkyborneHighOrder': ['windblessed', 'leyline'], 'SkyborneWindshaper': ['windblessed'],
+    'Tauren': ['endurance'], 'Troll': ['berserking', 'shadowguard'], 'SkyborneHighOrder': ['windblessed', 'leyline'], 'SkyborneWindshaper': ['windblessed'],
 }
-PRIEST_ONLY = {'chastise', 'starshards', 'darksacrifice'}
+PRIEST_ONLY = {'chastise', 'starshards', 'darksacrifice', 'shadowguard'}
 PET_ONLY = {'command'}  # Orc Command: Hunter and Warlock pets only
+# The racial a race's own gear (a race override's bonusStats) is tuned around. A sim that leaves it out wears the
+# preset's gear, so the racial's bar holds the gear trade too (user ruling, 2026-10-28).
+GEAR_PART = {'Dwarf': 'precision'}
 TARGETS = {'beast': 'MobTypeBeast', 'elemental': 'MobTypeElemental'}
 CLASS_TARGETS = {'Priest': {'humanoid': 'MobTypeHumanoid'}}  # a racial that cares about Humanoids (Chastise)
 # The races with a racial that depends on the target's creature type. Every other race fights a beast, elemental or
@@ -57,8 +62,18 @@ def parts_for(cls, race, req):
             and (p not in PET_ONLY or cls in ('Hunter', 'Warlock'))]
 
 
+def gear_on(race, off):
+    """Whether a sim with these racial parts left out wears the race's own gear: not when the racial it is tuned around
+    is out."""
+    return not off or (off != 'all' and GEAR_PART.get(race) not in off.split(','))
+
+
 def sim(req, race, off=None, mob=None, bid=None, meta=None):
-    req, _ = race_override.apply(req, bid, race, meta) if bid else (copy.deepcopy(req), None)
+    if bid:
+        ov = race_override.load(bid, race, meta)
+        if ov and ov.get('bonusStats') and race not in GEAR_PART:
+            raise RuntimeError(f'{bid} {race}: a gear override, and no GEAR_PART says which racial it is tuned around')
+    req, _ = race_override.apply(req, bid, race, meta, gear=gear_on(race, off)) if bid else (copy.deepcopy(req), None)
     pl = player(req)
     pl['race'] = 'Race' + race
     if mob:

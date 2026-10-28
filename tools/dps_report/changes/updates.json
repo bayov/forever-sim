@@ -631,6 +631,57 @@
       "e419e7f"
      ],
      "note": "Its global cooldown deals more as Smite."
+    },
+    {
+     "title": "Troll Shadow Priests: Shadowguard shown as its own racial",
+     "kind": "method",
+     "note": "The raid damage hits set it off, worth 8.7 DPS on Shadow and 8.3 on Shadow + Holy. The race breakdown counted it in the Troll's base stats.",
+     "races": [
+      "Troll"
+     ],
+     "builds": [
+      "priest__shadow",
+      "priest__shadow-holy"
+     ],
+     "parts": [
+      "shadowguard"
+     ],
+     "commits": [
+      "75ae9a1",
+      "e4d6f4d"
+     ],
+     "moves": false
+    },
+    {
+     "title": "Dwarf: Artisan's Precision includes the gear it frees up",
+     "kind": "method",
+     "note": "A Dwarf's gear trades the hit Artisan's Precision makes spare for other stats. The race breakdown now measures base stats on the preset's gear, so Dwarf base stats match a Tauren's and Precision's bar includes the trade: 5.6 DPS on Fury 2H (it showed 13.1). Race totals don't change.",
+     "races": [
+      "Dwarf"
+     ],
+     "builds": [
+      "warrior__fury_2h",
+      "warrior__arms",
+      "hunter__beast-mastery",
+      "hunter__marksmanship",
+      "hunter__lone-wolf",
+      "hunter__survival",
+      "paladin__level_60",
+      "paladin__level_60_shock",
+      "paladin__level_60_shock_ret",
+      "paladin__level_60_sub_holy",
+      "priest__shadow",
+      "priest__shadow-holy",
+      "shaman__elemental-level60",
+      "shaman__elemental-level60-mana-tide"
+     ],
+     "parts": [
+      "precision"
+     ],
+     "commits": [
+      "5f96ef4"
+     ],
+     "moves": false
     }
    ],
    "internal": [
@@ -653,6 +704,10 @@
     {
      "commit": "1696488",
      "why": "caveat wording, no numbers change"
+    },
+    {
+     "commit": "9ef5faf",
+     "why": "spec page caveats on the priest race spells, no numbers change"
     },
     {
      "commit": "c282ae5",

@@ -65,7 +65,8 @@
     "Mind Flay rolls to hit once per cast and isn't hasted. Shadow Word: Death's backlash is ignored.",
     "Left out: Brilliant Wizard Oil (+12.5) and Elixir of Sages (+13.9).",
     "Improved Mind Flay makes each tick do 20% more than the last. Dark Inspiration's Spirit goes to the priest only.",
-    "Mana barely matters. It takes about 13 min to run out."
+    "Mana barely matters. It takes about 13 min to run out.",
+    "Race spells: only the Undead's Dark Sacrifice is in the rotation, and Shadow never needs its mana. Night Elf Starshards would cost 20 DPS: its 6s channel hits no harder than Mind Flay and holds up Mind Blast. Dwarf Chastise can't be cast in Shadowform. Troll Shadowguard adds 8.7 DPS: the raid damage hits (2 a minute) set off its strikes."
   ],
   "notes": "Request from mksettings unchanged (spec shadow, 180s, durationVariation 20); it matches the shipped encounter and DefaultConsumes. Regenerated 2026-10-23 from mksettings (natural flask zone on) and the ui APLs, which tools/rotopt/priest_presets.sh writes from the templates. Talents regenerated 2026-10-23 with Silent Resolve 3 pinned (standards 26): mksettings -talents 00530400102-3-50052101231302251, otherwise unchanged; the sapper alone stays (every filler explosive loses, standards 11). Undead since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Human."
 }

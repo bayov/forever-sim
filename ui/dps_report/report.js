@@ -630,15 +630,18 @@ export function startReport(dash, events) {
 
   // ---------- tabs ----------
   const pages = ['ranking', 'spec', 'races', 'compare', 'changes', 'method'];
+  // a view's name in the address: its tab, the preset on the spec page, or the update a link opened on Changes
+  const linkName = (tab) => (tab === 'spec' && st.build ? st.build : tab === 'changes' && st.chUp && chUpdate() ? 'changes/' + chUpdate().id : tab);
+  // link: the view becomes a new history entry (the scroll it leaves kept on the old one); false leaves the address
   const showTab = (tab, link = true) => {
-    const changed = st.tab !== tab;
+    const changed = st.tab !== tab, y = $('.sim-ui').scrollTop; // before the tab button scrolls into view
     st.tab = tab; persist();
     if (changed) { const pg = document.getElementById(tab); pg.classList.remove('in'); void pg.offsetWidth; pg.classList.add('in'); }
     document.querySelectorAll('.fv-tab').forEach((b) => { b.setAttribute('aria-selected', String(b.dataset.tab === tab)); b.classList.toggle('active', b.dataset.tab === tab); });
     document.querySelectorAll('.fv-page').forEach((p) => { p.hidden = p.dataset.page !== tab; p.classList.toggle('active', p.dataset.page === tab); });
     // on a phone the header scrolls sideways: bring the open tab into view
     document.querySelector('.fv-tab.active')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-    if (link) dash.setLink(tab === 'spec' && st.build ? st.build : tab === 'changes' && st.chUp && chUpdate() ? 'changes/' + chUpdate().id : tab);
+    if (link) dash.setLink(linkName(tab), true, y);
     hideTip(); hideTT();
     render();
   };
@@ -720,8 +723,10 @@ export function startReport(dash, events) {
   const classChips = (host, key, avail) => {
     const m = iconMap();
     const name = st[key] === 'All' ? 'All classes' : st[key];
-    if (host.childElementCount && (host.dataset.icons === '1' || !m)) {
-      host.querySelector('.fv-pick-value').textContent = name;
+    // Built already, unless the only child is the Races spec selector the layout puts in the row.
+    const value = host.querySelector('.fv-pick-value');
+    if (value && (host.dataset.icons === '1' || !m)) {
+      value.textContent = name;
       host.querySelectorAll('button').forEach((b) => { b.setAttribute('aria-pressed', String(b.dataset.c === st[key])); b.classList.toggle('active', b.dataset.c === st[key]); b.hidden = !!avail && !avail.has(b.dataset.c); });
       return;
     }
@@ -1254,11 +1259,13 @@ export function startReport(dash, events) {
   };
   const raceName = (r, tag = r.tag) => el('span', { class: 'fv-rname' }, el('b', { text: r.race, style: `color:${fcol(r.race)}` }), raceTag(r, tag));
   const safeTop = (fn, host) => { try { fn(); } catch (err) { console.error(err); if (host) fail(host); } };
-  // a racial's colour follows what kind it is: a passive, a cooldown, or a boss type; base stats and the weapon swap are neutral
-  const PART_KIND = { elune: 1, eureka: 1, bloodfury: 1, berserking: 1, chastise: 1, starshards: 1, darksacrifice: 1, target: 2, beast_troll: 2, beast_dwarf: 2, insight: 2 };
-  const partCol = (p) => (p === 'base' ? 'var(--cds-chart-muted)' : p === 'swap' ? 'var(--color-fg-muted)' : dash.colors[PART_KIND[p] ?? 0]);
+  // a racial's colour follows what kind it is: a passive, a cooldown, a boss type, or a priest's racial spell (the
+  // priest's white); base stats and the weapon swap are neutral
+  const PART_KIND = { elune: 1, eureka: 1, bloodfury: 1, berserking: 1, target: 2, beast_troll: 2, beast_dwarf: 2, insight: 2, chastise: 3, starshards: 3, darksacrifice: 3, shadowguard: 3 };
+  const kindCol = (k) => (k === 'swap' ? 'var(--color-fg-muted)' : k === 3 ? ccol('Priest') : dash.colors[k]);
+  const partCol = (p) => (p === 'base' ? 'var(--cds-chart-muted)' : kindCol(p === 'swap' ? 'swap' : PART_KIND[p] ?? 0));
   const COND = { beast: /^beast/, elemental: /^insight$/ };
-  const KIND_NAME = ['Passive racial', 'Racial cooldown', 'Boss type racial'];
+  const KIND_NAME = ['Passive racial', 'Racial cooldown', 'Boss type racial', 'Priest racial spell'];
   const noteRow = (kind, key) => (rowsOf('race_notes') || []).find((n) => n.kind === kind && n.key === key);
   const shortLabel = (s) => String(s).replace('Specialization', 'Spec.');
   // A racial's game icon (race_notes) with a ring in its kind's colour, so it still ties to its part of the bar. The
@@ -1378,7 +1385,7 @@ export function startReport(dash, events) {
       && !(V === 'weapon' && mine.some((w) => w.scenario === 'weapon' && w.part === q.part))));
     return { segs: out.filter((sg) => sg.r), idle };
   };
-  const legend = (host, kinds, base) => host.replaceChildren(base ? el('span', {}, el('i', { class: 'sw2', style: 'background:var(--cds-chart-muted)' }), 'Base stats (no racials)') : '', ...[0, 1, 2, 'swap'].filter((k) => kinds.has(k)).map((k) => el('span', {}, el('i', { class: 'sw2', style: `background:${k === 'swap' ? 'var(--color-fg-muted)' : dash.colors[k]}` }), k === 'swap' ? 'Weapon swap' : KIND_NAME[k])));
+  const legend = (host, kinds, base) => host.replaceChildren(base ? el('span', {}, el('i', { class: 'sw2', style: 'background:var(--cds-chart-muted)' }), 'Base stats (no racials)') : '', ...[0, 1, 2, 3, 'swap'].filter((k) => kinds.has(k)).map((k) => el('span', {}, el('i', { class: 'sw2', style: `background:${kindCol(k)}` }), k === 'swap' ? 'Weapon swap' : KIND_NAME[k])));
 
   // Each racial's caption sits under its piece of the bar, starting where the piece starts. When a caption would run
   // into the one before it, we move it down to the first line where it fits, so short pieces side by side still get
@@ -1914,8 +1921,8 @@ export function startReport(dash, events) {
       const builds = new Map(visB().map((x) => [x.id, x]));
       if (!builds.has(b.id)) builds.set(b.id, b);
       const ns = rowsOf('notes').filter((n) => n.kind === 'caveats' && builds.get(n.build)?.class === b.class);
-      const groups = cavGroups(b.class, ns, builds, b.id);
-      cavHost.replaceChildren(groups.childElementCount ? groups : el('p', { class: 'fv-note', text: 'None.' }));
+      const list = cavFlat(b, ns, builds);
+      cavHost.replaceChildren(list || el('p', { class: 'fv-note', text: 'None.' }));
     }
 
     // a card that throws shows a failure note (never the previous preset's content)
@@ -2679,21 +2686,36 @@ export function startReport(dash, events) {
     const m = t.match(CAV_TAG), rest = m ? t.slice(m[0].length) : t, txt = rest.charAt(0).toUpperCase() + rest.slice(1);
     return el('li', { class: 'fv-cav' }, m ? el('span', { class: 'fv-cav-tag', text: m[1] }) : null, /[.!?)]$/.test(txt) ? txt : txt + '.');
   };
-  // One class's caveats (ns), under the presets they apply to. The ones every preset of the class shares come first,
-  // then each preset's own, in the ranking's order. A caveat a few presets share goes under all their names. Method
-  // shows every class, and a preset's page only the groups with its preset in them (only).
-  const cavGroups = (cls, ns, builds, only) => {
-    const order = new Map([...builds.keys()].map((id, k) => [id, k]));
+  // One class's caveats (ns), grouped by the presets they apply to: a caveat a few presets share is one group with all
+  // their names. Returns the groups and how many presets the class has here.
+  const cavSets = (cls, ns, builds) => {
     const seen = new Map();
     for (const n of ns) { if (!seen.has(n.text)) seen.set(n.text, []); seen.get(n.text).push(n.build); }
     const all = [...builds.values()].filter((b) => b.class === cls).length;
-    const groups = d3.groups([...seen], ([, ids]) => ids.join('|'))
-      .map(([, items]) => ({ ids: items[0][1], texts: items.map(([t]) => t) }))
-      .filter((g) => !only || g.ids.includes(only))
-      .sort((p, q) => (q.ids.length === all) - (p.ids.length === all) || order.get(p.ids[0]) - order.get(q.ids[0]));
+    const groups = d3.groups([...seen], ([, ids]) => ids.join('|')).map(([, items]) => ({ ids: items[0][1], texts: items.map(([t]) => t) }));
+    return { groups, all };
+  };
+  // Method: every class's caveats, each group a small panel under its presets' names. The ones every preset of the class
+  // shares come first, then each preset's own, in the ranking's order.
+  const cavGroups = (cls, ns, builds) => {
+    const order = new Map([...builds.keys()].map((id, k) => [id, k]));
+    const { groups, all } = cavSets(cls, ns, builds);
+    groups.sort((p, q) => (q.ids.length === all) - (p.ids.length === all) || order.get(p.ids[0]) - order.get(q.ids[0]));
     const head = (ids) => el('h4', { class: 'fv-cav-preset' }, ...(ids.length === all && all > 1 ? [`All ${cls} presets`]
       : ids.flatMap((id, k) => [k ? ', ' : null, specIco(builds.get(id), ''), ' ', builds.get(id).build])));
     return el('div', { class: 'fv-cav-groups' }, ...groups.map((g) => el('section', { class: 'fv-cav-group' }, head(g.ids), el('ul', { class: 'fv-cav-list' }, ...g.texts.map(cavItem)))));
+  };
+  // A preset's page: one plain list, the card's own, with no panels and no name of the preset it's already on. Its own
+  // caveats first, then the ones it shares, under a small note naming who else they cover. null when there are none.
+  const cavFlat = (b, ns, builds) => {
+    const { groups, all } = cavSets(b.class, ns, builds);
+    const mine = groups.filter((g) => g.ids.includes(b.id)).sort((p, q) => p.ids.length - q.ids.length);
+    if (!mine.length) return null;
+    const others = (ids) => (ids.length === all ? [`every ${b.class} preset`]
+      : ids.filter((id) => id !== b.id).flatMap((id, k) => [k ? ', ' : null, specIco(builds.get(id), ''), ' ', builds.get(id).build]));
+    return el('div', { class: 'fv-cav-flat' }, ...mine.flatMap((g) => [
+      g.ids.length > 1 ? el('h4', { class: 'fv-cav-shared' }, 'Shared with ', ...others(g.ids)) : null,
+      el('ul', { class: 'fv-cav-list' }, ...g.texts.map(cavItem))]));
   };
 
   // ---------- static placeholders (headline figures, method text) ----------
@@ -3305,10 +3327,21 @@ export function startReport(dash, events) {
   }
 
   // deep links: a tab name or a preset id
+  const readLink = (h) => {
+    if (pages.includes(h)) st.tab = h;
+    else if (h.startsWith('changes/')) { st.tab = 'changes'; try { st.chUp = decodeURIComponent(h.slice(8)); } catch { st.chUp = null; } }
+    else if (/^[a-z]+__[\w-]+$/.test(h)) { st.build = h; st.tab = 'spec'; }
+    else return false;
+    return true;
+  };
   const h = location.hash.slice(1);
-  if (pages.includes(h)) st.tab = h;
-  else if (h.startsWith('changes/')) { st.tab = 'changes'; try { st.chUp = decodeURIComponent(h.slice(8)); } catch { st.chUp = null; } }
-  else if (/^[a-z]+__[\w-]+$/.test(h)) { st.build = h; st.tab = 'spec'; }
+  if (!readLink(h)) dash.setLink(linkName(st.tab)); // the first entry names its view too, so Back can return to it
+  // Back and Forward: open the view the entry names, where it was scrolled to (the top for one never left)
+  dash.onLink((name, y) => {
+    if (!readLink(name)) st.tab = 'ranking';
+    showTab(st.tab, false);
+    $('.sim-ui').scrollTo({ top: y || 0 });
+  });
   document.querySelectorAll('.fv-tab').forEach((b) => { b.setAttribute('aria-selected', String(b.dataset.tab === st.tab)); b.classList.toggle('active', b.dataset.tab === st.tab); });
   document.querySelectorAll('.fv-page').forEach((p) => { p.hidden = p.dataset.page !== st.tab; p.classList.toggle('active', p.dataset.page === st.tab); });
   dash.onData(render);

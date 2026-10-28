@@ -91,7 +91,7 @@
   "title": "Talents, rotation and caveats",
   "description": "Per preset, its key talents, rotation priority, consumes and open questions, plus the gear rules every synthetic set follows (build _round, kind gear).",
   "updated": {
-   "at": "2026-10-28T17:13:26.030Z",
+   "at": "2026-10-28T17:39:35.013Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -99,7 +99,7 @@
   "title": "Race DPS split by racial",
   "description": "Each preset and race split into base stats (every racial off) and what each racial adds, plus the weapon swap and the change against each creature type. Racials turned off one at a time; where two count, each gets the average of its two orders so the parts add up.",
   "updated": {
-   "at": "2026-10-28T17:23:10.564Z",
+   "at": "2026-10-28T18:30:45.811Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -107,7 +107,7 @@
   "title": "Race scenario notes",
   "description": "What each race scenario switches on, what each racial does in the sim (with a short line for the tooltips), and a few plain sentences per class written from the race sims.",
   "updated": {
-   "at": "2026-10-28T17:23:10.564Z",
+   "at": "2026-10-28T18:30:45.811Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -115,7 +115,7 @@
   "title": "Race usefulness",
   "description": "Per scenario, role and race, across all races or within the race's faction: presets it can play, how often it is the best race, its average and worst gap to the best, its median rank and the presets where it comes closest.",
   "updated": {
-   "at": "2026-10-28T17:23:10.564Z",
+   "at": "2026-10-28T18:30:45.811Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -123,7 +123,7 @@
   "title": "Race scenarios",
   "description": "Every preset on every race its class can be: against the generic boss with the preset's own setup, against a Beast or an Elemental boss, against a Humanoid boss (Priests only, for Dwarf Chastise), with the race's racial weapon, and with all racials off. Mean DPS over 10,000 fights at 180 s, its standard error, and the gap to the best race in that scenario.",
   "updated": {
-   "at": "2026-10-28T17:23:10.564Z",
+   "at": "2026-10-28T18:30:45.811Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -307,7 +307,7 @@
   "title": "Updates",
   "description": "The report's updates, newest first: game updates (a new client build or development notes) and sim/preset updates (our own changes to the sim, rotations, gear, talents, consumes or races), each with its date, source and public change list. Each line may name the classes, presets, races and racial parts it touches.",
   "updated": {
-   "at": "2026-10-28T17:23:10.936Z",
+   "at": "2026-10-28T18:31:31.679Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -315,7 +315,7 @@
   "title": "Results before and after each update",
   "description": "The report's results at the first update's start in full (genesis), then each update's end as only the rows that changed (ends, with gone listing rows that left): builds (DPS, error, ranks, race, best race), races (each preset on each race), parts (each racial part's DPS against the generic boss) and summary (per race and role, how often it is best and its average gap).",
   "updated": {
-   "at": "2026-10-28T13:29:52.531Z",
+   "at": "2026-10-28T18:30:48.849Z",
    "by": "Claude (forever-sim)"
   }
  }
