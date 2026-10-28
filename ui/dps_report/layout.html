@@ -240,6 +240,7 @@
         <p><b>How.</b> Each class has a rotation template. The order of its abilities is fixed, but its thresholds can be tuned, like how much Rage Heroic Strike waits for, or when Execute takes over. An optimizer tries each threshold's values in turn. It keeps a change only if it clearly beats the sim's noise, and repeats until nothing helps.</p>
         <p>AI agents also tried new priorities, openers and cooldown timings by hand. Each stayed only if it won head to head in the sim. An auditor agent then went over every rotation, trying other versions and reading the fight logs for wasted mana, Rage or Energy.</p>
         <p>Buffs, totems, potions and pre-casts go up before the pull, so they land at 0s, when damage starts to count. Nobody opens from Stealth or Prowl. Raid buffs and debuffs that cost a global cooldown are left to the Duty presets. Two exceptions: every warrior casts Sunder Armor once after the pull, and every hunter keeps up Hunter's Mark.</p>
+        <p><b>Races.</b> Every race plays the preset's rotation, with only its own racials firing, unless a different version clearly beats it in the sim for that race (say, a racial held for another cooldown, or a timing that suits its haste). Pick a race above to see its rotation, or All races to see the whole rotation with each race's changes in place.</p>
         <p><b>Why trust it.</b> The rotation is tuned on the same preset and fight it's ranked on. Every change has to beat the noise. Audits keep checking it as the sim and Forever change.</p>
         <p><b>Gaps.</b></p>
         <ul>
@@ -248,9 +249,11 @@
           <li>Where Forever changed an ability without saying by how much, the sim uses the client data and beta tests up to level 30. The open ones are under Assumptions on the Ranking page.</li>
         </ul>
       </div>
+      <div class="fv-toolbar"><div class="fv-controls"><span class="fv-label fv-rowlabel">Race</span><div class="fv-seg fv-rot-seg" id="sp-rot-race" role="group" aria-label="Rotation for which race"></div></div></div>
+      <div class="fv-rot-races" id="sp-rot-races" data-source="races race_rotation"></div>
       <p class="fv-note" id="sp-rot-note">The sim uses the first line it can, from the top.</p>
-      <div class="fv-prepull" id="sp-prepull" data-source="rotation names icons"></div>
-      <ol class="fv-prio" id="sp-rotation" data-source="rotation abilities names icons tooltips"></ol>
+      <div class="fv-prepull" id="sp-prepull" data-source="rotation race_rotation names icons"></div>
+      <ol class="fv-prio" id="sp-rotation" data-source="rotation race_rotation abilities names icons tooltips"></ol>
     </div>
 
     <div class="content-block fv-card" id="sp-abiltab-card" data-jump="Ability table">

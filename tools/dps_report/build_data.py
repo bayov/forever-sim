@@ -688,7 +688,9 @@ for _k, _v in list(RACIAL_RACE.items()):
     RACIAL_RACE[_k] = {'SkyborneHighOrder': 'High Order', 'SkyborneWindshaper': 'Windshaper'}.get(_v, _v)
 _outs_r = [dict(o, meta=dict(o['meta'], race=race_name(o['meta']['race']))) for o in outs if not o['meta'].get('duty')]
 rot_rows, rot_fallback = rotation.build(os.path.join(D, 'req'), _outs_r, nm, names, abilities, RACIAL_RACE)
-for r in rot_rows:
+
+
+def _rot_finish(r):
     if r['key'] and not r['icon']:
         r['icon'] = names.get(r['key'], {}).get('icon')
     if r['key'] == 'oOtherActionPotion':  # the APL's "potion" is the preset's default potion
@@ -699,10 +701,22 @@ for r in rot_rows:
             _norm = lambda t: re.sub(r'[^a-z]', '', t.lower())
             pk = next((k for k, n in names.items() if _norm(n['name']) == _norm(r['name'])), None)
             ab = next((a for a in abilities if a['build'] == r['build'] and a['key'] == pk), None)
-            if ab:
+            if ab and r.get('casts') is not None:
                 r['casts'] = ab['casts']
     r['notes'] = _clean_note(r['notes'])
+
+
+for r in rot_rows:
+    _rot_finish(r)
 dump('rotation', rot_rows)
+# race_rotation: the races that play their own rotation on a preset (race_override.py), lined up with the preset's
+import race_override
+race_rot_rows, _fb = rotation.race_build(os.path.join(D, 'req'), _outs_r, nm, names, RACIAL_RACE, rot_rows, race_name, race_override.load)
+for r in race_rot_rows:
+    if r['diff'] in ('changed', 'added'):  # the others are the preset's rows, already finished
+        _rot_finish(r)
+dump('race_rotation', race_rot_rows)
+rot_fallback = sorted(set(rot_fallback) | set(_fb))
 print('rotation conditions shown in compact form:', rot_fallback)
 
 # tooltips: game-style text for spells, items, enchants, setup chips, races and stats (tooltips.py)

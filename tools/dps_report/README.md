@@ -167,7 +167,9 @@ encounter variant without a file of its own takes its base build's, but only wha
 variant's rotation is the base's (a duty preset's rotation keeps its duty up), the bonus stats when its gear is the
 base's. `python3 race_override.py [ids]` lists what every build sims at each race. The race sweep records each override
 it used in `out/<id>.json` (`races[].override`); `build_data.py` puts its note in `races` and `race_variants` as `tuned`,
-and the Races tab shows it after the race's name and in the row's tooltip. `stale.mjs` and the packs' fingerprints
+and the Races tab shows it after the race's name and in the row's tooltip. A race's own rotation is also the
+`race_rotation` dataset (`rotation.race_build`), which the Specs page's Rotation card shows for that race and weaves
+into its All races view. `stale.mjs` and the packs' fingerprints
 hash a build's override files (its base build's too), so adding, changing or deleting one makes the build stale.
 
 `race_gear.py [ids] [--write]` makes the Dwarf's gear files: for every build a Dwarf can be, the Dwarf's hit (dashstats'
@@ -216,6 +218,7 @@ All are written by `build_data.py`. "out" means `out/<id>.json` from `run_build.
 | notes | build_data.py | req meta keyTalents, rotation, consumes and caveats, plus the gear rules text in build_data.py (snapshot-cleaned) | none |
 | names | build_data.py | every key seen; `names/*.tsv` (DASH_NAMES), `db.json`, `assets/db_inputs/wowhead_*_tooltips.csv`, `forever-wiki/data/abilities.json`, talent trees, racials, the sim's rank arrays; colour from the icon (PIL) | run_build |
 | rotation | build_data.py + rotation.py | the request's APL (prepull and priority), cast counts from abilities, names, `racials.json` | none |
+| race_rotation | build_data.py + rotation.py (`race_build`) | each race's own APL in `req/races/` (`race_override.load`), lined up with the preset's: `forRace`, `diff` (same, changed, added, removed) and `base` (the preset line's order). No casts | none |
 | race_variants | build_races.py | `rv/results.jsonl` plus the out race sweep (baseline); `tuned`, the note of the race's override | run_races |
 | race_breakdown | build_races.py | `rv/results.jsonl` (`off`, `off:<part>`, weapon and target deltas) | run_races |
 | race_summary | build_races.py | race_variants by scenario, scope (overall or faction) and role | run_races |

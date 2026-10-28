@@ -151,6 +151,8 @@ class Humaniser:
             return f"boss under {th}% health"
         if t == 'inMeleeRange':
             return 'in melee range'
+        if t == 'gcdIsReady':
+            return 'the global cooldown is ready'
         if t == 'spellIsChanneling':
             return f"channeling {self.sp(a.get('spellId'))}"
         if t == 'sequenceIsComplete':
@@ -232,6 +234,8 @@ class Humaniser:
             return f"boss over {th}% health"
         if t == 'inMeleeRange':
             return 'out of melee range'
+        if t == 'gcdIsReady':
+            return 'the global cooldown is not ready'
         if t == 'cmp':  # not (a < b) is a >= b
             inv = {'OpLt': 'OpGe', 'OpLe': 'OpGt', 'OpGt': 'OpLe', 'OpGe': 'OpLt', 'OpEq': 'OpNe', 'OpNe': 'OpEq'}
             return self.cmp(dict(a, op=inv.get(a.get('op'), a.get('op'))))
@@ -340,61 +344,163 @@ def clean_note(t):
     return ' '.join(sents).strip()
 
 
+def apl_rows(bid, rot, race, nm, names, casts, racial_race, H):
+    """One APL's prepull and priority rows, as the preset's rotation dataset shows them. race is the race it is played
+    at (its racials are the ones that fire); casts maps (build, key) to casts per fight, empty for none known."""
+    rows = []
+
+    def row(section, order, act, at=None, notes=''):
+        cond = act.get('condition')
+        kind, ref, extra = None, None, ''
+        for k in act:
+            if k == 'condition':
+                continue
+            kind, body = k, act[k]
+        if kind == 'castSpell':
+            ref = body.get('spellId')
+        elif kind == 'channelSpell':
+            ref = body.get('spellId')
+            if body.get('interruptIf'):
+                extra = 'Stops the channel when ' + H.pred(body['interruptIf'])
+        elif kind == 'move':
+            r = body.get('rangeFromTarget', {}).get('const', {}).get('val', '0')
+            extra = 'Into melee range' if str(r) in ('0', '0s') else f'To {r} yd from the boss'
+        key = key_of(ref) if ref else None
+        name = nm(key) if key else {'move': 'Move', 'autocastOtherCooldowns': 'Other cooldowns', 'wait': 'Wait'}.get(kind, kind)
+        when = H.pred(cond, top=True) if cond else ''
+        if not cond or when == 'always':  # no condition, or only one we leave out (see Humaniser.const_of)
+            when = '' if section == 'prepull' else 'when ready' if kind in ('castSpell', 'channelSpell') else ''
+        if kind == 'autocastOtherCooldowns':
+            when = 'trinkets, racials and potions not listed here, as soon as they are ready'
+        rr = (racial_race.get(int(ref['spellId'])) if ref and ref.get('spellId') else None) or (racial_race.get(name) if key else None)
+        mr = re.match(r'^(Human|Dwarf|Night Elf|Gnome|High Order|Orc|Undead|Tauren|Troll|Windshaper)\. ', notes or '')
+        if not rr and mr:  # a racial line the notes name ("Undead. Dark Sacrifice when ...")
+            rr = mr.group(1)
+        rows.append({
+            'build': bid, 'section': section, 'order': order,
+            'kind': {'castSpell': 'cast', 'channelSpell': 'channel', 'move': 'move', 'autocastOtherCooldowns': 'auto'}.get(kind, kind),
+            'key': key, 'name': name, 'icon': names[key]['icon'] if key and key in names else None,
+            'at': at, 'when': when[:1].upper() + when[1:] if when else '', 'extra': extra, 'notes': clean_note(notes),
+            'race': rr, 'otherRace': bool(rr and race and rr != race and not (isinstance(rr, list))),
+            # A tagged press (a queued Heroic Strike or Raptor Strike) counts on its spell's row, where
+            # build_data folds it.
+            'casts': round(casts.get((bid, key), casts.get((bid, re.sub(r't\d+$', '', key)), 0)), 1) if key else None,
+            'cond': json.dumps(cond, separators=(',', ':')) if cond else None,
+        })
+
+    for i, p in enumerate(prepull_sorted(rot)):
+        at = secs(p.get('doAtValue', {}).get('const', {}).get('val', '0'))
+        row('prepull', i, p['action'], at=at, notes=p.get('notes', ''))
+    for i, p in enumerate(rot.get('priorityList') or []):
+        if p.get('hide'):
+            continue
+        row('priority', i + 1, p['action'], notes=p.get('notes', ''))
+    return rows
+
+
+def prepull_sorted(rot):
+    return sorted(rot.get('prepullActions') or [], key=lambda p: secs(p.get('doAtValue', {}).get('const', {}).get('val', '0')) or 0)
+
+
+def _humaniser(nm):
+    return Humaniser(lambda k: 'the potion' if k == 'oOtherActionPotion' else nm(k))
+
+
+def _rotation(req_dir, bid):
+    rq = json.load(open(os.path.join(req_dir, bid + '.json')))
+    return rq['raid']['parties'][0]['players'][0].get('rotation') or {}
+
+
 def build(req_dir, outs, nm, names, abilities, racial_race):
     rows, fallbacks = [], []
     casts = {(a['build'], a['key']): a['casts'] for a in abilities}
     for o in outs:
-        bid, m = o['id'], o['meta']
-        rq = json.load(open(os.path.join(req_dir, bid + '.json')))
-        rot = rq['raid']['parties'][0]['players'][0].get('rotation') or {}
-        H = Humaniser(lambda k: 'the potion' if k == 'oOtherActionPotion' else nm(k))
-        race = m.get('race')
-
-        def row(section, order, act, at=None, notes=''):
-            cond = act.get('condition')
-            kind, ref, extra = None, None, ''
-            for k in act:
-                if k == 'condition':
-                    continue
-                kind, body = k, act[k]
-            if kind == 'castSpell':
-                ref = body.get('spellId')
-            elif kind == 'channelSpell':
-                ref = body.get('spellId')
-                if body.get('interruptIf'):
-                    extra = 'Stops the channel when ' + H.pred(body['interruptIf'])
-            elif kind == 'move':
-                r = body.get('rangeFromTarget', {}).get('const', {}).get('val', '0')
-                extra = 'Into melee range' if str(r) in ('0', '0s') else f'To {r} yd from the boss'
-            key = key_of(ref) if ref else None
-            name = nm(key) if key else {'move': 'Move', 'autocastOtherCooldowns': 'Other cooldowns', 'wait': 'Wait'}.get(kind, kind)
-            when = H.pred(cond, top=True) if cond else ''
-            if not cond or when == 'always':  # no condition, or only one we leave out (see Humaniser.const_of)
-                when = '' if section == 'prepull' else 'when ready' if kind in ('castSpell', 'channelSpell') else ''
-            if kind == 'autocastOtherCooldowns':
-                when = 'trinkets, racials and potions not listed here, as soon as they are ready'
-            rr = (racial_race.get(int(ref['spellId'])) if ref and ref.get('spellId') else None) or (racial_race.get(name) if key else None)
-            mr = re.match(r'^(Human|Dwarf|Night Elf|Gnome|High Order|Orc|Undead|Tauren|Troll|Windshaper)\. ', notes or '')
-            if not rr and mr:  # a racial line the notes name ("Undead. Dark Sacrifice when ...")
-                rr = mr.group(1)
-            rows.append({
-                'build': bid, 'section': section, 'order': order,
-                'kind': {'castSpell': 'cast', 'channelSpell': 'channel', 'move': 'move', 'autocastOtherCooldowns': 'auto'}.get(kind, kind),
-                'key': key, 'name': name, 'icon': names[key]['icon'] if key and key in names else None,
-                'at': at, 'when': when[:1].upper() + when[1:] if when else '', 'extra': extra, 'notes': clean_note(notes),
-                'race': rr, 'otherRace': bool(rr and race and rr != race and not (isinstance(rr, list))),
-                # A tagged press (a queued Heroic Strike or Raptor Strike) counts on its spell's row, where
-                # build_data folds it.
-                'casts': round(casts.get((bid, key), casts.get((bid, re.sub(r't\d+$', '', key)), 0)), 1) if key else None,
-                'cond': json.dumps(cond, separators=(',', ':')) if cond else None,
-            })
-
-        for i, p in enumerate(sorted(rot.get('prepullActions') or [], key=lambda p: secs(p.get('doAtValue', {}).get('const', {}).get('val', '0')) or 0)):
-            at = secs(p.get('doAtValue', {}).get('const', {}).get('val', '0'))
-            row('prepull', i, p['action'], at=at, notes=p.get('notes', ''))
-        for i, p in enumerate(rot.get('priorityList') or []):
-            if p.get('hide'):
-                continue
-            row('priority', i + 1, p['action'], notes=p.get('notes', ''))
+        bid = o['id']
+        H = _humaniser(nm)
+        rows += apl_rows(bid, _rotation(req_dir, bid), o['meta'].get('race'), nm, names, casts, racial_race, H)
         fallbacks += H.fallbacks
+    return rows, sorted(set(fallbacks))
+
+
+def _sig(p):
+    """An APL line as the sim reads it (its notes and the sim UI's hide flag change nothing)."""
+    return json.dumps({k: v for k, v in p.items() if k not in ('notes', 'hide')}, sort_keys=True)
+
+
+def _act_sig(p):
+    """What an APL line does, without when: the action kind and its spell, item or other ref."""
+    act = p.get('action') or {}
+    kind = next((k for k in act if k != 'condition'), None)
+    body = act.get(kind) or {}
+    return json.dumps([kind, body.get('spellId') if isinstance(body, dict) else None], sort_keys=True)
+
+
+def diff_lines(base, mine):
+    """Pairs a race's APL lines with the preset's: [(base index or None, race index or None, 'same' | 'changed' |
+    'added' | 'removed')]. Lines that read the same pair up in order; in a stretch that differs, a race line pairs
+    with the preset line doing the same thing (the same spell, a new condition or pre-pull time), and the rest are
+    added or removed. A line that only moved is removed at its old place and added at its new one."""
+    import difflib
+    a, b = [_sig(p) for p in base], [_sig(p) for p in mine]
+    out = []
+    for op, a0, a1, b0, b1 in difflib.SequenceMatcher(None, a, b, autojunk=False).get_opcodes():
+        if op == 'equal':
+            out += [(a0 + k, b0 + k, 'same') for k in range(a1 - a0)]
+            continue
+        left = list(range(a0, a1))
+        for j in range(b0, b1):
+            i = next((i for i in left if _act_sig(base[i]) == _act_sig(mine[j])), None)
+            if i is None:
+                out.append((None, j, 'added'))
+                continue
+            # the preset lines before the pair that nothing pairs with are removed there
+            while left and left[0] != i:
+                out.append((left.pop(0), None, 'removed'))
+            left.pop(0)
+            out.append((i, j, 'changed'))
+        out += [(i, None, 'removed') for i in left]
+    return out
+
+
+def race_build(req_dir, outs, nm, names, racial_race, preset_rows, race_name, load_override):
+    """The races that play their own rotation on a preset (race_override.py), as rows of the preset's shape plus
+    forRace (the race), diff ('same', 'changed', 'added' or 'removed', against the preset's line) and base (the
+    preset line's order, None for an added line). A removed row is the preset's line, with order None. Lines the
+    race plays as the preset does are the preset's rows (its notes, potion name and icon). Casts are left out: the
+    race sweep records DPS only."""
+    rows, fallbacks = [], []
+    pre = {}
+    for r in preset_rows:
+        pre.setdefault(r['build'], []).append(r)
+    for o in outs:
+        bid = o['id']
+        base = _rotation(req_dir, bid)
+        for rc in o.get('races') or []:
+            ov = load_override(bid, rc['race'])
+            if not ov or 'rotation' not in ov:
+                continue
+            race = race_name(rc['race'])
+            mine = ov['rotation']
+            H = _humaniser(nm)
+            new = {(r['section'], r['order']): r for r in apl_rows(bid, mine, race, nm, names, {}, racial_race, H)}
+            fallbacks += H.fallbacks
+            old = {(r['section'], r['order']): r for r in pre.get(bid, [])}
+            for section, lb, lm, num in (('prepull', prepull_sorted(base), prepull_sorted(mine), lambda i: i),
+                                         ('priority', base.get('priorityList') or [], mine.get('priorityList') or [], lambda i: i + 1)):
+                for i, j, d in diff_lines(lb, lm):
+                    if (j is not None and lm[j].get('hide')) or (j is None and lb[i].get('hide')):
+                        continue
+                    if d == 'removed':
+                        src = old.get((section, num(i)))
+                    elif d == 'same' and old.get((section, num(i))):
+                        src = dict(old[(section, num(i))], order=num(j))
+                    else:
+                        src = new.get((section, num(j)))
+                    if not src:
+                        continue
+                    r = dict(src, forRace=race, diff=d, base=num(i) if i is not None else None, casts=None)
+                    if d == 'removed':
+                        r['order'] = None
+                    r['otherRace'] = bool(r['race'] and r['race'] != race)
+                    rows.append(r)
     return rows, sorted(set(fallbacks))

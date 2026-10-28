@@ -83,7 +83,7 @@
   "title": "Spell and item names",
   "description": "Names, icons and an icon-derived colour for the spell, item and attack ids in the timelines, breakdowns and rotations.",
   "updated": {
-   "at": "2026-10-27T20:42:03.433Z",
+   "at": "2026-10-28T09:12:58.608Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -140,6 +140,14 @@
   "description": "Each preset's APL as simmed: pre-pull casts with their timing, then the priority list in order, each line's spell, a plain-English condition, the APL's own note, its exact condition and the spell's casts per fight.",
   "updated": {
    "at": "2026-10-27T22:54:49.376Z",
+   "by": "Claude (forever-sim)"
+  }
+ },
+ "race_rotation": {
+  "title": "Race rotations",
+  "description": "The races that play their own rotation on a preset: each line of that rotation lined up with the preset's, marked the same, changed (a new condition or pre-pull time), added or removed. No cast counts: the race sweep records DPS only.",
+  "updated": {
+   "at": "2026-10-28T09:12:58.608Z",
    "by": "Claude (forever-sim)"
   }
  },

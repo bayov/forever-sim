@@ -13,6 +13,10 @@
 	--fv-adv-wpn: #b9bec8;
 	--fv-adv-tgt: #ff8a4c;
 	--fv-adv-nowpn: var(--color-fg-muted);
+	// a race's own rotation against the preset's: a line it changes, adds or drops
+	--fv-rot-changed: #ff9f4a;
+	--fv-rot-added: #5fd08a;
+	--fv-rot-removed: #ff6b5e;
 	--fv-r: var(--panel-radius);
 	--fv-r-sm: var(--panel-radius);
 	--fv-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.35);
@@ -2399,7 +2403,8 @@ div.tt-embed:not(.fv-tt) {
 	font-weight: 600;
 }
 
-.fv-pr .kd {
+.fv-pr .kd,
+.fv-ppi .kd {
 	font-size: 0.62rem;
 	text-transform: uppercase;
 	letter-spacing: 0.06em;
@@ -2410,7 +2415,8 @@ div.tt-embed:not(.fv-tt) {
 	color: var(--color-fg-muted);
 }
 
-.fv-pr .kd.race {
+.fv-pr .kd.race,
+.fv-ppi .kd.race {
 	background: var(--fv-gold-soft);
 	color: var(--fv-gold);
 }
@@ -2481,6 +2487,225 @@ div.tt-embed:not(.fv-tt) {
 
 .fv-pr.other .no {
 	padding-top: 0.1rem;
+}
+
+// ---------- the rotation for one race, or for all of them (drawRotation) ----------
+.fv-rot-opt {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+}
+
+.fv-rot-opt small {
+	font-size: 0.6rem;
+	text-transform: uppercase;
+	letter-spacing: 0.06em;
+	color: var(--fv-gold);
+}
+
+// a race that plays its own rotation
+.fv-rot-own {
+	width: 0.45rem;
+	height: 0.45rem;
+	border-radius: 50%;
+	background: var(--fv-rot-changed);
+}
+
+// Up to ten races: the picker wraps rather than hide some of them off its edge.
+.fv-rot-seg {
+	flex: 1 1 20rem;
+	flex-wrap: wrap;
+	overflow-x: visible;
+}
+
+.fv-rot-seg .fv-ico {
+	border-radius: 50%;
+}
+
+.kd.race {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.2rem;
+	white-space: nowrap;
+}
+
+.kd.race .fv-ico {
+	width: 0.85rem;
+	height: 0.85rem;
+	border-radius: 50%;
+	vertical-align: 0;
+}
+
+.fv-pr .kd.diff-changed,
+.fv-ppi .kd.diff-changed {
+	background: color-mix(in srgb, var(--fv-rot-changed) 16%, transparent);
+	color: var(--fv-rot-changed);
+}
+
+.fv-pr .kd.diff-added,
+.fv-ppi .kd.diff-added {
+	background: color-mix(in srgb, var(--fv-rot-added) 16%, transparent);
+	color: var(--fv-rot-added);
+}
+
+.fv-pr .kd.diff-removed,
+.fv-ppi .kd.diff-removed,
+.fv-pr .kd.diff-rm {
+	background: color-mix(in srgb, var(--fv-rot-removed) 16%, transparent);
+	color: var(--fv-rot-removed);
+}
+
+.fv-pr.changed,
+.fv-pr.added {
+	--rv: var(--fv-rot-changed);
+	background: color-mix(in srgb, var(--rv) 6%, transparent);
+	box-shadow: inset 3px 0 0 var(--rv);
+}
+
+.fv-pr.added {
+	--rv: var(--fv-rot-added);
+}
+
+.fv-pr.added .no {
+	color: var(--fv-rot-added);
+}
+
+.fv-pr.dropped .ics b {
+	text-decoration: line-through;
+}
+
+.fv-pr.dropped .no {
+	color: var(--fv-rot-removed);
+}
+
+// what a race does in place of a preset line, under it
+.fv-rv {
+	--rv: var(--fv-rot-changed);
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.2rem 0.45rem;
+	margin-top: 0.3rem;
+	padding: 0.3rem 0.5rem;
+	border-radius: 6px;
+	border-left: 2px solid var(--rv);
+	background: color-mix(in srgb, var(--rv) 8%, transparent);
+	font-size: var(--cds-font-size-caption);
+	line-height: 1.4;
+}
+
+.fv-rv.diff-removed {
+	--rv: var(--fv-rot-removed);
+}
+
+.fv-pr .fv-was {
+	font-size: var(--cds-font-size-caption);
+	color: var(--color-fg-muted);
+	font-style: italic;
+}
+
+.fv-ppi .pt {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+	flex-wrap: wrap;
+}
+
+.fv-ppi.changed {
+	border-color: color-mix(in srgb, var(--fv-rot-changed) 60%, transparent);
+}
+
+.fv-ppi.added {
+	border-color: color-mix(in srgb, var(--fv-rot-added) 60%, transparent);
+	border-style: dashed;
+}
+
+.fv-ppi.removed {
+	opacity: 0.62;
+	border-style: dashed;
+}
+
+.fv-ppi.removed b {
+	text-decoration: line-through;
+}
+
+.fv-rot-races {
+	display: grid;
+	gap: 0.35rem;
+}
+
+.fv-rot-races:empty {
+	display: none;
+}
+
+.fv-rot-list {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+	gap: 0.4rem;
+}
+
+.fv-rot-race {
+	font: inherit;
+	display: flex;
+	align-items: flex-start;
+	gap: 0.55rem;
+	padding: 0.5rem 0.65rem;
+	border: 1px solid var(--color-border-line);
+	border-left: 3px solid var(--fv-rot-changed);
+	border-radius: 8px;
+	background: var(--color-bg);
+	color: var(--color-fg);
+	text-align: left;
+	cursor: pointer;
+}
+
+.fv-rot-race:hover {
+	border-color: var(--fv-rot-changed);
+}
+
+.fv-rot-race .fv-ico,
+.fv-rot-why .fv-ico {
+	width: 1.6rem;
+	height: 1.6rem;
+	border-radius: 50%;
+}
+
+.fv-rot-race > span,
+.fv-rot-why > span {
+	display: grid;
+	gap: 0.1rem;
+	min-width: 0;
+	font-size: var(--cds-font-size-caption);
+	line-height: 1.4;
+}
+
+.fv-rot-race b,
+.fv-rot-why b {
+	font-size: var(--cds-font-size-body);
+	font-weight: 600;
+}
+
+.fv-rot-race small {
+	color: var(--fv-rot-changed);
+	font-weight: 600;
+}
+
+.fv-rot-race .nt {
+	color: var(--color-fg-muted);
+	display: -webkit-box;
+	-webkit-line-clamp: 3;
+	-webkit-box-orient: vertical;
+	overflow: hidden;
+}
+
+.fv-rot-why {
+	display: flex;
+	align-items: flex-start;
+	gap: 0.55rem;
+	padding: 0.5rem 0.7rem;
+	border-radius: 8px;
+	border-left: 3px solid var(--fv-rot-changed);
+	background: color-mix(in srgb, var(--fv-rot-changed) 7%, transparent);
 }
 
 .fv-noico {
