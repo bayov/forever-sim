@@ -14,7 +14,7 @@
    "endData": "4273ee51d1f824ec2ec87beda48d9828da277a5b",
    "lines": [
     {
-     "title": "Human: Ruthless gives 1% crit (was 2%), The Human Spirit 10% Spirit (was 5%)",
+     "title": "Human: Ruthless 1% crit (was 2%), The Human Spirit 10% Spirit (was 5%)",
      "kind": "game",
      "races": [
       "Human"
@@ -33,7 +33,7 @@
      ]
     },
     {
-     "title": "Dwarf: Earth Fury (2% crit damage) is gone, the new Artisan's Precision gives 1% hit with attacks and spells",
+     "title": "Dwarf: Earth Fury (2% crit damage) replaced by Artisan's Precision (1% hit)",
      "kind": "game",
      "races": [
       "Dwarf"
@@ -51,7 +51,7 @@
      ]
     },
     {
-     "title": "Tauren: Endurance gives 5% health only, with no 2% crit damage",
+     "title": "Tauren: Endurance loses its 2% crit damage",
      "kind": "game",
      "races": [
       "Tauren"
@@ -68,7 +68,7 @@
      ]
     },
     {
-     "title": "Orc: Savage (1% crit) is gone, Command is back: Hunter and Warlock pets deal 5% more damage",
+     "title": "Orc: Savage (1% crit) replaced by Command (5% more pet damage)",
      "kind": "game",
      "races": [
       "Orc"
@@ -86,7 +86,7 @@
      ]
     },
     {
-     "title": "Skyborne: Wind Blessed gives 2% haste (was 3%), Read Leyline 50% more Spirit regen for 15 sec (was 100% for 30 sec)",
+     "title": "Skyborne: Wind Blessed 2% haste (was 3%), Read Leyline weaker",
      "kind": "game",
      "races": [
       "High Order",
@@ -102,10 +102,11 @@
      },
      "commits": [
       "500e3a1"
-     ]
+     ],
+     "note": "Read Leyline: 50% more Spirit regen for 15 sec (was 100% for 30 sec)."
     },
     {
-     "title": "Warlock: Spellstone adds Shadow damage only, no longer Fire",
+     "title": "Warlock: Spellstone boosts Shadow only, not Fire",
      "kind": "game",
      "classes": [
       "Warlock"
@@ -121,7 +122,7 @@
     {
      "title": "Mage: Arcane Missiles no longer procs Missile Barrage",
      "kind": "game",
-     "note": "Client 70630's talent text no longer lists Arcane Missiles among the spells that trigger it.",
+     "note": "The talent's text no longer lists Arcane Missiles.",
      "builds": [
       "mage__arcane",
       "mage__frost"
@@ -135,9 +136,9 @@
      ]
     },
     {
-     "title": "Mage: Arcane Instability and Arcane Power no longer raise Ignite's ticks",
+     "title": "Mage: Arcane Instability and Arcane Power no longer boost Ignite",
      "kind": "sim",
-     "note": "No preset takes Ignite with either talent, so no preset's DPS moves.",
+     "note": "No preset takes Ignite with them.",
      "classes": [
       "Mage"
      ],
@@ -163,9 +164,9 @@
    "endData": "64a3102c3f3127db0bbae5b01288d0fe1accfe7e",
    "lines": [
     {
-     "title": "Each race now plays its own rotation where it beats the preset's",
+     "title": "Races get their own rotation where it does better",
      "kind": "rotation",
-     "note": "High Order and Windshaper Balance, Fire and Frostfire; Troll, Orc and Undead Frostfire; Gnome rogues with Eureka!; Holy Fire Smite for Dwarf, Gnome, Human, Night Elf and Troll.",
+     "note": "High Order and Windshaper casters, Troll, Orc and Undead Frostfire, Gnome rogues (Eureka!), and Holy Fire Smite for 5 races.",
      "races": [
       "High Order",
       "Windshaper",
@@ -188,9 +189,9 @@
      ]
     },
     {
-     "title": "Dwarves move their hit over the cap into other stats",
+     "title": "Dwarves trade hit over the cap for other stats",
      "kind": "gear",
-     "note": "On the 14 presets where it gains: hunters, Retribution, Shadow, Elemental, Arms and 2H Fury.",
+     "note": "On 14 presets: hunters, Retribution, Shadow, Elemental, Arms and 2H Fury.",
      "races": [
       "Dwarf"
      ],
@@ -247,7 +248,7 @@
      ]
     },
     {
-     "title": "Retribution Shock vs Undead and its Crusader duty: Light's Vigil timing retuned",
+     "title": "Retribution Shock vs Undead and Crusader duty: Light's Vigil retimed",
      "kind": "rotation",
      "builds": [
       "paladin__level_60_shock_undead",
@@ -308,7 +309,7 @@
      ]
     },
     {
-     "title": "Undead: Touch of the Grave can drain every 15 sec (was 25 sec)",
+     "title": "Undead: Touch of the Grave every 15 sec (was 25 sec)",
      "kind": "game",
      "races": [
       "Undead"
@@ -325,7 +326,7 @@
      ]
     },
     {
-     "title": "Presets moved to their new best race",
+     "title": "Presets moved to their best race",
      "kind": "race",
      "note": "Shadow to Undead; Combat Daggers, Seal Fate Daggers, Combat Swords and Subtlety to Undead; Enhancement to Orc; Demonology and Destruction to Orc; Destruction Fire to Undead.",
      "builds": [
@@ -411,7 +412,7 @@
      ]
     },
     {
-     "title": "Gnome warlocks: Eureka! timed so its 8 sec cover the spells it boosts",
+     "title": "Gnome warlocks: Eureka! timed to cover the spells it boosts",
      "kind": "rotation",
      "races": [
       "Gnome"
@@ -443,9 +444,9 @@
    "endData": "04422dc6b7b6fb6efb17d44deac37e4a908c8010",
    "lines": [
     {
-     "title": "Trueshot Aura and Aspect of the Hawk give about half as much at their lower ranks, so a level 60 hunter's best are Trueshot Aura rank 5 (+50 ranged attack power) and Aspect of the Hawk rank 6 (+55)",
+     "title": "Trueshot Aura and Aspect of the Hawk about halved at lower ranks",
      "kind": "game",
-     "note": "A server hotfix on the launch realms, not in the development notes: Trueshot Aura 15 / 22 / 30 / 40 / 50, Aspect of the Hawk 15 / 22 / 30 / 38 / 47 / 55.",
+     "note": "Server hotfix, not in the development notes. Best at 60: Trueshot Aura rank 5 (+50 ranged attack power) and Aspect of the Hawk rank 6 (+55).",
      "source": {
       "label": "foreverchanges.pro patch notes",
       "url": "https://foreverchanges.pro/patch-notes"
@@ -491,7 +492,7 @@
    "endData": null,
    "lines": [
     {
-     "title": "Warriors: Elune's Light goes out with the other cooldowns, never during Recklessness or just before it",
+     "title": "Night Elf warriors: Elune's Light with the other cooldowns, not in Recklessness",
      "kind": "rotation",
      "races": [
       "Night Elf"
@@ -507,7 +508,7 @@
      ]
     },
     {
-     "title": "Fury: in fights long enough for two Death Wishes, Recklessness waits for the last one instead of going at the pull",
+     "title": "Fury: Recklessness waits for the last Death Wish in long fights",
      "kind": "rotation",
      "builds": [
       "warrior__fury",
@@ -518,17 +519,18 @@
      ]
     },
     {
-     "title": "Frostfire: Evocation and the cheaper Frostfire Bolt rank share one cutoff (75 sec left), so 3 to 4 minute fights no longer run out of mana",
+     "title": "Frostfire: no longer runs out of mana in 3 to 4 minute fights",
      "kind": "rotation",
      "builds": [
       "mage__frostfire"
      ],
      "commits": [
       "8624ba1"
-     ]
+     ],
+     "note": "Evocation and the cheaper Frostfire Bolt start 75 sec before the end."
     },
     {
-     "title": "Fire: Troll Berserking and Orc Blood Fury wait for 5 Fire Vulnerability stacks, after the opening Scorches",
+     "title": "Fire: Berserking and Blood Fury wait for 5 Fire Vulnerability stacks",
      "kind": "rotation",
      "builds": [
       "mage__fire"
@@ -546,7 +548,7 @@
      ]
     },
     {
-     "title": "Troll Warlocks: Berserking waits for the first Shadow Bolt or Incinerate, after the instant opener",
+     "title": "Troll warlocks: Berserking waits for the first Shadow Bolt or Incinerate",
      "kind": "rotation",
      "races": [
       "Troll"
@@ -562,7 +564,7 @@
      ]
     },
     {
-     "title": "Gnome Warlocks on Curse of the Elements duty: Eureka! is saved for the spells it boosts, as on the other builds",
+     "title": "Gnome warlocks on curse duty: Eureka! saved for the spells it boosts",
      "kind": "rotation",
      "races": [
       "Gnome"
@@ -581,7 +583,7 @@
      ]
     },
     {
-     "title": "Elemental: the lower rank of Lightning Bolt starts once the mana won't last the rest of the fight, not at 20% mana, and never while Clearcasting makes the bolt free",
+     "title": "Elemental: lower-rank Lightning Bolt only when mana won't last the fight",
      "kind": "rotation",
      "builds": [
       "shaman__elemental-level60",
@@ -592,7 +594,7 @@
      ]
     },
     {
-     "title": "Holy Shock Paladin: Light's Vigil goes down to 30% mana at any fight length (in fights over 3.5 minutes it stopped at 60%, which cost damage)",
+     "title": "Holy Shock Paladin: Light's Vigil down to 30% mana in every fight",
      "kind": "rotation",
      "builds": [
       "paladin__level_60_shock",
@@ -600,10 +602,11 @@
      ],
      "commits": [
       "d8185e9"
-     ]
+     ],
+     "note": "In fights over 3.5 minutes it stopped at 60%."
     },
     {
-     "title": "Holy Shock Paladin vs Undead: once the mana, counting the potions and runes still to come, won't last the fight, Light's Vigil uses only the top of the mana bar",
+     "title": "Holy Shock Paladin vs Undead: Light's Vigil saves mana when it would run out",
      "kind": "rotation",
      "builds": [
       "paladin__level_60_shock_undead"
