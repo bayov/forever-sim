@@ -487,7 +487,130 @@
    "date": "2026-10-28",
    "baselineData": "04422dc6b7b6fb6efb17d44deac37e4a908c8010",
    "endData": null,
-   "lines": [],
+   "lines": [
+    {
+     "title": "Warriors: Elune's Light goes out with the other cooldowns, never during Recklessness or just before it",
+     "kind": "rotation",
+     "races": [
+      "Night Elf"
+     ],
+     "classes": [
+      "Warrior"
+     ],
+     "parts": [
+      "elune"
+     ],
+     "commits": [
+      "dd4ff5d"
+     ]
+    },
+    {
+     "title": "Fury: in fights long enough for two Death Wishes, Recklessness waits for the last one instead of going at the pull",
+     "kind": "rotation",
+     "builds": [
+      "warrior__fury",
+      "warrior__fury-duty-battle-shout"
+     ],
+     "commits": [
+      "dd4ff5d"
+     ]
+    },
+    {
+     "title": "Frostfire: Evocation and the cheaper Frostfire Bolt rank share one cutoff (75 sec left), so 3 to 4 minute fights no longer run out of mana",
+     "kind": "rotation",
+     "builds": [
+      "mage__frostfire"
+     ],
+     "commits": [
+      "8624ba1"
+     ]
+    },
+    {
+     "title": "Fire: Troll Berserking and Orc Blood Fury wait for 5 Fire Vulnerability stacks, after the opening Scorches",
+     "kind": "rotation",
+     "builds": [
+      "mage__fire"
+     ],
+     "races": [
+      "Troll",
+      "Orc"
+     ],
+     "parts": [
+      "berserking",
+      "bloodfury"
+     ],
+     "commits": [
+      "8624ba1"
+     ]
+    },
+    {
+     "title": "Troll Warlocks: Berserking waits for the first Shadow Bolt or Incinerate, after the instant opener",
+     "kind": "rotation",
+     "races": [
+      "Troll"
+     ],
+     "classes": [
+      "Warlock"
+     ],
+     "parts": [
+      "berserking"
+     ],
+     "commits": [
+      "d387da4"
+     ]
+    },
+    {
+     "title": "Gnome Warlocks on Curse of the Elements duty: Eureka! is saved for the spells it boosts, as on the other builds",
+     "kind": "rotation",
+     "races": [
+      "Gnome"
+     ],
+     "builds": [
+      "warlock__affliction-duty-curse",
+      "warlock__demonology-duty-curse",
+      "warlock__destruction-duty-curse",
+      "warlock__destruction_fire-duty-curse"
+     ],
+     "parts": [
+      "eureka"
+     ],
+     "commits": [
+      "d387da4"
+     ]
+    },
+    {
+     "title": "Elemental: the lower rank of Lightning Bolt starts once the mana won't last the rest of the fight, not at 20% mana, and never while Clearcasting makes the bolt free",
+     "kind": "rotation",
+     "builds": [
+      "shaman__elemental-level60",
+      "shaman__elemental-level60-mana-tide"
+     ],
+     "commits": [
+      "3ad93a8"
+     ]
+    },
+    {
+     "title": "Holy Shock Paladin: Light's Vigil goes down to 30% mana at any fight length (in fights over 3.5 minutes it stopped at 60%, which cost damage)",
+     "kind": "rotation",
+     "builds": [
+      "paladin__level_60_shock",
+      "paladin__level_60_shock-duty-crusader"
+     ],
+     "commits": [
+      "d8185e9"
+     ]
+    },
+    {
+     "title": "Holy Shock Paladin vs Undead: once the mana, counting the potions and runes still to come, won't last the fight, Light's Vigil uses only the top of the mana bar",
+     "kind": "rotation",
+     "builds": [
+      "paladin__level_60_shock_undead"
+     ],
+     "commits": [
+      "d8185e9"
+     ]
+    }
+   ],
    "internal": []
   }
  ]
