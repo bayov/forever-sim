@@ -653,6 +653,10 @@
     {
      "commit": "1696488",
      "why": "caveat wording, no numbers change"
+    },
+    {
+     "commit": "c282ae5",
+     "why": "Execute's casts were missing from the ability table and the rotation's cast counts; no DPS moves"
     }
    ]
   }
