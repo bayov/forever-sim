@@ -6,9 +6,9 @@ hunter__lone-wolf                      NightElf 1093.8  SkyborneHighOrder 1093.5
 hunter__marksmanship                   Orc 1116.1  NightElf 1109.6  Human 1105.4  SkyborneHighOrder 1105.1  SkyborneWindshaper 1105.1  Troll 1102.5  Dwarf 1101.1  Tauren 1093.5
 hunter__survival                       Orc 1028.8  NightElf 1019.1  SkyborneHighOrder 1016.3  SkyborneWindshaper 1016.3  Human 1015.4  Troll 1014.6  Dwarf 1011.0  Tauren 1005.1
 mage__arcane                           Gnome 902.0  Undead 900.8  Orc 899.5  Human 899.4  SkyborneHighOrder 896.0  Troll 893.0
-mage__fire                             Gnome 1090.6  Human 1089.5  Undead 1086.9  Orc 1083.9  SkyborneHighOrder 1079.5  Troll 1077.4
+mage__fire                             Gnome 1090.6  Human 1089.5  Undead 1086.9  Orc 1086.2  SkyborneHighOrder 1079.5  Troll 1077.8
 mage__frost                            SkyborneHighOrder 912.1  Undead 911.8  Orc 909.9  Gnome 909.1  Human 907.7  Troll 906.9
-mage__frostfire                        Human 1089.9  Gnome 1089.3  Undead 1081.2  Orc 1079.1  Troll 1076.3  SkyborneHighOrder 1076.0
+mage__frostfire                        Human 1089.9  Gnome 1088.2  Orc 1080.5  Undead 1079.6  SkyborneHighOrder 1076.6  Troll 1076.5
 paladin__level_60                      Undead 944.1  Human 939.7  Dwarf 935.9
 paladin__level_60_shock                Undead 887.7  Human 880.9  Dwarf 877.6
 paladin__level_60_shock_ret            Undead 931.2  Human 925.2  Dwarf 922.3
@@ -22,16 +22,16 @@ rogue__mutilate                        Undead 723.8  Orc 717.0  Gnome 716.7  Sky
 rogue__seal-fate-daggers               Undead 734.8  Gnome 731.1  Orc 729.5  SkyborneHighOrder 726.9  SkyborneWindshaper 726.9  NightElf 726.2  Human 725.4  Troll 724.5  Dwarf 723.0
 rogue__seal-fate-swords                Undead 732.2  Orc 726.4  Gnome 724.6  NightElf 723.7  SkyborneHighOrder 723.7  SkyborneWindshaper 723.7  Human 722.7  Troll 721.1  Dwarf 719.8
 rogue__subtlety                        Undead 717.1  NightElf 714.6  Gnome 714.1  Orc 713.4  SkyborneHighOrder 709.7  SkyborneWindshaper 709.7  Human 708.0  Troll 707.1  Dwarf 705.5
-shaman__elemental-level60-mana-tide    SkyborneWindshaper 756.9  Orc 756.0  Dwarf 752.5  Troll 752.2  Tauren 747.5
-shaman__elemental-level60              SkyborneWindshaper 772.1  Orc 771.4  Dwarf 767.8  Troll 767.2  Tauren 762.6
+shaman__elemental-level60-mana-tide    SkyborneWindshaper 757.0  Orc 756.1  Dwarf 752.6  Troll 752.4  Tauren 747.6
+shaman__elemental-level60              SkyborneWindshaper 772.5  Orc 771.8  Dwarf 768.3  Troll 767.6  Tauren 763.1
 shaman__enhancement-imp-gw             Orc 879.6  SkyborneWindshaper 878.5  Troll 874.3  Dwarf 873.5  Tauren 868.0
 shaman__enhancement-level60            Orc 883.8  SkyborneWindshaper 882.5  Troll 878.6  Dwarf 877.4  Tauren 871.9
 shaman__enhancement-mana-tide          Orc 795.9  SkyborneWindshaper 793.7  Troll 791.2  Dwarf 790.6  Tauren 785.4
 shaman__enhancement-water-shield       Orc 835.5  SkyborneWindshaper 834.6  Troll 829.9  Dwarf 829.1  Tauren 824.3
-warlock__affliction                    Orc 1019.8  Human 1019.7  Gnome 1017.0  Undead 1016.3  Troll 1013.3
-warlock__demonology                    Orc 1052.0  Gnome 1050.7  Undead 1050.1  Human 1049.5  Troll 1043.8
-warlock__destruction                   Orc 1002.1  Undead 1001.6  Human 1000.1  Gnome 998.4  Troll 992.6
-warlock__destruction_fire              Undead 987.4  Orc 983.7  Human 982.0  Gnome 978.7  Troll 975.9
-warrior__arms                          Undead 905.0  Orc 904.4  SkyborneHighOrder 899.7  SkyborneWindshaper 899.7  NightElf 899.6  Human 897.6  Troll 896.4  Gnome 895.4  Dwarf 894.7  Tauren 890.0
-warrior__fury                          Orc 983.1  Undead 981.7  NightElf 977.6  Human 977.1  Troll 977.1  SkyborneHighOrder 976.3  SkyborneWindshaper 976.3  Dwarf 973.4  Gnome 971.1  Tauren 965.6
-warrior__fury_2h                       Orc 963.3  Undead 960.8  Troll 954.6  Human 953.6  NightElf 950.7  SkyborneHighOrder 950.4  SkyborneWindshaper 950.4  Dwarf 950.2  Gnome 949.4  Tauren 944.7
+warlock__affliction                    Orc 1019.8  Human 1019.7  Gnome 1017.0  Undead 1016.3  Troll 1011.3
+warlock__demonology                    Orc 1052.0  Gnome 1050.7  Undead 1050.1  Human 1049.5  Troll 1045.2
+warlock__destruction                   Orc 1002.1  Undead 1001.6  Human 1000.1  Gnome 998.4  Troll 992.4
+warlock__destruction_fire              Undead 987.4  Orc 983.7  Human 982.0  Gnome 978.7  Troll 976.8
+warrior__arms                          Undead 905.0  Orc 904.4  NightElf 899.8  SkyborneHighOrder 899.7  SkyborneWindshaper 899.7  Human 897.6  Troll 896.4  Gnome 895.4  Dwarf 894.7  Tauren 890.0
+warrior__fury                          Orc 983.1  Undead 981.7  NightElf 977.7  Human 977.1  Troll 977.1  SkyborneHighOrder 976.3  SkyborneWindshaper 976.3  Dwarf 973.4  Gnome 971.1  Tauren 965.6
+warrior__fury_2h                       Orc 963.3  Undead 960.8  NightElf 957.8  Troll 954.6  Human 953.6  SkyborneHighOrder 950.4  SkyborneWindshaper 950.4  Dwarf 950.2  Gnome 949.4  Tauren 944.7
