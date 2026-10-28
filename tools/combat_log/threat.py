@@ -3,46 +3,51 @@
 The combat log has no threat. BayovCore's Threat module (bayovui/addons/BayovCore/Modules/
 Threat.lua in the WoW repo) records the raw threat the game reports, for us, our pet and two
 group members on every mob we fight, and wow-combat-logs' archive.py keeps each log's fights
-next to it as <log>.threat.jsonl.xz (its docstring has the format). The addon writes only the
+next to it as <log>.threat.jsonl.xz, plus <log>.threat.2.jsonl.xz and on for fights that
+reached the game's file later (its docstring has the format). The addon writes only the
 numbers. This lines them up with the log and works out which actions moved them.
 
-    python3 -I tools/combat_log/threat.py <log> [threat file] [--who NAME] [--rows]
+    python3 -I tools/combat_log/threat.py <log> [threat file ...] [--who NAME] [--rows]
 
-<log> is the combat log, plain, .xz or .gz. Without a threat file we look for
-<log>.threat.jsonl.xz next to it, then in ~/wow-combat-logs/<client>/.
+<log> is the combat log, plain, .xz or .gz. Without threat files we take every
+<log>.threat*.jsonl.xz next to it, else in ~/wow-combat-logs/<client>/.
 
 How it matches:
 
 1. Actions. One press can write several lines in the same moment (Sinister Strike's cast,
    its damage and its combo point; a buff's cast and an aura on each party member). A
-   player's lines of one spell within ACTION_GAP sec are one action. A cast followed by that
-   spell's damage or miss within CAST_LAND sec is the same action (Fireball's flight), and
-   combo point gains move no threat, so neither counts on its own. Lines from a player's
-   totems and guardians (SPELL_SUMMON) are the player's.
-2. Which actions can move threat on a mob: the player's hits, misses, casts and auras on that
-   mob, and everything they do that isn't aimed at a mob (heals, energizes, buffs, shouts),
-   which the game spreads over every mob they're on. Actions on other mobs don't move it.
+   player's lines of one spell on one target within ACTION_GAP sec are one action, so an AoE
+   is an action on each mob it hits. A cast followed by that spell's damage or miss within
+   CAST_LAND sec is the same action (Fireball's flight); a cast with no target (Thunder Clap)
+   whose hits follow is dropped, since the hits carry its threat. Lines of a player's totems
+   and guardians (SPELL_SUMMON, anywhere in the log) are the player's. An energize belongs to
+   whoever gains it, since the gain is what threatens; combo points threaten nobody. Auras a
+   player gets without casting anything (procs: Flurry, Clearcasting) threaten nobody either.
+2. Which actions can move threat on a mob: the player's actions on that mob, and their
+   actions not aimed at a mob (heals, energizes, buffs, shouts), which the game spreads over
+   every mob they're on. Actions on other mobs don't move it.
 3. The lag. The server sends a threat update a moment after the action it counts, and the
-   recorded clock is to a frame (`rough` fights to a second). For each rise in a player's
-   threat we take the time back to their latest action that could have moved it, and use the
-   median as the fight's lag.
-4. Each rise in a player's threat on a mob covers the actions between their previous reading
-   and this one, shifted by the lag. A rise with exactly one action is "clean" and gives that
-   action's threat. Falls (the mob died or reset, Fade, Feign Death, a knockback's threat
-   cut) and drops off the list (-1) are counted but never a sample.
+   recorded clock is to a frame (`rough` fights to a second). Each rise in a player's
+   threat covers the actions between their previous reading and this one, both moved back
+   by the lag. We try every lag from -1 to LAG_MAX sec (-2 to LAG_MAX + 1 when rough), in
+   10 ms steps, and keep the middle of the run of lags that make the most rises cover
+   exactly one action. A fight with fewer than MIN_RISES rises takes the log's lag, fitted
+   over all its exact-clock fights together.
+4. A rise with exactly one action is "clean" and gives that action's threat. Falls (the mob
+   died or reset, Fade, Feign Death, a knockback's threat cut) and drops off the list (-1)
+   are counted but never a sample. A player's first reading on a mob counts from 0 only when
+   they did nothing to that mob in the LOOKBACK sec before its window, since a fight cut by a
+   /reload, or a pick who pulled before we saw the mob, starts with threat already there.
 5. Per player and ability, the clean samples: how many, the median threat, and for damage the
    median threat per point of damage (the amount, which leaves out what was resisted, blocked
    or absorbed). An action not aimed at a mob is split over the mobs the player is on, so its
-   samples are multiplied back by that count ("x mobs"). The game's raw threat is Classic's
-   threat times 100, so we say which scale the white hits point to.
-
-Threat starts at 0, so a player's first reading counts from the pull (the actions up to PULL
-sec before the fight's first reading). A -1 reading is a player dropping off the mob's list.
-Their threat is 0 after it.
+   sample is the rise times that count ("x mobs"), once per action. The game's raw threat is
+   Classic's threat times 100, so we say which scale the white hits point to.
 """
 import argparse
 import bisect
 import datetime
+import glob
 import gzip
 import json
 import lzma
@@ -58,39 +63,44 @@ import cl  # noqa: E402
 
 # How long before a fight's first reading its first actions can be.
 PULL = 3
-# Lines of one spell from one player this close together are one action.
+# Lines of one spell from one player on one target this close together are one action.
 ACTION_GAP = 0.05
 # A cast whose damage or miss lands within this long is one action with it.
 CAST_LAND = 3.0
-# The furthest back an action can be from the rise it caused, for the lag.
+# The lags we try go up to this far.
 LAG_MAX = 1.5
+# A fight with fewer rises than this takes the log's lag.
+MIN_RISES = 10
+# How far back we look for a player's earlier actions on a mob, before their first reading.
+LOOKBACK = 120
+# The most rises a lag is fitted on.
+FIT_SAMPLE = 3000
 
-# The lines of a player that can move threat.
+# The lines that can move threat.
 THREATENS = ('SWING_DAMAGE', 'SWING_MISSED', 'RANGE_DAMAGE', 'RANGE_MISSED', 'SPELL_DAMAGE',
              'SPELL_MISSED', 'SPELL_PERIODIC_DAMAGE', 'SPELL_PERIODIC_MISSED', 'SPELL_CAST_SUCCESS',
              'SPELL_AURA_APPLIED', 'SPELL_AURA_REFRESH', 'SPELL_AURA_APPLIED_DOSE', 'DAMAGE_SHIELD',
              'DAMAGE_SHIELD_MISSED', 'SPELL_HEAL', 'SPELL_PERIODIC_HEAL', 'SPELL_ENERGIZE',
-             'SPELL_PERIODIC_ENERGIZE', 'SPELL_DISPEL', 'SPELL_INTERRUPT')
+             'SPELL_PERIODIC_ENERGIZE', 'SPELL_DRAIN', 'SPELL_PERIODIC_DRAIN', 'SPELL_LEECH',
+             'SPELL_PERIODIC_LEECH', 'SPELL_DISPEL', 'SPELL_INTERRUPT')
 LANDS = ('SPELL_DAMAGE', 'SPELL_MISSED', 'RANGE_DAMAGE', 'RANGE_MISSED')
+AURAS = ('SPELL_AURA_APPLIED', 'SPELL_AURA_REFRESH', 'SPELL_AURA_APPLIED_DOSE')
+ENERGIZES = ('SPELL_ENERGIZE', 'SPELL_PERIODIC_ENERGIZE')
 COMBO_POINTS = '4'
 
 
-def threat_path(log):
+def threat_paths(log):
+    """Every threat file of a log: next to it, else in ~/wow-combat-logs/<client>/."""
     base = os.path.basename(log)
     for ext in ('.txt.xz', '.txt.gz', '.txt'):
         if base.endswith(ext):
             base = base[:-len(ext)]
             break
-    name = base + '.threat.jsonl.xz'
-    here = os.path.join(os.path.dirname(log), name)
-    if os.path.exists(here):
-        return here
-    archive = os.path.expanduser('~/wow-combat-logs')
-    for client in sorted(os.listdir(archive)) if os.path.isdir(archive) else []:
-        p = os.path.join(archive, client, name)
-        if os.path.exists(p):
-            return p
-    return None
+    pattern = glob.escape(base) + '.threat*.jsonl.xz'
+    found = glob.glob(os.path.join(glob.escape(os.path.dirname(log) or '.'), pattern))
+    if not found:
+        found = glob.glob(os.path.join(glob.escape(os.path.expanduser('~/wow-combat-logs')), '*', pattern))
+    return sorted(found)
 
 
 def load_log(path):
@@ -137,7 +147,7 @@ def amount(e):
 
 
 def part(e):
-    """What a line adds to its action's name: Melee, a miss type, a tick, a heal."""
+    """What a line adds to its action's name: a miss type, a tick, a heal."""
     kind = e.ev.split('_', 1)[1]
     if kind.endswith('MISSED'):
         try:
@@ -147,22 +157,25 @@ def part(e):
     return {'PERIODIC_DAMAGE': 'tick', 'HEAL': 'heal', 'PERIODIC_HEAL': 'heal tick', 'ENERGIZE': 'energize',
             'PERIODIC_ENERGIZE': 'energize', 'CAST_SUCCESS': 'cast', 'AURA_APPLIED': 'aura',
             'AURA_REFRESH': 'aura', 'AURA_APPLIED_DOSE': 'aura stack', 'DISPEL': 'dispel',
-            'INTERRUPT': 'interrupt'}.get(kind)
+            'INTERRUPT': 'interrupt', 'DRAIN': 'drain', 'PERIODIC_DRAIN': 'drain',
+            'LEECH': 'leech', 'PERIODIC_LEECH': 'leech'}.get(kind)
 
 
 class Action:
-    """One press: a player's lines of one spell at one moment."""
+    """One press: a player's lines of one spell on one target at one moment."""
 
-    def __init__(self, e, by):
-        self.t, self.lines, self.by = e.t, [e], by
-        self.key = 'melee' if e.ev.startswith('SWING') else (e.spellId, e.spell)
+    def __init__(self, e, by, key):
+        self.t, self.lines, self.by, self.key = e.t, [e], by, key
         self.mob = e.dstGUID if is_mob(e) else None
+
+    def spell(self):
+        return self.key[1]
 
     def label(self):
         e = self.lines[0]
         damage = [x for x in self.lines if amount(x) is not None]
         main = damage[0] if damage else next((x for x in self.lines if x.ev in LANDS), e)
-        if self.key == 'melee':
+        if self.spell() == 'melee':
             name = 'Melee'
         elif main.ev.startswith('RANGE'):
             name = 'Ranged ' + (main.spell or '')
@@ -180,22 +193,35 @@ class Action:
         return sum(n) if n else None
 
 
-def actions_of(evs, guid):
-    """A player's actions (theirs and their summons'), by time, and by the mob they're on (None
-    for the actions not aimed at a mob)."""
-    summons = {e.dstGUID: e.dst for e in evs if e.ev == 'SPELL_SUMMON' and e.srcGUID == guid}
+def summons_of(evs):
+    """Summoned GUID -> (owner GUID, name), from every SPELL_SUMMON in the log."""
+    return {e.dstGUID: (e.srcGUID, e.dst) for e in evs if e.ev == 'SPELL_SUMMON'}
+
+
+def actions_of(evs, guid, summons, players):
+    """A player's actions (theirs, their summons' and the energizes they gain), by the mob
+    they're on (None for the actions not aimed at a mob). `players` are the GUIDs the fight
+    follows, whose summons (a pet) are theirs and not their owner's."""
     acts = []
     last = {}
     for e in evs:
         if e.ev not in THREATENS:
             continue
-        mine = e.srcGUID == guid
-        if not mine and e.srcGUID not in summons:
-            continue
-        if e.ev in ('SPELL_ENERGIZE', 'SPELL_PERIODIC_ENERGIZE') and len(e.f) > 2 and e.f[-2] == COMBO_POINTS:
-            continue
-        key = 'melee' if e.ev.startswith('SWING') else (e.spellId, e.spell)
-        k = (e.srcGUID, key)
+        if e.ev in ENERGIZES:
+            # The gain threatens, so it's the receiver's; combo points threaten nobody.
+            if e.dstGUID != guid or (len(e.f) > 2 and e.f[-2] == COMBO_POINTS):
+                continue
+            by = None
+        elif e.srcGUID == guid:
+            by = None
+        else:
+            owner = summons.get(e.srcGUID)
+            if not owner or owner[0] != guid or e.srcGUID in players:
+                continue
+            by = owner[1] or 'summon'
+        spell = 'melee' if e.ev.startswith('SWING') else (e.spellId, e.spell)
+        target = e.dstGUID if is_mob(e) else None
+        k = (e.srcGUID, spell, target)
         a = last.get(k)
         # A cast is joined by its own landing within CAST_LAND, anything else within ACTION_GAP.
         landing = a is not None and e.ev in LANDS and any(x.ev == 'SPELL_CAST_SUCCESS' for x in a.lines) \
@@ -204,15 +230,26 @@ def actions_of(evs, guid):
             a.lines.append(e)
             if landing:
                 a.t = e.t  # the threat comes when it lands
-            if a.mob is None and is_mob(e):
-                a.mob = e.dstGUID
             continue
-        a = Action(e, None if mine else summons.get(e.srcGUID) or 'summon')
+        a = Action(e, by, k)
         last[k] = a
         acts.append(a)
-    acts.sort(key=lambda a: a.t)
-    on = defaultdict(list)
+    kept = []
     for a in acts:
+        casts = any(x.ev == 'SPELL_CAST_SUCCESS' for x in a.lines)
+        if a.mob is None:
+            # A proc's aura on a friend or ourselves, with no cast: no threat.
+            a.lines = [x for x in a.lines if casts or x.ev not in AURAS]
+            if not a.lines:
+                continue
+            # An untargeted cast whose hits follow (an AoE): the hits carry the threat.
+            if all(x.ev == 'SPELL_CAST_SUCCESS' for x in a.lines) and any(
+                    b.mob and b.key[:2] == a.key[:2] and 0 <= b.t - a.t <= CAST_LAND for b in acts):
+                continue
+        kept.append(a)
+    kept.sort(key=lambda a: a.t)
+    on = defaultdict(list)
+    for a in kept:
         on[a.mob].append(a)
     return on
 
@@ -244,11 +281,13 @@ def series_of(fight):
 
 
 def changes(s):
-    """(from, to, delta, dropped) for each change in a series."""
+    """(from, to, delta, dropped, first) for each change in a series."""
     prev = None
+    first = True
     for t, v, dropped in s.points:
         if prev is not None and v != prev[1]:
-            yield prev[0], t, v - prev[1], dropped
+            yield prev[0], t, v - prev[1], dropped, first
+            first = False
         prev = (t, v)
 
 
@@ -262,24 +301,37 @@ class Lines:
     def between(self, a, b):
         return self.acts[bisect.bisect_right(self.ts, a):bisect.bisect_right(self.ts, b)]
 
-    def before(self, b):
-        i = bisect.bisect_right(self.ts, b)
-        return self.acts[i - 1] if i else None
+    def count(self, a, b):
+        return bisect.bisect_right(self.ts, b) - bisect.bisect_right(self.ts, a)
 
 
-def fit_lag(series, lines_for, rough):
-    """The median time from a rise back to the player's latest action that could have caused it."""
-    most = LAG_MAX + (1.0 if rough else 0.0)
-    gaps = []
+def rises(series, lines_for):
+    """(lines, from, to) of each rise worth matching."""
+    out = []
     for s in series.values():
         lines = lines_for(s)
-        for a, b, d, dropped in changes(s):
-            if d <= 0 or dropped:
-                continue
-            act = lines.before(b + (1.0 if rough else 0.0))
-            if act and -1.0 <= b - act.t <= most:
-                gaps.append(b - act.t)
-    return (statistics.median(gaps), len(gaps)) if gaps else (0.0, 0)
+        for a, b, d, dropped, first in changes(s):
+            if d > 0 and not dropped:
+                out.append((lines, a, b))
+    return out
+
+
+def fit_lag(found, rough):
+    """The middle of the run of lags that make the most rises cover exactly one action, and
+    how many it makes so."""
+    if not found:
+        return None, 0
+    # An even sample is as good a fit as every rise, and a raid log has tens of thousands.
+    if len(found) > FIT_SAMPLE:
+        found = found[::-(-len(found) // FIT_SAMPLE)]
+    lo, hi = (-2.0, LAG_MAX + 1.0) if rough else (-1.0, LAG_MAX)
+    scores = []
+    for step in range(int(round(lo * 100)), int(round(hi * 100)) + 1):
+        lag = step / 100.0
+        scores.append((sum(1 for lines, a, b in found if lines.count(a - lag, b - lag) == 1), lag))
+    top = max(sc for sc, _ in scores)
+    best = [lag for sc, lag in scores if sc == top]
+    return best[len(best) // 2], top
 
 
 def mobs_on(series, guid, t):
@@ -297,60 +349,86 @@ def mobs_on(series, guid, t):
     return max(n, 1)
 
 
+class Fight:
+    """A fight with its series and each player's actions, for matching."""
+
+    def __init__(self, fight, evs, times, summons):
+        self.fight = fight
+        self.series = series_of(fight)
+        self.start = epoch(fight['at'])
+        self.rough = bool(fight.get('rough'))
+        end = max((p[0] for s in self.series.values() for p in s.points), default=self.start)
+        span = LAG_MAX + (1.0 if self.rough else 0.0)
+        near = evs[bisect.bisect_left(times, self.start - PULL - span - LOOKBACK):
+                   bisect.bisect_right(times, end + span)]
+        players = {w['guid'] for w in fight['who']}
+        self.acts = {w['guid']: actions_of(near, w['guid'], summons, players) for w in fight['who']}
+        self.cache = {}
+
+    def lines_for(self, s):
+        key = (s.who['guid'], s.mob['guid'])
+        if key not in self.cache:
+            on = self.acts.get(s.who['guid'], {})
+            self.cache[key] = Lines(on.get(s.mob['guid'], []) + on.get(None, []))
+        return self.cache[key]
+
+    def mob_lines(self, s):
+        return Lines(self.acts.get(s.who['guid'], {}).get(s.mob['guid'], []))
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     ap.add_argument('log')
-    ap.add_argument('threat', nargs='?')
+    ap.add_argument('threat', nargs='*')
     ap.add_argument('--who', help='only this player (name)')
     ap.add_argument('--rows', action='store_true', help='print every change and the actions it covers')
     args = ap.parse_args()
 
-    tpath = args.threat or threat_path(args.log)
-    if not tpath:
+    paths = args.threat or threat_paths(args.log)
+    if not paths:
         sys.exit('no threat file for %s (archive.py writes <log>.threat.jsonl.xz)' % args.log)
-    fights = load_fights(tpath)
+    fights = [f for p in paths for f in load_fights(p)]
+    fights.sort(key=lambda f: f['at'])
     evs = load_log(args.log)
     evs.sort(key=lambda e: e.t)
     times = [e.t for e in evs]
-    print('%s: %d fights, %d lines in the log' % (os.path.basename(tpath), len(fights), len(evs)))
+    summons = summons_of(evs)
+    print('%s: %d fights, %d lines in the log' % (', '.join(os.path.basename(p) for p in paths),
+                                                    len(fights), len(evs)))
+
+    matched = [Fight(f, evs, times, summons) for f in fights if f.get('readings')]
+    # The log's lag, over every exact-clock fight, for the fights with few rises.
+    pooled = [r for m in matched if not m.rough for r in rises(m.series, m.lines_for)]
+    log_lag, _ = fit_lag(pooled, False)
 
     # (who guid, ability) -> list of (threat, damage or None)
     samples = defaultdict(list)
     names = {}
-    mixed, falls = defaultdict(int), defaultdict(int)
-    for fight in fights:
-        series = series_of(fight)
-        if not series:
-            continue
-        start = epoch(fight['at'])
-        end = max(p[0] for s in series.values() for p in s.points)
-        span = LAG_MAX + (1.0 if fight.get('rough') else 0.0)
-        near = evs[bisect.bisect_left(times, start - PULL - span):bisect.bisect_right(times, end + span)]
-        acts = {w['guid']: actions_of(near, w['guid']) for w in fight['who']}
-        cache = {}
-
-        def lines_for(s):
-            key = (s.who['guid'], s.mob['guid'])
-            if key not in cache:
-                on = acts.get(s.who['guid'], {})
-                cache[key] = Lines(on.get(s.mob['guid'], []) + on.get(None, []))
-            return cache[key]
-
-        lag, matched = fit_lag(series, lines_for, fight.get('rough'))
+    mixed, falls, unsure = defaultdict(int), defaultdict(int), defaultdict(int)
+    for m in matched:
+        fight, series = m.fight, m.series
+        found = rises(series, m.lines_for)
+        lag, top = fit_lag(found, m.rough)
+        how = 'fitted'
+        if (lag is None or len(found) < MIN_RISES) and not m.rough and log_lag is not None:
+            lag, how = log_lag, "the log's"
+        if lag is None:
+            lag, how = 0.0, 'none to fit'
         who = ', '.join('%s (%s)' % (w.get('name') or '?', (w.get('class') or w.get('kind') or '?').lower())
                         for w in fight['who'])
-        print('\n%s  %s, %d readings, %d mobs, lag %+.3f sec (from %d rises)%s%s' % (
-            fight['at'], fight.get('zone') or '?', len(fight['readings']), len(fight['mobs']), lag, matched,
-            ', %d hidden' % fight['secret'] if fight.get('secret') else '',
-            ', rough clock' if fight.get('rough') else ''))
+        print('\n%s  %s, %d readings, %d mobs, lag %+.2f sec (%s, %d of %d rises clean)%s%s' % (
+            fight['at'], fight.get('zone') or '?', len(fight['readings']), len(fight['mobs']), lag, how,
+            top, len(found), ', %d hidden' % fight['secret'] if fight.get('secret') else '',
+            ', rough clock' if m.rough else ''))
         print('  ' + who)
+        used = set()
         for s in series.values():
             g = s.who['guid']
             names[g] = '%s (%s)' % (s.who.get('name') or '?', (s.who.get('class') or s.who.get('kind') or '?').lower())
             if args.who and s.who.get('name') != args.who:
                 continue
-            lines = lines_for(s)
-            for a, b, d, dropped in changes(s):
+            lines = m.lines_for(s)
+            for a, b, d, dropped, first in changes(s):
                 got = lines.between(a - lag, b - lag)
                 if args.rows:
                     print('    %s %s on %s: %+g%s  %s' % (
@@ -360,15 +438,25 @@ def main():
                         or '(no action)'))
                 if d <= 0 or dropped:
                     falls[g] += 1
-                elif len(got) == 1:
-                    act = got[0]
-                    if act.mob is None:
-                        k = mobs_on(series, g, b)
-                        samples[(g, act.label() + ' x mobs')].append((d * k, None))
-                    else:
-                        samples[(g, act.label())].append((d, act.damage()))
-                elif got:
-                    mixed[g] += 1
+                    continue
+                if first and m.mob_lines(s).count(a - lag - LOOKBACK, a - lag):
+                    # They hit this mob before the fight's first reading: the threat they
+                    # had then isn't 0.
+                    unsure[g] += 1
+                    continue
+                if len(got) != 1:
+                    if got:
+                        mixed[g] += 1
+                    continue
+                act = got[0]
+                if act.mob is None:
+                    if id(act) in used:
+                        continue
+                    used.add(id(act))
+                    k = mobs_on(series, g, b)
+                    samples[(g, act.label() + ' x mobs')].append((d * k, None))
+                else:
+                    samples[(g, act.label())].append((d, act.damage()))
 
     print('\nClean samples (one action between two readings):')
     melee = []
@@ -382,13 +470,14 @@ def main():
         print('  %-24s %-40s %4d  threat %10.1f%s' % (
             names.get(g, g), ability, len(got), threat,
             '  per damage %.2f' % statistics.median(per) if per else ''))
-    for g in sorted(set(mixed) | set(falls), key=lambda g: names.get(g, g)):
-        print('  %s: %d rises covered more than one action, %d falls and drops (not used)'
-              % (names.get(g, g), mixed[g], falls[g]))
+    for g in sorted(set(mixed) | set(falls) | set(unsure), key=lambda g: names.get(g, g)):
+        print('  %s: %d rises covered more than one action, %d falls and drops, %d first readings '
+              'after earlier hits (not used)' % (names.get(g, g), mixed[g], falls[g], unsure[g]))
     if melee:
-        m = statistics.median(melee)
+        mid = statistics.median(melee)
         print('\nWhite hits make %.1f threat per point of damage, so the raw threat looks %s.' % (
-            m, 'scaled by 100 (Classic threat x 100)' if 50 < m < 200 else 'unscaled' if 0.5 < m < 2 else 'unusual'))
+            mid, 'scaled by 100 (Classic threat x 100)' if 50 < mid < 200 else 'unscaled' if 0.5 < mid < 2
+            else 'unusual'))
 
 
 if __name__ == '__main__':

@@ -27,7 +27,8 @@ class Ev:
 def load(path):
     out = []
     opener = lzma.open if path.endswith('.xz') else open
-    for line in opener(path, 'rt', encoding='utf-8'):
+    # A name can hold a byte that isn't UTF-8 (a pet's, on 2026-10-21), so we don't stop on one.
+    for line in opener(path, 'rt', encoding='utf-8', errors='replace'):
         line = line.rstrip('\n')
         if '  ' not in line:
             continue
