@@ -386,38 +386,16 @@
   <!-- CHANGES -->
   <section class="tab-pane fv-page" id="changes" data-page="changes" hidden>
     <div class="content-block fv-card" id="ch-card">
-      <div class="content-block-header"><h6 class="content-block-title">What changed</h6></div>
-      <div class="fv-toolbar">
-        <div class="fv-controls"><span class="fv-label fv-rowlabel">Update</span><div id="ch-pick" data-label="Update"></div></div>
-        <div class="fv-ch-meta" id="ch-meta"></div>
-      </div>
-      <p class="fv-note">Before and after are the report's results at the start and end of the update. Open a change to see what it did.</p>
-      <div class="fv-ch-lines" id="ch-lines" data-source="changes changes_snap"></div>
-    </div>
-
-    <div class="content-block fv-card" id="ch-builds-card">
-      <div class="content-block-header"><h6 class="content-block-title">Presets before and after</h6></div>
+      <div class="content-block-header"><h6 class="content-block-title">Updates</h6></div>
+      <p class="fv-note">Each update compares the report before and after it, newest first. A preset's change is the combined effect of every change in the update that touches it; ± is the noise on a change, within which it may be luck.</p>
       <div class="fv-toolbar">
         <div class="fv-controls" id="ch-cls" role="group" aria-label="Class filter"></div>
         <div class="fv-ctl"><span class="fv-label fv-rowlabel">Show</span>
-          <button class="fv-chip" id="ch-all" aria-pressed="false" title="Also list the presets this update didn't move">Unchanged too</button>
+          <button class="fv-chip" id="ch-all" aria-pressed="false" title="Also list the presets an update didn't move in its table">Unchanged too</button>
           <button class="fv-chip" id="ch-var" aria-pressed="false" title="Also list the advantaged and duty presets">Variants</button>
         </div>
       </div>
-      <p class="fv-note">A preset's change is the combined effect of every change in the update that touches it. ± is the noise on the change: within it, the change may be luck.</p>
-      <div class="fv-scroll">
-        <table id="ch-table">
-          <thead><tr><th>Preset</th><th class="n">Before</th><th class="n">After</th><th class="n">Change</th><th class="n">Rank</th><th>Race</th></tr></thead>
-          <tbody></tbody>
-        </table>
-      </div>
-    </div>
-
-    <div class="content-block fv-card" id="ch-races-card">
-      <div class="content-block-header"><h6 class="content-block-title">Races before and after</h6></div>
-      <div class="fv-toolbar"><div class="fv-controls" id="ch-rcls" role="group" aria-label="Class filter"></div></div>
-      <p class="fv-note">Every preset on every race it can be, and each racial's worth: the DPS a preset loses when only that racial is off.</p>
-      <div class="fv-ch-races" id="ch-races" data-source="changes_snap"></div>
+      <div class="fv-uc-list" id="ch-list" data-source="changes changes_snap"></div>
     </div>
   </section>
 

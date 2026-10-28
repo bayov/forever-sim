@@ -289,7 +289,7 @@ current data while it is the live update). `changes.py` keeps it, in `changes/`:
 - `updates.json` (hand-kept, oldest first): per update its `type` (`game`: a new client build or development notes;
   `sim`: our own changes after a game update was done), title, date, public source, `baselineData` (the commit whose
   data it starts from) and `endData` (null while live), and `lines`, the public change list. A line has a `title`, a
-  `kind` (game, sim, rotation, gear, talents, consumes, race or method), an optional `note` and `source`, and what it
+  `kind` (game, sim, rotation, gear, talents, consumes, race or method), an optional `note` and `source`, `moves: false` for a change that moves no number (a fix no preset reaches), and what it
   touches (`classes`, `builds`, `races`, racial `parts` as race_breakdown names them), which the page uses to show its
   effect: each racial's worth before and after for a line with `parts`, else the DPS of the presets it touches. A line
   that names nothing touches every preset. `commits` and `internal` (`{commit, why}`, commits left out of the public
