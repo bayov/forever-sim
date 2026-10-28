@@ -39,7 +39,7 @@ REPORT = os.path.join(ROOT, 'ui', 'dps_report')
 DATA_FILES = ('builds', 'races', 'race_breakdown', 'race_summary')
 # Fields of an update and of a line the page gets. Everything else (commits, internal, the data commits) stays here.
 PUBLIC_UPDATE = ('id', 'type', 'title', 'date', 'source', 'summary')
-PUBLIC_LINE = ('title', 'kind', 'note', 'classes', 'builds', 'races', 'parts', 'source')
+PUBLIC_LINE = ('title', 'kind', 'note', 'classes', 'builds', 'races', 'parts', 'source', 'moves')
 KINDS = ('game', 'sim', 'rotation', 'gear', 'talents', 'consumes', 'race', 'method')
 CLASSES = ('warrior', 'paladin', 'hunter', 'rogue', 'priest', 'shaman', 'mage', 'warlock', 'druid')
 # Paths whose changes can move a build's numbers: stale.mjs's inputs, plus the report's own sim scripts (method).
