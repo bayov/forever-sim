@@ -632,6 +632,10 @@
     {
      "commit": "ca2d3ba",
      "why": "phrasing pass on the report text, no numbers change"
+    },
+    {
+     "commit": "1696488",
+     "why": "caveat wording, no numbers change"
     }
    ]
   }
