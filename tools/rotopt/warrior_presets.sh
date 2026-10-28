@@ -19,6 +19,13 @@
 # when they gain), so the Sapper goes with the other cooldowns (within 0.6 of mineSync=1 without the
 # Land Mine at 180 sec on every build).
 #
+# 2026-10-28 (standards 31, rotation lines state their intent; no knob changed): recklessness=3 casts
+# Recklessness with the fight's last Death Wish, so in fights where two Death Wishes fit (210 sec or
+# more) it no longer goes with the first at the pull; and Elune's Light (every preset) goes on
+# cooldown but never during Recklessness or in the 15 sec before it, read from the Recklessness
+# knobs (reckDue in warrior_common.go), instead of waiting for Death Wish (Fury, two-hand Fury) or
+# going on cooldown (Arms). Identical for the presets' own races at 180 +- 20 sec.
+#
 # The searches: tools/rotopt -talent-search and the knob search, one after the other until
 # neither moved, from these talents and knobs.
 set -e

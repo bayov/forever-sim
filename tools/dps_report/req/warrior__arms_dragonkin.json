@@ -329,8 +329,70 @@
                   }
                 },
                 {
-                  "notes": "Other races can ignore the warning on this line.",
+                  "notes": "Elune's Light with the cooldowns, never during Recklessness, whose 100% crit makes its 10% worthless. Other races can ignore the warning on this line.",
                   "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 1719
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "or": {
+                              "vals": [
+                                {
+                                  "cmp": {
+                                    "op": "OpEq",
+                                    "lhs": {
+                                      "spellUsesRemaining": {
+                                        "spellId": {
+                                          "spellId": 1719
+                                        },
+                                        "minTimeLeft": {
+                                          "const": {
+                                            "val": "0s"
+                                          }
+                                        }
+                                      }
+                                    },
+                                    "rhs": {
+                                      "const": {
+                                        "val": "0"
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "not": {
+                                    "val": {
+                                      "cmp": {
+                                        "op": "OpLe",
+                                        "lhs": {
+                                          "remainingTime": {}
+                                        },
+                                        "rhs": {
+                                          "const": {
+                                            "val": "40s"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
                     "castSpell": {
                       "spellId": {
                         "spellId": 1259799

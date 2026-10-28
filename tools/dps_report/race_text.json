@@ -142,12 +142,6 @@
    "priority:s1259812": "Saved for an Immolate with Conflagrate after it. It doesn't help Incinerate or the DoTs."
   }
  },
- "warrior__fury.NightElf": {
-  "note": "Uses Elune's Light at the pull, not saved for Death Wish. Saved, it landed during Recklessness, whose 100% crit made its 10% crit worthless.",
-  "why": {
-   "priority:s1259799": "Used at the pull. Saved for Death Wish, it landed during Recklessness, whose 100% crit made its 10% crit worthless."
-  }
- },
  "hunter__beast-mastery.Dwarf": {
   "note": "Its gear trades 1% hit it doesn't need (over the cap) for 5.6 Agility, 0.21% crit, 1.9 ranged attack power and 0.6 Intellect."
  },

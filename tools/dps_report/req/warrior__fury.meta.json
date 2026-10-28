@@ -40,8 +40,8 @@
   "rotation": [
     "Start with no Rage; before the pull Battle Stance, Charge for 15 Rage and back to Berserker Stance; Battle Shout from the raid",
     "Sunder Armor as the first GCD after the pull (every warrior; the tanks keep it up after)",
-    "Death Wish held for the last 33s when that costs no use, then Recklessness while Death Wish is up, ahead of the trinket (which goes one GCD later)",
-    "Racial cooldowns with Death Wish (Blood Fury and Berserking also at the end of the fight); trinket on cooldown, its last use held for the last 30s; Mighty Rage Potion at the pull, second held for the last 20s",
+    "Death Wish held for the last 33s when that costs no use, then Recklessness with the fight's last Death Wish (in fights with two, the first goes at the pull without it), ahead of the trinket (which goes one GCD later)",
+    "Blood Fury and Berserking with Death Wish (also at the end of the fight), Elune's Light on cooldown but never during Recklessness or in the 15s before it; trinket on cooldown, its last use held for the last 30s; Mighty Rage Potion at the pull, second held for the last 20s",
     "Bloodrage under 20 Rage",
     "Whirlwind at 25+ Rage, then Bloodthirst",
     "Execute in the execute phase, after Bloodthirst and Whirlwind (Execute first loses 4.7 on Fury and 22.7 on two-hand Fury)",

@@ -67,9 +67,10 @@ func warriorKnobs() []Knob {
 		{Name: "dwEnd", Default: 36, Min: 15, Max: 60, Step: 3},
 		// Recklessness (30 min cooldown, so once a fight): 0 no line of its own (the other cooldowns
 		// line casts it at the pull), 1 at the pull, 2 when this many seconds are left (recklessAt),
-		// 3 while Death Wish is up, just ahead of the other cooldowns line, so that line's trinket
-		// waits for the GCD after it instead of going out in the same pass (the rotation auditor's
-		// pass 23).
+		// 3 while the fight's last Death Wish is up (the end-of-fight dump: with two Death Wishes
+		// the first goes at the pull without it), just ahead of the other cooldowns line, so that
+		// line's trinket waits for the GCD after it instead of going out in the same pass (the
+		// rotation auditor's pass 23).
 		{Name: "recklessness", Default: 2, Min: 0, Max: 3, Step: 1},
 		{Name: "recklessAt", Default: 15, Min: 10, Max: 30, Step: 5},
 		// Bloodrage below this much Rage.
@@ -82,8 +83,8 @@ func warriorKnobs() []Knob {
 		{Name: "hsExecute", Default: 0, Min: 0, Max: 1, Step: 1},
 		// Execute ahead of the main strike in the execute phase (1) or after it (0).
 		{Name: "executeFirst", Default: 1, Min: 0, Max: 1, Step: 1},
-		// Blood Fury, Berserking, Elune's Light and the Mighty Rage Potion wait for Death Wish when
-		// the wait costs no use. The potion can instead (2) wait for the last potionAt seconds when
+		// Blood Fury, Berserking and the Mighty Rage Potion wait for Death Wish when the wait costs
+		// no use. (Elune's Light has its own rule, elunesLightWhen: never with Recklessness.) The potion can instead (2) wait for the last potionAt seconds when
 		// the wait costs no use, for Arms' Recklessness or a Death Wish that is held to the end.
 		{Name: "racialHoldForDw", Default: 1, Min: 0, Max: 2, Step: 1},
 		{Name: "potionHoldForDw", Default: 1, Min: 0, Max: 2, Step: 1},
@@ -165,9 +166,7 @@ func warriorCooldowns(k Knobs) []*proto.APLListItem {
 	items = append(items,
 		cast(bloodFury, racialHold(bloodFury), "Other races can ignore the warning on this line."),
 		cast(berserking, racialHold(berserking), "Other races can ignore the warning on this line."),
-		// Elune's Light keeps waiting for Death Wish: held for the end it lost 7 at 180 sec on
-		// two-hand Fury, where Blood Fury and Berserking gained.
-		cast(elunesLight, hold(elunesLight, k["racialHoldForDw"] >= 1), "Other races can ignore the warning on this line."),
+		cast(elunesLight, elunesLightWhen(k), "Elune's Light with the cooldowns, never during Recklessness, whose 100% crit makes its 10% worthless. Other races can ignore the warning on this line."),
 		potionLine(k, hold),
 	)
 	if k["trinketAt"] > 0 {
@@ -191,10 +190,67 @@ func warriorCooldowns(k Knobs) []*proto.APLListItem {
 		)
 	}
 	if k["recklessness"] == 3 {
-		items = append(items, cast(recklessness, auraIsActive(deathWish), ""))
+		// Recklessness is the end-of-fight dump with the fight's last Death Wish: in a fight where
+		// two Death Wishes fit, the first goes at the pull and Recklessness waits for the second.
+		items = append(items, cast(recklessness, and(auraIsActive(deathWish), lastDeathWish()),
+			"Recklessness with the fight's last Death Wish."))
 	}
 	items = append(items, autocastOtherCooldowns(nil, "Sapper and trinkets."))
 	return items
+}
+
+// lastDeathWish is true when no Death Wish fits after the one that is up or about to go: the
+// count is of the casts after the current cooldown that still have its 30 sec to run.
+func lastDeathWish() value {
+	return eq(spellUsesRemaining(deathWish, deathWishDuration), num(0))
+}
+
+// reckDue is true when Recklessness goes out within the next `within`, read from the same knobs
+// as its own line (warriorCooldowns). Its 30 min cooldown makes it once a fight, and the caller
+// checks whether it is already spent.
+//   - recklessness 0 or 1: at the pull, so it is due until it is out.
+//   - 2: in the last recklessAt seconds.
+//   - 3: with the fight's last Death Wish, so when that Death Wish is up, or when the next Death
+//     Wish is the last one and goes within `within`. That next Death Wish goes once it is ready,
+//     and with deathWish=2 not before the last dwEnd seconds either: holding the last one costs no
+//     use. (That wait is only "when Death Wish goes" for the last one: an earlier one goes as soon
+//     as holding it would cost a use, so it is no estimate of when the next Death Wish goes.)
+//
+// nil means Recklessness never goes (recklessness=3 without Death Wish).
+func reckDue(k Knobs, within float64) value {
+	switch k["recklessness"] {
+	case 2:
+		return le(remainingTime(), seconds(k["recklessAt"]+within))
+	case 3:
+		if k["deathWish"] == 0 {
+			return nil
+		}
+		next := spellTimeToReady(deathWish)
+		if k["deathWish"] == 2 {
+			next = warriorMax(next, sub(remainingTime(), seconds(k["dwEnd"])))
+		}
+		return or(
+			and(auraIsActive(deathWish), lastDeathWish()),
+			and(le(spellUsesRemaining(deathWish, deathWishDuration), num(1)), le(next, seconds(within))),
+		)
+	}
+	return constant("true")
+}
+
+// elunesLightWhen is Night Elf Elune's Light (15 sec of 10% crit, 3 min) for warriors: with the
+// cooldowns, never during Recklessness and not when Recklessness is due within its 15 sec, since
+// Recklessness's 100% crit makes its 10% worthless. Otherwise it goes on cooldown, which puts the
+// first at the pull with the potion, the trinket and, in fights where two fit, the first Death
+// Wish. (Held for Death Wish instead, it went out with Death Wish and Recklessness at the end.)
+func elunesLightWhen(k Knobs) value {
+	due := reckDue(k, 15)
+	if due == nil {
+		return nil
+	}
+	return and(
+		not(auraIsActive(recklessness)),
+		or(eq(spellUsesRemaining(recklessness, seconds(0)), num(0)), not(due)),
+	)
 }
 
 // The first GCD after the pull is one Sunder Armor for every warrior (standards 23), so every
