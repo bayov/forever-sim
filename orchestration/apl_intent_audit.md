@@ -92,3 +92,11 @@ Resolved P1 (2026-10-28): `vigilLongFight`/`vigilLongMana` are gone. Shock and i
 - P1 on the Undead Holy Shock preset: the long-fight switch is right in direction, but no per-second rate tested reproduces it at 260 s. That preset needs a search.
 - S1: the rate (25) is not right at every length (-0.5 at 240). The finding is the 300 s loss; the right rate needs a search.
 - W2-W4 were simmed as JSON edits of the request rotation, not through the template. `reckDue` for `recklessness=3` was tested in the form "Death Wish up, or its line true now, or 48 s or less left", which matches what a template helper would build.
+
+## Resolved (2026-10-28, deployed as 1c92aefc from master 769404400)
+
+- W1-W5: warrior_common.go. Recklessness `recklessness=3` waits for the fight's last Death Wish (`lastDeathWish()`); every Elune's Light line is on cooldown but never during Recklessness nor when it is due within 15 s (`reckDue`, built from the Recklessness knobs). The Night Elf Fury race file is gone (the template does it: gain 0.00). Paired: Night Elf Fury +9.4 at 180±20 (duty +9.4), two-hand Fury +6.7 (duty +7.3), Arms +0.1; Orc and Human Fury unchanged at 180±20, +6 to +7 at 240-300 s. No loss anywhere.
+- M1: Frostfire's rank 2 line reads `evocationMinTime` too, searched to 75 s: +0.8 at 180±20, +10.2 at 210, +7.4 at 240. The Orc and Undead race files no longer gained and are gone; Troll and High Order kept. M2: `racialAfterScorch=1` in the Fire preset (Troll +2.5, Orc +2.2, every other race 0). Gnome Arcane's Eureka! on cooldown already covers every cast it boosts; left as is.
+- S1: `lightningBoltDownrankManaPerSec` (30, Mana Tide 20 counting the totem's mana while it is ready), never during Clearcasting: +0.5 at 180±20, +8.4 at 300 s. Only loss: -0.4 at 360 s on Mana Tide (outside the checked lengths).
+- L1: `berserking=1` in every warlock preset (Troll +0.3 to +1.6 at 180±20, every other race identical). The Gnome curse duty builds had lost their base's Eureka! file (rotation differs); they have their own now (+1.5 to +6.3).
+- P1: see above.
