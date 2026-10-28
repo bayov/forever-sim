@@ -48,7 +48,15 @@ func (priestSmite) Knobs() []Knob {
 		// Plague (free through the fourth class mask word, client 14751).
 		{Name: "innerFocus", Default: 2, Min: 0, Max: 4, Step: 1},
 		{Name: "powerInfusion", Default: 1, Min: 0, Max: 1, Step: 1},
-		{Name: "chastise", Default: 1, Min: 0, Max: 1, Step: 1},
+		// Dwarf: Chastise on cooldown against a Humanoid (it hits nothing else). Its GCD is worth
+		// more as Smite: a Dwarf on a Humanoid boss is 737.4 without it against 728.9 with it
+		// at 180 sec (2026-10-28).
+		{Name: "chastise", Default: 0, Min: 0, Max: 1, Step: 1},
+		// Night Elf: Starshards on cooldown, 1 below Devouring Plague, 2 above Holy Fire. Its
+		// 6 sec channel deals about 480 DPS against Smite's 700, and the mana it saves doesn't
+		// make that up: the Night Elf rotation is 741.1 without it, 723.7 / 718.4 with it, and
+		// a knob search started from 1 drops it (2026-10-28).
+		{Name: "starshards", Default: 0, Min: 0, Max: 2, Step: 1},
 		{Name: "darkSacrifice", Default: 40, Min: 0, Max: 80, Step: 10},
 		// Smite of this rank (0 never) once the mana would no longer last the fight at
 		// smiteManaRate mana a second. Forever's downranking penalty (Blizzard's 2026-10-01
@@ -83,6 +91,7 @@ func (priestSmite) Build(k Knobs) *proto.APLRotation {
 	mindBlast := rankID(priest.MindBlastLevel[:], priest.MindBlastSpellId[:])
 	shadowWordDeath := rankID(priest.ShadowWordDeathLevel[:], priest.ShadowWordDeathSpellId[:])
 	chastise := rankID(priest.ChastiseLevel[:], priest.ChastiseSpellId[:])
+	starshards := rankID(priest.StarshardsLevel[:], priest.StarshardsSpellId[:])
 	darkSacrifice := rankID(priest.DarkSacrificeLevel[:], priest.DarkSacrificeSpellId[:])
 
 	var items []*proto.APLListItem
@@ -95,6 +104,10 @@ func (priestSmite) Build(k Knobs) *proto.APLRotation {
 	items = append(items, autocastOtherCooldowns(nil, "Racials and trinkets on cooldown."))
 	items = append(items, priestWandRegen(k)...)
 
+	starshardsLine := channel(starshards, nil, nil, "Night Elf. Starshards on cooldown. Other races can ignore the warning on this line.")
+	if k["starshards"] == 2 {
+		items = append(items, starshardsLine)
+	}
 	if k["holyFire"] == 1 {
 		hfCond := and(not(dotIsActive(holyFire)), priestManaAbove(k["holyFireMana"]))
 		if k["innerFocus"] == 1 {
@@ -122,6 +135,9 @@ func (priestSmite) Build(k Knobs) *proto.APLRotation {
 			items = append(items, cast(innerFocus, and(append([]value{dpCond, spellIsReady(devouringPlague)}, above...)...), "Inner Focus right before Devouring Plague. Without the talent ignore the warning on this line."))
 		}
 		items = append(items, cast(devouringPlague, dpCond, "Devouring Plague whenever it is down and off cooldown."))
+	}
+	if k["starshards"] == 1 {
+		items = append(items, starshardsLine)
 	}
 	if k["chastise"] == 1 {
 		items = append(items, cast(chastise, nil, "Dwarf. Chastise on cooldown against a Humanoid. Other races can ignore the warning on this line."))

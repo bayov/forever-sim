@@ -250,16 +250,6 @@
         "action": {
           "castSpell": {
             "spellId": {
-              "spellId": 1277335
-            }
-          }
-        },
-        "notes": "Dwarf. Chastise on cooldown against a Humanoid. Other races can ignore the warning on this line."
-      },
-      {
-        "action": {
-          "castSpell": {
-            "spellId": {
               "spellId": 1309636
             }
           },

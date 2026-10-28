@@ -62,7 +62,8 @@ func (priestShadow) Knobs() []Knob {
 		{Name: "mfClipDots", Default: 2, Min: 0, Max: 2, Step: 1},
 		// Night Elf: Starshards on cooldown, 1 below Mind Blast, 2 above it. Its ticks hit no
 		// harder than Mind Flay's in Shadowform and its 6 sec channel holds up Mind Blast, so
-		// it costs 30 DPS at any fight length (2026-10-12).
+		// it costs 30 DPS at any fight length (2026-10-12). Still 20 after client 70425 put it in
+		// Twin Disciplines: 948.9 without, 929.3 / 914.0 with at 180 sec (2026-10-28).
 		{Name: "starshards", Default: 0, Min: 0, Max: 2, Step: 1},
 		// Dwarf: Chastise on cooldown against a Humanoid. A GCD of Mind Flay is worth more,
 		// 4.7 DPS at 180 sec.
