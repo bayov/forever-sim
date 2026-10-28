@@ -629,15 +629,18 @@ export function startReport(dash, events) {
 
   // ---------- tabs ----------
   const pages = ['ranking', 'spec', 'races', 'compare', 'changes', 'method'];
+  // a view's name in the address: its tab, the preset on the spec page, or the update a link opened on Changes
+  const linkName = (tab) => (tab === 'spec' && st.build ? st.build : tab === 'changes' && st.chUp && chUpdate() ? 'changes/' + chUpdate().id : tab);
+  // link: the view becomes a new history entry (the scroll it leaves kept on the old one); false leaves the address
   const showTab = (tab, link = true) => {
-    const changed = st.tab !== tab;
+    const changed = st.tab !== tab, y = $('.sim-ui').scrollTop; // before the tab button scrolls into view
     st.tab = tab; persist();
     if (changed) { const pg = document.getElementById(tab); pg.classList.remove('in'); void pg.offsetWidth; pg.classList.add('in'); }
     document.querySelectorAll('.fv-tab').forEach((b) => { b.setAttribute('aria-selected', String(b.dataset.tab === tab)); b.classList.toggle('active', b.dataset.tab === tab); });
     document.querySelectorAll('.fv-page').forEach((p) => { p.hidden = p.dataset.page !== tab; p.classList.toggle('active', p.dataset.page === tab); });
     // on a phone the header scrolls sideways: bring the open tab into view
     document.querySelector('.fv-tab.active')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-    if (link) dash.setLink(tab === 'spec' && st.build ? st.build : tab === 'changes' && st.chUp && chUpdate() ? 'changes/' + chUpdate().id : tab);
+    if (link) dash.setLink(linkName(tab), true, y);
     hideTip(); hideTT();
     render();
   };
@@ -3323,10 +3326,21 @@ export function startReport(dash, events) {
   }
 
   // deep links: a tab name or a preset id
+  const readLink = (h) => {
+    if (pages.includes(h)) st.tab = h;
+    else if (h.startsWith('changes/')) { st.tab = 'changes'; try { st.chUp = decodeURIComponent(h.slice(8)); } catch { st.chUp = null; } }
+    else if (/^[a-z]+__[\w-]+$/.test(h)) { st.build = h; st.tab = 'spec'; }
+    else return false;
+    return true;
+  };
   const h = location.hash.slice(1);
-  if (pages.includes(h)) st.tab = h;
-  else if (h.startsWith('changes/')) { st.tab = 'changes'; try { st.chUp = decodeURIComponent(h.slice(8)); } catch { st.chUp = null; } }
-  else if (/^[a-z]+__[\w-]+$/.test(h)) { st.build = h; st.tab = 'spec'; }
+  if (!readLink(h)) dash.setLink(linkName(st.tab)); // the first entry names its view too, so Back can return to it
+  // Back and Forward: open the view the entry names, where it was scrolled to (the top for one never left)
+  dash.onLink((name, y) => {
+    if (!readLink(name)) st.tab = 'ranking';
+    showTab(st.tab, false);
+    $('.sim-ui').scrollTo({ top: y || 0 });
+  });
   document.querySelectorAll('.fv-tab').forEach((b) => { b.setAttribute('aria-selected', String(b.dataset.tab === st.tab)); b.classList.toggle('active', b.dataset.tab === st.tab); });
   document.querySelectorAll('.fv-page').forEach((p) => { p.hidden = p.dataset.page !== st.tab; p.classList.toggle('active', p.dataset.page === st.tab); });
   dash.onData(render);

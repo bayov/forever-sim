@@ -136,13 +136,25 @@ export function createDash(manifest: Record<string, DatasetInfo>, load: DatasetL
 			calcs.set(id, opts);
 		},
 		colors: SERIES_COLORS,
-		// The page names its tab or preset in the address, so a link opens on it.
-		setLink(name: string) {
+		// The page names its tab or preset in the address, so a link opens on it. push makes it a new history entry
+		// (a new tab or preset, which Back returns from), and y is where the page being left was scrolled to, kept on
+		// its entry so Back returns there.
+		setLink(name: string, push = false, y?: number) {
+			const url = name ? `#${name}` : location.pathname + location.search;
 			try {
-				history.replaceState(null, '', name ? `#${name}` : location.pathname + location.search);
+				if (push && location.hash !== (name ? `#${name}` : '')) {
+					history.replaceState({ ...(history.state || {}), y }, '');
+					history.pushState({}, '', url);
+				} else {
+					history.replaceState(history.state, '', url);
+				}
 			} catch {
 				// A sandboxed frame may refuse history changes.
 			}
+		},
+		// Back and Forward: the name the address now holds, and where that entry was scrolled to.
+		onLink(fn: (name: string, y?: number) => void) {
+			addEventListener('popstate', (e) => fn(location.hash.slice(1), e.state?.y));
 		},
 		manifest,
 	};
