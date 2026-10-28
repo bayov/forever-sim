@@ -47,7 +47,7 @@ def load(path):
         e.me_dst = len(f) > 7 and is_me(e.dstGUID, f[7])
         e.spellId = None
         e.spell = None
-        if e.ev.startswith(('SPELL_', 'RANGE_')) and len(f) > 10:
+        if e.ev.startswith(('SPELL_', 'RANGE_', 'DAMAGE_')) and len(f) > 10:
             e.spellId = int(f[9]) if f[9].isdigit() else f[9]
             e.spell = f[10]
         out.append(e)

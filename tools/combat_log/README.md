@@ -103,13 +103,16 @@ Some scripts hold numbers from one character and one day, like the weapon models
   our casts whenever they change, which shows gear swaps and stat buffs or debuffs.
 - `threat.py` reads the threat BayovCore recorded during a log (`<log>.threat.jsonl.xz`, which
   wow-combat-logs' `archive.py` writes next to the archived log): our threat, our pet's and two
-  group members' on every mob, which the combat log doesn't have. It fits the lag between a
-  hit's line and the threat update after it, then takes each threat change that covers exactly
-  one line of that player and prints, per player and ability, how many such clean samples, the
-  median threat and the threat per point of damage. The game's raw threat is Classic's x 100,
-  and the white hits say so. `--rows` prints every change with the lines it covers, `--who`
-  keeps one player. It takes the log plain or .xz, so it runs on the archive directly:
-  `python3 -I tools/combat_log/threat.py ~/wow-combat-logs/forever/WoWCombatLog-<date>.txt.xz`.
+  group members' on every mob, which the combat log doesn't have. It groups each player's lines
+  into actions (a cast with its damage and combo point, a buff with its auras, their totems'
+  lines), fits the lag from each rise in threat back to the action before it, and takes each
+  rise that covers exactly one action. Per player and ability it prints how many such clean
+  samples, the median threat and the threat per point of damage. Actions not aimed at a mob
+  (heals, buffs, shouts) are split over the mobs the player is on, so they're scaled back up
+  ("x mobs"). Falls and drops off the list are never samples. The game's raw threat is
+  Classic's x 100, and the white hits say so. `--rows` prints every change with the actions it
+  covers, `--who` keeps one player. It takes the log plain, .xz or .gz, so it runs on the
+  archive directly: `python3 -I tools/combat_log/threat.py ~/wow-combat-logs/forever/WoWCombatLog-<date>.txt.xz`.
 - `client_spell.py` prints the client's rows for spell IDs from a directory of wago.tools
   CSVs (SpellName, SpellAuraOptions, SpellClassOptions, SpellEffect). Fetch each table from
   `https://wago.tools/db2/<Table>/csv?build=1.60.1.70338` with a desktop user agent.
