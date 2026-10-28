@@ -4080,52 +4080,53 @@ dialog.fv-about-modal {
 
 // The title is the fold: the whole header row opens and closes the update.
 .fv-us-head {
-	padding-bottom: 0;
+	flex-direction: column;
+	align-items: stretch;
 }
 
 .fv-us-toggle {
 	display: flex;
-	align-items: center;
-	gap: 0.75rem;
+	align-items: baseline;
+	gap: 0.85rem;
 	width: 100%;
-	padding: 0 0 var(--spacer-2);
+	padding: 0;
 	border: 0;
 	background: none;
 	color: inherit;
 	text-align: left;
 	cursor: pointer;
 
-	.content-block-title {
-		flex: 1 1 auto;
-		min-width: 0;
+	&:hover .fv-us-title {
+		color: var(--fv-gold);
 	}
 
-	&:hover .content-block-title {
-		color: var(--fv-gold);
+	.fv-us-chev {
+		align-self: center;
 	}
 }
 
-.fv-us-teaser {
+// The date leads the title, large, so the updates read as a timeline.
+.fv-us-date {
 	flex: none;
-	font-size: var(--cds-font-size-caption);
-	color: var(--color-fg-muted);
+	min-width: 4.4rem;
+	font-size: 1.35rem;
+	font-weight: 700;
+	line-height: 1.2;
+	color: var(--fv-gold);
+	font-variant-numeric: tabular-nums;
 	white-space: nowrap;
+}
 
-	b {
-		color: var(--color-fg);
-		font-size: var(--cds-font-size-body);
-		font-variant-numeric: tabular-nums;
-	}
-
-	.fv-us.open & {
-		display: none;
-	}
-
-	@include media-breakpoint-down(sm) {
-		.k {
-			display: none;
-		}
-	}
+// The title in the body font, for reading.
+.fv-us-title {
+	flex: 1 1 auto;
+	min-width: 0;
+	margin: 0;
+	font-family: inherit;
+	font-size: 1.05rem;
+	font-weight: 600;
+	line-height: 1.35;
+	color: var(--color-fg);
 }
 
 .fv-us-chev {
@@ -4143,7 +4144,9 @@ dialog.fv-about-modal {
 	display: flex;
 	flex-wrap: wrap;
 	gap: 0.1rem 0.5rem;
-	margin-top: 0.45rem;
+	margin-top: 0.15rem;
+	// under the title, past the date
+	padding-left: calc(4.4rem + 0.85rem);
 	font-size: var(--cds-font-size-caption);
 	color: var(--color-fg-muted);
 

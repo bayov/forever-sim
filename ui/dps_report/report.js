@@ -3153,8 +3153,8 @@ export function startReport(dash, events) {
       el('tbody', {}, ...rows)));
   };
   // the most important things an update did, for the strip at its top: what its racials are worth now, in the order
-  // its lines list them (the first is the headline), how many presets moved, the biggest move, and the race that most
-  // changed how often it is best
+  // its lines list them (the first is the headline), how many presets moved, and the race that most changed how often
+  // it is best
   const chHighlights = (S, u) => {
     const out = [];
     for (const ln of arr(u.lines)) {
@@ -3170,28 +3170,24 @@ export function startReport(dash, events) {
     if (moved.length) {
       const avg = d3.mean(moved, (id) => (100 * (S.new.builds[id][0] - S.old.builds[id][0])) / S.old.builds[id][0]);
       out.push({ k: 'Presets moved', v: String(moved.length), u: `of ${ids.length}`, s: `${chPct(avg)} on average` });
-      const big = moved.map((id) => chBuildRow(S, id)).sort(chBig)[0];
-      if (out.length < 4) out.push({ k: 'Biggest move', v: sgn(big.d), u: 'DPS', s: `${big.name.split(' · ')[0]}, ${big.vals}` });
     } else out.push({ k: 'Presets moved', v: '0', u: `of ${ids.length}`, s: 'Only races the presets are not played as' });
     const shifts = Object.keys(S.new.summary).filter((k) => k.endsWith('|All') && S.old.summary[k] && S.old.summary[k][0] !== S.new.summary[k][0])
       .map((k) => ({ race: k.split('|')[0], o: S.old.summary[k][0], n: S.new.summary[k][0] })).sort((a, b) => Math.abs(b.n - b.o) - Math.abs(a.n - a.o));
     if (shifts.length && out.length < 4) out.push({ k: `${shifts[0].race} best for`, v: String(shifts[0].n), u: `preset${shifts[0].n === 1 ? '' : 's'}`, s: `was ${shifts[0].o}` });
     return { tiles: out };
   };
-  // An update is a section of its own: its title (a fold), its kind, date and source, its headline figure while
-  // folded; open, a strip of its key numbers, its change lines (each a fold, opening to what it did per spec), its
+  // An update is a section of its own: its date and title (a fold), its kind and source; open, a strip of its key numbers, its change lines (each a fold, opening to what it did per spec), its
   // biggest movers and its races.
   const chCard = (u, S) => {
-    const key = 'u:' + u.id, hl = chHighlights(S, u), t = hl.tiles[0];
+    const key = 'u:' + u.id, hl = chHighlights(S, u);
     const sec = el('section', { class: 'content-block fv-card fv-us ' + u.type, 'data-u': u.id });
     const btn = el('button', { type: 'button', class: 'fv-us-toggle', 'aria-expanded': 'false' },
-      el('h6', { class: 'content-block-title', text: u.title }),
-      t ? el('span', { class: 'fv-us-teaser' }, el('span', { class: 'k', text: t.k }), ' ', el('b', { text: t.v }), t.u ? el('small', { text: ' ' + t.u }) : null) : null,
+      el('span', { class: 'fv-us-date', text: chDate(u.date) }),
+      el('h6', { class: 'fv-us-title', text: u.title }),
       el('i', { class: 'fas fa-chevron-down fv-us-chev', 'aria-hidden': 'true' }));
-    const meta = el('div', { class: 'fv-us-meta' }, el('span', { class: 'fv-us-type', text: u.type === 'game' ? 'Game update' : 'Sim and preset update' }), el('span', { text: chDate(u.date) }),
-      chSrc(u.source));
+    const meta = el('div', { class: 'fv-us-meta' }, el('span', { class: 'fv-us-type', text: u.type === 'game' ? 'Game update' : 'Sim and preset update' }), chSrc(u.source));
     const body = el('div', { class: 'fv-us-body', hidden: '' });
-    sec.append(el('div', { class: 'content-block-header fv-us-head' }, btn), meta, body);
+    sec.append(el('div', { class: 'content-block-header fv-us-head' }, btn, meta), body);
     const sub = (text) => el('div', { class: 'fv-us-h', text });
     const fill = () => {
       const lines = arr(u.lines);
