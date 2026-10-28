@@ -41,7 +41,7 @@
     "Judgement on cooldown on Seal of Righteousness; re-seal Righteousness whenever it is down (no twisting)",
     "Holy Strike on cooldown",
     "Hammer of Wrath below 20% health",
-    "Light's Vigil whenever it is not on the target, mana is at or above 30% (60% in fights over 210s) and the next swing is more than 2.5s off (its cast resets the swing)",
+    "Light's Vigil whenever it is not on the target, mana is at or above 30% and the next swing is more than 2.5s off (its cast resets the swing)",
     "Holy Shock on a Vigil-marked target (detonates it, refunds 75% of its mana, starts no cooldown), or on cooldown whenever the Vigil is held back (mana under its floor, or a swing within 2.5s); Divine Favor goes on a Holy Shock",
     "Consecration on cooldown, down to the last point of mana, after the lines above",
     "Racials, Goblin Sapper, Major Mana Potion and Demonic Rune on free GCDs"
@@ -75,5 +75,5 @@
     "Seal of Righteousness adds 12% of spell power a hit with a two-hander, once (70425 tooltip). Counted twice it would be 46-51 DPS higher. At the proc spell's 0 it would be 53-59 lower.",
     "No filler explosive (standards 11): the Goblin Land Mine and EZ-Thro Dark Bomb cost 6.1 at 180s, the EZ-Thro Thorium Grenade 6.8 (each 1s cast resets the swing)."
   ],
-  "notes": "Preset options are primarySeal Righteousness, as mksettings writes. Rotation regenerated 2026-10-27 from the paladin_presets.sh level60_shock knobs (consecrationFirst=0, vigilSwing=25, vigilLongFight=210; user ruling). Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human."
+  "notes": "Preset options are primarySeal Righteousness, as mksettings writes. Rotation regenerated 2026-10-27 from the paladin_presets.sh level60_shock knobs (consecrationFirst=0, vigilSwing=25; user ruling). The 60% Vigil floor in fights over 210s went on 2026-10-28 (standards 31): it only lost, 12.6 at 220s and 11.5 at 300s. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human."
 }

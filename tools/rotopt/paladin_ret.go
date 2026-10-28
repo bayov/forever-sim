@@ -27,6 +27,8 @@ var echoOfRighteousness = spellID(1311704)
 
 const syntheticSpellPowerOnUseTrinket = paladin.SyntheticSpellPowerOnUseTrinket
 const goblinSapperCharge = 10646
+const majorManaPotion = 13444
+const demonicRune = 12662
 
 func (paladinRet) Knobs() []Knob {
 	return []Knob{
@@ -94,11 +96,6 @@ func (paladinRet) Knobs() []Knob {
 		// With cooldownsFirst, the on-use trinket at the pull and then held for the 20% execute
 		// phase whenever holding it there loses no use of it in the fight.
 		{Name: "trinketExecute", Default: 0, Min: 0, Max: 1, Step: 1},
-		// In fights longer than vigilLongFight seconds, Light's Vigil (and Holy Shock's low mana
-		// branch) keeps a higher floor of vigilLongMana percent, so the mana lasts; shorter
-		// fights use lightsVigilMana. 0 off.
-		{Name: "vigilLongFight", Default: 0, Min: 0, Max: 300, Step: 30},
-		{Name: "vigilLongMana", Default: 60, Min: 30, Max: 80, Step: 10},
 		// Without twisting: put the seal back up ahead of Consecration and Holy Strike, so a
 		// seal that drops (after the Judgement of the Crusader opener, or after 30 sec) is
 		// recast first.
@@ -107,6 +104,23 @@ func (paladinRet) Knobs() []Knob {
 		// so its cast (which resets the swing when it completes) goes out right after a swing
 		// rather than just before one. 0 any time.
 		{Name: "vigilSwing", Default: 0, Min: 0, Max: 30, Step: 5},
+		// Light's Vigil and the Holy Shock it sets up are the least mana-efficient casts (1340 mana
+		// for the Vigil's damage and a Holy Shock with no cooldown), so when the mana won't last the
+		// fight they give way first. With vigilManaPerSec above 0, the Vigil goes down to
+		// lightsVigilMana only while the mana covers vigilManaPerSec a second of the fight left,
+		// counting the bar plus each Major Mana Potion (1800 on average) and Demonic Rune (1200)
+		// that still comes with 15 sec of the fight to spend it (their cooldowns, as
+		// spellUsesRemaining counts them). Otherwise it takes only the top of the bar, above
+		// vigilTopMana percent: spending that keeps the potion and rune coming on cooldown (they
+		// wait for a 2250 mana gap), and the rest goes to Exorcism, Consecration and Hammer of
+		// Wrath. It needs both consumables in the request: without them the sim drops the
+		// condition (with a warning) and the Vigil keeps lightsVigilMana alone. 0 off.
+		{Name: "vigilManaPerSec", Default: 0, Min: 0, Max: 80, Step: 5},
+		{Name: "vigilTopMana", Default: 60, Min: 30, Max: 80, Step: 10},
+		// In the execute phase, and vigilExecuteLead seconds before it, the mana must also cover
+		// Hammer of Wrath: vigilHammerManaPerSec more a second of the fight left.
+		{Name: "vigilHammerManaPerSec", Default: 0, Min: 0, Max: 60, Step: 10},
+		{Name: "vigilExecuteLead", Default: 0, Min: 0, Max: 30, Step: 5},
 	}
 }
 
@@ -239,23 +253,15 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 			if k["vigilSwing"] > 0 {
 				vigilFloor = and(vigilFloor, gt(mainHandTimeToNext(), seconds(k["vigilSwing"]/10)))
 			}
-			if k["vigilSwing"] > 0 {
-				vigilFloor = and(vigilFloor, gt(mainHandTimeToNext(), seconds(k["vigilSwing"]/10)))
-			}
-			if k["vigilLongFight"] > 0 {
-				// The fight is short when the time left is under vigilLongFight minus the time spent.
-				now := &proto.APLValue{Value: &proto.APLValue_CurrentTime{CurrentTime: &proto.APLValueCurrentTime{}}}
-				shortFight := lt(remainingTime(), sub(seconds(k["vigilLongFight"]), now))
-				vigilFloor = and(vigilFloor, or(shortFight, ge(currentManaPercent(), num(k["vigilLongMana"]/100))))
+			if k["vigilManaPerSec"] > 0 {
+				vigilFloor = and(vigilFloor, or(vigilManaLasts(k), ge(currentManaPercent(), num(k["vigilTopMana"]/100))))
 			}
 			if k["vigilChain"] == 1 {
 				items = append(items, cast(lightsVigil, and(vigilFloor, not(targetAuraIsActive(lightsVigilMark))),
 					"Light's Vigil whenever it is not on the target, with the mana to spare. Without the talent ignore the warning on this line."))
 				lowMana := constant("false")
-				if k["vigilLongFight"] > 0 {
+				if vigilFloor != nil {
 					lowMana = not(vigilFloor)
-				} else if k["lightsVigilMana"] > 0 {
-					lowMana = lt(currentManaPercent(), num(k["lightsVigilMana"]/100))
 				}
 				items = append(items, cast(holyShock, and(or(targetAuraIsActive(lightsVigilMark), lowMana), floor),
 					"Holy Shock on the Vigil, so it detonates it and starts no cooldown, or on cooldown once the mana is too low for the Vigil."))
@@ -333,6 +339,34 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 	}
 	rot.PrepullActions = append(rot.PrepullActions, prepull(opener, 1.5))
 	return rot
+}
+
+// vigilManaLasts: the mana, with the Major Mana Potions and Demonic Runes still to come, covers
+// vigilManaPerSec a second of the fight left (vigilManaPerSec plus vigilHammerManaPerSec in the
+// execute phase and the vigilExecuteLead seconds before it). Durations are multiplied by whole
+// numbers only (APL math truncates a duration times a fraction).
+func vigilManaLasts(k Knobs) value {
+	math := func(op proto.APLValueMath_MathOperator, lhs, rhs value) value {
+		return &proto.APLValue{Value: &proto.APLValue_Math{Math: &proto.APLValueMath{Op: op, Lhs: lhs, Rhs: rhs}}}
+	}
+	usesLeft := func(item int32) value { return spellUsesRemaining(itemID(item), seconds(15)) }
+	mana := math(proto.APLValueMath_OpAdd, currentMana(), math(proto.APLValueMath_OpAdd,
+		mul(usesLeft(majorManaPotion), num(1800)), mul(usesLeft(demonicRune), num(1200))))
+	rate := k["vigilManaPerSec"]
+	if k["vigilHammerManaPerSec"] == 0 {
+		return ge(mana, mul(remainingTime(), num(rate)))
+	}
+	execute := &proto.APLValue{Value: &proto.APLValue_IsExecutePhase{IsExecutePhase: &proto.APLValueIsExecutePhase{Threshold: proto.APLValueIsExecutePhase_E20}}}
+	if k["vigilExecuteLead"] > 0 {
+		// The time until the execute phase is (4 x time left - now) / 5, as in trinketLine.
+		now := &proto.APLValue{Value: &proto.APLValue_CurrentTime{CurrentTime: &proto.APLValueCurrentTime{}}}
+		untilExecute := math(proto.APLValueMath_OpDiv, sub(math(proto.APLValueMath_OpMul, remainingTime(), num(4)), now), num(5))
+		execute = or(execute, lt(untilExecute, seconds(k["vigilExecuteLead"])))
+	}
+	return or(
+		and(execute, ge(mana, mul(remainingTime(), num(rate+k["vigilHammerManaPerSec"])))),
+		and(not(execute), ge(mana, mul(remainingTime(), num(rate)))),
+	)
 }
 
 // trinketLine is the spell power on-use trinket on cooldown, or with holdForExecute at the pull

@@ -422,98 +422,31 @@
                             "and": {
                               "vals": [
                                 {
-                                  "and": {
-                                    "vals": [
-                                      {
-                                        "and": {
-                                          "vals": [
-                                            {
-                                              "cmp": {
-                                                "lhs": {
-                                                  "currentManaPercent": {}
-                                                },
-                                                "op": "OpGe",
-                                                "rhs": {
-                                                  "const": {
-                                                    "val": "0.3"
-                                                  }
-                                                }
-                                              }
-                                            },
-                                            {
-                                              "cmp": {
-                                                "lhs": {
-                                                  "autoTimeToNext": {
-                                                    "autoType": "MainHand"
-                                                  }
-                                                },
-                                                "op": "OpGt",
-                                                "rhs": {
-                                                  "const": {
-                                                    "val": "2.5s"
-                                                  }
-                                                }
-                                              }
-                                            }
-                                          ]
-                                        }
-                                      },
-                                      {
-                                        "cmp": {
-                                          "lhs": {
-                                            "autoTimeToNext": {
-                                              "autoType": "MainHand"
-                                            }
-                                          },
-                                          "op": "OpGt",
-                                          "rhs": {
-                                            "const": {
-                                              "val": "2.5s"
-                                            }
-                                          }
-                                        }
+                                  "cmp": {
+                                    "lhs": {
+                                      "currentManaPercent": {}
+                                    },
+                                    "op": "OpGe",
+                                    "rhs": {
+                                      "const": {
+                                        "val": "0.3"
                                       }
-                                    ]
+                                    }
                                   }
                                 },
                                 {
-                                  "or": {
-                                    "vals": [
-                                      {
-                                        "cmp": {
-                                          "lhs": {
-                                            "remainingTime": {}
-                                          },
-                                          "op": "OpLt",
-                                          "rhs": {
-                                            "math": {
-                                              "lhs": {
-                                                "const": {
-                                                  "val": "210s"
-                                                }
-                                              },
-                                              "op": "OpSub",
-                                              "rhs": {
-                                                "currentTime": {}
-                                              }
-                                            }
-                                          }
-                                        }
-                                      },
-                                      {
-                                        "cmp": {
-                                          "lhs": {
-                                            "currentManaPercent": {}
-                                          },
-                                          "op": "OpGe",
-                                          "rhs": {
-                                            "const": {
-                                              "val": "0.6"
-                                            }
-                                          }
-                                        }
+                                  "cmp": {
+                                    "lhs": {
+                                      "autoTimeToNext": {
+                                        "autoType": "MainHand"
                                       }
-                                    ]
+                                    },
+                                    "op": "OpGt",
+                                    "rhs": {
+                                      "const": {
+                                        "val": "2.5s"
+                                      }
+                                    }
                                   }
                                 }
                               ]
@@ -568,98 +501,31 @@
                                       "and": {
                                         "vals": [
                                           {
-                                            "and": {
-                                              "vals": [
-                                                {
-                                                  "and": {
-                                                    "vals": [
-                                                      {
-                                                        "cmp": {
-                                                          "lhs": {
-                                                            "currentManaPercent": {}
-                                                          },
-                                                          "op": "OpGe",
-                                                          "rhs": {
-                                                            "const": {
-                                                              "val": "0.3"
-                                                            }
-                                                          }
-                                                        }
-                                                      },
-                                                      {
-                                                        "cmp": {
-                                                          "lhs": {
-                                                            "autoTimeToNext": {
-                                                              "autoType": "MainHand"
-                                                            }
-                                                          },
-                                                          "op": "OpGt",
-                                                          "rhs": {
-                                                            "const": {
-                                                              "val": "2.5s"
-                                                            }
-                                                          }
-                                                        }
-                                                      }
-                                                    ]
-                                                  }
-                                                },
-                                                {
-                                                  "cmp": {
-                                                    "lhs": {
-                                                      "autoTimeToNext": {
-                                                        "autoType": "MainHand"
-                                                      }
-                                                    },
-                                                    "op": "OpGt",
-                                                    "rhs": {
-                                                      "const": {
-                                                        "val": "2.5s"
-                                                      }
-                                                    }
-                                                  }
+                                            "cmp": {
+                                              "lhs": {
+                                                "currentManaPercent": {}
+                                              },
+                                              "op": "OpGe",
+                                              "rhs": {
+                                                "const": {
+                                                  "val": "0.3"
                                                 }
-                                              ]
+                                              }
                                             }
                                           },
                                           {
-                                            "or": {
-                                              "vals": [
-                                                {
-                                                  "cmp": {
-                                                    "lhs": {
-                                                      "remainingTime": {}
-                                                    },
-                                                    "op": "OpLt",
-                                                    "rhs": {
-                                                      "math": {
-                                                        "lhs": {
-                                                          "const": {
-                                                            "val": "210s"
-                                                          }
-                                                        },
-                                                        "op": "OpSub",
-                                                        "rhs": {
-                                                          "currentTime": {}
-                                                        }
-                                                      }
-                                                    }
-                                                  }
-                                                },
-                                                {
-                                                  "cmp": {
-                                                    "lhs": {
-                                                      "currentManaPercent": {}
-                                                    },
-                                                    "op": "OpGe",
-                                                    "rhs": {
-                                                      "const": {
-                                                        "val": "0.6"
-                                                      }
-                                                    }
-                                                  }
+                                            "cmp": {
+                                              "lhs": {
+                                                "autoTimeToNext": {
+                                                  "autoType": "MainHand"
                                                 }
-                                              ]
+                                              },
+                                              "op": "OpGt",
+                                              "rhs": {
+                                                "const": {
+                                                  "val": "2.5s"
+                                                }
+                                              }
                                             }
                                           }
                                         ]

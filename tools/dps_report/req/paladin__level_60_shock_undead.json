@@ -333,37 +333,16 @@
                                   "and": {
                                     "vals": [
                                       {
-                                        "and": {
-                                          "vals": [
-                                            {
-                                              "cmp": {
-                                                "lhs": {
-                                                  "currentManaPercent": {}
-                                                },
-                                                "op": "OpGe",
-                                                "rhs": {
-                                                  "const": {
-                                                    "val": "0.3"
-                                                  }
-                                                }
-                                              }
-                                            },
-                                            {
-                                              "cmp": {
-                                                "lhs": {
-                                                  "autoTimeToNext": {
-                                                    "autoType": "MainHand"
-                                                  }
-                                                },
-                                                "op": "OpGt",
-                                                "rhs": {
-                                                  "const": {
-                                                    "val": "2.5s"
-                                                  }
-                                                }
-                                              }
+                                        "cmp": {
+                                          "lhs": {
+                                            "currentManaPercent": {}
+                                          },
+                                          "op": "OpGe",
+                                          "rhs": {
+                                            "const": {
+                                              "val": "0.3"
                                             }
-                                          ]
+                                          }
                                         }
                                       },
                                       {
@@ -388,24 +367,279 @@
                                   "or": {
                                     "vals": [
                                       {
-                                        "cmp": {
-                                          "lhs": {
-                                            "remainingTime": {}
-                                          },
-                                          "op": "OpLt",
-                                          "rhs": {
-                                            "math": {
-                                              "lhs": {
-                                                "const": {
-                                                  "val": "240s"
-                                                }
-                                              },
-                                              "op": "OpSub",
-                                              "rhs": {
-                                                "currentTime": {}
+                                        "or": {
+                                          "vals": [
+                                            {
+                                              "and": {
+                                                "vals": [
+                                                  {
+                                                    "or": {
+                                                      "vals": [
+                                                        {
+                                                          "isExecutePhase": {
+                                                            "threshold": "E20"
+                                                          }
+                                                        },
+                                                        {
+                                                          "cmp": {
+                                                            "lhs": {
+                                                              "math": {
+                                                                "lhs": {
+                                                                  "math": {
+                                                                    "lhs": {
+                                                                      "math": {
+                                                                        "lhs": {
+                                                                          "remainingTime": {}
+                                                                        },
+                                                                        "op": "OpMul",
+                                                                        "rhs": {
+                                                                          "const": {
+                                                                            "val": "4"
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    },
+                                                                    "op": "OpSub",
+                                                                    "rhs": {
+                                                                      "currentTime": {}
+                                                                    }
+                                                                  }
+                                                                },
+                                                                "op": "OpDiv",
+                                                                "rhs": {
+                                                                  "const": {
+                                                                    "val": "5"
+                                                                  }
+                                                                }
+                                                              }
+                                                            },
+                                                            "op": "OpLt",
+                                                            "rhs": {
+                                                              "const": {
+                                                                "val": "10s"
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      ]
+                                                    }
+                                                  },
+                                                  {
+                                                    "cmp": {
+                                                      "lhs": {
+                                                        "math": {
+                                                          "lhs": {
+                                                            "currentMana": {}
+                                                          },
+                                                          "op": "OpAdd",
+                                                          "rhs": {
+                                                            "math": {
+                                                              "lhs": {
+                                                                "math": {
+                                                                  "lhs": {
+                                                                    "spellUsesRemaining": {
+                                                                      "minTimeLeft": {
+                                                                        "const": {
+                                                                          "val": "15s"
+                                                                        }
+                                                                      },
+                                                                      "spellId": {
+                                                                        "itemId": 13444
+                                                                      }
+                                                                    }
+                                                                  },
+                                                                  "op": "OpMul",
+                                                                  "rhs": {
+                                                                    "const": {
+                                                                      "val": "1800"
+                                                                    }
+                                                                  }
+                                                                }
+                                                              },
+                                                              "op": "OpAdd",
+                                                              "rhs": {
+                                                                "math": {
+                                                                  "lhs": {
+                                                                    "spellUsesRemaining": {
+                                                                      "minTimeLeft": {
+                                                                        "const": {
+                                                                          "val": "15s"
+                                                                        }
+                                                                      },
+                                                                      "spellId": {
+                                                                        "itemId": 12662
+                                                                      }
+                                                                    }
+                                                                  },
+                                                                  "op": "OpMul",
+                                                                  "rhs": {
+                                                                    "const": {
+                                                                      "val": "1200"
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      },
+                                                      "op": "OpGe",
+                                                      "rhs": {
+                                                        "math": {
+                                                          "lhs": {
+                                                            "remainingTime": {}
+                                                          },
+                                                          "op": "OpMul",
+                                                          "rhs": {
+                                                            "const": {
+                                                              "val": "75"
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                ]
+                                              }
+                                            },
+                                            {
+                                              "and": {
+                                                "vals": [
+                                                  {
+                                                    "not": {
+                                                      "val": {
+                                                        "or": {
+                                                          "vals": [
+                                                            {
+                                                              "isExecutePhase": {
+                                                                "threshold": "E20"
+                                                              }
+                                                            },
+                                                            {
+                                                              "cmp": {
+                                                                "lhs": {
+                                                                  "math": {
+                                                                    "lhs": {
+                                                                      "math": {
+                                                                        "lhs": {
+                                                                          "math": {
+                                                                            "lhs": {
+                                                                              "remainingTime": {}
+                                                                            },
+                                                                            "op": "OpMul",
+                                                                            "rhs": {
+                                                                              "const": {
+                                                                                "val": "4"
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        },
+                                                                        "op": "OpSub",
+                                                                        "rhs": {
+                                                                          "currentTime": {}
+                                                                        }
+                                                                      }
+                                                                    },
+                                                                    "op": "OpDiv",
+                                                                    "rhs": {
+                                                                      "const": {
+                                                                        "val": "5"
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                },
+                                                                "op": "OpLt",
+                                                                "rhs": {
+                                                                  "const": {
+                                                                    "val": "10s"
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          ]
+                                                        }
+                                                      }
+                                                    }
+                                                  },
+                                                  {
+                                                    "cmp": {
+                                                      "lhs": {
+                                                        "math": {
+                                                          "lhs": {
+                                                            "currentMana": {}
+                                                          },
+                                                          "op": "OpAdd",
+                                                          "rhs": {
+                                                            "math": {
+                                                              "lhs": {
+                                                                "math": {
+                                                                  "lhs": {
+                                                                    "spellUsesRemaining": {
+                                                                      "minTimeLeft": {
+                                                                        "const": {
+                                                                          "val": "15s"
+                                                                        }
+                                                                      },
+                                                                      "spellId": {
+                                                                        "itemId": 13444
+                                                                      }
+                                                                    }
+                                                                  },
+                                                                  "op": "OpMul",
+                                                                  "rhs": {
+                                                                    "const": {
+                                                                      "val": "1800"
+                                                                    }
+                                                                  }
+                                                                }
+                                                              },
+                                                              "op": "OpAdd",
+                                                              "rhs": {
+                                                                "math": {
+                                                                  "lhs": {
+                                                                    "spellUsesRemaining": {
+                                                                      "minTimeLeft": {
+                                                                        "const": {
+                                                                          "val": "15s"
+                                                                        }
+                                                                      },
+                                                                      "spellId": {
+                                                                        "itemId": 12662
+                                                                      }
+                                                                    }
+                                                                  },
+                                                                  "op": "OpMul",
+                                                                  "rhs": {
+                                                                    "const": {
+                                                                      "val": "1200"
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          }
+                                                        }
+                                                      },
+                                                      "op": "OpGe",
+                                                      "rhs": {
+                                                        "math": {
+                                                          "lhs": {
+                                                            "remainingTime": {}
+                                                          },
+                                                          "op": "OpMul",
+                                                          "rhs": {
+                                                            "const": {
+                                                              "val": "55"
+                                                            }
+                                                          }
+                                                        }
+                                                      }
+                                                    }
+                                                  }
+                                                ]
                                               }
                                             }
-                                          }
+                                          ]
                                         }
                                       },
                                       {
@@ -479,37 +713,16 @@
                                             "and": {
                                               "vals": [
                                                 {
-                                                  "and": {
-                                                    "vals": [
-                                                      {
-                                                        "cmp": {
-                                                          "lhs": {
-                                                            "currentManaPercent": {}
-                                                          },
-                                                          "op": "OpGe",
-                                                          "rhs": {
-                                                            "const": {
-                                                              "val": "0.3"
-                                                            }
-                                                          }
-                                                        }
-                                                      },
-                                                      {
-                                                        "cmp": {
-                                                          "lhs": {
-                                                            "autoTimeToNext": {
-                                                              "autoType": "MainHand"
-                                                            }
-                                                          },
-                                                          "op": "OpGt",
-                                                          "rhs": {
-                                                            "const": {
-                                                              "val": "2.5s"
-                                                            }
-                                                          }
-                                                        }
+                                                  "cmp": {
+                                                    "lhs": {
+                                                      "currentManaPercent": {}
+                                                    },
+                                                    "op": "OpGe",
+                                                    "rhs": {
+                                                      "const": {
+                                                        "val": "0.3"
                                                       }
-                                                    ]
+                                                    }
                                                   }
                                                 },
                                                 {
@@ -534,24 +747,279 @@
                                             "or": {
                                               "vals": [
                                                 {
-                                                  "cmp": {
-                                                    "lhs": {
-                                                      "remainingTime": {}
-                                                    },
-                                                    "op": "OpLt",
-                                                    "rhs": {
-                                                      "math": {
-                                                        "lhs": {
-                                                          "const": {
-                                                            "val": "240s"
-                                                          }
-                                                        },
-                                                        "op": "OpSub",
-                                                        "rhs": {
-                                                          "currentTime": {}
+                                                  "or": {
+                                                    "vals": [
+                                                      {
+                                                        "and": {
+                                                          "vals": [
+                                                            {
+                                                              "or": {
+                                                                "vals": [
+                                                                  {
+                                                                    "isExecutePhase": {
+                                                                      "threshold": "E20"
+                                                                    }
+                                                                  },
+                                                                  {
+                                                                    "cmp": {
+                                                                      "lhs": {
+                                                                        "math": {
+                                                                          "lhs": {
+                                                                            "math": {
+                                                                              "lhs": {
+                                                                                "math": {
+                                                                                  "lhs": {
+                                                                                    "remainingTime": {}
+                                                                                  },
+                                                                                  "op": "OpMul",
+                                                                                  "rhs": {
+                                                                                    "const": {
+                                                                                      "val": "4"
+                                                                                    }
+                                                                                  }
+                                                                                }
+                                                                              },
+                                                                              "op": "OpSub",
+                                                                              "rhs": {
+                                                                                "currentTime": {}
+                                                                              }
+                                                                            }
+                                                                          },
+                                                                          "op": "OpDiv",
+                                                                          "rhs": {
+                                                                            "const": {
+                                                                              "val": "5"
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      },
+                                                                      "op": "OpLt",
+                                                                      "rhs": {
+                                                                        "const": {
+                                                                          "val": "10s"
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                ]
+                                                              }
+                                                            },
+                                                            {
+                                                              "cmp": {
+                                                                "lhs": {
+                                                                  "math": {
+                                                                    "lhs": {
+                                                                      "currentMana": {}
+                                                                    },
+                                                                    "op": "OpAdd",
+                                                                    "rhs": {
+                                                                      "math": {
+                                                                        "lhs": {
+                                                                          "math": {
+                                                                            "lhs": {
+                                                                              "spellUsesRemaining": {
+                                                                                "minTimeLeft": {
+                                                                                  "const": {
+                                                                                    "val": "15s"
+                                                                                  }
+                                                                                },
+                                                                                "spellId": {
+                                                                                  "itemId": 13444
+                                                                                }
+                                                                              }
+                                                                            },
+                                                                            "op": "OpMul",
+                                                                            "rhs": {
+                                                                              "const": {
+                                                                                "val": "1800"
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        },
+                                                                        "op": "OpAdd",
+                                                                        "rhs": {
+                                                                          "math": {
+                                                                            "lhs": {
+                                                                              "spellUsesRemaining": {
+                                                                                "minTimeLeft": {
+                                                                                  "const": {
+                                                                                    "val": "15s"
+                                                                                  }
+                                                                                },
+                                                                                "spellId": {
+                                                                                  "itemId": 12662
+                                                                                }
+                                                                              }
+                                                                            },
+                                                                            "op": "OpMul",
+                                                                            "rhs": {
+                                                                              "const": {
+                                                                                "val": "1200"
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                },
+                                                                "op": "OpGe",
+                                                                "rhs": {
+                                                                  "math": {
+                                                                    "lhs": {
+                                                                      "remainingTime": {}
+                                                                    },
+                                                                    "op": "OpMul",
+                                                                    "rhs": {
+                                                                      "const": {
+                                                                        "val": "75"
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          ]
+                                                        }
+                                                      },
+                                                      {
+                                                        "and": {
+                                                          "vals": [
+                                                            {
+                                                              "not": {
+                                                                "val": {
+                                                                  "or": {
+                                                                    "vals": [
+                                                                      {
+                                                                        "isExecutePhase": {
+                                                                          "threshold": "E20"
+                                                                        }
+                                                                      },
+                                                                      {
+                                                                        "cmp": {
+                                                                          "lhs": {
+                                                                            "math": {
+                                                                              "lhs": {
+                                                                                "math": {
+                                                                                  "lhs": {
+                                                                                    "math": {
+                                                                                      "lhs": {
+                                                                                        "remainingTime": {}
+                                                                                      },
+                                                                                      "op": "OpMul",
+                                                                                      "rhs": {
+                                                                                        "const": {
+                                                                                          "val": "4"
+                                                                                        }
+                                                                                      }
+                                                                                    }
+                                                                                  },
+                                                                                  "op": "OpSub",
+                                                                                  "rhs": {
+                                                                                    "currentTime": {}
+                                                                                  }
+                                                                                }
+                                                                              },
+                                                                              "op": "OpDiv",
+                                                                              "rhs": {
+                                                                                "const": {
+                                                                                  "val": "5"
+                                                                                }
+                                                                              }
+                                                                            }
+                                                                          },
+                                                                          "op": "OpLt",
+                                                                          "rhs": {
+                                                                            "const": {
+                                                                              "val": "10s"
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    ]
+                                                                  }
+                                                                }
+                                                              }
+                                                            },
+                                                            {
+                                                              "cmp": {
+                                                                "lhs": {
+                                                                  "math": {
+                                                                    "lhs": {
+                                                                      "currentMana": {}
+                                                                    },
+                                                                    "op": "OpAdd",
+                                                                    "rhs": {
+                                                                      "math": {
+                                                                        "lhs": {
+                                                                          "math": {
+                                                                            "lhs": {
+                                                                              "spellUsesRemaining": {
+                                                                                "minTimeLeft": {
+                                                                                  "const": {
+                                                                                    "val": "15s"
+                                                                                  }
+                                                                                },
+                                                                                "spellId": {
+                                                                                  "itemId": 13444
+                                                                                }
+                                                                              }
+                                                                            },
+                                                                            "op": "OpMul",
+                                                                            "rhs": {
+                                                                              "const": {
+                                                                                "val": "1800"
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        },
+                                                                        "op": "OpAdd",
+                                                                        "rhs": {
+                                                                          "math": {
+                                                                            "lhs": {
+                                                                              "spellUsesRemaining": {
+                                                                                "minTimeLeft": {
+                                                                                  "const": {
+                                                                                    "val": "15s"
+                                                                                  }
+                                                                                },
+                                                                                "spellId": {
+                                                                                  "itemId": 12662
+                                                                                }
+                                                                              }
+                                                                            },
+                                                                            "op": "OpMul",
+                                                                            "rhs": {
+                                                                              "const": {
+                                                                                "val": "1200"
+                                                                              }
+                                                                            }
+                                                                          }
+                                                                        }
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                },
+                                                                "op": "OpGe",
+                                                                "rhs": {
+                                                                  "math": {
+                                                                    "lhs": {
+                                                                      "remainingTime": {}
+                                                                    },
+                                                                    "op": "OpMul",
+                                                                    "rhs": {
+                                                                      "const": {
+                                                                        "val": "55"
+                                                                      }
+                                                                    }
+                                                                  }
+                                                                }
+                                                              }
+                                                            }
+                                                          ]
                                                         }
                                                       }
-                                                    }
+                                                    ]
                                                   }
                                                 },
                                                 {
