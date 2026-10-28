@@ -19,7 +19,7 @@ var (
 	hunterRapidFire        = spellID(3045)
 	hunterIntimidation     = spellID(19577)
 	hunterBestialWrath     = spellID(19574)
-	hunterAspectOfTheHawk  = spellID(14321) // rank 5, see sim/hunter/aspects.go
+	hunterAspectOfTheHawk  = spellID(14322) // rank 6, see sim/hunter/aspects.go
 	hunterAspectOfTheBeast = spellID(1299447)
 	hunterRaptorStrikeQ    = spellIDTag(14266, 3)
 	hunterRaptorStrike     = spellID(14266)

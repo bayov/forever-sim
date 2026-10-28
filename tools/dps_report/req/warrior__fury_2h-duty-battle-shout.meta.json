@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_fury_2h_battle_shout",
   "published": {
-    "dps": 961.6,
-    "source": "Warrior re-optimization at flat Rage, 2026-10-25 (standards 21, k flat at the level 30 value): the rotation and talent searches moved Berserker Rage under 30 Rage (never), Heroic Strike from 90 (85; the duty already 90), Slam from 45 (30), Improved Berserker Rage 2/2 for a point of Enrage. Orc stays (race sweep on both seed sets). 20k iterations, 180s, seed 1 (was 1030.3 at ×1.5 Rage, 957.3 at flat Rage before the re-search)"
+    "dps": 959.7,
+    "source": "DPS report 2026-10-28 (full re-sim at 20,000 iterations, 180 s, after the launch-realm hunter hotfix)"
   },
   "verify": {
     "dps": 961.6,

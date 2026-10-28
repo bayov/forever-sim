@@ -58,6 +58,7 @@ git fetch origin master
 
    - It's a Next.js page: the text sits in `self.__next_f.push` chunks. `tools/database/foreverchanges/scrape.py` shows how to decode them.
    - It lists each build. "Found in the game" or "Not in Blizzard's notes" lines are unannounced client changes it spotted, which makes it a good cross-check.
+   - It also posts **server hotfixes** it reads from the launch realms' hotfix cache, as "A hotfix to the <date> build" entries with per-spell lines ("Gives 15, 22, 30 and 40 ... instead of ..."). Read every one newer than the ledger's last and give each changed spell a row (see "Server hotfixes are not ambiguous" below). wago.tools/hotfixes (product `wowf`) has the raw rows when its own clients have seen them: the page embeds its data as JSON in `data-page`; rows are keyed by table and record ID (a SpellEffect row's ID, not the spell's).
    - It lags a day or more behind wago.
 4. **Wowhead.** Its Forever news returns HTTP 403 from cloud sessions, so don't spend time on it. Its build articles retell the Blizzard posts. The repo's `scrape-wowhead` skill and `tools/database/forever_wowhead/wowhead.py` can reach single pages if you really need one.
 5. **Blizzard news** (worldofwarcraft.blizzard.com/en-us/news). Class deep dives are design articles that describe the design as of their build.
@@ -124,6 +125,8 @@ python3 -I $T/enchant_diff.py <baseline> <new>
 - `n/a`: healing, tanking, threat, PvP, leveling or UI.
 
 **Announced but absent from the client:** the change is server side (a hotfix), or it lands in a later client. The 10-02 warrior pass showed up only in 70291. Mark it `ambiguous (needs verify)` and file a low-severity finding.
+
+**Server hotfixes are not "ambiguous".** A change read from the realms' hotfix cache (a wago.tools/hotfixes row, or a foreverchanges.pro "A hotfix to the <date> build" entry, "Not in Blizzard's notes") is server data (docs/data_sources.md, "Which source wins"), even when the client tables, Blizzard's notes and Wowhead don't have it yet. Its row gets the sim status `missing` / `wrong` (or `landed`), never `ambiguous`, and its finding is sized like any other: `needs: worker fix`, unless it contradicts a standing user ruling or assumption setting, which makes it `needs: user ruling` with severity at least `medium` (the 2026-10-28 Trueshot Aura and Aspect of the Hawk hotfix overturned the ruling of 2026-10-15, about −2% on three hunter presets, and waited a day as a low-key finding).
 
 ### 4. Check the sim and size the impact
 

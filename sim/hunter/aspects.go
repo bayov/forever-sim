@@ -16,13 +16,14 @@ func (hunter *Hunter) deadlyAspectsChance() float64 {
 }
 
 // The best Aspect of the Hawk the hunter can learn. Rank 7 comes from an Ahn'Qiraj book, out under
-// Forever. Forever's rank 6 gives less than rank 5 (55 against 90 in the beta client), so without
-// rank 7 a hunter keeps casting rank 5.
+// Forever, so a level 60 hunter casts rank 6. The client gives rank 6 55 against rank 5's 90, but the
+// launch realms' server hotfix of 2026-10-28 lowers ranks 1-5, which makes rank 6 the strongest
+// (user ruling 2026-10-28; see registerAspectOfTheHawkSpell).
 func (hunter *Hunter) getMaxHawkRank() int {
 	levels := [8]int{0, 10, 18, 28, 38, 48, 58, 60}
 	maxRank := 7
 	if hunter.Env.IsForever() && !hunter.Env.IncludeAQRanks() {
-		maxRank = 5
+		maxRank = 6
 	}
 	for i := maxRank; i > 0; i-- {
 		if levels[i] <= int(hunter.Level) {
@@ -40,10 +41,15 @@ func (hunter *Hunter) registerAspectOfTheHawkSpell() {
 
 	hunter.AspectOfTheHawkAPMultiplier = 1.0
 
-	// The beta client gives rank 6 55 ranged attack power, half of Classic's 110 and a step down from
-	// rank 5's 90. Rank 7 at level 60 is Classic's 120.
+	// The client (70338 to 70658) gives 20 / 35 / 50 / 70 / 90 / 55 ranged attack power; the launch
+	// realms' server hotfix of 2026-10-28 (foreverchanges.pro, read from the realms' hotfix cache, not in
+	// Blizzard's notes) lowers ranks 1-5 to 15 / 22 / 30 / 38 / 47, so rank 6's 55 tops the curve.
+	// Rank 7 at level 60 is Classic's 120.
 	spellID := [8]int32{0, 13165, 14318, 14319, 14320, 14321, 14322, 25296}[rank]
-	rap := [8]float64{0, 20, 35, 50, 70, 90, 55, 120}[rank]
+	rap := [8]float64{0, 20, 35, 50, 70, 90, 110, 120}[rank]
+	if hunter.Env.IsForever() {
+		rap = [8]float64{0, 15, 22, 30, 38, 47, 55, 120}[rank]
+	}
 	manaCost := [8]float64{0, 20, 35, 50, 70, 90, 110, 120}[rank]
 
 	var quickShots *core.Aura

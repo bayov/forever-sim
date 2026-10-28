@@ -4,10 +4,9 @@ import "testing"
 
 // TestForeverBestLearnedRank checks that Forever's Trueshot Aura and Hunter's Mark use the
 // strongest rank learned by a level, not the highest (standards 8a: players cast any rank they
-// know). Client 70338 gives Trueshot Aura rank 5 (level 60) 50 against rank 4's 75, and Hunter's
-// Mark rank 4 (level 58) 71 against rank 3's 98; report assumption hunter_tsa_hm_rank (user ruling
-// 2026-10-15) fixes Trueshot Aura's onto the curve at 100, and the 2026-10-21 server hotfix gives
-// Hunter's Mark rank 4 143, so the top ranks are cast.
+// know). The launch realms' 2026-10-28 hotfix puts Trueshot Aura on a rising curve (15 / 22 / 30 /
+// 40, rank 5 the client's 50), and the 2026-10-21 server hotfix gives Hunter's Mark rank 4 143
+// (the client's is 71 against rank 3's 98), so the top ranks are cast.
 func TestForeverBestLearnedRank(t *testing.T) {
 	for _, c := range []struct {
 		name   string
@@ -17,10 +16,10 @@ func TestForeverBestLearnedRank(t *testing.T) {
 		want   float64
 	}{
 		{"Trueshot Aura", foreverTrueshotAuraLevel[:], foreverTrueshotAuraRAP[:], 24, 0},
-		{"Trueshot Aura", foreverTrueshotAuraLevel[:], foreverTrueshotAuraRAP[:], 45, 50},
-		{"Trueshot Aura", foreverTrueshotAuraLevel[:], foreverTrueshotAuraRAP[:], 50, 75},
-		{"Trueshot Aura", foreverTrueshotAuraLevel[:], foreverTrueshotAuraRAP[:], 59, 75},
-		{"Trueshot Aura", foreverTrueshotAuraLevel[:], foreverTrueshotAuraRAP[:], 60, 100},
+		{"Trueshot Aura", foreverTrueshotAuraLevel[:], foreverTrueshotAuraRAP[:], 45, 30},
+		{"Trueshot Aura", foreverTrueshotAuraLevel[:], foreverTrueshotAuraRAP[:], 50, 40},
+		{"Trueshot Aura", foreverTrueshotAuraLevel[:], foreverTrueshotAuraRAP[:], 59, 40},
+		{"Trueshot Aura", foreverTrueshotAuraLevel[:], foreverTrueshotAuraRAP[:], 60, 50},
 		{"Hunter's Mark", foreverHuntersMarkLevel[:], foreverHuntersMark[:], 30, 59},
 		{"Hunter's Mark", foreverHuntersMarkLevel[:], foreverHuntersMark[:], 40, 98},
 		{"Hunter's Mark", foreverHuntersMarkLevel[:], foreverHuntersMark[:], 57, 98},

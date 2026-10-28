@@ -107,7 +107,7 @@ The counts are as audited, before this audit's own PRs. A row that touches two s
 4. **Warlock races.** After #69, Gnome may no longer be the best warlock race. Rerun the race tables.
 5. ~~**The 10-26 racial pass (dev notes post /7, rows SHR-P7-01..05).**~~ Settled 2026-10-27: the user asked for the sim to follow the notes; landed in 500e3a1.
 6. ~~**Missile Barrage from Arcane Missiles hits (MAGE-U-15).**~~ Settled 2026-10-27 by the user: no proc; one-value assumption.
-7. **Trueshot Aura rank 5 (HUN-HF-02).** The 10-28 launch-realm hotfix puts ranks 1-4 at 15/22/30/40, so the client's rank 5 of 50 now sits on the curve. Keep hunter_tsa_hm_rank at 100, or take 50 (−0.94% BM, −1.28% LW, −1.12% MM)?
+7. ~~**Trueshot Aura rank 5 (HUN-HF-02).**~~ Settled 2026-10-28 by the user ("Adopt both"): rank 5 at 50 on the hotfixed curve, Aspect of the Hawk rank 6 at 55 (HUN-HF-01); hunter_tsa_hm_rank is one value.
 
 ### Report assumptions and Need to Verify items this ledger settles
 
@@ -196,8 +196,8 @@ Dev notes: **new post /7** (2026-10-26 20:35, edited 21:09), the pre-launch raci
 
 | ID | Source | Change | L60 DPS? | Client check | Sim status | Code location / note |
 |---|---|---|---|---|---|---|
-| HUN-HF-01 | FC 2026-10-28 hotfix (launch-realm cache) | Aspect of the Hawk ranks 1-5: 15/22/30/38/47 ranged AP (was 20/35/50/70/90); rank 6 (55) not listed | **yes** (BM, LW, MM) | not in 70658 tables; hotfix cache only | ambiguous (needs verify): sim casts rank 5 at 90; with the hotfix the best is rank 6 at 55, −0.66% to −0.90% | `sim/hunter/aspects.go:46`, `getMaxHawkRank`; finding client_update-20261028-1 |
-| HUN-HF-02 | FC 2026-10-28 hotfix (launch-realm cache) | Trueshot Aura ranks 1-4: 15/22/30/40 ranged AP (was 30/40/50/75); rank 5 (50 in the client) not listed | **yes** (BM, LW, MM) | not in 70658 tables; hotfix cache only | ambiguous (needs verify) + ruling: sim keeps rank 5 at 100 (hunter_tsa_hm_rank); at 50 it is −0.94% to −1.28% | `sim/core/buffs.go:1748-1751`; finding client_update-20261028-2 |
+| HUN-HF-01 | FC 2026-10-28 hotfix (launch-realm cache) | Aspect of the Hawk ranks 1-5: 15/22/30/38/47 ranged AP (was 20/35/50/70/90); rank 6 (55) not listed | **yes** (BM, LW, MM) | not in 70658 tables; hotfix cache only | landed 2026-10-28 by user ruling (adopt the launch-realm hotfix) | `sim/hunter/aspects.go:46`, `getMaxHawkRank`; finding client_update-20261028-1 |
+| HUN-HF-02 | FC 2026-10-28 hotfix (launch-realm cache) | Trueshot Aura ranks 1-4: 15/22/30/40 ranged AP (was 30/40/50/75); rank 5 (50 in the client) not listed | **yes** (BM, LW, MM) | not in 70658 tables; hotfix cache only | landed 2026-10-28 by user ruling (adopt the launch-realm hotfix) | `sim/core/buffs.go:1748-1751`; finding client_update-20261028-2 |
 
 ## Per-class ledgers
 

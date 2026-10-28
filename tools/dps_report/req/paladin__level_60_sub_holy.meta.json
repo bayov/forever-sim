@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_sub_holy",
   "published": {
-    "dps": 943.7,
-    "source": "Race re-pick 2026-10-27 (standards 29 and 16): Undead; verify.py, 20000 iterations, seed 1 (was 941.8 as a Human on the same sim)"
+    "dps": 948.8,
+    "source": "DPS report 2026-10-28 (full re-sim at 20,000 iterations, 180 s, after the launch-realm hunter hotfix)"
   },
   "verify": {
     "dps": 943.7,

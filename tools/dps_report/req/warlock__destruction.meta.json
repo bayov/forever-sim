@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_destruction",
   "published": {
-    "dps": 1001.5,
-    "source": "Second race re-pick 2026-10-27 (standards 29 and 16, after dev notes post 8): Orc; verify.py, 20000 iterations, seed 1 (was 1000.1 as Human on the same sim)"
+    "dps": 1001.6,
+    "source": "DPS report 2026-10-28 (full re-sim at 20,000 iterations, 180 s, after the launch-realm hunter hotfix)"
   },
   "verify": {
     "dps": 1001.5,

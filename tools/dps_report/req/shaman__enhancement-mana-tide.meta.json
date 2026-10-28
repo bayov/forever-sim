@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_synthetic_burning_totem",
   "apl": "mana_tide",
   "published": {
-    "dps": 800.0,
-    "source": "Standards 11 explosives update (2026-10-23, explosives only when they gain): Goblin Land Mine dropped, Goblin Sapper Charge kept (was 792.1)"
+    "dps": 796.6,
+    "source": "DPS report 2026-10-28 (full re-sim at 20,000 iterations, 180 s, after the launch-realm hunter hotfix)"
   },
   "verify": {
     "dps": 800.01,
