@@ -1,5 +1,5 @@
 builds: 58 rows, 85 KB
-races: 302 rows, 57 KB
+races: 302 rows, 58 KB
 lengths: 290 rows, 23 KB
 abilities: 891 rows, 250 KB
 auras: 1458 rows, 213 KB
@@ -8,7 +8,7 @@ stats: 781 rows, 65 KB
 gear: 750 rows, 142 KB
 setup: 2273 rows, 567 KB
 notes: 1743 rows, 202 KB
-race_variants: 946 rows, 268 KB
+race_variants: 946 rows, 272 KB
 race_breakdown: 1167 rows, 175 KB
 race_summary: 328 rows, 100 KB
 race_notes: 46 rows, 11 KB
