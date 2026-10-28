@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_synthetic_fury",
   "apl": "level60_fury",
   "published": {
-    "dps": 986.6,
-    "source": "Warrior re-optimization at flat Rage, 2026-10-25 (standards 21, k flat at the level 30 value): the rotation and talent searches moved Heroic Strike from 80 Rage and in the execute phase (55), Bloodrage under 20 (40), Death Wish held for the last 33s and the trinket for the last 30s (on cooldown), Enrage 4/5 for Improved Bloodrage 2/2. Orc stays (race sweep on both seed sets). 20k iterations, 180s, seed 1 (was 1068.7 at ×1.5 Rage, 972.5 at flat Rage before the re-search)"
+    "dps": 982.2,
+    "source": "DPS report 2026-10-28 (full re-sim at 20,000 iterations, 180 s, after the launch-realm hunter hotfix)"
   },
   "verify": {
     "dps": 986.6,

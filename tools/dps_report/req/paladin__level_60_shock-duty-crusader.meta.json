@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_synthetic_crusader_duty",
   "apl": "level60_shock_crusader_duty",
   "published": {
-    "dps": 887.3,
-    "source": "Race re-pick 2026-10-27 (standards 29 and 16): Undead (follows its base build, paladin__level_60_shock); verify.py, 20000 iterations, seed 1 (was 865.9 as a Human on the same sim); rotation 2026-10-27: vigilLongFight 210 and vigilSwing 25 (was 869.5), verify.py 20000 iterations, seed 1"
+    "dps": 891.9,
+    "source": "DPS report 2026-10-28 (full re-sim at 20,000 iterations, 180 s, after the launch-realm hunter hotfix)"
   },
   "verify": {
     "dps": 887.3,

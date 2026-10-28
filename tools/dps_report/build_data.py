@@ -6,7 +6,7 @@ from itertools import groupby
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from dashpaths import D, TREE  # base dir and merged tree (env DASH_DIR / DASH_TREE)
-from race_override import tuned_kind  # noqa: E402
+from race_override import tuned_kind, note as race_note  # noqa: E402
 OUT = os.path.join(D, 'data')
 os.makedirs(OUT, exist_ok=True)
 os.makedirs(OUT, exist_ok=True)
@@ -62,7 +62,8 @@ item_names = {i['id']: i for i in db['items']}
 enchant_names = {e['effectId']: e['name'] for e in db['enchants']}
 spell_icons = {s['id']: s for s in db['spellIcons']}
 # Forever spells the sim keys by a borrowed or renamed Classic/SoD spell id: show Forever's name and icon
-FOREVER_SPELL = {425336: ('Rage of the Farseer', 'spell_nature_bloodlust'), 11713: ('Bane of Agony', None), 603: ('Bane of Doom', None)}
+FOREVER_SPELL = {425336: ('Rage of the Farseer', 'spell_nature_bloodlust'), 11713: ('Bane of Agony', None), 603: ('Bane of Doom', None),
+                 462707: ('Cutthroat', 'classicon_rogue')}  # Cutthroat's proc, which the client names by id only (the talent's icon)
 for _id, (_nm, _ic) in FOREVER_SPELL.items():
     _s = dict(spell_icons.get(_id) or {'id': _id})
     _s['name'] = _nm
@@ -409,7 +410,7 @@ for o in outs:
         races.append({'build': bid, 'class': m['class'], 'race': race_name(r['race']), 'faction': r['faction'],
                       'dps': round(r['dps'], 1), 'se': round(r['se'], 2), 'vsBest': round(100 * (r['dps'] / best['dps'] - 1), 2),
                       'isPreset': r['race'] == m['race'], 'raceIcon': RACE_ICON.get(race_name(r['race'])),
-                      'tuned': (r.get('override') or {}).get('note', ''),  # the race's own rotation or gear (race_override.py)
+                      'tuned': race_note(r.get('override')),  # the race's own rotation or gear (race_override.py)
                       'tunedKind': tuned_kind(r.get('override'))})
     total = sum(a['dps'] for a in mn['actions'])
     seen = defaultdict(int)
@@ -687,8 +688,11 @@ for _race, _lst in json.load(open(os.path.join(TREE, 'ui/core/forever/racials.js
 for _k, _v in list(RACIAL_RACE.items()):
     RACIAL_RACE[_k] = {'SkyborneHighOrder': 'High Order', 'SkyborneWindshaper': 'Windshaper'}.get(_v, _v)
 _outs_r = [dict(o, meta=dict(o['meta'], race=race_name(o['meta']['race']))) for o in outs if not o['meta'].get('duty')]
-rot_rows, rot_fallback = rotation.build(os.path.join(D, 'req'), _outs_r, nm, names, abilities, RACIAL_RACE)
-for r in rot_rows:
+_talents = rotation.load_talents(TREE)
+rot_rows, rot_fallback = rotation.build(os.path.join(D, 'req'), _outs_r, nm, names, abilities, RACIAL_RACE, _talents)
+
+
+def _rot_finish(r):
     if r['key'] and not r['icon']:
         r['icon'] = names.get(r['key'], {}).get('icon')
     if r['key'] == 'oOtherActionPotion':  # the APL's "potion" is the preset's default potion
@@ -699,10 +703,25 @@ for r in rot_rows:
             _norm = lambda t: re.sub(r'[^a-z]', '', t.lower())
             pk = next((k for k, n in names.items() if _norm(n['name']) == _norm(r['name'])), None)
             ab = next((a for a in abilities if a['build'] == r['build'] and a['key'] == pk), None)
-            if ab:
+            if ab and r.get('casts') is not None:
                 r['casts'] = ab['casts']
     r['notes'] = _clean_note(r['notes'])
+
+
+for r in rot_rows:
+    _rot_finish(r)
 dump('rotation', rot_rows)
+# race_rotation: the races that play their own rotation on a preset (race_override.py), lined up with the preset's
+import race_override
+race_rot_rows, _fb = rotation.race_build(os.path.join(D, 'req'), _outs_r, nm, names, RACIAL_RACE, rot_rows, race_name, race_override.load, _talents)
+for r in race_rot_rows:
+    if r['diff'] in ('changed', 'added'):  # the others are the preset's rows, already finished
+        _rot_finish(r)
+dump('race_rotation', race_rot_rows)
+_nowhy = sorted({f"{r['build']} {r['forRace']} {r['section']}:{r['key'] or r['name']}" for r in race_rot_rows if r['diff'] != 'same' and not r['otherRace'] and not r['why']})
+if _nowhy:
+    print(f'WARNING race_rotation: {len(_nowhy)} changed lines with no why in race_text.json, e.g. {_nowhy[0]}')
+rot_fallback = sorted(set(rot_fallback) | set(_fb))
 print('rotation conditions shown in compact form:', rot_fallback)
 
 # tooltips: game-style text for spells, items, enchants, setup chips, races and stats (tooltips.py)

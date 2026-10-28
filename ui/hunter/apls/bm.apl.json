@@ -2,7 +2,7 @@
     "type": "TypeAPL",
     "prepullActions": [
         {"action":{"move":{"rangeFromTarget":{"const":{"val":"12"}}}},"doAtValue":{"const":{"val":"-6s"}}},
-        {"action":{"castSpell":{"spellId":{"spellId":14321}}},"doAtValue":{"const":{"val":"-3s"}}},
+        {"action":{"castSpell":{"spellId":{"spellId":14322}}},"doAtValue":{"const":{"val":"-3s"}}},
         {"action":{"castSpell":{"spellId":{"spellId":14325}}},"doAtValue":{"const":{"val":"-1.5s"}}},
         {"action":{"castSpell":{"spellId":{"spellId":3045}}},"doAtValue":{"const":{"val":"-0.1s"}}}
     ],
@@ -13,7 +13,7 @@
         {"action":{"condition":{"and":{"vals":[{"inMeleeRange":{}},{"cmp":{"lhs":{"math":{"lhs":{"autoSwingTime":{"autoType":"MainHand"}},"op":"OpSub","rhs":{"autoTimeToNext":{"autoType":"MainHand"}}}},"op":"OpGt","rhs":{"const":{"val":"0.5s"}}}}]}},"wait":{"duration":{"math":{"lhs":{"autoTimeToNext":{"autoType":"MainHand"}},"op":"OpAdd","rhs":{"const":{"val":"0.001s"}}}}}},"notes":"Weave: in melee, wait for the swing."},
         {"action":{"condition":{"and":{"vals":[{"inMeleeRange":{}},{"cmp":{"lhs":{"math":{"lhs":{"autoSwingTime":{"autoType":"MainHand"}},"op":"OpSub","rhs":{"autoTimeToNext":{"autoType":"MainHand"}}}},"op":"OpLt","rhs":{"const":{"val":"0.2s"}}}}]}},"wait":{"duration":{"math":{"lhs":{"const":{"val":"0.2s"}},"op":"OpSub","rhs":{"math":{"lhs":{"autoSwingTime":{"autoType":"MainHand"}},"op":"OpSub","rhs":{"autoTimeToNext":{"autoType":"MainHand"}}}}}}}},"notes":"Weave: a moment after the swing."},
         {"action":{"condition":{"inMeleeRange":{}},"move":{"rangeFromTarget":{"const":{"val":"12"}}}},"notes":"Weave: back out past the deadzone."},
-        {"action":{"castSpell":{"spellId":{"spellId":14321}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":14321}}}}}},"notes":"Aspect of the Hawk if it ever drops."},
+        {"action":{"castSpell":{"spellId":{"spellId":14322}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":14322}}}}}},"notes":"Aspect of the Hawk if it ever drops."},
         {"action":{"castSpell":{"spellId":{"spellId":1259799}},"condition":{"or":{"vals":[{"auraIsActive":{"auraId":{"itemId":993016}}},{"cmp":{"lhs":{"spellUsesRemaining":{"minTimeLeft":{"const":{"val":"15s"}},"spellId":{"itemId":993016}}},"op":"OpEq","rhs":{"const":{"val":"0"}}}},{"cmp":{"lhs":{"spellUsesLostByDelay":{"delay":{"spellTimeToReady":{"spellId":{"itemId":993016}}},"minTimeLeft":{"const":{"val":"15s"}},"spellId":{"spellId":1259799}}},"op":"OpGt","rhs":{"const":{"val":"0"}}}}]}}},"notes":"Elune's Light with the on-use trinket, unless waiting would cost a use."},
         {"action":{"autocastOtherCooldowns":{}},"notes":"Rapid Fire, Bestial Wrath, racials, trinkets and potions on cooldown."},
         {"action":{"castSpell":{"spellId":{"spellId":14325}},"condition":{"cmp":{"lhs":{"auraRemainingTime":{"auraId":{"spellId":14325},"sourceUnit":{"type":"CurrentTarget"}}},"op":"OpLt","rhs":{"const":{"val":"3s"}}}}},"notes":"Hunter's Mark at the pull and again before it drops (every hunter keeps up its own; the raid's is off)."},

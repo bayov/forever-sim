@@ -165,11 +165,12 @@
     <div class="content-block fv-card" id="sp-races-card" data-jump="Races">
       <div class="content-block-header"><h6 class="content-block-title">Best races</h6><button type="button" class="btn btn-link fv-linkbtn fv-about-btn" data-about="about-races">How are races compared?</button></div>
       <div class="fv-about-body" id="about-races" data-title="How races are compared" hidden>
-        <p><b>How.</b> The preset is simmed as every race its class can be: <span data-source="builds" data-field="raceIters" data-row="0">—</span> fights each at 180s, with the same gear, talents, rotation, consumes and random rolls. The racials are Forever's, from its client. The preset uses the best race.</p>
+        <p><b>How.</b> The preset is simmed as every race its class can be, <span data-source="builds" data-field="raceIters" data-row="0">—</span> fights each at 180s. Gear, talents, rotation, consumes and random rolls stay the same. The racials are Forever's, from its client. The preset uses the best race.</p>
+        <p><b>Own rotation or gear.</b> Where a race clearly does better with its own rotation or gear, it's simmed with that. Its row is tagged, and the Rotation card shows each change and why.</p>
         <p><b>Why trust it.</b> Only the race changes, and every race gets the same random fights. So the gaps come from the race, not from luck.</p>
         <p><b>Gaps.</b></p>
         <ul>
-          <li>Talents and rotation stay tuned for the preset's own race. A race that would play a bit differently may come out a little low.</li>
+          <li>Talents stay the preset's. A race that would play a bit differently, but not clearly better, may come out a little low.</li>
           <li>Only damage on a boss that stands still counts. Utility racials (Stoneform, Will of the Forsaken, Escape Artist, threat drops) count as nothing.</li>
           <li>Races within 1 or 2 DPS of each other are tied.</li>
         </ul>
@@ -239,9 +240,10 @@
     <div class="content-block fv-card" id="sp-rot-card" data-jump="Rotation">
       <div class="content-block-header"><h6 class="content-block-title">Rotation</h6><button type="button" class="btn btn-link fv-linkbtn fv-about-btn" data-about="about-rotation">How was the rotation built?</button></div>
       <div class="fv-about-body" id="about-rotation" data-title="How the rotation was built" hidden>
-        <p><b>How.</b> Each class has a rotation template. The order of its abilities is fixed, but its thresholds can be tuned, like how much Rage Heroic Strike waits for, or when Execute takes over. An optimizer tries each threshold's values in turn. It keeps a change only if it clearly beats the sim's noise, and repeats until nothing helps.</p>
-        <p>AI agents also tried new priorities, openers and cooldown timings by hand. Each stayed only if it won head to head in the sim. An auditor agent then went over every rotation, trying other versions and reading the fight logs for wasted mana, Rage or Energy.</p>
-        <p>Buffs, totems, potions and pre-casts go up before the pull, so they land at 0s, when damage starts to count. Nobody opens from Stealth or Prowl. Raid buffs and debuffs that cost a global cooldown are left to the Duty presets. Two exceptions: every warrior casts Sunder Armor once after the pull, and every hunter keeps up Hunter's Mark.</p>
+        <p><b>How.</b> Each class has a rotation template. Its order is fixed, but its thresholds can be tuned, like how much Rage Heroic Strike waits for. An optimizer tries each threshold's values. It keeps a change only if it clearly beats the sim's noise, and repeats until nothing helps.</p>
+        <p>AI agents also tried new priorities, openers and cooldown timings by hand. A change stayed only if it won head to head in the sim. An auditor agent then checked every rotation, tried other versions and read the fight logs for wasted mana, Rage or Energy.</p>
+        <p>Buffs, totems, potions and pre-casts go out before the pull, so they're up at 0s, when damage starts to count. Nobody opens from Stealth or Prowl. Raid buffs and debuffs that cost a global cooldown are left to the Duty presets, except that every warrior casts Sunder Armor once and every hunter keeps up Hunter's Mark.</p>
+        <p><b>Races.</b> Each race plays the preset's rotation with its own racials. A race gets its own version only where it clearly beats the preset's in the sim, like a racial saved for a better moment, or a timing that suits the race's haste. Pick a race above to see its rotation.</p>
         <p><b>Why trust it.</b> The rotation is tuned on the same preset and fight it's ranked on. Every change has to beat the noise. Audits keep checking it as the sim and Forever change.</p>
         <p><b>Gaps.</b></p>
         <ul>
@@ -250,9 +252,10 @@
           <li>Where Forever changed an ability without saying by how much, the sim uses the client data and beta tests up to level 30. The open ones are under Assumptions on the Ranking page.</li>
         </ul>
       </div>
+      <div class="fv-toolbar"><div class="fv-controls"><span class="fv-label fv-rowlabel">Race</span><div class="fv-seg fv-rot-seg" id="sp-rot-race" role="group" aria-label="Rotation for which race" data-source="races race_rotation"></div></div></div>
       <p class="fv-note" id="sp-rot-note">The sim uses the first line it can, from the top.</p>
-      <div class="fv-prepull" id="sp-prepull" data-source="rotation names icons"></div>
-      <ol class="fv-prio" id="sp-rotation" data-source="rotation abilities names icons tooltips"></ol>
+      <div class="fv-prepull" id="sp-prepull" data-source="rotation race_rotation names icons"></div>
+      <ol class="fv-prio" id="sp-rotation" data-source="rotation race_rotation abilities names icons tooltips"></ol>
     </div>
 
     <div class="content-block fv-card" id="sp-abiltab-card" data-jump="Ability table">

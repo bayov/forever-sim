@@ -1,0 +1,205 @@
+{
+ "druid__balance.SkyborneHighOrder": {
+  "note": "Casts the pre-pull Starfire 2.5s out, not 3s. With 2% haste, a Starfire cast 3s out lands before the pull, where damage doesn't count.",
+  "why": {
+   "prepull:s9876": "With 2% haste, a Starfire cast 3s out lands before the pull, where damage doesn't count."
+  }
+ },
+ "druid__balance.SkyborneWindshaper": {
+  "note": "Casts the pre-pull Starfire 2.5s out, not 3s. With 2% haste, a Starfire cast 3s out lands before the pull, where damage doesn't count.",
+  "why": {
+   "prepull:s9876": "With 2% haste, a Starfire cast 3s out lands before the pull, where damage doesn't count."
+  }
+ },
+ "druid__balance-duty-ff.SkyborneHighOrder": {
+  "note": "Casts the pre-pull Starfire 2.5s out, not 3s. With 2% haste, a Starfire cast 3s out lands before the pull, where damage doesn't count.",
+  "why": {
+   "prepull:s9876": "With 2% haste, a Starfire cast 3s out lands before the pull, where damage doesn't count."
+  }
+ },
+ "druid__balance-duty-ff.SkyborneWindshaper": {
+  "note": "Casts the pre-pull Starfire 2.5s out, not 3s. With 2% haste, a Starfire cast 3s out lands before the pull, where damage doesn't count.",
+  "why": {
+   "prepull:s9876": "With 2% haste, a Starfire cast 3s out lands before the pull, where damage doesn't count."
+  }
+ },
+ "mage__arcane.SkyborneHighOrder": {
+  "note": "Starts the first Arcane Blast 1.47s before the pull, not 1.5s. With 2% haste, from 1.5s it lands just before the pull, where damage doesn't count.",
+  "why": {
+   "prepull:s1239700": "With 2% haste, an Arcane Blast cast 1.5s out lands just before the pull, where damage doesn't count."
+  }
+ },
+ "mage__fire.SkyborneHighOrder": {
+  "note": "Waits up to 0.1s for Fire Blast instead of starting another Fireball. With 2% haste, two Fireballs end just before Fire Blast is ready.",
+  "why": {
+   "priority:Wait": "With 2% haste, two Fireballs end 0.06s before Fire Blast is ready. A short wait beats starting another Fireball."
+  }
+ },
+ "mage__frostfire.Orc": {
+  "note": "Fire Blast only with mana the fight won't need, not whenever mana is above 80%.",
+  "why": {
+   "priority:s10199": "Leaves the mana for Frostfire Bolt. Fire Blast still uses mana the fight won't need (the next Fire Blast line)."
+  }
+ },
+ "mage__frostfire.Undead": {
+  "note": "Fire Blast only with mana the fight won't need, not whenever mana is above 80%.",
+  "why": {
+   "priority:s10199": "Leaves the mana for Frostfire Bolt. Fire Blast still uses mana the fight won't need (the next Fire Blast line)."
+  }
+ },
+ "mage__frostfire.Troll": {
+  "note": "Berserking waits for 5 Fire Vulnerability stacks, since haste can't speed up the Scorch casts before them. Fire Blast only with mana the fight won't need, not whenever mana is above 80%.",
+  "why": {
+   "priority:s26297t2": "Waits for 5 Fire Vulnerability stacks. The Scorch casts before them already take only the global cooldown, so haste can't speed them up.",
+   "priority:s10199": "Leaves the mana for Frostfire Bolt. Fire Blast still uses mana the fight won't need (the next Fire Blast line)."
+  }
+ },
+ "mage__frostfire.SkyborneHighOrder": {
+  "note": "Scorch and Pyroblast wait while Fingers of Frost is up, so Ice Lance gets the last charge. With 2% haste they would use it first. Fire Blast only with mana the fight won't need, not whenever mana is above 80%.",
+  "why": {
+   "priority:s1240047": "Goes with the Scorch and Pyroblast change, so Ice Lance gets the last Fingers of Frost charge.",
+   "priority:s10207": "With 2% haste, Scorch ends before the global cooldown and uses the last Fingers of Frost charge before Ice Lance can.",
+   "priority:s18809": "With 2% haste, Pyroblast ends before the global cooldown and uses the last Fingers of Frost charge before Ice Lance can.",
+   "priority:s10199": "Leaves the mana for Frostfire Bolt. Fire Blast still uses mana the fight won't need (the next Fire Blast line)."
+  }
+ },
+ "priest__smite.Dwarf": {
+  "note": "Adds Holy Fire on cooldown. Holy Fire does more damage per mana than Smite. Without Undead's Dark Sacrifice, Smite alone runs out of mana.",
+  "why": {
+   "priority:s15261": "Holy Fire does more damage per mana than Smite. Without Undead's Dark Sacrifice, Smite alone runs out of mana."
+  }
+ },
+ "priest__smite.Troll": {
+  "note": "Adds Holy Fire on cooldown. Holy Fire does more damage per mana than Smite. Without Undead's Dark Sacrifice, Smite alone runs out of mana.",
+  "why": {
+   "priority:s15261": "Holy Fire does more damage per mana than Smite. Without Undead's Dark Sacrifice, Smite alone runs out of mana."
+  }
+ },
+ "priest__smite.Human": {
+  "note": "Adds Holy Fire above 30% mana. Holy Fire does more damage per mana than Smite. Without Undead's Dark Sacrifice, Smite alone runs out of mana.",
+  "why": {
+   "priority:s15261": "Holy Fire does more damage per mana than Smite. Without Undead's Dark Sacrifice, Smite alone runs out of mana."
+  }
+ },
+ "priest__smite.Gnome": {
+  "note": "Adds Holy Fire above 30% mana. Holy Fire does more damage per mana than Smite. Without Undead's Dark Sacrifice, Smite alone runs out of mana.",
+  "why": {
+   "priority:s15261": "Holy Fire does more damage per mana than Smite. Without Undead's Dark Sacrifice, Smite alone runs out of mana."
+  }
+ },
+ "priest__smite.NightElf": {
+  "note": "Adds Holy Fire on cooldown and drops the wand break at low mana. Holy Fire does more damage per mana than Smite. Without Undead's Dark Sacrifice, Smite alone runs out of mana.",
+  "why": {
+   "priority:s15261": "Holy Fire does more damage per mana than Smite. Without Undead's Dark Sacrifice, Smite alone runs out of mana.",
+   "priority:s5019": "Night Elf does better in the sim without this wand break."
+  }
+ },
+ "rogue__combat-swords.Gnome": {
+  "note": "Uses Eureka! on cooldown, not saved for a 5-point Eviscerate. Saving it costs more uses than the bigger Eviscerate is worth.",
+  "why": {
+   "priority:s1259812": "Used on cooldown. Saving it for a 5-point Eviscerate costs more uses than the bigger Eviscerate is worth."
+  }
+ },
+ "rogue__subtlety.Gnome": {
+  "note": "Uses Eureka! on cooldown, not saved for a 5-point Eviscerate. Saving it costs more uses than the bigger Eviscerate is worth.",
+  "why": {
+   "priority:s1259812": "Used on cooldown. Saving it for a 5-point Eviscerate costs more uses than the bigger Eviscerate is worth."
+  }
+ },
+ "rogue__mutilate.Gnome": {
+  "note": "Uses Eureka! on cooldown, not saved for a 5-point Eviscerate, which this build rarely reaches.",
+  "why": {
+   "priority:s1259812": "Used on cooldown. This build rarely reaches a 5-point Eviscerate, so saving Eureka! for one wastes it."
+  }
+ },
+ "rogue__seal-fate-swords.Gnome": {
+  "note": "Uses Eureka! on cooldown, not saved for a 5-point Eviscerate, which this build rarely reaches.",
+  "why": {
+   "priority:s1259812": "Used on cooldown. This build rarely reaches a 5-point Eviscerate, so saving Eureka! for one wastes it."
+  }
+ },
+ "shaman__elemental-level60.Troll": {
+  "note": "Berserking waits until Elemental Mastery ends. During Mastery, Lightning Bolt already casts as fast as the global cooldown allows.",
+  "why": {
+   "priority:s26297t2": "Waits until Elemental Mastery ends. During Mastery, Lightning Bolt already casts as fast as the global cooldown allows, so the haste is wasted."
+  }
+ },
+ "shaman__elemental-level60-mana-tide.Troll": {
+  "note": "Berserking waits until Elemental Mastery ends. During Mastery, Lightning Bolt already casts as fast as the global cooldown allows.",
+  "why": {
+   "priority:s26297t2": "Waits until Elemental Mastery ends. During Mastery, Lightning Bolt already casts as fast as the global cooldown allows, so the haste is wasted."
+  }
+ },
+ "warlock__affliction.Gnome": {
+  "note": "Saves Eureka! for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap.",
+  "why": {
+   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap, which used to take its 8s."
+  }
+ },
+ "warlock__demonology.Gnome": {
+  "note": "Saves Eureka! for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap.",
+  "why": {
+   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap, which used to take its 8s."
+  }
+ },
+ "warlock__destruction.Gnome": {
+  "note": "Saves Eureka! for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap.",
+  "why": {
+   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap, which used to take its 8s."
+  }
+ },
+ "warlock__destruction_fire.Gnome": {
+  "note": "Saves Eureka! for an Immolate with Conflagrate after it. It doesn't help Incinerate or the DoTs.",
+  "why": {
+   "priority:s1259812": "Saved for an Immolate with Conflagrate after it. It doesn't help Incinerate or the DoTs."
+  }
+ },
+ "warrior__fury.NightElf": {
+  "note": "Uses Elune's Light at the pull, not saved for Death Wish. Saved, it landed during Recklessness, whose 100% crit made its 10% crit worthless.",
+  "why": {
+   "priority:s1259799": "Used at the pull. Saved for Death Wish, it landed during Recklessness, whose 100% crit made its 10% crit worthless."
+  }
+ },
+ "hunter__beast-mastery.Dwarf": {
+  "note": "Its gear trades 1% hit it doesn't need (over the cap) for 5.6 Agility, 0.21% crit, 1.9 ranged attack power and 0.6 Intellect."
+ },
+ "hunter__lone-wolf.Dwarf": {
+  "note": "Its gear trades 1% hit it doesn't need (over the cap) for 5.6 Agility, 0.21% crit, 1.9 ranged attack power and 0.6 Intellect."
+ },
+ "hunter__marksmanship.Dwarf": {
+  "note": "Its gear trades 1% hit it doesn't need (over the cap) for 5.6 Agility, 0.21% crit, 1.9 ranged attack power and 0.6 Intellect."
+ },
+ "hunter__survival.Dwarf": {
+  "note": "Its gear trades 1% hit it doesn't need (over the cap) for 4.7 Agility, 2.9 attack power, 0.16% crit and 1.6 Strength."
+ },
+ "paladin__level_60.Dwarf": {
+  "note": "Its gear trades 1% hit it doesn't need (over the cap) for 5.2 spell power, 2.1 Strength, 1.6 Intellect and 0.09% crit."
+ },
+ "paladin__level_60_shock.Dwarf": {
+  "note": "Its gear trades 1% hit it doesn't need (over the cap) for 5.2 spell power, 2.1 Strength, 1.6 Intellect and 0.09% crit."
+ },
+ "paladin__level_60_shock_ret.Dwarf": {
+  "note": "Its gear trades 1% hit it doesn't need (over the cap) for 5.2 spell power, 2.1 Strength, 1.6 Intellect and 0.09% crit."
+ },
+ "paladin__level_60_sub_holy.Dwarf": {
+  "note": "Its gear trades 1% hit it doesn't need (over the cap) for 5.2 spell power, 2.1 Strength, 1.6 Intellect and 0.09% crit."
+ },
+ "priest__shadow.Dwarf": {
+  "note": "Its gear trades 1% hit it doesn't need (over the cap) for 6.8 spell power, 2.5 Intellect and 0.12% crit."
+ },
+ "priest__shadow-holy.Dwarf": {
+  "note": "Its gear trades 1% hit it doesn't need (over the cap) for 6.8 spell power, 2.5 Intellect and 0.12% crit."
+ },
+ "shaman__elemental-level60.Dwarf": {
+  "note": "Its gear trades 1% hit it doesn't need (over the cap) for 6.3 spell power, 2.8 Intellect and 0.12% crit."
+ },
+ "shaman__elemental-level60-mana-tide.Dwarf": {
+  "note": "Its gear trades 1% hit it doesn't need (over the cap) for 6.3 spell power, 2.8 Intellect and 0.12% crit."
+ },
+ "warrior__arms.Dwarf": {
+  "note": "Its gear trades 1% hit it doesn't need (over the cap) for 5.1 Strength, 2.4 Agility, 2.2 attack power and 0.10% crit."
+ },
+ "warrior__fury_2h.Dwarf": {
+  "note": "Its gear trades 1% hit it doesn't need (over the cap) for 5.1 Strength, 2.4 Agility, 2.2 attack power and 0.10% crit."
+ }
+}

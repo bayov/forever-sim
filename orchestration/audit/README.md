@@ -77,7 +77,8 @@ This is what the routine session does, start to finish. Run every command from t
    ending the commit message with your session's attribution trailer. Never commit anything else.
 7. **Reply.** Your last message is the phone notification, 2 to 4 lines:
    - which auditors ran and why, in a few words (and which were skipped because nothing moved);
-   - the new findings, one line each with severity, or "no new findings";
+   - the new findings, one line each with severity, or "no new findings"; a finding marked `needs: user ruling` leads
+     with "Needs your call:" so it reaches the user, not just the findings file;
    - when there are new findings, a link to them:
      `https://github.com/bayov/forever-sim/blob/master/orchestration/audit/findings/<id>.md`.
 

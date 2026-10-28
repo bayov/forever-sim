@@ -13,6 +13,10 @@
 	--fv-adv-wpn: #b9bec8;
 	--fv-adv-tgt: #ff8a4c;
 	--fv-adv-nowpn: var(--color-fg-muted);
+	// a race's own rotation against the preset's: a line it changes, adds or drops
+	--fv-rot-changed: #ff9f4a;
+	--fv-rot-added: #5fd08a;
+	--fv-rot-removed: #ff6b5e;
 	--fv-r: var(--panel-radius);
 	--fv-r-sm: var(--panel-radius);
 	--fv-shadow: 0 0.25rem 1rem rgba(0, 0, 0, 0.35);
@@ -2399,7 +2403,8 @@ div.tt-embed:not(.fv-tt) {
 	font-weight: 600;
 }
 
-.fv-pr .kd {
+.fv-pr .kd,
+.fv-ppi .kd {
 	font-size: 0.62rem;
 	text-transform: uppercase;
 	letter-spacing: 0.06em;
@@ -2410,7 +2415,8 @@ div.tt-embed:not(.fv-tt) {
 	color: var(--color-fg-muted);
 }
 
-.fv-pr .kd.race {
+.fv-pr .kd.race,
+.fv-ppi .kd.race {
 	background: var(--fv-gold-soft);
 	color: var(--fv-gold);
 }
@@ -2481,6 +2487,184 @@ div.tt-embed:not(.fv-tt) {
 
 .fv-pr.other .no {
 	padding-top: 0.1rem;
+}
+
+// ---------- the rotation for one race, or for all of them (drawRotation) ----------
+// the race picker's icons: a gold ring on the preset's race, an orange dot on a race that plays its own rotation
+.fv-rot-seg > button {
+	position: relative;
+	padding-inline: 0.45rem;
+}
+
+.fv-rot-seg > button .fv-ico {
+	width: 1.25rem;
+	height: 1.25rem;
+}
+
+.fv-rot-seg > button.preset .fv-ico {
+	box-shadow: 0 0 0 1.5px var(--fv-gold);
+}
+
+.fv-rot-own {
+	position: absolute;
+	top: 0.15rem;
+	right: 0.2rem;
+	width: 0.45rem;
+	height: 0.45rem;
+	border-radius: 50%;
+	background: var(--fv-rot-changed);
+	box-shadow: 0 0 0 1.5px var(--color-bg);
+}
+
+// Up to ten races: the picker wraps rather than hide some of them off its edge.
+.fv-rot-seg {
+	flex: 1 1 20rem;
+	flex-wrap: wrap;
+	overflow-x: visible;
+}
+
+.fv-rot-seg .fv-ico {
+	border-radius: 50%;
+}
+
+.kd.race {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.2rem;
+	white-space: nowrap;
+}
+
+.kd.race .fv-ico {
+	width: 0.85rem;
+	height: 0.85rem;
+	border-radius: 50%;
+	vertical-align: 0;
+}
+
+.fv-pr .kd.diff-changed,
+.fv-ppi .kd.diff-changed {
+	background: color-mix(in srgb, var(--fv-rot-changed) 16%, transparent);
+	color: var(--fv-rot-changed);
+}
+
+.fv-pr .kd.diff-added,
+.fv-ppi .kd.diff-added {
+	background: color-mix(in srgb, var(--fv-rot-added) 16%, transparent);
+	color: var(--fv-rot-added);
+}
+
+.fv-pr .kd.diff-removed,
+.fv-ppi .kd.diff-removed {
+	background: color-mix(in srgb, var(--fv-rot-removed) 16%, transparent);
+	color: var(--fv-rot-removed);
+}
+
+.fv-pr.changed,
+.fv-pr.added {
+	--rv: var(--fv-rot-changed);
+	background: color-mix(in srgb, var(--rv) 6%, transparent);
+	box-shadow: inset 3px 0 0 var(--rv);
+}
+
+.fv-pr.added {
+	--rv: var(--fv-rot-added);
+}
+
+.fv-pr.added .no {
+	color: var(--fv-rot-added);
+}
+
+.fv-pr.dropped .ics b {
+	text-decoration: line-through;
+}
+
+.fv-pr.dropped .no {
+	color: var(--fv-rot-removed);
+}
+
+// what a race does in place of a preset line, under it
+.fv-rv {
+	--rv: var(--fv-rot-changed);
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.2rem 0.45rem;
+	margin-top: 0.3rem;
+	padding: 0.3rem 0.5rem;
+	border-radius: 6px;
+	border-left: 2px solid var(--rv);
+	background: color-mix(in srgb, var(--rv) 8%, transparent);
+	font-size: var(--cds-font-size-caption);
+	line-height: 1.4;
+}
+
+.fv-rv.diff-removed {
+	--rv: var(--fv-rot-removed);
+}
+
+// a talent a condition checks: its icon and name, with its tooltip on hover
+.fv-tal {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.2rem;
+	font-weight: 600;
+	color: var(--fv-gold);
+	cursor: help;
+	white-space: nowrap;
+}
+
+.fv-tal .fv-ico {
+	width: 0.95rem;
+	height: 0.95rem;
+	border-radius: 3px;
+	vertical-align: 0;
+}
+
+// why a race changes a line
+.fv-why {
+	font-size: var(--cds-font-size-caption);
+	line-height: 1.4;
+	color: var(--color-fg-muted);
+}
+
+.fv-rv .fv-why {
+	flex-basis: 100%;
+}
+
+.fv-why b {
+	font-weight: 600;
+	color: var(--color-fg);
+}
+
+.fv-pr .fv-was {
+	font-size: var(--cds-font-size-caption);
+	color: var(--color-fg-muted);
+	font-style: italic;
+}
+
+.fv-ppi .pt {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.3rem;
+	flex-wrap: wrap;
+}
+
+.fv-ppi.changed {
+	border-color: color-mix(in srgb, var(--fv-rot-changed) 60%, transparent);
+}
+
+.fv-ppi.added {
+	border-color: color-mix(in srgb, var(--fv-rot-added) 60%, transparent);
+	border-style: dashed;
+}
+
+.fv-ppi.removed {
+	opacity: 0.62;
+	border-style: dashed;
+}
+
+.fv-ppi.removed b {
+	text-decoration: line-through;
 }
 
 .fv-noico {

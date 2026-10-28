@@ -55,13 +55,13 @@ Rules for every role (put them in each prompt):
 - Commit only to your own branch.
 - End commits with the attribution trailer the session's system prompt specifies.
 - No model names in files.
-- Cite sources by tier: client data (wago.tools, newest build) > Wowhead Forever (www.wowhead.com/forever, tooltip API dataEnv **16** or the `/forever/` path; env 17 is retail) > Blizzard deep dives and dev notes > foreverchanges.pro > forever-wiki.
+- Cite sources by tier: server hotfixes (wago.tools/hotfixes rows, foreverchanges.pro's "A hotfix to the <date> build" entries read from the realms' cache) > client data (wago.tools, newest build) > Wowhead Forever (www.wowhead.com/forever, tooltip API dataEnv **16** or the `/forever/` path; env 17 is retail) > Blizzard deep dives and dev notes > foreverchanges.pro > forever-wiki.
 
 ## 3. Building blocks
 
 Each block lists its inputs, its outputs and how to run it. Combine them freely.
 
-**B1. Status check.** The live update of the Changes tab is the last entry of `tools/dps_report/changes/updates.json`. Inputs: state.json, `git log` per branch, `python3 tools/sources/stale.py` (new builds, scrape ages, the routine's PRs), Blizzard dev notes. Output: a short "what changed since last report" list (new client build, branch commits, open followups). Always do this first. It's cheap.
+**B1. Status check.** The live update of the Changes tab is the last entry of `tools/dps_report/changes/updates.json`. Inputs: state.json, `git log` per branch, `python3 tools/sources/stale.py` (new builds, scrape ages, the routine's PRs), Blizzard dev notes (by post date AND edit date: a post's "updated" stamp is often an old post edited), foreverchanges.pro/patch-notes' server-hotfix entries, and every `## Open` finding in `orchestration/audit/findings/*.md` (above all `needs: user ruling`). Output: a short "what changed since last report" list (new client build, server hotfixes, branch commits, open followups, rulings waiting). Always do this first. It's cheap. Never tell the user the sim is up to date with the patches while an open finding or a server hotfix says otherwise.
 
 **B2. Rule change.**
 - When the user rules on something cross-class, record it in `orchestration/standards.md` as a new numbered item, with the user's words and the date.

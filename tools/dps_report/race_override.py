@@ -66,6 +66,26 @@ def tuned_kind(ov):
     return '+'.join(k for k, on in (('rotation', ov.get('rotation')), ('gear', ov.get('bonusStats'))) if on)
 
 
+# The report's words for each race's own setup: a `note` for the Races tab and, for a rotation, a `why` per line it
+# changes ("<section>:<spell key, or the action's name>"). They live apart from the override files, which the sims read
+# and the staleness checks hash, so rewording them doesn't make a build stale.
+TEXT = os.path.join(HERE, 'race_text.json')
+_text = None
+
+
+def text(ov):
+    """The race_text.json entry for an override (its base build's file for a variant), or {}."""
+    global _text
+    if _text is None:
+        _text = json.load(open(TEXT)) if os.path.exists(TEXT) else {}
+    return _text.get(re.sub(r'\.json$', '', (ov or {}).get('file', '')), {})
+
+
+def note(ov):
+    """What the report says about a race's own setup: race_text.json's note, else the override file's."""
+    return text(ov).get('note') or (ov or {}).get('note', '')
+
+
 def own_path(bid, race):
     return os.path.join(DIR, f'{bid}.{race}.json')
 

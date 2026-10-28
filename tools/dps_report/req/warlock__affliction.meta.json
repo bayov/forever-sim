@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_affliction",
   "published": {
-    "dps": 1035.3,
-    "source": "warlock round 2026-10-23"
+    "dps": 1018.1,
+    "source": "DPS report 2026-10-28 (full re-sim at 20,000 iterations, 180 s, after the launch-realm hunter hotfix)"
   },
   "verify": {
     "dps": 1035.28,

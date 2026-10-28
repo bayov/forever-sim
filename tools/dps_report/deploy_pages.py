@@ -145,7 +145,8 @@ def main():
 
     live = f"https://{a.project}.pages.dev/" if dep["environment"] == "production" else dep["url"] + "/"
     for _ in range(12):
-        got = subprocess.run(["curl", "-sS", live], capture_output=True).stdout
+        # A deployment's own preview URL can stall partway through the file, so each fetch has a time limit.
+        got = subprocess.run(["curl", "-sS", "--max-time", "120", live], capture_output=True).stdout
         if strip_beacon(got) == strip_beacon(content):
             beacon = " with the Web Analytics beacon" if BEACON.search(got) else ""
             print(f"deployed {len(content)} bytes{beacon}, {dep['environment']}: {live} ({dep['url']})")

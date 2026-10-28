@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60",
   "published": {
-    "dps": 777.4,
-    "source": "Standards 11 explosives update (2026-10-23, explosives only when they gain): Goblin Land Mine dropped, Goblin Sapper Charge kept (was 776.4)"
+    "dps": 772.2,
+    "source": "DPS report 2026-10-28 (full re-sim at 20,000 iterations, 180 s, after the launch-realm hunter hotfix)"
   },
   "verify": {
     "dps": 777.41,

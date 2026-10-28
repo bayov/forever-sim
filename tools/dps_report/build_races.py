@@ -12,7 +12,7 @@ import json, math, os, re, statistics
 from collections import defaultdict
 
 from dashpaths import D, TREE
-from race_override import tuned_kind  # noqa: E402
+from race_override import tuned_kind, note as race_note  # noqa: E402
 RACE_NAMES = {'NightElf': 'Night Elf', 'SkyborneHighOrder': 'High Order', 'SkyborneWindshaper': 'Windshaper'}
 HORDE = {'Orc', 'Undead', 'Tauren', 'Troll', 'Windshaper'}
 RACE_ICON = {'Human': 'race_human_male', 'Dwarf': 'race_dwarf_male', 'Night Elf': 'race_nightelf_male', 'Gnome': 'race_gnome_male',
@@ -68,11 +68,11 @@ RACE_PARTS = {'Human': ['spirit', 'ruthless'], 'Dwarf': ['precision', 'beast_dwa
               'Gnome': ['mind', 'eureka'], 'Orc': ['command', 'bloodfury'], 'Undead': ['touch', 'darksacrifice'], 'Tauren': ['endurance'],
               'Troll': ['berserking', 'beast_troll'], 'High Order': ['windblessed', 'insight', 'leyline'], 'Windshaper': ['windblessed', 'insight']}
 SCENARIOS = [
-    ('baseline', 'Generic boss', 'Each preset against a level 63 boss with no creature type. In client 70425 no racial depends on the weapon. '
-     "A race plays its own rotation or gear where that beats the preset's by 2 standard errors, in every scenario; its row says what changed."),
-    ('beast', 'Beast target', 'A Beast boss turns on Troll Beast Slaying and Dwarf Big Game Hunter (5% more damage).'),
-    ('elemental', 'Elemental target', 'An Elemental boss turns on High Order and Windshaper Elemental Insight (5% more damage).'),
-    ('humanoid', 'Humanoid target', 'Priests only. Dwarf Priests cast Chastise, which works only on Humanoids. No other racial cares about Humanoids.'),
+    ('baseline', 'Generic boss', 'Each preset against a level 63 boss with no creature type. No racial depends on the weapon. '
+     "A race gets its own rotation or gear where that clearly beats the preset's in the sim, and its row says what changed."),
+    ('beast', 'Beast target', 'On a Beast boss, Troll Beast Slaying and Dwarf Big Game Hunter add 5% damage.'),
+    ('elemental', 'Elemental target', 'On an Elemental boss, High Order and Windshaper Elemental Insight add 5% damage.'),
+    ('humanoid', 'Humanoid target', 'Priests only. Dwarf Priests can cast Chastise, which works only on Humanoids.'),
     ('off', 'Racials off', 'Every race on its base stats, with all racials left out.'),
 ]
 
@@ -104,7 +104,7 @@ def build(builds, races_rows, stats_rows, dump):
         for r in out['races']:
             res[(out['id'], rn(r['race']))]['baseline'] = (r['dps'], r['se'])
             if r.get('override'):
-                tuned[(out['id'], rn(r['race']))] = (r['override'].get('note', ''), tuned_kind(r['override']))
+                tuned[(out['id'], rn(r['race']))] = (race_note(r['override']), tuned_kind(r['override']))
 
     variants, breakdown, notes = [], [], []
     for bid, b in list(bmap.items()):
@@ -286,13 +286,13 @@ def finding(cls, bmap, variants, breakdown):
     top_part = max((x for x in mine if x['build'] == b0['id']), key=lambda x: x['dps'], default=None)
     if top_part and top_part['dps'] > 2 * top_part['se']:
         dps = next(r['dps'] for r in bests[0][1] if r['race'] == top_part['race'])
-        out.append(f"{top_part['race']} {top_part['label']} is the biggest racial on {b0['build']}, +{top_part['dps']:.1f} DPS ({100 * top_part['dps'] / dps:.1f}%).")
+        out.append(f"{top_part['race']}'s {top_part['label']} adds the most on {b0['build']}, {top_part['dps']:.1f} DPS ({100 * top_part['dps'] / dps:.1f}%).")
     worst = min(mine, key=lambda x: x['dps'] / max(x['se'], 0.01), default=None)
     if worst and worst['dps'] < -2 * worst['se'] and worst['dps'] < -1:
         why = ', for the time spent casting it' if worst['part'] in ('chastise', 'starshards', 'darksacrifice', 'eureka', 'elune', 'shadowmeld', 'leyline', 'bloodfury', 'berserking') else ''
         out.append(f"{worst['race']} {worst['label']} costs {abs(worst['dps']):.1f} DPS on {bmap[worst['build']]['build']}{why}.")
     # target types that change the leader
-    for t, word in (('beast', 'Beasts'), ('elemental', 'Elementals')):
+    for t, word in (('beast', 'a Beast boss'), ('elemental', 'an Elemental boss')):
         b0, rs0 = bests[0]
         tr = V[(b0['id'], t)]
         if tr and tr[0]['race'] != rs0[0]['race']:
@@ -300,11 +300,10 @@ def finding(cls, bmap, variants, breakdown):
             lead = tr[0]['race']
             nxt = next((r for r in tr[1:] if not (r['race'] in sky and lead in sky)), None)
             if lead in sky and len(tr) > 1 and tr[1]['race'] in sky:
-                lead = 'High Order and Windshaper lead'
+                lead = 'High Order and Windshaper are best on'
             else:
-                lead += ' leads'
-            base = next(r for r in rs0 if r['race'] == tr[0]['race'])
-            s = f"Against {word}, {lead} {b0['build']} ({'+' if tr[0]['dps'] >= base['dps'] else '-'}{pct(100 * (tr[0]['dps'] / base['dps'] - 1))} vs the generic boss)"
+                lead += ' is best on'
+            s = f"On {word}, {lead} {b0['build']}"
             if nxt and abs(nxt['vsBest']) < 0.05:
                 s += f", level with {nxt['race']}"
             elif nxt:
