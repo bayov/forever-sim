@@ -61,7 +61,7 @@ Rules for every role (put them in each prompt):
 
 Each block lists its inputs, its outputs and how to run it. Combine them freely.
 
-**B1. Status check.** Inputs: state.json, `git log` per branch, `python3 tools/sources/stale.py` (new builds, scrape ages, the routine's PRs), Blizzard dev notes (by post date AND edit date: a post's "updated" stamp is often an old post edited), foreverchanges.pro/patch-notes' server-hotfix entries, and every `## Open` finding in `orchestration/audit/findings/*.md` (above all `needs: user ruling`). Output: a short "what changed since last report" list (new client build, server hotfixes, branch commits, open followups, rulings waiting). Always do this first. It's cheap. Never tell the user the sim is up to date with the patches while an open finding or a server hotfix says otherwise.
+**B1. Status check.** The live update of the Changes tab is the last entry of `tools/dps_report/changes/updates.json`. Inputs: state.json, `git log` per branch, `python3 tools/sources/stale.py` (new builds, scrape ages, the routine's PRs), Blizzard dev notes (by post date AND edit date: a post's "updated" stamp is often an old post edited), foreverchanges.pro/patch-notes' server-hotfix entries, and every `## Open` finding in `orchestration/audit/findings/*.md` (above all `needs: user ruling`). Output: a short "what changed since last report" list (new client build, server hotfixes, branch commits, open followups, rulings waiting). Always do this first. It's cheap. Never tell the user the sim is up to date with the patches while an open finding or a server hotfix says otherwise.
 
 **B2. Rule change.**
 - When the user rules on something cross-class, record it in `orchestration/standards.md` as a new numbered item, with the user's words and the date.
@@ -116,6 +116,7 @@ Template: `prompts/dashboard/HANDOFF_assumptions.md`. Re-run it whenever presets
 **B10. Analysis / research question.** For a new rules question (e.g. item budgets, per-archetype pricing), start a local subagent with a self-contained handoff. Its deliverable is an `orchestration/*.md` with tables. Bring its recommendation to the user before changing standards.
 
 **B11. Publish / wrap-up.**
+- Changes tab (standards 30): the live update has a public line for everything this pass changed (`python3 tools/dps_report/changes.py check` lists the commits no line covers). Once a game update's full pass is deployed, our next change of our own starts a sim/preset update (`changes.py new sim <id> "<title>"`, before the report is republished with it); until then, changes keep joining the game update.
 - Update state.json (heads, client build, the report's deploy, date).
 - Update PR bodies (class workers do their own).
 - Tell the user what changed, with the ranking.
@@ -146,7 +147,7 @@ Template: `prompts/dashboard/HANDOFF_assumptions.md`. Re-run it whenever presets
 
 - **Light refresh** ("update the report"): B1 → B7 for stale classes only → B8 only if the page needs no changes beyond data → B11.
 - **Act on audit findings** ("handle the audit findings", after a notification): B1 → B13 → B3/B4 for the fixes → B5 for the auditors that found them → B7 → B11.
-- **Full pass** (new Forever build, or "re-audit everything"): B1 → the `update-sources` skill (it pulls the build's tables and diff and regenerates the database) → class changes auditor (a subagent) and a client update pass (B5) on the new build → B3 research and fixes per class → B4 shared fixes → B5 audit pass → B7 → B9 → B11.
+- **Full pass** (new Forever build or development notes, or "re-audit everything"): for a new build or notes, start the report's game update first (`python3 tools/dps_report/changes.py new game <id> "<title>"` with the announcement as its source; standards 30), then B1 → the `update-sources` skill (it pulls the build's tables and diff and regenerates the database) → class changes auditor (a subagent) and a client update pass (B5) on the new build → B3 research and fixes per class → B4 shared fixes → B5 audit pass → B7 → B9 → B11.
 - **One class** ("re-check druids"): B1 for that class → B3 → B5 (results, and fairness for the ranking) → B7 for that class → B11.
 - **Rule change** ("assume X", "use Sunder not Expose"): B2 → B3 for affected classes → B5 → B7 → B11.
 - **Report feature** ("add Y to the report"): B8 (plus B7 if new data is needed) → B11.
@@ -162,7 +163,7 @@ For anything else, map the request to blocks. When it's ambiguous whether the us
 - **Wowhead Forever:** Forever's database is dataEnv **16** (`WH.dataEnv.CLASSICPLUS` in wowhead's tooltips.js, mapped to "forever"); 17 isn't one of wowhead's databases. A `/forever/` path or `domain=forever` picks Forever's data whatever the dataEnv, but use 16 everywhere.
 - **Wowhead pages:** www.wowhead.com (listings, item and NPC pages) sits behind a bot check and a rate limit, so curl gets a 403 and a burst of requests gets the whole address blocked for a while. Fetch them with `tools/database/forever_wowhead/wowhead.py` (the `scrape-wowhead` skill), and only a handful at a time outside its scrapes. The tooltip API (nether.wowhead.com) has neither.
 - **Browser checks:** Playwright is at `/opt/node22/lib/node_modules/playwright`. Import `/opt/node22/lib/node_modules/playwright/index.mjs` from a script outside the repo, and launch with `executablePath: '/opt/pw-browsers/chromium'`.
-- **Snapshot rule for the report:** it shows only the final data. No session history, rounds, before/after, PR numbers, or "shipped" wording. `build_data.py` cleans notes.
+- **Snapshot rule for the report:** it shows only the final data. No session history, rounds, before/after, PR numbers, or "shipped" wording. `build_data.py` cleans notes. The one exception is the Changes tab (standards 30), whose public lines follow the same wording rules.
 - **Neutral defaults:**
   - Generic boss (standards 19).
   - No unconfirmed launch items in presets (standards 8 / 8a). They become assumptions instead (e.g. mage imbue scrolls, two Forever enchants).

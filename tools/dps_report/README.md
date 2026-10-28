@@ -35,6 +35,7 @@ only the builds that changed and still rebuilds every dataset, the cross-build o
 | `patches/` | Local-only sim patches for the merged tree (see below) | yes |
 | `raw/<id>.tgz` | Each build's raw sim outputs (about 2 MB for all), written by `rawstore.py pack` (see "Partial regenerations") | yes |
 | `rawstore.py` | Packs, unpacks, cleans and checks the raw outputs, and copies the datasets into the report | yes |
+| `changes.py`, `changes/` | The Changes tab: the updates, their public change lines and the results at each update's end (see "Changes tab") | yes |
 | `dashstats/main.go` | The `dashstats` helper. Copy it to `tools/dashstats/` in the merged tree, or let patch 0001 add it. | yes |
 | `rd/` | Headless check harness (Playwright) | scripts only |
 | `bin/` | `wowsimcli`, `dashstats` and optionally `wowsimcli_r`, built from the merged tree | no |
@@ -279,11 +280,50 @@ another request, race override or assumption rotation than the current one.
 - **Talent links**: each rank links to the Forever client's rank 1 spell on Forever's wowhead, because Forever keeps only that one (`talent_links.py`). Forever's wowhead adds spells over time, so `python3 talent_links.py ids`, then `python3 whcache.py --retry talent_ids.json` asks it again for what it didn't know. `python3 talent_links.py refresh` then rewrites the links in the shipped `talenttrees.json` without a full `build_data.py` run.
 - `merge.mjs` (merge a partial `data/` folder into the report) is for hand repairs only now.
 
+## Changes tab
+
+The report's Changes tab shows the results before and after each update, with what changed (standards 30). It runs no
+sims: an update's "before" is the report as the previous update left it, its "after" the report as it ended (the
+current data while it is the live update). `changes.py` keeps it, in `changes/`:
+
+- `updates.json` (hand-kept, oldest first): per update its `type` (`game`: a new client build or development notes;
+  `sim`: our own changes after a game update was done), title, date, public source, `baselineData` (the commit whose
+  data it starts from) and `endData` (null while live), and `lines`, the public change list. A line has a `title`, a
+  `kind` (game, sim, rotation, gear, talents, consumes, race or method), an optional `note` and `source`, and what it
+  touches (`classes`, `builds`, `races`, racial `parts` as race_breakdown names them), which the page uses to show its
+  effect: each racial's worth before and after for a line with `parts`, else the DPS of the presets it touches. A line
+  that names nothing touches every preset. `commits` and `internal` (`{commit, why}`, commits left out of the public
+  list on purpose) never ship; `check` reads them.
+- `genesis.json`: the results at the first update's start, in full. `<id>.json`: a finished update's end, only the rows
+  that changed. The page rebuilds every update's before and after from these, so a finished update needs no git history.
+
+A snapshot keeps each build's DPS, error, ranks, race and best race, each build on each race, each racial part's DPS on
+the generic boss (race_breakdown scenario `all`) and the race summary (baseline, all presets). The page shows a change
+under 0.05 as unchanged (fights are seeded, so a build nothing touched keeps its numbers), puts ±2 standard errors of the
+difference on the rest (unpaired, so it overstates the noise), marks a rank or best race change "about tied" when the
+presets it passed are within that noise, and splits a race change into the old race's own change, the switch and the
+sampling left over (the main run has twice a race row's fights).
+
+| Command | What it does |
+|---|---|
+| `changes.py build` | Writes the datasets `changes` and `changes_snap` (`pipeline.sh publish` runs it last), and warns about lines naming unknown classes, presets, races or racials and about uncovered commits |
+| `changes.py check` | Lists the commits since the live update's `baselineData` that change build inputs and no line covers (it needs that commit in the clone: `git fetch --shallow-since=<date>`) |
+| `changes.py new game\|sim <id> "<title>" [--date D] [--source-label L --source-url U]` | Finishes the live update at the committed data and starts the next |
+| `changes.py diff <old> [<new>]` | Prints what moved between two commits' report data (default new: the work tree), for writing lines |
+| `changes.py freeze` | Rewrites `genesis.json` and the finished updates' files from git (a backfill or repair; needs their commits) |
+
+When to start an update: before the report is republished with its first change, once the data that ends the previous
+update is committed. A game update for a balance build or development notes (update-sources step 2, the dps-report full
+pass); a sim/preset update for our first change of our own after a game update's full pass was deployed (dps-report
+B11). Everything else joins the live update. `new` refuses while the four datasets a snapshot reads have uncommitted
+changes, and warns when the finished update lists commits its data doesn't include yet. Commit what it writes. Lines are plain game terms, with only public links as sources: they ship.
+
 ## Publishing
 
 `pipeline.sh publish`, then `make dps-report-artifact`, the browser checks of the `regenerate-dps-report` skill, the
 commit and push above, and `make dps-report-deploy`. The snapshot rule holds: the page and datasets show only final data,
-with no session history, "round", "before/after", PR numbers, process words, or "shipped". `build_data.py` cleans notes
+with no session history, "round", "before/after", PR numbers, process words, or "shipped", except the Changes tab's
+before and after (standards 30). `build_data.py` cleans notes
 accordingly. No model names in any file.
 
 ## Checks harness (`rd/`)

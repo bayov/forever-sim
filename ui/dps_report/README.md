@@ -37,6 +37,8 @@ Files:
   `[DEBUG]` damage formulas) to stay under 16 MB. See `vite.dps_report.config.mts`.
 - `data/mana.json`, `data/mana_summary.json`: mana % of max every 5 s over a 480 s fight per mana-using preset, and when
   it first drops below 15%. Made by `tools/dps_report/mana_curves.py`.
+- `data/changes.json`, `data/changes_snap.json`: the Changes tab, the updates with their public change lines and the
+  results at each update's end, made by `tools/dps_report/changes.py` (`tools/dps_report/README.md`, "Changes tab").
 - `provenance.json`: per build, the inputs its data was made from (written by `tools/dps_report/stale.mjs`).
 - The raw sim outputs these datasets were built from are in `tools/dps_report/raw/<id>.tgz`, one pack per build, committed with them (`tools/dps_report/README.md`, "Partial regenerations").
 

@@ -39,7 +39,9 @@ all. A build where only rows were added (pets, mounts, ensembles) is cosmetic. O
 read the diff, which groups every change by class.
 
 Processing a real balance build is the dps-report skill's full pass, which is hours of
-agents, so tell the user what changed and ask before starting it. The audit loop's
+agents, so tell the user what changed and ask before starting it. When it goes ahead, start the report's game update
+first, so the report's next publish puts its changes in it: `python3 tools/dps_report/changes.py new game <id> "<title>"` with the
+announcement as `--source-label`/`--source-url` (standards 30). A cosmetic build gets none. The audit loop's
 client_update auditor writes the ledger (`orchestration/update_ledger.md`) on its own
 schedule.
 

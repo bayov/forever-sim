@@ -46,6 +46,36 @@
 	}
 }
 
+// A stage scaled down to fit a narrow screen, like a phone's (Replay.updateScale). It's laid out at
+// a desktop's size and shrunk from its top left corner. The controls sit under it at their own
+// size, where a finger can use them, so the stage needs no room for them at the bottom.
+.replay-player.scaled {
+	.replay-stage {
+		min-height: 0;
+		max-height: none;
+		aspect-ratio: auto;
+		// A percentage would be of the player's width, which is the stage's scaled down.
+		padding: 150px calc(var(--replay-stage-width) * 0.03) calc(var(--replay-stage-width) * 0.03);
+		transform-origin: 0 0;
+	}
+
+	.replay-controls {
+		position: relative;
+		padding-top: 2px;
+		background: #000;
+	}
+
+	// The icons that pop up in the middle stay big enough to see.
+	.replay-big-play,
+	.replay-flash {
+		scale: max(1, calc(0.6 / var(--replay-scale)));
+	}
+}
+
+.replay-player.scaled-small .replay-search {
+	display: none;
+}
+
 .replay-root:focus-visible .replay-player {
 	box-shadow: inset 0 0 0 2px var(--accent);
 }

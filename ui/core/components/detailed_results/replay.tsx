@@ -67,6 +67,15 @@ const MAX_SCROLL_PX = 360;
 // The narrowest stage that has the frames at its edges and the leveling map between them, in
 // pixels. Narrower, the frames stay by the class pack and the combat text runs over the map.
 const MAP_WIDE_PX = 1150;
+// On a screen narrower than this, like a phone's, the stage is laid out this many pixels wide and
+// scaled down to fit, so it looks the same, only smaller. The controls stay their size under it.
+const SCALED_WIDTH_PX = 1000;
+// The scaled stage is taller than 16:9, since a phone held upright has the room. In full screen it
+// takes the whole screen, and it scales down further when it would be shorter than this.
+const SCALED_ASPECT = 4 / 3;
+const SCALED_MIN_HEIGHT_PX = 540;
+// Scaled down more than this, as on a phone, the search is too small to type in, so it hides.
+const SCALED_SMALL = 0.6;
 
 // The cast history is a timeline at the top left that ends at the current time, right under the
 // clock. Each cast sits at the moment we made it and slides left as time goes on. Casts too
@@ -399,6 +408,7 @@ export class Replay extends ResultComponent {
 	private readonly ui: {
 		player: HTMLElement;
 		stage: HTMLElement;
+		controls: HTMLElement;
 		message: HTMLElement;
 		flash: HTMLElement;
 		countdown: HTMLElement;
@@ -467,11 +477,15 @@ export class Replay extends ResultComponent {
 	// The iteration the frames were last lined up with the resource bar for.
 	private alignedFor: ReplayModel | null = null;
 	private mapWide = false;
+	// How much the stage is scaled down to fit (updateScale), 1 when it isn't.
+	private stageScale = 1;
 	private historyElems = new Map<number, HTMLElement>();
 	private historyLabels = new Map<number, HTMLElement>();
 	// Where each cast goes on the history timeline, by its index in the model's actions.
 	private historyLayout: Array<{ row: number; shift: number }> = [];
 	private sctElems = new Map<number, HTMLElement>();
+	// How wide each line of combat text is, measured once when it first shows.
+	private sctWidths = new WeakMap<HTMLElement, number>();
 	// How many crit spots the model's crits are placed on.
 	private critSpots = 0;
 
@@ -507,6 +521,7 @@ export class Replay extends ResultComponent {
 		const refs = {
 			player: ref<HTMLDivElement>(),
 			stage: ref<HTMLDivElement>(),
+			controls: ref<HTMLDivElement>(),
 			message: ref<HTMLDivElement>(),
 			flash: ref<HTMLDivElement>(),
 			countdown: ref<HTMLDivElement>(),
@@ -599,7 +614,7 @@ export class Replay extends ResultComponent {
 						<i className="fas fa-play" />
 					</div>
 				</div>
-				<div className="replay-controls">
+				<div ref={refs.controls} className="replay-controls">
 					<div ref={refs.progress} className="replay-progress">
 						<div className="replay-progress-track">
 							<div ref={refs.hover} className="replay-progress-hover" />
@@ -639,6 +654,7 @@ export class Replay extends ResultComponent {
 		this.ui = {
 			player: refs.player.value!,
 			stage: refs.stage.value!,
+			controls: refs.controls.value!,
 			message: refs.message.value!,
 			flash: refs.flash.value!,
 			countdown: refs.countdown.value!,
@@ -700,14 +716,21 @@ export class Replay extends ResultComponent {
 			event.stopPropagation();
 			this.ui.speedMenu.classList.toggle('hide');
 		});
-		// A leveling session on a wide enough stage has its frames at the edges, with the map
-		// between them (_replay_map.scss). The combat text follows the frames.
-		new ResizeObserver(() => this.updateMapWide()).observe(this.ui.player);
+		// A narrow stage is scaled down to fit. A leveling session on a wide enough stage has its
+		// frames at the edges, with the map between them (_replay_map.scss). The combat text follows
+		// the frames.
+		new ResizeObserver(() => {
+			const scaled = this.updateScale();
+			const moved = this.updateMapWide();
+			if (scaled || moved) this.draw();
+		}).observe(this.ui.player);
 		this.ui.fullscreenButton.addEventListener('click', () => this.toggleFullscreen());
 		document.addEventListener('fullscreenchange', () => {
 			const full = document.fullscreenElement == this.ui.player;
 			this.ui.player.classList.toggle('fullscreen', full);
 			this.ui.fullscreenButton.querySelector('i')!.className = `fas ${full ? 'fa-compress' : 'fa-expand'}`;
+			this.updateScale();
+			this.draw();
 		});
 		[
 			[this.ui.playButton, 'Play or pause (Space or K)'],
@@ -800,13 +823,64 @@ export class Replay extends ResultComponent {
 
 	// Sets the replay up for a leveling session, or back for a fight: the map, the session's
 	// controls and its faster speeds.
-	private updateMapWide() {
-		const wide = !!this.model?.leveling && this.ui.player.clientWidth >= MAP_WIDE_PX;
-		if (wide == this.mapWide) return;
+	private updateMapWide(): boolean {
+		const wide = !!this.model?.leveling && this.ui.stage.offsetWidth >= MAP_WIDE_PX;
+		if (wide == this.mapWide) return false;
 		this.mapWide = wide;
 		this.ui.player.classList.toggle('map-wide', wide);
 		// The frames moved, so they line up with the resource bar again.
 		this.alignedFor = null;
+		return true;
+	}
+
+	// Scales the stage down to fit a narrow screen (SCALED_WIDTH_PX), or a short one in full screen.
+	// The stage keeps the size it's laid out at, so its frames and icons keep their places, and
+	// takes only the room it shows at. Says whether the scale changed.
+	private updateScale(): boolean {
+		const { player, stage, controls } = this.ui;
+		const fullscreen = player.classList.contains('fullscreen');
+		const width = player.clientWidth;
+		if (width == 0) return false;
+		// Scaled, the controls sit under the stage rather than over it, so we measure them that way.
+		player.classList.add('scaled');
+		const height = fullscreen ? player.clientHeight - controls.offsetHeight : Infinity;
+		const scale = Math.min(1, width / SCALED_WIDTH_PX, height / SCALED_MIN_HEIGHT_PX);
+		player.classList.toggle('scaled', scale < 1);
+		player.classList.toggle('scaled-small', scale < SCALED_SMALL);
+		const style = stage.style;
+		if (scale < 1) {
+			const stageWidth = width / scale;
+			const stageHeight = fullscreen ? height / scale : SCALED_WIDTH_PX / SCALED_ASPECT;
+			style.width = `${stageWidth}px`;
+			style.height = `${stageHeight}px`;
+			style.transform = `scale(${scale})`;
+			style.marginRight = `${stageWidth * (scale - 1)}px`;
+			style.marginBottom = `${stageHeight * (scale - 1)}px`;
+			player.style.setProperty('--replay-scale', `${scale}`);
+			player.style.setProperty('--replay-stage-width', `${stageWidth}px`);
+		} else {
+			stage.removeAttribute('style');
+			player.style.removeProperty('--replay-scale');
+			player.style.removeProperty('--replay-stage-width');
+		}
+		if (scale == this.stageScale) return false;
+		this.stageScale = scale;
+		return true;
+	}
+
+	// Where an element on the stage is, in the stage's own pixels, which differ from the screen's
+	// while it's scaled down.
+	private stageRect(elem: Element): { left: number; right: number; top: number; bottom: number; width: number; height: number } {
+		const rect = elem.getBoundingClientRect();
+		const scale = this.stageScale;
+		return {
+			left: rect.left / scale,
+			right: rect.right / scale,
+			top: rect.top / scale,
+			bottom: rect.bottom / scale,
+			width: rect.width / scale,
+			height: rect.height / scale,
+		};
 	}
 
 	private setLeveling(model: ReplayModel) {
@@ -2091,13 +2165,12 @@ export class Replay extends ResultComponent {
 	// enemies scrolls up on the right, and crits pop up and stay put for a moment.
 	private drawSct(model: ReplayModel, time: number) {
 		// Where the frames are, in pixels from the left and the right of the combat text's area.
-		const zone = this.ui.sctZone.getBoundingClientRect();
-		const playerFrame = this.playerFrame!.root.querySelector('.replay-unit-main')!.getBoundingClientRect();
+		const zone = this.stageRect(this.ui.sctZone);
+		const playerFrame = this.stageRect(this.playerFrame!.root.querySelector('.replay-unit-main')!);
 		const focus = model.focus.at(time);
 		const shownFrames = this.enemyFrames.filter(frame => !frame.root.classList.contains('hide'));
-		const targetFrame = (shownFrames.find(frame => frame.enemy.unit.index == focus) ?? shownFrames[0])?.root
-			.querySelector('.replay-unit-main')!
-			.getBoundingClientRect();
+		const targetElem = (shownFrames.find(frame => frame.enemy.unit.index == focus) ?? shownFrames[0])?.root.querySelector('.replay-unit-main');
+		const targetFrame = targetElem ? this.stageRect(targetElem) : undefined;
 		const ourRight = zone.right - playerFrame.right;
 		// With the leveling map on a wide stage, the frames sit at its edges (_replay_map.scss). Without
 		// a target, the target's frame would be where ours is, from the other side.
@@ -2105,18 +2178,18 @@ export class Replay extends ResultComponent {
 		const targetLeft = targetFrame ? targetFrame.left - zone.left : withMap ? zone.width - (playerFrame.right - zone.left) : zone.width * 0.7;
 
 		// Where each side's lines start and end, in pixels from the top of the area.
-		const history = this.ui.history.parentElement!.getBoundingClientRect();
+		const history = this.stageRect(this.ui.history.parentElement!);
 		const inBottom = playerFrame.top - zone.top - SCT_MARGIN_PX;
 		const inTop = Math.max(history.bottom - zone.top + SCT_MARGIN_PX, inBottom - MAX_SCROLL_PX);
 		const outBottom = (targetFrame ? targetFrame.top - zone.top : zone.height) - SCT_MARGIN_PX;
-		const outTop = Math.max(this.buffsElem.getBoundingClientRect().bottom - zone.top + SCT_MARGIN_PX, outBottom - MAX_SCROLL_PX);
+		const outTop = Math.max(this.stageRect(this.buffsElem).bottom - zone.top + SCT_MARGIN_PX, outBottom - MAX_SCROLL_PX);
 		// Where the newer line on each side is. We place the lines from the newest back, so an older
 		// line too close to a newer one gets pushed ahead of it.
 		let newerIn = -Infinity;
 		let newerOut = Infinity;
 
 		// The crits' area has the same cap, so in full screen they stay near the scrolling lines.
-		let critBottom = this.ui.procs.getBoundingClientRect().top - zone.top;
+		let critBottom = this.stageRect(this.ui.procs).top - zone.top;
 		let critTop = Math.max(history.bottom - zone.top, critBottom - MAX_SCROLL_PX);
 		// The map takes the middle, so there the crits stay over the frames like the lines that
 		// scroll, above where those scroll. When that room is too small, they share the lines' room.
@@ -2136,18 +2209,28 @@ export class Replay extends ResultComponent {
 
 		const first = lastIndexAtOrBefore(model.sctTimes, time - SCROLL_LIFE) + 1;
 		const last = lastIndexAtOrBefore(model.sctTimes, time);
+		// We add the new lines and measure them before we move any, so the page lays out once.
+		const added: Array<HTMLElement> = [];
+		for (let i = last; i >= first; i--) {
+			const event = model.sct[i];
+			if (time - event.time > event.end || this.sctElems.has(i)) continue;
+			const elem = this.makeSctText(event);
+			this.sctElems.set(i, elem);
+			(event.side == 'in' ? this.ui.sctIn : this.ui.sctOut).appendChild(elem);
+			added.push(elem);
+		}
+		added.forEach(elem => this.sctWidths.set(elem, elem.offsetWidth));
+
 		const shown = new Set<number>();
 		for (let i = last; i >= first; i--) {
 			const event = model.sct[i];
 			const age = time - event.time;
 			if (age > event.end) continue;
 			shown.add(i);
-			let elem = this.sctElems.get(i);
-			if (!elem) {
-				elem = this.makeSctText(event);
-				this.sctElems.set(i, elem);
-				(event.side == 'in' ? this.ui.sctIn : this.ui.sctOut).appendChild(elem);
-			}
+			const elem = this.sctElems.get(i)!;
+			// A line that scrolls by is as close to its frame as it fits on the screen. On a narrow
+			// stage the frames are narrow too, and a long line would run off the edge.
+			const room = zone.width - (this.sctWidths.get(elem) ?? 0);
 			const progress = age / event.end;
 			let y: number;
 			let scale = 1;
@@ -2166,11 +2249,11 @@ export class Replay extends ResultComponent {
 			const opacity = pushedOut ? 0 : Math.min(1, age / 0.06) * Math.min(1, (event.end - age) / (event.end - event.fadeAt));
 			elem.style.top = `${y.toFixed(1)}px`;
 			if (event.side == 'out' && (!event.sticky || withMap)) {
-				elem.style.left = `${targetLeft}px`;
+				elem.style.left = `${Math.max(0, Math.min(targetLeft, room))}px`;
 			} else if (event.side == 'out') {
 				elem.style.right = `${zone.width - targetLeft + STICKY_GAP_PX}px`;
 			} else if (!event.sticky || withMap) {
-				elem.style.right = `${ourRight}px`;
+				elem.style.right = `${Math.max(0, Math.min(ourRight, room))}px`;
 			} else {
 				elem.style.left = `${zone.width - ourRight + STICKY_GAP_PX}px`;
 			}
