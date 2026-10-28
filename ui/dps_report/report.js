@@ -187,7 +187,7 @@ export function startReport(dash, events) {
   const axisWarn = (node, start, what) => {
     node.hidden = !start;
     if (start) node.replaceChildren(el('i', { class: 'fas fa-triangle-exclamation', 'aria-hidden': 'true' }),
-      el('span', {}, 'Bars start at ', el('b', { text: start }), `, not 0, so the gaps between ${what} look bigger than they are.`));
+      el('span', {}, 'Bars start at ', el('b', { text: start }), `, not 0, so gaps between ${what} look bigger than they are.`));
   };
 
   // ---------- tooltip ----------
@@ -268,7 +268,7 @@ export function startReport(dash, events) {
     const ab = base ? adjB(base) : null;
     const specs = arr(b.advantageRefs).map((v) => { try { return specFor(v, b.id); } catch { return null; } }).filter(Boolean);
     return el('div', { class: 'fv-tip fv-advtip' }, tipTitle(`Advantaged vs ${b.encounter}`),
-      ab && +ab.dps ? tipKey(tipDelta(100 * (b.dps / ab.dps - 1)), null, `over ${ab.build} on the generic boss`) : null,
+      ab && +ab.dps ? tipKey(tipDelta(100 * (b.dps / ab.dps - 1)), null, `vs ${ab.build} on the generic boss`) : null,
       tipText(...withIcons(b.advantageShort || b.advantage, specs)),
       specs.length ? el('div', { class: 'fv-advtip-cards' }, ...specs.map((sp) => ttCard(sp, true))) : null);
   };
@@ -295,7 +295,7 @@ export function startReport(dash, events) {
     const base = list.find((x) => x.id === b.baseBuild) || adjB((rowsOf('builds') || []).find((x) => x.id === b.baseBuild) || {});
     return el('div', { class: 'fv-tip fv-advtip' }, tipTitle(`On ${b.duty} duty`),
       +base.dps ? tipKey(dutyCostText(b, base), 'DPS', el('span', { class: 'fv-tip-m' }, tipDelta(100 * (b.dps / base.dps - 1)), ` vs ${base.build}`)) : null,
-      b.dutyDefensive === true ? tipText('Defensive, so the raid gains no DPS from it.') : null,
+      b.dutyDefensive === true ? tipText("It's defensive, so the raid gains no DPS from it.") : null,
       tipText(b.summary));
   };
   // The badge's short name for each duty; its tooltip gives the full name, and says when the duty is defensive.
@@ -902,7 +902,7 @@ export function startReport(dash, events) {
     // With one class picked there's nothing to pick the best of, so the chip is off until the class filter is cleared.
     const oneCls = st.cls !== 'All', best = st.best && !oneCls;
     $('#rank-best').disabled = oneCls;
-    $('#rank-best').title = oneCls ? 'Only one class is shown.' : '';
+    $('#rank-best').title = oneCls ? 'Off while one class is picked.' : '';
     $('#rank-best').setAttribute('aria-pressed', String(best));
     $('#rank-enc').setAttribute('aria-pressed', String(!!st.enc));
     $('#rank-duty').setAttribute('aria-pressed', String(!!st.duty));
@@ -922,7 +922,7 @@ export function startReport(dash, events) {
     const max = d3.max(builds, (b) => Math.max(L === 180 ? b.p90 : 0, val(b))) * 1.02;
     const x = (v) => (100 * v / max) + '%';
     const top = d3.max(builds, val);
-    if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No preset matches.' })); return; }
+    if (!rows.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No preset matches these filters.' })); return; }
     host.replaceChildren(...rows.map((b, i) => {
       const v = val(b);
       const valEl = el('span', { class: 'fv-row-val', text: f1(v) });
@@ -1173,7 +1173,7 @@ export function startReport(dash, events) {
   // Each Races card shows every race as the preset plays it, on the generic boss. A switch on each card adds the
   // boss types a racial works on as entries of their own (t, off by default). Since client 70425 no racial depends
   // on the weapon, so there are no racial weapon entries any more.
-  const RS_OPTS = [['t', 'Boss type racials', 'Count racials that only work on one boss type: Troll and Dwarf vs Beast, Windshaper and High Order vs Elemental, Dwarf vs Humanoid (Priests).']];
+  const RS_OPTS = [['t', 'Boss type racials', 'Add racials that only work on one boss type. These are Troll and Dwarf vs Beast, Windshaper and High Order vs Elemental, and Dwarf Priests vs Humanoid.']];
   const rsVar = (card) => {
     const m = (st.rsOpt?.[card] ?? '').replace('w', '');
     const host = $(`#${card}-opts`);
@@ -1373,7 +1373,7 @@ export function startReport(dash, events) {
     for (const r of mine.filter((q) => q.scenario === 'all' && q.part !== 'base' && q.active && q !== row.dropped)) out.push({ part: r.part, r });
     const cond = mine.find((q) => q.scenario === 'all' && !q.active && COND[V] && COND[V].test(q.part));
     for (const r of mine.filter((q) => q.scenario === V)) out.push(r.part === 'target' && cond ? { part: cond.part, r: { ...r, label: cond.label } } : { part: r.part, r });
-    const idle = (row.dropped ? [{ ...row.dropped, note: 'left out of this entry' }] : []).concat(mine.filter((q) => q.scenario === 'all' && !q.active && !(COND[V] && COND[V].test(q.part))
+    const idle = (row.dropped ? [{ ...row.dropped, note: 'not in this entry' }] : []).concat(mine.filter((q) => q.scenario === 'all' && !q.active && !(COND[V] && COND[V].test(q.part))
       && !(V === 'weapon' && mine.some((w) => w.scenario === 'weapon' && w.part === q.part))));
     return { segs: out.filter((sg) => sg.r), idle };
   };
@@ -1479,7 +1479,7 @@ export function startReport(dash, events) {
           : ws[0][0] === 'off hand' ? `${art(ws[0][1])} in the off hand` : ws[0][0] === 'two-hand' ? `a two-hand ${ws[0][1]}` : art(ws[0][1]);
         const gets = ws.length === 2 ? `${art(W)} in each hand` : ws[0][0] === 'off hand' ? `${art(W)} in the off hand` : q.caster ? `a one-hand ${W}` : art(W);
         const text = `${spec} uses ${holds}. ${racial} needs ${art(W)}, so here it gets ${gets} with the same stats. `
-          + `This part is the swap only, without the racial.`;
+          + `This part is only the swap, not the racial.`;
         const moved = ws.filter((w) => w[3] !== w[4]);
         const nodes = [];
         if (q.caster) nodes.push(el('span', { class: 'fv-tip-m', text: "Casters don't attack with their weapon. No change." }));
@@ -1494,7 +1494,7 @@ export function startReport(dash, events) {
         return { text, nodes };
       }
       const text = `${racial} needs ${art(W)}. Presets with another weapon get ${art(W)} with the same stats. `
-        + `This part is the swap only, without the racial.`;
+        + `This part is only the swap, not the racial.`;
       const why = (q) => (arr(q.talents).length ? arr(q.talents).map((t) => t[0]).join(' and ') + ' bonus changes' : 'the weapon speed changes');
       const from = (q) => { const t = [...new Set(arr(q.weapons).map((w) => w[1]))].join(' and '); return t[0].toUpperCase() + t.slice(1); };
       const live = sw.filter((q) => Math.abs(+q.dps) >= 0.05), idle = sw.filter((q) => Math.abs(+q.dps) < 0.05);
@@ -1506,7 +1506,7 @@ export function startReport(dash, events) {
           return el('span', {}, b ? specIco(b, '') : el('i'), el('span', {}, el('b', { text: `${b?.label || q.build}: ${sgn(+q.dps, f1)} DPS. ` }), `${from(q)} to ${W}, ${why(q)}.`));
         })),
         idle.length ? el('span', { class: 'fv-tip-m', text: `No effect on ${idle.map((q) => bmap.get(q.build)?.label || q.build).join(', ')}. `
-          + 'Casters and ranged Hunters don\'t attack with it. The others keep the same speed and talent bonus.' }) : null,
+          + 'Casters and ranged Hunters don\'t attack with it. The rest keep the same speed and talent bonus.' }) : null,
         ...[...talents.values()].map((t) => talent(t, [t[0], t[4]])),
       ] };
     };
@@ -1684,7 +1684,7 @@ export function startReport(dash, events) {
     const all = [...acc.values()].map((a) => ({ ...a, value: one ? a.dps : a.share / a.n })).sort((p, q) => q.value - p.value);
     const rows = all.filter((a) => a.works), idle = all.filter((a) => !a.works);
     if (!rows.length) {
-      host.replaceChildren(el('p', { class: 'fv-note', text: 'No racial helps these presets.' }));
+      host.replaceChildren(el('p', { class: 'fv-note', text: 'No racial adds DPS to these presets.' }));
       dead.replaceChildren(); $(`#${p}-legend`).replaceChildren();
       return;
     }
@@ -2053,7 +2053,7 @@ export function startReport(dash, events) {
         tt(el('span', { class: 'vl' }, mark(el('span', { text: f1(a.uptime) }), 'auras', 'uptime', where), '% avg'), 'a:' + a.key));
       let bar;
       if (s) {
-        bar = el('span', { class: 'tr fv-mini', 'data-tip': '1', role: 'button', 'aria-label': `${a.aura}: uptime in the sample fight` },
+        bar = el('span', { class: 'tr fv-mini', 'data-tip': '1', role: 'button', 'aria-label': `${a.aura} uptime in the sample fight` },
           t0 < -0.55 ? el('i', { class: 'pre', style: `width:${pos(0)}%` }) : null,
           ...iv.map((q) => el('span', { style: `left:${pos(q[2])}%;width:${Math.max(0.4, pos(q[3]) - pos(q[2]))}%;background:${col}` }, q[4] > 1 && pos(q[3]) - pos(q[2]) > 6 ? el('b', { text: '×' + q[4] }) : null)),
           el('i', { class: 'pull', style: `left:${pos(0)}%` }));
@@ -2178,7 +2178,7 @@ export function startReport(dash, events) {
     const fold = (q, race) => (q.race && race && q.race !== race ? 'race' : q.race && !icoOf.has(q.race) && icoOf.size ? 'race' : /^Never/.test(q.when) ? 'off' : null);
     const raceFold = (run) => {
       const rs = [...new Set(run.map((q) => q.race))], s = run.length > 1 ? 's' : '';
-      return rs.every((x) => !icoOf.has(x)) ? `${rs.join(', ')} racial${s}. No ${b.class.toLowerCase()} can be ${rs.join(' or ')}.` : `${rs.join(', ')} racial${s}, not for ${view === 'All' ? b.race : view}.`;
+      return rs.every((x) => !icoOf.has(x)) ? `${rs.join(', ')} racial${s}. No ${b.class.toLowerCase()} can be ${rs.join(' or ')}.` : `${rs.join(', ')} racial${s}. Not used by ${view === 'All' ? b.race : view}.`;
     };
     const folded = (run, why) => el('li', { class: 'fv-pr other', value: String(run[0].order) },
       el('span', { class: 'no', text: run.length > 1 ? `${run[0].order}–${run[run.length - 1].order}` : String(run[0].order) }),
@@ -2271,9 +2271,9 @@ export function startReport(dash, events) {
         }
         addCards(r.order);
       }
-      note = [el('span', { class: 'fv-lg' }, raceIco(icoOf.get(b.race)), `${b.race}: the preset’s race. Casts are for it.`),
-        own.size ? el('span', { class: 'fv-lg' }, el('i', { class: 'fv-rot-own fv-lg-dot' }), 'Plays its own version. Its changes sit under the lines they change.') : null,
-        el('span', { class: 'fv-lg' }, el('span', { class: 'kd race' }, 'Race only'), 'A racial: only that race casts it.')];
+      note = [el('span', { class: 'fv-lg' }, raceIco(icoOf.get(b.race)), `${b.race} is the preset’s race. The cast counts are for it.`),
+        own.size ? el('span', { class: 'fv-lg' }, el('i', { class: 'fv-rot-own fv-lg-dot' }), 'Plays its own version. Its changes show under the lines they change.') : null,
+        el('span', { class: 'fv-lg' }, el('span', { class: 'kd race' }, 'Race only'), 'A racial. Only that race casts it.')];
     } else {
       const mine = own.get(view);
       // the race's own lines (or the preset's), with the preset lines it drops where they were
@@ -2310,8 +2310,8 @@ export function startReport(dash, events) {
       }
       dropTo(Infinity);
       note = [isPreset ? `The rotation as simmed for ${view}, the preset’s race.`
-        : mine ? `${view} plays its own version. Its changes are marked, each with why. The race sims record DPS only, so there are no casts.`
-          : `${view} plays the preset’s rotation, with its own racials. The race sims record DPS only, so there are no casts.`];
+        : mine ? `${view} plays its own version. Each change is marked, with why. Race sims record only DPS, so there are no cast counts.`
+          : `${view} plays the preset’s rotation, with its own racials. Race sims record only DPS, so there are no cast counts.`];
     }
     pre.dataset.build = b.id;
     host.replaceChildren(...(items.length ? items : [el('li', { class: 'fv-note', text: 'No rotation recorded.' })]));
@@ -2619,7 +2619,7 @@ export function startReport(dash, events) {
     // The charts and the side by side cards show the sides that were simmed in full.
     const full = [sA, sB].filter((s) => s.full), part = [sA, sB].filter((s) => !s.full);
     const gap = $('#cmp-gap');
-    gap.replaceChildren(...(part.length ? [`Only mean DPS is known for ${part.map((s) => `${s.k} (${s.name})`).join(' and ')}. `, full.length ? `The charts below show ${full[0].k} only.` : "The charts below need a preset on its own race and normal setup."] : []));
+    gap.replaceChildren(...(part.length ? [`Only mean DPS is known for ${part.map((s) => `${s.k} (${s.name})`).join(' and ')}. `, full.length ? `The charts below show ${full[0].k} only.` : "Charts need a preset on its own race and normal setup."] : []));
     for (const id of ['#cmp-dist-card', '#cmp-len-card', '#cmp-w-card', '#cmp-abil-card']) $(id).hidden = !full.length;
     const hd = $('#cmp-dist');
     if (full.length && waitOr(hd, ['hist'])) {
@@ -2769,7 +2769,7 @@ export function startReport(dash, events) {
     const t = ids.map((id) => a.warn?.[id]).find(Boolean);
     if (!t) return null;
     const ic = el('i', { class: 'fas fa-triangle-exclamation fv-asm-warn', role: 'img', 'aria-label': t });
-    asmHover(ic, 'Read with care', () => [tipText(t)]);
+    asmHover(ic, 'Use with care', () => [tipText(t)]);
     return ic;
   };
   const asmHead = (a, x, cur) => [
@@ -2849,7 +2849,7 @@ export function startReport(dash, events) {
           // A one-value row's answer is its short line, in the right column where the other rows show their table.
           ref ? el('div', { class: 'fv-asm-body' }, el('p', { class: 'fv-asm-answer', text: a.short || a.description }))
             : el('div', { class: 'fv-asm-body' },
-            live ? el('p', { class: 'fv-asm-cap', text: picked ? 'DPS change at 180s, against the default' : ASM_CAP }) : null,
+            live ? el('p', { class: 'fv-asm-cap', text: picked ? 'DPS change at 180s vs the default' : ASM_CAP }) : null,
             asmMatrix(a, cur, (id) => asmPick(a, id)),
             !live ? el('p', { class: 'fv-asm-cap', text: a.status === 'pending' ? 'Not simulated yet.' : 'No longer applies.' }) : null)));
       }
