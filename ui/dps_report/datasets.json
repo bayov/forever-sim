@@ -3,7 +3,7 @@
   "title": "Damage by ability",
   "description": "Per preset and ability (pets included): DPS, share of damage, casts, hits, crits, ticks, average hit and crit, misses, dodges and glances per fight.",
   "updated": {
-   "at": "2026-10-28T10:58:48.728Z",
+   "at": "2026-10-27T22:54:49.376Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -11,7 +11,7 @@
   "title": "Buff and debuff uptime",
   "description": "Per preset, the average share of the fight each aura is up on the player or the boss, and how often it is applied.",
   "updated": {
-   "at": "2026-10-28T10:58:48.728Z",
+   "at": "2026-10-27T22:54:49.376Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -19,7 +19,7 @@
   "title": "Presets and headline DPS",
   "description": "One row per level 60 preset: mean DPS over 20,000 simulated 180 s fights against the generic boss, percentiles, best race overall and per faction, and talents. Encounter presets (the boss as one creature type) are extra rows with their creature type and why they are advantaged (in full and in one short line). Duty presets (the preset keeps a raid buff or debuff up itself, with the raid's copy off) are extra rows with the duty, their base preset and the DPS it costs; they get the main run, lengths and race sweep only. Simmed on master baed22e62's class code plus warrior 38b94b40a; most builds ran before per-hit rounding (about 0.007%), see provenance.json.",
   "updated": {
-   "at": "2026-10-28T10:58:48.728Z",
+   "at": "2026-10-28T06:06:52.166Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -35,7 +35,7 @@
   "title": "Fight-to-fight spread",
   "description": "Per preset, how many of the 20,000 fights landed in each 5 DPS bin.",
   "updated": {
-   "at": "2026-10-28T10:58:48.728Z",
+   "at": "2026-10-27T22:54:49.376Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -59,7 +59,7 @@
   "title": "DPS by fight length",
   "description": "Every preset at 60, 120, 180, 300 and 480 s average fight length, 5,000 fights each.",
   "updated": {
-   "at": "2026-10-28T10:58:48.728Z",
+   "at": "2026-10-27T22:54:49.376Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -67,7 +67,7 @@
   "title": "Mana over a long fight",
   "description": "Per mana-using preset, its mana as a % of max every 5 s through a 480 s fight with its own consumes and rotation: the average over 100 fights (pct) and the 25th and 75th percentile fight (p25, p75).",
   "updated": {
-   "at": "2026-10-28T10:58:48.728Z",
+   "at": "2026-10-27T22:54:49.376Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -75,7 +75,7 @@
   "title": "When mana runs low",
   "description": "Per mana-using preset over the same 480 s fights: when mana first drops below 15% of max (median and 25th to 75th percentile fight, empty when most fights never do), the share of fights that ever do, mana % at 60, 180, 300 and 480 s, mana spent and gained per second, and the sim's seconds out of mana, time to OOM and mana left at the end over 5,000 fights.",
   "updated": {
-   "at": "2026-10-28T10:58:48.728Z",
+   "at": "2026-10-27T22:54:49.376Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -83,7 +83,7 @@
   "title": "Spell and item names",
   "description": "Names, icons and an icon-derived colour for the spell, item and attack ids in the timelines, breakdowns and rotations.",
   "updated": {
-   "at": "2026-10-28T10:58:48.728Z",
+   "at": "2026-10-27T20:42:03.433Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -99,7 +99,7 @@
   "title": "Race DPS split by racial",
   "description": "Each preset and race split into base stats (every racial off) and what each racial adds, plus the weapon swap and the change against each creature type. Racials turned off one at a time; where two count, each gets the average of its two orders so the parts add up.",
   "updated": {
-   "at": "2026-10-28T10:58:48.728Z",
+   "at": "2026-10-28T06:06:52.166Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -107,7 +107,7 @@
   "title": "Race scenario notes",
   "description": "What each race scenario switches on, what each racial does in the sim (with a short line for the tooltips), and a few plain sentences per class written from the race sims.",
   "updated": {
-   "at": "2026-10-28T10:58:48.728Z",
+   "at": "2026-10-28T06:06:52.166Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -115,7 +115,7 @@
   "title": "Race usefulness",
   "description": "Per scenario, role and race, across all races or within the race's faction: presets it can play, how often it is the best race, its average and worst gap to the best, its median rank and the presets where it comes closest.",
   "updated": {
-   "at": "2026-10-28T10:58:48.728Z",
+   "at": "2026-10-28T06:06:52.166Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -123,7 +123,7 @@
   "title": "Race scenarios",
   "description": "Every preset on every race its class can be: against the generic boss with the preset's own setup, against a Beast or an Elemental boss, against a Humanoid boss (Priests only, for Dwarf Chastise), with the race's racial weapon, and with all racials off. Mean DPS over 10,000 fights at 180 s, its standard error, and the gap to the best race in that scenario.",
   "updated": {
-   "at": "2026-10-28T10:58:48.728Z",
+   "at": "2026-10-28T07:01:15.288Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -131,7 +131,7 @@
   "title": "Race sweep",
   "description": "Every preset on every race its class can be: mean DPS over 10,000 fights at 180 s, and the gap to the best race.",
   "updated": {
-   "at": "2026-10-28T10:58:48.728Z",
+   "at": "2026-10-28T07:01:15.288Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -139,7 +139,7 @@
   "title": "Rotation priority lists",
   "description": "Each preset's APL as simmed: pre-pull casts with their timing, then the priority list in order, each line's spell, a plain-English condition, the APL's own note, its exact condition and the spell's casts per fight.",
   "updated": {
-   "at": "2026-10-28T10:58:48.728Z",
+   "at": "2026-10-27T22:54:49.376Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -155,7 +155,7 @@
   "title": "Character sheets",
   "description": "Per preset, final character stats with gear, talents, buffs and consumes.",
   "updated": {
-   "at": "2026-10-28T10:58:48.728Z",
+   "at": "2026-10-27T22:54:49.376Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -179,7 +179,7 @@
   "title": "Hunter sample fights",
   "description": "Three single fights per hunter preset (nearest its 10th, 50th and 90th percentile): the auras and the pre-pull casts, for the aura bars. The whole fights are in events/<build>.json.gz.",
   "updated": {
-   "at": "2026-10-28T10:58:48.728Z",
+   "at": "2026-10-27T22:15:12.737Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -243,7 +243,7 @@
   "title": "Game tooltip text",
   "description": "Tooltip text for the spells, items, enchants, consumes, races and stat weights on the page: wowhead's WoW Forever database first (with a link to its page), the Forever client's talent text and the Forever wiki where it has nothing, Classic's text only as a marked last resort, the sim's own numbers where they differ, the item database for the synthetic gear, and the Forever racials.",
   "updated": {
-   "at": "2026-10-28T10:58:48.728Z",
+   "at": "2026-10-27T22:54:49.376Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -259,7 +259,7 @@
   "title": "Stat weights",
   "description": "Per preset, the DPS one more point of each stat adds (per 1% for hit and crit), measured by adding the stat on top of the gear and simming 40,000 fights at 180 s with the baseline’s seed; worth is in points of the preset’s main stat.",
   "updated": {
-   "at": "2026-10-28T10:58:48.728Z",
+   "at": "2026-10-27T22:54:49.376Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -267,7 +267,7 @@
   "title": "Assumptions",
   "description": "Every value Forever hasn't confirmed that the presets depend on, by class, in plain words: a question-style label, one short line for the panel, a description and its source for Method, the presets it touches, its Low / Expected / High settings (each with a label that says what it means, its numbers and a short rationale), which one the presets use, and each setting's effect on each preset at 180 s.",
   "updated": {
-   "at": "2026-10-28T10:58:48.728Z",
+   "at": "2026-10-27T22:54:49.376Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -275,7 +275,7 @@
   "title": "DPS under each assumption",
   "description": "Per preset an assumption touches: mean DPS with no setting changed, with each other setting alone (180 s at 20,000 fights, 120 and 300 s at 5,000), and with combinations of settings at 180 s (every combination where a preset has 3 or fewer assumptions, 12 random ones otherwise, which check the multiplied estimate the page uses for the rest). Seed 1, the preset's own request.",
   "updated": {
-   "at": "2026-10-28T10:58:48.728Z",
+   "at": "2026-10-27T22:54:49.376Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -283,7 +283,7 @@
   "title": "Event view names",
   "description": "The name, icon and rank of every spell and item in the sample fights and of each preset's weapons, as the sim UI's database and wowhead name them. Made by tools/dps_report/events.py.",
   "updated": {
-   "at": "2026-10-28T10:58:48.728Z",
+   "at": "2026-10-27T20:42:03.433Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -299,7 +299,7 @@
   "title": "Updates",
   "description": "The report's updates, newest first: game updates (a new client build or development notes) and sim/preset updates (our own changes to the sim, rotations, gear, talents, consumes or races), each with its date, source and public change list. Each line may name the classes, presets, races and racial parts it touches.",
   "updated": {
-   "at": "2026-10-28T11:02:25.548Z",
+   "at": "2026-10-28T11:04:31.063Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -307,7 +307,7 @@
   "title": "Results before and after each update",
   "description": "The report's results at the first update's start in full (genesis), then each update's end as only the rows that changed (ends, with gone listing rows that left): builds (DPS, error, ranks, race, best race), races (each preset on each race), parts (each racial part's DPS against the generic boss) and summary (per race and role, how often it is best and its average gap).",
   "updated": {
-   "at": "2026-10-28T11:02:25.551Z",
+   "at": "2026-10-28T09:52:44.777Z",
    "by": "Claude (forever-sim)"
   }
  }
