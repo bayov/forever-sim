@@ -47,7 +47,7 @@
   "source": "ui/dps_report/",
   "artifact": "retired 2026-10-25 (was https://claude.ai/artifact/RUzPysb5dSk2RAXzXij4oR); the report is deployed to https://forever-dps.pages.dev",
   "artifactVersion": 6,
-  "publishedFrom": "master d7551be (Dwarf base stats on the preset's gear, Artisan's Precision carries the gear trade; deploy wraps the page in a doctype/head/body; Web Analytics beacon)"as soon as holding it would mean one fewer use\" wording)",
+  "publishedFrom": "master d7551be (Dwarf base stats on the preset's gear, Artisan's Precision carries the gear trade; deploy wraps the page in a doctype/head/body; Web Analytics beacon)",
   "legacyDashboard": "deleted 2026-10-13"
  },
  "reportArtifact": {
