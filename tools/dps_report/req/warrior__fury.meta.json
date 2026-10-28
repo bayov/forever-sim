@@ -62,7 +62,7 @@
   ],
   "caveats": [
     "Assumed: white hits give Rage by weapon speed, at the level 30 rate even at level 60.",
-    "No Ahn'Qiraj book ranks (Heroic Strike VIII, raid Battle Shout VI, Strength of Earth, Grace of Air)",
+    "No Ahn'Qiraj book ranks, so Heroic Strike stops at rank VIII, and the raid's Battle Shout at VI, Strength of Earth at IV and Grace of Air at II.",
     "Deep Wounds ticks can't crit.",
     "Assumed: the crit Rage bonus is for white hits only. Heroic Strike can trigger Unbridled Wrath.",
     "Only one +2% crit elixir. A second (Grizzly) would add 15.1 DPS.",
