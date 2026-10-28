@@ -16,7 +16,8 @@ A production deploy (--branch main) must come from what master serves: the repor
 --unmerged deploys a commit that isn't on master yet, when the user asked for that. The
 deployment records the commit it was built from.
 
-The deploy serves the file as /index.html. After a production deploy the script fetches the
+The deploy serves the file as /index.html, inside the doctype, <head> and <body> the artifact
+host used to add. After a production deploy the script fetches the
 live site and compares it byte for byte, apart from the Cloudflare Web Analytics beacon that
 Pages injects into every page (enabled 2026-10-28); if it doesn't match, it rolls production
 back to the deployment that was live before.
@@ -44,6 +45,20 @@ BEACON = re.compile(rb"(<!-- Cloudflare Pages Analytics -->)?\s*<script[^>]*clou
 
 def strip_beacon(html):
     return BEACON.sub(b"", html)
+
+
+# The built file holds only the page's own tags (build_artifact.mjs): the Claude artifact host it was made
+# for added the doctype, <head> with the charset and viewport, and <body>. Pages serves the file as it is,
+# so we add the same wrapper. It keeps phones at device width and the page out of quirks mode, and it
+# gives Pages the </body> it puts the Web Analytics beacon in front of.
+HEAD = (b'<!doctype html><html lang="en"><head><meta charset="utf-8">'
+        b'<meta name="viewport" content="width=device-width, initial-scale=1"></head><body>')
+
+
+def document(html):
+    if html.lstrip()[:9].lower() == b"<!doctype":
+        return html
+    return HEAD + html + b"</body></html>"
 
 def curl(args, direct=False, auth=None):
     cmd = ["curl", "-sS", "--fail-with-body", "--retry", "3"]
@@ -97,7 +112,7 @@ def main():
     token = os.environ.get("CLOUDFLARE_API_TOKEN")
     proj = f"{API}/accounts/{account}/pages/projects/{a.project}"
 
-    content = open(a.file, "rb").read()
+    content = document(open(a.file, "rb").read())
     b64 = base64.b64encode(content).decode()
     # Any 32-hex key works; wrangler's is blake3, this is the same length from sha256.
     key = hashlib.sha256(b64.encode() + b"html").hexdigest()[:32]
