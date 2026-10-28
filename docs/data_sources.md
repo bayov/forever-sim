@@ -24,6 +24,15 @@ When two sources disagree, the one higher in this list wins:
 
 1. The Forever client and beta itself: its DB2 tables (wago.tools), its tooltips, and what we
    see in game and in combat logs.
+   - **Server hotfixes are server data and outrank the client tables for the rows they change.**
+     The realms push them into every client's hotfix cache with no new build: the rows on
+     https://wago.tools/hotfixes (product `wowf`, by push and table), and foreverchanges.pro's
+     "A hotfix to the <date> build" entries on https://foreverchanges.pro/patch-notes, which it
+     reads from the launch realms' cache (it marks them "Not in Blizzard's notes"). They often
+     reach neither Blizzard's notes, the next client build nor Wowhead for days (the 2026-10-28
+     Trueshot Aura and Aspect of the Hawk hotfix sat in a finding for a day because of that).
+     Apply them like client data, citing the push or the entry. One that contradicts a user
+     ruling still goes to the user, the same day, as a "needs your call" item.
 2. Season of Discovery.
 3. Anniversary, then 2019 Classic.
 
