@@ -4155,10 +4155,15 @@ dialog.fv-about-modal {
 	}
 }
 
-// The date leads the title, large, so the updates read as a timeline.
+// The date leads the title, large, so the updates read as a timeline. It has a fixed width, so every title and the
+// line under it start at one edge.
+.fv-us {
+	--us-date: 5rem;
+}
+
 .fv-us-date {
 	flex: none;
-	min-width: 4.4rem;
+	width: var(--us-date);
 	font-size: 1.35rem;
 	font-weight: 700;
 	line-height: 1.2;
@@ -4196,7 +4201,16 @@ dialog.fv-about-modal {
 	gap: 0.1rem 0.5rem;
 	margin-top: 0.15rem;
 	// under the title, past the date
-	padding-left: calc(4.4rem + 0.85rem);
+	padding-left: calc(var(--us-date) + 0.85rem);
+
+	// on a phone each item takes its own line, so none starts with a dot
+	@include media-breakpoint-down(sm) {
+		flex-direction: column;
+
+		> * + *::before {
+			display: none;
+		}
+	}
 	font-size: var(--cds-font-size-caption);
 	color: var(--color-fg-muted);
 
@@ -4394,12 +4408,11 @@ dialog.fv-about-modal {
 .fv-dl {
 	display: grid;
 	gap: 0.1rem;
-	max-width: 52rem;
 }
 
 .fv-dl-row {
 	display: grid;
-	grid-template-columns: minmax(10rem, 15rem) minmax(5rem, 1fr) 4rem;
+	grid-template-columns: minmax(10rem, 16rem) 4.5rem minmax(5rem, 1fr);
 	align-items: center;
 	gap: 0.75rem;
 	padding: 0.2rem 0.3rem;
@@ -4489,7 +4502,7 @@ dialog.fv-about-modal {
 	}
 
 	@include media-breakpoint-down(sm) {
-		grid-template-columns: minmax(0, 1fr) 3.5rem;
+		grid-template-columns: minmax(0, 1fr) 4rem;
 
 		.tr {
 			grid-column: 1 / -1;
