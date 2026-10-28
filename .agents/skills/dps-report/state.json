@@ -69,9 +69,9 @@
   "url": "https://forever-dps.pages.dev",
   "cloudflareProject": "forever-dps",
   "deploy": "make dps-report-deploy (tools/dps_report/deploy_pages.py)",
-  "publishedFrom": "master 38713ad (Changes tab without the Ongoing label; deploy wraps the page in a doctype/head/body; Web Analytics beacon)",
+  "publishedFrom": "master ed4e481 (Changes tab: date-led headers; deploy wraps the page in a doctype/head/body; Web Analytics beacon)",
   "date": "2026-10-28",
-  "deployId": "9b282f3c",
+  "deployId": "e51e53ed",
   "analytics": "Cloudflare Web Analytics enabled by the user 2026-10-28 (dashboard: Analytics & Logs > Web Analytics, site forever-dps.pages.dev); Pages injects the beacon, deploy_pages.py's live check strips it. The session token has no analytics read permission."
  },
  "changesTab": "Changes tab live 2026-10-28 (standards 30): tools/dps_report/changes/, live update 2026-10-28-race-rotations (sim/preset)"
