@@ -3189,7 +3189,7 @@ export function startReport(dash, events) {
       t ? el('span', { class: 'fv-us-teaser' }, el('span', { class: 'k', text: t.k }), ' ', el('b', { text: t.v }), t.u ? el('small', { text: ' ' + t.u }) : null) : null,
       el('i', { class: 'fas fa-chevron-down fv-us-chev', 'aria-hidden': 'true' }));
     const meta = el('div', { class: 'fv-us-meta' }, el('span', { class: 'fv-us-type', text: u.type === 'game' ? 'Game update' : 'Sim and preset update' }), el('span', { text: chDate(u.date) }),
-      chSrc(u.source), u.live ? el('span', { class: 'fv-ch-live', text: 'Ongoing: later changes join it' }) : null);
+      chSrc(u.source));
     const body = el('div', { class: 'fv-us-body', hidden: '' });
     sec.append(el('div', { class: 'content-block-header fv-us-head' }, btn), meta, body);
     const sub = (text) => el('div', { class: 'fv-us-h', text });
