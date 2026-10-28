@@ -3876,8 +3876,20 @@ dialog.fv-about-modal {
 	font-size: var(--cds-font-size-caption);
 	color: var(--color-fg-muted);
 
-	.sep {
+	// a dot before each item but the first, so a wrapped line never ends on one
+	> * + *::before {
+		content: '·';
+		margin-right: 0.5rem;
+		color: var(--color-fg-muted);
 		opacity: 0.6;
+	}
+}
+
+// Six tabs fit the header of a phone: smaller tabs below 480px.
+@media (max-width: 480px) {
+	.dps-report-sim-ui .sim-tabs .nav-item .nav-link {
+		padding: 0 0.42rem;
+		font-size: 0.8rem;
 	}
 }
 
@@ -3904,10 +3916,20 @@ dialog.fv-about-modal {
 }
 
 // The update picker shrinks to the card on a phone, and a long title ends in an ellipsis.
+#ch-card .fv-toolbar > .fv-controls {
+	flex-wrap: nowrap;
+	min-width: 0;
+	max-width: 100%;
+}
+
 #ch-pick {
 	flex: 0 1 auto;
 	min-width: 0;
 	max-width: 100%;
+
+	.fv-isel-menu {
+		min-width: min(24rem, calc(100vw - 2rem));
+	}
 
 	.fv-isel-btn {
 		max-width: 100%;
@@ -4027,8 +4049,17 @@ dialog.fv-about-modal {
 			white-space: nowrap;
 		}
 
+		> b,
+		> span {
+			flex: 0 1 auto;
+		}
+
 		em {
-			flex: none;
+			flex: 0 100 auto;
+			min-width: 0;
+			overflow: hidden;
+			text-overflow: ellipsis;
+			white-space: nowrap;
 			color: var(--color-fg-muted);
 			font-style: normal;
 		}
@@ -4092,12 +4123,41 @@ dialog.fv-about-modal {
 	color: var(--color-fg-muted);
 }
 
+#ch-table td:last-child {
+	white-space: nowrap;
+}
+
 .fv-ch-cls {
 	color: var(--color-fg-muted);
 }
 
+// On a phone the preset column gives way to the numbers: no class name, and a long preset name ends in an ellipsis.
+@include media-breakpoint-down(md) {
+	// the class name, and the change's percent and noise (the row's tooltip has them)
+	#ch-table .fv-ch-cls,
+	#ch-table .fv-ch-d small {
+		display: none;
+	}
+
+	#ch-table td.first b {
+		display: inline-block;
+		max-width: 8.5rem;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		vertical-align: bottom;
+	}
+}
+
 .fv-ch-race {
 	font-weight: 600;
+}
+
+.fv-ch-rhead .fv-ch-race {
+	font-size: 1rem;
+}
+
+.fv-ch-rblock .fv-ch-line > summary {
+	font-size: var(--cds-font-size-caption);
 }
 
 .fv-ch-rblock {

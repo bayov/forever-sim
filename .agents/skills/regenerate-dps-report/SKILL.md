@@ -85,8 +85,10 @@ check`, which lists the commits since the update's start that change build input
 the live update in `tools/dps_report/changes/updates.json` (or mark a commit `internal` with a reason when no player
 would care, like a refactor that moves no numbers). Write lines in plain game terms, with no commit ids, dates of our
 work, session or audit names, ruling references or file paths: they ship. Then `python3 tools/dps_report/changes.py build`.
-A new game update (a balance build or development notes) starts with `changes.py new game <id> "<title>" --source-label
-<label> --source-url <url>` before its changes land; the sim/preset update after a full pass with `changes.py new sim`.
+Start a new update before the report is republished with its first change, once the report data that ends the
+previous one is committed: `changes.py new game <id> "<title>" --source-label <label> --source-url <url>` for a balance
+build or development notes, `changes.py new sim <id> "<title>"` for the first change of our own after a game update's
+full pass was deployed. Commit what it writes (`tools/dps_report/changes/`, the two datasets, `datasets.json`).
 
 ## 3. Check both outputs
 
@@ -105,7 +107,9 @@ A new game update (a balance build or development notes) starts with `changes.py
 Commit `ui/dps_report/data/`, `datasets.json`, `provenance.json`, `tools/dps_report/raw/` and `tools/dps_report/changes/` together, with any pipeline
 changes, on a local branch from origin/master. If origin/master changed any of them meanwhile, don't hand-merge them:
 take master's, `hydrate` again, re-check `stale.mjs` (master may have made more builds stale), re-sim what that adds,
-and `publish` again.
+and `publish` again. The exception is `tools/dps_report/changes/updates.json`, which is hand-kept: merge it by hand
+(keep both sides' lines and updates), and let `publish` (`changes.py build`) regenerate the rest of `changes/`'s
+outputs and the two datasets.
 
 ## 5. Push, then deploy
 

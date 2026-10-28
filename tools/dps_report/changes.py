@@ -46,7 +46,12 @@ CLASSES = ('warrior', 'paladin', 'hunter', 'rogue', 'priest', 'shaman', 'mage', 
 INPUT_PATHS = ['sim', 'proto', 'assets/database', 'tools/rotopt', 'tools/database', 'tools/dps_report/patches',
                'tools/dps_report/req', 'tools/dps_report/asm_apls', 'tools/dps_report/run_build.py',
                'tools/dps_report/run_races.py', 'tools/dps_report/build_data.py', 'tools/dps_report/race_override.py',
-               'tools/dps_report/race_gear.py']
+               'tools/dps_report/race_gear.py', 'tools/dps_report/build_races.py']
+DATA_PATHS = [f'ui/dps_report/data/{f}.json' for f in DATA_FILES]
+
+
+class NoBaseline(Exception):
+    pass
 
 
 def git(*a, check=True):
@@ -89,7 +94,7 @@ SECTIONS = ('builds', 'meta', 'races', 'parts', 'labels', 'summary')
 
 def sparse(new, old):
     """The rows of new that differ from old, and the keys old has that new lacks."""
-    out = {s: {k: v for k, v in new[s].items() if old[s].get(k) != v} for s in SECTIONS}
+    out = {s: {k: v for k, v in new[s].items() if k not in old[s] or old[s][k] != v} for s in SECTIONS}
     gone = {s: sorted(k for k in old[s] if k not in new[s]) for s in SECTIONS}
     out['gone'] = {s: v for s, v in gone.items() if v}
     return out
@@ -129,31 +134,55 @@ def live(u):
 
 
 def validate(u):
-    ids = set()
-    for x in u['updates']:
-        if x['id'] in ids:
-            sys.exit(f'duplicate update id {x["id"]}')
+    ids, prev = set(), None
+    for i, x in enumerate(u['updates']):
+        if x['id'] in ids or x['id'] == 'genesis':
+            sys.exit(f'update id {x["id"]} is taken')
         ids.add(x['id'])
         if x['type'] not in ('game', 'sim'):
             sys.exit(f'{x["id"]}: type must be game or sim')
+        if not x.get('endData') and i != len(u['updates']) - 1:
+            sys.exit(f'{x["id"]}: only the last update can be live (endData null)')
+        if prev and x['baselineData'] != prev['endData']:
+            sys.exit(f'{x["id"]}: its baselineData must be {prev["id"]}\'s endData')
+        prev = x
         for ln in x.get('lines', []):
             if ln.get('kind') not in KINDS:
                 sys.exit(f'{x["id"]}: line "{ln.get("title")}" has kind {ln.get("kind")!r}, not one of {", ".join(KINDS)}')
     live(u)
 
 
+def check_names(u, states):
+    """Warn about a line naming a class, preset, race or racial part no snapshot of its update has: the page would
+    match nothing."""
+    for x in u['updates']:
+        old, new = states[x['id']]
+        known = {
+            'classes': {m[0] for s in (old, new) for m in s['meta'].values()},
+            'builds': set(old['builds']) | set(new['builds']),
+            'races': {k.split('|')[1] for s in (old, new) for k in s['races']},
+            'parts': {k.split('|')[1] for s in (old, new) for k in s['labels']},
+        }
+        for ln in x.get('lines', []):
+            for f, ok in known.items():
+                bad = [v for v in ln.get(f, []) if v not in ok]
+                if bad:
+                    print(f'warning: {x["id"]}: line "{ln["title"]}" names unknown {f}: {", ".join(bad)}', file=sys.stderr)
+
 def chain(u):
     """Genesis, then each update's end delta: the closed ones from their files, the live one from the work tree."""
     g = read_json(os.path.join(CH, 'genesis.json'))
-    state, ends = g, {}
+    state, ends, states = g, {}, {}
     for x in u['updates']:
         if x.get('endData'):
             d = read_json(os.path.join(CH, x['id'] + '.json'))
         else:
             d = sparse(snapshot(load_data()), state)
         ends[x['id']] = d
-        state = apply(state, d)
-    return g, ends
+        end = apply(state, d)
+        states[x['id']] = (state, end)
+        state = end
+    return g, ends, states
 
 
 def stamp(ds, changed):
@@ -179,7 +208,8 @@ def write_dataset(ds, value):
 def cmd_build():
     u = updates()
     validate(u)
-    g, ends = chain(u)
+    g, ends, states = chain(u)
+    check_names(u, states)
     pub = []
     for x in u['updates']:
         e = {k: x[k] for k in PUBLIC_UPDATE if k in x}
@@ -190,7 +220,11 @@ def cmd_build():
     n2, c2 = write_dataset('changes_snap', {'genesis': g, 'ends': ends})
     print(f'changes: {len(pub)} updates, {n1 / 1024:.1f} KB{" (changed)" if c1 else ""}; '
           f'changes_snap: {n2 / 1024:.1f} KB{" (changed)" if c2 else ""}')
-    uncovered = check(u, quiet=True)
+    try:
+        uncovered = check(u, quiet=True)
+    except NoBaseline as e:
+        print(f'warning: {e}', file=sys.stderr)  # the datasets are written; only the list of uncovered commits is missing
+        return
     if uncovered:
         print(f'warning: {len(uncovered)} commit(s) in the live update change build inputs and no public line covers them '
               f'(changes.py check):', file=sys.stderr)
@@ -208,7 +242,7 @@ def check(u, quiet=False):
     covered = [c for ln in lv.get('lines', []) for c in ln.get('commits', [])] + [i['commit'] for i in lv.get('internal', [])]
     base = lv['baselineData']
     if not git('rev-parse', '--verify', '-q', base + '^{commit}', check=False).strip():
-        sys.exit(f'{base} is not in this clone: deepen it (git fetch --shallow-since=<date>) to check the live update')
+        raise NoBaseline(f'{base[:10]} is not in this clone: deepen it (git fetch --shallow-since=<date>) to check the live update')
     # every commit the baseline's data doesn't include, whatever branch it came in on
     log = git('log', '--no-merges', '--format=%H %s', f'{base}..HEAD', '--', *INPUT_PATHS, *class_dirs()).splitlines()
     out = [l for l in log if not any(l.startswith(c) for c in covered)]
@@ -227,12 +261,17 @@ def cmd_new(typ, uid, title, date=None, src_label=None, src_url=None):
     lv = live(u)
     if any(x['id'] == uid for x in u['updates']):
         sys.exit(f'update {uid} exists already')
-    g, ends = chain(u)
-    write_json(os.path.join(CH, lv['id'] + '.json'), ends[lv['id']])
-    end = git('log', '-1', '--format=%H', '--', 'ui/dps_report/data').strip()
-    if git('status', '--porcelain', '--', 'ui/dps_report/data/builds.json', 'ui/dps_report/data/races.json',
-           'ui/dps_report/data/race_breakdown.json', 'ui/dps_report/data/race_summary.json').strip():
+    if git('status', '--porcelain', '--', *DATA_PATHS).strip():
         sys.exit('the report data has uncommitted changes: commit them before finishing the update')
+    # the last commit that changed the numbers the snapshot keeps (not changes.json or the events)
+    end = git('log', '-1', '--format=%H', '--', *DATA_PATHS).strip()
+    late = [c for ln in lv.get('lines', []) for c in ln.get('commits', [])
+            if subprocess.run(['git', 'merge-base', '--is-ancestor', c, end], cwd=ROOT, capture_output=True).returncode]
+    if late:
+        print(f'warning: {lv["id"]} lists commits its data doesn\'t include yet ({", ".join(late)}): their numbers will show '
+              f'in {uid}; move their lines there, or regenerate the report first', file=sys.stderr)
+    g, ends, _ = chain(u)
+    write_json(os.path.join(CH, lv['id'] + '.json'), ends[lv['id']])
     lv['endData'] = end
     x = {'id': uid, 'type': typ, 'title': title, 'date': date or datetime.now(timezone.utc).strftime('%Y-%m-%d'),
          'baselineData': end, 'endData': None, 'lines': [], 'internal': []}
@@ -293,7 +332,10 @@ if __name__ == '__main__':
     if a[:1] == ['build']:
         cmd_build()
     elif a[:1] == ['check']:
-        check(updates())
+        try:
+            check(updates())
+        except NoBaseline as e:
+            sys.exit(str(e))
     elif a[:1] == ['new'] and len(a) >= 4:
         cmd_new(a[1], a[2], a[3], opt('--date'), opt('--source-label'), opt('--source-url'))
     elif a[:1] == ['diff'] and len(a) >= 2:

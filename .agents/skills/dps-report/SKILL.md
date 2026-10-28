@@ -116,7 +116,7 @@ Template: `prompts/dashboard/HANDOFF_assumptions.md`. Re-run it whenever presets
 **B10. Analysis / research question.** For a new rules question (e.g. item budgets, per-archetype pricing), start a local subagent with a self-contained handoff. Its deliverable is an `orchestration/*.md` with tables. Bring its recommendation to the user before changing standards.
 
 **B11. Publish / wrap-up.**
-- Changes tab (standards 30): the live update has a public line for everything this pass changed (`python3 tools/dps_report/changes.py check` lists the commits no line covers). After a full pass's final deploy, start the sim/preset update that our later changes join: `changes.py new sim <id> "<title>"`.
+- Changes tab (standards 30): the live update has a public line for everything this pass changed (`python3 tools/dps_report/changes.py check` lists the commits no line covers). Once a game update's full pass is deployed, our next change of our own starts a sim/preset update (`changes.py new sim <id> "<title>"`, before the report is republished with it); until then, changes keep joining the game update.
 - Update state.json (heads, client build, the report's deploy, date).
 - Update PR bodies (class workers do their own).
 - Tell the user what changed, with the ranking.
@@ -147,7 +147,7 @@ Template: `prompts/dashboard/HANDOFF_assumptions.md`. Re-run it whenever presets
 
 - **Light refresh** ("update the report"): B1 → B7 for stale classes only → B8 only if the page needs no changes beyond data → B11.
 - **Act on audit findings** ("handle the audit findings", after a notification): B1 → B13 → B3/B4 for the fixes → B5 for the auditors that found them → B7 → B11.
-- **Full pass** (new Forever build, or "re-audit everything"): B1 → the `update-sources` skill (it pulls the build's tables and diff and regenerates the database) → class changes auditor (a subagent) and a client update pass (B5) on the new build → B3 research and fixes per class → B4 shared fixes → B5 audit pass → B7 → B9 → B11.
+- **Full pass** (new Forever build or development notes, or "re-audit everything"): for a new build or notes, start the report's game update first (`python3 tools/dps_report/changes.py new game <id> "<title>"` with the announcement as its source; standards 30), then B1 → the `update-sources` skill (it pulls the build's tables and diff and regenerates the database) → class changes auditor (a subagent) and a client update pass (B5) on the new build → B3 research and fixes per class → B4 shared fixes → B5 audit pass → B7 → B9 → B11.
 - **One class** ("re-check druids"): B1 for that class → B3 → B5 (results, and fairness for the ranking) → B7 for that class → B11.
 - **Rule change** ("assume X", "use Sunder not Expose"): B2 → B3 for affected classes → B5 → B7 → B11.
 - **Report feature** ("add Y to the report"): B8 (plus B7 if new data is needed) → B11.

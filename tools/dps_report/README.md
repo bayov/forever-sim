@@ -306,15 +306,17 @@ sampling left over (the main run has twice a race row's fights).
 
 | Command | What it does |
 |---|---|
-| `changes.py build` | Writes the datasets `changes` and `changes_snap` (`pipeline.sh publish` runs it) |
-| `changes.py check` | Lists the commits since the live update's `baselineData` that change build inputs and no line covers |
+| `changes.py build` | Writes the datasets `changes` and `changes_snap` (`pipeline.sh publish` runs it last), and warns about lines naming unknown classes, presets, races or racials and about uncovered commits |
+| `changes.py check` | Lists the commits since the live update's `baselineData` that change build inputs and no line covers (it needs that commit in the clone: `git fetch --shallow-since=<date>`) |
 | `changes.py new game\|sim <id> "<title>" [--date D] [--source-label L --source-url U]` | Finishes the live update at the committed data and starts the next |
 | `changes.py diff <old> [<new>]` | Prints what moved between two commits' report data (default new: the work tree), for writing lines |
 | `changes.py freeze` | Rewrites `genesis.json` and the finished updates' files from git (a backfill or repair; needs their commits) |
 
-When to start an update: a game update before its changes land (update-sources step 2 for a balance build, or when the
-development notes are applied); a sim/preset update after a full pass's final deploy (dps-report B11). Everything else
-joins the live update. Lines are plain game terms, with only public links as sources: they ship.
+When to start an update: before the report is republished with its first change, once the data that ends the previous
+update is committed. A game update for a balance build or development notes (update-sources step 2, the dps-report full
+pass); a sim/preset update for our first change of our own after a game update's full pass was deployed (dps-report
+B11). Everything else joins the live update. `new` refuses while the four datasets a snapshot reads have uncommitted
+changes, and warns when the finished update lists commits its data doesn't include yet. Commit what it writes. Lines are plain game terms, with only public links as sources: they ship.
 
 ## Publishing
 

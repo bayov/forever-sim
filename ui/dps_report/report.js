@@ -153,6 +153,7 @@ export function startReport(dash, events) {
   const saved = (() => { try { return JSON.parse(store?.getItem('fv-state') || '{}'); } catch { return {}; } })();
   const st = Object.assign({ tab: 'ranking', cls: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', rsOpt: {}, rsFac: 'All', srFac: 'All', slFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', rlFac: 'All', rlRole: 'All', rlCls: 'All', rlSpec: 'All', setupHide: false, enc: false, duty: true, asm: {}, asmOpen: [], chUp: null, chCls: 'All', chRcls: 'All', chAll: false, chVar: false }, saved);
   st.len = '180'; // a fight length other than 180s is never restored: the page always opens on the main numbers
+  st.chUp = null; // nor an older update: the Changes tab opens on the newest unless a link names one
   const persist = () => { try { store?.setItem('fv-state', JSON.stringify(st)); } catch {} };
 
   // ---------- tooltip pieces ----------
@@ -634,7 +635,9 @@ export function startReport(dash, events) {
     if (changed) { const pg = document.getElementById(tab); pg.classList.remove('in'); void pg.offsetWidth; pg.classList.add('in'); }
     document.querySelectorAll('.fv-tab').forEach((b) => { b.setAttribute('aria-selected', String(b.dataset.tab === tab)); b.classList.toggle('active', b.dataset.tab === tab); });
     document.querySelectorAll('.fv-page').forEach((p) => { p.hidden = p.dataset.page !== tab; p.classList.toggle('active', p.dataset.page === tab); });
-    if (link) dash.setLink(tab === 'spec' && st.build ? st.build : tab === 'changes' && st.chUp ? 'changes/' + st.chUp : tab);
+    // on a phone the header scrolls sideways: bring the open tab into view
+    document.querySelector('.fv-tab.active')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+    if (link) dash.setLink(tab === 'spec' && st.build ? st.build : tab === 'changes' && st.chUp && chUpdate() ? 'changes/' + chUpdate().id : tab);
     hideTip(); hideTT();
     render();
   };
@@ -2738,7 +2741,7 @@ export function startReport(dash, events) {
   };
   const chUpdate = () => {
     const ups = rowsOf('changes') || [];
-    return ups.find((u) => u.id === st.chUp) || ups[0];
+    return ups.find((u) => String(u.id) === String(st.chUp)) || ups[0];
   };
   const chMeta = (S, id) => S.new.meta[id] || S.old.meta[id] || [];
   const chIsVar = (m) => !!(m[2] || m[3]);
@@ -2751,14 +2754,10 @@ export function startReport(dash, events) {
     const m = chMeta(S, id), base = m[4] || id;
     const byB = arr(ln.builds).length ? arr(ln.builds).includes(id) || arr(ln.builds).includes(base) : null;
     const byC = arr(ln.classes).length ? arr(ln.classes).includes(m[0]) : null;
-    if (byB != null || byC != null) return !!(byB || byC);
+    if ((byB != null || byC != null) && !(byB || byC)) return false;
+    // a line that names races touches a preset only when it is played as one of them, before or after
     if (arr(ln.races).length) return [S.old.builds[id]?.[4], S.new.builds[id]?.[4]].some((r) => arr(ln.races).includes(r));
     return true;
-  };
-  // ranks among the presets on the generic boss with no duty, in one state
-  const chRanks = (B, M) => {
-    const ids = Object.keys(B).filter((id) => !chIsVar(M[id] || [])).sort((a, b) => B[b][0] - B[a][0]);
-    return new Map(ids.map((id, i) => [id, i + 1]));
   };
   // A rank change is "about tied" when every preset it passed, or that passed it, is still within noise of it.
   const chRankTied = (S, id) => {
@@ -2784,6 +2783,8 @@ export function startReport(dash, events) {
     const a = S.new.races[`${id}|${n[5]}`], b = S.new.races[`${id}|${o[5]}`];
     return !!(a && b && a[0] - b[0] < chNoise(a[1], b[1]));
   };
+  // previews show the biggest moves, up or down
+  const chBig = (a, b) => Math.abs(b.d) - Math.abs(a.d) || b.d - a.d;
   const chDeltaEl = (d, noise, pct) => {
     if (chSame(d)) return el('span', { class: 'fv-ch-d same', text: 'unchanged' });
     const quiet = noise != null && Math.abs(d) < noise;
@@ -2814,13 +2815,15 @@ export function startReport(dash, events) {
     const nm = chName(S, bid);
     return { k, bid, race, part, d, noise: chNoise(o?.[1], n?.[1]), icon: chIco(bid, nm.cls), name: `${nm.name} · ${nm.cls}`, tag: race, open: chCur(bid) ? bid : null,
       vals: `${ov == null ? 'none' : sgn(ov)} → ${nv == null ? 'gone' : sgn(nv)}` };
-  }).filter((r) => r && !chSame(r.d)).sort((a, b) => b.d - a.d);
+  }).filter((r) => r && !chSame(r.d)).sort(chBig);
   const chBuildRow = (S, id) => {
     const o = S.old.builds[id], n = S.new.builds[id], nm = chName(S, id);
     const d = o && n ? n[0] - o[0] : null;
-    return { id, d: d ?? 0, noise: o && n ? chNoise(o[1], n[1]) : null, icon: chIco(id, nm.cls), name: `${nm.name} · ${nm.cls}`, open: chCur(id) ? id : null,
+    return { id, bid: id, d: d ?? 0, noise: o && n ? chNoise(o[1], n[1]) : null, icon: chIco(id, nm.cls), name: `${nm.name} · ${nm.cls}`, open: chCur(id) ? id : null,
       tag: o && n && o[4] !== n[4] ? `${o[4]} → ${n[4]}` : !o ? 'new' : !n ? 'retired' : null, vals: `${o ? f1(o[0]) : '—'} → ${n ? f1(n[0]) : '—'}` };
   };
+  // advantaged and duty presets show with Variants on, or when the line names them
+  const chShown = (ln, S, id) => st.chVar || !chIsVar(chMeta(S, id)) || arr(ln.builds).includes(id);
   // what one line did: its racials' worth when it names racials, else the DPS of the presets it touches
   const chEffect = (S, u, ln) => {
     const host = el('div', { class: 'fv-ch-eff' });
@@ -2828,7 +2831,7 @@ export function startReport(dash, events) {
     const inScope = (bid) => (!arr(ln.builds).length && !arr(ln.classes).length) || chTouches({ builds: ln.builds, classes: ln.classes }, S, bid);
     if (parts.length) {
       const keys = [...new Set([...Object.keys(S.old.parts), ...Object.keys(S.new.parts)])]
-        .filter((k) => { const [bid, race, part] = k.split('|'); return parts.includes(part) && (!races.length || races.includes(race)) && inScope(bid) && (st.chVar || !chIsVar(chMeta(S, bid))); });
+        .filter((k) => { const [bid, race, part] = k.split('|'); return parts.includes(part) && (!races.length || races.includes(race)) && inScope(bid) && chShown(ln, S, bid); });
       for (const part of parts) {
         const rows = chPartRows(S, keys.filter((k) => k.endsWith('|' + part)));
         if (!rows.length) continue;
@@ -2838,22 +2841,27 @@ export function startReport(dash, events) {
       if (!host.childElementCount) host.append(el('p', { class: 'fv-note', text: "No racial's worth moved." }));
       return host;
     }
-    let ids = Object.keys({ ...S.old.builds, ...S.new.builds }).filter((id) => (st.chVar || !chIsVar(chMeta(S, id))) && chTouches(ln, S, id));
+    const others = (id) => arr(u.lines).filter((l) => l !== ln && chTouches(l, S, id)).length;
+    const tagOthers = (rows) => { for (const r of rows) { const n = others(r.bid); if (n) r.tag = [r.tag, `+${n} other change${n > 1 ? 's' : ''}`].filter(Boolean).join(' · '); } return rows; };
+    const ids = Object.keys({ ...S.old.builds, ...S.new.builds }).filter((id) => chShown(ln, S, id) && chTouches(ln, S, id));
     if (races.length && !arr(ln.builds).length && !arr(ln.classes).length) {
       // a race-wide change that names no preset: each preset on those races
-      const keys = Object.keys(S.new.races).filter((k) => races.includes(k.split('|')[1]) && (st.chVar || !chIsVar(chMeta(S, k.split('|')[0]))));
+      const keys = Object.keys(S.new.races).filter((k) => races.includes(k.split('|')[1]) && chShown(ln, S, k.split('|')[0]));
       const rows = keys.map((k) => {
         const [bid, race] = k.split('|'), o = S.old.races[k], n = S.new.races[k];
         if (!o) return null;
         const nm = chName(S, bid);
-        return { d: n[0] - o[0], noise: chNoise(o[1], n[1]), icon: chIco(bid, nm.cls), name: `${nm.name} · ${nm.cls}`, tag: race, open: chCur(bid) ? bid : null, vals: `${f1(o[0])} → ${f1(n[0])}` };
-      }).filter((r) => r && !chSame(r.d)).sort((a, b) => b.d - a.d);
+        return { bid, d: n[0] - o[0], noise: chNoise(o[1], n[1]), icon: chIco(bid, nm.cls), name: `${nm.name} · ${nm.cls}`, tag: race, open: chCur(bid) ? bid : null, vals: `${f1(o[0])} → ${f1(n[0])}` };
+      }).filter((r) => r && !chSame(r.d)).sort(chBig);
+      // a race row another line also moved (a rotation and a gear change on the same race) says so
+      for (const r of rows) {
+        const n = arr(u.lines).filter((l) => l !== ln && arr(l.races).includes(r.tag) && ((!arr(l.builds).length && !arr(l.classes).length) || chTouches({ builds: l.builds, classes: l.classes }, S, r.bid))).length;
+        if (n) r.tag += ` · +${n} other change${n > 1 ? 's' : ''}`;
+      }
       host.append(rows.length ? chList(rows) : el('p', { class: 'fv-note', text: 'No preset moved on these races.' }));
       return host;
     }
-    const rows = ids.map((id) => chBuildRow(S, id)).filter((r) => !chSame(r.d) || r.tag).sort((a, b) => b.d - a.d);
-    const others = (id) => arr(u.lines).filter((l) => l !== ln && chTouches(l, S, id)).length;
-    for (const r of rows) { const n = others(r.id); if (n) r.tag = [r.tag, `+${n} other change${n > 1 ? 's' : ''}`].filter(Boolean).join(' · '); }
+    const rows = tagOthers(ids.map((id) => chBuildRow(S, id)).filter((r) => !chSame(r.d) || r.tag).sort(chBig));
     host.append(rows.length ? chList(rows) : el('p', { class: 'fv-note', text: "No preset's DPS moved." }));
     return host;
   };
@@ -2871,10 +2879,15 @@ export function startReport(dash, events) {
     iconSelect($('#ch-pick'), ups.map((x) => ({ value: x.id, text: x.title, icon: () => typeTag(x), end: chDate(x.date) })), u.id,
       (v) => { st.chUp = v; persist(); dash.setLink('changes/' + v); hideTip(); render(); });
     const src = u.source ? (u.source.url ? el('a', { href: u.source.url, target: '_blank', rel: 'noopener', text: u.source.label }) : el('span', { text: u.source.label })) : null;
-    $('#ch-meta').replaceChildren(...[typeTag(u), el('span', { text: u.type === 'game' ? 'Game update' : 'Sim and preset update' }), el('span', { class: 'sep', text: '·' }), el('span', { text: chDate(u.date) }),
-      src ? el('span', { class: 'sep', text: '·' }) : null, src, u.live ? el('span', { class: 'fv-ch-live', text: 'Ongoing: later changes join it' }) : null].filter(Boolean));
+    $('#ch-meta').replaceChildren(...[el('span', { text: u.type === 'game' ? 'Game update' : 'Sim and preset update' }), el('span', { text: chDate(u.date) }),
+      src, u.live ? el('span', { class: 'fv-ch-live', text: 'Ongoing: later changes join it' }) : null].filter(Boolean));
 
-    // the change lines
+    // the change lines. A re-render (a resize, a dataset loading, a filter in another card) keeps them, and the lines
+    // a reader opened, unless what they show changed.
+    const icons = `${iconMap() ? 1 : 0}${statusOf('icons_more')}`;
+    const lsig = [u.id, st.chVar, icons].join('|');
+    if (linesHost.dataset.sig !== lsig) {
+    linesHost.dataset.sig = lsig;
     linesHost.replaceChildren(...arr(u.lines).map((ln) => {
       const d = el('details', { class: 'fv-ch-line' });
       const ls = ln.source ? (ln.source.url ? el('a', { href: ln.source.url, target: '_blank', rel: 'noopener', text: ln.source.label, onclick: (e) => e.stopPropagation() }) : el('span', { text: ln.source.label })) : null;
@@ -2884,10 +2897,10 @@ export function startReport(dash, events) {
       return d;
     }));
     if (!arr(u.lines).length) linesHost.append(el('p', { class: 'fv-note', text: 'No changes listed yet.' }));
+    }
 
     // every preset before and after
     const ids = Object.keys({ ...S.old.builds, ...S.new.builds });
-    const rO = chRanks(S.old.builds, { ...S.new.meta, ...S.old.meta }), rN = chRanks(S.new.builds, { ...S.old.meta, ...S.new.meta });
     const rows = ids.map((id) => {
       const o = S.old.builds[id], n = S.new.builds[id], m = chMeta(S, id);
       return { id, o, n, m, d: o && n ? n[0] - o[0] : null };
@@ -2897,8 +2910,9 @@ export function startReport(dash, events) {
     tb.replaceChildren(...rows.map((r) => {
       const { id, o, n, m } = r, nm = chName(S, id);
       const pct = o && n ? 100 * r.d / o[0] : null, noise = o && n ? chNoise(o[1], n[1]) : null;
-      const ro = rO.get(id), rn = rN.get(id), tied = ro && rn && ro !== rn && chRankTied(S, id);
-      const rank = !chIsVar(m) && (ro || rn) ? (ro && rn && ro !== rn ? `${ro} → ${rn}${tied ? ' ≈' : ''}` : String(rn || ro)) : '';
+      // the report's own rank (ties share one), which an advantaged preset doesn't have
+      const ro = m[2] ? null : o?.[2], rn = m[2] ? null : n?.[2], tied = ro && rn && ro !== rn && chRankTied(S, id);
+      const rank = ro || rn ? (ro && rn && ro !== rn ? `${ro} → ${rn}${tied ? ' ≈' : ''}` : String(rn || ro)) : '';
       const race = o && n && o[4] !== n[4] ? el('span', {}, raceEl(o[4]), ' → ', raceEl(n[4])) : raceEl((n || o)[4]);
       const tr = el('tr', { class: 'clk', 'data-tip': '1' },
         el('td', { class: 'first' }, chIco(id, nm.cls), ' ', el('b', { text: nm.name }), el('span', { class: 'fv-ch-cls', text: ` · ${nm.cls}` })),
@@ -2911,7 +2925,7 @@ export function startReport(dash, events) {
         const card = $('#ch-builds-card'), cr = card.getBoundingClientRect(), rr = tr.getBoundingClientRect();
         const split = chRaceSplit(S, id), by = arr(u.lines).filter((l) => chTouches(l, S, id)).map((l) => l.title);
         const lines = [
-          r.d == null ? tipText(o ? 'Retired in this update.' : 'New in this update.') : tipKey(sgn(r.d), 'DPS', el('span', {}, tipDelta(pct), chSame(r.d) ? '' : Math.abs(r.d) < noise ? ' · within noise' : '')),
+          r.d == null ? tipText(o ? 'Retired in this update.' : 'New in this update.') : chSame(r.d) ? tipText('Unchanged in this update.') : tipKey(sgn(r.d), 'DPS', el('span', {}, tipDelta(pct), chSame(r.d) ? '' : Math.abs(r.d) < noise ? ' · within noise' : '')),
           tipGrid([o ? ['Before', `${f1(o[0])} ± ${f2(o[1])}`] : null, n ? ['After', `${f1(n[0])} ± ${f2(n[1])}`] : null,
             noise != null && !chSame(r.d) ? ['Noise', `±${f1(noise)}`] : null,
             rank && ro !== rn ? ['Rank', `${ro} → ${rn}${tied ? ' (about tied)' : ''}`] : null,
@@ -2926,9 +2940,14 @@ export function startReport(dash, events) {
       });
       return tr;
     }));
-    if (!rows.length) tb.replaceChildren(el('tr', {}, el('td', { colspan: '6', class: 'fv-note', text: st.chCls === 'All' ? "No preset's DPS moved in this update." : 'No preset of this class moved in this update.' })));
+    const racesMoved = Object.keys(S.new.races).some((k) => S.old.races[k] && !chSame(S.new.races[k][0] - S.old.races[k][0]));
+    if (!rows.length) tb.replaceChildren(el('tr', {}, el('td', { colspan: '6', class: 'fv-note', text: (st.chCls === 'All' ? "No preset's own DPS moved in this update" : 'No preset of this class moved in this update')
+      + (racesMoved ? ': its changes were on races the presets are not played as. See the races below.' : '.') })));
 
-    // races: each race's presets and racials that moved, and how often it is best
+    // races: each race's presets and racials that moved, and how often it is best (kept across re-renders as above)
+    const rsig = [u.id, st.chVar, st.chRcls, icons].join('|');
+    if (racesHost.dataset.sig === rsig) return;
+    racesHost.dataset.sig = rsig;
     const inCls = (bid) => st.chRcls === 'All' || chMeta(S, bid)[0] === st.chRcls;
     const okB = (bid) => inCls(bid) && (st.chVar || !chIsVar(chMeta(S, bid)));
     const raceList = [...new Set(Object.keys({ ...S.old.races, ...S.new.races }).map((k) => k.split('|')[1]))].sort();
@@ -2939,7 +2958,7 @@ export function startReport(dash, events) {
         if (!o) return null;
         const nm = chName(S, bid);
         return { d: n[0] - o[0], noise: chNoise(o[1], n[1]), icon: chIco(bid, nm.cls), name: `${nm.name} · ${nm.cls}`, open: chCur(bid) ? bid : null, vals: `${f1(o[0])} → ${f1(n[0])}` };
-      }).filter((x) => x && !chSame(x.d)).sort((a, b) => b.d - a.d);
+      }).filter((x) => x && !chSame(x.d)).sort(chBig);
       const pkeys = [...new Set([...Object.keys(S.old.parts), ...Object.keys(S.new.parts)])].filter((k) => { const [bid, r, p] = k.split('|'); return r === race && p !== 'base' && okB(bid); });
       const byPart = d3.group(chPartRows(S, pkeys), (x) => x.part);
       const so = S.old.summary[`${race}|All`], sn = S.new.summary[`${race}|All`];
@@ -2968,13 +2987,14 @@ export function startReport(dash, events) {
   $('#ch-var').addEventListener('click', (e) => { e.stopPropagation(); st.chVar = !st.chVar; persist(); hideTip(); render(); });
   // the newest update, on top of the Ranking tab
   const drawUpdChip = () => {
-    const a = $('#rank-upd'), u = statusOf('changes') === 'ok' ? (rowsOf('changes') || [])[0] : null;
+    // the newest update with something in it (one just started has no lines yet)
+    const a = $('#rank-upd'), u = statusOf('changes') === 'ok' ? (rowsOf('changes') || []).find((x) => arr(x.lines).length) : null;
     a.hidden = !u;
     if (!u || a.dataset.id === u.id) return;
     a.dataset.id = u.id;
     a.replaceChildren(el('span', { class: 'k', text: `Updated ${chDate(u.date)}` }), el('span', { text: u.title }), el('i', { class: 'fas fa-arrow-right', 'aria-hidden': 'true' }));
   };
-  $('#rank-upd').addEventListener('click', (e) => { e.preventDefault(); st.chUp = null; showTab('changes'); });
+  $('#rank-upd').addEventListener('click', (e) => { e.preventDefault(); st.chUp = $('#rank-upd').dataset.id || null; showTab('changes'); });
 
   // ---------- render ----------
   // What the first view doesn't need waits until it is drawn: tooltips, more icons and the tree art behind the
@@ -3007,7 +3027,7 @@ export function startReport(dash, events) {
   // deep links: a tab name or a preset id
   const h = location.hash.slice(1);
   if (pages.includes(h)) st.tab = h;
-  else if (h.startsWith('changes/')) { st.tab = 'changes'; st.chUp = decodeURIComponent(h.slice(8)); }
+  else if (h.startsWith('changes/')) { st.tab = 'changes'; try { st.chUp = decodeURIComponent(h.slice(8)); } catch { st.chUp = null; } }
   else if (/^[a-z]+__[\w-]+$/.test(h)) { st.build = h; st.tab = 'spec'; }
   document.querySelectorAll('.fv-tab').forEach((b) => { b.setAttribute('aria-selected', String(b.dataset.tab === st.tab)); b.classList.toggle('active', b.dataset.tab === st.tab); });
   document.querySelectorAll('.fv-page').forEach((p) => { p.hidden = p.dataset.page !== st.tab; p.classList.toggle('active', p.dataset.page === st.tab); });
