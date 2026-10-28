@@ -4,6 +4,22 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### client_update-20261028-2: Launch-realm hotfix puts Trueshot Aura ranks 1-4 at 15/22/30/40, which makes rank 5's 50 look intended (ruling hunter_tsa_hm_rank assumes 100)
+- severity: high (−0.9% to −1.3% on three hunter presets if the ruling flips)
+- affects: hunter BM, Lone Wolf, Marksmanship (Survival −0.09%); TSA is ranged-only under Forever, so no other class
+- found: 2026-10-28, master 224b8a4
+- evidence: foreverchanges.pro/patch-notes, "October 28, 2026 Hotfix" (read from the launch realms' hotfix cache, not in Blizzard's notes; FC tier, not checkable from the cloud since `tools/sources/dbcache.py` needs a local client): "Trueshot Aura: gives 15, 22, 30 and 40 ranged attack power by rank instead of 30, 40, 50 and 75". Rank 5 (20906) is not listed, so it stays 50 (client since 70338). With 15/22/30/40/50 the top rank sits on the curve, which undercuts the 2026-10-15 ruling that Blizzard would lift rank 5 to 100. Sim: `sim/core/buffs.go:1748-1751` (rank 5 = 100 by ruling; ranks 1-4 30/40/50/75, only matter below 60). Measured with ranks 15/22/30/40/50 (180 s, 20k iterations, paired seeds 1 and 1000003): beast-mastery 1150.37 → 1139.50 (−10.87, −0.94%), lone-wolf 1118.87 → 1104.50 (−14.37, −1.28%), marksmanship 1137.33 → 1124.58 (−12.75, −1.12%), survival 1029.84 → 1028.89 (−0.09%). Ledger HUN-HF-02.
+- proposed fix: user re-rules hunter_tsa_hm_rank (keep 100, or take 50 now that the whole curve is half); either way set ranks 1-4 to 15/22/30/40 under Forever once confirmed in game or in a local DBCache read.
+- needs: user ruling (and verify: FC-tier hotfix)
+
+### client_update-20261028-1: Launch-realm hotfix halves Aspect of the Hawk ranks 1-5 (rank 5 90 → 47), so rank 6's 55 becomes the best at 60
+- severity: medium (−0.66% to −0.90% on three hunter presets)
+- affects: hunter BM, Lone Wolf, Marksmanship (Survival 0)
+- found: 2026-10-28, master 224b8a4
+- evidence: foreverchanges.pro/patch-notes, "October 28, 2026 Hotfix" (launch-realm hotfix cache, FC tier, not in Blizzard's notes, not in client 70658's tables): "Aspect of the Hawk: gives 15, 22, 30, 38 and 47 ranged attack power by rank instead of 20, 35, 50, 70 and 90". Rank 6 (14322, 55) is not listed. Sim: `sim/hunter/aspects.go:46` rap 20/35/50/70/90/55/120 and `getMaxHawkRank` caps Forever at rank 5 (assuming rank 6 is worse). Measured with rank 5's value at 55, i.e. the hunter casting rank 6 (paired seeds, 20k): beast-mastery 1150.37 → 1142.76 (−7.61, −0.66%), lone-wolf 1118.87 → 1108.81 (−10.06, −0.90%), marksmanship 1137.33 → 1128.41 (−8.92, −0.78%), survival 0. Ledger HUN-HF-01.
+- proposed fix: once confirmed, under Forever set ranks 1-5 to 15/22/30/38/47 and let `getMaxHawkRank` pick the best learned rank (rank 6, 55, from level 58) instead of capping at 5; fix the comment.
+- needs: verify (in game or local DBCache read), then orchestrator fix
+
 ### client_update-20261027-3: Amplify Curse no longer amplifies Bane of Agony in 70630
 - severity: low (no preset or APL casts Amplify Curse)
 - affects: warlock (Amplify Curse users only)
