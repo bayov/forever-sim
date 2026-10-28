@@ -2604,20 +2604,25 @@ div.tt-embed:not(.fv-tt) {
 
 // a talent a condition checks: its icon and name, with its tooltip on hover
 .fv-tal {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.2rem;
 	font-weight: 600;
 	color: var(--fv-gold);
 	cursor: help;
-	white-space: nowrap;
 }
 
-.fv-tal .fv-ico {
-	width: 0.95rem;
-	height: 0.95rem;
-	border-radius: 3px;
-	vertical-align: 0;
+// An icon and a name inside running text: plain inline text on the line's baseline (an inline-flex box would sit on
+// the icon's bottom edge instead), with the icon a little over the text's height and centred on its capitals. Sized in
+// em, so it follows the text it sits in.
+.fv-tal,
+.fv-advtip-ref {
+	white-space: nowrap;
+
+	.fv-ico {
+		width: 1.05em;
+		height: 1.05em;
+		margin-right: 0.25em;
+		border-radius: 3px;
+		vertical-align: -0.2em;
+	}
 }
 
 // the card's note: one line on how the sim reads the list, then a legend of the marks
@@ -3932,18 +3937,6 @@ dialog.fv-about-modal {
 // game tooltips follow under a line, a little smaller than on their own.
 .tippy-box:has(> .tippy-content > .fv-advtip) {
 	max-width: min(22rem, calc(100vw - 1rem)) !important;
-}
-
-.fv-advtip-ref {
-	white-space: nowrap;
-
-	.fv-ico {
-		width: 1rem;
-		height: 1rem;
-		margin-right: 0.25rem;
-		border-radius: 3px;
-		vertical-align: -0.2rem;
-	}
 }
 
 .fv-advtip-cards {
