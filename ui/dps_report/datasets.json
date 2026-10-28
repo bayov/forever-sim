@@ -107,7 +107,7 @@
   "title": "Race scenario notes",
   "description": "What each race scenario switches on, what each racial does in the sim (with a short line for the tooltips), and a few plain sentences per class written from the race sims.",
   "updated": {
-   "at": "2026-10-28T06:06:52.166Z",
+   "at": "2026-10-28T09:29:43.471Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -123,7 +123,7 @@
   "title": "Race scenarios",
   "description": "Every preset on every race its class can be: against the generic boss with the preset's own setup, against a Beast or an Elemental boss, against a Humanoid boss (Priests only, for Dwarf Chastise), with the race's racial weapon, and with all racials off. Mean DPS over 10,000 fights at 180 s, its standard error, and the gap to the best race in that scenario.",
   "updated": {
-   "at": "2026-10-28T07:01:15.288Z",
+   "at": "2026-10-28T09:29:43.471Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -131,7 +131,7 @@
   "title": "Race sweep",
   "description": "Every preset on every race its class can be: mean DPS over 10,000 fights at 180 s, and the gap to the best race.",
   "updated": {
-   "at": "2026-10-28T07:01:15.288Z",
+   "at": "2026-10-28T09:29:43.471Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -139,15 +139,15 @@
   "title": "Rotation priority lists",
   "description": "Each preset's APL as simmed: pre-pull casts with their timing, then the priority list in order, each line's spell, a plain-English condition, the APL's own note, its exact condition and the spell's casts per fight.",
   "updated": {
-   "at": "2026-10-27T22:54:49.376Z",
+   "at": "2026-10-28T09:29:43.471Z",
    "by": "Claude (forever-sim)"
   }
  },
  "race_rotation": {
   "title": "Race rotations",
-  "description": "The races that play their own rotation on a preset: each line of that rotation lined up with the preset's, marked the same, changed (a new condition or pre-pull time), added or removed. No cast counts: the race sweep records DPS only.",
+  "description": "The races that play their own rotation on a preset: each line lined up with the preset's (the same, changed, added or removed), with why it changed. No cast counts: the race sims record DPS only.",
   "updated": {
-   "at": "2026-10-28T09:12:58.608Z",
+   "at": "2026-10-28T09:29:43.471Z",
    "by": "Claude (forever-sim)"
   }
  },

@@ -1612,7 +1612,7 @@ export function startReport(dash, events) {
           return;
         }
         // A race with its own rotation or gear (standards 29) says what it changed.
-        let head = [tipKey(f1(r.dps), 'DPS', `± ${f2(r.se)}`), r.tuned ? el('span', { class: 'fv-tip-m', text: `Its own setup: ${String(r.tuned).replace(/\.$/, '')}.` }) : null];
+        let head = [tipKey(f1(r.dps), 'DPS', `± ${f2(r.se)}`), r.tuned ? el('span', { class: 'fv-tip-m' }, el('b', { text: `${TUNED_TITLE[r.tunedKind] || 'Its own setup'}. ` }), `${String(r.tuned).replace(/\.$/, '')}.`) : null];
         if (!one) {
           const order = new Map(sc.builds.map((b, k) => [b.id, k]));
           const best = r.shares.filter((g) => g.share > 99.995).sort((p, q) => order.get(p.build) - order.get(q.build));
@@ -1622,7 +1622,7 @@ export function startReport(dash, events) {
               os.map((o) => o.b.build + (best.length ? '' : ` (${pct(o.g.share)})`)).join(', '))));
           head = [tipKey(best.length ? `Best race on ${best.length}` : 'Never the best race', `of ${r.n} presets`),
             best.length ? null : el('span', { class: 'fv-tip-m', text: 'Closest on:' }), el('div', { class: 'fv-tip-specs' }, ...list),
-            r.tunedOn.length ? el('span', { class: 'fv-tip-m', text: `Its own rotation or gear on ${r.tunedOn.map((id) => bmap.get(id)?.label || id).join(', ')}.` }) : null];
+            r.tunedOn.length ? el('span', { class: 'fv-tip-m', text: `Own rotation or gear on ${r.tunedOn.map((id) => bmap.get(id)?.label || id).join(', ')}.` }) : null];
         }
         // The tooltip goes under the part the pointer is on. Under the numbers on the right it ends where they end.
         const at = node.getBoundingClientRect(), end = node.classList.contains('end');
@@ -2118,7 +2118,8 @@ export function startReport(dash, events) {
       !shown && r.when ? ['t', r.when] : null,
       !shown && r.extra ? ['t', r.extra] : null,
       !shown && r.notes ? ['m', r.notes] : null,
-      was ? ['m', section === 'prepull' ? `The preset casts it at ${fmtT(+was.at)}.` : `The preset's line: ${was.when || 'when ready'}.`] : null,
+      was ? ['m', section === 'prepull' ? `The preset casts it at ${fmtT(+was.at)}.` : `The preset’s line: ${was.when || 'when ready'}.`] : null,
+      r.why ? ['t', r.why] : null,
       cond ? ['d', 'Exact condition', aplText(cond)] : null,
     ].filter(Boolean);
     return { ...base, icon: base.icon || r.icon, title: String(r.key && !/^oOther/.test(r.key) ? base.title : r.name), lines: [...lines, ...(base.lines && base.lines.length ? [['s'], ...base.lines] : [])] };
@@ -2127,11 +2128,11 @@ export function startReport(dash, events) {
   const RACE_DIFF = { changed: 'Changed', added: 'Added', removed: 'Dropped' };
   // The Rotation card shows the preset's rotation for one race, or for all of them at once. A race plays the preset's
   // rotation unless it has its own (race_rotation); either way only its own racials fire. "All races" is the preset's
-  // rotation with every racial line tagged with its race, and each race's own changes woven in under the line they
+  // rotation with every racial line tagged with its race, and each race's own changes, with why, under the line they
   // change.
   const drawRotation = (b) => {
-    const host = $('#sp-rotation'), pre = $('#sp-prepull'), info = $('#sp-rot-races'), pick = $('#sp-rot-race');
-    if (!specWait(host, ['rotation', 'race_rotation', 'races'], b, [pre, info])) return;
+    const host = $('#sp-rotation'), pre = $('#sp-prepull'), pick = $('#sp-rot-race');
+    if (!specWait(host, ['rotation', 'race_rotation', 'races'], b, [pre])) return;
     const rows = rotRows(b.id);
     const races = (rowsOf('races') || []).filter((r) => r.build === b.id);
     const list = [...races.filter((r) => r.race === b.race), ...races.filter((r) => r.race !== b.race)];
@@ -2139,9 +2140,17 @@ export function startReport(dash, events) {
     const own = d3.group(raceRotRows(b.id), (r) => r.forRace);
     if (st.rotRace !== 'All' && !icoOf.has(st.rotRace)) st.rotRace = 'All';
     const view = st.rotRace;
+    // The picker shows each race's icon: a gold ring on the preset's race, an orange dot on a race with its own
+    // rotation. Its race tooltip names it.
     if (pick.dataset.build !== b.id) { pick.dataset.built = ''; pick.dataset.build = b.id; }
-    seg(pick, 'rotRace', [['All', 'All races'], ...list.map((r) => [r.race, el('span', { class: 'fv-rot-opt' }, r.race,
-      r.race === b.race ? el('small', { text: 'preset' }) : own.has(r.race) ? el('i', { class: 'fv-rot-own', title: 'Plays its own rotation', 'aria-label': ', its own rotation' }) : null), raceIco(r.raceIcon)])], () => drawRotation(b));
+    seg(pick, 'rotRace', [['All', 'All races'], ...list.map((r) => [r.race, own.has(r.race) ? el('i', { class: 'fv-rot-own' }) : null, raceIco(r.raceIcon)])], () => drawRotation(b));
+    for (const btn of pick.querySelectorAll('button')) {
+      const race = btn.dataset.v;
+      if (race === 'All') continue;
+      btn.classList.toggle('preset', race === b.race);
+      btn.setAttribute('aria-label', race + (race === b.race ? ', the preset’s race' : own.has(race) ? ', its own rotation' : ''));
+      tt(btn, `r:${race}:${b.class}`, false, b.id);
+    }
     pick.hidden = list.length < 2;
 
     const W = (r) => (r.forRace ? `build=${enc(b.id)}&forRace=${enc(r.forRace)}&section=${r.section}&order=${r.order ?? ''}&base=${r.base ?? ''}` : `build=${enc(b.id)}&section=${r.section}&order=${r.order}`);
@@ -2152,16 +2161,17 @@ export function startReport(dash, events) {
     const raceTag = (rs, cls, text) => el('span', { class: 'kd race ' + (cls || '') }, ...rs.map((x) => raceIco(icoOf.get(x))), text ?? rs.join(', '));
     // other races' racials (for the race shown) and lines switched off fold into one row each
     const fold = (q, race) => (q.race && race && q.race !== race ? 'race' : q.race && !icoOf.has(q.race) && icoOf.size ? 'race' : /^Never/.test(q.when) ? 'off' : null);
+    const raceFold = (run) => {
+      const rs = [...new Set(run.map((q) => q.race))], s = run.length > 1 ? 's' : '';
+      return rs.every((x) => !icoOf.has(x)) ? `${rs.join(', ')} racial${s}. No ${b.class.toLowerCase()} can be ${rs.join(' or ')}.` : `${rs.join(', ')} racial${s}, not for ${view === 'All' ? b.race : view}.`;
+    };
     const folded = (run, why) => el('li', { class: 'fv-pr other', value: String(run[0].order) },
       el('span', { class: 'no', text: run.length > 1 ? `${run[0].order}–${run[run.length - 1].order}` : String(run[0].order) }),
       el('div', { class: 'tx' }, el('div', { class: 'ics' }, ...run.map((q) => tt(ico(q, 'fv-ico'), ttKey(q), true, b.id)), el('b', { text: run.map((q) => q.name).join(', ') })),
         el('span', { class: 'wh', text: why === 'race' ? raceFold(run) : `Off in this preset${run[0].notes ? ': ' + run[0].notes.replace(/^Never:\s*/i, '') : '.'}` })));
-    const raceFold = (run) => {
-      const rs = [...new Set(run.map((q) => q.race))];
-      return `${rs.join(', ')} racial${run.length > 1 ? 's' : ''}: ${rs.every((x) => !icoOf.has(x)) ? `not a ${b.class.toLowerCase()} race` : `${view === 'All' ? b.race : view} skips ${run.length > 1 ? 'them' : 'it'}`}.`;
-    };
-    // one priority line as a card: number, icon, name and tags, condition, note, casts, and any lines under it
-    // sameRace: a tag already names the line's race (a racial a race adds for itself), so it needs no "only" tag
+    const whyLine = (r) => (r.why ? el('span', { class: 'fv-why' }, el('b', { text: 'Why: ' }), r.why) : null);
+    // one priority line as a card: number, icon, name and tags, condition, note, casts, and any lines under it.
+    // sameRace: a tag already names the line's race (a racial a race adds for itself), so it needs no "only" tag.
     const card = (r, { no = String(r.order), casts = false, tags = [], sub = [], cls = '', sameRace = false } = {}) => tt(el('li', { class: 'fv-pr' + cls, value: r.order != null ? String(r.order) : null },
       el('span', { class: 'no', text: no }),
       ico(r, 'fv-ico big'),
@@ -2176,29 +2186,35 @@ export function startReport(dash, events) {
     // a preset line a race leaves out
     const dropped = (r, rs) => tt(el('li', { class: 'fv-pr other dropped' },
       el('span', { class: 'no', text: '−' }),
-      el('div', { class: 'tx' }, el('div', { class: 'ics' }, ico(r, 'fv-ico'), el('b', { text: r.name }), raceTag(rs, 'diff-rm', `Dropped for ${rs.join(', ')}`)),
-        el('span', { class: 'wh', text: `The preset's line ${r.base}: ${r.when || 'when ready'}` }))), ttKey(r), true, b.id);
+      el('div', { class: 'tx' }, el('div', { class: 'ics' }, ico(r, 'fv-ico'), el('b', { text: r.name }), raceTag(rs, 'diff-removed', `Dropped for ${rs.join(', ')}`)),
+        el('span', { class: 'wh', text: `The preset’s line ${r.base}: ${r.when || 'when ready'}` }), whyLine(r))), ttKey(r), true, b.id);
     const diffTag = (r, rs) => raceTag(rs, 'diff-' + r.diff, `${RACE_DIFF[r.diff]} for ${rs.join(', ')}`);
     // a race's condition against the preset's: often the preset's with one more clause
     const whenDiff = (was, now) => {
       const a = was || 'When ready', b2 = now || 'When ready';
       return b2.startsWith(a + ' and ') ? ['Only when also ', b2.slice(a.length + 5)] : ['Instead: ', b2];
     };
+    // what races do in place of a line, with why: under the line, or under the pre-pull casts
+    const change = (g, base) => tt(el('div', { class: 'fv-rv diff-' + g.r.diff }, raceTag(g.races, 'diff-' + g.r.diff),
+      el('span', {}, ...(g.r.diff === 'removed' ? [el('em', { text: 'Drops this line.' })]
+        : g.r.section === 'prepull' ? [el('em', { text: `${g.r.diff === 'added' ? 'Adds' : ''} ${g.r.name} at ${fmtT(+g.r.at)}.`.trim() })]
+          : ((d) => [el('em', { text: d[0] }), d[1]])(whenDiff(base?.when, g.r.when)))),
+      whyLine(g.r)), g.r.diff === 'removed' ? ttKey(base) : ttKey(g.r), true, b.id);
     const ppChip = (r, { tags = [], cls = '' } = {}) => tt(el('button', { class: 'fv-ppi' + cls }, ico(r, 'fv-ico'),
       el('span', {}, mark(el('b', { text: r.name }), SRC(r), 'name', W(r)), el('span', { class: 'pt' }, mark(el('em', { text: fmtT(+r.at) }), SRC(r), 'at', W(r)), ...tags))), ttKey(r), true, b.id);
     const pull = el('span', { class: 'fv-ppi pull' }, el('b', { text: 'Pull' }), el('em', { text: '0s' }));
-    const prepull = (chips) => pre.replaceChildren(...(chips.length ? [el('span', { class: 'fv-label', text: 'Before the pull' }), el('div', { class: 'fv-pp' }, ...chips, pull)] : []));
+    const prepull = (chips, subs = []) => pre.replaceChildren(...(chips.length ? [el('span', { class: 'fv-label', text: 'Before the pull' }), el('div', { class: 'fv-pp' }, ...chips, pull), ...subs] : []));
     const byOrder = (p, q) => (p.section !== q.section ? (p.section === 'prepull' ? -1 : 1) : (p.section === 'prepull' ? p.at - q.at : 0) || p.order - q.order);
     const items = [];
     let note;
 
     if (view === 'All') {
       // Each race's changes that matter to it (a change to another race's racial never fires for it), grouped where
-      // races change a line the same way.
-      const sig = (r) => [r.diff, r.key, r.when, r.extra, r.at].join('|');
+      // races change a line the same way, for the same reason.
+      const sig = (r) => [r.diff, r.key, r.when, r.extra, r.at, r.why].join('|');
       const anns = new Map(), adds = new Map();
       for (const [race, rs] of own) {
-        let anchor = { prepull: -1, priority: 0 };
+        const anchor = { prepull: -1, priority: 0 };
         for (const r of [...rs].sort((p, q) => (p.section === q.section ? (p.order ?? 1e9) - (q.order ?? 1e9) : p.section === 'prepull' ? -1 : 1))) {
           if (r.base != null && r.diff !== 'removed') anchor[r.section] = r.base;
           if (r.otherRace || r.diff === 'same') continue;
@@ -2211,20 +2227,21 @@ export function startReport(dash, events) {
       }
       const ann = (section, order) => [...(anns.get(`${section}:${order}`) || new Map()).values()];
       const added = (section, order) => [...(adds.get(`${section}:${order}`) || new Map()).values()];
-      // pre-pull: the preset's casts, a race's other timing next to it, and a race's own casts
+      // pre-pull: the preset's casts, each race's own timing next to it, then each race's change and why
       const pp = rows.filter((r) => r.section === 'prepull').sort(byOrder);
-      const chips = [];
-      const addChips = (order) => { for (const g of added('prepull', order)) chips.push(ppChip(g.r, { cls: ' added', tags: [raceTag(g.races, 'diff-added', `+ ${g.races.join(', ')}`)] })); };
+      const chips = [], subs = [];
+      const addChips = (order) => { for (const g of added('prepull', order)) { chips.push(ppChip(g.r, { cls: ' added', tags: [raceTag(g.races, 'diff-added', `+ ${g.races.join(', ')}`)] })); subs.push(change(g)); } };
       addChips(-1);
       for (const r of pp) {
         const gs = ann('prepull', r.order);
         chips.push(ppChip(r, { tags: [r.race ? raceTag([r.race], '', `${r.race} only`) : null, ...gs.filter((g) => g.r.diff === 'removed').map((g) => raceTag(g.races, 'diff-removed', `not ${g.races.join(', ')}`))] }));
         for (const g of gs.filter((x) => x.r.diff === 'changed')) chips.push(ppChip(g.r, { cls: ' changed', tags: [raceTag(g.races, 'diff-changed', g.races.join(', '))] }));
+        subs.push(...gs.map((g) => change(g, r)));
         addChips(r.order);
       }
-      prepull(chips);
+      prepull(chips, subs);
       const pl = rows.filter((r) => r.section === 'priority').sort(byOrder);
-      const addCards = (order) => { for (const g of added('priority', order)) items.push(card(g.r, { no: '+', cls: ' added', tags: [diffTag(g.r, g.races)], sameRace: g.races.length === 1 && g.races[0] === g.r.race })); };
+      const addCards = (order) => { for (const g of added('priority', order)) items.push(card(g.r, { no: '+', cls: ' added', tags: [diffTag(g.r, g.races)], sameRace: g.races.length === 1 && g.races[0] === g.r.race, sub: [whyLine(g.r)] })); };
       addCards(0);
       for (let i = 0; i < pl.length; i++) {
         const r = pl[i];
@@ -2233,21 +2250,12 @@ export function startReport(dash, events) {
           while (pl[i + 1] && fold(pl[i + 1], null) === why && !ann('priority', pl[i + 1].order).length && !added('priority', run[run.length - 1].order).length) run.push(pl[++i]);
           items.push(folded(run, why));
         } else {
-          const sub = ann('priority', r.order).map((g) => tt(el('div', { class: 'fv-rv diff-' + g.r.diff }, raceTag(g.races, 'diff-' + g.r.diff),
-            g.r.diff === 'removed' ? el('span', { text: 'Drops this line.' }) : el('span', {}, ...((d) => [el('em', { text: d[0] }), d[1]])(whenDiff(r.when, g.r.when)))), g.r.diff === 'removed' ? ttKey(r) : ttKey(g.r), true, b.id));
-          items.push(card(r, { casts: true, sub, cls: sub.length ? ' has-rv' : '' }));
+          const sub = ann('priority', r.order).map((g) => change(g, r));
+          items.push(card(r, { casts: true, sub }));
         }
         addCards(r.order);
       }
-      note = own.size
-        ? 'The preset’s rotation for every race. A line tagged with a race is its racial, and fires only for it. The races that play their own version are listed above; their changes sit under the line they change, and their added lines are marked +. Casts are the preset’s, for one fight as ' + b.race + '.'
-        : 'Every race plays the preset’s rotation. A line tagged with a race is its racial, and fires only for it. Casts are the preset’s, for one fight as ' + b.race + '.';
-      info.replaceChildren(...(own.size ? [el('span', { class: 'fv-label', text: 'Races that play their own version' }), el('div', { class: 'fv-rot-list' }, ...[...own.keys()].map((race) => {
-        const rr = races.find((x) => x.race === race);
-        const n = (own.get(race) || []).filter((r) => r.diff !== 'same' && !r.otherRace).length;
-        return el('button', { type: 'button', class: 'fv-rot-race', onclick: (e) => { e.stopPropagation(); st.rotRace = race; persist(); hideTip(); drawRotation(b); } },
-          raceIco(icoOf.get(race)), el('span', {}, el('b', { text: race }), el('small', { text: `${n} change${n === 1 ? '' : 's'} to the preset’s rotation` }), rr?.tuned ? el('span', { class: 'nt', text: rr.tuned }) : null));
-      }))] : []));
+      note = `A line tagged with a race is for that race only.${own.size ? ' Races with an orange dot play their own version. Their changes show under the lines they change.' : ''} Casts are for ${b.race}, the preset’s race (gold ring).`;
     } else {
       const mine = own.get(view);
       // the race's own lines (or the preset's), with the preset lines it drops where they were
@@ -2255,8 +2263,10 @@ export function startReport(dash, events) {
       const isPreset = view === b.race;
       const pp = src.filter((r) => r.section === 'prepull');
       const gone = (section) => (mine || []).filter((r) => r.diff === 'removed' && r.section === section && !r.otherRace);
+      const ppDiff = pp.filter((r) => r.diff && r.diff !== 'same' && !r.otherRace);
       prepull([...pp.filter((r) => !fold(r, view) || r.race === view).map((r) => ppChip(r, { cls: r.diff && r.diff !== 'same' ? ' ' + r.diff : '', tags: r.diff && r.diff !== 'same' ? [diffTag(r, [view])] : [r.race ? raceTag([r.race], '', `${r.race} only`) : null] })),
-        ...gone('prepull').map((r) => ppChip(r, { cls: ' removed', tags: [raceTag([view], 'diff-removed', `Dropped for ${view}`)] }))]);
+        ...gone('prepull').map((r) => ppChip(r, { cls: ' removed', tags: [raceTag([view], 'diff-removed', `Dropped for ${view}`)] }))],
+      [...ppDiff, ...gone('prepull')].map((r) => change({ r, races: [view] }, rows.find((x) => x.section === 'prepull' && x.order === r.base))));
       const pl = src.filter((r) => r.section === 'priority');
       const drops = gone('priority');
       let last = 0;
@@ -2272,20 +2282,18 @@ export function startReport(dash, events) {
         }
         const ch = r.diff === 'changed' || r.diff === 'added';
         const was = r.diff === 'changed' ? rows.find((x) => x.section === 'priority' && x.order === r.base) : null;
+        const d = was && was.when !== r.when ? whenDiff(was.when, r.when) : null;
         items.push(card(r, { casts: isPreset, cls: ch ? ' ' + r.diff : '', tags: ch ? [diffTag(r, [view])] : [], sameRace: ch && r.race === view,
-          sub: was && was.when !== r.when ? [el('span', { class: 'fv-was', text: ((d) => (d[0] === 'Instead: ' ? `The preset: ${was.when || 'when ready'}` : `Adds to the preset’s condition: ${d[1]}`))(whenDiff(was.when, r.when)) })] : [] }));
+          sub: [d ? el('span', { class: 'fv-was', text: d[0] === 'Instead: ' ? `Preset: ${was.when || 'when ready'}` : `Adds to the preset’s line: ${d[1]}` }) : null, ch ? whyLine(r) : null] }));
       }
       dropTo(Infinity);
-      const rr = races.find((x) => x.race === view);
-      note = isPreset ? `${view} is the preset’s race: this is the rotation as simmed, with its casts per fight.`
-        : mine ? `${view} plays its own version of the rotation. Changed and added lines are marked, and the preset’s lines it drops are struck out. The race sweep records DPS only, so there are no cast counts.`
-          : `${view} plays the preset’s rotation. Only the racials differ: ${view}’s own fire, the others don’t. The race sweep records DPS only, so there are no cast counts.`;
-      info.replaceChildren(...(mine && rr?.tuned ? [el('div', { class: 'fv-rot-why' }, raceIco(icoOf.get(view)), el('span', {}, el('b', { text: `Why ${view} changes it` }), el('span', { text: rr.tuned })))] : []));
+      note = isPreset ? `As simmed for ${view}, the preset’s race.`
+        : mine ? `${view}’s own version. Each change shows why. The race sims record DPS only, so there are no casts.`
+          : `${view} plays the preset’s rotation with its own racials. The race sims record DPS only, so there are no casts.`;
     }
-    info.dataset.build = b.id;
     pre.dataset.build = b.id;
     host.replaceChildren(...(items.length ? items : [el('li', { class: 'fv-note', text: 'No rotation recorded.' })]));
-    $('#sp-rot-note').textContent = `${note} The sim uses the first line it can, from the top.`;
+    $('#sp-rot-note').textContent = `The sim plays the first line it can, from the top. ${note}`;
   };
 
   // ---------- gear (paper doll, as the sim UI's gear picker) ----------

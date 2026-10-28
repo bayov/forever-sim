@@ -2490,25 +2490,30 @@ div.tt-embed:not(.fv-tt) {
 }
 
 // ---------- the rotation for one race, or for all of them (drawRotation) ----------
-.fv-rot-opt {
-	display: inline-flex;
-	align-items: center;
-	gap: 0.3rem;
+// the race picker's icons: a gold ring on the preset's race, an orange dot on a race that plays its own rotation
+.fv-rot-seg > button {
+	position: relative;
+	padding-inline: 0.45rem;
 }
 
-.fv-rot-opt small {
-	font-size: 0.6rem;
-	text-transform: uppercase;
-	letter-spacing: 0.06em;
-	color: var(--fv-gold);
+.fv-rot-seg > button .fv-ico {
+	width: 1.25rem;
+	height: 1.25rem;
 }
 
-// a race that plays its own rotation
+.fv-rot-seg > button.preset .fv-ico {
+	box-shadow: 0 0 0 1.5px var(--fv-gold);
+}
+
 .fv-rot-own {
+	position: absolute;
+	top: 0.15rem;
+	right: 0.2rem;
 	width: 0.45rem;
 	height: 0.45rem;
 	border-radius: 50%;
 	background: var(--fv-rot-changed);
+	box-shadow: 0 0 0 1.5px var(--color-bg);
 }
 
 // Up to ten races: the picker wraps rather than hide some of them off its edge.
@@ -2549,8 +2554,7 @@ div.tt-embed:not(.fv-tt) {
 }
 
 .fv-pr .kd.diff-removed,
-.fv-ppi .kd.diff-removed,
-.fv-pr .kd.diff-rm {
+.fv-ppi .kd.diff-removed {
 	background: color-mix(in srgb, var(--fv-rot-removed) 16%, transparent);
 	color: var(--fv-rot-removed);
 }
@@ -2598,6 +2602,22 @@ div.tt-embed:not(.fv-tt) {
 	--rv: var(--fv-rot-removed);
 }
 
+// why a race changes a line
+.fv-why {
+	font-size: var(--cds-font-size-caption);
+	line-height: 1.4;
+	color: var(--color-fg-muted);
+}
+
+.fv-rv .fv-why {
+	flex-basis: 100%;
+}
+
+.fv-why b {
+	font-weight: 600;
+	color: var(--color-fg);
+}
+
 .fv-pr .fv-was {
 	font-size: var(--cds-font-size-caption);
 	color: var(--color-fg-muted);
@@ -2627,85 +2647,6 @@ div.tt-embed:not(.fv-tt) {
 
 .fv-ppi.removed b {
 	text-decoration: line-through;
-}
-
-.fv-rot-races {
-	display: grid;
-	gap: 0.35rem;
-}
-
-.fv-rot-races:empty {
-	display: none;
-}
-
-.fv-rot-list {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
-	gap: 0.4rem;
-}
-
-.fv-rot-race {
-	font: inherit;
-	display: flex;
-	align-items: flex-start;
-	gap: 0.55rem;
-	padding: 0.5rem 0.65rem;
-	border: 1px solid var(--color-border-line);
-	border-left: 3px solid var(--fv-rot-changed);
-	border-radius: 8px;
-	background: var(--color-bg);
-	color: var(--color-fg);
-	text-align: left;
-	cursor: pointer;
-}
-
-.fv-rot-race:hover {
-	border-color: var(--fv-rot-changed);
-}
-
-.fv-rot-race .fv-ico,
-.fv-rot-why .fv-ico {
-	width: 1.6rem;
-	height: 1.6rem;
-	border-radius: 50%;
-}
-
-.fv-rot-race > span,
-.fv-rot-why > span {
-	display: grid;
-	gap: 0.1rem;
-	min-width: 0;
-	font-size: var(--cds-font-size-caption);
-	line-height: 1.4;
-}
-
-.fv-rot-race b,
-.fv-rot-why b {
-	font-size: var(--cds-font-size-body);
-	font-weight: 600;
-}
-
-.fv-rot-race small {
-	color: var(--fv-rot-changed);
-	font-weight: 600;
-}
-
-.fv-rot-race .nt {
-	color: var(--color-fg-muted);
-	display: -webkit-box;
-	-webkit-line-clamp: 3;
-	-webkit-box-orient: vertical;
-	overflow: hidden;
-}
-
-.fv-rot-why {
-	display: flex;
-	align-items: flex-start;
-	gap: 0.55rem;
-	padding: 0.5rem 0.7rem;
-	border-radius: 8px;
-	border-left: 3px solid var(--fv-rot-changed);
-	background: color-mix(in srgb, var(--fv-rot-changed) 7%, transparent);
 }
 
 .fv-noico {

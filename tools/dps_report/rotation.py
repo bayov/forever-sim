@@ -43,6 +43,21 @@ def secs(s):
     return v / 1000 if m.group(2) == 'ms' else v * 60 if m.group(2) == 'm' else v
 
 
+def _once(text, how):
+    """Two ranks of one spell read the same, so a condition can name the same part twice ("A or A"): keep the first.
+    Splits on the connective outside parentheses, where nested parts of the same kind have been joined in."""
+    parts, depth, cur = [], 0, ''
+    for tok in re.split(r'(\(|\)| %s )' % how, text):
+        if tok == f' {how} ' and depth == 0:
+            parts.append(cur)
+            cur = ''
+            continue
+        depth += tok.count('(') - tok.count(')')
+        cur += tok
+    parts.append(cur)
+    return f' {how} '.join(dict.fromkeys(parts))
+
+
 class Humaniser:
     def __init__(self, name):
         self.name = name  # key -> display name
@@ -122,7 +137,7 @@ class Humaniser:
                 return self.pred(vals[0])
             # wrap a part whose text joins the other way (by node type, since names like Slice and Dice hold "and")
             parts = [f'({self.pred(x)})' if self.joiner(x, False) not in (None, how) else self.pred(x) for x in vals]
-            out = f' {how} '.join(parts)
+            out = _once(f' {how} '.join(parts), how)
             m = re.search(r'in the last (\S+(?: \S+)?) of the fight', out)
             if m:  # "in the last 33s ... or waiting until the last 33s ..." -> "waiting"
                 out = out.replace(f' until the last {m.group(1)} of the fight', '')
@@ -153,6 +168,8 @@ class Humaniser:
             return 'in melee range'
         if t == 'gcdIsReady':
             return 'the global cooldown is ready'
+        if t == 'frontOfTarget':
+            return 'in front of the boss'
         if t == 'spellIsChanneling':
             return f"channeling {self.sp(a.get('spellId'))}"
         if t == 'sequenceIsComplete':
@@ -236,6 +253,8 @@ class Humaniser:
             return 'out of melee range'
         if t == 'gcdIsReady':
             return 'the global cooldown is not ready'
+        if t == 'frontOfTarget':
+            return 'behind the boss'
         if t == 'cmp':  # not (a < b) is a >= b
             inv = {'OpLt': 'OpGe', 'OpLe': 'OpGt', 'OpGt': 'OpLe', 'OpGe': 'OpLt', 'OpEq': 'OpNe', 'OpNe': 'OpEq'}
             return self.cmp(dict(a, op=inv.get(a.get('op'), a.get('op'))))
@@ -246,7 +265,7 @@ class Humaniser:
             if len(vals) == 1:
                 return self.neg(vals[0])
             parts = [f'({self.neg(x)})' if self.joiner(x, True) not in (None, how) else self.neg(x) for x in vals]
-            return f' {how} '.join(parts)
+            return _once(f' {how} '.join(parts), how)
         return f'not ({self.pred(v)})'
 
     def cmp(self, a):
@@ -289,6 +308,8 @@ class Humaniser:
             s = self.sp(la.get('spellId'))
             if cv == 0 and op in ('OpEq', 'OpLe'):
                 return f"{s} is ready"
+            if cv == 0 and op in ('OpGt', 'OpNe'):
+                return f"{s} is not ready"
             return f"{s} is ready within {c}" if op in ('OpLt', 'OpLe') else f"{s} cooldown over {c}"
         if lt == 'spellChanneledTicks' and c:
             n = int(cv) if cv is not None else c
@@ -319,8 +340,9 @@ class Humaniser:
             n = int(cv) if cv is not None else c
             if n == 1 and op == 'OpLt':
                 return f'no {s} stacks'
-            return {'OpGe': f'{s} at {n}+ stacks', 'OpGt': f'{s} above {n} stacks', 'OpEq': f'{s} at {n} stacks',
-                    'OpLt': f'{s} under {n} stacks', 'OpLe': f'{s} at {n} stacks or fewer'}.get(op, f'{s} stacks {w} {n}')
+            st = 'stack' if n == 1 else 'stacks'
+            return {'OpGe': f'{s} at {n}+ stacks', 'OpGt': f'{s} above {n} {st}', 'OpEq': f'{s} at {n} {st}',
+                    'OpLt': f'{s} under {n} stacks', 'OpLe': f'{s} at {n} {st} or fewer'}.get(op, f'{s} stacks {w} {n}')
         if lt in ('currentMana', 'currentRage', 'currentEnergy', 'currentFocus') and 'spellCurrentCost' in R:
             s = self.sp(R['spellCurrentCost'].get('spellId'))
             res = self.noun(L)
@@ -465,9 +487,10 @@ def diff_lines(base, mine):
 def race_build(req_dir, outs, nm, names, racial_race, preset_rows, race_name, load_override):
     """The races that play their own rotation on a preset (race_override.py), as rows of the preset's shape plus
     forRace (the race), diff ('same', 'changed', 'added' or 'removed', against the preset's line) and base (the
-    preset line's order, None for an added line). A removed row is the preset's line, with order None. Lines the
-    race plays as the preset does are the preset's rows (its notes, potion name and icon). Casts are left out: the
-    race sweep records DPS only."""
+    preset line's order, None for an added line) and, on a line that differs, why (race_text.json). A removed row
+    is the preset's line, with order None. Lines the race plays as the preset does are the preset's rows (its notes,
+    potion name and icon). Casts are left out: the race sweep records DPS only."""
+    from race_override import text
     rows, fallbacks = [], []
     pre = {}
     for r in preset_rows:
@@ -481,6 +504,7 @@ def race_build(req_dir, outs, nm, names, racial_race, preset_rows, race_name, lo
                 continue
             race = race_name(rc['race'])
             mine = ov['rotation']
+            whys = text(ov).get('why', {})
             H = _humaniser(nm)
             new = {(r['section'], r['order']): r for r in apl_rows(bid, mine, race, nm, names, {}, racial_race, H)}
             fallbacks += H.fallbacks
@@ -498,7 +522,8 @@ def race_build(req_dir, outs, nm, names, racial_race, preset_rows, race_name, lo
                         src = new.get((section, num(j)))
                     if not src:
                         continue
-                    r = dict(src, forRace=race, diff=d, base=num(i) if i is not None else None, casts=None)
+                    r = dict(src, forRace=race, diff=d, base=num(i) if i is not None else None, casts=None,
+                             why=whys.get(f"{section}:{src['key'] or src['name']}", '') if d != 'same' else '')
                     if d == 'removed':
                         r['order'] = None
                     r['otherRace'] = bool(r['race'] and r['race'] != race)

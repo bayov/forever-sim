@@ -6,7 +6,7 @@ from itertools import groupby
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from dashpaths import D, TREE  # base dir and merged tree (env DASH_DIR / DASH_TREE)
-from race_override import tuned_kind  # noqa: E402
+from race_override import tuned_kind, note as race_note  # noqa: E402
 OUT = os.path.join(D, 'data')
 os.makedirs(OUT, exist_ok=True)
 os.makedirs(OUT, exist_ok=True)
@@ -409,7 +409,7 @@ for o in outs:
         races.append({'build': bid, 'class': m['class'], 'race': race_name(r['race']), 'faction': r['faction'],
                       'dps': round(r['dps'], 1), 'se': round(r['se'], 2), 'vsBest': round(100 * (r['dps'] / best['dps'] - 1), 2),
                       'isPreset': r['race'] == m['race'], 'raceIcon': RACE_ICON.get(race_name(r['race'])),
-                      'tuned': (r.get('override') or {}).get('note', ''),  # the race's own rotation or gear (race_override.py)
+                      'tuned': race_note(r.get('override')),  # the race's own rotation or gear (race_override.py)
                       'tunedKind': tuned_kind(r.get('override'))})
     total = sum(a['dps'] for a in mn['actions'])
     seen = defaultdict(int)
@@ -716,6 +716,9 @@ for r in race_rot_rows:
     if r['diff'] in ('changed', 'added'):  # the others are the preset's rows, already finished
         _rot_finish(r)
 dump('race_rotation', race_rot_rows)
+_nowhy = sorted({f"{r['build']} {r['forRace']} {r['section']}:{r['key'] or r['name']}" for r in race_rot_rows if r['diff'] != 'same' and not r['otherRace'] and not r['why']})
+if _nowhy:
+    print(f'WARNING race_rotation: {len(_nowhy)} changed lines with no why in race_text.json, e.g. {_nowhy[0]}')
 rot_fallback = sorted(set(rot_fallback) | set(_fb))
 print('rotation conditions shown in compact form:', rot_fallback)
 
