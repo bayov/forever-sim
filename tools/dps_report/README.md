@@ -325,7 +325,8 @@ When to start an update: before the report is republished with its first change,
 update is committed. A game update for a balance build or development notes (update-sources step 2, the dps-report full
 pass); a sim/preset update for our first change of our own after a game update's full pass was deployed (dps-report
 B11). Everything else joins the live update. `new` refuses while the four datasets a snapshot reads have uncommitted
-changes, and warns when the finished update lists commits its data doesn't include yet. Commit what it writes. Lines are plain game terms, with only public links as sources: they ship.
+changes, and warns when the finished update lists commits its data doesn't include yet. Commit what it writes. Lines are plain game terms, with only public links as sources, primary first (standards 30): Blizzard's posts, a
+wago.tools page of the changed client rows or hotfix, foreverchanges.pro only when nothing else shows it. They ship.
 
 ## Publishing
 

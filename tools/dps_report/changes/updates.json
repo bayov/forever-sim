@@ -111,7 +111,8 @@
       "Warlock"
      ],
      "source": {
-      "label": "Client 70630"
+      "label": "Client 70630 on wago.tools",
+      "url": "https://wago.tools/db2/SpellEffect?build=1.60.1.70630&filter%5BSpellID%5D=exact%3A1237162"
      },
      "commits": [
       "d6fcdd3"
@@ -120,13 +121,14 @@
     {
      "title": "Mage: Arcane Missiles no longer procs Missile Barrage",
      "kind": "game",
-     "note": "Client 70630's tooltip drops the missiles' chance.",
+     "note": "Client 70630's talent text no longer lists Arcane Missiles among the spells that trigger it.",
      "builds": [
       "mage__arcane",
       "mage__frost"
      ],
      "source": {
-      "label": "Client 70630"
+      "label": "Client 70630 on wago.tools",
+      "url": "https://wago.tools/db2/Spell?build=1.60.1.70630&filter%5BID%5D=exact%3A1326083"
      },
      "commits": [
       "a52cdcf"

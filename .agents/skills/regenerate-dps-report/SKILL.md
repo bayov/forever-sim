@@ -84,7 +84,9 @@ The report's Changes tab compares the live update's start with the new data (sta
 check`, which lists the commits since the update's start that change build inputs and no line covers, and add lines to
 the live update in `tools/dps_report/changes/updates.json` (or mark a commit `internal` with a reason when no player
 would care, like a refactor that moves no numbers). Write lines in plain game terms, with no commit ids, dates of our
-work, session or audit names, ruling references or file paths: they ship. Then `python3 tools/dps_report/changes.py build`.
+work, session or audit names, ruling references or file paths: they ship. Sources are public links, primary first (standards 30):
+Blizzard's posts, a wago.tools page of the changed client rows or hotfix, and foreverchanges.pro only when nothing else
+shows the change. Then `python3 tools/dps_report/changes.py build`.
 Start a new update before the report is republished with its first change, once the report data that ends the
 previous one is committed: `changes.py new game <id> "<title>" --source-label <label> --source-url <url>` for a balance
 build or development notes, `changes.py new sim <id> "<title>"` for the first change of our own after a game update's

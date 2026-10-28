@@ -4102,23 +4102,6 @@ dialog.fv-about-modal {
 	}
 }
 
-.fv-ch-meta {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: 0.25rem 0.5rem;
-	font-size: var(--cds-font-size-caption);
-	color: var(--color-fg-muted);
-
-	// a dot before each item but the first, so a wrapped line never ends on one
-	> * + *::before {
-		content: '·';
-		margin-right: 0.5rem;
-		color: var(--color-fg-muted);
-		opacity: 0.6;
-	}
-}
-
 // Six tabs fit the header of a phone: smaller tabs below 480px.
 @media (max-width: 480px) {
 	.dps-report-sim-ui .sim-tabs .nav-item .nav-link {
@@ -4127,178 +4110,403 @@ dialog.fv-about-modal {
 	}
 }
 
-// Game and Sim: what kind of update it is, in the picker and above the change list.
-.fv-ch-type {
+.fv-ch-filters {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--cds-gap-sm) var(--cds-gap-md);
+}
+
+// The updates: each a section of the page, like the other tabs' cards, with nothing boxed inside it.
+.fv-us-list {
+	display: flex;
+	flex-direction: column;
+	gap: var(--block-spacer);
+}
+
+.fv-us {
+	gap: 0;
+}
+
+// The title is the fold: the whole header row opens and closes the update.
+.fv-us-head {
+	flex-direction: column;
+	align-items: stretch;
+}
+
+.fv-us-toggle {
+	display: flex;
+	align-items: baseline;
+	gap: 0.85rem;
+	width: 100%;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: inherit;
+	text-align: left;
+	cursor: pointer;
+
+	&:hover .fv-us-title {
+		color: var(--fv-gold);
+	}
+
+	.fv-us-chev {
+		align-self: center;
+	}
+}
+
+// The date leads the title, large, so the updates read as a timeline.
+.fv-us-date {
 	flex: none;
-	font-size: 0.7rem;
-	font-weight: 600;
-	line-height: 1.5;
-	padding: 0 0.45rem;
-	border-radius: 999px;
+	min-width: 4.4rem;
+	font-size: 1.35rem;
+	font-weight: 700;
+	line-height: 1.2;
 	color: var(--fv-gold);
-	background: var(--fv-gold-soft);
-
-	&.sim {
-		color: var(--color-fg);
-		background: var(--fv-stone-chip);
-		box-shadow: inset 0 0 0 1px var(--color-border-line);
-	}
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
 }
 
-.fv-ch-live {
-	color: var(--fv-gold);
-}
-
-.fv-ch-lines,
-.fv-ch-races {
-	display: grid;
-	gap: 0.35rem;
-}
-
-.fv-ch-line {
-	border: 1px solid var(--color-border-line);
-	border-radius: var(--fv-r-sm);
-	background: var(--color-bg);
-
-	> summary {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: baseline;
-		gap: 0.25rem 0.5rem;
-		padding: 0.45rem 0.65rem;
-		cursor: pointer;
-		font-size: var(--cds-font-size-body);
-		font-weight: 400;
-	}
-
-	> .fv-ch-note,
-	> .fv-ch-eff,
-	> .fv-ch-list,
-	> .fv-scroll,
-	> .fv-ch-races,
-	> .fv-note {
-		margin: 0 0.65rem 0.55rem;
-	}
-}
-
-.fv-ch-title {
-	flex: 1 1 12rem;
+// The title in the body font, for reading.
+.fv-us-title {
+	flex: 1 1 auto;
 	min-width: 0;
+	margin: 0;
+	font-family: inherit;
+	font-size: 1.05rem;
+	font-weight: 600;
+	line-height: 1.35;
+	color: var(--color-fg);
 }
 
-.fv-ch-src {
+.fv-us-chev {
+	flex: none;
+	color: var(--color-fg-muted);
+	font-size: 0.8rem;
+	transition: transform var(--cds-dur-slow) var(--cds-ease-out);
+
+	[aria-expanded='true'] > & {
+		transform: rotate(180deg);
+	}
+}
+
+.fv-us-meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.1rem 0.5rem;
+	margin-top: 0.15rem;
+	// under the title, past the date
+	padding-left: calc(4.4rem + 0.85rem);
 	font-size: var(--cds-font-size-caption);
 	color: var(--color-fg-muted);
+
+	// a dot before each item but the first, so a wrapped line never ends on one
+	> * + *::before {
+		content: '·';
+		margin-right: 0.5rem;
+		opacity: 0.6;
+	}
 }
 
-// The kind of a change line: game changes in gold, ours in the muted chip.
-.fv-ch-kind {
-	flex: none;
-	min-width: 4.6rem;
-	text-align: center;
-	font-size: 0.7rem;
+.fv-us-type {
 	font-weight: 600;
-	padding: 0 0.45rem;
-	border-radius: 999px;
+
+	.fv-us.game & {
+		color: var(--fv-gold);
+	}
+}
+
+.fv-us-body {
+	display: flex;
+	flex-direction: column;
+	margin-top: var(--block-spacer);
+}
+
+// The key numbers: big figures in a row, divided by hairlines.
+.fv-us-stats {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+	gap: var(--cds-gap-md) 0;
+}
+
+.fv-us-stat {
+	display: grid;
+	align-content: start;
+	gap: 0.15rem;
+	min-width: 0;
+	padding: 0 var(--cds-gap-md);
+	border-left: 1px solid var(--color-border-line);
+
+	&:first-child {
+		padding-left: 0;
+		border-left: 0;
+	}
+
+	.k {
+		font-size: var(--cds-font-size-caption);
+		color: var(--color-fg-muted);
+	}
+
+	.v {
+		font-family: var(--heading-font-family);
+		font-size: 1.6rem;
+		line-height: 1.1;
+		color: var(--color-fg);
+		font-variant-numeric: tabular-nums;
+
+		small {
+			font-family: var(--font-anthropic-sans);
+			font-size: 0.75rem;
+			color: var(--color-fg-muted);
+		}
+	}
+
+	.s {
+		font-size: 0.75rem;
+		line-height: 1.35;
+		color: var(--color-fg-muted);
+	}
+
+	@include media-breakpoint-down(sm) {
+		padding: 0;
+		border-left: 0;
+	}
+}
+
+.fv-us-h {
+	margin: calc(var(--block-spacer) * 1.4) 0 0.4rem;
+	font-size: 0.72rem;
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
 	color: var(--color-fg-muted);
-	box-shadow: inset 0 0 0 1px var(--color-border-line);
+}
+
+// The change lines: rows divided by hairlines, each opening below itself.
+.fv-us-lines {
+	border-top: 1px solid var(--color-border-line);
+}
+
+.fv-us-line {
+	border-bottom: 1px solid var(--color-border-line);
+}
+
+.fv-us-lhead {
+	display: grid;
+	grid-template-columns: 4.5rem minmax(0, 1fr) auto 1rem;
+	align-items: baseline;
+	gap: 0.25rem 0.75rem;
+	width: 100%;
+	padding: 0.6rem 0.25rem;
+	border: 0;
+	background: none;
+	color: inherit;
+	text-align: left;
+	cursor: pointer;
+
+	&:hover {
+		background: color-mix(in srgb, var(--color-fg) 3%, transparent);
+	}
+
+	@include media-breakpoint-down(md) {
+		grid-template-columns: minmax(0, 1fr) 1rem;
+
+		.fv-us-kind {
+			grid-column: 1;
+		}
+
+		.fv-us-ltitle,
+		.fv-ch-fig {
+			grid-column: 1;
+		}
+
+		.fv-us-chev {
+			grid-column: 2;
+			grid-row: 1;
+		}
+	}
+}
+
+// what kind of change a line is: game changes in gold, ours muted
+.fv-us-kind {
+	font-size: 0.68rem;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--color-fg-muted);
 
 	&.k-game {
 		color: var(--fv-gold);
-		background: var(--fv-gold-soft);
-		box-shadow: none;
+	}
+}
+
+.fv-us-ltitle {
+	font-size: var(--cds-font-size-body);
+	line-height: 1.4;
+}
+
+// a line's key figure, after its title
+.fv-ch-fig {
+	font-size: var(--cds-font-size-caption);
+	color: var(--color-fg-muted);
+	text-align: right;
+	white-space: nowrap;
+
+	.vl {
+		color: var(--color-fg);
 	}
 
-	&.k-sim {
-		color: var(--color-fg);
+	> small {
+		opacity: 0.85;
+	}
+
+	@include media-breakpoint-down(md) {
+		text-align: left;
+		white-space: normal;
+	}
+}
+
+.fv-us-panel {
+	display: grid;
+	gap: 0.5rem;
+	padding: 0.1rem 0.25rem 0.85rem;
+
+	@include media-breakpoint-up(md) {
+		padding-left: calc(4.5rem + 1rem);
 	}
 }
 
 .fv-ch-eff {
 	display: grid;
-	gap: 0.35rem;
+	gap: 0.5rem;
 }
 
 .fv-ch-sub {
 	font-size: var(--cds-font-size-caption);
 	color: var(--color-fg-muted);
-	margin-top: 0.25rem;
 }
 
-.fv-ch-list {
+.fv-ch-src {
+	color: var(--color-fg-muted);
+}
+
+// A list of changes as bars from one zero line.
+.fv-dl {
 	display: grid;
 	gap: 0.1rem;
+	max-width: 52rem;
 }
 
-.fv-ch-row {
+.fv-dl-row {
 	display: grid;
-	grid-template-columns: minmax(0, 1fr) auto 7.5rem;
+	grid-template-columns: minmax(10rem, 15rem) minmax(5rem, 1fr) 4rem;
 	align-items: center;
-	gap: 0.5rem;
+	gap: 0.75rem;
 	padding: 0.2rem 0.3rem;
 	border-radius: var(--fv-r-sm);
-	font-size: var(--cds-font-size-caption);
 
 	&.clk {
 		cursor: pointer;
-	}
 
-	&.clk:hover {
-		background: color-mix(in srgb, var(--color-fg) 4%, transparent);
+		&:hover,
+		&.is-hl {
+			background: color-mix(in srgb, var(--color-fg) 4%, transparent);
+		}
 	}
 
 	.nm {
 		display: flex;
 		align-items: center;
-		gap: 0.35rem;
+		gap: 0.45rem;
 		min-width: 0;
+	}
 
-		> span {
+	.tx {
+		display: grid;
+		min-width: 0;
+		line-height: 1.25;
+
+		b,
+		small {
 			overflow: hidden;
 			text-overflow: ellipsis;
 			white-space: nowrap;
 		}
 
-		> b,
-		> span {
-			flex: 0 1 auto;
+		b {
+			font-size: var(--cds-font-size-caption);
+			font-weight: 600;
 		}
 
-		em {
-			flex: 0 100 auto;
-			min-width: 0;
-			overflow: hidden;
-			text-overflow: ellipsis;
-			white-space: nowrap;
+		small {
+			font-size: 0.7rem;
 			color: var(--color-fg-muted);
-			font-style: normal;
+		}
+	}
+
+	.tr {
+		position: relative;
+		height: 0.45rem;
+
+		.z {
+			position: absolute;
+			top: -0.2rem;
+			bottom: -0.2rem;
+			width: 1px;
+			background: var(--color-border-line);
+		}
+
+		.bar {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			border-radius: 2px;
+
+			&.pos {
+				background: color-mix(in srgb, var(--color-ok) 65%, var(--color-panel));
+			}
+
+			&.neg {
+				background: color-mix(in srgb, var(--color-bad) 70%, var(--color-panel));
+			}
+
+			&.quiet {
+				opacity: 0.45;
+			}
 		}
 	}
 
 	.vl {
-		color: var(--color-fg-muted);
-		white-space: nowrap;
-	}
+		display: grid;
+		justify-items: end;
+		line-height: 1.2;
+		font-size: var(--cds-font-size-caption);
 
-	.fv-ch-d {
-		text-align: right;
+		small {
+			font-size: 0.68rem;
+			color: var(--color-fg-muted);
+		}
 	}
 
 	@include media-breakpoint-down(sm) {
-		grid-template-columns: minmax(0, 1fr) auto;
+		grid-template-columns: minmax(0, 1fr) 3.5rem;
 
-		.vl {
+		.tr {
+			grid-column: 1 / -1;
 			grid-row: 2;
-			grid-column: 1;
-			padding-left: 1.6rem;
+			height: 0.4rem;
 		}
 	}
 }
 
-.fv-ch-more {
+.fv-dl-more {
 	justify-self: start;
 	padding: 0.1rem 0.3rem;
 	font-size: var(--cds-font-size-caption);
+}
+
+.fv-us-foot {
+	margin-top: 0.35rem;
 }
 
 // A change: green up, red down, muted within noise or when nothing moved.
@@ -4329,179 +4537,29 @@ dialog.fv-about-modal {
 	}
 }
 
-.fv-ch-table td.quiet {
-	color: var(--color-fg-muted);
-}
-
-.fv-ch-table td:last-child {
-	white-space: nowrap;
-}
-
-.fv-ch-cls {
-	color: var(--color-fg-muted);
-}
-
-// On a phone the preset column gives way to the numbers: no class name, and a long preset name ends in an ellipsis.
-@include media-breakpoint-down(md) {
-	// the class name, and the change's percent and noise (the row's tooltip has them)
-	.fv-ch-table .fv-ch-cls,
-	.fv-ch-table .fv-ch-d small {
-		display: none;
-	}
-
-	.fv-ch-table td.first b {
-		display: inline-block;
-		max-width: 8.5rem;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		vertical-align: bottom;
-	}
-}
-
 .fv-ch-race {
 	font-weight: 600;
 }
 
-.fv-ch-rhead .fv-ch-race {
-	font-size: 1rem;
-}
-
-.fv-ch-rblock .fv-ch-line > summary {
-	font-size: var(--cds-font-size-caption);
-}
-
-.fv-ch-rblock {
-	display: grid;
-	gap: 0.3rem;
-	padding: 0.55rem 0.65rem;
-	border: 1px solid var(--color-border-line);
-	border-radius: var(--fv-r-sm);
-	background: var(--color-bg);
-
-	.fv-ch-line {
-		background: var(--color-panel);
-	}
-}
-
-.fv-ch-rhead {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: baseline;
-	gap: 0.25rem 0.6rem;
-}
-
-// An update: a collapsible card, its title, date and source in the summary with its key figure, and the most
-// important things it did first inside.
-.fv-uc-list {
-	display: grid;
-	gap: var(--cds-gap-sm);
-}
-
-.fv-uc {
-	border: 1px solid var(--color-border-line);
-	border-radius: var(--fv-r-sm);
-	background: var(--color-bg);
-
-	&[open] {
-		border-color: color-mix(in srgb, var(--fv-gold) 35%, var(--color-border-line));
+.fv-us-races {
+	.was {
+		color: var(--color-fg-muted);
 	}
 
-	> summary {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 0.35rem 0.65rem;
-		padding: 0.6rem 0.75rem;
-		cursor: pointer;
-		font-weight: 400;
-	}
-
-	> :not(summary) {
-		margin-inline: 0.75rem;
-	}
-
-	> :last-child:not(summary) {
-		margin-bottom: 0.75rem;
-	}
-}
-
-.fv-uc-title {
-	display: grid;
-	gap: 0.1rem;
-	flex: 1 1 14rem;
-	min-width: 0;
-
-	> b {
-		font-size: var(--cds-font-size-heading);
+	td.n b {
 		font-weight: 600;
 	}
 }
 
-.fv-uc-meta {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.1rem 0.5rem;
-	font-size: var(--cds-font-size-caption);
-	color: var(--color-fg-muted);
-
-	> * + *::before {
-		content: '·';
-		margin-right: 0.5rem;
-		opacity: 0.6;
+.fv-us-parts {
+	> span {
+		display: inline-block;
+		margin-right: 0.85rem;
+		white-space: nowrap;
 	}
-}
 
-.fv-uc-teaser {
-	flex: none;
-	font-size: var(--cds-font-size-caption);
-	color: var(--color-fg-muted);
-
-	b {
-		color: var(--color-fg);
-		font-size: var(--cds-font-size-body);
-	}
-}
-
-.fv-uc-tiles {
-	margin-top: 0.15rem;
-
-	.fv-tile .s {
-		font-size: 0.72rem;
+	em {
+		font-style: normal;
 		color: var(--color-fg-muted);
-		line-height: 1.35;
-	}
-}
-
-.fv-uc-h {
-	margin: 0.85rem 0 0.35rem;
-	font-size: var(--cds-font-size-caption);
-	font-weight: 600;
-	letter-spacing: 0.04em;
-	text-transform: uppercase;
-	color: var(--color-fg-muted);
-}
-
-.fv-uc .fv-ch-line {
-	background: var(--color-panel);
-}
-
-.fv-uc-more {
-	margin-top: 0.4rem;
-}
-
-// a change line's key figure, after its title
-.fv-ch-fig {
-	flex: 0 1 auto;
-	margin-left: auto;
-	font-size: var(--cds-font-size-caption);
-	color: var(--color-fg-muted);
-	text-align: right;
-
-	.vl {
-		color: var(--color-fg);
-	}
-
-	> small {
-		opacity: 0.85;
 	}
 }

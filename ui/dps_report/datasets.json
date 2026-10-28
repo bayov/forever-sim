@@ -307,7 +307,7 @@
   "title": "Updates",
   "description": "The report's updates, newest first: game updates (a new client build or development notes) and sim/preset updates (our own changes to the sim, rotations, gear, talents, consumes or races), each with its date, source and public change list. Each line may name the classes, presets, races and racial parts it touches.",
   "updated": {
-   "at": "2026-10-28T13:14:49.894Z",
+   "at": "2026-10-28T13:33:41.855Z",
    "by": "Claude (forever-sim)"
   }
  },
