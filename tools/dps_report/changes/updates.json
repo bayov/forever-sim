@@ -613,7 +613,12 @@
      ]
     }
    ],
-   "internal": []
+   "internal": [
+    {
+     "commit": "c6a5e13",
+     "why": "plain-English wording for rotation conditions on the page, no numbers change"
+    }
+   ]
   }
  ]
 }
