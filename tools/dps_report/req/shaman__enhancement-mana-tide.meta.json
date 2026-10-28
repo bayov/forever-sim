@@ -25,7 +25,7 @@
     "ok": true,
     "note": "180s, seed 1; seed 1000003 gives 800.2"
   },
-  "summary": "Enhancement with Mana Tide Totem for the group, cast at 20% mana. Magma Totem rotation, with Lightning Shield kept up.",
+  "summary": "Enhancement with Mana Tide Totem for the group, cast at 20% mana. It uses Magma Totem and keeps Lightning Shield up.",
   "keyTalents": [
     "Stormstrike",
     "Maelstrom Weapon",
@@ -39,15 +39,15 @@
   "rotation": [
     "Pre-pull: Strength of Earth IV at -5.5s, Windfury Totem at -4.5s, Mana Spring at -3.5s, Lightning Shield at -2.5s, Magma Totem at -1s",
     "Recast Strength of Earth, Windfury Totem and Mana Spring when down, with at least 20s left",
-    "Mana Tide Totem at 20% mana or less; Mana Spring waits until the tide ends",
-    "Magma Totem when it is down and at least 2s remain",
-    "Rage of the Farseer on cooldown, waiting for the on-use trinket; Blood Fury lined up with it; other cooldowns",
+    "Mana Tide Totem at 20% mana or less. Mana Spring waits until it ends.",
+    "Magma Totem when it is down, with at least 2s left",
+    "Rage of the Farseer with the on-use trinket, Blood Fury with them, then the other cooldowns",
     "Stormstrike on cooldown",
     "Lightning Bolt at 5 Maelstrom Weapon stacks",
     "Flame Shock when its DoT is down",
     "Earth Shock while Flame Shock has more than 1s left",
     "Fire Nova above 20% mana (after the shocks)",
-    "Lightning Shield when it is down and nothing else is ready (orbs fire at the target on raid damage hits, 2 a minute)"
+    "Lightning Shield when it is down and nothing else is ready. Its orbs fire at the boss when the shaman takes a hit, about 2 a minute."
   ],
   "consumes": [
     "Windfury Weapon (shaman imbue) + Shadow Oil (main hand)",
@@ -70,14 +70,14 @@
     "Goblin Sapper Charge"
   ],
   "caveats": [
-    "Mana Tide Totem is worth about 0.1 for the shaman itself.",
-    "Water Shield does nothing: Lightning Shield stays ahead.",
-    "Assumed: Maelstrom Weapon procs at 2 PPM per point, until the beta reaches level 34.",
-    "Elemental Focus triggers: if Stormstrike can trigger it, Enhancement gets too few Clearcasting procs.",
-    "Raid damage hits (2 a minute, each fires Lightning Shield) are an estimate.",
-    "Fire Nova uses the 70425 values: coefficient 0.143, rank 5 base 232 to 259.",
-    "Assumed: another shaman's Flametongue Totem works alongside the preset's own Windfury Weapon, for +18 to +19 DPS at 180s. Not yet tested in game.",
-    "Relic: Burning Totem, its own gear set: Totem of the Storm is 0.1 to 1.5 behind here."
+    "Mana Tide Totem adds only about 0.1 DPS to the shaman itself.",
+    "Water Shield goes unused, because Lightning Shield does more.",
+    "Assumed: Maelstrom Weapon procs 2 times a minute per point. It can't be tested until the beta reaches level 34.",
+    "Open: whether Stormstrike can trigger Elemental Focus. If it can, Enhancement gets more Clearcasting procs than shown.",
+    "Assumed: the shaman takes 2 damage hits a minute. Each one fires Lightning Shield.",
+    "Fire Nova uses client build 70425's values: 0.143 coefficient, rank 5 base damage 232 to 259.",
+    "Assumed: another shaman's Flametongue Totem stacks with this shaman's Windfury Weapon. It adds 18 to 19 DPS at 180s and isn't tested in game yet.",
+    "The relic is Burning Totem, on its own gear set. Totem of the Storm is 0.1 to 1.5 DPS behind here."
   ],
   "notes": "mksettings -spec enh -gear level60_phase1_synthetic_burning_totem -apl mana_tide -talents 03-055030031005112051-053051001001 -race Orc -duration 180 -level 60 (standards 23: every shaman drops its own party totems; the raid's only totems are a second shaman's Grace of Air and Flametongue Totem, standards 25, the shaman drops Strength of Earth, Windfury Totem, Mana Spring Totem and Magma Totem itself)."
 }

@@ -25,7 +25,7 @@
     "ok": true,
     "note": "verify.py of this request, 180s, seed 1"
   },
-  "summary": "Shadow with Holy points of healing utility instead of Discipline.",
+  "summary": "Shadow with Holy points for healing utility, instead of Discipline.",
   "keyTalents": [
     "Shadowform",
     "Shadow Weaving",
@@ -36,14 +36,14 @@
     "Twilight Focus"
   ],
   "rotation": [
-    "Pre-pull: Shadowform at -4.5s, Shadowguard (Troll) at -3s, Mind Blast at -1.5s that lands at the pull; the on-use trinket and Major Spellblasting Potion at -0.1s",
-    "Dark Sacrifice (Undead) below 10% mana; racials and trinkets on cooldown",
-    "Shadow Word: Pain whenever it is down (9+ s left in the fight)",
-    "Devouring Plague whenever it is down and off its 24s cooldown (12+ s left)",
-    "Shadow Word: Death on cooldown, then Inner Focus right before Mind Blast and Mind Blast on cooldown",
-    "Shadowguard (Troll) again once its charges are spent, with 60+ s left and 40%+ mana",
-    "Mind Flay to fill; clipped after the second tick if SW:P or Devouring Plague fell off, never clipped for Mind Blast",
-    "Wand Shoot from 10% to 20% mana with 60+ s left, and when nothing else can be cast"
+    "Pre-pull: Shadowform at -4.5s, Shadowguard (Troll) at -3s, Mind Blast at -1.5s to land at the pull, then the on-use trinket and Major Spellblasting Potion at -0.1s",
+    "Dark Sacrifice (Undead) below 10% mana. Racials and trinkets on cooldown.",
+    "Shadow Word: Pain when it is down, with 9s or more left",
+    "Devouring Plague when it is down and off its 24s cooldown, with 12s or more left",
+    "Shadow Word: Death on cooldown. Then Mind Blast on cooldown, with Inner Focus right before it.",
+    "Shadowguard (Troll) again once its charges are used, with 60s or more left and 40% mana or more",
+    "Mind Flay as filler. It's cut after the second tick when Shadow Word: Pain or Devouring Plague drops, never for Mind Blast.",
+    "Wand from 10% to 20% mana with 60s or more left, or when nothing else can be cast"
   ],
   "consumes": [
     "Flask of Supreme Power",
@@ -59,11 +59,11 @@
     "Demonic Rune"
   ],
   "caveats": [
-    "The Holy points add no DPS except Twilight Focus (pushback protection).",
-    "Runs out of mana on long fights. The Undead's Dark Sacrifice helps there (876.9 vs 858.8 with the wand at 300s, measured before the race re-pick).",
-    "Only the 2-piece set bonus is active. Raiments 4-piece and 5-piece are not measured with Devouring Plague's 24s cooldown.",
-    "Periodic spells crit per tick (Forever rule). Assumed: Shadow Weaving applies to the priest's own Shadow damage.",
-    "Mind Flay rolls hit once and isn't hasted. SW:Death backlash is ignored.",
+    "The Holy points add no DPS, except Twilight Focus for pushback protection.",
+    "Runs out of mana in long fights. The Undead's Dark Sacrifice helps there. An older test had 876.9 DPS against 858.8 with only the wand at 300s.",
+    "Only the 2-piece set bonus is active. The Raiments 4-piece and 5-piece aren't measured with Devouring Plague's 24s cooldown.",
+    "Assumed: Shadow Weaving applies to the priest's own Shadow damage. In Forever, periodic spells crit per tick.",
+    "Mind Flay rolls to hit once per cast and isn't hasted. Shadow Word: Death's backlash is ignored.",
     "Left out: Brilliant Wizard Oil (+12.5) and Elixir of Sages (+13.9)."
   ],
   "notes": "mksettings request plus manaRegenElixir GreaterMagebloodElixir (ConsumesHoly in presets.ts). Only the Undead number is published for this build; no per-faction race table. Regenerated 2026-10-23 from mksettings (natural flask zone on) and the ui APLs, which tools/rotopt/priest_presets.sh writes from the templates. Undead since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Human."

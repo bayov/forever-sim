@@ -25,7 +25,7 @@
     "ok": true,
     "note": "verify.py of this request, 180s, seed 1"
   },
-  "summary": "Fire Destruction with Incinerate as the filler and a Firestone. The Succubus is sacrificed before the pull for 15% Fire damage, and no demon stays out.",
+  "summary": "Fire Destruction with Incinerate as filler and a Firestone. It sacrifices the Succubus before the pull for 15% Fire damage, and no demon stays out.",
   "keyTalents": [
     "Incinerate",
     "Conflagrate",
@@ -40,13 +40,13 @@
     "Pre-pull: Immolate at -1.5s",
     "Racials on cooldown, except Troll Berserking",
     "Life Tap below 5% mana or when Incinerate costs more than the mana left",
-    "Bane of Doom when it lands before the fight ends (more than 60s left)",
+    "Bane of Doom with more than 60s left, so it lands before the end",
     "Bane of Agony while Bane of Doom is on cooldown or would not land",
-    "Corruption when down or under 1.5s left (more than 15s left)",
-    "Immolate when down or under 1.5s left (more than 4s left)",
+    "Corruption when it is down or has under 1.5s left, with more than 15s left",
+    "Immolate when it is down or has under 1.5s left, with more than 4s left",
     "Conflagrate on cooldown while Immolate is up",
     "Death Coil, then Searing Pain, when the filler would not land before the fight ends",
-    "Troll Berserking just before an Incinerate or Shadow Bolt with the GCD free, so its cast speed goes on casts, not the instant opener",
+    "Troll Berserking right before an Incinerate or Shadow Bolt, so the haste goes on cast spells, not instants",
     "Incinerate while Immolate is up",
     "Shadow Bolt otherwise"
   ],
@@ -67,14 +67,14 @@
     "Major Firestone (weapon imbue)"
   ],
   "caveats": [
-    "Firestone is 9.7 ahead of Spellstone. The best build with the Succubus out is 5.1 behind; sacrificing the Imp is 69 behind, the Felhunter 101.",
+    "Firestone is 9.7 ahead of Spellstone. The best build with the Succubus out is 5.1 behind. Sacrificing the Imp is 69 behind, and the Felhunter 101.",
     "Unverified: whether Incinerate's 25% bonus applies to the whole hit. Bane of Havoc's point does nothing.",
-    "Demon shares and Succubus melee are wowsims/forever's, read on pet sheets at levels 20 and 30, not 60.",
-    "Bane of Doom's coefficient is 4.0 (Era 1.0). At 2.0 Shadow Bolt builds lose about 4%, at 1.0 about 6%.",
-    "No Ahn'Qiraj book ranks (Shadow Bolt IX, Immolate VII, Corruption VI): 7 to 13 DPS.",
-    "Only the Demonheart Raiment 2-piece is live (the 5-piece added about +8 to +13 on the first set)",
+    "How much of the warlock's stats a demon gets, and Succubus melee, come from pet sheets at levels 20 and 30, not 60.",
+    "Bane of Doom's coefficient is 4.0 (Era has 1.0). At 2.0, Shadow Bolt builds would lose about 4%. At 1.0, about 6%.",
+    "No Ahn'Qiraj book ranks (Shadow Bolt IX, Immolate VII, Corruption VI). They would add 7 to 13 DPS.",
+    "Only the Demonheart Raiment 2-piece is active. The 5-piece added about 8 to 13 DPS on an older gear set.",
     "Soul shards and Life Tap's health cost aren't tracked.",
-    "Demons use the warlock's spell crit (forever-bugs #331). Worth 15 to 17 DPS."
+    "Demons use the warlock's spell crit, a reported Forever bug. It's worth 15 to 17 DPS."
   ],
   "notes": "Request straight from mksettings -spec destruction_fire -gear level60_phase1_synthetic -apl level60_destruction_fire -race Undead -duration 180, no edits. Demon Armor; no demon out (Summon NoSummon), sacrificed Succubus, imbue Firestone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly. Undead since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Human."
 }

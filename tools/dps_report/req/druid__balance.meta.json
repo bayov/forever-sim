@@ -25,7 +25,7 @@
     "ok": true,
     "note": "verify.py of this request, 180s, seed 1"
   },
-  "summary": "Moonkin keeping Insect Swarm and Moonfire up, weaving Wrath and Starfire to spend every Eclipse charge.",
+  "summary": "Moonkin that keeps Insect Swarm and Moonfire up. It weaves Wrath and Starfire to spend every Eclipse charge.",
   "keyTalents": [
     "Moonkin Form",
     "Eclipse",
@@ -38,12 +38,12 @@
     "Subtlety"
   ],
   "rotation": [
-    "Pre-pull: Starfire (rank 6) cast 3s before the pull so it lands at 0",
-    "Racials, potions and runes on cooldown (Innervate on its own trigger)",
-    "Elune's Light held for the spell power trinket, and 0.1s before the pull with it and the potion (Night Elf)",
-    "Insect Swarm whenever it is down (more than 8s of fight left)",
-    "Moonfire whenever its dot is down (more than 8s of fight left)",
-    "Starfire when Clearcasting is up (Wrath does not use it up)",
+    "Pre-pull: Starfire rank 6 at -3s, so it lands at the pull",
+    "Racials, potions and runes on cooldown. Innervate has its own condition.",
+    "Elune's Light (Night Elf) with the spell power trinket, and at -0.1s with it and the potion",
+    "Insect Swarm when it is down, with more than 8s left",
+    "Moonfire when its DoT is down, with more than 8s left",
+    "Starfire when Clearcasting is up. Wrath doesn't use it up.",
     "Moonfire when a Starfire would not land before the end",
     "Wrath when Eclipse is at 2 charges or fewer and no Wrath is in flight",
     "Otherwise Starfire"
@@ -63,13 +63,13 @@
     "Cerebral Cortex Compound"
   ],
   "caveats": [
-    "No Ahn'Qiraj ranks: Starfire rank 6 costs 13.3 DPS at 180s.",
-    "5-piece Grovekeeper Eclipse instead of 2-piece would add 12.6 and Swarming Idol is worth 3.3 (measured before the 5a and 1b rounds)",
-    "At 300s mana runs out, and the plain weave is 2 ahead.",
-    "Wrath VIII's base damage is ×1.085 (client ×1.00).",
-    "Unverified: Omen of Clarity's proc chance on spells, and Eclipse charges on Wrath landing.",
-    "One +2% crit elixir. A second (Owl) would add 15.1.",
-    "Subtlety 3 (Restoration, threat) is a must-take (standards 26): costs 6.1 / 6.1 / 6.2 DPS at 120s / 180s / 300s."
+    "No Ahn'Qiraj book ranks. Starfire rank 6 costs 13.3 DPS at 180s.",
+    "The Grovekeeper 5-piece Eclipse bonus would add 12.6 DPS over the 2-piece. Swarming Idol is worth 3.3. Both were measured on older gear.",
+    "Mana runs out in 300s fights, where a plain weave is 2 DPS ahead.",
+    "Wrath VIII's base damage is ×1.085 the client's value.",
+    "Unverified: Omen of Clarity's proc chance on spells, and that Eclipse charges come when Wrath lands.",
+    "Only one +2% crit elixir. A second one (Owl) would add 15.1 DPS.",
+    "Subtlety 3 (Restoration) is taken for threat. It costs 6.1 / 6.1 / 6.2 DPS at 120s / 180s / 300s."
   ],
   "notes": "Request from mksettings -spec balance (caster group: Mana Spring, Kings + Wisdom, no Might, own Moonkin Form crit; 30 yd range; Innervate on self). Duration set to 180s, durationVariation 20 as in EncounterLevel60. No edits needed. Night Elf since the 2026-10-27 race re-pick, with the level60 rotation regenerated with elune=1 (tools/rotopt/druid_presets.sh), which was req/races/druid__balance.NightElf.json; the same rotation is 0.0 for a Tauren (Elune's Light is the Night Elf's)."
 }

@@ -36,10 +36,10 @@
     "Subtlety"
   ],
   "rotation": [
-    "Pre-pull: Wrath cast 1.5s before the pull",
-    "Racials, potions and runes on cooldown (Innervate on its own trigger)",
-    "Insect Swarm whenever it is down (more than 8s of fight left)",
-    "Moonfire whenever its dot is down (more than 8s of fight left)",
+    "Pre-pull: Wrath at -1.5s",
+    "Racials, potions and runes on cooldown. Innervate has its own condition.",
+    "Insect Swarm when it is down, with more than 8s left",
+    "Moonfire when its DoT is down, with more than 8s left",
     "Starfire when Clearcasting is up",
     "Moonfire when a Wrath plus 1.5s would not land before the end",
     "Otherwise Wrath"
@@ -59,9 +59,9 @@
     "Cerebral Cortex Compound"
   ],
   "caveats": [
-    "Wrath VIII's base damage is ×1.085 (client ×1.00).",
-    "Natural Power gloves are +8.1 over Arcane Power.",
-    "Subtlety 3 (Restoration, threat) is a must-take (standards 26): costs 2.9 / 2.9 / 3.0 DPS at 120s / 180s / 300s."
+    "Wrath VIII's base damage is ×1.085 the client's value.",
+    "Natural Power gloves are 8.1 DPS ahead of Arcane Power.",
+    "Subtlety 3 (Restoration) is taken for threat. It costs 2.9 / 2.9 / 3.0 DPS at 120s / 180s / 300s."
   ],
   "notes": "Request from mksettings -spec balance with the Wrath gear variant, apl and talents; same consumes, buffs and encounter as the Balance build (shared EncounterLevel60). Duration 180s, durationVariation 20. No edits needed. Windshaper Skyborne since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29); rotation unchanged."
 }

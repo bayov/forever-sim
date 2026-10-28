@@ -41,15 +41,15 @@
   "rotation": [
     "Pre-pull: Fireball at -3s",
     "Combustion, the on-use trinket, Berserking and Blood Fury once Fire Vulnerability has 5 stacks",
-    "Other cooldowns (Demonic Rune, other racials) on a free GCD; mana gems never",
+    "Other cooldowns (Demonic Rune, other racials) on a free GCD. No mana gems.",
     "Evocation below 20% mana with more than 90s left",
     "Scorch to 5 Fire Vulnerability stacks and before they run out",
     "Pyroblast at 3 Heating Up stacks (1.5s cast)",
     "Arcane Missiles on a Missile Barrage proc",
-    "Fire Blast on cooldown at 10% mana or more (every Fire Blast adds a Heating Up stack)",
+    "Fire Blast on cooldown at 10% mana or more. Each one adds a Heating Up stack.",
     "Fire Blast, then Scorch, when a Fireball would not land before the end (its cast plus 1.04s)",
-    "Filler: Fireball",
-    "Shoot the wand when nothing else can be cast (out of mana)"
+    "Fireball as filler",
+    "Wand when nothing else can be cast (out of mana)"
   ],
   "consumes": [
     "Flask of Supreme Power",
@@ -68,12 +68,12 @@
     "Goblin Sapper"
   ],
   "caveats": [
-    "Ignite rolls with no cap (SoD style, open). Its ticks never crit.",
-    "Heating Up: every Fire Blast adds a stack (two on a crit). One Pyroblast uses them all.",
-    "Fire Power counts Fire Vulnerability and up to 4 Fire DoTs. Open: whether it adds or multiplies.",
-    "Pyroblast DoT coefficient taken per tick",
-    "Open: Missile Barrage roll timing and its cost interaction with Arcane Power.",
-    "No Ahn'Qiraj book ranks (Fireball XI, Frostbolt X, Arcane Missiles VII). With the books: Frost +50, Arcane +30, Fire +17, Frostfire 0."
+    "Open: Ignite rolls over with no cap, as in Season of Discovery. Its ticks never crit.",
+    "Every Fire Blast adds a Heating Up stack, or 2 on a crit. One Pyroblast uses them all.",
+    "Open: whether Fire Power's bonuses add or multiply. It counts Fire Vulnerability and up to 4 Fire DoTs.",
+    "Pyroblast's DoT coefficient is applied per tick.",
+    "Open: when Missile Barrage procs, and how it works with Arcane Power's extra mana cost.",
+    "No Ahn'Qiraj book ranks (Fireball XI, Frostbolt X, Arcane Missiles VII). They would add 50 DPS to Frost, 30 to Arcane, 17 to Fire and 0 to Frostfire."
   ],
   "notes": "Request written by mksettings -spec mage_fire unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). It carries the spec's staff imbue scroll (Scroll of Imbue Greater Flame) as a mage option, as the preset does."
 }

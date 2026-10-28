@@ -25,7 +25,7 @@
     "ok": true,
     "note": "verify.py of this request, 180s, seed 1"
   },
-  "summary": "Arcane Power with four Arcane Blast stacks every 15s (60% of Intellect as spell damage) and a Frostbolt filler, on the Arcane gear (Gloves - Arcane Power).",
+  "summary": "Arcane Power build that keeps 4 Arcane Blast stacks up, for 60% of Intellect as spell damage. Frostbolt is the filler. It wears the Arcane gear with Gloves - Arcane Power.",
   "keyTalents": [
     "Arcane Blast",
     "Missile Barrage",
@@ -38,14 +38,14 @@
   ],
   "rotation": [
     "Pre-pull: Arcane Blast at -1.5s so it lands at the pull",
-    "Arcane Power and Presence of Mind with the on-use trinket (unless it won't be back in time); other cooldowns on a free GCD; mana gems never",
+    "Arcane Power and Presence of Mind with the on-use trinket, unless the trinket won't be back in time. Other cooldowns on a free GCD. No mana gems.",
     "Fire Blast, then Arcane Explosion, when a Frostbolt would not land before the end (its cast plus 0.75s)",
     "Arcane Missiles on a Missile Barrage proc, ahead of the Arcane Blasts",
-    "Below 20% mana: one Arcane Blast per 15s buff",
-    "Arcane Blast to 4 stacks (each 15% of Intellect as spell damage for 15s from the first)",
-    "Filler: Frostbolt",
+    "Below 20% mana, 1 Arcane Blast every 15s to keep the buff up",
+    "Arcane Blast to 4 stacks. Each stack gives 15% of Intellect as spell damage, for 15s from the first.",
+    "Frostbolt as filler",
     "No Evocation",
-    "Shoot the wand when nothing else can be cast (out of mana)"
+    "Wand when nothing else can be cast (out of mana)"
   ],
   "consumes": [
     "Flask of Supreme Power",
@@ -64,10 +64,10 @@
     "Goblin Sapper"
   ],
   "caveats": [
-    "Open: when Arcane Blast stacks land and whether more stacks refresh the 15s.",
-    "Assumed: Arcane Concentration on missile ticks, with a 1s internal cooldown.",
-    "Arcane Mind's crit behavior is assumed.",
-    "No Ahn'Qiraj book ranks (Fireball XI, Frostbolt X, Arcane Missiles VII). With the books: Frost +50, Arcane +30, Fire +17, Frostfire 0."
+    "Open: when Arcane Blast stacks apply, and whether new stacks reset the 15s.",
+    "Assumed: Arcane Missiles ticks can proc Arcane Concentration, at most once a second.",
+    "Assumed: how Arcane Mind adds crit.",
+    "No Ahn'Qiraj book ranks (Fireball XI, Frostbolt X, Arcane Missiles VII). They would add 50 DPS to Frost, 30 to Arcane, 17 to Fire and 0 to Frostfire."
   ],
   "notes": "Request written by mksettings -spec mage_arcane unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). It carries the spec's staff imbue scroll (Scroll of Imbue Precision) as a mage option, as the preset does. Gnome since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human."
 }

@@ -25,7 +25,7 @@
     "ok": true,
     "note": "verify.py of this request, 180s, seed 1"
   },
-  "summary": "Demonic Pact build. The Imp is sacrificed before the pull for 15% Shadow damage, and the Succubus stays out.",
+  "summary": "Demonic Pact build. It sacrifices the Imp before the pull for 15% Shadow damage, then keeps the Succubus out.",
   "keyTalents": [
     "Demonic Pact",
     "Demonic Sacrifice",
@@ -40,12 +40,12 @@
     "Pre-pull: Soul Link at -6s, Life Tap at -4.5s, Shadow Bolt at -2.5s (lands just after the pull)",
     "Racials on cooldown, except Troll Berserking",
     "Life Tap below 5% mana or when the filler costs more than the mana left",
-    "Bane of Doom when it lands before the fight ends (more than 60s left)",
+    "Bane of Doom with more than 60s left, so it lands before the end",
     "Bane of Agony while Bane of Doom is on cooldown or would not land",
-    "Corruption when down or under 1.5s left (more than 15s of fight left)",
-    "Immolate when down or under 1.5s left (more than 15s of fight left)",
+    "Corruption when it is down or has under 1.5s left, with more than 15s left",
+    "Immolate when it is down or has under 1.5s left, with more than 15s left",
     "Death Coil, then Searing Pain, when the filler would not land before the fight ends",
-    "Troll Berserking just before a Shadow Bolt with the GCD free, so its cast speed goes on casts, not the instant opener",
+    "Troll Berserking right before a Shadow Bolt, so the haste goes on cast spells, not instants",
     "Shadow Bolt as the filler"
   ],
   "consumes": [
@@ -65,14 +65,14 @@
     "Major Spellstone (weapon imbue)"
   ],
   "caveats": [
-    "Takes Suppression 5/5 for its threat (standards 26), on the shared set at the 16% hit cap: 68.1 behind the one point build on the hit set at 180 s.",
-    "Decimation's 3% is from the tooltip only.",
-    "Demon shares and Succubus melee are wowsims/forever's, read on pet sheets at levels 20 and 30, not 60.",
-    "Bane of Doom's coefficient is 4.0 (Era 1.0). At 2.0 Shadow Bolt builds lose about 4%, at 1.0 about 6%.",
-    "No Ahn'Qiraj book ranks (Shadow Bolt IX, Immolate VII, Corruption VI): 7 to 13 DPS.",
-    "Only the Demonheart Raiment 2-piece is live (the 5-piece added about +8 to +13 on the first set)",
+    "Takes Suppression 5/5 for threat, on the shared gear at the 16% hit cap. That's 68.1 DPS behind a 1-point build on hit gear at 180s.",
+    "Decimation's 3% comes from its tooltip and isn't tested.",
+    "How much of the warlock's stats a demon gets, and Succubus melee, come from pet sheets at levels 20 and 30, not 60.",
+    "Bane of Doom's coefficient is 4.0 (Era has 1.0). At 2.0, Shadow Bolt builds would lose about 4%. At 1.0, about 6%.",
+    "No Ahn'Qiraj book ranks (Shadow Bolt IX, Immolate VII, Corruption VI). They would add 7 to 13 DPS.",
+    "Only the Demonheart Raiment 2-piece is active. The 5-piece added about 8 to 13 DPS on an older gear set.",
     "Soul shards and Life Tap's health cost aren't tracked.",
-    "Demons use the warlock's spell crit (forever-bugs #331). Worth 15 to 17 DPS."
+    "Demons use the warlock's spell crit, a reported Forever bug. It's worth 15 to 17 DPS."
   ],
   "notes": "Request straight from mksettings -spec demonology -gear level60_phase1_synthetic -apl level60_demonology -race Orc -duration 180, no edits. Demon Armor; Summon Succubus, sacrificed Imp, imbue Spellstone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly. Orc since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Human."
 }

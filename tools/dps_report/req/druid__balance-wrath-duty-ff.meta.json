@@ -25,7 +25,7 @@
     "ok": true,
     "note": "verify.py of this request, 180s, seed 1"
   },
-  "summary": "The Wrath-only build keeping Faerie Fire on the boss for the raid. Moonkin gains nothing from the armor, so it only costs GCDs.",
+  "summary": "The Wrath-only build, keeping Faerie Fire on the boss for the raid. The armor cut doesn't help its spells, so it only costs GCDs.",
   "keyTalents": [
     "Improved Wrath",
     "Moonkin Form",
@@ -36,11 +36,11 @@
     "Subtlety"
   ],
   "rotation": [
-    "Pre-pull: Wrath cast 1.5s before the pull",
-    "Racials, potions and runes on cooldown (Innervate on its own trigger)",
-    "Faerie Fire on the target first after the pull, again once it has under 1.5s left",
-    "Insect Swarm whenever it is down (more than 8s of fight left)",
-    "Moonfire whenever its dot is down (more than 8s of fight left)",
+    "Pre-pull: Wrath at -1.5s",
+    "Racials, potions and runes on cooldown. Innervate has its own condition.",
+    "Faerie Fire first after the pull, and again when it has under 1.5s left",
+    "Insect Swarm when it is down, with more than 8s left",
+    "Moonfire when its DoT is down, with more than 8s left",
     "Starfire when Clearcasting is up",
     "Moonfire when a Wrath plus 1.5s would not land before the end",
     "Otherwise Wrath"
@@ -60,10 +60,10 @@
     "Cerebral Cortex Compound"
   ],
   "caveats": [
-    "Costs 31.7 / 29.3 / 27.6 DPS vs the base build at 120s / 180s / 300s.",
-    "Wrath VIII's base damage is ×1.085 (client ×1.00).",
-    "Natural Power gloves are +8.1 over Arcane Power.",
-    "Subtlety 3 (Restoration, threat) is a must-take (standards 26): costs 2.8 / 2.8 / 2.9 DPS at 120s / 180s / 300s."
+    "Costs 31.7 / 29.3 / 27.6 DPS at 120s / 180s / 300s, against the same build without the duty.",
+    "Wrath VIII's base damage is ×1.085 the client's value.",
+    "Natural Power gloves are 8.1 DPS ahead of Arcane Power.",
+    "Subtlety 3 (Restoration) is taken for threat. It costs 2.8 / 2.8 / 2.9 DPS at 120s / 180s / 300s."
   ],
   "notes": "druid__balance-wrath.json with the raid's Faerie Fire and Curse of Recklessness off (Forever's two share the minor armor slot, standards 20, so with the curse on the druid's own Faerie Fire adds nothing) and the level60_wrath_ff rotation. Everything else is the base request. Windshaper Skyborne since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29); rotation unchanged.",
   "duty": "Faerie Fire",

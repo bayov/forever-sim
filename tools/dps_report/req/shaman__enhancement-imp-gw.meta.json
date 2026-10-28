@@ -25,7 +25,7 @@
     "ok": true,
     "note": "verify.py of this request, 180s, seed 1"
   },
-  "summary": "The default Enhancement build with Improved Ghost Wolf for utility, with Magma Totem and the raid's Flametongue Totem on its weapon.",
+  "summary": "The default Enhancement build, with Improved Ghost Wolf for utility.",
   "keyTalents": [
     "Stormstrike",
     "Maelstrom Weapon",
@@ -37,18 +37,18 @@
     "Improved Stormstrike"
   ],
   "rotation": [
-    "Pre-pull: Strength of Earth IV at -6s, Windfury Totem at -5s, Mana Spring at -4s, Lightning Shield at -3s, Magma Totem at -1.5s (the totems last the whole fight but run out a few seconds before a 300s one ends)",
+    "Pre-pull: Strength of Earth IV at -6s, Windfury Totem at -5s, Mana Spring at -4s, Lightning Shield at -3s, Magma Totem at -1.5s. The totems last the fight, except the last few seconds of a 300s one.",
     "Recast Strength of Earth, Windfury Totem and Mana Spring when down, with at least 20s left",
-    "Magma Totem when it is down and at least 2s remain (after the pre-pull one)",
-    "Rage of the Farseer on cooldown, waiting for the on-use trinket; Blood Fury lined up with it",
+    "Magma Totem when it is down, with at least 2s left",
+    "Rage of the Farseer with the on-use trinket, and Blood Fury with them",
     "Other cooldowns (Sapper, Demonic Rune, Major Mana Potion)",
     "Stormstrike on cooldown",
     "Fire Nova while Clearcasting is up",
     "Flame Shock when its DoT is down",
     "Earth Shock otherwise",
     "Lightning Bolt at 5 Maelstrom Weapon stacks",
-    "Fire Nova while the mana covers 12 a second for the rest of the fight",
-    "Lightning Shield when it is down and nothing else is ready (orbs fire at the target on raid damage hits, 2 a minute)"
+    "Fire Nova while mana is above 12 per second of fight left",
+    "Lightning Shield when it is down and nothing else is ready. Its orbs fire at the boss when the shaman takes a hit, about 2 a minute."
   ],
   "consumes": [
     "Windfury Weapon (shaman imbue) + Shadow Oil (main hand)",
@@ -71,13 +71,13 @@
     "Goblin Sapper Charge"
   ],
   "caveats": [
-    "Assumed: Maelstrom Weapon procs at 2 PPM per point, until the beta reaches level 34.",
-    "Elemental Focus triggers: if Stormstrike can trigger it, Enhancement gets too few Clearcasting procs.",
-    "Raid damage hits (2 a minute, each fires Lightning Shield) are an estimate.",
-    "Fire Nova uses the 70425 values: coefficient 0.143, rank 5 base 232 to 259.",
-    "Assumed: another shaman's Flametongue Totem works alongside the preset's own Windfury Weapon, for +18 to +19 DPS at 180s. Not yet tested in game.",
-    "Improved Stormstrike 2 in place of Tidal Focus 1 is tuned at 180 s: about -3 at 120 s for +1 to +2 at 180 s and +4 to +5 at 300 s, paired at 20000 iterations on two seed sets.",
-    "Relic: Totem of the Storm (Lightning Bolt can trigger Maelstrom Weapon at half the chance), +0.9 to +2.1 over Burning Totem at every length."
+    "Assumed: Maelstrom Weapon procs 2 times a minute per point. It can't be tested until the beta reaches level 34.",
+    "Open: whether Stormstrike can trigger Elemental Focus. If it can, Enhancement gets more Clearcasting procs than shown.",
+    "Assumed: the shaman takes 2 damage hits a minute. Each one fires Lightning Shield.",
+    "Fire Nova uses client build 70425's values: 0.143 coefficient, rank 5 base damage 232 to 259.",
+    "Assumed: another shaman's Flametongue Totem stacks with this shaman's Windfury Weapon. It adds 18 to 19 DPS at 180s and isn't tested in game yet.",
+    "Improved Stormstrike 2 instead of Tidal Focus 1 is picked for 180s fights. It's about -3 DPS at 120s, +1 to +2 at 180s and +4 to +5 at 300s.",
+    "The relic is Totem of the Storm, 0.9 to 2.1 DPS ahead of Burning Totem at every fight length. It lets Lightning Bolt trigger Maelstrom Weapon at half the chance."
   ],
   "notes": "mksettings -spec enh -apl optimized (standards 23: every shaman drops its own party totems; the raid's only totem is a second shaman's Grace of Air, standards 25, the shaman drops Strength of Earth, Windfury Totem and Mana Spring Totem itself). Windshaper Skyborne since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Orc. Orc since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Windshaper Skyborne."
 }

@@ -40,16 +40,16 @@
   ],
   "rotation": [
     "Pre-pull: Lightning Shield at -5.4s, Mana Spring Totem at -3.9s, Lightning Bolt at -2.9s (lands 0.1s after the pull), Searing Totem at -0.9s",
-    "Elemental Mastery and the other cooldowns (Sapper, Demonic Rune, Major Mana Potion) as they come up",
+    "Elemental Mastery and other cooldowns (Sapper, Demonic Rune, Major Mana Potion) when ready",
     "Mana Tide Totem at 10% mana or less",
-    "Mana Spring Totem when it is down, Mana Tide is not up and at least 20s remain",
-    "Searing Totem when it is down and at least 20s remain",
-    "Flame Shock whenever its DoT is down and at least 9s remain",
+    "Mana Spring Totem when it and Mana Tide are down, with at least 20s left",
+    "Searing Totem when it is down, with at least 20s left",
+    "Flame Shock when its DoT is down, with at least 9s left",
     "Lava Burst on cooldown, unless Flame Shock would run out before the cast ends",
-    "Earth Shock once a Lightning Bolt would no longer land before the fight ends",
-    "Lightning Shield when it is down, above 50% mana with at least 60s left (orbs fire at the target on raid damage hits, 2 a minute)",
-    "Lightning Bolt rank 8 once the mana, counting Mana Tide's 1160 while it is ready, won't last the rest of the fight at 20 mana a second, except under Clearcasting (the top rank is free)",
-    "Lightning Bolt rank 10 as filler (no Chain Lightning on one target)"
+    "Earth Shock when a Lightning Bolt would not land before the end",
+    "Lightning Shield when it is down, above 50% mana with at least 60s left. Its orbs fire at the boss when the shaman takes a hit, about 2 a minute.",
+    "Lightning Bolt rank 8 once mana won't last the fight at 20 mana a second, counting Mana Tide's 1160 while it's ready. Under Clearcasting, the top rank, since it's free.",
+    "Lightning Bolt rank 10 as filler. No Chain Lightning on one target."
   ],
   "consumes": [
     "Flask of Supreme Power",
@@ -67,13 +67,13 @@
     "Goblin Sapper Charge"
   ],
   "caveats": [
-    "The Water Shield point does nothing (Lightning Shield stays up).",
-    "Lightning Bolt X's base damage is ×1.12, the beta's raise for the top playable rank.",
+    "The Water Shield point goes unused, because Lightning Shield stays up.",
+    "Lightning Bolt X's base damage is ×1.12. The beta raised the top playable rank by that much.",
     "Only the Tier 1 2-piece is active. The 5-piece (Lava Burst -1s cooldown) would add more.",
-    "One 2% crit elixir. Owl on top of Sages would add about 10.",
-    "Raid damage hits (2 a minute, each fires Lightning Shield) are an estimate.",
-    "Eye of the Storm 3 stops 70% of pushback from the 2 raid hits a minute.",
-    "Takes the Major Mana Potion where Level 60 takes the Caustic Smog Potion: -4.3 / +1.8 / +27.2 at 120 / 180 / 300 s."
+    "Only one 2% crit elixir. Owl on top of Sages would add about 10 DPS.",
+    "Assumed: the shaman takes 2 damage hits a minute. Each one fires Lightning Shield.",
+    "Eye of the Storm 3 stops 70% of the pushback from the 2 hits a minute.",
+    "Uses Major Mana Potion instead of Caustic Smog Potion. That's -4.3 / +1.8 / +27.2 DPS at 120s / 180s / 300s."
   ],
   "notes": "mksettings -spec ele -apl level60_mana_tide (standards 23: every shaman drops its own party totems; the raid has none, the shaman drops Mana Spring Totem itself); edited defaultPotion to MajorManaPotion (the build's own consumes, EncounterLevel60ManaTide); race SkyborneWindshaper (the best race since client 70425's Wind Blessed 3% haste)."
 }

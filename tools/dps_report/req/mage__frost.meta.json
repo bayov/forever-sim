@@ -25,7 +25,7 @@
     "ok": true,
     "note": "sim of the regenerated request, 180s, seed 1 (seed 1000003 within 1.1)"
   },
-  "summary": "Frostbolt to Fingers of Frost and Shatter, with 29 Arcane points (Arcane Mind, Arcane Instability, Arcane Blast for spell damage).",
+  "summary": "Frostbolt build with Fingers of Frost and Shatter. Its 29 Arcane points take Arcane Mind, Arcane Instability and Arcane Blast for spell damage.",
   "keyTalents": [
     "Arcane Mind",
     "Arcane Instability",
@@ -41,12 +41,12 @@
     "Pre-pull: Frostbolt at -2.5s",
     "Cooldowns (Demonic Rune, racial) on a free GCD",
     "Evocation below 20% mana with more than 90s left (almost never fires)",
-    "Ice Lance on every Fingers of Frost charge: the boss counts as Frozen, so 3 times the damage and Shatter crit",
+    "Ice Lance on every Fingers of Frost charge. The boss counts as Frozen, so it does 3 times the damage and gets Shatter's crit.",
     "Arcane Blast to 2 stacks every 15s for 30% of Intellect as spell damage",
     "Arcane Missiles on a Missile Barrage proc",
     "Ice Lance instead when a Frostbolt would not land before the end (its cast plus 1s)",
-    "Filler: Frostbolt (2.5s)",
-    "Shoot the wand when nothing else can be cast (out of mana)"
+    "Frostbolt as filler (2.5s cast)",
+    "Wand when nothing else can be cast (out of mana)"
   ],
   "consumes": [
     "Flask of Supreme Power",
@@ -65,11 +65,11 @@
     "Goblin Sapper"
   ],
   "caveats": [
-    "Ice Lance's spell power coefficient is 0.429 (SoD server value, the client has 0).",
-    "Frostbolt X's base damage is ×1.04 (client ×1.00).",
-    "Winter's Chill is a Cone of Cold debuff, so the build takes none.",
-    "Assumed: raid bosses can't be frozen. Fingers of Frost charge timing is open.",
-    "No Ahn'Qiraj book ranks (Fireball XI, Frostbolt X, Arcane Missiles VII). With the books: Frost +50, Arcane +30, Fire +17, Frostfire 0."
+    "Ice Lance's spell power coefficient is 0.429, the Season of Discovery value. The client has 0.",
+    "Frostbolt X's base damage is ×1.04 the client's value.",
+    "Winter's Chill only comes from Cone of Cold, so the build skips it.",
+    "Assumed: raid bosses can't be frozen. When Fingers of Frost charges apply is unknown.",
+    "No Ahn'Qiraj book ranks (Fireball XI, Frostbolt X, Arcane Missiles VII). They would add 50 DPS to Frost, 30 to Arcane, 17 to Fire and 0 to Frostfire."
   ],
   "notes": "Request written by mksettings -spec mage_frost unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). It carries the spec's staff imbue scroll (Scroll of Imbue Greater Frost) as a mage option, as the preset does. Its rotation casts Ice Lance on every Fingers of Frost charge."
 }

@@ -40,13 +40,13 @@
     "Pre-pull: Shadow Bolt at -2.5s (lands just after the pull)",
     "Racials on cooldown, except Troll Berserking",
     "Life Tap below 5% mana or when the filler costs more than the mana left",
-    "Bane of Doom when it lands before the fight ends (more than 60s left)",
+    "Bane of Doom with more than 60s left, so it lands before the end",
     "Bane of Agony while Bane of Doom is on cooldown or would not land",
     "Corruption when it is down (more than 9s left)",
-    "Immolate when down or when less than its cast time remains (more than 15s left)",
+    "Immolate when it is down or ends within its cast time, with more than 15s left",
     "Conflagrate on cooldown while Immolate is up",
     "Death Coil, then Searing Pain, when the filler would not land before the fight ends",
-    "Troll Berserking just before a Shadow Bolt with the GCD free, so its cast speed goes on casts, not the instant opener",
+    "Troll Berserking right before a Shadow Bolt, so the haste goes on cast spells, not instants",
     "Shadow Bolt as the filler"
   ],
   "consumes": [
@@ -66,13 +66,13 @@
     "Major Spellstone (weapon imbue)"
   ],
   "caveats": [
-    "Succubus 1011.2 vs Felhunter 993.5, Imp 986.3; Spellstone 3.6 ahead of Firestone. Sacrificing the Imp with no demon out is 31 behind.",
-    "Demon shares and Succubus melee are wowsims/forever's, read on pet sheets at levels 20 and 30, not 60.",
-    "Bane of Doom's coefficient is 4.0 (Era 1.0). At 2.0 Shadow Bolt builds lose about 4%, at 1.0 about 6%.",
-    "No Ahn'Qiraj book ranks (Shadow Bolt IX, Immolate VII, Corruption VI): 7 to 13 DPS.",
-    "Only the Demonheart Raiment 2-piece is live (the 5-piece added about +8 to +13 on the first set)",
+    "The Succubus does 1011.2 DPS, the Felhunter 993.5 and the Imp 986.3. Spellstone is 3.6 ahead of Firestone. Sacrificing the Imp with no demon out is 31 behind.",
+    "How much of the warlock's stats a demon gets, and Succubus melee, come from pet sheets at levels 20 and 30, not 60.",
+    "Bane of Doom's coefficient is 4.0 (Era has 1.0). At 2.0, Shadow Bolt builds would lose about 4%. At 1.0, about 6%.",
+    "No Ahn'Qiraj book ranks (Shadow Bolt IX, Immolate VII, Corruption VI). They would add 7 to 13 DPS.",
+    "Only the Demonheart Raiment 2-piece is active. The 5-piece added about 8 to 13 DPS on an older gear set.",
     "Soul shards and Life Tap's health cost aren't tracked.",
-    "Demons use the warlock's spell crit (forever-bugs #331). Worth 15 to 17 DPS."
+    "Demons use the warlock's spell crit, a reported Forever bug. It's worth 15 to 17 DPS."
   ],
   "notes": "Request straight from mksettings -spec destruction -gear level60_phase1_synthetic -apl level60_destruction -race Orc -duration 180, no edits. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Spellstone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly. Orc since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Human."
 }
