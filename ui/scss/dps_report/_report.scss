@@ -4102,11 +4102,36 @@ dialog.fv-about-modal {
 	}
 }
 
-// Six tabs fit the header of a phone: smaller tabs below 480px.
+// Six tabs fit the header of a phone, down to 320px: below 480px the logo keeps little room around it, and the tabs are
+// smaller, so Method isn't cut off at the right edge.
 @media (max-width: 480px) {
+	.dps-report-sim-ui {
+		.sim-header .sim-link-content {
+			padding: 0 0.5rem 0 0.25rem;
+		}
+
+		.sim-header .sim-link-icon {
+			margin-right: 0;
+		}
+
+		.sim-tabs .nav-item .nav-link {
+			padding: 0 0.3rem;
+			font-size: 0.8rem;
+		}
+	}
+}
+
+@media (max-width: 380px) {
 	.dps-report-sim-ui .sim-tabs .nav-item .nav-link {
-		padding: 0 0.42rem;
-		font-size: 0.8rem;
+		padding: 0 0.25rem;
+		font-size: 0.75rem;
+	}
+}
+
+@media (max-width: 340px) {
+	.dps-report-sim-ui .sim-tabs .nav-item .nav-link {
+		padding: 0 0.15rem;
+		font-size: 0.68rem;
 	}
 }
 
