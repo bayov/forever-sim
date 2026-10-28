@@ -442,19 +442,111 @@
                   }
                 },
                 {
-                  "notes": "Lower rank.",
+                  "notes": "Lower rank once the mana, with Mana Tide's 1160 while it is ready, won't last the rest of the fight at 20 mana a second. Not while Clearcasting makes the top rank free.",
                   "action": {
                     "condition": {
-                      "cmp": {
-                        "op": "OpLt",
-                        "lhs": {
-                          "currentManaPercent": {}
-                        },
-                        "rhs": {
-                          "const": {
-                            "val": "0.2"
+                      "and": {
+                        "vals": [
+                          {
+                            "or": {
+                              "vals": [
+                                {
+                                  "and": {
+                                    "vals": [
+                                      {
+                                        "spellIsReady": {
+                                          "spellId": {
+                                            "spellId": 1325256
+                                          }
+                                        }
+                                      },
+                                      {
+                                        "cmp": {
+                                          "lhs": {
+                                            "currentMana": {}
+                                          },
+                                          "op": "OpLt",
+                                          "rhs": {
+                                            "math": {
+                                              "lhs": {
+                                                "math": {
+                                                  "lhs": {
+                                                    "remainingTime": {}
+                                                  },
+                                                  "op": "OpMul",
+                                                  "rhs": {
+                                                    "const": {
+                                                      "val": "20"
+                                                    }
+                                                  }
+                                                }
+                                              },
+                                              "op": "OpSub",
+                                              "rhs": {
+                                                "const": {
+                                                  "val": "1160"
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  }
+                                },
+                                {
+                                  "and": {
+                                    "vals": [
+                                      {
+                                        "not": {
+                                          "val": {
+                                            "spellIsReady": {
+                                              "spellId": {
+                                                "spellId": 1325256
+                                              }
+                                            }
+                                          }
+                                        }
+                                      },
+                                      {
+                                        "cmp": {
+                                          "lhs": {
+                                            "currentMana": {}
+                                          },
+                                          "op": "OpLt",
+                                          "rhs": {
+                                            "math": {
+                                              "lhs": {
+                                                "remainingTime": {}
+                                              },
+                                              "op": "OpMul",
+                                              "rhs": {
+                                                "const": {
+                                                  "val": "20"
+                                                }
+                                              }
+                                            }
+                                          }
+                                        }
+                                      }
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 16246
+                                  }
+                                }
+                              }
+                            }
                           }
-                        }
+                        ]
                       }
                     },
                     "castSpell": {

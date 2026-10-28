@@ -399,20 +399,112 @@
       }
      },
      "condition": {
-      "cmp": {
-       "lhs": {
-        "currentManaPercent": {}
-       },
-       "op": "OpLt",
-       "rhs": {
-        "const": {
-         "val": "0.2"
+      "and": {
+       "vals": [
+        {
+         "or": {
+          "vals": [
+           {
+            "and": {
+             "vals": [
+              {
+               "spellIsReady": {
+                "spellId": {
+                 "spellId": 1325256
+                }
+               }
+              },
+              {
+               "cmp": {
+                "lhs": {
+                 "currentMana": {}
+                },
+                "op": "OpLt",
+                "rhs": {
+                 "math": {
+                  "lhs": {
+                   "math": {
+                    "lhs": {
+                     "remainingTime": {}
+                    },
+                    "op": "OpMul",
+                    "rhs": {
+                     "const": {
+                      "val": "20"
+                     }
+                    }
+                   }
+                  },
+                  "op": "OpSub",
+                  "rhs": {
+                   "const": {
+                    "val": "1160"
+                   }
+                  }
+                 }
+                }
+               }
+              }
+             ]
+            }
+           },
+           {
+            "and": {
+             "vals": [
+              {
+               "not": {
+                "val": {
+                 "spellIsReady": {
+                  "spellId": {
+                   "spellId": 1325256
+                  }
+                 }
+                }
+               }
+              },
+              {
+               "cmp": {
+                "lhs": {
+                 "currentMana": {}
+                },
+                "op": "OpLt",
+                "rhs": {
+                 "math": {
+                  "lhs": {
+                   "remainingTime": {}
+                  },
+                  "op": "OpMul",
+                  "rhs": {
+                   "const": {
+                    "val": "20"
+                   }
+                  }
+                 }
+                }
+               }
+              }
+             ]
+            }
+           }
+          ]
+         }
+        },
+        {
+         "not": {
+          "val": {
+           "auraIsActive": {
+            "auraId": {
+             "spellId": 16246
+            }
+           }
+          }
+         }
         }
-       }
+       ]
       }
      }
     },
-    "notes": "A lower rank of Lightning Bolt once the mana runs low."
+    "notes": "A lower rank of Lightning Bolt once the mana, with Mana Tide Totem's 1160 while it is ready, would not last the rest of the fight at 20 mana a second. Not while Clearcasting makes the top rank free."
    },
    {
     "action": {
@@ -428,11 +520,11 @@
  },
  "note": "Berserking held until Elemental Mastery ends: under Mastery the bolts are 1.5 sec casts and the GCD eats the haste",
  "gain": {
-  "dps": 4.68,
-  "se": 0.23,
+  "dps": 4.7,
+  "se": 0.2,
   "iterations": 20000,
   "seed": 1,
   "duration": 180
  },
- "how": "rotopt -template shaman_ele -race Troll -durs 180 -eval -level 60, the preset's knobs (chainLightning=0,lightningBoltDownrank=2,lavaBurstFlameShockLeft=2,prepullBolt=1,earthShockFinish=1,waterTotemMinTime=20,shield=1,shieldMinMana=50,shieldMinTime=60,prepullShield=1,flameShockMinTime=9,manaTideMana=10) plus berserkingAfterMastery=1 (new knob, tools/rotopt/shaman_ele.go). Both cooldowns came off at the pull, so Lightning Bolt went 2.0 -> 1.5 sec (Mastery) -> 1.36 sec (Berserking), floored at the 1.5 sec GCD: Berserking was worth +0.15 DPS; now +5.0. Paired over 20000 iterations."
+ "how": "rotopt -template shaman_ele -race Troll -durs 180 -eval -level 60, the preset's knobs (chainLightning=0,lightningBoltDownrank=2,lavaBurstFlameShockLeft=2,prepullBolt=1,earthShockFinish=1,waterTotemMinTime=20,shield=1,shieldMinMana=50,shieldMinTime=60,prepullShield=1,flameShockMinTime=9,manaTideMana=10,lightningBoltDownrankManaPerSec=20) plus berserkingAfterMastery=1 (tools/rotopt/shaman_ele.go). Both cooldowns come off at the pull, so Lightning Bolt went 2.0 -> 1.5 sec (Mastery) -> 1.36 sec (Berserking), floored at the 1.5 sec GCD: Berserking was worth +0.15 DPS with the autocast. Remade 2026-10-28 with the preset's per-second lower-rank Lightning Bolt line (standards 31); the gain is over that new preset rotation at Troll, paired over 20000 iterations (se from 8 seeds x 2500)."
 }

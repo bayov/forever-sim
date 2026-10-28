@@ -47,7 +47,7 @@
     "Lava Burst on cooldown, unless Flame Shock would run out before the cast ends",
     "Earth Shock once a Lightning Bolt would no longer land before the fight ends",
     "Lightning Shield when it is down, above 50% mana with at least 60s left (orbs fire at the target on raid damage hits, 2 a minute)",
-    "Lightning Bolt rank 8 below 20% mana",
+    "Lightning Bolt rank 8 once the mana won't last the rest of the fight at 30 mana a second, except under Clearcasting (the top rank is free)",
     "Lightning Bolt rank 10 as filler (no Chain Lightning on one target)"
   ],
   "consumes": [

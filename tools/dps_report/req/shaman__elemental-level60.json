@@ -408,19 +408,44 @@
                   }
                 },
                 {
-                  "notes": "Lower rank.",
+                  "notes": "Lower rank once the mana won't last the rest of the fight at 30 mana a second. Not while Clearcasting makes the top rank free.",
                   "action": {
                     "condition": {
-                      "cmp": {
-                        "op": "OpLt",
-                        "lhs": {
-                          "currentManaPercent": {}
-                        },
-                        "rhs": {
-                          "const": {
-                            "val": "0.2"
+                      "and": {
+                        "vals": [
+                          {
+                            "cmp": {
+                              "lhs": {
+                                "currentMana": {}
+                              },
+                              "op": "OpLt",
+                              "rhs": {
+                                "math": {
+                                  "lhs": {
+                                    "remainingTime": {}
+                                  },
+                                  "op": "OpMul",
+                                  "rhs": {
+                                    "const": {
+                                      "val": "30"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "not": {
+                              "val": {
+                                "auraIsActive": {
+                                  "auraId": {
+                                    "spellId": 16246
+                                  }
+                                }
+                              }
+                            }
                           }
-                        }
+                        ]
                       }
                     },
                     "castSpell": {
