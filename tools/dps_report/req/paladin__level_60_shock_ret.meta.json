@@ -17,7 +17,7 @@
     "dps": 931.6,
     "source": "DPS report 2026-10-28 (full re-sim at 20,000 iterations, 180 s, after the launch-realm hunter hotfix)"
   },
-  "summary": "Holy Shock with most points in Retribution: Seal of Command, Holy Shock and Consecrated Ground, Champion of the Light, no twisting and no Light's Vigil.",
+  "summary": "Holy Shock with most points in Retribution. Uses Seal of Command, Consecrated Ground and Champion of the Light. No twisting and no Light's Vigil.",
   "keyTalents": [
     "Holy Shock",
     "Champion of the Light",
@@ -30,11 +30,11 @@
   ],
   "rotation": [
     "Pre-pull: Seal of Command at -1.5s",
-    "Consecration on cooldown, down to the last point of mana",
-    "Judgement on cooldown; re-seal Command whenever it is down (no twisting)",
-    "Hammer of Wrath below 20% health, ahead of Holy Strike",
+    "Consecration on cooldown at any mana",
+    "Judgement on cooldown. Recast Seal of Command whenever it's down (no twisting)",
+    "Hammer of Wrath under 20% boss health, before Holy Strike",
     "Holy Strike on cooldown",
-    "Holy Shock on cooldown; Divine Favor goes on a Holy Shock",
+    "Holy Shock on cooldown. Divine Favor goes on a Holy Shock",
     "Racials, Goblin Sapper, Dragonfire Potion and Demonic Rune on free GCDs"
   ],
   "consumes": [
@@ -57,12 +57,12 @@
     "Demonic Rune"
   ],
   "caveats": [
-    "Pursuit of Justice 2 (movement speed) is taken by rule (standards 26).",
-    "Holy Shock needs 20 Holy points, so Twist of Light (the 31 point Retribution talent) is out of reach.",
-    "1.8% behind Level 60 (sub Holy) at 180s; 3.2% at 300s, where it runs short of mana (the Major Mana Potion is 10.3 better there, the Dragonfire Potion 5.7 better at 180s).",
-    "Holy Strike's flat bonus is inside the weapon percent (client data). Unconfirmed on the beta.",
-    "High Holy Strike and Consecration ranks may be out of date (about 1.2% at stake).",
-    "No filler explosive (standards 11): each 1s cast resets the swing."
+    "Takes Pursuit of Justice 2 (movement speed), a must-have talent.",
+    "Holy Shock needs 20 points in Holy, so Twist of Light (the 31-point Retribution talent) is out of reach.",
+    "1.8% behind Ret sub-Holy at 180s, and 3.2% at 300s, where it runs short of mana. Dragonfire Potion is 5.7 DPS better at 180s, and Major Mana Potion 10.3 better at 300s.",
+    "Unverified: Holy Strike's flat bonus is added before its weapon damage percent, as the client data says.",
+    "The top Holy Strike and Consecration ranks may be out of date (about 1.2% of DPS).",
+    "No filler explosive, because each 1s cast resets the swing."
   ],
   "notes": "mksettings -spec ret -gear level60_phase1_synthetic -apl level60_shock_ret -talents 550030032011012--052150312012303 -race Undead; primarySeal set to Command to match the shipped preset's options. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human.",
   "verify": {

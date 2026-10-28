@@ -42,13 +42,13 @@
     "Relentless Strikes"
   ],
   "rotation": [
-    "Slice and Dice at 1+ combo points when down; refresh when about to drop",
+    "Slice and Dice at 1+ combo points when it's down. Refresh it when it's about to drop",
     "Cold Blood right before a 5-point Eviscerate",
-    "Thistle Tea at 10 energy or less; Sapper and potion while Slice and Dice is up",
-    "Eviscerate at 4+ combo points (with Slice and Dice up, 79+ energy, or under 6s left); spend leftover points in the last 3s",
-    "Vanish into Ambush at 3 combo points or fewer (Shadowmeld into Ambush for a Night Elf)",
-    "Mutilate right after a main-hand swing (0.75s)",
-    "Backstab as fallback builder"
+    "Thistle Tea at 10 energy or less. Sapper and potion while Slice and Dice is up",
+    "Eviscerate at 4+ combo points when Slice and Dice is up, at 79+ energy, or with under 6s left. Spend leftover points in the last 3s",
+    "Vanish into Ambush at 3 combo points or fewer. A Night Elf uses Shadowmeld the same way",
+    "Mutilate within 0.75s after a main-hand swing",
+    "Backstab as the backup builder"
   ],
   "consumes": [
     "Flask of Natural Precision",
@@ -65,13 +65,13 @@
   ],
   "caveats": [
     "Murder (+4% damage) only works against Humanoids and Giants.",
-    "Backstab with the same talents is the Seal Fate Daggers build, 13 DPS ahead.",
+    "Seal Fate Daggers uses Backstab with the same talents, and is 13 DPS ahead.",
     "Venom (25 Energy) always loses DPS.",
-    "No Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV). They would add 13 to 18.",
-    "Grimstitch 4-piece and 5-piece aren't active (about +8 and +6).",
-    "Assumed: the fight is in Hyjal or the Barrow Deeps. Its flask gives its full bonus only there.",
-    "10% hit (the wrist and the second ring carry 10 hit rating each): dual wielders take hit by sim (standards 4), and past the 8% yellow cap it still helps the white hits (+0.4 to +1.9 over 8%).",
-    "No Goblin Land Mine: its 1 sec cast resets the swing, so it loses DPS here. The Sapper stays."
+    "No Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV). They would add 13 to 18 DPS.",
+    "Grimstitch 4-piece and 5-piece bonuses aren't counted. They would add about 8 and 6 DPS.",
+    "Assumed: the fight is in Hyjal or the Barrow Deeps. The flask gives its full bonus only there.",
+    "10% hit (10 hit rating each on the wrist and second ring). Hit past the 8% cap still helps white hits, so 10% beats 8% by 0.4 to 1.9 DPS.",
+    "No Goblin Land Mine. Its 1s cast resets the swing, so it loses DPS. The Sapper stays."
   ],
   "notes": "Request from mksettings with the same arguments as rogue__mutilate except talents, then the target's mobType set to MobTypeHumanoid, as the class preset's encounter does. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29) (follows its base build, rogue__mutilate), was Windshaper Skyborne.",
   "encounter": "Humanoid",

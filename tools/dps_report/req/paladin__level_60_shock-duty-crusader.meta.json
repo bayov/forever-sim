@@ -25,7 +25,7 @@
     "ok": true,
     "note": "verify.py of this request, 180s, seed 1"
   },
-  "summary": "The Holy Shock build, keeping Judgement of the Crusader on the boss for the raid.",
+  "summary": "Keeps Judgement of the Crusader on the boss for the raid.",
   "keyTalents": [
     "Holy Shock",
     "Light's Vigil",
@@ -38,14 +38,14 @@
   ],
   "rotation": [
     "Pre-pull: Seal of Righteousness at -4.5s, Light's Vigil at -3s, Seal of the Crusader at -1.5s",
-    "Hammer of Wrath below 20% health, first of all",
-    "Judgement of the Crusader at the pull (the duty): 161 Holy damage taken for 40s, refreshed by the paladin's own melee hits, so one cast lasts the fight; judged again only if it drops",
-    "Seal of Righteousness back up ahead of Consecration whenever it is down (right after the opening Judgement of the Crusader)",
-    "Consecration on cooldown, down to the last point of mana",
-    "Judgement on cooldown on Seal of Righteousness; re-seal Righteousness whenever it is down (no twisting)",
+    "Hammer of Wrath under 20% boss health, before everything else",
+    "Judgement of the Crusader at the pull, for the duty. It adds 161 Holy damage taken for 40s. The paladin's melee hits refresh it, so one cast lasts the fight. Judge it again only if it drops",
+    "Seal of Righteousness whenever it's down, before Consecration. So it goes right after the opening Judgement of the Crusader",
+    "Consecration on cooldown at any mana",
+    "Judgement on cooldown on Seal of Righteousness. Recast Seal of Righteousness whenever it's down (no twisting)",
     "Holy Strike on cooldown",
-    "Light's Vigil whenever it is not on the target, mana is at or above 30% and the next swing is more than 2.5s off (its cast resets the swing)",
-    "Holy Shock on a Vigil-marked target (detonates it, refunds 75% of its mana, starts no cooldown), or on cooldown whenever the Vigil is held back (mana under its floor, or a swing within 2.5s); Divine Favor goes on a Holy Shock",
+    "Light's Vigil when it's not on the target, at 30%+ mana, and the next swing is over 2.5s away (its cast resets the swing)",
+    "Holy Shock on a target with Light's Vigil. It detonates the Vigil, refunds 75% of its mana and starts no cooldown. When the Vigil is held back (low mana, or a swing within 2.5s), Holy Shock on cooldown. Divine Favor goes on a Holy Shock",
     "Racials, Goblin Sapper, Major Mana Potion and Demonic Rune on free GCDs"
   ],
   "consumes": [
@@ -68,15 +68,15 @@
     "Demonic Rune"
   ],
   "caveats": [
-    "Pursuit of Justice 2 (movement speed) is taken by rule (standards 26). It costs 1.6 / 1.9 / 2.1 at 120 / 180 / 300s.",
-    "Carries Libram of Fervor (+33 to Judgement of the Crusader), +5.9 over Libram of Law on twist duty and +7.7 on Shock duty at 180s.",
-    "Runs short of mana: 7.4% behind twist at 120s, 8.2% at 180s, 9.8% at 300s.",
+    "Takes Pursuit of Justice 2 (movement speed), a must-have talent. It costs 1.6 / 1.9 / 2.1 DPS at 120 / 180 / 300s.",
+    "Uses Libram of Fervor (+33 to Judgement of the Crusader). At 180s it beats Libram of Law by 5.9 DPS on twist duty and 7.7 on Shock duty.",
+    "Runs short of mana. It's 7.4% behind Ret twist at 120s, 8.2% at 180s and 9.8% at 300s.",
     "Divine Precision's hit doesn't cover Judgement of Righteousness.",
-    "A missed Holy Shock wastes the Vigil (about 1% Holy miss).",
-    "Holy Strike's flat bonus is inside the weapon percent (client data). Unconfirmed on the beta.",
-    "High Holy Strike and Consecration ranks may be out of date (about 1.2% at stake).",
-    "Seal of Righteousness adds 12% of spell power a hit with a two-hander, once (70425 tooltip). Counted twice it would be 46-51 DPS higher. At the proc spell's 0 it would be 53-59 lower.",
-    "No filler explosive (standards 11): the Goblin Land Mine and EZ-Thro Dark Bomb cost 5.4 at 180s, the EZ-Thro Thorium Grenade 6.1 (each 1s cast resets the swing)."
+    "A missed Holy Shock wastes the Vigil. Holy spells miss about 1% of the time.",
+    "Unverified: Holy Strike's flat bonus is added before its weapon damage percent, as the client data says.",
+    "The top Holy Strike and Consecration ranks may be out of date (about 1.2% of DPS).",
+    "Seal of Righteousness adds 12% of spell power per hit with a two-hander, counted once, as its tooltip says (spell 70425). Counted twice, DPS would be 46-51 higher. At the proc spell's 0%, it would be 53-59 lower.",
+    "No filler explosive, because each 1s cast resets the swing. The Goblin Land Mine and EZ-Thro Dark Bomb cost 5.4 DPS at 180s, and the EZ-Thro Thorium Grenade 6.1."
   ],
   "notes": "Request: paladin__level_60_shock with raid debuff judgementOfTheCrusader removed and the level60_shock_crusader_duty rotation. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human (follows its base build, paladin__level_60_shock).",
   "duty": "Judgement of the Crusader",

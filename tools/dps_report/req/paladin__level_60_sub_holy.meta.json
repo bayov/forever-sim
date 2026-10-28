@@ -25,7 +25,7 @@
     "ok": true,
     "note": "verify.py of this request, 180s, seed 1"
   },
-  "summary": "The twist build with its side points in Holy instead of Protection, on Seal of Righteousness twisted to Seal of Command. The class default: 4.0 ahead of twist at 180s.",
+  "summary": "The twist build with its side points in Holy instead of Protection. Twists Seal of Righteousness to Seal of Command. The class default, 4.0 DPS ahead of Ret twist at 180s.",
   "keyTalents": [
     "Twist of Light",
     "Seal of Command",
@@ -37,12 +37,12 @@
     "Champion of the Light"
   ],
   "rotation": [
-    "Pre-pull: Seal of Command at -3s, Seal of Righteousness at -1.5s so the first swing gets the Echo",
-    "Hammer of Wrath below 20% health, ahead of Consecration",
-    "Consecration on cooldown while mana is at or above 20%",
+    "Pre-pull: Seal of Command at -3s, then Seal of Righteousness at -1.5s, so the first swing gets the Echo",
+    "Hammer of Wrath under 20% boss health, before Consecration",
+    "Consecration on cooldown at 20%+ mana",
     "Judgement on cooldown on whichever damage seal is up",
     "Seal of Righteousness whenever no damage seal is up",
-    "Twist: with Seal of Righteousness up, swap to Seal of Command in the last 1.5s before a swing, and back to Righteousness before the next swing (one swap per swing, at any mana); Twist of Light's Echo applies the old seal on the next swing",
+    "Twist: with Seal of Righteousness up, switch to Seal of Command in the last 1.5s before a swing, then back to Righteousness before the next. One switch per swing, at any mana. Twist of Light's Echo applies the old seal on the next swing",
     "Holy Strike on cooldown",
     "Racials, Goblin Sapper, Dragonfire Potion and Demonic Rune on free GCDs"
   ],
@@ -66,14 +66,14 @@
     "Demonic Rune"
   ],
   "caveats": [
-    "Pursuit of Justice 2 (movement speed) is taken by rule (standards 26). It costs nothing: it replaced Purifying Power, which does nothing on this boss.",
-    "5 ahead of the twist build at 120s, 4.0 at 180s and 8 at 300s: the twist build's Precision puts its hit over the 8% cap.",
+    "Takes Pursuit of Justice 2 (movement speed), a must-have talent. It costs nothing here, because it replaced Purifying Power, which does nothing on this boss.",
+    "5 DPS ahead of Ret twist at 120s, 4.0 at 180s and 8 at 300s. Ret twist's Precision puts its hit over the 8% cap.",
     "Purifying Power does nothing on the generic boss.",
-    "Holy Strike's flat bonus is inside the weapon percent (client data). Unconfirmed on the beta.",
-    "High Holy Strike and Consecration ranks may be out of date (about 1.2% at stake).",
-    "Seal of Righteousness adds 12% of spell power a hit with a two-hander, once (70425 tooltip). Counted twice it would be 46-51 DPS higher. At the proc spell's 0 it would be 53-59 lower.",
-    "Two-Handed Weapon Specialization boosts Holy seal damage (Era sim choice, the client says Physical only). Without it: -11.",
-    "No filler explosive (standards 11): the Goblin Land Mine and EZ-Thro Dark Bomb cost 4.9 at 180s, the EZ-Thro Thorium Grenade 5.7 (each 1s cast resets the swing)."
+    "Unverified: Holy Strike's flat bonus is added before its weapon damage percent, as the client data says.",
+    "The top Holy Strike and Consecration ranks may be out of date (about 1.2% of DPS).",
+    "Seal of Righteousness adds 12% of spell power per hit with a two-hander, counted once, as its tooltip says (spell 70425). Counted twice, DPS would be 46-51 higher. At the proc spell's 0%, it would be 53-59 lower.",
+    "Two-Handed Weapon Specialization boosts Holy seal damage, as in the Era sim. The client says Physical only. Without it, DPS is 11 lower.",
+    "No filler explosive, because each 1s cast resets the swing. The Goblin Land Mine and EZ-Thro Dark Bomb cost 4.9 DPS at 180s, and the EZ-Thro Thorium Grenade 5.7."
   ],
   "notes": "mksettings writes primarySeal Righteousness; set to Command to match the shipped preset's options (the APL never uses Cast Primary Seal, so DPS is unaffected). Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human."
 }

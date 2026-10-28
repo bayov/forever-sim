@@ -25,7 +25,7 @@
     "ok": true,
     "note": "verify.py of this request, 180s, seed 1"
   },
-  "summary": "Beast Mastery with a cat: Bestial Wrath, Frenzy and Unleashed Fury, melee weaving between Auto Shots. The pet deals about 28% of the damage.",
+  "summary": "Beast Mastery with a cat, using Bestial Wrath, Frenzy and Unleashed Fury. Melee weaves between Auto Shots. The pet does about 28% of the damage.",
   "keyTalents": [
     "Bestial Wrath",
     "Frenzy",
@@ -38,14 +38,14 @@
   ],
   "rotation": [
     "Pre-pull: Aspect of the Hawk at -3s, walk to 12 yd, Hunter's Mark at -1.5s, Rapid Fire at -0.1s",
-    "Bestial Wrath (0s and 120s), Rapid Fire, racials, Sapper and potions on cooldown",
-    "Hunter's Mark (rank 4, +143 ranged attack power) 1.5s before the pull and again in its last 3s; the raid's mark is off",
-    "Arcane Shot on cooldown, above Aimed Shot (no mana floor)",
+    "Bestial Wrath (at 0s and 120s), Rapid Fire, racials, Sapper and potions on cooldown",
+    "Hunter's Mark (rank 4, +143 ranged attack power) at -1.5s, recast in its last 3s. The raid's mark is off",
+    "Arcane Shot on cooldown, before Aimed Shot, at any mana",
     "Aimed Shot on the cooldown it shares with Multi-Shot",
     "Sniper Shot on cooldown",
-    "Serpent Sting when it is down, last (no mana floor)",
-    "Melee weave: between Auto Shots, walk in for a main hand swing with Raptor Strike queued when the next Auto Shot waits 1.2s or less and the shot cooldowns stay down",
-    "Cat (1.0s) bites and claws on cooldown; Auto Shot throughout"
+    "Serpent Sting when it's down, last, at any mana",
+    "Melee weave between Auto Shots. Walk in for a main-hand swing with Raptor Strike queued, when the next Auto Shot is 1.2s or less away and no shot comes off cooldown",
+    "The cat (1.0s) bites and claws on cooldown. Auto Shot the whole fight"
   ],
   "consumes": [
     "Flask of Natural Aggression",
@@ -62,19 +62,19 @@
     "Goblin Land Mine"
   ],
   "caveats": [
-    "Assumed: Trueshot Aura's top rank gives 100 ranged attack power (the client has 50). Hunter's Mark gives 143, the server hotfix (the client has 71).",
-    "Aspect of the Hawk stays at rank 5 (90 RAP). Forever's rank 6 gives only 55.",
-    "The pet takes 10% of the hunter's ranged attack power, its crit and its hit, on its own 254 attack power (beta pet sheets).",
-    "Arcane Shot takes 10% of ranged attack power and Serpent Sting 3% a tick (beta log fit: 11% and 3.5%).",
-    "Auto Shot fires through casts and winds up 0.5s, which moving cancels.",
-    "Pet consumables are off (Forever pets take no player buffs). They would add 17.",
+    "Assumed: Trueshot Aura's top rank gives 100 ranged attack power (the client says 50). Hunter's Mark gives 143 after a server hotfix (the client says 71).",
+    "Uses Aspect of the Hawk rank 5 (90 ranged attack power). Forever's rank 6 gives only 55.",
+    "The pet gets 10% of the hunter's ranged attack power on top of its own 254, plus the hunter's crit and hit (from beta pet sheets).",
+    "Arcane Shot gets 10% of ranged attack power, and Serpent Sting 3% a tick. Beta logs fit 11% and 3.5%.",
+    "Auto Shot keeps firing during casts. Moving cancels its 0.5s wind-up.",
+    "Pet consumables are off (Forever pets get no player buffs). They would add 17 DPS.",
     "Intimidation is talented but not cast.",
-    "Major Frenzy Potion is 25.7 behind Major Mana Potion at 180s.",
-    "Crit per Agility is Classic's at 60 (0.0189% a point), from Forever's game files.",
-    "A 2.5s bow at Rhok'delar's 44.0 DPS. A 2.6s gun sims 0.3 to 1.0 higher with a 15% ammo pouch, 3.4 to 5.2 lower with Era's 14% pouch.",
-    "Pet hits scale with attack speed, as a level 17 pet sheet shows. A 1.0s raptor would add about 2.5 (Savage Rend), but none that fast is known.",
-    "Mark duty is assumed: the hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs about 0.5 to 2.5 DPS at 180s (0.5 here).",
-    "Scorpid Sting isn't a duty: it shares Insect Swarm's 2% hit-reduction slot, which Balance druids keep up for its own damage, so a hunter on it would pay about 85 to 100 DPS (Serpent Sting's slot) for nothing."
+    "Major Frenzy Potion is 25.7 DPS behind Major Mana Potion at 180s.",
+    "Crit per Agility is Classic's level 60 rate (0.0189% per point), from Forever's game files.",
+    "Uses a 2.5s bow with Rhok'delar's 44.0 weapon DPS. A 2.6s gun sims 0.3 to 1.0 DPS higher with a 15% ammo pouch, or 3.4 to 5.2 lower with Era's 14% pouch.",
+    "Pet hits scale with attack speed, as seen on a level 17 pet. A 1.0s raptor would add about 2.5 DPS (Savage Rend), but none that fast is known.",
+    "Assumed: each hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs 0.5 to 2.5 DPS at 180s (0.5 here).",
+    "No Scorpid Sting. Balance druids already keep up Insect Swarm, which gives the same 2% hit reduction. Scorpid Sting would replace Serpent Sting and cost about 85 to 100 DPS for nothing."
   ],
   "notes": "Request written by mksettings (spec hunter_bm, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Every hunter keeps up its own Hunter's Mark (standards 23, Mark duty assumed), so the raid's debuffs.huntersMark is off. Orc since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human."
 }

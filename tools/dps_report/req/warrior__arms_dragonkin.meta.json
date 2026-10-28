@@ -25,8 +25,8 @@
     "ok": true,
     "note": "verify.py of this request, 180s, seed 1"
   },
-  "summary": "Arms with Spearing Strike and Improved Bloodrage, for a Giant or Dragonkin boss such as Onyxia.",
-  "advantage": "Spearing Strike does 80% more damage to Giants and Dragonkin, so it earns a place in the rotation.",
+  "summary": "Arms with Spearing Strike and Improved Bloodrage, for a Giant or Dragonkin boss like Onyxia.",
+  "advantage": "Spearing Strike does 80% more damage to Giants and Dragonkin, so it's worth casting.",
   "advantageRefs": [
     "tal:Warrior:0:8"
   ],
@@ -41,16 +41,16 @@
     "Two-Handed Weapon Specialization"
   ],
   "rotation": [
-    "Pre-pull: Battle Stance, then Charge for 15 Rage",
-    "Sunder Armor as the first GCD after the pull (every warrior; the tanks keep it up after)",
-    "With 25s left, Recklessness ready and under 25 Rage: swap to Berserker Stance, and back to Battle Stance once Recklessness is out",
-    "Recklessness in the last 25s; racials on cooldown (Elune's Light never during Recklessness or in the 15s before it)",
-    "Mighty Rage Potion at the pull, second held for the last 15s; Bloodrage under 20 Rage",
+    "Pre-pull: Battle Stance, then Charge (15 Rage)",
+    "Sunder Armor as the first GCD. Every warrior does this, and the tanks keep it up after",
+    "With 25s left, if Recklessness is ready and Rage is under 25, swap to Berserker Stance. Swap back after Recklessness",
+    "Recklessness in the last 25s. Racials on cooldown, but Elune's Light never during Recklessness or the 15s before it",
+    "Mighty Rage Potion at the pull, the second in the last 15s. Bloodrage under 20 Rage",
     "Mortal Strike on cooldown",
-    "Slam from 20 Rage (15s cooldown with Improved Slam), outside execute",
-    "Overpower from 5 Rage (dodges and Bloodthrill)",
-    "Rend kept up outside execute; then Execute",
-    "Heroic Strike from 90 Rage, Hamstring filler from 30 Rage (outside execute)"
+    "Slam at 20+ Rage outside execute (15s cooldown with Improved Slam)",
+    "Overpower at 5+ Rage after a dodge or Bloodthrill",
+    "Keep Rend up outside execute. Then Execute",
+    "Heroic Strike at 90+ Rage and Hamstring filler at 30+, both outside execute"
   ],
   "consumes": [
     "Flask of Natural Aggression",
@@ -66,15 +66,15 @@
   ],
   "caveats": [
     "Spearing Strike only works against Giants and Dragonkin",
-    "Assumed: white hits give Rage by weapon speed, at the level 30 rate at every level.",
-    "No Fury Dragonkin build: Spearing Strike adds only 0.4% (dual wield) and 0.8% (two-hand).",
+    "Assumed: white hits give Rage by weapon speed, at the level 30 rate even at level 60.",
+    "There's no Fury Dragonkin build. Spearing Strike adds only 0.4% to dual-wield Fury and 0.8% to two-hand Fury.",
     "No Ahn'Qiraj book ranks (Heroic Strike VIII, raid Battle Shout VI, Strength of Earth, Grace of Air)",
     "Deep Wounds ticks can't crit.",
-    "Assumed: the crit Rage bonus is white hits only, and Heroic Strike counts for Unbridled Wrath.",
-    "One +2% crit elixir. A second (Grizzly) would add 10.9.",
-    "Battlegear of Glory 4-piece not counted. It would add 8.4 vs Humanoids.",
-    "Booming Voice (5/5) does nothing because the raid has Battle Shout",
-    "Raid damage hits (2 a minute, about 9 Rage each) are an estimate."
+    "Assumed: the crit Rage bonus is for white hits only. Heroic Strike can trigger Unbridled Wrath.",
+    "Only one +2% crit elixir. A second (Grizzly) would add 10.9 DPS.",
+    "Battlegear of Glory 4-piece isn't counted. It would add 8.4 DPS vs Humanoids.",
+    "Booming Voice (5/5) does nothing, because the raid already has Battle Shout",
+    "Rage from taking raid damage (2 hits a minute, about 9 Rage each) is an estimate."
   ],
   "notes": "Request from mksettings with the same arguments as warrior__arms except talents and APL, then the target's mobType set to MobTypeDragonkin, as the class preset's encounter does. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29) (follows its base build, warrior__arms), was Orc.",
   "encounter": "Dragonkin",

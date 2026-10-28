@@ -25,7 +25,7 @@
     "ok": true,
     "note": "verify.py of this request, 180s, seed 1"
   },
-  "summary": "Marksmanship with Lone Wolf (+20% damage with no pet out). It is behind the Marksmanship cat build, even though a Forever pet takes no player buffs.",
+  "summary": "Marksmanship with Lone Wolf (+20% damage with no pet out). It's behind Marksmanship with a cat, even though Forever pets get no player buffs.",
   "keyTalents": [
     "Lone Wolf",
     "Deadly Aspects",
@@ -39,13 +39,13 @@
   "rotation": [
     "Pre-pull: Aspect of the Hawk at -3s, walk to 12 yd, Hunter's Mark at -1.5s, Rapid Fire at -0.1s",
     "Rapid Fire, racials, potions and Demonic Rune on cooldown",
-    "Hunter's Mark (rank 4, +143 ranged attack power) 1.5s before the pull and again in its last 3s; the raid's mark is off",
-    "Arcane Shot on cooldown (above Multi-Shot, no mana floor)",
-    "Multi-Shot on the cooldown it shares with Aimed Shot (no Aimed Shot)",
-    "Serpent Sting when it is down (after Multi-Shot)",
-    "Sniper Shot on cooldown while mana >= 10 x seconds left",
-    "Melee weave: between Auto Shots, walk in for a main hand swing with Raptor Strike queued when the next Auto Shot waits 1.2s or less and the shot cooldowns stay down, while mana >= 25 x seconds left",
-    "Auto Shot throughout; no pet"
+    "Hunter's Mark (rank 4, +143 ranged attack power) at -1.5s, recast in its last 3s. The raid's mark is off",
+    "Arcane Shot on cooldown, before Multi-Shot, at any mana",
+    "Multi-Shot on the cooldown it shares with Aimed Shot. No Aimed Shot",
+    "Serpent Sting when it's down, after Multi-Shot",
+    "Sniper Shot on cooldown while mana is at least 10 per second of fight left",
+    "Melee weave between Auto Shots. Walk in for a main-hand swing with Raptor Strike queued, when the next Auto Shot is 1.2s or less away and no shot comes off cooldown. Only while mana is at least 25 per second of fight left",
+    "Auto Shot the whole fight. No pet"
   ],
   "consumes": [
     "Flask of Natural Aggression",
@@ -62,16 +62,16 @@
     "Goblin Land Mine"
   ],
   "caveats": [
-    "Assumed: Trueshot Aura's top rank gives 100 ranged attack power (the client has 50). Hunter's Mark gives 143, the server hotfix (the client has 71).",
-    "Aspect of the Hawk stays at rank 5 (90 RAP). Forever's rank 6 gives only 55.",
-    "Arcane Shot takes 10% of ranged attack power and Serpent Sting 3% a tick (beta log fit: 11% and 3.5%).",
-    "Auto Shot fires through casts and winds up 0.5s, which moving cancels.",
-    "Wildstalker Armor 4-piece and 5-piece aren't active. They would add 17.",
+    "Assumed: Trueshot Aura's top rank gives 100 ranged attack power (the client says 50). Hunter's Mark gives 143 after a server hotfix (the client says 71).",
+    "Uses Aspect of the Hawk rank 5 (90 ranged attack power). Forever's rank 6 gives only 55.",
+    "Arcane Shot gets 10% of ranged attack power, and Serpent Sting 3% a tick. Beta logs fit 11% and 3.5%.",
+    "Auto Shot keeps firing during casts. Moving cancels its 0.5s wind-up.",
+    "Wildstalker Armor 4-piece and 5-piece bonuses aren't counted. They would add 17 DPS.",
     "Rapid Killing never triggers on a single boss.",
-    "Crit per Agility is Classic's at 60 (0.0189% a point), from Forever's game files.",
-    "A 2.5s bow at Rhok'delar's 44.0 DPS. A 2.6s gun sims 0.3 to 1.0 higher with a 15% ammo pouch, 3.4 to 5.2 lower with Era's 14% pouch.",
-    "Mark duty is assumed: the hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs about 0.5 to 2.5 DPS at 180s (2.5 here).",
-    "Scorpid Sting isn't a duty: it shares Insect Swarm's 2% hit-reduction slot, which Balance druids keep up for its own damage, so a hunter on it would pay about 85 to 100 DPS (Serpent Sting's slot) for nothing."
+    "Crit per Agility is Classic's level 60 rate (0.0189% per point), from Forever's game files.",
+    "Uses a 2.5s bow with Rhok'delar's 44.0 weapon DPS. A 2.6s gun sims 0.3 to 1.0 DPS higher with a 15% ammo pouch, or 3.4 to 5.2 lower with Era's 14% pouch.",
+    "Assumed: each hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs 0.5 to 2.5 DPS at 180s (2.5 here).",
+    "No Scorpid Sting. Balance druids already keep up Insect Swarm, which gives the same 2% hit reduction. Scorpid Sting would replace Serpent Sting and cost about 85 to 100 DPS for nothing."
   ],
   "notes": "Request written by mksettings (spec hunter_lw, the hunter_presets.sh rotation); it matches the shipped preset's gear, talents, APL, race, consumes, raid buffs, debuffs and professions. Every hunter keeps up its own Hunter's Mark (standards 23, Mark duty assumed), so the raid's debuffs.huntersMark is off. Pet set to none (petType omitted = PetNone). Night Elf since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Windshaper Skyborne."
 }

@@ -25,7 +25,7 @@
     "ok": true,
     "note": "wowsimcli on the request, 180s, seed 1"
   },
-  "summary": "Dual wield Fury with a 2.8s sword and a 2.9s axe, and Death Wish and Recklessness held for the end of the fight.",
+  "summary": "Dual-wield Fury with a 2.8s sword and a 2.9s axe. Saves Death Wish and Recklessness for the end of the fight.",
   "keyTalents": [
     "Bloodthirst",
     "Flurry",
@@ -38,15 +38,15 @@
     "Enrage"
   ],
   "rotation": [
-    "Start with no Rage; before the pull Battle Stance, Charge for 15 Rage and back to Berserker Stance; Battle Shout from the raid",
-    "Sunder Armor as the first GCD after the pull (every warrior; the tanks keep it up after)",
-    "Death Wish held for the last 33s when that costs no use, then Recklessness with the fight's last Death Wish (in fights with two, the first goes at the pull without it), ahead of the trinket (which goes one GCD later)",
-    "Blood Fury and Berserking with Death Wish (also at the end of the fight), Elune's Light on cooldown but never during Recklessness or in the 15s before it; trinket on cooldown, its last use held for the last 30s; Mighty Rage Potion at the pull, second held for the last 20s",
+    "Start with 0 Rage. Before the pull, Battle Stance, Charge (15 Rage) and back to Berserker Stance. Battle Shout comes from the raid",
+    "Sunder Armor as the first GCD. Every warrior does this, and the tanks keep it up after",
+    "Save Death Wish for the last 33s when that doesn't lose a use. Recklessness goes with the last Death Wish, and the trinket 1 GCD later. In fights with 2 Death Wishes, the first goes at the pull without Recklessness",
+    "Blood Fury and Berserking with Death Wish. Elune's Light on cooldown, but never during Recklessness or the 15s before it. Trinket on cooldown, with its last use saved for the last 30s. Mighty Rage Potion at the pull, the second in the last 20s",
     "Bloodrage under 20 Rage",
     "Whirlwind at 25+ Rage, then Bloodthirst",
-    "Execute in the execute phase, after Bloodthirst and Whirlwind (Execute first loses 4.7 on Fury and 22.7 on two-hand Fury)",
-    "Heroic Strike queued from 80 Rage (in the execute phase too)",
-    "Hamstring filler from 10 Rage (procs Windfury Totem and Flurry)"
+    "During execute, Execute comes after Bloodthirst and Whirlwind. Putting it first loses 4.7 DPS on Fury and 22.7 on two-hand Fury",
+    "Heroic Strike at 80+ Rage, during execute too",
+    "Hamstring as filler at 10+ Rage (it procs Windfury Totem and Flurry)"
   ],
   "consumes": [
     "Flask of Natural Precision",
@@ -61,15 +61,15 @@
     "Dense Sharpening Stone"
   ],
   "caveats": [
-    "Assumed: white hits give Rage by weapon speed, at the level 30 rate at every level.",
+    "Assumed: white hits give Rage by weapon speed, at the level 30 rate even at level 60.",
     "No Ahn'Qiraj book ranks (Heroic Strike VIII, raid Battle Shout VI, Strength of Earth, Grace of Air)",
     "Deep Wounds ticks can't crit.",
-    "Assumed: the crit Rage bonus is white hits only, and Heroic Strike counts for Unbridled Wrath.",
-    "One +2% crit elixir. A second (Grizzly) would add 15.1.",
-    "Battlegear of Glory 4-piece not counted. It would add 10.8 vs Humanoids.",
-    "Holding Death Wish for 33s: +13.3 at 180s, +26.2 at 120s; the trinket for 30s: +2.2 at 180s.",
-    "Second Mighty Rage Potion held for the last 20s: +10.4 at 180s, 0.0 at 120s.",
-    "Raid damage hits (2 a minute, about 9 Rage each) are an estimate."
+    "Assumed: the crit Rage bonus is for white hits only. Heroic Strike can trigger Unbridled Wrath.",
+    "Only one +2% crit elixir. A second (Grizzly) would add 15.1 DPS.",
+    "Battlegear of Glory 4-piece isn't counted. It would add 10.8 DPS vs Humanoids.",
+    "Saving Death Wish for the last 33s adds 13.3 DPS at 180s and 26.2 at 120s. Saving the trinket for the last 30s adds 2.2 at 180s.",
+    "Saving the second Mighty Rage Potion for the last 20s adds 10.4 DPS at 180s and 0.0 at 120s.",
+    "Rage from taking raid damage (2 hits a minute, about 9 Rage each) is an estimate."
   ],
   "notes": "Request from mksettings -spec fury -gear level60_phase1_synthetic_fury -apl level60_fury -talents 30305013002-25053005142010501 -race Orc -duration 180, unedited (mksettings sets the raid hits, 2 a minute at 1500). Raid buffs, Kings and Might, debuffs, consumes, professions (Engineering, Alchemy) and the Level 60 encounter match ui/warrior/presets.ts."
 }

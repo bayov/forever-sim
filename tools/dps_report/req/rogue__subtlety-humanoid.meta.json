@@ -42,15 +42,15 @@
     "Seal Fate 4/5"
   ],
   "rotation": [
-    "Ambush first while stealthed (after Vanish)",
-    "Slice and Dice at 1+ combo points when down; refresh at 5 when about to drop",
-    "Cold Blood right before a 5-point Eviscerate; Thistle Tea at 10 energy or less",
-    "3-point Rupture when not ticking, with Hemorrhage right before it",
+    "Ambush first when stealthed (after Vanish)",
+    "Slice and Dice at 1+ combo points when it's down. Refresh it at 5 when it's about to drop",
+    "Cold Blood right before a 5-point Eviscerate. Thistle Tea at 10 energy or less",
+    "3-point Rupture when it's not up, with Hemorrhage right before it",
     "Premeditation at 3 combo points or fewer (no Stealth needed)",
     "Eviscerate at 5 combo points",
-    "Vanish into Ambush at 3 combo points or fewer, pooling energy, and the Night Elf's Shadowmeld into Ambush on the same terms; Preparation resets Vanish and Premeditation",
+    "Vanish into Ambush at 3 combo points or fewer, after pooling energy. A Night Elf uses Shadowmeld the same way. Preparation resets Vanish and Premeditation",
     "Ghostly Strike on cooldown",
-    "Hemorrhage as the filler builder"
+    "Hemorrhage as filler"
   ],
   "consumes": [
     "Flask of Natural Precision",
@@ -68,14 +68,14 @@
   ],
   "caveats": [
     "Murder (+4% damage) only works against Humanoids and Giants.",
-    "The fight doesn't open from Stealth. Only Vanish gives Stealth (and a Night Elf's Shadowmeld).",
-    "Ghostly Strike adds nothing over Hemorrhage (0.5), but the build requires it.",
-    "Open: Premeditation out of Stealth and Preparation's reset list.",
-    "Elusiveness: 0 at 180s, -2.9 at 300s.",
-    "No Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV). They would add 13 to 18.",
-    "Grimstitch 4-piece and 5-piece aren't active (about +8 and +6).",
-    "Assumed: the fight is in Hyjal or the Barrow Deeps. Its flask gives its full bonus only there.",
-    "No Flask of Natural Precision, so its 8% hit comes from the gear (7%, on the wrist, second ring and back) and the 2-piece bonus. That beats 6% hit by 1.2 to 1.9 DPS."
+    "The fight doesn't start in Stealth. Only Vanish, or a Night Elf's Shadowmeld, gives Stealth.",
+    "Ghostly Strike adds almost nothing over Hemorrhage (0.5 DPS), but the build requires it.",
+    "Open: whether Premeditation works out of Stealth, and what Preparation resets.",
+    "Elusiveness changes DPS by 0 at 180s and -2.9 at 300s.",
+    "No Ahn'Qiraj book ranks (Backstab VIII, Eviscerate VIII, Deadly Poison IV). They would add 13 to 18 DPS.",
+    "Grimstitch 4-piece and 5-piece bonuses aren't counted. They would add about 8 and 6 DPS.",
+    "Assumed: the fight is in Hyjal or the Barrow Deeps. The flask gives its full bonus only there.",
+    "No Flask of Natural Precision. Its 8% hit comes from gear (7% on the wrist, second ring and back) and the 2-piece bonus. That beats 6% hit by 1.2 to 1.9 DPS."
   ],
   "notes": "Request from mksettings with the same arguments as rogue__subtlety except talents, then the target's mobType set to MobTypeHumanoid, as the class preset's encounter does. Undead since the second 2026-10-27 race re-pick (follows its base build, rogue__subtlety) (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Night Elf.",
   "encounter": "Humanoid",
