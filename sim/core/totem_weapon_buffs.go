@@ -125,7 +125,7 @@ func applyRaidTotemWeaponBuff(character *Character, buff proto.TotemWeaponBuff) 
 	switch buff {
 	case proto.TotemWeaponBuff_TotemWeaponBuffWindfury:
 		if rank := HighestRankAt(character.Level, WindfuryTotemLevel[:]); rank > 0 {
-			character.RaidTotemWeaponBuff = MakePermanent(WindfuryTotemBuffAura(character, int32(rank), "Windfury Totem Raid"))
+			character.RaidTotemWeaponBuff = MakePermanent(WindfuryTotemBuffAura(character, int32(rank), "Windfury Totem Raid", ActionID{SpellID: WindfuryTotemSpellId[rank]}))
 		}
 	case proto.TotemWeaponBuff_TotemWeaponBuffFlametongue:
 		if rank := HighestRankAt(character.Level, FlametongueTotemLevel[:]); rank > 0 {

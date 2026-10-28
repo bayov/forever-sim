@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"math"
+	"strings"
 	"time"
 
 	"github.com/wowsims/classic/sim/core/proto"
@@ -1967,12 +1968,13 @@ func BattleSquawkAura(character *Unit, stackcount int32) *Aura {
 // CreateExtraAttackAuraCommon returns the aura that procs the extra attacks. It is not
 // active on its own: the caller makes it permanent or turns it on and off. While blocked
 // returns true the aura procs nothing (nil means never blocked). Only landed hits that
-// match procMask roll for a proc.
-func CreateExtraAttackAuraCommon(character *Character, buffActionID ActionID, auraLabel string, rank int32, getBonusAP func(aura *Aura, rank int32) float64, blocked func() bool, procMask ProcMask) *Aura {
+// match procMask roll for a proc. The aura reports its metrics under actionID (none when
+// empty), and each proc's short attack power buff is buffLabel, under buffActionID.
+func CreateExtraAttackAuraCommon(character *Character, actionID ActionID, buffActionID ActionID, auraLabel string, buffLabel string, rank int32, getBonusAP func(aura *Aura, rank int32) float64, blocked func() bool, procMask ProcMask) *Aura {
 	var bonusAP float64
 
 	apBuffAura := character.GetOrRegisterAura(Aura{
-		Label:     auraLabel + " Buff",
+		Label:     buffLabel,
 		ActionID:  buffActionID,
 		Duration:  time.Millisecond * 1500,
 		MaxStacks: 2,
@@ -2004,6 +2006,7 @@ func CreateExtraAttackAuraCommon(character *Character, buffActionID ActionID, au
 
 	return character.GetOrRegisterAura(Aura{
 		Label:    auraLabel,
+		ActionID: actionID,
 		Duration: NeverExpires,
 		OnSpellHitDealt: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
 			// charges are removed by every auto or next melee, whether it lands or not
@@ -2043,7 +2046,9 @@ func GetWildStrikesAP(aura *Aura, rank int32) float64 {
 const WindfuryRanks = 3
 
 var (
-	WindfuryBuffSpellId = [WindfuryRanks + 1]int32{0, 8516, 10608, 10610}
+	// The totem spells, which the raid's totem reports its uptime under.
+	WindfuryTotemSpellId = [WindfuryRanks + 1]int32{0, 8512, 10613, 10614}
+	WindfuryBuffSpellId  = [WindfuryRanks + 1]int32{0, 8516, 10608, 10610}
 	// Forever's totem gives less than Classic's 122, 229 and 315.
 	WindfuryBuffBonusAP = [WindfuryRanks + 1]float64{0, 95, 179, 246}
 )
@@ -2054,17 +2059,22 @@ func GetWindfuryAP(aura *Aura, rank int32) float64 {
 
 // WindfuryTotemBuffAura is the Windfury Totem buff at the given rank. It is not active on
 // its own, and Windfury Weapon on the main hand turns it off, see totem_weapon_buffs.go.
+// It reports its metrics under actionID (none when empty: a shaman's own totem reports its
+// party aura instead, see air_totems.go). Each proc's 1 sec attack power buff is "Windfury
+// Attack" (with the label's rank), so it doesn't read as the totem's uptime. The label
+// itself stays: tests roll each label's own random stream.
 //
 // Only main hand hits proc it, in Era and under Forever. Forever's totem is a raid aura with
 // nothing in its proc data that ties it to a weapon (ProcTypeMask 0x14), but client 70425
 // edited its description to "Each main hand hit has a 20% chance", and the user ruled for main
 // hand only (2026-10-16; report assumption wf_totem_offhand, one value). The extra swing is a
 // main hand one.
-func WindfuryTotemBuffAura(character *Character, rank int32, label string) *Aura {
+func WindfuryTotemBuffAura(character *Character, rank int32, label string, actionID ActionID) *Aura {
 	buffActionID := ActionID{SpellID: WindfuryBuffSpellId[rank]}
+	buffLabel := strings.Replace(strings.TrimSuffix(label, " Raid"), "Windfury Totem", "Windfury Attack", 1)
 	blocked := func() bool { return mainHandHasImbue(character, windfuryWeaponEnchantIds) }
 	procMask := ProcMaskMeleeMH
-	aura := CreateExtraAttackAuraCommon(character, buffActionID, label, rank, GetWindfuryAP, blocked, procMask)
+	aura := CreateExtraAttackAuraCommon(character, actionID, buffActionID, label, buffLabel, rank, GetWindfuryAP, blocked, procMask)
 	if character.Env.IsForever() {
 		// The attack power lasts 1 sec under Forever.
 		//
@@ -2072,7 +2082,7 @@ func WindfuryTotemBuffAura(character *Character, rank int32, label string) *Aura
 		// duration, where the Era client (1.15.9) has 1.5 sec. The extra swing comes right
 		// away and gets it either way. The second charge, when a yellow attack triggered the
 		// proc, only reaches a white swing that comes within the window.
-		character.GetAura(label + " Buff").Duration = time.Second
+		character.GetAura(buffLabel).Duration = time.Second
 	}
 	return aura
 }

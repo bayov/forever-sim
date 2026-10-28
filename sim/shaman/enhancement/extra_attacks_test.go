@@ -20,7 +20,7 @@ func TestOrcShamanExtraAttacks(t *testing.T) {
 	// The Forever client (70291) gives it 1 sec, where Era has 1.5 sec.
 	t.Run("Windfury Totem attack power", func(t *testing.T) {
 		_, enh := newGraceOfAirSim(proto.TotemWeaponBuff_TotemWeaponBuffWindfury, &proto.EnhancementShaman_Options{ShamanImbue: proto.WeaponImbue_FlametongueWeapon})
-		buff := enh.GetAura("Windfury Totem Raid Buff")
+		buff := enh.GetAura("Windfury Attack")
 		if buff == nil {
 			t.Fatalf("no Windfury Totem buff")
 		}

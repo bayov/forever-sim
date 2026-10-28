@@ -24,7 +24,7 @@ func (shaman *Shaman) setActiveAirTotem(sim *core.Simulation, spell *core.Spell,
 
 const WindfuryTotemRanks = 3
 
-var WindfuryTotemSpellId = [WindfuryTotemRanks + 1]int32{0, 8512, 10613, 10614}
+var WindfuryTotemSpellId = core.WindfuryTotemSpellId
 
 // The rotations ask for this aura to see whether the totem stands.
 //
@@ -70,7 +70,7 @@ func (shaman *Shaman) newWindfuryTotemSpellConfig(rank int) core.SpellConfig {
 	// leaves the slot to Flametongue Totem.
 	var buffAura *core.Aura
 	if shaman.HasMHWeapon() {
-		buffAura = core.WindfuryTotemBuffAura(&shaman.Character, int32(rank), fmt.Sprintf("Windfury Totem (Rank %d)", rank))
+		buffAura = core.WindfuryTotemBuffAura(&shaman.Character, int32(rank), fmt.Sprintf("Windfury Totem (Rank %d)", rank), core.ActionID{})
 	}
 
 	periodicTriggerAura := shaman.RegisterAura(core.Aura{

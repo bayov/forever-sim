@@ -88,7 +88,7 @@ func TestOrcRogueWindfuryTotemOffHand(t *testing.T) {
 	sim, rogue := newTotemRogueSim(60, proto.TotemWeaponBuff_TotemWeaponBuffWindfury, 300)
 
 	totem := rogue.GetAura("Windfury Totem Raid")
-	buff := rogue.GetAura("Windfury Totem Raid Buff")
+	buff := rogue.GetAura("Windfury Attack")
 	if totem == nil || buff == nil || buff.Icd == nil {
 		t.Fatalf("no Windfury Totem")
 	}

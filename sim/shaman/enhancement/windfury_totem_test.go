@@ -35,7 +35,7 @@ func TestOrcShamanWindfuryTotem(t *testing.T) {
 		sim, enh := start(c.level, 2)
 		at(sim, 1, func(sim *core.Simulation) {
 			before := enh.GetStat(stats.AttackPower)
-			enh.GetAura("Windfury Totem Raid Buff").Activate(sim)
+			enh.GetAura("Windfury Attack").Activate(sim)
 			if got := enh.GetStat(stats.AttackPower) - before; got != c.ap {
 				t.Errorf("level %d: Windfury Totem gave %.0f attack power, want %.0f", c.level, got, c.ap)
 			}
