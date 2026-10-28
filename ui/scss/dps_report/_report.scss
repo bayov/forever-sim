@@ -3747,6 +3747,12 @@ dialog.fv-about-modal {
 	--tag: var(--fv-adv-tgt);
 }
 
+// A race with its own rotation or gear on this preset.
+.fv-rtag.tuned {
+	--tag: var(--fv-gold);
+	cursor: help;
+}
+
 .fv-rtag.nowpn {
 	border-style: dashed;
 	background: none;

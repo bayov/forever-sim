@@ -1239,6 +1239,10 @@ export function startReport(dash, events) {
   const TAG_ICON = { sword: 'inv_sword_04', mace: 'inv_mace_25', axe: 'inv_axe_09', beast: 'ability_hunter_pet_bear', elemental: 'spell_frost_summonwaterelemental', humanoid: 'spell_holy_chastise' };
   const tagKind = (v) => (v === 'weapon' ? 'wpn' : v === 'noweapon' ? 'nowpn' : ADV.includes(v) ? 'tgt' : '');
   const tagIcon = (r) => TAG_ICON[r.variant === 'weapon' ? String(r.weapon || '').split(' ')[0] : r.variant];
+  // A race simmed with its own rotation or gear on a preset (standards 29) gets a badge after its name; the note
+  // that says what changed shows on hover, or on a tap on a phone.
+  const TUNED_LABEL = { rotation: 'own rotation', gear: 'own gear', 'rotation+gear': 'own rotation + gear' };
+  const TUNED_TITLE = { rotation: 'Its own rotation', gear: 'Its own gear', 'rotation+gear': 'Its own rotation and gear' };
   const raceTag = (r, tag = r.tag) => {
     if (!tag) return null;
     const ic = r.variant !== 'noweapon' && tagIcon(r) && iconMap() ? iconImg(tagIcon(r), '') : null;
@@ -1551,7 +1555,7 @@ export function startReport(dash, events) {
       const row = el('div', { class: 'fv-rrow' + (i === 0 ? ' top' : ''), 'data-tip': '1' },
         raceTT(r, raceIco(r.raceIcon) || el('span', { class: 'fv-dot', style: `background:${fcol(r.race)}` })),
         el('span', { class: 'nm' }, tagZone(r, raceNameTT(r)), one && r.isPreset ? head(el('i', { text: 'preset race' })) : null,
-          one && r.tuned ? head(el('small', { text: String(r.tuned) })) : null, ...idle),
+          one && r.tuned ? el('span', { class: 'fv-rtag tuned', 'data-zone': 'tuned', text: TUNED_LABEL[r.tunedKind] || 'own setup' }) : null, ...idle),
         el('span', { class: 'end', 'data-zone': '' }, el('small', { text: one ? (i === 0 ? '★ best' : `−${f2(100 * (1 - r.dps / rows[0].dps))}%`) : r.timesBest ? `best on ${r.timesBest} of ${r.n}` : 'never best' }),
           el('b', { text: one ? f1(r.dps) : pct(r.avg) })),
         track, cap);
@@ -1562,6 +1566,14 @@ export function startReport(dash, events) {
         const cr = card.getBoundingClientRect(), rw = row.getBoundingClientRect();
         const title = tipTitle(who(r), one ? one.label : null, raceIco(r.raceIcon));
         const opts = { below: true, pinned };
+        // A race with its own rotation or gear (standards 29): its badge says what changed and what it gains.
+        if (zone === 'tuned') {
+          const at = node.getBoundingClientRect();
+          showTip(card, Math.max(8, at.left - cr.left), at.bottom - cr.top + 4, title,
+            [el('span', {}, el('b', { text: TUNED_TITLE[r.tunedKind] || 'Its own setup' })),
+              el('span', { class: 'fv-tip-m', text: `${String(r.tuned).replace(/\.$/, '')}.` }), null], { ...opts, hl: row });
+          return;
+        }
         if (zone) {
           const [what, part] = zone.startsWith('idle:') ? ['idle', zone.slice(5)] : ['seg', zone];
           const sg = r.segs.find((g) => g.part === part), q = r.idle.find((g) => g.part === part);

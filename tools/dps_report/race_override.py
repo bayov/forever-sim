@@ -58,6 +58,14 @@ def _player(bid):
     return json.load(open(os.path.join(D, 'req', bid + '.json')))['raid']['parties'][0]['players'][0]
 
 
+def tuned_kind(ov):
+    """What a race's own setup changes, from its file or the override an out/ file records: 'rotation', 'gear' or
+    'rotation+gear' ('' for none). The Races tab names it on the race's badge."""
+    if not ov:
+        return ''
+    return '+'.join(k for k, on in (('rotation', ov.get('rotation')), ('gear', ov.get('bonusStats'))) if on)
+
+
 def own_path(bid, race):
     return os.path.join(DIR, f'{bid}.{race}.json')
 

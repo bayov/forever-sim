@@ -6,6 +6,7 @@ from itertools import groupby
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from dashpaths import D, TREE  # base dir and merged tree (env DASH_DIR / DASH_TREE)
+from race_override import tuned_kind  # noqa: E402
 OUT = os.path.join(D, 'data')
 os.makedirs(OUT, exist_ok=True)
 os.makedirs(OUT, exist_ok=True)
@@ -408,7 +409,8 @@ for o in outs:
         races.append({'build': bid, 'class': m['class'], 'race': race_name(r['race']), 'faction': r['faction'],
                       'dps': round(r['dps'], 1), 'se': round(r['se'], 2), 'vsBest': round(100 * (r['dps'] / best['dps'] - 1), 2),
                       'isPreset': r['race'] == m['race'], 'raceIcon': RACE_ICON.get(race_name(r['race'])),
-                      'tuned': (r.get('override') or {}).get('note', '')})  # the race's own rotation or gear (race_override.py)
+                      'tuned': (r.get('override') or {}).get('note', ''),  # the race's own rotation or gear (race_override.py)
+                      'tunedKind': tuned_kind(r.get('override'))})
     total = sum(a['dps'] for a in mn['actions'])
     seen = defaultdict(int)
     for a in mn['actions']:

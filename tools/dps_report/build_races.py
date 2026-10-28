@@ -12,6 +12,7 @@ import json, math, os, re, statistics
 from collections import defaultdict
 
 from dashpaths import D, TREE
+from race_override import tuned_kind  # noqa: E402
 RACE_NAMES = {'NightElf': 'Night Elf', 'SkyborneHighOrder': 'High Order', 'SkyborneWindshaper': 'Windshaper'}
 HORDE = {'Orc', 'Undead', 'Tauren', 'Troll', 'Windshaper'}
 RACE_ICON = {'Human': 'race_human_male', 'Dwarf': 'race_dwarf_male', 'Night Elf': 'race_nightelf_male', 'Gnome': 'race_gnome_male',
@@ -103,7 +104,7 @@ def build(builds, races_rows, stats_rows, dump):
         for r in out['races']:
             res[(out['id'], rn(r['race']))]['baseline'] = (r['dps'], r['se'])
             if r.get('override'):
-                tuned[(out['id'], rn(r['race']))] = r['override'].get('note', '')
+                tuned[(out['id'], rn(r['race']))] = (r['override'].get('note', ''), tuned_kind(r['override']))
 
     variants, breakdown, notes = [], [], []
     for bid, b in list(bmap.items()):
@@ -132,7 +133,7 @@ def build(builds, races_rows, stats_rows, dump):
                     raise SystemExit(f'missing {bid} {race} {var}')
                 rows.append({'build': bid, 'class': cls, 'race': race, 'faction': 'Horde' if race in HORDE else 'Alliance', 'variant': var,
                              'dps': round(val[0], 1), 'se': round(val[1], 2), 'isPreset': race == b['race'], 'simmed': sim, 'note': note,
-                             'tuned': tuned.get((bid, race), ''), 'raceIcon': RACE_ICON.get(race)})
+                             'tuned': tuned.get((bid, race), ('', ''))[0], 'tunedKind': tuned.get((bid, race), ('', ''))[1], 'raceIcon': RACE_ICON.get(race)})
             # breakdown: base stats, then each racial part (Shapley split when two parts count, so the parts add up exactly)
             off = v['off']
             ps = [p for p in RR.parts_for(cls, rc, req)]
