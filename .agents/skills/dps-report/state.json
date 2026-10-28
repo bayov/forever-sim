@@ -47,7 +47,7 @@
   "source": "ui/dps_report/",
   "artifact": "retired 2026-10-25 (was https://claude.ai/artifact/RUzPysb5dSk2RAXzXij4oR); the report is deployed to https://forever-dps.pages.dev",
   "artifactVersion": 6,
-  "publishedFrom": "master d40c34086 (Changes tab); the race rotations branch ccr-e54cfd9f-wlmdto was live as 5fe7a369 for a short while and was rolled back to master on the user's ask",
+  "publishedFrom": "master bd1b7c502 (race rotations on the Rotation card with why, talent icons and plain-word conditions, on the hunter hotfix data)",
   "legacyDashboard": "deleted 2026-10-13"
  },
  "reportArtifact": {
@@ -71,7 +71,7 @@
   "deploy": "make dps-report-deploy (tools/dps_report/deploy_pages.py)",
   "publishedFrom": "master e7dcc21 (launch-realm hunter hotfix; Changes tab game update 2026-10-28-hunter-hotfix)",
   "date": "2026-10-28",
-  "deployId": "7d3f49bf",
+  "deployId": "73d77944",
   "analytics": "Cloudflare Web Analytics enabled by the user 2026-10-28 (dashboard: Analytics & Logs > Web Analytics, site forever-dps.pages.dev); Pages injects the beacon, deploy_pages.py's live check strips it. The session token has no analytics read permission."
  },
  "changesTab": "Changes tab live 2026-10-28 (standards 30): tools/dps_report/changes/, live update 2026-10-28-race-rotations (sim/preset)"
