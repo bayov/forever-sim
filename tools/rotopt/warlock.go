@@ -46,7 +46,16 @@ var (
 	lockCurseOfReckl      = spellID(11717)
 	lockDecimation        = spellID(440873)
 	lockShadowTrance      = spellID(17941)
+	// Gnome Eureka! (sim/core/racials_forever.go): 10% less cost and 10% more damage for 8 sec,
+	// 2 min. The warlock's own mask covers Shadow Bolt, Searing Pain, Soul Fire, Conflagrate and
+	// Immolate's hit, and not Incinerate or the damage over time spells.
+	lockEureka = spellID(1259812)
 )
+
+// gcdIsReady is true when the global cooldown is free.
+func gcdIsReady() value {
+	return &proto.APLValue{Value: &proto.APLValue_GcdIsReady{GcdIsReady: &proto.APLValueGCDIsReady{}}}
+}
 
 func (warlockRotation) Knobs() []Knob {
 	return []Knob{
@@ -108,6 +117,12 @@ func (warlockRotation) Knobs() []Knob {
 		// pull does not count, so it should land just after: 2.5 for a 2.45 sec Shadow Bolt and
 		// its travel, 1.5 for Immolate.
 		{Name: "prepullAt", Default: 2.5, Min: 1, Max: 4, Step: 0.5},
+		// Gnome Eureka!: 0 with the other cooldowns (at the pull and on cooldown, where its 8 sec
+		// go on the bane, Corruption and Life Tap), 1 just before a filler with the GCD free, so
+		// its 8 sec are Shadow Bolts, 2 just before an Immolate that is due with Conflagrate back
+		// within 5 sec, so both hit inside it (the Incinerate build, whose filler it doesn't
+		// cover). Other races ignore the warning on the line.
+		{Name: "eureka", Default: 0, Min: 0, Max: 2, Step: 1},
 	}
 }
 
@@ -166,7 +181,12 @@ func (warlockRotation) Build(k Knobs) *proto.APLRotation {
 		if k["immolateLead"] == 1 {
 			immolateDown = or(not(dotIsActive(lockImmolate)), lt(dotRemainingTime(lockImmolate), spellCastTime(lockImmolate)))
 		}
-		items = append(items, cast(lockImmolate, and(immolateDown, gt(remainingTime(), seconds(k["immolateMinTime"]))), "Immolate when it is down."))
+		immolateWhen := and(immolateDown, gt(remainingTime(), seconds(k["immolateMinTime"])))
+		if k["eureka"] == 2 {
+			items = append(items, cast(lockEureka, and(gcdIsReady(), immolateWhen, lt(spellTimeToReady(lockConflagrate), seconds(5))),
+				"Gnome. Eureka! for an Immolate with Conflagrate after it. Other races ignore the warning on this line."))
+		}
+		items = append(items, cast(lockImmolate, immolateWhen, "Immolate when it is down."))
 	}
 	if k["conflagrate"] == 1 {
 		items = append(items, cast(lockConflagrate, dotIsActive(lockImmolate), "Conflagrate on cooldown."))
@@ -211,6 +231,10 @@ func (warlockRotation) Build(k Knobs) *proto.APLRotation {
 			cast(lockDeathCoil, tooLate, "Death Coil when the filler would not land before the end."),
 			cast(lockSearingPain, and(tooLate, gt(remainingTime(), spellCastTime(lockSearingPain))),
 				"Searing Pain when the filler would not land before the end."))
+	}
+	if k["eureka"] == 1 {
+		items = append(items, cast(lockEureka, gcdIsReady(),
+			"Gnome. Eureka! just before a filler, so its 8 sec are fillers. Other races ignore the warning on this line."))
 	}
 	switch k["filler"] {
 	case 4:
