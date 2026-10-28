@@ -63,7 +63,7 @@ export function startReport(dash, events) {
   // is on; everywhere else their base preset stands for them
   const isDuty = (b) => !!(b && b.duty && b.duty !== 'null');
   const visB = () => { const r = rowsOf('builds'); return r && r.filter((b) => !isDuty(b) && (st.enc || !isEnc(b))).map(adjB); };
-  const rankB = () => { const r = rowsOf('builds'); return r && r.filter((b) => (st.duty || !isDuty(b)) && (st.enc || !isEnc(b))).map(adjB); };
+  const rankB = () => { const r = rowsOf('builds'); return r && r.filter((b) => (st.showDuty || !isDuty(b)) && (st.enc || !isEnc(b))).map(adjB); };
   const genB = () => { const r = rowsOf('builds'); return r && r.filter((b) => !isEnc(b) && !isDuty(b)); };
   const dutyBase = (id) => { const b = (rowsOf('builds') || []).find((x) => x.id === id); return isDuty(b) ? b.baseBuild : id; };
   const rankOf = (b, list) => 1 + list.filter((x) => +x.dps > +b.dps).length;
@@ -151,7 +151,8 @@ export function startReport(dash, events) {
   // ---------- state ----------
   const store = (() => { try { return window.localStorage; } catch { return null; } })();
   const saved = (() => { try { return JSON.parse(store?.getItem('fv-state') || '{}'); } catch { return {}; } })();
-  const st = Object.assign({ tab: 'ranking', cls: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', rotRace: 'All', rsOpt: {}, rsFac: 'All', srFac: 'All', slFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', rlFac: 'All', rlRole: 'All', rlCls: 'All', rlSpec: 'All', setupHide: false, enc: false, duty: true, asm: {}, asmOpen: [], chUp: null, chCls: 'All', chVar: false, chSim: false }, saved);
+  // "Duty" is off by default; it's showDuty rather than the old duty, which every earlier visit saved as on
+  const st = Object.assign({ tab: 'ranking', cls: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', rotRace: 'All', rsOpt: {}, rsFac: 'All', srFac: 'All', slFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', rlFac: 'All', rlRole: 'All', rlCls: 'All', rlSpec: 'All', setupHide: false, enc: false, showDuty: false, asm: {}, asmOpen: [], chUp: null, chCls: 'All', chVar: false, chSim: false }, saved);
   st.len = '180'; // a fight length other than 180s is never restored: the page always opens on the main numbers
   st.chUp = null; // nor an older update: the Changes tab opens on the newest unless a link names one
   const persist = () => { try { store?.setItem('fv-state', JSON.stringify(st)); } catch {} };
@@ -905,7 +906,7 @@ export function startReport(dash, events) {
     $('#rank-best').title = oneCls ? 'Off while one class is picked.' : '';
     $('#rank-best').setAttribute('aria-pressed', String(best));
     $('#rank-enc').setAttribute('aria-pressed', String(!!st.enc));
-    $('#rank-duty').setAttribute('aria-pressed', String(!!st.duty));
+    $('#rank-duty').setAttribute('aria-pressed', String(!!st.showDuty));
     const filtered = st.cls !== 'All' || (role !== 'All' && !(clsRoles?.size === 1)) || st.fac !== 'All' || best;
     $('#rank-reset').hidden = !filtered;
     if (!waitOr(host, ['builds', 'lengths'])) return;
@@ -964,7 +965,7 @@ export function startReport(dash, events) {
     }));
   };
   $('#rank-best').addEventListener('click', (e) => { e.stopPropagation(); st.best = !st.best; persist(); render(); });
-  $('#rank-duty').addEventListener('click', (e) => { e.stopPropagation(); st.duty = !st.duty; persist(); hideTip(); render(); });
+  $('#rank-duty').addEventListener('click', (e) => { e.stopPropagation(); st.showDuty = !st.showDuty; persist(); hideTip(); render(); });
   $('#rank-enc').addEventListener('click', (e) => { e.stopPropagation(); st.enc = !st.enc; if (!st.enc && st.build && isEnc((rowsOf('builds') || []).find((b) => b.id === st.build))) st.build = (rowsOf('builds') || []).find((b) => b.id === st.build).baseBuild; persist(); hideTip(); render(); });
   $('#rank-reset').addEventListener('click', (e) => { e.stopPropagation(); Object.assign(st, { cls: 'All', role: 'All', fac: 'All', best: false }); persist(); render(); });
 
