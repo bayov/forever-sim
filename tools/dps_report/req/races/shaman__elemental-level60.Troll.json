@@ -1,0 +1,404 @@
+{
+ "rotation": {
+  "type": "TypeAPL",
+  "prepullActions": [
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 10432
+      }
+     }
+    },
+    "doAtValue": {
+     "const": {
+      "val": "-5.4s"
+     }
+    }
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 10497
+      }
+     }
+    },
+    "doAtValue": {
+     "const": {
+      "val": "-3.9s"
+     }
+    }
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 15208
+      }
+     }
+    },
+    "doAtValue": {
+     "const": {
+      "val": "-2.9s"
+     }
+    }
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 10438
+      }
+     }
+    },
+    "doAtValue": {
+     "const": {
+      "val": "-0.9s"
+     }
+    }
+   }
+  ],
+  "priorityList": [
+   {
+    "action": {
+     "autocastOtherCooldowns": {}
+    },
+    "notes": "Racials, trinkets, potions, Demonic Rune and Nature's Swiftness on cooldown."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 26297,
+       "tag": 2
+      }
+     },
+     "condition": {
+      "and": {
+       "vals": [
+        {
+         "not": {
+          "val": {
+           "auraIsActive": {
+            "auraId": {
+             "spellId": 16166
+            }
+           }
+          }
+         }
+        },
+        {
+         "not": {
+          "val": {
+           "spellIsReady": {
+            "spellId": {
+             "spellId": 16166
+            }
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    "notes": "Troll. Berserking once Elemental Mastery has run out: under it the bolts are 1.5 sec casts and the GCD takes the haste. Other races ignore the warning on this line."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 10497
+      }
+     },
+     "condition": {
+      "and": {
+       "vals": [
+        {
+         "not": {
+          "val": {
+           "auraIsActive": {
+            "auraId": {
+             "spellId": 10497
+            }
+           }
+          }
+         }
+        },
+        {
+         "cmp": {
+          "lhs": {
+           "remainingTime": {}
+          },
+          "op": "OpGe",
+          "rhs": {
+           "const": {
+            "val": "20s"
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    "notes": "Mana Spring Totem whenever it is down, with 20 sec or more of the fight left."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 10438
+      }
+     },
+     "condition": {
+      "and": {
+       "vals": [
+        {
+         "not": {
+          "val": {
+           "dotIsActive": {
+            "spellId": {
+             "spellId": 10438
+            }
+           }
+          }
+         }
+        },
+        {
+         "cmp": {
+          "lhs": {
+           "remainingTime": {}
+          },
+          "op": "OpGe",
+          "rhs": {
+           "const": {
+            "val": "20s"
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    "notes": "Searing Totem whenever it is down, unless the fight is about to end. It reaches 20 yards."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 29228
+      }
+     },
+     "condition": {
+      "and": {
+       "vals": [
+        {
+         "not": {
+          "val": {
+           "dotIsActive": {
+            "spellId": {
+             "spellId": 29228
+            }
+           }
+          }
+         }
+        },
+        {
+         "cmp": {
+          "lhs": {
+           "remainingTime": {}
+          },
+          "op": "OpGe",
+          "rhs": {
+           "const": {
+            "val": "9s"
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    "notes": "Flame Shock when its DoT is down, with 9 sec or more of the fight left."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 1326047
+      }
+     },
+     "condition": {
+      "or": {
+       "vals": [
+        {
+         "not": {
+          "val": {
+           "dotIsActive": {
+            "spellId": {
+             "spellId": 29228
+            }
+           }
+          }
+         }
+        },
+        {
+         "cmp": {
+          "lhs": {
+           "dotRemainingTime": {
+            "spellId": {
+             "spellId": 29228
+            }
+           }
+          },
+          "op": "OpGt",
+          "rhs": {
+           "const": {
+            "val": "2s"
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    "notes": "Lava Burst on cooldown, unless Flame Shock runs out before the cast ends. Without the talent ignore the warning on this line."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 10414
+      }
+     },
+     "condition": {
+      "cmp": {
+       "lhs": {
+        "remainingTime": {}
+       },
+       "op": "OpLt",
+       "rhs": {
+        "math": {
+         "lhs": {
+          "spellCastTime": {
+           "spellId": {
+            "spellId": 15208
+           }
+          }
+         },
+         "op": "OpAdd",
+         "rhs": {
+          "const": {
+           "val": "1s"
+          }
+         }
+        }
+       }
+      }
+     }
+    },
+    "notes": "Earth Shock when a Lightning Bolt would not land before the end."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 10432
+      }
+     },
+     "condition": {
+      "and": {
+       "vals": [
+        {
+         "not": {
+          "val": {
+           "auraIsActive": {
+            "auraId": {
+             "spellId": 10432
+            }
+           }
+          }
+         }
+        },
+        {
+         "cmp": {
+          "lhs": {
+           "currentManaPercent": {}
+          },
+          "op": "OpGe",
+          "rhs": {
+           "const": {
+            "val": "0.5"
+           }
+          }
+         }
+        },
+        {
+         "cmp": {
+          "lhs": {
+           "remainingTime": {}
+          },
+          "op": "OpGe",
+          "rhs": {
+           "const": {
+            "val": "60s"
+           }
+          }
+         }
+        }
+       ]
+      }
+     }
+    },
+    "notes": "Lightning Shield again with 50% of the mana or more and 60 sec of the fight to go. Raid damage that hits the shaman fires its orbs at the target, three to a cast, at most one every 3.5 sec."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 10392
+      }
+     },
+     "condition": {
+      "cmp": {
+       "lhs": {
+        "currentManaPercent": {}
+       },
+       "op": "OpLt",
+       "rhs": {
+        "const": {
+         "val": "0.2"
+        }
+       }
+      }
+     }
+    },
+    "notes": "A lower rank of Lightning Bolt once the mana runs low."
+   },
+   {
+    "action": {
+     "castSpell": {
+      "spellId": {
+       "spellId": 15208
+      }
+     }
+    },
+    "notes": "Lightning Bolt."
+   }
+  ]
+ },
+ "note": "Berserking held until Elemental Mastery ends: under Mastery the bolts are 1.5 sec casts and the GCD eats the haste",
+ "gain": {
+  "dps": 4.86,
+  "se": 0.23,
+  "iterations": 20000,
+  "seed": 1,
+  "duration": 180
+ },
+ "how": "rotopt -template shaman_ele -race Troll -durs 180 -eval -level 60, the preset's knobs (chainLightning=0,lightningBoltDownrank=2,lavaBurstFlameShockLeft=2,prepullBolt=1,earthShockFinish=1,waterTotemMinTime=20,shield=1,shieldMinMana=50,shieldMinTime=60,prepullShield=1,flameShockMinTime=9) plus berserkingAfterMastery=1 (new knob, tools/rotopt/shaman_ele.go). Both cooldowns came off at the pull, so Lightning Bolt went 2.0 -> 1.5 sec (Mastery) -> 1.36 sec (Berserking), floored at the 1.5 sec GCD: Berserking was worth +0.15 DPS; now +5.0. Paired over 20000 iterations."
+}

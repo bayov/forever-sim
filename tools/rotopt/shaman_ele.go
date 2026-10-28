@@ -17,8 +17,9 @@ import (
 // totem that reaches it. Magma Totem and Fire Nova hit around the totem (8 and 10 yards), so the
 // template leaves them out.
 //
-// Forever has no Elemental Mastery. The burst is the racials and the trinkets, which go out on
-// cooldown with the other cooldowns (potions, Demonic Rune, Nature's Swiftness).
+// The burst is Elemental Mastery (the 30-point talent since client 70425), the racials and the
+// trinkets, which go out on cooldown with the other cooldowns (potions, Demonic Rune, Nature's
+// Swiftness), unless berserkingAfterMastery holds Troll Berserking.
 type shamanEle struct{}
 
 func init() {
@@ -79,6 +80,11 @@ func (shamanEle) Knobs() []Knob {
 		{Name: "shieldMinTime", Default: 0, Min: 0, Max: 120, Step: 30},
 		// 1 puts the shield up 1.5 sec before the first prepull action.
 		{Name: "prepullShield", Default: 0, Min: 0, Max: 1, Step: 1},
+		// 1 holds Troll Berserking (10% cast speed, 15 sec) until Elemental Mastery has run out.
+		// Both come off cooldown together, and under Elemental Mastery Lightning Bolt and Lava
+		// Burst are 1.5 sec casts that Berserking can only take under the 1.5 sec GCD, so the
+		// autocast at the pull wastes it. 0 adds no line (Berserking goes out with the autocast).
+		{Name: "berserkingAfterMastery", Default: 0, Min: 0, Max: 1, Step: 1},
 	}
 }
 
@@ -103,6 +109,11 @@ func (shamanEle) Build(k Knobs) *proto.APLRotation {
 	var items []*proto.APLListItem
 	var totems []*proto.ActionID
 	items = append(items, autocastOtherCooldowns(nil, "Racials, trinkets, potions, Demonic Rune and Nature's Swiftness on cooldown."))
+	if k["berserkingAfterMastery"] == 1 {
+		elementalMastery := spellID(16166)
+		items = append(items, cast(berserking, and(not(auraIsActive(elementalMastery)), not(spellIsReady(elementalMastery))),
+			"Troll. Berserking once Elemental Mastery has run out: under it the bolts are 1.5 sec casts and the GCD takes the haste. Other races ignore the warning on this line."))
+	}
 	if k["manaTideMana"] > 0 {
 		items = append(items, cast(manaTideTotem, le(currentManaPercent(), num(k["manaTideMana"]/100)),
 			"Mana Tide Totem once the mana runs low. Without the talent ignore the warning on this line."))
