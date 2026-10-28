@@ -354,7 +354,7 @@
    "title": "Rotations for the weaker racials",
    "date": "2026-10-28",
    "baselineData": "9857d17e372e658b22e7b5ae86d7be37e7064070",
-   "endData": null,
+   "endData": "41ad908d6b62982004bc6cd09d024506956201d6",
    "lines": [
     {
      "title": "High Order Frostfire and Arcane: rotations built around Wind Blessed",
@@ -430,6 +430,37 @@
      "why": "a Races tab badge, no numbers change"
     }
    ]
+  },
+  {
+   "id": "2026-10-28-hunter-hotfix",
+   "type": "game",
+   "title": "Hunter hotfix: Trueshot Aura and Aspect of the Hawk",
+   "date": "2026-10-28",
+   "baselineData": "41ad908d6b62982004bc6cd09d024506956201d6",
+   "endData": null,
+   "lines": [
+    {
+     "title": "Trueshot Aura and Aspect of the Hawk give about half as much at their lower ranks, so a level 60 hunter's best are Trueshot Aura rank 5 (+50 ranged attack power) and Aspect of the Hawk rank 6 (+55)",
+     "kind": "game",
+     "note": "A server hotfix on the launch realms, not in the development notes: Trueshot Aura 15 / 22 / 30 / 40 / 50, Aspect of the Hawk 15 / 22 / 30 / 38 / 47 / 55.",
+     "source": {
+      "label": "foreverchanges.pro patch notes",
+      "url": "https://foreverchanges.pro/patch-notes"
+     },
+     "classes": [
+      "Hunter"
+     ],
+     "commits": [
+      "73cedc9",
+      "5b019f3"
+     ]
+    }
+   ],
+   "internal": [],
+   "source": {
+    "label": "foreverchanges.pro patch notes",
+    "url": "https://foreverchanges.pro/patch-notes"
+   }
   }
  ]
 }
