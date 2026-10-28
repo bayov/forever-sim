@@ -4099,33 +4099,6 @@ dialog.fv-about-modal {
 	color: var(--fv-gold);
 }
 
-// The update picker shrinks to the card on a phone, and a long title ends in an ellipsis.
-#ch-card .fv-toolbar > .fv-controls {
-	flex-wrap: nowrap;
-	min-width: 0;
-	max-width: 100%;
-}
-
-#ch-pick {
-	flex: 0 1 auto;
-	min-width: 0;
-	max-width: 100%;
-
-	.fv-isel-menu {
-		min-width: min(24rem, calc(100vw - 2rem));
-	}
-
-	.fv-isel-btn {
-		max-width: 100%;
-	}
-
-	.fv-isel-btn .fv-isel-text {
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-}
-
 .fv-ch-lines,
 .fv-ch-races {
 	display: grid;
@@ -4150,7 +4123,10 @@ dialog.fv-about-modal {
 
 	> .fv-ch-note,
 	> .fv-ch-eff,
-	> .fv-ch-list {
+	> .fv-ch-list,
+	> .fv-scroll,
+	> .fv-ch-races,
+	> .fv-note {
 		margin: 0 0.65rem 0.55rem;
 	}
 }
@@ -4303,11 +4279,11 @@ dialog.fv-about-modal {
 	}
 }
 
-#ch-table td.quiet {
+.fv-ch-table td.quiet {
 	color: var(--color-fg-muted);
 }
 
-#ch-table td:last-child {
+.fv-ch-table td:last-child {
 	white-space: nowrap;
 }
 
@@ -4318,12 +4294,12 @@ dialog.fv-about-modal {
 // On a phone the preset column gives way to the numbers: no class name, and a long preset name ends in an ellipsis.
 @include media-breakpoint-down(md) {
 	// the class name, and the change's percent and noise (the row's tooltip has them)
-	#ch-table .fv-ch-cls,
-	#ch-table .fv-ch-d small {
+	.fv-ch-table .fv-ch-cls,
+	.fv-ch-table .fv-ch-d small {
 		display: none;
 	}
 
-	#ch-table td.first b {
+	.fv-ch-table td.first b {
 		display: inline-block;
 		max-width: 8.5rem;
 		overflow: hidden;
@@ -4362,4 +4338,120 @@ dialog.fv-about-modal {
 	flex-wrap: wrap;
 	align-items: baseline;
 	gap: 0.25rem 0.6rem;
+}
+
+// An update: a collapsible card, its title, date and source in the summary with its key figure, and the most
+// important things it did first inside.
+.fv-uc-list {
+	display: grid;
+	gap: var(--cds-gap-sm);
+}
+
+.fv-uc {
+	border: 1px solid var(--color-border-line);
+	border-radius: var(--fv-r-sm);
+	background: var(--color-bg);
+
+	&[open] {
+		border-color: color-mix(in srgb, var(--fv-gold) 35%, var(--color-border-line));
+	}
+
+	> summary {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.35rem 0.65rem;
+		padding: 0.6rem 0.75rem;
+		cursor: pointer;
+		font-weight: 400;
+	}
+
+	> :not(summary) {
+		margin-inline: 0.75rem;
+	}
+
+	> :last-child:not(summary) {
+		margin-bottom: 0.75rem;
+	}
+}
+
+.fv-uc-title {
+	display: grid;
+	gap: 0.1rem;
+	flex: 1 1 14rem;
+	min-width: 0;
+
+	> b {
+		font-size: var(--cds-font-size-heading);
+		font-weight: 600;
+	}
+}
+
+.fv-uc-meta {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.1rem 0.5rem;
+	font-size: var(--cds-font-size-caption);
+	color: var(--color-fg-muted);
+
+	> * + *::before {
+		content: '·';
+		margin-right: 0.5rem;
+		opacity: 0.6;
+	}
+}
+
+.fv-uc-teaser {
+	flex: none;
+	font-size: var(--cds-font-size-caption);
+	color: var(--color-fg-muted);
+
+	b {
+		color: var(--color-fg);
+		font-size: var(--cds-font-size-body);
+	}
+}
+
+.fv-uc-tiles {
+	margin-top: 0.15rem;
+
+	.fv-tile .s {
+		font-size: 0.72rem;
+		color: var(--color-fg-muted);
+		line-height: 1.35;
+	}
+}
+
+.fv-uc-h {
+	margin: 0.85rem 0 0.35rem;
+	font-size: var(--cds-font-size-caption);
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--color-fg-muted);
+}
+
+.fv-uc .fv-ch-line {
+	background: var(--color-panel);
+}
+
+.fv-uc-more {
+	margin-top: 0.4rem;
+}
+
+// a change line's key figure, after its title
+.fv-ch-fig {
+	flex: 0 1 auto;
+	margin-left: auto;
+	font-size: var(--cds-font-size-caption);
+	color: var(--color-fg-muted);
+	text-align: right;
+
+	.vl {
+		color: var(--color-fg);
+	}
+
+	> small {
+		opacity: 0.85;
+	}
 }

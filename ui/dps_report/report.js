@@ -151,7 +151,7 @@ export function startReport(dash, events) {
   // ---------- state ----------
   const store = (() => { try { return window.localStorage; } catch { return null; } })();
   const saved = (() => { try { return JSON.parse(store?.getItem('fv-state') || '{}'); } catch { return {}; } })();
-  const st = Object.assign({ tab: 'ranking', cls: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', rotRace: 'All', rsOpt: {}, rsFac: 'All', srFac: 'All', slFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', rlFac: 'All', rlRole: 'All', rlCls: 'All', rlSpec: 'All', setupHide: false, enc: false, duty: true, asm: {}, asmOpen: [], chUp: null, chCls: 'All', chRcls: 'All', chAll: false, chVar: false }, saved);
+  const st = Object.assign({ tab: 'ranking', cls: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', rotRace: 'All', rsOpt: {}, rsFac: 'All', srFac: 'All', slFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', rlFac: 'All', rlRole: 'All', rlCls: 'All', rlSpec: 'All', setupHide: false, enc: false, duty: true, asm: {}, asmOpen: [], chUp: null, chCls: 'All', chAll: false, chVar: false }, saved);
   st.len = '180'; // a fight length other than 180s is never restored: the page always opens on the main numbers
   st.chUp = null; // nor an older update: the Changes tab opens on the newest unless a link names one
   const persist = () => { try { store?.setItem('fv-state', JSON.stringify(st)); } catch {} };
@@ -2974,11 +2974,12 @@ export function startReport(dash, events) {
     return { id, bid: id, d: d ?? 0, noise: o && n ? chNoise(o[1], n[1]) : null, icon: chIco(id, nm.cls), name: `${nm.name} · ${nm.cls}`, open: chCur(id) ? id : null,
       tag: o && n && o[4] !== n[4] ? `${o[4]} → ${n[4]}` : !o ? 'new' : !n ? 'retired' : null, vals: `${o ? f1(o[0]) : '—'} → ${n ? f1(n[0]) : '—'}` };
   };
-  // advantaged and duty presets show with Variants on, or when the line names them
-  const chShown = (ln, S, id) => st.chVar || !chIsVar(chMeta(S, id)) || arr(ln.builds).includes(id);
+  // a preset of the class picked; advantaged and duty presets only with Variants on, or when the line names them
+  const chShown = (ln, S, id) => (st.chCls === 'All' || chMeta(S, id)[0] === st.chCls) && (st.chVar || !chIsVar(chMeta(S, id)) || arr(ln?.builds).includes(id));
   // what one line did: its racials' worth when it names racials, else the DPS of the presets it touches
   const chEffect = (S, u, ln) => {
     const host = el('div', { class: 'fv-ch-eff' });
+    if (ln.moves === false) return host;
     const races = arr(ln.races), parts = arr(ln.parts);
     const inScope = (bid) => (!arr(ln.builds).length && !arr(ln.classes).length) || chTouches({ builds: ln.builds, classes: ln.classes }, S, bid);
     if (parts.length) {
@@ -3017,49 +3018,74 @@ export function startReport(dash, events) {
     host.append(rows.length ? chList(rows) : el('p', { class: 'fv-note', text: "No preset's DPS moved." }));
     return host;
   };
-  const drawChanges = () => {
-    const linesHost = $('#ch-lines'), tb = $('#ch-table tbody'), racesHost = $('#ch-races');
-    classChips($('#ch-cls'), 'chCls');
-    classChips($('#ch-rcls'), 'chRcls');
-    $('#ch-all').setAttribute('aria-pressed', String(!!st.chAll));
-    $('#ch-var').setAttribute('aria-pressed', String(!!st.chVar));
-    if (!waitOr(linesHost, ['changes', 'changes_snap']) || !waitOr(racesHost, ['changes', 'changes_snap']) || statusOf('builds') !== 'ok') return;
-    const ups = rowsOf('changes'), map = chStates(), u = chUpdate();
-    if (!u) { linesHost.replaceChildren(el('p', { class: 'fv-note', text: 'No updates yet.' })); return; }
-    const S = map.get(u.id);
-    const typeTag = (x) => el('span', { class: 'fv-ch-type ' + x.type, text: x.type === 'game' ? 'Game' : 'Sim' });
-    iconSelect($('#ch-pick'), ups.map((x) => ({ value: x.id, text: x.title, icon: () => typeTag(x), end: chDate(x.date) })), u.id,
-      (v) => { st.chUp = v; persist(); dash.setLink('changes/' + v); hideTip(); render(); });
-    const src = u.source ? (u.source.url ? el('a', { href: u.source.url, target: '_blank', rel: 'noopener', text: u.source.label }) : el('span', { text: u.source.label })) : null;
-    $('#ch-meta').replaceChildren(...[el('span', { text: u.type === 'game' ? 'Game update' : 'Sim and preset update' }), el('span', { text: chDate(u.date) }),
-      src, u.live ? el('span', { class: 'fv-ch-live', text: 'Ongoing: later changes join it' }) : null].filter(Boolean));
-
-    // the change lines. A re-render (a resize, a dataset loading, a filter in another card) keeps them, and the lines
-    // a reader opened, unless what they show changed.
-    const icons = `${iconMap() ? 1 : 0}${statusOf('icons_more')}`;
-    const lsig = [u.id, st.chVar, icons].join('|');
-    if (linesHost.dataset.sig !== lsig) {
-    linesHost.dataset.sig = lsig;
-    linesHost.replaceChildren(...arr(u.lines).map((ln) => {
-      const d = el('details', { class: 'fv-ch-line' });
-      const ls = ln.source ? (ln.source.url ? el('a', { href: ln.source.url, target: '_blank', rel: 'noopener', text: ln.source.label, onclick: (e) => e.stopPropagation() }) : el('span', { text: ln.source.label })) : null;
-      d.append(el('summary', {}, el('span', { class: 'fv-ch-kind k-' + ln.kind, text: KIND_LABEL[ln.kind] || ln.kind }), el('span', { class: 'fv-ch-title', text: ln.title }), ls ? el('span', { class: 'fv-ch-src' }, ls) : null));
-      if (ln.note) d.append(el('p', { class: 'fv-note fv-ch-note', text: ln.note }));
-      d.addEventListener('toggle', () => { if (d.open && !d.querySelector('.fv-ch-eff')) d.append(chEffect(S, u, ln)); });
-      return d;
-    }));
-    if (!arr(u.lines).length) linesHost.append(el('p', { class: 'fv-note', text: 'No changes listed yet.' }));
+  // Every collapsible part of the tab keeps whether the reader opened it across re-renders (a resize, a dataset
+  // loading, a filter), and builds its content only once it is opened.
+  const chOpen = new Set();
+  let chInit = false, chJump = null;
+  const chDetails = (key, cls, sum, build) => {
+    const d = el('details', { class: cls, 'data-key': key });
+    d.append(el('summary', {}, ...sum.filter(Boolean)));
+    const fill = () => { if (d.open && !d.dataset.built) { d.dataset.built = '1'; d.append(...[].concat(build()).filter(Boolean)); } };
+    d.addEventListener('toggle', () => { if (d.open) chOpen.add(key); else chOpen.delete(key); fill(); });
+    if (chOpen.has(key)) { d.open = true; fill(); }
+    return d;
+  };
+  const chSrc = (s) => (s ? (s.url ? el('a', { href: s.url, target: '_blank', rel: 'noopener', text: s.label, onclick: (e) => e.stopPropagation() }) : el('span', { text: s.label })) : null);
+  const chPct = (v) => `${sgn(v, Math.abs(v) < 0.1 ? f2 : f1)}%`;
+  // a racial's worth before and after, averaged over the presets (of the filter) it is active on in either, and the
+  // average change as a share of their DPS on that race
+  const chPartFig = (S, u, ln, part) => {
+    const races = arr(ln.races);
+    const keys = [...new Set([...Object.keys(S.old.parts), ...Object.keys(S.new.parts)])].filter((k) => {
+      const [bid, race, p] = k.split('|');
+      return p === part && (!races.length || races.includes(race)) && chShown(ln, S, bid) && (S.old.parts[k]?.[2] || S.new.parts[k]?.[2])
+        && ((!arr(ln.builds).length && !arr(ln.classes).length) || chTouches({ builds: ln.builds, classes: ln.classes }, S, bid));
+    });
+    if (!keys.length) return null;
+    const val = (s, k) => (s.parts[k]?.[2] ? s.parts[k][0] : 0);
+    const race = keys[0].split('|')[1];
+    const ov = d3.mean(keys, (k) => val(S.old, k)), nv = d3.mean(keys, (k) => val(S.new, k));
+    const pct = d3.mean(keys, (k) => { const [bid, r] = k.split('|'), x = S.new.races[`${bid}|${r}`] || S.old.races[`${bid}|${r}`]; return x ? 100 * (val(S.new, k) - val(S.old, k)) / x[0] : 0; });
+    return { part, label: S.new.labels[`${race}|${part}`] || S.old.labels[`${race}|${part}`] || part, ov, nv, d: nv - ov, pct, n: keys.length,
+      gone: keys.every((k) => !S.new.parts[k]?.[2]), added: keys.every((k) => !S.old.parts[k]?.[2]) };
+  };
+  // the presets a line touches that moved, or the race rows of a line that names only races
+  const chLineRows = (S, u, ln) => {
+    const races = arr(ln.races);
+    if (races.length && !arr(ln.builds).length && !arr(ln.classes).length) {
+      return Object.keys(S.new.races).filter((k) => races.includes(k.split('|')[1]) && chShown(ln, S, k.split('|')[0]) && S.old.races[k])
+        .map((k) => ({ d: S.new.races[k][0] - S.old.races[k][0], base: S.old.races[k][0], race: k.split('|')[1], id: k.split('|')[0] })).filter((r) => !chSame(r.d))
+        .map((r) => ({ ...r, shared: arr(u.lines).some((l) => l !== ln && arr(l.races).includes(r.race) && ((!arr(l.builds).length && !arr(l.classes).length) || chTouches({ builds: l.builds, classes: l.classes }, S, r.id))) }));
     }
-
-    // every preset before and after
-    const ids = Object.keys({ ...S.old.builds, ...S.new.builds });
-    const rows = ids.map((id) => {
+    return Object.keys({ ...S.old.builds, ...S.new.builds }).filter((id) => chShown(ln, S, id) && chTouches(ln, S, id) && S.old.builds[id] && S.new.builds[id])
+      .map((id) => ({ d: S.new.builds[id][0] - S.old.builds[id][0], base: S.old.builds[id][0], shared: arr(u.lines).some((l) => l !== ln && chTouches(l, S, id)) })).filter((r) => !chSame(r.d));
+  };
+  // a line's key figure, beside its title: its racials' average worth, else how many presets moved and by how much
+  const chLineFig = (S, u, ln) => {
+    if (arr(ln.parts).length) {
+      const figs = arr(ln.parts).map((p) => chPartFig(S, u, ln, p)).filter((f) => f && !chSame(f.d));
+      if (!figs.length) return el('span', { class: 'fv-ch-fig', text: 'no change' });
+      return el('span', { class: 'fv-ch-fig' }, ...figs.flatMap((f, i) => [i ? el('span', { class: 'sep', text: ' · ' }) : null,
+        `${f.label} `, el('span', { class: 'vl', text: `${f.added ? 'new' : sgn(f.ov)} → ${f.gone ? 'gone' : sgn(f.nv)}` }), ' ', chDeltaEl(f.d), el('small', { text: ` ${chPct(f.pct)}` })]));
+    }
+    // a line that moves no number says so, whatever else moved the presets it names
+    const rows = ln.moves === false ? [] : chLineRows(S, u, ln);
+    if (!rows.length) return el('span', { class: 'fv-ch-fig', text: 'no DPS change' });
+    const what = rows[0].race ? `race row${rows.length > 1 ? 's' : ''}` : `preset${rows.length > 1 ? 's' : ''}`;
+    // when another line touches the same presets, the figure is their combined change, and says so
+    const shared = rows.some((r) => r.shared);
+    return el('span', { class: 'fv-ch-fig' + (shared ? ' shared' : '') }, `${rows.length} ${what} `, chDeltaEl(d3.mean(rows, (r) => r.d)),
+      el('small', { text: ` ${chPct(d3.mean(rows, (r) => 100 * r.d / r.base))} avg${shared ? ', with other changes' : ''}` }));
+  };
+  // every preset before and after, as a table; a row's tooltip has the details
+  const chTable = (S, u) => {
+    const rows = Object.keys({ ...S.old.builds, ...S.new.builds }).map((id) => {
       const o = S.old.builds[id], n = S.new.builds[id], m = chMeta(S, id);
       return { id, o, n, m, d: o && n ? n[0] - o[0] : null };
-    }).filter((r) => (st.chVar || !chIsVar(r.m)) && (st.chCls === 'All' || r.m[0] === st.chCls)
-      && (st.chAll || r.d == null || !chSame(r.d) || r.o[4] !== r.n[4]))
+    }).filter((r) => chShown(null, S, r.id) && (st.chAll || r.d == null || !chSame(r.d) || r.o[4] !== r.n[4]))
       .sort((a, b) => (b.d ?? 1e9) - (a.d ?? 1e9) || CLASSES.indexOf(a.m[0]) - CLASSES.indexOf(b.m[0]));
-    tb.replaceChildren(...rows.map((r) => {
+    if (!rows.length) return el('p', { class: 'fv-note', text: 'No preset moved.' });
+    const tb = el('tbody', {}, ...rows.map((r) => {
       const { id, o, n, m } = r, nm = chName(S, id);
       const pct = o && n ? 100 * r.d / o[0] : null, noise = o && n ? chNoise(o[1], n[1]) : null;
       // the report's own rank (ties share one), which an advantaged preset doesn't have
@@ -3074,10 +3100,10 @@ export function startReport(dash, events) {
       tr.addEventListener('click', (e) => {
         e.stopPropagation();
         if (tr.classList.contains('is-hl')) { hideTip(); return; }
-        const card = $('#ch-builds-card'), cr = card.getBoundingClientRect(), rr = tr.getBoundingClientRect();
+        const card = tr.closest('.fv-uc'), cr = card.getBoundingClientRect(), rr = tr.getBoundingClientRect();
         const split = chRaceSplit(S, id), by = arr(u.lines).filter((l) => chTouches(l, S, id)).map((l) => l.title);
         const lines = [
-          r.d == null ? tipText(o ? 'Retired in this update.' : 'New in this update.') : chSame(r.d) ? tipText('Unchanged in this update.') : tipKey(sgn(r.d), 'DPS', el('span', {}, tipDelta(pct), chSame(r.d) ? '' : Math.abs(r.d) < noise ? ' · within noise' : '')),
+          r.d == null ? tipText(o ? 'Retired in this update.' : 'New in this update.') : chSame(r.d) ? tipText('Unchanged in this update.') : tipKey(sgn(r.d), 'DPS', el('span', {}, tipDelta(pct), Math.abs(r.d) < noise ? ' · within noise' : '')),
           tipGrid([o ? ['Before', `${f1(o[0])} ± ${f2(o[1])}`] : null, n ? ['After', `${f1(n[0])} ± ${f2(n[1])}`] : null,
             noise != null && !chSame(r.d) ? ['Noise', `±${f1(noise)}`] : null,
             rank && ro !== rn ? ['Rank', `${ro} → ${rn}${tied ? ' (about tied)' : ''}`] : null,
@@ -3092,26 +3118,19 @@ export function startReport(dash, events) {
       });
       return tr;
     }));
-    const racesMoved = Object.keys(S.new.races).some((k) => S.old.races[k] && !chSame(S.new.races[k][0] - S.old.races[k][0]));
-    if (!rows.length) tb.replaceChildren(el('tr', {}, el('td', { colspan: '6', class: 'fv-note', text: (st.chCls === 'All' ? "No preset's own DPS moved in this update" : 'No preset of this class moved in this update')
-      + (racesMoved ? ': its changes were on races the presets are not played as. See the races below.' : '.') })));
-
-    // races: each race's presets and racials that moved, and how often it is best (kept across re-renders as above)
-    const rsig = [u.id, st.chVar, st.chRcls, icons].join('|');
-    if (racesHost.dataset.sig === rsig) return;
-    racesHost.dataset.sig = rsig;
-    const inCls = (bid) => st.chRcls === 'All' || chMeta(S, bid)[0] === st.chRcls;
-    const okB = (bid) => inCls(bid) && (st.chVar || !chIsVar(chMeta(S, bid)));
+    return el('div', { class: 'fv-scroll' }, el('table', { class: 'fv-ch-table' },
+      el('thead', {}, el('tr', {}, el('th', { text: 'Preset' }), el('th', { class: 'n', text: 'Before' }), el('th', { class: 'n', text: 'After' }), el('th', { class: 'n', text: 'Change' }), el('th', { class: 'n', text: 'Rank' }), el('th', { text: 'Race' }))), tb));
+  };
+  // each race whose presets, racials or standing moved
+  const chRaceBlocks = (S, key) => {
+    const ok = (bid) => chShown(null, S, bid);
     const raceList = [...new Set(Object.keys({ ...S.old.races, ...S.new.races }).map((k) => k.split('|')[1]))].sort();
     const blocks = raceList.map((race) => {
-      const rk = Object.keys(S.new.races).filter((k) => k.endsWith('|' + race) && okB(k.split('|')[0]));
-      const rrows = rk.map((k) => {
-        const bid = k.split('|')[0], o = S.old.races[k], n = S.new.races[k];
-        if (!o) return null;
-        const nm = chName(S, bid);
+      const rrows = Object.keys(S.new.races).filter((k) => k.endsWith('|' + race) && ok(k.split('|')[0]) && S.old.races[k]).map((k) => {
+        const bid = k.split('|')[0], o = S.old.races[k], n = S.new.races[k], nm = chName(S, bid);
         return { d: n[0] - o[0], noise: chNoise(o[1], n[1]), icon: chIco(bid, nm.cls), name: `${nm.name} · ${nm.cls}`, open: chCur(bid) ? bid : null, vals: `${f1(o[0])} → ${f1(n[0])}` };
-      }).filter((x) => x && !chSame(x.d)).sort(chBig);
-      const pkeys = [...new Set([...Object.keys(S.old.parts), ...Object.keys(S.new.parts)])].filter((k) => { const [bid, r, p] = k.split('|'); return r === race && p !== 'base' && okB(bid); });
+      }).filter((x) => !chSame(x.d)).sort(chBig);
+      const pkeys = [...new Set([...Object.keys(S.old.parts), ...Object.keys(S.new.parts)])].filter((k) => { const [bid, r, p] = k.split('|'); return r === race && p !== 'base' && ok(bid); });
       const byPart = d3.group(chPartRows(S, pkeys), (x) => x.part);
       const so = S.old.summary[`${race}|All`], sn = S.new.summary[`${race}|All`];
       const sumMoved = so && sn && (so[0] !== sn[0] || Math.abs(so[1] - sn[1]) >= 0.05);
@@ -3123,17 +3142,92 @@ export function startReport(dash, events) {
         const label = S.new.labels[`${race}|${p}`] || S.old.labels[`${race}|${p}`] || p;
         const gone = xs.every((x) => !S.new.parts[x.k]?.[2]), added = xs.every((x) => !S.old.parts[x.k]?.[2]);
         const lo = d3.min(xs, (x) => x.d), hi = d3.max(xs, (x) => x.d);
-        const d = el('details', { class: 'fv-ch-line' });
-        d.append(el('summary', {}, el('span', { class: 'fv-ch-title' }, el('b', { text: label }), gone ? ' · removed' : added ? ' · new' : '',
-          ` · ${xs.length} preset${xs.length > 1 ? 's' : ''}, ${lo === hi ? sgn(lo) : `${sgn(lo)} to ${sgn(hi)}`}`)));
-        d.addEventListener('toggle', () => { if (d.open && !d.querySelector('.fv-ch-list')) d.append(chList(xs, 8)); });
-        return d;
+        return chDetails(`${key}|${race}|${p}`, 'fv-ch-line', [el('span', { class: 'fv-ch-title' }, el('b', { text: label }), gone ? ' · removed' : added ? ' · new' : '',
+          ` · ${xs.length} preset${xs.length > 1 ? 's' : ''}, ${lo === hi ? sgn(lo) : `${sgn(lo)} to ${sgn(hi)}`}`)], () => chList(xs, 8));
       });
       return el('div', { class: 'fv-ch-rblock' }, head,
         rrows.length ? el('div', { class: 'fv-ch-sub' }, `Presets on ${race}: ${rrows.length} moved`) : null, rrows.length ? chList(rrows, 4) : null,
         parts.length ? el('div', { class: 'fv-ch-sub', text: 'Racials' }) : null, ...parts);
     }).filter(Boolean);
-    racesHost.replaceChildren(...(blocks.length ? blocks : [el('p', { class: 'fv-note', text: 'No race moved.' })]));
+    return blocks.length ? blocks : el('p', { class: 'fv-note', text: 'No race moved.' });
+  };
+  // the most important things an update did, as tiles: what its racials are worth now, in the order its lines list
+  // them (the first is the headline), how many presets moved, and the race that most changed how often it is best
+  const chHighlights = (S, u) => {
+    const tiles = [];
+    for (const ln of arr(u.lines)) {
+      for (const p of arr(ln.parts)) {
+        const f = chPartFig(S, u, ln, p);
+        if (f && !chSame(f.d) && !tiles.some((t) => t.part === p)) {
+          tiles.push({ part: p, k: `${f.label} worth`, v: sgn(f.d), u: 'DPS', s: `${f.added ? 'new' : sgn(f.ov)} → ${f.gone ? 'gone' : sgn(f.nv)} on average, ${chPct(f.pct)} of DPS, ${f.n} preset${f.n > 1 ? 's' : ''}` });
+        }
+      }
+    }
+    const out = tiles.slice(0, 3);
+    const moved = Object.keys(S.new.builds).filter((id) => chShown(null, S, id) && S.old.builds[id] && (!chSame(S.new.builds[id][0] - S.old.builds[id][0]) || S.old.builds[id][4] !== S.new.builds[id][4]));
+    const all = Object.keys(S.new.builds).filter((id) => chShown(null, S, id));
+    if (moved.length) {
+      const big = moved.map((id) => chBuildRow(S, id)).sort(chBig)[0];
+      const avg = d3.mean(moved, (id) => 100 * (S.new.builds[id][0] - S.old.builds[id][0]) / S.old.builds[id][0]);
+      out.push({ k: 'Presets moved', v: `${moved.length}`, u: `of ${all.length}`, s: `average ${chPct(avg)}, most ${big.name.split(' · ')[0]} ${sgn(big.d)}` });
+    } else out.push({ k: 'Presets moved', v: '0', u: `of ${all.length}`, s: 'Only race rows the presets are not played as moved' });
+    const shifts = Object.keys(S.new.summary).filter((k) => k.endsWith('|All') && S.old.summary[k] && S.old.summary[k][0] !== S.new.summary[k][0])
+      .map((k) => ({ race: k.split('|')[0], o: S.old.summary[k][0], n: S.new.summary[k][0] })).sort((a, b) => Math.abs(b.n - b.o) - Math.abs(a.n - a.o));
+    if (shifts.length && out.length < 4) out.push({ k: 'Best race for', v: `${shifts[0].n}`, u: shifts[0].race, s: `${shifts[0].race} was best for ${shifts[0].o} preset${shifts[0].o === 1 ? '' : 's'}${shifts[1] ? `; ${shifts[1].race} ${shifts[1].o} → ${shifts[1].n}` : ''}` });
+    return { tiles: out, teaser: out[0] };
+  };
+  const chCard = (u, S) => {
+    const key = 'u:' + u.id, hl = chHighlights(S, u), t = hl.teaser;
+    const head = [el('span', { class: 'fv-ch-type ' + u.type, text: u.type === 'game' ? 'Game' : 'Sim' }),
+      el('span', { class: 'fv-uc-title' }, el('b', { text: u.title }),
+        el('span', { class: 'fv-uc-meta' }, ...[el('span', { text: chDate(u.date) }), u.type === 'game' ? el('span', { text: 'Game update' }) : el('span', { text: 'Sim and preset update' }), chSrc(u.source),
+          u.live ? el('span', { class: 'fv-ch-live', text: 'Ongoing' }) : null].filter(Boolean))),
+      t ? el('span', { class: 'fv-uc-teaser' }, el('span', { class: 'k', text: t.k }), ' ', el('b', { text: t.v }), t.u ? ` ${t.u}` : '') : null];
+    const d = chDetails(key, 'fv-uc', head, () => {
+      const lines = arr(u.lines);
+      return [
+        el('div', { class: 'fv-tiles fv-uc-tiles' }, ...hl.tiles.map((x) => el('div', { class: 'fv-tile' }, el('span', { class: 'k', text: x.k }), el('span', { class: 'v' }, x.v, x.u ? el('small', { text: x.u }) : null), el('span', { class: 's', text: x.s })))),
+        el('div', { class: 'fv-uc-h', text: 'What changed' }),
+        lines.length ? el('div', { class: 'fv-ch-lines' }, ...lines.map((ln, i) => chDetails(`${key}|l${i}`, 'fv-ch-line', [
+          el('span', { class: 'fv-ch-kind k-' + ln.kind, text: KIND_LABEL[ln.kind] || ln.kind }), el('span', { class: 'fv-ch-title', text: ln.title }), chLineFig(S, u, ln)],
+          () => [ln.note || ln.source ? el('p', { class: 'fv-note fv-ch-note' }, ln.note || '', ln.note && ln.source ? ' ' : '', ln.source ? el('span', { class: 'fv-ch-src' }, 'Source: ', chSrc(ln.source)) : null) : null, chEffect(S, u, ln)])))
+          : el('p', { class: 'fv-note', text: 'No changes listed yet.' }),
+        el('div', { class: 'fv-uc-h', text: 'Biggest movers' }),
+        (() => {
+          const rows = Object.keys({ ...S.old.builds, ...S.new.builds }).filter((id) => chShown(null, S, id)).map((id) => chBuildRow(S, id)).filter((r) => !chSame(r.d) || r.tag).sort(chBig);
+          return rows.length ? chList(rows, 5) : el('p', { class: 'fv-note', text: "No preset's own DPS moved: the changes were on races the presets are not played as. See Races." });
+        })(),
+        chDetails(`${key}|all`, 'fv-ch-line fv-uc-more', [el('span', { class: 'fv-ch-title', text: 'Every preset, before and after' })], () => chTable(S, u)),
+        chDetails(`${key}|races`, 'fv-ch-line fv-uc-more', [el('span', { class: 'fv-ch-title', text: 'Races: their presets, racials and how often each is best' })], () => el('div', { class: 'fv-ch-races' }, ...[].concat(chRaceBlocks(S, key)))),
+      ];
+    });
+    d.dataset.u = u.id;
+    d.addEventListener('toggle', () => { if (d.open && st.tab === 'changes') dash.setLink('changes/' + u.id); });
+    return d;
+  };
+  const drawChanges = () => {
+    const host = $('#ch-list');
+    classChips($('#ch-cls'), 'chCls');
+    $('#ch-all').setAttribute('aria-pressed', String(!!st.chAll));
+    $('#ch-var').setAttribute('aria-pressed', String(!!st.chVar));
+    if (!waitOr(host, ['changes', 'changes_snap']) || statusOf('builds') !== 'ok') return;
+    const ups = rowsOf('changes'), map = chStates();
+    if (!ups.length) { host.replaceChildren(el('p', { class: 'fv-note', text: 'No updates yet.' })); return; }
+    // a link or the Ranking chip names an update: open it and scroll to it; the first view opens the newest
+    if (st.chUp != null) { const u = chUpdate(); chJump = u.id; chOpen.add('u:' + u.id); st.chUp = null; }
+    else if (!chInit) chOpen.add('u:' + ups[0].id);
+    chInit = true;
+    const sig = [st.chCls, st.chVar, st.chAll, iconMap() ? 1 : 0, statusOf('icons_more'), ups.length].join('|');
+    if (host.dataset.sig !== sig) {
+      host.dataset.sig = sig;
+      hideTip();
+      host.replaceChildren(...ups.map((u) => chCard(u, map.get(u.id))));
+    }
+    if (chJump) {
+      const c = [...host.children].find((n) => n.dataset.u === String(chJump));
+      chJump = null;
+      if (c) { c.open = true; requestAnimationFrame(() => c.scrollIntoView({ block: 'start', behavior: 'auto' })); }
+    }
   };
   $('#ch-all').addEventListener('click', (e) => { e.stopPropagation(); st.chAll = !st.chAll; persist(); hideTip(); render(); });
   $('#ch-var').addEventListener('click', (e) => { e.stopPropagation(); st.chVar = !st.chVar; persist(); hideTip(); render(); });
