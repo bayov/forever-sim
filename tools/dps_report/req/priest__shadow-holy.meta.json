@@ -65,7 +65,7 @@
     "Assumed: Shadow Weaving applies to the priest's own Shadow damage. In Forever, periodic spells crit per tick.",
     "Mind Flay rolls to hit once per cast and isn't hasted. Shadow Word: Death's backlash is ignored.",
     "Left out: Brilliant Wizard Oil (+12.5) and Elixir of Sages (+13.9).",
-    "Race spells: only the Undead's Dark Sacrifice is in the rotation, for long fights. Night Elf Starshards would cost 19.5 DPS: its 6s channel hits no harder than Mind Flay and holds up Mind Blast. Dwarf Chastise can't be cast in Shadowform. Troll Shadowguard only strikes back when the priest is hit, and the boss doesn't attack the priest."
+    "Race spells: only the Undead's Dark Sacrifice is in the rotation, for long fights. Night Elf Starshards would cost 19.5 DPS: its 6s channel hits no harder than Mind Flay and holds up Mind Blast. Dwarf Chastise can't be cast in Shadowform. Troll Shadowguard adds 8.2 DPS: the raid damage hits (2 a minute) set off its strikes."
   ],
   "notes": "mksettings request plus manaRegenElixir GreaterMagebloodElixir (ConsumesHoly in presets.ts). Only the Undead number is published for this build; no per-faction race table. Regenerated 2026-10-23 from mksettings (natural flask zone on) and the ui APLs, which tools/rotopt/priest_presets.sh writes from the templates. Undead since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Human."
 }

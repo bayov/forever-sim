@@ -1253,11 +1253,13 @@ export function startReport(dash, events) {
   };
   const raceName = (r, tag = r.tag) => el('span', { class: 'fv-rname' }, el('b', { text: r.race, style: `color:${fcol(r.race)}` }), raceTag(r, tag));
   const safeTop = (fn, host) => { try { fn(); } catch (err) { console.error(err); if (host) fail(host); } };
-  // a racial's colour follows what kind it is: a passive, a cooldown, or a boss type; base stats and the weapon swap are neutral
-  const PART_KIND = { elune: 1, eureka: 1, bloodfury: 1, berserking: 1, chastise: 1, starshards: 1, darksacrifice: 1, target: 2, beast_troll: 2, beast_dwarf: 2, insight: 2 };
-  const partCol = (p) => (p === 'base' ? 'var(--cds-chart-muted)' : p === 'swap' ? 'var(--color-fg-muted)' : dash.colors[PART_KIND[p] ?? 0]);
+  // a racial's colour follows what kind it is: a passive, a cooldown, a boss type, or a priest's racial spell (the
+  // priest's white); base stats and the weapon swap are neutral
+  const PART_KIND = { elune: 1, eureka: 1, bloodfury: 1, berserking: 1, target: 2, beast_troll: 2, beast_dwarf: 2, insight: 2, chastise: 3, starshards: 3, darksacrifice: 3, shadowguard: 3 };
+  const kindCol = (k) => (k === 'swap' ? 'var(--color-fg-muted)' : k === 3 ? ccol('Priest') : dash.colors[k]);
+  const partCol = (p) => (p === 'base' ? 'var(--cds-chart-muted)' : kindCol(p === 'swap' ? 'swap' : PART_KIND[p] ?? 0));
   const COND = { beast: /^beast/, elemental: /^insight$/ };
-  const KIND_NAME = ['Passive racial', 'Racial cooldown', 'Boss type racial'];
+  const KIND_NAME = ['Passive racial', 'Racial cooldown', 'Boss type racial', 'Priest racial spell'];
   const noteRow = (kind, key) => (rowsOf('race_notes') || []).find((n) => n.kind === kind && n.key === key);
   const shortLabel = (s) => String(s).replace('Specialization', 'Spec.');
   // A racial's game icon (race_notes) with a ring in its kind's colour, so it still ties to its part of the bar. The
@@ -1377,7 +1379,7 @@ export function startReport(dash, events) {
       && !(V === 'weapon' && mine.some((w) => w.scenario === 'weapon' && w.part === q.part))));
     return { segs: out.filter((sg) => sg.r), idle };
   };
-  const legend = (host, kinds, base) => host.replaceChildren(base ? el('span', {}, el('i', { class: 'sw2', style: 'background:var(--cds-chart-muted)' }), 'Base stats (no racials)') : '', ...[0, 1, 2, 'swap'].filter((k) => kinds.has(k)).map((k) => el('span', {}, el('i', { class: 'sw2', style: `background:${k === 'swap' ? 'var(--color-fg-muted)' : dash.colors[k]}` }), k === 'swap' ? 'Weapon swap' : KIND_NAME[k])));
+  const legend = (host, kinds, base) => host.replaceChildren(base ? el('span', {}, el('i', { class: 'sw2', style: 'background:var(--cds-chart-muted)' }), 'Base stats (no racials)') : '', ...[0, 1, 2, 3, 'swap'].filter((k) => kinds.has(k)).map((k) => el('span', {}, el('i', { class: 'sw2', style: `background:${kindCol(k)}` }), k === 'swap' ? 'Weapon swap' : KIND_NAME[k])));
 
   // Each racial's caption sits under its piece of the bar, starting where the piece starts. When a caption would run
   // into the one before it, we move it down to the first line where it fits, so short pieces side by side still get

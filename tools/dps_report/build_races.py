@@ -45,6 +45,7 @@ PART_INFO = {
     'chastise': ('Chastise', 'Dwarf Priests: an instant Holy hit on a Humanoid, 2 min cooldown.'),
     'starshards': ('Starshards', 'Night Elf Priests: Arcane damage over 6s, 30s cooldown.'),
     'darksacrifice': ('Dark Sacrifice', 'Undead Priests: trade health for mana over 15s, 10 min cooldown.'),
+    'shadowguard': ('Shadowguard', 'Troll Priests, in Shadowform: 3 charges, and a hit taken strikes the attacker for Shadow damage, at most once every 3.5s. The raid damage hits set it off.'),
     'base': ('Base stats', "The race's own stats, with no racials."),
     'target': ('Target type', 'Racials, talents and spells that work only on this creature type.'),
 }
@@ -61,12 +62,12 @@ PART_ICON = {
     'elune': 'spell_nature_moonglow', 'shadowmeld': 'ability_ambush', 'leyline': 'ability_mage_incantersabsorbtion', 'mind': 'inv_enchant_essenceeternallarge', 'eureka': 'inv_gnometoy', 'command': 'ability_warrior_warcry',
     'bloodfury': 'racial_orc_berserkerstrength', 'touch': 'spell_shadow_fingerofdeath', 'endurance': 'spell_nature_unyeildingstamina',
     'berserking': 'racial_troll_berserk', 'beast_troll': 'inv_misc_pelt_bear_ruin_02', 'windblessed': 'inv_misc_volatileair',
-    'insight': 'achievement_raidprimalist_windelemental', 'starshards': 'spell_arcane_starfire', 'chastise': 'spell_holy_chastise',
+    'insight': 'achievement_raidprimalist_windelemental', 'starshards': 'spell_arcane_starfire', 'chastise': 'spell_holy_chastise', 'shadowguard': 'spell_nature_lightningshield',
 }
 
 RACE_PARTS = {'Human': ['spirit', 'ruthless'], 'Dwarf': ['precision', 'beast_dwarf', 'chastise'], 'Night Elf': ['elune', 'shadowmeld', 'starshards'],
               'Gnome': ['mind', 'eureka'], 'Orc': ['command', 'bloodfury'], 'Undead': ['touch', 'darksacrifice'], 'Tauren': ['endurance'],
-              'Troll': ['berserking', 'beast_troll'], 'High Order': ['windblessed', 'insight', 'leyline'], 'Windshaper': ['windblessed', 'insight']}
+              'Troll': ['berserking', 'shadowguard', 'beast_troll'], 'High Order': ['windblessed', 'insight', 'leyline'], 'Windshaper': ['windblessed', 'insight']}
 SCENARIOS = [
     ('baseline', 'Generic boss', 'Each preset against a level 63 boss with no creature type. No racial depends on the weapon. '
      "A race gets its own rotation or gear when that clearly does better in the sim. Its row says what changed."),
@@ -158,7 +159,7 @@ def build(builds, races_rows, stats_rows, dump):
                               'se': round(off[1], 2), 'active': True, 'note': ''})
             for p in RACE_PARTS[race]:
                 key = {'beast_dwarf': 'beast', 'beast_troll': 'beast'}.get(p, p)
-                if p in ('chastise', 'starshards', 'darksacrifice') and cls != 'Priest':
+                if p in ('chastise', 'starshards', 'darksacrifice', 'shadowguard') and cls != 'Priest':
                     continue
                 if key in contrib:
                     d, s = contrib[key]

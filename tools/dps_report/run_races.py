@@ -35,9 +35,9 @@ import race_override  # noqa: E402
 PARTS = {
     'Human': ['spirit', 'ruthless'], 'Dwarf': ['precision', 'chastise'], 'NightElf': ['elune', 'shadowmeld', 'starshards'],
     'Gnome': ['mind', 'eureka'], 'Orc': ['command', 'bloodfury'], 'Undead': ['touch', 'darksacrifice'],
-    'Tauren': ['endurance'], 'Troll': ['berserking'], 'SkyborneHighOrder': ['windblessed', 'leyline'], 'SkyborneWindshaper': ['windblessed'],
+    'Tauren': ['endurance'], 'Troll': ['berserking', 'shadowguard'], 'SkyborneHighOrder': ['windblessed', 'leyline'], 'SkyborneWindshaper': ['windblessed'],
 }
-PRIEST_ONLY = {'chastise', 'starshards', 'darksacrifice'}
+PRIEST_ONLY = {'chastise', 'starshards', 'darksacrifice', 'shadowguard'}
 PET_ONLY = {'command'}  # Orc Command: Hunter and Warlock pets only
 TARGETS = {'beast': 'MobTypeBeast', 'elemental': 'MobTypeElemental'}
 CLASS_TARGETS = {'Priest': {'humanoid': 'MobTypeHumanoid'}}  # a racial that cares about Humanoids (Chastise)

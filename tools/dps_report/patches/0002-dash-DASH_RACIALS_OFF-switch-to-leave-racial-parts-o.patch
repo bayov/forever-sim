@@ -1,18 +1,23 @@
-From 426badadb967c0c5324e8bb4f95db039a1b511f1 Mon Sep 17 00:00:00 2001
+From 86b94d3b29ecc2a115ab60c363be564f0724c958 Mon Sep 17 00:00:00 2001
 From: Claude <noreply@anthropic.com>
-Date: Tue, 13 Oct 2026 11:46:32 +0000
-Subject: [PATCH 2/3] dash: DASH_RACIALS_OFF switch to leave racial parts out
+Date: Wed, 28 Oct 2026 17:35:41 +0000
+Subject: [PATCH] dash: DASH_RACIALS_OFF switch to leave racial parts out
  (dashboard race breakdown only)
 
+DASH_RACIALS_OFF=all or =<part>[,<part>] leaves those racial parts out, so the
+race breakdown can split a race's edge into its base stats and each racial,
+the priest racial spells (Chastise, Dark Sacrifice, Starshards, Shadowguard)
+included.
 ---
- sim/core/racials_forever.go  | 111 ++++++++++++++++++++++++++++++++++++++++--------------------
+ sim/core/racials_forever.go  | 111 ++++++++++++++++++++++++++---------
  sim/priest/chastise.go       |   2 +-
  sim/priest/dark_sacrifice.go |   2 +-
+ sim/priest/shadowguard.go    |   2 +-
  sim/priest/starshards.go     |   2 +-
- 4 files changed, 86 insertions(+), 31 deletions(-)
+ 5 files changed, 87 insertions(+), 32 deletions(-)
 
 diff --git a/sim/core/racials_forever.go b/sim/core/racials_forever.go
-index f39a440..e398bc7 100644
+index 6d9578d..f217d36 100644
 --- a/sim/core/racials_forever.go
 +++ b/sim/core/racials_forever.go
 @@ -1,6 +1,8 @@
@@ -24,15 +29,15 @@ index f39a440..e398bc7 100644
  	"time"
  
  	"github.com/wowsims/classic/sim/core/proto"
-@@ -21,8 +23,29 @@
- // Cooldowns per the client: Eureka! and the Undead and Gnome utilities 2 min, Blood Fury
- // (since client 70425), Berserking, Elune's Light and the Human, Dwarf and Orc utilities 3 min.
+@@ -22,8 +24,29 @@ import (
+ // Elune's Light and the Human, Dwarf and Orc utilities 3 min. Blood Fury is 3 min in the client
+ // since 70425, and 2 min again per the development notes of 2026-10-27 (post 8).
  
 +// DASH_RACIALS_OFF (dashboard builds only) lists racial parts to leave out, comma separated,
 +// or "all": spirit, ruthless, precision, beast, dodge, elune, shadowmeld, mind, eureka, command,
 +// bloodfury, touch, endurance, berserking, windblessed, insight, leyline, and the priest racial
-+// spells darksacrifice, starshards and chastise. It splits a race's edge into its base stats and
-+// each racial.
++// spells darksacrifice, starshards, chastise and shadowguard. It splits a race's edge into its
++// base stats and each racial.
 +var dashRacialsOff = func() map[string]bool {
 +	off := map[string]bool{}
 +	for _, part := range strings.Split(os.Getenv("DASH_RACIALS_OFF"), ",") {
@@ -54,7 +59,7 @@ index f39a440..e398bc7 100644
  
  	switch character.Race {
  	case proto.Race_RaceHuman:
-@@ -31,77 +54,109 @@
+@@ -32,77 +55,109 @@ func applyForeverRaceEffects(agent Agent) {
  		// (SpellEquippedItems subclass mask 384); 70425 renamed it and dropped the weapon rule.
  		// Development notes 2026-10-26: "Ruthless now increases critical chance by 1% (was 2%)",
  		// "Human Spirit now increases Spirit by 10% (was 5%)".
@@ -215,6 +220,19 @@ index c362a30..c80862c 100644
  func (priest *Priest) registerDarkSacrificeSpell() {
 -	if priest.Race != proto.Race_RaceUndead {
 +	if priest.Race != proto.Race_RaceUndead || core.DashRacialOff("darksacrifice") {
+ 		return
+ 	}
+ 
+diff --git a/sim/priest/shadowguard.go b/sim/priest/shadowguard.go
+index aeab395..c972149 100644
+--- a/sim/priest/shadowguard.go
++++ b/sim/priest/shadowguard.go
+@@ -28,7 +28,7 @@ var ShadowguardLevel = [ShadowguardRanks + 1]int{0, 20, 28, 36, 44, 52, 60}
+ const ShadowguardStrikeCoef = 0.267
+ 
+ func (priest *Priest) registerShadowguardSpell() {
+-	if priest.Race != proto.Race_RaceTroll || !priest.Env.IsForever() {
++	if priest.Race != proto.Race_RaceTroll || !priest.Env.IsForever() || core.DashRacialOff("shadowguard") {
  		return
  	}
  
