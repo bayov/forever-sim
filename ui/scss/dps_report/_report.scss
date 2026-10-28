@@ -4128,6 +4128,41 @@ dialog.fv-about-modal {
 	gap: 0;
 }
 
+// The header is a band of its own colour across the card's top, so it stands apart from the body: gold-tinted for a
+// game update, the lighter panel for ours. The card's padding is spelled out, so the band can reach its edges (over
+// the sim UI's card rule, .sim-main .tab-pane .content-block:not(...), hence the id).
+#changes .content-block.fv-us {
+	--us-pt: var(--spacer-3);
+	--us-px: 0.75rem;
+	padding: var(--us-pt) var(--us-px);
+	overflow: hidden;
+
+	@media (max-width: 30rem) {
+		--us-pt: var(--cds-pad-md);
+		--us-px: var(--cds-pad-md);
+	}
+
+	// folded, the band is the whole card
+	&:not(.open) {
+		padding-bottom: 0;
+	}
+
+	> .fv-us-head {
+		margin: calc(-1 * var(--us-pt)) calc(-1 * var(--us-px)) 0;
+		padding: 0.75rem var(--us-px);
+		background: var(--panel-bg-2);
+	}
+
+	&.game > .fv-us-head {
+		background: color-mix(in srgb, var(--fv-gold) 11%, var(--panel-bg-2));
+	}
+
+	&:not(.open) > .fv-us-head {
+		border-image: none;
+		border-bottom-color: transparent;
+	}
+}
+
 // The header is the fold: a calendar date beside the title and its kind and source, then the chevron. (Over the sim
 // UI's content-block-header, which is a flex row.)
 .content-block.fv-us > .fv-us-head {
@@ -4184,9 +4219,12 @@ dialog.fv-about-modal {
 	color: var(--color-fg);
 }
 
-.fv-us-chev {
+.fv-us-head > .fv-us-chev {
 	grid-column: 3;
 	grid-row: 1 / span 2;
+}
+
+.fv-us-chev {
 	color: var(--color-fg-muted);
 	font-size: 0.8rem;
 	transition: transform var(--cds-dur-slow) var(--cds-ease-out);
