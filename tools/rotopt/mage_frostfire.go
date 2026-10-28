@@ -48,7 +48,29 @@ func (mageFrostfire) Knobs() []Knob {
 		// left. 0 never.
 		Knob{Name: "fireBlastSurplus", Default: 0, Min: 0, Max: 200, Step: 50},
 		cooldownWaitKnob(),
+		// Hold a cast shorter than the 1.5 sec GCD while Fingers of Frost is up: 0 never, 1
+		// Pyroblast, 2 Pyroblast and the Scorch refresh (while Fire Vulnerability has its 5 stacks
+		// and more than 4 sec left, so the hold never lets it drop). Unhasted, Pyroblast at 3
+		// Heating Up stacks and Scorch are 1.5 sec and end with the GCD, so the Ice Lance on the
+		// last charge goes out in the same spell batch, before the cast spends the charge (a
+		// batch after it completes), and the charge buys both Frozen. With haste (Skyborne Wind
+		// Blessed, Berserking) they end before the GCD and spend the last charge before Ice Lance
+		// can go: the Ice Lance is lost. Held, a Frostfire Bolt (longer than the GCD) takes the
+		// charge and the Ice Lance its batch. 3 also keeps the Ice Lance on the last charge
+		// (iceLance 2) for a Frostfire Bolt's batch while hasted, where it would otherwise go
+		// alone a moment after a Scorch or Pyroblast. Unhasted the lines never hold.
+		Knob{Name: "lanceHold", Default: 0, Min: 0, Max: 3, Step: 1},
 	)
+}
+
+// lanceHoldCond lets spell go unless it would end before the GCD with Fingers of Frost up and
+// also (nil for always) holds (the lanceHold knob), nil (no condition) when the knob doesn't
+// cover it.
+func lanceHoldCond(k Knobs, spell *proto.ActionID, level float64, also value) value {
+	if k["lanceHold"] < level {
+		return nil
+	}
+	return not(known(fingersOfFrost, and(auraIsActive(fingersOfFrost), lt(spellCastTime(spell), seconds(1.49)), also)))
 }
 
 func (mageFrostfire) Build(k Knobs) *proto.APLRotation {
@@ -59,7 +81,13 @@ func (mageFrostfire) Build(k Knobs) *proto.APLRotation {
 		case 1:
 			items = append(items, cast(s.iceLance, known(fingersOfFrost, auraIsActive(fingersOfFrost)), "Ice Lance while Fingers of Frost is up."))
 		case 2:
-			items = append(items, cast(s.iceLance, known(fingersOfFrost, eq(auraNumStacks(fingersOfFrost), num(1))), "Ice Lance on the last Fingers of Frost charge."))
+			last := eq(auraNumStacks(fingersOfFrost), num(1))
+			if k["lanceHold"] >= 3 {
+				// Hasted (Scorch under the GCD), only in a Frostfire Bolt's batch, either rank.
+				rank2 := spellID(mage.FrostfireBoltSpellId[2])
+				last = and(last, or(not(lt(spellCastTime(s.scorch), seconds(1.49))), spellInFlight(s.frostfireBolt), spellInFlight(rank2)))
+			}
+			items = append(items, cast(s.iceLance, known(fingersOfFrost, last), "Ice Lance on the last Fingers of Frost charge."))
 		default:
 			items = append(items, iceLanceAfterBolt(k, s.frostfireBolt, s.iceLance)...)
 		}
@@ -69,11 +97,12 @@ func (mageFrostfire) Build(k Knobs) *proto.APLRotation {
 	}
 	if k["scorchRefresh"] > 0 {
 		items = append(items, cast(s.scorch,
-			and(targetAuraIsKnown(fireVulnerability), or(lt(targetAuraNumStacks(fireVulnerability), num(5)), lt(targetAuraRemainingTime(fireVulnerability), seconds(k["scorchRefresh"])))),
+			and(targetAuraIsKnown(fireVulnerability), or(lt(targetAuraNumStacks(fireVulnerability), num(5)), lt(targetAuraRemainingTime(fireVulnerability), seconds(k["scorchRefresh"]))),
+				lanceHoldCond(k, s.scorch, 2, and(ge(targetAuraNumStacks(fireVulnerability), num(5)), gt(targetAuraRemainingTime(fireVulnerability), seconds(4))))),
 			"Scorch up to 5 stacks of Fire Vulnerability, and before it runs out."))
 	}
 	if p := k["pyroStacks"]; p > 0 {
-		items = append(items, cast(s.pyroblast, and(known(heatingUp, ge(auraNumStacks(heatingUp), num(p))), manaAbove(k["pyroMana"])), "Pyroblast once Heating Up has cut its cast enough."))
+		items = append(items, cast(s.pyroblast, and(known(heatingUp, ge(auraNumStacks(heatingUp), num(p))), manaAbove(k["pyroMana"]), lanceHoldCond(k, s.pyroblast, 1, nil)), "Pyroblast once Heating Up has cut its cast enough."))
 	}
 	if k["iceLanceFirst"] != 1 {
 		iceLance()
