@@ -72,7 +72,13 @@ gen level60 "seal=2,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=2
 # / 480 sec; Undead 879.5 / 866.6 / 840.1 / 820.7 -> 897.0 / 883.2 / 841.9 / 828.9. The same three
 # changes lose on Shock vs Undead (-4.7 / -3.7 / -8.4 / -3.0 at Undead) and on the Shock duty at 300
 # sec (+6.4 / +7.4 / -4.7 / +5.1), so those keep their knobs.
-gen level60_shock "seal=1,jotc=0,consecration=1,consecrationFirst=0,consecrationMana=0,holyShock=1,lightsVigilMana=30,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1,vigilSwing=25,vigilLongFight=210" -level 60
+# Standards 31 (2026-10-28): the 60% Vigil floor in fights longer than 210 sec (vigilLongFight) is gone
+# from Shock and its Crusader duty. It keyed on the fight's length, not on the mana, and it only lost:
+# a flat 30% is +0.0 at 120 / 180 / 180±20 sec and +12.6 / +8.4 / +11.5 at 220 / 240 / 300 sec (duty
+# +11.1 / +3.9 / +11.9), paired, 8 seeds x 5000. A mana-per-second rule in its place (vigilManaPerSec)
+# never helps: 10 or 15 mana a second never binds, 20 or more loses up to 13 at 220 to 300 sec. Holy
+# Shock still goes out whenever the Vigil is held, the swing check included.
+gen level60_shock "seal=1,jotc=0,consecration=1,consecrationFirst=0,consecrationMana=0,holyShock=1,lightsVigilMana=30,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1,vigilSwing=25" -level 60
 # Level 60 Shock (called Shock (Ret side) on 2026-10-26; the deep Holy build is Level 60 Shock (deep Holy)
 # since 2026-10-27), for the mostly Retribution Holy Shock talents (23/0/28: Holy Shock and
 # Consecrated Ground, Champion of the Light, no Light's Vigil and no Twist of Light). Searched over
@@ -99,13 +105,26 @@ gen level60_sub_holy "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrat
 # cast resets the swing and costs more than it adds: +9.6 / +6.8 / +8.3 at 120 / 180 / 300 sec on the
 # new vs Undead talents (paired, two seed sets).
 gen level60_undead "seal=1,jotc=0,consecration=1,consecrationFirst=0,consecrationMana=20,twist=1,twistMana=0,twistWindow=15,hammerOfWrathMana=0,prepullTwo=1,judgeRighteousnessWindow=0,cooldownsFirst=1,holyWrathMana=100,trinketExecute=1,hammerOfWrathFirst=3" -level 60
-# Level 60 Shock (vs Undead): the Shock rotation, with Light's Vigil above 30% mana in fights up
-# to 240 sec and above 60% in longer ones, to leave mana for Exorcism (rotation audit pass 13: a
-# flat 60% left 1300 to 1700 mana unspent at 120 and 180 sec; +9.7 / +10.5 / 0 at 120 / 180 /
-# 300 sec; any switch point from 210 to 270 sec is the same). On the generic boss the longer
-# floor only loses, so level60_shock keeps a flat 30%. Holy Wrath does not make it: its 2 sec cast is worth less
-# than the Holy Shocks and Holy Strikes it pushes back.
-gen level60_shock_undead "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,lightsVigilMana=30,vigilLongFight=240,vigilLongMana=60,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1,vigilSwing=25" -level 60
+# Level 60 Shock (vs Undead): the Shock rotation, with Light's Vigil above 30% mana while the mana
+# lasts the fight and only above 60% when it won't. Holy Wrath does not make it: its 2 sec cast is
+# worth less than the Holy Shocks and Holy Strikes it pushes back.
+# Rotation audit pass 13 had a fight-length switch here (30% in fights up to 240 sec, 60% in longer
+# ones; a flat 60% left 1300 to 1700 mana unspent at 120 and 180 sec). Standards 31 (2026-10-28)
+# states what it bought instead: against Undead the Vigil and its Holy Shock (1340 mana) are the
+# least mana-efficient casts next to Exorcism, Consecration and Hammer of Wrath, so once the mana
+# can't keep up they get only the top of the bar. Spending the top keeps the Major Mana Potion and
+# Demonic Rune coming on cooldown (they wait for a 2250 mana gap): a per-second rule on the bar
+# alone held the Vigil at the pull of long fights, the first potion came late and the third never
+# (-8 to -12 at 240 to 300 sec for 20 to 50 mana a second, whatever the rate). So "the mana lasts"
+# counts the bar plus the potions and runes still to come with 15 sec left to spend them, at 55 mana
+# a second of the fight left (vigilManaPerSec=55), 75 from 10 sec before the execute phase, where
+# Hammer of Wrath needs it (vigilHammerManaPerSec=20, vigilExecuteLead=10). Below that the Vigil
+# needs 60% (vigilTopMana=60). Searched by hand over 120 to 300 sec (rates 50 to 70, Hammer 0 to 80,
+# lead 0 to 20, counting potions or not, with 15 to 60 sec left). Against the switch, paired, 8 seeds
+# x 5000: +0.46 / -0.11 / -0.10 / +4.19 / +0.43 / +1.44 at 120 / 150 / 180 / 210 / 260 / 300 sec;
+# 20 seeds x 5000: -0.16+-0.07 at 180+-20 sec and -0.13+-0.02 at 240 sec, the switch's own tuning
+# point (the report's request, seed 1 x 20000: 973.11 -> 973.17).
+gen level60_shock_undead "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,lightsVigilMana=30,vigilManaPerSec=55,vigilTopMana=60,vigilHammerManaPerSec=20,vigilExecuteLead=10,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1,vigilSwing=25" -level 60
 # Judgement of the Crusader duty (standards 23): the base rotation plus Seal of the Crusader at
 # -1.5 sec after the base pre-pull and its Judgement at the pull (jotc=1). Under Forever the
 # judgement adds 161 Holy damage taken for 40 sec and the paladin's own melee hits refresh it, so
@@ -117,7 +136,7 @@ gen level60_shock_undead "seal=1,jotc=0,consecration=1,consecrationFirst=1,conse
 # (sealFirst), since the opener's Judgement of the Crusader leaves it down: +6.0 / +3.0 / +0.5 at 120
 # / 180 / 300 sec (base Shock, which never loses its seal early, is 1.6 behind with it at 180 sec).
 gen level60_crusader_duty "seal=2,jotc=1,consecration=1,consecrationFirst=1,consecrationMana=20,twist=1,twistMana=0,twistWindow=15,hammerOfWrathMana=0,prepullTwo=1,judgeRighteousnessWindow=0,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=1" -level 60
-gen level60_shock_crusader_duty "seal=1,jotc=1,sealFirst=1,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,holyStrikeFirst=1,lightsVigilMana=30,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=2,vigilSwing=25,vigilLongFight=210" -level 60
+gen level60_shock_crusader_duty "seal=1,jotc=1,sealFirst=1,consecration=1,consecrationFirst=1,consecrationMana=0,holyShock=1,holyStrikeFirst=1,lightsVigilMana=30,hammerOfWrathMana=0,prepullTwo=1,vigilChain=1,cooldownsFirst=1,trinketExecute=1,hammerOfWrathFirst=2,vigilSwing=25" -level 60
 # Rotation audit pass 23 (2026-10-16): Hammer of Wrath above Consecration, so in the execute phase
 # it isn't held behind a Consecration that ticks for less (hammerOfWrathFirst=1; 2 puts it at the
 # very top, which is where the Shock duty list gains most). Paired over two seed sets at 20k, 120 /

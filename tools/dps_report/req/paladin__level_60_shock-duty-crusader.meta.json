@@ -44,8 +44,8 @@
     "Consecration on cooldown, down to the last point of mana",
     "Judgement on cooldown on Seal of Righteousness; re-seal Righteousness whenever it is down (no twisting)",
     "Holy Strike on cooldown",
-    "Light's Vigil whenever it is not on the target, mana is at or above 30% and the next swing is more than 2s off (its cast resets the swing)",
-    "Holy Shock on a Vigil-marked target (detonates it, refunds 75% of its mana, starts no cooldown), or on cooldown below 30% mana; Divine Favor goes on a Holy Shock",
+    "Light's Vigil whenever it is not on the target, mana is at or above 30% and the next swing is more than 2.5s off (its cast resets the swing)",
+    "Holy Shock on a Vigil-marked target (detonates it, refunds 75% of its mana, starts no cooldown), or on cooldown whenever the Vigil is held back (mana under its floor, or a swing within 2.5s); Divine Favor goes on a Holy Shock",
     "Racials, Goblin Sapper, Major Mana Potion and Demonic Rune on free GCDs"
   ],
   "consumes": [

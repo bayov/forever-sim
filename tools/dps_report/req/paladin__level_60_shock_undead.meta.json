@@ -25,7 +25,7 @@
     "ok": true,
     "note": "verify.py of this request, 180s, seed 1"
   },
-  "summary": "The Holy Shock build with Exorcism, for an Undead or Demon boss. It saves more mana for Light's Vigil in long fights.",
+  "summary": "The Holy Shock build with Exorcism, for an Undead or Demon boss. When the mana won't last the fight, Light's Vigil gets only the top of the mana bar.",
   "advantage": "Exorcism and Holy Wrath only work on Undead and Demons. This build adds Exorcism to its Holy Shock rotation.",
   "advantageRefs": [
     "k:s10314"
@@ -47,8 +47,8 @@
     "Judgement on cooldown on Seal of Righteousness; re-seal Righteousness whenever it is down (no twisting)",
     "Holy Strike on cooldown",
     "Hammer of Wrath below 20% health",
-    "Light's Vigil whenever it is not on the target, mana is at or above 30% and the next swing is more than 2s off (its cast resets the swing)",
-    "Holy Shock on a Vigil-marked target (detonates it, refunds 75% of its mana, starts no cooldown), or on cooldown below 30% mana; Divine Favor goes on a Holy Shock",
+    "Light's Vigil whenever it is not on the target and the next swing is more than 2.5s off (its cast resets the swing): at or above 30% mana while the mana, with the Major Mana Potions and Demonic Runes still to come, covers 55 a second of the fight left (75 from 10s before the execute phase, for Hammer of Wrath), otherwise only at or above 60%",
+    "Holy Shock on a Vigil-marked target (detonates it, refunds 75% of its mana, starts no cooldown), or on cooldown whenever the Vigil is held back (mana under its floor, or a swing within 2.5s); Divine Favor goes on a Holy Shock",
     "Racials, Goblin Sapper, Major Mana Potion and Demonic Rune on free GCDs"
   ],
   "consumes": [
