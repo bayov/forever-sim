@@ -73,8 +73,8 @@ DEFENSIVE = {
     'judgementOfLight': "Healing only.",
 }
 GONE = {
-    'curseOfShadow': "Not in WoW Forever: its Curse of the Elements already covers Shadow and Arcane.",
-    'sanctityAura': "Not in WoW Forever: Sanctity Aura isn't in its Retribution tree.",
+    'curseOfShadow': "WoW Forever has no Curse of Shadow. Its Curse of the Elements covers Shadow and Arcane.",
+    'sanctityAura': "WoW Forever's Retribution tree has no Sanctity Aura.",
 }
 # under Forever the sim takes these 'improved' flags as regular (the talents that improved them are gone)
 IMPROVED_IGNORED = {'giftOfTheWild', 'powerWordFortitude', 'bloodPact', 'blessingOfMight', 'blessingOfWisdom', 'battleShout', 'exposeArmor',
@@ -192,12 +192,12 @@ def annotate(setup, builds, stat_rows, path=os.path.join(D, 'abl', 'ablate.json'
                 what = pair[1][0]
                 tail = " They share a slot in WoW Forever." if k in ('faerieFire', 'curseOfRecklessness', 'leaderOfThePack', 'moonkinAura') else ""
                 if k == 'exposeArmor':  # the sim's aura log shows Expose Armor up from 3s, as it takes the slot over
-                    tail += " Its uptime still shows because the sim swaps it in after 3s."
+                    tail += " Its uptime still shows, because the sim swaps it in after 3s."
                 r['active'], r['why'] = False, f"{NAME[other]} already gives {what}.{tail}"
         elif same:
             r['active'], r['why'] = False, reason(k, r, cls, role, same, pair_same)
         if r['active'] and '(improved)' in r['item'] and k in IMPROVED_IGNORED:
-            r['note'] = "WoW Forever has no Improved version of it, so the sim uses the regular one."
+            r['note'] = "WoW Forever has no Improved version. The sim uses the regular one."
         stats.setdefault(bid, [0, 0])
         stats[bid][0] += 1
         stats[bid][1] += 0 if r['active'] else 1

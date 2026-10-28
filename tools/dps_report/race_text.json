@@ -121,19 +121,19 @@
  "warlock__affliction.Gnome": {
   "note": "Saves Eureka! for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap.",
   "why": {
-   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap, which used to take its 8s."
+   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap."
   }
  },
  "warlock__demonology.Gnome": {
   "note": "Saves Eureka! for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap.",
   "why": {
-   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap, which used to take its 8s."
+   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap."
   }
  },
  "warlock__destruction.Gnome": {
   "note": "Saves Eureka! for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap.",
   "why": {
-   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap, which used to take its 8s."
+   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap."
   }
  },
  "warlock__destruction_fire.Gnome": {
@@ -187,19 +187,19 @@
  "warlock__affliction-duty-curse.Gnome": {
   "note": "Saves Eureka! for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap.",
   "why": {
-   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap, which used to take its 8s."
+   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap."
   }
  },
  "warlock__demonology-duty-curse.Gnome": {
   "note": "Saves Eureka! for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap.",
   "why": {
-   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap, which used to take its 8s."
+   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap."
   }
  },
  "warlock__destruction-duty-curse.Gnome": {
   "note": "Saves Eureka! for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap.",
   "why": {
-   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap, which used to take its 8s."
+   "priority:s1259812": "Saved for Shadow Bolt. It doesn't help the bane, Corruption or Life Tap."
   }
  },
  "warlock__destruction_fire-duty-curse.Gnome": {

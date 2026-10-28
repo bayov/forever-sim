@@ -309,11 +309,11 @@ outs.sort(key=lambda o: (CLASS_ORDER.index(o['meta']['class']), -o['main']['dps'
 builds, races, lengths, abilities, auras, hist, stats, gear, setup, notes = [], [], [], [], [], [], [], [], [], []
 # The gear rules of the bundled gear round (orchestration/standards.md 1b, 5a, 8a), shown on the Method tab.
 GEAR_RULES = [
-    "Each piece matches Forever's stat budget for its slot, item level and archetype, within 1%.",
-    "Budget weights: spell power 0.86, attack power 0.5, ranged attack power 0.4, every other stat 1.",
+    "Each piece matches Forever's stat budget for its slot, item level and type, within 1%.",
+    "In the budget, spell power counts 0.86 a point, attack power 0.5, ranged attack power 0.4 and every other stat 1.",
     "Item levels: 66 for head, shoulders, chest, hands, legs and feet. 71 for neck, back, wrist, waist, rings, one-handers and ranged. 76 for two-handers.",
-    "Stamina follows each spec's share in its Season of Discovery level 60 best-in-slot sets. Hit is at the cap.",
-    "Two synthetic item level 71 trinkets: a stat trinket and an on-use one (140 spell power, 335 attack power, 415 ranged attack power or 165 Strength for 20s every 2 min). Forever's launch trinkets aren't simulated.",
+    "Each spec gives Stamina the same share as its Season of Discovery level 60 best-in-slot sets. Hit is at the cap.",
+    "Two synthetic item level 71 trinkets. One has stats. The other, used every 2 min, gives 140 spell power, 335 attack power, 415 ranged attack power or 165 Strength for 20s. Forever's launch trinkets aren't simulated.",
     "Retribution and Enhancement also carry spell power and Intellect.",
     "Only the tier set's 2-piece bonus is active. Enchants are the best Phase 1 ones from outside raids.",
 ]
@@ -372,7 +372,7 @@ for o in outs:
         'encounter': encn or None, 'baseBuild': base_id or None, 'duty': duty or None,
         # a duty that protects the raid instead of raising its damage, so its cost buys no DPS anywhere
         'dutyDefensive': duty in DEFENSIVE_DUTIES if duty else None,
-        'bossType': encn or 'Generic boss', 'bossText': f"Level 63 {encn} boss" if encn else 'Level 63 boss with no creature type (generic)',
+        'bossType': encn or 'Generic boss', 'bossText': f"Level 63 {encn} boss" if encn else 'Level 63 boss with no creature type',
         'dps': round(mn['dps'], 1), 'se': round(mn['se'], 2), 'stdev': round(mn['stdev'], 1),
         'p1': round(mn['pct']['1'], 1), 'p10': round(mn['pct']['10'], 1), 'p25': round(mn['pct']['25'], 1), 'p50': round(mn['pct']['50'], 1),
         'p75': round(mn['pct']['75'], 1), 'p90': round(mn['pct']['90'], 1), 'p99': round(mn['pct']['99'], 1),

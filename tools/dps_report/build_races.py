@@ -69,7 +69,7 @@ RACE_PARTS = {'Human': ['spirit', 'ruthless'], 'Dwarf': ['precision', 'beast_dwa
               'Troll': ['berserking', 'beast_troll'], 'High Order': ['windblessed', 'insight', 'leyline'], 'Windshaper': ['windblessed', 'insight']}
 SCENARIOS = [
     ('baseline', 'Generic boss', 'Each preset against a level 63 boss with no creature type. No racial depends on the weapon. '
-     "A race gets its own rotation or gear where that clearly beats the preset's in the sim, and its row says what changed."),
+     "A race gets its own rotation or gear when that clearly does better in the sim. Its row says what changed."),
     ('beast', 'Beast target', 'On a Beast boss, Troll Beast Slaying and Dwarf Big Game Hunter add 5% damage.'),
     ('elemental', 'Elemental target', 'On an Elemental boss, High Order and Windshaper Elemental Insight add 5% damage.'),
     ('humanoid', 'Humanoid target', 'Priests only. Dwarf Priests can cast Chastise, which works only on Humanoids.'),
