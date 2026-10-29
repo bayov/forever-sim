@@ -2,6 +2,7 @@ export const enum RequestTypes {
 	RaidSim = 0x1,
 	StatWeights = 0x2,
 	BulkSim = 0x4,
+	CompSearch = 0x8,
 	All = 0xf,
 }
 

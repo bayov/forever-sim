@@ -7,9 +7,13 @@ import {
 	//BulkSimCombosResult,
 	BulkSimRequest,
 	BulkSimResult,
+	CompSearchRequest,
+	CompSearchResult,
 	ComputeStatsRequest,
 	ComputeStatsResult,
 	ProgressMetrics,
+	RaidComp,
+	RaidCompResolution,
 	RaidSimRequest,
 	RaidSimRequestSplitRequest,
 	RaidSimRequestSplitResult,
@@ -24,6 +28,8 @@ import { SimSignals } from './sim_signal_manager';
 import { noop } from './utils';
 
 const SIM_WORKER_URL = `/${REPO_NAME}/sim_worker.js`;
+const RESOLVER_MISSING_WASM = "This build of the sim's WebAssembly lib has no raid sim resolver (resolveComp) yet.";
+const RESOLVER_MISSING_SERVER = 'This build of the native server has no raid sim resolver (/resolveComp) yet.';
 export type WorkerProgressCallback = (progressMetrics: ProgressMetrics) => void;
 
 /**
@@ -168,6 +174,63 @@ export class WorkerPool {
 		return result.finalRaidResult!;
 	}
 
+	// The raid sim's resolver (docs/raid_sim.md): a comp into the raid's request and what it gives
+	// whom. A lib or server without it answers no bytes, which comes back as the resolution's error.
+	async resolveComp(comp: RaidComp): Promise<RaidCompResolution> {
+		const result = await this.makeApiCall(SimRequest.resolveComp, RaidComp.toBinary(comp));
+		if (result.length == 0) {
+			return RaidCompResolution.create({
+				error: { message: (await this.isWasm()) ? RESOLVER_MISSING_WASM : RESOLVER_MISSING_SERVER },
+			});
+		}
+		try {
+			return RaidCompResolution.fromBinary(result);
+		} catch (e) {
+			return RaidCompResolution.create({ error: { message: `The resolver's answer isn't a RaidCompResolution: ${e}` } });
+		}
+	}
+
+	// The comp search, through the native server's /compSearchAsync. It streams the phase, the sims
+	// done and the best comp so far, and its last frame holds the result. Abort stops it.
+	async compSearchAsync(request: CompSearchRequest, onProgress: WorkerProgressCallback, signals: SimSignals): Promise<CompSearchResult> {
+		const worker = this.getLeastBusyWorker();
+		if (await worker.isWasmWorker()) {
+			return CompSearchResult.create({ request, error: { message: 'The comp search needs the native server.' } });
+		}
+		worker.log('Comp search request: ' + CompSearchRequest.toJsonString(request));
+		const id = generateRequestId(SimRequest.compSearchAsync);
+		signals.abort.onTrigger(async () => {
+			await worker.sendAbortById(id);
+		});
+
+		let final: ProgressMetrics | null = null;
+		const onFrame = (progressData: Uint8Array) => {
+			const progress = ProgressMetrics.fromBinary(progressData);
+			onProgress(progress);
+			if (progress.finalCompSearchResult) {
+				final = progress;
+				return;
+			}
+			worker.addPromiseFunc(this.getProgressName(id), onFrame, noop);
+		};
+		try {
+			worker.addSimTaskRunning(id, request.iterations || 1000);
+			worker.addPromiseFunc(this.getProgressName(id), onFrame, noop);
+			// The call ends with the stream, after its last progress frame.
+			await worker.doApiCall(SimRequest.compSearchAsync, CompSearchRequest.toBinary(request), id);
+		} finally {
+			worker.updateSimTask(id, 0);
+		}
+		const result = (final as ProgressMetrics | null)?.finalCompSearchResult;
+		if (!result) {
+			return CompSearchResult.create({
+				request,
+				error: { message: "The native server didn't answer /compSearchAsync. A server built before the comp search doesn't have it." },
+			});
+		}
+		return result;
+	}
+
 	async raidSimRequestSplit(request: RaidSimRequestSplitRequest): Promise<RaidSimRequestSplitResult> {
 		const result = await this.makeApiCall(SimRequest.raidSimRequestSplit, RaidSimRequestSplitRequest.toBinary(request));
 		return RaidSimRequestSplitResult.fromBinary(result);
@@ -232,7 +295,12 @@ export class WorkerPool {
 			onProgress(progress);
 			worker.updateSimTask(id, Math.max(1, progress.totalIterations - progress.completedIterations));
 			// If we are done, stop adding the handler.
-			if (progress.finalRaidResult != null || progress.finalWeightResult != null || progress.finalBulkResult != null) {
+			if (
+				progress.finalRaidResult != null ||
+				progress.finalWeightResult != null ||
+				progress.finalBulkResult != null ||
+				progress.finalCompSearchResult != null
+			) {
 				onFinal(progress);
 				return;
 			}
