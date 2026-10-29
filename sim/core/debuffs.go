@@ -188,6 +188,14 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 		}
 	}
 
+	// A Tallstrider's Dust Cloud, at the rank of the raid's level. Forever only: Classic's
+	// Tallstriders have no Dust Cloud.
+	if debuffs.DustCloud && forever {
+		if rank := HighestRankAt(level, foreverDustCloudLevel[:]); rank > 0 {
+			MakePermanent(ForeverDustCloudAura(target, foreverDustCloudSpellID[rank], foreverDustCloudArmor[rank]))
+		}
+	}
+
 	// Forever took out the talents that raised these three, so we give the rank for the raid's
 	// level and ignore "improved".
 	if debuffs.CurseOfWeakness != proto.TristateEffect_TristateEffectMissing {
@@ -280,6 +288,12 @@ var (
 	foreverMinorArmor               = [...]float64{0, 175, 285, 395, 505}
 	foreverFaerieFireLevel          = [...]int{0, 18, 30, 42, 54}
 	foreverCurseOfRecklessnessLevel = [...]int{0, 14, 28, 42, 56}
+
+	// The pet's Dust Cloud ranks (client 70532, sim/hunter/pet_forever.go): 65 / 175 / 285 / 395 /
+	// 505 armor, learned at 12 / 24 / 36 / 48 / 60.
+	foreverDustCloudLevel   = [...]int{0, 12, 24, 36, 48, 60}
+	foreverDustCloudSpellID = [...]int32{0, 1265899, 1265901, 1265902, 1265903, 1265904}
+	foreverDustCloudArmor   = [...]float64{0, 65, 175, 285, 395, 505}
 
 	foreverCurseOfElementsLevel      = [...]int{0, 20, 30, 40, 50}
 	foreverCurseOfElementsSpellID    = [...]int32{0, 440892, 1311676, 1311677, 1311680}
