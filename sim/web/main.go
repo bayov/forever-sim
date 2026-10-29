@@ -109,6 +109,9 @@ var handlers = map[string]apiHandler{
 	"/computeStats": {msg: func() googleProto.Message { return &proto.ComputeStatsRequest{} }, handle: func(msg googleProto.Message) googleProto.Message {
 		return core.ComputeStats(msg.(*proto.ComputeStatsRequest))
 	}},
+	"/resolveComp": {msg: func() googleProto.Message { return &proto.RaidComp{} }, handle: func(msg googleProto.Message) googleProto.Message {
+		return compsearch.Resolve(msg.(*proto.RaidComp))
+	}},
 	"/abortById": {msg: func() googleProto.Message { return &proto.AbortRequest{} }, handle: func(msg googleProto.Message) googleProto.Message {
 		requestId := msg.(*proto.AbortRequest).RequestId
 		triggered := simsignals.AbortById(requestId)
