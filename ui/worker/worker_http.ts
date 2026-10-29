@@ -56,6 +56,17 @@ export const setupHttpWorker = (baseURL: string) => {
 		return outputData;
 	};
 
+	// A server built before an endpoint answers it with its file server's 404 page, which isn't a
+	// proto. So a call that fails answers no bytes, and the caller reads that as "not in this build".
+	const syncHandlerOrEmpty: HandlerFunction = async (inputData, _, id, msg) => {
+		const response = await makeHttpApiRequest(msg, inputData, id);
+		if (!response.ok) {
+			console.error(`${msg} failed with HTTP ${response.status}`);
+			return new Uint8Array();
+		}
+		return new Uint8Array(await response.arrayBuffer());
+	};
+
 	const noWasmConcurrency: HandlerFunction = (inputData, progress, msg) => {
 		const errmsg = `Tried to use ${msg} while using a http worker! This is only supported for wasm!`;
 		console.error(errmsg);
@@ -77,5 +88,7 @@ export const setupHttpWorker = (baseURL: string) => {
 		raidSimRequestSplit: noWasmConcurrency,
 		raidSimResultCombination: noWasmConcurrency,
 		abortById: syncHandler,
+		resolveComp: syncHandlerOrEmpty,
+		compSearchAsync: asyncHandler,
 	}).ready(false);
 };

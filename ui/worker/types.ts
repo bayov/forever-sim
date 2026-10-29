@@ -16,6 +16,11 @@ export enum SimRequest {
 	raidSimRequestSplit = 'raidSimRequestSplit',
 	raidSimResultCombination = 'raidSimResultCombination',
 	abortById = 'abortById',
+	// The raid sim (docs/raid_sim.md). resolveComp turns a RaidComp into a RaidCompResolution, in the
+	// WebAssembly lib and at the native server's /resolveComp. compSearchAsync is the comp search,
+	// streamed like raidSimAsync, and only the native server has it.
+	resolveComp = 'resolveComp',
+	compSearchAsync = 'compSearchAsync',
 }
 
 /**

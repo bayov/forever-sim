@@ -1,0 +1,636 @@
+// The comp search's result (docs/raid_sim.md, The result): every item a CompSearchResult holds, for each
+// scenario (faction and camp setting). It leads with what could change the answer: the tie set and the
+// sensitivity scenarios that change the winner.
+import {
+	CompResult,
+	CompResultMember,
+	CompScenarioResult,
+	CompSearchRequest,
+	CompSearchResult,
+	PaladinJudgement,
+	RaidPackage,
+	RaidPreset,
+	RaidRole,
+} from '../core/proto/api';
+import { Faction, MobType } from '../core/proto/common';
+import { blessingName, dutyName, factionName, judgementName, mobTypeName, packageName, presetName, raceLabel, RaidSimData, roleName, totemName } from './data';
+import { badge, ci95, collapsible, empty, fmt, fmtInt, fmtSigned, list, memberLabel, membersLabel, section, table } from './view_utils';
+
+export interface ResultViewOptions {
+	// Opens a comp in the comp editor.
+	onOpenComp?: (comp: CompResult, scenario: CompScenarioResult) => void;
+	// Where the result came from, shown above it.
+	source?: string;
+}
+
+export const scenarioName = (sc: CompScenarioResult) => `${factionName(sc.faction)}, camps ${sc.campBuffs ? 'on' : 'off'}`;
+
+const comboText = (presets: RaidPreset[]) => presets.map(presetName).join(', ');
+
+// The DPS members of a comp, counted, like "4× Mage: Frostfire".
+const dpsSummary = (data: RaidSimData | null, comp: CompResult) => {
+	const counts = new Map<string, { member: CompResultMember; n: number }>();
+	comp.members
+		.filter(m => m.role == RaidRole.RaidRoleDps)
+		.forEach(m => {
+			const key = m.buildId;
+			const entry = counts.get(key);
+			if (entry) entry.n++;
+			else counts.set(key, { member: m, n: 1 });
+		});
+	const out: Node[] = [];
+	[...counts.values()].forEach(({ member, n }, i) => {
+		if (i > 0) out.push(document.createTextNode(', '));
+		out.push(document.createTextNode(`${n}× `));
+		out.push(memberLabel(data, member.buildId));
+		if (member.duties.length && !data?.byId.has(member.buildId)) out.push(document.createTextNode(` (${member.duties.map(dutyName).join(', ')})`));
+	});
+	return <span className="rs-comp-summary">{out}</span>;
+};
+
+export class ResultView {
+	readonly rootElem: HTMLElement;
+	private readonly result: CompSearchResult;
+	private readonly data: RaidSimData | null;
+	private readonly opts: ResultViewOptions;
+	private scenarioIndex = 0;
+	private readonly scenarioHost: HTMLElement;
+
+	constructor(result: CompSearchResult, data: RaidSimData | null, opts: ResultViewOptions = {}) {
+		this.result = result;
+		this.data = data;
+		this.opts = opts;
+		this.scenarioHost = (<div className="rs-scenario" />) as HTMLElement;
+		this.rootElem = (
+			<div className="rs-result">
+				{this.header()}
+				{result.error ? <div className="alert alert-danger rs-error">The search failed: {result.error.message}</div> : null}
+				{result.scenarios.length ? this.overview() : empty('This result has no scenarios.')}
+				{this.scenarioHost}
+				{this.global()}
+			</div>
+		) as HTMLElement;
+		this.showScenario(0);
+	}
+
+	private header() {
+		const r = this.result;
+		const req = r.request ?? CompSearchRequest.create();
+		return (
+			<header className="rs-result-header">
+				<h2 className="rs-result-title">
+					Comp search: {req.size} players, {req.tanks} {req.tanks == 1 ? 'tank' : 'tanks'}, {req.healers} {req.healers == 1 ? 'healer' : 'healers'}
+				</h2>
+				<p className="rs-result-subtitle">
+					{encounterText(req)}. {fmtInt(r.simsRun)} single-player sims at {fmtInt(req.iterations)} iterations (contenders at{' '}
+					{fmtInt(req.contenderIterations)}), {fmtInt(r.cacheHits)} from the cache, {fmt(r.seconds, 0)} s. Sim version {r.version || 'unknown'}.
+				</p>
+				{this.opts.source ? <p className="rs-result-source">From {this.opts.source}</p> : null}
+			</header>
+		);
+	}
+
+	// Each scenario's best comp, and the picker for the scenario shown below.
+	private overview() {
+		const buttons = this.result.scenarios.map((sc, i) => {
+			const best = sc.comps[0];
+			const button = (
+				<button className="rs-scenario-tab" type="button" attributes={{ role: 'tab' }}>
+					<span className="rs-scenario-tab-name">{scenarioName(sc)}</span>
+					<span className="rs-scenario-tab-dps">{best ? `${fmt(best.dps)} raid DPS` : 'no comp'}</span>
+					{sc.tieSet > 1 ? <span className="rs-scenario-tab-note">{sc.tieSet} tie</span> : null}
+				</button>
+			) as HTMLButtonElement;
+			button.addEventListener('click', () => this.showScenario(i));
+			return button;
+		});
+		return (
+			<nav className="rs-scenario-tabs" attributes={{ role: 'tablist' }}>
+				{buttons}
+			</nav>
+		);
+	}
+
+	private showScenario(i: number) {
+		this.scenarioIndex = i;
+		this.rootElem?.querySelectorAll('.rs-scenario-tab').forEach((b, j) => b.classList.toggle('active', j == i));
+		const sc = this.result.scenarios[i];
+		if (!sc) {
+			this.scenarioHost.replaceChildren();
+			return;
+		}
+		this.scenarioHost.replaceChildren(...new ScenarioView(sc, this.data, this.opts).elements);
+	}
+
+	// What the whole run shares: the assumptions, what it left out and what isn't modelled, and the request.
+	private global() {
+		const r = this.result;
+		return (
+			<div className="rs-global">
+				{section('Assumptions', r.assumptions.length ? list(r.assumptions) : empty('None listed.'), {
+					note: 'The rules the search ran under that the client or the launch checks have not settled.',
+				})}
+				{section('Left out', r.leftOut.length ? list(r.leftOut) : empty('Nothing.'), { note: 'Role options no build can express yet.' })}
+				{section('Not modelled', r.notModelled.length ? list(r.notModelled) : empty('Nothing listed.'))}
+				{section('The request', requestTable(r.request ?? CompSearchRequest.create()))}
+			</div>
+		);
+	}
+}
+
+const encounterText = (req: CompSearchRequest) => {
+	const e = req.encounter;
+	if (!e) return 'Default fight';
+	const parts = [`${e.name || 'Generic'} boss`];
+	parts.push(
+		e.useHealth ? `${fmtInt(e.bossHealth)} health (first guess ${fmt(e.duration, 0)} s)` : `${fmt(e.duration, 0)} ± ${fmt(e.durationVariation, 0)} s`,
+	);
+	if (e.mobType != MobType.MobTypeUnknown) parts.push(mobTypeName(e.mobType));
+	parts.push(e.naturalFlaskZone ? 'in the natural flask zone' : 'outside the natural flask zone');
+	return parts.join(', ');
+};
+
+const requestTable = (req: CompSearchRequest) => {
+	const e = req.encounter;
+	const a = req.assumptions;
+	const rows: [string, string][] = [
+		['Raid size', `${req.size}`],
+		['Tank slots', `${req.tanks}`],
+		['Healer slots', `${req.healers}`],
+		['Fixed tanks', req.fixedTanks.map(presetName).join(', ') || 'none (searched)'],
+		['Fixed healers', req.fixedHealers.map(presetName).join(', ') || 'none (searched)'],
+		['Fixed DPS members', req.fixedDps.join(', ') || 'none'],
+		['Encounter', e ? encounterText(req) : 'default'],
+		['Factions', req.factions.map(f => factionName(f as Faction)).join(', ') || 'both'],
+		['Camp buffs', req.campBuffs.map(c => (c ? 'on' : 'off')).join(', ') || 'on and off'],
+		['Iterations', fmtInt(req.iterations)],
+		['Contender iterations', fmtInt(req.contenderIterations)],
+		['Seed', `${req.seed}`],
+		['Confirm with raid sims', req.confirm ? `yes, at ${fmtInt(req.confirmIterations)} and ${fmtInt(req.confirmTopIterations)} iterations` : 'no'],
+		['Sensitivity', req.skipSensitivity ? 'skipped' : 'run'],
+		['Max combos', req.maxCombos ? `${req.maxCombos}` : 'all'],
+		[
+			'Assumption switches',
+			a
+				? [
+						a.campChairSpellCritOnly ? 'the Camp Chair loses only its spell crit to Moonkin Aura' : '',
+						a.campBuffsStackWithGroupBuffs ? 'camp buffs stack with group buffs' : '',
+						a.journeymanCamp ? 'one Journeyman camp' : '',
+				  ]
+						.filter(s => s)
+						.join('; ') || 'none'
+				: 'none',
+		],
+	];
+	return table(['Field', 'Value'], rows, 'rs-table-request');
+};
+
+// One scenario: a faction and camp setting.
+class ScenarioView {
+	readonly elements: HTMLElement[];
+	private readonly sc: CompScenarioResult;
+	private readonly data: RaidSimData | null;
+	private readonly opts: ResultViewOptions;
+	private readonly membersHost = (<div className="rs-members-host" />) as HTMLElement;
+
+	constructor(sc: CompScenarioResult, data: RaidSimData | null, opts: ResultViewOptions) {
+		this.sc = sc;
+		this.data = data;
+		this.opts = opts;
+		this.elements = [
+			this.leading(),
+			this.comps(),
+			section('Members by party', this.membersHost, {
+				note: 'Every slot with its party, its duties and their cost, what it chose (judgement, totems) and what it gets (blessings, package, Power Infusion, Innervate).',
+			}),
+			this.combos(),
+			this.roles(),
+			this.buffs(),
+			this.fillers(),
+			this.memberValues(),
+			this.adding(),
+			this.sensitivity(),
+			this.modelCheck(),
+			this.notes(),
+		];
+		this.showMembers(0);
+	}
+
+	private get d() {
+		return this.data;
+	}
+
+	// The tie set and the sensitivity scenarios that change the winner.
+	private leading() {
+		const sc = this.sc;
+		const changes = sc.sensitivity.filter(s => !s.winnerHolds);
+		const items: Node[] = [];
+		if (sc.comps.length) {
+			items.push(
+				<p className="rs-lead-line">
+					<strong>{scenarioName(sc)}:</strong> the best comp gets <strong>{fmt(sc.comps[0].dps)} raid DPS</strong> ({ci95(sc.comps[0].se)}) over a{' '}
+					{fmt(sc.fightSeconds, 0)} s fight, with {comboText(sc.comps[0].combo)}.
+				</p>,
+			);
+		}
+		items.push(
+			<p className="rs-lead-line">
+				{sc.tieSet > 1
+					? `The first ${sc.tieSet} comps are a tie: their gaps are under the larger of 2 standard errors and 0.1%, so any of them is the answer.`
+					: 'No other comp ties with the best.'}
+			</p>,
+		);
+		if (sc.sensitivity.length) {
+			items.push(
+				<p className="rs-lead-line">
+					The winner holds under {sc.sensitivity.length - changes.length} of {sc.sensitivity.length} sensitivity scenarios
+					{changes.length ? ' and changes under these:' : '.'}
+				</p>,
+			);
+			if (changes.length) {
+				items.push(
+					list(
+						changes.map(s => (
+							<span>
+								<span className="rs-scenario-name">{s.scenario}</span>:{' '}
+								{s.winners.length ? (
+									<>
+										{s.winners[0].buffSet || dpsSummary(this.d, s.winners[0])}, ahead by {fmt(s.winners[0].gap)}
+										{s.winners.length > 1 ? ` (a tie of ${s.winners.length})` : ''}
+									</>
+								) : (
+									s.note || 'another comp wins'
+								)}
+							</span>
+						)),
+					),
+				);
+			}
+		}
+		return section('What could change the answer', items, { className: 'rs-lead' });
+	}
+
+	private comps() {
+		const sc = this.sc;
+		if (!sc.comps.length) return section('The best comps', empty('No comp.'));
+		const rows = sc.comps.map((c, i) => {
+			const show = (
+				<button className="btn btn-sm btn-outline-primary rs-show-members" type="button" title="Show this comp's members below">
+					Members
+				</button>
+			) as HTMLButtonElement;
+			show.addEventListener('click', () => this.showMembers(i));
+			const actions: Node[] = [show];
+			if (this.opts.onOpenComp) {
+				const open = (
+					<button className="btn btn-sm btn-outline-secondary rs-open-comp" type="button" title="Load this comp into the comp editor">
+						Edit
+					</button>
+				) as HTMLButtonElement;
+				open.addEventListener('click', () => this.opts.onOpenComp!(c, sc));
+				actions.push(open);
+			}
+			return [
+				<span>
+					{i + 1}
+					{i < sc.tieSet && sc.tieSet > 1 ? badge('tie', 'info', 'In the tie set') : null}
+				</span>,
+				<span className="rs-dps">
+					{fmt(c.dps)} <span className="rs-ci">{ci95(c.se)}</span>
+				</span>,
+				i == 0 ? (
+					'best'
+				) : (
+					<span>
+						{fmt(c.gap)} <span className="rs-ci">{ci95(c.gapSe)}</span>
+					</span>
+				),
+				comboText(c.combo),
+				dpsSummary(this.d, c),
+				c.confirmed ? `${fmt(c.raidSimDps)} ${ci95(c.raidSimSe)}` : 'not raid-simmed',
+				fmt(c.modelDps),
+				<span className="rs-actions">{actions}</span>,
+			];
+		});
+		return section(
+			'The best comps',
+			[
+				table(
+					[
+						'#',
+						{ label: 'Raid DPS', numeric: true, tooltip: 'The members’ sum, with its 95% interval' },
+						{ label: 'Behind', numeric: true, tooltip: 'Behind the best, with the paired 95% interval of the difference' },
+						'Tanks and healers',
+						'DPS members',
+						{ label: 'Raid sim', tooltip: 'The confirmation raid sim (milestone M1b)' },
+						{ label: 'Model', numeric: true, tooltip: 'What the search’s model scored it' },
+						'',
+					],
+					rows,
+					'rs-table-comps',
+				),
+				<div className="rs-buffsets">
+					{list(
+						sc.comps.map((c, i) => (
+							<span>
+								<strong>#{i + 1}</strong> buff set: {c.buffSet || 'not described'}
+							</span>
+						)),
+					)}
+				</div>,
+			],
+			{
+				note: 'The best comp and its runners-up. Gaps and intervals come from the screening sims, before any confirmation.',
+			},
+		);
+	}
+
+	private showMembers(i: number) {
+		const comp = this.sc.comps[i];
+		if (!comp) {
+			this.membersHost.replaceChildren(empty('No comp.'));
+			return;
+		}
+		this.membersHost.replaceChildren(
+			<p className="rs-members-of">
+				Comp #{i + 1}: {fmt(comp.dps)} raid DPS {ci95(comp.se)}
+			</p>,
+			partiesView(this.d, comp),
+		);
+	}
+
+	private combos() {
+		const sc = this.sc;
+		if (!sc.combos.length && !sc.presetValues.length) return section('Tank and healer combos', empty('This run ranked no combos.'));
+		const combosTable = (n: number) =>
+			table(
+				['#', 'Tanks and healers', { label: 'Raid DPS', numeric: true }, { label: 'Behind', numeric: true }, 'Signature'],
+				sc.combos
+					.slice(0, n)
+					.map((c, i) => [`${i + 1}`, comboText(c.presets), fmt(c.dps), fmt(c.gap), <span className="rs-muted">{c.signature}</span>]),
+			);
+		return section(
+			'Tank and healer combos',
+			[
+				collapsible(combosTable, sc.combos.length, 10),
+				<h4 className="rs-subtitle">Each preset’s DPS value</h4>,
+				table(
+					[
+						'Preset',
+						{ label: 'At the best', numeric: true, tooltip: 'The best combo minus the best combo with that slot’s preset changed' },
+						{
+							label: 'With minus without',
+							numeric: true,
+							tooltip: 'The best combo with at least one of the preset, minus the best combo with none',
+						},
+					],
+					sc.presetValues.map(p => [presetName(p.preset), fmt(p.atBest), fmt(p.bestWithMinusWithout)]),
+				),
+			],
+			{
+				note: 'Every combination of tank and healer presets that fits the slots, ranked by the raid DPS of its best comp. Their own damage is left out.',
+			},
+		);
+	}
+
+	private roles() {
+		const sc = this.sc;
+		return section(
+			'The role table',
+			sc.roles.length
+				? table(
+						['Role', '', { label: 'Gain', numeric: true }, 'Provider', { label: 'Provider cost', numeric: true }, { label: 'Net', numeric: true }],
+						sc.roles.map(r => [
+							r.role,
+							r.inSet ? badge('in the set', 'success') : badge('missing', 'secondary', 'The value of adding it'),
+							r.inSet ? fmt(r.gain) : '',
+							r.inSet ? membersLabel(this.d, r.provider) : 'value of adding',
+							r.inSet ? fmt(r.providerCost) : '',
+							fmt(r.net),
+						]),
+				  )
+				: empty('No roles.'),
+			{
+				note: 'Each role’s gain at the winning set, with that role alone removed and the raid re-filled; a role the set lacks shows its value of adding instead.',
+			},
+		);
+	}
+
+	private buffs() {
+		const sc = this.sc;
+		return section(
+			'Buffs and debuffs',
+			[
+				sc.buffs.length
+					? table(
+							['Effect', 'Scope', 'How', { label: 'Receivers', numeric: true }, 'Provider'],
+							sc.buffs.map(b => [b.effect, b.scope, b.given ? 'given' : 'cast', `${b.receivers}`, membersLabel(this.d, b.provider)]),
+					  )
+					: empty('No buffs recorded.'),
+				<h4 className="rs-subtitle">What the raid goes without</h4>,
+				sc.misses.length ? list(sc.misses, 'rs-misses') : empty('Nothing: every buff the raid could give is up.'),
+			],
+			{ note: 'From the resolver’s record of the best comp. A given buff is up all fight; a cast one comes from a member’s rotation.' },
+		);
+	}
+
+	private fillers() {
+		const sc = this.sc;
+		if (!sc.fillers.length) return section('The filler ranking', empty('No fillers.'));
+		const lo = Math.min(...sc.fillers.map(f => f.assumptionLow || f.dps));
+		const hi = Math.max(...sc.fillers.map(f => f.assumptionHigh || f.dps));
+		const pos = (v: number) => `${((v - lo) / Math.max(1, hi - lo)) * 100}%`;
+		return section(
+			'The filler ranking',
+			table(
+				['Build', { label: 'DPS', numeric: true }, { label: '±SE', numeric: true }, 'Assumption range', ''],
+				sc.fillers.map(f => [
+					memberLabel(this.d, f.buildId, { icon: true }),
+					fmt(f.dps),
+					fmt(f.se),
+					<span className="rs-range">
+						<span className="rs-range-text">
+							{fmt(f.assumptionLow, 0)} to {fmt(f.assumptionHigh, 0)}
+						</span>
+						<span className="rs-range-bar">
+							<span
+								className="rs-range-span"
+								style={{ left: pos(f.assumptionLow), width: `calc(${pos(f.assumptionHigh)} - ${pos(f.assumptionLow)})` }}
+							/>
+							<span className="rs-range-dot" style={{ left: pos(f.dps) }} />
+						</span>
+					</span>,
+					f.interchangeable ? badge('interchangeable', 'info', 'Within 2 standard errors of the best filler') : '',
+				]),
+				'rs-table-fillers',
+			),
+			{ note: 'Each build under the winning buff set without a package, with the spread of the DPS Report’s open assumptions (assumption_dps.json).' },
+		);
+	}
+
+	private memberValues() {
+		const sc = this.sc;
+		return section(
+			'Member values',
+			sc.memberValues.length
+				? table(
+						[
+							'Member',
+							{ label: 'Own DPS', numeric: true },
+							{ label: 'Adds to others', numeric: true, tooltip: 'Contribution minus its own DPS' },
+							{ label: 'Contribution', numeric: true, tooltip: 'Raid DPS minus raid DPS without the member, re-resolved' },
+							{ label: 'Replacement margin', numeric: true, tooltip: 'Raid DPS minus the best raid DPS with another build in that slot' },
+							'Best replacement',
+							{ label: 'vs the DPS Report', numeric: true },
+							'Its parts',
+						],
+						sc.memberValues.map(mv => [
+							memberLabel(this.d, mv.buildId, { icon: true, count: mv.count }),
+							fmt(mv.ownDps),
+							fmtSigned(mv.contribution - mv.ownDps),
+							fmt(mv.contribution),
+							fmt(mv.replacementMargin),
+							mv.bestReplacement ? memberLabel(this.d, mv.bestReplacement) : '',
+							fmtSigned(mv.reportDifference),
+							mv.reportDifferenceParts.length ? list(mv.reportDifferenceParts, 'rs-parts') : '',
+						]),
+						'rs-table-values',
+				  )
+				: empty('No member values.'),
+			{ note: 'One row per distinct member; identical members share one value. A replacement margin within noise means two builds are interchangeable.' },
+		);
+	}
+
+	private adding() {
+		const sc = this.sc;
+		return section(
+			'Value of adding',
+			sc.adding.length
+				? collapsible(
+						n =>
+							table(
+								['Build', { label: 'Value', numeric: true }],
+								sc.adding.slice(0, n).map(a => [memberLabel(this.d, a.buildId, { icon: true }), fmtSigned(a.value)]),
+							),
+						sc.adding.length,
+						8,
+				  )
+				: empty('No builds left to add.'),
+			{ note: 'A build that isn’t in the comp: the best raid DPS from swapping it in for any member, minus raid DPS.' },
+		);
+	}
+
+	private sensitivity() {
+		const sc = this.sc;
+		return section(
+			'Sensitivity',
+			sc.sensitivity.length
+				? collapsible(
+						n =>
+							table(
+								['Scenario', '', 'Winner there', { label: 'Ahead by', numeric: true }, 'Note'],
+								sc.sensitivity
+									.slice()
+									.sort((a, b) => +a.winnerHolds - +b.winnerHolds)
+									.slice(0, n)
+									.map(s => [
+										<span className="rs-scenario-name">{s.scenario}</span>,
+										s.winnerHolds ? badge('holds', 'success') : badge('changes', 'warning'),
+										s.winnerHolds ? '' : s.winners.length ? s.winners[0].buffSet || dpsSummary(this.d, s.winners[0]) : '',
+										s.winnerHolds || !s.winners.length ? '' : fmt(s.winners[0].gap),
+										s.note,
+									]),
+							),
+						sc.sensitivity.length,
+						12,
+				  )
+				: empty('This run skipped the sensitivity scenarios.'),
+			{ note: 'Whether the winner holds under each of the report’s open assumptions, and what wins where it doesn’t.' },
+		);
+	}
+
+	private modelCheck() {
+		const mc = this.sc.modelCheck;
+		return section(
+			'The model check',
+			mc
+				? table(
+						['Buff sets scored', 'Simmed exactly', { label: 'Largest miss', numeric: true }, { label: 'Mean miss', numeric: true }],
+						[[fmtInt(mc.setsScored), fmtInt(mc.setsSimmed), fmt(mc.maxMiss), fmt(mc.meanMiss)]],
+				  )
+				: empty('No model check.'),
+			{ note: 'How far the model’s scores were from the exact sims of the sets it ranked best.' },
+		);
+	}
+
+	private notes() {
+		const sc = this.sc;
+		return section('Notes and timings', [
+			sc.notes.length ? list(sc.notes) : empty('No notes.'),
+			<h4 className="rs-subtitle">Sims and seconds by phase</h4>,
+			sc.timings.length ? list(sc.timings, 'rs-timings') : empty('No timings.'),
+		]);
+	}
+}
+
+// A comp's members, party by party, with what each one holds and gets.
+export const partiesView = (data: RaidSimData | null, comp: CompResult) => {
+	const parties = new Map<number, CompResultMember[]>();
+	comp.members.forEach(m => {
+		if (!parties.has(m.party)) parties.set(m.party, []);
+		parties.get(m.party)!.push(m);
+	});
+	const sorted = [...parties.entries()].sort((a, b) => a[0] - b[0]);
+	return (
+		<div className="rs-parties">
+			{sorted.map(([party, members]) => {
+				const dps = members.reduce((s, m) => s + (m.role == RaidRole.RaidRoleDps ? m.dps : 0), 0);
+				return (
+					<div className="rs-party">
+						<div className="rs-party-header">
+							<span className="rs-party-name">Group {party}</span>
+							<span className="rs-party-dps">{fmt(dps)} DPS</span>
+						</div>
+						{members.map(m => memberCard(data, m))}
+					</div>
+				);
+			})}
+		</div>
+	);
+};
+
+const memberCard = (data: RaidSimData | null, m: CompResultMember) => {
+	const holds: string[] = [];
+	m.duties.forEach(d => holds.push(`${dutyName(d)}${m.dutyCost ? ` (costs ${fmt(m.dutyCost)})` : ''}`));
+	if (m.judgement != PaladinJudgement.PaladinJudgementNone) holds.push(`judges ${judgementName(m.judgement)}`);
+	if (m.totems.length) holds.push(`totems: ${m.totems.map(totemName).join(', ')}`);
+	const gets: string[] = [];
+	if (m.blessings.length) gets.push(`blessings: ${m.blessings.map(blessingName).join(', ')}`);
+	if (m.package != RaidPackage.RaidPackageNone) gets.push(packageName(m.package));
+	if (m.powerInfusion) gets.push('Power Infusion');
+	if (m.innervate) gets.push('Innervate');
+	const isDps = m.role == RaidRole.RaidRoleDps;
+	return (
+		<div className={`rs-member ${isDps ? '' : 'rs-member-placeholder'}`}>
+			<div className="rs-member-top">
+				{memberLabel(data, m.buildId, { icon: true })}
+				{isDps ? (
+					<span className="rs-member-dps">
+						{fmt(m.dps)} <span className="rs-ci">{ci95(m.se)}</span>
+					</span>
+				) : (
+					badge(roleName(m.role), m.role == RaidRole.RaidRoleTank ? 'warning' : 'success')
+				)}
+			</div>
+			<div className="rs-member-details">
+				{m.race ? <span>{raceLabel(m.race)}</span> : null}
+				{isDps && m.reportDps ? (
+					<span title="Its DPS here minus its report build’s published DPS">vs report {fmtSigned(m.dps - m.reportDps)}</span>
+				) : null}
+				{m.tps ? <span>{fmt(m.tps)} TPS</span> : null}
+			</div>
+			{holds.length ? <div className="rs-member-holds">{holds.join('; ')}</div> : null}
+			{gets.length ? <div className="rs-member-gets">gets {gets.join('; ')}</div> : null}
+		</div>
+	);
+};

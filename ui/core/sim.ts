@@ -6,10 +6,14 @@ import {
 	BulkSettings,
 	BulkSimRequest,
 	BulkSimResult,
+	CompSearchRequest,
+	CompSearchResult,
 	ComputeStatsRequest,
 	ErrorOutcome,
 	ErrorOutcomeType,
 	Raid as RaidProto,
+	RaidComp,
+	RaidCompResolution,
 	RaidSimRequest,
 	RaidSimResult,
 	Ruleset,
@@ -340,6 +344,24 @@ export class Sim {
 					: await this.workerPool.raidSimAsync(request, onProgress, signals);
 			if (result.error?.type == ErrorOutcomeType.ErrorOutcomeError) throw new SimError(result.error.message);
 			return result;
+		} finally {
+			this.signalManager.unregisterRunning(signals);
+		}
+	}
+
+	// The raid sim's resolver (docs/raid_sim.md): a comp into the raid's request and what it gives whom.
+	// Its errors, a missing resolver included, come back as the resolution's error.
+	async resolveComp(comp: RaidComp): Promise<RaidCompResolution> {
+		await this.waitForInit();
+		return this.workerPool.resolveComp(comp);
+	}
+
+	// The comp search, through the native server. abortType(RequestTypes.CompSearch) stops it, and an aborted
+	// search comes back with its error.
+	async runCompSearch(request: CompSearchRequest, onProgress: WorkerProgressCallback): Promise<CompSearchResult> {
+		const signals = this.signalManager.registerRunning(RequestTypes.CompSearch);
+		try {
+			return await this.workerPool.compSearchAsync(request, onProgress, signals);
 		} finally {
 			this.signalManager.unregisterRunning(signals);
 		}

@@ -311,7 +311,7 @@ export function getSpecSiteUrl(spec: Spec): string {
 	specString = camelToSnakeCase(specString); // 'balance_druid'
 	return specSiteUrlTemplate.toString().replace('SPEC', specString);
 }
-export const raidSimSiteUrl = new URL(`${window.location.protocol}//${window.location.host}/${REPO_NAME}/raid/`).toString();
+export const raidSimSiteUrl = new URL(`${window.location.protocol}//${window.location.host}/${REPO_NAME}/raid_sim/`).toString();
 // The landing page, where we pick a spec.
 export const homeSiteUrl = new URL(`${window.location.protocol}//${window.location.host}/${REPO_NAME}/`).toString();
 
