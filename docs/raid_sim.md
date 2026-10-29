@@ -75,8 +75,8 @@ Group placement changes mana (Mana Spring, Mana Tide, Blood Pact, Dark Inspirati
 only through Retribution Aura and Thorns in the tank's party, which do nothing until tanks are simmed.
 
 **Range.** "Raid-wide" still means within 20 yards (Battle Shout), 30 yards (the totems) or 45 yards
-(Moonkin, Leader of the Pack, Trueshot Aura). The raid sim assumes everyone is in range of everything (see
-[Open decisions](#open-decisions)).
+(Moonkin, Leader of the Pack, Trueshot Aura). The raid sim assumes everyone is in range of everything (the
+user, 2026-10-29).
 
 ## The score
 
@@ -348,6 +348,35 @@ boss's damage. They add no DPS and are left out.
   the raid sim uses the sim's current rule and lists it as an assumption. The beta tests that settle
   these go to notes.md.
 
+### Hunter pets
+
+Two pet families give the raid something, and both are substitutes, not extras.
+
+**A Tallstrider's Dust Cloud** takes 505 armor off the boss for 30 seconds. It sits in the minor armor
+slot with Faerie Fire (505) and Curse of Recklessness, and only the strongest of the three counts
+(`ForeverDustCloudAura`, `sim/core/debuffs.go`). So with a druid keeping Faerie Fire up, Dust Cloud adds
+nothing. Its value is in a raid without one: the minor armor slot gets filled without a druid, or without
+a warlock spending its curse on Recklessness.
+
+**A wolf's Furious Howl** gives 83 melee attack power at 60 for 60 seconds, raid-wide within 15 yards, on a
+30-second cooldown.
+
+- **With Battle Shout:** in the sim it shares Battle Shout's slot, and only the stronger counts
+  (`battleShoutCategory`, `sim/core/buffs.go`). Battle Shout is 115 at 60, so with a warrior shouting, the
+  howl adds nothing to players.
+- **Unverified:** the user approved this rule on 2026-10-23, from wowsims/forever, which cites no log. The
+  client puts the howl on the same aura type as Battle Shout, and in Classic both counted. If the game
+  stacks them, every melee member gains 83 attack power. notes.md has the beta test: a warrior with
+  Battle Shout up next to a howling wolf, reading the sheet's attack power.
+- **Pets:** pets take no player buffs in Forever, so they never get Battle Shout. The howl reaches the
+  wolf itself. Whether it reaches other hunters' pets is unverified: it has no players-only flag.
+
+So in the sim's rules, the wolf is worth taking only when no warrior shouts. The Tallstrider is worth
+taking only when nobody fills the minor armor slot more cheaply.
+
+Both cost the hunter some of their own DPS, since the usual pet is picked for it. The marked variants
+carry that cost, and the search weighs it against what the pet gives.
+
 ## Assignments
 
 Each assignment is **automatic, or set by hand** (the user, 2026-10-29). Automatic assignment gives it to
@@ -508,9 +537,9 @@ So:
   type matches.
 - **The "+ Mana Tide", Water Shield and Imp GW builds** are different talent builds, so they are entries
   of their own.
-- **Pet families are a comp choice.** A Tallstrider fills the minor armor slot and a wolf gives melee
-  attack power raid-wide. So these may need marked variants of the hunter builds (see
-  [Open decisions](#open-decisions)).
+- **Pet families are a comp choice.** Each hunter build gets marked variants with a Tallstrider and with
+  a wolf (the user, 2026-10-29), next to the build with its usual pet. See
+  [Hunter pets](#hunter-pets) for what they give.
 
 The page builds the pool's players from the marked presets. The Go tests read the same builds from
 `tools/dps_report/req`, and the parity check keeps the two equal.
@@ -529,107 +558,113 @@ The main thing the raid sim is for (the user, 2026-10-29).
 nothing else. The search may fill the raid with one spec, and may drop the only provider of a buff when a
 stronger spec in its place gives more.
 
-### The size of it
+### Not every combination
 
 For a generic boss the pool has 37 builds: 58 requests, less 12 duty variants and 9 encounter variants.
-About 20 are left after dropping builds that give the same buffs as a better one.
+The number of distinct comps runs from 3e7 for 7 DPS to 2.5e18 for 29, so trying them is out.
 
-The number of distinct comps:
+It's also unnecessary (the user, 2026-10-29). **Each build's DPS can be judged on its own, under a given
+set of buffs and debuffs**, because members affect each other almost only through what they give. A raid
+is then two things:
 
-| Builds | 7 DPS | 14 DPS | 29 DPS |
-|---|---|---|---|
-| 37 | 3.2e7 | 9.4e11 | 2.5e18 |
-| 20 | 6.6e5 | 8.2e8 | 1.2e13 |
+- **The buff set:** which buffs and debuffs are up, and who holds each assignment.
+- **The fill:** given the buff set, each slot's DPS is that build's own DPS under it, which a
+  single-player sim measures. One player costs about 0.4 ms an iteration, against 19 ms for a raid of 20.
 
-The first draft's greedy fill and swaps take about 1,100, 2,000 and 3,500 raid sims for 10, 20 and 40.
-At today's speed that is 5 hours for 10 and 6 days for 40 on one thread. The plan below takes about
-150 to 200.
+The reviews checked this on report builds: members that don't interact land within ±2.3 DPS of their
+build alone once the engine bugs are fixed.
 
 ### The search
 
-1. **A model of each build's DPS** as a function of which buffs and debuffs are up. Each buff is a role,
-   for example "the minor armor slot", "the first and second air totems", or blessings by count. The
-   model is log-linear with pairwise terms between roles. It's fitted from about 32 designed
-   single-player sims a build, at 2,000 iterations, in the report's pipeline: about 16 minutes native for
-   the whole pool. It ships as data next to `builds.json`, and the duty variants give each assignment's
-   cost.
+1. **Provider options.** List the ways the raid can cover each buff role, together with the builds that
+   can cover it:
+   - Battle Shout: none, a warrior, a wolf
+   - the air totems: none, one shaman, two
+   - the minor armor slot: none, a druid, a warlock's Curse of Recklessness, a Tallstrider
+   - Curse of the Elements
+   - Moonkin Aura and Leader of the Pack
+   - Trueshot Aura
+   - blessings: 0 to 3 paladins (as placeholders, or Ret)
+   - Power Infusion, Innervate, Mana Tide
 
-   A one-buff-at-a-time model isn't enough. Removing Faerie Fire alone costs a Fury warrior nothing,
-   because Curse of Recklessness takes its place, and removing everything is 21% off in the additive
-   model.
-2. **A shortlist from the model** (milliseconds):
-   - Count how many of each provider role are worth having, up to where one more adds nothing.
-   - Fill the rest of the raid with the best builds under that buff set.
-   - Keep the top 20 distinct comps.
-3. **Confirm with raid sims.** Sim the 20 at 500 iterations. Correct the model with each build's
-   difference (raid against model). Repeat 2 to 3 times: about 50 raid sims.
-4. **Polish with raid sims** at 300 to 500 iterations:
-   - swap each distinct build in the comp for each of the 5 best replacements (about 50)
-   - swap provider pairs, such as two shamans in or out (about 10)
-   - move assignments (about 15)
-   - move members between groups, only those Mana Spring, Mana Tide, Blood Pact and Dark Inspiration touch
-     (about 10)
+   Tank and healer placeholders cover some roles for free.
 
-   Every comp tried is remembered, so none is simmed twice.
-5. **Decide.** Sim the top 3 paired, at 5,000 iterations each. The winner is published at 20,000
-   (standard 15).
+   Roles stop adding after one or two providers, so a buff set is small: one option per role.
+2. **For a buff set, the best fill is a sort.**
+   - Each build's DPS under that set comes from a single-player sim of the build, with the set given
+     through the per-player raid buffs.
+   - The builds that provide a role pay their assignment's cost, because they run their assignment
+     rotation.
+   - The remaining DPS slots take the best builds under the set, repeats allowed.
+   - Group-scoped buffs (Mana Spring, Mana Tide, Blood Pact, Dark Inspiration) place the members they
+     touch in the right groups.
+3. **Search over buff sets, not comps.** A raid's score under a set is the sum of its members' DPS, so a
+   set is scored in microseconds once its builds' DPS are known. The search:
+   - starts from everything covered
+   - drops or swaps one role's option at a time, keeping what raises raid DPS
+   - stops when no change helps
+
+   It sims only the (build, buff set) pairs it hasn't seen. Every single-player result is cached by build
+   and buff set, so later searches, other raid sizes and the page all reuse them. Since the fill is a sort,
+   raid size changes only how many slots get filled, and every size shares the cache.
+4. **Confirm with raid sims.** The best 3 to 5 comps are simmed as whole raids, paired, at 5,000
+   iterations. The winner is published at 20,000 (standard 15). A whole-raid sim catches what the
+   single-player sims miss:
+   - debuffs ramping up after the pull (Sunder stacks, the first curse)
+   - shared marks
+   - Mana Tide's timing
+   - the engine's interactions
+
+   If a raid sim disagrees with the sum of its members' single-player sims by more than noise, the gap is
+   shown, since it means some interaction the single-player sims can't see.
+
+**Cost.**
+
+- A buff set needs at most one single-player sim per build it hasn't seen: 37 sims at 1,000 iterations,
+  about 15 seconds on one core, or about 1 second on 16.
+- A search visits tens of buff sets, and the cache shrinks that quickly.
+- The confirmation is 3 to 5 raid sims.
+- A whole search should take minutes on one machine for any raid size, and seconds when the cache is
+  warm.
 
 **The result:**
 
 - the best comp, with its raid DPS and interval
 - the runners-up, and how far each one is behind
 - each member's contribution and replacement margin
+- the buff set and who covers each role
 
 ### Noise
 
-Every member draws from one random stream (`sim.go`), so swapping one member changes every other
-member's draws. The same seed then helps little.
+Every member draws from one random stream (`sim.go`). Measured on a 20-DPS raid, swapping one member
+changes everyone's draws, so the same seed helps little:
 
-Measured on a 20-DPS raid, 1000 iterations, one member swapped:
+| Random streams | How closely the two raids' DPS move together |
+|---|---|
+| independent seeds | 0.02 |
+| the same seed, today | 0.22 |
+| per member, a rough prototype | 0.77 to 0.80 |
 
-| Random streams | How closely the two raids' DPS move together | Spread of the difference |
-|---|---|---|
-| independent seeds | 0.02 | 285 DPS |
-| the same seed, today | 0.22 | 255 |
-| per call site (the labeled streams) | 0.55 | 202 |
-| per member, a rough prototype | 0.77 to 0.80 | 135 to 148 |
-| only the swapped members' own noise (the ideal) | | about 70 |
-
-**Per-member random streams** (groundwork step 6):
-
-- Each member's spells, dots and swings draw from a stream seeded by the iteration, the build and the
-  copy, not the slot, so moving a member between groups keeps their stream.
-- The raid damage hits are keyed by the player who takes them.
-- They are behind a `SimOptions` flag that only raid sims and the search turn on, so no report number
-  moves.
-- They cost 1 to 2% in speed once the streams are set up ahead.
-
-Iterations needed to tell two comps apart, at 2σ, paired, on a raid of 18,500 DPS:
-
-| Difference | Today | Per member (prototype) | Per member (ideal) |
-|---|---|---|---|
-| 0.1% (18 DPS) | 760 | 229 | 57 |
-| 0.5% | 31 | 9 | 3 |
-| 10 DPS | 2,600 | 780 | 200 |
+The search barely needs this, since its choices come from single-player sims, which are paired by seed
+already. Only the final raid sims compare whole raids, and 5,000 paired iterations separate comps 0.1% apart
+even with today's single stream. Per-member random streams (seeded by iteration, build and copy, behind a
+`SimOptions` flag) are a later improvement, not groundwork for the search.
 
 ### Where it runs
 
-One request uses one core: the worker pool sends a whole request to one worker, and Go's WebAssembly is
-single threaded. So the search is a **stateless Go step function**, `compSearchStep(state, results) →
-(state, requests)`.
+**On the backend, natively, not in the browser** (the user, 2026-10-29).
 
-- **In the browser:** the page fans each batch of requests out over the workers, and reports progress
-  (`ProgressMetrics`) with the best comp so far.
-- **Abort** cancels every request in flight.
-- **Natively:** a command-line run or the local server loops the same function with goroutines.
+The backend already exists: the sim's native server (`sim/web/main.go`), which the downloadable binary and
+`make host` run. It serves the pages and runs sims on all cores through async endpoints with streamed
+progress (`/raidSimAsync`, `/bulkSimAsync`). The pages already send their sims to it when they're served
+by it rather than as static files (`ui/core/sim.ts`, net workers).
 
-Wall clock for the whole search, about 100,000 raid iterations:
-
-| Engine | 10 | 20 | 40 |
-|---|---|---|---|
-| Today, native, one thread | about 9 min | about 25 min | about 90 min |
-| After the speed fixes | about 5 min | about 10 min | about 20 min |
-| After the fixes, 4 browser workers (WebAssembly about 2× slower, estimated) | about 2.5 min | about 5 min | about 10 min |
+- The search is a new async endpoint, `/compSearchAsync`. It runs the single-player sims on goroutines
+  across every core, keeps the cache on disk next to the server, and streams progress with the best comp
+  so far. Abort stops it.
+- `wowsimcli` gets the same search for scripted runs.
+- A page served as static files, with no backend, can still sim a raid in its WebAssembly workers, but the
+  search button needs the backend.
 
 ## What the engine has today
 
@@ -753,7 +788,12 @@ In order. Each step is usable on its own.
 5. **The comp proto and its Go entry point.**
    - Members as build references, placeholders, groups, assignments and the encounter.
    - One Go call that resolves a comp and runs it, used by the tests, the page and the search.
-6. **Per-member random streams**, behind a `SimOptions` flag.
+6. **The search.**
+   - The single-player sims under a buff set: a build with its raid buffs and debuffs given, cached on disk
+     by build and buff set.
+   - The provider options, the search over buff sets, and the raid sim confirmation.
+   - The `/compSearchAsync` endpoint on the native server, and the same search in `wowsimcli`.
+   - Member value.
 7. **Several bosses and tanks.**
    - Which boss each member attacks.
    - Per-boss debuffs and execute phases.
@@ -771,12 +811,11 @@ In order. Each step is usable on its own.
    8. "Open in spec page" with "Save to raid", and "Add to raid sim".
    9. The landing card and launch.
    10. Retire `ui/raid` and `raidSimPresets`.
-10. **The search model.** The designed single-player sims in the report pipeline, and the fitted model as
-    data.
-11. **The comp search and member value.** The step function, the browser fan-out and the native loop.
+   11. The comp search on the page, through the backend.
+10. **Hunter pet variants** in the report, with a Tallstrider and with a wolf, marked for raid sims.
+11. **Later:** per-member random streams, behind a `SimOptions` flag.
 
-None of steps 1 to 8 changes a DPS Report number. Steps 10 and 11 add data to the report pipeline
-without changing its numbers.
+None of this changes a DPS Report number, except that the report gains the hunter pet variants.
 
 ## Open decisions
 
@@ -787,14 +826,15 @@ The four from the first round are settled (the user, 2026-10-29):
 - There are no limits per spec or class.
 - The search tries whatever groups and assignments give the most raid DPS.
 
-New, from the reviews:
+The three from the reviews are settled too (the user, 2026-10-29):
 
-1. **Range.** Should the sim assume everyone is within reach of every raid-wide buff? Battle Shout reaches
-   20 yards, the totems 30. Proposed: yes. The alternative is a melee group and a ranged group, with each
-   buff reaching the groups it would in game.
-2. **Hunter pet families.** A Tallstrider's Dust Cloud fills the minor armor slot, and a wolf's Furious
-   Howl gives raid-wide melee attack power. Should the report get marked hunter variants with those pets,
-   so the search can use them? Today the hunter builds use their best pet for their own DPS.
-3. **Where big searches run.** After the speed fixes, a 40-player search takes about 10 minutes in the
-   browser. Is that fine, or should the 10, 20 and 40 default searches run natively and ship with the page
-   as data, like the report's numbers, with the page running only custom searches?
+- Everyone is in range of every raid-wide buff.
+- The hunter builds get marked Tallstrider and wolf variants.
+- The search runs on the backend, natively, and judges each build on its own under a buff set rather than
+  trying combinations.
+
+Open:
+
+1. **A hosted backend.** The backend today is the native server that runs on the user's machine (the
+   downloaded binary or `make host`). Is that where the raid page will be used, or should it be hosted
+   somewhere so it works away from that machine?
