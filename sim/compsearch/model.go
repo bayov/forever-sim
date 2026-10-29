@@ -136,7 +136,7 @@ func (sc *Scenario) BuildModel(builds []*Build) (*Model, error) {
 	for i, a := range asks {
 		jobs[i] = sc.job(a.b, a.seat, sc.Iterations)
 	}
-	if err := sc.Sim.Sim(jobs); err != nil {
+	if err := sc.sim(jobs); err != nil {
 		return nil, err
 	}
 	for i, a := range asks {

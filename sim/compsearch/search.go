@@ -69,6 +69,11 @@ func Defaults(req *proto.CompSearchRequest) {
 // Search runs a comp search (docs/raid_sim.md, Comp search): one scenario for each faction and camp
 // setting.
 func Search(pool *Pool, sim *Simmer, req *proto.CompSearchRequest, progress Progress) (*proto.CompSearchResult, error) {
+	return SearchWithAbort(pool, sim, req, progress, nil)
+}
+
+// SearchWithAbort is Search that stops with ErrAborted once abort says so.
+func SearchWithAbort(pool *Pool, sim *Simmer, req *proto.CompSearchRequest, progress Progress, abort func() bool) (*proto.CompSearchResult, error) {
 	start := time.Now()
 	Defaults(req)
 	if req.Tanks+req.Healers >= req.Size {
@@ -102,7 +107,7 @@ func Search(pool *Pool, sim *Simmer, req *proto.CompSearchRequest, progress Prog
 	for _, faction := range req.Factions {
 		for _, camps := range req.CampBuffs {
 			sc := &Scenario{Pool: pool, Sim: sim, Faction: faction, Camps: camps, Iterations: req.Iterations,
-				Seed: req.Seed, Assumptions: req.Assumptions,
+				Seed: req.Seed, Assumptions: req.Assumptions, Abort: abort,
 				Fight: Fight{Duration: req.Encounter.Duration, DurationVariation: req.Encounter.DurationVariation,
 					MobType: req.Encounter.MobType, FlaskZone: req.Encounter.NaturalFlaskZone}}
 			var out *proto.CompScenarioResult

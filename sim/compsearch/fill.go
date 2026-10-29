@@ -22,6 +22,15 @@ type Scenario struct {
 	Assumptions *proto.RaidAssumptions
 	// A health fight's length this pass (0 for a fixed fight): the boss's health over the raid's DPS.
 	HealthLength float64
+	Abort        func() bool
+}
+
+// sim runs jobs, unless the search was aborted.
+func (sc *Scenario) sim(jobs []*Job) error {
+	if sc.Abort != nil && sc.Abort() {
+		return ErrAborted
+	}
+	return sc.Sim.SimAbortable(jobs, sc.Abort)
 }
 
 func (sc *Scenario) job(b *Build, s Seat, iters int32) *Job {

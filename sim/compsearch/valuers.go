@@ -79,7 +79,7 @@ func (v *exactValuer) flush() (int, error) {
 	for _, j := range v.missing {
 		jobs = append(jobs, j)
 	}
-	if err := v.sc.Sim.Sim(jobs); err != nil {
+	if err := v.sc.sim(jobs); err != nil {
 		return 0, err
 	}
 	n := len(v.missing)

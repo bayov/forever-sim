@@ -486,7 +486,7 @@ func (sc *Scenario) reportDifference(m *Member, ev *exactValuer) (float64, []str
 	seat.Own = base.Casts
 	j2 := sc.job(base, seat, ev.iters)
 	j3 := sc.job(m.B, m.Seat, ev.iters)
-	if err := sc.Sim.Sim([]*Job{j0, j1, j2, j3}); err != nil {
+	if err := sc.sim([]*Job{j0, j1, j2, j3}); err != nil {
 		return 0, nil, err
 	}
 	parts := []string{

@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/core/simsignals"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 
@@ -282,5 +283,43 @@ func TestHealthFight(t *testing.T) {
 	sc := res.Scenarios[0]
 	if kill := 400000 / sc.Comps[0].Dps; math.Abs(kill-sc.FightSeconds) > 1.5 {
 		t.Errorf("the fight is %.1f s, but the winner kills the boss in %.1f s", sc.FightSeconds, kill)
+	}
+}
+
+// The native server's async search ends with the result, and Abort stops it.
+func TestSearchAsync(t *testing.T) {
+	if testing.Short() {
+		t.Skip("about 20 s")
+	}
+	t.Setenv("FOREVER_SIM_ROOT", repoRoot())
+	t.Setenv("XDG_CACHE_HOME", t.TempDir())
+	req := func() *proto.CompSearchRequest {
+		return &proto.CompSearchRequest{Size: 5, Tanks: 1, Healers: 0, Factions: []proto.Faction{proto.Faction_Horde},
+			CampBuffs: []bool{false}, Iterations: 30, ContenderIterations: 30, Seed: 4, SkipSensitivity: true,
+			Encounter: &proto.CompEncounter{Duration: 60, NaturalFlaskZone: true}, MaxCombos: 3}
+	}
+	ch := make(chan *proto.ProgressMetrics, 100)
+	SearchAsync(req(), ch, "test-async-1")
+	for p := range ch {
+		if p.FinalCompSearchResult != nil {
+			if p.FinalCompSearchResult.Error != nil {
+				t.Fatal(p.FinalCompSearchResult.Error.Message)
+			}
+			if len(p.FinalCompSearchResult.Scenarios) != 1 {
+				t.Errorf("want one scenario")
+			}
+			break
+		}
+	}
+	ch = make(chan *proto.ProgressMetrics, 100)
+	SearchAsync(req(), ch, "test-async-2")
+	simsignals.AbortById("test-async-2")
+	for p := range ch {
+		if p.FinalCompSearchResult != nil {
+			if p.FinalCompSearchResult.Error == nil || p.FinalCompSearchResult.Error.Message != ErrAborted.Error() {
+				t.Errorf("an aborted search should end with %q, got %v", ErrAborted, p.FinalCompSearchResult.Error)
+			}
+			break
+		}
 	}
 }

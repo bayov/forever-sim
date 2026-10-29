@@ -24,6 +24,7 @@ import (
 	"github.com/pkg/browser"
 	dist "github.com/wowsims/classic/binary_dist"
 	"github.com/wowsims/classic/sim"
+	"github.com/wowsims/classic/sim/compsearch"
 	"github.com/wowsims/classic/sim/core"
 	proto "github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/simsignals"
@@ -125,6 +126,10 @@ var asyncAPIHandlers = map[string]asyncAPIHandler{
 	"/bulkSimAsync": {msg: func() googleProto.Message { return &proto.BulkSimRequest{} }, handle: func(msg googleProto.Message, reporter chan *proto.ProgressMetrics, requestId string) {
 		core.RunBulkSimAsync(msg.(*proto.BulkSimRequest), reporter, requestId)
 	}},
+	// The raid sim's comp search (docs/raid_sim.md, Where it runs), from the checkout the server runs in.
+	"/compSearchAsync": {msg: func() googleProto.Message { return &proto.CompSearchRequest{} }, handle: func(msg googleProto.Message, reporter chan *proto.ProgressMetrics, requestId string) {
+		compsearch.SearchAsync(msg.(*proto.CompSearchRequest), reporter, requestId)
+	}},
 }
 
 type server struct {
@@ -224,7 +229,8 @@ func (s *server) handleAsyncAPI(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			simProgress.latestProgress.Store(progMetric)
-			isFinal := progMetric.FinalRaidResult != nil || progMetric.FinalWeightResult != nil || progMetric.FinalBulkResult != nil
+			isFinal := progMetric.FinalRaidResult != nil || progMetric.FinalWeightResult != nil || progMetric.FinalBulkResult != nil ||
+				progMetric.FinalCompSearchResult != nil
 			if clientGone != nil {
 				if err := writeProgressFrame(w, rc, progMetric); err != nil {
 					log.Printf("[ERROR] Failed to stream progress: %s", err.Error())

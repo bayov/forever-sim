@@ -221,7 +221,10 @@ func (s *Simmer) store(key string, v *Value) {
 }
 
 // Sim runs the jobs, each at most once per distinct request, on every core.
-func (s *Simmer) Sim(jobs []*Job) error {
+func (s *Simmer) Sim(jobs []*Job) error { return s.SimAbortable(jobs, nil) }
+
+// SimAbortable is Sim that starts no more sims once abort says so.
+func (s *Simmer) SimAbortable(jobs []*Job, abort func() bool) error {
 	todo := map[string][]*Job{}
 	var order []string
 	for _, j := range jobs {
@@ -249,9 +252,14 @@ func (s *Simmer) Sim(jobs []*Job) error {
 	var firstErr atomic.Value
 	var done atomic.Int64
 	sem := make(chan struct{}, max(1, s.Workers))
+	aborted := false
 	for _, key := range order {
 		key := key
 		js := todo[key]
+		if abort != nil && abort() {
+			aborted = true
+			break
+		}
 		wg.Add(1)
 		sem <- struct{}{}
 		go func() {
@@ -275,6 +283,9 @@ func (s *Simmer) Sim(jobs []*Job) error {
 	wg.Wait()
 	if err, ok := firstErr.Load().(error); ok && err != nil {
 		return err
+	}
+	if aborted {
+		return ErrAborted
 	}
 	return nil
 }
