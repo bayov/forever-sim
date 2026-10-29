@@ -471,7 +471,9 @@ features give no stat buff. No camp buff gives hit, haste, spell power or a dama
 - When the raid lacks a class buff, its camp version is used instead, up to the limit of camp buffs a
   character can have.
 
-Since there's no per-character cap and 9 is the whole list, the sim gives the raid all 9 camp buffs. Each
+**A toggle decides whether the raid relies on camp buffs** (the user, 2026-10-29). It's an input of the raid
+and of the search, and every search runs both ways: the best comps with camps on and with camps off. With
+camps on, the sim gives the raid all 9, since there's no per-character cap and 9 is the whole list. Each
 player gets a camp buff only when they lack its class buff:
 
 - A class buff on that player means the camp buff adds nothing, and the class buff counts in full.
@@ -669,6 +671,7 @@ The main thing the raid sim is for (the user, 2026-10-29).
 - the tank and healer slots, each with a fixed preset or "any" (the default)
 - the encounter (boss, creature type, length)
 - the faction
+- camp buffs on or off (see [Camp buffs](#camp-buffs))
 
 **There are no limits per spec or class** (the user, 2026-10-29). The goal is the most raid DPS and
 nothing else. The search may fill the raid with one spec, and may drop the only provider of a buff when a
@@ -936,8 +939,8 @@ It leads with what could change the answer:
 
 1. **The tie set**, and every sensitivity scenario that changes the winner (see
    [Sensitivity](#sensitivity)).
-2. **For each raid size and faction:** the best comp and 2 to 4 runners-up, with the difference and paired
-   95% intervals.
+2. **For each raid size, faction and camp setting (on and off):** the best comp and 2 to 4 runners-up,
+   with the difference and paired 95% intervals.
 3. **The tank and healer combos ranked**, and each preset's DPS value (see
    [Tank and healer combos](#tank-and-healer-combos)).
 4. **The role table:** each role's gain, its provider's cost and the net, at 10, 20 and 40.
@@ -969,7 +972,7 @@ So the result says whether the winner holds under each of these:
 | Light consumes (no flask) | the flask is worth 112 to a fire mage and 38 to a Beast Mastery hunter | from the one-buff-at-a-time runs |
 | Pet uptime about 80%, and Lone Wolf | the pet is 332.7 of a Beast Mastery hunter's DPS and never dies in the sim. At 80% Beast Mastery falls to 1065.3, below Lone Wolf (1094.3) and fire (1089.0), and "29 Beast Mastery" becomes "29 Lone Wolf" | a re-run of the hunter builds |
 | Each unverified stacking rule on and off | Mana Spring from two shamans, Furious Howl against Battle Shout and on pets, Hunter's Mark, the Crusader | a re-run |
-| Camp buffs off; and the Camp Chair excluded only in its spell crit part | the camp replaces most of Kings, Might and Strength of Earth; how the Chair's exclusion works is unverified | a re-run |
+| The Camp Chair excluded only in its spell crit part | how the Chair's exclusion works is unverified | a re-run with camps on |
 
 When the winner changes under a scenario, the result says so and shows the comps that win as a tie set, not
 one answer.
@@ -1009,6 +1012,7 @@ doesn't fit: its modes are views of one page.
 **The page sets up only the raid:**
 
 - the raid size and the tank and healer slots
+- whether the raid relies on camp buffs
 - which member goes in each slot, and which group they're in
 - assignments
 - the encounter
@@ -1275,8 +1279,8 @@ the confirmation, which joins in M1b.
   - a second run makes zero sims
   - changing the encounter, the length, `sim/` or the item database misses the cache
   - given and cast are never both, per the resolver's tests
-  - the 20-player result for each faction is written up, with its tie set, role table, filler ranking,
-    tank and healer combo ranking and sensitivity
+  - the 20-player result for each faction, with camps on and off, is written up, with its tie set, role
+    table, filler ranking, tank and healer combo ranking and sensitivity
 
 ### M1b: whole raids that run right (engine)
 
@@ -1316,7 +1320,7 @@ below) and one Go call, `RunComp`, which resolves a comp into a `RaidSimRequest`
 **The comp proto:**
 
 ```
-RaidComp { size; repeated CompSlot slots; Encounter encounter; repeated Assignment assignments; Faction faction; }
+RaidComp { size; repeated CompSlot slots; Encounter encounter; repeated Assignment assignments; Faction faction; bool camp_buffs; }
 CompSlot { party; index; target_index (0 until several bosses); oneof member { Player player; Placeholder placeholder; } MemberRef ref; }
 MemberRef { report_id; source (report, preset, saved, snapshot); name; }   // display and the report comparison only
 Placeholder { preset; blessings per class; aura; judgement; totems (earth, air, water, fire); faerie_fire; }
@@ -1414,6 +1418,8 @@ The user's rulings (2026-10-29):
   - When the raid lacks a class buff, its camp version is used instead, if a camp feature gives one, up to
     the limit of camp buffs a character can have. There's no per-character limit and 9 features in all, so
     the raid gets all 9 (see [Camp buffs](#camp-buffs)).
+  - A toggle decides whether the raid relies on camp buffs, and the search finds the best comps with
+    camps on and off.
 
 None open.
 
