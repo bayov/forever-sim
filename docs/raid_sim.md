@@ -10,7 +10,7 @@ number of tanks and healers.
 **How to read this doc:**
 
 - The decisions marked "(the user, 2026-10-29)" are settled. Everything else is a proposal.
-- The questions still open are at the end.
+- The decisions so far are listed at the end.
 - The measurements behind the design are in the [Appendix](#appendix-measurements-2026-10-29).
 - An implementer starts at [Milestones](#milestones), which says which sections each step needs.
 
@@ -154,9 +154,10 @@ What each placeholder gives by default. Only effects that change DPS or mana are
   Battle Shout, Enhancing Totems, Improved Blessing of Wisdom, Improved Devotion Aura and Improved Mark of
   the Wild are gone, and Improved Imp no longer raises Blood Pact.
 
-**Tank and healer specs** are set by the user, with a default mix for each size (see
-[Open decisions](#open-decisions)). They can also be set to "any", and then the search chooses them for
-what they give. That run is exploratory, since nothing checks that the chosen specs can tank or heal the
+**Tank and healer specs are searched too** (the user, 2026-10-29). For the slot counts set, the search
+runs every combination of tank and healer specs and ranks them by raid DPS (see
+[Tank and healer combos](#tank-and-healer-combos)). The user can also fix any slot's spec. The ranking
+counts only what each spec gives the DPS, by design: nothing checks that a combo can tank or heal the
 fight.
 
 ## Buffs and debuffs come from the members
@@ -504,7 +505,7 @@ The main thing the raid sim is for (the user, 2026-10-29).
 **The inputs:**
 
 - the raid size
-- the tank and healer slots, with their specs or "any"
+- the tank and healer slots, each with a fixed spec or "any" (the default)
 - the encounter (boss, creature type, length)
 - the faction
 
@@ -618,6 +619,38 @@ So a search move adds, removes or swaps one provider member, not one role.
   search is a few hundred single-player sims at 1,000 iterations: minutes on any machine. The cache isn't
   committed.
 
+### Tank and healer combos
+
+The search runs once for each combination of tank and healer specs that fits the slots (the user,
+2026-10-29). The specs:
+
+- **Tanks:** warrior, Feral, Protection paladin.
+- **Healers:** Holy paladin, Restoration shaman, Discipline priest, Holy priest, Restoration druid.
+
+Combinations are counted as multisets, since two warrior tanks in either order are one combo:
+
+| Raid | Tanks | Healers | Combos |
+|---|---|---|---|
+| 10 | 1 or 2 | 2 | 3 × 15 + 6 × 15 = 135 |
+| 20 | 2 | 4 or 5 | 6 × 70 + 6 × 126 = 1,176 |
+| 40 | 3 | 7 to 9 | 10 × (330 + 495 + 715) = 15,400 |
+
+That's cheap, because a combo only changes the buff set. Each combo's placeholder choices (blessings,
+judgements, totems) are part of its search. Many combos give the same buffs: a Holy and a Discipline priest
+differ only by Power Infusion, and a third Restoration druid adds nothing. So most combos are scored from
+the cache without a new single-player sim. At 40, the search drops a combo early when even its best
+possible buff set can't reach the best combo found so far.
+
+**What it reports:**
+
+- **The combos ranked by raid DPS**, each with its best DPS comp, and how far it is behind the best.
+- **Each tank and healer spec's DPS value:** the raid DPS it adds through what it gives, as the
+  contribution of that slot (see [Member value](#member-value)) in each combo's best comp, and on average
+  over the combos. This answers which tanks and healers are best for the raid's damage, leaving out
+  utility, threat and healing.
+- Their own damage isn't in it while tanks and healers aren't simmed. When they are, it adds to the same
+  table.
+
 ### Cost
 
 - A buff set needs at most one single-player sim per build it hasn't seen, two with a group package: 37
@@ -657,6 +690,8 @@ On the user's machine or in Claude Code cloud environments, natively; nothing is
 
 - **For each raid size and faction:** the best comp and 2 to 4 runners-up, with the difference and paired
   95% intervals.
+- **The tank and healer combos ranked**, and each tank and healer spec's DPS value (see
+  [Tank and healer combos](#tank-and-healer-combos)).
 - **The role table:** each role's gain, its provider's cost and the net, at 10, 20 and 40.
 - **The filler ranking** under the winning buff set, each build with the spread of the report's
   assumptions (`assumption_dps.json`).
@@ -853,8 +888,8 @@ the first answer needs no engine fixes.
   - a second run makes zero sims
   - changing the encounter, the length or the commit misses the cache
   - given and cast are never both, per the resolver's tests
-  - the 20-player result for each faction is written up, with its role table, filler ranking and
-    sensitivity
+  - the 20-player result for each faction is written up, with its role table, filler ranking, tank and
+    healer combo ranking and sensitivity
 
 ### M1b: whole raids that run right (engine)
 
@@ -952,9 +987,9 @@ The page reaches it through a new WebAssembly worker call, `resolveComp`.
 - A committed result is stamped with the report's `datasets.json` stamp and the builds' fingerprints, and a
   stale check flags it when they move.
 
-## Open decisions
+## Decisions
 
-Settled so far (the user, 2026-10-29):
+The user's rulings so far (2026-10-29):
 
 - Tanks and healers aren't simmed and their damage is left out, but they give their buffs and debuffs, and
   the warrior tank maintains Sunder after every warrior's pull Sunder.
@@ -966,19 +1001,11 @@ Settled so far (the user, 2026-10-29):
   Faerie Fire or Curse of Recklessness until the launch checks.
 - The search runs natively on the user's machine or in Claude Code cloud environments, judges each build
   on its own under a buff set, and caches every single-player result.
+- Every tank and healer combo is simmed and ranked by raid DPS, with each tank and healer spec's DPS
+  value.
+- The DPS Report isn't touched for now.
 
-Open:
-
-1. **The default tank and healer mix** for each size. Proposed:
-   - **10:** a warrior tank, a holy paladin and a restoration shaman.
-   - **20:** two warrior tanks, a holy paladin, a restoration shaman, a holy priest and a restoration druid.
-   - **40:** three warrior tanks, two holy paladins, two restoration shamans, two priests (one Discipline)
-     and two restoration druids.
-
-   Which specs does the user's guild run?
-2. **A raid value column in the DPS Report.** Each build's contribution in the default 20-player raid
-   would sit where people already look. The user ruled the raid page out of the report; a column is a
-   smaller thing, and touching `ui/dps_report` means deploying it. Wanted?
+None open.
 
 ## Appendix: measurements (2026-10-29)
 
