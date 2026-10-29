@@ -1053,3 +1053,20 @@ message CompSearchResult {
 	double seconds = 9;
 	ErrorOutcome error = 10;
 }
+
+// The resolver (docs/raid_sim.md, M1b): a comp into the raid's request, and what it gives whom.
+message RaidCompResolution {
+	RaidSimRequest request = 1;
+	// The slot each player of the request is (parties and players in order, placeholders left out).
+	repeated int32 slot_of_player = 2;
+	repeated CompBuffRecord buffs = 3;
+	repeated string misses = 4;
+	repeated Assignment assignments = 5; // every assignment, the automatic ones filled in
+	ErrorOutcome error = 6;
+}
+
+// The page's run of a comp: the raid sim's result with the resolution it ran.
+message RaidCompRunResult {
+	RaidCompResolution resolution = 1;
+	RaidSimResult result = 2;
+}
