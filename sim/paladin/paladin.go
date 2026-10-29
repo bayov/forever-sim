@@ -57,6 +57,7 @@ type Paladin struct {
 	aurasSoR     []*core.Aura
 	aurasSoC     []*core.Aura
 	aurasSotC    []*core.Aura
+	aurasSoW     []*core.Aura
 
 	currentJudgement *core.Spell
 	// The seal spell whose aura is up, for Sanctified Judgement's refund of its cost.
@@ -65,6 +66,11 @@ type Paladin struct {
 	spellsJoR        []*core.Spell
 	spellsJoC        []*core.Spell
 	spellsJotC       []*core.Spell
+	spellsJoW        []*core.Spell
+
+	// Seal of Wisdom is registered only for a rotation that names it (sow.go).
+	usesSealOfWisdom       bool
+	judgementOfWisdomAuras core.AuraArray
 
 	// Active abilities and shared cooldowns that are externally manipulated.
 	exorcism       []*core.Spell
@@ -131,14 +137,17 @@ func (paladin *Paladin) Initialize() {
 	paladin.registerSealOfRighteousness()
 	paladin.registerSealOfCommand()
 	paladin.registerSealOfTheCrusader()
+	paladin.registerSealOfWisdom()
 
 	paladin.allJudgeSpells = append(paladin.allJudgeSpells, paladin.spellsJoR)
 	paladin.allJudgeSpells = append(paladin.allJudgeSpells, paladin.spellsJoC)
 	paladin.allJudgeSpells = append(paladin.allJudgeSpells, paladin.spellsJotC)
+	paladin.allJudgeSpells = append(paladin.allJudgeSpells, paladin.spellsJoW)
 
 	paladin.allSealAuras = append(paladin.allSealAuras, paladin.aurasSoR)
 	paladin.allSealAuras = append(paladin.allSealAuras, paladin.aurasSoC)
 	paladin.allSealAuras = append(paladin.allSealAuras, paladin.aurasSotC)
+	paladin.allSealAuras = append(paladin.allSealAuras, paladin.aurasSoW)
 
 	// Active abilities
 	paladin.registerForbearance()
@@ -174,6 +183,7 @@ func NewPaladin(character *core.Character, options *proto.Player, paladinOptions
 		Options:   paladinOptions,
 	}
 	paladin.FillTalents(paladin.Talents.ProtoReflect(), options.TalentsString, TalentTreeSizes)
+	paladin.usesSealOfWisdom = core.RotationReferencesSpell(options.GetRotation(), SealOfWisdomSpellId[1:]...)
 
 	paladin.primaryPaladinAura = paladin.Options.Aura
 

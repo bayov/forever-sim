@@ -80,6 +80,10 @@ func (paladin *Paladin) registerSealOfTheCrusader() {
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				spell.CalcAndDealOutcome(sim, target, spell.OutcomeAlwaysHit)
+				// One judgement per paladin (sow.go).
+				if paladin.judgementOfWisdomAuras != nil {
+					core.DropJudgementOfWisdom(sim, target, &paladin.Unit)
+				}
 				core.JudgeTheCrusader(sim, debuffs.Get(target), &paladin.Unit, judgementBonus)
 			},
 		})

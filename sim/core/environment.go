@@ -47,6 +47,8 @@ type Environment struct {
 
 	// Each target's Judgement of the Crusader, which every paladin shares (debuffs.go).
 	judgementsOfTheCrusader map[*Unit]*judgementOfTheCrusader
+	// And each target's Judgement of Wisdom, once a paladin can judge it.
+	judgementsOfWisdom map[*Unit]*judgementOfWisdom
 
 	// Effects to invoke when the Env is finalized.
 	preFinalizeEffects  []PostFinalizeEffect

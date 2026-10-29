@@ -536,6 +536,12 @@ func JudgementOfWisdomAura(target *Unit) *Aura {
 
 // jowMana is the mana each proc gives back.
 func judgementOfWisdomAura(target *Unit, jowMana float64) *Aura {
+	return newJudgementOfWisdomAura(target, &jowMana)
+}
+
+// newJudgementOfWisdomAura reads the mana a proc gives back from jowMana, so a paladin's own
+// judgement can set it (JudgeWisdom).
+func newJudgementOfWisdomAura(target *Unit, jowMana *float64) *Aura {
 	actionID := ActionID{SpellID: 20355}
 
 	return target.GetOrRegisterAura(Aura{
@@ -567,10 +573,83 @@ func judgementOfWisdomAura(target *Unit, jowMana float64) *Aura {
 					unit.JowManaMetrics = unit.NewManaMetrics(actionID)
 				}
 				// JoW returns flat mana
-				unit.AddMana(sim, jowMana, unit.JowManaMetrics)
+				unit.AddMana(sim, *jowMana, unit.JowManaMetrics)
 			}
 		},
 	})
+}
+
+// judgementOfWisdom is one target's Judgement of Wisdom once a paladin can judge it. It is one
+// debuff per target, as Judgement of the Crusader is: the last paladin to judge sets its mana, and
+// that paladin's melee hits refresh it.
+type judgementOfWisdom struct {
+	caster *Unit   // who judged last; nil while the settings' permanent one is up
+	mana   float64 // the mana a proc gives back
+}
+
+// JudgementOfWisdomCastAura is the Judgement of Wisdom a paladin's Seal of Wisdom judges on target:
+// mana is the rank's (33 / 46 / 59 under Forever, client 20268, 20352, 20353) and it lasts duration
+// (40 sec under Forever, client 20186, 20354, 20355: "Your melee strikes will refresh the spell's
+// duration"). It is the settings' aura when they give it (judgement_of_wisdom), which stays up and
+// gives its own mana; a paladin's judgement then only refreshes it.
+func JudgementOfWisdomCastAura(caster *Unit, target *Unit, mana float64, duration time.Duration) *Aura {
+	env := target.Env
+	if env.judgementsOfWisdom == nil {
+		env.judgementsOfWisdom = make(map[*Unit]*judgementOfWisdom)
+	}
+	if env.judgementsOfWisdom[target] != nil {
+		return target.GetAura("Judgement of Wisdom")
+	}
+	jow := &judgementOfWisdom{mana: mana}
+	env.judgementsOfWisdom[target] = jow
+
+	aura := target.GetAura("Judgement of Wisdom")
+	if aura == nil {
+		aura = newJudgementOfWisdomAura(target, &jow.mana)
+		aura.Duration = duration
+	}
+	procs := aura.OnSpellHitTaken
+	aura.OnSpellHitTaken = func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
+		procs(aura, sim, spell, result)
+		if jow.caster != nil && spell.Unit == jow.caster && result.Landed() && spell.ProcMask.Matches(ProcMaskMelee) {
+			aura.Refresh(sim)
+		}
+	}
+	return aura
+}
+
+// JudgeWisdom puts caster's Judgement of Wisdom on aura's target (an aura from
+// JudgementOfWisdomCastAura). Another paladin's is replaced. The settings' permanent one stays.
+func JudgeWisdom(sim *Simulation, aura *Aura, caster *Unit, mana float64) {
+	jow := aura.Unit.Env.judgementsOfWisdom[aura.Unit]
+	if aura.Duration != NeverExpires {
+		jow.caster, jow.mana = caster, mana
+	}
+	aura.Activate(sim)
+}
+
+// DropJudgementOfWisdom takes caster's Judgement of Wisdom off target, as a paladin's other
+// judgement does ("Only one Judgement per Paladin can be active at any one time"). Another
+// paladin's, or the settings' one, stays.
+func DropJudgementOfWisdom(sim *Simulation, target *Unit, caster *Unit) {
+	jow := target.Env.judgementsOfWisdom[target]
+	if jow == nil || jow.caster != caster {
+		return
+	}
+	if aura := target.GetAura("Judgement of Wisdom"); aura != nil && aura.Duration != NeverExpires {
+		aura.Deactivate(sim)
+	}
+}
+
+// DropJudgementOfTheCrusader is the same for caster's Judgement of the Crusader.
+func DropJudgementOfTheCrusader(sim *Simulation, target *Unit, caster *Unit) {
+	jotc := target.Env.judgementsOfTheCrusader[target]
+	if jotc == nil || jotc.caster != caster {
+		return
+	}
+	if aura := target.GetAura("Judgement of the Crusader"); aura != nil {
+		aura.Deactivate(sim)
+	}
 }
 
 func JudgementOfLightAura(target *Unit) *Aura {

@@ -12,6 +12,8 @@ var (
 	SealOfCommandSpellId       = [...]int32{0, 20375, 20915, 20918, 20919, 20920}
 	SealOfTheCrusaderLevel     = [...]int{0, 6, 12, 22, 32, 42, 52}
 	SealOfTheCrusaderSpellId   = [...]int32{0, 21082, 20162, 20305, 20306, 20307, 20308}
+	SealOfWisdomLevel          = [...]int{0, 38, 48, 58}
+	SealOfWisdomSpellId        = [...]int32{0, 20166, 20356, 20357}
 	ConsecrationLevel          = [...]int{0, 20, 30, 40, 50, 60}
 	ConsecrationSpellId        = [...]int32{0, 26573, 20116, 20922, 20923, 20924}
 	ExorcismLevel              = [...]int{0, 20, 28, 36, 44, 52, 60}
@@ -31,6 +33,7 @@ func init() {
 	core.RegisterSpellRanks(SealOfRighteousnessSpellId[1:]...)
 	core.RegisterSpellRanks(SealOfCommandSpellId[1:]...)
 	core.RegisterSpellRanks(SealOfTheCrusaderSpellId[1:]...)
+	core.RegisterSpellRanks(SealOfWisdomSpellId[1:]...)
 	core.RegisterSpellRanks(ConsecrationSpellId[1:]...)
 	core.RegisterSpellRanks(ExorcismSpellId[1:]...)
 	core.RegisterSpellRanks(HolyShockSpellId[1:]...)
