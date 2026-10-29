@@ -1613,6 +1613,31 @@ endpoint on the native server, with its `SimRequest` entry (`ui/worker/types.ts`
 
 **Reads:** [The page](#the-page).
 
+**Done** (2026-10-29): `ui/raid_sim/` (`/forever/raid_sim/`), linked from a "Raid sim" card next to the DPS
+Report, with four tabs: Search result, Search, Comp and Raid results.
+
+- **M2a:** a CompSearchResult JSON from a file, a drop or `?result=<url>`, every item of
+  [The result](#the-result), one tab per faction and camp setting. "Edit" on a comp loads it into the editor.
+- **M2c:** the search form (size, slots, fixed presets and DPS members, the boss, factions, camps,
+  iterations) streams the phase, the sims done and the best comp from `/compSearchAsync`, and Abort
+  stops it. Served as static files, the page has WebAssembly workers and the button is off with a line
+  saying why.
+- **M2b:** members from `ui/raid_sim/data/builds.json` (written by `go run -tags with_db
+  ./tools/raid_sim_data` through the search's own pool: each base build's Player per faction at its best
+  race, its duty and encounter variants), placeholders, drag and drop (or pick and click on a phone),
+  assignments automatic or by hand, the boss, faction and camps. Run resolves the comp (`resolveComp`)
+  and runs it in the workers; the results are raid DPS, the parties, the members, each buff with its
+  provider and uptime, the misses and the resolved assignments, with `EmbeddedDetailedResults` in Raid
+  results. Member values (`/compValues`) gives each member's contribution, replacement margin and duty
+  cost from the native server, which runs the single-player sims its cache lacks.
+- **The native server is built with the item database** (`make host`, the release binaries), since the
+  search and the resolver build each member's environment there.
+- **Different from the plan:** the page is a `SimUI` (for `EmbeddedDetailedResults`, the sidebar and the
+  tabs) without `addRaidSimAction`, and the resolver, not `Raid`/`Party`, builds the request. A placeholder
+  can't hold a duty (the druids' Faerie Fire is automatic), and a DPS shaman has no totem choice, as in
+  the resolver. Uptime matches effect names to the sim's aura names, so a given buff the sim tracks no
+  aura for shows none.
+
 ### Later
 
 - **Members from the spec pages:**
