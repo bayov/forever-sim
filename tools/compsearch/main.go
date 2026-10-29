@@ -39,6 +39,7 @@ func main() {
 	fixedHealers := flag.String("fixed-healers", "", "comma-separated healer presets, e.g. RestorationShaman")
 	maxCombos := flag.Int("max-combos", 0, "rank at most this many tank and healer combos (0: all)")
 	noSens := flag.Bool("no-sensitivity", false, "leave out the sensitivity scenarios")
+	confirm := flag.Bool("confirm", false, "confirm the top sets with raid sims (milestone M1b)")
 	cache := flag.String("cache", "default", `the sim cache directory ("" for memory only)`)
 	out := flag.String("out", "", "write <out>.json and <out>.md (default: markdown to stdout)")
 	quiet := flag.Bool("quiet", false, "no progress lines")
@@ -74,8 +75,8 @@ func main() {
 
 	req := &proto.CompSearchRequest{Size: int32(*size), Tanks: int32(*tanks), Healers: int32(*healers),
 		Iterations: int32(*iters), ContenderIterations: int32(*contender), Seed: *seed, MaxCombos: int32(*maxCombos),
-		SkipSensitivity: *noSens,
-		Encounter:       &proto.CompEncounter{Name: *boss, Duration: *duration, DurationVariation: *variation}}
+		SkipSensitivity: *noSens, Confirm: *confirm,
+		Encounter: &proto.CompEncounter{Name: *boss, Duration: *duration, DurationVariation: *variation}}
 	if *health > 0 {
 		req.Encounter.UseHealth = true
 		req.Encounter.BossHealth = *health
