@@ -1,0 +1,84 @@
+{
+  "id": "warlock__destruction_fire-duty-recklessness",
+  "class": "Warlock",
+  "spec": "Destruction",
+  "build": "Destruction Fire (Recklessness duty)",
+  "isDefault": false,
+  "pr": 104,
+  "race": "Undead",
+  "talents": "252-0050003201-0050345003101351",
+  "treeNames": [
+    "Affliction",
+    "Demonology",
+    "Destruction"
+  ],
+  "gearSet": "level60_phase1_synthetic",
+  "apl": "level60_destruction_fire_duty_recklessness",
+  "published": {
+    "dps": 971.1,
+    "source": "Raid sim variant (docs/raid_sim.md, milestone M1b), not yet in the DPS report: wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s, 2026-10-29"
+  },
+  "verify": {
+    "dps": 971.09,
+    "stderr": 0.23,
+    "iters": 20000,
+    "ok": true,
+    "note": "wowsimcli on this request, 180 s, seed 1 (the published number is this sim); a raid sim variant, not yet in the report"
+  },
+  "summary": "Keeps Curse of Recklessness (505 armor) on the boss for the raid instead of a druid's Faerie Fire. In Forever, curses and banes use separate slots, so it keeps its bane.",
+  "keyTalents": [
+    "Incinerate",
+    "Conflagrate",
+    "Fire and Brimstone",
+    "Shadow and Flame",
+    "Aftermath",
+    "Ruin",
+    "Demonic Sacrifice",
+    "Suppression"
+  ],
+  "rotation": [
+    "Pre-pull: Immolate at -1.5s",
+    "Racials on cooldown, except Troll Berserking",
+    "Life Tap below 5% mana or when Incinerate costs more than the mana left",
+    "Curse of Recklessness right after the opener, recast before it drops (2 min). It takes 505 armor in the minor armor slot, so the raid's Faerie Fire and Curse of Recklessness are off. The raid's Curse of the Elements stays on",
+    "Bane of Doom with more than 60s left, so it lands before the end",
+    "Bane of Agony while Bane of Doom is on cooldown or would not land",
+    "Corruption when it is down or has under 1.5s left, with more than 15s left",
+    "Immolate when it is down or has under 1.5s left, with more than 4s left",
+    "Conflagrate on cooldown while Immolate is up",
+    "Death Coil, then Searing Pain, when the filler would not land before the fight ends",
+    "Troll Berserking right before an Incinerate or Shadow Bolt, so the haste goes on cast spells, not instants",
+    "Incinerate while Immolate is up",
+    "Shadow Bolt otherwise"
+  ],
+  "consumes": [
+    "Flask of Supreme Power",
+    "Greater Arcane Elixir",
+    "Elixir of Shadow Power",
+    "Elixir of Firepower",
+    "Elixir of Sages",
+    "Elixir of Greater Intellect",
+    "Greater Mageblood Elixir",
+    "Cerebral Cortex Compound",
+    "Lobster Stew",
+    "Wizard Oil",
+    "Major Mana Potion",
+    "Demonic Rune",
+    "Goblin Sapper",
+    "Major Firestone (weapon imbue)"
+  ],
+  "caveats": [
+    "The duty costs 15.3 DPS at 180s against the same build without it (971.1 against 986.4, 20,000 iterations, seed 1). The curse only takes armor, which helps only a demon's melee, so the warlock pays its GCDs and mana for the raid.",
+    "Firestone is 9.7 ahead of Spellstone. The best build with the Succubus out is 5.1 behind. Sacrificing the Imp is 69 behind, and the Felhunter 101.",
+    "Unverified: whether Incinerate's 25% bonus applies to the whole hit. Bane of Havoc's point does nothing.",
+    "How much of the warlock's stats a demon gets, and Succubus melee, come from pet sheets at levels 20 and 30, not 60.",
+    "Bane of Doom's coefficient is 4.0 (Era has 1.0). At 2.0, Shadow Bolt builds would lose about 4%. At 1.0, about 6%.",
+    "No Ahn'Qiraj book ranks, so Shadow Bolt stops at rank IX, Immolate at VII and Corruption at VI. The books would add 7 to 13 DPS.",
+    "Only the Demonheart Raiment 2-piece is active. The 5-piece added about 8 to 13 DPS on an older gear set.",
+    "Soul shards and Life Tap's health cost aren't tracked.",
+    "Demons use the warlock's spell crit, a reported Forever bug. It's worth 15 to 17 DPS."
+  ],
+  "notes": "Request from mksettings with the same arguments as warlock__destruction_fire except -apl level60_destruction_fire_duty_recklessness, then raid.debuffs.curseOfRecklessness and faerieFire removed (they share the minor armor slot, standards 20). Made as a hand edit of the base request, which is the same. Demon Armor; no demon out (Summon NoSummon), sacrificed Succubus, imbue Firestone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly. Undead since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Human. A raid sim variant (docs/raid_sim.md, M1b), not yet in the DPS report.",
+  "duty": "Curse of Recklessness",
+  "baseBuild": "warlock__destruction_fire"
+}

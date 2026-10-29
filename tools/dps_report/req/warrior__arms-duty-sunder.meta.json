@@ -1,0 +1,78 @@
+{
+  "id": "warrior__arms-duty-sunder",
+  "class": "Warrior",
+  "spec": "Arms",
+  "build": "Arms (Sunder duty)",
+  "isDefault": false,
+  "pr": 4,
+  "race": "Undead",
+  "talents": "20305213032515201-55050000001",
+  "treeNames": [
+    "Arms",
+    "Fury",
+    "Protection"
+  ],
+  "gearSet": "level60_phase1_synthetic_arms",
+  "apl": "level60_arms_sunder",
+  "published": {
+    "dps": 862.7,
+    "source": "Raid sim variant (docs/raid_sim.md, milestone M1b), not yet in the DPS report: wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s, 2026-10-29"
+  },
+  "verify": {
+    "dps": 862.66,
+    "stderr": 0.39,
+    "iters": 20000,
+    "ok": true,
+    "note": "wowsimcli on this request, 180 s, seed 1 (the published number is this sim); a raid sim variant, not yet in the report"
+  },
+  "summary": "Keeps 5 Sunder Armor stacks on the boss for a raid with no warrior tank. The raid's Sunder Armor is off.",
+  "keyTalents": [
+    "Mortal Strike",
+    "Bloodthrill",
+    "Improved Overpower",
+    "Weaponmaster",
+    "Improved Slam",
+    "Two-Handed Weapon Specialization",
+    "Impale",
+    "Cruelty"
+  ],
+  "rotation": [
+    "Pre-pull: Battle Stance, then Charge (15 Rage)",
+    "Sunder Armor on duty for the raid: 5 stacks from the pull (7.5s of GCDs), before anything but the opening cooldowns, then refreshed in its last 3s, unless it lasts the fight. The raid's Sunder Armor is off",
+    "With 25s left, if Recklessness is ready and Rage is under 25, swap to Berserker Stance. Swap back after Recklessness",
+    "Recklessness in the last 25s. Racials on cooldown, but Elune's Light never during Recklessness or the 15s before it",
+    "Mighty Rage Potion at the pull, the second in the last 15s. Bloodrage under 20 Rage",
+    "Mortal Strike on cooldown",
+    "Slam at 20+ Rage outside execute (15s cooldown with Improved Slam)",
+    "Overpower at 5+ Rage after a dodge or Bloodthrill",
+    "Keep Rend up outside execute. Then Execute",
+    "Heroic Strike at 90+ Rage and Hamstring filler at 30+, both outside execute"
+  ],
+  "consumes": [
+    "Flask of Natural Aggression",
+    "Elixir of the Mongoose",
+    "Elixir of Ferocity",
+    "Juju Might",
+    "R.O.I.D.S.",
+    "Smoked Desert Dumpling",
+    "Dragonbreath Chili",
+    "Mighty Rage Potion",
+    "Goblin Sapper Charge",
+    "Dense Sharpening Stone (main hand)"
+  ],
+  "caveats": [
+    "The duty costs 42.9 DPS at 180s against the same build without it (862.7 against 905.6, 20,000 iterations, seed 1). Part of it is the ramp: the warrior's own hits meet fewer stacks for the first 7.5s, where the raid's Sunder was full at once.",
+    "Assumed: white hits give Rage by weapon speed, at the level 30 rate even at level 60.",
+    "No Ahn'Qiraj book ranks, so Heroic Strike stops at rank VIII, and the raid's Battle Shout at VI, Strength of Earth at IV and Grace of Air at II.",
+    "Deep Wounds ticks can't crit.",
+    "Assumed: the crit Rage bonus is for white hits only. Heroic Strike can trigger Unbridled Wrath.",
+    "Only one +2% crit elixir. A second (Grizzly) would add 10.9 DPS.",
+    "Battlegear of Glory 4-piece isn't counted. It would add 8.4 DPS vs Humanoids.",
+    "Booming Voice (5/5) does nothing, because the raid already has Battle Shout",
+    "Arms in Berserker Stance with Whirlwind is 10% behind.",
+    "Rage from taking raid damage (2 hits a minute, about 9 Rage each) is an estimate."
+  ],
+  "notes": "Request from mksettings with the same arguments as warrior__arms except -apl level60_arms_sunder, then the raid's sunderArmor removed (the duty warrior's Sunder is the only one, as for a raid with no warrior tank). Made as a hand edit of the base request, which is the same. A raid sim variant (docs/raid_sim.md, M1b), not yet in the DPS report.",
+  "duty": "Sunder Armor",
+  "baseBuild": "warrior__arms"
+}

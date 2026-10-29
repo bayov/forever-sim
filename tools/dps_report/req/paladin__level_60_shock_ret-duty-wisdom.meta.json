@@ -1,0 +1,82 @@
+{
+  "id": "paladin__level_60_shock_ret-duty-wisdom",
+  "class": "Paladin",
+  "spec": "Retribution",
+  "build": "Level 60 Shock (Wisdom duty)",
+  "isDefault": false,
+  "race": "Undead",
+  "talents": "550030032011012--052150312012303",
+  "treeNames": [
+    "Holy",
+    "Protection",
+    "Retribution"
+  ],
+  "gearSet": "level60_phase1_synthetic",
+  "apl": "level60_shock_ret_wisdom_duty",
+  "published": {
+    "dps": 919.8,
+    "source": "Raid sim variant (docs/raid_sim.md, milestone M1b), not yet in the DPS report: wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s, 2026-10-29"
+  },
+  "summary": "Keeps Judgement of Wisdom on the boss for the raid: every attacker with mana gets 59 mana on half its hits.",
+  "keyTalents": [
+    "Holy Shock",
+    "Champion of the Light",
+    "Consecrated Ground",
+    "Vengeance",
+    "Conviction",
+    "Sacred Arbiter",
+    "Divine Favor",
+    "Improved Seals"
+  ],
+  "rotation": [
+    "Pre-pull: Seal of Wisdom at -1.5s (no Twist of Light, so a damage seal before it would leave no Echo)",
+    "Judgement of Wisdom at the pull, for the duty. For 40s every attacker with mana gets 59 mana back on half its hits (the paladin too). The paladin's melee hits refresh it, so one cast lasts the fight. Judge it again only if it drops",
+    "Seal of Command once the judgement is up",
+    "Consecration on cooldown at any mana",
+    "Judgement on cooldown. Recast Seal of Command whenever it's down (no twisting)",
+    "Hammer of Wrath under 20% boss health, before Holy Strike",
+    "Holy Strike on cooldown",
+    "Holy Shock on cooldown. Divine Favor goes on a Holy Shock",
+    "Racials, Goblin Sapper, Dragonfire Potion and Demonic Rune on free GCDs"
+  ],
+  "consumes": [
+    "Flask of Supreme Power",
+    "Elixir of Cunning",
+    "Elixir of Ferocity",
+    "Juju Might",
+    "Elixir of Greater Firepower (Forever's Holy Power elixir)",
+    "Greater Arcane Elixir",
+    "Elixir of Shadow Power",
+    "Elixir of the Owl",
+    "Elixir of Greater Spirit",
+    "Greater Mageblood Elixir",
+    "R.O.I.D.S.",
+    "Lobster Stew",
+    "Dragonbreath Chili",
+    "Shadow Oil",
+    "Goblin Sapper",
+    "Dragonfire Potion",
+    "Demonic Rune"
+  ],
+  "caveats": [
+    "The duty costs 11.9 DPS at 180s against the same build without it (919.8 against 931.6, 20,000 iterations, seed 1).",
+    "The duty's own Judgement of Wisdom gives the paladin the same mana back as the raid's did, so the cost is the two seals' GCDs and mana and the one judgement that isn't a Judgement of Command or Righteousness.",
+    "Seal of Wisdom (rank 3, 200 mana) is up only until the next seal replaces it. Its own 90 mana on a melee hit is assumed to come on half the hits, as Judgement of Wisdom's does: the client says only \"a chance\".",
+    "Takes Pursuit of Justice 2 (movement speed), a must-have talent.",
+    "Holy Shock needs 20 points in Holy, so Twist of Light (the 31-point Retribution talent) is out of reach.",
+    "1.8% behind Ret sub-Holy at 180s, and 3.2% at 300s, where it runs short of mana. Dragonfire Potion is 5.7 DPS better at 180s, and Major Mana Potion 10.3 better at 300s.",
+    "Unverified: Holy Strike's flat bonus is added before its weapon damage percent, as the client data says.",
+    "The top Holy Strike and Consecration ranks may be out of date (about 1.2% of DPS).",
+    "No filler explosive, because each 1s cast resets the swing."
+  ],
+  "notes": "Request: paladin__level_60_shock_ret with raid debuff judgementOfWisdom removed and the level60_shock_ret_wisdom_duty rotation. Hand edits of the base request, as the other duty paladins were made (mksettings with -apl level60_shock_ret_wisdom_duty writes the same rotation). A raid sim variant (docs/raid_sim.md, M1b), not yet in the DPS report.",
+  "verify": {
+    "dps": 919.76,
+    "stderr": 0.31,
+    "iters": 20000,
+    "ok": true,
+    "note": "wowsimcli on this request, 180 s, seed 1 (the published number is this sim); a raid sim variant, not yet in the report"
+  },
+  "duty": "Judgement of Wisdom",
+  "baseBuild": "paladin__level_60_shock_ret"
+}
