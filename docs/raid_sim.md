@@ -1563,22 +1563,23 @@ below) and one Go call, `RunComp`, which resolves a comp into a `RaidSimRequest`
 - **The confirmation** (`-confirm`) raid-sims every distinct set near the top, at least 2. On a 10-player
   search the raid sims landed 1.5 to 11 DPS from the scores (0.15% at most).
 
-**The comp proto:**
+**The comp proto** (as built, at the end of `api.proto`):
 
 ```
-RaidComp    { size; repeated CompSlot slots; Encounter encounter; repeated Assignment assignments;
-              Faction faction; bool camp_buffs; Assumptions assumptions; }
-CompSlot    { id (stable); party; index; target_index (0 until several bosses);
-              oneof member { Member member; Placeholder placeholder; } MemberRef ref; }
-Member      { Player base; repeated DutyPlayer duties; }   // DutyPlayer { Duty duty; Player player; }
-MemberRef   { report_id; source (report, preset, saved, snapshot); name; }   // display and the report comparison only
-Placeholder { preset; preset options (the Feral tank's Innervate); }
-Assignment  { holder slot id; set_by_hand;
-              oneof job { Duty duty; Blessing blessing (class, kind); Aura aura; Judgement judgement;
-                          Totem totem (element, totem); CooldownTarget target (Power Infusion or Innervate, slot id); } }
-Assumptions { each unverified stacking rule on or off; the Camp Chair's exclusion; }
-Duty        enum { BATTLE_SHOUT, SUNDER_UPKEEP, FAERIE_FIRE, CURSE_OF_THE_ELEMENTS, CURSE_OF_RECKLESSNESS,
-                   JUDGEMENT_OF_THE_CRUSADER, JUDGEMENT_OF_WISDOM }
+RaidComp        { size; repeated CompSlot slots; Encounter encounter; repeated Assignment assignments;
+                  Faction faction; bool camp_buffs; RaidAssumptions assumptions; SimOptions sim_options; }
+CompSlot        { id (stable); party; index; RaidRole role;
+                  oneof member { CompMemberBuild build; RaidPreset placeholder; }
+                  report_id; name; bool preset_innervate; }   // the Feral tank's Innervate
+CompMemberBuild { Player base; repeated CompDutyPlayer duties; }   // CompDutyPlayer { Duty duty; Player player; }
+Assignment      { holder (slot id); set_by_hand;
+                  oneof job { Duty duty; BlessingAssignment blessing (class, blessing); PaladinJudgement judgement;
+                              TotemAssignment totem; CooldownTarget cooldown (Power Infusion or Innervate, target slot id); } }
+RaidAssumptions { camp_chair_spell_crit_only; camp_buffs_stack_with_group_buffs; journeyman_camp; }
+Duty            enum { BattleShout, SunderUpkeep, FaerieFire, CurseOfTheElements, CurseOfRecklessness,
+                       JudgementOfTheCrusader, JudgementOfWisdom }
+RaidCompResolution { RaidSimRequest request; repeated slot_of_player; repeated CompBuffRecord buffs;
+                     repeated string misses; repeated Assignment assignments; ErrorOutcome error; }
 ```
 
 - **A duty is a different `Player`, not a setting.** All 12 duty variants differ from their base in the
