@@ -134,31 +134,73 @@ members' settings, and that is its only effect.
 With no tank unit, the boss attacks nobody, and every DPS member takes the raid damage hits, as in the
 report.
 
-What each placeholder gives by default. Only effects that change DPS or mana are listed:
+### Tank and healer presets
 
-| Placeholder | Gives (default) |
-|---|---|
-| Tank warrior | Sunder Armor upkeep after the pull (see [Sunder Armor](#sunder-armor)); Battle Shout when no DPS warrior holds it |
-| Feral tank | Faerie Fire (Feral), Leader of the Pack |
-| Protection paladin | one Greater Blessing for each class; one aura; one judgement (Wisdom or the Crusader) |
-| Holy paladin | one Greater Blessing for each class; one aura; one judgement (Wisdom or the Crusader) |
-| Healing priest (Discipline) | Fortitude, Divine Spirit, Power Infusion |
-| Healing priest (Holy) | Fortitude, Divine Spirit |
-| Restoration shaman | one totem per element (earth, air, water, fire), with Restorative Totems; Mana Tide to its party |
-| Restoration druid | Gift of the Wild, Innervate |
+**A placeholder is a preset: a spec with a fixed talent build.** What it gives the raid follows from that
+build, so Power Infusion comes only with a Discipline priest.
 
-- Divine Spirit is a trainer spell in Forever, not a talent.
+**Every preset is a sensible raid build** (the user, 2026-10-29). It takes the core tanking or healing
+talents a real raid tank or healer would. Threat and healing aren't scored yet, so nothing else stops a
+build from trading its role talents for raid buffs. The presets are what keep the sim realistic.
+
+So the presets are a short, hand-picked list. The search chooses among them for each slot and never builds
+a tank's or healer's talents itself. When threat and healing are simmed, their scores keep builds realistic
+on their own, and the list stays the starting point.
+
+The presets, checked against client 70630's trees and 70685's spells. The talent strings are in the sim's
+per-tree digit format:
+
+| Preset | Talents | Gives |
+|---|---|---|
+| Protection warrior | 8/0/43, `35--251533120331221351` (`ui/tank_warrior/presets.ts`) | Sunder Armor upkeep after the pull (see [Sunder Armor](#sunder-armor)); Battle Shout when no DPS warrior holds it |
+| Feral tank | 0/41/10, `-55220302020132012551-055` (`ui/feral_tank_druid/presets.ts`) | Leader of the Pack; Faerie Fire; Gift of the Wild. Innervate is off by default, since it means leaving Bear Form. |
+| Protection paladin | 1/43/7, `1-5530513321301551-052` (`ui/protection_paladin/presets.ts`) | a Greater Blessing for each class; one aura; one judgement (Wisdom or the Crusader) |
+| Holy paladin | 31/20/0, `05320103225101051-500250302003` | the same as the Protection paladin |
+| Restoration shaman | 0/8/43, `-005102-5530500315513151` (`ui/restoration_shaman/presets.ts`) | one totem per element (earth, air, water, fire); Mana Spring with Restorative Totems (×1.25); Mana Tide to its party |
+| Discipline priest | 33/18/0, `005005231330011531-2310510303` (`ui/healing_priest/presets.ts`) | Fortitude, Divine Spirit, Power Infusion |
+| Holy priest | 19/32/0, `00510223123-03405103030121531` (`ui/healing_priest/presets.ts`) | Fortitude, Divine Spirit |
+| Restoration druid | 11/0/40, `05302001--5052035153113051` | Gift of the Wild; Innervate; Faerie Fire as an assignment |
+
+**Only the priest's talents change what a tank or healer gives.** Discipline reaches Power Infusion (31
+points) and deep Holy can't. No talent in any tree changes a blessing, an aura, a judgement, Battle Shout,
+Sunder Armor or a weapon totem. Every "Improved" talent for them is gone:
+
+- Improved Battle Shout, Booming Voice's duration, Improved Sunder's armor
+- Improved Seal of the Crusader, Improved Blessing of Might and Wisdom, Lasting Judgement
+- Improved Devotion, Concentration and Retribution Aura
+- Enhancing Totems and Improved Weapon Totems
+- Improved Mark of the Wild, which is baseline now
+
+Restorative Totems and Mana Tide are in every sensible Restoration shaman build. So the two paladin presets
+give the same set, and the two priests differ by Power Infusion only.
+
+**Not in a sensible build**, so no preset has them:
+
+- Dark Inspiration, which needs 20 Shadow points and a priest casting Mind Blast
+- Moonkin Aura from a healer, since a Moonkin can't heal
+- Leader of the Pack from a Restoration druid, since it needs Cat or Bear Form
+
+**Other facts:**
+
+- Divine Spirit, Kings, Innervate, Faerie Fire and Gift of the Wild are trainer spells, so every priest,
+  paladin or druid has them.
 - The tanks' Demoralizing Shout, Demoralizing Roar and Thunder Clap change no DPS, so they're left out.
-- Each placeholder can be changed per slot: which blessings, which judgement, which totems, and Restorative
-  or Guardian Totems. Those two are the only "improved" talents Forever still has for these buffs. Improved
-  Battle Shout, Enhancing Totems, Improved Blessing of Wisdom, Improved Devotion Aura and Improved Mark of
-  the Wild are gone, and Improved Imp no longer raises Blood Pact.
+- **Faerie Fire (Feral) isn't in client 70685** (spells 16857 and 17390 to 17392 have no rows). Instead,
+  the caster Faerie Fire can be cast in Cat and Bear Form, for mana. The raid effect is the same 505 armor,
+  and any druid can hold the minor armor slot. The sim still has the free Faerie Fire (Feral) with a
+  6-second cooldown (`sim/druid/faerie_fire.go`), which the Feral DPS builds use. That's a TASKS.md item.
+- The UI's Holy paladin and both Restoration druid talent strings are invalid in Forever. The table has
+  valid ones: the paladin's 3 points in Consecrated Ground moved to Unyielding Faith and Purifying Power,
+  and the druid's build was rebuilt on the Thicc Resto layout.
 
-**Tank and healer specs are searched too** (the user, 2026-10-29). For the slot counts set, the search
-runs every combination of tank and healer specs and ranks them by raid DPS (see
-[Tank and healer combos](#tank-and-healer-combos)). The user can also fix any slot's spec. The ranking
-counts only what each spec gives the DPS, by design: nothing checks that a combo can tank or heal the
-fight.
+**A slot's choices** are assignments, not talents: which blessings, which judgement, which totems, and
+whether it holds Faerie Fire.
+
+**Tank and healer presets are searched too** (the user, 2026-10-29). For the slot counts set, the search
+runs every combination of tank and healer presets and ranks them by raid DPS (see
+[Tank and healer combos](#tank-and-healer-combos)). The user can also fix any slot's preset. The ranking
+counts only what each preset gives the DPS. Nothing checks that a combo can tank or heal the fight, but
+every preset is a real tank or healer build.
 
 ## Buffs and debuffs come from the members
 
@@ -243,8 +285,8 @@ is no given form yet:
 | Gift of the Wild | any druid | raid, players | doesn't stack | | 60 min | `gift_of_the_wild` |
 | Arcane Brilliance, Divine Spirit (mana) | any mage, any priest | raid | doesn't stack | | 60 min | `arcane_brilliance`, `divine_spirit` |
 | Mana Spring Totem | any shaman, water (Restorative Totems) | party, 30 yd | open (shaman_audit 8.45) | the shaman's other water totems | 5 min | `mana_spring_totem` |
-| Mana Tide Totem | shaman talent | party | unverified | | 13 s, 5 min cooldown, at min(fight/2, 60 s) today | `PartyBuffs.mana_tide_totems`, which pays a party of 5 five times today |
-| Dark Inspiration (+15% Spirit) | Shadow talent | party | unverified | | procs on its own, 10 s | no field; the priest's own aura only |
+| Mana Tide Totem | shaman talent | party | unverified | probably Mana Spring, for its duration: both are water totems (unverified) | 12 s by the tooltip, 13 s in the sim; 5 min cooldown, at min(fight/2, 60 s) today | `PartyBuffs.mana_tide_totems`, which pays a party of 5 five times today |
+| Dark Inspiration (+15% Spirit) | Shadow talent, 20 points | party | unverified | | 10 s, set off by the priest's Mind Blast or Mind Flay; only a Shadow priest has it | no field; the priest's own aura only |
 | Power Infusion (+20% spell damage) | Discipline, 31 points | one target | unverified | | 15 s, 3 min cooldown, off the GCD; fires as soon as ready | `IndividualBuffs.power_infusions` |
 | Innervate | any druid | one target | unverified | | 20 s, 6 min cooldown; below a mana threshold | `IndividualBuffs.innervates` |
 | Retribution Aura, Thorns | paladin, druid | the tank's party, the tank | | | only when the boss hits a member: ignored until tanks are simmed | |
@@ -261,7 +303,7 @@ The debuffs:
 | Debuff | Given by | Several providers | Excludes | Lasts / in-fight cost | Settings field |
 |---|---|---|---|---|---|
 | Sunder Armor (450 a stack) | any warrior | stacks to 5 from any warrior | Expose Armor (standard 18) | 30 s, a GCD each | `sunder_armor`, full from the pull today |
-| Faerie Fire / Faerie Fire (Feral) (505 armor) | any druid | one per target, from any druid | the minor armor slot | 40 s | `faerie_fire` |
+| Faerie Fire (505 armor) | any druid, in caster, Moonkin, Cat or Bear Form | one per target, from any druid | the minor armor slot | 40 s, for mana | `faerie_fire` |
 | Dust Cloud (505 armor) | hunter with a Tallstrider | one | the minor armor slot | the pet's, 30 s | no field |
 | Curse of Recklessness | warlock | doesn't stack (70425) | the minor armor slot; the warlock's other curse | 2 min | `curse_of_recklessness` |
 | Curse of the Elements (+10%, all magic schools) | warlock | doesn't stack | the warlock's other curse, not its bane | 5 min | `curse_of_elements` |
@@ -542,7 +584,7 @@ A role is one thing the raid can have or not, with the ways it can be covered:
 |---|---|
 | Battle Shout | a warrior tank; a DPS warrior on duty; a wolf; none |
 | Sunder upkeep | a warrior tank; a Sunder upkeep warrior; none (pull Sunders only) |
-| Minor armor slot | a Feral tank; a druid on Faerie Fire; a Curse of Recklessness warlock; a Tallstrider; none |
+| Minor armor slot | a Feral tank; a Restoration druid; a DPS druid on Faerie Fire; a Curse of Recklessness warlock; a Tallstrider; none |
 | Curse of the Elements | a warlock on duty; none |
 | Judgement, per paladin | the Crusader; Wisdom |
 | Blessings | Kings, Might, Wisdom per class, from the paladins present (placeholders or Ret) |
@@ -621,10 +663,10 @@ So a search move adds, removes or swaps one provider member, not one role.
 
 ### Tank and healer combos
 
-The search runs once for each combination of tank and healer specs that fits the slots (the user,
-2026-10-29). The specs:
+The search runs once for each combination of tank and healer presets that fits the slots (the user,
+2026-10-29). The presets (see [Tank and healer presets](#tank-and-healer-presets)):
 
-- **Tanks:** warrior, Feral, Protection paladin.
+- **Tanks:** Protection warrior, Feral tank, Protection paladin.
 - **Healers:** Holy paladin, Restoration shaman, Discipline priest, Holy priest, Restoration druid.
 
 Combinations are counted as multisets, since two warrior tanks in either order are one combo:
@@ -636,15 +678,16 @@ Combinations are counted as multisets, since two warrior tanks in either order a
 | 40 | 3 | 7 to 9 | 10 × (330 + 495 + 715) = 15,400 |
 
 That's cheap, because a combo only changes the buff set. Each combo's placeholder choices (blessings,
-judgements, totems) are part of its search. Many combos give the same buffs: a Holy and a Discipline priest
-differ only by Power Infusion, and a third Restoration druid adds nothing. So most combos are scored from
+judgements, totems) are part of its search. Many combos give the same buffs: the two paladins give the same set,
+the two priests differ only by Power Infusion, and a second Restoration druid adds only another
+Innervate. So most combos are scored from
 the cache without a new single-player sim. At 40, the search drops a combo early when even its best
 possible buff set can't reach the best combo found so far.
 
 **What it reports:**
 
 - **The combos ranked by raid DPS**, each with its best DPS comp, and how far it is behind the best.
-- **Each tank and healer spec's DPS value:** the raid DPS it adds through what it gives, as the
+- **Each tank and healer preset's DPS value:** the raid DPS it adds through what it gives, as the
   contribution of that slot (see [Member value](#member-value)) in each combo's best comp, and on average
   over the combos. This answers which tanks and healers are best for the raid's damage, leaving out
   utility, threat and healing.
@@ -690,7 +733,7 @@ On the user's machine or in Claude Code cloud environments, natively; nothing is
 
 - **For each raid size and faction:** the best comp and 2 to 4 runners-up, with the difference and paired
   95% intervals.
-- **The tank and healer combos ranked**, and each tank and healer spec's DPS value (see
+- **The tank and healer combos ranked**, and each tank and healer preset's DPS value (see
   [Tank and healer combos](#tank-and-healer-combos)).
 - **The role table:** each role's gain, its provider's cost and the net, at 10, 20 and 40.
 - **The filler ranking** under the winning buff set, each build with the spread of the report's
@@ -1001,8 +1044,10 @@ The user's rulings so far (2026-10-29):
   Faerie Fire or Curse of Recklessness until the launch checks.
 - The search runs natively on the user's machine or in Claude Code cloud environments, judges each build
   on its own under a buff set, and caches every single-player result.
-- Every tank and healer combo is simmed and ranked by raid DPS, with each tank and healer spec's DPS
+- Every tank and healer combo is simmed and ranked by raid DPS, with each tank and healer preset's DPS
   value.
+- Tanks and healers are a short list of presets, each a sensible raid build with its core role talents,
+  and the search never builds their talents itself.
 - The DPS Report isn't touched for now.
 
 None open.
