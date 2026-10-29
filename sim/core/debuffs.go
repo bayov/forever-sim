@@ -2,6 +2,7 @@ package core
 
 import (
 	"math"
+	"slices"
 	"strconv"
 	"time"
 
@@ -588,25 +589,58 @@ func JudgementOfLightAura(target *Unit) *Aura {
 	})
 }
 
+// judgementOfTheCrusader is one target's Judgement of the Crusader. It is one debuff per
+// target: the last paladin to judge sets its bonus, and that paladin's melee hits refresh it.
+type judgementOfTheCrusader struct {
+	caster  *Unit   // who judged last; nil while the settings' permanent one is up
+	bonus   float64 // the bonus the next activation adds
+	applied float64 // the bonus it added when it went up
+	judges  []*Unit // every paladin that can judge it
+}
+
 // bonus is the Holy damage taken the judgement adds, duration how long it lasts before
 // a melee strike of the caster has to refresh it (10 sec in Classic, 40 under Forever).
+// caster is nil for the settings' permanent one. A paladin activates it with
+// JudgeTheCrusader, so the bonus and the refreshes are that paladin's.
 func JudgementOfTheCrusaderAura(caster *Unit, target *Unit, bonus float64, duration time.Duration) *Aura {
-	var spellId int32 = 20303
+	env := target.Env
+	if aura := target.GetAura("Judgement of the Crusader"); aura != nil {
+		if caster != nil {
+			jotc := env.judgementsOfTheCrusader[target]
+			jotc.judges = append(jotc.judges, caster)
+		}
+		return aura
+	}
 
-	return target.GetOrRegisterAura(Aura{
+	jotc := &judgementOfTheCrusader{caster: caster, bonus: bonus}
+	if caster != nil {
+		jotc.judges = []*Unit{caster}
+	}
+	if env.judgementsOfTheCrusader == nil {
+		env.judgementsOfTheCrusader = make(map[*Unit]*judgementOfTheCrusader)
+	}
+	env.judgementsOfTheCrusader[target] = jotc
+
+	return target.RegisterAura(Aura{
 		Label:    "Judgement of the Crusader",
-		ActionID: ActionID{SpellID: spellId},
+		ActionID: ActionID{SpellID: 20303},
 		Tag:      JudgementAuraTag,
 		Duration: duration,
 
 		OnGain: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.SchoolBonusDamageTaken[stats.SchoolIndexHoly] += bonus
+			jotc.applied = jotc.bonus
+			aura.Unit.PseudoStats.SchoolBonusDamageTaken[stats.SchoolIndexHoly] += jotc.applied
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
-			aura.Unit.PseudoStats.SchoolBonusDamageTaken[stats.SchoolIndexHoly] -= bonus
+			aura.Unit.PseudoStats.SchoolBonusDamageTaken[stats.SchoolIndexHoly] -= jotc.applied
 		},
 		OnSpellHitTaken: func(aura *Aura, sim *Simulation, spell *Spell, result *SpellResult) {
-			if spell.Unit != caster { // caster is nil for permanent auras
+			if jotc.caster != nil {
+				if spell.Unit != jotc.caster {
+					return
+				}
+			} else if !slices.Contains(jotc.judges, spell.Unit) {
+				// The settings' permanent one, which a paladin's hits refresh for the log only.
 				return
 			}
 			if result.Landed() && spell.ProcMask.Matches(ProcMaskMelee) {
@@ -614,6 +648,21 @@ func JudgementOfTheCrusaderAura(caster *Unit, target *Unit, bonus float64, durat
 			}
 		},
 	})
+}
+
+// JudgeTheCrusader puts caster's Judgement of the Crusader on aura's target. Another
+// paladin's is replaced. The settings' permanent one stays.
+func JudgeTheCrusader(sim *Simulation, aura *Aura, caster *Unit, bonus float64) {
+	jotc := aura.Unit.Env.judgementsOfTheCrusader[aura.Unit]
+	if aura.IsActive() && jotc.caster == nil {
+		aura.Activate(sim)
+		return
+	}
+	if aura.IsActive() && (jotc.caster != caster || jotc.bonus != bonus) {
+		aura.Deactivate(sim)
+	}
+	jotc.caster, jotc.bonus = caster, bonus
+	aura.Activate(sim)
 }
 
 func CurseOfElementsAura(target *Unit) *Aura {

@@ -74,6 +74,11 @@ type Aura struct {
 	// The unit this aura is attached to.
 	Unit *Unit
 
+	// The unit whose NewEnemyAuraArray made this aura, so a rotation finds its own debuff
+	// among other casters' with the same spell (Fire Vulnerability, Shadow Weaving). Nil for
+	// debuffs from the settings.
+	Owner *Unit
+
 	active                     bool
 	activeIndex                int32 // Position of this aura's index in the activeAuras array.
 	onCastCompleteIndex        int32 // Position of this aura's index in the onCastCompleteAuras array.
@@ -428,6 +433,23 @@ func (at *auraTracker) GetAuraByID(actionID ActionID) *Aura {
 	}
 	return nil
 }
+
+// getAuraByIDFor is GetAuraByID for owner's rotation: the first aura with the spell that
+// owner made or that nobody made, else the first one another unit made.
+func (at *auraTracker) getAuraByIDFor(actionID ActionID, owner *Unit) *Aura {
+	var foreign *Aura
+	for _, aura := range at.auras {
+		if aura.ActionID.SameAction(actionID) {
+			if aura.Owner == nil || aura.Owner == owner {
+				return aura
+			}
+			if foreign == nil {
+				foreign = aura
+			}
+		}
+	}
+	return foreign
+}
 func (at *auraTracker) GetIcdAuraByID(actionID ActionID) *Aura {
 	for _, aura := range at.auras {
 		if (aura.ActionID.SameAction(actionID) || aura.ActionIDForProc.SameAction(actionID)) && aura.Icd != nil {
@@ -458,8 +480,14 @@ func (at *auraTracker) registerAura(unit *Unit, aura Aura) *Aura {
 	if at.GetAura(aura.Label) != nil {
 		panic(fmt.Sprintf("Aura %s already registered!", aura.Label))
 	}
-	if len(at.auras) > 200 {
-		panic(fmt.Sprintf("Over 200 registered auras when registering %s! There is probably an aura being registered every iteration.", aura.Label))
+	// Each raid member registers its own debuff and DoT auras on every target, so the
+	// guard against registering an aura every iteration scales with the raid.
+	auraLimit := 200
+	if unit.Env != nil && unit.Env.Raid != nil {
+		auraLimit = 200 * max(1, len(unit.Env.Raid.AllPlayerUnits))
+	}
+	if len(at.auras) > auraLimit {
+		panic(fmt.Sprintf("Over %d registered auras when registering %s! There is probably an aura being registered every iteration.", auraLimit, aura.Label))
 	}
 
 	newAura := &Aura{}
@@ -1010,7 +1038,11 @@ func (caster *Unit) NewEnemyAuraArray(makeAura func(*Unit) *Aura) AuraArray {
 	auras := make([]*Aura, len(caster.Env.AllUnits))
 	for _, target := range caster.Env.AllUnits {
 		if target.Type == EnemyUnit {
-			auras[target.UnitIndex] = makeAura(target)
+			aura := makeAura(target)
+			if aura != nil && aura.Owner == nil {
+				aura.Owner = caster
+			}
+			auras[target.UnitIndex] = aura
 		}
 	}
 	return auras

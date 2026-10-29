@@ -70,6 +70,9 @@ func NewEncounter(options *proto.Encounter) Encounter {
 		if encounter.EndFightAtHealth == 0 {
 			encounter.EndFightAtHealth = 1 // default to something so we don't instantly end without anything.
 		}
+		// The fight ends when the targets die, so its length doesn't vary on its own. A
+		// variation would only move the end of fight the rotations see.
+		encounter.DurationVariation = 0
 	}
 
 	for targetIndex, targetOptions := range options.Targets {

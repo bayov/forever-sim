@@ -95,6 +95,25 @@ func (at *auraTracker) getAuraByRankFamily(actionID ActionID) *Aura {
 	return best
 }
 
+// getAuraByRankFamilyFor is getAuraByRankFamily among the auras owner made or nobody made.
+func (at *auraTracker) getAuraByRankFamilyFor(actionID ActionID, owner *Unit) *Aura {
+	if actionID.SpellID == 0 {
+		return nil
+	}
+	var best *Aura
+	for _, aura := range at.auras {
+		if aura.Owner != nil && aura.Owner != owner {
+			continue
+		}
+		if aura.ActionID.Tag == actionID.Tag && SameRankFamily(aura.ActionID.SpellID, actionID.SpellID) {
+			if best == nil || aura.ActionID.SpellID > best.ActionID.SpellID {
+				best = aura
+			}
+		}
+	}
+	return best
+}
+
 // RankScaling is how a vanilla spell rank grows with the character's level. A rank is
 // PerLevel weaker for every level the character is below MaxLevel, down to the level the
 // trainer teaches it at. A zero MaxLevel means the rank does not scale.

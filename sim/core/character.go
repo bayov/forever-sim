@@ -472,7 +472,12 @@ const (
 	AtieshGreatstaffDruid   = 22632
 )
 
-func (character *Character) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
+func (character *Character) AddPartyBuffs(_ *proto.PartyBuffs) {
+}
+
+// addItemPartyBuffs adds what the character's items give the party (Atiesh). It runs once
+// for each player, whether or not the class has its own AddPartyBuffs.
+func (character *Character) addItemPartyBuffs(partyBuffs *proto.PartyBuffs) {
 	switch character.MainHand().ID {
 	case AtieshGreatstaffMage:
 		partyBuffs.AtieshMage += 1

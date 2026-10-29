@@ -835,6 +835,8 @@ message PartyBuffs {
 
 	// Group buffs
 	int32 mana_tide_totems = 3;
+	// A warlock's Imp in the party (Blood Pact reaches the party under Forever).
+	TristateEffect blood_pact = 6;
 }
 
 // These are usually individual actions taken by other Characters.

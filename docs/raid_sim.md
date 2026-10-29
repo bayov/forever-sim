@@ -1091,13 +1091,19 @@ totems, Furious Howl, Blood Pact to the party), which is M1b.
 **None of them may move a single-player number.** Every one of the 58 report requests gives bit-identical
 results at a fixed seed before and after.
 
-**Already done once:** all of B was fixed in a scratch copy on 2026-10-29. Its patch and test file are in
-this session's scratchpad (`milestone_b/milestone_b.patch`, `milestone_b/raid_forever_test.go`). The 58
-requests' result hashes came out identical, and each new test failed before the fix and passed after.
-Implementation can start from that patch. The scratchpad goes with the session, but this section lists every fix
-without it.
+**Done** (2026-10-29), in one commit, from the scratch patch reviewed again before applying:
 
-**The fixes, in commit order:**
+- The 12 new tests in `sim/raid_forever_test.go` pass. On the commit before they failed, and the empty-slot
+  test crashed.
+- The 58 report requests' result hashes (1,000 iterations, seed 1, first-iteration logs) equal the baseline
+  taken before the fix.
+- The whole `./sim/...` suite gives the same outcomes before and after. `TestP1Mage` and
+  `TestElementalLevel60` fail on both, with stale `.results` files, and `sim/web` doesn't set up without
+  `binary_dist`.
+- The given Furious Howl is the rank 4 value at 60 (83). Moving its rank table into core, so it scales by
+  level, is left for M1b.
+
+**The fixes** (planned as separate commits, landed as one):
 
 0. **The test file and the baseline.** `sim/raid_forever_test.go`, with the helpers and
    `TestRaidForeverReportHashes`. That test is opt-in (`RAID_FOREVER_HASHES=file`, about 21 s): it runs

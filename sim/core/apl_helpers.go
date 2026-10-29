@@ -113,8 +113,18 @@ func newAuraReferenceHelper(sourceUnit UnitReference, auraId *proto.ActionID, au
 		}
 	}
 }
-func NewAuraReference(sourceUnit UnitReference, auraId *proto.ActionID) AuraReference {
+
+// NewAuraReference finds the aura for owner's rotation. With several casters' auras of the
+// same spell on a unit, it takes owner's own (see Aura.Owner), then one from the settings,
+// then another caster's.
+func NewAuraReference(sourceUnit UnitReference, auraId *proto.ActionID, owner *Unit) AuraReference {
 	return newAuraReferenceHelper(sourceUnit, auraId, func(unit *Unit, actionID ActionID) *Aura {
+		if aura := unit.getAuraByIDFor(actionID, owner); aura != nil && (aura.Owner == nil || aura.Owner == owner) {
+			return aura
+		}
+		if aura := unit.getAuraByRankFamilyFor(actionID, owner); aura != nil {
+			return aura
+		}
 		if aura := unit.GetAuraByID(actionID); aura != nil {
 			return aura
 		}
@@ -130,7 +140,7 @@ func (rot *APLRotation) GetAPLAura(sourceUnit UnitReference, auraId *proto.Actio
 		return AuraReference{}
 	}
 
-	aura := NewAuraReference(sourceUnit, auraId)
+	aura := NewAuraReference(sourceUnit, auraId, rot.unit)
 	if aura.Get() == nil {
 		rot.ValidationWarning("No aura found on %s for: %s", sourceUnit.Get().Label, ProtoToActionID(auraId))
 	}

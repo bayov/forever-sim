@@ -163,8 +163,12 @@ func (warlock *Warlock) Initialize() {
 	})
 }
 
-func (warlock *Warlock) AddRaidBuffs(raidBuffs *proto.RaidBuffs) {
-	raidBuffs.BloodPact = max(raidBuffs.BloodPact, core.MakeTristateValue(
+func (warlock *Warlock) AddRaidBuffs(_ *proto.RaidBuffs) {
+}
+
+// The Imp's Blood Pact is a party aura (client 70685: effect 35).
+func (warlock *Warlock) AddPartyBuffs(partyBuffs *proto.PartyBuffs) {
+	partyBuffs.BloodPact = max(partyBuffs.BloodPact, core.MakeTristateValue(
 		warlock.Options.Summon == proto.WarlockOptions_Imp,
 		// Forever's Improved Imp no longer improves Blood Pact.
 		false,

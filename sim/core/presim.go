@@ -35,7 +35,8 @@ func (sim *Simulation) runPresims(request *proto.RaidSimRequest) *proto.RaidSimR
 	const numPresimIterations = 100
 
 	// Run presims if requested.
-	raidPresimOptions := make([]*PresimOptions, 25)
+	// By raid index, which runs to 39 in a raid of 40.
+	raidPresimOptions := make(map[int32]*PresimOptions)
 	remainingAgents := 0
 	for _, party := range sim.Raid.Parties {
 		for _, player := range party.Players {
@@ -44,11 +45,10 @@ func (sim *Simulation) runPresims(request *proto.RaidSimRequest) *proto.RaidSimR
 				continue
 			}
 
-			partyConfig := request.Raid.Parties[player.GetCharacter().Party.Index]
-			if player.GetCharacter().PartyIndex >= len(partyConfig.Players) {
-				// This happens for target dummies.
+			if _, ok := player.(*TargetDummy); ok {
 				continue
 			}
+			partyConfig := request.Raid.Parties[player.GetCharacter().Party.Index]
 			playerConfig := partyConfig.Players[player.GetCharacter().PartyIndex]
 
 			presimOptions := presimmer.GetPresimOptions(playerConfig)
@@ -79,16 +79,15 @@ func (sim *Simulation) runPresims(request *proto.RaidSimRequest) *proto.RaidSimR
 		// ** Run a presim round. **
 
 		// Let each Agent modify their own settings.
-		for partyIdx, party := range sim.Raid.Parties {
-			partyConfig := presimRequest.Raid.Parties[partyIdx]
+		for _, party := range sim.Raid.Parties {
+			partyConfig := presimRequest.Raid.Parties[party.Index]
 			for _, player := range party.Players {
-				playerConfig := partyConfig.Players[player.GetCharacter().PartyIndex]
-
 				presimOptions := raidPresimOptions[player.GetCharacter().Index]
 				if presimOptions == nil {
 					continue
 				}
 
+				playerConfig := partyConfig.Players[player.GetCharacter().PartyIndex]
 				presimOptions.SetPresimPlayerOptions(playerConfig)
 			}
 		}
@@ -102,8 +101,8 @@ func (sim *Simulation) runPresims(request *proto.RaidSimRequest) *proto.RaidSimR
 		}
 
 		// Provide each Agent with their own results.
-		for partyIdx, party := range sim.Raid.Parties {
-			partyMetrics := presimResult.RaidMetrics.Parties[partyIdx]
+		for _, party := range sim.Raid.Parties {
+			partyMetrics := presimResult.RaidMetrics.Parties[party.Index]
 			for _, player := range party.Players {
 				playerMetrics := partyMetrics.Players[player.GetCharacter().PartyIndex]
 				presimOptions := raidPresimOptions[player.GetCharacter().Index]

@@ -44,7 +44,7 @@ func (shaman *Shaman) registerStormstrikeSpell() {
 	if forever {
 		stormStrikeAuras = shaman.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
 			return target.RegisterAura(core.Aura{
-				Label:    "Stormstrike",
+				Label:    "Stormstrike - " + shaman.Label,
 				ActionID: actionID,
 				Duration: time.Second * 12,
 			})

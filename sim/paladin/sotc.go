@@ -60,8 +60,9 @@ func (paladin *Paladin) registerSealOfTheCrusader() {
 			top = i
 		}
 	}
+	judgementBonus := ranks[top].judge.bonus*improvedSotC + libramBonus + paladin.judgementOfTheCrusaderBonus
 	debuffs := paladin.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
-		return core.JudgementOfTheCrusaderAura(&paladin.Unit, target, ranks[top].judge.bonus*improvedSotC+libramBonus+paladin.judgementOfTheCrusaderBonus, judgementDuration)
+		return core.JudgementOfTheCrusaderAura(&paladin.Unit, target, judgementBonus, judgementDuration)
 	})
 
 	for i, rank := range ranks {
@@ -79,7 +80,7 @@ func (paladin *Paladin) registerSealOfTheCrusader() {
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				spell.CalcAndDealOutcome(sim, target, spell.OutcomeAlwaysHit)
-				debuffs.Get(target).Activate(sim)
+				core.JudgeTheCrusader(sim, debuffs.Get(target), &paladin.Unit, judgementBonus)
 			},
 		})
 

@@ -45,6 +45,9 @@ type Environment struct {
 	BaseDuration      time.Duration // base duration
 	DurationVariation time.Duration // variation per duration
 
+	// Each target's Judgement of the Crusader, which every paladin shares (debuffs.go).
+	judgementsOfTheCrusader map[*Unit]*judgementOfTheCrusader
+
 	// Effects to invoke when the Env is finalized.
 	preFinalizeEffects  []PostFinalizeEffect
 	postFinalizeEffects []PostFinalizeEffect
@@ -202,15 +205,14 @@ func (env *Environment) finalize(raidProto *proto.Raid, _ *proto.Encounter, raid
 		}
 	}
 
-	for partyIdx, party := range env.Raid.Parties {
-		partyProto := raidProto.Parties[partyIdx]
-		for playerIdx, player := range party.Players {
-			if playerIdx >= len(partyProto.Players) {
-				// This happens for target dummies.
+	for _, party := range env.Raid.Parties {
+		partyProto := raidProto.Parties[party.Index]
+		for _, player := range party.Players {
+			if _, ok := player.(*TargetDummy); ok {
 				continue
 			}
-			playerProto := partyProto.Players[playerIdx]
 			char := player.GetCharacter()
+			playerProto := partyProto.Players[char.PartyIndex]
 			char.Rotation = char.newAPLRotation(playerProto.Rotation)
 		}
 	}
@@ -239,10 +241,10 @@ func (env *Environment) finalize(raidProto *proto.Raid, _ *proto.Encounter, raid
 		sim.Cleanup()
 	}
 
-	for partyIdx, party := range env.Raid.Parties {
+	for _, party := range env.Raid.Parties {
 		for _, player := range party.Players {
 			character := player.GetCharacter()
-			character.FillPlayerStats(raidStats.Parties[partyIdx].Players[character.PartyIndex])
+			character.FillPlayerStats(raidStats.Parties[party.Index].Players[character.PartyIndex])
 		}
 	}
 }
@@ -389,15 +391,14 @@ func (env *Environment) GetUnit(ref *proto.UnitReference, contextUnit *Unit) *Un
 	switch ref.Type {
 	case proto.UnitReference_Player:
 		raidIndex := ref.Index
-		partyIndex := int(raidIndex / 5)
-		if partyIndex < 0 || partyIndex >= len(env.Raid.Parties) {
-			return nil
-		}
-
-		party := env.Raid.Parties[partyIndex]
-		for _, player := range party.Players {
-			if player.GetCharacter().Index == raidIndex {
-				return &player.GetCharacter().Unit
+		for _, party := range env.Raid.Parties {
+			if party.Index != int(raidIndex/5) {
+				continue
+			}
+			for _, player := range party.Players {
+				if player.GetCharacter().Index == raidIndex {
+					return &player.GetCharacter().Unit
+				}
 			}
 		}
 	case proto.UnitReference_Pet:

@@ -323,11 +323,11 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 	}
 
 	// Forever's Improved Imp no longer raises Blood Pact, so we take an improved one as regular.
-	if raidBuffs.BloodPact > 0 {
+	if bloodPact := max(raidBuffs.BloodPact, partyBuffs.BloodPact); bloodPact > 0 {
 		updateStats := BuffSpellValues[BloodPact]
 		if character.Env.IsForever() {
 			updateStats = stats.Stats{stats.Stamina: foreverBloodPact(character.Level)}
-		} else if raidBuffs.BloodPact == proto.TristateEffect_TristateEffectImproved {
+		} else if bloodPact == proto.TristateEffect_TristateEffectImproved {
 			updateStats = updateStats.Multiply(1.3).Floor()
 		}
 		character.AddStats(updateStats)
@@ -395,6 +395,11 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 
 	if raidBuffs.BattleShout != proto.TristateEffect_TristateEffectMissing {
 		MakePermanent(BattleShoutAura(&character.Unit, GetTristateValueInt32(raidBuffs.BattleShout, 0, 5), 0, false)) // Do we implement 3pc wrath for the other sims?
+	}
+
+	// A wolf's Furious Howl (24597, 83 at 60), in Battle Shout's slot: the stronger counts.
+	if raidBuffs.FuriousHowl && character.Env.IsForever() {
+		MakePermanent(ForeverFuriousHowlAura(&character.Unit, 24597, 83))
 	}
 
 	if individualBuffs.BlessingOfMight != proto.TristateEffect_TristateEffectMissing && isAlliance {
@@ -1468,12 +1473,11 @@ func registerManaTideTotemCD(agent Agent, numManaTideTotems int32) {
 func ManaTideTotemAura(character *Character, actionTag int32) *Aura {
 	actionID := ManaTideTotemActionID.WithTag(actionTag)
 
-	metrics := make([]*ResourceMetrics, len(character.Party.Players))
-	for i, player := range character.Party.Players {
-		char := player.GetCharacter()
-		if char.HasManaBar() {
-			metrics[i] = char.NewManaMetrics(actionID)
-		}
+	// Each party member registers their own Mana Tide (PartyBuffs.mana_tide_totems), so the
+	// totem pays only the member it's registered on.
+	var metrics *ResourceMetrics
+	if character.HasManaBar() {
+		metrics = character.NewManaMetrics(actionID)
 	}
 
 	manaPerTick := 290.0
@@ -1488,11 +1492,8 @@ func ManaTideTotemAura(character *Character, actionTag int32) *Aura {
 				Period:   ManaTideTotemTickPeriod,
 				NumTicks: 4,
 				OnAction: func(sim *Simulation) {
-					for i, player := range character.Party.Players {
-						if metrics[i] != nil {
-							char := player.GetCharacter()
-							char.AddMana(sim, manaPerTick, metrics[i])
-						}
+					if metrics != nil {
+						character.AddMana(sim, manaPerTick, metrics)
 					}
 				},
 			})
@@ -1686,8 +1687,14 @@ func BattleShoutAura(unit *Unit, impBattleShout int32, boomingVoicePts int32, ha
 
 	ap := math.Floor(baseAP*(1+0.05*float64(impBattleShout)) + TernaryFloat64(has3pcWrath, 30, 0))
 	if unit.Env.IsForever() {
+		// Keyed by its value, so a stronger shout from another warrior is its own aura and
+		// the strongest counts (battleShoutCategory).
+		label := "Battle Shout"
+		if has3pcWrath {
+			label = fmt.Sprintf("Battle Shout (%v)", ap)
+		}
 		aura := unit.GetOrRegisterAura(Aura{
-			Label:      "Battle Shout",
+			Label:      label,
 			ActionID:   ActionID{SpellID: spellId},
 			Duration:   duration,
 			BuildPhase: CharacterBuildPhaseBuffs,

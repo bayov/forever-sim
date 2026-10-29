@@ -373,6 +373,9 @@ func (spell *Spell) createDots(config DotConfig, isHot bool) {
 		for _, target := range caster.Env.AllUnits {
 			if isHot != caster.IsOpponent(target) {
 				dot.Aura = target.GetOrRegisterAura(auraConfig)
+				if dot.Aura.Owner == nil {
+					dot.Aura.Owner = caster
+				}
 				spell.dots[target.UnitIndex] = newDot(dot)
 			}
 		}

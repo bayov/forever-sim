@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"time"
 )
 
@@ -110,6 +111,9 @@ func (aura *Aura) NewExclusiveEffect(categoryName string, singleAura bool, confi
 	// If there is already an effect in this category with the same aura, use that instead.
 	for _, effect := range category.effects {
 		if effect.Aura == aura {
+			if effect.Priority != config.Priority {
+				panic(fmt.Sprintf("%s on %s registered again with %v instead of %v: give each value its own label", aura.Label, aura.Unit.Label, config.Priority, effect.Priority))
+			}
 			return effect
 		}
 	}

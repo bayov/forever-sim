@@ -54,7 +54,7 @@ func (party *Party) GetPartyBuffs(basePartyBuffs *proto.PartyBuffs) *proto.Party
 	}
 	for _, player := range party.Players {
 		player.AddPartyBuffs(partyBuffs)
-		player.GetCharacter().AddPartyBuffs(partyBuffs)
+		player.GetCharacter().addItemPartyBuffs(partyBuffs)
 	}
 	return partyBuffs
 }
@@ -123,6 +123,10 @@ type Raid struct {
 	AllUnits       []*Unit // Cached list of all Units (players and pets) in the raid.
 
 	nextPetIndex int32
+
+	// How many parties the config has room for, missing ones included. Results keep each
+	// party at its place in the config.
+	numParties int
 }
 
 func (raid *Raid) GetActiveUnits() []*Unit {
@@ -146,6 +150,7 @@ func NewRaid(raidConfig *proto.Raid) *Raid {
 		dpsMetrics:   NewDistributionMetrics(),
 		hpsMetrics:   NewDistributionMetrics(),
 		nextPetIndex: int32(numParties) * 5,
+		numParties:   min(numParties, len(raidConfig.Parties)),
 	}
 
 	for partyIndex, partyConfig := range raidConfig.Parties {
@@ -217,12 +222,11 @@ func (raid *Raid) GetRaidBuffs(baseRaidBuffs *proto.RaidBuffs) *proto.RaidBuffs 
 	// Compute the full raid buffs from the raid.
 	raidBuffs := &proto.RaidBuffs{}
 	if baseRaidBuffs != nil {
-		raidBuffs = baseRaidBuffs
+		raidBuffs = googleProto.Clone(baseRaidBuffs).(*proto.RaidBuffs)
 	}
 	for _, party := range raid.Parties {
 		for _, player := range party.Players {
 			player.AddRaidBuffs(raidBuffs)
-			player.GetCharacter().AddRaidBuffs(raidBuffs)
 		}
 	}
 	return raidBuffs
@@ -264,28 +268,29 @@ func (raid *Raid) updatePlayersAndPets() {
 
 func (raid *Raid) applyCharacterEffects(raidConfig *proto.Raid) *proto.RaidStats {
 	raidBuffs := raid.GetRaidBuffs(raidConfig.Buffs)
-	raidStats := &proto.RaidStats{}
+	raidStats := &proto.RaidStats{Parties: make([]*proto.PartyStats, raid.numParties)}
+	for i := range raidStats.Parties {
+		raidStats.Parties[i] = &proto.PartyStats{Players: make([]*proto.PlayerStats, 5)}
+	}
 
-	for partyIdx, party := range raid.Parties {
-		partyConfig := raidConfig.Parties[partyIdx]
+	for _, party := range raid.Parties {
+		// Parties and players are kept by their place in the config, with gaps left out.
+		partyConfig := raidConfig.Parties[party.Index]
 		partyBuffs := party.GetPartyBuffs(partyConfig.Buffs)
-		partyStats := &proto.PartyStats{
-			Players: make([]*proto.PlayerStats, 5),
-		}
+		partyStats := raidStats.Parties[party.Index]
 
 		// Apply all buffs to the players in this party.
-		for playerIdx, player := range party.Players {
-			if playerIdx >= len(partyConfig.Players) {
-				// This happens for target dummies.
+		for _, player := range party.Players {
+			if _, ok := player.(*TargetDummy); ok {
 				continue
 			}
-			playerConfig := partyConfig.Players[playerIdx]
+			char := player.GetCharacter()
+			playerConfig := partyConfig.Players[char.PartyIndex]
 			individualBuffs := &proto.IndividualBuffs{}
 			if playerConfig.Buffs != nil {
 				individualBuffs = playerConfig.Buffs
 			}
 
-			char := player.GetCharacter()
 			char.EnableHealthBar()
 			char.trackChanceOfDeath(playerConfig.HealingModel)
 			partyStats.Players[char.PartyIndex] = char.applyAllEffects(player, raidBuffs, partyBuffs, individualBuffs)
@@ -294,8 +299,6 @@ func (raid *Raid) applyCharacterEffects(raidConfig *proto.Raid) *proto.RaidStats
 				pet.EnableHealthBar()
 			}
 		}
-
-		raidStats.Parties = append(raidStats.Parties, partyStats)
 	}
 
 	return raidStats
@@ -380,8 +383,13 @@ func (raid *Raid) GetMetrics() *proto.RaidMetrics {
 		Dps: raid.dpsMetrics.ToProto(),
 		Hps: raid.hpsMetrics.ToProto(),
 	}
+	metrics.Parties = make([]*proto.PartyMetrics, raid.numParties)
+	for i := range metrics.Parties {
+		// A missing party's place, shaped like an empty party's so results still combine.
+		metrics.Parties[i] = (&Party{dpsMetrics: NewDistributionMetrics(), hpsMetrics: NewDistributionMetrics()}).GetMetrics()
+	}
 	for _, party := range raid.Parties {
-		metrics.Parties = append(metrics.Parties, party.GetMetrics())
+		metrics.Parties[party.Index] = party.GetMetrics()
 	}
 	return metrics
 }
