@@ -32,6 +32,12 @@ message Player {
 
 	IndividualBuffs buffs = 8;
 
+	// The raid buffs this player gets, in place of Raid.buffs (docs/raid_sim.md, "Members get
+	// their own buff set"). When set it replaces them whole, nothing is merged, and the
+	// player's class AddRaidBuffs hook doesn't run: the raid sim's resolver gives every buff,
+	// a Balance druid's own Moonkin Aura included. Party buffs and debuffs stay where they are.
+	RaidBuffs raid_buffs = 53;
+
 	// Talents in wowhead format, e.g. '01102123133-12312312-'
 	string talents_string = 9;
 

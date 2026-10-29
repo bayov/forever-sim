@@ -8,17 +8,18 @@ import (
 	"github.com/wowsims/classic/sim/core/proto"
 )
 
-// setActiveAirTotem puts the totem in the air slot and swaps in its buff.
+// setActiveAirTotem puts the totem in the air slot and swaps in its buff, on us and on the
+// receivers (totem_receivers.go).
 //
 // Windwall Totem has no buff in the sim, so it comes with a nil aura.
-func (shaman *Shaman) setActiveAirTotem(sim *core.Simulation, spell *core.Spell, aura *core.Aura) {
+func (shaman *Shaman) setActiveAirTotem(sim *core.Simulation, spell *core.Spell, aura *core.Aura, receivers *totemBuffReceivers) {
 	duration := time.Minute * 5 // Forever totems last 5 min, Classic 2
 	if aura == nil {
 		shaman.placeTotem(sim, AirTotem, spell, duration, nil)
 		return
 	}
-	shaman.placeTotem(sim, AirTotem, spell, duration, endTotemBuff(aura))
-	aura.Activate(sim)
+	shaman.placeTotem(sim, AirTotem, spell, duration, shaman.endHeldTotemBuff(aura, receivers))
+	shaman.holdTotemBuff(sim, AirTotem, aura, receivers)
 	shaman.setTotemAuraReach(AirTotem, aura)
 }
 
@@ -70,8 +71,16 @@ func (shaman *Shaman) newWindfuryTotemSpellConfig(rank int) core.SpellConfig {
 	// leaves the slot to Flametongue Totem.
 	var buffAura *core.Aura
 	if shaman.HasMHWeapon() {
-		buffAura = core.WindfuryTotemBuffAura(&shaman.Character, int32(rank), fmt.Sprintf("Windfury Totem (Rank %d)", rank), core.ActionID{})
+		buffAura = core.CastWindfuryTotemBuffAura(&shaman.Character, int32(rank))
 	}
+	// It reaches the raid's players with a main hand weapon, each with their own cooldown
+	// between procs, and does nothing for one with Windfury Weapon.
+	receivers := shaman.newTotemBuffReceivers(false, func(char *core.Character) *core.Aura {
+		if !char.HasMHWeapon() {
+			return nil
+		}
+		return core.CastWindfuryTotemBuffAura(char, int32(rank))
+	})
 
 	periodicTriggerAura := shaman.RegisterAura(core.Aura{
 		Label:    fmt.Sprintf("Windfury Trigger Dummy (Rank %d)", rank),
@@ -81,11 +90,13 @@ func (shaman *Shaman) newWindfuryTotemSpellConfig(rank int) core.SpellConfig {
 			if buffAura != nil {
 				shaman.setTotemWeaponBuff(sim, buffAura, proto.WeaponImbue_WindfuryWeapon)
 			}
+			receivers.holdWeapon(sim, shaman, true)
 		},
 		OnExpire: func(_ *core.Aura, sim *core.Simulation) {
 			if buffAura != nil {
 				shaman.clearTotemWeaponBuff(sim, buffAura)
 			}
+			receivers.releaseWeapon(sim, shaman)
 		},
 	})
 
@@ -93,7 +104,8 @@ func (shaman *Shaman) newWindfuryTotemSpellConfig(rank int) core.SpellConfig {
 	spell.RequiredLevel = level
 	spell.Rank = rank
 	spell.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-		shaman.setActiveAirTotem(sim, spell, periodicTriggerAura)
+		// The trigger aura is ours alone: it hands the receivers their buffs.
+		shaman.setActiveAirTotem(sim, spell, periodicTriggerAura, &totemBuffReceivers{})
 	}
 	return spell
 }
@@ -133,12 +145,16 @@ func (shaman *Shaman) newGraceOfAirTotemSpellConfig(rank int) core.SpellConfig {
 	level := GraceOfAirTotemLevel[rank]
 
 	buffAura := ownTotemAura(core.GraceOfAirTotemAura(&shaman.Unit, 1))
+	// It reaches the raid's players.
+	receivers := shaman.newTotemBuffReceivers(false, func(char *core.Character) *core.Aura {
+		return ownTotemAura(core.GraceOfAirTotemAura(&char.Unit, 1))
+	})
 
 	spell := shaman.newTotemSpellConfig(manaCost, spellId)
 	spell.RequiredLevel = level
 	spell.Rank = rank
 	spell.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-		shaman.setActiveAirTotem(sim, spell, buffAura)
+		shaman.setActiveAirTotem(sim, spell, buffAura, receivers)
 	}
 	return spell
 }
@@ -176,7 +192,7 @@ func (shaman *Shaman) newWindwallTotemSpellConfig(rank int) core.SpellConfig {
 	spell.RequiredLevel = level
 	spell.Rank = rank
 	spell.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-		shaman.setActiveAirTotem(sim, spell, nil)
+		shaman.setActiveAirTotem(sim, spell, nil, nil)
 	}
 	return spell
 }

@@ -207,23 +207,46 @@ func (priest *Priest) ImprovedMindFlayTickMultiplier(tick int32) float64 {
 }
 
 // Dark Inspiration (new in 70425, client 1326159): Mind Blast and a fully channeled Mind
-// Flay give the priest and the party 3% Spirit a rank for 10 sec (1326168, aura 80). The
-// sim gives it to the priest, the only party member it models.
+// Flay give the priest and the party 3% Spirit a rank for 10 sec (1326168, aura 80, the
+// caster's party: implicit target 20). Its given form for a party without the priest is
+// PartyBuffs.dark_inspiration (core.DarkInspirationUptime).
 func (priest *Priest) registerDarkInspiration() {
 	if priest.Talents.DarkInspiration == 0 {
 		return
 	}
 
-	spiritDep := priest.NewDynamicMultiplyStat(stats.Spirit, 1+0.03*float64(priest.Talents.DarkInspiration))
-	priest.DarkInspirationAura = priest.RegisterAura(core.Aura{
+	multiplier := 1 + 0.03*float64(priest.Talents.DarkInspiration)
+	priest.DarkInspirationAura = darkInspirationAura(&priest.Character, multiplier)
+
+	// The party's other players get it too. It has no players-only flag, but it doesn't
+	// reach pets until a launch check says so (docs/raid_sim.md, Pets). Another priest's
+	// shares the aura, so two don't stack.
+	priest.Env.RegisterPreFinalizeEffect(func() {
+		for _, agent := range priest.Party.Players {
+			char := agent.GetCharacter()
+			if _, ok := agent.(*core.TargetDummy); ok || char == &priest.Character {
+				continue
+			}
+			aura := char.GetAura("Dark Inspiration")
+			if aura == nil {
+				aura = darkInspirationAura(char, multiplier)
+			}
+			priest.darkInspirationPartyAuras = append(priest.darkInspirationPartyAuras, aura)
+		}
+	})
+}
+
+func darkInspirationAura(char *core.Character, multiplier float64) *core.Aura {
+	spiritDep := char.NewDynamicMultiplyStat(stats.Spirit, multiplier)
+	return char.RegisterAura(core.Aura{
 		Label:    "Dark Inspiration",
 		ActionID: core.ActionID{SpellID: 1326168},
 		Duration: time.Second * 10,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
-			priest.EnableDynamicStatDep(sim, spiritDep)
+			char.EnableDynamicStatDep(sim, spiritDep)
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
-			priest.DisableDynamicStatDep(sim, spiritDep)
+			char.DisableDynamicStatDep(sim, spiritDep)
 		},
 	})
 }
@@ -231,6 +254,9 @@ func (priest *Priest) registerDarkInspiration() {
 func (priest *Priest) triggerDarkInspiration(sim *core.Simulation) {
 	if priest.DarkInspirationAura != nil {
 		priest.DarkInspirationAura.Activate(sim)
+		for _, aura := range priest.darkInspirationPartyAuras {
+			aura.Activate(sim)
+		}
 	}
 }
 

@@ -133,3 +133,139 @@ func applyRaidTotemWeaponBuff(character *Character, buff proto.TotemWeaponBuff) 
 		}
 	}
 }
+
+// CastWindfuryTotemBuffAura is the buff a shaman's Windfury Totem of the rank gives the
+// character. Every shaman's totem of that rank shares it, so two of them don't stack and the
+// cooldown between procs is the receiver's.
+func CastWindfuryTotemBuffAura(character *Character, rank int32) *Aura {
+	label := fmt.Sprintf("Windfury Totem (Rank %d)", rank)
+	if aura := character.GetAura(label); aura != nil {
+		return aura
+	}
+	return WindfuryTotemBuffAura(character, rank, label, ActionID{})
+}
+
+// CastFlametongueTotemBuffAura is the buff a shaman's Flametongue Totem of the rank gives the
+// character, which every shaman's totem of that rank shares.
+func CastFlametongueTotemBuffAura(character *Character, rank int) *Aura {
+	if aura := character.GetAura(fmt.Sprintf("Flametongue Totem (Rank %d)", rank)); aura != nil {
+		return aura
+	}
+	return FlametongueTotemBuffAura(character, rank, "Flametongue Totem", 0)
+}
+
+// TotemWeaponBuffBlocked is whether the main hand's shaman imbue turns the totem's buff off:
+// Windfury Weapon for Windfury Totem, Flametongue Weapon for Flametongue Totem.
+func (character *Character) TotemWeaponBuffBlocked(windfury bool) bool {
+	if windfury {
+		return mainHandHasImbue(character, windfuryWeaponEnchantIds)
+	}
+	return mainHandHasImbue(character, flametongueWeaponEnchantIds)
+}
+
+// totemWeaponSlot is which cast Windfury or Flametongue Totem buff the main hand's totem slot
+// holds. The slot holds one, and it takes over from another shaman's totem in the raid buffs
+// (RaidTotemWeaponBuff).
+type totemWeaponSlot struct {
+	// The buff that holds the slot, nil without one.
+	totemWeaponBuff *Aura
+	// The buffs of the weapon totems that stand and can take the slot, the last placed at
+	// the end.
+	standingTotemWeaponBuffs []standingTotemWeaponBuff
+}
+
+type standingTotemWeaponBuff struct {
+	aura     *Aura
+	windfury bool
+	// The shamans whose totem gives it. Two shamans' totems of one rank share the buff, and
+	// it stands while one of them does.
+	holders []*Unit
+}
+
+func (slot *totemWeaponSlot) reset() {
+	slot.totemWeaponBuff = nil
+	slot.standingTotemWeaponBuffs = slot.standingTotemWeaponBuffs[:0]
+}
+
+func (slot *totemWeaponSlot) standingIndex(aura *Aura) int {
+	return slices.IndexFunc(slot.standingTotemWeaponBuffs, func(s standingTotemWeaponBuff) bool { return s.aura == aura })
+}
+
+// HoldTotemWeaponBuff is the buff of caster's weapon totem coming up on us. The caster checks
+// TotemWeaponBuffBlocked first, since a blocked buff doesn't take the slot either.
+//
+// Which standing buff holds the slot:
+//   - the last one we put down ourselves, so a shaman's own rotation picks between its
+//     Windfury and Flametongue Totems by which it dropped last
+//   - else another shaman's Windfury Totem over a Flametongue Totem. A receiver takes one
+//     weapon totem, Flametongue for an Enhancement shaman, whose Windfury Weapon blocks
+//     Windfury Totem, and Windfury for everyone else (docs/raid_sim.md, the resolver's rules).
+//   - else the last one put down
+func (character *Character) HoldTotemWeaponBuff(sim *Simulation, aura *Aura, caster *Unit, windfury bool) {
+	slot := &character.totemWeaponSlot
+	standing := standingTotemWeaponBuff{aura: aura, windfury: windfury}
+	if i := slot.standingIndex(aura); i >= 0 {
+		standing = slot.standingTotemWeaponBuffs[i]
+		slot.standingTotemWeaponBuffs = slices.Delete(slot.standingTotemWeaponBuffs, i, i+1)
+	}
+	if !slices.Contains(standing.holders, caster) {
+		standing.holders = append(standing.holders, caster)
+	}
+	slot.standingTotemWeaponBuffs = append(slot.standingTotemWeaponBuffs, standing)
+
+	if character.pickTotemWeaponBuff() != aura {
+		return
+	}
+	if slot.totemWeaponBuff != nil && slot.totemWeaponBuff != aura {
+		slot.totemWeaponBuff.Deactivate(sim)
+	}
+	slot.totemWeaponBuff = aura
+	aura.Activate(sim)
+	if character.RaidTotemWeaponBuff != nil {
+		character.RaidTotemWeaponBuff.Deactivate(sim)
+	}
+}
+
+// ReleaseTotemWeaponBuff is caster's weapon totem going down. Unless another shaman's totem
+// still gives the buff, it goes, and when it held the slot the next standing buff takes it
+// back, or else another shaman's totem from the raid buffs.
+func (character *Character) ReleaseTotemWeaponBuff(sim *Simulation, aura *Aura, caster *Unit) {
+	slot := &character.totemWeaponSlot
+	if i := slot.standingIndex(aura); i >= 0 {
+		standing := &slot.standingTotemWeaponBuffs[i]
+		standing.holders = slices.DeleteFunc(standing.holders, func(u *Unit) bool { return u == caster })
+		if len(standing.holders) > 0 {
+			return
+		}
+	}
+	aura.Deactivate(sim)
+	slot.standingTotemWeaponBuffs = slices.DeleteFunc(slot.standingTotemWeaponBuffs, func(s standingTotemWeaponBuff) bool { return s.aura == aura })
+	if slot.totemWeaponBuff != aura {
+		return
+	}
+	slot.totemWeaponBuff = character.pickTotemWeaponBuff()
+	if slot.totemWeaponBuff != nil {
+		slot.totemWeaponBuff.Activate(sim)
+	} else if character.RaidTotemWeaponBuff != nil {
+		character.RaidTotemWeaponBuff.Activate(sim)
+	}
+}
+
+// pickTotemWeaponBuff is the standing buff that holds the slot (HoldTotemWeaponBuff), nil
+// without one.
+func (character *Character) pickTotemWeaponBuff() *Aura {
+	var pick *Aura
+	best := -1
+	for _, standing := range character.standingTotemWeaponBuffs {
+		score := 0
+		if slices.Contains(standing.holders, &character.Unit) {
+			score = 2
+		} else if standing.windfury {
+			score = 1
+		}
+		if score >= best {
+			pick, best = standing.aura, score
+		}
+	}
+	return pick
+}

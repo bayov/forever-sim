@@ -366,7 +366,14 @@ func (shaman *Shaman) registerFlametongueTotemSpell() {
 
 func (shaman *Shaman) newFlametongueTotemSpellConfig(rank int) core.SpellConfig {
 	duration := time.Minute * 5
-	buffAura := core.FlametongueTotemBuffAura(&shaman.Character, rank, "Flametongue Totem", 0)
+	buffAura := core.CastFlametongueTotemBuffAura(&shaman.Character, rank)
+	// It reaches the raid's players, and does nothing for one with Flametongue Weapon.
+	receivers := shaman.newTotemBuffReceivers(false, func(char *core.Character) *core.Aura {
+		if !char.HasMHWeapon() {
+			return nil
+		}
+		return core.CastFlametongueTotemBuffAura(char, rank)
+	})
 
 	spell := shaman.newTotemSpellConfig(FlametongueTotemManaCost[rank], FlametongueTotemSpellId[rank])
 	spell.RequiredLevel = FlametongueTotemLevel[rank]
@@ -379,9 +386,11 @@ func (shaman *Shaman) newFlametongueTotemSpellConfig(rank int) core.SpellConfig 
 			Label: fmt.Sprintf("Flametongue Totem (Rank %d) Totem", rank),
 			OnGain: func(aura *core.Aura, sim *core.Simulation) {
 				shaman.setTotemWeaponBuff(sim, buffAura, proto.WeaponImbue_FlametongueWeapon)
+				receivers.holdWeapon(sim, shaman, false)
 			},
 			OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 				shaman.clearTotemWeaponBuff(sim, buffAura)
+				receivers.releaseWeapon(sim, shaman)
 			},
 		},
 		NumberOfTicks: 1,

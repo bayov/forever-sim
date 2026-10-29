@@ -83,7 +83,7 @@ func (shaman *Shaman) getImbueProcMask(imbue proto.WeaponImbue) core.ProcMask {
 
 // setTotemWeaponBuff gives the weapon's totem slot to the buff of the totem the shaman
 // just placed. The weapon holds one totem buff, so it takes over from the other totem's
-// buff and from another shaman's totem in the raid buffs.
+// buff and from another shaman's totem in the raid buffs (core.HoldTotemWeaponBuff).
 //
 // sameKindImbue is the imbue that turns this totem's buff off for us (Windfury Weapon for
 // Windfury Totem). When our main hand has it, the buff does nothing for us and it doesn't
@@ -93,16 +93,7 @@ func (shaman *Shaman) setTotemWeaponBuff(sim *core.Simulation, aura *core.Aura, 
 	if shaman.getImbueProcMask(sameKindImbue) != core.ProcMaskUnknown {
 		return
 	}
-	shaman.standingTotemWeaponBuffs = slices.DeleteFunc(shaman.standingTotemWeaponBuffs, func(a *core.Aura) bool { return a == aura })
-	shaman.standingTotemWeaponBuffs = append(shaman.standingTotemWeaponBuffs, aura)
-	if shaman.totemWeaponBuff != nil && shaman.totemWeaponBuff != aura {
-		shaman.totemWeaponBuff.Deactivate(sim)
-	}
-	shaman.totemWeaponBuff = aura
-	aura.Activate(sim)
-	if shaman.RaidTotemWeaponBuff != nil {
-		shaman.RaidTotemWeaponBuff.Deactivate(sim)
-	}
+	shaman.HoldTotemWeaponBuff(sim, aura, &shaman.Unit, sameKindImbue == proto.WeaponImbue_WindfuryWeapon)
 }
 
 // clearTotemWeaponBuff takes the buff off when its totem goes down.
@@ -112,18 +103,7 @@ func (shaman *Shaman) setTotemWeaponBuff(sim *core.Simulation, aura *core.Aura, 
 // and a Searing Totem takes Flametongue's place. Windfury Totem's buff comes back for the
 // rest of its 5 min. Without one, another shaman's totem buff from the raid buffs comes back.
 func (shaman *Shaman) clearTotemWeaponBuff(sim *core.Simulation, aura *core.Aura) {
-	aura.Deactivate(sim)
-	shaman.standingTotemWeaponBuffs = slices.DeleteFunc(shaman.standingTotemWeaponBuffs, func(a *core.Aura) bool { return a == aura })
-	if shaman.totemWeaponBuff != aura {
-		return
-	}
-	shaman.totemWeaponBuff = nil
-	if n := len(shaman.standingTotemWeaponBuffs); n > 0 {
-		shaman.totemWeaponBuff = shaman.standingTotemWeaponBuffs[n-1]
-		shaman.totemWeaponBuff.Activate(sim)
-	} else if shaman.RaidTotemWeaponBuff != nil {
-		shaman.RaidTotemWeaponBuff.Activate(sim)
-	}
+	shaman.ReleaseTotemWeaponBuff(sim, aura, &shaman.Unit)
 }
 
 // OneMainHandImbue keeps one shaman imbue on the main hand, as the game does. When the spec's
@@ -264,13 +244,6 @@ type Shaman struct {
 	AirTotems   []*core.Spell
 	Totems      *proto.ShamanTotems
 
-	// The buff of the shaman's own Windfury or Flametongue Totem that holds the weapon's
-	// totem slot, nil without one.
-	totemWeaponBuff *core.Aura
-	// The buffs of our weapon totems that stand and can take the slot, the last one placed
-	// at the end.
-	standingTotemWeaponBuffs []*core.Aura
-
 	// Shield
 	ActiveShield     *core.Spell // Tracks the Shaman's active shield spell
 	ActiveShieldAura *core.Aura
@@ -337,8 +310,6 @@ func (shaman *Shaman) Initialize() {
 func (shaman *Shaman) Reset(_ *core.Simulation) {
 	shaman.ActiveShield = nil
 	shaman.ActiveShieldAura = nil
-	shaman.totemWeaponBuff = nil
-	shaman.standingTotemWeaponBuffs = shaman.standingTotemWeaponBuffs[:0]
 
 	for i := range []int{EarthTotem, FireTotem, WaterTotem, AirTotem} {
 		shaman.ActiveTotems[i] = nil

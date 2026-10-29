@@ -69,6 +69,9 @@ type Priest struct {
 	DarkInspirationAura *core.Aura
 	ShadowguardAuras    []*core.Aura
 
+	// Dark Inspiration on the party's other players.
+	darkInspirationPartyAuras []*core.Aura
+
 	ShadowWeavingAuras   core.AuraArray
 	VampiricEmbraceAuras core.AuraArray
 	WeakenedSouls        core.AuraArray

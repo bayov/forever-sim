@@ -218,6 +218,9 @@ func (raid *Raid) getNextPetIndex() int32 {
 	return petIndex
 }
 
+// GetRaidBuffs is the raid's buffs and what the class hooks add to them. A player with
+// their own raid buffs (Player.raid_buffs) adds nothing, since those come from the raid sim's
+// resolver, which gives that player's buffs too.
 func (raid *Raid) GetRaidBuffs(baseRaidBuffs *proto.RaidBuffs) *proto.RaidBuffs {
 	// Compute the full raid buffs from the raid.
 	raidBuffs := &proto.RaidBuffs{}
@@ -226,7 +229,9 @@ func (raid *Raid) GetRaidBuffs(baseRaidBuffs *proto.RaidBuffs) *proto.RaidBuffs 
 	}
 	for _, party := range raid.Parties {
 		for _, player := range party.Players {
-			player.AddRaidBuffs(raidBuffs)
+			if player.GetCharacter().ownRaidBuffs == nil {
+				player.AddRaidBuffs(raidBuffs)
+			}
 		}
 	}
 	return raidBuffs
@@ -290,10 +295,15 @@ func (raid *Raid) applyCharacterEffects(raidConfig *proto.Raid) *proto.RaidStats
 			if playerConfig.Buffs != nil {
 				individualBuffs = playerConfig.Buffs
 			}
+			// The player's own raid buffs replace the raid's whole.
+			playerRaidBuffs := raidBuffs
+			if char.ownRaidBuffs != nil {
+				playerRaidBuffs = googleProto.Clone(char.ownRaidBuffs).(*proto.RaidBuffs)
+			}
 
 			char.EnableHealthBar()
 			char.trackChanceOfDeath(playerConfig.HealingModel)
-			partyStats.Players[char.PartyIndex] = char.applyAllEffects(player, raidBuffs, partyBuffs, individualBuffs)
+			partyStats.Players[char.PartyIndex] = char.applyAllEffects(player, playerRaidBuffs, partyBuffs, individualBuffs)
 
 			for _, pet := range char.Pets {
 				pet.EnableHealthBar()
