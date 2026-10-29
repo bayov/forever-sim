@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "96e6ebbddac5426e3b7c77ac332727bc3830a5a7"
+  "master": "c46a799086a7fefa93d1c6456bba8d1ff087de25"
  },
  "last_pass_at": "2026-10-29T00:51:27Z",
  "pass": 47,
  "result": "quiet",
  "note": "Pass 47: b2b384c35 (Windfury Totem metrics/labels) and c282ae5d4 (Execute passive flag dropped) are reporting-only; label (RNG stream) and values unchanged. Client 70685 vs 70658: only Adventurer's Tent / Camping. Dev notes still 8 posts, no new blue posts. Amplify Curse finding still open.",
  "client_build": "1.60.1.70685",
- "checked_at": "2026-10-29T06:44:54Z",
+ "checked_at": "2026-10-29T13:04:39Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/8",
   "date": "2026-10-27T15:37:37Z",
