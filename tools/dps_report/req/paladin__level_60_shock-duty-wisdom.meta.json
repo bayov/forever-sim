@@ -1,0 +1,86 @@
+{
+  "id": "paladin__level_60_shock-duty-wisdom",
+  "class": "Paladin",
+  "spec": "Retribution",
+  "build": "Level 60 Shock (deep Holy, Wisdom duty)",
+  "isDefault": false,
+  "pr": 100,
+  "race": "Undead",
+  "talents": "55003003201121251--05225030201",
+  "treeNames": [
+    "Holy",
+    "Protection",
+    "Retribution"
+  ],
+  "gearSet": "level60_phase1_synthetic",
+  "apl": "level60_shock_wisdom_duty",
+  "published": {
+    "dps": 884.2,
+    "source": "Raid sim variant (docs/raid_sim.md, milestone M1b), not yet in the DPS report: wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s, 2026-10-29"
+  },
+  "verify": {
+    "dps": 884.24,
+    "stderr": 0.23,
+    "iters": 20000,
+    "ok": true,
+    "note": "wowsimcli on this request, 180 s, seed 1 (the published number is this sim); a raid sim variant, not yet in the report"
+  },
+  "summary": "Keeps Judgement of Wisdom on the boss for the raid: every attacker with mana gets 59 mana on half its hits.",
+  "keyTalents": [
+    "Holy Shock",
+    "Light's Vigil",
+    "Holy Power",
+    "Consecrated Ground",
+    "Divine Precision",
+    "Divine Favor",
+    "Improved Seals",
+    "Sacred Arbiter"
+  ],
+  "rotation": [
+    "Pre-pull: Seal of Righteousness at -4.5s, Light's Vigil at -3s, Seal of Wisdom at -1.5s",
+    "Hammer of Wrath under 20% boss health, before everything else",
+    "Judgement of Wisdom at the pull, for the duty. For 40s every attacker with mana gets 59 mana back on half its hits (the paladin too). The paladin's melee hits refresh it, so one cast lasts the fight. Judge it again only if it drops",
+    "Seal of Righteousness whenever it's down, before Consecration. So it goes right after the opening Judgement of Wisdom",
+    "Consecration on cooldown at any mana",
+    "Judgement on cooldown on Seal of Righteousness. Recast Seal of Righteousness whenever it's down (no twisting)",
+    "Holy Strike on cooldown",
+    "Light's Vigil when it's not on the target, at 30%+ mana, and the next swing is over 2.5s away (its cast resets the swing)",
+    "Holy Shock on a target with Light's Vigil. It detonates the Vigil, refunds 75% of its mana and starts no cooldown. When the Vigil is held back (low mana, or a swing within 2.5s), Holy Shock on cooldown. Divine Favor goes on a Holy Shock",
+    "Racials, Goblin Sapper, Major Mana Potion and Demonic Rune on free GCDs"
+  ],
+  "consumes": [
+    "Flask of Supreme Power",
+    "Elixir of Cunning",
+    "Elixir of Ferocity",
+    "Juju Might",
+    "Elixir of Greater Firepower (Forever's Holy Power elixir)",
+    "Greater Arcane Elixir",
+    "Elixir of Shadow Power",
+    "Elixir of the Owl",
+    "Elixir of Greater Spirit",
+    "Greater Mageblood Elixir",
+    "R.O.I.D.S.",
+    "Lobster Stew",
+    "Dragonbreath Chili",
+    "Shadow Oil",
+    "Goblin Sapper",
+    "Major Mana Potion",
+    "Demonic Rune"
+  ],
+  "caveats": [
+    "The duty costs 3.6 DPS at 180s against the same build without it (884.2 against 887.8, 20,000 iterations, seed 1).",
+    "The duty's own Judgement of Wisdom gives the paladin the same mana back as the raid's did, so the cost is the two seals' GCDs and mana and the one judgement that isn't a Judgement of Command or Righteousness.",
+    "Seal of Wisdom (rank 3, 200 mana) is up only until the next seal replaces it. Its own 90 mana on a melee hit is assumed to come on half the hits, as Judgement of Wisdom's does: the client says only \"a chance\".",
+    "Takes Pursuit of Justice 2 (movement speed), a must-have talent. It costs 2.3 / 2.3 / 2.1 DPS at 120 / 180 / 300s.",
+    "Runs short of mana. It's 7.4% behind Ret twist at 120s, 8.2% at 180s and 9.8% at 300s.",
+    "Divine Precision's hit doesn't cover Judgement of Righteousness.",
+    "A missed Holy Shock wastes the Vigil. Holy spells miss about 1% of the time.",
+    "Unverified: Holy Strike's flat bonus is added before its weapon damage percent, as the client data says.",
+    "The top Holy Strike and Consecration ranks may be out of date (about 1.2% of DPS).",
+    "Seal of Righteousness adds 12% of spell power per hit with a two-hander, counted once, as its tooltip says (spell 70425). Counted twice, DPS would be 46-51 higher. At the proc spell's 0%, it would be 53-59 lower.",
+    "No filler explosive, because each 1s cast resets the swing. The Goblin Land Mine and EZ-Thro Dark Bomb cost 6.1 DPS at 180s, and the EZ-Thro Thorium Grenade 6.8."
+  ],
+  "notes": "Request: paladin__level_60_shock with raid debuff judgementOfWisdom removed and the level60_shock_wisdom_duty rotation. Hand edits of the base request, as the other duty paladins were made (mksettings with -apl level60_shock_wisdom_duty writes the same rotation). A raid sim variant (docs/raid_sim.md, M1b), not yet in the DPS report.",
+  "duty": "Judgement of Wisdom",
+  "baseBuild": "paladin__level_60_shock"
+}

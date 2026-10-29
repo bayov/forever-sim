@@ -13,12 +13,12 @@ import (
 // Changes from the Forever beta development notes that the client data confirms.
 
 // "Faerie Fire no longer resets your swing timer" (2026-10-01, build 1.60.1.70170): the client
-// dropped InterruptFlags 8, the auto attack reset, from the caster ranks, and Faerie Fire
-// (Feral) has none. Classic keeps the reset.
+// dropped InterruptFlags 8, the auto attack reset, from the caster ranks, which the cat casts
+// under Forever. Classic's cat casts Faerie Fire (Feral), which keeps the reset.
 func TestForeverFaerieFireKeepsSwing(t *testing.T) {
 	_, cat := newFormSim(t, proto.Ruleset_RulesetForever, &proto.Consumes{})
 	if cat.FaerieFire.Flags.Matches(core.SpellFlagResetAttackSwing) {
-		t.Error("Forever Faerie Fire (Feral) resets the swing timer")
+		t.Error("Forever Faerie Fire resets the swing timer")
 	}
 	_, era := newFormSim(t, proto.Ruleset_RulesetClassic, &proto.Consumes{})
 	if !era.FaerieFire.Flags.Matches(core.SpellFlagResetAttackSwing) {

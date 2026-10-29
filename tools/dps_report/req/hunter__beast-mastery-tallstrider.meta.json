@@ -1,0 +1,85 @@
+{
+  "id": "hunter__beast-mastery-tallstrider",
+  "class": "Hunter",
+  "spec": "Beast Mastery",
+  "build": "Beast Mastery (Tallstrider)",
+  "isDefault": false,
+  "pr": 5,
+  "race": "Orc",
+  "talents": "5020121505021241-00520503005",
+  "treeNames": [
+    "Beast Mastery",
+    "Marksmanship",
+    "Survival"
+  ],
+  "gearSet": "level60_phase1_synthetic_ranged",
+  "apl": "bm",
+  "published": {
+    "dps": 1060.7,
+    "source": "Raid sim variant (docs/raid_sim.md, milestone M1b), not yet in the DPS report: wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s, 2026-10-29"
+  },
+  "verify": {
+    "dps": 1060.72,
+    "stderr": 0.2,
+    "iters": 20000,
+    "ok": true,
+    "note": "wowsimcli on this request, 180 s, seed 1 (the published number is this sim); a raid sim variant, not yet in the report"
+  },
+  "summary": "Beast Mastery with a Tallstrider, using Bestial Wrath, Frenzy and Unleashed Fury. Melee weaves between Auto Shots. The Tallstrider's Dust Cloud fills the minor armor slot when no druid or warlock does.",
+  "keyTalents": [
+    "Bestial Wrath",
+    "Frenzy",
+    "Unleashed Fury",
+    "Ferocity",
+    "Deadly Aspects",
+    "Careful Aim",
+    "Lethal Attacks",
+    "Mortal Shots"
+  ],
+  "rotation": [
+    "Pre-pull: Aspect of the Hawk at -3s, walk to 12 yd, Hunter's Mark at -1.5s, Rapid Fire at -0.1s",
+    "Bestial Wrath (at 0s and 120s), Rapid Fire, racials, Sapper and potions on cooldown",
+    "Hunter's Mark (rank 4, +143 ranged attack power) at -1.5s, recast in its last 3s. The raid's mark is off",
+    "Arcane Shot on cooldown, before Aimed Shot, at any mana",
+    "Aimed Shot on the cooldown it shares with Multi-Shot",
+    "Sniper Shot on cooldown",
+    "Serpent Sting when it's down, last, at any mana",
+    "Melee weave between Auto Shots. Walk in for a main-hand swing with Raptor Strike queued, when the next Auto Shot is 1.2s or less away and no shot comes off cooldown",
+    "The Tallstrider (1.0s) bites on cooldown, and keeps Dust Cloud (505 armor, 30s, 10 focus) on the boss while no Faerie Fire or Curse of Recklessness holds the minor armor slot. Auto Shot the whole fight"
+  ],
+  "consumes": [
+    "Flask of Natural Aggression",
+    "Elixir of the Mongoose",
+    "Elixir of Ferocity",
+    "Elixir of Greater Intellect",
+    "Greater Mageblood Elixir",
+    "Ground Scorpok Assay",
+    "Juju Might",
+    "Flank au Poivre",
+    "Major Mana Potion",
+    "Demonic Rune",
+    "Goblin Sapper",
+    "Goblin Land Mine"
+  ],
+  "caveats": [
+    "The Tallstrider costs 71.0 DPS at 180s against the same build without it (1060.7 against 1131.8, 20,000 iterations, seed 1). The search weighs that against what the pet gives the raid.",
+    "A Tallstrider has Bite, Dash and Dust Cloud and no Claw, so it does less damage than the cat. This request keeps the raid's Faerie Fire and Curse of Recklessness, so it never casts Dust Cloud: the number is the pet's cost. The raid sim switches them off when nobody gives them, and the pet then keeps Dust Cloud up itself.",
+    "The Tallstrider keeps the cat's 1.0s swing (Faster Attack VII) and Cobra Reflexes. Its hits scale with the speed, so a slower one changes little.",
+    "Assumed: Trueshot Aura's top rank gives 100 ranged attack power (the client says 50). Hunter's Mark gives 143 after a server hotfix (the client says 71).",
+    "Uses Aspect of the Hawk rank 5 (90 ranged attack power). Forever's rank 6 gives only 55.",
+    "The pet gets 10% of the hunter's ranged attack power on top of its own 254, plus the hunter's crit and hit (from beta pet sheets).",
+    "Arcane Shot gets 10% of ranged attack power, and Serpent Sting 3% a tick. Beta logs fit 11% and 3.5%.",
+    "Auto Shot keeps firing during casts. Moving cancels its 0.5s wind-up.",
+    "Pet consumables are off (Forever pets get no player buffs). They would add 17 DPS.",
+    "Intimidation is talented but not cast.",
+    "Major Frenzy Potion is 25.7 DPS behind Major Mana Potion at 180s.",
+    "Crit per Agility is Classic's level 60 rate (0.0189% per point), from Forever's game files.",
+    "Uses a 2.5s bow with Rhok'delar's 44.0 weapon DPS. A 2.6s gun sims 0.3 to 1.0 DPS higher with a 15% ammo pouch, or 3.4 to 5.2 lower with Era's 14% pouch.",
+    "Pet hits scale with attack speed, as seen on a level 17 pet. A 1.0s raptor would add about 2.5 DPS (Savage Rend), but none that fast is known.",
+    "Assumed: each hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs 0.5 to 2.5 DPS at 180s (0.5 here).",
+    "No Scorpid Sting. Balance druids already keep up Insect Swarm, which gives the same 2% hit reduction. Scorpid Sting would replace Serpent Sting and cost about 85 to 100 DPS for nothing."
+  ],
+  "notes": "Request: hunter__beast-mastery with hunter.options.petType Tallstrider instead of Cat, everything else the base request. A raid sim variant (docs/raid_sim.md, Hunter pets, M1b), not yet in the DPS report.",
+  "pet": "Tallstrider",
+  "baseBuild": "hunter__beast-mastery"
+}

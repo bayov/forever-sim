@@ -112,19 +112,18 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 	group: 'Level 60',
 });
 
-// Faerie Fire duty (standards 23): the cat that keeps Faerie Fire (Feral) on the boss for the
-// raid. The Level 60 rotation leaves it to the raid's debuff; this one casts it from Cat Form
-// (free, 1 sec GCD, 6 sec cooldown, a trainer spell at 25 under Forever) first after the cooldowns
-// and again once it has under 7 sec left, so a miss gets a second try before it drops (99.7% uptime,
-// rotation auditor). Forever's Faerie Fire and Curse of Recklessness share the
-// minor armor slot (standards 20), so the line waits while the raid's Faerie Fire or a curse holds
-// it, and the duty's cost shows with both off: 5.5 / 4.5 / 1.7 DPS at 120 / 180 / 300 sec (875.6 /
-// 863.6 / 850.8, Night Elf, 20,000 iterations, seed 1, no bomb; Faerie Fire no longer resets the swing), the
-// GCDs and the moment before it lands, since the cat's own hits get the armor. Refreshing at 3 sec,
-// or casting it after Rip, is within the noise.
+// Faerie Fire duty (standards 23): the cat that keeps Faerie Fire on the boss for the raid. Forever
+// has no Faerie Fire (Feral) (16857, 17390 to 17392 have no client rows): in Cat Form the druid casts
+// the caster Faerie Fire, free there, on a 1.5 sec GCD with no cooldown. The Level 60 rotation leaves
+// it to the raid's debuff; this one casts it first after the cooldowns and again once it has under 7
+// sec left (2, 3, 5 and 7 sec all keep it up 99.9% of the fight, within 1 DPS). Forever's Faerie Fire
+// and Curse of Recklessness share the minor armor slot (standards 20), so the line waits while a curse
+// holds it, and the duty's cost shows with both off: 10.2 / 8.3 / 4.3 DPS at 120 / 180 / 300 sec
+// (869.7 / 858.5 / 846.9, Night Elf, 20,000 iterations, seed 1, no bomb; Faerie Fire no longer resets
+// the swing), the GCDs and the moment before it lands, since the cat's own hits get the armor.
 export const APLLevel60FaerieFire = PresetUtils.makePresetAPLRotation('Level 60 (Faerie Fire duty)', Level60FaerieFireAPLJSON, {
 	tooltip:
-		"The Level 60 rotation, keeping Faerie Fire (Feral) on the target for the raid. Pick the duty build to switch off the raid's Faerie Fire and Curse of Recklessness.",
+		"The Level 60 rotation, keeping Faerie Fire on the target for the raid (free in Cat Form). Pick the duty build to switch off the raid's Faerie Fire and Curse of Recklessness.",
 	group: 'Level 60',
 });
 
@@ -366,7 +365,7 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 export const PresetBuildLevel60FaerieFire = PresetUtils.makePresetBuild('Level 60 (Faerie Fire duty)', {
 	group: 'Level 60',
 	tooltip:
-		"The Level 60 build keeping Faerie Fire (Feral) on the target for the raid. It turns off the raid's Faerie Fire and Curse of Recklessness, which share its armor slot.",
+		"The Level 60 build keeping Faerie Fire on the target for the raid (free in Cat Form). It turns off the raid's Faerie Fire and Curse of Recklessness, which share its armor slot.",
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60FaerieFire,

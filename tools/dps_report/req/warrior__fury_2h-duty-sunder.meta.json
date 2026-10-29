@@ -1,0 +1,76 @@
+{
+  "id": "warrior__fury_2h-duty-sunder",
+  "class": "Warrior",
+  "spec": "Fury",
+  "build": "Fury Two-Hand (Sunder duty)",
+  "isDefault": false,
+  "pr": 4,
+  "race": "Orc",
+  "talents": "30305013032-25053000142210501",
+  "treeNames": [
+    "Arms",
+    "Fury",
+    "Protection"
+  ],
+  "gearSet": "level60_phase1_synthetic_arms",
+  "apl": "level60_fury_2h_sunder",
+  "published": {
+    "dps": 928.2,
+    "source": "Raid sim variant (docs/raid_sim.md, milestone M1b), not yet in the DPS report: wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s, 2026-10-29"
+  },
+  "verify": {
+    "dps": 928.22,
+    "stderr": 0.44,
+    "iters": 20000,
+    "ok": true,
+    "note": "wowsimcli on this request, 180 s, seed 1 (the published number is this sim); a raid sim variant, not yet in the report"
+  },
+  "summary": "Keeps 5 Sunder Armor stacks on the boss for a raid with no warrior tank. The raid's Sunder Armor is off.",
+  "keyTalents": [
+    "Bloodthirst",
+    "Flurry",
+    "Death Wish",
+    "Two-Handed Weapon Specialization",
+    "Cruelty",
+    "Impale",
+    "Enrage"
+  ],
+  "rotation": [
+    "Start with 0 Rage. Before the pull, Battle Stance, Charge (15 Rage) and back to Berserker Stance. Battle Shout comes from the raid",
+    "Sunder Armor on duty for the raid: 5 stacks from the pull (7.5s of GCDs), before anything but the opening cooldowns, then refreshed in its last 3s, unless it lasts the fight. The raid's Sunder Armor is off",
+    "Death Wish in the last 36s, Recklessness in the last 30s",
+    "Blood Fury and Berserking in the last 30s. Elune's Light on cooldown, but never during Recklessness or the 15s before it. Mighty Rage Potion at the pull, the second in the last 20s",
+    "Bloodrage under 20 Rage. Berserker Rage under 30 (Improved Berserker Rage)",
+    "Bloodthirst, then Slam at 45+ Rage right after a main-hand swing, then Whirlwind at 25+ Rage",
+    "During execute, Execute comes after Bloodthirst and Whirlwind. Putting it first loses 4.7 DPS on Fury and 22.7 on two-hand Fury",
+    "Heroic Strike at 90+ Rage, outside execute",
+    "Hamstring as filler at 20+ Rage"
+  ],
+  "consumes": [
+    "Flask of Natural Precision",
+    "Elixir of the Mongoose",
+    "Elixir of Ferocity",
+    "Juju Might",
+    "R.O.I.D.S.",
+    "Smoked Desert Dumpling",
+    "Dragonbreath Chili",
+    "Mighty Rage Potion",
+    "Goblin Sapper Charge",
+    "Dense Sharpening Stone (main hand)"
+  ],
+  "caveats": [
+    "The duty costs 35.8 DPS at 180s against the same build without it (928.2 against 964.0, 20,000 iterations, seed 1). Part of it is the ramp: the warrior's own hits meet fewer stacks for the first 7.5s, where the raid's Sunder was full at once.",
+    "The trinket's last use is saved for the last 34s.",
+    "Assumed: white hits give Rage by weapon speed, at the level 30 rate even at level 60.",
+    "No Ahn'Qiraj book ranks, so Heroic Strike stops at rank VIII, and the raid's Battle Shout at VI, Strength of Earth at IV and Grace of Air at II.",
+    "Deep Wounds ticks can't crit.",
+    "Assumed: the crit Rage bonus is for white hits only. Heroic Strike can trigger Unbridled Wrath.",
+    "Only one +2% crit elixir. A second (Grizzly) would add 12.0 DPS.",
+    "Battlegear of Glory 4-piece isn't counted. It would add 8.8 DPS vs Humanoids.",
+    "Saving Death Wish for the last 36s adds 17.4 DPS at 180s and 28.4 at 120s.",
+    "Rage from taking raid damage (2 hits a minute, about 9 Rage each) is an estimate."
+  ],
+  "notes": "Request from mksettings with the same arguments as warrior__fury_2h except -apl level60_fury_2h_sunder, then the raid's sunderArmor removed (the duty warrior's Sunder is the only one, as for a raid with no warrior tank). Made as a hand edit of the base request, which is the same. A raid sim variant (docs/raid_sim.md, M1b), not yet in the DPS report.",
+  "duty": "Sunder Armor",
+  "baseBuild": "warrior__fury_2h"
+}

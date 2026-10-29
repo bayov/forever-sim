@@ -1,0 +1,81 @@
+{
+  "id": "paladin__level_60_shock_ret-duty-crusader",
+  "class": "Paladin",
+  "spec": "Retribution",
+  "build": "Level 60 Shock (Crusader duty)",
+  "isDefault": false,
+  "race": "Undead",
+  "talents": "550030032011012--052150312012303",
+  "treeNames": [
+    "Holy",
+    "Protection",
+    "Retribution"
+  ],
+  "gearSet": "level60_phase1_synthetic_crusader_duty",
+  "apl": "level60_shock_ret_crusader_duty",
+  "published": {
+    "dps": 930.9,
+    "source": "Raid sim variant (docs/raid_sim.md, milestone M1b), not yet in the DPS report: wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s, 2026-10-29"
+  },
+  "summary": "Keeps Judgement of the Crusader on the boss for the raid.",
+  "keyTalents": [
+    "Holy Shock",
+    "Champion of the Light",
+    "Consecrated Ground",
+    "Vengeance",
+    "Conviction",
+    "Sacred Arbiter",
+    "Divine Favor",
+    "Improved Seals"
+  ],
+  "rotation": [
+    "Pre-pull: Seal of the Crusader at -1.5s (no Twist of Light, so a damage seal before it would leave no Echo)",
+    "Judgement of the Crusader at the pull, for the duty. It adds 161 Holy damage taken for 40s. The paladin's melee hits refresh it, so one cast lasts the fight. Judge it again only if it drops",
+    "Seal of Command once the judgement is up",
+    "Consecration on cooldown at any mana",
+    "Judgement on cooldown. Recast Seal of Command whenever it's down (no twisting)",
+    "Hammer of Wrath under 20% boss health, before Holy Strike",
+    "Holy Strike on cooldown",
+    "Holy Shock on cooldown. Divine Favor goes on a Holy Shock",
+    "Racials, Goblin Sapper, Dragonfire Potion and Demonic Rune on free GCDs"
+  ],
+  "consumes": [
+    "Flask of Supreme Power",
+    "Elixir of Cunning",
+    "Elixir of Ferocity",
+    "Juju Might",
+    "Elixir of Greater Firepower (Forever's Holy Power elixir)",
+    "Greater Arcane Elixir",
+    "Elixir of Shadow Power",
+    "Elixir of the Owl",
+    "Elixir of Greater Spirit",
+    "Greater Mageblood Elixir",
+    "R.O.I.D.S.",
+    "Lobster Stew",
+    "Dragonbreath Chili",
+    "Shadow Oil",
+    "Goblin Sapper",
+    "Dragonfire Potion",
+    "Demonic Rune"
+  ],
+  "caveats": [
+    "The duty costs 0.7 DPS at 180s against the same build without it (930.9 against 931.6, 20,000 iterations, seed 1).",
+    "Uses Libram of Fervor (+33 to Judgement of the Crusader). At 180s it beats Libram of Law by 5.9 DPS on twist duty and 7.7 on Shock duty.",
+    "Takes Pursuit of Justice 2 (movement speed), a must-have talent.",
+    "Holy Shock needs 20 points in Holy, so Twist of Light (the 31-point Retribution talent) is out of reach.",
+    "1.8% behind Ret sub-Holy at 180s, and 3.2% at 300s, where it runs short of mana. Dragonfire Potion is 5.7 DPS better at 180s, and Major Mana Potion 10.3 better at 300s.",
+    "Unverified: Holy Strike's flat bonus is added before its weapon damage percent, as the client data says.",
+    "The top Holy Strike and Consecration ranks may be out of date (about 1.2% of DPS).",
+    "No filler explosive, because each 1s cast resets the swing."
+  ],
+  "notes": "Request: paladin__level_60_shock_ret with raid debuff judgementOfTheCrusader removed and the level60_shock_ret_crusader_duty rotation, and Libram of Fervor (23203) in the relic slot, as level60_phase1_synthetic_crusader_duty. Hand edits of the base request, as the other duty paladins were made (mksettings with -apl level60_shock_ret_crusader_duty writes the same rotation). A raid sim variant (docs/raid_sim.md, M1b), not yet in the DPS report.",
+  "verify": {
+    "dps": 930.89,
+    "stderr": 0.32,
+    "iters": 20000,
+    "ok": true,
+    "note": "wowsimcli on this request, 180 s, seed 1 (the published number is this sim); a raid sim variant, not yet in the report"
+  },
+  "duty": "Judgement of the Crusader",
+  "baseBuild": "paladin__level_60_shock_ret"
+}

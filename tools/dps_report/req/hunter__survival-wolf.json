@@ -1,0 +1,514 @@
+{
+  "raid": {
+    "parties": [
+      {
+        "players": [
+          {
+            "race": "RaceOrc",
+            "class": "ClassHunter",
+            "equipment": {
+              "items": [
+                {
+                  "id": 993101,
+                  "enchant": 1508
+                },
+                {
+                  "id": 993102,
+                  "enchant": 1249059
+                },
+                {
+                  "id": 993103
+                },
+                {
+                  "id": 993104,
+                  "enchant": 1219587
+                },
+                {
+                  "id": 993105,
+                  "enchant": 1891
+                },
+                {
+                  "id": 993106,
+                  "enchant": 1248497
+                },
+                {
+                  "id": 993107,
+                  "enchant": 1887
+                },
+                {
+                  "id": 993108
+                },
+                {
+                  "id": 993109,
+                  "enchant": 1508
+                },
+                {
+                  "id": 993110,
+                  "enchant": 1887
+                },
+                {
+                  "id": 993111
+                },
+                {
+                  "id": 993112
+                },
+                {
+                  "id": 993116
+                },
+                {
+                  "id": 993117
+                },
+                {
+                  "id": 993113,
+                  "enchant": 1900
+                },
+                {
+                  "id": 993114,
+                  "enchant": 2564
+                },
+                {
+                  "id": 993115,
+                  "enchant": 664
+                }
+              ]
+            },
+            "consumes": {
+              "flask": "FlaskOfNaturalPrecision",
+              "food": "FoodFlankAuPoivre",
+              "agilityElixir": "ElixirOfTheMongoose",
+              "strengthBuff": "ElixirOfFerocity",
+              "attackPowerBuff": "JujuMight",
+              "mainHandImbue": "DenseSharpeningStone",
+              "offHandImbue": "DenseSharpeningStone",
+              "defaultPotion": "MajorFrenzyPotion",
+              "dragonBreathChili": true,
+              "zanzaBuff": "GroundScorpokAssay",
+              "sapperExplosive": "SapperGoblinSapper",
+              "intellectElixir": "ElixirOfGreaterIntellect"
+            },
+            "buffs": {
+              "blessingOfKings": true,
+              "blessingOfWisdom": "TristateEffectImproved",
+              "blessingOfMight": "TristateEffectImproved"
+            },
+            "talentsString": "502-005005-500230230250122151",
+            "level": 60,
+            "profession1": "Engineering",
+            "profession2": "Alchemy",
+            "rotation": {
+              "type": "TypeAPL",
+              "prepullActions": [
+                {
+                  "action": {
+                    "move": {
+                      "rangeFromTarget": {
+                        "const": {
+                          "val": "0"
+                        }
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-6s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1299447
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-3s"
+                    }
+                  }
+                },
+                {
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 14325
+                      }
+                    }
+                  },
+                  "doAtValue": {
+                    "const": {
+                      "val": "-1.5s"
+                    }
+                  }
+                }
+              ],
+              "priorityList": [
+                {
+                  "notes": "Walk into melee range when the fight starts at range.",
+                  "action": {
+                    "condition": {
+                      "not": {
+                        "val": {
+                          "inMeleeRange": {}
+                        }
+                      }
+                    },
+                    "move": {
+                      "rangeFromTarget": {
+                        "const": {
+                          "val": "0"
+                        }
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Aspect of the Beast if it ever drops.",
+                  "action": {
+                    "condition": {
+                      "not": {
+                        "val": {
+                          "auraIsActive": {
+                            "auraId": {
+                              "spellId": 1299447
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1299447
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Rapid Fire, racials, trinkets and potions on cooldown.",
+                  "action": {
+                    "autocastOtherCooldowns": {}
+                  }
+                },
+                {
+                  "notes": "Hunter's Mark at the pull and again before it drops (every hunter keeps up its own; the raid's is off).",
+                  "action": {
+                    "condition": {
+                      "cmp": {
+                        "op": "OpLt",
+                        "lhs": {
+                          "auraRemainingTime": {
+                            "sourceUnit": {
+                              "type": "CurrentTarget"
+                            },
+                            "auraId": {
+                              "spellId": 14325
+                            }
+                          }
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "3s"
+                          }
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 14325
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Mongoose Bite whenever Expose Prey or a dodge opens it.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 14271
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Strider Kick on cooldown, with the talent.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1317257
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Immolation Trap at the hunter's feet on cooldown.",
+                  "action": {
+                    "condition": {
+                      "cmp": {
+                        "op": "OpGe",
+                        "lhs": {
+                          "currentManaPercent": {}
+                        },
+                        "rhs": {
+                          "const": {
+                            "val": "0.3"
+                          }
+                        }
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 14305
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Queue Raptor Strike on the next swing when it is ready.",
+                  "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 14266,
+                        "tag": 3
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Lacerate when it is down.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "not": {
+                              "val": {
+                                "dotIsActive": {
+                                  "spellId": {
+                                    "spellId": 1299332
+                                  }
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "currentManaPercent": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0.2"
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 1299332
+                      }
+                    }
+                  }
+                },
+                {
+                  "notes": "Wing Clip as a filler with the mana to spare, held when an opened Mongoose Bite is about ready.",
+                  "action": {
+                    "condition": {
+                      "and": {
+                        "vals": [
+                          {
+                            "cmp": {
+                              "op": "OpGe",
+                              "lhs": {
+                                "currentManaPercent": {}
+                              },
+                              "rhs": {
+                                "const": {
+                                  "val": "0.5"
+                                }
+                              }
+                            }
+                          },
+                          {
+                            "and": {
+                              "vals": [
+                                {
+                                  "not": {
+                                    "val": {
+                                      "and": {
+                                        "vals": [
+                                          {
+                                            "auraIsActive": {
+                                              "auraId": {
+                                                "spellId": 1310726
+                                              }
+                                            }
+                                          },
+                                          {
+                                            "cmp": {
+                                              "op": "OpLt",
+                                              "lhs": {
+                                                "spellTimeToReady": {
+                                                  "spellId": {
+                                                    "spellId": 14271
+                                                  }
+                                                }
+                                              },
+                                              "rhs": {
+                                                "const": {
+                                                  "val": "1s"
+                                                }
+                                              }
+                                            }
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        ]
+                      }
+                    },
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 14268
+                      }
+                    }
+                  }
+                }
+              ]
+            },
+            "reactionTimeMs": 200,
+            "channelClipDelayMs": 50,
+            "distanceFromTarget": 5,
+            "hunter": {
+              "options": {
+                "ammo": "SwiftfeatherArrow",
+                "quiverBonus": "Speed15",
+                "petType": "Wolf",
+                "petUptime": 1,
+                "cobraReflexes": true
+              }
+            }
+          }
+        ],
+        "buffs": {}
+      }
+    ],
+    "buffs": {
+      "giftOfTheWild": "TristateEffectImproved",
+      "powerWordFortitude": "TristateEffectImproved",
+      "bloodPact": "TristateEffectImproved",
+      "strengthOfEarthTotem": "TristateEffectRegular",
+      "graceOfAirTotem": "TristateEffectRegular",
+      "arcaneBrilliance": true,
+      "divineSpirit": true,
+      "battleShout": "TristateEffectImproved",
+      "trueshotAura": true,
+      "leaderOfThePack": true,
+      "moonkinAura": true,
+      "manaSpringTotem": "TristateEffectRegular",
+      "shadowProtection": true,
+      "frostResistanceAura": true,
+      "fireResistanceAura": true,
+      "thorns": "TristateEffectImproved",
+      "devotionAura": "TristateEffectImproved",
+      "retributionAura": "TristateEffectImproved",
+      "totemWeaponBuff": "TotemWeaponBuffWindfury",
+      "salvation": true
+    },
+    "debuffs": {
+      "judgementOfWisdom": true,
+      "judgementOfLight": true,
+      "judgementOfTheCrusader": "TristateEffectImproved",
+      "faerieFire": true,
+      "curseOfElements": true,
+      "sunderArmor": true,
+      "curseOfWeakness": "TristateEffectImproved",
+      "curseOfRecklessness": true,
+      "demoralizingRoar": "TristateEffectImproved",
+      "demoralizingShout": "TristateEffectImproved",
+      "thunderClap": "TristateEffectImproved",
+      "insectSwarm": true,
+      "scorpidSting": true
+    }
+  },
+  "encounter": {
+    "duration": 180,
+    "durationVariation": 20,
+    "executeProportion20": 0.2,
+    "executeProportion25": 0.25,
+    "executeProportion35": 0.35,
+    "targets": [
+      {
+        "id": 213336,
+        "name": "Level 60",
+        "level": 63,
+        "stats": [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          805,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          3731,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          127393,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "minBaseDamage": 3000,
+        "damageSpread": 0.3333,
+        "swingSpeed": 2,
+        "parryHaste": true
+      }
+    ],
+    "raidDamageHitsPerMinute": 2,
+    "raidDamagePerHit": 1500,
+    "naturalFlaskZone": true
+  },
+  "simOptions": {
+    "iterations": 1000,
+    "randomSeed": "1"
+  }
+}

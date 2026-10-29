@@ -169,6 +169,10 @@ message Hunter {
 
 		// Beast Training's Cobra Reflexes (25076): the pet attacks 30% faster.
 		bool cobra_reflexes = 8;
+
+		// Another hunter keeps Hunter's Mark on the target, so this one never casts it, whatever the
+		// rotation says (only one hunter in a raid needs to mark).
+		bool skip_hunters_mark = 9;
 	}
 	Options options = 2;
 }

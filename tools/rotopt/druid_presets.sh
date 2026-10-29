@@ -55,8 +55,9 @@ gen druid_balance "$balance" ui/balance_druid/apls level60_wrath_ff "innervateMa
 # new Rip in the last 8 sec, and Ferocious Bite at any combo points in the last 2 sec. The knob
 # search kept the rest at 120, 180 and 300 sec.
 gen druid_feral "$feral" ui/feral_druid/apls level60 "rake=1,rakeMinTime=6,shadowmeld=1,shadowmeldEnd=10,meldBeforeRake=1,ripCP=5,shiftEnergy=50,shiftHoldForBite=1,endBite=2,ripMinTime=8,biteRipTime=6,cdStack=1,tigersFury=0,elune=1"
-# The cat's Faerie Fire duty: Faerie Fire (Feral) from Cat Form, first after the cooldowns and
-# again once it has under 7 sec left, so a missed cast (its 6 sec cooldown) gets a second try before
-# the debuff drops (rotation auditor: 99.7% uptime against 98.7% at 1 sec, same DPS). After Rip, or
-# at 3 sec, is within the noise.
+# The cat's Faerie Fire duty: the caster Faerie Fire from Cat Form (Forever has no Faerie Fire
+# (Feral); it's free in Cat Form, 1.5 sec global cooldown, no cooldown), first after the cooldowns and
+# again once it has under 7 sec left. That was the old 6 sec cooldown's second try; with no cooldown
+# 2, 3, 5 and 7 sec all keep it up 99.9% of the fight and are within 1 DPS (2026-10-29, 20000
+# iterations, 180 sec), so 7 stayed. After Rip, or at 3 sec, was within the noise.
 gen druid_feral "$feral" ui/feral_druid/apls level60_ff "rake=1,rakeMinTime=6,shadowmeld=1,shadowmeldEnd=10,meldBeforeRake=1,ripCP=5,shiftEnergy=50,shiftHoldForBite=1,endBite=2,ripMinTime=8,biteRipTime=6,cdStack=1,tigersFury=0,faerieFire=1,ffRefresh=7,elune=1"

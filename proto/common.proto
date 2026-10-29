@@ -984,6 +984,9 @@ message Debuffs {
 
 	TristateEffect curse_of_weakness = 12;
 	bool curse_of_recklessness = 13;
+	// A hunter's Tallstrider keeping Dust Cloud up (Forever: 505 armor at 60, in the minor armor slot
+	// with Faerie Fire and Curse of Recklessness, the strongest counting).
+	bool dust_cloud = 27;
 
 	TristateEffect demoralizing_roar = 14;
 	TristateEffect demoralizing_shout = 15;

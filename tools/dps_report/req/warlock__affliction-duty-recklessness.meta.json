@@ -1,0 +1,80 @@
+{
+  "id": "warlock__affliction-duty-recklessness",
+  "class": "Warlock",
+  "spec": "Affliction",
+  "build": "Affliction (Recklessness duty)",
+  "isDefault": false,
+  "pr": 104,
+  "race": "Human",
+  "talents": "2550102003520005--0550305003",
+  "treeNames": [
+    "Affliction",
+    "Demonology",
+    "Destruction"
+  ],
+  "gearSet": "level60_phase1_synthetic",
+  "apl": "level60_affliction_duty_recklessness",
+  "published": {
+    "dps": 1003.4,
+    "source": "Raid sim variant (docs/raid_sim.md, milestone M1b), not yet in the DPS report: wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s, 2026-10-29"
+  },
+  "verify": {
+    "dps": 1003.39,
+    "stderr": 0.38,
+    "iters": 20000,
+    "ok": true,
+    "note": "wowsimcli on this request, 180 s, seed 1 (the published number is this sim); a raid sim variant, not yet in the report"
+  },
+  "summary": "Keeps Curse of Recklessness (505 armor) on the boss for the raid instead of a druid's Faerie Fire. In Forever, curses and banes use separate slots, so it keeps its bane.",
+  "keyTalents": [
+    "Shadow Mastery",
+    "Pandemic",
+    "Malevolence",
+    "Nightfall",
+    "Improved Shadow Bolt",
+    "Ruin",
+    "Agonizing Flames"
+  ],
+  "rotation": [
+    "Pre-pull: Shadow Bolt at -2.5s (lands just after the pull)",
+    "Racials on cooldown, except Troll Berserking",
+    "Life Tap below 5% mana or when the filler costs more than the mana left",
+    "Curse of Recklessness right after the opener, recast before it drops (2 min). It takes 505 armor in the minor armor slot, so the raid's Faerie Fire and Curse of Recklessness are off. The raid's Curse of the Elements stays on",
+    "Bane of Doom with more than 60s left, so it lands before the end",
+    "Bane of Agony while Bane of Doom is on cooldown or would not land",
+    "Corruption when it is down (more than 9s left)",
+    "Immolate when it is down or ends within its cast time, with more than 15s left",
+    "Death Coil, then Searing Pain, when the filler would not land before the fight ends",
+    "Troll Berserking right before a Shadow Bolt, so the haste goes on cast spells, not instants",
+    "Shadow Bolt as the filler (instant on Nightfall procs)"
+  ],
+  "consumes": [
+    "Flask of Supreme Power",
+    "Greater Arcane Elixir",
+    "Elixir of Shadow Power",
+    "Elixir of Firepower",
+    "Elixir of Sages",
+    "Elixir of Greater Intellect",
+    "Greater Mageblood Elixir",
+    "Cerebral Cortex Compound",
+    "Lobster Stew",
+    "Wizard Oil",
+    "Major Mana Potion",
+    "Demonic Rune",
+    "Goblin Sapper",
+    "Major Spellstone (weapon imbue)"
+  ],
+  "caveats": [
+    "The duty costs 14.7 DPS at 180s against the same build without it (1003.4 against 1018.1, 20,000 iterations, seed 1). The curse only takes armor, which helps only a demon's melee, so the warlock pays its GCDs and mana for the raid.",
+    "A Wrack and Siphon Life DoT build is 55 DPS behind. Drain fillers are 124 to 349 behind.",
+    "How much of the warlock's stats a demon gets, and Succubus melee, come from pet sheets at levels 20 and 30, not 60.",
+    "Bane of Doom's coefficient is 4.0 (Era has 1.0). At 2.0, Shadow Bolt builds would lose about 4%. At 1.0, about 6%.",
+    "No Ahn'Qiraj book ranks, so Shadow Bolt stops at rank IX, Immolate at VII and Corruption at VI. The books would add 7 to 13 DPS.",
+    "Only the Demonheart Raiment 2-piece is active. The 5-piece added about 8 to 13 DPS on an older gear set.",
+    "Soul shards and Life Tap's health cost aren't tracked.",
+    "Demons use the warlock's spell crit, a reported Forever bug. It's worth 15 to 17 DPS."
+  ],
+  "notes": "Request from mksettings with the same arguments as warlock__affliction except -apl level60_affliction_duty_recklessness, then raid.debuffs.curseOfRecklessness and faerieFire removed (they share the minor armor slot, standards 20). Made as a hand edit of the base request, which is the same. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Spellstone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly. A raid sim variant (docs/raid_sim.md, M1b), not yet in the DPS report.",
+  "duty": "Curse of Recklessness",
+  "baseBuild": "warlock__affliction"
+}

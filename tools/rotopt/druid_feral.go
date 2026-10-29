@@ -28,11 +28,8 @@ var (
 	druidTigersFury    = spellID(5217)
 	druidShiftingPower = spellID(1322605)
 	druidBerserk       = spellID(417141)
-	// Faerie Fire (Feral): a trainer spell at 25 under Forever, cast from Cat Form, free, 1 sec
-	// global cooldown, 6 sec cooldown.
-	druidFaerieFireFeral = spellID(17392)
-	druidShadowmeld      = spellID(20580)
-	druidRavage          = spellID(9867)
+	druidShadowmeld    = spellID(20580)
+	druidRavage        = spellID(9867)
 )
 
 func (druidFeral) Knobs() []Knob {
@@ -87,7 +84,7 @@ func (druidFeral) Knobs() []Knob {
 		{Name: "elune", Default: 1, Min: 0, Max: 1, Step: 1},
 		// Tiger's Fury before the pull, so it is ready again sooner, 0/1.
 		{Name: "prepullTigersFury", Default: 0, Min: 0, Max: 1, Step: 1},
-		// Faerie Fire duty (standards 23), 0/1: keep Faerie Fire (Feral) on the target, cast again
+		// Faerie Fire duty (standards 23), 0/1: keep Faerie Fire on the target, cast again
 		// once it has less than ffRefresh seconds left. ffPos 0 puts it ahead of everything but the
 		// cooldowns, 1 after Rip.
 		{Name: "faerieFire", Default: 0, Min: 0, Max: 1, Step: 1},
@@ -134,9 +131,12 @@ func (druidFeral) Build(k Knobs) *proto.APLRotation {
 	// Forever's Faerie Fire and Curse of Recklessness share the minor armor slot (standards 20), and
 	// the sim won't put ours up while the raid's Faerie Fire or a Curse of Recklessness holds it, so
 	// the line waits for the slot to be free instead of recasting on every cooldown.
-	ffItem := cast(druidFaerieFireFeral, and(not(targetAuraIsActive(druidFaerieFire)), not(targetAuraIsActive(druidCoRAura)),
-		lt(targetAuraRemainingTime(druidFaerieFireFeral), seconds(k["ffRefresh"]))),
-		"Faerie Fire (Feral) on the target, refreshed before it drops, unless another minor armor debuff holds the slot (Faerie Fire duty).")
+	// Forever has no Faerie Fire (Feral): the cat casts the caster Faerie Fire (druid_balance.go's
+	// druidFaerieFire), free in Cat Form, on a 1.5 sec global cooldown and no cooldown. It is the same
+	// debuff as the raid's, so the line only refreshes it.
+	ffItem := cast(druidFaerieFire, and(not(targetAuraIsActive(druidCoRAura)),
+		lt(targetAuraRemainingTime(druidFaerieFire), seconds(k["ffRefresh"]))),
+		"Faerie Fire on the target, free in Cat Form, refreshed before it drops, unless Curse of Recklessness holds the slot (Faerie Fire duty).")
 	if k["faerieFire"] == 1 && k["ffPos"] == 0 {
 		items = append(items, ffItem)
 	}
