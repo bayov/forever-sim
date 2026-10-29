@@ -1,5 +1,10 @@
 package compsearch
 
+import (
+	"fmt"
+	"math"
+)
+
 // modelValuer values a seat with the model, without sims.
 type modelValuer struct{ m *Model }
 
@@ -22,15 +27,48 @@ func newExactValuer(sc *Scenario, iters int32, model *Model) *exactValuer {
 func askKey(b *Build, s Seat) string { return b.ID + "#" + s.key() }
 
 func (v *exactValuer) V(b *Build, s Seat) (float64, float64, string) {
-	k := askKey(b, s)
+	if v.sc.HealthLength > 0 {
+		return v.lerp(b, s)
+	}
+	return v.one(b, s, v.sc.Fight)
+}
+
+func (v *exactValuer) one(b *Build, s Seat, fight Fight) (float64, float64, string) {
+	k := askKey(b, s) + fmt.Sprint(fight.Duration)
 	if j, ok := v.vals[k]; ok {
 		return j.Value.DPS, j.Value.SE, j.key
 	}
 	if _, ok := v.missing[k]; !ok {
-		v.missing[k] = v.sc.job(b, s, v.iters)
+		j := v.sc.job(b, s, v.iters)
+		j.Fight = fight
+		v.missing[k] = j
 	}
 	return v.model.V(b, s), 0, ""
 }
+
+// lerp is a health fight's value (docs/raid_sim.md, Fight length): the single-player sims run on a
+// 5-second grid of fixed lengths, so the cache hits across sets, and a build's DPS is interpolated
+// linearly between the two grid points around the fight's length.
+func (v *exactValuer) lerp(b *Build, s Seat) (float64, float64, string) {
+	L := v.sc.HealthLength
+	lo := math.Floor(L/lengthGrid) * lengthGrid
+	w := (L - lo) / lengthGrid
+	f1, f2 := v.sc.Fight, v.sc.Fight
+	f1.Duration, f2.Duration = lo, lo+lengthGrid
+	f1.DurationVariation, f2.DurationVariation = 0, 0
+	d1, se1, k1 := v.one(b, s, f1)
+	if w == 0 {
+		return d1, se1, k1
+	}
+	d2, se2, k2 := v.one(b, s, f2)
+	key := ""
+	if k1 != "" && k2 != "" {
+		key = k1 + k2
+	}
+	return (1-w)*d1 + w*d2, (1-w)*se1 + w*se2, key
+}
+
+const lengthGrid = 5.0
 
 // flush sims everything recorded as missing.
 func (v *exactValuer) flush() (int, error) {

@@ -20,6 +20,8 @@ type Scenario struct {
 	Iterations  int32
 	Seed        int64
 	Assumptions *proto.RaidAssumptions
+	// A health fight's length this pass (0 for a fixed fight): the boss's health over the raid's DPS.
+	HealthLength float64
 }
 
 func (sc *Scenario) job(b *Build, s Seat, iters int32) *Job {

@@ -32,6 +32,8 @@ func main() {
 	duration := flag.Float64("duration", 180, "fight length, seconds")
 	variation := flag.Float64("variation", 20, "fight length variation, seconds")
 	boss := flag.String("boss", "Generic", "Generic or Onyxia (Dragonkin, outside the flask zone)")
+	health := flag.Float64("health", 0, "a health fight: the boss's health (the length is then a first guess)")
+	leftOut := flag.Bool("measure-left-out", false, "sim every base build with and without the buffs the resolver leaves out")
 	fixedDPS := flag.String("fixed-dps", "", "comma-separated report build ids that must be in the comp")
 	fixedTanks := flag.String("fixed-tanks", "", "comma-separated tank presets, e.g. ProtectionWarrior")
 	fixedHealers := flag.String("fixed-healers", "", "comma-separated healer presets, e.g. RestorationShaman")
@@ -63,10 +65,21 @@ func main() {
 		return
 	}
 
+	if *leftOut {
+		if err := compsearch.MeasureLeftOut(pool, os.Stdout); err != nil {
+			fail(err)
+		}
+		return
+	}
+
 	req := &proto.CompSearchRequest{Size: int32(*size), Tanks: int32(*tanks), Healers: int32(*healers),
 		Iterations: int32(*iters), ContenderIterations: int32(*contender), Seed: *seed, MaxCombos: int32(*maxCombos),
 		SkipSensitivity: *noSens,
 		Encounter:       &proto.CompEncounter{Name: *boss, Duration: *duration, DurationVariation: *variation}}
+	if *health > 0 {
+		req.Encounter.UseHealth = true
+		req.Encounter.BossHealth = *health
+	}
 	if *boss == "Onyxia" {
 		req.Encounter.MobType = proto.MobType_MobTypeDragonkin
 	} else {

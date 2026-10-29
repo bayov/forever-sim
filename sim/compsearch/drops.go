@@ -2,6 +2,7 @@ package compsearch
 
 import (
 	"fmt"
+	"io"
 	"math"
 	"runtime"
 	"slices"
@@ -151,4 +152,30 @@ func ComputeDrops(p *Pool, iterations int32, seed int64, progress func(string)) 
 	}
 	wg.Wait()
 	return out, firstErr
+}
+
+// MeasureLeftOut sims every base build's report request with and without the buffs the resolver
+// leaves out (docs/raid_sim.md, Writing a role into a request): Thorns, Retribution Aura, Salvation and
+// Judgement of Light.
+func MeasureLeftOut(p *Pool, w io.Writer) error {
+	fmt.Fprintln(w, "| Build | Report set | Without Thorns, Retribution Aura, Salvation, Judgement of Light | Difference | Bit-identical |")
+	fmt.Fprintln(w, "|---|---|---|---|---|")
+	for _, b := range p.Bases {
+		req := googleProto.Clone(b.Req).(*proto.RaidSimRequest)
+		req.SimOptions = &proto.SimOptions{Iterations: 2000, RandomSeed: 1}
+		with, err := dpsOf(req)
+		if err != nil {
+			return err
+		}
+		req.Raid.Buffs.Thorns = missing
+		req.Raid.Buffs.RetributionAura = missing
+		req.Raid.Buffs.Salvation = false
+		req.Raid.Debuffs.JudgementOfLight = false
+		without, err := dpsOf(req)
+		if err != nil {
+			return err
+		}
+		fmt.Fprintf(w, "| %s | %.2f | %.2f | %+.2f | %v |\n", b.ID, with, without, without-with, math.Float64bits(with) == math.Float64bits(without))
+	}
+	return nil
 }

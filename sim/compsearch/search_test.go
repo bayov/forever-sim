@@ -211,3 +211,76 @@ func TestSeatWrite(t *testing.T) {
 		t.Errorf("the report's set leaked through")
 	}
 }
+
+// M1's done-when (docs/raid_sim.md): a second run makes zero sims, and changing the encounter or the
+// length misses the cache. (A code or item database change is a new binary, so a new version.)
+func TestCacheReuse(t *testing.T) {
+	if testing.Short() {
+		t.Skip("about 20 s")
+	}
+	p := subPool(t, "mage__fire", "warrior__fury")
+	dir := t.TempDir()
+	req := func() *proto.CompSearchRequest {
+		return &proto.CompSearchRequest{Size: 5, Tanks: 1, Healers: 0, Factions: []proto.Faction{proto.Faction_Horde},
+			CampBuffs: []bool{false}, Iterations: 40, ContenderIterations: 40, Seed: 2, SkipSensitivity: true,
+			Encounter: &proto.CompEncounter{Duration: 60, DurationVariation: 0, NaturalFlaskZone: true}}
+	}
+	for i, want0 := range []bool{false, true} {
+		sim, err := NewSimmer(p, dir)
+		if err != nil {
+			t.Fatal(err)
+		}
+		res, err := Search(p, sim, req(), nil)
+		if err != nil {
+			t.Fatal(err)
+		}
+		if want0 && res.SimsRun != 0 {
+			t.Errorf("run %d made %d sims, want 0", i+1, res.SimsRun)
+		}
+		if !want0 && res.SimsRun == 0 {
+			t.Errorf("the first run made no sims")
+		}
+	}
+	sim, _ := NewSimmer(p, "")
+	b := p.Builds["warrior__fury"]
+	key := func(f Fight) string {
+		k, err := sim.key(&Job{Build: b, Faction: proto.Faction_Horde, Seat: Seat{Up: GiftAB}, Fight: f, Iterations: 40, Seed: 2})
+		if err != nil {
+			t.Fatal(err)
+		}
+		return k
+	}
+	base := Fight{Duration: 60, FlaskZone: true}
+	k0 := key(base)
+	for _, f := range []Fight{{Duration: 65, FlaskZone: true}, {Duration: 60}, {Duration: 60, FlaskZone: true, MobType: proto.MobType_MobTypeDragonkin},
+		{Duration: 60, DurationVariation: 5, FlaskZone: true}} {
+		if key(f) == k0 {
+			t.Errorf("%+v has the same key as %+v", f, base)
+		}
+	}
+	// Arcane Brilliance is unread by a warrior, so it's the same sim with it or without.
+	k1, _ := sim.key(&Job{Build: b, Faction: proto.Faction_Horde, Seat: Seat{}, Fight: base, Iterations: 40, Seed: 2})
+	if k1 != k0 {
+		t.Errorf("Arcane Brilliance moved a warrior's key")
+	}
+}
+
+// A health fight's length settles where the winner kills the boss.
+func TestHealthFight(t *testing.T) {
+	if testing.Short() {
+		t.Skip("about 20 s")
+	}
+	p := subPool(t, "mage__fire", "warrior__fury")
+	sim, _ := NewSimmer(p, "")
+	req := &proto.CompSearchRequest{Size: 5, Tanks: 1, Healers: 0, Factions: []proto.Faction{proto.Faction_Horde},
+		CampBuffs: []bool{false}, Iterations: 40, ContenderIterations: 40, Seed: 2, SkipSensitivity: true,
+		Encounter: &proto.CompEncounter{Duration: 60, UseHealth: true, BossHealth: 400000, NaturalFlaskZone: true}}
+	res, err := Search(p, sim, req, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	sc := res.Scenarios[0]
+	if kill := 400000 / sc.Comps[0].Dps; math.Abs(kill-sc.FightSeconds) > 1.5 {
+		t.Errorf("the fight is %.1f s, but the winner kills the boss in %.1f s", sc.FightSeconds, kill)
+	}
+}

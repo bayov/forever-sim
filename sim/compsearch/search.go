@@ -5,6 +5,7 @@ import (
 	"math"
 	"runtime"
 	"sort"
+	"strings"
 	"sync"
 	"time"
 
@@ -104,7 +105,13 @@ func Search(pool *Pool, sim *Simmer, req *proto.CompSearchRequest, progress Prog
 				Seed: req.Seed, Assumptions: req.Assumptions,
 				Fight: Fight{Duration: req.Encounter.Duration, DurationVariation: req.Encounter.DurationVariation,
 					MobType: req.Encounter.MobType, FlaskZone: req.Encounter.NaturalFlaskZone}}
-			out, err := sc.run(req, fixed, progress)
+			var out *proto.CompScenarioResult
+			var err error
+			if !req.Encounter.UseHealth {
+				out, err = sc.run(req, fixed, progress)
+			} else {
+				out, err = sc.runHealth(req, fixed, progress)
+			}
 			if err != nil {
 				return nil, err
 			}
@@ -115,6 +122,37 @@ func Search(pool *Pool, sim *Simmer, req *proto.CompSearchRequest, progress Prog
 	res.CacheHits = sim.Hits.Load() - hits0
 	res.Seconds = time.Since(start).Seconds()
 	return res, nil
+}
+
+// runHealth is a health fight (docs/raid_sim.md, Fight length): the length is the boss's health over the
+// raid's DPS, and the raid's DPS depends on the length. Each pass holds one length for every set, and the
+// pass runs again while the winner's length moves by more than a second.
+func (sc *Scenario) runHealth(req *proto.CompSearchRequest, fixed []*Build, progress Progress) (*proto.CompScenarioResult, error) {
+	health := req.Encounter.BossHealth
+	if health <= 0 {
+		return nil, fmt.Errorf("a health fight needs the boss's health")
+	}
+	L := req.Encounter.Duration
+	var out *proto.CompScenarioResult
+	for pass := 0; pass < 4; pass++ {
+		sc.HealthLength = L
+		// The model ranks at the nearest grid point; the exact values interpolate.
+		sc.Fight.Duration = math.Max(lengthGrid, math.Round(L/lengthGrid)*lengthGrid)
+		sc.Fight.DurationVariation = 0
+		var err error
+		out, err = sc.run(req, fixed, progress)
+		if err != nil {
+			return nil, err
+		}
+		next := health / out.Comps[0].Dps
+		out.FightSeconds = L
+		out.Notes = append(out.Notes, fmt.Sprintf("health fight pass %d: %.1f s, the winner kills the boss in %.1f s", pass+1, L, next))
+		if math.Abs(next-L) <= 1 {
+			break
+		}
+		L = next
+	}
+	return out, nil
 }
 
 func assumptionLines(a *proto.RaidAssumptions) []string {
@@ -279,9 +317,23 @@ type scored struct {
 
 // run is one scenario.
 func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress Progress) (*proto.CompScenarioResult, error) {
+	var phases []string
+	lastPhase, lastRun := "", sc.Sim.Run.Load()
+	phaseStart := time.Now()
 	report := func(phase string, best *Comp) {
 		if progress != nil {
 			progress(phase, best, sc)
+		}
+		// Sims and seconds by phase, for the cost section's measurements.
+		name := phase
+		if len(name) > 9 && name[:9] == "signature" {
+			name = "signatures"
+		}
+		if name != lastPhase {
+			if lastPhase != "" {
+				phases = append(phases, fmt.Sprintf("%s %d sims %.0f s", lastPhase, sc.Sim.Run.Load()-lastRun, time.Since(phaseStart).Seconds()))
+			}
+			lastPhase, lastRun, phaseStart = name, sc.Sim.Run.Load(), time.Now()
 		}
 	}
 	mob := sc.Fight.MobType
@@ -607,6 +659,9 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 	out.Fillers = extras.fillers
 	out.MemberValues = extras.members
 	out.Adding = extras.adding
+	report("extras", best)
+	report("end", best)
+	out.Notes = append(out.Notes, "sims by phase: "+strings.Join(phases, ", "))
 	out.Buffs = buffRecords(best)
 	out.Misses = missList(best)
 	if !req.SkipSensitivity {
