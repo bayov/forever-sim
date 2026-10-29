@@ -126,6 +126,10 @@ type Aura struct {
 	// Metrics for this aura.
 	metrics AuraMetrics
 
+	// The casters keeping this aura up and until when, for a buff that several casters'
+	// identical effects share, like two shamans' Strength of Earth Totems (AddHold).
+	holds []auraHold
+
 	initialized bool
 }
 
@@ -150,6 +154,7 @@ func (aura *Aura) reset(sim *Simulation) {
 	aura.init(sim)
 	aura.procGained = false
 	aura.procStackGains = aura.procStackGains[:0]
+	aura.holds = aura.holds[:0]
 
 	if aura.IsActive() {
 		panic("Active aura during reset: " + aura.Label)
@@ -1017,6 +1022,17 @@ func (caster *Unit) NewRaidAuraArray(makeAura func(*Unit) *Aura) AuraArray {
 		if target.Type != EnemyUnit {
 			auras[target.UnitIndex] = makeAura(target)
 		}
+	}
+	return auras
+}
+
+// NewRaidPlayerAuraArray is NewRaidAuraArray for a buff that reaches the raid's players and
+// not their pets, like Battle Shout and the totems (docs/raid_sim.md, Pets). It's indexed by
+// unit like the others, so the entries for pets and enemies are nil.
+func (caster *Unit) NewRaidPlayerAuraArray(makeAura func(*Unit) *Aura) AuraArray {
+	auras := make([]*Aura, len(caster.Env.AllUnits))
+	for _, target := range caster.Env.Raid.AllPlayerUnits {
+		auras[target.UnitIndex] = makeAura(target)
 	}
 	return auras
 }

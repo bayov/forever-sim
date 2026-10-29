@@ -157,14 +157,14 @@ func (c *Comp) seat(b *Build, pkg proto.RaidPackage, sc *Scenario) Seat {
 		Camps: sc.Camps, Own: b.Casts, Assumptions: sc.Assumptions}
 }
 
-// filler is a candidate build for a slot.
+// item is a provider candidate: a build and the roles it covers.
 type item struct {
 	b     *Build
 	cover Gift
 	ret   bool // a paladin: one more blessing per class
 }
 
-// Filler is the search's view of the builds: the fillers that survived pruning and every provider.
+// Fillers is the search's view of the builds: the fillers that survived pruning, and the providers.
 type Fillers struct {
 	Fill      []*Build // base builds that may fill a slot
 	Providers []*Build // builds and duty variants that may provide a role
@@ -377,11 +377,6 @@ func (c *Comp) sum() {
 		v += s * s
 	}
 	c.SE = math.Sqrt(v)
-}
-
-type seatKind struct {
-	pkg  proto.RaidPackage
-	free int
 }
 
 func (sc *Scenario) fillWithWarriors(r *Raid, p Plan, f *Fillers, val Valuer, bless map[proto.Class][]proto.Blessing,

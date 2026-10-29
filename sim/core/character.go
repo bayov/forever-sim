@@ -50,6 +50,10 @@ type Character struct {
 	// The weapon buff from another shaman's Windfury or Flametongue Totem, nil without
 	// one. A shaman turns it off while their own totem's buff takes the slot.
 	RaidTotemWeaponBuff *Aura
+	// The main hand's totem slot under cast weapon totems (totem_weapon_buffs.go).
+	totemWeaponSlot
+	// The player's own raid buffs (Player.raid_buffs), nil when the raid's apply.
+	ownRaidBuffs *proto.RaidBuffs
 	// The Night Elf's Shadowmeld under Forever (registerShadowmeld), nil for other races.
 	Shadowmeld     *Spell
 	ShadowmeldAura *Aura
@@ -188,6 +192,7 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 	if player.Consumes != nil {
 		character.Consumes = player.Consumes
 	}
+	character.ownRaidBuffs = player.RaidBuffs
 
 	character.createIsbConfig(player)
 	character.createStormstrikeConfig(player)
@@ -566,6 +571,7 @@ func (character *Character) reset(sim *Simulation, agent Agent) {
 	character.Unit.reset(sim, agent)
 	character.majorCooldownManager.reset(sim)
 	character.ItemSwap.reset(sim)
+	character.totemWeaponSlot.reset()
 	character.CurrentTarget = character.defaultTarget
 
 	agent.Reset(sim)

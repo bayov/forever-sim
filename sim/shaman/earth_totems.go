@@ -51,13 +51,20 @@ func (shaman *Shaman) newStrengthOfEarthTotemSpellConfig(rank int) core.SpellCon
 		// A lower rank than our level's best gives its own, smaller buff.
 		buffAura = core.StrengthOfEarthTotemRankAura(&shaman.Unit, rank)
 	}
+	// It reaches the raid's players.
+	receivers := shaman.newTotemBuffReceivers(false, func(char *core.Character) *core.Aura {
+		if rank < top {
+			return core.StrengthOfEarthTotemRankAura(&char.Unit, rank)
+		}
+		return ownTotemAura(core.StrengthOfEarthTotemAura(&char.Unit, 1))
+	})
 
 	spell := shaman.newTotemSpellConfig(manaCost, spellId)
 	spell.RequiredLevel = level
 	spell.Rank = rank
 	spell.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
-		shaman.placeTotem(sim, EarthTotem, spell, duration, endTotemBuff(buffAura))
-		buffAura.Activate(sim)
+		shaman.placeTotem(sim, EarthTotem, spell, duration, shaman.endHeldTotemBuff(buffAura, receivers))
+		shaman.holdTotemBuff(sim, EarthTotem, buffAura, receivers)
 		shaman.setTotemAuraReach(EarthTotem, buffAura)
 	}
 	return spell

@@ -775,7 +775,6 @@ A role is one thing the raid can have or not, with the ways it can be covered:
 | Blessings | Kings, Might, Wisdom per class, from the paladins present (placeholders or Ret) |
 | Earth, air, water and fire totems | each shaman's choice per element (placeholders, Enhancement, Elemental) |
 | Packages (Mana Spring, Mana Tide) | from the shamans present; which party gets each (see [Groups](#groups)) |
-| Hunter's Mark | any hunter; none |
 | Moonkin Aura | a Balance druid; none |
 | Leader of the Pack | a Feral druid (cat or tank); none |
 | Trueshot Aura | a Marksmanship hunter; none |
@@ -783,6 +782,10 @@ A role is one thing the raid can have or not, with the ways it can be covered:
 | Gift of the Wild | a Feral tank; a Restoration druid; any DPS druid; none |
 | Prayer of Spirit | a priest (placeholder or Shadow); none |
 | Power Infusion, Innervate | from the placeholders that have them; only "who" is chosen |
+
+**Hunter's Mark isn't a role.** Only hunters gain from it (ranged attack power), each hunter marks for
+itself and the strongest counts, so it's the same for everyone whether another hunter is there or not.
+The shared mark (Survival gains 2 to 4 from a stronger one) is left to the raid sims.
 
 Roles are coupled through their providers:
 
@@ -857,9 +860,12 @@ For each signature:
      (step 4), so a Balance druid never dominates a build that fills a camps-on set without Moonkin Aura.
    - Only the builds no other build dominates fill slots, at a margin of 1.5 DPS, since mana effects
      aren't additive.
-   - It's recomputed for each scenario (faction, camps, length, boss). A recount on the report's
-     ablations at 180 seconds kept 6 of the 37 builds: Beast Mastery, Lone Wolf, Marksmanship, fire,
-     frostfire and Demonology. M0 counts it properly.
+   - It's recomputed for each scenario (faction, camps, length, boss). M0's count on the report's
+     ablations kept 6 of the 37 builds (`docs/raid_sim_m0.md`). The search's own role sims keep more,
+     since they price every role at its real cost: 9 of 37 for 10 and 20 players, Horde, camps off (Beast
+     Mastery, Lone Wolf, Marksmanship, fire, frostfire, sub Holy Ret, Shadow, Demonology, fire
+     Destruction).
+   - The best shaman of each package kind fills too, for its party's mana.
    - A provider's duty variants are providers only, never fillers.
 2. **Rank every buff set with a model.** The model is each build's DPS under the full set, less what each
    missing role costs it. Those costs come from the search's own single-player sims: one per build with
@@ -867,20 +873,28 @@ For each signature:
    builds). The report's one-buff-at-a-time runs can't serve. They run 300 iterations at 180 seconds with
    no camps, and they skip the buffs a request never had (no Moonkin Aura on Feral, no totems on the
    warlocks). On top of the costs:
-   - **Armor is computed, not added.** The armor formula (`spell_resistances.go`, K = 5500 at 60, against
-     the boss's 3731) gives each physical build's loss from Sunder and the minor armor slot together. A
-     raid without a warrior tank then values Faerie Fire right: 36 for Beast Mastery, against 64.4 with
-     Sunder up.
-   - **The percent buffs multiply:** Kings, the crit auras, Curse of the Elements.
-   - **Pair terms** where two roles interact: the two air totems, and the mana sources.
+   - **The roles multiply:** each missing role leaves its fraction of the full-set DPS.
+   - **Two pairs are simmed together**, since they don't multiply: Sunder upkeep with the minor armor slot
+     (armor: without a warrior tank, Faerie Fire is worth 36 to Beast Mastery, against 64.4 with Sunder
+     up), and Grace of Air with Windfury Totem.
+   - **The mana sources are simmed as a mix.** A caster loses little from any one while the others
+     suffice, and runs dry without them all, so multiplying them missed by up to 120 DPS. Each mana user
+     is simmed under all 64 mixes of Judgement of Wisdom, Arcane Brilliance, Prayer of Spirit, Blessing of
+     Wisdom and the four packages, and the model reads its mix. That brought the worst miss on a sparse
+     set to about 45.
 
    Every combination of placeholder choices and provider members is scored this way: about 50,000
    arithmetic evaluations, no sims.
 3. **Sim the best sets exactly, until the model can't change the answer.** Each build's DPS under a set
-   comes from a single-player sim, with the set written into its request. Sets are simmed in the model's
-   order, 50 at a time. After each batch, the model's worst miss so far (the largest gap between exact and
-   model) bounds its error, and every set whose model score is within that of the best exact score is
-   simmed next. The model's misses are reported.
+   comes from a single-player sim, with the set written into its request.
+   - Every signature's 4 best sets by the model are filled exactly.
+   - The 3 signatures with the best exact sets go on in the model's order while a set's model score is
+     within the model's worst miss on that signature's simmed sets of its best exact score, up to 200
+     sets.
+   - The model's misses are reported (its worst and mean miss over every set simmed).
+   - An exact fill runs the fill with the model first, sims what it asked for in one batch, and fills
+     again, until it asks for nothing new. It sims only the 3 providers the model makes cheapest for each
+     role, and a best filler only for the packages the raid's parties have.
 4. **Fill a buff set exactly:**
    - The provider members are in. Each one runs its duty variant for what it holds, simmed with that effect
      off in its own settings, so it pays the assignment's cost. In the search, only provider members the
@@ -892,9 +906,13 @@ For each signature:
      - Power Infusion and Innervate targets
    - The remaining DPS slots take the best builds under the set, repeats allowed.
    - A build that gives anything (the "Given by" column: a mage's Arcane Brilliance, a priest's Prayer of
-     Spirit, a druid's Gift of the Wild, a Balance druid's Moonkin Aura, a shaman's totems, a hunter's
-     Hunter's Mark) may only fill a slot when the set already has what it gives. So the comp stays the set
-     it was scored under.
+     Spirit, a druid's Gift of the Wild, a Balance druid's Moonkin Aura, a shaman's totems) may only fill a
+     slot when the set already has what it gives. So the comp stays the set it was scored under.
+   - The provider members are the cheapest cover of the roles the placeholders don't give, found exactly
+     over every provider build and duty variant (a small search over the roles left to cover). Shaman
+     fillers are tried at every count from 0 to the number of parties, each bringing its party's
+     package. A class's blessings are solved by turns, each class taking the ones its members gain most
+     from, until none changes.
    - The Sunder ramp's stack count follows the number of DPS warriors. So the fill is scored twice: under
      the warrior count the set assumed, and under the count the fill came out with, each re-filled under
      its own count. The better one stands.
@@ -1437,9 +1455,10 @@ scores (see [Confirmation](#confirmation)).
 - **The preset table:** each tank and healer preset's spec, talent string and what it gives, from
   [Tank and healer presets](#tank-and-healer-presets). The UI's Holy paladin and Restoration druid strings
   are invalid, so the table's strings are used until the TASKS.md item fixes them.
-- **The protos:** `CompSearchRequest` and `CompSearchResult` (see [The result](#the-result)) in
-  `proto/raid_comp.proto`, imported from `api.proto`, since the makefile generates TypeScript only for
-  api, test and ui (`makefile:93-96`). The M2a viewer reads the result.
+- **The protos:** `CompSearchRequest` and `CompSearchResult` (see [The result](#the-result)), and the comp
+  proto, at the end of `api.proto`. A file of their own can't be imported from `api.proto`, since they
+  use its `Player` and `SimOptions` and `ProgressMetrics` carries the search's result; and the makefile
+  generates TypeScript only for api, test and ui (`makefile:93-96`). The M2a viewer reads the result.
 - **The provider table** as Go, with Judgement of Wisdom and one judgement per paladin.
 - **A single-player resolver:** copy the request, then write in its buffs and debuffs per
   [Writing a role into a request](#the-provider-table), with the provider's own effect left off.
@@ -1486,7 +1505,7 @@ This is what the confirmation raid sims need, on top of B.
 - the missing builds in [Assignments](#assignments), and the per-player assigned-totems option
 - the hunter pet variants, as requests in `tools/dps_report/req/`
 
-**Then** the search's confirmation runs whole raids, through the comp proto (`proto/raid_comp.proto`,
+**Then** the search's confirmation runs whole raids, through the comp proto (at the end of `api.proto`,
 below) and one Go call, `RunComp`, which resolves a comp into a `RaidSimRequest` and runs it.
 
 - **Reads:** [Buffs and debuffs come from the members](#buffs-and-debuffs-come-from-the-members),

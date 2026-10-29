@@ -34,6 +34,7 @@ func NewWardenShaman(character *core.Character, options *proto.Player) *WardenSh
 	warden := &WardenShaman{
 		Shaman: shaman.NewShaman(character, options.TalentsString),
 	}
+	warden.AssignedTotems = options.AssignedTotems
 
 	// Enable Auto Attacks for this spec
 	warden.EnableAutoAttacks(warden, core.AutoAttackOptions{

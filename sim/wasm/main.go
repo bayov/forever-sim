@@ -4,12 +4,14 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"runtime/debug"
 	"strings"
 	"syscall/js"
 
 	"github.com/wowsims/classic/sim"
+	"github.com/wowsims/classic/sim/compsearch"
 	"github.com/wowsims/classic/sim/core"
 	proto "github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/simsignals"
@@ -38,6 +40,7 @@ func main() {
 	js.Global().Set("statWeightsAsync", js.FuncOf(statWeightsAsync))
 	js.Global().Set("bulkSimAsync", js.FuncOf(bulkSimAsync))
 	js.Global().Set("abortById", js.FuncOf(abortById))
+	js.Global().Set("resolveComp", js.FuncOf(resolveComp))
 	js.Global().Call("wasmready")
 	<-c
 }
@@ -393,4 +396,31 @@ func processAsyncProgress(progFunc js.Value, reporter chan *proto.ProgressMetric
 			}
 		}
 	}
+}
+
+// resolveComp is the raid sim page's resolver (docs/raid_sim.md, M1b): a RaidComp into a
+// RaidCompResolution, whose request the page then runs.
+func resolveComp(this js.Value, args []js.Value) (response interface{}) {
+	defer func() {
+		if err := recover(); err != nil {
+			errStr := fmt.Sprintf("%v\nStack Trace:\n%s", err, debug.Stack())
+			outbytes, _ := googleProto.Marshal(&proto.RaidCompResolution{Error: &proto.ErrorOutcome{Message: errStr}})
+			outArray := js.Global().Get("Uint8Array").New(len(outbytes))
+			js.CopyBytesToJS(outArray, outbytes)
+			response = outArray
+		}
+	}()
+	comp := &proto.RaidComp{}
+	if err := googleProto.Unmarshal(getArgsBinary(args[0]), comp); err != nil {
+		log.Printf("Failed to parse request: %s", err)
+		return nil
+	}
+	outbytes, err := googleProto.Marshal(compsearch.Resolve(comp))
+	if err != nil {
+		log.Printf("[ERROR] Failed to marshal result: %s", err.Error())
+		return nil
+	}
+	outArray := js.Global().Get("Uint8Array").New(len(outbytes))
+	js.CopyBytesToJS(outArray, outbytes)
+	return outArray
 }

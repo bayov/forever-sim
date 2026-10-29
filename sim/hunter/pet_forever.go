@@ -370,9 +370,11 @@ func (hp *HunterPet) newForeverDot(abilityType PetAbilityType) *core.Spell {
 }
 
 // Furious Howl (24597 at 56 to 60: 82 and 0.4 a level, 83 at 60 rounded down as Battle Shout's are)
-// gives melee attack power for 60 sec on a 30 sec cooldown to the pet and its allies within 15 yd,
-// which the sim takes to be the hunter's party. Under Forever it shares Battle Shout's slot. The pet
-// howls again when its own buff runs out.
+// gives melee attack power for 60 sec on a 30 sec cooldown to the pet and its allies within 15 yd.
+// It targets the caster's raid (client 70685: implicit target 56), and the raid sim takes every
+// player to be in reach. It has no players-only flag, but it doesn't reach other pets until a
+// launch check says so (docs/raid_sim.md, Hunter pets). Under Forever it shares Battle Shout's
+// slot. The pet howls again when its own buff runs out.
 func (hp *HunterPet) newForeverFuriousHowl() (*core.Spell, func(*core.Simulation, *core.Unit) bool) {
 	rank, ok := foreverPetRankAt(hp.Owner.Level, foreverPetRanks[FuriousHowl])
 	if !ok {
@@ -380,14 +382,14 @@ func (hp *HunterPet) newForeverFuriousHowl() (*core.Spell, func(*core.Simulation
 	}
 	ap := math.Floor(rank.amount(hp.Owner.Level))
 	petAura := core.ForeverFuriousHowlAura(&hp.Unit, rank.spellID, ap)
-	partyAuras := hp.hunterOwner.NewPartyAuraArray(func(unit *core.Unit) *core.Aura {
+	raidAuras := hp.hunterOwner.NewRaidPlayerAuraArray(func(unit *core.Unit) *core.Aura {
 		return core.ForeverFuriousHowlAura(unit, rank.spellID, ap)
 	})
 
 	config := hp.foreverPetSpellConfig(rank, 0, 60, time.Second*30)
 	config.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
 		petAura.Activate(sim)
-		for _, aura := range partyAuras {
+		for _, aura := range raidAuras {
 			if aura != nil {
 				aura.Activate(sim)
 			}

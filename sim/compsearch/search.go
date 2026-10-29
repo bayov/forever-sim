@@ -244,7 +244,7 @@ func multisets(from []*Preset, n int) [][]*Preset {
 }
 
 // toggles are the roles DPS members can bring, with what each one turns on.
-var toggles = []Gift{GiftBattleShout, GiftMinorArmor, GiftCoE, GiftCrusader, GiftMoonkin, GiftLotP, GiftTrueshot,
+var toggles = []Gift{GiftBattleShout, GiftFuriousHowl, GiftSunderTank, GiftMinorArmor, GiftCoE, GiftCrusader, GiftMoonkin, GiftLotP, GiftTrueshot,
 	GiftAB, GiftGotW, GiftPoS | GiftFort, GiftSoE | GiftWF}
 
 // Plans is every buff set a raid can have (docs/raid_sim.md, The search, step 2).
@@ -348,6 +348,7 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 		if v, ok := b.Vs[mob]; ok && mob != proto.MobType_MobTypeUnknown {
 			cands = append(cands, v)
 		}
+		cands = append(cands, b.Pets...)
 	}
 	var modelBuilds []*Build
 	modelBuilds = append(modelBuilds, cands...)
@@ -627,14 +628,90 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 	best = contenders[0]
 	report("done", best)
 
+	// The confirmation (docs/raid_sim.md, Confirmation): every distinct buff set near the top raid-simmed,
+	// paired on one seed; the top 2 again at more iterations on a fresh seed range. The raid sims rank
+	// the confirmed comps.
+	type confirmed struct {
+		dps, se float64
+	}
+	conf := map[*Comp]confirmed{}
+	if req.Confirm {
+		report("confirmation", best)
+		seenSet := map[string]bool{}
+		var sets []*Comp
+		for _, c := range contenders {
+			k := c.Plan.Key() + comboKey(c.Raid.Combo)
+			if seenSet[k] {
+				continue
+			}
+			seenSet[k] = true
+			if c.Score >= best.Score-0.001*best.Score-2.5*math.Hypot(best.SE, c.SE) || len(sets) < 2 {
+				sets = append(sets, c)
+			}
+		}
+		for _, c := range sets {
+			d, se, err := sc.confirm(c, req.ConfirmIterations, sc.Seed)
+			if err != nil {
+				return nil, err
+			}
+			conf[c] = confirmed{d, se}
+		}
+		sort.SliceStable(sets, func(a, b int) bool { return conf[sets[a]].dps > conf[sets[b]].dps })
+		fresh := sc.Seed + int64(req.ConfirmIterations) + 1_000_003
+		for i := 0; i < 2 && i < len(sets); i++ {
+			d, se, err := sc.confirm(sets[i], req.ConfirmTopIterations, fresh)
+			if err != nil {
+				return nil, err
+			}
+			conf[sets[i]] = confirmed{d, se}
+		}
+		sort.SliceStable(contenders, func(a, b int) bool {
+			ca, oka := conf[contenders[a]]
+			cb, okb := conf[contenders[b]]
+			if oka != okb {
+				return oka
+			}
+			if oka {
+				return ca.dps > cb.dps
+			}
+			return contenders[a].Score > contenders[b].Score
+		})
+		best = contenders[0]
+		for _, c := range sets {
+			if gap := conf[c].dps - c.Score; math.Abs(gap) > 3*math.Hypot(conf[c].se, c.SE) {
+				out.Notes = append(out.Notes, fmt.Sprintf("the raid sim of %s differs from its score by %+.1f, more than noise", c.Describe(), gap))
+			}
+		}
+	}
+
 	// The result.
 	for i, c := range contenders {
 		if i >= 5 {
 			break
 		}
-		out.Comps = append(out.Comps, sc.compProto(c, best, model))
+		cp := sc.compProto(c, best, model)
+		if x, ok := conf[c]; ok {
+			cp.Confirmed, cp.RaidSimDps, cp.RaidSimSe = true, x.dps, x.se
+			if b, okb := conf[best]; okb {
+				cp.Gap, cp.GapSe = b.dps-x.dps, math.Hypot(b.se, x.se)
+			}
+		}
+		out.Comps = append(out.Comps, cp)
 	}
-	out.TieSet = int32(tieSet(contenders, best))
+	if len(conf) > 0 {
+		n := 0
+		b := conf[best]
+		for _, c := range contenders {
+			x, ok := conf[c]
+			if !ok || b.dps-x.dps > math.Max(2*math.Hypot(b.se, x.se), 0.001*b.dps) {
+				break
+			}
+			n++
+		}
+		out.TieSet = int32(max(1, n))
+	} else {
+		out.TieSet = int32(tieSet(contenders, best))
+	}
 	for i, cb := range cbs {
 		cr := &proto.CompComboRank{Dps: cb.comp.Score, Gap: best.Score - cb.comp.Score, Signature: cb.sig.String()}
 		for _, p := range cb.raid.Combo {

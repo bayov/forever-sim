@@ -7,6 +7,7 @@ import {
 	APLActionAddComboPoints,
 	APLActionAutocastOtherCooldowns,
 	APLActionCancelAura,
+	APLActionCastAssignedTotem,
 	APLActionCastPaladinPrimarySeal,
 	APLActionCastSpell,
 	APLActionCatOptimalRotationAction,
@@ -680,6 +681,15 @@ const actionKindFactories: { [f in NonNullable<APLActionKind>]: ActionKindConfig
 				labelTooltip: 'Yards from the totem to stop at.',
 			}),
 		],
+	}),
+	['castAssignedTotem']: inputBuilder({
+		label: 'Cast Assigned Totem',
+		submenu: ['Shaman'],
+		shortDescription:
+			'Casts the totem of this element the raid sim assigned you, at its highest rank. Without one assigned there it never casts, so two shamans can share one rotation and drop different totems.',
+		includeIf: (player: Player<any>, _isPrepull: boolean) => player.getClass() === Class.ClassShaman,
+		newValue: () => APLActionCastAssignedTotem.create({}),
+		fields: [AplValues.totemTypeFieldConfig('totemType')],
 	}),
 	['levelingLookForMob']: inputBuilder({
 		label: 'Look For Mob (Leveling)',

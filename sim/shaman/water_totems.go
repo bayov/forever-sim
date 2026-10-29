@@ -171,8 +171,8 @@ func (shaman *Shaman) newManaSpringTotemSpellConfig(rank int) core.SpellConfig {
 	manaCost := ManaSpringTotemManaCost[rank]
 	level := ManaSpringTotemLevel[rank]
 
-	// The totem gives its mana to the shaman every 2 sec. Restorative Totems adds 5% per
-	// point under Forever. The raid buff in buffs.go stays for other players' totems.
+	// The totem gives its mana to the shaman and the party every 2 sec. Restorative Totems adds
+	// 5% per point under Forever. The raid buff in buffs.go is the given form, a plain MP5.
 	manaRestore := float64(ManaSpringTotemManaRestore[rank]) * (1 + 0.05*float64(shaman.Talents.RestorativeTotems))
 
 	// The ticks get their own tag, because the totem's cast cost is already reported under
@@ -180,22 +180,18 @@ func (shaman *Shaman) newManaSpringTotemSpellConfig(rank int) core.SpellConfig {
 	// single threaded one did not match.
 	manaMetrics := shaman.NewManaMetrics(core.ActionID{SpellID: spellId, Tag: 1})
 
-	var tick *core.PendingAction
-	aura := shaman.RegisterAura(core.Aura{
-		Label:    fmt.Sprintf("Mana Spring Totem (Rank %d)", rank),
-		ActionID: core.ActionID{SpellID: spellId},
-		Duration: time.Minute * 5, // Forever totems last 5 min, Classic 1
-		OnGain: func(_ *core.Aura, sim *core.Simulation) {
-			tick = core.StartPeriodicAction(sim, core.PeriodicActionOptions{
-				Period: time.Second * 2,
-				OnAction: func(sim *core.Simulation) {
-					shaman.AddMana(sim, manaRestore, manaMetrics)
-				},
-			})
-		},
-		OnExpire: func(_ *core.Aura, sim *core.Simulation) {
-			tick.Cancel(sim)
-		},
+	aura := manaSpringTotemAura(&shaman.Character, rank, manaRestore, manaMetrics)
+	// It reaches our party's players with mana. Every shaman's Mana Spring of this rank shares
+	// one aura on a receiver, so two don't stack, and the first one's ticks count: a shaman
+	// receiver's own, or else the first shaman's to build it.
+	receivers := shaman.newTotemBuffReceivers(true, func(char *core.Character) *core.Aura {
+		if !char.HasManaBar() {
+			return nil
+		}
+		if shared := char.GetAura(fmt.Sprintf("Mana Spring Totem (Rank %d)", rank)); shared != nil {
+			return shared
+		}
+		return manaSpringTotemAura(char, rank, manaRestore, char.NewManaMetrics(core.ActionID{SpellID: spellId, Tag: 1}))
 	})
 
 	spell := shaman.newTotemSpellConfig(manaCost, spellId)
@@ -203,11 +199,32 @@ func (shaman *Shaman) newManaSpringTotemSpellConfig(rank int) core.SpellConfig {
 	spell.Rank = rank
 	spell.ApplyEffects = func(sim *core.Simulation, _ *core.Unit, spell *core.Spell) {
 		// The ticks start over from the drop.
-		shaman.placeTotem(sim, WaterTotem, spell, aura.Duration, endTotemBuff(aura))
-		aura.Activate(sim)
+		shaman.placeTotem(sim, WaterTotem, spell, aura.Duration, shaman.endHeldTotemBuff(aura, receivers))
+		shaman.holdTotemBuff(sim, WaterTotem, aura, receivers)
 		shaman.setTotemAuraReach(WaterTotem, aura)
 	}
 	return spell
+}
+
+// manaSpringTotemAura gives the character the totem's mana every 2 sec while it's up.
+func manaSpringTotemAura(char *core.Character, rank int, manaRestore float64, manaMetrics *core.ResourceMetrics) *core.Aura {
+	var tick *core.PendingAction
+	return char.RegisterAura(core.Aura{
+		Label:    fmt.Sprintf("Mana Spring Totem (Rank %d)", rank),
+		ActionID: core.ActionID{SpellID: ManaSpringTotemSpellId[rank]},
+		Duration: time.Minute * 5, // Forever totems last 5 min, Classic 1
+		OnGain: func(_ *core.Aura, sim *core.Simulation) {
+			tick = core.StartPeriodicAction(sim, core.PeriodicActionOptions{
+				Period: time.Second * 2,
+				OnAction: func(sim *core.Simulation) {
+					char.AddMana(sim, manaRestore, manaMetrics)
+				},
+			})
+		},
+		OnExpire: func(_ *core.Aura, sim *core.Simulation) {
+			tick.Cancel(sim)
+		},
+	})
 }
 
 const ManaTideTotemRanks = 4

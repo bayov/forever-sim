@@ -410,6 +410,7 @@ const ACTION_KIND_ICONS: Record<string, string> = {
 	levelingRest: 'fa-utensils',
 	levelingBandage: 'fa-bandage',
 	shamanWalkToTotem: 'fa-monument',
+	castAssignedTotem: 'fa-monument',
 };
 
 class HidePicker extends Input<Player<any>, boolean> {

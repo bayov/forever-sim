@@ -53,3 +53,4 @@ wowsimsod*.h
 .vscode/launch.json
 __pycache__/
 /rotopt
+.claude/worktrees/
