@@ -22,7 +22,7 @@ type Field struct {
 }
 
 func rb(req *proto.RaidSimRequest) *proto.RaidBuffs { return req.Raid.Buffs }
-func db(req *proto.RaidSimRequest) *proto.Debuffs  { return req.Raid.Debuffs }
+func db(req *proto.RaidSimRequest) *proto.Debuffs   { return req.Raid.Debuffs }
 func ib(req *proto.RaidSimRequest) *proto.IndividualBuffs {
 	return req.Raid.Parties[0].Players[0].Buffs
 }

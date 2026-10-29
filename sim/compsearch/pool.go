@@ -34,11 +34,11 @@ type Build struct {
 	Req       *proto.RaidSimRequest
 
 	// Filled in by the pool.
-	Base   *Build                  // self for a base build
-	Duties map[proto.Duty]*Build   // a base build's duty variants
-	Gives  Gift                    // what it gives the raid without a duty
-	Pkg    proto.RaidPackage       // the party package a shaman gives
-	Casts  Gift                    // what its own rotation casts on itself (left off its own request)
+	Base   *Build                   // self for a base build
+	Duties map[proto.Duty]*Build    // a base build's duty variants
+	Gives  Gift                     // what it gives the raid without a duty
+	Pkg    proto.RaidPackage        // the party package a shaman gives
+	Casts  Gift                     // what its own rotation casts on itself (left off its own request)
 	Vs     map[proto.MobType]*Build // a base build's encounter variants
 }
 

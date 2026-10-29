@@ -28,10 +28,10 @@ const (
 	GiftTrueshot
 	GiftAB
 	GiftGotW
-	GiftPoS  // Prayer of Spirit (Divine Spirit)
-	GiftFort // Prayer of Fortitude
+	GiftPoS      // Prayer of Spirit (Divine Spirit)
+	GiftFort     // Prayer of Fortitude
 	GiftBlessing // a paladin: one Greater Blessing for each class
-	numGifts = iota
+	numGifts     = iota
 )
 
 var giftNames = []string{"Battle Shout", "Sunder upkeep", "Minor armor slot", "Curse of the Elements",
