@@ -640,6 +640,10 @@ body.rs-dropping .raid-sim-page .sim-main::after {
 
 	.rs-palette-label {
 		flex: 0 0 5.5rem;
+
+		@include media-breakpoint-down(md) {
+			flex-basis: auto;
+		}
 		color: var(--text-muted-color);
 		font-size: 0.85rem;
 		padding-top: 0.2rem;
@@ -697,7 +701,7 @@ body.rs-dropping .raid-sim-page .sim-main::after {
 
 	.rs-assignment-controls {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(10.5rem, 1fr));
 		gap: 0 var(--spacer-2);
 
 		.rs-field {
@@ -769,4 +773,14 @@ body.rs-dropping .raid-sim-page .sim-main::after {
 
 .rs-member .rs-member-top .rs-member-label {
 	white-space: normal;
+}
+
+// The page has no importers or exporters: a search's result is its JSON, opened in Search result.
+.raid-sim-page .sim-header .import-export {
+	display: none !important;
+}
+
+.rs-check .form-check-label {
+	font-size: var(--content-font-size, 0.875rem);
+	font-weight: normal;
 }

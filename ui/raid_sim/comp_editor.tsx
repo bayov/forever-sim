@@ -672,7 +672,9 @@ export class CompEditor {
 			rows.push(this.assignmentRow(member, cell, 'Greater Blessings for each class', controls));
 		});
 
-		// Each placeholder shaman: a totem for each element. A DPS shaman's rotation drops fixed totems.
+		// Each placeholder shaman: a totem for each element. A DPS shaman's rotation drops fixed totems. The
+		// resolver takes a shaman's totems set by hand as all it drops, so an element left on Auto then gets
+		// its usual totem (see buildComp).
 		members
 			.filter(m => m.member.preset && presetInfo(m.member.preset)?.shaman)
 			.forEach(({ member, cell }) => {
@@ -688,6 +690,7 @@ export class CompEditor {
 									),
 								},
 								...totems.map(t => ({ value: `${t}`, label: totemName(t) })),
+								{ value: `${RaidTotem.RaidTotemNone}`, label: 'none' },
 							],
 							h.totems[member.id]?.[element] !== undefined ? `${h.totems[member.id]![element]}` : '',
 							v => {
@@ -702,13 +705,11 @@ export class CompEditor {
 				rows.push(this.assignmentRow(member, cell, 'Totems', controls));
 			});
 
-		// Duties: a DPS member with duty variants, and a druid placeholder's Faerie Fire.
+		// Duties: a DPS member with duty variants. A placeholder gives its own (a druid's Faerie Fire, the
+		// warrior tank's Sunder Armor) without one.
 		members.forEach(({ member, cell }) => {
-			const duties = member.preset
-				? presetInfo(member.preset)?.faerieFire
-					? [Duty.DutyFaerieFire]
-					: []
-				: (this.buildOf(member)?.duties ?? []).map(d => d.duty!).filter(d => d !== undefined);
+			if (member.preset) return;
+			const duties = (this.buildOf(member)?.duties ?? []).map(d => d.duty!).filter(d => d !== undefined);
 			if (!duties.length) return;
 			const current = h.duties[member.id];
 			rows.push(
@@ -719,7 +720,6 @@ export class CompEditor {
 							[
 								{ value: '', label: this.autoLabel(a => a.holder == member.id && a.job.oneofKind == 'duty') },
 								...duties.map(d => ({ value: `${d}`, label: dutyName(d) })),
-								{ value: `${Duty.DutyNone}`, label: 'none' },
 							],
 							current !== undefined ? `${current}` : '',
 							v => {
@@ -737,16 +737,24 @@ export class CompEditor {
 		// tank with it switched on). Only who gets them is chosen.
 		const dpsMembers = members.filter(m => !m.member.preset);
 		const manaUsers = dpsMembers.filter(m => ![Class.ClassWarrior, Class.ClassRogue].includes(this.classOf(m.member)));
+		// The resolver's automatic Power Infusions and Innervates name their target, so the n-th holder's
+		// is the n-th one.
+		const piHolders = members.filter(m => m.member.preset && presetInfo(m.member.preset)?.powerInfusion).map(m => m.member.id);
+		const innervateHolders = members
+			.filter(m => m.member.preset && (presetInfo(m.member.preset)?.innervate || m.member.presetInnervate))
+			.map(m => m.member.id);
 		const cooldown = (holder: { member: Member; cell: number }, pi: boolean) => {
 			const map = pi ? h.powerInfusion : h.innervate;
 			const targets = pi ? dpsMembers : manaUsers;
+			const nth = (pi ? piHolders : innervateHolders).indexOf(holder.member.id);
+			const resolved = this.lastRun?.resolution.assignments.filter(a => a.job.oneofKind == 'cooldown' && a.job.cooldown.powerInfusion == pi)[nth];
 			return field(
 				pi ? 'Power Infusion' : 'Innervate',
 				select(
 					[
 						{
 							value: '',
-							label: this.autoLabel(a => a.holder == holder.member.id && a.job.oneofKind == 'cooldown' && a.job.cooldown.powerInfusion == pi),
+							label: this.autoLabel(a => a === resolved),
 						},
 						...targets.map(t => ({ value: `${t.member.id}`, label: this.memberShortName(t.member, t.cell) })),
 					],
@@ -876,7 +884,12 @@ export class CompEditor {
 				member.preset = m.preset;
 				if (presetInfo(m.preset)?.paladin && m.judgement != PaladinJudgement.PaladinJudgementNone) state.hand.judgements[member.id] = m.judgement;
 				if (m.totems.length) {
-					const totems: Partial<Record<TotemElement, RaidTotem>> = {};
+					const totems: Partial<Record<TotemElement, RaidTotem>> = {
+						earth: RaidTotem.RaidTotemNone,
+						air: RaidTotem.RaidTotemNone,
+						water: RaidTotem.RaidTotemNone,
+						fire: RaidTotem.RaidTotemNone,
+					};
 					m.totems.forEach(t => {
 						const e = totemElement(t);
 						if (e) totems[e] = t;
@@ -888,7 +901,6 @@ export class CompEditor {
 				const found = this.data?.byId.get(m.buildId);
 				member.buildId = found?.build.id ?? m.buildId;
 				if (m.duties.length) state.hand.duties[member.id] = m.duties[0];
-				else if (found?.build.duties.length) state.hand.duties[member.id] = Duty.DutyNone;
 			}
 			state.cells[cell] = member;
 			placed.push({ member, result: m });
@@ -1018,9 +1030,22 @@ export class CompEditor {
 			),
 		);
 		Object.entries(h.judgements).forEach(([holder, judgement]) => hand(parseInt(holder), { oneofKind: 'judgement', judgement }));
-		Object.entries(h.totems).forEach(([holder, byElement]) =>
-			Object.values(byElement).forEach(totem => hand(parseInt(holder), { oneofKind: 'totem', totem: { totem: totem as RaidTotem } })),
-		);
+		// A shaman's totems set by hand are all it drops, so the elements still on Auto get their usual
+		// totem: the one the last run resolved, else Strength of Earth, Grace of Air, Mana Spring and
+		// Flametongue.
+		Object.entries(h.totems).forEach(([holder, byElement]) => {
+			if (!Object.keys(byElement).length) return;
+			TOTEM_ELEMENTS.forEach(({ element, totems }) => {
+				let totem = byElement[element];
+				if (totem === undefined) {
+					const resolved = this.lastRun?.resolution.assignments.find(
+						a => a.holder == parseInt(holder) && a.job.oneofKind == 'totem' && totemElement(a.job.totem.totem) == element,
+					);
+					totem = resolved?.job.oneofKind == 'totem' ? resolved.job.totem.totem : totems[0];
+				}
+				if (totem != RaidTotem.RaidTotemNone) hand(parseInt(holder), { oneofKind: 'totem', totem: { totem } });
+			});
+		});
 		Object.entries(h.duties).forEach(([holder, duty]) => hand(parseInt(holder), { oneofKind: 'duty', duty }));
 		Object.entries(h.powerInfusion).forEach(
 			([holder, target]) => has(target) && hand(parseInt(holder), { oneofKind: 'cooldown', cooldown: { powerInfusion: true, target } }),
