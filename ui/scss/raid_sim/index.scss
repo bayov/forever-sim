@@ -1,0 +1,5 @@
+// The raid sim page (ui/raid_sim): the sim UI's styles, the old raid page's slots, and the page's own.
+@import '../core/individual_sim_ui/index';
+@import '../sims/raid/player';
+@import '../sims/raid/raid_picker';
+@import './raid_sim';

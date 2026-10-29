@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Raid Sim - WoWSims Forever</title>
+		<meta charset="utf-8" />
+
+		<link rel="icon" href="/forever/assets/favicon_io/favicon.ico" type="image/x-icon" />
+
+		<meta name="description" content="The best raid comp for World of Warcraft® Forever, and whole raids simmed together." />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+		<link rel="preload" href="/forever/assets/database/db.json" as="fetch" crossorigin="anonymous" />
+		<link rel="stylesheet" href="../scss/raid_sim/index.scss" />
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+			integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg=="
+			crossorigin="anonymous"
+			referrerpolicy="no-referrer" />
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+		<script
+			src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.31.3/js/jquery.tablesorter.min.js"
+			integrity="sha512-qzgd5cYSZcosqpzpn7zF2ZId8f/8CHmFKZ8j7mU4OUXTNRd5g+ZHBPsgKEwoqxCtdQvExE5LprwwPAgoicguNg=="
+			crossorigin="anonymous"
+			referrerpolicy="no-referrer"></script>
+
+		<!-- Load the top-level ui/index.ts -->
+		<script src="../index.ts" type="module"></script>
+		<script src="./index.ts" type="module"></script>
+	</head>
+
+	<body id="bootstrap-overrides">
+		<!-- Load wowhead scripts after done loading everything else -->
+		<script>
+			const whTooltips = { colorLinks: true };
+		</script>
+		<script src="https://wow.zamimg.com/js/tooltips.js"></script>
+	</body>
+</html>

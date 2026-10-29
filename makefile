@@ -9,6 +9,8 @@ GOROOT := $(shell go env GOROOT)
 UI_SRC := $(shell find ui -name '*.ts' -o -name '*.tsx' -o -name '*.scss' -o -name '*.html')
 # The DPS Report also has plain JavaScript and its datasets as JSON.
 DPS_REPORT_SRC := $(shell find ui/dps_report -type f)
+# The raid sim page has its members as a JSON data file (tools/raid_sim_data).
+RAID_SIM_SRC := $(shell find ui/raid_sim -type f)
 HTML_INDECIES := ui/balance_druid/index.html \
 				 ui/feral_druid/index.html \
 				 ui/feral_tank_druid/index.html \
@@ -40,6 +42,7 @@ $(OUT_DIR)/.dirstamp: \
 $(OUT_DIR)/bundle/.dirstamp: \
   $(UI_SRC) \
   $(DPS_REPORT_SRC) \
+  $(RAID_SIM_SRC) \
   $(HTML_INDECIES) \
   vite.config.mts \
   vite.build-workers.ts \
