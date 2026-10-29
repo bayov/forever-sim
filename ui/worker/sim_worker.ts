@@ -52,6 +52,7 @@ globalThis.wasmready = function () {
 		abortById: abortById,
 		resolveComp: typeof resolveComp === 'function' ? resolveComp : missing('resolveComp'),
 		compSearchAsync: missing('compSearchAsync'),
+		compValues: missing('compValues'),
 	}).ready(true);
 };
 

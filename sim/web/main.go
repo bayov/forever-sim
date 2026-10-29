@@ -109,6 +109,9 @@ var handlers = map[string]apiHandler{
 	"/computeStats": {msg: func() googleProto.Message { return &proto.ComputeStatsRequest{} }, handle: func(msg googleProto.Message) googleProto.Message {
 		return core.ComputeStats(msg.(*proto.ComputeStatsRequest))
 	}},
+	"/compValues": {msg: func() googleProto.Message { return &proto.RaidComp{} }, handle: func(msg googleProto.Message) googleProto.Message {
+		return compsearch.CompValues(msg.(*proto.RaidComp))
+	}},
 	"/resolveComp": {msg: func() googleProto.Message { return &proto.RaidComp{} }, handle: func(msg googleProto.Message) googleProto.Message {
 		return compsearch.Resolve(msg.(*proto.RaidComp))
 	}},

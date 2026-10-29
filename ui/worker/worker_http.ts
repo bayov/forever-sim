@@ -90,5 +90,6 @@ export const setupHttpWorker = (baseURL: string) => {
 		abortById: syncHandler,
 		resolveComp: syncHandlerOrEmpty,
 		compSearchAsync: asyncHandler,
+		compValues: syncHandlerOrEmpty,
 	}).ready(false);
 };

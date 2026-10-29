@@ -9,6 +9,7 @@ import {
 	CompSearchRequest,
 	CompSearchResult,
 	ComputeStatsRequest,
+	CompValuesResult,
 	ErrorOutcome,
 	ErrorOutcomeType,
 	Raid as RaidProto,
@@ -354,6 +355,12 @@ export class Sim {
 	async resolveComp(comp: RaidComp): Promise<RaidCompResolution> {
 		await this.waitForInit();
 		return this.workerPool.resolveComp(comp);
+	}
+
+	// A hand-built raid's member values (docs/raid_sim.md, Member value), from the native server.
+	async compValues(comp: RaidComp): Promise<CompValuesResult> {
+		await this.waitForInit();
+		return this.workerPool.compValues(comp);
 	}
 
 	// The comp search, through the native server. abortType(RequestTypes.CompSearch) stops it, and an aborted

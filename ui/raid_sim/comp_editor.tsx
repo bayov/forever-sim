@@ -116,6 +116,8 @@ export class CompEditor {
 	private readonly runStatus = (<div className="rs-run-status" />) as HTMLElement;
 	private readonly resultsHost = (<div className="rs-run-results" />) as HTMLElement;
 	private readonly runButton: HTMLButtonElement;
+	private readonly valuesButton: HTMLButtonElement;
+	private readonly valuesHost = (<div className="rs-member-values" />) as HTMLElement;
 	private drag: DragSource | null = null;
 	// The palette entry picked with a click, placed by clicking a slot (touch screens have no drag and drop).
 	private picked: Omit<Member, 'id'> | null = null;
@@ -132,6 +134,16 @@ export class CompEditor {
 			</button>
 		) as HTMLButtonElement;
 		this.runButton.addEventListener('click', () => this.run());
+		this.valuesButton = (
+			<button
+				className="btn btn-outline-primary rs-values-button"
+				type="button"
+				title="Each member’s contribution, replacement margin and duty cost, from the native server’s single-player sims">
+				<i className="fas fa-calculator me-1" />
+				Member values
+			</button>
+		) as HTMLButtonElement;
+		this.valuesButton.addEventListener('click', () => this.memberValues());
 
 		this.rootElem = (
 			<div className="rs-editor">
@@ -156,8 +168,10 @@ export class CompEditor {
 				</div>
 				<div className="rs-run-bar">
 					{this.runButton}
+					{this.valuesButton}
 					{this.runStatus}
 				</div>
+				{this.valuesHost}
 				{this.resultsHost}
 			</div>
 		) as HTMLElement;
@@ -1132,6 +1146,64 @@ export class CompEditor {
 		} finally {
 			this.running = false;
 			this.setRunning(false);
+		}
+	}
+
+	// A hand-built raid's member values (docs/raid_sim.md, Member value): the native server runs the
+	// single-player sims its cache lacks.
+	async memberValues() {
+		if (this.running) return;
+		if (!this.data) {
+			this.setStatus('The report’s builds haven’t loaded yet.', true);
+			return;
+		}
+		this.valuesButton.disabled = true;
+		try {
+			this.setStatus('Simming the member values (the native server sims what its cache lacks)…');
+			const comp = await this.buildComp();
+			const out = await this.simUI.sim.compValues(comp);
+			if (out.error) {
+				this.setStatus(`No member values: ${out.error.message}`, true);
+				this.valuesHost.replaceChildren();
+				return;
+			}
+			const rows = out.memberValues.map(mv => [
+				mv.buildId,
+				String(mv.slots.length),
+				fmt(mv.ownDps),
+				fmt(mv.contribution),
+				fmt(mv.contribution - mv.ownDps),
+				fmt(mv.replacementMargin),
+				mv.bestReplacement,
+				mv.dutyCost ? fmt(mv.dutyCost) : '',
+				`${fmtSigned(mv.reportDifference)}${mv.reportDifferenceParts.length ? ` (${mv.reportDifferenceParts.join('; ')})` : ''}`,
+			]);
+			this.valuesHost.replaceChildren(
+				section(
+					'Member values',
+					table(
+						[
+							'Member',
+							{ label: 'Slots', numeric: true },
+							{ label: 'Own DPS', numeric: true },
+							{ label: 'Contribution', numeric: true, tooltip: 'Raid DPS less raid DPS without the member, re-resolved' },
+							{ label: 'Adds to others', numeric: true },
+							{ label: 'Replacement margin', numeric: true, tooltip: 'Raid DPS less the best raid DPS with another build in that slot' },
+							'Best replacement',
+							{ label: 'Duty cost', numeric: true },
+							'vs the report',
+						],
+						rows,
+					),
+					{ note: `The members’ single-player sum under this comp’s set: ${fmt(out.score)} (±${fmt(1.96 * out.se)}).` },
+				),
+			);
+			this.setStatus('Member values done.');
+		} catch (e) {
+			console.error(e);
+			this.setStatus(`Member values failed: ${e instanceof Error ? e.message : e}`, true);
+		} finally {
+			this.valuesButton.disabled = false;
 		}
 	}
 

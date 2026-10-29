@@ -988,6 +988,8 @@ message CompMemberValue {
 	repeated string report_difference_parts = 7;
 	string build_id = 8;
 	int32 count = 9;             // identical members sharing this value
+	double duty_cost = 10;       // its base build's DPS less its DPS on duty, in its seat
+	repeated int32 slots = 11;   // the comp slots it stands for, for a hand-built raid
 }
 
 message CompValueOfAdding {
@@ -1078,4 +1080,13 @@ message RaidCompResolution {
 message RaidCompRunResult {
 	RaidCompResolution resolution = 1;
 	RaidSimResult result = 2;
+}
+
+// A hand-built raid's member values (docs/raid_sim.md, Member value): the native server's /compValues
+// runs the single-player sims the cache lacks.
+message CompValuesResult {
+	repeated CompMemberValue member_values = 1;
+	double score = 2;   // the members' single-player sum under the comp's set
+	double se = 3;
+	ErrorOutcome error = 4;
 }

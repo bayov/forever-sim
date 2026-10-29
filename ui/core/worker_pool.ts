@@ -11,6 +11,7 @@ import {
 	CompSearchResult,
 	ComputeStatsRequest,
 	ComputeStatsResult,
+	CompValuesResult,
 	ProgressMetrics,
 	RaidComp,
 	RaidCompResolution,
@@ -187,6 +188,23 @@ export class WorkerPool {
 			return RaidCompResolution.fromBinary(result);
 		} catch (e) {
 			return RaidCompResolution.create({ error: { message: `The resolver's answer isn't a RaidCompResolution: ${e}` } });
+		}
+	}
+
+	// A hand-built raid's member values, through the native server's /compValues. On WebAssembly, or a
+	// server without it, the result's error says so.
+	async compValues(comp: RaidComp): Promise<CompValuesResult> {
+		if (await this.isWasm()) {
+			return CompValuesResult.create({ error: { message: 'Member values need the native server, which has the report builds and the sim cache.' } });
+		}
+		const result = await this.makeApiCall(SimRequest.compValues, RaidComp.toBinary(comp));
+		if (result.length == 0) {
+			return CompValuesResult.create({ error: { message: 'This build of the native server has no /compValues yet.' } });
+		}
+		try {
+			return CompValuesResult.fromBinary(result);
+		} catch (e) {
+			return CompValuesResult.create({ error: { message: `The answer isn't a CompValuesResult: ${e}` } });
 		}
 	}
 

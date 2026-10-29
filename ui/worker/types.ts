@@ -21,6 +21,8 @@ export enum SimRequest {
 	// streamed like raidSimAsync, and only the native server has it.
 	resolveComp = 'resolveComp',
 	compSearchAsync = 'compSearchAsync',
+	// A hand-built raid's member values, at the native server's /compValues (it needs the report's builds).
+	compValues = 'compValues',
 }
 
 /**

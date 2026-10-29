@@ -139,3 +139,38 @@ func TestCompRoundTrip(t *testing.T) {
 		t.Errorf("the comp changed through JSON")
 	}
 }
+
+// A hand-built raid's member values: every distinct member gets one, with its slots, and a duty holder
+// its duty's cost.
+func TestCompValues(t *testing.T) {
+	if testing.Short() {
+		t.Skip("about 30 s")
+	}
+	p := loadTestPool(t)
+	sim, _ := NewSimmer(p, "")
+	comp := &proto.RaidComp{Size: 5, SimOptions: &proto.SimOptions{Iterations: 60},
+		Encounter: &proto.Encounter{Duration: 90, NaturalFlaskZone: true},
+		Slots: []*proto.CompSlot{phSlot(1, 0, 0, proto.RaidPreset_RaidPresetProtectionWarrior),
+			slotOf(2, 0, 1, p, "mage__fire"), slotOf(3, 0, 2, p, "mage__fire"), slotOf(4, 0, 3, p, "warlock__demonology"),
+			slotOf(5, 0, 4, p, "hunter__beast-mastery")},
+		Assignments: []*proto.Assignment{{Holder: 4, SetByHand: true, Job: &proto.Assignment_Duty{Duty: proto.Duty_DutyCurseOfTheElements}}}}
+	out, err := compValues(p, sim, comp)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if len(out.MemberValues) != 3 || out.Score <= 0 {
+		t.Fatalf("want 3 distinct members, got %d (score %.1f)", len(out.MemberValues), out.Score)
+	}
+	for _, mv := range out.MemberValues {
+		switch mv.BuildId {
+		case "mage__fire":
+			if len(mv.Slots) != 2 {
+				t.Errorf("the two mages share one value: %v", mv.Slots)
+			}
+		case "warlock__demonology-duty-curse":
+			if mv.DutyCost <= 0 || mv.Contribution <= mv.OwnDps {
+				t.Errorf("the curse warlock: duty cost %.1f, contribution %.1f, own %.1f", mv.DutyCost, mv.Contribution, mv.OwnDps)
+			}
+		}
+	}
+}
