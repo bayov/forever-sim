@@ -99,3 +99,6 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-10-28 19:14 | gear | pass 46 | master dd663e652 | quiet | standards.md change is not a gear rule
 2026-10-28 19:14 | consumables | pass 52 | master dd663e652 | quiet | assumptions_def.py wording only; scan.sh minor-armor expectation stale (3, not 2)
 2026-10-28 19:14 | fairness | pass 14 | master dd663e652 | quiet | all race rows +0.0 vs baseline; top/bottom 1.58x; sweep.py race_override fix left uncommitted
+2026-10-29 00:51 | consumables | pass 53 | master dcd927490 | quiet | Windfury Totem refactor only; client 70685 no consumable changes
+2026-10-29 00:51 | mechanics | pass 47 | master dcd927490 | quiet | Windfury/Execute changes are metrics only; client 70685 only Adventurer's Tent
+2026-10-29 00:51 | client_update | pass 5 | master dcd927490 | quiet | 70685 touches no level 60 DPS data (Adventurer's Tent, Camping only)

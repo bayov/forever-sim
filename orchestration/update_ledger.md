@@ -199,6 +199,10 @@ Dev notes: **new post /7** (2026-10-26 20:35, edited 21:09), the pre-launch raci
 | HUN-HF-01 | FC 2026-10-28 hotfix (launch-realm cache) | Aspect of the Hawk ranks 1-5: 15/22/30/38/47 ranged AP (was 20/35/50/70/90); rank 6 (55) not listed | **yes** (BM, LW, MM) | not in 70658 tables; hotfix cache only | landed 2026-10-28 by user ruling (adopt the launch-realm hotfix) | `sim/hunter/aspects.go:46`, `getMaxHawkRank`; finding client_update-20261028-1 |
 | HUN-HF-02 | FC 2026-10-28 hotfix (launch-realm cache) | Trueshot Aura ranks 1-4: 15/22/30/40 ranged AP (was 30/40/50/75); rank 5 (50 in the client) not listed | **yes** (BM, LW, MM) | not in 70658 tables; hotfix cache only | landed 2026-10-28 by user ruling (adopt the launch-realm hotfix) | `sim/core/buffs.go:1748-1751`; finding client_update-20261028-2 |
 
+## Build 1.60.1.70685 (first seen 2026-10-29)
+
+70685: leveling-only against 70658. `table_summary.py 70658 70685`: the Trait* tables, SpellPower, SpellClassOptions, SpellAuraOptions, SkillLineAbility, ItemSparse, SpellItemEnchantment and ChrRaces are identical. The whole diff is two spells: Adventurer's Tent (1325145, the tent item's use spell) turns from a cosmetic tent-appearance summon into a rested-XP tent (effect 1 now "raise rested XP to 20% of a level" for the party nearby, needs a campfire, 1 h category cooldown in new SpellCategory 2607; its ItemEffect row 238896 drops the 15 min item cooldown), and a new helper spell Camping (1328862). No class, racial, talent, enchant or item-stat change. Dev notes: not re-read (forum rate limit again). foreverchanges.pro does not list 70685 yet and has no hotfix newer than the 10-28 one (HUN-HF-01/02). No rows added.
+
 ## Per-class ledgers
 
 Each section below has five parts:

@@ -1,12 +1,22 @@
-# Consumables report, pass 52 (master dd663e6522)
+# Consumables pass 53 report
 
-Quiet. No findings.
+Master dcd927490 (last audited 52ec62e99). Client 70658 -> 70685.
 
-- standards.md: added rule 31 (rotation intent) and a Report 30 sourcing note. No consumable, buff or debuff content.
-- assumptions_def.py: wording-only rewrite of labels, short/desc/src texts. oil_proc_damage, hunter_tsa_hm_rank and every other buff-related setting keep their values (diff checked).
-- scan.sh on master: banned, Revelation, non-synthetic trinket and multi-crit-elixir sections empty. Totems as expected.
-- Latest wago build is 1.60.1.70658 (already recorded); nothing newer.
-- Note: scan.sh's "minor-armor exclusive effects (expect 2)" prints 3 because ForeverDustCloudAura (a pet ability, debuffs.go) also shares MinorArmorReduction. Faerie Fire and Curse of Recklessness still share the slot; the scan expectation is stale, not a bug.
-- Class branches show as ahead of master only through stale copies of shared files; not audited (gotcha 1).
+## Findings
+None.
+
+## Verified
+- Changed files: sim/core/buffs.go, sim/core/totem_weapon_buffs.go. The diff is a metrics/label refactor of the
+  Windfury Totem aura: new WindfuryTotemSpellId {8512, 10613, 10614} (all "Windfury Totem" in the 70685 client),
+  the proc buff is now labelled "Windfury Attack" and the aura reports under the totem spell id. Values are
+  unchanged (AP 95/179/246, 1 sec buff under Forever, main hand only, blocked by Windfury Weapon on the MH).
+- builddiff.py 70658 -> 70685: 0 consumable spell changes; 53 Forever enchants checked, 0 changed.
+- scan.sh on master: banned, Revelation, trinkets and crit-elixir sections empty. Counts match the baseline
+  (raid totems as ruled; Salvation on; Sunder on; MobTypeUnknown default).
+- Class branches: the changes.sh "ahead" lists are stale copies of shared files (gotcha 1); not audited.
+
+## Nit (no finding)
+scan.sh's "minor-armor exclusive effects (expect 2)" now reads 3: the third is Dust Cloud (ForeverDustCloudAura,
+hunter pet), already in debuffs.go, not in this window. The scan's expectation text is stale.
 
 No open items.

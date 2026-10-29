@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "52ec62e99b63f82e84288011e391baab8be7f98e"
+  "master": "dcd92749092615f781a700d8b5dc24b7cd853895"
  },
- "last_pass_at": "2026-10-28T07:32:27Z",
- "client_build": "1.60.1.70658",
- "result": "findings",
- "note": "70658: client-identical to 70634 (39 tables). FC 10-28 launch-realm hotfix: Hawk and TSA ranks halved (findings 20261028-1/-2, FC tier, verify). Dev notes rate-limited.",
- "checked_at": "2026-10-28T19:14:35Z",
- "pass": 4
+ "last_pass_at": "2026-10-29T00:51:11Z",
+ "client_build": "1.60.1.70685",
+ "result": "quiet",
+ "note": "70685: leveling-only vs 70658 (Adventurer's Tent becomes a rested-XP tent, new Camping spell). No DPS change. Dev notes rate-limited; FC has nothing newer than the 10-28 hotfix.",
+ "checked_at": "2026-10-29T00:51:38Z",
+ "pass": 5
 }

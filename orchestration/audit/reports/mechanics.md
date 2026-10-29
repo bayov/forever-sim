@@ -1,27 +1,23 @@
-# Mechanics pass 46 (2026-10-28, master 1274e15b3)
+# Mechanics pass 47 (2026-10-29, master dcd927490)
 
-Range audited: 224b8a4e0..1274e15b3. One code commit: 73cedc9a9 (Hunter: launch realms' 2026-10-28 hotfix for Trueshot Aura and Aspect of the Hawk), touching `sim/core/buffs.go` and `sim/hunter/aspects.go`. Ledger change in the same commit (HUN-HF-01/-02 settled); no `forever-update/*` merge.
+Range audited: 52ec62e99..dcd927490. Two code commits: b2b384c35 (Windfury Totem metrics and labels; `sim/core/buffs.go`, `sim/core/totem_weapon_buffs.go`, `sim/shaman/air_totems.go`) and c282ae5d4 (`sim/warrior/execute.go`). No TASKS.md or update-ledger change, no `forever-update/*` merge.
 
 ## Get current
 
-- Client: newest 1.60 build is still 1.60.1.70658 (`wago.py latest --probe 300`). No re-check needed.
+- Client: 1.60.1.70685 is new (was 70658). `wago.py diff 70658 70685`: only Adventurer's Tent (spell 1325145, item 238896, new SpellCategory 2607) and a new spell Camping (1328862). SpellItemEnchantment, TraitDefinitionEffectPoints and CurvePoint identical. No combat row moved, so every verdict holds; verdicts.md client line updated.
 - Dev notes thread 2360696: still 8 posts; post 7 (edited 2026-10-27 16:47:14) and post 8 (edited 16:46:55) unchanged.
-- Blue posts since 2026-10-28 01:28:41 (Kaivax, Aggrend, Gnedi, Linxy, Brenoch): none.
-- Server hotfixes: `tools/audit/mechanics/hotfixes.py` is still missing from the tree; the wago.tools hotfix API route is gone (404). Not re-read.
+- Blue posts after 2026-10-28 (forum search, Kaivax, Aggrend, Gnedi, Linxy, Brenoch): nothing newer than Kaivax's 01:28 name-list post, already seen in pass 46.
+- Server hotfixes: `tools/audit/mechanics/hotfixes.py` is still missing from the tree; not re-read.
 
-## 73cedc9a9: Trueshot Aura and Aspect of the Hawk
+## Commits
 
-| Item | Client 70658 (tier 1) | Sim now | Verdict |
+| Commit | Change | Mechanic effect | Verdict |
 |---|---|---|---|
-| Trueshot Aura r1-r4 (20905 = r4) | 30 / 40 / 50 / 75 | 15 / 22 / 30 / 40 | Launch-realm hotfix (foreverchanges.pro), adopted by user ruling 2026-10-28. Not a finding. |
-| Trueshot Aura r5 (20906) | 50 | 50 | Matches client. Ranks now monotonic, so `bestLearnedRank` picks the top rank. |
-| Aspect of the Hawk r1-r5 (14321 = r5, bp 90) | 20 / 35 / 50 / 70 / 90 | 15 / 22 / 30 / 38 / 47 | Hotfix, user ruling. Not a finding. |
-| Aspect of the Hawk r6 (14322) | 55, 110 mana, level 58 | 55, 110 mana; L60 casts r6 | Matches client. |
-| Hawk r6 outside Forever | n/a | 110 (was 55 for every env) | Classic value restored; no Forever effect. |
+| b2b384c35 | Raid Windfury Totem aura gets ActionID 8512 / 10613 / 10614 (Era totem spell IDs, rank 3 = 10614); proc AP buff relabelled "Windfury Attack" | None: aura label "Windfury Totem Raid" kept, so its random stream is unchanged; the 1 sec duration lookup follows the new buff label; procs, AP and blocking untouched | Reporting only. Not a finding. |
+| c282ae5d4 | Execute drops `SpellFlagPassiveSpell` | Flag is read by metrics and by Revelation's direct-cast filter (`sim/common/enchant_effects.go:292`), which also requires ProcMaskSpellDamage; Execute is melee, so no proc changes | Reporting only. Not a finding. |
 
-Knock-on: `ForeverTrueshotAuraRank5RAP` / `foreverTrueshotAuraRAP` are read only by the raid Trueshot Aura in buffs.go (ranged AP only, so melee unaffected); every other suite's golden moves only its sheet's ranged AP by -50. Hunter's Mark (debuffs.go, 143) untouched. No DPS sim run: the commit's goldens (BM/MM/LW -1.5% to -1.9%) are the intended effect of the ruling.
+No DPS sim run: neither commit changes a number.
 
 ## Findings
 
-- No new findings. mechanics-20261027-2 (Amplify Curse vs Bane of Agony) stays open; no warlock commit in range.
-- verdicts.md: hunter assumption row updated to the hotfixed curve.
+- No new findings. mechanics-20261027-2 (Amplify Curse vs Bane of Agony) stays open (parked for an in-game test); no warlock commit in range.
