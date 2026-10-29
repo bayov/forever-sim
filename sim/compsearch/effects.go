@@ -6,6 +6,7 @@ import (
 
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/shaman"
 	googleProto "google.golang.org/protobuf/proto"
 )
 
@@ -78,15 +79,23 @@ var dutyGift = map[proto.Duty]Gift{
 func DutyGift(d proto.Duty) Gift { return dutyGift[d] }
 
 // buildGifts says what a build gives the raid without a duty, the party package a shaman brings, and the
-// effects its own rotation casts on itself (which its own request then leaves out). The held auras come
-// from the class hooks, read from a one-player environment.
+// effects its own rotation casts on itself (which its own request then leaves out).
 func buildGifts(b *Build) (gives Gift, pkg proto.RaidPackage, casts Gift) {
-	switch b.Class {
+	return PlayerGifts(player0(b.Req), b.Duty)
+}
+
+// PlayerGifts is buildGifts for a player and the duty it holds. The held auras come from the class hooks,
+// read from a one-player environment, and a shaman's Mana Tide from its talents.
+func PlayerGifts(player *proto.Player, duty proto.Duty) (gives Gift, pkg proto.RaidPackage, casts Gift) {
+	raid := &proto.Raid{Parties: []*proto.Party{{Players: []*proto.Player{googleProto.Clone(player).(*proto.Player)}}}}
+	env, _, _ := core.NewEnvironment(raid, &proto.Encounter{}, proto.Ruleset_RulesetForever, false)
+	agent := env.Raid.Parties[0].Players[0]
+	switch player.Class {
 	case proto.Class_ClassDruid:
 		gives |= GiftGotW
 		// The hook gives Leader of the Pack only in Cat or Bear Form, which a Feral druid takes after
 		// the environment is built.
-		if b.Spec == "Feral" {
+		if player.GetFeralDruid() != nil {
 			gives |= GiftLotP
 		}
 	case proto.Class_ClassPaladin:
@@ -97,46 +106,36 @@ func buildGifts(b *Build) (gives Gift, pkg proto.RaidPackage, casts Gift) {
 		gives |= GiftPoS | GiftFort
 	case proto.Class_ClassShaman:
 		pkg = proto.RaidPackage_RaidPackageManaSpring
-		if strings.Contains(b.ID, "mana-tide") {
+		if sa, ok := agent.(shaman.ShamanAgent); ok && sa.GetShaman().Talents.ManaTideTotem {
 			pkg = proto.RaidPackage_RaidPackageManaSpringTide
 		}
-		if b.Spec == "Enhancement" {
+		if player.GetEnhancementShaman() != nil {
 			// Its rotation drops Strength of Earth, Windfury, Mana Spring and Magma before the pull.
 			gives |= GiftSoE | GiftWF
 			casts |= GiftSoE | GiftWF
 		}
 	}
-	gives |= hookGifts(b)
-	if d := DutyGift(b.Duty); d != 0 {
+	rb := env.Raid.GetRaidBuffs(&proto.RaidBuffs{})
+	if rb.MoonkinAura {
+		gives |= GiftMoonkin
+	}
+	if rb.LeaderOfThePack {
+		gives |= GiftLotP
+	}
+	if rb.TrueshotAura {
+		gives |= GiftTrueshot
+	}
+	if rb.ArcaneBrilliance {
+		gives |= GiftAB
+	}
+	if rb.DivineSpirit {
+		gives |= GiftPoS
+	}
+	if d := DutyGift(duty); d != 0 {
 		gives |= d
 		casts |= d
 	}
 	return
-}
-
-// hookGifts is what the class's AddRaidBuffs hook gives: Moonkin Aura, Leader of the Pack, Trueshot Aura
-// (the held auras), and Arcane Brilliance and Divine Spirit.
-func hookGifts(b *Build) Gift {
-	raid := &proto.Raid{Parties: []*proto.Party{{Players: []*proto.Player{googleProto.Clone(player0(b.Req)).(*proto.Player)}}}}
-	env, _, _ := core.NewEnvironment(raid, b.Req.Encounter, proto.Ruleset_RulesetForever, false)
-	rb := env.Raid.GetRaidBuffs(&proto.RaidBuffs{})
-	var g Gift
-	if rb.MoonkinAura {
-		g |= GiftMoonkin
-	}
-	if rb.LeaderOfThePack {
-		g |= GiftLotP
-	}
-	if rb.TrueshotAura {
-		g |= GiftTrueshot
-	}
-	if rb.ArcaneBrilliance {
-		g |= GiftAB
-	}
-	if rb.DivineSpirit {
-		g |= GiftPoS
-	}
-	return g
 }
 
 // usesMana is whether a build has a mana bar, so mana effects can move its DPS.
