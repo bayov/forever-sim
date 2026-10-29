@@ -364,6 +364,9 @@ a warlock spending its curse on Recklessness.
 - **With Battle Shout:** in the sim it shares Battle Shout's slot, and only the stronger counts
   (`battleShoutCategory`, `sim/core/buffs.go`). Battle Shout is 115 at 60, so with a warrior shouting, the
   howl adds nothing to players.
+- **Assumed for now, verified at launch** (the user, 2026-10-29): the howl doesn't stack with Battle Shout,
+  and Dust Cloud doesn't stack with Faerie Fire or Curse of Recklessness. notes.md (Need to Verify, At 60)
+  lists the launch checks: what stacks, and whether the pets' buffs reach other parties and other pets.
 - **Unverified:** the user approved this rule on 2026-10-23, from wowsims/forever, which cites no log. The
   client puts the howl on the same aura type as Battle Shout, and in Classic both counted. If the game
   stacks them, every melee member gains 83 attack power. notes.md has the beta test: a warrior with
@@ -832,9 +835,8 @@ The three from the reviews are settled too (the user, 2026-10-29):
 - The hunter builds get marked Tallstrider and wolf variants.
 - The search runs on the backend, natively, and judges each build on its own under a buff set rather than
   trying combinations.
+- The sims run on the user's machine or in Claude Code cloud environments, through the native server
+  or `wowsimcli`; nothing is hosted (the user, 2026-10-29). A cloud environment starts empty, so the
+  search's cache of single-player sims is rebuilt there unless it's kept somewhere a new session can read.
 
-Open:
-
-1. **A hosted backend.** The backend today is the native server that runs on the user's machine (the
-   downloaded binary or `make host`). Is that where the raid page will be used, or should it be hosted
-   somewhere so it works away from that machine?
+None open.
