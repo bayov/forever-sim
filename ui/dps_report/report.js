@@ -1177,8 +1177,8 @@ export function startReport(dash, events) {
 
   // ---------- races: scenarios ----------
   // Each Races card shows every race as the preset plays it, on the generic boss. A switch on each card adds the
-  // boss types a racial works on as entries of their own (t, off by default). The Races page's two cards share theirs. Since client 70425 no racial depends
-  // on the weapon, so there are no racial weapon entries any more.
+  // boss types a racial works on as entries of their own (t, off by default). The Races page's two cards share theirs.
+  // Since client 70425 no racial depends on the weapon, so there are no racial weapon entries any more.
   const RS_OPTS = [['t', 'Boss type racials', 'Add racials that only work on one boss type. These are Troll and Dwarf vs Beast, Windshaper and High Order vs Elemental, and Dwarf Priests vs Humanoid.']];
   // key is where the switch's state lives: the card's own name, or rs for both Races cards, which share theirs.
   const rsVar = (card, key = card) => {
