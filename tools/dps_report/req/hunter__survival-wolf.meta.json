@@ -1,0 +1,81 @@
+{
+  "id": "hunter__survival-wolf",
+  "class": "Hunter",
+  "spec": "Survival",
+  "build": "Survival (melee, Wolf)",
+  "isDefault": false,
+  "pr": 5,
+  "race": "Orc",
+  "talents": "502-005005-500230230250122151",
+  "treeNames": [
+    "Beast Mastery",
+    "Marksmanship",
+    "Survival"
+  ],
+  "gearSet": "level60_phase1_synthetic_survival",
+  "apl": "sv",
+  "published": {
+    "dps": 995.7,
+    "source": "Raid sim variant (docs/raid_sim.md, milestone M1b), not yet in the DPS report: wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s, 2026-10-29"
+  },
+  "verify": {
+    "dps": 995.74,
+    "stderr": 0.26,
+    "iters": 20000,
+    "ok": true,
+    "note": "wowsimcli on this request, 180 s, seed 1 (the published number is this sim); a raid sim variant, not yet in the report"
+  },
+  "summary": "Melee Survival with a wolf, built around Expose Prey into Mongoose Bite. The wolf's Furious Howl stands in for Battle Shout when no warrior shouts.",
+  "keyTalents": [
+    "Predator's Edge",
+    "Expose Prey",
+    "Strider Kick",
+    "Lacerating Strikes",
+    "Deadly Aspects",
+    "Lightning Reflexes",
+    "Surefooted",
+    "Clever Traps"
+  ],
+  "rotation": [
+    "Pre-pull: walk into melee at -6s, Aspect of the Beast at -3s, Hunter's Mark at -1.5s",
+    "Racials, potions and other cooldowns as soon as they're ready",
+    "Hunter's Mark (rank 4, +143 ranged attack power) at -1.5s, recast in its last 3s. The raid's mark is off",
+    "Mongoose Bite whenever Expose Prey or a dodge enables it",
+    "Strider Kick on cooldown",
+    "Immolation Trap on cooldown at 30%+ mana",
+    "Raptor Strike queued on the next swing when it's ready",
+    "Lacerate when it's down, at 20%+ mana",
+    "Wing Clip on free GCDs at 50%+ mana, but not when an enabled Mongoose Bite is about ready",
+    "The wolf (1.0s) bites on cooldown and howls when its Furious Howl (83 melee attack power, 60s) runs out. The howl shares Battle Shout's slot"
+  ],
+  "consumes": [
+    "Flask of Natural Precision",
+    "Elixir of the Mongoose",
+    "Elixir of Ferocity",
+    "Elixir of Greater Intellect",
+    "Ground Scorpok Assay",
+    "Juju Might",
+    "Flank au Poivre",
+    "Dragonbreath Chili",
+    "Major Frenzy Potion",
+    "Dense Sharpening Stone (main hand and off hand)",
+    "Goblin Sapper"
+  ],
+  "caveats": [
+    "The wolf costs 33.2 DPS at 180s against the same build without it (995.7 against 1028.9, 20,000 iterations, seed 1). The search weighs that against what the pet gives the raid.",
+    "A wolf has Bite, Dash and Furious Howl and no Claw, so it does less damage than the cat. Furious Howl shares Battle Shout's slot, so beside the raid's Battle Shout it adds nothing to the hunter.",
+    "The wolf keeps the cat's 1.0s swing (Faster Attack VII) and Cobra Reflexes. Its hits scale with the speed, so a slower one changes little.",
+    "The pet gets 10% of the hunter's ranged attack power on top of its own 254, plus the hunter's crit and hit (from beta pet sheets).",
+    "Assumed: Raptor Strike rank 8 adds 96, halfway between the client and Era.",
+    "Left out: Fire-toasted Bun (+9, seasonal) and Elemental Sharpening Stone (Molten Core plans).",
+    "Crit per Agility is Classic's level 60 rate (0.0189% per point), from Forever's game files.",
+    "Pet hits scale with attack speed, as seen on a level 17 pet. A 1.0s raptor would add about 2 DPS (Savage Rend), but none that fast is known.",
+    "Survival never shoots, so the ranged weapon doesn't matter.",
+    "Immolation Trap adds 10% of ranged attack power over its whole duration. This is from Blizzard's notes, not checked in a log.",
+    "Assumed: each hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs 0.5 to 2.5 DPS at 180s (1.5 here).",
+    "No Scorpid Sting. Balance druids already keep up Insect Swarm, which gives the same 2% hit reduction. On a ranged hunter, Scorpid Sting would replace Serpent Sting and cost about 85 to 100 DPS for nothing."
+  ],
+  "notes": "Request: hunter__survival with hunter.options.petType Wolf instead of Cat, everything else the base request. A raid sim variant (docs/raid_sim.md, Hunter pets, M1b), not yet in the DPS report.",
+  "pet": "Wolf",
+  "baseBuild": "hunter__survival"
+}
