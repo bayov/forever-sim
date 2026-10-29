@@ -420,6 +420,12 @@ func (sc *Scenario) fillWithWarriors(r *Raid, p Plan, f *Fillers, val Valuer, bl
 		}
 		items = append(items, item{b: b, cover: cov, ret: isRet})
 	}
+	// With exact values, sim only the providers the model makes cheapest for each role.
+	if ev, ok := val.(*exactValuer); ok && ev.model != nil {
+		items = pruneItems(items, func(b *Build) float64 {
+			return ev.model.V(b, base.seat(b, 0, sc))
+		})
+	}
 	cost := map[*Build]float64{}
 	for _, it := range items {
 		if _, ok := cost[it.b]; !ok {
@@ -499,6 +505,32 @@ func (sc *Scenario) fillWithWarriors(r *Raid, p Plan, f *Fillers, val Valuer, bl
 		}
 	}
 	return best
+}
+
+// pruneItems keeps, for each role an item covers, the 3 items the model values most (the cheapest to
+// bring), and every paladin.
+func pruneItems(items []item, model func(*Build) float64) []item {
+	keep := make([]bool, len(items))
+	for i := 0; i < numGifts; i++ {
+		g := Gift(1) << i
+		var idx []int
+		for j, it := range items {
+			if it.cover&g != 0 {
+				idx = append(idx, j)
+			}
+		}
+		sort.SliceStable(idx, func(a, b int) bool { return model(items[idx[a]].b) > model(items[idx[b]].b) })
+		for k := 0; k < 3 && k < len(idx); k++ {
+			keep[idx[k]] = true
+		}
+	}
+	var out []item
+	for j, it := range items {
+		if keep[j] || it.ret {
+			out = append(out, it)
+		}
+	}
+	return out
 }
 
 // shamanChoices is the shaman fillers to try: n of the best shaman build of each package kind.
@@ -616,11 +648,21 @@ func (sc *Scenario) seatAndFill(r *Raid, p Plan, f *Fillers, val Valuer, base *C
 	for _, pk := range packages {
 		bestV[pk] = math.Inf(-1)
 	}
+	// Only the packages the parties have (and none) need a best filler.
+	present := map[proto.RaidPackage]bool{proto.RaidPackage_RaidPackageNone: true}
+	for _, pt := range parties {
+		if pt.free > 0 {
+			present[pt.pkg] = true
+		}
+	}
 	for _, b := range f.Fill {
 		if !allowed(b, p) || (b.Class == proto.Class_ClassPaladin && !retFill) || b.Class == proto.Class_ClassShaman {
 			continue
 		}
 		for _, pk := range packages {
+			if !present[pk] {
+				continue
+			}
 			d, _, _ := val.V(b, comp.seat(b, pk, sc))
 			if d > bestV[pk] {
 				bestUnder[pk], bestV[pk] = b, d

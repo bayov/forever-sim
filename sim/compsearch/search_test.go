@@ -128,12 +128,21 @@ func TestSearchDeterministic(t *testing.T) {
 			t.Fatal(err)
 		}
 		res.Seconds = 0
+		for _, sc := range res.Scenarios {
+			sc.Timings = nil
+		}
 		data, _ := protojson.Marshal(res)
 		return string(data)
 	}
 	a, b, c := run(1), run(4), run(4)
 	if a != b || b != c {
-		t.Errorf("the result changed between runs")
+		for i := 0; i < len(a) && i < len(b); i++ {
+			if a[i] != b[i] || (i < len(c) && b[i] != c[i]) {
+				lo := max(0, i-300)
+				t.Errorf("the result changed between runs, at:\n1: %s\n4: %s\n4: %s", a[lo:min(len(a), i+200)], b[lo:min(len(b), i+200)], c[lo:min(len(c), i+200)])
+				break
+			}
+		}
 	}
 }
 

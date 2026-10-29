@@ -5,7 +5,6 @@ import (
 	"math"
 	"runtime"
 	"sort"
-	"strings"
 	"sync"
 	"time"
 
@@ -647,6 +646,7 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 		}
 	}
 	out.PresetValues = presetValues(cbs[0].raid, cbs)
+	report("extras", best)
 	// The role table and member values at the screening iterations, with the best comp's members
 	// re-valued there too so the differences are like for like.
 	bestLo, err := sc.EvalExact(best.Raid, best.Plan, f, ev)
@@ -664,9 +664,8 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 	out.Fillers = extras.fillers
 	out.MemberValues = extras.members
 	out.Adding = extras.adding
-	report("extras", best)
 	report("end", best)
-	out.Notes = append(out.Notes, "sims by phase: "+strings.Join(phases, ", "))
+	out.Timings = phases
 	out.Buffs = buffRecords(best)
 	out.Misses = missList(best)
 	if !req.SkipSensitivity {

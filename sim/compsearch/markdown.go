@@ -148,6 +148,9 @@ func Markdown(res *proto.CompSearchResult) string {
 		for _, n := range sc.Notes {
 			fmt.Fprintf(&b, "\n%s.\n", n)
 		}
+		if len(sc.Timings) > 0 {
+			fmt.Fprintf(&b, "\nSims and seconds by phase: %s.\n", strings.Join(sc.Timings, ", "))
+		}
 		b.WriteString("\n")
 	}
 	b.WriteString("## Assumptions\n\n")

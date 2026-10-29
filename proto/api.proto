@@ -1038,6 +1038,7 @@ message CompScenarioResult {
 	CompModelCheck model_check = 14;
 	repeated CompSensitivity sensitivity = 15;
 	repeated string notes = 16;
+	repeated string timings = 17;       // sims and seconds by phase
 }
 
 message CompSearchResult {
