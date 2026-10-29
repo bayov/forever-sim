@@ -321,7 +321,7 @@ following add no DPS either:
 - Stoneskin, Windwall, Tranquil Air, Healing Stream, the resistance totems and auras, Devotion and
   Concentration Aura.
 
-**Camp buffs** may change this (see [Decisions](#decisions)).
+**Camp buffs** stand in for some of these when the raid lacks the class buff (see [Camp buffs](#camp-buffs)).
 
 The debuffs:
 
@@ -423,6 +423,43 @@ Both pets cost the hunter some of their own DPS, since the usual pet is picked f
 with a pet (Beast Mastery, Marksmanship, Survival) gets variants with a Tallstrider and with a wolf (the
 user, 2026-10-29), with their own ids. The variants carry that cost, and the search weighs it against what
 the pet gives. Lone Wolf has no pet.
+
+### Camp buffs
+
+Forever's campsite features give everyone sitting nearby a 1-hour buff. Each feature's tooltip says it is
+"mutually exclusive with" a class buff:
+
+| Feature | Buff at 60 | Exclusive with |
+|---|---|---|
+| Fish Bowl | 8% all stats | Kings (10%) |
+| Lodestone | 90 AP | Might (133) |
+| Sharpening Wheel | 34 Strength | Strength of Earth (42) |
+| Camp Chair | 2% melee and spell crit | Moonkin Aura |
+| Incense Candle | 25 Intellect | Arcane Intellect (31) |
+| Faction Banner | 32 Spirit | Divine Spirit (40) |
+| Mana Well | 29 mana every 5 s | Wisdom (40) |
+| Enchanted Lute | 308 armor, 13 stats, 22 resistances | Mark of the Wild |
+| First Aid Kit | 56 Stamina | Fortitude |
+
+**The rule** (the user, 2026-10-29):
+
+- A camp buff doesn't stack with its class alternative.
+- When the raid lacks a class buff, its camp version is used instead, if a feature gives one, up to the
+  limit of camp buffs a character can have.
+
+So the raid's camp is one more provider. It is chosen like the others: up to the limit, the features that
+add the most raid DPS, where a feature excluded by a class buff the raid has adds nothing. Two
+consequences:
+
+- **Paladins and shamans are worth less.** A raid without them still gets about 75 to 80% of Kings, Might
+  and Strength of Earth from the camp.
+- **A Balance druid can cost the physical members crit.** The Camp Chair's 2% physical crit is excluded by
+  Moonkin Aura, not by Leader of the Pack. If the whole aura is excluded, adding a Balance druid takes 2%
+  crit away from the physical members of a raid with no Feral.
+
+**The limit** is being checked. The wiki says a camp holds 3 features, or 5 or 10 with upgraded Campfires
+that cooks learn (`forever-wiki/professions.md`). It doesn't say whether that's a per-character limit, or
+whether one character can carry buffs from two camps.
 
 ## Assignments
 
@@ -566,8 +603,8 @@ variants. The 6 hunter pet variants (3 builds × Tallstrider and wolf) will make
   join only when the boss's creature type matches.
 - **The "+ Mana Tide", Water Shield and Imp GW builds** are different talent builds, so they are entries of
   their own.
-- **New requests** (the pet variants, the missing duty builds) go into `tools/dps_report/req/`; see
-  [Decisions](#decisions) for whether the report publishes them.
+- **New requests** (the pet variants, the missing duty builds) go into `tools/dps_report/req/`, and the
+  report publishes them like any other build (the user, 2026-10-29).
 
 **Where the pool comes from:**
 
@@ -896,7 +933,7 @@ So the result says whether the winner holds under each of these:
 | Light consumes (no flask) | the flask is worth 112 to a fire mage and 38 to a Beast Mastery hunter | from the one-buff-at-a-time runs |
 | Pet uptime about 80%, and Lone Wolf | the pet is 332.7 of a Beast Mastery hunter's DPS and never dies in the sim. At 80% Beast Mastery falls to 1065.3, below Lone Wolf (1094.3) and fire (1089.0), and "29 Beast Mastery" becomes "29 Lone Wolf" | a re-run of the hunter builds |
 | Each unverified stacking rule on and off | Mana Spring from two shamans, Furious Howl against Battle Shout and on pets, Hunter's Mark, the Crusader | a re-run |
-| Camp buffs on (if the user wants them modelled, see [Decisions](#decisions)) | they replace most of Kings, Might and Strength of Earth | a re-run |
+| Camp buffs off, and the camp limit at 3, 5 and 10 | the camp replaces most of Kings, Might and Strength of Earth, and its limit is unverified | a re-run |
 
 When the winner changes under a scenario, the result says so and shows the comps that win as a tie set, not
 one answer.
@@ -1325,36 +1362,17 @@ The user's rulings (2026-10-29):
   - The length is a fixed duration or the bosses' health, and several bosses come later.
   - Threat is out of scope. When it's added it is reported, not modelled.
 - **Scope and order**
-  - The DPS Report isn't touched for now.
+  - The DPS Report gets the new variants (the hunter pet variants, the missing duty builds) and publishes
+    them. Nothing else in it changes for the raid sim.
   - Implementation starts with the bug fixes (B).
 
-**Open:**
+- **Camp buffs**
+  - The sim models Forever's camp buffs. A camp buff doesn't stack with its class alternative.
+  - When the raid lacks a class buff, its camp version is used instead, if a camp feature gives one, up to
+    the limit of camp buffs a character can have.
+  - See [Camp buffs](#camp-buffs).
 
-1. **New requests and the report.** The pet variants and the missing duty builds are new requests in
-   `tools/dps_report/req/`, where the report reads its builds. Proposed: they go there, but the report
-   doesn't publish them, so its builds and numbers stay as they are.
-2. **Camp buffs.** Forever's campsite features give everyone sitting nearby a 1-hour buff, each one
-   "mutually exclusive with" a class buff:
-
-   | Feature | Buff at 60 | Exclusive with |
-   |---|---|---|
-   | Fish Bowl | 8% all stats | Kings (10%) |
-   | Lodestone | 90 AP | Might (133) |
-   | Sharpening Wheel | 34 Strength | Strength of Earth (42) |
-   | Camp Chair | 2% melee and spell crit | Moonkin Aura |
-   | Incense Candle | 25 Intellect | Arcane Intellect (31) |
-   | Faction Banner | 32 Spirit | Divine Spirit (40) |
-   | Mana Well | 29 mana every 5 s | Wisdom (40) |
-
-   - If a raid has them, a raid with no paladin or shaman still gets about 75 to 80% of Kings, Might and
-     Strength of Earth, so those providers are worth much less.
-   - The Camp Chair's 2% physical crit is excluded by Moonkin Aura, not by Leader of the Pack, so a Balance
-     druid might take 2% crit away from the physical members.
-   - Neither the sim nor the report models camp buffs (`settings_tab.ts`: "Off for now"). How the exclusion
-     works, and whether a raid can use them before the pull, is unverified.
-
-   Proposed: model them as weaker substitutes, off by default, and run them as a sensitivity scenario. Or
-   leave them out entirely?
+None open.
 
 ## Appendix: measurements (2026-10-29)
 
