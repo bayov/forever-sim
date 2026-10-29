@@ -6,6 +6,8 @@ import (
 	"testing"
 
 	"github.com/wowsims/classic/sim/core/proto"
+	"google.golang.org/protobuf/encoding/protojson"
+	googleProto "google.golang.org/protobuf/proto"
 )
 
 func slotOf(id, party, index int32, p *Pool, buildID string) *proto.CompSlot {
@@ -114,5 +116,26 @@ func TestResolve(t *testing.T) {
 	}
 	if !shouts || res2.Request.Raid.Parties[0].Players[1].RaidBuffs.BattleShout != 0 {
 		t.Errorf("the warrior should cast Battle Shout, and nobody get it given")
+	}
+}
+
+// M1b's done-when: a comp round-trips through JSON.
+func TestCompRoundTrip(t *testing.T) {
+	p := loadTestPool(t)
+	comp := &proto.RaidComp{Size: 10, Faction: proto.Faction_Alliance, CampBuffs: true,
+		Assumptions: &proto.RaidAssumptions{CampChairSpellCritOnly: true},
+		Slots: []*proto.CompSlot{phSlot(1, 0, 0, proto.RaidPreset_RaidPresetFeralTank), slotOf(2, 0, 1, p, "warlock__demonology")},
+		Assignments: []*proto.Assignment{{Holder: 2, SetByHand: true, Job: &proto.Assignment_Duty{Duty: proto.Duty_DutyCurseOfTheElements}},
+			{Holder: 1, Job: &proto.Assignment_Cooldown{Cooldown: &proto.CooldownTarget{Target: 2}}}}}
+	data, err := protojson.Marshal(comp)
+	if err != nil {
+		t.Fatal(err)
+	}
+	back := &proto.RaidComp{}
+	if err := protojson.Unmarshal(data, back); err != nil {
+		t.Fatal(err)
+	}
+	if !googleProto.Equal(comp, back) {
+		t.Errorf("the comp changed through JSON")
 	}
 }
