@@ -95,10 +95,9 @@ func SearchWithAbort(pool *Pool, sim *Simmer, req *proto.CompSearchRequest, prog
 	run0, hits0 := sim.Run.Load(), sim.Hits.Load()
 	res := &proto.CompSearchResult{Request: req, Version: sim.version[:16]}
 	res.LeftOut = []string{
-		"hunter pets as providers: the Tallstrider's Dust Cloud and the wolf's Furious Howl (M1b)",
-		"a Sunder upkeep warrior, a Curse of Recklessness warlock, and Judgement of Wisdom from a Ret paladin (M1b)",
-		"a DPS shaman's totem choice: Enhancement and Elemental drop their fixed totems",
-		"Dark Inspiration",
+		"a DPS shaman's totem choice: Enhancement and Elemental drop their builds' fixed totems (the engine's assigned totems aren't in their rotations yet)",
+		"Dark Inspiration as a party package (a Shadow priest's own Spirit is in its sims)",
+		"the hunter pet variants' cat swing speed and Cobra Reflexes on the Tallstrider and wolf (an assumption)",
 	}
 	res.NotModelled = []string{"healing", "tanking", "threat", "pet deaths", "movement", "boss mechanics",
 		"the tanks' and healers' own damage"}
@@ -244,7 +243,7 @@ func multisets(from []*Preset, n int) [][]*Preset {
 }
 
 // toggles are the roles DPS members can bring, with what each one turns on.
-var toggles = []Gift{GiftBattleShout, GiftFuriousHowl, GiftSunderTank, GiftMinorArmor, GiftCoE, GiftCrusader, GiftMoonkin, GiftLotP, GiftTrueshot,
+var toggles = []Gift{GiftBattleShout, GiftFuriousHowl, GiftSunderTank, GiftMinorArmor, GiftCoE, GiftCrusader, GiftJoW, GiftMoonkin, GiftLotP, GiftTrueshot,
 	GiftAB, GiftGotW, GiftPoS | GiftFort, GiftSoE | GiftWF}
 
 // Plans is every buff set a raid can have (docs/raid_sim.md, The search, step 2).

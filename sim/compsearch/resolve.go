@@ -602,7 +602,7 @@ func RunComp(comp *proto.RaidComp) *proto.RaidCompRunResult {
 	if res.Error != nil {
 		return out
 	}
-	out.Result = core.RunRaidSim(res.Request)
+	out.Result = core.RunRaidSimConcurrent(res.Request)
 	return out
 }
 
