@@ -752,7 +752,21 @@ enum TotemWeaponBuff {
 }
 
 // Buffs that affect the entire raid.
-// NextIndex: 41
+// The buffs of Forever's camp features (client 1.60.1.70685, the camp benefits tooltip 1229741).
+// Each is "mutually exclusive with" a class buff, and the class buff wins.
+message CampBuffs {
+	bool fish_bowl = 1;        // 8% all stats (1230098), against Blessing of Kings
+	bool lodestone = 2;        // 90 melee attack power (1230164), against Blessing of Might
+	bool sharpening_wheel = 3; // 34 Strength (1230172), against Strength of Earth Totem
+	bool camp_chair = 4;       // 2% physical and 2% spell crit, one aura (1229519), against Moonkin Aura
+	bool incense_candle = 5;   // 25 Intellect (1229513), against Arcane Brilliance
+	bool faction_banner = 6;   // 32 Spirit (1229718), against Divine Spirit
+	bool mana_well = 7;        // 29 mana every 5 s (1230587), against Blessing of Wisdom
+	bool enchanted_lute = 8;   // 308 armor, 13 all stats, 22 resistances (1230653), against Gift of the Wild
+	bool first_aid_kit = 9;    // 56 Stamina (1230124), against Power Word: Fortitude
+}
+
+// NextIndex: 43
 message RaidBuffs {
 	reserved 36, 37, 38, 39;
 	reserved "atiesh_druid", "atiesh_mage", "atiesh_priest", "atiesh_warlock";
@@ -823,6 +837,10 @@ message RaidBuffs {
 	// Forever's Salvation (spell 1038, client 1.60.1.70425): 30% less threat for the raid. It's no
 	// longer a Blessing, so it doesn't take a Blessing slot.
 	bool salvation = 41;
+
+	// Forever's camp buffs (docs/raid_sim.md, Camp buffs). Each one adds nothing to a player who has
+	// its class buff.
+	CampBuffs camp_buffs = 42;
 }
 
 // Buffs that affect a single party.
@@ -921,7 +939,15 @@ message Consumes {
 	HealingPowerBuff healing_power_buff = 39;
 }
 
-// NextIndex: 26
+// The given Sunder Armor of a raid: the other warriors' pull Sunders, and a tank who keeps it up.
+message SunderRamp {
+	// How many other warriors cast one Sunder on their first GCD. Each adds a stack 1.5 s in.
+	int32 pull_sunders = 1;
+	// A warrior tank adds a stack every 1.5 s from the pull until there are 5, then keeps it at 5.
+	bool tank = 2;
+}
+
+// NextIndex: 27
 message Debuffs {
 	bool judgement_of_wisdom = 1;
 	bool judgement_of_light = 2;
@@ -943,6 +969,9 @@ message Debuffs {
 	// Major armor
 	TristateEffect expose_armor = 10;
 	bool sunder_armor = 11;
+	// A given Sunder that ramps up instead of starting full (docs/raid_sim.md, Sunder Armor). Used when
+	// sunder_armor is off.
+	SunderRamp sunder_ramp = 26;
 
 	TristateEffect curse_of_weakness = 12;
 	bool curse_of_recklessness = 13;

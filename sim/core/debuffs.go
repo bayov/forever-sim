@@ -169,6 +169,8 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 					}
 				},
 			}, raid)
+		} else if ramp := debuffs.SunderRamp; ramp != nil && sunderArmor > 0 && (ramp.PullSunders > 0 || ramp.Tank) {
+			scheduleSunderRamp(sunderArmorAura(target, sunderArmor), ramp)
 		}
 	}
 
@@ -845,6 +847,54 @@ func WintersChillAura(target *Unit) *Aura {
 
 var majorArmorReductionEffectCategory = "MajorArmorReduction"
 var minorArmorReductionEffectCategory = "MinorArmorReduction"
+
+// scheduleSunderRamp gives a raid's Sunder Armor as it builds up (docs/raid_sim.md, Sunder Armor): every
+// other warrior's pull Sunder lands one GCD in, and a warrior tank adds a stack each GCD from the pull
+// until there are 5, then keeps it at 5. Without a tank the stacks fall off 30 s after the last one,
+// unless the player's own Sunders refresh them.
+func scheduleSunderRamp(aura *Aura, ramp *proto.SunderRamp) {
+	const gcd = time.Millisecond * 1500
+	addStack := func(sim *Simulation) {
+		aura.Activate(sim)
+		if aura.IsActive() {
+			aura.AddStack(sim)
+		}
+	}
+	aura.OnReset = func(aura *Aura, sim *Simulation) {
+		aura.Duration = time.Second * 30
+		if ramp.PullSunders > 0 {
+			StartDelayedAction(sim, DelayedActionOptions{
+				DoAt:     gcd,
+				Priority: ActionPriorityDOT,
+				OnAction: func(sim *Simulation) {
+					for i := int32(0); i < ramp.PullSunders; i++ {
+						addStack(sim)
+					}
+				},
+			})
+		}
+		if ramp.Tank {
+			StartPeriodicAction(sim, PeriodicActionOptions{
+				Period:          gcd,
+				NumTicks:        5,
+				TickImmediately: true,
+				Priority:        ActionPriorityDOT,
+				OnAction: func(sim *Simulation) {
+					if aura.IsActive() && aura.GetStacks() == aura.MaxStacks {
+						aura.Duration = NeverExpires
+						aura.Refresh(sim)
+						return
+					}
+					addStack(sim)
+					if aura.GetStacks() == aura.MaxStacks {
+						aura.Duration = NeverExpires
+						aura.Refresh(sim)
+					}
+				},
+			})
+		}
+	}
+}
 
 func SunderArmorAura(target *Unit) *Aura {
 	return sunderArmorAura(target, 450)

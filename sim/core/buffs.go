@@ -484,6 +484,8 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 		ApplySaygesFortunes(character, individualBuffs.SaygesFortune)
 	}
 
+	applyCampBuffs(character, raidBuffs, individualBuffs)
+
 	// TODO: Classic provide in APL?
 	registerPowerInfusionCD(agent, individualBuffs.PowerInfusions)
 	registerManaTideTotemCD(agent, partyBuffs.ManaTideTotems)
@@ -530,6 +532,8 @@ func applyPetBuffEffects(petAgent PetAgent, playerFaction proto.Faction, raidBuf
 	// the owner during combat or don't make sense for a pet.
 	individualBuffs.Innervates = 0
 	individualBuffs.PowerInfusions = 0
+	// Pets don't sit at the campfire.
+	raidBuffs.CampBuffs = nil
 
 	// Pets only receive Onyxia, Rend, and ZG buffs because they're globally applied in their respective zones
 	// SoD versions were removed from pets though
