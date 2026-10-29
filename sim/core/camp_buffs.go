@@ -21,6 +21,10 @@ func applyCampBuffs(character *Character, raidBuffs *proto.RaidBuffs, individual
 	if camp == nil {
 		return
 	}
+	// The unverified rule that the camp buffs stack with the group versions: then no class buff turns one off.
+	if camp.StackWithGroupBuffs {
+		raidBuffs, individualBuffs = &proto.RaidBuffs{}, &proto.IndividualBuffs{}
+	}
 
 	if camp.FishBowl && !individualBuffs.BlessingOfKings {
 		campMultiplyStatsAura(character, "Fish Bowl", 1230098, 1.08)
@@ -36,6 +40,9 @@ func applyCampBuffs(character *Character, raidBuffs *proto.RaidBuffs, individual
 			stats.MeleeCrit: 2 * CritRatingPerCritChance,
 			stats.SpellCrit: 2 * SpellCritRatingPerCritChance,
 		})
+	} else if camp.CampChair && camp.CampChairSpellCritOnly {
+		// The unverified reading where Moonkin Aura takes only the chair's spell crit.
+		campStatsAura(character, "Camp Chair", 1229519, stats.Stats{stats.MeleeCrit: 2 * CritRatingPerCritChance})
 	}
 	if camp.IncenseCandle && !raidBuffs.ArcaneBrilliance {
 		campStatsAura(character, "Incense Candle", 1229513, stats.Stats{stats.Intellect: 25})

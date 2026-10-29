@@ -672,6 +672,10 @@ message ProgressMetrics {
 	RaidSimResult final_raid_result = 6; // only set when completed
 	StatWeightsResult final_weight_result = 7;
 	BulkSimResult final_bulk_result = 10;
+	CompSearchResult final_comp_search_result = 11;
+	// The comp search's progress: the best comp so far.
+	CompResult comp_search_best = 12;
+	string comp_search_phase = 13;
 }
 
 // RPC: BulkSim
@@ -730,4 +734,321 @@ message BulkComboResult {
 message ItemSpecWithSlot {
     ItemSpec item = 1;
     ItemSlot slot = 2;
+}
+
+// The raid sim (docs/raid_sim.md): a comp of DPS members and tank and healer placeholders, the comp
+// search's request and its result.
+
+// A job a member does for the raid (docs/raid_sim.md, Assignments).
+enum Duty {
+	DutyNone = 0;
+	DutyBattleShout = 1;
+	DutySunderUpkeep = 2;
+	DutyFaerieFire = 3;
+	DutyCurseOfTheElements = 4;
+	DutyCurseOfRecklessness = 5;
+	DutyJudgementOfTheCrusader = 6;
+	DutyJudgementOfWisdom = 7;
+}
+
+// The tank and healer presets (docs/raid_sim.md, Tank and healer presets).
+enum RaidPreset {
+	RaidPresetUnknown = 0;
+	RaidPresetProtectionWarrior = 1;
+	RaidPresetFeralTank = 2;
+	RaidPresetProtectionPaladin = 3;
+	RaidPresetWardenShaman = 4;
+	RaidPresetHolyPaladin = 5;
+	RaidPresetRestorationShaman = 6;
+	RaidPresetDisciplinePriest = 7;
+	RaidPresetHolyPriest = 8;
+	RaidPresetRestorationDruid = 9;
+}
+
+enum RaidRole {
+	RaidRoleDps = 0;
+	RaidRoleTank = 1;
+	RaidRoleHealer = 2;
+}
+
+enum Blessing {
+	BlessingNone = 0;
+	BlessingKings = 1;
+	BlessingMight = 2;
+	BlessingWisdom = 3;
+}
+
+enum PaladinJudgement {
+	PaladinJudgementNone = 0;
+	PaladinJudgementCrusader = 1;
+	PaladinJudgementWisdom = 2;
+}
+
+// The totems that change DPS, by element.
+enum RaidTotem {
+	RaidTotemNone = 0;
+	RaidTotemStrengthOfEarth = 1; // earth
+	RaidTotemGraceOfAir = 2;      // air
+	RaidTotemWindfury = 3;        // air
+	RaidTotemManaSpring = 4;      // water
+	RaidTotemFlametongue = 5;     // fire
+}
+
+// The party effects one party has (docs/raid_sim.md, Groups).
+enum RaidPackage {
+	RaidPackageNone = 0;
+	RaidPackageManaSpring = 1;         // an Enhancement, Elemental or Warden shaman
+	RaidPackageManaSpringTide = 2;     // a "+ Mana Tide" shaman: Mana Spring and Mana Tide
+	RaidPackageRestoration = 3;        // a Restoration shaman: Mana Spring x1.25 and Mana Tide
+}
+
+// The rules the client can't settle, as the search ran them (docs/raid_sim.md, Sensitivity).
+message RaidAssumptions {
+	// The Camp Chair loses only its spell crit to Moonkin Aura, not the whole aura.
+	bool camp_chair_spell_crit_only = 1;
+	// Camp buffs stack with the group versions of their class buffs.
+	bool camp_buffs_stack_with_group_buffs = 2;
+	// Only the 5 camp features worth most to the comp (one Journeyman camp).
+	bool journeyman_camp = 3;
+}
+
+// One member of a comp: a DPS build with its duty players, or a tank or healer placeholder.
+message CompSlot {
+	int32 id = 1; // stable: assignments name slots by it
+	int32 party = 2;
+	int32 index = 3;
+	RaidRole role = 4;
+	oneof member {
+		CompMemberBuild build = 5;
+		RaidPreset placeholder = 6;
+	}
+	// Display, and the comparison with the DPS Report.
+	string report_id = 7;
+	string name = 8;
+	// The Feral tank's Innervate (off by default, since it means leaving Bear Form).
+	bool preset_innervate = 9;
+}
+
+message CompMemberBuild {
+	Player base = 1;
+	repeated CompDutyPlayer duties = 2;
+}
+
+message CompDutyPlayer {
+	Duty duty = 1;
+	Player player = 2;
+}
+
+// A job and who holds it.
+message Assignment {
+	int32 holder = 1; // slot id
+	bool set_by_hand = 2;
+	oneof job {
+		Duty duty = 3;
+		BlessingAssignment blessing = 4;
+		PaladinJudgement judgement = 5;
+		TotemAssignment totem = 6;
+		CooldownTarget cooldown = 7;
+	}
+}
+
+message BlessingAssignment {
+	Class class = 1;
+	Blessing blessing = 2;
+}
+
+message TotemAssignment {
+	RaidTotem totem = 1;
+}
+
+message CooldownTarget {
+	bool power_infusion = 1; // else Innervate
+	int32 target = 2;        // slot id
+}
+
+// A raid to sim (milestone M1b's RunComp).
+message RaidComp {
+	int32 size = 1;
+	repeated CompSlot slots = 2;
+	Encounter encounter = 3;
+	repeated Assignment assignments = 4;
+	Faction faction = 5;
+	bool camp_buffs = 6;
+	RaidAssumptions assumptions = 7;
+	SimOptions sim_options = 8;
+}
+
+// The fight a search runs.
+message CompEncounter {
+	string name = 1;       // "Generic", "Onyxia"
+	double duration = 2;   // seconds; default 180
+	double duration_variation = 3; // default 20
+	// A health fight ends when the boss dies; duration is then a first guess.
+	bool use_health = 4;
+	double boss_health = 5;
+	MobType mob_type = 6;
+	bool natural_flask_zone = 7;
+}
+
+message CompSearchRequest {
+	int32 size = 1; // 10, 20 or 40
+	int32 tanks = 2;
+	int32 healers = 3;
+	// Fixed presets for the first tank and healer slots; the rest are searched.
+	repeated RaidPreset fixed_tanks = 4;
+	repeated RaidPreset fixed_healers = 5;
+	// Fixed DPS members (report build ids), with the rest filled by the search.
+	repeated string fixed_dps = 6;
+	CompEncounter encounter = 7;
+	repeated Faction factions = 8; // default both
+	repeated bool camp_buffs = 9;  // default on and off
+	int32 iterations = 10;            // the screening sims, default 1000
+	int32 contender_iterations = 11;  // the contenders' re-sims, default 10000
+	int64 seed = 12;
+	RaidAssumptions assumptions = 13;
+	// Raid sims to confirm the top sets (milestone M1b). Off in M1.
+	bool confirm = 14;
+	int32 confirm_iterations = 15;      // default 5000
+	int32 confirm_top_iterations = 16;  // default 20000
+	// Leave the sensitivity scenarios out.
+	bool skip_sensitivity = 17;
+	// Up to this many tank and healer combos are re-filled and ranked (0: all).
+	int32 max_combos = 18;
+}
+
+// One member of a result comp.
+message CompResultMember {
+	int32 party = 1;
+	RaidRole role = 2;
+	string build_id = 3;        // a report build, or the preset's name for a placeholder
+	RaidPreset preset = 4;
+	repeated Duty duties = 5;
+	double dps = 6;
+	double se = 7;
+	double duty_cost = 8;      // its base DPS minus its DPS on duty, under the same set
+	double tps = 9;
+	repeated Blessing blessings = 10;
+	bool power_infusion = 11;
+	bool innervate = 12;
+	RaidPackage package = 13;
+	PaladinJudgement judgement = 14;
+	repeated RaidTotem totems = 15;
+	string race = 16;
+	double report_dps = 17;    // its report build's published DPS
+}
+
+message CompResult {
+	double dps = 1;            // raid DPS: the members' sum
+	double se = 2;
+	double gap = 3;            // behind the best
+	double gap_se = 4;
+	repeated CompResultMember members = 5;
+	string buff_set = 6;       // the buff set, in words
+	bool confirmed = 7;        // raid-simmed (M1b)
+	double raid_sim_dps = 8;
+	double raid_sim_se = 9;
+	repeated RaidPreset combo = 10; // its tanks and healers
+	double model_dps = 11;
+}
+
+message CompRoleValue {
+	string role = 1;
+	double gain = 2;            // what the role adds at the winning set, re-filled
+	double provider_cost = 3;
+	double net = 4;
+	string provider = 5;
+	bool in_set = 6;            // false: the value of adding it
+}
+
+message CompFillerRank {
+	string build_id = 1;
+	double dps = 2;
+	double se = 3;
+	double assumption_low = 4;
+	double assumption_high = 5;
+	bool interchangeable = 6;   // within 2 standard errors of the best
+}
+
+message CompMemberValue {
+	int32 member = 1;            // index into the best comp's members
+	double contribution = 2;     // raid DPS minus raid DPS without the member
+	double own_dps = 3;
+	double replacement_margin = 4;
+	string best_replacement = 5;
+	double report_difference = 6;
+	repeated string report_difference_parts = 7;
+	string build_id = 8;
+	int32 count = 9;             // identical members sharing this value
+}
+
+message CompValueOfAdding {
+	string build_id = 1;
+	double value = 2;            // the best raid DPS with it swapped in, minus raid DPS
+}
+
+message CompComboRank {
+	repeated RaidPreset presets = 1;
+	double dps = 2;
+	double gap = 3;
+	string signature = 4;
+}
+
+message CompPresetValue {
+	RaidPreset preset = 1;
+	double at_best = 2;           // the best combo minus the best with that slot's preset changed
+	double best_with_minus_without = 3;
+}
+
+message CompBuffRecord {
+	string effect = 1;
+	string provider = 2;
+	string scope = 3;
+	int32 receivers = 4;
+	bool given = 5;
+}
+
+message CompSensitivity {
+	string scenario = 1;
+	bool winner_holds = 2;
+	repeated CompResult winners = 3;
+	string note = 4;
+}
+
+message CompModelCheck {
+	int32 sets_scored = 1;
+	int32 sets_simmed = 2;
+	double max_miss = 3;      // the largest |exact - model| of a simmed set
+	double mean_miss = 4;
+}
+
+message CompScenarioResult {
+	Faction faction = 1;
+	bool camp_buffs = 2;
+	double fight_seconds = 3;
+	repeated CompResult comps = 4;      // the best first, then the runners-up
+	int32 tie_set = 5;                  // the first this many comps are a tie
+	repeated CompComboRank combos = 6;
+	repeated CompPresetValue preset_values = 7;
+	repeated CompRoleValue roles = 8;
+	repeated CompFillerRank fillers = 9;
+	repeated CompMemberValue member_values = 10;
+	repeated CompValueOfAdding adding = 11;
+	repeated CompBuffRecord buffs = 12;
+	repeated string misses = 13;
+	CompModelCheck model_check = 14;
+	repeated CompSensitivity sensitivity = 15;
+	repeated string notes = 16;
+}
+
+message CompSearchResult {
+	CompSearchRequest request = 1;
+	repeated CompScenarioResult scenarios = 2;
+	repeated string assumptions = 3;
+	repeated string left_out = 4;          // role options this run can't express
+	repeated string not_modelled = 5;
+	string version = 6;
+	int64 sims_run = 7;
+	int64 cache_hits = 8;
+	double seconds = 9;
+	ErrorOutcome error = 10;
 }
