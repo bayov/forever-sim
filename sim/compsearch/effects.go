@@ -29,16 +29,17 @@ const (
 	GiftTrueshot
 	GiftAB
 	GiftGotW
-	GiftPoS      // Prayer of Spirit (Divine Spirit)
-	GiftFort     // Prayer of Fortitude
-	GiftBlessing // a paladin: one Greater Blessing for each class
-	numGifts     = iota
+	GiftPoS         // Prayer of Spirit (Divine Spirit)
+	GiftFort        // Prayer of Fortitude
+	GiftBlessing    // a paladin: one Greater Blessing for each class
+	GiftFuriousHowl // a hunter's wolf: 83 melee attack power in Battle Shout's slot
+	numGifts        = iota
 )
 
 var giftNames = []string{"Battle Shout", "Sunder upkeep", "Minor armor slot", "Curse of the Elements",
 	"Judgement of the Crusader", "Judgement of Wisdom", "Strength of Earth", "Grace of Air", "Windfury Totem",
 	"Flametongue Totem", "Moonkin Aura", "Leader of the Pack", "Trueshot Aura", "Arcane Brilliance",
-	"Gift of the Wild", "Prayer of Spirit", "Fortitude", "Blessings"}
+	"Gift of the Wild", "Prayer of Spirit", "Fortitude", "Blessings", "Furious Howl"}
 
 func (g Gift) Has(o Gift) bool { return g&o == o }
 
@@ -135,6 +136,18 @@ func PlayerGifts(player *proto.Player, duty proto.Duty) (gives Gift, pkg proto.R
 		gives |= d
 		casts |= d
 	}
+	// A hunter's pet: a Tallstrider's Dust Cloud fills the minor armor slot, a wolf's Furious Howl shares
+	// Battle Shout's slot.
+	if h := player.GetHunter(); h != nil && h.Options != nil {
+		switch h.Options.PetType {
+		case proto.Hunter_Options_Tallstrider:
+			gives |= GiftMinorArmor
+			casts |= GiftMinorArmor
+		case proto.Hunter_Options_Wolf:
+			gives |= GiftFuriousHowl
+			casts |= GiftFuriousHowl
+		}
+	}
 	return
 }
 
@@ -180,6 +193,7 @@ func (s Seat) Write(req *proto.RaidSimRequest, b *Build) {
 	if up.Has(GiftBattleShout) {
 		rb.BattleShout = regular
 	}
+	rb.FuriousHowl = up.Has(GiftFuriousHowl)
 	if up.Has(GiftSoE) {
 		rb.StrengthOfEarthTotem = regular
 	}

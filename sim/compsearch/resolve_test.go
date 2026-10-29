@@ -124,7 +124,7 @@ func TestCompRoundTrip(t *testing.T) {
 	p := loadTestPool(t)
 	comp := &proto.RaidComp{Size: 10, Faction: proto.Faction_Alliance, CampBuffs: true,
 		Assumptions: &proto.RaidAssumptions{CampChairSpellCritOnly: true},
-		Slots: []*proto.CompSlot{phSlot(1, 0, 0, proto.RaidPreset_RaidPresetFeralTank), slotOf(2, 0, 1, p, "warlock__demonology")},
+		Slots:       []*proto.CompSlot{phSlot(1, 0, 0, proto.RaidPreset_RaidPresetFeralTank), slotOf(2, 0, 1, p, "warlock__demonology")},
 		Assignments: []*proto.Assignment{{Holder: 2, SetByHand: true, Job: &proto.Assignment_Duty{Duty: proto.Duty_DutyCurseOfTheElements}},
 			{Holder: 1, Job: &proto.Assignment_Cooldown{Cooldown: &proto.CooldownTarget{Target: 2}}}}}
 	data, err := protojson.Marshal(comp)

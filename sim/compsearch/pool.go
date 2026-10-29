@@ -40,6 +40,7 @@ type Build struct {
 	Pkg    proto.RaidPackage        // the party package a shaman gives
 	Casts  Gift                     // what its own rotation casts on itself (left off its own request)
 	Vs     map[proto.MobType]*Build // a base build's encounter variants
+	Pets   []*Build                 // a base build's pet variants (a Tallstrider, a wolf), builds of their own
 }
 
 func (b *Build) IsBase() bool { return b.BaseID == "" }
@@ -198,9 +199,16 @@ func LoadPool(root string) (*Pool, error) {
 			base.Duties[b.Duty] = b
 		} else if b.MobType != proto.MobType_MobTypeUnknown {
 			base.Vs[b.MobType] = b
+		} else {
+			// A variant that's neither a duty nor an encounter is a build of its own in the pool, like a
+			// hunter with another pet: it fills and provides on its own terms.
+			base.Pets = append(base.Pets, b)
 		}
 	}
 	slices.SortFunc(pool.Bases, func(a, b *Build) int { return strings.Compare(a.ID, b.ID) })
+	for _, b := range pool.Bases {
+		slices.SortFunc(b.Pets, func(a, b *Build) int { return strings.Compare(a.ID, b.ID) })
+	}
 	for _, b := range pool.Builds {
 		b.Gives, b.Pkg, b.Casts = buildGifts(b)
 		// A variant without its own race takes its base build's.

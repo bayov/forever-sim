@@ -43,6 +43,7 @@ var Fields = []Field{
 	{"trueshot_aura", func(r *proto.RaidSimRequest) { rb(r).TrueshotAura = false }, func(r *proto.RaidSimRequest) { rb(r).TrueshotAura = true }},
 	{"arcane_brilliance", func(r *proto.RaidSimRequest) { rb(r).ArcaneBrilliance = false }, func(r *proto.RaidSimRequest) { rb(r).ArcaneBrilliance = true }},
 	{"divine_spirit", func(r *proto.RaidSimRequest) { rb(r).DivineSpirit = false }, func(r *proto.RaidSimRequest) { rb(r).DivineSpirit = true }},
+	{"furious_howl", func(r *proto.RaidSimRequest) { rb(r).FuriousHowl = false }, func(r *proto.RaidSimRequest) { rb(r).FuriousHowl = true }},
 	{"battle_shout", func(r *proto.RaidSimRequest) { rb(r).BattleShout = missing }, func(r *proto.RaidSimRequest) { rb(r).BattleShout = reg }},
 	{"strength_of_earth_totem", func(r *proto.RaidSimRequest) { rb(r).StrengthOfEarthTotem = missing }, func(r *proto.RaidSimRequest) { rb(r).StrengthOfEarthTotem = reg }},
 	{"grace_of_air_totem", func(r *proto.RaidSimRequest) { rb(r).GraceOfAirTotem = missing }, func(r *proto.RaidSimRequest) { rb(r).GraceOfAirTotem = reg }},

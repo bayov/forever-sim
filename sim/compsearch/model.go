@@ -13,7 +13,7 @@ import (
 // minor armor slot (armor), and the two air totems.
 
 // modelRoles are the roles the model removes one at a time.
-var modelRoles = []Gift{GiftBattleShout, GiftSunderTank, GiftMinorArmor, GiftCoE, GiftCrusader, GiftJoW, GiftSoE,
+var modelRoles = []Gift{GiftBattleShout, GiftFuriousHowl, GiftSunderTank, GiftMinorArmor, GiftCoE, GiftCrusader, GiftJoW, GiftSoE,
 	GiftGoA, GiftWF, GiftFT, GiftMoonkin, GiftLotP, GiftTrueshot, GiftAB, GiftGotW, GiftPoS}
 
 // The mana sources don't multiply: a caster loses little from any one while the others suffice, and runs
@@ -40,7 +40,7 @@ var allBlessings = []proto.Blessing{proto.Blessing_BlessingKings, proto.Blessing
 var packages = []proto.RaidPackage{proto.RaidPackage_RaidPackageNone, proto.RaidPackage_RaidPackageManaSpring,
 	proto.RaidPackage_RaidPackageManaSpringTide, proto.RaidPackage_RaidPackageRestoration}
 
-const fullGifts = GiftBattleShout | GiftSunderTank | GiftMinorArmor | GiftCoE | GiftCrusader | GiftJoW | GiftSoE |
+const fullGifts = GiftBattleShout | GiftFuriousHowl | GiftSunderTank | GiftMinorArmor | GiftCoE | GiftCrusader | GiftJoW | GiftSoE |
 	GiftGoA | GiftWF | GiftFT | GiftMoonkin | GiftLotP | GiftTrueshot | GiftAB | GiftGotW | GiftPoS | GiftFort | GiftBlessing
 
 // buildModel is one build's role sims.

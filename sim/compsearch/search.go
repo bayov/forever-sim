@@ -244,7 +244,7 @@ func multisets(from []*Preset, n int) [][]*Preset {
 }
 
 // toggles are the roles DPS members can bring, with what each one turns on.
-var toggles = []Gift{GiftBattleShout, GiftMinorArmor, GiftCoE, GiftCrusader, GiftMoonkin, GiftLotP, GiftTrueshot,
+var toggles = []Gift{GiftBattleShout, GiftFuriousHowl, GiftSunderTank, GiftMinorArmor, GiftCoE, GiftCrusader, GiftMoonkin, GiftLotP, GiftTrueshot,
 	GiftAB, GiftGotW, GiftPoS | GiftFort, GiftSoE | GiftWF}
 
 // Plans is every buff set a raid can have (docs/raid_sim.md, The search, step 2).
@@ -348,6 +348,7 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 		if v, ok := b.Vs[mob]; ok && mob != proto.MobType_MobTypeUnknown {
 			cands = append(cands, v)
 		}
+		cands = append(cands, b.Pets...)
 	}
 	var modelBuilds []*Build
 	modelBuilds = append(modelBuilds, cands...)
