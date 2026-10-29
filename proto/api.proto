@@ -31,11 +31,6 @@ message Player {
 	ItemSwap item_swap = 45;
 
 	IndividualBuffs buffs = 8;
-	// The raid sim's per-player raid buffs (docs/raid_sim.md, Members get their own buff set): when set,
-	// they replace Raid.buffs for this player wholesale, and the class AddRaidBuffs hooks are skipped
-	// for it, so the resolver owns every buff.
-	RaidBuffs raid_buffs = 53;
-
 	// The raid buffs this player gets, in place of Raid.buffs (docs/raid_sim.md, "Members get
 	// their own buff set"). When set it replaces them whole, nothing is merged, and the
 	// player's class AddRaidBuffs hook doesn't run: the raid sim's resolver gives every buff,
