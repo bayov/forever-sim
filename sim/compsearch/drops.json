@@ -3,6 +3,7 @@
 		"battle_shout",
 		"blessing_of_might",
 		"faerie_fire",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -20,6 +21,7 @@
 		"camp.lodestone",
 		"camp.sharpening_wheel",
 		"faerie_fire",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -32,6 +34,7 @@
 	"druid__balance-duty-ff": [
 		"battle_shout",
 		"blessing_of_might",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -48,6 +51,7 @@
 		"camp.first_aid_kit",
 		"camp.lodestone",
 		"camp.sharpening_wheel",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -61,6 +65,7 @@
 		"battle_shout",
 		"blessing_of_might",
 		"faerie_fire",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -79,6 +84,7 @@
 		"camp.sharpening_wheel",
 		"divine_spirit",
 		"faerie_fire",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -91,6 +97,7 @@
 	"druid__balance-wrath-duty-ff": [
 		"battle_shout",
 		"blessing_of_might",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -108,6 +115,7 @@
 		"camp.first_aid_kit",
 		"camp.lodestone",
 		"camp.sharpening_wheel",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -152,6 +160,26 @@
 		"judgement_of_the_crusader",
 		"power_word_fortitude"
 	],
+	"hunter__beast-mastery-tallstrider": [
+		"judgement_of_the_crusader",
+		"power_word_fortitude"
+	],
+	"hunter__beast-mastery-tallstrider+camps": [
+		"camp.first_aid_kit",
+		"judgement_of_the_crusader",
+		"power_word_fortitude"
+	],
+	"hunter__beast-mastery-wolf": [
+		"furious_howl",
+		"judgement_of_the_crusader",
+		"power_word_fortitude"
+	],
+	"hunter__beast-mastery-wolf+camps": [
+		"camp.first_aid_kit",
+		"furious_howl",
+		"judgement_of_the_crusader",
+		"power_word_fortitude"
+	],
 	"hunter__lone-wolf": [
 		"judgement_of_the_crusader",
 		"power_word_fortitude",
@@ -174,6 +202,30 @@
 		"power_word_fortitude",
 		"trueshot_aura"
 	],
+	"hunter__marksmanship-tallstrider": [
+		"judgement_of_the_crusader",
+		"power_word_fortitude",
+		"trueshot_aura"
+	],
+	"hunter__marksmanship-tallstrider+camps": [
+		"camp.first_aid_kit",
+		"judgement_of_the_crusader",
+		"power_word_fortitude",
+		"trueshot_aura"
+	],
+	"hunter__marksmanship-wolf": [
+		"furious_howl",
+		"judgement_of_the_crusader",
+		"power_word_fortitude",
+		"trueshot_aura"
+	],
+	"hunter__marksmanship-wolf+camps": [
+		"camp.first_aid_kit",
+		"furious_howl",
+		"judgement_of_the_crusader",
+		"power_word_fortitude",
+		"trueshot_aura"
+	],
 	"hunter__survival": [
 		"judgement_of_the_crusader",
 		"power_word_fortitude"
@@ -183,11 +235,30 @@
 		"judgement_of_the_crusader",
 		"power_word_fortitude"
 	],
+	"hunter__survival-tallstrider": [
+		"judgement_of_the_crusader",
+		"power_word_fortitude"
+	],
+	"hunter__survival-tallstrider+camps": [
+		"camp.first_aid_kit",
+		"judgement_of_the_crusader",
+		"power_word_fortitude"
+	],
+	"hunter__survival-wolf": [
+		"judgement_of_the_crusader",
+		"power_word_fortitude"
+	],
+	"hunter__survival-wolf+camps": [
+		"camp.first_aid_kit",
+		"judgement_of_the_crusader",
+		"power_word_fortitude"
+	],
 	"mage__arcane": [
 		"arcane_brilliance",
 		"battle_shout",
 		"blessing_of_might",
 		"faerie_fire",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -203,6 +274,7 @@
 		"camp.lodestone",
 		"camp.sharpening_wheel",
 		"faerie_fire",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -215,6 +287,7 @@
 		"battle_shout",
 		"blessing_of_might",
 		"faerie_fire",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -230,6 +303,7 @@
 		"camp.lodestone",
 		"camp.sharpening_wheel",
 		"faerie_fire",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -242,6 +316,7 @@
 		"battle_shout",
 		"blessing_of_might",
 		"faerie_fire",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -257,6 +332,7 @@
 		"camp.lodestone",
 		"camp.sharpening_wheel",
 		"faerie_fire",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -269,6 +345,7 @@
 		"battle_shout",
 		"blessing_of_might",
 		"faerie_fire",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -286,6 +363,7 @@
 		"camp.lodestone",
 		"camp.sharpening_wheel",
 		"faerie_fire",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -300,6 +378,21 @@
 	"paladin__level_60+camps": [
 		"trueshot_aura"
 	],
+	"paladin__level_60-duty-crusader": [
+		"trueshot_aura"
+	],
+	"paladin__level_60-duty-crusader+camps": [
+		"trueshot_aura"
+	],
+	"paladin__level_60-duty-wisdom": [
+		"judgement_of_wisdom",
+		"trueshot_aura"
+	],
+	"paladin__level_60-duty-wisdom+camps": [
+		"divine_spirit",
+		"judgement_of_wisdom",
+		"trueshot_aura"
+	],
 	"paladin__level_60_shock": [
 		"trueshot_aura"
 	],
@@ -312,10 +405,32 @@
 	"paladin__level_60_shock-duty-crusader+camps": [
 		"trueshot_aura"
 	],
+	"paladin__level_60_shock-duty-wisdom": [
+		"judgement_of_wisdom",
+		"trueshot_aura"
+	],
+	"paladin__level_60_shock-duty-wisdom+camps": [
+		"judgement_of_wisdom",
+		"trueshot_aura"
+	],
 	"paladin__level_60_shock_ret": [
 		"trueshot_aura"
 	],
 	"paladin__level_60_shock_ret+camps": [
+		"trueshot_aura"
+	],
+	"paladin__level_60_shock_ret-duty-crusader": [
+		"trueshot_aura"
+	],
+	"paladin__level_60_shock_ret-duty-crusader+camps": [
+		"trueshot_aura"
+	],
+	"paladin__level_60_shock_ret-duty-wisdom": [
+		"judgement_of_wisdom",
+		"trueshot_aura"
+	],
+	"paladin__level_60_shock_ret-duty-wisdom+camps": [
+		"judgement_of_wisdom",
 		"trueshot_aura"
 	],
 	"paladin__level_60_shock_undead": [
@@ -336,6 +451,14 @@
 	"paladin__level_60_sub_holy-duty-crusader+camps": [
 		"trueshot_aura"
 	],
+	"paladin__level_60_sub_holy-duty-wisdom": [
+		"judgement_of_wisdom",
+		"trueshot_aura"
+	],
+	"paladin__level_60_sub_holy-duty-wisdom+camps": [
+		"judgement_of_wisdom",
+		"trueshot_aura"
+	],
 	"paladin__level_60_sub_holy_undead": [
 		"trueshot_aura"
 	],
@@ -347,6 +470,7 @@
 		"blessing_of_might",
 		"divine_spirit",
 		"faerie_fire",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -364,6 +488,7 @@
 		"camp.sharpening_wheel",
 		"divine_spirit",
 		"faerie_fire",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -377,6 +502,7 @@
 		"blessing_of_might",
 		"divine_spirit",
 		"faerie_fire",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -394,6 +520,7 @@
 		"camp.sharpening_wheel",
 		"divine_spirit",
 		"faerie_fire",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -407,6 +534,7 @@
 		"blessing_of_might",
 		"divine_spirit",
 		"faerie_fire",
+		"furious_howl",
 		"grace_of_air_totem",
 		"leader_of_the_pack",
 		"power_word_fortitude",
@@ -423,6 +551,7 @@
 		"camp.sharpening_wheel",
 		"divine_spirit",
 		"faerie_fire",
+		"furious_howl",
 		"grace_of_air_totem",
 		"leader_of_the_pack",
 		"power_word_fortitude",
@@ -713,6 +842,7 @@
 		"battle_shout",
 		"blessing_of_might",
 		"faerie_fire",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -728,6 +858,7 @@
 		"camp.lodestone",
 		"camp.sharpening_wheel",
 		"faerie_fire",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -740,6 +871,7 @@
 		"battle_shout",
 		"blessing_of_might",
 		"faerie_fire",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -755,6 +887,7 @@
 		"camp.lodestone",
 		"camp.sharpening_wheel",
 		"faerie_fire",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -830,6 +963,7 @@
 	"warlock__affliction": [
 		"battle_shout",
 		"blessing_of_might",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -844,6 +978,7 @@
 		"camp.first_aid_kit",
 		"camp.lodestone",
 		"camp.sharpening_wheel",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -855,6 +990,7 @@
 	"warlock__affliction-duty-curse": [
 		"battle_shout",
 		"blessing_of_might",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -869,6 +1005,34 @@
 		"camp.first_aid_kit",
 		"camp.lodestone",
 		"camp.sharpening_wheel",
+		"furious_howl",
+		"grace_of_air_totem",
+		"judgement_of_the_crusader",
+		"leader_of_the_pack",
+		"power_word_fortitude",
+		"strength_of_earth_totem",
+		"totem_weapon_buff",
+		"trueshot_aura"
+	],
+	"warlock__affliction-duty-recklessness": [
+		"battle_shout",
+		"blessing_of_might",
+		"furious_howl",
+		"grace_of_air_totem",
+		"judgement_of_the_crusader",
+		"leader_of_the_pack",
+		"power_word_fortitude",
+		"strength_of_earth_totem",
+		"totem_weapon_buff",
+		"trueshot_aura"
+	],
+	"warlock__affliction-duty-recklessness+camps": [
+		"battle_shout",
+		"blessing_of_might",
+		"camp.first_aid_kit",
+		"camp.lodestone",
+		"camp.sharpening_wheel",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -880,6 +1044,7 @@
 	"warlock__demonology": [
 		"battle_shout",
 		"blessing_of_might",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -894,6 +1059,7 @@
 		"camp.first_aid_kit",
 		"camp.lodestone",
 		"camp.sharpening_wheel",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -905,6 +1071,7 @@
 	"warlock__demonology-duty-curse": [
 		"battle_shout",
 		"blessing_of_might",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -919,6 +1086,34 @@
 		"camp.first_aid_kit",
 		"camp.lodestone",
 		"camp.sharpening_wheel",
+		"furious_howl",
+		"grace_of_air_totem",
+		"judgement_of_the_crusader",
+		"leader_of_the_pack",
+		"power_word_fortitude",
+		"strength_of_earth_totem",
+		"totem_weapon_buff",
+		"trueshot_aura"
+	],
+	"warlock__demonology-duty-recklessness": [
+		"battle_shout",
+		"blessing_of_might",
+		"furious_howl",
+		"grace_of_air_totem",
+		"judgement_of_the_crusader",
+		"leader_of_the_pack",
+		"power_word_fortitude",
+		"strength_of_earth_totem",
+		"totem_weapon_buff",
+		"trueshot_aura"
+	],
+	"warlock__demonology-duty-recklessness+camps": [
+		"battle_shout",
+		"blessing_of_might",
+		"camp.first_aid_kit",
+		"camp.lodestone",
+		"camp.sharpening_wheel",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -930,6 +1125,7 @@
 	"warlock__destruction": [
 		"battle_shout",
 		"blessing_of_might",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -944,6 +1140,7 @@
 		"camp.first_aid_kit",
 		"camp.lodestone",
 		"camp.sharpening_wheel",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -955,6 +1152,7 @@
 	"warlock__destruction-duty-curse": [
 		"battle_shout",
 		"blessing_of_might",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -969,6 +1167,34 @@
 		"camp.first_aid_kit",
 		"camp.lodestone",
 		"camp.sharpening_wheel",
+		"furious_howl",
+		"grace_of_air_totem",
+		"judgement_of_the_crusader",
+		"leader_of_the_pack",
+		"power_word_fortitude",
+		"strength_of_earth_totem",
+		"totem_weapon_buff",
+		"trueshot_aura"
+	],
+	"warlock__destruction-duty-recklessness": [
+		"battle_shout",
+		"blessing_of_might",
+		"furious_howl",
+		"grace_of_air_totem",
+		"judgement_of_the_crusader",
+		"leader_of_the_pack",
+		"power_word_fortitude",
+		"strength_of_earth_totem",
+		"totem_weapon_buff",
+		"trueshot_aura"
+	],
+	"warlock__destruction-duty-recklessness+camps": [
+		"battle_shout",
+		"blessing_of_might",
+		"camp.first_aid_kit",
+		"camp.lodestone",
+		"camp.sharpening_wheel",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -981,6 +1207,7 @@
 		"battle_shout",
 		"blessing_of_might",
 		"faerie_fire",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -994,6 +1221,7 @@
 		"camp.lodestone",
 		"camp.sharpening_wheel",
 		"faerie_fire",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -1005,6 +1233,7 @@
 		"battle_shout",
 		"blessing_of_might",
 		"faerie_fire",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -1018,6 +1247,31 @@
 		"camp.lodestone",
 		"camp.sharpening_wheel",
 		"faerie_fire",
+		"furious_howl",
+		"grace_of_air_totem",
+		"judgement_of_the_crusader",
+		"leader_of_the_pack",
+		"strength_of_earth_totem",
+		"totem_weapon_buff",
+		"trueshot_aura"
+	],
+	"warlock__destruction_fire-duty-recklessness": [
+		"battle_shout",
+		"blessing_of_might",
+		"furious_howl",
+		"grace_of_air_totem",
+		"judgement_of_the_crusader",
+		"leader_of_the_pack",
+		"strength_of_earth_totem",
+		"totem_weapon_buff",
+		"trueshot_aura"
+	],
+	"warlock__destruction_fire-duty-recklessness+camps": [
+		"battle_shout",
+		"blessing_of_might",
+		"camp.lodestone",
+		"camp.sharpening_wheel",
+		"furious_howl",
 		"grace_of_air_totem",
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
@@ -1054,6 +1308,7 @@
 		"arcane_brilliance",
 		"blessing_of_wisdom",
 		"divine_spirit",
+		"furious_howl",
 		"innervates",
 		"judgement_of_the_crusader",
 		"judgement_of_wisdom",
@@ -1062,6 +1317,32 @@
 		"trueshot_aura"
 	],
 	"warrior__arms-duty-battle-shout+camps": [
+		"arcane_brilliance",
+		"blessing_of_wisdom",
+		"camp.faction_banner",
+		"camp.incense_candle",
+		"camp.mana_well",
+		"divine_spirit",
+		"furious_howl",
+		"innervates",
+		"judgement_of_the_crusader",
+		"judgement_of_wisdom",
+		"mana_spring_totem",
+		"mana_tide_totems",
+		"trueshot_aura"
+	],
+	"warrior__arms-duty-sunder": [
+		"arcane_brilliance",
+		"blessing_of_wisdom",
+		"divine_spirit",
+		"innervates",
+		"judgement_of_the_crusader",
+		"judgement_of_wisdom",
+		"mana_spring_totem",
+		"mana_tide_totems",
+		"trueshot_aura"
+	],
+	"warrior__arms-duty-sunder+camps": [
 		"arcane_brilliance",
 		"blessing_of_wisdom",
 		"camp.faction_banner",
@@ -1132,6 +1413,7 @@
 		"arcane_brilliance",
 		"blessing_of_wisdom",
 		"divine_spirit",
+		"furious_howl",
 		"innervates",
 		"judgement_of_the_crusader",
 		"judgement_of_wisdom",
@@ -1141,6 +1423,35 @@
 		"trueshot_aura"
 	],
 	"warrior__fury-duty-battle-shout+camps": [
+		"arcane_brilliance",
+		"blessing_of_wisdom",
+		"camp.faction_banner",
+		"camp.first_aid_kit",
+		"camp.incense_candle",
+		"camp.mana_well",
+		"divine_spirit",
+		"furious_howl",
+		"innervates",
+		"judgement_of_the_crusader",
+		"judgement_of_wisdom",
+		"mana_spring_totem",
+		"mana_tide_totems",
+		"power_word_fortitude",
+		"trueshot_aura"
+	],
+	"warrior__fury-duty-sunder": [
+		"arcane_brilliance",
+		"blessing_of_wisdom",
+		"divine_spirit",
+		"innervates",
+		"judgement_of_the_crusader",
+		"judgement_of_wisdom",
+		"mana_spring_totem",
+		"mana_tide_totems",
+		"power_word_fortitude",
+		"trueshot_aura"
+	],
+	"warrior__fury-duty-sunder+camps": [
 		"arcane_brilliance",
 		"blessing_of_wisdom",
 		"camp.faction_banner",
@@ -1188,6 +1499,7 @@
 		"arcane_brilliance",
 		"blessing_of_wisdom",
 		"divine_spirit",
+		"furious_howl",
 		"innervates",
 		"judgement_of_the_crusader",
 		"judgement_of_wisdom",
@@ -1197,6 +1509,35 @@
 		"trueshot_aura"
 	],
 	"warrior__fury_2h-duty-battle-shout+camps": [
+		"arcane_brilliance",
+		"blessing_of_wisdom",
+		"camp.faction_banner",
+		"camp.first_aid_kit",
+		"camp.incense_candle",
+		"camp.mana_well",
+		"divine_spirit",
+		"furious_howl",
+		"innervates",
+		"judgement_of_the_crusader",
+		"judgement_of_wisdom",
+		"mana_spring_totem",
+		"mana_tide_totems",
+		"power_word_fortitude",
+		"trueshot_aura"
+	],
+	"warrior__fury_2h-duty-sunder": [
+		"arcane_brilliance",
+		"blessing_of_wisdom",
+		"divine_spirit",
+		"innervates",
+		"judgement_of_the_crusader",
+		"judgement_of_wisdom",
+		"mana_spring_totem",
+		"mana_tide_totems",
+		"power_word_fortitude",
+		"trueshot_aura"
+	],
+	"warrior__fury_2h-duty-sunder+camps": [
 		"arcane_brilliance",
 		"blessing_of_wisdom",
 		"camp.faction_banner",
