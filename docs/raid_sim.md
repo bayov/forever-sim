@@ -216,9 +216,9 @@ Mana Tide from the Restoration shaman, plain Mana Spring from the Warden.
   70425, 70630 or 70685, and foreverchanges.pro says "Not in Forever". The caster Faerie Fire can be cast
   in Cat, Bear and Dire Bear Form, and costs nothing there (dev notes). forever-wiki/classes/druid.md:54
   and notes.md misread this.
-- **The sim is wrong about it.** It still gives Feral the free Faerie Fire (Feral) with a 6-second
-  cooldown (`sim/druid/faerie_fire.go`). Only the Feral Faerie Fire duty build uses it, so that build's
-  duty cost is too low until the TASKS.md item is done.
+- **Fixed in M1b:** under Forever every form casts Faerie Fire 9907, free in Cat and Bear Form, on a
+  1.5 s GCD with no cooldown (`sim/druid/faerie_fire.go`). The Feral duty build's cost went from 4.5 to
+  8.3 at 180 s (10.2 at 120 s, 4.3 at 300 s).
 - **The UI's talent strings for the Holy paladin and both Restoration druid presets are invalid in
   Forever.** The table has valid ones: the paladin's 3 points in Consecrated Ground moved to Unyielding
   Faith and Purifying Power, and the druid's build was rebuilt on the Thicc Resto layout.
@@ -459,6 +459,19 @@ with a pet (Beast Mastery, Marksmanship, Survival) gets variants with a Tallstri
 user, 2026-10-29), with their own ids. The variants carry that cost, and the search weighs it against what
 the pet gives. Lone Wolf has no pet.
 
+The variants (M1b, `hunter__<build>-tallstrider` and `-wolf`, with a `pet` field in their meta) cost:
+
+| Build | Tallstrider | Wolf |
+|---|---|---|
+| Beast Mastery (1131.8) | 71.0 | 57.4 |
+| Marksmanship (1115.7) | 40.2 | 32.6 |
+| Survival (1028.9) | 41.1 | 33.2 |
+
+Only the pet type changes; the pet keeps the cat's 1.0 s swing and Cobra Reflexes, an assumption. In the
+search a Tallstrider hunter gives the minor armor slot, which the others get as a given 505 armor in that
+slot (`Debuffs.dust_cloud` exists too, for a single-player sim of a hunter's own Dust Cloud), and a wolf
+hunter gives Furious Howl, a role of its own in Battle Shout's slot.
+
 ### Camp buffs
 
 Forever's camps give everyone who sits at the campfire a 1-hour buff for each feature placed there. There
@@ -595,29 +608,26 @@ Crusader") and `baseBuild`, the base build's id. Today there are 12:
 - Curse of the Elements: the 4 warlock builds
 - Judgement of the Crusader: `paladin__level_60_sub_holy` and `paladin__level_60_shock`
 
-**Builds still missing** (milestone M1b):
+**The duty builds M1b added** (2026-10-29; DPS at 20,000 iterations, 180 ± 20 s, against the base):
 
-- **A Sunder upkeep warrior**, for a raid with no warrior tank.
-- **A Curse of Recklessness warlock.**
-- **Judgement of the Crusader** for `paladin__level_60` and `paladin__level_60_shock_ret`. The UI already
-  has `level60_crusader_duty.apl.json`.
-- **A Judgement of Wisdom paladin**, for the Ret builds. It needs class code first: `sim/paladin` has no
-  Seal of Wisdom.
-- **A hunter without Hunter's Mark.** Today every hunter casts it, so "only one hunter marks" can't be
-  expressed. The other hunters' casts are wasted GCDs, which is small (Survival gains 2 to 4 from a
-  stronger mark next to it).
-- **Assignable shaman totems.** Each rotation's totems are fixed by spell id:
-  - Enhancement drops Strength of Earth, Windfury, Mana Spring and Magma.
-  - Elemental drops Mana Spring and Searing.
+| Duty | Builds | Cost |
+|---|---|---|
+| Sunder upkeep (5 stacks from the pull, refreshed in their last 3 s) | `warrior__arms-duty-sunder`, `warrior__fury-duty-sunder`, `warrior__fury_2h-duty-sunder` | 42.9, 34.1, 35.8 |
+| Curse of Recklessness (in place of the Curse of the Elements) | `warlock__<build>-duty-recklessness`, all 4 | 14.2 to 15.3 |
+| Judgement of the Crusader | `paladin__level_60-duty-crusader`, `paladin__level_60_shock_ret-duty-crusader` | 5.9, 0.7 |
+| Judgement of Wisdom (new Seal of Wisdom, `sim/paladin/sow.go`) | `paladin__<build>-duty-wisdom`, all 4 base Ret builds | 3.6 to 14.7 |
 
-  So two Enhancement shamans both drop Windfury, and nobody drops Grace of Air. This needs a per-player
-  "assigned totems" option that an APL action reads ("cast the assigned totem for this element"), not a
-  build for each totem mix.
+- **Seal of Wisdom** has Forever's ranks and mana. Its own 90-mana proc chance is an assumption, 50%, like
+  Judgement of Wisdom's server rule (the client only says "a chance"). A paladin gets the seal only if its
+  rotation names it, so no other paladin's result changes.
+- **A hunter can skip Hunter's Mark** (`Hunter.Options.skip_hunters_mark`); the base builds keep marking.
+- **Assignable shaman totems:** a per-player `Player.assigned_totems` and an APL action, Cast Assigned
+  Totem, which drops the assigned totem for an element. The report's shaman rotations don't use it yet,
+  so the search still takes their fixed totems (Enhancement: Strength of Earth, Windfury, Mana Spring and
+  Magma; Elemental: Mana Spring and Searing).
 
-- **Duty variants of the encounter variants** (a Battle Shout Arms warrior against Dragonkin). Until they
-  exist, a member on duty runs the base build's duty request, and the result says so.
-
-Until those exist, those jobs can only be held by placeholders.
+**Still missing:** duty variants of the encounter variants (a Battle Shout Arms warrior against
+Dragonkin). Until they exist, a member on duty runs the base build's duty request.
 
 ## Groups
 
@@ -1519,6 +1529,39 @@ below) and one Go call, `RunComp`, which resolves a comp into a `RaidSimRequest`
   - a comp round-trips through JSON
   - `RunComp` on 7 builds plus 3 placeholders equals a hand-built request, with every DPS member taking
     the raid damage hits
+
+**Done** (2026-10-29), except publishing the new builds in the report:
+
+- **The engine:** `Player.raid_buffs` (53), `Player.assigned_totems` (54) with the Cast Assigned Totem APL
+  action, `PartyBuffs.dark_inspiration` (its given form at 99.9% uptime, measured on both Shadow builds),
+  `Debuffs.dust_cloud` (27), a players-only raid aura array, and Battle Shout, the totems, the weapon totem
+  rules and Furious Howl reaching their scope (tests: `TestRaidForeverBuffScope`, `CastBattleShout`,
+  `TotemHolds`, `WeaponTotems`, `OwnRaidBuffs`, `AssignedTotems`, `CastFuriousHowl`).
+- **Choices made there:**
+  - A player with `raid_buffs` neither gets the other players' hook buffs nor gives its own, so the
+    resolver gives every held aura to everyone.
+  - Every receiver of a raid-wide shout adds its threat, so a shout makes far more threat than the old
+    party shout.
+  - A receiver of both weapon totems takes the one it dropped itself, then another shaman's Windfury over
+    Flametongue, then the last dropped (the resolver gives Enhancement Flametongue and the others
+    Windfury anyway).
+  - Identical totems from different shamans share one aura on each receiver, and each totem keeps it up
+    until that totem ends, so the buff stays while a second totem stands.
+- **The builds:** the duty builds and pet variants in [Assignments](#assignments) and
+  [Hunter pets](#hunter-pets), Seal of Wisdom, and Faerie Fire in Cat and Bear Form. Their metas hold
+  their own 20,000-iteration sims; the report hasn't re-simmed and published them yet.
+- **The hashes:** the 56 other requests are bit-identical. `druid__feral-cat`'s hash moved too, with its
+  DPS and every number the same: it used to register a never-active Faerie Fire (Feral) aura on the
+  target, which no longer exists.
+- **The resolver and RunComp** in `sim/compsearch/resolve.go`, `resolveComp` in WebAssembly and
+  `/resolveComp` on the native server. Automatic assignments give a job to a placeholder first, then to the
+  first DPS member with that duty's build; the gain-over-cost check needs the member value sims, so a
+  hand-built raid shows each assignment's cost instead.
+- **Checks:** 1 (`TestReportRaid`: a 10-member raid and a 12-member physical raid within 4σ of each
+  member's single-player sim), 4 (the engine tests above), 7 (`TestResolve`), 8 (`TestRaidMetricsAddUp`),
+  the round trip and `TestRunCompMatchesHandBuilt` pass.
+- **The confirmation** (`-confirm`) raid-sims every distinct set near the top, at least 2. On a 10-player
+  search the raid sims landed 1.5 to 11 DPS from the scores (0.15% at most).
 
 **The comp proto:**
 
