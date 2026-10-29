@@ -891,8 +891,12 @@ If a change touches shared result views (the events view, the replay), the DPS R
 
 Forever launches on 2026-11-04, and the classes will change with it. The raids open on 2026-12-09.
 
+**Implementation starts with the bug fixes** (the user, 2026-10-29): every engine bug in the
+[Appendix](#appendix-measurements-2026-10-29) that breaks a raid, before any new piece.
+
 **The plan:**
 
+- B, the bug fixes, first
 - M1 working by about 11-07, then run against the launch builds
 - M1b by mid-November
 - M2a by late November
@@ -900,6 +904,30 @@ Forever launches on 2026-11-04, and the classes will change with it. The raids o
 - check 6 against real logs after 12-09
 
 Each step says what it needs from this doc and when it's done.
+
+### B: the bug fixes
+
+Every bug that breaks a multi-player raid today, so the later steps build on a raid that runs right. None
+of them may move a single-player number: every one of the 58 report requests gives bit-identical results
+at a fixed seed before and after.
+
+- the aura cap
+- a member's own auras found by owner: APL references prefer the rotation's own unit's aura, personal
+  debuffs are keyed by caster, Stormstrike's label, and the Crusader's hook isn't overwritten
+- copying in `GetRaidBuffs`, and one `AddPartyBuffs`
+- `PartyIndex` and the missing-party index, and no panic on a nil player
+- the presim list
+- the health fight's duration variation
+- Blood Pact going raid-wide through its hook
+- two warriors' Battle Shouts: each receiver gets the strongest
+- a given Mana Tide paying a party of 5 five times
+- `RaidBuffs.furious_howl`, which is never read
+
+- **Reads:** [Appendix](#appendix-measurements-2026-10-29), [Checking it](#checking-it).
+- **Done when:**
+  - checks 2 and 3 pass in `sim/raid_forever_test.go`, with a test for each bug
+  - the 58 report requests are bit-identical at a fixed seed
+  - a raid of 20 and of 40 report builds runs, a health fight included
 
 ### M0: which roles matter (half a day, a script)
 
@@ -936,24 +964,14 @@ the first answer needs no engine fixes.
 
 ### M1b: whole raids that run right (engine)
 
-This is what the confirmation raid sims need.
-
-**The engine fixes** (the bugs are in the [Appendix](#appendix-measurements-2026-10-29)):
-
-- the aura cap
-- a member's own auras found by owner: APL references prefer the rotation's own unit's aura, personal
-  debuffs are keyed by caster, Stormstrike's label, and the Crusader's hook isn't overwritten
-- copying in `GetRaidBuffs`, and one `AddPartyBuffs`
-- `PartyIndex` and the missing-party index
-- the presim list
-- the health fight's duration variation
+This is what the confirmation raid sims need, on top of the bug fixes (B).
 
 **The new pieces:**
 
 - `raid_buffs` per player, skipping the class hooks
 - the Sunder ramp on the given debuff
-- the given forms that are missing: read `furious_howl`, add `Debuffs.dust_cloud` and a given Dark
-  Inspiration, and give Mana Tide once per party
+- the given forms that are missing: `Debuffs.dust_cloud`, and a given Dark Inspiration for a Shadow priest
+  who has it
 - a players-only raid aura array
 - cast buffs reaching their scope: Battle Shout, the shaman's totems with a count of standing totems per
   receiver, the weapon totem rules per receiver, Blood Pact to the party, and Furious Howl to the raid
@@ -968,7 +986,7 @@ This is what the confirmation raid sims need.
   [Sunder Armor](#sunder-armor), [Assignments](#assignments), [Checking it](#checking-it),
   [Appendix](#appendix-measurements-2026-10-29).
 - **Done when:**
-  - checks 1 to 4 pass in `sim/raid_forever_test.go`
+  - checks 1 and 4 pass in `sim/raid_forever_test.go`
   - every one of the 58 single-player requests gives bit-identical results at a fixed seed, so the report
     doesn't move
   - a comp round-trips through JSON
