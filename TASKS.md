@@ -69,6 +69,7 @@ wording instead.
 - [ ] 2026-10-14 — Whole raid sim (user idea)
   - Sim every member of a raid together, so we can try out raid comps and see the total raid damage.
   - Then optimize the comp itself: which classes and specs, and how buffs, debuffs and totems are spread across groups.
+  - 2026-10-29: first design draft in `docs/raid_sim.md` (what the engine has today, groundwork steps 1 to 8). Its open decisions wait on the user.
 - [ ] 2026-10-14 — Compare build 1.60.1.70374's item tables with 70338's (new client build, first seen Oct 13 23:25 UTC; no patch notes)
   - The spell tables are already byte-identical to 70338's (`orchestration/rank_tuning.md`, check 2026-10-14 00:30 UTC). Trackers say talents, spells and items are unchanged; wowclassicforever.info lists only ManifestInterfaceData and ManifestInterfaceItemIcon as changed tables.
   - Still to diff: https://wago.tools/db2/ItemSparse?build=1.60.1.70374 , https://wago.tools/db2/ItemEffect?build=1.60.1.70374 , https://wago.tools/db2/SpellItemEnchantment?build=1.60.1.70374 , https://wago.tools/db2/Talent?build=1.60.1.70374
