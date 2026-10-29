@@ -1,7 +1,8 @@
 package sim
 
-// Raids of the DPS Report's builds (tools/dps_report/req), for the raid sim's bug fixes
-// (docs/raid_sim.md, milestone B). Needs the item database: go test -tags with_db.
+// Raids of the DPS Report's builds (tools/dps_report/req), for the raid sim's bug fixes and its
+// buffs reaching their scope (docs/raid_sim.md, milestones B and M1b). Needs the item database:
+// go test -tags with_db.
 
 import (
 	"crypto/sha256"
@@ -12,10 +13,15 @@ import (
 	"slices"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/core/simsignals"
 	"github.com/wowsims/classic/sim/core/stats"
+	"github.com/wowsims/classic/sim/priest"
+	"github.com/wowsims/classic/sim/shaman"
+	"github.com/wowsims/classic/sim/warrior"
 	"google.golang.org/protobuf/encoding/protojson"
 	googleProto "google.golang.org/protobuf/proto"
 )
@@ -67,14 +73,26 @@ func raidReqNames(t testing.TB, base bool) []string {
 // raidOf puts players in parties of 5, in order, under the first request's buffs, debuffs
 // and encounter.
 func raidOf(t testing.TB, base string, players []*proto.Player, iterations int32) *proto.RaidSimRequest {
-	rsr := raidReq(t, base)
-	raid := &proto.Raid{Buffs: rsr.Raid.Buffs, Debuffs: rsr.Raid.Debuffs}
+	var parties [][]*proto.Player
 	for i, p := range players {
 		if i%5 == 0 {
-			raid.Parties = append(raid.Parties, &proto.Party{})
+			parties = append(parties, nil)
 		}
-		p.Name = fmt.Sprintf("%d", i)
-		raid.Parties[i/5].Players = append(raid.Parties[i/5].Players, p)
+		parties[i/5] = append(parties[i/5], p)
+	}
+	return raidOfParties(t, base, parties, iterations)
+}
+
+// raidOfParties is raidOf with the parties given.
+func raidOfParties(t testing.TB, base string, parties [][]*proto.Player, iterations int32) *proto.RaidSimRequest {
+	rsr := raidReq(t, base)
+	raid := &proto.Raid{Buffs: rsr.Raid.Buffs, Debuffs: rsr.Raid.Debuffs}
+	for i, players := range parties {
+		raid.Parties = append(raid.Parties, &proto.Party{})
+		for j, p := range players {
+			p.Name = fmt.Sprintf("%d", i*5+j)
+			raid.Parties[i].Players = append(raid.Parties[i].Players, p)
+		}
 	}
 	raid.NumActiveParties = int32(len(raid.Parties))
 	rsr.Raid = raid
@@ -378,6 +396,379 @@ func TestRaidForeverJudgementOfTheCrusader(t *testing.T) {
 		core.EnvHooks = nil
 		if len(judged) != 2 || bad > 0 {
 			t.Errorf("judgements %v, %d hits with another paladin's bonus", judged, bad)
+		}
+	}
+}
+
+// idle takes the player's rotation away, so only what a test casts happens.
+func idle(p *proto.Player) *proto.Player {
+	p.Rotation = &proto.APLRotation{}
+	return p
+}
+
+// stepRaid starts the request's sim for a test to step through with raidAt.
+func stepRaid(rsr *proto.RaidSimRequest) *core.Simulation {
+	sim := core.NewSim(rsr, simsignals.CreateSignals())
+	sim.Reset()
+	sim.PrePull()
+	return sim
+}
+
+func raidAt(sim *core.Simulation, seconds float64, fn func(sim *core.Simulation)) {
+	sim.AddPendingAction(&core.PendingAction{NextActionAt: core.DurationFromSeconds(seconds), OnAction: fn})
+}
+
+func runSteps(sim *core.Simulation) {
+	for !sim.Step() {
+	}
+}
+
+func member(sim *core.Simulation, party, slot int) *core.Character {
+	return sim.Raid.Parties[party].Players[slot].GetCharacter()
+}
+
+// castFree puts out a spell's effects at once, without its cost, cast time or GCD.
+func castFree(sim *core.Simulation, spell *core.Spell) {
+	spell.ApplyEffects(sim, spell.Unit.CurrentTarget, spell)
+}
+
+func topRank(t *testing.T, ranks []*core.Spell) *core.Spell {
+	t.Helper()
+	for i := len(ranks) - 1; i >= 0; i-- {
+		if ranks[i] != nil {
+			return ranks[i]
+		}
+	}
+	t.Fatal("no rank known")
+	return nil
+}
+
+func auraUp(char *core.Unit, label string) bool {
+	return char.GetAura(label).IsActive()
+}
+
+// Check 4: a party buff reaches only its own party, a raid buff every player and no pet.
+// Strength of Earth Totem and Battle Shout reach the raid, and Mana Spring Totem and Dark
+// Inspiration the caster's party.
+func TestRaidForeverBuffScope(t *testing.T) {
+	rsr := raidOfParties(t, "mage__fire", [][]*proto.Player{
+		{idle(raidPlayer(t, "shaman__enhancement-level60")), raidPlayer(t, "priest__shadow"), idle(raidPlayer(t, "mage__fire"))},
+		{idle(raidPlayer(t, "warrior__fury")), idle(raidPlayer(t, "mage__fire")), idle(raidPlayer(t, "warlock__destruction"))},
+	}, 1)
+	rsr.Raid.Buffs = &proto.RaidBuffs{}
+	sim := stepRaid(rsr)
+	sham := sim.Raid.Parties[0].Players[0].(shaman.ShamanAgent).GetShaman()
+	shadow := sim.Raid.Parties[0].Players[1].(priest.PriestAgent).GetPriest()
+	fury := sim.Raid.Parties[1].Players[0].(warrior.WarriorAgent).GetWarrior()
+	everyone := []*core.Character{member(sim, 0, 0), member(sim, 0, 1), member(sim, 0, 2), member(sim, 1, 0), member(sim, 1, 1), member(sim, 1, 2)}
+	imp := member(sim, 1, 2).Pets[0]
+
+	raidAt(sim, 1, func(sim *core.Simulation) {
+		castFree(sim, topRank(t, sham.StrengthOfEarthTotem))
+		castFree(sim, topRank(t, sham.ManaSpringTotem))
+		castFree(sim, fury.BattleShout.Spell)
+	})
+	raidAt(sim, 2, func(sim *core.Simulation) {
+		for i, char := range everyone {
+			for _, label := range []string{"Strength of Earth Totem", "Battle Shout"} {
+				if !auraUp(&char.Unit, label) {
+					t.Errorf("member %d has no %s", i, label)
+				}
+			}
+		}
+		for _, label := range []string{"Strength of Earth Totem", "Battle Shout"} {
+			if auraUp(&imp.Unit, label) {
+				t.Errorf("the warlock's pet has %s", label)
+			}
+		}
+		// Mana Spring reaches the shaman's party's players with mana.
+		for i, want := range []bool{true, true, true, false, false, false} {
+			if got := auraUp(&everyone[i].Unit, "Mana Spring Totem (Rank 4)"); got != want {
+				t.Errorf("member %d has Mana Spring: %v, want %v", i, got, want)
+			}
+		}
+	})
+	// The priest's Mind Blasts and Mind Flays put Dark Inspiration on the party's mage while
+	// it's on the priest, and never on the other party's.
+	up := 0
+	for s := 3; s < 60; s++ {
+		raidAt(sim, float64(s), func(sim *core.Simulation) {
+			if on := shadow.DarkInspirationAura.IsActive(); on != auraUp(&member(sim, 0, 2).Unit, "Dark Inspiration") {
+				t.Errorf("at %ds: Dark Inspiration up on the priest %v, on the party's mage %v", s, on, !on)
+			} else if on {
+				up++
+			}
+			if member(sim, 1, 1).GetAura("Dark Inspiration") != nil {
+				t.Errorf("the other party's mage has Dark Inspiration")
+			}
+		})
+	}
+	runSteps(sim)
+	if up == 0 {
+		t.Errorf("Dark Inspiration never came up")
+	}
+}
+
+// Check 4: a cast Battle Shout reaches the raid, and of two warriors' shouts the strongest
+// counts, whichever came first. With 3 pieces of Battle Gear of Wrath a shout is 30 stronger.
+// The rogue is in neither warrior's party.
+func TestRaidForeverCastBattleShout(t *testing.T) {
+	wrath := raidPlayer(t, "warrior__fury")
+	for slot, id := range map[proto.ItemSlot]int32{proto.ItemSlot_ItemSlotHead: 16963, proto.ItemSlot_ItemSlotShoulder: 16961, proto.ItemSlot_ItemSlotChest: 16966} {
+		wrath.Equipment.Items[slot] = &proto.ItemSpec{Id: id}
+	}
+	gains := func(strongFirst bool) (first, second float64) {
+		rsr := raidOfParties(t, "rogue__subtlety", [][]*proto.Player{
+			{idle(raidPlayer(t, "warrior__fury"))}, {idle(googleProto.Clone(wrath).(*proto.Player))}, {idle(raidPlayer(t, "rogue__subtlety"))},
+		}, 1)
+		rsr.Raid.Buffs.BattleShout = proto.TristateEffect_TristateEffectMissing
+		sim := stepRaid(rsr)
+		shouts := []*core.Spell{
+			sim.Raid.Parties[0].Players[0].(warrior.WarriorAgent).GetWarrior().BattleShout.Spell,
+			sim.Raid.Parties[1].Players[0].(warrior.WarriorAgent).GetWarrior().BattleShout.Spell,
+		}
+		if strongFirst {
+			shouts[0], shouts[1] = shouts[1], shouts[0]
+		}
+		rogue := member(sim, 2, 0)
+		var base float64
+		raidAt(sim, 1, func(sim *core.Simulation) {
+			base = rogue.GetStat(stats.AttackPower)
+			castFree(sim, shouts[0])
+			first = rogue.GetStat(stats.AttackPower) - base
+		})
+		raidAt(sim, 2, func(sim *core.Simulation) {
+			castFree(sim, shouts[1])
+			second = rogue.GetStat(stats.AttackPower) - base
+		})
+		runSteps(sim)
+		return first, second
+	}
+	weak, both := gains(false)
+	strong, bothReversed := gains(true)
+	if weak <= 0 || strong <= weak {
+		t.Errorf("a shout gives another party %.1f attack power, a Wrath shout %.1f", weak, strong)
+	}
+	if both != strong || bothReversed != strong {
+		t.Errorf("both shouts give %.1f attack power (%.1f the other way round), the stronger %.1f", both, bothReversed, strong)
+	}
+}
+
+// Check 4: a dropped totem's buff stays while a second shaman's identical totem still stands,
+// on the receivers and on the first shaman. It ends with the last of them.
+func TestRaidForeverTotemHolds(t *testing.T) {
+	for _, firstEndsFirst := range []bool{true, false} {
+		rsr := raidOfParties(t, "mage__fire", [][]*proto.Player{
+			{idle(raidPlayer(t, "shaman__enhancement-level60"))}, {idle(raidPlayer(t, "shaman__enhancement-level60"))}, {idle(raidPlayer(t, "mage__fire"))},
+		}, 1)
+		rsr.Raid.Buffs = &proto.RaidBuffs{}
+		sim := stepRaid(rsr)
+		shamans := []*shaman.Shaman{
+			sim.Raid.Parties[0].Players[0].(shaman.ShamanAgent).GetShaman(),
+			sim.Raid.Parties[1].Players[0].(shaman.ShamanAgent).GetShaman(),
+		}
+		mage := member(sim, 2, 0)
+		ends := []int{0, 1}
+		if !firstEndsFirst {
+			ends = []int{1, 0}
+		}
+		const soe, goa = "Strength of Earth Totem", "Grace of Air Totem"
+		check := func(when string, units []*core.Unit, label string, want bool) {
+			for _, unit := range units {
+				if got := auraUp(unit, label); got != want {
+					t.Errorf("%s: %s up on %s: %v, want %v", when, label, unit.Label, got, want)
+				}
+			}
+		}
+		raidAt(sim, 1, func(sim *core.Simulation) {
+			castFree(sim, topRank(t, shamans[0].StrengthOfEarthTotem))
+			castFree(sim, topRank(t, shamans[0].GraceOfAirTotem))
+		})
+		raidAt(sim, 2, func(sim *core.Simulation) {
+			castFree(sim, topRank(t, shamans[1].StrengthOfEarthTotem))
+			castFree(sim, topRank(t, shamans[1].GraceOfAirTotem))
+		})
+		raidAt(sim, 3, func(sim *core.Simulation) {
+			// Stoneskin and Windwall take the slots of the first shaman to end theirs.
+			castFree(sim, topRank(t, shamans[ends[0]].StoneskinTotem))
+			castFree(sim, topRank(t, shamans[ends[0]].WindwallTotem))
+			everyone := []*core.Unit{&shamans[0].Unit, &shamans[1].Unit, &mage.Unit}
+			check("one totem left", everyone, soe, true)
+			check("one totem left", everyone, goa, true)
+			// The buff lasts as long as the totem left standing.
+			want := core.DurationFromSeconds(float64(2-ends[0])) + 5*time.Minute
+			if got := mage.GetAura(soe).ExpiresAt(); got != want {
+				t.Errorf("the buff runs out at %s, want %s", got, want)
+			}
+		})
+		raidAt(sim, 4, func(sim *core.Simulation) {
+			castFree(sim, topRank(t, shamans[ends[1]].StoneskinTotem))
+			castFree(sim, topRank(t, shamans[ends[1]].WindwallTotem))
+			everyone := []*core.Unit{&shamans[0].Unit, &shamans[1].Unit, &mage.Unit}
+			check("both totems gone", everyone, soe, false)
+			check("both totems gone", everyone, goa, false)
+		})
+		runSteps(sim)
+	}
+}
+
+// A wolf's cast Furious Howl reaches the raid's players in Battle Shout's slot, but not
+// another hunter's pet.
+func TestRaidForeverCastFuriousHowl(t *testing.T) {
+	wolf := idle(raidPlayer(t, "hunter__beast-mastery"))
+	wolf.GetHunter().Options.PetType = proto.Hunter_Options_Wolf
+	rsr := raidOfParties(t, "rogue__subtlety", [][]*proto.Player{
+		{wolf}, {idle(raidPlayer(t, "rogue__subtlety")), idle(raidPlayer(t, "hunter__beast-mastery"))},
+	}, 1)
+	rsr.Raid.Buffs.BattleShout = proto.TristateEffect_TristateEffectMissing
+	sim := stepRaid(rsr)
+	var howl *core.Spell
+	for _, pet := range member(sim, 0, 0).Pets {
+		if spell := pet.GetSpell(core.ActionID{SpellID: 24597}); spell != nil {
+			howl = spell
+		}
+	}
+	if howl == nil {
+		t.Fatal("the wolf has no Furious Howl")
+	}
+	rogue := member(sim, 1, 0)
+	raidAt(sim, 1, func(sim *core.Simulation) {
+		ap := rogue.GetStat(stats.AttackPower)
+		castFree(sim, howl)
+		if got := rogue.GetStat(stats.AttackPower) - ap; got != 83 {
+			t.Errorf("another party's rogue gains %.1f attack power from Furious Howl, want 83", got)
+		}
+		for _, pet := range member(sim, 1, 1).Pets {
+			if auraUp(&pet.Unit, "Furious Howl") {
+				t.Errorf("another hunter's pet has Furious Howl")
+			}
+		}
+	})
+	runSteps(sim)
+}
+
+// The weapon totem per receiver: a receiver takes one of Windfury and Flametongue Totem.
+// Windfury Totem does nothing for the Enhancement shaman's Windfury Weapon, so that one takes
+// Flametongue. Everyone else (a rogue, and a mage it does nothing for) takes Windfury,
+// whichever came down last, and an Elemental shaman its own. When Windfury Totem goes, the
+// rogue takes Flametongue.
+func TestRaidForeverWeaponTotems(t *testing.T) {
+	const windfury, flametongue = "Windfury Totem (Rank 3)", "Flametongue Totem (Rank 4)"
+	for _, windfuryFirst := range []bool{true, false} {
+		rsr := raidOfParties(t, "rogue__combat-swords", [][]*proto.Player{
+			{idle(raidPlayer(t, "shaman__enhancement-level60"))},
+			{idle(raidPlayer(t, "shaman__elemental-level60"))},
+			{idle(raidPlayer(t, "rogue__combat-swords")), idle(raidPlayer(t, "mage__fire"))},
+		}, 1)
+		rsr.Raid.Buffs = &proto.RaidBuffs{}
+		sim := stepRaid(rsr)
+		enh := sim.Raid.Parties[0].Players[0].(shaman.ShamanAgent).GetShaman()
+		ele := sim.Raid.Parties[1].Players[0].(shaman.ShamanAgent).GetShaman()
+		rogue := member(sim, 2, 0)
+		totems := []*core.Spell{topRank(t, ele.WindfuryTotem), topRank(t, enh.FlametongueTotem)}
+		if !windfuryFirst {
+			totems[0], totems[1] = totems[1], totems[0]
+		}
+		holds := func(when string, unit *core.Unit, want string) {
+			for _, label := range []string{windfury, flametongue} {
+				if got := auraUp(unit, label); got != (label == want) {
+					t.Errorf("windfury first %v, %s: %s up on %s: %v", windfuryFirst, when, label, unit.Label, got)
+				}
+			}
+		}
+		raidAt(sim, 1, func(sim *core.Simulation) { castFree(sim, totems[0]) })
+		raidAt(sim, 2, func(sim *core.Simulation) {
+			castFree(sim, totems[1])
+			holds("both totems", &rogue.Unit, windfury)
+			holds("both totems", &member(sim, 2, 1).Unit, windfury)
+			holds("both totems", &enh.Unit, flametongue)
+			holds("both totems", &ele.Unit, windfury)
+		})
+		raidAt(sim, 3, func(sim *core.Simulation) {
+			castFree(sim, topRank(t, ele.GraceOfAirTotem))
+			holds("Flametongue left", &rogue.Unit, flametongue)
+			holds("Flametongue left", &ele.Unit, flametongue)
+		})
+		runSteps(sim)
+	}
+}
+
+// Player.raid_buffs replaces the raid's buffs whole, and the player's class hook doesn't
+// run: a mage with its own empty set has no Arcane Brilliance, and a Balance druid with its own
+// set gives the raid no Moonkin Aura.
+func TestRaidForeverOwnRaidBuffs(t *testing.T) {
+	encounter := raidReq(t, "mage__fire").Encounter
+	final := func(raid *proto.Raid, party, slot int) stats.Stats {
+		res := core.ComputeStats(&proto.ComputeStatsRequest{Raid: raid, Encounter: encounter})
+		return stats.FromFloatArray(res.RaidStats.Parties[party].Players[slot].FinalStats.Stats)
+	}
+	raidWith := func(raidBuffs *proto.RaidBuffs, players ...*proto.Player) *proto.Raid {
+		rsr := raidOf(t, "mage__fire", players, 1)
+		rsr.Raid.Buffs = raidBuffs
+		return rsr.Raid
+	}
+	mageWith := func(own *proto.RaidBuffs) *proto.Player {
+		p := raidPlayer(t, "mage__fire")
+		p.RaidBuffs = own
+		return p
+	}
+	full := raidReq(t, "mage__fire").Raid.Buffs
+
+	// Replaced whole: the raid's set doesn't matter.
+	own := &proto.RaidBuffs{ArcaneBrilliance: true, GiftOfTheWild: proto.TristateEffect_TristateEffectRegular}
+	if got, want := final(raidWith(full, mageWith(own), raidPlayer(t, "rogue__subtlety")), 0, 0), final(raidWith(own, raidPlayer(t, "mage__fire")), 0, 0); got != want {
+		t.Errorf("a mage with its own buffs in a buffed raid: %v, alone with them as the raid's: %v", got, want)
+	}
+	// No hook: the mage's own Arcane Brilliance isn't there.
+	if got, want := final(raidWith(full, mageWith(&proto.RaidBuffs{})), 0, 0)[stats.Intellect], final(raidWith(&proto.RaidBuffs{}, mageWith(&proto.RaidBuffs{ArcaneBrilliance: true})), 0, 0)[stats.Intellect]; got >= want {
+		t.Errorf("a mage with its own empty buffs has %.0f Intellect, with Arcane Brilliance %.0f", got, want)
+	}
+	// The druid's hook gives Moonkin Aura to the raid, but not with its own set.
+	crit := func(druidOwn *proto.RaidBuffs) float64 {
+		druid := raidPlayer(t, "druid__balance")
+		druid.RaidBuffs = druidOwn
+		return final(raidWith(&proto.RaidBuffs{}, druid, raidPlayer(t, "mage__fire")), 0, 1)[stats.SpellCrit]
+	}
+	alone := final(raidWith(&proto.RaidBuffs{}, raidPlayer(t, "mage__fire")), 0, 0)[stats.SpellCrit]
+	if hooked, owned := crit(nil), crit(&proto.RaidBuffs{}); hooked <= alone || owned != alone {
+		t.Errorf("the mage's spell crit next to a Balance druid: %.2f, next to one with its own buffs %.2f, alone %.2f", hooked, owned, alone)
+	}
+}
+
+// Two shamans with one rotation drop the air totems the raid assigned each of them.
+func TestRaidForeverAssignedTotems(t *testing.T) {
+	rotation := &proto.APLRotation{Type: proto.APLRotation_TypeAPL, PriorityList: []*proto.APLListItem{{Action: &proto.APLAction{
+		Condition: &proto.APLValue{Value: &proto.APLValue_Cmp{Cmp: &proto.APLValueCompare{
+			Op:  proto.APLValueCompare_OpLe,
+			Lhs: &proto.APLValue{Value: &proto.APLValue_TotemRemainingTime{TotemRemainingTime: &proto.APLValueTotemRemainingTime{TotemType: proto.ShamanTotems_Air}}},
+			Rhs: &proto.APLValue{Value: &proto.APLValue_Const{Const: &proto.APLValueConst{Val: "0s"}}},
+		}}},
+		Action: &proto.APLAction_CastAssignedTotem{CastAssignedTotem: &proto.APLActionCastAssignedTotem{TotemType: proto.ShamanTotems_Air}},
+	}}}}
+	var players []*proto.Player
+	for _, air := range []proto.AirTotem{proto.AirTotem_WindfuryTotem, proto.AirTotem_GraceOfAirTotem, proto.AirTotem_NoAirTotem} {
+		p := raidPlayer(t, "shaman__enhancement-level60")
+		p.Rotation = rotation
+		p.AssignedTotems = &proto.AssignedTotems{Air: air}
+		players = append(players, p)
+	}
+	res := runRaid(t, raidOf(t, "shaman__enhancement-level60", players, 1))
+	casts := func(slot int, spellID int32) int32 {
+		for _, action := range res.RaidMetrics.Parties[0].Players[slot].Actions {
+			if action.Id.GetSpellId() == spellID {
+				n := int32(0)
+				for _, target := range action.Targets {
+					n += target.Casts
+				}
+				return n
+			}
+		}
+		return 0
+	}
+	const windfuryTotem, graceOfAir = 10614, 10627
+	for slot, want := range [][2]bool{{true, false}, {false, true}, {false, false}} {
+		if got := [2]bool{casts(slot, windfuryTotem) > 0, casts(slot, graceOfAir) > 0}; got != want {
+			t.Errorf("shaman %d cast Windfury Totem, Grace of Air Totem: %v, want %v", slot, got, want)
 		}
 	}
 }

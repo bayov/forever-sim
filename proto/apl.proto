@@ -83,6 +83,7 @@ message APLAction {
         APLActionCatOptimalRotationAction cat_optimal_rotation_action = 19;
         APLActionCastPaladinPrimarySeal cast_paladin_primary_seal = 21;
         APLActionShamanWalkToTotem shaman_walk_to_totem = 26;
+        APLActionCastAssignedTotem cast_assigned_totem = 29;
 
         // Internal use only, not exposed in UI.
         APLActionCustomRotation custom_rotation = 20;
@@ -355,6 +356,12 @@ message APLActionLevelingBandage {
 message APLActionShamanWalkToTotem {
     ShamanTotems.TotemType totem_type = 1;
     APLValue within = 2;
+}
+
+// Casts the shaman's assigned totem of this element (Player.assigned_totems) at its highest
+// rank. Without an assigned totem there it never casts.
+message APLActionCastAssignedTotem {
+    ShamanTotems.TotemType totem_type = 1;
 }
 
 message APLActionCustomRotation {

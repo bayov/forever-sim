@@ -26,6 +26,13 @@ func (rot *APLRotation) newActionCastSpell(config *proto.APLActionCastSpell) APL
 		target: target,
 	}
 }
+
+// NewCastSpellAction is the Cast Spell action on the current target for a spell a class's own
+// action picks, like a shaman's assigned totem.
+func (rot *APLRotation) NewCastSpellAction(spell *Spell) APLActionImpl {
+	return rot.newActionCastSpell(&proto.APLActionCastSpell{SpellId: spell.ActionID.ToProto()})
+}
+
 func (action *APLActionCastSpell) IsReady(sim *Simulation) bool {
 	if action.target.IsDynamic() && action.target.Get() == nil {
 		return false
