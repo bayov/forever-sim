@@ -249,25 +249,11 @@
                   }
                 },
                 {
-                  "notes": "Faerie Fire (Feral) on the target, refreshed before it drops, unless another minor armor debuff holds the slot (Faerie Fire duty).",
+                  "notes": "Faerie Fire on the target, free in Cat Form, refreshed before it drops, unless Curse of Recklessness holds the slot (Faerie Fire duty).",
                   "action": {
                     "condition": {
                       "and": {
                         "vals": [
-                          {
-                            "not": {
-                              "val": {
-                                "auraIsActive": {
-                                  "sourceUnit": {
-                                    "type": "CurrentTarget"
-                                  },
-                                  "auraId": {
-                                    "spellId": 9907
-                                  }
-                                }
-                              }
-                            }
-                          },
                           {
                             "not": {
                               "val": {
@@ -291,7 +277,7 @@
                                     "type": "CurrentTarget"
                                   },
                                   "auraId": {
-                                    "spellId": 17392
+                                    "spellId": 9907
                                   }
                                 }
                               },
@@ -307,7 +293,7 @@
                     },
                     "castSpell": {
                       "spellId": {
-                        "spellId": 17392
+                        "spellId": 9907
                       }
                     }
                   }

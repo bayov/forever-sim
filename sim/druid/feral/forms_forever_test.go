@@ -161,40 +161,71 @@ func TestForeverTigersFuryRemoved(t *testing.T) {
 	}
 }
 
-// Faerie Fire duty (standards 23): the cat casts Faerie Fire (Feral) from Cat Form, free, on a
-// 1 sec global cooldown and a 6 sec cooldown, and it takes 505 armor for 40 sec.
-func TestForeverCatFaerieFireFeral(t *testing.T) {
+// Faerie Fire (Feral) is gone from Forever (16857, 17390 to 17392 have no client rows): the cat casts
+// the caster Faerie Fire (9907), free in Cat Form, on a 1.5 sec global cooldown with no cooldown. It
+// takes 505 armor for 40 sec and is the same debuff as the settings' and any other druid's. In
+// caster form it costs its 115 mana.
+func TestForeverCatFaerieFire(t *testing.T) {
 	sim, cat := newFormSim(t, proto.Ruleset_RulesetForever, &proto.Consumes{})
-	if cat.FaerieFire == nil || cat.FaerieFire.SpellID != 17392 {
-		t.Fatal("the Forever cat has no Faerie Fire (Feral)")
+	if cat.FaerieFire == nil || cat.FaerieFire.SpellID != 9907 {
+		t.Fatal("the Forever cat has no caster Faerie Fire")
+	}
+	if cat.GetSpell(core.ActionID{SpellID: 17392}) != nil {
+		t.Error("the Forever cat still has Faerie Fire (Feral)")
 	}
 	target := cat.CurrentTarget
 	target.AddStatDynamic(sim, stats.Armor, -target.GetStat(stats.Armor))
 	target.AddStatDynamic(sim, stats.Armor, 3731)
-	mana := cat.CurrentMana()
-	for i := 0; i < 20 && !cat.FaerieFireAuras.Get(target).IsActive(); i++ {
-		cat.SetGCDTimer(sim, sim.CurrentTime)
-		cat.FaerieFire.CD.Reset()
-		cat.FaerieFire.Cast(sim, target)
-	}
 	aura := cat.FaerieFireAuras.Get(target)
+	if aura != core.FaerieFireAura(target) {
+		t.Error("the cat's Faerie Fire isn't the shared Faerie Fire debuff")
+	}
+
+	mana := cat.CurrentMana()
+	casts := 0
+	for i := 0; i < 20 && !aura.IsActive(); i++ {
+		if !cat.FaerieFire.CanCast(sim, target) {
+			t.Fatalf("Faerie Fire can't be cast in Cat Form (try %d)", i)
+		}
+		cat.FaerieFire.Cast(sim, target)
+		casts++
+		// No cooldown: the next try waits only for the global cooldown.
+		if got := cat.GCD.ReadyAt() - sim.CurrentTime; got != 1500*time.Millisecond {
+			t.Errorf("Faerie Fire's global cooldown in Cat Form %s, want 1.5s", got)
+		}
+		cat.SetGCDTimer(sim, sim.CurrentTime)
+	}
 	if !aura.IsActive() {
-		t.Fatal("Faerie Fire (Feral) never landed")
+		t.Fatal("Faerie Fire never landed")
+	}
+	if !cat.InForm(druid.Cat) {
+		t.Error("Faerie Fire took the druid out of Cat Form")
 	}
 	if got := target.GetStat(stats.Armor); !near(got, 3731-505) {
-		t.Errorf("armor with Faerie Fire (Feral) %.0f, want %d", got, 3731-505)
+		t.Errorf("armor with Faerie Fire %.0f, want %d", got, 3731-505)
 	}
 	if aura.Duration.Seconds() != 40 {
-		t.Errorf("Faerie Fire (Feral) lasts %s, want 40s", aura.Duration)
+		t.Errorf("Faerie Fire lasts %s, want 40s", aura.Duration)
 	}
 	if got := cat.CurrentMana(); !near(got, mana) {
-		t.Errorf("Faerie Fire (Feral) cost %.0f mana, want 0", mana-got)
+		t.Errorf("%d Faerie Fires in Cat Form cost %.0f mana, want 0", casts, mana-got)
 	}
-	if got := cat.FaerieFire.CD.Duration.Seconds(); got != 6 {
-		t.Errorf("Faerie Fire (Feral) cooldown %.0f sec, want 6", got)
+	if cat.FaerieFire.CD.Timer != nil || cat.FaerieFire.CD.Duration != 0 {
+		t.Errorf("Faerie Fire has a %s cooldown, want none", cat.FaerieFire.CD.Duration)
 	}
-	if got := cat.FaerieFire.DefaultCast.GCD.Seconds(); got != 1 {
-		t.Errorf("Faerie Fire (Feral) global cooldown %.1f sec, want 1", got)
+	if !cat.FaerieFire.CanCast(sim, target) {
+		t.Error("Faerie Fire can't be cast again right after its global cooldown")
+	}
+
+	// Out of Cat Form it costs its mana again.
+	cat.CancelShapeshift(sim)
+	if cat.InForm(druid.Cat) {
+		t.Fatal("still in Cat Form")
+	}
+	mana = cat.CurrentMana()
+	cat.FaerieFire.Cast(sim, target)
+	if got := mana - cat.CurrentMana(); !near(got, 115) {
+		t.Errorf("Faerie Fire in caster form cost %.1f mana, want 115", got)
 	}
 }
 
