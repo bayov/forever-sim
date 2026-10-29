@@ -152,7 +152,7 @@ export function startReport(dash, events) {
   const store = (() => { try { return window.localStorage; } catch { return null; } })();
   const saved = (() => { try { return JSON.parse(store?.getItem('fv-state') || '{}'); } catch { return {}; } })();
   // "Duty" is off by default; it's showDuty rather than the old duty, which every earlier visit saved as on
-  const st = Object.assign({ tab: 'ranking', cls: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', rotRace: 'All', rsOpt: {}, rsFac: 'All', srFac: 'All', slFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', rlFac: 'All', rlRole: 'All', rlCls: 'All', rlSpec: 'All', setupHide: false, enc: false, showDuty: false, asm: {}, asmOpen: [], chUp: null, chCls: 'All', chVar: false, chSim: false }, saved);
+  const st = Object.assign({ tab: 'ranking', cls: 'All', role: 'All', fac: 'All', topN: 'all', defaults: false, best: false, sort: 'dps', len: '180', build: null, sample: 0, A: null, B: null, Ar: null, Av: null, Br: null, Bv: null, alwaysOn: true, hlLen: null, hlMana: null, distMode: 'bins', abilMetric: 'share', spreadSort: 'spread', auraOwner: 'All', rotRace: 'All', rsOpt: {}, rsFac: 'All', srFac: 'All', slFac: 'All', rsRole: 'All', rsCls: 'All', rsSpec: 'All', setupHide: false, enc: false, showDuty: false, asm: {}, asmOpen: [], chUp: null, chCls: 'All', chVar: false, chSim: false }, saved);
   st.len = '180'; // a fight length other than 180s is never restored: the page always opens on the main numbers
   st.chUp = null; // nor an older update: the Changes tab opens on the newest unless a link names one
   const persist = () => { try { store?.setItem('fv-state', JSON.stringify(st)); } catch {} };
@@ -1177,11 +1177,12 @@ export function startReport(dash, events) {
 
   // ---------- races: scenarios ----------
   // Each Races card shows every race as the preset plays it, on the generic boss. A switch on each card adds the
-  // boss types a racial works on as entries of their own (t, off by default). Since client 70425 no racial depends
+  // boss types a racial works on as entries of their own (t, off by default). The Races page's two cards share theirs. Since client 70425 no racial depends
   // on the weapon, so there are no racial weapon entries any more.
   const RS_OPTS = [['t', 'Boss type racials', 'Add racials that only work on one boss type. These are Troll and Dwarf vs Beast, Windshaper and High Order vs Elemental, and Dwarf Priests vs Humanoid.']];
-  const rsVar = (card) => {
-    const m = (st.rsOpt?.[card] ?? '').replace('w', '');
+  // key is where the switch's state lives: the card's own name, or rs for both Races cards, which share theirs.
+  const rsVar = (card, key = card) => {
+    const m = (st.rsOpt?.[key] ?? '').replace('w', '');
     const host = $(`#${card}-opts`);
     if (host && !host.dataset.bound) {
       host.dataset.bound = '1';
@@ -1189,8 +1190,8 @@ export function startReport(dash, events) {
         const bt = el('button', { type: 'button', class: 'fv-chip', 'data-k': k, title: tip, text: lbl });
         bt.addEventListener('click', (e) => {
           e.stopPropagation();
-          const cur = (st.rsOpt?.[card] ?? '').replace('w', '');
-          st.rsOpt = { ...st.rsOpt, [card]: RS_OPTS.map((o) => o[0]).filter((x) => (x === k) !== cur.includes(x)).join('') };
+          const cur = (st.rsOpt?.[key] ?? '').replace('w', '');
+          st.rsOpt = { ...st.rsOpt, [key]: RS_OPTS.map((o) => o[0]).filter((x) => (x === k) !== cur.includes(x)).join('') };
           persist(); hideTip(); render();
         });
         return bt;
@@ -1334,7 +1335,8 @@ export function startReport(dash, events) {
   // ---------- races: the scope filter ----------
   // Both Races cards narrow down the presets they average over with one filter: a faction, a role, a class, then
   // one spec. Each step lists only what fits the steps before it, so a role leaves its classes and a class leaves
-  // its specs. Each card keeps its own choice, under its own prefix (rs for races, rl for racials).
+  // its specs. The two cards share one choice, under the rs prefix, so a pick in either card shows in both. Their
+  // widgets keep their own ids (rs- for races, rl- for racials).
   const ROLES = [['All', 'All roles'], ['Melee', 'Melee'], ['Ranged', 'Ranged'], ['Caster', 'Caster']];
   const scopeOf = (p) => {
     const roleMap = roleOf(), has = new Set((rowsOf('race_variants') || []).map((r) => r.build));
@@ -1351,11 +1353,12 @@ export function startReport(dash, events) {
     const builds = spec === 'All' ? inCls : inCls.filter((b) => b.id === spec);
     return { fac: st[p + 'Fac'] || 'All', role, cls, spec, classes, inCls, builds, ids: new Set(builds.map((b) => b.id)), single: builds.length === 1 ? builds[0] : null };
   };
-  const drawScope = (p, sc) => {
+  // p names the widgets, k the state they show (scopeOf's prefix).
+  const drawScope = (p, sc, k = p) => {
     const fi = (n) => (iconMap() ? iconImg(n, 'fv-ico') : null);
-    seg($(`#${p}-fac`), p + 'Fac', [['All', 'Both factions'], ['Horde', 'Horde', fi('ui_hordeicon')], ['Alliance', 'Alliance', fi('ui_allianceicon')]]);
-    seg($(`#${p}-role`), p + 'Role', ROLES);
-    classChips($(`#${p}-cls`), p + 'Cls', new Set(sc.classes));
+    seg($(`#${p}-fac`), k + 'Fac', [['All', 'Both factions'], ['Horde', 'Horde', fi('ui_hordeicon')], ['Alliance', 'Alliance', fi('ui_allianceicon')]]);
+    seg($(`#${p}-role`), k + 'Role', ROLES);
+    classChips($(`#${p}-cls`), k + 'Cls', new Set(sc.classes));
     const all = 'All specs';
     const items = [{ value: 'All', text: `${all} (${sc.inCls.length})` }];
     for (const b of sc.inCls) items.push({ value: b.id, text: b.build, icon: () => specIco(b, '') });
@@ -1363,7 +1366,7 @@ export function startReport(dash, events) {
     const host = $(`#${p}-spec`);
     host.hidden = sc.cls === 'All';
     host.dataset.label = 'Spec';
-    iconSelect(host, items, sc.spec, (v) => { st[p + 'Spec'] = v; persist(); hideTip(); render(); }, (it) => (it.value === 'All' ? all : it.text));
+    iconSelect(host, items, sc.spec, (v) => { st[k + 'Spec'] = v; persist(); hideTip(); render(); }, (it) => (it.value === 'All' ? all : it.text));
   };
 
   // The Specs page's race cards show one preset, so their filter is only the faction.
@@ -1662,13 +1665,14 @@ export function startReport(dash, events) {
   //
   // The Specs page shows the same card for its preset (fixed), with only the faction and the boss type racials switch.
   const drawRacialRank = (fixed) => {
-    const p = fixed ? 'sl' : 'rl';
+    // On the Races page the filter is the Best races card's (rs), so the two cards always show the same presets.
+    const p = fixed ? 'sl' : 'rl', k = fixed ? p : 'rs';
     const host = fixed ? $('#sp-racials') : $('#racial-rank'), dead = $(`#${p}-dead`), card = host.closest('.fv-card');
     const ids = ['race_variants', 'race_breakdown', 'builds', 'stats'];
     if (!(fixed ? specWait(host, ids, fixed) : waitOr(host, ids))) return;
-    const sc = fixed ? fixedScope(p, fixed) : scopeOf(p);
-    if (!fixed) drawScope(p, sc);
-    const V = rsVar(p), one = sc.single, tgt = V.includes('t');
+    const sc = fixed ? fixedScope(p, fixed) : scopeOf(k);
+    if (!fixed) drawScope(p, sc, k);
+    const V = rsVar(p, k), one = sc.single, tgt = V.includes('t');
     const base = rowsOf('race_variants').filter((r) => r.variant === 'baseline' && sc.ids.has(r.build) && (sc.fac === 'All' || r.faction === sc.fac));
     const bd = d3.group(rowsOf('race_breakdown').filter((q) => sc.ids.has(q.build)), (q) => q.build + '|' + q.race);
     const bmap = new Map(sc.builds.map((b) => [b.id, b]));
