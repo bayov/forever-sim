@@ -244,6 +244,9 @@ type Shaman struct {
 	AirTotems   []*core.Spell
 	Totems      *proto.ShamanTotems
 
+	// The totem the raid assigned us for each element (Player.assigned_totems), nil without.
+	AssignedTotems *proto.AssignedTotems
+
 	// Shield
 	ActiveShield     *core.Spell // Tracks the Shaman's active shield spell
 	ActiveShieldAura *core.Aura

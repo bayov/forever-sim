@@ -38,6 +38,10 @@ message Player {
 	// a Balance druid's own Moonkin Aura included. Party buffs and debuffs stay where they are.
 	RaidBuffs raid_buffs = 53;
 
+	// The totem the raid assigns a shaman for each element, which the "Cast Assigned Totem"
+	// APL action drops.
+	AssignedTotems assigned_totems = 54;
+
 	// Talents in wowhead format, e.g. '01102123133-12312312-'
 	string talents_string = 9;
 

@@ -23,9 +23,79 @@ func (shaman *Shaman) NewAPLAction(rot *core.APLRotation, config *proto.APLActio
 	switch config.Action.(type) {
 	case *proto.APLAction_ShamanWalkToTotem:
 		return shaman.newActionWalkToTotem(rot, config.GetShamanWalkToTotem())
+	case *proto.APLAction_CastAssignedTotem:
+		return shaman.newActionCastAssignedTotem(rot, config.GetCastAssignedTotem())
 	default:
 		return nil
 	}
+}
+
+// newActionCastAssignedTotem casts our assigned totem of the element (Player.assigned_totems)
+// at the highest rank we know, as a plain Cast Spell. So two shamans with one rotation drop
+// the totems the raid gave each of them. Without one assigned there, the action is left out.
+func (shaman *Shaman) newActionCastAssignedTotem(rot *core.APLRotation, config *proto.APLActionCastAssignedTotem) core.APLActionImpl {
+	if totemSlot(config.TotemType) < 0 {
+		rot.ValidationWarning("Totem Type required.")
+		return nil
+	}
+	spell := shaman.assignedTotem(config.TotemType)
+	if spell == nil {
+		rot.ValidationWarning("No %s totem assigned, or none known at this level.", config.TotemType)
+		return nil
+	}
+	return rot.NewCastSpellAction(spell)
+}
+
+// assignedTotem is the highest rank we know of our assigned totem of the element, nil without
+// one.
+func (shaman *Shaman) assignedTotem(totemType proto.ShamanTotems_TotemType) *core.Spell {
+	assigned := shaman.AssignedTotems
+	if assigned == nil {
+		return nil
+	}
+	var ranks []*core.Spell
+	switch totemType {
+	case proto.ShamanTotems_Earth:
+		switch assigned.Earth {
+		case proto.EarthTotem_StrengthOfEarthTotem:
+			ranks = shaman.StrengthOfEarthTotem
+		case proto.EarthTotem_StoneskinTotem:
+			ranks = shaman.StoneskinTotem
+		case proto.EarthTotem_TremorTotem:
+			ranks = []*core.Spell{shaman.TremorTotem}
+		}
+	case proto.ShamanTotems_Air:
+		switch assigned.Air {
+		case proto.AirTotem_WindfuryTotem:
+			ranks = shaman.WindfuryTotem
+		case proto.AirTotem_GraceOfAirTotem:
+			ranks = shaman.GraceOfAirTotem
+		}
+	case proto.ShamanTotems_Fire:
+		switch assigned.Fire {
+		case proto.FireTotem_SearingTotem:
+			ranks = shaman.SearingTotem
+		case proto.FireTotem_MagmaTotem:
+			ranks = shaman.MagmaTotem
+		case proto.FireTotem_FireNovaTotem:
+			ranks = shaman.FireNova
+		case proto.FireTotem_FlametongueTotem:
+			ranks = shaman.FlametongueTotem
+		}
+	case proto.ShamanTotems_Water:
+		switch assigned.Water {
+		case proto.WaterTotem_ManaSpringTotem:
+			ranks = shaman.ManaSpringTotem
+		case proto.WaterTotem_HealingStreamTotem:
+			ranks = shaman.HealingStreamTotem
+		}
+	}
+	for i := len(ranks) - 1; i >= 0; i-- {
+		if ranks[i] != nil {
+			return ranks[i]
+		}
+	}
+	return nil
 }
 
 // totemSlot is the totem slot of an APL totem type, -1 for none.

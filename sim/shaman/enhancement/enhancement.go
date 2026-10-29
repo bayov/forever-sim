@@ -32,6 +32,7 @@ func NewEnhancementShaman(character *core.Character, options *proto.Player) *Enh
 	enh := &EnhancementShaman{
 		Shaman: shaman.NewShaman(character, options.TalentsString),
 	}
+	enh.AssignedTotems = options.AssignedTotems
 
 	// Enable Auto Attacks for this spec
 	enh.EnableAutoAttacks(enh, core.AutoAttackOptions{

@@ -91,6 +91,15 @@ enum WaterTotem {
 	HealingStreamTotem = 2;
 }
 
+// One totem for each element, which the raid sim assigns a shaman (Player.assigned_totems), so
+// two shamans in one raid can drop different totems from the same rotation.
+message AssignedTotems {
+	EarthTotem earth = 1;
+	AirTotem air = 2;
+	FireTotem fire = 3;
+	WaterTotem water = 4;
+}
+
 // Deprecated on 2024-02-08. Use APL totems instead
 message ShamanTotems {
 	// Not used here, but used by APL

@@ -735,6 +735,44 @@ func TestRaidForeverOwnRaidBuffs(t *testing.T) {
 	}
 }
 
+// Two shamans with one rotation drop the air totems the raid assigned each of them.
+func TestRaidForeverAssignedTotems(t *testing.T) {
+	rotation := &proto.APLRotation{Type: proto.APLRotation_TypeAPL, PriorityList: []*proto.APLListItem{{Action: &proto.APLAction{
+		Condition: &proto.APLValue{Value: &proto.APLValue_Cmp{Cmp: &proto.APLValueCompare{
+			Op:  proto.APLValueCompare_OpLe,
+			Lhs: &proto.APLValue{Value: &proto.APLValue_TotemRemainingTime{TotemRemainingTime: &proto.APLValueTotemRemainingTime{TotemType: proto.ShamanTotems_Air}}},
+			Rhs: &proto.APLValue{Value: &proto.APLValue_Const{Const: &proto.APLValueConst{Val: "0s"}}},
+		}}},
+		Action: &proto.APLAction_CastAssignedTotem{CastAssignedTotem: &proto.APLActionCastAssignedTotem{TotemType: proto.ShamanTotems_Air}},
+	}}}}
+	var players []*proto.Player
+	for _, air := range []proto.AirTotem{proto.AirTotem_WindfuryTotem, proto.AirTotem_GraceOfAirTotem, proto.AirTotem_NoAirTotem} {
+		p := raidPlayer(t, "shaman__enhancement-level60")
+		p.Rotation = rotation
+		p.AssignedTotems = &proto.AssignedTotems{Air: air}
+		players = append(players, p)
+	}
+	res := runRaid(t, raidOf(t, "shaman__enhancement-level60", players, 1))
+	casts := func(slot int, spellID int32) int32 {
+		for _, action := range res.RaidMetrics.Parties[0].Players[slot].Actions {
+			if action.Id.GetSpellId() == spellID {
+				n := int32(0)
+				for _, target := range action.Targets {
+					n += target.Casts
+				}
+				return n
+			}
+		}
+		return 0
+	}
+	const windfuryTotem, graceOfAir = 10614, 10627
+	for slot, want := range [][2]bool{{true, false}, {false, true}, {false, false}} {
+		if got := [2]bool{casts(slot, windfuryTotem) > 0, casts(slot, graceOfAir) > 0}; got != want {
+			t.Errorf("shaman %d cast Windfury Totem, Grace of Air Totem: %v, want %v", slot, got, want)
+		}
+	}
+}
+
 // B's rule: none of the fixes moves a single-player number. With RAID_FOREVER_HASHES set,
 // this writes a hash of each report request's whole result (metrics sorted, first iteration's
 // logs included) at its own seed and iterations, to diff against the same run on the commit
