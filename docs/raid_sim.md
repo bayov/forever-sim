@@ -499,7 +499,6 @@ The launch checks go into notes.md (Need to Verify, At 60):
 - sitting at two camps in turn
 
 ## Assignments
-## Assignments
 
 An assignment is a job one member does for the raid. Each one is **automatic or set by hand** (the user,
 2026-10-29).
