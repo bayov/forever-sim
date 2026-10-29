@@ -414,6 +414,11 @@ Things we can only check on release, because the beta stops at level 30.
 * Blessing of Wisdom at its top rank, and Judgement of Wisdom (1.12 learns it at 38). Both need a paladin past 30.
 * Forever's launch trinkets: not simulated, so the level 60 presets carry two synthetic ilvl 71 trinkets (standards 1b / 8a; Hand of Justice and Blackhand's Breadth are not in client 70338).
 * Raid buffs and totems at their top ranks, at their Forever values.
+* Camp buffs and their class buffs (the user, 2026-10-29, for the raid sim, docs/raid_sim.md Camp buffs). The sim takes it that a camp buff adds nothing to a player who has its class buff, and that the class buff counts in full; the client has no table linking them, so the server decides. Check on launch:
+  * Sit at a camp with Kings up, and without: does Fish Bowl's 8% show (sheet stats)? Then cast Kings after the camp buffs land: does the Fish Bowl buff go, or stay inactive?
+  * The Camp Chair (2% melee, ranged and spell crit, one aura) with a Balance druid in Moonkin Form anywhere in the raid (Moonkin Aura is a raid aura since 70425): does the whole Chair buff go, or only its spell crit? And with a Feral druid's Leader of the Pack: do both count (the Chair names only Moonkin Aura)?
+  * Sit at two camps in turn (100 yards apart): does the second camp's set add to the first's?
+  * Do the camp buffs survive entering a raid instance, and a death inside?
 * Hunter pet buffs and debuffs in a raid (the user, 2026-10-29, for the raid sim, docs/raid_sim.md Hunter pets). The sim assumes none of them stacks with its player counterpart: Furious Howl shares Battle Shout's slot, and Dust Cloud shares the minor armor slot with Faerie Fire and Curse of Recklessness, the strongest counting. Check on launch, in a raid or group with the classes involved:
   * Furious Howl next to Battle Shout: does a warrior's sheet attack power (UnitAttackPower) rise when the wolf howls with Battle Shout up? (The Hunter item above has the details.)
   * Who Furious Howl reaches: players in other parties of the raid (the client says the caster's raid, target 56, 15 yards), its own hunter, other hunters' pets and warlock demons (it has no players-only flag, unlike Battle Shout and the totems), and whether two wolves' howls stack.

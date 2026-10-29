@@ -321,7 +321,8 @@ following add no DPS either:
 - Stoneskin, Windwall, Tranquil Air, Healing Stream, the resistance totems and auras, Devotion and
   Concentration Aura.
 
-**Camp buffs** stand in for some of these when the raid lacks the class buff (see [Camp buffs](#camp-buffs)).
+**Camp buffs** stand in for Kings, Might, Strength of Earth, Moonkin Aura, Arcane Brilliance, Divine Spirit,
+Wisdom, Gift of the Wild and Fortitude when the raid lacks them (see [Camp buffs](#camp-buffs)).
 
 The debuffs:
 
@@ -426,41 +427,76 @@ the pet gives. Lone Wolf has no pet.
 
 ### Camp buffs
 
-Forever's campsite features give everyone sitting nearby a 1-hour buff. Each feature's tooltip says it is
-"mutually exclusive with" a class buff:
+Forever's camps give everyone who sits at the campfire a 1-hour buff for each feature placed there. There
+are 9 features with a buff, one per profession. Each one is "mutually exclusive with" a class buff.
 
-| Feature | Buff at 60 | Exclusive with |
-|---|---|---|
-| Fish Bowl | 8% all stats | Kings (10%) |
-| Lodestone | 90 AP | Might (133) |
-| Sharpening Wheel | 34 Strength | Strength of Earth (42) |
-| Camp Chair | 2% melee and spell crit | Moonkin Aura |
-| Incense Candle | 25 Intellect | Arcane Intellect (31) |
-| Faction Banner | 32 Spirit | Divine Spirit (40) |
-| Mana Well | 29 mana every 5 s | Wisdom (40) |
-| Enchanted Lute | 308 armor, 13 stats, 22 resistances | Mark of the Wild |
-| First Aid Kit | 56 Stamina | Fortitude |
+| Profession | Feature | Buff at 60 | Exclusive with (class value at 60) |
+|---|---|---|---|
+| Fishing | Fish Bowl | 8% all stats | Kings (10%) |
+| Mining | Lodestone | 90 melee AP | Might (133) |
+| Blacksmithing | Sharpening Wheel | 34 Strength | Strength of Earth (42, rank 4) |
+| Skinning | Camp Chair | 2% melee and ranged crit and 2% spell crit, one aura | Moonkin Aura |
+| Herbalism | Incense Candle | 25 Intellect | Arcane Brilliance (31) |
+| Tailoring | Faction Banner | 32 Spirit | Divine Spirit (40) |
+| Alchemy | Mana Well | 29 mana every 5 s | Blessing of Wisdom (40) |
+| Enchanting | Enchanted Lute | 308 armor, 13 all stats, 22 resistances | Gift of the Wild (385 / 16 / 27) |
+| First Aid | First Aid Kit | 56 Stamina | Fortitude (70) |
+
+These are the client's values in each buff spell (1.60.1.70685). Leatherworking, Engineering and Cooking
+features give no stat buff. No camp buff gives hit, haste, spell power or a damage percentage.
+
+**Facts** (client and guides, checked 2026-10-29):
+
+- **A feature's higher tiers don't change its buff.** The tier 2 and 3 versions "provide all of the
+  benefits of" the tier 1 one, with one buff spell per feature.
+- **The same feature twice adds nothing.**
+- **How many features a camp holds:** 3, 5 or 10, by campfire. The Basic Campfire holds 3 and comes with
+  Cooking 1. The Journeyman holds 5 and needs Cooking 140 and a Blueprint from Wailing Caverns. The Expert
+  holds 10 and needs Cooking 220; its Blueprint has no known source yet.
+- **Each player places one feature an hour,** so each feature needs a different player with that
+  profession at 20.
+- **There's no per-character cap.** A character can hold all 9 at once. Guides say sitting at a second camp
+  adds its buffs without losing the first's. That's server-side and unverified, but if it holds, three
+  Basic campfires give all 9.
+- **No camp inside a raid.** Campfires are outdoors only, and their spells carry the "not in raid
+  instances" flag. The buffs taken outside should carry in, since they have no zone restriction. They last
+  1 hour (1.5 with the Legacy perk Permanence), can't be refreshed inside, and are probably lost on death.
+- **"Mutually exclusive" is the server's.** No client table links a camp buff to its class buff. At 60
+  every class buff is the stronger one, so "the stronger wins" and "the class buff wins" give the same
+  result. The exception is the Camp Chair against Moonkin Aura.
 
 **The rule** (the user, 2026-10-29):
 
 - A camp buff doesn't stack with its class alternative.
-- When the raid lacks a class buff, its camp version is used instead, if a feature gives one, up to the
-  limit of camp buffs a character can have.
+- When the raid lacks a class buff, its camp version is used instead, up to the limit of camp buffs a
+  character can have.
 
-So the raid's camp is one more provider. It is chosen like the others: up to the limit, the features that
-add the most raid DPS, where a feature excluded by a class buff the raid has adds nothing. Two
-consequences:
+Since there's no per-character cap and 9 is the whole list, the sim gives the raid all 9 camp buffs. Each
+player gets a camp buff only when they lack its class buff:
 
-- **Paladins and shamans are worth less.** A raid without them still gets about 75 to 80% of Kings, Might
-  and Strength of Earth from the camp.
-- **A Balance druid can cost the physical members crit.** The Camp Chair's 2% physical crit is excluded by
-  Moonkin Aura, not by Leader of the Pack. If the whole aura is excluded, adding a Balance druid takes 2%
-  crit away from the physical members of a raid with no Feral.
+- A class buff on that player means the camp buff adds nothing, and the class buff counts in full.
+- This is decided per player. Blessings are one paladin per class, and Mana Spring is party-only, so it can
+  differ within a raid. It's mostly raid-wide in Forever.
+- Lodestone is melee attack power only.
 
-**The limit** is being checked. The wiki says a camp holds 3 features, or 5 or 10 with upgraded Campfires
-that cooks learn (`forever-wiki/professions.md`). It doesn't say whether that's a per-character limit, or
-whether one character can carry buffs from two camps.
+**Two consequences:**
 
+- **Paladins, shamans, druids, mages and priests are worth less.** A raid without paladins still gets 80% of
+  Kings and two thirds of Might from the camp. A raid without shamans gets 81% of Strength of Earth. The raid
+  sim counts only what each provider adds over the camp.
+- **A Balance druid costs everyone the Camp Chair's physical crit.** The Camp Chair is one aura, excluded
+  whole by Moonkin Aura, and Moonkin Aura is raid-wide (client effect 65). So with a Balance druid, every
+  member gains 3% spell crit and loses the chair's 2% melee and ranged crit. Leader of the Pack isn't
+  excluded by the chair and stacks with it. Unverified in game.
+
+The launch checks go into notes.md (Need to Verify, At 60):
+
+- sit at a camp with and without Kings
+- cast Kings after the camp buffs land
+- the Camp Chair with a Balance druid in the raid
+- sitting at two camps in turn
+
+## Assignments
 ## Assignments
 
 An assignment is a job one member does for the raid. Each one is **automatic or set by hand** (the user,
@@ -933,7 +969,7 @@ So the result says whether the winner holds under each of these:
 | Light consumes (no flask) | the flask is worth 112 to a fire mage and 38 to a Beast Mastery hunter | from the one-buff-at-a-time runs |
 | Pet uptime about 80%, and Lone Wolf | the pet is 332.7 of a Beast Mastery hunter's DPS and never dies in the sim. At 80% Beast Mastery falls to 1065.3, below Lone Wolf (1094.3) and fire (1089.0), and "29 Beast Mastery" becomes "29 Lone Wolf" | a re-run of the hunter builds |
 | Each unverified stacking rule on and off | Mana Spring from two shamans, Furious Howl against Battle Shout and on pets, Hunter's Mark, the Crusader | a re-run |
-| Camp buffs off, and the camp limit at 3, 5 and 10 | the camp replaces most of Kings, Might and Strength of Earth, and its limit is unverified | a re-run |
+| Camp buffs off; and the Camp Chair excluded only in its spell crit part | the camp replaces most of Kings, Might and Strength of Earth; how the Chair's exclusion works is unverified | a re-run |
 
 When the winner changes under a scenario, the result says so and shows the comps that win as a tie set, not
 one answer.
@@ -1203,7 +1239,8 @@ written. It's also the first version of the search's model.
 ### M1: the first answer (a command line search)
 
 Single-player sims of the report's requests, with a buff set written into each one, already work today. So
-M1 needs none of B's fixes and no new engine piece.
+M1 needs none of B's fixes. Its one engine piece is the camp buffs: 9 settings fields, each one's effect,
+and the rule that a class buff on the player turns its camp buff off (see [Camp buffs](#camp-buffs)).
 
 With one player per request, the resolver writes `Raid.buffs`, `Raid.debuffs`, the party's `buffs` and
 the player's `buffs` directly. The per-player `raid_buffs` comes in M1b. The class hooks still run, which
@@ -1375,8 +1412,8 @@ The user's rulings (2026-10-29):
 - **Camp buffs**
   - The sim models Forever's camp buffs. A camp buff doesn't stack with its class alternative.
   - When the raid lacks a class buff, its camp version is used instead, if a camp feature gives one, up to
-    the limit of camp buffs a character can have.
-  - See [Camp buffs](#camp-buffs).
+    the limit of camp buffs a character can have. There's no per-character limit and 9 features in all, so
+    the raid gets all 9 (see [Camp buffs](#camp-buffs)).
 
 None open.
 
