@@ -1376,16 +1376,23 @@ export function startReport(dash, events) {
     return { fac: st[p + 'Fac'] || 'All', builds: [b], ids: new Set([b.id]), single: b };
   };
 
+  const NOISE = 'no measurable effect';
+  const isNoise = (v, se) => Math.abs(v) < (+se || 0);
+
   // An entry's bar on one preset: base stats, then each racial that works in its scenario (its variant). The entry
   // without its weapon racial leaves that racial out. A boss type's part is named after the racial it switches on.
+  // A racial that works but measures within one standard error of nothing is idle too, with no number, since its sign
+  // would only be the sim's noise. Expansive Mind's 5% more Rage is one: a Fury warrior hardly ever caps its Rage.
   const segsOf = (row, mine) => {
     const V = row.variant;
     const out = [{ part: 'base', r: mine.find((q) => q.part === 'base') }];
-    for (const r of mine.filter((q) => q.scenario === 'all' && q.part !== 'base' && q.active && q !== row.dropped)) out.push({ part: r.part, r });
+    const racials = mine.filter((q) => q.scenario === 'all' && q.part !== 'base' && q.active && q !== row.dropped);
+    for (const r of racials.filter((q) => !isNoise(+q.dps, q.se))) out.push({ part: r.part, r });
     const cond = mine.find((q) => q.scenario === 'all' && !q.active && COND[V] && COND[V].test(q.part));
     for (const r of mine.filter((q) => q.scenario === V)) out.push(r.part === 'target' && cond ? { part: cond.part, r: { ...r, label: cond.label } } : { part: r.part, r });
     const idle = (row.dropped ? [{ ...row.dropped, note: 'not in this entry' }] : []).concat(mine.filter((q) => q.scenario === 'all' && !q.active && !(COND[V] && COND[V].test(q.part))
-      && !(V === 'weapon' && mine.some((w) => w.scenario === 'weapon' && w.part === q.part))));
+      && !(V === 'weapon' && mine.some((w) => w.scenario === 'weapon' && w.part === q.part))))
+      .concat(racials.filter((q) => isNoise(+q.dps, q.se)).map((q) => ({ ...q, note: NOISE })));
     return { segs: out.filter((sg) => sg.r), idle };
   };
   const legend = (host, kinds, base) => host.replaceChildren(base ? el('span', {}, el('i', { class: 'sw2', style: 'background:var(--cds-chart-muted)' }), 'Base stats (no racials)') : '', ...[0, 1, 2, 3, 'swap'].filter((k) => kinds.has(k)).map((k) => el('span', {}, el('i', { class: 'sw2', style: `background:${kindCol(k)}` }), k === 'swap' ? 'Weapon swap' : KIND_NAME[k])));
@@ -1682,15 +1689,19 @@ export function startReport(dash, events) {
       const tv = {};
       if (tgt) for (const q of mine) if (q.part === 'target' && TARGET_PART[r.race + '|' + q.scenario]) tv[TARGET_PART[r.race + '|' + q.scenario]] = q;
       for (const q of mine.filter((x) => x.scenario === 'all' && x.part !== 'base')) {
-        let v = q.active ? +q.dps : 0, works = q.active;
-        if (tv[q.part]) { v += +tv[q.part].dps; works = true; }
+        let v = q.active ? +q.dps : 0, works = q.active, se = q.active ? +q.se : 0;
+        if (tv[q.part]) { v += +tv[q.part].dps; works = true; se = Math.hypot(se, +tv[q.part].se); }
+        // Within one standard error of nothing it counts as nothing, like a racial that doesn't work here.
+        const noise = works && isNoise(v, se);
+        if (noise) v = 0;
         const k = r.race + '|' + q.part;
         if (!acc.has(k)) acc.set(k, { key: k, race: r.race, part: q.part, label: q.label, raceIcon: r.raceIcon, n: 0, works: 0, share: 0, dps: 0, per: [], notes: [] });
         const a = acc.get(k);
         a.n++; a.share += (100 * v) / r.dps; a.dps += v;
         a.per.push({ build: r.build, share: (100 * v) / r.dps, v });
+        const note = noise ? NOISE : q.note;
         if (works && Math.abs(v) >= 0.05) a.works++;
-        else if (q.note && !a.notes.includes(q.note)) a.notes.push(q.note);
+        else if (note && !a.notes.includes(note)) a.notes.push(note);
       }
     }
     const all = [...acc.values()].map((a) => ({ ...a, value: one ? a.dps : a.share / a.n })).sort((p, q) => q.value - p.value);
@@ -1727,7 +1738,7 @@ export function startReport(dash, events) {
       });
       return row;
     }));
-    dead.textContent = idle.length ? `No effect on ${one ? 'this preset' : 'these presets'}: ${idle.map((a) => `${a.label} (${a.race})`).join(', ')}.` : '';
+    dead.textContent = idle.length ? `No measurable effect on ${one ? 'this preset' : 'these presets'}: ${idle.map((a) => `${a.label} (${a.race})`).join(', ')}.` : '';
     legend($(`#${p}-legend`), kinds);
   };
 
