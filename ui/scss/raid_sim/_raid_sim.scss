@@ -1035,6 +1035,22 @@ $rs-none: #6b7280;
 		font-size: 0.8rem;
 	}
 
+	&.rs-slot-empty {
+		cursor: pointer;
+
+		&:hover {
+			border-color: var(--line-color-strong);
+			color: var(--text-muted-color);
+		}
+	}
+
+	&.rs-slot-chosen,
+	&.rs-slot-chosen:hover {
+		border: 1px solid var(--gold);
+		background: rgba($gold, 0.12);
+		color: var(--gold-soft);
+	}
+
 	.rs-dragging &.rs-slot-empty {
 		border-color: var(--gold);
 		color: var(--gold);
@@ -1241,6 +1257,17 @@ $rs-none: #6b7280;
 		color: var(--gold-soft);
 		font-family: var(--heading-font-family);
 		font-size: 1rem;
+
+		&.rs-bench-target {
+			font-family: inherit;
+			font-size: 0.9rem;
+		}
+	}
+
+	.rs-bench-cancel {
+		padding: 0 0.25rem;
+		color: var(--text-muted-color);
+		font-size: 0.85rem;
 	}
 
 	.rs-bench-filter {
@@ -1795,4 +1822,11 @@ $rs-none: #6b7280;
 
 .rs-result .rs-section {
 	scroll-margin-top: 7.5rem;
+}
+
+// The comp editor's tooltips: a line each for what an icon is and why.
+.tippy-box[data-theme~='rs-tip'] {
+	max-width: 22rem;
+	white-space: pre-line;
+	font-size: 0.8rem;
 }

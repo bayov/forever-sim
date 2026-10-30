@@ -1336,7 +1336,9 @@ The Comp tab comes first, before Raid results, Compare, Search and Search result
   icons (gold underline when set by hand) and its DPS in the last run. A party's header shows its Mana
   Spring, or an empty place for it when it has mana users and no shaman. A click on a member offers its
   other builds, which keep its assignments where they still fit.
-- A sticky bench of members to add, with a filter. A click adds one to the first open slot.
+- A sticky bench of members to add, with a filter. A click adds one to the first open slot, or to the empty
+  slot picked with a click.
+- The icons say what they are in quick tooltips.
 - Assignments as cards (`ui/raid_sim/choice_menu.tsx`): Blessings as a paladin by class table, Totems as a
   shaman by element table, Duties and Cooldowns. Each pick is an icon: gold when set by hand, dashed for
   Auto, with the last run's pick in it.

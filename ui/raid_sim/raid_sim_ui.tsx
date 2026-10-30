@@ -99,7 +99,9 @@ export class RaidSimUI extends SimUI {
 		});
 		this.editor.changeEmitter.on(() => this.updateStale());
 		this.addSidebarNote();
-		new CompareResults(this.tabElem(COMPARE_TAB).querySelector('.compare-results') as HTMLElement, this, this.history);
+		new CompareResults(this.tabElem(COMPARE_TAB).querySelector('.compare-results') as HTMLElement, this, this.history, {
+			changeExample: 'a member, an assignment or the fight',
+		});
 		this.simHeader.addImportLink('JSON', new RaidJsonImporter(this.rootElem, this, this.editor));
 		this.simHeader.addExportLink('Link', new RaidLinkExporter(this.rootElem, this, this.editor));
 		this.simHeader.addExportLink('JSON', new RaidJsonExporter(this.rootElem, this, this.editor));
@@ -113,13 +115,14 @@ export class RaidSimUI extends SimUI {
 		else this.showLastSearch();
 	}
 
-	// The sidebar's ± is a standard deviation of the iterations, and the Comp tab's the average's 95% interval.
+	// The sidebar's ± is a standard deviation of the iterations, and the Comp tab's the average's 95% interval,
+	// which its tooltip says.
 	private addSidebarNote() {
 		const results = this.resultsViewer.contentElem.querySelector('.results-sim');
 		if (!results || results.querySelector('.rs-sidebar-note')) return;
 		results.append(
 			(
-				<p className="rs-sidebar-note">± here is one standard deviation of the iterations; the Comp tab’s ±(95%) is the average’s 95% interval.</p>
+				<p className="rs-sidebar-note">± is one standard deviation of the iterations</p>
 			) as HTMLElement,
 		);
 	}

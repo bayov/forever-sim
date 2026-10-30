@@ -2,6 +2,8 @@
 // DPS Report build or a tank or healer placeholder, with its assignments, the encounter, the faction and
 // the camp buffs. Run builds a RaidComp, has the resolver turn it into the raid's request (resolveComp),
 // runs that request in the sim's workers and shows the raid's results.
+import { delegate } from 'tippy.js';
+
 import { ChangeCategory } from '../core/components/dirty_settings';
 import { EncounterPicker } from '../core/components/encounter_picker';
 import { SimProgress } from '../core/components/sim_progress';
@@ -183,6 +185,9 @@ export class CompEditor {
 	private readonly benchList = (<div className="rs-bench-list" />) as HTMLElement;
 	// The slot a member was just added to, which flashes once it's drawn.
 	private addedCell: number | null = null;
+	// The empty slot picked with a click, which the bench's next member goes to.
+	private targetCell: number | null = null;
+	private readonly benchHead = (<div className="rs-bench-head" />) as HTMLElement;
 	private running = false;
 	// The running raid sim was stopped from the page.
 	private stopping = false;
@@ -261,13 +266,13 @@ export class CompEditor {
 				<div className="rs-editor-layout">
 					<div className="rs-editor-main">
 						<p className="visually-hidden" id={this.slotHelpId}>
-							Enter or Space picks this slot’s member up to move it to another slot. Escape lets go, Delete removes the member, and the arrow keys
+							Enter or Space picks this slot’s member up to move it to another slot, or picks an empty slot for the next member from Add members. Escape lets go, Delete removes the member, and the arrow keys
 							move between slots.
 						</p>
 						{this.raidHost}
 						<p className="rs-hint">
 							<i className="fas fa-arrows-up-down-left-right me-1" />
-							Drag a member to move or swap it. Click one for its other builds.
+							Drag a member to move or swap it. Click one for its other builds, or an empty slot to fill it.
 						</p>
 						{section('Assignments', this.assignmentsHost, { className: 'rs-assignments-section' })}
 						{section('Encounter', this.encounterHost, { className: 'rs-encounter-section' })}
@@ -278,13 +283,21 @@ export class CompEditor {
 				</div>
 			</div>
 		) as HTMLElement;
+		// The icons and slots say what they are in a tooltip (data-tip), which shows sooner than a title does.
+		delegate(this.rootElem, {
+			target: '[data-tip]',
+			content: ref => ref.getAttribute('data-tip') ?? '',
+			onShow: instance => {
+				if (!instance.reference.getAttribute('data-tip')) return false;
+			},
+			theme: 'rs-tip',
+			delay: [250, 0],
+			appendTo: () => document.body,
+		});
 		this.benchFilter.setAttribute('aria-label', 'Filter the members to add');
 		this.benchFilter.addEventListener('input', () => this.renderPalette());
 		this.paletteHost.append(
-			<div className="rs-bench-head">
-				<span className="rs-bench-title">Add members</span>
-				<span className="rs-muted">click or drag</span>
-			</div>,
+			this.benchHead,
 			this.benchFilter,
 			this.benchList,
 		);
@@ -654,6 +667,8 @@ export class CompEditor {
 		const active = document.activeElement;
 		const activeCell = active instanceof HTMLElement && this.raidHost.contains(active) && active.dataset.cell ? parseInt(active.dataset.cell) : null;
 		const keep = this.focusCell ?? activeCell;
+		if (this.targetCell !== null && (this.targetCell >= this.state.size || this.state.cells[this.targetCell])) this.targetCell = null;
+		this.renderBenchHead();
 		this.raidHost.replaceChildren(<div className={`rs-parties rs-parties-${parties}`}>{[...Array(parties).keys()].map(p => this.partyElem(p))}</div>);
 		if (keep !== null) this.raidHost.querySelector<HTMLElement>(`[data-cell="${keep}"]`)?.focus();
 		this.focusCell = null;
@@ -675,7 +690,7 @@ export class CompEditor {
 					<span className="rs-party-name">Group {p + 1}</span>
 					<span className="rs-party-buffs">{this.partyBuffs(cells)}</span>
 					{partyDps ? (
-						<span className="rs-party-dps" title="The group’s DPS members in the last run">
+						<span className="rs-party-dps" dataset={{ tip: 'The group’s DPS members in the last run' }}>
 							{fmt(partyDps)} <span className="rs-unit">DPS</span>
 						</span>
 					) : null}
@@ -697,14 +712,14 @@ export class CompEditor {
 		if (giver) {
 			const pkg = this.packageOf(giver);
 			return [
-				<img className="rs-icon rs-party-buff" src={PACKAGE_ICON} alt="Mana Spring" title={`${packageName(pkg)} for this group, from ${this.memberName(giver)}`} />,
-				...(packageHasTide(pkg) ? [<img className="rs-icon rs-party-buff" src={MANA_TIDE_ICON} alt="Mana Tide" title={`Mana Tide Totem, from ${this.memberName(giver)}`} />] : []),
+				<img className="rs-icon rs-party-buff" src={PACKAGE_ICON} alt="Mana Spring" dataset={{ tip: `${packageName(pkg)} for this group, from ${this.memberName(giver)}` }} />,
+				...(packageHasTide(pkg) ? [<img className="rs-icon rs-party-buff" src={MANA_TIDE_ICON} alt="Mana Tide" dataset={{ tip: `Mana Tide Totem, from ${this.memberName(giver)}` }} />] : []),
 			];
 		}
 		const manaUsers = members.filter(m => !m.preset && this.usesMana(m));
 		if (!manaUsers.length) return [];
 		return [
-			<span className="rs-icon rs-party-gap" title={`No Mana Spring: ${plural(manaUsers.length, 'mana user')} here and no shaman`}>
+			<span className="rs-icon rs-party-gap" dataset={{ tip: `No Mana Spring: ${plural(manaUsers.length, 'mana user')} here and no shaman` }}>
 				<img src={PACKAGE_ICON} alt="No Mana Spring" />
 			</span>,
 		];
@@ -727,9 +742,10 @@ export class CompEditor {
 				this.activateSlot(cell);
 				return;
 			case 'Escape':
-				if (this.moving === null) return;
+				if (this.moving === null && this.targetCell === null) return;
 				e.preventDefault();
 				this.moving = null;
+				this.targetCell = null;
 				this.focusCell = cell;
 				this.setStatus('');
 				this.renderRaid();
@@ -769,7 +785,10 @@ export class CompEditor {
 			return;
 		}
 		const member = this.state.cells[cell];
-		if (!member) return;
+		if (!member) {
+			this.pickTarget(cell);
+			return;
+		}
 		this.moving = cell;
 		this.focusCell = cell;
 		this.setStatus(`Moving ${this.memberShortName(member, cell)}: Enter on another slot puts it there (a swap if it’s taken). Escape lets go.`);
@@ -796,7 +815,7 @@ export class CompEditor {
 		const where = `Group ${Math.floor(cell / PARTY_SIZE) + 1}, slot ${(cell % PARTY_SIZE) + 1}`;
 		if (!member) {
 			elem = (
-				<div className="rs-slot rs-slot-empty" title="Drag a member here, or click one under Add members">
+				<div className="rs-slot rs-slot-empty" dataset={{ tip: 'Click to fill from Add members, or drag a member here' }}>
 					<i className="fas fa-plus" />
 				</div>
 			) as HTMLElement;
@@ -840,7 +859,7 @@ export class CompEditor {
 					{remove}
 				</div>
 			) as HTMLElement;
-			elem.title = `${this.memberName(member)}${info ? ` · ${info.gives}` : build ? ` · gives ${build.gives}` : ''}`;
+			elem.dataset.tip = `${this.memberName(member)}${info ? ` · ${info.gives}` : build ? ` · gives ${build.gives}` : ''}`;
 			elem.setAttribute(
 				'aria-label',
 				`${where}: ${this.memberName(member)}, ${roleName(role)}${dps !== undefined ? `, ${fmt(dps)} DPS` : ''}${
@@ -898,7 +917,10 @@ export class CompEditor {
 			this.dropOn(cell, this.drag);
 			this.drag = null;
 		});
-		if (!member) elem.addEventListener('click', () => this.moving !== null && this.activateSlot(cell));
+		if (!member) {
+			elem.addEventListener('click', () => this.activateSlot(cell));
+			if (this.targetCell == cell) elem.classList.add('rs-slot-chosen');
+		}
 		elem.tabIndex = 0;
 		elem.dataset.cell = `${cell}`;
 		elem.setAttribute('role', 'button');
@@ -964,13 +986,47 @@ export class CompEditor {
 
 	// A member from the bench, in the first empty slot.
 	private addMember(member: Omit<Member, 'id'>) {
-		const cell = this.state.cells.findIndex(c => !c);
+		const cell = this.targetCell ?? this.state.cells.findIndex(c => !c);
+		this.targetCell = null;
 		if (cell < 0) {
 			this.setStatus('The raid is full. Drag a member onto a slot to replace who is there.', true);
 			return;
 		}
 		this.setStatus('');
 		this.dropOn(cell, { kind: 'new', member });
+	}
+
+	// Picks an empty slot for the bench's next member, or lets go of it with a second click.
+	private pickTarget(cell: number) {
+		this.targetCell = this.targetCell == cell ? null : cell;
+		this.focusCell = cell;
+		this.renderRaid();
+		if (this.targetCell !== null) this.benchFilter.focus();
+	}
+
+	// The bench's heading says where its next member goes.
+	private renderBenchHead() {
+		const target = this.targetCell;
+		if (target === null) {
+			this.benchHead.replaceChildren(<span className="rs-bench-title">Add members</span>, <span className="rs-muted">click or drag</span>);
+			return;
+		}
+		const cancel = (
+			<button type="button" className="btn btn-link rs-bench-cancel" dataset={{ tip: 'Back to the first open slot' }}>
+				<i className="fas fa-xmark" />
+			</button>
+		) as HTMLButtonElement;
+		cancel.setAttribute('aria-label', 'Cancel');
+		cancel.addEventListener('click', () => {
+			this.targetCell = null;
+			this.renderRaid();
+		});
+		this.benchHead.replaceChildren(
+			<span className="rs-bench-title rs-bench-target">
+				To group {Math.floor(target / PARTY_SIZE) + 1}, slot {(target % PARTY_SIZE) + 1}
+			</span>,
+			cancel,
+		);
 	}
 
 	private dropAssignmentsOf(id: number) {
@@ -1046,7 +1102,7 @@ export class CompEditor {
 		const shown = jobs.length > 4 ? jobs.slice(0, 3) : jobs;
 		const icons: Node[] = shown.map(job => {
 			const icon = (
-				<button type="button" className={`rs-job ${job.hand ? 'rs-job-hand' : ''}`} title={`${job.title}${job.hand ? ' (set by hand)' : ' (auto)'}`} tabIndex={-1}>
+				<button type="button" className={`rs-job ${job.hand ? 'rs-job-hand' : ''}`} dataset={{ tip: `${job.title}${job.hand ? ' (set by hand)' : ' (auto)'}` }} tabIndex={-1}>
 					<img className="rs-icon" src={job.icon} alt={job.title} draggable={false} />
 				</button>
 			) as HTMLButtonElement;
@@ -1056,7 +1112,7 @@ export class CompEditor {
 			});
 			return icon;
 		});
-		if (jobs.length > 4) icons.push(<span className="rs-job-more" title={jobs.slice(3).map(j => j.title).join('\n')}>+{jobs.length - 3}</span>);
+		if (jobs.length > 4) icons.push(<span className="rs-job-more" dataset={{ tip: jobs.slice(3).map(j => j.title).join('\n') }}>+{jobs.length - 3}</span>);
 		return icons;
 	}
 
@@ -1084,7 +1140,7 @@ export class CompEditor {
 			const off = !!range && (n < range[0] || n > range[1]);
 			const usual = range ? (range[0] == range[1] ? `${range[0]}` : `${range[0]} to ${range[1]}`) : '';
 			return (
-				<span className={`rs-role-count ${off ? 'rs-off' : ''}`} title={range ? `A ${size}-player raid usually has ${usual} ${word}` : ''}>
+				<span className={`rs-role-count ${off ? 'rs-off' : ''}`} dataset={{ tip: range ? `A ${size}-player raid usually has ${usual} ${word}` : '' }}>
 					<i className={`fas ${icon}`} />
 					<b>{n}</b> {word}
 				</span>
@@ -1113,7 +1169,7 @@ export class CompEditor {
 				none: 'Nobody here gives it',
 			}[state];
 			return (
-				<span className={`rs-effect rs-effect-${state}`} title={`${name}\n${why}`}>
+				<span className={`rs-effect rs-effect-${state}`} dataset={{ tip: `${name}\n${why}` }}>
 					<img className="rs-icon" src={e.icon} alt={name} />
 				</span>
 			);
@@ -1124,16 +1180,19 @@ export class CompEditor {
 			const iterations = last.request!.simOptions?.iterations || 1;
 			const raidDps = last.simResult!.raidMetrics.dps;
 			dps = (
-				<div className={`rs-overview-dps ${this.stale ? 'rs-stale' : ''}`} title={this.stale ? 'The raid changed after this run' : ''}>
+				<div className={`rs-overview-dps ${this.stale ? 'rs-stale' : ''}`} dataset={{ tip: this.stale ? 'The raid changed after this run' : '' }}>
 					<span className="rs-overview-dps-value">{fmt(raidDps.avg)}</span>
 					<span className="rs-overview-dps-label">
 						raid DPS
-						<span className="rs-ci" title="The average’s 95% interval">
+						<span className="rs-ci" dataset={{ tip: 'The average’s 95% interval' }}>
 							±{fmt((1.96 * raidDps.stdev) / Math.sqrt(iterations))}
 						</span>
 					</span>
+					<button className="btn btn-link rs-details-link" type="button" onclick={() => this.resultsHost.scrollIntoView({ behavior: 'smooth' })}>
+						Tables <i className="fas fa-arrow-down" />
+					</button>
 					<button className="btn btn-link rs-details-link" type="button" onclick={() => this.simUI.activate(DETAILS_TAB)}>
-						Details <i className="fas fa-arrow-right" />
+						Raid results <i className="fas fa-arrow-right" />
 					</button>
 				</div>
 			);
@@ -1145,7 +1204,7 @@ export class CompEditor {
 				{roleChip('fa-khanda', count(RaidRole.RaidRoleDps), 'DPS')}
 				{open ? <span className="rs-role-count rs-open">{open} open</span> : null}
 			</div>,
-			<div className="rs-strip" title="">
+			<div className="rs-strip">
 				<div className="rs-strip-group">
 					<span className="rs-strip-label">Buffs</span>
 					{RAID_EFFECTS.filter(e => !e.debuff).map(tile)}
@@ -1166,7 +1225,7 @@ export class CompEditor {
 		const matches = (...words: string[]) => !filter || words.some(w => w.toLowerCase().includes(filter));
 		const entry = (member: Omit<Member, 'id'>, label: string, icon: string, cls: Class, title: string, hint = '') => {
 			const elem = (
-				<button className="rs-bench-item" type="button" draggable={true} title={title}>
+				<button className="rs-bench-item" type="button" draggable={true} dataset={{ tip: title }}>
 					<img className="rs-icon" src={icon} draggable={false} alt={iconAlt(cls)} />
 					<span className={`rs-bench-name text-${cssClassForClass(cls)}`}>{label}</span>
 					{hint ? <span className="rs-bench-hint">{hint}</span> : null}
@@ -1253,7 +1312,7 @@ export class CompEditor {
 		const cls = this.classOf(member);
 		const info = member.preset ? presetInfo(member.preset) : undefined;
 		return (
-			<span className="rs-who" title={this.memberName(member)}>
+			<span className="rs-who" dataset={{ tip: this.memberName(member) }}>
 				<img className="rs-icon" src={memberIcon(info, this.buildOf(member), cls)} alt={iconAlt(cls)} />
 				<span className={`rs-who-name text-${cssClassForClass(cls)}`}>{this.slotName(member)}</span>
 				<span className="rs-who-seat">
@@ -1335,7 +1394,7 @@ export class CompEditor {
 									<tr>
 										<th />
 										{presentClasses.map(c => (
-											<th title={`${classNames[c]}s`}>
+											<th dataset={{ tip: `${classNames[c]}s` }}>
 												<img className="rs-icon" src={CLASS_ICONS[c]} alt={classNames[c]} />
 											</th>
 										))}
@@ -1375,7 +1434,7 @@ export class CompEditor {
 															onChange: v => set(h.judgements, member.id, v),
 														})
 													) : (
-														<span className="rs-muted" title="A DPS paladin judges by its duty, under Duties">
+														<span className="rs-muted" dataset={{ tip: 'A DPS paladin judges by its duty, under Duties' }}>
 															duty
 														</span>
 													)}
@@ -1517,7 +1576,7 @@ export class CompEditor {
 			const target = resolved?.job.oneofKind == 'cooldown' ? resolved.job.cooldown.target : undefined;
 			return (
 				<span className="rs-cooldown">
-					<img className="rs-icon" src={pi ? POWER_INFUSION_ICON : INNERVATE_ICON} alt="" title={pi ? 'Power Infusion' : 'Innervate'} />
+					<img className="rs-icon" src={pi ? POWER_INFUSION_ICON : INNERVATE_ICON} alt="" dataset={{ tip: pi ? 'Power Infusion' : 'Innervate' }} />
 					<i className="fas fa-arrow-right rs-muted" />
 					{assignmentPicker({
 						label: `${this.slotName(holder.member)}: ${pi ? 'Power Infusion' : 'Innervate'} on`,
@@ -2503,9 +2562,6 @@ export class CompEditor {
 						rows.map(r => r.row),
 						'rs-table-run-members',
 					),
-					{
-						note: 'Each member’s DPS and threat per second here, and its difference from its report build’s published DPS. Each duty’s cost is in Member values.',
-					},
 				),
 			);
 		}
@@ -2533,7 +2589,7 @@ export class CompEditor {
 					  )
 					: empty('The resolver recorded no buffs.'),
 				{
-					note: 'From the resolver’s record. A given effect is up all fight; a cast one’s uptime is its aura’s in the raid sim (the boss’s for a debuff; for a buff, the average over the members it was up on, leaving out a member whose aura never came up, like an Elemental shaman’s Windfury Totem), and shows — where the sim has no aura for it.',
+					note: 'A given effect is up all fight. A cast one shows its uptime in this run: the boss’s for a debuff, the members’ for a buff.',
 				},
 			),
 			section('What the raid goes without', resolution.misses.length ? list(resolution.misses, 'rs-misses') : empty('Nothing.')),

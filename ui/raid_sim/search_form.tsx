@@ -167,8 +167,8 @@ export class SearchForm {
 		parent.appendChild(
 			<div className="rs-search">
 				<p className="rs-intro">
-					Finds the DPS builds, and the tank and healer presets, that give a raid the most DPS, for each faction and camp setting. It runs on the
-					native server, on every core, and caches each single-player sim, so a search it has run before takes seconds.
+					Finds the builds, tanks and healers that give a raid the most DPS, for each faction and camp setting. A search it ran before takes
+					seconds.
 				</p>
 				{this.formHost}
 				{this.problemsElem}

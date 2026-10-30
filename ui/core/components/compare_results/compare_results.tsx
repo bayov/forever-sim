@@ -91,6 +91,8 @@ export class CompareResults extends Component {
 
 	private readonly simUI: SimUI;
 	private readonly history: SimHistory;
+	// What the empty state suggests changing between two runs, like "a talent or an item".
+	private readonly changeExample: string;
 	// The raid member we compare, by name, or '' for the whole raid. A spec page's runs have one player, so
 	// there it's always ''.
 	private member = '';
@@ -137,9 +139,10 @@ export class CompareResults extends Component {
 		resources: Map<ResourceType, { panel: HTMLElement; table: CompareTable<ResourceMetrics> }>;
 	};
 
-	constructor(parent: HTMLElement, simUI: SimUI, history: SimHistory) {
+	constructor(parent: HTMLElement, simUI: SimUI, history: SimHistory, opts: { changeExample?: string } = {}) {
 		super(parent, 'cmp-root');
 		this.simUI = simUI;
+		this.changeExample = opts.changeExample ?? 'a talent or an item';
 		this.history = history;
 		this.memberSelect = (<select className="form-select cmp-member-select" />) as HTMLSelectElement;
 		this.memberElem = (
@@ -472,7 +475,7 @@ export class CompareResults extends Component {
 	private missingText(usable: number): string {
 		if (usable == 0)
 			return 'Each run of Simulate goes in the sim history. Run the sim, change something, and run it again to see here what the change did.';
-		return 'We need one more run. Change something, like a talent or an item, and run the sim again to see here what the change did.';
+		return `We need one more run. Change something, like ${this.changeExample}, and run the sim again to see here what the change did.`;
 	}
 
 	private noResultsText(): string {

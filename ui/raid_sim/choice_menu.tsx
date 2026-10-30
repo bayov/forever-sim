@@ -115,7 +115,7 @@ export function assignmentPicker(opts: {
 		<button
 			type="button"
 			className={`rs-pick ${byHand ? 'rs-pick-hand' : 'rs-pick-auto'} ${shown ? '' : 'rs-pick-empty'}`}
-			title={`${opts.label}: ${words}`}
+			dataset={{ tip: `${opts.label}: ${words}` }}
 			attributes={{ 'aria-label': `${opts.label}: ${words}` }}>
 			{shown ? choiceIcon(shown) : <i className="fas fa-wand-magic-sparkles rs-pick-auto-icon" />}
 		</button>
@@ -146,7 +146,7 @@ export function segmented(options: { value: string; label: string; title?: strin
 			<button
 				type="button"
 				className={`rs-segment ${o.value == value ? 'active' : ''}`}
-				title={o.title ?? ''}
+				dataset={{ tip: o.title ?? '' }}
 				attributes={{ role: 'radio', 'aria-checked': o.value == value ? 'true' : 'false' }}>
 				{o.label}
 			</button>
