@@ -1,41 +1,41 @@
-builds: 58 rows, 85 KB
+builds: 77 rows, 116 KB
 races: 302 rows, 63 KB
-lengths: 290 rows, 23 KB
+lengths: 385 rows, 32 KB
 abilities: 891 rows, 250 KB
 auras: 1483 rows, 216 KB
-hist: 2771 rows, 148 KB
+hist: 2891 rows, 155 KB
 stats: 781 rows, 65 KB
 gear: 750 rows, 142 KB
-setup: 2273 rows, 565 KB
+setup: 2272 rows, 565 KB
 notes: 1755 rows, 208 KB
 race_variants: 946 rows, 287 KB
 race_breakdown: 1170 rows, 176 KB
 race_summary: 328 rows, 100 KB
 race_notes: 47 rows, 11 KB
 weights: 311 rows, 63 KB
-mana: 3783 rows, 283 KB
-mana_summary: 39 rows, 12 KB
+mana: 5335 rows, 415 KB
+mana_summary: 55 rows, 17 KB
 assumptions: 50 rows, 57 KB
 assumption_dps: 355 rows, 58 KB
 rotation: 787 rows, 450 KB
 race_rotation: 417 rows, 250 KB
 rotation conditions shown in compact form: []
-tooltips: 1126 rows, 445 KB
+tooltips: 1127 rows, 445 KB
 tooltips without text: ['i990015 Enhancement Synthetic On-Use Trinket (Phase 1)', 'i990115 Elemental Synthetic On-Use Trinket (Phase 1)', 'i991018 Warrior Synthetic Battle Trinket (Phase 1)', 'i992015 Retribution Synthetic Spell Power On-Use Trinket (Phase 1)', 'i993016 Ranged Hunter Synthetic On-Use Trinket (Phase 1)', 'i993117 Survival Synthetic On-Use Trinket (Phase 1)', 'i994202 Rogue Synthetic On-Use Trinket (Phase 1)', 'i995034 Priest Synthetic On-Use Trinket (Phase 1)', 'i996032 Mage Synthetic Talisman (Phase 1)', 'i997022 Warlock Synthetic Talisman (Phase 1)', 'i998015 Balance Synthetic Spell Power Trinket (Phase 1)', 'i998115 Feral Synthetic Strength Trinket (Phase 1)', 'o11 Raid damage hit']
 talenttrees: 465 rows, 178 KB
-wowhead coverage: {'item:forever': 70, 'spell:none': 1, 'spell:sim': 8, 'spell:forever': 242, 'spell:wiki': 8, 'spell:client': 18, 'item:db': 241, 'enchant:forever': 359, 'enchant:db': 60, 'setup:sim': 5, 'setup:forever': 36, 'setup:wiki': 1} {'forever': 303, 'other': 22} {'forever': 1375}
+wowhead coverage: {'item:forever': 71, 'spell:none': 1, 'spell:sim': 8, 'spell:forever': 243, 'spell:wiki': 8, 'spell:client': 17, 'item:db': 241, 'enchant:forever': 359, 'enchant:db': 60, 'setup:sim': 5, 'setup:forever': 36, 'setup:wiki': 1} {'forever': 304, 'other': 21} {'forever': 1375}
 icons: 79 rows, 159 KB
 icons_more: 608 rows, 923 KB
 names: 299 rows, 29 KB
 names without an icon: ['Bloodthrill', 'Caustic Smog Potion', 'Consecration Mark', 'Curse of Elements', 'Dark Inspiration', 'Decimation', 'Decimation - Execute', 'Demonic Knowledge', 'Dragonfire Potion', 'Echo of Command', 'Echo of Righteousness', 'Eclipse', 'Heating Up', 'Improved Stormstrike', 'Item 260817', 'Lacerating Strikes', 'Maelstrom Weapon', 'Major Frenzy Potion', 'Major Spellblasting Potion', 'Mana gain', 'Missile Barrage', 'Movement', 'Potion', 'Quick Strikes', 'Rage gain', 'Raid damage hit', 'Resourcefulness', 'Shadow Word Death', 'Shadow and Flame (Shadow)', 'Tenets of the Silver Hand']
 treeart: 27 rows, 1063 KB
 missing icons: ['client_252996']
-timeline_warrior: 12 rows, 34 KB
-timeline_rogue: 36 rows, 81 KB
-timeline_hunter: 12 rows, 38 KB
-timeline_paladin: 18 rows, 73 KB
+timeline_warrior: 12 rows, 37 KB
+timeline_rogue: 36 rows, 86 KB
+timeline_hunter: 12 rows, 39 KB
+timeline_paladin: 18 rows, 74 KB
 timeline_shaman: 18 rows, 49 KB
-timeline_druid: 9 rows, 24 KB
+timeline_druid: 9 rows, 25 KB
 timeline_mage: 12 rows, 42 KB
 timeline_warlock: 12 rows, 21 KB
 timeline_priest: 9 rows, 23 KB

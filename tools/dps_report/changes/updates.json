@@ -937,6 +937,114 @@
     {
      "commit": "414fa53",
      "why": "raid sim engine and comp search work; every report request's result is bit-identical (TestRaidForeverReportHashes), but for Feral's never-active Faerie Fire (Feral) aura"
+    },
+    {
+     "commit": "596ba72",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "bbbaf2e",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "161f80b",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "74554e2",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "a19f2e8",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "2626282",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "4ae4dc3",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "7a7a0f8",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "49edbab",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "26a471d",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "b720834",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "10ef00d",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "ec727d5",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "b342e74",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "6c13cef",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "d3f91e4",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "afaa943",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "060e525",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "2c3bf91",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "ed2fbc1",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "df737fa",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "03a2c75",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "4af1ec0",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "cbaee6d",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "2e00dee",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "98cf9bd",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "80dca73",
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     }
    ]
   }
