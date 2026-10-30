@@ -23,7 +23,7 @@ var WindfuryWeaponBonusAP = [WindfuryWeaponRanks + 1]float64{0, 103.6, 221.4, 31
 var WindfuryWeaponScaling = [WindfuryWeaponRanks + 1]core.RankScaling{{}, {38, 7.2}, {48, 12.8}, {58, 8.3}, {60, 12.5}}
 
 func (shaman *Shaman) windfuryRank() int {
-	return core.HighestRankAt(shaman.Level, WindfuryWeaponLevel[:])
+	return core.HighestKnownRank(&shaman.Character, WindfuryWeaponLevel[:], WindfuryWeaponSpellId[:])
 }
 
 func (shaman *Shaman) newWindfuryImbueSpell(isMH bool) *core.Spell {

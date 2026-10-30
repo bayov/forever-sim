@@ -32,7 +32,7 @@ var FlametongueWeaponScaling = [FlametongueWeaponRanks + 1]core.RankScaling{{}, 
 var FlametongueWeaponCut = [FlametongueWeaponRanks + 1]float64{0, 0, 2, 5, 0, 0, 0}
 
 func (shaman *Shaman) flametongueRank() int {
-	return core.HighestRankAt(shaman.Level, FlametongueWeaponLevel[:])
+	return core.HighestKnownRank(&shaman.Character, FlametongueWeaponLevel[:], FlametongueWeaponSpellId[:])
 }
 
 func (shaman *Shaman) newFlametongueImbueSpell(weapon *core.Item) *core.Spell {

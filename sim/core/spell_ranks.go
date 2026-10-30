@@ -142,3 +142,32 @@ func HighestRankAt[L int | int32](level int32, learnLevels []L) int {
 	}
 	return rank
 }
+
+func untrainedSpells(ids []int32) map[int32]bool {
+	if len(ids) == 0 {
+		return nil
+	}
+	untrained := make(map[int32]bool, len(ids))
+	for _, id := range ids {
+		untrained[id] = true
+	}
+	return untrained
+}
+
+// KnowsRank is whether the character knows a spell rank: its level has reached the rank's,
+// and it isn't one we left untrained (Player.untrained_spells).
+func (character *Character) KnowsRank(spellID int32, learnLevel int32) bool {
+	return learnLevel <= character.Level && !character.untrained[spellID]
+}
+
+// HighestKnownRank is the highest rank the character knows (KnowsRank), from a table of learn
+// levels and one of spell IDs by rank, with rank 0 unused in both. 0 when it knows none.
+func HighestKnownRank[L int | int32](character *Character, learnLevels []L, spellIDs []int32) int {
+	rank := 0
+	for r := 1; r < len(learnLevels); r++ {
+		if character.KnowsRank(spellIDs[r], int32(learnLevels[r])) {
+			rank = r
+		}
+	}
+	return rank
+}

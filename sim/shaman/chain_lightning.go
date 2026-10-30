@@ -34,7 +34,7 @@ func (shaman *Shaman) registerChainLightningSpell() {
 	for rank := 1; rank <= ChainLightningRanks; rank++ {
 		// Only the ranks the level has learned, so nothing below (a totem buff aura) is
 		// built for a rank the shaman cannot cast.
-		if ChainLightningLevel[rank] <= int(shaman.Level) {
+		if shaman.KnowsRank(ChainLightningSpellId[rank], int32(ChainLightningLevel[rank])) {
 			config := shaman.newChainLightningSpellConfig(rank, cdTimer)
 			// The overload gets a config of its own so that the two casts share no bounce results.
 			shaman.ChainLightningOverload[rank] = shaman.registerOverloadSpell(shaman.newChainLightningSpellConfig(rank, cdTimer))

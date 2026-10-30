@@ -9,6 +9,7 @@ import (
 
 const RockbiterWeaponRanks = 7
 
+var RockbiterWeaponSpellId = [RockbiterWeaponRanks + 1]int32{0, 8017, 8018, 8019, 10399, 16314, 16315, 16316}
 var RockbiterWeaponEnchantId = [RockbiterWeaponRanks + 1]int32{0, 29, 6, 1, 503, 1663, 683, 1664}
 var RockbiterWeaponBonusTPS = [RockbiterWeaponRanks + 1]float64{0, 6, 10, 16, 27, 41, 55, 72}
 var RockbiterWeaponLevel = [RockbiterWeaponRanks + 1]int32{0, 1, 8, 16, 24, 34, 44, 54}
@@ -24,7 +25,7 @@ var RockbiterWeaponBonusAP = [RockbiterWeaponRanks + 1]float64{0, 49.5, 79, 118,
 var RockbiterWeaponScaling = [RockbiterWeaponRanks + 1]core.RankScaling{{}, {6, 4.1}, {14, 3.5}, {22, 5}, {32, 8.1}, {42, 18}, {52, 16.1}, {60, 16.5}}
 
 func (shaman *Shaman) rockbiterRank() int {
-	return core.HighestRankAt(shaman.Level, RockbiterWeaponLevel[:])
+	return core.HighestKnownRank(&shaman.Character, RockbiterWeaponLevel[:], RockbiterWeaponSpellId[:])
 }
 
 func (shaman *Shaman) RegisterRockbiterImbue(procMask core.ProcMask) {

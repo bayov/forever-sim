@@ -26,9 +26,7 @@ func (shaman *Shaman) registerLightningShieldSpell() {
 	shaman.LightningShieldAuras = make([]*core.Aura, LightningShieldRanks+1)
 
 	for rank := 1; rank <= LightningShieldRanks; rank++ {
-		level := LightningShieldLevel[rank]
-
-		if level <= int(shaman.Level) {
+		if shaman.KnowsRank(LightningShieldSpellId[rank], int32(LightningShieldLevel[rank])) {
 			shaman.registerNewLightningShieldSpell(rank)
 		}
 	}

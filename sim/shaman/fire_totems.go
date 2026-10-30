@@ -27,7 +27,7 @@ func (shaman *Shaman) registerSearingTotemSpell() {
 	for rank := 1; rank <= SearingTotemRanks; rank++ {
 		// Only the ranks the level has learned, so nothing below (a totem buff aura) is
 		// built for a rank the shaman cannot cast.
-		if SearingTotemLevel[rank] <= int(shaman.Level) {
+		if shaman.KnowsRank(SearingTotemSpellId[rank], int32(SearingTotemLevel[rank])) {
 			config := shaman.newSearingTotemSpellConfig(rank)
 			shaman.SearingTotem[rank] = shaman.RegisterSpell(config)
 		}
@@ -138,7 +138,7 @@ func (shaman *Shaman) registerMagmaTotemSpell() {
 	for rank := 1; rank <= MagmaTotemRanks; rank++ {
 		// Only the ranks the level has learned, so nothing below (a totem buff aura) is
 		// built for a rank the shaman cannot cast.
-		if MagmaTotemLevel[rank] <= int(shaman.Level) {
+		if shaman.KnowsRank(MagmaTotemSpellId[rank], int32(MagmaTotemLevel[rank])) {
 			config := shaman.newMagmaTotemSpellConfig(rank)
 			shaman.MagmaTotem[rank] = shaman.RegisterSpell(config)
 		}
@@ -253,7 +253,7 @@ func (shaman *Shaman) registerFireNovaSpell() {
 	shaman.FireNovaHits = make([]*core.Spell, FireNovaRanks+1)
 
 	for rank := 1; rank <= FireNovaRanks; rank++ {
-		if FireNovaLevel[rank] <= int(shaman.Level) {
+		if shaman.KnowsRank(FireNovaSpellId[rank], int32(FireNovaLevel[rank])) {
 			shaman.FireNovaHits[rank] = shaman.RegisterSpell(shaman.newFireNovaHitSpellConfig(rank))
 			shaman.FireNova[rank] = shaman.RegisterSpell(shaman.newFireNovaSpellConfig(rank, shaman.FireNovaHits[rank]))
 		}
@@ -353,7 +353,7 @@ func (shaman *Shaman) registerFlametongueTotemSpell() {
 	shaman.FlametongueTotem = make([]*core.Spell, FlametongueTotemRanks+1)
 
 	for rank := 1; rank <= FlametongueTotemRanks; rank++ {
-		if FlametongueTotemLevel[rank] <= int(shaman.Level) {
+		if shaman.KnowsRank(FlametongueTotemSpellId[rank], int32(FlametongueTotemLevel[rank])) {
 			shaman.FlametongueTotem[rank] = shaman.RegisterSpell(shaman.newFlametongueTotemSpellConfig(rank))
 		}
 	}

@@ -52,6 +52,11 @@ message Player {
 	// builds set 5. The sim itself never counts points, the UI picker and the rotopt
 	// talent search cap with it.
 	int32 bonus_talent_points = 50;
+	// Spell ranks the character's level has reached but it hasn't trained, by their spell IDs.
+	// A leveling plan's training schedule leaves a rank here until the level it's bought at, so
+	// the sim casts the rank below it until then. The ranks after an untrained one should be
+	// here too, because a trainer sells a rank only once we know the one before it.
+	repeated int32 untrained_spells = 55;
 	// How far the main hand and off hand weapons' skill is below the most for the level (5 a
 	// level), 0 for full skill. A weapon we haven't leveled yet misses, gets dodged, parried
 	// and glanced more, glances for less and crits less.

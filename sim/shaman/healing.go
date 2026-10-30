@@ -86,7 +86,7 @@ func (shaman *Shaman) registerHealingSpells() {
 func (shaman *Shaman) registerHealRanks(ranks []healRank, spellCode int32) []*core.Spell {
 	spells := make([]*core.Spell, len(ranks))
 	for rank := 1; rank < len(ranks); rank++ {
-		if ranks[rank].learnLevel <= shaman.Level {
+		if shaman.KnowsRank(ranks[rank].spellID, ranks[rank].learnLevel) {
 			spells[rank] = shaman.RegisterSpell(shaman.newHealSpellConfig(ranks[rank], rank, spellCode))
 		}
 	}

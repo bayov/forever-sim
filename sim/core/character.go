@@ -74,6 +74,9 @@ type Character struct {
 	// How far each weapon's skill is below the most for the level, by hand (Player.main_hand_skill_gap).
 	weaponSkillGaps map[proto.CastType]float64
 
+	// The ranks the level has reached but we haven't trained (Player.untrained_spells).
+	untrained map[int32]bool
+
 	// Base stats for this Character.
 	baseStats stats.Stats
 
@@ -173,6 +176,8 @@ func NewCharacter(party *Party, partyIndex int, player *proto.Player) Character 
 			proto.CastType_CastTypeMainHand: float64(max(0, player.MainHandSkillGap)),
 			proto.CastType_CastTypeOffHand:  float64(max(0, player.OffHandSkillGap)),
 		},
+
+		untrained: untrainedSpells(player.UntrainedSpells),
 	}
 
 	// We drop an off-hand weapon from a class that can't hold one, so it adds no stats, swings

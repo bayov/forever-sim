@@ -42,7 +42,7 @@ func (shaman *Shaman) registerLightningBoltSpell() {
 	for rank := 1; rank <= LightningBoltRanks; rank++ {
 		// Only the ranks the level has learned, so nothing below (a totem buff aura) is
 		// built for a rank the shaman cannot cast.
-		if LightningBoltLevel[rank] <= int(shaman.Level) {
+		if shaman.KnowsRank(LightningBoltSpellId[rank], int32(LightningBoltLevel[rank])) {
 			config := shaman.newLightningBoltSpellConfig(rank)
 			// The overload gets a config of its own so that the two casts share no state.
 			shaman.LightningBoltOverload[rank] = shaman.registerOverloadSpell(shaman.newLightningBoltSpellConfig(rank))

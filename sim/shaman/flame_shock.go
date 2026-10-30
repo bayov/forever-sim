@@ -26,7 +26,7 @@ func (shaman *Shaman) registerFlameShockSpell(shockTimer *core.Timer) {
 	shaman.FlameShock = make([]*core.Spell, FlameShockRanks+1)
 
 	for rank := 1; rank <= FlameShockRanks; rank++ {
-		if FlameShockLevel[rank] <= int(shaman.Level) {
+		if shaman.KnowsRank(FlameShockSpellId[rank], int32(FlameShockLevel[rank])) {
 			shaman.FlameShock[rank] = shaman.RegisterSpell(shaman.newFlameShockSpell(rank, shockTimer))
 		}
 	}

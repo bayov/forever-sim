@@ -25,7 +25,7 @@ func (shaman *Shaman) registerFrostShockSpell(shockTimer *core.Timer) {
 	for rank := 1; rank <= FrostShockRanks; rank++ {
 		// Only the ranks the level has learned, so nothing below (a totem buff aura) is
 		// built for a rank the shaman cannot cast.
-		if FrostShockLevel[rank] <= int(shaman.Level) {
+		if shaman.KnowsRank(FrostShockSpellId[rank], int32(FrostShockLevel[rank])) {
 			config := shaman.newFrostShockSpellConfig(rank, shockTimer)
 			shaman.FrostShock[rank] = shaman.RegisterSpell(config)
 		}

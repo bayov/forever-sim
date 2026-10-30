@@ -48,7 +48,7 @@ func (shaman *Shaman) registerWindfuryTotemSpell() {
 	for rank := 1; rank <= WindfuryTotemRanks; rank++ {
 		// Only the ranks the level has learned, so nothing below (a totem buff aura) is
 		// built for a rank the shaman cannot cast.
-		if WindfuryTotemLevel[rank] <= int(shaman.Level) {
+		if shaman.KnowsRank(WindfuryTotemSpellId[rank], int32(WindfuryTotemLevel[rank])) {
 			config := shaman.newWindfuryTotemSpellConfig(rank)
 			shaman.WindfuryTotem[rank] = shaman.RegisterSpell(config)
 		}
@@ -127,7 +127,7 @@ func (shaman *Shaman) registerGraceOfAirTotemSpell() {
 	for rank := 1; rank <= maxRank; rank++ {
 		// Only the ranks the level has learned, so nothing below (a totem buff aura) is
 		// built for a rank the shaman cannot cast.
-		if GraceOfAirTotemLevel[rank] <= int(shaman.Level) {
+		if shaman.KnowsRank(GraceOfAirTotemSpellId[rank], int32(GraceOfAirTotemLevel[rank])) {
 			config := shaman.newGraceOfAirTotemSpellConfig(rank)
 			shaman.GraceOfAirTotem[rank] = shaman.RegisterSpell(config)
 		}
@@ -171,7 +171,7 @@ func (shaman *Shaman) registerWindwallTotemSpell() {
 	for rank := 1; rank <= WindwallTotemRanks; rank++ {
 		// Only the ranks the level has learned, so nothing below (a totem buff aura) is
 		// built for a rank the shaman cannot cast.
-		if WindwallTotemLevel[rank] <= int(shaman.Level) {
+		if shaman.KnowsRank(WindwallTotemSpellId[rank], int32(WindwallTotemLevel[rank])) {
 			config := shaman.newWindwallTotemSpellConfig(rank)
 			shaman.WindwallTotem[rank] = shaman.RegisterSpell(config)
 		}

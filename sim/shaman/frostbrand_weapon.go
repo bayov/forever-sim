@@ -24,7 +24,7 @@ var FrostbrandWeaponBaseDamage = [FrostbrandWeaponRanks + 1]float64{0, 44.6, 72,
 var FrostbrandWeaponScaling = [FrostbrandWeaponRanks + 1]core.RankScaling{{}, {26, 2.1}, {36, 3}, {46, 5}, {56, 4}, {60, 5.6}}
 
 func (shaman *Shaman) frostbrandRank() int {
-	return core.HighestRankAt(shaman.Level, FrostbrandWeaponLevel[:])
+	return core.HighestKnownRank(&shaman.Character, FrostbrandWeaponLevel[:], FrostbrandWeaponSpellId[:])
 }
 
 func (shaman *Shaman) FrostbrandDebuffAura(target *core.Unit) *core.Aura {

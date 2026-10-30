@@ -30,7 +30,7 @@ func (shaman *Shaman) registerEarthShockSpell(shockTimer *core.Timer) {
 	for rank := 1; rank <= EarthShockRanks; rank++ {
 		// Only the ranks the level has learned, so nothing below (a totem buff aura) is
 		// built for a rank the shaman cannot cast.
-		if EarthShockLevel[rank] <= int(shaman.Level) {
+		if shaman.KnowsRank(EarthShockSpellId[rank], int32(EarthShockLevel[rank])) {
 			config := shaman.newEarthShockSpellConfig(rank, shockTimer)
 			shaman.EarthShock[rank] = shaman.RegisterSpell(config)
 		}

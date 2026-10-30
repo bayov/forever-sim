@@ -23,7 +23,7 @@ func (shaman *Shaman) registerStrengthOfEarthTotemSpell() {
 	for rank := 1; rank <= maxRank; rank++ {
 		// Only the ranks the level has learned, so nothing below (a totem buff aura) is
 		// built for a rank the shaman cannot cast.
-		if StrengthOfEarthTotemLevel[rank] <= int(shaman.Level) {
+		if shaman.KnowsRank(StrengthOfEarthTotemSpellId[rank], int32(StrengthOfEarthTotemLevel[rank])) {
 			config := shaman.newStrengthOfEarthTotemSpellConfig(rank)
 			shaman.StrengthOfEarthTotem[rank] = shaman.RegisterSpell(config)
 		}
@@ -82,7 +82,7 @@ func (shaman *Shaman) registerStoneskinTotemSpell() {
 	for rank := 1; rank <= StoneskinTotemRanks; rank++ {
 		// Only the ranks the level has learned, so nothing below (a totem buff aura) is
 		// built for a rank the shaman cannot cast.
-		if StoneskinTotemLevel[rank] <= int(shaman.Level) {
+		if shaman.KnowsRank(StoneskinTotemSpellId[rank], int32(StoneskinTotemLevel[rank])) {
 			config := shaman.newStoneskinTotemSpellConfig(rank)
 			shaman.StoneskinTotem[rank] = shaman.RegisterSpell(config)
 		}
