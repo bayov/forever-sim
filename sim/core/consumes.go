@@ -950,10 +950,11 @@ func applySpellBuffConsumes(character *Character, consumes *proto.Consumes, raid
 	}
 }
 
-// The Intellect and Spirit each elixir gives, from client 1.60.1.70338. The familiar scrolls
-// summon a pet, which the sim doesn't model.
+// The Intellect and Spirit each elixir gives, from client 1.60.1.70338 (Elixir of Wisdom's spell 3166
+// from 1.60.1.70707, which cut it from 6 to 3). The familiar scrolls summon a pet, which the sim
+// doesn't model.
 var intellectElixirs = map[proto.IntellectElixir]float64{
-	proto.IntellectElixir_ElixirOfWisdom:           6,
+	proto.IntellectElixir_ElixirOfWisdom:           3,
 	proto.IntellectElixir_ElixirOfLesserIntellect:  6,
 	proto.IntellectElixir_ElixirOfIntellect:        10,
 	proto.IntellectElixir_ElixirOfTheOwl:           25,
