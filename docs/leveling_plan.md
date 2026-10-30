@@ -295,12 +295,27 @@ gap is what that rank saves at that level. A rank's worth is the sum over the le
 our highest. Both sims play the same sessions, and at 400 sessions a sim two seeds agree on
 every rank within about half a minute. 1000 sessions take 5 min for 10 to 60 on 16 cores.
 
-- **Ranks that save nothing.** For each spell we keep the ranks up to the one where the time
-  saved, added up from the first rank, is the most. The ranks after it are never trained.
+- **Ranks that save nothing.** For each spell we keep the ranks up to the last one that saves
+  time on its own. The ranks after it are never trained.
   Most save nothing because the plan doesn't cast them there (Fire Nova after 22, Healing Wave
   next to Lesser Healing Wave). Windfury Totem 2 and 3 cost 7 and 11 min, because the
   rotation drops the totem every pull and the higher ranks' mana is worth more than their
   attack power.
+- **Ranks bought later.** A rank the plan doesn't cast while it's our highest is bought with
+  the next rank it does cast (Lightning Bolt 2 to 7 come with Lightning Bolt 8 at 44, for
+  Maelstrom Weapon). A rank it casts waits until the level where the time it saved so far adds
+  up to the least, but never past the next rank, because we measured each rank only against the
+  one below it (Earth Shock 4 waits until 26, its mana costs more than its damage at 24 and 25).
+  It moves gold to later levels for the same hours.
+- **The check.** Each rank's worth is against the rank below it with every other rank trained,
+  so a change can cost more than it says: when it leaves us two ranks short (Earth Shock 4 in
+  place of 6 at 48, or Flame Shock 1 in place of 3), or next to the other spells' changes, since
+  they share our mana. So for each spell we sim the levels its changes touch with and without
+  them, on the same sessions, and keep them only when they cost no more than the noise of those
+  levels (one standard error, at least 15 s). When they cost more, we try keeping only its ranks
+  the plan doesn't cast while they're our highest, before we buy them all at their levels. On
+  2026-10-30 it bought Stoneskin Totem 5 at its level (its change cost 3.8 min) and kept Windfury
+  Totem 2 and 3 out (21 min saved).
 - **The gold budget.** The gold earned by a level is `gold_at_40` times (level / 40) to the
   power 3.5, net of food, water and repairs. 115g by 40 is what's left from "50 to 100g at 40
   to 45 before riding" (the user, 2026-10-30) plus about 50g of training. We keep Training's
@@ -324,10 +339,11 @@ at 40. The budget only matters with less gold. With 100g and riding at 40 it tra
 34 to 40 at 41, for 9 min. What the gold really buys is the spells the plan never casts (Ghost
 Wolf, Water Breathing, the resistance totems), which are ours to choose.
 
-The enhancement shaman's plan (`ui/enhancement_shaman/leveling_training.json`, 2026-10-30, 1000
-sessions) never trains 22 of the 74 ranks it casts, which saves 19 min (97.67h to 97.35h). The
-ranks worth the most are Rockbiter Weapon 5 and 6 (68 and 73 min), Windfury Totem 1 (48 min),
-Lightning Shield 5 (30 min) and Frost Shock 1 (24 min, cast in place of Earth Shock at 20 to 24).
+The enhancement shaman's plan from level 1 (`ui/enhancement_shaman/leveling_training.json`,
+2026-10-30, 1000 sessions) never trains 19 of the 74 ranks it casts and buys 10 later than their
+level, which saves 27 min (98.32h to 97.87h). The ranks worth the most are Windfury Totem 1 (71
+min), Rockbiter Weapon 5 and 6 (67 and 72 min), Lightning Shield 5 (29 min), Frost Shock 1 (24
+min, cast in place of Earth Shock at 20 to 24) and Earth Shock 1 (22 min at 4 to 7).
 
 Imbues and fire totems, 1000 paired sessions a level against the plan's Rockbiter Weapon
 (2026-10-30, the plan's rotations, not tuned again): Flametongue Weapon is a little slower at
@@ -358,7 +374,9 @@ The last run stays in the browser's storage. The Leveling mode has no sim histor
 ## The enhancement shaman's plan
 
 `DefaultLevelingPlan` in `ui/enhancement_shaman/presets.ts`, since 2026-10-19 the audited
-plan (The audit): 102h 8m. The route and the ranges are in
+plan (The audit): 102h 8m for 10 to 60 then. Since 2026-10-30 it starts at level 1 (the
+"Leveling 1-60" preset), where 1 to 9 play the first range's rotation with the spells we have
+by then and no talents, and with the route's gear and the training schedule it takes 97.87h. The route and the ranges are in
 `ui/enhancement_shaman/apls/leveling_plan_audited.json`, with a range only where the rotation
 changes. Thundering Strikes, Improved Ghost Wolf at 15 and 16 (required), Mental Dexterity,
 Shamanistic Focus, Elemental Weapons, Stormstrike at 25, then Flurry, Improved Stormstrike,

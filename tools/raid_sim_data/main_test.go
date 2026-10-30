@@ -14,13 +14,21 @@ func TestDataFileIsFresh(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	want, _ := generate(root)
+	want, _, pool := generate(root)
 	got, err := os.ReadFile(filepath.Join(root, "ui", "raid_sim", "data", "builds.json"))
 	if err != nil {
 		t.Fatal(err)
 	}
 	if !bytes.Equal(got, want) {
 		t.Error("ui/raid_sim/data/builds.json is stale: run go run -tags=with_db ./tools/raid_sim_data")
+	}
+	// The page's table is the search's (sim/compsearch/table.go).
+	got, err = os.ReadFile(filepath.Join(root, tableFile))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(got, table(pool)) {
+		t.Error(tableFile + " is stale: run go run -tags=with_db ./tools/raid_sim_data")
 	}
 }
 

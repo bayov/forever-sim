@@ -11,13 +11,14 @@ const ShoutExpirationThreshold = time.Second * 3
 // newShoutSpellConfig is a shout that puts allyAuras on its receivers: a raid aura array,
 // which has nil entries for the pets and enemies.
 //
-// Each receiver adds the shout's threat. A lone warrior's shout still counts as buffing a party of 5,
-// with extra hits on the target for the 4 it lacks; in a raid the receivers are real.
+// Each receiver adds the shout's threat, which goes to the enemies in combat, split between them
+// (buff threat, like healing threat). A lone warrior's shout still counts as buffing a party of 5. In a
+// raid the receivers are real.
 func (warrior *Warrior) newShoutSpellConfig(actionID core.ActionID, rank int32, allyAuras core.AuraArray) *WarriorSpell {
 	receivers := core.FilterSlice(allyAuras, func(aura *core.Aura) bool { return aura != nil })
-	extraHits := 0
-	if len(receivers) == 1 {
-		extraHits = 4
+	threatReceivers := len(receivers)
+	if threatReceivers == 1 {
+		threatReceivers = 5
 	}
 
 	return warrior.RegisterSpell(AnyStance, core.SpellConfig{
@@ -38,13 +39,9 @@ func (warrior *Warrior) newShoutSpellConfig(actionID core.ActionID, rank int32, 
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 			for _, aura := range receivers {
-				spell.CalcAndDealOutcome(sim, aura.Unit, spell.OutcomeAlwaysHit)
 				aura.Activate(sim)
 			}
-
-			for i := 0; i < extraHits; i++ {
-				spell.CalcAndDealOutcome(sim, target, spell.OutcomeAlwaysHit)
-			}
+			spell.BookSplitThreat(sim, float64(threatReceivers)*spell.FlatThreatBonus*spell.Unit.PseudoStats.ThreatMultiplier)
 		},
 
 		RelatedAuras: []core.AuraArray{allyAuras},

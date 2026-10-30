@@ -103,6 +103,9 @@ full pass was deployed. Commit what it writes (`tools/dps_report/changes/`, the 
   Ranking, Races, Specs, Compare, Changes and Method at phone and desktop width, and look for
   console errors.
 - If you changed the page itself, also check `npx vite serve` at `/classic/dps_report/`.
+- The raid sim reads the same builds. Run `go run -tags=with_db ./tools/raid_sim_data` and commit
+  `ui/raid_sim/data/` with the report. Then `go run -tags=with_db ./tools/compsearch -stale` lists the
+  committed comp searches whose builds changed. Name them in the reply. Don't re-run them unless the user asks.
 
 ## 4. Commit
 

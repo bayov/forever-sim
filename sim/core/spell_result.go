@@ -105,6 +105,64 @@ func (spell *Spell) ThreatFromDamage(outcome HitOutcome, damage float64) float64
 	}
 }
 
+// bookHitThreat splits a landed hit's threat by its outcome, the same way dealDamageInternal splits
+// the damage, so the results can show where the threat came from.
+func (spell *Spell) bookHitThreat(result *SpellResult, isPeriodic bool) {
+	if result.Threat == 0 {
+		return
+	}
+	m := &spell.SpellMetrics[result.Target.UnitIndex]
+	m.TotalHitThreat += result.Threat
+	if isPeriodic {
+		m.TotalTickThreat += result.Threat
+	}
+	if result.DidBlockCrit() {
+		m.TotalBlockedCritThreat += result.Threat
+	} else if result.DidCrit() {
+		m.TotalCritThreat += result.Threat
+		if isPeriodic {
+			m.TotalCritTickThreat += result.Threat
+		}
+	} else if result.DidGlance() {
+		m.TotalGlanceThreat += result.Threat
+	} else if result.DidBlock() {
+		m.TotalBlockThreat += result.Threat
+	} else if result.DidCrush() {
+		m.TotalCrushThreat += result.Threat
+	}
+}
+
+// ThreatPerHealingDone is the threat of each point of healing that lands, before the spell's and the
+// healer's threat multipliers (Classic's rule).
+const ThreatPerHealingDone = 0.5
+
+// healingThreat is a heal's threat: half of the health it restores (not the overhealing), times the
+// spell's and the healer's threat multipliers. A target without a health bar takes the whole heal.
+func (spell *Spell) healingThreat(result *SpellResult) float64 {
+	if !result.Landed() {
+		return 0
+	}
+	effective := result.Damage
+	if result.Target.HasHealthBar() {
+		effective = min(effective, result.Target.MaxHealth()-result.Target.CurrentHealth())
+	}
+	return (effective*ThreatPerHealingDone*spell.ThreatMultiplier + spell.FlatThreatBonus) * spell.Unit.PseudoStats.ThreatMultiplier
+}
+
+// BookSplitThreat gives threat that isn't aimed at an enemy, like a heal's or a mana gain's, to the
+// enemies in combat, split evenly between them (Classic's rule for healing and buff threat). Before the
+// pull nobody is in combat, so it makes none, as hits before the pull book none.
+func (spell *Spell) BookSplitThreat(sim *Simulation, threat float64) {
+	targets := sim.Encounter.ActiveTargetUnits
+	if threat == 0 || len(targets) == 0 || sim.CurrentTime < 0 {
+		return
+	}
+	each := threat / float64(len(targets))
+	for _, target := range targets {
+		spell.SpellMetrics[target.UnitIndex].TotalThreat += each
+	}
+}
+
 func (spell *Spell) MeleeAttackPower(target *Unit) float64 {
 	return spell.Unit.stats[stats.AttackPower] +
 		spell.Unit.AttackTables[target.UnitIndex][spell.CastType].BonusAttackPowerTaken
@@ -513,6 +571,7 @@ func (spell *Spell) dealDamageInternal(sim *Simulation, isPeriodic bool, result 
 			spell.SpellMetrics[result.Target.UnitIndex].TotalCrushDamage += result.Damage
 		}
 		spell.SpellMetrics[result.Target.UnitIndex].TotalThreat += result.Threat
+		spell.bookHitThreat(result, isPeriodic)
 	}
 
 	// Mark total damage done in raid so far for health based fights.
@@ -607,8 +666,6 @@ func (spell *Spell) calcHealingInternal(sim *Simulation, target *Unit, baseHeali
 			target.LogLabel(), spell.ActionID, spell.HealingPower(target), baseHealing, afterCasterMods, afterTargetMods, afterOutcome)
 	}
 
-	result.Threat = spell.ThreatFromDamage(result.Outcome, result.Damage)
-
 	return result
 }
 func (spell *Spell) CalcHealing(sim *Simulation, target *Unit, baseHealing float64, outcomeApplier OutcomeApplier) *SpellResult {
@@ -643,7 +700,9 @@ func (spell *Spell) dealHealingInternal(sim *Simulation, isPeriodic bool, result
 		spell.SpellMetrics[result.Target.UnitIndex].TotalCritHealing += result.Damage
 	}
 	spell.SpellMetrics[result.Target.UnitIndex].TotalHealing += result.Damage
-	spell.SpellMetrics[result.Target.UnitIndex].TotalThreat += result.Threat
+	// Overhealing makes no threat, so we take the heal's threat before the health goes up.
+	result.Threat = spell.healingThreat(result)
+	spell.BookSplitThreat(sim, result.Threat)
 	if result.Target.HasHealthBar() {
 		result.Target.GainHealth(sim, result.Damage, spell.HealthMetrics(result.Target))
 	}

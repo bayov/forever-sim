@@ -111,7 +111,6 @@ export class RaidSimResultsManager {
 	static resultMetricCategories: { [ResultMetrics: string]: keyof ResultMetricCategories } = {
 		dps: 'damage',
 		dpasp: 'demo',
-		tps: 'threat',
 		dtps: 'threat',
 		tmi: 'threat',
 		cod: 'threat',

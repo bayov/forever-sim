@@ -5,11 +5,14 @@
 package compsearch
 
 import (
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
 	"slices"
+	"sort"
 	"strings"
 
 	"github.com/wowsims/classic/sim"
@@ -30,8 +33,10 @@ type Build struct {
 	BaseID    string        // for a variant
 	MobType   proto.MobType // an encounter variant's creature type
 	Published float64       // the report's published DPS
-	Race      map[proto.Faction]proto.Race
-	Req       *proto.RaidSimRequest
+	// Stamp changes when the build's request, its race files or its published DPS change (Pool.Stamps).
+	Stamp string
+	Race  map[proto.Faction]proto.Race
+	Req   *proto.RaidSimRequest
 
 	// Filled in by the pool.
 	Base   *Build                   // self for a base build
@@ -41,6 +46,18 @@ type Build struct {
 	Casts  Gift                     // what its own rotation casts on itself (left off its own request)
 	Vs     map[proto.MobType]*Build // a base build's encounter variants
 	Pets   []*Build                 // a base build's pet variants (a Tallstrider, a wolf), builds of their own
+	spec   *SpecRow
+}
+
+// SpecRow is the table's row for the build's spec.
+func (b *Build) SpecRow() *SpecRow {
+	if b.spec == nil {
+		if b.Req == nil {
+			return noSpec
+		}
+		b.spec = specOfPlayer(player0(b.Req))
+	}
+	return b.spec
 }
 
 func (b *Build) IsBase() bool { return b.BaseID == "" }
@@ -71,16 +88,6 @@ type reportBuild struct {
 	AllianceRace string `json:"allianceRace"`
 }
 
-var dutyNames = map[string]proto.Duty{
-	"Battle Shout":              proto.Duty_DutyBattleShout,
-	"Faerie Fire":               proto.Duty_DutyFaerieFire,
-	"Curse of the Elements":     proto.Duty_DutyCurseOfTheElements,
-	"Curse of Recklessness":     proto.Duty_DutyCurseOfRecklessness,
-	"Judgement of the Crusader": proto.Duty_DutyJudgementOfTheCrusader,
-	"Judgement of Wisdom":       proto.Duty_DutyJudgementOfWisdom,
-	"Sunder Armor":              proto.Duty_DutySunderUpkeep,
-}
-
 var mobTypes = map[string]proto.MobType{
 	"Humanoid":  proto.MobType_MobTypeHumanoid,
 	"Undead":    proto.MobType_MobTypeUndead,
@@ -101,6 +108,27 @@ var raceNames = map[string]proto.Race{
 	"Tauren":     proto.Race_RaceTauren,
 	"Troll":      proto.Race_RaceTroll,
 	"Windshaper": proto.Race_RaceSkyborneWindshaper,
+}
+
+// leftOut is the report's base builds the raid sim leaves out, with their variants (the user, 2026-10-30).
+//
+// Each build in the pool adds sims to every search, so we keep one build per spec: the one we'd bring to a
+// raid. We also keep the builds that give the raid something the spec's main build doesn't, like Mana Tide
+// or a hunter's pet. A build that's missing from the report is fine here.
+var leftOut = map[string]string{
+	"druid__balance-wrath":             "Balance is the Balance build",
+	"hunter__lone-wolf":                "Marksmanship is the Marksmanship build, and it gives Trueshot Aura",
+	"paladin__level_60":                "sub Holy is the Retribution build",
+	"paladin__level_60_shock":          "sub Holy is the Retribution build",
+	"paladin__level_60_shock_ret":      "sub Holy is the Retribution build",
+	"priest__shadow-holy":              "Level 60 is the Shadow build",
+	"rogue__combat-swords":             "Combat Daggers is the Combat build",
+	"rogue__mutilate":                  "Seal Fate Daggers is the Assassination build",
+	"rogue__seal-fate-swords":          "Seal Fate Daggers is the Assassination build",
+	"shaman__enhancement-level60":      "Imp GW is the Enhancement build",
+	"shaman__enhancement-water-shield": "Imp GW is the Enhancement build",
+	"warlock__destruction_fire":        "Destruction is the Destruction build",
+	"warrior__fury_2h":                 "Fury Dual Wield is the Fury build",
 }
 
 // LoadPool reads the report's requests and races from a forever-sim checkout.
@@ -136,10 +164,18 @@ func LoadPool(root string) (*Pool, error) {
 		if err := json.Unmarshal(data, &m); err != nil {
 			return nil, fmt.Errorf("%s: %w", mf, err)
 		}
+		if _, ok := leftOut[m.ID]; ok {
+			continue
+		}
+		if _, ok := leftOut[m.BaseBuild]; ok {
+			continue
+		}
 		reqData, err := os.ReadFile(strings.TrimSuffix(mf, ".meta.json") + ".json")
 		if err != nil {
 			return nil, err
 		}
+		stamp := sha256.New()
+		stamp.Write(reqData)
 		req := &proto.RaidSimRequest{}
 		if err := protojson.Unmarshal(reqData, req); err != nil {
 			return nil, fmt.Errorf("%s: %w", m.ID, err)
@@ -148,6 +184,18 @@ func LoadPool(root string) (*Pool, error) {
 			DPS float64 `json:"dps"`
 		}
 		_ = json.Unmarshal(m.Published, &pub)
+		fmt.Fprintf(stamp, "|%.4f", pub.DPS)
+		// A variant sims with its base build's race files too.
+		for _, id := range []string{m.ID, m.BaseBuild} {
+			files, _ := filepath.Glob(filepath.Join(reqDir, "races", id+".*.json"))
+			sort.Strings(files)
+			for _, f := range files {
+				if data, err := os.ReadFile(f); err == nil && id != "" {
+					fmt.Fprintf(stamp, "|%s|", filepath.Base(f))
+					stamp.Write(data)
+				}
+			}
+		}
 		player := req.Raid.Parties[0].Players[0]
 		b := &Build{
 			ID:        m.ID,
@@ -157,17 +205,22 @@ func LoadPool(root string) (*Pool, error) {
 			Name:      m.Build,
 			BaseID:    m.BaseBuild,
 			Published: pub.DPS,
+			Stamp:     hex.EncodeToString(stamp.Sum(nil))[:12],
 			Req:       req,
 			Race:      map[proto.Faction]proto.Race{},
 			Duties:    map[proto.Duty]*Build{},
 			Vs:        map[proto.MobType]*Build{},
 		}
 		if m.Duty != "" {
-			d, ok := dutyNames[m.Duty]
-			if !ok {
+			b.Duty = proto.Duty_DutyNone
+			for _, r := range Duties {
+				if r.Name == m.Duty {
+					b.Duty = r.Duty
+				}
+			}
+			if b.Duty == proto.Duty_DutyNone {
 				return nil, fmt.Errorf("%s: unknown duty %q", m.ID, m.Duty)
 			}
-			b.Duty = d
 		}
 		if m.Encounter != "" {
 			t, ok := mobTypes[m.Encounter]
@@ -214,6 +267,7 @@ func LoadPool(root string) (*Pool, error) {
 		slices.SortFunc(b.Pets, func(a, b *Build) int { return strings.Compare(a.ID, b.ID) })
 	}
 	for _, b := range pool.Builds {
+		b.spec = specOfPlayer(player0(b.Req))
 		b.Gives, b.Pkg, b.Casts = buildGifts(b)
 		// A variant without its own race takes its base build's.
 		for _, f := range []proto.Faction{proto.Faction_Horde, proto.Faction_Alliance} {
@@ -227,6 +281,66 @@ func LoadPool(root string) (*Pool, error) {
 		}
 	}
 	return pool, nil
+}
+
+// Stamps is every build's stamp, by its id, for a search's result.
+//
+// A result's comps are only as current as the builds it chose from. When the report re-sims a build (a
+// new published DPS) or its request changes, its stamp changes, and the page flags the results that
+// chose from the old one.
+func (p *Pool) Stamps() map[string]string {
+	out := make(map[string]string, len(p.Builds))
+	for id, b := range p.Builds {
+		out[id] = b.Stamp
+	}
+	return out
+}
+
+// Staleness is how a result's pool differs from today's: the builds whose stamp changed, the ones gone
+// from the pool, and the ones it didn't have.
+type Staleness struct {
+	Changed, Gone, Added []string
+}
+
+func (s Staleness) Stale() bool { return len(s.Changed)+len(s.Gone)+len(s.Added) > 0 }
+
+func (s Staleness) String() string {
+	var parts []string
+	for _, x := range []struct {
+		what string
+		ids  []string
+	}{{"changed", s.Changed}, {"gone", s.Gone}, {"new", s.Added}} {
+		if len(x.ids) > 0 {
+			parts = append(parts, fmt.Sprintf("%s: %s", x.what, strings.Join(x.ids, ", ")))
+		}
+	}
+	if len(parts) == 0 {
+		return "current"
+	}
+	return strings.Join(parts, "; ")
+}
+
+// StalenessOf compares a result's stamps (CompSearchResult.build_stamps) with the pool's.
+func (p *Pool) StalenessOf(stamps map[string]string) Staleness {
+	var s Staleness
+	for id, stamp := range stamps {
+		b, ok := p.Builds[id]
+		switch {
+		case !ok:
+			s.Gone = append(s.Gone, id)
+		case b.Stamp != stamp:
+			s.Changed = append(s.Changed, id)
+		}
+	}
+	for id := range p.Builds {
+		if _, ok := stamps[id]; !ok {
+			s.Added = append(s.Added, id)
+		}
+	}
+	slices.Sort(s.Changed)
+	slices.Sort(s.Gone)
+	slices.Sort(s.Added)
+	return s
 }
 
 func player0(req *proto.RaidSimRequest) *proto.Player {

@@ -37,6 +37,7 @@ interface Percentiles {
 }
 
 // The DPS of each iteration, as a histogram or as the share of iterations at or below each DPS.
+// With metric 'tps' it's the threat per second instead, of the one player the results show.
 //
 // The sim counts the iterations at each whole DPS. We group those counts into bins with a
 // round width. A wider chart gets more bins, so on a wide screen a run with a spread of 500 DPS
@@ -51,10 +52,15 @@ export class DpsHistogram extends ResultComponent {
 	private readonly modeButtons: HTMLButtonElement[] = [];
 	// The bin width we drew with, so a resize only draws again when it changes the bins.
 	private drawnBinWidth = 0;
+	private readonly metric: 'dps' | 'tps';
+	// The unit after each value, like "180 DPS".
+	private readonly unit: string;
 
-	constructor(config: ResultComponentConfig) {
+	constructor(config: ResultComponentConfig, metric: 'dps' | 'tps' = 'dps') {
 		config.rootCssClass = 'dps-histogram-root';
 		super(config);
+		this.metric = metric;
+		this.unit = metric == 'tps' ? 'TPS' : 'DPS';
 
 		const statsRef = ref<HTMLDivElement>();
 		const chartRef = ref<HTMLDivElement>();
@@ -151,8 +157,17 @@ export class DpsHistogram extends ResultComponent {
 
 	private lastCounts(): DpsCount[] {
 		if (!this.lastResult) return [];
-		const damageMetrics = this.lastResult.result.getDamageMetrics(this.lastResult.filter);
-		return Object.entries(damageMetrics.hist)
+		const { result, filter } = this.lastResult;
+		let distribution;
+		if (this.metric == 'tps') {
+			// The sim keeps a threat distribution for each player, not for the raid.
+			const players = result.getRaidIndexedPlayers(filter);
+			if (players.length != 1) return [];
+			distribution = players[0].tps;
+		} else {
+			distribution = result.getDamageMetrics(filter);
+		}
+		return Object.entries(distribution.hist)
 			.map(([dps, count]) => ({ dps: Number(dps), count }))
 			.filter(({ count }) => count > 0)
 			.sort((a, b) => a.dps - b.dps);
@@ -213,7 +228,7 @@ export class DpsHistogram extends ResultComponent {
 						callbacks: {
 							title: items => {
 								const bin = bins[items[0].dataIndex];
-								return width == 1 ? `${bin.start + 0.5} DPS` : `${bin.start + 0.5} to ${bin.end - 0.5} DPS`;
+								return width == 1 ? `${bin.start + 0.5} ${this.unit}` : `${bin.start + 0.5} to ${bin.end - 0.5} ${this.unit}`;
 							},
 							label: item => {
 								const count = bins[item.dataIndex].count;
@@ -280,7 +295,7 @@ export class DpsHistogram extends ResultComponent {
 					tooltip: {
 						displayColors: false,
 						callbacks: {
-							title: items => `${formatToNumber(items[0].parsed.x, { maximumFractionDigits: 1 })} DPS`,
+							title: items => `${formatToNumber(items[0].parsed.x, { maximumFractionDigits: 1 })} ${this.unit}`,
 							label: item => {
 								const share = item.parsed.y ?? 0;
 								return [

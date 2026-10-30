@@ -29,7 +29,9 @@ func (warlock *Warlock) getSearingPainBaseConfig(rank int) core.SpellConfig {
 		},
 
 		DamageMultiplier: 1,
-		ThreatMultiplier: 2,
+		// Searing Pain makes double threat, and Demonic Brand takes 17 / 33 / 50% off it (client
+		// 1.60.1.70630, spell 1293695).
+		ThreatMultiplier: 2 * []float64{1, 0.83, 0.67, 0.5}[warlock.Talents.DemonicBrand],
 		BonusCoefficient: data.Coef,
 
 		ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {

@@ -8,6 +8,32 @@ Row N needs 5*(N-1) points spent in that tree. Row 1 is the top row. Rows 3, 4, 
 
 Warning on multi-rank NEW and CHANGED talents: the footage showed rank 1 only. The dataset scaled the other ranks linearly from rank 1, which sometimes produces nonsense (for example Maelstrom Weapon rank 5 reading 'stacks up to 25 times'). Treat rank 1 as observed and the rest as a guess until the beta client is out. The [ranks 2+ settled by the 70338 trait curves] tag marks every multi-rank new or changed talent. Read the Note line, it says when a higher rank was actually seen on a BlizzCon slide.
 
+## Client build 1.60.1.70707 (2026-10-30)
+
+70707 puts the 10-27 to 10-29 hotfixes' mage rework into the client tables (foreverchanges.pro "Build 1.60.1.70707"; ledger MAGE-U-20 to 27, finding client_update-20261030-1). It supersedes the sections below wherever they disagree.
+
+- Arcane Focus is gone (TraitNode 105814). The Arcane tree has 18 talents: Wand Specialization, Improved Channeling, Arcane Resilience, Arcane Subtlety, Magic Absorption, Arcane Concentration, Missile Barrage, Arcane Geometry, Arcane Impact, Arcane Blast, Arcane Shielding, Improved Counterspell, Arcane Meditation, Arcane Wrath, Presence of Mind, Arcane Mind, Arcane Instability, Arcane Power. Missile Barrage and Arcane Resilience swapped spots, Improved Fire Blast went from tier 1 to tier 3 and Improved Channeling moved left, so every mage talent string reads differently.
+- Elemental Precision is Precision: 2 / 4 / 6% hit with all spells (29438 effect 0, aura 107 on a mask became aura 55). The main set's 11% makes 17% for every school, the Arcane set's 10% makes 16%, the cap.
+- Improved Fireball is Accelerant: 0.1 sec a point off Fireball and Frostfire Bolt as before, and now off Arcane Wrath too (11069 effect 0 gains Arcane Wrath's class mask bit).
+- Incineration has 5 points (2% a point, 10% crit on Fire Blast, Scorch, Ice Lance and Arcane Blast) and Critical Mass 3 (2 / 4 / 6% Fire crit, was 10%).
+- Ice Lance has an 8 sec cooldown (category 19). The client puts it on rank 1 only (SpellCooldowns 101119, 1312002); ranks 2 to 6 have no cooldown row. The sim gives every rank the cooldown, as the tooltip and foreverchanges.pro have it (user ruling 2026-10-30, report assumption `mage_ice_lance_cd`). Check rank 6 in game at launch.
+- Missile Barrage's "missiles fire every 0.5 sec" effect (400589 effect 1) became a dummy aura; the -50% duration and -100% cost effects stay and the tooltip is unchanged. The sim keeps five missiles in half the time, since a dummy usually means a server script does the job (finding client_update-20261030-2: check an Arcane combat log).
+- Frost Blast left the spellbook (the sim never cast it).
+
+The presets, re-picked by talent searches at 180 sec, confirmed at 20,000 iterations on seeds 1 and 1000003 (`ui/mage/presets.ts` has the alternatives):
+
+| Build | Talents | 120 s | 180 s | 300 s | 180 s before |
+|---|---|---|---|---|---|
+| Fire (default) | `0502052-55500201230133031-003` | 1071.7 | 1061.0 | 1044.0 | 1101.0 |
+| Frostfire | `-2550030103013303-0235000311203002` | 1063.5 | 1051.0 | 1030.8 | 1096.4 |
+| Arcane (Gnome) | `050205203100301531-5-05350002` | 926.1 | 915.5 | 895.4 | 901.6 |
+| Frost | `05020520310011053-1-0535000301003002` | 911.2 | 908.3 | 886.6 | 946.6 |
+
+- Fire: Critical Mass's two points are Incineration 5. With Arcane Focus gone, Arcane row 1 needs five other points to reach Arcane Concentration: Improved Channeling 5, one of them Burning Soul's third point.
+- Frostfire: Critical Mass's two points are Incineration 2 and Master of Elements 3. The loss is Critical Mass and Ice Lance's cooldown; the rotation knob search kept every knob.
+- Arcane gains: Precision's 6% covers Arcane now (Arcane Focus gave 5%), and the five points are Incineration 5 (Arcane Blast) and Frost Channeling 2. Its rotation no longer drops to one Arcane Blast stack below 20% mana (+1.6 at 120 / 180 / 300 sec together).
+- Frost: Arcane Focus's five points and Presence of Mind's are Arcane Concentration 5, Arcane Meditation, Arcane Wrath and Incineration. Ice Lance on every Fingers of Frost charge was this build's damage, so the cooldown costs it most. With mana to spare the rotation keeps three Arcane Blast stacks and drops Evocation (+4.8 at 120 / 180 / 300 sec together).
+
 ## Regear and rotation round (2026-10-23)
 
 After the wowsims/forever alignment round (orchestration/alignment_round_2026-10-23.md). Numbers at 180 sec, 20,000 iterations, seed 1 (seed 1000003 within 1.1); the full tables are in [../sim-status.md](../sim-status.md#mage).

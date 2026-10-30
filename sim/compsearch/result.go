@@ -28,14 +28,14 @@ func (sc *Scenario) compProto(c *Comp, best *Comp, model *Model) *proto.CompResu
 	for i, ph := range c.Raid.Combo {
 		out.Combo = append(out.Combo, ph.ID)
 		m := &proto.CompResultMember{Party: int32(c.PHParty[i]) + 1, Role: ph.Role, BuildId: ph.Name, Preset: ph.ID}
-		if ph.Paladin {
+		if ph.Paladin() {
 			m.Judgement = proto.PaladinJudgement_PaladinJudgementWisdom
 			if paladinIndex(c.Raid, i) < c.Plan.PHCrusader {
 				m.Judgement = proto.PaladinJudgement_PaladinJudgementCrusader
 			}
 		}
-		if ph.Shaman {
-			m.Totems = []proto.RaidTotem{proto.RaidTotem_RaidTotemStrengthOfEarth, proto.RaidTotem_RaidTotemManaSpring, proto.RaidTotem_RaidTotemFlametongue}
+		if ph.Shaman() {
+			m.Totems = append([]proto.RaidTotem{}, fixedTotems...)
 			if k := shamanIndex(c.Raid, i); k < len(c.Plan.PHAir) {
 				m.Totems = append(m.Totems, c.Plan.PHAir[k])
 			}
@@ -77,7 +77,7 @@ func membersBuilds(c *Comp) []*Build {
 func paladinIndex(r *Raid, i int) int {
 	n := 0
 	for j := 0; j < i; j++ {
-		if r.Combo[j].Paladin {
+		if r.Combo[j].Paladin() {
 			n++
 		}
 	}
@@ -201,13 +201,27 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 	}
 	// The role table: each role removed from the winning set and re-filled, or added when it's missing.
 	for _, g := range toggles {
-		name := GiftName(g &^ GiftFort)
+		// A role is named by its own effect, without the toggles it brings along (Moonkin Aura brings Gift
+		// of the Wild), and a priest's by Prayer of Spirit.
+		contained := Gift(0)
+		for _, t := range toggles {
+			if t != g && g.Has(t) {
+				contained |= t
+			}
+		}
+		name := GiftName(g &^ contained &^ GiftFort)
+		// Adding it brings along what comes with it that the placeholders don't give, and the role's value
+		// includes that. Removing it takes away only its own effects: another member may give the rest.
+		along := contained &^ ph
 		if g == GiftSoE|GiftWF {
 			name = "Enhancement's totems (Strength of Earth, Windfury)"
 		}
 		q := best.Plan
 		q.PHAir = append([]proto.RaidTotem{}, best.Plan.PHAir...)
 		in := best.Plan.Up.Has(g &^ ph)
+		if in {
+			along = 0
+		}
 		if g&^ph == 0 {
 			// The placeholders give it at no cost.
 			if in {
@@ -216,7 +230,7 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 			continue
 		}
 		if in {
-			q.Up &^= g &^ ph
+			q.Up &^= g &^ contained &^ ph
 		} else {
 			q.Up |= g
 			// A placeholder paladin judging Wisdom can judge the Crusader instead, at no member's cost.
@@ -240,15 +254,15 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 				if b.Gives&g == 0 {
 					continue
 				}
-				extra := b.Gives &^ GiftBlessing &^ g &^ ph
+				extra := b.Gives &^ GiftBlessing &^ (g &^ contained) &^ ph
 				q2 := q
 				q2.PHAir = append([]proto.RaidTotem{}, q.PHAir...)
 				if in {
 					q2.Up &^= extra
 				} else {
 					q2.Up |= extra
-					if b.Class == proto.Class_ClassPaladin {
-						q2.Paladins = min(3, q2.Paladins+1)
+					if blesses(b) {
+						q2.Paladins = min(maxPaladins, q2.Paladins+1)
 						q2.Up |= GiftBlessing
 					}
 				}
@@ -264,7 +278,7 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 					if extra != 0 {
 						with = extra.String()
 					}
-					if b.Class == proto.Class_ClassPaladin && !in {
+					if blesses(b) && !in {
 						with = strings.TrimPrefix(with+" and a paladin", " and ")
 					}
 				}
@@ -274,6 +288,9 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 			out.roles = append(out.roles, &proto.CompRoleValue{Role: name, InSet: in,
 				Provider: "not measured: no buff set the raid can make differs by it alone"})
 			continue
+		}
+		if with == "" && along != 0 {
+			with = along.String()
 		}
 		if with != "" {
 			name += " (with " + with + ")"
@@ -317,7 +334,7 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 		}
 	}
 	// A paladin's blessings.
-	if best.Plan.Paladins > min(3, r.phPaladins) {
+	if best.Plan.Paladins > min(maxPaladins, r.phPaladins) {
 		q := best.Plan
 		q.Paladins--
 		if q.Paladins == 0 {
@@ -339,7 +356,7 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 	}
 	var frs []fr
 	for _, b := range cands {
-		if !allowed(b, best.Plan) || (b.Class == proto.Class_ClassPaladin && best.Plan.Paladins < 3) {
+		if !allowed(b, best.Plan) || (blesses(b) && best.Plan.Paladins < maxPaladins) {
 			continue
 		}
 		s := best.seat(b, 0, sc)
@@ -450,7 +467,7 @@ func providerCost(c *Comp, g Gift, sc *Scenario, ev *exactValuer, f *Fillers) (s
 		// The first pass records the sims the cache lacks; the second reads them.
 		for pass := 0; pass < 2; pass++ {
 			for _, b := range f.Fill {
-				if allowed(b, c.Plan) && b.Class != proto.Class_ClassShaman && (b.Class != proto.Class_ClassPaladin || c.Plan.Paladins >= 3) {
+				if allowed(b, c.Plan) && !dropsTotems(b) && (!blesses(b) || c.Plan.Paladins >= maxPaladins) {
 					s := c.seat(b, m.Seat.Package, sc)
 					v, _, _ := ev.V(b, s)
 					bestV = math.Max(bestV, v)
@@ -478,12 +495,12 @@ func (sc *Scenario) withMembers(c *Comp, members []*Member, ev *exactValuer) (*C
 	pal := r.phPaladins
 	for _, m := range members {
 		up |= m.B.Gives &^ GiftBlessing
-		if m.B.Class == proto.Class_ClassPaladin {
+		if blesses(m.B) {
 			pal++
 		}
 	}
 	p.Up = up
-	p.Paladins = min(3, pal)
+	p.Paladins = min(maxPaladins, pal)
 	if p.Paladins > 0 {
 		p.Up |= GiftBlessing
 	}
@@ -496,12 +513,12 @@ func (sc *Scenario) withMembers(c *Comp, members []*Member, ev *exactValuer) (*C
 	// Each party's package from the givers still in the raid: its shaman placeholder, or a DPS shaman.
 	phPkg, dpsPkg := map[int][]proto.RaidPackage{}, map[int][]proto.RaidPackage{}
 	for i, ph := range r.Combo {
-		if ph.Shaman {
+		if ph.Shaman() {
 			phPkg[c.PHParty[i]] = append(phPkg[c.PHParty[i]], ph.Package)
 		}
 	}
 	for _, m := range members {
-		if m.B.Class == proto.Class_ClassShaman {
+		if dropsTotems(m.B) {
 			dpsPkg[m.Party] = append(dpsPkg[m.Party], m.B.Pkg)
 		}
 	}
@@ -512,7 +529,7 @@ func (sc *Scenario) withMembers(c *Comp, members []*Member, ev *exactValuer) (*C
 	for _, m := range members {
 		nm := *m
 		p := pkg[m.Party]
-		if m.B.Class == proto.Class_ClassShaman {
+		if dropsTotems(m.B) {
 			p = proto.RaidPackage_RaidPackageNone // a shaman casts its own Mana Spring, so it's never given one too
 		}
 		if !usesMana(m.B) {
@@ -770,28 +787,6 @@ func (sc *Scenario) reportDifference(m *Member, ev *exactValuer) (float64, []str
 		parts = append(parts, fmt.Sprintf("%s: %+.1f", label, j3.Value.DPS-j2.Value.DPS))
 	}
 	return m.DPS - base.Published, parts, nil
-}
-
-func totemName(t proto.RaidTotem) string {
-	switch t {
-	case proto.RaidTotem_RaidTotemGraceOfAir:
-		return "Grace of Air"
-	case proto.RaidTotem_RaidTotemWindfury:
-		return "Windfury Totem"
-	}
-	return t.String()
-}
-
-func packageName(p proto.RaidPackage) string {
-	switch p {
-	case proto.RaidPackage_RaidPackageManaSpring:
-		return "Mana Spring"
-	case proto.RaidPackage_RaidPackageManaSpringTide:
-		return "Mana Spring and Mana Tide"
-	case proto.RaidPackage_RaidPackageRestoration:
-		return "Mana Spring ×1.25 and Mana Tide"
-	}
-	return "none"
 }
 
 func uniq(s []string) []string {

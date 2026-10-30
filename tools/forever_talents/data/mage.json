@@ -4,7 +4,7 @@
   "className": "Mage",
   "dataVersion": 2,
   "dataSource": "client",
-  "generatedAt": "2026-10-23T02:40:36Z",
+  "generatedAt": "2026-10-30T12:22:49Z",
   "rules": {
     "pointsPerRow": 5,
     "maxPoints": 51,
@@ -53,50 +53,14 @@
           "spellId": 6057
         },
         {
-          "id": "arcane-focus",
-          "name": "Arcane Focus",
-          "row": 0,
-          "col": 1,
-          "maxRank": 5,
-          "icon": "spell_holy_devotion",
-          "iconSource": "client",
-          "description": "Improves your chance to hit with Arcane spells by {0}%.",
-          "ranks": [
-            [
-              1
-            ],
-            [
-              2
-            ],
-            [
-              3
-            ],
-            [
-              4
-            ],
-            [
-              5
-            ]
-          ],
-          "ranksObserved": [
-            1,
-            2,
-            3,
-            4,
-            5
-          ],
-          "ranksSource": "client",
-          "spellId": 11222
-        },
-        {
           "id": "improved-channeling",
           "name": "Improved Channeling",
           "row": 0,
-          "col": 2,
+          "col": 1,
           "maxRank": 5,
           "icon": "spell_nature_starfall",
           "iconSource": "client",
-          "description": "Gives you a {0}% chance to avoid interruption caused by damage while channeling Arcane Missiles and a {1}% chance while casting Arcane Blast or Arcane Wrath.",
+          "description": "Gives your Arcane Missiles spell a {0}% chance and your Arcane Blast and Arcane Wrath spells a {1}% chance to not lose casting time when you take damage.",
           "ranks": [
             [
               20,
@@ -130,30 +94,20 @@
           "spellId": 11237
         },
         {
-          "id": "missile-barrage",
-          "name": "Missile Barrage",
+          "id": "arcane-resilience",
+          "name": "Arcane Resilience",
           "row": 0,
-          "col": 3,
+          "col": 2,
           "maxRank": 2,
-          "icon": "ability_mage_missilebarrage",
+          "icon": "spell_arcane_arcaneresilience",
           "iconSource": "client",
-          "description": "Gives your Arcane Blast spell a {0}% chance, your Arcane Missile hits a {1}% chance, and your Arcane Wrath, Fireball, Frostbolt, and Frostfire Bolt spells a {2}% chance to reduce the channeled duration of your next Arcane Missiles spell by {3}%, reduce the Mana cost by {4}%, and missiles fire every {5} sec.",
+          "description": "Increases your Armor by an amount equal to {0}% of your Intellect.",
           "ranks": [
             [
-              20,
-              5,
-              10,
-              50,
-              100,
-              0.5
+              25
             ],
             [
-              40,
-              10,
-              20,
-              50,
-              100,
-              0.5
+              50
             ]
           ],
           "ranksObserved": [
@@ -161,7 +115,7 @@
             2
           ],
           "ranksSource": "client",
-          "spellId": 400588
+          "spellId": 28574
         },
         {
           "id": "arcane-subtlety",
@@ -259,20 +213,28 @@
           "spellId": 11213
         },
         {
-          "id": "arcane-resilience",
-          "name": "Arcane Resilience",
+          "id": "missile-barrage",
+          "name": "Missile Barrage",
           "row": 1,
           "col": 3,
           "maxRank": 2,
-          "icon": "spell_arcane_arcaneresilience",
+          "icon": "ability_mage_missilebarrage",
           "iconSource": "client",
-          "description": "Increases your Armor by an amount equal to {0}% of your Intellect.",
+          "description": "Gives your Arcane Blast spell a {0}% chance, and your Arcane Wrath, Fireball, Frostbolt, Frost Blast, and Frostfire Bolt spells a {1}% chance to reduce the channeled duration of your next Arcane Missiles spell by {2}%, reduce the Mana cost by {3}%, and missiles fire every {4} sec.",
           "ranks": [
             [
-              25
+              20,
+              10,
+              50,
+              100,
+              0.5
             ],
             [
-              50
+              40,
+              20,
+              50,
+              100,
+              0.5
             ]
           ],
           "ranksObserved": [
@@ -280,7 +242,7 @@
             2
           ],
           "ranksSource": "client",
-          "spellId": 28574
+          "spellId": 400588
         },
         {
           "id": "arcane-geometry",
@@ -607,37 +569,11 @@
       "cols": 4,
       "talents": [
         {
-          "id": "improved-fire-blast",
-          "name": "Improved Fire Blast",
-          "row": 0,
-          "col": 0,
-          "maxRank": 2,
-          "icon": "spell_fire_lavaspawn",
-          "iconSource": "client",
-          "description": "Reduces the cooldown of your Fire Blast spell by {0} sec and increases its range by {1} yards.",
-          "ranks": [
-            [
-              1,
-              8
-            ],
-            [
-              2,
-              15
-            ]
-          ],
-          "ranksObserved": [
-            1,
-            2
-          ],
-          "ranksSource": "client",
-          "spellId": 11078
-        },
-        {
           "id": "incineration",
           "name": "Incineration",
           "row": 0,
           "col": 1,
-          "maxRank": 3,
+          "maxRank": 5,
           "icon": "spell_fire_flameshock",
           "iconSource": "client",
           "description": "Increases the critical strike chance of your Fire Blast, Ice Lance, Arcane Blast, and Scorch spells by {0}%.",
@@ -650,25 +586,33 @@
             ],
             [
               6
+            ],
+            [
+              8
+            ],
+            [
+              10
             ]
           ],
           "ranksObserved": [
             1,
             2,
-            3
+            3,
+            4,
+            5
           ],
           "ranksSource": "client",
           "spellId": 18459
         },
         {
-          "id": "improved-fireball",
-          "name": "Improved Fireball",
+          "id": "accelerant",
+          "name": "Accelerant",
           "row": 0,
           "col": 2,
           "maxRank": 5,
           "icon": "spell_fire_flamebolt",
           "iconSource": "client",
-          "description": "Reduces the casting time of your Fireball and Frostfire Bolt spells by {0} sec.",
+          "description": "Reduces the casting time of your Fireball, Frostfire Bolt, and Arcane Wrath spells by {0} sec.",
           "ranks": [
             [
               0.1
@@ -876,12 +820,38 @@
           "spellId": 11366
         },
         {
+          "id": "improved-fire-blast",
+          "name": "Improved Fire Blast",
+          "row": 2,
+          "col": 3,
+          "maxRank": 2,
+          "icon": "spell_fire_lavaspawn",
+          "iconSource": "client",
+          "description": "Reduces the cooldown of your Fire Blast spell by {0} sec and increases its range by {1} yards.",
+          "ranks": [
+            [
+              1,
+              8
+            ],
+            [
+              2,
+              15
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 11078
+        },
+        {
           "id": "improved-scorch",
           "name": "Improved Scorch",
           "row": 3,
           "col": 0,
           "maxRank": 3,
-          "icon": "spell_fire_windsofwoe",
+          "icon": "spell_fire_soulburn",
           "iconSource": "client",
           "description": "Your Scorch spell has a {0}% chance to cause your target to be vulnerable to Fire damage. This vulnerability increases all Fire damage you deal to your target by {1}% and lasts {2} sec, stacking up to {3} times.",
           "ranks": [
@@ -997,7 +967,7 @@
           "name": "Critical Mass",
           "row": 4,
           "col": 1,
-          "maxRank": 5,
+          "maxRank": 3,
           "icon": "spell_nature_wispheal",
           "iconSource": "client",
           "description": "Increases the critical strike chance of your Fire spells by {0}%.",
@@ -1010,20 +980,12 @@
             ],
             [
               6
-            ],
-            [
-              8
-            ],
-            [
-              10
             ]
           ],
           "ranksObserved": [
             1,
             2,
-            3,
-            4,
-            5
+            3
           ],
           "ranksSource": "client",
           "spellId": 11115
@@ -1106,7 +1068,7 @@
           "requires": [
             {
               "talent": "critical-mass",
-              "rank": 5
+              "rank": 3
             }
           ],
           "spellId": 11129
@@ -1187,14 +1149,14 @@
           "spellId": 11070
         },
         {
-          "id": "elemental-precision",
-          "name": "Elemental Precision",
+          "id": "precision",
+          "name": "Precision",
           "row": 0,
           "col": 2,
           "maxRank": 3,
           "icon": "spell_ice_magicdamage",
           "iconSource": "client",
-          "description": "Improves your chance to hit with Frost and Fire spells by {0}%.",
+          "description": "Improves your chance to hit with all spells by {0}%.",
           "ranks": [
             [
               2
@@ -1251,61 +1213,6 @@
           "spellId": 11207
         },
         {
-          "id": "permafrost",
-          "name": "Permafrost",
-          "row": 1,
-          "col": 3,
-          "maxRank": 3,
-          "icon": "spell_frost_wisp",
-          "iconSource": "client",
-          "description": "Increases the duration of your Chill effects by {0}% and reduces the target's speed by an additional {1}%.",
-          "ranks": [
-            [
-              11,
-              3
-            ],
-            [
-              22,
-              7
-            ],
-            [
-              33,
-              10
-            ]
-          ],
-          "ranksObserved": [
-            1,
-            2,
-            3
-          ],
-          "ranksSource": "client",
-          "spellId": 11175
-        },
-        {
-          "id": "improved-frost-nova",
-          "name": "Improved Frost Nova",
-          "row": 1,
-          "col": 2,
-          "maxRank": 2,
-          "icon": "spell_frost_freezingbreath",
-          "iconSource": "client",
-          "description": "Reduces the cooldown of your Frost Nova spell by {0} sec.",
-          "ranks": [
-            [
-              2
-            ],
-            [
-              4
-            ]
-          ],
-          "ranksObserved": [
-            1,
-            2
-          ],
-          "ranksSource": "client",
-          "spellId": 11165
-        },
-        {
           "id": "frostbite",
           "name": "Frostbite",
           "row": 1,
@@ -1335,6 +1242,61 @@
           ],
           "ranksSource": "client",
           "spellId": 11071
+        },
+        {
+          "id": "improved-frost-nova",
+          "name": "Improved Frost Nova",
+          "row": 1,
+          "col": 2,
+          "maxRank": 2,
+          "icon": "spell_frost_freezingbreath",
+          "iconSource": "client",
+          "description": "Reduces the cooldown of your Frost Nova spell by {0} sec.",
+          "ranks": [
+            [
+              2
+            ],
+            [
+              4
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2
+          ],
+          "ranksSource": "client",
+          "spellId": 11165
+        },
+        {
+          "id": "permafrost",
+          "name": "Permafrost",
+          "row": 1,
+          "col": 3,
+          "maxRank": 3,
+          "icon": "spell_frost_wisp",
+          "iconSource": "client",
+          "description": "Increases the duration of your Chill effects by {0}% and reduces the target's speed by an additional {1}%.",
+          "ranks": [
+            [
+              11,
+              3
+            ],
+            [
+              22,
+              7
+            ],
+            [
+              33,
+              10
+            ]
+          ],
+          "ranksObserved": [
+            1,
+            2,
+            3
+          ],
+          "ranksSource": "client",
+          "spellId": 11175
         },
         {
           "id": "frost-channeling",
@@ -1368,29 +1330,6 @@
           "spellId": 11160
         },
         {
-          "id": "ice-lance",
-          "name": "Ice Lance",
-          "row": 2,
-          "col": 2,
-          "maxRank": 1,
-          "icon": "spell_frost_frostblast",
-          "iconSource": "client",
-          "description": "Deals {0} to {1} Frost damage to an enemy target. Deals {2}% increased damage to Frozen targets.",
-          "ranks": [
-            [
-              28,
-              32,
-              200
-            ]
-          ],
-          "ranksObserved": [
-            1
-          ],
-          "ranksSource": "client",
-          "cost": "45 Mana; 30 yd range; Instant",
-          "spellId": 1312002
-        },
-        {
           "id": "improved-blizzard",
           "name": "Improved Blizzard",
           "row": 2,
@@ -1420,6 +1359,29 @@
           ],
           "ranksSource": "client",
           "spellId": 11185
+        },
+        {
+          "id": "ice-lance",
+          "name": "Ice Lance",
+          "row": 2,
+          "col": 2,
+          "maxRank": 1,
+          "icon": "spell_frost_frostblast",
+          "iconSource": "client",
+          "description": "Deals {0} to {1} Frost damage to an enemy target. Deals {2}% increased damage to Frozen targets.",
+          "ranks": [
+            [
+              28,
+              32,
+              200
+            ]
+          ],
+          "ranksObserved": [
+            1
+          ],
+          "ranksSource": "client",
+          "cost": "45 Mana; 30 yd range; Instant; 8 sec cooldown",
+          "spellId": 1312002
         },
         {
           "id": "arctic-reach",
@@ -1575,31 +1537,36 @@
           "maxRank": 5,
           "icon": "spell_frost_chillingblast",
           "iconSource": "client",
-          "description": "Gives your Frost damage spells a {0}% chance to apply the Winter's Chill effect, which increases the damage done by your Cone of Cold spell to the target by {1}%, stacking up to {2} times.",
+          "description": "Gives your Frostbolt, Frost Blast, and Fingers of Frost empowered Ice Lance spells a {0}% chance to apply Winter's Chill, increasing the target's damage taken from your next Cone of Cold by {1}% and it gains an additional {2}% of your spell damage, stacking up to {3} times.",
           "ranks": [
             [
               20,
-              40,
+              5,
+              7,
               5
             ],
             [
               40,
-              40,
+              5,
+              7,
               5
             ],
             [
               60,
-              40,
+              5,
+              7,
               5
             ],
             [
               80,
-              40,
+              5,
+              7,
               5
             ],
             [
               100,
-              40,
+              5,
+              7,
               5
             ]
           ],
@@ -1647,6 +1614,6 @@
     }
   ],
   "notes": [
-    "wago.tools Trait, TalentTab, SkillLine and Spell tables of the WoW Forever beta client build 1.60.1.70450 (TraitTree 1112), generated by tools/forever_talents/import_db2.py. The trees' removed lists carried over from the hand-assembled files these replaced. The Frost tree carries the 2026-10-20 server hotfix to 70450 by hand (wago.tools/hotfixes, push of 2026-10-20 09:51: TraitNode 105771, 105772, 105774 and 105776 moved, 105773 Piercing Ice deleted, TraitNodeEntry 130507 MaxRanks 3, CurvePoint 241098-241100 and the Spell rows of 11189, 11426-13033 and 1326891), which the client tables don't have; import_db2.py undoes it until a client build does."
+    "wago.tools Trait, TalentTab, SkillLine and Spell tables of the WoW Forever beta client build 1.60.1.70707 (TraitTree 1112), generated by tools/forever_talents/import_db2.py. The trees' removed lists and the hand notes on 7 talents carried over from the hand-assembled files these replaced."
   ]
 }

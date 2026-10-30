@@ -1,670 +1,686 @@
 {
-  "goldAt40": 115,
-  "ridingLevel": 43,
-  "ridingGold": 90,
-  "buys": [
+  "goldAt40":  115,
+  "ridingLevel":  43,
+  "ridingGold":  90,
+  "buys":  [
     {
-      "spellId": 332,
-      "level": 61
+      "spellId":  529,
+      "level":  44
     },
     {
-      "spellId": 547,
-      "level": 61
+      "spellId":  548,
+      "level":  44
     },
     {
-      "spellId": 913,
-      "level": 61
+      "spellId":  915,
+      "level":  44
     },
     {
-      "spellId": 939,
-      "level": 61
+      "spellId":  939,
+      "level":  61
     },
     {
-      "spellId": 959,
-      "level": 61
+      "spellId":  943,
+      "level":  44
     },
     {
-      "spellId": 8005,
-      "level": 61
+      "spellId":  959,
+      "level":  61
     },
     {
-      "spellId": 8058,
-      "level": 61
+      "spellId":  6041,
+      "level":  44
     },
     {
-      "spellId": 10395,
-      "level": 61
+      "spellId":  8005,
+      "level":  61
     },
     {
-      "spellId": 10396,
-      "level": 61
+      "spellId":  8045,
+      "level":  22
     },
     {
-      "spellId": 10414,
-      "level": 61
+      "spellId":  8046,
+      "level":  26
     },
     {
-      "spellId": 10438,
-      "level": 61
+      "spellId":  8058,
+      "level":  61
     },
     {
-      "spellId": 10466,
-      "level": 61
+      "spellId":  10391,
+      "level":  44
     },
     {
-      "spellId": 10467,
-      "level": 61
+      "spellId":  10395,
+      "level":  61
     },
     {
-      "spellId": 10468,
-      "level": 61
+      "spellId":  10396,
+      "level":  61
     },
     {
-      "spellId": 10472,
-      "level": 61
+      "spellId":  10412,
+      "level":  41
     },
     {
-      "spellId": 10473,
-      "level": 61
+      "spellId":  10414,
+      "level":  61
     },
     {
-      "spellId": 10613,
-      "level": 61
+      "spellId":  10438,
+      "level":  61
     },
     {
-      "spellId": 10614,
-      "level": 61
+      "spellId":  10468,
+      "level":  61
     },
     {
-      "spellId": 408342,
-      "level": 61
+      "spellId":  10472,
+      "level":  61
     },
     {
-      "spellId": 408343,
-      "level": 61
+      "spellId":  10473,
+      "level":  61
     },
     {
-      "spellId": 408344,
-      "level": 61
+      "spellId":  10613,
+      "level":  61
     },
     {
-      "spellId": 408345,
-      "level": 61
+      "spellId":  10614,
+      "level":  61
+    },
+    {
+      "spellId":  408342,
+      "level":  61
+    },
+    {
+      "spellId":  408343,
+      "level":  61
+    },
+    {
+      "spellId":  408344,
+      "level":  61
+    },
+    {
+      "spellId":  408345,
+      "level":  61
     }
   ],
-  "worth": [
+  "worth":  [
     {
-      "spellId": 324,
-      "level": 8,
-      "price": 90,
-      "minutes": 6.8,
-      "rank": 1,
-      "spell": "Lightning Shield"
+      "spellId":  324,
+      "level":  8,
+      "price":  90,
+      "minutes":  12.9,
+      "rank":  1,
+      "spell":  "Lightning Shield"
     },
     {
-      "spellId": 325,
-      "level": 16,
-      "price": 1620,
-      "minutes": 7.9,
-      "rank": 2,
-      "spell": "Lightning Shield"
+      "spellId":  325,
+      "level":  16,
+      "price":  1620,
+      "minutes":  7.8,
+      "rank":  2,
+      "spell":  "Lightning Shield"
     },
     {
-      "spellId": 332,
-      "level": 6,
-      "price": 90,
-      "minutes": -0.2,
-      "rank": 2,
-      "spell": "Healing Wave"
+      "spellId":  332,
+      "level":  6,
+      "price":  90,
+      "minutes":  -0.2,
+      "rank":  2,
+      "spell":  "Healing Wave"
     },
     {
-      "spellId": 529,
-      "level": 8,
-      "price": 90,
-      "rank": 2,
-      "spell": "Lightning Bolt"
+      "spellId":  529,
+      "level":  8,
+      "price":  90,
+      "rank":  2,
+      "spell":  "Lightning Bolt"
     },
     {
-      "spellId": 547,
-      "level": 12,
-      "price": 720,
-      "minutes": -0.1,
-      "rank": 3,
-      "spell": "Healing Wave"
+      "spellId":  547,
+      "level":  12,
+      "price":  720,
+      "minutes":  -0.1,
+      "rank":  3,
+      "spell":  "Healing Wave"
     },
     {
-      "spellId": 548,
-      "level": 14,
-      "price": 810,
-      "rank": 3,
-      "spell": "Lightning Bolt"
+      "spellId":  548,
+      "level":  14,
+      "price":  810,
+      "rank":  3,
+      "spell":  "Lightning Bolt"
     },
     {
-      "spellId": 905,
-      "level": 24,
-      "price": 3150,
-      "minutes": 15.1,
-      "rank": 3,
-      "spell": "Lightning Shield"
+      "spellId":  905,
+      "level":  24,
+      "price":  3150,
+      "minutes":  15.1,
+      "rank":  3,
+      "spell":  "Lightning Shield"
     },
     {
-      "spellId": 913,
-      "level": 18,
-      "price": 1800,
-      "minutes": -0.9,
-      "rank": 4,
-      "spell": "Healing Wave"
+      "spellId":  913,
+      "level":  18,
+      "price":  1800,
+      "minutes":  -0.6,
+      "rank":  4,
+      "spell":  "Healing Wave"
     },
     {
-      "spellId": 915,
-      "level": 20,
-      "price": 1980,
-      "rank": 4,
-      "spell": "Lightning Bolt"
+      "spellId":  915,
+      "level":  20,
+      "price":  1980,
+      "rank":  4,
+      "spell":  "Lightning Bolt"
     },
     {
-      "spellId": 939,
-      "level": 24,
-      "price": 3150,
-      "rank": 5,
-      "spell": "Healing Wave"
+      "spellId":  939,
+      "level":  24,
+      "price":  3150,
+      "rank":  5,
+      "spell":  "Healing Wave"
     },
     {
-      "spellId": 943,
-      "level": 26,
-      "price": 3600,
-      "rank": 5,
-      "spell": "Lightning Bolt"
+      "spellId":  943,
+      "level":  26,
+      "price":  3600,
+      "rank":  5,
+      "spell":  "Lightning Bolt"
     },
     {
-      "spellId": 945,
-      "level": 32,
-      "price": 7200,
-      "minutes": 15.3,
-      "rank": 4,
-      "spell": "Lightning Shield"
+      "spellId":  945,
+      "level":  32,
+      "price":  7200,
+      "minutes":  13.8,
+      "rank":  4,
+      "spell":  "Lightning Shield"
     },
     {
-      "spellId": 959,
-      "level": 32,
-      "price": 7200,
-      "rank": 6,
-      "spell": "Healing Wave"
+      "spellId":  959,
+      "level":  32,
+      "price":  7200,
+      "rank":  6,
+      "spell":  "Healing Wave"
     },
     {
-      "spellId": 5675,
-      "level": 26,
-      "price": 3600,
-      "minutes": 9.1,
-      "rank": 1,
-      "spell": "Mana Spring Totem"
-    },
-    {
-      "spellId": 6041,
-      "level": 32,
-      "price": 7200,
-      "rank": 6,
-      "spell": "Lightning Bolt"
-    },
-    {
-      "spellId": 6363,
-      "level": 20,
-      "price": 1980,
-      "minutes": 9.1,
-      "rank": 2,
-      "spell": "Searing Totem"
-    },
-    {
-      "spellId": 6364,
-      "level": 30,
-      "price": 6300,
-      "minutes": 5.6,
-      "rank": 3,
-      "spell": "Searing Totem"
-    },
-    {
-      "spellId": 6365,
-      "level": 40,
-      "price": 10800,
-      "minutes": 8.9,
-      "rank": 4,
-      "spell": "Searing Totem"
-    },
-    {
-      "spellId": 8004,
-      "level": 20,
-      "price": 1980,
-      "minutes": 1.1,
-      "rank": 1,
-      "spell": "Lesser Healing Wave"
-    },
-    {
-      "spellId": 8005,
-      "level": 40,
-      "price": 10800,
-      "rank": 7,
-      "spell": "Healing Wave"
+      "spellId":  5675,
+      "level":  26,
+      "price":  3600,
+      "minutes":  9.2,
+      "rank":  1,
+      "spell":  "Mana Spring Totem"
+    },
+    {
+      "spellId":  6041,
+      "level":  32,
+      "price":  7200,
+      "rank":  6,
+      "spell":  "Lightning Bolt"
+    },
+    {
+      "spellId":  6363,
+      "level":  20,
+      "price":  1980,
+      "minutes":  9.3,
+      "rank":  2,
+      "spell":  "Searing Totem"
+    },
+    {
+      "spellId":  6364,
+      "level":  30,
+      "price":  6300,
+      "minutes":  4.7,
+      "rank":  3,
+      "spell":  "Searing Totem"
+    },
+    {
+      "spellId":  6365,
+      "level":  40,
+      "price":  10800,
+      "minutes":  7.3,
+      "rank":  4,
+      "spell":  "Searing Totem"
+    },
+    {
+      "spellId":  8004,
+      "level":  20,
+      "price":  1980,
+      "minutes":  1.1,
+      "rank":  1,
+      "spell":  "Lesser Healing Wave"
+    },
+    {
+      "spellId":  8005,
+      "level":  40,
+      "price":  10800,
+      "rank":  7,
+      "spell":  "Healing Wave"
     },
-    {
-      "spellId": 8008,
-      "level": 28,
-      "price": 5400,
-      "minutes": 0.1,
-      "rank": 2,
-      "spell": "Lesser Healing Wave"
+    {
+      "spellId":  8008,
+      "level":  28,
+      "price":  5400,
+      "rank":  2,
+      "spell":  "Lesser Healing Wave"
     },
-    {
-      "spellId": 8010,
-      "level": 36,
-      "price": 9000,
-      "minutes": 0.3,
-      "rank": 3,
-      "spell": "Lesser Healing Wave"
+    {
+      "spellId":  8010,
+      "level":  36,
+      "price":  9000,
+      "minutes":  0.4,
+      "rank":  3,
+      "spell":  "Lesser Healing Wave"
     },
-    {
-      "spellId": 8018,
-      "level": 8,
-      "price": 90,
-      "minutes": 8.3,
-      "rank": 2,
-      "spell": "Rockbiter Weapon"
+    {
+      "spellId":  8018,
+      "level":  8,
+      "price":  90,
+      "minutes":  9.9,
+      "rank":  2,
+      "spell":  "Rockbiter Weapon"
     },
-    {
-      "spellId": 8019,
-      "level": 16,
-      "price": 1620,
-      "minutes": 10.5,
-      "rank": 3,
-      "spell": "Rockbiter Weapon"
+    {
+      "spellId":  8019,
+      "level":  16,
+      "price":  1620,
+      "minutes":  10.4,
+      "rank":  3,
+      "spell":  "Rockbiter Weapon"
     },
-    {
-      "spellId": 8042,
-      "level": 4,
-      "price": 90,
-      "rank": 1,
-      "spell": "Earth Shock"
+    {
+      "spellId":  8042,
+      "level":  4,
+      "price":  90,
+      "minutes":  22.2,
+      "rank":  1,
+      "spell":  "Earth Shock"
     },
     {
-      "spellId": 8044,
-      "level": 8,
-      "price": 90,
-      "minutes": 2.9,
-      "rank": 2,
-      "spell": "Earth Shock"
+      "spellId":  8044,
+      "level":  8,
+      "price":  90,
+      "minutes":  5.9,
+      "rank":  2,
+      "spell":  "Earth Shock"
     },
     {
-      "spellId": 8045,
-      "level": 14,
-      "price": 810,
-      "minutes": -0.2,
-      "rank": 3,
-      "spell": "Earth Shock"
+      "spellId":  8045,
+      "level":  14,
+      "price":  810,
+      "minutes":  -0.1,
+      "rank":  3,
+      "spell":  "Earth Shock"
     },
     {
-      "spellId": 8046,
-      "level": 24,
-      "price": 3150,
-      "minutes": 11.1,
-      "rank": 4,
-      "spell": "Earth Shock"
+      "spellId":  8046,
+      "level":  24,
+      "price":  3150,
+      "minutes":  11,
+      "rank":  4,
+      "spell":  "Earth Shock"
     },
     {
-      "spellId": 8050,
-      "level": 10,
-      "price": 360,
-      "minutes": 5,
-      "rank": 1,
-      "spell": "Flame Shock"
+      "spellId":  8050,
+      "level":  10,
+      "price":  360,
+      "minutes":  5,
+      "rank":  1,
+      "spell":  "Flame Shock"
     },
     {
-      "spellId": 8052,
-      "level": 18,
-      "price": 1800,
-      "minutes": -2,
-      "rank": 2,
-      "spell": "Flame Shock"
+      "spellId":  8052,
+      "level":  18,
+      "price":  1800,
+      "minutes":  -2.2,
+      "rank":  2,
+      "spell":  "Flame Shock"
     },
     {
-      "spellId": 8053,
-      "level": 28,
-      "price": 5400,
-      "minutes": 0.4,
-      "rank": 3,
-      "spell": "Flame Shock"
+      "spellId":  8053,
+      "level":  28,
+      "price":  5400,
+      "minutes":  0.3,
+      "rank":  3,
+      "spell":  "Flame Shock"
     },
     {
-      "spellId": 8056,
-      "level": 20,
-      "price": 1980,
-      "minutes": 24.2,
-      "rank": 1,
-      "spell": "Frost Shock"
+      "spellId":  8056,
+      "level":  20,
+      "price":  1980,
+      "minutes":  24.2,
+      "rank":  1,
+      "spell":  "Frost Shock"
     },
     {
-      "spellId": 8058,
-      "level": 34,
-      "price": 8100,
-      "rank": 2,
-      "spell": "Frost Shock"
+      "spellId":  8058,
+      "level":  34,
+      "price":  8100,
+      "rank":  2,
+      "spell":  "Frost Shock"
     },
     {
-      "spellId": 8134,
-      "level": 40,
-      "price": 10800,
-      "minutes": 30.1,
-      "rank": 5,
-      "spell": "Lightning Shield"
+      "spellId":  8134,
+      "level":  40,
+      "price":  10800,
+      "minutes":  28.6,
+      "rank":  5,
+      "spell":  "Lightning Shield"
     },
     {
-      "spellId": 8154,
-      "level": 14,
-      "price": 810,
-      "minutes": 1.8,
-      "rank": 2,
-      "spell": "Stoneskin Totem"
+      "spellId":  8154,
+      "level":  14,
+      "price":  810,
+      "minutes":  1.8,
+      "rank":  2,
+      "spell":  "Stoneskin Totem"
     },
     {
-      "spellId": 8155,
-      "level": 24,
-      "price": 3150,
-      "minutes": 3.4,
-      "rank": 3,
-      "spell": "Stoneskin Totem"
+      "spellId":  8155,
+      "level":  24,
+      "price":  3150,
+      "minutes":  3.3,
+      "rank":  3,
+      "spell":  "Stoneskin Totem"
     },
     {
-      "spellId": 8512,
-      "level": 32,
-      "price": 7200,
-      "minutes": 47.9,
-      "rank": 1,
-      "spell": "Windfury Totem"
+      "spellId":  8512,
+      "level":  32,
+      "price":  7200,
+      "minutes":  71.1,
+      "rank":  1,
+      "spell":  "Windfury Totem"
     },
     {
-      "spellId": 10391,
-      "level": 38,
-      "price": 9900,
-      "rank": 7,
-      "spell": "Lightning Bolt"
+      "spellId":  10391,
+      "level":  38,
+      "price":  9900,
+      "rank":  7,
+      "spell":  "Lightning Bolt"
     },
     {
-      "spellId": 10392,
-      "level": 44,
-      "price": 16200,
-      "minutes": 1.6,
-      "rank": 8,
-      "spell": "Lightning Bolt"
+      "spellId":  10392,
+      "level":  44,
+      "price":  16200,
+      "minutes":  1.8,
+      "rank":  8,
+      "spell":  "Lightning Bolt"
     },
     {
-      "spellId": 10395,
-      "level": 48,
-      "price": 19800,
-      "rank": 8,
-      "spell": "Healing Wave"
+      "spellId":  10395,
+      "level":  48,
+      "price":  19800,
+      "rank":  8,
+      "spell":  "Healing Wave"
     },
     {
-      "spellId": 10396,
-      "level": 56,
-      "price": 27000,
-      "rank": 9,
-      "spell": "Healing Wave"
+      "spellId":  10396,
+      "level":  56,
+      "price":  27000,
+      "rank":  9,
+      "spell":  "Healing Wave"
     },
     {
-      "spellId": 10399,
-      "level": 24,
-      "price": 3150,
-      "minutes": 28.1,
-      "rank": 4,
-      "spell": "Rockbiter Weapon"
+      "spellId":  10399,
+      "level":  24,
+      "price":  3150,
+      "minutes":  27.8,
+      "rank":  4,
+      "spell":  "Rockbiter Weapon"
     },
     {
-      "spellId": 10406,
-      "level": 34,
-      "price": 8100,
-      "minutes": 7.9,
-      "rank": 4,
-      "spell": "Stoneskin Totem"
+      "spellId":  10406,
+      "level":  34,
+      "price":  8100,
+      "minutes":  7.3,
+      "rank":  4,
+      "spell":  "Stoneskin Totem"
     },
     {
-      "spellId": 10407,
-      "level": 44,
-      "price": 16200,
-      "minutes": -0.4,
-      "rank": 5,
-      "spell": "Stoneskin Totem"
+      "spellId":  10407,
+      "level":  44,
+      "price":  16200,
+      "minutes":  -0.5,
+      "rank":  5,
+      "spell":  "Stoneskin Totem"
     },
     {
-      "spellId": 10408,
-      "level": 54,
-      "price": 26100,
-      "minutes": 3.2,
-      "rank": 6,
-      "spell": "Stoneskin Totem"
+      "spellId":  10408,
+      "level":  54,
+      "price":  26100,
+      "minutes":  3.3,
+      "rank":  6,
+      "spell":  "Stoneskin Totem"
     },
     {
-      "spellId": 10412,
-      "level": 36,
-      "price": 9000,
-      "minutes": -1,
-      "rank": 5,
-      "spell": "Earth Shock"
+      "spellId":  10412,
+      "level":  36,
+      "price":  9000,
+      "minutes":  -3,
+      "rank":  5,
+      "spell":  "Earth Shock"
     },
     {
-      "spellId": 10413,
-      "level": 48,
-      "price": 19800,
-      "minutes": 3.2,
-      "rank": 6,
-      "spell": "Earth Shock"
+      "spellId":  10413,
+      "level":  48,
+      "price":  19800,
+      "minutes":  1,
+      "rank":  6,
+      "spell":  "Earth Shock"
     },
     {
-      "spellId": 10414,
-      "level": 60,
-      "price": 30600,
-      "rank": 7,
-      "spell": "Earth Shock"
+      "spellId":  10414,
+      "level":  60,
+      "price":  30600,
+      "rank":  7,
+      "spell":  "Earth Shock"
     },
     {
-      "spellId": 10431,
-      "level": 48,
-      "price": 19800,
-      "minutes": 25.4,
-      "rank": 6,
-      "spell": "Lightning Shield"
+      "spellId":  10431,
+      "level":  48,
+      "price":  19800,
+      "minutes":  23.8,
+      "rank":  6,
+      "spell":  "Lightning Shield"
     },
     {
-      "spellId": 10432,
-      "level": 56,
-      "price": 27000,
-      "minutes": 17.2,
-      "rank": 7,
-      "spell": "Lightning Shield"
+      "spellId":  10432,
+      "level":  56,
+      "price":  27000,
+      "minutes":  16.5,
+      "rank":  7,
+      "spell":  "Lightning Shield"
     },
     {
-      "spellId": 10437,
-      "level": 50,
-      "price": 21600,
-      "minutes": 9.2,
-      "rank": 5,
-      "spell": "Searing Totem"
+      "spellId":  10437,
+      "level":  50,
+      "price":  21600,
+      "minutes":  8.9,
+      "rank":  5,
+      "spell":  "Searing Totem"
     },
     {
-      "spellId": 10438,
-      "level": 60,
-      "price": 30600,
-      "rank": 6,
-      "spell": "Searing Totem"
+      "spellId":  10438,
+      "level":  60,
+      "price":  30600,
+      "rank":  6,
+      "spell":  "Searing Totem"
     },
     {
-      "spellId": 10447,
-      "level": 40,
-      "price": 10800,
-      "minutes": -0.5,
-      "rank": 4,
-      "spell": "Flame Shock"
+      "spellId":  10447,
+      "level":  40,
+      "price":  10800,
+      "minutes":  -0.8,
+      "rank":  4,
+      "spell":  "Flame Shock"
     },
     {
-      "spellId": 10448,
-      "level": 52,
-      "price": 24300,
-      "minutes": 11,
-      "rank": 5,
-      "spell": "Flame Shock"
+      "spellId":  10448,
+      "level":  52,
+      "price":  24300,
+      "minutes":  10.3,
+      "rank":  5,
+      "spell":  "Flame Shock"
     },
     {
-      "spellId": 10466,
-      "level": 44,
-      "price": 16200,
-      "minutes": -0.3,
-      "rank": 4,
-      "spell": "Lesser Healing Wave"
+      "spellId":  10466,
+      "level":  44,
+      "price":  16200,
+      "minutes":  -0.4,
+      "rank":  4,
+      "spell":  "Lesser Healing Wave"
     },
     {
-      "spellId": 10467,
-      "level": 52,
-      "price": 24300,
-      "minutes": 0.2,
-      "rank": 5,
-      "spell": "Lesser Healing Wave"
+      "spellId":  10467,
+      "level":  52,
+      "price":  24300,
+      "minutes":  0.2,
+      "rank":  5,
+      "spell":  "Lesser Healing Wave"
     },
     {
-      "spellId": 10468,
-      "level": 60,
-      "price": 30600,
-      "rank": 6,
-      "spell": "Lesser Healing Wave"
+      "spellId":  10468,
+      "level":  60,
+      "price":  30600,
+      "rank":  6,
+      "spell":  "Lesser Healing Wave"
     },
     {
-      "spellId": 10472,
-      "level": 46,
-      "price": 18000,
-      "rank": 3,
-      "spell": "Frost Shock"
+      "spellId":  10472,
+      "level":  46,
+      "price":  18000,
+      "rank":  3,
+      "spell":  "Frost Shock"
     },
     {
-      "spellId": 10473,
-      "level": 58,
-      "price": 28800,
-      "rank": 4,
-      "spell": "Frost Shock"
+      "spellId":  10473,
+      "level":  58,
+      "price":  28800,
+      "rank":  4,
+      "spell":  "Frost Shock"
     },
     {
-      "spellId": 10495,
-      "level": 36,
-      "price": 9000,
-      "minutes": 8.8,
-      "rank": 2,
-      "spell": "Mana Spring Totem"
+      "spellId":  10495,
+      "level":  36,
+      "price":  9000,
+      "minutes":  9.4,
+      "rank":  2,
+      "spell":  "Mana Spring Totem"
     },
     {
-      "spellId": 10496,
-      "level": 46,
-      "price": 18000,
-      "minutes": 10.2,
-      "rank": 3,
-      "spell": "Mana Spring Totem"
+      "spellId":  10496,
+      "level":  46,
+      "price":  18000,
+      "minutes":  9.9,
+      "rank":  3,
+      "spell":  "Mana Spring Totem"
     },
     {
-      "spellId": 10497,
-      "level": 56,
-      "price": 27000,
-      "minutes": 3.8,
-      "rank": 4,
-      "spell": "Mana Spring Totem"
+      "spellId":  10497,
+      "level":  56,
+      "price":  27000,
+      "minutes":  3.8,
+      "rank":  4,
+      "spell":  "Mana Spring Totem"
     },
     {
-      "spellId": 10613,
-      "level": 42,
-      "price": 14400,
-      "minutes": -7.2,
-      "rank": 2,
-      "spell": "Windfury Totem"
+      "spellId":  10613,
+      "level":  42,
+      "price":  14400,
+      "minutes":  -7.4,
+      "rank":  2,
+      "spell":  "Windfury Totem"
     },
     {
-      "spellId": 10614,
-      "level": 52,
-      "price": 24300,
-      "minutes": -11.2,
-      "rank": 3,
-      "spell": "Windfury Totem"
+      "spellId":  10614,
+      "level":  52,
+      "price":  24300,
+      "minutes":  -9.5,
+      "rank":  3,
+      "spell":  "Windfury Totem"
     },
     {
-      "spellId": 15207,
-      "level": 50,
-      "price": 21600,
-      "minutes": 2.9,
-      "rank": 9,
-      "spell": "Lightning Bolt"
+      "spellId":  15207,
+      "level":  50,
+      "price":  21600,
+      "minutes":  2.9,
+      "rank":  9,
+      "spell":  "Lightning Bolt"
     },
     {
-      "spellId": 15208,
-      "level": 56,
-      "price": 27000,
-      "minutes": 5.3,
-      "rank": 10,
-      "spell": "Lightning Bolt"
+      "spellId":  15208,
+      "level":  56,
+      "price":  27000,
+      "minutes":  5.8,
+      "rank":  10,
+      "spell":  "Lightning Bolt"
     },
     {
-      "spellId": 16314,
-      "level": 34,
-      "price": 8100,
-      "minutes": 67.8,
-      "rank": 5,
-      "spell": "Rockbiter Weapon"
+      "spellId":  16314,
+      "level":  34,
+      "price":  8100,
+      "minutes":  66.6,
+      "rank":  5,
+      "spell":  "Rockbiter Weapon"
     },
     {
-      "spellId": 16315,
-      "level": 44,
-      "price": 16200,
-      "minutes": 72.5,
-      "rank": 6,
-      "spell": "Rockbiter Weapon"
+      "spellId":  16315,
+      "level":  44,
+      "price":  16200,
+      "minutes":  71.9,
+      "rank":  6,
+      "spell":  "Rockbiter Weapon"
     },
     {
-      "spellId": 16316,
-      "level": 54,
-      "price": 26100,
-      "minutes": 27.8,
-      "rank": 7,
-      "spell": "Rockbiter Weapon"
+      "spellId":  16316,
+      "level":  54,
+      "price":  26100,
+      "minutes":  28.2,
+      "rank":  7,
+      "spell":  "Rockbiter Weapon"
     },
     {
-      "spellId": 408341,
-      "level": 12,
-      "price": 720,
-      "minutes": 2.7,
-      "rank": 1,
-      "spell": "Fire Nova"
+      "spellId":  408341,
+      "level":  12,
+      "price":  720,
+      "minutes":  2.7,
+      "rank":  1,
+      "spell":  "Fire Nova"
     },
     {
-      "spellId": 408342,
-      "level": 22,
-      "price": 2700,
-      "rank": 2,
-      "spell": "Fire Nova"
+      "spellId":  408342,
+      "level":  22,
+      "price":  2700,
+      "rank":  2,
+      "spell":  "Fire Nova"
     },
     {
-      "spellId": 408343,
-      "level": 32,
-      "price": 7200,
-      "rank": 3,
-      "spell": "Fire Nova"
+      "spellId":  408343,
+      "level":  32,
+      "price":  7200,
+      "rank":  3,
+      "spell":  "Fire Nova"
     },
     {
-      "spellId": 408344,
-      "level": 42,
-      "price": 14400,
-      "rank": 4,
-      "spell": "Fire Nova"
+      "spellId":  408344,
+      "level":  42,
+      "price":  14400,
+      "rank":  4,
+      "spell":  "Fire Nova"
     },
     {
-      "spellId": 408345,
-      "level": 52,
-      "price": 24300,
-      "rank": 5,
-      "spell": "Fire Nova"
+      "spellId":  408345,
+      "level":  52,
+      "price":  24300,
+      "rank":  5,
+      "spell":  "Fire Nova"
     }
   ],
-  "alwaysSpells": [
+  "alwaysSpells":  [
     "Ghost Wolf",
     "Earthbind Totem",
     "Purge",
@@ -680,650 +696,650 @@
     "Totemic Recall",
     "Stoneclaw Totem"
   ],
-  "others": [
+  "others":  [
     {
-      "spellId": 131,
-      "level": 22,
-      "price": 2700,
-      "rank": 1,
-      "spell": "Water Breathing"
+      "spellId":  131,
+      "level":  22,
+      "price":  2700,
+      "rank":  1,
+      "spell":  "Water Breathing"
     },
     {
-      "spellId": 370,
-      "level": 12,
-      "price": 720,
-      "rank": 1,
-      "spell": "Purge"
+      "spellId":  370,
+      "level":  12,
+      "price":  720,
+      "rank":  1,
+      "spell":  "Purge"
     },
     {
-      "spellId": 421,
-      "level": 32,
-      "price": 7200,
-      "rank": 1,
-      "spell": "Chain Lightning"
+      "spellId":  421,
+      "level":  32,
+      "price":  7200,
+      "rank":  1,
+      "spell":  "Chain Lightning"
     },
     {
-      "spellId": 526,
-      "level": 16,
-      "price": 1620,
-      "rank": 1,
-      "spell": "Cure Poison"
+      "spellId":  526,
+      "level":  16,
+      "price":  1620,
+      "rank":  1,
+      "spell":  "Cure Poison"
     },
     {
-      "spellId": 546,
-      "level": 28,
-      "price": 5400,
-      "rank": 1,
-      "spell": "Water Walking"
+      "spellId":  546,
+      "level":  28,
+      "price":  5400,
+      "rank":  1,
+      "spell":  "Water Walking"
     },
     {
-      "spellId": 556,
-      "level": 30,
-      "price": 6300,
-      "rank": 1,
-      "spell": "Astral Recall"
+      "spellId":  556,
+      "level":  30,
+      "price":  6300,
+      "rank":  1,
+      "spell":  "Astral Recall"
     },
     {
-      "spellId": 930,
-      "level": 40,
-      "price": 10800,
-      "rank": 2,
-      "spell": "Chain Lightning"
+      "spellId":  930,
+      "level":  40,
+      "price":  10800,
+      "rank":  2,
+      "spell":  "Chain Lightning"
     },
     {
-      "spellId": 1064,
-      "level": 40,
-      "price": 10800,
-      "rank": 1,
-      "spell": "Chain Heal"
+      "spellId":  1064,
+      "level":  40,
+      "price":  10800,
+      "rank":  1,
+      "spell":  "Chain Heal"
     },
     {
-      "spellId": 2008,
-      "level": 12,
-      "price": 720,
-      "rank": 1,
-      "spell": "Ancestral Spirit"
+      "spellId":  2008,
+      "level":  12,
+      "price":  720,
+      "rank":  1,
+      "spell":  "Ancestral Spirit"
     },
     {
-      "spellId": 2484,
-      "level": 6,
-      "price": 90,
-      "rank": 1,
-      "spell": "Earthbind Totem"
+      "spellId":  2484,
+      "level":  6,
+      "price":  90,
+      "rank":  1,
+      "spell":  "Earthbind Totem"
     },
     {
-      "spellId": 2645,
-      "level": 20,
-      "price": 1980,
-      "rank": 1,
-      "spell": "Ghost Wolf"
+      "spellId":  2645,
+      "level":  20,
+      "price":  1980,
+      "rank":  1,
+      "spell":  "Ghost Wolf"
     },
     {
-      "spellId": 2860,
-      "level": 48,
-      "price": 19800,
-      "rank": 3,
-      "spell": "Chain Lightning"
+      "spellId":  2860,
+      "level":  48,
+      "price":  19800,
+      "rank":  3,
+      "spell":  "Chain Lightning"
     },
     {
-      "spellId": 2870,
-      "level": 22,
-      "price": 2700,
-      "rank": 1,
-      "spell": "Cure Disease"
+      "spellId":  2870,
+      "level":  22,
+      "price":  2700,
+      "rank":  1,
+      "spell":  "Cure Disease"
     },
     {
-      "spellId": 5730,
-      "level": 8,
-      "price": 90,
-      "rank": 1,
-      "spell": "Stoneclaw Totem"
+      "spellId":  5730,
+      "level":  8,
+      "price":  90,
+      "rank":  1,
+      "spell":  "Stoneclaw Totem"
     },
     {
-      "spellId": 6196,
-      "level": 26,
-      "price": 3600,
-      "rank": 1,
-      "spell": "Far Sight"
+      "spellId":  6196,
+      "level":  26,
+      "price":  3600,
+      "rank":  1,
+      "spell":  "Far Sight"
     },
     {
-      "spellId": 6375,
-      "level": 30,
-      "price": 6300,
-      "rank": 2,
-      "spell": "Healing Stream Totem"
+      "spellId":  6375,
+      "level":  30,
+      "price":  6300,
+      "rank":  2,
+      "spell":  "Healing Stream Totem"
     },
     {
-      "spellId": 6377,
-      "level": 40,
-      "price": 10800,
-      "rank": 3,
-      "spell": "Healing Stream Totem"
+      "spellId":  6377,
+      "level":  40,
+      "price":  10800,
+      "rank":  3,
+      "spell":  "Healing Stream Totem"
     },
     {
-      "spellId": 6390,
-      "level": 18,
-      "price": 1800,
-      "rank": 2,
-      "spell": "Stoneclaw Totem"
+      "spellId":  6390,
+      "level":  18,
+      "price":  1800,
+      "rank":  2,
+      "spell":  "Stoneclaw Totem"
     },
     {
-      "spellId": 6391,
-      "level": 28,
-      "price": 5400,
-      "rank": 3,
-      "spell": "Stoneclaw Totem"
+      "spellId":  6391,
+      "level":  28,
+      "price":  5400,
+      "rank":  3,
+      "spell":  "Stoneclaw Totem"
     },
     {
-      "spellId": 6392,
-      "level": 38,
-      "price": 9900,
-      "rank": 4,
-      "spell": "Stoneclaw Totem"
+      "spellId":  6392,
+      "level":  38,
+      "price":  9900,
+      "rank":  4,
+      "spell":  "Stoneclaw Totem"
     },
     {
-      "spellId": 6495,
-      "level": 34,
-      "price": 8100,
-      "rank": 1,
-      "spell": "Sentry Totem"
+      "spellId":  6495,
+      "level":  34,
+      "price":  8100,
+      "rank":  1,
+      "spell":  "Sentry Totem"
     },
     {
-      "spellId": 8012,
-      "level": 32,
-      "price": 7200,
-      "rank": 2,
-      "spell": "Purge"
+      "spellId":  8012,
+      "level":  32,
+      "price":  7200,
+      "rank":  2,
+      "spell":  "Purge"
     },
     {
-      "spellId": 8024,
-      "level": 10,
-      "price": 360,
-      "rank": 1,
-      "spell": "Flametongue Weapon"
+      "spellId":  8024,
+      "level":  10,
+      "price":  360,
+      "rank":  1,
+      "spell":  "Flametongue Weapon"
     },
     {
-      "spellId": 8027,
-      "level": 18,
-      "price": 1800,
-      "rank": 2,
-      "spell": "Flametongue Weapon"
+      "spellId":  8027,
+      "level":  18,
+      "price":  1800,
+      "rank":  2,
+      "spell":  "Flametongue Weapon"
     },
     {
-      "spellId": 8030,
-      "level": 26,
-      "price": 3600,
-      "rank": 3,
-      "spell": "Flametongue Weapon"
+      "spellId":  8030,
+      "level":  26,
+      "price":  3600,
+      "rank":  3,
+      "spell":  "Flametongue Weapon"
     },
     {
-      "spellId": 8033,
-      "level": 20,
-      "price": 1980,
-      "rank": 1,
-      "spell": "Frostbrand Weapon"
+      "spellId":  8033,
+      "level":  20,
+      "price":  1980,
+      "rank":  1,
+      "spell":  "Frostbrand Weapon"
     },
     {
-      "spellId": 8038,
-      "level": 28,
-      "price": 5400,
-      "rank": 2,
-      "spell": "Frostbrand Weapon"
+      "spellId":  8038,
+      "level":  28,
+      "price":  5400,
+      "rank":  2,
+      "spell":  "Frostbrand Weapon"
     },
     {
-      "spellId": 8075,
-      "level": 10,
-      "price": 360,
-      "rank": 1,
-      "spell": "Strength of Earth Totem"
+      "spellId":  8075,
+      "level":  10,
+      "price":  360,
+      "rank":  1,
+      "spell":  "Strength of Earth Totem"
     },
     {
-      "spellId": 8143,
-      "level": 18,
-      "price": 1800,
-      "rank": 1,
-      "spell": "Tremor Totem"
+      "spellId":  8143,
+      "level":  18,
+      "price":  1800,
+      "rank":  1,
+      "spell":  "Tremor Totem"
     },
     {
-      "spellId": 8160,
-      "level": 24,
-      "price": 3150,
-      "rank": 2,
-      "spell": "Strength of Earth Totem"
+      "spellId":  8160,
+      "level":  24,
+      "price":  3150,
+      "rank":  2,
+      "spell":  "Strength of Earth Totem"
     },
     {
-      "spellId": 8161,
-      "level": 38,
-      "price": 9900,
-      "rank": 3,
-      "spell": "Strength of Earth Totem"
+      "spellId":  8161,
+      "level":  38,
+      "price":  9900,
+      "rank":  3,
+      "spell":  "Strength of Earth Totem"
     },
     {
-      "spellId": 8166,
-      "level": 22,
-      "price": 2700,
-      "rank": 1,
-      "spell": "Poison Cleansing Totem"
+      "spellId":  8166,
+      "level":  22,
+      "price":  2700,
+      "rank":  1,
+      "spell":  "Poison Cleansing Totem"
     },
     {
-      "spellId": 8170,
-      "level": 38,
-      "price": 9900,
-      "rank": 1,
-      "spell": "Disease Cleansing Totem"
+      "spellId":  8170,
+      "level":  38,
+      "price":  9900,
+      "rank":  1,
+      "spell":  "Disease Cleansing Totem"
     },
     {
-      "spellId": 8177,
-      "level": 30,
-      "price": 6300,
-      "rank": 1,
-      "spell": "Grounding Totem"
+      "spellId":  8177,
+      "level":  30,
+      "price":  6300,
+      "rank":  1,
+      "spell":  "Grounding Totem"
     },
     {
-      "spellId": 8181,
-      "level": 24,
-      "price": 3150,
-      "rank": 1,
-      "spell": "Frost Resistance Totem"
+      "spellId":  8181,
+      "level":  24,
+      "price":  3150,
+      "rank":  1,
+      "spell":  "Frost Resistance Totem"
     },
     {
-      "spellId": 8184,
-      "level": 28,
-      "price": 5400,
-      "rank": 1,
-      "spell": "Fire Resistance Totem"
+      "spellId":  8184,
+      "level":  28,
+      "price":  5400,
+      "rank":  1,
+      "spell":  "Fire Resistance Totem"
     },
     {
-      "spellId": 8190,
-      "level": 26,
-      "price": 3600,
-      "rank": 1,
-      "spell": "Magma Totem"
+      "spellId":  8190,
+      "level":  26,
+      "price":  3600,
+      "rank":  1,
+      "spell":  "Magma Totem"
     },
     {
-      "spellId": 8227,
-      "level": 28,
-      "price": 5400,
-      "rank": 1,
-      "spell": "Flametongue Totem"
+      "spellId":  8227,
+      "level":  28,
+      "price":  5400,
+      "rank":  1,
+      "spell":  "Flametongue Totem"
     },
     {
-      "spellId": 8232,
-      "level": 30,
-      "price": 6300,
-      "rank": 1,
-      "spell": "Windfury Weapon"
+      "spellId":  8232,
+      "level":  30,
+      "price":  6300,
+      "rank":  1,
+      "spell":  "Windfury Weapon"
     },
     {
-      "spellId": 8235,
-      "level": 40,
-      "price": 10800,
-      "rank": 2,
-      "spell": "Windfury Weapon"
+      "spellId":  8235,
+      "level":  40,
+      "price":  10800,
+      "rank":  2,
+      "spell":  "Windfury Weapon"
     },
     {
-      "spellId": 8249,
-      "level": 38,
-      "price": 9900,
-      "rank": 2,
-      "spell": "Flametongue Totem"
+      "spellId":  8249,
+      "level":  38,
+      "price":  9900,
+      "rank":  2,
+      "spell":  "Flametongue Totem"
     },
     {
-      "spellId": 8835,
-      "level": 42,
-      "price": 14400,
-      "rank": 1,
-      "spell": "Grace of Air Totem"
+      "spellId":  8835,
+      "level":  42,
+      "price":  14400,
+      "rank":  1,
+      "spell":  "Grace of Air Totem"
     },
     {
-      "spellId": 10427,
-      "level": 48,
-      "price": 19800,
-      "rank": 5,
-      "spell": "Stoneclaw Totem"
+      "spellId":  10427,
+      "level":  48,
+      "price":  19800,
+      "rank":  5,
+      "spell":  "Stoneclaw Totem"
     },
     {
-      "spellId": 10428,
-      "level": 58,
-      "price": 28800,
-      "rank": 6,
-      "spell": "Stoneclaw Totem"
+      "spellId":  10428,
+      "level":  58,
+      "price":  28800,
+      "rank":  6,
+      "spell":  "Stoneclaw Totem"
     },
     {
-      "spellId": 10442,
-      "level": 52,
-      "price": 24300,
-      "rank": 4,
-      "spell": "Strength of Earth Totem"
+      "spellId":  10442,
+      "level":  52,
+      "price":  24300,
+      "rank":  4,
+      "spell":  "Strength of Earth Totem"
     },
     {
-      "spellId": 10456,
-      "level": 38,
-      "price": 9900,
-      "rank": 3,
-      "spell": "Frostbrand Weapon"
+      "spellId":  10456,
+      "level":  38,
+      "price":  9900,
+      "rank":  3,
+      "spell":  "Frostbrand Weapon"
     },
     {
-      "spellId": 10462,
-      "level": 50,
-      "price": 21600,
-      "rank": 4,
-      "spell": "Healing Stream Totem"
+      "spellId":  10462,
+      "level":  50,
+      "price":  21600,
+      "rank":  4,
+      "spell":  "Healing Stream Totem"
     },
     {
-      "spellId": 10463,
-      "level": 60,
-      "price": 30600,
-      "rank": 5,
-      "spell": "Healing Stream Totem"
+      "spellId":  10463,
+      "level":  60,
+      "price":  30600,
+      "rank":  5,
+      "spell":  "Healing Stream Totem"
     },
     {
-      "spellId": 10478,
-      "level": 38,
-      "price": 9900,
-      "rank": 2,
-      "spell": "Frost Resistance Totem"
+      "spellId":  10478,
+      "level":  38,
+      "price":  9900,
+      "rank":  2,
+      "spell":  "Frost Resistance Totem"
     },
     {
-      "spellId": 10479,
-      "level": 54,
-      "price": 26100,
-      "rank": 3,
-      "spell": "Frost Resistance Totem"
+      "spellId":  10479,
+      "level":  54,
+      "price":  26100,
+      "rank":  3,
+      "spell":  "Frost Resistance Totem"
     },
     {
-      "spellId": 10486,
-      "level": 50,
-      "price": 21600,
-      "rank": 3,
-      "spell": "Windfury Weapon"
+      "spellId":  10486,
+      "level":  50,
+      "price":  21600,
+      "rank":  3,
+      "spell":  "Windfury Weapon"
     },
     {
-      "spellId": 10526,
-      "level": 48,
-      "price": 19800,
-      "rank": 3,
-      "spell": "Flametongue Totem"
+      "spellId":  10526,
+      "level":  48,
+      "price":  19800,
+      "rank":  3,
+      "spell":  "Flametongue Totem"
     },
     {
-      "spellId": 10537,
-      "level": 42,
-      "price": 14400,
-      "rank": 2,
-      "spell": "Fire Resistance Totem"
+      "spellId":  10537,
+      "level":  42,
+      "price":  14400,
+      "rank":  2,
+      "spell":  "Fire Resistance Totem"
     },
     {
-      "spellId": 10538,
-      "level": 58,
-      "price": 28800,
-      "rank": 3,
-      "spell": "Fire Resistance Totem"
+      "spellId":  10538,
+      "level":  58,
+      "price":  28800,
+      "rank":  3,
+      "spell":  "Fire Resistance Totem"
     },
     {
-      "spellId": 10585,
-      "level": 36,
-      "price": 9000,
-      "rank": 2,
-      "spell": "Magma Totem"
+      "spellId":  10585,
+      "level":  36,
+      "price":  9000,
+      "rank":  2,
+      "spell":  "Magma Totem"
     },
     {
-      "spellId": 10586,
-      "level": 46,
-      "price": 18000,
-      "rank": 3,
-      "spell": "Magma Totem"
+      "spellId":  10586,
+      "level":  46,
+      "price":  18000,
+      "rank":  3,
+      "spell":  "Magma Totem"
     },
     {
-      "spellId": 10587,
-      "level": 56,
-      "price": 27000,
-      "rank": 4,
-      "spell": "Magma Totem"
+      "spellId":  10587,
+      "level":  56,
+      "price":  27000,
+      "rank":  4,
+      "spell":  "Magma Totem"
     },
     {
-      "spellId": 10595,
-      "level": 30,
-      "price": 6300,
-      "rank": 1,
-      "spell": "Nature Resistance Totem"
+      "spellId":  10595,
+      "level":  30,
+      "price":  6300,
+      "rank":  1,
+      "spell":  "Nature Resistance Totem"
     },
     {
-      "spellId": 10600,
-      "level": 44,
-      "price": 16200,
-      "rank": 2,
-      "spell": "Nature Resistance Totem"
+      "spellId":  10600,
+      "level":  44,
+      "price":  16200,
+      "rank":  2,
+      "spell":  "Nature Resistance Totem"
     },
     {
-      "spellId": 10601,
-      "level": 60,
-      "price": 30600,
-      "rank": 3,
-      "spell": "Nature Resistance Totem"
+      "spellId":  10601,
+      "level":  60,
+      "price":  30600,
+      "rank":  3,
+      "spell":  "Nature Resistance Totem"
     },
     {
-      "spellId": 10605,
-      "level": 56,
-      "price": 27000,
-      "rank": 4,
-      "spell": "Chain Lightning"
+      "spellId":  10605,
+      "level":  56,
+      "price":  27000,
+      "rank":  4,
+      "spell":  "Chain Lightning"
     },
     {
-      "spellId": 10622,
-      "level": 46,
-      "price": 18000,
-      "rank": 2,
-      "spell": "Chain Heal"
+      "spellId":  10622,
+      "level":  46,
+      "price":  18000,
+      "rank":  2,
+      "spell":  "Chain Heal"
     },
     {
-      "spellId": 10623,
-      "level": 54,
-      "price": 26100,
-      "rank": 3,
-      "spell": "Chain Heal"
+      "spellId":  10623,
+      "level":  54,
+      "price":  26100,
+      "rank":  3,
+      "spell":  "Chain Heal"
     },
     {
-      "spellId": 10627,
-      "level": 56,
-      "price": 27000,
-      "rank": 2,
-      "spell": "Grace of Air Totem"
+      "spellId":  10627,
+      "level":  56,
+      "price":  27000,
+      "rank":  2,
+      "spell":  "Grace of Air Totem"
     },
     {
-      "spellId": 15107,
-      "level": 36,
-      "price": 9000,
-      "rank": 1,
-      "spell": "Windwall Totem"
+      "spellId":  15107,
+      "level":  36,
+      "price":  9000,
+      "rank":  1,
+      "spell":  "Windwall Totem"
     },
     {
-      "spellId": 15111,
-      "level": 46,
-      "price": 18000,
-      "rank": 2,
-      "spell": "Windwall Totem"
+      "spellId":  15111,
+      "level":  46,
+      "price":  18000,
+      "rank":  2,
+      "spell":  "Windwall Totem"
     },
     {
-      "spellId": 15112,
-      "level": 56,
-      "price": 27000,
-      "rank": 3,
-      "spell": "Windwall Totem"
+      "spellId":  15112,
+      "level":  56,
+      "price":  27000,
+      "rank":  3,
+      "spell":  "Windwall Totem"
     },
     {
-      "spellId": 16339,
-      "level": 36,
-      "price": 9000,
-      "rank": 4,
-      "spell": "Flametongue Weapon"
+      "spellId":  16339,
+      "level":  36,
+      "price":  9000,
+      "rank":  4,
+      "spell":  "Flametongue Weapon"
     },
     {
-      "spellId": 16341,
-      "level": 46,
-      "price": 18000,
-      "rank": 5,
-      "spell": "Flametongue Weapon"
+      "spellId":  16341,
+      "level":  46,
+      "price":  18000,
+      "rank":  5,
+      "spell":  "Flametongue Weapon"
     },
     {
-      "spellId": 16342,
-      "level": 56,
-      "price": 27000,
-      "rank": 6,
-      "spell": "Flametongue Weapon"
+      "spellId":  16342,
+      "level":  56,
+      "price":  27000,
+      "rank":  6,
+      "spell":  "Flametongue Weapon"
     },
     {
-      "spellId": 16355,
-      "level": 48,
-      "price": 19800,
-      "rank": 4,
-      "spell": "Frostbrand Weapon"
+      "spellId":  16355,
+      "level":  48,
+      "price":  19800,
+      "rank":  4,
+      "spell":  "Frostbrand Weapon"
     },
     {
-      "spellId": 16356,
-      "level": 58,
-      "price": 28800,
-      "rank": 5,
-      "spell": "Frostbrand Weapon"
+      "spellId":  16356,
+      "level":  58,
+      "price":  28800,
+      "rank":  5,
+      "spell":  "Frostbrand Weapon"
     },
     {
-      "spellId": 16362,
-      "level": 60,
-      "price": 30600,
-      "rank": 4,
-      "spell": "Windfury Weapon"
+      "spellId":  16362,
+      "level":  60,
+      "price":  30600,
+      "rank":  4,
+      "spell":  "Windfury Weapon"
     },
     {
-      "spellId": 16387,
-      "level": 58,
-      "price": 28800,
-      "rank": 4,
-      "spell": "Flametongue Totem"
+      "spellId":  16387,
+      "level":  58,
+      "price":  28800,
+      "rank":  4,
+      "spell":  "Flametongue Totem"
     },
     {
-      "spellId": 17354,
-      "level": 38,
-      "price": 990,
-      "rank": 2,
-      "spell": "Mana Tide Totem"
+      "spellId":  17354,
+      "level":  38,
+      "price":  990,
+      "rank":  2,
+      "spell":  "Mana Tide Totem"
     },
     {
-      "spellId": 17359,
-      "level": 48,
-      "price": 1440,
-      "rank": 3,
-      "spell": "Mana Tide Totem"
+      "spellId":  17359,
+      "level":  48,
+      "price":  1440,
+      "rank":  3,
+      "spell":  "Mana Tide Totem"
     },
     {
-      "spellId": 20608,
-      "level": 30,
-      "price": 6300,
-      "rank": 1,
-      "spell": "Reincarnation"
+      "spellId":  20608,
+      "level":  30,
+      "price":  6300,
+      "rank":  1,
+      "spell":  "Reincarnation"
     },
     {
-      "spellId": 20609,
-      "level": 24,
-      "price": 3150,
-      "rank": 2,
-      "spell": "Ancestral Spirit"
+      "spellId":  20609,
+      "level":  24,
+      "price":  3150,
+      "rank":  2,
+      "spell":  "Ancestral Spirit"
     },
     {
-      "spellId": 20610,
-      "level": 36,
-      "price": 9000,
-      "rank": 3,
-      "spell": "Ancestral Spirit"
+      "spellId":  20610,
+      "level":  36,
+      "price":  9000,
+      "rank":  3,
+      "spell":  "Ancestral Spirit"
     },
     {
-      "spellId": 20776,
-      "level": 48,
-      "price": 19800,
-      "rank": 4,
-      "spell": "Ancestral Spirit"
+      "spellId":  20776,
+      "level":  48,
+      "price":  19800,
+      "rank":  4,
+      "spell":  "Ancestral Spirit"
     },
     {
-      "spellId": 20777,
-      "level": 60,
-      "price": 30600,
-      "rank": 5,
-      "spell": "Ancestral Spirit"
+      "spellId":  20777,
+      "level":  60,
+      "price":  30600,
+      "rank":  5,
+      "spell":  "Ancestral Spirit"
     },
     {
-      "spellId": 36936,
-      "level": 20,
-      "price": 6300,
-      "rank": 1,
-      "spell": "Totemic Recall"
+      "spellId":  36936,
+      "level":  20,
+      "price":  6300,
+      "rank":  1,
+      "spell":  "Totemic Recall"
     },
     {
-      "spellId": 66842,
-      "level": 20,
-      "price": 6300,
-      "rank": 1,
-      "spell": "Call of the Elements"
+      "spellId":  66842,
+      "level":  20,
+      "price":  6300,
+      "rank":  1,
+      "spell":  "Call of the Elements"
     },
     {
-      "spellId": 66843,
-      "level": 30,
-      "price": 6300,
-      "rank": 1,
-      "spell": "Call of the Ancestors"
+      "spellId":  66843,
+      "level":  30,
+      "price":  6300,
+      "rank":  1,
+      "spell":  "Call of the Ancestors"
     },
     {
-      "spellId": 66844,
-      "level": 40,
-      "price": 6300,
-      "rank": 1,
-      "spell": "Call of the Spirits"
+      "spellId":  66844,
+      "level":  40,
+      "price":  6300,
+      "rank":  1,
+      "spell":  "Call of the Spirits"
     },
     {
-      "spellId": 437009,
-      "level": 22,
-      "price": 2700,
-      "rank": 1,
-      "spell": "Totemic Projection"
+      "spellId":  437009,
+      "level":  22,
+      "price":  2700,
+      "rank":  1,
+      "spell":  "Totemic Projection"
     },
     {
-      "spellId": 1238299,
-      "level": 40,
-      "price": 21600,
-      "rank": 2,
-      "spell": "Lava Burst"
+      "spellId":  1238299,
+      "level":  40,
+      "price":  21600,
+      "rank":  2,
+      "spell":  "Lava Burst"
     },
     {
-      "spellId": 1238300,
-      "level": 50,
-      "price": 30600,
-      "rank": 3,
-      "spell": "Lava Burst"
+      "spellId":  1238300,
+      "level":  50,
+      "price":  30600,
+      "rank":  3,
+      "spell":  "Lava Burst"
     },
     {
-      "spellId": 1239242,
-      "level": 50,
-      "price": 720,
-      "rank": 2,
-      "spell": "Riptide"
+      "spellId":  1239242,
+      "level":  50,
+      "price":  720,
+      "rank":  2,
+      "spell":  "Riptide"
     },
     {
-      "spellId": 1239243,
-      "level": 60,
-      "price": 1440,
-      "rank": 3,
-      "spell": "Riptide"
+      "spellId":  1239243,
+      "level":  60,
+      "price":  1440,
+      "rank":  3,
+      "spell":  "Riptide"
     },
     {
-      "spellId": 1325256,
-      "level": 58,
-      "price": 1895,
-      "rank": 4,
-      "spell": "Mana Tide Totem"
+      "spellId":  1325256,
+      "level":  58,
+      "price":  1895,
+      "rank":  4,
+      "spell":  "Mana Tide Totem"
     },
     {
-      "spellId": 1326047,
-      "level": 60,
-      "price": 32210,
-      "rank": 4,
-      "spell": "Lava Burst"
+      "spellId":  1326047,
+      "level":  60,
+      "price":  32210,
+      "rank":  4,
+      "spell":  "Lava Burst"
     }
   ]
 }

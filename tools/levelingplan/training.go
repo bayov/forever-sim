@@ -230,6 +230,8 @@ type trainingJob struct {
 
 type trainingJobResult struct {
 	hours float64
+	// The standard error of the hours, from the spread of the mobs killed.
+	err   float64
 	casts map[int32]int32
 	ok    bool
 }
@@ -255,6 +257,9 @@ func (ts *trainingSearch) run(ctx context.Context, jobs []trainingJob) []trainin
 					continue
 				}
 				r := trainingJobResult{hours: hoursAtLevel(job.level, m.XpPerHour), ok: true}
+				if m.MobsKilled > 0 {
+					r.err = r.hours * m.MobsKilledStdev / math.Sqrt(float64(ts.sessions)) / m.MobsKilled
+				}
 				if job.spell == "" {
 					r.casts = map[int32]int32{}
 					for _, action := range res.RaidMetrics.Parties[0].Players[0].Actions {
@@ -375,7 +380,8 @@ func (ts *trainingSearch) planRanks(w *worth) []*spellRank {
 // How much gold we're short at a level, in copper: what we've paid for ranks and riding by
 // then and the flight money we keep, less what we've earned.
 func (ts *trainingSearch) short(ranks []*spellRank, s schedule, level int32) float64 {
-	spent := reserveAt(level)
+	// At level 1 and 2 we've earned less than the flight money, and keep what we have.
+	spent := min(reserveAt(level), ts.budget.earned(level))
 	for _, r := range ranks {
 		if s.buyLevel(r) <= level {
 			spent += r.price
@@ -392,10 +398,12 @@ func (ts *trainingSearch) short(ranks []*spellRank, s schedule, level int32) flo
 	return spent - ts.budget.earned(level)
 }
 
-// skipTails never buys the last ranks of a spell when they save no time in all, with every rank
+// skipTails never buys the last ranks of a spell when none of them saves time, with every rank
 // trained at its level (minutes). Their gold is saved for nothing, or they even cost time, like
-// a totem rank whose bigger buff is worth less than its mana. We keep the ranks up to the one
-// where the minutes added up from the first rank are the most.
+// a totem rank whose bigger buff is worth less than its mana. A rank that saves time keeps the
+// ranks before it, even when they cost a little more than it saves, because we measured each
+// rank only against the one below it: without Earth Shock 5 and 6, Earth Shock 4 is two ranks
+// short at 48, which costs far more than 6 against 5.
 func skipTails(ranks []*spellRank, minutes map[int32]float64) schedule {
 	s := schedule{}
 	bySpell := map[string][]*spellRank{}
@@ -404,11 +412,10 @@ func skipTails(ranks []*spellRank, minutes map[int32]float64) schedule {
 	}
 	for _, spellRanks := range bySpell {
 		sort.Slice(spellRanks, func(i, j int) bool { return spellRanks[i].level < spellRanks[j].level })
-		best, sum, keep := 0.0, 0.0, 0
+		keep := 0
 		for i, r := range spellRanks {
-			sum += minutes[r.id]
-			if sum > best {
-				best, keep = sum, i+1
+			if minutes[r.id] > 0 {
+				keep = i + 1
 			}
 		}
 		for _, r := range spellRanks[keep:] {
@@ -416,6 +423,187 @@ func skipTails(ranks []*spellRank, minutes map[int32]float64) schedule {
 		}
 	}
 	return s
+}
+
+// deferRuns trains ranks later that save nothing until then, when we need them only to buy a
+// later rank. Their gold then comes when we have more of it, for the same time or less.
+//
+// A rank the plan never casts while it's our highest waits for the next rank it does cast, and
+// we buy them together: Lightning Bolt 2 to 7 save nothing until Maelstrom Weapon casts Lightning
+// Bolt 8 at 44. A rank the plan casts waits until the level where what it saved so far at each
+// level (loss, by rank and then level, in hours) adds up to the least, at most until the next
+// rank. Earth Shock 3 next to the Earth Shock 2 we downrank to waits for Earth Shock 4 at 24, and
+// Earth Shock 5 costs a little at 36 and 37 but saves more from 38, so it waits until 38. We
+// measured each rank against the one below it, so we know what one rank less costs, but not two:
+// Flame Shock 1 in place of Flame Shock 3 at 30 costs far more than 3 against 2 and 2 against 1
+// at their own levels. So a cast rank never waits past the next one.
+func deferRuns(ranks []*spellRank, loss map[int32]map[int32]float64, cast map[int32]bool, skipped schedule) schedule {
+	s := skipped.clone()
+	bySpell := map[string][]*spellRank{}
+	for _, r := range ranks {
+		if _, never := skipped[r.id]; !never {
+			bySpell[r.spell] = append(bySpell[r.spell], r)
+		}
+	}
+	for _, spellRanks := range bySpell {
+		sort.Slice(spellRanks, func(i, j int) bool { return spellRanks[i].level < spellRanks[j].level })
+		for i := 0; i+1 < len(spellRanks); i++ {
+			r, next := spellRanks[i], spellRanks[i+1]
+			if !cast[r.id] {
+				j := i + 1
+				for j < len(spellRanks) && !cast[spellRanks[j].id] {
+					j++
+				}
+				if j == len(spellRanks) {
+					break
+				}
+				for _, run := range spellRanks[i:j] {
+					s[run.id] = spellRanks[j].level
+				}
+				i = j - 1
+				continue
+			}
+			best, at, sum := 0.0, r.level, 0.0
+			for l := r.level; l < next.level; l++ {
+				sum += loss[r.id][l]
+				if sum < best {
+					best, at = sum, l+1
+				}
+			}
+			if at > r.level {
+				s[r.id] = at
+			}
+		}
+	}
+	return s
+}
+
+// The least tolerance of check: what a spell's ranks bought later or never may cost in all, in
+// hours, for the gold they save.
+const checkTolerance = 0.25 / 60
+
+// check sims each spell's ranks that the schedule buys later or never against buying them at
+// their levels, on the same sessions, and keeps the change only when it costs no time. The worth
+// we schedule by is each rank against the one below it, with every other rank trained, and a
+// change can leave us more than one rank short, or cost more next to the other spells' changes
+// (they share our mana), which it doesn't see.
+//
+// "No time" is within the noise of the levels the change touches (one standard error), or
+// checkTolerance when that's less: a change that saves gold may cost what we can't tell from
+// nothing. When a spell's
+// change costs more, we try keeping only its ranks the plan doesn't cast while they're our
+// highest (`cast`), like Healing Wave 5 to 9 next to Lesser Healing Wave, before we buy them all
+// at their levels.
+func (ts *trainingSearch) check(ctx context.Context, s schedule, cast map[int32]bool) (schedule, error) {
+	out := s.clone()
+	bySpell := map[string][]int32{}
+	for id := range s {
+		if r := ts.ranks.byID[id]; r != nil {
+			bySpell[r.spell] = append(bySpell[r.spell], id)
+		}
+	}
+	candidates := map[string][]int32{}
+	for spell, ids := range bySpell {
+		candidates[spell] = ids
+	}
+	for round := 0; round < 2 && len(candidates) > 0; round++ {
+		costs, noise, err := ts.checkCosts(ctx, out, candidates)
+		if err != nil {
+			return nil, err
+		}
+		next := map[string][]int32{}
+		var spells []string
+		for spell := range candidates {
+			spells = append(spells, spell)
+		}
+		sort.Strings(spells)
+		for _, spell := range spells {
+			tolerance := max(checkTolerance, noise[spell])
+			if costs[spell] <= tolerance {
+				log.Printf("check: %s's changes cost %+.1f min (±%.1f), kept", spell, 60*costs[spell], 60*noise[spell])
+				continue
+			}
+			for _, id := range candidates[spell] {
+				delete(out, id)
+			}
+			var uncast []int32
+			for _, id := range candidates[spell] {
+				if !cast[id] {
+					uncast = append(uncast, id)
+				}
+			}
+			if round == 0 && len(uncast) > 0 && len(uncast) < len(candidates[spell]) {
+				for _, id := range uncast {
+					out[id] = s[id]
+				}
+				next[spell] = uncast
+				log.Printf("check: %s's changes cost %+.1f min (±%.1f), trying only its ranks the plan doesn't cast", spell, 60*costs[spell], 60*noise[spell])
+			} else {
+				log.Printf("check: %s's changes cost %+.1f min (±%.1f), bought at their levels instead", spell, 60*costs[spell], 60*noise[spell])
+			}
+		}
+		candidates = next
+	}
+	return out, nil
+}
+
+// checkCosts sims the schedule at each level a spell's changes touch, and again with them gone
+// (the spell's ranks bought at their levels), and says what each spell's changes cost in hours,
+// and the noise of that.
+func (ts *trainingSearch) checkCosts(ctx context.Context, s schedule, changes map[string][]int32) (map[string]float64, map[string]float64, error) {
+	var jobs []trainingJob
+	type touch struct {
+		spell string
+		level int32
+		job   int
+	}
+	var touches []touch
+	baseJob := map[int32]int{}
+	for spell, ids := range changes {
+		for _, level := range ts.levels {
+			touched := false
+			for _, id := range ids {
+				if r := ts.ranks.byID[id]; r.level <= level && s.buyLevel(r) > level {
+					touched = true
+				}
+			}
+			if !touched {
+				continue
+			}
+			if _, ok := baseJob[level]; !ok {
+				baseJob[level] = len(jobs)
+				jobs = append(jobs, trainingJob{level: level, untrained: s.untrained(level)})
+			}
+			var others []int32
+			for _, id := range s.untrained(level) {
+				if !slices.Contains(ids, id) {
+					others = append(others, id)
+				}
+			}
+			touches = append(touches, touch{spell, level, len(jobs)})
+			jobs = append(jobs, trainingJob{level: level, spell: spell, untrained: others})
+		}
+	}
+	results := ts.run(ctx, jobs)
+	if err := ctx.Err(); err != nil {
+		return nil, nil, err
+	}
+	costs, variance := map[string]float64{}, map[string]float64{}
+	for _, t := range touches {
+		base, alt := results[baseJob[t.level]], results[t.job]
+		if !base.ok || !alt.ok {
+			return nil, nil, fmt.Errorf("level %d didn't sim in the check of %s", t.level, t.spell)
+		}
+		costs[t.spell] += base.hours - alt.hours
+		// Two sims of the same sessions: about half the spread of two unrelated ones
+		// (Simulation.reseedWithin).
+		variance[t.spell] += 0.25 * (base.err*base.err + alt.err*alt.err)
+	}
+	noise := map[string]float64{}
+	for spell, v := range variance {
+		noise[spell] = math.Sqrt(v)
+	}
+	return costs, noise, nil
 }
 
 // plan makes the schedule: every rank at its level but the tails we skip, then at each level
@@ -607,11 +795,29 @@ func searchTraining(ctx context.Context, p *planner, sessions int32) (*proto.Lev
 	}
 	log.Printf("%d spells we always train, %.1fg by 40", len(always), alwaysCost/10000)
 
-	skipped := skipTails(planRanks, minutes)
+	cast := map[int32]bool{}
+	for _, bySpell := range full.top {
+		for _, id := range bySpell {
+			cast[id] = true
+		}
+	}
+	// Ranks learned before the plan's first level we train at their level. The sims don't play
+	// those levels, so they can't say what Earth Shock 1 is worth at 4 to 7, or Healing Wave 2 at
+	// 6 to 9.
+	var choosable []*spellRank
+	for _, r := range planRanks {
+		if r.level >= ts.levels[0] {
+			choosable = append(choosable, r)
+		}
+	}
+	skipped := deferRuns(choosable, ts.rankLoss, cast, skipTails(choosable, minutes))
+	if skipped, err = ts.check(ctx, skipped, cast); err != nil {
+		return nil, err
+	}
 	s, cost := ts.plan(planRanks, skipped)
 	last := full
 	for round := 1; round <= trainingRounds && len(s) > 0; round++ {
-		log.Printf("round %d: %d ranks never bought, %d pushed back, %.1f min by the measures so far", round, len(skipped), len(s)-len(skipped), 60*cost)
+		log.Printf("round %d: %d ranks never bought or bought with a later one, %d pushed back, %.1f min by the measures so far", round, len(skipped), len(s)-len(skipped), 60*cost)
 		w, err := ts.measure(ctx, s)
 		if err != nil {
 			return nil, err

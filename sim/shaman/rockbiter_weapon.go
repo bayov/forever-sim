@@ -48,11 +48,13 @@ func (shaman *Shaman) RegisterRockbiterImbue(procMask core.ProcMask) {
 	}
 	if hasOHImbue {
 		shaman.OffHand().TempEnchant = enchantId
-		shaman.AutoAttacks.MHConfig().FlatThreatBonus += bonusThreat * shaman.AutoAttacks.OH().SwingSpeed
+		shaman.AutoAttacks.OHConfig().FlatThreatBonus += bonusThreat * shaman.AutoAttacks.OH().SwingSpeed
 	}
 
+	// The auto attacks have their bonus by weapon speed above. Every other attack with the weapon
+	// gets the flat bonus.
 	shaman.OnSpellRegistered(func(spell *core.Spell) {
-		if spell.ProcMask.Matches(procMask) {
+		if spell.ProcMask.Matches(procMask) && !spell.ProcMask.Matches(core.ProcMaskMeleeWhiteHit) {
 			spell.FlatThreatBonus += bonusThreat
 		}
 	})

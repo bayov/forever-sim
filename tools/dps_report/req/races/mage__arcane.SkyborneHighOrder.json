@@ -340,66 +340,6 @@
         {
          "cmp": {
           "lhs": {
-           "currentManaPercent": {}
-          },
-          "op": "OpLt",
-          "rhs": {
-           "const": {
-            "val": "0.2"
-           }
-          }
-         }
-        },
-        {
-         "not": {
-          "val": {
-           "auraIsActive": {
-            "auraId": {
-             "spellId": 400573
-            }
-           }
-          }
-         }
-        },
-        {
-         "cmp": {
-          "lhs": {
-           "remainingTime": {}
-          },
-          "op": "OpGt",
-          "rhs": {
-           "const": {
-            "val": "4s"
-           }
-          }
-         }
-        }
-       ]
-      }
-     }
-    },
-    "notes": "Low on mana: one Arcane Blast for the spell damage."
-   },
-   {
-    "action": {
-     "castSpell": {
-      "spellId": {
-       "spellId": 1239700
-      }
-     },
-     "condition": {
-      "and": {
-       "vals": [
-        {
-         "auraIsKnown": {
-          "auraId": {
-           "spellId": 400573
-          }
-         }
-        },
-        {
-         "cmp": {
-          "lhs": {
            "auraNumStacks": {
             "auraId": {
              "spellId": 400573
@@ -423,23 +363,6 @@
           "rhs": {
            "const": {
             "val": "4s"
-           }
-          }
-         }
-        },
-        {
-         "not": {
-          "val": {
-           "cmp": {
-            "lhs": {
-             "currentManaPercent": {}
-            },
-            "op": "OpLt",
-            "rhs": {
-             "const": {
-              "val": "0.2"
-             }
-            }
            }
           }
          }
@@ -480,5 +403,5 @@
   "seed": 1,
   "duration": 180
  },
- "how": "rotopt -template mage_arcane -race SkyborneHighOrder -durs 180 -eval, the preset's knobs (blastBuff=4,blastRefresh=0,barrageBeforeBlast=1,arcaneWrath=0,conserveMana=20,filler=2,missileBarrage=1,barrageFirst=0,evocationMana=0,gems=0,prepull=1,powerWithTrinket=1,pomWrath=0,finisher=1,finishPad=0.75,wand=1) plus prepullAt=1.47 (new knob, tools/rotopt/mage_arcane.go). The preset starts the opener at -1.5 sec; Arcane Blast hits as its cast ends and has no flight time, so at 1.4706 sec it hit at -0.03 sec, before the pull, where its damage doesn't count. A knob search at High Order (3000 iterations) kept every other knob. Wind Blessed is now worth +6.8 (0.76%; was +1.8). Paired over 20000 iterations."
+ "how": "rotopt -template mage_arcane -race SkyborneHighOrder -durs 180 -eval, the preset's knobs (blastBuff=4,blastRefresh=0,barrageBeforeBlast=1,arcaneWrath=0,conserveMana=0,filler=2,missileBarrage=1,barrageFirst=0,evocationMana=0,gems=0,prepull=1,powerWithTrinket=1,pomWrath=0,finisher=1,finishPad=0.75,wand=1) plus prepullAt=1.47 (new knob, tools/rotopt/mage_arcane.go). The preset starts the opener at -1.5 sec; Arcane Blast hits as its cast ends and has no flight time, so at 1.4706 sec it hit at -0.03 sec, before the pull, where its damage doesn't count. A knob search at High Order (3000 iterations) kept every other knob. Wind Blessed is now worth +6.8 (0.76%; was +1.8). Paired over 20000 iterations."
 }

@@ -1299,6 +1299,33 @@ export class ActionMetrics {
 		};
 	}
 
+	// The threat split the way damageDone splits the damage. The critical hits and ticks count apart
+	// from the plain ones, as in damageDone, and `other` is the threat that came without a hit: Rage
+	// and mana gains, healing and buffs.
+	get threatDone() {
+		const d = this.combinedMetrics.data;
+		const n = this.iterations;
+		const total = d.threat / n;
+		const part = (sum: number, count: number) => {
+			const value = Number((sum / n).toFixed(8));
+			return { value, percentage: total ? (value / total) * 100 : 0, average: count ? sum / count : 0 };
+		};
+		const critHit = d.critThreat - d.critTickThreat;
+		const tick = d.tickThreat - d.critTickThreat;
+		const hit = d.hitThreat - critHit - d.tickThreat - d.glanceThreat - d.blockThreat - d.blockedCritThreat - d.crushThreat;
+		return {
+			hit: part(hit, d.hits),
+			critHit: part(critHit, d.crits),
+			tick: part(tick, d.ticks),
+			critTick: part(d.critTickThreat, d.critTicks),
+			glance: part(d.glanceThreat, d.glances),
+			block: part(d.blockThreat, d.blocks),
+			blockedCrit: part(d.blockedCritThreat, d.blockedCrits),
+			crush: part(d.crushThreat, d.crushes),
+			other: { ...part(d.threat - d.hitThreat, 0), average: undefined },
+		};
+	}
+
 	forTarget(filter?: SimResultFilter): ActionMetrics {
 		const unitIndex = this.unit!.getTargetIndex(filter);
 		if (unitIndex == null) {
@@ -1795,6 +1822,14 @@ export class TargetedActionMetrics {
 				blockedCritDamage: sum(actions.map(a => a.data.blockedCritDamage)),
 				crushDamage: sum(actions.map(a => a.data.crushDamage)),
 				threat: sum(actions.map(a => a.data.threat)),
+				hitThreat: sum(actions.map(a => a.data.hitThreat)),
+				critThreat: sum(actions.map(a => a.data.critThreat)),
+				tickThreat: sum(actions.map(a => a.data.tickThreat)),
+				critTickThreat: sum(actions.map(a => a.data.critTickThreat)),
+				glanceThreat: sum(actions.map(a => a.data.glanceThreat)),
+				blockThreat: sum(actions.map(a => a.data.blockThreat)),
+				blockedCritThreat: sum(actions.map(a => a.data.blockedCritThreat)),
+				crushThreat: sum(actions.map(a => a.data.crushThreat)),
 				healing: sum(actions.map(a => a.data.healing)),
 				critHealing: sum(actions.map(a => a.data.critHealing)),
 				shielding: sum(actions.map(a => a.data.shielding)),

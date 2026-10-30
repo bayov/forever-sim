@@ -52,7 +52,7 @@ func compFromRaidComp(pool *Pool, sc *Scenario, comp *proto.RaidComp) (*Comp, ma
 		case *proto.Assignment_Judgement:
 			judge[a.Holder] = j.Judgement
 		case *proto.Assignment_Totem:
-			if t := j.Totem.Totem; t == proto.RaidTotem_RaidTotemGraceOfAir || t == proto.RaidTotem_RaidTotemWindfury {
+			if t := j.Totem.Totem; totemElement(t) == proto.TotemElement_TotemElementAir {
 				air[a.Holder] = t
 			} else if t == proto.RaidTotem_RaidTotemManaSpring {
 				spring[a.Holder] = true
@@ -82,7 +82,7 @@ func compFromRaidComp(pool *Pool, sc *Scenario, comp *proto.RaidComp) (*Comp, ma
 	r := NewRaid(int(comp.Size), combo, nil)
 	p := Plan{}
 	for i, ph := range combo {
-		if ph.Paladin && judge[phIDs[i]] == proto.PaladinJudgement_PaladinJudgementCrusader {
+		if ph.Paladin() && judge[phIDs[i]] == proto.PaladinJudgement_PaladinJudgementCrusader {
 			p.PHCrusader++
 		}
 	}
@@ -104,7 +104,7 @@ func compFromRaidComp(pool *Pool, sc *Scenario, comp *proto.RaidComp) (*Comp, ma
 	up := Gift(0)
 	phPkg, dpsPkg := map[int32][]proto.RaidPackage{}, map[int32][]proto.RaidPackage{}
 	for i, ph := range combo {
-		if ph.Shaman && spring[phIDs[i]] {
+		if ph.Shaman() && spring[phIDs[i]] {
 			phPkg[int32(phParty[i])] = append(phPkg[int32(phParty[i])], ph.Package)
 		}
 	}
@@ -132,13 +132,13 @@ func compFromRaidComp(pool *Pool, sc *Scenario, comp *proto.RaidComp) (*Comp, ma
 		c.Members = append(c.Members, m)
 		ids[m] = s.Id
 		up |= b.Gives &^ GiftBlessing
-		if b.Class == proto.Class_ClassPaladin {
+		if blesses(b) {
 			pal++
 		}
 		if pullSunderer(b) {
 			c.Warriors++
 		}
-		if b.Class == proto.Class_ClassShaman {
+		if dropsTotems(b) {
 			dpsPkg[s.Party] = append(dpsPkg[s.Party], b.Pkg)
 		}
 	}
@@ -148,7 +148,7 @@ func compFromRaidComp(pool *Pool, sc *Scenario, comp *proto.RaidComp) (*Comp, ma
 	for party := int32(0); party < int32(r.Parties); party++ {
 		partyPkg[party] = partyPackage(phPkg[party], dpsPkg[party])
 	}
-	p.Paladins = min(3, pal)
+	p.Paladins = min(maxPaladins, pal)
 	p.Up = r.phUp(p)&^GiftBlessing | up
 	if p.Paladins > 0 {
 		p.Up |= GiftBlessing
@@ -156,7 +156,7 @@ func compFromRaidComp(pool *Pool, sc *Scenario, comp *proto.RaidComp) (*Comp, ma
 	c.Plan = p
 	for _, m := range c.Members {
 		pkg := partyPkg[int32(m.Party)]
-		if m.B.Class == proto.Class_ClassShaman {
+		if dropsTotems(m.B) {
 			pkg = proto.RaidPackage_RaidPackageNone // a shaman casts its own Mana Spring, so it's never given one too
 		}
 		pi, in := m.Seat.PI, m.Seat.Innervate

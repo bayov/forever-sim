@@ -81,12 +81,11 @@ func NewRaid(size int, combo []*Preset, fixed []*Build) *Raid {
 	r := &Raid{Size: size, Combo: combo, Fixed: fixed, Parties: (size + 4) / 5, DPS: size - len(combo)}
 	for _, p := range combo {
 		r.phGifts |= p.Gives
-		if p.Paladin {
+		if p.Paladin() {
 			r.phPaladins++
 		}
-		if p.Shaman {
+		if p.Shaman() {
 			r.phShamans = append(r.phShamans, p)
-			r.phGifts |= GiftSoE | GiftFT
 		}
 		if p.PI {
 			r.phPI++
@@ -103,7 +102,7 @@ func NewRaid(size int, combo []*Preset, fixed []*Build) *Raid {
 // placeholders' choices. The provider members follow from it in the fill.
 type Plan struct {
 	Up         Gift
-	Paladins   int // paladins giving blessings, placeholders and Ret members, at most 3
+	Paladins   int // paladins giving blessings, placeholders and Ret members, at most maxPaladins
 	PHCrusader int // paladin placeholders judging the Crusader; the others judge Wisdom
 	PHAir      []proto.RaidTotem
 }
@@ -138,12 +137,7 @@ func (r *Raid) phUp(p Plan) Gift {
 		}
 	}
 	for _, t := range p.PHAir {
-		switch t {
-		case proto.RaidTotem_RaidTotemGraceOfAir:
-			g |= GiftGoA
-		case proto.RaidTotem_RaidTotemWindfury:
-			g |= GiftWF
-		}
+		g |= totemGift(t)
 	}
 	return g
 }
@@ -212,7 +206,7 @@ func partyPackage(placeholders, dpsShamans []proto.RaidPackage) proto.RaidPackag
 // pullSunderer is a warrior that casts one Sunder at the pull. One keeping Sunder up is in the ramp
 // instead, so it isn't counted twice.
 func pullSunderer(b *Build) bool {
-	return b.Class == proto.Class_ClassWarrior && b.Duty != proto.Duty_DutySunderUpkeep
+	return b.SpecRow().PullSunder && b.Duty != proto.Duty_DutySunderUpkeep
 }
 
 // item is a provider candidate: a build and the roles it covers.
@@ -299,12 +293,12 @@ func (sc *Scenario) fill(r *Raid, p Plan, f *Fillers, val Valuer) *Comp {
 			return nil
 		}
 		fixedUp |= b.Gives
-		if b.Class == proto.Class_ClassPaladin {
+		if blesses(b) {
 			fixedRet++
 		}
 	}
 	retHave := r.phPaladins + fixedRet
-	if p.Paladins < 3 && retHave > p.Paladins {
+	if p.Paladins < maxPaladins && retHave > p.Paladins {
 		return nil
 	}
 	if p.Paladins > 0 && !p.Up.Has(GiftBlessing) {
@@ -319,11 +313,13 @@ func (sc *Scenario) fill(r *Raid, p Plan, f *Fillers, val Valuer) *Comp {
 
 	// The blessings each class gets. With fewer than 3 paladins a class gets the ones its builds gain most
 	// from, solved by turns (each class's choice is its own).
-	nb := min(3, p.Paladins)
+	nb := min(maxPaladins, p.Paladins)
 	choices := blessingChoices(nb)
 	c := &Comp{Raid: r, Plan: p, Blessings: map[proto.Class][]proto.Blessing{}}
-	classes := []proto.Class{proto.Class_ClassDruid, proto.Class_ClassHunter, proto.Class_ClassMage, proto.Class_ClassPaladin,
-		proto.Class_ClassPriest, proto.Class_ClassRogue, proto.Class_ClassShaman, proto.Class_ClassWarlock, proto.Class_ClassWarrior}
+	var classes []proto.Class
+	for _, row := range Classes {
+		classes = append(classes, row.Class)
+	}
 	for _, cl := range classes {
 		c.Blessings[cl] = choices[0]
 	}
@@ -407,19 +403,24 @@ func copyBlessings(m map[proto.Class][]proto.Blessing) map[proto.Class][]proto.B
 	return out
 }
 
+// blessingChoices is every set of n blessings a class can get, in the table's order.
 func blessingChoices(n int) [][]proto.Blessing {
-	switch n {
-	case 0:
+	if n <= 0 {
 		return [][]proto.Blessing{nil}
-	case 1:
-		return [][]proto.Blessing{{proto.Blessing_BlessingKings}, {proto.Blessing_BlessingMight}, {proto.Blessing_BlessingWisdom}}
-	case 2:
-		return [][]proto.Blessing{
-			{proto.Blessing_BlessingKings, proto.Blessing_BlessingMight},
-			{proto.Blessing_BlessingKings, proto.Blessing_BlessingWisdom},
-			{proto.Blessing_BlessingMight, proto.Blessing_BlessingWisdom}}
 	}
-	return [][]proto.Blessing{allBlessings}
+	var out [][]proto.Blessing
+	var rec func(start int, cur []proto.Blessing)
+	rec = func(start int, cur []proto.Blessing) {
+		if len(cur) == n {
+			out = append(out, append([]proto.Blessing{}, cur...))
+			return
+		}
+		for i := start; i < len(allBlessings); i++ {
+			rec(i+1, append(cur, allBlessings[i]))
+		}
+	}
+	rec(0, nil)
+	return out
 }
 
 // fillOnce fills a plan with fixed blessings, under each warrior count the fill can come to.
@@ -514,12 +515,12 @@ func (sc *Scenario) fillWithWarriors(r *Raid, p Plan, f *Fillers, val Valuer, bl
 		return d
 	}
 	// The best filler in a seat without a package.
-	retFill := p.Paladins >= 3
+	retFill := p.Paladins >= maxPaladins
 	var fill0 *Build
 	fill0V := math.Inf(-1)
 	for _, b := range f.Fill {
 		// Shamans fill only as package givers (below), so the filler a provider displaces isn't one.
-		if !allowed(b, p) || (b.Class == proto.Class_ClassPaladin && !retFill) || b.Class == proto.Class_ClassShaman {
+		if !allowed(b, p) || (blesses(b) && !retFill) || dropsTotems(b) {
 			continue
 		}
 		if v := v0(b); v > fill0V {
@@ -537,7 +538,7 @@ func (sc *Scenario) fillWithWarriors(r *Raid, p Plan, f *Fillers, val Valuer, bl
 			continue
 		}
 		cov := b.Gives & need
-		isRet := b.Class == proto.Class_ClassPaladin
+		isRet := blesses(b)
 		if cov == 0 && !(isRet && retNeed > 0) {
 			continue
 		}
@@ -607,7 +608,7 @@ func (sc *Scenario) fillWithWarriors(r *Raid, p Plan, f *Fillers, val Valuer, bl
 	// Which members bring a party package: shaman providers, and any shaman fillers tried below.
 	allowedShamans := []*Build{}
 	for _, b := range f.Fill {
-		if b.Class == proto.Class_ClassShaman && allowed(b, p) {
+		if dropsTotems(b) && allowed(b, p) {
 			allowedShamans = append(allowedShamans, b)
 		}
 	}
@@ -702,7 +703,7 @@ func (sc *Scenario) seatAndFill(r *Raid, p Plan, f *Fillers, val Valuer, base *C
 	// The package givers one per party, the richest first: shaman placeholders, then shaman members.
 	phOrder := make([]int, 0, len(r.Combo))
 	for i, ph := range r.Combo {
-		if ph.Shaman {
+		if ph.Shaman() {
 			phOrder = append(phOrder, i)
 		}
 	}
@@ -723,7 +724,7 @@ func (sc *Scenario) seatAndFill(r *Raid, p Plan, f *Fillers, val Valuer, base *C
 	}
 	shamanIdx := []int{}
 	for i, b := range forced {
-		if b.Class == proto.Class_ClassShaman {
+		if dropsTotems(b) {
 			shamanIdx = append(shamanIdx, i)
 		}
 	}
@@ -765,7 +766,7 @@ func (sc *Scenario) seatAndFill(r *Raid, p Plan, f *Fillers, val Valuer, base *C
 		}
 	}
 	// The rest of the forced members and the fillers share the free seats.
-	retFill := p.Paladins >= 3
+	retFill := p.Paladins >= maxPaladins
 	bestUnder := map[proto.RaidPackage]*Build{}
 	bestV := map[proto.RaidPackage]float64{}
 	for _, pk := range packages {
@@ -779,7 +780,7 @@ func (sc *Scenario) seatAndFill(r *Raid, p Plan, f *Fillers, val Valuer, base *C
 		}
 	}
 	for _, b := range f.Fill {
-		if !allowed(b, p) || (b.Class == proto.Class_ClassPaladin && !retFill) || b.Class == proto.Class_ClassShaman {
+		if !allowed(b, p) || (blesses(b) && !retFill) || dropsTotems(b) {
 			continue
 		}
 		for _, pk := range packages {
@@ -848,7 +849,7 @@ func (sc *Scenario) seatAndFill(r *Raid, p Plan, f *Fillers, val Valuer, base *C
 	}
 	for i, b := range forced {
 		pk := parties[memberParty[i]].pkg
-		if b.Class == proto.Class_ClassShaman {
+		if dropsTotems(b) {
 			pk = 0 // a shaman casts its own Mana Spring, so it's never given one too
 		}
 		comp.Members = append(comp.Members, &Member{B: b, Party: memberParty[i], Seat: comp.seat(b, pk, sc),

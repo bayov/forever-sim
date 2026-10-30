@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 98,
   "race": "Gnome",
-  "talents": "0552205003100301531-02-0535",
+  "talents": "050205203100301531-5-05350002",
   "treeNames": [
     "Arcane",
     "Fire",
@@ -19,11 +19,11 @@
     "source": "Race re-pick 2026-10-27 (standards 29 and 16): Gnome; verify.py, 20000 iterations, seed 1 (was 899.0 as a Human on the same sim)"
   },
   "verify": {
-    "dps": 901.6,
-    "stderr": 0.3,
+    "dps": 915.5,
+    "stderr": 0.28,
     "iters": 20000,
     "ok": true,
-    "note": "verify.py of this request, 180s, seed 1"
+    "note": "sim of the request after client 1.60.1.70707's talent rework (new talents, no low-mana single stack), 180s, seed 1 (seed 1000003 915.2)"
   },
   "summary": "Arcane Power build that keeps 4 Arcane Blast stacks up, for 60% of Intellect as spell damage. Frostbolt is the filler. It wears the Arcane gear with Gloves - Arcane Power.",
   "keyTalents": [
@@ -41,7 +41,6 @@
     "Arcane Power and Presence of Mind with the on-use trinket, unless the trinket won't be back in time. Other cooldowns on a free GCD. No mana gems.",
     "Fire Blast, then Arcane Explosion, when a Frostbolt would not land before the end (its cast plus 0.75s)",
     "Arcane Missiles on a Missile Barrage proc, ahead of the Arcane Blasts",
-    "Below 20% mana, 1 Arcane Blast every 15s to keep the buff up",
     "Arcane Blast to 4 stacks. Each stack gives 15% of Intellect as spell damage, for 15s from the first.",
     "Frostbolt as filler",
     "No Evocation",

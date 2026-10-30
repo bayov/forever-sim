@@ -292,6 +292,21 @@ message TargetedActionMetrics {
 	// Total threat done to this target by this action.
 	double threat = 10;
 
+	// The threat of the hits in each of the damage fields above, so the threat splits the same way:
+	// critical hits (ticks included), ticks, critical ticks, glancing, blocked, blocked critical and
+	// crushing hits.
+	double crit_threat = 37;
+	double tick_threat = 38;
+	double crit_tick_threat = 39;
+	double glance_threat = 40;
+	double block_threat = 41;
+	double blocked_crit_threat = 42;
+	double crush_threat = 43;
+
+	// The threat that came with a landed hit, the outcomes above included. The rest of the threat came
+	// without one: Rage and mana gains, healing and buffs.
+	double hit_threat = 44;
+
 	// Total healing done to this target by this action.
 	double healing = 11;
 
@@ -1101,6 +1116,9 @@ message CompSearchResult {
 	int64 cache_hits = 8;
 	double seconds = 9;
 	ErrorOutcome error = 10;
+	// Each build in the search's pool and its stamp (a hash of its request, race files and published DPS),
+	// so a result can say when the builds it chose from have changed since.
+	map<string, string> build_stamps = 11;
 }
 
 // The resolver (docs/raid_sim.md, M1b): a comp into the raid's request, and what it gives whom.

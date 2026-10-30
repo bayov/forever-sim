@@ -27,45 +27,10 @@
         "icon": "inv_wand_01"
       },
       {
-        "fieldName": "arcaneFocus",
-        "location": {
-          "rowIdx": 0,
-          "colIdx": 1
-        },
-        "spellIds": [
-          11222,
-          12839,
-          12840,
-          12841,
-          12842
-        ],
-        "maxPoints": 5,
-        "name": "Arcane Focus",
-        "description": "Improves your chance to hit with Arcane spells by {0}%.",
-        "ranks": [
-          [
-            1
-          ],
-          [
-            2
-          ],
-          [
-            3
-          ],
-          [
-            4
-          ],
-          [
-            5
-          ]
-        ],
-        "icon": "spell_holy_devotion"
-      },
-      {
         "fieldName": "improvedChanneling",
         "location": {
           "rowIdx": 0,
-          "colIdx": 2
+          "colIdx": 1
         },
         "spellIds": [
           11237,
@@ -76,7 +41,7 @@
         ],
         "maxPoints": 5,
         "name": "Improved Channeling",
-        "description": "Gives you a {0}% chance to avoid interruption caused by damage while channeling Arcane Missiles and a {1}% chance while casting Arcane Blast or Arcane Wrath.",
+        "description": "Gives your Arcane Missiles spell a {0}% chance and your Arcane Blast and Arcane Wrath spells a {1}% chance to not lose casting time when you take damage.",
         "ranks": [
           [
             20,
@@ -102,37 +67,26 @@
         "icon": "spell_nature_starfall"
       },
       {
-        "fieldName": "missileBarrage",
+        "fieldName": "arcaneResilience",
         "location": {
           "rowIdx": 0,
-          "colIdx": 3
+          "colIdx": 2
         },
         "spellIds": [
-          400588,
-          400588
+          28574
         ],
         "maxPoints": 2,
-        "name": "Missile Barrage",
-        "description": "Gives your Arcane Blast spell a {0}% chance, your Arcane Missile hits a {1}% chance, and your Arcane Wrath, Fireball, Frostbolt, and Frostfire Bolt spells a {2}% chance to reduce the channeled duration of your next Arcane Missiles spell by {3}%, reduce the Mana cost by {4}%, and missiles fire every {5} sec.",
+        "name": "Arcane Resilience",
+        "description": "Increases your Armor by an amount equal to {0}% of your Intellect.",
         "ranks": [
           [
-            20,
-            5,
-            10,
-            50,
-            100,
-            0.5
+            25
           ],
           [
-            40,
-            10,
-            20,
-            50,
-            100,
-            0.5
+            50
           ]
         ],
-        "icon": "ability_mage_missilebarrage"
+        "icon": "spell_arcane_arcaneresilience"
       },
       {
         "fieldName": "arcaneSubtlety",
@@ -230,26 +184,35 @@
         "icon": "spell_shadow_manaburn"
       },
       {
-        "fieldName": "arcaneResilience",
+        "fieldName": "missileBarrage",
         "location": {
           "rowIdx": 1,
           "colIdx": 3
         },
         "spellIds": [
-          28574
+          400588,
+          400588
         ],
         "maxPoints": 2,
-        "name": "Arcane Resilience",
-        "description": "Increases your Armor by an amount equal to {0}% of your Intellect.",
+        "name": "Missile Barrage",
+        "description": "Gives your Arcane Blast spell a {0}% chance, and your Arcane Wrath, Fireball, Frostbolt, Frost Blast, and Frostfire Bolt spells a {1}% chance to reduce the channeled duration of your next Arcane Missiles spell by {2}%, reduce the Mana cost by {3}%, and missiles fire every {4} sec.",
         "ranks": [
           [
-            25
+            20,
+            10,
+            50,
+            100,
+            0.5
           ],
           [
-            50
+            40,
+            20,
+            50,
+            100,
+            0.5
           ]
         ],
-        "icon": "spell_arcane_arcaneresilience"
+        "icon": "ability_mage_missilebarrage"
       },
       {
         "fieldName": "arcaneGeometry",
@@ -553,31 +516,6 @@
     "backgroundUrl": "https://wow.zamimg.com/images/wow/talents/backgrounds/classic/41.jpg",
     "talents": [
       {
-        "fieldName": "improvedFireBlast",
-        "location": {
-          "rowIdx": 0,
-          "colIdx": 0
-        },
-        "spellIds": [
-          11078,
-          11078
-        ],
-        "maxPoints": 2,
-        "name": "Improved Fire Blast",
-        "description": "Reduces the cooldown of your Fire Blast spell by {0} sec and increases its range by {1} yards.",
-        "ranks": [
-          [
-            1,
-            8
-          ],
-          [
-            2,
-            15
-          ]
-        ],
-        "icon": "spell_fire_lavaspawn"
-      },
-      {
         "fieldName": "incineration",
         "location": {
           "rowIdx": 0,
@@ -588,7 +526,7 @@
           18459,
           18459
         ],
-        "maxPoints": 3,
+        "maxPoints": 5,
         "name": "Incineration",
         "description": "Increases the critical strike chance of your Fire Blast, Ice Lance, Arcane Blast, and Scorch spells by {0}%.",
         "ranks": [
@@ -600,26 +538,32 @@
           ],
           [
             6
+          ],
+          [
+            8
+          ],
+          [
+            10
           ]
         ],
         "icon": "spell_fire_flameshock"
       },
       {
-        "fieldName": "improvedFireball",
+        "fieldName": "accelerant",
         "location": {
           "rowIdx": 0,
           "colIdx": 2
         },
         "spellIds": [
           11069,
-          12338,
-          12339,
-          12340,
-          12341
+          11069,
+          11069,
+          11069,
+          11069
         ],
         "maxPoints": 5,
-        "name": "Improved Fireball",
-        "description": "Reduces the casting time of your Fireball and Frostfire Bolt spells by {0} sec.",
+        "name": "Accelerant",
+        "description": "Reduces the casting time of your Fireball, Frostfire Bolt, and Arcane Wrath spells by {0} sec.",
         "ranks": [
           [
             0.1
@@ -637,7 +581,8 @@
             0.5
           ]
         ],
-        "icon": "spell_fire_flamebolt"
+        "icon": "spell_fire_flamebolt",
+        "notSimulated": true
       },
       {
         "fieldName": "ignite",
@@ -815,6 +760,31 @@
         "icon": "spell_fire_fireball02"
       },
       {
+        "fieldName": "improvedFireBlast",
+        "location": {
+          "rowIdx": 2,
+          "colIdx": 3
+        },
+        "spellIds": [
+          11078,
+          11078
+        ],
+        "maxPoints": 2,
+        "name": "Improved Fire Blast",
+        "description": "Reduces the cooldown of your Fire Blast spell by {0} sec and increases its range by {1} yards.",
+        "ranks": [
+          [
+            1,
+            8
+          ],
+          [
+            2,
+            15
+          ]
+        ],
+        "icon": "spell_fire_lavaspawn"
+      },
+      {
         "fieldName": "improvedScorch",
         "location": {
           "rowIdx": 3,
@@ -848,7 +818,7 @@
             5
           ]
         ],
-        "icon": "spell_fire_windsofwoe"
+        "icon": "spell_fire_soulburn"
       },
       {
         "fieldName": "improvedFireWard",
@@ -937,7 +907,7 @@
           11367,
           11368
         ],
-        "maxPoints": 5,
+        "maxPoints": 3,
         "name": "Critical Mass",
         "description": "Increases the critical strike chance of your Fire spells by {0}%.",
         "ranks": [
@@ -949,12 +919,6 @@
           ],
           [
             6
-          ],
-          [
-            8
-          ],
-          [
-            10
           ]
         ],
         "icon": "spell_nature_wispheal"
@@ -1106,19 +1070,19 @@
         "icon": "spell_frost_frostbolt02"
       },
       {
-        "fieldName": "elementalPrecision",
+        "fieldName": "precision",
         "location": {
           "rowIdx": 0,
           "colIdx": 2
         },
         "spellIds": [
           29438,
-          29439,
-          29440
+          29438,
+          29438
         ],
         "maxPoints": 3,
-        "name": "Elemental Precision",
-        "description": "Improves your chance to hit with Frost and Fire spells by {0}%.",
+        "name": "Precision",
+        "description": "Improves your chance to hit with all spells by {0}%.",
         "ranks": [
           [
             2
@@ -1250,8 +1214,7 @@
             10
           ]
         ],
-        "icon": "spell_frost_wisp",
-        "notSimulated": true
+        "icon": "spell_frost_wisp"
       },
       {
         "fieldName": "frostChanneling",
@@ -1355,8 +1318,7 @@
             20
           ]
         ],
-        "icon": "spell_shadow_darkritual",
-        "notSimulated": true
+        "icon": "spell_shadow_darkritual"
       },
       {
         "fieldName": "iceBlock",
@@ -1432,8 +1394,7 @@
             35
           ]
         ],
-        "icon": "spell_frost_glacier",
-        "notSimulated": true
+        "icon": "spell_frost_glacier"
       },
       {
         "fieldName": "coldSnap",
@@ -1494,36 +1455,40 @@
         ],
         "maxPoints": 5,
         "name": "Winter's Chill",
-        "description": "Gives your Frost damage spells a {0}% chance to apply the Winter's Chill effect, which increases the damage done by your Cone of Cold spell to the target by {1}%, stacking up to {2} times.",
+        "description": "Gives your Frostbolt, Frost Blast, and Fingers of Frost empowered Ice Lance spells a {0}% chance to apply Winter's Chill, increasing the target's damage taken from your next Cone of Cold by {1}% and it gains an additional {2}% of your spell damage, stacking up to {3} times.",
         "ranks": [
           [
             20,
-            40,
+            5,
+            7,
             5
           ],
           [
             40,
-            40,
+            5,
+            7,
             5
           ],
           [
             60,
-            40,
+            5,
+            7,
             5
           ],
           [
             80,
-            40,
+            5,
+            7,
             5
           ],
           [
             100,
-            40,
+            5,
+            7,
             5
           ]
         ],
-        "icon": "spell_frost_chillingblast",
-        "notSimulated": true
+        "icon": "spell_frost_chillingblast"
       },
       {
         "fieldName": "iceBarrier",

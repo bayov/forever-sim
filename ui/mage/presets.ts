@@ -149,7 +149,7 @@ export const APLLevel60Fire = PresetUtils.makePresetAPLRotation('Level 60 Fire',
 });
 // Client 70425 made Arcane Blast's stacks spell damage: 15% of Intellect each, up to 4, for 15
 // sec from the first, and nothing ends them early. So Arcane builds four stacks at the start of
-// every 15 sec (the fourth costs 6.25 times the first), and below 20% mana only one. Arcane
+// every 15 sec (the fourth costs 6.25 times the first); below 20% mana only one until 70707. Arcane
 // Missiles on a Missile Barrage proc goes first, ahead of the Arcane Blasts: each Arcane Blast has
 // 40% to proc it, so a proc during the ramp is used while the stacks boost it instead of being
 // rolled over (+40.5 at 180 sec, the rotation auditor's pass 23). Frostbolt is the filler: it
@@ -182,9 +182,15 @@ export const DefaultAPL = APLLevel60Fire;
 // (the Frost strings read differently from here on). The freed points were placed by sims at 180
 // sec, 10,000 to 40,000 iterations; the other points are as the search left them.
 //
-// Frostfire (0/29/22): Incineration, Improved Fireball, Ignite, Burning Soul 3 (pushback),
-// Pyroblast, Improved Scorch, Heating Up, Master of Elements, Critical Mass 5 and Fire Power 3 in
-// Fire, Elemental Precision, Ice Shards, Frost Channeling, Ice Lance, Shatter and Fingers of Frost
+// 1.60.1.70707 reworked the tree again: Arcane Focus is gone, Elemental Precision is Precision (2%
+// hit with all spells a point), Improved Fireball is Accelerant (it also takes 0.1 sec a point off
+// Arcane Wrath), Incineration has 5 points, Critical Mass 3, and Ice Lance has an 8 sec cooldown.
+// Every string reads differently from here on. The freed points were placed by talent searches at
+// 180 sec seeded from the old builds, the best confirmed at 20,000 iterations on two seeds.
+//
+// Frostfire (0/29/22): Incineration 2, Accelerant, Ignite, Burning Soul 3 (pushback),
+// Pyroblast, Improved Scorch, Heating Up, Master of Elements 3, Critical Mass 3 and Fire Power 3 in
+// Fire, Precision, Ice Shards, Frost Channeling, Ice Lance, Shatter and Fingers of Frost
 // in Frost. Frostfire Bolt is Fire and Frost at once, so it gets Fire Power, Ignite and Critical
 // Mass and also Ice Shards and Shatter. A second seed with Arcane Blast (10 Arcane points, without
 // Fingers of Frost) ended 65 behind on a Combustion build. It is 1112.7 / 1096.4 / 1078.6 at 120 /
@@ -194,17 +200,21 @@ export const DefaultAPL = APLLevel60Fire;
 // build (the client leaves Frostfire Bolt out of it): the points are the 20 in Frost that Fingers
 // of Frost needs, and since the hotfix so are Improved Frostbolt 2, Improved Blizzard 1 and Arctic
 // Reach 2, the five Piercing Ice and Elemental Precision gave back. Leaving Fingers of Frost for 12
-// Arcane points (Arcane Subtlety, Arcane Concentration) is 1009.3.
+// Arcane points (Arcane Subtlety, Arcane Concentration) is 1009.3. 70707's two Critical Mass points
+// are Incineration 2 and Master of Elements 3: 1051.0 at 180 sec (1096.4 before, the loss is
+// Critical Mass and Ice Lance's cooldown). The rotation search over 120, 180 and 300 sec kept every
+// knob.
 export const TalentsLevel60Frostfire = PresetUtils.makePresetTalents(
 	'Level 60 Frostfire',
-	SavedTalents.create({ talentsString: '-0155003013012503-0235000311203002' }),
+	SavedTalents.create({ talentsString: '-2550030103013303-0235000311203002' }),
 	{ tooltip: 'Fire and Frost for Frostfire Bolt: Heating Up, Fingers of Frost, Shatter.', group: 'Level 60' },
 );
-// Frost (29/0/22, 2026-10-23): Frost to Fingers of Frost (Improved Frostbolt, Elemental Precision,
-// Ice Shards, Frost Channeling, Ice Lance, Shatter) and 29 points of Arcane: Arcane Focus,
-// Improved Channeling 5 (pushback), Missile Barrage 2, Arcane Subtlety 2, Arcane Concentration 2,
-// Arcane Impact, Arcane Blast, Presence of Mind, Arcane Mind 5 and Arcane Instability 3. Arcane
-// Mind's 15% Intellect also grows the Arcane Blast stacks' spell damage, so the rotation keeps two.
+// Frost (28/1/22, 2026-10-30): Frost to Fingers of Frost (Improved Frostbolt, Precision, Ice
+// Shards, Frost Channeling, Ice Lance, Shatter) and 28 points of Arcane: Improved Channeling 5
+// (pushback), Arcane Subtlety 2, Arcane Concentration 5, Missile Barrage 2, Arcane Impact, Arcane
+// Blast, Arcane Meditation, Arcane Wrath, Arcane Mind 5 and Arcane Instability 3. Arcane
+// Mind's 15% Intellect also grows the Arcane Blast stacks' spell damage, so the rotation keeps two
+// (three since 70707).
 // The talent search (180 sec, 3000 iterations, the search's best confirmed at 20,000) was seeded
 // from the old deep-Frost preset, wowsims/forever's string, a 22 Frost / 26 Arcane / 3 Fire split,
 // a 29 Arcane split, a 31 Frost / 20 Arcane split and a Frost / Fire / Arcane hybrid. The two
@@ -214,38 +224,52 @@ export const TalentsLevel60Frostfire = PresetUtils.makePresetTalents(
 // 845.8), and Fire points 838. It is 945.5 / 946.6 / 942.3 (High Order, with the Major
 // Spellblasting Potion and the Greater Frost scroll), against 825.4 / 822.8 / 816.3 for the old
 // preset `05020050031001-03-253500133101301201` on the same gear: +121 / +124 / +126. 70425 cost
-// it Winter's Chill's crit and Ice Lance's fourth times on a Frozen target.
+// it Winter's Chill's crit and Ice Lance's fourth times on a Frozen target. 70707 took Arcane
+// Focus's five points and put an 8 sec cooldown on Ice Lance; two talent searches (seeded from this
+// build and from the 22 Frost / 29 Arcane fill) put the points in Arcane Concentration 5, Arcane
+// Meditation, Arcane Wrath and Incineration, and moved Presence of Mind's point there too (28/1/22;
+// one with Wand Specialization, Arcane Resilience and Magic Absorption for Arcane Concentration 2
+// ties). With the cooldown the rotation keeps three Arcane Blast stacks and skips Evocation. It is
+// 911.2 / 908.3 / 886.6 (946.6 at 180 sec before).
 export const TalentsLevel60Frost = PresetUtils.makePresetTalents(
 	'Level 60 Frost',
-	SavedTalents.create({ talentsString: '055220200310000153--0535000301003002' }),
+	SavedTalents.create({ talentsString: '05020520310011053-1-0535000301003002' }),
 	{
-		tooltip: 'Frost to Fingers of Frost with 29 Arcane: Frostbolt, Shatter, Ice Lance, Arcane Mind and Arcane Blast for spell damage.',
+		tooltip: 'Frost to Fingers of Frost with 28 Arcane: Frostbolt, Shatter, Ice Lance, Arcane Mind and Arcane Blast for spell damage.',
 		group: 'Level 60',
 	},
 );
-// Fire (13/35/3): every Fire damage talent to Combustion with Critical Mass 5, Burning Soul 3
+// Fire (14/34/3): every Fire damage talent to Combustion with Critical Mass 3, Burning Soul 2
 // (pushback) and Master of Elements 3, with Arcane Concentration and Missile Barrage 2 (Fireball
-// has 20% to make Arcane Missiles free and fast) and Elemental Precision 3. The two points the
+// has 20% to make Arcane Missiles free and fast) and Precision 3. The two points the
 // hotfix took off Elemental Precision are Arcane Subtlety 2 (30 less resistance on the boss), worth
 // more than Improved Flamestrike and Blast Wave (1067.2) or Improved Channeling 2 (1067.1). It is
 // 1106.4 / 1101.0 / 1088.3 (Human, with the Greater Flame scroll; 1067.6 at 180 before the
 // hotfix, 1094.3 before the main set's hit went to the cap). Every Fire Blast adds a Heating Up
 // stack since 70425. Fire is the mage's default build since 2026-10-23: 3.4 to 4.6 ahead of
 // Frostfire at 180 sec on both seed sets. The talent search on the new gear kept every point.
-export const TalentsLevel60Fire = PresetUtils.makePresetTalents('Level 60 Fire', SavedTalents.create({ talentsString: '0402205-23550030130135031-003' }), {
+// 70707 took Arcane Focus (4) and two Critical Mass points. The two are Incineration 5, and Arcane
+// row 1 still needs five points for Arcane Concentration: Improved Channeling 5 (pushback on
+// Missile Barrage's Arcane Missiles), with Burning Soul's third point (Wand Specialization and
+// Arcane Resilience instead are 1060.8). It is 1061.0 at 180 sec (1101.0 before), 10 ahead of
+// Frostfire.
+export const TalentsLevel60Fire = PresetUtils.makePresetTalents('Level 60 Fire', SavedTalents.create({ talentsString: '0502052-55500201230133031-003' }), {
 	tooltip: 'Deep Fire to Combustion, with Missile Barrage from Arcane.',
 	group: 'Level 60',
 });
-// Arcane (36/2/13): Arcane to Arcane Power with Arcane Blast, Missile Barrage 2 and Improved
-// Channeling 5 (pushback on Arcane Blast), Arcane Subtlety 2, Incineration 2 (it covers Arcane
-// Blast) and Frost for the Frostbolt filler (Improved Frostbolt, Elemental Precision, Ice Shards).
+// Arcane (31/5/15): Arcane to Arcane Power with Arcane Blast, Missile Barrage 2 and Improved
+// Channeling 5 (pushback on Arcane Blast), Arcane Subtlety 2, Incineration 5 (it covers Arcane
+// Blast) and Frost for the Frostbolt filler (Improved Frostbolt, Precision, Ice Shards).
 // Arcane Wrath lost to Missile Barrage's second point: a free Arcane Missiles at twice the speed is
 // worth more than the 3.5 sec cast. The five points Piercing Ice and Elemental Precision gave back
 // are Arcane Subtlety 2 and Improved Channeling 3 (982.0 at 180 sec, 40,000 iterations), ahead of
 // Arcane Subtlety with Frost Channeling 3 (977.3) and of Frost Channeling and Ice Lance (951.1). It
 // is 990.6 / 982.5 / 971.9, 11% behind Fire (Human, on the Arcane gear, with the Precision
-// scroll; 964.7 at 180 before the hotfix). The 2026-10-23 talent and knob searches kept it.
-export const TalentsLevel60Arcane = PresetUtils.makePresetTalents('Level 60 Arcane', SavedTalents.create({ talentsString: '0552205003100301531-02-0535' }), {
+// scroll; 964.7 at 180 before the hotfix). The 2026-10-23 talent and knob searches kept it. 70707's
+// Precision covers Arcane, so Arcane Focus's five points are Incineration 5 and Frost Channeling 2
+// (Arcane Blast's mana): 926.1 / 915.5 / 895.4 as a Gnome (901.6 at 180 sec before), with the
+// rotation keeping four stacks at any mana.
+export const TalentsLevel60Arcane = PresetUtils.makePresetTalents('Level 60 Arcane', SavedTalents.create({ talentsString: '050205203100301531-5-05350002' }), {
 	tooltip: 'Arcane to Arcane Power: four Arcane Blast stacks for spell damage, Missile Barrage, Frostbolt.',
 	group: 'Level 60',
 });

@@ -361,11 +361,10 @@ export class CompareResults extends Component {
 		trackStuckToolbar(toolbar, simUI);
 		syncSubTabWithUrl(toolbar, CompareResults.VIEW_PARAM);
 
+		// Every spec makes threat, so the Threat tab is always there.
 		const updateMetricTabs = () => {
-			this.rootElem.classList.toggle('hide-threat-metrics', !simUI.sim.getShowThreatMetrics());
 			this.rootElem.classList.toggle('hide-healing-metrics', !simUI.sim.getShowHealingMetrics());
 		};
-		simUI.sim.showThreatMetricsChangeEmitter.on(updateMetricTabs);
 		simUI.sim.showHealingMetricsChangeEmitter.on(updateMetricTabs);
 		updateMetricTabs();
 

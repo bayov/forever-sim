@@ -18,14 +18,15 @@ gen() {
 }
 # Client 1.60.1.70425. Arcane Blast's stacks are 15% of Intellect as spell damage each for 15 sec
 # from the first, so Arcane keeps all 4 up: four Arcane Blasts at the start of each 15 sec (the
-# last costs 6.25 times the first), and once the mana is under 20% a single Arcane Blast instead.
+# last costs 6.25 times the first). Until client 70707 it fell back to a single Arcane Blast below
+# 20% mana; since Precision covers Arcane, keeping all four is +1.6 at 120 / 180 / 300 sec together.
 # Arcane Missiles on a Missile Barrage proc (free and twice as fast) goes ahead of the Arcane
 # Blasts, so a proc during the ramp isn't rolled over (+40.5 at 180 sec, the rotation auditor's pass 23), Frostbolt as the filler (it
 # beats Arcane Missiles once the missiles aren't free). No Evocation, no mana gems (the Demonic
 # Rune takes their cooldown). An Arcane Blast precast lands at the pull. Arcane Power and Presence
 # of Mind wait for the on-use trinket unless it won't be back in time. When a Frostbolt would not
 # land before the end (its cast plus 0.75 sec), Fire Blast and Arcane Explosion instead.
-gen mage_arcane level60_arcane "blastBuff=4,blastRefresh=0,barrageBeforeBlast=1,arcaneWrath=0,conserveMana=20,filler=2,missileBarrage=1,barrageFirst=0,evocationMana=0,gems=0,prepull=1,powerWithTrinket=1,pomWrath=0,finisher=1,finishPad=0.75,wand=1"
+gen mage_arcane level60_arcane "blastBuff=4,blastRefresh=0,barrageBeforeBlast=1,arcaneWrath=0,conserveMana=0,filler=2,missileBarrage=1,barrageFirst=0,evocationMana=0,gems=0,prepull=1,powerWithTrinket=1,pomWrath=0,finisher=1,finishPad=0.75,wand=1"
 # Scorch to 5 Fire Vulnerability stacks and before they run out (5 sec), Pyroblast at 3 Heating Up
 # stacks (a 1.5 sec cast), Arcane Missiles on Missile Barrage, Fire Blast above 10% mana (since
 # 70425 every Fire Blast adds a Heating Up stack, two on a crit), Fireball. Evocation below 20% mana
@@ -36,16 +37,18 @@ gen mage_arcane level60_arcane "blastBuff=4,blastRefresh=0,barrageBeforeBlast=1,
 # Demonic Rune's 2 min cooldown, and the rune gives more. When a Fireball would not land before the
 # end (its cast plus 1.04 sec), Fire Blast and Scorch instead.
 gen mage_fire level60_fire "scorchRefresh=5,pyroStacks=3,fireBlastMana=10,fireBlastHeating=0,missileBarrage=1,filler=1,evocationMana=20,evocationMinTime=90,cooldownsAfterScorch=1,trinketAfterScorch=1,racialAfterScorch=1,gems=0,blastBuff=0,arcaneWrath=0,finisher=1,finishPad=1.04,wand=1"
-# Frostbolt, with Ice Lance on every Fingers of Frost charge (3 times the damage on a Frozen
-# target since 70425, with SoD's 42.9% spell power coefficient), and two Arcane Blasts every 15 sec
-# for 30% of Intellect as spell damage (the 2026-10-23 build has Arcane Mind; one stack lost 16 at
-# 120 / 180 / 300 sec together). A charge granted during a Frostbolt's cast is spent a spell batch
+# Frostbolt, with Ice Lance on a Fingers of Frost charge whenever its cooldown is up (3 times the
+# damage on a Frozen target since 70425, with SoD's 42.9% spell power coefficient; 8 sec cooldown
+# since 70707), and three Arcane Blasts every 15 sec for 45% of Intellect as spell damage. Since
+# Ice Lance's cooldown the mana goes further: three stacks and no Evocation (blastBuff 3,
+# evocationMana 0) are +4.8 at 120 / 180 / 300 sec together over the 2026-10-23 rotation's two
+# stacks with Evocation below 20%. A charge granted during a Frostbolt's cast is spent a spell batch
 # after it completes, so that Frostbolt and the Ice Lance right after it both read Frozen; waiting
-# for a Frostbolt before every Ice Lance (iceLance 3 or 4) lost 11 to 23 at 180 sec. Evocation
-# below 20% with 90 sec left almost never goes. When a Frostbolt would not land before the end (its
-# cast plus 1 sec), Ice Lance instead. The build stops at Fingers of Frost, so no Ice Barrier, and
-# the wand only when out of mana.
-gen mage_frost level60_frost "iceLance=1,missileBarrage=1,fireBlastMana=0,evocationMana=20,evocationMinTime=90,blastBuff=2,blastRefresh=9,arcaneWrath=0,finisher=1,finishPad=1,iceBarrier=0,wand=1"
+# for a Frostbolt before every Ice Lance (iceLance 3 or 4) lost 11 to 23 at 180 sec before the
+# cooldown. When a Frostbolt would not land before the end (its cast plus 1 sec), Ice Lance
+# instead. The build stops at Fingers of Frost, so no Ice Barrier, and the wand only when out of
+# mana.
+gen mage_frost level60_frost "iceLance=1,missileBarrage=1,fireBlastMana=0,evocationMana=0,evocationMinTime=90,blastBuff=3,blastRefresh=9,arcaneWrath=0,finisher=1,finishPad=1,iceBarrier=0,wand=1"
 # Scorch to 5 Fire Vulnerability stacks and again with under 7 sec left on it, Pyroblast at 3
 # Heating Up stacks, Ice Lance on the last Fingers of Frost charge (ahead of Scorch and Pyroblast;
 # the first charge goes on a Frostfire Bolt, which the charge makes a Shatter crit), Frostfire Bolt.
