@@ -22,6 +22,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"strings"
 	"sync"
 	"time"
 
@@ -43,6 +44,7 @@ func main() {
 	goldAt40 := flag.Float64("gold-at-40", 115, "with -training, the gold earned by level 40")
 	ridingLevel := flag.Int("riding-level", 43, "with -training, the level we buy riding at, 0 for none")
 	ridingGold := flag.Float64("riding-gold", 90, "with -training, what riding costs us, in gold")
+	alwaysSpells := flag.String("always", "", "with -training, the spells the plan doesn't cast that we train anyway, comma separated, like \"Ghost Wolf,Astral Recall\" (the request's plan's when empty)")
 	flag.Parse()
 
 	if !core.WITH_DB {
@@ -61,7 +63,11 @@ func main() {
 			log.Fatal(err)
 		}
 	case *in != "" && *training:
-		if err := trainingFile(db, *in, *out, int32(*trainingSessions), *goldAt40, int32(*ridingLevel), *ridingGold); err != nil {
+		var always []string
+		if *alwaysSpells != "" {
+			always = strings.Split(*alwaysSpells, ",")
+		}
+		if err := trainingFile(db, *in, *out, int32(*trainingSessions), *goldAt40, int32(*ridingLevel), *ridingGold, always); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 			os.Exit(1)
 		}
