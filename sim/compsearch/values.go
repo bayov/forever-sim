@@ -1,6 +1,7 @@
 package compsearch
 
 import (
+	"context"
 	"fmt"
 	"sort"
 
@@ -11,10 +12,15 @@ import (
 // hand, a button runs the sims the cache lacks"), for the native server's /compValues. Its members must
 // be report builds (each slot's report_id).
 func CompValues(comp *proto.RaidComp) *proto.CompValuesResult {
+	return CompValuesCtx(context.Background(), comp)
+}
+
+// CompValuesCtx is CompValues that stops when the context is done (the page stopped waiting).
+func CompValuesCtx(ctx context.Context, comp *proto.RaidComp) *proto.CompValuesResult {
 	pool, sim, err := serverSearch()
 	if err == nil {
 		var out *proto.CompValuesResult
-		out, err = compValues(pool, sim, comp)
+		out, err = compValues(pool, sim, comp, func() bool { return ctx.Err() != nil })
 		if err == nil {
 			return out
 		}
@@ -158,13 +164,15 @@ func compFromRaidComp(pool *Pool, sc *Scenario, comp *proto.RaidComp) (*Comp, ma
 	return c, ids, nil
 }
 
-func compValues(pool *Pool, sim *Simmer, comp *proto.RaidComp) (*proto.CompValuesResult, error) {
+func compValues(pool *Pool, sim *Simmer, comp *proto.RaidComp, abort func() bool) (*proto.CompValuesResult, error) {
 	sc := &Scenario{Pool: pool, Sim: sim, Faction: comp.Faction, Camps: comp.CampBuffs, Assumptions: comp.Assumptions,
-		Iterations: 1000, Seed: 101, Fight: Fight{Duration: 180, DurationVariation: 20, FlaskZone: true}}
+		Iterations: 1000, Seed: 101, Fight: Fight{Duration: 180, DurationVariation: 20, FlaskZone: true}, Abort: abort}
 	if sc.Faction == proto.Faction_Unknown {
 		sc.Faction = proto.Faction_Horde
 	}
-	if o := comp.SimOptions; o != nil && o.Iterations > 0 {
+	// The search's screening iterations at most: a raid run's 3,000 or more would take many minutes over
+	// the dozens of sims a member value needs. Fewer if the comp asks for fewer.
+	if o := comp.SimOptions; o != nil && o.Iterations > 0 && o.Iterations < sc.Iterations {
 		sc.Iterations = o.Iterations
 	}
 	if e := comp.Encounter; e != nil {

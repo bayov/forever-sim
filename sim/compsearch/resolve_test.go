@@ -263,7 +263,7 @@ func TestCompValues(t *testing.T) {
 			slotOf(2, 0, 1, p, "mage__fire"), slotOf(3, 0, 2, p, "mage__fire"), slotOf(4, 0, 3, p, "warlock__demonology"),
 			slotOf(5, 0, 4, p, "hunter__beast-mastery")},
 		Assignments: []*proto.Assignment{{Holder: 4, SetByHand: true, Job: &proto.Assignment_Duty{Duty: proto.Duty_DutyCurseOfTheElements}}}}
-	out, err := compValues(p, sim, comp)
+	out, err := compValues(p, sim, comp, nil)
 	if err != nil {
 		t.Fatal(err)
 	}

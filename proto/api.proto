@@ -990,7 +990,7 @@ message CompFillerRank {
 }
 
 message CompMemberValue {
-	int32 member = 1;            // index into the best comp's members
+	int32 member = 1;            // index into the best comp's CompResult.members (a hand-built raid's: see slots)
 	double contribution = 2;     // raid DPS minus raid DPS without the member
 	double own_dps = 3;
 	double replacement_margin = 4;

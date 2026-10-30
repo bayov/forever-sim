@@ -754,6 +754,18 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 	if err != nil {
 		return nil, err
 	}
+	// A member value's index is into the best comp's result members (placeholders first, by party).
+	if len(out.Comps) > 0 {
+		for _, mv := range extras.members {
+			m := bestLo.Members[mv.Member]
+			for j, rm := range out.Comps[0].Members {
+				if rm.BuildId == m.B.ID && rm.Party == int32(m.Party)+1 {
+					mv.Member = int32(j)
+					break
+				}
+			}
+		}
+	}
 	if len(out.Comps) > 0 {
 		cost := map[string]float64{}
 		for _, mv := range extras.members {

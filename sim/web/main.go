@@ -445,7 +445,13 @@ func handleAPI(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	result := handler.handle(msg)
+	var result googleProto.Message
+	if endpoint == "/compValues" {
+		// Member values can take minutes: they stop when the page stops waiting.
+		result = compsearch.CompValuesCtx(r.Context(), msg.(*proto.RaidComp))
+	} else {
+		result = handler.handle(msg)
+	}
 
 	outbytes, err := googleProto.Marshal(result)
 	if err != nil {
