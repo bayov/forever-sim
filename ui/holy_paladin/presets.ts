@@ -19,7 +19,7 @@ export const DefaultGear = PresetUtils.makePresetGear('Blank', BlankGear);
 export const StandardTalents = {
 	name: 'Standard',
 	data: SavedTalents.create({
-		talentsString: '05320003025101351-500250302003',
+		talentsString: '05320103225101051-500250302003',
 	}),
 };
 

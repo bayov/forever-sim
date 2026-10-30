@@ -270,17 +270,17 @@ arrives in one of two ways, never both:
 
 Tests prove the resolver keeps given and cast apart.
 
-**Members get their own buff set** (milestone M1b). Today one `RaidBuffs` covers the whole raid, and
-`PartyBuffs` holds only Atiesh, Mana Tide and Blood Pact. So `Player` gets a new field, `RaidBuffs raid_buffs`
-(`proto/api.proto`):
+**Members get their own buff set** (milestone M1b, done). One `RaidBuffs` used to cover the whole raid, so
+`Player` has `RaidBuffs raid_buffs` (`proto/api.proto`):
 
 - When set, it replaces `Raid.buffs` for that player wholesale. It isn't merged.
 - The class `AddRaidBuffs` hooks are skipped for that player, so the resolver owns every buff. That's why
   the held auras are given.
 - Party buffs and debuffs stay where they are.
 
-From M1b the same field serves the search's single-player sims, the report raid check and the page. Until
-then, a single-player request carries its buffs in `Raid.buffs`, which works the same for one player.
+The resolver's raids (the confirmation, RunComp, the page) and the report raid check use it. The search's
+single-player sims write `Raid.buffs`, which works the same for one player, and there the class hooks still
+run (a Balance druid's own Moonkin Aura comes from its hook).
 
 **Pets.** Standard 14 blocks every player buff on pets, and the engine skips them (`applyPetBuffEffects`).
 Some buffs lack the client's players-only flag: Furious Howl, Trueshot Aura, Mana Spring, Mana Tide, Blood
@@ -289,8 +289,8 @@ DPS. They're unverified exceptions, and until the launch checks they don't reach
 [Hunter pets](#hunter-pets)). Target debuffs do reach pets: armor debuffs raise every pet's damage, and
 Curse of the Elements raises the demons' spells.
 
-When cast buffs reach the raid (M1b), they need a players-only raid aura array, because `NewRaidAuraArray`
-today loops every unit, pets included.
+Cast buffs reach the raid through a players-only raid aura array (M1b), since `NewRaidAuraArray` loops every
+unit, pets included.
 
 ### The provider table
 
@@ -304,18 +304,14 @@ The resolver works from a table that says, for each buff and debuff:
 - how long it lasts and whether it costs GCDs in the fight
 - the settings field that gives it, and its spell ids
 
-**It's written by hand**, about 25 rows, checked against client 70685. The client's scope rule is in the
-appendix, for checking a row. `tools/sources/` (update-sources) flags any of the table's spell ids that
-change in a new build's wago.tools diff.
+**It's written by hand**, checked against client 70685. The client's scope rule is in the appendix, for
+checking a row.
 
-**In Go** it's a slice of rows:
-
-```
-{Effect, Providers (class, spec or preset, talent), Scope (Raid, Party, ClassInRaid, OneTarget, Boss),
- ReachesPets, Stacking (Strongest, One, Stacks n), Slot ("minor armor", "air totem", "judgement",
- "curse", ...), Excludes, InFightCost, SpellIDs,
- Write func(*proto.RaidBuffs, *proto.PartyBuffs, *proto.IndividualBuffs, *proto.Debuffs)}
-```
+**In Go** (as built) the table is spread over `sim/compsearch`: a `Gift` bit for each raid-wide effect
+(`effects.go`), what each build gives and casts itself (`PlayerGifts`: its class, its held auras from the
+class hooks, its duty, its pet), what each preset gives (`presets.go`), and `Seat.Write`, which writes a
+member's effects into its request's settings fields. The scopes, the stacking and the exclusions live in
+the engine (M1b). Nothing yet flags a spell id that changes in a new client build.
 
 DPS-relevant buffs. "Unverified" means the client can't say and the server decides. "No field" means there
 is no given form yet:
@@ -368,8 +364,8 @@ The debuffs:
 
 **Judgement of Wisdom matters.** It is worth 56 to 73 DPS to each mana user at 180 seconds in the report's
 one-buff-at-a-time runs: Beast Mastery 56, fire 59, Ret Undead 73. That makes it the third-largest effect,
-after Sunder and the weapon totem. No DPS member can give it yet: `sim/paladin` has no Seal of Wisdom, so
-until M1b adds the seal and its judgement, only a paladin placeholder does.
+after Sunder and the weapon totem. A paladin placeholder or a Ret member on its Wisdom duty (Seal of Wisdom,
+M1b) gives it.
 
 A paladin keeps up one judgement. So a raid with one paladin chooses between Wisdom and the Crusader, and
 the search treats them as one choice with two options.
@@ -415,10 +411,10 @@ them moves any base build (a done-when of M1).
 Every warrior's base rotation casts one Sunder on its first GCD. After that, the warrior tank keeps it up
 (the user, 2026-10-29). In a raid with a warrior tank, the DPS warriors never sunder again.
 
-The engine doesn't model that today:
+The old given Sunder didn't model that:
 
-- The given Sunder puts all 5 stacks on in the first 0.8 seconds (`debuffs.go:157-170`) and never lets them
-  drop.
+- It puts all 5 stacks on in the first 0.8 seconds and never lets them drop (it's still what `sunder_armor`
+  does, for the report's requests).
 - So the DPS warriors' pull Sunders always land on a full stack and do nothing.
 
 That overstates physical builds against casters by about 0.4 to 1% of their DPS. A ramp is worth 20 to 35
@@ -600,13 +596,15 @@ it casts the effect itself and pays for it. The report's `builds.json` has the n
 - Battle Shout costs Fury 1.8.
 
 **A DPS member can only hold an upkeep assignment its build has a duty variant for.** In `meta.json`, a
-duty variant has `duty` (one of "Battle Shout", "Faerie Fire", "Curse of the Elements", "Judgement of the
-Crusader") and `baseBuild`, the base build's id. Today there are 12:
+duty variant has `duty` (one of "Battle Shout", "Sunder Armor", "Faerie Fire", "Curse of the Elements",
+"Curse of Recklessness", "Judgement of the Crusader", "Judgement of Wisdom") and `baseBuild`, the base
+build's id. There are 25:
 
 - Battle Shout: the 3 warrior builds
 - Faerie Fire: Balance, Balance Wrath and Feral
 - Curse of the Elements: the 4 warlock builds
-- Judgement of the Crusader: `paladin__level_60_sub_holy` and `paladin__level_60_shock`
+- Judgement of the Crusader: `paladin__level_60_sub_holy` and `paladin__level_60_shock` (and 2 more below)
+- the 13 M1b added, below
 
 **The duty builds M1b added** (2026-10-29; DPS at 20,000 iterations, 180 ± 20 s, against the base):
 
@@ -640,8 +638,9 @@ Spring, Mana Tide and Dark Inspiration depend on groups, and each member's gain 
    Mana Tide, a "+ Mana Tide" shaman gives Mana Spring plus Mana Tide, an Enhancement, Elemental or Warden
    shaman gives plain Mana Spring, and two shamans in one party give their stacking rule's result. Each
    build is simmed once per distinct package in the set, and once without.
-2. **The package givers go one per party**, the richest package first. While the Mana Spring stacking rule
-   is open, two in one party is tried too.
+2. **The package givers go one per party**, the richest package first. Two in one party isn't tried: under
+   the sim's current rule two Mana Springs don't stack, so a second one in a party adds nothing (the rule is
+   open, shaman_audit 8.45). A DPS shaman casts its own Mana Spring, so it's never given a package.
 3. **The other placeholders go to parties without a package first**, so the packaged seats go to members
    who gain from them.
 4. **Each packaged seat takes the member who gains most from its package.** The provider members compete
@@ -783,7 +782,7 @@ A role is one thing the raid can have or not, with the ways it can be covered:
 | Curse of the Elements | a warlock on duty; none |
 | Judgement, per paladin | the Crusader; Wisdom |
 | Blessings | Kings, Might, Wisdom per class, from the paladins present (placeholders or Ret) |
-| Earth, air, water and fire totems | each shaman's choice per element (placeholders, Enhancement, Elemental) |
+| Earth, air, water and fire totems | a shaman placeholder's air totem (Grace of Air or Windfury); its earth, water and fire are fixed (Strength of Earth, Mana Spring, Flametongue cost a placeholder nothing); Enhancement and Elemental drop their builds' totems |
 | Packages (Mana Spring, Mana Tide) | from the shamans present; which party gets each (see [Groups](#groups)) |
 | Moonkin Aura | a Balance druid; none |
 | Leader of the Pack | a Feral druid (cat or tank); none |
@@ -967,15 +966,16 @@ Raid sims confirm **distinct buff sets, not comps**:
 
 - Fill variants under one set differ mostly by their members' single-player sims, which check 1 covers.
   Not exactly: Survival and Enhancement gain up to 4 DPS next to many physical members, and the Hunter's
-  Mark is shared, which across 13 copies is about 0.3%. So when a set's best fills are within 0.3% of each
-  other, its top 2 or 3 fills are raid-simmed.
+  Mark is shared, which across 13 copies is about 0.3%. The plan was to raid-sim a set's top 2 or 3 fills
+  when they're within 0.3% of each other; that isn't built yet, so each set's best fill is the one
+  confirmed.
 - Comps that resolve to the same request are one: the two paladin presets, and party permutations.
 - Every set within 0.1% plus 2.5 standard errors of the best score is raid-simmed, paired, at 5,000
   iterations. The top 2 go on to 20,000 (standard 15), on a fresh seed range, since seed s at 20,000
   iterations repeats the 5,000 run's iterations.
 - The raid sims rank the confirmed sets, and their numbers are the answer. If a raid sim disagrees with its
-  score by more than noise, the result shows the gap. When the gaps lean one way by comp type (every
-  physical-heavy raid higher, say), the confirmation widens to the next sets of that type.
+  score by more than noise, the result notes the gap. (Widening the confirmation to the next sets of a type
+  whose gaps lean one way isn't built; the notes show it.)
 
 The raid sim catches what the single-player sims can't:
 
@@ -1008,16 +1008,19 @@ The raid sim catches what the single-player sims can't:
     whether Faerie Fire, Curse of Recklessness or Dust Cloud fills it. The resolver settles every exclusion
     first (camp buffs against class buffs, the weapon totem per receiver), so the key holds what the player
     gets.
-  - **Effects a build can't read are dropped**, by a static table of what each effect touches (a stat, a
-    school, mana, pets) against what the build uses. Spell crit is dropped for a warrior, so Moonkin Aura
-    on or off is one key for every warrior. The Camp Chair that Moonkin Aura removes stays in the key,
-    since after the resolver it's an effect of its own.
-  - A test sims every build with and without each effect it drops, under the full set and under the empty
-    set, camps on and off, and asserts bit-identical results.
+  - **Effects a build can't read are dropped**, by a static table, `sim/compsearch/drops.json`, one for
+    each build and camp setting. `compsearch -drops` writes it: an effect goes in only when the build's
+    result is bit-identical with it set and cleared, under the full set and the empty set, at 120, 180, 300
+    and 420 s, in both factions and at two seeds, for each effect alone and then all together. Arcane
+    Brilliance is dropped for a warrior, so it's one key whether a mage is there or not. With camps on,
+    Moonkin Aura stays in a warrior's key, since it takes the Camp Chair.
+  - The weapon totem is two entries, Windfury and Flametongue, so Enhancement (whose Windfury Weapon makes
+    Windfury Totem useless to it) keeps its Flametongue.
+  - A test checks the whole table again at another seed.
   - The report's ablations don't decide this. Their `same: true` means only equal DPS at 300 iterations
     under the full set: Faerie Fire and Curse of Recklessness both show it for every build, because each
     fills the slot without the other.
-  - **The version** is the SHA-256 of the running binary and of the item database file. A git hash would
+  - **The version** is the SHA-256 of the running binary, which embeds the item database. A git hash would
     miss an uncommitted edit, and the downloadable server has no checkout.
 - **The value** is the DPS, its standard error and standard deviation, and the mana stats.
 - **Where it lives:**
@@ -1156,8 +1159,8 @@ All of these come from the single-player sims under buff sets. So they need no r
 them.
 
 - **Contribution of a DPS member:** raid DPS minus raid DPS without the member. Without them, the comp is
-  resolved again: automatic assignments are redone by the automatic rule, and the ones set by hand are
-  dropped. It's shown as the member's own DPS plus what they add to everyone else. This is "what a spec
+  resolved again: the parties' packages are recomputed from the givers left, and a duty the member held
+  goes with it unless another member gives that effect (another member doesn't take it over). It's shown as the member's own DPS plus what they add to everyone else. This is "what a spec
   brings".
 - **Contribution of a tank or healer:** the slot count is fixed, so taking one out leaves a hole. It's the
   combo's raid DPS minus the best raid DPS with that slot's preset changed.
@@ -1260,7 +1263,7 @@ If a change touches shared result views (the events view, the replay), the DPS R
      members cast (a cast Windfury Totem replaces each request's given one), plus their own held auras,
      which the resolver gives. A Balance druid's request leaves out its own Moonkin Aura, since the class
      hook gave it.
-   - The debuffs are the base requests' common ones (all 46 requests without a duty carry the same ones).
+   - The debuffs are the base requests' common ones (every base request carries the same ones).
    - The fight is a fixed 180 ± 20 seconds.
    - Each member lands within 4 × √(se₁² + se₂²) of a single-player sim of the same request, on the same
      commit, at the same seed and iterations. That's 4σ, since 3σ across 37 members fails by chance about 1
@@ -1292,7 +1295,8 @@ If a change touches shared result views (the events view, the replay), the DPS R
    - camp buffs per player, the Camp Chair against Moonkin Aura included
    - with placeholders leaving gaps in the parties, each result slot maps back to its comp slot
 8. **Metrics.** Raid DPS equals the sum of the members' DPS, pets included.
-9. **Determinism.** One search gives byte-identical output across runs and core counts.
+9. **Determinism.** One search gives the same result across runs and core counts (its JSON, less the seconds
+   and the timings by phase).
 10. **The cache's dropped effects** (see [The cache](#the-cache)).
 
 ## Milestones
@@ -1432,6 +1436,9 @@ skip the buffs a request never had. M1's own role sims replace it as the search'
 - **Done when:** a table of role gain, provider cost and net, the filler ranking and the builds left after
   pruning (by the rule in [The search](#the-search)) are in TASKS.md or a note.
 
+**Done** (2026-10-29): `tools/compsearch/m0.py` writes `docs/raid_sim_m0.md`. 6 of the 37 builds survive its
+pruning.
+
 ### M1: the first answer (a command line search)
 
 Single-player sims of the report's requests, with a buff set written into each one, already work today. So
@@ -1448,12 +1455,11 @@ the player's `buffs` directly. The per-player `raid_buffs` comes in M1b. The cla
 is right for the player's own Moonkin Aura, Leader of the Pack and Trueshot Aura. Blood Pact is a party
 hook since B.
 
-**M1 searches only the role options that exist today.** It leaves out:
+**M1 searches only the role options that exist.** With M1b's builds in the pool, it leaves out:
 
-- the Tallstrider and the wolf
-- the Sunder upkeep warrior, the Curse of Recklessness warlock, and Judgement of Wisdom from a Ret paladin
-- a DPS shaman's totem choice: Enhancement and Elemental drop their fixed totems
-- Dark Inspiration
+- a DPS shaman's totem choice: Enhancement and Elemental drop their builds' fixed totems (the engine's
+  assigned totems aren't in their rotations yet)
+- Dark Inspiration as a party package
 
 The search stops before the confirmation, which joins in M1b, so M1's tie set and intervals come from the
 scores (see [Confirmation](#confirmation)).
@@ -1493,6 +1499,18 @@ scores (see [Confirmation](#confirmation)).
   - the 20-player result for each faction, with camps on and off, is written up, with its tie set, role
     table, filler ranking, tank and healer combo ranking and sensitivity
 
+**Done** (2026-10-30), apart from the write-up, which is in [M1's 20-player result](#m1s-20-player-result):
+
+- `sim/compsearch` and `tools/compsearch` (`go run -tags with_db ./tools/compsearch -size 20 -out x` writes
+  `x.json` and `x.md`; `-health`, `-boss Onyxia`, `-fixed-*`, `-confirm`, `-drops` and
+  `-measure-left-out` are the other flags).
+- Check 5 (`TestSearchMatchesBruteForce`, any tank, the pet variants and every placeholder choice), the
+  cache (`TestCacheReuse`: a second run makes zero sims, the key changes with the encounter and the
+  length; a code or database change is a new binary, so a new version), the resolver's given-or-cast tests,
+  the drop table (`TestDropsAreUnread`) and determinism (`TestSearchDeterministic`) pass.
+- `-measure-left-out`: every base build's result is bit-identical with and without Thorns, Retribution
+  Aura, Salvation and Judgement of Light, so leaving them out moves nothing.
+
 ### M1b: whole raids that run right (engine)
 
 This is what the confirmation raid sims need, on top of B.
@@ -1523,14 +1541,15 @@ below) and one Go call, `RunComp`, which resolves a comp into a `RaidSimRequest`
   [Checking it](#checking-it), [Appendix](#appendix-measurements-2026-10-29).
 - **Done when:**
   - the report raid and Scope checks (1 and 4) pass in `sim/raid_forever_test.go`
-  - the 57 requests other than the Feral Faerie Fire duty build still give bit-identical results at a fixed
-    seed; that one and the new requests are re-simmed into the report
+  - the requests other than the Feral Faerie Fire duty build still give bit-identical results at a fixed
+    seed (56 did; `druid__feral-cat` moved only in an unused aura's name, with every number the same); that
+    one and the new requests are re-simmed into the report
   - checks 7 and 8 pass
   - a comp round-trips through JSON
   - `RunComp` on 7 builds plus 3 placeholders equals a hand-built request, with every DPS member taking
     the raid damage hits
 
-**Done** (2026-10-29), except publishing the new builds in the report:
+**Done** (2026-10-30):
 
 - **The engine:** `Player.raid_buffs` (53), `Player.assigned_totems` (54) with the Cast Assigned Totem APL
   action, `PartyBuffs.dark_inspiration` (its given form at 99.9% uptime, measured on both Shadow builds),
@@ -1549,7 +1568,8 @@ below) and one Go call, `RunComp`, which resolves a comp into a `RaidSimRequest`
     until that totem ends, so the buff stays while a second totem stands.
 - **The builds:** the duty builds and pet variants in [Assignments](#assignments) and
   [Hunter pets](#hunter-pets), Seal of Wisdom, and Faerie Fire in Cat and Bear Form. Their metas hold
-  their own 20,000-iteration sims; the report hasn't re-simmed and published them yet.
+  their own 20,000-iteration sims, and the DPS Report re-simmed and published them (as variants under its
+  Duty chip; deployed 2026-10-30).
 - **The hashes:** the 56 other requests are bit-identical. `druid__feral-cat`'s hash moved too, with its
   DPS and every number the same: it used to register a never-active Faerie Fire (Feral) aura on the
   target, which no longer exists.
@@ -1667,6 +1687,11 @@ Report, with four tabs: Search result, Search, Comp and Raid results.
   re-simmed.
 - A committed result is stamped with the report's `datasets.json` stamp and the builds' fingerprints. A
   stale check flags it when they move.
+
+## M1's 20-player result
+
+The write-up of M1's done-when: 20 players, 2 tanks and 4 healers, the generic boss at 180 ± 20 s, each
+faction with camps on and off. It's being run (a few hours on this machine) and lands here.
 
 ## Decisions
 

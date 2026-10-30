@@ -12,16 +12,18 @@ export const DefaultGear = PresetUtils.makePresetGear('Blank', BlankGear);
 
 // Default talents. Uses the wowhead calculator format, make the talents on
 // https://wowhead.com/classic/talent-calc and copy the numbers in the url.
-export const CelestialFocusTalents = {
-	name: 'Celestial Focus',
+// Forever's trees (client 70630, unchanged in 70685): Celestial Focus is gone, so the second build takes
+// Furor and every Restoration talent instead of Balance.
+export const FurorRestoTalents = {
+	name: 'Furor Resto',
 	data: SavedTalents.create({
-		talentsString: '05320031103--230023312131502331050313051',
+		talentsString: '05--5553035153113051',
 	}),
 };
 export const ThiccRestoTalents = {
 	name: 'Thicc Resto',
 	data: SavedTalents.create({
-		talentsString: '05320001--230023312331502531053313051',
+		talentsString: '05302001--5052035153113051',
 	}),
 };
 
