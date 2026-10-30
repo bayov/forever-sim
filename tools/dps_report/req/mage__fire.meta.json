@@ -6,7 +6,7 @@
   "isDefault": true,
   "pr": 98,
   "race": "Human",
-  "talents": "0402205-23550030130135031-003",
+  "talents": "0502052-55500201230133031-003",
   "treeNames": [
     "Arcane",
     "Fire",
@@ -19,17 +19,17 @@
     "source": "DPS report 2026-10-28 (full re-sim at 20,000 iterations, 180 s, after the launch-realm hunter hotfix)"
   },
   "verify": {
-    "dps": 1101.0,
-    "stderr": 0.39,
+    "dps": 1061.0,
+    "stderr": 0.4,
     "iters": 20000,
     "ok": true,
-    "note": "sim of the regenerated request, 180s, seed 1 (seed 1000003 within 1.1)"
+    "note": "sim of the request after client 1.60.1.70707's talent rework (new talents), 180s, seed 1 (seed 1000003 1061.0)"
   },
   "summary": "Deep Fire to Combustion, plus Arcane Concentration and Missile Barrage from Arcane.",
   "keyTalents": [
     "Missile Barrage",
     "Improved Fire Blast",
-    "Improved Fireball",
+    "Accelerant",
     "Ignite",
     "Burning Soul",
     "Improved Scorch",

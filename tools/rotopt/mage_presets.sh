@@ -36,16 +36,18 @@ gen mage_arcane level60_arcane "blastBuff=4,blastRefresh=0,barrageBeforeBlast=1,
 # Demonic Rune's 2 min cooldown, and the rune gives more. When a Fireball would not land before the
 # end (its cast plus 1.04 sec), Fire Blast and Scorch instead.
 gen mage_fire level60_fire "scorchRefresh=5,pyroStacks=3,fireBlastMana=10,fireBlastHeating=0,missileBarrage=1,filler=1,evocationMana=20,evocationMinTime=90,cooldownsAfterScorch=1,trinketAfterScorch=1,racialAfterScorch=1,gems=0,blastBuff=0,arcaneWrath=0,finisher=1,finishPad=1.04,wand=1"
-# Frostbolt, with Ice Lance on every Fingers of Frost charge (3 times the damage on a Frozen
-# target since 70425, with SoD's 42.9% spell power coefficient), and two Arcane Blasts every 15 sec
-# for 30% of Intellect as spell damage (the 2026-10-23 build has Arcane Mind; one stack lost 16 at
-# 120 / 180 / 300 sec together). A charge granted during a Frostbolt's cast is spent a spell batch
+# Frostbolt, with Ice Lance on a Fingers of Frost charge whenever its cooldown is up (3 times the
+# damage on a Frozen target since 70425, with SoD's 42.9% spell power coefficient; 8 sec cooldown
+# since 70707), and three Arcane Blasts every 15 sec for 45% of Intellect as spell damage. Since
+# Ice Lance's cooldown the mana goes further: three stacks and no Evocation (blastBuff 3,
+# evocationMana 0) are +4.8 at 120 / 180 / 300 sec together over the 2026-10-23 rotation's two
+# stacks with Evocation below 20%. A charge granted during a Frostbolt's cast is spent a spell batch
 # after it completes, so that Frostbolt and the Ice Lance right after it both read Frozen; waiting
-# for a Frostbolt before every Ice Lance (iceLance 3 or 4) lost 11 to 23 at 180 sec. Evocation
-# below 20% with 90 sec left almost never goes. When a Frostbolt would not land before the end (its
-# cast plus 1 sec), Ice Lance instead. The build stops at Fingers of Frost, so no Ice Barrier, and
-# the wand only when out of mana.
-gen mage_frost level60_frost "iceLance=1,missileBarrage=1,fireBlastMana=0,evocationMana=20,evocationMinTime=90,blastBuff=2,blastRefresh=9,arcaneWrath=0,finisher=1,finishPad=1,iceBarrier=0,wand=1"
+# for a Frostbolt before every Ice Lance (iceLance 3 or 4) lost 11 to 23 at 180 sec before the
+# cooldown. When a Frostbolt would not land before the end (its cast plus 1 sec), Ice Lance
+# instead. The build stops at Fingers of Frost, so no Ice Barrier, and the wand only when out of
+# mana.
+gen mage_frost level60_frost "iceLance=1,missileBarrage=1,fireBlastMana=0,evocationMana=0,evocationMinTime=90,blastBuff=3,blastRefresh=9,arcaneWrath=0,finisher=1,finishPad=1,iceBarrier=0,wand=1"
 # Scorch to 5 Fire Vulnerability stacks and again with under 7 sec left on it, Pyroblast at 3
 # Heating Up stacks, Ice Lance on the last Fingers of Frost charge (ahead of Scorch and Pyroblast;
 # the first charge goes on a Frostfire Bolt, which the charge makes a Shatter crit), Frostfire Bolt.

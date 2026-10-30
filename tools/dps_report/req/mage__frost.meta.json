@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 89,
   "race": "SkyborneHighOrder",
-  "talents": "055220200310000153--0535000301003002",
+  "talents": "05020520310011053-1-0535000301003002",
   "treeNames": [
     "Arcane",
     "Fire",
@@ -19,19 +19,19 @@
     "source": "DPS report 2026-10-28 (full re-sim at 20,000 iterations, 180 s, after the launch-realm hunter hotfix)"
   },
   "verify": {
-    "dps": 946.6,
-    "stderr": 0.37,
+    "dps": 908.3,
+    "stderr": 0.32,
     "iters": 20000,
     "ok": true,
-    "note": "sim of the regenerated request, 180s, seed 1 (seed 1000003 within 1.1)"
+    "note": "sim of the request after client 1.60.1.70707's talent rework (new talents, new rotation knobs), 180s, seed 1 (seed 1000003 908.0)"
   },
-  "summary": "Frostbolt build with Fingers of Frost and Shatter. Its 29 Arcane points take Arcane Mind, Arcane Instability and Arcane Blast for spell damage.",
+  "summary": "Frostbolt build with Fingers of Frost and Shatter. Its 28 Arcane points take Arcane Mind, Arcane Instability and Arcane Blast for spell damage.",
   "keyTalents": [
     "Arcane Mind",
     "Arcane Instability",
     "Arcane Blast",
     "Missile Barrage",
-    "Presence of Mind",
+    "Arcane Concentration",
     "Improved Frostbolt",
     "Ice Shards",
     "Shatter",
@@ -40,9 +40,8 @@
   "rotation": [
     "Pre-pull: Frostbolt at -2.5s",
     "Cooldowns (Demonic Rune, racial) on a free GCD",
-    "Evocation below 20% mana with more than 90s left (almost never fires)",
-    "Ice Lance on every Fingers of Frost charge. The boss counts as Frozen, so it does 3 times the damage and gets Shatter's crit.",
-    "Arcane Blast to 2 stacks every 15s for 30% of Intellect as spell damage",
+    "Ice Lance on a Fingers of Frost charge when its 8s cooldown is up. The boss counts as Frozen, so it does 3 times the damage and gets Shatter's crit.",
+    "Arcane Blast to 3 stacks every 15s for 45% of Intellect as spell damage",
     "Arcane Missiles on a Missile Barrage proc",
     "Ice Lance instead when a Frostbolt would not land before the end (its cast plus 1s)",
     "Frostbolt as filler (2.5s cast)",
@@ -71,5 +70,5 @@
     "Assumed: raid bosses can't be frozen. When Fingers of Frost charges apply is unknown.",
     "No Ahn'Qiraj book ranks, so Fireball stops at rank XI, Frostbolt at X and Arcane Missiles at VII. The books would add 50 DPS to Frost, 30 to Arcane, 17 to Fire and 0 to Frostfire."
   ],
-  "notes": "Request written by mksettings -spec mage_frost unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). It carries the spec's staff imbue scroll (Scroll of Imbue Greater Frost) as a mage option, as the preset does. Its rotation casts Ice Lance on every Fingers of Frost charge."
+  "notes": "Request written by mksettings -spec mage_frost unchanged (shared level 60 raid with Mana Spring Totem and Blessing of Wisdom in place of Might; Mage Armor; Engineering/Tailoring). It carries the spec's staff imbue scroll (Scroll of Imbue Greater Frost) as a mage option, as the preset does. Its rotation casts Ice Lance on a Fingers of Frost charge whenever the cooldown allows."
 }

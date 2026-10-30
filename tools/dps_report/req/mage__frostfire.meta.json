@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 98,
   "race": "Human",
-  "talents": "-0155003013012503-0235000311203002",
+  "talents": "-2550030103013303-0235000311203002",
   "treeNames": [
     "Arcane",
     "Fire",
@@ -19,15 +19,15 @@
     "source": "DPS report 2026-10-28 (full re-sim at 20,000 iterations, 180 s, after the launch-realm hunter hotfix)"
   },
   "verify": {
-    "dps": 1096.4,
-    "stderr": 0.59,
+    "dps": 1051.0,
+    "stderr": 0.6,
     "iters": 20000,
     "ok": true,
-    "note": "sim of the regenerated request, 180s, seed 1 (seed 1000003 within 1.1)"
+    "note": "sim of the request after client 1.60.1.70707's talent rework (new talents), 180s, seed 1 (seed 1000003 within 0.1)"
   },
   "summary": "Fire and Frost hybrid built on Frostfire Bolt, which gets both trees' talents.",
   "keyTalents": [
-    "Improved Fireball",
+    "Accelerant",
     "Ignite",
     "Burning Soul",
     "Improved Scorch",
