@@ -421,6 +421,15 @@ spell text in them (tooltip templates filled in, cost lines, icons) comes from o
   to `orchestration/audit/ref/client_update/sources/`.
 - `forever-wiki/references.md` lists the reference sites we looked at.
 
+## Scripts that talk to the network but fetch no data
+
+The registry check names every script that makes a web request, so these are listed too,
+though nothing they do is an input.
+
+- `tools/dps_report/deploy_pages.py` publishes `dist/dps_report.html` to Cloudflare Pages
+  (https://forever-dps.pages.dev), through the Cloudflare API, and then fetches the live
+  site back to compare it with what it uploaded. `make dps-report-deploy` runs it.
+
 ## gen_db's modes
 
 `go run ./tools/database/gen_db -outDir=assets -gen=<mode>`:
