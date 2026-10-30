@@ -908,6 +908,11 @@ message CompEncounter {
 	double boss_health = 5;
 	MobType mob_type = 6;
 	bool natural_flask_zone = 7;
+	// Sensitivity scenarios (docs/raid_sim.md, Sensitivity): raid damage hits a minute in place of the
+	// report's 2 (set_raid_damage on), and no flask for anyone.
+	bool set_raid_damage = 8;
+	double raid_damage_hits_per_minute = 9;
+	bool no_flask = 10;
 }
 
 message CompSearchRequest {

@@ -214,7 +214,7 @@ const requestTable = (req: CompSearchRequest) => {
 				? [
 						a.campChairSpellCritOnly ? 'the Camp Chair loses only its spell crit to Moonkin Aura' : '',
 						a.campBuffsStackWithGroupBuffs ? 'camp buffs stack with group buffs' : '',
-						a.journeymanCamp ? 'one Journeyman camp' : '',
+						a.journeymanCamp ? 'one Journeyman camp (asked for, not built yet)' : '',
 				  ]
 						.filter(s => s)
 						.join('; ') || 'none'

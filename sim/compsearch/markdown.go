@@ -134,7 +134,11 @@ func Markdown(res *proto.CompSearchResult) string {
 				b.WriteString(" It changes under:\n\n")
 				for _, s := range sc.Sensitivity {
 					if !s.WinnerHolds && len(s.Winners) > 0 {
-						fmt.Fprintf(&b, "- %s: %s, ahead by %.1f\n", s.Scenario, s.Winners[0].BuffSet, s.Winners[0].Gap)
+						if s.Winners[0].Gap != 0 {
+							fmt.Fprintf(&b, "- %s: %s, ahead by %.1f\n", s.Scenario, s.Winners[0].BuffSet, s.Winners[0].Gap)
+						} else {
+							fmt.Fprintf(&b, "- %s (%s): %s wins, at %.1f\n", s.Scenario, s.Note, s.Winners[0].BuffSet, s.Winners[0].Dps)
+						}
 					}
 				}
 			} else {

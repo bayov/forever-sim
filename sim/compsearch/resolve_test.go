@@ -314,3 +314,32 @@ func TestCompValues(t *testing.T) {
 		}
 	}
 }
+
+// Check 7's "nobody provides it": a lone mage gets no buff or debuff anyone else would give.
+func TestResolveNobodyProvides(t *testing.T) {
+	p := loadTestPool(t)
+	res := Resolve(&proto.RaidComp{Size: 5, Slots: []*proto.CompSlot{slotOf(1, 0, 0, p, "mage__fire")}})
+	if res.Error != nil {
+		t.Fatal(res.Error.Message)
+	}
+	rb, db := res.Request.Raid.Parties[0].Players[0].RaidBuffs, res.Request.Raid.Debuffs
+	if rb.BattleShout != 0 || rb.FuriousHowl || rb.MoonkinAura || rb.LeaderOfThePack || rb.TrueshotAura || rb.DivineSpirit ||
+		rb.GiftOfTheWild != 0 || rb.StrengthOfEarthTotem != 0 || rb.GraceOfAirTotem != 0 || rb.TotemWeaponBuff != 0 || rb.ManaSpringTotem != 0 {
+		t.Errorf("buffs nobody gives: %v", rb)
+	}
+	if db.JudgementOfWisdom || db.JudgementOfTheCrusader != 0 || db.CurseOfElements || db.FaerieFire || db.SunderRamp != nil || db.SunderArmor {
+		t.Errorf("debuffs nobody gives: %v", db)
+	}
+	if b := res.Request.Raid.Parties[0].Players[0].Buffs; b.BlessingOfKings || b.BlessingOfMight != 0 || b.BlessingOfWisdom != 0 || b.PowerInfusions != 0 {
+		t.Errorf("blessings or cooldowns nobody gives: %v", b)
+	}
+	// Its own Arcane Brilliance is given back to it, since the hooks are skipped.
+	if !rb.ArcaneBrilliance {
+		t.Errorf("the mage's own Arcane Brilliance")
+	}
+	for _, want := range []string{"Judgement of Wisdom", "Curse of the Elements", "Battle Shout", "Sunder upkeep"} {
+		if !slices.ContainsFunc(res.Misses, func(s string) bool { return strings.Contains(s, want) }) {
+			t.Errorf("the misses should name %s: %v", want, res.Misses)
+		}
+	}
+}

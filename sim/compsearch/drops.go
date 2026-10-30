@@ -40,7 +40,8 @@ type dropVariant struct {
 }
 
 func dropVariants(seed int64) []dropVariant {
-	return []dropVariant{{proto.Faction_Horde, 0, seed}, {proto.Faction_Horde, 0, seed + 4}, {proto.Faction_Alliance, 0, seed},
+	// Iteration i of a run uses seed + i, so a second sample needs a seed past the first run's iterations.
+	return []dropVariant{{proto.Faction_Horde, 0, seed}, {proto.Faction_Horde, 0, seed + 100_000}, {proto.Faction_Alliance, 0, seed},
 		{proto.Faction_Horde, 120, seed}, {proto.Faction_Horde, 300, seed}, {proto.Faction_Horde, 420, seed}}
 }
 

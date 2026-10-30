@@ -219,9 +219,10 @@ Mana Tide from the Restoration shaman, plain Mana Spring from the Warden.
 - **Fixed in M1b:** under Forever every form casts Faerie Fire 9907, free in Cat and Bear Form, on a
   1.5 s GCD with no cooldown (`sim/druid/faerie_fire.go`). The Feral duty build's cost went from 4.5 to
   8.3 at 180 s (10.2 at 120 s, 4.3 at 300 s).
-- **The UI's talent strings for the Holy paladin and both Restoration druid presets are invalid in
-  Forever.** The table has valid ones: the paladin's 3 points in Consecrated Ground moved to Unyielding
-  Faith and Purifying Power, and the druid's build was rebuilt on the Thicc Resto layout.
+- **The UI's Holy paladin and Restoration druid presets were invalid in Forever**, and now have the
+  table's strings (2026-10-30): the paladin's 3 points in Consecrated Ground moved to Unyielding Faith and
+  Purifying Power, the druid's build was rebuilt on the Thicc Resto layout, and its second preset, built
+  on Celestial Focus (gone from Forever), is now Furor Resto.
 - **Small realism nits** that don't change what the presets give: the Holy paladin takes Improved Righteous
   Fury, the paladins skip Pursuit of Justice, the Feral tank skips Feral Charge and Shredding Attacks, and a
   few points are filler (the warrior's Iron Will, the Protection paladin's Holy point, the druid's Moonglow,
@@ -333,7 +334,7 @@ is no given form yet:
 | Prayer of Spirit (Divine Spirit is one target) | any priest | raid | doesn't stack | | 60 min; mana | `divine_spirit` |
 | Mana Spring Totem | any shaman, water; ×1.25 with Restorative Totems | party, 30 yd | open (shaman_audit 8.45) | the shaman's other water totems, Mana Tide included | 5 min | `mana_spring_totem` |
 | Mana Tide Totem | Restoration shaman; the "+ Mana Tide" builds | party | unverified | the shaman's own Mana Spring (settled: the same water slot). Dropping Mana Tide destroys it, and it must be dropped again. Another shaman's Mana Spring stays. | 12 s by the tooltip, 13 s in the sim; 5 min cooldown, at min(fight/2, 60 s) today | `PartyBuffs.mana_tide_totems` (it paid a party of 5 five times before B) |
-| Dark Inspiration (+15% Spirit) | Shadow talent, row 4 (16 points; 20 for 15%) | party | unverified | | 10 s, from the priest's Mind Blast or a fully channeled Mind Flay; only a Shadow priest has it | no field; the priest's own aura only |
+| Dark Inspiration (+15% Spirit) | Shadow talent, row 4 (16 points; 20 for 15%) | party | unverified | | 10 s, from the priest's Mind Blast or a fully channeled Mind Flay; only a Shadow priest has it | `PartyBuffs.dark_inspiration` (M1b; a given form at 99.9% uptime), not yet a package in the search |
 | Power Infusion (+20% magic damage) | Discipline, 31 points | one target | unverified | Arcane Power on the target (an Era server rule, unverified) | 15 s, 3 min cooldown, off the GCD; fires as soon as ready | `IndividualBuffs.power_infusions` |
 | Innervate | any druid | one target | unverified | | 20 s, 6 min cooldown; below a mana threshold | `IndividualBuffs.innervates` |
 | Retribution Aura, Thorns | paladin, druid | the tank's party, the tank | | | only when the boss hits a member: ignored until tanks are simmed | |
@@ -355,7 +356,7 @@ The debuffs:
 |---|---|---|---|---|---|
 | Sunder Armor (450 a stack) | any warrior | stacks to 5 from any warrior | Expose Armor (standard 18) | 30 s, a GCD each | `sunder_armor`, full from the pull until the ramp (M1) |
 | Faerie Fire (505 armor) | any druid, in caster, Moonkin, Cat, Bear or Dire Bear Form | one per target, from any druid (settled, dev notes) | the minor armor slot | 40 s; 115 mana in caster or Moonkin Form, free in Cat and Bear; 1.5 s GCD, no cooldown | `faerie_fire` |
-| Dust Cloud (505 armor) | hunter with a Tallstrider | one | the minor armor slot | the pet's, 30 s | no field |
+| Dust Cloud (505 armor) | hunter with a Tallstrider | one | the minor armor slot | the pet's, 30 s | `Debuffs.dust_cloud` (M1b) |
 | Curse of Recklessness | warlock | doesn't stack (70425) | the minor armor slot; the warlock's other curse | 2 min | `curse_of_recklessness` |
 | Curse of the Elements (+10%, all magic schools) | warlock | doesn't stack | the warlock's other curse, not its bane | 5 min | `curse_of_elements` |
 | Judgement of the Crusader (+161 Holy) | paladin | one (client-consistent, server-side) | the paladin's other judgement | 40 s; about 2 GCDs to seal and re-seal | `judgement_of_the_crusader` |
@@ -445,7 +446,7 @@ stacks with its player counterpart (the user, 2026-10-29).
 - **A wolf's Furious Howl** shares Battle Shout's slot (`battleShoutCategory`), so with a warrior shouting
   it adds nothing to players. But it has no players-only flag, and pets never get Battle Shout. If it
   reaches other pets, a wolf gives 83 attack power to every hunter pet and demon nearby even with a warrior
-  shouting. The cast one reaches only the wolf and the players in its party until M1b.
+  shouting. The cast one reaches the raid's players (M1b), not other pets.
 
 The launch checks are in notes.md (Need to Verify, At 60): what stacks, and whether the pets' buffs reach
 other parties and other pets.
@@ -580,7 +581,12 @@ There are three kinds:
   who.
 
 **Automatic assignment** is for raids built by hand, and for re-resolving a comp when a member is taken
-out. Jobs go one at a time, the biggest gain first. A job goes to a placeholder first, since that costs no
+out. **Not built yet as planned below:** the resolver gives each duty no placeholder covers to the first DPS
+member with that duty's build, in a fixed order (Sunder, Battle Shout, Faerie Fire, Curse of the Elements,
+the Crusader), blessings by what each class's members want, a placeholder's air totem by the raid's melee
+share, and Power Infusion and Innervate to the first casters and mana users. A placeholder's own effects
+(its Faerie Fire, Battle Shout, Sunder) can't be switched off. The search's fill is where assignments are
+chosen by raid DPS. The plan: jobs go one at a time, the biggest gain first. A job goes to a placeholder first, since that costs no
 DPS. When no placeholder can, it goes to the eligible DPS member whose raid DPS drops least, by their
 single-player sims under the set at the raid's length, then to the lower slot. But a DPS member takes it
 only when the job's gain to the raid is more than that cost. Otherwise it stays uncovered, and the result
@@ -649,7 +655,7 @@ Spring, Mana Tide and Dark Inspiration depend on groups, and each member's gain 
 5. The rest fill on their DPS without a package.
 
 With one package giver per party, this is exact, since each member's gain is its own and the seats of a
-party are interchangeable. Until Dark Inspiration has a given form (M1b), it isn't a package.
+party are interchangeable. Dark Inspiration has a given form since M1b but isn't a package yet.
 
 ## The fight
 
@@ -697,8 +703,9 @@ party are interchangeable. Until Dark Inspiration has a given form (M1b), it isn
 **The search's DPS pool is the presets marked for raid sims, for now the DPS Report's builds** (the user,
 2026-10-29).
 
-For a generic boss that's 37 builds: the report's 58 requests, less 12 duty variants and 9 encounter
-variants. The 6 hunter pet variants (3 builds × Tallstrider and wolf) will make it 43.
+For a generic boss that's 43 builds: the report's 77 requests are 37 base builds, 25 duty variants, 9
+encounter variants and 6 hunter pet variants (3 builds × Tallstrider and wolf), and the pet variants are
+builds of their own.
 
 - **The duty variants** are the base build holding an assignment, not entries of their own (`duty` and
   `baseBuild` in the variant's `meta.json`).
@@ -709,8 +716,8 @@ variants. The 6 hunter pet variants (3 builds × Tallstrider and wolf) will make
 - **Each faction** needs each build's request at its best race in that faction, and 31 of the 58 requests
   have none for the other faction. The report makes race variants with `tools/dps_report/race_override.py`,
   which swaps in a race's own rotation and bonus stats from `req/races/`, with its own rules for the duty
-  and encounter variants. M1 runs it to write the missing requests into `req/races/`, so the search only
-  reads files.
+  and encounter variants. The search's `Pool.Player` applies the same `req/races/` overrides the same
+  way; a race with no file sims the preset's own rotation and gear.
 - **New requests** (the pet variants, the missing duty builds) go into `tools/dps_report/req/`, and the
   report publishes them like any other build (the user, 2026-10-29).
 
@@ -871,19 +878,22 @@ For each signature:
      aren't additive.
    - It's recomputed for each scenario (faction, camps, length, boss). M0's count on the report's
      ablations kept 6 of the 37 builds (`docs/raid_sim_m0.md`). The search's own role sims keep more,
-     since they price every role at its real cost: 9 of 37 for 10 and 20 players, Horde, camps off (Beast
+     since they price every role at its real cost: 9 of the 37 base builds for 10 and 20 players, Horde,
+     camps off, before the pet variants joined (11 of 43 with them) (Beast
      Mastery, Lone Wolf, Marksmanship, fire, frostfire, sub Holy Ret, Shadow, Demonology, fire
      Destruction).
    - The best shaman of each package kind fills too, for its party's mana.
    - A provider's duty variants are providers only, never fillers.
 2. **Rank every buff set with a model.** The model is each build's DPS under the full set, less what each
    missing role costs it. Those costs come from the search's own single-player sims: one per build with
-   each role removed from the full set, at the run's length, race and camp setting (about 20 roles × 43
+   each role removed from the full set, at the run's length, race and camp setting (29 sims for each of
+   68 builds, the 43 and the 25 duty variants, plus 64 mana mixes for each of 51 mana users: about 5,200;
    builds). The report's one-buff-at-a-time runs can't serve. They run 300 iterations at 180 seconds with
    no camps, and they skip the buffs a request never had (no Moonkin Aura on Feral, no totems on the
    warlocks). On top of the costs:
    - **The roles multiply:** each missing role leaves its fraction of the full-set DPS.
-   - **Two pairs are simmed together**, since they don't multiply: Sunder upkeep with the minor armor slot
+   - **Three pairs are simmed together**, since they don't multiply: Battle Shout with Furious Howl (one
+     slot), Sunder upkeep with the minor armor slot
      (armor: without a warrior tank, Faerie Fire is worth 36 to Beast Mastery, against 64.4 with Sunder
      up), and Grace of Air with Windfury Totem.
    - **The mana sources are simmed as a mix.** A caster loses little from any one while the others
@@ -918,28 +928,27 @@ For each signature:
      Spirit, a druid's Gift of the Wild, a Balance druid's Moonkin Aura, a shaman's totems) may only fill a
      slot when the set already has what it gives. So the comp stays the set it was scored under.
    - The provider members are the cheapest cover of the roles the placeholders don't give, found exactly
-     over every provider build and duty variant (a small search over the roles left to cover). Shaman
+     over the 4 strongest givers of each role by full-set DPS (3 per role, the model's cheapest, in an exact
+     fill), a small search over the roles left to cover. Shaman
      fillers are tried at every count from 0 to the number of parties, each bringing its party's
      package. A class's blessings are solved by turns, each class taking the ones its members gain most
      from, until none changes.
    - The Sunder ramp's stack count follows the number of DPS warriors. So the fill is scored twice: under
-     the warrior count the set assumed, and under the count the fill came out with, each re-filled under
-     its own count. The better one stands.
+     zero warriors first, and under the count that fill came out with, each re-filled under its own count.
+     The better one stands.
    - The score is the sum of the members' DPS. Its standard error comes from their sims, and k copies of
      one build share one sim, so they carry k times its error, not √k times.
-5. **Polish with local moves** from the best exact sets:
-   - add, remove or swap one provider member
-   - change one placeholder's choice: an air or fire totem, or a judgement
-
-   A swap re-resolves the duties, so one move can turn Balance on Faerie Fire into a Feral cat on Faerie
-   Fire. A move is kept only when it raises the score by more than 2 standard errors of the difference,
+5. **Polish with local moves** from the best exact sets of the 3 leading signatures: each move toggles one
+   role the DPS members bring, one paladin more or fewer, or one placeholder's choice (the air totem, the
+   judgement), and the fill picks the members again, so one move can turn Balance on Faerie Fire into a
+   Feral cat on Faerie Fire. A move is kept only when it raises the score by more than 2 standard errors of the difference,
    until none does.
 6. **Confirm with raid sims** (see [Confirmation](#confirmation)).
 
 **Iterations.** The single-player sims screen at 1,000 iterations with `SimOptions.use_labeled_rands`,
 which pairs a build's sims under two sets more closely (0.55 against 0.22 in the Appendix's raid
-measurement). The builds of the sets still in contention after step 5 are re-simmed at 10,000. M1 checks
-that the labeled streams still pair the fight durations.
+measurement). The builds of the sets still in contention after step 5 are re-simmed at 10,000. Whether the
+labeled streams still pair the fight durations hasn't been checked.
 
 ### Fight length
 
@@ -990,7 +999,8 @@ The raid sim catches what the single-player sims can't:
   published as a tie. Before the confirmation (M1), the same rule runs on the scores and the standard error
   of their difference.
 - The comp shown is the one with the fewest distinct builds, then the fewest DPS members on duty.
-- Fillers within 2 standard errors of their summed difference are listed as interchangeable. Fire and
+- Fillers within 2 standard errors of the best filler (one build against another) are listed as
+  interchangeable. Fire and
   frostfire are 0.6 DPS apart, with standard errors of 1.86 and 2.57 at 1,000 iterations, so picking
   between them would be a coin flip.
 
@@ -1040,7 +1050,7 @@ The exact sims are what cost. They're keyed by the buff set a build sees, so the
 nothing is shared between the factions, the camp settings, the lengths or the bosses. One run of one
 faction and camp setting, roughly:
 
-- the role sims for the model: about 20 roles × 43 builds
+- the role sims for the model: about 5,200 a scenario (see [The search](#the-search), step 2)
 - a few hundred distinct sets × the surviving builds × each package, plus the providers' duty variants, the
   blessing alternatives, and the Power Infusion and Innervate targets
 - the local moves, the role table's removals and the member values' neighbours
@@ -1111,12 +1121,14 @@ the same items. It leads with what could change the answer:
 3. **The tank and healer combos ranked**, and each preset's DPS value (see
    [Tank and healer combos](#tank-and-healer-combos)).
 4. **The role table:** each role's gain, its provider's cost and the net.
-   - Each role's gain is measured at the winning set, with that role alone removed, then re-filled and
-     re-resolved. A role the winning set lacks gets its value of adding instead (see
+   - Each role a DPS member brings is measured at the winning set, with that role alone removed, then
+     re-filled and re-resolved. A role the winning set lacks gets its value of adding instead (see
      [Member value](#member-value)).
-   - Pairs that interact strongly are shown together: Grace of Air with Trueshot Aura, Grace of Air with
-     Moonkin Aura, and the mana sources. Trueshot Aura, for example, is worth 10.8 a hunter with Grace of
-     Air up. Under Windfury alone no hunter is in the fill, so it's worth 0.
+   - A shaman placeholder's air totem is valued against the other one, re-filled. Other roles the
+     placeholders give are listed without a value: they cost nothing and can't be removed.
+   - Not built yet: pairs that interact shown together (Grace of Air with Trueshot Aura or Moonkin Aura,
+     the mana sources). Trueshot Aura, for example, is worth 10.8 a hunter with Grace of Air up, and under
+     Windfury alone no hunter is in the fill, so it's worth 0.
 5. **Each buff and debuff** with its provider, scope and receivers, from the resolver's record, and the
    members who miss a buff the raid could have given them. Uptimes come from the raid sims, so only
    confirmed comps have them.
@@ -1150,8 +1162,13 @@ So the result says whether the winner holds under each of these:
 | Camp buffs stacking with the group versions of their class buffs | the tooltips name only the single-target spells | a re-run with camps on |
 | Camps on with one Journeyman camp: the 5 features worth most to the winning comp | all 9 needs three Basic camps (the unverified second-camp rule) or an Expert camp, whose Blueprint has no known source | a re-run with camps on |
 
-When the winner changes under a scenario, the result says so and shows the comps that win as a tie set, not
-one answer.
+When the winner changes under a scenario, the result says so and shows the comp that wins.
+
+**Built** (2026-10-30): the assumption combos (every search, no sims), and `-matrix` (the command line;
+`RunMatrix`), which re-runs the search under 120 and 300 s, the other boss, raid damage at 0 and 10 a
+minute, no flask, and, with camps on, the Camp Chair keeping its physical crit and camp buffs stacking
+with the group versions. Not built: the pet uptime, the unverified stacking rules and the Journeyman camp
+(the engine can't express them yet; `RaidAssumptions.journeyman_camp` is read nowhere).
 
 ## Member value
 
@@ -1169,13 +1186,15 @@ them.
 - **Replacement margin:** raid DPS minus the best raid DPS with another build in that slot. The neighbours
   are evaluated on demand from the cache, not taken from whichever sets the search happened to visit. At
   the best comp it should be zero or more, within noise. A margin below that means the search missed a
-  better comp: the result says so, and the search goes on from it. A margin within noise means two builds
+  better comp: the result's notes say so (the search doesn't yet go on from it). A margin within noise
+  means two builds
   are interchangeable.
 - **Value of adding** a spec that isn't in the comp: the best raid DPS from swapping it in for any member,
   minus raid DPS.
 - **Assignment cost:** the holder's base DPS minus their DPS with the assignment, under the same set.
 - **Difference from the DPS Report:** the member's raid DPS minus their report build's published DPS,
-  broken down by single-player sims, one change at a time: the race, the buff set, the length, the duty. A
+  broken down by single-player sims, one change at a time: the report's request in this sim, the race, the
+  buff set, then the duty, pet or encounter variant (the length is in the buff set step). A
   member whose setup isn't a report build's shows none.
 
 A search returns all of them with its result. For a raid built by hand, a button runs the sims the cache
@@ -1469,8 +1488,7 @@ scores (see [Confirmation](#confirmation)).
 - **The pool** from `tools/dps_report/req`, with the missing best-race requests for each faction made by
   `race_override.py` (see [The build pool](#the-build-pool)).
 - **The preset table:** each tank and healer preset's spec, talent string and what it gives, from
-  [Tank and healer presets](#tank-and-healer-presets). The UI's Holy paladin and Restoration druid strings
-  are invalid, so the table's strings are used until the TASKS.md item fixes them.
+  [Tank and healer presets](#tank-and-healer-presets), in `sim/compsearch/presets.go`.
 - **The protos:** `CompSearchRequest` and `CompSearchResult` (see [The result](#the-result)), and the comp
   proto, at the end of `api.proto`. A file of their own can't be imported from `api.proto`, since they
   use its `Player` and `SimOptions` and `ProgressMetrics` carries the search's result; and the makefile
@@ -1577,7 +1595,7 @@ below) and one Go call, `RunComp`, which resolves a comp into a `RaidSimRequest`
   `/resolveComp` on the native server. Automatic assignments give a job to a placeholder first, then to the
   first DPS member with that duty's build; the gain-over-cost check needs the member value sims, so a
   hand-built raid shows each assignment's cost instead.
-- **Checks:** 1 (`TestReportRaid`: a 10-member raid and a 12-member physical raid within 4σ of each
+- **Checks:** 1 (`TestReportRaid`: a 10-member, a 20-member (with an Enhancement shaman) and a 12-member physical raid within 4σ of each
   member's single-player sim), 4 (the engine tests above), 7 (`TestResolve`), 8 (`TestRaidMetricsAddUp`),
   the round trip and `TestRunCompMatchesHandBuilt` pass.
 - **The confirmation** (`-confirm`) raid-sims every distinct set near the top, at least 2. On a 10-player
@@ -1602,8 +1620,8 @@ RaidCompResolution { RaidSimRequest request; repeated slot_of_player; repeated C
                      repeated string misses; repeated Assignment assignments; ErrorOutcome error; }
 ```
 
-- **A duty is a different `Player`, not a setting.** All 12 duty variants differ from their base in the
-  rotation, the two Crusader paladins in their gear too, and the Feral one in its consumes. So a member
+- **A duty is a different `Player`, not a setting.** The duty variants differ from their base in the
+  rotation, some Crusader paladins in their gear too, and the Feral one in its consumes. So a member
   carries its duty players, and the resolver picks one by its assignments. Moving a duty to another member
   picks that member's.
 - **Slot ids are stable**, so dragging a member to another group keeps its assignments.
@@ -1822,8 +1840,9 @@ neither Blood Pact nor the double Atiesh moves a report number. 56 carry a given
 
 **Known and harmless:**
 
-- `spell_result.go:110,117,197` indexes attack tables by `target.Index`, which for a friendly target is the
-  raid index. It makes no DPS difference, and fixing it could move single-player numbers.
+- Fixed since (fc03f362c): `spell_result.go` indexed attack tables by `target.Index`, the raid index for a
+  friendly target, which panicked on self-damage in a raid with gaps. It reads them by unit index now, and
+  no single-player number moved.
 - Vampiric Embrace's aura is keyed by target, not caster. It's healing only.
 
 ### Speed

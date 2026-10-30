@@ -169,6 +169,7 @@ func indexOfPreset(c []*Preset, p *Preset) int {
 }
 
 type extrasOut struct {
+	notes   []string
 	roles   []*proto.CompRoleValue
 	fillers []*proto.CompFillerRank
 	members []*proto.CompMemberValue
@@ -220,6 +221,25 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 			rv.Provider = "value of adding"
 		}
 		out.roles = append(out.roles, rv)
+	}
+	// A shaman placeholder's air totem: the other one, re-filled.
+	for i, t := range best.Plan.PHAir {
+		if i >= 2 {
+			break
+		}
+		q := best.Plan
+		q.PHAir = append([]proto.RaidTotem{}, best.Plan.PHAir...)
+		q.PHAir[i] = otherAir(t)
+		q.Up = r.phUp(q)&^GiftBlessing | (best.Plan.Up &^ r.phUp(best.Plan))
+		if q.Paladins > 0 {
+			q.Up |= GiftBlessing
+		}
+		if c, err := sc.EvalExact(r, q, f, ev); err != nil {
+			return nil, err
+		} else if c != nil {
+			out.roles = append(out.roles, &proto.CompRoleValue{Role: fmt.Sprintf("a shaman placeholder's %s over %s", totemName(t), totemName(otherAir(t))),
+				InSet: true, Net: best.Score - c.Score, Provider: "placeholders"})
+		}
 	}
 	// A paladin's blessings.
 	if best.Plan.Paladins > min(3, r.phPaladins) {
@@ -279,6 +299,11 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 		mv, err := sc.memberValue(best, i, f, ev, cands)
 		if err != nil {
 			return nil, err
+		}
+		// A replacement that beats the member beyond noise is a better comp the search missed.
+		if mv.BestReplacement != "" && mv.ReplacementMargin < -2*best.SE {
+			out.notes = append(out.notes, fmt.Sprintf("the search missed a better comp: %s in place of %s scores %.1f higher (beyond noise)",
+				mv.BestReplacement, m.B.ID, -mv.ReplacementMargin))
 		}
 		out.members = append(out.members, mv)
 	}
@@ -594,6 +619,16 @@ func buffRecords(c *Comp) []*proto.CompBuffRecord {
 		}
 	}
 	return out
+}
+
+func totemName(t proto.RaidTotem) string {
+	switch t {
+	case proto.RaidTotem_RaidTotemGraceOfAir:
+		return "Grace of Air"
+	case proto.RaidTotem_RaidTotemWindfury:
+		return "Windfury Totem"
+	}
+	return t.String()
 }
 
 func packageName(p proto.RaidPackage) string {

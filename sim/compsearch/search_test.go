@@ -2,6 +2,8 @@ package compsearch
 
 import (
 	"math"
+	"os"
+	"strings"
 	"testing"
 
 	"github.com/wowsims/classic/sim/core/proto"
@@ -183,7 +185,7 @@ func TestDropsAreUnread(t *testing.T) {
 			if len(drops) == 0 {
 				continue
 			}
-			ok, err := unread(p, b, camps, drops, 30, 3)
+			ok, err := unread(p, b, camps, drops, 30, 50_000)
 			if err != nil {
 				t.Fatal(err)
 			}
@@ -386,5 +388,53 @@ func TestConfirmMatchesScore(t *testing.T) {
 	}
 	if n == 0 {
 		t.Errorf("nothing was confirmed")
+	}
+}
+
+// A code or item database change is a new binary, so a new version: its keys and its cache directory are
+// new, and the old version's directory goes.
+func TestCacheVersion(t *testing.T) {
+	p := subPool(t, "warrior__fury")
+	dir := t.TempDir()
+	a, err := newSimmerAt(p, dir, strings.Repeat("a", 64))
+	if err != nil {
+		t.Fatal(err)
+	}
+	job := func() *Job {
+		return &Job{Build: p.Builds["warrior__fury"], Faction: proto.Faction_Horde, Fight: Fight{Duration: 60}, Iterations: 10, Seed: 1}
+	}
+	ka, _ := a.key(job())
+	b, err := newSimmerAt(p, dir, strings.Repeat("b", 64))
+	if err != nil {
+		t.Fatal(err)
+	}
+	kb, _ := b.key(job())
+	if ka == kb || a.Dir == b.Dir {
+		t.Errorf("two versions share a key or a directory")
+	}
+	if _, err := os.Stat(a.Dir); !os.IsNotExist(err) {
+		t.Errorf("the old version's directory should be pruned")
+	}
+}
+
+// The sensitivity matrix re-runs the search and says, for each scenario, whether the winner holds.
+func TestMatrix(t *testing.T) {
+	if testing.Short() {
+		t.Skip("about a minute")
+	}
+	p := subPool(t, "mage__fire", "warrior__fury", "hunter__beast-mastery")
+	sim, _ := NewSimmer(p, "")
+	req := &proto.CompSearchRequest{Size: 5, Tanks: 1, Healers: 0, FixedTanks: []proto.RaidPreset{proto.RaidPreset_RaidPresetProtectionWarrior},
+		Factions: []proto.Faction{proto.Faction_Horde}, CampBuffs: []bool{true}, Iterations: 30, ContenderIterations: 30, Seed: 3,
+		SkipSensitivity: true, Encounter: &proto.CompEncounter{Duration: 90, NaturalFlaskZone: true}}
+	res, err := Search(p, sim, req, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if err := RunMatrix(p, sim, req, res, nil); err != nil {
+		t.Fatal(err)
+	}
+	if got, want := len(res.Scenarios[0].Sensitivity), len(Matrix(req)); got != want {
+		t.Errorf("%d matrix rows, want %d", got, want)
 	}
 }

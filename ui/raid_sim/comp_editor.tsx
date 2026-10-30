@@ -1397,7 +1397,8 @@ export class CompEditor {
 
 	// A hand-built raid's member values (docs/raid_sim.md, Member value): the native server runs the
 	// single-player sims its cache lacks. A second click aborts: the page stops waiting, but the server has
-	// no abort for it and finishes the sims it started (into its cache, so a rerun is quicker).
+	// stops starting new sims when the call goes, and finishes the ones running (into its cache, so a rerun
+	// is quicker).
 	async memberValues() {
 		if (this.valuesAbort) {
 			this.valuesAbort.abort();
@@ -1426,7 +1427,7 @@ export class CompEditor {
 			const out = await this.simUI.sim.compValues(comp, abort.signal);
 			if (abort.signal.aborted) {
 				this.setStatus(
-					'Member values aborted. The native server can’t stop them, so it finishes the sims it started; they go into its cache, so asking again is quicker.',
+					'Member values aborted. The native server starts no new sims and finishes the ones running; they go into its cache, so asking again is quicker.',
 				);
 				return;
 			}

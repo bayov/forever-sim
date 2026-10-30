@@ -24,6 +24,34 @@ type Fight struct {
 	DurationVariation float64
 	MobType           proto.MobType
 	FlaskZone         bool
+	RaidHits          float64 // raid damage hits a minute, when SetRaidHits
+	SetRaidHits       bool
+	NoFlask           bool
+}
+
+// apply sets the fight on a request's encounter, and strips the flask for a no-flask scenario.
+func (f Fight) apply(req *proto.RaidSimRequest) {
+	enc := req.Encounter
+	enc.Duration = f.Duration
+	enc.DurationVariation = f.DurationVariation
+	enc.NaturalFlaskZone = f.FlaskZone
+	if f.SetRaidHits {
+		enc.RaidDamageHitsPerMinute = f.RaidHits
+	}
+	if f.MobType != proto.MobType_MobTypeUnknown {
+		for _, t := range enc.Targets {
+			t.MobType = f.MobType
+		}
+	}
+	if f.NoFlask {
+		for _, party := range req.Raid.Parties {
+			for _, p := range party.Players {
+				if p.Consumes != nil {
+					p.Consumes.Flask = proto.Flask_FlaskUnknown
+				}
+			}
+		}
+	}
 }
 
 // Value is one single-player sim's result (docs/raid_sim.md, The cache: the value).
@@ -74,6 +102,11 @@ func NewSimmer(pool *Pool, dir string) (*Simmer, error) {
 	if err != nil {
 		return nil, err
 	}
+	return newSimmerAt(pool, dir, version)
+}
+
+// newSimmerAt is NewSimmer for a given version (a test's stand-in for another binary).
+func newSimmerAt(pool *Pool, dir, version string) (*Simmer, error) {
 	if dir == "default" {
 		base, err := os.UserCacheDir()
 		if err != nil {
@@ -148,15 +181,7 @@ func (s *Simmer) Request(j *Job) (*proto.RaidSimRequest, error) {
 	}
 	req.Raid.Parties[0].Players[0] = player
 	j.Seat.Write(req, b)
-	enc := req.Encounter
-	enc.Duration = j.Fight.Duration
-	enc.DurationVariation = j.Fight.DurationVariation
-	enc.NaturalFlaskZone = j.Fight.FlaskZone
-	if j.Fight.MobType != proto.MobType_MobTypeUnknown {
-		for _, t := range enc.Targets {
-			t.MobType = j.Fight.MobType
-		}
-	}
+	j.Fight.apply(req)
 	req.SimOptions = &proto.SimOptions{Iterations: j.Iterations, RandomSeed: j.Seed, UseLabeledRands: s.Labeled}
 	normalize(req, b)
 	j.req = req

@@ -815,12 +815,21 @@ func (sc *Scenario) compOf(c *Comp, iterations int32, seed int64) (*proto.RaidCo
 	}
 	enc.DurationVariation = sc.Fight.DurationVariation
 	enc.NaturalFlaskZone = sc.Fight.FlaskZone
+	if sc.Fight.SetRaidHits {
+		enc.RaidDamageHitsPerMinute = sc.Fight.RaidHits
+	}
 	if sc.Fight.MobType != proto.MobType_MobTypeUnknown {
 		for _, t := range enc.Targets {
 			t.MobType = sc.Fight.MobType
 		}
 	}
 	rc.Encounter = enc
+	noFlask := func(p *proto.Player) *proto.Player {
+		if sc.Fight.NoFlask && p.Consumes != nil {
+			p.Consumes.Flask = proto.Flask_FlaskUnknown
+		}
+		return p
+	}
 	next := make([]int32, c.Raid.Parties)
 	id := int32(0)
 	place := func(party int) (int32, int32, error) {
@@ -878,13 +887,13 @@ func (sc *Scenario) compOf(c *Comp, iterations int32, seed int64) (*proto.RaidCo
 		if err != nil {
 			return nil, err
 		}
-		mb := &proto.CompMemberBuild{Base: base}
+		mb := &proto.CompMemberBuild{Base: noFlask(base)}
 		if m.B.Duty != proto.Duty_DutyNone {
 			dp, err := sc.Pool.Player(m.B, sc.Faction)
 			if err != nil {
 				return nil, err
 			}
-			mb.Duties = append(mb.Duties, &proto.CompDutyPlayer{Duty: m.B.Duty, Player: dp})
+			mb.Duties = append(mb.Duties, &proto.CompDutyPlayer{Duty: m.B.Duty, Player: noFlask(dp)})
 			rc.Assignments = append(rc.Assignments, &proto.Assignment{Holder: id, SetByHand: true, Job: &proto.Assignment_Duty{Duty: m.B.Duty}})
 		}
 		if m.B.Class == proto.Class_ClassPaladin {

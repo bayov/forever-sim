@@ -40,6 +40,7 @@ func main() {
 	maxCombos := flag.Int("max-combos", 0, "rank at most this many tank and healer combos (0: all)")
 	noSens := flag.Bool("no-sensitivity", false, "leave out the sensitivity scenarios")
 	confirm := flag.Bool("confirm", false, "confirm the top sets with raid sims (milestone M1b)")
+	matrix := flag.Bool("matrix", false, "re-run the search under each sensitivity scenario (lengths, bosses, raid damage, no flask, the camp rules)")
 	cache := flag.String("cache", "default", `the sim cache directory ("" for memory only)`)
 	out := flag.String("out", "", "write <out>.json and <out>.md (default: markdown to stdout)")
 	quiet := flag.Bool("quiet", false, "no progress lines")
@@ -129,6 +130,11 @@ func main() {
 	res, err := compsearch.Search(pool, simmer, req, progress)
 	if err != nil {
 		fail(err)
+	}
+	if *matrix {
+		if err := compsearch.RunMatrix(pool, simmer, req, res, progress); err != nil {
+			fail(err)
+		}
 	}
 	md := compsearch.Markdown(res)
 	if *out == "" {

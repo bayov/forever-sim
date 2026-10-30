@@ -9,10 +9,10 @@ import (
 )
 
 // The cache drops from a build's request the effects it can't read (docs/raid_sim.md, The cache), so
-// Moonkin Aura on or off is one sim for every warrior. Which effects a build can't read is a static
+// Arcane Brilliance on or off is one sim for every warrior. Which effects a build can't read is a static
 // table, drops.json, written by `compsearch -drops` from bit-identical sims with and without each
-// effect, under the full set and the empty set, camps on and off, and checked again by
-// TestDropsAreUnread.
+// effect, under the full set and the empty set, at several lengths, factions and seeds, for each camp
+// setting, and checked again by TestDropsAreUnread.
 
 // Field is one setting a seat writes.
 type Field struct {

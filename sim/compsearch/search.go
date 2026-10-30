@@ -108,7 +108,8 @@ func SearchWithAbort(pool *Pool, sim *Simmer, req *proto.CompSearchRequest, prog
 			sc := &Scenario{Pool: pool, Sim: sim, Faction: faction, Camps: camps, Iterations: req.Iterations,
 				Seed: req.Seed, Assumptions: req.Assumptions, Abort: abort,
 				Fight: Fight{Duration: req.Encounter.Duration, DurationVariation: req.Encounter.DurationVariation,
-					MobType: req.Encounter.MobType, FlaskZone: req.Encounter.NaturalFlaskZone}}
+					MobType: req.Encounter.MobType, FlaskZone: req.Encounter.NaturalFlaskZone,
+					SetRaidHits: req.Encounter.SetRaidDamage, RaidHits: req.Encounter.RaidDamageHitsPerMinute, NoFlask: req.Encounter.NoFlask}}
 			var out *proto.CompScenarioResult
 			var err error
 			if !req.Encounter.UseHealth {
@@ -777,6 +778,7 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 			}
 		}
 	}
+	out.Notes = append(out.Notes, extras.notes...)
 	out.Roles = extras.roles
 	out.Fillers = extras.fillers
 	out.MemberValues = extras.members
