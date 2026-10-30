@@ -1,0 +1,3899 @@
+{
+  "request":  {
+    "size":  10,
+    "tanks":  1,
+    "healers":  2,
+    "encounter":  {
+      "name":  "Generic",
+      "duration":  180,
+      "durationVariation":  20,
+      "naturalFlaskZone":  true
+    },
+    "factions":  [
+      "Horde",
+      "Alliance"
+    ],
+    "campBuffs":  [
+      false
+    ],
+    "iterations":  1000,
+    "contenderIterations":  10000,
+    "seed":  "101",
+    "confirm":  true,
+    "confirmIterations":  5000,
+    "confirmTopIterations":  20000,
+    "skipSensitivity":  true,
+    "requiredEffects":  [
+      "Fortitude",
+      "Gift of the Wild",
+      "Arcane Brilliance",
+      "Prayer of Spirit",
+      "Blessings"
+    ]
+  },
+  "scenarios":  [
+    {
+      "faction":  "Horde",
+      "fightSeconds":  180,
+      "comps":  [
+        {
+          "dps":  7262.022447505424,
+          "se":  2.071928753019645,
+          "gapSe":  2.930149742791157,
+          "members":  [
+            {
+              "party":  1,
+              "role":  "RaidRoleHealer",
+              "buildId":  "Restoration shaman",
+              "preset":  "RaidPresetRestorationShaman",
+              "totems":  [
+                "RaidTotemStrengthOfEarth",
+                "RaidTotemManaSpring",
+                "RaidTotemFlametongue",
+                "RaidTotemGraceOfAir"
+              ]
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1106.624887824104,
+              "se":  0.5940356900178645,
+              "tps":  813.4695075664151,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "powerInfusion":  true,
+              "package":  "RaidPackageRestoration",
+              "race":  "Undead",
+              "reportDps":  1089
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1086.7792439823625,
+              "se":  0.5861779206315987,
+              "tps":  799.3280022042568,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "package":  "RaidPackageRestoration",
+              "race":  "Undead",
+              "reportDps":  1089
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1086.7792439823625,
+              "se":  0.5861779206315987,
+              "tps":  799.3280022042568,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "package":  "RaidPackageRestoration",
+              "race":  "Undead",
+              "reportDps":  1089
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1086.7792439823625,
+              "se":  0.5861779206315987,
+              "tps":  799.3280022042568,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "package":  "RaidPackageRestoration",
+              "race":  "Undead",
+              "reportDps":  1089
+            },
+            {
+              "party":  2,
+              "role":  "RaidRoleTank",
+              "buildId":  "Protection paladin",
+              "preset":  "RaidPresetProtectionPaladin",
+              "judgement":  "PaladinJudgementWisdom"
+            },
+            {
+              "party":  2,
+              "role":  "RaidRoleHealer",
+              "buildId":  "Discipline priest",
+              "preset":  "RaidPresetDisciplinePriest"
+            },
+            {
+              "party":  2,
+              "buildId":  "warlock__demonology-duty-curse",
+              "duties":  [
+                "DutyCurseOfTheElements"
+              ],
+              "dps":  1005.4511626796373,
+              "se":  0.47684892892737607,
+              "dutyCost":  9.787676133778291,
+              "tps":  795.8373414739416,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "race":  "Orc",
+              "reportDps":  1051.8
+            },
+            {
+              "party":  2,
+              "buildId":  "druid__balance",
+              "dps":  845.4258615994933,
+              "se":  0.3171197106858763,
+              "tps":  859.6703016321023,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "race":  "SkyborneWindshaper",
+              "reportDps":  851.2
+            },
+            {
+              "party":  2,
+              "buildId":  "mage__fire",
+              "dps":  1044.182803455102,
+              "se":  0.720846414242311,
+              "tps":  767.0224413476053,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "race":  "Undead",
+              "reportDps":  1089
+            }
+          ],
+          "buffSet":  "Curse of the Elements, Judgement of Wisdom, Strength of Earth, Grace of Air, Flametongue Totem, Moonkin Aura, Arcane Brilliance, Gift of the Wild, Prayer of Spirit, Fortitude, Blessings; 1 blessing per class",
+          "confirmed":  true,
+          "raidSimDps":  7259.926161787973,
+          "raidSimSe":  1.0798304842423652,
+          "combo":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetRestorationShaman",
+            "RaidPresetDisciplinePriest"
+          ],
+          "modelDps":  7274.365068467372
+        },
+        {
+          "dps":  7242.619797252895,
+          "se":  2.7435305623850215,
+          "gap":  19.402650252528474,
+          "gapSe":  3.4380006841666297,
+          "members":  [
+            {
+              "party":  1,
+              "buildId":  "warlock__demonology-duty-curse",
+              "duties":  [
+                "DutyCurseOfTheElements"
+              ],
+              "dps":  1016.0268763250331,
+              "se":  0.4781936642732383,
+              "tps":  801.8301795755781,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "race":  "Orc",
+              "reportDps":  1051.8
+            },
+            {
+              "party":  1,
+              "buildId":  "druid__balance",
+              "dps":  846.8717640432654,
+              "se":  0.31762574763221374,
+              "tps":  861.1050099397698,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "race":  "SkyborneWindshaper",
+              "reportDps":  851.2
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1091.794668189917,
+              "se":  0.6569702992366476,
+              "tps":  799.8854062188196,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "powerInfusion":  true,
+              "race":  "Undead",
+              "reportDps":  1089
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1071.9816221736698,
+              "se":  0.6502785305424704,
+              "tps":  785.7663166798526,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "race":  "Undead",
+              "reportDps":  1089
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1071.9816221736698,
+              "se":  0.6502785305424704,
+              "tps":  785.7663166798526,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "race":  "Undead",
+              "reportDps":  1089
+            },
+            {
+              "party":  2,
+              "role":  "RaidRoleTank",
+              "buildId":  "Protection paladin",
+              "preset":  "RaidPresetProtectionPaladin",
+              "judgement":  "PaladinJudgementWisdom"
+            },
+            {
+              "party":  2,
+              "role":  "RaidRoleHealer",
+              "buildId":  "Holy paladin",
+              "preset":  "RaidPresetHolyPaladin",
+              "judgement":  "PaladinJudgementWisdom"
+            },
+            {
+              "party":  2,
+              "role":  "RaidRoleHealer",
+              "buildId":  "Discipline priest",
+              "preset":  "RaidPresetDisciplinePriest"
+            },
+            {
+              "party":  2,
+              "buildId":  "mage__fire",
+              "dps":  1071.9816221736698,
+              "se":  0.6502785305424704,
+              "tps":  785.7663166798526,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "race":  "Undead",
+              "reportDps":  1089
+            },
+            {
+              "party":  2,
+              "buildId":  "mage__fire",
+              "dps":  1071.9816221736698,
+              "se":  0.6502785305424704,
+              "tps":  785.7663166798526,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "race":  "Undead",
+              "reportDps":  1089
+            }
+          ],
+          "buffSet":  "Curse of the Elements, Judgement of Wisdom, Moonkin Aura, Arcane Brilliance, Gift of the Wild, Prayer of Spirit, Fortitude, Blessings; 2 blessings per class",
+          "confirmed":  true,
+          "raidSimDps":  7243.394096169778,
+          "raidSimSe":  1.1310006612205277,
+          "combo":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetHolyPaladin",
+            "RaidPresetDisciplinePriest"
+          ],
+          "modelDps":  7244.4951535244245,
+          "raidSimGap":  16.532065618194792,
+          "raidSimGapSe":  1.5637123681740104
+        },
+        {
+          "dps":  7242.176803663682,
+          "se":  2.5189764268500876,
+          "gap":  19.84564384174155,
+          "gapSe":  3.2616147836027443,
+          "members":  [
+            {
+              "party":  1,
+              "role":  "RaidRoleHealer",
+              "buildId":  "Restoration shaman",
+              "preset":  "RaidPresetRestorationShaman",
+              "totems":  [
+                "RaidTotemStrengthOfEarth",
+                "RaidTotemManaSpring",
+                "RaidTotemFlametongue",
+                "RaidTotemGraceOfAir"
+              ]
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1086.7792439823625,
+              "se":  0.5861779206315987,
+              "tps":  799.3280022042568,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "package":  "RaidPackageRestoration",
+              "race":  "Undead",
+              "reportDps":  1089
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1086.7792439823625,
+              "se":  0.5861779206315987,
+              "tps":  799.3280022042568,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "package":  "RaidPackageRestoration",
+              "race":  "Undead",
+              "reportDps":  1089
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1086.7792439823625,
+              "se":  0.5861779206315987,
+              "tps":  799.3280022042568,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "package":  "RaidPackageRestoration",
+              "race":  "Undead",
+              "reportDps":  1089
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1086.7792439823625,
+              "se":  0.5861779206315987,
+              "tps":  799.3280022042568,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "package":  "RaidPackageRestoration",
+              "race":  "Undead",
+              "reportDps":  1089
+            },
+            {
+              "party":  2,
+              "role":  "RaidRoleTank",
+              "buildId":  "Protection paladin",
+              "preset":  "RaidPresetProtectionPaladin",
+              "judgement":  "PaladinJudgementWisdom"
+            },
+            {
+              "party":  2,
+              "role":  "RaidRoleHealer",
+              "buildId":  "Holy priest",
+              "preset":  "RaidPresetHolyPriest"
+            },
+            {
+              "party":  2,
+              "buildId":  "warlock__demonology-duty-curse",
+              "duties":  [
+                "DutyCurseOfTheElements"
+              ],
+              "dps":  1005.4511626796373,
+              "se":  0.47684892892737607,
+              "tps":  795.8373414739416,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "race":  "Orc",
+              "reportDps":  1051.8
+            },
+            {
+              "party":  2,
+              "buildId":  "druid__balance",
+              "dps":  845.4258615994933,
+              "se":  0.3171197106858763,
+              "tps":  859.6703016321023,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "race":  "SkyborneWindshaper",
+              "reportDps":  851.2
+            },
+            {
+              "party":  2,
+              "buildId":  "mage__fire",
+              "dps":  1044.182803455102,
+              "se":  0.720846414242311,
+              "tps":  767.0224413476053,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "race":  "Undead",
+              "reportDps":  1089
+            }
+          ],
+          "buffSet":  "Curse of the Elements, Judgement of Wisdom, Strength of Earth, Grace of Air, Flametongue Totem, Moonkin Aura, Arcane Brilliance, Gift of the Wild, Prayer of Spirit, Fortitude, Blessings; 1 blessing per class",
+          "combo":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetRestorationShaman",
+            "RaidPresetHolyPriest"
+          ],
+          "modelDps":  7254.619515608156
+        },
+        {
+          "dps":  7222.806751236649,
+          "se":  3.301682825200182,
+          "gap":  39.21569626877499,
+          "gapSe":  3.8979479519115436,
+          "members":  [
+            {
+              "party":  1,
+              "buildId":  "warlock__demonology-duty-curse",
+              "duties":  [
+                "DutyCurseOfTheElements"
+              ],
+              "dps":  1016.0268763250331,
+              "se":  0.4781936642732383,
+              "tps":  801.8301795755781,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "race":  "Orc",
+              "reportDps":  1051.8
+            },
+            {
+              "party":  1,
+              "buildId":  "druid__balance",
+              "dps":  846.8717640432654,
+              "se":  0.31762574763221374,
+              "tps":  861.1050099397698,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "race":  "SkyborneWindshaper",
+              "reportDps":  851.2
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1071.9816221736698,
+              "se":  0.6502785305424704,
+              "tps":  785.7663166798526,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "race":  "Undead",
+              "reportDps":  1089
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1071.9816221736698,
+              "se":  0.6502785305424704,
+              "tps":  785.7663166798526,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "race":  "Undead",
+              "reportDps":  1089
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1071.9816221736698,
+              "se":  0.6502785305424704,
+              "tps":  785.7663166798526,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "race":  "Undead",
+              "reportDps":  1089
+            },
+            {
+              "party":  2,
+              "role":  "RaidRoleTank",
+              "buildId":  "Protection paladin",
+              "preset":  "RaidPresetProtectionPaladin",
+              "judgement":  "PaladinJudgementWisdom"
+            },
+            {
+              "party":  2,
+              "role":  "RaidRoleHealer",
+              "buildId":  "Holy paladin",
+              "preset":  "RaidPresetHolyPaladin",
+              "judgement":  "PaladinJudgementWisdom"
+            },
+            {
+              "party":  2,
+              "role":  "RaidRoleHealer",
+              "buildId":  "Holy priest",
+              "preset":  "RaidPresetHolyPriest"
+            },
+            {
+              "party":  2,
+              "buildId":  "mage__fire",
+              "dps":  1071.9816221736698,
+              "se":  0.6502785305424704,
+              "tps":  785.7663166798526,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "race":  "Undead",
+              "reportDps":  1089
+            },
+            {
+              "party":  2,
+              "buildId":  "mage__fire",
+              "dps":  1071.9816221736698,
+              "se":  0.6502785305424704,
+              "tps":  785.7663166798526,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "race":  "Undead",
+              "reportDps":  1089
+            }
+          ],
+          "buffSet":  "Curse of the Elements, Judgement of Wisdom, Moonkin Aura, Arcane Brilliance, Gift of the Wild, Prayer of Spirit, Fortitude, Blessings; 2 blessings per class",
+          "combo":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetHolyPaladin",
+            "RaidPresetHolyPriest"
+          ],
+          "modelDps":  7224.749600665208
+        },
+        {
+          "dps":  7206.726140760755,
+          "se":  2.4533219203070162,
+          "gap":  55.29630674466898,
+          "gapSe":  3.2111800326746627,
+          "members":  [
+            {
+              "party":  1,
+              "role":  "RaidRoleHealer",
+              "buildId":  "Restoration shaman",
+              "preset":  "RaidPresetRestorationShaman",
+              "totems":  [
+                "RaidTotemStrengthOfEarth",
+                "RaidTotemManaSpring",
+                "RaidTotemFlametongue",
+                "RaidTotemGraceOfAir"
+              ]
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1058.1168066062278,
+              "se":  0.5845411180935179,
+              "tps":  778.6719264525,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "package":  "RaidPackageRestoration",
+              "race":  "Undead",
+              "reportDps":  1089
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1058.1168066062278,
+              "se":  0.5845411180935179,
+              "tps":  778.6719264525,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "package":  "RaidPackageRestoration",
+              "race":  "Undead",
+              "reportDps":  1089
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1058.1168066062278,
+              "se":  0.5845411180935179,
+              "tps":  778.6719264525,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "package":  "RaidPackageRestoration",
+              "race":  "Undead",
+              "reportDps":  1089
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1058.1168066062278,
+              "se":  0.5845411180935179,
+              "tps":  778.6719264525,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "package":  "RaidPackageRestoration",
+              "race":  "Undead",
+              "reportDps":  1089
+            },
+            {
+              "party":  2,
+              "role":  "RaidRoleTank",
+              "buildId":  "Protection paladin",
+              "preset":  "RaidPresetProtectionPaladin",
+              "judgement":  "PaladinJudgementWisdom"
+            },
+            {
+              "party":  2,
+              "role":  "RaidRoleHealer",
+              "buildId":  "Restoration druid",
+              "preset":  "RaidPresetRestorationDruid"
+            },
+            {
+              "party":  2,
+              "buildId":  "warlock__demonology-duty-curse",
+              "duties":  [
+                "DutyCurseOfTheElements"
+              ],
+              "dps":  979.5754862479251,
+              "se":  0.4589216501862879,
+              "tps":  774.442027784118,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "race":  "Orc",
+              "reportDps":  1051.8
+            },
+            {
+              "party":  2,
+              "buildId":  "priest__shadow",
+              "dps":  927.9372415115492,
+              "se":  0.23164448382060696,
+              "tps":  667.417301137837,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "race":  "Undead",
+              "reportDps":  952.8
+            },
+            {
+              "party":  2,
+              "buildId":  "mage__fire",
+              "dps":  1066.7461865763685,
+              "se":  0.5361968825835921,
+              "tps":  781.9556153679164,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "innervate":  true,
+              "race":  "Undead",
+              "reportDps":  1089
+            }
+          ],
+          "buffSet":  "Minor armor slot, Curse of the Elements, Judgement of Wisdom, Strength of Earth, Grace of Air, Flametongue Totem, Arcane Brilliance, Gift of the Wild, Prayer of Spirit, Fortitude, Blessings; 1 blessing per class",
+          "combo":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetRestorationShaman",
+            "RaidPresetRestorationDruid"
+          ],
+          "modelDps":  7207.705062160332
+        }
+      ],
+      "tieSet":  1,
+      "combos":  [
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetRestorationShaman",
+            "RaidPresetDisciplinePriest"
+          ],
+          "dps":  7264.003998745431,
+          "signature":  "1 paladin, 1 shaman, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetRestorationShaman",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  7244.412360877606,
+          "gap":  19.59163786782483,
+          "signature":  "1 paladin, 1 shaman, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetHolyPaladin",
+            "RaidPresetDisciplinePriest"
+          ],
+          "dps":  7244.038327316732,
+          "gap":  19.965671428699352,
+          "signature":  "2 paladins, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetHolyPaladin",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  7224.462500870883,
+          "gap":  39.54149787454844,
+          "signature":  "2 paladins, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetRestorationShaman",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  7211.276896489673,
+          "gap":  52.72710225575793,
+          "signature":  "a druid, 1 paladin, 1 shaman"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetHolyPaladin",
+            "RaidPresetRestorationShaman"
+          ],
+          "dps":  7179.798675233524,
+          "gap":  84.20532351190741,
+          "signature":  "2 paladins, 1 shaman"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetRestorationShaman",
+            "RaidPresetRestorationShaman"
+          ],
+          "dps":  7173.0196059885875,
+          "gap":  90.98439275684359,
+          "signature":  "1 paladin, 2 shamans"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetHolyPaladin",
+            "RaidPresetDisciplinePriest"
+          ],
+          "dps":  7170.961458055812,
+          "gap":  93.04254068961927,
+          "signature":  "1 paladin, 1 shaman, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetHolyPaladin",
+            "RaidPresetRestorationShaman"
+          ],
+          "dps":  7165.93780120579,
+          "gap":  98.06619753964151,
+          "signature":  "a warrior tank, 1 paladin, 1 shaman"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetHolyPaladin",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  7163.9394462375185,
+          "gap":  100.0645525079126,
+          "signature":  "a druid, 2 paladins"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetHolyPaladin",
+            "RaidPresetRestorationShaman"
+          ],
+          "dps":  7158.27264118709,
+          "gap":  105.73135755834119,
+          "signature":  "1 paladin, 2 shamans"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetHolyPaladin",
+            "RaidPresetRestorationShaman"
+          ],
+          "dps":  7157.835628831791,
+          "gap":  106.16836991364016,
+          "signature":  "a Feral tank, 1 paladin, 1 shaman"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetHolyPaladin",
+            "RaidPresetHolyPaladin"
+          ],
+          "dps":  7153.0209677320345,
+          "gap":  110.98303101339661,
+          "signature":  "2 paladins, 1 shaman"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetHolyPaladin",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  7151.495882213537,
+          "gap":  112.5081165318943,
+          "signature":  "1 paladin, 1 shaman, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetDisciplinePriest",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  7149.863390608284,
+          "gap":  114.14060813714696,
+          "signature":  "a druid, 1 paladin, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetHolyPriest",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  7130.122261913078,
+          "gap":  133.88173683235345,
+          "signature":  "a druid, 1 paladin, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetHolyPaladin",
+            "RaidPresetHolyPaladin"
+          ],
+          "dps":  7128.985839372957,
+          "gap":  135.01815937247375,
+          "signature":  "a Feral tank, 2 paladins"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetDisciplinePriest",
+            "RaidPresetDisciplinePriest"
+          ],
+          "dps":  7120.972608418657,
+          "gap":  143.03139032677427,
+          "signature":  "1 paladin, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetHolyPaladin",
+            "RaidPresetHolyPaladin"
+          ],
+          "dps":  7117.692505035174,
+          "gap":  146.3114937102573,
+          "signature":  "a warrior tank, 2 paladins"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetHolyPaladin",
+            "RaidPresetDisciplinePriest"
+          ],
+          "dps":  7115.80738559177,
+          "gap":  148.19661315366102,
+          "signature":  "a warrior tank, 1 paladin, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetHolyPaladin",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  7104.451410864598,
+          "gap":  159.55258788083302,
+          "signature":  "a druid, 1 paladin, 1 shaman"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetHolyPaladin",
+            "RaidPresetDisciplinePriest"
+          ],
+          "dps":  7104.146511665974,
+          "gap":  159.85748707945731,
+          "signature":  "a Feral tank, 1 paladin, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetHolyPaladin",
+            "RaidPresetHolyPaladin"
+          ],
+          "dps":  7103.391604006435,
+          "gap":  160.61239473899604,
+          "signature":  "3 paladins"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetDisciplinePriest",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  7101.507032576382,
+          "gap":  162.4969661690493,
+          "signature":  "1 paladin, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetHolyPaladin",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  7096.341809749496,
+          "gap":  167.66218899593514,
+          "signature":  "a warrior tank, 1 paladin, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetRestorationDruid",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  7086.275272039962,
+          "gap":  177.72872670546894,
+          "signature":  "a druid, 1 paladin"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetHolyPaladin",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  7084.680935823699,
+          "gap":  179.32306292173234,
+          "signature":  "a Feral tank, 1 paladin, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetHolyPriest",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  7082.041456734107,
+          "gap":  181.96254201132433,
+          "signature":  "1 paladin, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetHolyPaladin",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  7077.094501601934,
+          "gap":  186.909497143497,
+          "signature":  "a warrior tank, a druid, 1 paladin"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetRestorationShaman",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  7057.387660332375,
+          "gap":  206.61633841305593,
+          "signature":  "a warrior tank, a druid, 1 shaman"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetRestorationShaman",
+            "RaidPresetDisciplinePriest"
+          ],
+          "dps":  7046.864093630975,
+          "gap":  217.13990511445627,
+          "signature":  "a warrior tank, 1 shaman, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetHolyPaladin",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  7035.145931631017,
+          "gap":  228.85806711441364,
+          "signature":  "a Feral tank, 1 paladin"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetRestorationShaman",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  7027.272455763148,
+          "gap":  236.73154298228292,
+          "signature":  "a warrior tank, 1 shaman, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetRestorationShaman",
+            "RaidPresetDisciplinePriest"
+          ],
+          "dps":  7023.316461036819,
+          "gap":  240.68753770861167,
+          "signature":  "a Feral tank, 1 shaman, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetRestorationShaman",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  7004.224003304217,
+          "gap":  259.77999544121394,
+          "signature":  "a Feral tank, 1 shaman, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetRestorationShaman",
+            "RaidPresetDisciplinePriest"
+          ],
+          "dps":  7002.3722154520365,
+          "gap":  261.6317832933946,
+          "signature":  "2 shamans, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetRestorationShaman",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  6982.780577584212,
+          "gap":  281.22342116121945,
+          "signature":  "2 shamans, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetRestorationShaman",
+            "RaidPresetRestorationShaman"
+          ],
+          "dps":  6982.03890668269,
+          "gap":  281.96509206274095,
+          "signature":  "a Feral tank, 2 shamans"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetRestorationShaman",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  6965.203679199689,
+          "gap":  298.80031954574224,
+          "signature":  "a druid, 2 shamans"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetDisciplinePriest",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  6953.624098977783,
+          "gap":  310.37989976764766,
+          "signature":  "a druid, 1 shaman, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetRestorationShaman",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  6952.851652849514,
+          "gap":  311.1523458959173,
+          "signature":  "a Feral tank, 1 shaman"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetRestorationShaman",
+            "RaidPresetRestorationShaman"
+          ],
+          "dps":  6940.622514979192,
+          "gap":  323.3814837662394,
+          "signature":  "a warrior tank, 2 shamans"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetHolyPriest",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  6934.685235248191,
+          "gap":  329.31876349724007,
+          "signature":  "a druid, 1 shaman, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetDisciplinePriest",
+            "RaidPresetDisciplinePriest"
+          ],
+          "dps":  6897.200080329081,
+          "gap":  366.8039184163499,
+          "signature":  "1 shaman, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetDisciplinePriest",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  6894.187610847736,
+          "gap":  369.81638789769477,
+          "signature":  "a warrior tank, a druid, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetDisciplinePriest",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  6877.771751293272,
+          "gap":  386.23224745215884,
+          "signature":  "1 shaman, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetHolyPriest",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  6874.886911116365,
+          "gap":  389.1170876290662,
+          "signature":  "a warrior tank, a druid, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetRestorationDruid",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  6868.625904417844,
+          "gap":  395.37809432758695,
+          "signature":  "a druid, 1 shaman"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetRestorationShaman",
+            "RaidPresetRestorationShaman"
+          ],
+          "dps":  6861.428628641781,
+          "gap":  402.57537010365013,
+          "signature":  "2 shamans"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetHolyPriest",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  6858.343422257465,
+          "gap":  405.66057648796595,
+          "signature":  "1 shaman, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetRestorationDruid",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  6816.403707584393,
+          "gap":  447.6002911610385,
+          "signature":  "a warrior tank, a druid"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetDisciplinePriest",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  6815.483813662299,
+          "gap":  448.52018508313176,
+          "signature":  "a Feral tank, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetDisciplinePriest",
+            "RaidPresetDisciplinePriest"
+          ],
+          "dps":  6807.107044849859,
+          "gap":  456.89695389557164,
+          "signature":  "a warrior tank, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetHolyPriest",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  6796.183113930928,
+          "gap":  467.8208848145032,
+          "signature":  "a Feral tank, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetDisciplinePriest",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  6787.641469007585,
+          "gap":  476.36252973784576,
+          "signature":  "a warrior tank, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetDisciplinePriest",
+            "RaidPresetDisciplinePriest"
+          ],
+          "dps":  6780.502836884326,
+          "gap":  483.5011618611052,
+          "signature":  "a Feral tank, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetHolyPriest",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  6768.17589316531,
+          "gap":  495.8281055801208,
+          "signature":  "a warrior tank, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetRestorationDruid",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  6763.252049192418,
+          "gap":  500.7519495530132,
+          "signature":  "a Feral tank"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetDisciplinePriest",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  6761.622341578686,
+          "gap":  502.38165716674484,
+          "signature":  "a Feral tank, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetHolyPriest",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  6742.741846273046,
+          "gap":  521.2621524723854,
+          "signature":  "a Feral tank, a priest"
+        }
+      ],
+      "presetValues":  [
+        {
+          "preset":  "RaidPresetProtectionWarrior",
+          "bestWithMinusWithout":  -98.06619753964151,
+          "hasBestWithMinusWithout":  true
+        },
+        {
+          "preset":  "RaidPresetFeralTank",
+          "bestWithMinusWithout":  -106.16836991364016,
+          "hasBestWithMinusWithout":  true
+        },
+        {
+          "preset":  "RaidPresetProtectionPaladin",
+          "atBest":  217.13990511445627,
+          "bestWithMinusWithout":  93.04254068961927,
+          "hasAtBest":  true,
+          "hasBestWithMinusWithout":  true
+        },
+        {
+          "preset":  "RaidPresetWardenShaman",
+          "bestWithMinusWithout":  -93.04254068961927,
+          "hasBestWithMinusWithout":  true
+        },
+        {
+          "preset":  "RaidPresetHolyPaladin",
+          "bestWithMinusWithout":  -19.965671428699352,
+          "hasBestWithMinusWithout":  true
+        },
+        {
+          "preset":  "RaidPresetRestorationShaman",
+          "atBest":  19.965671428699352,
+          "bestWithMinusWithout":  19.965671428699352,
+          "hasAtBest":  true,
+          "hasBestWithMinusWithout":  true
+        },
+        {
+          "preset":  "RaidPresetDisciplinePriest",
+          "atBest":  19.59163786782483,
+          "bestWithMinusWithout":  19.59163786782483,
+          "hasAtBest":  true,
+          "hasBestWithMinusWithout":  true
+        },
+        {
+          "preset":  "RaidPresetHolyPriest",
+          "bestWithMinusWithout":  -19.59163786782483,
+          "hasBestWithMinusWithout":  true
+        },
+        {
+          "preset":  "RaidPresetRestorationDruid",
+          "bestWithMinusWithout":  -52.72710225575793,
+          "hasBestWithMinusWithout":  true
+        }
+      ],
+      "roles":  [
+        {
+          "role":  "Battle Shout",
+          "net":  -465.27733083368,
+          "provider":  "value of adding",
+          "measured":  true
+        },
+        {
+          "role":  "Furious Howl",
+          "net":  -260.0351945634393,
+          "provider":  "value of adding",
+          "measured":  true
+        },
+        {
+          "role":  "Sunder upkeep",
+          "net":  -339.9890320218765,
+          "provider":  "value of adding",
+          "measured":  true
+        },
+        {
+          "role":  "Minor armor slot",
+          "net":  -29.4178429751355,
+          "provider":  "value of adding",
+          "measured":  true
+        },
+        {
+          "role":  "Curse of the Elements",
+          "gain":  658.5279361421537,
+          "providerCost":  38.58161088363636,
+          "net":  619.9463252585174,
+          "provider":  "warlock__demonology-duty-curse",
+          "inSet":  true,
+          "measured":  true
+        },
+        {
+          "role":  "Judgement of the Crusader",
+          "net":  -256.0669967184049,
+          "provider":  "value of adding",
+          "measured":  true
+        },
+        {
+          "role":  "Judgement of Wisdom",
+          "provider":  "placeholders (not measured: they give it at no cost)",
+          "inSet":  true
+        },
+        {
+          "role":  "Moonkin Aura (with Gift of the Wild) (its giver also gives Gift of the Wild, and its cost counts in each)",
+          "gain":  286.8820947508241,
+          "providerCost":  197.32927476619375,
+          "net":  89.55281998463033,
+          "provider":  "druid__balance",
+          "inSet":  true,
+          "measured":  true
+        },
+        {
+          "role":  "Leader of the Pack",
+          "net":  -436.4316230605964,
+          "provider":  "value of adding",
+          "measured":  true
+        },
+        {
+          "role":  "Trueshot Aura",
+          "net":  -237.61257635699803,
+          "provider":  "value of adding",
+          "measured":  true
+        },
+        {
+          "role":  "Arcane Brilliance",
+          "gain":  308.44164928546525,
+          "net":  308.44164928546525,
+          "provider":  "mage__fire",
+          "inSet":  true,
+          "measured":  true
+        },
+        {
+          "role":  "Gift of the Wild (with Moonkin Aura) (its giver also gives Moonkin Aura, and its cost counts in each)",
+          "gain":  286.8820947508241,
+          "providerCost":  197.32927476619375,
+          "net":  89.55281998463033,
+          "provider":  "druid__balance",
+          "inSet":  true,
+          "measured":  true
+        },
+        {
+          "role":  "Prayer of Spirit",
+          "provider":  "placeholders (not measured: they give it at no cost)",
+          "inSet":  true
+        },
+        {
+          "role":  "Enhancement's totems (Strength of Earth, Windfury)",
+          "net":  -336.2910236012194,
+          "provider":  "value of adding",
+          "measured":  true
+        },
+        {
+          "role":  "a shaman placeholder's Grace of Air over Windfury Totem",
+          "provider":  "placeholders",
+          "inSet":  true,
+          "measured":  true
+        }
+      ],
+      "fillers":  [
+        {
+          "buildId":  "mage__fire",
+          "dps":  1043.8493220585224,
+          "se":  2.199259225352024,
+          "assumptionLow":  1007.9213220585225,
+          "assumptionHigh":  1049.9853220585223,
+          "interchangeable":  true
+        },
+        {
+          "buildId":  "mage__frostfire",
+          "dps":  1025.5464172325628,
+          "se":  2.6480310067677997,
+          "assumptionLow":  941.7384172325628,
+          "assumptionHigh":  1031.4734172325627
+        },
+        {
+          "buildId":  "warlock__demonology",
+          "dps":  1015.0553873086643,
+          "se":  1.4877091686795882,
+          "assumptionLow":  934.6503873086643,
+          "assumptionHigh":  1033.2443873086645
+        },
+        {
+          "buildId":  "warlock__affliction",
+          "dps":  985.5915950573344,
+          "se":  1.7382334639883397,
+          "assumptionLow":  911.0415950573345,
+          "assumptionHigh":  1006.0105950573345
+        },
+        {
+          "buildId":  "warlock__destruction_fire",
+          "dps":  970.1284265692501,
+          "se":  1.0341540952970405,
+          "assumptionLow":  900.2284265692501,
+          "assumptionHigh":  987.18942656925
+        },
+        {
+          "buildId":  "warlock__destruction",
+          "dps":  969.863874954804,
+          "se":  1.5486407843040881,
+          "assumptionLow":  903.8478749548041,
+          "assumptionHigh":  989.170874954804
+        },
+        {
+          "buildId":  "priest__shadow",
+          "dps":  951.0744093713187,
+          "se":  0.7685344261543452,
+          "assumptionLow":  938.1674093713186,
+          "assumptionHigh":  954.8334093713186
+        },
+        {
+          "buildId":  "mage__frost",
+          "dps":  907.7650895364021,
+          "se":  1.6690682438962778,
+          "assumptionLow":  844.3800895364021,
+          "assumptionHigh":  923.870089536402
+        },
+        {
+          "buildId":  "priest__shadow-holy",
+          "dps":  890.8057376964124,
+          "se":  0.9887682921415383,
+          "assumptionLow":  878.5007376964124,
+          "assumptionHigh":  894.6227376964124
+        },
+        {
+          "buildId":  "mage__arcane",
+          "dps":  885.8817131630525,
+          "se":  1.3651129095819723,
+          "assumptionLow":  834.2857131630525,
+          "assumptionHigh":  898.3387131630525
+        },
+        {
+          "buildId":  "druid__balance",
+          "dps":  846.5200472923286,
+          "se":  1.0065189973280604,
+          "assumptionLow":  829.4450472923286,
+          "assumptionHigh":  853.4880472923286
+        },
+        {
+          "buildId":  "hunter__beast-mastery",
+          "dps":  822.6943562541127,
+          "se":  0.789631022661436,
+          "assumptionLow":  780.9703562541125,
+          "assumptionHigh":  823.7503562541125
+        },
+        {
+          "buildId":  "druid__balance-wrath",
+          "dps":  810.6276789749103,
+          "se":  0.8655072049143511,
+          "assumptionLow":  795.5136789749102,
+          "assumptionHigh":  821.8246789749103
+        },
+        {
+          "buildId":  "shaman__elemental-level60",
+          "dps":  767.742985925765,
+          "se":  0.8949500864330779,
+          "assumptionLow":  758.678985925765,
+          "assumptionHigh":  770.914985925765
+        },
+        {
+          "buildId":  "shaman__elemental-level60-mana-tide",
+          "dps":  756.9868677207559,
+          "se":  0.8494898678970751,
+          "assumptionLow":  747.2868677207559,
+          "assumptionHigh":  760.1978677207559
+        },
+        {
+          "buildId":  "priest__smite",
+          "dps":  672.0885561295281,
+          "se":  0.8920809271417195,
+          "assumptionLow":  656.9625561295281,
+          "assumptionHigh":  675.5435561295282
+        },
+        {
+          "buildId":  "hunter__survival",
+          "dps":  648.5324687728386,
+          "se":  0.6830854139167518,
+          "assumptionLow":  595.8384687728385,
+          "assumptionHigh":  648.5324687728386
+        },
+        {
+          "buildId":  "warrior__fury",
+          "dps":  559.9476746895072,
+          "se":  1.0797107197783233,
+          "assumptionLow":  479.7286746895072,
+          "assumptionHigh":  612.0696746895072
+        },
+        {
+          "buildId":  "warrior__arms",
+          "dps":  500.26953862427314,
+          "se":  0.9015452421192268,
+          "assumptionLow":  461.34653862427314,
+          "assumptionHigh":  526.1435386242731
+        },
+        {
+          "buildId":  "rogue__combat-daggers",
+          "dps":  497.70871912882694,
+          "se":  0.5838130293180428,
+          "assumptionLow":  460.682719128827,
+          "assumptionHigh":  497.70871912882694
+        },
+        {
+          "buildId":  "warrior__fury_2h",
+          "dps":  488.2511624708486,
+          "se":  1.0150720364565051,
+          "assumptionLow":  404.3721624708486,
+          "assumptionHigh":  544.2281624708486
+        },
+        {
+          "buildId":  "rogue__subtlety",
+          "dps":  482.0513658684888,
+          "se":  0.5101127029649921,
+          "assumptionLow":  449.7573658684888,
+          "assumptionHigh":  482.0513658684888
+        },
+        {
+          "buildId":  "rogue__combat-swords",
+          "dps":  470.63947192058475,
+          "se":  0.6281148150059057,
+          "assumptionLow":  443.4404719205847,
+          "assumptionHigh":  470.63947192058475
+        },
+        {
+          "buildId":  "rogue__seal-fate-daggers",
+          "dps":  469.391101497916,
+          "se":  0.5674591840497886,
+          "assumptionLow":  442.1921014979159,
+          "assumptionHigh":  469.391101497916
+        },
+        {
+          "buildId":  "rogue__mutilate",
+          "dps":  461.5202747218146,
+          "se":  0.5118050314353625,
+          "assumptionLow":  433.58427472181455,
+          "assumptionHigh":  461.5202747218146
+        },
+        {
+          "buildId":  "rogue__seal-fate-swords",
+          "dps":  449.1458866243577,
+          "se":  0.5927856351020286,
+          "assumptionLow":  418.0528866243577,
+          "assumptionHigh":  449.1458866243577
+        }
+      ],
+      "memberValues":  [
+        {
+          "member":  7,
+          "contribution":  1569.7859725917497,
+          "ownDps":  1005.267711174886,
+          "replacementMargin":  25.60545768990596,
+          "bestReplacement":  "warlock__affliction-duty-curse",
+          "reportDifference":  -46.53228882511394,
+          "reportDifferenceParts":  [
+            "the report's request in this sim: +0.8",
+            "race (Orc): +0.0",
+            "this fight (boss, length, flask zone): +0.0",
+            "the raid's buff set: -37.6",
+            "its duty (Curse of the Elements): -9.8"
+          ],
+          "buildId":  "warlock__demonology-duty-curse",
+          "count":  1,
+          "dutyCost":  9.787676133778291
+        },
+        {
+          "member":  8,
+          "contribution":  1087.5541536892451,
+          "ownDps":  846.5200472923286,
+          "replacementMargin":  35.892368317418004,
+          "bestReplacement":  "druid__balance-wrath",
+          "reportDifference":  -4.6799527076714185,
+          "reportDifferenceParts":  [
+            "the report's request in this sim: -0.1",
+            "race (SkyborneWindshaper): -0.7",
+            "this fight (boss, length, flask zone): +0.0",
+            "the raid's buff set: -3.9"
+          ],
+          "buildId":  "druid__balance",
+          "count":  1
+        },
+        {
+          "member":  1,
+          "contribution":  1087.1938200879667,
+          "ownDps":  1106.785457955793,
+          "replacementMargin":  6.926472261322488,
+          "bestReplacement":  "mage__frostfire",
+          "reportDifference":  17.785457955792936,
+          "reportDifferenceParts":  [
+            "the report's request in this sim: +1.0",
+            "race (Undead): -3.9",
+            "this fight (boss, length, flask zone): +0.0",
+            "the raid's buff set: +20.7"
+          ],
+          "buildId":  "mage__fire",
+          "count":  1
+        },
+        {
+          "member":  1,
+          "contribution":  1087.1938200879667,
+          "ownDps":  1087.1938200879672,
+          "replacementMargin":  6.926472261322488,
+          "bestReplacement":  "mage__frostfire",
+          "reportDifference":  -1.8061799120328033,
+          "reportDifferenceParts":  [
+            "the report's request in this sim: +1.0",
+            "race (Undead): -3.9",
+            "this fight (boss, length, flask zone): +0.0",
+            "the raid's buff set: +1.2"
+          ],
+          "buildId":  "mage__fire",
+          "count":  3
+        },
+        {
+          "member":  9,
+          "contribution":  1043.8493220585224,
+          "ownDps":  1043.8493220585224,
+          "replacementMargin":  18.30290482595956,
+          "bestReplacement":  "mage__frostfire",
+          "reportDifference":  -45.150677941477625,
+          "reportDifferenceParts":  [
+            "the report's request in this sim: +1.0",
+            "race (Undead): -3.9",
+            "this fight (boss, length, flask zone): +0.0",
+            "the raid's buff set: -42.2"
+          ],
+          "buildId":  "mage__fire",
+          "count":  1
+        }
+      ],
+      "adding":  [
+        {
+          "buildId":  "mage__frostfire",
+          "value":  -6.926472261322488
+        },
+        {
+          "buildId":  "warlock__affliction",
+          "value":  -25.60545768990596
+        },
+        {
+          "buildId":  "druid__balance-wrath",
+          "value":  -35.892368317418004
+        },
+        {
+          "buildId":  "warlock__destruction",
+          "value":  -42.47918319823657
+        },
+        {
+          "buildId":  "warlock__destruction_fire",
+          "value":  -45.031176939193756
+        },
+        {
+          "buildId":  "priest__shadow",
+          "value":  -136.10150400015118
+        },
+        {
+          "buildId":  "mage__frost",
+          "value":  -178.2097646701186
+        },
+        {
+          "buildId":  "priest__shadow-holy",
+          "value":  -178.33828052768695
+        },
+        {
+          "buildId":  "mage__arcane",
+          "value":  -182.2321436767943
+        },
+        {
+          "buildId":  "hunter__marksmanship",
+          "value":  -249.26848961797623
+        },
+        {
+          "buildId":  "hunter__lone-wolf",
+          "value":  -250.51763857249352
+        },
+        {
+          "buildId":  "hunter__beast-mastery",
+          "value":  -252.71025123777872
+        },
+        {
+          "buildId":  "paladin__level_60_sub_holy",
+          "value":  -277.6880747559808
+        },
+        {
+          "buildId":  "paladin__level_60_shock_ret",
+          "value":  -281.5090495167742
+        },
+        {
+          "buildId":  "paladin__level_60",
+          "value":  -289.14180210891936
+        },
+        {
+          "buildId":  "shaman__elemental-level60-mana-tide",
+          "value":  -289.62725959341424
+        },
+        {
+          "buildId":  "paladin__level_60_shock",
+          "value":  -300.7542348717161
+        },
+        {
+          "buildId":  "shaman__elemental-level60",
+          "value":  -317.87375453240566
+        },
+        {
+          "buildId":  "shaman__enhancement-level60",
+          "value":  -384.01583020869475
+        },
+        {
+          "buildId":  "priest__smite",
+          "value":  -384.5406339326164
+        },
+        {
+          "buildId":  "shaman__enhancement-imp-gw",
+          "value":  -387.3889545804004
+        },
+        {
+          "buildId":  "druid__feral-cat",
+          "value":  -410.50035723519886
+        },
+        {
+          "buildId":  "shaman__enhancement-mana-tide",
+          "value":  -416.2342741963457
+        },
+        {
+          "buildId":  "shaman__enhancement-water-shield",
+          "value":  -416.390252961688
+        },
+        {
+          "buildId":  "hunter__survival",
+          "value":  -438.6727567840826
+        },
+        {
+          "buildId":  "warrior__fury",
+          "value":  -527.009627767562
+        },
+        {
+          "buildId":  "warrior__arms",
+          "value":  -586.6877638327951
+        },
+        {
+          "buildId":  "rogue__combat-daggers",
+          "value":  -589.4657608083435
+        },
+        {
+          "buildId":  "warrior__fury_2h",
+          "value":  -598.7061399862196
+        },
+        {
+          "buildId":  "rogue__subtlety",
+          "value":  -605.1265220441855
+        },
+        {
+          "buildId":  "rogue__combat-swords",
+          "value":  -616.5692499580418
+        },
+        {
+          "buildId":  "rogue__seal-fate-daggers",
+          "value":  -617.8040785137782
+        },
+        {
+          "buildId":  "rogue__mutilate",
+          "value":  -625.6714805428801
+        },
+        {
+          "buildId":  "rogue__seal-fate-swords",
+          "value":  -638.0314582424544
+        }
+      ],
+      "buffs":  [
+        {
+          "effect":  "Curse of the Elements",
+          "provider":  "warlock__demonology 4",
+          "scope":  "the boss",
+          "receivers":  7
+        },
+        {
+          "effect":  "Judgement of Wisdom",
+          "provider":  "Protection paladin",
+          "scope":  "the boss",
+          "receivers":  7,
+          "given":  true
+        },
+        {
+          "effect":  "Strength of Earth",
+          "provider":  "Restoration shaman",
+          "scope":  "raid",
+          "receivers":  7,
+          "given":  true
+        },
+        {
+          "effect":  "Grace of Air",
+          "provider":  "Restoration shaman",
+          "scope":  "raid",
+          "receivers":  7,
+          "given":  true
+        },
+        {
+          "effect":  "Flametongue Totem",
+          "provider":  "Restoration shaman",
+          "scope":  "raid",
+          "receivers":  7,
+          "given":  true
+        },
+        {
+          "effect":  "Moonkin Aura",
+          "provider":  "druid__balance 5",
+          "scope":  "raid",
+          "receivers":  7,
+          "given":  true
+        },
+        {
+          "effect":  "Arcane Brilliance",
+          "provider":  "mage__fire 6, mage__fire 7, mage__fire 8, mage__fire 9, mage__fire 10",
+          "scope":  "raid",
+          "receivers":  7,
+          "given":  true
+        },
+        {
+          "effect":  "Gift of the Wild",
+          "provider":  "druid__balance 5",
+          "scope":  "raid",
+          "receivers":  7,
+          "given":  true
+        },
+        {
+          "effect":  "Prayer of Spirit",
+          "provider":  "Discipline priest",
+          "scope":  "raid",
+          "receivers":  7,
+          "given":  true
+        },
+        {
+          "effect":  "Fortitude",
+          "provider":  "Discipline priest",
+          "scope":  "raid",
+          "receivers":  7,
+          "given":  true
+        },
+        {
+          "effect":  "Mana Spring ×1.25 and Mana Tide",
+          "provider":  "Restoration shaman (party 1)",
+          "scope":  "party",
+          "receivers":  4,
+          "given":  true
+        }
+      ],
+      "misses":  [
+        "nobody gives Battle Shout",
+        "nobody gives Furious Howl",
+        "nobody gives Sunder upkeep",
+        "nobody gives Minor armor slot",
+        "nobody gives Judgement of the Crusader",
+        "nobody gives Leader of the Pack",
+        "nobody gives Trueshot Aura",
+        "Druids get 1 of the 3 blessings",
+        "Mages get 1 of the 3 blessings",
+        "Warlocks get 1 of the 3 blessings"
+      ],
+      "modelCheck":  {
+        "setsScored":  130176,
+        "setsSimmed":  140,
+        "maxMiss":  116.97352908974153,
+        "meanMiss":  20.158975854891086
+      },
+      "notes":  [
+        "9 of 43 builds survive pruning: hunter__beast-mastery, hunter__beast-mastery-tallstrider, hunter__lone-wolf, hunter__marksmanship, hunter__marksmanship-tallstrider, mage__fire, mage__frostfire, priest__shadow, warlock__demonology",
+        "60 tank and healer combos in 35 signatures"
+      ],
+      "timings":  [
+        "model 3847 sims 269 s",
+        "ranking buff sets 0 sims 1 s",
+        "signatures 1888 sims 147 s",
+        "exact sets 0 sims 0 s",
+        "local moves 419 sims 32 s",
+        "combos 2 sims 1 s",
+        "contenders 101 sims 46 s",
+        "done 0 sims 0 s",
+        "confirmation 4 sims 11 s",
+        "extras 267 sims 50 s"
+      ]
+    },
+    {
+      "faction":  "Alliance",
+      "fightSeconds":  180,
+      "comps":  [
+        {
+          "dps":  7288.723469222425,
+          "se":  2.6261914625486433,
+          "gap":  7.032652566496836,
+          "gapSe":  4.31121715201483,
+          "members":  [
+            {
+              "party":  1,
+              "buildId":  "warlock__demonology-duty-curse",
+              "duties":  [
+                "DutyCurseOfTheElements"
+              ],
+              "dps":  1014.9112904078515,
+              "se":  0.4770420321117115,
+              "dutyCost":  9.65596278746159,
+              "tps":  802.4185361108174,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "race":  "Gnome",
+              "reportDps":  1051.8
+            },
+            {
+              "party":  1,
+              "buildId":  "druid__balance",
+              "dps":  848.1141939739285,
+              "se":  0.3145074408798758,
+              "tps":  862.2733199301604,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "race":  "NightElf",
+              "reportDps":  851.2
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1101.6085593256432,
+              "se":  0.6290625495888862,
+              "tps":  803.7302238000951,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "powerInfusion":  true,
+              "race":  "Gnome",
+              "reportDps":  1089
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1081.0223563787504,
+              "se":  0.6212224780572795,
+              "tps":  789.0710786865565,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "race":  "Gnome",
+              "reportDps":  1089
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1081.0223563787504,
+              "se":  0.6212224780572795,
+              "tps":  789.0710786865565,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "race":  "Gnome",
+              "reportDps":  1089
+            },
+            {
+              "party":  2,
+              "role":  "RaidRoleTank",
+              "buildId":  "Protection paladin",
+              "preset":  "RaidPresetProtectionPaladin",
+              "judgement":  "PaladinJudgementWisdom"
+            },
+            {
+              "party":  2,
+              "role":  "RaidRoleHealer",
+              "buildId":  "Holy paladin",
+              "preset":  "RaidPresetHolyPaladin",
+              "judgement":  "PaladinJudgementWisdom"
+            },
+            {
+              "party":  2,
+              "role":  "RaidRoleHealer",
+              "buildId":  "Discipline priest",
+              "preset":  "RaidPresetDisciplinePriest"
+            },
+            {
+              "party":  2,
+              "buildId":  "mage__fire",
+              "dps":  1081.0223563787504,
+              "se":  0.6212224780572795,
+              "tps":  789.0710786865565,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "race":  "Gnome",
+              "reportDps":  1089
+            },
+            {
+              "party":  2,
+              "buildId":  "mage__fire",
+              "dps":  1081.0223563787504,
+              "se":  0.6212224780572795,
+              "tps":  789.0710786865565,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "race":  "Gnome",
+              "reportDps":  1089
+            }
+          ],
+          "buffSet":  "Curse of the Elements, Judgement of Wisdom, Moonkin Aura, Arcane Brilliance, Gift of the Wild, Prayer of Spirit, Fortitude, Blessings; 2 blessings per class",
+          "confirmed":  true,
+          "raidSimDps":  7289.580545938293,
+          "raidSimSe":  1.081046648252346,
+          "combo":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetHolyPaladin",
+            "RaidPresetDisciplinePriest"
+          ],
+          "modelDps":  7300.951162148252,
+          "raidSimGap":  1.9168080673243821,
+          "raidSimGapSe":  1.7211824352169132
+        },
+        {
+          "dps":  7295.7561217889215,
+          "se":  3.4190220434889684,
+          "gapSe":  4.835227343954673,
+          "members":  [
+            {
+              "party":  1,
+              "role":  "RaidRoleHealer",
+              "buildId":  "Restoration shaman",
+              "preset":  "RaidPresetRestorationShaman",
+              "totems":  [
+                "RaidTotemStrengthOfEarth",
+                "RaidTotemManaSpring",
+                "RaidTotemFlametongue",
+                "RaidTotemGraceOfAir"
+              ]
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__frostfire",
+              "dps":  1091.8916491516932,
+              "se":  0.8240205106334437,
+              "tps":  685.1320397915728,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "package":  "RaidPackageRestoration",
+              "race":  "Human",
+              "reportDps":  1087.5
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__frostfire",
+              "dps":  1091.8916491516932,
+              "se":  0.8240205106334437,
+              "tps":  685.1320397915728,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "package":  "RaidPackageRestoration",
+              "race":  "Human",
+              "reportDps":  1087.5
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__frostfire",
+              "dps":  1091.8916491516932,
+              "se":  0.8240205106334437,
+              "tps":  685.1320397915728,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "package":  "RaidPackageRestoration",
+              "race":  "Human",
+              "reportDps":  1087.5
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__frostfire",
+              "dps":  1091.8916491516932,
+              "se":  0.8240205106334437,
+              "tps":  685.1320397915728,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "package":  "RaidPackageRestoration",
+              "race":  "Human",
+              "reportDps":  1087.5
+            },
+            {
+              "party":  2,
+              "role":  "RaidRoleTank",
+              "buildId":  "Protection paladin",
+              "preset":  "RaidPresetProtectionPaladin",
+              "judgement":  "PaladinJudgementWisdom"
+            },
+            {
+              "party":  2,
+              "role":  "RaidRoleHealer",
+              "buildId":  "Discipline priest",
+              "preset":  "RaidPresetDisciplinePriest"
+            },
+            {
+              "party":  2,
+              "buildId":  "warlock__demonology-duty-curse",
+              "duties":  [
+                "DutyCurseOfTheElements"
+              ],
+              "dps":  1003.971214099635,
+              "se":  0.47659142374792124,
+              "tps":  796.1339746169111,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "race":  "Gnome",
+              "reportDps":  1051.8
+            },
+            {
+              "party":  2,
+              "buildId":  "druid__balance",
+              "dps":  846.3672502883643,
+              "se":  0.31390252324864176,
+              "tps":  860.539592557542,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "race":  "NightElf",
+              "reportDps":  851.2
+            },
+            {
+              "party":  2,
+              "buildId":  "mage__fire",
+              "dps":  1077.8510607941507,
+              "se":  0.7070224349042421,
+              "tps":  787.7970243171659,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "powerInfusion":  true,
+              "race":  "Gnome",
+              "reportDps":  1089
+            }
+          ],
+          "buffSet":  "Curse of the Elements, Judgement of Wisdom, Strength of Earth, Grace of Air, Flametongue Totem, Moonkin Aura, Arcane Brilliance, Gift of the Wild, Prayer of Spirit, Fortitude, Blessings; 1 blessing per class",
+          "confirmed":  true,
+          "raidSimDps":  7291.497354005617,
+          "raidSimSe":  1.3393308477002956,
+          "combo":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetRestorationShaman",
+            "RaidPresetDisciplinePriest"
+          ],
+          "modelDps":  7303.861169634978
+        },
+        {
+          "dps":  7275.4013865705565,
+          "se":  3.4175057728982114,
+          "gap":  20.354735218365022,
+          "gapSe":  4.834155297635367,
+          "members":  [
+            {
+              "party":  1,
+              "role":  "RaidRoleHealer",
+              "buildId":  "Restoration shaman",
+              "preset":  "RaidPresetRestorationShaman",
+              "totems":  [
+                "RaidTotemStrengthOfEarth",
+                "RaidTotemManaSpring",
+                "RaidTotemFlametongue",
+                "RaidTotemGraceOfAir"
+              ]
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__frostfire",
+              "dps":  1091.8916491516932,
+              "se":  0.8240205106334437,
+              "tps":  685.1320397915728,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "package":  "RaidPackageRestoration",
+              "race":  "Human",
+              "reportDps":  1087.5
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__frostfire",
+              "dps":  1091.8916491516932,
+              "se":  0.8240205106334437,
+              "tps":  685.1320397915728,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "package":  "RaidPackageRestoration",
+              "race":  "Human",
+              "reportDps":  1087.5
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__frostfire",
+              "dps":  1091.8916491516932,
+              "se":  0.8240205106334437,
+              "tps":  685.1320397915728,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "package":  "RaidPackageRestoration",
+              "race":  "Human",
+              "reportDps":  1087.5
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__frostfire",
+              "dps":  1091.8916491516932,
+              "se":  0.8240205106334437,
+              "tps":  685.1320397915728,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "package":  "RaidPackageRestoration",
+              "race":  "Human",
+              "reportDps":  1087.5
+            },
+            {
+              "party":  2,
+              "role":  "RaidRoleTank",
+              "buildId":  "Protection paladin",
+              "preset":  "RaidPresetProtectionPaladin",
+              "judgement":  "PaladinJudgementWisdom"
+            },
+            {
+              "party":  2,
+              "role":  "RaidRoleHealer",
+              "buildId":  "Holy priest",
+              "preset":  "RaidPresetHolyPriest"
+            },
+            {
+              "party":  2,
+              "buildId":  "warlock__demonology-duty-curse",
+              "duties":  [
+                "DutyCurseOfTheElements"
+              ],
+              "dps":  1003.971214099635,
+              "se":  0.47659142374792124,
+              "tps":  796.1339746169111,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "race":  "Gnome",
+              "reportDps":  1051.8
+            },
+            {
+              "party":  2,
+              "buildId":  "druid__balance",
+              "dps":  846.3672502883643,
+              "se":  0.31390252324864176,
+              "tps":  860.539592557542,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "race":  "NightElf",
+              "reportDps":  851.2
+            },
+            {
+              "party":  2,
+              "buildId":  "mage__fire",
+              "dps":  1057.4963255757857,
+              "se":  0.6996532694035283,
+              "tps":  773.2974432154389,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "race":  "Gnome",
+              "reportDps":  1089
+            }
+          ],
+          "buffSet":  "Curse of the Elements, Judgement of Wisdom, Strength of Earth, Grace of Air, Flametongue Totem, Moonkin Aura, Arcane Brilliance, Gift of the Wild, Prayer of Spirit, Fortitude, Blessings; 1 blessing per class",
+          "combo":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetRestorationShaman",
+            "RaidPresetHolyPriest"
+          ],
+          "modelDps":  7283.368189588358
+        },
+        {
+          "dps":  7268.137266275532,
+          "se":  3.1582302341439195,
+          "gap":  27.618855513389462,
+          "gapSe":  4.654474185740451,
+          "members":  [
+            {
+              "party":  1,
+              "buildId":  "warlock__demonology-duty-curse",
+              "duties":  [
+                "DutyCurseOfTheElements"
+              ],
+              "dps":  1014.9112904078515,
+              "se":  0.4770420321117115,
+              "tps":  802.4185361108174,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "race":  "Gnome",
+              "reportDps":  1051.8
+            },
+            {
+              "party":  1,
+              "buildId":  "druid__balance",
+              "dps":  848.1141939739285,
+              "se":  0.3145074408798758,
+              "tps":  862.2733199301604,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "race":  "NightElf",
+              "reportDps":  851.2
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1081.0223563787504,
+              "se":  0.6212224780572795,
+              "tps":  789.0710786865565,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "race":  "Gnome",
+              "reportDps":  1089
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1081.0223563787504,
+              "se":  0.6212224780572795,
+              "tps":  789.0710786865565,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "race":  "Gnome",
+              "reportDps":  1089
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1081.0223563787504,
+              "se":  0.6212224780572795,
+              "tps":  789.0710786865565,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "race":  "Gnome",
+              "reportDps":  1089
+            },
+            {
+              "party":  2,
+              "role":  "RaidRoleTank",
+              "buildId":  "Protection paladin",
+              "preset":  "RaidPresetProtectionPaladin",
+              "judgement":  "PaladinJudgementWisdom"
+            },
+            {
+              "party":  2,
+              "role":  "RaidRoleHealer",
+              "buildId":  "Holy paladin",
+              "preset":  "RaidPresetHolyPaladin",
+              "judgement":  "PaladinJudgementWisdom"
+            },
+            {
+              "party":  2,
+              "role":  "RaidRoleHealer",
+              "buildId":  "Holy priest",
+              "preset":  "RaidPresetHolyPriest"
+            },
+            {
+              "party":  2,
+              "buildId":  "mage__fire",
+              "dps":  1081.0223563787504,
+              "se":  0.6212224780572795,
+              "tps":  789.0710786865565,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "race":  "Gnome",
+              "reportDps":  1089
+            },
+            {
+              "party":  2,
+              "buildId":  "mage__fire",
+              "dps":  1081.0223563787504,
+              "se":  0.6212224780572795,
+              "tps":  789.0710786865565,
+              "blessings":  [
+                "BlessingKings",
+                "BlessingWisdom"
+              ],
+              "race":  "Gnome",
+              "reportDps":  1089
+            }
+          ],
+          "buffSet":  "Curse of the Elements, Judgement of Wisdom, Moonkin Aura, Arcane Brilliance, Gift of the Wild, Prayer of Spirit, Fortitude, Blessings; 2 blessings per class",
+          "combo":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetHolyPaladin",
+            "RaidPresetHolyPriest"
+          ],
+          "modelDps":  7280.458182101632
+        },
+        {
+          "dps":  7222.0823612357635,
+          "se":  2.2526039497644073,
+          "gap":  73.67376055315799,
+          "gapSe":  4.094378620542766,
+          "members":  [
+            {
+              "party":  1,
+              "role":  "RaidRoleTank",
+              "buildId":  "Warden shaman",
+              "preset":  "RaidPresetWardenShaman",
+              "totems":  [
+                "RaidTotemStrengthOfEarth",
+                "RaidTotemManaSpring",
+                "RaidTotemFlametongue",
+                "RaidTotemGraceOfAir"
+              ]
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1093.9396881163455,
+              "se":  0.6595259579689619,
+              "tps":  798.6160114357244,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "powerInfusion":  true,
+              "package":  "RaidPackageManaSpring",
+              "race":  "Gnome",
+              "reportDps":  1089
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1073.4359610518777,
+              "se":  0.6518402316672691,
+              "tps":  784.0137607863785,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "package":  "RaidPackageManaSpring",
+              "race":  "Gnome",
+              "reportDps":  1089
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1073.4359610518777,
+              "se":  0.6518402316672691,
+              "tps":  784.0137607863785,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "package":  "RaidPackageManaSpring",
+              "race":  "Gnome",
+              "reportDps":  1089
+            },
+            {
+              "party":  1,
+              "buildId":  "mage__fire",
+              "dps":  1073.4359610518777,
+              "se":  0.6518402316672691,
+              "tps":  784.0137607863785,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "package":  "RaidPackageManaSpring",
+              "race":  "Gnome",
+              "reportDps":  1089
+            },
+            {
+              "party":  2,
+              "role":  "RaidRoleHealer",
+              "buildId":  "Holy paladin",
+              "preset":  "RaidPresetHolyPaladin",
+              "judgement":  "PaladinJudgementWisdom"
+            },
+            {
+              "party":  2,
+              "role":  "RaidRoleHealer",
+              "buildId":  "Discipline priest",
+              "preset":  "RaidPresetDisciplinePriest"
+            },
+            {
+              "party":  2,
+              "buildId":  "warlock__demonology-duty-curse",
+              "duties":  [
+                "DutyCurseOfTheElements"
+              ],
+              "dps":  1003.971214099635,
+              "se":  0.47659142374792124,
+              "tps":  796.1339746169111,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "race":  "Gnome",
+              "reportDps":  1051.8
+            },
+            {
+              "party":  2,
+              "buildId":  "druid__balance",
+              "dps":  846.3672502883643,
+              "se":  0.31390252324864176,
+              "tps":  860.539592557542,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "race":  "NightElf",
+              "reportDps":  851.2
+            },
+            {
+              "party":  2,
+              "buildId":  "mage__fire",
+              "dps":  1057.4963255757857,
+              "se":  0.6996532694035283,
+              "tps":  773.2974432154389,
+              "blessings":  [
+                "BlessingKings"
+              ],
+              "race":  "Gnome",
+              "reportDps":  1089
+            }
+          ],
+          "buffSet":  "Curse of the Elements, Judgement of Wisdom, Strength of Earth, Grace of Air, Flametongue Totem, Moonkin Aura, Arcane Brilliance, Gift of the Wild, Prayer of Spirit, Fortitude, Blessings; 1 blessing per class",
+          "combo":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetHolyPaladin",
+            "RaidPresetDisciplinePriest"
+          ],
+          "modelDps":  7278.008145609525
+        }
+      ],
+      "tieSet":  2,
+      "combos":  [
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetRestorationShaman",
+            "RaidPresetDisciplinePriest"
+          ],
+          "dps":  7305.518432743413,
+          "signature":  "1 paladin, 1 shaman, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetHolyPaladin",
+            "RaidPresetDisciplinePriest"
+          ],
+          "dps":  7300.495198495503,
+          "gap":  5.023234247909386,
+          "signature":  "2 paladins, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetRestorationShaman",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  7285.140896628165,
+          "gap":  20.377536115247494,
+          "signature":  "1 paladin, 1 shaman, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetHolyPaladin",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  7280.147681093323,
+          "gap":  25.370751650089915,
+          "signature":  "2 paladins, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetHolyPaladin",
+            "RaidPresetDisciplinePriest"
+          ],
+          "dps":  7230.906914854801,
+          "gap":  74.61151788861207,
+          "signature":  "1 paladin, 1 shaman, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetRestorationShaman",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  7220.5716968463075,
+          "gap":  84.9467358971051,
+          "signature":  "a druid, 1 paladin, 1 shaman"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetHolyPaladin",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  7210.615435653062,
+          "gap":  94.90299709035025,
+          "signature":  "1 paladin, 1 shaman, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetDisciplinePriest",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  7205.682640880056,
+          "gap":  99.83579186335646,
+          "signature":  "a druid, 1 paladin, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetHolyPaladin",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  7203.511811283235,
+          "gap":  102.00662146017748,
+          "signature":  "a druid, 2 paladins"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetHolyPaladin",
+            "RaidPresetRestorationShaman"
+          ],
+          "dps":  7203.362212938972,
+          "gap":  102.1562198044403,
+          "signature":  "2 paladins, 1 shaman"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetRestorationShaman",
+            "RaidPresetRestorationShaman"
+          ],
+          "dps":  7197.696782680742,
+          "gap":  107.82165006267041,
+          "signature":  "1 paladin, 2 shamans"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetHolyPaladin",
+            "RaidPresetRestorationShaman"
+          ],
+          "dps":  7189.108434614481,
+          "gap":  116.40999812893187,
+          "signature":  "a warrior tank, 1 paladin, 1 shaman"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetHolyPriest",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  7186.125597025899,
+          "gap":  119.39283571751366,
+          "signature":  "a druid, 1 paladin, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetDisciplinePriest",
+            "RaidPresetDisciplinePriest"
+          ],
+          "dps":  7183.1098817307275,
+          "gap":  122.40855101268517,
+          "signature":  "1 paladin, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetHolyPaladin",
+            "RaidPresetRestorationShaman"
+          ],
+          "dps":  7182.965374639148,
+          "gap":  122.55305810426489,
+          "signature":  "1 paladin, 2 shamans"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetHolyPaladin",
+            "RaidPresetHolyPaladin"
+          ],
+          "dps":  7181.467896985861,
+          "gap":  124.05053575755119,
+          "signature":  "2 paladins, 1 shaman"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetHolyPaladin",
+            "RaidPresetRestorationShaman"
+          ],
+          "dps":  7180.503264170504,
+          "gap":  125.0151685729088,
+          "signature":  "a Feral tank, 1 paladin, 1 shaman"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetHolyPaladin",
+            "RaidPresetDisciplinePriest"
+          ],
+          "dps":  7176.6064004873,
+          "gap":  128.91203225611298,
+          "signature":  "a warrior tank, 1 paladin, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetHolyPaladin",
+            "RaidPresetDisciplinePriest"
+          ],
+          "dps":  7171.263882816035,
+          "gap":  134.2545499273774,
+          "signature":  "a Feral tank, 1 paladin, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetHolyPaladin",
+            "RaidPresetHolyPaladin"
+          ],
+          "dps":  7171.203148134429,
+          "gap":  134.31528460898335,
+          "signature":  "a Feral tank, 2 paladins"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetDisciplinePriest",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  7163.0099680419,
+          "gap":  142.50846470151282,
+          "signature":  "1 paladin, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetHolyPaladin",
+            "RaidPresetHolyPaladin"
+          ],
+          "dps":  7158.760823239279,
+          "gap":  146.75760950413405,
+          "signature":  "a warrior tank, 2 paladins"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetHolyPaladin",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  7156.506486798472,
+          "gap":  149.01194594494063,
+          "signature":  "a warrior tank, 1 paladin, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetHolyPaladin",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  7151.706838961877,
+          "gap":  153.81159378153552,
+          "signature":  "a Feral tank, 1 paladin, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetHolyPaladin",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  7145.853153939784,
+          "gap":  159.665278803629,
+          "signature":  "a druid, 1 paladin, 1 shaman"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetHolyPaladin",
+            "RaidPresetHolyPaladin"
+          ],
+          "dps":  7145.163383135376,
+          "gap":  160.355049608037,
+          "signature":  "3 paladins"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetHolyPriest",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  7142.910054353073,
+          "gap":  162.60837839033957,
+          "signature":  "1 paladin, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionPaladin",
+            "RaidPresetRestorationDruid",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  7115.920456253193,
+          "gap":  189.59797649021948,
+          "signature":  "a druid, 1 paladin"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetHolyPaladin",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  7097.454656973925,
+          "gap":  208.06377576948762,
+          "signature":  "a warrior tank, a druid, 1 paladin"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetHolyPaladin",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  7082.4171988544285,
+          "gap":  223.1012338889841,
+          "signature":  "a Feral tank, 1 paladin"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetRestorationShaman",
+            "RaidPresetDisciplinePriest"
+          ],
+          "dps":  7068.559495797481,
+          "gap":  236.95893694593178,
+          "signature":  "a warrior tank, 1 shaman, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetRestorationShaman",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  7048.181959682233,
+          "gap":  257.3364730611793,
+          "signature":  "a warrior tank, 1 shaman, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetRestorationShaman",
+            "RaidPresetDisciplinePriest"
+          ],
+          "dps":  7043.800203040542,
+          "gap":  261.7182297028703,
+          "signature":  "a Feral tank, 1 shaman, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetRestorationShaman",
+            "RaidPresetDisciplinePriest"
+          ],
+          "dps":  7024.807143197068,
+          "gap":  280.71128954634423,
+          "signature":  "2 shamans, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetRestorationShaman",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  7023.962455128112,
+          "gap":  281.55597761530043,
+          "signature":  "a Feral tank, 1 shaman, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetRestorationShaman",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  7022.844344007695,
+          "gap":  282.6740887357173,
+          "signature":  "a warrior tank, a druid, 1 shaman"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetRestorationShaman",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  7004.429607081821,
+          "gap":  301.0888256615917,
+          "signature":  "2 shamans, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetDisciplinePriest",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  6993.075838917122,
+          "gap":  312.44259382629025,
+          "signature":  "a druid, 1 shaman, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetHolyPriest",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  6973.343213136008,
+          "gap":  332.17521960740487,
+          "signature":  "a druid, 1 shaman, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetRestorationShaman",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  6970.644632679432,
+          "gap":  334.8738000639805,
+          "signature":  "a druid, 2 shamans"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetRestorationShaman",
+            "RaidPresetRestorationShaman"
+          ],
+          "dps":  6961.601892143739,
+          "gap":  343.9165405996737,
+          "signature":  "a Feral tank, 2 shamans"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetRestorationShaman",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  6956.801545611615,
+          "gap":  348.7168871317972,
+          "signature":  "a Feral tank, 1 shaman"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetRestorationShaman",
+            "RaidPresetRestorationShaman"
+          ],
+          "dps":  6949.666962943199,
+          "gap":  355.85146980021364,
+          "signature":  "a warrior tank, 2 shamans"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetDisciplinePriest",
+            "RaidPresetDisciplinePriest"
+          ],
+          "dps":  6940.586233838176,
+          "gap":  364.9321989052369,
+          "signature":  "1 shaman, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetDisciplinePriest",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  6920.294754636438,
+          "gap":  385.22367810697506,
+          "signature":  "1 shaman, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetDisciplinePriest",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  6912.301580210025,
+          "gap":  393.2168525333873,
+          "signature":  "a warrior tank, a druid, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetHolyPriest",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  6900.003275434699,
+          "gap":  405.51515730871324,
+          "signature":  "1 shaman, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetHolyPriest",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  6892.744536355868,
+          "gap":  412.7738963875445,
+          "signature":  "a warrior tank, a druid, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetRestorationDruid",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  6889.909121494121,
+          "gap":  415.60931124929175,
+          "signature":  "a druid, 1 shaman"
+        },
+        {
+          "presets":  [
+            "RaidPresetWardenShaman",
+            "RaidPresetRestorationShaman",
+            "RaidPresetRestorationShaman"
+          ],
+          "dps":  6873.371493197606,
+          "gap":  432.1469395458071,
+          "signature":  "2 shamans"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetDisciplinePriest",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  6862.163633669691,
+          "gap":  443.35479907372155,
+          "signature":  "a Feral tank, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetDisciplinePriest",
+            "RaidPresetDisciplinePriest"
+          ],
+          "dps":  6850.86601386348,
+          "gap":  454.65241887993307,
+          "signature":  "a warrior tank, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetDisciplinePriest",
+            "RaidPresetDisciplinePriest"
+          ],
+          "dps":  6847.301919459827,
+          "gap":  458.2165132835853,
+          "signature":  "a Feral tank, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetHolyPriest",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  6842.606589815533,
+          "gap":  462.91184292787966,
+          "signature":  "a Feral tank, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetDisciplinePriest",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  6830.766100174653,
+          "gap":  474.7523325687598,
+          "signature":  "a warrior tank, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetDisciplinePriest",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  6827.744875605669,
+          "gap":  477.7735571377434,
+          "signature":  "a Feral tank, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetRestorationDruid",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  6822.539395583162,
+          "gap":  482.9790371602503,
+          "signature":  "a warrior tank, a druid"
+        },
+        {
+          "presets":  [
+            "RaidPresetProtectionWarrior",
+            "RaidPresetHolyPriest",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  6810.666186485825,
+          "gap":  494.85224625758747,
+          "signature":  "a warrior tank, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetHolyPriest",
+            "RaidPresetHolyPriest"
+          ],
+          "dps":  6808.187831751511,
+          "gap":  497.3306009919015,
+          "signature":  "a Feral tank, a priest"
+        },
+        {
+          "presets":  [
+            "RaidPresetFeralTank",
+            "RaidPresetRestorationDruid",
+            "RaidPresetRestorationDruid"
+          ],
+          "dps":  6772.401449042828,
+          "gap":  533.1169837005846,
+          "signature":  "a Feral tank"
+        }
+      ],
+      "presetValues":  [
+        {
+          "preset":  "RaidPresetProtectionWarrior",
+          "bestWithMinusWithout":  -116.40999812893187,
+          "hasBestWithMinusWithout":  true
+        },
+        {
+          "preset":  "RaidPresetFeralTank",
+          "bestWithMinusWithout":  -125.0151685729088,
+          "hasBestWithMinusWithout":  true
+        },
+        {
+          "preset":  "RaidPresetProtectionPaladin",
+          "atBest":  69.58828364070268,
+          "bestWithMinusWithout":  74.61151788861207,
+          "hasAtBest":  true,
+          "hasBestWithMinusWithout":  true
+        },
+        {
+          "preset":  "RaidPresetWardenShaman",
+          "bestWithMinusWithout":  -74.61151788861207,
+          "hasBestWithMinusWithout":  true
+        },
+        {
+          "preset":  "RaidPresetHolyPaladin",
+          "atBest":  -5.023234247909386,
+          "bestWithMinusWithout":  -5.023234247909386,
+          "hasAtBest":  true,
+          "hasBestWithMinusWithout":  true
+        },
+        {
+          "preset":  "RaidPresetRestorationShaman",
+          "bestWithMinusWithout":  5.023234247909386,
+          "hasBestWithMinusWithout":  true
+        },
+        {
+          "preset":  "RaidPresetDisciplinePriest",
+          "atBest":  20.34751740218053,
+          "bestWithMinusWithout":  20.377536115247494,
+          "hasAtBest":  true,
+          "hasBestWithMinusWithout":  true
+        },
+        {
+          "preset":  "RaidPresetHolyPriest",
+          "bestWithMinusWithout":  -20.377536115247494,
+          "hasBestWithMinusWithout":  true
+        },
+        {
+          "preset":  "RaidPresetRestorationDruid",
+          "bestWithMinusWithout":  -84.9467358971051,
+          "hasBestWithMinusWithout":  true
+        }
+      ],
+      "roles":  [
+        {
+          "role":  "Battle Shout",
+          "net":  -532.3874316931533,
+          "provider":  "value of adding",
+          "measured":  true
+        },
+        {
+          "role":  "Furious Howl",
+          "net":  -334.08609861618606,
+          "provider":  "value of adding",
+          "measured":  true
+        },
+        {
+          "role":  "Sunder upkeep",
+          "net":  -415.7406828549638,
+          "provider":  "value of adding",
+          "measured":  true
+        },
+        {
+          "role":  "Minor armor slot",
+          "net":  -28.35298925695224,
+          "provider":  "value of adding",
+          "measured":  true
+        },
+        {
+          "role":  "Curse of the Elements",
+          "gain":  669.9335692603801,
+          "providerCost":  68.77529910497026,
+          "net":  601.1582701554098,
+          "provider":  "warlock__demonology-duty-curse",
+          "inSet":  true,
+          "measured":  true
+        },
+        {
+          "role":  "Judgement of the Crusader",
+          "provider":  "value of adding",
+          "measured":  true
+        },
+        {
+          "role":  "Judgement of Wisdom",
+          "provider":  "placeholders (not measured: they give it at no cost)",
+          "inSet":  true
+        },
+        {
+          "role":  "Moonkin Aura (with Gift of the Wild) (its giver also gives Gift of the Wild, and its cost counts in each)",
+          "gain":  292.31037341002195,
+          "providerCost":  234.5767503169542,
+          "net":  57.73362309306776,
+          "provider":  "druid__balance",
+          "inSet":  true,
+          "measured":  true
+        },
+        {
+          "role":  "Leader of the Pack",
+          "net":  -495.32945628893685,
+          "provider":  "value of adding",
+          "measured":  true
+        },
+        {
+          "role":  "Trueshot Aura",
+          "net":  -300.5600050897692,
+          "provider":  "value of adding",
+          "measured":  true
+        },
+        {
+          "role":  "Arcane Brilliance",
+          "gain":  359.86444805766496,
+          "net":  359.86444805766496,
+          "provider":  "mage__fire",
+          "inSet":  true,
+          "measured":  true
+        },
+        {
+          "role":  "Gift of the Wild (with Moonkin Aura) (its giver also gives Moonkin Aura, and its cost counts in each)",
+          "gain":  292.31037341002195,
+          "providerCost":  234.5767503169542,
+          "net":  57.73362309306776,
+          "provider":  "druid__balance",
+          "inSet":  true,
+          "measured":  true
+        },
+        {
+          "role":  "Prayer of Spirit",
+          "provider":  "placeholders (not measured: they give it at no cost)",
+          "inSet":  true
+        },
+        {
+          "role":  "Enhancement's totems (Strength of Earth, Windfury)",
+          "net":  -370.4730024796545,
+          "provider":  "value of adding",
+          "measured":  true
+        }
+      ],
+      "fillers":  [
+        {
+          "buildId":  "mage__fire",
+          "dps":  1083.357104359321,
+          "se":  1.9020192957957125,
+          "assumptionLow":  1047.4291043593212,
+          "assumptionHigh":  1089.493104359321,
+          "interchangeable":  true
+        },
+        {
+          "buildId":  "mage__frostfire",
+          "dps":  1068.122644236043,
+          "se":  2.5874460820236385,
+          "assumptionLow":  984.314644236043,
+          "assumptionHigh":  1074.049644236043
+        },
+        {
+          "buildId":  "warlock__demonology",
+          "dps":  1024.2377680418124,
+          "se":  1.5630105121327411,
+          "assumptionLow":  943.8327680418124,
+          "assumptionHigh":  1042.4267680418125
+        },
+        {
+          "buildId":  "warlock__affliction",
+          "dps":  996.9026900096674,
+          "se":  1.7064735960839088,
+          "assumptionLow":  922.3526900096674,
+          "assumptionHigh":  1017.3216900096675
+        },
+        {
+          "buildId":  "warlock__destruction",
+          "dps":  978.0247914316427,
+          "se":  1.6141576377410551,
+          "assumptionLow":  912.0087914316427,
+          "assumptionHigh":  997.3317914316427
+        },
+        {
+          "buildId":  "warlock__destruction_fire",
+          "dps":  975.7933036765444,
+          "se":  1.0700013300485338,
+          "assumptionLow":  905.8933036765444,
+          "assumptionHigh":  992.8543036765443
+        },
+        {
+          "buildId":  "priest__shadow",
+          "dps":  948.3728064013739,
+          "se":  0.7760656355988126,
+          "assumptionLow":  935.4658064013738,
+          "assumptionHigh":  952.1318064013738
+        },
+        {
+          "buildId":  "mage__frost",
+          "dps":  910.4183701271875,
+          "se":  1.6665264321640487,
+          "assumptionLow":  847.0333701271875,
+          "assumptionHigh":  926.5233701271874
+        },
+        {
+          "buildId":  "mage__arcane",
+          "dps":  897.7926132324656,
+          "se":  1.2898563714986822,
+          "assumptionLow":  846.1966132324656,
+          "assumptionHigh":  910.2496132324655
+        },
+        {
+          "buildId":  "priest__shadow-holy",
+          "dps":  871.5786218787235,
+          "se":  1.1392133079847715,
+          "assumptionLow":  859.2736218787236,
+          "assumptionHigh":  875.3956218787235
+        },
+        {
+          "buildId":  "druid__balance",
+          "dps":  848.7803540423669,
+          "se":  1.003277076013781,
+          "assumptionLow":  831.7053540423668,
+          "assumptionHigh":  855.7483540423668
+        },
+        {
+          "buildId":  "druid__balance-wrath",
+          "dps":  810.6298157989171,
+          "se":  0.8653993565035498,
+          "assumptionLow":  795.5158157989171,
+          "assumptionHigh":  821.8268157989171
+        },
+        {
+          "buildId":  "hunter__beast-mastery",
+          "dps":  786.362391956428,
+          "se":  0.6663152062860067,
+          "assumptionLow":  744.6383919564279,
+          "assumptionHigh":  787.4183919564279
+        },
+        {
+          "buildId":  "shaman__elemental-level60",
+          "dps":  764.3422263281946,
+          "se":  0.8922576909452506,
+          "assumptionLow":  755.2782263281946,
+          "assumptionHigh":  767.5142263281946
+        },
+        {
+          "buildId":  "shaman__elemental-level60-mana-tide",
+          "dps":  751.6541908941009,
+          "se":  0.8591676813114563,
+          "assumptionLow":  741.954190894101,
+          "assumptionHigh":  754.8651908941009
+        },
+        {
+          "buildId":  "priest__smite",
+          "dps":  643.5568549898281,
+          "se":  0.8909377231978918,
+          "assumptionLow":  628.4308549898282,
+          "assumptionHigh":  647.0118549898282
+        },
+        {
+          "buildId":  "hunter__survival",
+          "dps":  610.7606999381157,
+          "se":  0.6303466828988881,
+          "assumptionLow":  558.0666999381157,
+          "assumptionHigh":  610.7606999381157
+        },
+        {
+          "buildId":  "warrior__fury",
+          "dps":  534.4791994402589,
+          "se":  1.062923246596969,
+          "assumptionLow":  454.26019944025893,
+          "assumptionHigh":  586.6011994402589
+        },
+        {
+          "buildId":  "rogue__combat-daggers",
+          "dps":  481.56432499499965,
+          "se":  0.5839335889321534,
+          "assumptionLow":  444.5383249949997,
+          "assumptionHigh":  481.56432499499965
+        },
+        {
+          "buildId":  "warrior__arms",
+          "dps":  479.3130368346727,
+          "se":  0.9073635054074856,
+          "assumptionLow":  440.3900368346727,
+          "assumptionHigh":  505.1870368346727
+        },
+        {
+          "buildId":  "warrior__fury_2h",
+          "dps":  468.29142610755156,
+          "se":  0.9523992281256125,
+          "assumptionLow":  384.41242610755154,
+          "assumptionHigh":  524.2684261075515
+        },
+        {
+          "buildId":  "rogue__subtlety",
+          "dps":  467.45455174198145,
+          "se":  0.5198669037101469,
+          "assumptionLow":  435.16055174198146,
+          "assumptionHigh":  467.45455174198145
+        },
+        {
+          "buildId":  "rogue__seal-fate-daggers",
+          "dps":  452.1620198194826,
+          "se":  0.5571667932758071,
+          "assumptionLow":  424.96301981948255,
+          "assumptionHigh":  452.1620198194826
+        },
+        {
+          "buildId":  "rogue__combat-swords",
+          "dps":  451.2062061330602,
+          "se":  0.6215122803160328,
+          "assumptionLow":  424.00720613306015,
+          "assumptionHigh":  451.2062061330602
+        },
+        {
+          "buildId":  "rogue__mutilate",
+          "dps":  443.37535393706474,
+          "se":  0.5028584758245029,
+          "assumptionLow":  415.4393539370647,
+          "assumptionHigh":  443.37535393706474
+        },
+        {
+          "buildId":  "rogue__seal-fate-swords",
+          "dps":  429.60706509581104,
+          "se":  0.5889780121758743,
+          "assumptionLow":  398.5140650958111,
+          "assumptionHigh":  429.60706509581104
+        }
+      ],
+      "memberValues":  [
+        {
+          "contribution":  1586.0283072672346,
+          "ownDps":  1014.5818052543508,
+          "replacementMargin":  26.050134920015807,
+          "bestReplacement":  "warlock__affliction-duty-curse",
+          "reportDifference":  -37.21819474564916,
+          "reportDifferenceParts":  [
+            "the report's request in this sim: +0.8",
+            "race (Gnome): -3.9",
+            "this fight (boss, length, flask zone): +0.0",
+            "the raid's buff set: -24.5",
+            "its duty (Curse of the Elements): -9.7"
+          ],
+          "buildId":  "warlock__demonology-duty-curse",
+          "count":  1,
+          "dutyCost":  9.65596278746159
+        },
+        {
+          "member":  1,
+          "contribution":  1098.2815049698047,
+          "ownDps":  848.7803540423669,
+          "replacementMargin":  38.15053824344977,
+          "bestReplacement":  "druid__balance-wrath",
+          "reportDifference":  -2.419645957633179,
+          "reportDifferenceParts":  [
+            "the report's request in this sim: -0.1",
+            "race (NightElf): +0.0",
+            "this fight (boss, length, flask zone): +0.0",
+            "the raid's buff set: -2.4"
+          ],
+          "buildId":  "druid__balance",
+          "count":  1
+        },
+        {
+          "member":  2,
+          "contribution":  1083.357104359321,
+          "ownDps":  1103.7046217615014,
+          "replacementMargin":  15.23446012327804,
+          "bestReplacement":  "mage__frostfire",
+          "reportDifference":  14.704621761501357,
+          "reportDifferenceParts":  [
+            "the report's request in this sim: +1.0",
+            "race (Gnome): +2.5",
+            "this fight (boss, length, flask zone): +0.0",
+            "the raid's buff set: +11.3"
+          ],
+          "buildId":  "mage__fire",
+          "count":  1
+        },
+        {
+          "member":  2,
+          "contribution":  1083.357104359321,
+          "ownDps":  1083.357104359321,
+          "replacementMargin":  15.23446012327804,
+          "bestReplacement":  "mage__frostfire",
+          "reportDifference":  -5.642895640678944,
+          "reportDifferenceParts":  [
+            "the report's request in this sim: +1.0",
+            "race (Gnome): +2.5",
+            "this fight (boss, length, flask zone): +0.0",
+            "the raid's buff set: -9.1"
+          ],
+          "buildId":  "mage__fire",
+          "count":  4
+        }
+      ],
+      "adding":  [
+        {
+          "buildId":  "mage__frostfire",
+          "value":  -15.23446012327804
+        },
+        {
+          "buildId":  "warlock__affliction",
+          "value":  -26.050134920015807
+        },
+        {
+          "buildId":  "druid__balance-wrath",
+          "value":  -38.15053824344977
+        },
+        {
+          "buildId":  "warlock__destruction",
+          "value":  -45.186761439103975
+        },
+        {
+          "buildId":  "warlock__destruction_fire",
+          "value":  -47.132839134152164
+        },
+        {
+          "buildId":  "priest__shadow",
+          "value":  -134.9842979579471
+        },
+        {
+          "buildId":  "mage__frost",
+          "value":  -172.93873423213336
+        },
+        {
+          "buildId":  "mage__arcane",
+          "value":  -179.69093043895282
+        },
+        {
+          "buildId":  "priest__shadow-holy",
+          "value":  -211.77848248059763
+        },
+        {
+          "buildId":  "shaman__elemental-level60-mana-tide",
+          "value":  -281.41415711578065
+        },
+        {
+          "buildId":  "shaman__elemental-level60",
+          "value":  -291.3714559495138
+        },
+        {
+          "buildId":  "hunter__beast-mastery",
+          "value":  -296.99471240289313
+        },
+        {
+          "buildId":  "hunter__marksmanship",
+          "value":  -300.5600050897692
+        },
+        {
+          "buildId":  "hunter__lone-wolf",
+          "value":  -302.8695593597049
+        },
+        {
+          "buildId":  "shaman__enhancement-level60",
+          "value":  -379.17521326912356
+        },
+        {
+          "buildId":  "paladin__level_60_shock_ret",
+          "value":  -380.8614838559379
+        },
+        {
+          "buildId":  "shaman__enhancement-imp-gw",
+          "value":  -382.0243841731799
+        },
+        {
+          "buildId":  "paladin__level_60_sub_holy",
+          "value":  -391.2971057781624
+        },
+        {
+          "buildId":  "paladin__level_60",
+          "value":  -395.0347765678234
+        },
+        {
+          "buildId":  "paladin__level_60_shock",
+          "value":  -399.8788727754818
+        },
+        {
+          "buildId":  "shaman__enhancement-water-shield",
+          "value":  -417.8295446927432
+        },
+        {
+          "buildId":  "shaman__enhancement-mana-tide",
+          "value":  -430.54842971756716
+        },
+        {
+          "buildId":  "priest__smite",
+          "value":  -439.80024936949303
+        },
+        {
+          "buildId":  "druid__feral-cat",
+          "value":  -463.3960668030204
+        },
+        {
+          "buildId":  "hunter__survival",
+          "value":  -472.5964044212051
+        },
+        {
+          "buildId":  "warrior__fury",
+          "value":  -548.6485173846004
+        },
+        {
+          "buildId":  "rogue__combat-daggers",
+          "value":  -601.7927793643212
+        },
+        {
+          "buildId":  "warrior__arms",
+          "value":  -603.814679990187
+        },
+        {
+          "buildId":  "warrior__fury_2h",
+          "value":  -614.8362907173077
+        },
+        {
+          "buildId":  "rogue__subtlety",
+          "value":  -615.90255261734
+        },
+        {
+          "buildId":  "rogue__seal-fate-daggers",
+          "value":  -631.1950845398387
+        },
+        {
+          "buildId":  "rogue__combat-swords",
+          "value":  -632.1508982262612
+        },
+        {
+          "buildId":  "rogue__mutilate",
+          "value":  -639.9817504222565
+        },
+        {
+          "buildId":  "rogue__seal-fate-swords",
+          "value":  -653.7500392635102
+        }
+      ],
+      "buffs":  [
+        {
+          "effect":  "Curse of the Elements",
+          "provider":  "warlock__demonology 4",
+          "scope":  "the boss",
+          "receivers":  7
+        },
+        {
+          "effect":  "Judgement of Wisdom",
+          "provider":  "Protection paladin, Holy paladin",
+          "scope":  "the boss",
+          "receivers":  7,
+          "given":  true
+        },
+        {
+          "effect":  "Moonkin Aura",
+          "provider":  "druid__balance 5",
+          "scope":  "raid",
+          "receivers":  7,
+          "given":  true
+        },
+        {
+          "effect":  "Arcane Brilliance",
+          "provider":  "mage__fire 6, mage__fire 7, mage__fire 8, mage__fire 9, mage__fire 10",
+          "scope":  "raid",
+          "receivers":  7,
+          "given":  true
+        },
+        {
+          "effect":  "Gift of the Wild",
+          "provider":  "druid__balance 5",
+          "scope":  "raid",
+          "receivers":  7,
+          "given":  true
+        },
+        {
+          "effect":  "Prayer of Spirit",
+          "provider":  "Discipline priest",
+          "scope":  "raid",
+          "receivers":  7,
+          "given":  true
+        },
+        {
+          "effect":  "Fortitude",
+          "provider":  "Discipline priest",
+          "scope":  "raid",
+          "receivers":  7,
+          "given":  true
+        }
+      ],
+      "misses":  [
+        "nobody gives Battle Shout",
+        "nobody gives Furious Howl",
+        "nobody gives Sunder upkeep",
+        "nobody gives Minor armor slot",
+        "nobody gives Judgement of the Crusader",
+        "nobody gives Strength of Earth",
+        "nobody gives Grace of Air",
+        "nobody gives Leader of the Pack",
+        "nobody gives Trueshot Aura",
+        "Druids get 2 of the 3 blessings",
+        "Mages get 2 of the 3 blessings",
+        "Warlocks get 2 of the 3 blessings"
+      ],
+      "modelCheck":  {
+        "setsScored":  130176,
+        "setsSimmed":  140,
+        "maxMiss":  92.54791658914382,
+        "meanMiss":  23.05041539699991
+      },
+      "notes":  [
+        "10 of 43 builds survive pruning: hunter__beast-mastery, hunter__beast-mastery-tallstrider, hunter__lone-wolf, hunter__marksmanship, hunter__marksmanship-tallstrider, mage__fire, mage__frostfire, priest__shadow, warlock__demonology, warlock__destruction_fire",
+        "60 tank and healer combos in 35 signatures"
+      ],
+      "timings":  [
+        "model 3847 sims 187 s",
+        "ranking buff sets 0 sims 1 s",
+        "signatures 1694 sims 120 s",
+        "exact sets 0 sims 0 s",
+        "local moves 386 sims 35 s",
+        "combos 2 sims 1 s",
+        "contenders 81 sims 36 s",
+        "done 0 sims 0 s",
+        "confirmation 4 sims 10 s",
+        "extras 202 sims 36 s"
+      ]
+    }
+  ],
+  "assumptions":  [
+    "Each build at its best race in the faction, from the report's race tables.",
+    "Mana Spring from two shamans doesn't stack, and a party has one package (shaman_audit 8.45, unverified).",
+    "Furious Howl and the minor armor slot: the strongest counts, nothing stacks (until the launch checks).",
+    "Hunter's Mark: each hunter marks for itself; the shared mark is left to the raid sims.",
+    "Power Infusion fires as soon as it's ready; Innervate below a mana threshold.",
+    "Everyone is in range of every raid-wide buff.",
+    "Moonkin Aura takes the whole Camp Chair (unverified)."
+  ],
+  "leftOut":  [
+    "a DPS shaman's totem choice: Enhancement and Elemental drop their builds' fixed totems (the engine's assigned totems aren't in their rotations yet)",
+    "Dark Inspiration as a party package (a Shadow priest's own Spirit is in its sims)",
+    "the hunter pet variants' cat swing speed and Cobra Reflexes on the Tallstrider and wolf (an assumption)"
+  ],
+  "notModelled":  [
+    "healing",
+    "tanking",
+    "threat",
+    "pet deaths",
+    "movement",
+    "boss mechanics",
+    "the tanks' and healers' own damage"
+  ],
+  "version":  "6c652f4a55a41916",
+  "simsRun":  "12736",
+  "cacheHits":  "6971",
+  "seconds":  983.251351835
+}

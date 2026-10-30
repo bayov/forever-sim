@@ -883,6 +883,10 @@
 	.leveling-plan-training-status {
 		color: var(--bs-gray-500);
 		margin-bottom: var(--block-spacer);
+
+		&.leveling-plan-training-short {
+			color: var(--bs-danger);
+		}
 	}
 
 	.leveling-plan-training-table {

@@ -214,6 +214,8 @@ type trainingSearch struct {
 	budget   budget
 	levels   []int32
 	sessions int32
+	// The ranks of the spells the plan doesn't cast that we train anyway, at their level.
+	always []*spellRank
 	// What we measured for each rank at each level, from every round, the latest kept. A rank
 	// pushed back is our highest at levels where it wasn't before, and we take its loss there
 	// from the nearest level we measured it at, until the next round measures it there.
@@ -376,6 +378,11 @@ func (ts *trainingSearch) short(ranks []*spellRank, s schedule, level int32) flo
 	spent := reserveAt(level)
 	for _, r := range ranks {
 		if s.buyLevel(r) <= level {
+			spent += r.price
+		}
+	}
+	for _, r := range ts.always {
+		if r.level <= level {
 			spent += r.price
 		}
 	}
@@ -559,9 +566,46 @@ func searchTraining(ctx context.Context, p *planner, sessions int32) (*proto.Lev
 		}
 	}
 	var worthList []*proto.LevelingRankWorth
+	planSpells := map[string]bool{}
 	for _, r := range planRanks {
-		worthList = append(worthList, &proto.LevelingRankWorth{SpellId: r.id, Level: r.level, Price: int32(r.price), Minutes: math.Round(minutes[r.id]*10) / 10, Rank: int32(r.rank)})
+		planSpells[r.spell] = true
+		worthList = append(worthList, &proto.LevelingRankWorth{SpellId: r.id, Level: r.level, Price: int32(r.price), Minutes: math.Round(minutes[r.id]*10) / 10, Rank: int32(r.rank), Spell: r.spell})
 	}
+
+	// The spells the plan doesn't cast, and the ones of them we train anyway.
+	always := map[string]bool{}
+	for _, spell := range settings.AlwaysSpells {
+		if _, ok := ranks.bySpell[spell]; !ok {
+			return nil, fmt.Errorf("the class has no spell %q to always train", spell)
+		}
+		if planSpells[spell] {
+			return nil, fmt.Errorf("the plan casts %s, so it's scheduled like the plan's other spells", spell)
+		}
+		always[spell] = true
+	}
+	var others []*proto.LevelingRankWorth
+	for spell, spellRanks := range ranks.bySpell {
+		if planSpells[spell] {
+			continue
+		}
+		for _, r := range spellRanks {
+			if !r.bought || r.level > maxPlanLevel {
+				continue
+			}
+			others = append(others, &proto.LevelingRankWorth{SpellId: r.id, Level: r.level, Price: int32(r.price), Rank: int32(r.rank), Spell: spell})
+			if always[spell] {
+				ts.always = append(ts.always, r)
+			}
+		}
+	}
+	slices.SortFunc(others, func(a, b *proto.LevelingRankWorth) int { return int(a.SpellId - b.SpellId) })
+	alwaysCost := 0.0
+	for _, r := range ts.always {
+		if r.level <= 40 {
+			alwaysCost += r.price
+		}
+	}
+	log.Printf("%d spells we always train, %.1fg by 40", len(always), alwaysCost/10000)
 
 	skipped := skipTails(planRanks, minutes)
 	s, cost := ts.plan(planRanks, skipped)
@@ -587,7 +631,8 @@ func searchTraining(ctx context.Context, p *planner, sessions int32) (*proto.Lev
 	}
 	log.Printf("under the budget: %.2fh (%+.1f min)", totalHours(last), 60*(totalHours(last)-totalHours(full)))
 
-	out := &proto.LevelingTrainingSettings{GoldAt_40: settings.GoldAt_40, RidingLevel: settings.RidingLevel, RidingGold: settings.RidingGold, Worth: worthList}
+	out := &proto.LevelingTrainingSettings{GoldAt_40: settings.GoldAt_40, RidingLevel: settings.RidingLevel, RidingGold: settings.RidingGold, Worth: worthList,
+		AlwaysSpells: settings.AlwaysSpells, Others: others}
 	for id, level := range s {
 		out.Buys = append(out.Buys, &proto.LevelingTrainingBuy{SpellId: id, Level: level})
 	}
@@ -627,7 +672,7 @@ func (ts *trainingSearch) report(ranks []*spellRank, minutes map[int32]float64, 
 	}
 }
 
-func trainingFile(db *proto.UIDatabase, in, out string, sessions int32, goldAt40 float64, ridingLevel int32, ridingGold float64) error {
+func trainingFile(db *proto.UIDatabase, in, out string, sessions int32, goldAt40 float64, ridingLevel int32, ridingGold float64, alwaysSpells []string) error {
 	data, err := os.ReadFile(in)
 	if err != nil {
 		return err
@@ -637,7 +682,11 @@ func trainingFile(db *proto.UIDatabase, in, out string, sessions int32, goldAt40
 		return err
 	}
 	// The search starts from every rank at its level, so the plan's own schedule doesn't count.
-	req.Plan.Training = &proto.LevelingTrainingSettings{GoldAt_40: goldAt40, RidingLevel: ridingLevel, RidingGold: ridingGold}
+	// The spells we always train are the plan's, unless we name others.
+	if len(alwaysSpells) == 0 {
+		alwaysSpells = req.Plan.GetTraining().GetAlwaysSpells()
+	}
+	req.Plan.Training = &proto.LevelingTrainingSettings{GoldAt_40: goldAt40, RidingLevel: ridingLevel, RidingGold: ridingGold, AlwaysSpells: alwaysSpells}
 	p, err := newPlanner(req, db)
 	if err != nil {
 		return err

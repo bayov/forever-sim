@@ -1383,6 +1383,16 @@ like Fortitude, which adds no DPS but keeps the tanks alive.
   factions take the unconstrained best with a Discipline priest in a Restoration shaman's place: 15596.0
   Horde (36.6 behind the unconstrained 15632.6) and 15448.5 Alliance (38.5 behind 15487.0). They're the
   "Horde 20, class buffs" and "Alliance 20, class buffs" Best comps presets, which keep the requirements.
+- **10 and 40 players with the same requirements** (`m1_10_class_buffs`, `m1_40_class_buffs`, 2026-10-30,
+  after the Innervate fix):
+  - 10 players: a Protection paladin tank, a Discipline priest, and a Restoration shaman (Horde, 7259.9) or
+    a Holy paladin (Alliance, 7289.6). The DPS are five Fire mages, a Balance druid (Gift of the Wild and
+    Moonkin Aura) and a Demonology warlock on Curse of the Elements. The second paladin gives every class
+    two blessings, which puts Alliance ahead.
+  - 40 players: a Protection warrior, a Feral tank and a Warden shaman tank; three Holy paladins, three
+    Discipline priests (three Power Infusions), a Restoration shaman and a Restoration druid. The DPS are
+    26 Beast Mastery hunters, a Marksmanship hunter, a Fire mage and a Demonology warlock on Curse of the
+    Elements: 32766.5 Horde and 32427.4 Alliance.
 
 **What the page reuses:**
 

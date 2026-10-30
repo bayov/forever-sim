@@ -3,12 +3,24 @@ import { ref } from 'tsx-vanilla';
 import { IndividualSimUI } from '../../individual_sim_ui';
 import { Player } from '../../player';
 import { Spec } from '../../proto/common';
-import { LevelingRankWorth } from '../../proto/ui';
+import { LevelingRankWorth, LevelingTrainingSettings } from '../../proto/ui';
+import { TypedEvent } from '../../typed_event';
 import { ActionId } from '../../proto_utils/action_id';
 import { ContentBlock } from '../content_block';
 
 // A buy level past the plan's last level is a rank we never train (tools/levelingplan/training.go).
 const NEVER_LEVEL = 61;
+// The budget as training.go has it: the gold earned by a level grows with the level to this power,
+// and we keep Training's flight money (BayovCore's RESERVE) after training.
+const GOLD_GROWTH = 3.5;
+const FLIGHT_RESERVE: Array<[number, number]> = [
+	[50, 20000],
+	[40, 10000],
+	[30, 5000],
+	[20, 2500],
+	[11, 1000],
+	[1, 100],
+];
 
 // The Training part of the Leveling Plan tab: when we train each spell rank the plan casts, what
 // it costs and the minutes it saves.
@@ -23,6 +35,7 @@ export class LevelingTrainingSection {
 	private readonly player: Player<Spec>;
 	private readonly statusElem: HTMLElement;
 	private readonly bodyElem: HTMLElement;
+	private readonly othersElem: HTMLElement;
 
 	constructor(parentElem: HTMLElement, simUI: IndividualSimUI<Spec>) {
 		this.player = simUI.player;
@@ -58,6 +71,31 @@ export class LevelingTrainingSection {
 		);
 		this.statusElem = status.value!;
 		this.bodyElem = body.value!;
+
+		const othersBlock = new ContentBlock(this.rootElem, 'leveling-plan-training-others-block', {
+			header: {
+				title: 'Other spells',
+				tooltip: "Spells the plan never casts. A ticked one is trained at each rank's level, and its gold counts in the budget.",
+			},
+		});
+		const others = ref<HTMLTableSectionElement>();
+		othersBlock.bodyElement.appendChild(
+			<div className="leveling-plan-table-wrap">
+				<table className="leveling-plan-table leveling-plan-training-table table">
+					<thead>
+						<tr>
+							<th>Always</th>
+							<th>Spell</th>
+							<th>Levels</th>
+							<th>By 40</th>
+							<th>To 60</th>
+						</tr>
+					</thead>
+					<tbody ref={others} />
+				</table>
+			</div>,
+		);
+		this.othersElem = others.value!;
 		this.player.levelingPlanChangeEmitter.on(() => this.render());
 		this.render();
 	}
@@ -77,7 +115,11 @@ export class LevelingTrainingSection {
 		const parts = [`${training.goldAt40}g by 40`];
 		if (training.ridingLevel) parts.push(`riding ${training.ridingGold}g at ${training.ridingLevel}`);
 		parts.push(`${never} skipped`, `${later} later`);
+		const short = shortest(training);
+		parts.push(short ? `${formatCopper(short.copper)} short at ${short.level}` : 'gold enough');
 		this.statusElem.textContent = parts.join(' · ');
+		this.statusElem.classList.toggle('leveling-plan-training-short', !!short);
+		this.renderOthers(training);
 
 		worth.forEach(w => {
 			const row = this.row(w, buys.get(w.spellId));
@@ -89,6 +131,49 @@ export class LevelingTrainingSection {
 					row.name.textContent = `${id.name.replace(/ \(Rank \d+\)$/, '')} ${w.rank}`;
 				});
 		});
+	}
+
+	// A row per spell the plan never casts, with its ranks' levels and prices.
+	private renderOthers(training: LevelingTrainingSettings) {
+		this.othersElem.replaceChildren();
+		const bySpell = new Map<string, LevelingRankWorth[]>();
+		for (const w of training.others) bySpell.set(w.spell, [...(bySpell.get(w.spell) ?? []), w]);
+		const spells = [...bySpell.entries()].map(([spell, ranks]) => ({ spell, ranks: ranks.sort((a, b) => a.level - b.level) }));
+		spells.sort((a, b) => a.ranks[0].level - b.ranks[0].level || a.spell.localeCompare(b.spell));
+		const always = new Set(training.alwaysSpells);
+		for (const { spell, ranks } of spells) {
+			const icon = ref<HTMLSpanElement>();
+			const box = ref<HTMLInputElement>();
+			const sum = (to: number) => ranks.filter(r => r.level <= to).reduce((total, r) => total + r.price, 0);
+			this.othersElem.appendChild(
+				<tr className={always.has(spell) ? '' : 'leveling-plan-training-never'}>
+					<td>
+						<input type="checkbox" className="form-check-input" ref={box} attributes={{ 'aria-label': spell }} />
+					</td>
+					<td>
+						<span className="leveling-plan-spell" ref={icon} />
+						{spell}
+					</td>
+					<td>{ranks.map(r => r.level).join(', ')}</td>
+					<td>{formatCopper(sum(40))}</td>
+					<td>{formatCopper(sum(60))}</td>
+				</tr>,
+			);
+			// A checked attribute of false would still tick it, so we set the property.
+			box.value!.checked = always.has(spell);
+			box.value!.addEventListener('change', () => this.setAlways(spell, box.value!.checked));
+			ActionId.fromSpellId(ranks[0].spellId)
+				.fill()
+				.then(id => (icon.value!.style.backgroundImage = `url('${id.iconUrl}')`));
+		}
+	}
+
+	private setAlways(spell: string, on: boolean) {
+		const plan = this.player.getLevelingPlan();
+		const training = plan.training!;
+		training.alwaysSpells = training.alwaysSpells.filter(s => s != spell);
+		if (on) training.alwaysSpells.push(spell);
+		this.player.setLevelingPlan(TypedEvent.nextEventID(), plan);
 	}
 
 	private row(w: LevelingRankWorth, buy: number | undefined) {
@@ -117,6 +202,23 @@ export class LevelingTrainingSection {
 		) as HTMLElement;
 		return { elem, icon: icon.value!, name: name.value! };
 	}
+}
+
+// The first level where the gold runs short under the schedule, and by how much in copper, or
+// null when it never does. Like training.go's short: the ranks bought by a level, the spells we
+// always train, riding and the flight money, against the gold earned.
+function shortest(training: LevelingTrainingSettings): { level: number; copper: number } | null {
+	const buys = new Map(training.buys.map(buy => [buy.spellId, buy.level]));
+	const always = new Set(training.alwaysSpells);
+	for (let level = 10; level <= 60; level++) {
+		let spent = FLIGHT_RESERVE.find(([from]) => level >= from)?.[1] ?? 0;
+		for (const w of training.worth) if ((buys.get(w.spellId) ?? w.level) <= level) spent += w.price;
+		for (const w of training.others) if (always.has(w.spell) && w.level <= level) spent += w.price;
+		if (training.ridingLevel && level >= training.ridingLevel) spent += training.ridingGold * 10000;
+		const short = spent - training.goldAt40 * 10000 * Math.pow(level / 40, GOLD_GROWTH);
+		if (short > 0) return { level, copper: Math.round(short) };
+	}
+	return null;
 }
 
 // A price as the game says it, like 1.08g, 18s or 5c.
