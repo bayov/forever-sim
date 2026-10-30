@@ -819,3 +819,15 @@ func canonicalResult(res *proto.RaidSimResult) []byte {
 	b, _ := mo.Marshal(res)
 	return b
 }
+
+// Bug: self-targeted damage (Consecration, a Goblin Sapper's hit on its user) read the attack tables by
+// raid index, not unit index (spell_result.go). A raid with gaps, like the resolver's, where placeholders
+// aren't units, has raid indexes past the unit count, and that panicked.
+func TestRaidForeverSelfDamageLaterGroups(t *testing.T) {
+	rsr := raidOf(t, "mage__fire", []*proto.Player{raidPlayer(t, "mage__fire"), raidPlayer(t, "warrior__fury")}, 30)
+	rsr.Raid.Parties = append(rsr.Raid.Parties, &proto.Party{Players: []*proto.Player{raidPlayer(t, "paladin__level_60"), raidPlayer(t, "mage__arcane")}})
+	rsr.Raid.Parties[0].Players = append([]*proto.Player{{}, {}}, rsr.Raid.Parties[0].Players...) // slots 0 and 1 empty
+	rsr.Raid.NumActiveParties = 2
+	rsr.SimOptions.DebugFirstIteration = true
+	runRaid(t, rsr)
+}

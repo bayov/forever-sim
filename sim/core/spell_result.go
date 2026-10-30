@@ -107,14 +107,14 @@ func (spell *Spell) ThreatFromDamage(outcome HitOutcome, damage float64) float64
 
 func (spell *Spell) MeleeAttackPower(target *Unit) float64 {
 	return spell.Unit.stats[stats.AttackPower] +
-		spell.Unit.AttackTables[target.Index][spell.CastType].BonusAttackPowerTaken
+		spell.Unit.AttackTables[target.UnitIndex][spell.CastType].BonusAttackPowerTaken
 }
 
 func (spell *Spell) RangedAttackPower(target *Unit, ignoreTargetModifiers bool) float64 {
 	return TernaryFloat64(ignoreTargetModifiers,
 		spell.Unit.stats[stats.RangedAttackPower],
 		spell.Unit.stats[stats.RangedAttackPower]+
-			spell.Unit.AttackTables[target.Index][spell.CastType].BonusAttackPowerTaken,
+			spell.Unit.AttackTables[target.UnitIndex][spell.CastType].BonusAttackPowerTaken,
 	)
 }
 
@@ -194,7 +194,7 @@ func (spell *Spell) GetSchoolDamage(target *Unit) float64 {
 			schoolBonusDamage +
 			spell.Unit.GetStat(stats.SpellPower) +
 			spell.Unit.GetStat(stats.SpellDamage) +
-			spell.Unit.AttackTables[target.Index][spell.CastType].BonusSpellDamageTaken
+			spell.Unit.AttackTables[target.UnitIndex][spell.CastType].BonusSpellDamageTaken
 	}
 }
 
