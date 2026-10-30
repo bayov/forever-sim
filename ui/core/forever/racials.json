@@ -277,9 +277,7 @@
           "description": "Increases your spellcasting and attack speed by 10% for 15 sec.",
           "icon": "racial_troll_berserk",
           "passive": false,
-          "cost": "Instant; 3 min cooldown",
-          "source": "hotfix",
-          "note": "development notes 2026-10-27 (post 8): Berserking lasts 15 sec (was 10 sec); client 70634 reads 10 sec"
+          "cost": "Instant; 3 min cooldown"
         }
       ]
     },
