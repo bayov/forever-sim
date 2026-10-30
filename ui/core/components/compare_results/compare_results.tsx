@@ -3,12 +3,12 @@ import tippy, { delegate } from 'tippy.js';
 import { ref } from 'tsx-vanilla';
 
 import { TOOLTIP_METRIC_LABELS } from '../../constants/tooltips';
-import type { IndividualSimUI } from '../../individual_sim_ui';
-import { ResourceType } from '../../proto/api';
+import { DistributionMetrics, ResourceType } from '../../proto/api';
 import { ActionId } from '../../proto_utils/action_id';
 import { resourceNames } from '../../proto_utils/names';
 import { ActionMetrics, AuraMetrics, ResourceMetrics, SimResult, UnitMetrics } from '../../proto_utils/sim_result';
 import { orderedResourceTypes } from '../../proto_utils/utils';
+import type { SimUI } from '../../sim_ui';
 import { bucket, formatToNumber } from '../../utils';
 import { Component } from '../component';
 import { panel, syncSubTabWithUrl, trackStuckToolbar } from '../detailed_results';
@@ -89,8 +89,13 @@ interface Pair {
 export class CompareResults extends Component {
 	static readonly VIEW_PARAM = 'compare';
 
-	private readonly simUI: IndividualSimUI<any>;
+	private readonly simUI: SimUI;
 	private readonly history: SimHistory;
+	// The raid member we compare, by name, or '' for the whole raid. A spec page's runs have one player, so
+	// there it's always ''.
+	private member = '';
+	private readonly memberElem: HTMLElement;
+	private readonly memberSelect: HTMLSelectElement;
 	private choices: Record<Side, RunChoice> = { a: 'previous', b: 'latest' };
 	private readonly selects: Record<Side, HTMLSelectElement>;
 	private readonly metaElems: Record<Side, HTMLElement>;
@@ -132,10 +137,24 @@ export class CompareResults extends Component {
 		resources: Map<ResourceType, { panel: HTMLElement; table: CompareTable<ResourceMetrics> }>;
 	};
 
-	constructor(parent: HTMLElement, simUI: IndividualSimUI<any>, history: SimHistory) {
+	constructor(parent: HTMLElement, simUI: SimUI, history: SimHistory) {
 		super(parent, 'cmp-root');
 		this.simUI = simUI;
 		this.history = history;
+		this.memberSelect = (<select className="form-select cmp-member-select" />) as HTMLSelectElement;
+		this.memberElem = (
+			<div className="cmp-member hide">
+				<label className="cmp-member-label">Member</label>
+				{this.memberSelect}
+			</div>
+		) as HTMLElement;
+		this.memberSelect.addEventListener('change', () => {
+			this.member = this.memberSelect.value;
+			if (!this.pair) return;
+			this.drawOverview();
+			this.drawTables();
+			this.drawResourceCards();
+		});
 
 		const simulateRef = ref<HTMLButtonElement>();
 		const swapRef = ref<HTMLButtonElement>();
@@ -217,6 +236,7 @@ export class CompareResults extends Component {
 					</button>
 					{this.runPicker('b')}
 				</div>
+				{this.memberElem}
 				<div className="dr-empty cmp-empty hide">
 					<i className="fas fa-code-compare dr-empty-icon" />
 					<h5 className="dr-empty-title">Nothing to compare yet</h5>
@@ -534,17 +554,53 @@ export class CompareResults extends Component {
 		}
 
 		this.pair = { a, b, resultA, resultB };
+		this.fillMembers();
 		this.drawOverview();
 		this.drawTables();
 		this.drawResourceCards();
+	}
+
+	// A raid's runs compare the whole raid or one member, picked by name. The members are those of either run,
+	// so a member the compared raid dropped (or added) still shows, with nothing on the other side.
+	private fillMembers() {
+		const { resultA, resultB } = this.pair!;
+		const names = [...new Set([...resultA.getRaidIndexedPlayers(), ...resultB.getRaidIndexedPlayers()].map(player => player.name))];
+		const isRaid = resultA.getRaidIndexedPlayers().length > 1 || resultB.getRaidIndexedPlayers().length > 1;
+		this.memberElem.classList.toggle('hide', !isRaid);
+		if (!isRaid || !names.includes(this.member)) this.member = '';
+		const option = (value: string, text: string) => {
+			const elem = document.createElement('option');
+			elem.value = value;
+			elem.textContent = text;
+			return elem;
+		};
+		this.memberSelect.replaceChildren(option('', 'Whole raid'), ...names.map(name => option(name, name)));
+		this.memberSelect.value = this.member;
+	}
+
+	// The players we compare in a run: the picked member, or every player.
+	private players(result: SimResult): UnitMetrics[] {
+		const players = result.getRaidIndexedPlayers();
+		return this.member ? players.filter(player => player.name === this.member) : players;
+	}
+
+	// The DPS we compare in a run: the picked member's, or the raid's.
+	private dpsOf(result: SimResult): DistributionMetrics {
+		if (!this.member) return result.raidMetrics.dps;
+		return this.players(result)[0]?.dps ?? DistributionMetrics.create();
 	}
 
 	private drawOverview() {
 		const { a, b, resultA, resultB } = this.pair!;
 		const { verdict, cards, settings } = this.overviewElems;
 
-		const columnsA = RaidSimResultsManager.toplineColumns(resultA, undefined, { showOutOfMana: true });
-		const columnsB = RaidSimResultsManager.toplineColumns(resultB, undefined, { showOutOfMana: true });
+		// A picked member's own results, by its raid index in each run.
+		const filter = (result: SimResult) => {
+			const player = this.member ? this.players(result)[0] : undefined;
+			return this.member ? { player: player?.index ?? -1 } : undefined;
+		};
+		const columnsA = RaidSimResultsManager.toplineColumns(resultA, filter(resultA), { showOutOfMana: true });
+		const columnsB = RaidSimResultsManager.toplineColumns(resultB, filter(resultB), { showOutOfMana: true });
 		const metrics = columnsB
 			.map(metricB => ({ b: metricB, a: columnsA.find(metricA => metricA.name === metricB.name) }))
 			.filter((pair): pair is { a: ResultMetric; b: ResultMetric } => !!pair.a && (pair.a.average !== 0 || pair.b.average !== 0));
@@ -578,8 +634,8 @@ export class CompareResults extends Component {
 		const levelingB = getLevelingMetrics(resultB);
 		const leveling = !!levelingA && !!levelingB;
 		const unit = leveling ? 'mobs' : 'DPS';
-		const dpsA = leveling ? { avg: levelingA.mobsKilled, stdev: levelingA.mobsKilledStdev } : resultA.raidMetrics.dps;
-		const dpsB = leveling ? { avg: levelingB.mobsKilled, stdev: levelingB.mobsKilledStdev } : resultB.raidMetrics.dps;
+		const dpsA = leveling ? { avg: levelingA.mobsKilled, stdev: levelingA.mobsKilledStdev } : this.dpsOf(resultA);
+		const dpsB = leveling ? { avg: levelingB.mobsKilled, stdev: levelingB.mobsKilledStdev } : this.dpsOf(resultB);
 		const digits = leveling ? 2 : 1;
 		const diff = dpsB.avg - dpsA.avg;
 		const percent = (diff / (dpsA.avg || 1)) * 100;
@@ -708,18 +764,18 @@ export class CompareResults extends Component {
 		let better: Better;
 		let unit: string;
 		if (this.changesMode === 'dps') {
-			items = changeItems(pairRows(damageRows(resultA), damageRows(resultB)), m => m.dps);
+			items = changeItems(pairRows(damageRows(resultA, this.players(resultA)), damageRows(resultB, this.players(resultB))), m => m.dps);
 			format = formatFixed(1);
 			better = 'higher';
 			unit = 'DPS';
 		} else if (this.changesMode === 'casts') {
-			items = changeItems(pairRows(castRows(resultA), castRows(resultB)), m => m.casts);
+			items = changeItems(pairRows(castRows(resultA, this.players(resultA)), castRows(resultB, this.players(resultB))), m => m.casts);
 			format = formatFixed(1);
 			better = 'none';
 			unit = 'casts';
 		} else {
 			items = changeItems(
-				[...pairRows(buffRows(resultA), buffRows(resultB), true), ...pairRows(debuffRows(resultA), debuffRows(resultB), true)],
+				[...pairRows(buffRows(resultA, this.players(resultA)), buffRows(resultB, this.players(resultB)), true), ...pairRows(debuffRows(resultA, this.players(resultA)), debuffRows(resultB, this.players(resultB)), true)],
 				m => m.uptimePercent,
 			);
 			format = formatPercent(1);
@@ -735,8 +791,8 @@ export class CompareResults extends Component {
 		this.chart = null;
 		const elem = this.overviewElems.distribution;
 		this.distributionWidth = elem.clientWidth;
-		const countsA = dpsCounts(resultA);
-		const countsB = dpsCounts(resultB);
+		const countsA = dpsCounts(this.dpsOf(resultA));
+		const countsB = dpsCounts(this.dpsOf(resultB));
 		if (!countsA.length || !countsB.length) {
 			elem.replaceChildren(<p className="cmp-note">No DPS distribution in one of the runs.</p>);
 			return;
@@ -773,8 +829,8 @@ export class CompareResults extends Component {
 		const { resultA, resultB } = this.pair!;
 		const cards: Element[] = [];
 		RESOURCE_SUMMARY_TYPES.forEach(type => {
-			const rowsA = resourceRows(resultA, type).map(row => row.metric);
-			const rowsB = resourceRows(resultB, type).map(row => row.metric);
+			const rowsA = resourceRows(this.players(resultA), type).map(row => row.metric);
+			const rowsB = resourceRows(this.players(resultB), type).map(row => row.metric);
 			if (!rowsA.length && !rowsB.length) return;
 			const name = resourceNames.get(type) ?? 'Resource';
 			const sum = (rows: ResourceMetrics[], value: (metric: ResourceMetrics) => number) => rows.reduce((total, metric) => total + value(metric), 0);
@@ -794,7 +850,11 @@ export class CompareResults extends Component {
 				),
 			);
 			if (type === ResourceType.ResourceTypeMana) {
-				const oom = (result: SimResult) => result.getFirstPlayer()?.secondsOomAvg ?? 0;
+				// A raid's average over the players we compare.
+				const oom = (result: SimResult) => {
+					const players = this.players(result);
+					return players.reduce((sum, player) => sum + player.secondsOomAvg, 0) / Math.max(players.length, 1);
+				};
 				cards.push(
 					compareCard(
 						'Time out of mana',
@@ -813,15 +873,15 @@ export class CompareResults extends Component {
 
 	private drawTables() {
 		const { resultA, resultB } = this.pair!;
-		this.tables.damage.setRows(pairRows(damageRows(resultA), damageRows(resultB)));
-		this.tables.threat.setRows(pairRows(threatRows(resultA), threatRows(resultB)));
-		this.tables.healing.setRows(pairRows(healingRows(resultA), healingRows(resultB)));
-		this.tables.damageTaken.setRows(pairRows(damageTakenRows(resultA), damageTakenRows(resultB)));
-		this.tables.buffs.setRows(pairRows(buffRows(resultA), buffRows(resultB), true));
-		this.tables.debuffs.setRows(pairRows(debuffRows(resultA), debuffRows(resultB), true));
-		this.tables.casts.setRows(pairRows(castRows(resultA), castRows(resultB)));
+		this.tables.damage.setRows(pairRows(damageRows(resultA, this.players(resultA)), damageRows(resultB, this.players(resultB))));
+		this.tables.threat.setRows(pairRows(threatRows(resultA, this.players(resultA)), threatRows(resultB, this.players(resultB))));
+		this.tables.healing.setRows(pairRows(healingRows(resultA, this.players(resultA)), healingRows(resultB, this.players(resultB))));
+		this.tables.damageTaken.setRows(pairRows(damageTakenRows(resultA, this.players(resultA)), damageTakenRows(resultB, this.players(resultB))));
+		this.tables.buffs.setRows(pairRows(buffRows(resultA, this.players(resultA)), buffRows(resultB, this.players(resultB)), true));
+		this.tables.debuffs.setRows(pairRows(debuffRows(resultA, this.players(resultA)), debuffRows(resultB, this.players(resultB)), true));
+		this.tables.casts.setRows(pairRows(castRows(resultA, this.players(resultA)), castRows(resultB, this.players(resultB))));
 		this.tables.resources.forEach(({ panel, table }, type) => {
-			table.setRows(pairRows(resourceRows(resultA, type), resourceRows(resultB, type)));
+			table.setRows(pairRows(resourceRows(this.players(resultA), type), resourceRows(this.players(resultB), type)));
 			panel.classList.toggle('hide', table.isEmpty);
 		});
 	}
@@ -870,16 +930,16 @@ function pairRows<T>(rowsA: Keyed<T>[], rowsB: Keyed<T>[], isAura = false): Comp
 	return Array.from(rows.values());
 }
 
-// The player's spells, with the ranks and hands of one spell in one row, like the Results
-// tab's rows before we open them. Each pet is one row.
-function actionRows(result: SimResult, pick: (unit: UnitMetrics) => ActionMetrics[]): Keyed<ActionMetrics>[] {
-	const player = result.getFirstPlayer();
-	if (!player) return [];
-	const own = ActionMetrics.groupById(pick(player)).map(group => {
+// The players' spells, with the ranks and hands of one spell in one row, like the Results
+// tab's rows before we open them. Each pet is one row. Several players (a whole raid) add up
+// their casts of a spell in its row.
+function actionRows(players: UnitMetrics[], pick: (unit: UnitMetrics) => ActionMetrics[]): Keyed<ActionMetrics>[] {
+	if (!players.length) return [];
+	const own = ActionMetrics.groupById(players.flatMap(pick)).map(group => {
 		const metric = ActionMetrics.merge(group, { removeTag: true });
 		return { key: metric.actionId.toString(), actionId: metric.actionId, name: metric.name, metric };
 	});
-	const pets = Object.values(bucket(player.pets, pet => pet.name)).flatMap(pets => {
+	const pets = Object.values(bucket(players.flatMap(player => player.pets), pet => pet.name)).flatMap(pets => {
 		const actions = pets.flatMap(pick);
 		if (!actions.length) return [];
 		const metric = ActionMetrics.merge(actions, { removeTag: true, actionIdOverride: pets[0].petActionId || undefined });
@@ -888,23 +948,24 @@ function actionRows(result: SimResult, pick: (unit: UnitMetrics) => ActionMetric
 	return own.concat(pets);
 }
 
-const damageRows = (result: SimResult) => actionRows(result, unit => unit.getDamageActions());
-const threatRows = (result: SimResult) => actionRows(result, unit => unit.getThreatActions());
-const healingRows = (result: SimResult) => actionRows(result, unit => unit.getHealingActions().filter(action => action.hps !== 0));
-const castRows = (result: SimResult) => actionRows(result, unit => unit.actions.filter(action => action.casts !== 0));
+const damageRows = (_result: SimResult, players: UnitMetrics[]) => actionRows(players, unit => unit.getDamageActions());
+const threatRows = (_result: SimResult, players: UnitMetrics[]) => actionRows(players, unit => unit.getThreatActions());
+const healingRows = (_result: SimResult, players: UnitMetrics[]) =>
+	actionRows(players, unit => unit.getHealingActions().filter(action => action.hps !== 0));
+const castRows = (_result: SimResult, players: UnitMetrics[]) => actionRows(players, unit => unit.actions.filter(action => action.casts !== 0));
 
-// The enemy's spells and melee against the player.
-function damageTakenRows(result: SimResult): Keyed<ActionMetrics>[] {
-	const player = result.getFirstPlayer();
-	if (!player) return [];
+// The enemy's spells and melee against the players.
+function damageTakenRows(result: SimResult, players: UnitMetrics[]): Keyed<ActionMetrics>[] {
 	const actions = result.getTargets().flatMap(target =>
-		target.getDamageActions().flatMap(action => {
-			try {
-				return [action.forTarget({ player: player.unitIndex })];
-			} catch {
-				return [];
-			}
-		}),
+		target.getDamageActions().flatMap(action =>
+			players.flatMap(player => {
+				try {
+					return [action.forTarget({ player: player.unitIndex })];
+				} catch {
+					return [];
+				}
+			}),
+		),
 	);
 	return ActionMetrics.groupById(actions).map(group => {
 		const metric = ActionMetrics.merge(group, { removeTag: true });
@@ -921,19 +982,17 @@ function auraRows(auras: AuraMetrics[]): Keyed<AuraMetrics>[] {
 		.map(metric => ({ key: metric.actionId.toString(), actionId: metric.actionId, name: metric.name, metric }));
 }
 
-function buffRows(result: SimResult): Keyed<AuraMetrics>[] {
-	const player = result.getFirstPlayer();
-	return player ? auraRows(player.auras) : [];
+// A whole raid's buff shows its best uptime on any player, see AuraMetrics.merge.
+function buffRows(_result: SimResult, players: UnitMetrics[]): Keyed<AuraMetrics>[] {
+	return auraRows(players.flatMap(player => player.auras));
 }
 
-function debuffRows(result: SimResult): Keyed<AuraMetrics>[] {
+function debuffRows(result: SimResult, _players: UnitMetrics[]): Keyed<AuraMetrics>[] {
 	return auraRows(result.getDebuffMetrics());
 }
 
-function resourceRows(result: SimResult, type: ResourceType): Keyed<ResourceMetrics>[] {
-	const player = result.getFirstPlayer();
-	if (!player) return [];
-	return ResourceMetrics.groupById(player.getResourceMetrics(type)).map(group => {
+function resourceRows(players: UnitMetrics[], type: ResourceType): Keyed<ResourceMetrics>[] {
+	return ResourceMetrics.groupById(players.flatMap(player => player.getResourceMetrics(type))).map(group => {
 		const metric = ResourceMetrics.merge(group, { removeTag: true });
 		return { key: metric.actionId.toString(), actionId: metric.actionId, name: metric.name, metric };
 	});
@@ -1151,8 +1210,8 @@ interface DpsCount {
 	count: number;
 }
 
-function dpsCounts(result: SimResult): DpsCount[] {
-	return Object.entries(result.raidMetrics.dps.hist)
+function dpsCounts(dps: DistributionMetrics): DpsCount[] {
+	return Object.entries(dps.hist)
 		.map(([dps, count]) => ({ dps: Number(dps), count }))
 		.filter(({ count }) => count > 0)
 		.sort((x, y) => x.dps - y.dps);

@@ -6,6 +6,7 @@ import { LevelingMetrics } from '../proto/api';
 import { IndividualSimSettings } from '../proto/ui';
 import { SimResult } from '../proto_utils/sim_result';
 import { encounterMode, SIM_MODES, SimMode, simModeNames } from '../sim_mode';
+import type { SimUI } from '../sim_ui';
 import { TypedEvent } from '../typed_event';
 import { formatToNumber } from '../utils';
 import { BaseModal } from './base_modal';
@@ -82,6 +83,47 @@ interface ModeRuns {
 // Where a run's row shows. Each place offers different actions on it.
 type RowPlace = 'pinned' | 'recent' | 'dialog';
 
+// What the history needs from its page: the settings a run goes with, and how to put them back or list
+// what changed. A spec page's settings are its IndividualSimSettings (individualHistoryHost), and the raid
+// sim page's are its raid (the comp editor's state).
+export interface SimHistoryHost {
+	readonly simUI: SimUI;
+	// The mode whose runs we show, and a way to hear when it changes. A page with one mode stays on 'dps'.
+	mode(): SimMode;
+	onModeChange(listener: () => void): void;
+	// The settings as they are now, as JSON, kept with the run.
+	settings(): unknown;
+	// Puts a run's settings in place. It throws when it can't read them.
+	applySettings(settings: unknown): void;
+	// The changes from one run's settings to another's, or to the current ones when to is left out, in
+	// lines like 'Duration: 120 → 90'. It throws when it can't read them.
+	changes(from: unknown, to?: unknown): ChangeCategory[];
+	// Where the page keeps the last run of a mode, the one that shows after a reload. A page without one
+	// leaves it out.
+	lastSimRunKey?(mode: SimMode): string;
+}
+
+// The spec page's settings for the history: the whole IndividualSimSettings. The stat weights don't change
+// the DPS, so we leave their changes out.
+export function individualHistoryHost(simUI: IndividualSimUI<any>): SimHistoryHost {
+	const read = (settings: unknown) => IndividualSimSettings.fromJson(settings as any, { ignoreUnknownFields: true });
+	const apply = (settings: IndividualSimSettings) => () => simUI.fromProto(TypedEvent.nextEventID(), IndividualSimSettings.clone(settings));
+	return {
+		simUI,
+		mode: () => encounterMode(simUI.sim.encounter),
+		onModeChange: listener => simUI.sim.encounter.changeEmitter.on(listener),
+		settings: () => IndividualSimSettings.toJson(simUI.toProto()),
+		applySettings: settings => simUI.fromProto(TypedEvent.nextEventID(), read(settings)),
+		changes: (from, to) => {
+			const fromSettings = read(from);
+			const categories =
+				to === undefined ? dirtySettings.changesFrom(apply(fromSettings)) : dirtySettings.changesBetween(apply(fromSettings), apply(read(to)));
+			return categories.filter(category => category.name !== 'Stat Weights');
+		},
+		lastSimRunKey: mode => simUI.getLastSimRunKey(mode),
+	};
+}
+
 // The results in the sidebar of an individual sim, with the runs before them.
 //
 // DPS, PvP and Leveling runs score different things, so each mode has a history of its own,
@@ -101,7 +143,8 @@ type RowPlace = 'pinned' | 'recent' | 'dialog';
 // preset. Ctrl+click on a run loads the settings it ran with and shows its results. The
 // history stays in the browser's storage, so it's still there when we come back.
 export class SimHistory {
-	private readonly simUI: IndividualSimUI<any>;
+	private readonly host: SimHistoryHost;
+	private readonly simUI: SimUI;
 	private readonly resultsManager: RaidSimResultsManager;
 	private readonly runs: Record<SimMode, ModeRuns>;
 	// The mode of the encounter, whose runs we show.
@@ -127,28 +170,32 @@ export class SimHistory {
 
 	// Fires when a run comes, goes, gets its results saved, or gets a new name or pin.
 	readonly changeEmitter = new TypedEvent<void>('SimHistoryChange');
+	// Resolves once we know which runs have their full results kept, so loadResults can find them.
+	readonly ready: Promise<void>;
 
-	constructor(simUI: IndividualSimUI<any>, resultsManager: RaidSimResultsManager) {
+	constructor(host: SimHistoryHost, resultsManager: RaidSimResultsManager) {
+		const simUI = host.simUI;
+		this.host = host;
 		this.simUI = simUI;
 		this.resultsManager = resultsManager;
 		resultsManager.simHistory = this;
 		this.runs = this.loadRuns();
-		this.mode = encounterMode(simUI.sim.encounter);
+		this.mode = host.mode();
 		this.listElem = (<div className="sim-history" />) as HTMLElement;
 		// The warnings go under the runs.
 		simUI.resultsViewer.rootElem.insertBefore(this.listElem, simUI.resultsViewer.warningElem);
 		this.render();
-		this.loadResultIds();
+		this.ready = this.loadResultIds();
 
 		simUI.sim.waitForInit().then(() => {
 			const updateMode = () => {
-				const mode = encounterMode(simUI.sim.encounter);
+				const mode = host.mode();
 				if (mode === this.mode) return;
 				this.mode = mode;
 				this.render();
 			};
 			updateMode();
-			simUI.sim.encounter.changeEmitter.on(updateMode);
+			host.onModeChange(updateMode);
 		});
 	}
 
@@ -189,8 +236,8 @@ export class SimHistory {
 
 		for (const mode of SIM_MODES) {
 			const latest = this.runs[mode].history[0];
-			if (!latest || this.resultIds.has(latest.id)) continue;
-			const saved = await loadLastSimRun(this.simUI.getLastSimRunKey(mode));
+			if (!latest || this.resultIds.has(latest.id) || !this.host.lastSimRunKey) continue;
+			const saved = await loadLastSimRun(this.host.lastSimRunKey(mode));
 			const dps = saved?.result?.raidMetrics?.dps?.avg;
 			if (saved && dps !== undefined && Math.abs(dps - latest.dps) < 1e-6) {
 				await saveHistoryRun(this.resultsKey(latest.id), saved);
@@ -233,14 +280,7 @@ export class SimHistory {
 	// settings of one of them.
 	changesBetween(from: SimRun, to: SimRun): ChangeCategory[] | null {
 		try {
-			const fromSettings = IndividualSimSettings.fromJson(from.settings as any, { ignoreUnknownFields: true });
-			const toSettings = IndividualSimSettings.fromJson(to.settings as any, { ignoreUnknownFields: true });
-			return dirtySettings
-				.changesBetween(
-					() => this.simUI.fromProto(TypedEvent.nextEventID(), IndividualSimSettings.clone(fromSettings)),
-					() => this.simUI.fromProto(TypedEvent.nextEventID(), IndividualSimSettings.clone(toSettings)),
-				)
-				.filter(category => category.name !== 'Stat Weights');
+			return this.host.changes(from.settings, to.settings);
 		} catch (e) {
 			console.warn('Failed to compare the settings of two runs: ' + e);
 			return null;
@@ -248,8 +288,8 @@ export class SimHistory {
 	}
 
 	startRun() {
-		this.runSettings = IndividualSimSettings.toJson(this.simUI.toProto());
-		this.runningMode = encounterMode(this.simUI.sim.encounter);
+		this.runSettings = this.host.settings();
+		this.runningMode = this.host.mode();
 		this.running = true;
 	}
 
@@ -467,9 +507,8 @@ export class SimHistory {
 	// encounter. The Results tab then shows the run's own results, so they match the settings.
 	private applySettings(run: SimRun) {
 		try {
-			const settings = IndividualSimSettings.fromJson(run.settings as any, { ignoreUnknownFields: true });
 			this.tooltips.forEach(tooltip => tooltip.hide());
-			this.simUI.fromProto(TypedEvent.nextEventID(), settings);
+			this.host.applySettings(run.settings);
 		} catch (e) {
 			console.warn('Failed to load the settings of a saved run: ' + e);
 			return;
@@ -644,10 +683,7 @@ export class SimHistory {
 	// weights don't change the DPS, so we leave them out.
 	private changesSince(run: SimRun): ChangeCategory[] | null {
 		try {
-			const settings = IndividualSimSettings.fromJson(run.settings as any, { ignoreUnknownFields: true });
-			return dirtySettings
-				.changesFrom(() => this.simUI.fromProto(TypedEvent.nextEventID(), IndividualSimSettings.clone(settings)))
-				.filter(category => category.name !== 'Stat Weights');
+			return this.host.changes(run.settings);
 		} catch (e) {
 			console.warn('Failed to compare a saved run with the current settings: ' + e);
 			return null;

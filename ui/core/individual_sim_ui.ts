@@ -24,7 +24,7 @@ import { TalentsTab } from './components/individual_sim_ui/talents_tab';
 import * as InputHelpers from './components/input_helpers';
 import { addRaidSimAction, RaidSimResultsManager } from './components/raid_sim_action';
 import { SavedDataConfig } from './components/saved_data_manager';
-import { SimHistory } from './components/sim_history';
+import { individualHistoryHost, SimHistory } from './components/sim_history';
 import { SimModePicker } from './components/sim_mode_picker';
 import { addStatWeightsSection } from './components/stat_weights_action';
 import { GLOBAL_DISPLAY_PSEUDO_STATS, GLOBAL_DISPLAY_STATS, GLOBAL_EP_STATS } from './constants/other';
@@ -432,7 +432,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 
 		if (!this.isWithinRaidSim) new SimModePicker(this.simActionsContainer, this);
 		this.raidSimResultsManager = addRaidSimAction(this);
-		if (!this.isWithinRaidSim) new SimHistory(this, this.raidSimResultsManager);
+		if (!this.isWithinRaidSim) new SimHistory(individualHistoryHost(this), this.raidSimResultsManager);
 
 		const displayStats: UnitStat[] = [];
 
