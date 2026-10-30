@@ -43,15 +43,15 @@ Every change announced for the WoW Forever beta, from build 1.60.1.70009 (the fi
 |---|---|---|---|---|---|---|---|---|---|---|
 | Warrior | 83 | 52 | 0 | 2 | 0 | 2 | 0 | 4 | 23 | 0 |
 | Paladin | 66 | 37 | 5 | 2 | 0 | 2 | 1 | 3 | 14 | 2 superseded |
-| Hunter | 84 | 44 | 2 | 7 | 1 | 1 | 3 | 3 | 22 | 1 info |
+| Hunter | 85 | 44 | 2 | 8 | 1 | 1 | 3 | 3 | 22 | 1 info |
 | Rogue | 68 | 38 | 0 | 0 | 2 | 2 | 1 | 3 | 22 | 0 |
 | Priest | 55 | 20 | 14 | 2 | 0 | 2 | 1 | 1 | 15 | 0 |
 | Shaman | 103 | 58 | 12 | 4 | 0 | 2 | 2 | 2 | 23 | 0 |
-| Mage | 58 | 17 | 9 | 3 | 0 | 1 | 5 | 5 | 18 | 0 |
-| Warlock | 89 | 47 | 4 | 0 | 0 | 3 | 3 | 1 | 30 | 1 covered by another row |
+| Mage | 66 | 17 | 9 | 9 | 0 | 1 | 5 | 7 | 18 | 0 |
+| Warlock | 90 | 47 | 4 | 0 | 0 | 3 | 3 | 1 | 31 | 1 covered by another row |
 | Druid | 69 | 31 | 0 | 2 | 2 | 2 | 2 | 0 | 30 | 0 |
-| Shared (races, mechanics, items) | 67 | 25 | 1 | 2 | 3 | 2 | 2 | 8 | 24 | 0 |
-| **Total** | **742** | **369** | **47** | **24** | **8** | **19** | **20** | **30** | **221** | **4** |
+| Shared (races, mechanics, items) | 70 | 26 | 1 | 2 | 3 | 2 | 3 | 9 | 24 | 0 |
+| **Total** | **755** | **370** | **47** | **31** | **8** | **19** | **21** | **33** | **222** | **4** |
 
 The counts are as audited, before this audit's own PRs. A row that touches two scopes, such as Eureka!, Touch of the Grave or Grace of Air, appears under each class it affects.
 
@@ -202,6 +202,26 @@ Dev notes: **new post /7** (2026-10-26 20:35, edited 21:09), the pre-launch raci
 ## Build 1.60.1.70685 (first seen 2026-10-29)
 
 70685: leveling-only against 70658. `table_summary.py 70658 70685`: the Trait* tables, SpellPower, SpellClassOptions, SpellAuraOptions, SkillLineAbility, ItemSparse, SpellItemEnchantment and ChrRaces are identical. The whole diff is two spells: Adventurer's Tent (1325145, the tent item's use spell) turns from a cosmetic tent-appearance summon into a rested-XP tent (effect 1 now "raise rested XP to 20% of a level" for the party nearby, needs a campfire, 1 h category cooldown in new SpellCategory 2607; its ItemEffect row 238896 drops the 15 min item cooldown), and a new helper spell Camping (1328862). No class, racial, talent, enchant or item-stat change. Dev notes: not re-read (forum rate limit again). foreverchanges.pro does not list 70685 yet and has no hotfix newer than the 10-28 one (HUN-HF-01/02). No rows added.
+
+## Build 1.60.1.70707 (first seen 2026-10-30)
+
+70707 puts the server hotfixes of 10-27 to 10-29 into the client tables (foreverchanges.pro "Build 1.60.1.70707", 2026-10-30). That confirms the mage talent changes it had listed under 70685, which TASKS.md parked on 2026-10-29 "until a source confirms them (... or a newer client build)". `table_summary.py 70685 70707`: Spell* 201 spells, Trait* (mage tree 1112 only), ItemSparse 10 added and 43 changed, ItemEffect 11 added and 3 changed; ChrRaces and SpellItemEnchantment identical. Diff: `$AUDIT_WORK/diffs/70685-70707.md` (`db2diff.py`). Also in the client now, already landed from the 10-28 hotfix: Aspect of the Hawk 1-5 at 15/22/30/38/47 and Trueshot Aura 1-4 at 15/22/30/40 (HUN-HF-01/02, the sim's Forever values, `sim/hunter/aspects.go:51`, `sim/core/buffs.go:1804`), Blood Fury 3 → 2 min (SHR-P8-01), Righteous Fury at level 10. Also n/a: the shared root diminishing-returns group (Counterattack, Entrapment, Improved Wing Clip, Improved Hamstring, Frostbite, Frozen; PvP); Adventurer's Tent is a cosmetic again and Camping is removed (reverting 70685); 2008 zombie-plague event spells; new NPC spells (Thunderclap 1327245, Cleave 1327248, Shadow Bolt Volley 1327251, Void Bolt 1327241, Arcane Bolt 1327505); boss tooltip text (Anara); Shaman Ancestral Spirit rank 5; Healing Stream and Vampiric Embrace attribute bits; Transmute effect points; 10 new ilvl-10 copies of potions and Molten Core rings and an Earthshaker (items 288896-288931); Watcher's Signet renames; Lesser Intellect (3166, +6 → +3 Intellect, elixir buff); Well Fed 1249521 becomes +1 Fishing; Revenge's tooltip gains 22.5% of attack power (tanking; the sim's log-fit 0.28 stays, `sim/warrior/revenge.go:30`). Rogue and druid finishers (Eviscerate, Rupture, Kidney Shot, Expose Armor, Ferocious Bite, Rip, Death Mark) gain Attributes_4 0x800 (NO_PARTIAL_IMMUNITY in the modern list; no DPS reading). Dev notes: not read (forum rate limit again).
+
+| ID | Source | Change | L60 DPS? | Client check | Sim status | Code location / note |
+|---|---|---|---|---|---|---|
+| MAGE-U-20 | FC 2026-10-30 (70707), client | Critical Mass 5 → 3 ranks (2/4/6% Fire crit, was up to 10%) | **yes** (fire, frostfire) | TraitNodeEntry 130513 MaxRanks 5 → 3; curve 83083 now 3 points | missing | `sim/mage/talents.go:195`, `ui/core/talents/trees/mage.json`, presets at 5/5; finding client_update-20261030-1 |
+| MAGE-U-21 | FC, client | Incineration 3 → 5 ranks (2% a rank, 10% on Fire Blast, Scorch, Ice Lance, Arcane Blast) | **yes** (fire, frostfire, arcane) | TraitNodeEntry 130525 MaxRanks 3 → 5; curve 83095 gains 8 and 10 | missing (code scales per point; tree caps at 3) | `sim/mage/talents.go:184`, mage.json |
+| MAGE-U-22 | FC, client | Arcane Focus (1-5% Arcane hit) removed from the tree | **yes** (arcane, fire, frost presets take 4-5 points) | TraitNode 105814 and its TraitNodeXTraitNodeEntry row removed | missing | `sim/mage/talents.go:102`, mage.json |
+| MAGE-U-23 | FC, client | Elemental Precision → Precision: 2/4/6% hit with all spells (was Fire and Frost) | **yes** (arcane +1% Arcane hit net of MAGE-U-22) | 29438 effect 0 aura 107 (mask) → aura 55, masks 0 | missing | `sim/mage/talents.go:214` (Fire and Frost only) |
+| MAGE-U-24 | FC, client | Improved Fireball → Accelerant: also cuts Arcane Wrath's cast by 0.1 s a rank | **yes** (any build with both) | 11069 effect 0 EffectSpellClassMask_1 4096 → 36864 | missing | `sim/mage/arcane_wrath.go:64` (3.5 s flat), `fireball.go:76` |
+| MAGE-U-25 | FC, client | Ice Lance gains an 8 s cooldown (category 19), but in the client only rank 1 | **yes** (frost, frostfire cast rank 6 on Fingers of Frost) | SpellCooldowns 101119 (1312002, rank 1) CategoryRecoveryTime 0 → 8000, Category 0 → 19; ranks 2-6 (400640, 1240044-47) have no cooldown row | missing for rank 1; ambiguous for rank 6 (FC says the spell has 8 s) | `sim/mage/ice_lance.go:72` (GCD only) |
+| MAGE-U-26 | FC, client | Tree moves: Arcane Resilience to tier 1, Missile Barrage to tier 2 (the two TraitDefinitions swap spells), Improved Channeling left, Improved Fire Blast from tier 1 to tier 3 | **yes** (talent strings) | TraitDefinition 135332 / 135339 SpellID swap; TraitNode 105797, 105802, 105813 moved; Frost Blast 1326053-55 out of SkillLineAbility | missing | mage.json and every mage talent string; Missile Barrage's chance curve is now 20/40 (83108), what the sim uses (`talents.go:351`) |
+| MAGE-U-27 | client only | Missile Barrage (400589) effect 1, "missiles fire every 0.5 sec" (aura 107 op 19, −500 ms), becomes a dummy aura | **yes** (arcane) | SpellEffect 1045767 aura 107 → 4, mask 2048 → 0; tooltip unchanged | ambiguous (needs verify) | `sim/mage/arcane_missiles.go:98` keeps the same missiles in half the time; finding client_update-20261030-2 |
+| HUN-U-13 | client only | Efficiency's cost cut now covers Strider Kick (and Flanking Strike) | minor (Survival with Efficiency) | 19416 effect 0 EffectSpellClassMask_2 8192 → 2105344 (bit 0x200000: Strider Kick 1317257) | missing | `sim/hunter/talents.go:61`, `strider_kick.go:13` ("Efficiency doesn't"); finding client_update-20261030-3 |
+| SHR-U-16 | client only | Fengus' Ferocity (22817, Dire Maul world buff) has only dummy auras: 200 AP, 200 RAP and 230 spell power rows become aura 4 | minor (no report request uses it) | SpellEffect 700462, 870850, 1331558, 1331559 aura 99/124/13/135 → 4 | ambiguous (needs verify) | `sim/core/buffs.go:2244`; finding client_update-20261030-4 |
+| SHR-U-17 | client only | "Increased Hit Chance" item spells (15464-15468, 18066) gain a spell-hit effect (aura 55) equal to their melee hit | yes | new SpellEffect rows 1366107-1366113 | landed (gear hit is universal under Forever) | `sim/core/ruleset.go:52` |
+| SHR-U-18 | client only | Tauren Endurance's 2% crit-damage effect gets school mask 127; Earth Fury (Dwarf) loses its weapon requirement | n/a (the sim follows the 10-26 notes, which remove both; settled 2026-10-27) | 20550 effect 1 misc 0 → 127; SpellEquippedItems 255482 removed | not simulated on purpose | `sim/core/racials_forever.go:41,85` |
+| WL-U-18 | client only | Bane of Agony ranks gain a third effect (dummy, index 2) and the tooltip's amplify term moves from $w2 to $w3 | n/a (no build casts Amplify Curse) | SpellEffect 1366630, 1366638-42 added | n/a | evidence for finding client_update-20261027-3 |
 
 ## Per-class ledgers
 

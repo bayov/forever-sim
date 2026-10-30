@@ -4,6 +4,38 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### client_update-20261030-1: Client 70707 confirms the mage talent rework the user parked on 2026-10-29 (Critical Mass 3 ranks, Incineration 5, Arcane Focus gone, Precision on all spells, Accelerant on Arcane Wrath, Ice Lance cooldown, tree moves)
+- severity: high (fire −3.5% from Critical Mass 5 → 3 alone, −2.4% with Incineration 5; every mage talent string changes)
+- affects: mage, all four report builds (arcane, fire, frost, frostfire)
+- found: 2026-10-30, master 36a772f
+- evidence: client 1.60.1.70707 (wago.tools tables, sure): TraitNodeEntry 130513 Critical Mass MaxRanks 5 → 3 (curve 83083 now 2/4/6), 130525 Incineration 3 → 5 (curve 83095 adds 8/10), TraitNode 105814 Arcane Focus removed, 29438 renamed Precision with effect 0 aura 107 → 55 (2/4/6% hit, all spells), 11069 renamed Accelerant with mask word 1 4096 → 36864 (adds Arcane Wrath), Ice Lance 1312002 CategoryRecoveryTime 0 → 8000 (rank 1 only: ranks 2-6, the sim's 1240047 included, have no cooldown row), TraitDefinitions 135332 / 135339 swap Missile Barrage and Arcane Resilience (Missile Barrage to tier 2, Arcane Resilience to tier 1), Improved Fire Blast tier 1 → tier 3, Improved Channeling moves left, Frost Blast leaves the spellbook. foreverchanges.pro "Build 1.60.1.70707" says this build "puts the server's hotfixes of October 27 to 29 into the client files: the mage trees' rework, Ice Lance's 8 sec cooldown". Ledger rows MAGE-U-20 to MAGE-U-26. TASKS.md (2026-10-29 mage item) parked it "until a source confirms them (... or a newer client build)": this is that build. Measured (fire request edited in scratch, 180 s, 20k iterations, seeds 1 / 1000003): 1089.03 / 1088.66 → Critical Mass 3: 1051.59 / 1050.76 (−37.7, −3.5%); Critical Mass 3 + Incineration 5: 1063.87 / 1062.52 (−25.7, −2.4%), before re-spending the freed points. Arcane estimate: Arcane Focus 5 (5%) gives way to Precision 3 (6% on every school), so about +1% Arcane hit and 5 free points; not measured.
+- proposed fix: under Forever, in `sim/mage/talents.go` drop Arcane Focus (102), widen Elemental Precision to every school (214), keep Incineration and Critical Mass per point (184, 195) but update their comments; Accelerant on Arcane Wrath (`arcane_wrath.go:64`, as `fireball.go:76`); Ice Lance's 8 s cooldown, at least for rank 1 (`ice_lance.go:72`; rank 6 needs FC's word or the game); regenerate `ui/core/talents/trees/mage.json` from 70707 (update-sources talent trees) and re-pick the four mage presets' talents (fire: 2 points out of Critical Mass, 2 into Incineration, Arcane Focus's 4 elsewhere; arcane: Arcane Focus's 5 elsewhere).
+- needs: orchestrator fix (the user's parking condition is met; tell them)
+
+### client_update-20261030-2: Missile Barrage's "missiles fire every 0.5 sec" effect becomes a dummy in 70707
+- severity: low until verified (the sim's model matches the unchanged tooltip; if the server now fires the base 1 s ticks in a halved channel, arcane loses about half its Missile Barrage missiles)
+- affects: mage Arcane (and any build that casts Arcane Missiles on Missile Barrage)
+- found: 2026-10-30, master 36a772f
+- evidence: 400589 SpellEffect 1045767 (effect 1): aura 107 op 19 (tick period) bp −500 mask 2048 → aura 4 (dummy), misc 0, mask 0. Effect 0 (−50% duration) and effect 2 (−100% cost) unchanged; the tooltip still says "missiles fire every ${$400588w2/10}.1 sec". A dummy usually means a server script does the job, so probably no change in game. Sim: `sim/mage/arcane_missiles.go:98` ("the same missiles every 0.5 sec"). Ledger MAGE-U-27.
+- proposed fix: none unless a combat log shows 2-3 missiles in a Missile Barrage channel instead of 5; check the next arcane log (log-audit).
+- needs: verify (combat log)
+
+### client_update-20261030-3: Efficiency now discounts Strider Kick
+- severity: low (mana only; Survival builds with Efficiency)
+- affects: hunter Survival (any build with Efficiency and Strider Kick)
+- found: 2026-10-30, master 36a772f
+- evidence: 70707 19416 effect 0 EffectSpellClassMask_2 8192 → 2105344, adding bit 0x200000, which is Strider Kick's (1317257; also SoD's Flanking Strike 415320). The sim says the opposite: `sim/hunter/strider_kick.go:13` "Efficiency doesn't", and `talents.go:61` leaves it out. Ledger HUN-U-13. Not measured; 3% a point off Strider Kick's 5.81% base mana every 8 s.
+- proposed fix: under Forever add `SpellCode_HunterStriderKick` to Efficiency's list in `sim/hunter/talents.go:63` and fix the comment.
+- needs: worker fix
+
+### client_update-20261030-4: Fengus' Ferocity has only dummy effects in 70707
+- severity: low (no report request uses Dire Maul world buffs)
+- affects: any build that turns on Fengus' Ferocity
+- found: 2026-10-30, master 36a772f
+- evidence: 22817 effects 0-3 (aura 99 +200 AP, 124 +200 RAP, 13 +230 spell damage, 135 healing) all become aura 4 in 70707. Either the buff is dead or a script applies it. Sim: `sim/core/buffs.go:2244` gives 200 AP and 200 RAP. Ledger SHR-U-16.
+- proposed fix: none until confirmed in game; if it is dead, drop it under Forever.
+- needs: verify (in game)
+
 ### client_update-20261027-3: Amplify Curse no longer amplifies Bane of Agony in 70630
 - severity: low (no preset or APL casts Amplify Curse)
 - affects: warlock (Amplify Curse users only)
@@ -13,6 +45,7 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - needs: orchestrator fix
 - 2026-10-27: the 70630 mask reading holds, but 18288's 70630 description and Wowhead's Forever tooltip still name Bane of Agony, and every Agony rank gains a base-0 aura 271 effect (w2) that its new debuff text multiplies by, so the +50% looks moved onto Agony as a server-filled value, not removed. The sim keeps +50% (no preset casts Amplify Curse). needs: user ruling.
 - 2026-10-27 (user): park it until a build takes Amplify Curse, then test in game (TASKS.md item of 2026-10-27). The sim keeps +50% of base meanwhile. needs: in-game test
+- 2026-10-30 (70707): every Bane of Agony rank gains a third effect (index 2, dummy aura 4), and the tooltip's amplify term moves from $w2 to $w3, so the client still expects Amplify Curse to touch Agony through a scripted effect. 18288's mask is unchanged. Ledger WL-U-18. Still parked.
 
 ## Resolved
 

@@ -1,11 +1,15 @@
-# Consumables pass 54 (master d50909a37)
+# Consumables pass 55 (master 36a772fd1, client 1.60.1.70707)
 
-Findings: none.
+Result: findings (1 low).
 
-Checked (334c7dec..d50909a37, 5 watched files):
-- presets.ts: only feral Faerie Fire duty comments/tooltips changed (cat casts caster Faerie Fire, no cooldown). No Consumes/raid/debuff objects changed; no mksettings, consumes.go, enchant, gear-set or sim/common changes.
-- buffs.go: Blood Pact from party buffs, Furious Howl (24597, 83) in Battle Shout slot, camp buffs, Dark Inspiration (uptime 0.999), per-member Mana Tide, keyed Battle Shout/Howl labels. Raid-sim features, no preset effect.
-- debuffs.go: Sunder ramp, Faerie Fire/Dust Cloud rank labels (65/175/285/395/505 at 12/24/36/48/60), JoW/JotC per-caster. Dust Cloud joined the minor armor slot, so scan.sh's "expect 2" count is now 3 (docs/raid_sim.md says 3 members): stale scan expectation, not a finding.
-- totem_weapon_buffs.go: cast-totem slot resolver, no value changes.
-- assumptions_def.py: ALL_BASE skips pet variants; no buff assumption change.
-- scan.sh: all sections above counts empty; totems as ruled. wago latest is 70685, already audited; no new build.
+## Moved files (d50909a37..36a772fd1)
+- sim/core/buffs.go: Furious Howl now level-ranked via ForeverFuriousHowlAt; level 60 gives rank 24597, floor(82+0.4*4)=83, unchanged. A hunter test checks it against the wolf's ranks.
+- sim/core/debuffs.go: Expose Armor and Curse of Recklessness below the top rank get their own labels (top rank 2250 / 505 keeps the old label); new ForeverCurseOfRecklessnessAura picks the rank by level. Level 60 values unchanged.
+- ui/holy_paladin and ui/restoration_druid presets.ts: talent strings only; out of scope (non-DPS specs).
+
+## Checks
+- scan.sh on master: every ban section empty; counts as before. Minor-armor exclusive effects count is 3 (Dust Cloud joined the slot earlier), a stale scan expectation, not a finding.
+- Client 70685 -> 70707 builddiff: 4 consumable spell changes (Elixir of Wisdom Int 6 -> 3, Well Fed 1249521, Fengus' Ferocity, Missile Barrage), 0 Forever enchant changes (53 checked). No preset uses any. Finding consumables-20261030-1 (low).
+
+## Open items
+- consumables-20261030-1 (low).

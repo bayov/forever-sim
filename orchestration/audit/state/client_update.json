@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "d50909a3733ea5917688b276cd728f3ceab20da7"
+  "master": "36a772fd13853013772a7a48119361c14e979da0"
  },
- "last_pass_at": "2026-10-29T00:51:11Z",
- "client_build": "1.60.1.70685",
- "result": "quiet",
- "note": "70685: leveling-only vs 70658 (Adventurer's Tent becomes a rested-XP tent, new Camping spell). No DPS change. Dev notes rate-limited; FC has nothing newer than the 10-28 hotfix.",
- "checked_at": "2026-10-30T01:07:30Z",
- "pass": 5
+ "last_pass_at": "2026-10-30T07:00:55Z",
+ "client_build": "1.60.1.70707",
+ "result": "findings",
+ "note": "70707: the 10-27..29 server hotfixes are now in the client. It confirms the parked mage talent rework (Critical Mass 3, Incineration 5, Arcane Focus gone, Precision all spells, Accelerant on Arcane Wrath, Ice Lance 8 s on rank 1, tree moves). Hawk/TSA/Blood Fury already landed. Dev notes rate-limited.",
+ "pass": 6,
+ "checked_at": "2026-10-30T07:01:22Z"
 }

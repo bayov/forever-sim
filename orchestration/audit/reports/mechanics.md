@@ -1,35 +1,37 @@
-# Mechanics pass 48 (2026-10-30, master d50909a37)
+# Mechanics pass 49 (2026-10-30, master 36a772fd1)
 
-Range audited: 334c7decd..d50909a37. 25 code commits, all the raid sim (milestones B, M1, M1b, M2): `sim/compsearch` (new), shared engine (`buffs.go`, `debuffs.go`, `camp_buffs.go`, `totem_weapon_buffs.go`, `raid.go`, `environment.go`, `presim.go`, `aura*.go`), and druid, hunter, paladin, priest, shaman, warlock, warrior class files. TASKS.md changed only for the raid sim; no `forever-update/*` merge, no update-ledger change.
+Range audited: d50909a37..36a772fd1. 11 code commits, all the raid sim and compsearch (third audit round). TASKS.md / update ledger: one raid-sim doc commit (98cf9bdbe); no `forever-update/*` merge.
 
 ## Get current
 
-- Client: 1.60.1.70685 is still the newest (gate). Every verdict holds.
+- Client: 1.60.1.70707 is new (was 70685). Fetched the mechanics set and diffed by spell (178 spell rows) plus the talent and curve tables.
 - Dev notes thread 2360696: still 8 posts; post 7 (edited 10-27 16:47:14) and post 8 (edited 10-27 16:46:55) unchanged.
-- Blue tracker after 10-29 00:51: Forever posts are the November 4 launch announcement, a podcast and a starter guide. No mechanics.
+- Blue posts after 10-29 21:00: Kaivax's podcast post (10-29 16:17) and Linxy's retail PTR note, both before or off topic. No mechanics.
 - Server hotfixes: `tools/audit/mechanics/hotfixes.py` is still missing from the tree; not re-read.
 
-## Single-player effect
+## Client 70707 against 70685
 
-The shared run against the published report: 1 of 77 builds moved by more than 0.5 DPS (mage frostfire +0.9, +0.08%). No mage file in range, so this is no mechanic change. The raid sim's engine changes keep the single-player paths (Blood Pact moved to party buffs, read as max(raid, party); a lone warrior's shout still counts 4 extra threat hits).
-
-## Client values the new code claims (70685)
-
-| Code | Claim | Client | Verdict |
+| Row | Change | Sim | Verdict |
 |---|---|---|---|
-| `core/camp_buffs.go` | 9 camp buffs, values and spell IDs | 1230098 aura 137 8% all; 1230164 90 AP; 1230172 34 Str (effect 35); 1229519 2% (52 + 57); 1229513 25 Int; 1229718 32 Spi; 1230587 29 MP5; 1230653 308 armor / 13 stats / 22 resists; 1230124 56 Sta | Match. Exclusivity with class buffs comes from the tooltip only and the code says it is unverified. |
-| `core/debuffs.go` Dust Cloud | 65 / 175 / 285 / 395 / 505, 1265899-1265904 | aura 674, those base points, 30 sec | Match |
-| `core/buffs.go` Furious Howl 83 | 24597 at 60 | 82 + 0.4 x (60 - 56) = 83.6 | Match (floor) |
-| `druid/faerie_fire.go` | Feral FF gone; caster FF in Cat / Bear, free there | 16857, 17390-17392 have no rows; 9907 ShapeshiftMask 0x40000091 (Cat, Bear, Dire Bear, Moonkin), 115 mana, 1500 GCD; dev notes "costs no resources in those forms" | Match; no SpellFlagOmen, so no Omen of Clarity from it (dev notes) |
-| `paladin/sow.go` | SoW 38 / 48 / 58, 135 / 170 / 200 mana, 50 / 71 / 90 mana procs; JoW 40 sec, 33 / 46 / 59 | 20166 / 20356 / 20357, 20168 / 20350 / 20351, 20186 / 20354 / 20355 (dur 40000), 20268 / 20352 / 20353 | Match. 50% seal proc chance is an assumption (client 100, server-side); no preset casts it. |
-| `warrior/shouts.go`, `hunter/pet_forever.go` | Battle Shout and Furious Howl reach the raid | 25289, 24597 implicit target 56 | Match |
-| `warlock/warlock.go` | Blood Pact is a party aura | 11767 effect 35 | Match |
-| `shaman/water_totems.go` | Mana Spring reaches the party | 5677 effect 35 | Match |
-| `priest/talents.go` | Dark Inspiration reaches the party | 1326168 implicit target 20 | Match; given form at 0.999 uptime from the report's Shadow builds |
+| Trueshot Aura 1299346 / 1299348 / 19506 / 20905 (20906 50) | 30/40/50/75 -> 15/22/30/40 | 15/22/30/40/50 | matches (hotfix now in the client) |
+| Aspect of the Hawk 13165-14321 (14322 55) | 20/35/50/70/90 -> 15/22/30/38/47 | 15/22/30/38/47/55 | matches |
+| Blood Fury 20572 | RecoveryTime 180000 -> 120000 | 2 min | matches |
+| Increased Hit Chance 01-05, 10 | new e1 aura 55 (spell hit), same points as the melee hit | gear hit unified (ruleset.go) | matches |
+| Endurance 20550 e1 | aura 163 bp 2 misc 0 -> 127 | health only (post 7) | **mechanics-20261030-1** (user ruling) |
+| Fengus' Ferocity 22817 | 200 AP / 200 RAP / ... -> four dummy auras | 200 AP / RAP | open item: server scripted or removed? No preset takes it |
+| Well Fed 1249521 | +1 stat -> +1 skill 356 (fishing) | not simmed | none |
+| Class rows | rogue / druid finishers Attributes_4 0x800; mage Precision 29438 to aura 55 bp 6, Missile Barrage e1 dummy, Ice Lance 8 s category CD, Accelerant mask; hunter Efficiency mask, trap / Counterattack diminishing; two mage talent rank swaps (TraitNodeEntry 130513 5->3, 130525 3->5) and trait spell swaps 135332 / 135339 (400588 / 28574) | | for the class and rank tuning auditors |
 
-No DPS sims run: no single-player number moved and every claimed value matches the client.
+SpellItemEnchantment unchanged. TraitDefinitionEffectPoints +1 row (134452 curve 127736, new). CurvePoint: new curves 127736 / 127817, 83108 20/40 -> 25/50 swapped with 126757, 83083 points 3-4 moved to 83095; none of them a shared mechanic.
 
-## Findings
+## Code range
 
-- No new findings. mechanics-20261027-2 (Amplify Curse vs Bane of Agony) stays open (parked for an in-game test); no warlock curse change in range.
-- verdicts.md: added rows for camp buffs, area reach, Furious Howl, Dust Cloud, Forever Faerie Fire and Seal / Judgement of Wisdom.
+- `buffs.go`: Furious Howl given at the player's level (`ForeverFuriousHowlAt`). Ranks match 70707 (24604 10-24 5+0.6, 24605 24-40 34+0.02, 24603 40-56 60+0.5, 24597 56-60 82+0.4; 83 at 60). Level 60 unchanged.
+- `debuffs.go`: Expose Armor and Curse of Recklessness below the top rank get their own labels; `ForeverCurseOfRecklessnessAura` by level (14 / 28 / 42 / 56, armor 175 / 285 / 395 / 505). Level 60 unchanged.
+- `warlock/curses.go`: a Forever warlock's own curse now uses the leveled aura (505 at 60, as before).
+- `sim_concurrent.go`: empty party slots skip metrics. No mechanic.
+- compsearch, web: no mechanic.
+
+## Conclusions
+
+One new finding (Endurance, user ruling). Every other shared row on 70707 matches the sim. Open: Fengus' Ferocity's dummy auras on 70707 (no preset effect).
