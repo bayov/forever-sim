@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### mechanics-20261030-2: DPS report and standards still say Windfury Totem 1.5 sec and extra attacks reset the swing, after the sim took 100 ms and no reset
+- severity: medium (the numbers are right per the 2026-10-30 user rulings; the published assumption cards describe the opposite of what moved Arms +10%)
+- affects: DPS report assumption cards (all melee: warrior, rogue, Ret paladin, Survival hunter, Feral, Enhancement), orchestration/standards.md 17 / 174 / 175
+- found: 2026-10-30, master fb1485888
+- evidence: f3017897f sets the totem's proc ICD to 100 ms under Forever (tier 1: 70707 10612 aura 42 proc 20% icd 100, verified) and keeps the swing timer on extra attacks (user ruling, notes.md to verify). fb1485888 re-simmed the report with both, but `tools/dps_report/assumptions_def.py:399-412` and `ui/dps_report/data/assumptions.json` still show `wf_totem_icd` "At most once every 1.5s, as in Classic." and `extra_attack_swing` "Yes. The next swing waits a full swing after an extra attack."; standards.md 17 ("internal cooldown is 1.5 sec ... the 100 ms alternative is closed"), 174 and 175 say the same. Effect of f3017897f alone (run_reqs, seed 1, 5000 iterations, bbbaf2e3c vs f3017897f CLIs): Arms 905.0 -> 995.4 (+10.0%), Fury 2H +6.6%, Fury +6.2%, Survival +4.3%, Shock Ret +3.3%, Mutilate +2.9%, Combat Swords +1.7%. In Arms, white swings +13% and Heroic Strike casts 2.7x, so the swing-timer ruling carries most of it. Eviscerate's 4% AP a combo point (same commit, user ruling) has no assumption card either.
+- proposed fix: flip both cards (short/desc/settings: "100 ms, the client's 10612"; "No, the next swing comes when it was due", source wowsims/forever, to verify in game) and add one for Eviscerate 4% AP; rewrite standards 17 and 174/175 to the 2026-10-30 rulings; redeploy the report.
+- needs: orchestrator fix
+
 ### mechanics-20261030-1: Client 70707 widens Tauren Endurance's 2% critical damage to every school, against post 7's removal
 - severity: high if the bonus is live (estimate, not measured: about +1.0% for a crit-heavy Tauren melee build at ~35% crit and 2x crits, +0.4% for a 15% crit caster; it can move Tauren in the race tables); none if post 7 stands
 - affects: Tauren (every class and build in the race tables that Tauren can be)

@@ -1,11 +1,12 @@
 # Rotation audit: reference files
 
-- `baseline_1274e15_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
-  1274e15b3 (pass 37, after the 2026-10-28 hunter hotfix: Trueshot Aura rank 5 at 50, Aspect of the Hawk
-  rank 6 at 55; BM -18.4, MM -21.5, LW -24.7, SV -1.0 against pass 36, nothing else moved).
+- `baseline_fb14858_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
+  fb1485888 (pass 40, client 1.60.1.70707 mage talents, extra attacks keep the swing timer, Windfury Totem
+  100 ms ICD, Eviscerate 4% AP: warriors +6 to +10%, survival +4%, paladins/rogues/feral +2 to +3%,
+  fire -2.4%, frostfire -3.6%, arcane +1.4%).
   - It was made with `tools/audit/rotations/baseline.py`: 3,000 iterations, seed 424242, each req's own
     encounter.
-  - The CLI was the audit loop's shared build at 1274e15b3 (`/tmp/audit-cache/cli/1274e15b3c3b/wowsimcli`).
+  - The CLI was the audit loop's shared build at fb1485888 (`/tmp/audit-cache/cli/fb1485888563/wowsimcli`).
   - Next pass: build the CLI on the new master and run `baseline.py` with the same arguments. Diff the
     output against this file. If no req file changed, any row that moved more than about 1 DPS is a sim
     change.

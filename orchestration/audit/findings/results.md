@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### results-20261030-1: 46 of 77 metas' published.dps are stale after the 2026-10-30 re-sim (cd1f6b2d0, fb1485888)
+- severity: low (no published number is wrong: builds.json matches my 20k seed-1 run on all 77 within 0.15)
+- affects: tools/dps_report/req/*.meta.json (46); runreq.sh and verify.py report them as OFF published
+- found: 2026-10-30, master fb1485888
+- evidence: the re-sim commits update ui/dps_report/data/builds.json but not the metas (warrior__arms meta 905.6, builds.json 994.9, run 994.9; hunter__survival 1028.9 vs 1072.6; mage__fire 1089.0 vs 1061.0). Same pattern as results-20261027-1.
+- proposed fix: set each meta's published.dps and source from builds.json, per tools/dps_report/README.md "update meta.published".
+- needs: orchestrator fix
+
 ### results-20261025-1: mksettings and the committed requests disagree on consumes (potion, flask, filler explosive)
 - severity: medium (Ret Shock -13.7 DPS = -1.6% if regenerated; others under 2.5)
 - affects: paladin__level_60_shock* (defaultPotion MajorManaPotion vs DragonfirePotion), shaman__elemental-level60-mana-tide (vs CausticSmogPotion), all rogues (flask FlaskOfNaturalAccuracy vs FlaskOfNaturalPrecision on combat-daggers; fillerExplosive ExplosiveGoblinLandMine absent in requests), priest__smite and feral duty-ff (fillerExplosive)
