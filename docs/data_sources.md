@@ -285,10 +285,13 @@ them in game. The client still ships each one's Item row (class, subclass, slot)
 ItemSparse row. When the server first sends an item to a player it's revealed: the row
 arrives as a hotfix, and the client keeps it in `Cache/ADB/enUS/DBCache.bin`.
 
-- **Fetcher:** `python3 tools/sources/dbcache.py "<beta client folder>" --write` reads the
+- **Fetcher:** `python3 tools/sources/dbcache.py "<client folder>" --write` reads the
   cache's ItemSparse and Item rows (layouts from WoWDBDefs, checked against wago.tools'
   copy of the same build on every run) into `assets/db_inputs/forever_client_cache.json`,
-  with a meta block naming the build. Local only: the cloud has no client.
+  with a meta block naming the newest build and each client's. We run it for the release
+  (`_forever_`) and the beta (`_classic_beta_`). Each run adds to the rows of earlier runs,
+  because each client knows only the items it was sent, and a row both have comes from the
+  newer build. `--fresh` starts over. Local only: the cloud has no client.
 - **Push IDs:** each entry in the cache names the hotfix push it came in, and real pushes
   count up over time. But a reveal doesn't come in a real push. Its push ID is 2^24 plus
   the item ID (17061803 for Ankle Slicers, 284587), so it says nothing about when the item

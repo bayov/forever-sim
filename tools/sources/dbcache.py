@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Items our beta client was sent, read out of its hotfix cache.
+"""Items our clients were sent, read out of their hotfix caches.
 
-    python3 tools/sources/dbcache.py <client folder> [--write]
+    python3 tools/sources/dbcache.py <client folder> [--write [--fresh]]
 
 The client keeps every database row the server sent it, on top of the tables
 it shipped with, in Cache/ADB/enUS/DBCache.bin. Forever's new items reach us
@@ -14,6 +14,15 @@ why it's one of several sources for the secret items (docs/data_sources.md).
 With --write it writes assets/db_inputs/forever_client_cache.json, with a
 meta block naming the build. Without --write it prints what it found. It runs
 locally only, since the cloud has no client.
+
+--write adds to the rows the file already has rather than replacing them,
+because each client only knows the items it was sent. When the Forever release
+came out on 2026-10-30 (70685), its cache held 951 items with data, where the
+beta's held 5,021 after weeks of BayovCore's item sweeps. Writing the release
+alone would have called some 4,000 items hidden again that we know the stats
+of. So we run it for each client, the release and the beta, and a row both
+have comes from the newer build: the file's build when it's newer than the
+client's, the client's otherwise. --fresh starts the file over.
 
 Each item there has its state and, for a row with data, its name, quality,
 item level, required level, slot, set, class and subclass, the hotfix push its
@@ -82,8 +91,15 @@ MAGIC = b'XFTH'
 VALID, REMOVED, INVALID, NOT_PUBLIC = 1, 2, 3, 4
 STATES = {VALID: 'valid', REMOVED: 'removed', INVALID: 'invalid', NOT_PUBLIC: 'notPublic'}
 ITEM_SPARSE_HASH, ITEM_HASH = 0x919BE54E, 0x50238EC2
-# A row that differs from wago.tools in this many fields, or this share of
-# rows differing at all, means the layout is wrong.
+# A row that differs from wago.tools in this many fields, or one field that
+# differs in this share of the rows, means the layout is wrong.
+#
+# We count by field and not by row, because the only rows the cache shares with
+# the shipped table are rows a hotfix sent again, and those really differ. At
+# 70685 that was 43 of the release client's 148 (the Watcher's Signets renamed
+# in pushes 113161 and 113213, food flags, the hammer plans' required skill),
+# and 23 of the beta's 103. But each of them differs in its own field or two. A
+# wrong layout makes the same fields differ in nearly every row.
 LAYOUT_BROKEN_FIELDS, LAYOUT_BROKEN_SHARE = 3, 0.2
 # A row that didn't come in a real push has 2^24 plus its record ID instead.
 SYNTHETIC_PUSH = 1 << 24
@@ -215,7 +231,8 @@ def read(client):
     for table, rows_ in (('ItemSparse', sparse), ('Item', item)):
         compared, bad = check(rows_, table, version)
         broken = [b for b in bad if len(b[1]) >= LAYOUT_BROKEN_FIELDS]
-        if broken or (compared and len(bad) > compared * LAYOUT_BROKEN_SHARE):
+        by_field = collections.Counter(f for _, fields in bad for f in fields)
+        if broken or (compared and by_field and by_field.most_common(1)[0][1] > compared * LAYOUT_BROKEN_SHARE):
             raise SystemExit('%s rows decode differently from wago.tools for build %s, so the '
                              'layout changed (%d of %d compared, first: %s). Update ITEM_SPARSE '
                              'or ITEM from WoWDBDefs.' % (table, version, len(bad), compared, bad[:3]))
@@ -240,10 +257,15 @@ def read(client):
     return version, items
 
 
+def build_no(version):
+    return int(str(version).rsplit('.', 1)[-1])
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__.split('\n\n')[0])
     ap.add_argument('client', help='the client folder, like ".../World of Warcraft/_classic_beta_"')
     ap.add_argument('--write', action='store_true')
+    ap.add_argument('--fresh', action='store_true', help='with --write, drop the rows of earlier runs')
     a = ap.parse_args()
     version, items = read(a.client)
     shipped = wago.by_id('ItemSparse', version) or {}
@@ -252,8 +274,23 @@ def main():
     print('build %s: %d items (%s), %d with data that the shipped ItemSparse lacks' % (
         version, len(items), ', '.join('%d %s' % (n, s) for s, n in states.most_common()), len(new)))
     if a.write:
-        m = meta.meta('client beta %s hotfix cache (%s)' % (version, CACHE.replace(os.sep, '/')),
-                      'tools/sources/dbcache.py', build=version)
+        name = os.path.basename(os.path.normpath(a.client)).strip('_')
+        clients = {name: version}
+        if not a.fresh and os.path.exists(OUT):
+            with open(OUT, encoding='utf-8') as f:
+                old = json.load(f)
+            old_build = old['meta']['build']
+            clients = dict(old['meta'].get('clients') or {'classic_beta': old_build}, **clients)
+            old_items = {int(i): e for i, e in old['items'].items()}
+            if build_no(old_build) > build_no(version):
+                items = {**items, **old_items}
+                version = old_build
+            else:
+                items = {**old_items, **items}
+            print('merged with the %d items of earlier runs: %d in all' % (len(old_items), len(items)))
+        m = meta.meta('client hotfix caches (%s), %s' % (CACHE.replace(os.sep, '/'), ', '.join(
+            '%s %s' % kv for kv in sorted(clients.items()))), 'tools/sources/dbcache.py',
+            build=version, clients=clients)
         with open(OUT, 'w', encoding='utf-8') as f:
             f.write('{\n' + meta.line(m) + '"items": {\n')
             f.write(',\n'.join('%s: %s' % (json.dumps(str(i)), json.dumps(e, sort_keys=True))

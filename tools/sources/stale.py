@@ -73,7 +73,7 @@ CLIENT_INPUTS = [
     ('assets/db_inputs/forever_client_items.meta.json', 'python3 tools/sources/itemsparse.py %s'),
     ('assets/db_inputs/forever_enchants.json', 'python3 tools/sources/enchants.py %s'),
     ('ui/core/forever/racials.meta.json', 'python3 tools/sources/racials.py %s --write'),
-    ('assets/db_inputs/forever_client_cache.json', 'python3 tools/sources/dbcache.py <beta client> --write (%s)'),
+    ('assets/db_inputs/forever_client_cache.json', 'python3 tools/sources/dbcache.py <client> --write, for each client (%s)'),
 ]
 
 HIDDEN = os.path.join(ROOT, 'assets', 'database', 'hidden_items.json')

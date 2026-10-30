@@ -16,10 +16,11 @@ new builds and reveals and prepares PRs, and AtlasLoot is only on our machine.
 ## 1. What's behind
 
 ```bash
-python3 tools/sources/stale.py --client-build <beta version> --addons "<beta client>/Interface/AddOns"
+python3 tools/sources/stale.py --client-build <release version> --addons "<release client>/Interface/AddOns"
 ```
 
-The beta's version is in the WoW folder's `.build.info`. bayovui's `build/stale.py` runs
+Since the Forever release came out (2026-10-30), it's the client we read game data from, not
+the beta. Its version is in the WoW folder's `.build.info` (product `wowf`). bayovui's `build/stale.py` runs
 this for you with both filled in. Do only the steps it names, plus whatever the user asked
 for. Open PRs from the daily routine come first: the user decides each merge.
 
@@ -65,7 +66,7 @@ scrapes take a while.
 When `stale.py` says AtlasLoot Forever changed (CurseForge updated it):
 
 ```bash
-go run ./tools/database/gen_db -outDir=assets -gen=atlasloot -atlasloot="<beta client>/Interface/AddOns"
+go run ./tools/database/gen_db -outDir=assets -gen=atlasloot -atlasloot="<release client>/Interface/AddOns"
 python3 -I tools/sources/crosscheck.py
 ```
 
@@ -80,7 +81,8 @@ After a new client build is fetched (step 2), these follow it. `stale.py` names 
 behind.
 
 ```bash
-python3 tools/sources/dbcache.py "<beta client>" --write       # our client's hotfix cache
+python3 tools/sources/dbcache.py "<release client>" --write    # our clients' hotfix caches,
+python3 tools/sources/dbcache.py "<beta client>" --write       # each run adds to the last
 python3 tools/sources/itemsparse.py <new>                      # item sets, factions, PvP ranks
 python3 tools/sources/enchants.py <new>                        # enchant values
 python3 tools/sources/racials.py <new> --write                 # racial text for the UI
