@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### fairness-20261030-1: Frost's report race (High Order) is no longer its best; Undead sims 3.3 DPS higher after the 70707 talent re-pick
+- severity: low (0.36%; Frost stays 17th either way)
+- affects: mage__frost (report race SkyborneHighOrder)
+- found: 2026-10-30, master fb1485888
+- evidence: paired seed 1, 20k iterations, the report request with only the race changed (`ITERS=20000 python3 tools/audit/fairness/sweep.py mage__frost`): Undead 911.6, Gnome 909.9, Orc 909.3, High Order 908.3, Human 907.4, Troll 904.4. At d50909a High Order led (912.1 against Undead 911.8, 5k); cacd15f83 re-picked the mage talents on client 70707 and kept the race. Frost has no req/races/ override for any race. Best Alliance is Gnome (+1.6).
+- proposed fix: set mage__frost's race to Undead (or Gnome if the report wants an Alliance pick) and re-sim it; or record why High Order stays.
+- needs: orchestrator fix
+
 ## Resolved
 
 ### fairness-20261027-1: report races are stale after the 2026-10-26 racial pass (13 builds lose 1 to 12 DPS; Survival should pass Affliction)

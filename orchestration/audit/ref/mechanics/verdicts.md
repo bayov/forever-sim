@@ -1,4 +1,4 @@
-# Mechanics audit: verdicts and settled items (as of 2026-10-30 UTC, master bbbaf2e3c)
+# Mechanics audit: verdicts and settled items (as of 2026-10-30 UTC, master fb1485888)
 
 Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 = Era / Classic. Never cite vmangos.
 
@@ -56,12 +56,15 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 | Stoneskin Totem (Forever) | Top rank at our level off each physical non-periodic hit before armor; a hit it cuts still deals at least 1 after armor (ad5e98ae6) | beta logs 10-11 (rank 3) and 10-16 / 10-17 (rank 1: raw 3 and 4 dealt 1, no 0 hit), user agreed; shaman_audit.md 7.29 |
 | Ahn'Qiraj book ranks | Excluded (standards 8a, IncludeAQRanks) | |
 | Strongest learned rank | bestLearnedRank | 55c9744 |
+| Stones, oils, scrolls on weapons | Only on weapons their SpellEquippedItems allow: sharpening stones edged (mask 33219), weightstones blunt (9264), elemental / consecrated stones and oils any melee weapon; a misfit does nothing (f3017897f) | Era 1.15.9 and 70707, per commit; masks decode to axe/polearm/sword/dagger and mace/staff/fist; pass 51 |
+| Threat talents (70630/70707) | Subtlety -10/-20/-30% Nature and Arcane threat (17118, 3 ranks); Instrument of Law -10/-20% all threat without Righteous Fury (1311085 e1, curve 110348); Demonic Brand -17/-33/-50% Searing Pain threat (1293695 e0 op 2, curve 83195). Threat only | 70707 TraitDefinitionEffectPoints; pass 51 |
 | Intellect elixirs | Elixir of Wisdom 3 Int (spell 3166, named Lesser Intellect), Elixir of Lesser Intellect 6 (its own spell 1250988), 30 min | 70707 3166 / 1250988 aura 29 bp 3 / 6; pass 50 |
 
 ## Settled (don't re-flag)
 
 - wowsims/forever assumptions in standards 28 (2026-10-26, report knobs, departing from client on purpose): Multi-Shot 0.5 sec cast hasted by ranged speed (70532 still CastingTimeIndex 1, instant; Attributes_2 0x20000 keeps Auto Shot, verified), live spell DoT / channel ticks (`dot_live_ticks`), hunter base RAP level x 2 - 10 (`hunter_base_rap`), failed Ferocious Bite keeps extra energy and combo points (`druid_bite_miss`), channel holds the five second rule to its end (`channel_fsr`).
-- Windfury Totem cooldown 1.5 sec (standards 17, user ruling). Windfury Totem procs from the main hand only (user ruling).
+- Windfury Totem proc cooldown 100 ms under Forever (user ruling 2026-10-30, f3017897f; tier 1: 70707 10612 aura 42 proc 20% icd 100; replaces the 2026-10-13 ruling of 1.5 sec, standards 17 not yet updated, mechanics-20261030-2). Windfury Totem procs from the main hand only (user ruling).
+- Extra attacks swing at once and keep the swing timer under Forever (user ruling 2026-10-30, wowsims/forever, notes.md to verify; Era resets, tier 3). Eviscerate 4% AP a combo point under Forever (user ruling 2026-10-30, wowsims/forever estimate; Era 3%).
 - Bane of Doom: with the user.
 - Report assumptions decided by user rulings 2026-10-15 / 16: Trueshot Aura ranks 15 / 22 / 30 / 40 / 50 and Aspect of the Hawk ranks 15 / 22 / 30 / 38 / 47 / 55 (launch-realm server hotfix seen by foreverchanges.pro 2026-10-28, user ruling 2026-10-28 replacing rank 5 at 100; client 70707 now has the hotfix values too, TSA 15/22/30/40/50 and Hawk 15/22/30/38/47/55, all matching the sim; level 60 casts Hawk rank 6 14322, 110 mana; commit 73cedc9a9, pass 46); Hunter's Mark rank 4 143 (2026-10-21 hotfix, user 2026-10-23; the hotfix table has 14325 effect 1 at 143); Arcane Shot 0.10 / Serpent Sting 0.03; hunter crit per Agility Classic's at 60 (Forever's PlayerExpectedStat by level, user ruling 2026-10-25; ×1.22 before; all 60 sim values match 70532 PlayerExpectedStat ClassID 3, pass 39); pet hits scale with speed; Raptor Strike rank 8 96; Rend 2% AP a tick; Frostbolt rank 10 ×1.04; Ice Lance 0.429; Lightning Bolt rank 10 ×1.12; warr_crit_rage +100%; warr_rage_oh 0.5; level_partial_resist none; sham_ftt_stack (raid Flametongue Totem with Windfury Weapon).
 

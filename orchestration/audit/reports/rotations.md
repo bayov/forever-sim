@@ -1,46 +1,66 @@
-# Rotations pass 39 (2026-10-30)
+# Rotations pass 40 (2026-10-30)
 
-- **Master:** d50909a37 (last audited 334c7decd). Client 1.60.1.70630 data, unchanged.
-- **Result:** quiet, no new findings. rotations-20261028-1 (hunter Trueshot/Hawk caveats) still open, now
-  also in the four new hunter pet variants' meta files.
+- **Master:** fb1485888 (last audited bbbaf2e3c). Client 1.60.1.70707 mage talents.
+- **Result:** findings. Two new: rotations-20261030-1 (high, Ret paladin twist window) and
+  rotations-20261030-2 (medium, Arms / Fury 2H Hamstring rage gate). rotations-20261028-1 (hunter
+  Trueshot/Hawk caveats) still open.
 
 ## What changed
 
-64 commits, nearly all the raid sim (sim/compsearch, comp resolver, per-player raid buffs, camp buffs,
-multi-player raid bug fixes) and its 19 new report variants. `apl_logic_diff.py 334c7decd d50909a37`:
-- New duty APLs: paladin Seal of Wisdom / Crusader duties (4), warlock Curse of Recklessness duties (4),
-  warrior Sunder duties (3). New reqs also add hunter Tallstrider and Wolf pet variants (6; rotations
-  unchanged from their bases).
-- 0cf1a8c8b Feral `level60_ff`: Faerie Fire (Feral) 17392 replaced by caster Faerie Fire 9907 (free in Cat
-  Form, 1.5 s GCD, no swing reset; Forever has no Feral FF). Duty cost at 180 s rises 4.5 -> 8.3.
+- `apl_logic_diff.py bbbaf2e3c origin/master`: only the mage files.
+  - Arcane: the single-stack Arcane Blast fallback below 20% mana is gone (rotopt, +1.6).
+  - Frost: Evocation dropped, and the Arcane Blast stack target is now 3 (it was 2), with Ice Lance's new 8 s cooldown.
+- Sim `.go` that the presets reach:
+  - f3017897f: Forever extra attacks keep the swing timer.
+  - Windfury Totem's ICD is 100 ms.
+  - Eviscerate takes 4% AP a combo point.
+  - Imbues apply only to weapons they fit.
+  - The mage 70707 talents: Accelerant, Precision covering all spells, Critical Mass at 3, Ice Lance cooldown.
+  - The rest is threat only (mana-gain threat, Subtlety, Instrument of Law, Demonic Brand, shout threat) or raid sim / compsearch.
 
-## Checks
+## Regression baseline (3000 it, seed 424242) vs baseline_d50909a
 
-- Shared 20k run vs published: only mage__frostfire moved (+0.9, the pass-38 Evocation change, not yet
-  republished). The sim `.go` changes move no existing preset.
-- Regression baseline (3000 it, seed 424242) vs baseline_1274e15: feral-cat-duty-ff -3.2 (intended, above),
-  mage__frostfire +2.1, elemental +0.5/+0.2, shock_undead -0.3 (pass-38 APL changes). Everything else
-  identical. New baseline: `ref/rotations/baseline_d50909a_3000it_seed424242.tsv` (adds the 19 variants).
-- Duty upkeep, 300 it seed 7, uptime of the duty debuff on the target out of 180.9 s:
+| group | change |
+|---|---|
+| warrior arms (4) | +88.6 to +91.3 (+9.6 to +10.3%) |
+| warrior fury / fury_2h (6) | +62.0 to +65.6 (+6.3 to +6.9%) |
+| hunter survival (3) | +43 to +44 (+4.3%) |
+| paladin non-shock and shock (11) | +15 to +29.5 (+1.6 to +3.2%) |
+| rogue (12) | +13.6 to +21.9 (+1.8 to +2.9%) |
+| feral cat / -duty-ff | +22.6 / +26.0 |
+| mage fire / frostfire / frost / arcane | -26.3 / -38.6 / -4.6 / +12.3 |
 
-| preset | debuff | uptime s | casts/fight |
-|---|---|---:|---:|
-| warrior arms / fury / fury_2h -duty-sunder | Sunder 11597 | 180.6 / 180.8 / 180.9 | 11.7 / 11.2 / 10.9 |
-| warlock aff / demo / destro / destro_fire -duty-recklessness | CoR 11717 | 180.5-180.6 | 2.0 |
-| paladin 4 x -duty-wisdom | JoW 20355 | 180.9 | 1 (melee refreshes) |
-| paladin 2 x -duty-crusader | JoC 20303 | 180.9 | 1 |
-| druid__feral-cat-duty-ff | FF 9907 | 180.8 | 6.4 |
+Everything else moved by less than 1. New baseline: `ref/rotations/baseline_fb14858_3000it_seed424242.tsv`.
+The moves match the mechanic changes (extra attacks for warriors, rogues, paladins and SV; 70707 talents
+for mages). Enhancement didn't move.
 
-  No duty lapses.
-- Feral FF placement A/B (FF only below 30 Energy unless < 2 s left), 20k, two seed sets, B-A pooled:
-  120 s -0.82, 180 s -0.72, 300 s -0.37. Loses; the 7 s refresh holds.
+## A/B screens (paired, 8x2500, s0=1e6, 180 s unless noted)
 
-## Not covered
+| preset | variant | B-A |
+|---|---|---:|
+| warrior arms | Hamstring rage 30 -> 10 / 15 / 20 / 25 / 40 | +4.3 / +4.3 / +3.5 / +1.9 / -5.6 (finding 2) |
+| warrior arms | Heroic Strike 90 -> 80 / 70 | -6.2 / -17.5 |
+| warrior arms-duty-sunder | Hamstring 30 -> 10 | +2.9 |
+| warrior fury_2h | Hamstring 20 -> 10 / 30 | +3.2 / -4.2 (finding 2) |
+| warrior fury | Heroic Strike 80 -> 70 / 90; Hamstring 10 -> 25 | -1.1 / -2.3; -0.1 |
+| mage frost | re-add the old Evocation line (<20% mana, >90 s left) / >30 s left | -0.8 / -17.8 (rotopt's drop holds) |
+| paladin level_60 | twist window 1.5 s -> 1.4 / 1.6 / 1.7 / 1.8 / 2.0 / 2.5 / 3.0 / 10 | -0.2 / +2.2 / +2.7 / +3.6 / +4.9 / +8.3 / +6.6 / +13.9 (finding 1) |
+| paladin sub_holy | twist 10 s | +14.9 |
 
-- The new duty APLs' damage lines are their base rotations'; not separately A/B'd beyond upkeep.
-- Older open items unchanged (Balance Night Elf Elune's Light, Elemental Mastery hold, warlock duty Life
-  Tap/Doom screens).
+The two findings were confirmed on s0=2e8. The pooled numbers at 120/180/300 s are in `findings/rotations.md`.
 
-## Optional
+## Notes and open items
+
+- **Paladin twist:** the "1.5 s sharp optimum" settled item no longer holds. The bbbaf2e CLI still has the
+  10 s window losing (-4.0), so a sim change in this range flipped it. Most likely it's the extra-attack
+  swing timer, although the Ret req has no Windfury. Worth a look from mechanics before the window is
+  widened. The duty and undead variants weren't measured separately.
+- **Rogue:** no rotation screen for Eviscerate's 4% AP. The finisher lines don't choose between Eviscerate
+  and another finisher, so a gate shift is unlikely. Left for the next pass.
+- **Fire, Frostfire and Arcane:** the 70707 rotopt re-searches were taken as they are, and no A/B was run.
+- **Open items from earlier passes:** carried unchanged (Balance NE, holding Elemental Mastery, the warlock
+  duty variants).
+
+## Optional (under the bar)
 
 - None new.

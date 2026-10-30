@@ -115,3 +115,8 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-10-30 12:58 | gear | pass 47 | master bbbaf2e3c | quiet | forever_enchants.json meta stamp only
 2026-10-30 12:58 | consumables | pass 56 | master bbbaf2e3c | quiet | Elixir of Wisdom 6 -> 3 matches client, resolves consumables-20261030-1
 2026-10-30 12:58 | mechanics | pass 50 | master bbbaf2e3c | quiet | 8 code commits read, none change game values
+2026-10-30 19:12 | results | pass 64 | master fb1485888 | 1 new finding | metas' published.dps stale for 46 of 77 builds (low)
+2026-10-30 19:12 | rotations | pass 40 | master fb1485888 | 2 new findings | Ret twist window and Hamstring rage threshold now beat current APLs
+2026-10-30 19:12 | consumables | pass 57 | master fb1485888 | quiet | imbue-fit and presets agree, no findings
+2026-10-30 19:12 | mechanics | pass 51 | master fb1485888 | 1 new finding | wf_totem_icd/extra_attack_swing cards and standards.md contradict published numbers (medium)
+2026-10-30 19:12 | fairness | pass 16 | master fb1485888 | 1 new finding | Frost race: Undead now beats High Order (low)

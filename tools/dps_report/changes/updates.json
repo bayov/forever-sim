@@ -1174,6 +1174,10 @@
     {
      "commit": "e0bec0b24f4326175f37518ea112f0b4e6464512",
      "why": "the enhancement shaman leveling plan only; no level 60 preset or report request changes"
+    },
+    {
+     "commit": "e2c54a7",
+     "why": "leveling, raid sim or report page work that changes no build's results; the 2026-10-30 re-sim after it moved only the mage builds, which their own lines cover"
     }
    ],
    "source": {
