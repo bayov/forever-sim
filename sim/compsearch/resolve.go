@@ -284,7 +284,7 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 	for _, d := range []proto.Duty{proto.Duty_DutySunderUpkeep, proto.Duty_DutyBattleShout, proto.Duty_DutyFaerieFire,
 		proto.Duty_DutyCurseOfTheElements, proto.Duty_DutyJudgementOfTheCrusader} {
 		g := DutyGift(d)
-		if handDuty[d] || (phUp|dpsUp).Has(g) || (g == GiftCrusader && len(paladinPHs(paladins)) > 0) {
+		if handDuty[d] || (phUp | dpsUp).Has(g) || (g == GiftCrusader && len(paladinPHs(paladins)) > 0) {
 			continue
 		}
 		if d == proto.Duty_DutyFaerieFire && handDuty[proto.Duty_DutyCurseOfRecklessness] {

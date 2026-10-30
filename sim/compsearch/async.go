@@ -3,9 +3,9 @@ package compsearch
 import (
 	"errors"
 	"fmt"
-	"runtime/debug"
 	"os"
 	"path/filepath"
+	"runtime/debug"
 	"sync"
 	"time"
 
