@@ -1772,7 +1772,51 @@ Report, with four tabs: Search result, Search, Comp and Raid results.
 ## M1's 20-player result
 
 The write-up of M1's done-when: 20 players, 2 tanks and 4 healers, the generic boss at 180 ± 20 s, each
-faction with camps on and off. It's being run (a few hours on this machine) and lands here.
+faction with camps on and off, with the confirmation's raid sims. It ran on commit `6c13cefff` (sim version
+`3f28f71e0525149f`) after the third audit's fixes: 42,614 single-player sims at 1,000 iterations
+(contenders at 10,000), 29,291 of them reused, and 22 raid sims, in 3 hours on 4 cores. The whole report,
+with every table, is [`raid_sim_m1/m1_20.md`](raid_sim_m1/m1_20.md); the page opens
+[`raid_sim_m1/m1_20.json`](raid_sim_m1/m1_20.json).
+
+**The answer is a hunter raid.** Every scenario's winner is 11 or 12 Beast Mastery hunters, a Marksmanship
+hunter for Trueshot Aura, and a Demonology warlock on Curse of the Elements, with a fire mage for Arcane
+Brilliance when camps are off. The tanks are a Protection warrior and a Feral tank in all four.
+
+| Scenario | Raid sim DPS (±95%) | Score | Healers | DPS members |
+|---|---|---|---|---|
+| Horde, camps off | 15,632.6 ± 2.0 | 15,626.1 | 2 Holy paladins, 2 Restoration shamans | 11 BM, 1 MM, fire mage, CoE warlock |
+| Horde, camps on | 16,000.4 ± 2.0 (tie of 2) | 15,993.3 | Holy paladin, 2 Restoration shamans, Restoration druid | 12 BM, 1 MM, CoE warlock |
+| Alliance, camps off | 15,487.0 ± 1.8 | 15,478.9 | 2 Holy paladins, 2 Restoration shamans | 11 BM, 1 MM, fire mage, CoE warlock |
+| Alliance, camps on | 15,827.7 ± 1.8 (tie of 2) | 15,821.2 | Holy paladin, 2 Restoration shamans, Restoration druid | 12 BM, 1 MM, CoE warlock |
+
+- **The tie sets.** With camps on, the runner-up swaps the Restoration druid for a Discipline priest,
+  10 to 12 DPS behind, inside the tie window. With camps off the runner-up (the same swap) is 37 to 39
+  behind, outside it.
+- **Horde is 145 to 173 ahead of Alliance** with the same comp, all of it race: the hunters are Orcs
+  against Night Elves, the warlock an Orc against a Gnome, as the report's race tables pick.
+- **Camps add 368 (Horde) and 341 (Alliance)**, and they move the comp: the mage goes (with camps on,
+  Arcane Brilliance missing is worth only −40.2, since the Incense Candle gives Intellect in its place), and
+  one Holy paladin gives way to a Restoration druid.
+- **What each role is worth** at the Horde camps-off winner (net of its provider's cost): Curse of the
+  Elements 264.9, Trueshot Aura 116.1, Arcane Brilliance 86.9, and a shaman placeholder's Grace of Air
+  644.3 over Windfury Totem. Adding Moonkin Aura (with the druid who brings it) would be −218.6 and Prayer
+  of Spirit −183.7. With camps on, adding Judgement of the Crusader is −740.4: the one Holy paladin judges
+  it in place of Wisdom, which the hunters' mana needs.
+- **The fillers.** Beast Mastery leads every filler ranking by 27 or more over Marksmanship, the only
+  build within its noise; the best non-hunter is the fire mage at 1,031.8 against 1,129.3.
+- **The duty.** The warlock's Curse of the Elements costs it 11.0 DPS; Affliction on the same curse is 33.7
+  behind it (the replacement margin).
+- **The scores and raid sims agree.** Every confirmed set's raid sim is within 8.1 of its score (0.05%),
+  so the confirmation never had to widen. One note: Alliance camps off's winner raid-simmed 8.1 above its
+  score, beyond its noise.
+- **The model** missed the exact fills by 56.6 to 253.8 at most (6.3 to 22.5 on average) over 448 sets
+  each; the exact fills decide, so that's how much the model's order of the sets could be off, not the
+  answer.
+- **Sensitivity.** The winner holds under all 42 of the report's assumption scenarios in every scenario.
+  The `-matrix` re-runs (lengths, the boss, raid damage, no flask) weren't part of this run.
+- **What to read it with:** the result leans on the report's hunter rotations and on what isn't modelled
+  (pet deaths, movement, threat: 12 Beast Mastery pets and their hunters top the threat table). Healing
+  isn't modelled either, so the healers are chosen for their buffs alone.
 
 ## Decisions
 
