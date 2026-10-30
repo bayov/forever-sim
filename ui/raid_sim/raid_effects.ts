@@ -26,6 +26,8 @@ export const RAID_EFFECTS: RaidEffect[] = [
 	{ name: 'Arcane Brilliance', icon: wowIcon('spell_holy_arcaneintellect') },
 	{ name: 'Prayer of Spirit', icon: wowIcon('spell_holy_prayerofspirit') },
 	{ name: 'Blessings', label: 'Greater Blessings', icon: wowIcon('spell_magic_greaterblessingofkings') },
+	// Forever's Salvation (spell 1038) is no longer a Blessing: any paladin gives it, and it lowers threat only.
+	{ name: 'Salvation', icon: wowIcon('spell_holy_sealofsalvation') },
 	{ name: 'Battle Shout', icon: wowIcon('ability_warrior_battleshout') },
 	{ name: 'Furious Howl', icon: wowIcon('ability_hunter_pet_wolf') },
 	{ name: 'Trueshot Aura', icon: wowIcon('ability_trueshot') },
@@ -47,8 +49,8 @@ export const RAID_EFFECTS: RaidEffect[] = [
 const PRESET_GIVES: Partial<Record<RaidPreset, string[]>> = {
 	[RaidPreset.RaidPresetProtectionWarrior]: ['Sunder upkeep', 'Battle Shout'],
 	[RaidPreset.RaidPresetFeralTank]: ['Leader of the Pack', 'Gift of the Wild', 'Minor armor slot'],
-	[RaidPreset.RaidPresetProtectionPaladin]: ['Blessings', 'Judgement of the Crusader', 'Judgement of Wisdom'],
-	[RaidPreset.RaidPresetHolyPaladin]: ['Blessings', 'Judgement of the Crusader', 'Judgement of Wisdom'],
+	[RaidPreset.RaidPresetProtectionPaladin]: ['Blessings', 'Salvation', 'Judgement of the Crusader', 'Judgement of Wisdom'],
+	[RaidPreset.RaidPresetHolyPaladin]: ['Blessings', 'Salvation', 'Judgement of the Crusader', 'Judgement of Wisdom'],
 	[RaidPreset.RaidPresetWardenShaman]: ['Strength of Earth', 'Grace of Air', 'Windfury Totem', 'Flametongue Totem'],
 	[RaidPreset.RaidPresetRestorationShaman]: ['Strength of Earth', 'Grace of Air', 'Windfury Totem', 'Flametongue Totem'],
 	[RaidPreset.RaidPresetDisciplinePriest]: ['Fortitude', 'Prayer of Spirit'],
@@ -72,6 +74,8 @@ export const effectsOf = (preset: RaidPreset | undefined, build: ReportBuild | u
 	if (preset) return PRESET_GIVES[preset] ?? [];
 	if (!build) return [];
 	const own = build.gives == 'nothing' ? [] : build.gives.split(',').map(s => s.trim());
+	// A paladin's Salvation comes with its Blessings.
+	if (own.includes('Blessings')) own.push('Salvation');
 	const duties = build.duties.map(d => (d.duty !== undefined ? DUTY_EFFECT[d.duty] : undefined)).filter((e): e is string => !!e);
 	return [...new Set([...own, ...duties])];
 };

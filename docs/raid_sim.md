@@ -1362,6 +1362,10 @@ like Fortitude, which adds no DPS but keeps the tanks alive.
   with a "Missing required" line when nobody here gives it or the last run didn't have it. It changes no
   sim, so it doesn't make the last run another raid's, but a preset keeps it. A comp opened from a search
   takes the search's requirements.
+- **Salvation** can be required too. Forever made it a raid buff of its own (spell 1038, 30% less threat),
+  not a Blessing, so it takes no Blessing slot and any paladin gives it. Requiring it is requiring a paladin,
+  as requiring Greater Blessings is: at least one, never all three blessings, so it fits a 10-player raid.
+  The page's raids get it from any paladin, which moves only their threat.
 
 **What the page reuses:**
 

@@ -545,6 +545,8 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 	res := &proto.RaidCompResolution{}
 	for _, m := range dps {
 		p := memberPlayer(m, seatOf(m))
+		// Any paladin gives Forever's Salvation (spell 1038), which lowers threat only.
+		p.RaidBuffs.Salvation = len(paladins) > 0
 		if m.slot.Name != "" {
 			p.Name = m.slot.Name
 		} else if p.Name == "" {

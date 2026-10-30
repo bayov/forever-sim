@@ -1160,7 +1160,8 @@ export class CompEditor {
 		const tile = (e: RaidEffect) => {
 			const who = givers.get(e.name) ?? [];
 			const record = records.get(e.name);
-			const up = run ? !!record || (e.name == 'Blessings' && blessed) : false;
+			// The resolver records neither the Blessings nor Salvation: a run had them when it had a paladin.
+			const up = run ? !!record || (e.name == 'Blessings' && blessed) || (e.name == 'Salvation' && who.length > 0) : false;
 			const state = run ? (up ? 'up' : who.length ? 'off' : 'none') : who.length ? 'can' : 'none';
 			const name = e.label ?? e.name;
 			const isRequired = required.includes(e.name);

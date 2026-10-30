@@ -90,7 +90,7 @@ func validate(req *proto.CompSearchRequest) error {
 	}
 	for _, name := range req.RequiredEffects {
 		if _, ok := GiftByName(name); !ok {
-			return fmt.Errorf("unknown required effect %q (the names are %s)", name, strings.Join(giftNames, ", "))
+			return fmt.Errorf("unknown required effect %q (the names are %s, Salvation)", name, strings.Join(giftNames, ", "))
 		}
 	}
 	if req.Iterations <= 0 || req.ContenderIterations <= 0 || req.ConfirmIterations <= 0 || req.ConfirmTopIterations <= 0 {

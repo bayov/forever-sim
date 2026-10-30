@@ -67,7 +67,13 @@ func GiftName(g Gift) string {
 }
 
 // GiftByName is the gift a buff record names, like "Fortitude".
+//
+// Salvation is any paladin's under Forever (spell 1038): it's no longer a Blessing and takes no Blessing
+// slot, so requiring it is requiring a paladin, as Blessings does.
 func GiftByName(name string) (Gift, bool) {
+	if name == "Salvation" {
+		return GiftBlessing, true
+	}
 	for i, n := range giftNames {
 		if n == name {
 			return Gift(1) << i, true

@@ -541,6 +541,9 @@ func TestRequiredEffects(t *testing.T) {
 	if n := len(none.Plans()); n != 0 {
 		t.Errorf("%d plans give Grace of Air without a shaman", n)
 	}
+	if g, ok := GiftByName("Salvation"); !ok || g != GiftBlessing {
+		t.Errorf("GiftByName(Salvation) = %v, %v, want a paladin's Blessings", g, ok)
+	}
 	if g, ok := GiftByName("Fortitude"); !ok || g != GiftFort {
 		t.Errorf("GiftByName(Fortitude) = %v, %v", g, ok)
 	}
