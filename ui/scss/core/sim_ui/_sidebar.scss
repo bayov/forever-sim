@@ -214,6 +214,17 @@
 			.results-sim-dps {
 				text-align: center;
 			}
+
+			// The TPS sits under the DPS, smaller and dimmer, because most specs read it only
+			// now and then.
+			.results-sim-tps {
+				text-align: center;
+				color: var(--text-muted-color);
+
+				.topline-result-avg {
+					font-size: 1.125rem;
+				}
+			}
 		}
 
 		// A line between the presets and the sim's actions and results. The raid sim has no
