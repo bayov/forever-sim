@@ -89,9 +89,10 @@ def steps(body):
         yield step
 
 
-def skipped(flags, lines, level):
+def skipped(flags, lines, reached):
     """Whether we skip a step: another class's or race's, hardcore only, Season of Discovery,
-    for a faster XP rate, a dungeon we don't run, or for lower levels than ours."""
+    for a faster XP rate, a dungeon we don't run, or for other levels than ours. `reached`
+    says whether we're at a (level, xp) yet."""
     for f in flags:
         parts = f.split()
         if parts[0] in ('#hardcore', '#hardcoreserver'):
@@ -106,8 +107,12 @@ def skipped(flags, lines, level):
         m = re.match(r'\.dungeon (!?)(\w+)', l)
         if m and DUNGEON_TAGS.get(m.group(2), True) == bool(m.group(1)):
             return True
-        m = re.match(r'\.xp <(\d+)', l)
-        if m and level >= int(m.group(1)):
+        # A level check (".xp <16,1" or ".xp >18,1", with the step to skip to after the comma)
+        # isn't a grind target. "<16" skips the step below level 16, and ">18" (or a bare
+        # "18") skips it from 18 on, the way RestedXP's functions.xp reads it with its
+        # default "skip steps by level" setting on.
+        m = re.match(r'\.xp ([<>]?)(\d+)(?:\+(\d+))?,', l)
+        if m and reached((int(m.group(2)), int(m.group(3) or 0))) != (m.group(1) == '<'):
             return True
     return False
 
@@ -140,10 +145,10 @@ def main():
             deathskip = i + 1 < len(section) and any(l.startswith('.deathskip') for l in section[i + 1]['lines'])
             flags = [l for l in step['lines'] if l.startswith('#')]
             lines = [body for body, expr in map(split_filter, step['lines']) if expr is None or applies(expr)]
-            if skipped(flags, lines, level):
+            if skipped(flags, lines, lambda at: (level, xp) >= at):
                 continue
             for l in lines:
-                m = re.match(r'\.xp (\d+)(?:\+(\d+))?\b', l)
+                m = re.match(r'\.xp (\d+)(?:\+(\d+))?(?![,\d])', l)
                 if m:
                     reach(int(m.group(1)), int(m.group(2) or 0))
                 m = re.match(r'\.subzone (\d+)', l)
