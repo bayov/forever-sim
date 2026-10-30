@@ -176,7 +176,7 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 	handTotem := map[int32]map[proto.TotemElement]bool{} // the elements set by hand
 	noDuty := map[int32]bool{}                           // members set by hand to hold no duty
 	handBless := map[int32]map[proto.Class]bool{}
-	handCD := map[bool]bool{}
+	handCD := map[bool]int{} // cooldowns set by hand, by kind (Power Infusion or Innervate)
 	for _, a := range comp.Assignments {
 		// An assignment not set by hand is the resolver's to make again.
 		if !a.SetByHand {
@@ -279,7 +279,7 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 			} else {
 				t.inn = true
 			}
-			handCD[j.Cooldown.PowerInfusion] = true
+			handCD[j.Cooldown.PowerInfusion]++
 		}
 		out = append(out, googleProto.Clone(a).(*proto.Assignment))
 	}
@@ -301,7 +301,7 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 	for _, d := range []proto.Duty{proto.Duty_DutySunderUpkeep, proto.Duty_DutyBattleShout, proto.Duty_DutyFaerieFire,
 		proto.Duty_DutyCurseOfTheElements, proto.Duty_DutyJudgementOfTheCrusader} {
 		g := DutyGift(d)
-		if handDuty[d] || (phUp | dpsUp).Has(g) || (g == GiftCrusader && len(paladinPHs(paladins)) > 0) {
+		if handDuty[d] || (phUp | dpsUp).Has(g) || (g == GiftCrusader && phCrusader(paladins, handJudge)) {
 			continue
 		}
 		if d == proto.Duty_DutyFaerieFire && handDuty[proto.Duty_DutyCurseOfRecklessness] {
@@ -415,10 +415,9 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 		pi     bool
 		givers []int32
 	}{{true, piGivers}, {false, innGivers}} {
-		if handCD[cd.pi] {
-			continue
-		}
-		left := len(cd.givers)
+		// The givers not used by hand give theirs automatically.
+		left := len(cd.givers) - handCD[cd.pi]
+		cd.givers = cd.givers[:max(0, left)]
 		for _, m := range dps {
 			if left == 0 {
 				break
@@ -486,6 +485,13 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 			}
 		}
 	}
+	// A DPS shaman's cast Mana Spring reaches its party, so the party gets no given one too (two don't
+	// stack); a placeholder's Mana Tide stays.
+	for _, m := range dps {
+		if m.class == proto.Class_ClassShaman {
+			partyPkg[m.slot.Party] = proto.RaidPackage_RaidPackageNone
+		}
+	}
 
 	raid := &proto.Raid{Buffs: &proto.RaidBuffs{}, Debuffs: debuffs, NumActiveParties: int32(parties)}
 	for i := 0; i < parties; i++ {
@@ -510,6 +516,16 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 		tmp := &proto.RaidSimRequest{Raid: &proto.Raid{Parties: []*proto.Party{{Players: []*proto.Player{{}}}}}}
 		seat.Write(tmp, &Build{Class: m.class, Spec: specOf(m.player)})
 		p := googleProto.Clone(m.player).(*proto.Player)
+		// A Windfury imbue in the consumes gives the given Windfury Totem buff (consumes.go): the resolver
+		// owns that, so it goes.
+		if c := p.Consumes; c != nil {
+			if c.MainHandImbue == proto.WeaponImbue_Windfury {
+				c.MainHandImbue = proto.WeaponImbue_WeaponImbueUnknown
+			}
+			if c.OffHandImbue == proto.WeaponImbue_Windfury {
+				c.OffHandImbue = proto.WeaponImbue_WeaponImbueUnknown
+			}
+		}
 		p.RaidBuffs = tmp.Raid.Buffs
 		p.Buffs = tmp.Raid.Parties[0].Players[0].Buffs
 		if m.slot.Name != "" {
@@ -592,6 +608,27 @@ func blessingOrderFor(c proto.Class, dps []*member) []proto.Blessing {
 	return []proto.Blessing{proto.Blessing_BlessingKings, proto.Blessing_BlessingWisdom, proto.Blessing_BlessingMight}
 }
 
+// phCrusader is whether the paladin placeholders will judge the Crusader: one set to it by hand, or two
+// or more (the automatic ones take Wisdom first).
+func phCrusader(paladins []*member, handJudge map[int32]bool) bool {
+	n := 0
+	for _, m := range paladinPHs(paladins) {
+		if handJudge[m.slot.Id] && m.judge == proto.PaladinJudgement_PaladinJudgementCrusader {
+			return true
+		}
+		if !handJudge[m.slot.Id] {
+			n++
+		}
+	}
+	wisdomByHand := false
+	for _, m := range paladinPHs(paladins) {
+		if handJudge[m.slot.Id] && m.judge == proto.PaladinJudgement_PaladinJudgementWisdom {
+			wisdomByHand = true
+		}
+	}
+	return n >= 2 || (n >= 1 && wisdomByHand)
+}
+
 func phPaladinsFirst(pals []*member) []*member {
 	sort.SliceStable(pals, func(i, j int) bool { return pals[i].preset != nil && pals[j].preset == nil })
 	return pals
@@ -653,17 +690,25 @@ func resolutionRecords(up, cast Gift, phs, dps []*member, blessings map[proto.Cl
 		if !up.Has(g) || g == GiftBlessing {
 			continue
 		}
+		// The providers whose effect applies: a member's cast when one casts it, else whoever gives it.
 		var who []string
-		for _, m := range phs {
-			if m.gives.Has(g) || (g == GiftCrusader && m.judge == proto.PaladinJudgement_PaladinJudgementCrusader) ||
-				(g == GiftJoW && m.judge == proto.PaladinJudgement_PaladinJudgementWisdom) ||
-				(g == GiftGoA && m.totems[proto.RaidTotem_RaidTotemGraceOfAir]) || (g == GiftWF && m.totems[proto.RaidTotem_RaidTotemWindfury]) {
-				who = append(who, m.name())
+		if cast.Has(g) {
+			for _, m := range dps {
+				if m.casts.Has(g) {
+					who = append(who, m.name())
+				}
 			}
-		}
-		for _, m := range dps {
-			if m.gives.Has(g) {
-				who = append(who, m.name())
+		} else {
+			for _, m := range phs {
+				if m.gives.Has(g) || (g == GiftCrusader && m.judge == proto.PaladinJudgement_PaladinJudgementCrusader) ||
+					(g == GiftJoW && m.judge == proto.PaladinJudgement_PaladinJudgementWisdom) {
+					who = append(who, m.name())
+				}
+			}
+			for _, m := range dps {
+				if m.gives.Has(g) {
+					who = append(who, m.name())
+				}
 			}
 		}
 		scope := "raid"
@@ -687,10 +732,18 @@ func resolutionRecords(up, cast Gift, phs, dps []*member, blessings map[proto.Cl
 		recs = append(recs, &proto.CompBuffRecord{Effect: packageName(pk), Provider: fmt.Sprintf("party %d's shaman", p+1), Scope: "party", Receivers: int32(n), Given: true})
 	}
 	var misses []string
+	enh, melee := false, false
+	for _, m := range dps {
+		enh = enh || (m.class == proto.Class_ClassShaman && specOf(m.player) == "Enhancement")
+		melee = melee || isMelee(m)
+	}
 	for _, g := range modelRoles {
-		if !up.Has(g) {
-			misses = append(misses, "nobody gives "+GiftName(g))
+		// A slot another effect fills, or an effect nobody here could use, isn't missed.
+		if up.Has(g) || (g == GiftFuriousHowl && up.Has(GiftBattleShout)) || (g == GiftBattleShout && up.Has(GiftFuriousHowl)) ||
+			(g == GiftFT && !enh) || (g == GiftWF && !melee) {
+			continue
 		}
+		misses = append(misses, "nobody gives "+GiftName(g))
 	}
 	for _, cl := range sortedClasses(func() map[proto.Class]bool {
 		m := map[proto.Class]bool{}

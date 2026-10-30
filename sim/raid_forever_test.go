@@ -782,14 +782,45 @@ func TestRaidForeverReportHashes(t *testing.T) {
 	if out == "" {
 		t.Skip("set RAID_FOREVER_HASHES to a file to write")
 	}
+	if err := os.WriteFile(out, []byte(reportHashes(t)), 0644); err != nil {
+		t.Fatal(err)
+	}
+}
+
+func reportHashes(t *testing.T) string {
 	var lines []string
 	for _, name := range raidReqNames(t, false) {
 		rsr := raidReq(t, name)
 		rsr.SimOptions.DebugFirstIteration = true
 		lines = append(lines, fmt.Sprintf("%s %x", name, sha256.Sum256(canonicalResult(runRaid(t, rsr)))))
 	}
-	if err := os.WriteFile(out, []byte(strings.Join(lines, "\n")+"\n"), 0644); err != nil {
+	return strings.Join(lines, "\n") + "\n"
+}
+
+// The report requests' results against the committed hashes (testdata/report_hashes.txt): a change that
+// moves a single-player result fails here. When a result moves on purpose, write the file again with
+// RAID_FOREVER_HASHES=testdata/report_hashes.txt and say why in the commit.
+func TestRaidForeverReportHashesStable(t *testing.T) {
+	if testing.Short() {
+		t.Skip("about 30 s")
+	}
+	want, err := os.ReadFile("testdata/report_hashes.txt")
+	if err != nil {
 		t.Fatal(err)
+	}
+	wantLines := map[string]string{}
+	for _, l := range strings.Split(strings.TrimSpace(string(want)), "\n") {
+		if name, h, ok := strings.Cut(l, " "); ok {
+			wantLines[name] = h
+		}
+	}
+	for _, l := range strings.Split(strings.TrimSpace(reportHashes(t)), "\n") {
+		name, h, _ := strings.Cut(l, " ")
+		if w, ok := wantLines[name]; !ok {
+			t.Errorf("%s isn't in testdata/report_hashes.txt", name)
+		} else if w != h {
+			t.Errorf("%s's result moved", name)
+		}
 	}
 }
 

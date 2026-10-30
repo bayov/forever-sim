@@ -73,7 +73,9 @@ func TestResolve(t *testing.T) {
 			t.Errorf("%s got a cast totem given: %v", pl.Name, pl.RaidBuffs)
 		}
 	}
-	if war.RaidBuffs.ManaSpringTotem != proto.TristateEffect_TristateEffectImproved || mage.RaidBuffs.ManaSpringTotem != 0 {
+	// Party 1's Enhancement shaman casts its own Mana Spring there, so nobody in it gets one given; party 2
+	// has no shaman.
+	if war.RaidBuffs.ManaSpringTotem != 0 || mage.RaidBuffs.ManaSpringTotem != 0 {
 		t.Errorf("Mana Spring: party 1 %v, party 2 %v", war.RaidBuffs.ManaSpringTotem, mage.RaidBuffs.ManaSpringTotem)
 	}
 	if res.Request.Raid.Parties[0].Buffs.ManaTideTotems != 1 || res.Request.Raid.Parties[1].Buffs.ManaTideTotems != 0 {
@@ -197,6 +199,35 @@ func TestResolveAssignments(t *testing.T) {
 		Assignments: []*proto.Assignment{hand(1, &proto.Assignment{Job: &proto.Assignment_Duty{Duty: proto.Duty_DutyNone}})}})
 	if res.Error != nil || dutyOf(res, 1) != proto.Duty_DutyNone || res.Request.Raid.Debuffs.FaerieFire {
 		t.Errorf("the druid set to no duty: %v %v", res.Error, res.Assignments)
+	}
+	// A DPS shaman in a shaman placeholder's party casts its own Mana Spring: the party gets no given one
+	// too, but keeps the placeholder's Mana Tide.
+	res = Resolve(&proto.RaidComp{Size: 5, Slots: []*proto.CompSlot{phSlot(1, 0, 0, proto.RaidPreset_RaidPresetRestorationShaman),
+		slotOf(2, 0, 1, p, "shaman__elemental-level60"), slotOf(3, 0, 2, p, "mage__fire")}})
+	if res.Error != nil {
+		t.Fatal(res.Error.Message)
+	}
+	if mage := res.Request.Raid.Parties[0].Players[1]; mage.RaidBuffs.ManaSpringTotem != 0 || res.Request.Raid.Parties[0].Buffs.ManaTideTotems != 1 {
+		t.Errorf("Mana Spring given beside a cast one (%v), or Mana Tide lost", mage.RaidBuffs.ManaSpringTotem)
+	}
+	// One paladin placeholder judges Wisdom, so a Ret member with a Crusader build takes the Crusader.
+	res = Resolve(&proto.RaidComp{Size: 5, Slots: []*proto.CompSlot{phSlot(1, 0, 0, proto.RaidPreset_RaidPresetHolyPaladin),
+		slotOf(2, 0, 1, p, "paladin__level_60"), slotOf(3, 0, 2, p, "mage__fire")}})
+	if d := res.Request.Raid.Debuffs; !d.JudgementOfWisdom || dutyOf(res, 2) != proto.Duty_DutyJudgementOfTheCrusader {
+		t.Errorf("want Wisdom from the placeholder and the Crusader from the Ret: %v %v", d, res.Assignments)
+	}
+	// Two Discipline priests, one Power Infusion set by hand: the other priest's still goes out.
+	res = Resolve(&proto.RaidComp{Size: 10, Slots: []*proto.CompSlot{phSlot(1, 0, 0, proto.RaidPreset_RaidPresetDisciplinePriest),
+		phSlot(2, 0, 1, proto.RaidPreset_RaidPresetDisciplinePriest), slotOf(3, 0, 2, p, "mage__fire"), slotOf(4, 1, 0, p, "warlock__demonology")},
+		Assignments: []*proto.Assignment{hand(1, &proto.Assignment{Job: &proto.Assignment_Cooldown{Cooldown: &proto.CooldownTarget{PowerInfusion: true, Target: 3}}})}})
+	pis := 0
+	for _, party := range res.Request.Raid.Parties {
+		for _, pl := range party.Players {
+			pis += int(pl.Buffs.PowerInfusions)
+		}
+	}
+	if pis != 2 {
+		t.Errorf("two Power Infusions, one by hand: got %d", pis)
 	}
 	// An assignment not set by hand is the resolver's to redo, and a cooldown from someone without it is refused.
 	res = Resolve(&proto.RaidComp{Size: 5, Slots: []*proto.CompSlot{slotOf(1, 0, 0, p, "mage__fire")},
