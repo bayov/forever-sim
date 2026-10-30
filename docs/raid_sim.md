@@ -1774,7 +1774,7 @@ Report, with four tabs: Search result, Search, Comp and Raid results.
 The write-up of M1's done-when: 20 players, 2 tanks and 4 healers, the generic boss at 180 ± 20 s, each
 faction with camps on and off, with the confirmation's raid sims. It ran on commit `6c13cefff` (sim version
 `3f28f71e0525149f`) after the third audit's fixes: 42,614 single-player sims at 1,000 iterations
-(contenders at 10,000), 29,291 of them reused, and 22 raid sims, in 3 hours on 4 cores. The whole report,
+(contenders at 10,000), 29,291 of them reused, and 20 raid sims, in 3 hours on 4 cores. The whole report,
 with every table, is [`raid_sim_m1/m1_20.md`](raid_sim_m1/m1_20.md); the page opens
 [`raid_sim_m1/m1_20.json`](raid_sim_m1/m1_20.json).
 
