@@ -939,6 +939,9 @@ message CompSearchRequest {
 	bool skip_sensitivity = 17;
 	// Up to this many tank and healer combos are re-filled and ranked (0: all).
 	int32 max_combos = 18;
+	// The raid effects every comp must give, by the names the buff records use ("Fortitude", "Gift of the
+	// Wild"). The search ranks only the buff sets that have them all.
+	repeated string required_effects = 19;
 }
 
 // One member of a result comp.

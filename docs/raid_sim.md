@@ -1344,6 +1344,20 @@ The Comp tab comes first, before Raid results, Compare, Search and Search result
   Auto, with the last run's pick in it.
 - The search result has a sticky bar that jumps to each section.
 
+**Required buffs** (the user, 2026-10-30). A raid can require raid effects it would otherwise go without,
+like Fortitude, which adds no DPS but keeps the tanks alive.
+
+- The search's request takes `required_effects`, by the buff records' names ("Fortitude", "Gift of the
+  Wild"). The search ranks only the buff sets that have them all, and its local moves never drop one. When
+  no comp of the tanks, healers and report builds can give them, the search stops with an error that says
+  so. `tools/compsearch -require "Fortitude,Gift of the Wild"` does the same. A 10-player Horde search with
+  Fortitude required takes a Discipline priest as a healer.
+- The Search tab has a Required row of the effects' icons, with "Same as the Comp tab".
+- On the Comp tab, a click on an effect in the strip requires it. A required one has a gold dot, and red
+  with a "Missing required" line when nobody here gives it or the last run didn't have it. It changes no
+  sim, so it doesn't make the last run another raid's, but a preset keeps it. A comp opened from a search
+  takes the search's requirements.
+
 **What the page reuses:**
 
 - the `SimUI` base and `addRaidSimAction`, which already shows raid DPS for more than one player

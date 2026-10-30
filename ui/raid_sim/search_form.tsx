@@ -4,7 +4,9 @@
 import { CompEncounter, CompSearchRequest, CompSearchResult, ProgressMetrics, RaidPreset, RaidRole } from '../core/proto/api';
 import { Faction, MobType } from '../core/proto/common';
 import { RequestTypes } from '../core/sim_signal_manager';
+import { effectToggles } from './choice_menu';
 import { buildLabel, loadRaidSimData, presetName, presetsFor, RAID_SIZES, RaidSimData } from './data';
+import { RAID_EFFECTS } from './raid_effects';
 import type { RaidSimUI } from './raid_sim_ui';
 import { errorStatus, fmt, fmtInt, memberLabel, plural } from './view_utils';
 
@@ -33,6 +35,8 @@ interface FormState {
 	skipSensitivity: boolean;
 	maxCombos: number;
 	confirm: boolean;
+	// The raid effects every comp must give (RAID_EFFECTS names).
+	required: string[];
 }
 
 const defaultState = (): FormState => ({
@@ -55,6 +59,7 @@ const defaultState = (): FormState => ({
 	skipSensitivity: false,
 	maxCombos: 0,
 	confirm: false,
+	required: [],
 });
 
 // The request a form makes, with the encounter set the way tools/compsearch sets it: Generic is the
@@ -87,6 +92,7 @@ export const searchRequest = (s: FormState): CompSearchRequest => {
 		contenderIterations: s.contenderIterations,
 		skipSensitivity: s.skipSensitivity,
 		maxCombos: s.maxCombos,
+		requiredEffects: s.required ?? [],
 		// The confirmation's iterations are the search's defaults (5,000, and 20,000 for the top 2).
 		confirm: s.confirm,
 	});
@@ -252,6 +258,11 @@ export class SearchForm {
 				this.updateButton();
 			},
 		});
+	}
+
+	// Draws the form again, for its Same as the Comp tab button when the Comp tab's raid changes.
+	refresh() {
+		this.render();
 	}
 
 	private render() {
@@ -431,8 +442,30 @@ export class SearchForm {
 					</div>
 				</fieldset>
 			</div>,
+			<fieldset className="rs-fieldset rs-fieldset-required">
+				<legend>Required</legend>
+				<p className="rs-required-hint">Every comp must give these, even when they add no DPS, like Fortitude for the tanks.</p>
+				<div className="rs-required-row">
+					{effectToggles(RAID_EFFECTS, s.required ?? [], next => this.set('required', next, true))}
+					{this.sameAsComp()}
+				</div>
+			</fieldset>,
 		);
 		this.updateButton();
+	}
+
+	// Takes the Comp tab's required buffs, when it has some and they differ.
+	private sameAsComp(): HTMLElement | null {
+		const comp = this.simUI.editor?.getState().required ?? [];
+		const mine = this.state.required ?? [];
+		if (!comp.length || (comp.length == mine.length && comp.every(r => mine.includes(r)))) return null;
+		const b = (
+			<button type="button" className="btn btn-link rs-same-as-comp">
+				Same as the Comp tab ({comp.length})
+			</button>
+		) as HTMLButtonElement;
+		b.addEventListener('click', () => this.set('required', [...comp], true));
+		return b;
 	}
 
 	// Why the form can't search now: its own problems and the fields that hold no valid value.
@@ -546,6 +579,7 @@ const fieldNames: Record<string, string> = {
 	iterations: 'Iterations',
 	contenderIterations: 'Contender iterations',
 	maxCombos: 'Max combos',
+	required: 'Required',
 };
 
 const rangeText = (r?: [number, number]) => (!r ? '' : r[0] == r[1] ? `${r[0]}` : `${r[0]} to ${r[1]}`);

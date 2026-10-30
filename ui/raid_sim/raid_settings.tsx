@@ -37,7 +37,7 @@ export function addRaidPresets(parent: HTMLElement, simUI: RaidSimUI, editor: Co
 		},
 		storageKey: simUI.getStorageKey('__savedRaids__'),
 		changeEmitters: [editor.changeEmitter],
-		equals: (a, b) => CompEditor.sameRaid(a, b),
+		equals: (a, b) => CompEditor.sameRaid(a, b, true),
 		getData: editor => editor.getState(),
 		setData: (_eventID, editor, state) => editor.applyState(state, 'the preset'),
 		toJson: state => state,

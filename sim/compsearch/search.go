@@ -88,6 +88,11 @@ func validate(req *proto.CompSearchRequest) error {
 	if e.UseHealth && e.BossHealth <= 0 {
 		return fmt.Errorf("a health fight needs the boss's health")
 	}
+	for _, name := range req.RequiredEffects {
+		if _, ok := GiftByName(name); !ok {
+			return fmt.Errorf("unknown required effect %q (the names are %s)", name, strings.Join(giftNames, ", "))
+		}
+	}
 	if req.Iterations <= 0 || req.ContenderIterations <= 0 || req.ConfirmIterations <= 0 || req.ConfirmTopIterations <= 0 {
 		return fmt.Errorf("iterations must be positive")
 	}
@@ -404,6 +409,9 @@ func (r *Raid) Plans() []Plan {
 					}
 					p := base
 					p.Up = up
+					if !r.meets(p) {
+						continue
+					}
 					if k := p.Key(); !seen[k] {
 						seen[k] = true
 						out = append(out, p)
@@ -512,6 +520,7 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 	var sigOrder []Signature
 	for _, c := range combos {
 		r := NewRaid(int(req.Size), c, fixed)
+		r.Required = RequiredGifts(req)
 		s := r.Signature()
 		if _, ok := sigs[s]; !ok {
 			sigOrder = append(sigOrder, s)
@@ -563,6 +572,13 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 	check := &proto.CompModelCheck{}
 	for _, r := range results {
 		check.SetsScored += int32(r.n)
+	}
+	// With required effects, the raid may have no buff set that gives them all.
+	if len(results) == 0 || len(results[0].ranked) == 0 {
+		if need := RequiredGifts(req); need != 0 {
+			return nil, fmt.Errorf("no comp of these tanks, healers and report builds gives all of %s", need)
+		}
+		return nil, fmt.Errorf("no buff set could be filled with the report's builds")
 	}
 
 	// Exact sims of the best sets (step 3): every signature's top few, then for the leading signatures
@@ -1167,7 +1183,13 @@ func (r *Raid) neighbours(p Plan) []Plan {
 		}
 		out = append(out, rebase(q))
 	}
-	return out
+	kept := out[:0]
+	for _, q := range out {
+		if r.meets(q) {
+			kept = append(kept, q)
+		}
+	}
+	return kept
 }
 
 // localMoves polishes a signature's best exact sets (docs/raid_sim.md, The search, step 5): a move stays

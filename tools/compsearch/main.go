@@ -39,6 +39,7 @@ func main() {
 	fixedTanks := flag.String("fixed-tanks", "", "comma-separated tank presets, e.g. ProtectionWarrior")
 	fixedHealers := flag.String("fixed-healers", "", "comma-separated healer presets, e.g. RestorationShaman")
 	maxCombos := flag.Int("max-combos", 0, "rank at most this many tank and healer combos (0: all)")
+	require := flag.String("require", "", `comma-separated raid effects every comp must give, e.g. "Fortitude,Gift of the Wild"`)
 	noSens := flag.Bool("no-sensitivity", false, "leave out the sensitivity scenarios")
 	confirm := flag.Bool("confirm", false, "confirm the top sets with raid sims (milestone M1b)")
 	confirmIters := flag.Int("confirm-iterations", 5000, "the confirmation raid sims' iterations")
@@ -92,6 +93,11 @@ func main() {
 		SkipSensitivity: *noSens, Confirm: *confirm,
 		ConfirmIterations: int32(*confirmIters), ConfirmTopIterations: int32(*confirmTopIters),
 		Encounter: &proto.CompEncounter{Name: *boss, Duration: *duration, DurationVariation: *variation}}
+	for _, name := range strings.Split(*require, ",") {
+		if name = strings.TrimSpace(name); name != "" {
+			req.RequiredEffects = append(req.RequiredEffects, name)
+		}
+	}
 	if *health > 0 {
 		req.Encounter.UseHealth = true
 		req.Encounter.BossHealth = *health

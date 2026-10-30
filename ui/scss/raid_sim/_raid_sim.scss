@@ -283,6 +283,11 @@ body.rs-dropping .raid-sim-page .sim-main::after {
 		margin-bottom: var(--spacer-1);
 		color: var(--text-muted-color);
 	}
+
+	.rs-result-required {
+		margin-bottom: var(--spacer-1);
+		color: var(--gold-soft);
+	}
 }
 
 .rs-error {
@@ -1829,4 +1834,117 @@ $rs-none: #6b7280;
 	max-width: 22rem;
 	white-space: pre-line;
 	font-size: 0.8rem;
+}
+
+// ---- Required buffs ----
+
+// The strip's effects are toggles: a gold ring when required, and red when a required one is missing.
+.rs-strip .rs-effect {
+	border: 0;
+	background: none;
+	cursor: pointer;
+
+	&:focus-visible {
+		outline: 2px solid var(--gold-soft);
+		outline-offset: 1px;
+	}
+
+	&.rs-effect-required::after {
+		content: '';
+		position: absolute;
+		top: -3px;
+		right: -3px;
+		width: 7px;
+		height: 7px;
+		border-radius: 50%;
+		background: var(--gold);
+		box-shadow: 0 0 0 1px var(--panel-bg);
+	}
+
+	&.rs-effect-required:not(.rs-effect-up, .rs-effect-missing) {
+		box-shadow: 0 0 0 1px var(--gold);
+	}
+
+	&.rs-effect-missing {
+		box-shadow: 0 0 0 2px var(--bs-danger);
+
+		&::after {
+			background: var(--bs-danger);
+		}
+
+		.rs-icon {
+			filter: grayscale(0.6);
+			opacity: 0.75;
+		}
+	}
+}
+
+.rs-missing {
+	flex-basis: 100%;
+	padding: 0.3rem 0.75rem;
+	border-left: 3px solid var(--bs-danger);
+	background: rgba(220, 53, 69, 0.12);
+	color: #ff8a8a;
+	font-size: 0.875rem;
+}
+
+.rs-effect-toggles {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+
+	.rs-effect-toggle {
+		padding: 2px;
+		display: inline-flex;
+		border: 1px solid transparent;
+		border-radius: 4px;
+		background: none;
+
+		.rs-icon {
+			width: 1.8rem;
+			height: 1.8rem;
+			filter: grayscale(0.8);
+			opacity: 0.45;
+		}
+
+		&:hover .rs-icon {
+			opacity: 0.8;
+		}
+
+		&.active {
+			border-color: var(--gold);
+			background: rgba($gold, 0.15);
+
+			.rs-icon {
+				filter: none;
+				opacity: 1;
+			}
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--gold-soft);
+		}
+	}
+}
+
+.rs-fieldset-required {
+	margin-top: var(--spacer-3);
+}
+
+.rs-required-hint {
+	margin-bottom: var(--spacer-2);
+	color: var(--text-muted-color);
+	font-size: 0.85rem;
+}
+
+.rs-required-row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--spacer-2) var(--spacer-3);
+
+	.rs-same-as-comp {
+		padding: 0;
+		font-size: 0.85rem;
+	}
 }

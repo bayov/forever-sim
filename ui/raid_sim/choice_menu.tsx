@@ -164,3 +164,25 @@ export const toolbarItem = (label: string, control: Node) => (
 		{control}
 	</div>
 );
+
+// The raid effects as toggles: a click requires one, or lets it go. The required ones are lit with a gold
+// ring, the rest dimmed.
+export function effectToggles(effects: Array<{ name: string; label?: string; icon: string }>, required: string[], onChange: (next: string[]) => void) {
+	const group = (<div className="rs-effect-toggles" attributes={{ role: 'group', 'aria-label': 'Required buffs and debuffs' }} />) as HTMLElement;
+	effects.forEach(e => {
+		const on = required.includes(e.name);
+		const name = e.label ?? e.name;
+		const b = (
+			<button
+				type="button"
+				className={`rs-effect-toggle ${on ? 'active' : ''}`}
+				dataset={{ tip: `${name}\n${on ? 'Required. Click to let it go.' : 'Click to require it.'}` }}
+				attributes={{ 'aria-pressed': on ? 'true' : 'false', 'aria-label': name }}>
+				<img className="rs-icon" src={e.icon} alt="" />
+			</button>
+		) as HTMLButtonElement;
+		b.addEventListener('click', () => onChange(on ? required.filter(r => r != e.name) : [...required, e.name]));
+		group.appendChild(b);
+	});
+	return group;
+}

@@ -71,6 +71,9 @@ type Raid struct {
 	phShamans  []*Preset // the shaman placeholders, richest package first
 	phPI       int
 	phInn      int
+
+	// The gifts every buff set must have (the request's required effects).
+	Required Gift
 }
 
 // NewRaid is a raid with a combo.
@@ -103,6 +106,11 @@ type Plan struct {
 	Paladins   int // paladins giving blessings, placeholders and Ret members, at most 3
 	PHCrusader int // paladin placeholders judging the Crusader; the others judge Wisdom
 	PHAir      []proto.RaidTotem
+}
+
+// meets is whether a buff set has every gift the raid requires.
+func (r *Raid) meets(p Plan) bool {
+	return p.Up&r.Required == r.Required
 }
 
 func (p Plan) Key() string {

@@ -1,6 +1,8 @@
 // The raid sim page (docs/raid_sim.md, The page): a results viewer for the comp search's JSON, the search
 // through the native server, and a comp editor that runs one raid in the sim's workers. It is a page of its
 // own, not a spec's page or the DPS Report.
+import { delegate } from 'tippy.js';
+
 import { CompareResults } from '../core/components/compare_results/compare_results';
 import { EmbeddedDetailedResults } from '../core/components/detailed_results';
 import { RaidSimResultsManager } from '../core/components/raid_sim_action';
@@ -48,6 +50,17 @@ export class RaidSimUI extends SimUI {
 			],
 		});
 		this.rootElem.classList.add('raid-sim-ui');
+		// The page's icons say what they are in a tooltip (data-tip), which shows sooner than a title does.
+		delegate(this.rootElem, {
+			target: '[data-tip]',
+			content: ref => ref.getAttribute('data-tip') ?? '',
+			onShow: instance => {
+				if (!instance.reference.getAttribute('data-tip')) return false;
+			},
+			theme: 'rs-tip',
+			delay: [250, 0],
+			appendTo: () => document.body,
+		});
 
 		// The data file is only for names and the editor's members, so a page without it still shows a result.
 		this.dataPromise = loadRaidSimData().catch(e => {
@@ -74,7 +87,7 @@ export class RaidSimUI extends SimUI {
 		resultTab.appendChild(this.resultHost);
 		this.resultHost.appendChild(loader.emptyState());
 
-		new SearchForm(this.tabElem(SEARCH_TAB), this, (result: CompSearchResult) => {
+		const searchForm = new SearchForm(this.tabElem(SEARCH_TAB), this, (result: CompSearchResult) => {
 			this.showResult(result, 'the search run on this page');
 			this.keepLastSearch(result);
 		});
@@ -97,7 +110,11 @@ export class RaidSimUI extends SimUI {
 			this.addSidebarNote();
 			this.updateStale();
 		});
-		this.editor.changeEmitter.on(() => this.updateStale());
+		this.editor.changeEmitter.on(() => {
+			this.updateStale();
+			searchForm.refresh();
+		});
+		searchForm.refresh();
 		this.addSidebarNote();
 		new CompareResults(this.tabElem(COMPARE_TAB).querySelector('.compare-results') as HTMLElement, this, this.history, {
 			changeExample: 'a member, an assignment or the fight',

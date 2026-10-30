@@ -30,6 +30,7 @@ import {
 	roleName,
 	totemName,
 } from './data';
+import { RAID_EFFECTS } from './raid_effects';
 import {
 	badge,
 	ci95,
@@ -165,6 +166,7 @@ export class ResultView {
 					<span title="Sims the search didn’t run again: from the cache, or from earlier in this search">{fmtInt(r.cacheHits)} reused</span>,{' '}
 					{fmt(r.seconds, 0)} s. Sim version {r.version || 'unknown'}.
 				</p>
+				{req.requiredEffects.length ? <p className="rs-result-required">Every comp gives {requiredText(req)}.</p> : null}
 				{this.opts.source ? <p className="rs-result-source">From {this.opts.source}</p> : null}
 			</header>
 		);
@@ -271,6 +273,9 @@ const saveJson = (result: CompSearchResult) => {
 	setTimeout(() => URL.revokeObjectURL(url), 1000);
 };
 
+// The request's required effects, by the names the page's strip shows.
+const requiredText = (req: CompSearchRequest) => req.requiredEffects.map(r => RAID_EFFECTS.find(e => e.name == r)?.label ?? r).join(', ');
+
 const encounterText = (req: CompSearchRequest) => {
 	const e = req.encounter;
 	if (!e) return 'Default fight';
@@ -302,6 +307,7 @@ const requestTable = (req: CompSearchRequest) => {
 		['Confirm with raid sims', req.confirm ? `yes, at ${fmtInt(req.confirmIterations)} and ${fmtInt(req.confirmTopIterations)} iterations` : 'no'],
 		['Sensitivity', req.skipSensitivity ? 'skipped' : 'run'],
 		['Max combos', req.maxCombos ? `${req.maxCombos}` : 'all'],
+		['Required', req.requiredEffects.length ? requiredText(req) : 'nothing'],
 		[
 			'Assumption switches',
 			a

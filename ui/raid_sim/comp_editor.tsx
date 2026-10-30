@@ -2,8 +2,6 @@
 // DPS Report build or a tank or healer placeholder, with its assignments, the encounter, the faction and
 // the camp buffs. Run builds a RaidComp, has the resolver turn it into the raid's request (resolveComp),
 // runs that request in the sim's workers and shows the raid's results.
-import { delegate } from 'tippy.js';
-
 import { ChangeCategory } from '../core/components/dirty_settings';
 import { EncounterPicker } from '../core/components/encounter_picker';
 import { SimProgress } from '../core/components/sim_progress';
@@ -133,6 +131,9 @@ interface EditorState {
 	// The sidebar's iterations, which Run uses.
 	iterations?: number;
 	hand: HandAssignments;
+	// The raid effects the raid must give (RAID_EFFECTS names), which the strip marks when they're missing.
+	// They change no sim, only what the page checks, and a search from them.
+	required?: string[];
 }
 
 const emptyHand = (): HandAssignments => ({ blessings: {}, judgements: {}, totems: {}, duties: {}, powerInfusion: {}, innervate: {} });
@@ -283,17 +284,6 @@ export class CompEditor {
 				</div>
 			</div>
 		) as HTMLElement;
-		// The icons and slots say what they are in a tooltip (data-tip), which shows sooner than a title does.
-		delegate(this.rootElem, {
-			target: '[data-tip]',
-			content: ref => ref.getAttribute('data-tip') ?? '',
-			onShow: instance => {
-				if (!instance.reference.getAttribute('data-tip')) return false;
-			},
-			theme: 'rs-tip',
-			delay: [250, 0],
-			appendTo: () => document.body,
-		});
 		this.benchFilter.setAttribute('aria-label', 'Filter the members to add');
 		this.benchFilter.addEventListener('input', () => this.renderPalette());
 		this.paletteHost.append(
@@ -554,7 +544,15 @@ export class CompEditor {
 		newRaid.addEventListener('click', () => {
 			const before = this.snapshot();
 			const next = this.defaultState(this.state.size);
-			this.state = { ...next, faction: s.faction, campBuffs: s.campBuffs, boss: s.boss, encounter: s.encounter, iterations: s.iterations };
+			this.state = {
+				...next,
+				faction: s.faction,
+				campBuffs: s.campBuffs,
+				boss: s.boss,
+				encounter: s.encounter,
+				iterations: s.iterations,
+				required: s.required,
+			};
 			this.forgetResults();
 			this.changed();
 			this.setStatus('');
@@ -1156,24 +1154,48 @@ export class CompEditor {
 		const run = this.freshRun?.request ? this.freshRun : null;
 		const records = new Map((run?.resolution.buffs ?? []).map(b => [b.effect, b]));
 		const blessed = !!run?.resolution.assignments.some(a => a.job.oneofKind == 'blessing' && a.job.blessing.blessing != Blessing.BlessingNone);
+		const required = this.state.required ?? [];
+		const missing: string[] = [];
+		// A click on an effect requires it, or lets it go.
 		const tile = (e: RaidEffect) => {
 			const who = givers.get(e.name) ?? [];
 			const record = records.get(e.name);
 			const up = run ? !!record || (e.name == 'Blessings' && blessed) : false;
 			const state = run ? (up ? 'up' : who.length ? 'off' : 'none') : who.length ? 'can' : 'none';
 			const name = e.label ?? e.name;
+			const isRequired = required.includes(e.name);
+			const isMissing = isRequired && (state == 'none' || state == 'off');
+			if (isMissing) missing.push(name);
 			const why = {
 				up: `Up, from ${record?.provider || who.join(', ')}`,
 				can: `From ${who.join(', ')}`,
 				off: `Not up in the last run. ${who.join(', ')} could give it.`,
 				none: 'Nobody here gives it',
 			}[state];
-			return (
-				<span className={`rs-effect rs-effect-${state}`} dataset={{ tip: `${name}\n${why}` }}>
-					<img className="rs-icon" src={e.icon} alt={name} />
-				</span>
-			);
+			const elem = (
+				<button
+					type="button"
+					className={`rs-effect rs-effect-${state} ${isRequired ? 'rs-effect-required' : ''} ${isMissing ? 'rs-effect-missing' : ''}`}
+					dataset={{ tip: `${name}${isRequired ? ' · required' : ''}\n${why}\n${isRequired ? 'Click to let it go.' : 'Click to require it.'}` }}
+					attributes={{ 'aria-pressed': isRequired ? 'true' : 'false', 'aria-label': `${name}: ${why}` }}>
+					<img className="rs-icon" src={e.icon} alt="" />
+				</button>
+			) as HTMLButtonElement;
+			elem.addEventListener('click', () => this.toggleRequired(e.name));
+			return elem;
 		};
+		const strip = (
+			<div className="rs-strip">
+				<div className="rs-strip-group">
+					<span className="rs-strip-label">Buffs</span>
+					{RAID_EFFECTS.filter(e => !e.debuff).map(tile)}
+				</div>
+				<div className="rs-strip-group">
+					<span className="rs-strip-label">Debuffs</span>
+					{RAID_EFFECTS.filter(e => e.debuff).map(tile)}
+				</div>
+			</div>
+		);
 		const last = this.lastRun?.simResult && this.lastRun.request ? this.lastRun : null;
 		let dps: Node | null = null;
 		if (last) {
@@ -1204,18 +1226,26 @@ export class CompEditor {
 				{roleChip('fa-khanda', count(RaidRole.RaidRoleDps), 'DPS')}
 				{open ? <span className="rs-role-count rs-open">{open} open</span> : null}
 			</div>,
-			<div className="rs-strip">
-				<div className="rs-strip-group">
-					<span className="rs-strip-label">Buffs</span>
-					{RAID_EFFECTS.filter(e => !e.debuff).map(tile)}
-				</div>
-				<div className="rs-strip-group">
-					<span className="rs-strip-label">Debuffs</span>
-					{RAID_EFFECTS.filter(e => e.debuff).map(tile)}
-				</div>
-			</div>,
+			strip,
 			...(dps ? [dps] : []),
+			...(missing.length
+				? [
+						<div className="rs-missing" attributes={{ role: 'status' }}>
+							<i className="fas fa-triangle-exclamation me-1" />
+							Missing required: {missing.join(', ')}
+						</div>,
+				  ]
+				: []),
 		);
+	}
+
+	// Requires a raid effect, or lets it go. It changes no sim, so the last run stays this raid's.
+	private toggleRequired(name: string) {
+		const required = this.state.required ?? [];
+		this.state.required = required.includes(name) ? required.filter(r => r != name) : [...required, name];
+		this.saveState();
+		this.renderOverview();
+		this.overviewHost.querySelector<HTMLElement>(`.rs-effect[aria-label^="${CSS.escape(RAID_EFFECTS.find(e => e.name == name)?.label ?? name)}:"]`)?.focus();
 	}
 
 	// ---- The bench: presets and the report's builds ----
@@ -1809,6 +1839,7 @@ export class CompEditor {
 			nextId,
 			faction: s.faction ?? Faction.Horde,
 			campBuffs: !!s.campBuffs,
+			required: Array.isArray(s.required) ? s.required.filter(r => typeof r == 'string') : [],
 			boss: s.boss ?? 'Generic',
 			hand: { ...emptyHand(), ...s.hand },
 		};
@@ -1845,9 +1876,11 @@ export class CompEditor {
 	}
 
 	// Whether two raids are the same: the same members in the same slots, with the same assignments, faction,
-	// camps and fight. The member ids and the iterations don't count.
-	static sameRaid(a: RaidState, b: RaidState): boolean {
-		return stableJson(canonicalRaid(a)) == stableJson(canonicalRaid(b));
+	// camps and fight. The member ids and the iterations don't count. The required effects count only with
+	// `withRequired` (a preset keeps them), since they change no sim result.
+	static sameRaid(a: RaidState, b: RaidState, withRequired = false): boolean {
+		const key = (r: RaidState) => stableJson({ ...canonicalRaid(r), required: withRequired ? [...(r.required ?? [])].sort() : null });
+		return key(a) == key(b);
 	}
 
 	// What changed from one raid to the other, in lines like 'Group 2, slot 3: Fire → Beast Mastery', under
@@ -1863,6 +1896,7 @@ export class CompEditor {
 			...line('Faction', factionName(from.faction), factionName(to.faction)),
 			...line('Camp buffs', onOff(from.campBuffs), onOff(to.campBuffs)),
 			...line('Boss', from.boss, to.boss),
+			...line('Required', requiredWords(from), requiredWords(to)),
 		]);
 
 		const slotName = (cell: number) => `Group ${Math.floor(cell / PARTY_SIZE) + 1}, slot ${(cell % PARTY_SIZE) + 1}`;
@@ -2012,6 +2046,7 @@ export class CompEditor {
 			nextId: 1,
 			faction: scenario.faction,
 			campBuffs: scenario.campBuffs,
+			required: [...(request?.requiredEffects ?? [])],
 			hand: emptyHand(),
 		};
 		const placed: Array<{ member: Member; result: (typeof comp.members)[number] }> = [];
@@ -2773,6 +2808,12 @@ function canonicalRaid(state: RaidState) {
 			innervate: byCell(state.hand.innervate, target),
 		},
 	};
+}
+
+// A raid's required effects in words, for what changed between two raids.
+function requiredWords(state: RaidState): string {
+	const names = (state.required ?? []).map(r => RAID_EFFECTS.find(e => e.name == r)?.label ?? r);
+	return names.length ? names.sort().join(', ') : 'none';
 }
 
 // JSON with every object's keys sorted, so two equal values write the same text.

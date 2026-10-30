@@ -503,6 +503,7 @@ func TestSearchRejectsBadRequests(t *testing.T) {
 		"healer as tank": {Size: 10, Tanks: 1, Healers: 1, FixedTanks: []proto.RaidPreset{proto.RaidPreset_RaidPresetHolyPriest}},
 		"faction 7":      {Size: 10, Factions: []proto.Faction{7}},
 		"negative fight": {Size: 10, Encounter: &proto.CompEncounter{Duration: -5}},
+		"unknown effect": {Size: 10, RequiredEffects: []string{"Thorns"}},
 	}
 	for name, req := range bad {
 		if _, err := Search(p, sim, req, nil); err == nil {
@@ -511,5 +512,75 @@ func TestSearchRejectsBadRequests(t *testing.T) {
 	}
 	if n := sim.Run.Load(); n != 0 {
 		t.Errorf("%d sims run for bad requests", n)
+	}
+}
+
+// A required effect keeps only the buff sets that give it, and its local moves never drop it.
+func TestRequiredEffects(t *testing.T) {
+	combo := []*Preset{PresetByID(proto.RaidPreset_RaidPresetProtectionWarrior), PresetByID(proto.RaidPreset_RaidPresetRestorationShaman)}
+	all := NewRaid(10, combo, nil).Plans()
+	r := NewRaid(10, combo, nil)
+	r.Required = GiftFort | GiftCoE
+	plans := r.Plans()
+	if len(plans) == 0 || len(plans) >= len(all) {
+		t.Fatalf("%d plans with Fortitude and Curse of the Elements required, of %d", len(plans), len(all))
+	}
+	for _, p := range plans {
+		if !p.Up.Has(GiftFort | GiftCoE) {
+			t.Errorf("plan %s lacks a required gift", p)
+		}
+		for _, q := range r.neighbours(p) {
+			if !q.Up.Has(GiftFort | GiftCoE) {
+				t.Errorf("neighbour %s of %s lacks a required gift", q, p)
+			}
+		}
+	}
+	// No DPS member brings Grace of Air, so a raid without a shaman placeholder has no plan for it.
+	none := NewRaid(10, []*Preset{PresetByID(proto.RaidPreset_RaidPresetProtectionWarrior), PresetByID(proto.RaidPreset_RaidPresetHolyPriest)}, nil)
+	none.Required = GiftGoA
+	if n := len(none.Plans()); n != 0 {
+		t.Errorf("%d plans give Grace of Air without a shaman", n)
+	}
+	if g, ok := GiftByName("Fortitude"); !ok || g != GiftFort {
+		t.Errorf("GiftByName(Fortitude) = %v, %v", g, ok)
+	}
+}
+
+// A search that requires Fortitude takes a priest even though no DPS gain asks for one.
+func TestSearchRequiredEffect(t *testing.T) {
+	if testing.Short() {
+		t.Skip("about half a minute")
+	}
+	p := subPool(t, "mage__fire", "warrior__fury", "priest__shadow")
+	sim, err := NewSimmer(p, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	req := &proto.CompSearchRequest{Size: 5, Tanks: 1, Healers: 0, Factions: []proto.Faction{proto.Faction_Horde},
+		FixedTanks: []proto.RaidPreset{proto.RaidPreset_RaidPresetFeralTank},
+		CampBuffs:  []bool{false}, Iterations: 60, ContenderIterations: 60, Seed: 9, SkipSensitivity: true, RequiredEffects: []string{"Fortitude"},
+		Encounter: &proto.CompEncounter{Duration: 90, NaturalFlaskZone: true}}
+	res, err := Search(p, sim, req, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, sc := range res.Scenarios {
+		if len(sc.Comps) == 0 {
+			t.Error("no comp")
+		}
+		for _, c := range sc.Comps {
+			priest := false
+			for _, m := range c.Members {
+				priest = priest || strings.HasPrefix(m.BuildId, "priest__")
+			}
+			if !priest {
+				t.Errorf("a comp without a priest: %s", c.BuffSet)
+			}
+		}
+	}
+	// A raid that can't give it says so.
+	req.RequiredEffects = []string{"Grace of Air"}
+	if _, err := Search(p, sim, req, nil); err == nil || !strings.Contains(err.Error(), "Grace of Air") {
+		t.Errorf("Grace of Air without a shaman: %v", err)
 	}
 }

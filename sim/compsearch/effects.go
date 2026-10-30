@@ -66,6 +66,27 @@ func GiftName(g Gift) string {
 	return g.String()
 }
 
+// GiftByName is the gift a buff record names, like "Fortitude".
+func GiftByName(name string) (Gift, bool) {
+	for i, n := range giftNames {
+		if n == name {
+			return Gift(1) << i, true
+		}
+	}
+	return 0, false
+}
+
+// RequiredGifts is what a search request requires every comp to give. Its names were validated.
+func RequiredGifts(req *proto.CompSearchRequest) Gift {
+	var g Gift
+	for _, name := range req.RequiredEffects {
+		if x, ok := GiftByName(name); ok {
+			g |= x
+		}
+	}
+	return g
+}
+
 var dutyGift = map[proto.Duty]Gift{
 	proto.Duty_DutyBattleShout:            GiftBattleShout,
 	proto.Duty_DutySunderUpkeep:           GiftSunderTank,
