@@ -852,7 +852,8 @@ one slot count, and combos with different counts are never ranked together:
 
 The buff sets are ranked and simmed once per signature. Every combo with that signature then re-fills the
 signature's best sets with its own counts: Power Infusion, Innervate, and the packages (each shaman's kind,
-and the shamans beyond two). That's arithmetic on the cached sims.
+and the shamans beyond two). That's mostly arithmetic on the cached sims; a combo with another package kind
+runs the sims its seats need.
 
 **What it reports:**
 
@@ -919,7 +920,8 @@ For each signature:
    - The 3 signatures with the best exact sets go on in the model's order while a set's model score is
      within the model's worst miss on that signature's simmed sets of its best exact score, up to 200
      sets.
-   - The model's misses are reported (its worst and mean miss over every set simmed).
+   - The model's misses are reported (its worst and mean miss over the sets simmed in steps 3 and 4; the
+     local moves', combos' and contenders' fills aren't counted).
    - An exact fill runs the fill with the model first, sims what it asked for in one batch, and fills
      again, until it asks for nothing new. It sims only the 3 providers the model makes cheapest for each
      role, and a best filler only for the packages the raid's parties have.
@@ -988,7 +990,7 @@ Raid sims confirm **distinct buff sets, not comps**:
   when they're within 0.3% of each other; that isn't built yet, so each set's best fill is the one
   confirmed.
 - Comps that resolve to the same request are one: the two paladin presets, and party permutations.
-- Every set within 0.1% plus 2.5 standard errors of the best score is raid-simmed, paired, at 5,000
+- Every set within 0.1% plus 2.5 standard errors of the best score is raid-simmed, on one seed, at 5,000
   iterations. The top 2 go on to 20,000 (standard 15), on a fresh seed range, since seed s at 20,000
   iterations repeats the 5,000 run's iterations.
 - The raid sims rank the confirmed sets, and their numbers are the answer. If a raid sim disagrees with its
@@ -1004,9 +1006,11 @@ The raid sim catches what the single-player sims can't:
 
 **The tie rule:**
 
-- Comps whose paired gap is under the larger of 2 standard errors and 0.1% are one tie set, and they're
-  published as a tie. Before the confirmation (M1), the same rule runs on the scores and the standard error
-  of their difference.
+- Comps whose gap to the top is under the larger of 2 standard errors and 0.1% are one tie set, and
+  they're published as a tie. The error of a gap is the two comps' errors taken as independent, which is on
+  the wide side: comps on one seed are correlated (0.22 between two raids), and the tighter paired error
+  isn't computed. Before the confirmation (M1), the same rule runs on the scores. The gaps and windows are
+  measured from the top comp, not from the one shown first.
 - The comp shown is the one with the fewest distinct builds, then the fewest DPS members on duty.
 - Fillers within 2 standard errors of the best filler (one build against another) are listed as
   interchangeable. Fire and
@@ -1030,10 +1034,11 @@ The raid sim catches what the single-player sims can't:
   - **Effects a build can't read are dropped**, by a static table, `sim/compsearch/drops.json`, one for
     each build and camp setting. `compsearch -drops` writes it: an effect goes in only when the build's
     result is the same with it set and cleared, to within a hundred-thousandth, under the full set and the
-    empty set, at 120, 180, 300
-    and 420 s, in both factions and at two seeds, for each effect alone and then all together. Arcane
-    Brilliance is dropped for a warrior, so it's one key whether a mage is there or not. With camps on,
-    Moonkin Aura stays in a warrior's key, since it takes the Camp Chair.
+    empty set, at 120, 180, 300 and 420 s, in both factions and at two seeds, for each effect alone and
+    then all together. Arcane Brilliance is dropped for a warrior, so it's one key whether a mage is there
+    or not. Moonkin Aura stays in a warrior's key, camps on or off: the table finds every warrior reads it.
+    The Sunder ramp is an entry too, so a caster's key doesn't change with the raid's warrior count
+    (`compsearch -drops-add <field>` adds a new entry without recomputing the rest).
   - The weapon totem is two entries, Windfury and Flametongue, so Enhancement (whose Windfury Weapon makes
     Windfury Totem useless to it) keeps its Flametongue.
   - A test checks the whole table again at another seed. Not bit for bit: Mana Tide does nothing for an
@@ -1061,6 +1066,13 @@ The raid sim catches what the single-player sims can't:
   `/proc/self/exe`, so one rebuilt in place under a running server doesn't lend its hash to old code.
 - **In a Claude Code cloud environment** the cache starts empty each session, and that's fine. The cache
   isn't committed.
+
+### Limits
+
+The search stops some loops at a fixed count, so a run can't go on without end. Each is far above what the
+audits saw: local moves stop after 6 steps, a health fight after 4 passes (and says so), an exact fill after
+8 rounds of new sims, the blessing rounds after 3. A result lists the first 200 combos and 5 to 12
+contenders.
 
 ### Cost
 
@@ -1146,9 +1158,10 @@ the same items. It leads with what could change the answer:
 
 1. **The tie set**, and every sensitivity scenario that changes the winner (see
    [Sensitivity](#sensitivity)).
-2. **For each faction and camp setting:** the best comp and 2 to 4 runners-up, with the difference and
-   paired 95% intervals (from the scores, before the confirmation). Each comp lists:
-   - every slot's build or preset, its party and its duties, with each duty's cost
+2. **For each faction and camp setting:** the best comp and 2 to 4 runners-up, with the difference and its
+   95% interval (the two errors taken as independent), from the scores and, for the confirmed comps, from
+   the raid sims. Each comp lists:
+   - every slot's build or preset, its party and its duties (each duty's cost for the best comp)
    - the placeholders' choices
    - raid DPS, each party's DPS and each member's DPS
 3. **The tank and healer combos ranked**, and each preset's DPS value (see
@@ -1547,17 +1560,19 @@ scores (see [Confirmation](#confirmation)).
   [Comp search](#comp-search), [Sensitivity](#sensitivity), [Member value](#member-value).
 - **Done when:**
   - check 5 passes
-  - a second run makes zero sims
+  - a second run makes zero single-player sims (the confirmation's raid sims aren't cached)
   - changing the encounter, the length, `sim/` or the item database misses the cache
   - given and cast are never both, per the resolver's tests
   - the dropped-effects test passes (see [The cache](#the-cache)), and the output is byte-identical
-    across runs and core counts
+    across runs and core counts (the score's error and the dominance rule sum in a fixed order since the
+    third audit, and the test varies `GOMAXPROCS` too)
   - Thorns, Retribution Aura, Salvation and Judgement of Light are measured once against every base
     build
   - the 20-player result for each faction, with camps on and off, is written up, with its tie set, role
     table, filler ranking, tank and healer combo ranking and sensitivity
 
-**Done** (2026-10-30), apart from the write-up, which is in [M1's 20-player result](#m1s-20-player-result):
+**Done** (2026-10-30), apart from the write-up, which goes in [M1's 20-player result](#m1s-20-player-result)
+once it has run on the final code:
 
 - `sim/compsearch` and `tools/compsearch` (`go run -tags with_db ./tools/compsearch -size 20 -out x` writes
   `x.json` and `x.md`; `-health`, `-boss Onyxia`, `-fixed-*`, `-confirm`, `-drops` and

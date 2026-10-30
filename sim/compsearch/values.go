@@ -42,6 +42,7 @@ func compFromRaidComp(pool *Pool, sc *Scenario, comp *proto.RaidComp) (*Comp, ma
 	duty := map[int32]proto.Duty{}
 	judge := map[int32]proto.PaladinJudgement{}
 	air := map[int32]proto.RaidTotem{}
+	spring := map[int32]bool{} // the shaman placeholders that drop Mana Spring
 	pi, inn := map[int32]bool{}, map[int32]bool{}
 	bless := map[proto.Class][]proto.Blessing{}
 	for _, a := range res.Assignments {
@@ -53,6 +54,8 @@ func compFromRaidComp(pool *Pool, sc *Scenario, comp *proto.RaidComp) (*Comp, ma
 		case *proto.Assignment_Totem:
 			if t := j.Totem.Totem; t == proto.RaidTotem_RaidTotemGraceOfAir || t == proto.RaidTotem_RaidTotemWindfury {
 				air[a.Holder] = t
+			} else if t == proto.RaidTotem_RaidTotemManaSpring {
+				spring[a.Holder] = true
 			}
 		case *proto.Assignment_Cooldown:
 			if j.Cooldown.PowerInfusion {
@@ -99,13 +102,12 @@ func compFromRaidComp(pool *Pool, sc *Scenario, comp *proto.RaidComp) (*Comp, ma
 	ids := map[*Member]int32{}
 	pal := r.phPaladins
 	up := Gift(0)
-	partyPkg := map[int32]proto.RaidPackage{}
+	phPkg, dpsPkg := map[int32][]proto.RaidPackage{}, map[int32][]proto.RaidPackage{}
 	for i, ph := range combo {
-		if ph.Shaman && ph.Package > partyPkg[int32(phParty[i])] {
-			partyPkg[int32(phParty[i])] = ph.Package
+		if ph.Shaman && spring[phIDs[i]] {
+			phPkg[int32(phParty[i])] = append(phPkg[int32(phParty[i])], ph.Package)
 		}
 	}
-	var giverShamans []*Member
 	for _, s := range ordered {
 		if _, ok := s.Member.(*proto.CompSlot_Build); !ok {
 			continue
@@ -136,15 +138,15 @@ func compFromRaidComp(pool *Pool, sc *Scenario, comp *proto.RaidComp) (*Comp, ma
 		if pullSunderer(b) {
 			c.Warriors++
 		}
-		if b.Class == proto.Class_ClassShaman && partyPkg[s.Party] == proto.RaidPackage_RaidPackageNone {
-			giverShamans = append(giverShamans, m)
+		if b.Class == proto.Class_ClassShaman {
+			dpsPkg[s.Party] = append(dpsPkg[s.Party], b.Pkg)
 		}
 	}
-	// A DPS shaman's Mana Spring reaches the rest of its party.
-	for _, m := range giverShamans {
-		if partyPkg[int32(m.Party)] < m.B.Pkg {
-			partyPkg[int32(m.Party)] = m.B.Pkg
-		}
+	// Each party's package as the resolver gives it (a DPS shaman's Mana Spring reaches the rest of its
+	// party, in place of a given one).
+	partyPkg := map[int32]proto.RaidPackage{}
+	for party := int32(0); party < int32(r.Parties); party++ {
+		partyPkg[party] = partyPackage(phPkg[party], dpsPkg[party])
 	}
 	p.Paladins = min(3, pal)
 	p.Up = r.phUp(p)&^GiftBlessing | up
@@ -175,6 +177,9 @@ func compValues(pool *Pool, sim *Simmer, comp *proto.RaidComp, abort func() bool
 	if o := comp.SimOptions; o != nil && o.Iterations > 0 && o.Iterations < sc.Iterations {
 		sc.Iterations = o.Iterations
 	}
+	if o := comp.SimOptions; o != nil && o.RandomSeed != 0 {
+		sc.Seed = o.RandomSeed
+	}
 	if e := comp.Encounter; e != nil {
 		sc.Fight.Duration, sc.Fight.DurationVariation, sc.Fight.FlaskZone = e.Duration, e.DurationVariation, e.NaturalFlaskZone
 		if len(e.Targets) > 0 {
@@ -188,31 +193,15 @@ func compValues(pool *Pool, sim *Simmer, comp *proto.RaidComp, abort func() bool
 	if err != nil {
 		return nil, err
 	}
-	var builds []*Build
-	seen := map[*Build]bool{}
 	var cands []*Build
 	for _, b := range pool.Bases {
 		x := b.ForBoss(sc.Fight.MobType)
 		cands = append(cands, x)
 		cands = append(cands, b.Pets...)
 	}
-	for _, b := range cands {
-		if !seen[b] {
-			seen[b] = true
-			builds = append(builds, b)
-		}
-	}
-	for _, m := range c.Members {
-		if !seen[m.B] {
-			seen[m.B] = true
-			builds = append(builds, m.B)
-		}
-	}
-	model, err := sc.BuildModel(builds)
-	if err != nil {
-		return nil, err
-	}
-	ev := newExactValuer(sc, sc.Iterations, model)
+	// No model: member values only read exact sims, each after a flush, so a model's guesses before them
+	// would cost thousands of sims for nothing.
+	ev := newExactValuer(sc, sc.Iterations, nil)
 	scored, err := sc.withMembers(c, c.Members, ev)
 	if err != nil {
 		return nil, err

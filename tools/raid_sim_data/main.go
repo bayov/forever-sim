@@ -57,7 +57,21 @@ func main() {
 	out := flag.String("out", "ui/raid_sim/data/builds.json", "the data file, relative to the checkout")
 	flag.Parse()
 
-	pool, err := compsearch.LoadPool(*root)
+	data, builds := generate(*root)
+	path := filepath.Join(*root, *out)
+	if err := os.WriteFile(path, data, 0o644); err != nil {
+		fail(err)
+	}
+	n := 0
+	for _, b := range builds {
+		n += 1 + len(b.Duties) + len(b.Encounters)
+	}
+	fmt.Printf("wrote %s: %d base builds, %d players a faction, %d KB\n", path, len(builds), n, len(data)/1024)
+}
+
+// generate is the data file's contents, from the search's own pool.
+func generate(root string) ([]byte, []*build) {
+	pool, err := compsearch.LoadPool(root)
 	if err != nil {
 		fail(err)
 	}
@@ -80,7 +94,7 @@ func main() {
 	}
 	readMeta := func(id string) meta {
 		var m meta
-		if data, err := os.ReadFile(filepath.Join(*root, "tools", "dps_report", "req", id+".meta.json")); err == nil {
+		if data, err := os.ReadFile(filepath.Join(root, "tools", "dps_report", "req", id+".meta.json")); err == nil {
 			_ = json.Unmarshal(data, &m)
 		}
 		return m
@@ -158,15 +172,7 @@ func main() {
 	if err != nil {
 		fail(err)
 	}
-	path := filepath.Join(*root, *out)
-	if err := os.WriteFile(path, append(data, '\n'), 0o644); err != nil {
-		fail(err)
-	}
-	n := 0
-	for _, b := range builds {
-		n += 1 + len(b.Duties) + len(b.Encounters)
-	}
-	fmt.Printf("wrote %s: %d base builds, %d players a faction, %d KB\n", path, len(builds), n, len(data)/1024)
+	return append(data, '\n'), builds
 }
 
 func fail(err error) {

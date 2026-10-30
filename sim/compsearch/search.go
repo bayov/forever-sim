@@ -2,6 +2,7 @@ package compsearch
 
 import (
 	"fmt"
+	googleProto "google.golang.org/protobuf/proto"
 	"math"
 	"runtime"
 	"sort"
@@ -130,8 +131,10 @@ func SearchWithAbort(pool *Pool, sim *Simmer, req *proto.CompSearchRequest, prog
 	var fixed []*Build
 	for _, id := range req.FixedDps {
 		b, ok := pool.Builds[id]
-		if !ok || !b.IsBase() {
-			return nil, fmt.Errorf("fixed DPS member %q is not a base build of the report", id)
+		// A base build or a pet variant (a build of its own); a duty or encounter variant is the search's
+		// to choose.
+		if !ok || b.Duty != proto.Duty_DutyNone || b.MobType != proto.MobType_MobTypeUnknown {
+			return nil, fmt.Errorf("fixed DPS member %q is not a base build or pet variant of the report", id)
 		}
 		fixed = append(fixed, b)
 	}
@@ -186,26 +189,51 @@ func (sc *Scenario) runHealth(req *proto.CompSearchRequest, fixed []*Build, prog
 	sc.BossHealth = health
 	var out *proto.CompScenarioResult
 	var passNotes []string
-	for pass := 0; pass < 4; pass++ {
+	// The passes find the length without the confirmation and the extras; the last pass, at the length
+	// they settle on, runs everything.
+	lean := googleProto.Clone(req).(*proto.CompSearchRequest)
+	lean.Confirm, lean.SkipSensitivity = false, true
+	settled := false
+	for pass := 0; pass < 5; pass++ {
 		sc.HealthLength = L
 		// The model ranks at the nearest grid point; the exact values interpolate.
 		sc.Fight.Duration = math.Max(lengthGrid, math.Round(L/lengthGrid)*lengthGrid)
 		sc.Fight.DurationVariation = 0
+		last := settled || pass == 4
+		sc.lean = !last
 		var err error
-		out, err = sc.run(req, fixed, progress)
+		if last {
+			out, err = sc.run(req, fixed, progress)
+		} else {
+			out, err = sc.run(lean, fixed, progress)
+		}
 		if err != nil {
 			return nil, err
 		}
-		w := out.Comps[0]
-		dps := w.Dps
-		if w.Confirmed {
-			dps = w.RaidSimDps
+		if last {
+			out.FightSeconds = L
+			if !settled {
+				passNotes = append(passNotes, fmt.Sprintf("the length hadn't settled after 4 passes; the result is at %.1f s", L))
+			}
+			break
+		}
+		// The top DPS (the comp shown first may be a simpler one tied with it).
+		dps := 0.0
+		for _, c := range out.Comps {
+			if out.Comps[0].Confirmed {
+				if c.Confirmed {
+					dps = math.Max(dps, c.RaidSimDps)
+				}
+			} else {
+				dps = math.Max(dps, c.Dps)
+			}
 		}
 		next := health / dps
 		out.FightSeconds = L
 		passNotes = append(passNotes, fmt.Sprintf("health fight pass %d: %.1f s, the winner kills the boss in %.1f s", pass+1, L, next))
 		if math.Abs(next-L) <= 1 {
-			break
+			settled = true
+			continue
 		}
 		L = next
 	}
@@ -443,6 +471,13 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 	model, err := sc.BuildModel(modelBuilds)
 	if err != nil {
 		return nil, err
+	}
+	// A fixed base build runs its encounter variant against this boss, as the page's raids do.
+	fixed = append([]*Build{}, fixed...)
+	for i, b := range fixed {
+		if b.IsBase() {
+			fixed[i] = b.ForBoss(mob)
+		}
 	}
 	survivors, dominatedBy := model.Survivors(cands, 1.5)
 	f := &Fillers{Fill: append([]*Build{}, survivors...)}
@@ -738,6 +773,9 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 		}
 	}
 	sort.SliceStable(contenders, func(a, b int) bool { return contenders[a].Score > contenders[b].Score })
+	// The windows and gaps are measured from the top score; the comp shown first may be a simpler one
+	// tied with it.
+	top := contenders[0]
 	contenders = showSimplest(contenders)
 	best = contenders[0]
 	report("done", best)
@@ -749,6 +787,7 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 		dps, se float64
 	}
 	conf := map[*Comp]confirmed{}
+	var topConf *Comp // the best raid sim
 	if req.Confirm {
 		report("confirmation", best)
 		seenSet := map[string]bool{}
@@ -759,7 +798,7 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 				continue
 			}
 			seenSet[k] = true
-			if c.Score >= best.Score-0.001*best.Score-2.5*math.Hypot(best.SE, c.SE) || len(sets) < 2 {
+			if c.Score >= top.Score-0.001*top.Score-2.5*math.Hypot(top.SE, c.SE) || len(sets) < 2 {
 				sets = append(sets, c)
 			}
 		}
@@ -796,6 +835,7 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 			}
 			return contenders[a].Score > contenders[b].Score
 		})
+		topConf = contenders[0]
 		contenders = showSimplest(contenders, func(c *Comp) (float64, float64, bool) {
 			x, ok := conf[c]
 			return x.dps, x.se, ok
@@ -813,10 +853,10 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 		if i >= 5 {
 			break
 		}
-		cp := sc.compProto(c, best, model)
+		cp := sc.compProto(c, top, model)
 		if x, ok := conf[c]; ok {
 			cp.Confirmed, cp.RaidSimDps, cp.RaidSimSe = true, x.dps, x.se
-			if b, okb := conf[best]; okb && c != best {
+			if b, okb := conf[topConf]; okb && c != topConf {
 				cp.RaidSimGap, cp.RaidSimGapSe = b.dps-x.dps, math.Hypot(b.se, x.se)
 			}
 		}
@@ -824,7 +864,7 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 	}
 	if len(conf) > 0 {
 		n := 0
-		b := conf[best]
+		b := conf[topConf]
 		for _, c := range contenders {
 			x, ok := conf[c]
 			if !ok || b.dps-x.dps > math.Max(2*math.Hypot(b.se, x.se), 0.001*b.dps) {
@@ -834,7 +874,7 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 		}
 		out.TieSet = int32(max(1, n))
 	} else {
-		out.TieSet = int32(tieSet(contenders, best))
+		out.TieSet = int32(tieSet(contenders, top))
 	}
 	for i, cb := range cbs {
 		// The combo scores are all screening fills, so their gaps are against the best of them.
@@ -848,6 +888,12 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 		}
 	}
 	out.PresetValues = presetValues(best.Raid, cbs)
+	// A health fight's passes before its length settles need only the winner's DPS.
+	if sc.lean {
+		report("end", best)
+		out.Timings = phases
+		return out, nil
+	}
 	report("extras", best)
 	// The role table and member values at the screening iterations, with the best comp's members
 	// re-valued there too so the differences are like for like.
@@ -889,12 +935,18 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 	out.Adding = extras.adding
 	report("end", best)
 	out.Timings = phases
-	out.Buffs = buffRecords(best)
+	// The buff records and misses are the resolver's for the shown comp, the same the page shows for it.
+	if rc, err := sc.compOf(best, sc.Iterations, sc.Seed); err != nil {
+		return nil, err
+	} else if res := Resolve(rc); res.Error != nil {
+		return nil, fmt.Errorf("%s", res.Error.Message)
+	} else {
+		out.Buffs, out.Misses = res.Buffs, res.Misses
+	}
 	if sc.Camps {
 		out.Buffs = append(out.Buffs, &proto.CompBuffRecord{Effect: "camp buffs (all 9, each against its class buff)",
 			Provider: "the camp", Scope: "raid", Receivers: int32(len(best.Members)), Given: true})
 	}
-	out.Misses = missList(best)
 	if !req.SkipSensitivity {
 		out.Sensitivity = sc.assumptionSensitivity(contenders, best)
 	}

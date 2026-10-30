@@ -67,11 +67,16 @@ func Matrix(req *proto.CompSearchRequest) []MatrixScenario {
 	return out
 }
 
-// compIdentity is a result comp's members and placeholders, in a stable order.
-func compIdentity(c *proto.CompResult) string {
+// compIdentity is a result comp's members and placeholders, in a stable order. A boss's encounter
+// variant or a duty variant counts as its base build (plus the duty), so the same comp against another
+// boss is the same comp.
+func compIdentity(pool *Pool, c *proto.CompResult) string {
 	var ids []string
 	for _, m := range c.Members {
 		id := m.BuildId
+		if b := pool.Builds[m.BuildId]; b != nil && (b.MobType != proto.MobType_MobTypeUnknown || b.Duty != proto.Duty_DutyNone) {
+			id = b.Base.ID
+		}
 		if len(m.Duties) > 0 {
 			id += "+" + m.Duties[0].String()
 		}
@@ -110,10 +115,10 @@ func RunMatrix(pool *Pool, sim *Simmer, req *proto.CompSearchRequest, base *prot
 				if rs.Faction != bs.Faction || rs.CampBuffs != bs.CampBuffs || len(rs.Comps) == 0 {
 					continue
 				}
-				want := compIdentity(bs.Comps[0])
+				want := compIdentity(pool, bs.Comps[0])
 				holds := false
 				for i := 0; i < int(max(1, rs.TieSet)) && i < len(rs.Comps); i++ {
-					if compIdentity(rs.Comps[i]) == want {
+					if compIdentity(pool, rs.Comps[i]) == want {
 						holds = true
 					}
 				}

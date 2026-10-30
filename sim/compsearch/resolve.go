@@ -63,17 +63,6 @@ func isMelee(m *member) bool {
 	return false
 }
 
-// blessingOrder is what a class wants first from its paladins.
-func blessingOrder(c proto.Class) []proto.Blessing {
-	switch c {
-	case proto.Class_ClassWarrior, proto.Class_ClassRogue:
-		return []proto.Blessing{proto.Blessing_BlessingKings, proto.Blessing_BlessingMight, proto.Blessing_BlessingWisdom}
-	case proto.Class_ClassPaladin, proto.Class_ClassShaman, proto.Class_ClassDruid:
-		return []proto.Blessing{proto.Blessing_BlessingKings, proto.Blessing_BlessingMight, proto.Blessing_BlessingWisdom}
-	}
-	return []proto.Blessing{proto.Blessing_BlessingKings, proto.Blessing_BlessingWisdom, proto.Blessing_BlessingMight}
-}
-
 // Resolve resolves a comp (docs/raid_sim.md, Assignments): every assignment set by hand is kept, and
 // every other job is given automatically, to a placeholder first since that costs no DPS.
 func Resolve(comp *proto.RaidComp) *proto.RaidCompResolution {
@@ -176,7 +165,7 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 	handTotem := map[int32]map[proto.TotemElement]bool{} // the elements set by hand
 	noDuty := map[int32]bool{}                           // members set by hand to hold no duty
 	handBless := map[int32]map[proto.Class]bool{}
-	handCD := map[bool]int{} // cooldowns set by hand, by kind (Power Infusion or Innervate)
+	handCD := map[bool]map[int32]bool{true: {}, false: {}} // the givers whose cooldown is set by hand, by kind (Power Infusion or Innervate)
 	for _, a := range comp.Assignments {
 		// An assignment not set by hand is the resolver's to make again.
 		if !a.SetByHand {
@@ -279,7 +268,7 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 			} else {
 				t.inn = true
 			}
-			handCD[j.Cooldown.PowerInfusion]++
+			handCD[j.Cooldown.PowerInfusion][a.Holder] = true
 		}
 		out = append(out, googleProto.Clone(a).(*proto.Assignment))
 	}
@@ -415,11 +404,16 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 		pi     bool
 		givers []int32
 	}{{true, piGivers}, {false, innGivers}} {
-		// The givers not used by hand give theirs automatically.
-		left := len(cd.givers) - handCD[cd.pi]
-		cd.givers = cd.givers[:max(0, left)]
+		// The givers not used by hand give theirs automatically, in slot order.
+		var free []int32
+		for _, g := range cd.givers {
+			if !handCD[cd.pi][g] {
+				free = append(free, g)
+			}
+		}
+		next := 0
 		for _, m := range dps {
-			if left == 0 {
+			if next == len(free) {
 				break
 			}
 			if !usesManaPlayer(m.player) || (cd.pi && !isCaster(m)) || (cd.pi && m.pi) || (!cd.pi && m.inn) {
@@ -430,8 +424,8 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 			} else {
 				m.inn = true
 			}
-			left--
-			out = append(out, &proto.Assignment{Holder: cd.givers[left], Job: &proto.Assignment_Cooldown{Cooldown: &proto.CooldownTarget{PowerInfusion: cd.pi, Target: m.slot.Id}}})
+			out = append(out, &proto.Assignment{Holder: free[next], Job: &proto.Assignment_Cooldown{Cooldown: &proto.CooldownTarget{PowerInfusion: cd.pi, Target: m.slot.Id}}})
+			next++
 		}
 	}
 

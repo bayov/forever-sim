@@ -57,13 +57,12 @@ func (f Fight) apply(req *proto.RaidSimRequest) {
 
 // Value is one single-player sim's result (docs/raid_sim.md, The cache: the value).
 type Value struct {
-	DPS       float64 `json:"dps"`
-	SE        float64 `json:"se"`
-	Stdev     float64 `json:"stdev"`
-	TPS       float64 `json:"tps"`
-	OOMSecs   float64 `json:"oom"`
-	Iters     int32   `json:"iters"`
-	FromCache bool    `json:"-"`
+	DPS     float64 `json:"dps"`
+	SE      float64 `json:"se"`
+	Stdev   float64 `json:"stdev"`
+	TPS     float64 `json:"tps"`
+	OOMSecs float64 `json:"oom"`
+	Iters   int32   `json:"iters"`
 }
 
 // Job is one single-player sim: a build at a faction's race, in a seat, in a fight.

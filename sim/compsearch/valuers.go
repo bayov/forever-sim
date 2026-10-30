@@ -43,6 +43,11 @@ func (v *exactValuer) one(b *Build, s Seat, fight Fight) (float64, float64, stri
 		j.Fight = fight
 		v.missing[k] = j
 	}
+	// Until it's simmed: the model's guess, or nothing without a model (a caller that only reads values
+	// after a flush).
+	if v.model == nil {
+		return 0, 0, ""
+	}
 	return v.model.V(b, s), 0, ""
 }
 

@@ -181,6 +181,56 @@ func ComputeDrops(p *Pool, iterations int32, seed int64, progress func(string)) 
 	return out, firstErr
 }
 
+// ExtendDrops adds one field to an existing table: for each build and camp setting, when the build can't
+// read it alone, nor with the fields it already drops. It's the cheap way to add a field to Fields
+// (compsearch -drops-add); -drops recomputes everything.
+func ExtendDrops(p *Pool, table map[string][]string, field string, iterations int32, seed int64) (map[string][]string, error) {
+	out := map[string][]string{}
+	for k, v := range table {
+		out[k] = append([]string{}, v...)
+	}
+	ids := make([]string, 0, len(p.Builds))
+	for id := range p.Builds {
+		ids = append(ids, id)
+	}
+	slices.Sort(ids)
+	var mu sync.Mutex
+	var firstErr error
+	sem := make(chan struct{}, runtime.GOMAXPROCS(0))
+	var wg sync.WaitGroup
+	for _, id := range ids {
+		b := p.Builds[id]
+		for _, camps := range []bool{false, true} {
+			wg.Add(1)
+			sem <- struct{}{}
+			go func() {
+				defer wg.Done()
+				defer func() { <-sem }()
+				key := DropKey(b.ID, camps)
+				if slices.Contains(table[key], field) {
+					return
+				}
+				for _, fields := range [][]string{{field}, append(append([]string{}, table[key]...), field)} {
+					ok, err := unread(p, b, camps, fields, iterations, seed)
+					if err != nil || !ok {
+						if err != nil {
+							mu.Lock()
+							firstErr = err
+							mu.Unlock()
+						}
+						return
+					}
+				}
+				mu.Lock()
+				out[key] = append(out[key], field)
+				mu.Unlock()
+			}()
+		}
+	}
+	wg.Wait()
+	return out, firstErr
+}
+
 // MeasureLeftOut sims every base build's report request with and without the buffs the resolver
 // leaves out (docs/raid_sim.md, Writing a role into a request): Thorns, Retribution Aura, Salvation and
 // Judgement of Light.

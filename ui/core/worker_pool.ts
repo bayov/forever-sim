@@ -192,8 +192,8 @@ export class WorkerPool {
 	}
 
 	// A hand-built raid's member values, through the native server's /compValues. On WebAssembly, or a
-	// server without it, the result's error says so. The signal cancels the HTTP call; the server has no
-	// abort for /compValues, so it finishes the sims it started (they land in its cache).
+	// server without it, the result's error says so. The signal cancels the HTTP call, and the server stops
+	// starting sims once the call is gone (the ones running finish and land in its cache).
 	async compValues(comp: RaidComp, signal?: AbortSignal): Promise<CompValuesResult> {
 		if (await this.isWasm()) {
 			return CompValuesResult.create({ error: { message: 'Member values need the native server, which has the report builds and the sim cache.' } });

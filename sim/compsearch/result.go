@@ -264,7 +264,10 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 		rv := &proto.CompRoleValue{Role: name, InSet: in, Measured: true}
 		if in {
 			rv.Net = best.Score - c.Score
-			prov, other, cost := providerCost(best, g, sc, ev, f)
+			prov, other, cost, err := providerCost(best, g, sc, ev, f)
+			if err != nil {
+				return nil, err
+			}
 			rv.Provider, rv.ProviderCost = prov, cost
 			if other != 0 {
 				rv.Role += fmt.Sprintf(" (its giver also gives %s, and its cost counts in each)", other)
@@ -397,7 +400,7 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 
 // providerCost is the member giving a role, the other roles it gives in the set, and its cost: the best
 // filler in its seat less its DPS.
-func providerCost(c *Comp, g Gift, sc *Scenario, ev *exactValuer, f *Fillers) (string, Gift, float64) {
+func providerCost(c *Comp, g Gift, sc *Scenario, ev *exactValuer, f *Fillers) (string, Gift, float64, error) {
 	for _, m := range c.Members {
 		if m.B.Gives&g == 0 {
 			continue
@@ -414,14 +417,14 @@ func providerCost(c *Comp, g Gift, sc *Scenario, ev *exactValuer, f *Fillers) (s
 			}
 			if pass == 0 {
 				if _, err := ev.flush(); err != nil {
-					return m.B.ID, 0, 0
+					return "", 0, 0, err
 				}
 				bestV = math.Inf(-1)
 			}
 		}
-		return m.B.ID, m.B.Gives &^ g &^ GiftBlessing & c.Plan.Up, math.Max(0, bestV-m.DPS)
+		return m.B.ID, m.B.Gives &^ g &^ GiftBlessing & c.Plan.Up, math.Max(0, bestV-m.DPS), nil
 	}
-	return "", 0, 0
+	return "", 0, 0, nil
 }
 
 // withMembers is the comp with its members changed: the set they and the placeholders give, each member
@@ -450,16 +453,20 @@ func (sc *Scenario) withMembers(c *Comp, members []*Member, ev *exactValuer) (*C
 		}
 	}
 	// Each party's package from the givers still in the raid: its shaman placeholder, or a DPS shaman.
-	pkg := map[int]proto.RaidPackage{}
+	phPkg, dpsPkg := map[int][]proto.RaidPackage{}, map[int][]proto.RaidPackage{}
 	for i, ph := range r.Combo {
-		if ph.Shaman && ph.Package > pkg[c.PHParty[i]] {
-			pkg[c.PHParty[i]] = ph.Package
+		if ph.Shaman {
+			phPkg[c.PHParty[i]] = append(phPkg[c.PHParty[i]], ph.Package)
 		}
 	}
 	for _, m := range members {
-		if m.B.Class == proto.Class_ClassShaman && m.B.Pkg > pkg[m.Party] {
-			pkg[m.Party] = m.B.Pkg
+		if m.B.Class == proto.Class_ClassShaman {
+			dpsPkg[m.Party] = append(dpsPkg[m.Party], m.B.Pkg)
 		}
+	}
+	pkg := map[int]proto.RaidPackage{}
+	for party := 0; party < r.Parties; party++ {
+		pkg[party] = partyPackage(phPkg[party], dpsPkg[party])
 	}
 	for _, m := range members {
 		nm := *m
@@ -702,76 +709,11 @@ func (sc *Scenario) reportDifference(m *Member, ev *exactValuer) (float64, []str
 		fmt.Sprintf("this fight (boss, length, flask zone): %+.1f", jf.Value.DPS-j1.Value.DPS),
 		fmt.Sprintf("the raid's buff set: %+.1f", j2.Value.DPS-jf.Value.DPS),
 	}
+	// Only a duty holder is compared with another build (its base); a pet or encounter variant is its own.
 	if m.B != base {
-		label := "its pet"
-		if m.B.Duty != proto.Duty_DutyNone {
-			label = "its duty (" + dutyLabel(m.B.Duty) + ")"
-		} else if m.B.MobType != proto.MobType_MobTypeUnknown {
-			label = "its build for this boss"
-		}
-		parts = append(parts, fmt.Sprintf("%s: %+.1f", label, j3.Value.DPS-j2.Value.DPS))
+		parts = append(parts, fmt.Sprintf("its duty (%s): %+.1f", dutyLabel(m.B.Duty), j3.Value.DPS-j2.Value.DPS))
 	}
 	return m.DPS - base.Published, parts, nil
-}
-
-// buffRecords is each effect up, who gives it and how many members get it.
-func buffRecords(c *Comp) []*proto.CompBuffRecord {
-	var out []*proto.CompBuffRecord
-	ph := c.Raid.phUp(c.Plan)
-	for i := 0; i < numGifts; i++ {
-		g := Gift(1) << i
-		if !c.Plan.Up.Has(g) || g == GiftBlessing {
-			continue
-		}
-		rec := &proto.CompBuffRecord{Effect: GiftName(g), Scope: "raid", Receivers: int32(len(c.Members)), Given: true}
-		var who []string
-		if ph.Has(g) {
-			for _, p := range c.Raid.Combo {
-				if p.Gives.Has(g) || (p.Shaman && (g == GiftSoE || g == GiftFT || g == GiftGoA || g == GiftWF)) ||
-					(p.Paladin && (g == GiftCrusader || g == GiftJoW)) {
-					who = append(who, p.Name)
-				}
-			}
-		}
-		for _, m := range c.Members {
-			if m.B.Gives.Has(g) {
-				who = append(who, m.B.ID)
-				if m.B.Casts.Has(g) {
-					rec.Given = false
-				}
-			}
-		}
-		rec.Provider = strings.Join(uniq(who), ", ")
-		switch g {
-		case GiftSunderTank, GiftMinorArmor, GiftCoE, GiftCrusader, GiftJoW:
-			rec.Scope = "the boss"
-		}
-		out = append(out, rec)
-	}
-	for _, p := range packages[1:] {
-		n := 0
-		for _, m := range c.Members {
-			if m.Seat.Package == p {
-				n++
-			}
-		}
-		if n > 0 {
-			var who []string
-			for _, ph := range c.Raid.Combo {
-				if ph.Shaman && ph.Package == p {
-					who = append(who, ph.Name)
-				}
-			}
-			for _, m := range c.Members {
-				if m.B.Class == proto.Class_ClassShaman && m.B.Pkg == p {
-					who = append(who, m.B.ID)
-				}
-			}
-			out = append(out, &proto.CompBuffRecord{Effect: packageName(p), Provider: strings.Join(uniq(who), ", "),
-				Scope: "party", Receivers: int32(n), Given: true})
-		}
-	}
-	return out
 }
 
 func totemName(t proto.RaidTotem) string {
@@ -805,40 +747,6 @@ func uniq(s []string) []string {
 			out = append(out, x)
 		}
 	}
-	return out
-}
-
-// missList is what the raid lacks: roles nobody gives, and blessings a class goes without.
-func missList(c *Comp) []string {
-	var out []string
-	for _, g := range modelRoles {
-		if !c.Plan.Up.Has(g) {
-			out = append(out, "nobody gives "+GiftName(g))
-		}
-	}
-	present := map[proto.Class]bool{}
-	for _, m := range c.Members {
-		present[m.B.Class] = true
-	}
-	for cl := range present {
-		have := c.Blessings[cl]
-		if len(have) < 3 {
-			var miss []string
-			for _, b := range allBlessings {
-				found := false
-				for _, h := range have {
-					if h == b {
-						found = true
-					}
-				}
-				if !found {
-					miss = append(miss, strings.TrimPrefix(b.String(), "Blessing"))
-				}
-			}
-			out = append(out, fmt.Sprintf("%ss get no %s", strings.TrimPrefix(cl.String(), "Class"), strings.Join(miss, " or ")))
-		}
-	}
-	sort.Strings(out)
 	return out
 }
 

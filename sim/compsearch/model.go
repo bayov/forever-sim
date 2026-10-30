@@ -3,6 +3,7 @@ package compsearch
 import (
 	"math"
 	"math/bits"
+	"slices"
 
 	"github.com/wowsims/classic/sim/core/proto"
 )
@@ -294,8 +295,14 @@ func (m *Model) Survivors(builds []*Build, margin float64) (alive []*Build, by m
 			}
 			ca := m.costs(a)
 			need := margin
-			for k, v := range ca {
-				need += math.Max(0, v-cb[k])
+			// In a fixed order, so a decision on the edge comes out the same every run.
+			keys := make([]string, 0, len(ca))
+			for k := range ca {
+				keys = append(keys, k)
+			}
+			slices.Sort(keys)
+			for _, k := range keys {
+				need += math.Max(0, ca[k]-cb[k])
 			}
 			if full(a)-full(b) >= need {
 				by[b] = a

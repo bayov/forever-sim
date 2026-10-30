@@ -112,7 +112,11 @@ func LoadPool(root string) (*Pool, error) {
 		return nil, fmt.Errorf("no requests in %s", reqDir)
 	}
 	races := map[string]reportBuild{}
-	if data, err := os.ReadFile(filepath.Join(root, "ui", "dps_report", "data", "builds.json")); err == nil {
+	// The report's race tables and published DPS: without them every build would run its request's own race
+	// in both factions, silently.
+	if data, err := os.ReadFile(filepath.Join(root, "ui", "dps_report", "data", "builds.json")); err != nil {
+		return nil, fmt.Errorf("the report's builds (races and published DPS): %w", err)
+	} else {
 		var list []reportBuild
 		if err := json.Unmarshal(data, &list); err != nil {
 			return nil, fmt.Errorf("builds.json: %w", err)

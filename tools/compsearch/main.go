@@ -21,6 +21,7 @@ import (
 func main() {
 	root := flag.String("root", ".", "the forever-sim checkout")
 	drops := flag.Bool("drops", false, "recompute the cache's drop table, sim/compsearch/drops.json")
+	dropsAdd := flag.String("drops-add", "", "add one new field to the drop table, checking only it (cheaper than -drops)")
 	size := flag.Int("size", 20, "raid size: 10, 20 or 40")
 	tanks := flag.Int("tanks", 0, "tank slots (default by size)")
 	healers := flag.Int("healers", 0, "healer slots (default by size)")
@@ -57,8 +58,13 @@ func main() {
 	if err != nil {
 		fail(err)
 	}
-	if *drops {
-		table, err := compsearch.ComputeDrops(pool, 60, 7, func(s string) { fmt.Fprintln(os.Stderr, s) })
+	if *drops || *dropsAdd != "" {
+		var table map[string][]string
+		if *drops {
+			table, err = compsearch.ComputeDrops(pool, 60, 7, func(s string) { fmt.Fprintln(os.Stderr, s) })
+		} else {
+			table, err = compsearch.ExtendDrops(pool, compsearch.Drops, *dropsAdd, 60, 7)
+		}
 		if err != nil {
 			fail(err)
 		}

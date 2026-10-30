@@ -3,6 +3,7 @@ package compsearch
 import (
 	"math"
 	"os"
+	"runtime"
 	"strings"
 	"testing"
 	"time"
@@ -140,7 +141,9 @@ func TestSearchDeterministic(t *testing.T) {
 		t.Skip("about a minute")
 	}
 	p := subPool(t, "mage__fire", "hunter__beast-mastery", "warlock__demonology", "warrior__fury")
+	// The core count sizes both the sim workers and the ranking's goroutines (GOMAXPROCS).
 	run := func(workers int) string {
+		defer runtime.GOMAXPROCS(runtime.GOMAXPROCS(workers))
 		sim, err := NewSimmer(p, "")
 		if err != nil {
 			t.Fatal(err)

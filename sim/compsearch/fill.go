@@ -28,6 +28,9 @@ type Scenario struct {
 	Abort        func() bool
 	// This search's own sims (the Simmer's counters are every search's), nil for none.
 	Counter *Counter
+	// lean skips the result's extras (roles, member values, sensitivity): a health fight's passes before
+	// the last.
+	lean bool
 }
 
 // Counter is one search's sims: single-player sims run and found in the cache, and confirmation raid sims.
@@ -174,6 +177,28 @@ func (c *Comp) seat(b *Build, pkg proto.RaidPackage, sc *Scenario) Seat {
 	}
 	return Seat{Up: c.Plan.Up, Blessings: c.Blessings[b.Class], PullSunders: max(0, pull), Package: pkg,
 		Camps: sc.Camps, Own: b.Casts, Assumptions: sc.Assumptions}
+}
+
+// partyPackage is what a party's members get from its shamans, as the resolver gives it: the richest
+// placeholder's package, but with a DPS shaman in the party its own cast Mana Spring instead of a given
+// one (two don't stack), with a placeholder's Mana Tide kept.
+func partyPackage(placeholders, dpsShamans []proto.RaidPackage) proto.RaidPackage {
+	best := proto.RaidPackage_RaidPackageNone
+	for _, p := range placeholders {
+		best = max(best, p)
+	}
+	if len(dpsShamans) == 0 {
+		return best
+	}
+	out := proto.RaidPackage_RaidPackageManaSpring
+	tide := best >= proto.RaidPackage_RaidPackageManaSpringTide
+	for _, p := range dpsShamans {
+		tide = tide || p == proto.RaidPackage_RaidPackageManaSpringTide
+	}
+	if tide {
+		out = proto.RaidPackage_RaidPackageManaSpringTide
+	}
+	return out
 }
 
 // pullSunderer is a warrior that casts one Sunder at the pull. One keeping Sunder up is in the ramp
@@ -457,9 +482,15 @@ func (c *Comp) sum() {
 		}
 		byKey[m.key] += m.SE
 	}
+	// In a fixed order, so the same comp sums to the same bits every run.
+	keys := make([]string, 0, len(byKey))
+	for k := range byKey {
+		keys = append(keys, k)
+	}
+	slices.Sort(keys)
 	v := 0.0
-	for _, s := range byKey {
-		v += s * s
+	for _, k := range keys {
+		v += byKey[k] * byKey[k]
 	}
 	for _, s := range ses {
 		v += s * s

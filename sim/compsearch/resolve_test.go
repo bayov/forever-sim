@@ -229,6 +229,12 @@ func TestResolveAssignments(t *testing.T) {
 	if pis != 2 {
 		t.Errorf("two Power Infusions, one by hand: got %d", pis)
 	}
+	// The automatic one is the other priest's, not the hand-set one's again.
+	for _, a := range res.Assignments {
+		if cd, ok := a.Job.(*proto.Assignment_Cooldown); ok && !a.SetByHand && cd.Cooldown.PowerInfusion && a.Holder != 2 {
+			t.Errorf("the automatic Power Infusion is held by slot %d, want 2", a.Holder)
+		}
+	}
 	// An assignment not set by hand is the resolver's to redo, and a cooldown from someone without it is refused.
 	res = Resolve(&proto.RaidComp{Size: 5, Slots: []*proto.CompSlot{slotOf(1, 0, 0, p, "mage__fire")},
 		Assignments: []*proto.Assignment{hand(1, &proto.Assignment{Job: &proto.Assignment_Cooldown{Cooldown: &proto.CooldownTarget{PowerInfusion: true, Target: 1}}})}})
@@ -340,6 +346,24 @@ func TestResolveNobodyProvides(t *testing.T) {
 	for _, want := range []string{"Judgement of Wisdom", "Curse of the Elements", "Battle Shout", "Sunder upkeep"} {
 		if !slices.ContainsFunc(res.Misses, func(s string) bool { return strings.Contains(s, want) }) {
 			t.Errorf("the misses should name %s: %v", want, res.Misses)
+		}
+	}
+}
+
+// Member values see a hand-built raid's parties as the resolver gives them: beside a DPS shaman, a
+// Restoration placeholder's party gets the DPS shaman's cast Mana Spring and the placeholder's Mana Tide.
+func TestCompValuesSeatsMatchTheResolver(t *testing.T) {
+	p := loadTestPool(t)
+	comp := &proto.RaidComp{Size: 5, Slots: []*proto.CompSlot{phSlot(1, 0, 0, proto.RaidPreset_RaidPresetRestorationShaman),
+		slotOf(2, 0, 1, p, "shaman__elemental-level60"), slotOf(3, 0, 2, p, "mage__fire")}}
+	sc := &Scenario{Pool: p, Faction: proto.Faction_Horde, Fight: Fight{Duration: 180}}
+	c, ids, err := compFromRaidComp(p, sc, comp)
+	if err != nil {
+		t.Fatal(err)
+	}
+	for _, m := range c.Members {
+		if ids[m] == 3 && m.Seat.Package != proto.RaidPackage_RaidPackageManaSpringTide {
+			t.Errorf("the mage's package is %v, want Mana Spring and Mana Tide", m.Seat.Package)
 		}
 	}
 }

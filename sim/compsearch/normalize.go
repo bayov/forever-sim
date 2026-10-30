@@ -3,6 +3,7 @@ package compsearch
 import (
 	_ "embed"
 	"encoding/json"
+	"fmt"
 	"sort"
 
 	"github.com/wowsims/classic/sim/core/proto"
@@ -38,6 +39,11 @@ const missing = proto.TristateEffect_TristateEffectMissing
 
 // Fields is every effect the drop table may drop.
 var Fields = []Field{
+	// The Sunder ramp (the tank's and the other warriors' pull Sunders): a caster can't read it, so its key
+	// doesn't change with the raid's warrior count.
+	{"sunder_ramp", func(r *proto.RaidSimRequest) { db(r).SunderRamp = nil }, func(r *proto.RaidSimRequest) {
+		db(r).SunderRamp = &proto.SunderRamp{Tank: true, PullSunders: 3}
+	}},
 	{"moonkin_aura", func(r *proto.RaidSimRequest) { rb(r).MoonkinAura = false }, func(r *proto.RaidSimRequest) { rb(r).MoonkinAura = true }},
 	{"leader_of_the_pack", func(r *proto.RaidSimRequest) { rb(r).LeaderOfThePack = false }, func(r *proto.RaidSimRequest) { rb(r).LeaderOfThePack = true }},
 	{"trueshot_aura", func(r *proto.RaidSimRequest) { rb(r).TrueshotAura = false }, func(r *proto.RaidSimRequest) { rb(r).TrueshotAura = true }},
@@ -99,7 +105,10 @@ var dropsJSON []byte
 // Drops is the static table: build id -> the fields it can't read.
 var Drops = func() map[string][]string {
 	m := map[string][]string{}
-	_ = json.Unmarshal(dropsJSON, &m)
+	// A bad table would drop nothing and the test of it would pass with nothing to check.
+	if err := json.Unmarshal(dropsJSON, &m); err != nil || len(m) == 0 {
+		panic(fmt.Sprintf("sim/compsearch/drops.json doesn't load: %v", err))
+	}
 	return m
 }()
 
