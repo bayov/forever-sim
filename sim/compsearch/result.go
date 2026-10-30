@@ -371,9 +371,28 @@ func (sc *Scenario) withMembers(c *Comp, members []*Member, ev *exactValuer) (*C
 			nc.Warriors++
 		}
 	}
+	// Each party's package from the givers still in the raid: its shaman placeholder, or a DPS shaman.
+	pkg := map[int]proto.RaidPackage{}
+	for i, ph := range r.Combo {
+		if ph.Shaman && ph.Package > pkg[c.PHParty[i]] {
+			pkg[c.PHParty[i]] = ph.Package
+		}
+	}
+	for _, m := range members {
+		if m.B.Class == proto.Class_ClassShaman && m.B.Pkg > pkg[m.Party] {
+			pkg[m.Party] = m.B.Pkg
+		}
+	}
 	for _, m := range members {
 		nm := *m
-		nm.Seat = nc.seat(m.B, m.Seat.Package, sc)
+		p := pkg[m.Party]
+		if m.B.Class == proto.Class_ClassShaman {
+			p = proto.RaidPackage_RaidPackageNone // a shaman casts its own Mana Spring, so it's never given one too
+		}
+		if !usesMana(m.B) {
+			p = m.Seat.Package // unread: keep the seat as it was
+		}
+		nm.Seat = nc.seat(m.B, p, sc)
 		nm.Seat.PI, nm.Seat.Innervate = m.Seat.PI, m.Seat.Innervate
 		nc.Members = append(nc.Members, &nm)
 	}

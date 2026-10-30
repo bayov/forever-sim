@@ -22,6 +22,7 @@ type Scenario struct {
 	Assumptions *proto.RaidAssumptions
 	// A health fight's length this pass (0 for a fixed fight): the boss's health over the raid's DPS.
 	HealthLength float64
+	BossHealth   float64
 	Abort        func() bool
 }
 
@@ -720,8 +721,8 @@ func (sc *Scenario) seatAndFill(r *Raid, p Plan, f *Fillers, val Valuer, base *C
 	}
 	for i, b := range forced {
 		pk := parties[memberParty[i]].pkg
-		if b.Class == proto.Class_ClassShaman && parties[memberParty[i]].giver {
-			pk = 0 // its own party's Mana Spring is its own cast
+		if b.Class == proto.Class_ClassShaman {
+			pk = 0 // a shaman casts its own Mana Spring, so it's never given one too
 		}
 		comp.Members = append(comp.Members, &Member{B: b, Party: memberParty[i], Seat: comp.seat(b, pk, sc),
 			Provider: i >= nFixed && i < nProv, Fixed: i < nFixed})

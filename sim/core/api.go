@@ -90,6 +90,11 @@ func RunRaidSimConcurrent(request *proto.RaidSimRequest) *proto.RaidSimResult {
 	return runSimConcurrent(request, nil, simsignals.CreateSignals())
 }
 
+// RunRaidSimConcurrentWithSignals is RunRaidSimConcurrent that stops when the signals' Abort triggers.
+func RunRaidSimConcurrentWithSignals(request *proto.RaidSimRequest, signals simsignals.Signals) *proto.RaidSimResult {
+	return runSimConcurrent(request, nil, signals)
+}
+
 // Threading does not work in WASM!
 func RunRaidSimConcurrentAsync(request *proto.RaidSimRequest, progress chan *proto.ProgressMetrics, requestId string) {
 	signals, err := simsignals.RegisterWithId(requestId)

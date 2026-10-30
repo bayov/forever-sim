@@ -102,20 +102,113 @@ func TestResolve(t *testing.T) {
 	if Resolve(bad).Error == nil {
 		t.Errorf("two slots in one place")
 	}
-	// With no warrior tank, a DPS warrior with a Battle Shout build holds it.
+	// With no warrior tank, a DPS warrior holds the biggest job it has a build for: Sunder, before Battle Shout.
 	comp2 := &proto.RaidComp{Size: 5, Slots: []*proto.CompSlot{slotOf(1, 0, 0, p, "warrior__fury"), slotOf(2, 0, 1, p, "mage__fire")}}
 	res2 := Resolve(comp2)
 	if res2.Error != nil {
 		t.Fatal(res2.Error.Message)
 	}
-	shouts := false
+	sunders := false
 	for _, a := range res2.Assignments {
-		if d, ok := a.Job.(*proto.Assignment_Duty); ok && d.Duty == proto.Duty_DutyBattleShout && a.Holder == 1 {
-			shouts = true
+		if d, ok := a.Job.(*proto.Assignment_Duty); ok && d.Duty == proto.Duty_DutySunderUpkeep && a.Holder == 1 {
+			sunders = true
 		}
 	}
-	if !shouts || res2.Request.Raid.Parties[0].Players[1].RaidBuffs.BattleShout != 0 {
-		t.Errorf("the warrior should cast Battle Shout, and nobody get it given")
+	if !sunders || res2.Request.Raid.Debuffs.SunderRamp != nil {
+		t.Errorf("the warrior should keep Sunder up itself, with no given ramp: %v", res2.Assignments)
+	}
+}
+
+func dutyOf(res *proto.RaidCompResolution, holder int32) proto.Duty {
+	for _, a := range res.Assignments {
+		if d, ok := a.Job.(*proto.Assignment_Duty); ok && a.Holder == holder {
+			return d.Duty
+		}
+	}
+	return proto.Duty_DutyNone
+}
+
+// The first audit's resolver findings, each as a case.
+func TestResolveAssignments(t *testing.T) {
+	p := loadTestPool(t)
+	hand := func(holder int32, job proto.Assignment) *proto.Assignment {
+		job.Holder, job.SetByHand = holder, true
+		return &job
+	}
+	// A shaman placeholder set by hand to Grace of Air only doesn't take the other's Strength of Earth.
+	res := Resolve(&proto.RaidComp{Size: 10, Slots: []*proto.CompSlot{
+		phSlot(1, 0, 0, proto.RaidPreset_RaidPresetRestorationShaman), phSlot(2, 1, 0, proto.RaidPreset_RaidPresetWardenShaman),
+		slotOf(3, 0, 1, p, "warrior__fury")},
+		Assignments: []*proto.Assignment{hand(2, proto.Assignment{Job: &proto.Assignment_Totem{Totem: &proto.TotemAssignment{Totem: proto.RaidTotem_RaidTotemGraceOfAir}}})}})
+	if res.Error != nil {
+		t.Fatal(res.Error.Message)
+	}
+	if res.Request.Raid.Parties[0].Players[0].RaidBuffs.StrengthOfEarthTotem == 0 {
+		t.Errorf("the Restoration shaman's Strength of Earth went missing")
+	}
+	// A paladin placeholder set by hand to Wisdom: the automatic one takes the Crusader.
+	res = Resolve(&proto.RaidComp{Size: 10, Slots: []*proto.CompSlot{
+		phSlot(1, 0, 0, proto.RaidPreset_RaidPresetHolyPaladin), phSlot(2, 0, 1, proto.RaidPreset_RaidPresetProtectionPaladin),
+		slotOf(3, 0, 2, p, "mage__fire")},
+		Assignments: []*proto.Assignment{hand(1, proto.Assignment{Job: &proto.Assignment_Judgement{Judgement: proto.PaladinJudgement_PaladinJudgementWisdom}})}})
+	if d := res.Request.Raid.Debuffs; !d.JudgementOfWisdom || d.JudgementOfTheCrusader == 0 {
+		t.Errorf("want Wisdom and the Crusader: %v", d)
+	}
+	// A Ret member set by hand to the Crusader runs its Crusader duty build.
+	res = Resolve(&proto.RaidComp{Size: 5, Slots: []*proto.CompSlot{slotOf(1, 0, 0, p, "paladin__level_60_sub_holy")},
+		Assignments: []*proto.Assignment{hand(1, proto.Assignment{Job: &proto.Assignment_Judgement{Judgement: proto.PaladinJudgement_PaladinJudgementCrusader}})}})
+	if res.Error != nil {
+		t.Fatal(res.Error.Message)
+	}
+	cast := false
+	for _, b := range res.Buffs {
+		if b.Effect == "Judgement of the Crusader" && !b.Given {
+			cast = true
+		}
+	}
+	if !cast || res.Request.Raid.Debuffs.JudgementOfTheCrusader != 0 {
+		t.Errorf("the Ret should cast the Crusader through its duty build: %v", res.Buffs)
+	}
+	// Power Infusion goes to a caster, not a hunter; its holder is the priest.
+	res = Resolve(&proto.RaidComp{Size: 10, Slots: []*proto.CompSlot{
+		phSlot(1, 0, 0, proto.RaidPreset_RaidPresetDisciplinePriest), slotOf(2, 0, 1, p, "hunter__marksmanship"), slotOf(3, 1, 0, p, "mage__fire")}})
+	for _, a := range res.Assignments {
+		if c, ok := a.Job.(*proto.Assignment_Cooldown); ok && c.Cooldown.PowerInfusion && (c.Cooldown.Target != 3 || a.Holder != 1) {
+			t.Errorf("Power Infusion: holder %d, target %d", a.Holder, c.Cooldown.Target)
+		}
+	}
+	// A Tallstrider hunter already fills the minor armor slot, so the Balance druid holds no Faerie Fire duty.
+	res = Resolve(&proto.RaidComp{Size: 5, Slots: []*proto.CompSlot{slotOf(1, 0, 0, p, "hunter__beast-mastery-tallstrider"), slotOf(2, 0, 1, p, "druid__balance")}})
+	if dutyOf(res, 2) != proto.Duty_DutyNone {
+		t.Errorf("the druid shouldn't hold Faerie Fire next to a Tallstrider")
+	}
+	// An assignment not set by hand is the resolver's to redo, and a cooldown from someone without it is refused.
+	res = Resolve(&proto.RaidComp{Size: 5, Slots: []*proto.CompSlot{slotOf(1, 0, 0, p, "mage__fire")},
+		Assignments: []*proto.Assignment{hand(1, proto.Assignment{Job: &proto.Assignment_Cooldown{Cooldown: &proto.CooldownTarget{PowerInfusion: true, Target: 1}}})}})
+	if res.Error == nil {
+		t.Errorf("a mage can't give Power Infusion")
+	}
+}
+
+// The confirmation raid sims the variant it scored: a Tallstrider hunter keeps its Tallstrider.
+func TestCompOfKeepsVariants(t *testing.T) {
+	p := loadTestPool(t)
+	sim, _ := NewSimmer(p, "")
+	sc := &Scenario{Pool: p, Sim: sim, Faction: proto.Faction_Horde, Fight: Fight{Duration: 60, FlaskZone: true}}
+	b := p.Builds["hunter__beast-mastery-tallstrider"]
+	r := NewRaid(5, []*Preset{PresetByID(proto.RaidPreset_RaidPresetProtectionWarrior)}, nil)
+	c := &Comp{Raid: r, PHParty: []int{0}, Plan: Plan{Up: r.phUp(Plan{}) | b.Gives}, Members: []*Member{{B: b}}}
+	rc, err := sc.compOf(c, 10, 1)
+	if err != nil {
+		t.Fatal(err)
+	}
+	res := Resolve(rc)
+	if res.Error != nil {
+		t.Fatal(res.Error.Message)
+	}
+	pl := res.Request.Raid.Parties[0].Players[0]
+	if pl.GetHunter().GetOptions().GetPetType() != proto.Hunter_Options_Tallstrider || rc.Slots[1].ReportId != b.ID {
+		t.Errorf("the confirmation runs %v as %s", pl.GetHunter().GetOptions().GetPetType(), rc.Slots[1].ReportId)
 	}
 }
 

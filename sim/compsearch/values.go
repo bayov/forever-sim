@@ -83,7 +83,7 @@ func compFromRaidComp(pool *Pool, sc *Scenario, comp *proto.RaidComp) (*Comp, ma
 			if ph == sh {
 				if t, ok := air[phIDs[i]]; ok {
 					p.PHAir = append(p.PHAir, t)
-					air[phIDs[i]] = proto.RaidTotem_RaidTotemNone
+					delete(air, phIDs[i])
 					break
 				}
 			}
@@ -108,11 +108,16 @@ func compFromRaidComp(pool *Pool, sc *Scenario, comp *proto.RaidComp) (*Comp, ma
 		if !ok {
 			return nil, nil, fmt.Errorf("slot %d isn't a report build (%q), so it has no single-player sims", s.Id, s.ReportId)
 		}
-		b = b.Base.ForBoss(sc.Fight.MobType)
+		// A base build runs its encounter variant against this boss; a pet or encounter variant is its own.
+		if b.IsBase() {
+			b = b.ForBoss(sc.Fight.MobType)
+		}
 		if d := duty[s.Id]; d != proto.Duty_DutyNone {
-			if v := b.Base.WithDuty(d); v != nil {
-				b = v
+			v := b.Base.WithDuty(d)
+			if v == nil {
+				return nil, nil, fmt.Errorf("slot %d (%s) has no %s build", s.Id, b.ID, dutyLabel(d))
 			}
+			b = v
 		}
 		m := &Member{B: b, Party: int(s.Party)}
 		m.Seat.PI, m.Seat.Innervate = pi[s.Id], inn[s.Id]
@@ -143,8 +148,8 @@ func compFromRaidComp(pool *Pool, sc *Scenario, comp *proto.RaidComp) (*Comp, ma
 	c.Plan = p
 	for _, m := range c.Members {
 		pkg := partyPkg[int32(m.Party)]
-		if m.B.Class == proto.Class_ClassShaman && pkg == m.B.Pkg {
-			pkg = proto.RaidPackage_RaidPackageNone // its own Mana Spring is its own cast
+		if m.B.Class == proto.Class_ClassShaman {
+			pkg = proto.RaidPackage_RaidPackageNone // a shaman casts its own Mana Spring, so it's never given one too
 		}
 		pi, in := m.Seat.PI, m.Seat.Innervate
 		m.Seat = c.seat(m.B, pkg, sc)

@@ -5,9 +5,11 @@ import (
 	"math"
 	"sort"
 	"strings"
+	"time"
 
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
+	"github.com/wowsims/classic/sim/core/simsignals"
 	googleProto "google.golang.org/protobuf/proto"
 )
 
@@ -119,8 +121,7 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 				m.gives |= GiftBlessing
 			}
 			if p.Shaman {
-				m.gives |= GiftSoE | GiftFT
-				m.pkg = p.Package
+				m.pkg = p.Package // its totems come from its choices below
 			}
 			m.inn = p.Innervate || (p.InnervateOptional && s.PresetInnervate)
 		case *proto.CompSlot_Build:
@@ -131,6 +132,9 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 			m.player = m.base
 			m.class = m.base.Class
 			for _, d := range x.Build.Duties {
+				if d.GetPlayer() == nil {
+					return nil, fmt.Errorf("slot %d's %s build has no player", s.Id, dutyLabel(d.Duty))
+				}
 				m.duties[d.Duty] = d.Player
 			}
 			m.gives, m.pkg, m.casts = PlayerGifts(m.base, proto.Duty_DutyNone)
@@ -173,6 +177,10 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 	handBless := map[int32]map[proto.Class]bool{}
 	handCD := map[bool]bool{}
 	for _, a := range comp.Assignments {
+		// An assignment not set by hand is the resolver's to make again.
+		if !a.SetByHand {
+			continue
+		}
 		m, ok := ids[a.Holder]
 		if !ok {
 			return nil, fmt.Errorf("an assignment's holder %d isn't in the raid", a.Holder)
@@ -195,9 +203,29 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 			if m.class != proto.Class_ClassPaladin {
 				return nil, fmt.Errorf("%s isn't a paladin", m.name())
 			}
+			if m.preset == nil {
+				// A Ret member judges through its duty build.
+				d := proto.Duty_DutyJudgementOfWisdom
+				if j.Judgement == proto.PaladinJudgement_PaladinJudgementCrusader {
+					d = proto.Duty_DutyJudgementOfTheCrusader
+				}
+				p, ok := m.duties[d]
+				if !ok {
+					return nil, fmt.Errorf("%s has no %s build", m.name(), dutyLabel(d))
+				}
+				if m.duty != proto.Duty_DutyNone && m.duty != d {
+					return nil, fmt.Errorf("%s holds two duties", m.name())
+				}
+				m.duty, m.player = d, p
+				handDuty[d] = true
+				break
+			}
 			m.judge = j.Judgement
 			handJudge[a.Holder] = true
 		case *proto.Assignment_Blessing:
+			if j.Blessing == nil {
+				return nil, fmt.Errorf("a blessing assignment for %s names no blessing", m.name())
+			}
 			if m.class != proto.Class_ClassPaladin {
 				return nil, fmt.Errorf("%s isn't a paladin", m.name())
 			}
@@ -207,6 +235,9 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 			}
 			handBless[a.Holder][j.Blessing.Class] = true
 		case *proto.Assignment_Totem:
+			if j.Totem == nil {
+				return nil, fmt.Errorf("a totem assignment for %s names no totem", m.name())
+			}
 			if m.preset == nil || !m.preset.Shaman {
 				return nil, fmt.Errorf("%s isn't a shaman placeholder (a DPS shaman drops its build's totems)", m.name())
 			}
@@ -216,6 +247,12 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 			m.totems[j.Totem.Totem] = true
 			handTotem[a.Holder][j.Totem.Totem] = true
 		case *proto.Assignment_Cooldown:
+			if j.Cooldown == nil {
+				return nil, fmt.Errorf("a cooldown assignment for %s names no target", m.name())
+			}
+			if m.preset == nil || (j.Cooldown.PowerInfusion && !m.preset.PI) || (!j.Cooldown.PowerInfusion && !m.inn) {
+				return nil, fmt.Errorf("%s has no %s to give", m.name(), map[bool]string{true: "Power Infusion", false: "Innervate"}[j.Cooldown.PowerInfusion])
+			}
 			t, ok := ids[j.Cooldown.Target]
 			if !ok || t.preset != nil {
 				return nil, fmt.Errorf("a cooldown's target %d isn't a DPS member", j.Cooldown.Target)
@@ -235,11 +272,19 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 	for _, m := range phs {
 		phUp |= m.gives
 	}
-	// Duties no placeholder covers go to the first DPS member with that duty's build.
-	for _, d := range []proto.Duty{proto.Duty_DutyBattleShout, proto.Duty_DutySunderUpkeep, proto.Duty_DutyFaerieFire,
+	// What the DPS members give without a duty, and with the ones set by hand.
+	dpsUp := Gift(0)
+	for _, m := range dps {
+		if m.duty != proto.Duty_DutyNone {
+			m.gives, m.pkg, m.casts = PlayerGifts(m.player, m.duty)
+		}
+		dpsUp |= m.gives
+	}
+	// Duties nobody covers go to the first DPS member with that duty's build, the biggest first.
+	for _, d := range []proto.Duty{proto.Duty_DutySunderUpkeep, proto.Duty_DutyBattleShout, proto.Duty_DutyFaerieFire,
 		proto.Duty_DutyCurseOfTheElements, proto.Duty_DutyJudgementOfTheCrusader} {
 		g := DutyGift(d)
-		if handDuty[d] || phUp.Has(g) || (g == GiftCrusader && len(paladinPHs(paladins)) > 0) {
+		if handDuty[d] || (phUp|dpsUp).Has(g) || (g == GiftCrusader && len(paladinPHs(paladins)) > 0) {
 			continue
 		}
 		if d == proto.Duty_DutyFaerieFire && handDuty[proto.Duty_DutyCurseOfRecklessness] {
@@ -248,41 +293,35 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 		for _, m := range dps {
 			if p, ok := m.duties[d]; ok && m.duty == proto.Duty_DutyNone {
 				m.duty, m.player = d, p
+				m.gives, m.pkg, m.casts = PlayerGifts(m.player, m.duty)
+				dpsUp |= m.gives
 				out = append(out, &proto.Assignment{Holder: m.slot.Id, Job: &proto.Assignment_Duty{Duty: d}})
 				break
 			}
 		}
 	}
-	for _, m := range dps {
-		if m.duty != proto.Duty_DutyNone {
-			m.gives, m.pkg, m.casts = PlayerGifts(m.player, m.duty)
-		}
-	}
-
-	// Judgements: the paladin placeholders judge Wisdom, the second one the Crusader, unless a Ret
-	// member holds the Crusader duty.
-	crusader := false
-	for _, m := range dps {
-		if m.duty == proto.Duty_DutyJudgementOfTheCrusader {
-			crusader = true
-		}
-	}
+	// Judgements: each paladin placeholder on auto takes the judgement nobody keeps up yet, Wisdom first.
+	crusader, wisdom := dpsUp.Has(GiftCrusader), dpsUp.Has(GiftJoW)
 	for _, m := range paladinPHs(paladins) {
-		if m.judge == proto.PaladinJudgement_PaladinJudgementCrusader {
+		switch m.judge {
+		case proto.PaladinJudgement_PaladinJudgementCrusader:
 			crusader = true
+		case proto.PaladinJudgement_PaladinJudgementWisdom:
+			wisdom = true
 		}
 	}
-	nth := 0
 	for _, m := range paladinPHs(paladins) {
 		if handJudge[m.slot.Id] {
 			continue
 		}
-		m.judge = proto.PaladinJudgement_PaladinJudgementWisdom
-		if nth == 1 && !crusader {
-			m.judge = proto.PaladinJudgement_PaladinJudgementCrusader
-			crusader = true
+		switch {
+		case !wisdom:
+			m.judge, wisdom = proto.PaladinJudgement_PaladinJudgementWisdom, true
+		case !crusader:
+			m.judge, crusader = proto.PaladinJudgement_PaladinJudgementCrusader, true
+		default:
+			m.judge = proto.PaladinJudgement_PaladinJudgementWisdom
 		}
-		nth++
 		out = append(out, &proto.Assignment{Holder: m.slot.Id, Job: &proto.Assignment_Judgement{Judgement: m.judge}})
 	}
 
@@ -298,7 +337,7 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 				given[b] = true
 			}
 		}
-		order := blessingOrder(cl)
+		order := blessingOrderFor(cl, dps)
 		for _, p := range paladins {
 			if handBless[p.slot.Id][cl] {
 				continue
@@ -323,7 +362,7 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 		}
 	}
 	air := proto.RaidTotem_RaidTotemGraceOfAir
-	if 2*melee > len(dps) {
+	if 2*melee > len(dps) && !dpsUp.Has(GiftWF) {
 		air = proto.RaidTotem_RaidTotemWindfury
 	}
 	for _, m := range phShamans {
@@ -342,28 +381,28 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 	}
 
 	// Power Infusion and Innervate: the placeholders' go to the first casters and mana users.
-	nPI, nInn := 0, 0
+	var piGivers, innGivers []int32
 	for _, m := range phs {
 		if m.preset.PI {
-			nPI++
+			piGivers = append(piGivers, m.slot.Id)
 		}
 		if m.inn {
-			nInn++
+			innGivers = append(innGivers, m.slot.Id)
 		}
 	}
 	for _, cd := range []struct {
-		pi bool
-		n  int
-	}{{true, nPI}, {false, nInn}} {
+		pi     bool
+		givers []int32
+	}{{true, piGivers}, {false, innGivers}} {
 		if handCD[cd.pi] {
 			continue
 		}
-		left := cd.n
+		left := len(cd.givers)
 		for _, m := range dps {
 			if left == 0 {
 				break
 			}
-			if !usesManaPlayer(m.player) || (cd.pi && isMelee(m)) || (cd.pi && m.pi) || (!cd.pi && m.inn) {
+			if !usesManaPlayer(m.player) || (cd.pi && !isCaster(m)) || (cd.pi && m.pi) || (!cd.pi && m.inn) {
 				continue
 			}
 			if cd.pi {
@@ -372,7 +411,7 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 				m.inn = true
 			}
 			left--
-			out = append(out, &proto.Assignment{Holder: m.slot.Id, Job: &proto.Assignment_Cooldown{Cooldown: &proto.CooldownTarget{PowerInfusion: cd.pi, Target: m.slot.Id}}})
+			out = append(out, &proto.Assignment{Holder: cd.givers[left], Job: &proto.Assignment_Cooldown{Cooldown: &proto.CooldownTarget{PowerInfusion: cd.pi, Target: m.slot.Id}}})
 		}
 	}
 
@@ -386,17 +425,12 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 		case proto.PaladinJudgement_PaladinJudgementWisdom:
 			up |= GiftJoW
 		}
-		if m.totems[proto.RaidTotem_RaidTotemGraceOfAir] {
-			up |= GiftGoA
-		}
-		if m.totems[proto.RaidTotem_RaidTotemWindfury] {
-			up |= GiftWF
-		}
-		if !m.totems[proto.RaidTotem_RaidTotemStrengthOfEarth] && m.preset.Shaman && handTotem[m.slot.Id] != nil {
-			up &^= GiftSoE
-		}
-		if !m.totems[proto.RaidTotem_RaidTotemFlametongue] && m.preset.Shaman && handTotem[m.slot.Id] != nil {
-			up &^= GiftFT
+		for t, g := range map[proto.RaidTotem]Gift{proto.RaidTotem_RaidTotemStrengthOfEarth: GiftSoE, proto.RaidTotem_RaidTotemGraceOfAir: GiftGoA,
+			proto.RaidTotem_RaidTotemWindfury: GiftWF, proto.RaidTotem_RaidTotemFlametongue: GiftFT} {
+			if m.totems[t] {
+				up |= g
+				m.gives |= g // for the records
+			}
 		}
 	}
 	cast := Gift(0) // effects some member casts in the fight, so nobody gets them given
@@ -407,7 +441,7 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 
 	// The raid's given debuffs: what the placeholders keep up. Members' duties cast theirs.
 	debuffs := &proto.Debuffs{}
-	if phUp.Has(GiftSunderTank) {
+	if phUp.Has(GiftSunderTank) && !cast.Has(GiftSunderTank) {
 		debuffs.SunderRamp = &proto.SunderRamp{Tank: true}
 	}
 	debuffs.FaerieFire = up.Has(GiftMinorArmor) && !cast.Has(GiftMinorArmor)
@@ -446,7 +480,11 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 		}
 	}
 	for _, m := range dps {
-		seat := Seat{Up: up &^ cast, Blessings: blessings[m.class], Package: partyPkg[m.slot.Party], PI: m.pi,
+		pkg := partyPkg[m.slot.Party]
+		if m.class == proto.Class_ClassShaman {
+			pkg = proto.RaidPackage_RaidPackageNone // it casts its own Mana Spring: never given and cast
+		}
+		seat := Seat{Up: up &^ cast, Blessings: blessings[m.class], Package: pkg, PI: m.pi,
 			Innervate: m.inn, Camps: comp.CampBuffs, Own: 0, Assumptions: comp.Assumptions}
 		tmp := &proto.RaidSimRequest{Raid: &proto.Raid{Parties: []*proto.Party{{Players: []*proto.Player{{}}}}}}
 		seat.Write(tmp, &Build{Class: m.class, Spec: specOf(m.player)})
@@ -479,6 +517,37 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 	res.Assignments = out
 	res.Buffs, res.Misses = resolutionRecords(up, cast, phs, dps, blessings, partyPkg)
 	return res, nil
+}
+
+// isCaster is a member Power Infusion's 20% magic damage is for.
+func isCaster(m *member) bool {
+	switch m.class {
+	case proto.Class_ClassMage, proto.Class_ClassWarlock, proto.Class_ClassPriest:
+		return true
+	case proto.Class_ClassDruid:
+		return m.player.GetBalanceDruid() != nil
+	case proto.Class_ClassShaman:
+		return m.player.GetElementalShaman() != nil
+	}
+	return false
+}
+
+// blessingOrderFor is what a class's members want first: Kings, then Might when most of them are melee,
+// else Wisdom.
+func blessingOrderFor(c proto.Class, dps []*member) []proto.Blessing {
+	melee, n := 0, 0
+	for _, m := range dps {
+		if m.class == c {
+			n++
+			if isMelee(m) {
+				melee++
+			}
+		}
+	}
+	if 2*melee > n {
+		return []proto.Blessing{proto.Blessing_BlessingKings, proto.Blessing_BlessingMight, proto.Blessing_BlessingWisdom}
+	}
+	return []proto.Blessing{proto.Blessing_BlessingKings, proto.Blessing_BlessingWisdom, proto.Blessing_BlessingMight}
 }
 
 func phPaladinsFirst(pals []*member) []*member {
@@ -597,12 +666,37 @@ func resolutionRecords(up, cast Gift, phs, dps []*member, blessings map[proto.Cl
 
 // RunComp resolves a comp and runs its raid sim.
 func RunComp(comp *proto.RaidComp) *proto.RaidCompRunResult {
+	return runComp(comp, nil)
+}
+
+// runComp is RunComp that stops once abort says so.
+func runComp(comp *proto.RaidComp, abort func() bool) *proto.RaidCompRunResult {
 	res := Resolve(comp)
 	out := &proto.RaidCompRunResult{Resolution: res}
 	if res.Error != nil {
 		return out
 	}
-	out.Result = core.RunRaidSimConcurrent(res.Request)
+	signals := simsignals.CreateSignals()
+	done := make(chan struct{})
+	if abort != nil {
+		go func() {
+			t := time.NewTicker(200 * time.Millisecond)
+			defer t.Stop()
+			for {
+				select {
+				case <-done:
+					return
+				case <-t.C:
+					if abort() {
+						signals.Abort.Trigger()
+						return
+					}
+				}
+			}
+		}()
+	}
+	out.Result = core.RunRaidSimConcurrentWithSignals(res.Request, signals)
+	close(done)
 	return out
 }
 
@@ -610,9 +704,20 @@ func RunComp(comp *proto.RaidComp) *proto.RaidCompRunResult {
 // every choice set by hand to the search's.
 func (sc *Scenario) compOf(c *Comp, iterations int32, seed int64) (*proto.RaidComp, error) {
 	rc := &proto.RaidComp{Size: int32(c.Raid.Size), Faction: sc.Faction, CampBuffs: sc.Camps, Assumptions: sc.Assumptions,
-		SimOptions: &proto.SimOptions{Iterations: iterations, RandomSeed: seed}}
+		SimOptions: &proto.SimOptions{Iterations: iterations, RandomSeed: seed, UseLabeledRands: sc.Sim.Labeled}}
 	enc := cloneReq(sc.Pool.Bases[0].Req).Encounter
 	enc.Duration = sc.Fight.Duration
+	if sc.HealthLength > 0 {
+		// A health fight's confirmation runs the real fight: the boss dies at its health.
+		enc.Duration = sc.HealthLength
+		enc.UseHealth = true
+		for _, t := range enc.Targets {
+			for len(t.Stats) <= int(proto.Stat_StatHealth) {
+				t.Stats = append(t.Stats, 0)
+			}
+			t.Stats[proto.Stat_StatHealth] = sc.BossHealth
+		}
+	}
 	enc.DurationVariation = sc.Fight.DurationVariation
 	enc.NaturalFlaskZone = sc.Fight.FlaskZone
 	if sc.Fight.MobType != proto.MobType_MobTypeUnknown {
@@ -631,13 +736,19 @@ func (sc *Scenario) compOf(c *Comp, iterations int32, seed int64) (*proto.RaidCo
 		id++
 		return int32(party), next[party] - 1, nil
 	}
-	var pals []int32
+	var pals, piGivers, innGivers []int32
 	for i, ph := range c.Raid.Combo {
 		party, idx, err := place(c.PHParty[i])
 		if err != nil {
 			return nil, err
 		}
 		rc.Slots = append(rc.Slots, &proto.CompSlot{Id: id, Party: party, Index: idx, Role: ph.Role, Member: &proto.CompSlot_Placeholder{Placeholder: ph.ID}})
+		if ph.PI {
+			piGivers = append(piGivers, id)
+		}
+		if ph.Innervate {
+			innGivers = append(innGivers, id)
+		}
 		if ph.Paladin {
 			pals = append(pals, id)
 			j := proto.PaladinJudgement_PaladinJudgementWisdom
@@ -662,7 +773,13 @@ func (sc *Scenario) compOf(c *Comp, iterations int32, seed int64) (*proto.RaidCo
 		if err != nil {
 			return nil, err
 		}
-		base, err := sc.Pool.Player(m.B.Base, sc.Faction)
+		// The build it was scored as: a pet or encounter variant is its own build; a duty holder's base is
+		// the build it was a variant of, against this boss.
+		baseBuild := m.B
+		if m.B.Duty != proto.Duty_DutyNone {
+			baseBuild = m.B.Base.ForBoss(sc.Fight.MobType)
+		}
+		base, err := sc.Pool.Player(baseBuild, sc.Faction)
 		if err != nil {
 			return nil, err
 		}
@@ -679,13 +796,15 @@ func (sc *Scenario) compOf(c *Comp, iterations int32, seed int64) (*proto.RaidCo
 			pals = append(pals, id)
 		}
 		rc.Slots = append(rc.Slots, &proto.CompSlot{Id: id, Party: party, Index: idx, Role: proto.RaidRole_RaidRoleDps,
-			Member: &proto.CompSlot_Build{Build: mb}, ReportId: m.B.Base.ID, Name: fmt.Sprintf("%s %d", m.B.Base.ID, id)})
+			Member: &proto.CompSlot_Build{Build: mb}, ReportId: baseBuild.ID, Name: fmt.Sprintf("%s %d", baseBuild.ID, id)})
 		memberID[m] = id
-		if m.Seat.PI {
-			rc.Assignments = append(rc.Assignments, &proto.Assignment{Holder: id, SetByHand: true, Job: &proto.Assignment_Cooldown{Cooldown: &proto.CooldownTarget{PowerInfusion: true, Target: id}}})
+		if m.Seat.PI && len(piGivers) > 0 {
+			rc.Assignments = append(rc.Assignments, &proto.Assignment{Holder: piGivers[0], SetByHand: true, Job: &proto.Assignment_Cooldown{Cooldown: &proto.CooldownTarget{PowerInfusion: true, Target: id}}})
+			piGivers = piGivers[1:]
 		}
-		if m.Seat.Innervate {
-			rc.Assignments = append(rc.Assignments, &proto.Assignment{Holder: id, SetByHand: true, Job: &proto.Assignment_Cooldown{Cooldown: &proto.CooldownTarget{Target: id}}})
+		if m.Seat.Innervate && len(innGivers) > 0 {
+			rc.Assignments = append(rc.Assignments, &proto.Assignment{Holder: innGivers[0], SetByHand: true, Job: &proto.Assignment_Cooldown{Cooldown: &proto.CooldownTarget{Target: id}}})
+			innGivers = innGivers[1:]
 		}
 	}
 	// The blessings each class got, one per paladin.
@@ -707,7 +826,10 @@ func (sc *Scenario) confirm(c *Comp, iterations int32, seed int64) (float64, flo
 	if err != nil {
 		return 0, 0, err
 	}
-	run := RunComp(rc)
+	run := runComp(rc, sc.Abort)
+	if sc.Abort != nil && sc.Abort() {
+		return 0, 0, ErrAborted
+	}
 	if run.Resolution.Error != nil {
 		return 0, 0, fmt.Errorf("%s", run.Resolution.Error.Message)
 	}

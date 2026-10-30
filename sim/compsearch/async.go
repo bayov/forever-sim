@@ -2,6 +2,8 @@ package compsearch
 
 import (
 	"errors"
+	"fmt"
+	"runtime/debug"
 	"os"
 	"path/filepath"
 	"sync"
@@ -71,11 +73,18 @@ func SearchAsync(req *proto.CompSearchRequest, progress chan *proto.ProgressMetr
 	}
 	go func() {
 		defer simsignals.UnregisterId(requestId)
+		// A panic ends this search with an error, not the server.
+		defer func() {
+			if r := recover(); r != nil {
+				fail(fmt.Errorf("the search failed: %v\n%s", r, debug.Stack()))
+			}
+		}()
 		pool, sim, err := serverSearch()
 		if err != nil {
 			fail(err)
 			return
 		}
+		run0 := sim.Run.Load()
 		var mu sync.Mutex
 		latest := &proto.ProgressMetrics{CompSearchPhase: "starting"}
 		done := make(chan struct{})
@@ -93,7 +102,7 @@ func SearchAsync(req *proto.CompSearchRequest, progress chan *proto.ProgressMetr
 					mu.Lock()
 					p := googleProto.Clone(latest).(*proto.ProgressMetrics)
 					mu.Unlock()
-					p.CompletedSims = int32(sim.Run.Load())
+					p.CompletedSims = int32(sim.Run.Load() - run0)
 					progress <- p
 				}
 			}

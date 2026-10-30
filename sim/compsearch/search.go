@@ -136,6 +136,7 @@ func (sc *Scenario) runHealth(req *proto.CompSearchRequest, fixed []*Build, prog
 		return nil, fmt.Errorf("a health fight needs the boss's health")
 	}
 	L := req.Encounter.Duration
+	sc.BossHealth = health
 	var out *proto.CompScenarioResult
 	for pass := 0; pass < 4; pass++ {
 		sc.HealthLength = L
@@ -649,6 +650,9 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 			}
 		}
 		for _, c := range sets {
+			if sc.Abort != nil && sc.Abort() {
+				return nil, ErrAborted
+			}
 			d, se, err := sc.confirm(c, req.ConfirmIterations, sc.Seed)
 			if err != nil {
 				return nil, err
