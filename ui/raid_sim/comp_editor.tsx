@@ -355,6 +355,11 @@ export class CompEditor {
 		this.valuesAbort?.abort();
 		this.valuesHost.replaceChildren();
 		this.renderResults();
+		// The sidebar's raid DPS and Raid results were the run's too.
+		if (this.simUI.resultsManager.getRunData()) {
+			this.simUI.resultsManager.clearSimResult(TypedEvent.nextEventID());
+			this.simUI.resultsViewer.hideAll();
+		}
 	}
 
 	// The last run, while it's of the raid as it stands.

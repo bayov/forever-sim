@@ -94,7 +94,7 @@ export const errorStatus = (prefix: string, message: string | undefined): HTMLEl
 	let summary = lines[0].trim();
 	let details = lines.slice(1).join('\n').trim();
 	// A one-line error that carries a trace ("...: goroutine 1 [running]: ...") keeps only its message up front.
-	const trace = summary.search(/\s(goroutine \d+ \[|panic:|runtime error:|\tat |github\.com\/)/);
+	const trace = summary.search(/\s(goroutine \d+ \[|\tat |github\.com\/)/);
 	if (trace > 0) {
 		details = `${summary.slice(trace).trim()}\n${details}`.trim();
 		summary = summary.slice(0, trace).replace(/[:\s]+$/, '');
