@@ -132,6 +132,7 @@ type Member struct {
 	Seat     Seat
 	DPS      float64
 	SE       float64
+	TPS      float64
 	key      string
 	Provider bool
 	Fixed    bool
@@ -246,8 +247,10 @@ func (sc *Scenario) Fill(r *Raid, p Plan, f *Fillers, val Valuer) *Comp {
 		if comp == nil {
 			return nil
 		}
-		// Each class takes the blessings its members gain most from, summed.
+		// Each class takes the blessings its members gain most from, summed, for the next round. The comp
+		// keeps the blessings it was scored under.
 		changed := false
+		next := copyBlessings(comp.Blessings)
 		if len(choices) > 1 {
 			for _, cl := range classes {
 				var ms []*Member
@@ -273,8 +276,8 @@ func (sc *Scenario) Fill(r *Raid, p Plan, f *Fillers, val Valuer) *Comp {
 						bestCh, bestV = ch, v
 					}
 				}
-				if !slices.Equal(bestCh, comp.Blessings[cl]) {
-					comp.Blessings[cl] = bestCh
+				if !slices.Equal(bestCh, next[cl]) {
+					next[cl] = bestCh
 					changed = true
 				}
 			}
@@ -285,7 +288,7 @@ func (sc *Scenario) Fill(r *Raid, p Plan, f *Fillers, val Valuer) *Comp {
 		if !changed {
 			break
 		}
-		c.Blessings = comp.Blessings
+		c.Blessings = next
 	}
 	return best
 }
@@ -352,8 +355,19 @@ func (sc *Scenario) rescore(c *Comp, val Valuer) {
 		m.Seat = c.seat(m.B, m.Seat.Package, sc)
 		m.Seat.PI, m.Seat.Innervate = pi, inn
 		m.DPS, m.SE, m.key = val.V(m.B, m.Seat)
+		m.TPS = tpsOf(val, m.B, m.Seat)
 	}
 	c.sum()
+}
+
+// tpsOf is a member's threat per second, from its sim when the valuer has one.
+func tpsOf(val Valuer, b *Build, s Seat) float64 {
+	if ev, ok := val.(*exactValuer); ok {
+		if j, ok := ev.vals[askKey(b, s)+fmt.Sprint(ev.sc.Fight.Duration)]; ok && j.Value != nil {
+			return j.Value.TPS
+		}
+	}
+	return 0
 }
 
 // sum is the comp's score: the members' DPS, and its standard error. Copies of one build in one seat are
@@ -392,7 +406,8 @@ func (sc *Scenario) fillWithWarriors(r *Raid, p Plan, f *Fillers, val Valuer, bl
 	var fill0 *Build
 	fill0V := math.Inf(-1)
 	for _, b := range f.Fill {
-		if !allowed(b, p) || (b.Class == proto.Class_ClassPaladin && !retFill) {
+		// Shamans fill only as package givers (below), so the filler a provider displaces isn't one.
+		if !allowed(b, p) || (b.Class == proto.Class_ClassPaladin && !retFill) || b.Class == proto.Class_ClassShaman {
 			continue
 		}
 		if v := v0(b); v > fill0V {
@@ -473,7 +488,7 @@ func (sc *Scenario) fillWithWarriors(r *Raid, p Plan, f *Fillers, val Valuer, bl
 		return bestC, bestSel
 	}
 	c, providers := solve(need, retNeed)
-	if math.IsInf(c, 1) {
+	if math.IsInf(c, 1) || len(providers) > slots {
 		return nil
 	}
 
@@ -743,6 +758,7 @@ func (sc *Scenario) seatAndFill(r *Raid, p Plan, f *Fillers, val Valuer, base *C
 	sc.assignCooldowns(comp, val)
 	for _, m := range comp.Members {
 		m.DPS, m.SE, m.key = val.V(m.B, m.Seat)
+		m.TPS = tpsOf(val, m.B, m.Seat)
 	}
 	comp.sum()
 	return comp

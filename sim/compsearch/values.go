@@ -223,16 +223,6 @@ func compValues(pool *Pool, sim *Simmer, comp *proto.RaidComp) (*proto.CompValue
 			return nil, err
 		}
 		mv.Slots = []int32{ids[c.Members[i]]}
-		if m.B.Duty != proto.Duty_DutyNone {
-			s := m.Seat
-			s.Own = m.B.Base.Casts
-			v, _, _ := ev.V(m.B.Base, s)
-			if _, err := ev.flush(); err != nil {
-				return nil, err
-			}
-			v, _, _ = ev.V(m.B.Base, s)
-			mv.DutyCost = v - m.DPS
-		}
 		byKey[k] = mv
 		out.MemberValues = append(out.MemberValues, mv)
 	}

@@ -30,17 +30,34 @@ func DropKey(id string, camps bool) string {
 	return id
 }
 
+// dropVariant is one more way a drop must hold: a faction (its race's own rotation), a fight length (0
+// for the request's own 180 ± 20 s) and a seed. The cache uses the table at every length, so it must hold
+// at the short, long and very long ones too (an Enhancement shaman's own 5-minute totems run out).
+type dropVariant struct {
+	faction  proto.Faction
+	duration float64
+	seed     int64
+}
+
+func dropVariants(seed int64) []dropVariant {
+	return []dropVariant{{proto.Faction_Horde, 0, seed}, {proto.Faction_Horde, 0, seed + 4}, {proto.Faction_Alliance, 0, seed},
+		{proto.Faction_Horde, 120, seed}, {proto.Faction_Horde, 300, seed}, {proto.Faction_Horde, 420, seed}}
+}
+
 // dropRequest is a build's request in a seat, before any normalization.
-func dropRequest(p *Pool, b *Build, seat Seat, iterations int32, seed int64) (*proto.RaidSimRequest, error) {
+func dropRequest(p *Pool, b *Build, seat Seat, iterations int32, v dropVariant) (*proto.RaidSimRequest, error) {
 	req := googleProto.Clone(b.Req).(*proto.RaidSimRequest)
-	player, err := p.Player(b, proto.Faction_Horde)
+	player, err := p.Player(b, v.faction)
 	if err != nil {
 		return nil, err
 	}
 	req.Raid.Parties[0].Players[0] = player
 	seat.Own = b.Casts
 	seat.Write(req, b)
-	req.SimOptions = &proto.SimOptions{Iterations: iterations, RandomSeed: seed, UseLabeledRands: true}
+	if v.duration > 0 {
+		req.Encounter.Duration, req.Encounter.DurationVariation = v.duration, 0
+	}
+	req.SimOptions = &proto.SimOptions{Iterations: iterations, RandomSeed: v.seed, UseLabeledRands: true}
 	return req, nil
 }
 
@@ -69,24 +86,31 @@ func dpsOf(req *proto.RaidSimRequest) (float64, error) {
 // unread is whether the build's result is bit-identical with the fields set and with them cleared, in
 // every context.
 func unread(p *Pool, b *Build, camps bool, fields []string, iterations int32, seed int64) (bool, error) {
-	for _, seat := range dropContexts(camps) {
-		req, err := dropRequest(p, b, seat, iterations, seed)
-		if err != nil {
-			return false, err
-		}
-		on, err := dpsOf(withFields(req, fields, true))
-		if err != nil {
-			return false, err
-		}
-		off, err := dpsOf(withFields(req, fields, false))
-		if err != nil {
-			return false, err
-		}
-		if math.Float64bits(on) != math.Float64bits(off) {
-			return false, nil
+	for _, v := range dropVariants(seed) {
+		for _, seat := range dropContexts(camps) {
+			ok, err := unreadIn(p, b, seat, fields, iterations, v)
+			if err != nil || !ok {
+				return false, err
+			}
 		}
 	}
 	return true, nil
+}
+
+func unreadIn(p *Pool, b *Build, seat Seat, fields []string, iterations int32, v dropVariant) (bool, error) {
+	req, err := dropRequest(p, b, seat, iterations, v)
+	if err != nil {
+		return false, err
+	}
+	on, err := dpsOf(withFields(req, fields, true))
+	if err != nil {
+		return false, err
+	}
+	off, err := dpsOf(withFields(req, fields, false))
+	if err != nil {
+		return false, err
+	}
+	return math.Float64bits(on) == math.Float64bits(off), nil
 }
 
 // ComputeDrops finds, for every build, the fields it can't read: each one alone, then all together.

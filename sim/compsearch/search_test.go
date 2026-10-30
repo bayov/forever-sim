@@ -147,7 +147,8 @@ func TestSearchDeterministic(t *testing.T) {
 }
 
 // The cache's drop table (drops.json): every dropped field leaves the build bit-identical, all of them
-// together, at another seed and length than the table was made at.
+// together, at another seed than the table was made at, at each length and in each faction the table
+// covers (dropVariants: 120, 180, 300 and 420 s).
 func TestDropsAreUnread(t *testing.T) {
 	if testing.Short() {
 		t.Skip("about a minute")

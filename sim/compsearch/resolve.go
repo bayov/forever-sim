@@ -173,7 +173,8 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 	var out []*proto.Assignment
 	handDuty := map[proto.Duty]bool{}
 	handJudge := map[int32]bool{}
-	handTotem := map[int32]map[proto.RaidTotem]bool{}
+	handTotem := map[int32]map[proto.TotemElement]bool{} // the elements set by hand
+	noDuty := map[int32]bool{}                          // members set by hand to hold no duty
 	handBless := map[int32]map[proto.Class]bool{}
 	handCD := map[bool]bool{}
 	for _, a := range comp.Assignments {
@@ -189,6 +190,10 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 		case *proto.Assignment_Duty:
 			if m.preset != nil {
 				return nil, fmt.Errorf("%s can't hold a duty: placeholders give theirs without one", m.name())
+			}
+			if j.Duty == proto.Duty_DutyNone {
+				noDuty[a.Holder] = true
+				break
 			}
 			p, ok := m.duties[j.Duty]
 			if !ok {
@@ -241,11 +246,23 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 			if m.preset == nil || !m.preset.Shaman {
 				return nil, fmt.Errorf("%s isn't a shaman placeholder (a DPS shaman drops its build's totems)", m.name())
 			}
-			if handTotem[a.Holder] == nil {
-				handTotem[a.Holder] = map[proto.RaidTotem]bool{}
+			el := totemElement(j.Totem.Totem)
+			if el == proto.TotemElement_TotemElementUnknown {
+				el = j.Totem.Element
 			}
-			m.totems[j.Totem.Totem] = true
-			handTotem[a.Holder][j.Totem.Totem] = true
+			if el == proto.TotemElement_TotemElementUnknown {
+				return nil, fmt.Errorf("a totem assignment for %s names neither a totem nor an element", m.name())
+			}
+			if handTotem[a.Holder] == nil {
+				handTotem[a.Holder] = map[proto.TotemElement]bool{}
+			}
+			if handTotem[a.Holder][el] {
+				return nil, fmt.Errorf("%s has two totems set by hand for one element", m.name())
+			}
+			handTotem[a.Holder][el] = true
+			if j.Totem.Totem != proto.RaidTotem_RaidTotemNone {
+				m.totems[j.Totem.Totem] = true
+			}
 		case *proto.Assignment_Cooldown:
 			if j.Cooldown == nil {
 				return nil, fmt.Errorf("a cooldown assignment for %s names no target", m.name())
@@ -291,7 +308,7 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 			continue
 		}
 		for _, m := range dps {
-			if p, ok := m.duties[d]; ok && m.duty == proto.Duty_DutyNone {
+			if p, ok := m.duties[d]; ok && m.duty == proto.Duty_DutyNone && !noDuty[m.slot.Id] {
 				m.duty, m.player = d, p
 				m.gives, m.pkg, m.casts = PlayerGifts(m.player, m.duty)
 				dpsUp |= m.gives
@@ -365,18 +382,22 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 	if 2*melee > len(dps) && !dpsUp.Has(GiftWF) {
 		air = proto.RaidTotem_RaidTotemWindfury
 	}
+	// An air totem set by hand counts as taken.
 	for _, m := range phShamans {
-		if handTotem[m.slot.Id] != nil {
-			continue
+		if m.totems[air] && handTotem[m.slot.Id][proto.TotemElement_TotemElementAir] {
+			air = otherAir(air)
 		}
+	}
+	for _, m := range phShamans {
 		for _, t := range []proto.RaidTotem{proto.RaidTotem_RaidTotemStrengthOfEarth, proto.RaidTotem_RaidTotemManaSpring, proto.RaidTotem_RaidTotemFlametongue, air} {
+			if handTotem[m.slot.Id][totemElement(t)] {
+				continue
+			}
 			m.totems[t] = true
-			out = append(out, &proto.Assignment{Holder: m.slot.Id, Job: &proto.Assignment_Totem{Totem: &proto.TotemAssignment{Totem: t}}})
-		}
-		if air == proto.RaidTotem_RaidTotemGraceOfAir {
-			air = proto.RaidTotem_RaidTotemWindfury
-		} else {
-			air = proto.RaidTotem_RaidTotemGraceOfAir
+			out = append(out, &proto.Assignment{Holder: m.slot.Id, Job: &proto.Assignment_Totem{Totem: &proto.TotemAssignment{Totem: t, Element: totemElement(t)}}})
+			if t == air {
+				air = otherAir(air)
+			}
 		}
 	}
 
@@ -517,6 +538,27 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 	res.Assignments = out
 	res.Buffs, res.Misses = resolutionRecords(up, cast, phs, dps, blessings, partyPkg)
 	return res, nil
+}
+
+func totemElement(t proto.RaidTotem) proto.TotemElement {
+	switch t {
+	case proto.RaidTotem_RaidTotemStrengthOfEarth:
+		return proto.TotemElement_TotemElementEarth
+	case proto.RaidTotem_RaidTotemGraceOfAir, proto.RaidTotem_RaidTotemWindfury:
+		return proto.TotemElement_TotemElementAir
+	case proto.RaidTotem_RaidTotemManaSpring:
+		return proto.TotemElement_TotemElementWater
+	case proto.RaidTotem_RaidTotemFlametongue:
+		return proto.TotemElement_TotemElementFire
+	}
+	return proto.TotemElement_TotemElementUnknown
+}
+
+func otherAir(t proto.RaidTotem) proto.RaidTotem {
+	if t == proto.RaidTotem_RaidTotemGraceOfAir {
+		return proto.RaidTotem_RaidTotemWindfury
+	}
+	return proto.RaidTotem_RaidTotemGraceOfAir
 }
 
 // isCaster is a member Power Infusion's 20% magic damage is for.

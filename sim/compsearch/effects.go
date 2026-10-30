@@ -249,8 +249,9 @@ func (s Seat) Write(req *proto.RaidSimRequest, b *Build) {
 		ib.Innervates = 1
 	}
 
-	if s.Up.Has(GiftSunderTank) || s.PullSunders > 0 {
-		db.SunderRamp = &proto.SunderRamp{Tank: s.Up.Has(GiftSunderTank), PullSunders: int32(s.PullSunders)}
+	// A member keeping Sunder up itself gets no tank's ramp, only the other warriors' pull Sunders.
+	if up.Has(GiftSunderTank) || s.PullSunders > 0 {
+		db.SunderRamp = &proto.SunderRamp{Tank: up.Has(GiftSunderTank), PullSunders: int32(s.PullSunders)}
 	}
 	db.FaerieFire = up.Has(GiftMinorArmor)
 	db.CurseOfElements = up.Has(GiftCoE)

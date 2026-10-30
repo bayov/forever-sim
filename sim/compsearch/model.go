@@ -50,6 +50,7 @@ type buildModel struct {
 	ratio    map[Gift]float64 // DPS without the role / full
 	armor    float64          // without Sunder upkeep and the minor armor slot / full
 	air      float64          // without Grace of Air and Windfury / full
+	shout    float64          // without Battle Shout and Furious Howl (one slot) / full
 	blessing [4]float64       // without each blessing / full (index by proto.Blessing)
 	pkg      [4]float64       // with each package / full (full has the Restoration package)
 	pi       float64          // what Power Infusion adds
@@ -95,6 +96,9 @@ func (sc *Scenario) BuildModel(builds []*Build) (*Model, error) {
 		s = full
 		s.Up &^= GiftGoA | GiftWF
 		asks = append(asks, modelAsk{b, s, func(bm *buildModel, v float64) { bm.air = v }})
+		s = full
+		s.Up &^= GiftBattleShout | GiftFuriousHowl
+		asks = append(asks, modelAsk{b, s, func(bm *buildModel, v float64) { bm.shout = v }})
 		for i, bl := range allBlessings {
 			s := full
 			s.Blessings = append(append([]proto.Blessing{}, allBlessings[:i]...), allBlessings[i+1:]...)
@@ -155,6 +159,7 @@ func (sc *Scenario) BuildModel(builds []*Build) (*Model, error) {
 		}
 		bm.armor /= f
 		bm.air /= f
+		bm.shout /= f
 		for i := range bm.blessing {
 			if bm.blessing[i] != 0 {
 				bm.blessing[i] /= f
@@ -184,6 +189,7 @@ func (m *Model) V(b *Build, s Seat) float64 {
 	missing := fullGifts &^ up
 	armorBoth := missing.Has(GiftSunderTank | GiftMinorArmor)
 	airBoth := missing.Has(GiftGoA | GiftWF)
+	shoutBoth := missing.Has(GiftBattleShout | GiftFuriousHowl)
 	for _, r := range modelRoles {
 		if !missing.Has(r) {
 			continue
@@ -197,6 +203,9 @@ func (m *Model) V(b *Build, s Seat) float64 {
 		if airBoth && (r == GiftGoA || r == GiftWF) {
 			continue
 		}
+		if shoutBoth && (r == GiftBattleShout || r == GiftFuriousHowl) {
+			continue
+		}
 		v *= bm.ratio[r]
 	}
 	if armorBoth {
@@ -204,6 +213,9 @@ func (m *Model) V(b *Build, s Seat) float64 {
 	}
 	if airBoth {
 		v *= bm.air
+	}
+	if shoutBoth {
+		v *= bm.shout
 	}
 	wisdom := false
 	for _, bl := range allBlessings {
@@ -249,6 +261,7 @@ func (m *Model) costs(b *Build) map[string]float64 {
 	}
 	out["armor pair"] = bm.full * (1 - bm.armor)
 	out["air pair"] = bm.full * (1 - bm.air)
+	out["shout pair"] = bm.full * (1 - bm.shout)
 	for _, bl := range allBlessings {
 		out[bl.String()] = bm.full * (1 - bm.blessing[bl])
 	}

@@ -124,6 +124,23 @@ func main() {
 			bo.Encounters = append(bo.Encounters, &variant{ID: v.ID, Name: v.Name, MobType: t.String(), Published: v.Published, Players: players(v)})
 		}
 		builds = append(builds, bo)
+		// A pet variant (a Tallstrider or wolf hunter) is a build of its own, as in the search's pool.
+		for _, pv := range b.Pets {
+			pm := readMeta(pv.ID)
+			pb := &build{
+				variant:   variant{ID: pv.ID, Name: pv.Name, Published: pv.Published, Players: players(pv)},
+				Class:     pv.Class.String(),
+				ClassName: pv.ClassName,
+				Spec:      pv.Spec,
+				Summary:   pm.Summary,
+				Gives:     pv.Gives.String(),
+				Races:     map[string]string{},
+			}
+			for _, f := range factions {
+				pb.Races[f.String()] = pv.Race[f].String()
+			}
+			builds = append(builds, pb)
+		}
 	}
 	sort.SliceStable(builds, func(i, j int) bool {
 		if builds[i].ClassName != builds[j].ClassName {

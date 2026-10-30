@@ -44,7 +44,7 @@ func (sc *Scenario) compProto(c *Comp, best *Comp, model *Model) *proto.CompResu
 	}
 	for _, mb := range c.Members {
 		m := &proto.CompResultMember{Party: int32(mb.Party) + 1, Role: proto.RaidRole_RaidRoleDps, BuildId: mb.B.ID,
-			Dps: mb.DPS, Se: mb.SE, Blessings: mb.Seat.Blessings, PowerInfusion: mb.Seat.PI, Innervate: mb.Seat.Innervate,
+			Dps: mb.DPS, Se: mb.SE, Tps: mb.TPS, Blessings: mb.Seat.Blessings, PowerInfusion: mb.Seat.PI, Innervate: mb.Seat.Innervate,
 			Package: mb.Seat.Package, Race: strings.TrimPrefix(mb.B.Race[sc.Faction].String(), "Race"), ReportDps: mb.B.Base.Published}
 		if mb.B.Duty != proto.Duty_DutyNone {
 			m.Duties = []proto.Duty{mb.B.Duty}
@@ -462,6 +462,17 @@ func (sc *Scenario) memberValue(c *Comp, i int, f *Fillers, ev *exactValuer, can
 		out.ReplacementMargin = c.Score - bestV
 		out.BestReplacement = bestB
 	}
+	// A duty's cost: the base build in the same seat, less the member on duty.
+	if m.B.Duty != proto.Duty_DutyNone {
+		s := m.Seat
+		s.Own = m.B.Base.Casts
+		ev.V(m.B.Base, s)
+		if _, err := ev.flush(); err != nil {
+			return nil, err
+		}
+		v, _, _ := ev.V(m.B.Base, s)
+		out.DutyCost = v - m.DPS
+	}
 	// The difference from the DPS Report, one change at a time.
 	d, parts, err := sc.reportDifference(m, ev)
 	if err != nil {
@@ -514,7 +525,13 @@ func (sc *Scenario) reportDifference(m *Member, ev *exactValuer) (float64, []str
 		fmt.Sprintf("the raid's buff set: %+.1f", j2.Value.DPS-j1.Value.DPS),
 	}
 	if m.B != base {
-		parts = append(parts, fmt.Sprintf("its duty (%s): %+.1f", m.B.Duty, j3.Value.DPS-j2.Value.DPS))
+		label := "its pet"
+		if m.B.Duty != proto.Duty_DutyNone {
+			label = "its duty (" + dutyLabel(m.B.Duty) + ")"
+		} else if m.B.MobType != proto.MobType_MobTypeUnknown {
+			label = "its build for this boss"
+		}
+		parts = append(parts, fmt.Sprintf("%s: %+.1f", label, j3.Value.DPS-j2.Value.DPS))
 	}
 	return m.DPS - base.Published, parts, nil
 }

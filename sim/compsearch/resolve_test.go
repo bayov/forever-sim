@@ -131,15 +131,15 @@ func dutyOf(res *proto.RaidCompResolution, holder int32) proto.Duty {
 // The first audit's resolver findings, each as a case.
 func TestResolveAssignments(t *testing.T) {
 	p := loadTestPool(t)
-	hand := func(holder int32, job proto.Assignment) *proto.Assignment {
-		job.Holder, job.SetByHand = holder, true
-		return &job
+	hand := func(holder int32, a *proto.Assignment) *proto.Assignment {
+		a.Holder, a.SetByHand = holder, true
+		return a
 	}
 	// A shaman placeholder set by hand to Grace of Air only doesn't take the other's Strength of Earth.
 	res := Resolve(&proto.RaidComp{Size: 10, Slots: []*proto.CompSlot{
 		phSlot(1, 0, 0, proto.RaidPreset_RaidPresetRestorationShaman), phSlot(2, 1, 0, proto.RaidPreset_RaidPresetWardenShaman),
 		slotOf(3, 0, 1, p, "warrior__fury")},
-		Assignments: []*proto.Assignment{hand(2, proto.Assignment{Job: &proto.Assignment_Totem{Totem: &proto.TotemAssignment{Totem: proto.RaidTotem_RaidTotemGraceOfAir}}})}})
+		Assignments: []*proto.Assignment{hand(2, &proto.Assignment{Job: &proto.Assignment_Totem{Totem: &proto.TotemAssignment{Totem: proto.RaidTotem_RaidTotemGraceOfAir}}})}})
 	if res.Error != nil {
 		t.Fatal(res.Error.Message)
 	}
@@ -150,13 +150,13 @@ func TestResolveAssignments(t *testing.T) {
 	res = Resolve(&proto.RaidComp{Size: 10, Slots: []*proto.CompSlot{
 		phSlot(1, 0, 0, proto.RaidPreset_RaidPresetHolyPaladin), phSlot(2, 0, 1, proto.RaidPreset_RaidPresetProtectionPaladin),
 		slotOf(3, 0, 2, p, "mage__fire")},
-		Assignments: []*proto.Assignment{hand(1, proto.Assignment{Job: &proto.Assignment_Judgement{Judgement: proto.PaladinJudgement_PaladinJudgementWisdom}})}})
+		Assignments: []*proto.Assignment{hand(1, &proto.Assignment{Job: &proto.Assignment_Judgement{Judgement: proto.PaladinJudgement_PaladinJudgementWisdom}})}})
 	if d := res.Request.Raid.Debuffs; !d.JudgementOfWisdom || d.JudgementOfTheCrusader == 0 {
 		t.Errorf("want Wisdom and the Crusader: %v", d)
 	}
 	// A Ret member set by hand to the Crusader runs its Crusader duty build.
 	res = Resolve(&proto.RaidComp{Size: 5, Slots: []*proto.CompSlot{slotOf(1, 0, 0, p, "paladin__level_60_sub_holy")},
-		Assignments: []*proto.Assignment{hand(1, proto.Assignment{Job: &proto.Assignment_Judgement{Judgement: proto.PaladinJudgement_PaladinJudgementCrusader}})}})
+		Assignments: []*proto.Assignment{hand(1, &proto.Assignment{Job: &proto.Assignment_Judgement{Judgement: proto.PaladinJudgement_PaladinJudgementCrusader}})}})
 	if res.Error != nil {
 		t.Fatal(res.Error.Message)
 	}
@@ -182,9 +182,25 @@ func TestResolveAssignments(t *testing.T) {
 	if dutyOf(res, 2) != proto.Duty_DutyNone {
 		t.Errorf("the druid shouldn't hold Faerie Fire next to a Tallstrider")
 	}
+	// One element set by hand (fire: none) leaves the other elements to the resolver.
+	res = Resolve(&proto.RaidComp{Size: 10, Slots: []*proto.CompSlot{phSlot(1, 0, 0, proto.RaidPreset_RaidPresetRestorationShaman),
+		slotOf(2, 0, 1, p, "warrior__fury"), slotOf(3, 0, 2, p, "rogue__combat-swords"), slotOf(4, 0, 3, p, "warrior__arms")},
+		Assignments: []*proto.Assignment{hand(1, &proto.Assignment{Job: &proto.Assignment_Totem{Totem: &proto.TotemAssignment{Element: proto.TotemElement_TotemElementFire}}})}})
+	if res.Error != nil {
+		t.Fatal(res.Error.Message)
+	}
+	if rb := res.Request.Raid.Parties[0].Players[0].RaidBuffs; rb.StrengthOfEarthTotem == 0 || rb.TotemWeaponBuff != proto.TotemWeaponBuff_TotemWeaponBuffWindfury {
+		t.Errorf("earth and air should stay automatic (Windfury for a melee raid): %v", rb)
+	}
+	// A member set by hand to no duty holds none, though it has a build for one.
+	res = Resolve(&proto.RaidComp{Size: 5, Slots: []*proto.CompSlot{slotOf(1, 0, 0, p, "druid__balance"), slotOf(2, 0, 1, p, "warrior__fury")},
+		Assignments: []*proto.Assignment{hand(1, &proto.Assignment{Job: &proto.Assignment_Duty{Duty: proto.Duty_DutyNone}})}})
+	if res.Error != nil || dutyOf(res, 1) != proto.Duty_DutyNone || res.Request.Raid.Debuffs.FaerieFire {
+		t.Errorf("the druid set to no duty: %v %v", res.Error, res.Assignments)
+	}
 	// An assignment not set by hand is the resolver's to redo, and a cooldown from someone without it is refused.
 	res = Resolve(&proto.RaidComp{Size: 5, Slots: []*proto.CompSlot{slotOf(1, 0, 0, p, "mage__fire")},
-		Assignments: []*proto.Assignment{hand(1, proto.Assignment{Job: &proto.Assignment_Cooldown{Cooldown: &proto.CooldownTarget{PowerInfusion: true, Target: 1}}})}})
+		Assignments: []*proto.Assignment{hand(1, &proto.Assignment{Job: &proto.Assignment_Cooldown{Cooldown: &proto.CooldownTarget{PowerInfusion: true, Target: 1}}})}})
 	if res.Error == nil {
 		t.Errorf("a mage can't give Power Infusion")
 	}

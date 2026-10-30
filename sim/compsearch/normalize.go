@@ -47,8 +47,18 @@ var Fields = []Field{
 	{"battle_shout", func(r *proto.RaidSimRequest) { rb(r).BattleShout = missing }, func(r *proto.RaidSimRequest) { rb(r).BattleShout = reg }},
 	{"strength_of_earth_totem", func(r *proto.RaidSimRequest) { rb(r).StrengthOfEarthTotem = missing }, func(r *proto.RaidSimRequest) { rb(r).StrengthOfEarthTotem = reg }},
 	{"grace_of_air_totem", func(r *proto.RaidSimRequest) { rb(r).GraceOfAirTotem = missing }, func(r *proto.RaidSimRequest) { rb(r).GraceOfAirTotem = reg }},
-	{"totem_weapon_buff", func(r *proto.RaidSimRequest) { rb(r).TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffNone },
-		func(r *proto.RaidSimRequest) { rb(r).TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffWindfury }},
+	// The weapon totem is one field with two values: each is dropped on its own, so a build that can't
+	// read Windfury Totem (Enhancement, with Windfury Weapon) keeps its Flametongue.
+	{"totem_weapon_windfury", func(r *proto.RaidSimRequest) {
+		if rb(r).TotemWeaponBuff == proto.TotemWeaponBuff_TotemWeaponBuffWindfury {
+			rb(r).TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffNone
+		}
+	}, func(r *proto.RaidSimRequest) { rb(r).TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffWindfury }},
+	{"totem_weapon_flametongue", func(r *proto.RaidSimRequest) {
+		if rb(r).TotemWeaponBuff == proto.TotemWeaponBuff_TotemWeaponBuffFlametongue {
+			rb(r).TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffNone
+		}
+	}, func(r *proto.RaidSimRequest) { rb(r).TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffFlametongue }},
 	{"gift_of_the_wild", func(r *proto.RaidSimRequest) { rb(r).GiftOfTheWild = missing }, func(r *proto.RaidSimRequest) { rb(r).GiftOfTheWild = reg }},
 	{"power_word_fortitude", func(r *proto.RaidSimRequest) { rb(r).PowerWordFortitude = missing }, func(r *proto.RaidSimRequest) { rb(r).PowerWordFortitude = reg }},
 	{"mana_spring_totem", func(r *proto.RaidSimRequest) { rb(r).ManaSpringTotem = missing }, func(r *proto.RaidSimRequest) { rb(r).ManaSpringTotem = reg }},

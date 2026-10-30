@@ -866,8 +866,19 @@ message BlessingAssignment {
 	Blessing blessing = 2;
 }
 
+// One element's totem. RaidTotemNone with an element drops nothing there; elements not set by hand are
+// the resolver's.
 message TotemAssignment {
 	RaidTotem totem = 1;
+	TotemElement element = 2; // needed only with RaidTotemNone
+}
+
+enum TotemElement {
+	TotemElementUnknown = 0;
+	TotemElementEarth = 1;
+	TotemElementAir = 2;
+	TotemElementWater = 3;
+	TotemElementFire = 4;
 }
 
 message CooldownTarget {

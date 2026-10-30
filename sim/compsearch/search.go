@@ -5,6 +5,7 @@ import (
 	"math"
 	"runtime"
 	"sort"
+	"strings"
 	"sync"
 	"time"
 
@@ -523,7 +524,7 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 				return nil, err
 			}
 		}
-		if b := bestOf(sr); b != nil && b.Score > best.Score {
+		if b := bestOf(sr); b != nil && (best == nil || b.Score > best.Score) {
 			best = b
 		}
 		report("exact sets", best)
@@ -537,7 +538,7 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 		if err := sc.localMoves(r, sr, f, ev, model); err != nil {
 			return nil, err
 		}
-		if b := bestOf(sr); b != nil && b.Score > best.Score {
+		if b := bestOf(sr); b != nil && (best == nil || b.Score > best.Score) {
 			best = b
 		}
 	}
@@ -570,7 +571,12 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 		}
 	}
 	nCombo := 0
-	for _, s := range sigOrder {
+	// The combos of the best signatures first, so a limit keeps them.
+	ranked := make([]Signature, 0, len(results))
+	for _, r := range results {
+		ranked = append(ranked, r.sig)
+	}
+	for _, s := range ranked {
 		for _, r := range sigs[s] {
 			if req.MaxCombos > 0 && nCombo >= int(req.MaxCombos) {
 				break
@@ -602,7 +608,9 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 	contenders := []*Comp{}
 	seenPlan := map[string]bool{}
 	for _, cb := range cbs {
-		k := cb.comp.Plan.Key() + cb.comp.Describe() + comboKey(cb.raid.Combo)
+		// Comps that resolve to the same request are one (two paladin presets, another healer that adds
+		// nothing): the same members in the same seats.
+		k := cb.comp.resolvedKey()
 		if seenPlan[k] {
 			continue
 		}
@@ -625,6 +633,7 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 		}
 	}
 	sort.SliceStable(contenders, func(a, b int) bool { return contenders[a].Score > contenders[b].Score })
+	contenders = showSimplest(contenders)
 	best = contenders[0]
 	report("done", best)
 
@@ -679,6 +688,10 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 			}
 			return contenders[a].Score > contenders[b].Score
 		})
+		contenders = showSimplest(contenders, func(c *Comp) (float64, float64, bool) {
+			x, ok := conf[c]
+			return x.dps, x.se, ok
+		})
 		best = contenders[0]
 		for _, c := range sets {
 			if gap := conf[c].dps - c.Score; math.Abs(gap) > 3*math.Hypot(conf[c].se, c.SE) {
@@ -716,7 +729,8 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 		out.TieSet = int32(tieSet(contenders, best))
 	}
 	for i, cb := range cbs {
-		cr := &proto.CompComboRank{Dps: cb.comp.Score, Gap: best.Score - cb.comp.Score, Signature: cb.sig.String()}
+		// The combo scores are all screening fills, so their gaps are against the best of them.
+		cr := &proto.CompComboRank{Dps: cb.comp.Score, Gap: cbs[0].comp.Score - cb.comp.Score, Signature: cb.sig.String()}
 		for _, p := range cb.raid.Combo {
 			cr.Presets = append(cr.Presets, p.ID)
 		}
@@ -740,6 +754,17 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 	if err != nil {
 		return nil, err
 	}
+	if len(out.Comps) > 0 {
+		cost := map[string]float64{}
+		for _, mv := range extras.members {
+			cost[mv.BuildId] = mv.DutyCost
+		}
+		for _, m := range out.Comps[0].Members {
+			if len(m.Duties) > 0 {
+				m.DutyCost = cost[m.BuildId]
+			}
+		}
+	}
 	out.Roles = extras.roles
 	out.Fillers = extras.fillers
 	out.MemberValues = extras.members
@@ -752,6 +777,65 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 		out.Sensitivity = sc.assumptionSensitivity(contenders, best)
 	}
 	return out, nil
+}
+
+// resolvedKey is what a comp resolves to: its members in their seats, and its placeholders' gifts.
+func (c *Comp) resolvedKey() string {
+	var ks []string
+	for _, m := range c.Members {
+		ks = append(ks, askKey(m.B, m.Seat))
+	}
+	sort.Strings(ks)
+	return fmt.Sprintf("%x|%d|%d|%d|", uint32(c.Raid.phUp(c.Plan)), c.Plan.Paladins, c.Raid.phPI, c.Raid.phInn) + strings.Join(ks, ";")
+}
+
+// showSimplest is the tie rule's choice of the comp to show (docs/raid_sim.md, Confirmation): among the
+// comps tied with the best, the one with the fewest distinct builds, then the fewest members on duty,
+// goes first. With a score function, ties are on its scores (the raid sims).
+func showSimplest(cs []*Comp, score ...func(*Comp) (float64, float64, bool)) []*Comp {
+	if len(cs) < 2 {
+		return cs
+	}
+	val := func(c *Comp) (float64, float64, bool) { return c.Score, c.SE, true }
+	if len(score) > 0 {
+		val = score[0]
+	}
+	bv, bse, ok := val(cs[0])
+	if !ok {
+		return cs
+	}
+	tied := []int{0}
+	for i := 1; i < len(cs); i++ {
+		v, se, ok := val(cs[i])
+		if !ok || bv-v > math.Max(2*math.Hypot(bse, se), 0.001*bv) {
+			break
+		}
+		tied = append(tied, i)
+	}
+	simplest := func(c *Comp) (int, int) {
+		ids := map[string]bool{}
+		duty := 0
+		for _, m := range c.Members {
+			ids[m.B.ID] = true
+			if m.B.Duty != proto.Duty_DutyNone {
+				duty++
+			}
+		}
+		return len(ids), duty
+	}
+	pick := tied[0]
+	for _, i := range tied[1:] {
+		a, b := simplest(cs[i])
+		pa, pb := simplest(cs[pick])
+		if a < pa || (a == pa && b < pb) {
+			pick = i
+		}
+	}
+	if pick != 0 {
+		out := append([]*Comp{cs[pick]}, cs[:pick]...)
+		cs = append(out, cs[pick+1:]...)
+	}
+	return cs
 }
 
 func comboKey(c []*Preset) string {
@@ -904,8 +988,10 @@ func (sc *Scenario) localMoves(r *Raid, sr *sigResult, f *Fillers, ev *exactValu
 			if c == nil {
 				continue
 			}
-			sr.ranked = append(sr.ranked, scored{plan: q, model: mc.Score, comp: c})
+			// A move stays only when it beats the set by 2 standard errors, so one better by noise alone
+			// can't become the answer.
 			if c.Score > cur.comp.Score+2*math.Hypot(c.SE, cur.comp.SE) {
+				sr.ranked = append(sr.ranked, scored{plan: q, model: mc.Score, comp: c})
 				improved = true
 			}
 		}
