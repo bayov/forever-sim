@@ -23,3 +23,19 @@ func TestDataFileIsFresh(t *testing.T) {
 		t.Error("ui/raid_sim/data/builds.json is stale: run go run -tags=with_db ./tools/raid_sim_data")
 	}
 }
+
+// The built-in raids are the committed write-ups' best comps. When it fails, run the same command.
+func TestPresetsFileIsFresh(t *testing.T) {
+	root, err := filepath.Abs("../..")
+	if err != nil {
+		t.Fatal(err)
+	}
+	want, _ := presets(root)
+	got, err := os.ReadFile(filepath.Join(root, presetsFile))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if !bytes.Equal(got, want) {
+		t.Error(presetsFile + " is stale: run go run -tags=with_db ./tools/raid_sim_data")
+	}
+}

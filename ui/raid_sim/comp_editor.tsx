@@ -2,6 +2,7 @@
 // DPS Report build or a tank or healer placeholder, with its assignments, the encounter, the faction and
 // the camp buffs. Run builds a RaidComp, has the resolver turn it into the raid's request (resolveComp),
 // runs that request in the sim's workers and shows the raid's results.
+import { ChangeCategory } from '../core/components/dirty_settings';
 import { EncounterPicker } from '../core/components/encounter_picker';
 import { SimProgress } from '../core/components/sim_progress';
 import {
@@ -45,6 +46,7 @@ import {
 	factionName,
 	judgementName,
 	loadRaidSimData,
+	loadRaidSimPresets,
 	packageName,
 	presetInfo,
 	presetsFor,
@@ -115,6 +117,17 @@ interface EditorState {
 
 const emptyHand = (): HandAssignments => ({ blessings: {}, judgements: {}, totems: {}, duties: {}, powerInfusion: {}, innervate: {} });
 
+// The raid as the sim history, the presets and links keep it.
+export type RaidState = EditorState;
+
+// A built-in raid of the sidebar's presets.
+export interface RaidPresetEntry {
+	name: string;
+	group: string;
+	tooltip: string;
+	state: RaidState;
+}
+
 // A palette entry or a slot being dragged.
 type DragSource = { kind: 'cell'; index: number } | { kind: 'new'; member: Omit<Member, 'id'> };
 
@@ -127,6 +140,8 @@ interface RunOutput {
 }
 
 export class CompEditor {
+	// Fires when the raid changes (its members, assignments, faction, camps or fight), for the presets.
+	readonly changeEmitter = new TypedEvent<void>('RaidCompChange');
 	private readonly simUI: RaidSimUI;
 	private data: RaidSimData | null = null;
 	private state: EditorState;
@@ -300,6 +315,7 @@ export class CompEditor {
 		} catch (e) {
 			// A private window: the comp just isn't remembered.
 		}
+		this.changeEmitter.emit(TypedEvent.nextEventID());
 	}
 
 	// A new raid: the size's default tanks and healers, placed by the Groups rule (a package giver per
@@ -401,7 +417,6 @@ export class CompEditor {
 		if (this.lastRun) this.stale = true;
 		if (this.valuesHost.childElementCount) this.valuesStale = true;
 		if (hadRun) {
-			if (this.lastRun?.simResult) this.setRunStale(true);
 			this.renderResults();
 			// The Auto labels and slot DPS were the run's.
 			this.renderRaid();
@@ -410,7 +425,9 @@ export class CompEditor {
 		if (hadValues) this.renderValuesStale();
 	}
 
-	// Forget the last run and the member values (New raid, Clear, a comp loaded from a search).
+	// Forget the last run and the member values (New raid, Clear, a comp loaded from a search or a preset).
+	// The sidebar keeps the sim history's latest run and Raid results keep its results, both marked as
+	// another raid's.
 	private forgetResults() {
 		this.lastRun = null;
 		this.stale = false;
@@ -418,23 +435,17 @@ export class CompEditor {
 		this.valuesAbort?.abort();
 		this.valuesHost.replaceChildren();
 		this.renderResults();
-		this.clearSidebar();
 	}
 
-	// The sidebar's raid DPS (or a run's progress) and Raid results, which were the last run's. A run's
-	// progress isn't run data, so it goes whether there is any or not.
-	private clearSidebar() {
-		if (this.simUI.resultsManager.getRunData()) this.simUI.resultsManager.clearSimResult(TypedEvent.nextEventID());
-		this.simUI.resultsViewer.contentElem.replaceChildren();
-		this.simUI.resultsViewer.hideAll();
-		this.setRunStale(false);
-	}
-
-	// The sidebar's raid DPS and Raid results are of the raid as it was.
-	private setRunStale(stale: boolean) {
+	// The sidebar's latest run is of another raid (RaidSimUI.updateStale).
+	setSidebarStale(stale: boolean) {
 		this.sidebarStaleNote.classList.toggle('d-none', !stale);
-		this.detailsStaleNote.classList.toggle('d-none', !stale);
 		this.simUI.resultsViewer.contentElem.classList.toggle('rs-stale', stale);
+	}
+
+	// Raid results are of another raid (RaidSimUI.updateStale).
+	setDetailsStale(stale: boolean) {
+		this.detailsStaleNote.classList.toggle('d-none', !stale);
 		this.simUI.tabElem(DETAILS_TAB).classList.toggle('rs-details-stale', stale);
 	}
 
@@ -1288,6 +1299,180 @@ export class CompEditor {
 		this.simUI.sim.encounter.fromProto(this.presetEvent, encounter);
 	}
 
+	// ---- The raid as data: the sim history, the presets and links ----
+
+	// The raid as it stands, its fight included, as a copy.
+	getState(): RaidState {
+		const state = { ...this.state, encounter: EncounterProto.toJson(this.simUI.sim.encounter.toProto()) };
+		return JSON.parse(JSON.stringify(state));
+	}
+
+	// Reads a raid kept as JSON (a preset, a run in the sim history or an import), filling in what a raid
+	// from before a field was added lacks. It throws when it isn't a raid of this page.
+	static readState(raw: unknown): RaidState {
+		const s = raw as Partial<EditorState> | null;
+		if (!s || typeof s != 'object' || !s.size || !RAID_SIZES[s.size] || !Array.isArray(s.cells) || s.cells.length != s.size)
+			throw new Error('It isn’t a raid of the raid sim page.');
+		const cells = s.cells.map(c => (c && typeof c == 'object' && typeof c.id == 'number' ? c : null));
+		const nextId = Math.max(s.nextId ?? 1, ...cells.map(c => (c?.id ?? 0) + 1));
+		return {
+			...s,
+			size: s.size,
+			cells,
+			nextId,
+			faction: s.faction ?? Faction.Horde,
+			campBuffs: !!s.campBuffs,
+			boss: s.boss ?? 'Generic',
+			hand: { ...emptyHand(), ...s.hand },
+		};
+	}
+
+	// Puts a raid in place: a preset, a run's raid from the sim history, or an import. The iterations stay as
+	// they are. Undo puts back the raid it replaced. It throws when it can't read the raid.
+	applyState(raw: unknown, what: string) {
+		const next = CompEditor.readState(raw);
+		const before = this.snapshot();
+		next.iterations = this.state.iterations;
+		this.state = next;
+		this.moving = null;
+		this.setStateEncounter();
+		this.initBossSelect();
+		this.forgetResults();
+		this.renderAll();
+		this.changed();
+		this.setUndo(before, what);
+		this.setStatus('');
+	}
+
+	// The fight the raid keeps, or its boss's when it keeps none.
+	private setStateEncounter() {
+		if (this.state.encounter) {
+			try {
+				this.setPresetEncounter(EncounterProto.fromJson(this.state.encounter as any, { ignoreUnknownFields: true }));
+				return;
+			} catch (e) {
+				console.warn('Failed to read the raid’s encounter:', e);
+			}
+		}
+		this.applyBoss(this.state.boss);
+	}
+
+	// Whether two raids are the same: the same members in the same slots, with the same assignments, faction,
+	// camps and fight. The member ids and the iterations don't count.
+	static sameRaid(a: RaidState, b: RaidState): boolean {
+		return stableJson(canonicalRaid(a)) == stableJson(canonicalRaid(b));
+	}
+
+	// What changed from one raid to the other, in lines like 'Group 2, slot 3: Fire → Beast Mastery', under
+	// Raid, Members, Assignments and Encounter.
+	describeChanges(from: RaidState, to: RaidState): ChangeCategory[] {
+		const categories: ChangeCategory[] = [];
+		const add = (name: string, lines: string[]) => lines.length && categories.push({ name, lines });
+		const line = (name: string, a: string, b: string) => (a == b ? [] : [`${name}: ${a} → ${b}`]);
+		const onOff = (on: boolean) => (on ? 'on' : 'off');
+
+		add('Raid', [
+			...line('Size', `${from.size}`, `${to.size}`),
+			...line('Faction', factionName(from.faction), factionName(to.faction)),
+			...line('Camp buffs', onOff(from.campBuffs), onOff(to.campBuffs)),
+			...line('Boss', from.boss, to.boss),
+		]);
+
+		const slotName = (cell: number) => `Group ${Math.floor(cell / PARTY_SIZE) + 1}, slot ${(cell % PARTY_SIZE) + 1}`;
+		const memberAt = (state: RaidState, cell: number) => {
+			const m = state.cells[cell];
+			return m ? this.memberName(m) : 'empty';
+		};
+		const cells = Math.max(from.size, to.size);
+		add(
+			'Members',
+			[...Array(cells).keys()].flatMap(cell => line(slotName(cell), memberAt(from, cell), memberAt(to, cell))),
+		);
+
+		const fromJobs = this.jobsOf(from);
+		const toJobs = this.jobsOf(to);
+		add(
+			'Assignments',
+			[...new Set([...fromJobs.keys(), ...toJobs.keys()])].flatMap(job => line(job, fromJobs.get(job) ?? 'Auto', toJobs.get(job) ?? 'Auto')),
+		);
+
+		const fromFight = flattenJson(from.encounter ?? {});
+		const toFight = flattenJson(to.encounter ?? {});
+		add(
+			'Encounter',
+			[...new Set([...fromFight.keys(), ...toFight.keys()])].flatMap(key => line(humanize(key), fromFight.get(key) ?? '-', toFight.get(key) ?? '-')),
+		);
+		return categories;
+	}
+
+	// The raid's assignments set by hand, by who holds them, like 'Holy paladin (4.3): Hunter blessing' →
+	// 'Kings'.
+	private jobsOf(state: RaidState): Map<string, string> {
+		const jobs = new Map<string, string>();
+		const cellOf = new Map<number, number>();
+		state.cells.forEach((m, cell) => m && cellOf.set(m.id, cell));
+		const holder = (id: number) => {
+			const cell = cellOf.get(id);
+			return cell === undefined ? undefined : this.memberShortName(state.cells[cell]!, cell);
+		};
+		const each = <T,>(record: Record<number, T>, put: (who: string, value: T) => void) =>
+			Object.entries(record).forEach(([id, value]) => {
+				const who = holder(Number(id));
+				if (who) put(who, value);
+			});
+		const h = state.hand;
+		each(h.blessings, (who, byClass) =>
+			Object.entries(byClass).forEach(([c, b]) => jobs.set(`${who}: ${classNames[Number(c) as Class]} blessing`, blessingName(b as Blessing))),
+		);
+		each(h.judgements, (who, j) => jobs.set(`${who}: Judgement`, judgementName(j)));
+		each(h.totems, (who, totems) =>
+			TOTEM_ELEMENTS.forEach(({ element, label }) => {
+				const t = totems[element];
+				if (t !== undefined) jobs.set(`${who}: ${label} totem`, t == RaidTotem.RaidTotemNone ? 'none' : totemName(t));
+			}),
+		);
+		each(h.duties, (who, d) => jobs.set(`${who}: Duty`, dutyName(d)));
+		each(h.powerInfusion, (who, target) => jobs.set(`${who}: Power Infusion`, holder(target) ?? 'nobody'));
+		each(h.innervate, (who, target) => jobs.set(`${who}: Innervate`, holder(target) ?? 'nobody'));
+		return jobs;
+	}
+
+	// The built-in raids: each size's new raid, and the best comp of each scenario of the committed searches.
+	async builtInPresets(): Promise<RaidPresetEntry[]> {
+		this.data ??= await loadRaidSimData();
+		const generic = (state: EditorState): EditorState => ({ ...state, boss: 'Generic', encounter: EncounterProto.toJson(this.genericEncounter()) });
+		const presets: RaidPresetEntry[] = [10, 20, 40].map(size => ({
+			name: `${size} players`,
+			group: 'New raids',
+			tooltip: `${size} players: the usual tanks and healers, no DPS yet.`,
+			state: generic(this.defaultState(size)),
+		}));
+		for (const result of await loadRaidSimPresets()) {
+			for (const scenario of result.scenarios) {
+				const comp = scenario.comps[0];
+				if (!comp) continue;
+				const { state } = this.stateFromResult(comp, scenario, result.request);
+				const size = result.request?.size ?? state.size;
+				const faction = factionName(scenario.faction);
+				const dps = comp.confirmed ? `${fmt(comp.raidSimDps)} raid DPS` : `${fmt(comp.dps)} score`;
+				presets.push({
+					name: `${faction} ${size}${scenario.campBuffs ? ', camps' : ''}`,
+					group: 'Best comps',
+					tooltip: `The comp search’s best ${size}-player ${faction} raid, camp buffs ${scenario.campBuffs ? 'on' : 'off'} · ${dps}`,
+					state: { ...state, encounter: state.encounter ?? EncounterProto.toJson(this.genericEncounter()) },
+				});
+			}
+		}
+		return presets;
+	}
+
+	// The report's fight, the Generic boss.
+	private genericEncounter(): EncounterProto {
+		const encounter = EncounterProto.clone(this.data!.encounter);
+		encounter.naturalFlaskZone = true;
+		return encounter;
+	}
+
 	// ---- Load a comp from a search result ----
 
 	async loadFromResult(comp: CompResult, scenario: CompScenarioResult, request?: CompSearchRequest) {
@@ -1301,6 +1486,36 @@ export class CompEditor {
 			}
 		}
 		const before = this.snapshot();
+		const { state, unknown } = this.stateFromResult(comp, scenario, request);
+		this.state = state;
+		this.setStateEncounter();
+		this.initBossSelect();
+		this.forgetResults();
+		this.saveState();
+		this.renderAll();
+		this.setUndo(before, 'the loaded comp');
+		// A confirmed comp has its raid sim DPS; otherwise the search only scored it.
+		const there = comp.confirmed
+			? `${fmt(comp.raidSimDps)} raid sim DPS there`
+			: `a score of ${fmt(comp.dps)} there (its members’ single-player sims added up; Run sims it as a raid)`;
+		const loaded = `Loaded comp from the search (${factionName(scenario.faction)}, camps ${
+			scenario.campBuffs ? 'on' : 'off'
+		}): ${there}. Undo puts back the raid it replaced.`;
+		if (unknown.length) {
+			this.setStatus(
+				`${loaded} This page’s builds don’t have ${[...new Set(unknown)].join(
+					', ',
+				)}, so Run and Member values refuse this raid until they’re replaced.`,
+				true,
+			);
+		} else {
+			this.setStatus(loaded);
+		}
+	}
+
+	// A search's comp as the editor's raid, with its fight when the search's request has one, and the builds
+	// this page's data doesn't have. It needs the data file.
+	private stateFromResult(comp: CompResult, scenario: CompScenarioResult, request?: CompSearchRequest): { state: EditorState; unknown: string[] } {
 		const unknown: string[] = [];
 		const size = request?.size && RAID_SIZES[request.size] ? request.size : comp.members.length <= 10 ? 10 : comp.members.length <= 20 ? 20 : 40;
 		const state: EditorState = {
@@ -1378,37 +1593,19 @@ export class CompEditor {
 			}
 		}
 
-		this.state = state;
 		const e = request?.encounter;
-		if (e) this.applySearchEncounter(e);
-		this.forgetResults();
-		this.saveState();
-		this.renderAll();
-		this.setUndo(before, 'the loaded comp');
-		// A confirmed comp has its raid sim DPS; otherwise the search only scored it.
-		const there = comp.confirmed
-			? `${fmt(comp.raidSimDps)} raid sim DPS there`
-			: `a score of ${fmt(comp.dps)} there (its members’ single-player sims added up; Run sims it as a raid)`;
-		const loaded = `Loaded comp from the search (${factionName(scenario.faction)}, camps ${
-			scenario.campBuffs ? 'on' : 'off'
-		}): ${there}. Undo puts back the raid it replaced.`;
-		if (unknown.length) {
-			this.setStatus(
-				`${loaded} This page’s builds don’t have ${[...new Set(unknown)].join(
-					', ',
-				)}, so Run and Member values refuse this raid until they’re replaced.`,
-				true,
-			);
-		} else {
-			this.setStatus(loaded);
+		if (e) {
+			const { encounter, boss } = this.searchEncounter(e);
+			state.encounter = EncounterProto.toJson(encounter);
+			state.boss = boss;
 		}
+		return { state, unknown };
 	}
 
 	// A search's fight, as tools/compsearch runs it (sim/compsearch, compOf): the report's boss with the
 	// search's length, its health for a health fight, its creature type and its natural flask zone.
-	private applySearchEncounter(e: CompEncounter) {
-		if (!this.data) return;
-		const encounter = EncounterProto.clone(this.data.encounter);
+	private searchEncounter(e: CompEncounter): { encounter: EncounterProto; boss: Boss } {
+		const encounter = EncounterProto.clone(this.data!.encounter);
 		encounter.duration = e.duration || 180;
 		encounter.durationVariation = e.durationVariation;
 		encounter.useHealth = e.useHealth;
@@ -1422,9 +1619,8 @@ export class CompEditor {
 		});
 		const generic = e.mobType == MobType.MobTypeUnknown && e.naturalFlaskZone;
 		const onyxia = e.mobType == MobType.MobTypeDragonkin && !e.naturalFlaskZone;
-		this.state.boss = (e.name || 'Generic') == 'Generic' && generic ? 'Generic' : e.name == 'Onyxia' && onyxia ? 'Onyxia' : 'Custom';
-		this.setPresetEncounter(encounter);
-		this.initBossSelect();
+		const boss = (e.name || 'Generic') == 'Generic' && generic ? 'Generic' : e.name == 'Onyxia' && onyxia ? 'Onyxia' : 'Custom';
+		return { encounter, boss };
 	}
 
 	// ---- Run ----
@@ -1588,6 +1784,10 @@ export class CompEditor {
 		const progressBar = new SimProgress('', this.simUI.iterationsPicker.querySelector<HTMLElement>('.form-label') ?? undefined);
 		this.simUI.iterationsPicker.appendChild(progressBar.rootElem);
 		this.simUI.simActionsContainer.classList.add('running');
+		// The sim history keeps the raid as it was when Run was pressed, with the run's results.
+		const history = this.simUI.resultsManager.simHistory;
+		const raid = this.getState();
+		history?.startRun();
 		const revision = this.revision;
 		// A worker's last progress can come after the run ends or is stopped: the sidebar keeps none of it then.
 		let live = true;
@@ -1627,27 +1827,18 @@ export class CompEditor {
 			// The raid changed while it ran.
 			if (this.revision != revision) this.stale = true;
 			if (result.error && this.stopping) {
-				// A stopped run keeps nothing: neither its progress in the sidebar nor the resolution.
+				// A stopped run keeps nothing: neither the resolution nor a place in the sim history. The sidebar
+				// goes back to the latest run (history.finishRun, below).
 				this.lastRun = null;
 				this.stale = false;
-				this.clearSidebar();
 				this.setStatus('Run stopped. Nothing was kept.');
 			} else if (result.error) {
-				this.clearSidebar();
 				this.setError('The raid sim stopped', result.error.message || 'aborted');
 			} else {
 				out.simResult = await SimResult.makeNew(request, result);
+				// With the sim history, this adds the run to it and shows it in the sidebar.
 				this.simUI.resultsManager.setSimResult(TypedEvent.nextEventID(), out.simResult);
-				this.simUI.resultsViewer.contentElem
-					.querySelector('.results-sim')
-					?.append(
-						(
-							<p className="rs-sidebar-note">
-								± here is one standard deviation of the iterations; the Comp tab’s ±(95%) is the average’s 95% interval.
-							</p>
-						) as HTMLElement,
-					);
-				this.setRunStale(this.stale);
+				this.simUI.setShownRaid(raid);
 				this.setStatus(`Done: ${fmt(result.raidMetrics?.dps?.avg)} raid DPS.`);
 			}
 			this.renderRaid();
@@ -1655,10 +1846,11 @@ export class CompEditor {
 			this.renderResults();
 		} catch (e) {
 			console.error(e);
-			this.clearSidebar();
 			this.setError('The run failed', e instanceof Error ? e.message : `${e}`);
 		} finally {
 			live = false;
+			// A run that failed or was stopped isn't in the history, and the sidebar shows the latest run again.
+			if (history?.isRunning()) history.finishRun();
 			await progressBar.finish();
 			progressBar.remove();
 			this.simUI.simActionsContainer.classList.remove('running');
@@ -2094,3 +2286,62 @@ const uptimeText = (simResult: SimResult, effect: string, scope: string): Node |
 		</span>
 	);
 };
+
+// A raid as sameRaid compares it: the members by slot, and the assignments by their holder's slot (and a
+// Power Infusion's or Innervate's target by its slot), so the member ids don't count.
+function canonicalRaid(state: RaidState) {
+	const cellOf = new Map<number, number>();
+	state.cells.forEach((m, cell) => m && cellOf.set(m.id, cell));
+	const byCell = <T,>(record: Record<number, T>, value: (v: T) => unknown = v => v) =>
+		Object.fromEntries(
+			Object.entries(record)
+				.filter(([id]) => cellOf.has(Number(id)))
+				.map(([id, v]) => [cellOf.get(Number(id))!, value(v)]),
+		);
+	const target = (id: number) => cellOf.get(id) ?? -1;
+	return {
+		size: state.size,
+		faction: state.faction,
+		campBuffs: state.campBuffs,
+		boss: state.boss,
+		encounter: state.encounter ?? null,
+		cells: state.cells.map(m => (m ? { buildId: m.buildId ?? null, preset: m.preset ?? null, presetInnervate: !!m.presetInnervate } : null)),
+		hand: {
+			blessings: byCell(state.hand.blessings),
+			judgements: byCell(state.hand.judgements),
+			totems: byCell(state.hand.totems),
+			duties: byCell(state.hand.duties),
+			powerInfusion: byCell(state.hand.powerInfusion, target),
+			innervate: byCell(state.hand.innervate, target),
+		},
+	};
+}
+
+// JSON with every object's keys sorted, so two equal values write the same text.
+function stableJson(value: unknown): string {
+	if (Array.isArray(value)) return `[${value.map(stableJson).join(',')}]`;
+	if (value && typeof value == 'object')
+		return `{${Object.keys(value)
+			.sort()
+			.map(key => `${JSON.stringify(key)}:${stableJson((value as Record<string, unknown>)[key])}`)
+			.join(',')}}`;
+	return JSON.stringify(value) ?? 'null';
+}
+
+// A JSON value's leaves by path, like 'targets.0.stats.12' → '6000000'.
+function flattenJson(value: unknown, path = '', out = new Map<string, string>()): Map<string, string> {
+	if (Array.isArray(value)) value.forEach((v, i) => flattenJson(v, path ? `${path}.${i}` : `${i}`, out));
+	else if (value && typeof value == 'object') Object.entries(value).forEach(([k, v]) => flattenJson(v, path ? `${path}.${k}` : k, out));
+	else out.set(path, `${value}`);
+	return out;
+}
+
+// A path of flattenJson in words, like 'targets.0.mobType' → 'Target 1 mob type'.
+function humanize(path: string): string {
+	const words = path
+		.split('.')
+		.map(part => (/^\d+$/.test(part) ? `${Number(part) + 1}` : part.replace(/([a-z])([A-Z0-9])/g, '$1 $2').toLowerCase()))
+		.join(' ')
+		.replace(/^targets /, 'target ');
+	return words.charAt(0).toUpperCase() + words.slice(1);
+}

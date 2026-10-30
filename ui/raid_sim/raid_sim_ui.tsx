@@ -1,16 +1,19 @@
 // The raid sim page (docs/raid_sim.md, The page): a results viewer for the comp search's JSON, the search
 // through the native server, and a comp editor that runs one raid in the sim's workers. It is a page of its
 // own, not a spec's page or the DPS Report.
+import { CompareResults } from '../core/components/compare_results/compare_results';
 import { EmbeddedDetailedResults } from '../core/components/detailed_results';
 import { RaidSimResultsManager } from '../core/components/raid_sim_action';
 import { SimHeader } from '../core/components/sim_header';
+import { SimHistory } from '../core/components/sim_history';
 import { raidSimStatus } from '../core/launched_sims';
 import { CompResult, CompScenarioResult, CompSearchResult } from '../core/proto/api';
 import { Sim } from '../core/sim';
 import { SimUI } from '../core/sim_ui';
-import { EventID } from '../core/typed_event';
-import { CompEditor } from './comp_editor';
+import { EventID, TypedEvent } from '../core/typed_event';
+import { CompEditor, RaidState } from './comp_editor';
 import { loadRaidSimData, RaidSimData } from './data';
+import { addRaidPresets, loadRaidFromLink, raidHistoryHost,RaidJsonExporter, RaidJsonImporter, RaidLinkExporter } from './raid_settings';
 import { RESULT_PARAM, ResultLoader } from './result_loader';
 import { ResultView } from './result_view';
 import { SearchForm } from './search_form';
@@ -19,6 +22,7 @@ export const RESULT_TAB = 'raid-sim-result';
 export const SEARCH_TAB = 'raid-sim-search';
 export const EDITOR_TAB = 'raid-sim-editor';
 export const DETAILS_TAB = 'raid-sim-details';
+export const COMPARE_TAB = 'raid-sim-compare';
 
 // The last search run on this page, so a reload shows it again. Save JSON on the result keeps it for good.
 const LAST_SEARCH_KEY = '__forever_raid_sim__lastSearch__';
@@ -28,6 +32,9 @@ export class RaidSimUI extends SimUI {
 	readonly dataPromise: Promise<RaidSimData | null>;
 	private readonly resultHost: HTMLElement;
 	readonly editor: CompEditor;
+	readonly history: SimHistory;
+	// The raid whose results Raid results shows, or null when it shows none.
+	private shownRaid: RaidState | null = null;
 
 	constructor(parentElem: HTMLElement) {
 		super(parentElem, new Sim(), {
@@ -54,6 +61,7 @@ export class RaidSimUI extends SimUI {
 		this.addTab('Search', SEARCH_TAB, '');
 		this.addTab('Comp', EDITOR_TAB, '');
 		this.addTab('Raid results', DETAILS_TAB, '<div class="detailed-results"></div>');
+		this.addTab('Compare', COMPARE_TAB, '<div class="compare-results"></div>');
 
 		const resultTab = this.tabElem(RESULT_TAB);
 		// A result linked with the page's address opens its tab unless the address names another one
@@ -75,9 +83,81 @@ export class RaidSimUI extends SimUI {
 
 		new EmbeddedDetailedResults(this.tabElem(DETAILS_TAB).querySelector('.detailed-results') as HTMLElement, this, this.resultsManager);
 
+		// What a spec page has for its character, for the raid (raid_settings.tsx): preset raids in the sidebar,
+		// the sim history under the raid DPS with the Compare tab, and the raid's JSON and link.
+		addRaidPresets(this.rootElem.querySelector('.sim-sidebar-presets') as HTMLElement, this, this.editor);
+		this.history = new SimHistory(raidHistoryHost(this, this.editor), this.resultsManager);
+		// A run's results the history shows (Ctrl+click on a run) are of the raid it just put in place.
+		this.sim.simResultEmitter.on((eventID, result) => {
+			this.resultsManager.setSimResult(eventID, result);
+			this.setShownRaid(this.editor.getState());
+		});
+		this.history.changeEmitter.on(() => {
+			this.addSidebarNote();
+			this.updateStale();
+		});
+		this.editor.changeEmitter.on(() => this.updateStale());
+		this.addSidebarNote();
+		new CompareResults(this.tabElem(COMPARE_TAB).querySelector('.compare-results') as HTMLElement, this, this.history);
+		this.simHeader.addImportLink('JSON', new RaidJsonImporter(this.rootElem, this, this.editor));
+		this.simHeader.addExportLink('Link', new RaidLinkExporter(this.rootElem, this, this.editor));
+		this.simHeader.addExportLink('JSON', new RaidJsonExporter(this.rootElem, this, this.editor));
+		loadRaidFromLink(this.editor);
+		// A link pasted into this page's own tab changes only the hash, which doesn't reload the page.
+		window.addEventListener('hashchange', () => loadRaidFromLink(this.editor));
+		this.showLatestRun();
+
 		this.simHeader.syncTabWithUrl();
 		if (new URLSearchParams(window.location.search).has(RESULT_PARAM)) loader.loadFromUrlParameter();
 		else this.showLastSearch();
+	}
+
+	// The sidebar's ± is a standard deviation of the iterations, and the Comp tab's the average's 95% interval.
+	private addSidebarNote() {
+		const results = this.resultsViewer.contentElem.querySelector('.results-sim');
+		if (!results || results.querySelector('.rs-sidebar-note')) return;
+		results.append(
+			(
+				<p className="rs-sidebar-note">± here is one standard deviation of the iterations; the Comp tab’s ±(95%) is the average’s 95% interval.</p>
+			) as HTMLElement,
+		);
+	}
+
+	// After a reload, Raid results show the latest run's results again, as a spec page's Results do. They're
+	// marked as another raid's when the raid changed since.
+	private async showLatestRun() {
+		await this.history.ready;
+		const latest = this.history.getRuns().recent[0];
+		if (!latest || this.resultsManager.getRunData() || this.history.isRunning()) return;
+		const result = await this.history.loadResults(latest, true);
+		if (!result || this.resultsManager.getRunData() || this.history.isRunning()) return;
+		this.resultsManager.setSimResult(TypedEvent.nextEventID(), result);
+		try {
+			this.setShownRaid(CompEditor.readState(latest.settings));
+		} catch (e) {
+			console.warn('Failed to read the latest run’s raid:', e);
+		}
+	}
+
+	setShownRaid(raid: RaidState) {
+		this.shownRaid = raid;
+		this.updateStale();
+	}
+
+	// The sidebar's latest run and Raid results each say so when they're of another raid than the one on the
+	// Comp tab.
+	private updateStale() {
+		const current = this.editor.getState();
+		const differs = (raid: unknown) => {
+			try {
+				return !CompEditor.sameRaid(CompEditor.readState(raid), current);
+			} catch (e) {
+				return true;
+			}
+		};
+		const latest = this.history.getRuns().recent[0];
+		this.editor.setSidebarStale(!!latest && !this.history.isRunning() && differs(latest.settings));
+		this.editor.setDetailsStale(!!this.resultsManager.getRunData() && (!this.shownRaid || differs(this.shownRaid)));
 	}
 
 	tabElem(cssClass: string): HTMLElement {

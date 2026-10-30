@@ -1,9 +1,10 @@
 // The raid sim page's members: the DPS Report's builds (data/builds.json, written by tools/raid_sim_data
 // from tools/dps_report/req) and the tank and healer presets (sim/compsearch/presets.go).
-import { Blessing, Duty, PaladinJudgement, Player, RaidPackage, RaidPreset, RaidRole, RaidTotem, TotemElement as TotemElementProto } from '../core/proto/api';
+import { Blessing, CompSearchResult, Duty, PaladinJudgement, Player, RaidPackage, RaidPreset, RaidRole, RaidTotem, TotemElement as TotemElementProto } from '../core/proto/api';
 import { Class, Encounter as EncounterProto, Faction, MobType, Race } from '../core/proto/common';
 import { raceNames } from '../core/proto_utils/names';
 import buildsUrl from './data/builds.json?url';
+import presetsUrl from './data/presets.json?url';
 
 // One request of a build: the base build, a duty variant or an encounter variant.
 export interface BuildVariant {
@@ -334,4 +335,20 @@ export const mobTypeName = (m: MobType): string => (MobType[m] ?? `${m}`).replac
 export const buildLabel = (build: ReportBuild, variant: BuildVariant = build): string => {
 	const generic = !variant.name.includes(build.spec) && (variant.name.startsWith('Level') || build.class == Class.ClassShaman);
 	return `${build.className}: ${generic ? `${build.spec} ${variant.name}` : variant.name}`;
+};
+
+// The built-in raids' searches (data/presets.json, written by tools/raid_sim_data from the committed
+// write-ups): each search's request and each scenario's best comp. Fetched once.
+let presetsPromise: Promise<CompSearchResult[]> | null = null;
+export const loadRaidSimPresets = (): Promise<CompSearchResult[]> => {
+	if (!presetsPromise) {
+		presetsPromise = fetch(presetsUrl)
+			.then(res => {
+				if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+				return res.json();
+			})
+			.then((results: unknown[]) => results.map(r => CompSearchResult.fromJson(r as any, { ignoreUnknownFields: true })));
+		presetsPromise.catch(() => (presetsPromise = null));
+	}
+	return presetsPromise;
 };

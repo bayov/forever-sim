@@ -6,6 +6,9 @@
 //
 // It reads tools/dps_report/req through the comp search's pool, so the page's members are the search's.
 // With them, the report's fight (the page's Generic boss). Run it again when the report's requests change.
+//
+// It also writes the page's built-in raids (ui/raid_sim/data/presets.json): the best comp of each scenario
+// of the committed search write-ups (docs/raid_sim_m1/m1_<size>.json). Run it again when a write-up changes.
 package main
 
 import (
@@ -15,6 +18,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strings"
 
 	"github.com/wowsims/classic/sim/compsearch"
 	"github.com/wowsims/classic/sim/core/proto"
@@ -67,6 +71,69 @@ func main() {
 		n += 1 + len(b.Duties) + len(b.Encounters)
 	}
 	fmt.Printf("wrote %s: %d base builds, %d players a faction, %d KB\n", path, len(builds), n, len(data)/1024)
+
+	presetData, results := presets(*root)
+	presetPath := filepath.Join(*root, presetsFile)
+	if err := os.WriteFile(presetPath, presetData, 0o644); err != nil {
+		fail(err)
+	}
+	fmt.Printf("wrote %s: %d search results, %d KB\n", presetPath, results, len(presetData)/1024)
+}
+
+// presetsFile holds the page's built-in raids, relative to the checkout.
+const presetsFile = "ui/raid_sim/data/presets.json"
+
+// presets is the built-in raids' file: each committed search write-up cut down to its request and each
+// scenario's best comp, as a list of CompSearchResult JSON. A write-up is 600 KB, and the page needs about
+// 5 KB of it a scenario. The JSON is kept as it is (not read into the proto), so a field the page doesn't
+// know yet passes through.
+func presets(root string) ([]byte, int) {
+	paths, err := filepath.Glob(filepath.Join(root, "docs", "raid_sim_m1", "m1_*.json"))
+	if err != nil {
+		fail(err)
+	}
+	sort.Strings(paths)
+	var results []map[string]any
+	for _, path := range paths {
+		data, err := os.ReadFile(path)
+		if err != nil {
+			fail(err)
+		}
+		var full map[string]any
+		if err := json.Unmarshal(data, &full); err != nil {
+			fail(fmt.Errorf("%s: %w", path, err))
+		}
+		var scenarios []any
+		for _, raw := range asList(full["scenarios"]) {
+			sc, _ := raw.(map[string]any)
+			comps := asList(sc["comps"])
+			if len(comps) == 0 {
+				continue
+			}
+			slim := map[string]any{"comps": comps[:1]}
+			for _, key := range []string{"faction", "campBuffs", "fightSeconds"} {
+				if v, ok := sc[key]; ok {
+					slim[key] = v
+				}
+			}
+			scenarios = append(scenarios, slim)
+		}
+		results = append(results, map[string]any{
+			"source":    strings.TrimSuffix(filepath.Base(path), ".json"),
+			"request":   full["request"],
+			"scenarios": scenarios,
+		})
+	}
+	data, err := json.Marshal(results)
+	if err != nil {
+		fail(err)
+	}
+	return append(data, '\n'), len(results)
+}
+
+func asList(v any) []any {
+	list, _ := v.([]any)
+	return list
 }
 
 // generate is the data file's contents, from the search's own pool.

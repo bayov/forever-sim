@@ -1308,9 +1308,23 @@ Since nothing is hosted, a raid's result is shared as a static page. So the page
   - A "Save to raid" button writes back to a key the raid page owns. The raid page listens for the
     browser's `storage` event.
 - **"Add to raid sim"** on a spec page adds a reference to a raid.
-- **Raid history, saved raids and share links.**
 - **Retiring `ui/raid`.** It's the upstream raid page: hidden, stale, and built around editing members
   inside it. `raidSimPresets` and the `isWithinRaidSim` branches go with it.
+
+**What a spec page has, for the raid** (the user, 2026-10-30; `ui/raid_sim/raid_settings.tsx`). Each keeps
+the Comp tab's raid: its members by slot, assignments, faction, camps and fight, but not the iterations.
+
+- **Preset Raids** in the sidebar: each size's new raid, each committed write-up's best comp per scenario
+  (`ui/raid_sim/data/presets.json`, which `tools/raid_sim_data` cuts from `docs/raid_sim_m1/m1_*.json`, with a
+  freshness test), and the raids we save. The selected one shows the modified dot, with what changed.
+- **The sim history** under the raid DPS, as on a spec page: pins, names, what changed since a run, and
+  Ctrl+click to load a run's raid and results. `SimHistory` takes a host (`SimHistoryHost`) for the settings,
+  so both pages share it.
+- **The Compare tab**, with a member picker: the whole raid (each spell's casts added up over the members) or
+  one member.
+- **Import and Export** of the raid as JSON, and a link with the raid in its hash.
+- After a reload, Raid results show the latest run again. The sidebar and Raid results each say so when
+  they're of another raid than the Comp tab's.
 
 **What the page reuses:**
 
@@ -1746,7 +1760,6 @@ Report, with four tabs: Search result, Search, Comp and Raid results.
   - the parity check against `req/`
   - the headless builder
   - "Open in spec page" and "Save to raid", and "Add to raid sim"
-  - raid history, saved raids and share links
   - retiring `ui/raid`
 - **Speed**, in the profile's order (Appendix), and not registering DoT ranks that can't be cast. The
   search runs single-player sims, so this matters only for big raid sims on the page.
