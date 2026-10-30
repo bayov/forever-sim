@@ -974,6 +974,9 @@ message CompResult {
 	double raid_sim_se = 9;
 	repeated RaidPreset combo = 10; // its tanks and healers
 	double model_dps = 11;
+	// Behind the best confirmed comp in the raid sims (gap and gap_se are the scores').
+	double raid_sim_gap = 12;
+	double raid_sim_gap_se = 13;
 }
 
 message CompRoleValue {
@@ -983,6 +986,7 @@ message CompRoleValue {
 	double net = 4;
 	string provider = 5;
 	bool in_set = 6;            // false: the value of adding it
+	bool measured = 7;          // false: a role the placeholders give, listed without a value
 }
 
 message CompFillerRank {

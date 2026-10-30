@@ -7,6 +7,7 @@ import (
 	"sort"
 	"strings"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/wowsims/classic/sim/core/proto"
@@ -204,8 +205,28 @@ func (r *Raid) Signature() Signature {
 }
 
 func (s Signature) String() string {
-	return fmt.Sprintf("warrior tank %v, feral tank %v, druid %v, paladins %d, shamans %d, priest %v",
-		s.WarriorTank, s.FeralTank, s.Druid, s.Paladins, s.Shamans, s.Priest)
+	var parts []string
+	if s.WarriorTank {
+		parts = append(parts, "a warrior tank")
+	}
+	if s.FeralTank {
+		parts = append(parts, "a Feral tank")
+	} else if s.Druid {
+		parts = append(parts, "a druid")
+	}
+	if s.Paladins > 0 {
+		parts = append(parts, fmt.Sprintf("%d paladin%s", s.Paladins, map[bool]string{true: "s"}[s.Paladins > 1]))
+	}
+	if s.Shamans > 0 {
+		parts = append(parts, fmt.Sprintf("%d shaman%s", s.Shamans, map[bool]string{true: "s"}[s.Shamans > 1]))
+	}
+	if s.Priest {
+		parts = append(parts, "a priest")
+	}
+	if len(parts) == 0 {
+		return "nothing the search uses"
+	}
+	return strings.Join(parts, ", ")
 }
 
 // Combos is every tank and healer combo that fits the slots, as multisets.
@@ -326,7 +347,10 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 	var phases []string
 	lastPhase, lastRun := "", sc.Sim.Run.Load()
 	phaseStart := time.Now()
+	var reportMu sync.Mutex
 	report := func(phase string, best *Comp) {
+		reportMu.Lock()
+		defer reportMu.Unlock()
 		if progress != nil {
 			progress(phase, best, sc)
 		}
@@ -334,6 +358,9 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 		name := phase
 		if len(name) > 9 && name[:9] == "signature" {
 			name = "signatures"
+		}
+		if strings.HasPrefix(name, "ranking buff sets") {
+			name = "ranking buff sets"
 		}
 		if name != lastPhase {
 			if lastPhase != "" {
@@ -411,6 +438,7 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 	var wg sync.WaitGroup
 	sem := make(chan struct{}, runtime.GOMAXPROCS(0))
 	mv := modelValuer{model}
+	var ranked0 atomic.Int64
 	for i, s := range sigOrder {
 		i, s := i, s
 		wg.Add(1)
@@ -421,16 +449,23 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 			r := sigs[s][0]
 			plans := r.Plans()
 			var ranked []scored
-			for _, p := range plans {
+			for k, p := range plans {
+				if k%256 == 0 && sc.Abort != nil && sc.Abort() {
+					return
+				}
 				if c := sc.Fill(r, p, f, mv); c != nil {
 					ranked = append(ranked, scored{plan: p, model: c.Score})
 				}
 			}
 			sort.SliceStable(ranked, func(a, b int) bool { return ranked[a].model > ranked[b].model })
 			results[i] = sigResult{s, ranked, len(plans)}
+			report(fmt.Sprintf("ranking buff sets: signature %d of %d", int(ranked0.Add(1)), len(sigOrder)), nil)
 		}()
 	}
 	wg.Wait()
+	if sc.Abort != nil && sc.Abort() {
+		return nil, ErrAborted
+	}
 	sort.SliceStable(results, func(a, b int) bool {
 		if len(results[a].ranked) == 0 || len(results[b].ranked) == 0 {
 			return len(results[a].ranked) > len(results[b].ranked)
@@ -710,7 +745,7 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 		if x, ok := conf[c]; ok {
 			cp.Confirmed, cp.RaidSimDps, cp.RaidSimSe = true, x.dps, x.se
 			if b, okb := conf[best]; okb {
-				cp.Gap, cp.GapSe = b.dps-x.dps, math.Hypot(b.se, x.se)
+				cp.RaidSimGap, cp.RaidSimGapSe = b.dps-x.dps, math.Hypot(b.se, x.se)
 			}
 		}
 		out.Comps = append(out.Comps, cp)

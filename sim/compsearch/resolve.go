@@ -474,11 +474,12 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 	// Each party's package from its shaman placeholder (a DPS shaman's Mana Spring is cast).
 	partyPkg := make([]proto.RaidPackage, parties)
 	partyTide := make([]int32, parties)
+	pkgGiver := make([]string, parties)
 	for _, m := range phShamans {
 		if m.totems[proto.RaidTotem_RaidTotemManaSpring] {
 			p := m.slot.Party
 			if m.pkg > partyPkg[p] {
-				partyPkg[p] = m.pkg
+				partyPkg[p], pkgGiver[p] = m.pkg, m.name()
 			}
 			if m.pkg == proto.RaidPackage_RaidPackageRestoration {
 				partyTide[p]++
@@ -552,7 +553,7 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 		res.Request.SimOptions = &proto.SimOptions{Iterations: 1000, RandomSeed: 1}
 	}
 	res.Assignments = out
-	res.Buffs, res.Misses = resolutionRecords(up, cast, phs, dps, blessings, partyPkg)
+	res.Buffs, res.Misses = resolutionRecords(up, cast, phs, dps, blessings, partyPkg, pkgGiver)
 	return res, nil
 }
 
@@ -683,7 +684,7 @@ func dutyLabel(d proto.Duty) string {
 }
 
 // resolutionRecords is each effect up with who gives it, and what the raid goes without.
-func resolutionRecords(up, cast Gift, phs, dps []*member, blessings map[proto.Class][]proto.Blessing, partyPkg []proto.RaidPackage) ([]*proto.CompBuffRecord, []string) {
+func resolutionRecords(up, cast Gift, phs, dps []*member, blessings map[proto.Class][]proto.Blessing, partyPkg []proto.RaidPackage, pkgGiver []string) ([]*proto.CompBuffRecord, []string) {
 	var recs []*proto.CompBuffRecord
 	for i := 0; i < numGifts; i++ {
 		g := Gift(1) << i
@@ -729,7 +730,7 @@ func resolutionRecords(up, cast Gift, phs, dps []*member, blessings map[proto.Cl
 				n++
 			}
 		}
-		recs = append(recs, &proto.CompBuffRecord{Effect: packageName(pk), Provider: fmt.Sprintf("party %d's shaman", p+1), Scope: "party", Receivers: int32(n), Given: true})
+		recs = append(recs, &proto.CompBuffRecord{Effect: packageName(pk), Provider: fmt.Sprintf("%s (party %d)", pkgGiver[p], p+1), Scope: "party", Receivers: int32(n), Given: true})
 	}
 	var misses []string
 	enh, melee := false, false
@@ -753,7 +754,7 @@ func resolutionRecords(up, cast Gift, phs, dps []*member, blessings map[proto.Cl
 		return m
 	}()) {
 		if n := len(blessings[cl]); n < 3 {
-			misses = append(misses, fmt.Sprintf("%s get %d of the 3 blessings", strings.TrimPrefix(cl.String(), "Class"), n))
+			misses = append(misses, fmt.Sprintf("%ss get %d of the 3 blessings", strings.TrimPrefix(cl.String(), "Class"), n))
 		}
 	}
 	return recs, misses

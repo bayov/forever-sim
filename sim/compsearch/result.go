@@ -194,7 +194,7 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 		if g&^ph == 0 {
 			// The placeholders give it at no cost.
 			if in {
-				out.roles = append(out.roles, &proto.CompRoleValue{Role: name, Provider: "placeholders", InSet: true})
+				out.roles = append(out.roles, &proto.CompRoleValue{Role: name, Provider: "placeholders (not measured: they give it at no cost)", InSet: true})
 			}
 			continue
 		}
@@ -210,7 +210,7 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 		if c == nil {
 			continue
 		}
-		rv := &proto.CompRoleValue{Role: name, InSet: in}
+		rv := &proto.CompRoleValue{Role: name, InSet: in, Measured: true}
 		if in {
 			rv.Net = best.Score - c.Score
 			prov, cost := providerCost(best, g, sc, ev, f)
@@ -237,8 +237,9 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 		if c, err := sc.EvalExact(r, q, f, ev); err != nil {
 			return nil, err
 		} else if c != nil {
+			net := best.Score - c.Score
 			out.roles = append(out.roles, &proto.CompRoleValue{Role: fmt.Sprintf("a shaman placeholder's %s over %s", totemName(t), totemName(otherAir(t))),
-				InSet: true, Net: best.Score - c.Score, Provider: "placeholders"})
+				InSet: true, Measured: true, Gain: net, Net: net, Provider: "placeholders"})
 		}
 	}
 	// A paladin's blessings.
@@ -251,7 +252,7 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 		if c, err := sc.EvalExact(r, q, f, ev); err != nil {
 			return nil, err
 		} else if c != nil {
-			out.roles = append(out.roles, &proto.CompRoleValue{Role: "a Ret paladin's blessings", InSet: true, Net: best.Score - c.Score, Provider: "Ret paladin"})
+			out.roles = append(out.roles, &proto.CompRoleValue{Role: "a Ret paladin's blessings", InSet: true, Measured: true, Net: best.Score - c.Score, Provider: "Ret paladin"})
 		}
 	}
 
@@ -510,8 +511,17 @@ func (sc *Scenario) memberValue(c *Comp, i int, f *Fillers, ev *exactValuer, can
 
 // reportDifference breaks a member's DPS less its report build's published DPS into single-player sims:
 // the report's own request, at the faction's race, under the raid's buff set, then on duty.
+// reportBaseline is the report build a member is compared with: the build it was picked as (a pet or
+// encounter variant is its own report build), or for a duty holder its base build.
+func reportBaseline(b *Build) *Build {
+	if b.Duty != proto.Duty_DutyNone {
+		return b.Base
+	}
+	return b
+}
+
 func (sc *Scenario) reportDifference(m *Member, ev *exactValuer) (float64, []string, error) {
-	base := m.B.Base
+	base := reportBaseline(m.B)
 	if base.Published == 0 {
 		return 0, nil, nil
 	}
@@ -682,7 +692,7 @@ func missList(c *Comp) []string {
 					miss = append(miss, strings.TrimPrefix(b.String(), "Blessing"))
 				}
 			}
-			out = append(out, fmt.Sprintf("%s get no %s", strings.TrimPrefix(cl.String(), "Class"), strings.Join(miss, " or ")))
+			out = append(out, fmt.Sprintf("%ss get no %s", strings.TrimPrefix(cl.String(), "Class"), strings.Join(miss, " or ")))
 		}
 	}
 	sort.Strings(out)

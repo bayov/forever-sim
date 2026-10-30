@@ -92,7 +92,7 @@ func (p Plan) Key() string {
 func (p Plan) String() string {
 	s := p.Up.String()
 	if p.Paladins > 0 {
-		s += fmt.Sprintf("; %d blessings per class", p.Paladins)
+		s += fmt.Sprintf("; %d blessing%s per class", p.Paladins, map[bool]string{true: "s"}[p.Paladins > 1])
 	}
 	return s
 }
