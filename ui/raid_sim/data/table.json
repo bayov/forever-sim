@@ -1,0 +1,479 @@
+{
+	"blessings": [
+		{
+			"id": "BlessingKings",
+			"name": "Kings",
+			"icon": "spell_magic_greaterblessingofkings"
+		},
+		{
+			"id": "BlessingMight",
+			"name": "Might",
+			"icon": "spell_holy_greaterblessingofkings"
+		},
+		{
+			"id": "BlessingWisdom",
+			"name": "Wisdom",
+			"icon": "spell_holy_greaterblessingofwisdom"
+		}
+	],
+	"classes": [
+		{
+			"id": "ClassWarrior",
+			"name": "Warrior",
+			"icon": "class_warrior"
+		},
+		{
+			"id": "ClassPaladin",
+			"name": "Paladin",
+			"icon": "class_paladin"
+		},
+		{
+			"id": "ClassHunter",
+			"name": "Hunter",
+			"icon": "class_hunter"
+		},
+		{
+			"id": "ClassRogue",
+			"name": "Rogue",
+			"icon": "class_rogue"
+		},
+		{
+			"id": "ClassPriest",
+			"name": "Priest",
+			"icon": "class_priest"
+		},
+		{
+			"id": "ClassShaman",
+			"name": "Shaman",
+			"icon": "class_shaman"
+		},
+		{
+			"id": "ClassMage",
+			"name": "Mage",
+			"icon": "class_mage"
+		},
+		{
+			"id": "ClassWarlock",
+			"name": "Warlock",
+			"icon": "class_warlock"
+		},
+		{
+			"id": "ClassDruid",
+			"name": "Druid",
+			"icon": "class_druid"
+		}
+	],
+	"duties": [
+		{
+			"id": "DutyBattleShout",
+			"name": "Battle Shout",
+			"icon": "ability_warrior_battleshout",
+			"effect": "Battle Shout",
+			"of": "ClassWarrior"
+		},
+		{
+			"id": "DutySunderUpkeep",
+			"name": "Sunder Armor",
+			"label": "Sunder Armor upkeep",
+			"icon": "ability_warrior_sunder",
+			"effect": "Sunder upkeep",
+			"of": "ClassWarrior"
+		},
+		{
+			"id": "DutyFaerieFire",
+			"name": "Faerie Fire",
+			"icon": "spell_nature_faeriefire",
+			"effect": "Minor armor slot",
+			"of": "ClassDruid"
+		},
+		{
+			"id": "DutyCurseOfTheElements",
+			"name": "Curse of the Elements",
+			"icon": "spell_shadow_chilltouch",
+			"effect": "Curse of the Elements",
+			"of": "ClassWarlock"
+		},
+		{
+			"id": "DutyCurseOfRecklessness",
+			"name": "Curse of Recklessness",
+			"icon": "spell_shadow_unholystrength",
+			"effect": "Minor armor slot",
+			"of": "ClassWarlock"
+		},
+		{
+			"id": "DutyJudgementOfTheCrusader",
+			"name": "Judgement of the Crusader",
+			"icon": "spell_holy_holysmite",
+			"effect": "Judgement of the Crusader",
+			"of": "ClassPaladin"
+		},
+		{
+			"id": "DutyJudgementOfWisdom",
+			"name": "Judgement of Wisdom",
+			"icon": "spell_holy_righteousnessaura",
+			"effect": "Judgement of Wisdom",
+			"of": "ClassPaladin"
+		}
+	],
+	"effects": [
+		{
+			"name": "Fortitude",
+			"label": "Prayer of Fortitude",
+			"icon": "spell_holy_prayeroffortitude",
+			"from": "Discipline priest, Holy priest, any DPS priest"
+		},
+		{
+			"name": "Gift of the Wild",
+			"icon": "spell_nature_regeneration",
+			"from": "Feral tank, Restoration druid, any DPS druid"
+		},
+		{
+			"name": "Arcane Brilliance",
+			"icon": "spell_holy_arcaneintellect",
+			"from": "Any DPS mage"
+		},
+		{
+			"name": "Prayer of Spirit",
+			"icon": "spell_holy_prayerofspirit",
+			"from": "Discipline priest, Holy priest, any DPS priest"
+		},
+		{
+			"name": "Blessings",
+			"label": "Greater Blessings",
+			"icon": "spell_magic_greaterblessingofkings",
+			"from": "Protection paladin, Holy paladin, any DPS paladin"
+		},
+		{
+			"name": "Salvation",
+			"icon": "spell_holy_sealofsalvation",
+			"from": "Protection paladin, Holy paladin, any DPS paladin"
+		},
+		{
+			"name": "Battle Shout",
+			"icon": "ability_warrior_battleshout",
+			"from": "Protection warrior, a warrior on its duty"
+		},
+		{
+			"name": "Furious Howl",
+			"icon": "ability_hunter_pet_wolf",
+			"from": "Beast Mastery, Marksmanship or Survival hunter (Wolf)"
+		},
+		{
+			"name": "Trueshot Aura",
+			"icon": "ability_trueshot",
+			"from": "Marksmanship hunter"
+		},
+		{
+			"name": "Leader of the Pack",
+			"icon": "spell_nature_unyeildingstamina",
+			"from": "Feral tank, Feral druid"
+		},
+		{
+			"name": "Moonkin Aura",
+			"icon": "spell_nature_moonglow",
+			"from": "Balance druid"
+		},
+		{
+			"name": "Strength of Earth",
+			"label": "Strength of Earth Totem",
+			"icon": "spell_nature_earthbindtotem",
+			"from": "Warden shaman, Restoration shaman, Enhancement shaman"
+		},
+		{
+			"name": "Grace of Air",
+			"label": "Grace of Air Totem",
+			"icon": "spell_nature_invisibilitytotem",
+			"from": "Warden shaman, Restoration shaman"
+		},
+		{
+			"name": "Windfury Totem",
+			"icon": "spell_nature_windfury",
+			"from": "Warden shaman, Restoration shaman, Enhancement shaman"
+		},
+		{
+			"name": "Flametongue Totem",
+			"icon": "spell_nature_guardianward",
+			"from": "Warden shaman, Restoration shaman"
+		},
+		{
+			"name": "Sunder upkeep",
+			"label": "Sunder Armor",
+			"icon": "ability_warrior_sunder",
+			"debuff": true,
+			"from": "Protection warrior, a warrior on its duty"
+		},
+		{
+			"name": "Minor armor slot",
+			"label": "Faerie Fire or Curse of Recklessness",
+			"icon": "spell_nature_faeriefire",
+			"debuff": true,
+			"from": "Feral tank, Restoration druid, Beast Mastery, Marksmanship or Survival hunter (Tallstrider), a druid on its duty, a warlock on its duty"
+		},
+		{
+			"name": "Curse of the Elements",
+			"icon": "spell_shadow_chilltouch",
+			"debuff": true,
+			"from": "A warlock on its duty"
+		},
+		{
+			"name": "Judgement of the Crusader",
+			"icon": "spell_holy_holysmite",
+			"debuff": true,
+			"from": "Protection paladin, Holy paladin, a paladin on its duty"
+		},
+		{
+			"name": "Judgement of Wisdom",
+			"icon": "spell_holy_righteousnessaura",
+			"debuff": true,
+			"from": "Protection paladin, Holy paladin, a paladin on its duty"
+		}
+	],
+	"elements": [
+		{
+			"id": "TotemElementEarth",
+			"name": "Earth"
+		},
+		{
+			"id": "TotemElementAir",
+			"name": "Air"
+		},
+		{
+			"id": "TotemElementWater",
+			"name": "Water"
+		},
+		{
+			"id": "TotemElementFire",
+			"name": "Fire"
+		}
+	],
+	"icons": {
+		"innervate": "spell_nature_lightning",
+		"manaTide": "spell_frost_summonwaterelemental",
+		"powerInfusion": "spell_holy_powerinfusion"
+	},
+	"judgements": [
+		{
+			"id": "PaladinJudgementCrusader",
+			"name": "the Crusader",
+			"icon": "spell_holy_holysmite",
+			"effect": "Judgement of the Crusader"
+		},
+		{
+			"id": "PaladinJudgementWisdom",
+			"name": "Wisdom",
+			"icon": "spell_holy_righteousnessaura",
+			"effect": "Judgement of Wisdom"
+		}
+	],
+	"packages": [
+		{
+			"id": "RaidPackageManaSpring",
+			"name": "Mana Spring"
+		},
+		{
+			"id": "RaidPackageManaSpringTide",
+			"name": "Mana Spring and Mana Tide"
+		},
+		{
+			"id": "RaidPackageRestoration",
+			"name": "Mana Spring ×1.25 and Mana Tide"
+		}
+	],
+	"presets": [
+		{
+			"id": "RaidPresetProtectionWarrior",
+			"name": "Protection warrior",
+			"role": "RaidRoleTank",
+			"class": "ClassWarrior",
+			"talents": "35--251533120331221351",
+			"icon": "ability_warrior_defensivestance",
+			"gives": [
+				"Battle Shout",
+				"Sunder upkeep"
+			],
+			"summary": "Battle Shout, Sunder Armor"
+		},
+		{
+			"id": "RaidPresetFeralTank",
+			"name": "Feral tank",
+			"role": "RaidRoleTank",
+			"class": "ClassDruid",
+			"talents": "-55220302020132012551-055",
+			"icon": "ability_racial_bearform",
+			"gives": [
+				"Gift of the Wild",
+				"Leader of the Pack",
+				"Minor armor slot"
+			],
+			"summary": "Gift of the Wild, Leader of the Pack, Faerie Fire, Innervate when switched on",
+			"innervateOptional": true
+		},
+		{
+			"id": "RaidPresetProtectionPaladin",
+			"name": "Protection paladin",
+			"role": "RaidRoleTank",
+			"class": "ClassPaladin",
+			"talents": "1-5530513321301551-052",
+			"icon": "spell_holy_devotionaura",
+			"gives": [
+				"Blessings",
+				"Salvation",
+				"Judgement of the Crusader",
+				"Judgement of Wisdom"
+			],
+			"summary": "Greater Blessings, Salvation, Judgement of the Crusader or Wisdom",
+			"paladin": true
+		},
+		{
+			"id": "RaidPresetWardenShaman",
+			"name": "Warden shaman",
+			"role": "RaidRoleTank",
+			"class": "ClassShaman",
+			"talents": "35050013-0502303313551102",
+			"icon": "spell_shaman_lavaflow",
+			"gives": [
+				"Strength of Earth",
+				"Grace of Air",
+				"Windfury Totem",
+				"Flametongue Totem"
+			],
+			"summary": "Strength of Earth Totem, Grace of Air or Windfury Totem, Flametongue Totem, Mana Spring for its party",
+			"shaman": true,
+			"package": "RaidPackageManaSpring"
+		},
+		{
+			"id": "RaidPresetHolyPaladin",
+			"name": "Holy paladin",
+			"role": "RaidRoleHealer",
+			"class": "ClassPaladin",
+			"talents": "05320103225101051-500250302003",
+			"icon": "spell_holy_holybolt",
+			"gives": [
+				"Blessings",
+				"Salvation",
+				"Judgement of the Crusader",
+				"Judgement of Wisdom"
+			],
+			"summary": "Greater Blessings, Salvation, Judgement of the Crusader or Wisdom",
+			"paladin": true
+		},
+		{
+			"id": "RaidPresetRestorationShaman",
+			"name": "Restoration shaman",
+			"role": "RaidRoleHealer",
+			"class": "ClassShaman",
+			"talents": "-005102-5530500315513151",
+			"icon": "spell_nature_magicimmunity",
+			"gives": [
+				"Strength of Earth",
+				"Grace of Air",
+				"Windfury Totem",
+				"Flametongue Totem"
+			],
+			"summary": "Strength of Earth Totem, Grace of Air or Windfury Totem, Flametongue Totem, Mana Spring ×1.25 and Mana Tide for its party",
+			"shaman": true,
+			"package": "RaidPackageRestoration"
+		},
+		{
+			"id": "RaidPresetDisciplinePriest",
+			"name": "Discipline priest",
+			"role": "RaidRoleHealer",
+			"class": "ClassPriest",
+			"talents": "005005231330011531-2310510303",
+			"icon": "spell_holy_powerinfusion",
+			"gives": [
+				"Fortitude",
+				"Prayer of Spirit"
+			],
+			"summary": "Prayer of Fortitude, Prayer of Spirit, Power Infusion",
+			"powerInfusion": true
+		},
+		{
+			"id": "RaidPresetHolyPriest",
+			"name": "Holy priest",
+			"role": "RaidRoleHealer",
+			"class": "ClassPriest",
+			"talents": "00510223123-03405103030121531",
+			"icon": "spell_holy_guardianspirit",
+			"gives": [
+				"Fortitude",
+				"Prayer of Spirit"
+			],
+			"summary": "Prayer of Fortitude, Prayer of Spirit"
+		},
+		{
+			"id": "RaidPresetRestorationDruid",
+			"name": "Restoration druid",
+			"role": "RaidRoleHealer",
+			"class": "ClassDruid",
+			"talents": "05302001--5052035153113051",
+			"icon": "spell_nature_healingtouch",
+			"gives": [
+				"Gift of the Wild",
+				"Minor armor slot"
+			],
+			"summary": "Gift of the Wild, Faerie Fire, Innervate",
+			"innervate": true
+		}
+	],
+	"specIcons": {
+		"Druid:Balance": "spell_nature_starfall",
+		"Druid:Feral": "ability_druid_catform",
+		"Hunter:Beast Mastery": "ability_hunter_beasttaming",
+		"Hunter:Marksmanship": "ability_marksmanship",
+		"Hunter:Survival": "ability_hunter_swiftstrike",
+		"Mage:Arcane": "spell_holy_magicalsentry",
+		"Mage:Fire": "spell_fire_firebolt02",
+		"Mage:Frost": "spell_frost_frostbolt02",
+		"Mage:Frostfire": "ability_mage_frostfirebolt",
+		"Paladin:Retribution": "spell_holy_auraoflight",
+		"Priest:Shadow": "spell_shadow_shadowwordpain",
+		"Priest:Smite": "spell_holy_holysmite",
+		"Rogue:Assassination": "ability_rogue_eviscerate",
+		"Rogue:Combat": "ability_backstab",
+		"Rogue:Subtlety": "ability_stealth",
+		"Shaman:Elemental": "spell_nature_lightning",
+		"Shaman:Enhancement": "ability_shaman_stormstrike",
+		"Warlock:Affliction": "spell_shadow_deathcoil",
+		"Warlock:Demonology": "spell_shadow_metamorphosis",
+		"Warlock:Destruction": "spell_shadow_rainoffire",
+		"Warrior:Arms": "ability_warrior_savageblow",
+		"Warrior:Fury": "ability_warrior_innerrage"
+	},
+	"totems": [
+		{
+			"id": "RaidTotemStrengthOfEarth",
+			"name": "Strength of Earth",
+			"icon": "spell_nature_earthbindtotem",
+			"effect": "Strength of Earth",
+			"of": "TotemElementEarth"
+		},
+		{
+			"id": "RaidTotemGraceOfAir",
+			"name": "Grace of Air",
+			"icon": "spell_nature_invisibilitytotem",
+			"effect": "Grace of Air",
+			"of": "TotemElementAir"
+		},
+		{
+			"id": "RaidTotemWindfury",
+			"name": "Windfury",
+			"icon": "spell_nature_windfury",
+			"effect": "Windfury Totem",
+			"of": "TotemElementAir"
+		},
+		{
+			"id": "RaidTotemManaSpring",
+			"name": "Mana Spring",
+			"icon": "spell_nature_manaregentotem",
+			"of": "TotemElementWater"
+		},
+		{
+			"id": "RaidTotemFlametongue",
+			"name": "Flametongue",
+			"icon": "spell_nature_guardianward",
+			"effect": "Flametongue Totem",
+			"of": "TotemElementFire"
+		}
+	]
+}

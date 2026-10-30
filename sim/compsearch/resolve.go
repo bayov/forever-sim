@@ -53,17 +53,7 @@ func (m *member) name() string {
 	return fmt.Sprintf("slot %d", m.slot.Id)
 }
 
-func isMelee(m *member) bool {
-	switch m.class {
-	case proto.Class_ClassWarrior, proto.Class_ClassRogue, proto.Class_ClassPaladin:
-		return true
-	case proto.Class_ClassShaman:
-		return m.player.GetEnhancementShaman() != nil
-	case proto.Class_ClassDruid:
-		return m.player.GetFeralDruid() != nil
-	}
-	return false
-}
+func isMelee(m *member) bool { return m.player != nil && specOfPlayer(m.player).Melee }
 
 // Resolve resolves a comp (docs/raid_sim.md, Assignments): every assignment set by hand is kept, and
 // every other job is given automatically, to a placeholder first since that costs no DPS.
@@ -108,11 +98,10 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 			m.preset = p
 			m.class = p.Class
 			m.gives = p.Gives
-			if p.Paladin {
-				m.gives |= GiftBlessing
-			}
-			if p.Shaman {
-				m.pkg = p.Package // its totems come from its choices below
+			if p.Shaman() {
+				// Its totems come from its choices below, since one set by hand to none drops its element.
+				m.gives &^= fixedTotemGifts
+				m.pkg = p.Package
 			}
 			m.inn = p.Innervate || (p.InnervateOptional && s.PresetInnervate)
 		case *proto.CompSlot_Build:
@@ -145,15 +134,15 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 	for _, m := range ms {
 		if m.preset != nil {
 			phs = append(phs, m)
-			if m.preset.Paladin {
+			if m.preset.Paladin() {
 				paladins = append(paladins, m)
 			}
-			if m.preset.Shaman {
+			if m.preset.Shaman() {
 				phShamans = append(phShamans, m)
 			}
 		} else {
 			dps = append(dps, m)
-			if m.class == proto.Class_ClassPaladin {
+			if m.gives.Has(GiftBlessing) {
 				paladins = append(paladins, m)
 			}
 		}
@@ -196,7 +185,7 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 			m.duty, m.player = j.Duty, p
 			handDuty[j.Duty] = true
 		case *proto.Assignment_Judgement:
-			if m.class != proto.Class_ClassPaladin {
+			if !m.gives.Has(GiftBlessing) {
 				return nil, fmt.Errorf("%s isn't a paladin", m.name())
 			}
 			if m.preset == nil {
@@ -222,7 +211,7 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 			if j.Blessing == nil {
 				return nil, fmt.Errorf("a blessing assignment for %s names no blessing", m.name())
 			}
-			if m.class != proto.Class_ClassPaladin {
+			if !m.gives.Has(GiftBlessing) {
 				return nil, fmt.Errorf("%s isn't a paladin", m.name())
 			}
 			m.bless[j.Blessing.Class] = j.Blessing.Blessing
@@ -234,7 +223,7 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 			if j.Totem == nil {
 				return nil, fmt.Errorf("a totem assignment for %s names no totem", m.name())
 			}
-			if m.preset == nil || !m.preset.Shaman {
+			if m.preset == nil || !m.preset.Shaman() {
 				return nil, fmt.Errorf("%s isn't a shaman placeholder (a DPS shaman drops its build's totems)", m.name())
 			}
 			el := totemElement(j.Totem.Totem)
@@ -380,7 +369,7 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 		}
 	}
 	for _, m := range phShamans {
-		for _, t := range []proto.RaidTotem{proto.RaidTotem_RaidTotemStrengthOfEarth, proto.RaidTotem_RaidTotemManaSpring, proto.RaidTotem_RaidTotemFlametongue, air} {
+		for _, t := range append(append([]proto.RaidTotem{}, fixedTotems...), air) {
 			if handTotem[m.slot.Id][totemElement(t)] {
 				continue
 			}
@@ -395,19 +384,10 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 	// What's up: the placeholders' gifts and choices, and every member's.
 	up := Gift(0)
 	for _, m := range phs {
-		up |= m.gives &^ GiftBlessing
-		switch m.judge {
-		case proto.PaladinJudgement_PaladinJudgementCrusader:
-			up |= GiftCrusader
-		case proto.PaladinJudgement_PaladinJudgementWisdom:
-			up |= GiftJoW
-		}
-		for t, g := range map[proto.RaidTotem]Gift{proto.RaidTotem_RaidTotemStrengthOfEarth: GiftSoE, proto.RaidTotem_RaidTotemGraceOfAir: GiftGoA,
-			proto.RaidTotem_RaidTotemWindfury: GiftWF, proto.RaidTotem_RaidTotemFlametongue: GiftFT} {
-			if m.totems[t] {
-				up |= g
-				m.gives |= g // for the records
-			}
+		up |= m.gives&^GiftBlessing | judgementGift(m.judge)
+		for t := range m.totems {
+			up |= totemGift(t)
+			m.gives |= totemGift(t) // for the records
 		}
 	}
 	cast := Gift(0) // effects some member casts in the fight, so nobody gets them given
@@ -421,12 +401,12 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 	if phUp.Has(GiftSunderTank) && !cast.Has(GiftSunderTank) {
 		debuffs.SunderRamp = &proto.SunderRamp{Tank: true}
 	}
-	debuffs.FaerieFire = up.Has(GiftMinorArmor) && !cast.Has(GiftMinorArmor)
-	debuffs.CurseOfElements = up.Has(GiftCoE) && !cast.Has(GiftCoE)
-	if up.Has(GiftCrusader) && !cast.Has(GiftCrusader) {
-		debuffs.JudgementOfTheCrusader = proto.TristateEffect_TristateEffectRegular
+	dw := &buffWriter{rb: &proto.RaidBuffs{}, db: debuffs, spec: noSpec}
+	for _, e := range Effects {
+		if e.Debuff && !e.Alias && e.write != nil && up.Has(e.Gift) && !cast.Has(e.Gift) {
+			e.write(dw)
+		}
 	}
-	debuffs.JudgementOfWisdom = up.Has(GiftJoW) && !cast.Has(GiftJoW)
 
 	// Each party's package from its shaman placeholder (a DPS shaman's Mana Spring is cast).
 	partyPkg := make([]proto.RaidPackage, parties)
@@ -446,7 +426,7 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 	// A DPS shaman's cast Mana Spring reaches its party, so the party gets no given one too (two don't
 	// stack); a placeholder's Mana Tide stays.
 	for _, m := range dps {
-		if m.class == proto.Class_ClassShaman {
+		if m.pkg != proto.RaidPackage_RaidPackageNone {
 			partyPkg[m.slot.Party] = proto.RaidPackage_RaidPackageNone
 		}
 	}
@@ -463,7 +443,7 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 	// aren't given, since the caster's own rotation keeps them up for everyone.
 	seatOf := func(m *member) Seat {
 		pkg := partyPkg[m.slot.Party]
-		if m.class == proto.Class_ClassShaman {
+		if m.pkg != proto.RaidPackage_RaidPackageNone {
 			pkg = proto.RaidPackage_RaidPackageNone // it casts its own Mana Spring: never given and cast
 		}
 		return Seat{Up: up &^ cast, Blessings: blessings[m.class], Package: pkg, PI: m.pi,
@@ -575,39 +555,8 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 	return res, nil
 }
 
-func totemElement(t proto.RaidTotem) proto.TotemElement {
-	switch t {
-	case proto.RaidTotem_RaidTotemStrengthOfEarth:
-		return proto.TotemElement_TotemElementEarth
-	case proto.RaidTotem_RaidTotemGraceOfAir, proto.RaidTotem_RaidTotemWindfury:
-		return proto.TotemElement_TotemElementAir
-	case proto.RaidTotem_RaidTotemManaSpring:
-		return proto.TotemElement_TotemElementWater
-	case proto.RaidTotem_RaidTotemFlametongue:
-		return proto.TotemElement_TotemElementFire
-	}
-	return proto.TotemElement_TotemElementUnknown
-}
-
-func otherAir(t proto.RaidTotem) proto.RaidTotem {
-	if t == proto.RaidTotem_RaidTotemGraceOfAir {
-		return proto.RaidTotem_RaidTotemWindfury
-	}
-	return proto.RaidTotem_RaidTotemGraceOfAir
-}
-
 // isCaster is a member Power Infusion's 20% magic damage is for.
-func isCaster(m *member) bool {
-	switch m.class {
-	case proto.Class_ClassMage, proto.Class_ClassWarlock, proto.Class_ClassPriest:
-		return true
-	case proto.Class_ClassDruid:
-		return m.player.GetBalanceDruid() != nil
-	case proto.Class_ClassShaman:
-		return m.player.GetElementalShaman() != nil
-	}
-	return false
-}
+func isCaster(m *member) bool { return m.player != nil && specOfPlayer(m.player).Caster }
 
 // blessingOrderFor is what a class's members want first: Kings, then Might when most of them are melee,
 // else Wisdom.
@@ -672,31 +621,11 @@ func sortedClasses(m map[proto.Class]bool) []proto.Class {
 	return out
 }
 
-func usesManaPlayer(p *proto.Player) bool {
-	switch p.Class {
-	case proto.Class_ClassWarrior, proto.Class_ClassRogue:
-		return false
-	case proto.Class_ClassDruid:
-		return p.GetFeralDruid() == nil
-	}
-	return true
-}
-
-func specOf(p *proto.Player) string {
-	switch {
-	case p.GetEnhancementShaman() != nil:
-		return "Enhancement"
-	case p.GetFeralDruid() != nil:
-		return "Feral"
-	}
-	return ""
-}
+func usesManaPlayer(p *proto.Player) bool { return specOfPlayer(p).Mana }
 
 func dutyLabel(d proto.Duty) string {
-	for k, v := range dutyNames {
-		if v == d {
-			return k
-		}
+	if r := dutyRow(d); r != nil {
+		return r.Name
 	}
 	return d.String()
 }
@@ -751,15 +680,16 @@ func resolutionRecords(up, cast Gift, phs, dps []*member, blessings map[proto.Cl
 		recs = append(recs, &proto.CompBuffRecord{Effect: packageName(pk), Provider: fmt.Sprintf("%s (party %d)", pkgGiver[p], p+1), Scope: "party", Receivers: int32(n), Given: true})
 	}
 	var misses []string
-	enh, melee := false, false
+	// Someone takes Flametongue Totem, and someone melee takes Windfury Totem.
+	ft, melee := false, false
 	for _, m := range dps {
-		enh = enh || (m.class == proto.Class_ClassShaman && specOf(m.player) == "Enhancement")
+		ft = ft || specOfPlayer(m.player).FlametongueTotem
 		melee = melee || isMelee(m)
 	}
 	for _, g := range modelRoles {
 		// A slot another effect fills, or an effect nobody here could use, isn't missed.
 		if up.Has(g) || (g == GiftFuriousHowl && up.Has(GiftBattleShout)) || (g == GiftBattleShout && up.Has(GiftFuriousHowl)) ||
-			(g == GiftFT && !enh) || (g == GiftWF && !melee) {
+			(g == GiftFT && !ft) || (g == GiftWF && !melee) {
 			continue
 		}
 		misses = append(misses, "nobody gives "+GiftName(g))
@@ -872,7 +802,7 @@ func (sc *Scenario) compOf(c *Comp, iterations int32, seed int64) (*proto.RaidCo
 		if ph.Innervate {
 			innGivers = append(innGivers, id)
 		}
-		if ph.Paladin {
+		if ph.Paladin() {
 			pals = append(pals, id)
 			j := proto.PaladinJudgement_PaladinJudgementWisdom
 			if paladinIndex(c.Raid, i) < c.Plan.PHCrusader {
@@ -880,8 +810,8 @@ func (sc *Scenario) compOf(c *Comp, iterations int32, seed int64) (*proto.RaidCo
 			}
 			rc.Assignments = append(rc.Assignments, &proto.Assignment{Holder: id, SetByHand: true, Job: &proto.Assignment_Judgement{Judgement: j}})
 		}
-		if ph.Shaman {
-			totems := []proto.RaidTotem{proto.RaidTotem_RaidTotemStrengthOfEarth, proto.RaidTotem_RaidTotemManaSpring, proto.RaidTotem_RaidTotemFlametongue}
+		if ph.Shaman() {
+			totems := append([]proto.RaidTotem{}, fixedTotems...)
 			if k := shamanIndex(c.Raid, i); k < len(c.Plan.PHAir) {
 				totems = append(totems, c.Plan.PHAir[k])
 			}
@@ -915,7 +845,7 @@ func (sc *Scenario) compOf(c *Comp, iterations int32, seed int64) (*proto.RaidCo
 			mb.Duties = append(mb.Duties, &proto.CompDutyPlayer{Duty: m.B.Duty, Player: noFlask(dp)})
 			rc.Assignments = append(rc.Assignments, &proto.Assignment{Holder: id, SetByHand: true, Job: &proto.Assignment_Duty{Duty: m.B.Duty}})
 		}
-		if m.B.Class == proto.Class_ClassPaladin {
+		if blesses(m.B) {
 			pals = append(pals, id)
 		}
 		rc.Slots = append(rc.Slots, &proto.CompSlot{Id: id, Party: party, Index: idx, Role: proto.RaidRole_RaidRoleDps,
@@ -969,7 +899,7 @@ func (sc *Scenario) confirm(c *Comp, iterations int32, seed int64) (float64, flo
 // memberPlayer is a member's player with what its seat gets written into its own buffs.
 func memberPlayer(m *member, seat Seat) *proto.Player {
 	tmp := &proto.RaidSimRequest{Raid: &proto.Raid{Parties: []*proto.Party{{Players: []*proto.Player{{}}}}}}
-	seat.Write(tmp, &Build{Class: m.class, Spec: specOf(m.player)})
+	seat.Write(tmp, &Build{Class: m.class, spec: specOfPlayer(m.player)})
 	p := googleProto.Clone(m.player).(*proto.Player)
 	// A Windfury imbue in the consumes gives the given Windfury Totem buff (consumes.go): the resolver
 	// owns that, so it goes.
@@ -1010,7 +940,7 @@ func cooldownGains(cands []*member, pi bool, seatOf func(*member) Seat, comp *pr
 			req.Encounter = &proto.Encounter{}
 		}
 		// The seat's debuffs and party buffs (Mana Tide) go on the raid, which memberPlayer leaves alone.
-		seat.Write(req, &Build{Class: m.class, Spec: specOf(m.player)})
+		seat.Write(req, &Build{Class: m.class, spec: specOfPlayer(m.player)})
 		v, err := runOne(req)
 		if err != nil {
 			return 0, err

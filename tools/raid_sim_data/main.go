@@ -7,7 +7,8 @@
 // It reads tools/dps_report/req through the comp search's pool, so the page's members are the search's.
 // With them, the report's fight (the page's Generic boss). Run it again when the report's requests change.
 //
-// It also writes the page's built-in raids (ui/raid_sim/data/presets.json): the best comp of each scenario
+// It also writes the page's copy of the search's table of who gives what (ui/raid_sim/data/table.json), and
+// the page's built-in raids (ui/raid_sim/data/presets.json): the best comp of each scenario
 // of the committed search write-ups (docs/raid_sim_m1/m1_<size>.json). Run it again when a write-up changes.
 package main
 
@@ -32,6 +33,7 @@ type variant struct {
 	Duty      string                     `json:"duty,omitempty"`
 	MobType   string                     `json:"mobType,omitempty"`
 	Published float64                    `json:"published"`
+	Stamp     string                     `json:"stamp"`
 	Players   map[string]json.RawMessage `json:"players"` // by faction, protojson
 }
 
@@ -61,7 +63,7 @@ func main() {
 	out := flag.String("out", "ui/raid_sim/data/builds.json", "the data file, relative to the checkout")
 	flag.Parse()
 
-	data, builds := generate(*root)
+	data, builds, pool := generate(*root)
 	path := filepath.Join(*root, *out)
 	if err := os.WriteFile(path, data, 0o644); err != nil {
 		fail(err)
@@ -71,6 +73,12 @@ func main() {
 		n += 1 + len(b.Duties) + len(b.Encounters)
 	}
 	fmt.Printf("wrote %s: %d base builds, %d players a faction, %d KB\n", path, len(builds), n, len(data)/1024)
+
+	tablePath := filepath.Join(*root, tableFile)
+	if err := os.WriteFile(tablePath, table(pool), 0o644); err != nil {
+		fail(err)
+	}
+	fmt.Printf("wrote %s\n", tablePath)
 
 	presetData, results := presets(*root)
 	presetPath := filepath.Join(*root, presetsFile)
@@ -118,11 +126,16 @@ func presets(root string) ([]byte, int) {
 			}
 			scenarios = append(scenarios, slim)
 		}
-		results = append(results, map[string]any{
+		slim := map[string]any{
 			"source":    strings.TrimSuffix(filepath.Base(path), ".json"),
 			"request":   full["request"],
 			"scenarios": scenarios,
-		})
+		}
+		// The builds it chose from, so the page can say when they changed since.
+		if stamps, ok := full["buildStamps"]; ok {
+			slim["buildStamps"] = stamps
+		}
+		results = append(results, slim)
 	}
 	data, err := json.Marshal(results)
 	if err != nil {
@@ -137,7 +150,7 @@ func asList(v any) []any {
 }
 
 // generate is the data file's contents, from the search's own pool.
-func generate(root string) ([]byte, []*build) {
+func generate(root string) ([]byte, []*build, *compsearch.Pool) {
 	pool, err := compsearch.LoadPool(root)
 	if err != nil {
 		fail(err)
@@ -171,7 +184,7 @@ func generate(root string) ([]byte, []*build) {
 	for _, b := range pool.Bases {
 		m := readMeta(b.ID)
 		bo := &build{
-			variant:   variant{ID: b.ID, Name: b.Name, Published: b.Published, Players: players(b)},
+			variant:   variant{ID: b.ID, Name: b.Name, Published: b.Published, Stamp: b.Stamp, Players: players(b)},
 			Class:     b.Class.String(),
 			ClassName: b.ClassName,
 			Spec:      b.Spec,
@@ -193,7 +206,7 @@ func generate(root string) ([]byte, []*build) {
 		sort.Slice(duties, func(i, j int) bool { return duties[i] < duties[j] })
 		for _, d := range duties {
 			v := b.Duties[d]
-			bo.Duties = append(bo.Duties, &variant{ID: v.ID, Name: v.Name, Duty: d.String(), Published: v.Published, Players: players(v)})
+			bo.Duties = append(bo.Duties, &variant{ID: v.ID, Name: v.Name, Duty: d.String(), Published: v.Published, Stamp: v.Stamp, Players: players(v)})
 		}
 		var mobs []proto.MobType
 		for t := range b.Vs {
@@ -202,14 +215,14 @@ func generate(root string) ([]byte, []*build) {
 		sort.Slice(mobs, func(i, j int) bool { return mobs[i] < mobs[j] })
 		for _, t := range mobs {
 			v := b.Vs[t]
-			bo.Encounters = append(bo.Encounters, &variant{ID: v.ID, Name: v.Name, MobType: t.String(), Published: v.Published, Players: players(v)})
+			bo.Encounters = append(bo.Encounters, &variant{ID: v.ID, Name: v.Name, MobType: t.String(), Published: v.Published, Stamp: v.Stamp, Players: players(v)})
 		}
 		builds = append(builds, bo)
 		// A pet variant (a Tallstrider or wolf hunter) is a build of its own, as in the search's pool.
 		for _, pv := range b.Pets {
 			pm := readMeta(pv.ID)
 			pb := &build{
-				variant:   variant{ID: pv.ID, Name: pv.Name, Published: pv.Published, Players: players(pv)},
+				variant:   variant{ID: pv.ID, Name: pv.Name, Published: pv.Published, Stamp: pv.Stamp, Players: players(pv)},
 				Class:     pv.Class.String(),
 				ClassName: pv.ClassName,
 				Spec:      pv.Spec,
@@ -239,7 +252,7 @@ func generate(root string) ([]byte, []*build) {
 	if err != nil {
 		fail(err)
 	}
-	return append(data, '\n'), builds
+	return append(data, '\n'), builds, pool
 }
 
 func fail(err error) {

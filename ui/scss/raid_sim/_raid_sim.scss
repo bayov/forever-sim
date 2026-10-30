@@ -288,6 +288,11 @@ body.rs-dropping .raid-sim-page .sim-main::after {
 		margin-bottom: var(--spacer-1);
 		color: var(--gold-soft);
 	}
+
+	.rs-result-stale {
+		margin-bottom: var(--spacer-1);
+		color: var(--bs-warning);
+	}
 }
 
 .rs-error {

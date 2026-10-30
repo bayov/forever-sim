@@ -55,6 +55,8 @@ import {
 	RaidSimData,
 	ReportBuild,
 	roleName,
+	stalenessOf,
+	stalenessText,
 	TOTEM_ELEMENTS,
 	TotemElement,
 	totemElement,
@@ -1338,7 +1340,7 @@ export class CompEditor {
 				<i className={`fas ${faIcon} rs-bench-role`} />,
 				presetsFor(role)
 					.filter(p => matches(p.name, title))
-					.map(p => entry({ preset: p.id }, p.name, p.icon, p.class, `${p.name}: ${p.gives}`)),
+					.map(p => entry({ preset: p.id }, p.name, p.icon, p.class, `${p.name}: ${p.summary}`)),
 			);
 
 		// The entry with the keyboard's focus keeps it when the bench is drawn again.
@@ -2024,12 +2026,13 @@ export class CompEditor {
 				const faction = factionName(scenario.faction);
 				const dps = comp.confirmed ? `${fmt(comp.raidSimDps)} raid DPS` : `${fmt(comp.dps)} score`;
 				const required = result.request?.requiredEffects ?? [];
+				const stale = stalenessOf(result.buildStamps, this.data);
 				presets.push({
 					name: `${faction} ${size}${scenario.campBuffs ? ', camps' : ''}${requiredSuffix(required)}`,
 					group: 'Best comps',
 					tooltip: `The comp search’s best ${size}-player ${faction} raid, camp buffs ${scenario.campBuffs ? 'on' : 'off'}${
 						required.length ? `, requiring ${required.map(r => RAID_EFFECTS.find(e => e.name == r)?.label ?? r).join(', ')}` : ''
-					} · ${dps}`,
+					} · ${dps}${stale ? ` · ${stalenessText(stale, this.data)}` : ''}`,
 					state: { ...state, encounter: state.encounter ?? EncounterProto.toJson(this.genericEncounter()) },
 				});
 			}

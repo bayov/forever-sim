@@ -34,7 +34,7 @@ func TestResolve(t *testing.T) {
 		phSlot(5, 1, 1, proto.RaidPreset_RaidPresetProtectionPaladin),
 		slotOf(6, 1, 2, p, "mage__fire"),
 		slotOf(7, 1, 4, p, "hunter__beast-mastery"),
-		slotOf(8, 0, 4, p, "shaman__enhancement-level60"),
+		slotOf(8, 0, 4, p, "shaman__enhancement-imp-gw"),
 	}}
 	res := Resolve(comp)
 	if res.Error != nil {
@@ -186,7 +186,7 @@ func TestResolveAssignments(t *testing.T) {
 	}
 	// One element set by hand (fire: none) leaves the other elements to the resolver.
 	res = Resolve(&proto.RaidComp{Size: 10, Slots: []*proto.CompSlot{phSlot(1, 0, 0, proto.RaidPreset_RaidPresetRestorationShaman),
-		slotOf(2, 0, 1, p, "warrior__fury"), slotOf(3, 0, 2, p, "rogue__combat-swords"), slotOf(4, 0, 3, p, "warrior__arms")},
+		slotOf(2, 0, 1, p, "warrior__fury"), slotOf(3, 0, 2, p, "rogue__combat-daggers"), slotOf(4, 0, 3, p, "warrior__arms")},
 		Assignments: []*proto.Assignment{hand(1, &proto.Assignment{Job: &proto.Assignment_Totem{Totem: &proto.TotemAssignment{Element: proto.TotemElement_TotemElementFire}}})}})
 	if res.Error != nil {
 		t.Fatal(res.Error.Message)
@@ -212,7 +212,7 @@ func TestResolveAssignments(t *testing.T) {
 	}
 	// One paladin placeholder judges Wisdom, so a Ret member with a Crusader build takes the Crusader.
 	res = Resolve(&proto.RaidComp{Size: 5, Slots: []*proto.CompSlot{phSlot(1, 0, 0, proto.RaidPreset_RaidPresetHolyPaladin),
-		slotOf(2, 0, 1, p, "paladin__level_60"), slotOf(3, 0, 2, p, "mage__fire")}})
+		slotOf(2, 0, 1, p, "paladin__level_60_sub_holy"), slotOf(3, 0, 2, p, "mage__fire")}})
 	if d := res.Request.Raid.Debuffs; !d.JudgementOfWisdom || dutyOf(res, 2) != proto.Duty_DutyJudgementOfTheCrusader {
 		t.Errorf("want Wisdom from the placeholder and the Crusader from the Ret: %v %v", d, res.Assignments)
 	}

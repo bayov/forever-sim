@@ -83,15 +83,15 @@ func TestReportRaid(t *testing.T) {
 	}
 	const iters = 1000
 	raids := map[string][]string{
-		"10": {"mage__fire", "warlock__demonology", "hunter__beast-mastery", "rogue__combat-swords", "priest__shadow",
-			"druid__balance", "mage__frostfire", "warrior__arms", "paladin__level_60", "hunter__marksmanship"},
-		"20": {"shaman__enhancement-level60", "warrior__fury", "rogue__combat-swords", "hunter__marksmanship", "mage__fire",
-			"warlock__demonology", "priest__shadow", "druid__balance", "paladin__level_60", "hunter__beast-mastery",
-			"mage__frostfire", "warlock__affliction", "warrior__arms", "rogue__mutilate", "druid__feral-cat",
-			"hunter__survival", "mage__arcane", "warlock__destruction", "priest__shadow-holy", "shaman__elemental-level60"},
-		"physical": {"warrior__fury", "warrior__fury_2h", "rogue__combat-daggers", "rogue__subtlety", "hunter__survival",
-			"hunter__beast-mastery", "druid__feral-cat", "paladin__level_60_sub_holy", "warrior__arms", "rogue__mutilate",
-			"hunter__lone-wolf", "rogue__seal-fate-swords"},
+		"10": {"mage__fire", "warlock__demonology", "hunter__beast-mastery", "rogue__combat-daggers", "priest__shadow",
+			"druid__balance", "mage__frostfire", "warrior__arms", "paladin__level_60_sub_holy", "hunter__marksmanship"},
+		"20": {"shaman__enhancement-imp-gw", "warrior__fury", "rogue__combat-daggers", "hunter__marksmanship", "mage__fire",
+			"warlock__demonology", "priest__shadow", "druid__balance", "paladin__level_60_sub_holy", "hunter__beast-mastery",
+			"mage__frostfire", "priest__smite", "warrior__arms", "rogue__seal-fate-daggers", "druid__feral-cat",
+			"hunter__survival", "mage__arcane", "warlock__destruction", "warlock__affliction", "shaman__elemental-level60"},
+		"physical": {"warrior__fury", "rogue__combat-daggers", "rogue__subtlety", "hunter__survival",
+			"hunter__beast-mastery", "druid__feral-cat", "paladin__level_60_sub_holy", "warrior__arms", "rogue__seal-fate-daggers",
+			"hunter__marksmanship"},
 	}
 	p := loadTestPool(t)
 	for name, ids := range raids {
@@ -115,7 +115,7 @@ func TestReportRaid(t *testing.T) {
 				solo := core.RunRaidSim(alone).RaidMetrics.Dps
 				se := math.Hypot(pm.Dps.Stdev, solo.Stdev) / math.Sqrt(iters)
 				allow := 4 * se
-				if id == "hunter__survival" || id == "shaman__enhancement-level60" {
+				if id == "hunter__survival" || id == "shaman__enhancement-imp-gw" {
 					allow += 5
 				}
 				if d := pm.Dps.Avg - solo.Avg; math.Abs(d) > allow {
@@ -134,7 +134,7 @@ func TestRunCompMatchesHandBuilt(t *testing.T) {
 		t.Skip("about 20 s")
 	}
 	p := loadTestPool(t)
-	ids := []string{"mage__fire", "warlock__affliction", "hunter__beast-mastery", "rogue__combat-swords", "priest__shadow", "mage__frost", "warrior__arms"}
+	ids := []string{"mage__fire", "warlock__affliction", "hunter__beast-mastery", "rogue__combat-daggers", "priest__shadow", "mage__frost", "warrior__arms"}
 	comp := &proto.RaidComp{Size: 10, SimOptions: &proto.SimOptions{Iterations: 300, RandomSeed: 3},
 		Encounter: cloneReq(p.Builds[ids[0]].Req).Encounter,
 		Slots: []*proto.CompSlot{phSlot(1, 0, 0, proto.RaidPreset_RaidPresetProtectionWarrior),

@@ -31,29 +31,34 @@ func loadTestPool(t testing.TB) *Pool {
 
 func TestPoolGifts(t *testing.T) {
 	p := loadTestPool(t)
-	if len(p.Bases) != 37 {
-		t.Errorf("%d base builds, want 37", len(p.Bases))
+	if len(p.Bases) != 24 {
+		t.Errorf("%d base builds, want 24", len(p.Bases))
+	}
+	for id := range leftOut {
+		if p.Builds[id] != nil || p.Builds[id+"-duty-crusader"] != nil {
+			t.Errorf("%s is left out of the raid sim but in the pool", id)
+		}
 	}
 	want := map[string]Gift{
-		"druid__balance":                        GiftGotW | GiftMoonkin,
-		"druid__feral-cat":                      GiftGotW | GiftLotP,
-		"druid__feral-cat-duty-ff":              GiftGotW | GiftLotP | GiftMinorArmor,
-		"hunter__marksmanship":                  GiftTrueshot,
-		"hunter__beast-mastery":                 0,
-		"mage__fire":                            GiftAB,
-		"priest__shadow":                        GiftPoS | GiftFort,
-		"paladin__level_60":                     GiftBlessing,
-		"shaman__enhancement-level60":           GiftSoE | GiftWF,
-		"shaman__elemental-level60":             0,
-		"warrior__fury":                         0,
-		"warrior__fury-duty-battle-shout":       GiftBattleShout,
-		"warlock__demonology-duty-curse":        GiftCoE,
-		"rogue__subtlety":                       0,
-		"warrior__fury-duty-sunder":             GiftSunderTank,
-		"warlock__demonology-duty-recklessness": GiftMinorArmor,
-		"paladin__level_60-duty-wisdom":         GiftBlessing | GiftJoW,
-		"hunter__beast-mastery-tallstrider":     GiftMinorArmor,
-		"hunter__marksmanship-wolf":             GiftTrueshot | GiftFuriousHowl,
+		"druid__balance":                         GiftGotW | GiftMoonkin,
+		"druid__feral-cat":                       GiftGotW | GiftLotP,
+		"druid__feral-cat-duty-ff":               GiftGotW | GiftLotP | GiftMinorArmor,
+		"hunter__marksmanship":                   GiftTrueshot,
+		"hunter__beast-mastery":                  0,
+		"mage__fire":                             GiftAB,
+		"priest__shadow":                         GiftPoS | GiftFort,
+		"paladin__level_60_sub_holy":             GiftBlessing,
+		"shaman__enhancement-imp-gw":             GiftSoE | GiftWF,
+		"shaman__elemental-level60":              0,
+		"warrior__fury":                          0,
+		"warrior__fury-duty-battle-shout":        GiftBattleShout,
+		"warlock__demonology-duty-curse":         GiftCoE,
+		"rogue__subtlety":                        0,
+		"warrior__fury-duty-sunder":              GiftSunderTank,
+		"warlock__demonology-duty-recklessness":  GiftMinorArmor,
+		"paladin__level_60_sub_holy-duty-wisdom": GiftBlessing | GiftJoW,
+		"hunter__beast-mastery-tallstrider":      GiftMinorArmor,
+		"hunter__marksmanship-wolf":              GiftTrueshot | GiftFuriousHowl,
 	}
 	for id, g := range want {
 		b := p.Builds[id]

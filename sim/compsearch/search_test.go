@@ -41,7 +41,7 @@ func TestSearchMatchesBruteForce(t *testing.T) {
 	if testing.Short() {
 		t.Skip("about a minute")
 	}
-	ids := []string{"mage__fire", "hunter__beast-mastery", "warlock__demonology", "druid__balance", "warrior__fury", "shaman__enhancement-level60"}
+	ids := []string{"mage__fire", "hunter__beast-mastery", "warlock__demonology", "druid__balance", "warrior__fury", "shaman__enhancement-imp-gw"}
 	p := subPool(t, ids...)
 	sim, err := NewSimmer(p, "")
 	if err != nil {
@@ -203,7 +203,7 @@ func TestDropsAreUnread(t *testing.T) {
 // The resolver's writing of a seat into a request (docs/raid_sim.md, Writing a role into a request).
 func TestSeatWrite(t *testing.T) {
 	p := loadTestPool(t)
-	enh := p.Builds["shaman__enhancement-level60"]
+	enh := p.Builds["shaman__enhancement-imp-gw"]
 	fury := p.Builds["warrior__fury"]
 	lock := p.Builds["warlock__demonology-duty-curse"]
 	seat := Seat{Up: GiftWF | GiftFT | GiftSoE | GiftCoE | GiftBattleShout, Blessings: []proto.Blessing{proto.Blessing_BlessingKings},

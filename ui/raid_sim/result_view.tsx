@@ -28,6 +28,8 @@ import {
 	raceLabel,
 	RaidSimData,
 	roleName,
+	stalenessOf,
+	stalenessText,
 	totemName,
 } from './data';
 import { RAID_EFFECTS } from './raid_effects';
@@ -167,8 +169,21 @@ export class ResultView {
 					{fmt(r.seconds, 0)} s. Sim version {r.version || 'unknown'}.
 				</p>
 				{req.requiredEffects.length ? <p className="rs-result-required">Every comp gives {requiredText(req)}.</p> : null}
+				{this.staleLine()}
 				{this.opts.source ? <p className="rs-result-source">From {this.opts.source}</p> : null}
 			</header>
+		);
+	}
+
+	// Whether the builds the search chose from changed since: then its comps may not be the best anymore.
+	private staleLine() {
+		const stale = this.data ? stalenessOf(this.result.buildStamps, this.data) : undefined;
+		if (!stale || !this.data) return null;
+		return (
+			<p className="rs-result-stale">
+				<i className="fas fa-exclamation-triangle me-1" />
+				{stalenessText(stale, this.data)}. Run the search again for current comps.
+			</p>
 		);
 	}
 
