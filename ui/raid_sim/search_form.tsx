@@ -107,6 +107,17 @@ export const formProblems = (s: FormState): string[] => {
 	}
 	if (s.size - s.tanks - s.healers < 1)
 		problems.push(`${plural(s.tanks, 'tank')} and ${plural(s.healers, 'healer')} leave no DPS slot in a raid of ${s.size}.`);
+	// The request takes only as many fixed DPS members as there are DPS slots, so the rest would be left
+	// out without a word.
+	const dpsSlots = Math.max(0, s.size - s.tanks - s.healers);
+	if (s.fixedDps.length > dpsSlots) {
+		const over = s.fixedDps.length - dpsSlots;
+		problems.push(
+			`${plural(s.fixedDps.length, 'fixed DPS member')} for ${plural(dpsSlots, 'DPS slot')}: remove ${over} (the dimmed ${
+				over == 1 ? 'one' : 'ones'
+			}), or the search would leave ${over == 1 ? 'it' : 'them'} out.`,
+		);
+	}
 	if (!s.horde && !s.alliance) problems.push('Pick a faction.');
 	return problems;
 };

@@ -58,7 +58,22 @@ import {
 import type { RaidSimUI } from './raid_sim_ui';
 import { DETAILS_TAB } from './raid_sim_ui';
 import { check, field, select } from './search_form';
-import { badge, ci95Labelled, empty, errorStatus, fmt, fmtSigned, iconAlt, list, NA, plural, section, table } from './view_utils';
+import {
+	badge,
+	ci95Labelled,
+	empty,
+	errorStatus,
+	fmt,
+	fmtSigned,
+	iconAlt,
+	list,
+	MEMBER_VALUE_COLUMNS,
+	NA,
+	partsToggle,
+	plural,
+	section,
+	table,
+} from './view_utils';
 
 const STORAGE_KEY = '__forever_raid_sim__comp__';
 const PARTY_SIZE = 5;
@@ -119,6 +134,7 @@ export class CompEditor {
 	private readonly paletteHost = (<div className="rs-palette" />) as HTMLElement;
 	private readonly raidHost = (<div className="rs-raid" />) as HTMLElement;
 	private readonly assignmentsHost = (<div className="rs-assignments" />) as HTMLElement;
+	private readonly warningsHost = (<ul className="rs-assignment-warnings" attributes={{ 'aria-live': 'polite' }} />) as HTMLElement;
 	private readonly encounterHost = (<div className="rs-encounter" />) as HTMLElement;
 	private readonly bossHost = (<div className="rs-boss" />) as HTMLElement;
 	private readonly runStatus = (<div className="rs-run-status" />) as HTMLElement;
@@ -148,6 +164,20 @@ export class CompEditor {
 	// The event of the last fight a boss preset or a loaded comp set, which leaves the boss as it is. Any
 	// other change to the fight is an edit by hand, which makes it a custom one.
 	private presetEvent: EventID | null = null;
+	// The raid as it was before the last New raid, Clear, smaller size or loaded comp, for one Undo. The next
+	// edit forgets it.
+	private undo: { state: EditorState; what: string } | null = null;
+	private readonly undoButton: HTMLButtonElement;
+	// Why Member values can't run here (a page served as static files has no native server), if it can't.
+	private valuesUnavailable: string | null = null;
+	private readonly valuesNote = (<span className="rs-static-note rs-static-off d-none" />) as HTMLElement;
+	// The notes that mark the sidebar's raid DPS and Raid results as another raid's after an edit.
+	private readonly sidebarStaleNote = (<p className="rs-stale-note rs-sidebar-stale d-none">The raid changed after this run.</p>) as HTMLElement;
+	private readonly detailsStaleNote = (
+		<p className="rs-stale-note d-none" attributes={{ role: 'status' }}>
+			The raid changed after this run, so these results are of the raid as it was. Run it again to update them.
+		</p>
+	) as HTMLElement;
 
 	constructor(parent: HTMLElement, simUI: RaidSimUI) {
 		this.simUI = simUI;
@@ -169,6 +199,13 @@ export class CompEditor {
 			</button>
 		) as HTMLButtonElement;
 		this.valuesButton.addEventListener('click', () => this.memberValues());
+		this.undoButton = (
+			<button className="btn btn-outline-warning d-none" type="button">
+				<i className="fas fa-rotate-left me-1" />
+				Undo
+			</button>
+		) as HTMLButtonElement;
+		this.undoButton.addEventListener('click', () => this.undoLast());
 
 		this.rootElem = (
 			<div className="rs-editor">
@@ -204,6 +241,7 @@ export class CompEditor {
 				<div className="rs-run-bar">
 					{this.runButton}
 					{this.valuesButton}
+					{this.valuesNote}
 					{this.runStatus}
 				</div>
 				{this.valuesHost}
@@ -211,6 +249,8 @@ export class CompEditor {
 			</div>
 		) as HTMLElement;
 		parent.appendChild(this.rootElem);
+		simUI.resultsViewer.contentElem.after(this.sidebarStaleNote);
+		simUI.tabElem(DETAILS_TAB).prepend(this.detailsStaleNote);
 
 		this.renderControls();
 		this.renderRaid();
@@ -226,6 +266,15 @@ export class CompEditor {
 				this.renderAll();
 			})
 			.catch(e => this.setStatus(`The report’s builds didn’t load: ${e}`, true));
+
+		// Member values come from the native server's single-player sims, as a search does.
+		simUI.sim.isWasm().then(isWasm => {
+			if (!isWasm) return;
+			this.valuesUnavailable = 'Member values need the native server (the downloadable sim or make host); this page is served as static files.';
+			this.valuesNote.textContent = this.valuesUnavailable;
+			this.valuesNote.classList.remove('d-none');
+			this.valuesButton.disabled = true;
+		});
 	}
 
 	// ---- State ----
@@ -293,13 +342,17 @@ export class CompEditor {
 			state.cells[cell] = { id: state.nextId++, preset: p };
 			packaged.add(party);
 		});
-		const order = [...Array(parties).keys()].sort((a, b) => +packaged.has(a) - +packaged.has(b));
+		// The other placeholders go to the parties without a package while they have room, so the packaged
+		// seats are left for members who gain from them (docs/raid_sim.md, Groups, 3). Among those, the party
+		// with the fewest placeholders so far takes the next one, which spreads them.
+		const placed = Array(parties).fill(0);
 		others.forEach(p => {
-			const party = order.find(q => freeIn(q) !== undefined);
+			const party = [...Array(parties).keys()]
+				.filter(q => freeIn(q) !== undefined)
+				.sort((a, b) => +packaged.has(a) - +packaged.has(b) || placed[a] - placed[b] || a - b)[0];
 			if (party === undefined) return;
 			state.cells[freeIn(party)!] = { id: state.nextId++, preset: p };
-			// Spread them: the next one goes to the next party.
-			order.push(order.splice(order.indexOf(party), 1)[0]);
+			placed[party]++;
 		});
 	}
 
@@ -341,11 +394,13 @@ export class CompEditor {
 	// are of another raid now.
 	private markStale() {
 		this.revision++;
+		this.setUndo(null);
 		const hadRun = !!this.lastRun && !this.stale;
 		const hadValues = this.valuesHost.childElementCount > 0 && !this.valuesStale;
 		if (this.lastRun) this.stale = true;
 		if (this.valuesHost.childElementCount) this.valuesStale = true;
 		if (hadRun) {
+			if (this.lastRun?.simResult) this.setRunStale(true);
 			this.renderResults();
 			// The Auto labels and slot DPS were the run's.
 			this.renderRaid();
@@ -365,10 +420,55 @@ export class CompEditor {
 		this.clearSidebar();
 	}
 
-	// The sidebar's raid DPS (or a run's progress) and Raid results, which were the last run's.
+	// The sidebar's raid DPS (or a run's progress) and Raid results, which were the last run's. A run's
+	// progress isn't run data, so it goes whether there is any or not.
 	private clearSidebar() {
 		if (this.simUI.resultsManager.getRunData()) this.simUI.resultsManager.clearSimResult(TypedEvent.nextEventID());
+		this.simUI.resultsViewer.contentElem.replaceChildren();
 		this.simUI.resultsViewer.hideAll();
+		this.setRunStale(false);
+	}
+
+	// The sidebar's raid DPS and Raid results are of the raid as it was.
+	private setRunStale(stale: boolean) {
+		this.sidebarStaleNote.classList.toggle('d-none', !stale);
+		this.detailsStaleNote.classList.toggle('d-none', !stale);
+		this.simUI.resultsViewer.contentElem.classList.toggle('rs-stale', stale);
+		this.simUI.tabElem(DETAILS_TAB).classList.toggle('rs-details-stale', stale);
+	}
+
+	// ---- Undo ----
+
+	// The raid as it stands, its fight included, for an Undo.
+	private snapshot(): EditorState {
+		this.saveState();
+		return JSON.parse(JSON.stringify(this.state));
+	}
+
+	// Offers one Undo of a change that replaced the raid (or forgets it, with null).
+	private setUndo(state: EditorState | null, what = '') {
+		this.undo = state ? { state, what } : null;
+		this.undoButton.classList.toggle('d-none', !state);
+		this.undoButton.title = state ? `Put the raid back as it was before ${what}` : '';
+		this.undoButton.replaceChildren(<i className="fas fa-rotate-left me-1" />, state ? `Undo ${what}` : 'Undo');
+	}
+
+	private undoLast() {
+		const undo = this.undo;
+		if (!undo) return;
+		this.state = undo.state;
+		this.moving = null;
+		if (this.state.encounter) {
+			try {
+				this.setPresetEncounter(EncounterProto.fromJson(this.state.encounter as any, { ignoreUnknownFields: true }));
+			} catch (e) {
+				console.warn('Failed to read the undone encounter:', e);
+			}
+		}
+		this.initBossSelect();
+		this.renderControls();
+		this.changed();
+		this.setStatus(`Undid ${undo.what}: the raid is back as it was.`);
 	}
 
 	// The last run, while it's of the raid as it stands.
@@ -380,6 +480,7 @@ export class CompEditor {
 	private assignmentChanged() {
 		this.saveState();
 		this.markStale();
+		this.renderAssignmentWarnings();
 	}
 
 	private renderAll() {
@@ -399,11 +500,13 @@ export class CompEditor {
 			</button>
 		) as HTMLButtonElement;
 		newRaid.addEventListener('click', () => {
+			const before = this.snapshot();
 			const next = this.defaultState(this.state.size);
-			this.state = { ...next, faction: s.faction, campBuffs: s.campBuffs, boss: s.boss, encounter: s.encounter };
+			this.state = { ...next, faction: s.faction, campBuffs: s.campBuffs, boss: s.boss, encounter: s.encounter, iterations: s.iterations };
 			this.forgetResults();
 			this.changed();
 			this.setStatus('');
+			this.setUndo(before, 'New raid');
 		});
 		const clear = (
 			<button className="btn btn-outline-secondary" type="button">
@@ -411,11 +514,13 @@ export class CompEditor {
 			</button>
 		) as HTMLButtonElement;
 		clear.addEventListener('click', () => {
+			const before = this.snapshot();
 			this.state.cells = Array(this.state.size).fill(null);
 			this.state.hand = emptyHand();
 			this.forgetResults();
 			this.changed();
 			this.setStatus('');
+			this.setUndo(before, 'Clear');
 		});
 
 		this.controlsHost.replaceChildren(
@@ -449,11 +554,13 @@ export class CompEditor {
 			<div className="rs-editor-buttons">
 				{newRaid}
 				{clear}
+				{this.undoButton}
 			</div>,
 		);
 	}
 
 	private resize(size: number) {
+		const before = this.snapshot();
 		const cells: Array<Member | null> = Array(size).fill(null);
 		// Members keep their place; the ones past the new size are dropped, with their assignments, and the
 		// status line names them.
@@ -473,7 +580,8 @@ export class CompEditor {
 		this.changed();
 		if (dropped.length) {
 			const who = dropped.length == 1 ? 'this member' : `these ${dropped.length} members`;
-			this.setStatus(`Down to ${size} players: ${who} past group ${size / PARTY_SIZE} left the raid: ${dropped.join(', ')}.`);
+			this.setStatus(`Down to ${size} players: ${who} past group ${size / PARTY_SIZE} left the raid: ${dropped.join(', ')}. Undo brings them back.`);
+			this.setUndo(before, 'the resize');
 		}
 	}
 
@@ -632,7 +740,10 @@ export class CompEditor {
 					<div className="player-label">
 						<img className="player-icon" src={icon} draggable={false} alt={iconAlt(cls)} />
 						<div className="player-details">
-							<span className={`rs-slot-name text-${cssClassForClass(cls)}`}>{this.memberName(member)}</span>
+							{/* The icon and color say the class, so a slot names only the build, as the palette does. */}
+							<span className={`rs-slot-name text-${cssClassForClass(cls)}`} title={this.memberName(member)}>
+								{member.preset ? this.memberName(member) : this.memberName(member).replace(/^[^:]*: /, '')}
+							</span>
 							<span className="rs-slot-sub">
 								{unknownBuild ? 'not one of this page’s builds' : info ? (info.role == RaidRole.RaidRoleTank ? 'Tank' : 'Healer') : 'DPS'}
 								{dps !== undefined ? ` · ${fmt(dps)} DPS` : ''}
@@ -955,8 +1066,11 @@ export class CompEditor {
 
 		// Cooldowns: Power Infusion from a Discipline priest, Innervate from a Restoration druid (or a Feral
 		// tank with it switched on). Only who gets them is chosen.
+		// Power Infusion goes to the casters its 20% magic damage is for, Innervate to the mana users, as the
+		// resolver gives them (sim/compsearch, isCaster and usesManaPlayer).
 		const dpsMembers = members.filter(m => !m.member.preset);
-		const manaUsers = dpsMembers.filter(m => ![Class.ClassWarrior, Class.ClassRogue].includes(this.classOf(m.member)));
+		const casters = dpsMembers.filter(m => this.isCaster(m.member));
+		const manaUsers = dpsMembers.filter(m => this.usesMana(m.member));
 		// The resolver's automatic Power Infusions and Innervates name their target, so the n-th holder's
 		// is the n-th one.
 		const piHolders = members.filter(m => m.member.preset && presetInfo(m.member.preset)?.powerInfusion).map(m => m.member.id);
@@ -965,7 +1079,11 @@ export class CompEditor {
 			.map(m => m.member.id);
 		const cooldown = (holder: { member: Member; cell: number }, pi: boolean) => {
 			const map = pi ? h.powerInfusion : h.innervate;
-			const targets = pi ? dpsMembers : manaUsers;
+			const targets = [...(pi ? casters : manaUsers)];
+			// A target set by hand that the list doesn't offer (a saved raid from before it was narrowed) stays
+			// in it, marked, so the select shows what Run sends.
+			const current = dpsMembers.find(t => t.member.id == map[holder.member.id]);
+			if (current && !targets.includes(current)) targets.push(current);
 			const nth = (pi ? piHolders : innervateHolders).indexOf(holder.member.id);
 			const resolved = this.freshRun?.resolution.assignments.filter(a => a.job.oneofKind == 'cooldown' && a.job.cooldown.powerInfusion == pi)[nth];
 			return field(
@@ -976,7 +1094,12 @@ export class CompEditor {
 							value: '',
 							label: this.autoLabel(a => a === resolved),
 						},
-						...targets.map(t => ({ value: `${t.member.id}`, label: this.memberShortName(t.member, t.cell) })),
+						...targets.map(t => ({
+							value: `${t.member.id}`,
+							label: `${this.memberShortName(t.member, t.cell)}${
+								t != current || (pi ? casters : manaUsers).includes(t) ? '' : pi ? ' (no magic damage to boost)' : ' (no mana)'
+							}`,
+						})),
 					],
 					map[holder.member.id] !== undefined ? `${map[holder.member.id]}` : '',
 					v => {
@@ -1001,6 +1124,9 @@ export class CompEditor {
 							'Innervate',
 							check('Casts Innervate (leaves Bear Form)', !!m.member.presetInnervate, v => {
 								m.member.presetInnervate = v;
+								// Without its Innervate, a target set by hand goes too: the resolver refuses a holder
+								// with nothing to give.
+								if (!v) delete h.innervate[m.member.id];
 								this.changed();
 							}),
 						),
@@ -1011,12 +1137,73 @@ export class CompEditor {
 			});
 
 		const dpsShamans = dpsMembers.filter(m => this.classOf(m.member) == Class.ClassShaman);
+		this.renderAssignmentWarnings();
 		this.assignmentsHost.replaceChildren(
+			this.warningsHost,
 			...(rows.length ? rows : [empty('Nobody in this raid holds an assignment yet. Paladins, shamans, priests, druids and the duty builds do.')]),
 			...(dpsShamans.length
 				? [<p className="rs-muted">A DPS shaman’s rotation drops its own fixed totems, so it has no totem choice yet (docs/raid_sim.md, M1b).</p>]
 				: []),
 		);
+	}
+
+	// What the jobs set by hand waste: two holders of the one minor armor slot, or a Windfury Totem by hand
+	// next to another shaman's (the raid gets one, so the second adds nothing). Drawn again on each change.
+	private renderAssignmentWarnings() {
+		const h = this.state.hand;
+		const members = this.members();
+		const warnings: string[] = [];
+		const minorArmor = members.filter(m => h.duties[m.member.id] == Duty.DutyFaerieFire || h.duties[m.member.id] == Duty.DutyCurseOfRecklessness);
+		if (minorArmor.length > 1) {
+			warnings.push(
+				`${minorArmor.map(m => `${this.memberShortName(m.member, m.cell)} holds ${dutyName(h.duties[m.member.id])}`).join(' and ')} by hand, but ` +
+					'Faerie Fire and Curse of Recklessness fill one minor armor slot: only one of them counts, and the rest pay their duty cost for nothing.',
+			);
+		}
+		const handWindfury = members.filter(m => h.totems[m.member.id]?.air == RaidTotem.RaidTotemWindfury);
+		const otherWindfury = (id: number) =>
+			members.filter(
+				m =>
+					m.member.id != id &&
+					(h.totems[m.member.id]?.air == RaidTotem.RaidTotemWindfury || this.buildOf(m.member)?.gives.includes('Windfury Totem')),
+			);
+		handWindfury.forEach(m => {
+			const others = otherWindfury(m.member.id);
+			// Two placeholders by hand make one warning, from the first.
+			if (!others.length || others.some(o => handWindfury.includes(o) && o.cell < m.cell)) return;
+			warnings.push(
+				`${this.memberShortName(m.member, m.cell)}’s Windfury Totem by hand duplicates ${others
+					.map(o => this.memberShortName(o.member, o.cell))
+					.join(' and ')}’s: the raid gets one Windfury Totem, so Grace of Air would add more.`,
+			);
+		});
+		this.warningsHost.replaceChildren(...warnings.map(w => <li>{w}</li>));
+	}
+
+	// A member Power Infusion's 20% magic damage is for (sim/compsearch, isCaster).
+	private isCaster(member: Member): boolean {
+		const build = this.buildOf(member);
+		if (!build) return false;
+		const spec = Object.values(build.players)[0]?.spec.oneofKind;
+		switch (build.class) {
+			case Class.ClassMage:
+			case Class.ClassWarlock:
+			case Class.ClassPriest:
+				return true;
+			case Class.ClassDruid:
+				return spec == 'balanceDruid';
+			case Class.ClassShaman:
+				return spec == 'elementalShaman';
+		}
+		return false;
+	}
+
+	// A member Innervate is for (sim/compsearch, usesManaPlayer): not a warrior, a rogue or a cat.
+	private usesMana(member: Member): boolean {
+		const build = this.buildOf(member);
+		if (!build) return false;
+		if (build.class == Class.ClassWarrior || build.class == Class.ClassRogue) return false;
+		return Object.values(build.players)[0]?.spec.oneofKind != 'feralDruid';
 	}
 
 	private assignmentRow(member: Member, cell: number, title: string, controls: Node[]) {
@@ -1112,6 +1299,7 @@ export class CompEditor {
 				return;
 			}
 		}
+		const before = this.snapshot();
 		const unknown: string[] = [];
 		const size = request?.size && RAID_SIZES[request.size] ? request.size : comp.members.length <= 10 ? 10 : comp.members.length <= 20 ? 20 : 40;
 		const state: EditorState = {
@@ -1195,9 +1383,14 @@ export class CompEditor {
 		this.forgetResults();
 		this.saveState();
 		this.renderAll();
-		const loaded = `Loaded comp from the search (${factionName(scenario.faction)}, camps ${scenario.campBuffs ? 'on' : 'off'}): ${fmt(
-			comp.dps,
-		)} raid DPS there.`;
+		this.setUndo(before, 'the loaded comp');
+		// A confirmed comp has its raid sim DPS; otherwise the search only scored it.
+		const there = comp.confirmed
+			? `${fmt(comp.raidSimDps)} raid sim DPS there`
+			: `a score of ${fmt(comp.dps)} there (its members’ single-player sims added up; Run sims it as a raid)`;
+		const loaded = `Loaded comp from the search (${factionName(scenario.faction)}, camps ${
+			scenario.campBuffs ? 'on' : 'off'
+		}): ${there}. Undo puts back the raid it replaced.`;
 		if (unknown.length) {
 			this.setStatus(
 				`${loaded} This page’s builds don’t have ${[...new Set(unknown)].join(
@@ -1335,11 +1528,20 @@ export class CompEditor {
 			}),
 		);
 		Object.entries(h.duties).forEach(([holder, duty]) => hand(parseInt(holder), { oneofKind: 'duty', duty }));
+		// A cooldown goes only from a holder that has it to give: a saved raid can name one that no longer does
+		// (a Feral tank with its Innervate switched off), which the resolver would refuse.
+		const gives = (holder: number, pi: boolean) => {
+			const m = this.memberById(holder)?.member;
+			const info = m?.preset ? presetInfo(m.preset) : undefined;
+			return !!info && (pi ? !!info.powerInfusion : !!info.innervate || (!!info.innervateOptional && !!m!.presetInnervate));
+		};
 		Object.entries(h.powerInfusion).forEach(
-			([holder, target]) => has(target) && hand(parseInt(holder), { oneofKind: 'cooldown', cooldown: { powerInfusion: true, target } }),
+			([holder, target]) =>
+				has(target) && gives(parseInt(holder), true) && hand(parseInt(holder), { oneofKind: 'cooldown', cooldown: { powerInfusion: true, target } }),
 		);
 		Object.entries(h.innervate).forEach(
-			([holder, target]) => has(target) && hand(parseInt(holder), { oneofKind: 'cooldown', cooldown: { powerInfusion: false, target } }),
+			([holder, target]) =>
+				has(target) && gives(parseInt(holder), false) && hand(parseInt(holder), { oneofKind: 'cooldown', cooldown: { powerInfusion: false, target } }),
 		);
 
 		return RaidComp.create({
@@ -1382,6 +1584,8 @@ export class CompEditor {
 		this.stopping = false;
 		this.setRunning(true);
 		const revision = this.revision;
+		// A worker's last progress can come after the run ends or is stopped: the sidebar keeps none of it then.
+		let live = true;
 		try {
 			this.setStatus('Resolving the comp…');
 			const comp = await this.buildComp();
@@ -1407,10 +1611,12 @@ export class CompEditor {
 			out.request = request;
 			this.setStatus(`Simming ${plural(request.raid?.parties.flatMap(p => p.players).length ?? 0, 'player')}…`);
 			const result = await sim.runRaidSimRequest(request, (progress: ProgressMetrics) => {
+				if (!live || this.stopping) return;
 				this.simUI.resultsManager.setSimProgress(progress);
 				if (progress.totalIterations)
 					this.setStatus(`Simming: ${progress.completedIterations} of ${progress.totalIterations} iterations, ${fmt(progress.dps)} DPS`);
 			});
+			live = false;
 			out.result = result;
 			// The raid changed while it ran.
 			if (this.revision != revision) this.stale = true;
@@ -1426,6 +1632,16 @@ export class CompEditor {
 			} else {
 				out.simResult = await SimResult.makeNew(request, result);
 				this.simUI.resultsManager.setSimResult(TypedEvent.nextEventID(), out.simResult);
+				this.simUI.resultsViewer.contentElem
+					.querySelector('.results-sim')
+					?.append(
+						(
+							<p className="rs-sidebar-note">
+								± here is one standard deviation of the iterations; the Comp tab’s ±(95%) is the average’s 95% interval.
+							</p>
+						) as HTMLElement,
+					);
+				this.setRunStale(this.stale);
 				this.setStatus(`Done: ${fmt(result.raidMetrics?.dps?.avg)} raid DPS.`);
 			}
 			this.renderRaid();
@@ -1436,6 +1652,7 @@ export class CompEditor {
 			this.clearSidebar();
 			this.setError('The run failed', e instanceof Error ? e.message : `${e}`);
 		} finally {
+			live = false;
 			this.running = false;
 			this.setRunning(false);
 		}
@@ -1448,6 +1665,10 @@ export class CompEditor {
 	async memberValues() {
 		if (this.valuesAbort) {
 			this.valuesAbort.abort();
+			return;
+		}
+		if (this.valuesUnavailable) {
+			this.setStatus(this.valuesUnavailable, true);
 			return;
 		}
 		if (!this.data) {
@@ -1522,40 +1743,21 @@ export class CompEditor {
 					</span>
 				</span>,
 				fmt(mv.ownDps),
-				fmt(mv.contribution),
 				fmtSigned(mv.contribution - mv.ownDps),
+				fmt(mv.contribution),
 				mv.bestReplacement ? fmt(mv.replacementMargin) : NA,
 				mv.bestReplacement ? (replacement ? buildLabel(replacement.build, replacement.variant) : mv.bestReplacement) : NA,
 				duty !== undefined && duty != Duty.DutyNone ? dutyName(duty) : NA,
 				duty !== undefined && duty != Duty.DutyNone ? fmt(mv.dutyCost) : NA,
 				mv.reportDifference || mv.reportDifferenceParts.length ? fmtSigned(mv.reportDifference) : NA,
-				mv.reportDifferenceParts.length ? list(mv.reportDifferenceParts, 'rs-parts') : '',
+				partsToggle(mv.reportDifferenceParts),
 			];
 		});
-		return section(
-			'Member values',
-			table(
-				[
-					'Member',
-					{ label: 'Own DPS', numeric: true },
-					{ label: 'Contribution', numeric: true, tooltip: 'Raid DPS less raid DPS without the member, re-resolved' },
-					{ label: 'Adds to others', numeric: true, tooltip: 'Contribution minus its own DPS' },
-					{ label: 'Replacement margin', numeric: true, tooltip: 'Raid DPS less the best raid DPS with another build in that slot' },
-					'Best replacement',
-					'Duty',
-					{ label: 'Duty cost', numeric: true, tooltip: 'Its base build’s DPS less its DPS on duty, in its seat' },
-					{ label: 'vs the DPS Report', numeric: true },
-					'Its parts',
-				],
-				rows,
-				'rs-table-values',
-			),
-			{
-				note: `One row per distinct member, with the slots (group.place) it stands for. The members’ single-player sum under this comp’s set: ${fmt(
-					out.score,
-				)} ${ci95Labelled(out.se)}.`,
-			},
-		);
+		return section('Member values', table(MEMBER_VALUE_COLUMNS, rows, 'rs-table-values'), {
+			note: `One row per distinct member, with the slots (group.place) it stands for. The members’ single-player sum under this comp’s set: ${fmt(
+				out.score,
+			)} ${ci95Labelled(out.se)}.`,
+		});
 	}
 
 	// The package a party's shaman gives, by the resolver's record when there is one, else by its preset.
@@ -1583,7 +1785,7 @@ export class CompEditor {
 		this.runButton.replaceChildren(<i className={`fas ${running ? 'fa-stop' : 'fa-play'} me-1`} />, running ? 'Stop' : 'Run');
 		const sidebar = this.simUI.simActionsContainer.querySelector<HTMLButtonElement>('.dps-action');
 		if (sidebar) sidebar.textContent = running ? 'Stop' : 'Run comp';
-		this.valuesButton.disabled = running;
+		this.valuesButton.disabled = running || !!this.valuesUnavailable;
 	}
 
 	private setValuesRunning(running: boolean) {
@@ -1626,7 +1828,9 @@ export class CompEditor {
 				<div className="rs-run-topline">
 					<span className="rs-run-dps">{fmt(raidDps.avg)}</span>
 					<span className="rs-run-dps-label">raid DPS</span>
-					<span className="rs-ci">±{fmt((1.96 * raidDps.stdev) / Math.sqrt(iterations))} (95%)</span>
+					<span className="rs-ci" title="The 95% interval of the average raid DPS (the sidebar’s ± is one standard deviation of the iterations)">
+						±{fmt((1.96 * raidDps.stdev) / Math.sqrt(iterations))} (95%)
+					</span>
 					<span className="rs-muted">
 						{iterations} iterations, {fmt(simResult.result.avgIterationDuration, 0)} s average fight
 					</span>
@@ -1721,7 +1925,7 @@ export class CompEditor {
 					  )
 					: empty('The resolver recorded no buffs.'),
 				{
-					note: 'From the resolver’s record. A given effect is up all fight; a cast one’s uptime is its aura’s in the raid sim (the boss’s for a debuff, the average over the members who carry it for a buff), and shows — where the sim has no aura for it.',
+					note: 'From the resolver’s record. A given effect is up all fight; a cast one’s uptime is its aura’s in the raid sim (the boss’s for a debuff; for a buff, the average over the members it was up on, leaving out a member whose aura never came up, like an Elemental shaman’s Windfury Totem), and shows — where the sim has no aura for it.',
 				},
 			),
 			section('What the raid goes without', resolution.misses.length ? list(resolution.misses, 'rs-misses') : empty('Nothing.')),
@@ -1842,16 +2046,18 @@ const EFFECT_AURAS: Record<string, string[]> = {
 	'Mana Spring ×1.25 and Mana Tide': ['Mana Spring Totem', 'Mana Spring'],
 };
 
-// The uptime of a cast effect in a raid sim: the average over the units that carry one of its auras, the
-// boss for a debuff and the players for a buff. An effect the page knows no aura for, or whose aura no
-// unit carries, shows none.
+// The uptime of a cast effect in a raid sim: the average over the units it was up on, the boss for a
+// debuff and the players for a buff. A unit that has the aura but never had it up isn't a giver or a
+// receiver of it (an Elemental shaman registers Windfury Totem and never drops it, next to an
+// Enhancement shaman who does), so it's left out, and the text says how many were. An effect the page
+// knows no aura for, or whose aura no unit carries, shows none.
 // The Windfury Totem's 1 sec attack power buff on each proc (sim/core's WindfuryBuffSpellId): its spell is
 // named Windfury Totem too, but its uptime is the procs', not the totem's.
 const WINDFURY_ATTACK_SPELLS = [8516, 10608, 10610];
 
 const auraBaseName = (name: string) => name.replace(/\s*\(Rank \d+\)$/, '');
 
-const uptimeText = (simResult: SimResult, effect: string, scope: string): string => {
+const uptimeText = (simResult: SimResult, effect: string, scope: string): Node | string => {
 	const names = EFFECT_AURAS[effect];
 	if (!names) return NA;
 	const units = /boss|target/i.test(scope) ? simResult.getTargets() : simResult.getPlayers();
@@ -1861,5 +2067,16 @@ const uptimeText = (simResult: SimResult, effect: string, scope: string): string
 		if (auras.length) uptimes.push(Math.max(...auras.map(a => a.uptimePercent)));
 	});
 	if (!uptimes.length) return NA;
-	return `${fmt(uptimes.reduce((a, b) => a + b, 0) / uptimes.length, 1)}%`;
+	const up = uptimes.filter(u => u > 0);
+	if (!up.length) return '0%';
+	const average = `${fmt(up.reduce((a, b) => a + b, 0) / up.length, 1)}%`;
+	if (up.length == uptimes.length) return average;
+	return (
+		<span title={`The average over the ${plural(up.length, 'unit')} it was up on; ${uptimes.length - up.length} more have its aura and never had it up`}>
+			{average}{' '}
+			<span className="rs-muted">
+				on {up.length} of {uptimes.length}
+			</span>
+		</span>
+	);
 };

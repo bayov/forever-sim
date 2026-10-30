@@ -171,6 +171,32 @@ export const membersLabel = (data: RaidSimData | null, ids: string) => {
 	return <span>{out}</span>;
 };
 
+// The member values table's columns, the search result's and the comp editor's alike: its own DPS and what
+// it adds to everyone else come before their sum, the contribution (docs/raid_sim.md, Member value).
+export const MEMBER_VALUE_COLUMNS: Column[] = [
+	{ label: 'Member' },
+	{ label: 'Own DPS', numeric: true },
+	{ label: 'Adds to others', numeric: true, tooltip: 'Contribution minus its own DPS' },
+	{ label: 'Contribution', numeric: true, tooltip: 'Raid DPS minus raid DPS without the member, re-resolved' },
+	{ label: 'Replacement margin', numeric: true, tooltip: 'Raid DPS minus the best raid DPS with another build in that slot' },
+	{ label: 'Best replacement' },
+	{ label: 'Duty' },
+	{ label: 'Duty cost', numeric: true, tooltip: 'Its base build’s DPS less its DPS on duty, in its seat' },
+	{ label: 'vs the DPS Report', numeric: true, tooltip: 'Its DPS here minus its report build’s published DPS' },
+	{ label: 'Its parts', tooltip: 'The difference from the DPS Report, one change at a time' },
+];
+
+// The parts of a member's difference from the DPS Report, folded away so the table fits the page.
+export const partsToggle = (parts: string[]): Node | string => {
+	if (!parts.length) return '';
+	return (
+		<details className="rs-parts-toggle">
+			<summary>{plural(parts.length, 'part')}</summary>
+			{list(parts, 'rs-parts')}
+		</details>
+	);
+};
+
 // A collapsible list: the first n rows, and a button for the rest.
 export const collapsible = (build: (rows: number) => HTMLElement, total: number, first: number) => {
 	if (total <= first) return build(total);

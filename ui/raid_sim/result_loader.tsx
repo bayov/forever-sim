@@ -19,11 +19,12 @@ export const parseCompSearchResult = (text: string): CompSearchResult => {
 
 export class ResultLoader {
 	readonly rootElem: HTMLElement;
-	private readonly onLoad: (result: CompSearchResult, source: string) => void;
+	// fromUrl: the result came with the page's address, which may name a tab of its own to open.
+	private readonly onLoad: (result: CompSearchResult, source: string, fromUrl: boolean) => void;
 	private readonly fileInput: HTMLInputElement;
 	private readonly statusElem: HTMLElement;
 
-	constructor(parent: HTMLElement, onLoad: (result: CompSearchResult, source: string) => void) {
+	constructor(parent: HTMLElement, onLoad: (result: CompSearchResult, source: string, fromUrl: boolean) => void) {
 		this.onLoad = onLoad;
 		this.fileInput = (<input type="file" accept=".json,application/json" className="d-none" />) as HTMLInputElement;
 		this.statusElem = (<div className="rs-loader-status" />) as HTMLElement;
@@ -97,7 +98,7 @@ export class ResultLoader {
 		try {
 			const res = await fetch(url);
 			if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
-			this.load(await res.text(), url);
+			this.load(await res.text(), url, true);
 		} catch (e) {
 			this.setStatus(`Couldn’t load ${url}: ${e instanceof Error ? e.message : e}`, true);
 		}
@@ -111,11 +112,11 @@ export class ResultLoader {
 		}
 	}
 
-	private load(text: string, source: string) {
+	private load(text: string, source: string, fromUrl = false) {
 		try {
 			const result = parseCompSearchResult(text);
 			this.setStatus('');
-			this.onLoad(result, source);
+			this.onLoad(result, source, fromUrl);
 		} catch (e) {
 			this.setStatus(`Couldn’t open ${source}: ${e instanceof Error ? e.message : e}`, true);
 		}
