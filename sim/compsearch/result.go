@@ -190,6 +190,15 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 	out := &extrasOut{}
 	r := best.Raid
 	ph := r.phUp(best.Plan)
+	// The role table compares re-fills, and a re-fill picks its builds on the screening's noise (six fire
+	// mages trade for six frostfire on 45 DPS of it at 100 iterations). So the winning set is re-filled the
+	// same way for the baseline, and the better of that and the winner's own members is the one to beat.
+	roleBase := best.Score
+	if ref, err := sc.EvalExact(r, best.Plan, f, ev); err != nil {
+		return nil, err
+	} else if ref != nil && ref.Score > roleBase {
+		roleBase = ref.Score
+	}
 	// The role table: each role removed from the winning set and re-filled, or added when it's missing.
 	for _, g := range toggles {
 		name := GiftName(g &^ GiftFort)
@@ -210,6 +219,14 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 			q.Up &^= g &^ ph
 		} else {
 			q.Up |= g
+			// A placeholder paladin judging Wisdom can judge the Crusader instead, at no member's cost.
+			if g == GiftCrusader && r.phPaladins > q.PHCrusader {
+				q.PHCrusader++
+				q.Up = r.phUp(q)&^GiftBlessing | (best.Plan.Up &^ ph)
+				if q.Paladins > 0 {
+					q.Up |= GiftBlessing
+				}
+			}
 		}
 		c, err := sc.EvalExact(r, q, f, ev)
 		if err != nil {
@@ -263,7 +280,7 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 		}
 		rv := &proto.CompRoleValue{Role: name, InSet: in, Measured: true}
 		if in {
-			rv.Net = best.Score - c.Score
+			rv.Net = roleBase - c.Score
 			prov, other, cost, err := providerCost(best, g, sc, ev, f)
 			if err != nil {
 				return nil, err
@@ -274,7 +291,7 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 			}
 			rv.Gain = rv.Net + cost
 		} else {
-			rv.Net = c.Score - best.Score
+			rv.Net = c.Score - roleBase
 			rv.Provider = "value of adding"
 		}
 		out.roles = append(out.roles, rv)
@@ -294,7 +311,7 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 		if c, err := sc.EvalExact(r, q, f, ev); err != nil {
 			return nil, err
 		} else if c != nil {
-			net := best.Score - c.Score
+			net := roleBase - c.Score
 			out.roles = append(out.roles, &proto.CompRoleValue{Role: fmt.Sprintf("a shaman placeholder's %s over %s", totemName(t), totemName(otherAir(t))),
 				InSet: true, Measured: true, Gain: net, Net: net, Provider: "placeholders"})
 		}
@@ -309,7 +326,7 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 		if c, err := sc.EvalExact(r, q, f, ev); err != nil {
 			return nil, err
 		} else if c != nil {
-			out.roles = append(out.roles, &proto.CompRoleValue{Role: "a Ret paladin's blessings", InSet: true, Measured: true, Net: best.Score - c.Score, Provider: "Ret paladin"})
+			out.roles = append(out.roles, &proto.CompRoleValue{Role: "a Ret paladin's blessings", InSet: true, Measured: true, Net: roleBase - c.Score, Provider: "Ret paladin"})
 		}
 	}
 
@@ -358,8 +375,9 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 		if err != nil {
 			return nil, err
 		}
-		// A replacement that beats the member beyond noise is a better comp the search missed.
-		if mv.BestReplacement != "" && mv.ReplacementMargin < -2*best.SE {
+		// A replacement that beats the member beyond noise is a better comp the search missed, unless the
+		// member is fixed (the search couldn't replace it).
+		if mv.BestReplacement != "" && mv.ReplacementMargin < -2*best.SE && !m.Fixed {
 			out.notes = append(out.notes, fmt.Sprintf("the search missed a better comp: %s in place of %s scores %.1f higher (beyond noise)",
 				mv.BestReplacement, m.B.ID, -mv.ReplacementMargin))
 		}
@@ -378,16 +396,23 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 		bestV := math.Inf(-1)
 		tried := map[*Build]bool{}
 		for i, m := range best.Members {
-			if tried[m.B] {
+			// A fixed member stays; a duty holder's seat takes the build's own variant on that duty too.
+			if tried[m.B] || m.Fixed {
 				continue
 			}
 			tried[m.B] = true
-			v, ok, err := sc.swapScore(best, i, b, ev)
-			if err != nil {
-				return nil, err
+			try := []*Build{b}
+			if v := b.Duties[m.B.Duty]; m.B.Duty != proto.Duty_DutyNone && v != nil {
+				try = append(try, v)
 			}
-			if ok {
-				bestV = math.Max(bestV, v)
+			for _, x := range try {
+				v, ok, err := sc.swapScore(best, i, x, ev)
+				if err != nil {
+					return nil, err
+				}
+				if ok {
+					bestV = math.Max(bestV, v)
+				}
 			}
 		}
 		if !math.IsInf(bestV, -1) {
@@ -404,6 +429,22 @@ func providerCost(c *Comp, g Gift, sc *Scenario, ev *exactValuer, f *Fillers) (s
 	for _, m := range c.Members {
 		if m.B.Gives&g == 0 {
 			continue
+		}
+		other := m.B.Gives &^ g &^ GiftBlessing & c.Plan.Up
+		// A fixed member is never displaced, so the role costs it only its duty: its base build in the same
+		// seat less it (nothing when it gives the role without one).
+		if m.Fixed {
+			if m.B.Duty == proto.Duty_DutyNone {
+				return m.B.ID, other, 0, nil
+			}
+			s := m.Seat
+			s.Own = m.B.Base.Casts
+			ev.V(m.B.Base, s)
+			if _, err := ev.flush(); err != nil {
+				return "", 0, 0, err
+			}
+			v, _, _ := ev.V(m.B.Base, s)
+			return m.B.ID, other, math.Max(0, v-m.DPS), nil
 		}
 		bestV := math.Inf(-1)
 		// The first pass records the sims the cache lacks; the second reads them.
@@ -422,7 +463,7 @@ func providerCost(c *Comp, g Gift, sc *Scenario, ev *exactValuer, f *Fillers) (s
 				bestV = math.Inf(-1)
 			}
 		}
-		return m.B.ID, m.B.Gives &^ g &^ GiftBlessing & c.Plan.Up, math.Max(0, bestV-m.DPS), nil
+		return m.B.ID, other, math.Max(0, bestV-m.DPS), nil
 	}
 	return "", 0, 0, nil
 }
@@ -611,9 +652,19 @@ func (sc *Scenario) memberValue(c *Comp, i int, f *Fillers, ev *exactValuer, can
 		return nil, err
 	}
 	out.Contribution = c.Score - nc.Score
-	// The best other build in that slot.
+	// The best other build in that slot. A duty holder is also compared with every other build that can
+	// hold its duty.
+	alts := cands
+	if m.B.Duty != proto.Duty_DutyNone {
+		alts = append([]*Build{}, cands...)
+		for _, b := range sc.Pool.Bases {
+			if v := b.Duties[m.B.Duty]; v != nil && v != m.B {
+				alts = append(alts, v)
+			}
+		}
+	}
 	bestV, bestB := math.Inf(-1), ""
-	for _, b := range cands {
+	for _, b := range alts {
 		if b == m.B || b == m.B.Base {
 			continue
 		}
@@ -711,7 +762,12 @@ func (sc *Scenario) reportDifference(m *Member, ev *exactValuer) (float64, []str
 	}
 	// Only a duty holder is compared with another build (its base); a pet or encounter variant is its own.
 	if m.B != base {
-		parts = append(parts, fmt.Sprintf("its duty (%s): %+.1f", dutyLabel(m.B.Duty), j3.Value.DPS-j2.Value.DPS))
+		label := "its duty (" + dutyLabel(m.B.Duty) + ")"
+		// A duty build's own race table can pick another race, which this step then includes.
+		if r := m.B.Race[sc.Faction]; r != base.Race[sc.Faction] {
+			label += ", at its own best race (" + strings.TrimPrefix(r.String(), "Race") + ")"
+		}
+		parts = append(parts, fmt.Sprintf("%s: %+.1f", label, j3.Value.DPS-j2.Value.DPS))
 	}
 	return m.DPS - base.Published, parts, nil
 }
@@ -791,7 +847,9 @@ func loadAssumptionShifts(root string) map[string]map[string]float64 {
 
 // assumptionSensitivity shifts each contender's members by the report's open assumptions, one combo at a
 // time, and says whether the winner holds (docs/raid_sim.md, Sensitivity: no sims).
-func (sc *Scenario) assumptionSensitivity(contenders []*Comp, best *Comp) []*proto.CompSensitivity {
+// base is each comp's DPS before the shifts and its standard error: the raid sims' for confirmed comps
+// (then only the confirmed take part, since the winner is the raid sims' choice), else the score's.
+func (sc *Scenario) assumptionSensitivity(contenders []*Comp, best *Comp, base func(*Comp) (float64, float64, bool)) []*proto.CompSensitivity {
 	shift := loadAssumptionShifts(sc.Pool.Root)
 	combos := map[string]bool{}
 	for _, m := range shift {
@@ -809,15 +867,22 @@ func (sc *Scenario) assumptionSensitivity(contenders []*Comp, best *Comp) []*pro
 	for _, name := range names {
 		var vs []shifted
 		for _, c := range contenders {
-			v := c.Score
+			v, _, ok := base(c)
+			if !ok {
+				continue
+			}
 			for _, m := range c.Members {
 				v += shift[m.B.Base.ID][name]
 			}
 			vs = append(vs, shifted{c, v})
 		}
 		sort.SliceStable(vs, func(a, b int) bool { return vs[a].v > vs[b].v })
+		bv, bse, ok := base(best)
+		if len(vs) == 0 || !ok {
+			continue
+		}
 		res := &proto.CompSensitivity{Scenario: label(name), WinnerHolds: vs[0].c == best ||
-			vs[0].v-valueOf(vs, best) <= math.Max(2*best.SE, 0.001*best.Score)}
+			vs[0].v-valueOf(vs, best) <= math.Max(2*bse, 0.001*bv)}
 		if !res.WinnerHolds {
 			// The whole comp, so a page can name its members; its DPS and gap are the shifted ones.
 			w := sc.compProto(vs[0].c, best, nil)

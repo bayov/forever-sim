@@ -71,7 +71,9 @@ func Markdown(res *proto.CompSearchResult) string {
 		if len(sc.Roles) > 0 {
 			b.WriteString("\n**Roles** at the winning set (re-filled without each, or with it when it's missing):\n\n| Role | Gain | Provider | Provider cost | Net |\n|---|---|---|---|---|\n")
 			for _, r := range sc.Roles {
-				if r.InSet {
+				if !r.Measured {
+					fmt.Fprintf(&b, "| %s | | %s | | not measured |\n", r.Role, r.Provider)
+				} else if r.InSet {
 					fmt.Fprintf(&b, "| %s | %.1f | %s | %.1f | %.1f |\n", r.Role, r.Gain, r.Provider, r.ProviderCost, r.Net)
 				} else {
 					fmt.Fprintf(&b, "| %s (missing) | | value of adding | | %.1f |\n", r.Role, r.Net)
@@ -109,7 +111,11 @@ func Markdown(res *proto.CompSearchResult) string {
 			}
 		}
 		if len(sc.Combos) > 0 {
-			b.WriteString("\n**Tank and healer combos** (best first):\n\n| Combo | Raid DPS | Behind |\n|---|---|---|\n")
+			b.WriteString("\n**Tank and healer combos** (best first, by their best comp's screening score")
+			if req.MaxCombos > 0 {
+				fmt.Fprintf(&b, "; at most %d combos were ranked, so the preset values are over those", req.MaxCombos)
+			}
+			b.WriteString("):\n\n| Combo | Best comp's score | Behind |\n|---|---|---|\n")
 			for i, c := range sc.Combos {
 				if i >= 10 {
 					fmt.Fprintf(&b, "| … %d more | | |\n", len(sc.Combos)-i)
@@ -240,7 +246,11 @@ func membersTable(c *proto.CompResult) string {
 	for _, m := range c.Members {
 		var jobs, gets []string
 		for _, d := range m.Duties {
-			jobs = append(jobs, shortEnum(d.String(), "Duty"))
+			job := shortEnum(d.String(), "Duty")
+			if m.DutyCost != 0 {
+				job += fmt.Sprintf(" (costs %.1f)", m.DutyCost)
+			}
+			jobs = append(jobs, job)
 		}
 		if m.Judgement != proto.PaladinJudgement_PaladinJudgementNone {
 			jobs = append(jobs, "judges "+shortEnum(m.Judgement.String(), "PaladinJudgement"))

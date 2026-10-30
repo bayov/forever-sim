@@ -814,6 +814,43 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 			}
 			conf[c] = confirmed{d, se}
 		}
+		// Members who cast debuffs or hold duties make a score run high against its raid sim (0.2 to 0.45%
+		// in the third audit), more than the window allows for, so a set just outside it could beat the
+		// confirmed ones. When the confirmed sets' scores ran high beyond noise, the window widens by the
+		// most any did, once.
+		lean := 0.0
+		for _, c := range sets {
+			if d := c.Score - conf[c].dps; d > 3*math.Hypot(conf[c].se, c.SE) {
+				lean = math.Max(lean, d)
+			}
+		}
+		if lean > 0 {
+			doneSet := map[string]bool{}
+			for _, c := range sets {
+				doneSet[c.Plan.Key()+comboKey(c.Raid.Combo)] = true
+			}
+			for _, c := range contenders {
+				k := c.Plan.Key() + comboKey(c.Raid.Combo)
+				if doneSet[k] {
+					continue
+				}
+				if c.Score < top.Score-0.001*top.Score-2.5*math.Hypot(top.SE, c.SE)-lean {
+					continue
+				}
+				doneSet[k] = true
+				if sc.Abort != nil && sc.Abort() {
+					return nil, ErrAborted
+				}
+				report("confirmation: a set the scores' lean brings in", best)
+				d, se, err := sc.confirm(c, req.ConfirmIterations, sc.Seed)
+				if err != nil {
+					return nil, err
+				}
+				conf[c] = confirmed{d, se}
+				sets = append(sets, c)
+			}
+			out.Notes = append(out.Notes, fmt.Sprintf("the confirmed sets' scores ran up to %.1f above their raid sims, so the confirmation took in the sets within that much more", lean))
+		}
 		sort.SliceStable(sets, func(a, b int) bool { return conf[sets[a]].dps > conf[sets[b]].dps })
 		fresh := sc.Seed + int64(req.ConfirmIterations) + 1_000_003
 		for i := 0; i < 2 && i < len(sets); i++ {
@@ -948,7 +985,13 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 			Provider: "the camp", Scope: "raid", Receivers: int32(len(best.Members)), Given: true})
 	}
 	if !req.SkipSensitivity {
-		out.Sensitivity = sc.assumptionSensitivity(contenders, best)
+		out.Sensitivity = sc.assumptionSensitivity(contenders, best, func(c *Comp) (float64, float64, bool) {
+			if len(conf) > 0 {
+				x, ok := conf[c]
+				return x.dps, x.se, ok
+			}
+			return c.Score, c.SE, true
+		})
 	}
 	return out, nil
 }

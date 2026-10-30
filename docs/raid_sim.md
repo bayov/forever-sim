@@ -994,8 +994,11 @@ Raid sims confirm **distinct buff sets, not comps**:
   iterations. The top 2 go on to 20,000 (standard 15), on a fresh seed range, since seed s at 20,000
   iterations repeats the 5,000 run's iterations.
 - The raid sims rank the confirmed sets, and their numbers are the answer. If a raid sim disagrees with its
-  score by more than noise, the result notes the gap. (Widening the confirmation to the next sets of a type
-  whose gaps lean one way isn't built; the notes show it.)
+  score by more than noise, the result notes the gap.
+- Scores run high for comps whose members cast debuffs or hold duties: the third audit measured 0.2 to
+  0.45% (a Battle Shout warrior 6.7 DPS under its single-player sim, Beast Mastery hunters 3 to 5), against
+  0.04% for casters. That's more than the window allows for, so when the confirmed sets' scores ran high
+  beyond noise, the window widens once by the most any did and the sets inside it are raid-simmed too.
 
 The raid sim catches what the single-player sims can't:
 
@@ -1169,7 +1172,10 @@ the same items. It leads with what could change the answer:
 4. **The role table:** each role's gain, its provider's cost and the net.
    - Each role a DPS member brings is measured at the winning set, with that role alone removed, then
      re-filled and re-resolved. A role the winning set lacks gets its value of adding instead (see
-     [Member value](#member-value)).
+     [Member value](#member-value)). A re-fill picks its builds on the screening's noise, so the baseline
+     is the winning set re-filled the same way, or the winner's own members if they score higher. A
+     fixed member's cost is its duty's alone, since it's never displaced. The Crusader is added by a
+     placeholder paladin judging it when one judges Wisdom.
    - A role whose givers all bring another role too (a Balance druid's Moonkin Aura with its Gift of the
      Wild) can't be removed or added alone, so it goes or comes with the giver's other roles, and the row
      says which; the Crusader comes with one more paladin. A provider holding two roles is charged its
@@ -1201,7 +1207,7 @@ So the result says whether the winner holds under each of these:
 
 | Scenario | Why | Cost |
 |---|---|---|
-| Each build shifted by its assumption combos (`assumption_dps.json`) | the report's open rules move builds against each other | no sims |
+| Each build shifted by its assumption combos (`assumption_dps.json`), from the raid sims' DPS for confirmed comps (the confirmed alone take part) | the report's open rules move builds against each other | no sims |
 | 120 and 300 seconds | Fury, rogues and the hunters fall faster than casters with length; hunters run out of mana by 300 | a re-run at each length |
 | Each raid's boss: generic in the flask zone; Dragonkin outside it | off the zone the flasks give only Stamina, which costs builds unevenly: fire about 112, Fury 64, Beast Mastery 38 | a re-run |
 | Raid damage at 0 and 10 hits a minute | Demonology loses 63 DPS at 10 a minute; Fury 2H gains 56 | from the assumption data |
@@ -1233,7 +1239,9 @@ them.
   combo's raid DPS minus the best raid DPS with that slot's preset changed.
 - **Identical members share one value.** Two copies of one build get the same contribution, whichever one
   the search calls the provider.
-- **Replacement margin:** raid DPS minus the best raid DPS with another build in that slot. The neighbours
+- **Replacement margin:** raid DPS minus the best raid DPS with another build in that slot (for a duty
+  holder, also every other build that can hold its duty; a fixed member's margin raises no note, since the
+  search couldn't replace it). The neighbours
   are evaluated on demand from the cache, not taken from whichever sets the search happened to visit. At
   the best comp it should be zero or more, within noise. A margin below that means the search missed a
   better comp: the result's notes say so (the search doesn't yet go on from it). A margin within noise
