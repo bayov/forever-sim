@@ -723,6 +723,60 @@
       "b2b384c"
      ],
      "moves": false
+    },
+    {
+     "title": "Feral Faerie Fire duty: Faerie Fire in Cat Form is the caster spell",
+     "kind": "sim",
+     "note": "Forever has no Faerie Fire (Feral). In Cat Form the druid casts the caster Faerie Fire, free there but on a 1.5 second global cooldown, so keeping it up costs 8.3 DPS at 180 seconds (it was 4.5).",
+     "builds": [
+      "druid__feral-cat-duty-ff"
+     ],
+     "commits": [
+      "0cf1a8c"
+     ]
+    },
+    {
+     "title": "New duty presets: Judgement of the Crusader, Judgement of Wisdom, Sunder Armor and Curse of Recklessness",
+     "kind": "method",
+     "note": "Ret paladins that keep Judgement of the Crusader or Judgement of Wisdom up on the boss, warriors that keep 5 Sunder Armor stacks up for a raid with no warrior tank, and warlocks on Curse of Recklessness. They show with Duty on, with what the duty costs.",
+     "builds": [
+      "paladin__level_60-duty-crusader",
+      "paladin__level_60_shock_ret-duty-crusader",
+      "paladin__level_60-duty-wisdom",
+      "paladin__level_60_sub_holy-duty-wisdom",
+      "paladin__level_60_shock-duty-wisdom",
+      "paladin__level_60_shock_ret-duty-wisdom",
+      "warrior__arms-duty-sunder",
+      "warrior__fury-duty-sunder",
+      "warrior__fury_2h-duty-sunder",
+      "warlock__affliction-duty-recklessness",
+      "warlock__demonology-duty-recklessness",
+      "warlock__destruction-duty-recklessness",
+      "warlock__destruction_fire-duty-recklessness"
+     ],
+     "commits": [
+      "9d6896d",
+      "22d2058",
+      "360176f"
+     ]
+    },
+    {
+     "title": "New hunter presets with a wolf or a tallstrider",
+     "kind": "method",
+     "note": "Beast Mastery, Marksmanship and Survival with a wolf (Furious Howl) or a tallstrider (Dust Cloud) in place of the cat. They show with Duty on, with what the pet costs.",
+     "builds": [
+      "hunter__beast-mastery-tallstrider",
+      "hunter__beast-mastery-wolf",
+      "hunter__marksmanship-tallstrider",
+      "hunter__marksmanship-wolf",
+      "hunter__survival-tallstrider",
+      "hunter__survival-wolf"
+     ],
+     "commits": [
+      "740f304",
+      "24c1938",
+      "3669b5c"
+     ]
     }
    ],
    "internal": [
@@ -753,6 +807,82 @@
     {
      "commit": "c282ae5",
      "why": "Execute's casts were missing from the ability table and the rotation's cast counts; no DPS moves"
+    },
+    {
+     "commit": "90eecc3",
+     "why": "raid sim engine and comp search work; every report request's result is bit-identical (TestRaidForeverReportHashes), but for Feral's never-active Faerie Fire (Feral) aura"
+    },
+    {
+     "commit": "1030fd2",
+     "why": "raid sim engine and comp search work; every report request's result is bit-identical (TestRaidForeverReportHashes), but for Feral's never-active Faerie Fire (Feral) aura"
+    },
+    {
+     "commit": "5f9cd57",
+     "why": "raid sim engine and comp search work; every report request's result is bit-identical (TestRaidForeverReportHashes), but for Feral's never-active Faerie Fire (Feral) aura"
+    },
+    {
+     "commit": "95dee74",
+     "why": "raid sim engine and comp search work; every report request's result is bit-identical (TestRaidForeverReportHashes), but for Feral's never-active Faerie Fire (Feral) aura"
+    },
+    {
+     "commit": "2d51592",
+     "why": "raid sim engine and comp search work; every report request's result is bit-identical (TestRaidForeverReportHashes), but for Feral's never-active Faerie Fire (Feral) aura"
+    },
+    {
+     "commit": "a17e60c",
+     "why": "raid sim engine and comp search work; every report request's result is bit-identical (TestRaidForeverReportHashes), but for Feral's never-active Faerie Fire (Feral) aura"
+    },
+    {
+     "commit": "fe5a7a1",
+     "why": "raid sim engine and comp search work; every report request's result is bit-identical (TestRaidForeverReportHashes), but for Feral's never-active Faerie Fire (Feral) aura"
+    },
+    {
+     "commit": "bd1e18c",
+     "why": "raid sim engine and comp search work; every report request's result is bit-identical (TestRaidForeverReportHashes), but for Feral's never-active Faerie Fire (Feral) aura"
+    },
+    {
+     "commit": "ad25019",
+     "why": "raid sim engine and comp search work; every report request's result is bit-identical (TestRaidForeverReportHashes), but for Feral's never-active Faerie Fire (Feral) aura"
+    },
+    {
+     "commit": "33c6ca4",
+     "why": "raid sim engine and comp search work; every report request's result is bit-identical (TestRaidForeverReportHashes), but for Feral's never-active Faerie Fire (Feral) aura"
+    },
+    {
+     "commit": "1ced803",
+     "why": "raid sim engine and comp search work; every report request's result is bit-identical (TestRaidForeverReportHashes), but for Feral's never-active Faerie Fire (Feral) aura"
+    },
+    {
+     "commit": "7d585a8",
+     "why": "raid sim engine and comp search work; every report request's result is bit-identical (TestRaidForeverReportHashes), but for Feral's never-active Faerie Fire (Feral) aura"
+    },
+    {
+     "commit": "14f3ea6",
+     "why": "raid sim engine and comp search work; every report request's result is bit-identical (TestRaidForeverReportHashes), but for Feral's never-active Faerie Fire (Feral) aura"
+    },
+    {
+     "commit": "cdeda0c",
+     "why": "raid sim engine and comp search work; every report request's result is bit-identical (TestRaidForeverReportHashes), but for Feral's never-active Faerie Fire (Feral) aura"
+    },
+    {
+     "commit": "4b599a2",
+     "why": "raid sim engine and comp search work; every report request's result is bit-identical (TestRaidForeverReportHashes), but for Feral's never-active Faerie Fire (Feral) aura"
+    },
+    {
+     "commit": "fb638ff",
+     "why": "raid sim engine and comp search work; every report request's result is bit-identical (TestRaidForeverReportHashes), but for Feral's never-active Faerie Fire (Feral) aura"
+    },
+    {
+     "commit": "d39038f",
+     "why": "raid sim engine and comp search work; every report request's result is bit-identical (TestRaidForeverReportHashes), but for Feral's never-active Faerie Fire (Feral) aura"
+    },
+    {
+     "commit": "9e9d90d",
+     "why": "raid sim engine and comp search work; every report request's result is bit-identical (TestRaidForeverReportHashes), but for Feral's never-active Faerie Fire (Feral) aura"
+    },
+    {
+     "commit": "414fa53",
+     "why": "raid sim engine and comp search work; every report request's result is bit-identical (TestRaidForeverReportHashes), but for Feral's never-active Faerie Fire (Feral) aura"
     }
    ]
   }

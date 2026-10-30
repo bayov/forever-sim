@@ -16,7 +16,7 @@
   "apl": "level60_ff",
   "published": {
     "dps": 858.5,
-    "source": "Re-simmed 2026-10-29 for the raid sim (docs/raid_sim.md, M1b), not yet in the DPS report: Forever has no Faerie Fire (Feral), so the cat now casts the caster Faerie Fire. wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s (was 862.2 with Faerie Fire (Feral))"
+    "source": "Re-simmed 2026-10-29 for the raid sim (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30: Forever has no Faerie Fire (Feral), so the cat now casts the caster Faerie Fire. wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s (was 862.2 with Faerie Fire (Feral))"
   },
   "verify": {
     "dps": 858.52,

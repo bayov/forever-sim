@@ -61,7 +61,9 @@ export function startReport(dash, events) {
   const isEnc = (b) => !!(b && b.encounter && b.encounter !== 'null');
   // duty presets (the preset keeps a raid buff or debuff up itself, standards 23) are listed in the Ranking only, while "Duty"
   // is on; everywhere else their base preset stands for them
-  const isDuty = (b) => !!(b && b.duty && b.duty !== 'null');
+  // pet variants (the base preset with another pet, for what that pet gives the raid) are listed the same way
+  const isPet = (b) => !!(b && b.pet && b.pet !== 'null');
+  const isDuty = (b) => !!(b && b.duty && b.duty !== 'null') || isPet(b);
   const visB = () => { const r = rowsOf('builds'); return r && r.filter((b) => !isDuty(b) && (st.enc || !isEnc(b))).map(adjB); };
   const rankB = () => { const r = rowsOf('builds'); return r && r.filter((b) => (st.showDuty || !isDuty(b)) && (st.enc || !isEnc(b))).map(adjB); };
   const genB = () => { const r = rowsOf('builds'); return r && r.filter((b) => !isEnc(b) && !isDuty(b)); };
@@ -107,7 +109,7 @@ export function startReport(dash, events) {
     inputs: ['builds'], title: 'Headline figures',
     description: 'Top, median and lowest preset DPS, how many presets and classes, and the top-to-bottom gap in percent.',
     fn: (builds) => {
-      const s = builds.filter((b) => !(b.encounter && b.encounter !== 'null') && !(b.duty && b.duty !== 'null')).sort((a, b) => b.dps - a.dps);
+      const s = builds.filter((b) => !(b.encounter && b.encounter !== 'null') && !(b.duty && b.duty !== 'null') && !(b.pet && b.pet !== 'null')).sort((a, b) => b.dps - a.dps);
       const n = (v) => +v;
       const top = s[0], bot = s[s.length - 1];
       return [{
@@ -286,23 +288,25 @@ export function startReport(dash, events) {
     return parts.filter((p) => p !== '');
   };
   // A duty preset's badge on its ranking row, and what the duty costs against its base preset (the raid covers it there).
+  // A pet variant's badge names its pet, and what the pet costs against the base preset's.
   // What the duty costs, signed: a duty can come out level with its base, or a hair ahead within the noise.
   const dutyCostText = (b, base) => { const c = base.dps - b.dps; return Math.abs(c) < 0.05 ? '±0' : c > 0 ? `−${f1(c)}` : `+${f1(-c)}`; };
   const dutyCostEl = (b, list) => {
     const base = list.find((x) => x.id === b.baseBuild) || adjB((rowsOf('builds') || []).find((x) => x.id === b.baseBuild) || {});
-    return +base.dps ? el('span', {}, `${b.duty} · ${dutyCostText(b, base)} DPS `, tipDelta(100 * (b.dps / base.dps - 1))) : b.duty;
+    const what = isPet(b) ? b.pet : b.duty;
+    return +base.dps ? el('span', {}, `${what} · ${dutyCostText(b, base)} DPS `, tipDelta(100 * (b.dps / base.dps - 1))) : what;
   };
   const dutyTip = (b, list) => {
     const base = list.find((x) => x.id === b.baseBuild) || adjB((rowsOf('builds') || []).find((x) => x.id === b.baseBuild) || {});
-    return el('div', { class: 'fv-tip fv-advtip' }, tipTitle(`On ${b.duty} duty`),
+    return el('div', { class: 'fv-tip fv-advtip' }, tipTitle(isPet(b) ? `${b.pet} as the pet` : `On ${b.duty} duty`),
       +base.dps ? tipKey(dutyCostText(b, base), 'DPS', el('span', { class: 'fv-tip-m' }, tipDelta(100 * (b.dps / base.dps - 1)), ` vs ${base.build}`)) : null,
       b.dutyDefensive === true ? tipText("It's defensive, so the raid gains no DPS from it.") : null,
       tipText(b.summary));
   };
   // The badge's short name for each duty; its tooltip gives the full name, and says when the duty is defensive.
-  const DUTY_SHORT = { 'Battle Shout': 'Shout', 'Curse of the Elements': 'Curse', 'Faerie Fire': 'FF', "Hunter's Mark": 'Mark', 'Judgement of the Crusader': 'Crusader', 'Scorpid Sting': 'Scorpid' };
+  const DUTY_SHORT = { 'Battle Shout': 'Shout', 'Curse of the Elements': 'Curse', 'Faerie Fire': 'FF', "Hunter's Mark": 'Mark', 'Judgement of the Crusader': 'Crusader', 'Scorpid Sting': 'Scorpid', 'Judgement of Wisdom': 'Wisdom', 'Sunder Armor': 'Sunder', 'Curse of Recklessness': 'Recklessness' };
   const dutyBadge = (b, list) => {
-    const badge = el('span', { class: 'fv-duty' + (b.dutyDefensive === true ? ' def' : ''), text: `${DUTY_SHORT[b.duty] || b.duty} duty` });
+    const badge = el('span', { class: 'fv-duty' + (b.dutyDefensive === true ? ' def' : ''), text: isPet(b) ? b.pet : `${DUTY_SHORT[b.duty] || b.duty} duty` });
     tippy(badge, { content: dutyTip(b, list), duration: 0, onShow: (t) => t.setContent(dutyTip(b, list)) });
     badge.addEventListener('click', (e) => { e.stopPropagation(); hideTip(); setTimeout(() => badge._tippy?.show()); });
     return badge;
@@ -947,7 +951,7 @@ export function startReport(dash, events) {
         el('span', { class: 'fv-row-pos', text: String(i + 1) }),
         specIco(b) || el('span', { class: 'fv-dot', style: `background:${ccol(b.class)}` }),
         el('span', { class: 'fv-row-main' },
-          el('span', { class: 'fv-row-name' }, el('b', { text: isEnc(b) ? String(b.build).replace(/ · vs .*$/, '') : isDuty(b) ? String(b.build).replace(/ · [^·]* duty$/, '') : b.build }), el('span', { text: '· ' + b.class })),
+          el('span', { class: 'fv-row-name' }, el('b', { text: isEnc(b) ? String(b.build).replace(/ · vs .*$/, '') : isDuty(b) ? String(b.build).replace(isPet(b) ? / · [^·]*$/ : / · [^·]* duty$/, '') : b.build }), el('span', { text: '· ' + b.class })),
           el('span', { class: 'fv-row-sub' }, tt(raceIco(b.raceIcon), `r:${b.race}:${b.class}`, false, b.id), el('em', { text: b.race }),
             iconMap() ? iconImg(b.faction === 'Horde' ? 'ui_hordeicon' : 'ui_allianceicon', 'fv-ico') : null,
             isEnc(b) ? encBadge(b) : null, isDuty(b) ? dutyBadge(b, builds) : null)),
@@ -962,7 +966,7 @@ export function startReport(dash, events) {
         const se = lenMap.get(b.id)?.se;
         const lines = L === 180
           ? [tipKey(f1(b.dps), 'DPS', `± ${f2(b.se)}`), tipGrid([['Rank', el('span', {}, `${rankOf(b, builds)} of ${builds.length} · `, behind)], ['10th–90th', `${f1(b.p10)}–${f1(b.p90)}`],
-            ['Middle half', `${f1(b.p25)}–${f1(b.p75)}`], ['Spread', `${f2(b.cv)}%`], ['Race', race], isEnc(b) ? ['Boss', `${b.encounter} · advantaged`] : null, isDuty(b) ? ['Duty', dutyCostEl(b, builds)] : null])]
+            ['Middle half', `${f1(b.p25)}–${f1(b.p75)}`], ['Spread', `${f2(b.cv)}%`], ['Race', race], isEnc(b) ? ['Boss', `${b.encounter} · advantaged`] : null, isDuty(b) ? [isPet(b) ? 'Pet' : 'Duty', dutyCostEl(b, builds)] : null])]
           : [tipKey(f1(v), 'DPS', se != null ? `± ${f2(se)} at ${L}s` : `at ${L}s`), tipGrid([['vs 180s', el('span', {}, `${f1(b.dps)} · `, tipDelta(100 * (v / b.dps - 1)))], ['vs the top', behind], ['Race', race]])];
         showTip(card, rr.left - cr.left + 30, rr.bottom - cr.top + 6, tipTitle(b.label, null, specIco(b, '')), lines, { hl: row, open: b.id, below: true });
       });
@@ -2942,7 +2946,7 @@ export function startReport(dash, events) {
     return ups.find((u) => String(u.id) === String(st.chUp)) || ups[0];
   };
   const chMeta = (S, id) => S.new.meta[id] || S.old.meta[id] || [];
-  const chIsVar = (m) => !!(m[2] || m[3]);
+  const chIsVar = (m) => !!(m[2] || m[3] || m[4]);  // an encounter or duty preset, or another variant of a base build
   const chCur = (id) => (rowsOf('builds') || []).find((b) => b.id === id);
   const chIco = (id, cls) => { const b = chCur(id); return (b && specIco(b, '')) || el('span', { class: 'fv-dot', style: `background:${ccol(cls)}` }); };
   const chName = (S, id) => { const m = chMeta(S, id); return { cls: m[0] || '', name: m[1] || id, label: `${m[0] || ''} · ${m[1] || id}` }; };

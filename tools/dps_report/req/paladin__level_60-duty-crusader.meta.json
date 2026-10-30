@@ -16,14 +16,14 @@
   "apl": "level60_crusader_duty",
   "published": {
     "dps": 938.1,
-    "source": "Raid sim variant (docs/raid_sim.md, milestone M1b), not yet in the DPS report: wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s, 2026-10-29"
+    "source": "Raid sim variant (docs/raid_sim.md, milestone M1b), in the DPS report since 2026-10-30: wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s, 2026-10-29"
   },
   "verify": {
     "dps": 938.11,
     "stderr": 0.32,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 s, seed 1 (the published number is this sim); a raid sim variant, not yet in the report"
+    "note": "wowsimcli on this request, 180 s, seed 1 (the published number is this sim); a raid sim variant, in the DPS report since 2026-10-30"
   },
   "summary": "Keeps Judgement of the Crusader on the boss for the raid.",
   "keyTalents": [
@@ -78,7 +78,7 @@
     "Two-Handed Weapon Specialization boosts Holy seal damage, as in the Era sim. The client says Physical only. Without it, DPS is 11 lower.",
     "No filler explosive, because each 1s cast resets the swing. The Goblin Land Mine and EZ-Thro Dark Bomb cost 5.2 DPS at 180s, and the EZ-Thro Thorium Grenade 6.0."
   ],
-  "notes": "Request: paladin__level_60 with raid debuff judgementOfTheCrusader removed and the level60_crusader_duty rotation, and Libram of Fervor (23203) in the relic slot, as level60_phase1_synthetic_crusader_duty. Hand edits of the base request, as the other duty paladins were made (mksettings with -apl level60_crusader_duty writes the same rotation). A raid sim variant (docs/raid_sim.md, M1b), not yet in the DPS report.",
+  "notes": "Request: paladin__level_60 with raid debuff judgementOfTheCrusader removed and the level60_crusader_duty rotation, and Libram of Fervor (23203) in the relic slot, as level60_phase1_synthetic_crusader_duty. Hand edits of the base request, as the other duty paladins were made (mksettings with -apl level60_crusader_duty writes the same rotation). A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30.",
   "duty": "Judgement of the Crusader",
   "baseBuild": "paladin__level_60"
 }

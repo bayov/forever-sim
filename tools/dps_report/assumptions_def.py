@@ -13,7 +13,7 @@ Each assumption is written for a player who hasn't read our notes:
 - warn (optional): {build: note}, a warning icon with that note on the build's non-default cells.
 status 'pending' = listed but not simulated yet; 'inert' = no longer applies.
 """
-import os
+import json, os
 
 
 ROGUE = ['combat-daggers', 'seal-fate-daggers', 'combat-swords', 'seal-fate-swords', 'mutilate', 'subtlety']
@@ -27,9 +27,11 @@ ENH = ['shaman__enhancement-level60', 'shaman__enhancement-imp-gw', 'shaman__enh
 ELE = ['shaman__elemental-level60', 'shaman__elemental-level60-mana-tide']
 WARR = ['warrior__fury', 'warrior__fury_2h', 'warrior__arms', 'warrior__arms_dragonkin']
 MAGE = ['mage__frostfire', 'mage__fire', 'mage__frost', 'mage__arcane']
-# Every build that isn't a duty preset, from the req files.
-ALL_BASE = sorted(f[:-5] for f in os.listdir(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'req'))
-                  if f.endswith('.json') and not f.endswith('.meta.json') and '-duty-' not in f)
+# Every build that isn't a duty preset or a pet variant (they take their base build's factor), from the req files.
+_REQ = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'req')
+ALL_BASE = sorted(f[:-5] for f in os.listdir(_REQ)
+                  if f.endswith('.json') and not f.endswith('.meta.json') and '-duty-' not in f
+                  and not json.load(open(os.path.join(_REQ, f[:-5] + '.meta.json'))).get('pet'))
 
 
 

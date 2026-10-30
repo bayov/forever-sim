@@ -36,9 +36,9 @@ ids() {  # the given ids or every request, most expensive first
 	python3 - "$@" <<'EOF'
 import glob, json, os, sys
 ids = sys.argv[1:] or sorted(os.path.basename(p)[:-10] for p in glob.glob('req/*.meta.json'))
-# core-minutes per build for every step, from the 2026-10-16 runs (a duty preset gets run_build.py only)
+# core-minutes per build for every step, from the 2026-10-16 runs (a duty preset or pet variant gets run_build.py only)
 W = {'rogue': 6.6, 'shaman': 6.3, 'warrior': 5.6, 'hunter': 4.9, 'mage': 3.8, 'paladin': 3.4, 'warlock': 3.3, 'druid': 2.5, 'priest': 1.7}
-cost = lambda i: W.get(i.split('__')[0], 4) * (0.35 if json.load(open(f'req/{i}.meta.json')).get('duty') else 1)
+cost = lambda i: W.get(i.split('__')[0], 4) * (0.35 if any(json.load(open(f'req/{i}.meta.json')).get(k) for k in ('duty', 'pet')) else 1)
 print(' '.join(sorted(ids, key=lambda i: (-cost(i), i))))
 EOF
 }
@@ -78,7 +78,7 @@ plan | run | resume)
 	if [ $# -gt 0 ]; then set -- $(python3 $T/rawstore.py variants "$@"); fi
 	ALL=$(ids "$@")
 	if [ "$cmd" = run ]; then python3 $T/rawstore.py clean $ALL; fi
-	BASE=$(for i in $ALL; do python3 -c "import json,sys; sys.exit(0 if json.load(open('req/$i.meta.json')).get('duty') else 1)" || echo $i; done)
+	BASE=$(for i in $ALL; do python3 -c "import json,sys; m = json.load(open('req/$i.meta.json')); sys.exit(0 if m.get('duty') or m.get('pet') else 1)" || echo $i; done)
 	MANA=$(for i in $ALL; do case $i in warrior__* | rogue__*) ;; *) echo $i ;; esac; done)
 	python3 - $BASE <<EOF
 import os, sys
@@ -90,7 +90,7 @@ r = sum(1 for b in base if not json.load(open(f'req/{b}.meta.json')).get('encoun
 a = sum(1 for b in base for _ in run_assumptions.tasks(b))
 import glob
 W = {'rogue': 6.6, 'shaman': 6.3, 'warrior': 5.6, 'hunter': 4.9, 'mage': 3.8, 'paladin': 3.4, 'warlock': 3.3, 'druid': 2.5, 'priest': 1.7}
-cost = lambda i: W.get(i.split('__')[0], 4) * (0.35 if json.load(open(f'req/{i}.meta.json')).get('duty') else 1)
+cost = lambda i: W.get(i.split('__')[0], 4) * (0.35 if any(json.load(open(f'req/{i}.meta.json')).get(k) for k in ('duty', 'pet')) else 1)
 every = [os.path.basename(p)[:-10] for p in glob.glob('req/*.meta.json')]
 # the whole 66-build set: about 380 core-minutes with these scripts (2026-10-16 timings, scaled; the weights step
 # saves about 30% with paired errors, since melee hit and crit steps still need 40k)
@@ -130,7 +130,7 @@ k, n, ids = int(sys.argv[1]), int(sys.argv[2]), sys.argv[3:]
 W = {'rogue': 6.6, 'shaman': 6.3, 'warrior': 5.6, 'hunter': 4.9, 'mage': 3.8, 'paladin': 3.4, 'warlock': 3.3, 'druid': 2.5, 'priest': 1.7}
 load, out = [0.0] * n, [[] for _ in range(n)]
 for i in ids:  # already most expensive first: give each build to the least loaded shard
-    c = W.get(i.split('__')[0], 4) * (0.35 if json.load(open(f'req/{i}.meta.json')).get('duty') else 1)
+    c = W.get(i.split('__')[0], 4) * (0.35 if any(json.load(open(f'req/{i}.meta.json')).get(k) for k in ('duty', 'pet')) else 1)
     j = load.index(min(load)); load[j] += c; out[j].append(i)
 print(' '.join(out[k]))
 EOF

@@ -80,7 +80,7 @@ def write_lines(path, by_build):
 # What a build should have, so a pack never stores a build with a step missing or a failed sim.
 def expected(bid):
     m = meta(bid)
-    duty, enc = m.get('duty'), m.get('encounter')
+    duty, enc = m.get('duty') or m.get('pet'), m.get('encounter')  # a pet variant gets a duty preset's steps
     mana = not bid.startswith(('warrior__', 'rogue__'))
     want = {'out': True, 'names': True, 'weights': not duty, 'mana': mana, 'abl': not duty}
     rv = set()

@@ -19,7 +19,7 @@
   "title": "Presets and headline DPS",
   "description": "One row per level 60 preset: mean DPS over 20,000 simulated 180 s fights against the generic boss, percentiles, best race overall and per faction, and talents. Encounter presets (the boss as one creature type) are extra rows with their creature type and why they are advantaged (in full and in one short line). Duty presets (the preset keeps a raid buff or debuff up itself, with the raid's copy off) are extra rows with the duty, their base preset and the DPS it costs; they get the main run, lengths and race sweep only. Simmed on master baed22e62's class code plus warrior 38b94b40a; most builds ran before per-hit rounding (about 0.007%), see provenance.json.",
   "updated": {
-   "at": "2026-10-28T13:29:49.924Z",
+   "at": "2026-10-30T00:26:37.505Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -59,7 +59,7 @@
   "title": "DPS by fight length",
   "description": "Every preset at 60, 120, 180, 300 and 480 s average fight length, 5,000 fights each.",
   "updated": {
-   "at": "2026-10-28T13:29:49.924Z",
+   "at": "2026-10-30T00:26:37.505Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -67,7 +67,7 @@
   "title": "Mana over a long fight",
   "description": "Per mana-using preset, its mana as a % of max every 5 s through a 480 s fight with its own consumes and rotation: the average over 100 fights (pct) and the 25th and 75th percentile fight (p25, p75).",
   "updated": {
-   "at": "2026-10-28T13:29:49.924Z",
+   "at": "2026-10-30T00:26:37.505Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -75,7 +75,7 @@
   "title": "When mana runs low",
   "description": "Per mana-using preset over the same 480 s fights: when mana first drops below 15% of max (median and 25th to 75th percentile fight, empty when most fights never do), the share of fights that ever do, mana % at 60, 180, 300 and 480 s, mana spent and gained per second, and the sim's seconds out of mana, time to OOM and mana left at the end over 5,000 fights.",
   "updated": {
-   "at": "2026-10-28T13:29:49.924Z",
+   "at": "2026-10-30T00:26:37.505Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -291,7 +291,7 @@
   "title": "Event view names",
   "description": "The name, icon and rank of every spell and item in the sample fights and of each preset's weapons, as the sim UI's database and wowhead name them. Made by tools/dps_report/events.py.",
   "updated": {
-   "at": "2026-10-28T13:29:49.924Z",
+   "at": "2026-10-30T00:26:37.505Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -307,7 +307,7 @@
   "title": "Updates",
   "description": "The report's updates, newest first: game updates (a new client build or development notes) and sim/preset updates (our own changes to the sim, rotations, gear, talents, consumes or races), each with its date, source and public change list. Each line may name the classes, presets, races and racial parts it touches.",
   "updated": {
-   "at": "2026-10-28T21:11:50.308Z",
+   "at": "2026-10-30T00:26:39.721Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -315,7 +315,7 @@
   "title": "Results before and after each update",
   "description": "The report's results at the first update's start in full (genesis), then each update's end as only the rows that changed (ends, with gone listing rows that left): builds (DPS, error, ranks, race, best race), races (each preset on each race), parts (each racial part's DPS against the generic boss) and summary (per race and role, how often it is best and its average gap).",
   "updated": {
-   "at": "2026-10-28T18:30:48.849Z",
+   "at": "2026-10-30T00:26:39.729Z",
    "by": "Claude (forever-sim)"
   }
  }
