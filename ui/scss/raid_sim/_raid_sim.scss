@@ -9,6 +9,17 @@
 	.sim-main > .tab-pane {
 		padding-bottom: var(--section-spacer);
 	}
+
+	// A phone keeps a 16px gutter beside the content and the sidebar, where the sims' pages have a quarter
+	// of it.
+	@include media-breakpoint-down(lg) {
+		--sim-content-padding-x: 16px;
+
+		.sim-sidebar .sim-sidebar-content {
+			padding-left: 16px;
+			padding-right: 16px;
+		}
+	}
 }
 
 // ---- Shared pieces ----
@@ -252,7 +263,16 @@ body.rs-dropping .raid-sim-page .sim-main::after {
 .rs-result-header {
 	margin-bottom: var(--spacer-3);
 
+	.rs-result-title-row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--spacer-2) var(--spacer-3);
+	}
+
 	.rs-result-title {
+		margin-bottom: 0;
 		color: var(--gold-soft);
 		font-family: var(--heading-font-family);
 		font-size: 1.5rem;
@@ -315,9 +335,13 @@ body.rs-dropping .raid-sim-page .sim-main::after {
 }
 
 .rs-scenario-name {
-	font-family: var(--bs-font-monospace);
-	font-size: 0.85em;
 	word-break: break-word;
+
+	// An older result's raw scenario key.
+	&.rs-scenario-key {
+		font-family: var(--bs-font-monospace);
+		font-size: 0.85em;
+	}
 }
 
 .rs-buffsets {
@@ -520,8 +544,25 @@ body.rs-dropping .raid-sim-page .sim-main::after {
 	gap: var(--spacer-3);
 }
 
+// A checkbox beside its label, never under or over it: the theme's .form-check floats a 2rem-wide box
+// into a padding the label can wrap past.
 .rs-check {
+	min-height: 0;
 	margin-bottom: 0;
+	padding-left: 0;
+	display: inline-flex;
+	align-items: flex-start;
+	gap: var(--spacer-2);
+
+	.form-check-input {
+		flex: none;
+		float: none;
+		margin: 0.1em 0 0;
+	}
+
+	.form-check-label {
+		min-width: 0;
+	}
 }
 
 .rs-slot-pickers {
@@ -841,13 +882,105 @@ body.rs-dropping .raid-sim-page .sim-main::after {
 	}
 }
 
-// Columns of words keep a readable width; the table scrolls sideways instead.
-.rs-table-comps td.rs-col-words {
-	min-width: 12rem;
+// The best comps and the member values fit the page at 1440 px: headers wrap, a figure's interval goes
+// under it, the comp's members wrap between entries, and the parts of a difference fold away.
+.rs-table-comps,
+.rs-table-values {
+	// Over .rs-table .numeric's nowrap too.
+	.rs-table th {
+		white-space: normal;
+		vertical-align: bottom;
+	}
 }
 
-.rs-table-values td:last-child {
-	min-width: 18rem;
+.rs-table-comps {
+	td.rs-col-words {
+		min-width: 9rem;
+	}
+
+	td.numeric .rs-ci {
+		display: block;
+	}
+
+	.rs-comp-entry {
+		white-space: nowrap;
+	}
+
+	.rs-actions {
+		flex-direction: column;
+		align-items: stretch;
+	}
+}
+
+.rs-table-values {
+	// The name wraps beside its icon, and the seat goes under it.
+	.rs-member-label {
+		display: inline;
+		white-space: normal;
+	}
+
+	.rs-member-icon {
+		margin-right: 0.3rem;
+		vertical-align: -0.15rem;
+	}
+
+	.rs-member-count {
+		margin-left: 0.3rem;
+	}
+
+	.rs-member-seat {
+		display: block;
+		margin-left: 0;
+	}
+
+	td:nth-child(6) {
+		min-width: 8rem;
+	}
+}
+
+.rs-parts-toggle {
+	summary {
+		color: var(--text-muted-color);
+		white-space: nowrap;
+		cursor: pointer;
+	}
+
+	.rs-parts {
+		min-width: 16rem;
+		margin-top: var(--spacer-1);
+	}
+}
+
+.rs-assignment-warnings {
+	margin: 0;
+	padding-left: 1.25rem;
+	color: $known-issues-color;
+	font-size: 0.875rem;
+
+	&:empty {
+		display: none;
+	}
+}
+
+// The sidebar's run, kept but of the raid as it was.
+.rs-sidebar-stale {
+	margin: var(--spacer-2) 0 0;
+	font-size: 0.8rem;
+}
+
+.results-content.rs-stale {
+	opacity: 0.6;
+}
+
+.rs-sidebar-note {
+	margin: var(--spacer-1) 0 0;
+	color: var(--text-muted-color);
+	font-size: 0.75rem;
+	text-align: center;
+}
+
+.rs-details-stale > .detailed-results {
+	opacity: 0.6;
 }
 
 .rs-range .rs-range-text {

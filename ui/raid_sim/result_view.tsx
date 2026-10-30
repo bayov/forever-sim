@@ -41,13 +41,31 @@ import {
 	fmtInt,
 	fmtSigned,
 	list,
+	MEMBER_VALUE_COLUMNS,
 	memberLabel,
 	membersLabel,
 	NA,
+	partsToggle,
 	plural,
 	section,
 	table,
 } from './view_utils';
+
+// A sensitivity scenario's winner: its members and tanks and healers, as the comps table names them. A
+// result from before the winners carried their members has only the buff set's text.
+const winnerText = (data: RaidSimData | null, w: CompResult): Node | string => {
+	if (!w.members.length) return w.buffSet || 'another comp';
+	return (
+		<span>
+			{dpsSummary(data, w)}
+			{w.combo.length ? `; ${comboText(w.combo)}` : ''}
+		</span>
+	);
+};
+
+// A scenario's name: readable since the search names them from the report's assumptions; an older
+// result's raw key ("raid_hits=high|natural_flask_zone=low") keeps a code font.
+const scenarioLabel = (name: string) => <span className={`rs-scenario-name ${/[=|]/.test(name) ? 'rs-scenario-key' : ''}`}>{name}</span>;
 
 // What the two DPS figures of a comp are, wherever both show.
 const TWO_FIGURES =
@@ -64,7 +82,8 @@ export const scenarioName = (sc: CompScenarioResult) => `${factionName(sc.factio
 
 const comboText = (presets: RaidPreset[]) => presets.map(presetName).join(', ');
 
-// The DPS members of a comp, counted, like "4× Mage: Frostfire".
+// The DPS members of a comp, counted, like "4× Mage: Frostfire". Each entry keeps its count and its name
+// on one line, and the list wraps between entries.
 const dpsSummary = (data: RaidSimData | null, comp: CompResult) => {
 	const counts = new Map<string, { member: CompResultMember; n: number }>();
 	comp.members
@@ -78,9 +97,13 @@ const dpsSummary = (data: RaidSimData | null, comp: CompResult) => {
 	const out: Node[] = [];
 	[...counts.values()].forEach(({ member, n }, i) => {
 		if (i > 0) out.push(document.createTextNode(', '));
-		out.push(document.createTextNode(`${n}× `));
-		out.push(memberLabel(data, member.buildId));
-		if (member.duties.length && !data?.byId.has(member.buildId)) out.push(document.createTextNode(` (${member.duties.map(dutyName).join(', ')})`));
+		out.push(
+			<span className="rs-comp-entry">
+				{`${n}× `}
+				{memberLabel(data, member.buildId)}
+				{member.duties.length && !data?.byId.has(member.buildId) ? ` (${member.duties.map(dutyName).join(', ')})` : ''}
+			</span>,
+		);
 	});
 	return <span className="rs-comp-summary">{out}</span>;
 };
@@ -118,14 +141,26 @@ export class ResultView {
 	private header() {
 		const r = this.result;
 		const req = r.request ?? CompSearchRequest.create();
+		const save = (
+			<button className="btn btn-outline-primary btn-sm rs-save-json" type="button" title="Save this result as the JSON that Open a result reads">
+				<i className="fas fa-download me-1" />
+				Save JSON
+			</button>
+		) as HTMLButtonElement;
+		save.addEventListener('click', () => saveJson(r));
 		return (
 			<header className="rs-result-header">
-				<h2 className="rs-result-title">
-					Comp search: {plural(req.size, 'player')}, {plural(req.tanks, 'tank')}, {plural(req.healers, 'healer')}
-				</h2>
+				<div className="rs-result-title-row">
+					<h2 className="rs-result-title">
+						Comp search: {plural(req.size, 'player')}, {plural(req.tanks, 'tank')}, {plural(req.healers, 'healer')}
+					</h2>
+					{save}
+				</div>
 				<p className="rs-result-subtitle">
 					{encounterText(req)}. {fmtInt(r.simsRun)} single-player sims at {fmtInt(req.iterations)} iterations (contenders at{' '}
-					{fmtInt(req.contenderIterations)}), {fmtInt(r.cacheHits)} from the cache, {fmt(r.seconds, 0)} s. Sim version {r.version || 'unknown'}.
+					{fmtInt(req.contenderIterations)}),{' '}
+					<span title="Sims the search didn’t run again: from the cache, or from earlier in this search">{fmtInt(r.cacheHits)} reused</span>,{' '}
+					{fmt(r.seconds, 0)} s. Sim version {r.version || 'unknown'}.
 				</p>
 				{this.opts.source ? <p className="rs-result-source">From {this.opts.source}</p> : null}
 			</header>
@@ -199,6 +234,17 @@ export class ResultView {
 		);
 	}
 }
+
+// A result as a JSON file, like tools/compsearch's <out>.json.
+const saveJson = (result: CompSearchResult) => {
+	const name = `comp-search-${result.request?.size ?? 'raid'}-${new Date().toISOString().slice(0, 16).replace(/[:T]/g, '-')}.json`;
+	const url = URL.createObjectURL(new Blob([CompSearchResult.toJsonString(result, { prettySpaces: 1 })], { type: 'application/json' }));
+	const link = (<a href={url} download={name} className="d-none" />) as HTMLAnchorElement;
+	document.body.appendChild(link); // Firefox wants it in the page
+	link.click();
+	link.remove();
+	setTimeout(() => URL.revokeObjectURL(url), 1000);
+};
 
 const encounterText = (req: CompSearchRequest) => {
 	const e = req.encounter;
@@ -330,10 +376,10 @@ class ScenarioView {
 					list(
 						changes.map(s => (
 							<span>
-								<span className="rs-scenario-name">{s.scenario}</span>:{' '}
+								{scenarioLabel(s.scenario)}:{' '}
 								{s.winners.length ? (
 									<>
-										{s.winners[0].buffSet || dpsSummary(this.d, s.winners[0])}, ahead by {fmt(s.winners[0].gap)}
+										{winnerText(this.d, s.winners[0])}, ahead by {fmt(s.winners[0].gap)}
 										{s.winners.length > 1 ? ` (a tie of ${s.winners.length})` : ''}
 									</>
 								) : (
@@ -428,7 +474,7 @@ class ScenarioView {
 							numeric: true,
 							tooltip: `Behind the ${
 								confirmed ? 'first comp' : 'best'
-							}’s score, with the paired 95% interval of the difference (below zero: ahead of it on score)`,
+							}’s score, with the difference’s 95% interval, the two errors taken as independent, so on the wide side (below zero: ahead of it on score)`,
 						},
 						...(confirmed
 							? [
@@ -436,7 +482,8 @@ class ScenarioView {
 									{
 										label: 'Raid sim gap ±95%',
 										numeric: true,
-										tooltip: 'Behind the best confirmed comp in the raid sims, with the paired 95% interval of the difference',
+										tooltip:
+											'Behind the best confirmed comp in the raid sims, with the difference’s 95% interval, the two errors taken as independent, so on the wide side',
 									},
 							  ]
 							: []),
@@ -648,18 +695,7 @@ class ScenarioView {
 			'Member values',
 			sc.memberValues.length
 				? table(
-						[
-							'Member',
-							{ label: 'Own DPS', numeric: true },
-							{ label: 'Adds to others', numeric: true, tooltip: 'Contribution minus its own DPS' },
-							{ label: 'Contribution', numeric: true, tooltip: 'Raid DPS minus raid DPS without the member, re-resolved' },
-							{ label: 'Replacement margin', numeric: true, tooltip: 'Raid DPS minus the best raid DPS with another build in that slot' },
-							'Best replacement',
-							'Duty',
-							{ label: 'Duty cost', numeric: true, tooltip: 'Its base build’s DPS less its DPS on duty, in its seat' },
-							{ label: 'vs the DPS Report', numeric: true },
-							'Its parts',
-						],
+						MEMBER_VALUE_COLUMNS,
 						sc.memberValues.map(mv => {
 							const seat = seats.get(mv) ?? [];
 							const duties = seat[0]?.duties.filter(d => d != Duty.DutyNone) ?? [];
@@ -673,7 +709,7 @@ class ScenarioView {
 								duties.length ? duties.map(dutyName).join(', ') : NA,
 								duties.length ? fmt(mv.dutyCost) : NA,
 								mv.reportDifference || mv.reportDifferenceParts.length ? fmtSigned(mv.reportDifference) : NA,
-								mv.reportDifferenceParts.length ? list(mv.reportDifferenceParts, 'rs-parts') : '',
+								partsToggle(mv.reportDifferenceParts),
 							];
 						}),
 						'rs-table-values',
@@ -718,9 +754,9 @@ class ScenarioView {
 									.sort((a, b) => +a.winnerHolds - +b.winnerHolds)
 									.slice(0, n)
 									.map(s => [
-										<span className="rs-scenario-name">{s.scenario}</span>,
+										scenarioLabel(s.scenario),
 										s.winnerHolds ? badge('holds', 'success') : badge('changes', 'warning'),
-										s.winnerHolds ? '' : s.winners.length ? s.winners[0].buffSet || dpsSummary(this.d, s.winners[0]) : '',
+										s.winnerHolds ? '' : s.winners.length ? winnerText(this.d, s.winners[0]) : '',
 										s.winnerHolds || !s.winners.length ? '' : fmt(s.winners[0].gap),
 										s.note,
 									]),

@@ -319,8 +319,9 @@ export class Database {
 			if (tooltipPostfix === 'item' && typeof json['quality'] === 'number') {
 				Database.itemQualities.set(id, json['quality']);
 			}
-			if (tooltipPostfix === 'spell') {
-				const rankMatches = Array.from(json['tooltip'].matchAll(RANK_REGEX) as RegExpMatchArray[]);
+			// A tooltip can come back without its text (a spell Wowhead has no tooltip for).
+			if (tooltipPostfix === 'spell' && typeof json['tooltip'] === 'string') {
+				const rankMatches = Array.from((json['tooltip'] as string).matchAll(RANK_REGEX));
 				rank = rankMatches.length ? parseInt(rankMatches[0][1]) : 0;
 			}
 
