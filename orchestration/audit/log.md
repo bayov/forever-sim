@@ -107,3 +107,7 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-10-30 01:00 | consumables | pass 54 | master d50909a37 | quiet | only feral Faerie Fire comments changed in presets
 2026-10-30 01:00 | mechanics | pass 48 | master d50909a37 | quiet | raid sim values match client 70685; Seal of Wisdom 50% proc assumed
 2026-10-30 01:00 | fairness | pass 15 | master d50909a37 | quiet | 37 builds match baseline at every race; top/bottom 1.58x
+2026-10-30 07:01 | results | pass 62 | master 36a772fd1 | quiet | 76 of 77 builds within 0.15 of published; mage frostfire meta stale (known)
+2026-10-30 07:01 | consumables | pass 55 | master 36a772fd1 | 1 new finding | Elixir of Wisdom +3 Int in 70707, sim has 6 (low)
+2026-10-30 07:01 | mechanics | pass 49 | master 36a772fd1 | 1 new finding | Tauren Endurance 2% crit damage now applied in 70707 (needs user ruling)
+2026-10-30 07:01 | client_update | pass 6 | master 36a772fd1 | 4 new findings | 70707 carries the mage talent rework (high); 3 low

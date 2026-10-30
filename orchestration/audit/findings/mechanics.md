@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### mechanics-20261030-1: Client 70707 widens Tauren Endurance's 2% critical damage to every school, against post 7's removal
+- severity: high if the bonus is live (estimate, not measured: about +1.0% for a crit-heavy Tauren melee build at ~35% crit and 2x crits, +0.4% for a 15% crit caster; it can move Tauren in the race tables); none if post 7 stands
+- affects: Tauren (every class and build in the race tables that Tauren can be)
+- found: 2026-10-30, master 36a772fd1
+- evidence: tier 1, client 1.60.1.70707: 20550 e1 aura 163 bp 2 EffectMiscValue_0 0 -> 127 (all schools); e2 aura 50 bp 2 (crit healing) kept; tooltip still "critical strike bonus to damage and healing increased by $s2%" (`AUDIT_DB=<70707> python3 tools/audit/mechanics/sp.py 20550`, against 70685). The same build bakes in Blood Fury's 2 min cooldown (20572 RecoveryTime 180000 -> 120000) from post 7 / 8, so the client team edited the racials after the notes, yet kept and widened Endurance's crit effect. Tier 1 against it: dev notes post 7 (2026-10-26, edited 10-27 16:47): "Endurance no longer provides any modifiers beyond 5% increased Health (no hit chance or critical damage modifiers)." The sim follows post 7 (sim/core/racials_forever.go:83-87, health only). Server side may still strip it; the client alone can't settle it.
+- proposed fix: user ruling. If the bonus is live: under Forever, Tauren get a permanent crit-damage multiplier of 1.02 on every school (aura 163, multiplying the whole crit multiplier, as other 163 effects in the sim do) in racials_forever.go's Tauren case, then re-sim the Tauren rows. Otherwise note in verdicts.md that post 7 overrides the client row.
+- needs: user ruling
+
 ### mechanics-20261027-2: Amplify Curse no longer boosts Bane of Agony on client 70630
 - severity: low (no preset takes Amplify Curse; rotopt's `amplifyCurse` knob defaults to 0)
 - affects: warlock (only builds that take Amplify Curse)
