@@ -53,6 +53,8 @@ globalThis.wasmready = function () {
 		resolveComp: typeof resolveComp === 'function' ? resolveComp : missing('resolveComp'),
 		compSearchAsync: missing('compSearchAsync'),
 		compValues: missing('compValues'),
+		// The lib makes no HTTP calls, so there's none to cancel.
+		abortFetch: () => new Uint8Array(),
 	}).ready(true);
 };
 

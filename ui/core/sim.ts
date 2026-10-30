@@ -358,9 +358,9 @@ export class Sim {
 	}
 
 	// A hand-built raid's member values (docs/raid_sim.md, Member value), from the native server.
-	async compValues(comp: RaidComp): Promise<CompValuesResult> {
+	async compValues(comp: RaidComp, signal?: AbortSignal): Promise<CompValuesResult> {
 		await this.waitForInit();
-		return this.workerPool.compValues(comp);
+		return this.workerPool.compValues(comp, signal);
 	}
 
 	// The comp search, through the native server. abortType(RequestTypes.CompSearch) stops it, and an aborted

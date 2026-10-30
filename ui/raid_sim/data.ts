@@ -1,6 +1,6 @@
 // The raid sim page's members: the DPS Report's builds (data/builds.json, written by tools/raid_sim_data
 // from tools/dps_report/req) and the tank and healer presets (sim/compsearch/presets.go).
-import { Blessing, Duty, PaladinJudgement, Player, RaidPackage, RaidPreset, RaidRole, RaidTotem } from '../core/proto/api';
+import { Blessing, Duty, PaladinJudgement, Player, RaidPackage, RaidPreset, RaidRole, RaidTotem, TotemElement as TotemElementProto } from '../core/proto/api';
 import { Class, Encounter as EncounterProto, Faction, MobType, Race } from '../core/proto/common';
 import { raceNames } from '../core/proto_utils/names';
 import buildsUrl from './data/builds.json?url';
@@ -296,13 +296,16 @@ export const totemName = (t: RaidTotem): string =>
 	})[t] ?? `${t}`;
 
 export type TotemElement = 'earth' | 'air' | 'water' | 'fire';
-export const TOTEM_ELEMENTS: { element: TotemElement; label: string; totems: RaidTotem[] }[] = [
-	{ element: 'earth', label: 'Earth', totems: [RaidTotem.RaidTotemStrengthOfEarth] },
-	{ element: 'air', label: 'Air', totems: [RaidTotem.RaidTotemGraceOfAir, RaidTotem.RaidTotemWindfury] },
-	{ element: 'water', label: 'Water', totems: [RaidTotem.RaidTotemManaSpring] },
-	{ element: 'fire', label: 'Fire', totems: [RaidTotem.RaidTotemFlametongue] },
+export const TOTEM_ELEMENTS: { element: TotemElement; proto: TotemElementProto; label: string; totems: RaidTotem[] }[] = [
+	{ element: 'earth', proto: TotemElementProto.TotemElementEarth, label: 'Earth', totems: [RaidTotem.RaidTotemStrengthOfEarth] },
+	{ element: 'air', proto: TotemElementProto.TotemElementAir, label: 'Air', totems: [RaidTotem.RaidTotemGraceOfAir, RaidTotem.RaidTotemWindfury] },
+	{ element: 'water', proto: TotemElementProto.TotemElementWater, label: 'Water', totems: [RaidTotem.RaidTotemManaSpring] },
+	{ element: 'fire', proto: TotemElementProto.TotemElementFire, label: 'Fire', totems: [RaidTotem.RaidTotemFlametongue] },
 ];
 export const totemElement = (t: RaidTotem): TotemElement | undefined => TOTEM_ELEMENTS.find(e => e.totems.includes(t))?.element;
+// A totem assignment's element: its own, or its totem's (RaidTotemNone names its element).
+export const assignedElement = (a: { totem: RaidTotem; element: TotemElementProto }): TotemElement | undefined =>
+	TOTEM_ELEMENTS.find(e => e.proto == a.element)?.element ?? totemElement(a.totem);
 
 export const packageName = (p: RaidPackage): string =>
 	({

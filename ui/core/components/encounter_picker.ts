@@ -220,7 +220,7 @@ function buildTargetCard(target: TargetProto, presetTargets: Array<PresetTarget>
 	const card = document.createElement('div');
 	card.classList.add('encounter-target-row');
 	card.innerHTML = `
-		<img class="encounter-target-icon" src="https://wow.zamimg.com/images/wow/icons/large/${mobType.icon}.jpg" />
+		<img class="encounter-target-icon" src="https://wow.zamimg.com/images/wow/icons/large/${mobType.icon}.jpg" alt="${mobType.name}" />
 		<div class="encounter-target-info">
 			<div class="encounter-target-name"></div>
 			<div class="encounter-target-summary"></div>
@@ -234,7 +234,7 @@ function buildTargetCard(target: TargetProto, presetTargets: Array<PresetTarget>
 	TARGET_RESISTANCES.forEach(({ stat, school, icon }) => {
 		const resistance = document.createElement('span');
 		resistance.classList.add('encounter-target-resist');
-		resistance.append(resistanceIcon(icon), String(target.stats[stat]));
+		resistance.append(resistanceIcon(icon, `${school} resistance`), String(target.stats[stat]));
 		tippy(resistance, { content: resistanceTooltip(school) });
 		resistancesElem.appendChild(resistance);
 	});
@@ -436,7 +436,7 @@ class TargetPicker extends Input<Encounter, TargetProto> {
 				const name = document.createElement('span');
 				name.classList.add('visually-hidden');
 				name.textContent = statNames.get(stat) ?? '';
-				label.replaceChildren(resistanceIcon(resistance.icon), name);
+				label.replaceChildren(resistanceIcon(resistance.icon, ''), name);
 			}
 			return picker;
 		});
@@ -1142,8 +1142,10 @@ const TARGET_RESISTANCES = [
 	{ stat: Stat.StatShadowResistance, school: 'Shadow', icon: 'spell_shadow_antishadow' },
 ];
 
-function resistanceIcon(icon: string): HTMLElement {
+// alt is empty where a label beside it already names the school.
+function resistanceIcon(icon: string, alt: string): HTMLElement {
 	const img = document.createElement('img');
+	img.alt = alt;
 	img.classList.add('resistance-icon');
 	img.src = `https://wow.zamimg.com/images/wow/icons/large/${icon}.jpg`;
 	return img;

@@ -1,10 +1,21 @@
 // Small building blocks the raid sim page's views share: numbers, tables and member labels.
 import { Class } from '../core/proto/common';
-import { cssClassForClass } from '../core/proto_utils/utils';
+import { classNames, cssClassForClass } from '../core/proto_utils/utils';
 import { buildLabel, CLASS_ICONS, RAID_PRESETS, RaidSimData } from './data';
 
-export const fmt = (n: number | undefined, digits = 1) => (n === undefined || isNaN(n) ? '' : n.toFixed(digits));
-export const fmtSigned = (n: number | undefined, digits = 1) => (n === undefined || isNaN(n) ? '' : `${n >= 0 ? '+' : ''}${n.toFixed(digits)}`);
+// A value that rounds to zero prints as 0, never as -0.0.
+const rounded = (n: number, digits: number) => {
+	const text = n.toFixed(digits);
+	return /^-0\.?0*$/.test(text) ? text.slice(1) : text;
+};
+export const fmt = (n: number | undefined, digits = 1) => (n === undefined || isNaN(n) ? '' : rounded(n, digits));
+export const fmtSigned = (n: number | undefined, digits = 1) => {
+	if (n === undefined || isNaN(n)) return '';
+	const text = rounded(n, digits);
+	return text.startsWith('-') || /^0\.?0*$/.test(text) ? text : `+${text}`;
+};
+// The dash a table shows for a value that doesn't apply.
+export const NA = '—';
 // A 95% interval from a standard error.
 export const ci95 = (se: number | undefined, digits = 1) => (se ? `±${(1.96 * se).toFixed(digits)}` : '');
 export const fmtInt = (n: number | bigint | undefined) => (n === undefined ? '' : Number(n).toLocaleString('en-US'));
@@ -75,6 +86,36 @@ export const badge = (text: string, variant = 'secondary', title = '') => (
 
 export const empty = (text: string) => <p className="rs-empty">{text}</p>;
 
+// An error for a status line: its first line, and the rest (a Go stack trace, say) in a collapsible, so
+// a long error never makes the line wider than the screen.
+export const errorStatus = (prefix: string, message: string | undefined): HTMLElement => {
+	const text = (message ?? '').trim();
+	const lines = text.split('\n');
+	let summary = lines[0].trim();
+	let details = lines.slice(1).join('\n').trim();
+	// A one-line error that carries a trace ("...: goroutine 1 [running]: ...") keeps only its message up front.
+	const trace = summary.search(/\s(goroutine \d+ \[|\tat |github\.com\/)/);
+	if (trace > 0) {
+		details = `${summary.slice(trace).trim()}\n${details}`.trim();
+		summary = summary.slice(0, trace).replace(/[:\s]+$/, '');
+	}
+	if (summary.length > 240) {
+		details = `${summary}\n${details}`.trim();
+		summary = `${summary.slice(0, 200).trimEnd()}…`;
+	}
+	return (
+		<div className="rs-error-status">
+			<span className="rs-error-summary">{summary ? `${prefix}: ${summary}` : `${prefix}.`}</span>
+			{details ? (
+				<details className="rs-error-details">
+					<summary>Details</summary>
+					<pre>{details}</pre>
+				</details>
+			) : null}
+		</div>
+	) as HTMLElement;
+};
+
 // What we know about a build id or a preset's name: its class, its name and its icon. A result can
 // name a build this page's data doesn't have (a newer report), so it then shows the id.
 export const memberInfo = (data: RaidSimData | null, id: string): { label: string; detail: string; cls: Class; icon: string } => {
@@ -93,17 +134,21 @@ export const memberInfo = (data: RaidSimData | null, id: string): { label: strin
 	return { label: id, detail: '', cls: Class.ClassUnknown, icon: '' };
 };
 
+// An icon's alt text: its class, since the name beside it says the rest.
+export const iconAlt = (cls: Class) => (cls == Class.ClassUnknown ? '' : classNames[cls] ?? '');
+
 const presetNamed = (name: string) => RAID_PRESETS.find(p => p.name == name);
 
 // A member's name in its class color, with the report id in its tooltip.
-export const memberLabel = (data: RaidSimData | null, id: string, opts: { icon?: boolean; count?: number } = {}) => {
+export const memberLabel = (data: RaidSimData | null, id: string, opts: { icon?: boolean; count?: number; seat?: string } = {}) => {
 	const info = memberInfo(data, id);
 	const cls = info.cls == Class.ClassUnknown ? '' : `text-${cssClassForClass(info.cls)}`;
 	return (
 		<span className={`rs-member-label ${cls}`} title={info.detail}>
-			{opts.icon && info.icon ? <img className="rs-member-icon" src={info.icon} /> : null}
+			{opts.icon && info.icon ? <img className="rs-member-icon" src={info.icon} alt={iconAlt(info.cls)} /> : null}
 			{info.label}
 			{opts.count && opts.count > 1 ? <span className="rs-member-count">×{opts.count}</span> : null}
+			{opts.seat ? <span className="rs-member-seat">{opts.seat}</span> : null}
 		</span>
 	);
 };
