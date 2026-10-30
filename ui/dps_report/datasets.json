@@ -307,7 +307,7 @@
   "title": "Updates",
   "description": "The report's updates, newest first: game updates (a new client build or development notes) and sim/preset updates (our own changes to the sim, rotations, gear, talents, consumes or races), each with its date, source and public change list. Each line may name the classes, presets, races and racial parts it touches.",
   "updated": {
-   "at": "2026-10-30T00:26:39.721Z",
+   "at": "2026-10-30T15:25:40.039Z",
    "by": "Claude (forever-sim)"
   }
  },
@@ -315,7 +315,7 @@
   "title": "Results before and after each update",
   "description": "The report's results at the first update's start in full (genesis), then each update's end as only the rows that changed (ends, with gone listing rows that left): builds (DPS, error, ranks, race, best race), races (each preset on each race), parts (each racial part's DPS against the generic boss) and summary (per race and role, how often it is best and its average gap).",
   "updated": {
-   "at": "2026-10-30T00:26:39.729Z",
+   "at": "2026-10-30T15:24:16.947Z",
    "by": "Claude (forever-sim)"
   }
  }
