@@ -93,6 +93,9 @@ export class CompareResults extends Component {
 	private readonly history: SimHistory;
 	// What the empty state suggests changing between two runs, like "a talent or an item".
 	private readonly changeExample: string;
+	// Who a member is across runs, from its name. The raid page's names changed form, so its old and new
+	// runs name one member two ways.
+	private readonly memberKey: (name: string) => string;
 	// The raid member we compare, by name, or '' for the whole raid. A spec page's runs have one player, so
 	// there it's always ''.
 	private member = '';
@@ -139,10 +142,11 @@ export class CompareResults extends Component {
 		resources: Map<ResourceType, { panel: HTMLElement; table: CompareTable<ResourceMetrics> }>;
 	};
 
-	constructor(parent: HTMLElement, simUI: SimUI, history: SimHistory, opts: { changeExample?: string } = {}) {
+	constructor(parent: HTMLElement, simUI: SimUI, history: SimHistory, opts: { changeExample?: string; memberKey?: (name: string) => string } = {}) {
 		super(parent, 'cmp-root');
 		this.simUI = simUI;
 		this.changeExample = opts.changeExample ?? 'a talent or an item';
+		this.memberKey = opts.memberKey ?? (name => name);
 		this.history = history;
 		this.memberSelect = (<select className="form-select cmp-member-select" />) as HTMLSelectElement;
 		this.memberElem = (
@@ -567,7 +571,7 @@ export class CompareResults extends Component {
 	// so a member the compared raid dropped (or added) still shows, with nothing on the other side.
 	private fillMembers() {
 		const { resultA, resultB } = this.pair!;
-		const names = [...new Set([...resultA.getRaidIndexedPlayers(), ...resultB.getRaidIndexedPlayers()].map(player => player.name))];
+		const names = [...new Set([...resultA.getRaidIndexedPlayers(), ...resultB.getRaidIndexedPlayers()].map(player => this.memberKey(player.name)))];
 		const isRaid = resultA.getRaidIndexedPlayers().length > 1 || resultB.getRaidIndexedPlayers().length > 1;
 		this.memberElem.classList.toggle('hide', !isRaid);
 		if (!isRaid || !names.includes(this.member)) this.member = '';
@@ -584,7 +588,7 @@ export class CompareResults extends Component {
 	// The players we compare in a run: the picked member, or every player.
 	private players(result: SimResult): UnitMetrics[] {
 		const players = result.getRaidIndexedPlayers();
-		return this.member ? players.filter(player => player.name === this.member) : players;
+		return this.member ? players.filter(player => this.memberKey(player.name) === this.member) : players;
 	}
 
 	// The DPS we compare in a run: the picked member's, or the raid's.

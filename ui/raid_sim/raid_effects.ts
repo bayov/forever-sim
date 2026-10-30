@@ -16,32 +16,34 @@ export interface RaidEffect {
 	label?: string;
 	icon: string;
 	debuff?: boolean;
+	// Who can give it, for the Who gives what table.
+	from: string;
 }
 
 // The raid's effects in the order the page's strip shows them: the long buffs, the held auras and totems,
 // then the boss's debuffs.
 export const RAID_EFFECTS: RaidEffect[] = [
-	{ name: 'Fortitude', label: 'Prayer of Fortitude', icon: wowIcon('spell_holy_prayeroffortitude') },
-	{ name: 'Gift of the Wild', icon: wowIcon('spell_nature_regeneration') },
-	{ name: 'Arcane Brilliance', icon: wowIcon('spell_holy_arcaneintellect') },
-	{ name: 'Prayer of Spirit', icon: wowIcon('spell_holy_prayerofspirit') },
-	{ name: 'Blessings', label: 'Greater Blessings', icon: wowIcon('spell_magic_greaterblessingofkings') },
+	{ name: 'Fortitude', label: 'Prayer of Fortitude', from: 'Priest: Discipline or Holy healer, Shadow or Smite', icon: wowIcon('spell_holy_prayeroffortitude') },
+	{ name: 'Gift of the Wild', from: 'Druid: Feral tank, Restoration healer, Balance or Feral', icon: wowIcon('spell_nature_regeneration') },
+	{ name: 'Arcane Brilliance', from: 'Mage', icon: wowIcon('spell_holy_arcaneintellect') },
+	{ name: 'Prayer of Spirit', from: 'Priest: Discipline or Holy healer, Shadow or Smite', icon: wowIcon('spell_holy_prayerofspirit') },
+	{ name: 'Blessings', label: 'Greater Blessings', from: 'Paladin: Holy or Protection, or Retribution. One blessing per class per paladin', icon: wowIcon('spell_magic_greaterblessingofkings') },
 	// Forever's Salvation (spell 1038) is no longer a Blessing: any paladin gives it, and it lowers threat only.
-	{ name: 'Salvation', icon: wowIcon('spell_holy_sealofsalvation') },
-	{ name: 'Battle Shout', icon: wowIcon('ability_warrior_battleshout') },
-	{ name: 'Furious Howl', icon: wowIcon('ability_hunter_pet_wolf') },
-	{ name: 'Trueshot Aura', icon: wowIcon('ability_trueshot') },
-	{ name: 'Leader of the Pack', icon: wowIcon('spell_nature_unyeildingstamina') },
-	{ name: 'Moonkin Aura', icon: wowIcon('spell_nature_moonglow') },
-	{ name: 'Strength of Earth', label: 'Strength of Earth Totem', icon: wowIcon('spell_nature_earthbindtotem') },
-	{ name: 'Grace of Air', label: 'Grace of Air Totem', icon: wowIcon('spell_nature_invisibilitytotem') },
-	{ name: 'Windfury Totem', icon: wowIcon('spell_nature_windfury') },
-	{ name: 'Flametongue Totem', icon: wowIcon('spell_nature_guardianward') },
-	{ name: 'Sunder upkeep', label: 'Sunder Armor', icon: wowIcon('ability_warrior_sunder'), debuff: true },
-	{ name: 'Minor armor slot', label: 'Faerie Fire or Curse of Recklessness', icon: wowIcon('spell_nature_faeriefire'), debuff: true },
-	{ name: 'Curse of the Elements', icon: wowIcon('spell_shadow_chilltouch'), debuff: true },
-	{ name: 'Judgement of the Crusader', icon: wowIcon('spell_holy_holysmite'), debuff: true },
-	{ name: 'Judgement of Wisdom', icon: wowIcon('spell_holy_righteousnessaura'), debuff: true },
+	{ name: 'Salvation', from: 'Any paladin', icon: wowIcon('spell_holy_sealofsalvation') },
+	{ name: 'Battle Shout', from: 'Protection warrior tank, or a warrior on its duty', icon: wowIcon('ability_warrior_battleshout') },
+	{ name: 'Furious Howl', from: 'Hunter with a wolf', icon: wowIcon('ability_hunter_pet_wolf') },
+	{ name: 'Trueshot Aura', from: 'Marksmanship hunter', icon: wowIcon('ability_trueshot') },
+	{ name: 'Leader of the Pack', from: 'Feral druid: tank or cat', icon: wowIcon('spell_nature_unyeildingstamina') },
+	{ name: 'Moonkin Aura', from: 'Balance druid', icon: wowIcon('spell_nature_moonglow') },
+	{ name: 'Strength of Earth', label: 'Strength of Earth Totem', from: 'Shaman: Restoration or Warden, or Enhancement', icon: wowIcon('spell_nature_earthbindtotem') },
+	{ name: 'Grace of Air', label: 'Grace of Air Totem', from: 'Restoration or Warden shaman', icon: wowIcon('spell_nature_invisibilitytotem') },
+	{ name: 'Windfury Totem', from: 'Shaman: Restoration or Warden, or Enhancement', icon: wowIcon('spell_nature_windfury') },
+	{ name: 'Flametongue Totem', from: 'Restoration or Warden shaman', icon: wowIcon('spell_nature_guardianward') },
+	{ name: 'Sunder upkeep', label: 'Sunder Armor', from: 'Protection warrior tank, or a warrior on its duty', icon: wowIcon('ability_warrior_sunder'), debuff: true },
+	{ name: 'Minor armor slot', label: 'Faerie Fire or Curse of Recklessness', from: 'Druid (Faerie Fire), a warlock on its duty, or a hunter with a Tallstrider', icon: wowIcon('spell_nature_faeriefire'), debuff: true },
+	{ name: 'Curse of the Elements', from: 'Warlock on its duty', icon: wowIcon('spell_shadow_chilltouch'), debuff: true },
+	{ name: 'Judgement of the Crusader', from: 'Paladin: Holy or Protection, or Retribution on its duty', icon: wowIcon('spell_holy_holysmite'), debuff: true },
+	{ name: 'Judgement of Wisdom', from: 'Paladin: Holy or Protection, or Retribution on its duty', icon: wowIcon('spell_holy_righteousnessaura'), debuff: true },
 ];
 
 // What each placeholder gives, by the resolver's names. A shaman gives one totem of each element, so

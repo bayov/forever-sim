@@ -1230,9 +1230,10 @@ $rs-none: #6b7280;
 // The bench: every placeholder and report build, to click into the first open slot or drag to one.
 .rs-bench {
 	position: sticky;
-	// Under the page's tabs, which stay at the top too.
+	// Under the page's tabs, which stay at the top too. Its bottom stays clear of the 5 rem or so of page
+	// under the editor, so at the end of the page it isn't pushed up out of place.
 	top: 4.5rem;
-	max-height: calc(100vh - 5.5rem);
+	max-height: calc(100vh - 10.5rem);
 	display: flex;
 	flex-direction: column;
 	border: 1px solid var(--line-color);
@@ -1946,5 +1947,50 @@ $rs-none: #6b7280;
 	.rs-same-as-comp {
 		padding: 0;
 		font-size: 0.85rem;
+	}
+}
+
+// The Who gives what table under the strip.
+.rs-givers {
+	flex-basis: 100%;
+
+	summary {
+		width: fit-content;
+		color: var(--text-muted-color);
+		font-size: 0.85rem;
+		cursor: pointer;
+
+		&:hover {
+			color: var(--gold-soft);
+		}
+	}
+
+	.rs-givers-table {
+		margin-top: var(--spacer-2);
+
+		td {
+			vertical-align: middle;
+		}
+	}
+
+	.rs-givers-effect {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		white-space: nowrap;
+
+		.rs-icon {
+			width: 1.3rem;
+			height: 1.3rem;
+		}
+	}
+
+	.rs-givers-required {
+		color: var(--gold);
+		font-size: 0.75rem;
+	}
+
+	.rs-givers-missing td:last-child {
+		color: #ff8a8a;
 	}
 }

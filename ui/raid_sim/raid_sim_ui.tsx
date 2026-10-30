@@ -118,6 +118,8 @@ export class RaidSimUI extends SimUI {
 		this.addSidebarNote();
 		new CompareResults(this.tabElem(COMPARE_TAB).querySelector('.compare-results') as HTMLElement, this, this.history, {
 			changeExample: 'a member, an assignment or the fight',
+			// Members were named "Mage: Fire (1.4)" before they were "Fire (1.4)".
+			memberKey: name => name.replace(/^[^:(]*: /, ''),
 		});
 		this.simHeader.addImportLink('JSON', new RaidJsonImporter(this.rootElem, this, this.editor));
 		this.simHeader.addExportLink('Link', new RaidLinkExporter(this.rootElem, this, this.editor));

@@ -1352,6 +1352,10 @@ The Comp tab comes first, before Raid results, Compare, Search and Search result
 - A sticky bench of members to add, with a filter. A click adds one to the first open slot, or to the empty
   slot picked with a click.
 - The icons say what they are in quick tooltips.
+- **Who gives what**, folded under the strip: every raid effect, the classes and specs that can give it,
+  and who gives it in this raid, a required one in red when nobody does.
+- Members go by their build and seat ("Fire (1.4)"), with their class in their icon and color. The Compare
+  tab matches a member's old name ("Mage: Fire (1.4)") to its new one.
 - Assignments as cards (`ui/raid_sim/choice_menu.tsx`): Blessings as a paladin by class table, Totems as a
   shaman by element table, Duties and Cooldowns. Each pick is an icon: gold when set by hand, dashed for
   Auto, with the last run's pick in it.

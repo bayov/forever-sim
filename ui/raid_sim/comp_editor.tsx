@@ -189,6 +189,8 @@ export class CompEditor {
 	// The empty slot picked with a click, which the bench's next member goes to.
 	private targetCell: number | null = null;
 	private readonly benchHead = (<div className="rs-bench-head" />) as HTMLElement;
+	// Whether the Who gives what table is open, which the overview keeps when it's drawn again.
+	private giversOpen = false;
 	private running = false;
 	// The running raid sim was stopped from the page.
 	private stopping = false;
@@ -423,8 +425,9 @@ export class CompEditor {
 		return build ? buildLabel(build) : member.buildId ?? '';
 	}
 
+	// A member by its build and seat, like "Fire (1.4)". Its class shows in its icon and color.
 	private memberShortName(member: Member, cell: number): string {
-		return `${this.memberName(member)} (${Math.floor(cell / PARTY_SIZE) + 1}.${(cell % PARTY_SIZE) + 1})`;
+		return `${this.slotName(member)} (${Math.floor(cell / PARTY_SIZE) + 1}.${(cell % PARTY_SIZE) + 1})`;
 	}
 
 	private changed() {
@@ -1237,7 +1240,50 @@ export class CompEditor {
 						</div>,
 				  ]
 				: []),
+			this.giversTable(givers, required),
 		);
+	}
+
+	// Every raid effect, who can give it, and who gives it in this raid.
+	private giversTable(givers: Map<string, string[]>, required: string[]) {
+		const details = (
+			<details className="rs-givers">
+				<summary>Who gives what</summary>
+				<div className="rs-table-wrap">
+					<table className="rs-table rs-givers-table">
+						<thead>
+							<tr>
+								<th>Effect</th>
+								<th>Comes from</th>
+								<th>In this raid</th>
+							</tr>
+						</thead>
+						<tbody>
+							{RAID_EFFECTS.map(e => {
+								const who = givers.get(e.name) ?? [];
+								const isRequired = required.includes(e.name);
+								return (
+									<tr className={isRequired && !who.length ? 'rs-givers-missing' : ''}>
+										<td>
+											<span className="rs-givers-effect">
+												<img className="rs-icon" src={e.icon} alt="" />
+												{e.label ?? e.name}
+												{isRequired ? <span className="rs-givers-required">required</span> : null}
+											</span>
+										</td>
+										<td className="rs-muted">{e.from}</td>
+										<td>{who.length ? who.join(', ') : 'nobody'}</td>
+									</tr>
+								);
+							})}
+						</tbody>
+					</table>
+				</div>
+			</details>
+		) as HTMLDetailsElement;
+		details.open = this.giversOpen;
+		details.addEventListener('toggle', () => (this.giversOpen = details.open));
+		return details;
 	}
 
 	// Requires a raid effect, or lets it go. It changes no sim, so the last run stays this raid's.
