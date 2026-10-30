@@ -146,6 +146,9 @@ A duty preset (one with `duty` and `baseBuild`, standards 23) keeps a raid buff 
 off. It gets `run_build.py` only (main, race sweep, lengths, samples): the page lists it in the Ranking while "Duty" is on,
 with what it costs against its base, and `build_data.py` keeps it out of every per-preset detail dataset so the page stays
 small. Its assumption factor is its base's.
+A pet variant (one with `pet` and `baseBuild`, a hunter preset with another pet for what that pet gives the raid) is
+handled as a duty preset is: `run_build.py` only, listed in the Ranking while "Duty" is on with its pet as the badge
+and what the pet costs against its base, and its base's assumption factor.
 Each assumption in `assumptions_def.py` is written for a player who hasn't read our notes: a question-style `label`
 (8 words at most), a `short` line (20 words at most) the Ranking panel shows under it, setting labels that say what each
 choice means with a `rationale` of 15 words at most, and a `desc` of 2 to 4 sentences plus its `src` (written to the

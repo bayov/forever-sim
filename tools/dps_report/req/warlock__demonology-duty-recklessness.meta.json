@@ -16,14 +16,14 @@
   "apl": "level60_demonology_duty_recklessness",
   "published": {
     "dps": 1036.8,
-    "source": "Raid sim variant (docs/raid_sim.md, milestone M1b), not yet in the DPS report: wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s, 2026-10-29"
+    "source": "Raid sim variant (docs/raid_sim.md, milestone M1b), in the DPS report since 2026-10-30: wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s, 2026-10-29"
   },
   "verify": {
     "dps": 1036.79,
     "stderr": 0.34,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 s, seed 1 (the published number is this sim); a raid sim variant, not yet in the report"
+    "note": "wowsimcli on this request, 180 s, seed 1 (the published number is this sim); a raid sim variant, in the DPS report since 2026-10-30"
   },
   "summary": "Keeps Curse of Recklessness (505 armor) on the boss for the raid instead of a druid's Faerie Fire. In Forever, curses and banes use separate slots, so it keeps its bane.",
   "keyTalents": [
@@ -76,7 +76,7 @@
     "Soul shards and Life Tap's health cost aren't tracked.",
     "Demons use the warlock's spell crit, a reported Forever bug. It's worth 15 to 17 DPS."
   ],
-  "notes": "Request from mksettings with the same arguments as warlock__demonology except -apl level60_demonology_duty_recklessness, then raid.debuffs.curseOfRecklessness and faerieFire removed (they share the minor armor slot, standards 20). Made as a hand edit of the base request, which is the same. Demon Armor; Summon Succubus, sacrificed Imp, imbue Spellstone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly. Orc since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Human. A raid sim variant (docs/raid_sim.md, M1b), not yet in the DPS report.",
+  "notes": "Request from mksettings with the same arguments as warlock__demonology except -apl level60_demonology_duty_recklessness, then raid.debuffs.curseOfRecklessness and faerieFire removed (they share the minor armor slot, standards 20). Made as a hand edit of the base request, which is the same. Demon Armor; Summon Succubus, sacrificed Imp, imbue Spellstone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly. Orc since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Human. A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30.",
   "duty": "Curse of Recklessness",
   "baseBuild": "warlock__demonology"
 }

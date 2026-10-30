@@ -16,14 +16,14 @@
   "apl": "bm",
   "published": {
     "dps": 1060.7,
-    "source": "Raid sim variant (docs/raid_sim.md, milestone M1b), not yet in the DPS report: wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s, 2026-10-29"
+    "source": "Raid sim variant (docs/raid_sim.md, milestone M1b), in the DPS report since 2026-10-30: wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s, 2026-10-29"
   },
   "verify": {
     "dps": 1060.72,
     "stderr": 0.2,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 s, seed 1 (the published number is this sim); a raid sim variant, not yet in the report"
+    "note": "wowsimcli on this request, 180 s, seed 1 (the published number is this sim); a raid sim variant, in the DPS report since 2026-10-30"
   },
   "summary": "Beast Mastery with a Tallstrider, using Bestial Wrath, Frenzy and Unleashed Fury. Melee weaves between Auto Shots. The Tallstrider's Dust Cloud fills the minor armor slot when no druid or warlock does.",
   "keyTalents": [
@@ -79,7 +79,7 @@
     "Assumed: each hunter keeps up its own Hunter's Mark, and the raid's mark is off. That costs 0.5 to 2.5 DPS at 180s (0.5 here).",
     "No Scorpid Sting. Balance druids already keep up Insect Swarm, which gives the same 2% hit reduction. Scorpid Sting would replace Serpent Sting and cost about 85 to 100 DPS for nothing."
   ],
-  "notes": "Request: hunter__beast-mastery with hunter.options.petType Tallstrider instead of Cat, everything else the base request. A raid sim variant (docs/raid_sim.md, Hunter pets, M1b), not yet in the DPS report.",
+  "notes": "Request: hunter__beast-mastery with hunter.options.petType Tallstrider instead of Cat, everything else the base request. A raid sim variant (docs/raid_sim.md, Hunter pets, M1b), in the DPS report since 2026-10-30.",
   "pet": "Tallstrider",
   "baseBuild": "hunter__beast-mastery"
 }
