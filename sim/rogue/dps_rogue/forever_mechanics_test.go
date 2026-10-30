@@ -137,6 +137,38 @@ func TestForeverInstantPoisonAttackPower(t *testing.T) {
 	}
 }
 
+// Forever's Eviscerate adds 4% of attack power per combo point (wowsims/forever's in-game tests;
+// Era's is 3%). The same seed gives the same rolls, so 2000 more attack power adds 400 to every
+// 5 point hit before the multipliers, and twice that on a crit. The target has no armor.
+func TestForeverEviscerateAttackPower(t *testing.T) {
+	const casts = 300
+	damage := func(bonusAP float64) (float64, *core.Spell) {
+		sim, rogue := newForeverRogueSim(t, "", 18832, 18805, 1)
+		rogue.AddStatDynamic(sim, stats.AttackPower, bonusAP)
+		target := rogue.CurrentTarget
+		for i := 0; i < casts; i++ {
+			rogue.SpendComboPoints(sim, rogue.Eviscerate)
+			rogue.AddComboPoints(sim, 5, target, rogue.Eviscerate.ComboPointMetrics())
+			rogue.AddEnergy(sim, 100, rogue.EnergyRefundMetrics)
+			rogue.SetGCDTimer(sim, sim.CurrentTime)
+			if !rogue.Eviscerate.Cast(sim, target) {
+				t.Fatalf("Eviscerate didn't cast at %s", sim.CurrentTime)
+			}
+		}
+		return rogue.Eviscerate.SpellMetrics[target.UnitIndex].TotalDamage, rogue.Eviscerate
+	}
+	base, _ := damage(0)
+	more, eviscerate := damage(2000)
+	metrics := eviscerate.SpellMetrics[eviscerate.Unit.CurrentTarget.UnitIndex]
+	if metrics.Hits+metrics.Crits < casts/2 {
+		t.Fatalf("only %d of %d Eviscerates landed", metrics.Hits+metrics.Crits, casts)
+	}
+	want := 0.04 * 5 * 2000 * eviscerate.DamageMultiplier * (float64(metrics.Hits) + 2*float64(metrics.Crits))
+	if got := more - base; math.Abs(got-want) > 0.01*want {
+		t.Errorf("2000 attack power added %.1f Eviscerate damage over %d casts, want %.1f", got, casts, want)
+	}
+}
+
 // The Subtlety preset's talents (tools/dps_report/req/rogue__subtlety.json), with Hemorrhage and
 // Serrated Blades.
 const subtletyPresetTalents = "0053031035140004--3021203310113011"
@@ -280,5 +312,48 @@ func TestForeverGrimstitchArmorBySetID(t *testing.T) {
 	}
 	if got := rogue.GetStat(stats.MeleeHit); got != float64(core.MeleeHitRatingPerHitChance) {
 		t.Errorf("six Grimstitch pieces give %.2f melee hit rating, want %.2f", got, float64(core.MeleeHitRatingPerHitChance))
+	}
+}
+
+// A sharpening stone goes on an edged weapon only, so on a mace it does nothing and the stats
+// carry a warning; a weightstone fits the mace (the spells' SpellEquippedItems).
+func TestSharpeningStoneNeedsAnEdgedWeapon(t *testing.T) {
+	build := func(offHandImbue proto.WeaponImbue) (*core.Simulation, *proto.PlayerStats) {
+		items := make([]*proto.ItemSpec, proto.ItemSlot_ItemSlotOffHand+1)
+		for i := range items {
+			items[i] = &proto.ItemSpec{}
+		}
+		items[proto.ItemSlot_ItemSlotMainHand].Id = 994013 // Combat Swords' synthetic axe
+		items[proto.ItemSlot_ItemSlotOffHand].Id = 994014  // and mace
+		player := &proto.Player{
+			Race:      proto.Race_RaceHuman,
+			Class:     proto.Class_ClassRogue,
+			Level:     60,
+			Equipment: &proto.EquipmentSpec{Items: items},
+			Consumes:  &proto.Consumes{MainHandImbue: proto.WeaponImbue_DenseSharpeningStone, OffHandImbue: offHandImbue},
+			Rotation:  &proto.APLRotation{},
+			Spec:      DefaultRogue,
+		}
+		raid := core.SinglePlayerRaidProto(player, &proto.PartyBuffs{}, &proto.RaidBuffs{}, &proto.Debuffs{})
+		encounter := &proto.Encounter{Duration: 60, Targets: []*proto.Target{{Level: 63}}}
+		stats := core.ComputeStats(&proto.ComputeStatsRequest{Raid: raid, Encounter: encounter, Ruleset: proto.Ruleset_RulesetForever})
+		sim := core.NewSim(&proto.RaidSimRequest{Raid: raid, Encounter: encounter,
+			SimOptions: &proto.SimOptions{Ruleset: proto.Ruleset_RulesetForever, RandomSeed: 1}}, simsignals.CreateSignals())
+		return sim, stats.RaidStats.Parties[0].Players[0]
+	}
+
+	sim, stats := build(proto.WeaponImbue_DenseSharpeningStone)
+	aa := &sim.Raid.Parties[0].Players[0].GetCharacter().AutoAttacks
+	if aa.MH().BaseDamageMin != 111.6+8 || aa.OH().BaseDamageMin != 90 {
+		t.Errorf("weapon minimums %.1f and %.1f, want the stone on the axe only (119.6 and 90)", aa.MH().BaseDamageMin, aa.OH().BaseDamageMin)
+	}
+	if len(stats.Warnings) != 1 {
+		t.Errorf("warnings %q, want one for the stone on the mace", stats.Warnings)
+	}
+
+	sim, stats = build(proto.WeaponImbue_DenseWeightstone)
+	aa = &sim.Raid.Parties[0].Players[0].GetCharacter().AutoAttacks
+	if aa.OH().BaseDamageMin != 90+8 || len(stats.Warnings) != 0 {
+		t.Errorf("a weightstone on the mace: minimum %.1f and warnings %q, want 98 and none", aa.OH().BaseDamageMin, stats.Warnings)
 	}
 }

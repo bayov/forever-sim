@@ -308,11 +308,29 @@ The resolver works from a table that says, for each buff and debuff:
 **It's written by hand**, checked against client 70685. The client's scope rule is in the appendix, for
 checking a row.
 
-**In Go** (as built) the table is spread over `sim/compsearch`: a `Gift` bit for each raid-wide effect
-(`effects.go`), what each build gives and casts itself (`PlayerGifts`: its class, its held auras from the
-class hooks, its duty, its pet), what each preset gives (`presets.go`), and `Seat.Write`, which writes a
-member's effects into its request's settings fields. The scopes, the stacking and the exclusions live in
-the engine (M1b). Nothing yet flags a spell id that changes in a new client build.
+**In Go** (as built, 2026-10-30) the table is one file, `sim/compsearch/table.go`. The search, the
+resolver and the page read everything they know about classes from it:
+
+- `Effects`: each raid-wide effect's `Gift` bit, names, icon, and how it goes into a receiver's request.
+  `Seat.Write` and the resolver's raid debuffs loop over it.
+- `Specs`: what each DPS spec always gives, what some of its builds may give (talents, pets), what it casts
+  itself, and whether it drops a party package, Sunders at the pull, is melee, a caster or a mana user, and
+  takes Flametongue over Windfury. `PlayerGifts` reads its row, then the class hooks for the talent auras,
+  its duty and its pet.
+- `Classes`, `Blessings`, `Judgements`, `Totems` and `Elements`, `Packages`, `Duties`, and the presets
+  (`presets.go`). The number of paladins that give a class every blessing is `len(Blessings)`.
+- The buff sets' toggles come from `Specs` and `Duties`: what a spec always gives comes together.
+
+The search asks what a member gives, not its class: a member with Blessings is a paladin to it, and one
+with a party package is a shaman. `tools/raid_sim_data` writes the page's copy, `ui/raid_sim/data/table.json`,
+with the Who gives what text built from the presets, the pool and the duties. A test fails when the copy is
+stale.
+
+So a class change is an edit of these rows. What stays in code is the three ways a raid shares effects: a
+paladin's blessings go to each class, a shaman's totems go to its party, and warriors Sunder at the pull. The
+heuristics that pick automatic assignments (Kings first, Might for a melee class, Windfury for a melee raid)
+also name their effects. A new kind of sharing needs code. The scopes, the stacking and the exclusions live
+in the engine (M1b). Nothing yet flags a spell id that changes in a new client build.
 
 DPS-relevant buffs. "Unverified" means the client can't say and the server decides. "No field" means there
 is no given form yet:
@@ -722,6 +740,14 @@ party are interchangeable. Dark Inspiration has a given form since M1b but isn't
 
 **The search's DPS pool is the presets marked for raid sims, for now the DPS Report's builds** (the user,
 2026-10-29).
+
+**One build per spec** (the user, 2026-10-30: "I want to avoid too many options that would slow finding
+ideal comp sim"). `leftOut` in `sim/compsearch/pool.go` drops 13 base builds and their variants: the
+spec's other talent or weapon builds (Balance Wrath, Lone Wolf, three Retribution builds, Shadow + Holy,
+Combat Swords, Mutilate, Seal Fate Swords, Enhancement Level 60 and Water Shield, Destruction Fire, Fury
+Two-Hand). We keep the builds that give the raid something the spec's main build doesn't: the "+ Mana
+Tide" builds and the hunters' pets. None of the dropped builds was in a top comp of the committed searches.
+That leaves 24 base builds. The counts below are from before the trim.
 
 For a generic boss that's 43 builds: the report's 77 requests are 37 base builds, 25 duty variants, 9
 encounter variants and 6 hunter pet variants (3 builds × Tallstrider and wolf), and the pet variants are
@@ -1383,6 +1409,16 @@ like Fortitude, which adds no DPS but keeps the tanks alive.
   factions take the unconstrained best with a Discipline priest in a Restoration shaman's place: 15596.0
   Horde (36.6 behind the unconstrained 15632.6) and 15448.5 Alliance (38.5 behind 15487.0). They're the
   "Horde 20, class buffs" and "Alliance 20, class buffs" Best comps presets, which keep the requirements.
+- **10 and 40 players with the same requirements** (`m1_10_class_buffs`, `m1_40_class_buffs`, 2026-10-30,
+  after the Innervate fix):
+  - 10 players: a Protection paladin tank, a Discipline priest, and a Restoration shaman (Horde, 7259.9) or
+    a Holy paladin (Alliance, 7289.6). The DPS are five Fire mages, a Balance druid (Gift of the Wild and
+    Moonkin Aura) and a Demonology warlock on Curse of the Elements. The second paladin gives every class
+    two blessings, which puts Alliance ahead.
+  - 40 players: a Protection warrior, a Feral tank and a Warden shaman tank; three Holy paladins, three
+    Discipline priests (three Power Infusions), a Restoration shaman and a Restoration druid. The DPS are
+    26 Beast Mastery hunters, a Marksmanship hunter, a Fire mage and a Demonology warlock on Curse of the
+    Elements: 32766.5 Horde and 32427.4 Alliance.
 
 **What the page reuses:**
 
@@ -1837,8 +1873,11 @@ Report, with four tabs: Search result, Search, Comp and Raid results.
 - The search reads `req/`, so the report's regenerations flow in on their own.
 - The regenerate-dps-report and dps-report skills get a step: re-run the default searches when a build is
   re-simmed.
-- A committed result is stamped with the report's `datasets.json` stamp and the builds' fingerprints. A
-  stale check flags it when they move.
+- **Stale results (built 2026-10-30).** A result keeps each pool build's stamp (`build_stamps`): a hash of
+  its request, its race files and its published DPS, so a re-sim after an engine change counts too. The
+  page compares them with `builds.json` and says which builds changed, which are new and which are gone,
+  in the result's header and the Best comps presets' tooltips. `go run -tags=with_db ./tools/compsearch
+  -stale` lists the committed write-ups the same way. The write-ups from before 2026-10-30 have no stamps.
 
 ## M1's 20-player result
 

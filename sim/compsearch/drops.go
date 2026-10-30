@@ -17,7 +17,7 @@ import (
 // on or off. Each camp setting has its own table, since with camps on Moonkin Aura takes the Camp Chair
 // from a warrior.
 func dropContexts(camps bool) []Seat {
-	full := Seat{Up: ^Gift(0), Blessings: []proto.Blessing{proto.Blessing_BlessingKings, proto.Blessing_BlessingMight, proto.Blessing_BlessingWisdom},
+	full := Seat{Up: ^Gift(0), Blessings: allBlessings,
 		Package: proto.RaidPackage_RaidPackageRestoration, PI: true, Innervate: true, Camps: camps}
 	return []Seat{full, {Camps: camps}}
 }

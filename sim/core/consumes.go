@@ -1,6 +1,10 @@
 package core
 
 import (
+	"fmt"
+	"regexp"
+	"slices"
+	"strings"
 	"time"
 
 	"github.com/wowsims/classic/sim/core/proto"
@@ -122,12 +126,70 @@ func applyWeaponImbueConsumes(character *Character, consumes *proto.Consumes) {
 		Duration: time.Second * 10,
 	}
 
-	if character.HasMHWeapon() {
+	if character.HasMHWeapon() && character.imbueFits(consumes.MainHandImbue, character.MainHand(), "main hand") {
 		addImbueStats(character, consumes.MainHandImbue, true, shadowOilIcd)
 	}
-	if character.OffHand() != nil {
+	if character.OffHand() != nil && character.imbueFits(consumes.OffHandImbue, character.OffHand(), "off hand") {
 		addImbueStats(character, consumes.OffHandImbue, false, shadowOilIcd)
 	}
+}
+
+// The weapons a stone, oil or scroll goes on, as its spell's SpellEquippedItems states them (the
+// same in Era 1.15.9.69722 and Forever 1.60.1.70707): Solid and Dense Sharpening Stone on an
+// edged weapon (subclass mask 33219), Solid and Dense Weightstone on a blunt one (9264), and
+// Elemental and Consecrated Sharpening Stone, Shadow and Frost Oil and the wizard and mana oils
+// on any melee weapon (42483, 1097203, 173555 and inventory types 6430720). Forever's imbue
+// scrolls name one type each. A shield or an off-hand frill takes none. The UI offers only the
+// ones that fit (ui/core/components/inputs/consumables.ts); a saved setting can still carry one.
+var edgedWeaponTypes = []proto.WeaponType{proto.WeaponType_WeaponTypeAxe, proto.WeaponType_WeaponTypeDagger, proto.WeaponType_WeaponTypePolearm, proto.WeaponType_WeaponTypeSword}
+var bluntWeaponTypes = []proto.WeaponType{proto.WeaponType_WeaponTypeFist, proto.WeaponType_WeaponTypeMace, proto.WeaponType_WeaponTypeStaff}
+
+func ImbueFitsWeapon(imbue proto.WeaponImbue, weaponType proto.WeaponType) bool {
+	edged, blunt := slices.Contains(edgedWeaponTypes, weaponType), slices.Contains(bluntWeaponTypes, weaponType)
+	switch imbue {
+	case proto.WeaponImbue_WeaponImbueUnknown,
+		// A shaman's weapon imbues are spells on the shaman's own weapon, and Windfury here is
+		// another shaman's totem.
+		proto.WeaponImbue_RockbiterWeapon, proto.WeaponImbue_FlametongueWeapon, proto.WeaponImbue_FrostbrandWeapon,
+		proto.WeaponImbue_WindfuryWeapon, proto.WeaponImbue_Windfury:
+		return true
+	case proto.WeaponImbue_SolidSharpeningStone, proto.WeaponImbue_DenseSharpeningStone:
+		return edged
+	case proto.WeaponImbue_SolidWeightstone, proto.WeaponImbue_DenseWeightstone:
+		return blunt
+	case proto.WeaponImbue_ScrollOfImbueSpark:
+		return weaponType == proto.WeaponType_WeaponTypeSword
+	case proto.WeaponImbue_ScrollOfImbueManablade, proto.WeaponImbue_ScrollOfImbueIceknife, proto.WeaponImbue_ScrollOfImbueChillknife:
+		return weaponType == proto.WeaponType_WeaponTypeDagger
+	case proto.WeaponImbue_ScrollOfImbueLesserFlame, proto.WeaponImbue_ScrollOfImbueFrost, proto.WeaponImbue_ScrollOfImbueStriking,
+		proto.WeaponImbue_ScrollOfImbueBaleflame, proto.WeaponImbue_ScrollOfImbueAccuracy, proto.WeaponImbue_ScrollOfImbueQuickening,
+		proto.WeaponImbue_ScrollOfImbueBalefrost, proto.WeaponImbue_ScrollOfImbueFlame, proto.WeaponImbue_ScrollOfImbueGreaterFlame,
+		proto.WeaponImbue_ScrollOfImbueGreaterFrost, proto.WeaponImbue_ScrollOfImbuePrecision, proto.WeaponImbue_ScrollOfImbueSpellbreak:
+		return weaponType == proto.WeaponType_WeaponTypeStaff
+	default:
+		return edged || blunt
+	}
+}
+
+// imbueFits says whether the imbue goes on the hand's weapon. One that doesn't does nothing, as
+// in game, and leaves a warning. An empty hand takes none and gets no warning: a two-hander's
+// presets often share their consumes with a dual wielder's.
+func (character *Character) imbueFits(imbue proto.WeaponImbue, weapon *Item, hand string) bool {
+	if weapon.ID == 0 {
+		return false
+	}
+	if ImbueFitsWeapon(imbue, weapon.WeaponType) {
+		return true
+	}
+	weaponType := strings.ToLower(strings.TrimPrefix(weapon.WeaponType.String(), "WeaponType"))
+	character.SetupWarnings = append(character.SetupWarnings, fmt.Sprintf("The %s imbue %s can't go on %s (%s), so it does nothing.",
+		hand, imbueName(imbue), weapon.Name, weaponType))
+	return false
+}
+
+// "DenseSharpeningStone" as "Dense Sharpening Stone".
+func imbueName(imbue proto.WeaponImbue) string {
+	return strings.TrimSpace(regexp.MustCompile(`([A-Z])`).ReplaceAllString(imbue.String(), " $1"))
 }
 
 // weaponEffectsWork says whether weapon imbues apply. A feral druid fights with its paws, so

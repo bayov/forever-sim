@@ -48,6 +48,7 @@ func main() {
 	cache := flag.String("cache", "default", `the sim cache directory ("" for memory only)`)
 	out := flag.String("out", "", "write <out>.json and <out>.md (default: markdown to stdout)")
 	quiet := flag.Bool("quiet", false, "no progress lines")
+	stale := flag.Bool("stale", false, "list the committed write-ups (docs/raid_sim_m1) whose builds changed since their search")
 	flag.Parse()
 	// The cache version is this binary's hash, taken before anything can replace it.
 	if _, err := compsearch.Version(); err != nil {
@@ -78,6 +79,13 @@ func main() {
 			fail(err)
 		}
 		fmt.Printf("wrote %s for %d builds on %d cores\n", path, len(table), runtime.GOMAXPROCS(0))
+		return
+	}
+
+	if *stale {
+		if err := listStale(pool, *root); err != nil {
+			fail(err)
+		}
 		return
 	}
 
@@ -195,4 +203,30 @@ func preset(s string) proto.RaidPreset {
 func fail(err error) {
 	fmt.Fprintln(os.Stderr, "compsearch:", err)
 	os.Exit(1)
+}
+
+// listStale prints each committed write-up and whether the builds it chose from changed since. A write-up
+// from before the stamps has none to compare.
+func listStale(pool *compsearch.Pool, root string) error {
+	paths, err := filepath.Glob(filepath.Join(root, "docs", "raid_sim_m1", "m1_*.json"))
+	if err != nil {
+		return err
+	}
+	for _, path := range paths {
+		data, err := os.ReadFile(path)
+		if err != nil {
+			return err
+		}
+		res := &proto.CompSearchResult{}
+		if err := (protojson.UnmarshalOptions{DiscardUnknown: true}).Unmarshal(data, res); err != nil {
+			return fmt.Errorf("%s: %w", path, err)
+		}
+		name := filepath.Base(path)
+		if len(res.BuildStamps) == 0 {
+			fmt.Printf("%s: not stamped (searched before the stamps)\n", name)
+			continue
+		}
+		fmt.Printf("%s: %s\n", name, pool.StalenessOf(res.BuildStamps))
+	}
+	return nil
 }

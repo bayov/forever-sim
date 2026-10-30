@@ -2154,7 +2154,12 @@ func WindfuryTotemBuffAura(character *Character, rank int32, label string, actio
 		// duration, where the Era client (1.15.9) has 1.5 sec. The extra swing comes right
 		// away and gets it either way. The second charge, when a yellow attack triggered the
 		// proc, only reaches a white swing that comes within the window.
-		character.GetAura(buffLabel).Duration = time.Second
+		buff := character.GetAura(buffLabel)
+		buff.Duration = time.Second
+		// The proc's internal cooldown is 100 ms under Forever, the raid aura 10612's in the
+		// client store wowsims/forever reads (2026-10-30). The Era sim's 1.5 sec stays for
+		// Classic. To verify in game (notes.md, All classes).
+		buff.Icd.Duration = time.Millisecond * 100
 	}
 	return aura
 }

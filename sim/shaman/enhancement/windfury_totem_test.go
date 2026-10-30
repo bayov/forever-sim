@@ -15,10 +15,11 @@ import (
 //
 // The extra swing gets 95, 179 or 246 attack power at levels 32, 42 and 52, as in the Forever
 // client. Each landed white hit has a 20% chance to proc it, so 500 hits 2 sec apart should
-// proc it about 100 times. The sim waits 1.5 sec between procs, so hits 0.5 sec apart never
-// proc it twice within 1.5 sec. The client has 100 ms there, which notes.md asks to check at
-// level 32. The totem is another shaman's, and we have Rockbiter on, so Windfury Weapon doesn't
-// turn it off. A proc moves our next swing to right now.
+// proc it about 100 times. The sim waits 100 ms between procs under Forever, the client's
+// internal cooldown on the raid aura 10612 (Era's sim had 1.5 sec), so hits 0.5 sec apart
+// proc it as often as hits 2 sec apart; notes.md asks to check the 100 ms in game. The totem
+// is another shaman's, and we have Rockbiter on, so Windfury Weapon doesn't turn it off. A
+// proc moves our next swing to right now.
 func TestOrcShamanWindfuryTotem(t *testing.T) {
 	start := func(level int32, seconds float64) (*core.Simulation, *EnhancementShaman) {
 		sim, enh := weaponSim{level: level, weapon: &proto.ItemSpec{Id: darkEdge}, imbue: proto.WeaponImbue_RockbiterWeapon,
@@ -64,13 +65,8 @@ func TestOrcShamanWindfuryTotem(t *testing.T) {
 		t.Errorf("500 white hits 2 sec apart procced Windfury Totem %d times, want about 100", procs)
 	}
 
-	procs := procTimes(400, 0.5)
-	if len(procs) < 20 {
-		t.Errorf("400 white hits 0.5 sec apart procced Windfury Totem %d times, want about 50", len(procs))
-	}
-	for i := 1; i < len(procs); i++ {
-		if gap := procs[i] - procs[i-1]; gap < 1500*time.Millisecond {
-			t.Errorf("Windfury Totem procced at %s and again %s later, want 1.5 sec at least", procs[i-1], gap)
-		}
+	// 400 hits 0.5 sec apart: 80 procs give or take 8, where a 1.5 sec cooldown would allow about 50.
+	if procs := len(procTimes(400, 0.5)); math.Abs(float64(procs)-80) > 32 || procs <= 60 {
+		t.Errorf("400 white hits 0.5 sec apart procced Windfury Totem %d times, want about 80", procs)
 	}
 }

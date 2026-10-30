@@ -301,6 +301,12 @@ every rank within about half a minute. 1000 sessions take 5 min for 10 to 60 on 
   next to Lesser Healing Wave). Windfury Totem 2 and 3 cost 7 and 11 min, because the
   rotation drops the totem every pull and the higher ranks' mana is worth more than their
   attack power.
+- **Ranks bought later.** A rank the plan doesn't cast while it's our highest is bought with
+  the next rank it does cast (Lightning Bolt 2 to 7 come with Lightning Bolt 8 at 44, for
+  Maelstrom Weapon). A rank it casts waits until the level where the time it saved so far adds
+  up to the least, but never past the next rank, because we measured each rank only against the
+  one below it (Earth Shock 4 waits until 26, its mana costs more than its damage at 24 and 25).
+  It moves gold to later levels for the same hours.
 - **The gold budget.** The gold earned by a level is `gold_at_40` times (level / 40) to the
   power 3.5, net of food, water and repairs. 115g by 40 is what's left from "50 to 100g at 40
   to 45 before riding" (the user, 2026-10-30) plus about 50g of training. We keep Training's
@@ -311,15 +317,31 @@ every rank within about half a minute. 1000 sessions take 5 min for 10 to 60 on 
   under that schedule and schedule again, until it stays the same, because two missing ranks
   cost more than the two alone.
 
+- **Spells the plan doesn't cast.** Some we train anyway (`always_spells`, ticked in the Other
+  spells list): every rank at its level, and their gold counts in the budget. The enhancement
+  shaman's are Ghost Wolf, Earthbind, Stoneclaw (to hold an add off while we kill a quest
+  target), Tremor and Grounding Totem, Purge, the cures, Water Breathing and Walking, Astral
+  Recall, Reincarnation, Ancestral Spirit and Totemic Recall (the user, 2026-10-30, not the Call
+  spells). Ticking another one shows at once whether the gold still holds, and the search sees
+  it the next time it runs (`-always` names them for a request without them).
+
 The ranks the plan casts cost only about 21g by 40, so 115g never runs short, even with riding
 at 40. The budget only matters with less gold. With 100g and riding at 40 it trains 8 ranks of
 34 to 40 at 41, for 9 min. What the gold really buys is the spells the plan never casts (Ghost
 Wolf, Water Breathing, the resistance totems), which are ours to choose.
 
 The enhancement shaman's plan (`ui/enhancement_shaman/leveling_training.json`, 2026-10-30, 1000
-sessions) never trains 22 of the 74 ranks it casts, which saves 19 min (97.67h to 97.35h). The
+sessions) never trains 22 of the 74 ranks it casts, which saves 19 min (97.67h to 97.35h), and
+buys 17 later than their level. The
 ranks worth the most are Rockbiter Weapon 5 and 6 (68 and 73 min), Windfury Totem 1 (48 min),
 Lightning Shield 5 (30 min) and Frost Shock 1 (24 min, cast in place of Earth Shock at 20 to 24).
+
+Imbues and fire totems, 1000 paired sessions a level against the plan's Rockbiter Weapon
+(2026-10-30, the plan's rotations, not tuned again): Flametongue Weapon is a little slower at
+most levels, but faster just after each of its new ranks and before Rockbiter's next (2 min a
+level at 39 to 41, about 17 min over 10 to 60). Windfury Weapon in place of Windfury Totem is 3
+to 24 min a level slower from 32, and with Flametongue Totem in place of Searing it's slower
+still (2 to 6 min a level more).
 
 Still open: the search doesn't tune the rotation again for a rank we train later, so a missing
 rank can look a bit worse than it is.

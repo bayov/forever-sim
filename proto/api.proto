@@ -588,6 +588,10 @@ message PlayerStats {
 	APLStats rotation_stats = 12;
 
 	repeated PetStats pets = 11;
+
+	// Problems with the setup the sim found while building the character, such as a weapon
+	// imbue that can't go on its weapon (and so does nothing).
+	repeated string warnings = 13;
 }
 message PartyStats {
 	repeated PlayerStats players = 1;
@@ -1097,6 +1101,9 @@ message CompSearchResult {
 	int64 cache_hits = 8;
 	double seconds = 9;
 	ErrorOutcome error = 10;
+	// Each build in the search's pool and its stamp (a hash of its request, race files and published DPS),
+	// so a result can say when the builds it chose from have changed since.
+	map<string, string> build_stamps = 11;
 }
 
 // The resolver (docs/raid_sim.md, M1b): a comp into the raid's request, and what it gives whom.

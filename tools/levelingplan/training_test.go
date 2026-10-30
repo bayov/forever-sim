@@ -51,3 +51,31 @@ func TestSkipTails(t *testing.T) {
 		t.Errorf("skipped %v, want %v", got, want)
 	}
 }
+
+func TestDeferRuns(t *testing.T) {
+	ranks := []*spellRank{
+		{id: 1, spell: "Bolt", level: 10},
+		{id: 2, spell: "Bolt", level: 20},
+		{id: 3, spell: "Bolt", level: 30},
+		{id: 4, spell: "Bolt", level: 40},
+		{id: 5, spell: "Shock", level: 10},
+		{id: 6, spell: "Shock", level: 12},
+		{id: 7, spell: "Shock", level: 14},
+		{id: 8, spell: "Shock", level: 16},
+	}
+	// Bolt 1 to 3 aren't cast while they're our highest, so they come with Bolt 4. Shock 2 costs
+	// time at 12 and saves less at 13, so it waits until 13. Shock 3 costs time at both its
+	// levels and waits for Shock 4. Shock 1 saves time from its first level.
+	loss := map[int32]map[int32]float64{
+		5: {10: 0.1, 11: 0.1},
+		6: {12: -0.2, 13: 0.1},
+		7: {14: -0.1, 15: -0.1},
+		8: {16: 0.2},
+	}
+	cast := map[int32]bool{4: true, 5: true, 6: true, 7: true, 8: true}
+	got := deferRuns(ranks, loss, cast, schedule{})
+	want := schedule{1: 40, 2: 40, 3: 40, 6: 13, 7: 16}
+	if !sameSchedule(got, want) {
+		t.Errorf("deferred %v, want %v", got, want)
+	}
+}

@@ -12,11 +12,10 @@ type Preset struct {
 	Role    proto.RaidRole
 	Class   proto.Class
 	Talents string // the sim's per-tree digit format, checked against client 70630's trees
+	Icon    string
+	// Gives is what it always gives. A paladin's Blessings also mean it judges one of the table's
+	// judgements, and a shaman's package means it drops one totem per element (table.go).
 	Gives   Gift
-	// A paladin chooses one judgement and gives one Greater Blessing for each class; a shaman chooses a
-	// totem per element.
-	Paladin bool
-	Shaman  bool
 	Package proto.RaidPackage
 	PI      bool
 	// Innervate: the Restoration druid's, and the Feral tank's when switched on.
@@ -24,26 +23,41 @@ type Preset struct {
 	InnervateOptional bool
 }
 
+// Paladin is whether it gives Greater Blessings and judges.
+func (p *Preset) Paladin() bool { return p.Gives.Has(GiftBlessing) }
+
+// Shaman is whether it drops totems: a package for its party and one totem per element.
+func (p *Preset) Shaman() bool { return p.Package != proto.RaidPackage_RaidPackageNone }
+
 var Presets = []*Preset{
 	{ID: proto.RaidPreset_RaidPresetProtectionWarrior, Name: "Protection warrior", Role: proto.RaidRole_RaidRoleTank,
-		Class: proto.Class_ClassWarrior, Talents: "35--251533120331221351", Gives: GiftBattleShout | GiftSunderTank},
+		Class: proto.Class_ClassWarrior, Talents: "35--251533120331221351", Icon: "ability_warrior_defensivestance",
+		Gives: GiftBattleShout | GiftSunderTank},
 	{ID: proto.RaidPreset_RaidPresetFeralTank, Name: "Feral tank", Role: proto.RaidRole_RaidRoleTank,
-		Class: proto.Class_ClassDruid, Talents: "-55220302020132012551-055", Gives: GiftLotP | GiftGotW | GiftMinorArmor,
+		Class: proto.Class_ClassDruid, Talents: "-55220302020132012551-055", Icon: "ability_racial_bearform",
+		Gives:             GiftLotP | GiftGotW | GiftMinorArmor,
 		InnervateOptional: true},
 	{ID: proto.RaidPreset_RaidPresetProtectionPaladin, Name: "Protection paladin", Role: proto.RaidRole_RaidRoleTank,
-		Class: proto.Class_ClassPaladin, Talents: "1-5530513321301551-052", Paladin: true},
+		Class: proto.Class_ClassPaladin, Talents: "1-5530513321301551-052", Icon: "spell_holy_devotionaura",
+		Gives: GiftBlessing},
 	{ID: proto.RaidPreset_RaidPresetWardenShaman, Name: "Warden shaman", Role: proto.RaidRole_RaidRoleTank,
-		Class: proto.Class_ClassShaman, Talents: "35050013-0502303313551102", Shaman: true, Package: proto.RaidPackage_RaidPackageManaSpring},
+		Class: proto.Class_ClassShaman, Talents: "35050013-0502303313551102", Icon: "spell_shaman_lavaflow",
+		Gives: fixedTotemGifts, Package: proto.RaidPackage_RaidPackageManaSpring},
 	{ID: proto.RaidPreset_RaidPresetHolyPaladin, Name: "Holy paladin", Role: proto.RaidRole_RaidRoleHealer,
-		Class: proto.Class_ClassPaladin, Talents: "05320103225101051-500250302003", Paladin: true},
+		Class: proto.Class_ClassPaladin, Talents: "05320103225101051-500250302003", Icon: "spell_holy_holybolt",
+		Gives: GiftBlessing},
 	{ID: proto.RaidPreset_RaidPresetRestorationShaman, Name: "Restoration shaman", Role: proto.RaidRole_RaidRoleHealer,
-		Class: proto.Class_ClassShaman, Talents: "-005102-5530500315513151", Shaman: true, Package: proto.RaidPackage_RaidPackageRestoration},
+		Class: proto.Class_ClassShaman, Talents: "-005102-5530500315513151", Icon: "spell_nature_magicimmunity",
+		Gives: fixedTotemGifts, Package: proto.RaidPackage_RaidPackageRestoration},
 	{ID: proto.RaidPreset_RaidPresetDisciplinePriest, Name: "Discipline priest", Role: proto.RaidRole_RaidRoleHealer,
-		Class: proto.Class_ClassPriest, Talents: "005005231330011531-2310510303", Gives: GiftPoS | GiftFort, PI: true},
+		Class: proto.Class_ClassPriest, Talents: "005005231330011531-2310510303", Icon: "spell_holy_powerinfusion",
+		Gives: GiftPoS | GiftFort, PI: true},
 	{ID: proto.RaidPreset_RaidPresetHolyPriest, Name: "Holy priest", Role: proto.RaidRole_RaidRoleHealer,
-		Class: proto.Class_ClassPriest, Talents: "00510223123-03405103030121531", Gives: GiftPoS | GiftFort},
+		Class: proto.Class_ClassPriest, Talents: "00510223123-03405103030121531", Icon: "spell_holy_guardianspirit",
+		Gives: GiftPoS | GiftFort},
 	{ID: proto.RaidPreset_RaidPresetRestorationDruid, Name: "Restoration druid", Role: proto.RaidRole_RaidRoleHealer,
-		Class: proto.Class_ClassDruid, Talents: "05302001--5052035153113051", Gives: GiftGotW | GiftMinorArmor, Innervate: true},
+		Class: proto.Class_ClassDruid, Talents: "05302001--5052035153113051", Icon: "spell_nature_healingtouch",
+		Gives: GiftGotW | GiftMinorArmor, Innervate: true},
 }
 
 var presetByID = func() map[proto.RaidPreset]*Preset {

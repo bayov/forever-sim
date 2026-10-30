@@ -90,7 +90,11 @@ func validate(req *proto.CompSearchRequest) error {
 	}
 	for _, name := range req.RequiredEffects {
 		if _, ok := GiftByName(name); !ok {
-			return fmt.Errorf("unknown required effect %q (the names are %s, Salvation)", name, strings.Join(giftNames, ", "))
+			var names []string
+			for _, e := range Effects {
+				names = append(names, e.Name)
+			}
+			return fmt.Errorf("unknown required effect %q (the names are %s)", name, strings.Join(names, ", "))
 		}
 	}
 	if req.Iterations <= 0 || req.ContenderIterations <= 0 || req.ConfirmIterations <= 0 || req.ConfirmTopIterations <= 0 {
@@ -147,7 +151,7 @@ func SearchWithAbort(pool *Pool, sim *Simmer, req *proto.CompSearchRequest, prog
 		return nil, fmt.Errorf("more fixed DPS members than DPS slots")
 	}
 	counter := &Counter{}
-	res := &proto.CompSearchResult{Request: req, Version: sim.version[:16]}
+	res := &proto.CompSearchResult{Request: req, Version: sim.version[:16], BuildStamps: pool.Stamps()}
 	res.LeftOut = []string{
 		"a DPS shaman's totem choice: Enhancement and Elemental drop their builds' fixed totems (the engine's assigned totems aren't in their rotations yet)",
 		"Dark Inspiration as a party package (a Shadow priest's own Spirit is in its sims)",
@@ -266,46 +270,29 @@ func assumptionLines(a *proto.RaidAssumptions) []string {
 	return out
 }
 
-// Signature is what a combo's placeholders can give (docs/raid_sim.md, Tank and healer combos).
+// Signature is what a combo's placeholders can give (docs/raid_sim.md, Tank and healer combos): their
+// effects, the paladins' blessings and the shamans' air totems. Paladins past maxPaladins add only a
+// judgement, and shamans past the air totems' count only a totem the raid has.
 type Signature struct {
-	WarriorTank, FeralTank, Druid, Priest bool
-	Paladins, Shamans                     int
+	Gives             Gift
+	Paladins, Shamans int
 }
 
 func (r *Raid) Signature() Signature {
-	s := Signature{Paladins: min(3, r.phPaladins), Shamans: min(2, len(r.phShamans)), Priest: r.phGifts.Has(GiftPoS)}
-	for _, p := range r.Combo {
-		switch p.ID {
-		case proto.RaidPreset_RaidPresetProtectionWarrior:
-			s.WarriorTank = true
-		case proto.RaidPreset_RaidPresetFeralTank:
-			s.FeralTank = true
-		}
-		if p.Class == proto.Class_ClassDruid {
-			s.Druid = true
-		}
-	}
-	return s
+	return Signature{Gives: r.phGifts &^ GiftBlessing &^ fixedTotemGifts, Paladins: min(maxPaladins, r.phPaladins),
+		Shamans: min(len(airTotems), len(r.phShamans))}
 }
 
 func (s Signature) String() string {
 	var parts []string
-	if s.WarriorTank {
-		parts = append(parts, "a warrior tank")
-	}
-	if s.FeralTank {
-		parts = append(parts, "a Feral tank")
-	} else if s.Druid {
-		parts = append(parts, "a druid")
+	if s.Gives != 0 {
+		parts = append(parts, s.Gives.String())
 	}
 	if s.Paladins > 0 {
 		parts = append(parts, fmt.Sprintf("%d paladin%s", s.Paladins, map[bool]string{true: "s"}[s.Paladins > 1]))
 	}
 	if s.Shamans > 0 {
 		parts = append(parts, fmt.Sprintf("%d shaman%s", s.Shamans, map[bool]string{true: "s"}[s.Shamans > 1]))
-	}
-	if s.Priest {
-		parts = append(parts, "a priest")
 	}
 	if len(parts) == 0 {
 		return "nothing the search uses"
@@ -350,10 +337,6 @@ func multisets(from []*Preset, n int) [][]*Preset {
 	return out
 }
 
-// toggles are the roles DPS members can bring, with what each one turns on.
-var toggles = []Gift{GiftBattleShout, GiftFuriousHowl, GiftSunderTank, GiftMinorArmor, GiftCoE, GiftCrusader, GiftJoW, GiftMoonkin, GiftLotP, GiftTrueshot,
-	GiftAB, GiftGotW, GiftPoS | GiftFort, GiftSoE | GiftWF}
-
 // Plans is every buff set a raid can have (docs/raid_sim.md, The search, step 2).
 func (r *Raid) Plans() []Plan {
 	var crus []int
@@ -362,26 +345,28 @@ func (r *Raid) Plans() []Plan {
 	} else {
 		crus = []int{0}
 	}
+	// Each shaman placeholder's air totem. Past the first two, the others take the first air totem.
 	var airs [][]proto.RaidTotem
+	a, b := airTotems[0], otherAir(airTotems[0])
 	switch n := len(r.phShamans); {
 	case n == 0:
 		airs = [][]proto.RaidTotem{nil}
 	case n == 1:
-		airs = [][]proto.RaidTotem{{proto.RaidTotem_RaidTotemGraceOfAir}, {proto.RaidTotem_RaidTotemWindfury}}
+		for _, t := range airTotems {
+			airs = append(airs, []proto.RaidTotem{t})
+		}
 	default:
-		mk := func(a, b proto.RaidTotem) []proto.RaidTotem {
-			out := []proto.RaidTotem{a, b}
+		mk := func(x, y proto.RaidTotem) []proto.RaidTotem {
+			out := []proto.RaidTotem{x, y}
 			for i := 2; i < n; i++ {
-				out = append(out, proto.RaidTotem_RaidTotemGraceOfAir)
+				out = append(out, a)
 			}
 			return out
 		}
-		airs = [][]proto.RaidTotem{mk(proto.RaidTotem_RaidTotemGraceOfAir, proto.RaidTotem_RaidTotemWindfury),
-			mk(proto.RaidTotem_RaidTotemGraceOfAir, proto.RaidTotem_RaidTotemGraceOfAir),
-			mk(proto.RaidTotem_RaidTotemWindfury, proto.RaidTotem_RaidTotemWindfury)}
+		airs = [][]proto.RaidTotem{mk(a, b), mk(a, a), mk(b, b)}
 	}
 	var pals []int
-	for n := min(3, r.phPaladins); n <= 3; n++ {
+	for n := min(maxPaladins, r.phPaladins); n <= maxPaladins; n++ {
 		pals = append(pals, n)
 	}
 	seen := map[string]bool{}
@@ -492,7 +477,7 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 	// The best shaman of each package kind fills too, for its party's mana.
 	bestSham := map[proto.RaidPackage]*Build{}
 	for _, b := range cands {
-		if b.Class == proto.Class_ClassShaman {
+		if dropsTotems(b) {
 			if cur, ok := bestSham[b.Pkg]; !ok || model.builds[b].full > model.builds[cur].full {
 				bestSham[b.Pkg] = b
 			}
@@ -1149,7 +1134,7 @@ func (r *Raid) neighbours(p Plan) []Plan {
 	for _, d := range []int{-1, 1} {
 		q := p
 		q.Paladins += d
-		if q.Paladins < min(3, r.phPaladins) || q.Paladins > 3 {
+		if q.Paladins < min(maxPaladins, r.phPaladins) || q.Paladins > maxPaladins {
 			continue
 		}
 		if q.Paladins > 0 {
@@ -1176,11 +1161,7 @@ func (r *Raid) neighbours(p Plan) []Plan {
 	for i := range p.PHAir {
 		q := p
 		q.PHAir = append([]proto.RaidTotem{}, p.PHAir...)
-		if q.PHAir[i] == proto.RaidTotem_RaidTotemGraceOfAir {
-			q.PHAir[i] = proto.RaidTotem_RaidTotemWindfury
-		} else {
-			q.PHAir[i] = proto.RaidTotem_RaidTotemGraceOfAir
-		}
+		q.PHAir[i] = otherAir(q.PHAir[i])
 		out = append(out, rebase(q))
 	}
 	kept := out[:0]

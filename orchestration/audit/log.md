@@ -111,3 +111,7 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-10-30 07:01 | consumables | pass 55 | master 36a772fd1 | 1 new finding | Elixir of Wisdom +3 Int in 70707, sim has 6 (low)
 2026-10-30 07:01 | mechanics | pass 49 | master 36a772fd1 | 1 new finding | Tauren Endurance 2% crit damage now applied in 70707 (needs user ruling)
 2026-10-30 07:01 | client_update | pass 6 | master 36a772fd1 | 4 new findings | 70707 carries the mage talent rework (high); 3 low
+2026-10-30 12:58 | results | pass 63 | master bbbaf2e3c | quiet | 77 sims within tolerance of published; two over-tolerance builds match the reference run
+2026-10-30 12:58 | gear | pass 47 | master bbbaf2e3c | quiet | forever_enchants.json meta stamp only
+2026-10-30 12:58 | consumables | pass 56 | master bbbaf2e3c | quiet | Elixir of Wisdom 6 -> 3 matches client, resolves consumables-20261030-1
+2026-10-30 12:58 | mechanics | pass 50 | master bbbaf2e3c | quiet | 8 code commits read, none change game values

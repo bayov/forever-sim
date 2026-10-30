@@ -375,6 +375,11 @@ message LevelingTrainingSettings {
 	repeated LevelingTrainingBuy buys = 4;
 	// What each rank is worth, from the training search. Only shown, the sim doesn't read it.
 	repeated LevelingRankWorth worth = 5;
+	// The spells the plan doesn't cast that we train anyway, every rank at its level, by name
+	// (Ghost Wolf, Astral Recall). Their gold counts in the budget.
+	repeated string always_spells = 6;
+	// Every rank of the spells the plan doesn't cast, with its level and price (no minutes).
+	repeated LevelingRankWorth others = 7;
 }
 
 message LevelingTrainingBuy {
@@ -393,6 +398,8 @@ message LevelingRankWorth {
 	double minutes = 4;
 	// Its rank number, like 3 for Lightning Shield (Rank 3).
 	int32 rank = 5;
+	// The spell's name, the same for all its ranks.
+	string spell = 6;
 }
 
 // A talent we must have at least points in from level on.

@@ -693,9 +693,17 @@ export const P1SapperOnlyConsumes = Consumes.create({
 // Combat Daggers drinks the Flask of Natural Accuracy: its 5% hit does more for the white hits (the
 // dual wield cap is 27%) than Precision's expertise, on the 9% set too (+0.1 to +0.6 at 120 / 180 / 300
 // sec on five of the six seed set and length pairs, 0.4 behind on the sixth; 770.3 against 769.7 at 180 sec).
+// The Combat builds hold a mace in the off hand, which takes a Dense Weightstone: a sharpening stone
+// goes on an edged weapon only (the stones' SpellEquippedItems), and the weightstone adds the same 8.
 export const P1CombatDaggersConsumes = Consumes.create({
 	...P1SapperOnlyConsumes,
 	flask: Flask.FlaskOfNaturalAccuracy,
+	offHandImbue: WeaponImbue.DenseWeightstone,
+});
+
+export const P1CombatSwordsConsumes = Consumes.create({
+	...P1SapperOnlyConsumes,
+	offHandImbue: WeaponImbue.DenseWeightstone,
 });
 
 // The shared level 60 raid (both blessings, every debuff but Curse of Shadow), with the rogue in a melee
@@ -816,6 +824,12 @@ export const EncounterLevel60 = level60Encounter('Level 60', MobType.MobTypeUnkn
 export const EncounterLevel60Humanoid = level60Encounter('Level 60 (vs Humanoid)', MobType.MobTypeHumanoid);
 export const EncounterLevel60SapperOnly = level60Encounter('Level 60 (no Land Mine)', MobType.MobTypeUnknown, P1SapperOnlyConsumes);
 export const EncounterLevel60SapperOnlyHumanoid = level60Encounter('Level 60 (no Land Mine, vs Humanoid)', MobType.MobTypeHumanoid, P1SapperOnlyConsumes);
+export const EncounterLevel60CombatSwords = level60Encounter('Level 60 (Combat Swords)', MobType.MobTypeUnknown, P1CombatSwordsConsumes);
+export const EncounterLevel60CombatSwordsHumanoid = level60Encounter(
+	'Level 60 (Combat Swords, vs Humanoid)',
+	MobType.MobTypeHumanoid,
+	P1CombatSwordsConsumes,
+);
 export const EncounterLevel60CombatDaggers = level60Encounter('Level 60 (Combat Daggers)', MobType.MobTypeUnknown, P1CombatDaggersConsumes);
 export const EncounterLevel60CombatDaggersHumanoid = level60Encounter(
 	'Level 60 (Combat Daggers, vs Humanoid)',
@@ -831,7 +845,8 @@ export const EncounterLevel60CombatDaggersHumanoid = level60Encounter(
 // (seed 1000003 within 0.7), at 120 / 180 / 300 sec, against the generic boss (no creature type), on the
 // synthetic sets built to the Forever budget (standards 1b: armor 650.5, weapons 63.9, bow 19.5
 // weighted linear points a set, plus two synthetic ilvl 71 trinkets, 31 Agility and 15 crit rating, and
-// +335 attack power for 20 sec every 2 min), with a Dense Sharpening Stone beside the poison on each blade:
+// +335 attack power for 20 sec every 2 min), with a Dense Sharpening Stone beside the poison on each blade
+// (a Dense Weightstone on the Combat builds' off-hand mace since 2026-10-30, the same +8):
 //   Combat Daggers      793.8 / 770.3 / 750.5 Skyborne (Windshaper) (the default), 9% hit
 //   Combat Swords       789.9 / 764.0 / 743.8 Skyborne (Windshaper), 10% hit
 //   Seal Fate Daggers   746.3 / 731.5 / 720.9 Orc, 5.0% behind Combat Daggers, 10% hit
@@ -925,7 +940,7 @@ export const PresetBuildLevel60CombatSwords = level60Build(
 	GearLevel60SyntheticSwords,
 	TalentsLevel60CombatSwords,
 	ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
-	EncounterLevel60SapperOnly,
+	EncounterLevel60CombatSwords,
 	Race.RaceUndead,
 );
 export const PresetBuildLevel60SealFateSwords = level60Build(
@@ -987,7 +1002,7 @@ export const PresetBuildLevel60CombatSwordsHumanoid = humanoidBuild(
 	TalentsLevel60CombatSwordsHumanoid,
 	ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
 	Race.RaceUndead,
-	EncounterLevel60SapperOnlyHumanoid,
+	EncounterLevel60CombatSwordsHumanoid,
 );
 export const PresetBuildLevel60SealFateSwordsHumanoid = humanoidBuild(
 	'Level 60 Seal Fate Swords',

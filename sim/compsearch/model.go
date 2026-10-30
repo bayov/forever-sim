@@ -37,13 +37,11 @@ func manaIndex(up Gift, wisdom bool, pkg proto.RaidPackage) int {
 	return i*4 + int(pkg)
 }
 
-var allBlessings = []proto.Blessing{proto.Blessing_BlessingKings, proto.Blessing_BlessingMight, proto.Blessing_BlessingWisdom}
-
 var packages = []proto.RaidPackage{proto.RaidPackage_RaidPackageNone, proto.RaidPackage_RaidPackageManaSpring,
 	proto.RaidPackage_RaidPackageManaSpringTide, proto.RaidPackage_RaidPackageRestoration}
 
-const fullGifts = GiftBattleShout | GiftFuriousHowl | GiftSunderTank | GiftMinorArmor | GiftCoE | GiftCrusader | GiftJoW | GiftSoE |
-	GiftGoA | GiftWF | GiftFT | GiftMoonkin | GiftLotP | GiftTrueshot | GiftAB | GiftGotW | GiftPoS | GiftFort | GiftBlessing
+// fullGifts is every effect.
+const fullGifts = Gift(1)<<numGifts - 1
 
 // buildModel is one build's role sims.
 type buildModel struct {

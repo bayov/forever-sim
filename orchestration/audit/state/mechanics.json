@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "36a772fd13853013772a7a48119361c14e979da0"
+  "master": "bbbaf2e3cfd2f215a771db7f290abc92ba0cb3fb"
  },
- "last_pass_at": "2026-10-30T06:57:41Z",
- "pass": 49,
- "result": "findings",
- "note": "Pass 49: 11 raid sim / compsearch commits (leveled Furious Howl and Curse of Recklessness verified on 70707; level 60 unchanged). Client 70707 bakes in the TSA / Hawk hotfixes and Blood Fury 2 min, gear hit gains spell hit (sim already unified); new finding mechanics-20261030-1 (Tauren Endurance crit damage widened to all schools, against post 7). Fengus' Ferocity now dummy auras (open, no preset). Dev notes still 8 posts.",
+ "last_pass_at": "2026-10-30T12:58:07Z",
+ "pass": 50,
+ "result": "quiet",
+ "note": "Pass 50: 8 code commits (Elixir of Wisdom 3 Int verified on 70707 spell 3166; Innervate/Evocation scheduling, untrained spell ranks, leveling RNG, raid sim). Client 70707 unchanged, dev notes still 8 posts, no new blue posts. No new findings.",
  "client_build": "1.60.1.70707",
- "checked_at": "2026-10-30T07:01:22Z",
+ "checked_at": "2026-10-30T12:58:38Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/8",
   "date": "2026-10-27T15:37:37Z",

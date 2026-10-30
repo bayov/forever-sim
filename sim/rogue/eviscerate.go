@@ -25,6 +25,10 @@ func (rogue *Rogue) registerEviscerate() {
 		1: 2098, 8: 6760, 16: 6761, 24: 6762, 32: 8623, 40: 8624, 48: 11299, 56: 11300,
 		60: core.TernaryInt32(rogue.Env.IncludeAQRanks(), 31016, 11300),
 	})
+	// Each combo point adds 3% of attack power in Era. Forever's is 4%, as wowsims/forever's
+	// in-game tests put it (eviscerate.go, "Estimated from in-game tests"; the user's ruling of
+	// 2026-10-30, to verify in game, notes.md Rogue).
+	apPerComboPoint := core.TernaryFloat64(rogue.Env.IsForever(), 0.04, 0.03)
 	core.RegisterSpellRanks(11300, 31016)
 
 	rogue.Eviscerate = rogue.RegisterSpell(core.SpellConfig{
@@ -68,7 +72,7 @@ func (rogue *Rogue) registerEviscerate() {
 			flatBaseDamage := flatDamage + comboDamageBonus*float64(comboPoints)
 
 			baseDamage := sim.Roll(flatBaseDamage, flatBaseDamage+damageVariance) +
-				0.03*float64(comboPoints)*spell.MeleeAttackPower(target)
+				apPerComboPoint*float64(comboPoints)*spell.MeleeAttackPower(target)
 
 			result := spell.CalcDamage(sim, target, baseDamage, spell.OutcomeMeleeSpecialHitAndCrit)
 

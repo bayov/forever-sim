@@ -780,6 +780,57 @@
       "3669b5c",
       "0bb3ec9"
      ]
+    },
+    {
+     "title": "Extra attacks no longer restart the swing timer",
+     "kind": "sim",
+     "note": "Windfury Totem, Hack and Slash, Sword Specialization, Hand of Justice and other extra attacks swing at once, and the next swing comes when it was already due. Assumed until a combat log settles it.",
+     "commits": [
+      "f301789"
+     ]
+    },
+    {
+     "title": "Windfury Totem can proc again 0.1 sec after a proc, not 1.5 sec",
+     "kind": "sim",
+     "source": "https://wago.tools/db2/SpellAuraOptions?build=1.60.1.70707&filter[SpellID]=10612",
+     "commits": [
+      "f301789"
+     ]
+    },
+    {
+     "title": "Eviscerate: 4% of attack power per combo point, up from 3%",
+     "kind": "sim",
+     "classes": [
+      "Rogue"
+     ],
+     "note": "Taken from in-game tests by the WoWSims Forever team. Assumed until our own test settles it.",
+     "source": "https://github.com/wowsims/forever/blob/master/sim/rogue/eviscerate.go",
+     "commits": [
+      "f301789"
+     ]
+    },
+    {
+     "title": "Sharpening stones only work on edged weapons, and weightstones on blunt ones",
+     "kind": "sim",
+     "moves": false,
+     "commits": [
+      "f301789"
+     ]
+    },
+    {
+     "title": "Combat Swords and Combat Daggers: Dense Weightstone on the off-hand mace",
+     "kind": "consumes",
+     "moves": false,
+     "builds": [
+      "rogue__combat-swords",
+      "rogue__combat-swords-humanoid",
+      "rogue__combat-daggers",
+      "rogue__combat-daggers-humanoid"
+     ],
+     "note": "The same +8 damage as the sharpening stone they listed, which can't go on a mace.",
+     "commits": [
+      "f301789"
+     ]
     }
    ],
    "internal": [

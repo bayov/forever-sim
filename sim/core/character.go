@@ -54,6 +54,8 @@ type Character struct {
 	totemWeaponSlot
 	// The player's own raid buffs (Player.raid_buffs), nil when the raid's apply.
 	ownRaidBuffs *proto.RaidBuffs
+	// Problems with the setup found while building the character (PlayerStats.warnings).
+	SetupWarnings []string
 	// The Night Elf's Shadowmeld under Forever (registerShadowmeld), nil for other races.
 	Shadowmeld     *Spell
 	ShadowmeldAura *Aura
@@ -570,6 +572,7 @@ func (character *Character) FillPlayerStats(playerStats *proto.PlayerStats) {
 	if character.Rotation != nil {
 		playerStats.RotationStats = character.Rotation.getStats()
 	}
+	playerStats.Warnings = character.SetupWarnings
 }
 
 func (character *Character) reset(sim *Simulation, agent Agent) {
