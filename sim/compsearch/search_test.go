@@ -43,9 +43,10 @@ func TestSearchMatchesBruteForce(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	// 5 players: a Protection warrior tank and 4 DPS. Physical builds lean on its Sunder, the casters on
-	// the warlock's curse and the druid: Sunder and the minor armor slot don't add up for them.
-	req := &proto.CompSearchRequest{Size: 5, Tanks: 1, Healers: 0, FixedTanks: []proto.RaidPreset{proto.RaidPreset_RaidPresetProtectionWarrior},
+	// 5 players: any tank and 4 DPS. Physical builds lean on a warrior tank's Sunder and Battle Shout,
+	// the casters on the warlock's curse and the druid: with and without the warrior, Sunder and the minor
+	// armor slot don't add up.
+	req := &proto.CompSearchRequest{Size: 5, Tanks: 1, Healers: 0,
 		Factions: []proto.Faction{proto.Faction_Horde}, CampBuffs: []bool{false}, Iterations: 100, ContenderIterations: 100,
 		Seed: 5, SkipSensitivity: true, Encounter: &proto.CompEncounter{Duration: 120, DurationVariation: 0, NaturalFlaskZone: true}}
 	res, err := Search(p, sim, req, nil)
@@ -58,6 +59,7 @@ func TestSearchMatchesBruteForce(t *testing.T) {
 	var items []*Build
 	for _, b := range p.Bases {
 		items = append(items, b)
+		items = append(items, b.Pets...)
 		for _, d := range b.Duties {
 			items = append(items, d)
 		}
@@ -71,24 +73,42 @@ func TestSearchMatchesBruteForce(t *testing.T) {
 		t.Fatal(err)
 	}
 	ev := newExactValuer(sc, 100, model)
-	tank := []*Preset{PresetByID(proto.RaidPreset_RaidPresetProtectionWarrior)}
 	best := math.Inf(-1)
 	var bestComp *Comp
+	var tank []*Preset
 	var rec func(start int, cur []*Build)
 	rec = func(start int, cur []*Build) {
 		if len(cur) == 4 {
 			r := NewRaid(5, tank, append([]*Build{}, cur...))
-			plan := Plan{Up: r.phUp(Plan{})}
-			for _, b := range cur {
-				plan.Up |= b.Gives &^ GiftBlessing
-			}
-			f := &Fillers{Fill: cur, Providers: cur}
-			c, err := sc.EvalExact(r, plan, f, ev)
-			if err != nil {
-				t.Fatal(err)
-			}
-			if c != nil && c.Score > best {
-				best, bestComp = c.Score, c
+			// Every choice the placeholder has: a paladin's judgement, a shaman's air totem.
+			for _, crus := range []int{0, 1} {
+				for _, air := range [][]proto.RaidTotem{nil, {proto.RaidTotem_RaidTotemGraceOfAir}, {proto.RaidTotem_RaidTotemWindfury}} {
+					if (crus == 1 && r.phPaladins == 0) || (air == nil) != (len(r.phShamans) == 0) {
+						continue
+					}
+					plan := Plan{PHCrusader: crus, PHAir: air, Paladins: r.phPaladins}
+					for _, b := range cur {
+						if b.Class == proto.Class_ClassPaladin {
+							plan.Paladins++
+						}
+					}
+					plan.Paladins = min(3, plan.Paladins)
+					plan.Up = r.phUp(plan) &^ GiftBlessing
+					for _, b := range cur {
+						plan.Up |= b.Gives &^ GiftBlessing
+					}
+					if plan.Paladins > 0 {
+						plan.Up |= GiftBlessing
+					}
+					f := &Fillers{Fill: cur, Providers: cur}
+					c, err := sc.EvalExact(r, plan, f, ev)
+					if err != nil {
+						t.Fatal(err)
+					}
+					if c != nil && c.Score > best {
+						best, bestComp = c.Score, c
+					}
+				}
 			}
 			return
 		}
@@ -96,7 +116,10 @@ func TestSearchMatchesBruteForce(t *testing.T) {
 			rec(i, append(cur, items[i]))
 		}
 	}
-	rec(0, nil)
+	for _, t := range PresetsFor(proto.RaidRole_RaidRoleTank) {
+		tank = []*Preset{t}
+		rec(0, nil)
+	}
 	if bestComp == nil {
 		t.Fatal("brute force found nothing")
 	}
@@ -331,5 +354,37 @@ func TestSearchAsync(t *testing.T) {
 			}
 			break
 		}
+	}
+}
+
+// The confirmation raid-sims the comps it scored: each confirmed comp's raid sim lands near its score
+// (members add up within about 0.1% in the doc's measurements; this allows 1% and 4 standard errors at
+// these few iterations).
+func TestConfirmMatchesScore(t *testing.T) {
+	if testing.Short() {
+		t.Skip("about a minute")
+	}
+	p := subPool(t, "mage__fire", "warlock__demonology", "hunter__beast-mastery", "warrior__fury", "priest__shadow")
+	sim, _ := NewSimmer(p, "")
+	req := &proto.CompSearchRequest{Size: 5, Tanks: 1, Healers: 0, FixedTanks: []proto.RaidPreset{proto.RaidPreset_RaidPresetProtectionWarrior},
+		Factions: []proto.Faction{proto.Faction_Horde}, CampBuffs: []bool{false}, Iterations: 400, ContenderIterations: 400,
+		Seed: 13, SkipSensitivity: true, Confirm: true, ConfirmIterations: 1500, ConfirmTopIterations: 1500,
+		Encounter: &proto.CompEncounter{Duration: 120, NaturalFlaskZone: true}}
+	res, err := Search(p, sim, req, nil)
+	if err != nil {
+		t.Fatal(err)
+	}
+	n := 0
+	for _, c := range res.Scenarios[0].Comps {
+		if !c.Confirmed {
+			continue
+		}
+		n++
+		if d := c.RaidSimDps - c.Dps; math.Abs(d) > math.Max(4*math.Hypot(c.Se, c.RaidSimSe), 0.01*c.Dps) {
+			t.Errorf("raid sim %.1f, score %.1f (%+.1f): %s", c.RaidSimDps, c.Dps, d, c.BuffSet)
+		}
+	}
+	if n == 0 {
+		t.Errorf("nothing was confirmed")
 	}
 }

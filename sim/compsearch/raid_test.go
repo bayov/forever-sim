@@ -3,6 +3,8 @@ package compsearch
 import (
 	"fmt"
 	"math"
+	"slices"
+	"strings"
 	"testing"
 
 	"github.com/wowsims/classic/sim/core"
@@ -46,6 +48,30 @@ func reportRaid(t *testing.T, ids []string, iters int32) *proto.RaidSimRequest {
 		raid.Parties[i/5].Players = append(raid.Parties[i/5].Players, pl)
 	}
 	raid.NumActiveParties = int32(len(raid.Parties))
+	// What a member casts reaches its scope in the raid, so nobody gets it given too (docs/raid_sim.md,
+	// Checking it, check 1): an Enhancement shaman's Strength of Earth and Windfury Totem for everyone,
+	// its Mana Spring for its own party.
+	for pi, party := range raid.Parties {
+		for i, pl := range party.Players {
+			b := p.Builds[ids[pi*5+i]]
+			if !b.Casts.Has(GiftSoE) {
+				continue
+			}
+			for _, other := range raid.Parties {
+				for _, o := range other.Players {
+					o.RaidBuffs.StrengthOfEarthTotem = proto.TristateEffect_TristateEffectMissing
+					if o.RaidBuffs.TotemWeaponBuff == proto.TotemWeaponBuff_TotemWeaponBuffWindfury {
+						o.RaidBuffs.TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffNone
+					}
+				}
+			}
+			for _, o := range party.Players {
+				if o != pl {
+					o.RaidBuffs.ManaSpringTotem = proto.TristateEffect_TristateEffectMissing
+				}
+			}
+		}
+	}
 	return &proto.RaidSimRequest{Raid: raid, Encounter: first.Encounter, SimOptions: &proto.SimOptions{Iterations: iters, RandomSeed: 7}}
 }
 
@@ -59,6 +85,10 @@ func TestReportRaid(t *testing.T) {
 	raids := map[string][]string{
 		"10": {"mage__fire", "warlock__demonology", "hunter__beast-mastery", "rogue__combat-swords", "priest__shadow",
 			"druid__balance", "mage__frostfire", "warrior__arms", "paladin__level_60", "hunter__marksmanship"},
+		"20": {"shaman__enhancement-level60", "warrior__fury", "rogue__combat-swords", "hunter__marksmanship", "mage__fire",
+			"warlock__demonology", "priest__shadow", "druid__balance", "paladin__level_60", "hunter__beast-mastery",
+			"mage__frostfire", "warlock__affliction", "warrior__arms", "rogue__mutilate", "druid__feral-cat",
+			"hunter__survival", "mage__arcane", "warlock__destruction", "priest__shadow-holy", "shaman__elemental-level60"},
 		"physical": {"warrior__fury", "warrior__fury_2h", "rogue__combat-daggers", "rogue__subtlety", "hunter__survival",
 			"hunter__beast-mastery", "druid__feral-cat", "paladin__level_60_sub_holy", "warrior__arms", "rogue__mutilate",
 			"hunter__lone-wolf", "rogue__seal-fate-swords"},
@@ -76,6 +106,12 @@ func TestReportRaid(t *testing.T) {
 				i++
 				alone := cloneReq(p.Builds[id].Req)
 				alone.SimOptions = &proto.SimOptions{Iterations: iters, RandomSeed: 7}
+				// An Enhancement shaman's cast totems reach everyone in the raid, so the member's own sim
+				// gets them given (a hunter's request had no Strength of Earth).
+				if slices.ContainsFunc(ids, func(x string) bool { return p.Builds[x].Casts.Has(GiftSoE) }) && !p.Builds[id].Casts.Has(GiftSoE) {
+					alone.Raid.Buffs.StrengthOfEarthTotem = proto.TristateEffect_TristateEffectRegular
+					alone.Raid.Buffs.TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffWindfury
+				}
 				solo := core.RunRaidSim(alone).RaidMetrics.Dps
 				se := math.Hypot(pm.Dps.Stdev, solo.Stdev) / math.Sqrt(iters)
 				allow := 4 * se
@@ -133,7 +169,25 @@ func TestRunCompMatchesHandBuilt(t *testing.T) {
 		}
 	}
 	if !same {
-		t.Skip("the members' raid buffs differ, so there's no shared set to compare with")
+		t.Fatal("the members' raid buffs differ, so there's no shared set to compare with")
+	}
+	// What each placeholder gives, checked on its own, so a buff the resolver forgot can't hide on both
+	// sides of the comparison below.
+	if shared.BattleShout == 0 || shared.GiftOfTheWild == 0 || shared.PowerWordFortitude == 0 || !shared.DivineSpirit || !shared.ArcaneBrilliance {
+		t.Errorf("the placeholders' and the mage's buffs: %v", shared)
+	}
+	if d := hand.Raid.Debuffs; !d.FaerieFire || d.SunderRamp == nil || !d.SunderRamp.Tank {
+		t.Errorf("the druid's Faerie Fire and the warrior tank's Sunder: %v", d)
+	}
+	pi, inn := 0, 0
+	for _, party := range hand.Raid.Parties {
+		for _, pl := range party.Players {
+			pi += int(pl.Buffs.PowerInfusions)
+			inn += int(pl.Buffs.Innervates)
+		}
+	}
+	if pi != 1 || inn != 1 {
+		t.Errorf("one Power Infusion and one Innervate: %d and %d", pi, inn)
 	}
 	// The hooks run in the hand-built raid, so the held auras and the mage's and priest's buffs must be in
 	// the shared set already (they are: the resolver gives them to everyone).
@@ -177,5 +231,23 @@ func TestRaidMetricsAddUp(t *testing.T) {
 	}
 	if d := res.RaidMetrics.Dps.Avg - sum; math.Abs(d) > 1e-6*sum {
 		t.Errorf("raid DPS %.3f, its members' sum %.3f", res.RaidMetrics.Dps.Avg, sum)
+	}
+	// The members' totals are their own damage and their pets': the hunter's and the warlock's pets deal
+	// damage, and the boss takes all of it.
+	for _, party := range res.RaidMetrics.Parties {
+		for _, pm := range party.Players {
+			if strings.HasPrefix(pm.Name, "hunter__beast-mastery") || strings.HasPrefix(pm.Name, "warlock__demonology") {
+				petDps := 0.0
+				for _, pet := range pm.Pets {
+					petDps += pet.Dps.Avg
+				}
+				if petDps <= 0 {
+					t.Errorf("%s's pet dealt no damage", pm.Name)
+				}
+			}
+		}
+	}
+	if taken := res.EncounterMetrics.Targets[0].Dtps.Avg; math.Abs(taken-sum) > 0.01*sum {
+		t.Errorf("the boss took %.1f DPS, the raid dealt %.1f", taken, sum)
 	}
 }
