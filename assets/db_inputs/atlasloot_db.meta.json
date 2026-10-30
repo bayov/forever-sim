@@ -1,7 +1,7 @@
 {
   "meta": {
-    "fetched": "2026-10-17T17:01Z",
-    "sha256": "f738bda19ea9",
+    "fetched": "2026-10-30T08:27Z",
+    "sha256": "7c6dba6a57f6",
     "source": "AtlasLoot Forever (CurseForge 1422985)",
     "tool": "tools/database/gen_db -gen=atlasloot",
     "version": "Forever 1.60.1"
