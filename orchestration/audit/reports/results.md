@@ -1,9 +1,21 @@
-# Results audit, pass 62 (master 36a772fd1)
+# Results audit, pass 63 (master bbbaf2e3c, client build 1.60.1.70707)
 
-Checked with the loop's shared run (20k, seed 1, 180 s, all 77 requests) against published, builds.json and the reference.
+Why due: 33 watched files changed since 36a772fd1 (shaman spell ranks and untrained-rank option, Elixir of Wisdom +3 Int,
+Evocation/Innervate, compsearch, db regen, enhancement presets.ts).
 
-- Why due: 25 watched files since d50909a37: the raid sim's compsearch (not read by the report's sims), sim/core buffs.go (Furious Howl rank by level), debuffs.go (rank labels for Expose Armor and Curse of Recklessness), sim_concurrent.go (empty party slot guard), sim/warlock/curses.go (level-ranked Recklessness, Forever only), sim/web/main.go, report_hashes.txt, healer presets (ui/holy_paladin, ui/restoration_druid). No change under tools/rotopt, tools/dps_report, tools/database, assets or ui/dps_report, so drift (mksettings vs requests) is unchanged and was not re-run.
-- Published vs mine: 76 of 77 within 0.15. mage__frostfire meta 1087.5 vs run 1088.4 (+0.9), the known stale meta of pass 61 (builds.json already carries the run's value). Not filed.
-- Moves against the reference: none. The level-60 changes (howl rank 24597 at 83, top-rank labels) reproduce the old numbers exactly.
-- Unread fields, drift: unchanged (no mksettings or request changes).
-- Findings: none new. results-20261025-1 stays open.
+## Checked
+- Shared run (20k, seed 1, every request, 77 of them): 75 within 0.15 of published. Two are over, both identical to the
+  reference run, so not moves: mage__frostfire 1088.4 vs 1087.5 (+0.9), shaman__elemental-level60 772.7 vs 772.2 (+0.5).
+  Both are within seed noise of the published re-sim; neither request carries Elixir of Wisdom.
+- Moves against req_summary.txt: none. builds.json matches the run on all 77.
+- Drift report (regen.py with the master mksettings): identical to the reference (155 lines). Open consumes drift
+  (results-20261025-1) is unchanged.
+- Unread fields: none reported (not even notes).
+- Rank-training and shaman rank changes did not move any shaman number: the requests keep max ranks.
+
+## Housekeeping
+- regen.py mapped hunter ids without the -tallstrider/-wolf suffixes; fixed so the drift check runs on the 77 requests.
+- ref/results/req_summary.txt replaced with this run (77 lines); drift_report.txt unchanged.
+
+## Conclusion
+Quiet. No new findings.

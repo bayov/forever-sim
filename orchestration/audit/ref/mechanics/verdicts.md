@@ -1,4 +1,4 @@
-# Mechanics audit: verdicts and settled items (as of 2026-10-30 UTC, master 36a772fd1)
+# Mechanics audit: verdicts and settled items (as of 2026-10-30 UTC, master bbbaf2e3c)
 
 Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 = Era / Classic. Never cite vmangos.
 
@@ -56,6 +56,7 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 | Stoneskin Totem (Forever) | Top rank at our level off each physical non-periodic hit before armor; a hit it cuts still deals at least 1 after armor (ad5e98ae6) | beta logs 10-11 (rank 3) and 10-16 / 10-17 (rank 1: raw 3 and 4 dealt 1, no 0 hit), user agreed; shaman_audit.md 7.29 |
 | Ahn'Qiraj book ranks | Excluded (standards 8a, IncludeAQRanks) | |
 | Strongest learned rank | bestLearnedRank | 55c9744 |
+| Intellect elixirs | Elixir of Wisdom 3 Int (spell 3166, named Lesser Intellect), Elixir of Lesser Intellect 6 (its own spell 1250988), 30 min | 70707 3166 / 1250988 aura 29 bp 3 / 6; pass 50 |
 
 ## Settled (don't re-flag)
 
