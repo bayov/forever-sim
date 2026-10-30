@@ -489,7 +489,7 @@
    "title": "Rotations that hold at any fight length",
    "date": "2026-10-28",
    "baselineData": "04422dc6b7b6fb6efb17d44deac37e4a908c8010",
-   "endData": null,
+   "endData": "cd1f6b2d052d13f06b4785a482471da23445a68f",
    "lines": [
     {
      "title": "Night Elf warriors: Elune's Light with the other cooldowns, not in Recklessness",
@@ -1047,6 +1047,139 @@
      "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     }
    ]
+  },
+  {
+   "id": "2026-10-30-build-70707",
+   "type": "game",
+   "title": "Build 1.60.1.70707: the mage talent rework",
+   "date": "2026-10-30",
+   "baselineData": "cd1f6b2d052d13f06b4785a482471da23445a68f",
+   "endData": null,
+   "lines": [
+    {
+     "title": "Mage talents reworked: Arcane Focus removed, Critical Mass down to 3 points (6% Fire crit), Incineration up to 5 points (10%)",
+     "kind": "game",
+     "classes": [
+      "Mage"
+     ],
+     "note": "Improved Fireball is now Accelerant and also shortens Arcane Wrath's cast. Missile Barrage, Arcane Resilience, Improved Channeling and Improved Fire Blast moved in the tree, so every mage talent string changed.",
+     "source": "https://wago.tools/db2/TraitNodeEntry?build=1.60.1.70707",
+     "commits": [
+      "cacd15f",
+      "31054ea"
+     ]
+    },
+    {
+     "title": "Elemental Precision is now Precision: 2/4/6% hit with all spells, Arcane included",
+     "kind": "game",
+     "classes": [
+      "Mage"
+     ],
+     "source": "https://wago.tools/db2/SpellEffect?build=1.60.1.70707&filter[SpellID]=29438",
+     "commits": [
+      "cacd15f",
+      "31054ea"
+     ]
+    },
+    {
+     "title": "Ice Lance has an 8 sec cooldown",
+     "kind": "game",
+     "classes": [
+      "Mage"
+     ],
+     "note": "The game files put it on rank 1 only; the presets give every rank the cooldown, as the tooltip does. Assumed until checked in game.",
+     "source": "https://wago.tools/db2/SpellCooldowns?build=1.60.1.70707&filter[SpellID]=1312002",
+     "commits": [
+      "cacd15f",
+      "31054ea"
+     ]
+    },
+    {
+     "title": "Mage presets: talents re-picked for the new trees",
+     "kind": "talents",
+     "builds": [
+      "mage__arcane",
+      "mage__fire",
+      "mage__frost",
+      "mage__frostfire"
+     ],
+     "note": "Fire and Arcane put the freed points in Incineration; Frostfire in Incineration and Master of Elements; Frost in Arcane Concentration, Arcane Meditation and Arcane Wrath.",
+     "commits": [
+      "cacd15f"
+     ]
+    },
+    {
+     "title": "Frost mage: three Arcane Blast stacks and no Evocation",
+     "kind": "rotation",
+     "builds": [
+      "mage__frost"
+     ],
+     "note": "With Ice Lance on a cooldown, the mana goes further.",
+     "commits": [
+      "cacd15f"
+     ]
+    },
+    {
+     "title": "Arcane mage: keeps four Arcane Blast stacks at low mana",
+     "kind": "rotation",
+     "builds": [
+      "mage__arcane"
+     ],
+     "commits": [
+      "56695e4"
+     ]
+    }
+   ],
+   "internal": [
+    {
+     "commit": "3205cc5",
+     "why": "leveling sim and plan work; no report request's result moves (TestRaidForeverReportHashes)"
+    },
+    {
+     "commit": "cf51105",
+     "why": "raid sim engine and comp search work; no report request's result moves (TestRaidForeverReportHashes)"
+    },
+    {
+     "commit": "eacc2b3",
+     "why": "raid sim engine and comp search work; no report request's result moves (only the builds the 70707 lines name differ from the published data)"
+    },
+    {
+     "commit": "d50909a",
+     "why": "raid sim engine and comp search work; no report request's result moves (only the builds the 70707 lines name differ from the published data)"
+    },
+    {
+     "commit": "0b6a702",
+     "why": "raid sim engine and comp search work; no report request's result moves (only the builds the 70707 lines name differ from the published data)"
+    },
+    {
+     "commit": "fc03f36",
+     "why": "raid sim engine and comp search work; no report request's result moves (only the builds the 70707 lines name differ from the published data)"
+    },
+    {
+     "commit": "ee1b301",
+     "why": "raid sim engine and comp search work; no report request's result moves (only the builds the 70707 lines name differ from the published data)"
+    },
+    {
+     "commit": "9ab5520",
+     "why": "raid sim engine and comp search work; no report request's result moves (only the builds the 70707 lines name differ from the published data)"
+    },
+    {
+     "commit": "84f8191",
+     "why": "raid sim engine and comp search work; no report request's result moves (only the builds the 70707 lines name differ from the published data)"
+    },
+    {
+     "commit": "9d4f296",
+     "why": "raid sim engine and comp search work; no report request's result moves (only the builds the 70707 lines name differ from the published data)"
+    },
+    {
+     "commit": "e0bec0b24f4326175f37518ea112f0b4e6464512",
+     "why": "the enhancement shaman leveling plan only; no level 60 preset or report request changes"
+    }
+   ],
+   "source": {
+    "label": "wago.tools, build 1.60.1.70707",
+    "url": "https://wago.tools/db2/TraitNodeEntry?build=1.60.1.70707"
+   }
   }
  ]
 }
