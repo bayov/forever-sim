@@ -1977,10 +1977,13 @@ export class CompEditor {
 				const size = result.request?.size ?? state.size;
 				const faction = factionName(scenario.faction);
 				const dps = comp.confirmed ? `${fmt(comp.raidSimDps)} raid DPS` : `${fmt(comp.dps)} score`;
+				const required = result.request?.requiredEffects ?? [];
 				presets.push({
-					name: `${faction} ${size}${scenario.campBuffs ? ', camps' : ''}`,
+					name: `${faction} ${size}${scenario.campBuffs ? ', camps' : ''}${requiredSuffix(required)}`,
 					group: 'Best comps',
-					tooltip: `The comp search’s best ${size}-player ${faction} raid, camp buffs ${scenario.campBuffs ? 'on' : 'off'} · ${dps}`,
+					tooltip: `The comp search’s best ${size}-player ${faction} raid, camp buffs ${scenario.campBuffs ? 'on' : 'off'}${
+						required.length ? `, requiring ${required.map(r => RAID_EFFECTS.find(e => e.name == r)?.label ?? r).join(', ')}` : ''
+					} · ${dps}`,
 					state: { ...state, encounter: state.encounter ?? EncounterProto.toJson(this.genericEncounter()) },
 				});
 			}
@@ -2811,6 +2814,16 @@ function canonicalRaid(state: RaidState) {
 			innervate: byCell(state.hand.innervate, target),
 		},
 	};
+}
+
+// The long class buffs, which add little or no DPS, so a search drops them unless they're required.
+const CLASS_BUFFS = ['Fortitude', 'Gift of the Wild', 'Arcane Brilliance', 'Prayer of Spirit', 'Blessings', 'Salvation'];
+
+// What a preset's name says about a search's required effects: "class buffs" when they're all class buffs,
+// else how many.
+function requiredSuffix(required: string[]): string {
+	if (!required.length) return '';
+	return required.every(r => CLASS_BUFFS.includes(r)) ? ', class buffs' : `, ${required.length} required`;
 }
 
 // A raid's required effects in words, for what changed between two raids.

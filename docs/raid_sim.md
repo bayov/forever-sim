@@ -1366,6 +1366,11 @@ like Fortitude, which adds no DPS but keeps the tanks alive.
   not a Blessing, so it takes no Blessing slot and any paladin gives it. Requiring it is requiring a paladin,
   as requiring Greater Blessings is: at least one, never all three blessings, so it fits a 10-player raid.
   The page's raids get it from any paladin, which moves only their threat.
+- **The class buffs search** (`docs/raid_sim_m1/m1_20_class_buffs`, 2026-10-30): 20 players, camps off,
+  Fortitude, Gift of the Wild, Arcane Brilliance, Prayer of Spirit and Greater Blessings required. Both
+  factions take the unconstrained best with a Discipline priest in a Restoration shaman's place: 15596.0
+  Horde (36.6 behind the unconstrained 15632.6) and 15448.5 Alliance (38.5 behind 15487.0). They're the
+  "Horde 20, class buffs" and "Alliance 20, class buffs" Best comps presets, which keep the requirements.
 
 **What the page reuses:**
 
