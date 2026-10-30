@@ -1,4 +1,4 @@
-# Mechanics audit: verdicts and settled items (as of 2026-10-29 UTC, master dcd927490)
+# Mechanics audit: verdicts and settled items (as of 2026-10-30 UTC, master d50909a37)
 
 Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 = Era / Classic. Never cite vmangos.
 
@@ -27,6 +27,12 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 | Grace of Air | Stacks with Windfury Totem; Windfury and Flametongue Totems stay exclusive | 70425 Attributes_11 0x400 dropped; 16 Oct notes |
 | Flametongue Totem | 548 / 781 / 1061 / 1363 per the N / 25 per 4 sec rule, white swings only (ProcTypeMask 4), no spell power | 70450 8253 / 8248 / 10523 / 16389 |
 | Raid buff ranks (Arcane Intellect, Devotion Aura, Blood Pact, resistance auras, Scroll of Stamina, Battle Shout growth) | Client values by level | 70338 (unchanged in 70425); shaman audit 10.2 |
+| Camp buffs (raid sim) | Fish Bowl all stats x1.08, Lodestone 90 AP, Sharpening Wheel 34 Str (party aura), Camp Chair 2% weapon and spell crit, Incense Candle 25 Int, Faction Banner 32 Spirit, Mana Well 29 MP5, Enchanted Lute 308 armor / 13 all stats / 22 all resists, First Aid Kit 56 Sta; 1 hour. Which class buff turns each off is unverified (tooltip only) | 70685 1230098, 1230164, 1230172, 1229519, 1229513, 1229718, 1230587, 1230653, 1230124; pass 48 |
+| Area reach (raid sim) | Battle Shout 25289 and Furious Howl 24597 implicit target 56 (caster's raid); Blood Pact 11767 and Mana Spring 5677 effect 35 (party); Dark Inspiration 1326168 implicit target 20 (party) | 70685 SpellEffect; pass 48 |
+| Furious Howl | 82 + 0.4 per level past 56 = 83 at 60 (24597); lower ranks 24604 / 24605 / 24603 | 70685; pass 48 |
+| Dust Cloud (Tallstrider) | 65 / 175 / 285 / 395 / 505 armor (aura 674), 30 sec, ranks 1265899 / 01 / 02 / 03 / 04 | 70685; pass 48 |
+| Faerie Fire under Forever | Feral version gone (16857, 17390-17392 have no rows); 9907 castable in Cat, Bear, Dire Bear and Moonkin (ShapeshiftMask 0x40000091), 505 armor 40 sec, 115 mana, 1.5 sec GCD, free in Cat / Bear (dev notes), no swing reset, no Omen of Clarity from it | 70685; dev notes (tier 1); pass 48 |
+| Seal of Wisdom / Judgement of Wisdom | Ranks 38 / 48 / 58, 135 / 170 / 200 mana, 30 sec; proc mana 50 / 71 / 90 (20168 / 20350 / 20351); JoW 40 sec, 33 / 46 / 59 (20268 / 20352 / 20353). Seal proc chance 50% is an assumption (client ProcChance 100, server-side) | 70685 20166 / 20356 / 20357, 20186 / 20354 / 20355; pass 48 |
 | Debuff ranks (Curse of Weakness, Demoralizing Shout / Roar, Thunder Clap −20%, Scorpid Sting −2% hit, Curse of the Elements 30–75 / 4–10% on all magic schools) | Client values | 70338; shaman audit 10.4 |
 | Curse of Recklessness | Armor only; 70425 dropped the target AP part | 70425 |
 | Salvation | −30% threat, raid buff, no DPS effect | 70425 1038 aura 10 bp −30 misc 127 |

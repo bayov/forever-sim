@@ -1,11 +1,11 @@
 {
  "last": {
-  "master": "334c7decda0d711fefd75f17c8dbc9b6dbd855df"
+  "master": "d50909a3733ea5917688b276cd728f3ceab20da7"
  },
  "last_pass_at": "2026-10-29T00:51:11Z",
  "client_build": "1.60.1.70685",
  "result": "quiet",
  "note": "70685: leveling-only vs 70658 (Adventurer's Tent becomes a rested-XP tent, new Camping spell). No DPS change. Dev notes rate-limited; FC has nothing newer than the 10-28 hotfix.",
- "checked_at": "2026-10-29T18:45:04Z",
+ "checked_at": "2026-10-30T01:07:30Z",
  "pass": 5
 }

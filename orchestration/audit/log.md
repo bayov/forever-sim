@@ -102,3 +102,8 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-10-29 00:51 | consumables | pass 53 | master dcd927490 | quiet | Windfury Totem refactor only; client 70685 no consumable changes
 2026-10-29 00:51 | mechanics | pass 47 | master dcd927490 | quiet | Windfury/Execute changes are metrics only; client 70685 only Adventurer's Tent
 2026-10-29 00:51 | client_update | pass 5 | master dcd927490 | quiet | 70685 touches no level 60 DPS data (Adventurer's Tent, Camping only)
+2026-10-30 01:00 | results | pass 61 | master d50909a37 | quiet | 75 of 77 within 0.15 of published; feral duty-ff -3.7 from caster Faerie Fire
+2026-10-30 01:00 | rotations | pass 39 | master d50909a37 | quiet | new duty APLs keep debuffs up; baseline refreshed
+2026-10-30 01:00 | consumables | pass 54 | master d50909a37 | quiet | only feral Faerie Fire comments changed in presets
+2026-10-30 01:00 | mechanics | pass 48 | master d50909a37 | quiet | raid sim values match client 70685; Seal of Wisdom 50% proc assumed
+2026-10-30 01:00 | fairness | pass 15 | master d50909a37 | quiet | 37 builds match baseline at every race; top/bottom 1.58x
