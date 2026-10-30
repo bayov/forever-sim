@@ -407,7 +407,7 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 		}
 		// Sims and seconds by phase, for the cost section's measurements.
 		name := phase
-		if len(name) > 9 && name[:9] == "signature" {
+		if strings.HasPrefix(name, "simming signature") {
 			name = "signatures"
 		}
 		for _, prefix := range []string{"ranking buff sets", "confirmation", "combos"} {
@@ -563,7 +563,7 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 	const perSig = 4
 	// Each phase is reported as it starts, so its sims and seconds are booked under its own name.
 	for i := range results {
-		report(fmt.Sprintf("signature %d of %d", i+1, len(results)), best)
+		report(fmt.Sprintf("simming signature %d of %d", i+1, len(results)), best)
 		sr := &results[i]
 		r := sigs[sr.sig][0]
 		for j := 0; j < perSig && j < len(sr.ranked); j++ {
@@ -890,6 +890,10 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 	report("end", best)
 	out.Timings = phases
 	out.Buffs = buffRecords(best)
+	if sc.Camps {
+		out.Buffs = append(out.Buffs, &proto.CompBuffRecord{Effect: "camp buffs (all 9, each against its class buff)",
+			Provider: "the camp", Scope: "raid", Receivers: int32(len(best.Members)), Given: true})
+	}
 	out.Misses = missList(best)
 	if !req.SkipSensitivity {
 		out.Sensitivity = sc.assumptionSensitivity(contenders, best)

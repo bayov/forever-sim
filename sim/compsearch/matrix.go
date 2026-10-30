@@ -119,8 +119,9 @@ func RunMatrix(pool *Pool, sim *Simmer, req *proto.CompSearchRequest, base *prot
 				}
 				s := &proto.CompSensitivity{Scenario: "re-run: " + ms.Name, WinnerHolds: holds, Note: ms.Why}
 				if !holds {
-					w := rs.Comps[0]
-					s.Winners = append(s.Winners, &proto.CompResult{Dps: w.Dps, BuffSet: compText(w)})
+					w := googleProto.Clone(rs.Comps[0]).(*proto.CompResult)
+					w.BuffSet = compText(w)
+					s.Winners = append(s.Winners, w)
 				}
 				bs.Sensitivity = append(bs.Sensitivity, s)
 			}

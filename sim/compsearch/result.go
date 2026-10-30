@@ -45,7 +45,7 @@ func (sc *Scenario) compProto(c *Comp, best *Comp, model *Model) *proto.CompResu
 	for _, mb := range c.Members {
 		m := &proto.CompResultMember{Party: int32(mb.Party) + 1, Role: proto.RaidRole_RaidRoleDps, BuildId: mb.B.ID,
 			Dps: mb.DPS, Se: mb.SE, Tps: mb.TPS, Blessings: mb.Seat.Blessings, PowerInfusion: mb.Seat.PI, Innervate: mb.Seat.Innervate,
-			Package: mb.Seat.Package, Race: strings.TrimPrefix(mb.B.Race[sc.Faction].String(), "Race"), ReportDps: mb.B.Base.Published}
+			Package: mb.Seat.Package, Race: strings.TrimPrefix(mb.B.Race[sc.Faction].String(), "Race"), ReportDps: reportBaseline(mb.B).Published}
 		if mb.B.Duty != proto.Duty_DutyNone {
 			m.Duties = []proto.Duty{mb.B.Duty}
 		}
@@ -243,7 +243,10 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 					return nil, err
 				}
 				if c2 != nil && (c == nil || c2.Score > c.Score) {
-					c, with = c2, extra.String()
+					c, with = c2, ""
+					if extra != 0 {
+						with = extra.String()
+					}
 					if b.Class == proto.Class_ClassPaladin && !in {
 						with = strings.TrimPrefix(with+" and a paladin", " and ")
 					}
@@ -893,6 +896,7 @@ func (sc *Scenario) assumptionSensitivity(contenders []*Comp, best *Comp) []*pro
 		names = append(names, k)
 	}
 	sort.Strings(names)
+	label := assumptionLabels(sc.Pool.Root)
 	var out []*proto.CompSensitivity
 	for _, name := range names {
 		var vs []shifted
@@ -904,15 +908,54 @@ func (sc *Scenario) assumptionSensitivity(contenders []*Comp, best *Comp) []*pro
 			vs = append(vs, shifted{c, v})
 		}
 		sort.SliceStable(vs, func(a, b int) bool { return vs[a].v > vs[b].v })
-		res := &proto.CompSensitivity{Scenario: name, WinnerHolds: vs[0].c == best ||
+		res := &proto.CompSensitivity{Scenario: label(name), WinnerHolds: vs[0].c == best ||
 			vs[0].v-valueOf(vs, best) <= math.Max(2*best.SE, 0.001*best.Score)}
 		if !res.WinnerHolds {
-			res.Winners = append(res.Winners, &proto.CompResult{Dps: vs[0].v, Gap: vs[0].v - valueOf(vs, best),
-				BuffSet: vs[0].c.Describe() + "; " + comboText(comboIDs(vs[0].c.Raid.Combo))})
+			// The whole comp, so a page can name its members; its DPS and gap are the shifted ones.
+			w := sc.compProto(vs[0].c, best, nil)
+			w.Dps, w.Gap = vs[0].v, vs[0].v-valueOf(vs, best)
+			w.BuffSet = vs[0].c.Describe() + "; " + comboText(comboIDs(vs[0].c.Raid.Combo))
+			res.Winners = append(res.Winners, w)
 		}
 		out = append(out, res)
 	}
 	return out
+}
+
+// assumptionLabels names an assumption scenario ("raid_hits=high|natural_flask_zone=low") from the
+// report's assumptions.json: each question and the setting it takes. A key it lacks stays as it is.
+func assumptionLabels(root string) func(string) string {
+	var defs []struct {
+		Key      string `json:"key"`
+		Label    string `json:"label"`
+		Settings []struct {
+			ID    string `json:"id"`
+			Label string `json:"label"`
+		} `json:"settings"`
+	}
+	if data, err := os.ReadFile(filepath.Join(root, "ui", "dps_report", "data", "assumptions.json")); err == nil {
+		_ = json.Unmarshal(data, &defs)
+	}
+	return func(name string) string {
+		var parts []string
+		for _, kv := range strings.Split(name, "|") {
+			k, v, _ := strings.Cut(kv, "=")
+			part := kv
+			for _, d := range defs {
+				if d.Key != k {
+					continue
+				}
+				part = strings.TrimSuffix(d.Label, "?") + ": " + v
+				for _, st := range d.Settings {
+					if st.ID == v {
+						part = strings.TrimSuffix(d.Label, "?") + ": " + st.Label
+					}
+				}
+			}
+			parts = append(parts, part)
+		}
+		return strings.Join(parts, "; ")
+	}
 }
 
 type shifted struct {
