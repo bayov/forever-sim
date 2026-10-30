@@ -896,6 +896,9 @@ message RaidComp {
 	bool camp_buffs = 6;
 	RaidAssumptions assumptions = 7;
 	SimOptions sim_options = 8;
+	// Power Infusion and Innervate on Auto go to the members who gain the most DPS from them, by two
+	// single-player sims each. Off, they go to the first casters and mana users, with no sims.
+	bool cooldowns_by_gain = 9;
 }
 
 // The fight a search runs.

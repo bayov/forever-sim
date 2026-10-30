@@ -1598,7 +1598,7 @@ export class CompEditor {
 			const nth = (pi ? piHolders : innervateHolders).indexOf(holder.member.id);
 			const resolved = this.freshRun?.resolution.assignments.filter(a => a.job.oneofKind == 'cooldown' && a.job.cooldown.powerInfusion == pi)[nth];
 			const choices: Choice[] = [
-				AUTO,
+				{ ...AUTO, hint: 'whoever gains most' },
 				...targets.map(t =>
 					this.memberChoice(t.member, t.cell, t != current || (pi ? casters : manaUsers).includes(t) ? '' : pi ? 'no magic damage to boost' : 'no mana'),
 				),
@@ -2271,6 +2271,8 @@ export class CompEditor {
 			faction,
 			campBuffs: this.state.campBuffs,
 			assumptions: RaidAssumptions.create(),
+			// Power Infusion and Innervate on Auto go to whoever gains the most DPS, by single-player sims.
+			cooldownsByGain: true,
 			simOptions: SimOptions.create({
 				iterations: sim.getIterations(),
 				randomSeed: BigInt(sim.getFixedRngSeed() || Math.floor(Math.random() * (2 ** 32 - 1))),
@@ -2314,7 +2316,7 @@ export class CompEditor {
 		// A worker's last progress can come after the run ends or is stopped: the sidebar keeps none of it then.
 		let live = true;
 		try {
-			this.setStatus('Resolving the comp…');
+			this.setStatus('Resolving the comp, and simming who gains most from Power Infusion and Innervate…');
 			const comp = await this.buildComp();
 			const resolution = await sim.resolveComp(comp);
 			const out: RunOutput = { comp, resolution };

@@ -367,3 +367,36 @@ func TestCompValuesSeatsMatchTheResolver(t *testing.T) {
 		}
 	}
 }
+
+// With cooldowns by gain, Power Infusion and Innervate go to the members they gain the most DPS, whatever
+// their slots. Power Infusion's 20% magic damage gains a hunter a quarter of what it gains a caster, so the
+// hunter in the first slot doesn't get it, as it would in slot order.
+func TestResolveCooldownsByGain(t *testing.T) {
+	p := loadTestPool(t)
+	slots := []*proto.CompSlot{phSlot(1, 0, 0, proto.RaidPreset_RaidPresetDisciplinePriest), phSlot(2, 0, 1, proto.RaidPreset_RaidPresetRestorationDruid),
+		slotOf(3, 0, 2, p, "hunter__beast-mastery"), slotOf(4, 0, 3, p, "warlock__demonology"), slotOf(5, 0, 4, p, "mage__fire")}
+	comp := &proto.RaidComp{Size: 5, Slots: slots, Encounter: cloneReq(p.Bases[0].Req).Encounter, CooldownsByGain: true, SimOptions: &proto.SimOptions{RandomSeed: 7}}
+	targets := func() map[bool]int32 {
+		res := Resolve(comp)
+		if res.Error != nil {
+			t.Fatal(res.Error.Message)
+		}
+		out := map[bool]int32{}
+		for _, a := range res.Assignments {
+			if c := a.GetCooldown(); c != nil {
+				out[c.PowerInfusion] = c.Target
+			}
+		}
+		return out
+	}
+	got := targets()
+	if pi, ok := got[true]; !ok || pi == 3 {
+		t.Errorf("Power Infusion on slot %d (ok %v), want a caster", pi, ok)
+	}
+	if _, ok := got[false]; !ok {
+		t.Errorf("no Innervate")
+	}
+	if again := targets(); again[true] != got[true] || again[false] != got[false] {
+		t.Errorf("the picks changed between two resolves: %v, then %v", got, again)
+	}
+}

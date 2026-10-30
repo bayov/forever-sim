@@ -583,6 +583,11 @@ There are three kinds:
   - Innervate: which mana user
   - Mana Tide, which reaches only its own party
 
+  On Auto, each goes to the member who gains the most DPS from it (the user, 2026-10-30): the resolver sims
+  every mana user twice, with it and without, on the same random numbers (`RaidComp.cooldowns_by_gain`,
+  which the page sets; the search picks its own by the same gains). A gain of 0 or less gets none. Without
+  the option they go to the first casters and mana users, in slot order.
+
   Today they fire on fixed rules: Power Infusion as soon as it's ready, Innervate below a mana threshold,
   Mana Tide at min(fight/2, 60 s). Choosing when needs new settings, so the first version only chooses
   who.

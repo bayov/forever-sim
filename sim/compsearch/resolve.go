@@ -3,8 +3,10 @@ package compsearch
 import (
 	"fmt"
 	"math"
+	"runtime"
 	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/wowsims/classic/sim/core"
@@ -390,45 +392,6 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 		}
 	}
 
-	// Power Infusion and Innervate: the placeholders' go to the first casters and mana users.
-	var piGivers, innGivers []int32
-	for _, m := range phs {
-		if m.preset.PI {
-			piGivers = append(piGivers, m.slot.Id)
-		}
-		if m.inn {
-			innGivers = append(innGivers, m.slot.Id)
-		}
-	}
-	for _, cd := range []struct {
-		pi     bool
-		givers []int32
-	}{{true, piGivers}, {false, innGivers}} {
-		// The givers not used by hand give theirs automatically, in slot order.
-		var free []int32
-		for _, g := range cd.givers {
-			if !handCD[cd.pi][g] {
-				free = append(free, g)
-			}
-		}
-		next := 0
-		for _, m := range dps {
-			if next == len(free) {
-				break
-			}
-			if !usesManaPlayer(m.player) || (cd.pi && !isCaster(m)) || (cd.pi && m.pi) || (!cd.pi && m.inn) {
-				continue
-			}
-			if cd.pi {
-				m.pi = true
-			} else {
-				m.inn = true
-			}
-			out = append(out, &proto.Assignment{Holder: free[next], Job: &proto.Assignment_Cooldown{Cooldown: &proto.CooldownTarget{PowerInfusion: cd.pi, Target: m.slot.Id}}})
-			next++
-		}
-	}
-
 	// What's up: the placeholders' gifts and choices, and every member's.
 	up := Gift(0)
 	for _, m := range phs {
@@ -488,11 +451,6 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 		}
 	}
 
-	raid := &proto.Raid{Buffs: &proto.RaidBuffs{}, Debuffs: debuffs, NumActiveParties: int32(parties)}
-	for i := 0; i < parties; i++ {
-		raid.Parties = append(raid.Parties, &proto.Party{Buffs: &proto.PartyBuffs{ManaTideTotems: partyTide[i]}})
-	}
-	res := &proto.RaidCompResolution{}
 	blessings := map[proto.Class][]proto.Blessing{}
 	for cl := range classes {
 		for _, p := range paladins {
@@ -501,28 +459,92 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 			}
 		}
 	}
-	for _, m := range dps {
+	// What a member gets from the rest of the raid. In the raid's request the effects some member casts
+	// aren't given, since the caster's own rotation keeps them up for everyone.
+	seatOf := func(m *member) Seat {
 		pkg := partyPkg[m.slot.Party]
 		if m.class == proto.Class_ClassShaman {
 			pkg = proto.RaidPackage_RaidPackageNone // it casts its own Mana Spring: never given and cast
 		}
-		seat := Seat{Up: up &^ cast, Blessings: blessings[m.class], Package: pkg, PI: m.pi,
+		return Seat{Up: up &^ cast, Blessings: blessings[m.class], Package: pkg, PI: m.pi,
 			Innervate: m.inn, Camps: comp.CampBuffs, Own: 0, Assumptions: comp.Assumptions}
-		tmp := &proto.RaidSimRequest{Raid: &proto.Raid{Parties: []*proto.Party{{Players: []*proto.Player{{}}}}}}
-		seat.Write(tmp, &Build{Class: m.class, Spec: specOf(m.player)})
-		p := googleProto.Clone(m.player).(*proto.Player)
-		// A Windfury imbue in the consumes gives the given Windfury Totem buff (consumes.go): the resolver
-		// owns that, so it goes.
-		if c := p.Consumes; c != nil {
-			if c.MainHandImbue == proto.WeaponImbue_Windfury {
-				c.MainHandImbue = proto.WeaponImbue_WeaponImbueUnknown
-			}
-			if c.OffHandImbue == proto.WeaponImbue_Windfury {
-				c.OffHandImbue = proto.WeaponImbue_WeaponImbueUnknown
+	}
+
+	// Power Infusion and Innervate: the placeholders' that aren't set by hand go to the members who gain
+	// the most DPS from them (cooldownGains), when the comp asks for that. Otherwise they go to the first
+	// casters and mana users, which needs no sims.
+	var piGivers, innGivers []int32
+	for _, m := range phs {
+		if m.preset.PI {
+			piGivers = append(piGivers, m.slot.Id)
+		}
+		if m.inn {
+			innGivers = append(innGivers, m.slot.Id)
+		}
+	}
+	for _, cd := range []struct {
+		pi     bool
+		givers []int32
+	}{{true, piGivers}, {false, innGivers}} {
+		var free []int32
+		for _, g := range cd.givers {
+			if !handCD[cd.pi][g] {
+				free = append(free, g)
 			}
 		}
-		p.RaidBuffs = tmp.Raid.Buffs
-		p.Buffs = tmp.Raid.Parties[0].Players[0].Buffs
+		if len(free) == 0 {
+			continue
+		}
+		var cands []*member
+		for _, m := range dps {
+			if !usesManaPlayer(m.player) || (cd.pi && m.pi) || (!cd.pi && m.inn) || (!comp.CooldownsByGain && cd.pi && !isCaster(m)) {
+				continue
+			}
+			cands = append(cands, m)
+		}
+		if comp.CooldownsByGain {
+			// The single-player sims see the casts of the others as given, as the search's do.
+			gains, err := cooldownGains(cands, cd.pi, func(m *member) Seat {
+				s := seatOf(m)
+				s.Up, s.Own = up, m.casts
+				return s
+			}, comp)
+			if err != nil {
+				return nil, err
+			}
+			order := make([]int, len(cands))
+			for i := range order {
+				order[i] = i
+			}
+			sort.SliceStable(order, func(a, b int) bool { return gains[order[a]] > gains[order[b]] })
+			var kept []*member
+			for _, i := range order {
+				if gains[i] > 0 {
+					kept = append(kept, cands[i])
+				}
+			}
+			cands = kept
+		}
+		for i, m := range cands {
+			if i == len(free) {
+				break
+			}
+			if cd.pi {
+				m.pi = true
+			} else {
+				m.inn = true
+			}
+			out = append(out, &proto.Assignment{Holder: free[i], Job: &proto.Assignment_Cooldown{Cooldown: &proto.CooldownTarget{PowerInfusion: cd.pi, Target: m.slot.Id}}})
+		}
+	}
+
+	raid := &proto.Raid{Buffs: &proto.RaidBuffs{}, Debuffs: debuffs, NumActiveParties: int32(parties)}
+	for i := 0; i < parties; i++ {
+		raid.Parties = append(raid.Parties, &proto.Party{Buffs: &proto.PartyBuffs{ManaTideTotems: partyTide[i]}})
+	}
+	res := &proto.RaidCompResolution{}
+	for _, m := range dps {
+		p := memberPlayer(m, seatOf(m))
 		if m.slot.Name != "" {
 			p.Name = m.slot.Name
 		} else if p.Name == "" {
@@ -940,4 +962,92 @@ func (sc *Scenario) confirm(c *Comp, iterations int32, seed int64) (float64, flo
 	}
 	m := run.Result.RaidMetrics.Dps
 	return m.Avg, m.Stdev / math.Sqrt(float64(iterations)), nil
+}
+
+// memberPlayer is a member's player with what its seat gets written into its own buffs.
+func memberPlayer(m *member, seat Seat) *proto.Player {
+	tmp := &proto.RaidSimRequest{Raid: &proto.Raid{Parties: []*proto.Party{{Players: []*proto.Player{{}}}}}}
+	seat.Write(tmp, &Build{Class: m.class, Spec: specOf(m.player)})
+	p := googleProto.Clone(m.player).(*proto.Player)
+	// A Windfury imbue in the consumes gives the given Windfury Totem buff (consumes.go): the resolver
+	// owns that, so it goes.
+	if c := p.Consumes; c != nil {
+		if c.MainHandImbue == proto.WeaponImbue_Windfury {
+			c.MainHandImbue = proto.WeaponImbue_WeaponImbueUnknown
+		}
+		if c.OffHandImbue == proto.WeaponImbue_Windfury {
+			c.OffHandImbue = proto.WeaponImbue_WeaponImbueUnknown
+		}
+	}
+	p.RaidBuffs = tmp.Raid.Buffs
+	p.Buffs = tmp.Raid.Parties[0].Players[0].Buffs
+	return p
+}
+
+// cooldownGainIterations is how long each sim of cooldownGains runs. The two sims of a member share
+// their random numbers, so the gain is much steadier than either DPS: a Power Infusion's 30 to 50 DPS on a
+// caster stands well clear of the noise.
+const cooldownGainIterations = 1000
+
+// cooldownGains is the DPS each of `cands` gains from a Power Infusion (or an Innervate, with pi false):
+// a single-player sim with it and one without, in its seat, against the comp's boss.
+func cooldownGains(cands []*member, pi bool, seatOf func(*member) Seat, comp *proto.RaidComp) ([]float64, error) {
+	gains := make([]float64, len(cands))
+	errs := make([]error, len(cands))
+	seed := int64(1)
+	if comp.SimOptions != nil && comp.SimOptions.RandomSeed != 0 {
+		seed = comp.SimOptions.RandomSeed
+	}
+	dps := func(m *member, seat Seat) (float64, error) {
+		req := &proto.RaidSimRequest{
+			Raid:       &proto.Raid{Parties: []*proto.Party{{Players: []*proto.Player{memberPlayer(m, seat)}}}},
+			Encounter:  comp.Encounter,
+			SimOptions: &proto.SimOptions{Iterations: cooldownGainIterations, RandomSeed: seed, UseLabeledRands: true},
+		}
+		if req.Encounter == nil {
+			req.Encounter = &proto.Encounter{}
+		}
+		// The seat's debuffs and party buffs (Mana Tide) go on the raid, which memberPlayer leaves alone.
+		seat.Write(req, &Build{Class: m.class, Spec: specOf(m.player)})
+		v, err := runOne(req)
+		if err != nil {
+			return 0, err
+		}
+		return v.DPS, nil
+	}
+	var wg sync.WaitGroup
+	sem := make(chan struct{}, runtime.GOMAXPROCS(0))
+	for i, m := range cands {
+		wg.Add(1)
+		sem <- struct{}{}
+		go func() {
+			defer wg.Done()
+			defer func() { <-sem }()
+			base := seatOf(m)
+			with := base
+			if pi {
+				with.PI = true
+			} else {
+				with.Innervate = true
+			}
+			a, err := dps(m, base)
+			if err != nil {
+				errs[i] = err
+				return
+			}
+			b, err := dps(m, with)
+			if err != nil {
+				errs[i] = err
+				return
+			}
+			gains[i] = b - a
+		}()
+	}
+	wg.Wait()
+	for i, err := range errs {
+		if err != nil {
+			return nil, fmt.Errorf("%s's %s gain: %w", cands[i].name(), map[bool]string{true: "Power Infusion", false: "Innervate"}[pi], err)
+		}
+	}
+	return gains, nil
 }
