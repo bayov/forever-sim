@@ -418,6 +418,59 @@ func skipTails(ranks []*spellRank, minutes map[int32]float64) schedule {
 	return s
 }
 
+// deferRuns trains ranks later that save nothing until then, when we need them only to buy a
+// later rank. Their gold then comes when we have more of it, for the same time or less.
+//
+// A rank the plan never casts while it's our highest waits for the next rank it does cast, and
+// we buy them together: Lightning Bolt 2 to 7 save nothing until Maelstrom Weapon casts Lightning
+// Bolt 8 at 44. A rank the plan casts waits until the level where what it saved so far at each
+// level (loss, by rank and then level, in hours) adds up to the least, at most until the next
+// rank. Earth Shock 3 next to the Earth Shock 2 we downrank to waits for Earth Shock 4 at 24, and
+// Earth Shock 5 costs a little at 36 and 37 but saves more from 38, so it waits until 38. We
+// measured each rank against the one below it, so we know what one rank less costs, but not two:
+// Flame Shock 1 in place of Flame Shock 3 at 30 costs far more than 3 against 2 and 2 against 1
+// at their own levels. So a cast rank never waits past the next one.
+func deferRuns(ranks []*spellRank, loss map[int32]map[int32]float64, cast map[int32]bool, skipped schedule) schedule {
+	s := skipped.clone()
+	bySpell := map[string][]*spellRank{}
+	for _, r := range ranks {
+		if _, never := skipped[r.id]; !never {
+			bySpell[r.spell] = append(bySpell[r.spell], r)
+		}
+	}
+	for _, spellRanks := range bySpell {
+		sort.Slice(spellRanks, func(i, j int) bool { return spellRanks[i].level < spellRanks[j].level })
+		for i := 0; i+1 < len(spellRanks); i++ {
+			r, next := spellRanks[i], spellRanks[i+1]
+			if !cast[r.id] {
+				j := i + 1
+				for j < len(spellRanks) && !cast[spellRanks[j].id] {
+					j++
+				}
+				if j == len(spellRanks) {
+					break
+				}
+				for _, run := range spellRanks[i:j] {
+					s[run.id] = spellRanks[j].level
+				}
+				i = j - 1
+				continue
+			}
+			best, at, sum := 0.0, r.level, 0.0
+			for l := r.level; l < next.level; l++ {
+				sum += loss[r.id][l]
+				if sum < best {
+					best, at = sum, l+1
+				}
+			}
+			if at > r.level {
+				s[r.id] = at
+			}
+		}
+	}
+	return s
+}
+
 // plan makes the schedule: every rank at its level but the tails we skip, then at each level
 // where the gold runs short we push back the highest ranks we've bought by then that cost the
 // fewest hours for the gold, one level at a time. It also says how many hours the pushes cost
@@ -607,11 +660,17 @@ func searchTraining(ctx context.Context, p *planner, sessions int32) (*proto.Lev
 	}
 	log.Printf("%d spells we always train, %.1fg by 40", len(always), alwaysCost/10000)
 
-	skipped := skipTails(planRanks, minutes)
+	cast := map[int32]bool{}
+	for _, bySpell := range full.top {
+		for _, id := range bySpell {
+			cast[id] = true
+		}
+	}
+	skipped := deferRuns(planRanks, ts.rankLoss, cast, skipTails(planRanks, minutes))
 	s, cost := ts.plan(planRanks, skipped)
 	last := full
 	for round := 1; round <= trainingRounds && len(s) > 0; round++ {
-		log.Printf("round %d: %d ranks never bought, %d pushed back, %.1f min by the measures so far", round, len(skipped), len(s)-len(skipped), 60*cost)
+		log.Printf("round %d: %d ranks never bought or bought with a later one, %d pushed back, %.1f min by the measures so far", round, len(skipped), len(s)-len(skipped), 60*cost)
 		w, err := ts.measure(ctx, s)
 		if err != nil {
 			return nil, err

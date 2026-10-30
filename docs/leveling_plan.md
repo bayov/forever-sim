@@ -301,6 +301,12 @@ every rank within about half a minute. 1000 sessions take 5 min for 10 to 60 on 
   next to Lesser Healing Wave). Windfury Totem 2 and 3 cost 7 and 11 min, because the
   rotation drops the totem every pull and the higher ranks' mana is worth more than their
   attack power.
+- **Ranks bought later.** A rank the plan doesn't cast while it's our highest is bought with
+  the next rank it does cast (Lightning Bolt 2 to 7 come with Lightning Bolt 8 at 44, for
+  Maelstrom Weapon). A rank it casts waits until the level where the time it saved so far adds
+  up to the least, but never past the next rank, because we measured each rank only against the
+  one below it (Earth Shock 4 waits until 26, its mana costs more than its damage at 24 and 25).
+  It moves gold to later levels for the same hours.
 - **The gold budget.** The gold earned by a level is `gold_at_40` times (level / 40) to the
   power 3.5, net of food, water and repairs. 115g by 40 is what's left from "50 to 100g at 40
   to 45 before riding" (the user, 2026-10-30) plus about 50g of training. We keep Training's
@@ -325,7 +331,8 @@ at 40. The budget only matters with less gold. With 100g and riding at 40 it tra
 Wolf, Water Breathing, the resistance totems), which are ours to choose.
 
 The enhancement shaman's plan (`ui/enhancement_shaman/leveling_training.json`, 2026-10-30, 1000
-sessions) never trains 22 of the 74 ranks it casts, which saves 19 min (97.67h to 97.35h). The
+sessions) never trains 22 of the 74 ranks it casts, which saves 19 min (97.67h to 97.35h), and
+buys 17 later than their level. The
 ranks worth the most are Rockbiter Weapon 5 and 6 (68 and 73 min), Windfury Totem 1 (48 min),
 Lightning Shield 5 (30 min) and Frost Shock 1 (24 min, cast in place of Earth Shock at 20 to 24).
 
