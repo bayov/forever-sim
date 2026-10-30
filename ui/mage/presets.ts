@@ -149,7 +149,7 @@ export const APLLevel60Fire = PresetUtils.makePresetAPLRotation('Level 60 Fire',
 });
 // Client 70425 made Arcane Blast's stacks spell damage: 15% of Intellect each, up to 4, for 15
 // sec from the first, and nothing ends them early. So Arcane builds four stacks at the start of
-// every 15 sec (the fourth costs 6.25 times the first), and below 20% mana only one. Arcane
+// every 15 sec (the fourth costs 6.25 times the first); below 20% mana only one until 70707. Arcane
 // Missiles on a Missile Barrage proc goes first, ahead of the Arcane Blasts: each Arcane Blast has
 // 40% to proc it, so a proc during the ramp is used while the stacks boost it instead of being
 // rolled over (+40.5 at 180 sec, the rotation auditor's pass 23). Frostbolt is the filler: it
@@ -267,7 +267,8 @@ export const TalentsLevel60Fire = PresetUtils.makePresetTalents('Level 60 Fire',
 // is 990.6 / 982.5 / 971.9, 11% behind Fire (Human, on the Arcane gear, with the Precision
 // scroll; 964.7 at 180 before the hotfix). The 2026-10-23 talent and knob searches kept it. 70707's
 // Precision covers Arcane, so Arcane Focus's five points are Incineration 5 and Frost Channeling 2
-// (Arcane Blast's mana): 914.3 at 180 sec as a Gnome (901.6 before).
+// (Arcane Blast's mana): 926.1 / 915.5 / 895.4 as a Gnome (901.6 at 180 sec before), with the
+// rotation keeping four stacks at any mana.
 export const TalentsLevel60Arcane = PresetUtils.makePresetTalents('Level 60 Arcane', SavedTalents.create({ talentsString: '050205203100301531-5-05350002' }), {
 	tooltip: 'Arcane to Arcane Power: four Arcane Blast stacks for spell damage, Missile Barrage, Frostbolt.',
 	group: 'Level 60',

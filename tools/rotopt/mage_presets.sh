@@ -18,14 +18,15 @@ gen() {
 }
 # Client 1.60.1.70425. Arcane Blast's stacks are 15% of Intellect as spell damage each for 15 sec
 # from the first, so Arcane keeps all 4 up: four Arcane Blasts at the start of each 15 sec (the
-# last costs 6.25 times the first), and once the mana is under 20% a single Arcane Blast instead.
+# last costs 6.25 times the first). Until client 70707 it fell back to a single Arcane Blast below
+# 20% mana; since Precision covers Arcane, keeping all four is +1.6 at 120 / 180 / 300 sec together.
 # Arcane Missiles on a Missile Barrage proc (free and twice as fast) goes ahead of the Arcane
 # Blasts, so a proc during the ramp isn't rolled over (+40.5 at 180 sec, the rotation auditor's pass 23), Frostbolt as the filler (it
 # beats Arcane Missiles once the missiles aren't free). No Evocation, no mana gems (the Demonic
 # Rune takes their cooldown). An Arcane Blast precast lands at the pull. Arcane Power and Presence
 # of Mind wait for the on-use trinket unless it won't be back in time. When a Frostbolt would not
 # land before the end (its cast plus 0.75 sec), Fire Blast and Arcane Explosion instead.
-gen mage_arcane level60_arcane "blastBuff=4,blastRefresh=0,barrageBeforeBlast=1,arcaneWrath=0,conserveMana=20,filler=2,missileBarrage=1,barrageFirst=0,evocationMana=0,gems=0,prepull=1,powerWithTrinket=1,pomWrath=0,finisher=1,finishPad=0.75,wand=1"
+gen mage_arcane level60_arcane "blastBuff=4,blastRefresh=0,barrageBeforeBlast=1,arcaneWrath=0,conserveMana=0,filler=2,missileBarrage=1,barrageFirst=0,evocationMana=0,gems=0,prepull=1,powerWithTrinket=1,pomWrath=0,finisher=1,finishPad=0.75,wand=1"
 # Scorch to 5 Fire Vulnerability stacks and before they run out (5 sec), Pyroblast at 3 Heating Up
 # stacks (a 1.5 sec cast), Arcane Missiles on Missile Barrage, Fire Blast above 10% mana (since
 # 70425 every Fire Blast adds a Heating Up stack, two on a crit), Fireball. Evocation below 20% mana

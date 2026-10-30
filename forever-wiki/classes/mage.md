@@ -26,12 +26,12 @@ The presets, re-picked by talent searches at 180 sec, confirmed at 20,000 iterat
 |---|---|---|---|---|---|
 | Fire (default) | `0502052-55500201230133031-003` | 1071.7 | 1061.0 | 1044.0 | 1101.0 |
 | Frostfire | `-2550030103013303-0235000311203002` | 1063.5 | 1051.0 | 1030.8 | 1096.4 |
-| Arcane (Gnome) | `050205203100301531-5-05350002` | 925.5 | 914.3 | 892.3 | 901.6 |
+| Arcane (Gnome) | `050205203100301531-5-05350002` | 926.1 | 915.5 | 895.4 | 901.6 |
 | Frost | `05020520310011053-1-0535000301003002` | 911.2 | 908.3 | 886.6 | 946.6 |
 
 - Fire: Critical Mass's two points are Incineration 5. With Arcane Focus gone, Arcane row 1 needs five other points to reach Arcane Concentration: Improved Channeling 5, one of them Burning Soul's third point.
 - Frostfire: Critical Mass's two points are Incineration 2 and Master of Elements 3. The loss is Critical Mass and Ice Lance's cooldown; the rotation knob search kept every knob.
-- Arcane gains: Precision's 6% covers Arcane now (Arcane Focus gave 5%), and the five points are Incineration 5 (Arcane Blast) and Frost Channeling 2.
+- Arcane gains: Precision's 6% covers Arcane now (Arcane Focus gave 5%), and the five points are Incineration 5 (Arcane Blast) and Frost Channeling 2. Its rotation no longer drops to one Arcane Blast stack below 20% mana (+1.6 at 120 / 180 / 300 sec together).
 - Frost: Arcane Focus's five points and Presence of Mind's are Arcane Concentration 5, Arcane Meditation, Arcane Wrath and Incineration. Ice Lance on every Fingers of Frost charge was this build's damage, so the cooldown costs it most. With mana to spare the rotation keeps three Arcane Blast stacks and drops Evocation (+4.8 at 120 / 180 / 300 sec together).
 
 ## Regear and rotation round (2026-10-23)
