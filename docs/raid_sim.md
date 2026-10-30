@@ -588,6 +588,14 @@ There are three kinds:
   which the page sets; the search picks its own by the same gains). A gain of 0 or less gets none. Without
   the option they go to the first casters and mana users, in slot order.
 
+  **An Innervate on a mage waits for its Evocation** (2026-10-30). It came at 70% of the mage's mana, kept
+  the mage above the Evocation's 20% until less than 90 sec were left, and so took the Evocation's place: in
+  a raid without Mana Spring or Blessings it cost a Fire mage 14 DPS and a Frostfire mage 39. Now, while
+  the Evocation is ready and more than 90 sec are left, the Innervate waits for 10% mana. It gains every
+  mage spec DPS, lean raid or buffed (`TestInnervateNeverCostsAMage`): a Fire mage +70 and +43, a Frostfire
+  mage +19 and +71. An Innervate ending mid-Evocation no longer takes the Evocation's full regen, nor the
+  other way round.
+
   Today they fire on fixed rules: Power Infusion as soon as it's ready, Innervate below a mana threshold,
   Mana Tide at min(fight/2, 60 s). Choosing when needs new settings, so the first version only chooses
   who.

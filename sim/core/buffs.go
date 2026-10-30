@@ -1393,6 +1393,10 @@ func InnervateManaThreshold(character *Character) float64 {
 	}
 }
 
+// InnervateWaitsForEvocation is how much of the fight must be left for an Innervate to wait for the mage's
+// own Evocation. The Fire, Frost and Arcane rotations cast Evocation only with more than 90 sec left.
+const InnervateWaitsForEvocation = 90 * time.Second
+
 func registerInnervateCD(agent Agent, numInnervates int32) {
 	if numInnervates == 0 {
 		return
@@ -1401,9 +1405,11 @@ func registerInnervateCD(agent Agent, numInnervates int32) {
 	character := agent.GetCharacter()
 	innervateThreshold := 0.0
 	innervateAura := InnervateAura(character, -1)
+	var evocation *Spell
 
 	character.Env.RegisterPostFinalizeEffect(func() {
 		innervateThreshold = InnervateManaThreshold(character)
+		evocation = character.GetSpell(ActionID{SpellID: 12051})
 	})
 
 	registerExternalConsecutiveCDApproximation(
@@ -1416,6 +1422,14 @@ func registerInnervateCD(agent Agent, numInnervates int32) {
 			AuraCD:           InnervateCD,
 			Type:             CooldownTypeMana,
 			ShouldActivate: func(sim *Simulation, character *Character) bool {
+				// A mage's own Evocation goes first while it's ready and the fight has time left for it, and
+				// the Innervate comes at 10% mana only if the Evocation doesn't. At the mage's usual 70% it
+				// came early, kept the mage above the Evocation's 20% until less than 90 sec were left, and so
+				// took the Evocation's place. That cost a lean raid's Fire mage 14 DPS and a Frostfire mage
+				// 39 (raid_sim.md, Required buffs).
+				if evocation != nil && evocation.IsReady(sim) && sim.GetRemainingDuration() > InnervateWaitsForEvocation {
+					return character.CurrentMana() <= character.MaxMana()*0.1
+				}
 				// Only cast innervate when very low on mana, to make sure all other mana CDs are prioritized.
 				return character.CurrentMana() <= innervateThreshold
 			},
@@ -1442,11 +1456,17 @@ func InnervateAura(character *Character, actionTag int32) *Aura {
 		},
 		OnExpire: func(aura *Aura, sim *Simulation) {
 			character.PseudoStats.SpiritRegenMultiplier -= 4
-			character.PseudoStats.ForceFullSpiritRegen = false
+			// A mage's Evocation still channeling keeps its full regen.
+			evocation := character.GetAura(EvocationRegenLabel)
+			character.PseudoStats.ForceFullSpiritRegen = evocation != nil && evocation.IsActive()
 			character.UpdateManaRegenRates()
 		},
 	})
 }
+
+// EvocationRegenLabel is the mage's Evocation regen aura (sim/mage/evocation.go), which an Innervate ending
+// mid-channel leaves its full regen.
+const EvocationRegenLabel = "Evocation Regen"
 
 var ManaTideTotemActionID = ActionID{SpellID: 16190}
 var ManaTideTotemAuraTag = "ManaTideTotem"

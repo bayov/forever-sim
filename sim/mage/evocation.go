@@ -15,7 +15,7 @@ func (mage *Mage) registerEvocationCD() {
 	maxTicks := int32(channelTime / tickLength)
 
 	manaRegenAura := mage.RegisterAura(core.Aura{
-		Label:    "Evocation Regen",
+		Label:    core.EvocationRegenLabel,
 		ActionID: actionID,
 		Duration: core.NeverExpires,
 		OnGain: func(aura *core.Aura, sim *core.Simulation) {
@@ -25,7 +25,8 @@ func (mage *Mage) registerEvocationCD() {
 		},
 		OnExpire: func(aura *core.Aura, sim *core.Simulation) {
 			mage.PseudoStats.SpiritRegenMultiplier -= 15
-			mage.PseudoStats.ForceFullSpiritRegen = false
+			// An Innervate still running keeps its full regen.
+			mage.PseudoStats.ForceFullSpiritRegen = mage.GetActiveAuraWithTag(core.InnervateAuraTag) != nil
 			mage.UpdateManaRegenRates()
 		},
 	})

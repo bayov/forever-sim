@@ -400,3 +400,31 @@ func TestResolveCooldownsByGain(t *testing.T) {
 		t.Errorf("the picks changed between two resolves: %v, then %v", got, again)
 	}
 }
+
+// An Innervate from a druid never costs a mage DPS: it waits for the mage's own Evocation while that's
+// ready and the fight has time for it. At the old 70% mana it came early and took the Evocation's place,
+// which cost a Fire mage 14 DPS and a Frostfire mage 39 in a raid without Mana Spring or Blessings.
+func TestInnervateNeverCostsAMage(t *testing.T) {
+	if testing.Short() {
+		t.Skip("about 15 seconds")
+	}
+	p := loadTestPool(t)
+	enc := cloneReq(p.Bases[0].Req).Encounter
+	for _, id := range []string{"mage__fire", "mage__frost", "mage__arcane", "mage__frostfire"} {
+		s := slotOf(1, 0, 0, p, id)
+		m := &member{slot: s, player: s.GetBuild().Base, class: s.GetBuild().Base.Class}
+		for _, lean := range []bool{true, false} {
+			seat := Seat{}
+			if !lean {
+				seat = Seat{Up: GiftAB | GiftPoS | GiftFort | GiftGotW | GiftCoE | GiftJoW, Blessings: []proto.Blessing{proto.Blessing_BlessingKings}}
+			}
+			gains, err := cooldownGains([]*member{m}, false, func(*member) Seat { return seat }, &proto.RaidComp{Encounter: enc})
+			if err != nil {
+				t.Fatal(err)
+			}
+			if gains[0] < -1 {
+				t.Errorf("%s (lean raid %v): Innervate gains %.1f DPS", id, lean, gains[0])
+			}
+		}
+	}
+}
