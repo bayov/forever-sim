@@ -831,6 +831,29 @@
      "commits": [
       "f301789"
      ]
+    },
+    {
+     "title": "Mage talents picked again for client 70707's Arcane Focus and Critical Mass",
+     "kind": "talents",
+     "classes": [
+      "Mage"
+     ],
+     "note": "The points those two talents freed went to Incineration and, by spec, Improved Channeling, Master of Elements, Frost Channeling or Arcane Concentration. Fire and Frostfire lose 28 and 37 DPS with the talents gone, Frost 3, and Arcane gains 14 now that Precision covers Arcane.",
+     "commits": [
+      "31054ea",
+      "cacd15f"
+     ]
+    },
+    {
+     "title": "Arcane: four Arcane Blast stacks at any mana",
+     "kind": "rotation",
+     "builds": [
+      "mage__arcane"
+     ],
+     "note": "The single-stack fallback below 20% mana is gone.",
+     "commits": [
+      "56695e4"
+     ]
     }
    ],
    "internal": [
@@ -1045,6 +1068,22 @@
     {
      "commit": "80dca73",
      "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
+    },
+    {
+     "commit": "e0bec0b",
+     "why": "leveling, raid sim or report page work that changes no build's results; the 2026-10-30 re-sim after it moved only the mage builds, which their own lines cover"
+    },
+    {
+     "commit": "e2c54a7",
+     "why": "leveling, raid sim or report page work that changes no build's results; the 2026-10-30 re-sim after it moved only the mage builds, which their own lines cover"
+    },
+    {
+     "commit": "3205cc5",
+     "why": "leveling, raid sim or report page work that changes no build's results; the 2026-10-30 re-sim after it moved only the mage builds, which their own lines cover"
+    },
+    {
+     "commit": "cf51105",
+     "why": "leveling, raid sim or report page work that changes no build's results; the 2026-10-30 re-sim after it moved only the mage builds, which their own lines cover"
     }
    ]
   }
