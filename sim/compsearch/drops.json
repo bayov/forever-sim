@@ -10,7 +10,8 @@
 		"moonkin_aura",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"druid__balance+camps": [
@@ -28,7 +29,8 @@
 		"moonkin_aura",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"druid__balance-duty-ff": [
@@ -41,7 +43,8 @@
 		"moonkin_aura",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"druid__balance-duty-ff+camps": [
@@ -58,7 +61,8 @@
 		"moonkin_aura",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"druid__balance-wrath": [
@@ -72,7 +76,8 @@
 		"moonkin_aura",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"druid__balance-wrath+camps": [
@@ -82,7 +87,6 @@
 		"camp.first_aid_kit",
 		"camp.lodestone",
 		"camp.sharpening_wheel",
-		"divine_spirit",
 		"faerie_fire",
 		"furious_howl",
 		"grace_of_air_totem",
@@ -91,7 +95,8 @@
 		"moonkin_aura",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"druid__balance-wrath-duty-ff": [
@@ -104,14 +109,14 @@
 		"moonkin_aura",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"druid__balance-wrath-duty-ff+camps": [
 		"battle_shout",
 		"blessing_of_might",
 		"camp.camp_chair",
-		"camp.faction_banner",
 		"camp.first_aid_kit",
 		"camp.lodestone",
 		"camp.sharpening_wheel",
@@ -122,7 +127,8 @@
 		"moonkin_aura",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"druid__feral-cat": [
@@ -263,7 +269,8 @@
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"mage__arcane+camps": [
@@ -279,7 +286,8 @@
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"mage__fire": [
@@ -292,7 +300,8 @@
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"mage__fire+camps": [
@@ -308,7 +317,8 @@
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"mage__frost": [
@@ -321,7 +331,8 @@
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"mage__frost+camps": [
@@ -337,7 +348,8 @@
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"mage__frostfire": [
@@ -351,7 +363,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"mage__frostfire+camps": [
@@ -369,7 +382,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"paladin__level_60": [
@@ -389,7 +403,6 @@
 		"trueshot_aura"
 	],
 	"paladin__level_60-duty-wisdom+camps": [
-		"divine_spirit",
 		"judgement_of_wisdom",
 		"trueshot_aura"
 	],
@@ -476,7 +489,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"priest__shadow+camps": [
@@ -494,7 +508,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"priest__shadow-holy": [
@@ -508,7 +523,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"priest__shadow-holy+camps": [
@@ -526,7 +542,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"priest__smite": [
@@ -539,7 +556,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"priest__smite+camps": [
@@ -556,7 +574,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"rogue__combat-daggers": [
@@ -659,7 +678,6 @@
 		"judgement_of_the_crusader",
 		"judgement_of_wisdom",
 		"mana_spring_totem",
-		"mana_tide_totems",
 		"trueshot_aura"
 	],
 	"rogue__mutilate+camps": [
@@ -683,7 +701,6 @@
 		"judgement_of_the_crusader",
 		"judgement_of_wisdom",
 		"mana_spring_totem",
-		"mana_tide_totems",
 		"trueshot_aura"
 	],
 	"rogue__mutilate-humanoid+camps": [
@@ -720,7 +737,6 @@
 		"judgement_of_the_crusader",
 		"judgement_of_wisdom",
 		"mana_spring_totem",
-		"mana_tide_totems",
 		"trueshot_aura"
 	],
 	"rogue__seal-fate-daggers-humanoid": [
@@ -848,7 +864,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"shaman__elemental-level60+camps": [
@@ -864,7 +881,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"shaman__elemental-level60-mana-tide": [
@@ -877,7 +895,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"shaman__elemental-level60-mana-tide+camps": [
@@ -893,71 +912,52 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"shaman__enhancement-imp-gw": [
 		"judgement_of_the_crusader",
 		"power_word_fortitude",
-		"strength_of_earth_totem",
-		"totem_weapon_buff",
 		"trueshot_aura"
 	],
 	"shaman__enhancement-imp-gw+camps": [
 		"camp.first_aid_kit",
-		"camp.sharpening_wheel",
 		"judgement_of_the_crusader",
 		"power_word_fortitude",
-		"strength_of_earth_totem",
-		"totem_weapon_buff",
 		"trueshot_aura"
 	],
 	"shaman__enhancement-level60": [
 		"judgement_of_the_crusader",
 		"power_word_fortitude",
-		"strength_of_earth_totem",
-		"totem_weapon_buff",
 		"trueshot_aura"
 	],
 	"shaman__enhancement-level60+camps": [
 		"camp.first_aid_kit",
-		"camp.sharpening_wheel",
 		"judgement_of_the_crusader",
 		"power_word_fortitude",
-		"strength_of_earth_totem",
-		"totem_weapon_buff",
 		"trueshot_aura"
 	],
 	"shaman__enhancement-mana-tide": [
 		"judgement_of_the_crusader",
 		"power_word_fortitude",
-		"strength_of_earth_totem",
-		"totem_weapon_buff",
 		"trueshot_aura"
 	],
 	"shaman__enhancement-mana-tide+camps": [
 		"camp.first_aid_kit",
-		"camp.sharpening_wheel",
 		"judgement_of_the_crusader",
 		"power_word_fortitude",
-		"strength_of_earth_totem",
-		"totem_weapon_buff",
 		"trueshot_aura"
 	],
 	"shaman__enhancement-water-shield": [
 		"judgement_of_the_crusader",
 		"power_word_fortitude",
-		"strength_of_earth_totem",
-		"totem_weapon_buff",
 		"trueshot_aura"
 	],
 	"shaman__enhancement-water-shield+camps": [
 		"camp.first_aid_kit",
-		"camp.sharpening_wheel",
 		"judgement_of_the_crusader",
 		"power_word_fortitude",
-		"strength_of_earth_totem",
-		"totem_weapon_buff",
 		"trueshot_aura"
 	],
 	"warlock__affliction": [
@@ -969,7 +969,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"warlock__affliction+camps": [
@@ -984,7 +985,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"warlock__affliction-duty-curse": [
@@ -996,7 +998,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"warlock__affliction-duty-curse+camps": [
@@ -1011,7 +1014,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"warlock__affliction-duty-recklessness": [
@@ -1023,7 +1027,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"warlock__affliction-duty-recklessness+camps": [
@@ -1038,7 +1043,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"warlock__demonology": [
@@ -1050,7 +1056,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"warlock__demonology+camps": [
@@ -1065,7 +1072,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"warlock__demonology-duty-curse": [
@@ -1077,7 +1085,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"warlock__demonology-duty-curse+camps": [
@@ -1092,7 +1101,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"warlock__demonology-duty-recklessness": [
@@ -1104,7 +1114,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"warlock__demonology-duty-recklessness+camps": [
@@ -1119,7 +1130,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"warlock__destruction": [
@@ -1131,7 +1143,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"warlock__destruction+camps": [
@@ -1146,7 +1159,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"warlock__destruction-duty-curse": [
@@ -1158,7 +1172,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"warlock__destruction-duty-curse+camps": [
@@ -1173,7 +1188,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"warlock__destruction-duty-recklessness": [
@@ -1185,7 +1201,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"warlock__destruction-duty-recklessness+camps": [
@@ -1200,7 +1217,8 @@
 		"leader_of_the_pack",
 		"power_word_fortitude",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"warlock__destruction_fire": [
@@ -1212,7 +1230,8 @@
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"warlock__destruction_fire+camps": [
@@ -1226,7 +1245,8 @@
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"warlock__destruction_fire-duty-curse": [
@@ -1238,7 +1258,8 @@
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"warlock__destruction_fire-duty-curse+camps": [
@@ -1252,7 +1273,8 @@
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"warlock__destruction_fire-duty-recklessness": [
@@ -1263,7 +1285,8 @@
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"warlock__destruction_fire-duty-recklessness+camps": [
@@ -1276,7 +1299,8 @@
 		"judgement_of_the_crusader",
 		"leader_of_the_pack",
 		"strength_of_earth_totem",
-		"totem_weapon_buff",
+		"totem_weapon_flametongue",
+		"totem_weapon_windfury",
 		"trueshot_aura"
 	],
 	"warrior__arms": [
@@ -1448,14 +1472,12 @@
 		"judgement_of_wisdom",
 		"mana_spring_totem",
 		"mana_tide_totems",
-		"power_word_fortitude",
 		"trueshot_aura"
 	],
 	"warrior__fury-duty-sunder+camps": [
 		"arcane_brilliance",
 		"blessing_of_wisdom",
 		"camp.faction_banner",
-		"camp.first_aid_kit",
 		"camp.incense_candle",
 		"camp.mana_well",
 		"divine_spirit",
@@ -1464,7 +1486,6 @@
 		"judgement_of_wisdom",
 		"mana_spring_totem",
 		"mana_tide_totems",
-		"power_word_fortitude",
 		"trueshot_aura"
 	],
 	"warrior__fury_2h": [
