@@ -235,6 +235,15 @@ func (character *Character) ReleaseTotemWeaponBuff(sim *Simulation, aura *Aura, 
 		standing := &slot.standingTotemWeaponBuffs[i]
 		standing.holders = slices.DeleteFunc(standing.holders, func(u *Unit) bool { return u == caster })
 		if len(standing.holders) > 0 {
+			// It still stands, but with its holders changed another buff may win the slot now (our own
+			// Flametongue over the Windfury we shared with another shaman).
+			if slot.totemWeaponBuff == aura {
+				if pick := character.pickTotemWeaponBuff(); pick != aura {
+					aura.Deactivate(sim)
+					slot.totemWeaponBuff = pick
+					pick.Activate(sim)
+				}
+			}
 			return
 		}
 	}

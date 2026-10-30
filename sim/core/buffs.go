@@ -1757,8 +1757,14 @@ func battleShoutEffect(aura *Aura, ap float64) {
 // ForeverFuriousHowlAura is a hunter pet's Furious Howl on one ally: melee attack power for 60 sec,
 // in Battle Shout's slot.
 func ForeverFuriousHowlAura(unit *Unit, spellID int32, ap float64) *Aura {
+	// A howl below the top rank is an aura of its own, so a given howl and a pet's of another rank don't
+	// share one (the exclusive effect would see two values for one aura).
+	label := "Furious Howl"
+	if ap != 83 {
+		label = fmt.Sprintf("Furious Howl (%v)", ap)
+	}
 	aura := unit.GetOrRegisterAura(Aura{
-		Label:    "Furious Howl",
+		Label:    label,
 		ActionID: ActionID{SpellID: spellID},
 		Duration: time.Minute,
 	})

@@ -1,6 +1,7 @@
 package core
 
 import (
+	"fmt"
 	"math"
 	"slices"
 	"strconv"
@@ -186,7 +187,7 @@ func applyDebuffEffects(target *Unit, targetIdx int, debuffs *proto.Debuffs, rai
 		if !forever {
 			MakePermanent(FaerieFireAura(target))
 		} else if armor := foreverMinorArmor[HighestRankAt(level, foreverFaerieFireLevel[:])]; armor > 0 {
-			MakePermanent(faerieFireAuraInternal(target, "Faerie Fire", 9907, armor))
+			MakePermanent(ForeverFaerieFireAura(target, level))
 		}
 	}
 
@@ -1122,12 +1123,27 @@ func faerieFireAuraInternal(target *Unit, label string, spellID int32, arPen flo
 	return aura
 }
 
+// ForeverFaerieFireAura is Faerie Fire at the rank a level knows. Below the top rank it's an aura of its
+// own, so a druid's and a given one of other ranks don't share one.
+func ForeverFaerieFireAura(target *Unit, level int32) *Aura {
+	armor := foreverMinorArmor[HighestRankAt(level, foreverFaerieFireLevel[:])]
+	label := "Faerie Fire"
+	if armor != 505 {
+		label = fmt.Sprintf("Faerie Fire (%v)", armor)
+	}
+	return faerieFireAuraInternal(target, label, 9907, armor)
+}
+
 // ForeverDustCloudAura is a Tallstrider's Dust Cloud on an enemy for 30 sec (client 70532, rank 5
 // 1265904: 505 armor at 60), in the minor armor slot with Faerie Fire and Curse of Recklessness, so
 // only the strongest of them counts.
 func ForeverDustCloudAura(target *Unit, spellID int32, armor float64) *Aura {
+	label := "Dust Cloud"
+	if armor != 505 {
+		label = fmt.Sprintf("Dust Cloud (%v)", armor)
+	}
 	aura := target.GetOrRegisterAura(Aura{
-		Label:    "Dust Cloud",
+		Label:    label,
 		ActionID: ActionID{SpellID: spellID},
 		Duration: time.Second * 30,
 	})

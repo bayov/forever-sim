@@ -21,9 +21,13 @@ func applyCampBuffs(character *Character, raidBuffs *proto.RaidBuffs, individual
 	if camp == nil {
 		return
 	}
-	// The unverified rule that the camp buffs stack with the group versions: then no class buff turns one off.
+	// The unverified rule that the camp buffs stack with the group versions of their class buffs (the
+	// tooltips name only the single-target spells): then the Greater Blessings, Arcane Brilliance, Prayer of
+	// Spirit, Gift of the Wild and Prayer of Fortitude turn nothing off. Moonkin Aura and Strength of Earth
+	// have no group version, so they still do.
 	if camp.StackWithGroupBuffs {
-		raidBuffs, individualBuffs = &proto.RaidBuffs{}, &proto.IndividualBuffs{}
+		raidBuffs = &proto.RaidBuffs{MoonkinAura: raidBuffs.MoonkinAura, StrengthOfEarthTotem: raidBuffs.StrengthOfEarthTotem}
+		individualBuffs = &proto.IndividualBuffs{}
 	}
 
 	if camp.FishBowl && !individualBuffs.BlessingOfKings {
@@ -142,4 +146,7 @@ func sharpeningWheelAura(character *Character) {
 	// up, the wheel's Strength is off.
 	soe := StrengthOfEarthTotemAura(&character.Unit, 1)
 	soe.NewExclusiveEffect(sharpeningWheelCategory, false, ExclusiveEffect{Priority: 2})
+	// Nobody gives this player Strength of Earth (else the wheel isn't here), so the aura is only a cast
+	// totem's: keep it out of the stats panel's build phase, which would turn it on.
+	soe.BuildPhase = CharacterBuildPhaseNone
 }

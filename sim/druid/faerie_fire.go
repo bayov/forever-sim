@@ -95,7 +95,7 @@ func (druid *Druid) registerFaerieFireSpell() {
 // rank (770, 778, 9749, 9907).
 func (druid *Druid) registerForeverFaerieFireSpell() {
 	druid.FaerieFireAuras = druid.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
-		return core.FaerieFireAura(target)
+		return core.ForeverFaerieFireAura(target, druid.Level)
 	})
 
 	// The form the cost was last set for: free in Cat and Bear Form. A cast and the rotation's

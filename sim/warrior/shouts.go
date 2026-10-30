@@ -11,17 +11,14 @@ const ShoutExpirationThreshold = time.Second * 3
 // newShoutSpellConfig is a shout that puts allyAuras on its receivers: a raid aura array,
 // which has nil entries for the pets and enemies.
 //
-// Each receiver adds the shout's threat. Extra hits on the target stand in for the party
-// members a smaller party lacks, so a lone warrior's shout still counts as buffing a party of 5.
+// Each receiver adds the shout's threat. A lone warrior's shout still counts as buffing a party of 5,
+// with extra hits on the target for the 4 it lacks; in a raid the receivers are real.
 func (warrior *Warrior) newShoutSpellConfig(actionID core.ActionID, rank int32, allyAuras core.AuraArray) *WarriorSpell {
 	receivers := core.FilterSlice(allyAuras, func(aura *core.Aura) bool { return aura != nil })
-	partyReceivers := 0
-	for _, aura := range receivers {
-		if warrior.Env.Raid.GetPlayerParty(aura.Unit) == warrior.Party {
-			partyReceivers++
-		}
+	extraHits := 0
+	if len(receivers) == 1 {
+		extraHits = 4
 	}
-	extraHits := max(0, 5-partyReceivers)
 
 	return warrior.RegisterSpell(AnyStance, core.SpellConfig{
 		ActionID: actionID,

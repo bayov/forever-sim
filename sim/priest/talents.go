@@ -220,7 +220,8 @@ func (priest *Priest) registerDarkInspiration() {
 
 	// The party's other players get it too. It has no players-only flag, but it doesn't
 	// reach pets until a launch check says so (docs/raid_sim.md, Pets). Another priest's
-	// shares the aura, so two don't stack.
+	// shares the aura, so two don't stack, and it keeps the first priest's points: every
+	// sensible Shadow build has the talent's 5 of 5, so they're the same.
 	priest.Env.RegisterPreFinalizeEffect(func() {
 		for _, agent := range priest.Party.Players {
 			char := agent.GetCharacter()
