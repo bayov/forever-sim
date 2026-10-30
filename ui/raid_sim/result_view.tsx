@@ -491,6 +491,8 @@ class ScenarioView {
 		const key = (presets: RaidPreset[]) => [...presets].sort((a, b) => a - b).join(',');
 		const ranked = new Set(sc.combos.map(c => key(c.presets)));
 		const best = sc.combos[0]?.presets ?? [];
+		// A result from before the search marked them says nothing, so it falls back to the ranked combos.
+		const flagged = sc.presetValues.some(p => p.hasAtBest || p.hasBestWithMinusWithout);
 		const presetValueApplies = {
 			atBest: (p: RaidPreset) => {
 				const idx = best.indexOf(p);
@@ -524,7 +526,7 @@ class ScenarioView {
 				table(
 					[
 						'Preset',
-						{ label: 'At the best', numeric: true, tooltip: 'The best combo minus the best combo with that slot’s preset changed' },
+						{ label: 'At the winner’s combo', numeric: true, tooltip: 'The winner’s combo minus the best combo with that slot’s preset changed (screening scores)' },
 						{
 							label: 'With minus without',
 							numeric: true,
@@ -533,8 +535,8 @@ class ScenarioView {
 					],
 					sc.presetValues.map(p => [
 						presetName(p.preset),
-						presetValueApplies.atBest(p.preset) ? fmt(p.atBest) : NA,
-						presetValueApplies.withMinusWithout(p.preset) ? fmt(p.bestWithMinusWithout) : NA,
+						(flagged ? p.hasAtBest : presetValueApplies.atBest(p.preset)) ? fmt(p.atBest) : NA,
+						(flagged ? p.hasBestWithMinusWithout : presetValueApplies.withMinusWithout(p.preset)) ? fmt(p.bestWithMinusWithout) : NA,
 					]),
 				),
 				<p className="rs-section-note">

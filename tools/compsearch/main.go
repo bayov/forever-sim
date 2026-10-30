@@ -40,6 +40,8 @@ func main() {
 	maxCombos := flag.Int("max-combos", 0, "rank at most this many tank and healer combos (0: all)")
 	noSens := flag.Bool("no-sensitivity", false, "leave out the sensitivity scenarios")
 	confirm := flag.Bool("confirm", false, "confirm the top sets with raid sims (milestone M1b)")
+	confirmIters := flag.Int("confirm-iterations", 5000, "the confirmation raid sims' iterations")
+	confirmTopIters := flag.Int("confirm-top-iterations", 20000, "the top 2 sets' second confirmation, on fresh seeds")
 	matrix := flag.Bool("matrix", false, "re-run the search under each sensitivity scenario (lengths, bosses, raid damage, no flask, the camp rules)")
 	cache := flag.String("cache", "default", `the sim cache directory ("" for memory only)`)
 	out := flag.String("out", "", "write <out>.json and <out>.md (default: markdown to stdout)")
@@ -77,6 +79,7 @@ func main() {
 	req := &proto.CompSearchRequest{Size: int32(*size), Tanks: int32(*tanks), Healers: int32(*healers),
 		Iterations: int32(*iters), ContenderIterations: int32(*contender), Seed: *seed, MaxCombos: int32(*maxCombos),
 		SkipSensitivity: *noSens, Confirm: *confirm,
+		ConfirmIterations: int32(*confirmIters), ConfirmTopIterations: int32(*confirmTopIters),
 		Encounter: &proto.CompEncounter{Name: *boss, Duration: *duration, DurationVariation: *variation}}
 	if *health > 0 {
 		req.Encounter.UseHealth = true

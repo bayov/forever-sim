@@ -114,7 +114,15 @@ func presetValues(bestRaid *Raid, cbs []comboBest) []*proto.CompPresetValue {
 	for _, cb := range cbs {
 		score[key(cb.raid.Combo)] = cb.comp.Score
 	}
+	// At the winner's combo, which after the contenders and the confirmation needn't be the combo that
+	// screened best.
 	best := cbs[0]
+	for _, cb := range cbs {
+		if key(cb.raid.Combo) == key(bestRaid.Combo) {
+			best = cb
+			break
+		}
+	}
 	var out []*proto.CompPresetValue
 	for _, p := range Presets {
 		v := &proto.CompPresetValue{Preset: p.ID}
@@ -132,7 +140,7 @@ func presetValues(bestRaid *Raid, cbs []comboBest) []*proto.CompPresetValue {
 				}
 			}
 			if !math.IsInf(alt, -1) {
-				v.AtBest = best.comp.Score - alt
+				v.AtBest, v.HasAtBest = best.comp.Score-alt, true
 			}
 		}
 		with, without := math.Inf(-1), math.Inf(-1)
@@ -144,7 +152,7 @@ func presetValues(bestRaid *Raid, cbs []comboBest) []*proto.CompPresetValue {
 			}
 		}
 		if !math.IsInf(with, -1) && !math.IsInf(without, -1) {
-			v.BestWithMinusWithout = with - without
+			v.BestWithMinusWithout, v.HasBestWithMinusWithout = with-without, true
 		}
 		out = append(out, v)
 	}
@@ -207,14 +215,57 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 		if err != nil {
 			return nil, err
 		}
+		// A role whose givers all bring something else too can't be toggled alone: it goes or comes with
+		// a giver's other roles (and the Crusader with one more paladin), the best of those.
+		with := ""
 		if c == nil {
+			for _, b := range f.Providers {
+				if b.Gives&g == 0 {
+					continue
+				}
+				extra := b.Gives &^ GiftBlessing &^ g &^ ph
+				q2 := q
+				q2.PHAir = append([]proto.RaidTotem{}, q.PHAir...)
+				if in {
+					q2.Up &^= extra
+				} else {
+					q2.Up |= extra
+					if b.Class == proto.Class_ClassPaladin {
+						q2.Paladins = min(3, q2.Paladins+1)
+						q2.Up |= GiftBlessing
+					}
+				}
+				if q2.Key() == q.Key() {
+					continue
+				}
+				c2, err := sc.EvalExact(r, q2, f, ev)
+				if err != nil {
+					return nil, err
+				}
+				if c2 != nil && (c == nil || c2.Score > c.Score) {
+					c, with = c2, extra.String()
+					if b.Class == proto.Class_ClassPaladin && !in {
+						with = strings.TrimPrefix(with+" and a paladin", " and ")
+					}
+				}
+			}
+		}
+		if c == nil {
+			out.roles = append(out.roles, &proto.CompRoleValue{Role: name, InSet: in,
+				Provider: "not measured: no buff set the raid can make differs by it alone"})
 			continue
+		}
+		if with != "" {
+			name += " (with " + with + ")"
 		}
 		rv := &proto.CompRoleValue{Role: name, InSet: in, Measured: true}
 		if in {
 			rv.Net = best.Score - c.Score
-			prov, cost := providerCost(best, g, sc, ev, f)
+			prov, other, cost := providerCost(best, g, sc, ev, f)
 			rv.Provider, rv.ProviderCost = prov, cost
+			if other != 0 {
+				rv.Role += fmt.Sprintf(" (its giver also gives %s, and its cost counts in each)", other)
+			}
 			rv.Gain = rv.Net + cost
 		} else {
 			rv.Net = c.Score - best.Score
@@ -341,25 +392,33 @@ func (sc *Scenario) extras(best *Comp, f *Fillers, ev *exactValuer, model *Model
 	return out, nil
 }
 
-// providerCost is the member who brings a role and what it costs them: their DPS below the best filler
-// in their seat.
-func providerCost(c *Comp, g Gift, sc *Scenario, ev *exactValuer, f *Fillers) (string, float64) {
+// providerCost is the member giving a role, the other roles it gives in the set, and its cost: the best
+// filler in its seat less its DPS.
+func providerCost(c *Comp, g Gift, sc *Scenario, ev *exactValuer, f *Fillers) (string, Gift, float64) {
 	for _, m := range c.Members {
 		if m.B.Gives&g == 0 {
 			continue
 		}
 		bestV := math.Inf(-1)
-		for _, b := range f.Fill {
-			if allowed(b, c.Plan) && b.Class != proto.Class_ClassShaman && (b.Class != proto.Class_ClassPaladin || c.Plan.Paladins >= 3) {
-				s := c.seat(b, m.Seat.Package, sc)
-				v, _, _ := ev.V(b, s)
-				bestV = math.Max(bestV, v)
+		// The first pass records the sims the cache lacks; the second reads them.
+		for pass := 0; pass < 2; pass++ {
+			for _, b := range f.Fill {
+				if allowed(b, c.Plan) && b.Class != proto.Class_ClassShaman && (b.Class != proto.Class_ClassPaladin || c.Plan.Paladins >= 3) {
+					s := c.seat(b, m.Seat.Package, sc)
+					v, _, _ := ev.V(b, s)
+					bestV = math.Max(bestV, v)
+				}
+			}
+			if pass == 0 {
+				if _, err := ev.flush(); err != nil {
+					return m.B.ID, 0, 0
+				}
+				bestV = math.Inf(-1)
 			}
 		}
-		_, _ = ev.flush()
-		return m.B.ID, math.Max(0, bestV-m.DPS)
+		return m.B.ID, m.B.Gives &^ g &^ GiftBlessing & c.Plan.Up, math.Max(0, bestV-m.DPS)
 	}
-	return "", 0
+	return "", 0, 0
 }
 
 // withMembers is the comp with its members changed: the set they and the placeholders give, each member
@@ -382,18 +441,8 @@ func (sc *Scenario) withMembers(c *Comp, members []*Member, ev *exactValuer) (*C
 		p.Up |= GiftBlessing
 	}
 	nc := &Comp{Raid: r, Plan: p, PHParty: c.PHParty, Blessings: c.Blessings}
-	if p.Paladins != c.Plan.Paladins {
-		nc.Blessings = map[proto.Class][]proto.Blessing{}
-		for k := range c.Blessings {
-			ch := blessingChoices(p.Paladins)
-			nc.Blessings[k] = ch[0]
-			if len(c.Blessings[k]) > 0 && p.Paladins > 0 {
-				nc.Blessings[k] = c.Blessings[k][:min(len(c.Blessings[k]), p.Paladins)]
-			}
-		}
-	}
 	for _, m := range members {
-		if m.B.Class == proto.Class_ClassWarrior {
+		if pullSunderer(m.B) {
 			nc.Warriors++
 		}
 	}
@@ -422,8 +471,90 @@ func (sc *Scenario) withMembers(c *Comp, members []*Member, ev *exactValuer) (*C
 		nm.Seat.PI, nm.Seat.Innervate = m.Seat.PI, m.Seat.Innervate
 		nc.Members = append(nc.Members, &nm)
 	}
+	reseat := func() {
+		for _, m := range nc.Members {
+			pi, inn := m.Seat.PI, m.Seat.Innervate
+			m.Seat = nc.seat(m.B, m.Seat.Package, sc)
+			m.Seat.PI, m.Seat.Innervate = pi, inn
+		}
+	}
+	// A change in the paladin count re-solves each class's blessings: the choice its members gain most from.
+	if p.Paladins != c.Plan.Paladins {
+		choices := blessingChoices(p.Paladins)
+		nc.Blessings = map[proto.Class][]proto.Blessing{}
+		for k := range c.Blessings {
+			nc.Blessings[k] = choices[0]
+		}
+		for _, m := range nc.Members {
+			nc.Blessings[m.B.Class] = choices[0]
+		}
+		if len(choices) > 1 {
+			for _, ch := range choices {
+				for _, m := range nc.Members {
+					s := m.Seat
+					tmp := *nc
+					tmp.Blessings = copyBlessings(nc.Blessings)
+					tmp.Blessings[m.B.Class] = ch
+					s2 := tmp.seat(m.B, s.Package, sc)
+					s2.PI, s2.Innervate = s.PI, s.Innervate
+					ev.V(m.B, s2)
+				}
+			}
+			if _, err := ev.flush(); err != nil {
+				return nil, err
+			}
+			next := copyBlessings(nc.Blessings)
+			for cl := range nc.Blessings {
+				bestV := math.Inf(-1)
+				for _, ch := range choices {
+					tmp := *nc
+					tmp.Blessings = copyBlessings(nc.Blessings)
+					tmp.Blessings[cl] = ch
+					v, any := 0.0, false
+					for _, m := range nc.Members {
+						if m.B.Class != cl {
+							continue
+						}
+						s2 := tmp.seat(m.B, m.Seat.Package, sc)
+						s2.PI, s2.Innervate = m.Seat.PI, m.Seat.Innervate
+						d, _, _ := ev.V(m.B, s2)
+						v, any = v+d, true
+					}
+					if any && v > bestV+1e-9 {
+						next[cl], bestV = ch, v
+					}
+				}
+			}
+			nc.Blessings = next
+		}
+		reseat()
+	}
+	// The placeholders' Power Infusions and Innervates a removed or swapped member held go to whoever
+	// gains most from them now (the members keeping theirs keep them).
 	for _, m := range nc.Members {
 		ev.V(m.B, m.Seat)
+	}
+	if _, err := ev.flush(); err != nil {
+		return nil, err
+	}
+	saved := make([]Seat, len(nc.Members))
+	for i, m := range nc.Members {
+		saved[i] = m.Seat
+	}
+	sc.assignCooldowns(nc, ev)
+	if n, err := ev.flush(); err != nil {
+		return nil, err
+	} else if n > 0 {
+		for i, m := range nc.Members {
+			m.Seat = saved[i]
+		}
+		sc.assignCooldowns(nc, ev)
+		if _, err := ev.flush(); err != nil {
+			return nil, err
+		}
+	}
+	for _, m := range nc.Members {
+		m.DPS, m.SE, m.key = ev.V(m.B, m.Seat)
 	}
 	if _, err := ev.flush(); err != nil {
 		return nil, err
@@ -509,8 +640,6 @@ func (sc *Scenario) memberValue(c *Comp, i int, f *Fillers, ev *exactValuer, can
 	return out, nil
 }
 
-// reportDifference breaks a member's DPS less its report build's published DPS into single-player sims:
-// the report's own request, at the faction's race, under the raid's buff set, then on duty.
 // reportBaseline is the report build a member is compared with: the build it was picked as (a pet or
 // encounter variant is its own report build), or for a duty holder its base build.
 func reportBaseline(b *Build) *Build {
@@ -520,12 +649,15 @@ func reportBaseline(b *Build) *Build {
 	return b
 }
 
+// reportDifference breaks a member's DPS less its report build's published DPS into single-player sims:
+// the report's own request, at the faction's race, in this fight (boss, length, flask zone), under the
+// raid's buff set, then on duty or as its variant.
 func (sc *Scenario) reportDifference(m *Member, ev *exactValuer) (float64, []string, error) {
 	base := reportBaseline(m.B)
 	if base.Published == 0 {
 		return 0, nil, nil
 	}
-	reportJob := func(race bool) (*Job, error) {
+	reportJob := func(race, fight bool) (*Job, error) {
 		req := googleProto.Clone(base.Req).(*proto.RaidSimRequest)
 		if race {
 			pl, err := sc.Pool.Player(base, sc.Faction)
@@ -534,16 +666,23 @@ func (sc *Scenario) reportDifference(m *Member, ev *exactValuer) (float64, []str
 			}
 			req.Raid.Parties[0].Players[0] = pl
 		}
+		if fight {
+			sc.Fight.apply(req)
+		}
 		req.SimOptions = &proto.SimOptions{Iterations: ev.iters, RandomSeed: sc.Seed, UseLabeledRands: sc.Sim.Labeled}
 		j := &Job{Build: base, Faction: sc.Faction, Iterations: ev.iters, Seed: sc.Seed}
 		j.req = req
 		return j, nil
 	}
-	j0, err := reportJob(false)
+	j0, err := reportJob(false, false)
 	if err != nil {
 		return 0, nil, err
 	}
-	j1, err := reportJob(true)
+	j1, err := reportJob(true, false)
+	if err != nil {
+		return 0, nil, err
+	}
+	jf, err := reportJob(true, true)
 	if err != nil {
 		return 0, nil, err
 	}
@@ -551,13 +690,14 @@ func (sc *Scenario) reportDifference(m *Member, ev *exactValuer) (float64, []str
 	seat.Own = base.Casts
 	j2 := sc.job(base, seat, ev.iters)
 	j3 := sc.job(m.B, m.Seat, ev.iters)
-	if err := sc.sim([]*Job{j0, j1, j2, j3}); err != nil {
+	if err := sc.sim([]*Job{j0, j1, jf, j2, j3}); err != nil {
 		return 0, nil, err
 	}
 	parts := []string{
 		fmt.Sprintf("the report's request in this sim: %+.1f", j0.Value.DPS-base.Published),
 		fmt.Sprintf("race (%s): %+.1f", strings.TrimPrefix(base.Race[sc.Faction].String(), "Race"), j1.Value.DPS-j0.Value.DPS),
-		fmt.Sprintf("the raid's buff set: %+.1f", j2.Value.DPS-j1.Value.DPS),
+		fmt.Sprintf("this fight (boss, length, flask zone): %+.1f", jf.Value.DPS-j1.Value.DPS),
+		fmt.Sprintf("the raid's buff set: %+.1f", j2.Value.DPS-jf.Value.DPS),
 	}
 	if m.B != base {
 		label := "its pet"

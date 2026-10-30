@@ -141,6 +141,7 @@ func (sc *Scenario) runHealth(req *proto.CompSearchRequest, fixed []*Build, prog
 	L := req.Encounter.Duration
 	sc.BossHealth = health
 	var out *proto.CompScenarioResult
+	var passNotes []string
 	for pass := 0; pass < 4; pass++ {
 		sc.HealthLength = L
 		// The model ranks at the nearest grid point; the exact values interpolate.
@@ -151,14 +152,20 @@ func (sc *Scenario) runHealth(req *proto.CompSearchRequest, fixed []*Build, prog
 		if err != nil {
 			return nil, err
 		}
-		next := health / out.Comps[0].Dps
+		w := out.Comps[0]
+		dps := w.Dps
+		if w.Confirmed {
+			dps = w.RaidSimDps
+		}
+		next := health / dps
 		out.FightSeconds = L
-		out.Notes = append(out.Notes, fmt.Sprintf("health fight pass %d: %.1f s, the winner kills the boss in %.1f s", pass+1, L, next))
+		passNotes = append(passNotes, fmt.Sprintf("health fight pass %d: %.1f s, the winner kills the boss in %.1f s", pass+1, L, next))
 		if math.Abs(next-L) <= 1 {
 			break
 		}
 		L = next
 	}
+	out.Notes = append(passNotes, out.Notes...)
 	return out, nil
 }
 
@@ -744,7 +751,7 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 		cp := sc.compProto(c, best, model)
 		if x, ok := conf[c]; ok {
 			cp.Confirmed, cp.RaidSimDps, cp.RaidSimSe = true, x.dps, x.se
-			if b, okb := conf[best]; okb {
+			if b, okb := conf[best]; okb && c != best {
 				cp.RaidSimGap, cp.RaidSimGapSe = b.dps-x.dps, math.Hypot(b.se, x.se)
 			}
 		}
@@ -775,16 +782,13 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 			break
 		}
 	}
-	out.PresetValues = presetValues(cbs[0].raid, cbs)
+	out.PresetValues = presetValues(best.Raid, cbs)
 	report("extras", best)
 	// The role table and member values at the screening iterations, with the best comp's members
 	// re-valued there too so the differences are like for like.
-	bestLo, err := sc.EvalExact(best.Raid, best.Plan, f, ev)
+	bestLo, err := sc.withMembers(best, best.Members, ev)
 	if err != nil {
 		return nil, err
-	}
-	if bestLo == nil {
-		bestLo = best
 	}
 	extras, err := sc.extras(bestLo, f, ev, model, dominatedBy, cands)
 	if err != nil {
@@ -1005,9 +1009,13 @@ func (r *Raid) neighbours(p Plan) []Plan {
 // localMoves polishes a signature's best exact sets (docs/raid_sim.md, The search, step 5): a move stays
 // only when it beats the set by 2 standard errors of the difference, until none does.
 func (sc *Scenario) localMoves(r *Raid, sr *sigResult, f *Fillers, ev *exactValuer, model *Model) error {
+	// Only the sets already simmed exactly are done; the others were only ranked by the model, and a
+	// move to one of them is what this step is for.
 	seen := map[string]bool{}
 	for _, s := range sr.ranked {
-		seen[s.plan.Key()] = true
+		if s.comp != nil {
+			seen[s.plan.Key()] = true
+		}
 	}
 	mv := modelValuer{model}
 	for step := 0; step < 6; step++ {

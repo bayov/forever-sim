@@ -22,7 +22,11 @@ func Markdown(res *proto.CompSearchResult) string {
 	req := res.Request
 	fmt.Fprintf(&b, "# Comp search: %d players, %d tanks, %d healers\n\n", req.Size, req.Tanks, req.Healers)
 	e := req.Encounter
-	fmt.Fprintf(&b, "%s boss, %.0f ± %.0f s", e.Name, e.Duration, e.DurationVariation)
+	if e.UseHealth {
+		fmt.Fprintf(&b, "%s boss with %.0f health (the fight lasts until it dies)", e.Name, e.BossHealth)
+	} else {
+		fmt.Fprintf(&b, "%s boss, %.0f ± %.0f s", e.Name, e.Duration, e.DurationVariation)
+	}
 	if e.MobType != proto.MobType_MobTypeUnknown {
 		fmt.Fprintf(&b, ", %s", shortEnum(e.MobType.String(), "MobType"))
 	}
@@ -40,14 +44,26 @@ func Markdown(res *proto.CompSearchResult) string {
 			camps = "camps on"
 		}
 		fmt.Fprintf(&b, "## %s, %s\n\n", sc.Faction, camps)
+		if e.UseHealth && sc.FightSeconds > 0 {
+			fmt.Fprintf(&b, "The boss dies in %.1f s.\n\n", sc.FightSeconds)
+		}
 		if len(sc.Comps) > 0 {
 			best := sc.Comps[0]
-			fmt.Fprintf(&b, "**Best: %.1f raid DPS** (±%.1f), %s.\n\n", best.Dps, 1.96*best.Se, comboText(best.Combo))
+			if best.Confirmed {
+				fmt.Fprintf(&b, "**Best: %.1f raid DPS in the raid sims** (±%.1f at 95%%; score %.1f), %s.\n\n", best.RaidSimDps, 1.96*best.RaidSimSe, best.Dps, comboText(best.Combo))
+			} else {
+				fmt.Fprintf(&b, "**Best: score %.1f** (±%.1f at 95%%), %s.\n\n", best.Dps, 1.96*best.Se, comboText(best.Combo))
+			}
+			b.WriteString("A score is the sum of the members' single-player sims in their seats; a raid sim runs the whole raid.\n\n")
 			if sc.TieSet > 1 {
 				fmt.Fprintf(&b, "The first %d comps below are a tie (within 2 standard errors or 0.1%%).\n\n", sc.TieSet)
 			}
 			for i, c := range sc.Comps {
-				fmt.Fprintf(&b, "%d. **%.1f** (%s): %s\n", i+1, c.Dps, gapText(c), compText(c))
+				if c.Confirmed {
+					fmt.Fprintf(&b, "%d. **%.1f** in the raid sims (%s; score %.1f, %s): %s\n", i+1, c.RaidSimDps, raidGapText(c), c.Dps, gapText(c), compText(c))
+				} else {
+					fmt.Fprintf(&b, "%d. score **%.1f** (%s): %s\n", i+1, c.Dps, gapText(c), compText(c))
+				}
 			}
 			b.WriteString("\n")
 			b.WriteString(membersTable(best))
@@ -101,9 +117,9 @@ func Markdown(res *proto.CompSearchResult) string {
 				}
 				fmt.Fprintf(&b, "| %s | %.1f | %.1f |\n", comboText(c.Presets), c.Dps, c.Gap)
 			}
-			b.WriteString("\n**Each preset's DPS value**: at the best combo (the best combo less the best with that slot changed), and the best combo with it less the best without it:\n\n| Preset | At the best | With minus without |\n|---|---|---|\n")
+			b.WriteString("\n**Each preset's DPS value**: at the winner's combo (its screening score less the best with that slot changed), and the best combo with it less the best without it:\n\n| Preset | At the winner's combo | With minus without |\n|---|---|---|\n")
 			for _, p := range sc.PresetValues {
-				fmt.Fprintf(&b, "| %s | %.1f | %.1f |\n", presetName(p.Preset), p.AtBest, p.BestWithMinusWithout)
+				fmt.Fprintf(&b, "| %s | %s | %s |\n", presetName(p.Preset), orNA(p.HasAtBest, p.AtBest), orNA(p.HasBestWithMinusWithout, p.BestWithMinusWithout))
 			}
 		}
 		if len(sc.Buffs) > 0 {
@@ -168,9 +184,16 @@ func Markdown(res *proto.CompSearchResult) string {
 
 func gapText(c *proto.CompResult) string {
 	if c.Gap == 0 {
-		return "best"
+		return "the best score"
 	}
-	return fmt.Sprintf("%.1f behind, ±%.1f", c.Gap, 1.96*c.GapSe)
+	return fmt.Sprintf("%.1f behind the best score, ±%.1f at 95%%", c.Gap, 1.96*c.GapSe)
+}
+
+func raidGapText(c *proto.CompResult) string {
+	if c.RaidSimGap == 0 && c.RaidSimGapSe == 0 {
+		return "the best"
+	}
+	return fmt.Sprintf("%.1f behind the best, ±%.1f at 95%%", c.RaidSimGap, 1.96*c.RaidSimGapSe)
 }
 
 func comboText(ids []proto.RaidPreset) string {
@@ -244,4 +267,11 @@ func membersTable(c *proto.CompResult) string {
 		fmt.Fprintf(&b, "| %d | %s | %s | %s | %s | %s |\n", m.Party, m.BuildId, m.Race, dps, strings.Join(jobs, ", "), strings.Join(gets, ", "))
 	}
 	return b.String()
+}
+
+func orNA(ok bool, v float64) string {
+	if !ok {
+		return "n/a"
+	}
+	return fmt.Sprintf("%.1f", v)
 }

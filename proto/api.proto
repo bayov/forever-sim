@@ -1028,6 +1028,9 @@ message CompPresetValue {
 	RaidPreset preset = 1;
 	double at_best = 2;           // the best combo minus the best with that slot's preset changed
 	double best_with_minus_without = 3;
+	// Whether each value could be found from the ranked combos (n/a otherwise).
+	bool has_at_best = 4;
+	bool has_best_with_minus_without = 5;
 }
 
 message CompBuffRecord {

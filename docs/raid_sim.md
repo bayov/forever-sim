@@ -434,6 +434,13 @@ up), so the raid sim and the single-player sims use the same one. The number of 
 is part of the buff set. A raid without a warrior tank but with DPS
 warriors needs a Sunder upkeep build (see [Assignments](#assignments)).
 
+A Sunder upkeep warrior's own stacks are the ramp, so it isn't counted among the pull Sunders too. Its
+ramp is still the tank's, one stack per GCD, though a DPS warrior with little rage at the pull stacks
+slower. The second audit measured the other members 4.8 DPS high each under a Sunder upkeep warrior (a
+Beast Mastery hunter 897.5 alone against 892.7 in the raid). Counting it twice was 1.8 of that and is
+fixed; the other 3.0 (about 0.3%) is the slower ramp. The confirmation's raid sims carry it, and a ramp
+measured from the duty build would remove it.
+
 ### Hunter pets
 
 Two pet families give the raid something. Until the launch checks settle it, the raid sim assumes neither
@@ -746,7 +753,8 @@ The main thing the raid sim is for (the user, 2026-10-29).
 
 - the raid size
 - the tank and healer slot counts, and each slot's fixed preset or "any" (the default)
-- optionally, fixed DPS members (a guild's roster), with the rest filled by the search
+- optionally, fixed DPS members (a guild's roster), with the rest filled by the search. A fixed member
+  may hold a duty in its own slot (a fixed Fury warrior on Sunder upkeep), and the fill tries each way.
 - the encounter (boss, creature type, length)
 
 **A run covers both factions, with camps on and off: four results** (see [Camp buffs](#camp-buffs)). Each
@@ -1040,7 +1048,8 @@ The raid sim catches what the single-player sims can't:
 - **What gets reused:** two Fury warriors in one comp, or one comp reached two ways, are one sim. Other raid
   sizes, other slot counts, other signatures and later searches reuse what's there, since a sim is keyed by
   the buff set a build sees, not by who gives it.
-- **A code or database change starts a fresh cache.** Old entries are pruned.
+- **A code or database change starts a fresh cache.** Another binary's cache is pruned once it has gone
+  unused for a week, so the CLI and the native server built from different code don't wipe each other's.
 - **In a Claude Code cloud environment** the cache starts empty each session, and that's fine. The cache
   isn't committed.
 
@@ -1124,6 +1133,10 @@ the same items. It leads with what could change the answer:
    - Each role a DPS member brings is measured at the winning set, with that role alone removed, then
      re-filled and re-resolved. A role the winning set lacks gets its value of adding instead (see
      [Member value](#member-value)).
+   - A role whose givers all bring another role too (a Balance druid's Moonkin Aura with its Gift of the
+     Wild) can't be removed or added alone, so it goes or comes with the giver's other roles, and the row
+     says which; the Crusader comes with one more paladin. A provider holding two roles is charged its
+     cost under each, and the row says so.
    - A shaman placeholder's air totem is valued against the other one, re-filled. Other roles the
      placeholders give are listed without a value: they cost nothing and can't be removed.
    - Not built yet: pairs that interact shown together (Grace of Air with Trueshot Aura or Moonkin Aura,

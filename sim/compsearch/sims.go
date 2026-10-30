@@ -12,6 +12,7 @@ import (
 	"runtime"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	"github.com/wowsims/classic/sim/core"
 	"github.com/wowsims/classic/sim/core/proto"
@@ -156,13 +157,21 @@ func Version() (string, error) {
 	return versionOnce.v, versionOnce.err
 }
 
+// pruneOldVersions removes the caches of other binaries unused for a week. Two binaries in use at once
+// (the CLI and the native server, or two checkouts) share the directory, so a cache that's in use is
+// kept: each run marks its own as used.
 func pruneOldVersions(dir, keep string) {
+	now := time.Now()
+	_ = os.Chtimes(filepath.Join(dir, keep), now, now)
 	entries, err := os.ReadDir(dir)
 	if err != nil {
 		return
 	}
 	for _, e := range entries {
-		if e.IsDir() && e.Name() != keep && len(e.Name()) == 16 {
+		if !e.IsDir() || e.Name() == keep || len(e.Name()) != 16 {
+			continue
+		}
+		if info, err := e.Info(); err == nil && now.Sub(info.ModTime()) > 7*24*time.Hour {
 			os.RemoveAll(filepath.Join(dir, e.Name()))
 		}
 	}

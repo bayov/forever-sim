@@ -145,18 +145,24 @@ type Comp struct {
 	Members   []*Member
 	PHParty   []int // each placeholder's party
 	Blessings map[proto.Class][]proto.Blessing
-	Warriors  int
+	Warriors  int // the warriors casting a Sunder at the pull
 	Score     float64
 	SE        float64
 }
 
 func (c *Comp) seat(b *Build, pkg proto.RaidPackage, sc *Scenario) Seat {
 	pull := c.Warriors
-	if b.Class == proto.Class_ClassWarrior {
+	if pullSunderer(b) {
 		pull--
 	}
 	return Seat{Up: c.Plan.Up, Blessings: c.Blessings[b.Class], PullSunders: max(0, pull), Package: pkg,
 		Camps: sc.Camps, Own: b.Casts, Assumptions: sc.Assumptions}
+}
+
+// pullSunderer is a warrior that casts one Sunder at the pull. One keeping Sunder up is in the ramp
+// instead, so it isn't counted twice.
+func pullSunderer(b *Build) bool {
+	return b.Class == proto.Class_ClassWarrior && b.Duty != proto.Duty_DutySunderUpkeep
 }
 
 // item is a provider candidate: a build and the roles it covers.
@@ -180,8 +186,58 @@ func allowed(b *Build, p Plan) bool {
 }
 
 // Fill fills a plan exactly under the valuer (docs/raid_sim.md, The search, step 4). It returns nil when
-// the plan can't be made with this raid.
+// the plan can't be made with this raid. A fixed member may hold a duty the plan has, in its own slot, so
+// each way of giving the fixed members their duty variants is filled and the best kept.
 func (sc *Scenario) Fill(r *Raid, p Plan, f *Fillers, val Valuer) *Comp {
+	options := make([][]*Build, len(r.Fixed))
+	n := 1 // the ways so far, at most 64
+	for i, b := range r.Fixed {
+		options[i] = []*Build{b}
+		for _, d := range sortedDuties(b.Base.Duties) {
+			v := b.Base.Duties[d]
+			if v != b && v.Gives&^b.Gives&p.Up != 0 && allowed(v, p) && n*(len(options[i])+1) <= 64 {
+				options[i] = append(options[i], v)
+			}
+		}
+		n *= len(options[i])
+	}
+	if n == 1 {
+		return sc.fill(r, p, f, val)
+	}
+	var best *Comp
+	pick := make([]int, len(r.Fixed))
+	for {
+		r2 := *r
+		r2.Fixed = make([]*Build, len(r.Fixed))
+		for i := range r.Fixed {
+			r2.Fixed[i] = options[i][pick[i]]
+		}
+		if c := sc.fill(&r2, p, f, val); c != nil && (best == nil || c.Score > best.Score) {
+			best = c
+		}
+		i := 0
+		for ; i < len(pick); i++ {
+			if pick[i]++; pick[i] < len(options[i]) {
+				break
+			}
+			pick[i] = 0
+		}
+		if i == len(pick) {
+			return best
+		}
+	}
+}
+
+func sortedDuties(m map[proto.Duty]*Build) []proto.Duty {
+	var out []proto.Duty
+	for d := range m {
+		out = append(out, d)
+	}
+	slices.Sort(out)
+	return out
+}
+
+func (sc *Scenario) fill(r *Raid, p Plan, f *Fillers, val Valuer) *Comp {
 	phUp := r.phUp(p)
 	if phUp&^GiftBlessing&^p.Up != 0 {
 		return nil
@@ -329,7 +385,7 @@ func (sc *Scenario) fillOnce(r *Raid, p Plan, f *Fillers, val Valuer, bless map[
 		// Score it at the warrior count it came out with.
 		w := 0
 		for _, m := range comp.Members {
-			if m.B.Class == proto.Class_ClassWarrior {
+			if pullSunderer(m.B) {
 				w++
 			}
 		}
@@ -766,7 +822,13 @@ func (sc *Scenario) seatAndFill(r *Raid, p Plan, f *Fillers, val Valuer, base *C
 
 // assignCooldowns gives the placeholders' Power Infusions and Innervates to the members who gain most.
 func (sc *Scenario) assignCooldowns(c *Comp, val Valuer) {
-	give := func(n int, set func(*Seat, bool)) {
+	// Members already holding one keep it; the rest go to whoever gains most.
+	give := func(n int, has func(Seat) bool, set func(*Seat, bool)) {
+		for _, m := range c.Members {
+			if has(m.Seat) {
+				n--
+			}
+		}
 		if n <= 0 {
 			return
 		}
@@ -776,7 +838,7 @@ func (sc *Scenario) assignCooldowns(c *Comp, val Valuer) {
 		}
 		var gs []g
 		for _, m := range c.Members {
-			if !usesMana(m.B) {
+			if !usesMana(m.B) || has(m.Seat) {
 				continue
 			}
 			s := m.Seat
@@ -792,8 +854,8 @@ func (sc *Scenario) assignCooldowns(c *Comp, val Valuer) {
 			}
 		}
 	}
-	give(c.Raid.phPI, func(s *Seat, v bool) { s.PI = v })
-	give(c.Raid.phInn, func(s *Seat, v bool) { s.Innervate = v })
+	give(c.Raid.phPI, func(s Seat) bool { return s.PI }, func(s *Seat, v bool) { s.PI = v })
+	give(c.Raid.phInn, func(s Seat) bool { return s.Innervate }, func(s *Seat, v bool) { s.Innervate = v })
 }
 
 // Describe is a comp in one line per build.

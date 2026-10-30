@@ -133,7 +133,7 @@ func compFromRaidComp(pool *Pool, sc *Scenario, comp *proto.RaidComp) (*Comp, ma
 		if b.Class == proto.Class_ClassPaladin {
 			pal++
 		}
-		if b.Class == proto.Class_ClassWarrior {
+		if pullSunderer(b) {
 			c.Warriors++
 		}
 		if b.Class == proto.Class_ClassShaman && partyPkg[s.Party] == proto.RaidPackage_RaidPackageNone {

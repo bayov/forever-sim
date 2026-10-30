@@ -5,6 +5,7 @@ import (
 	"os"
 	"strings"
 	"testing"
+	"time"
 
 	"github.com/wowsims/classic/sim/core/proto"
 	"github.com/wowsims/classic/sim/core/simsignals"
@@ -392,7 +393,7 @@ func TestConfirmMatchesScore(t *testing.T) {
 }
 
 // A code or item database change is a new binary, so a new version: its keys and its cache directory are
-// new, and the old version's directory goes.
+// new, and an old version's directory goes once unused for a week.
 func TestCacheVersion(t *testing.T) {
 	p := subPool(t, "warrior__fury")
 	dir := t.TempDir()
@@ -412,8 +413,19 @@ func TestCacheVersion(t *testing.T) {
 	if ka == kb || a.Dir == b.Dir {
 		t.Errorf("two versions share a key or a directory")
 	}
+	// One in use stays (the CLI and the server can run different binaries); one unused for a week goes.
+	if _, err := os.Stat(a.Dir); err != nil {
+		t.Errorf("a version used just now should stay: %v", err)
+	}
+	old := time.Now().Add(-8 * 24 * time.Hour)
+	if err := os.Chtimes(a.Dir, old, old); err != nil {
+		t.Fatal(err)
+	}
+	if _, err := newSimmerAt(p, dir, strings.Repeat("b", 64)); err != nil {
+		t.Fatal(err)
+	}
 	if _, err := os.Stat(a.Dir); !os.IsNotExist(err) {
-		t.Errorf("the old version's directory should be pruned")
+		t.Errorf("a version unused for a week should be pruned")
 	}
 }
 
@@ -436,5 +448,41 @@ func TestMatrix(t *testing.T) {
 	}
 	if got, want := len(res.Scenarios[0].Sensitivity), len(Matrix(req)); got != want {
 		t.Errorf("%d matrix rows, want %d", got, want)
+	}
+}
+
+// fakeValuer values a build by its id alone.
+type fakeValuer map[string]float64
+
+func (v fakeValuer) V(b *Build, s Seat) (float64, float64, string) { return v[b.ID], 0, b.ID }
+
+// A fixed DPS member can hold a duty in its own slot, rather than the fill adding a second member of its
+// class just to hold it.
+func TestFixedMemberHoldsDuty(t *testing.T) {
+	p := subPool(t, "warrior__fury", "mage__fire")
+	fury, mage := p.Builds["warrior__fury"], p.Builds["mage__fire"]
+	sunder := fury.Duties[proto.Duty_DutySunderUpkeep]
+	if sunder == nil {
+		t.Fatal("warrior__fury has no Sunder duty variant")
+	}
+	sc := &Scenario{Pool: p, Faction: proto.Faction_Horde, Fight: Fight{Duration: 180}}
+	r := NewRaid(10, []*Preset{PresetByID(proto.RaidPreset_RaidPresetFeralTank), PresetByID(proto.RaidPreset_RaidPresetDisciplinePriest)}, []*Build{fury})
+	plan := Plan{Up: (r.phUp(Plan{}) | GiftSunderTank | fury.Gives | mage.Gives) &^ GiftBlessing}
+	f := &Fillers{Fill: []*Build{fury, mage}, Providers: []*Build{sunder, mage}}
+	c := sc.Fill(r, plan, f, fakeValuer{fury.ID: 1000, sunder.ID: 950, mage.ID: 1001})
+	if c == nil {
+		t.Fatalf("the plan can't be filled: plan %s, ph %s, fury %s, sunder %s, mage %s", plan.Up, r.phUp(Plan{}), fury.Gives, sunder.Gives, mage.Gives)
+	}
+	warriors := 0
+	for _, m := range c.Members {
+		if m.B.Class == proto.Class_ClassWarrior {
+			warriors++
+			if m.B != sunder || !m.Fixed {
+				t.Errorf("the warrior is %s (fixed %v), not the fixed member on Sunder", m.B.ID, m.Fixed)
+			}
+		}
+	}
+	if warriors != 1 {
+		t.Errorf("%d warriors, want the fixed one alone: %s", warriors, c.Describe())
 	}
 }
