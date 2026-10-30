@@ -58,7 +58,9 @@ var Fields = []Field{
 		if rb(r).TotemWeaponBuff == proto.TotemWeaponBuff_TotemWeaponBuffFlametongue {
 			rb(r).TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffNone
 		}
-	}, func(r *proto.RaidSimRequest) { rb(r).TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffFlametongue }},
+	}, func(r *proto.RaidSimRequest) {
+		rb(r).TotemWeaponBuff = proto.TotemWeaponBuff_TotemWeaponBuffFlametongue
+	}},
 	{"gift_of_the_wild", func(r *proto.RaidSimRequest) { rb(r).GiftOfTheWild = missing }, func(r *proto.RaidSimRequest) { rb(r).GiftOfTheWild = reg }},
 	{"power_word_fortitude", func(r *proto.RaidSimRequest) { rb(r).PowerWordFortitude = missing }, func(r *proto.RaidSimRequest) { rb(r).PowerWordFortitude = reg }},
 	{"mana_spring_totem", func(r *proto.RaidSimRequest) { rb(r).ManaSpringTotem = missing }, func(r *proto.RaidSimRequest) { rb(r).ManaSpringTotem = reg }},

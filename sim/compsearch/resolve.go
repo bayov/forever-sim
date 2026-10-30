@@ -174,7 +174,7 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 	handDuty := map[proto.Duty]bool{}
 	handJudge := map[int32]bool{}
 	handTotem := map[int32]map[proto.TotemElement]bool{} // the elements set by hand
-	noDuty := map[int32]bool{}                          // members set by hand to hold no duty
+	noDuty := map[int32]bool{}                           // members set by hand to hold no duty
 	handBless := map[int32]map[proto.Class]bool{}
 	handCD := map[bool]bool{}
 	for _, a := range comp.Assignments {
