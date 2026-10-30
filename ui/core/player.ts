@@ -503,6 +503,12 @@ export class Player<SpecType extends Spec> {
 		return LevelingPlanSettings.clone(this.levelingPlan);
 	}
 
+	// Compares without the copy getLevelingPlan makes, which is slow for a plan with many
+	// rotations, like the spec's 10 to 60 one.
+	levelingPlanEquals(plan: LevelingPlanSettings): boolean {
+		return LevelingPlanSettings.equals(this.levelingPlan, plan);
+	}
+
 	// A plan saved before the plan had its own rotations gets them here, see
 	// withRotationLibrary.
 	setLevelingPlan(eventID: EventID, plan: LevelingPlanSettings) {

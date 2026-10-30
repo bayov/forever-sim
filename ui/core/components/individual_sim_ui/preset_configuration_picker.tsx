@@ -3,7 +3,7 @@ import { IndividualSimUI } from '../../individual_sim_ui';
 import { PresetBuild } from '../../preset_utils';
 import { APLRotation, APLRotation_Type } from '../../proto/apl';
 import { Consumes, Debuffs, Encounter, EquipmentSpec, HealingModel, IndividualBuffs, PartyBuffs, RaidBuffs, Spec } from '../../proto/common';
-import { IndividualSimSettings, LevelingPlanSettings, SavedTalents } from '../../proto/ui';
+import { IndividualSimSettings, SavedTalents } from '../../proto/ui';
 import { statNames } from '../../proto_utils/names';
 import { normalizeDebuffs } from '../../raid';
 import { EventID, TypedEvent } from '../../typed_event';
@@ -66,6 +66,9 @@ export class PresetConfigurationPicker extends Component {
 			storageKey: simUI.getStorageKey('__savedPresetConfigurations__'),
 			changeEmitters: [simUI.player.changeEmitter, simUI.sim.settingsChangeEmitter, simUI.sim.raid.changeEmitter, simUI.sim.encounter.changeEmitter],
 			equals: (a, b) => (a.build ? !this.changedParts(a.build).length : IndividualSimSettings.equals(a.settings!, b.settings!)),
+			// A preset build compares only its own parts, so it doesn't need currentSettings, which
+			// copies the whole leveling plan and its rotations. We check every preset on each change.
+			matches: data => (data.build ? !this.changedParts(data.build).length : IndividualSimSettings.equals(data.settings!, this.currentSettings())),
 			getData: () => ({ settings: this.currentSettings() }),
 			setData: (eventID, simUI, data) => {
 				if (data.build) {
@@ -227,7 +230,7 @@ export class PresetConfigurationPicker extends Component {
 		// The raid turns some debuffs off, see normalizeDebuffs, so a preset that has them still matches.
 		const hasDebuffs = encounter?.debuffs ? Debuffs.equals(normalizeDebuffs(encounter.debuffs, this.simUI.sim.getRuleset()), raid.getDebuffs()) : true;
 		const hasConsumes = encounter?.consumes ? Consumes.equals(encounter.consumes, player.getConsumes()) : true;
-		const hasLevelingPlan = levelingPlan ? LevelingPlanSettings.equals(levelingPlan, player.getLevelingPlan()) : true;
+		const hasLevelingPlan = levelingPlan ? player.levelingPlanEquals(levelingPlan) : true;
 
 		const changed: Array<[boolean, string]> = [
 			[hasGear, 'gear'],

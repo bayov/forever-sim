@@ -15,6 +15,9 @@ export type SavedDataManagerConfig<ModObject, T> = {
 	storageKey: string;
 	changeEmitters: Array<TypedEvent<any>>;
 	equals: (a: T, b: T) => boolean;
+	// Whether the settings now are those of a saved set. Without it, we compare the set with
+	// getData's, which a manager can skip when getData is slow and the set needs less.
+	matches?: (data: T) => boolean;
 	getData: (modObject: ModObject) => T;
 	setData: (eventID: EventID, modObject: ModObject, data: T) => void;
 	toJson: (a: T) => any;
@@ -137,7 +140,7 @@ export class SavedDataManager<ModObject, T> extends Component {
 
 		this.presetTree.track(dataElem, {
 			name: config.name,
-			matches: () => this.config.equals(config.data, this.config.getData(this.modObject)),
+			matches: () => (this.config.matches ? this.config.matches(config.data) : this.config.equals(config.data, this.config.getData(this.modObject))),
 			enabled: config.enableWhen ? () => config.enableWhen!(this.modObject) : undefined,
 		});
 
