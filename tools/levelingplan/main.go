@@ -38,6 +38,11 @@ func main() {
 	out := flag.String("out", "", "with -in, where to write the LevelingPlanSearchResult JSON (stdout when empty)")
 	keep := flag.String("keep", "", "with -serve, a file to write each request to, to run it again with -in")
 	levelRequests := flag.String("level-requests", "", "with -in, write each level's sim request (the plan's gear, talents and rotation there) into this directory as level_NN.json and don't search, for rotopt -settings")
+	training := flag.Bool("training", false, "with -in, measure what each spell rank the plan casts is worth and make the training schedule under the gold budget (training.go), writing LevelingTrainingSettings to -out")
+	trainingSessions := flag.Int("training-sessions", 400, "with -training, sessions per sim of a level")
+	goldAt40 := flag.Float64("gold-at-40", 115, "with -training, the gold earned by level 40")
+	ridingLevel := flag.Int("riding-level", 43, "with -training, the level we buy riding at, 0 for none")
+	ridingGold := flag.Float64("riding-gold", 90, "with -training, what riding costs us, in gold")
 	flag.Parse()
 
 	if !core.WITH_DB {
@@ -54,6 +59,11 @@ func main() {
 		http.HandleFunc("/search", searchHandler(db, *keep))
 		if err := http.ListenAndServe(*serve, nil); err != nil {
 			log.Fatal(err)
+		}
+	case *in != "" && *training:
+		if err := trainingFile(db, *in, *out, int32(*trainingSessions), *goldAt40, int32(*ridingLevel), *ridingGold); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
 		}
 	case *in != "" && *levelRequests != "":
 		if err := writeLevelRequests(db, *in, *levelRequests); err != nil {

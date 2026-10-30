@@ -1,0 +1,593 @@
+{
+  "goldAt40":  115,
+  "ridingLevel":  43,
+  "ridingGold":  90,
+  "buys":  [
+    {
+      "spellId":  332,
+      "level":  61
+    },
+    {
+      "spellId":  547,
+      "level":  61
+    },
+    {
+      "spellId":  913,
+      "level":  61
+    },
+    {
+      "spellId":  939,
+      "level":  61
+    },
+    {
+      "spellId":  959,
+      "level":  61
+    },
+    {
+      "spellId":  8005,
+      "level":  61
+    },
+    {
+      "spellId":  8058,
+      "level":  61
+    },
+    {
+      "spellId":  10395,
+      "level":  61
+    },
+    {
+      "spellId":  10396,
+      "level":  61
+    },
+    {
+      "spellId":  10414,
+      "level":  61
+    },
+    {
+      "spellId":  10438,
+      "level":  61
+    },
+    {
+      "spellId":  10466,
+      "level":  61
+    },
+    {
+      "spellId":  10467,
+      "level":  61
+    },
+    {
+      "spellId":  10468,
+      "level":  61
+    },
+    {
+      "spellId":  10472,
+      "level":  61
+    },
+    {
+      "spellId":  10473,
+      "level":  61
+    },
+    {
+      "spellId":  10613,
+      "level":  61
+    },
+    {
+      "spellId":  10614,
+      "level":  61
+    },
+    {
+      "spellId":  408342,
+      "level":  61
+    },
+    {
+      "spellId":  408343,
+      "level":  61
+    },
+    {
+      "spellId":  408344,
+      "level":  61
+    },
+    {
+      "spellId":  408345,
+      "level":  61
+    }
+  ],
+  "worth":  [
+    {
+      "spellId":  324,
+      "level":  8,
+      "price":  90,
+      "minutes":  6.8,
+      "rank":  1
+    },
+    {
+      "spellId":  325,
+      "level":  16,
+      "price":  1620,
+      "minutes":  7.9,
+      "rank":  2
+    },
+    {
+      "spellId":  332,
+      "level":  6,
+      "price":  90,
+      "minutes":  -0.2,
+      "rank":  2
+    },
+    {
+      "spellId":  529,
+      "level":  8,
+      "price":  90,
+      "rank":  2
+    },
+    {
+      "spellId":  547,
+      "level":  12,
+      "price":  720,
+      "minutes":  -0.1,
+      "rank":  3
+    },
+    {
+      "spellId":  548,
+      "level":  14,
+      "price":  810,
+      "rank":  3
+    },
+    {
+      "spellId":  905,
+      "level":  24,
+      "price":  3150,
+      "minutes":  15.1,
+      "rank":  3
+    },
+    {
+      "spellId":  913,
+      "level":  18,
+      "price":  1800,
+      "minutes":  -0.9,
+      "rank":  4
+    },
+    {
+      "spellId":  915,
+      "level":  20,
+      "price":  1980,
+      "rank":  4
+    },
+    {
+      "spellId":  939,
+      "level":  24,
+      "price":  3150,
+      "rank":  5
+    },
+    {
+      "spellId":  943,
+      "level":  26,
+      "price":  3600,
+      "rank":  5
+    },
+    {
+      "spellId":  945,
+      "level":  32,
+      "price":  7200,
+      "minutes":  15.3,
+      "rank":  4
+    },
+    {
+      "spellId":  959,
+      "level":  32,
+      "price":  7200,
+      "rank":  6
+    },
+    {
+      "spellId":  5675,
+      "level":  26,
+      "price":  3600,
+      "minutes":  9.1,
+      "rank":  1
+    },
+    {
+      "spellId":  6041,
+      "level":  32,
+      "price":  7200,
+      "rank":  6
+    },
+    {
+      "spellId":  6363,
+      "level":  20,
+      "price":  1980,
+      "minutes":  9.1,
+      "rank":  2
+    },
+    {
+      "spellId":  6364,
+      "level":  30,
+      "price":  6300,
+      "minutes":  5.6,
+      "rank":  3
+    },
+    {
+      "spellId":  6365,
+      "level":  40,
+      "price":  10800,
+      "minutes":  8.9,
+      "rank":  4
+    },
+    {
+      "spellId":  8004,
+      "level":  20,
+      "price":  1980,
+      "minutes":  1.1,
+      "rank":  1
+    },
+    {
+      "spellId":  8005,
+      "level":  40,
+      "price":  10800,
+      "rank":  7
+    },
+    {
+      "spellId":  8008,
+      "level":  28,
+      "price":  5400,
+      "minutes":  0.1,
+      "rank":  2
+    },
+    {
+      "spellId":  8010,
+      "level":  36,
+      "price":  9000,
+      "minutes":  0.3,
+      "rank":  3
+    },
+    {
+      "spellId":  8018,
+      "level":  8,
+      "price":  90,
+      "minutes":  8.3,
+      "rank":  2
+    },
+    {
+      "spellId":  8019,
+      "level":  16,
+      "price":  1620,
+      "minutes":  10.5,
+      "rank":  3
+    },
+    {
+      "spellId":  8042,
+      "level":  4,
+      "price":  90,
+      "rank":  1
+    },
+    {
+      "spellId":  8044,
+      "level":  8,
+      "price":  90,
+      "minutes":  2.9,
+      "rank":  2
+    },
+    {
+      "spellId":  8045,
+      "level":  14,
+      "price":  810,
+      "minutes":  -0.2,
+      "rank":  3
+    },
+    {
+      "spellId":  8046,
+      "level":  24,
+      "price":  3150,
+      "minutes":  11.1,
+      "rank":  4
+    },
+    {
+      "spellId":  8050,
+      "level":  10,
+      "price":  360,
+      "minutes":  5,
+      "rank":  1
+    },
+    {
+      "spellId":  8052,
+      "level":  18,
+      "price":  1800,
+      "minutes":  -2,
+      "rank":  2
+    },
+    {
+      "spellId":  8053,
+      "level":  28,
+      "price":  5400,
+      "minutes":  0.4,
+      "rank":  3
+    },
+    {
+      "spellId":  8056,
+      "level":  20,
+      "price":  1980,
+      "minutes":  24.2,
+      "rank":  1
+    },
+    {
+      "spellId":  8058,
+      "level":  34,
+      "price":  8100,
+      "rank":  2
+    },
+    {
+      "spellId":  8134,
+      "level":  40,
+      "price":  10800,
+      "minutes":  30.1,
+      "rank":  5
+    },
+    {
+      "spellId":  8154,
+      "level":  14,
+      "price":  810,
+      "minutes":  1.8,
+      "rank":  2
+    },
+    {
+      "spellId":  8155,
+      "level":  24,
+      "price":  3150,
+      "minutes":  3.4,
+      "rank":  3
+    },
+    {
+      "spellId":  8512,
+      "level":  32,
+      "price":  7200,
+      "minutes":  47.9,
+      "rank":  1
+    },
+    {
+      "spellId":  10391,
+      "level":  38,
+      "price":  9900,
+      "rank":  7
+    },
+    {
+      "spellId":  10392,
+      "level":  44,
+      "price":  16200,
+      "minutes":  1.6,
+      "rank":  8
+    },
+    {
+      "spellId":  10395,
+      "level":  48,
+      "price":  19800,
+      "rank":  8
+    },
+    {
+      "spellId":  10396,
+      "level":  56,
+      "price":  27000,
+      "rank":  9
+    },
+    {
+      "spellId":  10399,
+      "level":  24,
+      "price":  3150,
+      "minutes":  28.1,
+      "rank":  4
+    },
+    {
+      "spellId":  10406,
+      "level":  34,
+      "price":  8100,
+      "minutes":  7.9,
+      "rank":  4
+    },
+    {
+      "spellId":  10407,
+      "level":  44,
+      "price":  16200,
+      "minutes":  -0.4,
+      "rank":  5
+    },
+    {
+      "spellId":  10408,
+      "level":  54,
+      "price":  26100,
+      "minutes":  3.2,
+      "rank":  6
+    },
+    {
+      "spellId":  10412,
+      "level":  36,
+      "price":  9000,
+      "minutes":  -1,
+      "rank":  5
+    },
+    {
+      "spellId":  10413,
+      "level":  48,
+      "price":  19800,
+      "minutes":  3.2,
+      "rank":  6
+    },
+    {
+      "spellId":  10414,
+      "level":  60,
+      "price":  30600,
+      "rank":  7
+    },
+    {
+      "spellId":  10431,
+      "level":  48,
+      "price":  19800,
+      "minutes":  25.4,
+      "rank":  6
+    },
+    {
+      "spellId":  10432,
+      "level":  56,
+      "price":  27000,
+      "minutes":  17.2,
+      "rank":  7
+    },
+    {
+      "spellId":  10437,
+      "level":  50,
+      "price":  21600,
+      "minutes":  9.2,
+      "rank":  5
+    },
+    {
+      "spellId":  10438,
+      "level":  60,
+      "price":  30600,
+      "rank":  6
+    },
+    {
+      "spellId":  10447,
+      "level":  40,
+      "price":  10800,
+      "minutes":  -0.5,
+      "rank":  4
+    },
+    {
+      "spellId":  10448,
+      "level":  52,
+      "price":  24300,
+      "minutes":  11,
+      "rank":  5
+    },
+    {
+      "spellId":  10466,
+      "level":  44,
+      "price":  16200,
+      "minutes":  -0.3,
+      "rank":  4
+    },
+    {
+      "spellId":  10467,
+      "level":  52,
+      "price":  24300,
+      "minutes":  0.2,
+      "rank":  5
+    },
+    {
+      "spellId":  10468,
+      "level":  60,
+      "price":  30600,
+      "rank":  6
+    },
+    {
+      "spellId":  10472,
+      "level":  46,
+      "price":  18000,
+      "rank":  3
+    },
+    {
+      "spellId":  10473,
+      "level":  58,
+      "price":  28800,
+      "rank":  4
+    },
+    {
+      "spellId":  10495,
+      "level":  36,
+      "price":  9000,
+      "minutes":  8.8,
+      "rank":  2
+    },
+    {
+      "spellId":  10496,
+      "level":  46,
+      "price":  18000,
+      "minutes":  10.2,
+      "rank":  3
+    },
+    {
+      "spellId":  10497,
+      "level":  56,
+      "price":  27000,
+      "minutes":  3.8,
+      "rank":  4
+    },
+    {
+      "spellId":  10613,
+      "level":  42,
+      "price":  14400,
+      "minutes":  -7.2,
+      "rank":  2
+    },
+    {
+      "spellId":  10614,
+      "level":  52,
+      "price":  24300,
+      "minutes":  -11.2,
+      "rank":  3
+    },
+    {
+      "spellId":  15207,
+      "level":  50,
+      "price":  21600,
+      "minutes":  2.9,
+      "rank":  9
+    },
+    {
+      "spellId":  15208,
+      "level":  56,
+      "price":  27000,
+      "minutes":  5.3,
+      "rank":  10
+    },
+    {
+      "spellId":  16314,
+      "level":  34,
+      "price":  8100,
+      "minutes":  67.8,
+      "rank":  5
+    },
+    {
+      "spellId":  16315,
+      "level":  44,
+      "price":  16200,
+      "minutes":  72.5,
+      "rank":  6
+    },
+    {
+      "spellId":  16316,
+      "level":  54,
+      "price":  26100,
+      "minutes":  27.8,
+      "rank":  7
+    },
+    {
+      "spellId":  408341,
+      "level":  12,
+      "price":  720,
+      "minutes":  2.7,
+      "rank":  1
+    },
+    {
+      "spellId":  408342,
+      "level":  22,
+      "price":  2700,
+      "rank":  2
+    },
+    {
+      "spellId":  408343,
+      "level":  32,
+      "price":  7200,
+      "rank":  3
+    },
+    {
+      "spellId":  408344,
+      "level":  42,
+      "price":  14400,
+      "rank":  4
+    },
+    {
+      "spellId":  408345,
+      "level":  52,
+      "price":  24300,
+      "rank":  5
+    }
+  ]
+}

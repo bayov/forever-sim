@@ -357,6 +357,42 @@ message LevelingPlanSettings {
 	// Talents we take whatever the sim says, like Improved Ghost Wolf for walking to quests
 	// and grind spots, which a grinding session doesn't sim. The talent search keeps them.
 	repeated LevelingTalentRequirement required_talents = 9;
+	// Which spell ranks we train when, under a gold budget (docs/leveling_plan.md, Training).
+	LevelingTrainingSettings training = 10;
+}
+
+// Training: the gold we have by level, riding, and when we buy each rank.
+message LevelingTrainingSettings {
+	// The gold earned by level 40, net of food, water and repairs, in gold. The gold earned by
+	// any level grows with the level to the power 3.5 from it. 0 means no budget, and we train
+	// every rank at its level.
+	double gold_at_40 = 1;
+	// The level we buy riding at, and what riding costs then, in gold. Level 0 is no riding.
+	int32 riding_level = 2;
+	double riding_gold = 3;
+	// When we train each rank, for the ranks we don't train at their own level. A rank with no
+	// entry is trained at its level.
+	repeated LevelingTrainingBuy buys = 4;
+	// What each rank is worth, from the training search. Only shown, the sim doesn't read it.
+	repeated LevelingRankWorth worth = 5;
+}
+
+message LevelingTrainingBuy {
+	int32 spell_id = 1;
+	// The level we train the rank at, past 60 for never.
+	int32 level = 2;
+}
+
+message LevelingRankWorth {
+	int32 spell_id = 1;
+	// The rank's level, and the trainer's price in copper before any discount.
+	int32 level = 2;
+	int32 price = 3;
+	// The minutes the rank saves over the levels it's our highest rank, when we train it at its
+	// level.
+	double minutes = 4;
+	// Its rank number, like 3 for Lightning Shield (Rank 3).
+	int32 rank = 5;
 }
 
 // A talent we must have at least points in from level on.

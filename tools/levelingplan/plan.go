@@ -125,6 +125,18 @@ func rotationAt(plan *proto.LevelingPlanSettings, level int32) *proto.APLRotatio
 	return nil
 }
 
+// The ranks we haven't trained yet at a level, by the plan's training schedule: those it
+// trains at a later level.
+func untrainedAt(plan *proto.LevelingPlanSettings, level int32) []int32 {
+	var untrained []int32
+	for _, buy := range plan.GetTraining().GetBuys() {
+		if buy.Level > level {
+			untrained = append(untrained, buy.SpellId)
+		}
+	}
+	return untrained
+}
+
 // A pick is one talent point: its tree and the talent's place in the tree.
 type pick struct{ tree, talent int }
 

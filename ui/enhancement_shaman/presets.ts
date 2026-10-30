@@ -45,6 +45,7 @@ import {
 	LevelingTalentBuild,
 	LevelingTalentPick,
 	LevelingTalentRequirement,
+	LevelingTrainingSettings,
 	SavedTalents,
 } from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
@@ -59,6 +60,7 @@ import LevelingPlan25APLJSON from './apls/leveling_plan_25.apl.json';
 import LevelingPlan30APLJSON from './apls/leveling_plan_30.apl.json';
 import LevelingPlanAuditedJSON from './apls/leveling_plan_audited.json';
 import LevelingRouteJSON from './leveling_route.json';
+import LevelingTrainingJSON from './leveling_training.json';
 import MagmaAPLJSON from './apls/magma.apl.json';
 import ManaTideAPLJSON from './apls/mana_tide.apl.json';
 import OptimizedAPLJSON from './apls/optimized.apl.json';
@@ -1720,6 +1722,9 @@ export const DefaultLevelingPlan = LevelingPlanSettings.create({
 	// Improved Ghost Wolf as early as its row opens (15 and 16), for walking to quests and grind
 	// spots, which the grinding sessions don't sim.
 	requiredTalents: [LevelingTalentRequirement.create({ tree: 1, talent: 5, points: 2, level: 16 })],
+	// When we train each rank, from tools/levelingplan -training: 115g earned by 40 and riding
+	// (90g after the Honored discount) at 43.
+	training: LevelingTrainingSettings.fromJson(LevelingTrainingJSON as any),
 });
 
 // Our RestedXP route for an Orc Shaman (tools/leveling_route): the quest rewards we take on it

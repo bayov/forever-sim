@@ -44,6 +44,9 @@ type levelJob struct {
 	plan     *proto.LevelingPlanSettings
 	rotation *proto.APLRotation
 	imbue    proto.WeaponImbue
+	// The ranks we haven't trained, when they aren't the plan's (training.go).
+	untrained    []int32
+	ownUntrained bool
 }
 
 // planner holds the plan and its gear plan, and makes and runs each level's request the way
@@ -196,6 +199,10 @@ func (p *planner) request(job levelJob, iterations int32, seed int64) *proto.Rai
 		player.BonusTalentPoints = plan.BonusTalentPoints
 	}
 	player.TalentsString = talents
+	player.UntrainedSpells = untrainedAt(plan, level)
+	if job.ownUntrained {
+		player.UntrainedSpells = job.untrained
+	}
 
 	equipment := &proto.EquipmentSpec{Items: make([]*proto.ItemSpec, len(gearSlots))}
 	gear := p.gear.levels[min(int(level), len(p.gear.levels))-1].gear

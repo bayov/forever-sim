@@ -167,6 +167,12 @@ export function rotationAt(plan: LevelingPlanSettings, level: number): APLRotati
 	return range ? libraryRotation(plan, range.name)?.rotation : undefined;
 }
 
+// The ranks we haven't trained yet at a level, by the plan's training schedule: those it
+// trains at a later level (tools/levelingplan/training.go makes the schedule).
+export function untrainedAt(plan: LevelingPlanSettings, level: number): number[] {
+	return (plan.training?.buys ?? []).filter(buy => buy.level > level).map(buy => buy.spellId);
+}
+
 // A name for a new rotation of the library, the name itself when it's free, or else with a
 // number after it, like "Level 20 Leveling Plan 2".
 export function freeRotationName(plan: LevelingPlanSettings, name: string): string {

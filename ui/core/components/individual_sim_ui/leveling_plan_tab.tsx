@@ -17,6 +17,7 @@ import {
 	talentsAt,
 	TalentShape,
 	talentsStringToCounts,
+	untrainedAt,
 	xpToNextLevel,
 } from '../../leveling_plan';
 import { Player } from '../../player';
@@ -38,6 +39,7 @@ import { LevelingGearSection } from './leveling_plan_gear';
 import { LevelingRotationsSection } from './leveling_plan_rotations';
 import { LevelingTalentSearch } from './leveling_plan_talent_search';
 import { LevelingTalentsSection } from './leveling_plan_talents';
+import { LevelingTrainingSection } from './leveling_plan_training';
 
 // What one level of a plan run came to.
 interface LevelResult {
@@ -66,12 +68,13 @@ interface PlanRun {
 
 const PLAN_RUN_KEY = '__levelingPlanRun__';
 
-type Section = 'overview' | 'gear' | 'talents' | 'rotations';
+type Section = 'overview' | 'gear' | 'talents' | 'rotations' | 'training';
 const SECTIONS: Array<{ id: Section; name: string }> = [
 	{ id: 'overview', name: 'Overview' },
 	{ id: 'gear', name: 'Gear' },
 	{ id: 'talents', name: 'Talents' },
 	{ id: 'rotations', name: 'Rotations' },
+	{ id: 'training', name: 'Training' },
 ];
 
 // The Leveling Plan tab, the page of the Leveling mode (sim_mode.ts, leveling_plan.ts).
@@ -251,6 +254,7 @@ export class LevelingPlanTab extends SimTab {
 			new LevelingPlanCharacter(simUI.sim, this.player.spec, makeRequest),
 			characterKey,
 		);
+		new LevelingTrainingSection(this.sections.get('training')!, simUI);
 		this.gear.planChangeEmitter.on(() => this.rotations.refresh());
 		this.showSection('overview');
 		simUI.sim.encounter.changeEmitter.on(() => this.syncActiveSections());
@@ -329,6 +333,7 @@ export class LevelingPlanTab extends SimTab {
 		player.level = level;
 		player.bonusTalentPoints = level >= BONUS_TALENT_POINTS_LEVEL ? plan.bonusTalentPoints : 0;
 		player.talentsString = talentsAt(plan, level, this.talents.shape, options.buildIndex);
+		player.untrainedSpells = untrainedAt(plan, level);
 		player.equipment = gear.asSpec();
 		player.database = Database.mergeSimDatabases(gear.toDatabase(), this.player.getItemSwapGear().toDatabase());
 		if (!plan.useSettingsBuffs) {
@@ -483,6 +488,7 @@ export class LevelingPlanTab extends SimTab {
 			plan.bonusTalentPoints,
 			plan.useSettingsBuffs,
 			rangeAt(plan, level)?.imbue ?? 0,
+			untrainedAt(plan, level),
 			this.gear.gearAt(level)?.asSpec() ?? null,
 		]);
 	}

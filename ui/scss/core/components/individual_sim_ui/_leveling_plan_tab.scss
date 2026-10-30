@@ -879,6 +879,38 @@
 		overflow-y: auto;
 	}
 
+	// The Training part: a row per rank the plan casts.
+	.leveling-plan-training-status {
+		color: var(--bs-gray-500);
+		margin-bottom: var(--block-spacer);
+	}
+
+	.leveling-plan-training-table {
+		td {
+			white-space: nowrap;
+			vertical-align: middle;
+		}
+
+		.leveling-plan-spell {
+			width: 1.25rem;
+			height: 1.25rem;
+			margin-right: var(--spacer-2);
+			vertical-align: middle;
+		}
+
+		.leveling-plan-training-later td:last-child {
+			color: var(--gold);
+		}
+
+		.leveling-plan-training-never td {
+			color: var(--bs-gray-600);
+		}
+
+		.leveling-plan-training-costs {
+			color: var(--bs-danger);
+		}
+	}
+
 	.leveling-plan-editor-head {
 		display: flex;
 		flex-direction: column;

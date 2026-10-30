@@ -277,6 +277,53 @@ Shock when its DoT is down" recast Flame Shock on every cooldown (the reason the
 turned the `flameShock` knob off). And Current Health and Current Health % of the Pull Target
 gave up when the rotation was built, before any mob was found.
 
+## Training
+
+The plan says when we train each spell rank it casts (`LevelingTrainingSettings`). The sims of
+a level leave out the ranks we train later (`Player.untrained_spells`), so the rotation casts
+the rank below them, as it does with a rank named on purpose. A rank with no entry is trained
+at its level. The Training part of the tab shows the schedule, with each rank's price and the
+time it saves.
+
+The training search makes the schedule:
+
+    go run --tags=with_db ./tools/levelingplan -in request.json -training -out training.json
+
+It takes the request the tab's talent search sends (the server's `-keep` file). It sims each
+level with every rank, then again without our highest rank of each spell the level casts. The
+gap is what that rank saves at that level. A rank's worth is the sum over the levels where it's
+our highest. Both sims play the same sessions, and at 400 sessions a sim two seeds agree on
+every rank within about half a minute. 1000 sessions take 5 min for 10 to 60 on 16 cores.
+
+- **Ranks that save nothing.** For each spell we keep the ranks up to the one where the time
+  saved, added up from the first rank, is the most. The ranks after it are never trained.
+  Most save nothing because the plan doesn't cast them there (Fire Nova after 22, Healing Wave
+  next to Lesser Healing Wave). Windfury Totem 2 and 3 cost 7 and 11 min, because the
+  rotation drops the totem every pull and the higher ranks' mana is worth more than their
+  attack power.
+- **The gold budget.** The gold earned by a level is `gold_at_40` times (level / 40) to the
+  power 3.5, net of food, water and repairs. 115g by 40 is what's left from "50 to 100g at 40
+  to 45 before riding" (the user, 2026-10-30) plus about 50g of training. We keep Training's
+  flight money, and riding takes `riding_gold` (90g: 100g less 10% at Honored) at
+  `riding_level`. Prices are wowhead's trainer prices, also 10% off. Where we're short at a
+  level, we train later the highest ranks bought by then that free the gold for the least time
+  (a small knapsack over the spells), one level at a time. Then we measure the worth again
+  under that schedule and schedule again, until it stays the same, because two missing ranks
+  cost more than the two alone.
+
+The ranks the plan casts cost only about 21g by 40, so 115g never runs short, even with riding
+at 40. The budget only matters with less gold. With 100g and riding at 40 it trains 8 ranks of
+34 to 40 at 41, for 9 min. What the gold really buys is the spells the plan never casts (Ghost
+Wolf, Water Breathing, the resistance totems), which are ours to choose.
+
+The enhancement shaman's plan (`ui/enhancement_shaman/leveling_training.json`, 2026-10-30, 1000
+sessions) never trains 22 of the 74 ranks it casts, which saves 19 min (97.67h to 97.35h). The
+ranks worth the most are Rockbiter Weapon 5 and 6 (68 and 73 min), Windfury Totem 1 (48 min),
+Lightning Shield 5 (30 min) and Frost Shock 1 (24 min, cast in place of Earth Shock at 20 to 24).
+
+Still open: the search doesn't tune the rotation again for a rank we train later, so a missing
+rank can look a bit worse than it is.
+
 ## The run
 
 Simulate runs one grinding session request per level, each with the main iterations, then the
