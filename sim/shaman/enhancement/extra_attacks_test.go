@@ -30,12 +30,13 @@ func TestOrcShamanExtraAttacks(t *testing.T) {
 	})
 }
 
-// An extra attack is a white swing that restarts the swing timer, as in 2019 Classic
-// (magey's tests). We give one when the first white swing lands, which comes 10 ms later and
-// pushes the next swing back by those 10 ms. Then we give one from a Stormstrike at 5 sec,
-// halfway through a swing. That one comes right away, and the next swing comes a full 3.6
-// sec after it. Windfury Weapon's two attacks at 10 sec are yellow attacks, not extra
-// attacks, so the next swing stays where it was.
+// An extra attack is a white swing that leaves the swing timer alone under Forever (the
+// user's ruling of 2026-10-30, as wowsims/forever has it; 2019 Classic restarted it, magey's
+// tests). We give one when the first white swing lands, which comes 10 ms later, and the next
+// swing stays 3.6 sec after the first. Then we give one from a Stormstrike at 5 sec, halfway
+// through a swing. That one comes right away, and the next swing still comes at 7.2 sec.
+// Windfury Weapon's two attacks at 10 sec are yellow attacks, not extra attacks, so the next
+// swing stays where it was.
 func testExtraAttackSwingTimer(t *testing.T) {
 	sim, enh := weaponSim{level: 30, weapon: &proto.ItemSpec{Id: whirlwind}, imbue: proto.WeaponImbue_WindfuryWeapon, seconds: 17}.start()
 	sim.PrePull()
@@ -64,7 +65,7 @@ func testExtraAttackSwingTimer(t *testing.T) {
 	runSim(sim)
 
 	// Each white hit lands 10 ms after its swing (the server batch window).
-	want := []float64{0, 0.01, 3.61, 5, 8.6, 12.2, 15.8}
+	want := []float64{0, 0.01, 3.6, 5, 7.2, 10.8, 14.4}
 	if len(swings) != len(want) {
 		t.Fatalf("white hits landed at %v, want swings at %v sec", swings, want)
 	}

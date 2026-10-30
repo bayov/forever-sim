@@ -272,8 +272,10 @@ func TestForeverCompletedCastResetsSwingTimer(t *testing.T) {
 		fc.Resetting.Cast(sim, fc.CurrentTarget)
 		castEnd := sim.CurrentTime + swingResetCastTime
 		stepSwingSim(t, sim, castEnd-SpellBatchWindow/2)
-		// As a swing that procs an extra attack leaves it: due one batch later.
+		// As a swing that procs an extra attack leaves it: due one batch later, with the next
+		// swing kept where the swing put it.
 		extraAt := sim.CurrentTime + SpellBatchWindow
+		aa.mh.keepsSchedule, aa.mh.keptSwingAt = true, aa.mh.swingAt
 		aa.mh.extraAttacksPending = 1
 		aa.mh.swingAt = extraAt
 		sim.rescheduleWeaponAttack(extraAt)
@@ -282,13 +284,41 @@ func TestForeverCompletedCastResetsSwingTimer(t *testing.T) {
 		if aa.mh.lastSwingAt != extraAt {
 			t.Fatalf("MH extra attack: expected it at %v, got the last swing at %v", extraAt, aa.mh.lastSwingAt)
 		}
-		if expected := extraAt + aa.MainhandSwingSpeed(); aa.MainhandSwingAt() != expected {
+		// The cast's reset sets the next swing; the extra attack leaves it there.
+		if expected := castEnd + aa.MainhandSwingSpeed(); aa.MainhandSwingAt() != expected {
 			t.Fatalf("MH swing: expected %v, got %v", expected, aa.MainhandSwingAt())
 		}
 		if expected := castEnd + aa.OffhandSwingSpeed(); aa.OffhandSwingAt() != expected {
 			t.Fatalf("OH swing: expected the cast to reset it to %v, got %v", expected, aa.OffhandSwingAt())
 		}
 	})
+
+	// Under Forever an extra attack swings at once and leaves the swing timer alone; in Classic
+	// it restarts the swing.
+	for _, tc := range []struct {
+		ruleset proto.Ruleset
+		resets  bool
+	}{{proto.Ruleset_RulesetForever, false}, {proto.Ruleset_RulesetClassic, true}} {
+		t.Run("an extra attack mid-swing under "+tc.ruleset.String(), func(t *testing.T) {
+			sim, fc := setupSwingResetSim(t, tc.ruleset)
+			aa := &fc.AutoAttacks
+			procAt, dueAt := sim.CurrentTime, aa.MainhandSwingAt()
+
+			aa.ExtraMHAttack(sim, 1, ActionID{SpellID: 15600}, ActionID{SpellID: 1})
+			stepSwingSim(t, sim, procAt+SpellBatchWindow)
+
+			if aa.mh.lastSwingAt != procAt {
+				t.Fatalf("MH extra attack: expected it at %v, got the last swing at %v", procAt, aa.mh.lastSwingAt)
+			}
+			expected := dueAt
+			if tc.resets {
+				expected = procAt + aa.MainhandSwingSpeed()
+			}
+			if aa.MainhandSwingAt() != expected {
+				t.Fatalf("MH swing: expected %v, got %v", expected, aa.MainhandSwingAt())
+			}
+		})
+	}
 
 	t.Run("an instant cast leaves the swing timer alone", func(t *testing.T) {
 		sim, fc := setupSwingResetSim(t, proto.Ruleset_RulesetForever)

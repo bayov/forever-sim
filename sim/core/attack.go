@@ -260,6 +260,12 @@ type WeaponAttack struct {
 	curSwingSpeed    float64
 	curSwingDuration time.Duration
 	heldByCast       bool // The swing came due during a cast that resets it and waits for the cast to end.
+
+	// Under Forever an extra attack swings at once and leaves the swing timer alone: the next
+	// swing comes when it was due before the proc (keptSwingAt, keptHeldByCast).
+	keepsSchedule  bool
+	keptSwingAt    time.Duration
+	keptHeldByCast bool
 }
 
 func (wa *WeaponAttack) getWeapon() *Weapon {
@@ -365,6 +371,10 @@ func (wa *WeaponAttack) swing(sim *Simulation) time.Duration {
 	wa.unit.swingingThroughCast = false
 
 	if canSwing {
+		if !isExtraAttack {
+			wa.keepsSchedule = false
+		}
+
 		// Update swing timer BEFORE the cast, so that APL checks for TimeToNextAuto behave correctly
 		// if the attack causes APL evaluations (e.g. from rage gain).
 
@@ -412,6 +422,10 @@ func (wa *WeaponAttack) swing(sim *Simulation) time.Duration {
 			wa.swingAt = sim.CurrentTime + SpellBatchWindow
 			wa.lastSwingAt = sim.CurrentTime
 			sim.rescheduleWeaponAttack(wa.swingAt) // Required to fix extra attack procs triggered during swing
+		} else if isExtraAttack && wa.keepsSchedule {
+			wa.swingAt, wa.heldByCast = wa.keptSwingAt, wa.keptHeldByCast
+			wa.keepsSchedule = false
+			sim.rescheduleWeaponAttack(wa.swingAt)
 		}
 
 		if !sim.Options.Interactive && wa.unit.Rotation != nil {
@@ -621,6 +635,7 @@ func (aa *AutoAttacks) reset(sim *Simulation) {
 	aa.oh.swingAt = NeverExpires
 	aa.mh.heldByCast = false
 	aa.oh.heldByCast = false
+	aa.mh.keepsSchedule = false
 
 	// Make sure extra attacks are reset
 	aa.mh.extraAttacks = 0
@@ -819,6 +834,9 @@ func (aa *AutoAttacks) UpdateSwingTimers(sim *Simulation) {
 		if remainingSwingTime := aa.mh.swingAt - sim.CurrentTime; remainingSwingTime > 0 {
 			aa.mh.swingAt = sim.CurrentTime + time.Duration(float64(remainingSwingTime)*f)
 		}
+		if remainingSwingTime := aa.mh.keptSwingAt - sim.CurrentTime; aa.mh.keepsSchedule && remainingSwingTime > 0 {
+			aa.mh.keptSwingAt = sim.CurrentTime + time.Duration(float64(remainingSwingTime)*f)
+		}
 
 		sim.rescheduleWeaponAttack(aa.mh.swingAt)
 
@@ -843,6 +861,11 @@ func (aa *AutoAttacks) ExtraMHAttackProc(sim *Simulation, attacks int32, actionI
 }
 
 // ExtraMHAttack should be used for all "extra attack" procs in Classic Era versions, including Wild Strikes and Hand of Justice. In vanilla, these procs don't actually grant a full extra attack, but instead just advance the MH swing timer.
+//
+// Under Forever the extra swing comes at once and the next swing stays where it was, as
+// wowsims/forever has it for every extra attack ("We were told these don't reset swings
+// anymore", their Hack and Slash). The user's ruling of 2026-10-30 takes it until a log settles
+// it (notes.md, All classes).
 func (aa *AutoAttacks) ExtraMHAttack(sim *Simulation, attacks int32, actionID ActionID, triggerAction ActionID) {
 	if attacks == 0 {
 		return
@@ -852,6 +875,10 @@ func (aa *AutoAttacks) ExtraMHAttack(sim *Simulation, attacks int32, actionID Ac
 		aa.mh.unit.Log(sim, "gained %d extra main-hand %s from %s triggered by %s", attacks, attacksText, actionID, triggerAction)
 	}
 
+	if sim.IsForever() && !aa.mh.keepsSchedule {
+		aa.mh.keepsSchedule = true
+		aa.mh.keptSwingAt, aa.mh.keptHeldByCast = aa.mh.swingAt, aa.mh.heldByCast
+	}
 	aa.mh.swingAt = sim.CurrentTime
 	aa.mh.spell.SetMetricsSplit(1)
 	sim.rescheduleWeaponAttack(aa.mh.swingAt)
@@ -923,7 +950,7 @@ func (aa *AutoAttacks) StopMeleeUntil(sim *Simulation, readyAt time.Duration, de
 	}
 
 	// Under Forever a swing reset that takes effect now leaves a pending extra attack to swing at
-	// once; the extra attack then resets the swing itself.
+	// once, and the next swing comes a full swing after the reset.
 	keepExtraAttack := func(wa *WeaponAttack) bool {
 		return wa.extraAttacksPending > 0 && readyAt <= sim.CurrentTime && sim.IsForever()
 	}
@@ -931,7 +958,10 @@ func (aa *AutoAttacks) StopMeleeUntil(sim *Simulation, readyAt time.Duration, de
 	if !keepExtraAttack(&aa.mh) {
 		aa.mh.swingAt = readyAt + aa.mh.curSwingDuration
 		aa.mh.heldByCast = false
+		aa.mh.keepsSchedule = false
 		sim.rescheduleWeaponAttack(aa.mh.swingAt)
+	} else if aa.mh.keepsSchedule {
+		aa.mh.keptSwingAt, aa.mh.keptHeldByCast = readyAt+aa.mh.curSwingDuration, false
 	}
 
 	if aa.IsDualWielding && !keepExtraAttack(&aa.oh) {

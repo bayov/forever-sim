@@ -291,6 +291,11 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		// 		}
 		// 	},
 		// });
+		// What the sim found wrong with the setup, such as a weapon imbue that can't go on its weapon.
+		this.addWarning({
+			updateOn: this.player.currentStatsEmitter,
+			getContent: () => this.player.getCurrentStats().warnings,
+		});
 		(config.warnings || []).forEach(warning => this.addWarning(warning(this)));
 
 		if (!this.isWithinRaidSim) {

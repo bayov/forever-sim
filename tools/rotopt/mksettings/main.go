@@ -193,6 +193,7 @@ func main() {
 		player.Profession1, player.Profession2 = setup.professions[0], setup.professions[1]
 	}
 	setup.withSpec(player)
+	fitStonesToWeapons(player)
 
 	raid := core.SinglePlayerRaidProto(player, partyBuffs, raidBuffs, debuffs)
 	raid.Tanks = tanks
@@ -252,4 +253,31 @@ func lowLevelTarget(level int32) *proto.Target {
 		target.MinBaseDamage = 52
 	}
 	return target
+}
+
+// fitStonesToWeapons puts each hand's stone on a weapon it fits: a sharpening stone on an edged
+// weapon, a Dense Weightstone (the same +8 damage) on a blunt one, and none on an empty hand
+// (core.ImbueFitsWeapon, from the stones' SpellEquippedItems). The specs name sharpening stones for
+// both hands; the gear set says what each hand holds.
+func fitStonesToWeapons(player *proto.Player) {
+	if player.Consumes == nil || player.Equipment == nil {
+		return
+	}
+	fit := func(slot proto.ItemSlot, imbue *proto.WeaponImbue) {
+		var weaponType proto.WeaponType
+		if int(slot) < len(player.Equipment.Items) && player.Equipment.Items[slot] != nil {
+			weaponType = core.ItemsByID[player.Equipment.Items[slot].Id].WeaponType
+		}
+		switch {
+		case core.ImbueFitsWeapon(*imbue, weaponType):
+		case weaponType == proto.WeaponType_WeaponTypeUnknown:
+			*imbue = proto.WeaponImbue_WeaponImbueUnknown
+		case *imbue == proto.WeaponImbue_DenseSharpeningStone && core.ImbueFitsWeapon(proto.WeaponImbue_DenseWeightstone, weaponType):
+			*imbue = proto.WeaponImbue_DenseWeightstone
+		default:
+			fmt.Fprintf(os.Stderr, "warning: %v doesn't fit the %v's %v\n", *imbue, slot, weaponType)
+		}
+	}
+	fit(proto.ItemSlot_ItemSlotMainHand, &player.Consumes.MainHandImbue)
+	fit(proto.ItemSlot_ItemSlotOffHand, &player.Consumes.OffHandImbue)
 }
