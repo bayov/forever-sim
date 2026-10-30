@@ -184,7 +184,7 @@ dps_results: {
  key: "TestWardenShaman-Phase1-AllItems-GiftoftheGatheringStorm"
  value: {
   dps: 568.89067
-  tps: 1058.96222
+  tps: 1003.44182
  }
 }
 dps_results: {
@@ -275,7 +275,7 @@ dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Orc-blank-Default-default-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
   dps: 140.08033
-  tps: 520.11195
+  tps: 277.45039
  }
 }
 dps_results: {
@@ -296,7 +296,7 @@ dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Orc-blank-Default-default-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
   dps: 44.6225
-  tps: 211.65314
+  tps: 62.83825
  }
 }
 dps_results: {
@@ -317,7 +317,7 @@ dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Troll-blank-Default-default-FullBuffs-P1-Consumes-LongMultiTarget"
  value: {
   dps: 138.98067
-  tps: 514.1172
+  tps: 274.68195
  }
 }
 dps_results: {
@@ -338,7 +338,7 @@ dps_results: {
  key: "TestWardenShaman-Phase1-Settings-Troll-blank-Default-default-NoBuffs-P1-Consumes-LongMultiTarget"
  value: {
   dps: 44.487
-  tps: 211.5047
+  tps: 62.68981
  }
 }
 dps_results: {

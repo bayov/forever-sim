@@ -300,7 +300,7 @@ dps_results: {
  key: "TestBeastMasteryHawk-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-bm_turret-FullBuffs-Ranged-LongMultiTarget"
  value: {
   dps: 1741.9525
-  tps: 1683.74602
+  tps: 1279.05975
   dtps: 1.95317
  }
 }
@@ -324,7 +324,7 @@ dps_results: {
  key: "TestBeastMasteryHawk-Phase1-Settings-NightElf-level60_phase1_synthetic_ranged-Options-bm_turret-NoBuffs-Ranged-LongMultiTarget"
  value: {
   dps: 884.8995
-  tps: 870.56099
+  tps: 589.47444
   dtps: 1.657
  }
 }
@@ -348,7 +348,7 @@ dps_results: {
  key: "TestBeastMasteryHawk-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Options-bm_turret-FullBuffs-Ranged-LongMultiTarget"
  value: {
   dps: 1759.41383
-  tps: 1680.68906
+  tps: 1276.00279
   dtps: 1.7
  }
 }
@@ -372,7 +372,7 @@ dps_results: {
  key: "TestBeastMasteryHawk-Phase1-Settings-Orc-level60_phase1_synthetic_ranged-Options-bm_turret-NoBuffs-Ranged-LongMultiTarget"
  value: {
   dps: 895.68983
-  tps: 869.45202
+  tps: 588.36547
   dtps: 1.604
  }
 }

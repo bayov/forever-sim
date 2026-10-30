@@ -17,6 +17,7 @@ func (druid *Druid) ApplyTalents() {
 	druid.applyImprovedWrath()
 	druid.applyGenesis()
 	druid.applyMoonglow()
+	druid.applySubtlety()
 	druid.applyImprovedMoonfire()
 	druid.applyVengeance()
 	druid.applyImprovedStarfire()
@@ -117,6 +118,20 @@ func (druid *Druid) applyGenesis() {
 		spells := druid.balanceSpells(druid.Moonfire, druid.InsectSwarm, []*DruidSpell{druid.Rake, druid.Rip})
 		for _, spell := range spells {
 			spell.PeriodicDamageMultiplierAdditive += 0.01 * float64(points)
+		}
+	})
+}
+
+// Subtlety under Forever: 10% a point less threat from our Nature and Arcane spells (client
+// 1.60.1.70630, spell 17118). Earlier clients had it on healing threat.
+func (druid *Druid) applySubtlety() {
+	if druid.Talents.Subtlety == 0 || !druid.Env.IsForever() {
+		return
+	}
+	threatMultiplier := 1 - 0.1*float64(druid.Talents.Subtlety)
+	druid.OnSpellRegistered(func(spell *core.Spell) {
+		if spell.SpellSchool.Matches(core.SpellSchoolNature | core.SpellSchoolArcane) {
+			spell.ThreatMultiplier *= threatMultiplier
 		}
 	})
 }

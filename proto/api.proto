@@ -292,6 +292,21 @@ message TargetedActionMetrics {
 	// Total threat done to this target by this action.
 	double threat = 10;
 
+	// The threat of the hits in each of the damage fields above, so the threat splits the same way:
+	// critical hits (ticks included), ticks, critical ticks, glancing, blocked, blocked critical and
+	// crushing hits.
+	double crit_threat = 37;
+	double tick_threat = 38;
+	double crit_tick_threat = 39;
+	double glance_threat = 40;
+	double block_threat = 41;
+	double blocked_crit_threat = 42;
+	double crush_threat = 43;
+
+	// The threat that came with a landed hit, the outcomes above included. The rest of the threat came
+	// without one: Rage and mana gains, healing and buffs.
+	double hit_threat = 44;
+
 	// Total healing done to this target by this action.
 	double healing = 11;
 
