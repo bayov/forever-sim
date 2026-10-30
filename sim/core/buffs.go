@@ -1426,7 +1426,7 @@ func registerInnervateCD(agent Agent, numInnervates int32) {
 				// the Innervate comes at 10% mana only if the Evocation doesn't. At the mage's usual 70% it
 				// came early, kept the mage above the Evocation's 20% until less than 90 sec were left, and so
 				// took the Evocation's place. That cost a lean raid's Fire mage 14 DPS and a Frostfire mage
-				// 39 (raid_sim.md, Required buffs).
+				// 39 (docs/raid_sim.md, Cooldowns given to someone else).
 				if evocation != nil && evocation.IsReady(sim) && sim.GetRemainingDuration() > InnervateWaitsForEvocation {
 					return character.CurrentMana() <= character.MaxMana()*0.1
 				}
