@@ -164,8 +164,9 @@ export class LevelingTalentsSection {
 		this.render();
 	}
 
+	// The plan to read, see readLevelingPlan. A change starts from getLevelingPlan's copy.
 	private plan(): LevelingPlanSettings {
-		return this.player.getLevelingPlan();
+		return this.player.readLevelingPlan();
 	}
 
 	private selectedBuild(): LevelingTalentBuild | undefined {
@@ -174,7 +175,7 @@ export class LevelingTalentsSection {
 
 	// Changes the selected build. The builds are kept by level, so the change finds it there.
 	private updateSelected(eventID: EventID, change: (build: LevelingTalentBuild) => void) {
-		const plan = this.plan();
+		const plan = this.player.getLevelingPlan();
 		plan.builds = sortedBuilds(plan);
 		const build = plan.builds[this.selected];
 		if (!build) return;
@@ -188,7 +189,7 @@ export class LevelingTalentsSection {
 	}
 
 	private addRespec() {
-		const plan = this.plan();
+		const plan = this.player.getLevelingPlan();
 		const builds = sortedBuilds(plan);
 		const last = builds[builds.length - 1];
 		const level = Math.min(Math.max(builds.length > 1 ? last.level + 5 : plan.fromLevel + 5, plan.fromLevel + 1), plan.toLevel - 1);
@@ -201,7 +202,7 @@ export class LevelingTalentsSection {
 		const target = talentsStringToCounts(this.player.getTalentsString(), this.shape);
 		const eventID = TypedEvent.nextEventID();
 		if (!this.plan().builds.length) {
-			const plan = this.plan();
+			const plan = this.player.getLevelingPlan();
 			plan.builds = [LevelingTalentBuild.create({ level: plan.fromLevel })];
 			this.selected = 0;
 			this.player.setLevelingPlan(eventID, plan);
@@ -331,7 +332,7 @@ export class LevelingTalentsSection {
 					level.value!.value = String(build.level);
 					return;
 				}
-				const newPlan = this.plan();
+				const newPlan = this.player.getLevelingPlan();
 				newPlan.builds = sortedBuilds(newPlan);
 				newPlan.builds[i].level = newLevel;
 				this.player.setLevelingPlan(TypedEvent.nextEventID(), newPlan);
@@ -339,7 +340,7 @@ export class LevelingTalentsSection {
 			if (remove.value) {
 				tippy(remove.value, { content: 'Drop this respec' });
 				remove.value.addEventListener('click', () => {
-					const newPlan = this.plan();
+					const newPlan = this.player.getLevelingPlan();
 					newPlan.builds = sortedBuilds(newPlan).filter((_, j) => j != i);
 					if (this.selected >= i) this.selected = Math.max(this.selected - 1, 0);
 					this.player.setLevelingPlan(TypedEvent.nextEventID(), newPlan);

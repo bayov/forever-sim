@@ -79,7 +79,7 @@ import { Raid } from './raid.js';
 import { Sim } from './sim.js';
 import { playerTalentStringToProto } from './talents/factory.js';
 import { EventID, TypedEvent } from './typed_event.js';
-import { stringComparator } from './utils.js';
+import { deepFreeze, stringComparator } from './utils.js';
 import { WorkerProgressCallback } from './worker_pool';
 
 export interface AuraStats {
@@ -306,7 +306,7 @@ export class Player<SpecType extends Spec> {
 	private epRatios: Array<number> = new Array<number>(Player.numEpRatios).fill(0);
 	private epWeights: Stats = new Stats();
 	private levelingGearPlan: LevelingGearPlanSettings = LevelingGearPlanSettings.create({ seed: 1 });
-	private levelingPlan: LevelingPlanSettings = LevelingPlanSettings.create({ fromLevel: 10, toLevel: 30 });
+	private levelingPlan: LevelingPlanSettings = deepFreeze(LevelingPlanSettings.create({ fromLevel: 10, toLevel: 30 }));
 	private currentStats: PlayerStats = PlayerStats.create();
 	private metadata: UnitMetadata = new UnitMetadata();
 	private petMetadatas: UnitMetadataList = new UnitMetadataList();
@@ -498,23 +498,37 @@ export class Player<SpecType extends Spec> {
 		this.levelingGearPlanChangeEmitter.emit(eventID);
 	}
 
-	// The leveling plan's levels, talent builds and rotations (leveling_plan.ts).
+	// The leveling plan's levels, talent builds and rotations (leveling_plan.ts), as a copy we
+	// can change and pass to setLevelingPlan.
+	//
+	// A copy of a plan with many rotations, like the spec's 10 to 60 one, takes about 0.1s. So
+	// code that only reads the plan uses readLevelingPlan instead.
 	getLevelingPlan(): LevelingPlanSettings {
 		return LevelingPlanSettings.clone(this.levelingPlan);
 	}
 
-	// Compares without the copy getLevelingPlan makes, which is slow for a plan with many
-	// rotations, like the spec's 10 to 60 one.
+	// The leveling plan itself, without a copy, for code that only reads it.
+	//
+	// We never change the plan we hold, setLevelingPlan replaces it. It's frozen, so a change
+	// to it throws, and a plan we handed out before stays as it was.
+	readLevelingPlan(): LevelingPlanSettings {
+		return this.levelingPlan;
+	}
+
 	levelingPlanEquals(plan: LevelingPlanSettings): boolean {
-		return LevelingPlanSettings.equals(this.levelingPlan, plan);
+		return plan === this.levelingPlan || LevelingPlanSettings.equals(this.levelingPlan, plan);
 	}
 
 	// A plan saved before the plan had its own rotations gets them here, see
 	// withRotationLibrary.
+	//
+	// A frozen plan is one we held before, like the one in the settings the sidebar compares
+	// with a preset and then puts back, so we keep it without a copy.
 	setLevelingPlan(eventID: EventID, plan: LevelingPlanSettings) {
+		if (plan === this.levelingPlan) return;
 		plan = withRotationLibrary(plan);
 		if (LevelingPlanSettings.equals(this.levelingPlan, plan)) return;
-		this.levelingPlan = LevelingPlanSettings.clone(plan);
+		this.levelingPlan = Object.isFrozen(plan) ? plan : deepFreeze(LevelingPlanSettings.clone(plan));
 		this.levelingPlanChangeEmitter.emit(eventID);
 	}
 

@@ -179,8 +179,9 @@ export class LevelingRotationsSection {
 		this.syncEditor();
 	}
 
+	// The plan to read, see readLevelingPlan. A change starts from a copy, see change().
 	private plan(): LevelingPlanSettings {
-		return this.player.getLevelingPlan();
+		return this.player.readLevelingPlan();
 	}
 
 	private selectedRotation(): LevelingRotationPreset | undefined {
@@ -238,7 +239,7 @@ export class LevelingRotationsSection {
 	}
 
 	private change(change: (plan: LevelingPlanSettings) => void) {
-		const plan = this.plan();
+		const plan = this.player.getLevelingPlan();
 		plan.rotations = sortedRanges(plan);
 		change(plan);
 		this.player.setLevelingPlan(TypedEvent.nextEventID(), plan);

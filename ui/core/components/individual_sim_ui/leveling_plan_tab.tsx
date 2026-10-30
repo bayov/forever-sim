@@ -159,7 +159,7 @@ export class LevelingPlanTab extends SimTab {
 				labelTooltip: tooltip,
 				positive: true,
 				changedEvent: player => player.levelingPlanChangeEmitter,
-				getValue: player => get(player.getLevelingPlan()),
+				getValue: player => get(player.readLevelingPlan()),
 				setValue: (eventID, player, newValue) => {
 					const plan = player.getLevelingPlan();
 					set(plan, newValue);
@@ -194,7 +194,7 @@ export class LevelingPlanTab extends SimTab {
 				"Level with the Settings tab's buffs, debuffs and consumables. Without them we level solo, because the Settings tab usually has a raid's.",
 			inline: true,
 			changedEvent: player => player.levelingPlanChangeEmitter,
-			getValue: player => player.getLevelingPlan().useSettingsBuffs,
+			getValue: player => player.readLevelingPlan().useSettingsBuffs,
 			setValue: (eventID, player, newValue) => {
 				const plan = player.getLevelingPlan();
 				plan.useSettingsBuffs = newValue;
@@ -296,7 +296,7 @@ export class LevelingPlanTab extends SimTab {
 		}
 		result.rotationsNameTopRanks = true;
 		// The plan may have changed while we asked the sim, and then we try again next time.
-		if (LevelingPlanSettings.equals(this.player.getLevelingPlan(), plan)) this.player.setLevelingPlan(TypedEvent.nextEventID(), result);
+		if (this.player.levelingPlanEquals(plan)) this.player.setLevelingPlan(TypedEvent.nextEventID(), result);
 	}
 
 	protected buildTabContent() {
@@ -475,7 +475,7 @@ export class LevelingPlanTab extends SimTab {
 	// What the plan's character at a level is made of, besides its rotation. When it's the same
 	// as when we loaded the character, the character is still right.
 	private characterKey(level: number): string {
-		const plan = this.player.getLevelingPlan();
+		const plan = this.player.readLevelingPlan();
 		return JSON.stringify([
 			level,
 			talentsAt(plan, level, this.talents.shape),
@@ -525,7 +525,7 @@ export class LevelingPlanTab extends SimTab {
 
 	// The totals of the run we show, a tile each.
 	private renderTiles() {
-		const plan = this.player.getLevelingPlan();
+		const plan = this.player.readLevelingPlan();
 		const run = this.shownRun();
 		const levels = run?.levels ?? [];
 		const hours = this.totalHours(levels);
@@ -560,7 +560,7 @@ export class LevelingPlanTab extends SimTab {
 
 	private renderRespecs() {
 		const run = this.shownRun();
-		const plan = this.player.getLevelingPlan();
+		const plan = this.player.readLevelingPlan();
 		const rows = (run?.respecs ?? []).map(respec => {
 			const kept = run!.kept[respec.build] ?? [];
 			const played = run!.levels.filter(level => kept.some(k => k.level == level.level));
@@ -585,7 +585,7 @@ export class LevelingPlanTab extends SimTab {
 	}
 
 	private renderTable() {
-		const plan = this.player.getLevelingPlan();
+		const plan = this.player.readLevelingPlan();
 		const run = this.shownRun();
 		const gearPlan = this.gear.getPlan();
 		const builds = sortedBuilds(plan);

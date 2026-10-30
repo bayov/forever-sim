@@ -630,8 +630,10 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		if (exportCategory(SimSettingCategories.Gear)) {
 			IndividualSimSettings.mergePartial(proto, {
 				levelingGearPlan: this.player.getLevelingGearPlan(),
-				levelingPlan: this.player.getLevelingPlan(),
 			});
+			// The plan itself and not a copy, which would take about 0.1s, see readLevelingPlan.
+			// It's frozen, so nothing that gets these settings can change it.
+			proto.levelingPlan = this.player.readLevelingPlan();
 		}
 		if (exportCategory(SimSettingCategories.Encounter)) {
 			IndividualSimSettings.mergePartial(proto, {

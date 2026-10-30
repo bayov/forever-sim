@@ -5,6 +5,16 @@ export const randomUUID = () => uuidv4();
 // eslint-disable-next-line @typescript-eslint/no-empty-function
 export const noop = () => {};
 
+// Freezes an object and everything in it, so a change to any part of it throws. It returns
+// the object. Byte arrays stay as they are, because they can't be frozen.
+export function deepFreeze<T>(value: T): T {
+	if (value && typeof value == 'object' && !ArrayBuffer.isView(value) && !Object.isFrozen(value)) {
+		Object.freeze(value);
+		Object.values(value).forEach(deepFreeze);
+	}
+	return value;
+}
+
 export const sleep = (ms: number) => new Promise(r => setTimeout(r, ms));
 
 export const existsInDOM = (element: HTMLElement | null) => document.body.contains(element);
@@ -164,13 +174,13 @@ export function downloadString(data: string, fileName: string) {
 
 export function formatDeltaTextElem(elem: HTMLElement, before: number, after: number, precision: number, lowerIsBetter?: boolean, noColor?: boolean) {
 	const delta = after - before;
-	const deltaPct = Math.abs(delta / (before === 0 ? 1 : before) * 100).toFixed(precision);
+	const deltaPct = Math.abs((delta / (before === 0 ? 1 : before)) * 100).toFixed(precision);
 
 	let deltaStr = delta.toFixed(precision);
 	if (delta >= 0) {
 		deltaStr = `+${deltaStr}`;
 	}
-	
+
 	elem.textContent = `${deltaStr} (${deltaPct}%)`;
 
 	if (noColor || delta == 0) {
