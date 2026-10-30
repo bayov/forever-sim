@@ -526,7 +526,11 @@ class ScenarioView {
 				table(
 					[
 						'Preset',
-						{ label: 'At the winner’s combo', numeric: true, tooltip: 'The winner’s combo minus the best combo with that slot’s preset changed (screening scores)' },
+						{
+							label: 'At the winner’s combo',
+							numeric: true,
+							tooltip: 'The winner’s combo minus the best combo with that slot’s preset changed (screening scores)',
+						},
 						{
 							label: 'With minus without',
 							numeric: true,
