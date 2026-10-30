@@ -57,11 +57,12 @@ export class RaidSimUI extends SimUI {
 
 		this.resultsManager = new RaidSimResultsManager(this);
 
-		this.addTab('Search result', RESULT_TAB, '');
-		this.addTab('Search', SEARCH_TAB, '');
+		// Building a raid and running it comes first. The comp search, which finds the best raids, comes after.
 		this.addTab('Comp', EDITOR_TAB, '');
 		this.addTab('Raid results', DETAILS_TAB, '<div class="detailed-results"></div>');
 		this.addTab('Compare', COMPARE_TAB, '<div class="compare-results"></div>');
+		this.addTab('Search', SEARCH_TAB, '');
+		this.addTab('Search result', RESULT_TAB, '');
 
 		const resultTab = this.tabElem(RESULT_TAB);
 		// A result linked with the page's address opens its tab unless the address names another one

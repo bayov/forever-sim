@@ -1326,6 +1326,22 @@ the Comp tab's raid: its members by slot, assignments, faction, camps and fight,
 - After a reload, Raid results show the latest run again. The sidebar and Raid results each say so when
   they're of another raid than the Comp tab's.
 
+**The Comp tab's layout** (the user's UX pass, 2026-10-30, after their BuffCoordinator addon's raid pane).
+The Comp tab comes first, before Raid results, Compare, Search and Search result.
+
+- A toolbar: size, faction and camp buffs as segmented buttons, New, Clear, Undo, Member values and Run.
+- Over the raid: the tank, healer and DPS counts against the size's usual range, a strip of every raid buff
+  and debuff (lit when someone here gives it, green or orange after a run for up or not), and the raid DPS.
+- The parties side by side. A slot shows the member's spec icon with a role badge, its assignments as
+  icons (gold underline when set by hand) and its DPS in the last run. A party's header shows its Mana
+  Spring, or an empty place for it when it has mana users and no shaman. A click on a member offers its
+  other builds, which keep its assignments where they still fit.
+- A sticky bench of members to add, with a filter. A click adds one to the first open slot.
+- Assignments as cards (`ui/raid_sim/choice_menu.tsx`): Blessings as a paladin by class table, Totems as a
+  shaman by element table, Duties and Cooldowns. Each pick is an icon: gold when set by hand, dashed for
+  Auto, with the last run's pick in it.
+- The search result has a sticky bar that jumps to each section.
+
 **What the page reuses:**
 
 - the `SimUI` base and `addRaidSimAction`, which already shows raid DPS for more than one player

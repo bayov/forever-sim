@@ -35,6 +35,7 @@ import { SimResult } from '../core/proto_utils/sim_result';
 import { classNames, cssClassForClass } from '../core/proto_utils/utils';
 import { RequestTypes } from '../core/sim_signal_manager';
 import { EventID, TypedEvent } from '../core/typed_event';
+import { assignmentPicker, Choice, openChoiceMenu, segmented, toolbarItem } from './choice_menu';
 import {
 	assignedElement,
 	BLESSING_CLASSES,
@@ -53,14 +54,31 @@ import {
 	RAID_SIZES,
 	RaidSimData,
 	ReportBuild,
+	roleName,
 	TOTEM_ELEMENTS,
 	TotemElement,
 	totemElement,
 	totemName,
 } from './data';
+import {
+	BLESSING_ICONS,
+	buildIcon,
+	DUTY_ICONS,
+	effectsOf,
+	INNERVATE_ICON,
+	JUDGEMENT_ICONS,
+	MANA_TIDE_ICON,
+	memberIcon,
+	PACKAGE_ICON,
+	packageHasTide,
+	POWER_INFUSION_ICON,
+	RAID_EFFECTS,
+	RaidEffect,
+	TOTEM_ICONS,
+} from './raid_effects';
 import type { RaidSimUI } from './raid_sim_ui';
 import { DETAILS_TAB } from './raid_sim_ui';
-import { check, field, select } from './search_form';
+import { check } from './search_form';
 import {
 	badge,
 	ci95Labelled,
@@ -152,6 +170,7 @@ export class CompEditor {
 	private readonly assignmentsHost = (<div className="rs-assignments" />) as HTMLElement;
 	private readonly warningsHost = (<ul className="rs-assignment-warnings" attributes={{ 'aria-live': 'polite' }} />) as HTMLElement;
 	private readonly encounterHost = (<div className="rs-encounter" />) as HTMLElement;
+	private readonly overviewHost = (<div className="rs-overview" />) as HTMLElement;
 	private readonly bossHost = (<div className="rs-boss" />) as HTMLElement;
 	private readonly runStatus = (<div className="rs-run-status" />) as HTMLElement;
 	private readonly resultsHost = (<div className="rs-run-results" />) as HTMLElement;
@@ -159,8 +178,11 @@ export class CompEditor {
 	private readonly valuesButton: HTMLButtonElement;
 	private readonly valuesHost = (<div className="rs-member-values" />) as HTMLElement;
 	private drag: DragSource | null = null;
-	// The palette entry picked with a click, placed by clicking a slot (touch screens have no drag and drop).
-	private picked: Omit<Member, 'id'> | null = null;
+	// The bench's filter, and its list of members to add.
+	private readonly benchFilter = (<input className="form-control rs-bench-filter" type="search" placeholder="Filter: fire, wolf, kings…" />) as HTMLInputElement;
+	private readonly benchList = (<div className="rs-bench-list" />) as HTMLElement;
+	// The slot a member was just added to, which flashes once it's drawn.
+	private addedCell: number | null = null;
 	private running = false;
 	// The running raid sim was stopped from the page.
 	private stopping = false;
@@ -209,7 +231,7 @@ export class CompEditor {
 			<button
 				className="btn btn-outline-primary rs-values-button"
 				type="button"
-				title="Each member’s contribution, replacement margin and duty cost, from the native server’s single-player sims">
+				title="Each member’s worth to this raid, from single-player sims on the native server">
 				<i className="fas fa-calculator me-1" />
 				Member values
 			</button>
@@ -225,45 +247,47 @@ export class CompEditor {
 
 		this.rootElem = (
 			<div className="rs-editor">
-				<p className="rs-intro">
-					Build a raid from the DPS Report’s builds and the tank and healer placeholders, drag members between groups, set assignments by hand or
-					leave them automatic, and run it. Each member’s gear, talents, rotation and consumes come whole from its report build.
-				</p>
-				{this.controlsHost}
+				<div className="rs-toolbar">
+					{this.controlsHost}
+					<div className="rs-toolbar-actions">
+						{this.undoButton}
+						{this.valuesButton}
+						{this.runButton}
+					</div>
+				</div>
+				{this.valuesNote}
+				{this.runStatus}
+				{this.overviewHost}
 				<div className="rs-editor-layout">
 					<div className="rs-editor-main">
-						{section(
-							'The raid',
-							[
-								<p className="visually-hidden" id={this.slotHelpId}>
-									Enter or Space places the member picked under Add members, or picks this slot’s member up to move it to another slot. Escape
-									lets go, Delete removes the member, and the arrow keys move between slots.
-								</p>,
-								this.raidHost,
-							],
-							{
-								note: 'Drag a member onto another slot to move or swap it, or pick one below and click a slot. With the keyboard, Enter on a member picks it up and Enter on another slot puts it there.',
-							},
-						)}
-						{section('Add members', this.paletteHost)}
+						<p className="visually-hidden" id={this.slotHelpId}>
+							Enter or Space picks this slot’s member up to move it to another slot. Escape lets go, Delete removes the member, and the arrow keys
+							move between slots.
+						</p>
+						{this.raidHost}
+						<p className="rs-hint">
+							<i className="fas fa-arrows-up-down-left-right me-1" />
+							Drag a member to move or swap it. Click one for its other builds.
+						</p>
+						{section('Assignments', this.assignmentsHost, { className: 'rs-assignments-section' })}
+						{section('Encounter', this.encounterHost, { className: 'rs-encounter-section' })}
+						{this.valuesHost}
+						{this.resultsHost}
 					</div>
-					<div className="rs-editor-side">
-						{section('Assignments', this.assignmentsHost, {
-							note: 'Auto leaves a job to the resolver: biggest gain first, to a placeholder before a DPS member.',
-						})}
-						{section('The encounter', this.encounterHost)}
-					</div>
+					<aside className="rs-bench">{this.paletteHost}</aside>
 				</div>
-				<div className="rs-run-bar">
-					{this.runButton}
-					{this.valuesButton}
-					{this.valuesNote}
-					{this.runStatus}
-				</div>
-				{this.valuesHost}
-				{this.resultsHost}
 			</div>
 		) as HTMLElement;
+		this.benchFilter.setAttribute('aria-label', 'Filter the members to add');
+		this.benchFilter.addEventListener('input', () => this.renderPalette());
+		this.paletteHost.append(
+			<div className="rs-bench-head">
+				<span className="rs-bench-title">Add members</span>
+				<span className="rs-muted">click or drag</span>
+			</div>,
+			this.benchFilter,
+			this.benchList,
+		);
 		parent.appendChild(this.rootElem);
 		simUI.resultsViewer.contentElem.after(this.sidebarStaleNote);
 		simUI.tabElem(DETAILS_TAB).prepend(this.detailsStaleNote);
@@ -492,7 +516,9 @@ export class CompEditor {
 	private assignmentChanged() {
 		this.saveState();
 		this.markStale();
-		this.renderAssignmentWarnings();
+		// The cards show the new pick, and the slots their icons.
+		this.renderRaid();
+		this.renderAssignments();
 	}
 
 	private renderAll() {
@@ -507,8 +533,9 @@ export class CompEditor {
 	private renderControls() {
 		const s = this.state;
 		const newRaid = (
-			<button className="btn btn-outline-secondary" type="button" title="Start over with this size’s default tanks and healers">
-				New raid
+			<button className="btn btn-link rs-toolbar-link" type="button" title="Start over with this size’s usual tanks and healers">
+				<i className="fas fa-file me-1" />
+				New
 			</button>
 		) as HTMLButtonElement;
 		newRaid.addEventListener('click', () => {
@@ -521,7 +548,8 @@ export class CompEditor {
 			this.setUndo(before, 'New raid');
 		});
 		const clear = (
-			<button className="btn btn-outline-secondary" type="button">
+			<button className="btn btn-link rs-toolbar-link" type="button" title="Empty every slot">
+				<i className="fas fa-eraser me-1" />
 				Clear
 			</button>
 		) as HTMLButtonElement;
@@ -536,37 +564,47 @@ export class CompEditor {
 		});
 
 		this.controlsHost.replaceChildren(
-			field(
-				'Raid size',
-				select(
-					[10, 20, 40].map(n => ({ value: `${n}`, label: `${n}` })),
+			toolbarItem(
+				'Size',
+				segmented(
+					[10, 20, 40].map(n => ({ value: `${n}`, label: `${n}`, title: `${n} players` })),
 					`${s.size}`,
 					v => this.resize(parseInt(v)),
+					'Raid size',
 				),
 			),
-			field(
+			toolbarItem(
 				'Faction',
-				select(
-					[Faction.Horde, Faction.Alliance].map(f => ({ value: `${f}`, label: factionName(f) })),
+				segmented(
+					[Faction.Horde, Faction.Alliance].map(f => ({ value: `${f}`, label: factionName(f), title: 'Each build takes its best race of this faction' })),
 					`${s.faction}`,
 					v => {
 						this.state.faction = parseInt(v);
 						this.assignmentChanged();
+						this.renderControls();
 					},
+					'Faction',
 				),
-				'each build takes its best race in it',
 			),
-			field(
+			toolbarItem(
 				'Camp buffs',
-				check('The raid relies on camp buffs', s.campBuffs, v => {
-					this.state.campBuffs = v;
-					this.assignmentChanged();
-				}),
+				segmented(
+					[
+						{ value: 'off', label: 'Off' },
+						{ value: 'on', label: 'On', title: 'The raid relies on camp buffs' },
+					],
+					s.campBuffs ? 'on' : 'off',
+					v => {
+						this.state.campBuffs = v == 'on';
+						this.assignmentChanged();
+						this.renderControls();
+					},
+					'Camp buffs',
+				),
 			),
-			<div className="rs-editor-buttons">
+			<div className="rs-toolbar-edit">
 				{newRaid}
 				{clear}
-				{this.undoButton}
 			</div>,
 		);
 	}
@@ -590,6 +628,7 @@ export class CompEditor {
 		this.state.size = size;
 		this.state.cells = cells;
 		this.changed();
+		this.renderControls();
 		if (dropped.length) {
 			const who = dropped.length == 1 ? 'this member' : `these ${dropped.length} members`;
 			this.setStatus(`Down to ${size} players: ${who} past group ${size / PARTY_SIZE} left the raid: ${dropped.join(', ')}. Undo brings them back.`);
@@ -599,46 +638,81 @@ export class CompEditor {
 
 	// ---- The raid: parties of 5 with drag and drop ----
 
+	// The last run's DPS of the member `id`, while the run is of the raid as it stands.
+	private dpsOf(id: number): number | undefined {
+		const run = this.freshRun;
+		if (!run?.simResult || !run.request) return undefined;
+		const k = run.resolution.slotOfPlayer.indexOf(id);
+		if (k < 0) return undefined;
+		const raidIndex = playersInOrder(run.request)[k];
+		return raidIndex !== undefined ? run.simResult.getPlayerWithRaidIndex(raidIndex)?.dps.avg : undefined;
+	}
+
 	private renderRaid() {
 		const parties = this.state.size / PARTY_SIZE;
-		const run = this.freshRun;
 		// The slot with the keyboard's focus keeps it when the raid is drawn again.
 		const active = document.activeElement;
 		const activeCell = active instanceof HTMLElement && this.raidHost.contains(active) && active.dataset.cell ? parseInt(active.dataset.cell) : null;
 		const keep = this.focusCell ?? activeCell;
-		const dpsOf = (id: number): number | undefined => {
-			if (!run?.simResult || !run.request) return undefined;
-			const k = run.resolution.slotOfPlayer.indexOf(id);
-			if (k < 0) return undefined;
-			return playersInOrder(run.request)[k] !== undefined ? run.simResult.getPlayerWithRaidIndex(playersInOrder(run.request)[k])?.dps.avg : undefined;
-		};
-		this.raidHost.replaceChildren(
-			<div className={`rs-parties rs-parties-${parties}`}>
-				{[...Array(parties).keys()].map(p => {
-					const cells = [...Array(PARTY_SIZE).keys()].map(i => p * PARTY_SIZE + i);
-					const partyDps = cells.reduce((sum, c) => {
-						const m = this.state.cells[c];
-						return sum + (m ? dpsOf(m.id) ?? 0 : 0);
-					}, 0);
-					return (
-						<div className="rs-party party-picker-root active">
-							<div className="rs-party-header">
-								<span className="rs-party-name">Group {p + 1}</span>
-								{partyDps ? <span className="rs-party-dps">{fmt(partyDps)} DPS</span> : null}
-							</div>
-							<div className="players-container">{cells.map(c => this.slotElem(c, dpsOf))}</div>
-						</div>
-					);
-				})}
-			</div>,
-		);
+		this.raidHost.replaceChildren(<div className={`rs-parties rs-parties-${parties}`}>{[...Array(parties).keys()].map(p => this.partyElem(p))}</div>);
 		if (keep !== null) this.raidHost.querySelector<HTMLElement>(`[data-cell="${keep}"]`)?.focus();
 		this.focusCell = null;
+		if (this.addedCell !== null) this.raidHost.querySelector(`[data-cell="${this.addedCell}"]`)?.classList.add('rs-slot-added');
+		this.addedCell = null;
+		this.renderOverview();
 	}
 
-	// What a slot's keys do: Enter or Space places the member picked below, or picks this slot's member up
-	// and puts it down on another slot (a move, or a swap); Escape lets go; Delete removes; the arrow keys
-	// go up and down a group and across the groups.
+	// A party: its name, its own buffs and its DPS in the last run, then its five slots.
+	private partyElem(p: number) {
+		const cells = [...Array(PARTY_SIZE).keys()].map(i => p * PARTY_SIZE + i);
+		const partyDps = cells.reduce((sum, c) => {
+			const m = this.state.cells[c];
+			return sum + (m ? this.dpsOf(m.id) ?? 0 : 0);
+		}, 0);
+		return (
+			<div className="rs-party">
+				<div className="rs-party-header">
+					<span className="rs-party-name">Group {p + 1}</span>
+					<span className="rs-party-buffs">{this.partyBuffs(cells)}</span>
+					{partyDps ? (
+						<span className="rs-party-dps" title="The group’s DPS members in the last run">
+							{fmt(partyDps)} <span className="rs-unit">DPS</span>
+						</span>
+					) : null}
+				</div>
+				<div className="rs-party-slots">{cells.map(c => this.slotElem(c))}</div>
+			</div>
+		);
+	}
+
+	private packageOf(member: Member): RaidPackage {
+		return (member.preset ? presetInfo(member.preset)?.package : this.buildOf(member)?.package) ?? RaidPackage.RaidPackageNone;
+	}
+
+	// The buff that reaches only this party: a shaman's Mana Spring, with Mana Tide from some. A party with
+	// mana users and no shaman shows the empty place where it would be.
+	private partyBuffs(cells: number[]): Node[] {
+		const members = cells.map(c => this.state.cells[c]).filter((m): m is Member => !!m);
+		const giver = members.find(m => this.packageOf(m) != RaidPackage.RaidPackageNone);
+		if (giver) {
+			const pkg = this.packageOf(giver);
+			return [
+				<img className="rs-icon rs-party-buff" src={PACKAGE_ICON} alt="Mana Spring" title={`${packageName(pkg)} for this group, from ${this.memberName(giver)}`} />,
+				...(packageHasTide(pkg) ? [<img className="rs-icon rs-party-buff" src={MANA_TIDE_ICON} alt="Mana Tide" title={`Mana Tide Totem, from ${this.memberName(giver)}`} />] : []),
+			];
+		}
+		const manaUsers = members.filter(m => !m.preset && this.usesMana(m));
+		if (!manaUsers.length) return [];
+		return [
+			<span className="rs-icon rs-party-gap" title={`No Mana Spring: ${plural(manaUsers.length, 'mana user')} here and no shaman`}>
+				<img src={PACKAGE_ICON} alt="No Mana Spring" />
+			</span>,
+		];
+	}
+
+	// What a slot's keys do: Enter or Space picks this slot's member up and puts it down on another slot (a
+	// move, or a swap); Escape lets go; Delete removes; the arrow keys go up and down a group and across the
+	// groups.
 	private slotKey(e: KeyboardEvent, cell: number) {
 		const member = this.state.cells[cell];
 		const parties = this.state.size / PARTY_SIZE;
@@ -653,13 +727,11 @@ export class CompEditor {
 				this.activateSlot(cell);
 				return;
 			case 'Escape':
-				if (this.moving === null && !this.picked) return;
+				if (this.moving === null) return;
 				e.preventDefault();
 				this.moving = null;
-				this.picked = null;
 				this.focusCell = cell;
 				this.setStatus('');
-				this.renderPalette();
 				this.renderRaid();
 				return;
 			case 'Delete':
@@ -681,13 +753,8 @@ export class CompEditor {
 		}
 	}
 
-	// A click, or Enter or Space, on a slot.
+	// Enter or Space on a slot: pick its member up, or put the one picked up here.
 	private activateSlot(cell: number) {
-		if (this.picked) {
-			this.focusCell = cell;
-			this.dropOn(cell, { kind: 'new', member: this.picked });
-			return;
-		}
 		if (this.moving !== null) {
 			const from = this.moving;
 			this.moving = null;
@@ -705,7 +772,7 @@ export class CompEditor {
 		if (!member) return;
 		this.moving = cell;
 		this.focusCell = cell;
-		this.setStatus(`Moving ${this.memberShortName(member, cell)}: Enter or a click on another slot puts it there (a swap if it’s taken); Escape lets go.`);
+		this.setStatus(`Moving ${this.memberShortName(member, cell)}: Enter on another slot puts it there (a swap if it’s taken). Escape lets go.`);
 		this.renderRaid();
 	}
 
@@ -718,70 +785,93 @@ export class CompEditor {
 		this.changed();
 	}
 
-	private slotElem(cell: number, dpsOf: (id: number) => number | undefined) {
+	// A member's name in a slot. The icon and color say the class, so a build goes by its own name.
+	private slotName(member: Member) {
+		return member.preset ? this.memberName(member) : this.memberName(member).replace(/^[^:]*: /, '');
+	}
+
+	private slotElem(cell: number) {
 		const member = this.state.cells[cell];
 		let elem: HTMLElement;
 		const where = `Group ${Math.floor(cell / PARTY_SIZE) + 1}, slot ${(cell % PARTY_SIZE) + 1}`;
 		if (!member) {
 			elem = (
-				<div className="player player-picker-root rs-slot rs-slot-empty" title="An empty slot: drop a member here, or pick one below and click">
-					<span className="rs-slot-empty-text">empty</span>
+				<div className="rs-slot rs-slot-empty" title="Drag a member here, or click one under Add members">
+					<i className="fas fa-plus" />
 				</div>
 			) as HTMLElement;
 			elem.setAttribute('aria-label', `${where}: empty`);
 		} else {
 			const cls = this.classOf(member);
 			const info = member.preset ? presetInfo(member.preset) : undefined;
-			const icon = info?.icon ?? CLASS_ICONS[cls] ?? '';
-			const dps = dpsOf(member.id);
+			const build = this.buildOf(member);
+			const role = info?.role ?? RaidRole.RaidRoleDps;
+			const dps = this.dpsOf(member.id);
 			// A build this page's data doesn't have (a result from a newer report): Run refuses it.
-			const unknownBuild = !member.preset && !!this.data && !this.buildOf(member);
+			const unknownBuild = !member.preset && !!this.data && !build;
 			// The slot itself takes Delete, so its remove button stays out of the tab order.
 			const remove = (
-				<a href="javascript:void(0)" className="player-delete link-danger" attributes={{ role: 'button', 'aria-hidden': 'true' }} title="Remove">
-					<i className="fa fa-times fa-lg" />
-				</a>
-			) as HTMLElement;
+				<button type="button" className="rs-slot-remove" title="Remove" attributes={{ 'aria-hidden': 'true' }}>
+					<i className="fas fa-xmark" />
+				</button>
+			) as HTMLButtonElement;
 			remove.tabIndex = -1;
 			remove.addEventListener('click', e => {
 				e.stopPropagation();
 				this.removeMember(cell);
 			});
+			const sub = unknownBuild ? 'not one of this page’s builds' : role == RaidRole.RaidRoleDps ? classNames[cls] : `${roleName(role)} · ${classNames[cls]}`;
 			elem = (
-				<div className={`player player-picker-root rs-slot bg-${cssClassForClass(cls)}-dampened`} draggable={true}>
-					<div className="player-label">
-						<img className="player-icon" src={icon} draggable={false} alt={iconAlt(cls)} />
-						<div className="player-details">
-							{/* The icon and color say the class, so a slot names only the build, as the palette does. */}
-							<span className={`rs-slot-name text-${cssClassForClass(cls)}`} title={this.memberName(member)}>
-								{member.preset ? this.memberName(member) : this.memberName(member).replace(/^[^:]*: /, '')}
+				<div className={`rs-slot rs-slot-filled rs-class-${cssClassForClass(cls)} ${unknownBuild ? 'rs-slot-unknown' : ''}`} draggable={true}>
+					<span className="rs-slot-icon">
+						<img src={memberIcon(info, build, cls)} draggable={false} alt={iconAlt(cls)} />
+						{role != RaidRole.RaidRoleDps ? (
+							<span className={`rs-role rs-role-${role == RaidRole.RaidRoleTank ? 'tank' : 'healer'}`}>
+								<i className={`fas ${role == RaidRole.RaidRoleTank ? 'fa-shield-alt' : 'fa-plus'}`} />
 							</span>
-							<span className="rs-slot-sub">
-								{unknownBuild ? 'not one of this page’s builds' : info ? (info.role == RaidRole.RaidRoleTank ? 'Tank' : 'Healer') : 'DPS'}
-								{dps !== undefined ? ` · ${fmt(dps)} DPS` : ''}
-							</span>
-						</div>
-					</div>
-					<div className="player-options">{remove}</div>
+						) : null}
+					</span>
+					<span className="rs-slot-text">
+						<span className={`rs-slot-name text-${cssClassForClass(cls)}`}>{this.slotName(member)}</span>
+						<span className="rs-slot-sub">{sub}</span>
+					</span>
+					<span className="rs-slot-jobs">{this.jobIcons(member)}</span>
+					{dps !== undefined ? <span className="rs-slot-dps">{fmt(dps)}</span> : null}
+					{remove}
 				</div>
 			) as HTMLElement;
+			elem.title = `${this.memberName(member)}${info ? ` · ${info.gives}` : build ? ` · gives ${build.gives}` : ''}`;
 			elem.setAttribute(
 				'aria-label',
-				`${where}: ${this.memberName(member)}, ${info ? (info.role == RaidRole.RaidRoleTank ? 'tank' : 'healer') : 'DPS'}${
-					dps !== undefined ? `, ${fmt(dps)} DPS` : ''
-				}${this.moving == cell ? ', picked up to move' : ''}`,
+				`${where}: ${this.memberName(member)}, ${roleName(role)}${dps !== undefined ? `, ${fmt(dps)} DPS` : ''}${
+					this.moving == cell ? ', picked up to move' : ''
+				}`,
 			);
 			if (this.moving == cell) elem.classList.add('rs-slot-moving');
-			if (unknownBuild) elem.classList.add('rs-slot-unknown');
 			elem.addEventListener('dragstart', e => {
 				this.drag = { kind: 'cell', index: cell };
 				e.dataTransfer!.effectAllowed = 'move';
 				e.dataTransfer!.setData('text/plain', `rs-cell:${cell}`);
 				elem.classList.add('dragfrom');
+				this.raidHost.classList.add('rs-dragging');
 			});
 			elem.addEventListener('dragend', () => {
 				elem.classList.remove('dragfrom');
+				this.raidHost.classList.remove('rs-dragging');
 				this.drag = null;
+			});
+			// A click offers the member's other builds, or the other placeholders of its role.
+			elem.addEventListener('click', () => {
+				if (this.moving !== null) {
+					this.activateSlot(cell);
+					return;
+				}
+				openChoiceMenu(elem, {
+					title: `${where}: swap for`,
+					choices: [...this.swapChoices(member), { value: 'remove', label: 'Remove', faIcon: 'fa-xmark', danger: true }],
+					value: chipKey(member),
+					onPick: v => (v == 'remove' ? this.removeMember(cell) : this.swapMember(cell, v)),
+				});
 			});
 		}
 		let depth = 0;
@@ -808,17 +898,53 @@ export class CompEditor {
 			this.dropOn(cell, this.drag);
 			this.drag = null;
 		});
-		elem.addEventListener('click', () => {
-			if (!this.picked && this.moving === null) return;
-			this.activateSlot(cell);
-		});
+		if (!member) elem.addEventListener('click', () => this.moving !== null && this.activateSlot(cell));
 		elem.tabIndex = 0;
 		elem.dataset.cell = `${cell}`;
 		elem.setAttribute('role', 'button');
 		elem.setAttribute('aria-describedby', this.slotHelpId);
 		elem.addEventListener('keydown', e => this.slotKey(e, cell));
-		if (this.picked || (this.moving !== null && this.moving != cell)) elem.classList.add('rs-slot-target');
+		if (this.moving !== null && this.moving != cell) elem.classList.add('rs-slot-target');
 		return elem;
+	}
+
+	// The builds a member can turn into: its class's other builds, or the other tanks or healers.
+	private swapChoices(member: Member): Choice[] {
+		if (member.preset) {
+			const role = presetInfo(member.preset)?.role ?? RaidRole.RaidRoleHealer;
+			return presetsFor(role).map(p => ({ value: chipKey({ preset: p.id }), label: p.name, icon: p.icon, labelClass: `text-${cssClassForClass(p.class)}` }));
+		}
+		const cls = this.classOf(member);
+		return (this.data?.builds ?? [])
+			.filter(b => b.class == cls)
+			.map(b => ({
+				value: chipKey({ buildId: b.id }),
+				label: buildLabel(b).replace(/^[^:]*: /, ''),
+				icon: buildIcon(b),
+				hint: `${fmt(b.published, 0)} DPS`,
+				labelClass: `text-${cssClassForClass(b.class)}`,
+			}));
+	}
+
+	// Turns the member at `cell` into another build or placeholder (a chip key). It keeps its place and its
+	// assignments, but those the new one can't hold go.
+	private swapMember(cell: number, key: string) {
+		const member = this.state.cells[cell];
+		if (!member || key == chipKey(member)) return;
+		const next: Member = key.startsWith('preset-') ? { id: member.id, preset: parseInt(key.slice(7)) } : { id: member.id, buildId: key.slice(6) };
+		this.state.cells[cell] = next;
+		const h = this.state.hand;
+		const id = member.id;
+		const info = next.preset ? presetInfo(next.preset) : undefined;
+		if (this.classOf(next) != Class.ClassPaladin) delete h.blessings[id];
+		if (!info?.paladin) delete h.judgements[id];
+		if (!info?.shaman) delete h.totems[id];
+		if (!info?.powerInfusion) delete h.powerInfusion[id];
+		if (!info?.innervate && !info?.innervateOptional) delete h.innervate[id];
+		const duty = h.duties[id];
+		if (duty !== undefined && (next.preset || (duty != Duty.DutyNone && !this.buildOf(next)?.duties.some(d => d.duty == duty)))) delete h.duties[id];
+		this.addedCell = cell;
+		this.changed();
 	}
 
 	private dropOn(cell: number, source: DragSource) {
@@ -831,8 +957,20 @@ export class CompEditor {
 			const old = cells[cell];
 			if (old) this.dropAssignmentsOf(old.id);
 			cells[cell] = { ...source.member, id: this.state.nextId++ };
+			this.addedCell = cell;
 		}
 		this.changed();
+	}
+
+	// A member from the bench, in the first empty slot.
+	private addMember(member: Omit<Member, 'id'>) {
+		const cell = this.state.cells.findIndex(c => !c);
+		if (cell < 0) {
+			this.setStatus('The raid is full. Drag a member onto a slot to replace who is there.', true);
+			return;
+		}
+		this.setStatus('');
+		this.dropOn(cell, { kind: 'new', member });
 	}
 
 	private dropAssignmentsOf(id: number) {
@@ -848,233 +986,505 @@ export class CompEditor {
 		}
 	}
 
-	// ---- The palette: presets and the report's builds ----
+	// ---- What each member does, as icons on its slot ----
+
+	// The member's assignments: what the last run's resolver gave it while the run is of this raid, else
+	// what's set by hand. A click on one goes to its card under Assignments.
+	private jobIcons(member: Member): Node[] {
+		const jobs: Array<{ icon: string; title: string; hand: boolean }> = [];
+		const id = member.id;
+		const run = this.freshRun;
+		const targetName = (target: number) => {
+			const t = this.memberById(target);
+			return t ? this.memberShortName(t.member, t.cell) : 'nobody';
+		};
+		if (run) {
+			const blessings = new Map<Blessing, { classes: string[]; hand: boolean }>();
+			run.resolution.assignments
+				.filter(a => a.holder == id)
+				.forEach(a => {
+					const j = a.job;
+					if (j.oneofKind == 'blessing') {
+						if (j.blessing.blessing == Blessing.BlessingNone) return;
+						const b = blessings.get(j.blessing.blessing) ?? { classes: [], hand: false };
+						b.classes.push(`${classNames[j.blessing.class]}s`);
+						b.hand ||= a.setByHand;
+						blessings.set(j.blessing.blessing, b);
+					} else if (j.oneofKind == 'judgement' && j.judgement != PaladinJudgement.PaladinJudgementNone) {
+						jobs.push({ icon: JUDGEMENT_ICONS[j.judgement]!, title: `Judgement of ${judgementName(j.judgement)}`, hand: a.setByHand });
+					} else if (j.oneofKind == 'totem' && j.totem.totem != RaidTotem.RaidTotemNone) {
+						jobs.push({ icon: TOTEM_ICONS[j.totem.totem]!, title: `${totemName(j.totem.totem)} Totem`, hand: a.setByHand });
+					} else if (j.oneofKind == 'duty' && j.duty != Duty.DutyNone) {
+						jobs.push({ icon: DUTY_ICONS[j.duty]!, title: dutyName(j.duty), hand: a.setByHand });
+					} else if (j.oneofKind == 'cooldown') {
+						const pi = j.cooldown.powerInfusion;
+						jobs.push({ icon: pi ? POWER_INFUSION_ICON : INNERVATE_ICON, title: `${pi ? 'Power Infusion' : 'Innervate'} on ${targetName(j.cooldown.target)}`, hand: a.setByHand });
+					}
+				});
+			[...blessings.entries()].forEach(([b, { classes, hand }]) =>
+				jobs.unshift({ icon: BLESSING_ICONS[b]!, title: `Greater Blessing of ${blessingName(b)}: ${classes.join(', ')}`, hand }),
+			);
+		} else {
+			const h = this.state.hand;
+			const byBlessing = new Map<Blessing, string[]>();
+			Object.entries(h.blessings[id] ?? {}).forEach(([c, b]) => {
+				if (b == Blessing.BlessingNone || b === undefined) return;
+				byBlessing.set(b, [...(byBlessing.get(b) ?? []), `${classNames[Number(c) as Class]}s`]);
+			});
+			byBlessing.forEach((classes, b) => jobs.push({ icon: BLESSING_ICONS[b]!, title: `Greater Blessing of ${blessingName(b)}: ${classes.join(', ')}`, hand: true }));
+			const j = h.judgements[id];
+			if (j !== undefined && j != PaladinJudgement.PaladinJudgementNone) jobs.push({ icon: JUDGEMENT_ICONS[j]!, title: `Judgement of ${judgementName(j)}`, hand: true });
+			Object.values(h.totems[id] ?? {}).forEach(t => {
+				if (t !== undefined && t != RaidTotem.RaidTotemNone) jobs.push({ icon: TOTEM_ICONS[t]!, title: `${totemName(t)} Totem`, hand: true });
+			});
+			const d = h.duties[id];
+			if (d !== undefined && d != Duty.DutyNone) jobs.push({ icon: DUTY_ICONS[d]!, title: dutyName(d), hand: true });
+			if (h.powerInfusion[id] !== undefined) jobs.push({ icon: POWER_INFUSION_ICON, title: `Power Infusion on ${targetName(h.powerInfusion[id])}`, hand: true });
+			if (h.innervate[id] !== undefined) jobs.push({ icon: INNERVATE_ICON, title: `Innervate on ${targetName(h.innervate[id])}`, hand: true });
+		}
+		// Four fit beside a name. Past that, three and how many more.
+		const shown = jobs.length > 4 ? jobs.slice(0, 3) : jobs;
+		const icons: Node[] = shown.map(job => {
+			const icon = (
+				<button type="button" className={`rs-job ${job.hand ? 'rs-job-hand' : ''}`} title={`${job.title}${job.hand ? ' (set by hand)' : ' (auto)'}`} tabIndex={-1}>
+					<img className="rs-icon" src={job.icon} alt={job.title} draggable={false} />
+				</button>
+			) as HTMLButtonElement;
+			icon.addEventListener('click', e => {
+				e.stopPropagation();
+				this.showAssignmentsOf(id);
+			});
+			return icon;
+		});
+		if (jobs.length > 4) icons.push(<span className="rs-job-more" title={jobs.slice(3).map(j => j.title).join('\n')}>+{jobs.length - 3}</span>);
+		return icons;
+	}
+
+	// Scrolls to a member's assignments and flashes them.
+	private showAssignmentsOf(id: number) {
+		const rows = [...this.assignmentsHost.querySelectorAll<HTMLElement>(`[data-holder="${id}"]`)];
+		if (!rows.length) return;
+		rows[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+		rows.forEach(r => {
+			r.classList.remove('rs-flash');
+			void r.offsetWidth;
+			r.classList.add('rs-flash');
+		});
+	}
+
+	// ---- Over the raid: its roles, and the buffs and debuffs it has ----
+
+	private renderOverview() {
+		const members = this.members();
+		const size = this.state.size;
+		const info = RAID_SIZES[size];
+		const roleOf = (m: Member) => (m.preset ? presetInfo(m.preset)?.role ?? RaidRole.RaidRoleHealer : RaidRole.RaidRoleDps);
+		const count = (role: RaidRole) => members.filter(m => roleOf(m.member) == role).length;
+		const roleChip = (icon: string, n: number, word: string, range?: [number, number]) => {
+			const off = !!range && (n < range[0] || n > range[1]);
+			const usual = range ? (range[0] == range[1] ? `${range[0]}` : `${range[0]} to ${range[1]}`) : '';
+			return (
+				<span className={`rs-role-count ${off ? 'rs-off' : ''}`} title={range ? `A ${size}-player raid usually has ${usual} ${word}` : ''}>
+					<i className={`fas ${icon}`} />
+					<b>{n}</b> {word}
+				</span>
+			);
+		};
+		const open = size - members.length;
+
+		// Who could give each effect, and after a run of this raid, what was up.
+		const givers = new Map<string, string[]>();
+		members.forEach(({ member, cell }) =>
+			effectsOf(member.preset, this.buildOf(member)).forEach(e => givers.set(e, [...(givers.get(e) ?? []), this.memberShortName(member, cell)])),
+		);
+		const run = this.freshRun?.request ? this.freshRun : null;
+		const records = new Map((run?.resolution.buffs ?? []).map(b => [b.effect, b]));
+		const blessed = !!run?.resolution.assignments.some(a => a.job.oneofKind == 'blessing' && a.job.blessing.blessing != Blessing.BlessingNone);
+		const tile = (e: RaidEffect) => {
+			const who = givers.get(e.name) ?? [];
+			const record = records.get(e.name);
+			const up = run ? !!record || (e.name == 'Blessings' && blessed) : false;
+			const state = run ? (up ? 'up' : who.length ? 'off' : 'none') : who.length ? 'can' : 'none';
+			const name = e.label ?? e.name;
+			const why = {
+				up: `Up, from ${record?.provider || who.join(', ')}`,
+				can: `From ${who.join(', ')}`,
+				off: `Not up in the last run. ${who.join(', ')} could give it.`,
+				none: 'Nobody here gives it',
+			}[state];
+			return (
+				<span className={`rs-effect rs-effect-${state}`} title={`${name}\n${why}`}>
+					<img className="rs-icon" src={e.icon} alt={name} />
+				</span>
+			);
+		};
+		const last = this.lastRun?.simResult && this.lastRun.request ? this.lastRun : null;
+		let dps: Node | null = null;
+		if (last) {
+			const iterations = last.request!.simOptions?.iterations || 1;
+			const raidDps = last.simResult!.raidMetrics.dps;
+			dps = (
+				<div className={`rs-overview-dps ${this.stale ? 'rs-stale' : ''}`} title={this.stale ? 'The raid changed after this run' : ''}>
+					<span className="rs-overview-dps-value">{fmt(raidDps.avg)}</span>
+					<span className="rs-overview-dps-label">
+						raid DPS
+						<span className="rs-ci" title="The average’s 95% interval">
+							±{fmt((1.96 * raidDps.stdev) / Math.sqrt(iterations))}
+						</span>
+					</span>
+					<button className="btn btn-link rs-details-link" type="button" onclick={() => this.simUI.activate(DETAILS_TAB)}>
+						Details <i className="fas fa-arrow-right" />
+					</button>
+				</div>
+			);
+		}
+		this.overviewHost.replaceChildren(
+			<div className="rs-overview-roles">
+				{roleChip('fa-shield-alt', count(RaidRole.RaidRoleTank), 'tanks', info.tankRange)}
+				{roleChip('fa-plus', count(RaidRole.RaidRoleHealer), 'healers', info.healerRange)}
+				{roleChip('fa-khanda', count(RaidRole.RaidRoleDps), 'DPS')}
+				{open ? <span className="rs-role-count rs-open">{open} open</span> : null}
+			</div>,
+			<div className="rs-strip" title="">
+				<div className="rs-strip-group">
+					<span className="rs-strip-label">Buffs</span>
+					{RAID_EFFECTS.filter(e => !e.debuff).map(tile)}
+				</div>
+				<div className="rs-strip-group">
+					<span className="rs-strip-label">Debuffs</span>
+					{RAID_EFFECTS.filter(e => e.debuff).map(tile)}
+				</div>
+			</div>,
+			...(dps ? [dps] : []),
+		);
+	}
+
+	// ---- The bench: presets and the report's builds ----
 
 	private renderPalette() {
-		const chip = (member: Omit<Member, 'id'>, label: string, icon: string, cls: Class, title: string) => {
+		const filter = this.benchFilter.value.trim().toLowerCase();
+		const matches = (...words: string[]) => !filter || words.some(w => w.toLowerCase().includes(filter));
+		const entry = (member: Omit<Member, 'id'>, label: string, icon: string, cls: Class, title: string, hint = '') => {
 			const elem = (
-				<button
-					className={`rs-palette-chip ${this.isPicked(member) ? 'active' : ''} text-${cssClassForClass(cls)}`}
-					type="button"
-					draggable={true}
-					title={title}>
-					{icon ? <img className="rs-palette-icon" src={icon} draggable={false} alt={iconAlt(cls)} /> : null}
-					<span>{label}</span>
+				<button className="rs-bench-item" type="button" draggable={true} title={title}>
+					<img className="rs-icon" src={icon} draggable={false} alt={iconAlt(cls)} />
+					<span className={`rs-bench-name text-${cssClassForClass(cls)}`}>{label}</span>
+					{hint ? <span className="rs-bench-hint">{hint}</span> : null}
 				</button>
 			) as HTMLButtonElement;
 			elem.dataset.key = chipKey(member);
-			elem.setAttribute('aria-pressed', this.isPicked(member) ? 'true' : 'false');
 			elem.addEventListener('dragstart', e => {
 				this.drag = { kind: 'new', member };
 				e.dataTransfer!.effectAllowed = 'copy';
 				e.dataTransfer!.setData('text/plain', 'rs-new');
+				this.raidHost.classList.add('rs-dragging');
 			});
-			elem.addEventListener('dragend', () => (this.drag = null));
-			elem.addEventListener('click', () => {
-				this.picked = this.isPicked(member) ? null : member;
-				this.renderPalette();
-				this.renderRaid();
+			elem.addEventListener('dragend', () => {
+				this.drag = null;
+				this.raidHost.classList.remove('rs-dragging');
 			});
+			elem.addEventListener('click', () => this.addMember(member));
 			return elem;
 		};
-		const presetChips = (role: RaidRole) =>
-			presetsFor(role).map(p => chip({ preset: p.id }, p.name, p.icon, p.class, `${p.name} (${p.talents}): ${p.gives}`));
+		const group = (title: string, icon: Node, items: HTMLElement[]) =>
+			items.length ? (
+				<div className="rs-bench-group">
+					<div className="rs-bench-heading">
+						{icon}
+						{title}
+					</div>
+					<div className="rs-bench-items">{items}</div>
+				</div>
+			) : null;
+		const presetGroup = (title: string, role: RaidRole, faIcon: string) =>
+			group(
+				title,
+				<i className={`fas ${faIcon} rs-bench-role`} />,
+				presetsFor(role)
+					.filter(p => matches(p.name, title))
+					.map(p => entry({ preset: p.id }, p.name, p.icon, p.class, `${p.name}: ${p.gives}`)),
+			);
 
-		// The chip with the keyboard's focus keeps it when the palette is drawn again.
+		// The entry with the keyboard's focus keeps it when the bench is drawn again.
 		const active = document.activeElement;
-		const activeKey = active instanceof HTMLElement && this.paletteHost.contains(active) ? active.dataset.key : undefined;
+		const activeKey = active instanceof HTMLElement && this.benchList.contains(active) ? active.dataset.key : undefined;
 		const byClass = new Map<string, ReportBuild[]>();
 		this.data?.builds.forEach(b => {
 			if (!byClass.has(b.className)) byClass.set(b.className, []);
 			byClass.get(b.className)!.push(b);
 		});
-		this.paletteHost.replaceChildren(
-			<div className="rs-palette-group">
-				<span className="rs-palette-label">Tanks</span>
-				<div className="rs-palette-chips">{presetChips(RaidRole.RaidRoleTank)}</div>
-			</div>,
-			<div className="rs-palette-group">
-				<span className="rs-palette-label">Healers</span>
-				<div className="rs-palette-chips">{presetChips(RaidRole.RaidRoleHealer)}</div>
-			</div>,
+		const groups = [
+			presetGroup('Tanks', RaidRole.RaidRoleTank, 'fa-shield-alt'),
+			presetGroup('Healers', RaidRole.RaidRoleHealer, 'fa-plus'),
 			...(this.data
-				? [...byClass.entries()].map(([className, builds]) => (
-						<div className="rs-palette-group">
-							<span className="rs-palette-label">{className}</span>
-							<div className="rs-palette-chips">
-								{builds.map(b =>
-									chip(
+				? [...byClass.entries()].map(([className, builds]) =>
+						group(
+							className,
+							<img className="rs-icon" src={CLASS_ICONS[builds[0].class] ?? ''} alt="" />,
+							builds
+								.filter(b => matches(className, b.spec, buildLabel(b), b.gives))
+								.map(b =>
+									entry(
 										{ buildId: b.id },
 										buildLabel(b).replace(/^[^:]*: /, ''),
-										'',
+										buildIcon(b),
 										b.class,
-										`${buildLabel(b)}, ${fmt(b.published)} DPS in the report. Gives: ${b.gives}.${b.summary ? ' ' + b.summary : ''}`,
+										`${buildLabel(b)} · ${fmt(b.published)} DPS in the report · gives ${b.gives}${b.summary ? `\n${b.summary}` : ''}`,
+										fmt(b.published, 0),
 									),
-								)}
-							</div>
-						</div>
-				  ))
+								),
+						),
+				  )
 				: [<p className="rs-muted">Loading the report’s builds…</p>]),
-		);
-		if (activeKey) this.paletteHost.querySelector<HTMLElement>(`[data-key="${activeKey}"]`)?.focus();
-	}
-
-	private isPicked(member: Omit<Member, 'id'>) {
-		return !!this.picked && this.picked.buildId == member.buildId && this.picked.preset == member.preset;
+		].filter((g): g is HTMLElement => !!g);
+		this.benchList.replaceChildren(...(groups.length ? groups : [<p className="rs-muted">No build matches “{this.benchFilter.value}”.</p>]));
+		if (activeKey) this.benchList.querySelector<HTMLElement>(`[data-key="${activeKey}"]`)?.focus();
 	}
 
 	// ---- Assignments ----
 
-	private resolvedText(job: (a: Assignment) => boolean): string | null {
-		const found = this.freshRun?.resolution.assignments.find(job);
-		if (!found) return null;
-		switch (found.job.oneofKind) {
-			case 'blessing':
-				return blessingName(found.job.blessing.blessing);
-			case 'judgement':
-				return judgementName(found.job.judgement);
-			case 'totem':
-				return found.job.totem.totem == RaidTotem.RaidTotemNone ? 'none' : totemName(found.job.totem.totem);
-			case 'duty':
-				return dutyName(found.job.duty);
-			case 'cooldown': {
-				const target = this.memberById(found.job.cooldown.target);
-				return target ? this.memberShortName(target.member, target.cell) : `slot ${found.job.cooldown.target}`;
-			}
-		}
-		return null;
+	// The job the last run's resolver gave, while the run is of this raid.
+	private resolved(job: (a: Assignment) => boolean): Assignment | undefined {
+		return this.freshRun?.resolution.assignments.find(job);
 	}
 
-	private autoLabel(job: (a: Assignment) => boolean) {
-		const resolved = this.resolvedText(job);
-		return resolved ? `Auto (${resolved})` : 'Auto';
+	// A member as a row's heading on an assignment card: its icon, its name and where it stands.
+	private who(member: Member, cell: number) {
+		const cls = this.classOf(member);
+		const info = member.preset ? presetInfo(member.preset) : undefined;
+		return (
+			<span className="rs-who" title={this.memberName(member)}>
+				<img className="rs-icon" src={memberIcon(info, this.buildOf(member), cls)} alt={iconAlt(cls)} />
+				<span className={`rs-who-name text-${cssClassForClass(cls)}`}>{this.slotName(member)}</span>
+				<span className="rs-who-seat">
+					{Math.floor(cell / PARTY_SIZE) + 1}.{(cell % PARTY_SIZE) + 1}
+				</span>
+			</span>
+		);
+	}
+
+	// A member as a choice, for a cooldown's target.
+	private memberChoice(member: Member, cell: number, hint = ''): Choice {
+		const cls = this.classOf(member);
+		const info = member.preset ? presetInfo(member.preset) : undefined;
+		return {
+			value: `${member.id}`,
+			label: `${this.slotName(member)} (${Math.floor(cell / PARTY_SIZE) + 1}.${(cell % PARTY_SIZE) + 1})`,
+			icon: memberIcon(info, this.buildOf(member), cls),
+			labelClass: `text-${cssClassForClass(cls)}`,
+			hint,
+		};
 	}
 
 	private renderAssignments() {
 		const members = this.members();
 		const h = this.state.hand;
-		const rows: Node[] = [];
+		const cards: Node[] = [];
+		const card = (title: string, icon: string, body: Node[], note = '') => (
+			<div className="rs-card">
+				<div className="rs-card-head">
+					<img className="rs-icon" src={icon} alt="" />
+					<span className="rs-card-title">{title}</span>
+				</div>
+				{note ? <p className="rs-card-note">{note}</p> : null}
+				{body}
+			</div>
+		);
+		const AUTO: Choice = { value: '', label: 'Auto', faIcon: 'fa-wand-magic-sparkles', hint: 'the resolver picks' };
+		const set = <T,>(record: Record<number, T>, id: number, v: string) => {
+			if (v === '') delete record[id];
+			else record[id] = parseInt(v) as T;
+			this.assignmentChanged();
+		};
+
+		// Blessings: a row per paladin, a column per class in the raid, and a placeholder's judgement.
 		const presentClasses = BLESSING_CLASSES.filter(c => members.some(m => !m.member.preset && this.classOf(m.member) == c));
-
-		// Each paladin: a Greater Blessing for each class, and a placeholder's judgement.
 		const paladins = members.filter(m => this.classOf(m.member) == Class.ClassPaladin);
-		paladins.forEach(({ member, cell }) => {
-			const controls: Node[] = [];
-			if (member.preset) {
-				controls.push(
-					field(
-						'Judgement',
-						select(
-							[
-								{ value: '', label: this.autoLabel(a => a.holder == member.id && a.job.oneofKind == 'judgement') },
-								...[
-									PaladinJudgement.PaladinJudgementCrusader,
-									PaladinJudgement.PaladinJudgementWisdom,
-									PaladinJudgement.PaladinJudgementNone,
-								].map(j => ({
-									value: `${j}`,
-									label: judgementName(j),
-								})),
-							],
-							h.judgements[member.id] !== undefined ? `${h.judgements[member.id]}` : '',
-							v => {
-								if (v === '') delete h.judgements[member.id];
-								else h.judgements[member.id] = parseInt(v);
-								this.assignmentChanged();
-							},
-						),
-					),
-				);
-			}
-			presentClasses.forEach(c => {
-				const current = h.blessings[member.id]?.[c];
-				controls.push(
-					field(
-						classNames[c],
-						select(
-							[
-								{
-									value: '',
-									label: this.autoLabel(a => a.holder == member.id && a.job.oneofKind == 'blessing' && a.job.blessing.class == c),
-								},
-								...[Blessing.BlessingKings, Blessing.BlessingMight, Blessing.BlessingWisdom, Blessing.BlessingNone].map(b => ({
-									value: `${b}`,
-									label: blessingName(b),
-								})),
-							],
-							current !== undefined ? `${current}` : '',
-							v => {
-								const mine = (h.blessings[member.id] ??= {});
-								if (v === '') delete mine[c];
-								else mine[c] = parseInt(v);
-								this.assignmentChanged();
-							},
-						),
-					),
-				);
-			});
-			rows.push(this.assignmentRow(member, cell, 'Greater Blessings for each class', controls));
-		});
+		if (paladins.length) {
+			const blessingChoices: Choice[] = [
+				AUTO,
+				...[Blessing.BlessingKings, Blessing.BlessingMight, Blessing.BlessingWisdom].map(b => ({
+					value: `${b}`,
+					label: `Greater Blessing of ${blessingName(b)}`,
+					icon: BLESSING_ICONS[b],
+				})),
+				{ value: `${Blessing.BlessingNone}`, label: 'No blessing', faIcon: 'fa-ban' },
+			];
+			const judgementChoices: Choice[] = [
+				AUTO,
+				...[PaladinJudgement.PaladinJudgementCrusader, PaladinJudgement.PaladinJudgementWisdom].map(j => ({
+					value: `${j}`,
+					label: `Judgement of ${judgementName(j)}`,
+					icon: JUDGEMENT_ICONS[j],
+				})),
+				{ value: `${PaladinJudgement.PaladinJudgementNone}`, label: 'No judgement', faIcon: 'fa-ban' },
+			];
+			const withJudgement = paladins.some(p => p.member.preset);
+			const blessingOf = (a: Assignment | undefined) =>
+				a?.job.oneofKind == 'blessing' ? blessingChoices.find(c => c.value == `${(a.job as any).blessing.blessing}`) : undefined;
+			const judgementOf = (a: Assignment | undefined) =>
+				a?.job.oneofKind == 'judgement' ? judgementChoices.find(c => c.value == `${(a.job as any).judgement}`) : undefined;
+			cards.push(
+				card(
+					'Blessings',
+					BLESSING_ICONS[Blessing.BlessingKings]!,
+					[
+						<div className="rs-table-wrap">
+							<table className="rs-matrix">
+								<thead>
+									<tr>
+										<th />
+										{presentClasses.map(c => (
+											<th title={`${classNames[c]}s`}>
+												<img className="rs-icon" src={CLASS_ICONS[c]} alt={classNames[c]} />
+											</th>
+										))}
+										{withJudgement ? <th className="rs-matrix-gap">Judge</th> : null}
+									</tr>
+								</thead>
+								<tbody>
+									{paladins.map(({ member, cell }) => (
+										<tr dataset={{ holder: `${member.id}` }}>
+											<th>{this.who(member, cell)}</th>
+											{presentClasses.map(c => (
+												<td>
+													{assignmentPicker({
+														label: `${this.slotName(member)}: blessing for ${classNames[c]}s`,
+														choices: blessingChoices,
+														value: h.blessings[member.id]?.[c] !== undefined ? `${h.blessings[member.id]![c]}` : '',
+														resolved: blessingOf(
+															this.resolved(a => a.holder == member.id && a.job.oneofKind == 'blessing' && a.job.blessing.class == c),
+														),
+														onChange: v => {
+															const mine = (h.blessings[member.id] ??= {});
+															if (v === '') delete mine[c];
+															else mine[c] = parseInt(v);
+															this.assignmentChanged();
+														},
+													})}
+												</td>
+											))}
+											{withJudgement ? (
+												<td className="rs-matrix-gap">
+													{member.preset ? (
+														assignmentPicker({
+															label: `${this.slotName(member)}: judgement`,
+															choices: judgementChoices,
+															value: h.judgements[member.id] !== undefined ? `${h.judgements[member.id]}` : '',
+															resolved: judgementOf(this.resolved(a => a.holder == member.id && a.job.oneofKind == 'judgement')),
+															onChange: v => set(h.judgements, member.id, v),
+														})
+													) : (
+														<span className="rs-muted" title="A DPS paladin judges by its duty, under Duties">
+															duty
+														</span>
+													)}
+												</td>
+											) : null}
+										</tr>
+									))}
+								</tbody>
+							</table>
+						</div>,
+					],
+					presentClasses.length ? '' : 'Add DPS members to give them blessings.',
+				),
+			);
+		}
 
-		// Each placeholder shaman: a totem for each element. A DPS shaman's rotation drops fixed totems. Each
-		// element set by hand is sent with its element (none drops nothing there); the elements left on Auto
-		// stay the resolver's.
-		members
-			.filter(m => m.member.preset && presetInfo(m.member.preset)?.shaman)
-			.forEach(({ member, cell }) => {
-				const controls = TOTEM_ELEMENTS.map(({ element, label, totems }) =>
-					field(
-						label,
-						select(
-							[
-								{
-									value: '',
-									label: this.autoLabel(a => a.holder == member.id && a.job.oneofKind == 'totem' && assignedElement(a.job.totem) == element),
-								},
-								...totems.map(t => ({ value: `${t}`, label: totemName(t) })),
-								{ value: `${RaidTotem.RaidTotemNone}`, label: 'none' },
-							],
-							h.totems[member.id]?.[element] !== undefined ? `${h.totems[member.id]![element]}` : '',
-							v => {
-								const mine = (h.totems[member.id] ??= {});
-								if (v === '') delete mine[element];
-								else mine[element] = parseInt(v);
-								this.assignmentChanged();
-							},
-						),
-					),
-				);
-				rows.push(this.assignmentRow(member, cell, 'Totems', controls));
-			});
+		// Totems: a row per shaman placeholder, a column per element. A DPS shaman's rotation drops its own.
+		const shamans = members.filter(m => m.member.preset && presetInfo(m.member.preset)?.shaman);
+		const dpsShamans = members.filter(m => !m.member.preset && this.classOf(m.member) == Class.ClassShaman);
+		if (shamans.length || dpsShamans.length) {
+			const totemChoices = (totems: RaidTotem[]): Choice[] => [
+				AUTO,
+				...totems.map(t => ({ value: `${t}`, label: `${totemName(t)} Totem`, icon: TOTEM_ICONS[t] })),
+				{ value: `${RaidTotem.RaidTotemNone}`, label: 'No totem', faIcon: 'fa-ban' },
+			];
+			cards.push(
+				card(
+					'Totems',
+					TOTEM_ICONS[RaidTotem.RaidTotemWindfury]!,
+					[
+						shamans.length ? (
+							<div className="rs-table-wrap">
+								<table className="rs-matrix">
+									<thead>
+										<tr>
+											<th />
+											{TOTEM_ELEMENTS.map(e => (
+												<th>{e.label}</th>
+											))}
+										</tr>
+									</thead>
+									<tbody>
+										{shamans.map(({ member, cell }) => (
+											<tr dataset={{ holder: `${member.id}` }}>
+												<th>{this.who(member, cell)}</th>
+												{TOTEM_ELEMENTS.map(({ element: el, label, totems }) => {
+													const choices = totemChoices(totems);
+													const a = this.resolved(a => a.holder == member.id && a.job.oneofKind == 'totem' && assignedElement(a.job.totem) == el);
+													return (
+														<td>
+															{assignmentPicker({
+																label: `${this.slotName(member)}: ${label.toLowerCase()} totem`,
+																choices,
+																value: h.totems[member.id]?.[el] !== undefined ? `${h.totems[member.id]![el]}` : '',
+																resolved: a?.job.oneofKind == 'totem' ? choices.find(c => c.value == `${(a.job as any).totem.totem}`) : undefined,
+																onChange: v => {
+																	const mine = (h.totems[member.id] ??= {});
+																	if (v === '') delete mine[el];
+																	else mine[el] = parseInt(v);
+																	this.assignmentChanged();
+																},
+															})}
+														</td>
+													);
+												})}
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+						) : null,
+						...dpsShamans.map(({ member, cell }) => (
+							<div className="rs-job-row rs-job-row-fixed" dataset={{ holder: `${member.id}` }}>
+								{this.who(member, cell)}
+								<span className="rs-muted">drops its own totems</span>
+							</div>
+						)),
+					].filter((n): n is HTMLElement => !!n),
+				),
+			);
+		}
 
-		// Duties: a DPS member with duty variants. A placeholder gives its own (a druid's Faerie Fire, the
-		// warrior tank's Sunder Armor) without one.
+		// Duties: a DPS member with duty variants holds one of them, or none. A placeholder gives its own
+		// (a druid's Faerie Fire, the warrior tank's Sunder Armor) without one.
+		const dutyRows: Node[] = [];
 		members.forEach(({ member, cell }) => {
 			if (member.preset) return;
 			const duties = (this.buildOf(member)?.duties ?? []).map(d => d.duty!).filter(d => d !== undefined);
 			if (!duties.length) return;
-			const current = h.duties[member.id];
-			rows.push(
-				this.assignmentRow(member, cell, 'Duty', [
-					field(
-						'Holds',
-						select(
-							[
-								{ value: '', label: this.autoLabel(a => a.holder == member.id && a.job.oneofKind == 'duty') },
-								...duties.map(d => ({ value: `${d}`, label: dutyName(d) })),
-								{ value: `${Duty.DutyNone}`, label: 'None (holds no duty)' },
-							],
-							current !== undefined ? `${current}` : '',
-							v => {
-								if (v === '') delete h.duties[member.id];
-								else h.duties[member.id] = parseInt(v);
-								this.assignmentChanged();
-							},
-						),
-					),
-				]),
+			const choices: Choice[] = [
+				AUTO,
+				...duties.map(d => ({ value: `${d}`, label: dutyName(d), icon: DUTY_ICONS[d] })),
+				{ value: `${Duty.DutyNone}`, label: 'No duty', faIcon: 'fa-ban', hint: 'the most DPS' },
+			];
+			const a = this.resolved(a => a.holder == member.id && a.job.oneofKind == 'duty');
+			dutyRows.push(
+				<div className="rs-job-row" dataset={{ holder: `${member.id}` }}>
+					{this.who(member, cell)}
+					{assignmentPicker({
+						label: `${this.slotName(member)}: duty`,
+						choices,
+						value: h.duties[member.id] !== undefined ? `${h.duties[member.id]}` : '',
+						resolved: a?.job.oneofKind == 'duty' ? choices.find(c => c.value == `${(a.job as any).duty}`) : undefined,
+						onChange: v => set(h.duties, member.id, v),
+					})}
+				</div>,
 			);
 		});
+		if (dutyRows.length) cards.push(card('Duties', DUTY_ICONS[Duty.DutySunderUpkeep]!, [<div className="rs-job-rows">{dutyRows}</div>], 'A duty costs its holder some DPS.'));
 
 		// Cooldowns: Power Infusion from a Discipline priest, Innervate from a Restoration druid (or a Feral
 		// tank with it switched on). Only who gets them is chosen.
@@ -1093,69 +1503,81 @@ export class CompEditor {
 			const map = pi ? h.powerInfusion : h.innervate;
 			const targets = [...(pi ? casters : manaUsers)];
 			// A target set by hand that the list doesn't offer (a saved raid from before it was narrowed) stays
-			// in it, marked, so the select shows what Run sends.
+			// in it, marked, so the picker shows what Run sends.
 			const current = dpsMembers.find(t => t.member.id == map[holder.member.id]);
 			if (current && !targets.includes(current)) targets.push(current);
 			const nth = (pi ? piHolders : innervateHolders).indexOf(holder.member.id);
 			const resolved = this.freshRun?.resolution.assignments.filter(a => a.job.oneofKind == 'cooldown' && a.job.cooldown.powerInfusion == pi)[nth];
-			return field(
-				pi ? 'Power Infusion' : 'Innervate',
-				select(
-					[
-						{
-							value: '',
-							label: this.autoLabel(a => a === resolved),
-						},
-						...targets.map(t => ({
-							value: `${t.member.id}`,
-							label: `${this.memberShortName(t.member, t.cell)}${
-								t != current || (pi ? casters : manaUsers).includes(t) ? '' : pi ? ' (no magic damage to boost)' : ' (no mana)'
-							}`,
-						})),
-					],
-					map[holder.member.id] !== undefined ? `${map[holder.member.id]}` : '',
-					v => {
-						if (v === '') delete map[holder.member.id];
-						else map[holder.member.id] = parseInt(v);
-						this.assignmentChanged();
-					},
+			const choices: Choice[] = [
+				AUTO,
+				...targets.map(t =>
+					this.memberChoice(t.member, t.cell, t != current || (pi ? casters : manaUsers).includes(t) ? '' : pi ? 'no magic damage to boost' : 'no mana'),
 				),
+			];
+			const target = resolved?.job.oneofKind == 'cooldown' ? resolved.job.cooldown.target : undefined;
+			return (
+				<span className="rs-cooldown">
+					<img className="rs-icon" src={pi ? POWER_INFUSION_ICON : INNERVATE_ICON} alt="" title={pi ? 'Power Infusion' : 'Innervate'} />
+					<i className="fas fa-arrow-right rs-muted" />
+					{assignmentPicker({
+						label: `${this.slotName(holder.member)}: ${pi ? 'Power Infusion' : 'Innervate'} on`,
+						choices,
+						value: map[holder.member.id] !== undefined ? `${map[holder.member.id]}` : '',
+						resolved: target !== undefined ? choices.find(c => c.value == `${target}`) : undefined,
+						onChange: v => set(map, holder.member.id, v),
+					})}
+				</span>
 			);
 		};
+		const cooldownRows: Node[] = [];
 		members
 			.filter(m => m.member.preset && presetInfo(m.member.preset)?.powerInfusion)
-			.forEach(m => rows.push(this.assignmentRow(m.member, m.cell, 'Cooldown', [cooldown(m, true)])));
+			.forEach(m =>
+				cooldownRows.push(
+					<div className="rs-job-row" dataset={{ holder: `${m.member.id}` }}>
+						{this.who(m.member, m.cell)}
+						{cooldown(m, true)}
+					</div>,
+				),
+			);
 		members
 			.filter(m => m.member.preset && (presetInfo(m.member.preset)?.innervate || presetInfo(m.member.preset)?.innervateOptional))
 			.forEach(m => {
 				const info = presetInfo(m.member.preset!)!;
-				const controls: Node[] = [];
-				if (info.innervateOptional) {
-					controls.push(
-						field(
-							'Innervate',
-							check('Casts Innervate (leaves Bear Form)', !!m.member.presetInnervate, v => {
-								m.member.presetInnervate = v;
-								// Without its Innervate, a target set by hand goes too: the resolver refuses a holder
-								// with nothing to give.
-								if (!v) delete h.innervate[m.member.id];
-								this.changed();
-							}),
-						),
-					);
-				}
-				if (info.innervate || m.member.presetInnervate) controls.push(cooldown(m, false));
-				rows.push(this.assignmentRow(m.member, m.cell, 'Cooldown', controls));
+				cooldownRows.push(
+					<div className="rs-job-row" dataset={{ holder: `${m.member.id}` }}>
+						{this.who(m.member, m.cell)}
+						{info.innervate || m.member.presetInnervate ? cooldown(m, false) : null}
+						{info.innervateOptional
+							? check('Innervate', !!m.member.presetInnervate, v => {
+									m.member.presetInnervate = v;
+									// Without its Innervate, a target set by hand goes too: the resolver refuses a holder
+									// with nothing to give.
+									if (!v) delete h.innervate[m.member.id];
+									this.changed();
+							  })
+							: null}
+					</div>,
+				);
 			});
+		if (cooldownRows.length) cards.push(card('Cooldowns', POWER_INFUSION_ICON, [<div className="rs-job-rows">{cooldownRows}</div>]));
 
-		const dpsShamans = dpsMembers.filter(m => this.classOf(m.member) == Class.ClassShaman);
 		this.renderAssignmentWarnings();
 		this.assignmentsHost.replaceChildren(
+			<p className="rs-legend">
+				<span className="rs-legend-item">
+					<span className="rs-pick rs-pick-hand rs-legend-swatch" /> set by hand
+				</span>
+				<span className="rs-legend-item">
+					<span className="rs-pick rs-pick-auto rs-legend-swatch" /> Auto: the resolver picks, and a run shows its pick
+				</span>
+			</p>,
 			this.warningsHost,
-			...(rows.length ? rows : [empty('Nobody in this raid holds an assignment yet. Paladins, shamans, priests, druids and the duty builds do.')]),
-			...(dpsShamans.length
-				? [<p className="rs-muted">A DPS shaman’s rotation drops its own fixed totems, so it has no totem choice yet (docs/raid_sim.md, M1b).</p>]
-				: []),
+			cards.length ? (
+				<div className="rs-cards">{cards}</div>
+			) : (
+				empty('Nobody here holds an assignment yet. Paladins, shamans, priests, druids, warriors and warlocks do.')
+			),
 		);
 	}
 
@@ -1266,20 +1688,26 @@ export class CompEditor {
 
 	// The boss preset's select, drawn again when a loaded comp sets it.
 	private initBossSelect() {
-		const bossSelect = select(
-			[
-				{ value: 'Generic', label: 'Generic: the report’s level 63 boss, in the natural flask zone' },
-				{ value: 'Onyxia', label: 'Onyxia: a Dragonkin, outside the flask zone' },
-				{ value: 'Custom', label: 'Custom: as set below' },
-			],
+		const bosses: Array<{ value: Boss; label: string; title: string }> = [
+			{ value: 'Generic', label: 'Generic', title: 'The DPS Report’s level 63 boss, in the natural flask zone' },
+			{ value: 'Onyxia', label: 'Onyxia', title: 'A Dragonkin, outside the flask zone' },
+			{ value: 'Custom', label: 'Custom', title: 'As set below. Any change below makes the fight custom.' },
+		];
+		const bossControl = segmented(
+			bosses,
 			this.state.boss,
 			v => {
 				this.state.boss = v as Boss;
 				this.applyBoss(this.state.boss);
 				this.assignmentChanged();
+				this.initBossSelect();
 			},
+			'Boss',
 		);
-		this.bossHost.replaceChildren(field('Boss', bossSelect));
+		this.bossHost.replaceChildren(
+			toolbarItem('Boss', bossControl),
+			<span className="rs-muted rs-boss-note">{bosses.find(b => b.value == this.state.boss)?.title}</span>,
+		);
 	}
 
 	private applyBoss(boss: Boss) {
@@ -1839,7 +2267,8 @@ export class CompEditor {
 				// With the sim history, this adds the run to it and shows it in the sidebar.
 				this.simUI.resultsManager.setSimResult(TypedEvent.nextEventID(), out.simResult);
 				this.simUI.setShownRaid(raid);
-				this.setStatus(`Done: ${fmt(result.raidMetrics?.dps?.avg)} raid DPS.`);
+				// The raid DPS shows over the raid, so the status line has nothing more to say.
+					this.setStatus('');
 			}
 			this.renderRaid();
 			this.renderAssignments();
@@ -2029,22 +2458,6 @@ export class CompEditor {
 
 		if (simResult && result && request) {
 			const iterations = request.simOptions?.iterations || 1;
-			const raidDps = simResult.raidMetrics.dps;
-			parts.push(
-				<div className="rs-run-topline">
-					<span className="rs-run-dps">{fmt(raidDps.avg)}</span>
-					<span className="rs-run-dps-label">raid DPS</span>
-					<span className="rs-ci" title="The 95% interval of the average raid DPS (the sidebar’s ± is one standard deviation of the iterations)">
-						±{fmt((1.96 * raidDps.stdev) / Math.sqrt(iterations))} (95%)
-					</span>
-					<span className="rs-muted">
-						{iterations} iterations, {fmt(simResult.result.avgIterationDuration, 0)} s average fight
-					</span>
-					<button className="btn btn-link rs-details-link" type="button" onclick={() => this.simUI.activate(DETAILS_TAB)}>
-						Every metric in Raid results <i className="fas fa-arrow-right" />
-					</button>
-				</div>,
-			);
 
 			// The members, in the request's order, back to their slots.
 			const order = playersInOrder(request);
@@ -2074,18 +2487,7 @@ export class CompEditor {
 					],
 				};
 			});
-			const parties = simResult.raidMetrics.parties
-				.map((p, i) => ({ i, dps: p.dps.avg, n: order.filter(r => Math.floor(r / PARTY_SIZE) == i).length }))
-				.filter(p => p.n > 0);
 			parts.push(
-				section(
-					'Groups',
-					table(
-						['Group', { label: 'Simmed members', numeric: true }, { label: 'DPS', numeric: true }],
-						parties.map(p => [`${p.i + 1}`, `${p.n}`, fmt(p.dps)]),
-					),
-					{ note: 'Placeholders aren’t simmed, so a group’s DPS is its DPS members’.' },
-				),
 				section(
 					'Members',
 					table(
@@ -2135,10 +2537,10 @@ export class CompEditor {
 				},
 			),
 			section('What the raid goes without', resolution.misses.length ? list(resolution.misses, 'rs-misses') : empty('Nothing.')),
-			section(
-				'Assignments as resolved',
-				resolution.assignments.length ? list(resolution.assignments.map(a => this.assignmentText(a, slotById))) : empty('None.'),
-			),
+			<details className="rs-resolved">
+				<summary>Every assignment as resolved</summary>
+				{resolution.assignments.length ? list(resolution.assignments.map(a => this.assignmentText(a, slotById))) : empty('None.')}
+			</details>,
 		);
 		if (this.stale) {
 			parts.unshift(
@@ -2147,7 +2549,7 @@ export class CompEditor {
 				</p>,
 			);
 		}
-		this.resultsHost.replaceChildren(<h3 className="rs-results-title">The run</h3>, ...parts);
+		this.resultsHost.replaceChildren(<h3 className="rs-results-title">Last run</h3>, ...parts);
 		this.resultsHost.classList.toggle('rs-stale', this.stale);
 	}
 

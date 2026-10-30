@@ -119,6 +119,8 @@ export class ResultView {
 	private readonly scenarioHost: HTMLElement;
 	private tabs: HTMLButtonElement[] = [];
 	private readonly panelId = `rs-scenario-${++viewSeq}`;
+	// The bar that jumps to each section of the long report.
+	private readonly jumpHost = (<nav className="rs-jump" attributes={{ 'aria-label': 'Sections' }} />) as HTMLElement;
 
 	constructor(result: CompSearchResult, data: RaidSimData | null, opts: ResultViewOptions = {}) {
 		this.result = result;
@@ -131,6 +133,7 @@ export class ResultView {
 				{this.header()}
 				{result.error ? <div className="alert alert-danger rs-error">{errorStatus('The search failed', result.error.message)}</div> : null}
 				{result.scenarios.length ? this.overview() : empty('This result has no scenarios.')}
+				{this.jumpHost}
 				{this.scenarioHost}
 				{this.global()}
 			</div>
@@ -217,6 +220,28 @@ export class ResultView {
 			return;
 		}
 		this.scenarioHost.replaceChildren(...new ScenarioView(sc, this.data, this.opts).elements);
+		this.renderJumps();
+	}
+
+	// A link to each section the report shows, in its order.
+	private renderJumps() {
+		const sections = [...this.rootElem.querySelectorAll<HTMLElement>('.rs-section')];
+		this.jumpHost.replaceChildren(
+			...sections.map((sec, i) => {
+				sec.id ||= `${this.panelId}-section-${i}`;
+				const link = (
+					<a className="rs-jump-link" href={`#${sec.id}`}>
+						{sec.querySelector('.rs-section-title')?.textContent ?? ''}
+					</a>
+				) as HTMLAnchorElement;
+				// The address keeps its hash for raid links, so a jump only scrolls.
+				link.addEventListener('click', e => {
+					e.preventDefault();
+					sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+				});
+				return link;
+			}),
+		);
 	}
 
 	// What the whole run shares: the assumptions, what it left out and what isn't modelled, and the request.
