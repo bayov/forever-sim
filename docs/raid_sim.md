@@ -1029,13 +1029,16 @@ The raid sim catches what the single-player sims can't:
     gets.
   - **Effects a build can't read are dropped**, by a static table, `sim/compsearch/drops.json`, one for
     each build and camp setting. `compsearch -drops` writes it: an effect goes in only when the build's
-    result is bit-identical with it set and cleared, under the full set and the empty set, at 120, 180, 300
+    result is the same with it set and cleared, to within a hundred-thousandth, under the full set and the
+    empty set, at 120, 180, 300
     and 420 s, in both factions and at two seeds, for each effect alone and then all together. Arcane
     Brilliance is dropped for a warrior, so it's one key whether a mage is there or not. With camps on,
     Moonkin Aura stays in a warrior's key, since it takes the Camp Chair.
   - The weapon totem is two entries, Windfury and Flametongue, so Enhancement (whose Windfury Weapon makes
     Windfury Totem useless to it) keeps its Flametongue.
-  - A test checks the whole table again at another seed.
+  - A test checks the whole table again at another seed. Not bit for bit: Mana Tide does nothing for an
+    Arms warrior, but with the other mana fields it moves the order of its float sums, 904.4142 to 904.4167
+    at that seed, so the rule allows a hundred-thousandth.
   - The report's ablations don't decide this. Their `same: true` means only equal DPS at 300 iterations
     under the full set: Faerie Fire and Curse of Recklessness both show it for every build, because each
     fills the slot without the other.

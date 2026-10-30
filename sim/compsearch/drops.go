@@ -84,8 +84,8 @@ func dpsOf(req *proto.RaidSimRequest) (float64, error) {
 	return res.RaidMetrics.Dps.Avg, nil
 }
 
-// unread is whether the build's result is bit-identical with the fields set and with them cleared, in
-// every context.
+// unread is whether the build's result is the same, to within a hundred-thousandth, with the fields set and
+// with them cleared, in every context.
 func unread(p *Pool, b *Build, camps bool, fields []string, iterations int32, seed int64) (bool, error) {
 	for _, v := range dropVariants(seed) {
 		for _, seat := range dropContexts(camps) {
@@ -111,7 +111,9 @@ func unreadIn(p *Pool, b *Build, seat Seat, fields []string, iterations int32, v
 	if err != nil {
 		return false, err
 	}
-	return math.Float64bits(on) == math.Float64bits(off), nil
+	// Within a hundred-thousandth: an aura that does nothing for the build can still move the order of float sums
+	// (Mana Tide on an Arms warrior moves 904.4142 to 904.4167, 3 millionths), which no decision can see.
+	return math.Abs(on-off) <= 1e-5*math.Max(math.Abs(on), 1), nil
 }
 
 // ComputeDrops finds, for every build, the fields it can't read: each one alone, then all together.
