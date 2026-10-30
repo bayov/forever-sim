@@ -62,7 +62,7 @@ export class SimTitleDropdown extends Component {
 		return (
 			<a href={href ?? 'javascript:void(0)'} className={clsx('sim-link', href && 'sim-title-home-link', this.getContextualKlass(data))}>
 				<div className="sim-link-content">
-					<img src={this.getSimIconPath(data)} className="sim-link-icon" />
+					<img src={this.getSimIconPath(data)} className="sim-link-icon" alt="" />
 					<div className="sim-title-texts">
 						<div className="sim-title-current d-flex flex-column">
 							<span className="sim-link-label text-white">WoWSims - Forever</span>

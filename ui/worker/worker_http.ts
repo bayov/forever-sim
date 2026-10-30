@@ -16,10 +16,14 @@ const concatBytes = (a: Uint8Array, b: Uint8Array): Uint8Array => {
 };
 
 export const setupHttpWorker = (baseURL: string) => {
-	const makeHttpApiRequest = (endPoint: string, inputData: Uint8Array, requestId: string) =>
+	// The HTTP calls abortFetch can cancel, by request id.
+	const controllers = new Map<string, AbortController>();
+
+	const makeHttpApiRequest = (endPoint: string, inputData: Uint8Array, requestId: string, signal?: AbortSignal) =>
 		fetch(`${baseURL}/${endPoint}?requestId=${requestId}`, {
 			...defaultRequestOptions,
 			body: inputData,
+			signal,
 		});
 
 	const syncHandler: HandlerFunction = async (inputData, _, id, msg) => {
@@ -58,13 +62,29 @@ export const setupHttpWorker = (baseURL: string) => {
 
 	// A server built before an endpoint answers it with its file server's 404 page, which isn't a
 	// proto. So a call that fails answers no bytes, and the caller reads that as "not in this build".
+	// abortFetch cancels it, which also answers no bytes.
 	const syncHandlerOrEmpty: HandlerFunction = async (inputData, _, id, msg) => {
-		const response = await makeHttpApiRequest(msg, inputData, id);
-		if (!response.ok) {
-			console.error(`${msg} failed with HTTP ${response.status}`);
-			return new Uint8Array();
+		const controller = new AbortController();
+		controllers.set(id, controller);
+		try {
+			const response = await makeHttpApiRequest(msg, inputData, id, controller.signal);
+			if (!response.ok) {
+				console.error(`${msg} failed with HTTP ${response.status}`);
+				return new Uint8Array();
+			}
+			return new Uint8Array(await response.arrayBuffer());
+		} catch (e) {
+			if (controller.signal.aborted) return new Uint8Array();
+			throw e;
+		} finally {
+			controllers.delete(id);
 		}
-		return new Uint8Array(await response.arrayBuffer());
+	};
+
+	const abortFetch: HandlerFunction = inputData => {
+		const id = new TextDecoder().decode(inputData);
+		controllers.get(id)?.abort();
+		return new Uint8Array([controllers.has(id) ? 1 : 0]);
 	};
 
 	const noWasmConcurrency: HandlerFunction = (inputData, progress, msg) => {
@@ -91,5 +111,6 @@ export const setupHttpWorker = (baseURL: string) => {
 		resolveComp: syncHandlerOrEmpty,
 		compSearchAsync: asyncHandler,
 		compValues: syncHandlerOrEmpty,
+		abortFetch,
 	}).ready(false);
 };

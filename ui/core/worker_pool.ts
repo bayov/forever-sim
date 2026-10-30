@@ -192,12 +192,25 @@ export class WorkerPool {
 	}
 
 	// A hand-built raid's member values, through the native server's /compValues. On WebAssembly, or a
-	// server without it, the result's error says so.
-	async compValues(comp: RaidComp): Promise<CompValuesResult> {
+	// server without it, the result's error says so. The signal cancels the HTTP call; the server has no
+	// abort for /compValues, so it finishes the sims it started (they land in its cache).
+	async compValues(comp: RaidComp, signal?: AbortSignal): Promise<CompValuesResult> {
 		if (await this.isWasm()) {
 			return CompValuesResult.create({ error: { message: 'Member values need the native server, which has the report builds and the sim cache.' } });
 		}
-		const result = await this.makeApiCall(SimRequest.compValues, RaidComp.toBinary(comp));
+		const worker = this.getLeastBusyWorker();
+		const id = generateRequestId(SimRequest.compValues);
+		const onAbort = () => {
+			worker.abortFetch(id).catch(e => console.warn('Failed to cancel /compValues:', e));
+		};
+		signal?.addEventListener('abort', onAbort);
+		let result: Uint8Array;
+		try {
+			result = await worker.doApiCall(SimRequest.compValues, RaidComp.toBinary(comp), id);
+		} finally {
+			signal?.removeEventListener('abort', onAbort);
+		}
+		if (signal?.aborted) return CompValuesResult.create({ error: { message: 'Aborted.' } });
 		if (result.length == 0) {
 			return CompValuesResult.create({ error: { message: 'This build of the native server has no /compValues yet.' } });
 		}
@@ -482,6 +495,11 @@ class SimWorker {
 
 	log(s: string) {
 		console.log(`Worker ${this.workerId}: ${s}`);
+	}
+
+	// Cancels a request's HTTP call in a net worker.
+	async abortFetch(requestId: string) {
+		await this.doApiCall(SimRequest.abortFetch, new TextEncoder().encode(requestId), generateRequestId(SimRequest.abortFetch));
 	}
 
 	async sendAbortById(requestId: string) {

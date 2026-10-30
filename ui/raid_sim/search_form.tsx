@@ -6,7 +6,7 @@ import { Faction, MobType } from '../core/proto/common';
 import { RequestTypes } from '../core/sim_signal_manager';
 import { buildLabel, loadRaidSimData, presetName, presetsFor, RAID_SIZES, RaidSimData } from './data';
 import type { RaidSimUI } from './raid_sim_ui';
-import { fmt, fmtInt, memberLabel } from './view_utils';
+import { errorStatus, fmt, fmtInt, memberLabel } from './view_utils';
 
 const STORAGE_KEY = '__forever_raid_sim__searchForm__';
 
@@ -88,6 +88,24 @@ export const searchRequest = (s: FormState): CompSearchRequest => {
 	});
 };
 
+// Why a form can't search as it stands, if it can't. The search (sim/compsearch/search.go, Defaults)
+// reads 0 tanks and 0 healers as the raid size's defaults, so the form doesn't send that: it would run a
+// different raid from the one set here.
+export const formProblems = (s: FormState): string[] => {
+	const problems: string[] = [];
+	const def = RAID_SIZES[s.size];
+	if (s.tanks == 0 && s.healers == 0) {
+		problems.push(
+			`A raid with no tank and no healer slot can’t be searched: the search reads 0 and 0 as the size’s defaults (${def?.tanks ?? '?'} and ${
+				def?.healers ?? '?'
+			}). Set at least one tank or healer slot.`,
+		);
+	}
+	if (s.size - s.tanks - s.healers < 1) problems.push(`${s.tanks} tanks and ${s.healers} healers leave no DPS slot in a raid of ${s.size}.`);
+	if (!s.horde && !s.alliance) problems.push('Pick a faction.');
+	return problems;
+};
+
 export class SearchForm {
 	private readonly simUI: RaidSimUI;
 	private readonly onResult: (result: CompSearchResult) => void;
@@ -97,7 +115,11 @@ export class SearchForm {
 	private readonly searchButton: HTMLButtonElement;
 	private readonly abortButton: HTMLButtonElement;
 	private readonly staticNote: HTMLElement;
+	private readonly problemsElem: HTMLElement;
 	private readonly progressElem: HTMLElement;
+	// The number fields whose text isn't a valid value, with why. The state keeps their last valid value,
+	// so the search waits until they're fixed.
+	private readonly invalid = new Map<string, string>();
 	private running = false;
 	private native = false;
 
@@ -120,7 +142,8 @@ export class SearchForm {
 			</button>
 		) as HTMLButtonElement;
 		this.staticNote = (<p className="rs-static-note">Checking for the native server…</p>) as HTMLElement;
-		this.progressElem = (<div className="rs-progress d-none" />) as HTMLElement;
+		this.problemsElem = (<ul className="rs-form-problems text-danger" attributes={{ 'aria-live': 'polite' }} />) as HTMLElement;
+		this.progressElem = (<div className="rs-progress d-none" attributes={{ 'aria-live': 'polite' }} />) as HTMLElement;
 
 		parent.appendChild(
 			<div className="rs-search">
@@ -129,6 +152,7 @@ export class SearchForm {
 					native server, on every core, and caches each single-player sim, so a search it has run before takes seconds.
 				</p>
 				{this.formHost}
+				{this.problemsElem}
 				<div className="rs-search-actions">
 					{this.searchButton}
 					{this.abortButton}
@@ -157,18 +181,24 @@ export class SearchForm {
 		// not WebAssembly. Served as static files, there's no server to search with.
 		this.simUI.sim.isWasm().then(isWasm => {
 			this.native = !isWasm;
-			this.searchButton.disabled = isWasm;
 			this.staticNote.textContent = isWasm
 				? 'Searching needs the native server (the downloadable sim or make host); this page is served as static files.'
 				: 'Runs on the native server serving this page.';
 			this.staticNote.classList.toggle('rs-static-off', isWasm);
+			this.updateButton();
 		});
 	}
 
 	private loadState(): FormState {
 		try {
 			const saved = window.localStorage.getItem(STORAGE_KEY);
-			if (saved) return { ...defaultState(), ...JSON.parse(saved) };
+			if (saved) {
+				const s: FormState = { ...defaultState(), ...JSON.parse(saved) };
+				// An older page took any number: the counts are whole numbers.
+				s.tanks = Math.max(0, Math.round(s.tanks));
+				s.healers = Math.max(0, Math.round(s.healers));
+				return s;
+			}
 		} catch (e) {
 			console.warn('Failed to read the saved search form:', e);
 		}
@@ -187,12 +217,27 @@ export class SearchForm {
 		this.state[key] = value;
 		this.saveState();
 		if (rerender) this.render();
+		else this.updateButton();
+	}
+
+	// A number field of the form. Counts and iterations are whole numbers.
+	private num<K extends keyof FormState>(key: K, min: number, max: number, opts: { integer?: boolean; rerender?: boolean } = {}) {
+		const integer = opts.integer ?? true;
+		return numberInput(this.state[key] as number, min, max, v => this.set(key, v as FormState[K], opts.rerender), {
+			integer,
+			onInvalid: reason => {
+				if (reason) this.invalid.set(key, reason);
+				else this.invalid.delete(key);
+				this.updateButton();
+			},
+		});
 	}
 
 	private render() {
 		const s = this.state;
 		const sizeInfo = RAID_SIZES[s.size];
 		const dpsSlots = s.size - s.tanks - s.healers;
+		this.invalid.clear();
 
 		const sizeSelect = select(
 			[10, 20, 40].map(n => ({ value: `${n}`, label: `${n}` })),
@@ -206,12 +251,12 @@ export class SearchForm {
 				this.render();
 			},
 		);
-		const tanksInput = numberInput(s.tanks, 0, s.size - 1, v => this.set('tanks', v, true));
-		const healersInput = numberInput(s.healers, 0, s.size - 1, v => this.set('healers', v, true));
+		const tanksInput = this.num('tanks', 0, s.size - 1, { rerender: true });
+		const healersInput = this.num('healers', 0, s.size - 1, { rerender: true });
 
 		const slotPickers = (role: RaidRole, count: number, fixed: RaidPreset[], key: 'fixedTanks' | 'fixedHealers') =>
-			[...Array(count).keys()].map(i =>
-				select(
+			[...Array(count).keys()].map(i => {
+				const elem = select(
 					[{ value: '0', label: 'any (searched)' }, ...presetsFor(role).map(p => ({ value: `${p.id}`, label: p.name }))],
 					`${fixed[i] ?? 0}`,
 					v => {
@@ -220,15 +265,17 @@ export class SearchForm {
 						next[i] = parseInt(v);
 						this.set(key, next);
 					},
-				),
-			);
+				);
+				elem.setAttribute('aria-label', `${role == RaidRole.RaidRoleTank ? 'Tank' : 'Healer'} slot ${i + 1}`);
+				return elem;
+			});
 
 		// The fixed DPS members: a guild's roster, the rest filled by the search.
 		const fixedDps = (
 			<div className="rs-fixed-dps">
 				{s.fixedDps.map((id, i) => {
 					const remove = (
-						<button className="btn btn-link link-danger rs-chip-remove" type="button" title="Remove">
+						<button className="btn btn-link link-danger rs-chip-remove" type="button" title="Remove" attributes={{ 'aria-label': `Remove ${id}` }}>
 							<i className="fas fa-times" />
 						</button>
 					) as HTMLButtonElement;
@@ -245,18 +292,22 @@ export class SearchForm {
 					);
 				})}
 				{this.data ? (
-					select(
-						[
-							{ value: '', label: s.fixedDps.length >= dpsSlots ? 'Every DPS slot is fixed' : 'Add a member…' },
-							...this.data.builds.map(b => ({ value: b.id, label: buildLabel(b) })),
-						],
-						'',
-						v => {
-							if (!v) return;
-							this.set('fixedDps', [...this.state.fixedDps, v], true);
-						},
-						s.fixedDps.length >= dpsSlots,
-					)
+					(() => {
+						const add = select(
+							[
+								{ value: '', label: s.fixedDps.length >= dpsSlots ? 'Every DPS slot is fixed' : 'Add a member…' },
+								...this.data.builds.map(b => ({ value: b.id, label: buildLabel(b) })),
+							],
+							'',
+							v => {
+								if (!v) return;
+								this.set('fixedDps', [...this.state.fixedDps, v], true);
+							},
+							s.fixedDps.length >= dpsSlots,
+						);
+						add.setAttribute('aria-label', 'Add a fixed DPS member');
+						return add;
+					})()
 				) : (
 					<span className="rs-muted">Loading the report’s builds…</span>
 				)}
@@ -287,19 +338,8 @@ export class SearchForm {
 						v => this.set('useHealth', v == 'health', true),
 					),
 				)}
-				{field(
-					s.useHealth ? 'First guess (s)' : 'Duration (s)',
-					numberInput(s.duration, 10, 1200, v => this.set('duration', v)),
-				)}
-				{s.useHealth
-					? field(
-							'Boss health',
-							numberInput(s.bossHealth, 1, 1e9, v => this.set('bossHealth', v)),
-					  )
-					: field(
-							'Variation (s)',
-							numberInput(s.variation, 0, 600, v => this.set('variation', v)),
-					  )}
+				{field(s.useHealth ? 'First guess (s)' : 'Duration (s)', this.num('duration', 10, 1200, { integer: false }))}
+				{s.useHealth ? field('Boss health', this.num('bossHealth', 1, 1e9)) : field('Variation (s)', this.num('variation', 0, 600, { integer: false }))}
 			</div>
 		);
 
@@ -355,21 +395,9 @@ export class SearchForm {
 				<fieldset className="rs-fieldset">
 					<legend>The search</legend>
 					<div className="rs-field-group">
-						{field(
-							'Iterations',
-							numberInput(s.iterations, 10, 100000, v => this.set('iterations', v)),
-							'the screening sims',
-						)}
-						{field(
-							'Contender iterations',
-							numberInput(s.contenderIterations, 10, 1000000, v => this.set('contenderIterations', v)),
-							'the contenders’ re-sims',
-						)}
-						{field(
-							'Max combos',
-							numberInput(s.maxCombos, 0, 100000, v => this.set('maxCombos', v)),
-							'0 ranks every tank and healer combo',
-						)}
+						{field('Iterations', this.num('iterations', 10, 100000), 'the screening sims')}
+						{field('Contender iterations', this.num('contenderIterations', 10, 1000000), 'the contenders’ re-sims')}
+						{field('Max combos', this.num('maxCombos', 0, 100000), '0 ranks every tank and healer combo')}
 						{field(
 							'Sensitivity',
 							check('Skip the sensitivity scenarios', s.skipSensitivity, v => this.set('skipSensitivity', v)),
@@ -378,16 +406,27 @@ export class SearchForm {
 				</fieldset>
 			</div>,
 		);
-		this.searchButton.disabled = !this.native || this.running || dpsSlots < 1;
+		this.updateButton();
+	}
+
+	// Why the form can't search now: its own problems and the fields that hold no valid value.
+	private problems(): string[] {
+		return [...formProblems(this.state), ...[...this.invalid.entries()].map(([key, reason]) => `${fieldNames[key] ?? key}: ${reason}.`)];
+	}
+
+	private updateButton() {
+		const problems = this.problems();
+		this.problemsElem.replaceChildren(...problems.map(p => <li>{p}</li>));
+		this.searchButton.disabled = !this.native || this.running || problems.length > 0;
 	}
 
 	private async search() {
 		if (this.running) return;
-		const request = searchRequest(this.state);
-		if (!request.factions.length) {
-			this.showProgress(<p className="text-danger">Pick a faction.</p>);
+		if (this.problems().length) {
+			this.updateButton();
 			return;
 		}
+		const request = searchRequest(this.state);
 		this.running = true;
 		this.searchButton.disabled = true;
 		this.abortButton.disabled = false;
@@ -397,13 +436,13 @@ export class SearchForm {
 		try {
 			const result = await this.simUI.sim.runCompSearch(request, (progress: ProgressMetrics) => this.onProgress(progress, started));
 			if (result.error && !result.scenarios.length) {
-				this.showProgress(<div className="alert alert-danger">The search stopped: {result.error.message}</div>);
+				this.showProgress(<div className="alert alert-danger">{errorStatus('The search stopped', result.error.message)}</div>);
 			} else {
 				this.showProgress(<p>Done in {fmt((Date.now() - started) / 1000, 0)} s.</p>);
 				this.onResult(result);
 			}
 		} catch (e) {
-			this.showProgress(<div className="alert alert-danger">The search failed: {`${e}`}</div>);
+			this.showProgress(<div className="alert alert-danger">{errorStatus('The search failed', `${e instanceof Error ? e.message : e}`)}</div>);
 		} finally {
 			this.running = false;
 			this.abortButton.classList.add('d-none');
@@ -441,16 +480,58 @@ export class SearchForm {
 	}
 }
 
+const fieldNames: Record<string, string> = {
+	tanks: 'Tank slots',
+	healers: 'Healer slots',
+	duration: 'Duration',
+	variation: 'Variation',
+	bossHealth: 'Boss health',
+	iterations: 'Iterations',
+	contenderIterations: 'Contender iterations',
+	maxCombos: 'Max combos',
+};
+
 const rangeText = (r?: [number, number]) => (!r ? '' : r[0] == r[1] ? `${r[0]}` : `${r[0]} to ${r[1]}`);
 
 // Plain form controls, styled like the sim's pickers.
-export const field = (label: string, control: Node, hint?: string) => (
-	<label className="rs-field">
-		<span className="form-label rs-field-label">{label}</span>
-		{control}
-		{hint ? <span className="rs-field-hint">{hint}</span> : null}
-	</label>
-);
+
+let controlSeq = 0;
+const nextId = (prefix: string) => `${prefix}-${++controlSeq}`;
+
+const isFormControl = (n: Node): n is HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement =>
+	n instanceof HTMLInputElement || n instanceof HTMLSelectElement || n instanceof HTMLTextAreaElement;
+
+// A labelled field. A single form control gets a <label for> of its own. A field of several controls, or
+// of a checkbox with its own label, is a group the label names, so a click on that label toggles nothing.
+export const field = (label: string, control: Node, hint?: string): HTMLElement => {
+	const hintElem = hint ? ((<span className="rs-field-hint">{hint}</span>) as HTMLElement) : null;
+	if (hintElem) hintElem.id = nextId('rs-hint');
+	if (isFormControl(control) && control.type != 'checkbox') {
+		if (!control.id) control.id = nextId('rs-control');
+		if (hintElem) control.setAttribute('aria-describedby', hintElem.id);
+		return (
+			<div className="rs-field">
+				<label className="form-label rs-field-label" htmlFor={control.id}>
+					{label}
+				</label>
+				{control}
+				{hintElem}
+			</div>
+		) as HTMLElement;
+	}
+	const labelElem = (<span className="form-label rs-field-label">{label}</span>) as HTMLElement;
+	labelElem.id = nextId('rs-label');
+	const group = (
+		<div className="rs-field" attributes={{ role: 'group' }}>
+			{labelElem}
+			{control}
+			{hintElem}
+		</div>
+	) as HTMLElement;
+	group.setAttribute('aria-labelledby', labelElem.id);
+	if (hintElem) group.setAttribute('aria-describedby', hintElem.id);
+	return group;
+};
 
 export const select = (options: { value: string; label: string }[], value: string, onChange: (value: string) => void, disabled = false) => {
 	const elem = (
@@ -466,22 +547,46 @@ export const select = (options: { value: string; label: string }[], value: strin
 	return elem;
 };
 
-export const numberInput = (value: number, min: number, max: number, onChange: (value: number) => void) => {
-	const elem = (<input className="form-control rs-number" type="number" value={`${value}`} min={`${min}`} max={`${max}`} />) as HTMLInputElement;
+// A number input. A value out of range, or not a whole number where one is needed, is marked invalid and
+// not taken: onInvalid hears why, and onChange gets only valid values.
+export const numberInput = (
+	value: number,
+	min: number,
+	max: number,
+	onChange: (value: number) => void,
+	opts: { integer?: boolean; onInvalid?: (reason: string | null) => void } = {},
+) => {
+	const elem = (
+		<input className="form-control rs-number" type="number" value={`${value}`} min={`${min}`} max={`${max}`} step={opts.integer ? '1' : 'any'} />
+	) as HTMLInputElement;
+	elem.inputMode = opts.integer ? 'numeric' : 'decimal';
 	elem.addEventListener('change', () => {
-		const v = parseFloat(elem.value);
-		if (!isNaN(v)) onChange(Math.min(max, Math.max(min, v)));
+		const text = elem.value.trim();
+		const v = text === '' ? NaN : Number(text);
+		let reason: string | null = null;
+		if (isNaN(v)) reason = 'it needs a number';
+		else if (opts.integer && !Number.isInteger(v)) reason = 'it needs a whole number';
+		else if (v < min || v > max) reason = `it needs ${min} to ${max}`;
+		elem.classList.toggle('is-invalid', !!reason);
+		elem.setAttribute('aria-invalid', reason ? 'true' : 'false');
+		elem.title = reason ? `Not taken: ${reason}` : '';
+		opts.onInvalid?.(reason);
+		if (!reason) onChange(v);
 	});
 	return elem;
 };
 
+// A checkbox with a label of its own.
 export const check = (label: string, value: boolean, onChange: (value: boolean) => void) => {
 	const input = (<input className="form-check-input" type="checkbox" checked={value} />) as HTMLInputElement;
+	input.id = nextId('rs-check');
 	input.addEventListener('change', () => onChange(input.checked));
 	return (
 		<span className="form-check rs-check">
 			{input}
-			<span className="form-check-label">{label}</span>
+			<label className="form-check-label" htmlFor={input.id}>
+				{label}
+			</label>
 		</span>
 	);
 };

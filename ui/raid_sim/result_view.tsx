@@ -2,19 +2,35 @@
 // scenario (faction and camp setting). It leads with what could change the answer: the tie set and the
 // sensitivity scenarios that change the winner.
 import {
+	CompMemberValue,
 	CompResult,
 	CompResultMember,
 	CompScenarioResult,
 	CompSearchRequest,
 	CompSearchResult,
+	Duty,
 	PaladinJudgement,
 	RaidPackage,
 	RaidPreset,
 	RaidRole,
 } from '../core/proto/api';
 import { Faction, MobType } from '../core/proto/common';
-import { blessingName, dutyName, factionName, judgementName, mobTypeName, packageName, presetName, raceLabel, RaidSimData, roleName, totemName } from './data';
-import { badge, ci95, collapsible, empty, fmt, fmtInt, fmtSigned, list, memberLabel, membersLabel, section, table } from './view_utils';
+import {
+	blessingName,
+	dutyName,
+	factionName,
+	judgementName,
+	mobTypeName,
+	packageName,
+	presetInfo,
+	presetName,
+	presetsFor,
+	raceLabel,
+	RaidSimData,
+	roleName,
+	totemName,
+} from './data';
+import { badge, ci95, collapsible, empty, errorStatus, fmt, fmtInt, fmtSigned, list, memberLabel, membersLabel, NA, section, table } from './view_utils';
 
 export interface ResultViewOptions {
 	// Opens a comp in the comp editor.
@@ -48,6 +64,8 @@ const dpsSummary = (data: RaidSimData | null, comp: CompResult) => {
 	return <span className="rs-comp-summary">{out}</span>;
 };
 
+let viewSeq = 0;
+
 export class ResultView {
 	readonly rootElem: HTMLElement;
 	private readonly result: CompSearchResult;
@@ -55,16 +73,19 @@ export class ResultView {
 	private readonly opts: ResultViewOptions;
 	private scenarioIndex = 0;
 	private readonly scenarioHost: HTMLElement;
+	private tabs: HTMLButtonElement[] = [];
+	private readonly panelId = `rs-scenario-${++viewSeq}`;
 
 	constructor(result: CompSearchResult, data: RaidSimData | null, opts: ResultViewOptions = {}) {
 		this.result = result;
 		this.data = data;
 		this.opts = opts;
-		this.scenarioHost = (<div className="rs-scenario" />) as HTMLElement;
+		this.scenarioHost = (<div className="rs-scenario" attributes={{ role: 'tabpanel' }} />) as HTMLElement;
+		this.scenarioHost.id = this.panelId;
 		this.rootElem = (
 			<div className="rs-result">
 				{this.header()}
-				{result.error ? <div className="alert alert-danger rs-error">The search failed: {result.error.message}</div> : null}
+				{result.error ? <div className="alert alert-danger rs-error">{errorStatus('The search failed', result.error.message)}</div> : null}
 				{result.scenarios.length ? this.overview() : empty('This result has no scenarios.')}
 				{this.scenarioHost}
 				{this.global()}
@@ -91,6 +112,7 @@ export class ResultView {
 	}
 
 	// Each scenario's best comp, and the picker for the scenario shown below.
+	// The scenario tabs: a tablist whose arrow keys move between them, each tab naming the panel below.
 	private overview() {
 		const buttons = this.result.scenarios.map((sc, i) => {
 			const best = sc.comps[0];
@@ -101,11 +123,23 @@ export class ResultView {
 					{sc.tieSet > 1 ? <span className="rs-scenario-tab-note">{sc.tieSet} tie</span> : null}
 				</button>
 			) as HTMLButtonElement;
+			button.id = `${this.panelId}-tab-${i}`;
+			button.setAttribute('aria-controls', this.panelId);
 			button.addEventListener('click', () => this.showScenario(i));
+			button.addEventListener('keydown', e => {
+				const n = this.result.scenarios.length;
+				const to = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1, ArrowUp: i - 1, Home: 0, End: n - 1 }[e.key];
+				if (to === undefined) return;
+				e.preventDefault();
+				const next = (to + n) % n;
+				this.showScenario(next);
+				this.tabs[next]?.focus();
+			});
 			return button;
 		});
+		this.tabs = buttons;
 		return (
-			<nav className="rs-scenario-tabs" attributes={{ role: 'tablist' }}>
+			<nav className="rs-scenario-tabs" attributes={{ role: 'tablist', 'aria-label': 'Faction and camp setting' }}>
 				{buttons}
 			</nav>
 		);
@@ -113,7 +147,12 @@ export class ResultView {
 
 	private showScenario(i: number) {
 		this.scenarioIndex = i;
-		this.rootElem?.querySelectorAll('.rs-scenario-tab').forEach((b, j) => b.classList.toggle('active', j == i));
+		this.tabs.forEach((b, j) => {
+			b.classList.toggle('active', j == i);
+			b.setAttribute('aria-selected', j == i ? 'true' : 'false');
+			b.tabIndex = j == i ? 0 : -1;
+		});
+		if (this.tabs[i]) this.scenarioHost.setAttribute('aria-labelledby', this.tabs[i].id);
 		const sc = this.result.scenarios[i];
 		if (!sc) {
 			this.scenarioHost.replaceChildren();
@@ -362,6 +401,21 @@ class ScenarioView {
 	private combos() {
 		const sc = this.sc;
 		if (!sc.combos.length && !sc.presetValues.length) return section('Tank and healer combos', empty('This run ranked no combos.'));
+		// Which preset values the ranked combos give, as sim/compsearch's presetValues finds them: at the
+		// best needs the best combo with that preset's slot changed to be ranked, and with minus without
+		// needs a ranked combo with it and one without it.
+		const key = (presets: RaidPreset[]) => [...presets].sort((a, b) => a - b).join(',');
+		const ranked = new Set(sc.combos.map(c => key(c.presets)));
+		const best = sc.combos[0]?.presets ?? [];
+		const presetValueApplies = {
+			atBest: (p: RaidPreset) => {
+				const idx = best.indexOf(p);
+				const role = presetInfo(p)?.role;
+				if (idx < 0 || role === undefined) return false;
+				return presetsFor(role).some(q => q.id != p && ranked.has(key(best.map((x, j) => (j == idx ? q.id : x)))));
+			},
+			withMinusWithout: (p: RaidPreset) => sc.combos.some(c => c.presets.includes(p)) && sc.combos.some(c => !c.presets.includes(p)),
+		};
 		const combosTable = (n: number) =>
 			table(
 				['#', 'Tanks and healers', { label: 'Raid DPS', numeric: true }, { label: 'Behind', numeric: true }, 'Signature'],
@@ -384,8 +438,16 @@ class ScenarioView {
 							tooltip: 'The best combo with at least one of the preset, minus the best combo with none',
 						},
 					],
-					sc.presetValues.map(p => [presetName(p.preset), fmt(p.atBest), fmt(p.bestWithMinusWithout)]),
+					sc.presetValues.map(p => [
+						presetName(p.preset),
+						presetValueApplies.atBest(p.preset) ? fmt(p.atBest) : NA,
+						presetValueApplies.withMinusWithout(p.preset) ? fmt(p.bestWithMinusWithout) : NA,
+					]),
 				),
+				<p className="rs-section-note">
+					{NA} where the ranked combos can’t say: at the best, for a preset the best combo doesn’t have or no ranked combo swaps out; with minus
+					without, for a preset in every ranked combo or in none.
+				</p>,
 			],
 			{
 				note: 'Every combination of tank and healer presets that fits the slots, ranked by the raid DPS of its best comp. Their own damage is left out.',
@@ -470,6 +532,7 @@ class ScenarioView {
 
 	private memberValues() {
 		const sc = this.sc;
+		const seats = sc.comps[0] ? valueSeats(sc.comps[0], sc.memberValues) : new Map<CompMemberValue, CompResultMember[]>();
 		return section(
 			'Member values',
 			sc.memberValues.length
@@ -481,23 +544,33 @@ class ScenarioView {
 							{ label: 'Contribution', numeric: true, tooltip: 'Raid DPS minus raid DPS without the member, re-resolved' },
 							{ label: 'Replacement margin', numeric: true, tooltip: 'Raid DPS minus the best raid DPS with another build in that slot' },
 							'Best replacement',
+							'Duty',
+							{ label: 'Duty cost', numeric: true, tooltip: 'Its base build’s DPS less its DPS on duty, in its seat' },
 							{ label: 'vs the DPS Report', numeric: true },
 							'Its parts',
 						],
-						sc.memberValues.map(mv => [
-							memberLabel(this.d, mv.buildId, { icon: true, count: mv.count }),
-							fmt(mv.ownDps),
-							fmtSigned(mv.contribution - mv.ownDps),
-							fmt(mv.contribution),
-							fmt(mv.replacementMargin),
-							mv.bestReplacement ? memberLabel(this.d, mv.bestReplacement) : '',
-							fmtSigned(mv.reportDifference),
-							mv.reportDifferenceParts.length ? list(mv.reportDifferenceParts, 'rs-parts') : '',
-						]),
+						sc.memberValues.map(mv => {
+							const seat = seats.get(mv) ?? [];
+							const duties = seat[0]?.duties.filter(d => d != Duty.DutyNone) ?? [];
+							return [
+								memberLabel(this.d, mv.buildId, { icon: true, count: mv.count, seat: seat.length ? seatText(seat) : undefined }),
+								fmt(mv.ownDps),
+								fmtSigned(mv.contribution - mv.ownDps),
+								fmt(mv.contribution),
+								mv.bestReplacement ? fmt(mv.replacementMargin) : NA,
+								mv.bestReplacement ? memberLabel(this.d, mv.bestReplacement) : NA,
+								duties.length ? duties.map(dutyName).join(', ') : NA,
+								duties.length ? fmt(mv.dutyCost) : NA,
+								mv.reportDifference || mv.reportDifferenceParts.length ? fmtSigned(mv.reportDifference) : NA,
+								mv.reportDifferenceParts.length ? list(mv.reportDifferenceParts, 'rs-parts') : '',
+							];
+						}),
 						'rs-table-values',
 				  )
 				: empty('No member values.'),
-			{ note: 'One row per distinct member; identical members share one value. A replacement margin within noise means two builds are interchangeable.' },
+			{
+				note: 'One row per distinct member in the best comp, with its group and package; identical members share one value. A replacement margin within noise means two builds are interchangeable.',
+			},
 		);
 	}
 
@@ -599,9 +672,55 @@ export const partiesView = (data: RaidSimData | null, comp: CompResult) => {
 	);
 };
 
+// What makes one seat of a build differ from another: the seat's package and cooldowns, and its class's
+// blessings (the search's askKey).
+const seatKey = (m: CompResultMember) => [m.buildId, m.package, +m.powerInfusion, +m.innervate, m.blessings.join('.')].join('|');
+
+// The best comp's members each member value stands for. A value's member index counts the search's own
+// member list, which isn't the result's (that one has the placeholders first and is sorted by party), so
+// a value is matched to the seats of its build that share one value: as many as its count, the closest
+// in DPS when two seats fit.
+export const valueSeats = (comp: CompResult, values: CompMemberValue[]): Map<CompMemberValue, CompResultMember[]> => {
+	const groups = new Map<string, CompResultMember[]>();
+	comp.members
+		.filter(m => m.role == RaidRole.RaidRoleDps)
+		.forEach(m => {
+			const k = seatKey(m);
+			if (!groups.has(k)) groups.set(k, []);
+			groups.get(k)!.push(m);
+		});
+	const used = new Set<string>();
+	const out = new Map<CompMemberValue, CompResultMember[]>();
+	values.forEach(mv => {
+		const fits = [...groups.entries()].filter(([k, ms]) => !used.has(k) && ms[0].buildId == mv.buildId);
+		const exact = fits.filter(([, ms]) => ms.length == (mv.count || 1));
+		const pool = exact.length ? exact : fits;
+		if (!pool.length) return;
+		pool.sort((a, b) => Math.abs(a[1][0].dps - mv.ownDps) - Math.abs(b[1][0].dps - mv.ownDps));
+		used.add(pool[0][0]);
+		out.set(mv, pool[0][1]);
+	});
+	return out;
+};
+
+// A seat in words, like "group 2 · Mana Spring · Power Infusion".
+export const seatText = (members: CompResultMember[]) => {
+	const m = members[0];
+	const groups = [...new Set(members.map(x => x.party))].sort((a, b) => a - b);
+	const parts = [`${groups.length > 1 ? 'groups' : 'group'} ${groups.join(', ')}`];
+	if (m.package != RaidPackage.RaidPackageNone) parts.push(packageName(m.package));
+	if (m.powerInfusion) parts.push('Power Infusion');
+	if (m.innervate) parts.push('Innervate');
+	return parts.join(' · ');
+};
+
 const memberCard = (data: RaidSimData | null, m: CompResultMember) => {
 	const holds: string[] = [];
-	m.duties.forEach(d => holds.push(`${dutyName(d)}${m.dutyCost ? ` (costs ${fmt(m.dutyCost)})` : ''}`));
+	// The result has one duty cost per member, its base build less it on duty. A member holds one duty, so
+	// that's the duty's own cost; with more than one, it's their cost together.
+	const duties = m.duties.filter(d => d != Duty.DutyNone);
+	if (duties.length == 1) holds.push(`${dutyName(duties[0])}${m.dutyCost ? ` (costs ${fmt(m.dutyCost)} DPS)` : ''}`);
+	else if (duties.length > 1) holds.push(`${duties.map(dutyName).join(', ')}${m.dutyCost ? ` (cost ${fmt(m.dutyCost)} DPS together)` : ''}`);
 	if (m.judgement != PaladinJudgement.PaladinJudgementNone) holds.push(`judges ${judgementName(m.judgement)}`);
 	if (m.totems.length) holds.push(`totems: ${m.totems.map(totemName).join(', ')}`);
 	const gets: string[] = [];

@@ -63,6 +63,62 @@
 	margin-left: var(--spacer-1);
 	font-weight: normal;
 	vertical-align: middle;
+
+	// The theme's green, yellow and cyan are bright: white on them is unreadable.
+	&.bg-success,
+	&.bg-warning,
+	&.bg-info {
+		color: #111;
+	}
+}
+
+// An error in a status line: it wraps, and a stack trace waits in a collapsible.
+.rs-error-status {
+	min-width: 0;
+	max-width: 100%;
+	overflow-wrap: anywhere;
+
+	.rs-error-details {
+		margin-top: var(--spacer-1);
+		color: var(--bs-body-color);
+
+		summary {
+			cursor: pointer;
+			color: var(--text-muted-color);
+		}
+
+		pre {
+			max-height: 20rem;
+			margin: var(--spacer-1) 0 0;
+			padding: var(--spacer-2);
+			overflow: auto;
+			white-space: pre-wrap;
+			overflow-wrap: anywhere;
+			font-size: 0.75rem;
+			background: rgba(0, 0, 0, 0.3);
+		}
+	}
+}
+
+// Results of a raid that has changed since.
+.rs-stale-note {
+	margin-bottom: var(--spacer-3);
+	padding: var(--spacer-2) var(--spacer-3);
+	border-left: 3px solid $known-issues-color;
+	background: rgba(0, 0, 0, 0.25);
+	color: $known-issues-color;
+}
+
+.rs-stale .rs-section-body,
+.rs-run-results.rs-stale .rs-section,
+.rs-run-results.rs-stale .rs-run-topline {
+	opacity: 0.6;
+}
+
+.rs-member-seat {
+	margin-left: var(--spacer-1);
+	color: var(--text-muted-color);
+	font-size: 0.8em;
 }
 
 .rs-ci {
@@ -449,6 +505,15 @@ body.rs-dropping .raid-sim-page .sim-main::after {
 	min-width: 0;
 }
 
+.rs-form-problems {
+	margin: var(--spacer-2) 0 0;
+	padding-left: 1.25rem;
+
+	&:empty {
+		display: none;
+	}
+}
+
 .rs-checks {
 	display: flex;
 	flex-wrap: wrap;
@@ -513,6 +578,7 @@ body.rs-dropping .raid-sim-page .sim-main::after {
 }
 
 .rs-progress {
+	overflow-wrap: anywhere;
 	padding: var(--spacer-3);
 	border: 1px solid var(--line-color);
 	border-radius: var(--panel-radius);
@@ -601,6 +667,20 @@ body.rs-dropping .raid-sim-page .sim-main::after {
 
 	&.dragfrom {
 		opacity: 0.4;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--gold-soft);
+		outline-offset: 1px;
+	}
+
+	&.rs-slot-moving {
+		outline: 2px dashed var(--gold-soft);
+		opacity: 0.7;
+	}
+
+	&.rs-slot-unknown {
+		outline: 1px solid var(--bs-danger);
 	}
 
 	.player-details {
@@ -727,6 +807,10 @@ body.rs-dropping .raid-sim-page .sim-main::after {
 }
 
 .rs-run-status {
+	flex: 1 1 16rem;
+	min-width: 0;
+	overflow-wrap: anywhere;
+
 	&:empty {
 		display: none;
 	}

@@ -23,6 +23,9 @@ export enum SimRequest {
 	compSearchAsync = 'compSearchAsync',
 	// A hand-built raid's member values, at the native server's /compValues (it needs the report's builds).
 	compValues = 'compValues',
+	// Cancels a request's HTTP call in a net worker (its input is the request id, as UTF-8). The server may
+	// go on computing what it was asked; only the page stops waiting.
+	abortFetch = 'abortFetch',
 }
 
 /**
