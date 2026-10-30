@@ -277,9 +277,9 @@ export const makePresetEncounter = (name: string, encounter?: PresetEncounter['e
 
 export const makePresetBuild = (
 	name: string,
-	{ group, tooltip, gear, talents, rotation, epWeights, encounter, race, level, bonusTalentPoints, professions, options }: PresetBuildOptions,
+	{ group, tooltip, gear, talents, rotation, epWeights, encounter, race, level, bonusTalentPoints, professions, options, levelingPlan }: PresetBuildOptions,
 ): PresetBuild => {
-	return { name, group, tooltip, gear, talents, rotation, epWeights, encounter, race, level, bonusTalentPoints, professions, options };
+	return { name, group, tooltip, gear, talents, rotation, epWeights, encounter, race, level, bonusTalentPoints, professions, options, levelingPlan };
 };
 
 export type SpecCheckWarning = {
