@@ -32,7 +32,7 @@ import { Class, Encounter as EncounterProto, Faction, MobType, Stat } from '../c
 import { SimResult } from '../core/proto_utils/sim_result';
 import { classNames, cssClassForClass } from '../core/proto_utils/utils';
 import { RequestTypes } from '../core/sim_signal_manager';
-import { TypedEvent } from '../core/typed_event';
+import { EventID, TypedEvent } from '../core/typed_event';
 import {
 	assignedElement,
 	BLESSING_CLASSES,
@@ -58,7 +58,7 @@ import {
 import type { RaidSimUI } from './raid_sim_ui';
 import { DETAILS_TAB } from './raid_sim_ui';
 import { check, field, select } from './search_form';
-import { badge, empty, errorStatus, fmt, fmtSigned, iconAlt, list, NA, section, table } from './view_utils';
+import { badge, ci95Labelled, empty, errorStatus, fmt, fmtSigned, iconAlt, list, NA, plural, section, table } from './view_utils';
 
 const STORAGE_KEY = '__forever_raid_sim__comp__';
 const PARTY_SIZE = 5;
@@ -92,6 +92,8 @@ interface EditorState {
 	campBuffs: boolean;
 	boss: Boss;
 	encounter?: unknown; // protojson
+	// The sidebar's iterations, which Run uses.
+	iterations?: number;
 	hand: HandAssignments;
 }
 
@@ -128,6 +130,8 @@ export class CompEditor {
 	// The palette entry picked with a click, placed by clicking a slot (touch screens have no drag and drop).
 	private picked: Omit<Member, 'id'> | null = null;
 	private running = false;
+	// The running raid sim was stopped from the page.
+	private stopping = false;
 	private lastRun: RunOutput | null = null;
 	// The raid changed after the last run (or member values): its results are kept but marked stale, and
 	// its resolved assignments no longer fill the Auto labels.
@@ -141,6 +145,9 @@ export class CompEditor {
 	// The slot to focus once the raid is drawn again (after a keyboard move).
 	private focusCell: number | null = null;
 	private readonly slotHelpId = 'rs-slot-help';
+	// The event of the last fight a boss preset or a loaded comp set, which leaves the boss as it is. Any
+	// other change to the fight is an edit by hand, which makes it a custom one.
+	private presetEvent: EventID | null = null;
 
 	constructor(parent: HTMLElement, simUI: RaidSimUI) {
 		this.simUI = simUI;
@@ -355,11 +362,13 @@ export class CompEditor {
 		this.valuesAbort?.abort();
 		this.valuesHost.replaceChildren();
 		this.renderResults();
-		// The sidebar's raid DPS and Raid results were the run's too.
-		if (this.simUI.resultsManager.getRunData()) {
-			this.simUI.resultsManager.clearSimResult(TypedEvent.nextEventID());
-			this.simUI.resultsViewer.hideAll();
-		}
+		this.clearSidebar();
+	}
+
+	// The sidebar's raid DPS (or a run's progress) and Raid results, which were the last run's.
+	private clearSidebar() {
+		if (this.simUI.resultsManager.getRunData()) this.simUI.resultsManager.clearSimResult(TypedEvent.nextEventID());
+		this.simUI.resultsViewer.hideAll();
 	}
 
 	// The last run, while it's of the raid as it stands.
@@ -446,13 +455,26 @@ export class CompEditor {
 
 	private resize(size: number) {
 		const cells: Array<Member | null> = Array(size).fill(null);
-		// Members keep their place; the ones past the new size are dropped.
+		// Members keep their place; the ones past the new size are dropped, with their assignments, and the
+		// status line names them.
+		const dropped: string[] = [];
 		this.state.cells.forEach((m, i) => {
-			if (m && i < size) cells[i] = m;
+			if (!m) return;
+			if (i < size) {
+				cells[i] = m;
+				return;
+			}
+			dropped.push(this.memberShortName(m, i));
+			this.dropAssignmentsOf(m.id);
 		});
+		if (this.moving !== null && this.moving >= size) this.moving = null;
 		this.state.size = size;
 		this.state.cells = cells;
 		this.changed();
+		if (dropped.length) {
+			const who = dropped.length == 1 ? 'this member' : `these ${dropped.length} members`;
+			this.setStatus(`Down to ${size} players: ${who} past group ${size / PARTY_SIZE} left the raid: ${dropped.join(', ')}.`);
+		}
 	}
 
 	// ---- The raid: parties of 5 with drag and drop ----
@@ -1027,9 +1049,18 @@ export class CompEditor {
 				}
 			}
 			new EncounterPicker(pickerHost, sim.encounter, { showExecuteProportion: true }, this.simUI);
-			sim.encounter.changeEmitter.on(() => {
+			sim.encounter.changeEmitter.on(eventID => {
+				if (eventID != this.presetEvent && this.state.boss != 'Custom') {
+					this.state.boss = 'Custom';
+					this.initBossSelect();
+				}
 				this.saveState();
 				this.markStale();
+			});
+			if (this.state.iterations) sim.setIterations(TypedEvent.nextEventID(), this.state.iterations);
+			sim.iterationsChangeEmitter.on(() => {
+				this.state.iterations = sim.getIterations();
+				this.saveState();
 			});
 		});
 	}
@@ -1061,7 +1092,12 @@ export class CompEditor {
 		} else {
 			encounter.naturalFlaskZone = true;
 		}
-		this.simUI.sim.encounter.fromProto(TypedEvent.nextEventID(), encounter);
+		this.setPresetEncounter(encounter);
+	}
+
+	private setPresetEncounter(encounter: EncounterProto) {
+		this.presetEvent = TypedEvent.nextEventID();
+		this.simUI.sim.encounter.fromProto(this.presetEvent, encounter);
 	}
 
 	// ---- Load a comp from a search result ----
@@ -1193,7 +1229,7 @@ export class CompEditor {
 		const generic = e.mobType == MobType.MobTypeUnknown && e.naturalFlaskZone;
 		const onyxia = e.mobType == MobType.MobTypeDragonkin && !e.naturalFlaskZone;
 		this.state.boss = (e.name || 'Generic') == 'Generic' && generic ? 'Generic' : e.name == 'Onyxia' && onyxia ? 'Onyxia' : 'Custom';
-		this.simUI.sim.encounter.fromProto(TypedEvent.nextEventID(), encounter);
+		this.setPresetEncounter(encounter);
 		this.initBossSelect();
 	}
 
@@ -1326,6 +1362,7 @@ export class CompEditor {
 	async run() {
 		const sim = this.simUI.sim;
 		if (this.running) {
+			this.stopping = true;
 			await sim.signalManager.abortType(RequestTypes.RaidSim);
 			return;
 		}
@@ -1342,6 +1379,7 @@ export class CompEditor {
 			return;
 		}
 		this.running = true;
+		this.stopping = false;
 		this.setRunning(true);
 		const revision = this.revision;
 		try {
@@ -1367,7 +1405,7 @@ export class CompEditor {
 				}),
 			);
 			out.request = request;
-			this.setStatus(`Simming ${request.raid?.parties.flatMap(p => p.players).length ?? 0} players…`);
+			this.setStatus(`Simming ${plural(request.raid?.parties.flatMap(p => p.players).length ?? 0, 'player')}…`);
 			const result = await sim.runRaidSimRequest(request, (progress: ProgressMetrics) => {
 				this.simUI.resultsManager.setSimProgress(progress);
 				if (progress.totalIterations)
@@ -1376,7 +1414,14 @@ export class CompEditor {
 			out.result = result;
 			// The raid changed while it ran.
 			if (this.revision != revision) this.stale = true;
-			if (result.error) {
+			if (result.error && this.stopping) {
+				// A stopped run keeps nothing: neither its progress in the sidebar nor the resolution.
+				this.lastRun = null;
+				this.stale = false;
+				this.clearSidebar();
+				this.setStatus('Run stopped. Nothing was kept.');
+			} else if (result.error) {
+				this.clearSidebar();
 				this.setError('The raid sim stopped', result.error.message || 'aborted');
 			} else {
 				out.simResult = await SimResult.makeNew(request, result);
@@ -1388,6 +1433,7 @@ export class CompEditor {
 			this.renderResults();
 		} catch (e) {
 			console.error(e);
+			this.clearSidebar();
 			this.setError('The run failed', e instanceof Error ? e.message : `${e}`);
 		} finally {
 			this.running = false;
@@ -1507,7 +1553,7 @@ export class CompEditor {
 			{
 				note: `One row per distinct member, with the slots (group.place) it stands for. The members’ single-player sum under this comp’s set: ${fmt(
 					out.score,
-				)} (±${fmt(1.96 * out.se)}).`,
+				)} ${ci95Labelled(out.se)}.`,
 			},
 		);
 	}
@@ -1636,7 +1682,7 @@ export class CompEditor {
 						[
 							'Group',
 							'Member',
-							{ label: 'DPS', numeric: true },
+							{ label: 'DPS ±95%', numeric: true, tooltip: 'Its DPS in the raid sim, with its 95% interval' },
 							{ label: 'TPS', numeric: true, tooltip: 'Threat per second' },
 							{ label: 'vs the DPS Report', numeric: true },
 							'Duties',
@@ -1719,14 +1765,23 @@ export class CompEditor {
 		let job = '';
 		switch (a.job.oneofKind) {
 			case 'blessing':
-				job = `${blessingName(a.job.blessing.blessing)} to ${classNames[a.job.blessing.class]}s`;
+				job = `${a.job.blessing.blessing == Blessing.BlessingNone ? 'no blessing' : blessingName(a.job.blessing.blessing)} to ${
+					classNames[a.job.blessing.class]
+				}s`;
 				break;
 			case 'judgement':
-				job = `judges ${judgementName(a.job.judgement)}`;
+				job = a.job.judgement == PaladinJudgement.PaladinJudgementNone ? 'judges nothing' : `judges ${judgementName(a.job.judgement)}`;
 				break;
-			case 'totem':
-				job = `drops ${totemName(a.job.totem.totem)}`;
+			case 'totem': {
+				const element = assignedElement(a.job.totem);
+				job =
+					a.job.totem.totem != RaidTotem.RaidTotemNone
+						? `drops ${totemName(a.job.totem.totem)}`
+						: element
+						? `drops no ${element} totem`
+						: 'drops no totem';
 				break;
+			}
 			case 'duty':
 				job = `holds ${dutyName(a.job.duty)}`;
 				break;

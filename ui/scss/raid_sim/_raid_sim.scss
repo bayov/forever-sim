@@ -842,8 +842,7 @@ body.rs-dropping .raid-sim-page .sim-main::after {
 }
 
 // Columns of words keep a readable width; the table scrolls sideways instead.
-.rs-table-comps td:nth-child(4),
-.rs-table-comps td:nth-child(5) {
+.rs-table-comps td.rs-col-words {
 	min-width: 12rem;
 }
 

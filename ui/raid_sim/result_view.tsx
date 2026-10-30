@@ -30,7 +30,28 @@ import {
 	roleName,
 	totemName,
 } from './data';
-import { badge, ci95, collapsible, empty, errorStatus, fmt, fmtInt, fmtSigned, list, memberLabel, membersLabel, NA, section, table } from './view_utils';
+import {
+	badge,
+	ci95,
+	ci95Labelled,
+	collapsible,
+	empty,
+	errorStatus,
+	fmt,
+	fmtInt,
+	fmtSigned,
+	list,
+	memberLabel,
+	membersLabel,
+	NA,
+	plural,
+	section,
+	table,
+} from './view_utils';
+
+// What the two DPS figures of a comp are, wherever both show.
+const TWO_FIGURES =
+	'Score: the members’ own single-player sims under the comp’s buffs, added up, which is how the search ranks comps. Raid sim DPS: the whole raid simmed together, which the confirmation runs for the top comps and which settles their order.';
 
 export interface ResultViewOptions {
 	// Opens a comp in the comp editor.
@@ -100,7 +121,7 @@ export class ResultView {
 		return (
 			<header className="rs-result-header">
 				<h2 className="rs-result-title">
-					Comp search: {req.size} players, {req.tanks} {req.tanks == 1 ? 'tank' : 'tanks'}, {req.healers} {req.healers == 1 ? 'healer' : 'healers'}
+					Comp search: {plural(req.size, 'player')}, {plural(req.tanks, 'tank')}, {plural(req.healers, 'healer')}
 				</h2>
 				<p className="rs-result-subtitle">
 					{encounterText(req)}. {fmtInt(r.simsRun)} single-player sims at {fmtInt(req.iterations)} iterations (contenders at{' '}
@@ -119,8 +140,10 @@ export class ResultView {
 			const button = (
 				<button className="rs-scenario-tab" type="button" attributes={{ role: 'tab' }}>
 					<span className="rs-scenario-tab-name">{scenarioName(sc)}</span>
-					<span className="rs-scenario-tab-dps">{best ? `${fmt(best.dps)} raid DPS` : 'no comp'}</span>
-					{sc.tieSet > 1 ? <span className="rs-scenario-tab-note">{sc.tieSet} tie</span> : null}
+					<span className="rs-scenario-tab-dps">
+						{!best ? 'no comp' : best.confirmed ? `${fmt(best.raidSimDps)} raid sim DPS` : `${fmt(best.dps)} DPS score`}
+					</span>
+					{sc.tieSet > 1 ? <span className="rs-scenario-tab-note">a tie of {sc.tieSet}</span> : null}
 				</button>
 			) as HTMLButtonElement;
 			button.id = `${this.panelId}-tab-${i}`;
@@ -264,26 +287,42 @@ class ScenarioView {
 		const sc = this.sc;
 		const changes = sc.sensitivity.filter(s => !s.winnerHolds);
 		const items: Node[] = [];
-		if (sc.comps.length) {
+		const best = sc.comps[0];
+		if (best) {
 			items.push(
-				<p className="rs-lead-line">
-					<strong>{scenarioName(sc)}:</strong> the best comp gets <strong>{fmt(sc.comps[0].dps)} raid DPS</strong> ({ci95(sc.comps[0].se)}) over a{' '}
-					{fmt(sc.fightSeconds, 0)} s fight, with {comboText(sc.comps[0].combo)}.
-				</p>,
+				best.confirmed ? (
+					<p className="rs-lead-line">
+						<strong>{scenarioName(sc)}:</strong> the best comp gets <strong>{fmt(best.raidSimDps)} raid DPS in the raid sim</strong>
+						{` ${ci95Labelled(best.raidSimSe)}, with a score of ${fmt(best.dps)} ${ci95Labelled(best.se)}, over a ${fmt(
+							sc.fightSeconds,
+							0,
+						)} s fight, with `}
+						{comboText(best.combo)}.
+					</p>
+				) : (
+					<p className="rs-lead-line">
+						<strong>{scenarioName(sc)}:</strong> the best comp scores <strong>{fmt(best.dps)} raid DPS</strong>
+						{` ${ci95Labelled(best.se)} over a ${fmt(sc.fightSeconds, 0)} s fight, with `}
+						{comboText(best.combo)}. No raid sim confirmed it.
+					</p>
+				),
 			);
+			if (best.confirmed) items.push(<p className="rs-section-note">{TWO_FIGURES}</p>);
 		}
 		items.push(
 			<p className="rs-lead-line">
 				{sc.tieSet > 1
-					? `The first ${sc.tieSet} comps are a tie: their gaps are under the larger of 2 standard errors and 0.1%, so any of them is the answer.`
+					? `The first ${sc.tieSet} comps are a tie: their ${
+							best?.confirmed ? 'raid sim' : 'score'
+					  } gaps are under the larger of 2 standard errors and 0.1%, so any of them is the answer.`
 					: 'No other comp ties with the best.'}
 			</p>,
 		);
 		if (sc.sensitivity.length) {
 			items.push(
 				<p className="rs-lead-line">
-					The winner holds under {sc.sensitivity.length - changes.length} of {sc.sensitivity.length} sensitivity scenarios
-					{changes.length ? ' and changes under these:' : '.'}
+					The winner holds under {sc.sensitivity.length - changes.length} of {plural(sc.sensitivity.length, 'sensitivity scenario')}
+					{changes.length == 1 ? ' and changes under this one:' : changes.length ? ' and changes under these:' : '.'}
 				</p>,
 			);
 			if (changes.length) {
@@ -312,6 +351,8 @@ class ScenarioView {
 	private comps() {
 		const sc = this.sc;
 		if (!sc.comps.length) return section('The best comps', empty('No comp.'));
+		// With a confirmation, the comps are ranked by their raid sims, and the raid sim columns join.
+		const confirmed = sc.comps.some(c => c.confirmed);
 		const rows = sc.comps.map((c, i) => {
 			const show = (
 				<button className="btn btn-sm btn-outline-primary rs-show-members" type="button" title="Show this comp's members below">
@@ -337,17 +378,41 @@ class ScenarioView {
 				<span className="rs-dps">
 					{fmt(c.dps)} <span className="rs-ci">{ci95(c.se)}</span>
 				</span>,
+				// The first comp is the one the gaps are measured from: by score, or by raid sim with a confirmation.
 				i == 0 ? (
-					'best'
+					confirmed ? (
+						NA
+					) : (
+						'best'
+					)
 				) : (
 					<span>
 						{fmt(c.gap)} <span className="rs-ci">{ci95(c.gapSe)}</span>
 					</span>
 				),
+				...(confirmed
+					? [
+							c.confirmed ? (
+								<span className="rs-dps">
+									{fmt(c.raidSimDps)} <span className="rs-ci">{ci95(c.raidSimSe)}</span>
+								</span>
+							) : (
+								<span className="rs-muted">not raid-simmed</span>
+							),
+							!c.confirmed ? (
+								NA
+							) : i == 0 ? (
+								'best'
+							) : (
+								<span>
+									{fmt(c.raidSimGap)} <span className="rs-ci">{ci95(c.raidSimGapSe)}</span>
+								</span>
+							),
+					  ]
+					: []),
+				fmt(c.modelDps),
 				comboText(c.combo),
 				dpsSummary(this.d, c),
-				c.confirmed ? `${fmt(c.raidSimDps)} ${ci95(c.raidSimSe)}` : 'not raid-simmed',
-				fmt(c.modelDps),
 				<span className="rs-actions">{actions}</span>,
 			];
 		});
@@ -357,17 +422,33 @@ class ScenarioView {
 				table(
 					[
 						'#',
-						{ label: 'Raid DPS', numeric: true, tooltip: 'The members’ sum, with its 95% interval' },
-						{ label: 'Behind', numeric: true, tooltip: 'Behind the best, with the paired 95% interval of the difference' },
-						'Tanks and healers',
-						'DPS members',
-						{ label: 'Raid sim', tooltip: 'The confirmation raid sim (milestone M1b)' },
-						{ label: 'Model', numeric: true, tooltip: 'What the search’s model scored it' },
+						{ label: 'Score ±95%', numeric: true, tooltip: 'The members’ single-player DPS added up, with its 95% interval' },
+						{
+							label: 'Score gap ±95%',
+							numeric: true,
+							tooltip: `Behind the ${
+								confirmed ? 'first comp' : 'best'
+							}’s score, with the paired 95% interval of the difference (below zero: ahead of it on score)`,
+						},
+						...(confirmed
+							? [
+									{ label: 'Raid sim DPS ±95%', numeric: true, tooltip: 'The whole raid simmed together, with its 95% interval' },
+									{
+										label: 'Raid sim gap ±95%',
+										numeric: true,
+										tooltip: 'Behind the best confirmed comp in the raid sims, with the paired 95% interval of the difference',
+									},
+							  ]
+							: []),
+						{ label: 'Model', numeric: true, tooltip: 'The model’s estimate of the score, before the exact single-player sims' },
+						{ label: 'Tanks and healers', className: 'rs-col-words' },
+						{ label: 'DPS members', className: 'rs-col-words' },
 						'',
 					],
 					rows,
 					'rs-table-comps',
 				),
+				<p className="rs-section-note">{TWO_FIGURES}</p>,
 				<div className="rs-buffsets">
 					{list(
 						sc.comps.map((c, i) => (
@@ -379,7 +460,9 @@ class ScenarioView {
 				</div>,
 			],
 			{
-				note: 'The best comp and its runners-up. Gaps and intervals come from the screening sims, before any confirmation.',
+				note: confirmed
+					? 'The best comp and its runners-up, ranked by raid sim DPS: the comps the raid sims confirmed come first, the rest follow by score.'
+					: 'The best comp and its runners-up, ranked by score. This run didn’t confirm them with raid sims (the search’s Confirm option).',
 			},
 		);
 	}
@@ -392,7 +475,8 @@ class ScenarioView {
 		}
 		this.membersHost.replaceChildren(
 			<p className="rs-members-of">
-				Comp #{i + 1}: {fmt(comp.dps)} raid DPS {ci95(comp.se)}
+				{`Comp #${i + 1}: a score of ${fmt(comp.dps)} ${ci95Labelled(comp.se)}`}
+				{comp.confirmed ? `, ${fmt(comp.raidSimDps)} raid sim DPS ${ci95Labelled(comp.raidSimSe)}` : ''}
 			</p>,
 			partiesView(this.d, comp),
 		);
@@ -418,7 +502,16 @@ class ScenarioView {
 		};
 		const combosTable = (n: number) =>
 			table(
-				['#', 'Tanks and healers', { label: 'Raid DPS', numeric: true }, { label: 'Behind', numeric: true }, 'Signature'],
+				[
+					'#',
+					'Tanks and healers',
+					{ label: 'Best comp’s score', numeric: true, tooltip: 'The score of the best comp the search filled around this combo' },
+					{ label: 'Behind the best combo', numeric: true },
+					{
+						label: 'Signature',
+						tooltip: 'The tanks and healers that change what the raid gets: the combos with one signature share their buff sets',
+					},
+				],
 				sc.combos
 					.slice(0, n)
 					.map((c, i) => [`${i + 1}`, comboText(c.presets), fmt(c.dps), fmt(c.gap), <span className="rs-muted">{c.signature}</span>]),
@@ -450,30 +543,36 @@ class ScenarioView {
 				</p>,
 			],
 			{
-				note: 'Every combination of tank and healer presets that fits the slots, ranked by the raid DPS of its best comp. Their own damage is left out.',
+				note: 'Every combination of tank and healer presets that fits the slots, ranked by its best comp’s score: the members’ single-player sims added up, from the screening fill, before any raid sim. Their own damage is left out.',
 			},
 		);
 	}
 
 	private roles() {
 		const sc = this.sc;
+		// A result from before the measured field has none set: its rows show their numbers as they are.
+		const old = !sc.roles.some(r => r.measured);
+		const notMeasured = () => <span className="rs-muted">not measured</span>;
 		return section(
 			'The role table',
 			sc.roles.length
 				? table(
 						['Role', '', { label: 'Gain', numeric: true }, 'Provider', { label: 'Provider cost', numeric: true }, { label: 'Net', numeric: true }],
-						sc.roles.map(r => [
-							r.role,
-							r.inSet ? badge('in the set', 'success') : badge('missing', 'secondary', 'The value of adding it'),
-							r.inSet ? fmt(r.gain) : '',
-							r.inSet ? membersLabel(this.d, r.provider) : 'value of adding',
-							r.inSet ? fmt(r.providerCost) : '',
-							fmt(r.net),
-						]),
+						sc.roles.map(r => {
+							const measured = r.measured || old;
+							return [
+								r.role,
+								r.inSet ? badge('in the set', 'success') : badge('missing', 'secondary', 'The value of adding it'),
+								!measured ? notMeasured() : r.inSet ? fmt(r.gain) : '',
+								r.inSet ? membersLabel(this.d, r.provider) : 'value of adding',
+								measured && r.inSet ? fmt(r.providerCost) : '',
+								measured ? fmt(r.net) : notMeasured(),
+							];
+						}),
 				  )
 				: empty('No roles.'),
 			{
-				note: 'Each role’s gain at the winning set, with that role alone removed and the raid re-filled; a role the set lacks shows its value of adding instead.',
+				note: 'Each role’s gain at the winning set, with that role alone removed and the raid re-filled; a role the set lacks shows its value of adding instead. A role only the placeholders give costs nothing and can’t be removed, so it isn’t measured.',
 			},
 		);
 	}
@@ -505,7 +604,13 @@ class ScenarioView {
 		return section(
 			'The filler ranking',
 			table(
-				['Build', { label: 'DPS', numeric: true }, { label: '±SE', numeric: true }, 'Assumption range', ''],
+				[
+					'Build',
+					{ label: 'DPS', numeric: true },
+					{ label: 'Standard error', numeric: true, tooltip: 'One standard error; the 95% interval is 1.96 times it either side' },
+					'Assumption range',
+					'',
+				],
 				sc.fillers.map(f => [
 					memberLabel(this.d, f.buildId, { icon: true }),
 					fmt(f.dps),
@@ -724,7 +829,7 @@ const memberCard = (data: RaidSimData | null, m: CompResultMember) => {
 	if (m.judgement != PaladinJudgement.PaladinJudgementNone) holds.push(`judges ${judgementName(m.judgement)}`);
 	if (m.totems.length) holds.push(`totems: ${m.totems.map(totemName).join(', ')}`);
 	const gets: string[] = [];
-	if (m.blessings.length) gets.push(`blessings: ${m.blessings.map(blessingName).join(', ')}`);
+	if (m.blessings.length) gets.push(`${m.blessings.length == 1 ? 'blessing' : 'blessings'}: ${m.blessings.map(blessingName).join(', ')}`);
 	if (m.package != RaidPackage.RaidPackageNone) gets.push(packageName(m.package));
 	if (m.powerInfusion) gets.push('Power Infusion');
 	if (m.innervate) gets.push('Innervate');
@@ -735,7 +840,10 @@ const memberCard = (data: RaidSimData | null, m: CompResultMember) => {
 				{memberLabel(data, m.buildId, { icon: true })}
 				{isDps ? (
 					<span className="rs-member-dps">
-						{fmt(m.dps)} <span className="rs-ci">{ci95(m.se)}</span>
+						{fmt(m.dps)}{' '}
+						<span className="rs-ci" title="Its 95% interval">
+							{ci95(m.se)}
+						</span>
 					</span>
 				) : (
 					badge(roleName(m.role), m.role == RaidRole.RaidRoleTank ? 'warning' : 'success')

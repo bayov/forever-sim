@@ -18,6 +18,10 @@ export const fmtSigned = (n: number | undefined, digits = 1) => {
 export const NA = '—';
 // A 95% interval from a standard error.
 export const ci95 = (se: number | undefined, digits = 1) => (se ? `±${(1.96 * se).toFixed(digits)}` : '');
+// The same, saying it's a 95% interval, for a line that has more than one ± figure.
+export const ci95Labelled = (se: number | undefined, digits = 1) => (se ? `${ci95(se, digits)} (95%)` : '');
+// A count with its noun, which is singular for 1: "1 tank", "2 tanks".
+export const plural = (n: number, one: string, many = `${one}s`) => `${n} ${n == 1 ? one : many}`;
 export const fmtInt = (n: number | bigint | undefined) => (n === undefined ? '' : Number(n).toLocaleString('en-US'));
 
 export type Cell = Node | string | number | null | undefined | Array<Node | string>;

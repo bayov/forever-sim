@@ -6,7 +6,7 @@ import { Faction, MobType } from '../core/proto/common';
 import { RequestTypes } from '../core/sim_signal_manager';
 import { buildLabel, loadRaidSimData, presetName, presetsFor, RAID_SIZES, RaidSimData } from './data';
 import type { RaidSimUI } from './raid_sim_ui';
-import { errorStatus, fmt, fmtInt, memberLabel } from './view_utils';
+import { errorStatus, fmt, fmtInt, memberLabel, plural } from './view_utils';
 
 const STORAGE_KEY = '__forever_raid_sim__searchForm__';
 
@@ -32,6 +32,7 @@ interface FormState {
 	contenderIterations: number;
 	skipSensitivity: boolean;
 	maxCombos: number;
+	confirm: boolean;
 }
 
 const defaultState = (): FormState => ({
@@ -53,6 +54,7 @@ const defaultState = (): FormState => ({
 	contenderIterations: 10000,
 	skipSensitivity: false,
 	maxCombos: 0,
+	confirm: false,
 });
 
 // The request a form makes, with the encounter set the way tools/compsearch sets it: Generic is the
@@ -85,6 +87,8 @@ export const searchRequest = (s: FormState): CompSearchRequest => {
 		contenderIterations: s.contenderIterations,
 		skipSensitivity: s.skipSensitivity,
 		maxCombos: s.maxCombos,
+		// The confirmation's iterations are the search's defaults (5,000, and 20,000 for the top 2).
+		confirm: s.confirm,
 	});
 };
 
@@ -101,7 +105,8 @@ export const formProblems = (s: FormState): string[] => {
 			}). Set at least one tank or healer slot.`,
 		);
 	}
-	if (s.size - s.tanks - s.healers < 1) problems.push(`${s.tanks} tanks and ${s.healers} healers leave no DPS slot in a raid of ${s.size}.`);
+	if (s.size - s.tanks - s.healers < 1)
+		problems.push(`${plural(s.tanks, 'tank')} and ${plural(s.healers, 'healer')} leave no DPS slot in a raid of ${s.size}.`);
 	if (!s.horde && !s.alliance) problems.push('Pick a faction.');
 	return problems;
 };
@@ -121,7 +126,10 @@ export class SearchForm {
 	// so the search waits until they're fixed.
 	private readonly invalid = new Map<string, string>();
 	private running = false;
+	// The running search was aborted from the page.
+	private aborted = false;
 	private native = false;
+	private readonly baseTitle = document.title;
 
 	constructor(parent: HTMLElement, simUI: RaidSimUI, onResult: (result: CompSearchResult) => void) {
 		this.simUI = simUI;
@@ -165,6 +173,8 @@ export class SearchForm {
 		this.searchButton.addEventListener('click', () => this.search());
 		this.abortButton.addEventListener('click', async () => {
 			this.abortButton.disabled = true;
+			this.aborted = true;
+			this.showProgress(<p className="rs-muted">Aborting the search…</p>);
 			await this.simUI.sim.signalManager.abortType(RequestTypes.CompSearch);
 		});
 
@@ -402,6 +412,11 @@ export class SearchForm {
 							'Sensitivity',
 							check('Skip the sensitivity scenarios', s.skipSensitivity, v => this.set('skipSensitivity', v)),
 						)}
+						{field(
+							'Confirm',
+							check('Raid-sim the top comps', s.confirm, v => this.set('confirm', v)),
+							'whole-raid sims of the best buff sets, which then rank them; slower',
+						)}
 					</div>
 				</fieldset>
 			</div>,
@@ -428,21 +443,31 @@ export class SearchForm {
 		}
 		const request = searchRequest(this.state);
 		this.running = true;
+		this.aborted = false;
 		this.searchButton.disabled = true;
 		this.abortButton.disabled = false;
 		this.abortButton.classList.remove('d-none');
 		this.showProgress(<p>Starting the search…</p>);
+		this.setTitle('Searching');
 		const started = Date.now();
+		const seconds = () => fmt((Date.now() - started) / 1000, 0);
 		try {
 			const result = await this.simUI.sim.runCompSearch(request, (progress: ProgressMetrics) => this.onProgress(progress, started));
-			if (result.error && !result.scenarios.length) {
+			if (result.error && !result.scenarios.length && this.aborted) {
+				// Nothing of an aborted search is kept, so its last progress (the best so far) goes too.
+				this.showProgress(<p className="rs-muted">Search aborted after {seconds()} s. Nothing was kept.</p>);
+				this.finishTitle('Search aborted');
+			} else if (result.error && !result.scenarios.length) {
 				this.showProgress(<div className="alert alert-danger">{errorStatus('The search stopped', result.error.message)}</div>);
+				this.finishTitle('Search failed');
 			} else {
-				this.showProgress(<p>Done in {fmt((Date.now() - started) / 1000, 0)} s.</p>);
+				this.showProgress(<p>Done in {seconds()} s. The result is in the Search result tab.</p>);
+				this.finishTitle('Search done');
 				this.onResult(result);
 			}
 		} catch (e) {
 			this.showProgress(<div className="alert alert-danger">{errorStatus('The search failed', `${e instanceof Error ? e.message : e}`)}</div>);
+			this.finishTitle('Search failed');
 		} finally {
 			this.running = false;
 			this.abortButton.classList.add('d-none');
@@ -451,8 +476,9 @@ export class SearchForm {
 	}
 
 	private onProgress(progress: ProgressMetrics, started: number) {
-		if (progress.finalCompSearchResult) return;
+		if (progress.finalCompSearchResult || this.aborted) return;
 		const best = progress.compSearchBest;
+		this.setTitle(`Searching: ${progress.compSearchPhase || 'starting'}`);
 		this.showProgress(
 			<div className="rs-progress-body">
 				<div className="rs-progress-line">
@@ -472,6 +498,26 @@ export class SearchForm {
 				) : null}
 			</div>,
 		);
+	}
+
+	// The page's title says how a search goes, for a page in a background tab. Its outcome stays there until
+	// the page is looked at again.
+	private setTitle(status: string | null) {
+		document.title = status ? `${status} · ${this.baseTitle}` : this.baseTitle;
+	}
+
+	private finishTitle(status: string) {
+		if (!document.hidden) {
+			this.setTitle(null);
+			return;
+		}
+		this.setTitle(status);
+		const back = () => {
+			if (document.hidden) return;
+			document.removeEventListener('visibilitychange', back);
+			if (!this.running) this.setTitle(null);
+		};
+		document.addEventListener('visibilitychange', back);
 	}
 
 	private showProgress(content: Element) {
