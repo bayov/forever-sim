@@ -34,7 +34,7 @@ const (
 	SpellCode_MageConeOfCold
 )
 
-var TalentTreeSizes = [3]int{19, 17, 18}
+var TalentTreeSizes = [3]int{18, 17, 18}
 
 func RegisterMage() {
 	core.RegisterAgentFactory(

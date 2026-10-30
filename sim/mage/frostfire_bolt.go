@@ -55,8 +55,8 @@ func (mage *Mage) newFrostfireBoltSpellConfig(rank int) core.SpellConfig {
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
 				GCD: core.GCDDefault,
-				// Improved Fireball covers Frostfire Bolt under Forever.
-				CastTime: time.Millisecond*3000 - time.Millisecond*100*time.Duration(mage.Talents.ImprovedFireball),
+				// Accelerant (Improved Fireball before 1.60.1.70707) covers Frostfire Bolt under Forever.
+				CastTime: time.Millisecond*3000 - time.Millisecond*100*time.Duration(mage.Talents.Accelerant),
 			},
 		},
 

@@ -98,14 +98,6 @@ func (mage *Mage) applyArcaneTalents() {
 		})
 	}
 
-	// Arcane Focus: 1% hit with Arcane spells per point (Classic took 2% off the resist chance).
-	if mage.Talents.ArcaneFocus > 0 {
-		bonusHit := float64(mage.Talents.ArcaneFocus) * core.SpellHitRatingPerHitChance
-		mage.onMageSpellOfSchool(core.SpellSchoolArcane, func(spell *core.Spell) {
-			spell.BonusHitRating += bonusHit
-		})
-	}
-
 	// Magic Absorption: 5 resistance to every school per point. The mana back from fully
 	// resisted spells needs an enemy that casts.
 	if mage.Talents.MagicAbsorption > 0 {
@@ -180,7 +172,7 @@ func (mage *Mage) applyFireTalents() {
 	}
 
 	// Incineration: 2% crit per point on Fire Blast, Scorch, Ice Lance and Arcane Blast (Forever
-	// added the last two and a third rank).
+	// added the last two, a third rank and, in 1.60.1.70707, a fourth and fifth).
 	if mage.Talents.Incineration > 0 {
 		bonusCrit := 2 * float64(mage.Talents.Incineration) * core.SpellCritRatingPerCritChance
 		mage.OnSpellRegistered(func(spell *core.Spell) {
@@ -191,7 +183,8 @@ func (mage *Mage) applyFireTalents() {
 		})
 	}
 
-	// Critical Mass: 2% crit with Fire spells per point, 5 points since 1.60.1.70425 (3 before).
+	// Critical Mass: 2% crit with Fire spells per point, 3 points since 1.60.1.70707 (5 from
+	// 1.60.1.70425, 3 before).
 	if mage.Talents.CriticalMass > 0 {
 		bonusCrit := 2 * float64(mage.Talents.CriticalMass) * core.SpellCritRatingPerCritChance
 		mage.onMageSpellOfSchool(core.SpellSchoolFire, func(spell *core.Spell) {
@@ -209,13 +202,11 @@ func (mage *Mage) applyFrostTalents() {
 	mage.applyShatter()
 	mage.applyWintersChill()
 
-	// Elemental Precision: 2% hit with Fire and Frost spells per point, 3 points since the
-	// 2026-10-20 hotfix to 70450 (5 points of 1% before; Classic took 2% off the resist chance).
-	if mage.Talents.ElementalPrecision > 0 {
-		bonusHit := 2 * float64(mage.Talents.ElementalPrecision) * core.SpellHitRatingPerHitChance
-		mage.onMageSpellOfSchool(core.SpellSchoolFire|core.SpellSchoolFrost, func(spell *core.Spell) {
-			spell.BonusHitRating += bonusHit
-		})
+	// Precision: 2% hit with all spells per point. 1.60.1.70707 renamed Elemental Precision and
+	// widened it from Fire and Frost spells (29438 effect 0 aura 107 on a mask becomes aura 55);
+	// the 2026-10-20 hotfix to 70450 had made it 3 points of 2% (5 of 1% before).
+	if mage.Talents.Precision > 0 {
+		mage.AddStat(stats.SpellHit, 2*float64(mage.Talents.Precision)*core.SpellHitRatingPerHitChance)
 	}
 
 	// Ice Shards

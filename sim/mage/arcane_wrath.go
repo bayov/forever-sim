@@ -60,8 +60,10 @@ func (mage *Mage) newArcaneWrathSpellConfig(rank int, cdTimer *core.Timer) core.
 		},
 		Cast: core.CastConfig{
 			DefaultCast: core.Cast{
-				GCD:      core.GCDDefault,
-				CastTime: time.Millisecond * 3500,
+				GCD: core.GCDDefault,
+				// Accelerant, 0.1 sec a point, since 1.60.1.70707 (11069 effect 0's class mask
+				// gains Arcane Wrath's bit).
+				CastTime: time.Millisecond*3500 - time.Millisecond*100*time.Duration(mage.Talents.Accelerant),
 			},
 			CD: core.Cooldown{
 				Timer:    cdTimer,

@@ -47,7 +47,7 @@ func topRank(t *testing.T, name string, ranks []*core.Spell) *core.Spell {
 // next Pyroblast uses up every stack.
 func TestMageHeatingUp(t *testing.T) {
 	// Fire to Heating Up.
-	sim, mage := newMageSim(t, "-235500001301")
+	sim, mage := newMageSim(t, "-355000012301")
 	pyroblast := topRank(t, "Pyroblast", mage.Pyroblast)
 	for stacks, want := range []time.Duration{6000, 4500, 3000, 1500} {
 		if stacks > 0 {
@@ -76,7 +76,7 @@ func TestMageHeatingUp(t *testing.T) {
 // a second. A Pyroblast made instant by Presence of Mind leaves the stacks alone.
 func TestMageHeatingUpFireBlastAndPresenceOfMind(t *testing.T) {
 	// Arcane to Presence of Mind, Fire to Heating Up.
-	sim, mage := newMageSim(t, "0502225003100001-235500001301")
+	sim, mage := newMageSim(t, "000225203100001-355000012301")
 	fireBlast := topRank(t, "Fire Blast", mage.FireBlast)
 	for i := 0; i < 8; i++ {
 		mage.HeatingUpAura.Deactivate(sim)
@@ -120,7 +120,7 @@ func TestMageHeatingUpFireBlastAndPresenceOfMind(t *testing.T) {
 // mana on Arcane Blast. The buff lasts 15 sec from the first stack, and other spells don't end it.
 func TestMageArcaneBlastStacks(t *testing.T) {
 	// Arcane to Arcane Wrath, with Missile Barrage 2.
-	sim, mage := newMageSim(t, "050200500310001")
+	sim, mage := newMageSim(t, "00000520310001")
 	arcaneBlast := topRank(t, "Arcane Blast", mage.ArcaneBlast)
 	fireball := topRank(t, "Fireball", mage.Fireball)
 	if got := arcaneBlast.CastTime(); got != 1500*time.Millisecond {
@@ -180,7 +180,7 @@ func TestMageArcaneBlastStacks(t *testing.T) {
 // Arcane Wrath casts in 3.5 sec, has a 6 sec cooldown and gets 5% of maximum mana as spell damage
 // at a full coefficient.
 func TestMageArcaneWrath(t *testing.T) {
-	sim, mage := newMageSim(t, "050200500310001")
+	sim, mage := newMageSim(t, "00000520310001")
 	arcaneWrath := topRank(t, "Arcane Wrath", mage.ArcaneWrath)
 	if got := arcaneWrath.CastTime(); got != 3500*time.Millisecond {
 		t.Errorf("Arcane Wrath casts in %s, want 3.5s", got)
@@ -217,7 +217,7 @@ func TestMageArcaneWrath(t *testing.T) {
 // target, at most 4. Frostfire Bolt's DoT is two schools and doesn't count.
 func TestMageFirePower(t *testing.T) {
 	// Fire to Fire Power 3, with Improved Scorch 3.
-	sim, mage := newMageSim(t, "-2355000013010003")
+	sim, mage := newMageSim(t, "-3550000123010003")
 	target := mage.CurrentTarget
 	at := mage.AttackTables[target.UnitIndex][proto.CastType_CastTypeMainHand]
 	fireball := topRank(t, "Fireball", mage.Fireball)
@@ -253,7 +253,7 @@ func TestMageFirePower(t *testing.T) {
 
 // Fire Vulnerability counts only for the mage's own Fire damage, 3% a stack.
 func TestMageFireVulnerability(t *testing.T) {
-	sim, mage := newMageSim(t, "-235500001301")
+	sim, mage := newMageSim(t, "-355000012301")
 	target := mage.CurrentTarget
 	aura := mage.ImprovedScorchAuras.Get(target)
 	aura.Activate(sim)
@@ -301,7 +301,7 @@ func TestMageShatter(t *testing.T) {
 // client's coefficients (4.2% and 3.2% a tick), not the 3% dummy on Blizzard itself. Combustion
 // stacks to 10 (28682).
 func TestMageAreaCoefficientsAndCombustion(t *testing.T) {
-	_, mage := newMageSim(t, "-235500001301")
+	_, mage := newMageSim(t, "-355000012301")
 	if got := topRank(t, "Blizzard", mage.Blizzard).AOEDot().BonusCoefficient; math.Abs(got-0.042) > 1e-9 {
 		t.Errorf("Blizzard tick coefficient %v, want 0.042", got)
 	}
@@ -402,7 +402,7 @@ func mageStat(player *proto.Player, stat stats.Stat) float64 {
 // Arcane Wrath.
 func TestMagePushbackProtection(t *testing.T) {
 	// Improved Channeling 5 with Arcane Wrath, and Burning Soul 3.
-	_, mage := newMageSim(t, "055200500310001-00000030")
+	_, mage := newMageSim(t, "05000520310001-000003")
 	for _, c := range []struct {
 		name  string
 		spell *core.Spell
@@ -423,15 +423,15 @@ func TestMagePushbackProtection(t *testing.T) {
 
 // Since the 2026-10-20 hotfix Ice Barrier raises Frost damage by 3% while the shield holds, and
 // every cast gives Frigid Power, 3% more for a minute, each its own factor. The absorb is the rank's base and 10% of
-// Frost spell power, and Frost Warding raises it 10% a point. Elemental Precision is 2% hit a
+// Frost spell power, and Frost Warding raises it 10% a point. Precision is 2% hit with all spells a
 // point.
 func TestMageIceBarrier(t *testing.T) {
-	// Frost Warding 2, Elemental Precision 3, to Ice Barrier.
+	// Frost Warding 2, Precision 3, to Ice Barrier.
 	sim, mage := newMageSim(t, "--253500133101301201")
 	frostbolt := topRank(t, "Frostbolt", mage.Frostbolt)
 	fireBlast := topRank(t, "Fire Blast", mage.FireBlast)
-	if got, want := frostbolt.BonusHitRating, 6*float64(core.SpellHitRatingPerHitChance); math.Abs(got-want) > 1e-9 {
-		t.Errorf("Frostbolt gets %.1f hit rating from Elemental Precision 3, want %.1f", got, want)
+	if got, want := mage.GetStat(stats.SpellHit), 6*float64(core.SpellHitRatingPerHitChance); math.Abs(got-want) > 1e-9 {
+		t.Errorf("Precision 3 gives %.1f spell hit, want %.1f", got, want)
 	}
 	frostBase, fireBase := frostbolt.DamageMultiplier, fireBlast.DamageMultiplier
 
@@ -484,7 +484,7 @@ func TestMageIceBarrier(t *testing.T) {
 // Arcane Power, and the Gnome's Eureka! multiplies Arcane Power's cost too.
 func TestMageModifiersMultiply(t *testing.T) {
 	// The Arcane preset's tree: Missile Barrage 2, Arcane Blast, Arcane Instability 3, Arcane Power.
-	sim, mage := newMageSim(t, "0552205003100301531")
+	sim, mage := newMageSim(t, "050205203100301531")
 	fireball := topRank(t, "Fireball", mage.Fireball)
 	arcaneBlast := topRank(t, "Arcane Blast", mage.ArcaneBlast)
 	arcaneMissiles := topRank(t, "Arcane Missiles", mage.ArcaneMissiles)
@@ -653,7 +653,7 @@ func TestMageFingersOfFrostCharges(t *testing.T) {
 // Clearcasting cast's too (wowsims/forever c999a66b3f).
 func TestMageMasterOfElements(t *testing.T) {
 	// The Fire preset's tree: Arcane Concentration 5, Master of Elements 3.
-	sim, mage := newMageSim(t, "0402205-23550030130135031")
+	sim, mage := newMageSim(t, "0002052-35500301230133031")
 	target := mage.CurrentTarget
 	fireBlast := topRank(t, "Fire Blast", mage.FireBlast)
 	fireBlast.BonusHitRating += 100 * core.SpellHitRatingPerHitChance
@@ -682,7 +682,7 @@ func TestMageMasterOfElements(t *testing.T) {
 func TestMageConeOfColdAndWintersChill(t *testing.T) {
 	// wowsims/forever's Frost build (41214cc8d0): Frost Channeling 3, Improved Cone of Cold 3,
 	// Cold Snap, Fingers of Frost 2 and Winter's Chill 5.
-	sim, mage := newMageSim(t, "05022050011003--053500030100331251")
+	sim, mage := newMageSim(t, "0002052011003--053500030100331251")
 	target := mage.CurrentTarget
 	cone := topRank(t, "Cone of Cold", mage.ConeOfCold)
 	frostbolt := topRank(t, "Frostbolt", mage.Frostbolt)
@@ -735,9 +735,13 @@ func TestMageConeOfColdAndWintersChill(t *testing.T) {
 		t.Fatalf("%d Winter's Chill stacks after two Frostbolts, want 2", got)
 	}
 
-	// An Ice Lance adds one only when the target counts as Frozen.
+	// An Ice Lance adds one only when the target counts as Frozen. Every rank shares its 8 sec
+	// cooldown.
 	castNow(iceLance)
-	advance(2 * time.Second)
+	if mage.IceLance[1].CD.IsReady(sim) {
+		t.Errorf("rank 1 Ice Lance is ready right after rank 6, want both on an 8 sec cooldown")
+	}
+	advance(IceLanceCooldown)
 	if got := mage.wintersChillStacks(target); got != 2 {
 		t.Errorf("%d Winter's Chill stacks after an Ice Lance at a target not Frozen, want 2", got)
 	}
@@ -907,7 +911,7 @@ func newMageWithRace(race proto.Race) (*core.Simulation, *Mage) {
 // modifiers"). Arcane Instability and Arcane Power raise Fireball but not the Ignite ticks.
 func TestMageIgniteTakesNoDamagePercent(t *testing.T) {
 	// The Arcane preset's tree (Arcane Instability 3, Arcane Power) and Ignite 5.
-	sim, mage := newMageSim(t, "0552205003100301531-0005")
+	sim, mage := newMageSim(t, "050205203100301531-005")
 	fireball := topRank(t, "Fireball", mage.Fireball)
 	at := mage.AttackTables[mage.CurrentTarget.UnitIndex][mage.Ignite.CastType]
 	mage.ArcanePowerAura.Activate(sim)

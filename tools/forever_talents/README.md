@@ -41,9 +41,10 @@ does, for a level 60 character with no bonuses, and notes every value it couldn'
 
 A server hotfix the client tables don't have yet is carried in `client/` by hand, with the
 hotfix named in the file's `source` and in the talents' `tooltip.notes` (`tooltip.source` is
-`hotfix`). The mage's Frost tree carries the 2026-10-20 hotfix to 70450 that way (Piercing Ice
-removed, four talents moved, Elemental Precision 3 ranks), from wago.tools' hotfix table. Running
-`import_db2.py mage --write` on a build without it puts the old tree back, so check the diff.
+`hotfix`). The mage's Frost tree carried the 2026-10-20 hotfix to 70450 that way (Piercing Ice
+removed, four talents moved, Elemental Precision 3 ranks), from wago.tools' hotfix table, until
+1.60.1.70707 put it in the client tables. Running `import_db2.py <class> --write` on a build
+without a hotfix the file carries puts the old tree back, so check the diff.
 
 Without `--write` it prints each class's differences from the current file in three kinds:
 structure (talents added, removed, moved, renamed, or given another rank count, prerequisite
