@@ -1,4 +1,4 @@
-{"meta": {"dataEnv": 16, "fetched": "2026-10-19T20:35Z", "oldestPage": "2026-10-19T20:33Z", "source": "www.wowhead.com/forever", "tool": "tools/database/forever_wowhead/class_spells.py"},
+{"meta": {"dataEnv": 16, "fetched": "2026-10-30T08:24Z", "oldestPage": "2026-10-30T08:24Z", "source": "www.wowhead.com/forever", "tool": "tools/database/forever_wowhead/class_spells.py"},
 "classes": {
 "DRUID": {
 "99":{"cost":300,"level":10,"name":"Demoralizing Roar","rank":"Rank 1","source":[6]},
@@ -731,6 +731,8 @@
 "10223":{"cost":32000,"level":50,"name":"Fire Ward","rank":"Rank 4","source":[6]},
 "10225":{"cost":42000,"level":60,"name":"Fire Ward","rank":"Rank 5","source":[6]},
 "10230":{"cost":36000,"level":54,"name":"Frost Nova","rank":"Rank 4","source":[6]},
+"11151":{"level":1,"name":"Piercing Ice"},
+"11222":{"level":1,"name":"Arcane Focus"},
 "11416":{"cost":15000,"level":40,"name":"Portal: Ironforge","source":[6]},
 "11417":{"cost":15000,"level":40,"name":"Portal: Orgrimmar","source":[6]},
 "11418":{"cost":15000,"level":40,"name":"Portal: Undercity","source":[6]},
@@ -839,12 +841,12 @@
 "1240046":{"cost":32000,"level":48,"name":"Ice Lance","rank":"Rank 5","source":[6]},
 "1240047":{"cost":40000,"level":56,"name":"Ice Lance","rank":"Rank 6","source":[6]},
 "1297659":{"level":50,"name":"Teleport: Dalaran"},
-"1326053":{"level":24,"name":"Frost Blast","rank":"Rank 1"},
-"1326054":{"level":36,"name":"Frost Blast","rank":"Rank 2"},
-"1326055":{"level":48,"name":"Frost Blast","rank":"Rank 3"},
-"1326080":{"level":36,"name":"Arcane Wrath","rank":"Rank 2"},
-"1326081":{"level":48,"name":"Arcane Wrath","rank":"Rank 3"},
-"1326082":{"level":60,"name":"Arcane Wrath","rank":"Rank 4"}
+"1326053":{"cost":4526,"level":24,"name":"Frost Blast","rank":"Rank 1","source":[6]},
+"1326054":{"cost":11578,"level":36,"name":"Frost Blast","rank":"Rank 2","source":[6]},
+"1326055":{"cost":23157,"level":48,"name":"Frost Blast","rank":"Rank 3","source":[6]},
+"1326080":{"cost":11578,"level":36,"name":"Arcane Wrath","rank":"Rank 2","source":[6]},
+"1326081":{"cost":23157,"level":48,"name":"Arcane Wrath","rank":"Rank 3","source":[6]},
+"1326082":{"cost":32631,"level":60,"name":"Arcane Wrath","rank":"Rank 4","source":[6]}
 },
 "PALADIN": {
 "465":{"cost":10,"level":1,"name":"Devotion Aura","rank":"Rank 1","source":[6]},
@@ -1017,7 +1019,7 @@
 "25290":{"level":60,"name":"Blessing of Wisdom","rank":"Rank 6","source":[2]},
 "25291":{"level":60,"name":"Blessing of Might","rank":"Rank 7","source":[2]},
 "25292":{"level":60,"name":"Holy Light","rank":"Rank 9","source":[2]},
-"25780":{"cost":3000,"level":16,"name":"Righteous Fury","source":[6]},
+"25780":{"cost":3000,"level":10,"name":"Righteous Fury","source":[6]},
 "25782":{"cost":46000,"level":52,"name":"Greater Blessing of Might","rank":"Rank 1","source":[6]},
 "25890":{"cost":46000,"level":60,"name":"Greater Blessing of Light","source":[6]},
 "25894":{"cost":46000,"level":54,"name":"Greater Blessing of Wisdom","rank":"Rank 1","source":[6]},
@@ -1844,8 +1846,8 @@
 "1238376":{"level":60,"name":"Lava Burst"},
 "1239242":{"cost":800,"level":50,"name":"Riptide","rank":"Rank 2","source":[6]},
 "1239243":{"cost":1600,"level":60,"name":"Riptide","rank":"Rank 3","source":[6]},
-"1325256":{"level":58,"name":"Mana Tide Totem","rank":"Rank 4"},
-"1326047":{"level":60,"name":"Lava Burst","rank":"Rank 4"}
+"1325256":{"cost":2105,"level":58,"name":"Mana Tide Totem","rank":"Rank 4","source":[6]},
+"1326047":{"cost":35789,"level":60,"name":"Lava Burst","rank":"Rank 4","source":[6]}
 },
 "WARLOCK": {
 "126":{"cost":2500,"level":22,"name":"Eye of Kilrogg","rank":"Summon","source":[6]},
@@ -1985,7 +1987,7 @@
 "17952":{"cost":13000,"level":46,"name":"Create Firestone","rank":"Rank 3","source":[6]},
 "17953":{"cost":22000,"level":56,"name":"Create Firestone","rank":"Rank 4","source":[6]},
 "17954":{"level":0,"name":"Emberstorm"},
-"17962":{"cost":500,"level":40,"name":"Conflagrate","rank":"Rank 3","source":[6]},
+"17962":{"cost":526,"level":40,"name":"Conflagrate","rank":"Rank 3","source":[6]},
 "18096":{"level":0,"name":"Apocalypse"},
 "18126":{"level":0,"name":"Improved Firebolt","rank":"Rank 1"},
 "18127":{"level":0,"name":"Improved Firebolt","rank":"Rank 2"},
@@ -2088,7 +2090,7 @@
 "431756":{"level":1,"name":"Engrave Bracers - Summon Felguard"},
 "431758":{"level":1,"name":"Engrave Bracers - Immolation Aura"},
 "437169":{"level":60,"name":"Portal of Summoning"},
-"440892":{"cost":2000,"level":20,"name":"Curse of the Elements","rank":"Rank 1","source":[6]},
+"440892":{"cost":2105,"level":20,"name":"Curse of the Elements","rank":"Rank 1","source":[6]},
 "440922":{"level":1,"name":"Engrave Boots - Decimation"},
 "440924":{"level":1,"name":"Engrave Cloak - Mark of Chaos"},
 "440926":{"level":1,"name":"Engrave Cloak - Infernal Armor"},
@@ -2100,12 +2102,12 @@
 "453700":{"level":1,"name":"Engrave Ring - Shadow Specialization"},
 "459313":{"level":1,"name":"Engrave Ring - Defense Specialization"},
 "468763":{"level":1,"name":"Engrave Ring - Meditation Specialization"},
-"1293812":{"cost":900,"level":50,"name":"Incinerate","rank":"Rank 2","source":[6]},
-"1293813":{"cost":1100,"level":60,"name":"Incinerate","rank":"Rank 3","source":[6]},
-"1293818":{"cost":300,"level":32,"name":"Conflagrate","rank":"Rank 2","source":[6]},
-"1311676":{"cost":6000,"level":30,"name":"Curse of the Elements","rank":"Rank 2","source":[6]},
-"1311677":{"cost":11000,"level":40,"name":"Curse of the Elements","rank":"Rank 3","source":[6]},
-"1311680":{"cost":15000,"level":50,"name":"Curse of the Elements","rank":"Rank 4","source":[6]}
+"1293812":{"cost":947,"level":50,"name":"Incinerate","rank":"Rank 2","source":[6]},
+"1293813":{"cost":1157,"level":60,"name":"Incinerate","rank":"Rank 3","source":[6]},
+"1293818":{"cost":315,"level":32,"name":"Conflagrate","rank":"Rank 2","source":[6]},
+"1311676":{"cost":6315,"level":30,"name":"Curse of the Elements","rank":"Rank 2","source":[6]},
+"1311677":{"cost":11578,"level":40,"name":"Curse of the Elements","rank":"Rank 3","source":[6]},
+"1311680":{"cost":15789,"level":50,"name":"Curse of the Elements","rank":"Rank 4","source":[6]}
 },
 "WARRIOR": {
 "71":{"level":10,"name":"Defensive Stance","source":[4]},
