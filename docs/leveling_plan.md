@@ -113,6 +113,13 @@ its gold.
 - **The same sessions.** Each level is simmed on its own seed, so two routes with the same
   talents at a level get the same hours there, and we sim each level and talents once. A search
   of the 10 to 30 plan takes 600 to 1,800 sims of a level at 50 sessions each.
+  Before 2026-10-30, two different builds with the same seed shared almost none of their rolls.
+  Every roll came from one stream, so after the first roll that came out differently, every mob
+  level, distance and crit after it differed too. Now each roll label has its own stream, and
+  each search starts all of them again from the session's seed and its search count. So the k-th
+  mob found is the same in both runs. Comparing two rotations over the same 400 sessions at 30
+  now has half the spread it had (0.51 of unpaired, against 0.96 before), which is a quarter of
+  the sessions for the same precision, for about 7% more time a session.
 - **Respecs.** At a respec level all our points are free, and we search the levels from it on.
   A respec's build is also a route from the first level, and sometimes it's the better route
   (it only moves a point the route could have put there too). So we search the route again from

@@ -327,13 +327,17 @@ func (s *levelingSession) search(sim *Simulation) {
 		s.startPull(sim)
 		return
 	}
+	s.searches++
+	sim.reseedWithin("Leveling Search", s.searches)
 	s.setState(sim, levelingSearching)
 	s.move(sim, goalSearch, Vec2{}, 0, nil)
 	if sim.Log != nil {
 		s.player.Log(sim, "Leveling: searching for a mob")
 	}
+	n := s.searches
 	s.after(sim, &s.next, randomDuration(sim, "Leveling Search", s.opts.searchMin, s.opts.searchMax), func(sim *Simulation) {
 		s.move(sim, goalNone, Vec2{}, 0, nil)
+		sim.reseedWithin("Leveling Search Find", n)
 		if s.find(sim, false) != nil {
 			s.startPull(sim)
 		} else {
@@ -484,6 +488,8 @@ func (s *levelingSession) aggro(sim *Simulation, mob *Unit) {
 // runs around for it with the mobs on us following, or stands and keeps fighting while it
 // looks, which takes longer.
 func (s *levelingSession) chainSearch(sim *Simulation, stand bool) {
+	s.chainSearches++
+	sim.reseedWithin("Leveling Chain Search", s.chainSearches)
 	lo, hi := s.opts.chainSearchMin, s.opts.chainSearchMax
 	if stand {
 		lo, hi = s.opts.standingSearchMin, s.opts.standingSearchMax
@@ -493,11 +499,13 @@ func (s *levelingSession) chainSearch(sim *Simulation, stand bool) {
 	if sim.Log != nil {
 		s.player.Log(sim, "Leveling: looking for another mob, running: %v", !stand)
 	}
+	n := s.chainSearches
 	s.after(sim, &s.chainNext, randomDuration(sim, "Leveling Chain Search", lo, hi), func(sim *Simulation) {
 		if s.goal == goalSearch {
 			s.move(sim, goalNone, Vec2{}, 0, nil)
 		}
 		if s.state == levelingCombat {
+			sim.reseedWithin("Leveling Chain Find", n)
 			s.find(sim, stand)
 		}
 	})

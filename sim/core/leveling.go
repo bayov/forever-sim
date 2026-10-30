@@ -82,6 +82,9 @@ type levelingSession struct {
 	pullMobs   int
 	pulls      int
 	mobsPulled int
+	// How many searches and chain searches the session has made, for the random sources'
+	// reseed at each, and at the mob each finds (Simulation.reseedWithin).
+	searches, chainSearches int
 	// The current rest (leveling_rest.go), with the food, water and bandage left on it.
 	rest                             levelingRest
 	foodLeft, drinkLeft, bandageLeft time.Duration
@@ -327,6 +330,7 @@ func (s *levelingSession) reset(sim *Simulation) {
 	s.state, s.stateSince = levelingSearching, 0
 	s.seconds = [levelingStateCount]time.Duration{}
 	s.pullMobs, s.pulls, s.mobsPulled = 0, 0, 0
+	s.searches, s.chainSearches = 0, 0
 	s.kills, s.xp, s.deaths = 0, 0, 0
 	s.bandageReadyAt = 0
 	s.rest = levelingRest{}

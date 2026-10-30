@@ -164,6 +164,9 @@ func TestLevelingChainPulls(t *testing.T) {
 	rotation := strings.TrimSuffix(chainRotation, "\n]}") + ",\n" + strings.Join(packLines(2), ",\n") + "\n]}"
 	req := withRotation(t, levelingRequest(t, &proto.LevelingOptions{MobLevelOffset: -4}, 1), rotation)
 	req.SimOptions.Debug = true
+	// How many chain pulls go by bolt in one session is luck: seeds 2 to 8 give 0 to 4. Seed 2
+	// gives 4, so the check below sees the bolt pulls happen.
+	req.SimOptions.RandomSeed = 2
 	result := runLeveling(t, req)
 
 	running, looks, runs, chainBolts := false, 0, 0, 0
