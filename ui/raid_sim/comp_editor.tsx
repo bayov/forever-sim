@@ -3,6 +3,7 @@
 // the camp buffs. Run builds a RaidComp, has the resolver turn it into the raid's request (resolveComp),
 // runs that request in the sim's workers and shows the raid's results.
 import { EncounterPicker } from '../core/components/encounter_picker';
+import { SimProgress } from '../core/components/sim_progress';
 import {
 	Assignment,
 	Blessing,
@@ -1583,6 +1584,10 @@ export class CompEditor {
 		this.running = true;
 		this.stopping = false;
 		this.setRunning(true);
+		// The sidebar's progress bar, as on a spec page. It slides without filling while the resolver runs.
+		const progressBar = new SimProgress('', this.simUI.iterationsPicker.querySelector<HTMLElement>('.form-label') ?? undefined);
+		this.simUI.iterationsPicker.appendChild(progressBar.rootElem);
+		this.simUI.simActionsContainer.classList.add('running');
 		const revision = this.revision;
 		// A worker's last progress can come after the run ends or is stopped: the sidebar keeps none of it then.
 		let live = true;
@@ -1612,6 +1617,7 @@ export class CompEditor {
 			this.setStatus(`Simming ${plural(request.raid?.parties.flatMap(p => p.players).length ?? 0, 'player')}…`);
 			const result = await sim.runRaidSimRequest(request, (progress: ProgressMetrics) => {
 				if (!live || this.stopping) return;
+				progressBar.update(progress);
 				this.simUI.resultsManager.setSimProgress(progress);
 				if (progress.totalIterations)
 					this.setStatus(`Simming: ${progress.completedIterations} of ${progress.totalIterations} iterations, ${fmt(progress.dps)} DPS`);
@@ -1653,6 +1659,9 @@ export class CompEditor {
 			this.setError('The run failed', e instanceof Error ? e.message : `${e}`);
 		} finally {
 			live = false;
+			await progressBar.finish();
+			progressBar.remove();
+			this.simUI.simActionsContainer.classList.remove('running');
 			this.running = false;
 			this.setRunning(false);
 		}
@@ -1784,7 +1793,12 @@ export class CompEditor {
 	private setRunning(running: boolean) {
 		this.runButton.replaceChildren(<i className={`fas ${running ? 'fa-stop' : 'fa-play'} me-1`} />, running ? 'Stop' : 'Run');
 		const sidebar = this.simUI.simActionsContainer.querySelector<HTMLButtonElement>('.dps-action');
-		if (sidebar) sidebar.textContent = running ? 'Stop' : 'Run comp';
+		if (sidebar) {
+			// Stop is shorter than Run comp, and the button keeps its width so the bar beside it doesn't grow.
+			sidebar.style.minWidth = running ? `${sidebar.getBoundingClientRect().width}px` : '';
+			if (running) sidebar.replaceChildren(<i className="fas fa-stop me-1" />, 'Stop');
+			else sidebar.textContent = 'Run comp';
+		}
 		this.valuesButton.disabled = running || !!this.valuesUnavailable;
 	}
 
