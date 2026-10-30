@@ -89,6 +89,7 @@ func gearInputs(req *proto.LevelingPlanSearchRequest, db *proto.UIDatabase) *gea
 		faction:   req.Faction,
 		seed:      req.GetGearPlan().GetSeed(),
 		pins:      req.GetGearPlan().GetPins(),
+		route:     req.Route,
 	}
 	if player := req.Base.GetRaid().GetParties()[0].GetPlayers()[0]; player != nil {
 		in.playerClass = player.Class

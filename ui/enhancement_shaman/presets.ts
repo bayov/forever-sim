@@ -39,6 +39,7 @@ import {
 import { EnhancementShaman_Options as EnhancementShamanOptions, ShamanSyncType } from '../core/proto/shaman.js';
 import {
 	LevelingPlanSettings,
+	LevelingRoute,
 	LevelingRotation,
 	LevelingRotationPreset,
 	LevelingTalentBuild,
@@ -57,6 +58,7 @@ import LevelingPlan20APLJSON from './apls/leveling_plan_20.apl.json';
 import LevelingPlan25APLJSON from './apls/leveling_plan_25.apl.json';
 import LevelingPlan30APLJSON from './apls/leveling_plan_30.apl.json';
 import LevelingPlanAuditedJSON from './apls/leveling_plan_audited.json';
+import LevelingRouteJSON from './leveling_route.json';
 import MagmaAPLJSON from './apls/magma.apl.json';
 import ManaTideAPLJSON from './apls/mana_tide.apl.json';
 import OptimizedAPLJSON from './apls/optimized.apl.json';
@@ -1719,6 +1721,11 @@ export const DefaultLevelingPlan = LevelingPlanSettings.create({
 	// spots, which the grinding sessions don't sim.
 	requiredTalents: [LevelingTalentRequirement.create({ tree: 1, talent: 5, points: 2, level: 16 })],
 });
+
+// Our RestedXP route for an Orc Shaman (tools/leveling_route): the quest rewards we take on it
+// and the dungeons we run, at the levels we're at then. The leveling gear plan takes them in
+// place of the ones it makes up.
+export const LevelingRouteOrcShaman = LevelingRoute.fromJson(LevelingRouteJSON);
 
 // The Leveling mode with the plan above. The plan levels alone without the Settings tab's buffs,
 // so we leave those as they are. The fight's duration and target are the Level 30 encounter's,

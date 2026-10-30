@@ -29,10 +29,10 @@ We don't take the best item for each level. While leveling we gear up as we go:
   The rest are drops, with whatever stats they have.
 - **Dungeons.** We run the dungeons of our faction (`LEVELING_DUNGEONS`) with an 80% chance
   each, once: 1 level after the lowest level their loot needs. A second run is rare while
-  leveling. Each boss drops one item from its own loot, or two half the time, and we win an
-  item we'd wear half the time, since the group rolls on it too. So Ragefire Chasm's blues
-  come at 14, and Ruins of Lordaeron's (a Forever dungeon) at 16. Boss loot isn't a find out
-  in the world.
+  leveling. Each boss drops one item from its own loot, or two half the time. We get an item
+  we'd wear 75% of the time (`DUNGEON_WIN_CHANCE`): half the time one other player wants it
+  too, and we win half of those rolls. So Ragefire Chasm's blues come at 14, and Ruins of
+  Lordaeron's (a Forever dungeon) at 16. Boss loot isn't a find out in the world.
 - **Wearing it.** We put a find on only when it beats what we wear in that slot, by the stat
   weights at that level. Most finds don't, so a slot can keep a lucky blue for ten or twenty
   levels. A ring or a trinket replaces the weaker of the two, and a two-hander also takes the
@@ -54,6 +54,32 @@ many mobs as the best round's or more at 15 to 30 (62.7 against 59.7 at 25), and
 The weights rate Intellect near Strength from level 15 (2.83 against 2 at 20), so the plan
 often wears cloth caster pieces like Robe of Evocation and Darkweave Breeches. Intellect
 shortens our rests and keeps us alive through the heals we cast.
+
+## The route
+
+A spec can have a leveling route, the quests and dungeons of a RestedXP guide. The enhancement
+shaman has ours, the "Bayov On-Release Guide" walked as an Orc Shaman
+(`ui/enhancement_shaman/leveling_route.json`, from `tools/leveling_route/route.py`). Then the
+plan's quest rewards and dungeon runs are the route's, and only the drops out in the world and
+the boss loot stay random:
+
+- **Quest rewards.** Each quest we turn in gives its reward at the level we're at then. Of a
+  choice we take the item that helps us most, and we get every fixed reward. We wear one when
+  it beats what we have, like a find. A random find that would be a quest reward doesn't
+  happen, and a quest reward is never a drop. 217 of the route's 953 quests give an item in
+  the database, which starts at item level 10.
+- **Dungeons.** We run each of the route's dungeons once, at the route's level: Ragefire Chasm
+  at 14, Ruins of Lordaeron 16, Wailing Caverns 21, Shadowfang Keep 24, Blackfathom Deeps 28,
+  Razorfen Kraul 30, Gnomeregan 31, Razorfen Downs 37, Scarlet Monastery 38, Uldaman 42,
+  Zul'Farrak 47, Maraudon 49, The Temple of Atal'Hakkar 55 and Blackrock Depths 57. Excavation
+  Site (32) and City of Dalaran (33) are Forever's, and the database has no loot for them yet.
+- **The level.** The tool counts each quest's XP (wowhead's quest rows) and the guide's "grind
+  to" steps, and each section starts at least at the level its name says. It doesn't count
+  the mobs we kill on the way, so it can be up to a level behind the guide.
+
+The Gear part's Quest route switch makes the plan make them up again. On the 10 to 60 plan, four
+seeds took 97.1 to 98.6 hours with the route (98.0 on average) and 98.5 to 101.7 without it
+(100.4), with the plan's own talents and rotations.
 
 A plan is one random history from its seed, and Reroll plays out another. Each level and kind
 of slot rolls its own random numbers, so the same seed gives the same plan, and an item we add
@@ -77,8 +103,9 @@ rotation. The seed and our items are saved with the gear settings.
 - The finds, the quality mix and the dungeon runs are guesses (notes.md, Need to Verify).
   Bayov-Oom's BayovCore history as it levels will show the real pace. Which faction The Hall
   of Thanes is for is a guess too.
-- The dungeons' quest rewards aren't in: the item database doesn't say which quest belongs to
-  which dungeon.
+- Without a route, the dungeons' quest rewards aren't in: the item database doesn't say which
+  quest belongs to which dungeon.
+- How often another player in the group rolls on an item we want (half the time) is a guess.
 - Leveling stat weights above level 30, once the beta goes past it.
 - The leveling sim can take the plan's gear at its own level directly, and average over many
   seeds, for the talent route.

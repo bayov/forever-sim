@@ -405,6 +405,34 @@ message LevelingRotationPreset {
 message LevelingGearPlanSettings {
 	int32 seed = 1;
 	repeated LevelingGearPin pins = 2;
+	// Make up the quest rewards and dungeon runs even when the spec has a leveling route.
+	bool ignore_route = 3;
+}
+
+// The quest rewards and dungeon runs of a leveling route, like our RestedXP route for an Orc
+// Shaman (tools/leveling_route). The leveling gear plan takes them in place of the quest rewards
+// and dungeon runs it makes up.
+message LevelingRoute {
+	string name = 1;
+	repeated LevelingRouteQuest quests = 2;
+	repeated LevelingRouteDungeon dungeons = 3;
+}
+
+// A quest we turn in on the route, at the level we're at then. We take the choice item that
+// helps us most and every reward item.
+message LevelingRouteQuest {
+	int32 id = 1;
+	string name = 2;
+	int32 level = 3;
+	repeated int32 choice_ids = 4;
+	repeated int32 reward_ids = 5;
+}
+
+// A dungeon we run on the route, at the level we're at then.
+message LevelingRouteDungeon {
+	int32 zone_id = 1;
+	string name = 2;
+	int32 level = 3;
 }
 
 // An item we have from this level on, if it beats what the plan has in that slot.
@@ -442,6 +470,8 @@ message LevelingPlanSearchRequest {
 	// Whether we also search the rotation of each level range, in turns with the talent route
 	// until neither changes (tools/levelingplan/rotation.go, docs/leveling_plan.md).
 	bool rotation_search = 13;
+	// The spec's leveling route, when the gear plan takes it (LevelingGearPlanSettings.ignore_route).
+	LevelingRoute route = 14;
 }
 
 message LevelingGearWeights {

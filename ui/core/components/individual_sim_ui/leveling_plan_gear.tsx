@@ -10,12 +10,14 @@ import {
 	LevelingGearLevel,
 	LevelingGearPiece,
 	LevelingGearPlan,
+	LevelingGearRoute,
 	planLevelingGear,
 } from '../../leveling_gear';
 import { Player } from '../../player';
 import { ItemSlot, ItemSpec, Spec } from '../../proto/common';
-import { LevelingGearPin, LevelingGearPlanSettings } from '../../proto/ui';
+import { LevelingGearPin, LevelingGearPlanSettings, LevelingRoute } from '../../proto/ui';
 import { ActionId } from '../../proto_utils/action_id';
+import { Database } from '../../proto_utils/database';
 import { EquippedItem } from '../../proto_utils/equipped_item';
 import { Gear } from '../../proto_utils/gear';
 import { slotNames } from '../../proto_utils/names';
@@ -25,6 +27,7 @@ import { TypedEvent } from '../../typed_event';
 import { ContentBlock } from '../content_block';
 import GearPicker from '../gear_picker/gear_picker';
 import { SelectorModalTabs } from '../gear_picker/selector_modal';
+import { BooleanPicker } from '../boolean_picker';
 import { NumberPicker } from '../number_picker';
 import { LevelingPlanCharacter } from './leveling_plan_character';
 
@@ -126,6 +129,22 @@ export class LevelingGearSection {
 		});
 		seedRow.value!.append(reroll.value!);
 		tippy(reroll.value!, { content: 'Play out another leveling journey, with a new seed.' });
+		const route = simUI.individualConfig.levelingRoute;
+		if (route) {
+			new BooleanPicker<Player<Spec>>(planBlock.bodyElement, this.player, {
+				id: 'leveling-gear-route',
+				label: 'Quest route',
+				labelTooltip: `${route.name}: its quest rewards and dungeons at the route's levels, in place of made-up ones.`,
+				inline: true,
+				changedEvent: player => player.levelingGearPlanChangeEmitter,
+				getValue: player => !player.getLevelingGearPlan().ignoreRoute,
+				setValue: (eventID, player, newValue) => {
+					const plan = player.getLevelingGearPlan();
+					plan.ignoreRoute = !newValue;
+					player.setLevelingGearPlan(eventID, plan);
+				},
+			});
+		}
 		reroll.value!.addEventListener('click', () => {
 			const plan = this.player.getLevelingGearPlan();
 			plan.seed = Math.floor(Math.random() * 1_000_000) + 1;
@@ -339,6 +358,7 @@ export class LevelingGearSection {
 			faction: raceToFaction[this.player.getRace()],
 			seed: this.player.getLevelingGearPlan().seed,
 			pins,
+			route: this.gearRoute(db),
 			weightsAt: level => this.weightsAt(level),
 			zoneName: zoneId => db.getZone(zoneId)?.name,
 		});
@@ -346,6 +366,21 @@ export class LevelingGearSection {
 		this.buildGrid();
 		this.buildPins();
 		this.planChangeEmitter.emit(TypedEvent.nextEventID());
+	}
+
+	// The spec's leveling route, unless the plan makes up its quest rewards and dungeon runs.
+	route(): LevelingRoute | undefined {
+		return this.player.getLevelingGearPlan().ignoreRoute ? undefined : this.simUI.individualConfig.levelingRoute;
+	}
+
+	private gearRoute(db: Database): LevelingGearRoute | undefined {
+		const route = this.route();
+		if (!route) return undefined;
+		const items = (ids: number[]) => ids.flatMap(id => db.getItemById(id) ?? []);
+		return {
+			quests: route.quests.map(quest => ({ name: quest.name, level: quest.level, choices: items(quest.choiceIds), rewards: items(quest.rewardIds) })),
+			dungeons: route.dungeons,
+		};
 	}
 
 	// The tab calls it when this part opens or closes, and when the talents or rotations change.
@@ -533,7 +568,7 @@ function sourceText(piece: LevelingGearPiece): string {
 		case 'pinned':
 			return 'ours';
 		case 'quest':
-			return 'quest reward';
+			return piece.quest ?? 'quest reward';
 		case 'dungeon':
 			return piece.dungeon ?? 'dungeon';
 		default:

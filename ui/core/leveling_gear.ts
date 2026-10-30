@@ -35,6 +35,11 @@ import { Stats } from './proto_utils/stats.js';
 // suffixes. The database has no white items, so a white find is a plain piece we make up
 // here, with the armor or weapon damage of its item level and no stats.
 //
+// With a leveling route (the spec's, see LevelingRoute), the quest rewards and dungeon runs are
+// the route's instead of made up. We take each quest's reward at the level we turn it in, and
+// run each dungeon at the route's level. The drops out in the world and the loot of the bosses
+// stay random.
+//
 // A plan is one random history, from its seed. The same seed and pins give the same plan,
 // and a pin doesn't change any other find, because each level and slot rolls its own random
 // numbers.
@@ -76,18 +81,21 @@ export const QUALITY_MIX: Array<{ level: number; white: number; green: number; b
 ];
 
 // Of the finds, this share are quest rewards, where we take the best of QUEST_CHOICES for us.
-// The rest are drops.
+// The rest are drops. With a route, the route has the quest rewards, so we keep only the drops.
 export const QUEST_SHARE = 0.6;
 export const QUEST_CHOICES = 3;
 
 // The dungeons we run while leveling, if our faction goes there. Each one we run with this
 // chance, once: 1 level after the lowest level its loot needs. A second run is rare while
-// leveling, so what we didn't get on the first one we don't get. Each boss drops one item
-// from its own loot, or two half the time, and we win an item we'd wear with WIN_CHANCE, since
-// others in the group roll on it too. Raids and battlegrounds aren't here.
+// leveling, so what we didn't get on the first one we don't get. A route says which dungeons
+// we run and at what level instead.
+//
+// Each boss drops one item from its own loot, or two half the time. We get an item we'd wear
+// with WIN_CHANCE. Half the time one other player in the group wants it too, and we win half
+// of those rolls. Raids and battlegrounds aren't here.
 export const DUNGEON_RUN_CHANCE = 0.8;
 export const DUNGEON_RUN_LEVELS = [1];
-export const DUNGEON_WIN_CHANCE = 0.5;
+export const DUNGEON_WIN_CHANCE = 0.75;
 export const LEVELING_DUNGEONS: Array<{ zoneId: number; faction?: Faction }> = [
 	{ zoneId: 2437, faction: Faction.Horde }, // Ragefire Chasm, in Orgrimmar
 	{ zoneId: 16611, faction: Faction.Horde }, // Ruins of Lordaeron, Forever's, under Undercity
@@ -173,6 +181,8 @@ export interface LevelingGearPiece {
 	source: LevelingGearSource;
 	// The dungeon it dropped in.
 	dungeon?: string;
+	// The route's quest that gave it.
+	quest?: string;
 	// The level we put it on at.
 	since: number;
 }
@@ -204,6 +214,12 @@ export interface LevelingGearClassRules {
 	canDualWield: boolean;
 }
 
+// A leveling route's quests and dungeons (LevelingRoute), with the quests' items looked up.
+export interface LevelingGearRoute {
+	quests: Array<{ name: string; level: number; choices: Array<Item>; rewards: Array<Item> }>;
+	dungeons: Array<{ zoneId: number; name: string; level: number }>;
+}
+
 export interface LevelingGearInputs {
 	// Every item in the database, and the random suffixes by id.
 	items: Array<Item>;
@@ -213,6 +229,7 @@ export interface LevelingGearInputs {
 	faction: Faction;
 	seed: number;
 	pins: Array<LevelingGearPinInput>;
+	route?: LevelingGearRoute;
 	// The stat weights we judge items by at a level.
 	weightsAt: (level: number) => Stats;
 	// A zone's name, for the dungeons.
@@ -253,12 +270,24 @@ export function planLevelingGear(inputs: LevelingGearInputs): LevelingGearPlan {
 		};
 
 		let finds = 0;
+		for (const quest of inputs.route?.quests ?? []) {
+			if (quest.level != level) continue;
+			const take = (item: Item): LevelingGearPiece => ({ item, source: 'quest', quest: quest.name, since: level });
+			const choices = quest.choices.filter(item => pool.canTakeAt(item, level)).map(take);
+			const rewards = quest.rewards.filter(item => pool.canTakeAt(item, level)).map(take);
+			if (choices.length) rewards.unshift(choices.reduce((a, b) => (gainOf(b).gain > gainOf(a).gain ? b : a)));
+			for (const piece of rewards) {
+				finds++;
+				offer(piece);
+			}
+		}
 		for (const [typeKey, rate] of Object.entries(FINDS_PER_LEVEL)) {
 			const type = Number(typeKey) as ItemType;
 			const rand = mulberry32(hash(inputs.seed, level, type));
 			const count = poisson(rate!, rand);
 			for (let i = 0; i < count; i++) {
 				const quest = rand() < QUEST_SHARE;
+				if (quest && inputs.route) continue;
 				const choices: Array<LevelingGearPiece> = [];
 				for (let c = 0; c < (quest ? QUEST_CHOICES : 1); c++) {
 					const piece = pool.find(type, level, rand);
@@ -305,6 +334,11 @@ interface DungeonRun {
 
 // The dungeon runs of this journey: which dungeons of our faction we run, and at what levels.
 function planDungeonRuns(inputs: LevelingGearInputs, pool: ItemPool): Array<DungeonRun> {
+	if (inputs.route) {
+		return inputs.route.dungeons
+			.map(dungeon => ({ level: dungeon.level, zoneId: dungeon.zoneId, name: dungeon.name, bosses: pool.bossLoot(dungeon.zoneId) }))
+			.filter(run => run.bosses.length > 0);
+	}
 	const runs: Array<DungeonRun> = [];
 	for (const dungeon of LEVELING_DUNGEONS) {
 		if (dungeon.faction !== undefined && dungeon.faction != inputs.faction) continue;
@@ -439,7 +473,9 @@ class ItemPool {
 			// A dungeon boss's or a raid's loot only drops there, so it's not a find out in the
 			// world.
 			const instanceOnly = item.sources.length > 0 && item.sources.every(s => s.source.oneofKind == 'drop' && INSTANCE_ZONES.has(s.source.drop.zoneId));
-			if (!instanceOnly) push(this.byTypeQuality, `${item.type}/${item.quality}`, item);
+			// With a route, every find is a drop, and a quest reward doesn't drop.
+			const questOnly = item.sources.length > 0 && item.sources.every(s => s.source.oneofKind == 'quest');
+			if (!instanceOnly && !(questOnly && inputs.route)) push(this.byTypeQuality, `${item.type}/${item.quality}`, item);
 			for (const source of item.sources) {
 				if (source.source.oneofKind != 'drop' || !source.source.drop.npcId) continue;
 				const { zoneId, npcId } = source.source.drop;
@@ -455,14 +491,24 @@ class ItemPool {
 	// and reputation items we'd have to go out of our way for.
 	private canFind(item: Item): boolean {
 		if (item.quality != ItemQuality.ItemQualityUncommon && item.quality != ItemQuality.ItemQualityRare) return false;
+		if (item.sources.length > 0 && !item.sources.some(s => s.source.oneofKind == 'drop' || s.source.oneofKind == 'quest')) return false;
+		return this.canUse(item);
+	}
+
+	// Whether our class and faction can use the item, and our class can wield it.
+	private canUse(item: Item): boolean {
 		if (item.classAllowlist.length > 0 && !item.classAllowlist.includes(this.inputs.playerClass)) return false;
 		const restriction = item.factionRestriction;
 		if (restriction == FactionRestriction.ALLIANCE_ONLY && this.inputs.faction == Faction.Horde) return false;
 		if (restriction == FactionRestriction.HORDE_ONLY && this.inputs.faction == Faction.Alliance) return false;
-		if (item.sources.length > 0 && !item.sources.some(s => s.source.oneofKind == 'drop' || s.source.oneofKind == 'quest')) return false;
 		if (item.type == ItemType.ItemTypeWeapon) return this.canWield(item.weaponType, item.handType == HandType.HandTypeTwoHand);
 		if (item.type == ItemType.ItemTypeRanged) return this.inputs.classRules.rangedWeaponTypes.includes(item.rangedWeaponType);
 		return true;
+	}
+
+	// Whether we can take a route's quest reward at this level and wear it.
+	canTakeAt(item: Item, level: number): boolean {
+		return this.canUse(item) && this.canWearAt(item, level);
 	}
 
 	private canWield(weaponType: WeaponType, twoHand: boolean): boolean {

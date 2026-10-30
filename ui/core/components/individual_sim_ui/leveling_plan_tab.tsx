@@ -364,6 +364,7 @@ export class LevelingPlanTab extends SimTab {
 			base: this.simUI.sim.makeRaidSimRequest(false),
 			plan,
 			gearPlan: this.player.getLevelingGearPlan(),
+			route: this.gear.route(),
 			gearWeights: this.gear.weightPresets().map(preset => LevelingGearWeights.create({ level: preset.level, weights: preset.weights.toProto() })),
 			gearDefaultWeights: this.player.getEpWeights().toProto(),
 			classRules: LevelingGearClassRules.create({

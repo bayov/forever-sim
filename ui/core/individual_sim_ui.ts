@@ -52,7 +52,7 @@ import {
 	Spec,
 	Stat,
 } from './proto/common';
-import { IndividualSimSettings, LevelingPlanSettings, SavedTalents } from './proto/ui';
+import { IndividualSimSettings, LevelingPlanSettings, LevelingRoute, SavedTalents } from './proto/ui';
 import { ItemSwapGear } from './proto_utils/gear';
 import { professionNames } from './proto_utils/names';
 import { SimResult } from './proto_utils/sim_result';
@@ -138,6 +138,10 @@ export interface IndividualSimUIConfig<SpecType extends Spec> extends PlayerConf
 		// The spec's leveling plan, for the Leveling mode (leveling_plan.ts).
 		levelingPlan?: LevelingPlanSettings;
 	};
+
+	// The spec's leveling route, whose quest rewards and dungeon runs the leveling gear plan
+	// takes (leveling_gear.ts, LevelingGearRoute).
+	levelingRoute?: LevelingRoute;
 
 	playerInputs?: InputSection;
 	playerIconInputs: Array<IconInputs.IconInputConfig<Player<SpecType>, any>>;

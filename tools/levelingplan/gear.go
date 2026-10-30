@@ -68,7 +68,7 @@ const (
 	questShare         = 0.6
 	questChoices       = 3
 	dungeonRunChance   = 0.8
-	dungeonWinChance   = 0.5
+	dungeonWinChance   = 0.75
 	ilvlBelow          = 3
 	ilvlAbove          = 5
 	gearMaxLevel       = 60
@@ -169,7 +169,10 @@ type gearPlanInputs struct {
 	faction     proto.Faction
 	seed        int32
 	pins        []*proto.LevelingGearPin
-	weightsAt   func(level int32) weights
+	// The spec's leveling route, or nil when the plan makes up the quest rewards and dungeon
+	// runs.
+	route     *proto.LevelingRoute
+	weightsAt func(level int32) weights
 }
 
 type gearPlan struct {
@@ -210,11 +213,43 @@ func planLevelingGear(in *gearPlanInputs) *gearPlan {
 			}
 		}
 
+		for _, q := range in.route.GetQuests() {
+			if q.Level != level {
+				continue
+			}
+			take := func(ids []int32) []gearPiece {
+				var out []gearPiece
+				for _, id := range ids {
+					if item := in.itemsByID[id]; item != nil && pool.canTakeAt(item, level) {
+						out = append(out, gearPiece{item: item, source: "quest", since: level})
+					}
+				}
+				return out
+			}
+			pieces := take(q.RewardIds)
+			if choices := take(q.ChoiceIds); len(choices) > 0 {
+				best := choices[0]
+				for _, c := range choices[1:] {
+					_, _, gc := gainOf(c)
+					_, _, gb := gainOf(best)
+					if gc > gb {
+						best = c
+					}
+				}
+				pieces = append([]gearPiece{best}, pieces...)
+			}
+			for _, p := range pieces {
+				offer(p)
+			}
+		}
 		for _, f := range findsPerLevel {
 			rand := mulberry32(hash(in.seed, level, int32(f.itemType)))
 			count := poisson(f.rate, rand)
 			for i := 0; i < count; i++ {
 				quest := rand() < questShare
+				if quest && in.route != nil {
+					continue
+				}
 				var choices []gearPiece
 				n := 1
 				if quest {
@@ -301,6 +336,14 @@ type dungeonRun struct {
 
 func planDungeonRuns(in *gearPlanInputs, pool *itemPool) []dungeonRun {
 	var runs []dungeonRun
+	if in.route != nil {
+		for _, d := range in.route.Dungeons {
+			if bosses := pool.bossLoot(d.ZoneId); len(bosses) > 0 {
+				runs = append(runs, dungeonRun{level: d.Level, zoneID: d.ZoneId, bosses: bosses})
+			}
+		}
+		return runs
+	}
 	for _, d := range levelingDungeons {
 		if d.faction != proto.Faction_Unknown && d.faction != in.faction {
 			continue
@@ -495,7 +538,14 @@ func newItemPool(in *gearPlanInputs) *itemPool {
 				instanceOnly = false
 			}
 		}
-		if !instanceOnly {
+		// With a route, every find is a drop, and a quest reward doesn't drop.
+		questOnly := len(item.Sources) > 0
+		for _, s := range item.Sources {
+			if s.GetQuest() == nil {
+				questOnly = false
+			}
+		}
+		if !instanceOnly && !(questOnly && in.route != nil) {
 			key := [2]int32{int32(item.Type), int32(item.Quality)}
 			pool.byTypeQuality[key] = append(pool.byTypeQuality[key], item)
 		}
@@ -525,6 +575,14 @@ func (pool *itemPool) canFind(item *proto.UIItem) bool {
 	if item.Quality != proto.ItemQuality_ItemQualityUncommon && item.Quality != proto.ItemQuality_ItemQualityRare {
 		return false
 	}
+	if len(item.Sources) > 0 && !slices.ContainsFunc(item.Sources, func(s *proto.UIItemSource) bool { return s.GetDrop() != nil || s.GetQuest() != nil }) {
+		return false
+	}
+	return pool.canUse(item)
+}
+
+// Whether our class and faction can use the item, and our class can wield it.
+func (pool *itemPool) canUse(item *proto.UIItem) bool {
 	if len(item.ClassAllowlist) > 0 && !slices.Contains(item.ClassAllowlist, pool.in.playerClass) {
 		return false
 	}
@@ -537,9 +595,6 @@ func (pool *itemPool) canFind(item *proto.UIItem) bool {
 		if pool.in.faction == proto.Faction_Alliance {
 			return false
 		}
-	}
-	if len(item.Sources) > 0 && !slices.ContainsFunc(item.Sources, func(s *proto.UIItemSource) bool { return s.GetDrop() != nil || s.GetQuest() != nil }) {
-		return false
 	}
 	switch item.Type {
 	case proto.ItemType_ItemTypeWeapon:
@@ -576,6 +631,11 @@ func (pool *itemPool) maxArmorAt(level int32) proto.ArmorType {
 // Whether we can wear the item at this level: its required level and our armor type then.
 func (pool *itemPool) canWearAt(item *proto.UIItem, level int32) bool {
 	return item.RequiredLevel <= level && (item.ArmorType == proto.ArmorType_ArmorTypeUnknown || item.ArmorType <= pool.maxArmorAt(level))
+}
+
+// Whether we can take a route's quest reward at this level and wear it.
+func (pool *itemPool) canTakeAt(item *proto.UIItem, level int32) bool {
+	return pool.canUse(item) && pool.canWearAt(item, level)
 }
 
 // The item as a piece we have, with one of its random suffixes rolled.

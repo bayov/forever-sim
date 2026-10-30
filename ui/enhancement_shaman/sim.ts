@@ -108,6 +108,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 		debuffs: Presets.DefaultDebuffs,
 		levelingPlan: Presets.DefaultLevelingPlan,
 	},
+	levelingRoute: Presets.LevelingRouteOrcShaman,
 
 	// IconInputs to include in the 'Player' section on the settings tab.
 	playerIconInputs: [],
