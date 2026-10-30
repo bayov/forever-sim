@@ -27,6 +27,8 @@ type manaBar struct {
 
 	ReplenishmentAura *Aura
 
+	manaGainSpell *Spell // Holds the threat from mana gains.
+
 	// Forever regen is a rate rather than a 2 sec tick. Mana is settled up to the current
 	// time in Simulation.advance, so currentMana is always exact when anyone reads it.
 	// The 5 second rule still applies: the stretch of time before
@@ -58,7 +60,7 @@ func (character *Character) EnableManaBarWithModifier(modifier float64) {
 	character.AddStatDependency(stats.Intellect, stats.Mana, 15*modifier)
 
 	// Not a real spell, just holds metrics from mana gain threat.
-	character.RegisterSpell(SpellConfig{
+	character.manaGainSpell = character.RegisterSpell(SpellConfig{
 		ActionID: ActionID{OtherID: proto.OtherAction_OtherActionManaGain},
 	})
 
@@ -99,6 +101,29 @@ func (unit *Unit) AddMana(sim *Simulation, amount float64, metrics *ResourceMetr
 
 	unit.currentMana = newMana
 	unit.Metrics.ManaGained += newMana - oldMana
+
+	if gain := newMana - oldMana; gain > 0 && sim.IsForever() && unit.manaBar.gainMakesThreat(metrics) {
+		unit.manaBar.manaGainThreat(sim, gain)
+	}
+}
+
+// gainMakesThreat says whether mana from this source makes threat. Regeneration doesn't, and Vampiric
+// Touch's mana threat is the priest's.
+func (mb *manaBar) gainMakesThreat(metrics *ResourceMetrics) bool {
+	if mb.manaGainSpell == nil {
+		return false
+	}
+	return !metrics.ActionID.SameActionIgnoreTag(ActionID{OtherID: proto.OtherAction_OtherActionManaRegen}) &&
+		!metrics.ActionID.SameActionIgnoreTag(ActionID{SpellID: 34917})
+}
+
+// manaGainThreat books a mana gain's threat under Forever, the way Rage gains do
+// (foreverRageGainThreat): half a threat a mana, times the unit's threat multiplier at the time,
+// split between the enemies in combat, when the mana comes. Classic gives it in full to every enemy
+// at the end of the iteration (doneIteration).
+func (mb *manaBar) manaGainThreat(sim *Simulation, gain float64) {
+	mb.manaGainSpell.BookSplitThreat(sim, gain*ThreatPerManaGained*mb.unit.PseudoStats.ThreatMultiplier)
+	mb.manaGainSpell.SpellMetrics[0].Casts++
 }
 
 func (unit *Unit) SpendMana(sim *Simulation, amount float64, metrics *ResourceMetrics) {
@@ -124,6 +149,10 @@ func (mb *manaBar) doneIteration(sim *Simulation) {
 
 	if mb.waitingForMana != 0 {
 		mb.unit.Metrics.AddOOMTime(sim, sim.CurrentTime-mb.waitingForManaStartTime)
+	}
+
+	if sim.IsForever() {
+		return
 	}
 
 	manaGainSpell := mb.unit.GetSpell(ActionID{OtherID: proto.OtherAction_OtherActionManaGain})

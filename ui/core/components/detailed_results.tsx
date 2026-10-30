@@ -39,10 +39,11 @@ const tabs: Tab[] = [
 		classes: ['damage-metrics-tab'],
 	},
 	{
+		// Every spec makes threat, so this tab is always there. The tank results (Damage Taken, DTPS,
+		// TMI, chance of death) stay behind the Threat/Tank setting.
 		targetId: 'threatTab',
 		label: 'Threat',
 		icon: 'fa-skull',
-		classes: ['threat-metrics-tab'],
 	},
 	{
 		targetId: 'healingTab',
@@ -163,8 +164,9 @@ export abstract class DetailedResults extends Component {
 					</div>
 					<div id="threatTab" className="tab-pane dr-tab-content threat-content fade">
 						<div className="dr-row topline-results" />
-						<div className="dr-row all-players-only">{panel('Players', 'threat-metrics', <div className="player-threat-metrics" />)}</div>
-						<div className="dr-row single-player-only">{panel('Abilities', 'threat-metrics', <div className="threat-metrics-host" />)}</div>
+						<div className="dr-row all-players-only">{panel('Players', '', <div className="player-threat-metrics" />)}</div>
+						<div className="dr-row single-player-only">{panel('Abilities', '', <div className="threat-metrics-host" />)}</div>
+						<div className="dr-row single-player-only">{panel('TPS Distribution', '', <div className="tps-histogram" />)}</div>
 					</div>
 					<div id="healingTab" className="tab-pane dr-tab-content healing-content fade">
 						<div className="dr-row topline-results" />
@@ -256,6 +258,11 @@ export abstract class DetailedResults extends Component {
 			{ parent: this.rootElem.querySelector('.player-damage-metrics')!, resultsEmitter: this.resultsEmitter },
 			this.resultsFilter,
 		);
+		new PlayerDamageMetricsTable(
+			{ parent: this.rootElem.querySelector('.player-threat-metrics')!, resultsEmitter: this.resultsEmitter },
+			this.resultsFilter,
+			'threat',
+		);
 		new PlayerDamageTakenMetricsTable(
 			{ parent: this.rootElem.querySelector('.player-damage-taken-metrics')!, resultsEmitter: this.resultsEmitter },
 			this.resultsFilter,
@@ -281,6 +288,14 @@ export abstract class DetailedResults extends Component {
 			parent: this.rootElem.querySelector('.dps-histogram')!,
 			resultsEmitter: this.resultsEmitter,
 		});
+
+		new DpsHistogram(
+			{
+				parent: this.rootElem.querySelector('.tps-histogram')!,
+				resultsEmitter: this.resultsEmitter,
+			},
+			'tps',
+		);
 
 		new DtpsMetricsTable({
 			parent: this.rootElem.querySelector('.dtps-metrics')!,

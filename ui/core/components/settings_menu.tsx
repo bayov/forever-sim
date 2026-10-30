@@ -130,8 +130,8 @@ export class SettingsMenu extends BaseModal {
 		if (showThreatMetrics.value)
 			new BooleanPicker(showThreatMetrics.value, this.simUI.sim, {
 				id: 'simui-show-threat-metrics',
-				label: 'Show Threat/Tank Options',
-				labelTooltip: 'Shows all options and metrics relevant to tanks, like TPS/DTPS.',
+				label: 'Show Tank Options',
+				labelTooltip: 'Tank options and results, like Damage Taken and DTPS.',
 				inline: true,
 				changedEvent: (sim: Sim) => sim.showThreatMetricsChangeEmitter,
 				getValue: (sim: Sim) => sim.getShowThreatMetrics(),

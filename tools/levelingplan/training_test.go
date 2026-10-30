@@ -42,9 +42,9 @@ func TestSkipTails(t *testing.T) {
 		{id: 5, spell: "Totem", level: 20},
 		{id: 6, spell: "Totem", level: 30},
 	}
-	// Shock 2 costs a little but Shock 3 saves more, so we keep both. Shock 4 saves nothing.
+	// Shock 2 costs a little but Shock 3 saves time, so we keep both. Shock 4 saves nothing.
 	// Totem 2 costs time.
-	minutes := map[int32]float64{1: 5, 2: -1, 3: 4, 4: 0, 5: 3, 6: -2}
+	minutes := map[int32]float64{1: 5, 2: -1, 3: 0.5, 4: 0, 5: 3, 6: -2}
 	got := skipTails(ranks, minutes)
 	want := schedule{4: neverLevel, 6: neverLevel}
 	if !sameSchedule(got, want) {

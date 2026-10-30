@@ -300,7 +300,7 @@ dps_results: {
  key: "TestSurvival-Phase1-Settings-NightElf-level60_phase1_synthetic_survival-Options-sv-FullBuffs-Survival-LongMultiTarget"
  value: {
   dps: 1603.43333
-  tps: 1809.95872
+  tps: 1390.77081
   dtps: 2.4155
  }
 }
@@ -348,7 +348,7 @@ dps_results: {
  key: "TestSurvival-Phase1-Settings-Orc-level60_phase1_synthetic_survival-Options-sv-FullBuffs-Survival-LongMultiTarget"
  value: {
   dps: 1625.30817
-  tps: 1821.63834
+  tps: 1402.45043
   dtps: 2.28917
  }
 }

@@ -236,7 +236,7 @@ dps_results: {
  key: "TestWarlockDestruction-Phase1-Settings-Gnome-level60_phase1_synthetic-Destruction Warlock-level60_destruction-FullBuffs-Consumes-LongMultiTarget"
  value: {
   dps: 1291.0035
-  tps: 1731.04119
+  tps: 1005.78871
   hps: 2.07083
  }
 }
@@ -260,7 +260,7 @@ dps_results: {
  key: "TestWarlockDestruction-Phase1-Settings-Gnome-level60_phase1_synthetic-Destruction Warlock-level60_destruction-NoBuffs-Consumes-LongMultiTarget"
  value: {
   dps: 803.355
-  tps: 1478.08999
+  tps: 645.04899
   hps: 0.68433
  }
 }

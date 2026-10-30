@@ -1698,7 +1698,7 @@ export const PresetBuildLevel30PvPVsProt = makeLevel30PvPBuild(
 //                                 Leveling Plan
 ///////////////////////////////////////////////////////////////////////////
 
-// The leveling plan of the Leveling mode (ui/core/leveling_plan.ts), from level 10 to 60. We
+// The leveling plan of the Leveling mode (ui/core/leveling_plan.ts), from level 1 to 60. We
 // grind up to 59, and 60 is where we stop.
 //
 // The talents and rotations come from the 2026-10-19 audit of the searched plan
@@ -1712,7 +1712,9 @@ export const PresetBuildLevel30PvPVsProt = makeLevel30PvPBuild(
 // of Flame after. The rotations are "Audited 10" and so on, one range for each level that
 // changed something, all on Rockbiter Weapon.
 export const DefaultLevelingPlan = LevelingPlanSettings.create({
-	fromLevel: 10,
+	// From level 1, where levels 1 to 9 play the first range's rotation with the spells we have
+	// by then, and no talents.
+	fromLevel: 1,
 	toLevel: 60,
 	bonusTalentPoints: 0,
 	builds: [LevelingTalentBuild.create({ level: 10, picks: LevelingPlanAuditedJSON.route.map(pick => LevelingTalentPick.fromJson(pick as any)) })],
@@ -1743,9 +1745,9 @@ export const EncounterLevelingPlan = PresetUtils.makePresetEncounter(
 	}),
 	{ group: 'Leveling' },
 );
-export const PresetBuildLeveling10to60 = PresetUtils.makePresetBuild('Leveling 10-60', {
+export const PresetBuildLeveling1to60 = PresetUtils.makePresetBuild('Leveling 1-60', {
 	group: 'Leveling',
-	tooltip: 'The Leveling mode with our 10 to 60 plan: an Orc grinding alone, with its talent route and rotations.',
+	tooltip: 'The Leveling mode with our 1 to 60 plan: an Orc grinding alone, with its talent route and rotations.',
 	encounter: EncounterLevelingPlan,
 	race: Race.RaceOrc,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],

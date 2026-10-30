@@ -6,6 +6,9 @@ import (
 
 func (paladin *Paladin) registerRighteousFury() {
 	if !paladin.Options.RighteousFury {
+		// Instrument of Law takes 10% a point off all our threat while Righteous Fury is off
+		// (client 1.60.1.70630, spell 1311085). Righteous Fury is on or off for the whole fight.
+		paladin.PseudoStats.ThreatMultiplier *= 1 - 0.1*float64(paladin.Talents.InstrumentOfLaw)
 		return
 	}
 	actionID := core.ActionID{SpellID: 25780}

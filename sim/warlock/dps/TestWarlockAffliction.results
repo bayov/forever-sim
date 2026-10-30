@@ -236,7 +236,7 @@ dps_results: {
  key: "TestWarlockAffliction-Phase1-Settings-Gnome-level60_phase1_synthetic-Affliction Warlock-level60_affliction-FullBuffs-Consumes-LongMultiTarget"
  value: {
   dps: 1316.1
-  tps: 1746.42184
+  tps: 1025.51377
   hps: 3.3425
  }
 }
@@ -260,7 +260,7 @@ dps_results: {
  key: "TestWarlockAffliction-Phase1-Settings-Gnome-level60_phase1_synthetic-Affliction Warlock-level60_affliction-NoBuffs-Consumes-LongMultiTarget"
  value: {
   dps: 817.92933
-  tps: 1482.25674
+  tps: 656.20622
   hps: 1.18033
  }
 }

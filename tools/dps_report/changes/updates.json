@@ -489,7 +489,7 @@
    "title": "Rotations that hold at any fight length",
    "date": "2026-10-28",
    "baselineData": "04422dc6b7b6fb6efb17d44deac37e4a908c8010",
-   "endData": "0bb3ec9b6e890ce6a3c5f174d548e4b2555efa05",
+   "endData": null,
    "lines": [
     {
      "title": "Night Elf warriors: Elune's Light with the other cooldowns, not in Recklessness",
@@ -780,6 +780,57 @@
       "3669b5c",
       "0bb3ec9"
      ]
+    },
+    {
+     "title": "Extra attacks no longer restart the swing timer",
+     "kind": "sim",
+     "note": "Windfury Totem, Hack and Slash, Sword Specialization, Hand of Justice and other extra attacks swing at once, and the next swing comes when it was already due. Assumed until a combat log settles it.",
+     "commits": [
+      "f301789"
+     ]
+    },
+    {
+     "title": "Windfury Totem can proc again 0.1 sec after a proc, not 1.5 sec",
+     "kind": "sim",
+     "source": "https://wago.tools/db2/SpellAuraOptions?build=1.60.1.70707&filter[SpellID]=10612",
+     "commits": [
+      "f301789"
+     ]
+    },
+    {
+     "title": "Eviscerate: 4% of attack power per combo point, up from 3%",
+     "kind": "sim",
+     "classes": [
+      "Rogue"
+     ],
+     "note": "Taken from in-game tests by the WoWSims Forever team. Assumed until our own test settles it.",
+     "source": "https://github.com/wowsims/forever/blob/master/sim/rogue/eviscerate.go",
+     "commits": [
+      "f301789"
+     ]
+    },
+    {
+     "title": "Sharpening stones only work on edged weapons, and weightstones on blunt ones",
+     "kind": "sim",
+     "moves": false,
+     "commits": [
+      "f301789"
+     ]
+    },
+    {
+     "title": "Combat Swords and Combat Daggers: Dense Weightstone on the off-hand mace",
+     "kind": "consumes",
+     "moves": false,
+     "builds": [
+      "rogue__combat-swords",
+      "rogue__combat-swords-humanoid",
+      "rogue__combat-daggers",
+      "rogue__combat-daggers-humanoid"
+     ],
+     "note": "The same +8 damage as the sharpening stone they listed, which can't go on a mace.",
+     "commits": [
+      "f301789"
+     ]
     }
    ],
    "internal": [
@@ -886,296 +937,116 @@
     {
      "commit": "414fa53",
      "why": "raid sim engine and comp search work; every report request's result is bit-identical (TestRaidForeverReportHashes), but for Feral's never-active Faerie Fire (Feral) aura"
-    }
-   ]
-  },
-  {
-   "id": "2026-10-30-build-70707",
-   "type": "game",
-   "title": "Build 1.60.1.70707: the mage talent rework",
-   "date": "2026-10-30",
-   "baselineData": "0bb3ec9b6e890ce6a3c5f174d548e4b2555efa05",
-   "endData": null,
-   "lines": [
-    {
-     "title": "Mage talents reworked: Arcane Focus removed, Critical Mass down to 3 points (6% Fire crit), Incineration up to 5 points (10%)",
-     "kind": "game",
-     "classes": [
-      "Mage"
-     ],
-     "note": "Improved Fireball is now Accelerant and also shortens Arcane Wrath's cast. Missile Barrage, Arcane Resilience, Improved Channeling and Improved Fire Blast moved in the tree, so every mage talent string changed.",
-     "source": "https://wago.tools/db2/TraitNodeEntry?build=1.60.1.70707",
-     "commits": [
-      "cacd15f",
-      "31054ea"
-     ]
-    },
-    {
-     "title": "Elemental Precision is now Precision: 2/4/6% hit with all spells, Arcane included",
-     "kind": "game",
-     "classes": [
-      "Mage"
-     ],
-     "source": "https://wago.tools/db2/SpellEffect?build=1.60.1.70707&filter[SpellID]=29438",
-     "commits": [
-      "cacd15f",
-      "31054ea"
-     ]
-    },
-    {
-     "title": "Ice Lance has an 8 sec cooldown",
-     "kind": "game",
-     "classes": [
-      "Mage"
-     ],
-     "note": "The game files put it on rank 1 only; the presets give every rank the cooldown, as the tooltip does. Assumed until checked in game.",
-     "source": "https://wago.tools/db2/SpellCooldowns?build=1.60.1.70707&filter[SpellID]=1312002",
-     "commits": [
-      "cacd15f",
-      "31054ea"
-     ]
-    },
-    {
-     "title": "Mage presets: talents re-picked for the new trees",
-     "kind": "talents",
-     "builds": [
-      "mage__arcane",
-      "mage__fire",
-      "mage__frost",
-      "mage__frostfire"
-     ],
-     "note": "Fire and Arcane put the freed points in Incineration; Frostfire in Incineration and Master of Elements; Frost in Arcane Concentration, Arcane Meditation and Arcane Wrath.",
-     "commits": [
-      "cacd15f"
-     ]
-    },
-    {
-     "title": "Frost mage: three Arcane Blast stacks and no Evocation",
-     "kind": "rotation",
-     "builds": [
-      "mage__frost"
-     ],
-     "note": "With Ice Lance on a cooldown, the mana goes further.",
-     "commits": [
-      "cacd15f"
-     ]
-    },
-    {
-     "title": "Arcane mage: keeps four Arcane Blast stacks at low mana",
-     "kind": "rotation",
-     "builds": [
-      "mage__arcane"
-     ],
-     "commits": [
-      "56695e4"
-     ]
-    },
-    {
-     "title": "Extra attacks no longer restart the swing timer",
-     "kind": "sim",
-     "note": "Windfury Totem, Hack and Slash, Sword Specialization, Hand of Justice and other extra attacks swing at once, and the next swing comes when it was already due. Assumed until a combat log settles it.",
-     "commits": [
-      "f301789"
-     ]
-    },
-    {
-     "title": "Windfury Totem can proc again 0.1 sec after a proc, not 1.5 sec",
-     "kind": "sim",
-     "source": "https://wago.tools/db2/SpellAuraOptions?build=1.60.1.70707&filter[SpellID]=10612",
-     "commits": [
-      "f301789"
-     ]
-    },
-    {
-     "title": "Eviscerate: 4% of attack power per combo point, up from 3%",
-     "kind": "sim",
-     "classes": [
-      "Rogue"
-     ],
-     "note": "Taken from in-game tests by the WoWSims Forever team. Assumed until our own test settles it.",
-     "source": "https://github.com/wowsims/forever/blob/master/sim/rogue/eviscerate.go",
-     "commits": [
-      "f301789"
-     ]
-    },
-    {
-     "title": "Sharpening stones only work on edged weapons, and weightstones on blunt ones",
-     "kind": "sim",
-     "moves": false,
-     "commits": [
-      "f301789"
-     ]
-    },
-    {
-     "title": "Combat Swords and Combat Daggers: Dense Weightstone on the off-hand mace",
-     "kind": "consumes",
-     "moves": false,
-     "builds": [
-      "rogue__combat-swords",
-      "rogue__combat-swords-humanoid",
-      "rogue__combat-daggers",
-      "rogue__combat-daggers-humanoid"
-     ],
-     "note": "The same +8 damage as the sharpening stone they listed, which can't go on a mace.",
-     "commits": [
-      "f301789"
-     ]
-    }
-   ],
-   "internal": [
-    {
-     "commit": "3205cc5",
-     "why": "leveling sim and plan work; no report request's result moves (TestRaidForeverReportHashes)"
-    },
-    {
-     "commit": "cf51105",
-     "why": "raid sim engine and comp search work; no report request's result moves (TestRaidForeverReportHashes)"
     },
     {
      "commit": "596ba72",
-     "why": "leveling sim and plan work; no report request's result moves (TestRaidForeverReportHashes)"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     },
     {
      "commit": "bbbaf2e",
-     "why": "leveling sim and plan work; no report request's result moves (TestRaidForeverReportHashes)"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     },
     {
      "commit": "161f80b",
-     "why": "leveling sim and plan work; no report request's result moves (TestRaidForeverReportHashes)"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     },
     {
      "commit": "74554e2",
-     "why": "no report request uses Elixir of Wisdom"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     },
     {
      "commit": "a19f2e8",
-     "why": "comment only"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     },
     {
      "commit": "2626282",
-     "why": "raid sim engine and comp search work; no report request's result moves (TestRaidForeverReportHashes)"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     },
     {
      "commit": "4ae4dc3",
-     "why": "leveling sim and plan work; no report request's result moves (TestRaidForeverReportHashes)"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     },
     {
      "commit": "7a7a0f8",
-     "why": "raid sim engine and comp search work; no report request's result moves (TestRaidForeverReportHashes)"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     },
     {
      "commit": "49edbab",
-     "why": "raid sim engine and comp search work; no report request's result moves (TestRaidForeverReportHashes)"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     },
     {
      "commit": "26a471d",
-     "why": "raid sim engine and comp search work; no report request's result moves (TestRaidForeverReportHashes)"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     },
     {
      "commit": "b720834",
-     "why": "leveling sim and plan work; no report request's result moves (TestRaidForeverReportHashes)"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     },
     {
      "commit": "10ef00d",
-     "why": "item sources and hidden flags; no report gear changes, no report request's result moves (TestRaidForeverReportHashes)"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     },
     {
      "commit": "ec727d5",
-     "why": "item sources and hidden flags; no report gear changes, no report request's result moves (TestRaidForeverReportHashes)"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     },
     {
      "commit": "b342e74",
-     "why": "item sources and hidden flags; no report gear changes, no report request's result moves (TestRaidForeverReportHashes)"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     },
     {
      "commit": "6c13cef",
-     "why": "raid sim engine and comp search work; no report request's result moves (TestRaidForeverReportHashes)"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     },
     {
      "commit": "d3f91e4",
-     "why": "raid sim engine and comp search work; no report request's result moves (TestRaidForeverReportHashes)"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     },
     {
      "commit": "afaa943",
-     "why": "raid sim engine and comp search work; no report request's result moves (TestRaidForeverReportHashes)"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     },
     {
      "commit": "060e525",
-     "why": "raid sim engine and comp search work; no report request's result moves (TestRaidForeverReportHashes)"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     },
     {
      "commit": "2c3bf91",
-     "why": "raid sim engine and comp search work; no report request's result moves (TestRaidForeverReportHashes)"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     },
     {
      "commit": "ed2fbc1",
-     "why": "raid sim engine and comp search work; no report request's result moves (TestRaidForeverReportHashes)"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     },
     {
      "commit": "df737fa",
-     "why": "raid sim engine and comp search work; no report request's result moves (TestRaidForeverReportHashes)"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     },
     {
      "commit": "03a2c75",
-     "why": "raid sim engine and comp search work; no report request's result moves (TestRaidForeverReportHashes)"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     },
     {
      "commit": "4af1ec0",
-     "why": "raid sim engine and comp search work; no report request's result moves (TestRaidForeverReportHashes)"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     },
     {
      "commit": "cbaee6d",
-     "why": "raid sim engine and comp search work; no report request's result moves (only the builds the 70707 lines name differ from the published data)"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     },
     {
      "commit": "2e00dee",
-     "why": "raid sim engine and comp search work; no report request's result moves (only the builds the 70707 lines name differ from the published data)"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     },
     {
      "commit": "98cf9bd",
-     "why": "raid sim engine and comp search work; no report request's result moves (only the builds the 70707 lines name differ from the published data)"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     },
     {
      "commit": "80dca73",
-     "why": "raid sim engine and comp search work; no report request's result moves (only the builds the 70707 lines name differ from the published data)"
-    },
-    {
-     "commit": "eacc2b3",
-     "why": "raid sim engine and comp search work; no report request's result moves (only the builds the 70707 lines name differ from the published data)"
-    },
-    {
-     "commit": "d50909a",
-     "why": "raid sim engine and comp search work; no report request's result moves (only the builds the 70707 lines name differ from the published data)"
-    },
-    {
-     "commit": "0b6a702",
-     "why": "raid sim engine and comp search work; no report request's result moves (only the builds the 70707 lines name differ from the published data)"
-    },
-    {
-     "commit": "fc03f36",
-     "why": "raid sim engine and comp search work; no report request's result moves (only the builds the 70707 lines name differ from the published data)"
-    },
-    {
-     "commit": "ee1b301",
-     "why": "raid sim engine and comp search work; no report request's result moves (only the builds the 70707 lines name differ from the published data)"
-    },
-    {
-     "commit": "9ab5520",
-     "why": "raid sim engine and comp search work; no report request's result moves (only the builds the 70707 lines name differ from the published data)"
-    },
-    {
-     "commit": "84f8191",
-     "why": "raid sim engine and comp search work; no report request's result moves (only the builds the 70707 lines name differ from the published data)"
-    },
-    {
-     "commit": "9d4f296",
-     "why": "raid sim engine and comp search work; no report request's result moves (only the builds the 70707 lines name differ from the published data)"
+     "why": "raid sim, comp search, leveling or item source work; the full re-sim of 2026-10-30 moved only the builds under Windfury Totem"
     }
-   ],
-   "source": {
-    "label": "wago.tools, build 1.60.1.70707",
-    "url": "https://wago.tools/db2/TraitNodeEntry?build=1.60.1.70707"
-   }
+   ]
   }
  ]
 }

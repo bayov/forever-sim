@@ -1,6 +1,6 @@
 import tippy from 'tippy.js';
 
-import { UnitMetrics } from '../../proto_utils/sim_result.js';
+import { ActionMetrics, UnitMetrics } from '../../proto_utils/sim_result.js';
 import { maxIndex, sum } from '../../utils.js';
 import { ColumnSortType, MetricsTable } from './metrics_table/metrics_table.js';
 import { MetricsTotalBar } from './metrics_table/metrics_total_bar';
@@ -8,20 +8,23 @@ import { ResultComponentConfig, SimResultData } from './result_component.js';
 import { ResultsFilter } from './results_filter.js';
 import { SourceChart } from './source_chart.js';
 
+// Each player's damage, or with metric 'threat' each player's threat, as a share of the raid's.
 export class PlayerDamageMetricsTable extends MetricsTable<UnitMetrics> {
 	private readonly resultsFilter: ResultsFilter;
+	private readonly metric: 'damage' | 'threat';
 
 	// Cached values from most recent result.
 	private raidDps: number;
 	private maxDps: number;
 
-	constructor(config: ResultComponentConfig, resultsFilter: ResultsFilter) {
-		config.rootCssClass = 'player-damage-metrics-root';
+	constructor(config: ResultComponentConfig, resultsFilter: ResultsFilter, metric: 'damage' | 'threat' = 'damage') {
+		config.rootCssClass = metric == 'threat' ? 'player-threat-metrics-root' : 'player-damage-metrics-root';
+		const perSecond = metric == 'threat' ? 'TPS' : 'DPS';
 		super(config, [
 			MetricsTable.playerNameCellConfig(),
 			{
 				name: 'Amount',
-				tooltip: 'Player Damage / Raid Damage',
+				tooltip: metric == 'threat' ? 'Player Threat / Raid Threat' : 'Player Damage / Raid Damage',
 				headerCellClass: 'amount-header-cell text-center',
 				fillCell: (player: UnitMetrics, cellElem: HTMLElement, rowElem: HTMLElement) => {
 					cellElem.classList.add('amount-cell');
@@ -34,7 +37,7 @@ export class PlayerDamageMetricsTable extends MetricsTable<UnitMetrics> {
 							.getPlayerAndPetActions()
 							.map(action => action.forTarget(this.resultsFilter.getFilter()))
 							.flat();
-						new SourceChart(chartContainer, playerActions);
+						new SourceChart(chartContainer, playerActions, this.metric);
 						return chartContainer;
 					};
 
@@ -64,8 +67,8 @@ export class PlayerDamageMetricsTable extends MetricsTable<UnitMetrics> {
 				},
 			},
 			{
-				name: 'DPS',
-				tooltip: 'Damage / Encounter Duration',
+				name: perSecond,
+				tooltip: metric == 'threat' ? 'Threat / Encounter Duration' : 'Damage / Encounter Duration',
 				columnClass: 'dps-cell',
 				sort: ColumnSortType.Descending,
 				getValue: (player: UnitMetrics) => this.getPlayerDps(player),
@@ -73,6 +76,7 @@ export class PlayerDamageMetricsTable extends MetricsTable<UnitMetrics> {
 			},
 		]);
 		this.resultsFilter = resultsFilter;
+		this.metric = metric;
 		this.raidDps = 0;
 		this.maxDps = 0;
 	}
@@ -82,8 +86,12 @@ export class PlayerDamageMetricsTable extends MetricsTable<UnitMetrics> {
 			.getPlayerAndPetActions()
 			.map(action => action.forTarget(this.resultsFilter.getFilter()))
 			.flat();
-		const playerDps = sum(playerActions.map(action => action.dps));
-		return playerDps;
+		return sum(playerActions.map(action => this.perSecond(action)));
+	}
+
+	// Named for damage, the amounts here are threat with metric 'threat'.
+	private perSecond(action: ActionMetrics): number {
+		return this.metric == 'threat' ? action.tps : action.dps;
 	}
 
 	customizeRowElem(player: UnitMetrics, rowElem: HTMLElement) {
@@ -98,14 +106,14 @@ export class PlayerDamageMetricsTable extends MetricsTable<UnitMetrics> {
 
 		const targetActions = players.map(player => player.getPlayerAndPetActions().map(action => action.forTarget(resultData.filter))).flat();
 
-		this.raidDps = sum(targetActions.map(action => action.dps));
+		this.raidDps = sum(targetActions.map(action => this.perSecond(action)));
 		const maxDpsIndex = maxIndex(
 			players.map(player => {
 				const targetActions = player
 					.getPlayerAndPetActions()
 					.map(action => action.forTarget(resultData.filter))
 					.flat();
-				return sum(targetActions.map(action => action.dps));
+				return sum(targetActions.map(action => this.perSecond(action)));
 			}),
 		)!;
 
@@ -113,7 +121,7 @@ export class PlayerDamageMetricsTable extends MetricsTable<UnitMetrics> {
 			.getPlayerAndPetActions()
 			.map(action => action.forTarget(resultData.filter))
 			.flat();
-		this.maxDps = sum(maxDpsTargetActions.map(action => action.dps));
+		this.maxDps = sum(maxDpsTargetActions.map(action => this.perSecond(action)));
 
 		return players.map(player => [player]);
 	}

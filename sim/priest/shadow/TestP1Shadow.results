@@ -260,7 +260,7 @@ dps_results: {
  key: "TestP1Shadow-Phase1-Settings-Dwarf-level60_phase1_synthetic-Basic-level60-FullBuffs-Level60-Consumes-LongMultiTarget"
  value: {
   dps: 1210.30683
-  tps: 1113.41292
+  tps: 868.71709
   dtps: 1.99317
  }
 }
@@ -284,7 +284,7 @@ dps_results: {
  key: "TestP1Shadow-Phase1-Settings-Dwarf-level60_phase1_synthetic-Basic-level60-NoBuffs-Level60-Consumes-LongMultiTarget"
  value: {
   dps: 641.3275
-  tps: 584.16518
+  tps: 469.69219
   dtps: 2.46533
  }
 }
@@ -308,7 +308,7 @@ dps_results: {
  key: "TestP1Shadow-Phase1-Settings-Human-level60_phase1_synthetic-Basic-level60-FullBuffs-Level60-Consumes-LongMultiTarget"
  value: {
   dps: 1220.23083
-  tps: 1114.66133
+  tps: 875.40628
   dtps: 1.99317
  }
 }
@@ -332,7 +332,7 @@ dps_results: {
  key: "TestP1Shadow-Phase1-Settings-Human-level60_phase1_synthetic-Basic-level60-NoBuffs-Level60-Consumes-LongMultiTarget"
  value: {
   dps: 658.4865
-  tps: 595.40374
+  tps: 480.93075
   dtps: 2.3655
  }
 }
@@ -356,7 +356,7 @@ dps_results: {
  key: "TestP1Shadow-Phase1-Settings-NightElf-level60_phase1_synthetic-Basic-level60-FullBuffs-Level60-Consumes-LongMultiTarget"
  value: {
   dps: 1219.79283
-  tps: 1120.34085
+  tps: 875.64503
   dtps: 2.04133
  }
 }
@@ -380,7 +380,7 @@ dps_results: {
  key: "TestP1Shadow-Phase1-Settings-NightElf-level60_phase1_synthetic-Basic-level60-NoBuffs-Level60-Consumes-LongMultiTarget"
  value: {
   dps: 644.83117
-  tps: 586.22664
+  tps: 471.75365
   dtps: 2.33317
  }
 }
@@ -404,7 +404,7 @@ dps_results: {
  key: "TestP1Shadow-Phase1-Settings-Undead-level60_phase1_synthetic-Basic-level60-FullBuffs-Level60-Consumes-LongMultiTarget"
  value: {
   dps: 1225.14417
-  tps: 1128.1749
+  tps: 883.47908
   dtps: 1.993
  }
 }
@@ -428,7 +428,7 @@ dps_results: {
  key: "TestP1Shadow-Phase1-Settings-Undead-level60_phase1_synthetic-Basic-level60-NoBuffs-Level60-Consumes-LongMultiTarget"
  value: {
   dps: 708.94717
-  tps: 697.11133
+  tps: 523.07334
   dtps: 3.02483
  }
 }

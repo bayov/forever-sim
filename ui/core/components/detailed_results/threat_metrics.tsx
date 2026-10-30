@@ -8,6 +8,9 @@ import { ResultComponentConfig, SimResultData } from './result_component';
 
 export class ThreatMetricsTable extends MetricsTable<ActionMetrics> {
 	maxThreatAmount: number | null = null;
+	// The average threat of all the rows, so each row's share is of the threat the table shows (the
+	// player's and pets', on the filtered targets).
+	totalAvgThreat = 0;
 	constructor(config: ResultComponentConfig) {
 		config.rootCssClass = 'threat-metrics-root';
 		config.resultsEmitter.on((_, resultData) => {
@@ -17,6 +20,7 @@ export class ThreatMetricsTable extends MetricsTable<ActionMetrics> {
 						.map(groups => this.mergeMetrics(groups))
 				: undefined;
 			this.maxThreatAmount = Math.max(...(lastResult || []).map(a => a.threat));
+			this.totalAvgThreat = (lastResult || []).reduce((total, a) => total + a.avgThreat, 0);
 		});
 
 		super(config, [
@@ -31,15 +35,41 @@ export class ThreatMetricsTable extends MetricsTable<ActionMetrics> {
 				name: 'Threat done',
 				headerCellClass: 'text-center metrics-table-cell--primary-metric',
 				columnClass: 'metrics-table-cell--primary-metric',
-				getValue: (metric: ActionMetrics) => metric.avgDamage,
+				getValue: (metric: ActionMetrics) => metric.avgThreat,
 				fillCell: (metric: ActionMetrics, cellElem: HTMLElement) => {
 					cellElem.appendChild(
 						<MetricsTotalBar
 							spellSchool={metric.spellSchool}
-							percentage={metric.totalThreatPercent}
+							percentage={this.totalAvgThreat ? (metric.avgThreat / this.totalAvgThreat) * 100 : undefined}
 							max={this.maxThreatAmount}
 							total={metric.avgThreat}
 							value={metric.threat}
+						/>,
+					);
+
+					const parts = metric.threatDone;
+					cellElem.appendChild(
+						<MetricsCombinedTooltipTable
+							tooltipElement={cellElem}
+							headerValues={[, 'Amount']}
+							groups={[
+								{
+									spellSchool: metric.spellSchool,
+									total: metric.avgThreat,
+									totalPercentage: 100,
+									data: [
+										{ name: 'Hit', ...parts.hit },
+										{ name: 'Critical Hit', ...parts.critHit },
+										{ name: 'Tick', ...parts.tick },
+										{ name: 'Critical Tick', ...parts.critTick },
+										{ name: 'Glancing Blow', ...parts.glance },
+										{ name: 'Blocked Hit', ...parts.block },
+										{ name: 'Blocked Critical Hit', ...parts.blockedCrit },
+										{ name: 'Crushing Blow', ...parts.crush },
+										{ name: 'Not from hits', ...parts.other },
+									],
+								},
+							]}
 						/>,
 					);
 				},
