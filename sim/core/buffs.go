@@ -397,9 +397,12 @@ func applyBuffEffects(agent Agent, playerFaction proto.Faction, raidBuffs *proto
 		MakePermanent(BattleShoutAura(&character.Unit, GetTristateValueInt32(raidBuffs.BattleShout, 0, 5), 0, false)) // Do we implement 3pc wrath for the other sims?
 	}
 
-	// A wolf's Furious Howl (24597, 83 at 60), in Battle Shout's slot: the stronger counts.
+	// A wolf's Furious Howl at the player's level (24597, 83 at 60), in Battle Shout's slot: the stronger
+	// counts.
 	if raidBuffs.FuriousHowl && character.Env.IsForever() {
-		MakePermanent(ForeverFuriousHowlAura(&character.Unit, 24597, 83))
+		if spellID, ap, ok := ForeverFuriousHowlAt(character.Level); ok {
+			MakePermanent(ForeverFuriousHowlAura(&character.Unit, spellID, ap))
+		}
 	}
 
 	if individualBuffs.BlessingOfMight != proto.TristateEffect_TristateEffectMissing && isAlliance {
@@ -1756,6 +1759,22 @@ func battleShoutEffect(aura *Aura, ap float64) {
 
 // ForeverFuriousHowlAura is a hunter pet's Furious Howl on one ally: melee attack power for 60 sec,
 // in Battle Shout's slot.
+// ForeverFuriousHowlAt is the howl's rank at a level: its spell and its attack power, rounded down as
+// Battle Shout's is. The rows are the wolf's (sim/hunter/pet_forever.go, foreverPetRanks), which a test
+// there checks against these.
+func ForeverFuriousHowlAt(level int32) (int32, float64, bool) {
+	ranks := []struct {
+		level, maxLevel, spellID int32
+		base, perLevel           float64
+	}{{10, 24, 24604, 5, 0.6}, {24, 40, 24605, 34, 0.02}, {40, 56, 24603, 60, 0.5}, {56, 60, 24597, 82, 0.4}}
+	for i := len(ranks) - 1; i >= 0; i-- {
+		if r := ranks[i]; r.level <= level {
+			return r.spellID, math.Floor(r.base + r.perLevel*float64(min(level, r.maxLevel)-r.level)), true
+		}
+	}
+	return 0, 0, false
+}
+
 func ForeverFuriousHowlAura(unit *Unit, spellID int32, ap float64) *Aura {
 	// A howl below the top rank is an aura of its own, so a given howl and a pet's of another rank don't
 	// share one (the exclusive effect would see two values for one aura).

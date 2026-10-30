@@ -766,8 +766,8 @@ message CampBuffs {
 	bool first_aid_kit = 9;    // 56 Stamina (1230124), against Power Word: Fortitude
 
 	// Unverified rules, for the raid sim's sensitivity scenarios: Moonkin Aura takes only the Camp
-	// Chair's spell crit, and the camp buffs stack with every class buff (the tooltips name only the
-	// single-target spells, a raid uses the group versions).
+	// Chair's spell crit, and the camp buffs stack with the group versions of the class buffs (the
+	// tooltips name only the single-target spells). Moonkin Aura and Strength of Earth still exclude.
 	bool camp_chair_spell_crit_only = 10;
 	bool stack_with_group_buffs = 11;
 }

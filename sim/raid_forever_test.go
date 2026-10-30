@@ -862,3 +862,47 @@ func TestRaidForeverSelfDamageLaterGroups(t *testing.T) {
 	rsr.SimOptions.DebugFirstIteration = true
 	runRaid(t, rsr)
 }
+
+// Every report build runs below level 60 with the raid's armor debuffs given, as the class sims' default
+// debuffs do. A build's own cast debuff and the given one rank by level, and two ranks of one debuff
+// under one label were an error (a warlock's Curse of Recklessness, a rogue's Expose Armor).
+func TestRaidForeverLowLevelGivenDebuffs(t *testing.T) {
+	for _, name := range raidReqNames(t, false) {
+		for _, level := range []int32{30, 50, 55} {
+			rsr := raidReq(t, name)
+			rsr.SimOptions.Iterations = 1
+			for _, party := range rsr.Raid.Parties {
+				for _, p := range party.Players {
+					p.Level = level
+				}
+			}
+			d := rsr.Raid.Debuffs
+			if d == nil {
+				d = &proto.Debuffs{}
+				rsr.Raid.Debuffs = d
+			}
+			d.CurseOfRecklessness, d.FaerieFire, d.SunderArmor = true, true, true
+			d.ExposeArmor = proto.TristateEffect_TristateEffectRegular
+			if res := core.RunRaidSim(rsr); res.Error != nil {
+				msg := res.Error.Message
+				t.Errorf("%s at %d: %s", name, level, msg[:min(len(msg), 200)])
+			}
+		}
+	}
+}
+
+// A party with an empty slot gives the same raid DPS run serially and split across goroutines.
+func TestRaidForeverEmptySlotConcurrent(t *testing.T) {
+	rsr := raidReq(t, raidReqNames(t, false)[0])
+	rsr.SimOptions.Iterations = 40
+	pl := rsr.Raid.Parties[0].Players[0]
+	rsr.Raid.Parties[0].Players = []*proto.Player{{}, pl}
+	serial := runRaid(t, rsr)
+	conc := core.RunRaidSimConcurrent(rsr)
+	if conc.Error != nil {
+		t.Fatal(conc.Error.Message)
+	}
+	if a, b := serial.RaidMetrics.Dps.Avg, conc.RaidMetrics.Dps.Avg; math.Abs(a-b) > 1e-6*a {
+		t.Errorf("serial %.4f, concurrent %.4f", a, b)
+	}
+}

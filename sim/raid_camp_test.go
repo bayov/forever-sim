@@ -147,3 +147,25 @@ func TestRaidForeverSunderRamp(t *testing.T) {
 		t.Errorf("pull Sunders only: uptime %.3f, want %.3f", pullUp, want)
 	}
 }
+
+// The sensitivity scenarios' unverified rules: with stack_with_group_buffs a camp buff adds to its class
+// buff, and with camp_chair_spell_crit_only Moonkin Aura leaves the chair's melee crit.
+func TestRaidForeverCampRuleFlags(t *testing.T) {
+	agi := func(stack bool) float64 {
+		rsr := raidReq(t, "paladin__level_60")
+		rsr.Raid.Buffs = &proto.RaidBuffs{CampBuffs: &proto.CampBuffs{FishBowl: true, StackWithGroupBuffs: stack}}
+		rsr.Raid.Parties[0].Players[0].Buffs = &proto.IndividualBuffs{BlessingOfKings: true}
+		return finalStats(t, rsr)[stats.Agility]
+	}
+	if on, off := agi(true), agi(false); on <= off {
+		t.Errorf("Fish Bowl stacking with Kings: %.1f Agility, want more than %.1f", on, off)
+	}
+	crit := func(spellOnly bool) float64 {
+		rsr := raidReq(t, "rogue__subtlety")
+		rsr.Raid.Buffs = &proto.RaidBuffs{CampBuffs: &proto.CampBuffs{CampChair: true, CampChairSpellCritOnly: spellOnly}, MoonkinAura: true}
+		return finalStats(t, rsr)[stats.MeleeCrit] / core.CritRatingPerCritChance
+	}
+	if d := crit(true) - crit(false); math.Abs(d-2) > 1e-9 {
+		t.Errorf("Moonkin Aura taking only the chair's spell crit should leave its 2%% melee crit, left %.3f", d)
+	}
+}

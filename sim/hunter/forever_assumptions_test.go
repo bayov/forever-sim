@@ -580,3 +580,14 @@ func TestForeverExplosiveTrapScalesWithRangedAttackPower(t *testing.T) {
 		t.Errorf("Explosive Trap ticks for %.2f before modifiers, want %.2f", got, want)
 	}
 }
+
+// The given Furious Howl (core.ForeverFuriousHowlAt) has the wolf's own ranks at every level.
+func TestForeverGivenFuriousHowlMatchesPet(t *testing.T) {
+	for level := int32(1); level <= 60; level++ {
+		rank, ok := foreverPetRankAt(level, foreverPetRanks[FuriousHowl])
+		spellID, ap, gok := core.ForeverFuriousHowlAt(level)
+		if ok != gok || (ok && (rank.spellID != spellID || math.Floor(rank.amount(level)) != ap)) {
+			t.Errorf("level %d: the pet's %v %d %.0f, the given %v %d %.0f", level, ok, rank.spellID, math.Floor(rank.amount(level)), gok, spellID, ap)
+		}
+	}
+}

@@ -1391,8 +1391,8 @@ results at a fixed seed before and after.
 - The whole `./sim/...` suite gives the same outcomes before and after. `TestP1Mage` and
   `TestElementalLevel60` fail on both, with stale `.results` files, and `sim/web` doesn't set up without
   `binary_dist`.
-- The given Furious Howl is the rank 4 value at 60 (83). Moving its rank table into core, so it scales by
-  level, is left for M1b.
+- The given Furious Howl was the rank 4 value at 60 (83). Since the third audit it's the player's level's
+  rank (`core.ForeverFuriousHowlAt`), with a test that it matches the wolf's own ranks.
 
 **The fixes** (planned as separate commits, landed as one):
 
@@ -1453,9 +1453,12 @@ results at a fixed seed before and after.
      Battle Shout with the 3-piece Wrath bonus.
    - Fix: labels keyed by value at the call sites (`"Battle Shout (145)"`), as Hunter's Mark already is,
      plus a guard that panics when the priority differs. The guard fires in none of the 58 requests, the
-     raids of 20 and 40, or the doubles.
-   - The given `furious_howl` is read: a permanent Furious Howl at the rank 4 value (83). Its rank table
-     stays in the hunter package until M1b.
+     raids of 20 and 40, or the doubles. It did fire below level 56, which no report request is at: a
+     warlock's own Curse of Recklessness and a rogue's Expose Armor registered at the top rank under the
+     label the given one, at its own rank, used too. The cast curse now ranks by the warlock's level, a
+     given debuff below the top rank has a label of its own (as Faerie Fire's does), and a test runs every
+     report build at 30, 50 and 55 with the armor debuffs given.
+   - The given `furious_howl` is read: a permanent Furious Howl at the player's level's rank (83 at 60).
    - Tests: `BattleShout`, `FuriousHowl`.
 8. **The health fight's duration variation.** `DurationVariation` is set to 0 when the fight uses health,
    as the leveling sim already does (`leveling.go:226`). That also drops one random draw an iteration, so

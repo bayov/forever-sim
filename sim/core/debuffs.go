@@ -1029,8 +1029,14 @@ func ExposeArmorAura(target *Unit, improvedEA int32) *Aura {
 func exposeArmorAura(target *Unit, arpen float64) *Aura {
 	spellID := int32(11198)
 
+	// The given debuff below the top rank has its own label: a rogue's own Expose Armor registers at
+	// 2250 and sets its value per cast, so the two never meet under one label with two values.
+	label := "ExposeArmor"
+	if arpen != 2250 {
+		label = fmt.Sprintf("ExposeArmor (%v)", arpen)
+	}
 	aura := target.GetOrRegisterAura(Aura{
-		Label:    "ExposeArmor",
+		Label:    label,
 		ActionID: ActionID{SpellID: spellID},
 		Duration: time.Second * 30,
 	})
@@ -1075,9 +1081,20 @@ func CurseOfRecklessnessAura(target *Unit) *Aura {
 	return aura
 }
 
+// ForeverCurseOfRecklessnessAura is the curse at the rank a level has. A rank below the top has its own
+// label, as Faerie Fire's does, so a low-level warlock's cast curse and the given one at the same level
+// are one aura, and ranks never meet under one label.
+func ForeverCurseOfRecklessnessAura(target *Unit, level int32) *Aura {
+	return foreverCurseOfRecklessnessAura(target, foreverMinorArmor[HighestRankAt(level, foreverCurseOfRecklessnessLevel[:])])
+}
+
 func foreverCurseOfRecklessnessAura(target *Unit, arpen float64) *Aura {
+	label := "Curse of Recklessness"
+	if arpen != 505 {
+		label = fmt.Sprintf("Curse of Recklessness (%v)", arpen)
+	}
 	aura := target.GetOrRegisterAura(Aura{
-		Label:    "Curse of Recklessness",
+		Label:    label,
 		ActionID: ActionID{SpellID: 11717},
 		Duration: time.Minute * 2,
 	})

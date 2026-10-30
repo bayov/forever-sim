@@ -251,6 +251,10 @@ func (rsrc *raidSimResultCombiner) addResourceMetrics(unit *proto.UnitMetrics, a
 }
 
 func (rsrc *raidSimResultCombiner) combineUnitMetrics(base *proto.UnitMetrics, add *proto.UnitMetrics, isLast bool, weight float64) {
+	// An empty slot in a party has no metrics to add.
+	if add.Dps == nil || base.Dps == nil {
+		return
+	}
 	rsrc.combineDistMetrics(base.Dps, add.Dps, isLast, weight)
 	rsrc.combineDistMetrics(base.Dpasp, add.Dpasp, isLast, weight)
 	rsrc.combineDistMetrics(base.Threat, add.Threat, isLast, weight)

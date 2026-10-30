@@ -134,7 +134,12 @@ func (warlock *Warlock) registerCurseOfRecklessnessSpell() {
 	}
 	data := curseOfRecklessnessRanks[rank]
 
-	warlock.CurseOfRecklessnessAuras = warlock.NewEnemyAuraArray(core.CurseOfRecklessnessAura)
+	warlock.CurseOfRecklessnessAuras = warlock.NewEnemyAuraArray(func(target *core.Unit) *core.Aura {
+		if target.Env.IsForever() {
+			return core.ForeverCurseOfRecklessnessAura(target, warlock.Level)
+		}
+		return core.CurseOfRecklessnessAura(target)
+	})
 
 	warlock.CurseOfRecklessness = warlock.RegisterSpell(core.SpellConfig{
 		ActionID:    core.ActionID{SpellID: data.spellID},
