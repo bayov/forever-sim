@@ -53,6 +53,8 @@ func main() {
 	var skipVersionCheck = flag.Bool("nvc", false, "set true to skip version check")
 
 	flag.Parse()
+	// The comp search's cache version is this binary's hash, taken now, before anything can replace it.
+	go compsearch.Version()
 
 	fmt.Printf("Version: %s\n", Version)
 	if !*skipVersionCheck && Version != "development" {
@@ -229,6 +231,15 @@ func (s *server) handleAsyncAPI(w http.ResponseWriter, r *http.Request) {
 			clientGone = nil
 		case <-time.After(time.Minute * 10):
 			log.Printf("[ERROR] No progress from async sim %s in 10 minutes, dropping it.", simProgress.id)
+			// Stop it, and read its reports until the final one so nothing blocks on the channel.
+			simsignals.AbortById(requestId)
+			go func() {
+				for p := range reporter {
+					if p == nil || p.FinalRaidResult != nil || p.FinalWeightResult != nil || p.FinalBulkResult != nil || p.FinalCompSearchResult != nil {
+						return
+					}
+				}
+			}()
 			return
 		case progMetric := <-reporter:
 			if progMetric == nil {

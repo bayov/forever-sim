@@ -486,3 +486,27 @@ func TestFixedMemberHoldsDuty(t *testing.T) {
 		t.Errorf("%d warriors, want the fixed one alone: %s", warriors, c.Describe())
 	}
 }
+
+// A request the search can't run fails before any sims.
+func TestSearchRejectsBadRequests(t *testing.T) {
+	p := subPool(t, "mage__fire")
+	sim, err := NewSimmer(p, "")
+	if err != nil {
+		t.Fatal(err)
+	}
+	bad := map[string]*proto.CompSearchRequest{
+		"size 50":        {Size: 50},
+		"unknown preset": {Size: 10, Tanks: 1, Healers: 1, FixedTanks: []proto.RaidPreset{999}},
+		"healer as tank": {Size: 10, Tanks: 1, Healers: 1, FixedTanks: []proto.RaidPreset{proto.RaidPreset_RaidPresetHolyPriest}},
+		"faction 7":      {Size: 10, Factions: []proto.Faction{7}},
+		"negative fight": {Size: 10, Encounter: &proto.CompEncounter{Duration: -5}},
+	}
+	for name, req := range bad {
+		if _, err := Search(p, sim, req, nil); err == nil {
+			t.Errorf("%s: no error", name)
+		}
+	}
+	if n := sim.Run.Load(); n != 0 {
+		t.Errorf("%d sims run for bad requests", n)
+	}
+}

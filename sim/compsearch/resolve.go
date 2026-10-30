@@ -932,6 +932,9 @@ func (sc *Scenario) confirm(c *Comp, iterations int32, seed int64) (float64, flo
 		return 0, 0, err
 	}
 	run := runComp(rc, sc.Abort)
+	if sc.Counter != nil {
+		sc.Counter.RaidSims.Add(1)
+	}
 	if sc.Abort != nil && sc.Abort() {
 		return 0, 0, ErrAborted
 	}

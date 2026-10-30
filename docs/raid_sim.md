@@ -910,8 +910,9 @@ For each signature:
      Wisdom and the four packages, and the model reads its mix. That brought the worst miss on a sparse
      set to about 45.
 
-   Every combination of placeholder choices and provider members is scored this way: about 50,000
-   arithmetic evaluations, no sims.
+   Every combination of placeholder choices and provider members is scored this way, with no sims. The
+   second audit counted 0.75 to 1.1 million set fills (10 to 40 players), not the 50,000 first guessed:
+   90 s to 20 minutes of one core per signature group, the same warm or cold (see [Cost](#cost)).
 3. **Sim the best sets exactly, until the model can't change the answer.** Each build's DPS under a set
    comes from a single-player sim, with the set written into its request.
    - Every signature's 4 best sets by the model are filled exactly.
@@ -1043,13 +1044,18 @@ The raid sim catches what the single-player sims can't:
 - **The value** is the DPS, its standard error and standard deviation, and the mana stats.
 - **Where it lives:**
   - In memory during a search.
-  - On disk in `forever-sim/compsearch/` under `os.UserCacheDir()`, for the command line and the native
-    server alike (`~/.cache/forever-sim/compsearch/` on Linux).
+  - On disk in `forever-sim/compsearch/` under `os.UserCacheDir()` (`~/.cache/forever-sim/compsearch/` on
+    Linux), a folder per binary. The command line, the native server and the tests are different binaries,
+    so they share the place but not the entries.
+  - One small file per sim, written to a temp file and renamed, so a reader never sees half of one. That's
+    about 4 KB of disk for 125 bytes; a packed store would fix it if the cache grows large.
 - **What gets reused:** two Fury warriors in one comp, or one comp reached two ways, are one sim. Other raid
   sizes, other slot counts, other signatures and later searches reuse what's there, since a sim is keyed by
   the buff set a build sees, not by who gives it.
 - **A code or database change starts a fresh cache.** Another binary's cache is pruned once it has gone
-  unused for a week, so the CLI and the native server built from different code don't wipe each other's.
+  unused for a week (a run marks its own as used, hourly while it stores), so the CLI and the native server
+  built from different code don't wipe each other's. The binary is hashed at startup through
+  `/proc/self/exe`, so one rebuilt in place under a running server doesn't lend its hash to old code.
 - **In a Claude Code cloud environment** the cache starts empty each session, and that's fine. The cache
   isn't committed.
 
@@ -1065,9 +1071,24 @@ faction and camp setting, roughly:
 - the local moves, the role table's removals and the member values' neighbours
 - two grid points per length, in a health fight
 
-That's about 24,000 sims at 1,000 iterations: about 2.5 hours on one core, or 10 minutes on 16. The
-contenders' re-sims at 10,000 iterations add to it. Warm, it's seconds. The model ranking and the fills are
-arithmetic.
+That was guessed at about 24,000 sims. The second audit measured one scenario at small iterations and
+scaled it to the defaults:
+
+| Size | Screening and contender sims | Ranking and combos (arithmetic) | Core-hours before the confirmation |
+|---|---|---|---|
+| 10 | about 9,800 | about 50 core-seconds | about 2.2 |
+| 20 | about 12,800 | about 420 core-seconds | about 2.9 |
+| 40 | about 10,800 | about 1,560 core-seconds | about 2.4 |
+
+- About half the guessed sims, but at about 0.6 ms a single-player iteration (a Beast Mastery hunter
+  1.2 ms, a mage 0.22), not 0.37.
+- The contenders' re-sims at 10,000 iterations are 20 to 35% of the screening's time.
+- Warm, the sims are free but the arithmetic isn't: a 40-player scenario still takes about 25 core-minutes,
+  most of it the ranking (one goroutine per signature) and the combos' re-fills. The model is indexed by
+  arrays and the fill's sort is typed since; an upper bound to prune plans, and a default combo limit for
+  40 players, would cut it further.
+- A search keeps every sim it has run for its scenario. Each kept its 37 KB request until the second audit
+  (a 10-player search peaked at 744 MB); now only the value and the key stay.
 
 M1's write-up is 4 of those (2 factions, camps on and off) under about 8 scenarios: about 80 core-hours, or
 5 hours on 16 cores.

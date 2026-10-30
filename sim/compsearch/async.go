@@ -63,32 +63,39 @@ func serverSearch() (*Pool, *Simmer, error) {
 // comp so far every few seconds (the server drops a call that goes 10 minutes without progress), and
 // stops on Abort.
 func SearchAsync(req *proto.CompSearchRequest, progress chan *proto.ProgressMetrics, requestId string) {
-	fail := func(err error) {
-		progress <- &proto.ProgressMetrics{FinalCompSearchResult: &proto.CompSearchResult{Error: &proto.ErrorOutcome{Message: err.Error()}}}
+	failed := func(err error) *proto.ProgressMetrics {
+		return &proto.ProgressMetrics{FinalCompSearchResult: &proto.CompSearchResult{Error: &proto.ErrorOutcome{Message: err.Error()}}}
 	}
 	signals, err := simsignals.RegisterWithId(requestId)
 	if err != nil {
-		fail(err)
+		progress <- failed(err)
 		return
 	}
 	go func() {
+		// The deferred calls run last first: a panic becomes the final frame, the ticker stops, then the
+		// final frame goes out, so nothing is left running whatever happened.
+		var final *proto.ProgressMetrics
+		defer func() { progress <- final }()
 		defer simsignals.UnregisterId(requestId)
-		// A panic ends this search with an error, not the server.
+		done := make(chan struct{})
+		var ticker sync.WaitGroup
+		defer func() {
+			close(done)
+			ticker.Wait()
+		}()
 		defer func() {
 			if r := recover(); r != nil {
-				fail(fmt.Errorf("the search failed: %v\n%s", r, debug.Stack()))
+				final = failed(fmt.Errorf("the search failed: %v\n%s", r, debug.Stack()))
 			}
 		}()
 		pool, sim, err := serverSearch()
 		if err != nil {
-			fail(err)
+			final = failed(err)
 			return
 		}
-		run0 := sim.Run.Load()
 		var mu sync.Mutex
 		latest := &proto.ProgressMetrics{CompSearchPhase: "starting"}
-		done := make(chan struct{})
-		var ticker sync.WaitGroup
+		var simsDone func() int64
 		ticker.Add(1)
 		go func() {
 			defer ticker.Done()
@@ -101,9 +108,15 @@ func SearchAsync(req *proto.CompSearchRequest, progress chan *proto.ProgressMetr
 				case <-t.C:
 					mu.Lock()
 					p := googleProto.Clone(latest).(*proto.ProgressMetrics)
+					if simsDone != nil {
+						p.CompletedSims = int32(simsDone())
+					}
 					mu.Unlock()
-					p.CompletedSims = int32(sim.Run.Load() - run0)
-					progress <- p
+					// A reader that stopped reading misses ticks rather than holding the search up.
+					select {
+					case progress <- p:
+					default:
+					}
 				}
 			}
 		}()
@@ -114,14 +127,13 @@ func SearchAsync(req *proto.CompSearchRequest, progress chan *proto.ProgressMetr
 			}
 			mu.Lock()
 			latest = p
+			simsDone = sc.Counter.Done
 			mu.Unlock()
 		}, signals.Abort.IsTriggered)
-		close(done)
-		ticker.Wait()
 		if err != nil {
-			fail(err)
+			final = failed(err)
 			return
 		}
-		progress <- &proto.ProgressMetrics{FinalCompSearchResult: res}
+		final = &proto.ProgressMetrics{FinalCompSearchResult: res}
 	}()
 }

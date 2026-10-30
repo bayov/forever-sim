@@ -94,6 +94,7 @@ type Simmer struct {
 	Run     atomic.Int64 // sims run
 	Hits    atomic.Int64 // cache hits
 	OnSim   func(done, total int)
+	touched atomic.Int64 // when the cache directory was last marked used, Unix seconds
 }
 
 // NewSimmer makes a sim runner. dir "" keeps the cache in memory only; "default" uses
@@ -133,13 +134,18 @@ var versionOnce struct {
 }
 
 // Version is the SHA-256 of the running binary, which holds the sim and the item database: a code or
-// database change starts a fresh cache. A git hash would miss an uncommitted edit.
+// database change starts a fresh cache. A git hash would miss an uncommitted edit. It reads the binary
+// through /proc/self/exe where there is one, which stays the running binary when the file is rebuilt in
+// place, and a long-running program calls it at startup (the server, the command line), so a binary
+// replaced since never lends its hash to old code's results.
 func Version() (string, error) {
 	versionOnce.Do(func() {
-		exe, err := os.Executable()
-		if err != nil {
-			versionOnce.err = err
-			return
+		exe := "/proc/self/exe"
+		if _, err := os.Stat(exe); err != nil {
+			if exe, err = os.Executable(); err != nil {
+				versionOnce.err = err
+				return
+			}
 		}
 		f, err := os.Open(exe)
 		if err != nil {
@@ -248,9 +254,23 @@ func (s *Simmer) store(key string, v *Value) {
 	data, _ := json.Marshal(v)
 	dir := filepath.Join(s.Dir, key[:2])
 	_ = os.MkdirAll(dir, 0o755)
-	tmp := filepath.Join(dir, fmt.Sprintf(".%s.%d", key, os.Getpid()))
-	if os.WriteFile(tmp, data, 0o644) == nil {
-		_ = os.Rename(tmp, filepath.Join(dir, key+".json"))
+	// A temp file of its own, renamed into place, so a reader never sees half a value. A failed write
+	// only costs the cache entry.
+	f, err := os.CreateTemp(dir, "."+key+".*")
+	if err != nil {
+		return
+	}
+	_, err = f.Write(data)
+	if cerr := f.Close(); err == nil {
+		err = cerr
+	}
+	if err != nil || os.Rename(f.Name(), filepath.Join(dir, key+".json")) != nil {
+		_ = os.Remove(f.Name())
+	}
+	// Mark the cache used, at most hourly, so a long-running server's isn't pruned as idle.
+	if now := time.Now().Unix(); now-s.touched.Load() > 3600 {
+		s.touched.Store(now)
+		_ = os.Chtimes(s.Dir, time.Now(), time.Now())
 	}
 }
 
@@ -259,6 +279,12 @@ func (s *Simmer) Sim(jobs []*Job) error { return s.SimAbortable(jobs, nil) }
 
 // SimAbortable is Sim that starts no more sims once abort says so.
 func (s *Simmer) SimAbortable(jobs []*Job, abort func() bool) error {
+	return s.simCounted(jobs, abort, nil)
+}
+
+// simCounted is SimAbortable that also counts into a search's own counter. It starts no more sims after
+// one fails.
+func (s *Simmer) simCounted(jobs []*Job, abort func() bool, c *Counter) error {
 	todo := map[string][]*Job{}
 	var order []string
 	for _, j := range jobs {
@@ -270,8 +296,11 @@ func (s *Simmer) SimAbortable(jobs []*Job, abort func() bool) error {
 			return err
 		}
 		if v := s.lookup(key); v != nil {
-			j.Value = v
+			j.Value, j.req = v, nil
 			s.Hits.Add(1)
+			if c != nil {
+				c.Hits.Add(1)
+			}
 			continue
 		}
 		if _, ok := todo[key]; !ok {
@@ -294,6 +323,9 @@ func (s *Simmer) SimAbortable(jobs []*Job, abort func() bool) error {
 			aborted = true
 			break
 		}
+		if firstErr.Load() != nil {
+			break
+		}
 		wg.Add(1)
 		sem <- struct{}{}
 		go func() {
@@ -305,10 +337,14 @@ func (s *Simmer) SimAbortable(jobs []*Job, abort func() bool) error {
 				return
 			}
 			s.store(key, v)
+			// The request is about 37 KB and a search keeps its jobs, so it goes once the key is known.
 			for _, j := range js {
-				j.Value = v
+				j.Value, j.req = v, nil
 			}
 			s.Run.Add(1)
+			if c != nil {
+				c.Run.Add(1)
+			}
 			if s.OnSim != nil {
 				s.OnSim(int(done.Add(1)), len(order))
 			}

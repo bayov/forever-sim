@@ -1,11 +1,13 @@
 package compsearch
 
 import (
+	"cmp"
 	"fmt"
 	"math"
 	"slices"
 	"sort"
 	"strings"
+	"sync/atomic"
 
 	"github.com/wowsims/classic/sim/core/proto"
 )
@@ -24,6 +26,21 @@ type Scenario struct {
 	HealthLength float64
 	BossHealth   float64
 	Abort        func() bool
+	// This search's own sims (the Simmer's counters are every search's), nil for none.
+	Counter *Counter
+}
+
+// Counter is one search's sims: single-player sims run and found in the cache, and confirmation raid sims.
+type Counter struct {
+	Run, Hits, RaidSims atomic.Int64
+}
+
+// Done is the sims run so far, for progress. A nil counter has none.
+func (c *Counter) Done() int64 {
+	if c == nil {
+		return 0
+	}
+	return c.Run.Load() + c.RaidSims.Load()
 }
 
 // sim runs jobs, unless the search was aborted.
@@ -31,7 +48,7 @@ func (sc *Scenario) sim(jobs []*Job) error {
 	if sc.Abort != nil && sc.Abort() {
 		return ErrAborted
 	}
-	return sc.Sim.SimAbortable(jobs, sc.Abort)
+	return sc.Sim.simCounted(jobs, sc.Abort, sc.Counter)
 }
 
 func (sc *Scenario) job(b *Build, s Seat, iters int32) *Job {
@@ -777,7 +794,7 @@ func (sc *Scenario) seatAndFill(r *Raid, p Plan, f *Fillers, val Valuer, base *C
 			cands = append(cands, cand{i, s, (v - v0) - fillerDelta})
 		}
 	}
-	sort.SliceStable(cands, func(a, b int) bool { return cands[a].gain > cands[b].gain })
+	slices.SortStableFunc(cands, func(a, b cand) int { return cmp.Compare(b.gain, a.gain) })
 	for _, cd := range cands {
 		if memberParty[cd.i] >= 0 || taken[cd.s] {
 			continue

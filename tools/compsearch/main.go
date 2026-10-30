@@ -47,6 +47,11 @@ func main() {
 	out := flag.String("out", "", "write <out>.json and <out>.md (default: markdown to stdout)")
 	quiet := flag.Bool("quiet", false, "no progress lines")
 	flag.Parse()
+	// The cache version is this binary's hash, taken before anything can replace it.
+	if _, err := compsearch.Version(); err != nil {
+		fmt.Fprintln(os.Stderr, err)
+		os.Exit(1)
+	}
 
 	pool, err := compsearch.LoadPool(*root)
 	if err != nil {

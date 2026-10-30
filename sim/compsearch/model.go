@@ -2,6 +2,7 @@ package compsearch
 
 import (
 	"math"
+	"math/bits"
 
 	"github.com/wowsims/classic/sim/core/proto"
 )
@@ -47,15 +48,15 @@ const fullGifts = GiftBattleShout | GiftFuriousHowl | GiftSunderTank | GiftMinor
 type buildModel struct {
 	full     float64
 	se       float64
-	ratio    map[Gift]float64 // DPS without the role / full
-	armor    float64          // without Sunder upkeep and the minor armor slot / full
-	air      float64          // without Grace of Air and Windfury / full
-	shout    float64          // without Battle Shout and Furious Howl (one slot) / full
-	blessing [4]float64       // without each blessing / full (index by proto.Blessing)
-	pkg      [4]float64       // with each package / full (full has the Restoration package)
-	pi       float64          // what Power Infusion adds
-	inn      float64          // what Innervate adds
-	mana     []float64        // a mana user's DPS under each mix of mana sources / full; nil for the others
+	ratio    [32]float64 // DPS without the role / full, by the role's bit (an array: V runs millions of times)
+	armor    float64     // without Sunder upkeep and the minor armor slot / full
+	air      float64     // without Grace of Air and Windfury / full
+	shout    float64     // without Battle Shout and Furious Howl (one slot) / full
+	blessing [4]float64  // without each blessing / full (index by proto.Blessing)
+	pkg      [4]float64  // with each package / full (full has the Restoration package)
+	pi       float64     // what Power Infusion adds
+	inn      float64     // what Innervate adds
+	mana     []float64   // a mana user's DPS under each mix of mana sources / full; nil for the others
 }
 
 // Model is every build's role sims for one scenario.
@@ -80,7 +81,7 @@ func (sc *Scenario) BuildModel(builds []*Build) (*Model, error) {
 	m := &Model{builds: map[*Build]*buildModel{}}
 	var asks []modelAsk
 	for _, b := range builds {
-		bm := &buildModel{ratio: map[Gift]float64{}}
+		bm := &buildModel{}
 		m.builds[b] = bm
 		full := sc.fullSeat(b)
 		asks = append(asks, modelAsk{b, full, func(bm *buildModel, v float64) { bm.full = v }})
@@ -88,7 +89,7 @@ func (sc *Scenario) BuildModel(builds []*Build) (*Model, error) {
 			r := r
 			s := full
 			s.Up &^= r
-			asks = append(asks, modelAsk{b, s, func(bm *buildModel, v float64) { bm.ratio[r] = v }})
+			asks = append(asks, modelAsk{b, s, func(bm *buildModel, v float64) { bm.ratio[giftBit(r)] = v }})
 		}
 		s := full
 		s.Up &^= GiftSunderTank | GiftMinorArmor
@@ -178,6 +179,9 @@ func (sc *Scenario) BuildModel(builds []*Build) (*Model, error) {
 	return m, nil
 }
 
+// giftBit is a single gift's bit index.
+func giftBit(g Gift) int { return bits.TrailingZeros32(uint32(g)) }
+
 // V is the model's DPS for a build in a seat.
 func (m *Model) V(b *Build, s Seat) float64 {
 	bm := m.builds[b]
@@ -206,7 +210,7 @@ func (m *Model) V(b *Build, s Seat) float64 {
 		if shoutBoth && (r == GiftBattleShout || r == GiftFuriousHowl) {
 			continue
 		}
-		v *= bm.ratio[r]
+		v *= bm.ratio[giftBit(r)]
 	}
 	if armorBoth {
 		v *= bm.armor
@@ -257,7 +261,7 @@ func (m *Model) costs(b *Build) map[string]float64 {
 		return out
 	}
 	for _, r := range modelRoles {
-		out[GiftName(r)] = bm.full * (1 - bm.ratio[r])
+		out[GiftName(r)] = bm.full * (1 - bm.ratio[giftBit(r)])
 	}
 	out["armor pair"] = bm.full * (1 - bm.armor)
 	out["air pair"] = bm.full * (1 - bm.air)

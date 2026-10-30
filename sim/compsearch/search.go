@@ -67,6 +67,47 @@ func Defaults(req *proto.CompSearchRequest) {
 	}
 }
 
+// validate rejects a request the search can't run, before any sims.
+func validate(req *proto.CompSearchRequest) error {
+	if req.Size < 1 || req.Size > 40 {
+		return fmt.Errorf("a raid has 1 to 40 members, not %d", req.Size)
+	}
+	if req.Tanks < 0 || req.Healers < 0 {
+		return fmt.Errorf("negative tank or healer slots")
+	}
+	for _, f := range req.Factions {
+		if f != proto.Faction_Horde && f != proto.Faction_Alliance {
+			return fmt.Errorf("unknown faction %v", f)
+		}
+	}
+	e := req.Encounter
+	if e.Duration <= 0 || e.DurationVariation < 0 || e.DurationVariation >= e.Duration {
+		return fmt.Errorf("a fight of %.0f ± %.0f s", e.Duration, e.DurationVariation)
+	}
+	if e.UseHealth && e.BossHealth <= 0 {
+		return fmt.Errorf("a health fight needs the boss's health")
+	}
+	if req.Iterations <= 0 || req.ContenderIterations <= 0 || req.ConfirmIterations <= 0 || req.ConfirmTopIterations <= 0 {
+		return fmt.Errorf("iterations must be positive")
+	}
+	for _, fx := range []struct {
+		ids  []proto.RaidPreset
+		role proto.RaidRole
+		name string
+	}{{req.FixedTanks, proto.RaidRole_RaidRoleTank, "tank"}, {req.FixedHealers, proto.RaidRole_RaidRoleHealer, "healer"}} {
+		for _, id := range fx.ids {
+			p := PresetByID(id)
+			if p == nil {
+				return fmt.Errorf("unknown preset %v", id)
+			}
+			if p.Role != fx.role {
+				return fmt.Errorf("%s isn't a %s preset", p.Name, fx.name)
+			}
+		}
+	}
+	return nil
+}
+
 // Search runs a comp search (docs/raid_sim.md, Comp search): one scenario for each faction and camp
 // setting.
 func Search(pool *Pool, sim *Simmer, req *proto.CompSearchRequest, progress Progress) (*proto.CompSearchResult, error) {
@@ -77,6 +118,9 @@ func Search(pool *Pool, sim *Simmer, req *proto.CompSearchRequest, progress Prog
 func SearchWithAbort(pool *Pool, sim *Simmer, req *proto.CompSearchRequest, progress Progress, abort func() bool) (*proto.CompSearchResult, error) {
 	start := time.Now()
 	Defaults(req)
+	if err := validate(req); err != nil {
+		return nil, err
+	}
 	if req.Tanks+req.Healers >= req.Size {
 		return nil, fmt.Errorf("%d tanks and %d healers leave no DPS slot in a raid of %d", req.Tanks, req.Healers, req.Size)
 	}
@@ -94,7 +138,7 @@ func SearchWithAbort(pool *Pool, sim *Simmer, req *proto.CompSearchRequest, prog
 	if len(fixed) > int(req.Size-req.Tanks-req.Healers) {
 		return nil, fmt.Errorf("more fixed DPS members than DPS slots")
 	}
-	run0, hits0 := sim.Run.Load(), sim.Hits.Load()
+	counter := &Counter{}
 	res := &proto.CompSearchResult{Request: req, Version: sim.version[:16]}
 	res.LeftOut = []string{
 		"a DPS shaman's totem choice: Enhancement and Elemental drop their builds' fixed totems (the engine's assigned totems aren't in their rotations yet)",
@@ -107,7 +151,7 @@ func SearchWithAbort(pool *Pool, sim *Simmer, req *proto.CompSearchRequest, prog
 	for _, faction := range req.Factions {
 		for _, camps := range req.CampBuffs {
 			sc := &Scenario{Pool: pool, Sim: sim, Faction: faction, Camps: camps, Iterations: req.Iterations,
-				Seed: req.Seed, Assumptions: req.Assumptions, Abort: abort,
+				Seed: req.Seed, Assumptions: req.Assumptions, Abort: abort, Counter: counter,
 				Fight: Fight{Duration: req.Encounter.Duration, DurationVariation: req.Encounter.DurationVariation,
 					MobType: req.Encounter.MobType, FlaskZone: req.Encounter.NaturalFlaskZone,
 					SetRaidHits: req.Encounter.SetRaidDamage, RaidHits: req.Encounter.RaidDamageHitsPerMinute, NoFlask: req.Encounter.NoFlask}}
@@ -124,8 +168,8 @@ func SearchWithAbort(pool *Pool, sim *Simmer, req *proto.CompSearchRequest, prog
 			res.Scenarios = append(res.Scenarios, out)
 		}
 	}
-	res.SimsRun = sim.Run.Load() - run0
-	res.CacheHits = sim.Hits.Load() - hits0
+	res.SimsRun = counter.Run.Load()
+	res.CacheHits = counter.Hits.Load()
 	res.Seconds = time.Since(start).Seconds()
 	return res, nil
 }
@@ -352,7 +396,7 @@ type scored struct {
 // run is one scenario.
 func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress Progress) (*proto.CompScenarioResult, error) {
 	var phases []string
-	lastPhase, lastRun := "", sc.Sim.Run.Load()
+	lastPhase, lastRun := "", sc.Counter.Done()
 	phaseStart := time.Now()
 	var reportMu sync.Mutex
 	report := func(phase string, best *Comp) {
@@ -366,14 +410,16 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 		if len(name) > 9 && name[:9] == "signature" {
 			name = "signatures"
 		}
-		if strings.HasPrefix(name, "ranking buff sets") {
-			name = "ranking buff sets"
+		for _, prefix := range []string{"ranking buff sets", "confirmation", "combos"} {
+			if strings.HasPrefix(name, prefix) {
+				name = prefix
+			}
 		}
 		if name != lastPhase {
 			if lastPhase != "" {
-				phases = append(phases, fmt.Sprintf("%s %d sims %.0f s", lastPhase, sc.Sim.Run.Load()-lastRun, time.Since(phaseStart).Seconds()))
+				phases = append(phases, fmt.Sprintf("%s %d sims %.0f s", lastPhase, sc.Counter.Done()-lastRun, time.Since(phaseStart).Seconds()))
 			}
-			lastPhase, lastRun, phaseStart = name, sc.Sim.Run.Load(), time.Now()
+			lastPhase, lastRun, phaseStart = name, sc.Counter.Done(), time.Now()
 		}
 	}
 	mob := sc.Fight.MobType
@@ -515,7 +561,9 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 		return b
 	}
 	const perSig = 4
+	// Each phase is reported as it starts, so its sims and seconds are booked under its own name.
 	for i := range results {
+		report(fmt.Sprintf("signature %d of %d", i+1, len(results)), best)
 		sr := &results[i]
 		r := sigs[sr.sig][0]
 		for j := 0; j < perSig && j < len(sr.ranked); j++ {
@@ -526,7 +574,6 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 		if b := bestOf(sr); b != nil && (best == nil || b.Score > best.Score) {
 			best = b
 		}
-		report(fmt.Sprintf("signature %d of %d", i+1, len(results)), best)
 	}
 	maxMiss := func() float64 {
 		m := 0.0
@@ -545,6 +592,7 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 	})
 	const leading = 3
 	const maxExact = 200
+	report("exact sets", best)
 	for i := 0; i < leading && i < len(results); i++ {
 		sr := &results[i]
 		r := sigs[sr.sig][0]
@@ -619,10 +667,24 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 	for _, r := range results {
 		ranked = append(ranked, r.sig)
 	}
+	totalCombos := 0
+	for _, s := range ranked {
+		totalCombos += len(sigs[s])
+	}
+	if req.MaxCombos > 0 {
+		totalCombos = min(totalCombos, int(req.MaxCombos))
+	}
 	for _, s := range ranked {
 		for _, r := range sigs[s] {
 			if req.MaxCombos > 0 && nCombo >= int(req.MaxCombos) {
 				break
+			}
+			// Warm, this loop runs no sims, so it checks abort itself.
+			if sc.Abort != nil && sc.Abort() {
+				return nil, ErrAborted
+			}
+			if nCombo%50 == 0 {
+				report(fmt.Sprintf("combos: %d of %d", nCombo, totalCombos), best)
 			}
 			nCombo++
 			var cb *Comp
@@ -701,10 +763,12 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 				sets = append(sets, c)
 			}
 		}
-		for _, c := range sets {
+		total := len(sets) + min(2, len(sets))
+		for k, c := range sets {
 			if sc.Abort != nil && sc.Abort() {
 				return nil, ErrAborted
 			}
+			report(fmt.Sprintf("confirmation: raid sim %d of %d", k+1, total), best)
 			d, se, err := sc.confirm(c, req.ConfirmIterations, sc.Seed)
 			if err != nil {
 				return nil, err
@@ -714,6 +778,7 @@ func (sc *Scenario) run(req *proto.CompSearchRequest, fixed []*Build, progress P
 		sort.SliceStable(sets, func(a, b int) bool { return conf[sets[a]].dps > conf[sets[b]].dps })
 		fresh := sc.Seed + int64(req.ConfirmIterations) + 1_000_003
 		for i := 0; i < 2 && i < len(sets); i++ {
+			report(fmt.Sprintf("confirmation: raid sim %d of %d", len(sets)+i+1, total), best)
 			d, se, err := sc.confirm(sets[i], req.ConfirmTopIterations, fresh)
 			if err != nil {
 				return nil, err
