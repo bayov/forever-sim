@@ -1,4 +1,4 @@
-| # | Spec | Best race | DPS | Best Horde / Alliance | Report race (DPS here) | Report's published | Gap | Before (1274e15) |
+| # | Spec | Best race | DPS | Best Horde / Alliance | Report race (DPS here) | Report's published | Gap | Before (dd663e6) |
 |---|---|---|---|---|---|---|---|---|
 | 1 | Beast Mastery | Orc | 1131.8 | Orc / Night Elf 1119.5 | Orc (1131.8) | 1131.8 | +0.0 | 1131.8 (+0.0%) |
 | 2 | Marksmanship | Orc | 1116.1 | Orc / Night Elf 1109.6 | Orc (1116.1) | 1115.7 | +0.4 | 1116.1 (+0.0%) |
@@ -21,7 +21,7 @@
 | 19 | Feral | Night Elf | 867.2 | Windshaper 854.2 / Night Elf | Night Elf (867.2) | 866.8 | +0.4 | 867.2 (+0.0%) |
 | 20 | Balance | Night Elf | 851.0 | Windshaper 849.4 / Night Elf | Night Elf (851.0) | 851.2 | -0.2 | 851.0 (+0.0%) |
 | 21 | Rogue Combat Daggers | Undead | 773.3 | Undead / Gnome 770.1 | Undead (773.3) | 773.3 | +0.0 | 773.3 (+0.0%) |
-| 22 | Elemental | Windshaper | 772.5 | Windshaper / Dwarf 768.3 | Windshaper (772.5) | 772.2 | +0.3 | 772.1 (+0.1%) |
+| 22 | Elemental | Windshaper | 772.5 | Windshaper / Dwarf 768.3 | Windshaper (772.5) | 772.2 | +0.3 | 772.5 (+0.0%) |
 | 23 | Smite | Undead | 766.7 | Undead / Gnome 747.2 | Undead (766.7) | 766.8 | -0.1 | 766.7 (+0.0%) |
 | 24 | Rogue Combat Swords | Undead | 765.2 | Undead / High Order 758.8 | Undead (765.2) | 765.4 | -0.2 | 765.2 (+0.0%) |
 | 25 | Rogue Seal Fate Daggers | Undead | 734.8 | Undead / Gnome 731.1 | Undead (734.8) | 734.9 | -0.1 | 734.8 (+0.0%) |
@@ -32,11 +32,17 @@
 | Variant | Best race | DPS | Report's published (at its race) | Before |
 |---|---|---|---|---|
 | druid__balance-wrath | High Order | 811.2 | 811.1 (at Windshaper 811.2) | 811.2 |
+| hunter__beast-mastery-tallstrider | Orc | 1060.7 | 1060.7 (at Orc 1060.7) | nan |
+| hunter__beast-mastery-wolf | Orc | 1074.2 | 1074.3 (at Orc 1074.2) | nan |
+| hunter__marksmanship-tallstrider | Orc | 1075.5 | 1075.4 (at Orc 1075.5) | nan |
+| hunter__marksmanship-wolf | Orc | 1083.1 | 1083.1 (at Orc 1083.1) | nan |
+| hunter__survival-tallstrider | Orc | 987.6 | 987.8 (at Orc 987.6) | nan |
+| hunter__survival-wolf | Orc | 995.4 | 995.7 (at Orc 995.4) | nan |
 | paladin__level_60_shock | Undead | 887.7 | 887.8 (at Undead 887.7) | 887.7 |
 | paladin__level_60_shock_ret | Undead | 931.2 | 931.6 (at Undead 931.2) | 931.2 |
 | paladin__level_60_sub_holy | Undead | 949.6 | 948.8 (at Undead 949.6) | 949.6 |
 | priest__shadow-holy | Undead | 910.7 | 910.4 (at Undead 910.7) | 910.7 |
-| shaman__elemental-level60-mana-tide | Windshaper | 757.0 | 757.0 (at Windshaper 757.0) | 756.9 |
+| shaman__elemental-level60-mana-tide | Windshaper | 757.0 | 757.0 (at Windshaper 757.0) | 757.0 |
 | shaman__enhancement-imp-gw | Orc | 879.6 | 880.1 (at Orc 879.6) | 879.6 |
 | shaman__enhancement-mana-tide | Orc | 795.9 | 796.6 (at Orc 795.9) | 795.9 |
 | shaman__enhancement-water-shield | Orc | 835.5 | 836.3 (at Orc 835.5) | 835.5 |

@@ -1,62 +1,46 @@
-# Rotations pass 38 (2026-10-28)
+# Rotations pass 39 (2026-10-30)
 
-- **Master:** dd663e652 (last audited c9d93dd66). Client 1.60.1.70630 data, unchanged.
-- **Result:** no new findings. rotations-20261028-1 (hunter Trueshot/Hawk caveats) still open: the phrasing
-  pass reworded the lines but kept the old numbers.
+- **Master:** d50909a37 (last audited 334c7decd). Client 1.60.1.70630 data, unchanged.
+- **Result:** quiet, no new findings. rotations-20261028-1 (hunter Trueshot/Hawk caveats) still open, now
+  also in the four new hunter pet variants' meta files.
 
 ## What changed
 
-- No non-test sim `.go` changed. `apl_logic_diff.py c9d93dd dd663e6`: 23 Level 60 APLs, all from the
-  standards 31 "rotation lines state their intent" round plus one Smite fix:
-  - dd4ff5d91 Warrior: Recklessness with the last Death Wish; Elune's Light (1259799) not during Recklessness.
-  - 8624ba126 Mage: Frostfire Evocation cutoff 90 s -> 75 s, matching Mana Gem gate; Fire racials after Scorch.
-  - d387da420 Warlock (8 APLs): Troll Berserking just before a filler, not on the DoT opener.
-  - 3ad93a86b Elemental (base and Mana Tide): low-rank Lightning Bolt when mana won't last the fight (mana < 30 x time left) instead of < 20 % mana.
-  - d8185e98f Ret Holy Shock (3 APLs): Light's Vigil floor from mana, not fight length.
-  - e419e7f50 Smite: Chastise (1277335) removed.
-- The 23 reqs differ from c9d93dd only in the embedded rotation.
+64 commits, nearly all the raid sim (sim/compsearch, comp resolver, per-player raid buffs, camp buffs,
+multi-player raid bug fixes) and its 19 new report variants. `apl_logic_diff.py 334c7decd d50909a37`:
+- New duty APLs: paladin Seal of Wisdom / Crusader duties (4), warlock Curse of Recklessness duties (4),
+  warrior Sunder duties (3). New reqs also add hunter Tallstrider and Wolf pet variants (6; rotations
+  unchanged from their bases).
+- 0cf1a8c8b Feral `level60_ff`: Faerie Fire (Feral) 17392 replaced by caster Faerie Fire 9907 (free in Cat
+  Form, 1.5 s GCD, no swing reset; Forever has no Feral FF). Duty cost at 180 s rises 4.5 -> 8.3.
 
 ## Checks
 
-Paired A/B, old rotation (c9d93dd req) vs new (master req), on master's req and the shared CLI, 20k it,
-8 blocks, both seed sets, 180 +/- 20 s variation kept. B-A pooled (DPS):
+- Shared 20k run vs published: only mage__frostfire moved (+0.9, the pass-38 Evocation change, not yet
+  republished). The sim `.go` changes move no existing preset.
+- Regression baseline (3000 it, seed 424242) vs baseline_1274e15: feral-cat-duty-ff -3.2 (intended, above),
+  mage__frostfire +2.1, elemental +0.5/+0.2, shock_undead -0.3 (pass-38 APL changes). Everything else
+  identical. New baseline: `ref/rotations/baseline_d50909a_3000it_seed424242.tsv` (adds the 19 variants).
+- Duty upkeep, 300 it seed 7, uptime of the duty debuff on the target out of 180.9 s:
 
-| preset | 120 s | 180 s | 300 s |
-|---|---:|---:|---:|
-| warrior__fury | 0.00 | 0.00 | +6.3 |
-| warrior__fury-duty-battle-shout | 0.00 | 0.00 | +5.7 |
-| warrior arms (3), fury_2h (2) | 0.00 | 0.00 | 0.00 |
-| shaman__elemental-level60 | +0.01 | +0.52 | +9.6 |
-| shaman__elemental-level60-mana-tide | 0.00 | +0.16 | +1.9 |
-| mage__frostfire | 0.00 | +0.49 | +0.31 |
-| mage__fire (Human) | 0.00 | 0.00 | 0.00 |
-| paladin__level_60_shock | 0.00 | 0.00 | +11.4 |
-| paladin__level_60_shock-duty-crusader | 0.00 | 0.00 | +10.4 |
-| paladin__level_60_shock_undead | -0.08 | -0.22 | -0.01 |
-| priest__smite (Undead) | 0.00 | 0.00 | 0.00 |
-| warlock, 8 presets (Human) | 0.00 | 0.00 | 0.00 |
+| preset | debuff | uptime s | casts/fight |
+|---|---|---:|---:|
+| warrior arms / fury / fury_2h -duty-sunder | Sunder 11597 | 180.6 / 180.8 / 180.9 | 11.7 / 11.2 / 10.9 |
+| warlock aff / demo / destro / destro_fire -duty-recklessness | CoR 11717 | 180.5-180.6 | 2.0 |
+| paladin 4 x -duty-wisdom | JoW 20355 | 180.9 | 1 (melee refreshes) |
+| paladin 2 x -duty-crusader | JoC 20303 | 180.9 | 1 |
+| druid__feral-cat-duty-ff | FF 9907 | 180.8 | 6.4 |
 
-Race checks (racial lines inert on the base presets), RaceTroll copies of the reqs:
-
-| preset (Troll) | 120 s | 180 s | 300 s |
-|---|---:|---:|---:|
-| warlock__destruction | +1.21 | +0.31 | +0.90 |
-| warlock__affliction | +1.79 | +0.79 | +0.96 |
-| mage__fire | +0.69 | +0.14 | +0.46 |
-
-- Every change holds or gains at 120, 180 and 300 s; the longer-fight gains are the intent of standards 31.
-  shock_undead's -0.2 at 180 s is inside the noise (seed sets +0.04 and -0.47 at SE 0.14-0.25).
-- Shared run vs published (`runs/vs_published.txt`): only mage__frostfire moved (+0.9), as expected from the
-  Evocation change.
-- Baseline not refreshed (no sim change): `ref/rotations/baseline_1274e15_3000it_seed424242.tsv`.
-- Open finding rotations-20261028-1: `tools/dps_report/req/hunter__{beast-mastery,marksmanship,lone-wolf}.meta.json:65-66`
-  and `ui/dps_report/data/notes.json` still say Trueshot 100 RAP and Hawk rank 5 (90).
+  No duty lapses.
+- Feral FF placement A/B (FF only below 30 Energy unless < 2 s left), 20k, two seed sets, B-A pooled:
+  120 s -0.82, 180 s -0.72, 300 s -0.37. Loses; the 7 s refresh holds.
 
 ## Not covered
 
-- Night Elf Fury Elune's Light (needs the Elune's Light req lines) and Dwarf Smite were not A/B'd; the
-  Smite removal is a fix, not a tuning change.
+- The new duty APLs' damage lines are their base rotations'; not separately A/B'd beyond upkeep.
+- Older open items unchanged (Balance Night Elf Elune's Light, Elemental Mastery hold, warlock duty Life
+  Tap/Doom screens).
 
 ## Optional
 
-- None new. Earlier optional items in `passes/rotations.md` stand.
+- None new.
