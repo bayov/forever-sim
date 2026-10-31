@@ -484,6 +484,7 @@ func (rb *rageBar) foreverRageGainThreat(sim *Simulation, gain float64) {
 	threat := gain * ThreatPerRageGained * rb.unit.PseudoStats.ThreatMultiplier / float64(len(targets))
 	for _, target := range targets {
 		rb.rageGainSpell.SpellMetrics[target.UnitIndex].TotalThreat += threat
+		rb.unit.watchThreat(sim, target, threat)
 	}
 	rb.rageGainSpell.SpellMetrics[0].Casts++
 }

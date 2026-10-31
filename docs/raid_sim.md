@@ -727,14 +727,36 @@ party are interchangeable. Dark Inspiration has a given form since M1b but isn't
   work (see [Later](#later)). Until then, the raid sim fights one boss.
 - **Raid damage.** Every DPS member takes the encounter's raid damage hits, as in the report (2 a minute at
   1500, standard 24). They feed procs and Rage, since nobody heals.
-- **Threat is out of scope for now** (the user, 2026-10-29). When it's added, it is reported but not
-  modelled:
-  - a warning whenever the tank couldn't hold threat, saying when and against whom
-  - a results page that drills down into each member's threat on each boss
-  - nothing holds a member's damage back
+- **Threat is reported, not modelled** (the user, 2026-10-29). Nothing holds a member's damage back. See
+  [Threat](#threat).
 
-  Until then the result prints each member's threat per second, which is already measured, so a raid of 14
-  Fury warriors is at least visible as one.
+### Threat
+
+**Each raid run checks who passes the tank's threat on the boss** (2026-10-31, `sim/core/threat_check.go`).
+A pass is the moment a member's threat goes over 110% of the tank's in melee range, or 130% at range.
+Pets count on their own, at 110%.
+
+**The tank is a stand-in until tanks are simmed.** Its threat is a steady threat per second that started a
+few seconds before the pull. The page sets both (Encounter: Tank TPS, default 700, and Tank head start,
+default 2s). 700 is the Protection warrior's TPS in the sim's tank suite (level 60, raid buffs).
+
+**One fight says little, so the check counts over the iterations, like time to OOM** (the user, 2026-10-31:
+passing the tank at the pull is mostly luck). For each member:
+
+- **Aggro**: the share of fights in which it passes the tank
+- **First pass**: how many fights passed in each second, which the Threat tab draws as the share of fights
+  passed by then
+- **Peak**: its highest threat in each fight as a share of what pulls aggro, so a member who never passes
+  but comes within 10% shows
+
+**Most passes come in the first seconds**, while the tank's lead is small. In the Horde 20 best comp, a
+Demonology warlock passes in about 6% of fights at the pull (a prepull Shadow Bolt crit and a Goblin Sapper
+Charge), and the Marksmanship hunter in about 28%, around 8 to 10 seconds in. The sim doesn't use Feign
+Death or hold back damage.
+
+**Where it shows**: the last run's warning line and Aggro column on the Comp tab, and on the Raid results'
+Threat tab the Aggro and Peak columns and the Aggro chart. The Events log marks each pass ("Pulled aggro").
+A search doesn't check threat yet.
 
 ## The build pool
 

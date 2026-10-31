@@ -160,6 +160,7 @@ func (spell *Spell) BookSplitThreat(sim *Simulation, threat float64) {
 	each := threat / float64(len(targets))
 	for _, target := range targets {
 		spell.SpellMetrics[target.UnitIndex].TotalThreat += each
+		spell.Unit.watchThreat(sim, target, each)
 	}
 }
 
@@ -572,6 +573,7 @@ func (spell *Spell) dealDamageInternal(sim *Simulation, isPeriodic bool, result 
 		}
 		spell.SpellMetrics[result.Target.UnitIndex].TotalThreat += result.Threat
 		spell.bookHitThreat(result, isPeriodic)
+		spell.Unit.watchThreat(sim, result.Target, result.Threat)
 	}
 
 	// Mark total damage done in raid so far for health based fights.

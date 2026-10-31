@@ -906,3 +906,57 @@ func TestRaidForeverEmptySlotConcurrent(t *testing.T) {
 		t.Errorf("serial %.4f, concurrent %.4f", a, b)
 	}
 }
+
+// The threat check (docs/raid_sim.md, Threat): a tank that makes no threat to speak of is passed
+// by everyone at once, a tank far ahead by nobody, and the counts add up, pets included. Each
+// split of a concurrent run adds its own passes.
+func TestRaidForeverThreatCheck(t *testing.T) {
+	players := []*proto.Player{raidPlayer(t, "mage__fire"), raidPlayer(t, "warrior__fury"), raidPlayer(t, "hunter__beast-mastery")}
+	check := func(tps float64, concurrent bool) []*proto.UnitMetrics {
+		rsr := raidOf(t, "mage__fire", players, 200)
+		rsr.Raid.ThreatCheck = &proto.ThreatCheck{TankTps: tps, HeadStart: 2, Ranged: []int32{0, 2}}
+		var res *proto.RaidSimResult
+		if concurrent {
+			res = core.RunRaidSimConcurrent(rsr)
+		} else {
+			res = runRaid(t, rsr)
+		}
+		if res.Error != nil {
+			t.Fatal(res.Error.Message)
+		}
+		ps := res.RaidMetrics.Parties[0].Players
+		return []*proto.UnitMetrics{ps[0], ps[1], ps[2], ps[2].Pets[0]}
+	}
+	for _, concurrent := range []bool{false, true} {
+		for i, m := range check(1, concurrent) {
+			if m.Aggro == nil || math.Abs(m.Aggro.Chance-1) > 1e-9 {
+				t.Fatalf("concurrent %v: member %d against a tank with 1 TPS passes in %v of the fights", concurrent, i, m.Aggro.GetChance())
+			}
+			passes := int32(0)
+			for _, n := range m.Aggro.FirstPass {
+				passes += n
+			}
+			if passes != 200 {
+				t.Errorf("concurrent %v: member %d has %d first passes, want 200", concurrent, i, passes)
+			}
+			if m.Aggro.Peak.Avg <= 1 {
+				t.Errorf("concurrent %v: member %d peaks at %.2f of the pull", concurrent, i, m.Aggro.Peak.Avg)
+			}
+		}
+		for i, m := range check(1e6, concurrent) {
+			if m.Aggro.Chance != 0 || m.Aggro.Peak.Avg >= 0.01 {
+				t.Errorf("concurrent %v: member %d against a tank with 1M TPS: %v", concurrent, i, m.Aggro)
+			}
+		}
+	}
+	ms := check(700, false)
+	if ms[0].Aggro.PullRatio != core.RangedPullRatio || ms[1].Aggro.PullRatio != core.MeleePullRatio || ms[3].Aggro.PullRatio != core.MeleePullRatio {
+		t.Errorf("pull ratios: mage %.1f, warrior %.1f, pet %.1f", ms[0].Aggro.PullRatio, ms[1].Aggro.PullRatio, ms[3].Aggro.PullRatio)
+	}
+	for i, m := range ms {
+		t.Logf("member %d at 700 TPS: passes %.0f%%, peak %.2f, first passes by second %v", i, m.Aggro.Chance*100, m.Aggro.Peak.Avg, m.Aggro.FirstPass)
+	}
+	if res := runRaid(t, raidOf(t, "mage__fire", players[:1], 10)); res.RaidMetrics.Parties[0].Players[0].Aggro != nil {
+		t.Error("a raid without a threat check has aggro metrics")
+	}
+}

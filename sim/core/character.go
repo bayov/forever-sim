@@ -740,6 +740,9 @@ func (character *Character) GetMetricsProto() *proto.UnitMetrics {
 	metrics.Name = character.Name
 	metrics.UnitIndex = character.UnitIndex
 	metrics.Auras = character.auraTracker.GetMetricsProto()
+	if character.aggro != nil {
+		metrics.Aggro = character.aggro.toProto()
+	}
 
 	metrics.Pets = make([]*proto.UnitMetrics, len(character.Pets))
 	for i, pet := range character.Pets {

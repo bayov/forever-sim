@@ -1,5 +1,6 @@
 import {
 	ActionMetrics as ActionMetricsProto,
+	AggroMetrics,
 	AuraMetrics as AuraMetricsProto,
 	DistributionMetrics as DistributionMetricsProto,
 	EncounterMetrics as EncounterMetricsProto,
@@ -462,6 +463,11 @@ export class UnitMetrics {
 
 	get maxThreat() {
 		return this.threatLogs[this.threatLogs.length - 1]?.threatAfter || 0;
+	}
+
+	// How often it passed the tank's threat, in a raid with a threat check.
+	get aggro(): AggroMetrics | undefined {
+		return this.metrics.aggro;
 	}
 
 	get secondsOomAvg() {

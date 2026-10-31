@@ -86,6 +86,7 @@ func (env *Environment) construct(raidProto *proto.Raid, encounterProto *proto.E
 	env.Raid = NewRaid(raidProto)
 
 	env.Raid.updatePlayersAndPets()
+	env.Raid.setupThreatCheck(raidProto.ThreatCheck)
 
 	env.AllUnits = append(env.Encounter.TargetUnits, env.Raid.AllUnits...)
 
