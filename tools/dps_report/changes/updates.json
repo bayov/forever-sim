@@ -1261,6 +1261,78 @@
      "commits": [
       "e1fcd57"
      ]
+    },
+    {
+     "title": "The raid's Sunder Armor builds up from the pull, no longer full at the pull",
+     "kind": "method",
+     "note": "A warrior tank adds a stack every global cooldown and a second warrior casts one on its first, so the boss is at 5 stacks 4.5 sec in. A warrior preset is that second warrior. It costs physical builds up to 4 DPS. Holding cooldowns for the fifth stack was tested and lost DPS, so the rotations still open with them.",
+     "builds": [
+      "druid__feral-cat-duty-ff",
+      "druid__feral-cat",
+      "hunter__beast-mastery-tallstrider",
+      "hunter__beast-mastery-wolf",
+      "hunter__beast-mastery",
+      "hunter__lone-wolf",
+      "hunter__marksmanship-tallstrider",
+      "hunter__marksmanship-wolf",
+      "hunter__marksmanship",
+      "hunter__survival-tallstrider",
+      "hunter__survival-wolf",
+      "hunter__survival",
+      "paladin__level_60-duty-crusader",
+      "paladin__level_60-duty-wisdom",
+      "paladin__level_60",
+      "paladin__level_60_shock-duty-crusader",
+      "paladin__level_60_shock-duty-wisdom",
+      "paladin__level_60_shock",
+      "paladin__level_60_shock_ret-duty-crusader",
+      "paladin__level_60_shock_ret-duty-wisdom",
+      "paladin__level_60_shock_ret",
+      "paladin__level_60_shock_undead",
+      "paladin__level_60_sub_holy-duty-crusader",
+      "paladin__level_60_sub_holy-duty-wisdom",
+      "paladin__level_60_sub_holy",
+      "paladin__level_60_sub_holy_undead",
+      "rogue__combat-daggers-humanoid",
+      "rogue__combat-daggers",
+      "rogue__combat-swords-humanoid",
+      "rogue__combat-swords",
+      "rogue__mutilate-humanoid",
+      "rogue__mutilate",
+      "rogue__seal-fate-daggers-humanoid",
+      "rogue__seal-fate-daggers",
+      "rogue__seal-fate-swords-humanoid",
+      "rogue__seal-fate-swords",
+      "rogue__subtlety-humanoid",
+      "rogue__subtlety",
+      "shaman__enhancement-imp-gw",
+      "shaman__enhancement-level60",
+      "shaman__enhancement-mana-tide",
+      "shaman__enhancement-water-shield",
+      "warrior__arms-duty-battle-shout",
+      "warrior__arms-duty-sunder",
+      "warrior__arms",
+      "warrior__arms_dragonkin",
+      "warrior__fury-duty-battle-shout",
+      "warrior__fury-duty-sunder",
+      "warrior__fury",
+      "warrior__fury_2h-duty-battle-shout",
+      "warrior__fury_2h-duty-sunder",
+      "warrior__fury_2h",
+      "warlock__affliction-duty-curse",
+      "warlock__affliction-duty-recklessness",
+      "warlock__affliction",
+      "warlock__demonology-duty-curse",
+      "warlock__demonology-duty-recklessness",
+      "warlock__demonology",
+      "warlock__destruction-duty-curse",
+      "warlock__destruction-duty-recklessness",
+      "warlock__destruction"
+     ],
+     "commits": [
+      "fedb739",
+      "727a7ca"
+     ]
     }
    ],
    "internal": [
@@ -1287,6 +1359,10 @@
     {
      "commit": "8d0a22b",
      "why": "mksettings consumes setups and the audit drift check; no committed request changed"
+    },
+    {
+     "commit": "4ea5cc8",
+     "why": "leveling rotations only; no report build uses them"
     }
    ]
   }
