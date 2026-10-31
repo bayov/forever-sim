@@ -391,7 +391,7 @@
 			flex-direction: row;
 			flex-wrap: wrap;
 			align-items: stretch;
-			gap: 0.4rem 1rem;
+			gap: 0.15rem 1rem;
 			min-width: 0;
 		}
 	}
@@ -438,7 +438,6 @@
 		justify-content: center;
 		gap: 0;
 		min-width: 0;
-		min-height: 2.75rem;
 
 		// The kind of action, like Cast, is a small line over the spell.
 		> .dropdown-picker-root > .dropdown-picker-button {
@@ -469,10 +468,15 @@
 					display: none;
 				}
 			}
+
+			// A cast with no spell picked shows "Spell" in the warning color.
+			> .apl-actionid-picker:not(:has(.apl-actionid-item-icon)) > .dropdown-picker-button {
+				color: var(--bs-warning);
+			}
 		}
 
 		// An action with no spell, like Wait or Autocast Other Cooldowns, is named by its kind.
-		&:not(:has(.apl-actionid-item-icon)) > .dropdown-picker-root > .dropdown-picker-button {
+		&:not(:has(.apl-actionid-picker)) > .dropdown-picker-root > .dropdown-picker-button {
 			color: var(--bs-white);
 			font-size: 1rem;
 			font-weight: 600;
@@ -481,7 +485,7 @@
 		// Its fields go on more lines when they don't fit in the column. Rest (Leveling) has four
 		// of them (Eat, Drink, until Health and until Mana), and on one line they ran into the
 		// condition.
-		&:not(:has(.apl-actionid-item-icon)) > .apl-picker-builder-root {
+		&:not(:has(.apl-actionid-picker)) > .apl-picker-builder-root {
 			flex-wrap: wrap;
 			row-gap: 0.25rem;
 		}
@@ -614,16 +618,8 @@
 	}
 
 	@container (max-width: 54rem) {
-		.apl-list-item-picker-root > .apl-action-picker-root {
-			row-gap: 0.15rem;
-
-			> .apl-action-picker-action {
-				min-height: 0;
-			}
-
-			> .apl-condition-summary {
-				flex-basis: 100%;
-			}
+		.apl-list-item-picker-root > .apl-action-picker-root > .apl-condition-summary {
+			flex-basis: 100%;
 		}
 	}
 
