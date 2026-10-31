@@ -52,14 +52,15 @@ const (
 	trainerSource = 6
 )
 
-// The flight money we keep after training, in copper, from BayovCore's Training.lua RESERVE.
-var flightReserve = []struct {
+// The pocket money we keep after training, in copper, from BayovCore's Training.lua RESERVE.
+var pocketMoney = []struct {
 	level  int32
 	copper float64
-}{{50, 20000}, {40, 10000}, {30, 5000}, {20, 2500}, {11, 1000}, {1, 100}}
+}{{55, 15000}, {50, 12500}, {45, 10000}, {40, 7500}, {36, 5000}, {32, 3500}, {28, 2500}, {24, 1800},
+	{20, 1200}, {16, 800}, {14, 500}, {11, 300}, {1, 0}}
 
 func reserveAt(level int32) float64 {
-	for _, band := range flightReserve {
+	for _, band := range pocketMoney {
 		if level >= band.level {
 			return band.copper
 		}
@@ -381,9 +382,9 @@ func (ts *trainingSearch) planRanks(w *worth) []*spellRank {
 }
 
 // How much gold we're short at a level, in copper: what we've paid for ranks and riding by
-// then and the flight money we keep, less what we've earned.
+// then and the pocket money we keep, less what we've earned.
 func (ts *trainingSearch) short(ranks []*spellRank, s schedule, level int32) float64 {
-	// At level 1 and 2 we've earned less than the flight money, and keep what we have.
+	// Early on we may have earned less than the pocket money, and keep what we have.
 	spent := min(reserveAt(level), ts.budget.earned(level))
 	for _, r := range ranks {
 		if s.buyLevel(r) <= level {
