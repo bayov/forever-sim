@@ -56,6 +56,9 @@ export class SourceChart extends Component {
 
 		this.rootElem.append(<div className="source-chart-ring">{canvas}</div>, <div className="source-chart-legend">{rows}</div>);
 
+		// The gaps between slices are a border in the tooltip's own color. Chart.js' spacing moves each
+		// slice out along its middle, which leaves gaps of different widths.
+		const gapColor = getComputedStyle(document.documentElement).getPropertyValue('--bs-tooltip-bg').trim() || '#000';
 		const chart = new Chart(canvas, {
 			type: 'doughnut',
 			data: {
@@ -63,8 +66,8 @@ export class SourceChart extends Component {
 					{
 						data: slices.map(slice => slice.value),
 						backgroundColor: slices.map(slice => slice.color),
-						borderWidth: 0,
-						spacing: 4,
+						borderColor: gapColor,
+						borderWidth: slices.length > 1 ? 2 : 0,
 					},
 				],
 			},
