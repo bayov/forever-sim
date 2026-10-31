@@ -728,56 +728,12 @@
 		font-size: 0.8125rem;
 	}
 
-	// Rotations: the level ranges on top, then the plan's rotations on the left and the
-	// selected one in the editor on the right.
+	// Rotations: the level ranges and the plan's rotations on the left, and the selected one in
+	// the editor on the right.
 	.leveling-plan-rotations {
 		display: flex;
 		flex-direction: column;
 		gap: var(--section-spacer);
-	}
-
-	.leveling-plan-ranges {
-		display: flex;
-		flex-direction: column;
-		gap: var(--spacer-2);
-		margin-bottom: var(--block-spacer);
-	}
-
-	.leveling-plan-range {
-		display: flex;
-		align-items: center;
-		gap: var(--spacer-2);
-		max-width: 52rem;
-	}
-
-	.leveling-plan-range-levels {
-		flex: 0 0 9.5rem;
-		display: flex;
-		align-items: center;
-		gap: var(--spacer-2);
-		white-space: nowrap;
-	}
-
-	.leveling-plan-range-from {
-		width: 4rem;
-		padding: 0 var(--spacer-2);
-	}
-
-	.leveling-plan-range-to {
-		color: var(--bs-gray-400);
-	}
-
-	.leveling-plan-rotation-select {
-		flex: 1;
-		min-width: 0;
-	}
-
-	.leveling-plan-imbue-select {
-		flex: 0 0 12rem;
-	}
-
-	.leveling-plan-remove-space {
-		flex: 0 0 1.6rem;
 	}
 
 	.leveling-plan-rotations-main {
@@ -791,7 +747,7 @@
 	}
 
 	.leveling-plan-library-col {
-		flex: 0 0 20rem;
+		flex: 0 0 24rem;
 		position: sticky;
 		top: var(--spacer-3);
 
@@ -853,9 +809,78 @@
 		color: var(--bs-white);
 	}
 
-	.leveling-plan-library-where {
+	.leveling-plan-library-heading {
+		margin-top: var(--spacer-2);
 		color: var(--bs-gray-500);
+		font-size: 0.75rem;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+	}
+
+	// A level range in the list: its levels, its rotation and a remove button on top, the
+	// rotation's spells and a shaman's imbue under them.
+	.leveling-plan-range {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 0.35rem;
+	}
+
+	.leveling-plan-range-head,
+	.leveling-plan-range-foot {
+		display: flex;
+		align-items: center;
+		gap: var(--spacer-2);
+	}
+
+	.leveling-plan-range-head .leveling-plan-swatch {
+		margin-top: 0;
+	}
+
+	.leveling-plan-range-levels {
+		flex: 0 0 auto;
+		display: flex;
+		align-items: center;
+		gap: 0.35rem;
+		white-space: nowrap;
+
+		.leveling-plan-level-input {
+			width: 3.25rem;
+			height: 1.75rem;
+		}
+	}
+
+	.leveling-plan-range-from {
+		width: 3.25rem;
+		padding: 0 var(--spacer-2);
+		color: var(--bs-white);
+	}
+
+	.leveling-plan-range-to {
+		color: var(--bs-gray-400);
 		font-size: 0.8125rem;
+	}
+
+	.leveling-plan-rotation-select {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.leveling-plan-remove-space {
+		flex: 0 0 1.6rem;
+	}
+
+	.leveling-plan-range-foot {
+		justify-content: space-between;
+		padding-left: calc(0.75rem + var(--spacer-2));
+
+		.leveling-plan-spells {
+			margin-top: 0;
+		}
+	}
+
+	.leveling-plan-imbue-select {
+		flex: 0 1 10rem;
+		min-width: 0;
 	}
 
 	.leveling-plan-spells {

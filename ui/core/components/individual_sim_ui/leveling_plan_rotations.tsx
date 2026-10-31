@@ -13,13 +13,13 @@ import { ContentBlock } from '../content_block';
 import { APLRotationPicker } from './apl_rotation_picker';
 import { LevelingPlanCharacter } from './leveling_plan_character';
 
-// The shaman imbues a level range can come with, by the names the class options give them.
+// The shaman imbues a level range can come with, short so they fit under the range.
 const SHAMAN_IMBUES: Array<{ name: string; value: WeaponImbue }> = [
-	{ name: 'Class options imbue', value: WeaponImbue.WeaponImbueUnknown },
-	{ name: 'Rockbiter Weapon', value: WeaponImbue.RockbiterWeapon },
-	{ name: 'Flametongue Weapon', value: WeaponImbue.FlametongueWeapon },
-	{ name: 'Frostbrand Weapon', value: WeaponImbue.FrostbrandWeapon },
-	{ name: 'Windfury Weapon', value: WeaponImbue.WindfuryWeapon },
+	{ name: 'Settings imbue', value: WeaponImbue.WeaponImbueUnknown },
+	{ name: 'Rockbiter', value: WeaponImbue.RockbiterWeapon },
+	{ name: 'Flametongue', value: WeaponImbue.FlametongueWeapon },
+	{ name: 'Frostbrand', value: WeaponImbue.FrostbrandWeapon },
+	{ name: 'Windfury', value: WeaponImbue.WindfuryWeapon },
 ];
 
 // The colors of the plan's rotations, by their place in the library, so a level range and its
@@ -31,11 +31,11 @@ const LIST_SPELLS = 6;
 
 // The Rotations part of the Leveling Plan tab.
 //
-// The plan has its own rotations, in the list on the left. They start as copies of the spec's
-// rotation presets, and we can add more, rename them and change them in the editor on the
-// right. The level ranges on top say which of them we play at which levels: each range from
-// its level until the next one's. A shaman's range also says which weapon imbue we use, because
-// Windfury Weapon only comes at level 30.
+// The plan has its own rotations. They start as copies of the spec's rotation presets, and we
+// can add more, rename them and change them in the editor on the right. The list on the left is
+// the plan's level ranges in order, each with the rotation we play from its level until the next
+// range's. A shaman's range also says which weapon imbue we use, because Windfury Weapon only
+// comes at level 30. The rotations no range plays come last.
 //
 // The editor is the Rotation tab's, on the plan's character at one level of the plan
 // (LevelingPlanCharacter), because its spell lists come from the character's level and talents.
@@ -48,8 +48,6 @@ export class LevelingRotationsSection {
 	private readonly characterKey: (level: number) => string;
 	private readonly hasShamanImbue: boolean;
 
-	private readonly timelineElem: HTMLElement;
-	private readonly rangesElem: HTMLElement;
 	private readonly libraryElem: HTMLElement;
 	private readonly newMenuElem: HTMLElement;
 	private readonly editorHeadElem: HTMLElement;
@@ -74,66 +72,50 @@ export class LevelingRotationsSection {
 		this.rootElem = (<div className="leveling-plan-rotations" />) as HTMLElement;
 		parentElem.appendChild(this.rootElem);
 
-		// The level ranges, as a timeline of the plan's levels and a row each to change them.
-		const rangesBlock = new ContentBlock(this.rootElem, 'leveling-plan-ranges-block', {
-			header: {
-				title: 'Rotation by Level',
-				tooltip: "Each range of levels plays one of the plan's rotations, from its first level until the next range's.",
-			},
-		});
-		const timeline = ref<HTMLDivElement>();
-		const ranges = ref<HTMLDivElement>();
-		const addRange = ref<HTMLButtonElement>();
-		rangesBlock.bodyElement.appendChild(
-			<>
-				<div className="leveling-plan-timeline" ref={timeline} />
-				<div className="leveling-plan-ranges" ref={ranges} />
-				<div className="leveling-plan-buttons">
-					<button className="btn btn-outline-primary" ref={addRange}>
-						<i className="fas fa-plus me-1" />
-						Add level range
-					</button>
-				</div>
-			</>,
-		);
-		this.timelineElem = timeline.value!;
-		this.rangesElem = ranges.value!;
-		tippy(addRange.value!, { content: 'Split the longest range in two, so its second half can play another rotation.' });
-		addRange.value!.addEventListener('click', () => this.addRange());
-
 		const main = (<div className="leveling-plan-rotations-main" />) as HTMLElement;
 		this.rootElem.appendChild(main);
 		const libraryCol = (<div className="leveling-plan-library-col" />) as HTMLElement;
 		const editorCol = (<div className="leveling-plan-editor-col" />) as HTMLElement;
 		main.append(libraryCol, editorCol);
 
-		// The plan's rotations, with New Rotation under them like Save Preset under a preset list.
+		// The level ranges and the plan's rotations, with the buttons to add them under the list
+		// like Save Preset under a preset list.
 		const libraryBlock = new ContentBlock(libraryCol, 'leveling-plan-library-block', {
 			header: {
 				title: 'Rotations',
-				tooltip: "The plan's own rotations. A click opens one in the editor. Changing them here leaves the spec's presets and the Rotation tab alone.",
+				tooltip:
+					"Each level range plays one of the plan's rotations, until the next range's level. A click opens its rotation in the editor. Changing them here leaves the spec's presets and the Rotation tab alone.",
 			},
 		});
 		const library = ref<HTMLDivElement>();
+		const addRange = ref<HTMLButtonElement>();
 		const newMenu = ref<HTMLUListElement>();
 		libraryBlock.bodyElement.appendChild(
 			<>
 				<div className="leveling-plan-library" ref={library} />
-				<div className="dropdown leveling-plan-new-rotation">
-					<button
-						className="btn btn-outline-primary dropdown-toggle"
-						type="button"
-						dataset={{ bsToggle: 'dropdown' }}
-						attributes={{ 'aria-expanded': 'false' }}>
+				<div className="leveling-plan-buttons">
+					<button className="btn btn-outline-primary" ref={addRange}>
 						<i className="fas fa-plus me-1" />
-						New rotation
+						Level range
 					</button>
-					<ul className="dropdown-menu" ref={newMenu} />
+					<div className="dropdown leveling-plan-new-rotation">
+						<button
+							className="btn btn-outline-primary dropdown-toggle"
+							type="button"
+							dataset={{ bsToggle: 'dropdown' }}
+							attributes={{ 'aria-expanded': 'false' }}>
+							<i className="fas fa-plus me-1" />
+							Rotation
+						</button>
+						<ul className="dropdown-menu" ref={newMenu} />
+					</div>
 				</div>
 			</>,
 		);
 		this.libraryElem = library.value!;
 		this.newMenuElem = newMenu.value!;
+		tippy(addRange.value!, { content: 'Split the longest range in two, so its second half can play another rotation.' });
+		addRange.value!.addEventListener('click', () => this.addRange());
 
 		const editorBlock = new ContentBlock(editorCol, 'leveling-plan-editor-block', {
 			header: { title: 'Editor' },
@@ -308,112 +290,19 @@ export class LevelingRotationsSection {
 		const plan = this.plan();
 		if (!this.selectedRotation()) this.selected = sortedRanges(plan)[0]?.name ?? plan.rotationLibrary[0]?.name ?? '';
 		if (!this.selectedRotation()) this.selected = plan.rotationLibrary[0]?.name ?? '';
-		this.renderTimeline(plan);
-		this.renderRanges(plan);
 		this.renderLibrary(plan);
 		this.renderNewMenu();
 		this.renderEditorHead(plan);
 	}
 
-	private renderTimeline(plan: LevelingPlanSettings) {
-		const ranges = sortedRanges(plan);
-		const segments = ranges.flatMap((range, i) => {
-			const { from, to } = rangeLevels(plan, i);
-			if (to < from) return [];
-			const segment = (
-				<button
-					className={`leveling-plan-segment ${range.name == this.selected ? 'active' : ''}`}
-					type="button"
-					style={{ flexGrow: String(to - from + 1), '--segment-color': this.colorOf(plan, range.name) } as any}>
-					<span className="leveling-plan-segment-levels">{from == to ? `${from}` : `${from}-${to}`}</span>
-					<span className="leveling-plan-segment-name">{range.name || 'No rotation'}</span>
-					{this.hasShamanImbue && range.imbue ? (
-						<span className="leveling-plan-segment-imbue">{SHAMAN_IMBUES.find(imbue => imbue.value == range.imbue)?.name ?? ''}</span>
-					) : null}
-				</button>
-			) as HTMLButtonElement;
-			segment.addEventListener('click', () => this.select(range.name));
-			return [segment];
-		});
-		this.timelineElem.replaceChildren(
-			...(segments.length ? segments : [<p className="leveling-plan-note">No ranges yet, so we play the Rotation tab's at every level.</p>]),
-		);
-	}
-
-	private renderRanges(plan: LevelingPlanSettings) {
-		const ranges = sortedRanges(plan);
-		const names = plan.rotationLibrary.map(preset => preset.name);
-		const rows = ranges.map((range, i) => {
-			const { from, to } = rangeLevels(plan, i);
-			const level = ref<HTMLInputElement>();
-			const select = ref<HTMLSelectElement>();
-			const imbue = ref<HTMLSelectElement>();
-			const remove = ref<HTMLButtonElement>();
-			const missing = !names.includes(range.name);
-			const row = (
-				<div className="leveling-plan-range">
-					<i className="leveling-plan-swatch" style={{ backgroundColor: this.colorOf(plan, range.name) }} />
-					<span className="leveling-plan-range-levels">
-						{i == 0 ? (
-							<span className="leveling-plan-range-from">{String(plan.fromLevel)}</span>
-						) : (
-							<input className="form-control leveling-plan-level-input" type="number" value={String(range.level)} ref={level} />
-						)}
-						<span className="leveling-plan-range-to">{to < from ? 'past the plan' : `to ${to}`}</span>
-					</span>
-					<select className={`form-select leveling-plan-rotation-select ${missing ? 'is-invalid' : ''}`} ref={select}>
-						{missing ? <option value={range.name}>{range.name ? `${range.name} (gone)` : 'No rotation'}</option> : null}
-						{names.map(name => (
-							<option value={name}>{name}</option>
-						))}
-					</select>
-					{this.hasShamanImbue ? (
-						<select className="form-select leveling-plan-imbue-select" ref={imbue}>
-							{SHAMAN_IMBUES.map(({ name, value }) => (
-								<option value={String(value)}>{name}</option>
-							))}
-						</select>
-					) : null}
-					{i == 0 ? (
-						<span className="leveling-plan-remove-space" />
-					) : (
-						<button className="btn btn-link link-danger leveling-plan-remove" ref={remove}>
-							<i className="fas fa-times" />
-						</button>
-					)}
-				</div>
-			) as HTMLElement;
-			select.value!.value = range.name;
-			select.value!.addEventListener('change', () => {
-				const name = select.value!.value;
-				this.change(plan => (plan.rotations[i].name = name));
-				this.select(name);
-			});
-			if (imbue.value) {
-				imbue.value.value = String(range.imbue);
-				tippy(imbue.value, { content: 'The weapon imbue at these levels. Class options imbue keeps the one in the Settings tab.' });
-				imbue.value.addEventListener('change', () => this.change(plan => (plan.rotations[i].imbue = Number(imbue.value!.value) as WeaponImbue)));
-			}
-			level.value?.addEventListener('change', () => {
-				const newLevel = Math.round(Number(level.value!.value));
-				if (!(newLevel > plan.fromLevel && newLevel < plan.toLevel)) {
-					level.value!.value = String(range.level);
-					return;
-				}
-				this.change(plan => (plan.rotations[i].level = newLevel));
-			});
-			if (remove.value) {
-				tippy(remove.value, { content: 'Drop this range, so the range before it plays on' });
-				remove.value.addEventListener('click', () => this.change(plan => plan.rotations.splice(i, 1)));
-			}
-			return row;
-		});
-		this.rangesElem.replaceChildren(...rows);
-	}
-
+	// The level ranges in order, then the rotations no range plays.
 	private renderLibrary(plan: LevelingPlanSettings) {
-		const rows = plan.rotationLibrary.map(preset => {
-			const used = this.usedAt(plan, preset.name);
+		const ranges = sortedRanges(plan);
+		const rows: Array<Element> = ranges.map((_, i) => this.renderRange(plan, i));
+		if (!ranges.length) rows.push(<p className="leveling-plan-note">No level ranges yet, so we play the Rotation tab's at every level.</p>);
+		const unplayed = plan.rotationLibrary.filter(preset => !ranges.some(range => range.name == preset.name));
+		if (unplayed.length) rows.push(<div className="leveling-plan-library-heading">Not played</div>);
+		unplayed.forEach(preset => {
 			const spec = this.specPreset(preset.name);
 			const edited = !!spec && !APLRotation.equals(spec.rotation.rotation!, preset.rotation ?? APLRotation.create());
 			const spells = ref<HTMLDivElement>();
@@ -425,18 +314,95 @@ export class LevelingRotationsSection {
 							{preset.name}
 							{edited ? <span className="leveling-plan-badge">edited</span> : null}
 						</span>
-						<span className="leveling-plan-library-where">
-							{used.length ? `Levels ${used.map(({ from, to }) => (from == to ? `${from}` : `${from}-${to}`)).join(', ')}` : 'Not played'}
-						</span>
 						<span className="leveling-plan-spells" ref={spells} />
 					</span>
 				</button>
 			) as HTMLButtonElement;
 			fillSpellIcons(spells.value!, preset.rotation);
 			row.addEventListener('click', () => this.select(preset.name));
-			return row;
+			rows.push(row);
 		});
-		this.libraryElem.replaceChildren(...(rows.length ? rows : [<p className="leveling-plan-note">No rotations yet.</p>]));
+		this.libraryElem.replaceChildren(...rows);
+	}
+
+	// A level range: its levels, its rotation and a remove button on top, the rotation's spells
+	// and a shaman's imbue under them. A click anywhere else on it opens its rotation.
+	private renderRange(plan: LevelingPlanSettings, i: number): HTMLElement {
+		const range = sortedRanges(plan)[i];
+		const names = plan.rotationLibrary.map(preset => preset.name);
+		const { from, to } = rangeLevels(plan, i);
+		const level = ref<HTMLInputElement>();
+		const select = ref<HTMLSelectElement>();
+		const imbue = ref<HTMLSelectElement>();
+		const remove = ref<HTMLButtonElement>();
+		const spells = ref<HTMLSpanElement>();
+		const missing = !names.includes(range.name);
+		const row = (
+			<div className={`leveling-plan-library-item leveling-plan-range ${range.name == this.selected ? 'active' : ''}`}>
+				<div className="leveling-plan-range-head">
+					<i className="leveling-plan-swatch" style={{ backgroundColor: this.colorOf(plan, range.name) }} />
+					<span className="leveling-plan-range-levels">
+						{i == 0 ? (
+							<span className="leveling-plan-range-from">{String(plan.fromLevel)}</span>
+						) : (
+							<input className="form-control leveling-plan-level-input" type="number" value={String(range.level)} ref={level} />
+						)}
+						<span className="leveling-plan-range-to">{to < from ? 'past the plan' : `to ${to}`}</span>
+					</span>
+					<select className={`form-select form-select-sm leveling-plan-rotation-select ${missing ? 'is-invalid' : ''}`} ref={select}>
+						{missing ? <option value={range.name}>{range.name ? `${range.name} (gone)` : 'No rotation'}</option> : null}
+						{names.map(name => (
+							<option value={name}>{name}</option>
+						))}
+					</select>
+					{i == 0 ? (
+						<span className="leveling-plan-remove-space" />
+					) : (
+						<button className="btn btn-link link-danger leveling-plan-remove" ref={remove}>
+							<i className="fas fa-times" />
+						</button>
+					)}
+				</div>
+				<div className="leveling-plan-range-foot">
+					<span className="leveling-plan-spells" ref={spells} />
+					{this.hasShamanImbue ? (
+						<select className="form-select form-select-sm leveling-plan-imbue-select" ref={imbue}>
+							{SHAMAN_IMBUES.map(({ name, value }) => (
+								<option value={String(value)}>{name}</option>
+							))}
+						</select>
+					) : null}
+				</div>
+			</div>
+		) as HTMLElement;
+		fillSpellIcons(spells.value!, libraryRotation(plan, range.name)?.rotation);
+		row.addEventListener('click', event => {
+			if (!(event.target as HTMLElement).closest('input, select, button')) this.select(range.name);
+		});
+		select.value!.value = range.name;
+		select.value!.addEventListener('change', () => {
+			const name = select.value!.value;
+			this.change(plan => (plan.rotations[i].name = name));
+			this.select(name);
+		});
+		if (imbue.value) {
+			imbue.value.value = String(range.imbue);
+			tippy(imbue.value, { content: 'The weapon imbue at these levels. Settings imbue keeps the one in the Settings tab.' });
+			imbue.value.addEventListener('change', () => this.change(plan => (plan.rotations[i].imbue = Number(imbue.value!.value) as WeaponImbue)));
+		}
+		level.value?.addEventListener('change', () => {
+			const newLevel = Math.round(Number(level.value!.value));
+			if (!(newLevel > plan.fromLevel && newLevel < plan.toLevel)) {
+				level.value!.value = String(range.level);
+				return;
+			}
+			this.change(plan => (plan.rotations[i].level = newLevel));
+		});
+		if (remove.value) {
+			tippy(remove.value, { content: 'Drop this range, so the range before it plays on' });
+			remove.value.addEventListener('click', () => this.change(plan => plan.rotations.splice(i, 1)));
+		}
+		return row;
 	}
 
 	private renderNewMenu() {
