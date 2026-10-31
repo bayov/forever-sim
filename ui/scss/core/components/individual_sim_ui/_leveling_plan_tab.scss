@@ -477,17 +477,19 @@
 
 	.leveling-plan-talents-main {
 		display: flex;
+		flex-wrap: wrap;
 		gap: var(--section-spacer);
 		align-items: flex-start;
-
-		@include media-breakpoint-down(xxl) {
-			flex-wrap: wrap;
-		}
 	}
 
+	// The trees don't size themselves by their talents (each is a size container, see
+	// _talents_picker.scss), so we give the column the width three trees need at the smallest
+	// talent size (a tree is 8 icons of 2.5rem wide). The order column goes under it when the
+	// two don't fit side by side.
 	.leveling-plan-talents-trees {
-		flex: 0 1 auto;
-		min-width: 0;
+		flex: 1 1 62rem;
+		min-width: min(100%, 62rem);
+		max-width: 80rem;
 	}
 
 	.leveling-plan-trees-note {
