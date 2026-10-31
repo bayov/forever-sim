@@ -66,7 +66,7 @@ export class APLRotationPicker extends Component {
 				config: ListItemPickerConfig<Player<any>, APLPrepullAction>,
 			) => new APLPrepullActionPicker(parent, modPlayer, config, index, prepullActionNote),
 			inlineMenuBar: true,
-			dragWholeItem: true,
+			dragByHandle: true,
 		});
 
 		new ListPicker<Player<any>, APLListItem>(this.rootElem, modPlayer, {
@@ -92,7 +92,7 @@ export class APLRotationPicker extends Component {
 				config: ListItemPickerConfig<Player<any>, APLListItem>,
 			) => new APLListItemPicker(parent, modPlayer, config, index),
 			inlineMenuBar: true,
-			dragWholeItem: true,
+			dragByHandle: true,
 		});
 
 		//modPlayer.rotationChangeEmitter.on(() => console.log('APL: ' + APLRotation.toJsonString(modPlayer.aplRotation)))
@@ -128,7 +128,7 @@ class APLPrepullActionPicker extends Input<Player<any>, APLPrepullAction> {
 
 		const itemHeaderElem = ListPicker.getItemHeaderElem(this);
 		makeListItemWarnings(itemHeaderElem, player, player => player.getCurrentStats().rotationStats?.prepullActions[index]?.warnings || []);
-		const iconElem = makeActionIcon(this.rootElem, player, () => this.getItem().action);
+		const iconElem = makeActionIcon(makeRowGrip(this.rootElem), player, () => this.getItem().action);
 		if (prepullActionNote) {
 			markUnstacked(iconElem, () => prepullActionNote(player, this.getItem()), player.changeEmitter);
 		}
@@ -232,7 +232,7 @@ class APLListItemPicker extends Input<Player<any>, APLListItem> {
 
 		const itemHeaderElem = ListPicker.getItemHeaderElem(this);
 		makeListItemWarnings(itemHeaderElem, player, player => player.getCurrentStats().rotationStats?.priorityList[index]?.warnings || []);
-		makeActionIcon(this.rootElem, player, () => this.getItem().action);
+		makeActionIcon(makeRowGrip(this.rootElem), player, () => this.getItem().action);
 
 		this.hidePicker = new HidePicker(itemHeaderElem, player, {
 			changedEvent: () => this.player.rotationChangeEmitter,
@@ -279,10 +279,11 @@ class APLListItemPicker extends Input<Player<any>, APLListItem> {
 // A priority list row as a card that we expand to edit its condition.
 //
 // A long condition, like a leveling rotation's checks on the mobs and our health and mana, is a
-// tall tree of dropdowns. So a row starts collapsed and shows its condition as one line of text
-// next to the action. A click on that line, or on the chevron with the row's buttons, expands the
-// row, and the condition's dropdowns go under the action across the whole row. The row's picker
-// stays with its place in the list, so a row we expanded stays open while we edit it.
+// tall tree of dropdowns. So a row starts collapsed, as a header that shows its condition as one
+// line of text next to the action. A click anywhere on the header, other than its grip on the
+// left, its inputs and its buttons, expands the row. The condition's dropdowns then go in a panel
+// under the header, across the whole card. The row's picker stays with its place in the list, so a
+// row we expanded stays open while we edit it.
 function makeCollapsible(
 	rowElem: HTMLElement,
 	actionPickerElem: HTMLElement,
@@ -290,10 +291,14 @@ function makeCollapsible(
 	player: Player<any>,
 	getCondition: () => APLValue | undefined,
 ) {
-	const summaryElem = document.createElement('a');
+	const cardElem = itemHeaderElem.parentElement!;
+	const bodyElem = document.createElement('div');
+	bodyElem.classList.add('apl-row-body');
+	bodyElem.appendChild(actionPickerElem.querySelector(':scope > .apl-action-condition')!);
+	cardElem.appendChild(bodyElem);
+
+	const summaryElem = document.createElement('div');
 	summaryElem.classList.add('apl-condition-summary');
-	summaryElem.href = 'javascript:void(0)';
-	summaryElem.setAttribute('role', 'button');
 	actionPickerElem.appendChild(summaryElem);
 	const summaryTooltip = tippy(summaryElem, { content: '', maxWidth: '40rem' });
 
@@ -303,13 +308,20 @@ function makeCollapsible(
 
 	const setExpanded = (expanded: boolean) => {
 		rowElem.classList.toggle('apl-collapsed', !expanded);
+		cardElem.classList.toggle('apl-expanded', expanded);
+		bodyElem.hidden = !expanded;
 		toggleElem.querySelector('i')?.classList.toggle('fa-chevron-up', expanded);
 		toggleElem.querySelector('i')?.classList.toggle('fa-chevron-down', !expanded);
 		toggleTooltip.setContent(expanded ? 'Collapse' : 'Edit condition');
 	};
 	setExpanded(false);
-	toggleElem.addEventListener('click', () => setExpanded(rowElem.classList.contains('apl-collapsed')));
-	summaryElem.addEventListener('click', () => setExpanded(true));
+	const toggle = () => setExpanded(rowElem.classList.contains('apl-collapsed'));
+	toggleElem.addEventListener('click', toggle);
+	cardElem.addEventListener('click', event => {
+		if (!(event.target as HTMLElement).closest(`.apl-row-grip, .apl-row-body, ${CLICKABLE}`)) {
+			toggle();
+		}
+	});
 
 	// The names of spells and auras come in later, so a newer change can finish first.
 	let shown = 0;
@@ -329,6 +341,25 @@ function makeCollapsible(
 	};
 	update();
 	player.rotationChangeEmitter.on(update);
+}
+
+// What we click on in a row to use it, rather than to expand or collapse the row.
+const CLICKABLE = 'input, textarea, select, button, a, label, [contenteditable], .dropdown-menu';
+
+// The left side of a row, where we grab it to drag it to a new place in the list.
+//
+// It holds a grip, the row's number in the priority list and the large icon of the row's action.
+// It takes the row's whole height, so we don't have to aim for the grip.
+function makeRowGrip(rowElem: HTMLElement): HTMLElement {
+	const gripElem = document.createElement('div');
+	gripElem.classList.add('apl-row-grip', LIST_PICKER_DRAG_HANDLE);
+	const gripIconElem = document.createElement('i');
+	gripIconElem.classList.add('fa', 'fa-grip-vertical');
+	const numberElem = document.createElement('span');
+	numberElem.classList.add('apl-row-number');
+	gripElem.append(gripIconElem, numberElem);
+	rowElem.parentElement!.parentElement!.prepend(gripElem);
+	return gripElem;
 }
 
 function makeListItemWarnings(itemHeaderElem: HTMLElement, player: Player<any>, getWarnings: (player: Player<any>) => Array<string>) {
@@ -373,14 +404,14 @@ function makeListItemWarnings(itemHeaderElem: HTMLElement, player: Player<any>, 
 //
 // A row that casts a spell or uses an aura shows that spell's icon, with its wowhead tooltip. A
 // Scheduled Action shows the icon of the action it schedules. Other actions, like Wait or
-// Autocast Other Cooldowns, show a plain icon for their kind. We can drag the icon to move the
-// row, like the handle on its left, and a click opens the spell on wowhead.
+// Autocast Other Cooldowns, show a plain icon for their kind. It sits in the row's grip, so we drag
+// the row by it too, and a click opens the spell on wowhead.
 function makeActionIcon(parent: HTMLElement, player: Player<any>, getAction: () => APLAction | undefined): HTMLElement {
 	const iconElem = document.createElement('a');
 	iconElem.classList.add('apl-row-icon', LIST_PICKER_DRAG_HANDLE);
 	iconElem.dataset.whtticon = 'false';
 	iconElem.target = '_blank';
-	parent.prepend(iconElem);
+	parent.appendChild(iconElem);
 
 	let shownKey = '';
 	const update = () => {

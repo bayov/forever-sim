@@ -102,7 +102,11 @@
 	& > :not(:last-child) {
 		margin-right: var(--spacer-2);
 	}
+}
 
+// The condition's panel under an expanded row is outside the row's picker, so it gets these too.
+.apl-list-item-picker-root,
+.apl-row-body {
 	.form-label {
 		font-size: var(--btn-font-size);
 		line-height: 1.5;
@@ -206,41 +210,6 @@
 	display: none;
 }
 
-// A row whose condition goes under its action. It needs no line between them, and the left
-// side, the row's number and its buttons stay at the top, next to the action.
-@mixin apl-row-stacked {
-	> .list-picker-item-move {
-		align-items: flex-start;
-		padding-top: 1.25rem;
-	}
-
-	&::before {
-		align-self: flex-start;
-		padding-top: 0.75rem;
-	}
-
-	> .list-picker-item-header {
-		align-self: flex-start;
-		padding-top: 0.8rem;
-	}
-
-	.apl-list-item-picker-root {
-		align-items: flex-start;
-
-		> .apl-action-picker-root > .apl-action-picker-action {
-			align-self: flex-start;
-		}
-
-		> .apl-action-picker-root > .apl-action-condition,
-		> .apl-action-picker-root > .apl-condition-summary {
-			flex-basis: 100%;
-			min-height: 0;
-			padding-left: 0;
-			border-left: 0;
-		}
-	}
-}
-
 // The rotation editor, laid out so we can read the priority list top to bottom.
 //
 // Each row shows what it does first ("Cast Stormstrike") and its condition under it, like a
@@ -264,9 +233,13 @@
 			gap: 0.35rem;
 		}
 
+		// The card's top line is its header: the grip on the left, then the action, then the
+		// row's buttons. An expanded priority list row adds its condition under the header.
 		> .list-picker-items > .list-picker-item-container {
-			align-items: flex-start;
-			padding: 0.45rem 0.6rem;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 0 0.6rem;
+			padding: 0;
 			border: 1px solid var(--line-color);
 			border-radius: 3px;
 			background-color: color-mix(in srgb, var(--panel-bg) 85%, transparent);
@@ -278,48 +251,45 @@
 
 			// A long condition wraps inside the row, so the row's buttons stay in the card.
 			> .list-picker-item {
+				flex: 1 1 0;
 				min-width: 0;
+				padding: 0.45rem 0;
 			}
 
 			> .list-picker-item-header {
 				flex: 0 0 auto;
-			}
-
-			// The handle on the far left. We drag the row from it or from any part of the row that
-			// isn't an input, a dropdown or a button, and the handle lights up while we hover one.
-			> .list-picker-item-move {
-				order: -1;
-				align-self: stretch;
-				display: flex;
-				align-items: center;
-				margin: -0.45rem 0 -0.45rem -0.6rem;
-				padding: 0 0.35rem 0 0.5rem;
-				color: var(--text-muted-color);
-				opacity: 0.35;
-				cursor: grab;
-				transition: opacity 0.15s;
-
-				i.fa-xl {
-					font-size: 0.9rem;
-				}
-
-				&:hover {
-					opacity: 1;
-					color: var(--bs-white);
-				}
-			}
-
-			&:hover:not(:has(:is(input, textarea, select, button, .dropdown-menu, a:not(.list-picker-drag-handle):not(.list-picker-item-move)):hover))
-				> .list-picker-item-move,
-			&.list-picker-dragging > .list-picker-item-move {
-				opacity: 1;
-				color: var(--bs-white);
+				padding-right: 0.6rem;
 			}
 
 			// A row we turned off with the eye button stays in the list, faded out.
-			&:has(> .list-picker-item > .apl-list-item-picker-root.disabled) > .list-picker-item {
+			&:has(> .list-picker-item > .apl-list-item-picker-root.disabled) > :is(.list-picker-item, .apl-row-grip, .apl-row-body) {
 				opacity: 0.4;
 			}
+		}
+
+		.apl-row-grip {
+			align-self: stretch;
+			display: flex;
+			align-items: center;
+			gap: 0.6rem;
+			padding-left: 0.6rem;
+
+			> .fa-grip-vertical {
+				color: var(--text-muted-color);
+				font-size: 0.9rem;
+				opacity: 0.35;
+				transition: opacity 0.15s;
+			}
+
+			&:hover > .fa-grip-vertical {
+				opacity: 1;
+				color: var(--bs-white);
+			}
+		}
+
+		.list-picker-dragging .apl-row-grip > .fa-grip-vertical {
+			opacity: 1;
+			color: var(--bs-white);
 		}
 
 		// The row's buttons, quiet until we hover the row. A warning always shows.
@@ -382,15 +352,21 @@
 		> .list-picker-item-container {
 			counter-increment: apl-row;
 
-			&::before {
+			.apl-row-number::before {
 				content: counter(apl-row);
-				flex: 0 0 1.5rem;
-				align-self: center;
-				color: var(--text-muted-color);
-				font-size: 0.8rem;
-				font-variant-numeric: tabular-nums;
 			}
 		}
+	}
+
+	.apl-row-number {
+		flex: 0 0 1.25rem;
+		color: var(--text-muted-color);
+		font-size: 0.8rem;
+		font-variant-numeric: tabular-nums;
+	}
+
+	.apl-prepull-action-picker .apl-row-number {
+		display: none;
 	}
 
 	// Each row is split in two. On the left is what the row does: a large icon, the kind of
@@ -508,7 +484,6 @@
 		}
 	}
 
-	.apl-list-item-picker-root > .apl-action-picker-root > .apl-action-condition,
 	.apl-prepull-actions-doat {
 		flex: 1 1 18rem;
 		flex-wrap: wrap;
@@ -531,27 +506,34 @@
 		}
 	}
 
-	// A collapsed row shows its condition as a line of text (makeCollapsible). An expanded row
-	// shows the condition's dropdowns under the action, across the whole row. In a narrow row,
-	// like on a small screen, the line of text goes under the action too.
-	.apl-list-item-picker > .list-picker-items {
-		container-type: inline-size;
-
-		> .list-picker-item-container:has(> .list-picker-item > .apl-list-item-picker-root:not(.apl-collapsed)) {
-			@include apl-row-stacked;
-
-			// The condition editor sits on a darker panel, so it stands apart from the action.
-			> .list-picker-item > .apl-list-item-picker-root > .apl-action-picker-root > .apl-action-condition {
-				padding: 0.4rem 0.6rem;
-				border-radius: 3px;
-				background-color: rgba(0, 0, 0, 0.3);
-			}
-		}
-	}
-
-	.apl-list-item-picker-root.apl-collapsed > .apl-action-picker-root > .apl-action-condition,
+	// A collapsed row shows its condition as a line of text next to the action
+	// (makeCollapsible). An expanded row shows the condition's dropdowns in a darker panel under
+	// the header, across the whole card. They line up with the action above them.
 	.apl-list-item-picker-root:not(.apl-collapsed) > .apl-action-picker-root > .apl-condition-summary {
 		display: none;
+	}
+
+	// We drag a row by its left side, and a click on the rest of its header expands it.
+	.apl-list-item-picker > .list-picker-items > .list-picker-item-container {
+		cursor: pointer;
+	}
+
+	.apl-row-body {
+		flex: 0 0 100%;
+		display: flex;
+		padding: 0.5rem 0.6rem 0.6rem 6.9rem;
+		border-top: 1px solid var(--line-color);
+		border-radius: 0 0 2px 2px;
+		background-color: rgba(0, 0, 0, 0.3);
+		cursor: auto;
+
+		// "If:" stays at the top of a tall condition, next to its first line.
+		> .apl-action-condition {
+			flex: 1 1 auto;
+			flex-wrap: wrap;
+			align-items: flex-start;
+			min-width: 0;
+		}
 	}
 
 	.apl-condition-summary {
@@ -563,16 +545,11 @@
 		color: #a9b6c6;
 		font-size: 0.8125rem;
 		line-height: 1.4;
-		text-decoration: none;
 		// Two lines at most. The tooltip has the whole condition.
 		display: -webkit-box;
 		-webkit-line-clamp: 2;
 		-webkit-box-orient: vertical;
 		overflow: hidden;
-
-		&:hover {
-			color: var(--bs-white);
-		}
 
 		&.apl-condition-summary-empty {
 			color: var(--text-muted-color);
@@ -580,9 +557,20 @@
 		}
 	}
 
+	.list-picker-item-container:hover .apl-condition-summary:not(.apl-condition-summary-empty) {
+		color: var(--bs-white);
+	}
+
+	// In a narrow row, like on a small screen, the line of text goes under the action.
+	.apl-list-item-picker > .list-picker-items {
+		container-type: inline-size;
+	}
+
 	@container (max-width: 54rem) {
-		.apl-list-item-picker > .list-picker-items > .list-picker-item-container {
-			@include apl-row-stacked;
+		.apl-list-item-picker-root > .apl-action-picker-root > .apl-condition-summary {
+			flex-basis: 100%;
+			padding-left: 0;
+			border-left: 0;
 		}
 	}
 
