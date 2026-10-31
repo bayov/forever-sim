@@ -276,14 +276,15 @@ class APLListItemPicker extends Input<Player<any>, APLListItem> {
 	}
 }
 
-// A priority list row as a card that we expand to edit its condition.
+// A priority list row as a card that we expand to edit its condition and settings.
 //
 // A long condition, like a leveling rotation's checks on the mobs and our health and mana, is a
-// tall tree of dropdowns. So a row starts collapsed, as a header that shows its condition as one
-// line of text next to the action. A click anywhere on the header, other than its grip on the
-// left, its inputs and its buttons, expands the row. The condition's dropdowns then go in a panel
-// under the header, across the whole card. The row's picker stays with its place in the list, so a
-// row we expanded stays open while we edit it.
+// tall tree of dropdowns. So a row starts collapsed, as a header that shows what the row does
+// ("Cast Flame Shock") and its condition as one line of text. A click anywhere on the header,
+// other than its grip on the left, its inputs and its buttons, expands the row. A panel then opens
+// under the header, across the whole card. It holds the action's settings, like a cast's target or
+// Rest's Eat and Drink, and the condition's dropdowns under them. The row's picker stays with its
+// place in the list, so a row we expanded stays open while we edit it.
 function makeCollapsible(
 	rowElem: HTMLElement,
 	actionPickerElem: HTMLElement,
@@ -294,8 +295,20 @@ function makeCollapsible(
 	const cardElem = itemHeaderElem.parentElement!;
 	const bodyElem = document.createElement('div');
 	bodyElem.classList.add('apl-row-body');
-	bodyElem.appendChild(actionPickerElem.querySelector(':scope > .apl-action-condition')!);
+	const settingsElem = document.createElement('div');
+	settingsElem.classList.add('apl-row-settings');
+	bodyElem.append(settingsElem, actionPickerElem.querySelector(':scope > .apl-action-condition')!);
 	cardElem.appendChild(bodyElem);
+
+	// The action's fields come with its kind, so we move them each time we pick another kind. The
+	// spell stays in the header.
+	const actionElem = actionPickerElem.querySelector(':scope > .apl-action-picker-action')!;
+	const moveSettings = () => {
+		const fields = Array.from(actionElem.querySelector(':scope > .apl-picker-builder-root')?.children ?? []);
+		settingsElem.replaceChildren(...fields.filter(field => !field.classList.contains('apl-actionid-picker')));
+	};
+	moveSettings();
+	new MutationObserver(moveSettings).observe(actionElem, { childList: true });
 
 	const summaryElem = document.createElement('div');
 	summaryElem.classList.add('apl-condition-summary');

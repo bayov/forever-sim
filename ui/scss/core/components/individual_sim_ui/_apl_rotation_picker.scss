@@ -272,6 +272,7 @@
 			display: flex;
 			align-items: center;
 			gap: 0.6rem;
+			margin-right: 0.4rem;
 			padding-left: 0.6rem;
 
 			> .fa-grip-vertical {
@@ -455,11 +456,13 @@
 			// the left.
 			> .dropdown-picker-root:first-child > .dropdown-picker-button {
 				min-width: 0;
+				overflow: hidden;
 				color: var(--bs-white);
 				font-size: 0.95rem;
 				font-weight: 600;
 				line-height: 1.25;
-				white-space: normal;
+				white-space: nowrap;
+				text-overflow: ellipsis;
 				text-align: left;
 
 				.apl-actionid-item-icon {
@@ -521,11 +524,57 @@
 	.apl-row-body {
 		flex: 0 0 100%;
 		display: flex;
-		padding: 0.5rem 0.6rem 0.6rem 6.9rem;
+		flex-direction: column;
+		gap: 0.5rem;
+		padding: 0.5rem 0.6rem 0.6rem 7.3rem;
 		border-top: 1px solid var(--line-color);
 		border-radius: 0 0 2px 2px;
 		background-color: rgba(0, 0, 0, 0.3);
 		cursor: auto;
+
+		// The action's settings, like a cast's target or Rest's Eat and Drink, on a line over the
+		// condition.
+		> .apl-row-settings {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 0.4rem 1.25rem;
+			font-size: 0.8125rem;
+
+			&:empty {
+				display: none;
+			}
+
+			.input-root {
+				width: auto;
+				margin: 0;
+				border: none;
+			}
+
+			.dropdown-picker-button,
+			.form-label {
+				font-size: inherit;
+			}
+
+			// A checkbox, like Eat or Stand, sized to the small text next to it.
+			.form-check {
+				align-items: center;
+				min-height: 0;
+				padding-left: 0;
+			}
+
+			.form-check-input[type='checkbox'] {
+				flex-shrink: 0;
+				width: 0.875rem;
+				height: 0.875rem;
+				margin: 0;
+				border-radius: 0.2rem;
+			}
+
+			.form-check .form-label {
+				margin-left: 0.35rem;
+			}
+		}
 
 		// "If:" stays at the top of a tall condition, next to its first line.
 		> .apl-action-condition {
