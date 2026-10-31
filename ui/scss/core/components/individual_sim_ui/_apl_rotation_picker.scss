@@ -614,8 +614,16 @@
 	}
 
 	@container (max-width: 54rem) {
-		.apl-list-item-picker-root > .apl-action-picker-root > .apl-condition-summary {
-			flex-basis: 100%;
+		.apl-list-item-picker-root > .apl-action-picker-root {
+			row-gap: 0.15rem;
+
+			> .apl-action-picker-action {
+				min-height: 0;
+			}
+
+			> .apl-condition-summary {
+				flex-basis: 100%;
+			}
 		}
 	}
 
