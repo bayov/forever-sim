@@ -794,8 +794,7 @@
 		}
 
 		&.active {
-			border-color: var(--gold);
-			border-left-color: var(--rotation-color, var(--gold));
+			border-color: var(--rotation-color, var(--gold));
 			background: rgba(255, 255, 255, 0.05);
 		}
 	}
