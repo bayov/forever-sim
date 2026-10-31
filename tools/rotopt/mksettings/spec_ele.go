@@ -41,4 +41,10 @@ func init() {
 			}}
 		},
 	}
+	// The Mana Tide build drinks the Major Mana Potion (ui/elemental_shaman/presets.ts
+	// ManaTideConsumes): it runs shorter on mana, and the potion is -4.3 / +1.8 / +27.2 at 120 /
+	// 180 / 300 sec over the Caustic Smog Potion.
+	specs["ele_mana_tide"] = withConsumes(specs["ele"], func(consumes *proto.Consumes) {
+		consumes.DefaultPotion = proto.Potions_MajorManaPotion
+	})
 }

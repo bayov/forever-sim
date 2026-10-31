@@ -39,6 +39,18 @@ type lowLevelSetup struct {
 
 var specs = map[string]*specSetup{}
 
+// withConsumes is a copy of a spec's setup whose level 60 consumes are the base's with edit
+// applied, for a build that takes the spec's setup but a consume or two of its own.
+func withConsumes(base *specSetup, edit func(consumes *proto.Consumes)) *specSetup {
+	variant := *base
+	variant.consumes = func() *proto.Consumes {
+		consumes := base.consumes()
+		edit(consumes)
+		return consumes
+	}
+	return &variant
+}
+
 func specNames() []string {
 	names := make([]string, 0, len(specs))
 	for name := range specs {
