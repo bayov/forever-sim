@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_synthetic_arms",
   "apl": "level60_fury_2h_battle_shout",
   "published": {
-    "dps": 959.7,
-    "source": "DPS report 2026-10-28 (full re-sim at 20,000 iterations, 180 s, after the launch-realm hunter hotfix)"
+    "dps": 1027.2,
+    "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
   },
   "verify": {
     "dps": 961.6,
@@ -45,7 +45,7 @@
     "Bloodthirst, then Slam at 45+ Rage right after a main-hand swing, then Whirlwind at 25+ Rage",
     "During execute, Execute comes after Bloodthirst and Whirlwind. Putting it first loses 4.7 DPS on Fury and 22.7 on two-hand Fury",
     "Heroic Strike at 90+ Rage, outside execute",
-    "Hamstring as filler at 20+ Rage"
+    "Hamstring as filler at 10+ Rage"
   ],
   "consumes": [
     "Flask of Natural Precision",

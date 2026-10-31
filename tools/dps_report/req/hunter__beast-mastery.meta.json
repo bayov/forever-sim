@@ -62,8 +62,8 @@
     "Goblin Land Mine"
   ],
   "caveats": [
-    "Assumed: Trueshot Aura's top rank gives 100 ranged attack power (the client says 50). Hunter's Mark gives 143 after a server hotfix (the client says 71).",
-    "Uses Aspect of the Hawk rank 5 (90 ranged attack power). Forever's rank 6 gives only 55.",
+    "Trueshot Aura's top rank gives 50 ranged attack power, from the launch realms' hotfix of 2026-10-28 (ranks 1 to 4: 15, 22, 30 and 40). Hunter's Mark gives 143 after a server hotfix (the client says 71).",
+    "Uses Aspect of the Hawk rank 6 (55 ranged attack power). The 2026-10-28 hotfix lowers ranks 1 to 5 to 15, 22, 30, 38 and 47.",
     "The pet gets 10% of the hunter's ranged attack power on top of its own 254, plus the hunter's crit and hit (from beta pet sheets).",
     "Arcane Shot gets 10% of ranged attack power, and Serpent Sting 3% a tick. Beta logs fit 11% and 3.5%.",
     "Auto Shot keeps firing during casts. Moving cancels its 0.5s wind-up.",

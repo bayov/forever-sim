@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_mana_tide",
   "published": {
-    "dps": 757.0,
-    "source": "DPS report 2026-10-28 (full re-sim at 20,000 iterations, 180 s, after the launch-realm hunter hotfix)"
+    "dps": 757.1,
+    "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
   },
   "verify": {
     "dps": 762.14,
@@ -75,5 +75,5 @@
     "Eye of the Storm 3 stops 70% of the pushback from the 2 hits a minute.",
     "Uses Major Mana Potion instead of Caustic Smog Potion. That's -4.3 / +1.8 / +27.2 DPS at 120s / 180s / 300s."
   ],
-  "notes": "mksettings -spec ele -apl level60_mana_tide (standards 23: every shaman drops its own party totems; the raid has none, the shaman drops Mana Spring Totem itself); edited defaultPotion to MajorManaPotion (the build's own consumes, EncounterLevel60ManaTide); race SkyborneWindshaper (the best race since client 70425's Wind Blessed 3% haste). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD."
+  "notes": "mksettings -spec ele_mana_tide -apl level60_mana_tide (standards 23: every shaman drops its own party totems; the raid has none, the shaman drops Mana Spring Totem itself) (its own consumes, the Major Mana Potion, ManaTideConsumes); race SkyborneWindshaper (the best race since client 70425's Wind Blessed 3% haste). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD."
 }

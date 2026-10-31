@@ -728,56 +728,12 @@
 		font-size: 0.8125rem;
 	}
 
-	// Rotations: the level ranges on top, then the plan's rotations on the left and the
-	// selected one in the editor on the right.
+	// Rotations: the level ranges and the plan's rotations on the left, and the selected one in
+	// the editor on the right.
 	.leveling-plan-rotations {
 		display: flex;
 		flex-direction: column;
 		gap: var(--section-spacer);
-	}
-
-	.leveling-plan-ranges {
-		display: flex;
-		flex-direction: column;
-		gap: var(--spacer-2);
-		margin-bottom: var(--block-spacer);
-	}
-
-	.leveling-plan-range {
-		display: flex;
-		align-items: center;
-		gap: var(--spacer-2);
-		max-width: 52rem;
-	}
-
-	.leveling-plan-range-levels {
-		flex: 0 0 9.5rem;
-		display: flex;
-		align-items: center;
-		gap: var(--spacer-2);
-		white-space: nowrap;
-	}
-
-	.leveling-plan-range-from {
-		width: 4rem;
-		padding: 0 var(--spacer-2);
-	}
-
-	.leveling-plan-range-to {
-		color: var(--bs-gray-400);
-	}
-
-	.leveling-plan-rotation-select {
-		flex: 1;
-		min-width: 0;
-	}
-
-	.leveling-plan-imbue-select {
-		flex: 0 0 12rem;
-	}
-
-	.leveling-plan-remove-space {
-		flex: 0 0 1.6rem;
 	}
 
 	.leveling-plan-rotations-main {
@@ -791,7 +747,7 @@
 	}
 
 	.leveling-plan-library-col {
-		flex: 0 0 20rem;
+		flex: 0 0 24rem;
 		position: sticky;
 		top: var(--spacer-3);
 
@@ -815,12 +771,14 @@
 		margin-bottom: var(--block-spacer);
 	}
 
+	// A rotation's card, with the rotation's color as a band on its left.
 	.leveling-plan-library-item {
 		display: flex;
 		align-items: flex-start;
 		gap: var(--spacer-2);
 		padding: var(--spacer-2);
 		border: 1px solid var(--line-color);
+		border-left: 4px solid var(--rotation-color, var(--line-color));
 		border-radius: var(--bs-border-radius);
 		background: rgba(0, 0, 0, 0.2);
 		color: inherit;
@@ -836,7 +794,7 @@
 		}
 
 		&.active {
-			border-color: var(--gold);
+			border-color: var(--rotation-color, var(--gold));
 			background: rgba(255, 255, 255, 0.05);
 		}
 	}
@@ -853,8 +811,57 @@
 		color: var(--bs-white);
 	}
 
-	.leveling-plan-library-where {
+	.leveling-plan-library-heading {
+		margin-top: var(--spacer-2);
 		color: var(--bs-gray-500);
+		font-size: 0.75rem;
+		letter-spacing: 0.04em;
+		text-transform: uppercase;
+	}
+
+	// A rotation's card: its name and a remove button on top, its levels and spells under them.
+	.leveling-plan-range {
+		flex-direction: column;
+		align-items: stretch;
+		gap: 0.35rem;
+	}
+
+	.leveling-plan-range-head,
+	.leveling-plan-range-foot {
+		display: flex;
+		align-items: center;
+		gap: var(--spacer-2);
+	}
+
+	.leveling-plan-range-head .leveling-plan-library-name {
+		flex: 1;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.leveling-plan-range-levels {
+		flex: 0 0 auto;
+		display: flex;
+		align-items: center;
+		gap: 0.35rem;
+		white-space: nowrap;
+
+		.leveling-plan-level-input {
+			width: 3.25rem;
+			height: 1.75rem;
+		}
+	}
+
+	.leveling-plan-range-from {
+		width: 3.25rem;
+		padding: 0 var(--spacer-2);
+		color: var(--bs-white);
+	}
+
+	.leveling-plan-range-to {
+		color: var(--bs-gray-400);
 		font-size: 0.8125rem;
 	}
 
@@ -876,12 +883,30 @@
 		margin-left: 0.2rem;
 	}
 
+	.leveling-plan-range-foot .leveling-plan-spells {
+		margin-top: 0;
+		margin-left: auto;
+	}
+
 	.leveling-plan-new-rotation .dropdown-menu {
 		max-height: 60vh;
 		overflow-y: auto;
 	}
 
 	// The Training part: a row per rank the plan casts.
+	.leveling-plan-training {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-start;
+		gap: var(--block-spacer);
+
+		> .content-block {
+			flex: 1 1 32rem;
+			min-width: 0;
+			margin-bottom: 0;
+		}
+	}
+
 	.leveling-plan-training-status {
 		color: var(--bs-gray-500);
 		margin-bottom: var(--block-spacer);
@@ -956,6 +981,10 @@
 
 	.leveling-plan-level-select {
 		width: 5rem;
+	}
+
+	.leveling-plan-imbue-select {
+		width: auto;
 	}
 }
 

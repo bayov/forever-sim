@@ -444,21 +444,6 @@
                             "and": {
                               "vals": [
                                 {
-                                  "cmp": {
-                                    "op": "OpLt",
-                                    "lhs": {
-                                      "autoTimeToNext": {
-                                        "autoType": "MainHand"
-                                      }
-                                    },
-                                    "rhs": {
-                                      "const": {
-                                        "val": "1.5s"
-                                      }
-                                    }
-                                  }
-                                },
-                                {
                                   "not": {
                                     "val": {
                                       "auraIsActive": {
@@ -509,21 +494,6 @@
                           {
                             "and": {
                               "vals": [
-                                {
-                                  "cmp": {
-                                    "op": "OpLt",
-                                    "lhs": {
-                                      "autoTimeToNext": {
-                                        "autoType": "MainHand"
-                                      }
-                                    },
-                                    "rhs": {
-                                      "const": {
-                                        "val": "1.5s"
-                                      }
-                                    }
-                                  }
-                                },
                                 {
                                   "not": {
                                     "val": {

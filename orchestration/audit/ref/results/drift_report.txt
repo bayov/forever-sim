@@ -39,14 +39,11 @@
    .raid.parties[0].players[0].retributionPaladin.options.primarySeal: committed=Command regen=Righteousness
 ## paladin__level_60 spec=ret diffs=1 (apl/prepull 0)
    .raid.parties[0].players[0].retributionPaladin.options.primarySeal: committed=Command regen=Righteousness
-## paladin__level_60_shock-duty-crusader spec=ret diffs=2 (apl/prepull 0)
+## paladin__level_60_shock-duty-crusader spec=ret_shock diffs=1 (apl/prepull 0)
    .raid.debuffs.judgementOfTheCrusader: committed=<absent> regen=TristateEffectImproved
-   .raid.parties[0].players[0].consumes.defaultPotion: committed=MajorManaPotion regen=DragonfirePotion
-## paladin__level_60_shock-duty-wisdom spec=ret diffs=2 (apl/prepull 0)
+## paladin__level_60_shock-duty-wisdom spec=ret_shock diffs=1 (apl/prepull 0)
    .raid.debuffs.judgementOfWisdom: committed=<absent> regen=True
-   .raid.parties[0].players[0].consumes.defaultPotion: committed=MajorManaPotion regen=DragonfirePotion
-## paladin__level_60_shock spec=ret diffs=1 (apl/prepull 0)
-   .raid.parties[0].players[0].consumes.defaultPotion: committed=MajorManaPotion regen=DragonfirePotion
+## paladin__level_60_shock spec=ret_shock diffs=0 (apl/prepull 0)
 ## paladin__level_60_shock_ret-duty-crusader spec=ret diffs=2 (apl/prepull 0)
    .raid.debuffs.judgementOfTheCrusader: committed=<absent> regen=TristateEffectImproved
    .raid.parties[0].players[0].retributionPaladin.options.primarySeal: committed=Command regen=Righteousness
@@ -55,9 +52,8 @@
    .raid.parties[0].players[0].retributionPaladin.options.primarySeal: committed=Command regen=Righteousness
 ## paladin__level_60_shock_ret spec=ret diffs=1 (apl/prepull 0)
    .raid.parties[0].players[0].retributionPaladin.options.primarySeal: committed=Command regen=Righteousness
-## paladin__level_60_shock_undead spec=ret diffs=2 (apl/prepull 0)
+## paladin__level_60_shock_undead spec=ret_shock diffs=1 (apl/prepull 0)
    .encounter.targets[0].mobType: committed=MobTypeUndead regen=<absent>
-   .raid.parties[0].players[0].consumes.defaultPotion: committed=MajorManaPotion regen=DragonfirePotion
 ## paladin__level_60_sub_holy-duty-crusader spec=ret diffs=2 (apl/prepull 0)
    .raid.debuffs.judgementOfTheCrusader: committed=<absent> regen=TristateEffectImproved
    .raid.parties[0].players[0].retributionPaladin.options.primarySeal: committed=Command regen=Righteousness
@@ -68,45 +64,28 @@
    .raid.parties[0].players[0].retributionPaladin.options.primarySeal: committed=Command regen=Righteousness
 ## paladin__level_60_sub_holy_undead spec=ret diffs=1 (apl/prepull 0)
    .encounter.targets[0].mobType: committed=MobTypeUndead regen=<absent>
-## priest__shadow-holy spec=shadow diffs=1 (apl/prepull 0)
-   .raid.parties[0].players[0].consumes.manaRegenElixir: committed=GreaterMagebloodElixir regen=<absent>
+## priest__shadow-holy spec=shadow_holy diffs=0 (apl/prepull 0)
 ## priest__shadow spec=shadow diffs=0 (apl/prepull 0)
-## priest__smite spec=shadow diffs=5 (apl/prepull 0)
-   .raid.parties[0].players[0].consumes.defaultPotion: committed=MajorManaPotion regen=MajorSpellblastingPotion
-   .raid.parties[0].players[0].consumes.fillerExplosive: committed=ExplosiveGoblinLandMine regen=<absent>
-   .raid.parties[0].players[0].consumes.firePowerBuff: committed=ElixirOfGreaterFirepower regen=<absent>
-   .raid.parties[0].players[0].consumes.manaRegenElixir: committed=GreaterMagebloodElixir regen=<absent>
-   .raid.parties[0].players[0].consumes.spiritElixir: committed=ElixirOfGreaterSpirit regen=<absent>
-## rogue__combat-daggers-humanoid spec=rogue_combat diffs=3 (apl/prepull 0)
+## priest__smite spec=smite diffs=0 (apl/prepull 0)
+## rogue__combat-daggers-humanoid spec=rogue_combat_daggers diffs=1 (apl/prepull 0)
    .encounter.targets[0].mobType: committed=MobTypeHumanoid regen=<absent>
-   .raid.parties[0].players[0].consumes.fillerExplosive: committed=<absent> regen=ExplosiveGoblinLandMine
-   .raid.parties[0].players[0].consumes.flask: committed=FlaskOfNaturalAccuracy regen=FlaskOfNaturalPrecision
-## rogue__combat-daggers spec=rogue_combat diffs=2 (apl/prepull 0)
-   .raid.parties[0].players[0].consumes.fillerExplosive: committed=<absent> regen=ExplosiveGoblinLandMine
-   .raid.parties[0].players[0].consumes.flask: committed=FlaskOfNaturalAccuracy regen=FlaskOfNaturalPrecision
-## rogue__combat-swords-humanoid spec=rogue_combat diffs=2 (apl/prepull 0)
+## rogue__combat-daggers spec=rogue_combat_daggers diffs=0 (apl/prepull 0)
+## rogue__combat-swords-humanoid spec=rogue_combat_swords diffs=1 (apl/prepull 0)
    .encounter.targets[0].mobType: committed=MobTypeHumanoid regen=<absent>
-   .raid.parties[0].players[0].consumes.fillerExplosive: committed=<absent> regen=ExplosiveGoblinLandMine
-## rogue__combat-swords spec=rogue_combat diffs=1 (apl/prepull 0)
-   .raid.parties[0].players[0].consumes.fillerExplosive: committed=<absent> regen=ExplosiveGoblinLandMine
-## rogue__mutilate-humanoid spec=rogue_assassination diffs=2 (apl/prepull 0)
+## rogue__combat-swords spec=rogue_combat_swords diffs=0 (apl/prepull 0)
+## rogue__mutilate-humanoid spec=rogue_assassination diffs=1 (apl/prepull 0)
    .encounter.targets[0].mobType: committed=MobTypeHumanoid regen=<absent>
-   .raid.parties[0].players[0].consumes.fillerExplosive: committed=<absent> regen=ExplosiveGoblinLandMine
-## rogue__mutilate spec=rogue_assassination diffs=1 (apl/prepull 0)
-   .raid.parties[0].players[0].consumes.fillerExplosive: committed=<absent> regen=ExplosiveGoblinLandMine
+## rogue__mutilate spec=rogue_assassination diffs=0 (apl/prepull 0)
 ## rogue__seal-fate-daggers-humanoid spec=rogue_combat diffs=1 (apl/prepull 0)
    .encounter.targets[0].mobType: committed=MobTypeHumanoid regen=<absent>
 ## rogue__seal-fate-daggers spec=rogue_combat diffs=0 (apl/prepull 0)
-## rogue__seal-fate-swords-humanoid spec=rogue_combat diffs=2 (apl/prepull 0)
+## rogue__seal-fate-swords-humanoid spec=rogue_combat_swords diffs=1 (apl/prepull 0)
    .encounter.targets[0].mobType: committed=MobTypeHumanoid regen=<absent>
-   .raid.parties[0].players[0].consumes.fillerExplosive: committed=<absent> regen=ExplosiveGoblinLandMine
-## rogue__seal-fate-swords spec=rogue_combat diffs=1 (apl/prepull 0)
-   .raid.parties[0].players[0].consumes.fillerExplosive: committed=<absent> regen=ExplosiveGoblinLandMine
+## rogue__seal-fate-swords spec=rogue_combat_swords diffs=0 (apl/prepull 0)
 ## rogue__subtlety-humanoid spec=rogue_subtlety diffs=1 (apl/prepull 0)
    .encounter.targets[0].mobType: committed=MobTypeHumanoid regen=<absent>
 ## rogue__subtlety spec=rogue_subtlety diffs=0 (apl/prepull 0)
-## shaman__elemental-level60-mana-tide spec=ele diffs=1 (apl/prepull 0)
-   .raid.parties[0].players[0].consumes.defaultPotion: committed=MajorManaPotion regen=CausticSmogPotion
+## shaman__elemental-level60-mana-tide spec=ele_mana_tide diffs=0 (apl/prepull 0)
 ## shaman__elemental-level60 spec=ele diffs=0 (apl/prepull 0)
 ## shaman__enhancement-imp-gw spec=enh diffs=0 (apl/prepull 0)
 ## shaman__enhancement-level60 spec=enh diffs=0 (apl/prepull 0)
@@ -139,17 +118,17 @@
 ## warrior__arms-duty-battle-shout spec=arms diffs=1 (apl/prepull 0)
    .raid.buffs.battleShout: committed=<absent> regen=TristateEffectImproved
 ## warrior__arms-duty-sunder spec=arms diffs=1 (apl/prepull 0)
-   .raid.debuffs.sunderArmor: committed=<absent> regen=True
+   .raid.debuffs.sunderRamp.tank: committed=<absent> regen=True
 ## warrior__arms spec=arms diffs=0 (apl/prepull 0)
 ## warrior__arms_dragonkin spec=arms diffs=1 (apl/prepull 0)
    .encounter.targets[0].mobType: committed=MobTypeDragonkin regen=<absent>
 ## warrior__fury-duty-battle-shout spec=fury diffs=1 (apl/prepull 0)
    .raid.buffs.battleShout: committed=<absent> regen=TristateEffectImproved
 ## warrior__fury-duty-sunder spec=fury diffs=1 (apl/prepull 0)
-   .raid.debuffs.sunderArmor: committed=<absent> regen=True
+   .raid.debuffs.sunderRamp.tank: committed=<absent> regen=True
 ## warrior__fury spec=fury diffs=0 (apl/prepull 0)
 ## warrior__fury_2h-duty-battle-shout spec=fury diffs=1 (apl/prepull 0)
    .raid.buffs.battleShout: committed=<absent> regen=TristateEffectImproved
 ## warrior__fury_2h-duty-sunder spec=fury diffs=1 (apl/prepull 0)
-   .raid.debuffs.sunderArmor: committed=<absent> regen=True
+   .raid.debuffs.sunderRamp.tank: committed=<absent> regen=True
 ## warrior__fury_2h spec=fury diffs=0 (apl/prepull 0)

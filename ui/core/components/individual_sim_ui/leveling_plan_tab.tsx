@@ -67,6 +67,8 @@ interface PlanRun {
 }
 
 const PLAN_RUN_KEY = '__levelingPlanRun__';
+// The part of the plan we last looked at, so a page reload opens it again.
+const SECTION_KEY = '__levelingPlanSection__';
 
 type Section = 'overview' | 'gear' | 'talents' | 'rotations' | 'training';
 const SECTIONS: Array<{ id: Section; name: string }> = [
@@ -256,7 +258,7 @@ export class LevelingPlanTab extends SimTab {
 		);
 		new LevelingTrainingSection(this.sections.get('training')!, simUI);
 		this.gear.planChangeEmitter.on(() => this.rotations.refresh());
-		this.showSection('overview');
+		this.showSection(this.loadSection());
 		simUI.sim.encounter.changeEmitter.on(() => this.syncActiveSections());
 
 		this.lastRun = this.loadRun();
@@ -315,6 +317,20 @@ export class LevelingPlanTab extends SimTab {
 			button.classList.toggle('active', id == section);
 			button.setAttribute('aria-pressed', String(id == section));
 		});
+		try {
+			window.localStorage.setItem(this.simUI.getStorageKey(SECTION_KEY), section);
+		} catch (e) {
+			// Without storage we open the overview again on the next visit.
+		}
+	}
+
+	private loadSection(): Section {
+		try {
+			const section = window.localStorage.getItem(this.simUI.getStorageKey(SECTION_KEY));
+			return SECTIONS.find(s => s.id == section)?.id ?? 'overview';
+		} catch (e) {
+			return 'overview';
+		}
 	}
 
 	// The request of one level: the plan's gear, talents and rotation there, in the grinding

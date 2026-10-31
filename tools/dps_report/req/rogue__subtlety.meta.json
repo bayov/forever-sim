@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_synthetic_subtlety",
   "apl": "level60_subtlety",
   "published": {
-    "dps": 717.2,
-    "source": "Second race re-pick 2026-10-27 (standards 29 and 16, after dev notes post 8): Undead; verify.py, 20000 iterations, seed 1 (was 714.9 as Night Elf on the same sim)"
+    "dps": 735.8,
+    "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
   },
   "verify": {
     "dps": 717.2,

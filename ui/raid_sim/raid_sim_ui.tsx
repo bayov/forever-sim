@@ -5,6 +5,7 @@ import { delegate } from 'tippy.js';
 
 import { CompareResults } from '../core/components/compare_results/compare_results';
 import { EmbeddedDetailedResults } from '../core/components/detailed_results';
+import { loadingState } from '../core/components/loading_state';
 import { RaidSimResultsManager } from '../core/components/raid_sim_action';
 import { SimHeader } from '../core/components/sim_header';
 import { SimHistory } from '../core/components/sim_history';
@@ -127,7 +128,7 @@ export class RaidSimUI extends SimUI {
 		loadRaidFromLink(this.editor);
 		// A link pasted into this page's own tab changes only the hash, which doesn't reload the page.
 		window.addEventListener('hashchange', () => loadRaidFromLink(this.editor));
-		this.showLatestRun();
+		this.resultsManager.whileLoading(this.showLatestRun());
 
 		this.simHeader.syncTabWithUrl();
 		if (new URLSearchParams(window.location.search).has(RESULT_PARAM)) loader.loadFromUrlParameter();
@@ -214,6 +215,8 @@ export class RaidSimUI extends SimUI {
 	}
 
 	async showResult(result: CompSearchResult, source: string, activate = true) {
+		// The first one waits for the data file. The ones after it don't wait, so the loader never shows.
+		this.resultHost.replaceChildren(loadingState('Loading the search result'));
 		const data = await this.dataPromise;
 		const view = new ResultView(result, data, {
 			source,

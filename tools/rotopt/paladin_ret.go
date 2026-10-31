@@ -62,10 +62,10 @@ func (paladinRet) Knobs() []Knob {
 		// Consecration tick or the Holy Strike it delays.
 		{Name: "hammerOfWrathFirst", Default: 0, Min: 0, Max: 3, Step: 1},
 		// Twist the seals for Twist of Light's Echo: 0 never, 1 swap Seal of Command and Seal
-		// of Righteousness within twistWindow tenths of a second of the next swing, above
-		// twistMana percent of mana.
+		// of Righteousness within twistWindow tenths of a second of the next swing (0: whenever
+		// no Echo is waiting, at any point of the swing), above twistMana percent of mana.
 		{Name: "twist", Default: 0, Min: 0, Max: 1, Step: 1},
-		{Name: "twistWindow", Default: 10, Min: 5, Max: 30, Step: 5},
+		{Name: "twistWindow", Default: 10, Min: 0, Max: 30, Step: 5},
 		{Name: "twistMana", Default: 40, Min: 0, Max: 80, Step: 20},
 		// Holy Strike only above this much mana, 0 always.
 		{Name: "holyStrikeMana", Default: 0, Min: 0, Max: 40, Step: 20},
@@ -216,8 +216,11 @@ func (paladinRet) Build(k Knobs) *proto.APLRotation {
 		sealUp := or(auraIsActive(seal), auraIsActive(otherSeal))
 		// One swap per swing: none while the last swap's Echo waits for its swing. Two swaps
 		// before a swing would leave both Echoes up, and we do not know the server allows that.
-		swingSoon := and(lt(mainHandTimeToNext(), seconds(k["twistWindow"]/10)),
-			not(auraIsActive(echoOfCommand)), not(auraIsActive(echoOfRighteousness)))
+		swingSoon := and(not(auraIsActive(echoOfCommand)), not(auraIsActive(echoOfRighteousness)))
+		if k["twistWindow"] > 0 {
+			swingSoon = and(lt(mainHandTimeToNext(), seconds(k["twistWindow"]/10)),
+				not(auraIsActive(echoOfCommand)), not(auraIsActive(echoOfRighteousness)))
+		}
 		var floor value
 		if k["twistMana"] > 0 {
 			floor = ge(currentManaPercent(), num(k["twistMana"]/100))

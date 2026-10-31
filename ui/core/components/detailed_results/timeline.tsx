@@ -8,7 +8,7 @@ import { ActionId, resourceTypeToIcon } from '../../proto_utils/action_id.js';
 import { AuraUptimeLog, CastLog, DamageDealtLog, DpsLog, ResourceChangedLogGroup, SimLog, ThreatLogGroup } from '../../proto_utils/logs_parser.js';
 import { resourceNames } from '../../proto_utils/names.js';
 import { UnitMetrics } from '../../proto_utils/sim_result.js';
-import { orderedResourceTypes } from '../../proto_utils/utils.js';
+import { classColors, orderedResourceTypes, specToClass } from '../../proto_utils/utils.js';
 import { TypedEvent } from '../../typed_event.js';
 import { bucket, distinct, formatToCompactNumber, formatToNumber, stringComparator, sum } from '../../utils.js';
 import { actionColors } from './color_settings.js';
@@ -796,13 +796,15 @@ export class Timeline extends ResultComponent {
 
 			this.addMajorCooldownAnnotations(player, options);
 		} else {
+			// Each player's line is named for them, so the legend tells them apart and the DPS axis
+			// can name all of them.
 			let maxDps = 0;
 			players.forEach(player => {
-				const dpsData = this.addDpsSeries(player, options, `var(--bs-${player.classColor}`, duration);
+				const dpsData = this.addDpsSeries(player, options, classColors[specToClass[player.spec]], duration, '', player.label);
 				maxDps = Math.max(maxDps, dpsData.maxDps);
 				tooltipHandlers.push(dpsData.tooltipHandler);
 			});
-			this.addDpsYAxis(maxDps, options);
+			this.addDpsYAxis(maxDps, options, dpsColor, players.map(player => player.label));
 		}
 
 		options.series.forEach((series: { name: string; hidden?: boolean }) => (series.hidden = this.hiddenChartSeries.has(series.name)));
@@ -1060,11 +1062,11 @@ export class Timeline extends ResultComponent {
 		);
 	}
 
-	private addDpsYAxis(maxDps: number, options: any, color = dpsColor) {
+	private addDpsYAxis(maxDps: number, options: any, color = dpsColor, seriesName: string | Array<string> = 'DPS') {
 		const dpsAxisMax = Math.ceil(maxDps / 100) * 100;
 		options.yaxis.push({
 			color,
-			seriesName: 'DPS',
+			seriesName,
 			min: 0,
 			max: dpsAxisMax,
 			tickAmount: 10,
@@ -1103,7 +1105,14 @@ export class Timeline extends ResultComponent {
 	// the value also falls slowly between changes. We add a point every half second there.
 	//
 	// lineColor replaces the usual red, like next to rage (see rageDpsColor).
-	private addDpsSeries(unit: UnitMetrics, options: any, colorOverride: string, duration: number, lineColor = ''): { maxDps: number; tooltipHandler: TooltipHandler } {
+	private addDpsSeries(
+		unit: UnitMetrics,
+		options: any,
+		colorOverride: string,
+		duration: number,
+		lineColor = '',
+		name = 'DPS',
+	): { maxDps: number; tooltipHandler: TooltipHandler } {
 		const dpsLogs = unit.dpsLogs;
 		const changes = new Map<number, number>();
 		const addChange = (timestamp: number, amount: number) => changes.set(timestamp, (changes.get(timestamp) ?? 0) + amount);
@@ -1142,7 +1151,7 @@ export class Timeline extends ResultComponent {
 
 		options.colors.push(lineColor || colorOverride || dpsColor);
 		options.series.push({
-			name: 'DPS',
+			name,
 			type: 'line',
 			data: points.map(point => ({ x: point.timestamp, y: point.dps })),
 		});

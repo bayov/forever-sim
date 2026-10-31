@@ -45,4 +45,19 @@ func init() {
 			}}
 		},
 	}
+	// Shadow + Holy adds Greater Mageblood (ui/shadow_priest/presets.ts ConsumesHoly): the Holy
+	// sub tree build runs short of mana.
+	specs["shadow_holy"] = withConsumes(specs["shadow"], func(consumes *proto.Consumes) {
+		consumes.ManaRegenElixir = proto.ManaRegenElixir_GreaterMagebloodElixir
+	})
+	// Smite's own consumes (ui/shadow_priest/presets.ts ConsumesSmite): the Major Mana Potion,
+	// Greater Mageblood and Greater Spirit for its mana, Greater Firepower for Smite and Holy
+	// Fire, and the Goblin Land Mine (+0.4 / +2.7 at 180 / 300 sec, 1.6 behind at 120, 2026-10-23).
+	specs["smite"] = withConsumes(specs["shadow"], func(consumes *proto.Consumes) {
+		consumes.DefaultPotion = proto.Potions_MajorManaPotion
+		consumes.FillerExplosive = proto.Explosive_ExplosiveGoblinLandMine
+		consumes.FirePowerBuff = proto.FirePowerBuff_ElixirOfGreaterFirepower
+		consumes.ManaRegenElixir = proto.ManaRegenElixir_GreaterMagebloodElixir
+		consumes.SpiritElixir = proto.SpiritElixir_ElixirOfGreaterSpirit
+	})
 }

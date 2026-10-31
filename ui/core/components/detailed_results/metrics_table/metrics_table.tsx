@@ -172,6 +172,11 @@ export abstract class MetricsTable<T extends ActionMetrics | AuraMetrics | UnitM
 		this.onUpdate.emit(resultData.eventID);
 	}
 
+	// Sorts the rows again after rows were added or removed outside of a new result.
+	protected resort() {
+		$(this.tableElem).trigger('update');
+	}
+
 	// Whether a single-element group should have its parent row removed.
 	// Override this to add custom behavior.
 	protected shouldCollapse(metric: T): boolean {

@@ -6,6 +6,7 @@ import { SimResult } from '../proto_utils/sim_result';
 import { SimUI } from '../sim_ui';
 import { TypedEvent } from '../typed_event';
 import { Component } from './component';
+import { loadingState } from './loading_state';
 import { AuraMetricsTable } from './detailed_results/aura_metrics';
 import { CastMetricsTable } from './detailed_results/cast_metrics';
 import { DamageMetricsTable } from './detailed_results/damage_metrics';
@@ -13,6 +14,7 @@ import { DpsHistogram } from './detailed_results/dps_histogram';
 import { DtpsMetricsTable } from './detailed_results/dtps_metrics';
 import { EventsView } from './detailed_results/events_view';
 import { HealingMetricsTable } from './detailed_results/healing_metrics';
+import { PlayerChooser } from './detailed_results/player_chooser';
 import { PlayerDamageMetricsTable } from './detailed_results/player_damage';
 import { PlayerDamageTakenMetricsTable } from './detailed_results/player_damage_taken';
 import { ResourceMetricsTable } from './detailed_results/resource_metrics';
@@ -142,6 +144,7 @@ export abstract class DetailedResults extends Component {
 				</div>
 				<div className="tab-content">
 					<div id="noResultsTab" className="tab-pane dr-tab-content fade active show">
+						{loadingState('Loading results')}
 						<div className="dr-empty">
 							<i className="fas fa-chart-column dr-empty-icon" />
 							<h5 className="dr-empty-title">No results yet</h5>
@@ -182,7 +185,10 @@ export abstract class DetailedResults extends Component {
 							{panel(
 								'Buffs',
 								'',
-								<div className="buff-aura-metrics" />,
+								<div>
+									<div className="all-players-only player-chooser-host" />
+									<div className="buff-aura-metrics" />
+								</div>,
 								<button ref={buffsUnusedRef} className="btn btn-link dr-panel-action" type="button" />,
 							)}
 							{panel(
@@ -194,9 +200,19 @@ export abstract class DetailedResults extends Component {
 						</div>
 					</div>
 					<div id="castsTab" className="tab-pane dr-tab-content casts-content fade">
-						<div className="dr-row">{panel('Casts', '', <div className="cast-metrics" />)}</div>
+						<div className="dr-row">
+							{panel(
+								'Casts',
+								'',
+								<div>
+									<div className="all-players-only player-chooser-host" />
+									<div className="cast-metrics" />
+								</div>,
+							)}
+						</div>
 					</div>
 					<div id="resourcesTab" className="tab-pane dr-tab-content resources-content fade">
+						<div className="dr-row all-players-only">{panel('Resources', '', <div className="player-chooser-host" />)}</div>
 						<div className="dr-row">
 							<div className="resource-metrics" />
 						</div>
@@ -302,10 +318,15 @@ export abstract class DetailedResults extends Component {
 			resultsEmitter: this.resultsEmitter,
 		});
 
+		this.rootElem.querySelectorAll<HTMLElement>('.player-chooser-host').forEach(parent => {
+			new PlayerChooser({ parent, resultsEmitter: this.resultsEmitter }, this.resultsFilter);
+		});
+
 		new EventsView({
 			parent: this.rootElem.querySelector('.events-view')!,
 			resultsEmitter: this.resultsEmitter,
 			simUI: this.simUI,
+			resultsFilter: this.resultsFilter,
 		});
 
 		this.rootElem.classList.add('hide-threat-metrics');
@@ -324,6 +345,11 @@ export abstract class DetailedResults extends Component {
 	}
 
 	abstract postMessage(update: DetailedResultsUpdate): Promise<void>;
+
+	// A loader in place of "No results yet", while we read the results we're about to show.
+	protected setLoading(loading: boolean) {
+		this.rootDiv.classList.toggle('dr-loading', loading);
+	}
 
 	protected async setSimRunData(simRunData: SimRunData) {
 		this.latestRun = simRunData;
@@ -404,11 +430,26 @@ export class EmbeddedDetailedResults extends DetailedResults {
 			this.rootElem.classList.add('individual-sim');
 		}
 
+		// We also count the results we're still reading into the tab. Otherwise "No results yet"
+		// would show for a moment between the manager's load being done and the tab having the
+		// results.
+		let reading = 0;
+		const updateLoading = () => this.setLoading(simResultsManager.isLoading() || reading > 0);
+		simResultsManager.loadingChangeEmitter.on(updateLoading);
+		updateLoading();
+
 		simResultsManager.currentChangeEmitter.on(async () => {
-			// Without a run, the tab shows no results.
-			const runData = simResultsManager.getRunData() ?? SimRunData.create();
-			await this.updateSettings();
-			await this.setSimRunData(runData);
+			reading++;
+			updateLoading();
+			try {
+				// Without a run, the tab shows no results.
+				const runData = simResultsManager.getRunData() ?? SimRunData.create();
+				await this.updateSettings();
+				await this.setSimRunData(runData);
+			} finally {
+				reading--;
+				updateLoading();
+			}
 		});
 	}
 

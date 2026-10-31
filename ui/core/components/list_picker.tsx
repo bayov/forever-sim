@@ -36,17 +36,13 @@ export interface ListPickerConfig<ModObject, ItemType> extends Omit<InputConfig<
 	minimumItems?: number;
 	// If set, only actions included in the list are allowed. Otherwise, all actions are allowed.
 	allowedActions?: Array<ListItemAction>;
-	// If set, we drag an item from anywhere on it, except its inputs, dropdowns and buttons, and
-	// the items around it slide away to make room, see ListPicker.makeSortable. Its move handle
-	// goes first in the item, on its left. A link in the item, like the rotation editor's action
-	// icon, starts a drag too when it has the LIST_PICKER_DRAG_HANDLE class.
-	dragWholeItem?: boolean;
+	// If set, we drag an item by its handle, and the items around it slide away to make room, see
+	// ListPicker.makeSortable. The item makes its own handle: any element in it with the
+	// LIST_PICKER_DRAG_HANDLE class, like the left side of a rotation editor row.
+	dragByHandle?: boolean;
 }
 
 export const LIST_PICKER_DRAG_HANDLE = 'list-picker-drag-handle';
-
-// What we press on to use it rather than to drag the item it's in.
-const NOT_DRAGGABLE = `input, textarea, select, button, [contenteditable], .dropdown-menu, a:not(.${LIST_PICKER_DRAG_HANDLE}):not(.list-picker-item-move)`;
 
 // How far we move the pointer before a press turns into a drag, so a click stays a click.
 const DRAG_THRESHOLD_PX = 4;
@@ -213,13 +209,11 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 
 		const item: ItemPickerPair<ItemType> = { elem: itemContainer, picker: itemPicker, idx: index };
 
-		if (this.actionEnabled('move')) {
-			const moveButton = ListPicker.makeActionElem('list-picker-item-move', this.config.dragWholeItem ? 'fa-grip-vertical' : 'fa-arrows-up-down');
-			if (this.config.dragWholeItem) {
-				itemContainer.prepend(moveButton);
-			} else {
-				itemHeader.appendChild(moveButton);
-			}
+		if (this.actionEnabled('move') && this.config.dragByHandle) {
+			this.makeSortable(itemContainer, index);
+		} else if (this.actionEnabled('move')) {
+			const moveButton = ListPicker.makeActionElem('list-picker-item-move', 'fa-arrows-up-down');
+			itemHeader.appendChild(moveButton);
 
 			const moveButtonTooltip = tippy(moveButton, {
 				allowHTML: false,
@@ -237,11 +231,7 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 				moveButtonTooltip?.destroy();
 			});
 
-			if (this.config.dragWholeItem) {
-				this.makeSortable(itemContainer, index);
-			}
-
-			moveButton.draggable = !this.config.dragWholeItem;
+			moveButton.draggable = true;
 			moveButton.addEventListener(
 				'dragstart',
 				event => {
@@ -374,8 +364,8 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 
 	// Lets us drag the item to a new place in the list, with the items around it sliding away.
 	//
-	// A press on the item that moves the pointer a few pixels starts the drag, unless it's on an
-	// input, a dropdown or a button. The item follows the pointer, and each item it passes slides
+	// A press on the item's handle that moves the pointer a few pixels starts the drag. The item
+	// follows the pointer, and each item it passes slides
 	// up or down by the item's height to open a gap. When we let go, the item slides into the gap
 	// and only then we save the new order, so the list doesn't jump. Near the top or the bottom
 	// of the scrolling area we scroll it, for lists taller than the screen.
@@ -397,7 +387,8 @@ export class ListPicker<ModObject, ItemType> extends Input<ModObject, Array<Item
 			'pointerdown',
 			down => {
 				const target = down.target as HTMLElement;
-				if (down.button != 0 || target.closest(NOT_DRAGGABLE) || target.closest('.list-picker-sortable') != itemContainer) {
+				const handle = target.closest(`.${LIST_PICKER_DRAG_HANDLE}`);
+				if (down.button != 0 || !handle || handle.closest('.list-picker-sortable') != itemContainer) {
 					return;
 				}
 

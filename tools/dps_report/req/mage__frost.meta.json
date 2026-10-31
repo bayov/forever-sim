@@ -5,7 +5,7 @@
   "build": "Frost",
   "isDefault": false,
   "pr": 89,
-  "race": "SkyborneHighOrder",
+  "race": "Undead",
   "talents": "05020520310011053-1-0535000301003002",
   "treeNames": [
     "Arcane",
@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_frost",
   "published": {
-    "dps": 911.1,
-    "source": "DPS report 2026-10-28 (full re-sim at 20,000 iterations, 180 s, after the launch-realm hunter hotfix)"
+    "dps": 911.6,
+    "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
   },
   "verify": {
     "dps": 908.3,

@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_sub_holy",
   "published": {
-    "dps": 948.8,
-    "source": "DPS report 2026-10-28 (full re-sim at 20,000 iterations, 180 s, after the launch-realm hunter hotfix)"
+    "dps": 978.2,
+    "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
   },
   "verify": {
     "dps": 943.7,
@@ -42,7 +42,7 @@
     "Consecration on cooldown at 20%+ mana",
     "Judgement on cooldown on whichever damage seal is up",
     "Seal of Righteousness whenever no damage seal is up",
-    "Twist: with Seal of Righteousness up, switch to Seal of Command in the last 1.5s before a swing, then back to Righteousness before the next. One switch per swing, at any mana. Twist of Light's Echo applies the old seal on the next swing",
+    "Twist: with Seal of Righteousness up, switch to Seal of Command whenever no Echo is waiting for a swing, then back to Righteousness the same way. One switch per swing, at any mana. Twist of Light's Echo applies the old seal on the next swing",
     "Holy Strike on cooldown",
     "Racials, Goblin Sapper, Dragonfire Potion and Demonic Rune on free GCDs"
   ],

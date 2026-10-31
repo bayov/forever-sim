@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_synthetic_crusader_duty",
   "apl": "level60_crusader_duty",
   "published": {
-    "dps": 938.1,
-    "source": "Raid sim variant (docs/raid_sim.md, milestone M1b), in the DPS report since 2026-10-30: wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s, 2026-10-29"
+    "dps": 968.7,
+    "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
   },
   "verify": {
     "dps": 938.11,
@@ -43,7 +43,7 @@
     "Consecration on cooldown at 20%+ mana",
     "Judgement on cooldown on whichever damage seal is up",
     "Seal of Command whenever no damage seal is up",
-    "Twist: with Seal of Command up, switch to Seal of Righteousness in the last 1.5s before a swing, then back to Command before the next. One switch per swing, at any mana. Twist of Light's Echo applies the old seal on the next swing",
+    "Twist: with Seal of Command up, switch to Seal of Righteousness whenever no Echo is waiting for a swing, then back to Command the same way. One switch per swing, at any mana. Twist of Light's Echo applies the old seal on the next swing",
     "Holy Strike on cooldown",
     "Racials, Goblin Sapper, Dragonfire Potion and Demonic Rune on free GCDs"
   ],

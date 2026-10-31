@@ -112,18 +112,20 @@
 	}
 }
 
-// A list we sort by dragging its items, see ListPicker.makeSortable. We drag an item from any
-// part of it that isn't an input, a dropdown or a button.
+// A list we sort by dragging its items by their handles, see ListPicker.makeSortable.
 .list-picker-sortable {
-	cursor: grab;
 	user-select: none;
+
+	.list-picker-drag-handle {
+		cursor: grab;
+	}
 
 	:is(input, textarea, select, [contenteditable]) {
 		cursor: text;
 		user-select: text;
 	}
 
-	:is(button, .dropdown-menu, a:not(.list-picker-drag-handle):not(.list-picker-item-move)) {
+	:is(button, .dropdown-menu, a:not(.list-picker-drag-handle)) {
 		cursor: pointer;
 	}
 }

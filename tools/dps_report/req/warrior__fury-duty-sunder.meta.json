@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_synthetic_fury",
   "apl": "level60_fury_sunder",
   "published": {
-    "dps": 948.1,
-    "source": "Raid sim variant (docs/raid_sim.md, milestone M1b), in the DPS report since 2026-10-30: wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s, 2026-10-29"
+    "dps": 1012.5,
+    "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
   },
   "verify": {
     "dps": 948.12,

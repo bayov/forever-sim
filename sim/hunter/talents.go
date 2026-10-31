@@ -56,15 +56,15 @@ func (hunter *Hunter) applyMarksmanshipTalents() {
 	}
 
 	// Efficiency: 3% off a rank (Classic 2%) on the shots, stings and melee abilities in its
-	// class mask (19416). Strider Kick and Lacerate are not in it; Sniper Shot is since client
-	// 1.60.1.70425 (mask word 3 bit 0x800000).
+	// class mask (19416). Lacerate is not in it. Sniper Shot is since client 1.60.1.70425 (mask
+	// word 3 bit 0x800000), and Strider Kick since 1.60.1.70707 (word 2 bit 0x200000).
 	if hunter.Talents.Efficiency > 0 {
 		hunter.OnSpellRegistered(func(spell *core.Spell) {
 			switch spell.SpellCode {
 			case SpellCode_HunterAimedShot, SpellCode_HunterArcaneShot, SpellCode_HunterMultiShot,
 				SpellCode_HunterSerpentSting, SpellCode_HunterScorpidSting, SpellCode_HunterVolley, SpellCode_HunterSummonHawk,
 				SpellCode_HunterRaptorStrike, SpellCode_HunterMongooseBite, SpellCode_HunterWingClip,
-				SpellCode_HunterSniperShot:
+				SpellCode_HunterSniperShot, SpellCode_HunterStriderKick:
 				if spell.Cost != nil {
 					spell.Cost.Multiplier -= 3 * hunter.Talents.Efficiency
 				}

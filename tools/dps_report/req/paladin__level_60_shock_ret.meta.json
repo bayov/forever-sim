@@ -14,8 +14,8 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_shock_ret",
   "published": {
-    "dps": 931.6,
-    "source": "DPS report 2026-10-28 (full re-sim at 20,000 iterations, 180 s, after the launch-realm hunter hotfix)"
+    "dps": 960.9,
+    "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
   },
   "summary": "Holy Shock with most points in Retribution. Uses Seal of Command, Consecrated Ground and Champion of the Light. No twisting and no Light's Vigil.",
   "keyTalents": [

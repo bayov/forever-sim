@@ -7,7 +7,7 @@ What the results audit compares against, and what it kept only locally (and how 
 | File | What it is | Made by |
 |---|---|---|
 | `req_summary.txt` | One line per DPS report request (66): `<id> mine <dps> pub <published> diff <d>`. The DPS of each committed `tools/dps_report/req/<id>.json` run as is, 20,000 iterations, seed 1, 180 s, on a wowsimcli built from master 1735382cd. All 66 are within 0.15 of `published.dps`. | Pass 40 (2026-10-17 00:34 UTC), `runreq.sh` |
-| `drift_report.txt` | The drift check's output for all 66 requests on master 1735382cd: what mksettings rebuilds from each meta against the committed request. Every difference listed is expected (see the handoff, "Drift check"). | Pass 40, `regen.py` |
+| `drift_report.txt` | The drift check's output for all 77 requests (2026-10-31, after results-20261025-1): what mksettings rebuilds from each meta against the committed request. No consumes differ except the feral Faerie Fire duty preset's dropped bomb; every difference listed is expected (duty and encounter variants' own edits, see the handoff, "Drift check"). | 2026-10-31, `regen.py` |
 
 Both still hold at master b389688f7 (2026-10-17 14:33 +0300): nothing the binaries read changed after 1735382cd, and
 `ui/dps_report/data/builds.json` (report v35) matches `req_summary.txt` on all 66 builds within 0.15 (pass 41).

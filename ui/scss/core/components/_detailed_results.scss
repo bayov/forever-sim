@@ -1,3 +1,4 @@
+@import './loading_state';
 @import './detailed_results/dps_histogram';
 @import './detailed_results/events_view';
 @import './detailed_results/session_strip';
@@ -53,6 +54,11 @@
 		#noResultsTab {
 			display: none;
 		}
+	}
+
+	&.dr-loading .dr-empty,
+	&:not(.dr-loading) #noResultsTab .loading-state {
+		display: none;
 	}
 
 	> .tab-content {

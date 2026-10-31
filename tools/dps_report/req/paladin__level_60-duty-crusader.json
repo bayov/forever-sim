@@ -448,21 +448,6 @@
                             "and": {
                               "vals": [
                                 {
-                                  "cmp": {
-                                    "lhs": {
-                                      "autoTimeToNext": {
-                                        "autoType": "MainHand"
-                                      }
-                                    },
-                                    "op": "OpLt",
-                                    "rhs": {
-                                      "const": {
-                                        "val": "1.5s"
-                                      }
-                                    }
-                                  }
-                                },
-                                {
                                   "not": {
                                     "val": {
                                       "auraIsActive": {
@@ -513,21 +498,6 @@
                           {
                             "and": {
                               "vals": [
-                                {
-                                  "cmp": {
-                                    "lhs": {
-                                      "autoTimeToNext": {
-                                        "autoType": "MainHand"
-                                      }
-                                    },
-                                    "op": "OpLt",
-                                    "rhs": {
-                                      "const": {
-                                        "val": "1.5s"
-                                      }
-                                    }
-                                  }
-                                },
                                 {
                                   "not": {
                                     "val": {

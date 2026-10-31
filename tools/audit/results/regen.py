@@ -11,7 +11,14 @@ WORK=os.environ.get('AUDIT_WORK') or os.path.join(os.environ.get('TMPDIR','/tmp'
 BIN=os.environ.get('AUDIT_BIN') or os.path.join(WORK,'bin')
 os.makedirs(os.path.join(WORK,'drift'),exist_ok=True)
 os.chdir(TREE)
+META={}
 def spec_for(m):
+    # The spec the request was made with: a variant (duty, pet, encounter) takes its base build's, then the
+    # meta's notes name it (`-spec X`) where they do, else it follows from the id.
+    if m.get('baseBuild'):
+        return spec_for(META.get(m['baseBuild']) or json.load(open(f"tools/dps_report/req/{m['baseBuild']}.meta.json")))
+    named=re.findall(r'-spec (\w+)',m.get('notes') or '')
+    if named: return named[0]
     i=m['id']
     c,rest=i.split('__')
     if c=='druid': return 'feral' if 'feral' in rest else 'balance'
@@ -19,13 +26,15 @@ def spec_for(m):
         base={'beast-mastery':'hunter_bm','lone-wolf':'hunter_lw','marksmanship':'hunter_mm','survival':'hunter_sv'}[rest.split('-duty')[0]]
         return base
     if c=='mage': return 'mage_'+rest
-    if c=='paladin': return 'ret'
-    if c=='priest': return 'shadow'
+    if c=='paladin': return 'ret_shock' if 'shock' in rest and 'shock_ret' not in rest else 'ret'
+    if c=='priest': return {'smite':'smite','shadow-holy':'shadow_holy'}.get(rest,'shadow')
     if c=='rogue':
         if rest.startswith('mutilate'): return 'rogue_assassination'
         if rest.startswith('subtlety'): return 'rogue_subtlety'
+        if rest.startswith('combat-daggers'): return 'rogue_combat_daggers'
+        if rest.startswith(('combat-swords','seal-fate-swords')): return 'rogue_combat_swords'
         return 'rogue_combat'
-    if c=='shaman': return 'ele' if 'elemental' in rest else 'enh'
+    if c=='shaman': return ('ele_mana_tide' if 'mana-tide' in rest else 'ele') if 'elemental' in rest else 'enh'
     if c=='warlock': return rest.split('-duty')[0]
     if c=='warrior': return 'arms' if rest.startswith('arms') else 'fury'
 def flat(x,p=''):

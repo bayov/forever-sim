@@ -25,7 +25,7 @@
         {"action":{"castSpell":{"spellId":{"spellId":1680}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"currentRage":{}},"op":"OpGe","rhs":{"const":{"val":"25"}}}},{"sequenceIsComplete":{"sequenceName":"sunder"}}]}}}},
         {"action":{"castSpell":{"spellId":{"rank":5,"spellId":20662}},"condition":{"and":{"vals":[{"sequenceIsComplete":{"sequenceName":"sunder"}}]}}}},
         {"action":{"castSpell":{"spellId":{"rank":8,"spellId":11567,"tag":1}},"condition":{"and":{"vals":[{"cmp":{"lhs":{"currentRage":{}},"op":"OpGe","rhs":{"const":{"val":"90"}}}},{"not":{"val":{"isExecutePhase":{"threshold":"E20"}}}}]}}}},
-        {"action":{"castSpell":{"spellId":{"rank":3,"spellId":7373}},"condition":{"and":{"vals":[{"and":{"vals":[{"cmp":{"lhs":{"currentRage":{}},"op":"OpGe","rhs":{"const":{"val":"20"}}}},{"not":{"val":{"isExecutePhase":{"threshold":"E20"}}}}]}},{"sequenceIsComplete":{"sequenceName":"sunder"}}]}}},"notes":"For the procs."},
+        {"action":{"castSpell":{"spellId":{"rank":3,"spellId":7373}},"condition":{"and":{"vals":[{"and":{"vals":[{"cmp":{"lhs":{"currentRage":{}},"op":"OpGe","rhs":{"const":{"val":"10"}}}},{"not":{"val":{"isExecutePhase":{"threshold":"E20"}}}}]}},{"sequenceIsComplete":{"sequenceName":"sunder"}}]}}},"notes":"For the procs."},
         {"action":{"castSpell":{"spellId":{"spellId":2458}},"condition":{"not":{"val":{"auraIsActive":{"auraId":{"spellId":2458}}}}}}}
     ]
 }

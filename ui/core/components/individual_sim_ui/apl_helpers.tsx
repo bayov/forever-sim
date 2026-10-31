@@ -307,6 +307,7 @@ export class APLActionIDPicker extends DropdownPicker<Player<any>, ActionID, Act
 			},
 			values: [],
 		});
+		this.rootElem.classList.add('apl-actionid-picker');
 
 		const getUnitRef = config.getUnitRef;
 		const defaultRef =

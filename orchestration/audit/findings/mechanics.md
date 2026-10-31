@@ -4,22 +4,6 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
-### mechanics-20261030-2: DPS report and standards still say Windfury Totem 1.5 sec and extra attacks reset the swing, after the sim took 100 ms and no reset
-- severity: medium (the numbers are right per the 2026-10-30 user rulings; the published assumption cards describe the opposite of what moved Arms +10%)
-- affects: DPS report assumption cards (all melee: warrior, rogue, Ret paladin, Survival hunter, Feral, Enhancement), orchestration/standards.md 17 / 174 / 175
-- found: 2026-10-30, master fb1485888
-- evidence: f3017897f sets the totem's proc ICD to 100 ms under Forever (tier 1: 70707 10612 aura 42 proc 20% icd 100, verified) and keeps the swing timer on extra attacks (user ruling, notes.md to verify). fb1485888 re-simmed the report with both, but `tools/dps_report/assumptions_def.py:399-412` and `ui/dps_report/data/assumptions.json` still show `wf_totem_icd` "At most once every 1.5s, as in Classic." and `extra_attack_swing` "Yes. The next swing waits a full swing after an extra attack."; standards.md 17 ("internal cooldown is 1.5 sec ... the 100 ms alternative is closed"), 174 and 175 say the same. Effect of f3017897f alone (run_reqs, seed 1, 5000 iterations, bbbaf2e3c vs f3017897f CLIs): Arms 905.0 -> 995.4 (+10.0%), Fury 2H +6.6%, Fury +6.2%, Survival +4.3%, Shock Ret +3.3%, Mutilate +2.9%, Combat Swords +1.7%. In Arms, white swings +13% and Heroic Strike casts 2.7x, so the swing-timer ruling carries most of it. Eviscerate's 4% AP a combo point (same commit, user ruling) has no assumption card either.
-- proposed fix: flip both cards (short/desc/settings: "100 ms, the client's 10612"; "No, the next swing comes when it was due", source wowsims/forever, to verify in game) and add one for Eviscerate 4% AP; rewrite standards 17 and 174/175 to the 2026-10-30 rulings; redeploy the report.
-- needs: orchestrator fix
-
-### mechanics-20261030-1: Client 70707 widens Tauren Endurance's 2% critical damage to every school, against post 7's removal
-- severity: high if the bonus is live (estimate, not measured: about +1.0% for a crit-heavy Tauren melee build at ~35% crit and 2x crits, +0.4% for a 15% crit caster; it can move Tauren in the race tables); none if post 7 stands
-- affects: Tauren (every class and build in the race tables that Tauren can be)
-- found: 2026-10-30, master 36a772fd1
-- evidence: tier 1, client 1.60.1.70707: 20550 e1 aura 163 bp 2 EffectMiscValue_0 0 -> 127 (all schools); e2 aura 50 bp 2 (crit healing) kept; tooltip still "critical strike bonus to damage and healing increased by $s2%" (`AUDIT_DB=<70707> python3 tools/audit/mechanics/sp.py 20550`, against 70685). The same build bakes in Blood Fury's 2 min cooldown (20572 RecoveryTime 180000 -> 120000) from post 7 / 8, so the client team edited the racials after the notes, yet kept and widened Endurance's crit effect. Tier 1 against it: dev notes post 7 (2026-10-26, edited 10-27 16:47): "Endurance no longer provides any modifiers beyond 5% increased Health (no hit chance or critical damage modifiers)." The sim follows post 7 (sim/core/racials_forever.go:83-87, health only). Server side may still strip it; the client alone can't settle it.
-- proposed fix: user ruling. If the bonus is live: under Forever, Tauren get a permanent crit-damage multiplier of 1.02 on every school (aura 163, multiplying the whole crit multiplier, as other 163 effects in the sim do) in racials_forever.go's Tauren case, then re-sim the Tauren rows. Otherwise note in verdicts.md that post 7 overrides the client row.
-- needs: user ruling
-
 ### mechanics-20261027-2: Amplify Curse no longer boosts Bane of Agony on client 70630
 - severity: low (no preset takes Amplify Curse; rotopt's `amplifyCurse` knob defaults to 0)
 - affects: warlock (only builds that take Amplify Curse)
@@ -31,6 +15,24 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - 2026-10-27 (user): park it until a build takes Amplify Curse, then test in game (TASKS.md item of 2026-10-27). The sim keeps +50% of base meanwhile. needs: in-game test
 
 ## Resolved
+
+### mechanics-20261030-2: DPS report and standards still say Windfury Totem 1.5 sec and extra attacks reset the swing, after the sim took 100 ms and no reset
+- severity: medium (the numbers are right per the 2026-10-30 user rulings; the published assumption cards describe the opposite of what moved Arms +10%)
+- affects: DPS report assumption cards (all melee: warrior, rogue, Ret paladin, Survival hunter, Feral, Enhancement), orchestration/standards.md 17 / 174 / 175
+- found: 2026-10-30, master fb1485888
+- evidence: f3017897f sets the totem's proc ICD to 100 ms under Forever (tier 1: 70707 10612 aura 42 proc 20% icd 100, verified) and keeps the swing timer on extra attacks (user ruling, notes.md to verify). fb1485888 re-simmed the report with both, but `tools/dps_report/assumptions_def.py:399-412` and `ui/dps_report/data/assumptions.json` still show `wf_totem_icd` "At most once every 1.5s, as in Classic." and `extra_attack_swing` "Yes. The next swing waits a full swing after an extra attack."; standards.md 17 ("internal cooldown is 1.5 sec ... the 100 ms alternative is closed"), 174 and 175 say the same. Effect of f3017897f alone (run_reqs, seed 1, 5000 iterations, bbbaf2e3c vs f3017897f CLIs): Arms 905.0 -> 995.4 (+10.0%), Fury 2H +6.6%, Fury +6.2%, Survival +4.3%, Shock Ret +3.3%, Mutilate +2.9%, Combat Swords +1.7%. In Arms, white swings +13% and Heroic Strike casts 2.7x, so the swing-timer ruling carries most of it. Eviscerate's 4% AP a combo point (same commit, user ruling) has no assumption card either.
+- proposed fix: flip both cards (short/desc/settings: "100 ms, the client's 10612"; "No, the next swing comes when it was due", source wowsims/forever, to verify in game) and add one for Eviscerate 4% AP; rewrite standards 17 and 174/175 to the 2026-10-30 rulings; redeploy the report.
+- needs: orchestrator fix
+- resolved: 2026-10-31, e1fcd57b7: the `wf_totem_icd` and `extra_attack_swing` cards say 0.1s and the swing timer kept, a new `evisc_ap` card says 4% a combo point, standards 17 and 28 follow; the report is redeployed.
+
+### mechanics-20261030-1: Client 70707 widens Tauren Endurance's 2% critical damage to every school, against post 7's removal
+- severity: high if the bonus is live (estimate, not measured: about +1.0% for a crit-heavy Tauren melee build at ~35% crit and 2x crits, +0.4% for a 15% crit caster; it can move Tauren in the race tables); none if post 7 stands
+- affects: Tauren (every class and build in the race tables that Tauren can be)
+- found: 2026-10-30, master 36a772fd1
+- evidence: tier 1, client 1.60.1.70707: 20550 e1 aura 163 bp 2 EffectMiscValue_0 0 -> 127 (all schools); e2 aura 50 bp 2 (crit healing) kept; tooltip still "critical strike bonus to damage and healing increased by $s2%" (`AUDIT_DB=<70707> python3 tools/audit/mechanics/sp.py 20550`, against 70685). The same build bakes in Blood Fury's 2 min cooldown (20572 RecoveryTime 180000 -> 120000) from post 7 / 8, so the client team edited the racials after the notes, yet kept and widened Endurance's crit effect. Tier 1 against it: dev notes post 7 (2026-10-26, edited 10-27 16:47): "Endurance no longer provides any modifiers beyond 5% increased Health (no hit chance or critical damage modifiers)." The sim follows post 7 (sim/core/racials_forever.go:83-87, health only). Server side may still strip it; the client alone can't settle it.
+- proposed fix: user ruling. If the bonus is live: under Forever, Tauren get a permanent crit-damage multiplier of 1.02 on every school (aura 163, multiplying the whole crit multiplier, as other 163 effects in the sim do) in racials_forever.go's Tauren case, then re-sim the Tauren rows. Otherwise note in verdicts.md that post 7 overrides the client row.
+- needs: user ruling
+- resolved: 2026-10-31 (user ruling): Tauren get 5% health only, no crit damage, as post 7 says; the client row doesn't override it for now. No sim change (sim/core/racials_forever.go already health only); verdicts.md notes it.
 
 ### mechanics-20261027-3: Blood Fury, Berserking and Touch of the Grave still use the pre-post-8 values
 - severity: medium (estimate, not measured: Blood Fury uptime 15/180 -> 15/120 of +10% AP/SP and Berserking 10 -> 15 sec of 10% haste each look like +0.2-0.4% DPS on Orc / Troll builds; Touch of the Grave is a drain, no DPS)

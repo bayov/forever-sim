@@ -11,9 +11,11 @@ import { formatToNumber } from '../../utils.js';
 import { eventCategories, EventCategory, EventFilter, levelingOnlyCategories } from './events_filter.js';
 import { formatClock, getLevelingSession, isLevelingResult } from './leveling_session.js';
 import { LogRunner } from './log_runner.js';
+import { PlayerChooser } from './player_chooser.js';
 import { PullsTable } from './pulls_table.js';
 import { Replay } from './replay.js';
 import { ResultComponent, ResultComponentConfig, SimResultData } from './result_component.js';
+import { ResultsFilter } from './results_filter.js';
 import { SessionStrip } from './session_strip.js';
 import { levelingZoomPresets, Timeline, zoomPresets, ZoomSpan } from './timeline.js';
 
@@ -71,6 +73,9 @@ export interface EventsViewConfig extends ResultComponentConfig {
 	// Where the pick is remembered, so a page with its own default keeps its own pick. The sim
 	// UI's key by default.
 	formatStorageKey?: string;
+	// The results' player filter. When it's given and a raid shows all players, the timeline and
+	// replay offer the players to pick from, since they show one player at a time.
+	resultsFilter?: ResultsFilter;
 }
 
 // One iteration of the run, event by event. We can look at it as a timeline, a chart or a log,
@@ -100,6 +105,7 @@ export class EventsView extends ResultComponent {
 	private simulatingNew = false;
 	private readonly simUI: SimUI | null;
 	private readonly onIterationChange?: (kind: IterationKind) => void;
+	private readonly resultsFilter?: ResultsFilter;
 
 	private readonly ui: {
 		formatButtons: Map<EventsFormat, HTMLButtonElement>;
@@ -126,6 +132,7 @@ export class EventsView extends ResultComponent {
 		filterRow: HTMLElement;
 		loading: HTMLElement;
 		stripHost: HTMLElement;
+		chooserHost: HTMLElement;
 	};
 
 	constructor(config: EventsViewConfig) {
@@ -161,6 +168,7 @@ export class EventsView extends ResultComponent {
 			filterRow: ref<HTMLDivElement>(),
 			loading: ref<HTMLDivElement>(),
 			stripHost: ref<HTMLDivElement>(),
+			chooserHost: ref<HTMLDivElement>(),
 		};
 		const formatButtons = new Map<EventsFormat, HTMLButtonElement>();
 		const iterationButtons = new Map<IterationKind, HTMLButtonElement>();
@@ -276,6 +284,7 @@ export class EventsView extends ResultComponent {
 					<div ref={refs.logHost} className="events-log"></div>
 					<div ref={refs.pullsHost} className="events-pulls"></div>
 					<div ref={refs.replayHost} className="events-replay"></div>
+					<div ref={refs.chooserHost} className="events-player-chooser hide"></div>
 				</div>
 			</>,
 		);
@@ -301,6 +310,7 @@ export class EventsView extends ResultComponent {
 			logHost: refs.logHost.value!,
 			pullsHost: refs.pullsHost.value!,
 			replayHost: refs.replayHost.value!,
+			chooserHost: refs.chooserHost.value!,
 			filterRow: refs.filterRow.value!,
 			loading: refs.loading.value!,
 			stripHost: refs.stripHost.value!,
@@ -357,6 +367,10 @@ export class EventsView extends ResultComponent {
 
 		this.simUI = config.simUI;
 		this.onIterationChange = config.onIterationChange;
+		this.resultsFilter = config.resultsFilter;
+		if (this.resultsFilter) {
+			new PlayerChooser({ parent: this.ui.chooserHost, resultsEmitter: config.resultsEmitter }, this.resultsFilter);
+		}
 		this.ui.rerollButton.addEventListener('click', () => this.simNewIteration());
 		tippy(this.ui.rerollButton, { content: 'Sim another new iteration, with a fresh seed and the current settings.' });
 
@@ -391,6 +405,8 @@ export class EventsView extends ResultComponent {
 			this.leveling = leveling;
 			this.rootElem.classList.toggle('leveling', leveling);
 			this.applyFormat();
+		} else {
+			this.updatePlayerPick();
 		}
 		this.updateIterationButtons();
 		this.selectIteration();
@@ -434,6 +450,26 @@ export class EventsView extends ResultComponent {
 			this.timeline.renderIfDirty();
 		}
 		this.updateFilterControls();
+		this.updatePlayerPick();
+	}
+
+	// With all players shown, the timeline and replay have no one to draw, so we offer the players
+	// instead. The chart and the log show the whole raid, so they stay.
+	private updatePlayerPick() {
+		const format = this.shownFormat();
+		const data = this.latestData;
+		const allPlayers = !!data && data.filter.player == null && data.result.getPlayers().length > 1;
+		const pick = !!this.resultsFilter && allPlayers && (format == 'timeline' || format == 'replay');
+		this.ui.chooserHost.classList.toggle('hide', !pick);
+		if (pick) {
+			this.ui.timelineHost.classList.add('hide');
+			this.ui.replayHost.classList.add('hide');
+			this.replay.setShown(false);
+		} else {
+			this.ui.timelineHost.classList.toggle('hide', format != 'timeline' && format != 'chart');
+			this.ui.replayHost.classList.toggle('hide', format != 'replay');
+			this.replay.setShown(format == 'replay');
+		}
 	}
 
 	// Sims one more iteration and shows it as New. A second one replaces the first.

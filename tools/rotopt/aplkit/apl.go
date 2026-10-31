@@ -149,8 +149,20 @@ func AutocastOtherCooldowns(condition Value, notes string) *proto.APLListItem {
 	}
 }
 
+// Rotation leaves out the casts of spell ID 0.
+//
+// A template names a spell the level doesn't know yet as spell ID 0 (like Fire Nova before level
+// 12 in shaman_enh_leveling), and a line that casts nothing only shows up as an empty "Cast Spell"
+// row in the editor.
 func Rotation(items ...*proto.APLListItem) *proto.APLRotation {
-	return &proto.APLRotation{Type: proto.APLRotation_TypeAPL, PriorityList: items}
+	kept := make([]*proto.APLListItem, 0, len(items))
+	for _, item := range items {
+		if cast := item.GetAction().GetCastSpell(); cast != nil && cast.GetSpellId().GetSpellId() == 0 && cast.GetSpellId().GetOtherId() == 0 && cast.GetSpellId().GetItemId() == 0 {
+			continue
+		}
+		kept = append(kept, item)
+	}
+	return &proto.APLRotation{Type: proto.APLRotation_TypeAPL, PriorityList: kept}
 }
 
 // Prepull casts a spell that many seconds before the pull.

@@ -302,16 +302,20 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		});
 		(config.warnings || []).forEach(warning => this.addWarning(warning(this)));
 
+		// The sim loads its data first, then we read the last run, see restoreLastSimRun. The
+		// Results tab shows a loader until both are done.
+		let restored: Promise<void> | null = null;
 		if (!this.isWithinRaidSim) {
 			// This needs to go before all the UI components so that gear loading is the
 			// first callback invoked from waitForInit().
-			this.sim.waitForInit().then(() => {
+			restored = this.sim.waitForInit().then(() => {
 				this.loadSettings();
-				this.restoreLastSimRun();
+				const restoring = this.restoreLastSimRun();
 
 				if (isHealingSpec(this.player.spec)) {
 					alert(Tooltips.HEALING_SIM_DISCLAIMER);
 				}
+				return restoring;
 			});
 		}
 
@@ -322,6 +326,9 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 		this.bt = this.addBulkTab();
 		this.addSettingsTab();
 		this.addRotationTab();
+
+		// TypeScript doesn't see that addSidebarComponents set the manager, so it reads it as still null.
+		if (restored) (this.raidSimResultsManager as RaidSimResultsManager | null)?.whileLoading(restored);
 
 		if (!this.isWithinRaidSim) {
 			this.addDetailedResultsTab();
@@ -419,7 +426,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			const newMode = encounterMode(this.sim.encounter);
 			if (newMode === mode) return;
 			mode = newMode;
-			show(mode);
+			this.raidSimResultsManager?.whileLoading(show(mode));
 		});
 	}
 

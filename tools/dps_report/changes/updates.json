@@ -1054,7 +1054,7 @@
    "title": "Build 1.60.1.70707: the mage talent rework",
    "date": "2026-10-30",
    "baselineData": "cd1f6b2d052d13f06b4785a482471da23445a68f",
-   "endData": null,
+   "endData": "fb14858885638b09f11c61720c25f3243fd55654",
    "lines": [
     {
      "title": "Mage talents reworked: Arcane Focus removed, Critical Mass down to 3 points (6% Fire crit), Incineration up to 5 points (10%)",
@@ -1184,6 +1184,111 @@
     "label": "wago.tools, build 1.60.1.70707",
     "url": "https://wago.tools/db2/TraitNodeEntry?build=1.60.1.70707"
    }
+  },
+  {
+   "id": "2026-10-31-melee-tuning",
+   "type": "sim",
+   "title": "Melee rotations tuned for extra attacks",
+   "date": "2026-10-31",
+   "baselineData": "fb14858885638b09f11c61720c25f3243fd55654",
+   "endData": null,
+   "lines": [
+    {
+     "title": "Retribution paladins twist seals whenever no Echo is waiting, not only in the last 1.5 sec before a swing",
+     "kind": "rotation",
+     "classes": [
+      "Paladin"
+     ],
+     "builds": [
+      "paladin__level_60",
+      "paladin__level_60_sub_holy"
+     ],
+     "note": "Since extra attacks stopped resetting the swing timer, the open window puts both seals on more swings. Against Undead bosses the 1.5 sec window still does better and stays; the Holy Shock builds don't twist.",
+     "commits": [
+      "e1fcd57",
+      "64faff6"
+     ]
+    },
+    {
+     "title": "Arms and two-hand Fury warriors use Hamstring from 10 Rage (was 30 and 20)",
+     "kind": "rotation",
+     "classes": [
+      "Warrior"
+     ],
+     "builds": [
+      "warrior__arms",
+      "warrior__arms_dragonkin",
+      "warrior__fury_2h"
+     ],
+     "note": "More Hamstrings means more Windfury Totem and sword procs, which pay for themselves now that extra attacks keep the swing timer.",
+     "commits": [
+      "e1fcd57"
+     ]
+    },
+    {
+     "title": "Frost mage preset is Undead (was High Order)",
+     "kind": "race",
+     "classes": [
+      "Mage"
+     ],
+     "builds": [
+      "mage__frost"
+     ],
+     "races": [
+      "Undead",
+      "High Order"
+     ],
+     "note": "After the talent rework Undead edges out High Order on Frost.",
+     "commits": [
+      "e1fcd57"
+     ]
+    },
+    {
+     "title": "Efficiency also lowers Strider Kick's mana cost",
+     "kind": "game",
+     "classes": [
+      "Hunter"
+     ],
+     "source": "https://wago.tools/db2/SpellEffect?build=1.60.1.70707&filter[SpellID]=19416",
+     "commits": [
+      "e1fcd57"
+     ]
+    },
+    {
+     "title": "Method: the Windfury Totem and extra attack answers now match the numbers (0.1 sec, the swing timer kept), and Eviscerate's 4% attack power a combo point has its own answer",
+     "kind": "method",
+     "note": "Text only: the numbers already used these since the last update.",
+     "commits": [
+      "e1fcd57"
+     ]
+    }
+   ],
+   "internal": [
+    {
+     "commit": "85d1201",
+     "why": "leveling plan training only; no report request moves"
+    },
+    {
+     "commit": "4876300",
+     "why": "sim UI preset names and folders, Level 30 presets removed; the report's requests are unchanged"
+    },
+    {
+     "commit": "3d4cdda",
+     "why": "the re-sim's own data and meta published numbers; its changes are the lines above"
+    },
+    {
+     "commit": "1594436",
+     "why": "sim UI preset names and defaults; the report's requests are unchanged"
+    },
+    {
+     "commit": "39906cd",
+     "why": "old Era presets and gear sets deleted from the sim UI; no report request uses them"
+    },
+    {
+     "commit": "8d0a22b",
+     "why": "mksettings consumes setups and the audit drift check; no committed request changed"
+    }
+   ]
   }
  ]
 }
