@@ -20,7 +20,7 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 | Berserking | Flat 10%, no cost, 15 sec, 3 min CD (dev notes post 8, tier 1, server side; sim since ae8522c14, Forever only) | pass 1 |
 | Wind Blessed (Skyborne) | 2% melee, ranged and cast haste; Read Leyline's Energized +50% Spirit regen, 15 sec | Dev notes post 7 (tier 1, server side; client 70630 1259710 still 3), 500e3a1 |
 | Artisan's Precision (Dwarf) | +1% melee (and ranged) and spell hit; Earth Fury gone | Dev notes post 7 (tier 1; no client row in 70630), 500e3a1 |
-| Ruthless and The Human Spirit (Human); Savage and Command (Orc); Endurance (Tauren) | Human 1% crit any weapon, Spirit ×1.10; Orc no crit, non-guardian hunter and warlock pets ×1.05 damage (Classic's Command code); Tauren 5% health only | Dev notes post 7 (tier 1, server side; 70630 rows still old), 500e3a1; verified pass 42 |
+| Ruthless and The Human Spirit (Human); Savage and Command (Orc); Endurance (Tauren) | Human 1% crit any weapon, Spirit ×1.10; Orc no crit, non-guardian hunter and warlock pets ×1.05 damage (Classic's Command code); Tauren 5% health only | Dev notes post 7 (tier 1, server side; 70630 rows still old), 500e3a1; verified pass 42. Client 70707 widens Endurance's 2% crit damage to every school (mechanics-20261030-1); user ruling 2026-10-31: post 7 stands, health only, until the game shows otherwise |
 | Troll Regeneration | 70425: 20% / 20% in combat (leveling only) | 20555 |
 | Beast Slaying, Big Game Hunter, Elemental Insight | Damage only, no crit damage | aura 168; dbe2cf45a |
 | Moonkin Aura / Leader of the Pack | Spell crit / weapon crit, 3% each, raid-wide, they stack | 70425 24907 effect 65 aura 57; 24932 aura 52 |

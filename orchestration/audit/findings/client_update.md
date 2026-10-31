@@ -13,14 +13,6 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - needs: verify (combat log)
 - 2026-10-30: the 70707 port (client_update-20261030-1) kept the sim's five missiles in half the time.
 
-### client_update-20261030-3: Efficiency now discounts Strider Kick
-- severity: low (mana only; Survival builds with Efficiency)
-- affects: hunter Survival (any build with Efficiency and Strider Kick)
-- found: 2026-10-30, master 36a772f
-- evidence: 70707 19416 effect 0 EffectSpellClassMask_2 8192 → 2105344, adding bit 0x200000, which is Strider Kick's (1317257; also SoD's Flanking Strike 415320). The sim says the opposite: `sim/hunter/strider_kick.go:13` "Efficiency doesn't", and `talents.go:61` leaves it out. Ledger HUN-U-13. Not measured; 3% a point off Strider Kick's 5.81% base mana every 8 s.
-- proposed fix: under Forever add `SpellCode_HunterStriderKick` to Efficiency's list in `sim/hunter/talents.go:63` and fix the comment.
-- needs: worker fix
-
 ### client_update-20261030-4: Fengus' Ferocity has only dummy effects in 70707
 - severity: low (no report request uses Dire Maul world buffs)
 - affects: any build that turns on Fengus' Ferocity
@@ -41,6 +33,15 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 - 2026-10-30 (70707): every Bane of Agony rank gains a third effect (index 2, dummy aura 4), and the tooltip's amplify term moves from $w2 to $w3, so the client still expects Amplify Curse to touch Agony through a scripted effect. 18288's mask is unchanged. Ledger WL-U-18. Still parked.
 
 ## Resolved
+
+### client_update-20261030-3: Efficiency now discounts Strider Kick
+- severity: low (mana only; Survival builds with Efficiency)
+- affects: hunter Survival (any build with Efficiency and Strider Kick)
+- found: 2026-10-30, master 36a772f
+- evidence: 70707 19416 effect 0 EffectSpellClassMask_2 8192 → 2105344, adding bit 0x200000, which is Strider Kick's (1317257; also SoD's Flanking Strike 415320). The sim says the opposite: `sim/hunter/strider_kick.go:13` "Efficiency doesn't", and `talents.go:61` leaves it out. Ledger HUN-U-13. Not measured; 3% a point off Strider Kick's 5.81% base mana every 8 s.
+- proposed fix: under Forever add `SpellCode_HunterStriderKick` to Efficiency's list in `sim/hunter/talents.go:63` and fix the comment.
+- needs: worker fix
+- resolved: 2026-10-31, e1fcd57b7: Efficiency's list has Strider Kick (sim/hunter/talents.go); the hunter builds re-simmed.
 
 ### client_update-20261030-1: Client 70707 confirms the mage talent rework the user parked on 2026-10-29 (Critical Mass 3 ranks, Incineration 5, Arcane Focus gone, Precision on all spells, Accelerant on Arcane Wrath, Ice Lance cooldown, tree moves)
 - severity: high (fire −3.5% from Critical Mass 5 → 3 alone, −2.4% with Incineration 5; every mage talent string changes)
