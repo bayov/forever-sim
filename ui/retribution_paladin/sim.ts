@@ -141,7 +141,6 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 			Presets.PresetBuildLevel60ShockCrusaderDuty,
 			Presets.PresetBuildLevel60SubHolyUndead,
 			Presets.PresetBuildLevel60ShockUndead,
-			Presets.PresetBuildLevel30p5,
 		],
 		rotations: [
 			...Presets.APLPresets[Phase.Phase4],
@@ -157,7 +156,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 			...Presets.TalentPresets[Phase.Phase1],
 		],
 		// Preset gear configurations that the user can quickly select.
-		gear: [Presets.GearLevel60Phase1Synthetic, Presets.GearLevel60Phase1SyntheticUndead, Presets.GearBlank, Presets.GearLevel30p5],
+		gear: [Presets.GearLevel60Phase1Synthetic, Presets.GearLevel60Phase1SyntheticUndead, Presets.GearBlank],
 	},
 
 	autoRotation: player => {

@@ -80,9 +80,9 @@ export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
 // Trinkets are synthetic too (standards 1b), since Forever's launch trinkets are not simulated: 32
 // Agility and 14 crit rating (45.9 of budget), and an on-use 415 ranged attack power for 20 sec
 // every 2 min (37 weighted points over a 3 minute fight, Earthstrike's size).
-export const GearLevel60Ranged = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic Ranged', Level60RangedGear, {
+export const GearLevel60Ranged = PresetUtils.makePresetGear('Beast Mastery', Level60RangedGear, {
 	tooltip: 'A guess at Phase 1 BiS for a ranged hunter under Forever, made of synthetic items that are not in the game.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 // The Survival set: melee attack power and Strength in place of ranged attack power, a pair of
 // one-handers for Predator's Edge's off hand bonus at Brutality Blade's damage per second (a 2.9 sec
@@ -95,9 +95,9 @@ export const GearLevel60Ranged = PresetUtils.makePresetGear('Level 60 Phase 1 Sy
 // crit 15.0%, Strength 11.2%, attack power 9.9%, hit 6.3%. Crusader on the main hand and Agility on
 // the off hand (+4 over Agility on both). Trinkets: 32 Agility and 14 crit rating, and an on-use
 // 335 attack power and ranged attack power for 20 sec every 2 min.
-export const GearLevel60Survival = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic Survival', Level60SurvivalGear, {
+export const GearLevel60Survival = PresetUtils.makePresetGear('Survival', Level60SurvivalGear, {
 	tooltip: 'A guess at Phase 1 BiS for a melee Survival hunter under Forever, made of synthetic items that are not in the game.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 
 export const GearPresets = {
@@ -142,30 +142,30 @@ export const APLBeastMastery = PresetUtils.makePresetAPLRotation('Beast Mastery'
 		'Arcane Shot, Aimed Shot and Sniper Shot on cooldown, then Serpent Sting when down, Bestial Wrath and Rapid Fire on cooldown, no mana floors.' +
 		weaveTooltip +
 		markTooltip,
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 export const APLMarksmanship = PresetUtils.makePresetAPLRotation('Marksmanship', MarksmanshipAPL, {
 	tooltip:
 		'Arcane Shot, Multi-Shot, Serpent Sting when down, and Sniper Shot while the mana lasts the fight, Rapid Fire on cooldown.' +
 		manaWeaveTooltip +
 		markTooltip,
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 export const APLLoneWolf = PresetUtils.makePresetAPLRotation('Lone Wolf', LoneWolfAPL, {
 	tooltip: 'The Marksmanship rotation, for no pet.' + manaWeaveTooltip + markTooltip,
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 export const APLBeastMasteryTurret = PresetUtils.makePresetAPLRotation('Beast Mastery (turret)', BeastMasteryTurretAPL, {
 	tooltip: 'The Beast Mastery rotation, standing at 25 yd.' + markTooltip,
-	group: 'Level 60',
+	group: 'Other',
 });
 export const APLMarksmanshipTurret = PresetUtils.makePresetAPLRotation('Marksmanship (turret)', MarksmanshipTurretAPL, {
 	tooltip: 'The Marksmanship rotation, standing at 25 yd.' + markTooltip,
-	group: 'Level 60',
+	group: 'Other',
 });
 export const APLLoneWolfTurret = PresetUtils.makePresetAPLRotation('Lone Wolf (turret)', LoneWolfTurretAPL, {
 	tooltip: 'The Lone Wolf rotation, standing at 25 yd.' + markTooltip,
-	group: 'Level 60',
+	group: 'Other',
 });
 // Melee: Mongoose Bite whenever Expose Prey opens it, Strider Kick and Immolation Trap on
 // cooldown (the trap ahead of Raptor Strike since it scales with ranged attack power,
@@ -176,7 +176,7 @@ export const APLLoneWolfTurret = PresetUtils.makePresetAPLRotation('Lone Wolf (t
 // pull, since the fight starts at 25 yards.
 export const APLSurvival = PresetUtils.makePresetAPLRotation('Survival', SurvivalAPL, {
 	tooltip: 'Melee: Mongoose Bite, Strider Kick, Immolation Trap, Raptor Strike, Lacerate, Wing Clip filler.' + markTooltip,
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 
 export const APLPresets = {
@@ -204,7 +204,7 @@ export const DefaultAPL = APLBeastMastery;
 // The searches drop Summon Hawk: for a point of Spirit Bond it is 11.8 behind at 180 sec.
 export const TalentsBeastMastery = PresetUtils.makePresetTalents('Beast Mastery', SavedTalents.create({ talentsString: '5020121505021241-00520503005' }), {
 	tooltip: 'Level 60 Beast Mastery 31/20 from the talent search.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 // Marksmanship 7/39/5 with a pet: Efficiency 5, Careful Aim, Rapid Killing 1, Improved Arcane Shot 5,
 // Trueshot Aura, Mortal Shots, Barrage, Ranged Weapon Specialization, Sniper Shot, Improved
@@ -213,13 +213,13 @@ export const TalentsBeastMastery = PresetUtils.makePresetTalents('Beast Mastery'
 // triggers on a single boss) into Efficiency 5 (+4.3 at 180 sec).
 export const TalentsMarksmanship = PresetUtils.makePresetTalents('Marksmanship', SavedTalents.create({ talentsString: '502-0053551501503051-5' }), {
 	tooltip: 'Level 60 Marksmanship 7/39/5 from the talent search, with a pet.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 // Marksmanship with Lone Wolf (20% damage with no pet out) and the pet dismissed: Lone Wolf and Rapid
 // Killing 2 where the pet build has Focused Fire.
 export const TalentsLoneWolf = PresetUtils.makePresetTalents('Lone Wolf', SavedTalents.create({ talentsString: '5-0053552511503051-5' }), {
 	tooltip: 'Level 60 Marksmanship 5/41/5 with Lone Wolf, played without a pet.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 // Survival 7/10/34, the melee spec: Predator's Edge, Expose Prey, Strider Kick, Lightning
 // Reflexes, Lacerating Strikes, Savage Strikes, Surefooted, Improved Tracking, Clever Traps and
@@ -228,7 +228,7 @@ export const TalentsLoneWolf = PresetUtils.makePresetTalents('Lone Wolf', SavedT
 // here.
 export const TalentsSurvival = PresetUtils.makePresetTalents('Survival', SavedTalents.create({ talentsString: '502-005005-500230230250122151' }), {
 	tooltip: 'Level 60 melee Survival 7/10/34 from the talent search.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 
 export const TalentPresets = {
@@ -475,8 +475,8 @@ const professions: [Profession, Profession] = [OtherDefaults.profession1, OtherD
 // floors. Its own Hunter's Mark (standards 23) cost 0.4 / 0.5 / 1.4 against the raid's mark. It was
 // 1176.5 / 1171.5 / 1157.9 with 22% more crit per Agility than Classic, and 1151.4 / 1145.6 / 1124.3
 // on the Windshaper before the 2026-10-23 round.
-export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Beast Mastery', {
-	group: 'Level 60',
+export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Beast Mastery', {
+	group: 'Synthetic',
 	tooltip: 'Level 60 Beast Mastery on the synthetic Phase 1 ranged gear with a 1.0 sec cat, in a 3 minute raid fight.',
 	gear: GearLevel60Ranged,
 	talents: TalentsBeastMastery,
@@ -492,8 +492,8 @@ export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Level 60 Bea
 // 1106.5 (1183.5 / 1166.1 / 1137.3 with 22% more crit per Agility). Its own Hunter's Mark cost 1.3 /
 // 1.4 / 2.9 against the raid's (1176.2 / 1145.7 / 1108.4 before the 8% hit cap gear, Efficiency 5 and
 // the mana-gated weave).
-export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Marksmanship', {
-	group: 'Level 60',
+export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Marksmanship', {
+	group: 'Synthetic',
 	tooltip: 'Level 60 Marksmanship on the synthetic Phase 1 ranged gear with a 1.0 sec cat, in a 3 minute raid fight.',
 	gear: GearLevel60Ranged,
 	talents: TalentsMarksmanship,
@@ -509,8 +509,8 @@ export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Level 60 Mar
 // 12.4 behind a cat at 180 sec (it was 1166.0 / 1139.5 / 1101.8 before the 2026-10-23 round). Its own
 // Hunter's Mark cost 1.3 / 2.5 / 3.5 against the raid's. Holds up in a 5 minute fight with Sniper Shot
 // and the weave held back for mana.
-export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wolf', {
-	group: 'Level 60',
+export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Lone Wolf', {
+	group: 'Synthetic',
 	tooltip: 'Level 60 Marksmanship with Lone Wolf and no pet, on the synthetic Phase 1 ranged gear, in a 3 minute raid fight.',
 	gear: GearLevel60Ranged,
 	talents: TalentsLoneWolf,
@@ -524,8 +524,8 @@ export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Level 60 Lone Wo
 // seed 1; seed 1000003 1032.8 / 1025.2 / 1018.3; 2026-10-25, Classic's crit per Agility at 60; 1063.0 /
 // 1055.0 / 1047.8 with 22% more); its own Hunter's Mark cost 1.2 / 1.5 / 1.6 against the raid's. The
 // rotation walks in before the pull, so starting at 25 yards in the UI costs nothing.
-export const PresetBuildSurvival = PresetUtils.makePresetBuild('Level 60 Survival', {
-	group: 'Level 60',
+export const PresetBuildSurvival = PresetUtils.makePresetBuild('Survival', {
+	group: 'Synthetic',
 	tooltip: 'Level 60 melee Survival on the synthetic Phase 1 Survival gear, in a 3 minute raid fight with a melee group.',
 	gear: GearLevel60Survival,
 	talents: TalentsSurvival,

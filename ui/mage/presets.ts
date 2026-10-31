@@ -83,13 +83,13 @@ export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
 // (+6 spell power) on chest, hands, legs and feet, Greater Spellpower (+16) on the wrist and
 // Spellblasting on the staff. Arcane wears Gloves - Arcane Power (+20 Arcane) instead of the kit,
 // 7.7 ahead.
-export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGear, {
+export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Fire', Level60Phase1SyntheticGear, {
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
-export const GearLevel60Phase1SyntheticArcane = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic (Arcane)', Level60Phase1SyntheticArcaneGear, {
+export const GearLevel60Phase1SyntheticArcane = PresetUtils.makePresetGear('Arcane', Level60Phase1SyntheticArcaneGear, {
 	tooltip: 'The Level 60 synthetic Arcane set (more spell power, less crit) with Gloves - Arcane Power.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 
 export const GearPresets = {
@@ -122,9 +122,9 @@ export const APLP1DPS = PresetUtils.makePresetAPLRotation('DPS', P1APL);
 // cast, put Ice Lance on the last charge only (the first goes on a Frostfire Bolt, which reads the
 // target as Frozen for Shatter), Evocation below 10% with 90 sec left and rank 2 below 30 mana a
 // second of the fight left: +15 / +44 / +39 at 120 / 180 / 300 sec on both seed sets.
-export const APLLevel60Frostfire = PresetUtils.makePresetAPLRotation('Level 60 Frostfire', Level60FrostfireAPL, {
+export const APLLevel60Frostfire = PresetUtils.makePresetAPLRotation('Frostfire', Level60FrostfireAPL, {
 	tooltip: 'Frostfire Bolt, Pyroblast on 3 Heating Up stacks, Ice Lance on the last Fingers of Frost charge, Scorch for Fire Vulnerability, Fire Blast.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 // Frostbolt, with Ice Lance on every Fingers of Frost charge (3 times the damage on a Frozen
 // target and Shatter's crit), and two Arcane Blasts every 15 sec for 30% of Intellect as spell
@@ -133,9 +133,9 @@ export const APLLevel60Frostfire = PresetUtils.makePresetAPLRotation('Level 60 F
 // Ice Lance cast right after both read Frozen; holding Ice Lance for a Frostbolt every time lost
 // 11 to 23 at 180 sec. Frost rarely runs low on mana, so Evocation almost never goes. When a
 // Frostbolt would not land before the end (its cast plus 1 sec), Ice Lance instead.
-export const APLLevel60Frost = PresetUtils.makePresetAPLRotation('Level 60 Frost', Level60FrostAPL, {
+export const APLLevel60Frost = PresetUtils.makePresetAPLRotation('Frost', Level60FrostAPL, {
 	tooltip: 'Frostbolt, with Ice Lance on Fingers of Frost and two Arcane Blasts for spell damage.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 // Scorch to 5 Fire Vulnerability stacks and before they run out, Pyroblast at 3 Heating Up
 // stacks, Arcane Missiles on Missile Barrage, Fire Blast above 10% mana (every Fire Blast adds a
@@ -143,9 +143,9 @@ export const APLLevel60Frost = PresetUtils.makePresetAPLRotation('Level 60 Frost
 // and Fireball. Combustion and the on-use
 // trinket wait for the 5th Fire Vulnerability stack. When a Fireball would not land before the
 // end (its cast plus 1.04 sec), Fire Blast and Scorch instead.
-export const APLLevel60Fire = PresetUtils.makePresetAPLRotation('Level 60 Fire', Level60FireAPL, {
+export const APLLevel60Fire = PresetUtils.makePresetAPLRotation('Fire', Level60FireAPL, {
 	tooltip: 'Fireball, Pyroblast on 3 Heating Up stacks, Scorch for Fire Vulnerability, Fire Blast.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 // Client 70425 made Arcane Blast's stacks spell damage: 15% of Intellect each, up to 4, for 15
 // sec from the first, and nothing ends them early. So Arcane builds four stacks at the start of
@@ -156,9 +156,9 @@ export const APLLevel60Fire = PresetUtils.makePresetAPLRotation('Level 60 Fire',
 // beats Arcane Missiles that aren't free. No Evocation. Arcane Power and Presence of Mind wait for
 // the on-use trinket unless it won't be back before the last 15 sec. When a Frostbolt would not
 // land before the end (its cast plus 0.75 sec), Fire Blast and Arcane Explosion instead.
-export const APLLevel60Arcane = PresetUtils.makePresetAPLRotation('Level 60 Arcane', Level60ArcaneAPL, {
+export const APLLevel60Arcane = PresetUtils.makePresetAPLRotation('Arcane', Level60ArcaneAPL, {
 	tooltip: 'Four Arcane Blast stacks every 15 sec for spell damage, Arcane Missiles on Missile Barrage, Frostbolt.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 
 export const APLPresets = {
@@ -205,9 +205,9 @@ export const DefaultAPL = APLLevel60Fire;
 // Critical Mass and Ice Lance's cooldown). The rotation search over 120, 180 and 300 sec kept every
 // knob.
 export const TalentsLevel60Frostfire = PresetUtils.makePresetTalents(
-	'Level 60 Frostfire',
+	'Frostfire',
 	SavedTalents.create({ talentsString: '-2550030103013303-0235000311203002' }),
-	{ tooltip: 'Fire and Frost for Frostfire Bolt: Heating Up, Fingers of Frost, Shatter.', group: 'Level 60' },
+	{ tooltip: 'Fire and Frost for Frostfire Bolt: Heating Up, Fingers of Frost, Shatter.', group: 'Synthetic' },
 );
 // Frost (28/1/22, 2026-10-30): Frost to Fingers of Frost (Improved Frostbolt, Precision, Ice
 // Shards, Frost Channeling, Ice Lance, Shatter) and 28 points of Arcane: Improved Channeling 5
@@ -231,14 +231,10 @@ export const TalentsLevel60Frostfire = PresetUtils.makePresetTalents(
 // one with Wand Specialization, Arcane Resilience and Magic Absorption for Arcane Concentration 2
 // ties). With the cooldown the rotation keeps three Arcane Blast stacks and skips Evocation. It is
 // 911.2 / 908.3 / 886.6 (946.6 at 180 sec before).
-export const TalentsLevel60Frost = PresetUtils.makePresetTalents(
-	'Level 60 Frost',
-	SavedTalents.create({ talentsString: '05020520310011053-1-0535000301003002' }),
-	{
-		tooltip: 'Frost to Fingers of Frost with 28 Arcane: Frostbolt, Shatter, Ice Lance, Arcane Mind and Arcane Blast for spell damage.',
-		group: 'Level 60',
-	},
-);
+export const TalentsLevel60Frost = PresetUtils.makePresetTalents('Frost', SavedTalents.create({ talentsString: '05020520310011053-1-0535000301003002' }), {
+	tooltip: 'Frost to Fingers of Frost with 28 Arcane: Frostbolt, Shatter, Ice Lance, Arcane Mind and Arcane Blast for spell damage.',
+	group: 'Synthetic',
+});
 // Fire (14/34/3): every Fire damage talent to Combustion with Critical Mass 3, Burning Soul 2
 // (pushback) and Master of Elements 3, with Arcane Concentration and Missile Barrage 2 (Fireball
 // has 20% to make Arcane Missiles free and fast) and Precision 3. The two points the
@@ -253,9 +249,9 @@ export const TalentsLevel60Frost = PresetUtils.makePresetTalents(
 // Missile Barrage's Arcane Missiles), with Burning Soul's third point (Wand Specialization and
 // Arcane Resilience instead are 1060.8). It is 1061.0 at 180 sec (1101.0 before), 10 ahead of
 // Frostfire.
-export const TalentsLevel60Fire = PresetUtils.makePresetTalents('Level 60 Fire', SavedTalents.create({ talentsString: '0502052-55500201230133031-003' }), {
+export const TalentsLevel60Fire = PresetUtils.makePresetTalents('Fire', SavedTalents.create({ talentsString: '0502052-55500201230133031-003' }), {
 	tooltip: 'Deep Fire to Combustion, with Missile Barrage from Arcane.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 // Arcane (31/5/15): Arcane to Arcane Power with Arcane Blast, Missile Barrage 2 and Improved
 // Channeling 5 (pushback on Arcane Blast), Arcane Subtlety 2, Incineration 5 (it covers Arcane
@@ -269,9 +265,9 @@ export const TalentsLevel60Fire = PresetUtils.makePresetTalents('Level 60 Fire',
 // Precision covers Arcane, so Arcane Focus's five points are Incineration 5 and Frost Channeling 2
 // (Arcane Blast's mana): 926.1 / 915.5 / 895.4 as a Gnome (901.6 at 180 sec before), with the
 // rotation keeping four stacks at any mana.
-export const TalentsLevel60Arcane = PresetUtils.makePresetTalents('Level 60 Arcane', SavedTalents.create({ talentsString: '050205203100301531-5-05350002' }), {
+export const TalentsLevel60Arcane = PresetUtils.makePresetTalents('Arcane', SavedTalents.create({ talentsString: '050205203100301531-5-05350002' }), {
 	tooltip: 'Arcane to Arcane Power: four Arcane Blast stacks for spell damage, Missile Barrage, Frostbolt.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 
 export const TalentPresets = {
@@ -426,7 +422,7 @@ const level60Encounter = Encounter.create({
 		},
 	],
 });
-export const EncounterLevel60 = PresetUtils.makePresetEncounter('Level 60', level60Encounter, {
+export const EncounterLevel60 = PresetUtils.makePresetEncounter('Generic boss', level60Encounter, {
 	tanks: [],
 	raidBuffs: DefaultRaidBuffs,
 	debuffs: DefaultDebuffs,
@@ -437,7 +433,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter('Level 60', leve
 // +7.9 at 180 sec and +4.6 at 300 (the consumables auditor), and +10.5 / +7.6 with Ice Lance on
 // the charges (2026-10-15). Frostfire runs dry with it at 300 sec
 // (-77), Fire loses 24 / 18 and Arcane is +2.7 / -2.1, so they keep the Major Mana Potion.
-export const EncounterLevel60Frost = PresetUtils.makePresetEncounter('Level 60 (Frost)', level60Encounter, {
+export const EncounterLevel60Frost = PresetUtils.makePresetEncounter('Frost', level60Encounter, {
 	tanks: [],
 	raidBuffs: DefaultRaidBuffs,
 	debuffs: DefaultDebuffs,
@@ -458,7 +454,7 @@ export const EncounterLevel60Frost = PresetUtils.makePresetEncounter('Level 60 (
 // and gear): Arcane moves to the Gnome, 901.6 at 180 sec against the Human's 899.1 (verify.py, 20000
 // iterations, seed 1). Frostfire and Fire stay Human, Frost High Order.
 const buildCommon = {
-	group: 'Level 60',
+	group: 'Synthetic',
 	gear: GearLevel60Phase1Synthetic,
 	encounter: EncounterLevel60,
 	level: 60,
@@ -467,14 +463,14 @@ const buildCommon = {
 	options: DefaultOptions,
 };
 
-export const PresetBuildLevel60Frostfire = PresetUtils.makePresetBuild('Level 60 Frostfire', {
+export const PresetBuildLevel60Frostfire = PresetUtils.makePresetBuild('Frostfire', {
 	...buildCommon,
 	tooltip: 'Level 60 Human Frostfire on the synthetic Phase 1 gear, in a 3 minute raid fight.',
 	talents: TalentsLevel60Frostfire,
 	rotation: APLLevel60Frostfire,
 	race: Race.RaceHuman,
 });
-export const PresetBuildLevel60Frost = PresetUtils.makePresetBuild('Level 60 Frost', {
+export const PresetBuildLevel60Frost = PresetUtils.makePresetBuild('Frost', {
 	...buildCommon,
 	tooltip: 'Level 60 High Order Frost on the synthetic Phase 1 gear, in a 3 minute raid fight, with a Major Spellblasting Potion.',
 	encounter: EncounterLevel60Frost,
@@ -483,14 +479,14 @@ export const PresetBuildLevel60Frost = PresetUtils.makePresetBuild('Level 60 Fro
 	race: Race.RaceSkyborneHighOrder,
 	options: FrostOptions,
 });
-export const PresetBuildLevel60Fire = PresetUtils.makePresetBuild('Level 60 Fire', {
+export const PresetBuildLevel60Fire = PresetUtils.makePresetBuild('Fire', {
 	...buildCommon,
 	tooltip: 'Level 60 Human Fire on the synthetic Phase 1 gear, in a 3 minute raid fight.',
 	talents: TalentsLevel60Fire,
 	rotation: APLLevel60Fire,
 	race: Race.RaceHuman,
 });
-export const PresetBuildLevel60Arcane = PresetUtils.makePresetBuild('Level 60 Arcane', {
+export const PresetBuildLevel60Arcane = PresetUtils.makePresetBuild('Arcane', {
 	...buildCommon,
 	tooltip: 'Level 60 Gnome Arcane on the synthetic Phase 1 gear, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1SyntheticArcane,

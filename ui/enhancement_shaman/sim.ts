@@ -132,16 +132,9 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 	presets: {
 		builds: [
 			Presets.PresetBuildLevel60,
+			Presets.PresetBuildLevel60ImpGW,
 			Presets.PresetBuildLevel60WaterShield,
 			Presets.PresetBuildLevel60ManaTide,
-			Presets.PresetBuildLevel30p5,
-			Presets.PresetBuildLevel30PvP,
-			Presets.PresetBuildLevel30PvPVsCloth,
-			Presets.PresetBuildLevel30PvPVsHunter,
-			Presets.PresetBuildLevel30PvPVsRogue,
-			Presets.PresetBuildLevel30PvPVsShaman,
-			Presets.PresetBuildLevel30PvPVsWarrior,
-			Presets.PresetBuildLevel30PvPVsProt,
 			Presets.PresetBuildLeveling1to60,
 		],
 		epWeights: Presets.EPPresets,

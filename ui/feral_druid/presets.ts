@@ -76,9 +76,9 @@ export const GearP6BIS = PresetUtils.makePresetGear('P6 BiS', P6BISGear);
 // Strength on the wrist, Superior Strength on the gloves (3.2 ahead of Greater Agility), +7
 // Agility on the feet and +25 Agility on the weapon. Forceful Rugged Armor Kit (+10 attack power)
 // is 1.5 to 2.2 behind each of them.
-export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGearJSON, {
+export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Feral', Level60Phase1SyntheticGearJSON, {
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 
 export const GearPresets = {
@@ -92,7 +92,7 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 //                                 APL Presets
 ///////////////////////////////////////////////////////////////////////////
 
-export const APLFeral = PresetUtils.makePresetAPLRotation('Feral', FeralAPL);
+export const APLFeral = PresetUtils.makePresetAPLRotation('Feral (Era)', FeralAPL);
 export const APLSimpleVael = PresetUtils.makePresetAPLRotation('Simple Vaelastrasz', SimpleVaelAPL);
 
 // The tools/rotopt druid_feral template's best (druid_presets.sh) on the synthetic set and the
@@ -107,9 +107,9 @@ export const APLSimpleVael = PresetUtils.makePresetAPLRotation('Simple Vaelastra
 // combo points in the last 2. Keeping Rake up is now 38 to 42 ahead of no Rake at 120 / 180 / 300
 // sec on both seed sets (836.8 / 823.8 / 813.3 to 875.5 / 864.7 / 855.5, seed 1). The knob search
 // kept the rest at 120, 180 and 300 sec.
-export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
+export const APLLevel60 = PresetUtils.makePresetAPLRotation('Feral', Level60APLJSON, {
 	tooltip: "The optimizer's best level 60 rotation: Rip at 5 combo points, Rake kept up, Shred, Shadowmeld into Ravage, Shifting Power and Berserk.",
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 
 // Faerie Fire duty (standards 23): the cat that keeps Faerie Fire on the boss for the raid. Forever
@@ -121,10 +121,10 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // holds it, and the duty's cost shows with both off: 10.2 / 8.3 / 4.3 DPS at 120 / 180 / 300 sec
 // (869.7 / 858.5 / 846.9, Night Elf, 20,000 iterations, seed 1, no bomb; Faerie Fire no longer resets
 // the swing), the GCDs and the moment before it lands, since the cat's own hits get the armor.
-export const APLLevel60FaerieFire = PresetUtils.makePresetAPLRotation('Level 60 (Faerie Fire duty)', Level60FaerieFireAPLJSON, {
+export const APLLevel60FaerieFire = PresetUtils.makePresetAPLRotation('Feral · Faerie Fire duty', Level60FaerieFireAPLJSON, {
 	tooltip:
-		"The Level 60 rotation, keeping Faerie Fire on the target for the raid (free in Cat Form). Pick the duty build to switch off the raid's Faerie Fire and Curse of Recklessness.",
-	group: 'Level 60',
+		"The Feral rotation, keeping Faerie Fire on the target for the raid (free in Cat Form). Pick the duty build to switch off the raid's Faerie Fire and Curse of Recklessness.",
+	group: 'Synthetic',
 });
 
 export const APLPresets = {
@@ -161,9 +161,9 @@ export const SIMPLE_ROTATION_DEFAULT = PresetUtils.makePresetSimpleRotation('Sim
 // 20,000 iterations, seed 1), the long fight losing Natural Shapeshifter's cheaper shifts. Earlier searches started from pure Feral builds (0 / 35 / 16 with Ferocity
 // and Reflection, 0 / 33 / 18 with Heart of the Wild and Thick Hide) and from the Balance split, and
 // all of them moved their spare points into Genesis and Nature's Majesty.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '05002-55200032021030212051-055' }), {
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Feral', SavedTalents.create({ talentsString: '05002-55200032021030212051-055' }), {
 	tooltip: 'The talent search best on the synthetic Phase 1 set.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 
 export const TalentPresets = {
@@ -294,7 +294,7 @@ export const OtherDefaults = {
 // The level 60 raid setup: the shared Level 60 boss (level 63, 3731 armor, type Unknown, standards 19), a 3 minute
 // fight, and the buffs, debuffs and consumes above.
 export const EncounterLevel60 = PresetUtils.makePresetEncounter(
-	'Level 60',
+	'Generic boss',
 	Encounter.create({
 		duration: 180,
 		durationVariation: 20,
@@ -328,7 +328,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // The duty presets' raid (standards 23): the Level 60 raid without its Faerie Fire, and without its
 // Curse of Recklessness, which shares Faerie Fire's minor armor slot under Forever (standards 20),
 // so the armor comes only from our own Faerie Fire. The base builds set the full raid back.
-export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('Level 60 (Faerie Fire duty)', EncounterLevel60.encounter, {
+export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('Feral · Faerie Fire duty', EncounterLevel60.encounter, {
 	tanks: [],
 	raidBuffs: DefaultRaidBuffs,
 	debuffs: Debuffs.create({ ...DefaultDebuffs, faerieFire: false, curseOfRecklessness: false }),
@@ -350,9 +350,9 @@ export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('L
 // The Night Elf's Shadowmeld into Ravage (on Clearcasting, which the pre-pull fishing and Rake's
 // extra Omen rolls make more of) and Elune's Light put it 5.2 ahead of the Tauren at 180 sec on both
 // seed sets. No racial goes by weapon type.
-export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
-	group: 'Level 60',
-	tooltip: 'Level 60 Night Elf on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
+export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Feral', {
+	group: 'Synthetic',
+	tooltip: 'Level 60 Night Elf on the synthetic Phase 1 gear with the Feral rotation, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60,
@@ -362,10 +362,10 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 });
-export const PresetBuildLevel60FaerieFire = PresetUtils.makePresetBuild('Level 60 (Faerie Fire duty)', {
-	group: 'Level 60',
+export const PresetBuildLevel60FaerieFire = PresetUtils.makePresetBuild('Feral · Faerie Fire duty', {
+	group: 'Synthetic',
 	tooltip:
-		"The Level 60 build keeping Faerie Fire on the target for the raid (free in Cat Form). It turns off the raid's Faerie Fire and Curse of Recklessness, which share its armor slot.",
+		"The Feral build keeping Faerie Fire on the target for the raid (free in Cat Form). It turns off the raid's Faerie Fire and Curse of Recklessness, which share its armor slot.",
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60FaerieFire,

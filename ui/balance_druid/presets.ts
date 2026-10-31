@@ -75,16 +75,16 @@ export const GearP5BIS = PresetUtils.makePresetGear('P5 BiS', P5BISGear);
 // Forever's +6 spell power on the neck, Mystic Rugged Armor Kit on the chest, legs and feet,
 // Greater Spellpower on the wrist, Arcane Power on the gloves (4.7 ahead of Natural Power,
 // Starfire is Arcane) and Spellblasting on the staff (6.9 ahead of Mighty Spell Power).
-export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGearJSON, {
+export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Balance', Level60Phase1SyntheticGearJSON, {
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 
 // The same set for the Wrath build, with Natural Power (+20 Nature damage) on the gloves in place
 // of Arcane Power, 8.1 ahead for Wrath (762.2 against 754.1 at 180 sec, with Starfire rank 7).
-export const GearLevel60Phase1SyntheticWrath = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic Wrath', Level60Phase1SyntheticWrathGearJSON, {
+export const GearLevel60Phase1SyntheticWrath = PresetUtils.makePresetGear('Balance Wrath', Level60Phase1SyntheticWrathGearJSON, {
 	tooltip: 'The synthetic Phase 1 set with Natural Power on the gloves, for the Wrath build.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 
 export const GearPresets = {
@@ -120,9 +120,9 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // 29 and 16), and its rotation has them back (elune=1): +1.1 at 180 sec on seed 1 (+1.0 on seed
 // 1000003) over leaving Elune's Light to the autocast line, 0.0 for a Tauren. The Wrath build is
 // Windshaper Skyborne and leaves them out.
-export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
+export const APLLevel60 = PresetUtils.makePresetAPLRotation('Balance', Level60APLJSON, {
 	tooltip: "The optimizer's best level 60 rotation: both dots up, then Wrath and Starfire in turn for Eclipse.",
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 // export const APLP1Balance = PresetUtils.makePresetAPLRotation('Balance', P1APL);
 export const DefaultBalance = PresetUtils.makePresetAPLRotation('Default Balance', Balance);
@@ -132,9 +132,9 @@ export const DefaultBalance = PresetUtils.makePresetAPLRotation('Default Balance
 // and gear (GearLevel60Phase1SyntheticWrath). Moonfire once a Wrath plus 1.5 sec would no longer
 // land before the end is 5.9 / 3.8 / 2.2 ahead (rotation auditor), 787.0 / 786.6 / 782.3 with Wrath
 // rank 8 at x1.085.
-export const APLLevel60Wrath = PresetUtils.makePresetAPLRotation('Level 60 Wrath', Level60WrathAPLJSON, {
+export const APLLevel60Wrath = PresetUtils.makePresetAPLRotation('Balance Wrath', Level60WrathAPLJSON, {
 	tooltip: 'Both dots up, a free Starfire on Clearcasting, and Wrath otherwise.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 // Faerie Fire duty (standards 23): the moonkin that keeps Faerie Fire on the boss for the raid.
 // The Level 60 rotations leave it to the raid's debuff; these cast it first after the pull and
@@ -145,15 +145,15 @@ export const APLLevel60Wrath = PresetUtils.makePresetAPLRotation('Level 60 Wrath
 // sec for Level 60 (797.6 / 797.5 / 789.9), 30.5 / 28.6 / 27.1 for Level 60 Wrath (752.1 /
 // 755.8 / 753.4), Tauren, 20,000 iterations. With Subtlety (2026-10-24): 33.5 / 31.5 / 29.1 (824.4 /
 // 824.8 / 817.8) and 31.7 / 29.3 / 27.6 (779.9 / 784.0 / 781.4), seed 1. The knob search kept the rest of both rotations.
-export const APLLevel60FaerieFire = PresetUtils.makePresetAPLRotation('Level 60 (Faerie Fire duty)', Level60FaerieFireAPLJSON, {
+export const APLLevel60FaerieFire = PresetUtils.makePresetAPLRotation('Balance · Faerie Fire duty', Level60FaerieFireAPLJSON, {
 	tooltip:
-		"The Level 60 rotation, keeping Faerie Fire on the target for the raid. Pick the duty build to switch off the raid's Faerie Fire and Curse of Recklessness.",
-	group: 'Level 60',
+		"The Balance rotation, keeping Faerie Fire on the target for the raid. Pick the duty build to switch off the raid's Faerie Fire and Curse of Recklessness.",
+	group: 'Synthetic',
 });
-export const APLLevel60WrathFaerieFire = PresetUtils.makePresetAPLRotation('Level 60 Wrath (Faerie Fire duty)', Level60WrathFaerieFireAPLJSON, {
+export const APLLevel60WrathFaerieFire = PresetUtils.makePresetAPLRotation('Balance Wrath · Faerie Fire duty', Level60WrathFaerieFireAPLJSON, {
 	tooltip:
-		"The Level 60 Wrath rotation, keeping Faerie Fire on the target for the raid. Pick the duty build to switch off the raid's Faerie Fire and Curse of Recklessness.",
-	group: 'Level 60',
+		"The Balance Wrath rotation, keeping Faerie Fire on the target for the raid. Pick the duty build to switch off the raid's Faerie Fire and Curse of Recklessness.",
+	group: 'Synthetic',
 });
 export const APLPresets = {
 	[Phase.Phase1]: [APLLevel60, APLLevel60FaerieFire, APLLevel60Wrath, APLLevel60WrathFaerieFire, DefaultBalance],
@@ -176,9 +176,9 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 // on the final set only traded Genesis, Moonglow and Reflection points within the noise. The other
 // archetypes were well behind on the first set at 180 sec: 31 / 0 / 20 (Reflection and Tranquil
 // Spirit, no Moonfury) 10% and 41 / 10 / 0 4%.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '5232220115501351--5053' }), {
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Balance', SavedTalents.create({ talentsString: '5232220115501351--5053' }), {
 	tooltip: "The talent search best on the synthetic Phase 1 set with Subtlety: 38 Balance, Nature's Focus, Naturalist and Subtlety from Restoration.",
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 // The Wrath rotation's own search: Genesis 5 in place of Moonglow 3 (Wrath's mana cost is already
 // low). It took Heart of the Wild 3 (Intellect) for Moonglow before Subtlety 3 became a must-take
@@ -186,9 +186,9 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // Naturalist and Subtlety: 811.6 / 813.3 / 809.0 at 120 / 180 / 300 sec against 814.5 / 816.2 /
 // 812.0 (5502220115501351-03-505), 2.9 / 2.9 / 3.0 for the threat cut (Tauren, 20,000 iterations,
 // seed 1; the same on seed 1000003).
-export const TalentsLevel60Wrath = PresetUtils.makePresetTalents('Level 60 Wrath', SavedTalents.create({ talentsString: '5502220115501351--5053' }), {
+export const TalentsLevel60Wrath = PresetUtils.makePresetTalents('Balance Wrath', SavedTalents.create({ talentsString: '5502220115501351--5053' }), {
 	tooltip: 'The Wrath rotation talent search best: Genesis in place of Moonglow, Subtlety from Restoration.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 
 export const TalentPresets = {
@@ -302,7 +302,7 @@ export const OtherDefaults = {
 // The level 60 raid setup: the shared Level 60 boss (level 63, 3731 armor, type Unknown, standards 19), a 3 minute
 // fight, and the buffs, debuffs and consumes above.
 export const EncounterLevel60 = PresetUtils.makePresetEncounter(
-	'Level 60',
+	'Generic boss',
 	Encounter.create({
 		duration: 180,
 		durationVariation: 20,
@@ -336,7 +336,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // The duty presets' raid (standards 23): the Level 60 raid without its Faerie Fire, and without its
 // Curse of Recklessness, which shares Faerie Fire's minor armor slot under Forever (standards 20),
 // so the armor comes only from our own Faerie Fire. The base builds set the full raid back.
-export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('Level 60 (Faerie Fire duty)', EncounterLevel60.encounter, {
+export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('Balance · Faerie Fire duty', EncounterLevel60.encounter, {
 	tanks: [],
 	raidBuffs: DefaultRaidBuffs,
 	debuffs: Debuffs.create({ ...DefaultDebuffs, faerieFire: false, curseOfRecklessness: false }),
@@ -364,9 +364,9 @@ export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('L
 // within noise keeps the race): the Level 60 build is Night Elf with Elune's Light held for the
 // trinket, 851.2 at 180 sec against the Tauren's 841.5 (20,000 iterations, seed 1); the Wrath build
 // is Windshaper Skyborne, 811.1 against the Tauren's 800.7. The Faerie Fire duty builds follow them.
-export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
-	group: 'Level 60',
-	tooltip: 'Level 60 Night Elf on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
+export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Balance', {
+	group: 'Synthetic',
+	tooltip: 'Level 60 Night Elf on the synthetic Phase 1 gear with the Balance rotation, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60,
@@ -376,10 +376,10 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 });
-export const PresetBuildLevel60FaerieFire = PresetUtils.makePresetBuild('Level 60 (Faerie Fire duty)', {
-	group: 'Level 60',
+export const PresetBuildLevel60FaerieFire = PresetUtils.makePresetBuild('Balance · Faerie Fire duty', {
+	group: 'Synthetic',
 	tooltip:
-		"The Level 60 build keeping Faerie Fire on the target for the raid. It turns off the raid's Faerie Fire and Curse of Recklessness, which share its armor slot.",
+		"The Balance build keeping Faerie Fire on the target for the raid. It turns off the raid's Faerie Fire and Curse of Recklessness, which share its armor slot.",
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60FaerieFire,
@@ -389,9 +389,9 @@ export const PresetBuildLevel60FaerieFire = PresetUtils.makePresetBuild('Level 6
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 });
-export const PresetBuildLevel60Wrath = PresetUtils.makePresetBuild('Level 60 Wrath', {
-	group: 'Level 60',
-	tooltip: 'The Level 60 build with Wrath as the only filler.',
+export const PresetBuildLevel60Wrath = PresetUtils.makePresetBuild('Balance Wrath', {
+	group: 'Synthetic',
+	tooltip: 'The Balance build with Wrath as the only filler.',
 	gear: GearLevel60Phase1SyntheticWrath,
 	talents: TalentsLevel60Wrath,
 	rotation: APLLevel60Wrath,
@@ -401,10 +401,10 @@ export const PresetBuildLevel60Wrath = PresetUtils.makePresetBuild('Level 60 Wra
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 });
-export const PresetBuildLevel60WrathFaerieFire = PresetUtils.makePresetBuild('Level 60 Wrath (Faerie Fire duty)', {
-	group: 'Level 60',
+export const PresetBuildLevel60WrathFaerieFire = PresetUtils.makePresetBuild('Balance Wrath · Faerie Fire duty', {
+	group: 'Synthetic',
 	tooltip:
-		"The Level 60 Wrath build keeping Faerie Fire on the target for the raid. It turns off the raid's Faerie Fire and Curse of Recklessness, which share its armor slot.",
+		"The Balance Wrath build keeping Faerie Fire on the target for the raid. It turns off the raid's Faerie Fire and Curse of Recklessness, which share its armor slot.",
 	gear: GearLevel60Phase1SyntheticWrath,
 	talents: TalentsLevel60Wrath,
 	rotation: APLLevel60WrathFaerieFire,

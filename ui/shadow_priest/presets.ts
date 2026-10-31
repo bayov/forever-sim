@@ -84,9 +84,9 @@ export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
 // Bracer - Greater Spellpower (16) and Spellblasting on the staff. Forever's Revelation is not
 // used: its proc model is a guess made for shaman shocks. No Phase 1 shoulder or cloak enchant
 // does anything for a caster outside the raids.
-export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGear, {
+export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Shadow', Level60Phase1SyntheticGear, {
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 
 // The same set for the Smite build without hit rating: Holy Precision gives Smite, Holy Fire and
@@ -98,9 +98,9 @@ export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 P
 // head and shoulders carry Vestments of Conviction, Forever's Tier 1 Discipline and Holy set, so
 // only its 2 piece (10 Spirit) is live; the 4 and 5 piece (9 spell damage, Penance 1 sec
 // shorter) would add 4.7.
-export const GearLevel60Phase1Smite = PresetUtils.makePresetGear('Level 60 Phase 1 Smite', Level60Phase1SmiteGear, {
+export const GearLevel60Phase1Smite = PresetUtils.makePresetGear('Smite', Level60Phase1SmiteGear, {
 	tooltip: 'The synthetic Phase 1 set with the Discipline and Holy Tier 1 bonuses, for the Smite build.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 
 export const GearPresets = {
@@ -113,7 +113,7 @@ export const DefaultGear = GearPresets[Phase.Phase1][0];
 //                                 APL Presets
 ///////////////////////////////////////////////////////////////////////////
 
-export const APLP1Shadow = PresetUtils.makePresetAPLRotation('Shadow', P1APL);
+export const APLP1Shadow = PresetUtils.makePresetAPLRotation('Shadow (Era)', P1APL);
 
 // The tools/rotopt priest_shadow template after a knob search on the Level 60 build (3000
 // iterations a candidate, 20000 to confirm, at 120, 180 and 300 sec, 2026-10-12). Shadowform
@@ -164,9 +164,9 @@ export const APLP1Shadow = PresetUtils.makePresetAPLRotation('Shadow', P1APL);
 // more to go, and when nothing else can be cast. The Shadow build never runs that low; Shadow +
 // Holy goes from 916.0 / 918.9 / 829.7 / 711.6 to 916.0 / 918.9 / 859.3 / 786.4 at 120 / 180 /
 // 300 / 480 sec.
-export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APL, {
+export const APLLevel60 = PresetUtils.makePresetAPLRotation('Shadow', Level60APL, {
 	tooltip: "The optimizer's best level 60 rotation: both damage over time spells up, Mind Blast and Shadow Word: Death on cooldown, Mind Flay to fill.",
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 
 // The tools/rotopt priest_smite template after a knob search on the Smite talents (3000
@@ -204,9 +204,9 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // Wand Shoot (2026-10-23, forever-wiki/sim-status.md): from 10% mana to 20% with a minute or
 // more to go, and when nothing else can be cast: 785.6 / 765.4 / 675.3 / 580.4 to 785.7 /
 // 765.7 / 689.6 / 619.4 at 120 / 180 / 300 / 480 sec.
-export const APLLevel60Smite = PresetUtils.makePresetAPLRotation('Level 60 Smite', Level60SmiteAPL, {
+export const APLLevel60Smite = PresetUtils.makePresetAPLRotation('Smite', Level60SmiteAPL, {
 	tooltip: "The optimizer's best rotation for the Smite talents: Shadow Word: Pain up for Power in Light, Smite to fill, a lower rank once mana runs short.",
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 
 export const APLPresets = {
@@ -249,10 +249,10 @@ export const DefaultAPL = APLPresets[Phase.Phase1][0];
 //   180 / 300 sec (20000 iterations, seeds 1 and 1000003 within 0.4), a cost of 1.1 / 0.9 / 1.0.
 //   Taking all 3 points from Meditation instead costs 61 at 300 sec (mana), and the 180 sec search's
 //   Meditation 1 build costs 9.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '00530400102-3-50052101231302251' }), {
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Shadow', SavedTalents.create({ talentsString: '00530400102-3-50052101231302251' }), {
 	tooltip:
 		'Level 60 talents from the talent search: deep Shadow with Twin Disciplines, Silent Resolve (threat), Mental Strength, Inner Focus and Twilight Focus.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 
 // Client 70425 (2026-10-16): the Shadow points follow Level 60's (Early Demise 2 from Holy Reach,
@@ -267,9 +267,9 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // 2.5% behind at 180 sec. A talent search from it trades Holy points for Twin Disciplines and
 // Shadow (+9.8 with 13 Holy), which defeats the build's purpose, so it keeps its 20 Holy. With
 // Dark Sacrifice left out of the rotation it would gain 5.1 (837.1).
-export const TalentsLevel60Holy = PresetUtils.makePresetTalents('Level 60 + Holy', SavedTalents.create({ talentsString: '-3025011303-50052101231302251' }), {
-	tooltip: 'The Level 60 Shadow points with 18 Holy points for healing utility, about 42 DPS behind.',
-	group: 'Level 60',
+export const TalentsLevel60Holy = PresetUtils.makePresetTalents('Shadow + Holy', SavedTalents.create({ talentsString: '-3025011303-50052101231302251' }), {
+	tooltip: 'The Shadow points with 18 Holy points for healing utility, about 42 DPS behind.',
+	group: 'Synthetic',
 });
 
 // A Holy damage priest: Smite, Holy Fire and Penance instead of Shadowform. Forever's
@@ -288,12 +288,12 @@ export const TalentsLevel60Holy = PresetUtils.makePresetTalents('Level 60 + Holy
 // at 180 sec. That is 17% behind
 // Shadow at 180 sec and 24% at 300: Smite is a mana hungry filler and nothing in the tree halves its cost the way
 // Shadowform does for Shadow spells.
-export const TalentsLevel60Smite = PresetUtils.makePresetTalents('Level 60 Smite', SavedTalents.create({ talentsString: '525035231030001001-30505110002-3' }), {
+export const TalentsLevel60Smite = PresetUtils.makePresetTalents('Smite', SavedTalents.create({ talentsString: '525035231030001001-30505110002-3' }), {
 	tooltip: 'Holy damage talents: 31 Discipline (Power in Light, Penance, Power Infusion) and 17 Holy (Divine Fury, Searing Light, Twilight Focus).',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 
-export const TalentsP1Shadow = PresetUtils.makePresetTalents('Shadow', SavedTalents.create({ talentsString: '00503123103--50052101231302251' }));
+export const TalentsP1Shadow = PresetUtils.makePresetTalents('Shadow (Era)', SavedTalents.create({ talentsString: '00503123103--50052101231302251' }));
 
 export const TalentPresets = {
 	[Phase.Phase1]: [TalentsLevel60, TalentsLevel60Holy, TalentsLevel60Smite, TalentsP1Shadow],
@@ -411,7 +411,7 @@ export const OtherDefaults = {
 // The level 60 raid setup: the sim's default boss (level 63, 3731 armor, type Unknown: a generic boss), a 3 minute
 // fight, and the default buffs, debuffs and consumes, like the enhancement shaman's.
 export const EncounterLevel60 = PresetUtils.makePresetEncounter(
-	'Level 60',
+	'Generic boss',
 	Encounter.create({
 		duration: 180,
 		durationVariation: 20,
@@ -463,9 +463,9 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // Berserking 15 sec, Undead Touch of the Grave 15 sec): Level 60 and Level 60 + Holy move to the Undead.
 // At 180 sec (verify.py, 20000 iterations, seed 1): Level 60 952.8 against the Human's 949.2, Level 60 +
 // Holy 910.5 against 906.8.
-export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
-	group: 'Level 60',
-	tooltip: 'Level 60 Undead on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
+export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Shadow', {
+	group: 'Synthetic',
+	tooltip: 'Level 60 Undead on the synthetic Phase 1 gear with the Shadow rotation, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60,
@@ -494,7 +494,7 @@ export const ConsumesHoly = Consumes.create({
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
 });
 
-export const EncounterLevel60Holy = PresetUtils.makePresetEncounter('Level 60 + Holy', EncounterLevel60.encounter, {
+export const EncounterLevel60Holy = PresetUtils.makePresetEncounter('Shadow + Holy', EncounterLevel60.encounter, {
 	tanks: [],
 	raidBuffs: DefaultRaidBuffs,
 	debuffs: DefaultDebuffs,
@@ -502,10 +502,10 @@ export const EncounterLevel60Holy = PresetUtils.makePresetEncounter('Level 60 + 
 	consumes: ConsumesHoly,
 });
 
-export const PresetBuildLevel60Holy = PresetUtils.makePresetBuild('Level 60 + Holy', {
-	group: 'Level 60',
+export const PresetBuildLevel60Holy = PresetUtils.makePresetBuild('Shadow + Holy', {
+	group: 'Synthetic',
 	tooltip:
-		'Level 60 Undead with the Holy sub tree talents and Greater Mageblood, 42 DPS behind Level 60. Dark Sacrifice holds it at 865.1 at 300 sec, where a Human runs out of mana (802.9).',
+		'Level 60 Undead with the Holy sub tree talents and Greater Mageblood, 42 DPS behind Shadow. Dark Sacrifice holds it at 865.1 at 300 sec, where a Human runs out of mana (802.9).',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60Holy,
 	rotation: APLLevel60,
@@ -535,7 +535,7 @@ export const ConsumesSmite = Consumes.create({
 	spiritElixir: SpiritElixir.ElixirOfGreaterSpirit,
 });
 
-export const EncounterLevel60Smite = PresetUtils.makePresetEncounter('Level 60 Smite', EncounterLevel60.encounter, {
+export const EncounterLevel60Smite = PresetUtils.makePresetEncounter('Smite', EncounterLevel60.encounter, {
 	tanks: [],
 	raidBuffs: DefaultRaidBuffs,
 	debuffs: DefaultDebuffs,
@@ -553,8 +553,8 @@ export const EncounterLevel60Smite = PresetUtils.makePresetEncounter('Level 60 S
 //   Troll     773.0 / 730.4 / 654.5
 // Undead's Dark Sacrifice and Gnome's larger mana pool and cheaper Eureka! casts are worth the
 // most once the mana runs out.
-export const PresetBuildLevel60Smite = PresetUtils.makePresetBuild('Level 60 Smite', {
-	group: 'Level 60',
+export const PresetBuildLevel60Smite = PresetUtils.makePresetBuild('Smite', {
+	group: 'Synthetic',
 	tooltip: 'Level 60 Undead Holy damage priest (Smite, Power Infusion) on the synthetic Phase 1 gear, 22% behind Shadow.',
 	gear: GearLevel60Phase1Smite,
 	talents: TalentsLevel60Smite,

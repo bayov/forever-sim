@@ -79,9 +79,9 @@ export const GearMC = PresetUtils.makePresetGear('MC', MCGear);
 // (Arcanum of Focus is a Zandalar one), Enchant Necklace - Spell Power, the Mystic Rugged Armor Kit
 // (+6 spell power) on the chest, hands, legs and feet, Bracer - Greater Spellpower and Spellblasting on
 // the staff. No Phase 1 enchant adds damage on the shoulders or back.
-export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGearJSON, {
+export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Demonology', Level60Phase1SyntheticGearJSON, {
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game. Hit capped with Suppression 5/5.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 // The old Demonology set, for the build with one point of Suppression: four pieces (the chest, legs, waist
 // and staff) swapped for hit variants (14% hit from gear) at the same budget, in Demonology's own stat
@@ -94,7 +94,7 @@ export const GearLevel60Phase1SyntheticDemonology = PresetUtils.makePresetGear(
 	Level60Phase1SyntheticDemonologyGearJSON,
 	{
 		tooltip: 'The synthetic Phase 1 set with four hit pieces, hit capped for a Demonology build with one point of Suppression.',
-		group: 'Level 60',
+		group: 'Other',
 	},
 );
 
@@ -123,51 +123,55 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // Corruption too (the knob search's near misses, positive at 120 / 180 / 300 sec on both seed sets:
 // Demonology +0.8 to +2.2, Destruction +0.3 to +0.6, Affliction +0.3 to +0.8, fire +0.5 to +1.4 with
 // its Immolate recast 1.5 sec early).
-export const RotationLevel60Demonology = PresetUtils.makePresetAPLRotation('Level 60 Demonology', Level60DemonologyAPL, {
-	group: 'Level 60',
+export const RotationLevel60Demonology = PresetUtils.makePresetAPLRotation('Demonology', Level60DemonologyAPL, {
+	group: 'Synthetic',
 	tooltip: 'The Level 60 rotation with Soul Link before the pull, for the Demonology talents.',
 });
 // Destruction adds Conflagrate on cooldown while Immolate is up. Shadow and Flame 5/5 keeps the
 // Immolate every time. Destruction and Affliction recast Immolate once it has less left than its
 // own cast time, which clips no tick, and Corruption only when it is gone (an early instant
 // Corruption clips its last tick).
-export const RotationLevel60Destruction = PresetUtils.makePresetAPLRotation('Level 60 Destruction', Level60DestructionAPL, {
-	group: 'Level 60',
+export const RotationLevel60Destruction = PresetUtils.makePresetAPLRotation('Destruction', Level60DestructionAPL, {
+	group: 'Synthetic',
 	tooltip: 'The Level 60 rotation with Conflagrate, for the Destruction talents.',
 });
-export const RotationLevel60Affliction = PresetUtils.makePresetAPLRotation('Level 60 Affliction', Level60AfflictionAPL, {
-	group: 'Level 60',
+export const RotationLevel60Affliction = PresetUtils.makePresetAPLRotation('Affliction', Level60AfflictionAPL, {
+	group: 'Synthetic',
 	tooltip: 'The Level 60 rotation for the Affliction talents.',
 });
 // Destruction fire: Incinerate while Immolate is up (25% more), Conflagrate on cooldown, Immolate
 // opens the fight (started 1.5 sec before the pull, so it lands as the fight starts) and is
 // recast 1.5 sec before it runs out, Corruption too.
-export const RotationLevel60DestructionFire = PresetUtils.makePresetAPLRotation('Level 60 Destruction Fire', Level60DestructionFireAPL, {
-	group: 'Level 60',
+export const RotationLevel60DestructionFire = PresetUtils.makePresetAPLRotation('Destruction Fire', Level60DestructionFireAPL, {
+	group: 'Synthetic',
 	tooltip: 'The Level 60 rotation with Incinerate as the filler, for the Destruction fire talents.',
 });
 // The raid curse duty rotations (standards 23): the base rotation plus Curse of the Elements, which
 // this warlock keeps up for the raid (put up right after the opener and recast before it drops). A
 // warlock holds one curse duty and every curse costs the same GCDs, so one duty preset covers them.
 // Under Forever the curse has its own slot, so the bane stays.
-export const RotationLevel60DemonologyDutyCurse = PresetUtils.makePresetAPLRotation('Level 60 Demonology (Curse duty)', Level60DemonologyDutyCurseAPL, {
-	group: 'Level 60',
-	tooltip: 'The Level 60 Demonology rotation with Curse of the Elements kept up for the raid.',
+export const RotationLevel60DemonologyDutyCurse = PresetUtils.makePresetAPLRotation('Demonology · Curse of the Elements duty', Level60DemonologyDutyCurseAPL, {
+	group: 'Synthetic',
+	tooltip: 'The Demonology rotation with Curse of the Elements kept up for the raid.',
 });
-export const RotationLevel60DestructionDutyCurse = PresetUtils.makePresetAPLRotation('Level 60 Destruction (Curse duty)', Level60DestructionDutyCurseAPL, {
-	group: 'Level 60',
-	tooltip: 'The Level 60 Destruction rotation with Curse of the Elements kept up for the raid.',
-});
-export const RotationLevel60AfflictionDutyCurse = PresetUtils.makePresetAPLRotation('Level 60 Affliction (Curse duty)', Level60AfflictionDutyCurseAPL, {
-	group: 'Level 60',
-	tooltip: 'The Level 60 Affliction rotation with Curse of the Elements kept up for the raid.',
+export const RotationLevel60DestructionDutyCurse = PresetUtils.makePresetAPLRotation(
+	'Destruction · Curse of the Elements duty',
+	Level60DestructionDutyCurseAPL,
+	{
+		group: 'Synthetic',
+		tooltip: 'The Destruction rotation with Curse of the Elements kept up for the raid.',
+	},
+);
+export const RotationLevel60AfflictionDutyCurse = PresetUtils.makePresetAPLRotation('Affliction · Curse of the Elements duty', Level60AfflictionDutyCurseAPL, {
+	group: 'Synthetic',
+	tooltip: 'The Affliction rotation with Curse of the Elements kept up for the raid.',
 });
 export const RotationLevel60DestructionFireDutyCurse = PresetUtils.makePresetAPLRotation(
-	'Level 60 Destruction Fire (Curse duty)',
+	'Destruction Fire · Curse of the Elements duty',
 	Level60DestructionFireDutyCurseAPL,
 	{
-		group: 'Level 60',
-		tooltip: 'The Level 60 Destruction Fire rotation with Curse of the Elements kept up for the raid.',
+		group: 'Synthetic',
+		tooltip: 'The Destruction Fire rotation with Curse of the Elements kept up for the raid.',
 	},
 );
 export const RotationBasic = PresetUtils.makePresetAPLRotation('Basic', BasicRotation);
@@ -207,20 +211,18 @@ export const DefaultAPL = RotationLevel60Demonology;
 // in Improved Corruption; the same for the curse duty build. Dropping Demonic Pact to keep Agonizing
 // Flames is 90 behind. Against the old one point build on its hit set (011-0305003131221001351-0550005003)
 // Suppression costs 67.1 / 68.1 / 66.2 at 120 / 180 / 300 sec (66.8 on curse duty at 180 sec).
-export const TalentsLevel60Demonology = PresetUtils.makePresetTalents(
-	'Level 60 Demonology',
-	SavedTalents.create({ talentsString: '051-0305003131221001351-0550004' }),
-	{ group: 'Level 60', tooltip: 'Demonic Pact with Suppression 5/5, Improved Shadow Bolt and Ruin.' },
-);
+export const TalentsLevel60Demonology = PresetUtils.makePresetTalents('Demonology', SavedTalents.create({ talentsString: '051-0305003131221001351-0550004' }), {
+	group: 'Synthetic',
+	tooltip: 'Demonic Pact with Suppression 5/5, Improved Shadow Bolt and Ruin.',
+});
 // The best build with 30 points in Destruction: Conflagrate, Fire and Brimstone and Shadow and
 // Flame, with Pandemic and Malevolence from Affliction. Incinerate and Bane of Havoc lost to two
 // points of Malevolence and Shadowburn to more Pandemic. Under client 1.60.1.70425 Malediction's
 // point went to Nightfall (searched again 2026-10-16).
-export const TalentsLevel60Destruction = PresetUtils.makePresetTalents(
-	'Level 60 Destruction',
-	SavedTalents.create({ talentsString: '255000000351--055030500310035' }),
-	{ group: 'Level 60', tooltip: 'Conflagrate and Shadow and Flame, with Pandemic and Malevolence.' },
-);
+export const TalentsLevel60Destruction = PresetUtils.makePresetTalents('Destruction', SavedTalents.create({ talentsString: '255000000351--055030500310035' }), {
+	group: 'Synthetic',
+	tooltip: 'Conflagrate and Shadow and Flame, with Pandemic and Malevolence.',
+});
 // The best build with 30 points in Affliction: Shadow Mastery, Pandemic, Malevolence and
 // Nightfall, with Improved Shadow Bolt, Ruin and Agonizing Flames. Under client 1.60.1.70425
 // Shadow Mastery is 10% and Malediction is gone: its 3 points went to Improved Bane of Agony and one
@@ -229,11 +231,10 @@ export const TalentsLevel60Destruction = PresetUtils.makePresetTalents(
 // Siphon Life, Soul Siphon and Wrack (25530000035001351--0550005003, the best build with both, on
 // the same Shadow Bolt rotation) is 55 behind, and casting its Wrack costs 34; its drain filler
 // versions lose 124 to 349. It played the same as this build, so it is not shipped as a spec.
-export const TalentsLevel60Affliction = PresetUtils.makePresetTalents(
-	'Level 60 Affliction',
-	SavedTalents.create({ talentsString: '2550102003520005--0550305003' }),
-	{ group: 'Level 60', tooltip: 'Shadow Mastery, Pandemic and Nightfall, with Improved Shadow Bolt and Ruin.' },
-);
+export const TalentsLevel60Affliction = PresetUtils.makePresetTalents('Affliction', SavedTalents.create({ talentsString: '2550102003520005--0550305003' }), {
+	group: 'Synthetic',
+	tooltip: 'Shadow Mastery, Pandemic and Nightfall, with Improved Shadow Bolt and Ruin.',
+});
 
 // Destruction fire, its own spec: Incinerate, Conflagrate, Fire and Brimstone, Shadow and Flame and
 // Aftermath, with Demonic Sacrifice (the Succubus sacrificed before the pull for 15% Fire damage, no
@@ -244,9 +245,9 @@ export const TalentsLevel60Affliction = PresetUtils.makePresetTalents(
 // build 950.3, the Imp sacrificed 917.5, the Felhunter 885.4, and Spellstone 9.7 behind Firestone. A
 // talent search from it moved nothing. Bane of Havoc's point does nothing in the sim.
 export const TalentsLevel60DestructionFire = PresetUtils.makePresetTalents(
-	'Level 60 Destruction Fire',
+	'Destruction Fire',
 	SavedTalents.create({ talentsString: '252-0050003201-0050345003101351' }),
-	{ group: 'Level 60', tooltip: 'Incinerate, Conflagrate and Shadow and Flame, with the Succubus sacrificed for 15% Fire damage.' },
+	{ group: 'Synthetic', tooltip: 'Incinerate, Conflagrate and Shadow and Flame, with the Succubus sacrificed for 15% Fire damage.' },
 );
 
 export const TalentPresets = [TalentsLevel60Demonology, TalentsLevel60Destruction, TalentsLevel60Affliction, TalentsLevel60DestructionFire];
@@ -426,10 +427,13 @@ const level60Encounter = (name: string, debuffs: Debuffs) =>
 			consumes: DefaultConsumes,
 		},
 	);
-export const EncounterLevel60 = level60Encounter('Level 60', DefaultDebuffs);
+export const EncounterLevel60 = level60Encounter('Generic boss', DefaultDebuffs);
 // The curse duty presets' encounter: the raid's Curse of the Elements is off, the warlock on duty
 // brings it; the raid's other curses and Faerie Fire stay on (other players' duties).
-export const EncounterLevel60CurseDuty = level60Encounter('Level 60 (Curse duty)', Debuffs.create({ ...DefaultDebuffs, curseOfElements: false }));
+export const EncounterLevel60CurseDuty = level60Encounter(
+	'Demonology · Curse of the Elements duty',
+	Debuffs.create({ ...DefaultDebuffs, curseOfElements: false }),
+);
 
 // The Level 60 builds at 120 / 180 / 300 sec (20000 iterations, seed 1, 2026-10-23, the natural flask
 // zone, wowsims/forever's measured demon shares and melee): Demonology 1081.4 / 1065.1 / 1035.4 (with
@@ -454,8 +458,8 @@ export const EncounterLevel60CurseDuty = level60Encounter('Level 60 (Curse duty)
 // Affliction stays Human (the Orc's 0.4 lead in the race sweep is a tie). The curse duty builds follow
 // their base. The UI's default race is the Orc, the race of the default build (Demonology) and of
 // Destruction.
-export const PresetBuildLevel60Demonology = PresetUtils.makePresetBuild('Level 60 Demonology', {
-	group: 'Level 60',
+export const PresetBuildLevel60Demonology = PresetUtils.makePresetBuild('Demonology', {
+	group: 'Synthetic',
 	tooltip: 'Level 60 Orc Demonology warlock on the synthetic Phase 1 gear, the Imp sacrificed and the Succubus out, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60Demonology,
@@ -467,8 +471,8 @@ export const PresetBuildLevel60Demonology = PresetUtils.makePresetBuild('Level 6
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: PresetBuildOptionsDemonology,
 });
-export const PresetBuildLevel60Destruction = PresetUtils.makePresetBuild('Level 60 Destruction', {
-	group: 'Level 60',
+export const PresetBuildLevel60Destruction = PresetUtils.makePresetBuild('Destruction', {
+	group: 'Synthetic',
 	tooltip: 'Level 60 Orc Destruction warlock on the synthetic Phase 1 gear with the Succubus out, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60Destruction,
@@ -480,8 +484,8 @@ export const PresetBuildLevel60Destruction = PresetUtils.makePresetBuild('Level 
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: PresetBuildOptionsSuccubus,
 });
-export const PresetBuildLevel60Affliction = PresetUtils.makePresetBuild('Level 60 Affliction', {
-	group: 'Level 60',
+export const PresetBuildLevel60Affliction = PresetUtils.makePresetBuild('Affliction', {
+	group: 'Synthetic',
 	tooltip: 'Level 60 Human Affliction warlock on the synthetic Phase 1 gear with the Succubus out, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60Affliction,
@@ -494,8 +498,8 @@ export const PresetBuildLevel60Affliction = PresetUtils.makePresetBuild('Level 6
 	options: PresetBuildOptionsSuccubus,
 });
 
-export const PresetBuildLevel60DestructionFire = PresetUtils.makePresetBuild('Level 60 Destruction Fire', {
-	group: 'Level 60',
+export const PresetBuildLevel60DestructionFire = PresetUtils.makePresetBuild('Destruction Fire', {
+	group: 'Synthetic',
 	tooltip: 'Level 60 Undead Destruction fire warlock on the synthetic Phase 1 gear, the Succubus sacrificed, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60DestructionFire,
@@ -514,7 +518,7 @@ export const PresetBuildLevel60DestructionFire = PresetUtils.makePresetBuild('Le
 // Faerie Fire up it never lands.
 const curseDutyBuild = (base: PresetUtils.PresetBuild, rotation: PresetUtils.PresetRotation) => {
 	const { name, ...options } = base;
-	return PresetUtils.makePresetBuild(`${name} (Curse duty)`, {
+	return PresetUtils.makePresetBuild(`${name} · Curse of the Elements duty`, {
 		...options,
 		tooltip: `${options.tooltip} On curse duty for the raid, keeping Curse of the Elements up itself.`,
 		rotation,

@@ -92,15 +92,15 @@ export const GearPhase6 = PresetUtils.makePresetGear('P6 BiS', Phase6Gear);
 //
 // On 2026-10-13 the Level 60 Fury build (Human, 180 sec) does 1031.1 on the Fury set, and the Era
 // Phase 1 set (phase_1.gear.json) 984.2 with the same talents and rotation.
-export const GearLevel60Phase1SyntheticFury = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic (Fury)', Level60Phase1SyntheticFuryGearJSON, {
+export const GearLevel60Phase1SyntheticFury = PresetUtils.makePresetGear('Fury', Level60Phase1SyntheticFuryGearJSON, {
 	tooltip: 'A guess at Phase 1 BiS under Forever for a dual wield warrior, made of synthetic items that are not in the game.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 // The same armor with a two-hander in place of Bonereaver's Edge, for Arms and two-hand Fury. It is a
 // 3.7 sec axe, the slowest Era Phase 1 BiS two-hand speed (standards 22).
-export const GearLevel60Phase1SyntheticArms = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic (Two-Hand)', Level60Phase1SyntheticArmsGearJSON, {
+export const GearLevel60Phase1SyntheticArms = PresetUtils.makePresetGear('Fury 2H', Level60Phase1SyntheticArmsGearJSON, {
 	tooltip: 'A guess at Phase 1 BiS under Forever for a two-hand warrior, made of synthetic items that are not in the game.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 
 export const GearPresets = {
@@ -137,7 +137,7 @@ export const APLNoReck = PresetUtils.makePresetAPLRotation('DPS (No Reck)', APLN
 // cooldowns (no Goblin Land Mine since 2026-10-24, see the consumables below). Blood Fury, Berserking and Elune's Light wait for Death Wish when that costs
 // no use. It is 1031.1 (Human) where the old DPS (With Reck) rotation is 981.2. Slam on its 18 sec
 // cooldown and holding the fillers for Bloodthirst and Whirlwind both lose.
-export const APLLevel60Fury = PresetUtils.makePresetAPLRotation('Level 60 Fury', Level60FuryAPLJSON, { group: 'Level 60' });
+export const APLLevel60Fury = PresetUtils.makePresetAPLRotation('Fury', Level60FuryAPLJSON, { group: 'Synthetic' });
 // The same template on the two-hand Fury talents and the two-hand set: the Fury rotation with
 // Heroic Strike from 90 Rage, Hamstring from 20, Bloodrage under 20, Berserker Rage under 30 for its
 // Rage (Improved Berserker Rage 2/2), Slam from 45 Rage right after a main hand swing, ahead of
@@ -152,7 +152,7 @@ export const APLLevel60Fury = PresetUtils.makePresetAPLRotation('Level 60 Fury',
 // 2026-10-25 re-search at flat Rage (Berserker Rage under 30, Heroic Strike from 90, Slam from 45,
 // with Improved Berserker Rage 2 for a point of Enrage): 958.4 to 965.6 at 180 sec (Orc, seed 1;
 // +5.8 / +7.3 / +4.4 at 120 / 180 / 300 sec, seed 1000003 within 1.1).
-export const APLLevel60Fury2H = PresetUtils.makePresetAPLRotation('Level 60 Fury (Two-Hand)', Level60Fury2HAPLJSON, { group: 'Level 60' });
+export const APLLevel60Fury2H = PresetUtils.makePresetAPLRotation('Fury 2H', Level60Fury2HAPLJSON, { group: 'Synthetic' });
 // The tools/rotopt search (template warrior_arms) on the Level 60 Arms talents and the two-hand
 // set, Human, 180 sec: Battle Stance, Mortal Strike, Slam above 20 Rage (15 sec cooldown with
 // Improved Slam), Overpower on dodges and Bloodthrill procs, Rend kept up for Bloodthrill, Execute
@@ -168,23 +168,23 @@ export const APLLevel60Fury2H = PresetUtils.makePresetAPLRotation('Level 60 Fury
 // numbers, on the earlier gear). Berserker Stance with Whirlwind in place of Overpower and
 // Rend for the whole fight was 790.0 with its own talents on the earlier gear, 90 behind. Spearing Strike is worth
 // nothing at 15 Rage for 40% weapon damage, except against Giants and Dragonkin (the preset below).
-export const APLLevel60Arms = PresetUtils.makePresetAPLRotation('Level 60 Arms', Level60ArmsAPLJSON, { group: 'Level 60' });
+export const APLLevel60Arms = PresetUtils.makePresetAPLRotation('Arms', Level60ArmsAPLJSON, { group: 'Synthetic' });
 // Arms against a Giant or Dragonkin boss (Onyxia is Dragonkin in Phase 1), where Spearing Strike does
 // 120% of normalized weapon damage instead of 40%: the Arms rotation with Spearing Strike on cooldown
 // from 15 Rage (946.1 to 948.4 at 180 sec with the Arms re-search's Hamstring and Bloodrage, 2026-10-25).
-export const APLLevel60ArmsDragonkin = PresetUtils.makePresetAPLRotation('Level 60 Arms (vs Dragonkin)', Level60ArmsDragonkinAPLJSON, {
-	group: 'Level 60',
+export const APLLevel60ArmsDragonkin = PresetUtils.makePresetAPLRotation('Arms · vs Dragonkin', Level60ArmsDragonkinAPLJSON, {
+	group: 'Synthetic',
 });
 
 // The Battle Shout duty (standards 23): the base rotation, plus Battle Shout before the pull (with a
 // Bloodrage for its Rage, 3 sec before the pull so its GCD is over by then) and again when 35 sec of it
 // are left, unless it lasts the fight. Forever's Battle Shout lasts 3 min, so only a fight over about
 // 177 sec refreshes it, at about 142 sec, before the execute phase.
-export const APLLevel60FuryShout = PresetUtils.makePresetAPLRotation('Level 60 Fury (Battle Shout duty)', Level60FuryShoutAPLJSON, { group: 'Level 60' });
-export const APLLevel60Fury2HShout = PresetUtils.makePresetAPLRotation('Level 60 Fury (Two-Hand) (Battle Shout duty)', Level60Fury2HShoutAPLJSON, {
-	group: 'Level 60',
+export const APLLevel60FuryShout = PresetUtils.makePresetAPLRotation('Fury · Battle Shout duty', Level60FuryShoutAPLJSON, { group: 'Synthetic' });
+export const APLLevel60Fury2HShout = PresetUtils.makePresetAPLRotation('Fury 2H · Battle Shout duty', Level60Fury2HShoutAPLJSON, {
+	group: 'Synthetic',
 });
-export const APLLevel60ArmsShout = PresetUtils.makePresetAPLRotation('Level 60 Arms (Battle Shout duty)', Level60ArmsShoutAPLJSON, { group: 'Level 60' });
+export const APLLevel60ArmsShout = PresetUtils.makePresetAPLRotation('Arms · Battle Shout duty', Level60ArmsShoutAPLJSON, { group: 'Synthetic' });
 
 export const APLPresets = {
 	[Phase.Phase1]: [
@@ -214,19 +214,18 @@ export const DefaultAPLs = [APLLevel60Fury];
 // search at flat Rage (+1.6 at 180 sec, 20,000 iterations). Weaponmaster
 // hybrids (25 Arms for the swords' extra attacks, no Bloodthirst) were 823.5 on the earlier gear,
 // 17% behind.
-export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Level 60 Fury', SavedTalents.create({ talentsString: '30305013002-25053005142010501' }), {
+export const TalentsLevel60Fury = PresetUtils.makePresetTalents('Fury', SavedTalents.create({ talentsString: '30305013002-25053005142010501' }), {
 	tooltip: 'Level 60 dual wield Fury talents from the talent search.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 // Two-hand Fury from the same search on the two-hand set: Two-Handed Weapon Specialization in place
 // of Dual Wield Specialization and Furious Precision. 899.4 at 180 sec (Human), 13% behind dual wield
 // Fury but its own way to play, so it gets its own preset. At flat Rage (2026-10-25) a point of
 // Enrage moves to Improved Berserker Rage (2/2, 10 Rage a Berserker Rage): +0.8 at 180 sec.
-export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents(
-	'Level 60 Fury (Two-Hand)',
-	SavedTalents.create({ talentsString: '30305013032-25053000142210501' }),
-	{ tooltip: 'Level 60 two-hand Fury talents from the talent search.', group: 'Level 60' },
-);
+export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents('Fury 2H', SavedTalents.create({ talentsString: '30305013032-25053000142210501' }), {
+	tooltip: 'Level 60 two-hand Fury talents from the talent search.',
+	group: 'Synthetic',
+});
 // Arms from the same search on the two-hand set: 35 Arms to Mortal Strike with Bloodthrill,
 // Weaponmaster (1% extra attacks a point with a sword), Improved Slam and Impale, and Cruelty,
 // Unbridled Wrath and Booming Voice in Fury. Arms cannot reach Death Wish. Booming Voice does
@@ -235,18 +234,18 @@ export const TalentsLevel60Fury2H = PresetUtils.makePresetTalents(
 // own preset as the Mortal Strike spec. The 2026-10-25 search at flat Rage kept it: Improved Bloodrage
 // 2/2 for Booming Voice and Improved Execute (which needs the Booming Voice points to open its row)
 // loses 1.5 at 180 sec.
-export const TalentsLevel60Arms = PresetUtils.makePresetTalents('Level 60 Arms', SavedTalents.create({ talentsString: '20305213032515201-55050000001' }), {
+export const TalentsLevel60Arms = PresetUtils.makePresetTalents('Arms', SavedTalents.create({ talentsString: '20305213032515201-55050000001' }), {
 	tooltip: 'Level 60 Arms talents from the talent search.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 // The talent and rotation searches on a Dragonkin boss take Spearing Strike and Improved Bloodrage
 // for two points of Booming Voice and one of Improved Execute.
 export const TalentsLevel60ArmsDragonkin = PresetUtils.makePresetTalents(
-	'Level 60 Arms (vs Dragonkin)',
+	'Arms · vs Dragonkin',
 	SavedTalents.create({ talentsString: '20305213132515201-3505-2' }),
 	{
 		tooltip: 'Level 60 Arms talents against a Giant or Dragonkin boss, with Spearing Strike.',
-		group: 'Level 60',
+		group: 'Synthetic',
 	},
 );
 
@@ -576,8 +575,8 @@ export const EncounterLevel60ArmsBattleShoutDuty = PresetUtils.makePresetEncount
 // 1039.8, two-hand Fury 1081.5 / 1033.7 / 1001.7, its duty 1080.3 / 1030.3 / 999.3, Arms 978.2 /
 // 957.4 / 934.3, its duty 976.3 / 956.0 / 933.0, Arms vs Dragonkin 1020.9 / 1000.1 / 975.7. Orc stays
 // 1.1 to 4.0 ahead of Human at 180 sec on both seed sets.
-export const PresetBuildLevel60Fury = PresetUtils.makePresetBuild('Level 60 Fury', {
-	group: 'Level 60',
+export const PresetBuildLevel60Fury = PresetUtils.makePresetBuild('Fury', {
+	group: 'Synthetic',
 	tooltip: 'Level 60 dual wield Fury on the synthetic Phase 1 gear, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1SyntheticFury,
 	talents: TalentsLevel60Fury,
@@ -589,8 +588,8 @@ export const PresetBuildLevel60Fury = PresetUtils.makePresetBuild('Level 60 Fury
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: PresetBuildOptionsFury,
 });
-export const PresetBuildLevel60FuryShout = PresetUtils.makePresetBuild('Level 60 Fury (Battle Shout duty)', {
-	group: 'Level 60',
+export const PresetBuildLevel60FuryShout = PresetUtils.makePresetBuild('Fury · Battle Shout duty', {
+	group: 'Synthetic',
 	tooltip: 'Level 60 dual wield Fury keeping Battle Shout up. The warrior shouts for the party, so the raid has no other Battle Shout.',
 	gear: GearLevel60Phase1SyntheticFury,
 	talents: TalentsLevel60Fury,
@@ -602,8 +601,8 @@ export const PresetBuildLevel60FuryShout = PresetUtils.makePresetBuild('Level 60
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: PresetBuildOptionsFury,
 });
-export const PresetBuildLevel60Fury2H = PresetUtils.makePresetBuild('Level 60 Fury (Two-Hand)', {
-	group: 'Level 60',
+export const PresetBuildLevel60Fury2H = PresetUtils.makePresetBuild('Fury 2H', {
+	group: 'Synthetic',
 	tooltip: 'Level 60 two-hand Fury on the synthetic Phase 1 gear, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1SyntheticArms,
 	talents: TalentsLevel60Fury2H,
@@ -615,8 +614,8 @@ export const PresetBuildLevel60Fury2H = PresetUtils.makePresetBuild('Level 60 Fu
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: PresetBuildOptionsFury,
 });
-export const PresetBuildLevel60Fury2HShout = PresetUtils.makePresetBuild('Level 60 Fury (Two-Hand) (Battle Shout duty)', {
-	group: 'Level 60',
+export const PresetBuildLevel60Fury2HShout = PresetUtils.makePresetBuild('Fury 2H · Battle Shout duty', {
+	group: 'Synthetic',
 	tooltip: 'Level 60 two-hand Fury keeping Battle Shout up. The warrior shouts for the party, so the raid has no other Battle Shout.',
 	gear: GearLevel60Phase1SyntheticArms,
 	talents: TalentsLevel60Fury2H,
@@ -628,8 +627,8 @@ export const PresetBuildLevel60Fury2HShout = PresetUtils.makePresetBuild('Level 
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: PresetBuildOptionsFury,
 });
-export const PresetBuildLevel60Arms = PresetUtils.makePresetBuild('Level 60 Arms', {
-	group: 'Level 60',
+export const PresetBuildLevel60Arms = PresetUtils.makePresetBuild('Arms', {
+	group: 'Synthetic',
 	tooltip: 'Level 60 Arms on the synthetic Phase 1 gear, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1SyntheticArms,
 	talents: TalentsLevel60Arms,
@@ -641,8 +640,8 @@ export const PresetBuildLevel60Arms = PresetUtils.makePresetBuild('Level 60 Arms
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: PresetBuildOptionsArms,
 });
-export const PresetBuildLevel60ArmsShout = PresetUtils.makePresetBuild('Level 60 Arms (Battle Shout duty)', {
-	group: 'Level 60',
+export const PresetBuildLevel60ArmsShout = PresetUtils.makePresetBuild('Arms · Battle Shout duty', {
+	group: 'Synthetic',
 	tooltip: 'Level 60 Arms keeping Battle Shout up. The warrior shouts for the party, so the raid has no other Battle Shout.',
 	gear: GearLevel60Phase1SyntheticArms,
 	talents: TalentsLevel60Arms,
@@ -659,8 +658,8 @@ export const PresetBuildLevel60ArmsShout = PresetUtils.makePresetBuild('Level 60
 // 952.6 / 927.0 before the Sunder opener (+4.0% at 180 sec). Fury doesn't get one:
 // Spearing Strike needs Battle Stance, and a stance dance for it, with the talent searches, is +0.5%
 // on dual wield Fury and +0.8% on two-hand Fury at 180 sec.
-export const PresetBuildLevel60ArmsDragonkin = PresetUtils.makePresetBuild('Level 60 Arms (vs Dragonkin)', {
-	group: 'Level 60',
+export const PresetBuildLevel60ArmsDragonkin = PresetUtils.makePresetBuild('Arms · vs Dragonkin', {
+	group: 'Synthetic',
 	tooltip: 'Level 60 Arms with Spearing Strike, against a Giant or Dragonkin boss such as Onyxia.',
 	gear: GearLevel60Phase1SyntheticArms,
 	talents: TalentsLevel60ArmsDragonkin,

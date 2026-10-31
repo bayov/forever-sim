@@ -26,8 +26,6 @@ import {
 	StrengthBuff,
 	TotemWeaponBuff,
 	TristateEffect,
-	UnitReference,
-	UnitReference_Type,
 	WeaponImbue,
 	ZanzaBuff,
 } from '../core/proto/common.js';
@@ -35,7 +33,6 @@ import { PaladinAura, PaladinOptions as RetributionPaladinOptions, PaladinSeal }
 import { SavedTalents } from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import APLBasicRetJson from './apls/basic_ret.apl.json';
-import Level30p5APLJSON from './apls/level30p5.apl.json';
 import Level60APLJSON from './apls/level60.apl.json';
 import Level60CrusaderDutyAPLJSON from './apls/level60_crusader_duty.apl.json';
 import Level60ShockAPLJSON from './apls/level60_shock.apl.json';
@@ -45,7 +42,6 @@ import Level60ShockUndeadAPLJSON from './apls/level60_shock_undead.apl.json';
 import Level60SubHolyAPLJSON from './apls/level60_sub_holy.apl.json';
 import Level60UndeadAPLJSON from './apls/level60_undead.apl.json';
 import BlankGear from './gear_sets/blank.gear.json';
-import Level30p5GearJSON from './gear_sets/level30p5.gear.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
 import Level60Phase1SyntheticCrusaderDutyGearJSON from './gear_sets/level60_phase1_synthetic_crusader_duty.gear.json';
 import Level60Phase1SyntheticUndeadGearJSON from './gear_sets/level60_phase1_synthetic_undead.gear.json';
@@ -59,26 +55,6 @@ import Level60Phase1SyntheticUndeadGearJSON from './gear_sets/level60_phase1_syn
 ///////////////////////////////////////////////////////////////////////////
 
 export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear, { tooltip: 'No gear equipped.' });
-// The gear search at level 30 with 26 talent points and Seal of Command, over everything
-// an Undead paladin can equip, started from the old level 20 set. The professions are
-// Blacksmithing and Enchanting, and the Scourge Invasion drops and the items no source is
-// known for are left out. Corpsemaker (Razorfen Kraul) takes the two hander for 8.8 DPS. Blacksmithing makes
-// the helm, shirt, leggings and belt (the Crusader's chain pieces and Justicar's Belt,
-// bind on pickup) and the Hard Gold Boots. Bloodmage Mantle comes from the Scarlet
-// Monastery Library and Unearthed Bands of Power from Uldaman.
-//
-// The first search took Scorn's Icy Choker (+0.7). Scorn only spawns in the Scourge
-// Invasion, so we left his drops out and Mark of the Pack Leader keeps the neck. Manual
-// Crowd Pummeler is left out too, see the shaman's Level 30 + 5 set.
-//
-// On 2026-10-05 the two-hander went from Lesser Strength (+15 Strength) to Impact (+6 weapon
-// damage), because the +15 Strength and +15 Agility enchants are not in the beta. That is
-// 130.7 against 131.7 at 60 sec. Revelation adds nothing here (128.8, the same as no enchant),
-// because the rotation casts no spell that can trigger it.
-export const GearLevel30p5 = PresetUtils.makePresetGear('Level 30 + 5', Level30p5GearJSON, {
-	tooltip: 'Level 30 gear with Corpsemaker and Blacksmithing crafts.',
-	group: 'Level 30',
-});
 
 // Synthetic Phase 1 retribution gear, from tools/database/forever_synthetic_items_paladin.go (ids
 // from 992000, not in the game).
@@ -120,18 +96,18 @@ export const GearLevel30p5 = PresetUtils.makePresetGear('Level 30 + 5', Level30p
 // two-hander. Spellblasting is 10 DPS over Crusader on the twist build and 27 on Shock, Holy Power
 // 2 to 7 over Gloves Superior Strength, and the Rugged kits lose on chest and legs and tie on the
 // boots. The gear stays fixed for the talent, rotation and race searches.
-export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGearJSON, {
+export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Ret sub-Holy', Level60Phase1SyntheticGearJSON, {
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 
 // The same set with Tenets of the Silver Hand (1% more damage against Undead, spell 1302545) in the
 // relic slot, for the vs Undead builds. Paired at 180 sec with 20000 iterations against an Undead
 // boss it beats Libram of Law by 6.2 on Level 60 (vs Undead), 6.3 on sub Holy vs Undead and 3.4 on
 // Shock vs Undead (2026-10-23).
-export const GearLevel60Phase1SyntheticUndead = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic (vs Undead)', Level60Phase1SyntheticUndeadGearJSON, {
-	tooltip: 'The Level 60 Phase 1 Synthetic set with Tenets of the Silver Hand, for an Undead boss.',
-	group: 'Level 60',
+export const GearLevel60Phase1SyntheticUndead = PresetUtils.makePresetGear('Ret sub-Holy · vs Undead', Level60Phase1SyntheticUndeadGearJSON, {
+	tooltip: 'The synthetic Phase 1 set with Tenets of the Silver Hand, for an Undead boss.',
+	group: 'Synthetic',
 });
 
 // The same set with Libram of Fervor (+33 to Judgement of the Crusader's Holy damage taken, a Phase 1
@@ -141,11 +117,11 @@ export const GearLevel60Phase1SyntheticUndead = PresetUtils.makePresetGear('Leve
 // (Crusader duty). On the base builds it does nothing: the raid's Judgement of the Crusader is
 // someone else's.
 export const GearLevel60Phase1SyntheticCrusaderDuty = PresetUtils.makePresetGear(
-	'Level 60 Phase 1 Synthetic (Crusader duty)',
+	'Ret sub-Holy · Judgement of the Crusader duty',
 	Level60Phase1SyntheticCrusaderDutyGearJSON,
 	{
-		tooltip: 'The Level 60 Phase 1 Synthetic set with Libram of Fervor, for the Crusader duty builds.',
-		group: 'Level 60',
+		tooltip: 'The synthetic Phase 1 set with Libram of Fervor, for the Crusader duty builds.',
+		group: 'Synthetic',
 	},
 );
 
@@ -181,9 +157,9 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // at 20000 iterations on seeds 1 and 1000003): the twist goes on at any mana (it stopped below 20%),
 // +0.0 / +0.1 / +5.7 at 120 / 180 / 300 sec, the Crusader duty copy +0.0 / +0.1 / +6.2. The 20%
 // floor never binds in a 120 sec fight.
-export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJSON, {
+export const APLLevel60 = PresetUtils.makePresetAPLRotation('Ret twist', Level60APLJSON, {
 	tooltip: 'Level 60 rotation: Consecration, Seal of Command twisted with Seal of Righteousness before every swing, Judgement and Holy Strike on cooldown.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 // The rotation for the Level 60 Shock talents (paladin_presets.sh, searched the same way): no
 // Twist of Light, so no twisting. Consecration first down to the last point of mana, Judgement on
@@ -202,28 +178,28 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60A
 // at 120 / 180 / 300 / 480 sec (Undead 879.5 / 866.6 / 840.1 / 820.7 -> 897.0 / 883.2 / 841.9 /
 // 828.9). The Shock vs Undead and Shock duty rotations lose with the same three changes (vs Undead at
 // every length, the duty at 300 sec), so they keep theirs.
-export const APLLevel60Shock = PresetUtils.makePresetAPLRotation('Level 60 Shock (deep Holy)', Level60ShockAPLJSON, {
+export const APLLevel60Shock = PresetUtils.makePresetAPLRotation('Ret Shock (deep Holy)', Level60ShockAPLJSON, {
 	tooltip: "Level 60 Holy Shock rotation: Judgement and Holy Strike on cooldown, Light's Vigil and Holy Shock, then Consecration.",
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 // The rotation for the Level 60 Shock talents (paladin_presets.sh): no Twist of Light and
 // no Light's Vigil. Seal of Command stays up with no twisting (+6 over Seal of Righteousness),
 // Consecration first down to the last point of mana, then Judgement, Holy Strike and Holy Shock on
 // cooldown, and Hammer of Wrath below 20% health above Holy Strike. Searched over 120, 180 and 300 sec
 // together, before and after the talent search.
-export const APLLevel60ShockRet = PresetUtils.makePresetAPLRotation('Level 60 Shock', Level60ShockRetAPLJSON, {
+export const APLLevel60ShockRet = PresetUtils.makePresetAPLRotation('Ret Shock', Level60ShockRetAPLJSON, {
 	tooltip:
 		'Level 60 Holy Shock rotation for the Retribution side talents: Seal of Command, Consecration, then Judgement, Holy Strike and Holy Shock on cooldown.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 // Level 60 (sub Holy): the twist rotation with Seal of Righteousness as the seal that stays up,
 // twisting to Seal of Command before each swing (regear and rotation round, 2026-10-23): +1.1 /
 // +0.5 / +0.9 at 120 / 180 / 300 sec on the sub Holy talents (paired, two seed sets). The twist
 // talents keep Seal of Command, and the sub Holy Crusader duty is 0.4 behind with it, so that one
 // keeps the twist duty rotation.
-export const APLLevel60SubHoly = PresetUtils.makePresetAPLRotation('Level 60 (sub Holy)', Level60SubHolyAPLJSON, {
+export const APLLevel60SubHoly = PresetUtils.makePresetAPLRotation('Ret sub-Holy', Level60SubHolyAPLJSON, {
 	tooltip: 'Level 60 sub Holy rotation: the twist rotation with Seal of Righteousness up, twisted to Seal of Command before every swing.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 // Level 60 (vs Undead), for an Undead or Demon boss, where Exorcism and Holy Wrath land
 // (standards 19; the default boss is type Unknown, where they do nothing). Searched on an Undead
@@ -236,9 +212,9 @@ export const APLLevel60SubHoly = PresetUtils.makePresetAPLRotation('Level 60 (su
 // Regear and rotation round (2026-10-23): no Holy Wrath. Its 2 sec cast resets the swing when it
 // completes and costs more than it adds: +9.6 / +6.8 / +8.3 at 120 / 180 / 300 sec on the new vs
 // Undead talents (paired, two seed sets).
-export const APLLevel60Undead = PresetUtils.makePresetAPLRotation('Level 60 (vs Undead)', Level60UndeadAPLJSON, {
+export const APLLevel60Undead = PresetUtils.makePresetAPLRotation('Ret sub-Holy · vs Undead', Level60UndeadAPLJSON, {
 	tooltip: 'Level 60 rotation against an Undead or Demon boss: the twist rotation with Exorcism.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 // Level 60 Shock (vs Undead): the Shock rotation with Exorcism on cooldown, and Light's Vigil
 // above 30% mana in fights up to 240 sec and above 60% in longer ones, which leaves the mana for
@@ -247,9 +223,9 @@ export const APLLevel60Undead = PresetUtils.makePresetAPLRotation('Level 60 (vs 
 // (2026-10-23) Light's Vigil waits until the next swing is more than 2 sec off, as in
 // APLLevel60Shock: +52.8 / +40.4 / +17.5 at 120 / 180 / 300 sec (a flat 50 or 70% Vigil floor with
 // it is 4.7 and 13.5 behind at 180 sec).
-export const APLLevel60ShockUndead = PresetUtils.makePresetAPLRotation('Level 60 Shock (deep Holy, vs Undead)', Level60ShockUndeadAPLJSON, {
+export const APLLevel60ShockUndead = PresetUtils.makePresetAPLRotation('Ret Shock (deep Holy) · vs Undead', Level60ShockUndeadAPLJSON, {
 	tooltip: 'Level 60 Holy Shock rotation against an Undead or Demon boss, with Exorcism and more mana kept for it in long fights.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 // Judgement of the Crusader duty (standards 23): one paladin in the raid keeps Judgement of the
 // Crusader on the boss, the others judge only their damage seals and get it from the raid. Under
@@ -261,26 +237,21 @@ export const APLLevel60ShockUndead = PresetUtils.makePresetAPLRotation('Level 60
 // Since the regear round (2026-10-23) the twist duty twists at any mana (as APLLevel60) and the
 // Shock duty holds Light's Vigil until the next swing is more than 2 sec off (as APLLevel60Shock:
 // +37.0 / +32.2 / +24.3 at 120 / 180 / 300 sec).
-export const APLLevel60CrusaderDuty = PresetUtils.makePresetAPLRotation('Level 60 (Crusader duty)', Level60CrusaderDutyAPLJSON, {
+export const APLLevel60CrusaderDuty = PresetUtils.makePresetAPLRotation('Ret sub-Holy · Judgement of the Crusader duty', Level60CrusaderDutyAPLJSON, {
 	tooltip: 'Level 60 twist rotation that also keeps Judgement of the Crusader on the boss for the raid.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
-export const APLLevel60ShockCrusaderDuty = PresetUtils.makePresetAPLRotation('Level 60 Shock (deep Holy, Crusader duty)', Level60ShockCrusaderDutyAPLJSON, {
-	tooltip: 'Level 60 Holy Shock rotation that also keeps Judgement of the Crusader on the boss for the raid.',
-	group: 'Level 60',
-});
+export const APLLevel60ShockCrusaderDuty = PresetUtils.makePresetAPLRotation(
+	'Ret Shock (deep Holy) · Judgement of the Crusader duty',
+	Level60ShockCrusaderDutyAPLJSON,
+	{
+		tooltip: 'Level 60 Holy Shock rotation that also keeps Judgement of the Crusader on the boss for the raid.',
+		group: 'Synthetic',
+	},
+);
 export const APLBasicRet = PresetUtils.makePresetAPLRotation('Basic Ret', APLBasicRetJson, {
 	tooltip: 'Basic level 60 Retribution rotation.',
-	group: 'Level 60',
-});
-// The paladin_ret template with the knobs the level 30 search settled on (see
-// tools/rotopt/paladin_presets.sh), with the level 30 ranks: Seal of the Crusader judged
-// once for the fight, then Consecration whenever it is off cooldown, Seal of Command judged
-// on every cooldown and Holy Strike on cooldown. Consecration goes first and spends the
-// mana to the last point.
-export const APLLevel30p5 = PresetUtils.makePresetAPLRotation('Level 30 + 5', Level30p5APLJSON, {
-	tooltip: 'Level 30 Seal of Command rotation with Consecration and Holy Strike on cooldown.',
-	group: 'Level 30',
+	group: 'Other',
 });
 
 export const APLPresets = {
@@ -297,7 +268,6 @@ export const APLPresets = {
 		APLLevel60Undead,
 		APLLevel60ShockUndead,
 		APLBasicRet,
-		APLLevel30p5,
 	],
 	[Phase.Phase5]: [],
 };
@@ -393,19 +363,18 @@ export const DefaultAPL = APLLevel60SubHoly;
 //   / 847.8.
 // - Against an Undead boss: sub Holy vs Undead 1055.6 / 1050.8 / 1032.8, Shock vs Undead 985.0 /
 //   968.4 / 938.0.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '51003-502-05225231201330321' }), {
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Ret twist', SavedTalents.create({ talentsString: '51003-502-05225231201330321' }), {
 	tooltip: 'Level 60 talents from the talent search: Retribution to Twist of Light, Precision, Divine Strength and Improved Seals.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 // Level 60 (sub Holy): the side points in Holy instead of Protection (Divine Strength 5, Divine
 // Intellect 5, Improved Seals 3, Reverence 3, Purifying Power 2) and Instrument of Law 2 for a
 // Holy Conduit point. It was the search's best from the Holy seed. 981.9 / 977.2 / 965.1 at 120 /
 // 180 / 300 sec, 0.5% behind Level 60 at 120 sec and 0.8% at 300 because it has no Precision.
-export const TalentsLevel60SubHoly = PresetUtils.makePresetTalents(
-	'Level 60 (sub Holy)',
-	SavedTalents.create({ talentsString: '55003002--05225331201330321' }),
-	{ tooltip: 'Level 60 talents with the side points in Holy instead of Protection.', group: 'Level 60' },
-);
+export const TalentsLevel60SubHoly = PresetUtils.makePresetTalents('Ret sub-Holy', SavedTalents.create({ talentsString: '55003002--05225331201330321' }), {
+	tooltip: 'Level 60 talents with the side points in Holy instead of Protection.',
+	group: 'Synthetic',
+});
 // Level 60 Shock (deep Holy), called Level 60 Shock until 2026-10-27 (older comments use that
 // name): the Holy Shock playstyle, its own talent and rotation search from a 31 Holy seed (Holy Shock, Divine Precision, Consecrated Ground, Holy Power, Light's Vigil). Divine
 // Strength 5, Divine Intellect 5, Improved Seals 3, Reverence 3, Purifying Power 2, Illumination 1
@@ -416,11 +385,11 @@ export const TalentsLevel60SubHoly = PresetUtils.makePresetTalents(
 // Level 60 at 180 sec and 4.4% at 300 (Divine Precision does not cover its judgements): without Twist of Light it has nothing for the free GCDs
 // between its cooldowns, and it runs out of mana in long fights. Light's Vigil is worth 64 and Holy Shock 148.
 export const TalentsLevel60Shock = PresetUtils.makePresetTalents(
-	'Level 60 Shock (deep Holy)',
+	'Ret Shock (deep Holy)',
 	SavedTalents.create({ talentsString: '55003003201121251--05225030201' }),
 	{
 		tooltip: "Level 60 Holy Shock talents: deep Holy to Light's Vigil with Holy Power, and Retribution to Sacred Arbiter.",
-		group: 'Level 60',
+		group: 'Synthetic',
 	},
 );
 // Level 60 Shock (Level 60 Shock (Ret side) on 2026-10-26): Holy Shock with most points in
@@ -432,47 +401,26 @@ export const TalentsLevel60Shock = PresetUtils.makePresetTalents(
 // Pursuit of Justice 2, Sacred Arbiter, Two-Handed Weapon Specialization 2, Vengeance 3 and Champion
 // of the Light 3 in Retribution. Human, 20000 iterations, seed 1: 939.5 / 932.4 / 910.7 at 120 / 180
 // / 300 sec, 1.8% behind Level 60 (sub Holy) at 180 sec and 6.7% ahead of Level 60 Shock (deep Holy).
-export const TalentsLevel60ShockRet = PresetUtils.makePresetTalents(
-	'Level 60 Shock',
-	SavedTalents.create({ talentsString: '550030032011012--052150312012303' }),
-	{
-		tooltip: 'Level 60 Holy Shock talents with most points in Retribution: Holy Shock, Consecrated Ground and Champion of the Light, no Twist of Light.',
-		group: 'Level 60',
-	},
-);
+export const TalentsLevel60ShockRet = PresetUtils.makePresetTalents('Ret Shock', SavedTalents.create({ talentsString: '550030032011012--052150312012303' }), {
+	tooltip: 'Level 60 Holy Shock talents with most points in Retribution: Holy Shock, Consecrated Ground and Champion of the Light, no Twist of Light.',
+	group: 'Synthetic',
+});
 // Level 60 (sub Holy, vs Undead): the talent search from Level 60 (sub Holy) on an Undead boss
 // moved Instrument of Law 2 to 1 for Holy Conduit 2 (Exorcism and Holy Wrath cost 40% less). It
 // already has Purifying Power 2. 1074.6 / 1071.5 / 1061.7 at 120 / 180 / 300 sec against an
 // Undead boss, the best build there at every length (9.6% over Level 60 (sub Holy) on its own
 // boss at 180 sec): its Divine Intellect 5 and Reverence 3 pay for the extra spells.
 export const TalentsLevel60SubHolyUndead = PresetUtils.makePresetTalents(
-	'Level 60 (sub Holy, vs Undead)',
+	'Ret sub-Holy · vs Undead',
 	SavedTalents.create({ talentsString: '550030022--05225131201330321' }),
-	{ tooltip: 'Level 60 sub Holy talents for an Undead or Demon boss, with Holy Conduit 2.', group: 'Level 60' },
+	{ tooltip: 'Level 60 sub Holy talents for an Undead or Demon boss, with Holy Conduit 2.', group: 'Synthetic' },
 );
-// Level 30 with 5 extra talent points (26 in all), Pursuit of Justice 2 pinned. Holy
-// Shock is out of reach with it: Holy Shock needs 20 Holy points and Pursuit of Justice
-// 10 Retribution points. We scored every Seal of Command build over the Retribution
-// damage talents, with up to 8 Holy points in Divine Strength, Divine Intellect and
-// Improved Seals (56865 builds). The best is Deflection 5, Improved Judgement 2, Holy
-// Conduit 2, Conviction 4, Sanctified Judgement 3, Seal of Command, Sacred Arbiter,
-// Two-Handed Weapon Specialization 3, Vengeance 2 and Champion of the Light 1, and it
-// stays on top on the Level 30 + 5 gear.
-//
-// The 2026-10-01 development notes cut Champion of the Light to 20% of Intellect per
-// point (was 33%). We rescored the best 150 builds and every build that moves its point
-// to another talent, and this one is still first. The best build without Champion of
-// the Light is 1.4 DPS behind at 60 sec.
-export const TalentsLevel30p5 = PresetUtils.makePresetTalents('Level 30 + 5', SavedTalents.create({ talentsString: '--502240312013201' }), {
-	tooltip: 'Level 30 with 5 extra talent points, all in Retribution for Seal of Command.',
-	group: 'Level 30',
-});
 
 export const TalentPresets = {
 	[Phase.Phase1]: [],
 	[Phase.Phase2]: [],
 	[Phase.Phase3]: [],
-	[Phase.Phase4]: [TalentsLevel60, TalentsLevel60SubHoly, TalentsLevel60Shock, TalentsLevel60ShockRet, TalentsLevel60SubHolyUndead, TalentsLevel30p5],
+	[Phase.Phase4]: [TalentsLevel60, TalentsLevel60SubHoly, TalentsLevel60Shock, TalentsLevel60ShockRet, TalentsLevel60SubHolyUndead],
 };
 
 export const DefaultTalents = TalentsLevel60SubHoly;
@@ -615,8 +563,8 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 // At level 60 the paladin is an engineer (the Goblin Sapper and the Land Mine) and a
-// blacksmith. The level 30 build keeps Blacksmithing and Enchanting. Gear another profession
-// makes is only in the presets when it binds on equip, so it can be bought.
+// blacksmith. Gear another profession makes is only in the presets when it binds on equip, so it
+// can be bought.
 export const OtherDefaults = {
 	profession1: Profession.Engineering,
 	profession2: Profession.Blacksmithing,
@@ -629,10 +577,9 @@ export const OtherDefaults = {
 
 // The level 60 raid setup: the sim's default boss (level 63, 3731 armor) as type Unknown, the
 // generic boss of standards 19, so no creature-type bonus applies (Exorcism and Holy Wrath do
-// nothing on it), a 3 minute fight, and the default buffs, debuffs and consumes, so switching
-// back from the Level 30 build restores everything that build changed.
+// nothing on it), a 3 minute fight, and the default buffs, debuffs and consumes.
 export const EncounterLevel60 = PresetUtils.makePresetEncounter(
-	'Level 60',
+	'Generic boss',
 	Encounter.create({
 		duration: 180,
 		durationVariation: 20,
@@ -664,7 +611,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 	},
 );
 // The Level 60 encounter with the Shock consumes.
-export const EncounterLevel60Shock = PresetUtils.makePresetEncounter('Level 60 (deep Holy Shock)', EncounterLevel60.encounter!, {
+export const EncounterLevel60Shock = PresetUtils.makePresetEncounter('Ret Shock (deep Holy)', EncounterLevel60.encounter!, {
 	tanks: [],
 	raidBuffs: DefaultRaidBuffs,
 	debuffs: DefaultDebuffs,
@@ -693,9 +640,9 @@ export const EncounterLevel60Shock = PresetUtils.makePresetEncounter('Level 60 (
 // Undead against Human: Level 60 939.4 / 937.8, sub Holy 943.7 / 941.8, Shock (deep Holy) 866.6 / 863.6
 // on the old Shock rotation (883.2 / 881.2 on the 2026-10-27 one), Shock 927.9 / 925.5; the Crusader
 // duty and vs Undead builds follow their base builds.
-export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
-	group: 'Level 60',
-	tooltip: 'Level 60 Undead on the synthetic Phase 1 gear with the Level 60 talents and rotation, in a 3 minute raid fight.',
+export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Ret twist', {
+	group: 'Synthetic',
+	tooltip: 'Level 60 Undead on the synthetic Phase 1 gear with the Ret twist talents and rotation, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60,
@@ -708,8 +655,8 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 });
 // Level 60 (sub Holy): the same with the sub Holy talents. Undead 981.9 / 977.2 / 965.1 at 120 /
 // 180 / 300 sec, Human 966.9 / 962.0 / 951.5, Dwarf 966.2 / 961.4 / 949.9.
-export const PresetBuildLevel60SubHoly = PresetUtils.makePresetBuild('Level 60 (sub Holy)', {
-	group: 'Level 60',
+export const PresetBuildLevel60SubHoly = PresetUtils.makePresetBuild('Ret sub-Holy', {
+	group: 'Synthetic',
 	tooltip: 'Level 60 Undead with the side talent points in Holy instead of Protection.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60SubHoly,
@@ -725,8 +672,8 @@ export const PresetBuildLevel60SubHoly = PresetUtils.makePresetBuild('Level 60 (
 // Level 60 Shock: the Holy Shock talents and rotation on Seal of Righteousness. Races at 120 /
 // 180 / 300 sec (50000 iterations): Undead 987.3 / 970.6 / 930.0, Human 971.7 / 955.7 / 915.8,
 // Dwarf 970.8 / 954.4 / 914.1.
-export const PresetBuildLevel60Shock = PresetUtils.makePresetBuild('Level 60 Shock (deep Holy)', {
-	group: 'Level 60',
+export const PresetBuildLevel60Shock = PresetUtils.makePresetBuild('Ret Shock (deep Holy)', {
+	group: 'Synthetic',
 	tooltip: "Level 60 Undead Holy Shock build with Light's Vigil, on the synthetic Phase 1 gear.",
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60Shock,
@@ -745,8 +692,8 @@ export const PresetBuildLevel60Shock = PresetUtils.makePresetBuild('Level 60 Sho
 // Level 60 Shock: the Retribution side Holy Shock talents and rotation on Seal of
 // Command, with the twist builds' consumes: the Dragonfire Potion is +5.5 / +5.7 over the Major
 // Mana Potion at 120 / 180 sec and 10.3 behind at 300 (paired, 20000 iterations).
-export const PresetBuildLevel60ShockRet = PresetUtils.makePresetBuild('Level 60 Shock', {
-	group: 'Level 60',
+export const PresetBuildLevel60ShockRet = PresetUtils.makePresetBuild('Ret Shock', {
+	group: 'Synthetic',
 	tooltip: 'Level 60 Undead Holy Shock build with most points in Retribution, on the synthetic Phase 1 gear.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60ShockRet,
@@ -765,20 +712,24 @@ export const PresetBuildLevel60ShockRet = PresetUtils.makePresetBuild('Level 60 
 // The Level 60 encounter for the Judgement of the Crusader duty presets: the same boss and raid
 // without the raid's Judgement of the Crusader, so the debuff comes only from the paladin's own
 // judgement.
-export const EncounterLevel60CrusaderDuty = PresetUtils.makePresetEncounter('Level 60 (Crusader duty)', EncounterLevel60.encounter!, {
+export const EncounterLevel60CrusaderDuty = PresetUtils.makePresetEncounter('Ret sub-Holy · Judgement of the Crusader duty', EncounterLevel60.encounter!, {
 	tanks: [],
 	raidBuffs: DefaultRaidBuffs,
 	debuffs: Debuffs.create({ ...DefaultDebuffs, judgementOfTheCrusader: TristateEffect.TristateEffectMissing }),
 	buffs: DefaultIndividualBuffs,
 	consumes: DefaultConsumes,
 });
-export const EncounterLevel60ShockCrusaderDuty = PresetUtils.makePresetEncounter('Level 60 (deep Holy Shock, Crusader duty)', EncounterLevel60.encounter!, {
-	tanks: [],
-	raidBuffs: DefaultRaidBuffs,
-	debuffs: Debuffs.create({ ...DefaultDebuffs, judgementOfTheCrusader: TristateEffect.TristateEffectMissing }),
-	buffs: DefaultIndividualBuffs,
-	consumes: ShockConsumes,
-});
+export const EncounterLevel60ShockCrusaderDuty = PresetUtils.makePresetEncounter(
+	'Ret Shock (deep Holy) · Judgement of the Crusader duty',
+	EncounterLevel60.encounter!,
+	{
+		tanks: [],
+		raidBuffs: DefaultRaidBuffs,
+		debuffs: Debuffs.create({ ...DefaultDebuffs, judgementOfTheCrusader: TristateEffect.TristateEffectMissing }),
+		buffs: DefaultIndividualBuffs,
+		consumes: ShockConsumes,
+	},
+);
 // The Judgement of the Crusader duty presets: each base build with its duty rotation and the duty
 // encounter. Undead, 20000 iterations, 120 / 180 / 300 sec, against the base build on the
 // base encounter: Level 60 973.6 / 973.1 / 967.4 (-13.7 / -9.0 / -5.9), sub Holy
@@ -788,8 +739,8 @@ export const EncounterLevel60ShockCrusaderDuty = PresetUtils.makePresetEncounter
 // Level 60 (Crusader duty), the twist build's duty copy, was its own build until 2026-10-24 (user
 // ruling): its talent search with Pursuit of Justice pinned moved to the sub Holy side and tied the
 // sub Holy duty build below, so it went. The sub Holy duty build keeps the twist duty rotation.
-export const PresetBuildLevel60SubHolyCrusaderDuty = PresetUtils.makePresetBuild('Level 60 (sub Holy, Crusader duty)', {
-	group: 'Level 60',
+export const PresetBuildLevel60SubHolyCrusaderDuty = PresetUtils.makePresetBuild('Ret sub-Holy · Judgement of the Crusader duty', {
+	group: 'Synthetic',
 	tooltip: 'Level 60 Undead with the sub Holy talents that keeps Judgement of the Crusader on the boss for the raid.',
 	gear: GearLevel60Phase1SyntheticCrusaderDuty,
 	talents: TalentsLevel60SubHoly,
@@ -801,8 +752,8 @@ export const PresetBuildLevel60SubHolyCrusaderDuty = PresetUtils.makePresetBuild
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: DefaultOptions,
 });
-export const PresetBuildLevel60ShockCrusaderDuty = PresetUtils.makePresetBuild('Level 60 Shock (deep Holy, Crusader duty)', {
-	group: 'Level 60',
+export const PresetBuildLevel60ShockCrusaderDuty = PresetUtils.makePresetBuild('Ret Shock (deep Holy) · Judgement of the Crusader duty', {
+	group: 'Synthetic',
 	tooltip: 'Level 60 Undead Holy Shock build that keeps Judgement of the Crusader on the boss for the raid.',
 	gear: GearLevel60Phase1SyntheticCrusaderDuty,
 	talents: TalentsLevel60Shock,
@@ -821,7 +772,7 @@ export const PresetBuildLevel60ShockCrusaderDuty = PresetUtils.makePresetBuild('
 // The Level 60 boss as an Undead, for the vs Undead builds (Exorcism and Holy Wrath land on
 // Undead and Demons only).
 export const EncounterLevel60Undead = PresetUtils.makePresetEncounter(
-	'Level 60 (vs Undead)',
+	'Undead boss',
 	Encounter.create({
 		...EncounterLevel60.encounter!,
 		targets: EncounterLevel60.encounter!.targets.map(target => ({ ...target, mobType: MobType.MobTypeUndead })),
@@ -834,7 +785,7 @@ export const EncounterLevel60Undead = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
-export const EncounterLevel60ShockUndead = PresetUtils.makePresetEncounter('Level 60 (deep Holy Shock, vs Undead)', EncounterLevel60Undead.encounter!, {
+export const EncounterLevel60ShockUndead = PresetUtils.makePresetEncounter('Ret Shock (deep Holy) · vs Undead', EncounterLevel60Undead.encounter!, {
 	tanks: [],
 	raidBuffs: DefaultRaidBuffs,
 	debuffs: DefaultDebuffs,
@@ -854,8 +805,8 @@ const OptionsRighteousness = RetributionPaladinOptions.create({
 // rotation as the sub Holy one below since the regear round, so it went.
 // Level 60 (sub Holy, vs Undead): Undead 1074.6 / 1071.5 / 1061.7, Human 1058.5 / 1055.7 /
 // 1046.3, Dwarf 1058.1 / 1055.2 / 1045.2. The best build against an Undead boss.
-export const PresetBuildLevel60SubHolyUndead = PresetUtils.makePresetBuild('Level 60 (sub Holy, vs Undead)', {
-	group: 'Level 60',
+export const PresetBuildLevel60SubHolyUndead = PresetUtils.makePresetBuild('Ret sub-Holy · vs Undead', {
+	group: 'Synthetic',
 	tooltip: 'Level 60 Undead with the sub Holy talents against an Undead or Demon boss, with Exorcism and Holy Wrath.',
 	gear: GearLevel60Phase1SyntheticUndead,
 	talents: TalentsLevel60SubHolyUndead,
@@ -871,8 +822,8 @@ export const PresetBuildLevel60SubHolyUndead = PresetUtils.makePresetBuild('Leve
 // better) with the vs Undead Shock rotation. Undead 1070.9 / 1041.3 / 997.2, Human 1055.4 /
 // 1026.6 / 982.5, Dwarf 1053.9 / 1024.7 / 980.6, 7.3% over Level 60 Shock on its own boss at
 // 180 sec.
-export const PresetBuildLevel60ShockUndead = PresetUtils.makePresetBuild('Level 60 Shock (deep Holy, vs Undead)', {
-	group: 'Level 60',
+export const PresetBuildLevel60ShockUndead = PresetUtils.makePresetBuild('Ret Shock (deep Holy) · vs Undead', {
+	group: 'Synthetic',
 	tooltip: 'Level 60 Undead Holy Shock build against an Undead or Demon boss, with Exorcism.',
 	gear: GearLevel60Phase1SyntheticUndead,
 	talents: TalentsLevel60Shock,
@@ -883,58 +834,4 @@ export const PresetBuildLevel60ShockUndead = PresetUtils.makePresetBuild('Level 
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: OptionsRighteousness,
-});
-
-// A level 30 paladin soloing Interrogator Vishas (Scarlet Monastery Graveyard, level 32):
-// no raid buffs or consumes, its own Blessing of Kings (2.4 DPS ahead of Blessing of Might
-// at 60 sec), and the boss hitting the paladin so Retribution Aura gets to fire.
-export const EncounterLevel30 = PresetUtils.makePresetEncounter(
-	'Level 30',
-	Encounter.create({
-		duration: 60,
-		durationVariation: 5,
-		executeProportion20: 0.2,
-		executeProportion25: 0.25,
-		executeProportion35: 0.35,
-		targets: [
-			{
-				id: 3983,
-				name: 'Interrogator Vishas',
-				level: 32,
-				mobType: MobType.MobTypeHumanoid,
-				stats: new Stats().withStat(Stat.StatArmor, 1063).withStat(Stat.StatHealth, 30000).asArray(),
-				minBaseDamage: 52,
-				damageSpread: 0.3333,
-				swingSpeed: 2,
-				parryHaste: true,
-				tankIndex: 0,
-			},
-		],
-	}),
-	{
-		tanks: [UnitReference.create({ type: UnitReference_Type.Player, index: 0 })],
-		raidBuffs: RaidBuffs.create({}),
-		debuffs: Debuffs.create({}),
-		buffs: IndividualBuffs.create({ blessingOfKings: true }),
-		consumes: Consumes.create({}),
-	},
-);
-// Level 30 with 5 extra talent points. The optimizer puts Seal of Righteousness 2.6 DPS
-// behind Seal of Command on Corpsemaker, even with its spell power counted twice. At
-// 30 / 60 / 300 sec that is 130.5 / 131.8 / 105.3, and 187.9 on three targets.
-export const PresetBuildLevel30p5 = PresetUtils.makePresetBuild('Level 30 + 5', {
-	group: 'Level 30',
-	tooltip: 'Level 30 Undead with 5 extra talent points and Seal of Command, soloing Interrogator Vishas.',
-	gear: GearLevel30p5,
-	talents: TalentsLevel30p5,
-	rotation: APLLevel30p5,
-	encounter: EncounterLevel30,
-	race: Race.RaceUndead,
-	level: 30,
-	bonusTalentPoints: 5,
-	professions: [Profession.Blacksmithing, Profession.Enchanting],
-	options: RetributionPaladinOptions.create({
-		aura: PaladinAura.RetributionAura,
-		primarySeal: PaladinSeal.Command,
-	}),
 });

@@ -88,9 +88,9 @@ export const GearPhase6 = PresetUtils.makePresetGear('Phase 6', Phase6GearJSON, 
 // downranking penalty). Before the gear round
 // it was 648.7 / 646.1 / 638.1 (the 1a set, no trinkets) and 693.3 / 690.3 / 680.4 before the fair
 // mix. The set stays fixed, it was not gear searched.
-export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Level 60 Phase 1 Synthetic', Level60Phase1SyntheticGearJSON, {
+export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Elemental', Level60Phase1SyntheticGearJSON, {
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 
 export const GearPresets = {
@@ -123,14 +123,14 @@ export const APLDefault = PresetUtils.makePresetAPLRotation('Default', DefaultAP
 // once a Lightning Bolt would no longer land in time, is +5.8 / +3.4 / +1.7 (the rotation auditor,
 // 2026-10-15; +5.7 / +3.4 / +1.8 on Mana Tide). A caster stands at range, so the rotation has no
 // Magma Totem or Fire Nova. tools/rotopt/shaman_presets.sh writes it.
-export const APLLevel60 = PresetUtils.makePresetAPLRotation('Level 60', Level60APLJson, {
-	tooltip: 'The tools/rotopt search result for the Level 60 talents.',
-	group: 'Level 60',
+export const APLLevel60 = PresetUtils.makePresetAPLRotation('Elemental', Level60APLJson, {
+	tooltip: 'The tools/rotopt search result for the Elemental talents.',
+	group: 'Synthetic',
 });
 // The same with Mana Tide Totem at 20% mana. At 40, 60 and 80% it was 1.1, 2.7 and 5.7 behind.
-export const APLLevel60ManaTide = PresetUtils.makePresetAPLRotation('Level 60 + Mana Tide', Level60ManaTideAPLJson, {
-	tooltip: 'The Level 60 rotation with Mana Tide Totem, for the Level 60 + Mana Tide talents.',
-	group: 'Level 60',
+export const APLLevel60ManaTide = PresetUtils.makePresetAPLRotation('Elemental Mana Tide', Level60ManaTideAPLJson, {
+	tooltip: 'The Elemental rotation with Mana Tide Totem, for the Elemental Mana Tide talents.',
+	group: 'Synthetic',
 });
 
 export const APLPresets = {
@@ -163,9 +163,9 @@ export const DefaultAPL = APLLevel60;
 // (+8: it keeps 70% of the casts from being pushed back), and the Restoration points into
 // Ancestral Knowledge, Shamanistic Focus and one Improved Lightning Shield. 731.3 / 721.4 /
 // 712.6 at 120 / 180 / 300 sec.
-export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTalents.create({ talentsString: '5501331003001351-055000101-053' }), {
+export const TalentsLevel60 = PresetUtils.makePresetTalents('Elemental', SavedTalents.create({ talentsString: '5501331003001351-055000101-053' }), {
 	tooltip: 'Level 60 talents from the talent search: Elemental Mastery, Lava Burst, Eye of the Storm, Thundering Strikes and Tidal Focus.',
-	group: 'Level 60',
+	group: 'Synthetic',
 });
 // Mana Tide Totem for the group's mana: Totemic Focus 5, Mindfulness 3, Tidal Focus 5 and the
 // Mana Tide row, with one point less in Thundering Strikes and none in Ancestral Knowledge. The
@@ -176,9 +176,9 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Level 60', SavedTal
 // with Mana Tide Totem pinned). 721.3 / 711.2 / 697.4 at 120 / 180 / 300 sec, 1.4% behind
 // Level 60 at 180.
 export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
-	'Level 60 + Mana Tide',
+	'Elemental Mana Tide',
 	SavedTalents.create({ talentsString: '5501331003001351-04-053150001001' }),
-	{ tooltip: 'Level 60 talents with 16 Restoration points for Mana Tide Totem.', group: 'Level 60' },
+	{ tooltip: 'Level 60 talents with 16 Restoration points for Mana Tide Totem.', group: 'Synthetic' },
 );
 
 export const TalentPresets = {
@@ -339,7 +339,7 @@ export const OtherDefaults = {
 // and the default buffs, debuffs and consumes, as for the enhancement shaman. The synthetic
 // Phase 1 set, the talents and the rotation were searched at 120, 180 and 300 sec.
 export const EncounterLevel60 = PresetUtils.makePresetEncounter(
-	'Level 60',
+	'Generic boss',
 	Encounter.create({
 		duration: 180,
 		durationVariation: 20,
@@ -370,7 +370,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 		consumes: DefaultConsumes,
 	},
 );
-export const EncounterLevel60ManaTide = PresetUtils.makePresetEncounter('Level 60 (Mana Tide)', EncounterLevel60.encounter, {
+export const EncounterLevel60ManaTide = PresetUtils.makePresetEncounter('Elemental Mana Tide', EncounterLevel60.encounter, {
 	tanks: [],
 	raidBuffs: DefaultRaidBuffs,
 	debuffs: DefaultDebuffs,
@@ -402,9 +402,9 @@ export const EncounterLevel60ManaTide = PresetUtils.makePresetEncounter('Level 6
 // 759.6 / 717.0 with the Caustic Smog Potion). Races at 180 sec (seed 1; seed 1000003 agrees within 0.8):
 // Windshaper Skyborne 776.4, Orc 773.2, Dwarf 771.0, Tauren 770.8, Troll 761.4; on Mana Tide 761.4,
 // 757.4, 754.6, 754.5, 745.8. Best overall and best Horde: Windshaper Skyborne. Best Alliance: Dwarf.
-export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
-	group: 'Level 60',
-	tooltip: 'Level 60 Windshaper Skyborne on the synthetic Phase 1 gear with the Level 60 rotation, in a 3 minute raid fight.',
+export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Elemental', {
+	group: 'Synthetic',
+	tooltip: 'Level 60 Windshaper Skyborne on the synthetic Phase 1 gear with the Elemental rotation, in a 3 minute raid fight.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60,
 	rotation: APLLevel60,
@@ -414,9 +414,9 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Level 60', {
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 });
-export const PresetBuildLevel60ManaTide = PresetUtils.makePresetBuild('Level 60 + Mana Tide', {
-	group: 'Level 60',
-	tooltip: 'Level 60 with the Mana Tide talents and the Mana Tide rotation.',
+export const PresetBuildLevel60ManaTide = PresetUtils.makePresetBuild('Elemental Mana Tide', {
+	group: 'Synthetic',
+	tooltip: 'Level 60 with the Mana Tide talents and rotation.',
 	gear: GearLevel60Phase1Synthetic,
 	talents: TalentsLevel60ManaTide,
 	rotation: APLLevel60ManaTide,
