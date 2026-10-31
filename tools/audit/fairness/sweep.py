@@ -7,7 +7,11 @@ import json, glob, os, sys, hashlib, subprocess
 from concurrent.futures import ThreadPoolExecutor
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from races import RACES
-TREE = os.environ["AUDIT_TREE"]; WORK = os.environ["AUDIT_WORK"]
+TREE = os.environ["AUDIT_TREE"]
+os.environ.setdefault("DASH_DIR", os.path.join(TREE, "tools/dps_report"))
+sys.path.insert(0, os.path.join(TREE, "tools/dps_report"))
+import race_override  # noqa: E402
+WORK = os.environ["AUDIT_WORK"]
 REQ = os.path.join(TREE, "tools/dps_report/req"); OUT = os.path.join(WORK, "runs"); os.makedirs(OUT, exist_ok=True)
 BIN = os.path.join(WORK, "wowsimcli"); ITERS = int(os.environ.get("ITERS", "5000"))
 def ids():
@@ -18,7 +22,9 @@ def ids():
         out.append(i)
     return out
 def run(i, race):
-    req = json.load(open(f"{REQ}/{i}.json")); p = req["raid"]["parties"][0]["players"][0]
+    req = json.load(open(f"{REQ}/{i}.json"))
+    # KEEP (lost 5 times before): each race sims with its own rotation and gear (standards 29, req/races/).
+    req, _ = race_override.apply(req, i, race); p = req["raid"]["parties"][0]["players"][0]
     p["race"] = "Race" + race; req["simOptions"] = {"iterations": ITERS, "randomSeed": "1"}
     h = hashlib.md5((json.dumps(req, sort_keys=True) + str(os.path.getmtime(BIN))).encode()).hexdigest()[:12]
     inf = f"{OUT}/{i}_{h}.in.json"; outf = f"{OUT}/{i}_{h}.out.json"
