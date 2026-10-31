@@ -32,7 +32,6 @@ import Level60CombatSwordsAPL from './apls/level60_combat_swords.apl.json';
 import Level60MutilateAPL from './apls/level60_mutilate.apl.json';
 import Level60SealFateSwordsAPL from './apls/level60_seal_fate_swords.apl.json';
 import Level60SubtletyAPL from './apls/level60_subtlety.apl.json';
-import BlankGear from './gear_sets/blank.gear.json';
 import Level60SyntheticCombatDaggersGear from './gear_sets/level60_phase1_synthetic_combat_daggers.gear.json';
 import Level60SyntheticDaggersGear from './gear_sets/level60_phase1_synthetic_daggers.gear.json';
 import Level60SyntheticMutilateGear from './gear_sets/level60_phase1_synthetic_mutilate.gear.json';
@@ -48,7 +47,6 @@ import Level60SyntheticSwordsGear from './gear_sets/level60_phase1_synthetic_swo
 //                                 Gear Presets
 ///////////////////////////////////////////////////////////////////////////
 
-export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear, { tooltip: 'No gear equipped.' });
 // A guess at Phase 1 BiS under Forever, made of the synthetic items in
 // tools/database/forever_synthetic_items_rogue.go (ids from 994000, not in the game).
 //

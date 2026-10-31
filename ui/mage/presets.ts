@@ -32,11 +32,8 @@ import Level60ArcaneAPL from './apls/level60_arcane.apl.json';
 import Level60FireAPL from './apls/level60_fire.apl.json';
 import Level60FrostAPL from './apls/level60_frost.apl.json';
 import Level60FrostfireAPL from './apls/level60_frostfire.apl.json';
-import P1APL from './apls/p1.apl.json';
 import Level60Phase1SyntheticGear from './gear_sets/level60_phase1_synthetic.gear.json';
 import Level60Phase1SyntheticArcaneGear from './gear_sets/level60_phase1_synthetic_arcane.gear.json';
-import P0BISGear from './gear_sets/p0.bis.gear.json';
-import P1BISGear from './gear_sets/p1.bis.gear.json';
 
 // The Level 60 presets were searched on 2026-10-12, and again on 2026-10-13 on the Forever
 // budget gear, with tools/rotopt (the mage_arcane, mage_fire, mage_frost and mage_frostfire
@@ -50,9 +47,6 @@ import P1BISGear from './gear_sets/p1.bis.gear.json';
 ///////////////////////////////////////////////////////////////////////////
 //                                 Gear Presets
 ///////////////////////////////////////////////////////////////////////////
-
-export const GearP0BIS = PresetUtils.makePresetGear('Pre-BiS', P0BISGear);
-export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
 
 // A guess at Phase 1 BiS under Forever, made of the synthetic items in
 // tools/database/forever_synthetic_items_mage.go (ids from 996001, not in the game), on the
@@ -93,7 +87,7 @@ export const GearLevel60Phase1SyntheticArcane = PresetUtils.makePresetGear('Arca
 });
 
 export const GearPresets = {
-	[Phase.Phase1]: [GearLevel60Phase1Synthetic, GearLevel60Phase1SyntheticArcane, GearP0BIS, GearP1BIS],
+	[Phase.Phase1]: [GearLevel60Phase1Synthetic, GearLevel60Phase1SyntheticArcane],
 };
 
 export const DefaultGear = GearLevel60Phase1Synthetic;
@@ -101,9 +95,6 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets
 ///////////////////////////////////////////////////////////////////////////
-
-// The Classic rotation the fork shipped. It still runs, but it was written for the Classic tree.
-export const APLP1DPS = PresetUtils.makePresetAPLRotation('DPS', P1APL);
 
 // Frostfire Bolt as the filler. Scorch puts up 5 stacks of Fire Vulnerability and keeps them
 // (again with under 7 sec left on them), Pyroblast waits for 3 Heating Up stacks (a 1.5 sec
@@ -162,7 +153,7 @@ export const APLLevel60Arcane = PresetUtils.makePresetAPLRotation('Arcane', Leve
 });
 
 export const APLPresets = {
-	[Phase.Phase1]: [APLLevel60Frostfire, APLLevel60Frost, APLLevel60Fire, APLLevel60Arcane, APLP1DPS],
+	[Phase.Phase1]: [APLLevel60Frostfire, APLLevel60Frost, APLLevel60Fire, APLLevel60Arcane],
 };
 
 export const DefaultAPL = APLLevel60Fire;

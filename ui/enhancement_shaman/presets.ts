@@ -1,4 +1,3 @@
-import { Phase } from '../core/constants/other.js';
 import * as PresetUtils from '../core/preset_utils.js';
 import {
 	AgilityElixir,
@@ -143,14 +142,7 @@ export const GearLevel60Phase1SyntheticBurningTotem = PresetUtils.makePresetGear
 	group: 'Synthetic',
 });
 
-export const GearPresets = {
-	[Phase.Phase1]: [GearLevel60Phase1Synthetic, GearLevel60Phase1SyntheticBurningTotem],
-	[Phase.Phase2]: [],
-	[Phase.Phase3]: [],
-	[Phase.Phase4]: [],
-	[Phase.Phase5]: [],
-	[Phase.Phase6]: [],
-};
+export const GearPresets = [GearLevel60Phase1Synthetic, GearLevel60Phase1SyntheticBurningTotem];
 
 export const DefaultGear = GearLevel60Phase1Synthetic;
 
@@ -283,16 +275,9 @@ export const APLLevelingPlan = (
 	}),
 );
 
-export const APLPresets = {
-	[Phase.Phase1]: [APLOptimized, APLMagma, APLManaTide, APLLevel30Leveling, ...APLLevelingPlan],
-	[Phase.Phase2]: [],
-	[Phase.Phase3]: [],
-	[Phase.Phase4]: [],
-	[Phase.Phase5]: [],
-	[Phase.Phase6]: [],
-};
+export const APLPresets = [APLOptimized, APLMagma, APLManaTide, APLLevel30Leveling, ...APLLevelingPlan];
 
-export const DefaultAPL = APLPresets[Phase.Phase1][0];
+export const DefaultAPL = APLOptimized;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Talent Presets
@@ -464,16 +449,9 @@ export const TalentsLevel30Leveling = PresetUtils.makePresetTalents('Level 30 Le
 	group: 'Leveling',
 });
 
-export const TalentPresets = {
-	[Phase.Phase1]: [TalentsLevel60, TalentsLevel60ImpGW, TalentsLevel60WaterShield, TalentsLevel60ManaTide, TalentsLevel30Leveling],
-	[Phase.Phase2]: [],
-	[Phase.Phase3]: [],
-	[Phase.Phase4]: [],
-	[Phase.Phase5]: [],
-	[Phase.Phase6]: [],
-};
+export const TalentPresets = [TalentsLevel60, TalentsLevel60ImpGW, TalentsLevel60WaterShield, TalentsLevel60ManaTide, TalentsLevel30Leveling];
 
-export const DefaultTalents = TalentPresets[Phase.Phase1][0];
+export const DefaultTalents = TalentsLevel60;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Options

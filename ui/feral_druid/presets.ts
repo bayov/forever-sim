@@ -1,4 +1,3 @@
-import { Phase } from '../core/constants/other.js';
 import * as PresetUtils from '../core/preset_utils.js';
 import {
 	AgilityElixir,
@@ -16,7 +15,6 @@ import {
 	Profession,
 	Race,
 	RaidBuffs,
-	Spec,
 	Stat,
 	StrengthBuff,
 	TotemWeaponBuff,
@@ -27,17 +25,9 @@ import {
 import { FeralDruid_Options as FeralDruidOptions, FeralDruid_Rotation as FeralDruidRotation } from '../core/proto/druid.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
-import FeralAPL from './apls/feral.apl.json';
 import Level60APLJSON from './apls/level60.apl.json';
 import Level60FaerieFireAPLJSON from './apls/level60_ff.apl.json';
-import SimpleVaelAPL from './apls/simple_vael.apl.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
-import P2BISGear from './gear_sets/p2.bis.gear.json';
-import P2PreBISGear from './gear_sets/p2.pre-bis.gear.json';
-import P3BISGear from './gear_sets/p3.bis.gear.json';
-import P4BISGear from './gear_sets/p4.bis.gear.json';
-import P5BISGear from './gear_sets/p5.bis.gear.json';
-import P6BISGear from './gear_sets/p6.bis.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -46,13 +36,6 @@ import P6BISGear from './gear_sets/p6.bis.gear.json';
 ///////////////////////////////////////////////////////////////////////////
 //                                 Gear Presets
 ///////////////////////////////////////////////////////////////////////////
-
-export const GearP2PreBIS = PresetUtils.makePresetGear('P2 Pre-BiS', P2PreBISGear);
-export const GearP2BIS = PresetUtils.makePresetGear('P2 BiS', P2BISGear);
-export const GearP3BIS = PresetUtils.makePresetGear('P3 BiS', P3BISGear);
-export const GearP4BIS = PresetUtils.makePresetGear('P4 BiS', P4BISGear);
-export const GearP5BIS = PresetUtils.makePresetGear('P5 BiS', P5BISGear);
-export const GearP6BIS = PresetUtils.makePresetGear('P6 BiS', P6BISGear);
 
 // The level 60 Phase 1 set for Forever, made of synthetic items that are not in the game
 // (tools/database/forever_synthetic_items_druid.go, which has the budget math), priced by
@@ -81,19 +64,13 @@ export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Feral', Le
 	group: 'Synthetic',
 });
 
-export const GearPresets = {
-	[Phase.Phase1]: [GearLevel60Phase1Synthetic],
-	[Phase.Phase4]: [GearP2PreBIS, GearP2BIS, GearP3BIS, GearP4BIS, GearP5BIS, GearP6BIS],
-};
+export const GearPresets = [GearLevel60Phase1Synthetic];
 
 export const DefaultGear = GearLevel60Phase1Synthetic;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets
 ///////////////////////////////////////////////////////////////////////////
-
-export const APLFeral = PresetUtils.makePresetAPLRotation('Feral (Era)', FeralAPL);
-export const APLSimpleVael = PresetUtils.makePresetAPLRotation('Simple Vaelastrasz', SimpleVaelAPL);
 
 // The tools/rotopt druid_feral template's best (druid_presets.sh) on the synthetic set and the
 // Level 60 talents, re-searched on 2026-10-23's sim (Rake's attack power, Rend and Tear on its
@@ -127,10 +104,7 @@ export const APLLevel60FaerieFire = PresetUtils.makePresetAPLRotation('Feral · 
 	group: 'Synthetic',
 });
 
-export const APLPresets = {
-	[Phase.Phase1]: [APLLevel60, APLLevel60FaerieFire],
-	[Phase.Phase4]: [APLFeral, APLSimpleVael],
-};
+export const APLPresets = [APLLevel60, APLLevel60FaerieFire];
 
 export const DefaultAPL = APLLevel60;
 
@@ -141,8 +115,6 @@ export const DefaultRotation = FeralDruidRotation.create({
 	precastTigersFury: false,
 	useShredTrick: false,
 });
-
-export const SIMPLE_ROTATION_DEFAULT = PresetUtils.makePresetSimpleRotation('Simple Default', Spec.SpecFeralDruid, DefaultRotation);
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Talent Presets
@@ -166,9 +138,7 @@ export const TalentsLevel60 = PresetUtils.makePresetTalents('Feral', SavedTalent
 	group: 'Synthetic',
 });
 
-export const TalentPresets = {
-	[Phase.Phase1]: [TalentsLevel60],
-};
+export const TalentPresets = [TalentsLevel60];
 
 export const DefaultTalents = TalentsLevel60;
 

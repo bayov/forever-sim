@@ -25,8 +25,6 @@ import {
 import { SavedTalents } from '../core/proto/ui.js';
 import { Warrior_Options as WarriorOptions, WarriorShout, WarriorStance } from '../core/proto/warrior.js';
 import { Stats } from '../core/proto_utils/stats.js';
-import APLNoReckJSON from './apls/dps_no_reck.apl.json';
-import APLReckJSON from './apls/dps_reck.apl.json';
 import Level60ArmsAPLJSON from './apls/level60_arms.apl.json';
 import Level60ArmsShoutAPLJSON from './apls/level60_arms_battle_shout.apl.json';
 import Level60ArmsDragonkinAPLJSON from './apls/level60_arms_dragonkin.apl.json';
@@ -39,13 +37,6 @@ import Level60FuryShoutAPLJSON from './apls/level60_fury_battle_shout.apl.json';
 import Level60FurySunderAPLJSON from './apls/level60_fury_sunder.apl.json';
 import Level60Phase1SyntheticArmsGearJSON from './gear_sets/level60_phase1_synthetic_arms.gear.json';
 import Level60Phase1SyntheticFuryGearJSON from './gear_sets/level60_phase1_synthetic_fury.gear.json';
-import P0BISGear from './gear_sets/p0.bis.gear.json';
-import Phase1Gear from './gear_sets/phase_1.gear.json';
-import Phase2Gear from './gear_sets/phase_2.gear.json';
-import Phase3Gear from './gear_sets/phase_3.gear.json';
-import Phase4Gear from './gear_sets/phase_4.gear.json';
-import Phase5Gear from './gear_sets/phase_5.gear.json';
-import Phase6Gear from './gear_sets/phase_6.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -54,14 +45,6 @@ import Phase6Gear from './gear_sets/phase_6.gear.json';
 ///////////////////////////////////////////////////////////////////////////
 //                                 Gear Presets
 ///////////////////////////////////////////////////////////////////////////
-
-export const GearP0BIS = PresetUtils.makePresetGear('Pre-BiS', P0BISGear);
-export const GearPhase1 = PresetUtils.makePresetGear('P1 BiS', Phase1Gear);
-export const GearPhase2 = PresetUtils.makePresetGear('P2 BiS', Phase2Gear);
-export const GearPhase3 = PresetUtils.makePresetGear('P3 BiS', Phase3Gear);
-export const GearPhase4 = PresetUtils.makePresetGear('P4 BiS', Phase4Gear);
-export const GearPhase5 = PresetUtils.makePresetGear('P5 BiS', Phase5Gear);
-export const GearPhase6 = PresetUtils.makePresetGear('P6 BiS', Phase6Gear);
 
 // A guess at Phase 1 BiS under Forever, made of the synthetic items in
 // tools/database/forever_synthetic_items_warrior.go (ids from 991000, not in the game).
@@ -107,12 +90,7 @@ export const GearLevel60Phase1SyntheticArms = PresetUtils.makePresetGear('Fury 2
 });
 
 export const GearPresets = {
-	[Phase.Phase1]: [GearLevel60Phase1SyntheticFury, GearLevel60Phase1SyntheticArms, GearPhase1, GearP0BIS],
-	[Phase.Phase2]: [GearPhase2],
-	[Phase.Phase3]: [GearPhase3],
-	[Phase.Phase4]: [GearPhase4],
-	[Phase.Phase5]: [GearPhase5],
-	[Phase.Phase6]: [GearPhase6],
+	[Phase.Phase1]: [GearLevel60Phase1SyntheticFury, GearLevel60Phase1SyntheticArms],
 };
 
 export const DefaultGear = GearLevel60Phase1SyntheticFury;
@@ -120,9 +98,6 @@ export const DefaultGear = GearLevel60Phase1SyntheticFury;
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets
 ///////////////////////////////////////////////////////////////////////////
-
-export const AplReck = PresetUtils.makePresetAPLRotation('DPS (With Reck)', APLReckJSON);
-export const APLNoReck = PresetUtils.makePresetAPLRotation('DPS (No Reck)', APLNoReckJSON);
 
 // The tools/rotopt search (template warrior_fury, see warrior_presets.sh) on the Level 60 Fury
 // talents and set, 180 sec, with Forever's normalized Rage (standards 21: a white hit gives 3.46 Rage
@@ -138,7 +113,7 @@ export const APLNoReck = PresetUtils.makePresetAPLRotation('DPS (No Reck)', APLN
 // last 20 sec when that costs no use (with the trinket then on cooldown, +20.7 at 120 sec, where the
 // hold alone skipped the pull potion; the rotation auditor's pass 14). The Sapper goes on cooldown with the other
 // cooldowns (no Goblin Land Mine since 2026-10-24, see the consumables below). Blood Fury, Berserking and Elune's Light wait for Death Wish when that costs
-// no use. It is 1031.1 (Human) where the old DPS (With Reck) rotation is 981.2. Slam on its 18 sec
+// no use. It is 1031.1 (Human) where the old Classic rotation (dps_reck.apl.json) is 981.2. Slam on its 18 sec
 // cooldown and holding the fillers for Bloodthirst and Whirlwind both lose.
 export const APLLevel60Fury = PresetUtils.makePresetAPLRotation('Fury', Level60FuryAPLJSON, { group: 'Synthetic' });
 // The same template on the two-hand Fury talents and the two-hand set: the Fury rotation with
@@ -217,8 +192,6 @@ export const APLPresets = {
 		APLLevel60ArmsShout,
 		APLLevel60ArmsSunder,
 		APLLevel60ArmsDragonkin,
-		APLNoReck,
-		AplReck,
 	],
 };
 
@@ -271,12 +244,8 @@ export const TalentsLevel60ArmsDragonkin = PresetUtils.makePresetTalents(
 	},
 );
 
-// The old Classic DPS talents, rebuilt for the Forever tree on 2026-10-12 (the points in talents
-// Forever removed went to Furious Precision, Improved Execute and Improved Berserker Rage).
-export const TalentsP1DPS = PresetUtils.makePresetTalents('DPS', SavedTalents.create({ talentsString: '30305013-25053005152110501' }));
-
 export const TalentPresets = {
-	[Phase.Phase1]: [TalentsLevel60Fury, TalentsLevel60Fury2H, TalentsLevel60Arms, TalentsLevel60ArmsDragonkin, TalentsP1DPS],
+	[Phase.Phase1]: [TalentsLevel60Fury, TalentsLevel60Fury2H, TalentsLevel60Arms, TalentsLevel60ArmsDragonkin],
 };
 
 export const DefaultTalents = TalentsLevel60Fury;

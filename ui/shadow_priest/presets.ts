@@ -31,11 +31,8 @@ import { SavedTalents } from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import Level60APL from './apls/level60.apl.json';
 import Level60SmiteAPL from './apls/level60_smite.apl.json';
-import P1APL from './apls/p1.apl.json';
 import Level60Phase1SmiteGear from './gear_sets/level60_phase1_smite.gear.json';
 import Level60Phase1SyntheticGear from './gear_sets/level60_phase1_synthetic.gear.json';
-import P0BISGear from './gear_sets/p0.bis.gear.json';
-import P1BISGear from './gear_sets/p1.bis.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -44,9 +41,6 @@ import P1BISGear from './gear_sets/p1.bis.gear.json';
 ///////////////////////////////////////////////////////////////////////////
 //                                 Gear Presets
 ///////////////////////////////////////////////////////////////////////////
-
-export const GearP0BIS = PresetUtils.makePresetGear('Pre-BiS', P0BISGear);
-export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
 
 // A guess at Phase 1 BiS under Forever, made of the synthetic items in
 // tools/database/forever_synthetic_items_priest.go (ids from 995000, not in the game).
@@ -104,7 +98,7 @@ export const GearLevel60Phase1Smite = PresetUtils.makePresetGear('Smite', Level6
 });
 
 export const GearPresets = {
-	[Phase.Phase1]: [GearLevel60Phase1Synthetic, GearLevel60Phase1Smite, GearP0BIS, GearP1BIS],
+	[Phase.Phase1]: [GearLevel60Phase1Synthetic, GearLevel60Phase1Smite],
 };
 
 export const DefaultGear = GearPresets[Phase.Phase1][0];
@@ -112,8 +106,6 @@ export const DefaultGear = GearPresets[Phase.Phase1][0];
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets
 ///////////////////////////////////////////////////////////////////////////
-
-export const APLP1Shadow = PresetUtils.makePresetAPLRotation('Shadow (Era)', P1APL);
 
 // The tools/rotopt priest_shadow template after a knob search on the Level 60 build (3000
 // iterations a candidate, 20000 to confirm, at 120, 180 and 300 sec, 2026-10-12). Shadowform
@@ -210,7 +202,7 @@ export const APLLevel60Smite = PresetUtils.makePresetAPLRotation('Smite', Level6
 });
 
 export const APLPresets = {
-	[Phase.Phase1]: [APLLevel60, APLLevel60Smite, APLP1Shadow],
+	[Phase.Phase1]: [APLLevel60, APLLevel60Smite],
 };
 
 export const DefaultAPL = APLPresets[Phase.Phase1][0];
@@ -293,10 +285,8 @@ export const TalentsLevel60Smite = PresetUtils.makePresetTalents('Smite', SavedT
 	group: 'Synthetic',
 });
 
-export const TalentsP1Shadow = PresetUtils.makePresetTalents('Shadow (Era)', SavedTalents.create({ talentsString: '00503123103--50052101231302251' }));
-
 export const TalentPresets = {
-	[Phase.Phase1]: [TalentsLevel60, TalentsLevel60Holy, TalentsLevel60Smite, TalentsP1Shadow],
+	[Phase.Phase1]: [TalentsLevel60, TalentsLevel60Holy, TalentsLevel60Smite],
 };
 
 export const DefaultTalents = TalentPresets[Phase.Phase1][0];

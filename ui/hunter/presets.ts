@@ -41,8 +41,6 @@ import MarksmanshipAPL from './apls/mm.apl.json';
 import SurvivalAPL from './apls/sv.apl.json';
 import Level60RangedGear from './gear_sets/level60_phase1_synthetic_ranged.gear.json';
 import Level60SurvivalGear from './gear_sets/level60_phase1_synthetic_survival.gear.json';
-import P0BISGear from './gear_sets/p0.bis.gear.json';
-import P1BISGear from './gear_sets/p1.bis.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -50,9 +48,6 @@ import P1BISGear from './gear_sets/p1.bis.gear.json';
 ///////////////////////////////////////////////////////////////////////////
 //                                 Gear Presets
 ///////////////////////////////////////////////////////////////////////////
-
-export const GearP0BIS = PresetUtils.makePresetGear('Pre-BiS', P0BISGear);
-export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
 
 // A guess at Phase 1 BiS under Forever, made of the synthetic items in
 // tools/database/forever_synthetic_items_hunter.go (ids from 993000, not in the game).
@@ -98,7 +93,7 @@ export const GearLevel60Survival = PresetUtils.makePresetGear('Survival', Level6
 });
 
 export const GearPresets = {
-	[Phase.Phase1]: [GearLevel60Ranged, GearLevel60Survival, GearP0BIS, GearP1BIS],
+	[Phase.Phase1]: [GearLevel60Ranged, GearLevel60Survival],
 };
 
 export const DefaultGear = GearLevel60Ranged;

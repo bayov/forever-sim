@@ -1,4 +1,3 @@
-import { Phase } from '../core/constants/other.js';
 import * as PresetUtils from '../core/preset_utils.js';
 import {
 	Conjured,
@@ -28,16 +27,9 @@ import {
 import { ElementalShaman_Options as ElementalShamanOptions } from '../core/proto/shaman.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
-import DefaultAPLJson from './apls/default.apl.json';
 import Level60APLJson from './apls/level60.apl.json';
 import Level60ManaTideAPLJson from './apls/level60_mana_tide.apl.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
-import Phase1GearJSON from './gear_sets/phase_1.gear.json';
-import Phase2GearJSON from './gear_sets/phase_2.gear.json';
-import Phase3GearJSON from './gear_sets/phase_3.gear.json';
-import Phase4GearJSON from './gear_sets/phase_4.gear.json';
-import Phase5GearJSON from './gear_sets/phase_5.gear.json';
-import Phase6GearJSON from './gear_sets/phase_6.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -46,13 +38,6 @@ import Phase6GearJSON from './gear_sets/phase_6.gear.json';
 ///////////////////////////////////////////////////////////////////////////
 //                                 Gear Presets
 ///////////////////////////////////////////////////////////////////////////
-
-export const GearPhase1 = PresetUtils.makePresetGear('Phase 1', Phase1GearJSON, { group: 'Era' });
-export const GearPhase2 = PresetUtils.makePresetGear('Phase 2', Phase2GearJSON, { group: 'Era' });
-export const GearPhase3 = PresetUtils.makePresetGear('Phase 3', Phase3GearJSON, { group: 'Era' });
-export const GearPhase4 = PresetUtils.makePresetGear('Phase 4', Phase4GearJSON, { group: 'Era' });
-export const GearPhase5 = PresetUtils.makePresetGear('Phase 5', Phase5GearJSON, { group: 'Era' });
-export const GearPhase6 = PresetUtils.makePresetGear('Phase 6', Phase6GearJSON, { group: 'Era' });
 
 // A guess at Phase 1 BiS under Forever, made of the synthetic items in
 // tools/database/forever_synthetic_items_shaman.go (ids from 990101, not in the game).
@@ -93,22 +78,13 @@ export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Elemental'
 	group: 'Synthetic',
 });
 
-export const GearPresets = {
-	[Phase.Phase1]: [GearLevel60Phase1Synthetic, GearPhase1],
-	[Phase.Phase2]: [GearPhase2],
-	[Phase.Phase3]: [GearPhase3],
-	[Phase.Phase4]: [GearPhase4],
-	[Phase.Phase5]: [GearPhase5],
-	[Phase.Phase6]: [GearPhase6],
-};
+export const GearPresets = [GearLevel60Phase1Synthetic];
 
 export const DefaultGear = GearLevel60Phase1Synthetic;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets
 ///////////////////////////////////////////////////////////////////////////
-
-export const APLDefault = PresetUtils.makePresetAPLRotation('Default', DefaultAPLJson, { group: 'Era' });
 
 // The tools/rotopt shaman_ele search on the Level 60 talents, over the mean of 120, 180 and
 // 300 sec: Mana Spring and Searing Totem, Flame Shock whenever its DoT is down, Lava Burst on
@@ -133,14 +109,7 @@ export const APLLevel60ManaTide = PresetUtils.makePresetAPLRotation('Elemental M
 	group: 'Synthetic',
 });
 
-export const APLPresets = {
-	[Phase.Phase1]: [APLLevel60, APLLevel60ManaTide, APLDefault],
-	[Phase.Phase2]: [],
-	[Phase.Phase3]: [],
-	[Phase.Phase4]: [],
-	[Phase.Phase5]: [],
-	[Phase.Phase6]: [],
-};
+export const APLPresets = [APLLevel60, APLLevel60ManaTide];
 
 export const DefaultAPL = APLLevel60;
 
@@ -181,14 +150,7 @@ export const TalentsLevel60ManaTide = PresetUtils.makePresetTalents(
 	{ tooltip: 'Level 60 talents with 16 Restoration points for Mana Tide Totem.', group: 'Synthetic' },
 );
 
-export const TalentPresets = {
-	[Phase.Phase1]: [TalentsLevel60, TalentsLevel60ManaTide],
-	[Phase.Phase2]: [],
-	[Phase.Phase3]: [],
-	[Phase.Phase4]: [],
-	[Phase.Phase5]: [],
-	[Phase.Phase6]: [],
-};
+export const TalentPresets = [TalentsLevel60, TalentsLevel60ManaTide];
 
 export const DefaultTalents = TalentsLevel60;
 

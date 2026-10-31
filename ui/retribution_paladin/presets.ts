@@ -1,4 +1,3 @@
-import { Phase } from '../core/constants/other.js';
 import * as PresetUtils from '../core/preset_utils.js';
 import {
 	AgilityElixir,
@@ -44,7 +43,6 @@ import Level60ShockWisdomDutyAPLJSON from './apls/level60_shock_wisdom_duty.apl.
 import Level60SubHolyAPLJSON from './apls/level60_sub_holy.apl.json';
 import Level60UndeadAPLJSON from './apls/level60_undead.apl.json';
 import Level60WisdomDutyAPLJSON from './apls/level60_wisdom_duty.apl.json';
-import BlankGear from './gear_sets/blank.gear.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
 import Level60Phase1SyntheticCrusaderDutyGearJSON from './gear_sets/level60_phase1_synthetic_crusader_duty.gear.json';
 import Level60Phase1SyntheticUndeadGearJSON from './gear_sets/level60_phase1_synthetic_undead.gear.json';
@@ -56,8 +54,6 @@ import Level60Phase1SyntheticUndeadGearJSON from './gear_sets/level60_phase1_syn
 ///////////////////////////////////////////////////////////////////////////
 //                                 Gear Presets
 ///////////////////////////////////////////////////////////////////////////
-
-export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear, { tooltip: 'No gear equipped.' });
 
 // Synthetic Phase 1 retribution gear, from tools/database/forever_synthetic_items_paladin.go (ids
 // from 992000, not in the game).
@@ -128,7 +124,7 @@ export const GearLevel60Phase1SyntheticCrusaderDuty = PresetUtils.makePresetGear
 	},
 );
 
-export const GearPresets = {};
+export const GearPresets = [GearLevel60Phase1Synthetic, GearLevel60Phase1SyntheticUndead, GearLevel60Phase1SyntheticCrusaderDuty];
 
 export const DefaultGear = GearLevel60Phase1Synthetic;
 
@@ -275,26 +271,20 @@ export const APLLevel60ShockRetWisdomDuty = PresetUtils.makePresetAPLRotation('R
 	group: 'Synthetic',
 });
 
-export const APLPresets = {
-	[Phase.Phase1]: [],
-	[Phase.Phase2]: [],
-	[Phase.Phase3]: [],
-	[Phase.Phase4]: [
-		APLLevel60,
-		APLLevel60SubHoly,
-		APLLevel60CrusaderDuty,
-		APLLevel60WisdomDuty,
-		APLLevel60Shock,
-		APLLevel60ShockCrusaderDuty,
-		APLLevel60ShockWisdomDuty,
-		APLLevel60ShockRet,
-		APLLevel60ShockRetCrusaderDuty,
-		APLLevel60ShockRetWisdomDuty,
-		APLLevel60Undead,
-		APLLevel60ShockUndead,
-	],
-	[Phase.Phase5]: [],
-};
+export const APLPresets = [
+	APLLevel60,
+	APLLevel60SubHoly,
+	APLLevel60CrusaderDuty,
+	APLLevel60WisdomDuty,
+	APLLevel60Shock,
+	APLLevel60ShockCrusaderDuty,
+	APLLevel60ShockWisdomDuty,
+	APLLevel60ShockRet,
+	APLLevel60ShockRetCrusaderDuty,
+	APLLevel60ShockRetWisdomDuty,
+	APLLevel60Undead,
+	APLLevel60ShockUndead,
+];
 
 // Since the regear round (2026-10-23) the class default is Level 60 (sub Holy), the build highest at
 // 180 sec (944.5 against twist's 943.3).
@@ -440,12 +430,7 @@ export const TalentsLevel60SubHolyUndead = PresetUtils.makePresetTalents(
 	{ tooltip: 'Level 60 sub Holy talents for an Undead or Demon boss, with Holy Conduit 2.', group: 'Synthetic' },
 );
 
-export const TalentPresets = {
-	[Phase.Phase1]: [],
-	[Phase.Phase2]: [],
-	[Phase.Phase3]: [],
-	[Phase.Phase4]: [TalentsLevel60, TalentsLevel60SubHoly, TalentsLevel60Shock, TalentsLevel60ShockRet, TalentsLevel60SubHolyUndead],
-};
+export const TalentPresets = [TalentsLevel60, TalentsLevel60SubHoly, TalentsLevel60Shock, TalentsLevel60ShockRet, TalentsLevel60SubHolyUndead];
 
 export const DefaultTalents = TalentsLevel60SubHoly;
 

@@ -45,20 +45,12 @@ import Level60DemonologyDutyRecklessnessAPL from './apls/level60_demonology_duty
 import Level60DestructionDutyRecklessnessAPL from './apls/level60_destruction_duty_recklessness.apl.json';
 import Level60AfflictionDutyRecklessnessAPL from './apls/level60_affliction_duty_recklessness.apl.json';
 import Level60DestructionFireDutyRecklessnessAPL from './apls/level60_destruction_fire_duty_recklessness.apl.json';
-import BasicRotation from './apls/rotation.apl.json';
 // gear
-import BlankGear from './gear_sets/blank.gear.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
-import MCGear from './gear_sets/mc.gear.json';
-import PreBisGear from './gear_sets/prebis.gear.json';
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Gear Presets
 ///////////////////////////////////////////////////////////////////////////
-
-export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear);
-export const GearPreBis = PresetUtils.makePresetGear('Pre-BIS', PreBisGear);
-export const GearMC = PresetUtils.makePresetGear('MC', MCGear);
 
 // Forever's level 60 gear is not tuned yet and Molten Core has no Forever data, so the Level 60
 // presets wear synthetic items (tools/database/forever_synthetic_items_warlock.go): the Era Phase 1
@@ -86,7 +78,7 @@ export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Demonology
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game. Hit capped with Suppression 5/5.',
 	group: 'Synthetic',
 });
-export const GearPresets = [GearLevel60Phase1Synthetic, GearBlank, GearPreBis, GearMC];
+export const GearPresets = [GearLevel60Phase1Synthetic];
 
 export const DefaultGear = GearLevel60Phase1Synthetic;
 
@@ -193,7 +185,6 @@ export const RotationLevel60DestructionFireDutyRecklessness = PresetUtils.makePr
 		tooltip: 'The Destruction Fire rotation with Curse of Recklessness kept up for the raid.',
 	},
 );
-export const RotationBasic = PresetUtils.makePresetAPLRotation('Basic', BasicRotation);
 
 export const APLPresets = [
 	RotationLevel60Demonology,
@@ -208,7 +199,6 @@ export const APLPresets = [
 	RotationLevel60DestructionFire,
 	RotationLevel60DestructionFireDutyCurse,
 	RotationLevel60DestructionFireDutyRecklessness,
-	RotationBasic,
 ];
 
 export const DefaultAPL = RotationLevel60Demonology;

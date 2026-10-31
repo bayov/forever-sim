@@ -1,6 +1,5 @@
 import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs';
 import * as OtherInputs from '../core/components/other_inputs.js';
-import { Phase } from '../core/constants/other.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 import { Player } from '../core/player.js';
 import { Class, Faction, PartyBuffs, PseudoStat, Race, Spec, Stat } from '../core/proto/common.js';
@@ -149,21 +148,11 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 			Presets.PresetBuildLevel60ShockCrusaderDuty,
 			Presets.PresetBuildLevel60ShockWisdomDuty,
 		],
-		rotations: [
-			...Presets.APLPresets[Phase.Phase4],
-			...Presets.APLPresets[Phase.Phase3],
-			...Presets.APLPresets[Phase.Phase2],
-			...Presets.APLPresets[Phase.Phase1],
-		],
+		rotations: Presets.APLPresets,
 		// Preset talents that the user can quickly select.
-		talents: [
-			...Presets.TalentPresets[Phase.Phase4],
-			...Presets.TalentPresets[Phase.Phase3],
-			...Presets.TalentPresets[Phase.Phase2],
-			...Presets.TalentPresets[Phase.Phase1],
-		],
+		talents: Presets.TalentPresets,
 		// Preset gear configurations that the user can quickly select.
-		gear: [Presets.GearLevel60Phase1Synthetic, Presets.GearLevel60Phase1SyntheticUndead, Presets.GearLevel60Phase1SyntheticCrusaderDuty, Presets.GearBlank],
+		gear: Presets.GearPresets,
 	},
 
 	autoRotation: player => {
