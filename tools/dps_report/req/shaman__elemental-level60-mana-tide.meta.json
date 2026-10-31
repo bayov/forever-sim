@@ -75,5 +75,5 @@
     "Eye of the Storm 3 stops 70% of the pushback from the 2 hits a minute.",
     "Uses Major Mana Potion instead of Caustic Smog Potion. That's -4.3 / +1.8 / +27.2 DPS at 120s / 180s / 300s."
   ],
-  "notes": "mksettings -spec ele -apl level60_mana_tide (standards 23: every shaman drops its own party totems; the raid has none, the shaman drops Mana Spring Totem itself); edited defaultPotion to MajorManaPotion (the build's own consumes, EncounterLevel60ManaTide); race SkyborneWindshaper (the best race since client 70425's Wind Blessed 3% haste)."
+  "notes": "mksettings -spec ele -apl level60_mana_tide (standards 23: every shaman drops its own party totems; the raid has none, the shaman drops Mana Spring Totem itself); edited defaultPotion to MajorManaPotion (the build's own consumes, EncounterLevel60ManaTide); race SkyborneWindshaper (the best race since client 70425's Wind Blessed 3% haste). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD."
 }

@@ -73,7 +73,7 @@
     "Only one +2% crit elixir. A second one (Owl) would add 15.1 DPS.",
     "Subtlety 3 (Restoration) is taken for threat. It costs 6.0 / 6.2 / 6.2 DPS at 120s / 180s / 300s."
   ],
-  "notes": "druid__balance.json with the raid's Faerie Fire and Curse of Recklessness off (Forever's two share the minor armor slot, standards 20, so with the curse on the druid's own Faerie Fire adds nothing) and the level60_ff rotation. Everything else is the base request. Night Elf since the 2026-10-27 race re-pick, with the level60_ff rotation regenerated with elune=1 (tools/rotopt/druid_presets.sh), which was req/races/druid__balance-duty-ff.NightElf.json; the same rotation is 0.0 for a Tauren (Elune's Light is the Night Elf's).",
+  "notes": "druid__balance.json with the raid's Faerie Fire and Curse of Recklessness off (Forever's two share the minor armor slot, standards 20, so with the curse on the druid's own Faerie Fire adds nothing) and the level60_ff rotation. Everything else is the base request. Night Elf since the 2026-10-27 race re-pick, with the level60_ff rotation regenerated with elune=1 (tools/rotopt/druid_presets.sh), which was req/races/druid__balance-duty-ff.NightElf.json; the same rotation is 0.0 for a Tauren (Elune's Light is the Night Elf's). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD.",
   "duty": "Faerie Fire",
   "baseBuild": "druid__balance"
 }

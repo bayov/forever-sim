@@ -67,5 +67,5 @@
     "10% hit (10 hit rating each on the wrist and second ring). Hit past the 8% cap still helps white hits, so 10% beats 8% by 0.4 to 1.9 DPS.",
     "No Goblin Land Mine. Its 1s cast resets the swing, so it loses DPS. The Sapper stays."
   ],
-  "notes": "Default for the Assassination raid-sim preset. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Windshaper Skyborne."
+  "notes": "Default for the Assassination raid-sim preset. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Windshaper Skyborne. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD."
 }

@@ -41,6 +41,8 @@ func main() {
 	targets := flag.Int("targets", 1, "number of enemies, copies of the level's target")
 	duration := flag.Float64("duration", 0, "fight length in seconds, 300 at level 60 and 60 at level 20 when left out")
 	out := flag.String("out", "", "file to write, stdout when empty")
+	sunder := flag.String("sunder", "ramp", "the raid's Sunder Armor at level 60: ramp (a warrior tank stacks it from the pull, standard 32), full (5 stacks at the pull) or none")
+	sunderPull := flag.Int("sunder-pull", -1, "with -sunder ramp, how many other DPS warriors cast one Sunder on their first GCD; -1 is the typical raid's one (none for a warrior, whose own pull Sunder is that one)")
 	flag.Parse()
 
 	raceValue, ok := proto.Race_value["Race"+*race]
@@ -194,6 +196,12 @@ func main() {
 	}
 	setup.withSpec(player)
 	fitStonesToWeapons(player)
+	if *level >= 60 {
+		if err := setSunder(debuffs, *sunder, *sunderPull, player.Class); err != nil {
+			fmt.Fprintln(os.Stderr, err)
+			os.Exit(1)
+		}
+	}
 
 	raid := core.SinglePlayerRaidProto(player, partyBuffs, raidBuffs, debuffs)
 	raid.Tanks = tanks
@@ -280,4 +288,26 @@ func fitStonesToWeapons(player *proto.Player) {
 	}
 	fit(proto.ItemSlot_ItemSlotMainHand, &player.Consumes.MainHandImbue)
 	fit(proto.ItemSlot_ItemSlotOffHand, &player.Consumes.OffHandImbue)
+}
+
+// setSunder gives the raid's Sunder Armor (standard 32). The typical raid has two warriors, a
+// tank and a DPS warrior: the tank stacks it once a GCD from the pull and the DPS warrior casts
+// one on its first GCD, so it is up to 5 in 3 to 4 GCDs. A warrior preset's own pull Sunder is
+// that DPS warrior's, so its raid has only the tank.
+func setSunder(debuffs *proto.Debuffs, mode string, pull int, class proto.Class) error {
+	switch mode {
+	case "full":
+		debuffs.SunderArmor = true
+	case "none":
+		debuffs.SunderArmor = false
+	case "ramp":
+		if pull < 0 {
+			pull = core.TernaryInt(class == proto.Class_ClassWarrior, 0, 1)
+		}
+		debuffs.SunderArmor = false
+		debuffs.SunderRamp = &proto.SunderRamp{Tank: true, PullSunders: int32(pull)}
+	default:
+		return fmt.Errorf("unknown -sunder %q, want ramp, full or none", mode)
+	}
+	return nil
 }

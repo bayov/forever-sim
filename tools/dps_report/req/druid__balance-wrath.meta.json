@@ -63,5 +63,5 @@
     "Natural Power gloves are 8.1 DPS ahead of Arcane Power.",
     "Subtlety 3 (Restoration) is taken for threat. It costs 2.9 / 2.9 / 3.0 DPS at 120s / 180s / 300s."
   ],
-  "notes": "Request from mksettings -spec balance with the Wrath gear variant, apl and talents; same consumes, buffs and encounter as the Balance build (shared EncounterLevel60). Duration 180s, durationVariation 20. No edits needed. Windshaper Skyborne since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29); rotation unchanged."
+  "notes": "Request from mksettings -spec balance with the Wrath gear variant, apl and talents; same consumes, buffs and encounter as the Balance build (shared EncounterLevel60). Duration 180s, durationVariation 20. No edits needed. Windshaper Skyborne since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29); rotation unchanged. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD."
 }

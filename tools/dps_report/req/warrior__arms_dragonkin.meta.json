@@ -76,7 +76,7 @@
     "Booming Voice (5/5) does nothing, because the raid already has Battle Shout",
     "Rage from taking raid damage (2 hits a minute, about 9 Rage each) is an estimate."
   ],
-  "notes": "Request from mksettings with the same arguments as warrior__arms except talents and APL, then the target's mobType set to MobTypeDragonkin, as the class preset's encounter does. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29) (follows its base build, warrior__arms), was Orc.",
+  "notes": "Request from mksettings with the same arguments as warrior__arms except talents and APL, then the target's mobType set to MobTypeDragonkin, as the class preset's encounter does. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29) (follows its base build, warrior__arms), was Orc. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull, and the preset's own pull Sunder is the raid's other one.",
   "encounter": "Dragonkin",
   "baseBuild": "warrior__arms"
 }

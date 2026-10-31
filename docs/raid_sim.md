@@ -433,7 +433,7 @@ Every warrior's base rotation casts one Sunder on its first GCD. After that, the
 The old given Sunder didn't model that:
 
 - It puts all 5 stacks on in the first 0.8 seconds and never lets them drop (it's still what `sunder_armor`
-  does, for the report's requests).
+  does; the report's requests use the ramp below since 2026-10-31, standard 32).
 - So the DPS warriors' pull Sunders always land on a full stack and do nothing.
 
 That overstates physical builds against casters by about 0.4 to 1% of their DPS. A ramp is worth 20 to 35

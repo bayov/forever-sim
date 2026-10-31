@@ -10,8 +10,8 @@ import (
 //
 // Adrenaline Rush is the anchor of the big window. The timed buffs that multiply with
 // the extra energy (Blood Fury, Elune's Light) wait for it whenever the wait costs them
-// no use. Cold Blood and Eureka! are spent by the next hits, so they wait for a 5 point
-// Eviscerate, which also lines them up with each other. Blade Flurry and Berserking are
+// no use. Cold Blood is spent by the next hit and Eureka! lasts 8 sec, so they wait for a
+// 5 point Eviscerate, which also lines them up with each other. Blade Flurry and Berserking are
 // auto attack speed, which does not feed the energy window, so they go on cooldown
 // unless the optimizer finds that holding them helps.
 
@@ -207,10 +207,10 @@ func buildRogueCooldowns(k Knobs) rogueCooldowns {
 		), "Blade Flurry is auto attack speed and does not feed the energy window, so it goes on cooldown."))
 	}
 	eurekaLine := cast(eureka, and(c.fivePointEviscerate, sndAtLeast(k["eurekaSnd"]), c.notRefreshing),
-		"Gnome. Eureka! buffs the next 3 abilities, so right before Eviscerate and the two builders after it. Other races can ignore the warning on this line.")
+		"Gnome. Eureka! right before a 5 point Eviscerate, so its 8 sec of 10% more damage start with it. Other races can ignore the warning on this line.")
 	if k["eurekaCp"] == 0 {
 		eurekaLine = cast(eureka, sndAtLeast(k["eurekaSnd"]),
-			"Gnome. Eureka! on cooldown, the next 3 abilities cost 20% less and hit 10% harder. Other races can ignore the warning on this line.")
+			"Gnome. Eureka! on cooldown: for 8 sec, abilities cost 10% less and hit 10% harder. Other races can ignore the warning on this line.")
 	}
 	berserkingNotes := "Berserking is auto attack speed, so it goes on cooldown."
 	if k["berserkingHoldForBf"] == 1 && hasBladeFlurry {

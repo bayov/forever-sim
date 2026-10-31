@@ -67,5 +67,5 @@
     "10% hit (10 hit rating each on the wrist and second ring). Hit past the 8% cap still helps white hits, so 10% beats 8% by 0.4 to 1.9 DPS.",
     "No Goblin Land Mine. Its 1s cast resets the swing, so it loses DPS. The Sapper stays."
   ],
-  "notes": "Spec family set to Assassination (30 Assassination points); the PR frames it as a variant of Combat Swords and it uses the rogue_combat mksettings setup and its own APL, the Combat Swords one with 4-point Eviscerates (level60_seal_fate_swords, 2026-10-23). Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Orc."
+  "notes": "Spec family set to Assassination (30 Assassination points); the PR frames it as a variant of Combat Swords and it uses the rogue_combat mksettings setup and its own APL, the Combat Swords one with 4-point Eviscerates (level60_seal_fate_swords, 2026-10-23). Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Orc. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD."
 }

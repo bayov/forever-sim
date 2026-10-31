@@ -65,7 +65,7 @@
     "Natural Power gloves are 8.1 DPS ahead of Arcane Power.",
     "Subtlety 3 (Restoration) is taken for threat. It costs 2.8 / 2.8 / 2.9 DPS at 120s / 180s / 300s."
   ],
-  "notes": "druid__balance-wrath.json with the raid's Faerie Fire and Curse of Recklessness off (Forever's two share the minor armor slot, standards 20, so with the curse on the druid's own Faerie Fire adds nothing) and the level60_wrath_ff rotation. Everything else is the base request. Windshaper Skyborne since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29); rotation unchanged.",
+  "notes": "druid__balance-wrath.json with the raid's Faerie Fire and Curse of Recklessness off (Forever's two share the minor armor slot, standards 20, so with the curse on the druid's own Faerie Fire adds nothing) and the level60_wrath_ff rotation. Everything else is the base request. Windshaper Skyborne since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29); rotation unchanged. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD.",
   "duty": "Faerie Fire",
   "baseBuild": "druid__balance-wrath"
 }

@@ -718,7 +718,7 @@
                   }
                 },
                 {
-                  "notes": "Gnome. Buffs Eviscerate and the next two builders. Other races can ignore the warning on this line.",
+                  "notes": "Gnome. Eureka! right before a 5 point Eviscerate, so its 8 sec of 10% more damage start with it. Other races can ignore the warning on this line.",
                   "action": {
                     "condition": {
                       "and": {
@@ -1463,7 +1463,10 @@
       "judgementOfTheCrusader": "TristateEffectImproved",
       "faerieFire": true,
       "curseOfElements": true,
-      "sunderArmor": true,
+      "sunderRamp": {
+        "tank": true,
+        "pullSunders": 1
+      },
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,
       "demoralizingRoar": "TristateEffectImproved",

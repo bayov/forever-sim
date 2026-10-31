@@ -74,7 +74,7 @@
     "Soul shards and Life Tap's health cost aren't tracked.",
     "Demons use the warlock's spell crit, a reported Forever bug. It's worth 15 to 17 DPS."
   ],
-  "notes": "Request from mksettings with the same arguments as warlock__affliction except -apl level60_affliction_duty_recklessness, then raid.debuffs.curseOfRecklessness and faerieFire removed (they share the minor armor slot, standards 20). Made as a hand edit of the base request, which is the same. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Spellstone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly. A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30.",
+  "notes": "Request from mksettings with the same arguments as warlock__affliction except -apl level60_affliction_duty_recklessness, then raid.debuffs.curseOfRecklessness and faerieFire removed (they share the minor armor slot, standards 20). Made as a hand edit of the base request, which is the same. Demon Armor; Summon Succubus, sacrificed NoSummon, imbue Spellstone. mksettings sets distanceFromTarget 5 / channelClipDelayMs 50 where the UI preset uses 25 / 150; the published numbers were made with mksettings and reproduce exactly. A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD.",
   "duty": "Curse of Recklessness",
   "baseBuild": "warlock__affliction"
 }

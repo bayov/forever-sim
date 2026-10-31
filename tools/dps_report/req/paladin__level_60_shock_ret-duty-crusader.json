@@ -439,7 +439,10 @@
       "judgementOfLight": true,
       "faerieFire": true,
       "curseOfElements": true,
-      "sunderArmor": true,
+      "sunderRamp": {
+        "tank": true,
+        "pullSunders": 1
+      },
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,
       "demoralizingRoar": "TristateEffectImproved",

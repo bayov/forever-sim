@@ -78,7 +78,7 @@
     "Seal of Righteousness adds 12% of spell power per hit with a two-hander, counted once, as its tooltip says (spell 70425). Counted twice, DPS would be 46-51 higher. At the proc spell's 0%, it would be 53-59 lower.",
     "No filler explosive, because each 1s cast resets the swing. The Goblin Land Mine and EZ-Thro Dark Bomb cost 5.4 DPS at 180s, and the EZ-Thro Thorium Grenade 6.1."
   ],
-  "notes": "Request: paladin__level_60_shock with raid debuff judgementOfTheCrusader removed and the level60_shock_crusader_duty rotation. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human (follows its base build, paladin__level_60_shock).",
+  "notes": "Request: paladin__level_60_shock with raid debuff judgementOfTheCrusader removed and the level60_shock_crusader_duty rotation. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human (follows its base build, paladin__level_60_shock). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD.",
   "duty": "Judgement of the Crusader",
   "baseBuild": "paladin__level_60_shock"
 }

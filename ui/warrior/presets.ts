@@ -17,6 +17,7 @@ import {
 	SapperExplosive,
 	Stat,
 	StrengthBuff,
+	SunderRamp,
 	TotemWeaponBuff,
 	TristateEffect,
 	WeaponImbue,
@@ -385,7 +386,8 @@ export const DefaultDebuffs = Debuffs.create({
 	judgementOfTheCrusader: TristateEffect.TristateEffectImproved,
 	judgementOfWisdom: true,
 	scorpidSting: true,
-	sunderArmor: true,
+	// The raid's Sunder Armor builds up from the pull (standard 32): a warrior tank stacks it and our own pull Sunder is the other warrior's.
+	sunderRamp: SunderRamp.create({ tank: true }),
 	thunderClap: TristateEffect.TristateEffectImproved,
 });
 

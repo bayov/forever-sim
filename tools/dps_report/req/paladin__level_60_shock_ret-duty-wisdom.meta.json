@@ -69,7 +69,7 @@
     "The top Holy Strike and Consecration ranks may be out of date (about 1.2% of DPS).",
     "No filler explosive, because each 1s cast resets the swing."
   ],
-  "notes": "Request: paladin__level_60_shock_ret with raid debuff judgementOfWisdom removed and the level60_shock_ret_wisdom_duty rotation. Hand edits of the base request, as the other duty paladins were made (mksettings with -apl level60_shock_ret_wisdom_duty writes the same rotation). A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30.",
+  "notes": "Request: paladin__level_60_shock_ret with raid debuff judgementOfWisdom removed and the level60_shock_ret_wisdom_duty rotation. Hand edits of the base request, as the other duty paladins were made (mksettings with -apl level60_shock_ret_wisdom_duty writes the same rotation). A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD.",
   "verify": {
     "dps": 919.76,
     "stderr": 0.31,

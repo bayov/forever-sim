@@ -78,7 +78,7 @@
     "Two-Handed Weapon Specialization boosts Holy seal damage, as in the Era sim. The client says Physical only. Without it, DPS is 11 lower.",
     "No filler explosive, because each 1s cast resets the swing. The Goblin Land Mine and EZ-Thro Dark Bomb cost 5.2 DPS at 180s, and the EZ-Thro Thorium Grenade 6.0."
   ],
-  "notes": "Request: paladin__level_60 with raid debuff judgementOfTheCrusader removed and the level60_crusader_duty rotation, and Libram of Fervor (23203) in the relic slot, as level60_phase1_synthetic_crusader_duty. Hand edits of the base request, as the other duty paladins were made (mksettings with -apl level60_crusader_duty writes the same rotation). A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30.",
+  "notes": "Request: paladin__level_60 with raid debuff judgementOfTheCrusader removed and the level60_crusader_duty rotation, and Libram of Fervor (23203) in the relic slot, as level60_phase1_synthetic_crusader_duty. Hand edits of the base request, as the other duty paladins were made (mksettings with -apl level60_crusader_duty writes the same rotation). A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD.",
   "duty": "Judgement of the Crusader",
   "baseBuild": "paladin__level_60"
 }

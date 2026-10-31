@@ -72,5 +72,5 @@
     "Assumed: the fight is in Hyjal or the Barrow Deeps. The flask gives its full bonus only there.",
     "No Flask of Natural Precision. Its 8% hit comes from gear (7% on the wrist, second ring and back) and the 2-piece bonus. That beats 6% hit by 1.2 to 1.9 DPS."
   ],
-  "notes": "Only Subtlety build, so treated as the Subtlety default. Undead since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Night Elf."
+  "notes": "Only Subtlety build, so treated as the Subtlety default. Undead since the second 2026-10-27 race re-pick (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Night Elf. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD."
 }

@@ -648,7 +648,7 @@
             }
           }
         },
-        "notes": "Gnome. Eureka! on cooldown, the next 3 abilities cost 20% less and hit 10% harder. Other races can ignore the warning on this line."
+        "notes": "Gnome. Eureka! on cooldown: for 8 sec, abilities cost 10% less and hit 10% harder. Other races can ignore the warning on this line."
       },
       {
         "action": {

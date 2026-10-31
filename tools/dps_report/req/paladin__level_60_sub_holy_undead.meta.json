@@ -81,7 +81,7 @@
     "Two-Handed Weapon Specialization boosts Holy seal damage, as in the Era sim. The client says Physical only. Without it, DPS is 11 lower.",
     "No filler explosive, because each 1s cast resets the swing. The Goblin Land Mine and EZ-Thro Dark Bomb cost 7.0 DPS at 180s, and the EZ-Thro Thorium Grenade 7.7."
   ],
-  "notes": "Request from mksettings with the same arguments as paladin__level_60_sub_holy except talents and APL, then the target's mobType set to MobTypeUndead, as the class preset's encounter does. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human (follows its base build, paladin__level_60_sub_holy).",
+  "notes": "Request from mksettings with the same arguments as paladin__level_60_sub_holy except talents and APL, then the target's mobType set to MobTypeUndead, as the class preset's encounter does. Undead since the 2026-10-27 race re-pick (the race sweep with each race's own rotation and gear, standards 29), was Human (follows its base build, paladin__level_60_sub_holy). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD.",
   "encounter": "Undead",
   "baseBuild": "paladin__level_60_sub_holy"
 }

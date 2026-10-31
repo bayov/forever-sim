@@ -889,7 +889,9 @@
       "judgementOfTheCrusader": "TristateEffectImproved",
       "faerieFire": true,
       "curseOfElements": true,
-      "sunderArmor": true,
+      "sunderRamp": {
+        "tank": true
+      },
       "curseOfWeakness": "TristateEffectImproved",
       "curseOfRecklessness": true,
       "demoralizingRoar": "TristateEffectImproved",

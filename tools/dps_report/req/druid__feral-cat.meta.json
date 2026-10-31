@@ -73,5 +73,5 @@
     "The melee group has Windfury Totem and a second shaman's Grace of Air. No Elemental Sharpening Stone, since its recipe comes from Molten Core.",
     "Takes Feral Swiftness 2 (movement speed) instead of Natural Shapeshifter's point. It costs 0.0 / 0.1 / 5.2 DPS at 120s / 180s / 300s, from shapeshift mana in long fights."
   ],
-  "notes": "Request from mksettings -spec feral (melee group: Strength of Earth and Windfury Totem, all blessings, own Leader of the Pack; latency 100 ms). Duration 180s, durationVariation 20. Forever lets the cat drink in form, so Mighty Rage Potion and Thistle Tea are used. Feral options: prepull Clearcasting on. No edits needed."
+  "notes": "Request from mksettings -spec feral (melee group: Strength of Earth and Windfury Totem, all blessings, own Leader of the Pack; latency 100 ms). Duration 180s, durationVariation 20. Forever lets the cat drink in form, so Mighty Rage Potion and Thistle Tea are used. Feral options: prepull Clearcasting on. No edits needed. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD."
 }

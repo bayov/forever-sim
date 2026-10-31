@@ -74,5 +74,5 @@
     "Assumed: the shaman takes 2 damage hits a minute. Each one fires Lightning Shield.",
     "Eye of the Storm 3 stops 70% of the pushback from the 2 hits a minute."
   ],
-  "notes": "mksettings -spec ele -apl level60 (standards 23: every shaman drops its own party totems; the raid has none, the shaman drops Mana Spring Totem itself); race SkyborneWindshaper (the best race since client 70425's Wind Blessed 3% haste)."
+  "notes": "mksettings -spec ele -apl level60 (standards 23: every shaman drops its own party totems; the raid has none, the shaman drops Mana Spring Totem itself); race SkyborneWindshaper (the best race since client 70425's Wind Blessed 3% haste). The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD."
 }

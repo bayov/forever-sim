@@ -1,6 +1,18 @@
 import { Player } from '../../player';
 import { Ruleset } from '../../proto/api';
-import { Class, Debuffs, Faction, IndividualBuffs, RaidBuffs, SaygesFortune, Spec, Stat, TotemWeaponBuff, TristateEffect } from '../../proto/common';
+import {
+	Class,
+	Debuffs,
+	Faction,
+	IndividualBuffs,
+	RaidBuffs,
+	SaygesFortune,
+	Spec,
+	Stat,
+	SunderRamp,
+	TotemWeaponBuff,
+	TristateEffect,
+} from '../../proto/common';
 import { ActionId } from '../../proto_utils/action_id';
 import { EventID, TypedEvent } from '../../typed_event';
 import {
@@ -593,6 +605,7 @@ function makeDebuffToggle(
 function makeExclusiveDebuffRow(
 	options: Array<{ spellId: number; fieldName: DebuffToggleField }>,
 	exclusiveWhen: (player: Player<any>) => boolean = () => true,
+	onTurnOn?: (debuffs: Debuffs) => void,
 ): ExclusiveDebuffRowConfig {
 	const fields = options.map(option => option.fieldName);
 	return {
@@ -603,16 +616,52 @@ function makeExclusiveDebuffRow(
 				onTurnOn: (debuffs, player) => {
 					if (!exclusiveWhen(player)) return;
 					fields.filter(field => field !== option.fieldName).forEach(field => setDebuffOn(debuffs, field, false));
+					onTurnOn?.(debuffs);
 				},
 			}),
 		),
 	};
 }
 
-export const MajorArmorDebuff = makeExclusiveDebuffRow([
-	{ spellId: 11597, fieldName: 'sunderArmor' },
-	{ spellId: 11198, fieldName: 'exposeArmor' },
-]);
+// The raid's Sunder Armor as it builds up from the pull (standard 32): a warrior tank adds a stack
+// every GCD and keeps it at 5, and each other warrior casts one on its first GCD. The counter is
+// the raid's warriors besides you, the tank among them: 2 is the typical raid's tank and DPS
+// warrior, 5 stacks in 3 to 4 GCDs. A warrior's own pull Sunder adds its stack too, so a warrior's
+// typical raid is 1.
+const sunderRampWarriors = (debuffs: Debuffs): number => {
+	const ramp = debuffs.sunderRamp;
+	return ramp?.tank ? 1 + ramp.pullSunders : 0;
+};
+const SunderArmorRamp: InputHelpers.TypedIconPickerConfig<Player<any>, number> = {
+	type: 'icon',
+	actionId: () => ActionId.fromSpellId(11597),
+	states: 5,
+	changedEvent: (player: Player<any>) => TypedEvent.onAny([player.getRaid()!.debuffsChangeEmitter, player.sim.rulesetChangeEmitter]),
+	getValue: (player: Player<any>) => sunderRampWarriors(player.getRaid()!.getDebuffs()),
+	setValue: (eventID: EventID, player: Player<any>, warriors: number) => {
+		const debuffs = player.getRaid()!.getDebuffs();
+		debuffs.sunderRamp = warriors > 0 ? SunderRamp.create({ tank: true, pullSunders: warriors - 1 }) : undefined;
+		if (warriors > 0) {
+			setDebuffOn(debuffs, 'sunderArmor', false);
+			setDebuffOn(debuffs, 'exposeArmor', false);
+		}
+		player.getRaid()!.setDebuffs(eventID, debuffs);
+	},
+};
+
+const majorArmorRow = makeExclusiveDebuffRow(
+	[
+		{ spellId: 11597, fieldName: 'sunderArmor' },
+		{ spellId: 11198, fieldName: 'exposeArmor' },
+	],
+	() => true,
+	debuffs => (debuffs.sunderRamp = undefined),
+);
+// Sunder Armor in full from the pull, Sunder Armor building up (the counter), or Expose Armor.
+export const MajorArmorDebuff: ExclusiveDebuffRowConfig = {
+	...majorArmorRow,
+	options: [majorArmorRow.options[0], SunderArmorRamp as any, majorArmorRow.options[1]],
+};
 
 // Faerie Fire and Curse of Recklessness stack in Classic but not in Forever.
 export const MinorArmorDebuff = makeExclusiveDebuffRow(

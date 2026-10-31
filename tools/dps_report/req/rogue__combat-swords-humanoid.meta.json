@@ -73,7 +73,7 @@
     "10% hit (10 hit rating each on the wrist and second ring). Hit past the 8% cap still helps white hits, so 10% beats 8% by 0.4 to 1.9 DPS.",
     "No Goblin Land Mine. Its 1s cast resets the swing, so it loses DPS. The Sapper stays."
   ],
-  "notes": "Request from mksettings with the same arguments as rogue__combat-swords except talents, then the target's mobType set to MobTypeHumanoid, as the class preset's encounter does. Undead since the second 2026-10-27 race re-pick (follows its base build, rogue__combat-swords) (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Windshaper Skyborne.",
+  "notes": "Request from mksettings with the same arguments as rogue__combat-swords except talents, then the target's mobType set to MobTypeHumanoid, as the class preset's encounter does. Undead since the second 2026-10-27 race re-pick (follows its base build, rogue__combat-swords) (after dev notes post 8: Orc Blood Fury 2 min, Troll Berserking 15 s, Undead Touch of the Grave 15 s; the race sweep with each race's own rotation and gear, standards 29), was Windshaper Skyborne. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD.",
   "encounter": "Humanoid",
   "baseBuild": "rogue__combat-swords"
 }
