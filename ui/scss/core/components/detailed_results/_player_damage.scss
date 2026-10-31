@@ -4,6 +4,10 @@
 
 .name-cell {
 	width: 250px;
+
+	.metrics-action-name {
+		margin-left: var(--spacer-1);
+	}
 }
 
 .dps-cell {
@@ -39,4 +43,94 @@
 .player-damage-total {
 	display: inline-block;
 	margin: 0 10px;
+}
+
+.player-expand-caret {
+	width: 1rem;
+	margin-right: var(--spacer-1);
+	font-size: 0.625rem;
+	color: var(--text-muted-color);
+	transition: transform 0.15s ease-in-out;
+
+	.expanded > td > & {
+		transform: rotate(90deg);
+	}
+}
+
+.player-damage-row.expanded {
+	background-color: rgba(255, 255, 255, 0.035);
+}
+
+.player-filter-button {
+	margin-left: var(--spacer-2);
+	padding: 0 0.25rem;
+	border: 0;
+	background: none;
+	font-size: 0.75rem;
+	color: var(--text-muted-color);
+	opacity: 0.5;
+
+	.player-damage-row:hover & {
+		opacity: 1;
+	}
+
+	&:hover {
+		color: var(--bs-primary);
+	}
+}
+
+// A player's abilities, opened under their row.
+.metrics-table-body tr.player-breakdown-row {
+	background: rgba(0, 0, 0, 0.25);
+
+	&:hover {
+		background: rgba(0, 0, 0, 0.25);
+	}
+
+	> td,
+	> td:first-child {
+		padding: var(--spacer-2) var(--spacer-3) var(--spacer-3);
+	}
+
+	.metrics-table-header-cell {
+		position: static;
+	}
+}
+
+// The raid's players as buttons, where a tab shows one player at a time.
+.player-chooser-root {
+	padding: var(--spacer-2) 0;
+}
+
+.player-chooser-title {
+	margin-bottom: var(--spacer-2);
+	color: var(--text-muted-color);
+}
+
+.player-chooser-list {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(16rem, 1fr));
+	gap: var(--spacer-2);
+}
+
+.player-chooser-item {
+	display: flex;
+	align-items: center;
+	gap: var(--spacer-2);
+	min-width: 0;
+	padding: 0.35rem var(--spacer-2);
+	border: 1px solid var(--line-color);
+	border-radius: 4px;
+	background: rgba(255, 255, 255, 0.03);
+	font-size: 0.8125rem;
+	text-align: left;
+
+	&:hover {
+		border-color: var(--bs-primary);
+		background: rgba(255, 255, 255, 0.07);
+	}
+}
+
+.events-player-chooser {
+	padding: var(--spacer-3);
 }

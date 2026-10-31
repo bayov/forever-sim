@@ -13,6 +13,7 @@ import { DpsHistogram } from './detailed_results/dps_histogram';
 import { DtpsMetricsTable } from './detailed_results/dtps_metrics';
 import { EventsView } from './detailed_results/events_view';
 import { HealingMetricsTable } from './detailed_results/healing_metrics';
+import { PlayerChooser } from './detailed_results/player_chooser';
 import { PlayerDamageMetricsTable } from './detailed_results/player_damage';
 import { PlayerDamageTakenMetricsTable } from './detailed_results/player_damage_taken';
 import { ResourceMetricsTable } from './detailed_results/resource_metrics';
@@ -182,7 +183,10 @@ export abstract class DetailedResults extends Component {
 							{panel(
 								'Buffs',
 								'',
-								<div className="buff-aura-metrics" />,
+								<div>
+									<div className="all-players-only player-chooser-host" />
+									<div className="buff-aura-metrics" />
+								</div>,
 								<button ref={buffsUnusedRef} className="btn btn-link dr-panel-action" type="button" />,
 							)}
 							{panel(
@@ -194,9 +198,19 @@ export abstract class DetailedResults extends Component {
 						</div>
 					</div>
 					<div id="castsTab" className="tab-pane dr-tab-content casts-content fade">
-						<div className="dr-row">{panel('Casts', '', <div className="cast-metrics" />)}</div>
+						<div className="dr-row">
+							{panel(
+								'Casts',
+								'',
+								<div>
+									<div className="all-players-only player-chooser-host" />
+									<div className="cast-metrics" />
+								</div>,
+							)}
+						</div>
 					</div>
 					<div id="resourcesTab" className="tab-pane dr-tab-content resources-content fade">
+						<div className="dr-row all-players-only">{panel('Resources', '', <div className="player-chooser-host" />)}</div>
 						<div className="dr-row">
 							<div className="resource-metrics" />
 						</div>
@@ -302,10 +316,15 @@ export abstract class DetailedResults extends Component {
 			resultsEmitter: this.resultsEmitter,
 		});
 
+		this.rootElem.querySelectorAll<HTMLElement>('.player-chooser-host').forEach(parent => {
+			new PlayerChooser({ parent, resultsEmitter: this.resultsEmitter }, this.resultsFilter);
+		});
+
 		new EventsView({
 			parent: this.rootElem.querySelector('.events-view')!,
 			resultsEmitter: this.resultsEmitter,
 			simUI: this.simUI,
+			resultsFilter: this.resultsFilter,
 		});
 
 		this.rootElem.classList.add('hide-threat-metrics');

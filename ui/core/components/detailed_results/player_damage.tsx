@@ -2,16 +2,21 @@ import tippy from 'tippy.js';
 
 import { ActionMetrics, UnitMetrics } from '../../proto_utils/sim_result.js';
 import { maxIndex, sum } from '../../utils.js';
+import { TypedEvent } from '../../typed_event.js';
+import { DamageMetricsTable } from './damage_metrics.js';
 import { ColumnSortType, MetricsTable } from './metrics_table/metrics_table.js';
 import { MetricsTotalBar } from './metrics_table/metrics_total_bar';
 import { ResultComponentConfig, SimResultData } from './result_component.js';
 import { ResultsFilter } from './results_filter.js';
-import { SourceChart } from './source_chart.js';
+import { ThreatMetricsTable } from './threat_metrics.js';
 
 // Each player's damage, or with metric 'threat' each player's threat, as a share of the raid's.
 export class PlayerDamageMetricsTable extends MetricsTable<UnitMetrics> {
 	private readonly resultsFilter: ResultsFilter;
 	private readonly metric: 'damage' | 'threat';
+	// The players whose breakdown is open, by raid index, so a new result or filter keeps them open.
+	private readonly expanded = new Set<number>();
+	private readonly rows = new Map<number, HTMLElement>();
 
 	// Cached values from most recent result.
 	private raidDps: number;
@@ -26,32 +31,8 @@ export class PlayerDamageMetricsTable extends MetricsTable<UnitMetrics> {
 				name: 'Amount',
 				tooltip: metric == 'threat' ? 'Player Threat / Raid Threat' : 'Player Damage / Raid Damage',
 				headerCellClass: 'amount-header-cell text-center',
-				fillCell: (player: UnitMetrics, cellElem: HTMLElement, rowElem: HTMLElement) => {
+				fillCell: (player: UnitMetrics, cellElem: HTMLElement) => {
 					cellElem.classList.add('amount-cell');
-
-					let chart: HTMLElement | null = null;
-					const makeChart = () => {
-						const chartContainer = document.createElement('div');
-						rowElem.appendChild(chartContainer);
-						const playerActions = player
-							.getPlayerAndPetActions()
-							.map(action => action.forTarget(this.resultsFilter.getFilter()))
-							.flat();
-						new SourceChart(chartContainer, playerActions, this.metric);
-						return chartContainer;
-					};
-
-					tippy(rowElem, {
-						content: 'Loading...',
-						placement: 'bottom',
-						ignoreAttributes: true,
-						onShow(instance: any) {
-							if (!chart) {
-								chart = makeChart();
-								instance.setContent(chart);
-							}
-						},
-					});
 
 					const playerDps = this.getPlayerDps(player);
 
@@ -72,7 +53,19 @@ export class PlayerDamageMetricsTable extends MetricsTable<UnitMetrics> {
 				columnClass: 'dps-cell',
 				sort: ColumnSortType.Descending,
 				getValue: (player: UnitMetrics) => this.getPlayerDps(player),
-				getDisplayString: (player: UnitMetrics) => this.getPlayerDps(player).toFixed(1),
+				fillCell: (player: UnitMetrics, cellElem: HTMLElement) => {
+					const filterButton = (
+						<button className="player-filter-button" type="button">
+							<i className="fas fa-filter" />
+						</button>
+					) as HTMLButtonElement;
+					tippy(filterButton, { content: 'Show only this player' });
+					filterButton.addEventListener('click', event => {
+						event.stopPropagation();
+						this.resultsFilter.setPlayer(this.getLastSimResult().eventID, player.index);
+					});
+					cellElem.append(<span>{this.getPlayerDps(player).toFixed(1)}</span>, filterButton);
+				},
 			},
 		]);
 		this.resultsFilter = resultsFilter;
@@ -96,12 +89,56 @@ export class PlayerDamageMetricsTable extends MetricsTable<UnitMetrics> {
 
 	customizeRowElem(player: UnitMetrics, rowElem: HTMLElement) {
 		rowElem.classList.add('player-damage-row');
-		rowElem.addEventListener('click', event => {
-			this.resultsFilter.setPlayer(this.getLastSimResult().eventID, player.index);
+		rowElem.firstElementChild?.prepend(<i className="fas fa-chevron-right player-expand-caret" />);
+		this.rows.set(player.index, rowElem);
+		rowElem.addEventListener('click', () => {
+			if (this.expanded.has(player.index)) {
+				this.expanded.delete(player.index);
+				this.closeBreakdown(rowElem);
+			} else {
+				this.expanded.add(player.index);
+				this.openBreakdown(player, rowElem);
+			}
+			this.resort();
 		});
 	}
 
+	onSimResult(resultData: SimResultData) {
+		super.onSimResult(resultData);
+		this.expanded.forEach(index => {
+			const rowElem = this.rows.get(index);
+			if (rowElem) this.openBreakdown(this.getLastSimResult().result.getUnitWithIndex(index)!, rowElem);
+		});
+		if (this.expanded.size) this.resort();
+	}
+
+	// The player's own abilities table goes in a row under theirs, as the Abilities table it shows with
+	// only that player picked.
+	private openBreakdown(player: UnitMetrics, rowElem: HTMLElement) {
+		const host = <div className="player-breakdown" />;
+		const breakdownRow = (
+			<tr className="child-metric player-breakdown-row">
+				<td colSpan={rowElem.children.length}>{host}</td>
+			</tr>
+		);
+		rowElem.after(breakdownRow);
+		rowElem.classList.add('expanded');
+
+		const emitter = new TypedEvent<SimResultData | null>();
+		const config = { parent: host as HTMLElement, resultsEmitter: emitter };
+		if (this.metric == 'threat') new ThreatMetricsTable(config);
+		else new DamageMetricsTable(config);
+		const last = this.getLastSimResult();
+		emitter.emit(last.eventID, { ...last, filter: { ...last.filter, player: player.index } });
+	}
+
+	private closeBreakdown(rowElem: HTMLElement) {
+		if (rowElem.nextElementSibling?.classList.contains('player-breakdown-row')) rowElem.nextElementSibling.remove();
+		rowElem.classList.remove('expanded');
+	}
+
 	getGroupedMetrics(resultData: SimResultData): Array<Array<UnitMetrics>> {
+		this.rows.clear();
 		const players = resultData.result.getPlayers(resultData.filter);
 
 		const targetActions = players.map(player => player.getPlayerAndPetActions().map(action => action.forTarget(resultData.filter))).flat();
