@@ -539,6 +539,13 @@
 
 		> .list-picker-item-container:has(> .list-picker-item > .apl-list-item-picker-root:not(.apl-collapsed)) {
 			@include apl-row-stacked;
+
+			// The condition editor sits on a darker panel, so it stands apart from the action.
+			> .list-picker-item > .apl-list-item-picker-root > .apl-action-picker-root > .apl-action-condition {
+				padding: 0.4rem 0.6rem;
+				border-radius: 3px;
+				background-color: rgba(0, 0, 0, 0.3);
+			}
 		}
 	}
 
