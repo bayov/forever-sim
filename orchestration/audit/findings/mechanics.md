@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### mechanics-20261031-1: Efficiency should discount Lacerate (its class bit is in the mask)
+- severity: low (mana only; no report build both takes Efficiency and casts Lacerate: Marksmanship / Lone Wolf have Efficiency 5 but no Lacerate in their APLs, Survival casts Lacerate 1299332 but has Efficiency 0). Not simmed: no published number moves.
+- affects: hunter (any build with Efficiency and Lacerate)
+- found: 2026-10-31, master e05fd732e
+- evidence: tier 1, clients 1.60.1.70425 / 70450 / 70630 / 70707: Efficiency 19416 e0 (aura 108 misc 14, -3% a rank) EffectSpellClassMask_1 = -2146955264 = 0x80081000. Lacerate's SpellClassOptions (24118 / 24119 / 24120 / 1299332, set 9) mask word 1 = 4096 = 0x1000, inside it; `AUDIT_DB=<70707> python3 tools/audit/mechanics/mask.py 19416` lists Lacerate. The sim leaves it out: sim/hunter/talents.go:59 "Lacerate is not in it", and sim/hunter/talents_test.go:48 TestEfficiencyClassMask wants Lacerate at 100 because it reads the mask as "0x80080000" (the 0x1000 bit dropped). Resourcefulness (440529, word 1 0x80000) rightly skips Lacerate. Sure: high (four builds, two tables agree).
+- proposed fix: add `SpellCode_HunterLacerate` to Efficiency's case list in sim/hunter/talents.go:63-67, fix the comment, and change the test's Lacerate row to 85 with the mask 0x80081000 (patch: $AUDIT_WORK/mechanics/efficiency_lacerate.patch, key hunk: `SpellCode_HunterSniperShot, SpellCode_HunterStriderKick, SpellCode_HunterLacerate:`).
+- needs: worker fix
+
 ### mechanics-20261027-2: Amplify Curse no longer boosts Bane of Agony on client 70630
 - severity: low (no preset takes Amplify Curse; rotopt's `amplifyCurse` knob defaults to 0)
 - affects: warlock (only builds that take Amplify Curse)

@@ -1,44 +1,24 @@
-# Mechanics pass 51 (2026-10-30, master fb1485888)
+# Mechanics pass 52 (2026-10-31, master e05fd732e)
 
-Range audited: bbbaf2e3c..fb1485888. 4 code commits. TASKS.md / update ledger: MAGE-U-20 to 27 landed (class side, mage worker); no `forever-update/*` merge.
+Range audited: a2a3e66e1..e05fd732e. 4 code commits touching watched files. TASKS.md / update ledger: only the audit-closing commit 35ea909bd (Tauren health-only user ruling) and e05fd732e; no `forever-update/*` merge.
 
 ## Get current
 
-- Client: 1.60.1.70707, unchanged (`wago.py latest --probe 300`).
+- Client: 1.60.1.70707, unchanged (gate probe).
 - Dev notes thread 2360696: still 8 posts; post 7 (upd 10-27 16:47:14) and post 8 (upd 10-27 16:46:55) unchanged.
-- Blue posts: none newer than 10-29 21:00:50 in category 349's active topics (checked "Thank You For Testing", only Kaivax's 10-23 posts).
+- Blue posts: Linxy's newest is Midnight hotfixes (10-31 02:17); no Forever blue post found since 10-30 18:50. Kaivax's activity feed is not public (404).
+- tools/audit/mechanics/hotfixes.py, named in the state, is not in the repo; server hotfixes were not re-read this pass.
 
 ## Code range
 
 | Commit | Change | Verdict |
 |---|---|---|
-| f3017897f | Windfury Totem proc ICD 1.5 s -> 100 ms under Forever | tier 1 match: 70707 10612 aura 42, proc 20%, icd 100; the Icd is the shared proc cooldown in CreateExtraAttackAuraCommon |
-| f3017897f | Extra attacks keep the swing timer under Forever | user ruling (wowsims/forever, notes.md to verify); settled, not a finding |
-| f3017897f | Eviscerate 4% AP a combo point under Forever | user ruling (wowsims/forever estimate); 31016 has no AP coefficient in the client |
-| f3017897f | Stones / oils / scrolls only on weapons that fit | masks 33219 = axe, 2H axe, polearm, sword, 2H sword, dagger; 9264 = mace, 2H mace, staff, fist: match the code's edged / blunt lists |
-| e2c54a743 | Subtlety, Instrument of Law, Demonic Brand threat; healing / mana / Battle Shout threat split across enemies; Rockbiter OH threat | 70707 curves: 17118 -10/-20/-30 (3 ranks, Nature + Arcane), 1311085 e1 10/20 (all, RF off), 1293695 e0 -17/-33/-50 (op 2 threat, Searing Pain). Threat only; warrior DPS ~0.01 |
-| 31054ead2 | Mage 70707 talents | Precision 29438 curve 2/4/6 aura 55; Accelerant 11069 -100..-500 ms, mask covers Frostfire Bolt (401502, 1237312) and Arcane Wrath (1326079); Critical Mass 3 ranks 2/4/6; Incineration 5 ranks 2..10. All match. Ice Lance shared 8 s CD is a user ruling |
-| cf51105c3 | Raid sim table | raid sim only |
+| e1fcd57b7 | Efficiency discounts Strider Kick | tier 1 match: 70707 19416 mask word 2 0x202000 holds Strider Kick's 0x200000 (1317257). The same mask's word 1 (0x80081000) also holds Lacerate's 0x1000, which the sim leaves out: new finding mechanics-20261031-1 (low, no report build affected) |
+| e05fd732e | Raid sim threat check (watchThreat hooks in rage.go, spell_result.go) | observer only: no RNG, no events, nil unless the raid request sets ThreatCheck; no DPS effect. 110% melee / 130% ranged pull ratios are the Classic rule |
+| 8d0a22be9 | mksettings per-build consumes (rogue Land Mine off, Ele Mana Tide potion, Shadow+Holy Mageblood, Smite) | consumes only, matching the ui presets; no request changed. Consumables auditor's ground |
+| 159443615 | mksettings doc comment gear name | comment only |
 
-## Effect of f3017897f (seed 1, 5000 iterations, CLIs at bbbaf2e3c and f3017897f)
+## Conclusions
 
-| Build | Before | After | Change |
-|---|---|---|---|
-| warrior__arms | 905.0 | 995.4 | +10.0% |
-| warrior__fury_2h | 963.3 | 1026.8 | +6.6% |
-| warrior__fury | 983.1 | 1044.4 | +6.2% |
-| hunter__survival | 1028.8 | 1072.7 | +4.3% |
-| paladin__level_60_shock_ret | 931.2 | 961.5 | +3.3% |
-| rogue__mutilate | 723.8 | 745.0 | +2.9% |
-| rogue__combat-swords | 765.2 | 778.5 | +1.7% |
-
-Arms: white swings +13%, Heroic Strike casts 2.7x; most of it is the swing-timer ruling.
-
-## Findings
-
-- New: mechanics-20261030-2 (medium): the DPS report's `wf_totem_icd` and `extra_attack_swing` cards and standards 17 / 174 / 175 still describe 1.5 s and a reset, though the re-simmed report uses 100 ms and no reset.
-- Open, unchanged: mechanics-20261030-1 (Tauren Endurance), mechanics-20261027-2 (Amplify Curse / Bane of Agony).
-
-## Verdicts updated
-
-Windfury Totem 100 ms and the extra-attack / Eviscerate rulings replace the 1.5 s settled line; new rows for weapon-fit imbues and the threat talents.
+- One new low finding: Efficiency should cover Lacerate (client 70425 to 70707 all agree); the existing test reads the mask with the 0x1000 bit dropped.
+- Verdicts: Efficiency row added; "as of" moved to 2026-10-31 / e05fd732e.

@@ -1,4 +1,4 @@
-# Mechanics audit: verdicts and settled items (as of 2026-10-30 UTC, master fb1485888)
+# Mechanics audit: verdicts and settled items (as of 2026-10-31 UTC, master e05fd732e)
 
 Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 = Era / Classic. Never cite vmangos.
 
@@ -14,6 +14,7 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 
 | Item | Sim (master) | Source |
 |---|---|---|
+| Efficiency (hunter) | -3% a rank on its mask; Strider Kick in it since 70707 (sim since e1fcd57b7); the sim leaves Lacerate out, which the client puts in (mechanics-20261031-1) | 70707 19416 e0 aura 108 misc 14, mask 522818 / 0x80081000 / 0x202000; Lacerate 24118-24120 / 1299332 word 1 0x1000; Strider Kick 1317257 word 2 0x200000 (tier 1); pass 52 |
 | Touch of the Grave | 20% chance (30% for Mage, Priest and Warlock), 15 sec ICD (dev notes post 8, tier 1, server side: client 70634 still reads 25000; sim since ae8522c14); the drain is 5% of max health, no damage mods | 70425: 1260189 / 1260201 ProcChance 20 / 30, ProcCategoryRecovery 25000; 1260198; 16 Oct notes |
 | Eureka! | 8 sec, no charge limit, 10% cost / 10% damage, per-class masks (racials_forever_eureka.go), 2 min CD | 70425 duration index 31, no SpellAuraOptions row; CD 120000 on all five variants |
 | Blood Fury | +10% AP and SP, 15 sec, 2 min CD (dev notes post 8, tier 1; client 70707 now reads 120000 too; sim since ae8522c14) | 70707 20572 RecoveryTime 120000 |
