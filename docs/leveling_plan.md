@@ -333,6 +333,11 @@ every rank within about half a minute. 1000 sessions take 5 min for 10 to 60 on 
   Recall, Reincarnation, Ancestral Spirit and Totemic Recall (the user, 2026-10-30, not the Call
   spells). Ticking another one shows at once whether the gold still holds, and the search sees
   it the next time it runs (`-always` names them for a request without them).
+- **Holds.** Ranks we choose not to train before a level, whatever the sim says (`holds`). The
+  search keeps them and doesn't move them. They copy BayovCore Training's route profile by hand
+  (`ROUTES` in Modules/Training.lua): our route reaches Sen'jin Village at 6 with just enough
+  for the Walking Stick, so Healing Wave 2 and Earthbind wait for the trainer at 8. Change
+  both together.
 
 The ranks the plan casts cost only about 21g by 40, so 115g never runs short, even with riding
 at 40. The budget only matters with less gold. With 100g and riding at 40 it trains 8 ranks of
@@ -340,8 +345,9 @@ at 40. The budget only matters with less gold. With 100g and riding at 40 it tra
 Wolf, Water Breathing, the resistance totems), which are ours to choose.
 
 The enhancement shaman's plan from level 1 (`ui/enhancement_shaman/leveling_training.json`,
-2026-10-30, 1000 sessions) never trains 19 of the 74 ranks it casts and buys 10 later than their
-level, which saves 27 min (98.32h to 97.87h). The ranks worth the most are Windfury Totem 1 (71
+2026-10-31, 1000 sessions, with the route's holds) never trains 21 of the 74 ranks it casts and
+buys 9 later than their level, which saves 27 min (98.32h to 97.86h). With Healing Wave 2 held
+to 8, Healing Wave 3 and up save nothing, because Lesser Healing Wave takes over from 20. The ranks worth the most are Windfury Totem 1 (71
 min), Rockbiter Weapon 5 and 6 (67 and 72 min), Lightning Shield 5 (29 min), Frost Shock 1 (24
 min, cast in place of Earth Shock at 20 to 24) and Earth Shock 1 (22 min at 4 to 7).
 

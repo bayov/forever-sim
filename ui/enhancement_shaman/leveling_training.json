@@ -4,12 +4,24 @@
   "ridingGold":  90,
   "buys":  [
     {
+      "spellId":  332,
+      "level":  8
+    },
+    {
       "spellId":  529,
       "level":  44
     },
     {
+      "spellId":  547,
+      "level":  61
+    },
+    {
       "spellId":  548,
       "level":  44
+    },
+    {
+      "spellId":  913,
+      "level":  61
     },
     {
       "spellId":  915,
@@ -26,6 +38,10 @@
     {
       "spellId":  959,
       "level":  61
+    },
+    {
+      "spellId":  2484,
+      "level":  8
     },
     {
       "spellId":  6041,
@@ -129,7 +145,7 @@
       "spellId":  332,
       "level":  6,
       "price":  90,
-      "minutes":  -0.2,
+      "minutes":  -0.1,
       "rank":  2,
       "spell":  "Healing Wave"
     },
@@ -296,7 +312,7 @@
       "spellId":  8042,
       "level":  4,
       "price":  90,
-      "minutes":  22.2,
+      "minutes":  23.8,
       "rank":  1,
       "spell":  "Earth Shock"
     },
@@ -1340,6 +1356,16 @@
       "price":  32210,
       "rank":  4,
       "spell":  "Lava Burst"
+    }
+  ],
+  "holds":  [
+    {
+      "spellId":  332,
+      "level":  8
+    },
+    {
+      "spellId":  2484,
+      "level":  8
     }
   ]
 }
