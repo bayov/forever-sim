@@ -8,6 +8,7 @@ import { ColumnSortType, MetricsTable } from './metrics_table/metrics_table.js';
 import { MetricsTotalBar } from './metrics_table/metrics_total_bar';
 import { ResultComponentConfig, SimResultData } from './result_component.js';
 import { ResultsFilter } from './results_filter.js';
+import { SourceChart, sourceChartTooltip } from './source_chart.js';
 import { ThreatMetricsTable } from './threat_metrics.js';
 
 // Each player's damage, or with metric 'threat' each player's threat, as a share of the raid's.
@@ -31,8 +32,15 @@ export class PlayerDamageMetricsTable extends MetricsTable<UnitMetrics> {
 				name: 'Amount',
 				tooltip: metric == 'threat' ? 'Player Threat / Raid Threat' : 'Player Damage / Raid Damage',
 				headerCellClass: 'amount-header-cell text-center',
-				fillCell: (player: UnitMetrics, cellElem: HTMLElement) => {
+				fillCell: (player: UnitMetrics, cellElem: HTMLElement, rowElem: HTMLElement) => {
 					cellElem.classList.add('amount-cell');
+					sourceChartTooltip(rowElem, () => {
+						const actions = player
+							.getPlayerAndPetActions()
+							.map(action => action.forTarget(this.resultsFilter.getFilter()))
+							.flat();
+						return new SourceChart(document.createElement('div'), actions, this.metric).rootElem;
+					});
 
 					const playerDps = this.getPlayerDps(player);
 

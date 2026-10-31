@@ -1,5 +1,77 @@
+// A player's sources on hover: a ring, and a legend of icon, name, share and amount.
+.tippy-box[data-theme~='source-chart'] {
+	font-size: 0.8125rem;
+
+	.tippy-content {
+		padding: var(--spacer-2) var(--spacer-3);
+	}
+}
+
 .source-chart-root {
+	display: flex;
+	align-items: center;
+	gap: var(--spacer-3);
+}
+
+.source-chart-ring canvas {
 	display: block;
-	height: 400px;
-	width: 600px;
+	width: 132px;
+	height: 132px;
+}
+
+.source-chart-legend {
+	display: grid;
+	grid-template-columns: auto auto auto auto auto;
+	align-items: center;
+	column-gap: var(--spacer-2);
+	font-variant-numeric: tabular-nums;
+}
+
+// Each row's cells sit in the legend's columns, so names, shares and amounts line up.
+.source-chart-row {
+	display: contents;
+
+	> * {
+		padding: 0.125rem 0;
+	}
+
+	.metrics-action-icon {
+		width: 18px;
+		height: 18px;
+		margin-right: 0;
+	}
+}
+
+.source-chart-swatch {
+	width: 0.625rem;
+	height: 0.625rem;
+	padding: 0;
+	border-radius: 2px;
+}
+
+.source-chart-other-icon {
+	background: rgba(255, 255, 255, 0.08);
+}
+
+.source-chart-name {
+	white-space: nowrap;
+	color: $ivory;
+}
+
+.source-chart-pet {
+	margin-left: var(--spacer-1);
+	color: var(--text-muted-color);
+}
+
+.source-chart-percent,
+.source-chart-amount {
+	text-align: right;
+}
+
+.source-chart-percent {
+	color: var(--text-muted-color);
+}
+
+.source-chart-empty {
+	color: var(--text-muted-color);
 }
