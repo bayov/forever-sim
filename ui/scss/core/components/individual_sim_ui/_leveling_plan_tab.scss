@@ -894,6 +894,19 @@
 	}
 
 	// The Training part: a row per rank the plan casts.
+	.leveling-plan-training {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-start;
+		gap: var(--block-spacer);
+
+		> .content-block {
+			flex: 1 1 32rem;
+			min-width: 0;
+			margin-bottom: 0;
+		}
+	}
+
 	.leveling-plan-training-status {
 		color: var(--bs-gray-500);
 		margin-bottom: var(--block-spacer);
