@@ -1,4 +1,4 @@
-# Mechanics audit: verdicts and settled items (as of 2026-10-31 UTC, master e05fd732e)
+# Mechanics audit: verdicts and settled items (as of 2026-10-31 UTC, master d96adcce1)
 
 Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 = Era / Classic. Never cite vmangos.
 
@@ -24,7 +24,7 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 | Ruthless and The Human Spirit (Human); Savage and Command (Orc); Endurance (Tauren) | Human 1% crit any weapon, Spirit ×1.10; Orc no crit, non-guardian hunter and warlock pets ×1.05 damage (Classic's Command code); Tauren 5% health only | Dev notes post 7 (tier 1, server side; 70630 rows still old), 500e3a1; verified pass 42. Client 70707 widens Endurance's 2% crit damage to every school (mechanics-20261030-1); user ruling 2026-10-31: post 7 stands, health only, until the game shows otherwise |
 | Troll Regeneration | 70425: 20% / 20% in combat (leveling only) | 20555 |
 | Beast Slaying, Big Game Hunter, Elemental Insight | Damage only, no crit damage | aura 168; dbe2cf45a |
-| Moonkin Aura / Leader of the Pack | Spell crit / weapon crit, 3% each, raid-wide, they stack | 70425 24907 effect 65 aura 57; 24932 aura 52 |
+| Moonkin Aura / Leader of the Pack | 3% all crit each, raid-wide (hotfix push 113283 on 70707, aura 290, effects 701335 / 702727); the 70707 table itself still has spell / weapon crit. Stacking unknown: open (mechanics-20261031-2) | 70707 hotfix (tier 1); was 70425 24907 effect 65 aura 57; 24932 aura 52 |
 | Battle Shout, Trueshot Aura, Strength of Earth, Grace of Air, Windfury and Flametongue Totems | Raid-wide (effect 65) since 70425 | 70425 |
 | Grace of Air | Stacks with Windfury Totem; Windfury and Flametongue Totems stay exclusive | 70425 Attributes_11 0x400 dropped; 16 Oct notes |
 | Flametongue Totem | 548 / 781 / 1061 / 1363 per the N / 25 per 4 sec rule, white swings only (ProcTypeMask 4), no spell power | 70450 8253 / 8248 / 10523 / 16389 |
@@ -36,6 +36,7 @@ Tier: 1 = Forever client or Blizzard Forever notes, 2 = Season of Discovery, 3 =
 | Faerie Fire under Forever | Feral version gone (16857, 17390-17392 have no rows); 9907 castable in Cat, Bear, Dire Bear and Moonkin (ShapeshiftMask 0x40000091), 505 armor 40 sec, 115 mana, 1.5 sec GCD, free in Cat / Bear (dev notes), no swing reset, no Omen of Clarity from it | 70685; dev notes (tier 1); pass 48 |
 | Seal of Wisdom / Judgement of Wisdom | Ranks 38 / 48 / 58, 135 / 170 / 200 mana, 30 sec; proc mana 50 / 71 / 90 (20168 / 20350 / 20351); JoW 40 sec, 33 / 46 / 59 (20268 / 20352 / 20353). Seal proc chance 50% is an assumption (client ProcChance 100, server-side) | 70685 20166 / 20356 / 20357, 20186 / 20354 / 20355; pass 48 |
 | Debuff ranks (Curse of Weakness, Demoralizing Shout / Roar, Thunder Clap −20%, Scorpid Sting −2% hit, Curse of the Elements 30–75 / 4–10% on all magic schools) | Client values | 70338; shaman audit 10.4 |
+| Sunder Armor (11597) | 450 armor a stack (aura 674), 30 sec, 1.5 sec GCD; the raid ramp (standard 32) is a raid assumption, not client data | 70707; pass 53 |
 | Curse of Recklessness | Armor only; 70425 dropped the target AP part | 70425 |
 | Salvation | −30% threat, raid buff, no DPS effect | 70425 1038 aura 10 bp −30 misc 127 |
 | Normalised Rage | k 3.46 one-hand / 4.5 two-hand × swing speed, level factor s = 0 (flat, user ruling 2026-10-25; 0.5 before); off hand 0.5; a crit adds 100% of the one-hand-rate Rage before the two-hand factor; misses, dodges and parries give none | user rulings, standards 21 (crit and miss rules 2026-10-23, logs via wowsims/forever 5ac4ffbcb6, f9f9f21883; Rule of Rage row 1322574) |

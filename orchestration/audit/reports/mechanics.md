@@ -1,24 +1,32 @@
-# Mechanics pass 52 (2026-10-31, master e05fd732e)
+# Mechanics pass 53 (2026-10-31, master d96adcce1)
 
-Range audited: a2a3e66e1..e05fd732e. 4 code commits touching watched files. TASKS.md / update ledger: only the audit-closing commit 35ea909bd (Tauren health-only user ruling) and e05fd732e; no `forever-update/*` merge.
+Range audited: e05fd732e..d96adcce1. One non-merge code commit on watched paths (fedb73949, mksettings `-sunder ramp|full|none`, default ramp); report_hashes.txt re-recorded (d32d6210f). TASKS.md: d96adcce1 adds the October 30 hotfix items (paladin / druid trees, Frost mage, priest / warlock). No `forever-update/*` merge in range.
 
 ## Get current
 
-- Client: 1.60.1.70707, unchanged (gate probe).
-- Dev notes thread 2360696: still 8 posts; post 7 (upd 10-27 16:47:14) and post 8 (upd 10-27 16:46:55) unchanged.
-- Blue posts: Linxy's newest is Midnight hotfixes (10-31 02:17); no Forever blue post found since 10-30 18:50. Kaivax's activity feed is not public (404).
-- tools/audit/mechanics/hotfixes.py, named in the state, is not in the repo; server hotfixes were not re-read this pass.
+- Client: 1.60.1.70707, unchanged (probe 300).
+- Dev notes thread 2360696: still 8 posts, edit times unchanged (post 8 10-27 16:46:55, post 7 10-27 16:47:14).
+- Blue tracker: no posts since 2026-10-31 12:54 UTC.
+- Server hotfixes: read from wago.tools/hotfixes (`?search=<spellID>`, JSON in the page's data-page attribute) for 24907, 24932, 11597.
 
 ## Code range
 
-| Commit | Change | Verdict |
+| Commit | What | Verdict |
 |---|---|---|
-| e1fcd57b7 | Efficiency discounts Strider Kick | tier 1 match: 70707 19416 mask word 2 0x202000 holds Strider Kick's 0x200000 (1317257). The same mask's word 1 (0x80081000) also holds Lacerate's 0x1000, which the sim leaves out: new finding mechanics-20261031-1 (low, no report build affected) |
-| e05fd732e | Raid sim threat check (watchThreat hooks in rage.go, spell_result.go) | observer only: no RNG, no events, nil unless the raid request sets ThreatCheck; no DPS effect. 110% melee / 130% ranged pull ratios are the Classic rule |
-| 8d0a22be9 | mksettings per-build consumes (rogue Land Mine off, Ele Mana Tide potion, Shadow+Holy Mageblood, Smite) | consumes only, matching the ui presets; no request changed. Consumables auditor's ground |
-| 159443615 | mksettings doc comment gear name | comment only |
+| fedb73949 | mksettings: raid Sunder Armor ramps from the pull at 60 (tank 1/GCD, 1 pull Sunder from a DPS warrior, none for warrior presets) | Raid assumption (standard 32). Engine `scheduleSunderRamp` (sim/core/debuffs.go:945) unchanged since pass 52; 11597 on 70707 = 450 armor/stack, 30 s, GCD 1.5 s, matching `SunderArmorAura`. No finding. |
+| d32d6210f | report hashes | Data only. |
 
-## Conclusions
+## October 30 hotfix (shared part)
 
-- One new low finding: Efficiency should cover Lacerate (client 70425 to 70707 all agree); the existing test reads the mask with the 0x1000 bit dropped.
-- Verdicts: Efficiency row added; "as of" moved to 2026-10-31 / e05fd732e.
+| Item | Tier 1 data | Sim | Result |
+|---|---|---|---|
+| Moonkin Aura 24907 | push 113283: aura 290 (all crit) 3, effect 65 | 3% spell crit | mechanics-20261031-2 |
+| Leader of the Pack 24932 | push 113283: aura 290 (all crit) 3, effect 65 | 3% melee crit | mechanics-20261031-2 |
+
+Measured with +3% crit (seed 1, 20k iterations): Fury +3.26%, Combat Swords +2.49%, Fire +2.77%, Elemental +2.29%. That is the effect if the two stack. If they don't, presets with both buffs stay as they are.
+
+Class items in the hotfix (paladin and druid trees, Frost mage, priest, warlock) belong to the class workers and are already in TASKS.md.
+
+## Open items
+
+- tools/audit/mechanics/hotfixes.py is still missing from the repo. The wago.tools page search above works in its place.

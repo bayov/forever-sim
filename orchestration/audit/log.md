@@ -126,3 +126,9 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-10-31 13:01 | consumables | pass 58 | master e05fd732e | quiet | no consume/buff/enchant values changed
 2026-10-31 13:01 | mechanics | pass 52 | master e05fd732e | 1 new finding | Efficiency should also cut Lacerate mana cost (low)
 2026-10-31 13:01 | fairness | pass 17 | master e05fd732e | quiet | full race sweep; report race best everywhere, top/bottom 1.54x
+2026-10-31 19:02 | results | pass 66 | master d96adcce1 | quiet | Sunder ramp (std 32) moved 36 physical builds -0.5 to -4.1 vs published; expected lag
+2026-10-31 19:02 | rotations | pass 42 | master d96adcce1 | quiet | rogue APL note rewording only
+2026-10-31 19:02 | gear | pass 49 | master d96adcce1 | quiet | only standards.md changed, no gear rule
+2026-10-31 19:02 | consumables | pass 59 | master d96adcce1 | quiet | presets swap sunderArmor for sunderRamp, consistent with standards
+2026-10-31 19:02 | mechanics | pass 53 | master d96adcce1 | 1 new finding | Moonkin/LotP hotfix to 3% all crit: stacking ruling needed (high if stack)
+2026-10-31 19:02 | fairness | pass 18 | master d96adcce1 | 1 new finding | Demonology wears shared Destro gear but has its own target (medium, needs user ruling)

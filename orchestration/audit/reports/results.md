@@ -1,19 +1,16 @@
-# Results audit, pass 65 (master e05fd732e, client build 1.60.1.70707)
+# Results audit, pass 66, master d96adcce1
 
-Why due: 172 watched files changed since fb1485888/a2a3e66 (audit-loop fixes e1fcd57b7, re-sims 3d4cdda4a / dfe8c5a16 / a88c140af,
-mksettings consumes 8d0a22be9, raid-sim threat count e05fd732e, UI and leveling work).
+Why due: standard 32 (the raid's Sunder Armor ramps from the pull) changed 77 requests' `sunderArmor` to `sunderRamp`, plus mksettings `-sunder` and the sim UI presets. No other sim code changed.
 
-## Checked
-- Shared run (20k, seed 1, 77 requests, master binary): builds.json matches the run on all 77 within 0.15; every meta's published.dps
-  matches too (results-20261030-1 stays resolved, no stale metas).
-- Moves against the previous req_summary.txt (14 over 0.15), all explained by 3d4cdda4a (sim change e1fcd57b7):
-  - Ret / Ret sub Holy and their duties +12.5 to +16.0 (free twist window).
-  - Arms (4 builds) +2.7 to +4.8, Fury 2H (3) +1.5 to +2.9 (Hamstring from 10 Rage).
-  - Mage Frost 908.3 -> 911.6 (Undead). Hunters unmoved (Efficiency on Strider Kick is mana only).
-  Sizes equal the commit message's; builds.json carries them.
-- Drift (regen.py vs ref): identical to the reference. Unread fields: none (not even notes).
-- No new finding; none open.
+## Checks
+| Check | Result |
+|---|---|
+| Shared run (77 requests, 20k, seed 1) vs published | 36 of 77 moved more than 0.5, all physical builds, all negative |
+| Size of moves | Feral -4.1 (-0.46%), Subtlety -3.7, hunters -2.4 to -3.1, warriors -2.3 to -2.9, other rogues -2.0 to -2.2, Ret Crusader duty -0.5 |
+| Standard 32's stated range | Feral 3-4, rogues 2-4, hunters 2-3, warriors 0-3, Enhancement 1, Ret under 1, casters 0: matches (hunter BM 3.1 is 0.1 over the stated range) |
+| Casters | none moved (no mage, warlock, priest, shaman Ele, Balance in the moved list) |
+| Drift (regen.py vs ref/drift_report.txt) | identical, so mksettings's default `-sunder ramp` reproduces the committed requests |
+| Unread fields | none (sunderRamp is read by the sim) |
 
-## Reference
-req_summary.txt replaced with this run (77 requests); baseline e05fd732e. Ranking explanation unchanged apart from the Ret, Arms and
-Fury 2H lifts above.
+## Conclusion
+Quiet. The moves are the ruled Sunder ramp and match its measured cost. builds.json and the metas' published.dps are still pre-ramp, so requests read OFF published by 0.5 to 4.1 until the report re-sims; that is the expected lag, not a bug. Ranking order is unchanged at this size, except where spec pairs sit within about 4 DPS (not re-ranked here).

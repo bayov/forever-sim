@@ -1,47 +1,46 @@
-# Fairness pass 17 (2026-10-31, master e05fd73)
+# Fairness pass 18 (2026-10-31, master d96adcc)
 
-Result: quiet. Full pass: gear check, full race sweep, new baseline.
+Result: findings (1 new). Full pass: gear check, full race sweep, new baseline.
 
 ## Why it ran
 
-Since a2a3e66, 40 commits, 164 watched files. Sim-relevant: e1fcd57b7 (the 2026-10-30 audit fixes: Ret twisting
-without the 1.5 sec window, Hamstring from 10 Rage, Frost Undead, Efficiency on Strider Kick), its re-sim 3d4cdda4a,
-the threat check in sim/core (e05fd732e, threat only), and the preset cleanup (159443615, 39906cdaa: Other presets
-and old gear sets deleted, report requests unchanged). standards.md changes are the 2026-10-30 rulings already
-swept last pass (WF Totem 100 ms, extra attacks, Eviscerate 4% AP).
+Since e05fd73, 8 commits, 172 watched files: standard 32 (the raid's Sunder Armor ramps from the pull, pull
+cooldowns don't wait for it), its request and preset edits (fedb73949), the re-sim 3c46da089 and report_hashes.
+No sim code changed.
 
 ## What I checked
 
-- Gear: `audit1b.py` passes 5a and 1b on all 18 lines. Tool fix: 159443615 renamed the warlock target to
-  "Warlock (every spec)", which isn't in `gear_targets_v3.json`, so the script crashed. Now uses
-  "Warlock (Destruction / Affliction / Fire)". The deleted Demonology gear set was unused: every warlock request
-  already wore the shared set (same items at a2a3e66 and fb14858).
-- Race sweep (5k, seed 1, race overrides applied), against the fb14858 baseline:
+- Ramp applied evenly: 67 non-warrior requests carry `sunderRamp {tank: true, pullSunders: 1}`; the 7 warrior
+  builds `{tank: true}` and their rotations cast "Sunder Armor once at the pull" (the DPS warrior's stack); the 3
+  Sunder duty builds keep only their own. Casters carry it too and are unaffected.
+- Race sweep (5k, seed 1, race overrides), against the e05fd73 baseline: every physical build drops at every race
+  (Feral -4.0, Subtlety -3.4, hunters -2.2 to -3.1, warriors -2.3 to -2.9, rogues -1.9 to -2.6, Enhancement
+  -0.7 to -1.6, Ret -0.3, warlock pets -0.1 to -0.2). Casters 0.0. Matches standard 32's measured cost; no leak.
+- Best race against report race: best everywhere; ties within 0.6 (Fire Gnome, Arcane Undead, Affliction Orc).
+- Published against current: `ui/dps_report/data/builds.json` matches the shared 20k run on all 77 (within 0.15)
+  and this sweep within 0.8 (Affliction +1.6, the known offset). The 36 physical metas' `published.dps` are
+  still pre-ramp (feral 889.7 vs 885.6): only the metas are stale, not builds.json. This corrects results'
+  report this run, which says builds.json is pre-ramp too. Results' area (same pattern as results-20261030-1).
+- Gear: `audit1b.py` 18 of 19 lines pass. The new Demonology line fails 5a: fairness-20261031-1.
 
-| Moved | Change | Cause |
-|---|---|---|
-| Retribution | +14.4 (960.9 -> 975.3) | e1fcd57b7 twisting, no swing window |
-| Sub Holy Ret variant | +12.6 | same |
-| Arms | +4.0 | e1fcd57b7 Hamstring from 10 Rage |
-| Fury two-hand | +2.9 | same |
+## Finding
 
-  Every other build at every race is unchanged to 0.0. Survival correctly doesn't move from Efficiency on Strider
-  Kick (its build has no Efficiency). Shock Ret variants unchanged. No shared change leaked.
-- Published against current: every report race within 1.0 of `meta.published.dps` except Affliction +1.6 (the
-  known 5k seed-1 offset); agrees with the loop's vs_published (0 of 77 moved). The metas are current again, so
-  results-20261030-1's stale metas are fixed on master.
-- Best race against report race: best everywhere. Ties: Fire Gnome +0.6, Arcane Undead +0.2, Affliction Orc +0.1.
-  Arms now sims best as Undead, its report race.
+fairness-20261031-1 (medium, user ruling): Demonology wears the shared Destruction / Affliction / Fire set
+since its own was deleted (159443615), but gear_targets.md still gives it its own target. Against it the set
+fails 5a (crit 10.4 vs 14.1). As bonus stats (+2.44% crit, -15 SP, -12 Int, -8 Sta), paired 20k seed 1:
+1051.7 -> 1060.9 (+9.2); it would stay 6th, 0.1 under Fire.
 
-## Tool fix (fifth time)
+## Tool fixes (again)
 
-`tools/audit/fairness/sweep.py` had lost the race-override step again; re-applied in the working tree with a
-KEEP comment, for the run's commit.
+- `tools/audit/fairness/sweep.py`: the race-override step was missing for the sixth time; re-applied (KEEP
+  comment). The earlier five fixes never reached master: the run's commit should include `tools/audit/fairness/`.
+- `tools/audit/fairness/audit1b.py`: target "Warlock (every spec)" isn't in gear_targets_v3.json (crash; same as
+  pass 17, also lost); now "Warlock (Destruction / Affliction / Fire)" plus a Demonology line on the same set.
 
 ## Ranking
 
-Top BM Orc 1131.8, bottom Subtlety Undead 735.8: 1.54x (unchanged). Full table in fairness_report.md §1 and
-ref/fairness/table_baseline.md. The baseline is now e05fd73.
+Order unchanged. Top BM Orc 1128.7, bottom Subtlety Undead 732.4: 1.54x. Full table in fairness_report.md §1
+and ref/fairness/table_baseline.md. Baseline is now d96adcc.
 
 ## Open items (unchanged)
 

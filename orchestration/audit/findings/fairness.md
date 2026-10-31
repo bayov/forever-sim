@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### fairness-20261031-1: Demonology wears the Destruction / Affliction set and fails its own 5a target (crit 10.4 vs 14.1); its own mix sims +9.2
+- severity: medium (0.9%; Demonology 1051.7 -> 1060.9 would sit 0.1 under Fire, so it stays 6th)
+- affects: warlock__demonology and its duty-curse / duty-recklessness variants
+- found: 2026-10-31, master d96adcce1
+- evidence: `orchestration/gear_targets.md` ("Warlock: one set for Destruction, Affliction and Fire; Demonology keeps its own") and `orchestration/tools/gear_targets_v3.json` still give Demonology its own target (Sta 13.5, Int 15.5, SP 38.8, Crit 14.8), but 159443615 deleted `level60_phase1_synthetic_demonology` and every warlock request wears `level60_phase1_synthetic` (it already did before). `audit1b.py` on that set against the Demonology target: `5a FAIL Crit 10.4 vs 14.1` (hit-adjusted; Int 16.0 vs 14.7, SP 38.3 vs 36.9 within tolerance; 1b passes). Measured as bonus stats on the report request (the target mix minus the set's: +2.44% spell crit, -15 SP, -12 Int, -8 Sta, same linear budget), paired, seed 1, 20k iterations, 180 s: 1051.7 -> 1060.9 (+9.2, SE about 0.35). Crit alone at the cost of SP: 1044.4 (-7.3), so the gain is from the mix, not just crit. Script: $AUDIT_WORK/fairness/demo.py (bonus stats via tools/dps_report/race_override.stat_index). Sure of the 5a fail; the +9.2 is a bonus-stat proxy, not a built set.
+- proposed fix: (a) rebuild a Demonology set at its own target (standards 1b/5a, as the mage Arcane set does): about +9 DPS, no rank change; or (b) rule that every warlock spec shares one set and drop the Demonology row from gear_targets.md / gear_targets_v3.json (then `audit1b.py` drops its Demonology line).
+- needs: user ruling
+
 ## Resolved
 
 ### fairness-20261030-1: Frost's report race (High Order) is no longer its best; Undead sims 3.3 DPS higher after the 70707 talent re-pick

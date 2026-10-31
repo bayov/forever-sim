@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### mechanics-20261031-2: Moonkin Aura and Leader of the Pack are both 3% all crit on live 70707 (hotfix push 113283); the sim still gives the Era split
+- severity: high if the two stack (+2.3 to +3.3% DPS on every preset with both), none if they don't (then the sim's 3% melee + 3% spell already equals one 3% all crit for those presets)
+- affects: shared raid buffs (sim/core/buffs.go:292-303), every Level 60 preset with both buffs; the raid sim's crit-aura counting
+- found: 2026-10-31, master d96adcce1
+- evidence: wago.tools/hotfixes, push 113283 on 1.60.1.70707 (2026-10-31 10:59): SpellEffect 701335 (24907 Moonkin Aura) and 702727 (24932 Leader of the Pack) both effect 65 (raid area aura), aura 290 (all crit), base points 3; Spell 24907 text "Increases Critical Strike chance by $s1%." (was "spell Critical Strike"), 17007 text "...increases the Critical Strike chance of all party or raid members". The build's own table still has auras 57 / 52 (`sp.py 24907`, `sp.py 24932`). Tier 1 (server data on the current build); matches foreverchanges' October 30 hotfix (TASKS.md 2026-10-31 druid item). Reproduce: `curl -s 'https://wago.tools/hotfixes?search=24907'` (data-page props). Nothing in the client says whether two different aura-290 raid auras stack; under 70338 the sim assumed they did not, without a cited source. Measured +3% crit (bonus stats, seed 1, 20k iterations, report requests, CLI d96adcce1): Fury 1041.5 -> 1075.5 (+3.26%), Combat Swords 777.0 -> 796.3 (+2.49%), Fire 1061.0 -> 1090.3 (+2.77%), Elemental 772.7 -> 790.4 (+2.29%).
+- proposed fix: under `IsForever()`, give each buff 3% MeleeCrit + 3% SpellCrit; if they stack, add both (each preset +3% crit); if not, give 3% for either (the pre-70425 code in 9016b8511's parent). Either way Balance's own Moonkin Form and Feral's own LotP become all crit (no DPS change for those specs). Update the buffs.go comment and the raid sim's aura count.
+- needs: user ruling (stacking), then orchestrator fix
+
 ### mechanics-20261031-1: Efficiency should discount Lacerate (its class bit is in the mask)
 - severity: low (mana only; no report build both takes Efficiency and casts Lacerate: Marksmanship / Lone Wolf have Efficiency 5 but no Lacerate in their APLs, Survival casts Lacerate 1299332 but has Efficiency 0). Not simmed: no published number moves.
 - affects: hunter (any build with Efficiency and Lacerate)

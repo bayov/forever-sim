@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "e05fd732e447f2eec2d3d50ee74dd7f1283c21e4"
+  "master": "d96adcce13c9d833d4219b7ea4c2e5ed40b33459"
  },
- "last_pass_at": "2026-10-31T12:54:42Z",
- "pass": 52,
+ "last_pass_at": "2026-10-31T19:10:00Z",
+ "pass": 53,
  "result": "findings",
- "note": "Pass 52: 4 code commits (Efficiency on Strider Kick verified 70707; raid threat check observer only; mksettings consumes). Finding mechanics-20261031-1: Efficiency mask also covers Lacerate. Client 70707, dev notes 8 posts, no new Forever blue posts.",
+ "note": "Pass 53: fedb73949 mksettings Sunder ramp (raid assumption, 11597 verified 70707). Finding mechanics-20261031-2: Moonkin Aura and LotP all crit via hotfix push 113283 on 70707; stacking needs ruling. Client 70707, dev notes 8 posts, no new blue posts.",
  "client_build": "1.60.1.70707",
- "checked_at": "2026-10-31T13:01:23Z",
+ "checked_at": "2026-10-31T19:02:07Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/8",
   "date": "2026-10-27T15:37:37Z",
@@ -19,10 +19,11 @@
    "70425",
    "70450",
    "70532",
-   "70630"
+   "70630",
+   "70707"
   ],
-  "newest_push": 113205,
-  "tool": "tools/audit/mechanics/hotfixes.py"
+  "newest_push": 113283,
+  "tool": "wago.tools/hotfixes?search=<id> (hotfixes.py not in repo)"
  },
- "blue_tracker_seen": "2026-10-31T12:54:42Z"
+ "blue_tracker_seen": "2026-10-31T19:10:00Z"
 }
