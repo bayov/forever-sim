@@ -10,7 +10,7 @@
 // Everyone gets Blessing of Kings, because a group at that level almost always has a
 // paladin in it.
 //
-//	go run --tags=with_db ./tools/rotopt/mksettings -spec rogue -gear combat_sinister_strike_p2_bis \
+//	go run --tags=with_db ./tools/rotopt/mksettings -spec rogue -gear combat_sinister_strike_prebis \
 //	    -apl combat_sinister_strike -talents 00530310501-32003311201515231 -race Human -out ss60.json
 //	go run --tags=with_db ./tools/rotopt/mksettings -spec enh -gear phase_2 -apl optimized \
 //	    -talents 0505331-055030031005112251 -race Orc -out enh60.json

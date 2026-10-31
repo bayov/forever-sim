@@ -27,32 +27,14 @@ import {
 import { RogueOptions } from '../core/proto/rogue.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
-import BackstabAPL from './apls/combat_backstab.apl.json';
-import BackstabOnCooldownAPL from './apls/combat_backstab_on_cooldown.apl.json';
-import BackstabRuptureAPL from './apls/combat_backstab_rupture.apl.json';
-import BackstabSndWindowAPL from './apls/combat_backstab_snd_window.apl.json';
-import BackstabSweatyAPL from './apls/combat_backstab_sweaty.apl.json';
-import SinisterStrikeAPL from './apls/combat_sinister_strike.apl.json';
-import SinisterStrikeHoldForARAPL from './apls/combat_sinister_strike_hold_for_ar.apl.json';
-import SinisterStrikeOnCooldownAPL from './apls/combat_sinister_strike_on_cooldown.apl.json';
-import SinisterStrikeSndOpenerAPL from './apls/combat_sinister_strike_snd_opener.apl.json';
-import SinisterStrikeSndWindowAPL from './apls/combat_sinister_strike_snd_window.apl.json';
-import SinisterStrikeSweatyAPL from './apls/combat_sinister_strike_sweaty.apl.json';
-import MutilateAPL from './apls/forever_mutilate.apl.json';
 import Level60CombatDaggersAPL from './apls/level60_combat_daggers.apl.json';
 import Level60CombatSwordsAPL from './apls/level60_combat_swords.apl.json';
 import Level60MutilateAPL from './apls/level60_mutilate.apl.json';
 import Level60SealFateSwordsAPL from './apls/level60_seal_fate_swords.apl.json';
 import Level60SubtletyAPL from './apls/level60_subtlety.apl.json';
 import BlankGear from './gear_sets/blank.gear.json';
-import BackstabGearP1BiS from './gear_sets/combat_backstab_p1_bis.gear.json';
-import BackstabGearP2BiS from './gear_sets/combat_backstab_p2_bis.gear.json';
-import BackstabGearPreBiS from './gear_sets/combat_backstab_prebis.gear.json';
-import SinisterStrikeGearP1BiS from './gear_sets/combat_sinister_strike_p1_bis.gear.json';
-import SinisterStrikeGearP2BiS from './gear_sets/combat_sinister_strike_p2_bis.gear.json';
-import SinisterStrikeGearPreBiS from './gear_sets/combat_sinister_strike_prebis.gear.json';
-import Level60SyntheticDaggersGear from './gear_sets/level60_phase1_synthetic_daggers.gear.json';
 import Level60SyntheticCombatDaggersGear from './gear_sets/level60_phase1_synthetic_combat_daggers.gear.json';
+import Level60SyntheticDaggersGear from './gear_sets/level60_phase1_synthetic_daggers.gear.json';
 import Level60SyntheticMutilateGear from './gear_sets/level60_phase1_synthetic_mutilate.gear.json';
 import Level60SyntheticSealFateSwordsGear from './gear_sets/level60_phase1_synthetic_seal_fate_swords.gear.json';
 import Level60SyntheticSubtletyGear from './gear_sets/level60_phase1_synthetic_subtlety.gear.json';
@@ -67,30 +49,6 @@ import Level60SyntheticSwordsGear from './gear_sets/level60_phase1_synthetic_swo
 ///////////////////////////////////////////////////////////////////////////
 
 export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear, { tooltip: 'No gear equipped.' });
-export const GearBackstabPreBiS = PresetUtils.makePresetGear('Backstab Pre-BiS', BackstabGearPreBiS, {
-	tooltip: 'Level 60 pre-raid gear for Backstab, with daggers.',
-	group: 'Other',
-});
-export const GearSinisterStrikePreBiS = PresetUtils.makePresetGear('Sinister Strike Pre-BiS', SinisterStrikeGearPreBiS, {
-	tooltip: 'Level 60 pre-raid gear for Sinister Strike.',
-	group: 'Other',
-});
-export const GearBackstabP1BiS = PresetUtils.makePresetGear('Backstab P1 BiS', BackstabGearP1BiS, {
-	tooltip: 'Level 60 Phase 1 BiS for Backstab, with daggers.',
-	group: 'Other',
-});
-export const GearBackstabP2BiS = PresetUtils.makePresetGear('Backstab P2 BiS', BackstabGearP2BiS, {
-	tooltip: 'Level 60 Phase 2 BiS for Backstab, with daggers.',
-	group: 'Other',
-});
-export const GearSinisterStrikeP1BiS = PresetUtils.makePresetGear('Sinister Strike P1 BiS', SinisterStrikeGearP1BiS, {
-	tooltip: 'Level 60 Phase 1 BiS for Sinister Strike.',
-	group: 'Other',
-});
-export const GearSinisterStrikeP2BiS = PresetUtils.makePresetGear('Sinister Strike P2 BiS', SinisterStrikeGearP2BiS, {
-	tooltip: 'Level 60 Phase 2 BiS for Sinister Strike.',
-	group: 'Other',
-});
 // A guess at Phase 1 BiS under Forever, made of the synthetic items in
 // tools/database/forever_synthetic_items_rogue.go (ids from 994000, not in the game).
 //
@@ -157,10 +115,6 @@ export const GearPresets = {
 		GearLevel60SyntheticSealFateSwords,
 		GearLevel60SyntheticCombatDaggers,
 		GearLevel60SyntheticMutilate,
-		GearBackstabPreBiS,
-		GearSinisterStrikePreBiS,
-		GearBackstabP1BiS,
-		GearSinisterStrikeP1BiS,
 	],
 	[Phase.Phase2]: [
 		GearLevel60SyntheticSwords,
@@ -169,10 +123,6 @@ export const GearPresets = {
 		GearLevel60SyntheticSealFateSwords,
 		GearLevel60SyntheticCombatDaggers,
 		GearLevel60SyntheticMutilate,
-		GearBackstabPreBiS,
-		GearSinisterStrikePreBiS,
-		GearBackstabP2BiS,
-		GearSinisterStrikeP2BiS,
 	],
 };
 
@@ -184,61 +134,6 @@ export const DefaultGear = GearLevel60SyntheticCombatDaggers;
 //                                 APL Presets[]
 ///////////////////////////////////////////////////////////////////////////
 
-export const ROTATION_PRESET_BACKSTAB = PresetUtils.makePresetAPLRotation('Backstab', BackstabAPL, {
-	tooltip: "The optimizer's best level 60 Backstab rotation.",
-	group: 'Other',
-});
-export const ROTATION_PRESET_SINISTER_STRIKE = PresetUtils.makePresetAPLRotation('Sinister Strike', SinisterStrikeAPL, {
-	tooltip: "The optimizer's best level 60 Sinister Strike rotation.",
-	group: 'Other',
-});
-// Variants of the Backstab and Sinister Strike rotations, generated by
-// tools/rotopt/rogue_presets.sh. The plain ones are the optimizer's best, these are the
-// alternatives to compare against.
-export const ROTATION_PRESET_BACKSTAB_RUPTURE = PresetUtils.makePresetAPLRotation('Backstab (Rupture at 5 points)', BackstabRuptureAPL, {
-	tooltip: 'Backstab variant that uses Rupture as a 5 point finisher.',
-	group: 'Other',
-});
-export const ROTATION_PRESET_BACKSTAB_ON_COOLDOWN = PresetUtils.makePresetAPLRotation('Backstab (cooldowns on cooldown)', BackstabOnCooldownAPL, {
-	tooltip: 'Backstab variant that uses every cooldown as soon as it is ready.',
-	group: 'Other',
-});
-export const ROTATION_PRESET_BACKSTAB_SND_WINDOW = PresetUtils.makePresetAPLRotation(
-	'Backstab (cooldowns in a 20s Slice and Dice window)',
-	BackstabSndWindowAPL,
-	{ tooltip: 'Backstab variant that saves the cooldowns for a window with 20 sec of Slice and Dice.', group: 'Other' },
-);
-export const ROTATION_PRESET_SINISTER_STRIKE_ON_COOLDOWN = PresetUtils.makePresetAPLRotation('SS (cooldowns on cooldown)', SinisterStrikeOnCooldownAPL, {
-	tooltip: 'Sinister Strike variant that uses every cooldown as soon as it is ready.',
-	group: 'Other',
-});
-export const ROTATION_PRESET_SINISTER_STRIKE_HOLD_FOR_AR = PresetUtils.makePresetAPLRotation(
-	'SS (everything with Adrenaline Rush)',
-	SinisterStrikeHoldForARAPL,
-	{ tooltip: 'Sinister Strike variant that holds every cooldown for Adrenaline Rush.', group: 'Other' },
-);
-export const ROTATION_PRESET_SINISTER_STRIKE_SND_OPENER = PresetUtils.makePresetAPLRotation(
-	'SS (5 point Slice and Dice before cooldowns)',
-	SinisterStrikeSndOpenerAPL,
-	{ tooltip: 'Sinister Strike variant that puts up a 5 point Slice and Dice before the cooldowns.', group: 'Other' },
-);
-export const ROTATION_PRESET_SINISTER_STRIKE_SND_WINDOW = PresetUtils.makePresetAPLRotation(
-	'SS (cooldowns in a 20s Slice and Dice window)',
-	SinisterStrikeSndWindowAPL,
-	{ tooltip: 'Sinister Strike variant that saves the cooldowns for a window with 20 sec of Slice and Dice.', group: 'Other' },
-);
-export const ROTATION_PRESET_BACKSTAB_SWEATY = PresetUtils.makePresetAPLRotation('Backstab (Sweaty)', BackstabSweatyAPL, {
-	tooltip: 'Sweaty variant of the Backstab rotation.',
-	group: 'Other',
-});
-export const ROTATION_PRESET_SINISTER_STRIKE_SWEATY = PresetUtils.makePresetAPLRotation('Sinister Strike (Sweaty)', SinisterStrikeSweatyAPL, {
-	tooltip: 'Sweaty variant of the Sinister Strike rotation.',
-	group: 'Other',
-});
-export const ROTATION_PRESET_MUTILATE = PresetUtils.makePresetAPLRotation('Mutilate (old)', MutilateAPL, {
-	tooltip: 'Level 60 Mutilate rotation.',
-	group: 'Other',
-});
 // The Level 60 rotations, from the tools/rotopt searches on the synthetic Phase 1 sets with the
 // talents below (knob search, talent search, knob search again, 180 sec, see rogue_presets.sh).
 // Seal Fate Daggers uses the Combat Daggers rotation, the knob search kept every knob. Seal Fate Swords
@@ -280,18 +175,6 @@ export const APLPresets = {
 		ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
 		ROTATION_PRESET_LEVEL60_MUTILATE,
 		ROTATION_PRESET_LEVEL60_SUBTLETY,
-		ROTATION_PRESET_BACKSTAB,
-		ROTATION_PRESET_BACKSTAB_RUPTURE,
-		ROTATION_PRESET_BACKSTAB_ON_COOLDOWN,
-		ROTATION_PRESET_BACKSTAB_SND_WINDOW,
-		ROTATION_PRESET_SINISTER_STRIKE,
-		ROTATION_PRESET_SINISTER_STRIKE_ON_COOLDOWN,
-		ROTATION_PRESET_SINISTER_STRIKE_HOLD_FOR_AR,
-		ROTATION_PRESET_SINISTER_STRIKE_SND_OPENER,
-		ROTATION_PRESET_SINISTER_STRIKE_SND_WINDOW,
-		ROTATION_PRESET_BACKSTAB_SWEATY,
-		ROTATION_PRESET_SINISTER_STRIKE_SWEATY,
-		ROTATION_PRESET_MUTILATE,
 	],
 	[Phase.Phase2]: [
 		ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
@@ -299,18 +182,6 @@ export const APLPresets = {
 		ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
 		ROTATION_PRESET_LEVEL60_MUTILATE,
 		ROTATION_PRESET_LEVEL60_SUBTLETY,
-		ROTATION_PRESET_BACKSTAB,
-		ROTATION_PRESET_BACKSTAB_RUPTURE,
-		ROTATION_PRESET_BACKSTAB_ON_COOLDOWN,
-		ROTATION_PRESET_BACKSTAB_SND_WINDOW,
-		ROTATION_PRESET_SINISTER_STRIKE,
-		ROTATION_PRESET_SINISTER_STRIKE_ON_COOLDOWN,
-		ROTATION_PRESET_SINISTER_STRIKE_HOLD_FOR_AR,
-		ROTATION_PRESET_SINISTER_STRIKE_SND_OPENER,
-		ROTATION_PRESET_SINISTER_STRIKE_SND_WINDOW,
-		ROTATION_PRESET_BACKSTAB_SWEATY,
-		ROTATION_PRESET_SINISTER_STRIKE_SWEATY,
-		ROTATION_PRESET_MUTILATE,
 	],
 };
 
@@ -319,10 +190,6 @@ export const DefaultAPLs: Record<number, PresetUtils.PresetRotation> = {
 	[0]: ROTATION_PRESET_LEVEL60_COMBAT_DAGGERS,
 	[1]: ROTATION_PRESET_LEVEL60_COMBAT_SWORDS,
 };
-
-export const DefaultAPLBackstab = ROTATION_PRESET_BACKSTAB;
-export const DefaultAPLSinisterStrike = ROTATION_PRESET_SINISTER_STRIKE;
-export const DefaultAPLMutilate = ROTATION_PRESET_MUTILATE;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Talent Presets
@@ -333,20 +200,6 @@ export const DefaultAPLMutilate = ROTATION_PRESET_MUTILATE;
 
 // Preset name must be unique. Ex: 'Backstab DPS' cannot be used as a name more than once
 
-export const CombatBackstabTalents = PresetUtils.makePresetTalents('Backstab', SavedTalents.create({ talentsString: '005323102-30230320201515231-002' }), {
-	tooltip: 'Level 60 Combat talents for Backstab with daggers.',
-	group: 'Other',
-});
-export const CombatSinisterStrikeTalents = PresetUtils.makePresetTalents(
-	'Sinister Strike',
-	SavedTalents.create({ talentsString: '00530310501-32003311201515231' }),
-	{ tooltip: 'Level 60 Combat talents for Sinister Strike.', group: 'Other' },
-);
-export const AssassinationMutilateTalents = PresetUtils.makePresetTalents(
-	'Mutilate (old)',
-	SavedTalents.create({ talentsString: '00530310551021051-302303202004' }),
-	{ tooltip: 'Level 60 Assassination talents for Mutilate.', group: 'Other' },
-);
 // The Level 60 talents, from the tools/rotopt talent searches on the synthetic Phase 1 sets (180 sec,
 // 3000 iterations a candidate, the best moves checked again at 10000), seeded from each archetype
 // and alternated with the knob search until neither moved. See PresetBuildLevel60CombatDaggers for
@@ -422,9 +275,6 @@ export const TalentPresets = {
 		TalentsLevel60SealFateSwordsHumanoid,
 		TalentsLevel60MutilateHumanoid,
 		TalentsLevel60SubtletyHumanoid,
-		CombatBackstabTalents,
-		CombatSinisterStrikeTalents,
-		AssassinationMutilateTalents,
 	],
 	[Phase.Phase2]: [
 		TalentsLevel60CombatSwords,
@@ -439,9 +289,6 @@ export const TalentPresets = {
 		TalentsLevel60SealFateSwordsHumanoid,
 		TalentsLevel60MutilateHumanoid,
 		TalentsLevel60SubtletyHumanoid,
-		CombatBackstabTalents,
-		CombatSinisterStrikeTalents,
-		AssassinationMutilateTalents,
 	],
 };
 
@@ -449,36 +296,7 @@ export const DefaultTalentsAssassin = TalentsLevel60Mutilate;
 export const DefaultTalentsCombat = TalentsLevel60CombatDaggers;
 export const DefaultTalentsSubtlety = TalentsLevel60Subtlety;
 
-export const DefaultTalentsBackstab = CombatBackstabTalents;
-export const DefaultTalentsSinisterStrike = CombatSinisterStrikeTalents;
-export const DefaultTalentsMutilate = AssassinationMutilateTalents;
-
 export const DefaultTalents = TalentsLevel60CombatDaggers;
-
-///////////////////////////////////////////////////////////////////////////
-//                                Build Presets
-///////////////////////////////////////////////////////////////////////////
-export const PresetBuildBackstab = PresetUtils.makePresetBuild('Backstab', {
-	group: 'Other',
-	tooltip: 'Level 60 Combat Backstab on Phase 2 BiS daggers.',
-	gear: GearBackstabP2BiS,
-	talents: DefaultTalentsBackstab,
-	rotation: DefaultAPLBackstab,
-});
-export const PresetBuildSinisterStrike = PresetUtils.makePresetBuild('Sinister Strike', {
-	group: 'Other',
-	tooltip: 'Level 60 Combat Sinister Strike on Phase 2 BiS gear.',
-	gear: GearSinisterStrikeP2BiS,
-	talents: DefaultTalentsSinisterStrike,
-	rotation: DefaultAPLSinisterStrike,
-});
-export const PresetBuildMutilate = PresetUtils.makePresetBuild('Mutilate (old)', {
-	group: 'Other',
-	tooltip: 'Level 60 Assassination Mutilate on Phase 2 BiS daggers.',
-	gear: GearBackstabP2BiS,
-	talents: DefaultTalentsMutilate,
-	rotation: DefaultAPLMutilate,
-});
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Options
@@ -617,6 +435,8 @@ export const DefaultDebuffs = {
 };
 
 export const P1OtherDefaults = {
+	distanceFromTarget: 5,
+	channelClipDelay: 50,
 	profession1: Profession.Engineering,
 	profession2: Profession.Leatherworking,
 	race: Race.RaceUndead,
@@ -665,18 +485,14 @@ const level60Encounter = (name: string, mobType: MobType, consumes = P1Consumes)
 			consumes,
 		},
 	);
-export const EncounterLevel60 = level60Encounter('Level 60', MobType.MobTypeUnknown);
-export const EncounterLevel60Humanoid = level60Encounter('Level 60 (vs Humanoid)', MobType.MobTypeHumanoid);
-export const EncounterLevel60SapperOnly = level60Encounter('Level 60 (no Land Mine)', MobType.MobTypeUnknown, P1SapperOnlyConsumes);
-export const EncounterLevel60SapperOnlyHumanoid = level60Encounter('Level 60 (no Land Mine, vs Humanoid)', MobType.MobTypeHumanoid, P1SapperOnlyConsumes);
-export const EncounterLevel60CombatSwords = level60Encounter('Level 60 (Combat Swords)', MobType.MobTypeUnknown, P1CombatSwordsConsumes);
-export const EncounterLevel60CombatSwordsHumanoid = level60Encounter('Level 60 (Combat Swords, vs Humanoid)', MobType.MobTypeHumanoid, P1CombatSwordsConsumes);
-export const EncounterLevel60CombatDaggers = level60Encounter('Level 60 (Combat Daggers)', MobType.MobTypeUnknown, P1CombatDaggersConsumes);
-export const EncounterLevel60CombatDaggersHumanoid = level60Encounter(
-	'Level 60 (Combat Daggers, vs Humanoid)',
-	MobType.MobTypeHumanoid,
-	P1CombatDaggersConsumes,
-);
+export const EncounterLevel60 = level60Encounter('Generic boss', MobType.MobTypeUnknown);
+export const EncounterLevel60Humanoid = level60Encounter('Humanoid boss', MobType.MobTypeHumanoid);
+export const EncounterLevel60SapperOnly = level60Encounter('Mutilate', MobType.MobTypeUnknown, P1SapperOnlyConsumes);
+export const EncounterLevel60SapperOnlyHumanoid = level60Encounter('Mutilate · vs Humanoid', MobType.MobTypeHumanoid, P1SapperOnlyConsumes);
+export const EncounterLevel60CombatSwords = level60Encounter('Combat Swords', MobType.MobTypeUnknown, P1CombatSwordsConsumes);
+export const EncounterLevel60CombatSwordsHumanoid = level60Encounter('Combat Swords · vs Humanoid', MobType.MobTypeHumanoid, P1CombatSwordsConsumes);
+export const EncounterLevel60CombatDaggers = level60Encounter('Combat Daggers', MobType.MobTypeUnknown, P1CombatDaggersConsumes);
+export const EncounterLevel60CombatDaggersHumanoid = level60Encounter('Combat Daggers · vs Humanoid', MobType.MobTypeHumanoid, P1CombatDaggersConsumes);
 
 // The Level 60 builds: the synthetic Phase 1 gear, the searched talents and rotation, the Level 60
 // encounter and the best race at 180 sec. A build changes race only when the new one leads by more
@@ -756,6 +572,7 @@ const level60Build = (
 		level: 60,
 		bonusTalentPoints: 0,
 		professions: [P1OtherDefaults.profession1, P1OtherDefaults.profession2],
+		options: DefaultOptions,
 	});
 export const PresetBuildLevel60CombatDaggers = level60Build(
 	'Combat Daggers',

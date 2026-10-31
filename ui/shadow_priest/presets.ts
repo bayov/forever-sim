@@ -398,7 +398,7 @@ export const DefaultDebuffs = Debuffs.create({
 // crafting, nothing in the presets needs it.
 export const OtherDefaults = {
 	channelClipDelay: 50,
-	distanceFromTarget: 30,
+	distanceFromTarget: 5,
 	profession1: Profession.Engineering,
 	profession2: Profession.Tailoring,
 	race: Race.RaceUndead,
@@ -474,6 +474,7 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Shadow', {
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: DefaultOptions,
 });
 // Without Twin Disciplines and Mental Strength the Holy build runs low on a long fight, so it
 // adds the Greater Mageblood Elixir. With it the Major Spellblasting Potion beat the Major Mana
@@ -514,6 +515,7 @@ export const PresetBuildLevel60Holy = PresetUtils.makePresetBuild('Shadow + Holy
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: DefaultOptions,
 });
 
 // The Smite build is short of mana, so its consumes keep the Major Mana Potion (the Major
@@ -564,4 +566,5 @@ export const PresetBuildLevel60Smite = PresetUtils.makePresetBuild('Smite', {
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: DefaultOptions,
 });

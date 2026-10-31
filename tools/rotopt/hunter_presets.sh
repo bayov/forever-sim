@@ -71,11 +71,9 @@ mmWeave="$weave,weaveManaPerSec=25"
 gen hunter_ranged bm "$bm,$weave"
 gen hunter_ranged mm "$mmMulti,$mmWeave"
 gen hunter_ranged lw "$mmMulti,$mmWeave"
+# The Beast Mastery rotation at range, which the hunter Go tests run. The UI dropped the turret
+# rotations on 2026-10-31.
 gen hunter_ranged bm_turret "$bm"
-# At range Multi-Shot wins for Marksmanship too (+3.1 / +1.0 / +1.2, seed 1000003 +3.0 / +0.8 / +1.6),
-# but not for Lone Wolf at 180 sec (-0.1 / +0.5), which keeps Aimed Shot there.
-gen hunter_ranged mm_turret "$mmMulti"
-gen hunter_ranged lw_turret "$mm"
 # Marksmanship and Lone Wolf hold Rapid Fire and Elune's Light for the on-use trinket when the wait
 # costs no use, Beast Mastery only Elune's Light (rotation auditor, 2026-10-13: +2.3 / +1.7 / +0.5
 # at 300 sec, nothing at 120 and 180).

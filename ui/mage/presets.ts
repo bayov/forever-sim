@@ -388,6 +388,7 @@ export const DefaultDebuffs = Debuffs.create({
 // Engineering is for the Goblin Sapper. Tailoring makes the Manaflare Regalia, the set the
 // synthetic pieces stand in for. Alchemy and Enchanting changed nothing.
 export const OtherDefaults = {
+	channelClipDelay: 50,
 	distanceFromTarget: 25,
 	profession1: Profession.Engineering,
 	profession2: Profession.Tailoring,

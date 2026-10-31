@@ -109,6 +109,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 		// Default spec-specific settings.
 		specOptions: Presets.DefaultOptions,
 		other: Presets.OtherDefaults,
+		encounter: Presets.EncounterLevel60.encounter,
 		// Default raid/party buffs settings.
 		raidBuffs: Presets.DefaultRaidBuffs,
 		partyBuffs: PartyBuffs.create({}),
@@ -133,14 +134,20 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 
 	presets: {
 		builds: [
-			Presets.PresetBuildLevel60,
 			Presets.PresetBuildLevel60SubHoly,
-			Presets.PresetBuildLevel60SubHolyCrusaderDuty,
-			Presets.PresetBuildLevel60Shock,
-			Presets.PresetBuildLevel60ShockRet,
-			Presets.PresetBuildLevel60ShockCrusaderDuty,
 			Presets.PresetBuildLevel60SubHolyUndead,
+			Presets.PresetBuildLevel60SubHolyCrusaderDuty,
+			Presets.PresetBuildLevel60SubHolyWisdomDuty,
+			Presets.PresetBuildLevel60ShockRet,
+			Presets.PresetBuildLevel60ShockRetCrusaderDuty,
+			Presets.PresetBuildLevel60ShockRetWisdomDuty,
+			Presets.PresetBuildLevel60,
+			Presets.PresetBuildLevel60CrusaderDuty,
+			Presets.PresetBuildLevel60WisdomDuty,
+			Presets.PresetBuildLevel60Shock,
 			Presets.PresetBuildLevel60ShockUndead,
+			Presets.PresetBuildLevel60ShockCrusaderDuty,
+			Presets.PresetBuildLevel60ShockWisdomDuty,
 		],
 		rotations: [
 			...Presets.APLPresets[Phase.Phase4],
@@ -156,7 +163,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRetributionPaladin, {
 			...Presets.TalentPresets[Phase.Phase1],
 		],
 		// Preset gear configurations that the user can quickly select.
-		gear: [Presets.GearLevel60Phase1Synthetic, Presets.GearLevel60Phase1SyntheticUndead, Presets.GearBlank],
+		gear: [Presets.GearLevel60Phase1Synthetic, Presets.GearLevel60Phase1SyntheticUndead, Presets.GearLevel60Phase1SyntheticCrusaderDuty, Presets.GearBlank],
 	},
 
 	autoRotation: player => {

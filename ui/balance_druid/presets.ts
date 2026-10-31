@@ -23,6 +23,7 @@ import {
 	Stat,
 	TristateEffect,
 	UnitReference,
+	UnitReference_Type,
 	WeaponImbue,
 	ZanzaBuff,
 } from '../core/proto/common.js';
@@ -202,7 +203,7 @@ export const DefaultTalents = TalentPresets[Phase.Phase1][0];
 ///////////////////////////////////////////////////////////////////////////
 
 export const DefaultOptions = BalanceDruidOptions.create({
-	innervateTarget: UnitReference.create(),
+	innervateTarget: UnitReference.create({ type: UnitReference_Type.Self }),
 });
 
 // The level 60 consumables, Forever launch Phase 1 only (nothing from Molten Core, Zul'Gurub,
@@ -287,8 +288,10 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 // An engineer for the Goblin Sapper Charge (+4.3 at 180 sec) and an alchemist, like the other
-// level 60 presets. The moonkin casts from range, so it does not melee between casts.
+// level 60 presets. The moonkin casts from range, so it does not melee between casts. The channel
+// clip delay is the DPS Report's.
 export const OtherDefaults = {
+	channelClipDelay: 50,
 	distanceFromTarget: 30,
 	profession1: Profession.Engineering,
 	profession2: Profession.Alchemy,
@@ -336,7 +339,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // The duty presets' raid (standards 23): the Level 60 raid without its Faerie Fire, and without its
 // Curse of Recklessness, which shares Faerie Fire's minor armor slot under Forever (standards 20),
 // so the armor comes only from our own Faerie Fire. The base builds set the full raid back.
-export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('Balance · Faerie Fire duty', EncounterLevel60.encounter, {
+export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('Faerie Fire duty', EncounterLevel60.encounter, {
 	tanks: [],
 	raidBuffs: DefaultRaidBuffs,
 	debuffs: Debuffs.create({ ...DefaultDebuffs, faerieFire: false, curseOfRecklessness: false }),
@@ -375,6 +378,7 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Balance', {
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: DefaultOptions,
 });
 export const PresetBuildLevel60FaerieFire = PresetUtils.makePresetBuild('Balance · Faerie Fire duty', {
 	group: 'Synthetic',
@@ -388,6 +392,7 @@ export const PresetBuildLevel60FaerieFire = PresetUtils.makePresetBuild('Balance
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: DefaultOptions,
 });
 export const PresetBuildLevel60Wrath = PresetUtils.makePresetBuild('Balance Wrath', {
 	group: 'Synthetic',
@@ -400,6 +405,7 @@ export const PresetBuildLevel60Wrath = PresetUtils.makePresetBuild('Balance Wrat
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: DefaultOptions,
 });
 export const PresetBuildLevel60WrathFaerieFire = PresetUtils.makePresetBuild('Balance Wrath · Faerie Fire duty', {
 	group: 'Synthetic',
@@ -413,4 +419,5 @@ export const PresetBuildLevel60WrathFaerieFire = PresetUtils.makePresetBuild('Ba
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: DefaultOptions,
 });

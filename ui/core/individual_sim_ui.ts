@@ -135,6 +135,10 @@ export interface IndividualSimUIConfig<SpecType extends Spec> extends PlayerConf
 
 		other?: OtherDefaults;
 
+		// The fight a fresh page starts with, like the DPS Report's Generic boss. Left out means the
+		// sim-wide default boss.
+		encounter?: EncounterProto;
+
 		// The spec's leveling plan, for the Leveling mode (leveling_plan.ts).
 		levelingPlan?: LevelingPlanSettings;
 	};
@@ -589,6 +593,7 @@ export abstract class IndividualSimUI<SpecType extends Spec> extends SimUI {
 			} else {
 				this.sim.raid.setTargetDummies(eventID, healingSpec ? 9 : 0);
 				this.sim.encounter.applyDefaults(eventID);
+				if (this.individualConfig.defaults.encounter) this.sim.encounter.fromProto(eventID, this.individualConfig.defaults.encounter);
 				this.sim.raid.setDebuffs(eventID, this.individualConfig.defaults.debuffs);
 				this.sim.applyDefaults(eventID, tankSpec, healingSpec);
 

@@ -87,6 +87,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 		// Default spec-specific settings.
 		specOptions: Presets.DefaultOptions,
 		other: Presets.OtherDefaults[Phase.Phase1],
+		encounter: Presets.EncounterLevel60CombatDaggers.encounter,
 		// Default raid/party buffs settings.
 		raidBuffs: Presets.DefaultRaidBuffs[Phase.Phase1],
 		partyBuffs: PartyBuffs.create({}),
@@ -124,21 +125,18 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecRogue, {
 		// Preset gear configurations that the user can quickly select.
 		gear: [...Presets.GearPresets[Phase.Phase2]],
 		builds: [
-			Presets.PresetBuildLevel60CombatSwords,
-			Presets.PresetBuildLevel60SealFateSwords,
 			Presets.PresetBuildLevel60CombatDaggers,
-			Presets.PresetBuildLevel60SealFateDaggers,
-			Presets.PresetBuildLevel60Mutilate,
-			Presets.PresetBuildLevel60Subtlety,
-			Presets.PresetBuildLevel60CombatSwordsHumanoid,
-			Presets.PresetBuildLevel60SealFateSwordsHumanoid,
 			Presets.PresetBuildLevel60CombatDaggersHumanoid,
+			Presets.PresetBuildLevel60CombatSwords,
+			Presets.PresetBuildLevel60CombatSwordsHumanoid,
+			Presets.PresetBuildLevel60SealFateDaggers,
 			Presets.PresetBuildLevel60SealFateDaggersHumanoid,
+			Presets.PresetBuildLevel60SealFateSwords,
+			Presets.PresetBuildLevel60SealFateSwordsHumanoid,
+			Presets.PresetBuildLevel60Mutilate,
 			Presets.PresetBuildLevel60MutilateHumanoid,
+			Presets.PresetBuildLevel60Subtlety,
 			Presets.PresetBuildLevel60SubtletyHumanoid,
-			Presets.PresetBuildBackstab,
-			Presets.PresetBuildSinisterStrike,
-			Presets.PresetBuildMutilate,
 		],
 	},
 

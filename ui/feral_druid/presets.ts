@@ -282,6 +282,8 @@ export const DefaultDebuffs = Debuffs.create({
 // An engineer and an alchemist like the other level 60 presets. Nothing either makes works in
 // Cat Form, so the pair is free to change.
 export const OtherDefaults = {
+	channelClipDelay: 50,
+	distanceFromTarget: 5,
 	profession1: Profession.Engineering,
 	profession2: Profession.Alchemy,
 	race: Race.RaceNightElf,
@@ -328,7 +330,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // The duty presets' raid (standards 23): the Level 60 raid without its Faerie Fire, and without its
 // Curse of Recklessness, which shares Faerie Fire's minor armor slot under Forever (standards 20),
 // so the armor comes only from our own Faerie Fire. The base builds set the full raid back.
-export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('Feral · Faerie Fire duty', EncounterLevel60.encounter, {
+export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('Faerie Fire duty', EncounterLevel60.encounter, {
 	tanks: [],
 	raidBuffs: DefaultRaidBuffs,
 	debuffs: Debuffs.create({ ...DefaultDebuffs, faerieFire: false, curseOfRecklessness: false }),
@@ -361,6 +363,7 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Feral', {
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: DefaultOptions,
 });
 export const PresetBuildLevel60FaerieFire = PresetUtils.makePresetBuild('Feral · Faerie Fire duty', {
 	group: 'Synthetic',
@@ -374,4 +377,5 @@ export const PresetBuildLevel60FaerieFire = PresetUtils.makePresetBuild('Feral �
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: DefaultOptions,
 });

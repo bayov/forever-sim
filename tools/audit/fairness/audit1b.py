@@ -29,8 +29,7 @@ SETS = [  # (class, gear path, target name, archetype, weapon kind)
  ("druid", "ui/balance_druid/gear_sets/level60_phase1_synthetic.gear.json", "Balance druid (and Wrath)", "cast", "cast"),
  ("mage", "ui/mage/gear_sets/level60_phase1_synthetic.gear.json", "Mage (Frostfire / Frost / Fire)", "cast", "cast"),
  ("mage", "ui/mage/gear_sets/level60_phase1_synthetic_arcane.gear.json", "Mage Arcane", "cast", "cast"),
- ("warlock", "ui/warlock/gear_sets/level60_phase1_synthetic.gear.json", "Warlock (Destruction / Affliction / Fire)", "cast", "cast"),
- ("warlock", "ui/warlock/gear_sets/level60_phase1_synthetic_demonology.gear.json", "Warlock Demonology", "cast", "cast"),
+ ("warlock", "ui/warlock/gear_sets/level60_phase1_synthetic.gear.json", "Warlock (every spec)", "cast", "cast"),
  ("priest", "ui/shadow_priest/gear_sets/level60_phase1_synthetic.gear.json", "Shadow priest", "cast", "cast"),
  ("priest", "ui/shadow_priest/gear_sets/level60_phase1_smite.gear.json", "Smite priest", "cast", "cast"),
 ]

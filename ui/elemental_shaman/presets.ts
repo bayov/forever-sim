@@ -324,8 +324,11 @@ export const DefaultDebuffs = Debuffs.create({
 // The shaman is an engineer for the Goblin Sapper Charge (+4.2 at 180 sec) and an alchemist. The
 // race is Windshaper Skyborne, the best race since client 1.60.1.70425 gave Wind Blessed 3% haste
 // (721.4 for the Orc at 180 sec before), see the races under the builds.
+//
+// The distance and the channel clip delay are the ones the DPS Report sims with.
 export const OtherDefaults = {
 	distanceFromTarget: 20,
+	channelClipDelay: 50,
 	profession1: Profession.Engineering,
 	profession2: Profession.Alchemy,
 	race: Race.RaceSkyborneWindshaper,

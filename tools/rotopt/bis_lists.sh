@@ -37,12 +37,19 @@ bis() {
 		-gear-rank-out "$out" -gear-rank-name "Level 30" -gear-rank-spec "$spec" -gear-rank-sim "$sim" "$@"
 }
 
-# Enhancement starts from the Level 30 + 5 gear, talents and rotation, with the level30p5
-# knobs from shaman_presets.sh. Manual Crowd Pummeler (9449) is left out, because the sim
-# gives it its haste every 30 sec while its 3 charges never come back in 1.12 (see the
-# Level 30 + 5 gear in ui/enhancement_shaman/presets.ts).
-go run --tags=with_db ./tools/rotopt/mksettings -spec enh -gear level30p5 -apl level30p5 \
-	-talents -0540320010051122 -race Orc -level 30 -bonus-talents 5 -duration 120 -out "$tmp/enh.json"
+# Enhancement starts from the old Level 30 + 5 gear and talents, with the knobs its rotation had
+# (the level30p5 line shaman_presets.sh had until 2026-10-31). The UI dropped its Level 30 presets
+# that day, so the set is written out here: mksettings takes the Level 60 set and we replace it.
+# The rotation comes from the template and the knobs, so the APL we name doesn't matter. Manual
+# Crowd Pummeler (9449) is left out, because the sim gives it its haste every 30 sec while its 3
+# charges never come back in 1.12.
+go run --tags=with_db ./tools/rotopt/mksettings -spec enh -gear level60_phase1_synthetic -apl optimized \
+	-talents -0540320010051122 -race Orc -level 30 -bonus-talents 5 -duration 120 -out "$tmp/enh60gear.json"
+jq '.raid.parties[0].players[0].equipment = {items: [{id: 3020}, {id: 13084, enchant: 1249057}, {id: 6697},
+	{id: 7460, randomSuffix: 936, enchant: 13419}, {id: 273026, enchant: 866}, {id: 9428, randomSuffix: 176, enchant: 1248498},
+	{id: 277223, enchant: 13887}, {id: 252461}, {id: 6690, enchant: 1255124}, {id: 15142, randomSuffix: 942, enchant: 13637},
+	{id: 281635}, {id: 13097}, {}, {}, {id: 280604, enchant: 13695}, {}, {id: 249398}]}' \
+	"$tmp/enh60gear.json" >"$tmp/enh.json"
 bis enh shaman_enh "$tmp/enh.json" ui/enhancement_shaman/bis/level30.bis.json \
 	"airTotem=0,strengthOfEarth=1,fireTotemMinTime=10,shield=1,shock=4,shockMana=10,waterTotem=1,maelstromStacks=0,fireTotem=3,fireNova=2,fireNovaMana=80,prepullTotems=1" \
 	-gear-exclude 9449

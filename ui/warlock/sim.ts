@@ -94,6 +94,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarlock, {
 		debuffs: Presets.DefaultDebuffs,
 
 		other: Presets.OtherDefaults,
+		encounter: Presets.EncounterLevel60.encounter,
 	},
 
 	// IconInputs to include in the 'Player' section on the settings tab.

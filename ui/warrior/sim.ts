@@ -70,6 +70,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarrior, {
 		// Default spec-specific settings.
 		specOptions: Presets.DefaultOptions,
 		other: Presets.OtherDefaults,
+		encounter: Presets.EncounterLevel60.encounter,
 		// Default raid/party buffs settings.
 		raidBuffs: Presets.DefaultRaidBuffs,
 		partyBuffs: PartyBuffs.create({}),
@@ -126,10 +127,13 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecWarrior, {
 		builds: [
 			Presets.PresetBuildLevel60Fury,
 			Presets.PresetBuildLevel60FuryShout,
+			Presets.PresetBuildLevel60FurySunder,
 			Presets.PresetBuildLevel60Fury2H,
 			Presets.PresetBuildLevel60Fury2HShout,
+			Presets.PresetBuildLevel60Fury2HSunder,
 			Presets.PresetBuildLevel60Arms,
 			Presets.PresetBuildLevel60ArmsShout,
+			Presets.PresetBuildLevel60ArmsSunder,
 			Presets.PresetBuildLevel60ArmsDragonkin,
 		],
 	},
