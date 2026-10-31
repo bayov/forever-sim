@@ -62,7 +62,8 @@ export class Entity {
 	//   'Target 1' if a target,
 	//   'PlayerName (#1)' if a player, or
 	//   'PlayerName (#1) - PetName' if a pet.
-	static parseRegex = /\[(Target (\d+))|(([a-zA-Z0-9]+) \(#(\d+)\) - ([a-zA-Z0-9\s]+))|(([a-zA-Z0-9\s]+) \(#(\d+)\))\]/g;
+	// A name can hold any character but brackets, since the raid sim names its players like "Fire (1.2)".
+	static parseRegex = /\[(?:(Target (\d+))|(([^[\]]+?) \(#(\d+)\) - ([^[\]]+))|(([^[\]]+?) \(#(\d+)\)))\]/g;
 	static parseAll(str: string): Array<Entity> {
 		return Array.from(str.matchAll(Entity.parseRegex)).map(match => {
 			if (match[1]) {
@@ -128,7 +129,7 @@ export class SimLog {
 			let html = <>{this.raw}</>;
 			// Base logs already have the timestamp appended by default
 			if (!includeTimestamp) {
-				const regexp = /(\[[0-9.-]+\]) (\[[0-9a-zA-Z\s\-()#]+\])?(.*)/;
+				const regexp = /(\[[0-9.-]+\]) (\[[^\]]+\])?(.*)/;
 				if (this.raw.match(regexp)) {
 					// TypeScript doesn't handle regex capture typing well
 					const captureArr = regexp.exec(this.raw);
