@@ -14,6 +14,7 @@ import { AdaptiveStringPicker } from '../inputs/string_picker';
 import { LIST_PICKER_DRAG_HANDLE, ListItemPickerConfig, ListPicker } from '../list_picker';
 import { markUnstacked } from '../unstacked_mark';
 import { APLActionPicker } from './apl_actions';
+import { aplValueSummary } from './apl_summary';
 import { APLValueImplStruct } from './apl_values';
 
 export class APLRotationPicker extends Component {
@@ -250,6 +251,7 @@ class APLListItemPicker extends Input<Player<any>, APLListItem> {
 				this.player.rotationChangeEmitter.emit(eventID);
 			},
 		});
+		makeCollapsible(this.rootElem, this.actionPicker.rootElem, itemHeaderElem, player, () => this.getItem().action?.condition);
 		this.init();
 	}
 
@@ -272,6 +274,61 @@ class APLListItemPicker extends Input<Player<any>, APLListItem> {
 		this.hidePicker.setInputValue(newValue.hide);
 		this.actionPicker.setInputValue(newValue.action || APLAction.create());
 	}
+}
+
+// A priority list row as a card that we expand to edit its condition.
+//
+// A long condition, like a leveling rotation's checks on the mobs and our health and mana, is a
+// tall tree of dropdowns. So a row starts collapsed and shows its condition as one line of text
+// next to the action. A click on that line, or on the chevron with the row's buttons, expands the
+// row, and the condition's dropdowns go under the action across the whole row. The row's picker
+// stays with its place in the list, so a row we expanded stays open while we edit it.
+function makeCollapsible(
+	rowElem: HTMLElement,
+	actionPickerElem: HTMLElement,
+	itemHeaderElem: HTMLElement,
+	player: Player<any>,
+	getCondition: () => APLValue | undefined,
+) {
+	const summaryElem = document.createElement('a');
+	summaryElem.classList.add('apl-condition-summary');
+	summaryElem.href = 'javascript:void(0)';
+	summaryElem.setAttribute('role', 'button');
+	actionPickerElem.appendChild(summaryElem);
+	const summaryTooltip = tippy(summaryElem, { content: '', maxWidth: '40rem' });
+
+	const toggleElem = ListPicker.makeActionElem('apl-expand-toggle', 'fa-chevron-down');
+	itemHeaderElem.prepend(toggleElem);
+	const toggleTooltip = tippy(toggleElem, { content: 'Edit condition' });
+
+	const setExpanded = (expanded: boolean) => {
+		rowElem.classList.toggle('apl-collapsed', !expanded);
+		toggleElem.querySelector('i')?.classList.toggle('fa-chevron-up', expanded);
+		toggleElem.querySelector('i')?.classList.toggle('fa-chevron-down', !expanded);
+		toggleTooltip.setContent(expanded ? 'Collapse' : 'Edit condition');
+	};
+	setExpanded(false);
+	toggleElem.addEventListener('click', () => setExpanded(rowElem.classList.contains('apl-collapsed')));
+	summaryElem.addEventListener('click', () => setExpanded(true));
+
+	// The names of spells and auras come in later, so a newer change can finish first.
+	let shown = 0;
+	const update = async () => {
+		if (!existsInDOM(summaryElem)) {
+			player.rotationChangeEmitter.off(update);
+			summaryTooltip.destroy();
+			toggleTooltip.destroy();
+			return;
+		}
+		const call = ++shown;
+		const text = await aplValueSummary(getCondition());
+		if (call !== shown) return;
+		summaryElem.textContent = text ? `If ${text}` : 'Always';
+		summaryElem.classList.toggle('apl-condition-summary-empty', !text);
+		summaryTooltip.setContent(text ? `If ${text}` : 'No condition. Click to add one.');
+	};
+	update();
+	player.rotationChangeEmitter.on(update);
 }
 
 function makeListItemWarnings(itemHeaderElem: HTMLElement, player: Player<any>, getWarnings: (player: Player<any>) => Array<string>) {

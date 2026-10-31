@@ -1196,3 +1196,6 @@ const valueKindFactories: { [f in NonNullable<APLValueKind>]: ValueKindConfig<AP
 		fields: [],
 	}),
 };
+
+// A kind of value's name in the editor, like "Health (%)" or "Any of".
+export const aplValueKindLabel = (kind: NonNullable<APLValueKind>): string => valueKindFactories[kind]?.label ?? kind;

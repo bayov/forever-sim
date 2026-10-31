@@ -231,7 +231,8 @@
 			align-self: flex-start;
 		}
 
-		> .apl-action-picker-root > .apl-action-condition {
+		> .apl-action-picker-root > .apl-action-condition,
+		> .apl-action-picker-root > .apl-condition-summary {
 			flex-basis: 100%;
 			min-height: 0;
 			padding-left: 0;
@@ -530,14 +531,45 @@
 		}
 	}
 
-	// A condition with three levels of "Any of" and "All of", like the rogue's Slice and Dice
-	// checks, needs the whole row, so it goes under the action. In a narrow row, like on a small
-	// screen, every condition goes under the action.
+	// A collapsed row shows its condition as a line of text (makeCollapsible). An expanded row
+	// shows the condition's dropdowns under the action, across the whole row. In a narrow row,
+	// like on a small screen, the line of text goes under the action too.
 	.apl-list-item-picker > .list-picker-items {
 		container-type: inline-size;
 
-		> .list-picker-item-container:has(.apl-action-condition .apl-picker-builder-multi .apl-picker-builder-multi .apl-picker-builder-multi) {
+		> .list-picker-item-container:has(> .list-picker-item > .apl-list-item-picker-root:not(.apl-collapsed)) {
 			@include apl-row-stacked;
+		}
+	}
+
+	.apl-list-item-picker-root.apl-collapsed > .apl-action-picker-root > .apl-action-condition,
+	.apl-list-item-picker-root:not(.apl-collapsed) > .apl-action-picker-root > .apl-condition-summary {
+		display: none;
+	}
+
+	.apl-condition-summary {
+		flex: 1 1 18rem;
+		align-self: center;
+		min-width: 0;
+		padding-left: 1rem;
+		border-left: 1px solid var(--line-color);
+		color: #a9b6c6;
+		font-size: 0.8125rem;
+		line-height: 1.4;
+		text-decoration: none;
+		// Two lines at most. The tooltip has the whole condition.
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+
+		&:hover {
+			color: var(--bs-white);
+		}
+
+		&.apl-condition-summary-empty {
+			color: var(--text-muted-color);
+			opacity: 0.6;
 		}
 	}
 
