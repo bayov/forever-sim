@@ -1,4 +1,3 @@
-import { Phase } from '../core/constants/other.js';
 import * as PresetUtils from '../core/preset_utils.js';
 import {
 	Conjured,
@@ -23,25 +22,19 @@ import {
 	Stat,
 	TristateEffect,
 	UnitReference,
+	UnitReference_Type,
 	WeaponImbue,
 	ZanzaBuff,
 } from '../core/proto/common.js';
 import { BalanceDruid_Options as BalanceDruidOptions } from '../core/proto/druid.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
-import Balance from './apls/balance.apl.json';
 import Level60APLJSON from './apls/level60.apl.json';
 import Level60FaerieFireAPLJSON from './apls/level60_ff.apl.json';
 import Level60WrathAPLJSON from './apls/level60_wrath.apl.json';
 import Level60WrathFaerieFireAPLJSON from './apls/level60_wrath_ff.apl.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
 import Level60Phase1SyntheticWrathGearJSON from './gear_sets/level60_phase1_synthetic_wrath.gear.json';
-import P0BISGear from './gear_sets/p0.bis.gear.json';
-import P1BISGear from './gear_sets/p1.bis.gear.json';
-import P2BISGear from './gear_sets/p2.bis.gear.json';
-import P3BISGear from './gear_sets/p3.bis.gear.json';
-import P4BISGear from './gear_sets/p4.bis.gear.json';
-import P5BISGear from './gear_sets/p5.bis.gear.json';
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
 // keep them in a separate file.
@@ -49,13 +42,6 @@ import P5BISGear from './gear_sets/p5.bis.gear.json';
 ///////////////////////////////////////////////////////////////////////////
 //                                 Gear Presets
 ///////////////////////////////////////////////////////////////////////////
-
-export const GearP0BIS = PresetUtils.makePresetGear('Pre-BiS', P0BISGear);
-export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
-export const GearP2BIS = PresetUtils.makePresetGear('P2 BiS', P2BISGear);
-export const GearP3BIS = PresetUtils.makePresetGear('P3 BiS', P3BISGear);
-export const GearP4BIS = PresetUtils.makePresetGear('P4 BiS', P4BISGear);
-export const GearP5BIS = PresetUtils.makePresetGear('P5 BiS', P5BISGear);
 
 // The level 60 Phase 1 set for Forever, made of synthetic items that are not in the game
 // (tools/database/forever_synthetic_items_druid.go, which has the budget math), priced by
@@ -87,10 +73,7 @@ export const GearLevel60Phase1SyntheticWrath = PresetUtils.makePresetGear('Balan
 	group: 'Synthetic',
 });
 
-export const GearPresets = {
-	[Phase.Phase1]: [GearLevel60Phase1Synthetic, GearLevel60Phase1SyntheticWrath],
-	[Phase.Phase5]: [GearP0BIS, GearP1BIS, GearP2BIS, GearP3BIS, GearP4BIS, GearP5BIS],
-};
+export const GearPresets = [GearLevel60Phase1Synthetic, GearLevel60Phase1SyntheticWrath];
 
 export const DefaultGear = GearLevel60Phase1Synthetic;
 
@@ -124,8 +107,6 @@ export const APLLevel60 = PresetUtils.makePresetAPLRotation('Balance', Level60AP
 	tooltip: "The optimizer's best level 60 rotation: both dots up, then Wrath and Starfire in turn for Eclipse.",
 	group: 'Synthetic',
 });
-// export const APLP1Balance = PresetUtils.makePresetAPLRotation('Balance', P1APL);
-export const DefaultBalance = PresetUtils.makePresetAPLRotation('Default Balance', Balance);
 // Wrath as the only filler (1.5 sec with Improved Wrath, half the mana) after a Wrath 1.5 sec
 // before the pull, for a moonkin that would rather not weave: 774.7 / 776.5 / 773.7 at 120 /
 // 180 / 300 sec, 6.1% behind the Level 60 rotation, on its own talents (TalentsLevel60Wrath)
@@ -155,11 +136,9 @@ export const APLLevel60WrathFaerieFire = PresetUtils.makePresetAPLRotation('Bala
 		"The Balance Wrath rotation, keeping Faerie Fire on the target for the raid. Pick the duty build to switch off the raid's Faerie Fire and Curse of Recklessness.",
 	group: 'Synthetic',
 });
-export const APLPresets = {
-	[Phase.Phase1]: [APLLevel60, APLLevel60FaerieFire, APLLevel60Wrath, APLLevel60WrathFaerieFire, DefaultBalance],
-};
+export const APLPresets = [APLLevel60, APLLevel60FaerieFire, APLLevel60Wrath, APLLevel60WrathFaerieFire];
 
-export const DefaultAPL = APLPresets[Phase.Phase1][0];
+export const DefaultAPL = APLLevel60;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Talent Presets
@@ -191,18 +170,16 @@ export const TalentsLevel60Wrath = PresetUtils.makePresetTalents('Balance Wrath'
 	group: 'Synthetic',
 });
 
-export const TalentPresets = {
-	[Phase.Phase1]: [TalentsLevel60, TalentsLevel60Wrath],
-};
+export const TalentPresets = [TalentsLevel60, TalentsLevel60Wrath];
 
-export const DefaultTalents = TalentPresets[Phase.Phase1][0];
+export const DefaultTalents = TalentsLevel60;
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Options
 ///////////////////////////////////////////////////////////////////////////
 
 export const DefaultOptions = BalanceDruidOptions.create({
-	innervateTarget: UnitReference.create(),
+	innervateTarget: UnitReference.create({ type: UnitReference_Type.Self }),
 });
 
 // The level 60 consumables, Forever launch Phase 1 only (nothing from Molten Core, Zul'Gurub,
@@ -287,8 +264,10 @@ export const DefaultDebuffs = Debuffs.create({
 });
 
 // An engineer for the Goblin Sapper Charge (+4.3 at 180 sec) and an alchemist, like the other
-// level 60 presets. The moonkin casts from range, so it does not melee between casts.
+// level 60 presets. The moonkin casts from range, so it does not melee between casts. The channel
+// clip delay is the DPS Report's.
 export const OtherDefaults = {
+	channelClipDelay: 50,
 	distanceFromTarget: 30,
 	profession1: Profession.Engineering,
 	profession2: Profession.Alchemy,
@@ -336,7 +315,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 // The duty presets' raid (standards 23): the Level 60 raid without its Faerie Fire, and without its
 // Curse of Recklessness, which shares Faerie Fire's minor armor slot under Forever (standards 20),
 // so the armor comes only from our own Faerie Fire. The base builds set the full raid back.
-export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('Balance · Faerie Fire duty', EncounterLevel60.encounter, {
+export const EncounterLevel60FaerieFireDuty = PresetUtils.makePresetEncounter('Faerie Fire duty', EncounterLevel60.encounter, {
 	tanks: [],
 	raidBuffs: DefaultRaidBuffs,
 	debuffs: Debuffs.create({ ...DefaultDebuffs, faerieFire: false, curseOfRecklessness: false }),
@@ -375,6 +354,7 @@ export const PresetBuildLevel60 = PresetUtils.makePresetBuild('Balance', {
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: DefaultOptions,
 });
 export const PresetBuildLevel60FaerieFire = PresetUtils.makePresetBuild('Balance · Faerie Fire duty', {
 	group: 'Synthetic',
@@ -388,6 +368,7 @@ export const PresetBuildLevel60FaerieFire = PresetUtils.makePresetBuild('Balance
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: DefaultOptions,
 });
 export const PresetBuildLevel60Wrath = PresetUtils.makePresetBuild('Balance Wrath', {
 	group: 'Synthetic',
@@ -400,6 +381,7 @@ export const PresetBuildLevel60Wrath = PresetUtils.makePresetBuild('Balance Wrat
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: DefaultOptions,
 });
 export const PresetBuildLevel60WrathFaerieFire = PresetUtils.makePresetBuild('Balance Wrath · Faerie Fire duty', {
 	group: 'Synthetic',
@@ -413,4 +395,5 @@ export const PresetBuildLevel60WrathFaerieFire = PresetUtils.makePresetBuild('Ba
 	level: 60,
 	bonusTalentPoints: 0,
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: DefaultOptions,
 });

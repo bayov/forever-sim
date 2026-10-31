@@ -25,24 +25,18 @@ import {
 import { SavedTalents } from '../core/proto/ui.js';
 import { Warrior_Options as WarriorOptions, WarriorShout, WarriorStance } from '../core/proto/warrior.js';
 import { Stats } from '../core/proto_utils/stats.js';
-import APLNoReckJSON from './apls/dps_no_reck.apl.json';
-import APLReckJSON from './apls/dps_reck.apl.json';
 import Level60ArmsAPLJSON from './apls/level60_arms.apl.json';
+import Level60ArmsShoutAPLJSON from './apls/level60_arms_battle_shout.apl.json';
 import Level60ArmsDragonkinAPLJSON from './apls/level60_arms_dragonkin.apl.json';
+import Level60ArmsSunderAPLJSON from './apls/level60_arms_sunder.apl.json';
 import Level60FuryAPLJSON from './apls/level60_fury.apl.json';
 import Level60Fury2HAPLJSON from './apls/level60_fury_2h.apl.json';
 import Level60Fury2HShoutAPLJSON from './apls/level60_fury_2h_battle_shout.apl.json';
+import Level60Fury2HSunderAPLJSON from './apls/level60_fury_2h_sunder.apl.json';
 import Level60FuryShoutAPLJSON from './apls/level60_fury_battle_shout.apl.json';
-import Level60ArmsShoutAPLJSON from './apls/level60_arms_battle_shout.apl.json';
+import Level60FurySunderAPLJSON from './apls/level60_fury_sunder.apl.json';
 import Level60Phase1SyntheticArmsGearJSON from './gear_sets/level60_phase1_synthetic_arms.gear.json';
 import Level60Phase1SyntheticFuryGearJSON from './gear_sets/level60_phase1_synthetic_fury.gear.json';
-import P0BISGear from './gear_sets/p0.bis.gear.json';
-import Phase1Gear from './gear_sets/phase_1.gear.json';
-import Phase2Gear from './gear_sets/phase_2.gear.json';
-import Phase3Gear from './gear_sets/phase_3.gear.json';
-import Phase4Gear from './gear_sets/phase_4.gear.json';
-import Phase5Gear from './gear_sets/phase_5.gear.json';
-import Phase6Gear from './gear_sets/phase_6.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -51,14 +45,6 @@ import Phase6Gear from './gear_sets/phase_6.gear.json';
 ///////////////////////////////////////////////////////////////////////////
 //                                 Gear Presets
 ///////////////////////////////////////////////////////////////////////////
-
-export const GearP0BIS = PresetUtils.makePresetGear('Pre-BiS', P0BISGear);
-export const GearPhase1 = PresetUtils.makePresetGear('P1 BiS', Phase1Gear);
-export const GearPhase2 = PresetUtils.makePresetGear('P2 BiS', Phase2Gear);
-export const GearPhase3 = PresetUtils.makePresetGear('P3 BiS', Phase3Gear);
-export const GearPhase4 = PresetUtils.makePresetGear('P4 BiS', Phase4Gear);
-export const GearPhase5 = PresetUtils.makePresetGear('P5 BiS', Phase5Gear);
-export const GearPhase6 = PresetUtils.makePresetGear('P6 BiS', Phase6Gear);
 
 // A guess at Phase 1 BiS under Forever, made of the synthetic items in
 // tools/database/forever_synthetic_items_warrior.go (ids from 991000, not in the game).
@@ -104,12 +90,7 @@ export const GearLevel60Phase1SyntheticArms = PresetUtils.makePresetGear('Fury 2
 });
 
 export const GearPresets = {
-	[Phase.Phase1]: [GearLevel60Phase1SyntheticFury, GearLevel60Phase1SyntheticArms, GearPhase1, GearP0BIS],
-	[Phase.Phase2]: [GearPhase2],
-	[Phase.Phase3]: [GearPhase3],
-	[Phase.Phase4]: [GearPhase4],
-	[Phase.Phase5]: [GearPhase5],
-	[Phase.Phase6]: [GearPhase6],
+	[Phase.Phase1]: [GearLevel60Phase1SyntheticFury, GearLevel60Phase1SyntheticArms],
 };
 
 export const DefaultGear = GearLevel60Phase1SyntheticFury;
@@ -117,9 +98,6 @@ export const DefaultGear = GearLevel60Phase1SyntheticFury;
 ///////////////////////////////////////////////////////////////////////////
 //                                 APL Presets
 ///////////////////////////////////////////////////////////////////////////
-
-export const AplReck = PresetUtils.makePresetAPLRotation('DPS (With Reck)', APLReckJSON);
-export const APLNoReck = PresetUtils.makePresetAPLRotation('DPS (No Reck)', APLNoReckJSON);
 
 // The tools/rotopt search (template warrior_fury, see warrior_presets.sh) on the Level 60 Fury
 // talents and set, 180 sec, with Forever's normalized Rage (standards 21: a white hit gives 3.46 Rage
@@ -135,7 +113,7 @@ export const APLNoReck = PresetUtils.makePresetAPLRotation('DPS (No Reck)', APLN
 // last 20 sec when that costs no use (with the trinket then on cooldown, +20.7 at 120 sec, where the
 // hold alone skipped the pull potion; the rotation auditor's pass 14). The Sapper goes on cooldown with the other
 // cooldowns (no Goblin Land Mine since 2026-10-24, see the consumables below). Blood Fury, Berserking and Elune's Light wait for Death Wish when that costs
-// no use. It is 1031.1 (Human) where the old DPS (With Reck) rotation is 981.2. Slam on its 18 sec
+// no use. It is 1031.1 (Human) where the old Classic rotation (dps_reck.apl.json) is 981.2. Slam on its 18 sec
 // cooldown and holding the fillers for Bloodthirst and Whirlwind both lose.
 export const APLLevel60Fury = PresetUtils.makePresetAPLRotation('Fury', Level60FuryAPLJSON, { group: 'Synthetic' });
 // The same template on the two-hand Fury talents and the two-hand set: the Fury rotation with
@@ -187,17 +165,34 @@ export const APLLevel60Fury2HShout = PresetUtils.makePresetAPLRotation('Fury 2H 
 });
 export const APLLevel60ArmsShout = PresetUtils.makePresetAPLRotation('Arms · Battle Shout duty', Level60ArmsShoutAPLJSON, { group: 'Synthetic' });
 
+// The Sunder Armor duty: the base rotation, with 5 Sunder Armor stacks from the pull ahead of
+// everything but the opening cooldowns, refreshed in their last 3 sec unless they last the fight.
+// It is for a raid with no warrior tank, so the raid has no other Sunder Armor.
+export const APLLevel60FurySunder = PresetUtils.makePresetAPLRotation('Fury · Sunder Armor duty', Level60FurySunderAPLJSON, {
+	tooltip: 'Fury keeping 5 Sunder Armor stacks on the boss.',
+	group: 'Synthetic',
+});
+export const APLLevel60Fury2HSunder = PresetUtils.makePresetAPLRotation('Fury 2H · Sunder Armor duty', Level60Fury2HSunderAPLJSON, {
+	tooltip: 'Two-hand Fury keeping 5 Sunder Armor stacks on the boss.',
+	group: 'Synthetic',
+});
+export const APLLevel60ArmsSunder = PresetUtils.makePresetAPLRotation('Arms · Sunder Armor duty', Level60ArmsSunderAPLJSON, {
+	tooltip: 'Arms keeping 5 Sunder Armor stacks on the boss.',
+	group: 'Synthetic',
+});
+
 export const APLPresets = {
 	[Phase.Phase1]: [
 		APLLevel60Fury,
 		APLLevel60FuryShout,
+		APLLevel60FurySunder,
 		APLLevel60Fury2H,
 		APLLevel60Fury2HShout,
+		APLLevel60Fury2HSunder,
 		APLLevel60Arms,
 		APLLevel60ArmsShout,
+		APLLevel60ArmsSunder,
 		APLLevel60ArmsDragonkin,
-		APLNoReck,
-		AplReck,
 	],
 };
 
@@ -250,12 +245,8 @@ export const TalentsLevel60ArmsDragonkin = PresetUtils.makePresetTalents(
 	},
 );
 
-// The old Classic DPS talents, rebuilt for the Forever tree on 2026-10-12 (the points in talents
-// Forever removed went to Furious Precision, Improved Execute and Improved Berserker Rage).
-export const TalentsP1DPS = PresetUtils.makePresetTalents('DPS', SavedTalents.create({ talentsString: '30305013-25053005152110501' }));
-
 export const TalentPresets = {
-	[Phase.Phase1]: [TalentsLevel60Fury, TalentsLevel60Fury2H, TalentsLevel60Arms, TalentsLevel60ArmsDragonkin, TalentsP1DPS],
+	[Phase.Phase1]: [TalentsLevel60Fury, TalentsLevel60Fury2H, TalentsLevel60Arms, TalentsLevel60ArmsDragonkin],
 };
 
 export const DefaultTalents = TalentsLevel60Fury;
@@ -409,6 +400,8 @@ export const DefaultDebuffs = Debuffs.create({
 // and gear): Arms, its Battle Shout duty and Arms (vs Dragonkin) are Undead, 900.9 at 180 sec against the
 // Orc's 898.7 on Arms (verify.py, 20000 iterations, seed 1); the Fury builds stay Orc.
 export const OtherDefaults = {
+	distanceFromTarget: 5,
+	channelClipDelay: 50,
 	profession1: Profession.Engineering,
 	profession2: Profession.Alchemy,
 	race: Race.RaceOrc,
@@ -422,7 +415,7 @@ export const OtherDefaults = {
 // creature-type bonus applies, standards 19), a 3 minute fight, and the default buffs, debuffs and
 // consumes. The synthetic Phase 1 sets, their talents and rotations were searched at 180 sec.
 export const EncounterLevel60 = PresetUtils.makePresetEncounter(
-	'Level 60',
+	'Generic boss',
 	Encounter.create({
 		duration: 180,
 		durationVariation: 20,
@@ -456,7 +449,7 @@ export const EncounterLevel60 = PresetUtils.makePresetEncounter(
 
 // The Level 60 raid without its Battle Shout, for the Battle Shout duty builds, whose warrior
 // shouts for the party (standards 23).
-export const EncounterLevel60BattleShoutDuty = PresetUtils.makePresetEncounter('Level 60 (Battle Shout duty)', EncounterLevel60.encounter, {
+export const EncounterLevel60BattleShoutDuty = PresetUtils.makePresetEncounter('Battle Shout duty', EncounterLevel60.encounter, {
 	tanks: [],
 	raidBuffs: RaidBuffs.create({ ...DefaultRaidBuffs, battleShout: TristateEffect.TristateEffectMissing }),
 	debuffs: DefaultDebuffs,
@@ -464,9 +457,19 @@ export const EncounterLevel60BattleShoutDuty = PresetUtils.makePresetEncounter('
 	consumes: DefaultConsumes,
 });
 
+// The Level 60 raid without its Sunder Armor, for the Sunder Armor duty builds, whose warrior keeps
+// the stacks up for a raid with no warrior tank.
+export const EncounterLevel60SunderDuty = PresetUtils.makePresetEncounter('Sunder Armor duty', EncounterLevel60.encounter, {
+	tanks: [],
+	raidBuffs: DefaultRaidBuffs,
+	debuffs: Debuffs.create({ ...DefaultDebuffs, sunderArmor: false }),
+	buffs: DefaultIndividualBuffs,
+	consumes: DefaultConsumes,
+});
+
 // The same boss as a Dragonkin, for Spearing Strike (standards 19).
 export const EncounterLevel60Dragonkin = PresetUtils.makePresetEncounter(
-	'Level 60 (vs Dragonkin)',
+	'Dragonkin boss',
 	Encounter.create({
 		duration: 180,
 		durationVariation: 20,
@@ -499,17 +502,24 @@ export const EncounterLevel60Dragonkin = PresetUtils.makePresetEncounter(
 );
 
 // The Level 60 encounters with the Arms consumes.
-export const EncounterLevel60Arms = PresetUtils.makePresetEncounter('Level 60 (Arms)', EncounterLevel60.encounter, {
+export const EncounterLevel60Arms = PresetUtils.makePresetEncounter('Arms', EncounterLevel60.encounter, {
 	tanks: [],
 	raidBuffs: DefaultRaidBuffs,
 	debuffs: DefaultDebuffs,
 	buffs: DefaultIndividualBuffs,
 	consumes: ArmsConsumes,
 });
-export const EncounterLevel60ArmsBattleShoutDuty = PresetUtils.makePresetEncounter('Level 60 (Arms, Battle Shout duty)', EncounterLevel60.encounter, {
+export const EncounterLevel60ArmsBattleShoutDuty = PresetUtils.makePresetEncounter('Arms · Battle Shout duty', EncounterLevel60.encounter, {
 	tanks: [],
 	raidBuffs: RaidBuffs.create({ ...DefaultRaidBuffs, battleShout: TristateEffect.TristateEffectMissing }),
 	debuffs: DefaultDebuffs,
+	buffs: DefaultIndividualBuffs,
+	consumes: ArmsConsumes,
+});
+export const EncounterLevel60ArmsSunderDuty = PresetUtils.makePresetEncounter('Arms · Sunder Armor duty', EncounterLevel60.encounter, {
+	tanks: [],
+	raidBuffs: DefaultRaidBuffs,
+	debuffs: Debuffs.create({ ...DefaultDebuffs, sunderArmor: false }),
 	buffs: DefaultIndividualBuffs,
 	consumes: ArmsConsumes,
 });
@@ -602,6 +612,19 @@ export const PresetBuildLevel60FuryShout = PresetUtils.makePresetBuild('Fury · 
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: PresetBuildOptionsFury,
 });
+export const PresetBuildLevel60FurySunder = PresetUtils.makePresetBuild('Fury · Sunder Armor duty', {
+	group: 'Synthetic',
+	tooltip: 'Level 60 dual wield Fury keeping Sunder Armor up. The warrior keeps 5 Sunder Armor stacks up, so the raid has no other Sunder Armor.',
+	gear: GearLevel60Phase1SyntheticFury,
+	talents: TalentsLevel60Fury,
+	rotation: APLLevel60FurySunder,
+	encounter: EncounterLevel60SunderDuty,
+	race: Race.RaceOrc,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: PresetBuildOptionsFury,
+});
 export const PresetBuildLevel60Fury2H = PresetUtils.makePresetBuild('Fury 2H', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 two-hand Fury on the synthetic Phase 1 gear, in a 3 minute raid fight.',
@@ -628,6 +651,19 @@ export const PresetBuildLevel60Fury2HShout = PresetUtils.makePresetBuild('Fury 2
 	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
 	options: PresetBuildOptionsFury,
 });
+export const PresetBuildLevel60Fury2HSunder = PresetUtils.makePresetBuild('Fury 2H · Sunder Armor duty', {
+	group: 'Synthetic',
+	tooltip: 'Level 60 two-hand Fury keeping Sunder Armor up. The warrior keeps 5 Sunder Armor stacks up, so the raid has no other Sunder Armor.',
+	gear: GearLevel60Phase1SyntheticArms,
+	talents: TalentsLevel60Fury2H,
+	rotation: APLLevel60Fury2HSunder,
+	encounter: EncounterLevel60SunderDuty,
+	race: Race.RaceOrc,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: PresetBuildOptionsFury,
+});
 export const PresetBuildLevel60Arms = PresetUtils.makePresetBuild('Arms', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 Arms on the synthetic Phase 1 gear, in a 3 minute raid fight.',
@@ -648,6 +684,19 @@ export const PresetBuildLevel60ArmsShout = PresetUtils.makePresetBuild('Arms · 
 	talents: TalentsLevel60Arms,
 	rotation: APLLevel60ArmsShout,
 	encounter: EncounterLevel60ArmsBattleShoutDuty,
+	race: Race.RaceUndead,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: PresetBuildOptionsArms,
+});
+export const PresetBuildLevel60ArmsSunder = PresetUtils.makePresetBuild('Arms · Sunder Armor duty', {
+	group: 'Synthetic',
+	tooltip: 'Level 60 Arms keeping Sunder Armor up. The warrior keeps 5 Sunder Armor stacks up, so the raid has no other Sunder Armor.',
+	gear: GearLevel60Phase1SyntheticArms,
+	talents: TalentsLevel60Arms,
+	rotation: APLLevel60ArmsSunder,
+	encounter: EncounterLevel60ArmsSunderDuty,
 	race: Race.RaceUndead,
 	level: 60,
 	bonusTalentPoints: 0,

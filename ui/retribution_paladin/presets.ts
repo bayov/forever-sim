@@ -1,4 +1,3 @@
-import { Phase } from '../core/constants/other.js';
 import * as PresetUtils from '../core/preset_utils.js';
 import {
 	AgilityElixir,
@@ -32,16 +31,18 @@ import {
 import { PaladinAura, PaladinOptions as RetributionPaladinOptions, PaladinSeal } from '../core/proto/paladin.js';
 import { SavedTalents } from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
-import APLBasicRetJson from './apls/basic_ret.apl.json';
 import Level60APLJSON from './apls/level60.apl.json';
 import Level60CrusaderDutyAPLJSON from './apls/level60_crusader_duty.apl.json';
 import Level60ShockAPLJSON from './apls/level60_shock.apl.json';
 import Level60ShockCrusaderDutyAPLJSON from './apls/level60_shock_crusader_duty.apl.json';
 import Level60ShockRetAPLJSON from './apls/level60_shock_ret.apl.json';
+import Level60ShockRetCrusaderDutyAPLJSON from './apls/level60_shock_ret_crusader_duty.apl.json';
+import Level60ShockRetWisdomDutyAPLJSON from './apls/level60_shock_ret_wisdom_duty.apl.json';
 import Level60ShockUndeadAPLJSON from './apls/level60_shock_undead.apl.json';
+import Level60ShockWisdomDutyAPLJSON from './apls/level60_shock_wisdom_duty.apl.json';
 import Level60SubHolyAPLJSON from './apls/level60_sub_holy.apl.json';
 import Level60UndeadAPLJSON from './apls/level60_undead.apl.json';
-import BlankGear from './gear_sets/blank.gear.json';
+import Level60WisdomDutyAPLJSON from './apls/level60_wisdom_duty.apl.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
 import Level60Phase1SyntheticCrusaderDutyGearJSON from './gear_sets/level60_phase1_synthetic_crusader_duty.gear.json';
 import Level60Phase1SyntheticUndeadGearJSON from './gear_sets/level60_phase1_synthetic_undead.gear.json';
@@ -53,8 +54,6 @@ import Level60Phase1SyntheticUndeadGearJSON from './gear_sets/level60_phase1_syn
 ///////////////////////////////////////////////////////////////////////////
 //                                 Gear Presets
 ///////////////////////////////////////////////////////////////////////////
-
-export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear, { tooltip: 'No gear equipped.' });
 
 // Synthetic Phase 1 retribution gear, from tools/database/forever_synthetic_items_paladin.go (ids
 // from 992000, not in the game).
@@ -125,7 +124,7 @@ export const GearLevel60Phase1SyntheticCrusaderDuty = PresetUtils.makePresetGear
 	},
 );
 
-export const GearPresets = {};
+export const GearPresets = [GearLevel60Phase1Synthetic, GearLevel60Phase1SyntheticUndead, GearLevel60Phase1SyntheticCrusaderDuty];
 
 export const DefaultGear = GearLevel60Phase1Synthetic;
 
@@ -250,28 +249,43 @@ export const APLLevel60ShockCrusaderDuty = PresetUtils.makePresetAPLRotation(
 		group: 'Synthetic',
 	},
 );
-export const APLBasicRet = PresetUtils.makePresetAPLRotation('Basic Ret', APLBasicRetJson, {
-	tooltip: 'Basic level 60 Retribution rotation.',
-	group: 'Other',
+export const APLLevel60ShockRetCrusaderDuty = PresetUtils.makePresetAPLRotation(
+	'Ret Shock · Judgement of the Crusader duty',
+	Level60ShockRetCrusaderDutyAPLJSON,
+	{
+		tooltip: 'The Ret Shock rotation that also keeps Judgement of the Crusader on the boss for the raid.',
+		group: 'Synthetic',
+	},
+);
+// Judgement of Wisdom duty (standards 23): the same as the Crusader duty, with Seal of Wisdom and its
+// Judgement in place of the Crusader's. The twist duty copy serves the twist and sub Holy builds.
+export const APLLevel60WisdomDuty = PresetUtils.makePresetAPLRotation('Ret sub-Holy · Judgement of Wisdom duty', Level60WisdomDutyAPLJSON, {
+	tooltip: 'Level 60 twist rotation that also keeps Judgement of Wisdom on the boss for the raid.',
+	group: 'Synthetic',
+});
+export const APLLevel60ShockWisdomDuty = PresetUtils.makePresetAPLRotation('Ret Shock (deep Holy) · Judgement of Wisdom duty', Level60ShockWisdomDutyAPLJSON, {
+	tooltip: 'Level 60 Holy Shock rotation that also keeps Judgement of Wisdom on the boss for the raid.',
+	group: 'Synthetic',
+});
+export const APLLevel60ShockRetWisdomDuty = PresetUtils.makePresetAPLRotation('Ret Shock · Judgement of Wisdom duty', Level60ShockRetWisdomDutyAPLJSON, {
+	tooltip: 'The Ret Shock rotation that also keeps Judgement of Wisdom on the boss for the raid.',
+	group: 'Synthetic',
 });
 
-export const APLPresets = {
-	[Phase.Phase1]: [],
-	[Phase.Phase2]: [],
-	[Phase.Phase3]: [],
-	[Phase.Phase4]: [
-		APLLevel60,
-		APLLevel60SubHoly,
-		APLLevel60CrusaderDuty,
-		APLLevel60Shock,
-		APLLevel60ShockCrusaderDuty,
-		APLLevel60ShockRet,
-		APLLevel60Undead,
-		APLLevel60ShockUndead,
-		APLBasicRet,
-	],
-	[Phase.Phase5]: [],
-};
+export const APLPresets = [
+	APLLevel60,
+	APLLevel60SubHoly,
+	APLLevel60CrusaderDuty,
+	APLLevel60WisdomDuty,
+	APLLevel60Shock,
+	APLLevel60ShockCrusaderDuty,
+	APLLevel60ShockWisdomDuty,
+	APLLevel60ShockRet,
+	APLLevel60ShockRetCrusaderDuty,
+	APLLevel60ShockRetWisdomDuty,
+	APLLevel60Undead,
+	APLLevel60ShockUndead,
+];
 
 // Since the regear round (2026-10-23) the class default is Level 60 (sub Holy), the build highest at
 // 180 sec (944.5 against twist's 943.3).
@@ -417,12 +431,7 @@ export const TalentsLevel60SubHolyUndead = PresetUtils.makePresetTalents(
 	{ tooltip: 'Level 60 sub Holy talents for an Undead or Demon boss, with Holy Conduit 2.', group: 'Synthetic' },
 );
 
-export const TalentPresets = {
-	[Phase.Phase1]: [],
-	[Phase.Phase2]: [],
-	[Phase.Phase3]: [],
-	[Phase.Phase4]: [TalentsLevel60, TalentsLevel60SubHoly, TalentsLevel60Shock, TalentsLevel60ShockRet, TalentsLevel60SubHolyUndead],
-};
+export const TalentPresets = [TalentsLevel60, TalentsLevel60SubHoly, TalentsLevel60Shock, TalentsLevel60ShockRet, TalentsLevel60SubHolyUndead];
 
 export const DefaultTalents = TalentsLevel60SubHoly;
 
@@ -566,10 +575,14 @@ export const DefaultDebuffs = Debuffs.create({
 // At level 60 the paladin is an engineer (the Goblin Sapper and the Land Mine) and a
 // blacksmith. Gear another profession makes is only in the presets when it binds on equip, so it
 // can be bought.
+//
+// The distance and the channel clip delay are the ones the DPS Report sims with.
 export const OtherDefaults = {
 	profession1: Profession.Engineering,
 	profession2: Profession.Blacksmithing,
 	race: Race.RaceUndead,
+	distanceFromTarget: 5,
+	channelClipDelay: 50,
 };
 
 ///////////////////////////////////////////////////////////////////////////
@@ -713,7 +726,7 @@ export const PresetBuildLevel60ShockRet = PresetUtils.makePresetBuild('Ret Shock
 // The Level 60 encounter for the Judgement of the Crusader duty presets: the same boss and raid
 // without the raid's Judgement of the Crusader, so the debuff comes only from the paladin's own
 // judgement.
-export const EncounterLevel60CrusaderDuty = PresetUtils.makePresetEncounter('Ret sub-Holy · Judgement of the Crusader duty', EncounterLevel60.encounter!, {
+export const EncounterLevel60CrusaderDuty = PresetUtils.makePresetEncounter('Judgement of the Crusader duty', EncounterLevel60.encounter!, {
 	tanks: [],
 	raidBuffs: DefaultRaidBuffs,
 	debuffs: Debuffs.create({ ...DefaultDebuffs, judgementOfTheCrusader: TristateEffect.TristateEffectMissing }),
@@ -737,9 +750,22 @@ export const EncounterLevel60ShockCrusaderDuty = PresetUtils.makePresetEncounter
 // 969.4 / 969.0 / 959.9 (-12.8 / -8.6 / -5.5), Shock 974.4 / 960.9 / 923.5 (-13.7 / -10.5 /
 // -7.0). Shock pays more: its pull Judgement goes on the Crusader instead of Righteousness and it
 // has to put Seal of Righteousness back up.
-// Level 60 (Crusader duty), the twist build's duty copy, was its own build until 2026-10-24 (user
-// ruling): its talent search with Pursuit of Justice pinned moved to the sub Holy side and tied the
-// sub Holy duty build below, so it went. The sub Holy duty build keeps the twist duty rotation.
+// The twist duty build's talent search with Pursuit of Justice pinned moved to the sub Holy side and
+// tied the sub Holy duty build, so the twist duty build keeps its base build's talents. The sub Holy
+// duty build keeps the twist duty rotation.
+export const PresetBuildLevel60CrusaderDuty = PresetUtils.makePresetBuild('Ret twist · Judgement of the Crusader duty', {
+	group: 'Synthetic',
+	tooltip: 'Level 60 Undead with the twist talents that keeps Judgement of the Crusader on the boss for the raid.',
+	gear: GearLevel60Phase1SyntheticCrusaderDuty,
+	talents: TalentsLevel60,
+	rotation: APLLevel60CrusaderDuty,
+	encounter: EncounterLevel60CrusaderDuty,
+	race: Race.RaceUndead,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: DefaultOptions,
+});
 export const PresetBuildLevel60SubHolyCrusaderDuty = PresetUtils.makePresetBuild('Ret sub-Holy · Judgement of the Crusader duty', {
 	group: 'Synthetic',
 	tooltip: 'Level 60 Undead with the sub Holy talents that keeps Judgement of the Crusader on the boss for the raid.',
@@ -767,6 +793,103 @@ export const PresetBuildLevel60ShockCrusaderDuty = PresetUtils.makePresetBuild('
 	options: RetributionPaladinOptions.create({
 		aura: PaladinAura.ConcentrationAura,
 		primarySeal: PaladinSeal.Righteousness,
+	}),
+});
+export const PresetBuildLevel60ShockRetCrusaderDuty = PresetUtils.makePresetBuild('Ret Shock · Judgement of the Crusader duty', {
+	group: 'Synthetic',
+	tooltip: 'The Ret Shock build that keeps Judgement of the Crusader on the boss for the raid.',
+	gear: GearLevel60Phase1SyntheticCrusaderDuty,
+	talents: TalentsLevel60ShockRet,
+	rotation: APLLevel60ShockRetCrusaderDuty,
+	encounter: EncounterLevel60CrusaderDuty,
+	race: Race.RaceUndead,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: RetributionPaladinOptions.create({
+		aura: PaladinAura.ConcentrationAura,
+		primarySeal: PaladinSeal.Command,
+	}),
+});
+
+// The Level 60 encounter for the Judgement of Wisdom duty presets: the same boss and raid without the
+// raid's Judgement of Wisdom, so the debuff comes only from the paladin's own judgement.
+export const EncounterLevel60WisdomDuty = PresetUtils.makePresetEncounter('Judgement of Wisdom duty', EncounterLevel60.encounter!, {
+	tanks: [],
+	raidBuffs: DefaultRaidBuffs,
+	debuffs: Debuffs.create({ ...DefaultDebuffs, judgementOfWisdom: false }),
+	buffs: DefaultIndividualBuffs,
+	consumes: DefaultConsumes,
+});
+export const EncounterLevel60ShockWisdomDuty = PresetUtils.makePresetEncounter(
+	'Ret Shock (deep Holy) · Judgement of Wisdom duty',
+	EncounterLevel60.encounter!,
+	{
+		tanks: [],
+		raidBuffs: DefaultRaidBuffs,
+		debuffs: Debuffs.create({ ...DefaultDebuffs, judgementOfWisdom: false }),
+		buffs: DefaultIndividualBuffs,
+		consumes: ShockConsumes,
+	},
+);
+// The Judgement of Wisdom duty presets: each base build with its Wisdom duty rotation and the duty
+// encounter, on the base build's gear.
+export const PresetBuildLevel60WisdomDuty = PresetUtils.makePresetBuild('Ret twist · Judgement of Wisdom duty', {
+	group: 'Synthetic',
+	tooltip: 'Level 60 Undead with the twist talents that keeps Judgement of Wisdom on the boss for the raid.',
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60,
+	rotation: APLLevel60WisdomDuty,
+	encounter: EncounterLevel60WisdomDuty,
+	race: Race.RaceUndead,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: DefaultOptions,
+});
+export const PresetBuildLevel60SubHolyWisdomDuty = PresetUtils.makePresetBuild('Ret sub-Holy · Judgement of Wisdom duty', {
+	group: 'Synthetic',
+	tooltip: 'Level 60 Undead with the sub Holy talents that keeps Judgement of Wisdom on the boss for the raid.',
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60SubHoly,
+	rotation: APLLevel60WisdomDuty,
+	encounter: EncounterLevel60WisdomDuty,
+	race: Race.RaceUndead,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: DefaultOptions,
+});
+export const PresetBuildLevel60ShockWisdomDuty = PresetUtils.makePresetBuild('Ret Shock (deep Holy) · Judgement of Wisdom duty', {
+	group: 'Synthetic',
+	tooltip: 'Level 60 Undead Holy Shock build that keeps Judgement of Wisdom on the boss for the raid.',
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60Shock,
+	rotation: APLLevel60ShockWisdomDuty,
+	encounter: EncounterLevel60ShockWisdomDuty,
+	race: Race.RaceUndead,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: RetributionPaladinOptions.create({
+		aura: PaladinAura.ConcentrationAura,
+		primarySeal: PaladinSeal.Righteousness,
+	}),
+});
+export const PresetBuildLevel60ShockRetWisdomDuty = PresetUtils.makePresetBuild('Ret Shock · Judgement of Wisdom duty', {
+	group: 'Synthetic',
+	tooltip: 'The Ret Shock build that keeps Judgement of Wisdom on the boss for the raid.',
+	gear: GearLevel60Phase1Synthetic,
+	talents: TalentsLevel60ShockRet,
+	rotation: APLLevel60ShockRetWisdomDuty,
+	encounter: EncounterLevel60WisdomDuty,
+	race: Race.RaceUndead,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions: [OtherDefaults.profession1, OtherDefaults.profession2],
+	options: RetributionPaladinOptions.create({
+		aura: PaladinAura.ConcentrationAura,
+		primarySeal: PaladinSeal.Command,
 	}),
 });
 

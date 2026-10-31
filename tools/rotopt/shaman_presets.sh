@@ -1,9 +1,8 @@
 #!/bin/sh
 # Regenerates the enhancement shaman presets in ui/enhancement_shaman/apls that come from
 # the shaman_enh template. The level 60 one is the optimizer's best on the Phase 2 gear
-# and the Level 60 talents. The level 30 one is the same template with the knobs the
-# level 30 search settled on (no Maelstrom Weapon yet, Lightning Shield up because the boss
-# is hitting the shaman). The level 20 presets were dropped on 2026-10-05.
+# and the Level 60 talents. The level 20 presets were dropped on 2026-10-05, and the level 30
+# ones on 2026-10-31.
 # The hand written air totem presets are not touched. Run from the repo root with the
 # settings file the optimizer should sim against (a RaidSimRequest or a UI settings
 # export). The rotation itself does not depend on the settings, only the one sanity sim
@@ -106,21 +105,6 @@ gen magma "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,fireNova=1,fireNova
 # Fire Nova after the shocks (fireNova=2) on the Mana Tide build since the raid's Flametongue Totem:
 # +0.7 to +2.5 / +1.1 to +2.2 / +1.1 to +1.8 on two seed sets.
 gen mana_tide "shock=4,airTotem=2,fireTotem=2,fireTotemMinTime=2,fireNova=2,fireNovaMana=20,waterTotem=1,manaTideMana=20,earthShockFlameShockLeft=1,prepullTotems=1,rageHoldForTrinket=1,totemMinTime=20,shield=1,prepullShield=2,prepullFireLead=1" -level 60
-# Level 30 with 5 extra talent points (26 in all), tuned for the 120 sec Level 30
-# encounter. Flame Shock when its DoT is down and Earth Shock otherwise (shock=4), because
-# Earth Shock spends the Stormstrike mark (+20%). Windfury Weapon from level 30 and Mana Spring Totem from 26, and shocks only
-# above 10% mana so the pool lasts the fight. Flametongue Totem (level 28) in the fire
-# slot, and Fire Nova after the shocks only while the shaman is above 80% mana. Fire Nova
-# at any mana was 9.6 behind at 120 sec, because the shocks then run dry.
-gen level30p5 "airTotem=0,strengthOfEarth=1,fireTotemMinTime=10,shield=1,shock=4,shockMana=10,waterTotem=1,maelstromStacks=0,fireTotem=3,fireNova=2,fireNovaMana=80,prepullTotems=1" -level 30 -bonus-talents 5
-# Level 30 PvP, with the PvP talents and a 60 sec fight against a level 30 player (the
-# "Level 30 PvP" encounter: PvP mode, 30% of the fight out of melee range at the time, 70%
-# since 2026-10-06). The same knobs
-# as level30p5, but Fire Nova at any mana (+6.3 at 60 sec, the pool lasts a minute). A
-# Lightning Bolt hard cast while out of melee range (lightningBolt=2) was 28 behind,
-# because the 3.5 sec cast runs on after the shaman is back in range and holds the swing.
-# At 70% out of melee range (2026-10-07) a knob search from these knobs kept every one.
-gen level30_pvp "airTotem=0,strengthOfEarth=1,fireTotemMinTime=10,shield=1,shock=4,shockMana=10,waterTotem=1,maelstromStacks=0,fireTotem=3,fireNova=2,fireNovaMana=0" -level 30 -bonus-talents 5
 
 # The elemental presets in ui/elemental_shaman/apls, from the shaman_ele template. Mana Spring and
 # Searing Totem, Flame Shock when its DoT is down, Lava Burst on cooldown unless Flame Shock runs

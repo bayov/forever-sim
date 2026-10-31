@@ -41,21 +41,16 @@ import Level60DemonologyDutyCurseAPL from './apls/level60_demonology_duty_curse.
 import Level60DestructionDutyCurseAPL from './apls/level60_destruction_duty_curse.apl.json';
 import Level60AfflictionDutyCurseAPL from './apls/level60_affliction_duty_curse.apl.json';
 import Level60DestructionFireDutyCurseAPL from './apls/level60_destruction_fire_duty_curse.apl.json';
-import BasicRotation from './apls/rotation.apl.json';
+import Level60DemonologyDutyRecklessnessAPL from './apls/level60_demonology_duty_recklessness.apl.json';
+import Level60DestructionDutyRecklessnessAPL from './apls/level60_destruction_duty_recklessness.apl.json';
+import Level60AfflictionDutyRecklessnessAPL from './apls/level60_affliction_duty_recklessness.apl.json';
+import Level60DestructionFireDutyRecklessnessAPL from './apls/level60_destruction_fire_duty_recklessness.apl.json';
 // gear
-import BlankGear from './gear_sets/blank.gear.json';
 import Level60Phase1SyntheticGearJSON from './gear_sets/level60_phase1_synthetic.gear.json';
-import Level60Phase1SyntheticDemonologyGearJSON from './gear_sets/level60_phase1_synthetic_demonology.gear.json';
-import MCGear from './gear_sets/mc.gear.json';
-import PreBisGear from './gear_sets/prebis.gear.json';
 
 ///////////////////////////////////////////////////////////////////////////
 //                                 Gear Presets
 ///////////////////////////////////////////////////////////////////////////
-
-export const GearBlank = PresetUtils.makePresetGear('Blank', BlankGear);
-export const GearPreBis = PresetUtils.makePresetGear('Pre-BIS', PreBisGear);
-export const GearMC = PresetUtils.makePresetGear('MC', MCGear);
 
 // Forever's level 60 gear is not tuned yet and Molten Core has no Forever data, so the Level 60
 // presets wear synthetic items (tools/database/forever_synthetic_items_warlock.go): the Era Phase 1
@@ -83,22 +78,7 @@ export const GearLevel60Phase1Synthetic = PresetUtils.makePresetGear('Demonology
 	tooltip: 'A guess at Phase 1 BiS under Forever, made of synthetic items that are not in the game. Hit capped with Suppression 5/5.',
 	group: 'Synthetic',
 });
-// The old Demonology set, for the build with one point of Suppression: four pieces (the chest, legs, waist
-// and staff) swapped for hit variants (14% hit from gear) at the same budget, in Demonology's own stat
-// mix: Stamina 13.5%, Intellect 12.9%, Spirit 9.9%, spell power 36.4%, crit 12.1%, hit 15.1%. Since
-// 2026-10-24 Demonology takes Suppression 5/5 (standards 26, a threat talent it must take), which caps
-// it on the shared set; this set would put it 4% over the cap (1052.0 against 1065.1 at 180 sec).
-// No Level 60 preset wears it.
-export const GearLevel60Phase1SyntheticDemonology = PresetUtils.makePresetGear(
-	'Level 60 Phase 1 Synthetic Demonology',
-	Level60Phase1SyntheticDemonologyGearJSON,
-	{
-		tooltip: 'The synthetic Phase 1 set with four hit pieces, hit capped for a Demonology build with one point of Suppression.',
-		group: 'Other',
-	},
-);
-
-export const GearPresets = [GearLevel60Phase1Synthetic, GearLevel60Phase1SyntheticDemonology, GearBlank, GearPreBis, GearMC];
+export const GearPresets = [GearLevel60Phase1Synthetic];
 
 export const DefaultGear = GearLevel60Phase1Synthetic;
 
@@ -146,10 +126,9 @@ export const RotationLevel60DestructionFire = PresetUtils.makePresetAPLRotation(
 	group: 'Synthetic',
 	tooltip: 'The Level 60 rotation with Incinerate as the filler, for the Destruction fire talents.',
 });
-// The raid curse duty rotations (standards 23): the base rotation plus Curse of the Elements, which
-// this warlock keeps up for the raid (put up right after the opener and recast before it drops). A
-// warlock holds one curse duty and every curse costs the same GCDs, so one duty preset covers them.
-// Under Forever the curse has its own slot, so the bane stays.
+// The raid curse duty rotations (standards 23): the base rotation plus Curse of the Elements or Curse of
+// Recklessness, which this warlock keeps up for the raid (put up right after the opener and recast
+// before it drops). Under Forever the curse has its own slot, so the bane stays.
 export const RotationLevel60DemonologyDutyCurse = PresetUtils.makePresetAPLRotation('Demonology · Curse of the Elements duty', Level60DemonologyDutyCurseAPL, {
 	group: 'Synthetic',
 	tooltip: 'The Demonology rotation with Curse of the Elements kept up for the raid.',
@@ -174,18 +153,52 @@ export const RotationLevel60DestructionFireDutyCurse = PresetUtils.makePresetAPL
 		tooltip: 'The Destruction Fire rotation with Curse of the Elements kept up for the raid.',
 	},
 );
-export const RotationBasic = PresetUtils.makePresetAPLRotation('Basic', BasicRotation);
+export const RotationLevel60DemonologyDutyRecklessness = PresetUtils.makePresetAPLRotation(
+	'Demonology · Curse of Recklessness duty',
+	Level60DemonologyDutyRecklessnessAPL,
+	{
+		group: 'Synthetic',
+		tooltip: 'The Demonology rotation with Curse of Recklessness kept up for the raid.',
+	},
+);
+export const RotationLevel60DestructionDutyRecklessness = PresetUtils.makePresetAPLRotation(
+	'Destruction · Curse of Recklessness duty',
+	Level60DestructionDutyRecklessnessAPL,
+	{
+		group: 'Synthetic',
+		tooltip: 'The Destruction rotation with Curse of Recklessness kept up for the raid.',
+	},
+);
+export const RotationLevel60AfflictionDutyRecklessness = PresetUtils.makePresetAPLRotation(
+	'Affliction · Curse of Recklessness duty',
+	Level60AfflictionDutyRecklessnessAPL,
+	{
+		group: 'Synthetic',
+		tooltip: 'The Affliction rotation with Curse of Recklessness kept up for the raid.',
+	},
+);
+export const RotationLevel60DestructionFireDutyRecklessness = PresetUtils.makePresetAPLRotation(
+	'Destruction Fire · Curse of Recklessness duty',
+	Level60DestructionFireDutyRecklessnessAPL,
+	{
+		group: 'Synthetic',
+		tooltip: 'The Destruction Fire rotation with Curse of Recklessness kept up for the raid.',
+	},
+);
 
 export const APLPresets = [
 	RotationLevel60Demonology,
 	RotationLevel60DemonologyDutyCurse,
-	RotationLevel60Destruction,
-	RotationLevel60DestructionDutyCurse,
+	RotationLevel60DemonologyDutyRecklessness,
 	RotationLevel60Affliction,
 	RotationLevel60AfflictionDutyCurse,
+	RotationLevel60AfflictionDutyRecklessness,
+	RotationLevel60Destruction,
+	RotationLevel60DestructionDutyCurse,
+	RotationLevel60DestructionDutyRecklessness,
 	RotationLevel60DestructionFire,
 	RotationLevel60DestructionFireDutyCurse,
-	RotationBasic,
+	RotationLevel60DestructionFireDutyRecklessness,
 ];
 
 export const DefaultAPL = RotationLevel60Demonology;
@@ -379,12 +392,13 @@ export const DefaultDebuffs = Debuffs.create({
 	thunderClap: TristateEffect.TristateEffectImproved,
 });
 
-// Engineering for the Goblin Sapper in the consumes, Tailoring for the cloth.
+// Engineering for the Goblin Sapper in the consumes, Tailoring for the cloth. The distance and channel
+// clip delay are the DPS Report's (tools/rotopt/mksettings).
 export const OtherDefaults = {
-	distanceFromTarget: 25,
+	distanceFromTarget: 5,
 	profession1: Profession.Engineering,
 	profession2: Profession.Tailoring,
-	channelClipDelay: 150,
+	channelClipDelay: 50,
 	race: Race.RaceOrc,
 };
 
@@ -430,9 +444,13 @@ const level60Encounter = (name: string, debuffs: Debuffs) =>
 export const EncounterLevel60 = level60Encounter('Generic boss', DefaultDebuffs);
 // The curse duty presets' encounter: the raid's Curse of the Elements is off, the warlock on duty
 // brings it; the raid's other curses and Faerie Fire stay on (other players' duties).
-export const EncounterLevel60CurseDuty = level60Encounter(
-	'Demonology · Curse of the Elements duty',
-	Debuffs.create({ ...DefaultDebuffs, curseOfElements: false }),
+export const EncounterLevel60CurseDuty = level60Encounter('Curse of the Elements duty', Debuffs.create({ ...DefaultDebuffs, curseOfElements: false }));
+// The Curse of Recklessness duty presets' encounter: the warlock keeps Recklessness up in place of a
+// druid's Faerie Fire. Under Forever the two share the minor armor slot (standards 20), so the raid's
+// Faerie Fire and Curse of Recklessness are both off, and the armor comes only from our curse.
+export const EncounterLevel60RecklessnessDuty = level60Encounter(
+	'Curse of Recklessness duty',
+	Debuffs.create({ ...DefaultDebuffs, curseOfRecklessness: false, faerieFire: false }),
 );
 
 // The Level 60 builds at 120 / 180 / 300 sec (20000 iterations, seed 1, 2026-10-23, the natural flask
@@ -512,31 +530,48 @@ export const PresetBuildLevel60DestructionFire = PresetUtils.makePresetBuild('De
 	options: PresetBuildOptionsFire,
 });
 
-// The raid curse duty presets (standards 23): each build with the warlock keeping Curse of the
-// Elements up for the raid itself, the raid's own switched off. It is Elements, not Recklessness:
-// under Forever Curse of Recklessness shares Faerie Fire's minor armor slot, so with the raid's
-// Faerie Fire up it never lands.
-const curseDutyBuild = (base: PresetUtils.PresetBuild, rotation: PresetUtils.PresetRotation) => {
+// The raid curse duty presets (standards 23): each build with the warlock keeping a curse up for the
+// raid itself, with the raid's own switched off. Curse of the Elements is the usual duty. Curse of
+// Recklessness takes Faerie Fire's place, because under Forever the two share the minor armor slot.
+const curseDutyBuild = (
+	base: PresetUtils.PresetBuild,
+	rotation: PresetUtils.PresetRotation,
+	curse = 'Curse of the Elements',
+	encounter = EncounterLevel60CurseDuty,
+) => {
 	const { name, ...options } = base;
-	return PresetUtils.makePresetBuild(`${name} · Curse of the Elements duty`, {
+	return PresetUtils.makePresetBuild(`${name} · ${curse} duty`, {
 		...options,
-		tooltip: `${options.tooltip} On curse duty for the raid, keeping Curse of the Elements up itself.`,
+		tooltip: `${options.tooltip} On curse duty for the raid, keeping ${curse} up itself.`,
 		rotation,
-		encounter: EncounterLevel60CurseDuty,
+		encounter,
 	});
 };
+const recklessnessDutyBuild = (base: PresetUtils.PresetBuild, rotation: PresetUtils.PresetRotation) =>
+	curseDutyBuild(base, rotation, 'Curse of Recklessness', EncounterLevel60RecklessnessDuty);
 export const PresetBuildLevel60DemonologyDutyCurse = curseDutyBuild(PresetBuildLevel60Demonology, RotationLevel60DemonologyDutyCurse);
 export const PresetBuildLevel60DestructionDutyCurse = curseDutyBuild(PresetBuildLevel60Destruction, RotationLevel60DestructionDutyCurse);
 export const PresetBuildLevel60AfflictionDutyCurse = curseDutyBuild(PresetBuildLevel60Affliction, RotationLevel60AfflictionDutyCurse);
 export const PresetBuildLevel60DestructionFireDutyCurse = curseDutyBuild(PresetBuildLevel60DestructionFire, RotationLevel60DestructionFireDutyCurse);
+export const PresetBuildLevel60DemonologyDutyRecklessness = recklessnessDutyBuild(PresetBuildLevel60Demonology, RotationLevel60DemonologyDutyRecklessness);
+export const PresetBuildLevel60DestructionDutyRecklessness = recklessnessDutyBuild(PresetBuildLevel60Destruction, RotationLevel60DestructionDutyRecklessness);
+export const PresetBuildLevel60AfflictionDutyRecklessness = recklessnessDutyBuild(PresetBuildLevel60Affliction, RotationLevel60AfflictionDutyRecklessness);
+export const PresetBuildLevel60DestructionFireDutyRecklessness = recklessnessDutyBuild(
+	PresetBuildLevel60DestructionFire,
+	RotationLevel60DestructionFireDutyRecklessness,
+);
 
 export const PresetBuilds = [
 	PresetBuildLevel60Demonology,
 	PresetBuildLevel60DemonologyDutyCurse,
-	PresetBuildLevel60Destruction,
-	PresetBuildLevel60DestructionDutyCurse,
+	PresetBuildLevel60DemonologyDutyRecklessness,
 	PresetBuildLevel60Affliction,
 	PresetBuildLevel60AfflictionDutyCurse,
+	PresetBuildLevel60AfflictionDutyRecklessness,
+	PresetBuildLevel60Destruction,
+	PresetBuildLevel60DestructionDutyCurse,
+	PresetBuildLevel60DestructionDutyRecklessness,
 	PresetBuildLevel60DestructionFire,
 	PresetBuildLevel60DestructionFireDutyCurse,
+	PresetBuildLevel60DestructionFireDutyRecklessness,
 ];

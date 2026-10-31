@@ -1,7 +1,6 @@
 import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs';
 import * as ConsumablesInputs from '../core/components/inputs/consumables.js';
 import * as OtherInputs from '../core/components/other_inputs.js';
-import { Phase } from '../core/constants/other.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 import { Player } from '../core/player.js';
 import { Class, Faction, ItemSlot, Race, Spec, Stat } from '../core/proto/common.js';
@@ -76,6 +75,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecBalanceDruid, {
 		// Default spec-specific settings.
 		specOptions: Presets.DefaultOptions,
 		other: Presets.OtherDefaults,
+		encounter: Presets.EncounterLevel60.encounter,
 		// Default raid/party buffs settings.
 		raidBuffs: Presets.DefaultRaidBuffs,
 		partyBuffs: Presets.DefaultPartyBuffs,
@@ -111,9 +111,9 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecBalanceDruid, {
 
 	presets: {
 		builds: [Presets.PresetBuildLevel60, Presets.PresetBuildLevel60FaerieFire, Presets.PresetBuildLevel60Wrath, Presets.PresetBuildLevel60WrathFaerieFire],
-		talents: [...Presets.TalentPresets[Phase.Phase1]],
-		rotations: [...Presets.APLPresets[Phase.Phase1]],
-		gear: [...Presets.GearPresets[Phase.Phase1], ...Presets.GearPresets[Phase.Phase5]],
+		talents: Presets.TalentPresets,
+		rotations: Presets.APLPresets,
+		gear: Presets.GearPresets,
 	},
 
 	autoRotation: player => {

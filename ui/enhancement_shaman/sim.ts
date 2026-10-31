@@ -2,7 +2,6 @@ import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs';
 import * as ConsumesInputs from '../core/components/inputs/consumables';
 import { migrateShamanImbue } from '../core/components/inputs/shaman_imbues';
 import * as OtherInputs from '../core/components/other_inputs.js';
-import { Phase } from '../core/constants/other.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 import { Player } from '../core/player.js';
 import { APLRotation } from '../core/proto/apl.js';
@@ -101,6 +100,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 		// Default spec-specific settings.
 		specOptions: Presets.DefaultOptions,
 		other: Presets.OtherDefaults,
+		encounter: Presets.EncounterLevel60.encounter,
 		// Default raid/party buffs settings.
 		raidBuffs: Presets.DefaultRaidBuffs,
 		partyBuffs: PartyBuffs.create({}),
@@ -138,30 +138,9 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecEnhancementShaman, {
 			Presets.PresetBuildLeveling1to60,
 		],
 		epWeights: Presets.EPPresets,
-		talents: [
-			...Presets.TalentPresets[Phase.Phase6],
-			...Presets.TalentPresets[Phase.Phase5],
-			...Presets.TalentPresets[Phase.Phase4],
-			...Presets.TalentPresets[Phase.Phase3],
-			...Presets.TalentPresets[Phase.Phase2],
-			...Presets.TalentPresets[Phase.Phase1],
-		],
-		rotations: [
-			...Presets.APLPresets[Phase.Phase6],
-			...Presets.APLPresets[Phase.Phase5],
-			...Presets.APLPresets[Phase.Phase4],
-			...Presets.APLPresets[Phase.Phase3],
-			...Presets.APLPresets[Phase.Phase2],
-			...Presets.APLPresets[Phase.Phase1],
-		],
-		gear: [
-			...Presets.GearPresets[Phase.Phase6],
-			...Presets.GearPresets[Phase.Phase5],
-			...Presets.GearPresets[Phase.Phase4],
-			...Presets.GearPresets[Phase.Phase3],
-			...Presets.GearPresets[Phase.Phase2],
-			...Presets.GearPresets[Phase.Phase1],
-		],
+		talents: Presets.TalentPresets,
+		rotations: Presets.APLPresets,
+		gear: Presets.GearPresets,
 	},
 
 	autoRotation: (): APLRotation => {

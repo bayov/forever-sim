@@ -105,6 +105,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 		// Default spec-specific settings.
 		specOptions: Presets.DefaultOptions,
 		other: Presets.OtherDefaults,
+		encounter: Presets.EncounterLevel60.encounter,
 		// Default raid/party buffs settings.
 		raidBuffs: Presets.DefaultRaidBuffs,
 		partyBuffs: PartyBuffs.create({}),
@@ -143,7 +144,18 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecHunter, {
 	},
 
 	presets: {
-		builds: [Presets.PresetBuildBeastMastery, Presets.PresetBuildMarksmanship, Presets.PresetBuildLoneWolf, Presets.PresetBuildSurvival],
+		builds: [
+			Presets.PresetBuildBeastMastery,
+			Presets.PresetBuildBeastMasteryWolf,
+			Presets.PresetBuildBeastMasteryTallstrider,
+			Presets.PresetBuildMarksmanship,
+			Presets.PresetBuildMarksmanshipWolf,
+			Presets.PresetBuildMarksmanshipTallstrider,
+			Presets.PresetBuildLoneWolf,
+			Presets.PresetBuildSurvival,
+			Presets.PresetBuildSurvivalWolf,
+			Presets.PresetBuildSurvivalTallstrider,
+		],
 		// Preset talents that the user can quickly select.
 		talents: [...Presets.TalentPresets[Phase.Phase1]],
 		// Preset rotations that the user can quickly select.

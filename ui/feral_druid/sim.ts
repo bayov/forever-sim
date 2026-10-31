@@ -1,6 +1,5 @@
 import * as BuffDebuffInputs from '../core/components/inputs/buffs_debuffs';
 import * as OtherInputs from '../core/components/other_inputs.js';
-import { Phase } from '../core/constants/other.js';
 import { IndividualSimUI, registerSpecConfig } from '../core/individual_sim_ui.js';
 import { Player } from '../core/player.js';
 import { APLRotation_Type as APLRotationType } from '../core/proto/apl.js';
@@ -94,6 +93,7 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 		// Default spec-specific settings.
 		specOptions: Presets.DefaultOptions,
 		other: Presets.OtherDefaults,
+		encounter: Presets.EncounterLevel60.encounter,
 		// Default raid/party buffs settings.
 		raidBuffs: Presets.DefaultRaidBuffs,
 		partyBuffs: PartyBuffs.create({}),
@@ -136,10 +136,10 @@ const SPEC_CONFIG = registerSpecConfig(Spec.SpecFeralDruid, {
 	presets: {
 		builds: [Presets.PresetBuildLevel60, Presets.PresetBuildLevel60FaerieFire],
 		// Preset talents that the user can quickly select.
-		talents: [...Presets.TalentPresets[Phase.Phase1]],
-		rotations: [...Presets.APLPresets[Phase.Phase1], ...Presets.APLPresets[Phase.Phase4]],
+		talents: Presets.TalentPresets,
+		rotations: Presets.APLPresets,
 		// Preset gear configurations that the user can quickly select.
-		gear: [...Presets.GearPresets[Phase.Phase1], ...Presets.GearPresets[Phase.Phase4]],
+		gear: Presets.GearPresets,
 	},
 
 	autoRotation: player => {

@@ -36,16 +36,11 @@ import {
 import { SavedTalents } from '../core/proto/ui.js';
 import { Stats } from '../core/proto_utils/stats.js';
 import BeastMasteryAPL from './apls/bm.apl.json';
-import BeastMasteryTurretAPL from './apls/bm_turret.apl.json';
 import LoneWolfAPL from './apls/lw.apl.json';
-import LoneWolfTurretAPL from './apls/lw_turret.apl.json';
 import MarksmanshipAPL from './apls/mm.apl.json';
-import MarksmanshipTurretAPL from './apls/mm_turret.apl.json';
 import SurvivalAPL from './apls/sv.apl.json';
 import Level60RangedGear from './gear_sets/level60_phase1_synthetic_ranged.gear.json';
 import Level60SurvivalGear from './gear_sets/level60_phase1_synthetic_survival.gear.json';
-import P0BISGear from './gear_sets/p0.bis.gear.json';
-import P1BISGear from './gear_sets/p1.bis.gear.json';
 
 // Preset options for this spec.
 // Eventually we will import these values for the raid sim too, so its good to
@@ -53,9 +48,6 @@ import P1BISGear from './gear_sets/p1.bis.gear.json';
 ///////////////////////////////////////////////////////////////////////////
 //                                 Gear Presets
 ///////////////////////////////////////////////////////////////////////////
-
-export const GearP0BIS = PresetUtils.makePresetGear('Pre-BiS', P0BISGear);
-export const GearP1BIS = PresetUtils.makePresetGear('P1 BiS', P1BISGear);
 
 // A guess at Phase 1 BiS under Forever, made of the synthetic items in
 // tools/database/forever_synthetic_items_hunter.go (ids from 993000, not in the game).
@@ -101,7 +93,7 @@ export const GearLevel60Survival = PresetUtils.makePresetGear('Survival', Level6
 });
 
 export const GearPresets = {
-	[Phase.Phase1]: [GearLevel60Ranged, GearLevel60Survival, GearP0BIS, GearP1BIS],
+	[Phase.Phase1]: [GearLevel60Ranged, GearLevel60Survival],
 };
 
 export const DefaultGear = GearLevel60Ranged;
@@ -128,7 +120,7 @@ export const DefaultGear = GearLevel60Ranged;
 // shot cooldowns stay down meanwhile (Beast Mastery +9.5 over standing at range). Marksmanship and
 // Lone Wolf weave only while the mana covers 25 a second of the fight left: weaving wins a short
 // fight and costs a long one its mana (2026-10-23; at range Marksmanship is 4.7 behind at 120 sec,
-// 1.3 and 1.8 ahead at 180 and 300). The turret rotations stand at range.
+// 1.3 and 1.8 ahead at 180 and 300).
 // Every rotation keeps up the hunter's own Hunter's Mark (standards 23, user ruling 2026-10-25: Mark
 // duty is assumed, the raid's mark is off): 1.5 sec before the pull (it doesn't pull; user ruling
 // 2026-10-15) and again before its 2 min run out, never held back for the hunter's own damage. Against
@@ -155,18 +147,6 @@ export const APLLoneWolf = PresetUtils.makePresetAPLRotation('Lone Wolf', LoneWo
 	tooltip: 'The Marksmanship rotation, for no pet.' + manaWeaveTooltip + markTooltip,
 	group: 'Synthetic',
 });
-export const APLBeastMasteryTurret = PresetUtils.makePresetAPLRotation('Beast Mastery (turret)', BeastMasteryTurretAPL, {
-	tooltip: 'The Beast Mastery rotation, standing at 25 yd.' + markTooltip,
-	group: 'Other',
-});
-export const APLMarksmanshipTurret = PresetUtils.makePresetAPLRotation('Marksmanship (turret)', MarksmanshipTurretAPL, {
-	tooltip: 'The Marksmanship rotation, standing at 25 yd.' + markTooltip,
-	group: 'Other',
-});
-export const APLLoneWolfTurret = PresetUtils.makePresetAPLRotation('Lone Wolf (turret)', LoneWolfTurretAPL, {
-	tooltip: 'The Lone Wolf rotation, standing at 25 yd.' + markTooltip,
-	group: 'Other',
-});
 // Melee: Mongoose Bite whenever Expose Prey opens it, Strider Kick and Immolation Trap on
 // cooldown (the trap ahead of Raptor Strike since it scales with ranged attack power,
 // hunter_trap_ap), Raptor Strike, Lacerate kept up and Wing Clip in every free global cooldown,
@@ -180,7 +160,7 @@ export const APLSurvival = PresetUtils.makePresetAPLRotation('Survival', Surviva
 });
 
 export const APLPresets = {
-	[Phase.Phase1]: [APLBeastMastery, APLMarksmanship, APLLoneWolf, APLSurvival, APLBeastMasteryTurret, APLMarksmanshipTurret, APLLoneWolfTurret],
+	[Phase.Phase1]: [APLBeastMastery, APLMarksmanship, APLLoneWolf, APLSurvival],
 };
 
 export const DefaultAPL = APLBeastMastery;
@@ -271,6 +251,19 @@ export const DefaultOptions = HunterOptions.create({
 export const LoneWolfOptions = HunterOptions.create({
 	...DefaultOptions,
 	petType: PetType.PetNone,
+});
+
+// The pets a hunter brings for the raid in place of the cat: a wolf for Furious Howl, which stands in
+// for Battle Shout when no warrior shouts, and a Tallstrider for Dust Cloud, which fills the minor
+// armor slot when no druid or warlock does. Both have Bite and no Claw, so they do less damage than
+// the cat. The builds keep the full raid, so they show what the pet costs the hunter.
+export const WolfOptions = HunterOptions.create({
+	...DefaultOptions,
+	petType: PetType.Wolf,
+});
+export const TallstriderOptions = HunterOptions.create({
+	...DefaultOptions,
+	petType: PetType.Tallstrider,
 });
 
 // The level 60 consumables, tried one at a time on the Beast Mastery, Lone Wolf and Survival builds
@@ -397,6 +390,7 @@ export const DefaultDebuffs = Debuffs.create({
 // The synthetic gear is fixed, so no gear needs a profession.
 export const OtherDefaults = {
 	distanceFromTarget: 25,
+	channelClipDelay: 50,
 	profession1: Profession.Engineering,
 	profession2: Profession.Alchemy,
 	race: Race.RaceOrc,
@@ -431,14 +425,14 @@ const level60Boss = Encounter.create({
 
 // The level 60 raid setup: the generic level 60 boss (level 63, 3731 armor, type Unknown) in a 3
 // minute fight, and the raid and consumes above. The builds were searched at 180 sec.
-export const EncounterLevel60 = PresetUtils.makePresetEncounter('Level 60', level60Boss, {
+export const EncounterLevel60 = PresetUtils.makePresetEncounter('Generic boss', level60Boss, {
 	tanks: [],
 	raidBuffs: DefaultRaidBuffs,
 	debuffs: DefaultDebuffs,
 	buffs: DefaultIndividualBuffs,
 	consumes: DefaultConsumes,
 });
-export const EncounterLevel60Melee = PresetUtils.makePresetEncounter('Level 60 Melee', level60Boss, {
+export const EncounterLevel60Melee = PresetUtils.makePresetEncounter('Survival', level60Boss, {
 	tanks: [],
 	raidBuffs: SurvivalRaidBuffs,
 	debuffs: DefaultDebuffs,
@@ -483,8 +477,36 @@ export const PresetBuildBeastMastery = PresetUtils.makePresetBuild('Beast Master
 	rotation: APLBeastMastery,
 	encounter: EncounterLevel60,
 	race: Race.RaceOrc,
+	level: 60,
+	bonusTalentPoints: 0,
 	professions,
 	options: DefaultOptions,
+});
+export const PresetBuildBeastMasteryWolf = PresetUtils.makePresetBuild('Beast Mastery · Wolf', {
+	group: 'Synthetic',
+	tooltip: "Beast Mastery with a wolf. The wolf's Furious Howl stands in for Battle Shout when no warrior shouts.",
+	gear: GearLevel60Ranged,
+	talents: TalentsBeastMastery,
+	rotation: APLBeastMastery,
+	encounter: EncounterLevel60,
+	race: Race.RaceOrc,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions,
+	options: WolfOptions,
+});
+export const PresetBuildBeastMasteryTallstrider = PresetUtils.makePresetBuild('Beast Mastery · Tallstrider', {
+	group: 'Synthetic',
+	tooltip: "Beast Mastery with a Tallstrider. The Tallstrider's Dust Cloud fills the minor armor slot when no druid or warlock does.",
+	gear: GearLevel60Ranged,
+	talents: TalentsBeastMastery,
+	rotation: APLBeastMastery,
+	encounter: EncounterLevel60,
+	race: Race.RaceOrc,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions,
+	options: TallstriderOptions,
 });
 // 1157.9 / 1139.4 / 1109.0 at 120 / 180 / 300 sec (20000 iterations, seed 1; seed 1000003 1157.6 /
 // 1139.2 / 1109.0; 2026-10-25), 2.2 behind Beast Mastery at 180 sec, on a Human with Multi-Shot on the
@@ -500,8 +522,36 @@ export const PresetBuildMarksmanship = PresetUtils.makePresetBuild('Marksmanship
 	rotation: APLMarksmanship,
 	encounter: EncounterLevel60,
 	race: Race.RaceOrc,
+	level: 60,
+	bonusTalentPoints: 0,
 	professions,
 	options: DefaultOptions,
+});
+export const PresetBuildMarksmanshipWolf = PresetUtils.makePresetBuild('Marksmanship · Wolf', {
+	group: 'Synthetic',
+	tooltip: "Marksmanship with a wolf. The wolf's Furious Howl stands in for Battle Shout when no warrior shouts.",
+	gear: GearLevel60Ranged,
+	talents: TalentsMarksmanship,
+	rotation: APLMarksmanship,
+	encounter: EncounterLevel60,
+	race: Race.RaceOrc,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions,
+	options: WolfOptions,
+});
+export const PresetBuildMarksmanshipTallstrider = PresetUtils.makePresetBuild('Marksmanship · Tallstrider', {
+	group: 'Synthetic',
+	tooltip: "Marksmanship with a Tallstrider. The Tallstrider's Dust Cloud fills the minor armor slot when no druid or warlock does.",
+	gear: GearLevel60Ranged,
+	talents: TalentsMarksmanship,
+	rotation: APLMarksmanship,
+	encounter: EncounterLevel60,
+	race: Race.RaceOrc,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions,
+	options: TallstriderOptions,
 });
 // 1142.8 / 1127.0 / 1089.9 at 120 / 180 / 300 sec (20000 iterations, seed 1; seed 1000003 1141.6 /
 // 1127.6 / 1090.1; 2026-10-25), with Multi-Shot on the shared cooldown (1141.1 / 1125.3 / 1088.7 with
@@ -517,6 +567,8 @@ export const PresetBuildLoneWolf = PresetUtils.makePresetBuild('Lone Wolf', {
 	rotation: APLLoneWolf,
 	encounter: EncounterLevel60,
 	race: Race.RaceNightElf,
+	level: 60,
+	bonusTalentPoints: 0,
 	professions,
 	options: LoneWolfOptions,
 });
@@ -532,6 +584,34 @@ export const PresetBuildSurvival = PresetUtils.makePresetBuild('Survival', {
 	rotation: APLSurvival,
 	encounter: EncounterLevel60Melee,
 	race: Race.RaceOrc,
+	level: 60,
+	bonusTalentPoints: 0,
 	professions,
 	options: DefaultOptions,
+});
+export const PresetBuildSurvivalWolf = PresetUtils.makePresetBuild('Survival · Wolf', {
+	group: 'Synthetic',
+	tooltip: "Survival with a wolf. The wolf's Furious Howl stands in for Battle Shout when no warrior shouts.",
+	gear: GearLevel60Survival,
+	talents: TalentsSurvival,
+	rotation: APLSurvival,
+	encounter: EncounterLevel60Melee,
+	race: Race.RaceOrc,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions,
+	options: WolfOptions,
+});
+export const PresetBuildSurvivalTallstrider = PresetUtils.makePresetBuild('Survival · Tallstrider', {
+	group: 'Synthetic',
+	tooltip: "Survival with a Tallstrider. The Tallstrider's Dust Cloud fills the minor armor slot when no druid or warlock does.",
+	gear: GearLevel60Survival,
+	talents: TalentsSurvival,
+	rotation: APLSurvival,
+	encounter: EncounterLevel60Melee,
+	race: Race.RaceOrc,
+	level: 60,
+	bonusTalentPoints: 0,
+	professions,
+	options: TallstriderOptions,
 });
