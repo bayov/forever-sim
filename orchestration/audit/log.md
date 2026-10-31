@@ -120,3 +120,9 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-10-30 19:12 | consumables | pass 57 | master fb1485888 | quiet | imbue-fit and presets agree, no findings
 2026-10-30 19:12 | mechanics | pass 51 | master fb1485888 | 1 new finding | wf_totem_icd/extra_attack_swing cards and standards.md contradict published numbers (medium)
 2026-10-30 19:12 | fairness | pass 16 | master fb1485888 | 1 new finding | Frost race: Undead now beats High Order (low)
+2026-10-31 13:01 | results | pass 65 | master e05fd732e | quiet | 77 builds match published; 14 moves all explained by e1fcd57b7 fixes
+2026-10-31 13:01 | rotations | pass 41 | master e05fd732e | quiet | APL changes are last pass's three fixes; new 3000it baseline
+2026-10-31 13:01 | gear | pass 48 | master e05fd732e | quiet | no gear content changed; demonology warlock set deleted
+2026-10-31 13:01 | consumables | pass 58 | master e05fd732e | quiet | no consume/buff/enchant values changed
+2026-10-31 13:01 | mechanics | pass 52 | master e05fd732e | 1 new finding | Efficiency should also cut Lacerate mana cost (low)
+2026-10-31 13:01 | fairness | pass 17 | master e05fd732e | quiet | full race sweep; report race best everywhere, top/bottom 1.54x

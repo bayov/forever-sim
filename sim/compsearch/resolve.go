@@ -542,6 +542,7 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 			}
 		}
 	}
+	raid.ThreatCheck = threatCheck(comp.ThreatCheck, raid)
 	enc := comp.Encounter
 	if enc == nil {
 		enc = &proto.Encounter{}
@@ -553,6 +554,27 @@ func resolve(comp *proto.RaidComp) (*proto.RaidCompResolution, error) {
 	res.Assignments = out
 	res.Buffs, res.Misses = resolutionRecords(up, cast, phs, dps, blessings, partyPkg, pkgGiver)
 	return res, nil
+}
+
+// threatCheck is the comp's threat check with the raid indexes of the players at range, who pull aggro at
+// 130% of the tank's threat instead of 110%.
+//
+// A hunter is at range, except a Survival hunter that stands in melee range (distance 5), as its report
+// build does.
+func threatCheck(check *proto.ThreatCheck, raid *proto.Raid) *proto.ThreatCheck {
+	if check == nil || check.TankTps <= 0 {
+		return nil
+	}
+	out := &proto.ThreatCheck{TankTps: check.TankTps, HeadStart: check.HeadStart}
+	for pi, party := range raid.Parties {
+		for i, p := range party.Players {
+			melee := specOfPlayer(p).Melee || (p.Class == proto.Class_ClassHunter && p.DistanceFromTarget <= 5)
+			if !melee {
+				out.Ranged = append(out.Ranged, int32(pi*5+i))
+			}
+		}
+	}
+	return out
 }
 
 // isCaster is a member Power Infusion's 20% magic damage is for.

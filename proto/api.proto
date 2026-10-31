@@ -143,6 +143,19 @@ message Raid {
 
 	// Extra fake players to add. Currently only used by healing sims.
 	int32 target_dummies = 6;
+
+	// Off unless set: when each player and pet passes the tank's threat on the boss (sim/core/threat_check.go).
+	ThreatCheck threat_check = 8;
+}
+
+// The raid sim's threat check (docs/raid_sim.md, Threat). We don't sim the tank yet, so its threat on
+// the boss is a steady threat per second that started head_start seconds before the pull.
+message ThreatCheck {
+	double tank_tps = 1;
+	double head_start = 2;
+	// Raid indexes of the players at range, who pull aggro at 130% of the tank's threat. The rest and
+	// every pet pull at 110%, in melee range.
+	repeated int32 ranged = 3;
 }
 
 message SimOptions {
@@ -390,6 +403,9 @@ message UnitMetrics {
 	// average seconds spent oom per iteration
 	double seconds_oom_avg = 3; 
 
+	// Set when the raid has a threat check (Raid.threat_check).
+	AggroMetrics aggro = 19;
+
 	// Chance (0-1) representing probability of death. Used for tank sims.
 	double chance_of_death = 12;
 
@@ -398,6 +414,18 @@ message UnitMetrics {
 	repeated ResourceMetrics resources = 10;
 
 	repeated UnitMetrics pets = 7;
+}
+
+// How often a player or pet passed the tank's threat on the boss, over the iterations.
+message AggroMetrics {
+	// The share of the tank's threat it pulls aggro at: 1.1 in melee range, 1.3 at range.
+	double pull_ratio = 1;
+	// The share of the iterations (0 to 1) in which it passed the tank.
+	double chance = 2;
+	// How many iterations had their first pass in each second of the fight, from the pull.
+	repeated int32 first_pass = 3;
+	// Its highest threat in each iteration, as a share of what pulls aggro (above 1 is a pass).
+	DistributionMetrics peak = 4;
 }
 
 // Results for a whole raid.
@@ -923,6 +951,8 @@ message RaidComp {
 	// Power Infusion and Innervate on Auto go to the members who gain the most DPS from them, by two
 	// single-player sims each. Off, they go to the first casters and mana users, with no sims.
 	bool cooldowns_by_gain = 9;
+	// The resolver fills in who is at range.
+	ThreatCheck threat_check = 10;
 }
 
 // The fight a search runs.

@@ -1,66 +1,41 @@
-# Rotations pass 40 (2026-10-30)
+# Rotations pass 41 (2026-10-31)
 
-- **Master:** fb1485888 (last audited bbbaf2e3c). Client 1.60.1.70707 mage talents.
-- **Result:** findings. Two new: rotations-20261030-1 (high, Ret paladin twist window) and
-  rotations-20261030-2 (medium, Arms / Fury 2H Hamstring rage gate). rotations-20261028-1 (hunter
-  Trueshot/Hawk caveats) still open.
+- **Master:** e05fd732e (last audited a2a3e66e1). Client 1.60.1.70707.
+- **Result:** quiet. No new findings; all three open findings landed on master (e1fcd57b7) as written
+  and were already moved to Resolved.
 
 ## What changed
 
-- `apl_logic_diff.py bbbaf2e3c origin/master`: only the mage files.
-  - Arcane: the single-stack Arcane Blast fallback below 20% mana is gone (rotopt, +1.6).
-  - Frost: Evocation dropped, and the Arcane Blast stack target is now 3 (it was 2), with Ice Lance's new 8 s cooldown.
-- Sim `.go` that the presets reach:
-  - f3017897f: Forever extra attacks keep the swing timer.
-  - Windfury Totem's ICD is 100 ms.
-  - Eviscerate takes 4% AP a combo point.
-  - Imbues apply only to weapons they fit.
-  - The mage 70707 talents: Accelerant, Precision covering all spells, Critical Mass at 3, Ice Lance cooldown.
-  - The rest is threat only (mana-gain threat, Subtlety, Instrument of Law, Demonic Brand, shout threat) or raid sim / compsearch.
+- `apl_logic_diff.py a2a3e66e1 origin/master`: 30 files. 24 deleted (old Era presets removed, 39906cdaa;
+  not report builds). The Level 60 logic edits are exactly the pass 40 fixes:
+  - Ret twist lines lose the `autoTimeToNext < 1.5s` gate in level60, level60_sub_holy,
+    level60_crusader_duty, level60_wisdom_duty (rotations-20261030-1). level60_undead keeps 1.5 s
+    (the worker measured the free window losing there, 64faff678).
+  - Hamstring 7373 r3 from 10 Rage in the four Arms and three Fury 2H APLs (rotations-20261030-2).
+  - Enhancement leveling plans changed (leveling only; not reached by raid presets).
+- Sim `.go` the presets reach:
+  - Efficiency now covers Strider Kick (client 70707 mask). Mana-cost only; no survival preset moved >0.5.
+  - `threat_check.go` and its hooks (rage.go, spell_result.go, unit.go, metrics): observational, active
+    only with a raid threat check, uses no RNG. compsearch/resolve.go is compsearch only.
 
-## Regression baseline (3000 it, seed 424242) vs baseline_d50909a
+## Baseline (3000 it, seed 424242, shared CLI e05fd732e) vs fb14858
 
-| group | change |
-|---|---|
-| warrior arms (4) | +88.6 to +91.3 (+9.6 to +10.3%) |
-| warrior fury / fury_2h (6) | +62.0 to +65.6 (+6.3 to +6.9%) |
-| hunter survival (3) | +43 to +44 (+4.3%) |
-| paladin non-shock and shock (11) | +15 to +29.5 (+1.6 to +3.2%) |
-| rogue (12) | +13.6 to +21.9 (+1.8 to +2.9%) |
-| feral cat / -duty-ff | +22.6 / +26.0 |
-| mage fire / frostfire / frost / arcane | -26.3 / -38.6 / -4.6 / +12.3 |
+| preset | old | new | diff |
+|---|---|---|---|
+| paladin__level_60 | 961.0 | 975.8 | +14.8 |
+| paladin__level_60-duty-crusader / -wisdom | 954.4 / 947.3 | 967.3 / 960.3 | +12.9 / +13.0 |
+| paladin__level_60_sub_holy (+ crusader / wisdom) | 965.0 | 977.8 | +12.9 (+14.5 / +14.2) |
+| warrior__arms / -battle-shout / -sunder / dragonkin | 995.5 / 993.6 / 951.9 / 1039.3 | 1000.2 / 997.6 / 954.9 / 1040.9 | +4.7 / +4.0 / +3.0 / +1.6 |
+| warrior__fury_2h / -battle-shout / -sunder | 1027.3 / 1026.1 / 994.6 | 1030.8 / 1029.1 / 996.6 | +3.5 / +3.0 / +2.0 |
+| mage__frost | 909.4 | 911.6 | +2.2 (Frost Undead req change, e1fcd57b7) |
 
-Everything else moved by less than 1. New baseline: `ref/rotations/baseline_fb14858_3000it_seed424242.tsv`.
-The moves match the mechanic changes (extra attacks for warriors, rogues, paladins and SV; 70707 talents
-for mages). Enhancement didn't move.
+Every other row within 0.5. All moves match the applied fixes and their measured gains, so
+`regress.py` was not needed. The loop's shared run: 0 of 77 moved >0.5 vs published.
 
-## A/B screens (paired, 8x2500, s0=1e6, 180 s unless noted)
+## Open items
 
-| preset | variant | B-A |
-|---|---|---:|
-| warrior arms | Hamstring rage 30 -> 10 / 15 / 20 / 25 / 40 | +4.3 / +4.3 / +3.5 / +1.9 / -5.6 (finding 2) |
-| warrior arms | Heroic Strike 90 -> 80 / 70 | -6.2 / -17.5 |
-| warrior arms-duty-sunder | Hamstring 30 -> 10 | +2.9 |
-| warrior fury_2h | Hamstring 20 -> 10 / 30 | +3.2 / -4.2 (finding 2) |
-| warrior fury | Heroic Strike 80 -> 70 / 90; Hamstring 10 -> 25 | -1.1 / -2.3; -0.1 |
-| mage frost | re-add the old Evocation line (<20% mana, >90 s left) / >30 s left | -0.8 / -17.8 (rotopt's drop holds) |
-| paladin level_60 | twist window 1.5 s -> 1.4 / 1.6 / 1.7 / 1.8 / 2.0 / 2.5 / 3.0 / 10 | -0.2 / +2.2 / +2.7 / +3.6 / +4.9 / +8.3 / +6.6 / +13.9 (finding 1) |
-| paladin sub_holy | twist 10 s | +14.9 |
-
-The two findings were confirmed on s0=2e8. The pooled numbers at 120/180/300 s are in `findings/rotations.md`.
-
-## Notes and open items
-
-- **Paladin twist:** the "1.5 s sharp optimum" settled item no longer holds. The bbbaf2e CLI still has the
-  10 s window losing (-4.0), so a sim change in this range flipped it. Most likely it's the extra-attack
-  swing timer, although the Ret req has no Windfury. Worth a look from mechanics before the window is
-  widened. The duty and undead variants weren't measured separately.
-- **Rogue:** no rotation screen for Eviscerate's 4% AP. The finisher lines don't choose between Eviscerate
-  and another finisher, so a gate shift is unlikely. Left for the next pass.
-- **Fire, Frostfire and Arcane:** the 70707 rotopt re-searches were taken as they are, and no A/B was run.
-- **Open items from earlier passes:** carried unchanged (Balance NE, holding Elemental Mastery, the warlock
-  duty variants).
-
-## Optional (under the bar)
-
-- None new.
+- The pass doc's settled item "Paladin twist: 1.5 s before the swing is a sharp optimum" is now stale
+  (true only for sub_holy_undead). The orchestrator should reword it in `passes/rotations.md`; this
+  pass doesn't own that doc.
+- Carried over, untouched: Balance Night Elf vs Tauren, Elemental Mastery holding, warlock duty-curse
+  screens, and the optional list in the pass doc.

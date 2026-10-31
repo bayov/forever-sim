@@ -1,15 +1,14 @@
-# Consumables pass 57 (master fb1485888)
+# Consumables pass 58 (master e05fd732e)
 
-No findings. Last audited master bbbaf2e3c; client 1.60.1.70707 is still the newest build. Class branches are not ahead in any audited way (stale copies only).
+No findings. Last audited master a2a3e66e1; client 1.60.1.70707 is still the newest build. Class branches are not ahead in any audited way (stale copies only).
 
 Moved watched files, all checked:
-- sim/core/consumes.go: weapon imbues now need a fitting weapon (ImbueFitsWeapon, from the stones' SpellEquippedItems). A misfit imbue does nothing and warns.
-- tools/rotopt/mksettings/main.go: fitStonesToWeapons swaps a Dense Sharpening Stone for a Dense Weightstone (same +8) on a blunt weapon and clears empty hands. Consistent with the rogue presets.
-- ui/rogue/presets.ts: Combat Daggers and new Combat Swords consumes put a Dense Weightstone on the off-hand mace (994014 is a mace; Seal Fate's off hand 994017 is a dagger, so keeps the sharpening stone). Matches mksettings.
-- sim/core/buffs.go: Windfury Totem proc ICD 100 ms under Forever (sim note says to verify in game); not a consumable value, outside this audit's number checks.
-- tools/dps_report/assumptions_def.py: new mage_ice_lance_cd assumption; no buff content.
-- ui/mage/presets.ts, ui/enhancement_shaman/presets.ts: talents, rotation notes, leveling plan; Consumes, buffs and gear untouched.
+- ui/*/presets.ts (all eleven specs): mostly renames (build, encounter and APL labels such as "Generic boss", "Humanoid boss", "Mutilate", "Faerie Fire duty"), removal of the Level 30 and low-level encounters and gear, comment trims, and new hunter Wolf and Tallstrider pet builds. No Consumes, buff, debuff or enchant value changed. scan.sh is clean in every ban section.
+- Default Level 60 encounters are still MobTypeUnknown; Humanoid appears only in labelled "vs Humanoid" encounters.
+- tools/rotopt/mksettings (withConsumes helper, ele_mana_tide, shadow_holy, smite, rogue_combat_swords/daggers, rogue_assassination): each matches its presets.ts Consumes (ManaTideConsumes Major Mana Potion; ConsumesHoly and ConsumesSmite; P1SapperOnly/CombatSwords/CombatDaggers with no Land Mine).
+- ui/warlock gear_sets: the synthetic demonology set was deleted (no live use left); no enchants touched.
+- tools/dps_report/assumptions_def.py: Windfury Totem ICD 0.1 s, extra attacks keep the swing, new rogue evisc_ap. No buff values.
 
-scan.sh on master: every ban section empty. Minor-armor exclusive-effect count is 3 (known stale expectation, Dust Cloud). Totem counts as the ruling.
+scan.sh on master: minor-armor exclusive-effect count 3 (Faerie Fire, Curse of Recklessness, Tallstrider Dust Cloud; intended shared slot). Totem counts as the ruling.
 
 No open items.

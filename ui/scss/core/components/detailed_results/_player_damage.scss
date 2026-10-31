@@ -134,3 +134,28 @@
 .events-player-chooser {
 	padding: var(--spacer-3);
 }
+
+// The Aggro and Peak columns show only in a raid with a threat check.
+.player-threat-metrics-root {
+	.aggro-cell {
+		text-align: center;
+		white-space: nowrap;
+	}
+
+	&:not(.has-aggro) .aggro-cell {
+		display: none;
+	}
+}
+
+.aggro-chart-root {
+	.aggro-chart-note {
+		margin-bottom: var(--spacer-2);
+		color: var(--text-muted-color);
+		font-size: 0.8125rem;
+	}
+
+	.aggro-chart-canvas {
+		position: relative;
+		height: 16rem;
+	}
+}

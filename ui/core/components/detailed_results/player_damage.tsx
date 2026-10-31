@@ -3,8 +3,9 @@ import tippy from 'tippy.js';
 import { ActionMetrics, UnitMetrics } from '../../proto_utils/sim_result.js';
 import { maxIndex, sum } from '../../utils.js';
 import { TypedEvent } from '../../typed_event.js';
+import { aggroLine, percent, unitAggros } from './aggro.js';
 import { DamageMetricsTable } from './damage_metrics.js';
-import { ColumnSortType, MetricsTable } from './metrics_table/metrics_table.js';
+import { ColumnSortType, MetricsColumnConfig, MetricsTable } from './metrics_table/metrics_table.js';
 import { MetricsTotalBar } from './metrics_table/metrics_total_bar';
 import { ResultComponentConfig, SimResultData } from './result_component.js';
 import { ResultsFilter } from './results_filter.js';
@@ -55,6 +56,7 @@ export class PlayerDamageMetricsTable extends MetricsTable<UnitMetrics> {
 					);
 				},
 			},
+			...(metric == 'threat' ? aggroColumns() : []),
 			{
 				name: perSecond,
 				tooltip: metric == 'threat' ? 'Threat / Encounter Duration' : 'Damage / Encounter Duration',
@@ -80,6 +82,16 @@ export class PlayerDamageMetricsTable extends MetricsTable<UnitMetrics> {
 		this.metric = metric;
 		this.raidDps = 0;
 		this.maxDps = 0;
+	}
+
+	onSimResult(resultData: SimResultData) {
+		// The aggro columns are only for a raid with a threat check.
+		this.rootElem.classList.toggle(
+			'has-aggro',
+			resultData.result.getPlayers().some(player => player.aggro),
+		);
+		super.onSimResult(resultData);
+		this.reopenBreakdowns();
 	}
 
 	private getPlayerDps(player: UnitMetrics): number {
@@ -111,8 +123,7 @@ export class PlayerDamageMetricsTable extends MetricsTable<UnitMetrics> {
 		});
 	}
 
-	onSimResult(resultData: SimResultData) {
-		super.onSimResult(resultData);
+	private reopenBreakdowns() {
 		this.expanded.forEach(index => {
 			const rowElem = this.rows.get(index);
 			if (rowElem) this.openBreakdown(this.getLastSimResult().result.getUnitWithIndex(index)!, rowElem);
@@ -170,4 +181,48 @@ export class PlayerDamageMetricsTable extends MetricsTable<UnitMetrics> {
 
 		return players.map(player => [player]);
 	}
+}
+
+// How often each player passed the tank's threat, and how close they came, in a raid with a threat check.
+// The column cells color a player who passes at all, and one who comes within 10% of the pull.
+function aggroColumns(): Array<MetricsColumnConfig<UnitMetrics>> {
+	return [
+		{
+			name: 'Aggro',
+			tooltip: 'Fights in which they pass the tank: 110% of its threat in melee range, 130% at range',
+			headerCellClass: 'aggro-cell',
+			columnClass: 'aggro-cell',
+			sort: ColumnSortType.Descending,
+			getValue: (player: UnitMetrics) => Math.max(0, ...unitAggros(player).map(u => u.aggro.chance)),
+			fillCell: (player: UnitMetrics, cellElem: HTMLElement) => {
+				const aggros = unitAggros(player);
+				if (!aggros.length) return;
+				const chance = Math.max(...aggros.map(u => u.aggro.chance));
+				cellElem.textContent = chance > 0 ? percent(chance) : '-';
+				if (chance > 0) cellElem.classList.add(chance >= 0.05 ? 'text-danger' : 'text-warning');
+				tippy(cellElem, {
+					content: (
+						<div>
+							{aggros.map(u => (
+								<div>{aggroLine(u.name, u.aggro)}</div>
+							))}
+						</div>
+					),
+				});
+			},
+		},
+		{
+			name: 'Peak',
+			tooltip: 'Their highest threat as a share of what pulls aggro, the average over fights',
+			headerCellClass: 'aggro-cell',
+			columnClass: 'aggro-cell',
+			getValue: (player: UnitMetrics) => player.aggro?.peak?.avg ?? 0,
+			fillCell: (player: UnitMetrics, cellElem: HTMLElement) => {
+				const peak = player.aggro?.peak?.avg;
+				if (peak === undefined) return;
+				cellElem.textContent = percent(peak);
+				if (peak >= 0.9) cellElem.classList.add('text-warning');
+			},
+		},
+	];
 }

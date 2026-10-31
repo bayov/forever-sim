@@ -4,6 +4,8 @@
 // runs that request in the sim's workers and shows the raid's results.
 import { ChangeCategory } from '../core/components/dirty_settings';
 import { EncounterPicker } from '../core/components/encounter_picker';
+import { NumberPicker } from '../core/components/number_picker';
+import { percent } from '../core/components/detailed_results/aggro';
 import { SimProgress } from '../core/components/sim_progress';
 import {
 	Assignment,
@@ -29,6 +31,7 @@ import {
 	RaidSimResult,
 	RaidTotem,
 	SimOptions,
+	ThreatCheck,
 } from '../core/proto/api';
 import { Class, Encounter as EncounterProto, Faction, MobType, Stat } from '../core/proto/common';
 import { SimResult } from '../core/proto_utils/sim_result';
@@ -130,6 +133,10 @@ interface EditorState {
 	campBuffs: boolean;
 	boss: Boss;
 	encounter?: unknown; // protojson
+	// The tank's threat on the boss, which the threat check compares everyone to. Until tanks are simmed, it's
+	// a steady threat per second that starts a few seconds before the pull. Unset is the default.
+	tankTps?: number;
+	tankHeadStart?: number;
 	// The sidebar's iterations, which Run uses.
 	iterations?: number;
 	hand: HandAssignments;
@@ -137,6 +144,11 @@ interface EditorState {
 	// They change no sim, only what the page checks, and a search from them.
 	required?: string[];
 }
+
+// A Protection warrior's threat per second in the sim's tank suite (level 60, raid buffs), and the
+// seconds a raid gives its tank before it attacks.
+export const DEFAULT_TANK_TPS = 700;
+export const DEFAULT_TANK_HEAD_START = 2;
 
 const emptyHand = (): HandAssignments => ({ blessings: {}, judgements: {}, totems: {}, duties: {}, powerInfusion: {}, innervate: {} });
 
@@ -555,6 +567,8 @@ export class CompEditor {
 				campBuffs: s.campBuffs,
 				boss: s.boss,
 				encounter: s.encounter,
+				tankTps: s.tankTps,
+				tankHeadStart: s.tankHeadStart,
 				iterations: s.iterations,
 				required: s.required,
 			};
@@ -1796,8 +1810,10 @@ export class CompEditor {
 	private initEncounter() {
 		const sim = this.simUI.sim;
 		const pickerHost = (<div className="rs-encounter-picker" />) as HTMLElement;
-		this.encounterHost.replaceChildren(this.bossHost, pickerHost);
+		const threatHost = (<div className="rs-tank-threat" />) as HTMLElement;
+		this.encounterHost.replaceChildren(this.bossHost, pickerHost, threatHost);
 		this.initBossSelect();
+		this.initTankThreat(threatHost);
 
 		sim.waitForInit().then(() => {
 			if (this.state.encounter) {
@@ -1822,6 +1838,41 @@ export class CompEditor {
 				this.saveState();
 			});
 		});
+	}
+
+	// The tank's threat that the threat check compares everyone to (docs/raid_sim.md, Threat).
+	private initTankThreat(host: HTMLElement) {
+		const picker = (id: string, label: string, labelTooltip: string, get: () => number, set: (v: number) => void, float: boolean) =>
+			new NumberPicker(host, this, {
+				id,
+				label,
+				labelTooltip,
+				float,
+				positive: true,
+				changedEvent: editor => editor.changeEmitter,
+				getValue: get,
+				setValue: (_eventID, _editor, v) => {
+					set(v);
+					this.saveState();
+					this.markStale();
+				},
+			});
+		picker(
+			'rs-tank-tps',
+			'Tank TPS',
+			'The tank’s threat per second on the boss. Players who pass it pull aggro.',
+			() => this.state.tankTps ?? DEFAULT_TANK_TPS,
+			v => (this.state.tankTps = v),
+			false,
+		);
+		picker(
+			'rs-tank-head-start',
+			'Tank head start (s)',
+			'Seconds the tank attacks before the raid does.',
+			() => this.state.tankHeadStart ?? DEFAULT_TANK_HEAD_START,
+			v => (this.state.tankHeadStart = v),
+			true,
+		);
 	}
 
 	// The boss preset's select, drawn again when a loaded comp sets it.
@@ -1945,6 +1996,8 @@ export class CompEditor {
 			...line('Faction', factionName(from.faction), factionName(to.faction)),
 			...line('Camp buffs', onOff(from.campBuffs), onOff(to.campBuffs)),
 			...line('Boss', from.boss, to.boss),
+			...line('Tank TPS', `${from.tankTps ?? DEFAULT_TANK_TPS}`, `${to.tankTps ?? DEFAULT_TANK_TPS}`),
+			...line('Tank head start', `${from.tankHeadStart ?? DEFAULT_TANK_HEAD_START}s`, `${to.tankHeadStart ?? DEFAULT_TANK_HEAD_START}s`),
 			...line('Required', requiredWords(from), requiredWords(to)),
 		]);
 
@@ -2326,6 +2379,10 @@ export class CompEditor {
 			assumptions: RaidAssumptions.create(),
 			// Power Infusion and Innervate on Auto go to whoever gains the most DPS, by single-player sims.
 			cooldownsByGain: true,
+			threatCheck: ThreatCheck.create({
+				tankTps: this.state.tankTps ?? DEFAULT_TANK_TPS,
+				headStart: this.state.tankHeadStart ?? DEFAULT_TANK_HEAD_START,
+			}),
 			simOptions: SimOptions.create({
 				iterations: sim.getIterations(),
 				randomSeed: BigInt(sim.getFixedRngSeed() || Math.floor(Math.random() * (2 ** 32 - 1))),
@@ -2619,8 +2676,12 @@ export class CompEditor {
 					.filter(a => a.holder == slot?.id && a.job.oneofKind == 'duty' && a.job.duty != Duty.DutyNone)
 					.map(a => (a.job.oneofKind == 'duty' ? dutyName(a.job.duty) : ''));
 				const dps = metrics?.dps.avg ?? 0;
+				// A member's aggro counts its pets', since a pet that pulls the boss is a problem too.
+				const aggro = metrics ? Math.max(0, ...[metrics, ...metrics.pets].map(u => u.aggro?.chance ?? 0)) : 0;
 				return {
 					party: Math.floor(raidIndex / PARTY_SIZE) + 1,
+					name: slot?.name ?? metrics?.name ?? `player ${k + 1}`,
+					aggro,
 					row: [
 						`${Math.floor(raidIndex / PARTY_SIZE) + 1}`,
 						<span className={slot ? `text-${cssClassForClass(this.slotClass(slot))}` : ''}>
@@ -2630,6 +2691,7 @@ export class CompEditor {
 							{fmt(dps)} <span className="rs-ci">{metrics ? `±${fmt((1.96 * metrics.dps.stdev) / Math.sqrt(iterations))}` : ''}</span>
 						</span>,
 						metrics ? fmt(metrics.tps.avg) : NA,
+						metrics?.aggro ? <span className={aggro >= 0.05 ? 'text-danger' : aggro > 0 ? 'text-warning' : ''}>{aggro > 0 ? percent(aggro) : NA}</span> : NA,
 						published ? fmtSigned(dps - published) : NA,
 						duties.length ? duties.join(', ') : NA,
 						this.getsText(slot, resolution) || NA,
@@ -2645,6 +2707,7 @@ export class CompEditor {
 							'Member',
 							{ label: 'DPS ±95%', numeric: true, tooltip: 'Its DPS in the raid sim, with its 95% interval' },
 							{ label: 'TPS', numeric: true, tooltip: 'Threat per second' },
+							{ label: 'Aggro', numeric: true, tooltip: 'Fights in which it or its pet passes the tank (Raid results, Threat)' },
 							{ label: 'vs the DPS Report', numeric: true },
 							'Duties',
 							'Gets',
@@ -2654,6 +2717,16 @@ export class CompEditor {
 					),
 				),
 			);
+			// The members who pass the tank in at least 1% of fights, most likely first.
+			const pulls = rows.filter(r => r.aggro >= 0.01).sort((a, b) => b.aggro - a.aggro);
+			if (pulls.length) {
+				parts.unshift(
+					<p className="rs-aggro-warning" attributes={{ role: 'status' }}>
+						<i className="fas fa-triangle-exclamation me-1" />
+						Pass the tank: {pulls.map(r => `${r.name} ${percent(r.aggro)}`).join(' · ')}
+					</p>,
+				);
+			}
 		}
 
 		parts.push(
@@ -2853,6 +2926,8 @@ function canonicalRaid(state: RaidState) {
 		campBuffs: state.campBuffs,
 		boss: state.boss,
 		encounter: state.encounter ?? null,
+		tankTps: state.tankTps ?? DEFAULT_TANK_TPS,
+		tankHeadStart: state.tankHeadStart ?? DEFAULT_TANK_HEAD_START,
 		cells: state.cells.map(m => (m ? { buildId: m.buildId ?? null, preset: m.preset ?? null, presetInnervate: !!m.presetInnervate } : null)),
 		hand: {
 			blessings: byCell(state.hand.blessings),

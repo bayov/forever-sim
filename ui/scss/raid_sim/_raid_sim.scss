@@ -120,6 +120,15 @@
 	color: $known-issues-color;
 }
 
+// The members who pull aggro in the last run.
+.rs-aggro-warning {
+	margin-bottom: var(--spacer-3);
+	padding: var(--spacer-2) var(--spacer-3);
+	border-left: 3px solid var(--bs-danger);
+	background: rgba(0, 0, 0, 0.25);
+	color: var(--bs-danger);
+}
+
 .rs-stale .rs-section-body,
 .rs-run-results.rs-stale .rs-section,
 .rs-run-results.rs-stale .rs-run-topline {
@@ -1649,6 +1658,18 @@ $rs-none: #6b7280;
 
 	.encounter-picker-root {
 		flex-direction: column;
+	}
+
+	// Two inputs side by side, like the encounter's rows above.
+	.rs-tank-threat {
+		margin-top: var(--spacer-3);
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+		gap: var(--spacer-3);
+
+		.number-picker-root {
+			margin-bottom: 0;
+		}
 	}
 }
 

@@ -67,6 +67,9 @@ type Unit struct {
 	StartDistanceFromTarget float64
 	DistanceFromTarget      float64
 
+	// Set in a raid with a threat check (threat_check.go).
+	aggro *aggroWatch
+
 	MovementHandler *MovementHandler
 
 	// Environment in which this Unit exists. This will be nil until after the
@@ -541,6 +544,9 @@ func (unit *Unit) reset(sim *Simulation, _ Agent) {
 	unit.ChanneledDot = nil
 	unit.channelHoldsFSR = false
 	unit.Metrics.reset()
+	if unit.aggro != nil {
+		unit.aggro.reset()
+	}
 	unit.ResetStatDeps()
 	unit.statsWithoutDeps = unit.initialStatsWithoutDeps
 	unit.stats = unit.initialStats

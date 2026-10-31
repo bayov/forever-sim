@@ -88,6 +88,10 @@ func (rsrc *raidSimResultCombiner) newUnitMetrics(baseUnit *proto.UnitMetrics) *
 		Pets:      make([]*proto.UnitMetrics, len(baseUnit.Pets)),
 	}
 
+	if baseUnit.Aggro != nil {
+		newUm.Aggro = &proto.AggroMetrics{PullRatio: baseUnit.Aggro.PullRatio, Peak: rsrc.newDistMetrics()}
+	}
+
 	for i, aura := range baseUnit.Auras {
 		newUm.Auras[i] = &proto.AuraMetrics{
 			Id:             aura.Id,
@@ -274,6 +278,17 @@ func (rsrc *raidSimResultCombiner) combineUnitMetrics(base *proto.UnitMetrics, a
 
 	base.SecondsOomAvg += add.SecondsOomAvg * weight
 	base.ChanceOfDeath += add.ChanceOfDeath * weight
+
+	if base.Aggro != nil && add.Aggro != nil {
+		base.Aggro.Chance += add.Aggro.Chance * weight
+		for len(base.Aggro.FirstPass) < len(add.Aggro.FirstPass) {
+			base.Aggro.FirstPass = append(base.Aggro.FirstPass, 0)
+		}
+		for i, n := range add.Aggro.FirstPass {
+			base.Aggro.FirstPass[i] += n
+		}
+		rsrc.combineDistMetrics(base.Aggro.Peak, add.Aggro.Peak, isLast, weight)
+	}
 
 	for _, addAction := range add.Actions {
 		rsrc.addActionMetrics(base, addAction)

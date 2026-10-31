@@ -20,6 +20,7 @@ import { PlayerDamageTakenMetricsTable } from './detailed_results/player_damage_
 import { ResourceMetricsTable } from './detailed_results/resource_metrics';
 import { SimResultData } from './detailed_results/result_component';
 import { ResultsFilter } from './detailed_results/results_filter';
+import { AggroChart } from './detailed_results/aggro';
 import { ThreatMetricsTable } from './detailed_results/threat_metrics';
 import { ToplineResults } from './detailed_results/topline_results';
 import { RaidSimResultsManager } from './raid_sim_action';
@@ -168,6 +169,9 @@ export abstract class DetailedResults extends Component {
 					<div id="threatTab" className="tab-pane dr-tab-content threat-content fade">
 						<div className="dr-row topline-results" />
 						<div className="dr-row all-players-only">{panel('Players', '', <div className="player-threat-metrics" />)}</div>
+						<div className="dr-row" hidden>
+							{panel('Aggro', '', <div className="aggro-chart" />)}
+						</div>
 						<div className="dr-row single-player-only">{panel('Abilities', '', <div className="threat-metrics-host" />)}</div>
 						<div className="dr-row single-player-only">{panel('TPS Distribution', '', <div className="tps-histogram" />)}</div>
 					</div>
@@ -279,6 +283,7 @@ export abstract class DetailedResults extends Component {
 			this.resultsFilter,
 			'threat',
 		);
+		new AggroChart({ parent: this.rootElem.querySelector('.aggro-chart')!, resultsEmitter: this.resultsEmitter });
 		new PlayerDamageTakenMetricsTable(
 			{ parent: this.rootElem.querySelector('.player-damage-taken-metrics')!, resultsEmitter: this.resultsEmitter },
 			this.resultsFilter,

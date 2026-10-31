@@ -557,6 +557,10 @@ func (unitMetrics *UnitMetrics) doneIteration(unit *Unit, sim *Simulation) {
 	unitMetrics.tto.doneIteration(sim)
 	unitMetrics.manaEnd.doneIteration(sim)
 
+	if unit.aggro != nil {
+		unit.aggro.doneIteration(sim)
+	}
+
 	unitMetrics.oomTimeSum += unitMetrics.OOMTime.Seconds()
 	if unitMetrics.Died {
 		unitMetrics.numItersDead++

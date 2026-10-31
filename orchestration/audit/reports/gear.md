@@ -1,6 +1,10 @@
-# Gear pass 44 (master 5d27b00150)
+# Gear pass 48 (master e05fd732e)
 
-- Watched change: f6116e453 added standards item 29 (race-tuned rotations and gear). No other ruling commits since 37a8a8ccd.
-- Item 29 gear part: Dwarf (+1% hit racial) sets at the hit cap re-spend the excess hit (at most 10 points) into other non-Stamina, non-Spirit stats. Modelled as bonus stats on the preset gear, not new items. So no synthetic item, gear.json set or enchant is affected; the 1b budget checks are unchanged.
-- Gear files (synthetic items, level60 gear.json, enchants, trinkets, items.go) changed since 37a8a8ccd: none. Full audit not needed.
-- Open: if a later pass sees race-specific gear as real items or sets, check them against 1b prices and the hit-adjusted rule in gear_targets.md.
+Quiet. The gate flagged 42 files, but all are non-Level-60 sets (p0..p6, level30, phase_N, blank) plus orchestration/standards.md.
+
+| Check | Result |
+|---|---|
+| Synthetic item files, synthetic trinkets, forever_enchants.go | unchanged since a2a3e66e1 |
+| level60 sets | one deleted: warlock level60_phase1_synthetic_demonology (159443615); Demonology now wears the main warlock set. 22 sets left. No items changed |
+| standards.md | WF totem ICD 100 ms, extra-attack swing, Eviscerate 4% AP: none are gear rules |
+| Full lin2/wepcheck audit | not run, no gear content changed |
