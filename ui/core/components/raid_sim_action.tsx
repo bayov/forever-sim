@@ -437,6 +437,26 @@ export class RaidSimResultsManager {
 		return isDiff;
 	}
 
+	// Reading results we already have, like the last run's after a page refresh, takes a second
+	// or two. Until it's done, the Results tab shows a loader in place of "No results yet".
+	readonly loadingChangeEmitter: TypedEvent<void> = new TypedEvent<void>();
+	private loads = 0;
+
+	async whileLoading<T>(load: Promise<T>): Promise<T> {
+		this.loads++;
+		if (this.loads === 1) this.loadingChangeEmitter.emit(TypedEvent.nextEventID());
+		try {
+			return await load;
+		} finally {
+			this.loads--;
+			if (this.loads === 0) this.loadingChangeEmitter.emit(TypedEvent.nextEventID());
+		}
+	}
+
+	isLoading(): boolean {
+		return this.loads > 0;
+	}
+
 	// No results, like in a mode we haven't run yet. See SimHistory and restoreLastSimRun.
 	clearSimResult(eventID: EventID) {
 		if (!this.currentData) return;

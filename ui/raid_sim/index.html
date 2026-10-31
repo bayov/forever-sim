@@ -28,9 +28,93 @@
 		<!-- Load the top-level ui/index.ts -->
 		<script src="../index.ts" type="module"></script>
 		<script src="./index.ts" type="module"></script>
+		<!--
+			The page loader. The page draws nothing until its scripts load the sim (a few seconds on a cold
+			load), so the HTML itself shows this until the sim UI is on the page. Its styles are inline
+			because the page's stylesheets aren't loaded yet either.
+		-->
+		<style>
+			.boot-loader {
+				position: fixed;
+				inset: 0;
+				z-index: 2000;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				gap: 1.25rem;
+				background: radial-gradient(ellipse at center, #1a1f2b 0%, #0d1017 70%);
+				color: #9a917c;
+				font: 500 0.8rem/1 system-ui, sans-serif;
+				letter-spacing: 0.18em;
+				text-transform: uppercase;
+				animation: boot-loader-in 0.3s ease-out 0.1s both;
+			}
+			body:has(> .sim-ui) > .boot-loader {
+				display: none;
+			}
+			.boot-loader-emblem {
+				position: relative;
+				width: 6.5rem;
+				height: 6.5rem;
+			}
+			.boot-loader-emblem img {
+				position: absolute;
+				inset: 0.9rem;
+				width: calc(100% - 1.8rem);
+				height: calc(100% - 1.8rem);
+				border-radius: 50%;
+				animation: boot-loader-breathe 2s ease-in-out infinite;
+			}
+			.boot-loader-ring {
+				position: absolute;
+				inset: 0;
+				border-radius: 50%;
+				background: conic-gradient(from 0deg, transparent 0 55%, rgba(232, 180, 80, 0.15) 70%, #e8b450 100%);
+				-webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+				mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+				animation: boot-loader-spin 1.1s linear infinite;
+			}
+			.boot-loader-ring::after {
+				content: '';
+				position: absolute;
+				inset: 0;
+				border-radius: 50%;
+				box-shadow: 0 0 1.5rem rgba(232, 180, 80, 0.25);
+			}
+			@keyframes boot-loader-spin {
+				to {
+					transform: rotate(360deg);
+				}
+			}
+			@keyframes boot-loader-breathe {
+				50% {
+					transform: scale(0.94);
+					filter: brightness(1.2);
+				}
+			}
+			@keyframes boot-loader-in {
+				from {
+					opacity: 0;
+				}
+			}
+			@media (prefers-reduced-motion: reduce) {
+				.boot-loader-ring,
+				.boot-loader-emblem img {
+					animation-duration: 3s;
+				}
+			}
+		</style>
 	</head>
 
 	<body id="bootstrap-overrides">
+		<div class="boot-loader" role="status">
+			<div class="boot-loader-emblem">
+				<div class="boot-loader-ring"></div>
+				<img src="/forever/assets/img/WoW-Simulator-Icon.png" alt="" />
+			</div>
+			Loading the sim
+		</div>
 		<!-- Load wowhead scripts after done loading everything else -->
 		<script>
 			const whTooltips = { colorLinks: true };

@@ -6,6 +6,7 @@ import { SimResult } from '../proto_utils/sim_result';
 import { SimUI } from '../sim_ui';
 import { TypedEvent } from '../typed_event';
 import { Component } from './component';
+import { loadingState } from './loading_state';
 import { AuraMetricsTable } from './detailed_results/aura_metrics';
 import { CastMetricsTable } from './detailed_results/cast_metrics';
 import { DamageMetricsTable } from './detailed_results/damage_metrics';
@@ -143,6 +144,7 @@ export abstract class DetailedResults extends Component {
 				</div>
 				<div className="tab-content">
 					<div id="noResultsTab" className="tab-pane dr-tab-content fade active show">
+						{loadingState('Loading results')}
 						<div className="dr-empty">
 							<i className="fas fa-chart-column dr-empty-icon" />
 							<h5 className="dr-empty-title">No results yet</h5>
@@ -344,6 +346,11 @@ export abstract class DetailedResults extends Component {
 
 	abstract postMessage(update: DetailedResultsUpdate): Promise<void>;
 
+	// A loader in place of "No results yet", while we read the results we're about to show.
+	protected setLoading(loading: boolean) {
+		this.rootDiv.classList.toggle('dr-loading', loading);
+	}
+
 	protected async setSimRunData(simRunData: SimRunData) {
 		this.latestRun = simRunData;
 		await this.postMessage(
@@ -423,11 +430,26 @@ export class EmbeddedDetailedResults extends DetailedResults {
 			this.rootElem.classList.add('individual-sim');
 		}
 
+		// We also count the results we're still reading into the tab. Otherwise "No results yet"
+		// would show for a moment between the manager's load being done and the tab having the
+		// results.
+		let reading = 0;
+		const updateLoading = () => this.setLoading(simResultsManager.isLoading() || reading > 0);
+		simResultsManager.loadingChangeEmitter.on(updateLoading);
+		updateLoading();
+
 		simResultsManager.currentChangeEmitter.on(async () => {
-			// Without a run, the tab shows no results.
-			const runData = simResultsManager.getRunData() ?? SimRunData.create();
-			await this.updateSettings();
-			await this.setSimRunData(runData);
+			reading++;
+			updateLoading();
+			try {
+				// Without a run, the tab shows no results.
+				const runData = simResultsManager.getRunData() ?? SimRunData.create();
+				await this.updateSettings();
+				await this.setSimRunData(runData);
+			} finally {
+				reading--;
+				updateLoading();
+			}
 		});
 	}
 

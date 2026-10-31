@@ -1,0 +1,139 @@
+// See loading_state.tsx.
+.loading-state {
+	--ls-base: rgba(255, 255, 255, 0.08);
+	--ls-shine: rgba(255, 214, 140, 0.22);
+
+	display: flex;
+	flex-direction: column;
+	gap: var(--block-spacer, 1rem);
+	padding: var(--spacer-3) 0;
+
+	// It shows only after a moment, so a quick read never flashes it.
+	animation: ls-fade-in 0.25s ease-out 0.15s both;
+
+	.ls-tiles {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+		gap: var(--spacer-3);
+	}
+
+	.ls-tile,
+	.ls-table {
+		@include panel-card;
+		display: flex;
+		flex-direction: column;
+		gap: 0.75rem;
+		padding: var(--spacer-3);
+	}
+
+	.ls-table {
+		gap: 1rem;
+	}
+
+	.ls-row {
+		display: flex;
+		align-items: center;
+		gap: var(--spacer-3);
+	}
+
+	.ls-row-fill {
+		flex: 1;
+	}
+
+	// Every bar shares one gradient fixed to the page, so the shine sweeps across all of them
+	// as one band of light.
+	.ls-bar {
+		display: block;
+		height: 0.7rem;
+		border-radius: 999px;
+		background: linear-gradient(100deg, var(--ls-base) 30%, var(--ls-shine) 50%, var(--ls-base) 70%) fixed;
+		background-size: 200vw 100%;
+		animation: ls-shimmer 1.6s linear infinite;
+	}
+
+	.ls-bar-label {
+		height: 0.55rem;
+	}
+	.ls-bar-value {
+		height: 1.4rem;
+		border-radius: 0.4rem;
+	}
+	.ls-bar-heading {
+		height: 0.9rem;
+		margin-bottom: 0.25rem;
+	}
+	.ls-icon {
+		flex: none;
+		width: 1.75rem;
+		height: 1.75rem;
+		border-radius: 0.35rem;
+	}
+	.ls-bar-name {
+		flex: none;
+		max-width: 40%;
+	}
+	.ls-bar-meter {
+		flex: none;
+		height: 0.5rem;
+	}
+	.ls-bar-number {
+		flex: none;
+		min-width: 2.5rem;
+	}
+
+	.ls-label {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		gap: var(--spacer-2);
+		color: var(--text-muted-color);
+		font-size: 0.8rem;
+		letter-spacing: 0.08em;
+		text-transform: uppercase;
+	}
+
+	.ls-pulse {
+		width: 0.5rem;
+		height: 0.5rem;
+		border-radius: 50%;
+		background: var(--gold);
+		box-shadow: 0 0 0 0 var(--gold);
+		animation: ls-pulse 1.4s ease-out infinite;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.ls-bar,
+		.ls-pulse {
+			animation: none;
+		}
+	}
+}
+
+@keyframes ls-fade-in {
+	from {
+		opacity: 0;
+		transform: translateY(0.25rem);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@keyframes ls-shimmer {
+	from {
+		background-position: 100vw 0;
+	}
+	to {
+		background-position: -100vw 0;
+	}
+}
+
+@keyframes ls-pulse {
+	0% {
+		box-shadow: 0 0 0 0 rgba(255, 200, 100, 0.55);
+	}
+	100% {
+		box-shadow: 0 0 0 0.6rem rgba(255, 200, 100, 0);
+	}
+}
