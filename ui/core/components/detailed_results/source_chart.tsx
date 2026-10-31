@@ -64,7 +64,7 @@ export class SourceChart extends Component {
 						data: slices.map(slice => slice.value),
 						backgroundColor: slices.map(slice => slice.color),
 						borderWidth: 0,
-						spacing: 1,
+						spacing: 4,
 					},
 				],
 			},
