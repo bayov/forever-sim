@@ -1363,6 +1363,10 @@
     {
      "commit": "4ea5cc8",
      "why": "leveling rotations only; no report build uses them"
+    },
+    {
+     "commit": "e05fd73",
+     "why": "raid sim threat counting; it runs only with a raid's threat check, and every report result hashes the same before and after it"
     }
    ]
   }
