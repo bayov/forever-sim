@@ -42,7 +42,7 @@
     "Consecration on cooldown at 20%+ mana",
     "Judgement on cooldown on whichever damage seal is up",
     "Seal of Righteousness whenever no damage seal is up",
-    "Twist: with Seal of Righteousness up, switch to Seal of Command in the last 1.5s before a swing, then back to Righteousness before the next. One switch per swing, at any mana. Twist of Light's Echo applies the old seal on the next swing",
+    "Twist: with Seal of Righteousness up, switch to Seal of Command whenever no Echo is waiting for a swing, then back to Righteousness the same way. One switch per swing, at any mana. Twist of Light's Echo applies the old seal on the next swing",
     "Holy Strike on cooldown",
     "Racials, Goblin Sapper, Dragonfire Potion and Demonic Rune on free GCDs"
   ],

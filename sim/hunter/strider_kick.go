@@ -10,7 +10,7 @@ import (
 // normalized melee weapon damage, an 8 sec cooldown, 5.81% of base mana, and 30% run speed for 3 sec
 // (its row's third effect; wowsims/forever b8c06a0e07), which only a weave walks with. Like every run
 // speed bonus only the highest counts (MoveHeap). Savage Strikes and Predator's Edge cover it, and since client 1.60.1.70425
-// Resourcefulness does too (its mask gained Strider Kick's bit); Efficiency doesn't.
+// Resourcefulness does too (its mask gained Strider Kick's bit), and since 1.60.1.70707 Efficiency.
 func (hunter *Hunter) registerStriderKickSpell() {
 	if !hunter.Talents.StriderKick {
 		return

@@ -139,7 +139,7 @@ export const APLNoReck = PresetUtils.makePresetAPLRotation('DPS (No Reck)', APLN
 // cooldown and holding the fillers for Bloodthirst and Whirlwind both lose.
 export const APLLevel60Fury = PresetUtils.makePresetAPLRotation('Fury', Level60FuryAPLJSON, { group: 'Synthetic' });
 // The same template on the two-hand Fury talents and the two-hand set: the Fury rotation with
-// Heroic Strike from 90 Rage, Hamstring from 20, Bloodrage under 20, Berserker Rage under 30 for its
+// Heroic Strike from 90 Rage, Hamstring from 10 (20 until 2026-10-30, +3.1 at 180 sec), Bloodrage under 20, Berserker Rage under 30 for its
 // Rage (Improved Berserker Rage 2/2), Slam from 45 Rage right after a main hand swing, ahead of
 // Whirlwind (+8.4 at 180 sec from 30 Rage on the old ×1.5 Rage; Slam at any time loses), and
 // Death Wish held for the last 36 sec with Recklessness for the last 30. The second potion and the
@@ -157,7 +157,8 @@ export const APLLevel60Fury2H = PresetUtils.makePresetAPLRotation('Fury 2H', Lev
 // set, Human, 180 sec: Battle Stance, Mortal Strike, Slam above 20 Rage (15 sec cooldown with
 // Improved Slam), Overpower on dodges and Bloodthrill procs, Rend kept up for Bloodthrill, Execute
 // after them in the execute phase, Heroic Strike from 90 Rage (70 before Forever's normalized Rage)
-// and Hamstring from 30 Rage as a filler (20 until the 2026-10-25 re-search at flat Rage, which also
+// and Hamstring from 10 Rage as a filler (2026-10-30: +4.3 at 180 sec over 30 once extra attacks kept
+// the swing timer; it was 30 from the 2026-10-25 re-search at flat Rage and 20 before it. That re-search also
 // moved Bloodrage from under 10 Rage to under 20: 903.3 to 906.6 at 180 sec, Orc, seed 1; +2.9 / +3.3
 // / +2.4 at 120 / 180 / 300 sec, seed 1000003 within 0.3).
 // With 25 sec left and Recklessness ready it moves to Berserker Stance for Recklessness (no more

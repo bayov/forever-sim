@@ -137,8 +137,9 @@ export const DefaultGear = GearLevel60Phase1Synthetic;
 // tools/rotopt/paladin_presets.sh), searched over 120, 180 and 300 sec together on the Level 60
 // talents and the synthetic set. Judgement of the Crusader comes from the raid (our own Seal of
 // the Crusader opener is 11 behind). Consecration goes first down to 20% mana. Seal of Command
-// stays up and Twist of Light twists to Seal of Righteousness and back in the last 1.5 sec
-// before each swing, so every swing gets both seals (126 DPS over no twisting). Judgement and
+// stays up and Twist of Light twists to Seal of Righteousness and back whenever no Echo is waiting
+// for a swing, so every swing gets both seals (126 DPS over no twisting; in the last 1.5 sec before
+// each swing until 2026-10-30, when extra attacks kept the swing timer and the free window won 13.9). Judgement and
 // Holy Strike on cooldown, Seal of Righteousness judged whenever Judgement is ready (no swing
 // window, 3 DPS over waiting for one), Hammer of Wrath below 20% health. Seal of Righteousness as the seal
 // that stays up is 1.5 behind. The spell power on-use trinket and the Goblin Sapper Charge go at
