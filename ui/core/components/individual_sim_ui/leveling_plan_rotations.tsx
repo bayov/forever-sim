@@ -13,13 +13,13 @@ import { ContentBlock } from '../content_block';
 import { APLRotationPicker } from './apl_rotation_picker';
 import { LevelingPlanCharacter } from './leveling_plan_character';
 
-// The shaman imbues a level range can come with, short so they fit under the range.
+// The shaman imbues a level range can come with.
 const SHAMAN_IMBUES: Array<{ name: string; value: WeaponImbue }> = [
-	{ name: 'Settings imbue', value: WeaponImbue.WeaponImbueUnknown },
-	{ name: 'Rockbiter', value: WeaponImbue.RockbiterWeapon },
-	{ name: 'Flametongue', value: WeaponImbue.FlametongueWeapon },
-	{ name: 'Frostbrand', value: WeaponImbue.FrostbrandWeapon },
-	{ name: 'Windfury', value: WeaponImbue.WindfuryWeapon },
+	{ name: "Settings tab's imbue", value: WeaponImbue.WeaponImbueUnknown },
+	{ name: 'Rockbiter Weapon', value: WeaponImbue.RockbiterWeapon },
+	{ name: 'Flametongue Weapon', value: WeaponImbue.FlametongueWeapon },
+	{ name: 'Frostbrand Weapon', value: WeaponImbue.FrostbrandWeapon },
+	{ name: 'Windfury Weapon', value: WeaponImbue.WindfuryWeapon },
 ];
 
 // The colors of the plan's rotations, by their place in the library, so a level range and its
@@ -32,10 +32,11 @@ const LIST_SPELLS = 6;
 // The Rotations part of the Leveling Plan tab.
 //
 // The plan has its own rotations. They start as copies of the spec's rotation presets, and we
-// can add more, rename them and change them in the editor on the right. The list on the left is
-// the plan's level ranges in order, each with the rotation we play from its level until the next
-// range's. A shaman's range also says which weapon imbue we use, because Windfury Weapon only
-// comes at level 30. The rotations no range plays come last.
+// can add more, rename them and change them in the editor on the right. The list on the left has
+// a card per rotation in the order we play them, each from its level until the next one's. Under
+// the hood each card is a level range of the plan, and the rotation it plays. A shaman's range
+// also says which weapon imbue we use, because Windfury Weapon only comes at level 30. We set it in
+// the editor. Rotations that no range plays, like ones from an older plan, come last.
 //
 // The editor is the Rotation tab's, on the plan's character at one level of the plan
 // (LevelingPlanCharacter), because its spell lists come from the character's level and talents.
@@ -56,6 +57,8 @@ export class LevelingRotationsSection {
 
 	// The name of the rotation in the editor.
 	private selected = '';
+	// The level range we opened it from, by its place in sortedRanges, or -1 for none.
+	private selectedRange = -1;
 	// The level of the plan the editor's character is at. 0 means the first level we play the
 	// selected rotation at.
 	private editLevel = 0;
@@ -84,20 +87,15 @@ export class LevelingRotationsSection {
 			header: {
 				title: 'Rotations',
 				tooltip:
-					"Each level range plays one of the plan's rotations, until the next range's level. A click opens its rotation in the editor. Changing them here leaves the spec's presets and the Rotation tab alone.",
+					"The plan's rotations, each played from its level until the next one's. A click opens one in the editor. Changing them here leaves the spec's presets and the Rotation tab alone.",
 			},
 		});
 		const library = ref<HTMLDivElement>();
-		const addRange = ref<HTMLButtonElement>();
 		const newMenu = ref<HTMLUListElement>();
 		libraryBlock.bodyElement.appendChild(
 			<>
 				<div className="leveling-plan-library" ref={library} />
 				<div className="leveling-plan-buttons">
-					<button className="btn btn-outline-primary" ref={addRange}>
-						<i className="fas fa-plus me-1" />
-						Level range
-					</button>
 					<div className="dropdown leveling-plan-new-rotation">
 						<button
 							className="btn btn-outline-primary dropdown-toggle"
@@ -114,8 +112,6 @@ export class LevelingRotationsSection {
 		);
 		this.libraryElem = library.value!;
 		this.newMenuElem = newMenu.value!;
-		tippy(addRange.value!, { content: 'Split the longest range in two, so its second half can play another rotation.' });
-		addRange.value!.addEventListener('click', () => this.addRange());
 
 		const editorBlock = new ContentBlock(editorCol, 'leveling-plan-editor-block', {
 			header: { title: 'Editor' },
@@ -213,9 +209,25 @@ export class LevelingRotationsSection {
 	}
 
 	private select(name: string) {
-		if (name == this.selected) return;
+		this.selectedRange = -1;
+		if (name == this.selected) {
+			this.render();
+			return;
+		}
 		this.selected = name;
 		this.editLevel = 0;
+		this.render();
+		this.syncEditor();
+	}
+
+	// Opens a range's rotation in the editor, on the character at the range's first level.
+	private selectRange(i: number) {
+		const plan = this.plan();
+		const range = sortedRanges(plan)[i];
+		if (!range) return;
+		this.selectedRange = i;
+		this.selected = range.name;
+		this.editLevel = rangeLevels(plan, i).from;
 		this.render();
 		this.syncEditor();
 	}
@@ -227,12 +239,44 @@ export class LevelingRotationsSection {
 		this.player.setLevelingPlan(TypedEvent.nextEventID(), plan);
 	}
 
-	// Adds a rotation to the library and opens it.
+	// Adds a rotation to the plan and opens it. It plays the second half of the open rotation's
+	// levels, or of the longest one's when the open one plays a single level.
 	private addRotation(name: string, rotation: APLRotation) {
 		const plan = this.plan();
 		const free = freeRotationName(plan, name);
-		this.change(plan => plan.rotationLibrary.push(LevelingRotationPreset.create({ name: free, rotation: APLRotation.clone(rotation) })));
-		this.select(free);
+		const ranges = sortedRanges(plan);
+		const split = this.rangeToSplit(plan);
+		this.change(plan => {
+			plan.rotationLibrary.push(LevelingRotationPreset.create({ name: free, rotation: APLRotation.clone(rotation) }));
+			if (!ranges.length) {
+				plan.rotations.push(LevelingRotation.create({ level: plan.fromLevel, name: free }));
+			} else if (split) {
+				plan.rotations.push(LevelingRotation.clone({ ...ranges[split.index], level: split.level, name: free }));
+			}
+		});
+		const index = sortedRanges(this.plan()).findIndex(range => range.name == free);
+		if (index >= 0) this.selectRange(index);
+		else this.select(free);
+	}
+
+	private rangeToSplit(plan: LevelingPlanSettings): { index: number; level: number } | undefined {
+		const length = (i: number) => {
+			const { from, to } = rangeLevels(plan, i);
+			return to - from + 1;
+		};
+		let index = this.selectedRange;
+		if (!(index >= 0 && length(index) >= 2)) {
+			index = -1;
+			let longest = 1;
+			sortedRanges(plan).forEach((_, i) => {
+				if (length(i) > longest) {
+					index = i;
+					longest = length(i);
+				}
+			});
+		}
+		if (index < 0) return undefined;
+		return { index, level: rangeLevels(plan, index).from + Math.floor(length(index) / 2) };
 	}
 
 	private renameRotation(from: string, to: string): boolean {
@@ -250,35 +294,19 @@ export class LevelingRotationsSection {
 		return true;
 	}
 
+	// Takes a rotation out of the plan. The rotation before it plays on at its levels.
 	private deleteRotation(name: string) {
-		this.change(plan => (plan.rotationLibrary = plan.rotationLibrary.filter(preset => preset.name != name)));
+		const preset = libraryRotation(this.plan(), name);
+		const spec = this.specPreset(name);
+		const lost = !spec || !APLRotation.equals(spec.rotation.rotation!, preset?.rotation ?? APLRotation.create());
+		if (lost && !window.confirm(`Delete ${name}? Its changes can't come back.`)) return;
+		this.change(plan => {
+			plan.rotationLibrary = plan.rotationLibrary.filter(preset => preset.name != name);
+			plan.rotations = plan.rotations.filter(range => range.name != name);
+		});
 		this.selected = this.plan().rotationLibrary[0]?.name ?? '';
 		this.render();
 		this.syncEditor();
-	}
-
-	// Splits the longest range in two. The new range plays the same rotation, so nothing
-	// changes until we pick another one for it.
-	private addRange() {
-		const plan = this.plan();
-		const ranges = sortedRanges(plan);
-		if (!ranges.length) {
-			this.change(plan => plan.rotations.push(LevelingRotation.create({ level: plan.fromLevel, name: plan.rotationLibrary[0]?.name ?? '' })));
-			return;
-		}
-		let longest = -1;
-		let longestLevels = 0;
-		ranges.forEach((_, i) => {
-			const { from, to } = rangeLevels(plan, i);
-			if (to - from + 1 > longestLevels) {
-				longest = i;
-				longestLevels = to - from + 1;
-			}
-		});
-		if (longest < 0 || longestLevels < 2) return;
-		const { from } = rangeLevels(plan, longest);
-		const level = from + Math.floor(longestLevels / 2);
-		this.change(plan => plan.rotations.push(LevelingRotation.clone({ ...ranges[longest], level })));
 	}
 
 	colorOf(plan: LevelingPlanSettings, name: string): string {
@@ -290,6 +318,10 @@ export class LevelingRotationsSection {
 		const plan = this.plan();
 		if (!this.selectedRotation()) this.selected = sortedRanges(plan)[0]?.name ?? plan.rotationLibrary[0]?.name ?? '';
 		if (!this.selectedRotation()) this.selected = plan.rotationLibrary[0]?.name ?? '';
+		const ranges = sortedRanges(plan);
+		if (ranges[this.selectedRange]?.name != this.selected) {
+			this.selectedRange = ranges.findIndex(range => range.name == this.selected);
+		}
 		this.renderLibrary(plan);
 		this.renderNewMenu();
 		this.renderEditorHead(plan);
@@ -307,8 +339,10 @@ export class LevelingRotationsSection {
 			const edited = !!spec && !APLRotation.equals(spec.rotation.rotation!, preset.rotation ?? APLRotation.create());
 			const spells = ref<HTMLDivElement>();
 			const row = (
-				<button className={`leveling-plan-library-item ${preset.name == this.selected ? 'active' : ''}`} type="button">
-					<i className="leveling-plan-swatch" style={{ backgroundColor: this.colorOf(plan, preset.name) }} />
+				<button
+					className={`leveling-plan-library-item ${preset.name == this.selected && this.selectedRange < 0 ? 'active' : ''}`}
+					type="button"
+					style={{ '--rotation-color': this.colorOf(plan, preset.name) } as any}>
 					<span className="leveling-plan-library-labels">
 						<span className="leveling-plan-library-name">
 							{preset.name}
@@ -325,22 +359,34 @@ export class LevelingRotationsSection {
 		this.libraryElem.replaceChildren(...rows);
 	}
 
-	// A level range: its levels, its rotation and a remove button on top, the rotation's spells
-	// and a shaman's imbue under them. A click anywhere else on it opens its rotation.
+	// A rotation's card: its name and a remove button on top, its levels and spells under them. A
+	// click anywhere else on it opens it in the editor.
 	private renderRange(plan: LevelingPlanSettings, i: number): HTMLElement {
-		const range = sortedRanges(plan)[i];
-		const names = plan.rotationLibrary.map(preset => preset.name);
+		const ranges = sortedRanges(plan);
+		const range = ranges[i];
+		const preset = libraryRotation(plan, range.name);
+		const spec = this.specPreset(range.name);
+		const edited = !!preset && !!spec && !APLRotation.equals(spec.rotation.rotation!, preset.rotation ?? APLRotation.create());
 		const { from, to } = rangeLevels(plan, i);
 		const level = ref<HTMLInputElement>();
-		const select = ref<HTMLSelectElement>();
-		const imbue = ref<HTMLSelectElement>();
 		const remove = ref<HTMLButtonElement>();
 		const spells = ref<HTMLSpanElement>();
-		const missing = !names.includes(range.name);
 		const row = (
-			<div className={`leveling-plan-library-item leveling-plan-range ${range.name == this.selected ? 'active' : ''}`}>
+			<div
+				className={`leveling-plan-library-item leveling-plan-range ${i == this.selectedRange ? 'active' : ''}`}
+				style={{ '--rotation-color': this.colorOf(plan, range.name) } as any}>
 				<div className="leveling-plan-range-head">
-					<i className="leveling-plan-swatch" style={{ backgroundColor: this.colorOf(plan, range.name) }} />
+					<span className={`leveling-plan-library-name ${preset ? '' : 'text-danger'}`}>
+						{preset ? range.name : `${range.name || 'No rotation'} (gone)`}
+						{edited ? <span className="leveling-plan-badge">edited</span> : null}
+					</span>
+					{ranges.length > 1 ? (
+						<button className="btn btn-link link-danger leveling-plan-remove" ref={remove}>
+							<i className="fas fa-times" />
+						</button>
+					) : null}
+				</div>
+				<div className="leveling-plan-range-foot">
 					<span className="leveling-plan-range-levels">
 						{i == 0 ? (
 							<span className="leveling-plan-range-from">{String(plan.fromLevel)}</span>
@@ -349,47 +395,15 @@ export class LevelingRotationsSection {
 						)}
 						<span className="leveling-plan-range-to">{to < from ? 'past the plan' : `to ${to}`}</span>
 					</span>
-					<select className={`form-select form-select-sm leveling-plan-rotation-select ${missing ? 'is-invalid' : ''}`} ref={select}>
-						{missing ? <option value={range.name}>{range.name ? `${range.name} (gone)` : 'No rotation'}</option> : null}
-						{names.map(name => (
-							<option value={name}>{name}</option>
-						))}
-					</select>
-					{i == 0 ? (
-						<span className="leveling-plan-remove-space" />
-					) : (
-						<button className="btn btn-link link-danger leveling-plan-remove" ref={remove}>
-							<i className="fas fa-times" />
-						</button>
-					)}
-				</div>
-				<div className="leveling-plan-range-foot">
 					<span className="leveling-plan-spells" ref={spells} />
-					{this.hasShamanImbue ? (
-						<select className="form-select form-select-sm leveling-plan-imbue-select" ref={imbue}>
-							{SHAMAN_IMBUES.map(({ name, value }) => (
-								<option value={String(value)}>{name}</option>
-							))}
-						</select>
-					) : null}
 				</div>
 			</div>
 		) as HTMLElement;
-		fillSpellIcons(spells.value!, libraryRotation(plan, range.name)?.rotation);
+		fillSpellIcons(spells.value!, preset?.rotation);
 		row.addEventListener('click', event => {
-			if (!(event.target as HTMLElement).closest('input, select, button')) this.select(range.name);
+			if (!(event.target as HTMLElement).closest('input, button')) this.selectRange(i);
 		});
-		select.value!.value = range.name;
-		select.value!.addEventListener('change', () => {
-			const name = select.value!.value;
-			this.change(plan => (plan.rotations[i].name = name));
-			this.select(name);
-		});
-		if (imbue.value) {
-			imbue.value.value = String(range.imbue);
-			tippy(imbue.value, { content: 'The weapon imbue at these levels. Settings imbue keeps the one in the Settings tab.' });
-			imbue.value.addEventListener('change', () => this.change(plan => (plan.rotations[i].imbue = Number(imbue.value!.value) as WeaponImbue)));
-		}
+		if (level.value) tippy(level.value, { content: 'The level we start playing it at.' });
 		level.value?.addEventListener('change', () => {
 			const newLevel = Math.round(Number(level.value!.value));
 			if (!(newLevel > plan.fromLevel && newLevel < plan.toLevel)) {
@@ -399,8 +413,12 @@ export class LevelingRotationsSection {
 			this.change(plan => (plan.rotations[i].level = newLevel));
 		});
 		if (remove.value) {
-			tippy(remove.value, { content: 'Drop this range, so the range before it plays on' });
-			remove.value.addEventListener('click', () => this.change(plan => plan.rotations.splice(i, 1)));
+			tippy(remove.value, { content: 'Take it out of the plan. The rotation before it plays on at its levels.' });
+			remove.value.addEventListener('click', () => {
+				// Another card can play the same rotation. Then we only drop this card's levels.
+				if (ranges.filter(other => other.name == range.name).length > 1) this.change(plan => plan.rotations.splice(i, 1));
+				else this.deleteRotation(range.name);
+			});
 		}
 		return row;
 	}
@@ -447,10 +465,13 @@ export class LevelingRotationsSection {
 		const edited = !!spec && !APLRotation.equals(spec.rotation.rotation!, preset.rotation ?? APLRotation.create());
 		const name = ref<HTMLInputElement>();
 		const level = ref<HTMLSelectElement>();
+		const imbue = ref<HTMLSelectElement>();
 		const revert = ref<HTMLButtonElement>();
 		const remove = ref<HTMLButtonElement>();
 		const levels: number[] = [];
 		for (let l = plan.fromLevel; l < plan.toLevel; l++) levels.push(l);
+		const range = sortedRanges(plan)[this.selectedRange];
+		const { from: rangeFrom, to: rangeTo } = range ? rangeLevels(plan, this.selectedRange) : { from: 0, to: 0 };
 		this.editorHeadElem.replaceChildren(
 			<>
 				<div className="leveling-plan-editor-title">
@@ -474,12 +495,30 @@ export class LevelingRotationsSection {
 					</select>
 					<span className="leveling-plan-note">
 						{used.length
-							? `Played at levels ${used.map(({ from, to }) => (from == to ? `${from}` : `${from} to ${to}`)).join(', ')}.`
+							? `Played at ${used.length == 1 && used[0].from == used[0].to ? 'level' : 'levels'} ${used
+									.map(({ from, to }) => (from == to ? `${from}` : `${from} to ${to}`))
+									.join(', ')}.`
 							: 'No level range plays it yet.'}
 					</span>
 				</div>
+				{this.hasShamanImbue && range ? (
+					<div className="leveling-plan-editor-level">
+						<span>{rangeFrom == rangeTo ? `Weapon imbue at level ${rangeFrom}` : `Weapon imbue at levels ${rangeFrom} to ${rangeTo}`}</span>
+						<select className="form-select leveling-plan-imbue-select" ref={imbue}>
+							{SHAMAN_IMBUES.map(({ name, value }) => (
+								<option value={String(value)}>{name}</option>
+							))}
+						</select>
+					</div>
+				) : null}
 			</>,
 		);
+		if (imbue.value) {
+			const i = this.selectedRange;
+			imbue.value.value = String(range!.imbue);
+			tippy(imbue.value, { content: "Settings tab's imbue keeps the one in the Settings tab." });
+			imbue.value.addEventListener('change', () => this.change(plan => (plan.rotations[i].imbue = Number(imbue.value!.value) as WeaponImbue)));
+		}
 		level.value!.value = String(this.characterLevel(plan));
 		level.value!.addEventListener('change', () => {
 			this.editLevel = Number(level.value!.value);
@@ -494,9 +533,10 @@ export class LevelingRotationsSection {
 		revert.value!.addEventListener('click', () =>
 			this.change(plan => (libraryRotation(plan, preset.name)!.rotation = APLRotation.clone(spec!.rotation.rotation!))),
 		);
-		remove.value!.disabled = used.length > 0;
+		const onlyOne = sortedRanges(plan).every(range => range.name == preset.name) && used.length > 0;
+		remove.value!.disabled = onlyOne;
 		tippy(wrapForTooltip(remove.value!), {
-			content: used.length ? 'A level range plays it. Give the range another rotation first.' : 'Take it out of the plan.',
+			content: onlyOne ? 'The plan needs a rotation.' : 'Take it out of the plan. The rotation before it plays on at its levels.',
 		});
 		remove.value!.addEventListener('click', () => this.deleteRotation(preset.name));
 	}

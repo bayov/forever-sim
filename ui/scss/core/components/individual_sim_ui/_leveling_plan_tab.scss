@@ -771,12 +771,14 @@
 		margin-bottom: var(--block-spacer);
 	}
 
+	// A rotation's card, with the rotation's color as a band on its left.
 	.leveling-plan-library-item {
 		display: flex;
 		align-items: flex-start;
 		gap: var(--spacer-2);
 		padding: var(--spacer-2);
 		border: 1px solid var(--line-color);
+		border-left: 4px solid var(--rotation-color, var(--line-color));
 		border-radius: var(--bs-border-radius);
 		background: rgba(0, 0, 0, 0.2);
 		color: inherit;
@@ -793,6 +795,7 @@
 
 		&.active {
 			border-color: var(--gold);
+			border-left-color: var(--rotation-color, var(--gold));
 			background: rgba(255, 255, 255, 0.05);
 		}
 	}
@@ -817,8 +820,7 @@
 		text-transform: uppercase;
 	}
 
-	// A level range in the list: its levels, its rotation and a remove button on top, the
-	// rotation's spells and a shaman's imbue under them.
+	// A rotation's card: its name and a remove button on top, its levels and spells under them.
 	.leveling-plan-range {
 		flex-direction: column;
 		align-items: stretch;
@@ -832,8 +834,12 @@
 		gap: var(--spacer-2);
 	}
 
-	.leveling-plan-range-head .leveling-plan-swatch {
-		margin-top: 0;
+	.leveling-plan-range-head .leveling-plan-library-name {
+		flex: 1;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
 	}
 
 	.leveling-plan-range-levels {
@@ -860,29 +866,6 @@
 		font-size: 0.8125rem;
 	}
 
-	.leveling-plan-rotation-select {
-		flex: 1;
-		min-width: 0;
-	}
-
-	.leveling-plan-remove-space {
-		flex: 0 0 1.6rem;
-	}
-
-	.leveling-plan-range-foot {
-		justify-content: space-between;
-		padding-left: calc(0.75rem + var(--spacer-2));
-
-		.leveling-plan-spells {
-			margin-top: 0;
-		}
-	}
-
-	.leveling-plan-imbue-select {
-		flex: 0 1 10rem;
-		min-width: 0;
-	}
-
 	.leveling-plan-spells {
 		display: flex;
 		align-items: center;
@@ -899,6 +882,11 @@
 		color: var(--bs-gray-500);
 		font-size: 0.75rem;
 		margin-left: 0.2rem;
+	}
+
+	.leveling-plan-range-foot .leveling-plan-spells {
+		margin-top: 0;
+		margin-left: auto;
 	}
 
 	.leveling-plan-new-rotation .dropdown-menu {
@@ -981,6 +969,10 @@
 
 	.leveling-plan-level-select {
 		width: 5rem;
+	}
+
+	.leveling-plan-imbue-select {
+		width: auto;
 	}
 }
 
