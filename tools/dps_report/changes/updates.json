@@ -1271,6 +1271,18 @@
     {
      "commit": "4876300",
      "why": "sim UI preset names and folders, Level 30 presets removed; the report's requests are unchanged"
+    },
+    {
+     "commit": "3d4cdda",
+     "why": "the re-sim's own data and meta published numbers; its changes are the lines above"
+    },
+    {
+     "commit": "1594436",
+     "why": "sim UI preset names and defaults; the report's requests are unchanged"
+    },
+    {
+     "commit": "39906cd",
+     "why": "old Era presets and gear sets deleted from the sim UI; no report request uses them"
     }
    ]
   }
