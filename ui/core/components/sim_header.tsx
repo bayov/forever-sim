@@ -8,6 +8,7 @@ import { Component } from './component';
 import { Exporter } from './exporter';
 import { Importer } from './importer';
 import { SettingsMenu } from './settings_menu';
+import { showTabNow } from './show_tab_now';
 import { SimTab } from './sim_tab';
 import { SocialLinks } from './social_links';
 
@@ -64,7 +65,7 @@ export class SimHeader extends Component {
 
 		const wanted = new URLSearchParams(window.location.search).get(SimHeader.TAB_PARAM);
 		const link = links.find(link => tabName(link) === wanted);
-		if (link) Tab.getOrCreateInstance(link).show();
+		if (link) showTabNow(link);
 
 		this.simTabsContainer.addEventListener('shown.bs.tab', event => {
 			const url = new URL(window.location.href);

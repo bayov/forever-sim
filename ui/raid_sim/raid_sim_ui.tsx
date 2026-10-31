@@ -128,7 +128,7 @@ export class RaidSimUI extends SimUI {
 		loadRaidFromLink(this.editor);
 		// A link pasted into this page's own tab changes only the hash, which doesn't reload the page.
 		window.addEventListener('hashchange', () => loadRaidFromLink(this.editor));
-		this.resultsManager.whileLoading(this.showLatestRun());
+		this.showLatestRun();
 
 		this.simHeader.syncTabWithUrl();
 		if (new URLSearchParams(window.location.search).has(RESULT_PARAM)) loader.loadFromUrlParameter();
@@ -149,7 +149,15 @@ export class RaidSimUI extends SimUI {
 
 	// After a reload, Raid results show the latest run's results again, as a spec page's Results do. They're
 	// marked as another raid's when the raid changed since.
+	//
+	// Reading them back takes seconds in a big raid, because we read the log of every member's actions. So we
+	// wait until Raid results opens, and the other tabs stay quick.
 	private async showLatestRun() {
+		await this.whenTabOpens(DETAILS_TAB);
+		await this.resultsManager.whileLoading(this.readLatestRun());
+	}
+
+	private async readLatestRun() {
 		await this.history.ready;
 		const latest = this.history.getRuns().recent[0];
 		if (!latest || this.resultsManager.getRunData() || this.history.isRunning()) return;
@@ -161,6 +169,19 @@ export class RaidSimUI extends SimUI {
 		} catch (e) {
 			console.warn('Failed to read the latest run’s raid:', e);
 		}
+	}
+
+	private whenTabOpens(cssClass: string): Promise<void> {
+		const pane = this.tabElem(cssClass);
+		if (pane.classList.contains('active')) return Promise.resolve();
+		return new Promise(resolve => {
+			const onShow = (event: Event) => {
+				if ((event.target as HTMLElement).dataset.bsTarget !== `#${pane.id}`) return;
+				document.removeEventListener('show.bs.tab', onShow);
+				resolve();
+			};
+			document.addEventListener('show.bs.tab', onShow);
+		});
 	}
 
 	setShownRaid(raid: RaidState) {

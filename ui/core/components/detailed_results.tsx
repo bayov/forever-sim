@@ -1,4 +1,3 @@
-import { Tab as BootstrapTab } from 'bootstrap';
 import { ref } from 'tsx-vanilla';
 
 import { DetailedResultsUpdate, SimRun, SimRunData } from '../proto/ui';
@@ -7,6 +6,7 @@ import { SimUI } from '../sim_ui';
 import { TypedEvent } from '../typed_event';
 import { Component } from './component';
 import { loadingState } from './loading_state';
+import { showTabNow } from './show_tab_now';
 import { AuraMetricsTable } from './detailed_results/aura_metrics';
 import { CastMetricsTable } from './detailed_results/cast_metrics';
 import { DamageMetricsTable } from './detailed_results/damage_metrics';
@@ -490,7 +490,7 @@ export const syncSubTabWithUrl = (toolbar: HTMLElement, param: string) => {
 
 	const wanted = new URLSearchParams(window.location.search).get(param);
 	const link = links.find(link => tabName(link) === wanted);
-	if (link) BootstrapTab.getOrCreateInstance(link).show();
+	if (link) showTabNow(link);
 
 	toolbar.addEventListener('shown.bs.tab', event => {
 		const url = new URL(window.location.href);

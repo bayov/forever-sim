@@ -200,57 +200,67 @@ export class SimLog {
 		return logs;
 	}
 
-	private static parseLines(lines: string[]): Promise<SimLog[]> {
-		return Promise.all(
-			lines.map((line, lineIndex) => {
-				const params: SimLogParams = {
-					raw: line,
-					logIndex: lineIndex,
-					timestamp: 0,
-					source: null,
-					target: null,
-					actionId: null,
-					threat: 0,
-				};
+	// A raid's log has over 100k lines, which takes seconds to read. We read it in slices, and
+	// between them we let the browser draw and take clicks, so the page doesn't freeze meanwhile.
+	private static readonly PARSE_SLICE = 5000;
 
-				const threatMatch = line.match(/ \(Threat: (-?[0-9]+\.[0-9]+)\)/);
-				if (threatMatch) {
-					params.threat = parseFloat(threatMatch[1]);
-					line = line.substring(0, threatMatch.index);
-				}
+	private static async parseLines(lines: string[]): Promise<SimLog[]> {
+		const logs: SimLog[] = [];
+		for (let start = 0; start < lines.length; start += SimLog.PARSE_SLICE) {
+			if (start > 0) await new Promise(resolve => setTimeout(resolve, 0));
+			const slice = lines.slice(start, start + SimLog.PARSE_SLICE);
+			for (const log of await Promise.all(slice.map((line, i) => SimLog.parseLine(line, start + i)))) logs.push(log);
+		}
+		return logs;
+	}
 
-				const match = line.match(/\[(-?[0-9]+\.[0-9]+)\]\w*(.*)/);
-				if (!match || !match[1]) {
-					return new SimLog(params);
-				}
+	private static parseLine(line: string, lineIndex: number): Promise<SimLog> {
+		const params: SimLogParams = {
+			raw: line,
+			logIndex: lineIndex,
+			timestamp: 0,
+			source: null,
+			target: null,
+			actionId: null,
+			threat: 0,
+		};
 
-				params.timestamp = parseFloat(match[1]);
-				const remainder = match[2];
+		const threatMatch = line.match(/ \(Threat: (-?[0-9]+\.[0-9]+)\)/);
+		if (threatMatch) {
+			params.threat = parseFloat(threatMatch[1]);
+			line = line.substring(0, threatMatch.index);
+		}
 
-				const entities = Entity.parseAll(remainder);
-				params.source = entities[0] || null;
-				params.target = entities[1] || null;
+		const match = line.match(/\[(-?[0-9]+\.[0-9]+)\]\w*(.*)/);
+		if (!match || !match[1]) {
+			return Promise.resolve(new SimLog(params));
+		}
 
-				// Order from most to least common to reduce number of checks.
-				return (
-					DamageDealtLog.parse(params) ||
-					ResourceChangedLog.parse(params) ||
-					AuraEventLog.parse(params) ||
-					AuraStacksChangeLog.parse(params) ||
-					MajorCooldownUsedLog.parse(params) ||
-					CastBeganLog.parse(params) ||
-					CastCompletedLog.parse(params) ||
-					CastInterruptedLog.parse(params) ||
-					StatChangeLog.parse(params) ||
-					ExtraAttackLog.parse(params) ||
-					CooldownLog.parse(params) ||
-					ChannelLog.parse(params) ||
-					CastPushbackLog.parse(params) ||
-					MaxResourcesLog.parse(params) ||
-					TotemLog.parse(params) ||
-					Promise.resolve(new SimLog(params))
-				);
-			}),
+		params.timestamp = parseFloat(match[1]);
+		const remainder = match[2];
+
+		const entities = Entity.parseAll(remainder);
+		params.source = entities[0] || null;
+		params.target = entities[1] || null;
+
+		// Order from most to least common to reduce number of checks.
+		return (
+			DamageDealtLog.parse(params) ||
+			ResourceChangedLog.parse(params) ||
+			AuraEventLog.parse(params) ||
+			AuraStacksChangeLog.parse(params) ||
+			MajorCooldownUsedLog.parse(params) ||
+			CastBeganLog.parse(params) ||
+			CastCompletedLog.parse(params) ||
+			CastInterruptedLog.parse(params) ||
+			StatChangeLog.parse(params) ||
+			ExtraAttackLog.parse(params) ||
+			CooldownLog.parse(params) ||
+			ChannelLog.parse(params) ||
+			CastPushbackLog.parse(params) ||
+			MaxResourcesLog.parse(params) ||
+			TotemLog.parse(params) ||
+			Promise.resolve(new SimLog(params))
 		);
 	}
 
