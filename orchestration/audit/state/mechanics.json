@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "fb14858885638b09f11c61720c25f3243fd55654"
+  "master": "d63bb63b61e7ffcb2e94d2762ebe0e3d2040afe2"
  },
  "last_pass_at": "2026-10-30T18:57:08Z",
  "pass": 51,
  "result": "findings",
  "note": "Pass 51: 4 code commits (WF Totem 100 ms ICD verified 10612; extra attacks keep swing, Eviscerate 4% AP user rulings; threat talents and mage 70707 talents verified). Finding mechanics-20261030-2: report assumption cards and standards still say 1.5 s / reset. Client 70707, dev notes 8 posts, no new blue posts.",
  "client_build": "1.60.1.70707",
- "checked_at": "2026-10-30T19:12:48Z",
+ "checked_at": "2026-10-31T00:45:11Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/8",
   "date": "2026-10-27T15:37:37Z",
