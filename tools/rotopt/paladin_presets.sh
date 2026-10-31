@@ -42,6 +42,8 @@ gen() {
 # no Echo is waiting (twistWindow=0, no swing gate) beats the 1.5 sec window by +13.9 at 180 sec
 # (+11.9 at 120, +4.8 at 300) on level60 and +14.9 on sub Holy. Before that change the same
 # variant lost 4.0, and 1.5 sec was the sharp optimum.
+# Against an Undead boss (level60_undead) the 1.5 sec window still wins, +1.1 to +3.5 at 120 / 180 /
+# 300 sec on two seed sets (2026-10-31), so it keeps twistWindow=15.
 # From the rotation audit (2026-10-13): the spell power on-use trinket and the Goblin Sapper
 # Charge at the top of the list instead of on the autocast line, which a GCD line above it
 # nearly always beat, so they went out 3 to 4.5 sec late and drifted from there.
@@ -108,7 +110,7 @@ gen level60_sub_holy "seal=1,jotc=0,consecration=1,consecrationFirst=1,consecrat
 # Regear and rotation round (2026-10-23): no Holy Wrath (holyWrathMana=100, was 80). Its 2 sec
 # cast resets the swing and costs more than it adds: +9.6 / +6.8 / +8.3 at 120 / 180 / 300 sec on the
 # new vs Undead talents (paired, two seed sets).
-gen level60_undead "seal=1,jotc=0,consecration=1,consecrationFirst=0,consecrationMana=20,twist=1,twistMana=0,twistWindow=0,hammerOfWrathMana=0,prepullTwo=1,judgeRighteousnessWindow=0,cooldownsFirst=1,holyWrathMana=100,trinketExecute=1,hammerOfWrathFirst=3" -level 60
+gen level60_undead "seal=1,jotc=0,consecration=1,consecrationFirst=0,consecrationMana=20,twist=1,twistMana=0,twistWindow=15,hammerOfWrathMana=0,prepullTwo=1,judgeRighteousnessWindow=0,cooldownsFirst=1,holyWrathMana=100,trinketExecute=1,hammerOfWrathFirst=3" -level 60
 # Level 60 Shock (vs Undead): the Shock rotation, with Light's Vigil above 30% mana while the mana
 # lasts the fight and only above 60% when it won't. Holy Wrath does not make it: its 2 sec cast is
 # worth less than the Holy Shocks and Holy Strikes it pushes back.

@@ -1201,10 +1201,9 @@
      ],
      "builds": [
       "paladin__level_60",
-      "paladin__level_60_sub_holy",
-      "paladin__level_60_sub_holy_undead"
+      "paladin__level_60_sub_holy"
      ],
-     "note": "Since extra attacks stopped resetting the swing timer, the open window puts both seals on more swings. The Holy Shock builds don't twist and are unchanged.",
+     "note": "Since extra attacks stopped resetting the swing timer, the open window puts both seals on more swings. Against Undead bosses the 1.5 sec window still does better and stays; the Holy Shock builds don't twist.",
      "commits": [
       "e1fcd57"
      ]
