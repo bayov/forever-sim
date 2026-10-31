@@ -336,6 +336,15 @@ function makeCollapsible(
 		}
 	});
 
+	// The summary starts with the action's ticked checkboxes, like "Eat, Drink". We read them after
+	// the condition's summary, because a checkbox takes its new value from the same change.
+	const checkedSettings = () =>
+		Array.from(settingsElem.querySelectorAll<HTMLElement>('.boolean-picker-root'))
+			.filter(elem => elem.querySelector<HTMLInputElement>('input')?.checked)
+			.map(elem => elem.querySelector('label')?.textContent?.trim())
+			.filter(label => label)
+			.join(', ');
+
 	// The names of spells and auras come in later, so a newer change can finish first.
 	let shown = 0;
 	const update = async () => {
@@ -348,9 +357,11 @@ function makeCollapsible(
 		const call = ++shown;
 		const text = await aplValueSummary(getCondition());
 		if (call !== shown) return;
-		summaryElem.textContent = text ? `If ${text}` : 'Always';
-		summaryElem.classList.toggle('apl-condition-summary-empty', !text);
-		summaryTooltip.setContent(text ? `If ${text}` : 'No condition. Click to add one.');
+		const settings = checkedSettings();
+		const condition = text ? `If ${text}` : 'Always';
+		summaryElem.textContent = settings ? `${settings} · ${condition}` : condition;
+		summaryElem.classList.toggle('apl-condition-summary-empty', !text && !settings);
+		summaryTooltip.setContent(text || settings ? summaryElem.textContent : 'No condition. Click to add one.');
 	};
 	update();
 	player.rotationChangeEmitter.on(update);
