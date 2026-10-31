@@ -1283,6 +1283,10 @@
     {
      "commit": "39906cd",
      "why": "old Era presets and gear sets deleted from the sim UI; no report request uses them"
+    },
+    {
+     "commit": "8d0a22b",
+     "why": "mksettings consumes setups and the audit drift check; no committed request changed"
     }
    ]
   }
