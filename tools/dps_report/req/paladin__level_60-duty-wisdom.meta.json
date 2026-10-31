@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_wisdom_duty",
   "published": {
-    "dps": 930.7,
-    "source": "Raid sim variant (docs/raid_sim.md, milestone M1b), in the DPS report since 2026-10-30: wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s, 2026-10-29"
+    "dps": 960.1,
+    "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
   },
   "verify": {
     "dps": 930.71,

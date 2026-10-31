@@ -14,8 +14,8 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_shock_ret_wisdom_duty",
   "published": {
-    "dps": 919.8,
-    "source": "Raid sim variant (docs/raid_sim.md, milestone M1b), in the DPS report since 2026-10-30: wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s, 2026-10-29"
+    "dps": 949.9,
+    "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
   },
   "summary": "Keeps Judgement of Wisdom on the boss for the raid: every attacker with mana gets 59 mana on half its hits.",
   "keyTalents": [

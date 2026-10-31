@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_ff",
   "published": {
-    "dps": 858.5,
-    "source": "Re-simmed 2026-10-29 for the raid sim (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30: Forever has no Faerie Fire (Feral), so the cat now casts the caster Faerie Fire. wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s (was 862.2 with Faerie Fire (Feral))"
+    "dps": 884.9,
+    "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
   },
   "verify": {
     "dps": 858.52,

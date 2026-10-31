@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_synthetic_subtlety",
   "apl": "level60_subtlety",
   "published": {
-    "dps": 742.1,
-    "source": "Second race re-pick 2026-10-27 (standards 29 and 16, after dev notes post 8): Undead (follows its base build, rogue__subtlety); verify.py, 20000 iterations, seed 1 (was 740.3 as Night Elf on the same sim)"
+    "dps": 761.4,
+    "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
   },
   "verify": {
     "dps": 742.1,

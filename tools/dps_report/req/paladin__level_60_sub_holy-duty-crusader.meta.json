@@ -15,8 +15,8 @@
   "gearSet": "level60_phase1_synthetic_crusader_duty",
   "apl": "level60_crusader_duty",
   "published": {
-    "dps": 941.2,
-    "source": "DPS report 2026-10-28 (full re-sim at 20,000 iterations, 180 s, after the launch-realm hunter hotfix)"
+    "dps": 972.5,
+    "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
   },
   "verify": {
     "dps": 937.0,
