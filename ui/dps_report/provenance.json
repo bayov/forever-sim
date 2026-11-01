@@ -214,8 +214,8 @@
 			}
 		},
 		"hunter__lone-wolf": {
-			"commit": "560579d78465e422c31a42c72a968bd1d3c51171",
-			"recordedAt": "2026-11-01T15:33:33.603Z",
+			"commit": "e9344df43f36ed26e90e672ea228c9b6dbf1d426",
+			"recordedAt": "2026-11-01T15:45:12.107Z",
 			"inputs": {
 				"sim/core": "bd6f8b126acbd5a43e0c408c5dbbe2e76dfd334d",
 				"sim/common": "0d569c6d77b089a30d28fc9ba48a3c6132eb07fd",
@@ -225,7 +225,7 @@
 				"assets/database": "2b7844c64f5ad2a474ef66be8d76dc8ddfbd4e75",
 				"tools/rotopt": "4e49ce9c0b738c6d550b3193eabc472321fa0f58",
 				"tools/dps_report/patches": "4138e248b6a54de468028ea43f886e88d427829f",
-				"sim/hunter": "0bf2648b8b76d7ade6d326c2aa72f42446a61e0d",
+				"sim/hunter": "3d31ee7d540668df38e9823dbcf06d371093442a",
 				"ui/hunter": "cb4bc0a93615d67ae9296dce418a70a1af30e6d4",
 				"tools/dps_report/req/hunter__lone-wolf.json": "eceea658b4b666d4169ccf55f99bae6485f8b807",
 				"tools/dps_report/req/races/hunter__lone-wolf.Dwarf.json": "240a48ab6c3f0b8ce5d944e6dfdbd6add6876826"

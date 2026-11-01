@@ -1468,6 +1468,28 @@
      "commits": [
       "560579d"
      ]
+    },
+    {
+     "title": "Hunter pets' normal swings hit 30% less before attack power",
+     "kind": "sim",
+     "classes": [
+      "Hunter"
+     ],
+     "builds": [
+      "hunter__beast-mastery",
+      "hunter__beast-mastery-tallstrider",
+      "hunter__beast-mastery-wolf",
+      "hunter__marksmanship",
+      "hunter__marksmanship-tallstrider",
+      "hunter__marksmanship-wolf",
+      "hunter__survival",
+      "hunter__survival-tallstrider",
+      "hunter__survival-wolf"
+     ],
+     "note": "The game's creature damage figure already includes the pet's own attack power, and the sim was adding that attack power on top. 152 logged hits of a level 30 Cat fit the new figure. Level 60 isn't measured yet, so it is listed under Assumptions.",
+     "commits": [
+      "e9344df"
+     ]
     }
    ],
    "internal": [
