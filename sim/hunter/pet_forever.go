@@ -13,7 +13,7 @@ import (
 // The family abilities Forever added or changed, from client 1.60.1.70532 (SpellEffect, SpellMisc,
 // SpellCooldowns; the same rows as wowsims/forever's spell store). Each rank is learned at its
 // level and grows by its per-level amount up to its max level. None of the new rows carries a bonus
-// coefficient, so Pet Aggression's 8 a hit adds to Bite and Claw only.
+// coefficient.
 type foreverPetRank struct {
 	level    int32
 	maxLevel int32

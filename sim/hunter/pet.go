@@ -204,11 +204,6 @@ func (hp *HunterPet) foreverSwingSpeed() float64 {
 	return swing
 }
 
-// Beast Training's Pet Aggression, rank 5 (6317; skill line 270 "Pet - Generic" has the pet
-// learn 6311 to 6317): A_MOD_DAMAGE_DONE 8 to physical (misc 1), so 8 more on each white hit, Bite
-// and Claw (each row's bonus coefficient 1). wowsims/forever takes rank 5 by default (pets.go:173).
-const foreverPetAggressionDamage = 8
-
 // What Forever changed about pets.
 func (hp *HunterPet) applyForeverRules() {
 	hp.AutoAttacks.MH().SwingSpeed = hp.foreverSwingSpeed()
@@ -237,7 +232,10 @@ func (hp *HunterPet) applyForeverRules() {
 	// at 150 with 5.96% on the sheet: 9.6% in 2,516).
 	hp.AddStat(stats.AttackPower, 20+foreverPetAttackPower)
 
-	hp.PseudoStats.BonusPhysicalDamage += foreverPetAggressionDamage
+	// No Pet Aggression. Its ranks (6311, 6314 to 6317, 8 physical damage a hit at rank 5) are on
+	// skill line 270, but no trainer teaches them: their teaching spells (6312, 6318 to 6321) are on
+	// no skill line, and Beast Training's line (261) has no Pet Aggression, in 70707 as in Era, where
+	// it was never trainable (wowsims/forever 8aa26ccb4d dropped it too; user ruling 2026-11-01).
 
 	// The pet starts at the hunter's distance and runs in at the pull (wowsims/forever pets.go,
 	// StartsAtOwnerDistance), not swinging or casting till it is in melee range.

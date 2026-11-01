@@ -161,7 +161,7 @@ A = [
       default='expected', expected='expected'),
  dict(key='hunter_cobra_damage', cls='Hunter', label="How much does Cobra Reflexes cut pet hits?",
       short="Hits shrink by the 30% speed gain, so white DPS stays the same.",
-      desc="The tooltip says it \"reduces damage\" but gives no number. The gain is then only Pet Aggression's 8 a hit on the extra swings, and more procs. wowsims/forever uses The Burning Crusade's 15% cut, which gives 10.5% more white damage.",
+      desc="The tooltip says it \"reduces damage\" but gives no number. The gain is then only the extra procs, which is about nothing. wowsims/forever uses The Burning Crusade's 15% cut, which gives 10.5% more white damage.",
       src="Forever client 70532 (spell 25076). wowsims/forever (The Burning Crusade's 15% cut).",
       builds=['hunter__beast-mastery', 'hunter__marksmanship', 'hunter__survival'],
       settings=[S('expected', 'Hits shrink with speed', 'each hit ×1/1.3, the same white damage a second', 'The same as pet attack speed.')],

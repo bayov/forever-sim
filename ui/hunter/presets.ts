@@ -235,9 +235,9 @@ export const DefaultTalents = TalentsBeastMastery;
 // Survival (180 sec, 10000 iterations, 2026-10-15): the cat is still best (the raptor ties it, with
 // the same damage modifier, Bite and Claw), 5 to 9 ahead of the next family (the owl, then the
 // bat), and the cat's speeds sim within 1 DPS of each other (20000 iterations), so the preset
-// keeps the 1.0 sec cat. The pet knows Cobra Reflexes (30% faster, hits as much smaller; +6 Beast
-// Mastery, +3 Marksmanship and Survival with Pet Aggression's 8 a hit, 2026-10-23), as wowsims/forever's
-// presets have it; Beast Training's point budget isn't known. The ammo is Swiftfeather Arrow, Forever's
+// keeps the 1.0 sec cat. The pet knows Cobra Reflexes (30% faster, hits as much smaller), as
+// wowsims/forever's presets have it. Without Pet Aggression (no trainer teaches it, 2026-11-01) it ties:
+// -0.8 to +0.9 at 180 sec on Beast Mastery, Marksmanship and Survival (10000 iterations), so it stays. The ammo is Swiftfeather Arrow, Forever's
 // Engineering 300 arrow at 24.5 damage a second (+15 to +22 over Thorium Headed Arrow at range; the user
 // put it in the presets on 2026-10-23).
 export const DefaultOptions = HunterOptions.create({

@@ -119,15 +119,15 @@ func TestForeverPetHitScalesWithSpeed(t *testing.T) {
 }
 
 // Cobra Reflexes (25076) speeds the pet up 30%, and its hits shrink with the speed (report assumption
-// hunter_pet_speed's reading, user ruling 2026-10-23). Pet Aggression rank 5 (6317) adds 8 to each
-// physical hit. Neither is in Classic's pet.
-func TestForeverCobraReflexesAndPetAggression(t *testing.T) {
+// hunter_pet_speed's reading, user ruling 2026-10-23). Neither ruleset gives the pet Pet Aggression: no
+// trainer teaches it under Forever (user ruling 2026-11-01).
+func TestForeverCobraReflexesNoPetAggression(t *testing.T) {
 	for _, c := range []struct {
 		ruleset proto.Ruleset
 		swing   float64
 		bonus   float64
 	}{
-		{proto.Ruleset_RulesetForever, 1 / 1.3, 8},
+		{proto.Ruleset_RulesetForever, 1 / 1.3, 0},
 		{proto.Ruleset_RulesetClassic, 1, 0},
 	} {
 		_, hunter := newHunterPetSimOpts(t, &proto.Hunter_Options{

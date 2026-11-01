@@ -190,7 +190,7 @@ elif klass == 'ClassHunter':
              'TwoFive': 'SlowerAttackII', 'TwoSeven': 'SlowerAttackIII'}
     copt = {'quiverBonus': QUIVER[ho['quiverBonus']], 'ammo': ho['ammo'], 'petUptime': ho.get('petUptime', 0),
             'cobraReflexes': ho.get('cobraReflexes', False), 'petAttackSpeed': SPEED[ho['petAttackSpeed']]}
-    # (Theirs dropped Pet Aggression on 2026-11-01, 8aa26ccb4d; ours keeps rank 5, a difference to report.)
+    # Neither sim has Pet Aggression since 2026-11-01 (theirs 8aa26ccb4d).
     if ho.get('petType') and ho['petType'] != 'PetNone':
         copt['petType'] = {'Crocolisk': 'Crocilisk'}.get(ho['petType'], ho['petType'])
     class_opts = {'hunter': {'options': {'classOptions': copt}}}
