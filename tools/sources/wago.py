@@ -22,7 +22,10 @@ session's home doesn't last).
 
 A build is a full version like 1.60.1.70450 or 1.15.9.69722 (the Era client
 the mechanics pass compares with). A bare build number like 70450 means the
-cached version that ends in it, or 1.60.1.<n> when none is cached.
+cached version that ends in it, or 1.60.1.<n> when none is cached. A version
+with a suffix, like 1.60.1.70707+hf, is a build with the realms' hotfix rows
+laid over it: tools/sources/hotfixes.py writes its tables from the hotfix rows
+it cached, and path() asks it for a table it hasn't written yet.
 
 `latest` asks wago.tools' build list for the newest Forever (1.60) build. That
 list has lagged behind the tables before, so --probe N also asks for SpellName
@@ -178,7 +181,12 @@ def path(table, build, fetch=True):
     """The cached CSV of a table at a build, downloaded first when we don't have it."""
     v = version(build)
     p = os.path.join(CACHE, v, table + '.csv')
-    if fetch and not os.path.exists(p):
+    if fetch and not os.path.exists(p) and '+' in v:
+        # A version like 1.60.1.70707+hf is a build with the server's hotfix rows laid
+        # over it, made from the rows tools/sources/hotfixes.py cached. Never downloaded.
+        import hotfixes
+        hotfixes.build_table(table, v)
+    elif fetch and not os.path.exists(p):
         print('downloading %s %s' % (v, table), file=sys.stderr)
         download(URL % (table, v), p)
     return p
