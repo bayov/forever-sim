@@ -1,12 +1,12 @@
 # Rotation audit: reference files
 
-- `baseline_dd053d2_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
-  dd053d24c (pass 43). Since e05fd73: the Sunder ramp reqs (melee -2 to -4), the 10 yd explosive reach in
-  the sim (ranged hunters -2 to -5.5, isolated with `regress.py`), and the req moves that follow it
-  (warlocks and priests to 25 yd, casters' Land Mine to EZ-Thro Dark Bomb: -4 to -8).
+- `baseline_c23ef04_3000it_seed424242.tsv`: DPS of every `tools/dps_report/req/*.json` preset on master
+  c23ef0440 (pass 44). Since dd053d2 (sim only; no req .json changed): hunter pets lose Pet Aggression and
+  get the new swing (hunters -38 to -80), two-hand white crits double the whole swing's Rage (2H warriors
+  +10 to +15), the October 30 hotfix values for Frost and Arcane mage (Frostfire +30, Frost +21, Arcane -17).
   - It was made with `tools/audit/rotations/baseline.py`: 3,000 iterations, seed 424242, each req's own
     encounter.
-  - The CLI was the audit loop's shared build at dd053d24c (`/tmp/audit-cache/cli/dd053d24ccba/wowsimcli`).
+  - The CLI was the audit loop's shared build at c23ef0440 (`/tmp/audit-cache/cli/c23ef04408a0/wowsimcli`).
   - Next pass: build the CLI on the new master and run `baseline.py` with the same arguments. Diff the
     output against this file. If no req file changed, any row that moved more than about 1 DPS is a sim
     change.

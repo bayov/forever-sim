@@ -4,6 +4,14 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### fairness-20261101-3: Arcane's report race Gnome is 2.8 under Undead after the Arcane Blast hotfix
+- severity: low (0.3%, no rank change)
+- affects: mage__arcane
+- found: 2026-11-01, master c23ef0440
+- evidence: `ITERS=20000 python3 tools/audit/fairness/sweep.py mage__arcane` (seed 1, race overrides): Undead 896.4, Orc 894.1, Gnome 893.6 (the report race), Human 891.0. At 5k: Undead 895.9, Gnome 894.1. At dd053d2 they tied (911.4 / 911.3); f619fb648 (Arcane Blast 12% Int / 100% mana / 18 sec) moved Arcane -15.5 and Gnome more than Undead. Fairly sure (same order at 5k and 20k). The report hasn't taken in the hotfix yet (results pass 68), so this is about the coming re-sim.
+- proposed fix: on the October 30 hotfix's report pass, re-pick Arcane's race (Undead), or keep Gnome and say it is within 3.
+- needs: orchestrator fix
+
 ### fairness-20261101-2: Affliction's report race Human is 1.4 under Orc
 - severity: low (0.14%, no rank change)
 - affects: warlock__affliction (and its duty variants, same race)

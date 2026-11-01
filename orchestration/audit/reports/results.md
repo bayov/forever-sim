@@ -1,16 +1,14 @@
-# Results audit, pass 67, master dd053d24c
+# Results audit, pass 68 (master c23ef0440)
 
-Why due: Goblin Sapper Charge and Land Mine reach only 10 yd (consumes.go `explosiveBlastRadius`), warlocks and priests cast from 25 yd, so requests swap the casters' filler Land Mine for EZ-Thro Dark Bomb and Sapper is dropped where out of reach; report hashes updated; 38fb06ea9 re-simmed 32 builds.
+Used the shared run (77 requests, 20k, seed 1) against builds.json. 66 of 77 within 0.15.
 
-## Checks
-| Check | Result |
-|---|---|
-| Shared run (77 requests, 20k, seed 1) vs builds.json | all 77 within 0.1 |
-| Shared run vs metas' published.dps | 74 of 77 off (0.5 to 8.9), all negative: stale metas, finding results-20261101-1 |
-| Largest moves vs metas | warlocks -5.8 to -8.9 (-0.6 to -0.9%), hunters -2.4 to -6.9, Balance -4.6, mages -3.8 to -4.7, Ele -4.0 to -4.2, Smite -5.4, Shadow -4.1, Feral -3.0 to -4.1 |
-| Explanation | the explosive reach and 25 yd caster range (bb21e3b32, 905787afd, 9eb1fad6b); lost Sapper/Land Mine damage matches the sizes |
-| Drift (regen.py vs ref/drift_report.txt) | identical |
-| Unread fields | none |
+| Build | builds.json | run | gap | cause |
+|---|---|---|---|---|
+| mage__frostfire | 1046.3 | 1076.6 | +30.2 | 98e819d39 Frost hotfix values, not yet re-simmed |
+| mage__frost | 907.8 | 929.3 | +21.5 | same |
+| mage__arcane | 910.9 | 893.6 | -17.3 | f619fb648 Arcane Blast 12% Int / 100% mana / 18 s, not yet re-simmed |
+| warrior arms, arms_dragonkin, fury_2h and their duty runs (6) | | | +11 to +12 | 5b2eec6de crit Rage fix; eaced12a8 re-simmed them (Arms 1008.7, Fury 2H 1038.9, matching the run) but the c23ef0440 merge held the report data, so builds.json lacks it |
 
-## Conclusion
-Not quiet only for the stale metas (low). Numbers moved by the ruled explosive-reach change; ranking at this size is not re-ranked here. req_summary.txt in ref/ is replaced with this run (pub = builds.json).
+The 9 pet hunters now match builds.json (11de3318a). Warlock Improved Drains change moves no build beyond 0.15.
+All gaps are stale report data waiting on a re-sim or republish, not bugs. The open metas finding (results-20261101-1) stands.
+Drift and unread-field checks were not rerun (no mksettings or request-shape change).
