@@ -1472,6 +1472,10 @@
     {
      "commit": "d32d621",
      "why": "the report hash test's data and provenance only; no report request moves"
+    },
+    {
+     "commit": "9eb1fad",
+     "why": "the Changes lines and the provenance of builds whose results hash the same; no request moves"
     }
    ]
   }
