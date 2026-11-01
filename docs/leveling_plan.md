@@ -349,7 +349,8 @@ every rank within about half a minute. 1000 sessions take 5 min for 10 to 60 on 
   the next rank it does cast (Lightning Bolt 2 to 7 come with Lightning Bolt 8 at 44, for
   Maelstrom Weapon). A rank it casts waits until the level where the time it saved so far adds
   up to the least, but never past the next rank, because we measured each rank only against the
-  one below it (Earth Shock 4 waits until 26, its mana costs more than its damage at 24 and 25).
+  one below it (Earth Shock 4 waited until 26 while Frost Shock had 22 to 24, its mana cost
+  more than its damage at 24 and 25).
   It moves gold to later levels for the same hours.
 - **The check.** Each rank's worth is against the rank below it with every other rank trained,
   so a change can cost more than it says: when it leaves us two ranks short (Earth Shock 4 in
@@ -389,11 +390,15 @@ at 40. The budget only matters with less gold. With 100g and riding at 40 it tra
 Wolf, Water Breathing, the resistance totems), which are ours to choose.
 
 The enhancement shaman's plan from level 1 (`ui/enhancement_shaman/leveling_training.json`,
-2026-10-31, 1000 sessions, with the route's holds) never trains 21 of the 74 ranks it casts and
-buys 9 later than their level, which saves 27 min (98.32h to 97.86h). With Healing Wave 2 held
-to 8, Healing Wave 3 and up save nothing, because Lesser Healing Wave takes over from 20. The ranks worth the most are Windfury Totem 1 (71
-min), Rockbiter Weapon 5 and 6 (67 and 72 min), Lightning Shield 5 (29 min), Frost Shock 1 (24
-min, cast in place of Earth Shock at 20 to 24) and Earth Shock 1 (22 min at 4 to 7).
+2026-11-01, 1000 sessions, with the route's holds, the route of 2026-11-01 and Earth Shock at
+22 to 24) never trains 16 of the 70 ranks it casts and buys 8 later than their level (Lightning
+Bolt 2 to 7 with rank 8 at 44, and the two holds), which saves 22 min (98.23h to 97.86h). With
+Healing Wave 2 held to 8, Healing Wave 3 and up save nothing, because Lesser Healing Wave takes
+over from 20. The ranks worth the most are Rockbiter Weapon 5 and 6 (66 and 71 min), Windfury
+Totem 1 (70 min), Lightning Shield 5 and 6 (30 and 27 min), Rockbiter Weapon 4 and 7 (27 min
+each) and Earth Shock 1 (24 min at 4 to 7). The plan no longer casts Frost Shock, so the
+schedule buys none of it. BayovCore's route trains rank 1 for utility (2026-11-01, the user).
+Before the Earth Shock change, Frost Shock 1 was worth 24 min and Earth Shock 3 to 5 waited.
 
 Imbues and fire totems, 1000 paired sessions a level against the plan's Rockbiter Weapon
 (2026-10-30, the plan's rotations, not tuned again): Flametongue Weapon is a little slower at
