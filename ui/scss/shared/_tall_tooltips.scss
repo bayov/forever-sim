@@ -1,0 +1,7 @@
+// A tooltip taller than the screen, like a long ability list, stops at 80% of the screen's height and
+// scrolls. interactiveWhenNeeded (interactive_tooltips.ts) keeps such a tooltip up while the mouse is on
+// it, so we can reach its scrollbar.
+.tippy-content {
+	max-height: 80vh;
+	overflow-y: auto;
+}
