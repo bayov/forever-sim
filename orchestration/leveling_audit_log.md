@@ -48,6 +48,11 @@ Numbers are minutes over the levels named, against the plan, on the same session
   sessions, seed 1): +6.1h over 30 to 59, +6 to +8 min a level at 30 to 38, up to +27 at 59.
   Mana stays at 64 to 100% after fights, but rests start on health, and fights run longer
   without Lightning Shield's damage.
+- Healing Wave in place of Lesser Healing Wave, every Healing Wave rank trained (1500
+  sessions, both seeds, over 20 to 59): between pulls +20 and +21 min, in combat +44 and +45
+  min with deaths 0.38 to 1.7, both +64 and +63. It heals 20 to 25% more a mana, but between
+  pulls its 3 s cast stands in for sitting down and rests start on health, and in combat the
+  cast is pushed back, lands late and resets the swing.
 - Rotation checks: Earth Shock in place of Frost Shock rank 1 at 22 to 24 -0.7 min on both
   seeds, kept: under half a mob, but it leaves Frost Shock a utility spell. Dropping Windfury Totem +5.5h, Mana Spring Totem +1.1h,
   Lightning Shield +7.5h, Searing Totem +1.4h over 32 to 59. The rest line ±10% on each of its
