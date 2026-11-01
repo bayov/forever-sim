@@ -76,7 +76,6 @@
               "defaultPotion": "MajorSpellblastingPotion",
               "defaultConjured": "ConjuredDemonicRune",
               "zanzaBuff": "CerebralCortexCompound",
-              "sapperExplosive": "SapperGoblinSapper",
               "intellectElixir": "ElixirOfTheOwl"
             },
             "buffs": {
@@ -547,7 +546,7 @@
             },
             "reactionTimeMs": 200,
             "channelClipDelayMs": 50,
-            "distanceFromTarget": 5,
+            "distanceFromTarget": 25,
             "shadowPriest": {
               "options": {
                 "armor": "InnerFire"

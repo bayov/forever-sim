@@ -15,7 +15,6 @@ import {
 	Profession,
 	Race,
 	RaidBuffs,
-	SapperExplosive,
 	ShadowPowerBuff,
 	SpellPowerBuff,
 	SpiritElixir,
@@ -317,9 +316,11 @@ const PresetBuildOptionsSuccubus = {
 // recipe) is out. Elixir of Greater Firepower is Forever's Elixir of Holy Power, so the plain
 // Elixir of Firepower takes the slot, for Immolate and Conflagrate. Flask of Distilled Wisdom (-88)
 // lost. Explosives are taken only when they gain (standards 11): on every preset (2026-10-24, 120 / 180
-// / 300 sec, both seed sets) the Goblin Sapper alone is ahead of none by 2.7 to 7.6, and adding any other
-// explosive (Dense Dynamite, Thorium Grenade, EZ-Thro Dark Bomb, Goblin Land Mine, their 1 sec cast in
-// place of a Shadow Bolt) costs 1.2 to 6.7; without the Sapper they lose 3.4 to 10.8 to none.
+// / 300 sec, both seed sets) the Goblin Sapper alone was ahead of none by 2.7 to 7.6 at 5 yd, and adding
+// any other explosive (Dense Dynamite, Thorium Grenade, EZ-Thro Dark Bomb, Goblin Land Mine, their 1 sec
+// cast in place of a Shadow Bolt) cost 1.2 to 6.7. Since 2026-11-01 the warlock stands at range (25 yd,
+// see OtherDefaults), out of the Sapper's and the Land Mine's 10 yd reach, so it takes no explosive: the
+// EZ-Thro Dark Bomb loses 5 to 7 at 180 sec.
 export const DefaultConsumes = Consumes.create({
 	defaultConjured: Conjured.ConjuredDemonicRune,
 	defaultPotion: Potions.MajorManaPotion,
@@ -331,7 +332,6 @@ export const DefaultConsumes = Consumes.create({
 	intellectElixir: IntellectElixir.ElixirOfGreaterIntellect,
 	mainHandImbue: WeaponImbue.WizardOil,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
-	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	shadowPowerBuff: ShadowPowerBuff.ElixirOfShadowPower,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	spiritElixir: SpiritElixir.ElixirOfSages,
@@ -394,10 +394,11 @@ export const DefaultDebuffs = Debuffs.create({
 	thunderClap: TristateEffect.TristateEffectImproved,
 });
 
-// Engineering for the Goblin Sapper in the consumes, Tailoring for the cloth. The distance and channel
-// clip delay are the DPS Report's (tools/rotopt/mksettings).
+// Engineering (it was for the Goblin Sapper), Tailoring for the cloth. The distance and channel clip
+// delay are the DPS Report's (tools/rotopt/mksettings): the warlock casts from 25 yd like the mages
+// (2026-11-01, 5 yd before).
 export const OtherDefaults = {
-	distanceFromTarget: 5,
+	distanceFromTarget: 25,
 	profession1: Profession.Engineering,
 	profession2: Profession.Tailoring,
 	channelClipDelay: 50,

@@ -291,97 +291,85 @@ dps_results: {
 dps_results: {
  key: "TestElementalLevel60-Phase1-Settings-Orc-level60_phase1_synthetic-Adaptive-level60-FullBuffs-Level60-Consumes-LongMultiTarget"
  value: {
-  dps: 963.36483
-  tps: 912.30454
-  dtps: 2.01933
+  dps: 935.7395
+  tps: 883.26778
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-Settings-Orc-level60_phase1_synthetic-Adaptive-level60-FullBuffs-Level60-Consumes-LongSingleTarget"
  value: {
-  dps: 945.181
-  tps: 893.52498
-  dtps: 1.89983
+  dps: 935.7395
+  tps: 883.26778
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-Settings-Orc-level60_phase1_synthetic-Adaptive-level60-FullBuffs-Level60-Consumes-ShortSingleTarget"
  value: {
-  dps: 1033.3875
-  tps: 996.28253
-  dtps: 9.49917
+  dps: 1028.34583
+  tps: 990.81256
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-Settings-Orc-level60_phase1_synthetic-Adaptive-level60-NoBuffs-Level60-Consumes-LongMultiTarget"
  value: {
-  dps: 585.09333
-  tps: 555.75822
-  dtps: 1.93967
+  dps: 563.22667
+  tps: 534.33968
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-Settings-Orc-level60_phase1_synthetic-Adaptive-level60-NoBuffs-Level60-Consumes-LongSingleTarget"
  value: {
-  dps: 567.7585
-  tps: 539.03902
-  dtps: 1.80217
+  dps: 563.22667
+  tps: 534.33968
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-Settings-Orc-level60_phase1_synthetic-Adaptive-level60-NoBuffs-Level60-Consumes-ShortSingleTarget"
  value: {
-  dps: 717.5875
-  tps: 704.88988
-  dtps: 9.01083
+  dps: 721.72917
+  tps: 711.81508
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-Settings-Tauren-level60_phase1_synthetic-Adaptive-level60-FullBuffs-Level60-Consumes-LongMultiTarget"
  value: {
-  dps: 953.7855
-  tps: 903.18519
-  dtps: 2.01933
+  dps: 926.29533
+  tps: 874.34612
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-Settings-Tauren-level60_phase1_synthetic-Adaptive-level60-FullBuffs-Level60-Consumes-LongSingleTarget"
  value: {
-  dps: 935.38833
-  tps: 884.26008
-  dtps: 1.89983
+  dps: 926.29533
+  tps: 874.34612
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-Settings-Tauren-level60_phase1_synthetic-Adaptive-level60-FullBuffs-Level60-Consumes-ShortSingleTarget"
  value: {
-  dps: 1015.08167
-  tps: 978.96124
-  dtps: 9.49917
+  dps: 1011.09333
+  tps: 974.53488
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-Settings-Tauren-level60_phase1_synthetic-Adaptive-level60-NoBuffs-Level60-Consumes-LongMultiTarget"
  value: {
-  dps: 579.04433
-  tps: 550.04044
-  dtps: 1.93967
+  dps: 557.31367
+  tps: 528.77411
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-Settings-Tauren-level60_phase1_synthetic-Adaptive-level60-NoBuffs-Level60-Consumes-LongSingleTarget"
  value: {
-  dps: 561.25567
-  tps: 532.78694
-  dtps: 1.80217
+  dps: 557.31367
+  tps: 528.77411
  }
 }
 dps_results: {
  key: "TestElementalLevel60-Phase1-Settings-Tauren-level60_phase1_synthetic-Adaptive-level60-NoBuffs-Level60-Consumes-ShortSingleTarget"
  value: {
-  dps: 705.5875
-  tps: 693.49629
-  dtps: 9.01083
+  dps: 709.40417
+  tps: 700.13358
  }
 }
 dps_results: {

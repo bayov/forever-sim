@@ -20,7 +20,8 @@ func init() {
 				raidBuffs.LeaderOfThePack = false
 			},
 			// Every consumable the sim applies was tried in its slot on the Demonology build at
-			// 180 sec (2026-10-12): Goblin Sapper +4.1 (Engineering), Cerebral Cortex Compound +10.7
+			// 180 sec (2026-10-12): Goblin Sapper +4.1 (Engineering; out of reach at range since
+			// 2026-11-01), Cerebral Cortex Compound +10.7
 			// (a Blasted Lands quest), Demonic Rune +15.8, Wizard Oil +15.7, Elixir of Shadow Power
 			// +23.3. With Forever's elixirs and foods simulated: one of the five +2% crit elixirs (they
 			// are role variants of one elixir), Elixir of Sages with Elixir of Greater Intellect, which
@@ -41,7 +42,6 @@ func init() {
 					IntellectElixir: proto.IntellectElixir_ElixirOfGreaterIntellect,
 					MainHandImbue:   proto.WeaponImbue_WizardOil,
 					ManaRegenElixir: proto.ManaRegenElixir_GreaterMagebloodElixir,
-					SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
 					ShadowPowerBuff: proto.ShadowPowerBuff_ElixirOfShadowPower,
 					SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
 					SpiritElixir:    proto.SpiritElixir_ElixirOfSages,
@@ -59,6 +59,11 @@ func init() {
 						WeaponImbue:   imbue,
 					},
 				}}
+				// Casters stand at range, like the mages: 25 yd (2026-11-01; it was mksettings'
+				// default 5 yd). The Goblin Sapper Charge only reaches 10 yd, so it is out, and
+				// the bolts take their flight time. 5.5 to 9.3 lower at 180 sec than at 5 yd with the
+				// Sapper; the EZ-Thro Dark Bomb loses 5 to 7.
+				player.DistanceFromTarget = 25
 			},
 		}
 	}

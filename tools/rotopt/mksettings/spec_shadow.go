@@ -16,8 +16,8 @@ func init() {
 		},
 		// Each consume was tried in and out of the set on the Level 60 build (180 sec, 20000
 		// iterations, 2026-10-12): Lobster Stew (28 spell damage under Forever) is 2.8 ahead of
-		// Nightfin Soup, the Goblin Sapper Charge adds 3.7 (a filler explosive costs a GCD and
-		// loses 4), the Elixir of the Owl 16.4 over the Elixir of Wisdom (one 2% crit elixir a
+		// Nightfin Soup, the Goblin Sapper Charge added 3.7 at 5 yd (a filler explosive costs a GCD
+		// and loses 4), the Elixir of the Owl 16.4 over the Elixir of Wisdom (one 2% crit elixir a
 		// character, Sages would add 13.9), the Major Spellblasting Potion 8.2 over the Major
 		// Mana Potion and Cerebral Cortex Compound 3.2. Brilliant Wizard Oil would be 12.5 ahead of Wizard Oil but is a
 		// Zul'Gurub recipe, Shadow Oil and Dragonbreath Chili add nothing. Mana never runs out
@@ -30,19 +30,23 @@ func init() {
 				Food:            proto.Food_FoodLobsterStew,
 				IntellectElixir: proto.IntellectElixir_ElixirOfTheOwl,
 				MainHandImbue:   proto.WeaponImbue_WizardOil,
-				SapperExplosive: proto.SapperExplosive_SapperGoblinSapper,
 				ShadowPowerBuff: proto.ShadowPowerBuff_ElixirOfShadowPower,
 				SpellPowerBuff:  proto.SpellPowerBuff_GreaterArcaneElixir,
 				ZanzaBuff:       proto.ZanzaBuff_CerebralCortexCompound,
 			}
 		},
-		// Engineering for the Goblin Sapper Charge, Tailoring as the priest's crafting.
+		// Engineering was for the Goblin Sapper Charge, Tailoring is the priest's crafting.
 		professions: [2]proto.Profession{proto.Profession_Engineering, proto.Profession_Tailoring},
 		withSpec: func(player *proto.Player) {
 			player.Class = proto.Class_ClassPriest
 			player.Spec = &proto.Player_ShadowPriest{ShadowPriest: &proto.ShadowPriest{
 				Options: &proto.ShadowPriest_Options{Armor: proto.ShadowPriest_Options_InnerFire},
 			}}
+			// Casters stand at range, like the mages: 25 yd (2026-11-01; it was mksettings' default
+			// 5 yd). The Goblin Sapper Charge and the Goblin Land Mine only reach 10 yd, so both are
+			// out: 4.3 to 6.2 lower at 180 sec than at 5 yd with them. The EZ-Thro Dark Bomb loses
+			// 5.6 to 6.7 on Shadow and ties on Smite (+0.4), so no explosive.
+			player.DistanceFromTarget = 25
 		},
 	}
 	// Shadow + Holy adds Greater Mageblood (ui/shadow_priest/presets.ts ConsumesHoly): the Holy
@@ -52,10 +56,10 @@ func init() {
 	})
 	// Smite's own consumes (ui/shadow_priest/presets.ts ConsumesSmite): the Major Mana Potion,
 	// Greater Mageblood and Greater Spirit for its mana, Greater Firepower for Smite and Holy
-	// Fire, and the Goblin Land Mine (+0.4 / +2.7 at 180 / 300 sec, 1.6 behind at 120, 2026-10-23).
+	// Fire. No Goblin Land Mine since the priests stand at 25 yd (it was +0.4 / +2.7 at 180 / 300 sec
+	// at 5 yd).
 	specs["smite"] = withConsumes(specs["shadow"], func(consumes *proto.Consumes) {
 		consumes.DefaultPotion = proto.Potions_MajorManaPotion
-		consumes.FillerExplosive = proto.Explosive_ExplosiveGoblinLandMine
 		consumes.FirePowerBuff = proto.FirePowerBuff_ElixirOfGreaterFirepower
 		consumes.ManaRegenElixir = proto.ManaRegenElixir_GreaterMagebloodElixir
 		consumes.SpiritElixir = proto.SpiritElixir_ElixirOfGreaterSpirit

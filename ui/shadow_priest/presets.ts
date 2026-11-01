@@ -5,7 +5,6 @@ import {
 	Consumes,
 	Debuffs,
 	Encounter,
-	Explosive,
 	FirePowerBuff,
 	Flask,
 	Food,
@@ -17,7 +16,6 @@ import {
 	Profession,
 	Race,
 	RaidBuffs,
-	SapperExplosive,
 	ShadowPowerBuff,
 	SpellPowerBuff,
 	SpiritElixir,
@@ -304,9 +302,11 @@ export const DefaultOptions = Options.create({
 // iterations, 2026-10-12, before Inner Focus joined the build):
 // - Lobster Stew (28 spell damage under Forever) is 2.8 ahead of Nightfin Soup (22), which is
 //   7.9 ahead of Runn Tum Tuber Surprise and 3.1 ahead of Grilled Squid.
-// - Goblin Sapper Charge +3.7. A filler explosive takes a GCD and costs 4. Rechecked 2026-10-23
-//   (standards 11, 5000 iterations at 180 sec): the sapper is +4.6 on Shadow and +4.1 on Shadow +
-//   Holy, and every filler explosive costs them 5 to 8, so both take the sapper alone.
+// - Goblin Sapper Charge +3.7 at 5 yd. A filler explosive takes a GCD and costs 4. Rechecked
+//   2026-10-23 (standards 11, 5000 iterations at 180 sec): the sapper was +4.6 on Shadow and +4.1
+//   on Shadow + Holy, and every filler explosive cost them 5 to 8. Since 2026-11-01 the priest
+//   stands at 25 yd (OtherDefaults), out of the Sapper's 10 yd reach, so it takes no explosive (the
+//   EZ-Thro Dark Bomb loses 5.6 to 6.7).
 // - Elixir of the Owl (25 Intellect, 2% crit) +16.4 over the Elixir of Wisdom, the Elixir of
 //   Greater Intellect only +2.8 (Arcane Brilliance is on). A character takes one of the five 2%
 //   crit elixirs (Mongoose, Grizzly, Owl, Sages, Whale); the Elixir of Sages on top of the Owl
@@ -327,7 +327,6 @@ export const DefaultConsumes = Consumes.create({
 	food: Food.FoodLobsterStew,
 	intellectElixir: IntellectElixir.ElixirOfTheOwl,
 	mainHandImbue: WeaponImbue.WizardOil,
-	sapperExplosive: SapperExplosive.SapperGoblinSapper,
 	shadowPowerBuff: ShadowPowerBuff.ElixirOfShadowPower,
 	spellPowerBuff: SpellPowerBuff.GreaterArcaneElixir,
 	zanzaBuff: ZanzaBuff.CerebralCortexCompound,
@@ -386,11 +385,11 @@ export const DefaultDebuffs = Debuffs.create({
 	thunderClap: TristateEffect.TristateEffectImproved,
 });
 
-// Engineering is for the Goblin Sapper Charge in the consumes. Tailoring is the priest's
-// crafting, nothing in the presets needs it.
+// Engineering was for the Goblin Sapper Charge. Tailoring is the priest's crafting, nothing in the
+// presets needs it. The priest casts from 25 yd like the mages (2026-11-01, 5 yd before).
 export const OtherDefaults = {
 	channelClipDelay: 50,
-	distanceFromTarget: 5,
+	distanceFromTarget: 25,
 	profession1: Profession.Engineering,
 	profession2: Profession.Tailoring,
 	race: Race.RaceUndead,
@@ -517,13 +516,12 @@ export const PresetBuildLevel60Holy = PresetUtils.makePresetBuild('Shadow + Holy
 // Elixir of Sages would add 6.4 but is a second crit elixir. Kreeg's Stout Beatdown is a Dire
 // Maul item, which the presets leave out like the full Arcanums; it would add -0.2 / +0.2 /
 // +0.9 at 120 / 180 / 300 sec. The Flask of Distilled Wisdom is 71 behind the Flask of Supreme
-// Power even here. The Goblin Sapper Charge is +5.0. A Goblin Land Mine on top (the Engineering
-// filler; the EZ-Thro Dark Bomb sims the same) is -1.6 / +0.4 / +2.7 at 120 / 180 / 300 sec
-// (20000 iterations, seeds 1 and 1000003 within 0.2, 2026-10-23), so it follows the 180 sec fight.
+// Power even here. From 25 yd (2026-11-01) the Goblin Sapper Charge and the Goblin Land Mine are
+// out of their 10 yd reach, and the EZ-Thro Dark Bomb ties no explosive (+0.4 at 180 sec, 3000
+// iterations), so Smite takes none (standards 11).
 export const ConsumesSmite = Consumes.create({
 	...DefaultConsumes,
 	defaultPotion: Potions.MajorManaPotion,
-	fillerExplosive: Explosive.ExplosiveGoblinLandMine,
 	firePowerBuff: FirePowerBuff.ElixirOfGreaterFirepower,
 	manaRegenElixir: ManaRegenElixir.GreaterMagebloodElixir,
 	spiritElixir: SpiritElixir.ElixirOfGreaterSpirit,

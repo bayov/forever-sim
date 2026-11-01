@@ -78,7 +78,6 @@
               "defaultPotion": "MajorManaPotion",
               "defaultConjured": "ConjuredDemonicRune",
               "zanzaBuff": "CerebralCortexCompound",
-              "sapperExplosive": "SapperGoblinSapper",
               "intellectElixir": "ElixirOfGreaterIntellect",
               "spiritElixir": "ElixirOfSages"
             },
@@ -618,7 +617,7 @@
             },
             "reactionTimeMs": 200,
             "channelClipDelayMs": 50,
-            "distanceFromTarget": 5,
+            "distanceFromTarget": 25,
             "warlock": {
               "options": {
                 "armor": "DemonArmor",

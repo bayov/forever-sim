@@ -76,12 +76,10 @@
               "defaultPotion": "MajorManaPotion",
               "defaultConjured": "ConjuredDemonicRune",
               "zanzaBuff": "CerebralCortexCompound",
-              "sapperExplosive": "SapperGoblinSapper",
               "intellectElixir": "ElixirOfTheOwl",
               "firePowerBuff": "ElixirOfGreaterFirepower",
               "manaRegenElixir": "GreaterMagebloodElixir",
-              "spiritElixir": "ElixirOfGreaterSpirit",
-              "fillerExplosive": "ExplosiveGoblinLandMine"
+              "spiritElixir": "ElixirOfGreaterSpirit"
             },
             "buffs": {
               "blessingOfKings": true,
@@ -401,7 +399,7 @@
             },
             "reactionTimeMs": 200,
             "channelClipDelayMs": 50,
-            "distanceFromTarget": 5,
+            "distanceFromTarget": 25,
             "shadowPriest": {
               "options": {
                 "armor": "InnerFire"
