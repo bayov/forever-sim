@@ -72,7 +72,8 @@ cs = p['consumes']
 
 # ALIGNED_OURS: what ours changes so both model the same fight.
 d = ours['raid']['debuffs']
-if d.pop('sunderRamp', None) is not None: d['sunderArmor'] = True  # theirs has no ramp: full Sunder at the pull in both
+# Sunder Armor: theirs ramps the raid's copy itself, a stack every GCD from the pull (5 at 6 s, driveSunderArmor), and
+# our report ramp (a tank and one pull Sunder) also reaches 5 at 6 s, so ours keeps its ramp.
 if cs.get('fillerExplosive') and '--keep-filler' not in args:
     print('ours drops its filler explosive', cs.pop('fillerExplosive'), '(theirs applies one explosive)')
 
@@ -149,7 +150,7 @@ party_buffs = {'manaSpringTotem': b.get('manaSpringTotem', 'TristateEffectMissin
 ind_buffs = {'greaterBlessingOfKings': ib.get('blessingOfKings', False), 'greaterBlessingOfMight': bool(ib.get('blessingOfMight')),
              'greaterBlessingOfWisdom': bool(ib.get('blessingOfWisdom')), 'greaterBlessingOfSalvation': b.get('salvation', False),
              'thorns': bool(b.get('thorns'))}
-debuffs = {k: bool(d.get(k)) for k in ['judgementOfWisdom', 'judgementOfLight', 'judgementOfTheCrusader', 'faerieFire',
+debuffs = {k: bool(d.get(k)) or (k == 'sunderArmor' and 'sunderRamp' in d) for k in ['judgementOfWisdom', 'judgementOfLight', 'judgementOfTheCrusader', 'faerieFire',
            'curseOfElements', 'sunderArmor', 'curseOfWeakness', 'curseOfRecklessness', 'demoralizingRoar', 'demoralizingShout',
            'thunderClap', 'insectSwarm', 'scorpidSting', 'exposeArmor']}
 

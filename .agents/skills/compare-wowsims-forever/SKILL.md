@@ -127,7 +127,9 @@ rotation gives a result that looks off.
 - **Buffs:** Mana Spring Totem is a party buff in theirs. `battleShout` is an int there (1 is rank 6, 2 rank 7).
   Their Battle Shout lands just after the pull's sheet, so `align.py` adds its 115 attack power to their sheet.
   Our Improved Battle Shout, Blessing of Might and Gift of the Wild come out the same as their plain ones.
-- **Sunder Armor:** theirs has no ramp, so both get the full stack at the pull.
+- **Sunder Armor:** theirs ramps the raid's copy itself, a stack every GCD from the pull (5 at 6 s), and our report
+  ramp also reaches 5 at 6 s, so ours keeps its ramp. (Full in ours against their ramp was worth about 4 to the hunter
+  and 1.5 to the pet.)
 - **Rotation values theirs lacks:** `spellUsesRemaining` and `spellUsesLostByDelay` (rewritten from
   `remainingTime`, with the cooldowns in `CD`), `moveTime` and `inMeleeRange` (from `unitDistance` and
   `unitMovementSpeed`). `autoTimeToNext` and `autoTimeSinceLast` take `MainHandAuto`, `OffHandAuto` and
@@ -148,16 +150,17 @@ rotation gives a result that looks off.
 
 ## Known differences
 
-As of 2026-11-01, ours at 0e87f3d and theirs at b70888a518, on the report's requests. A rerun should find these, so
+As of 2026-11-01, ours at 0e87f3d and theirs at b70888a518, on the report's requests. The four pet rows add up to the
+BM cat's whole pet gap (334 against 247 at 20,000 iterations, measured by flipping each in ours). A rerun should find these, so
 it can tell what is new. Keep the list current when one is settled.
 
 | Difference | Ours | Theirs | Status |
 |---|---|---|---|
-| Pet damage | Their old pet fits (643d636345) | Counts the pet's own attack power inside the creature DPS (71d4f46012, 2026-11-01) | New, not yet examined. Their BM cat does 247 DPS, ours 334 |
-| Pet Aggression | Rank 5 (user-approved 2026-10-23, from their old pets.go) | Dropped: no Beast Training spell teaches it (8aa26ccb4d) | New. About 2% of pet damage |
+| Pet swing damage | Creature DPS × 2 a 2.0 s swing (their old fit, 643d636345, to level 11 and 17 sheet tooltips) | (creature DPS − the pet's own attack power / 14) × 2, 30% less (71d4f46012, fit to 152 logged swings of a level 30 cat, in the commit message only) | Open, both extrapolate to 60. −48 pet DPS on the BM cat. A level 60 pet's logged white hits, with its sheet and happiness, settle it |
+| Pet Aggression | Rank 5, +8 on every hit unscaled by speed (user-approved 2026-10-23, from their old pets.go) | Dropped (8aa26ccb4d) | The game data backs theirs: its teaching spells are on no skill line, and Beast Training's has no Pet Aggression (70707 and Era alike). −34 pet DPS on the BM cat (about 10% of its damage, since our fast cat swings often) |
 | Improved Tracking vs the generic boss | Counts the typeless boss as tracked (standards 19) | Only the types a Track spell names (8aa26ccb4d) | A choice. `--their-mob-type MobTypeGiant` aligns it (Survival 41 DPS) |
-| Pet focus | 10 a second (client RegenCombat, beta logs) | Classic's 25 per 5 sec × Bestial Discipline | Ours on evidence. Cats 14 to 30 DPS |
-| Cobra Reflexes | Hits shrink with the speed (`hunter_pet_speed`, user ruling) | ×0.85 a hit (TBC) | Ruling |
+| Pet focus | 10 a second (client RegenCombat, beta logs) | Classic's 25 per 5 sec × Bestial Discipline | Ours on evidence. −28 pet DPS on the BM cat (half the Claws) |
+| Cobra Reflexes | Hits shrink with the speed (`hunter_pet_speed`, user ruling) | ×0.85 a hit (TBC) | Ruling. +24 pet DPS for theirs on the BM cat |
 | The hunter's buffs on the pet | Passed live | Not | Wolf and Tallstrider 0 to 10 DPS with Cobra Reflexes |
 | Raptor Strike rank 8 | +96 (`hunter_raptor_31plus`) | +70 | Ruling |
 | AQ book ranks | Off under Forever | Hunter's top ranks only | Worth 30 to 36 DPS to ranged hunters |
