@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "d1935640f2453c346a0d425c373d4b5041444e31"
+  "master": "dd053d24ccbac7f9f246c451bd62e910036f6ddf"
  },
- "last_pass_at": "2026-10-31T19:10:00Z",
- "pass": 53,
+ "last_pass_at": "2026-11-01T12:53:37Z",
+ "pass": 54,
  "result": "findings",
- "note": "Pass 53: fedb73949 mksettings Sunder ramp (raid assumption, 11597 verified 70707). Finding mechanics-20261031-2: Moonkin Aura and LotP all crit via hotfix push 113283 on 70707; stacking needs ruling. Client 70707, dev notes 8 posts, no new blue posts.",
+ "note": "Pass 54: bb21e3b32 explosive 10 yd reach verified on 70707 (13241/4043 radius index 13); 905787afd casters at 25 yd. Finding mechanics-20261101-1 (low): Shadow at 25 yd vs Mind Flay 20 yd, no DPS effect. Client 70707, dev notes 8 posts unchanged, no new blue posts.",
  "client_build": "1.60.1.70707",
- "checked_at": "2026-11-01T06:44:30Z",
+ "checked_at": "2026-11-01T13:18:44Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/8",
   "date": "2026-10-27T15:37:37Z",
@@ -25,5 +25,5 @@
   "newest_push": 113283,
   "tool": "wago.tools/hotfixes?search=<id> (hotfixes.py not in repo)"
  },
- "blue_tracker_seen": "2026-10-31T19:10:00Z"
+ "blue_tracker_seen": "2026-11-01T12:53:37Z"
 }

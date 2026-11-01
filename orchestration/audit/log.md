@@ -132,3 +132,8 @@ One line per pass, newest last: `<UTC time> | <auditor> | pass <n> | master <sha
 2026-10-31 19:02 | consumables | pass 59 | master d96adcce1 | quiet | presets swap sunderArmor for sunderRamp, consistent with standards
 2026-10-31 19:02 | mechanics | pass 53 | master d96adcce1 | 1 new finding | Moonkin/LotP hotfix to 3% all crit: stacking ruling needed (high if stack)
 2026-10-31 19:02 | fairness | pass 18 | master d96adcce1 | 1 new finding | Demonology wears shared Destro gear but has its own target (medium, needs user ruling)
+2026-11-01 13:18 | results | pass 67 | master dd053d24c | 1 new finding | 74 of 77 metas' published.dps stale vs builds.json after re-sim (low)
+2026-11-01 13:18 | rotations | pass 43 | master dd053d24c | quiet | no APL change; only ranged hunters moved from Sapper reach; baseline refreshed
+2026-11-01 13:18 | consumables | pass 60 | master dd053d24c | 1 new finding | ranged hunters keep Sapper worth +0.16 DPS at 25 yd, comments say +4.8 (low)
+2026-11-01 13:18 | mechanics | pass 54 | master dd053d24c | 1 new finding | Shadow presets at 25 yd but Mind Flay range is 20 yd (low, no DPS change)
+2026-11-01 13:18 | fairness | pass 19 | master dd053d24c | 2 new findings | caster distances have no standard (medium, needs user ruling); Affliction Human 1.4 under Orc (low)

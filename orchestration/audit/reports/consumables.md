@@ -1,11 +1,12 @@
-# Consumables pass 59 (master d96adcce1)
+# Consumables pass 60 (master dd053d24c)
 
-No findings. Last audited master e05fd732e; client 1.60.1.70707 is still the newest build. Class branches are not ahead in any audited way (stale copies only).
+One finding (low): consumables-20261101-1, ranged hunters' Goblin Sapper Charge is worth +0.16 at 25 yd (see findings).
 
-Moved watched files, all checked:
-- ui/*/presets.ts (eleven specs): the only change is DefaultDebuffs `sunderArmor: true` -> `sunderRamp: SunderRamp.create(...)` (standard 32, user ruling 2026-10-31). Ten specs use `{ tank: true, pullSunders: 1 }`, warrior uses `{ tank: true }` (its own pull Sunder is the DPS warrior's). Matches mksettings setSunder (ramp default, pull 1, 0 for a warrior). No Consumes, enchant, Expose Armor or duty value changed.
-- tools/rotopt/mksettings/main.go: new -sunder / -sunder-pull flags, applied at level 60 only. Ramp code in sim/core/debuffs.go (450 per stack, 5 stacks = 2250, same as Expose) reaches 5 stacks at 4.5 s (tank plus one pull Sunder) or 6 s (tank only).
-- orchestration/standards.md: standard 18 now notes the ramp, new 32; consistent with the presets.
-- scan.sh on master: all ban sections empty; minor-armor exclusive-effect count 3 (known: Faerie Fire, Curse of Recklessness, Tallstrider Dust Cloud).
+Last audited master d1935640f; client 1.60.1.70707 still newest. Moved watched files, all checked:
+- sim/core/consumes.go: Goblin Sapper Charge and Goblin Land Mine need DistanceFromTarget <= 10 (explosiveBlastRadius). Matches the user's change; no consumable value changed.
+- Balance, Elemental, Mage: Sapper dropped from presets.ts and mksettings, both agree (30 / 20 / 25 yd).
+- Shadow (incl. Smite, Holy) and Warlock: Sapper (and Smite's Land Mine) dropped, distance 5 -> 25 in presets.ts OtherDefaults and mksettings withSpec; they agree. No explosive is right: casters out of reach.
+- Hunter: ranged builds FillerExplosive Land Mine -> EZ-Thro Dark Bomb in presets.ts and spec_hunter.go (agree); Survival keeps the Sapper at 5 yd. Dark Bomb +3.1 over none (20000 it, BM). Sapper only +0.16 (finding).
+- scan.sh on master: all ban sections empty; minor-armor count 3 (known). No new client build; no class branch ahead.
 
-No open items.
+Open: consumables-20261101-1.
