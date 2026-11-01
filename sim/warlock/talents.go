@@ -184,14 +184,17 @@ func (warlock *Warlock) applyImprovedCorruption() {
 	})
 }
 
-// Improved Drains: 7 / 13 / 20% on Drain Life, Drain Soul and Wrack.
+// Improved Drains: 7 / 13 / 20% on Drain Life and Drain Soul (and Drain Mana's drain, which the sim
+// doesn't cast). The launch realms' October 30 hotfix (foreverchanges.pro; wago.tools hotfixes,
+// region 91 on 1.60.1.70707) moved it off Wrack onto Drain Mana: "Increases Health drained, damage
+// done, or Mana drained by your Drain Life, Drain Soul, and Drain Mana spells by 20%."
 func (warlock *Warlock) applyImprovedDrains() {
 	if warlock.Talents.ImprovedDrains == 0 {
 		return
 	}
 
 	bonus := []float64{0, 0.07, 0.13, 0.20}[warlock.Talents.ImprovedDrains]
-	warlock.onSpellCodes(drainSpells, func(spell *core.Spell) {
+	warlock.onSpellCodes([]int32{SpellCode_WarlockDrainLife, SpellCode_WarlockDrainSoul}, func(spell *core.Spell) {
 		changePeriodicDamagePercent(spell, bonus, true)
 	})
 }
