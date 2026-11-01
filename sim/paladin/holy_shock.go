@@ -27,8 +27,9 @@ func (paladin *Paladin) registerHolyShock() {
 		{level: 48, spellID: 20929, manaCost: 275, minDamage: 248, maxDamage: 268},
 		{level: 56, spellID: 20930, manaCost: 325, minDamage: 334, maxDamage: 362},
 	}
-	// Holy Power gives Holy Shock 3% crit per point where every other spell gets 1%.
-	extraCrit := 3 * float64(paladin.Talents.HolyPower) * core.SpellCritRatingPerCritChance
+	// Holy Power gave Holy Shock 3% crit a point until the October 30 hotfix made it crit healing
+	// only (talents.go, holyPowerCrit).
+	extraCrit := 0.0
 	if paladin.Ranged().ID == LibramOfInfusion {
 		extraCrit += 6 * core.SpellCritRatingPerCritChance
 	}
@@ -74,10 +75,7 @@ func (paladin *Paladin) registerHolyShock() {
 
 			ApplyEffects: func(sim *core.Simulation, target *core.Unit, spell *core.Spell) {
 				baseDamage := sim.Roll(rank.minDamage, rank.maxDamage)
-				result := spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
-				if paladin.lightsVigil != nil {
-					paladin.lightsVigil(sim, target, spell, result.Landed())
-				}
+				spell.CalcAndDealDamage(sim, target, baseDamage, spell.OutcomeMagicHitAndCrit)
 			},
 		})
 	}

@@ -6,7 +6,7 @@
   "isDefault": false,
   "pr": 100,
   "race": "Undead",
-  "talents": "55003002--05225331201330321",
+  "talents": "0512500022-3-05233101201301351",
   "treeNames": [
     "Holy",
     "Protection",
@@ -15,37 +15,39 @@
   "gearSet": "level60_phase1_synthetic",
   "apl": "level60_wisdom_duty",
   "published": {
-    "dps": 963.8,
-    "source": "DPS report 2026-10-31 (wowsimcli on this request, 20,000 iterations, seed 1, 180 ± 20 s; re-simmed on 2026-10-30 or 2026-10-31)"
+    "dps": 1023.7,
+    "source": "forever-sim's paladin re-search on the October 30 hotfix trees, 2026-11-01 (wowsimcli on this request, 20,000 iterations, seed 1, 180 \u00b1 20 s); the DPS report data isn't regenerated yet"
   },
   "verify": {
-    "dps": 934.06,
-    "stderr": 0.32,
+    "dps": 1023.7,
+    "stderr": 0.4,
     "iters": 20000,
     "ok": true,
-    "note": "wowsimcli on this request, 180 s, seed 1 (the published number is this sim); a raid sim variant, in the DPS report since 2026-10-30"
+    "note": "simreq of this request, 180s, seed 1"
   },
   "summary": "Keeps Judgement of Wisdom on the boss for the raid: every attacker with mana gets 59 mana on half its hits.",
   "keyTalents": [
-    "Twist of Light",
+    "Unsealed Wrath",
     "Seal of Command",
+    "Champion of the Light",
+    "Conviction",
     "Improved Seals",
-    "Divine Intellect",
-    "Divine Strength",
-    "Instrument of Law",
-    "Vengeance",
-    "Champion of the Light"
+    "Divine Precision",
+    "Reverence",
+    "Vengeance"
   ],
   "rotation": [
-    "Pre-pull: Seal of Righteousness at -4.5s, Seal of Command at -3s, Seal of Wisdom at -1.5s. Replacing Seal of Command leaves its Echo for the first swing",
-    "Judgement of Wisdom at the pull, for the duty. For 40s every attacker with mana gets 59 mana back on half its hits (the paladin too). The paladin's melee hits refresh it, so one cast lasts the fight. Judge it again only if it drops",
+    "The spell power on-use trinket at the pull, then held for the execute phase when that loses no use; Goblin Sapper Charge on cooldown",
+    "Pre-pull: Seal of Wisdom at -1.5s",
+    "Judgement of Wisdom at the pull, for the duty. It lasts 40s and the paladin's melee hits refresh it, so one cast lasts the fight. Judge it again only if it drops",
     "Hammer of Wrath under 20% boss health, before Consecration",
     "Consecration on cooldown at 20%+ mana",
     "Judgement on cooldown on whichever damage seal is up",
     "Seal of Command whenever no damage seal is up",
-    "Twist: with Seal of Command up, switch to Seal of Righteousness whenever no Echo is waiting for a swing, then back to Command the same way. One switch per swing, at any mana. Twist of Light's Echo applies the old seal on the next swing",
+    "Unsealed Wrath: with Seal of Command up, once it has stored 2 copies, Seal of Righteousness, so the next swing spends them all (one Seal of Command roll each) and stores a Righteousness copy. Back to Seal of Command once that copy is stored",
     "Holy Strike on cooldown",
-    "Racials, Goblin Sapper, Dragonfire Potion and Demonic Rune on free GCDs"
+    "Exorcism on cooldown (only against Undead and Demons)",
+    "Racials on free GCDs"
   ],
   "consumes": [
     "Flask of Supreme Power",
@@ -67,19 +69,18 @@
     "Demonic Rune"
   ],
   "caveats": [
-    "The duty costs 14.7 DPS at 180s against the same build without it (934.1 against 948.8, 20,000 iterations, seed 1).",
+    "Takes Pursuit of Justice 2 (movement speed), a must-have talent.",
+    "Unsealed Wrath is new with the October 30 hotfix and unverified: the sim lets landed white swings store and spend the copies, and rolls each stored Seal of Command at its own 7 a minute.",
+    "Two-Handed Weapon Specialization boosts the Holy seal and judgement damage and Holy Strike too, as measured in game before the October 30 hotfix. The hotfix tooltip says physical damage, but its damage effect is unchanged.",
+    "The duty costs 14.4 DPS at 180s against the same build without it (1023.7 against 1038.1, 20,000 iterations, seed 1).",
     "The duty's own Judgement of Wisdom gives the paladin the same mana back as the raid's did, so the cost is the two seals' GCDs and mana and the one judgement that isn't a Judgement of Command or Righteousness.",
     "Seal of Wisdom (rank 3, 200 mana) is up only until the next seal replaces it. Its own 90 mana on a melee hit is assumed to come on half the hits, as Judgement of Wisdom's does: the client says only \"a chance\".",
-    "Takes Pursuit of Justice 2 (movement speed), a must-have talent. It costs nothing here, because it replaced Purifying Power, which does nothing on this boss.",
-    "5 DPS ahead of Ret twist at 120s, 4.0 at 180s and 8 at 300s. Ret twist's Precision puts its hit over the 8% cap.",
-    "Purifying Power does nothing on the generic boss.",
     "Unverified: Holy Strike's flat bonus is added before its weapon damage percent, as the client data says.",
     "The top Holy Strike and Consecration ranks may be out of date (about 1.2% of DPS).",
     "Seal of Righteousness adds 12% of spell power per hit with a two-hander, counted once, as its tooltip says (spell 70425). Counted twice, DPS would be 46-51 higher. At the proc spell's 0%, it would be 53-59 lower.",
-    "Two-Handed Weapon Specialization boosts Holy seal damage, as in the Era sim. The client says Physical only. Without it, DPS is 11 lower.",
-    "No filler explosive, because each 1s cast resets the swing. The Goblin Land Mine and EZ-Thro Dark Bomb cost 4.9 DPS at 180s, and the EZ-Thro Thorium Grenade 5.7."
+    "No filler explosive, because each 1s cast resets the swing."
   ],
-  "notes": "Request: paladin__level_60_sub_holy with raid debuff judgementOfWisdom removed and the level60_wisdom_duty rotation. Hand edits of the base request, as the other duty paladins were made (mksettings with -apl level60_wisdom_duty writes the same rotation). A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD.",
+  "notes": "Request: paladin__level_60_sub_holy with raid debuff judgementOfWisdom removed and the level60_wisdom_duty rotation. Hand edits of the base request, as the other duty paladins were made (mksettings with -apl level60_wisdom_duty writes the same rotation). A raid sim variant (docs/raid_sim.md, M1b), in the DPS report since 2026-10-30. The raid's Sunder Armor ramps since 2026-10-31 (standard 32, mksettings -sunder ramp): a warrior tank stacks it from the pull and one DPS warrior casts it on its first GCD. Talents, rotation and its notes re-searched on 2026-11-01 for the launch realms' October 30 hotfix trees (1.60.1.70707+hf); the request is the earlier one with the new talentsString and rotation (tools/rotopt/paladin_presets.sh).",
   "duty": "Judgement of Wisdom",
   "baseBuild": "paladin__level_60_sub_holy"
 }

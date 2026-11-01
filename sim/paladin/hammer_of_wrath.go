@@ -51,14 +51,17 @@ func (paladin *Paladin) registerHammerOfWrath() {
 			ManaCost: core.ManaCostOptions{
 				FlatCost: rank.manaCost,
 				// Benediction's spell list in the client (1.60.1.70338, spell 20101) leaves
-				// Hammer of Wrath out, even when Instrument of Law makes it instant.
+				// Hammer of Wrath out, even when Champion of the Light 5/5 makes it instant.
 				Multiplier: paladin.holyConduit(),
 			},
 			Cast: core.CastConfig{
 				DefaultCast: core.Cast{
 					GCD: time.Second,
-					// Instrument of Law takes half a second per point off the cast.
-					CastTime: time.Second - time.Millisecond*500*time.Duration(paladin.Talents.InstrumentOfLaw),
+					// Champion of the Light takes 0.2 sec a rank off the cast since the October 30
+					// hotfix (spell 1311084 in 1.60.1.70707+hf, effect 1: aura 107 on Hammer of
+					// Wrath's class mask, -1000 ms at 5 ranks), so 5/5 makes it instant. Instrument of
+					// Law, which had the cut before, left the tree.
+					CastTime: time.Second - time.Millisecond*200*time.Duration(paladin.Talents.ChampionOfTheLight),
 				},
 				IgnoreHaste: true,
 				CD:          cd,
@@ -92,12 +95,9 @@ func (paladin *Paladin) hammerOfWrathHitRating() float64 {
 	return -float64(paladin.Talents.Precision) * core.MeleeHitRatingPerHitChance
 }
 
-// Forever's Conviction (client 20117) is A_MOD_WEAPON_CRIT_PERCENT on melee weapons, so it reaches
-// the attacks made with the weapon and not Hammer of Wrath, which the sim's melee crit stat would
-// give it (wowsims/forever conviction_test.go: Conviction 5/5, Hammer of Wrath 0%).
+// Conviction reaches Hammer of Wrath since the October 30 hotfix: spell 20117 is A_MOD_CRIT_PCT
+// (aura 290, all spells and attacks) in 1.60.1.70707+hf, where it was A_MOD_WEAPON_CRIT_PERCENT on
+// melee weapons (aura 52), which left Hammer of Wrath out (wowsims/forever conviction_test.go).
 func (paladin *Paladin) hammerOfWrathCritRating() float64 {
-	if paladin.Env.IsForever() {
-		return paladin.holyPowerCrit() - float64(paladin.Talents.Conviction)*core.CritRatingPerCritChance
-	}
 	return paladin.holyPowerCrit()
 }

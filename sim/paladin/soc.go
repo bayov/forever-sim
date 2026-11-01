@@ -162,7 +162,13 @@ func (paladin *Paladin) registerSealOfCommand() {
 		})
 
 		paladin.aurasSoC = append(paladin.aurasSoC, aura)
-		paladin.registerSealEcho(aura, paladin.echoOfCommand, tryProc)
+		// A stored copy (Unsealed Wrath) rolls the seal's procs a minute and leaves its proc
+		// cooldown alone (unsealed_wrath.go).
+		paladin.registerSealEcho(aura, paladin.echoOfCommand, func(sim *core.Simulation, target *core.Unit) {
+			if ppmm.Proc(sim, core.ProcMaskMeleeMHAuto, "seal of command (unsealed wrath)") {
+				procSpell.Cast(sim, target)
+			}
+		})
 
 		paladin.sealOfCommand = paladin.RegisterSpell(core.SpellConfig{
 			ActionID:    aura.ActionID,

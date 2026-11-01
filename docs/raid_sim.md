@@ -166,17 +166,18 @@ So the presets are a short, hand-picked list. The search chooses among them for 
 a tank's or healer's talents itself. When threat and healing are simmed, their scores keep builds realistic
 on their own, and the list stays the starting point.
 
-The presets were checked against client 70630's trees (unchanged in 70685) and 70685's spells. Every string
-is valid: 51 points, with rows and prerequisites right. The talent strings are in the sim's per-tree digit
-format:
+The presets were checked against client 70630's trees (unchanged in 70685) and 70685's spells, and the two
+paladins again against the launch realms' October 30 hotfix trees (1.60.1.70707+hf), which reworked the whole
+paladin tree. Every string is valid: 51 points, with rows and prerequisites right. The talent strings are in
+the sim's per-tree digit format:
 
 | Preset | Talents | Gives |
 |---|---|---|
 | Protection warrior | 8/0/43, `35--251533120331221351` (`ui/tank_warrior/presets.ts`) | Sunder Armor upkeep after the pull (see [Sunder Armor](#sunder-armor)); Battle Shout |
 | Feral tank | 0/41/10, `-55220302020132012551-055` (`ui/feral_tank_druid/presets.ts`) | Leader of the Pack; Gift of the Wild; Faerie Fire as an assignment. Innervate is off by default, since it means leaving Bear Form. |
-| Protection paladin | 1/43/7, `1-5530513321301551-052` (`ui/protection_paladin/presets.ts`) | one Greater Blessing for each class; one aura; one judgement (Wisdom or the Crusader) |
+| Protection paladin | 0/44/7, `-55302102513521531-052` (`ui/protection_paladin/presets.ts`) | one Greater Blessing for each class; one aura; one judgement (Wisdom or the Crusader) |
 | Warden shaman (tank) | 17/34/0, `35050013-0502303313551102` (`ui/warden_shaman/presets.ts`) | one totem per element (earth, air, water, fire); plain Mana Spring to its party |
-| Holy paladin | 31/20/0, `05320103225101051-500250302003` | the same as the Protection paladin |
+| Holy paladin | 32/19/0, `50320215022101251-510221305` | the same as the Protection paladin |
 | Restoration shaman | 0/8/43, `-005102-5530500315513151` (`ui/restoration_shaman/presets.ts`) | one totem per element (earth, air, water, fire); Mana Spring with Restorative Totems (×1.25); Mana Tide to its party |
 | Discipline priest | 33/18/0, `005005231330011531-2310510303` (`ui/healing_priest/presets.ts`) | Fortitude, Prayer of Spirit, Power Infusion |
 | Holy priest | 19/32/0, `00510223123-03405103030121531` (`ui/healing_priest/presets.ts`) | Fortitude, Prayer of Spirit |
@@ -223,10 +224,19 @@ Mana Tide from the Restoration shaman, plain Mana Spring from the Warden.
   table's strings (2026-10-30): the paladin's 3 points in Consecrated Ground moved to Unyielding Faith and
   Purifying Power, the druid's build was rebuilt on the Thicc Resto layout, and its second preset, built
   on Celestial Focus (gone from Forever), is now Furor Resto.
-- **Small realism nits** that don't change what the presets give: the Holy paladin takes Improved Righteous
-  Fury, the paladins skip Pursuit of Justice, the Feral tank skips Feral Charge and Shredding Attacks, and a
-  few points are filler (the warrior's Iron Will, the Protection paladin's Holy point, the druid's Moonglow,
-  the Restoration shaman's Guardian Totems over Ancestral Healing).
+- **The paladin presets were rebuilt for the October 30 hotfix trees** (2026-11-01; every paladin string
+  read differently after it). The Protection paladin goes down to Shieldsworn: Redoubt, Shield
+  Specialization 2, Improved Righteous Fury, Anticipation, Holy Shield (no longer behind Templar's
+  Bulwark), Reckoning, Iron Creed 3, Swift Judgement and Stoicism, with Divine Intellect (moved to
+  Protection) and Benediction and Improved Judgement. The Holy paladin keeps its healing core (Spiritual
+  Focus 5, Healing Light, Reverence 2, Illumination, Divine Favor, Infusion of Light, Holy Shock, Holy Power
+  5, now crit healing, Light's Vigil, now heals only) and takes the new Oath of Light and Boundless Light,
+  with Divine Intellect, Guardian's Favor, Sacred Duty, Improved Hammer of Justice and Toughness in
+  Protection. Neither gives the raid anything new.
+- **Small realism nits** that don't change what the presets give: the paladins skip Pursuit of Justice,
+  the Feral tank skips Feral Charge and Shredding Attacks, and a few points are filler (the warrior's Iron
+  Will, the Holy paladin's Redoubt and Templar's Bulwark points, the druid's Moonglow, the Restoration
+  shaman's Guardian Totems over Ancestral Healing).
 
 **A slot's choices** are assignments, not talents: which blessings, which aura, which judgement, which
 totems, and whether it holds Faerie Fire.

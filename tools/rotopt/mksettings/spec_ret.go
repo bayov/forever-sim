@@ -7,13 +7,15 @@ import (
 )
 
 func init() {
-	specs["ret"] = retSpec(false)
-	specs["ret_shock"] = retSpec(true)
+	specs["ret"] = retSpec()
+	specs["ret_shock"] = retSpec() // the deep Holy Shock requests name it; the same setup since the October 30 hotfix
 }
 
-// retSpec is the Retribution setup. The Holy Shock builds (shock) take their own consumes
-// (ShockConsumes in ui/retribution_paladin/presets.ts), as they run short of mana.
-func retSpec(shock bool) *specSetup {
+// retSpec is the Retribution setup. The deep Holy Shock builds (ret_shock) took the Major Mana
+// Potion until the October 30 hotfix; with Light's Vigil gone they end fights with mana to spare
+// and take the Dragonfire Potion like the rest (+5.3 to +6.0 at 120 / 180 / 300 sec on Shock and its
+// duties, +5.6 / +5.8 / -5.6 on Shock vs Undead), so both specs are the same now.
+func retSpec() *specSetup {
 	return &specSetup{
 		uiDir: "ui/retribution_paladin",
 		// The paladin is in a melee group with a shaman. Enhancing Totems is not in Forever's tree,
@@ -47,9 +49,6 @@ func retSpec(shock bool) *specSetup {
 				SpiritElixir:      proto.SpiritElixir_ElixirOfGreaterSpirit,
 				StrengthBuff:      proto.StrengthBuff_ElixirOfFerocity,
 				ZanzaBuff:         proto.ZanzaBuff_ROIDS,
-			}
-			if shock {
-				consumes.DefaultPotion = proto.Potions_MajorManaPotion
 			}
 			return consumes
 		},

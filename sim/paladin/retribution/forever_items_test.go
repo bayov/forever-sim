@@ -53,21 +53,21 @@ func TestTenetsOfTheSilverHand(t *testing.T) {
 	}
 }
 
-// TestLibramOfInvocation checks the libram's 5% off the seals with Benediction 5/5 and Twist of
-// Light: Seal of Righteousness rank 8 costs 200 x 0.9 x 0.8 x 0.95 = 136.8, and Sanctified
-// Judgement 3/3 returns 60% of 200 x (2 - 0.684) = 157.92.
+// TestLibramOfInvocation checks the libram's 5% off the seals with Benediction 5/5 (and Unsealed
+// Wrath, which has no cost cut): Seal of Righteousness rank 8 costs 200 x 0.9 x 0.95 = 171, and
+// Sanctified Judgement 3/3 returns 60% of 200 x (2 - 0.855) = 137.4.
 func TestLibramOfInvocation(t *testing.T) {
-	sim, ret := retSimGear(t, "--05000030000000001", withWeapon(map[proto.ItemSlot]int32{proto.ItemSlot_ItemSlotRanged: 249442}), 1, proto.MobType_MobTypeUnknown)
+	sim, ret := retSimGear(t, "--05003000000000001", withWeapon(map[proto.ItemSlot]int32{proto.ItemSlot_ItemSlotRanged: 249442}), 1, proto.MobType_MobTypeUnknown)
 	seal := ret.GetSpell(core.ActionID{SpellID: 20293})
-	if got := seal.Cost.GetCurrentCost(); got < 136.79 || got > 136.81 {
-		t.Errorf("Seal of Righteousness costs %.2f, want 136.8", got)
+	if got := seal.Cost.GetCurrentCost(); got < 170.99 || got > 171.01 {
+		t.Errorf("Seal of Righteousness costs %.2f, want 171", got)
 	}
 	castByID(sim, ret, 20293)
 	ret.SpendMana(sim, 0.5*ret.MaxMana(), ret.NewManaMetrics(core.ActionID{OtherID: 1}))
 	before := ret.CurrentMana()
 	castByID(sim, ret, 20271)
-	if got := ret.CurrentMana() - before; got < 157.91 || got > 157.93 {
-		t.Errorf("Judgement refunded %.2f mana, want 157.92", got)
+	if got := ret.CurrentMana() - before; got < 137.39 || got > 137.41 {
+		t.Errorf("Judgement refunded %.2f mana, want 137.4", got)
 	}
 }
 
@@ -75,7 +75,7 @@ func TestLibramOfInvocation(t *testing.T) {
 // taken on Judgement of the Crusader, 181 at rank 6.
 func TestJudgementOfTheCrusaderGloves(t *testing.T) {
 	for _, gloves := range []int32{16410, 16471, 23274} {
-		sim, ret := retSimGear(t, "52003-503-05225331001330311", withWeapon(map[proto.ItemSlot]int32{proto.ItemSlot_ItemSlotHands: gloves}), 1, proto.MobType_MobTypeUnknown)
+		sim, ret := retSimGear(t, "--05233001001301351", withWeapon(map[proto.ItemSlot]int32{proto.ItemSlot_ItemSlotHands: gloves}), 1, proto.MobType_MobTypeUnknown)
 		castByID(sim, ret, 20308)
 		castByID(sim, ret, 20271)
 		if got := ret.CurrentTarget.PseudoStats.SchoolBonusDamageTaken[stats.SchoolIndexHoly]; got < 180.99 || got > 181.01 {
@@ -88,7 +88,7 @@ func TestJudgementOfTheCrusaderGloves(t *testing.T) {
 // by the client's set ID: +10 Spirit, +26 healing and +9 spell damage, Holy Shock 1 sec faster;
 // +7 Defense, 1.2% expertise and Forbearance 10 sec shorter.
 func TestJusticeSets(t *testing.T) {
-	const shock = "55003003201121251--05225230001"
+	const shock = "0502521122002105-5-05233"
 	_, base := retSimGear(t, shock, withWeapon(nil), 1, proto.MobType_MobTypeUnknown)
 	_, armor := retSimGear(t, shock, withWeapon(justiceArmorPieces), 1, proto.MobType_MobTypeUnknown)
 	_, plate := retSimGear(t, shock, withWeapon(justiceBattleplatePieces), 1, proto.MobType_MobTypeUnknown)
@@ -119,31 +119,5 @@ func TestJusticeSets(t *testing.T) {
 	}
 	if got := base.GetAura("Forbearance").Duration; got != time.Minute {
 		t.Errorf("Forbearance lasts %v, want 1m", got)
-	}
-}
-
-// TestTwistOfLightOneEcho checks that only one Echo is up and that a seal drops its own Echo:
-// Seal of Command to Righteousness leaves an Echo of Command, and back to Command swaps it for an
-// Echo of Righteousness. Seal of Command to the Crusader and back to Command leaves no Echo.
-func TestTwistOfLightOneEcho(t *testing.T) {
-	sim, ret := retSim(t, "--25225331001330301", arcaniteReaper)
-	command, righteousness := ret.GetAura("Echo of Command"), ret.GetAura("Echo of Righteousness")
-	castByID(sim, ret, 20920)
-	castByID(sim, ret, 20293)
-	if !command.IsActive() || righteousness.IsActive() {
-		t.Fatalf("after Command then Righteousness: Echo of Command %v, Echo of Righteousness %v", command.IsActive(), righteousness.IsActive())
-	}
-	castByID(sim, ret, 20920)
-	if command.IsActive() || !righteousness.IsActive() {
-		t.Errorf("back to Command: Echo of Command %v, Echo of Righteousness %v", command.IsActive(), righteousness.IsActive())
-	}
-	righteousness.Deactivate(sim)
-	castByID(sim, ret, 20308)
-	if !command.IsActive() {
-		t.Fatalf("no Echo of Command after Command then the Crusader")
-	}
-	castByID(sim, ret, 20920)
-	if command.IsActive() {
-		t.Errorf("Echo of Command still up under Seal of Command")
 	}
 }

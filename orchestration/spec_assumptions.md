@@ -224,8 +224,9 @@ Close behind: `sham_lb_31plus` (−1.9% / +4.1% Elemental around the presets' ×
 |---|---|---|---|---|---|---|---|
 | `pal_2h_spec_holy` | Two-Handed Weapon Spec on Holy seal damage | twist, sub Holy, Shock | yes (one value, resolved 2026-10-23) | = Expected | yes | = Expected | none left (one value) |
 | `pal_31plus_ranks` | Holy Strike and Consecration 31+ ranks | twist, sub Holy, Shock | client (one value, resolved 2026-10-25) | = Expected | client | = Expected | none left (one value; the ≤30 trend last measured −1.0 to −1.5%) |
+| `pal_unsealed_wrath` | How Unsealed Wrath's stored seals fire | twist, sub Holy, sub Holy vs Undead | the hotfix data read literally (one value, 2026-11-01) | = Expected | literal | = Expected | not measured (one value) |
 
-Retribution was also affected by `flat_bonus_inside_pct`, settled 2026-10-16 (Holy Strike; +3.6 to +4.2% at its Low, assumption sims). `pal_soc_wf` (Seal of Command and Echo of Command procing Windfury Totem) and `pal_soc_ppm` are rows too (see `pal_soc_ppm` below). Patch 0004's `pal_soc_wf` knob did nothing from 2026-10-16 to 2026-10-23 (the check in `CreateExtraAttackAuraCommon` had been lost in a rebase); it is back, and its Low measures −12.8 (−1.4%) on the old twist request (3,000 iterations, seed 1, 180 s).
+Retribution was also affected by `flat_bonus_inside_pct`, settled 2026-10-16 (Holy Strike; +3.6 to +4.2% at its Low, assumption sims). `pal_soc_wf` (Seal of Command and its Unsealed Wrath copies procing Windfury Totem, Twist of Light's Echo of Command before the October 30 hotfix) and `pal_soc_ppm` are rows too (see `pal_soc_ppm` below). Patch 0004's `pal_soc_wf` knob did nothing from 2026-10-16 to 2026-10-23 (the check in `CreateExtraAttackAuraCommon` had been lost in a rebase); it is back, and its Low measures −12.8 (−1.4%) on the old twist request (3,000 iterations, seed 1, 180 s).
 
 ### `pal_2h_spec_holy`: Two-Handed Weapon Specialization on Holy seal damage (resolved 2026-10-23, one value)
 
@@ -241,6 +242,17 @@ Retribution was also affected by `flat_bonus_inside_pct`, settled 2026-10-16 (Ho
   - **High:** = Expected.
 - **Sensitivity (PR):** Low gave twist about −11 (−1.1%). Sub Holy is similar; Shock was not measured.
 - **Knob:** none (one value).
+
+- **2026-11-01, the October 30 hotfix:** the tooltip of 20111 now reads "Increases the physical damage you deal by 6%, and reduces all threat you generate by 20% while a two-handed melee weapon is equipped" (1.60.1.70707+hf). Its damage effect is the row it was (effect 0, aura 79 misc 1), and only a threat effect was added, so the in-game finding above still describes it; the one value stands. The threat cut is in the sim (`applyWeaponSpecialization`).
+
+### `pal_unsealed_wrath`: how Unsealed Wrath's stored seals fire (added 2026-11-01, one value)
+
+- **Builds:** the twisting presets (Level 60, sub Holy, their duty copies, sub Holy vs Undead).
+- **Sim now:** `sim/paladin/unsealed_wrath.go`. A landed white swing (extra attacks included) under a seal with an Echo stores a copy of it: a stack more, up to 3, and 15 sec again. A landed white swing under a seal first spends every other Echo's stacks, one roll of the stored seal's own chance a stack, with the rank that stored the last copy. Seal of Righteousness's chance is every swing; Seal of Command's is its 7 procs a minute on the main hand's speed (`pal_soc_ppm`), and its 1 sec proc cooldown neither stops nor starts the rolls. Holy Strike and the other abilities store and spend nothing; a miss, dodge or parry neither; a swing with no seal up spends nothing. Seal of the Crusader and Seal of Wisdom have no Echo, so they store nothing (and spend the others). The 20% seal cost cut is gone.
+- **Source:** the launch realms' hotfix rows for build 70707 (wago.tools hotfixes, region 91; `tools/sources/hotfixes.py`, the cached 1.60.1.70707+hf). Unsealed Wrath (1310735): "Your melee attacks store a copy of your active Seal for 15 sec, stacking up to 3 times. Landing an attack with a different Seal consumes all stacks, giving the stored Seal its normal chance to activate once per stack." It keeps Twist of Light's one aura options row, 100% on done melee auto attacks (proc type 4), and its cost effect at 0. The Echoes of Command (1311703), Righteousness (1311704), Fury (1311701) and Justice (1311705) went to 15 sec (duration index 8), CumulativeAura 3, no charges and no proc flags: "Empowers your next melee attack without Seal of Command active with $s3 instances of Seal of Command" ($s3 = 1). foreverchanges.pro's calculator has the same text.
+- **Why uncertain:** the server's script does the work and no log has shown it. The tooltip says "melee attacks", the proc row says auto attacks; the Echo says "without Seal of Command active", the talent "with a different Seal"; neither says whether Seal of Command's proc cooldown holds between the stacks.
+- **Settings:** one value, the reading above (each choice is the proc row's or the talent tooltip's). The twist rotations are built on it (`tools/rotopt/paladin_ret.go`: the seal's copies build to `twistStacks`, the other seal goes up for the swing that spends them).
+- **Knob:** none.
 
 ### `pal_31plus_ranks`: Holy Strike's flat part and Consecration's 31+ ranks (resolved 2026-10-25, one value)
 
@@ -663,6 +675,7 @@ These were pending when added; c3c8167f20 (2026-10-16) gave them their knobs. `l
 
 ### `pal_soc_ppm` (added 2026-10-16 by the assumptions audit)
 
+- **2026-11-01:** Unsealed Wrath's stored Seal of Command copies roll the same rate (`pal_unsealed_wrath`), so the twist builds lean on it more than before; not re-measured.
 - **Builds:** the twisting presets (Level 60, sub Holy, the sub Holy Crusader duty copy and sub Holy vs Undead; the vs Undead twist build and the twist Crusader duty copy went on 2026-10-24). The Shock builds never use Seal of Command.
 - **Sim now:** 7 procs a minute with a 1 sec cooldown (`SealOfCommandPPM`, `sim/paladin/soc.go`).
 - **Source:** the client (1.60.1.70425, the aura options of 20375 and 20915 to 20920) gives the aura a 100% chance on melee hits, a 1 sec recovery and no procs-per-minute entry, so the server's script sets the rate, as in Classic. Classic and Season of Discovery use 7 a minute. No Forever beta log has counted the procs.

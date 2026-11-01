@@ -92,7 +92,7 @@
               "blessingOfWisdom": "TristateEffectImproved",
               "blessingOfMight": "TristateEffectImproved"
             },
-            "talentsString": "550030032011012--052150312012303",
+            "talentsString": "05125210220021--0523310120130133",
             "level": 60,
             "profession1": "Engineering",
             "profession2": "Blacksmithing",
@@ -116,17 +116,21 @@
               ],
               "priorityList": [
                 {
-                  "notes": "The spell power on-use trinket at the pull, then held for the execute phase when that loses no use.",
                   "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "itemId": 992015
+                      }
+                    },
                     "condition": {
                       "or": {
                         "vals": [
                           {
                             "cmp": {
-                              "op": "OpLt",
                               "lhs": {
                                 "currentTime": {}
                               },
+                              "op": "OpLt",
                               "rhs": {
                                 "const": {
                                   "val": "1s"
@@ -141,24 +145,18 @@
                           },
                           {
                             "cmp": {
-                              "op": "OpGt",
                               "lhs": {
                                 "spellUsesLostByDelay": {
-                                  "spellId": {
-                                    "itemId": 992015
-                                  },
                                   "delay": {
                                     "math": {
-                                      "op": "OpDiv",
                                       "lhs": {
                                         "math": {
-                                          "op": "OpSub",
                                           "lhs": {
                                             "math": {
-                                              "op": "OpMul",
                                               "lhs": {
                                                 "remainingTime": {}
                                               },
+                                              "op": "OpMul",
                                               "rhs": {
                                                 "const": {
                                                   "val": "4"
@@ -166,11 +164,13 @@
                                               }
                                             }
                                           },
+                                          "op": "OpSub",
                                           "rhs": {
                                             "currentTime": {}
                                           }
                                         }
                                       },
+                                      "op": "OpDiv",
                                       "rhs": {
                                         "const": {
                                           "val": "5"
@@ -182,9 +182,13 @@
                                     "const": {
                                       "val": "20s"
                                     }
+                                  },
+                                  "spellId": {
+                                    "itemId": 992015
                                   }
                                 }
                               },
+                              "op": "OpGt",
                               "rhs": {
                                 "const": {
                                   "val": "0"
@@ -194,37 +198,37 @@
                           }
                         ]
                       }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "itemId": 992015
-                      }
                     }
-                  }
+                  },
+                  "notes": "The spell power on-use trinket at the pull, then held for the execute phase when that loses no use."
                 },
                 {
-                  "notes": "Goblin Sapper Charge on cooldown.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "itemId": 10646
                       }
                     }
-                  }
+                  },
+                  "notes": "Goblin Sapper Charge on cooldown."
                 },
                 {
-                  "notes": "Consecration on cooldown, down to the last point of mana.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "spellId": 20924
                       }
                     }
-                  }
+                  },
+                  "notes": "Consecration on cooldown, down to the last point of mana."
                 },
                 {
-                  "notes": "Judgement on cooldown.",
                   "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20271
+                      }
+                    },
                     "condition": {
                       "and": {
                         "vals": [
@@ -237,17 +241,17 @@
                           }
                         ]
                       }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 20271
-                      }
                     }
-                  }
+                  },
+                  "notes": "Judgement on cooldown."
                 },
                 {
-                  "notes": "Seal of Command whenever it is down. Judgement does not consume it under Forever. Without the talent ignore the warning on this line.",
                   "action": {
+                    "castSpell": {
+                      "spellId": {
+                        "spellId": 20920
+                      }
+                    },
                     "condition": {
                       "and": {
                         "vals": [
@@ -264,59 +268,55 @@
                           }
                         ]
                       }
-                    },
-                    "castSpell": {
-                      "spellId": {
-                        "spellId": 20920
-                      }
                     }
-                  }
+                  },
+                  "notes": "Seal of Command whenever it is down. Judgement does not consume it under Forever. Without the talent ignore the warning on this line."
                 },
                 {
-                  "notes": "Hammer of Wrath below 20% health.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "spellId": 24239
                       }
                     }
-                  }
+                  },
+                  "notes": "Hammer of Wrath below 20% health."
                 },
                 {
-                  "notes": "Holy Strike on cooldown.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "spellId": 10333
                       }
                     }
-                  }
+                  },
+                  "notes": "Holy Strike on cooldown."
                 },
                 {
-                  "notes": "Exorcism on cooldown, only against Undead and Demons.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "spellId": 10314
                       }
                     }
-                  }
+                  },
+                  "notes": "Exorcism on cooldown, only against Undead and Demons."
                 },
                 {
-                  "notes": "Holy Shock on cooldown. Without the talent ignore the warning on this line.",
                   "action": {
                     "castSpell": {
                       "spellId": {
                         "spellId": 20930
                       }
                     }
-                  }
+                  },
+                  "notes": "Holy Shock on cooldown. Without the talent ignore the warning on this line."
                 },
                 {
-                  "notes": "Racials and trinkets on a free GCD.",
                   "action": {
                     "autocastOtherCooldowns": {}
-                  }
+                  },
+                  "notes": "Racials and trinkets on a free GCD."
                 }
               ]
             },

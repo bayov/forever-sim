@@ -6,10 +6,18 @@ import (
 	"github.com/wowsims/classic/sim/core"
 )
 
-// SwiftJudgementSpellId is Swift Judgement, the 15 point Protection talent (client
-// 1.60.1.70338, spell 1310994): instant and off the global cooldown, 1 min cooldown. It
-// finishes Judgement's cooldown and leaves a one-charge aura (aura 108 / misc 14 at -100% on
-// Judgement's class mask) that makes the next Judgement free.
+// SwiftJudgementSpellId is Swift Judgement, the 15 point Protection talent (needs Templar's
+// Bulwark). The launch realms' October 30 hotfix made it a Judgement of its own (spell 1310994 in
+// 1.60.1.70707+hf): "Unleash the energy of a Seal spell upon an enemy. Does not consume the Seal.
+// Refer to individual Seals for Judgement effect. Does not share a cooldown with your Judgement
+// ability." Its row is Judgement's (20271: effect 77, the same attributes and range), with a 1 min
+// recovery of its own, no power cost and no global cooldown (no start recovery). Before the hotfix
+// it finished Judgement's cooldown and made the next one free.
+//
+// We read it literally (report assumption pal_swift_judgement): it judges the active seal as
+// Judgement does, free, off the global cooldown, on its own 1 min cooldown, which Improved
+// Judgement doesn't shorten (25956's class mask names Judgement only). Sanctified Judgement
+// ("Gives your Judgement ability ...") gives no mana back for it.
 const SwiftJudgementSpellId = 1310994
 
 func (paladin *Paladin) registerSwiftJudgement() {
@@ -17,31 +25,24 @@ func (paladin *Paladin) registerSwiftJudgement() {
 		return
 	}
 
-	freeJudgement := paladin.RegisterAura(core.Aura{
-		Label:    "Swift Judgement",
-		ActionID: core.ActionID{SpellID: SwiftJudgementSpellId},
-		Duration: core.NeverExpires,
-		OnGain: func(_ *core.Aura, _ *core.Simulation) {
-			paladin.judgement.Cost.Multiplier -= 100
-		},
-		OnExpire: func(_ *core.Aura, _ *core.Simulation) {
-			paladin.judgement.Cost.Multiplier += 100
-		},
-	})
-	paladin.swiftJudgementAura = freeJudgement
-
 	paladin.RegisterSpell(core.SpellConfig{
-		ActionID: freeJudgement.ActionID,
-		Flags:    core.SpellFlagAPL | core.SpellFlagNoOnCastComplete,
+		ActionID:    core.ActionID{SpellID: SwiftJudgementSpellId},
+		SpellSchool: core.SpellSchoolHoly,
+		ProcMask:    core.ProcMaskEmpty,
+		Flags:       core.SpellFlagMeleeMetrics | core.SpellFlagAPL | core.SpellFlagNoOnCastComplete | core.SpellFlagPassiveSpell | core.SpellFlagCastTimeNoGCD,
+
 		Cast: core.CastConfig{
+			IgnoreHaste: true,
 			CD: core.Cooldown{
 				Timer:    paladin.NewTimer(),
 				Duration: time.Minute,
 			},
 		},
-		ApplyEffects: func(sim *core.Simulation, _ *core.Unit, _ *core.Spell) {
-			paladin.judgement.CD.Reset()
-			freeJudgement.Activate(sim)
+		ExtraCastCondition: func(_ *core.Simulation, _ *core.Unit) bool {
+			return paladin.currentSeal.IsActive()
+		},
+		ApplyEffects: func(sim *core.Simulation, target *core.Unit, _ *core.Spell) {
+			paladin.castSpecificJudgement(sim, target, paladin.currentJudgement, paladin.currentSeal)
 		},
 	})
 }
