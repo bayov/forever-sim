@@ -19,10 +19,11 @@ func main() {
 	must(protojson.Unmarshal(read(os.Args[1]), db))
 	core.AddToDatabase(db)
 
-	// Our synthetic on-use trinkets: the rogue's +335 attack power, the ranged hunter's +415 ranged attack
-	// power and the Survival hunter's +335 of both, each 20 s on a 2 min cooldown sharing the offensive trinket's.
+	// Our synthetic on-use trinkets: the rogue's and the warrior's +335 attack power, the ranged hunter's +415
+	// ranged attack power and the Survival hunter's +335 of both, each 20 s on a 2 min cooldown sharing the offensive trinket's.
 	for id, st := range map[int32]stats.Stats{
 		994202: {stats.AttackPower: 335, stats.RangedAttackPower: 335},
+		991018: {stats.AttackPower: 335, stats.RangedAttackPower: 335},
 		993016: {stats.RangedAttackPower: 415},
 		993117: {stats.AttackPower: 335, stats.RangedAttackPower: 335},
 	} {
@@ -40,9 +41,9 @@ func main() {
 		})
 	}
 
-	// Our synthetic hunter sets' 2 piece bonus (Wildstalker Armor's): 1% attack and casting speed, on the head piece,
-	// which each set's two pieces include.
-	for _, id := range []int32{993001, 993101} {
+	// Our synthetic sets' 2 piece bonus, 1% attack and casting speed, on the head piece, which each set's two pieces
+	// include: the hunters' (Wildstalker Armor's) and the warriors' (Battlegear of Glory's).
+	for _, id := range []int32{993001, 993101, 991001, 991019} {
 		core.NewItemEffect(id, func(agent core.Agent) {
 			character := agent.GetCharacter()
 			core.MakePermanent(character.RegisterAura(core.Aura{

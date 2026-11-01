@@ -16,13 +16,14 @@
 --turret: drop our rotation's lines whose notes start "Weave:" (the hunters' melee weave), so both stand at range.
 --their-mob-type <MobType...>: give theirs' boss a creature type. Ours counts the generic boss (no type) as one the
   hunter tracks and theirs doesn't (Improved Tracking, 8aa26ccb4d): MobTypeGiant aligns that and no racial reads it.
+--no-raid-damage: no raid damage taken in ours (theirs has none): the warrior's rage from it.
 --keep-filler: keep our filler explosive. Theirs applies one explosive of a kind, so by default ours drops its
   filler and both use only the Sapper.
 
 Env ALIGN="<their stat index>=<value>,..." adds bonus stats to theirs (align.py finds them).
 Env NOSPELLS="<id>,..." names talent spells the build doesn't have, see nospell() below.
 
-Only the classes in CLASSES are mapped. Adding one means its options, its consumables and its spell ids
+Rogues, hunters and warriors are mapped. Adding one means its options, its consumables and its spell ids
 (SKILL.md, "Adding a class").
 """
 import copy, json, os, re, sys
@@ -74,6 +75,10 @@ cs = p['consumes']
 d = ours['raid']['debuffs']
 # Sunder Armor: theirs ramps the raid's copy itself, a stack every GCD from the pull (5 at 6 s, driveSunderArmor), and
 # our report ramp (a tank and one pull Sunder) also reaches 5 at 6 s, so ours keeps its ramp.
+# Raid damage taken (the encounter's raidDamageHitsPerMinute): theirs has no such model. --no-raid-damage turns ours'
+# off, which isolates its worth (the rage a warrior gets from it).
+if '--no-raid-damage' in args:
+    ours['encounter']['raidDamageHitsPerMinute'] = 0
 if cs.get('fillerExplosive') and '--keep-filler' not in args:
     print('ours drops its filler explosive', cs.pop('fillerExplosive'), '(theirs applies one explosive)')
 
@@ -104,7 +109,8 @@ C = {'FlaskOfNaturalAggression': 274274, 'FlaskOfNaturalPrecision': 274275, 'Fla
      'ConjuredRogueThistleTea': 7676, 'SapperGoblinSapper': 10646, 'ExplosiveEZThroDarkBomb': 260817,
      'ExplosiveEZThroThoriumGrenade': 260816, 'ExplosiveDenseDynamite': 18641, 'ExplosiveThoriumGrenade': 15993,
      'DenseSharpeningStone': 12404, 'DenseWeightstone': 12643,
-     'DeadlyPoison': 8985, 'InstantPoison': 8928}  # Deadly Poison IV (theirs has no AQ book rank), Instant VI
+     'DeadlyPoison': 8985, 'InstantPoison': 8928,
+     'FoodSmokedDesertDumpling': 20452, 'MightyRagePotion': 13442, 'ROIDS': 8410}  # Deadly Poison IV (theirs has no AQ book rank), Instant VI
 def c(k):
     v = cs.get(k)
     if not v: return 0
@@ -128,7 +134,7 @@ consumables = {
     'potions': [pot] if pot else [], 'conjuredId': c('defaultConjured'), 'conjuredItems': [c('defaultConjured')] if c('defaultConjured') else [],
     'explosiveId': c('sapperExplosive'),
 }
-if pot == 13444: consumables['resourcePotId'] = pot
+if pot in (13444, 13442): consumables['resourcePotId'] = pot  # mana, rage
 elif pot: consumables['offensivePotId'] = pot
 
 # Raid and party buffs, blessings, debuffs.
@@ -155,13 +161,18 @@ debuffs = {k: bool(d.get(k)) or (k == 'sunderArmor' and 'sunderRamp' in d) for k
            'thunderClap', 'insectSwarm', 'scorpidSting', 'exposeArmor']}
 
 # Cooldowns of the spells spellUsesLostByDelay names, which theirs lacks (it is rewritten from remainingTime).
-CD = {20572: '120s', 1259799: '180s', ('item', 993016): '120s', ('item', 993117): '120s'}
+CD = {20572: '120s', 1259799: '180s', ('item', 993016): '120s', ('item', 993117): '120s', ('item', 991018): '120s',
+      ('other', 'OtherActionPotion'): '120s'}
 REMAP = {}  # (spellId, frozenset of the other keys) handled per class in remap()
 SET_BONUS = {}  # theirs' stat index -> value for a synthetic set bonus theirs doesn't register
 
 # ---- classes ----------------------------------------------------------------------------------------------------
 talents = p['talentsString']
 extra_lines = []
+def never(sid):  # a never-true line naming a spell, which keeps it out of theirs' autocastOtherCooldowns
+    return {'action': {'condition': {'cmp': {'op': 'OpLt', 'lhs': {'const': {'val': '1'}}, 'rhs': {'const': {'val': '0'}}}},
+                       'castSpell': {'spellId': sid}}}
+THEIR_DISTANCE = 0  # theirs' start, when ours' can't open as ours does
 if klass == 'ClassRogue':
     ro = p['rogue']['options']
     consumables['mhWeaponImbueId'] = C[ro['mainHandPoison']]; consumables['ohWeaponImbueId'] = C[ro['offHandPoison']]
@@ -178,8 +189,7 @@ if klass == 'ClassRogue':
         return n
     # Theirs registers Vanish as a DPS cooldown, so autocastOtherCooldowns would Vanish at the pull; a never-true
     # line naming it keeps it out of the autocast, as ours has no Vanish cooldown.
-    extra_lines.append({'action': {'condition': {'cmp': {'op': 'OpLt', 'lhs': {'const': {'val': '1'}}, 'rhs': {'const': {'val': '0'}}}},
-                                   'castSpell': {'spellId': {'spellId': 1857, 'rank': 2}}}})
+    extra_lines.append(never({'spellId': 1857, 'rank': 2}))
 elif klass == 'ClassHunter':
     ho = p['hunter']['options']
     ho.setdefault('petAttackSpeed', 'One')  # the proto default: Faster Attack VII, a 1.0 s swing before Cobra Reflexes
@@ -213,6 +223,28 @@ elif klass == 'ClassHunter':
         s_ = json.dumps(p['rotation'])
         for a_, b_ in AQ.items(): s_ = s_.replace('"spellId": %d' % a_, '"spellId": %d' % b_)
         p['rotation'] = json.loads(s_)
+elif klass == 'ClassWarrior':
+    wo = p['warrior']['options']
+    # Our shout option feeds nothing: the warrior gets the raid's Battle Shout and our rotation never shouts.
+    class_opts = {'dpsWarrior': {'options': {'classOptions': {
+        'defaultStance': wo.get('stance', 'WarriorStanceNone'), 'queueDelay': wo.get('queueDelay', 0),
+        'startingRage': wo.get('startingRage', 0), 'stanceSnapshot': wo.get('stanceSnapshot', False),
+        'useBattleShout': False}}}}
+    # Our Charge is an opener for its Rage alone, at any range. Theirs moves the warrior in and needs 8 yd, so a
+    # rotation that opens with it starts theirs at 20 yd (its dash lands in melee range before the pull).
+    if '"spellId": 11578' in json.dumps(p['rotation'].get('prepullActions', [])): THEIR_DISTANCE = 20
+    # Theirs registers Sweeping Strikes as a DPS cooldown, so autocastOtherCooldowns would spend 30 rage on it every
+    # 30 s against one target. Ours doesn't count it as one.
+    extra_lines.append(never({'spellId': 12723}))
+    CD.update({12328: '180s', 1719: '1800s', 26297: '180s', 20554: '180s', 2687: '60s'})
+    def remap(n):
+        if n.get('spellId') == 26297:  # Berserking: ours keys the rage one, 26297 (tagged), theirs Forever's 20554
+            n = {k: v for k, v in n.items() if k != 'tag'}; n['spellId'] = 20554
+        if n.get('spellId') == 11578:  # Charge: theirs keys it without a rank
+            n = {'spellId': 11578}
+        if n.get('spellId') == 1680 and 'tag' not in n:  # Whirlwind: theirs casts the main hand's copy, tag 14
+            n = {**n, 'tag': 14}
+        return n
 else:
     raise SystemExit(f'{klass} is not mapped yet (SKILL.md, "Adding a class")')
 
@@ -220,7 +252,7 @@ else:
 # APL_TRANSLATION: values theirs lacks, rewritten from ones it has.
 NOSPELLS = {int(x) for x in os.environ.get('NOSPELLS', '').split(',') if x}
 def add(a, b_): return {'math': {'op': 'OpAdd', 'lhs': a, 'rhs': b_}}
-def sid_key(s): return ('item', s['itemId']) if 'itemId' in s else s.get('spellId')
+def sid_key(s): return ('item', s['itemId']) if 'itemId' in s else ('other', s['otherId']) if 'otherId' in s else s.get('spellId')
 DIST = {'unitDistance': {}}
 def nospell(n):
     # A value naming a talent spell the build lacks: ours reads it as false, theirs drops it from its and/or, which
@@ -241,7 +273,7 @@ def walk(n):
             r = walk(n['moveTime']['rangeFromTarget'])
             return {'math': {'op': 'OpMul', 'lhs': {'const': {'val': '1s'}},
                              'rhs': {'math': {'op': 'OpDiv', 'lhs': {'math': {'op': 'OpSub', 'lhs': DIST, 'rhs': r}}, 'rhs': {'unitMovementSpeed': {}}}}}}
-        if 'cmp' in n and 'spellUsesRemaining' in n['cmp']['lhs']:
+        if 'cmp' in n and 'spellUsesRemaining' in n['cmp']['lhs'] and n['cmp']['op'] in ('OpGt', 'OpEq'):
             c_ = n['cmp']; u = c_['lhs']['spellUsesRemaining']; t = u['minTimeLeft']
             assert c_['rhs'] == {'const': {'val': '0'}}
             if u['spellId'].get('spellId') in NOSPELLS:
@@ -251,6 +283,14 @@ def walk(n):
                 return {'cmp': {'op': 'OpGe', 'lhs': {'remainingTime': {}}, 'rhs': t}}
             if c_['op'] == 'OpEq':  # no use left with T to go: fewer than T left, or not ready in time
                 return {'cmp': {'op': 'OpLt', 'lhs': {'remainingTime': {}}, 'rhs': add({'spellTimeToReady': {'spellId': u['spellId']}}, t)}}
+        if 'cmp' in n and 'spellUsesRemaining' in n['cmp']['lhs'] and n['cmp']['op'] == 'OpLe':
+            # spellUsesRemaining(X, minTimeLeft T) <= k: fewer than T + its time to ready + k cooldowns left
+            c_ = n['cmp']; u = c_['lhs']['spellUsesRemaining']; k_ = int(c_['rhs']['const']['val'])
+            key = sid_key(u['spellId'])
+            if key not in CD: raise SystemExit(f'spellUsesRemaining on {key}: add its cooldown to CD')
+            span = add({'spellTimeToReady': {'spellId': u['spellId']}}, u['minTimeLeft'])
+            for _ in range(k_): span = add(span, {'const': {'val': CD[key]}})
+            return {'cmp': {'op': 'OpLt', 'lhs': {'remainingTime': {}}, 'rhs': span}}
         if 'cmp' in n and 'spellUsesLostByDelay' in n['cmp']['lhs']:
             # spellUsesLostByDelay(X, delay D, minTimeLeft T) > 0: delaying X by D costs a use. With R the time left
             # and fewer than two cooldowns of X in R - T: R < T + D when R < T + CD, else R < T + D + CD.
@@ -266,6 +306,8 @@ def walk(n):
         for k2 in ('autoTimeToNext', 'autoTimeSinceLast'):  # theirs: MainHandAuto, OffHandAuto, RangedAuto
             if k2 in n and n[k2].get('autoType') in ('MainHand', 'Ranged', 'OffHand'):
                 n = {**n, k2: {**n[k2], 'autoType': n[k2]['autoType'] + 'Auto'}}  # (autoSwingTime keeps MainHand)
+        if n.get('otherId') == 'OtherActionPotion':  # theirs: one placeholder per potion class
+            n = {**n, 'otherId': 'OtherActionResourcePotion' if consumables.get('resourcePotId') else 'OtherActionOffensivePotion'}
         n = remap(n)
         return {k3: walk(v) for k3, v in n.items()}
     if isinstance(n, list): return [walk(x) for x in n]
@@ -296,7 +338,7 @@ player = {
     'talentsString': talents, 'profession1': p.get('profession1'), 'profession2': p.get('profession2'),
     'prof1Rank': 300, 'prof2Rank': 300, 'cooldowns': p.get('cooldowns', {}), 'rotation': apl,
     'reactionTimeMs': p['reactionTimeMs'], 'channelClipDelayMs': p['channelClipDelayMs'],
-    'distanceFromTarget': p['distanceFromTarget'], 'bonusStats': {'stats': stats_arr(bonus)},
+    'distanceFromTarget': THEIR_DISTANCE or p['distanceFromTarget'], 'bonusStats': {'stats': stats_arr(bonus)},
 }
 theirs = {
     'raid': {'parties': [{'players': [player], 'buffs': party_buffs}], 'buffs': raid_buffs, 'debuffs': debuffs},
