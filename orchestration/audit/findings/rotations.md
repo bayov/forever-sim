@@ -4,6 +4,28 @@ Format and rules: `orchestration/audit/PASS.md`. Newest first.
 
 ## Open
 
+### rotations-20261101-1: Frost mage: a fourth Arcane Blast stack above 70% mana, now that a stack costs 100% (was 175%)
+- severity: low (+1.8 DPS at 180 s, 0.2%)
+- affects: mage__frost (ui/mage/apls/level60_frost.apl.json)
+- found: 2026-11-01, master c23ef0440
+- evidence: the October 30 hotfix (b79e033bc, `sim/mage/arcane_blast.go`) made each Arcane Blast stack
+  12% of Intellect, +100% mana per stack (was 15%, 175%) and 18 sec. The Frost APL still caps the
+  stacks at 3 (line 9, `"auraNumStacks" ... "OpLt" ... "3"`). Plain cap 4 is a trade-off (+4.6 / +2.7 /
+  -15.7 at 120/180/300 s, S0 = 1e6: it runs out of mana in long fights). Gating the fourth stack on mana
+  holds at every length. Variant: insert a copy of line 9 just above it, with the stack cap `"4"` and one
+  more condition `{"cmp":{"lhs":{"currentManaPercent":{}},"op":"OpGt","rhs":{"const":{"val":"0.7"}}}}`.
+  Paired, 20k it in 8 blocks, `tools/audit/rotations/ab.py`, baseline 929.7 at 180 s:
+  | variant | S0 | 120 s | 180 s | 300 s |
+  |---|---|---|---|---|
+  | mana > 0.7 | 1e6 | +2.20 ±0.42 | +1.53 ±0.53 | +0.32 ±0.56 |
+  | mana > 0.7 | 2e8 | +3.18 ±0.36 | +2.12 ±0.44 | +0.74 ±0.52 |
+  | mana > 0.7 | pooled | +2.69 | +1.83 | +0.53 |
+  | mana > 0.6 | pooled | +3.07 | +2.18 | +0.22 (-0.16 on S0 = 1e6) |
+  Fairly sure of the gain at 120 and 180 s; 300 s is flat.
+- proposed fix: the 0.7 line above (0.6 is +0.35 more at 180 s but flat to negative at 300 s). Also update
+  that line's note, which still says "15% of Intellect ... for 15 sec" (now 12%, 18 sec).
+- needs: orchestrator fix
+
 ## Resolved
 
 ### rotations-20261028-1: BM, MM and LW caveats still say Trueshot Aura 100 and Hawk rank 5 (90), on the published report

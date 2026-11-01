@@ -229,8 +229,8 @@ func TestForeverCatFaerieFire(t *testing.T) {
 	}
 }
 
-// Client 1.60.1.70425: Moonkin Aura is 3% spell crit and Leader of the Pack 3% physical crit,
-// each its own raid aura, so the cat gets melee crit only from Leader of the Pack.
+// Forever: Moonkin Aura and Leader of the Pack are each 3% crit with spells and attacks (the launch
+// realms' hotfix push 113283 on 1.60.1.70707), and the two don't stack (user ruling 2026-11-01).
 func TestForeverCritAuras(t *testing.T) {
 	_, none := newFormSimBuffs(t, proto.Ruleset_RulesetForever, &proto.Consumes{}, &proto.RaidBuffs{})
 	_, moonkin := newFormSimBuffs(t, proto.Ruleset_RulesetForever, &proto.Consumes{}, &proto.RaidBuffs{MoonkinAura: true})
@@ -238,14 +238,13 @@ func TestForeverCritAuras(t *testing.T) {
 	_, both := newFormSimBuffs(t, proto.Ruleset_RulesetForever, &proto.Consumes{}, &proto.RaidBuffs{MoonkinAura: true, LeaderOfThePack: true})
 	melee := func(c *FeralDruid) float64 { return c.GetStat(stats.MeleeCrit) - none.GetStat(stats.MeleeCrit) }
 	spell := func(c *FeralDruid) float64 { return c.GetStat(stats.SpellCrit) - none.GetStat(stats.SpellCrit) }
-	if !near(melee(moonkin), 0) || !near(spell(moonkin), 3*core.SpellCritRatingPerCritChance) {
-		t.Errorf("Moonkin Aura gave %.2f melee and %.2f spell crit rating, want 0 and 3%%", melee(moonkin), spell(moonkin))
-	}
-	if !near(melee(lotp), 3*core.CritRatingPerCritChance) || !near(spell(lotp), 0) {
-		t.Errorf("Leader of the Pack gave %.2f melee and %.2f spell crit rating, want 3%% and 0", melee(lotp), spell(lotp))
-	}
-	if !near(melee(both), 3*core.CritRatingPerCritChance) || !near(spell(both), 3*core.SpellCritRatingPerCritChance) {
-		t.Errorf("both auras gave %.2f melee and %.2f spell crit rating, want 3%% each", melee(both), spell(both))
+	for _, c := range []struct {
+		name string
+		cat  *FeralDruid
+	}{{"Moonkin Aura", moonkin}, {"Leader of the Pack", lotp}, {"both auras", both}} {
+		if !near(melee(c.cat), 3*core.CritRatingPerCritChance) || !near(spell(c.cat), 3*core.SpellCritRatingPerCritChance) {
+			t.Errorf("%s gave %.2f melee and %.2f spell crit rating, want 3%% each", c.name, melee(c.cat), spell(c.cat))
+		}
 	}
 }
 
