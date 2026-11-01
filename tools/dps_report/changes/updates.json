@@ -1333,6 +1333,107 @@
       "fedb739",
       "727a7ca"
      ]
+    },
+    {
+     "title": "Goblin Sapper Charge and Goblin Land Mine only hit enemies within 10 yards",
+     "kind": "sim",
+     "classes": [
+      "Hunter",
+      "Mage",
+      "Druid",
+      "Shaman",
+      "Warlock",
+      "Priest"
+     ],
+     "builds": [
+      "hunter__beast-mastery",
+      "hunter__beast-mastery-tallstrider",
+      "hunter__beast-mastery-wolf",
+      "hunter__lone-wolf",
+      "hunter__marksmanship",
+      "hunter__marksmanship-tallstrider",
+      "hunter__marksmanship-wolf",
+      "druid__balance",
+      "druid__balance-duty-ff",
+      "druid__balance-wrath",
+      "druid__balance-wrath-duty-ff",
+      "mage__arcane",
+      "mage__fire",
+      "mage__frost",
+      "mage__frostfire",
+      "shaman__elemental-level60",
+      "shaman__elemental-level60-mana-tide",
+      "priest__shadow",
+      "priest__shadow-holy",
+      "priest__smite",
+      "warlock__affliction",
+      "warlock__affliction-duty-curse",
+      "warlock__affliction-duty-recklessness",
+      "warlock__demonology",
+      "warlock__demonology-duty-curse",
+      "warlock__demonology-duty-recklessness",
+      "warlock__destruction",
+      "warlock__destruction-duty-curse",
+      "warlock__destruction-duty-recklessness",
+      "warlock__destruction_fire",
+      "warlock__destruction_fire-duty-curse",
+      "warlock__destruction_fire-duty-recklessness"
+     ],
+     "note": "The sim used them from any range. Ranged hunters still set off the Sapper when they step in to melee weave. Mages, Balance druids, Elemental shamans, warlocks and priests now take no Sapper. It costs them 4 to 9 DPS.",
+     "source": "https://wago.tools/db2/SpellEffect?build=1.60.1.70707&filter[SpellID]=13241",
+     "commits": [
+      "bb21e3b",
+      "e563383"
+     ]
+    },
+    {
+     "title": "Ranged hunters throw the EZ-Thro Dark Bomb instead of laying the Goblin Land Mine",
+     "kind": "consumes",
+     "classes": [
+      "Hunter"
+     ],
+     "builds": [
+      "hunter__beast-mastery",
+      "hunter__beast-mastery-tallstrider",
+      "hunter__beast-mastery-wolf",
+      "hunter__lone-wolf",
+      "hunter__marksmanship",
+      "hunter__marksmanship-tallstrider",
+      "hunter__marksmanship-wolf"
+     ],
+     "note": "From range the mine's blast can't reach the boss, and its 1 sec cast doesn't fit in a melee weave.",
+     "commits": [
+      "bb21e3b"
+     ]
+    },
+    {
+     "title": "Warlocks and priests cast from 25 yards, like mages (was 5)",
+     "kind": "method",
+     "classes": [
+      "Warlock",
+      "Priest"
+     ],
+     "builds": [
+      "priest__shadow",
+      "priest__shadow-holy",
+      "priest__smite",
+      "warlock__affliction",
+      "warlock__affliction-duty-curse",
+      "warlock__affliction-duty-recklessness",
+      "warlock__demonology",
+      "warlock__demonology-duty-curse",
+      "warlock__demonology-duty-recklessness",
+      "warlock__destruction",
+      "warlock__destruction-duty-curse",
+      "warlock__destruction-duty-recklessness",
+      "warlock__destruction_fire",
+      "warlock__destruction_fire-duty-curse",
+      "warlock__destruction_fire-duty-recklessness"
+     ],
+     "note": "That puts them out of the Sapper's reach, and their bolts now take their flight time.",
+     "commits": [
+      "905787a"
+     ]
     }
    ],
    "internal": [
@@ -1367,6 +1468,10 @@
     {
      "commit": "e05fd73",
      "why": "raid sim threat counting; it runs only with a raid's threat check, and every report result hashes the same before and after it"
+    },
+    {
+     "commit": "d32d621",
+     "why": "the report hash test's data and provenance only; no report request moves"
     }
    ]
   }
