@@ -49,8 +49,8 @@ type RageBarOptions struct {
 // shows a 1.8 sec main hand dagger giving 6.2 to 6.3 Rage a swing (3.46 × 1.8) and a 1.6 sec off
 // hand dagger 2.7 to 2.8 (3.46 × 1.6 × 0.5), glancing blows included, on about 50 and 60 clean
 // swings (assumptions audit, 2026-10-16). Talent multipliers (Dual Wield Specialization's 10% off
-// hand Rage a point, client 1.60.1.70425 curve 111755) stay on top, and a crit adds its bonus at
-// the one-hand rate (foreverWhiteHitRage). Misses, dodges and parries give nothing. The rest is
+// hand Rage a point, client 1.60.1.70425 curve 111755) stay on top, and a crit doubles the swing's
+// whole Rage (foreverWhiteHitRage). Misses, dodges and parries give nothing. The rest is
 // an assumption until the beta test in orchestration/followups.md ("Rage needs a beta test"). k does
 // not grow with level (standards 21; user ruling 2026-10-25, report row warr_rage_k): the same
 // level 13 log gives 3.46 × speed, the k testers measured at level 30, so k didn't move from 13
@@ -99,11 +99,13 @@ func foreverTwoHandRageFactor(weapon *Weapon) float64 {
 // foreverWhiteHitRage is the Rage a white swing gives under Forever, before the flat bonus. Only a
 // swing that lands makes Rage: misses, dodges and parries make none (wowsims/forever f9f9f21883,
 // six level 8 and 9 combat logs). The off hand, Dual Wield Specialization and the other talent
-// multipliers scale the swing's Rage at the one-hand rate; the two-hand factor then multiplies it,
-// and a crit adds the crit bonus (100%) times the one-hand-rate Rage on top, so a two-hander crit
-// gives (4.5 + 3.46) × speed, not 9 × speed. The game files' Rule of Rage (DND) row 1322574
-// states the 100; warrior and bear combat logs show the bonus (wowsims/forever 5ac4ffbcb6,
-// 913fb51b9f).
+// multipliers scale the swing's Rage at the one-hand rate, the two-hand factor then multiplies it,
+// and a crit doubles the whole of it (the crit bonus, 100%, the game files' Rule of Rage (DND) row
+// 1322574), the two-hand factor included: a two-hander crit gives 9 × speed. Forever combat logs
+// from 9 October on show a two-hand white crit at exactly twice the swing's Rage (16.2 to 32.4 over
+// 13 crits, 14.8 to 29.7 over 8; wowsims/forever 7c28cfa731, 31 October). Until 1 November the sim
+// added the bonus at the one-hand rate, (4.5 + 3.46) × speed, after their earlier reading
+// (5ac4ffbcb6), which that commit reverses.
 func (unit *Unit) foreverWhiteHitRage(spell *Spell, result *SpellResult) float64 {
 	if !result.Landed() {
 		return 0
@@ -118,7 +120,7 @@ func (unit *Unit) foreverWhiteHitRage(spell *Spell, result *SpellResult) float64
 
 	generatedRage := swingRage * foreverTwoHandRageFactor(weapon)
 	if result.DidCrit() {
-		generatedRage += (unit.rageBar.critDealtMultiplier - 1) * swingRage
+		generatedRage *= unit.rageBar.critDealtMultiplier
 	}
 	return generatedRage
 }
