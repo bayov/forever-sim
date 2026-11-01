@@ -1,13 +1,13 @@
 {
  "last": {
-  "master": "64ebe97e930b34b76aa18bf406deb557c5198890"
+  "master": "d1935640f2453c346a0d425c373d4b5041444e31"
  },
  "last_pass_at": "2026-10-31T19:10:00Z",
  "pass": 53,
  "result": "findings",
  "note": "Pass 53: fedb73949 mksettings Sunder ramp (raid assumption, 11597 verified 70707). Finding mechanics-20261031-2: Moonkin Aura and LotP all crit via hotfix push 113283 on 70707; stacking needs ruling. Client 70707, dev notes 8 posts, no new blue posts.",
  "client_build": "1.60.1.70707",
- "checked_at": "2026-11-01T00:45:08Z",
+ "checked_at": "2026-11-01T06:44:30Z",
  "dev_notes_seen": {
   "url": "https://us.forums.blizzard.com/en/wow/t/2360696/8",
   "date": "2026-10-27T15:37:37Z",
