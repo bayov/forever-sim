@@ -11,7 +11,7 @@ type Preset struct {
 	Name    string
 	Role    proto.RaidRole
 	Class   proto.Class
-	Talents string // the sim's per-tree digit format, checked against client 70630's trees
+	Talents string // the sim's per-tree digit format, checked against the trees of 1.60.1.70707+hf (the October 30 hotfix)
 	Icon    string
 	// Gives is what it always gives. A paladin's Blessings also mean it judges one of the table's
 	// judgements, and a shaman's package means it drops one totem per element (table.go).
@@ -38,13 +38,13 @@ var Presets = []*Preset{
 		Gives:             GiftLotP | GiftGotW | GiftMinorArmor,
 		InnervateOptional: true},
 	{ID: proto.RaidPreset_RaidPresetProtectionPaladin, Name: "Protection paladin", Role: proto.RaidRole_RaidRoleTank,
-		Class: proto.Class_ClassPaladin, Talents: "1-5530513321301551-052", Icon: "spell_holy_devotionaura",
+		Class: proto.Class_ClassPaladin, Talents: "-55302102513521531-052", Icon: "spell_holy_devotionaura",
 		Gives: GiftBlessing},
 	{ID: proto.RaidPreset_RaidPresetWardenShaman, Name: "Warden shaman", Role: proto.RaidRole_RaidRoleTank,
 		Class: proto.Class_ClassShaman, Talents: "35050013-0502303313551102", Icon: "spell_shaman_lavaflow",
 		Gives: fixedTotemGifts, Package: proto.RaidPackage_RaidPackageManaSpring},
 	{ID: proto.RaidPreset_RaidPresetHolyPaladin, Name: "Holy paladin", Role: proto.RaidRole_RaidRoleHealer,
-		Class: proto.Class_ClassPaladin, Talents: "05320103225101051-500250302003", Icon: "spell_holy_holybolt",
+		Class: proto.Class_ClassPaladin, Talents: "50320215022101251-510221305", Icon: "spell_holy_holybolt",
 		Gives: GiftBlessing},
 	{ID: proto.RaidPreset_RaidPresetRestorationShaman, Name: "Restoration shaman", Role: proto.RaidRole_RaidRoleHealer,
 		Class: proto.Class_ClassShaman, Talents: "-005102-5530500315513151", Icon: "spell_nature_magicimmunity",
