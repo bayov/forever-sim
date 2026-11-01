@@ -20,6 +20,7 @@ Beast Mastery:
 - Summon Hawk (16 points): the dive bomb deals 32 / 47 / 85 / 108 (ranks at 25 / 36 / 48 / 60) plus 5% of ranged attack power, for 80 / 105 / 135 / 190 mana. The hawk it leaves attacks for 18 sec, at most 2 at once. 6 sec cooldown shared with Arcane Shot.
 - Intimidation gives the pet's next attack 100% more crit, 8% of base mana, 1 min. Bestial Wrath is Classic's (50% pet damage for 18 sec, 2 min, 12% of base mana).
 - Gone: Improved Aspect of the Hawk, Thick Hide (folded into Endurance Training), Improved Eyes of the Beast (baseline).
+- The launch realms' hotfix of 2026-10-30 (wago.tools hotfix rows, region 91, on client 1.60.1.70707, read with `tools/sources/hotfixes.py`) moves Pathfinding from row 2 column 3 to row 3 column 1 and Improved Revive Pet from column 4 to column 3 of row 2, so the two swap places in the talent string (5th and 6th digit). With Pathfinding out of row 2, rows 1 and 2 hold one point less, so the Level 60 Beast Mastery build (`5020121505021241-00520503005`) no longer reaches row 3; its Pathfinding point went to Improved Aspect of the Monkey (`5021201505021241-00520503005`, 2026-11-01). Neither talent is simulated, so no result moved.
 
 Marksmanship:
 
@@ -218,16 +219,15 @@ Aspect of the Pack, Aspect of the Wild, Tranquilizing Shot, Track Giants, Counte
   - Rank 2: Increases the Dodge bonus of your Aspect of the Monkey by 4%. Additionally, your pet gains 50% of the effect of your Aspect of the Monkey ability.
   - Rank 3: Increases the Dodge bonus of your Aspect of the Monkey by 6%. Additionally, your pet gains 50% of the effect of your Aspect of the Monkey ability.
   - Note: Higher-rank values taken from the nikftw dataset.
-- **Pathfinding** (2 ranks, column 3) [unchanged]
-  - Rank 1: Increases the speed bonus of your Aspect of the Cheetah and Aspect of the Pack by 3%.
-  - Rank 2: Increases the speed bonus of your Aspect of the Cheetah and Aspect of the Pack by 6%.
-  - Note: Slot corrected from the third-party dataset, not yet verified in footage by us.
-- **Improved Revive Pet** (2 ranks, column 4) [unchanged]
+- **Improved Revive Pet** (2 ranks, column 3, column 4 before the 2026-10-30 hotfix) [unchanged]
   - Rank 1: Revive Pet's casting time is reduced by 3 sec, mana cost is reduced by 20%, and increases the health your pet returns with by an additional 15%.
   - Rank 2: Revive Pet's casting time is reduced by 6 sec, mana cost is reduced by 40%, and increases the health your pet returns with by an additional 30%.
 
 #### Row 3 (10 points)
 
+- **Pathfinding** (2 ranks, column 1, row 2 column 3 before the 2026-10-30 hotfix) [unchanged]
+  - Rank 1: Increases the speed bonus of your Aspect of the Cheetah and Aspect of the Pack by 3%.
+  - Rank 2: Increases the speed bonus of your Aspect of the Cheetah and Aspect of the Pack by 6%.
 - **Bestial Swiftness** (1 rank, column 2) [CHANGED]
   - Increases the movement speed of your pets by 30%.
   - Classic: Increases the outdoor movement speed of your pets by 30%.
